@@ -84,6 +84,10 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 				  SIGNAL ( onlineStatusChanged ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 				  this, SLOT ( slotCheckVCard () ) );
 
+		connect ( account->myself (),
+				  SIGNAL ( onlineStatusChanged ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
+				  this, SLOT ( slotCheckLastActivity ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
+
 		/*
 		 * Trigger update once if we're already connected for contacts
 		 * that are being added while we are online.
@@ -194,36 +198,6 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 	actionCollection->append( actionSelectResource );
 
 	return actionCollection;
-
-}
-void JabberContact::rename ( const QString &newName )
-{
-
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Renaming " << contactId () << " to " << newName << endl;
-
-	// our display name has been changed, forward the change to the roster
-	if (!account()->isConnected())
-	{
-		account()->errorConnectFirst();
-		return;
-	}
-
-	// we can't rename a contact without meta contact (FIXME! libkopete issue)
-	if ( !metaContact() )
-		return;
-
-	// only forward change if this is not a temporary contact
-	if ( !metaContact()->isTemporary () )
-	{
-		XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
-
-		rosterTask->set ( mRosterItem.jid (), newName, mRosterItem.groups ());
-		rosterTask->go ( true );
-	}
-	else
-	{
-		metaContact()->setDisplayName ( newName );
-	}
 
 }
 
@@ -349,6 +323,12 @@ void JabberContact::slotCheckVCard ()
 	QDateTime cacheDate;
 	Kopete::ContactProperty cacheDateString = property ( protocol()->propVCardCacheTimeStamp );
 
+	// don't do anything while we are offline
+	if ( !account()->myself()->onlineStatus().isDefinitelyOnline () )
+	{
+		return;
+	}
+
 	// avoid warning if key does not exist in configuration file
 	if ( cacheDateString.isNull () )
 		cacheDate = QDateTime::currentDateTime().addDays ( -2 );
@@ -374,9 +354,8 @@ void JabberContact::slotGetTimedVCard ()
 
 	mVCardUpdateInProgress = false;
 
-	// check if we are connected
-	if ( ( account()->myself()->onlineStatus().status () != Kopete::OnlineStatus::Online ) &&
-		 ( account()->myself()->onlineStatus().status () != Kopete::OnlineStatus::Away ) )
+	// check if we are still connected - eventually we lost our connection in the meantime
+	if ( !account()->myself()->onlineStatus().isDefinitelyOnline () )
 	{
 		// we are not connected, discard this update
 		return;
@@ -424,6 +403,76 @@ void JabberContact::slotGotVCard ()
 
 }
 
+void JabberContact::slotCheckLastActivity ( Kopete::Contact *, const Kopete::OnlineStatus &newStatus, const Kopete::OnlineStatus &oldStatus )
+{
+
+	/*
+	 * Checking the last activity only makes sense if a contact is offline.
+	 * So, this check should only be done in the following cases:
+	 * - Kopete goes online for the first time and this contact is offline, or
+	 * - Kopete is already online and this contact went offline.
+	 *
+	 * Since Kopete already takes care of maintaining the lastSeen property
+	 * if the contact changes its state while we are online, we don't need
+	 * to query its activity after we are already connected.
+	 */
+
+	if ( onlineStatus().isDefinitelyOnline () )
+	{
+		// Kopete already deals with lastSeen if the contact is online
+		return;
+	}
+	
+	if ( ( oldStatus.status () == Kopete::OnlineStatus::Connecting ) && newStatus.isDefinitelyOnline () )
+	{
+		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Scheduling request for last activity for " << mRosterItem.jid().bare () << endl;
+
+		QTimer::singleShot ( account()->client()->getPenaltyTime () * 1000, this, SLOT ( slotGetTimedLastActivity () ) );
+	}
+
+}
+
+void JabberContact::slotGetTimedLastActivity ()
+{
+
+	/*
+	 * We have been called from @ref slotCheckLastActivity.
+	 * We could have lost our connection in the meantime,
+	 * so make sure we are online. Additionally, the contact
+	 * itself could have gone online, so make sure it is
+	 * still offline. (otherwise the last seen property is
+	 * maintained by Kopete)
+	 */
+
+	if ( onlineStatus().isDefinitelyOnline () )
+	{
+		// Kopete already deals with setting lastSeen if the contact is online
+		return;
+	}
+
+	if ( account()->myself()->onlineStatus().isDefinitelyOnline () )
+	{
+		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Requesting last activity from timer for " << mRosterItem.jid().bare () << endl;
+
+		XMPP::JT_GetLastActivity *task = new XMPP::JT_GetLastActivity ( account()->client()->rootTask () );
+		QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotGotLastActivity () ) );
+		task->get ( mRosterItem.jid () );
+		task->go ( true );
+	}
+
+}
+
+void JabberContact::slotGotLastActivity ()
+{
+	XMPP::JT_GetLastActivity *task = (XMPP::JT_GetLastActivity *) sender ();
+
+	if ( task->success () )
+	{
+		setProperty ( protocol()->propLastSeen, QDateTime::currentDateTime().addSecs ( -task->seconds () ) );
+	}
+
+}
+
 void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Updating vCard for " << contactId () << endl;
@@ -439,26 +488,12 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	 * no alias has been set so far, we'll update
 	 * the contact's alias to the nick set in the vCard.
 	 */
-	if ( !vCard.nickName().isEmpty () )
+	if ( !vCard.nickName().isEmpty () && mRosterItem.name().isEmpty () )
 	{
-		if ( metaContact() && ( metaContact()->displayName () == contactId () ) )
-		{
-			/*
-			 * Set the alias to the nick, as no alias
-			 * is present so far.
-			 */
-			rename ( vCard.nickName () );
-		}
-
 		/*
 		 * Update the property
 		 */
 		setProperty ( protocol()->propNickName, vCard.nickName () );
-	}
-	else
-	{
-		// no nickname has been set, remove it from the prop list
-		removeProperty ( protocol()->propNickName );
 	}
 
 	/**

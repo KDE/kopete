@@ -138,7 +138,7 @@ private slots:
 
 	/**
 	 * Triggered from a timer, requests the vCard.
-	 * Timer is initiated by slotCheckVCard().
+	 * Timer is initiated by @ref slotCheckVCard.
 	 */
 	void slotGetTimedVCard ();
 	
@@ -146,6 +146,23 @@ private slots:
 	 * Passes vCard on to parsing function.
 	 */
 	void slotGotVCard ();
+
+	/**
+	 * Get information about last activity of the contact.
+	 * Triggered as soon as Kopete goes online or the contact goes offline.
+	 */
+	void slotCheckLastActivity ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & );
+
+	/**
+	 * Triggered from a timer, requests last activity information.
+	 * Timer is initiated by @ref slotCheckLastActivity.
+	 */
+	void slotGetTimedLastActivity ();
+
+	/**
+	 * Updates activity information.
+	 */
+	void slotGotLastActivity ();
 
 	/**
 	 * Apply the global identity in the myself vCard.

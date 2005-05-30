@@ -74,11 +74,6 @@ public:
 	virtual void serialize (QMap < QString, QString > &serializedData, QMap < QString, QString > &addressBookData);
 
 	/**
-	 * Start a rename request.
-	 */
-	virtual void rename ( const QString &newName ) = 0;
-
-	/**
 	 * Update contact if a roster item has been
 	 * received for it. (used during login)
 	 */

@@ -195,6 +195,29 @@ namespace XMPP
 		Private *d;
 	};
 
+	class JT_GetLastActivity : public Task
+	{
+		Q_OBJECT
+	public:
+		JT_GetLastActivity(Task *);
+		~JT_GetLastActivity();
+
+		void get(const Jid &);
+
+		int seconds() const;
+		const QString &message() const;
+
+		void onGo();
+		bool take(const QDomElement &x);
+
+	private:
+		class Private;
+		Private *d;
+
+		QDomElement iq;
+		Jid jid;
+	};
+
 	class JT_GetServices : public Task
 	{
 		Q_OBJECT

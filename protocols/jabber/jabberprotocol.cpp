@@ -74,6 +74,7 @@ JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStrin
 	JabberKOSOffline(Kopete::OnlineStatus::Offline,       50, this, JabberOffline, QString::null, i18n ("Offline") ,i18n ("Offline"), Kopete::OnlineStatusManager::Offline ),
 	JabberKOSInvisible(Kopete::OnlineStatus::Invisible,   40, this, JabberInvisible, "contact_invisible_overlay",   i18n ("Invisible") ,i18n ("Invisible"), Kopete::OnlineStatusManager::Invisible),
 	JabberKOSConnecting(Kopete::OnlineStatus::Connecting, 30, this, JabberConnecting, "jabber_connecting",  i18n("Connecting")),
+	propLastSeen(Kopete::Global::Properties::self()->lastSeen()),
 	propAwayMessage(Kopete::Global::Properties::self()->awayMessage()),
 	propFirstName(Kopete::Global::Properties::self()->firstName()),
 	propLastName(Kopete::Global::Properties::self()->lastName()),

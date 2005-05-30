@@ -82,6 +82,7 @@ public:
 	const Kopete::OnlineStatus JabberKOSInvisible;
 	const Kopete::OnlineStatus JabberKOSConnecting;
 
+	const Kopete::ContactPropertyTmpl propLastSeen;
 	const Kopete::ContactPropertyTmpl propAwayMessage;
 	const Kopete::ContactPropertyTmpl propFirstName;
 	const Kopete::ContactPropertyTmpl propLastName;

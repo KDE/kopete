@@ -43,11 +43,6 @@ public:
 	QPtrList<KAction> *customContextMenuActions ();
 
 	/**
-	 * Start a rename request.
-	 */
-	void rename ( const QString &newName );
-
-	/**
 	 * Return message manager for this instance.
 	 */
 	Kopete::ChatSession *manager ( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CannotCreate );
