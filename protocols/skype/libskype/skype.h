@@ -226,6 +226,14 @@ class Skype : public QObject
 		 * Start DBus if not wunning?
 		 */
 		void setStartDBus(bool value);
+		/**
+		 * Set the launch timeout - after that launch of Skype will be considered as unsuccessfull if connection can not be established
+		 */
+		void setLaunchTimeout(int seconds);
+		/**
+		 * Set a command to start skype by
+		 */
+		void setSkypeCommand(const QString &command);
 	signals:
 		/**
 		 * Emited when the skype changes to online (or says it goes online)

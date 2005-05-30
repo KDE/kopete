@@ -19,12 +19,17 @@
 #include <klocale.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <kprocess.h>
+#include <qstringlist.h>
+#include <qtimer.h>
 
 typedef enum {
 	cfConnected,
 	cfNotConnected,
 	cfNameSent,
-	cfProtocolSent
+	cfProtocolSent,
+	cfWaitingStart
 } connFase;
 
 class SkypeConnectionPrivate {
@@ -37,6 +42,10 @@ class SkypeConnectionPrivate {
 		int protocolVer;
 		///The connection to DBus
 		DBusQt::Connection *conn;
+		///This timer will keep trying until Skype starts
+		QTimer *startTimer;
+		///How much time rest? (until I say starting skype did not work)
+		int timeRemaining;
 };
 
 SkypeConnection::SkypeConnection() {
@@ -45,6 +54,7 @@ SkypeConnection::SkypeConnection() {
 	d = new SkypeConnectionPrivate;//create the d pointer
 	d->fase = cfNotConnected;//not connected yet
 	d->conn = 0L;//No connetion created
+	d->startTimer = 0L;
 
 	connect(this, SIGNAL(received(const QString&)), this, SLOT(parseMessage(const QString&)));//look into all messages
 }
@@ -137,7 +147,7 @@ void SkypeConnection::parseMessage(const QString &message) {
 	}
 }
 
-void SkypeConnection::connectSkype(bool start, const QString &appName, int protocolVer, int bus) {
+void SkypeConnection::connectSkype(const QString &start, const QString &appName, int protocolVer, int bus, bool startDBus, int launchTimeout) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (d->fase != cfNotConnected)
@@ -146,12 +156,21 @@ void SkypeConnection::connectSkype(bool start, const QString &appName, int proto
 	d->appName = appName;
 	d->protocolVer = protocolVer;
 
-	if (bus == 0) 
+	if (bus == 0)
 		d->conn = new DBusQt::Connection(DBUS_BUS_SESSION, this);
-	else 
+	else
 		d->conn = new DBusQt::Connection(DBUS_BUS_SYSTEM, this);
 
 	if ((!d->conn) || (!d->conn->isConnected())) {
+		if ((bus == 0) && (startDBus)) {
+			KProcess bus_launch;
+			bus_launch << "dbus_launch";
+			bus_launch << "--exit-with-session";
+			connect(&bus_launch, SIGNAL(receivedStdout(KProcess *, char *, int)), this, SLOT(setEnv(KProcess *, char*, int )));
+			bus_launch.start(KProcess::Block, KProcess::Stdout);
+			connectSkype(start, appName, protocolVer, bus, false, launchTimeout);//try it once again, but if the dbus start did not work, it won't work that time ether, so do not cycle
+			return;
+		}
 		emit error(i18n("Could not connect to DBus"));
 		disconnectSkype(crLost);
 		emit connectionDone(seNoDBus, 0);
@@ -171,6 +190,25 @@ void SkypeConnection::connectSkype(bool start, const QString &appName, int proto
 
 		DBusQt::Message::iterator it = reply.begin();
 		if ((it == reply.end()) || ((*it).toBool() != true)) {
+			if (!start.isEmpty()) {//try starting Skype by the given command
+				KProcess sk;
+				QStringList args = QStringList::split(' ', start);
+				for (QStringList::iterator i = args.begin(); i != args.end(); ++i) {
+					sk << (*i);
+				}
+				if (!sk.start(KProcess::DontCare, KProcess::NoCommunication)) {
+					emit error(i18n("Could not launch Skype"));
+					disconnectSkype(crLost);
+					emit connectionDone(seNoSkype, 0);
+					return;
+				}
+				d->fase = cfWaitingStart;
+				d->startTimer = new QTimer();
+				connect(d->startTimer, SIGNAL(timeout()), this, SLOT(tryConnect()));
+				d->startTimer->start(1000);
+				d->timeRemaining = launchTimeout;
+				return;
+			}
 			emit error(i18n("Could not find Skype"));
 			disconnectSkype(crLost);
 			emit connectionDone(seNoSkype, 0);
@@ -189,9 +227,15 @@ void SkypeConnection::disconnectSkype(skypeCloseReason reason) {
 	d->conn->close();//close the connection
 	delete d->conn;//destroy it
 	d->conn = 0L;//andmark it as empty
+	if (d->startTimer) {
+		d->startTimer->stop();
+		d->startTimer->deleteLater();
+		d->startTimer = 0L;
+	}
 
 	d->fase = cfNotConnected;//No longer connected
 	emit connectionClosed(reason);//we disconnect
+	emit connectionDone(seCanceled, 0);
 }
 
 void SkypeConnection::send(const QString &message) {
@@ -264,6 +308,67 @@ QString SkypeConnection::operator %(const QString &message) {
 	}
 
 	return "";//the skype did not respond, wich is unusual but what can I do..
+}
+
+void SkypeConnection::setEnv(KProcess *, char *buffer, int length) {
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
+
+	char *myBuff = new char[length + 1];
+	myBuff[length] = '\0';
+	memcpy(myBuff, buffer, length);//copy the output from there
+
+	char *next;
+
+	for (char *c = myBuff; *c; c++) if (*c == '=') {
+		*c = '\0';//Split the string
+		next = c + 1;//This is the next one
+		break;
+	}
+
+	if (strcmp(myBuff, "DBUS_SESSION_BUS_ADDRESS") != 0) {
+		delete[] myBuff;
+		return;//something I'm not interested in
+	}
+
+	//strip the apostrophes or quotes given by the dbus-launch command
+	if ((next[0] == '\'') || (next[0] == '"')) ++next;
+	int len = strlen(next);
+	if ((next[len - 1] == '\'') || (next[len - 1] == '"')) next[len - 1] = '\0';
+
+	setenv(myBuff, next, false);//and set the environment variable
+
+	delete[] myBuff;
+}
+
+void SkypeConnection::tryConnect() {
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
+
+	{
+		DBusQt::Message m("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "ServiceExists");
+		m << QString("com.Skype.API");
+		m.setAutoActivation(true);
+
+		DBusQt::Message reply = d->conn->sendWithReplyAndBlock(m);
+
+		DBusQt::Message::iterator it = reply.begin();
+		if ((it == reply.end()) || ((*it).toBool() != true)) {
+			if (--d->timeRemaining == 0) {
+				d->startTimer->stop();
+				d->startTimer->deleteLater();
+				d->startTimer = 0L;
+				emit error(i18n("Could not find Skype"));
+				disconnectSkype(crLost);
+				emit connectionDone(seNoSkype, 0);
+				return;
+			}
+			return;//Maybe next time
+		}
+	}
+
+	d->startTimer->stop();
+	d->startTimer->deleteLater();
+	d->startTimer = 0L;
+	startLogOn();//It is responding now, OK to connect now
 }
 
 #include "skypeconnection.moc"

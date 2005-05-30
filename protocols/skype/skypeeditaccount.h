@@ -37,9 +37,6 @@ Q_OBJECT
 	private:
 		///Some internal things
 		SkypeEditAccountPrivate *d;
-	protected slots:
-		///User wants to launch skype now
-		virtual void testLaunch();
 	public:
 		/**
 		 * Constructor.

@@ -24,7 +24,9 @@ typedef enum {
 	///User did not accept this app
 	seAuthorization,
 	///Some other error
-	seUnknown
+	seUnknown,
+	///It was canceled (by disconnectSkype)
+	seCanceled
 } skypeConnectionError;
 
 ///This describes why was the connection closed
@@ -34,13 +36,14 @@ typedef enum {
 	///It was closed by skype (reserverd for future versions of protocol, does not work yet)
 	crRemoteClosed,
 	///The connection was lost, skype does not respond for the ping command or messages can not be sent
-	crLost
+	crLost,
 } skypeCloseReason;
 
 class SkypeConnectionPrivate;
 namespace DBusQt {
 	class Message;
 };
+class KProcess;
 
 /**
  * This class is classs wrapping DBUS so it can be used easilly to connect to skype, disconnect send and receive messages from it.
@@ -59,17 +62,23 @@ class SkypeConnection : public QObject
 		void gotMessage(const DBusQt::Message &);
 		///This one takes care of incoming messages if they have some sence for the connection (protocol, pings and so on)
 		void parseMessage(const QString &message);
+		///Set environment variables set from dbus-launch command (private DBus session)
+		void setEnv(KProcess *, char *buff, int len);
+		///Another interval try to connect to just started Skype
+		void tryConnect();
 	public slots:
 		/**
 		 * Connects to skype
 		 * After connection (bosth successfull or unsuccessfull) connectionDone is emited
 		 * @see connectionDone
-		 * @param start indicates weather the skype should be started or not if it is not running. If yes, then it will be launched, if not, error will be produced. If it is already running, it has no effect.
+		 * @param start By what command start Skype if it is not running (empty string means nothing is started)
 		 * @param appName tells as what application it should authorise itself (this will user see on the "do you want to allow" dialog box)
 		 * @param protocolVer Maximal protocol version that this app manages
 		 * @param bus 0 - session bus, 1 - system bus
+		 * @param startDbus Start session DBUs if needed (etc. not running and session DBus should be used)
+		 * @param launchTimeout How long max. should wait to tell that launching skype did not work
 		 */
-		void connectSkype(bool start, const QString &appName, int protocolVer, int bus);
+		void connectSkype(const QString &start, const QString &appName, int protocolVer, int bus, bool startDBus, int launchTimeout);
 		/**
 		 * Disconnects from skype
 		 * @see connectionClosed

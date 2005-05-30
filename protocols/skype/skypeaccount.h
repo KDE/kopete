@@ -196,6 +196,14 @@ Q_OBJECT
 		 * @return You guess..
 		 */
 		bool getStartDBus() const;
+		/**
+		 * How long does it try to connect to newly started skype, until it gives up (seconds)
+		 */
+		int getLaunchTimeout() const;
+		/**
+		 * What is the command that launches skype?
+		 */
+		const QString &getSkypeCommand() const;
 	public slots:
 		/**
 		 * Disconnects from server.
@@ -280,6 +288,14 @@ Q_OBJECT
 		 * Should be DBus started when needed?
 		 */
 		void setStartDBus(bool enabled);
+		/**
+		 * Set the timeout for giving up launching Skype
+		 */
+		void setLaunchTimeout(int seconds);
+		/**
+		 * Set command by what the Skype will be started
+		 */
+		void setSkypeCommand(const QString &command);
 	signals:
 		/**
 		 * This is emited when the ID of the last sent message is known

@@ -63,6 +63,7 @@ skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *acc
 		PingsCheck->setChecked(d->account->getPings());
 		BusGroup->setButton(d->account->getBus());
 		DBusCheck->setChecked(d->account->getStartDBus());
+		LaunchSpin->setValue(d->account->getLaunchTimeout());
 		if (d->account->closeCallWindowTimeout()) {
 			AutoCloseCallCheck->setChecked(true);
 			CloseTimeoutSpin->setValue(d->account->closeCallWindowTimeout());
@@ -110,12 +111,9 @@ Kopete::Account *skypeEditAccount::apply() {
 	skype->setPings(PingsCheck->isChecked());
 	skype->setBus(BusGroup->selectedId());
 	skype->setStartDBus(DBusCheck->isChecked());
+	skype->setLaunchTimeout(LaunchSpin->value());
 	skype->save();//save it to config
 	return skype;//return the account
-}
-
-void skypeEditAccount::testLaunch() {
-	kdDebug(14311) << k_funcinfo << endl;//some debug info
 }
 
 #include "skypeeditaccount.moc"

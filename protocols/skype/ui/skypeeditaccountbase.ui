@@ -163,7 +163,7 @@
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>&amp;Launch</string>
+                    <string>Lau&amp;nch</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -172,9 +172,6 @@
                     <widget class="QButtonGroup">
                         <property name="name">
                             <cstring>LaunchGroup</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>false</bool>
                         </property>
                         <property name="title">
                             <string>Launch Skype</string>
@@ -230,11 +227,8 @@
                                 <property name="name">
                                     <cstring>CommandEdit</cstring>
                                 </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
                                 <property name="text">
-                                    <string>skype</string>
+                                    <string>artsdsp skype --use-session-dbus</string>
                                 </property>
                             </widget>
                         </hbox>
@@ -257,16 +251,16 @@
                             </widget>
                             <widget class="QSpinBox">
                                 <property name="name">
-                                    <cstring>spinBox3</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
+                                    <cstring>LaunchSpin</cstring>
                                 </property>
                                 <property name="maxValue">
                                     <number>60</number>
                                 </property>
                                 <property name="minValue">
                                     <number>3</number>
+                                </property>
+                                <property name="value">
+                                    <number>30</number>
                                 </property>
                             </widget>
                             <widget class="QLabel">
@@ -304,10 +298,7 @@
                             <bool>false</bool>
                         </property>
                         <property name="text">
-                            <string>Launch DBus</string>
-                        </property>
-                        <property name="accel">
-                            <string></string>
+                            <string>Laun&amp;ch DBus</string>
                         </property>
                         <property name="toolTip" stdset="0">
                             <string>Launches DBus when not running</string>
@@ -758,8 +749,5 @@ By default, kopete provides kopete as its name, but if you suspect another appli
         <slot>setChecked(bool)</slot>
     </connection>
 </connections>
-<slots>
-    <slot access="protected" specifier="pure virtual">testLaunch()</slot>
-</slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

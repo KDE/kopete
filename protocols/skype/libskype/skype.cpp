@@ -90,6 +90,12 @@ class SkypePrivate {
 		QTimer *pingTimer;
 		///What bus is used now?
 		int bus;
+		///Do we start DBus as well if needed?
+		bool startDBus;
+		///The launch timeout (after that no connection -> unsuccessfull -> error)
+		int launchTimeout;
+		///By what command is skype started?
+		QString skypeCommand;
 };
 
 Skype::Skype(SkypeAccount &account) : QObject() {
@@ -183,7 +189,7 @@ void Skype::queueSkypeMessage(const QString &message, bool deleteQueue) {
 		if (deleteQueue)
 			d->messageQueue.clear();//delete all old messages
 		d->messageQueue << message;//add the new one
-		d->connection.connectSkype(d->start, d->appName, PROTOCOL_MAX, d->bus);//try to connect
+		d->connection.connectSkype((d->start) ? d->skypeCommand : "", d->appName, PROTOCOL_MAX, d->bus, d->startDBus, d->launchTimeout);//try to connect 
 	}
 }
 
@@ -564,7 +570,10 @@ void Skype::enablePings(bool enabled) {
 }
 
 void Skype::ping() {
-	d->connection << QString("PING");
+	if ((d->connection % QString("PING")).stripWhiteSpace() != "PONG") {
+		d->connection.disconnectSkype(crLost);
+		error(i18n("Could not ping Skype"));
+	}
 }
 
 void Skype::setBus(int bus) {
@@ -572,7 +581,15 @@ void Skype::setBus(int bus) {
 }
 
 void Skype::setStartDBus(bool enabled) {
-	///@todo do this
+	d->startDBus = enabled;
+}
+
+void Skype::setLaunchTimeout(int seconds) {
+	d->launchTimeout = seconds;
+}
+
+void Skype::setSkypeCommand(const QString &command) {
+	d->skypeCommand = command;
 }
 
 #include "skype.moc"

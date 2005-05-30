@@ -63,6 +63,10 @@ class SkypeAccountPrivate {
 		int bus;
 		///Do we start DBus if needed?
 		bool startDBus;
+		///How long can I keep trying connect to newly started skype, before I give up (seconds)
+		int launchTimeout;
+		///By what command is the skype started?
+		QString skypeCommand;
 };
 
 SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, "Skype", (char *)0) {
@@ -88,7 +92,11 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 	setScanForUnread(config->readBoolEntry("ScanForUnread"));
 	setCallControl(config->readBoolEntry("CallControl"));
 	setBus(config->readNumEntry("Bus", 1));
-	setStartDBus(config->readBoolEntry("StartDBus", false));
+	//setStartDBus(config->readBoolEntry("StartDBus", false));
+	///@todo Once Dbus launching works, remove this v and uncomment this ^
+	setStartDBus(false);
+	setLaunchTimeout(config->readNumEntry("LaunchTimeout", 30));
+	setSkypeCommand(config->readEntry("SkypeCommand", "artsdsp skype --use-session-dbus"));
 
 	//Now, connect the signals
 	QObject::connect(&d->skype, SIGNAL(wentOnline()), this, SLOT(wentOnline()));
@@ -205,6 +213,8 @@ void SkypeAccount::save() {
 	config->writeEntry("Pings", getPings());
 	config->writeEntry("Bus", getBus());
 	config->writeEntry("StartDBus", getStartDBus());
+	config->writeEntry("LaunchTimeout", getLaunchTimeout());
+	config->writeEntry("SkypeCommand", getSkypeCommand());
 
 	//save it into the skype connection as well
 	d->skype.setValues(launchType, author);
@@ -410,9 +420,15 @@ int SkypeAccount::closeCallWindowTimeout() const {
 
 QString SkypeAccount::getUserLabel(const QString &userId) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
-	
+
+	if (userId.find(' ') != -1) {//there are more people than just one
+		QString all = userId;
+		all = all.replace(' ', '\n');//Each one on his line
+		return all;
+	}
+
 	Kopete::Contact *cont = contact(userId);
-	
+
 	if (!cont) {
 		addContact(userId, QString::null, 0L, Temporary);//create a temporary contact
 
@@ -423,7 +439,7 @@ QString SkypeAccount::getUserLabel(const QString &userId) {
 
 	return QString("%1 (%2)").arg(cont->nickName()).arg(userId);
 }
-	
+
 void SkypeAccount::setPings(bool enabled) {
 	d->skype.enablePings(enabled);
 	d->pings = enabled;
@@ -443,12 +459,30 @@ void SkypeAccount::setBus(int bus) {
 }
 
 void SkypeAccount::setStartDBus(bool enable) {
-	d->startDBus = true;
+	d->startDBus = enable;
 	d->skype.setStartDBus(enable);
 }
 
 bool SkypeAccount::getStartDBus() const {
 	return d->startDBus;
+}
+
+void SkypeAccount::setLaunchTimeout(int seconds) {
+	d->launchTimeout = seconds;
+	d->skype.setLaunchTimeout(seconds);
+}
+
+int SkypeAccount::getLaunchTimeout() const {
+	return d->launchTimeout;
+}
+
+void SkypeAccount::setSkypeCommand(const QString &command) {
+	d->skypeCommand = command;
+	d->skype.setSkypeCommand(command);
+}
+
+const QString &SkypeAccount::getSkypeCommand() const {
+	return d->skypeCommand;
 }
 
 #include "skypeaccount.moc"
