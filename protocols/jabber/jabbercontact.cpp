@@ -816,18 +816,25 @@ void JabberContact::slotApplyGlobalIdentity()
 {
 	kdDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Applying Global Identity for Jabber" << endl;
 
-	XMPP::JT_VCard *taskvCard = (XMPP::JT_VCard *) sender();
-	XMPP::VCard vCard = taskvCard->vcard();
+	XMPP::JT_VCard *task = (XMPP::JT_VCard *) sender();
+
+	if ( !task->success () )
+	{
+		// don't attempt to send a vCard if we couldn't retrieve it successfully
+		return;
+	}
 	
-	vCard.setNickName( metaContact()->displayName() );
+	XMPP::VCard vCard = task->vcard ();
+	
+	vCard.setNickName ( metaContact()->displayName () );
 	
 	// Save the vCard on server.
-	XMPP::JT_VCard *task = new XMPP::JT_VCard( account()->client()->rootTask() );
-	task->set( vCard );
-	task->go(true);
+	task = new XMPP::JT_VCard ( account()->client()->rootTask() );
+	task->set ( vCard );
+	task->go ( true );
 
 	// Update the nickname property
-	setProperty ( protocol()->propNickName, metaContact()->displayName());
+	setProperty ( protocol()->propNickName, metaContact()->displayName () );
 }
 
 void JabberContact::sendFile ( const KURL &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )
