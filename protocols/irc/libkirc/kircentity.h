@@ -53,6 +53,8 @@ public:
 	Entity(const QString &name = QString::null, const Type type = Unknown);
 	virtual ~Entity();
 
+	bool operator == (const Entity &);
+
 	KIRC::Entity::Type type() const;
 	KIRC::Entity::Type guessType();
 

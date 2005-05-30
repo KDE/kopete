@@ -52,6 +52,12 @@ Entity::~Entity()
 	emit destroyed(this);
 }
 
+bool Entity::operator == (const Entity &)
+{
+	#warning Implement Me
+	return false;
+}
+
 void Entity::setName(const QString &name)
 {
 	m_name = name;

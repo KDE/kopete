@@ -15,6 +15,7 @@ kopete_irc_la_SOURCES = \
 	irccontact_server.cpp \
 	irccontact_user.cpp \
 	ircguiclient.cpp \
+	ircproperties.cpp \
 	ircprotocol.cpp \
 	irctransferhandler.cpp \
 	ksparser.cpp

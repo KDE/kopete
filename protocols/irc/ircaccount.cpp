@@ -888,8 +888,8 @@ void IRCAccount::receivedMessage(KIRC::Engine::ServerMessageType type,
 				const KIRC::EntityPtrList &to,
 				const QString &message)
 {
-/*	IRCContact *fromContact = ircAccount()->getContact(from);
-
+	IRCContact *fromContact = getContact(from);
+/*
 	Message msg(fromContact, manager()->members(), message, Kopete::Message::Inbound,
 		    Kopete::Message::RichText, CHAT_VIEW);
 

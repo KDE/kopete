@@ -39,7 +39,6 @@
 #include "kopeteview.h"
 #include "kopeteuiglobal.h"
 
-#undef KDE_NO_COMPAT
 #include <kaction.h>
 #include <kcharsets.h>
 #include <kdebug.h>
@@ -126,18 +125,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	  m_UserStatusConnecting(OnlineStatus::Connecting, 1, this, Connecting, "irc_connecting", i18n("Connecting")),
 	  m_UserStatusOffline(OnlineStatus::Offline, 0, this, Offline, QString::null, i18n("Offline"), i18n("Offline"), OnlineStatusManager::Offline),
 
-	  m_StatusUnknown(OnlineStatus::Unknown, 999, this, 999, "status_unknown", i18n("Status not available")),
-
-	  propChannelTopic(QString::fromLatin1("channelTopic"), i18n("Topic"), QString::null, false, true ),
-	  propChannelMembers(QString::fromLatin1("channelMembers"), i18n("Members")),
-	  propHomepage(QString::fromLatin1("homePage"), i18n("Home Page")),
-	  propLastSeen(Kopete::Global::Properties::self()->lastSeen()),
-	  propUserInfo(QString::fromLatin1("userInfo"), i18n("IRC User")),
-	  propServer(QString::fromLatin1("ircServer"), i18n("IRC Server")),
-	  propChannels( QString::fromLatin1("ircChannels"), i18n("IRC Channels")),
-	  propHops(QString::fromLatin1("ircHops"), i18n("IRC Hops")),
-	  propFullName(QString::fromLatin1("FormattedName"), i18n("Full Name")),
-	  propIsIdentified(QString::fromLatin1("identifiedUser"), i18n("User Is Authenticated"))
+	  m_StatusUnknown(OnlineStatus::Unknown, 999, this, 999, "status_unknown", i18n("Status not available"))
 {
 //	kdDebug(14120) << k_funcinfo << endl;
 

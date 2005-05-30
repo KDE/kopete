@@ -20,7 +20,6 @@
 
 #include "kopeteonlinestatus.h"
 #include "kopeteprotocol.h"
-#include "kopetecontactproperty.h"
 #include "kopetemimetypehandler.h"
 
 #include <dom/dom_node.h>
@@ -122,20 +121,6 @@ public:
 	const Kopete::OnlineStatus m_UserStatusOffline;
 
 	const Kopete::OnlineStatus m_StatusUnknown;
-
-	// irc channnel-contact properties
-	const Kopete::ContactPropertyTmpl propChannelTopic;
-	const Kopete::ContactPropertyTmpl propChannelMembers;
-	const Kopete::ContactPropertyTmpl propHomepage;
-
-	// irc user-contact properties
-	const Kopete::ContactPropertyTmpl propLastSeen;
-	const Kopete::ContactPropertyTmpl propUserInfo;
-	const Kopete::ContactPropertyTmpl propServer;
-	const Kopete::ContactPropertyTmpl propChannels;
-	const Kopete::ContactPropertyTmpl propHops;
-	const Kopete::ContactPropertyTmpl propFullName;
-	const Kopete::ContactPropertyTmpl propIsIdentified;
 
 	bool commandInProgress(){ return m_commandInProgress; }
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }

@@ -142,6 +142,7 @@ void IRCContact::entityUpdated()
 		break;
 	default:
 //		setIcon("irc_unknown");
+		setIcon(QString::null);
 		break;
 	}
 
@@ -420,8 +421,7 @@ KopeteView *IRCContact::view()
 }
 void IRCContact::serialize(QMap<QString, QString> & /*serializedData*/, QMap<QString, QString> &addressBookData)
 {
-	// write the
-	addressBookData[ protocol()->addressBookIndexField() ] = ( contactId() + QChar(0xE120) + account()->accountId() );
+	addressBookData[protocol()->addressBookIndexField()] = contactId() + QChar(0xE120) + account()->accountId();
 }
 
 #include "irccontact.moc"
