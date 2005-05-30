@@ -354,80 +354,292 @@ If you do not currently have an account, please click the button to create one.<
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>&amp;User Info</string>
+                    <string>U&amp;ser Information</string>
                 </attribute>
-                <vbox>
+                <grid>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QLayoutWidget">
+                    <widget class="QLabel" row="1" column="0">
                         <property name="name">
-                            <cstring>layout57</cstring>
+                            <cstring>connectLabel</cstring>
                         </property>
-                        <hbox>
+                        <property name="enabled">
+                            <bool>true</bool>
+                        </property>
+                        <property name="paletteForegroundColor">
+                            <color>
+                                <red>255</red>
+                                <green>0</green>
+                                <blue>0</blue>
+                            </color>
+                        </property>
+                        <property name="font">
+                            <font>
+                                <pointsize>10</pointsize>
+                                <bold>1</bold>
+                            </font>
+                        </property>
+                        <property name="text">
+                            <string>&lt;p align="center"&gt;You must be connected to change your Personal Information.&lt;/p&gt;</string>
+                        </property>
+                    </widget>
+                    <widget class="QGroupBox" row="0" column="0">
+                        <property name="name">
+                            <cstring>userInformation</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>true</bool>
+                        </property>
+                        <property name="title">
+                            <string>User Information</string>
+                        </property>
+                        <grid>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLabel">
+                            <widget class="QLayoutWidget" row="0" column="0" rowspan="1" colspan="3">
                                 <property name="name">
-                                    <cstring>textLabel1_3</cstring>
+                                    <cstring>layout9</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLayoutWidget">
+                                        <property name="name">
+                                            <cstring>layout8</cstring>
+                                        </property>
+                                        <vbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>textLabel1_5</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Name</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>uiSurnamea</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Surname</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>textLabel1_5_3</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Your Nick Name</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>textLabel1_5_3_2</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Gender</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>textLabel1_5_3_2_2</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Year of Birth</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>textLabel1_5_3_2_3</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>City</string>
+                                                </property>
+                                            </widget>
+                                        </vbox>
+                                    </widget>
+                                    <widget class="QLayoutWidget">
+                                        <property name="name">
+                                            <cstring>layout7</cstring>
+                                        </property>
+                                        <vbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>uiName</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>uiSurname</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>nickName</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>true</bool>
+                                                </property>
+                                            </widget>
+                                            <widget class="QComboBox">
+                                                <item>
+                                                    <property name="text">
+                                                        <string></string>
+                                                    </property>
+                                                </item>
+                                                <item>
+                                                    <property name="text">
+                                                        <string>Female</string>
+                                                    </property>
+                                                </item>
+                                                <item>
+                                                    <property name="text">
+                                                        <string>Male</string>
+                                                    </property>
+                                                </item>
+                                                <property name="name">
+                                                    <cstring>uiGender</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>uiYOB</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>uiCity</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                            </widget>
+                                        </vbox>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                            <widget class="QLayoutWidget" row="2" column="0" rowspan="1" colspan="3">
+                                <property name="name">
+                                    <cstring>layout12</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLayoutWidget">
+                                        <property name="name">
+                                            <cstring>layout11</cstring>
+                                        </property>
+                                        <vbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>textLabel1_5_3_2_4</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Maiden Name</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>textLabel1_5_3_2_4_3</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>City of orgin</string>
+                                                </property>
+                                            </widget>
+                                        </vbox>
+                                    </widget>
+                                    <widget class="QLayoutWidget">
+                                        <property name="name">
+                                            <cstring>layout10</cstring>
+                                        </property>
+                                        <vbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>uiMeiden</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>uiOrgin</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                            </widget>
+                                        </vbox>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                            <widget class="QLabel" row="1" column="0">
+                                <property name="name">
+                                    <cstring>textLabel1_5_3_2_4_2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>N&amp;ickname:</string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>nickName</cstring>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>This alias will be used by Kopete to identify your Gadu-Gadu account.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>This alias will be used by Kopete to identify your Gadu-Gadu account.  Since you can have more than one account, this name should be a unique identifier.</string>
+                                    <string>Values below are going to be used in search, but will not appear in results.</string>
                                 </property>
                             </widget>
-                            <widget class="KLineEdit">
+                            <spacer row="1" column="1">
                                 <property name="name">
-                                    <cstring>nickName</cstring>
+                                    <cstring>spacer15_3</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Vertical</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>16</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <widget class="QPushButton" row="3" column="2">
+                                <property name="name">
+                                    <cstring>uiPublish</cstring>
                                 </property>
                                 <property name="enabled">
-                                    <bool>true</bool>
-                                </property>
-                                <property name="maxLength">
-                                    <number>16</number>
-                                </property>
-                                <property name="edited">
-                                    <bool>true</bool>
-                                </property>
-                                <property name="dragEnabled">
                                     <bool>false</bool>
                                 </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>This alias will be used by Kopete to identify your Gadu-Gadu account.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>This alias will be used by Kopete to identify your Gadu-Gadu account.  Since you can have more than one account, this name should be a unique identifier.</string>
+                                <property name="text">
+                                    <string>Publish</string>
                                 </property>
                             </widget>
-                        </hbox>
+                        </grid>
                     </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer46</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>111</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </vbox>
+                </grid>
             </widget>
             <widget class="QWidget">
                 <property name="name">
@@ -575,271 +787,6 @@ If you do not currently have an account, please click the button to create one.<
                     </spacer>
                 </vbox>
             </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>TabPage</cstring>
-                </property>
-                <attribute name="title">
-                    <string>U&amp;ser Information</string>
-                </attribute>
-                <grid>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLabel" row="1" column="0">
-                        <property name="name">
-                            <cstring>textLabel1_6</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>true</bool>
-                        </property>
-                        <property name="paletteForegroundColor">
-                            <color>
-                                <red>255</red>
-                                <green>0</green>
-                                <blue>0</blue>
-                            </color>
-                        </property>
-                        <property name="font">
-                            <font>
-                                <pointsize>10</pointsize>
-                                <bold>1</bold>
-                            </font>
-                        </property>
-                        <property name="text">
-                            <string>&lt;p align="center"&gt;You must be connected to change your Personal Information.&lt;/p&gt;</string>
-                        </property>
-                    </widget>
-                    <widget class="QGroupBox" row="0" column="0">
-                        <property name="name">
-                            <cstring>userInformation</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>false</bool>
-                        </property>
-                        <property name="title">
-                            <string>User Information</string>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLayoutWidget" row="0" column="0" rowspan="1" colspan="3">
-                                <property name="name">
-                                    <cstring>layout9</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout8</cstring>
-                                        </property>
-                                        <vbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>textLabel1_5</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Name</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>uiSurnamea</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Surname</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>textLabel1_5_3</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Your Nick Name</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>textLabel1_5_3_2</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Gender</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>textLabel1_5_3_2_2</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Year of Birth</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>textLabel1_5_3_2_3</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>City</string>
-                                                </property>
-                                            </widget>
-                                        </vbox>
-                                    </widget>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout7</cstring>
-                                        </property>
-                                        <vbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QLineEdit">
-                                                <property name="name">
-                                                    <cstring>uiName</cstring>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLineEdit">
-                                                <property name="name">
-                                                    <cstring>uiSurname</cstring>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLineEdit">
-                                                <property name="name">
-                                                    <cstring>uiNick</cstring>
-                                                </property>
-                                            </widget>
-                                            <widget class="QComboBox">
-                                                <item>
-                                                    <property name="text">
-                                                        <string></string>
-                                                    </property>
-                                                </item>
-                                                <item>
-                                                    <property name="text">
-                                                        <string>Female</string>
-                                                    </property>
-                                                </item>
-                                                <item>
-                                                    <property name="text">
-                                                        <string>Male</string>
-                                                    </property>
-                                                </item>
-                                                <property name="name">
-                                                    <cstring>uiGender</cstring>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLineEdit">
-                                                <property name="name">
-                                                    <cstring>uiYOB</cstring>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLineEdit">
-                                                <property name="name">
-                                                    <cstring>uiCity</cstring>
-                                                </property>
-                                            </widget>
-                                        </vbox>
-                                    </widget>
-                                </hbox>
-                            </widget>
-                            <widget class="QLayoutWidget" row="2" column="0" rowspan="1" colspan="3">
-                                <property name="name">
-                                    <cstring>layout12</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout11</cstring>
-                                        </property>
-                                        <vbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>textLabel1_5_3_2_4</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Maiden Name</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>textLabel1_5_3_2_4_3</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>City of orgin</string>
-                                                </property>
-                                            </widget>
-                                        </vbox>
-                                    </widget>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout10</cstring>
-                                        </property>
-                                        <vbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QLineEdit">
-                                                <property name="name">
-                                                    <cstring>uiMeiden</cstring>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLineEdit">
-                                                <property name="name">
-                                                    <cstring>uiOrgin</cstring>
-                                                </property>
-                                            </widget>
-                                        </vbox>
-                                    </widget>
-                                </hbox>
-                            </widget>
-                            <widget class="QLabel" row="1" column="0">
-                                <property name="name">
-                                    <cstring>textLabel1_5_3_2_4_2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Values below are going to be used in search, but will not appear in results.</string>
-                                </property>
-                            </widget>
-                            <spacer row="1" column="1">
-                                <property name="name">
-                                    <cstring>spacer15_3</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Vertical</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>16</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="QPushButton" row="3" column="2">
-                                <property name="name">
-                                    <cstring>uiPublish</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Publish</string>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
-                </grid>
-            </widget>
         </widget>
         <widget class="QLabel">
             <property name="name">
@@ -882,7 +829,7 @@ If you do not currently have an account, please click the button to create one.<
     <connection>
         <sender>optionOverrideDCC</sender>
         <signal>toggled(bool)</signal>
-        <receiver>textLabel2</receiver>
+        <receiver>dccPort</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
@@ -900,7 +847,7 @@ If you do not currently have an account, please click the button to create one.<
     <connection>
         <sender>optionOverrideDCC</sender>
         <signal>toggled(bool)</signal>
-        <receiver>dccPort</receiver>
+        <receiver>textLabel2</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
@@ -912,7 +859,6 @@ If you do not currently have an account, please click the button to create one.<
     <tabstop>cacheServersCheck__</tabstop>
     <tabstop>dccCheck_</tabstop>
     <tabstop>useTls_</tabstop>
-    <tabstop>nickName</tabstop>
     <tabstop>optionOverrideDCC</tabstop>
     <tabstop>ipAddress</tabstop>
     <tabstop>dccPort</tabstop>
@@ -921,7 +867,6 @@ If you do not currently have an account, please click the button to create one.<
 <includehints>
     <includehint>klineedit.h</includehint>
     <includehint>kopete::ui::passwordwidget.h</includehint>
-    <includehint>klineedit.h</includehint>
     <includehint>krestrictedline.h</includehint>
 </includehints>
 </UI>
