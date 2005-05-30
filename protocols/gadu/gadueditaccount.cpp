@@ -95,6 +95,36 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 }
 
 void
+GaduEditAccount::publishUserInfo()
+{
+	ResLine sr;
+
+	enableUserInfo( false );
+	
+	sr.firstname	= uiName->text();
+	sr.surname	= uiSurname->text();
+	sr.nickname	= nickName->text();
+	sr.age		= uiYOB->text();
+	sr.city		= uiCity->text();
+	sr.meiden	= uiMeiden->text();
+	sr.orgin	= uiOrgin->text();
+
+	kdDebug(14100) << uiGender->currentItem()  << " gender " << endl;
+	if ( uiGender->currentItem() == 1 ) {
+		kdDebug(14100) << "so you become female now" << endl;
+		sr.gender = QString( GG_PUBDIR50_GENDER_SET_FEMALE );
+	}
+	if ( uiGender->currentItem() == 2 ) {
+		kdDebug(14100) << "so you become male now" << endl;
+		sr.gender = QString( GG_PUBDIR50_GENDER_SET_MALE );
+	}
+
+	if ( account_ ) {
+		account_->publishPersonalInformation( sr );
+	}
+}
+
+void
 GaduEditAccount::slotSearchResult( const SearchResult& result, unsigned int seq )
 {
 	if ( !( seq != 0 && seqNr != 0 && seq == seqNr ) ) {
@@ -107,15 +137,15 @@ GaduEditAccount::slotSearchResult( const SearchResult& result, unsigned int seq 
 	uiYOB->setText( result[0].age );
 	uiCity->setText( result[0].city );
 
-	if ( result[0].gender == QString( GG_PUBDIR50_GENDER_FEMALE ) ) {
-		uiGender->setCurrentItem( 2 );
+	kdDebug( 14100 ) << "gender found: " << result[0].gender << endl;
+	if ( result[0].gender == QString( GG_PUBDIR50_GENDER_SET_FEMALE ) ) {
+		uiGender->setCurrentItem( 1 );
+		kdDebug(14100) << "looks like female" << endl;
 	}
 	else {
-		if ( result[0].gender == QString( GG_PUBDIR50_GENDER_MALE ) ) {
-			uiGender->setCurrentItem( 3 );
-		}
-		else {
-			uiGender->setCurrentItem( 1 );
+		if ( result[0].gender == QString( GG_PUBDIR50_GENDER_SET_MALE ) ) {
+			uiGender->setCurrentItem( 2 );
+			kdDebug( 14100 ) <<" looks like male" << endl;
 		}
 	}
 
@@ -198,6 +228,8 @@ GaduEditAccount::validateData()
 Kopete::Account*
 GaduEditAccount::apply()
 {
+	publishUserInfo();
+	
 	if ( account() == NULL ) {
 		setAccount( new GaduAccount( protocol_, loginEdit_->text() ) );
 		account_ = static_cast<GaduAccount*>( account() );

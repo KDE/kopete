@@ -49,6 +49,7 @@ private slots:
 
 private:
 	void enableUserInfo( bool );
+	void publishUserInfo();
 
 	GaduProtocol*		protocol_;
 	bool			reg_in_progress;

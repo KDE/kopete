@@ -137,7 +137,8 @@ public slots:
 	*/
 	void pubDirSearchClose();
 	void exportContactsOnServer( GaduContactsList* );
-
+	bool publishPersonalInformation( ResLine& );
+		
 signals:
 	void error( const QString&, const QString& );
 	void messageReceived( KGaduMessage* );

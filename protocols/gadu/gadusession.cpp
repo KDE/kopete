@@ -349,6 +349,48 @@ GaduSession::getPersonalInformation()
 	return seqNr;
 }
 
+bool
+GaduSession::publishPersonalInformation( ResLine& d )
+{
+	gg_pubdir50_t r;
+	
+	if ( !session_ ) {
+		return 0;
+        }		
+	
+	r = gg_pubdir50_new( GG_PUBDIR50_WRITE );
+
+	if ( d.firstname.length() )
+		gg_pubdir50_add( r, GG_PUBDIR50_FIRSTNAME, 
+			 (const char *)((const char*)textcodec->fromUnicode( d.firstname ) ) );
+        if ( d.surname.length() )
+		gg_pubdir50_add( r, GG_PUBDIR50_LASTNAME,
+			(const char *)((const char*)textcodec->fromUnicode( d.surname ) ) );
+	if ( d.nickname.length() )
+		gg_pubdir50_add( r, GG_PUBDIR50_NICKNAME,
+			(const char *)((const char*)textcodec->fromUnicode( d.nickname ) ) );
+	if ( d.age.length() )
+		gg_pubdir50_add( r, GG_PUBDIR50_BIRTHYEAR,
+			(const char *)((const char*)textcodec->fromUnicode( d.age ) ) );
+        if ( d.city.length() )
+        	gg_pubdir50_add( r, GG_PUBDIR50_CITY,
+			(const char *)((const char*)textcodec->fromUnicode( d.city ) ) );
+	if ( d.meiden.length() )
+		gg_pubdir50_add( r, GG_PUBDIR50_FAMILYNAME,
+			(const char *)((const char*)textcodec->fromUnicode( d.meiden ) ) );
+        if ( d.orgin.length() )
+		gg_pubdir50_add( r, GG_PUBDIR50_FAMILYCITY,
+			(const char *)((const char*)textcodec->fromUnicode( d.orgin ) ) );
+	if ( d.gender.length() == 1 )
+		gg_pubdir50_add( r, GG_PUBDIR50_GENDER, 
+			(const char *)((const char*)textcodec->fromUnicode( d.gender ) ) );
+        
+	gg_pubdir50( session_, r );
+        
+	gg_pubdir50_free( r );
+
+	return true;
+}
 
 unsigned int
 GaduSession::pubDirSearch(QString& name, QString& surname, QString& nick, int UIN, QString& city,
@@ -465,12 +507,7 @@ GaduSession::sendResult( gg_pubdir50_t result )
 	}
 
 	searchSeqNr_ = gg_pubdir50_next( result );
-	if ( count ) {
-		emit pubDirSearchResult( sres, gg_pubdir50_seq( result ) );
-	}
-	else {
-		emit pubDirSearchResult( sres, 0 );
-	}
+	emit pubDirSearchResult( sres, gg_pubdir50_seq( result ) );
 }
 
 void

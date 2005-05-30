@@ -66,6 +66,7 @@ public:
 	//}
 	enum tlsConnection{ TLS_ifAvaliable = 0, TLS_only, TLS_no };
 	unsigned int getPersonalInformation();
+	bool publishPersonalInformation( ResLine& d );
 
 public slots:
 	//{

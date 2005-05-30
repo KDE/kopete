@@ -954,6 +954,12 @@ GaduAccount::getPersonalInformation()
 	return p->session_->getPersonalInformation();
 }
 
+bool 
+GaduAccount::publishPersonalInformation( ResLine& d )
+{
+	return p->session_->publishPersonalInformation( d );
+}
+
 void
 GaduAccount::slotExportContactsList()
 {
