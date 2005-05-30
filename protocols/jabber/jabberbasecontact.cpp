@@ -172,6 +172,7 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 
 void JabberBaseContact::updateResourceList ()
 {
+
 	/*
 	 * Set available resources.
 	 * This is a bit more complicated: We need to generate
@@ -181,6 +182,12 @@ void JabberBaseContact::updateResourceList ()
 	 */
 	JabberResourcePool::ResourceList resourceList;
 	account()->resourcePool()->findResources ( XMPP::Jid ( contactId () ), resourceList );
+
+	if ( resourceList.isEmpty () )
+	{
+		removeProperty ( protocol()->propAvailableResources );
+		return;
+	}
 
 	QString resourceListStr = "<table cellspacing=\"0\">";
 
