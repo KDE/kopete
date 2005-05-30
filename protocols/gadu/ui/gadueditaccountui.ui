@@ -398,7 +398,7 @@ If you do not currently have an account, please click the button to create one.<
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLayoutWidget" row="0" column="0" rowspan="1" colspan="3">
+                            <widget class="QLayoutWidget" row="0" column="0" rowspan="1" colspan="2">
                                 <property name="name">
                                     <cstring>layout9</cstring>
                                 </property>
@@ -539,7 +539,32 @@ If you do not currently have an account, please click the button to create one.<
                                     </widget>
                                 </hbox>
                             </widget>
-                            <widget class="QLayoutWidget" row="2" column="0" rowspan="1" colspan="3">
+                            <widget class="QLabel" row="1" column="0">
+                                <property name="name">
+                                    <cstring>textLabel1_5_3_2_4_2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Values below are going to be used in search, but will not appear in results.</string>
+                                </property>
+                            </widget>
+                            <spacer row="1" column="1">
+                                <property name="name">
+                                    <cstring>spacer15_3</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Vertical</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>30</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <widget class="QLayoutWidget" row="2" column="0" rowspan="1" colspan="2">
                                 <property name="name">
                                     <cstring>layout12</cstring>
                                 </property>
@@ -600,42 +625,6 @@ If you do not currently have an account, please click the button to create one.<
                                         </vbox>
                                     </widget>
                                 </hbox>
-                            </widget>
-                            <widget class="QLabel" row="1" column="0">
-                                <property name="name">
-                                    <cstring>textLabel1_5_3_2_4_2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Values below are going to be used in search, but will not appear in results.</string>
-                                </property>
-                            </widget>
-                            <spacer row="1" column="1">
-                                <property name="name">
-                                    <cstring>spacer15_3</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Vertical</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>16</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="QPushButton" row="3" column="2">
-                                <property name="name">
-                                    <cstring>uiPublish</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
-                                <property name="text">
-                                    <string>Publish</string>
-                                </property>
                             </widget>
                         </grid>
                     </widget>
