@@ -1774,7 +1774,7 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 
 	KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
 									KMessageBox::Error,
-									i18n ("An error occurred when trying to start a chat: %1)").arg ( QString::number ( error ) ),
+									i18n ("An error occurred when trying to start a chat: %1").arg ( QString::number ( error ) ),
 									i18n ("Jabber Error") );
 }
 
