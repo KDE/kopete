@@ -185,6 +185,8 @@ void SkypeContact::setInfo(const QString &change) {
 }
 
 QString SkypeContact::formattedName() const {
+	if (!d->user) 
+		return nickName();
 	return d->fullName;
 }
 

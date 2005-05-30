@@ -67,6 +67,8 @@ class SkypeAccountPrivate {
 		int launchTimeout;
 		///By what command is the skype started?
 		QString skypeCommand;
+		///What is my name, by the way?
+		QString myName;
 };
 
 SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, "Skype", (char *)0) {
@@ -80,11 +82,6 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 	//remember the protocol, it will be needed
 	d->protocol = protocol;
 
-	//create myself contact
-	SkypeContact *_myself = new SkypeContact(this, "Skype", Kopete::ContactList::self()->myself(), false);
-	setMyself(_myself);
-	//and set default online status (means offline)
-	myself()->setOnlineStatus(protocol->Offline);
 	//load the properties
 	KConfigGroup *config = configGroup();
 	author = config->readEntry("Authorization");//get the name how to authorize myself
@@ -96,7 +93,13 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 	///@todo Once Dbus launching works, remove this v and uncomment this ^
 	setStartDBus(false);
 	setLaunchTimeout(config->readNumEntry("LaunchTimeout", 30));
-	setSkypeCommand(config->readEntry("SkypeCommand", "artsdsp skype --use-session-dbus"));
+	d->myName = config->readEntry("MyselfName", "Skype");
+
+	//create myself contact
+	SkypeContact *_myself = new SkypeContact(this, "Skype", Kopete::ContactList::self()->myself(), false);
+	setMyself(_myself);
+	//and set default online status (means offline)
+	myself()->setOnlineStatus(protocol->Offline);setSkypeCommand(config->readEntry("SkypeCommand", "artsdsp skype --use-session-dbus"));
 
 	//Now, connect the signals
 	QObject::connect(&d->skype, SIGNAL(wentOnline()), this, SLOT(wentOnline()));
@@ -113,6 +116,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 	QObject::connect(&d->skype, SIGNAL(gotMessageId(const QString& )), this, SIGNAL(gotMessageId(const QString& )));//every time some ID is known inform the contacts
 	QObject::connect(&d->skype, SIGNAL(sentMessage(const QString& )), this, SIGNAL(sentMessage(const QString& )));//inform contacts of sent messages
 	QObject::connect(&d->skype, SIGNAL(newCall(const QString&, const QString&)), this, SLOT(newCall(const QString&, const QString&)));
+	QObject::connect(&d->skype, SIGNAL(setMyselfName(const QString&)), this, SLOT(setMyselfName(const QString& )));
 
 	//set values for the connection (should be updated if changed)
 	d->skype.setValues(launchType, author);
@@ -125,6 +129,8 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 
 SkypeAccount::~SkypeAccount() {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
+
+	save();
 
 	d->protocol->unregisterAccount();//This account no longer exists
 
@@ -215,6 +221,7 @@ void SkypeAccount::save() {
 	config->writeEntry("StartDBus", getStartDBus());
 	config->writeEntry("LaunchTimeout", getLaunchTimeout());
 	config->writeEntry("SkypeCommand", getSkypeCommand());
+	config->writeEntry("MyselfName", d->myName);
 
 	//save it into the skype connection as well
 	d->skype.setValues(launchType, author);
@@ -483,6 +490,10 @@ void SkypeAccount::setSkypeCommand(const QString &command) {
 
 const QString &SkypeAccount::getSkypeCommand() const {
 	return d->skypeCommand;
+}
+
+void SkypeAccount::setMyselfName(const QString &name) {
+	myself()->setNickName(name);
 }
 
 #include "skypeaccount.moc"

@@ -27,7 +27,7 @@
 #include <kmessagebox.h>
 #include <qtimer.h>
 
-#define PROTOCOL_MAX 3
+#define PROTOCOL_MAX 4
 #define PROTOCOL_MIN 3
 #define TEST_QUIT if (!d->connection.connected()) return;
 
@@ -403,6 +403,14 @@ void Skype::skypeMessage(const QString &message) {
 			}
 			emit callStatus(callId, status);
 		}
+	} else if (messageType == "CURRENTUSERHANDLE") {
+		QString user = message.section(' ', 1, 1).stripWhiteSpace();
+		QString name = (d->connection % QString("GET USER %1 DISPLAYNAME").arg(user)).section(' ', 3).stripWhiteSpace();
+		if (name.isEmpty())
+			name = (d->connection % QString("GET USER %1 FULLNAME").arg(user)).section(' ', 3).stripWhiteSpace();
+		if (name.isEmpty())
+			name = user;
+		emit setMyselfName(name);
 	}
 }
 

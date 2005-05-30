@@ -340,6 +340,11 @@ class Skype : public QObject
 		 * @param currency And what is it that he has
 		 */
 		void skypeOutInfo(int balance, const QString &currency);
+		/**
+		 * Tells that my name is known or changed
+		 * @param name The new name
+		 */
+		void setMyselfName(const QString &name);
 };
 
 #endif

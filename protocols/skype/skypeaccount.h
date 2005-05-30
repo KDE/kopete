@@ -96,6 +96,11 @@ Q_OBJECT
 		 * @param userId User that is on the other end. If conference, list of IDs divided by spaces.
 		 */
 		void newCall(const QString &callId, const QString &userId);
+		/**
+		 * This one sets name of myself
+		 * @param name What the new name is.
+		 */
+		void setMyselfName(const QString &name);
 	protected:
 		/**
 		 * Creates new skype contact and adds it into the parentContact.
