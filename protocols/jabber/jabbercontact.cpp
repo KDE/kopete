@@ -92,10 +92,9 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 		 * Trigger update once if we're already connected for contacts
 		 * that are being added while we are online.
 		 */
-		if ( ( account->myself()->onlineStatus().status () == Kopete::OnlineStatus::Online ) ||
-			 ( account->myself()->onlineStatus().status () == Kopete::OnlineStatus::Away ) )
+		if ( account->myself()->onlineStatus().isDefinitelyOnline() )
 		{
-			slotCheckVCard ();
+			slotGetTimedVCard ();
 		}
 	}
 
