@@ -553,18 +553,6 @@ kdDebug() << "libkopete: VideoDevice::SetSize(" << newwidth << ", " << newheight
 	return EXIT_SUCCESS;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 VideoDevice::pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 {
 kdDebug() << "libkopete: VideoDevice::setPixelFormat() called." << endl;
