@@ -39,6 +39,8 @@ JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, Jabber
 				: Kopete::Contact (account, rosterItem.jid().full().lower (), mc)
 {
 
+	setDontSync ( false );
+
 	// take roster item and update display name
 	updateContact ( rosterItem );
 
@@ -88,6 +90,12 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 	// if we don't have a meta contact yet, stop processing here
 	if ( !metaContact () )
 		return;
+
+	/*
+	 * We received the information from the server, as such,
+	 * don't attempt to synch while we update our local copy.
+	 */
+	setDontSync ( true );
 
 	// only update the alias if its not empty
 	if ( !item.name().isEmpty () )
@@ -150,23 +158,22 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 		groupsToRemoveFrom.remove ( Kopete::Group::topLevel () );
 	}
 
-#warning  next dontsync stuff are temporary solutions
-	
 	for ( Kopete::Group *group = groupsToRemoveFrom.first (); group; group = groupsToRemoveFrom.next () )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing " << contactId() << " from group " << group->displayName () << endl;
-		account()->dontSync=true;
 		metaContact()->removeFromGroup ( group );
-		account()->dontSync=false;
 	}
-	
+
 	for ( Kopete::Group *group = groupsToAddTo.first (); group; group = groupsToAddTo.next () )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Adding " << contactId() << " to group " << group->displayName () << endl;
-		account()->dontSync=true;
 		metaContact()->addToGroup ( group );
-		account()->dontSync=false;
 	}
+
+	/*
+	 * Enable updates for the server again.
+	 */
+	setDontSync ( false );
 
 }
 
@@ -280,6 +287,20 @@ XMPP::Jid JabberBaseContact::bestAddress ()
 	jid.setResource ( account()->resourcePool()->bestResource( mRosterItem.jid() ).name () );
 
 	return jid;
+
+}
+
+void JabberBaseContact::setDontSync ( bool flag )
+{
+
+	mDontSync = flag;
+
+}
+
+bool JabberBaseContact::dontSync ()
+{
+
+	return mDontSync;
 
 }
 

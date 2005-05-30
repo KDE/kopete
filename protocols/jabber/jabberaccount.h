@@ -238,12 +238,6 @@ private slots:
 	/* Get the services list from the server for management. */
 	void slotGetServices ();
 
-public:
-	/*
-	 * this is only a temporary solution to don't have an infinite loop whensyncing the contactlist
-	 */
-	bool dontSync;
-
 };
 
 #endif

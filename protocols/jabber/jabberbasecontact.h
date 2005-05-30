@@ -104,6 +104,29 @@ public:
 	 */
 	QString fullAddress ();
 
+	/**
+	 * Set the dontSync flag for this contact.
+	 * If this flag is set, calls to @ref sync will
+	 * be ignored. This is required if the contact
+	 * has been moved between groups on the server
+	 * after we logged in and we try to update our
+	 * local contact list. Since libkopete can only
+	 * handle one group update at a time, moving
+	 * between groups requires to operations which
+	 * each in turn would cause a call to sync(),
+	 * overwriting the change that is being carried
+	 * out. (besides causing unnecessary traffic)
+	 * This is avoided by setting the dontSync flag
+	 * while synchronizing the local copy.
+	 */
+	void setDontSync ( bool flag );
+
+	/**
+	 * Return the status of the dontSync flag.
+	 * See @ref setDontSync for a full description.
+	 */
+	bool dontSync ();
+
 public slots:
 
 	/**
@@ -125,6 +148,9 @@ protected:
 	 * relevant data for this contact.
 	 */
 	XMPP::RosterItem mRosterItem;
+
+private:
+	bool mDontSync;
 
 };
 

@@ -773,7 +773,7 @@ void JabberContact::deleteContact ()
 
 }
 
-void JabberContact::sync ( unsigned int)
+void JabberContact::sync ( unsigned int )
 {
 	if ( this == account()->myself() && account()->isConnected() )
 	{
@@ -790,18 +790,14 @@ void JabberContact::sync ( unsigned int)
 		return;
 	}
 
-	#warning  dontsync is a temporary solution
-	if( account()->dontSync )
+	// if we are offline or this is a temporary contact or we should not synch, don't bother
+	if ( dontSync () || !account()->isConnected () || metaContact()->isTemporary () )
 		return;
 
 	QStringList groups;
 	Kopete::GroupList groupList = metaContact ()->groups ();
 
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Synchronizing groups for " << contactId () << endl;
-
-	// if we are offline or this is a temporary contact, don't bother
-	if ( !account()->isConnected () || metaContact()->isTemporary () )
-		return;
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Synchronizing contact " << contactId () << endl;
 
 	for ( Kopete::Group * g = groupList.first (); g; g = groupList.next () )
 	{

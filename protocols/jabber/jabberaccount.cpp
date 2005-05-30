@@ -81,8 +81,6 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 
 	m_initialPresence = XMPP::Status ( "", "", 5, true );
 
-#warning  this is a temporary solution.  remove also the definition of this in jabberaccount.h
-	dontSync=false;
 }
 
 JabberAccount::~JabberAccount ()
