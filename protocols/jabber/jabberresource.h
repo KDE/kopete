@@ -50,6 +50,7 @@ signals:
 	void updated ( JabberResource * );
 
 private slots:
+	void slotGetTimedClientVersion ();
 	void slotGotClientVersion ();
 
 private:

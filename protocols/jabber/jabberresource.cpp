@@ -18,6 +18,7 @@
 #include "jabberresource.h"
 
 #include <kdebug.h>
+#include <qtimer.h>
 #include "xmpp_tasks.h"
 #include "jabberaccount.h"
 
@@ -30,14 +31,9 @@ JabberResource::JabberResource ( JabberAccount *account, const XMPP::Jid &jid, c
 
 	if ( account->isConnected () )
 	{
-		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Requesting client version for " << jid.full () << endl;
+		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Scheduling request for client version for " << jid.full () << endl;
 
-		// request client version
-		XMPP::JT_ClientVersion *task = new XMPP::JT_ClientVersion ( account->client()->rootTask () );
-		// signal to ourselves when the vCard data arrived
-		QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotGotClientVersion () ) );
-		task->get ( jid );
-		task->go ( true );
+		QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT ( slotGetTimedClientVersion () ) );
 	}
 
 }
@@ -78,6 +74,23 @@ const QString &JabberResource::clientSystem () const
 {
 
 	return mClientSystem;
+
+}
+
+void JabberResource::slotGetTimedClientVersion ()
+{
+
+	if ( mAccount->isConnected () )
+	{
+		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Requesting client version for " << mJid.full () << endl;
+
+		// request client version
+		XMPP::JT_ClientVersion *task = new XMPP::JT_ClientVersion ( mAccount->client()->rootTask () );
+		// signal to ourselves when the vCard data arrived
+		QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotGotClientVersion () ) );
+		task->get ( mJid );
+		task->go ( true );
+	}
 
 }
 
