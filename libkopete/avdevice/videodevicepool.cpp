@@ -334,7 +334,7 @@ int VideoDevicePool::scanDevices()
     /// @todo implement me
 
 	kdDebug() << "libkopete (avdevice): scanDevices() called" << endl;
-#ifdef __linux_
+#ifdef __linux__
 	QDir videodevice_dir;
 	const QString videodevice_dir_path=QString::fromLocal8Bit("/dev/v4l/");
 	const QString videodevice_dir_filter=QString::fromLocal8Bit("video*");

@@ -82,7 +82,7 @@ int VideoDevice::open()
 {
     /// @todo implement me
 
-	kdDebug() << "libkopete (avdevice): VideoDevice::open() called" << endl;
+	kdDebug() <<  k_funcinfo << "VideoDevice::open() called" << endl;
 	if(-1 != descriptor)
 	{
 		kdDebug() << "libkopete (avdevice): VideoDevice::open() Device is already open" << endl;
@@ -614,8 +614,7 @@ kdDebug() << "libkopete: VideoDevice::setPixelFormat() called." << endl;
 				kdDebug() << "libkopete (avdevice): VIDIOCGPICT failed (" << errno << ")." << endl;
 			kdDebug() << "libkopete (avdevice): V4L_picture.palette: " << V4L_picture.palette << " Depth: " << V4L_picture.depth << endl;
 			V4L_picture.palette = pixelFormatCode(newformat);
-//			V4L_picture.depth   = pixelFormatDepth(newformat);
-			V4L_picture.depth   = 32;
+			V4L_picture.depth   = pixelFormatDepth(newformat);
 			if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
 			{
 				kdDebug() << "libkopete (avdevice): Card seems to not support " << pixelFormatName(newformat) << " format. Fallback to it is not yet implemented." << endl;
