@@ -28,8 +28,6 @@
 #include <xmpp.h>
 #include <s5b.h>
 
-#define JABBER_PENALTY_TIME	3
-
 using namespace XMPP;
 
 class JabberConnector;
