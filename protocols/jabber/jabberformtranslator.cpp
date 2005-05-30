@@ -44,7 +44,8 @@ JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * p
 	QGridLayout *formLayout = new QGridLayout (innerLayout, form.count (), 2);
 
 	int row = 1;
-	for (XMPP::Form::const_iterator it = form.begin (); it != form.end (); it++, row++)
+	XMPP::Form::const_iterator formEnd = form.end ();
+	for (XMPP::Form::const_iterator it = form.begin (); it != formEnd; ++it, ++row)
 	{
 		kdDebug (14130) << "[JabberFormTranslator] Adding field realName()==" <<
 			(*it).realName () << ", fieldName()==" << (*it).fieldName () << " to the dialog" << endl;

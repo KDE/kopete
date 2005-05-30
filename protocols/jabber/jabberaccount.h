@@ -101,7 +101,7 @@ public:
 	/*
 	 * Handle stream errors. Displays a dialog and returns.
 	 */
-	static void handleStreamError (int streamError, int streamCondition, int connectorCode, QString server, Kopete::Account::DisconnectReason &errorClass);
+	static void handleStreamError (int streamError, int streamCondition, int connectorCode, const QString &server, Kopete::Account::DisconnectReason &errorClass);
 
 public slots:
 	/* Connects to the server. */

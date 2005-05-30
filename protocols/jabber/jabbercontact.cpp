@@ -158,7 +158,8 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 
 		account()->resourcePool()->findResources ( mRosterItem.jid (), availableResources );
 
-		for ( XMPP::ResourceList::iterator it = availableResources.begin(); it != availableResources.end(); ++it, i++)
+		XMPP::ResourceList::const_iterator resourcesEnd = availableResources.end ();
+		for ( XMPP::ResourceList::const_iterator it = availableResources.begin(); it != resourcesEnd; ++it, i++)
 		{
 			items.append ( (*it).name() );
 
@@ -168,7 +169,8 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 
 		// now go through the string list and add the resources with their icons
 		i = 0;
-		for(QStringList::iterator it = items.begin(); it != items.end(); ++it)
+		QStringList::const_iterator itemsEnd = items.end ();
+		for(QStringList::const_iterator it = items.begin(); it != itemsEnd; ++it)
 		{
 			if( i == activeItem )
 			{
@@ -586,7 +588,8 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	 * saved.
 	 * This might not be the desired behaviour for all.
 	 */
-	for(XMPP::VCard::EmailList::const_iterator it = vCard.emailList().begin(); it != vCard.emailList().end(); ++it)
+	XMPP::VCard::EmailList::const_iterator emailEnd = vCard.emailList().end ();
+	for(XMPP::VCard::EmailList::const_iterator it = vCard.emailList().begin(); it != emailEnd; ++it)
 	{
 		XMPP::VCard::Email email = (*it);
 
@@ -612,7 +615,8 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	 * phone number property. This might not be the desired
 	 * behavior for all users.
 	 */
-	for(XMPP::VCard::PhoneList::const_iterator it = vCard.phoneList().begin(); it != vCard.phoneList().end(); ++it)
+	XMPP::VCard::PhoneList::const_iterator phoneEnd = vCard.phoneList().end ();
+	for(XMPP::VCard::PhoneList::const_iterator it = vCard.phoneList().begin(); it != phoneEnd; ++it)
 	{
 		XMPP::VCard::Phone phone = (*it);
 

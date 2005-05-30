@@ -659,7 +659,7 @@ void JabberAccount::slotCSDisconnected ()
 
 }
 
-void JabberAccount::handleStreamError (int streamError, int streamCondition, int connectorCode, QString server, Kopete::Account::DisconnectReason &errorClass)
+void JabberAccount::handleStreamError (int streamError, int streamCondition, int connectorCode, const QString &server, Kopete::Account::DisconnectReason &errorClass)
 {
 	QString errorText;
 	QString errorCondition;

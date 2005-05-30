@@ -173,7 +173,8 @@ void dlgJabberVCard::assignVCard (const XMPP::VCard &vCard)
 	// email
 	m_mainWidget->urlWorkEmail->setUseCursor ( false );
 	m_mainWidget->urlHomeEmail->setUseCursor ( false );
-	for(XMPP::VCard::EmailList::const_iterator it = vCard.emailList().begin(); it != vCard.emailList().end(); it++)
+	XMPP::VCard::EmailList::const_iterator emailEnd = vCard.emailList().end ();
+	for(XMPP::VCard::EmailList::const_iterator it = vCard.emailList().begin(); it != emailEnd; ++it)
 	{
 		XMPP::VCard::Email email = (*it);
 
@@ -201,7 +202,8 @@ void dlgJabberVCard::assignVCard (const XMPP::VCard &vCard)
 	m_mainWidget->leRole->setText (vCard.role());
 
 	// phone numbers tab
-	for(XMPP::VCard::PhoneList::const_iterator it = vCard.phoneList().begin(); it != vCard.phoneList().end(); it++)
+	XMPP::VCard::PhoneList::const_iterator phoneEnd = vCard.phoneList().end ();
+	for(XMPP::VCard::PhoneList::const_iterator it = vCard.phoneList().begin(); it != phoneEnd; ++it)
 	{
 		XMPP::VCard::Phone phone = (*it);
 
