@@ -180,7 +180,6 @@ GaduRegisterAccount::registrationError(  const QString& title,  const QString& w
 	// emit UIN 0, to enable 'register new account' button again in dialog below
 	emit registeredNumber( 0, QString( "" ) );
 
-	slotClose();
 	deleteLater();
 }
 
@@ -202,14 +201,12 @@ GaduRegisterAccount::updateStatus( const QString status )
 void
 GaduRegisterAccount::slotClose()
 {
-	delete cRegister;
-	cRegister = NULL;
+	deleteLater();
 }
 
 GaduRegisterAccount::~GaduRegisterAccount( )
 {
 	kdDebug( 14100 ) << " register Cancel " << endl;
-	delete cRegister;
 }
 
 #include "gaduregisteraccount.moc"
