@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>526</width>
+            <width>530</width>
             <height>390</height>
         </rect>
     </property>
@@ -830,7 +830,7 @@ If you do not currently have an account, please click the button to create one.<
                             </spacer>
                             <widget class="QPushButton" row="3" column="2">
                                 <property name="name">
-                                    <cstring>pushButton2</cstring>
+                                    <cstring>uiPublish</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Publish</string>
