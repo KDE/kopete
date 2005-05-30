@@ -636,6 +636,8 @@ class DisplayNameComponent::Private
 {
 public:
 	QString text;
+    QColor color;
+    QFont font;
 };
 
 DisplayNameComponent::DisplayNameComponent( ComponentBase *parent )
@@ -707,15 +709,14 @@ void DisplayNameComponent::setText( const QString& text )
 	tokens = Kopete::Emoticons::tokenizeEmoticons( text );
 	ImageComponent *ic;
 
-	QFont font;
-	QFontMetrics fontMetrics( font );
+	QFontMetrics fontMetrics( d->font );
 	int fontHeight = fontMetrics.height();
 	for ( token = tokens.begin(); token != tokens.end(); ++token )
 	{
 		switch ( (*token).type )
 		{
 		case Kopete::Emoticons::Text:
-			new TextComponent( this, font, (*token).text );
+			new TextComponent( this, d->font, (*token).text );
 		break;
 		case Kopete::Emoticons::Image:
 			ic = new ImageComponent( this );
@@ -733,6 +734,8 @@ void DisplayNameComponent::setFont( const QFont& font )
 	for ( uint n = 0; n < components(); ++n )
 		if( component( n )->rtti() == Rtti_TextComponent )
 			((TextComponent*)component(n))->setFont( font );
+
+	d->font = font;
 }
 
 void DisplayNameComponent::setColor( const QColor& color )
@@ -740,6 +743,7 @@ void DisplayNameComponent::setColor( const QColor& color )
 	for ( uint n = 0; n < components(); ++n )
 		if( component( n )->rtti() == Rtti_TextComponent )
 			((TextComponent*)component(n))->setColor( color );
+	d->color = color;
 }
 
 void DisplayNameComponent::setDefaultColor()
