@@ -163,12 +163,8 @@ void AVDeviceConfig::slotImageAutoAdjustBrightContrastChanged(bool){
 
 void AVDeviceConfig::slotUpdateImage()
 {
-	if(d->isOpen())
-	{
-		d->getFrame();
-		d->getImage(&qimage);
-		bitBlt(mPrfsVideoDevice->mVideoImageLabel, 0, 0, &qimage, 0, Qt::CopyROP);
-		kdDebug() << "kopete (avdeviceconfig_videoconfig): Image updated." << endl;
-//	emit changed( true );
-	}
+	d->getFrame();
+	d->getImage(&qimage);
+	bitBlt(mPrfsVideoDevice->mVideoImageLabel, 0, 0, &qimage, 0, Qt::CopyROP);
+	kdDebug() << "kopete (avdeviceconfig_videoconfig): Image updated." << endl;
 }
