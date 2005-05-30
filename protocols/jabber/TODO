@@ -10,9 +10,6 @@ TODO for Jabber:
 - clean up class names in the ui directory, no real scheme there right now
 - if a contact subscribed to you, it is being added as a real contact,
   should either be added as temporary or not at all
-- ask if authorization should be removed if a contact is deleted from the
-  list
-- ask the same for added contacts
 - provide better feedback for dialogs querying the server
 - support avatars and idle times for tooltips
 - when trying to register an account, try to display the actual server error

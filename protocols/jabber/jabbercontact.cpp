@@ -758,6 +758,14 @@ void JabberContact::deleteContact ()
 		return;
 	}
 
+	if ( KMessageBox::questionYesNo (Kopete::UI::Global::mainWidget(),
+		 i18n ( "Do you also want to remove the authorization from user %1 to see your status?" ).
+				arg ( mRosterItem.jid().bare () ), i18n ("Notification"),
+				KStdGuiItem::yes (), KStdGuiItem::no (), "JabberRemoveAuthorizationOnDelete" ) == KMessageBox::Yes )
+	{
+		sendSubscription ("unsubscribed");
+	}
+
 	XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
 
 	rosterTask->remove ( mRosterItem.jid () );
