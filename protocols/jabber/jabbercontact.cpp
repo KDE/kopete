@@ -486,16 +486,15 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	}
 
 	/*
-	 * If a nick name is present in the vCard and if
-	 * no alias has been set so far, we'll update
-	 * the contact's alias to the nick set in the vCard.
+	 * Set the nickname property.
 	 */
-	if ( !vCard.nickName().isEmpty () && mRosterItem.name().isEmpty () )
+	if ( !vCard.nickName().isEmpty () )
 	{
-		/*
-		 * Update the property
-		 */
 		setProperty ( protocol()->propNickName, vCard.nickName () );
+	}
+	else
+	{
+		removeProperty ( protocol()->propNickName );
 	}
 
 	/**

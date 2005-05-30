@@ -89,15 +89,15 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 	if ( !metaContact () )
 		return;
 
-	// only update the nickname if its not empty
+	// only update the alias if its not empty
 	if ( !item.name().isEmpty () )
 	{
-		setProperty ( protocol()->propNickName, item.name () );
+		metaContact()->setDisplayName ( item.name () );
 	}
 	else
 	{
-		// no nickname has been set, remove it from the prop list
-		removeProperty ( protocol()->propNickName );
+		// no alias has been set, set it to the contact id
+		metaContact()->setDisplayName ( item.jid().bare () );
 	}
 
 	/*
