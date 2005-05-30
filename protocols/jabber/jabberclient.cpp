@@ -30,7 +30,7 @@
 
 #include "jabberconnector.h"
 
-#define JABBER_PENALTY_TIME	1
+#define JABBER_PENALTY_TIME	2
 
 XMPP::S5BServer *JabberClient::m_s5bServer = 0L;
 QStringList JabberClient::m_s5bAddressList;
