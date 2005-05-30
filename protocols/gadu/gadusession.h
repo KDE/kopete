@@ -78,6 +78,9 @@ struct ResLine{
 	QString nickname;
 	QString age;
 	QString city;
+	QString orgin;
+	QString meiden;
+	QString gender;
 	int status;
 };
 

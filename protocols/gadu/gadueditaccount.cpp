@@ -33,6 +33,7 @@
 #include <qbutton.h>
 #include <qregexp.h>
 #include <qpushbutton.h>
+#include <qgroupbox.h>
 
 #include <klineedit.h>
 #include <kmessagebox.h>
@@ -102,14 +103,42 @@ GaduEditAccount::slotSearchResult( const SearchResult& result, unsigned int seq 
 
 	uiName->setText( result[0].firstname );
 	uiSurname->setText( result[0].surname );
-	uiNick->setText( result[0].nickname );
+	nickName->setText( result[0].nickname );
 	uiYOB->setText( result[0].age );
 	uiCity->setText( result[0].city );
 
-	uiMeiden->setText( "" );
-	uiOrgin->setText( "" );
+	if ( result[0].gender == QString( GG_PUBDIR50_GENDER_FEMALE ) ) {
+		uiGender->setCurrentItem( 2 );
+	}
+	else {
+		if ( result[0].gender == QString( GG_PUBDIR50_GENDER_MALE ) ) {
+			uiGender->setCurrentItem( 3 );
+		}
+		else {
+			uiGender->setCurrentItem( 1 );
+		}
+	}
+
+	uiMeiden->setText( result[0].meiden );
+	uiOrgin->setText( result[0].orgin );
+
+	enableUserInfo( true );
 
 	disconnect( SLOT( slotSearchResult( const SearchResult&, unsigned int ) ) );
+}
+
+void
+GaduEditAccount::enableUserInfo( bool e )
+{
+	uiName->setEnabled( e );
+	uiSurname->setEnabled( e );
+	uiYOB->setEnabled( e );
+	uiCity->setEnabled( e );
+	uiGender->setEnabled( e );
+	uiMeiden->setEnabled( e );
+	uiOrgin->setEnabled( e );
+	
+	connectLabel->setEnabled( !e );
 }
 
 void

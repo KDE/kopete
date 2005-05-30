@@ -48,6 +48,8 @@ private slots:
 	void slotSearchResult( const SearchResult&, unsigned int );
 
 private:
+	void enableUserInfo( bool );
+
 	GaduProtocol*		protocol_;
 	bool			reg_in_progress;
 	bool			isSsl;

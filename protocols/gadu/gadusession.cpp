@@ -448,6 +448,10 @@ GaduSession::sendResult( gg_pubdir50_t result )
 		resultLine.age		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_BIRTHYEAR ) );
 		resultLine.city		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_CITY ) );
 		QString stat		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_STATUS ) );
+		resultLine.orgin	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_FAMILYCITY ) );
+		resultLine.meiden	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_FAMILYNAME ) );
+		resultLine.gender	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_GENDER ) );
+
 		resultLine.status	= stat.toInt();
 		age = resultLine.age.toInt();
 		if ( age ) {
