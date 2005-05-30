@@ -1105,9 +1105,9 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 
 		switch (KMessageBox::warningYesNo (Kopete::UI::Global::mainWidget(),
 								  i18n
-								  ("The Jabber user %1 removed %2's subscription to them."
-								   "This account will no longer be able to view their online/offline status."
-								   "\nDo you want to delete the contact?").
+								  ("The Jabber user %1 removed %2's subscription to them. "
+								   "This account will no longer be able to view their online/offline status. "
+								   "Do you want to delete the contact?").
 								  arg (jid.userHost (), 1).arg (accountId(), 2), i18n ("Notification")))
 		{
 
