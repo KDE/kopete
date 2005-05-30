@@ -664,14 +664,8 @@ void JabberContact::sync ( unsigned int)
 
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Synchronizing groups for " << contactId () << endl;
 
-	if ( !account()->isConnected() )
-	{
-		account()->errorConnectFirst ();
-		return;
-	}
-
-	// if this is a temporary contact, don't bother
-	if ( metaContact()->isTemporary () )
+	// if we are offline or this is a temporary contact, don't bother
+	if ( !account()->isConnected () || metaContact()->isTemporary () )
 		return;
 
 	for ( Kopete::Group * g = groupList.first (); g; g = groupList.next () )
