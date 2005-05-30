@@ -586,6 +586,30 @@ If you do not currently have an account, please click the button to create one.<
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_6</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>true</bool>
+                        </property>
+                        <property name="paletteForegroundColor">
+                            <color>
+                                <red>255</red>
+                                <green>0</green>
+                                <blue>0</blue>
+                            </color>
+                        </property>
+                        <property name="font">
+                            <font>
+                                <pointsize>10</pointsize>
+                                <bold>1</bold>
+                            </font>
+                        </property>
+                        <property name="text">
+                            <string>&lt;p align="center"&gt;You must be connected to change your Personal Information.&lt;/p&gt;</string>
+                        </property>
+                    </widget>
                     <widget class="QGroupBox" row="0" column="0">
                         <property name="name">
                             <cstring>userInformation</cstring>
@@ -600,7 +624,7 @@ If you do not currently have an account, please click the button to create one.<
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLayoutWidget" row="0" column="0">
+                            <widget class="QLayoutWidget" row="0" column="0" rowspan="1" colspan="3">
                                 <property name="name">
                                     <cstring>layout9</cstring>
                                 </property>
@@ -723,7 +747,7 @@ If you do not currently have an account, please click the button to create one.<
                                     </widget>
                                 </hbox>
                             </widget>
-                            <widget class="QLayoutWidget" row="3" column="0">
+                            <widget class="QLayoutWidget" row="2" column="0" rowspan="1" colspan="3">
                                 <property name="name">
                                     <cstring>layout12</cstring>
                                 </property>
@@ -779,7 +803,7 @@ If you do not currently have an account, please click the button to create one.<
                                     </widget>
                                 </hbox>
                             </widget>
-                            <widget class="QLabel" row="2" column="0">
+                            <widget class="QLabel" row="1" column="0">
                                 <property name="name">
                                     <cstring>textLabel1_5_3_2_4_2</cstring>
                                 </property>
@@ -787,7 +811,7 @@ If you do not currently have an account, please click the button to create one.<
                                     <string>Values below are going to be used in search, but will not appear in results.</string>
                                 </property>
                             </widget>
-                            <spacer row="1" column="0">
+                            <spacer row="1" column="1">
                                 <property name="name">
                                     <cstring>spacer15_3</cstring>
                                 </property>
@@ -800,29 +824,20 @@ If you do not currently have an account, please click the button to create one.<
                                 <property name="sizeHint">
                                     <size>
                                         <width>20</width>
-                                        <height>30</height>
+                                        <height>16</height>
                                     </size>
                                 </property>
                             </spacer>
+                            <widget class="QPushButton" row="3" column="2">
+                                <property name="name">
+                                    <cstring>pushButton2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Publish</string>
+                                </property>
+                            </widget>
                         </grid>
                     </widget>
-                    <spacer row="1" column="0">
-                        <property name="name">
-                            <cstring>spacer15_2</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>90</height>
-                            </size>
-                        </property>
-                    </spacer>
                 </grid>
             </widget>
         </widget>
