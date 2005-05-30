@@ -358,18 +358,13 @@ void MSNContact::clearServerGroups()
 void MSNContact::sync( unsigned int changed )
 {
 	// Apply the global identity if applicable
-	if(contactId() == account()->accountId())
+	if(this == account()->myself())
 	{
-		KConfig *configIdentity = KGlobal::config();
-		configIdentity->setGroup("GlobalIdentity");
-		bool useGlobal = configIdentity->readBoolEntry("enableGlobalIdentity");
-		bool useAccount = configIdentity->readBoolEntry("checkAccountNick");
-		QString accountSelected = configIdentity->readEntry("accountSelected");
 		 // Apply the global identity
-		if(useGlobal && (!(accountSelected == account()->accountId()) || !useAccount))
+		if(Kopete::ContactList::self()->checkGlobalIdentity())
 		{
 			kdDebug( 14140 ) << k_funcinfo << "Applying Global Identity on a MSN account." << endl;
-			static_cast<MSNAccount*>(account())->setPublicName(Kopete::ContactList::self()->myself()->displayName());
+			static_cast<MSNAccount*>(account())->setPublicName(metaContact()->displayName());
 		}
 		return;
 	}

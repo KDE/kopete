@@ -30,10 +30,8 @@
 #include <kfiledialog.h>
 #include <kaction.h>
 #include <kapplication.h>
-// For Global Identity stuff
-#include <kconfig.h> 
-#include <kglobal.h> 
 
+#include "kopetecontactlist.h"
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
 #include "kopetechatsessionmanager.h"
@@ -732,15 +730,10 @@ void JabberContact::deleteContact ()
 
 void JabberContact::sync ( unsigned int)
 {
-	if ( contactId () == account()->accountId() && account()->isConnected() )
+	if ( this == account()->myself() && account()->isConnected() )
 	{
-		KConfig * configIdentity = KGlobal::config();
-		configIdentity->setGroup("GlobalIdentity");
-		bool useGlobal = configIdentity->readBoolEntry("enableGlobalIdentity");
-		bool useAccount = configIdentity->readBoolEntry("checkAccountNick");
-		QString accountSelected = configIdentity->readEntry("accountSelected");
 		 // Apply the global identity
-		if( useGlobal && ( !(accountSelected == account()->accountId()) || !useAccount) )
+		if( Kopete::ContactList::self()->checkGlobalIdentity() )
 		{
 			// request vCard
 			XMPP::JT_VCard *task = new XMPP::JT_VCard( account()->client()->rootTask () );

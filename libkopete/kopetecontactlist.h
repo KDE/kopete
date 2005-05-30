@@ -317,13 +317,15 @@ public: //TODO I think all theses method should be moved to the decop interface.
 	 */
 	void messageContact( const QString &displayName, const QString &messageText = QString::null );
 
-	
 	/**
-	  * Load the global identity details into the myself MetaContact
-          */  	
+	  * Apply the global identity.
+	  */
 	void loadGlobalIdentity();
-	
 
+	/**
+	  * Check if we need to apply the global identity, called in Contact::sync()
+	  */
+	bool checkGlobalIdentity();
 public slots:
 	/**
 	 * @internal

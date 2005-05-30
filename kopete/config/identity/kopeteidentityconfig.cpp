@@ -57,6 +57,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char *name, co
 		QString accountName = i->accountLabel();
 		QPixmap accountIcon = i->accountIcon();
 		m_view->m_comboAccount->insertItem(accountIcon, accountName);
+		// Populate QMap for futher use
 		m_listAccounts.insert(accountName, i);
 	}
 
@@ -78,22 +79,27 @@ void KopeteIdentityConfig::load()
 	KConfig *config = KGlobal::config();
 	
 	config->setGroup("GlobalIdentity");
-	m_view->m_checkEnableGlobal->setChecked(config->readBoolEntry("enableGlobalIdentity"));
+	m_useGlobal = config->readBoolEntry("enableGlobalIdentity");
+	m_useAccount = config->readBoolEntry("checkAccountNick");
+	m_nickname = config->readEntry("Nickname");
+
+	m_view->m_checkEnableGlobal->setChecked(m_useGlobal);
 	// Load the latest configured nickname
-	m_view->m_lineNickName->setText(config->readEntry("Nickname"));
-	m_view->m_checkAccountNick->setChecked(config->readBoolEntry("checkAccountNick"));
+	m_view->m_lineNickName->setText(m_nickname);
+	m_view->m_checkAccountNick->setChecked(m_useAccount);
 
 	// Load the latest selected display picture
 	m_view->m_useDisplayPicture->setChecked(config->readBoolEntry("useAvatar"));
 	m_view->m_displayPicture->setPixmap( locateLocal( "appdata", "global-displayphoto.png" ) );
 
 	// Select the account according to the latest setting
-	QString accountSelected = config->readEntry("accountSelected");
+	m_accountSelected = config->readEntry("accountSelected");
+	m_protocolSelected = config->readEntry("protocolSelected");
 	int current=0;
 	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
 	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next() )
 	{
-		if(i->accountLabel() == accountSelected)
+		if(i->accountLabel() == m_accountSelected && i->protocol()->pluginId() == m_protocolSelected)
 		{
 			m_view->m_comboAccount->setCurrentItem(current);
 		}
@@ -103,15 +109,21 @@ void KopeteIdentityConfig::load()
 
 void KopeteIdentityConfig::save()
 {
+	m_useGlobal = m_view->m_checkEnableGlobal->isChecked();
+	m_nickname = m_view->m_lineNickName->text();
+	m_useAccount = m_view->m_checkAccountNick->isChecked();
+	m_accountSelected = m_view->m_comboAccount->currentText();
+	m_protocolSelected = m_listAccounts[m_view->m_comboAccount->currentText()]->protocol()->pluginId();
+
 	KConfig *config = KGlobal::config();
 	
 	config->setGroup("GlobalIdentity");
-	config->writeEntry("enableGlobalIdentity", m_view->m_checkEnableGlobal->isChecked());
-	config->writeEntry("Nickname", m_view->m_lineNickName->text());
-	config->writeEntry("checkAccountNick", m_view->m_checkAccountNick->isChecked());
+	config->writeEntry("enableGlobalIdentity", m_useGlobal);
+	config->writeEntry("Nickname", m_nickname);
+	config->writeEntry("checkAccountNick", m_useAccount);
 	config->writeEntry("useAvatar", m_view->m_useDisplayPicture->isChecked());
-	config->writeEntry("accountSelected", m_view->m_comboAccount->currentText());
-	config->writeEntry("protocolSelected", m_listAccounts[m_view->m_comboAccount->currentText()]->protocol()->pluginId());
+	config->writeEntry("accountSelected", m_accountSelected);
+	config->writeEntry("protocolSelected", m_protocolSelected);
 
 	load();
 

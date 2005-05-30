@@ -59,6 +59,9 @@ class ContactList::Private
 
 	MetaContact *myself;
 
+	/** Flag: does the user uses the global identity */
+	bool useGlobalIdentity;
+
 	/**
 	 * Current contact list version * 10 ( i.e. '10' is version '1.0' )
 	 */
@@ -296,21 +299,20 @@ MetaContact* ContactList::myself()
 
 void ContactList::loadGlobalIdentity()
 {
-	//kdDebug(14010) << k_funcinfo << endl;
-	bool useGlobal=false, useAccountNickname=false;
-	QString globalNickName, accountSelected, protocolSelected;
-
-	// Load the saved global identity in the configuration
+	QString globalNickname, accountSelected, protocolSelected;
+	bool useAccountNickname;
+	// Load the saved global identity
 	KConfig *configIdentity = KGlobal::config();
 	
 	configIdentity->setGroup("GlobalIdentity");
-	useGlobal = configIdentity->readBoolEntry("enableGlobalIdentity");
+	d->useGlobalIdentity = configIdentity->readBoolEntry("enableGlobalIdentity");
 	useAccountNickname = configIdentity->readBoolEntry("checkAccountNick");
-	globalNickName = configIdentity->readEntry("Nickname");
+	globalNickname = configIdentity->readEntry("Nickname");
 	accountSelected = configIdentity->readEntry("accountSelected");
 	protocolSelected = configIdentity->readEntry("protocolSelected");
-	
-	if(useGlobal)
+
+	// Apply the global identity
+	if(d->useGlobalIdentity)
 	{
 		if(useAccountNickname)
 		{
@@ -318,21 +320,29 @@ void ContactList::loadGlobalIdentity()
 			
 			if(syncAccount != 0)
 			{
-				// Set the display name source of the 
+				// Set the display name source
 				myself()->setNameSource(syncAccount->myself());
 				kdDebug(14010) << k_funcinfo << "Global Identity applied !" << endl;
 			}
 		}
 		// Only apply the new nickname if it's different
-		else if(myself()->displayName() != globalNickName)
+		else if(myself()->displayName() != globalNickname)
 		{
 			kdDebug(14010) << k_funcinfo << "Global Identity applied !" << endl;	
-			myself()->setDisplayName(globalNickName);
+			myself()->setDisplayName(globalNickname);
 		}
-		
 	}
 }
 
+bool ContactList::checkGlobalIdentity()
+{	
+	 //Check if the user choosed to use the global identity
+	if(d->useGlobalIdentity)
+	{
+		return true;
+	}
+	return false;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void ContactList::load()

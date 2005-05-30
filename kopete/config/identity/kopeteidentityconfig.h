@@ -43,6 +43,9 @@ private:
 	KopeteIdentityConfigBase *m_view;
 	QMap<QString, Kopete::Account*> m_listAccounts;
 
+	bool m_useGlobal,m_useAccount;
+	QString m_protocolSelected, m_accountSelected, m_nickname;
+
 private slots:
 	void slotSelectImage();
 	void slotTextChanged(const QString &);
