@@ -1772,12 +1772,10 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Group chat error - room " << jid.full () << " had error " << error << " (" << reason << ")" << endl;
 
-	QString detailedReason = reason.isEmpty () ? i18n ( "No reason given by the server" ) : reason;
-
 	KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
 									KMessageBox::Error,
-									i18n ("There was an error processing your request for group chat %1. (Reason: %2, Code %3)").arg ( jid.full (), detailedReason, QString::number ( error ) ),
-									i18n ("Jabber Group Chat") );
+									i18n ("An error occurred when trying to start a chat: %1)").arg ( QString::number ( error ) ),
+									i18n ("Jabber Error") );
 }
 
 void JabberAccount::slotResourceAvailable (const XMPP::Jid & jid, const XMPP::Resource & resource)
