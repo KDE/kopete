@@ -80,6 +80,7 @@ protected:
 	int showDeviceCapabilities(unsigned int device);
 	void guessDriver();
 	unsigned int m_current_device;
+	struct buffer2 m_buffer; // only used when no devices were found
 private:
 	VideoDevicePool();
 	static VideoDevicePool* s_self;
