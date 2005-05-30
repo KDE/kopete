@@ -146,28 +146,5 @@ private:
 	uin_t			uin_;
 };
 
-class ChangeInfoCommand : public GaduCommand
-{
-	Q_OBJECT
-
-public:
-	ChangeInfoCommand( QObject* parent = 0, const char* name = 0 );
-	~ChangeInfoCommand();
-
-	void setInfo( uin_t uin, const QString& passwd,
-				const QString& firstName, const QString& lastName,
-				const QString& nickname, const QString& email,
-				int born, int gender, const QString& city );
-	void execute();
-
-protected slots:
-	void watcher();
-
-private:
-	struct gg_change_info_request	info_;
-	struct gg_http*					session_;
-	uin_t							uin_;
-	QString							passwd_;
-};
 
 #endif
