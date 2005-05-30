@@ -9,7 +9,6 @@ kde_module_LTLIBRARIES = kopete_irc.la
 
 kopete_irc_la_SOURCES = \
 	ircaccount.cpp  \
-	ircaddcontactpage.cpp \
 	irccontact.cpp \
 	irccontact_channel.cpp \
 	irccontact_server.cpp \

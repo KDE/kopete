@@ -8,6 +8,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 
 libkopeteircui_la_SOURCES = \
 	ircadd.ui \
+	ircaddcontactpage.cpp \
 	irceditaccountwidget.cpp \
 	irceditaccount.ui \
 	channellist.cpp \
