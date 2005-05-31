@@ -8,7 +8,7 @@ else
 AVDEVICEDIR =
 endif
 
-SUBDIRS = private ui . tests $(AVDEVICEDIR)
+SUBDIRS = private ui . $(AVDEVICEDIR)
 
 METASOURCES = AUTO
 
