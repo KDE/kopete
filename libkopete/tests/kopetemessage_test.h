@@ -1,7 +1,6 @@
 /*
-    Tests for Kopete::Message::parseLinks
+    Tests for Kopete::Message
 
-    Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
     Copyright (c) 2005      by Duncan Mac-Vicar       <duncan@kde.org>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
@@ -16,27 +15,43 @@
     *************************************************************************
 */
 
-#ifndef KOPETE_LINK_TEST_H
-#define KOPETE_LINK_TEST_H
+#ifndef KOPETEMESSAGE_TEST_H
+#define KOPETEMESSAGE_TEST_H
 
 #include <kunittest/tester.h>
 
+#define private public
+#include "kopetemessage.h"
+#undef private
+
+class Kopete::Protocol;
+class Kopete::Account;
+class Kopete::MetaContact;
+class	Kopete::Contact;
+
 // change to SlotTester when it works
-class KopeteLinkTest : public KUnitTest::Tester
+class KopeteMessage_Test : public KUnitTest::Tester
 {
 public:
-	//KopeteLinkTest();
-	//~KopeteLinkTest();
+	KopeteMessage_Test();
 	void allTests();
 public slots:
+	void testFormats();
+	void testValidXML();
 	void testKnownGoodHTML();
 	void testKnownBrokenHTML();
 	void testKnownGoodPlain();
 	void testKnownBrokenPlain();
 private:
-	
+	void setup();
+	Kopete::Message *m_message;
+	Kopete::Protocol *m_protocol;
+	Kopete::Account *m_account;
+	Kopete::MetaContact *m_metaContactMyself;
+	Kopete::MetaContact *m_metaContactOther;
+	Kopete::Contact *m_contactFrom;
+	Kopete::Contact *m_contactTo;
 };
 
 #endif
-
 

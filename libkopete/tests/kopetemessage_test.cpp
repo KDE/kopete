@@ -1,10 +1,10 @@
 /*
-    Tests for Kopete::Message::parseLinks
+    Tests for Kopete::Message
 
-    Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
-    Copyright (c) 2005      by Duncan Mac-Vicar       <duncan@kde.org>
+    Copyright (c) 2005 by Duncan Mac-Vicar Prett  <duncan@kde.org>
+		Copyright (c) 2004 by Richard Smith <kde@metafoo.co.uk>
 
-    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -16,19 +16,25 @@
     *************************************************************************
 */
 
-#include <qstring.h>
+#include <stdlib.h>
 
+#include <qdir.h>
+
+#include <kapplication.h>
+#include <kinstance.h>
 #include <kunittest/module.h>
-#include "kopetelinktest.h"
 
-#define private public
-#include "kopetemessage.h"
-#undef private
+#include "kopetemessage_test.h"
+#include "kopeteaccount_mock.h"
+#include "kopeteprotocol_mock.h"
+#include "kopetecontact_mock.h"
+#include "kopetemetacontact_mock.h"
+#include "kopeteaccount_mock.h"
 
 using namespace KUnitTest;
 
-KUNITTEST_MODULE( kunittest_kopetelinktest, "KopeteSuite");
-KUNITTEST_MODULE_REGISTER_TESTER( KopeteLinkTest );
+KUNITTEST_MODULE( kunittest_kopetemessage_test, "KopeteSuite");
+KUNITTEST_MODULE_REGISTER_TESTER( KopeteMessage_Test );
 
 /*
   There are four sets of tests: for each of plain text and html, we have those
@@ -69,7 +75,13 @@ static LinkTestSet knownBrokenHTML =
 	{ NULL, NULL }
 };
 
-void KopeteLinkTest::allTests()
+
+KopeteMessage_Test::KopeteMessage_Test()
+{
+	setup();
+}
+
+void KopeteMessage_Test::allTests()
 {
 	testKnownGoodHTML();
 	testKnownBrokenHTML();
@@ -77,7 +89,36 @@ void KopeteLinkTest::allTests()
 	testKnownBrokenPlain();
 }
 
-void KopeteLinkTest::testKnownGoodHTML()
+void KopeteMessage_Test::testFormats()
+{
+	
+}
+
+void KopeteMessage_Test::testValidXML()
+{
+
+}
+
+void KopeteMessage_Test::setup()
+{
+	// change user data dir to avoid messing with user's .kde dir
+	setenv( "KDEHOME", QFile::encodeName( QDir::homeDirPath() + "/.kopete-unittest" ), true );
+
+	//KApplication::disableAutoDcopRegistration();
+	//KCmdLineArgs::init(argc,argv,"testkopetemessage", 0, 0, 0, 0);
+	//KApplication app;
+	
+	// create fake objects needed to build a reasonable testeable message
+	m_protocol = new Kopete::Test::Mock::Protocol( new KInstance(QCString("test-kopete-message")), 0L, "test-kopete-message");
+	m_account = new Kopete::Test::Mock::Account(m_protocol, "testaccount");
+	m_metaContactMyself = new Kopete::Test::Mock::MetaContact();
+	m_metaContactOther = new Kopete::Test::Mock::MetaContact();
+	m_contactFrom = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-myself"), m_metaContactMyself, QString::null);
+	m_contactTo = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-dest"), m_metaContactOther, QString::null);
+	m_message = new Kopete::Message( m_contactFrom, m_contactTo, QString::null, Kopete::Message::Outbound, Kopete::Message::PlainText);
+}
+
+void KopeteMessage_Test::testKnownGoodHTML()
 {
 	uint i = 0;
 	while ( knownGoodHTML[ i ][ 0 ] && knownGoodHTML[ i ][ 1 ] )
@@ -92,7 +133,7 @@ void KopeteLinkTest::testKnownGoodHTML()
 	}
 }
 
-void KopeteLinkTest::testKnownBrokenHTML()
+void KopeteMessage_Test::testKnownBrokenHTML()
 {
 	uint i = 0;
 	while ( knownBrokenHTML[ i ][ 0 ] && knownBrokenHTML[ i ][ 1 ] )
@@ -106,7 +147,7 @@ void KopeteLinkTest::testKnownBrokenHTML()
 		i++;
 	}
 }
-void KopeteLinkTest::testKnownGoodPlain()
+void KopeteMessage_Test::testKnownGoodPlain()
 {
 	uint i = 0;
 	while ( knownGoodPlain[ i ][ 0 ] && knownGoodPlain[ i ][ 1 ] )
@@ -121,7 +162,7 @@ void KopeteLinkTest::testKnownGoodPlain()
 	}
 }
 
-void KopeteLinkTest::testKnownBrokenPlain()
+void KopeteMessage_Test::testKnownBrokenPlain()
 {
 	uint i = 0;
 	while ( knownBrokenPlain[ i ][ 0 ] && knownBrokenPlain[ i ][ 1 ] )
@@ -135,6 +176,3 @@ void KopeteLinkTest::testKnownBrokenPlain()
 		i++;
 	}
 }
-
-
- 

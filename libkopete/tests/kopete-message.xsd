@@ -1,0 +1,39 @@
+<xsd:element name="message">
+  <xsd:complexType>
+    <xsd:sequence>
+      <xsd:element name="from" type="metaContact" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="to" type="metaContact" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="body" type="messageBody" minOccurs="1" maxOccurs="1"/>
+    </xsd:sequence>
+
+    <!-- The time only. eg 12:00 pm -->
+    <xsd:attribute name="time" type="xsd:string" use="required"/>
+
+    <!-- Full timestamp. eg Tue Feb  8 19:04:49 AST 2005 -->
+    <xsd:attribute name="timestamp" type="xsd:string" use="required"/>
+
+    <!-- Formatted timestamp. eg 12:00:57 pm -->
+    <xsd:attribute name="formattedTimestamp" type="xsd:string" use="required"/>
+
+    <!-- Message subject. Used by Jabber Email. -->
+    <xsd:attribute name="subject" type="xsd:string" use="required"/>
+
+    <!-- Message direction (Inbound, Outbound, Internal).
+         This is deprecated. Use @type and @route -->
+    <xsd:attribute name="direction" type="direction" use="required"/>
+
+    <!-- Message route (Inbound, Outbound, Internal).-->
+    <xsd:attribute name="route" type="route" use="required"/>
+
+    <!-- Message route (Normal, Action).-->
+    <xsd:attribute name="type" type="type" use="required"/>
+
+    <!-- Message importance.-->
+    <xsd:attribute name="importance" type="importance" use="required"/>
+
+    <!-- This is the main contact Id - the other person in the
+         converation besides you. If it is a group chat, it is the first
+         person who was being spoken to, or the group chat name. -->
+    <xsd:attribute name="mainContactId" type="xsd:string" use="optional"/>
+  </xsd:complexType>
+</xsd:element>

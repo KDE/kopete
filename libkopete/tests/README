@@ -16,3 +16,22 @@ Test Programs:
 Password Test Program
 Wallet Test Program
 
+Tricks
+======
+
+Accessing private data?, you should not. We will kill you.
+If it is really required, do something like:
+
+#define private public
+#include "kopetemessage.h"
+#undef private
+
+Add a new test quickly:
+
+[duncan@tarro tests]$ ./create_test.rb Kopete::ContactList
+Creating test for class Kopete::ContactList
+kopetecontactlist_test.h and kopetecontactlist_test.cpp writen.
+Please add the following to Makefile.am:
+kunittest_kopetecontactlist_test_la_SOURCES = kopetecontactlist_test.cpp
+kunittest_kopetecontactlist_test_la_LIBADD = -lkunittest ../mock/libkopete_mock.la
+kunittest_kopetecontactlist_test_la_LDFLAGS = -module $(KDE_CHECK_PLUGIN) $(all_libraries)
