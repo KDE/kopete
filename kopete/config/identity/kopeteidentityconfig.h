@@ -17,6 +17,7 @@
 #define _IDENTITYCONFIG_H
 
 #include <kcmodule.h>
+#include <kconfigdialog.h>
 
 namespace Kopete
 {
@@ -49,7 +50,7 @@ private:
 private slots:
 	void slotSelectImage();
 	void slotTextChanged(const QString &);
-	void slotSettingsChanged(bool);
+	void slotSettingsChanged();
 	void slotComboActivated(int);
 };
 #endif
