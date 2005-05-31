@@ -351,7 +351,11 @@ int VideoDevice::showDeviceCapabilities()
 			kdDebug() << "libkopete (avdevice):     Video scales" << endl;
 		if(canOverlay())
 			kdDebug() << "libkopete (avdevice):     Video overlay" << endl;
+#ifdef __linux__
+#ifdef HAVE_V4L2
 		kdDebug() << "libkopete (avdevice):     Audios : " << V4L_capabilities.audios << endl;
+#endif
+#endif
 		kdDebug() << "libkopete (avdevice):     Max res: " << maxWidth() << " x " << maxHeight() << endl;
 		kdDebug() << "libkopete (avdevice):     Min res: " << minWidth() << " x " << minHeight() << endl;
 		kdDebug() << "libkopete (avdevice):     Inputs : " << inputs() << endl;
