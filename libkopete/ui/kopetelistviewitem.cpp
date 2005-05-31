@@ -716,7 +716,8 @@ void DisplayNameComponent::setText( const QString& text )
 		switch ( (*token).type )
 		{
 		case Kopete::Emoticons::Text:
-			new TextComponent( this, d->font, (*token).text );
+			TextComponent *t = new TextComponent( this,  d->font, (*token).text );
+			t->setColor( d->color );
 		break;
 		case Kopete::Emoticons::Image:
 			ic = new ImageComponent( this );
