@@ -708,6 +708,7 @@ void DisplayNameComponent::setText( const QString& text )
 
 	tokens = Kopete::Emoticons::tokenizeEmoticons( text );
 	ImageComponent *ic;
+	TextComponent *t;
 
 	QFontMetrics fontMetrics( d->font );
 	int fontHeight = fontMetrics.height();
@@ -716,7 +717,7 @@ void DisplayNameComponent::setText( const QString& text )
 		switch ( (*token).type )
 		{
 		case Kopete::Emoticons::Text:
-			TextComponent *t = new TextComponent( this,  d->font, (*token).text );
+			t = new TextComponent( this,  d->font, (*token).text );
 			t->setColor( d->color );
 		break;
 		case Kopete::Emoticons::Image:
