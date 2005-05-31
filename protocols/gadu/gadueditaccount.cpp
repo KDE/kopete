@@ -93,7 +93,6 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 	QWidget::setTabOrder( loginEdit_, passwordWidget_->mRemembered );
 	QWidget::setTabOrder( passwordWidget_->mRemembered, passwordWidget_->mPassword );
 	QWidget::setTabOrder( passwordWidget_->mPassword, autoLoginCheck_ );
-
 }
 
 void
@@ -111,7 +110,7 @@ GaduEditAccount::publishUserInfo()
 	sr.meiden	= uiMeiden->text();
 	sr.orgin	= uiOrgin->text();
 
-	kdDebug(14100) << uiGender->currentItem()  << " gender " << endl;
+	kdDebug(14100) << uiGender->currentItem() << " gender " << endl;
 	if ( uiGender->currentItem() == 1 ) {
 		kdDebug(14100) << "so you become female now" << endl;
 		sr.gender = QString( GG_PUBDIR50_GENDER_SET_FEMALE );
@@ -133,7 +132,7 @@ GaduEditAccount::slotSearchResult( const SearchResult& result, unsigned int seq 
 		return;
 	}
         
-	connectLabel->setText( "" );
+	connectLabel->setText( " " );
 		
 	uiName->setText( result[0].firstname );
 	uiSurname->setText( result[0].surname );
@@ -158,7 +157,6 @@ GaduEditAccount::slotSearchResult( const SearchResult& result, unsigned int seq 
 
 	enableUserInfo( true );
 	
-	
 	disconnect( SLOT( slotSearchResult( const SearchResult&, unsigned int ) ) );
 }
 
@@ -173,7 +171,7 @@ GaduEditAccount::enableUserInfo( bool e )
 	uiMeiden->setEnabled( e );
 	uiOrgin->setEnabled( e );
 	
-	connectLabel->setEnabled( !e );
+//	connectLabel->setEnabled( !e );
 }
 
 void
