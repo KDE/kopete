@@ -29,7 +29,7 @@
 #include <kdebug.h>
 #include <ksavefile.h>
 #include <kstandarddirs.h>
-#include <kconfig.h>
+#include <kopeteconfig.h>
 #include <kglobal.h>
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
@@ -304,12 +304,11 @@ void ContactList::loadGlobalIdentity()
 	// Load the saved global identity
 	KConfig *configIdentity = KGlobal::config();
 	
-	configIdentity->setGroup("GlobalIdentity");
-	d->useGlobalIdentity = configIdentity->readBoolEntry("enableGlobalIdentity");
-	useAccountNickname = configIdentity->readBoolEntry("checkAccountNick");
-	globalNickname = configIdentity->readEntry("Nickname");
-	accountSelected = configIdentity->readEntry("accountSelected");
-	protocolSelected = configIdentity->readEntry("protocolSelected");
+	d->useGlobalIdentity = Kopete::Config::enableGlobalIdentity();
+	useAccountNickname = Kopete::Config::globalIdentity_CheckAccountNick();
+	globalNickname = Kopete::Config::globalIdentity_Nickname();
+	accountSelected = Kopete::Config::globalIdentity_AccountSelected();
+	protocolSelected = Kopete::Config::globalIdentity_ProtocolSelected();
 
 	// Apply the global identity
 	if(d->useGlobalIdentity)

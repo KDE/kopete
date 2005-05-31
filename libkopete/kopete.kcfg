@@ -1,0 +1,23 @@
+<!DOCTYPE kcfg SYSTEM "http://www.kde.org/standards/kcfg/1.0/kcfg.dtd">
+<kcfg>
+ <kcfgfile name="kopete" />
+ <group name="GlobalIdentity" >
+  <entry key="enableGlobalIdentity" type="Bool" name="EnableGlobalIdentity" >
+   <label>Enable the global identity feature</label>
+   <whatsthis>When enabled, this allows you to set your data in a central place. All your IM accounts will use this global data.
+</whatsthis>
+   <default>false</default>
+  </entry>
+  <entry key="checkAccountNick" type="Bool" name="GlobalIdentity_CheckAccountNick" >
+   <default>false</default>
+  </entry>
+  <entry key="Nickname" type="String" name="GlobalIdentity_Nickname" >
+   <label>Your prefered nickname for your global identity</label>
+  </entry>
+  <entry key="accountSelected" type="String" name="GlobalIdentity_AccountSelected" />
+  <entry key="protocolSelected" type="String" name="GlobalIdentity_ProtocolSelected" />
+  <entry key="useDisplayPicture" type="Bool" name="GlobalIdentity_UseDisplayPicture" >
+   <default>false</default>
+  </entry>
+ </group>
+</kcfg>

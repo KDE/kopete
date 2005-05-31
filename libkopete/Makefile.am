@@ -31,10 +31,12 @@ libkopete_la_SOURCES = knotification.cpp connectionmanager.cpp kopeteonlinestatu
 	kopeteeventpresentation.cpp kopetenotifyevent.cpp kopetenotifydataobject.cpp kopeteblacklister.cpp \
 	kopetemessageevent.cpp kopetemessagehandler.cpp kopetemessagehandlerchain.cpp \
 	kopetesimplemessagehandler.cpp kopeteproperties.cpp kabcpersistence.cpp connectionmanager.skel \
-	clientiface.stub managedconnectionaccount.cpp networkstatuscommon.h
+	clientiface.stub managedconnectionaccount.cpp networkstatuscommon.h kopeteconfig.kcfgc kopeteerrornotifier.cpp
 
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
 libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(LIB_KIO) $(LIB_XSS) $(LIBXML_LIBS) $(LIBXSLT_LIBS)
+
+kde_kcfg_DATA = kopete.kcfg
 
 #AM_CXXFLAGS = -DQT_PLUGIN
 #kde_widget_LTLIBRARIES = libkopetewidgets.la
@@ -64,4 +66,4 @@ kopeteinclude_HEADERS = kopeteaccount.h kopeteaccountmanager.h kopeteawayaction.
 
 # vim: set noet:
 
-noinst_HEADERS = kopeteblacklister.h
+noinst_HEADERS = kopeteblacklister.h kopeteconfig.h
