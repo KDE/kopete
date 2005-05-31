@@ -79,10 +79,12 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 
 		autoLoginCheck_->setChecked( account_->excludeConnect() );
 		dccCheck_->setChecked( account_->dccEnabled() );
-		useTls_->setCurrentItem( isSsl ? ( account_ ->useTls() ) : 2 );
+		useTls_->setCurrentItem( isSsl ? ( account_->useTls() ) : 2 );
 
 		connect( account(), SIGNAL( pubDirSearchResult( const SearchResult&, unsigned int ) ),
 					SLOT( slotSearchResult( const SearchResult&, unsigned int ) ) );
+		connectLabel->setText( i18n( "personal information being fetched from server",
+					"<p align=\"center\">Fetching from server</p>" ) );
 		seqNr = account_->getPersonalInformation();
 	}
 
@@ -130,7 +132,9 @@ GaduEditAccount::slotSearchResult( const SearchResult& result, unsigned int seq 
 	if ( !( seq != 0 && seqNr != 0 && seq == seqNr ) ) {
 		return;
 	}
-
+        
+	connectLabel->setText( "" );
+		
 	uiName->setText( result[0].firstname );
 	uiSurname->setText( result[0].surname );
 	nickName->setText( result[0].nickname );
@@ -153,7 +157,8 @@ GaduEditAccount::slotSearchResult( const SearchResult& result, unsigned int seq 
 	uiOrgin->setText( result[0].orgin );
 
 	enableUserInfo( true );
-
+	
+	
 	disconnect( SLOT( slotSearchResult( const SearchResult&, unsigned int ) ) );
 }
 

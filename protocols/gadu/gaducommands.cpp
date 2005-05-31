@@ -220,7 +220,7 @@ void RegisterCommand::watcher()
 				return;
 				break;
 			case GG_STATE_DONE:
-				struct gg_token* sp	= ( struct gg_token* )session_->data;
+				struct gg_token* sp = ( struct gg_token* )session_->data;
 				tokenId = (char *)sp->tokenid;
 				kdDebug( 14100 ) << "got Token!, ID: " << tokenId << endl;
 				deleteNotifiers();
