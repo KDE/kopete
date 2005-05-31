@@ -53,6 +53,8 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, QWidget* parent, const char*
 GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* parent, const char* name )
 : KDialogBase( parent, name, false, QString::null, User1|User2|User3|Cancel, User2 )
 {
+	ResLine rs;
+
 	mAccount = account;
 	createWidget();
 	initConnections();
@@ -76,13 +78,14 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* pare
 	enableButton( User2, false );
 
 	// now it is time to switch to Right Page(tm)
+	rs.uin = searchFor;
+	
 	fName	=  fSurname =  fNick = fCity = QString::null;
 	fUin	= searchFor;
 	fGender	= fAgeFrom = fAgeTo = 0;
 	fOnlyOnline = false;
 
-	mAccount->pubDirSearch( fName, fSurname, fNick,
-				fUin, fCity, fGender, fAgeFrom, fAgeTo, fOnlyOnline );
+	mAccount->pubDirSearch( rs, fAgeFrom, fAgeTo, fOnlyOnline );
 
 }
 
@@ -124,7 +127,8 @@ GaduPublicDir::slotAddContact()
 
 	cl->surname	= fSurname;
 
-	GaduEditContact *ed = new GaduEditContact( mAccount, cl, this );
+//	GaduEditContact *ed = 
+	new GaduEditContact( mAccount, cl, this );
 }
 
 void
@@ -232,7 +236,7 @@ GaduPublicDir::iconForStatus( uint status )
 }
 
 void
-GaduPublicDir::slotSearchResult( const SearchResult& result, unsigned int seq )
+GaduPublicDir::slotSearchResult( const SearchResult& result, unsigned int )
 {
 	QListView* list = mMainWidget->listFound;
 
@@ -250,7 +254,7 @@ GaduPublicDir::slotSearchResult( const SearchResult& result, unsigned int seq )
 					(*r).nickname,
 					(*r).age,
 					(*r).city,
-					(*r).uin
+					QString::number( (*r).uin ).ascii()
 						);
 		sl->setPixmap( 0, iconForStatus( (*r).status ) );
 	}
@@ -314,13 +318,26 @@ GaduPublicDir::slotSearch()
 	enableButton( User3, false );
 	enableButton( User2, false );
 
+	ResLine rs;
+	rs.firstname	= fName;
+	rs.surname	= fSurname;
+	rs.nickname	= fNick;
+	rs.uin		= fUin;
+	rs.city		= fCity;
+	
+	if ( fGender == 1 ) {
+		rs.gender =  GG_PUBDIR50_GENDER_MALE;
+	}
+	if ( fGender == 2 ) {
+		rs.gender = GG_PUBDIR50_GENDER_FEMALE;
+	}
+	
+	
 	if ( mMainWidget->radioByData->isChecked() ) {
-		mAccount->pubDirSearch( fName, fSurname, fNick,
-					0, fCity, fGender, fAgeFrom, fAgeTo, fOnlyOnline );
+		mAccount->pubDirSearch( rs, fAgeFrom, fAgeTo, fOnlyOnline );
 	}
 	else {
-		mAccount->pubDirSearch( empty, empty, empty,
-					fUin, empty, 0, 0, 0,  fOnlyOnline );
+		mAccount->pubDirSearch( rs, 0, 0, fOnlyOnline );
 	}
 }
 

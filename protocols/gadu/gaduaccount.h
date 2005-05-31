@@ -102,9 +102,7 @@ public slots:
 	// those two functions are connected straight to gadusession ones
 	// with the same names/params. This was the easiest way to
 	// make this interface public
-	unsigned int pubDirSearch( QString& name, QString& surname, QString& nick,
-			    int UIN, QString& city, int gender,
-			    int ageFrom, int ageTo, bool onlyAlive );
+	unsigned int pubDirSearch(  ResLine& query, int ageFrom, int ageTo, bool onlyAlive );
 	void pubDirSearchClose();
 
 	// tls

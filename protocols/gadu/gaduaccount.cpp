@@ -1027,12 +1027,9 @@ GaduAccount::slotDescription()
 }
 
 unsigned int
-GaduAccount::pubDirSearch( QString& name, QString& surname, QString& nick,
-			    int UIN, QString& city, int gender,
-			    int ageFrom, int ageTo, bool onlyAlive )
+GaduAccount::pubDirSearch( ResLine& query, int ageFrom, int ageTo, bool onlyAlive )
 {
-	return p->session_->pubDirSearch( name, surname, nick, UIN, city, gender,
-							ageFrom, ageTo, onlyAlive );
+	return p->session_->pubDirSearch( query, ageFrom, ageTo, onlyAlive );
 }
 
 void

@@ -393,8 +393,7 @@ GaduSession::publishPersonalInformation( ResLine& d )
 }
 
 unsigned int
-GaduSession::pubDirSearch(QString& name, QString& surname, QString& nick, int UIN, QString& city,
-                            int gender, int ageFrom, int ageTo, bool onlyAlive)
+GaduSession::pubDirSearch(  ResLine& query, int ageFrom, int ageTo, bool onlyAlive )
 {
 	QString bufYear;
 	unsigned int reqNr;
@@ -409,22 +408,22 @@ GaduSession::pubDirSearch(QString& name, QString& surname, QString& nick, int UI
 		return 0;
 	}
 
-	if ( !UIN ) {
-		if (name.length()) {
+	if ( query.uin == 0 ) {
+		if (query.firstname.length()) {
 			gg_pubdir50_add( searchRequest, GG_PUBDIR50_FIRSTNAME,
-						(const char*)textcodec->fromUnicode( name ) );
+						(const char*)textcodec->fromUnicode( query.firstname ) );
 		}
-		if ( surname.length() ) {
+		if ( query.surname.length() ) {
 			gg_pubdir50_add( searchRequest, GG_PUBDIR50_LASTNAME,
-						(const char*)textcodec->fromUnicode( surname ) );
+						(const char*)textcodec->fromUnicode( query.surname ) );
 		}
-		if ( nick.length() ) {
+		if ( query.nickname.length() ) {
 			gg_pubdir50_add( searchRequest, GG_PUBDIR50_NICKNAME,
-						(const char*)textcodec->fromUnicode( nick ) );
+						(const char*)textcodec->fromUnicode( query.nickname ) );
 		}
-		if ( city.length() ) {
+		if ( query.city.length() ) {
 			gg_pubdir50_add( searchRequest, GG_PUBDIR50_CITY,
-						(const char*)textcodec->fromUnicode( city ) );
+						(const char*)textcodec->fromUnicode( query.city ) );
 		}
 		if ( ageFrom || ageTo ) {
 			QString yearFrom = QString::number( QDate::currentDate().year() - ageFrom );
@@ -444,13 +443,9 @@ GaduSession::pubDirSearch(QString& name, QString& surname, QString& nick, int UI
 			}
 		}
 
-		switch ( gender ) {
-			case 1:
-				gg_pubdir50_add( searchRequest, GG_PUBDIR50_GENDER, GG_PUBDIR50_GENDER_MALE );
-			break;
-			case 2:
-				gg_pubdir50_add( searchRequest, GG_PUBDIR50_GENDER, GG_PUBDIR50_GENDER_FEMALE );
-			break;
+		if ( query.gender.length() == 1 ) {
+                	gg_pubdir50_add( searchRequest, GG_PUBDIR50_GENDER,
+				(const char *)((const char*)textcodec->fromUnicode( query.gender ) ) );
 		}
 
 		if ( onlyAlive ) {
@@ -459,10 +454,10 @@ GaduSession::pubDirSearch(QString& name, QString& surname, QString& nick, int UI
 	}
 	// otherwise we are looking only for one fellow with this nice UIN
 	else{
-		gg_pubdir50_add( searchRequest, GG_PUBDIR50_UIN, QString::number( UIN ).ascii() );
+		gg_pubdir50_add( searchRequest, GG_PUBDIR50_UIN, QString::number( query.uin ).ascii() );
 	}
 
-	gg_pubdir50_add( searchRequest, GG_PUBDIR50_START, QString::number(searchSeqNr_).ascii() );
+	gg_pubdir50_add( searchRequest, GG_PUBDIR50_START, QString::number( searchSeqNr_ ).ascii() );
 	reqNr = gg_pubdir50( session_, searchRequest );
 	gg_pubdir50_free( searchRequest );
 
@@ -483,7 +478,7 @@ GaduSession::sendResult( gg_pubdir50_t result )
 	}
 
 	for ( i = 0; i < count; i++ ) {
-		resultLine.uin		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_UIN ) );
+		resultLine.uin		= QString( gg_pubdir50_get( result, i, GG_PUBDIR50_UIN ) ).toInt();
 		resultLine.firstname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_FIRSTNAME ) );
 		resultLine.surname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_LASTNAME ) );
 		resultLine.nickname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_NICKNAME ) );

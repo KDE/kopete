@@ -72,7 +72,7 @@ struct KGaduNotify {
 typedef QPtrList<KGaduNotify> KGaduNotifyList;
 
 struct ResLine{
-	QString uin;
+	unsigned int uin;
 	QString firstname;
 	QString surname;
 	QString nickname;
@@ -116,7 +116,7 @@ public:
 	 * You must set @ref pubDirSearchResult() signal before calling this function, otherwise no result
 	 * will be returned
 	 */
-	unsigned int pubDirSearch( QString&, QString&, QString&, int, QString&, int, int, int, bool );
+	unsigned int pubDirSearch( ResLine&, int, int, bool );
 
 public slots:
 	void	login( KGaduLoginParams* login );
