@@ -1201,29 +1201,6 @@ void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 		contact->removeProperty ( protocol()->propAuthorizationStatus );
 	}
 
-	/*
-	 * Set the contact's subscription status
-	 */
-	switch ( item.subscription().type () )
-	{
-		case XMPP::Subscription::None:
-			contact->setProperty ( protocol()->propSubscriptionStatus,
-								   i18n ( "You cannot see each others' status." ) );
-			break;
-		case XMPP::Subscription::To:
-			contact->setProperty ( protocol()->propSubscriptionStatus,
-								   i18n ( "You can see this contact's status but they cannot see your status." ) );
-			break;
-		case XMPP::Subscription::From:
-			contact->setProperty ( protocol()->propSubscriptionStatus,
-								   i18n ( "This contact can see your status but you cannot see their status." ) );
-			break;
-		case XMPP::Subscription::Both:
-			contact->setProperty ( protocol()->propSubscriptionStatus,
-								   i18n ( "You can see each others' status." ) );
-			break;
-	}
-
 }
 
 void JabberAccount::slotContactDeleted (const XMPP::RosterItem & item)

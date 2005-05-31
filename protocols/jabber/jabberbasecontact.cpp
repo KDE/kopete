@@ -109,6 +109,29 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 	}
 
 	/*
+	 * Set the contact's subscription status
+	 */
+	switch ( item.subscription().type () )
+	{
+		case XMPP::Subscription::None:
+			setProperty ( protocol()->propSubscriptionStatus,
+						  i18n ( "You cannot see each others' status." ) );
+			break;
+		case XMPP::Subscription::To:
+			setProperty ( protocol()->propSubscriptionStatus,
+						  i18n ( "You can see this contact's status but they cannot see your status." ) );
+			break;
+		case XMPP::Subscription::From:
+			setProperty ( protocol()->propSubscriptionStatus,
+						  i18n ( "This contact can see your status but you cannot see their status." ) );
+			break;
+		case XMPP::Subscription::Both:
+			setProperty ( protocol()->propSubscriptionStatus,
+						  i18n ( "You can see each others' status." ) );
+			break;
+	}
+
+	/*
 	 * In this method, as opposed to KC::syncGroups(),
 	 * the group list from the server is authoritative.
 	 * As such, we need to find a list of all groups
