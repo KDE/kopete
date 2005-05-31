@@ -97,18 +97,21 @@ void SkypeCallDialog::updateStatus(const QString &callId, const QString &status)
 			AcceptButton->setEnabled(false);
 			StatusLabel->setText(i18n("Canceled"));
 			closeLater();
+			d->status = csNotRunning;
 		} else if (status == "BUSY") {
 			HoldButton->setEnabled(false);
 			HangButton->setEnabled(false);
 			AcceptButton->setEnabled(false);
 			StatusLabel->setText(i18n("Other person is busy"));
 			closeLater();
+			d->status = csNotRunning;
 		} else if (status == "REFUSED") {
 			HoldButton->setEnabled(false);
 			HangButton->setEnabled(false);
 			AcceptButton->setEnabled(false);
 			StatusLabel->setText(i18n("Refused"));
 			closeLater();
+			d->status = csNotRunning;
 		} else if (status == "MISSED") {
 			HoldButton->setEnabled(false);
 			HangButton->setEnabled(false);
@@ -121,6 +124,7 @@ void SkypeCallDialog::updateStatus(const QString &callId, const QString &status)
 			AcceptButton->setEnabled(false);
 			StatusLabel->setText(i18n("Finished"));
 			closeLater();
+			d->status = csNotRunning;
 		} else if (status == "LOCALHOLD") {
 			HoldButton->setEnabled(true);
 			HoldButton->setText(i18n("Resume"));

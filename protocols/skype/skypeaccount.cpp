@@ -88,18 +88,20 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 	launchType = config->readNumEntry("Launch");//launch the skype?
 	setScanForUnread(config->readBoolEntry("ScanForUnread"));
 	setCallControl(config->readBoolEntry("CallControl"));
+	setPings(config->readBoolEntry("Pings", true));
 	setBus(config->readNumEntry("Bus", 1));
 	//setStartDBus(config->readBoolEntry("StartDBus", false));
 	///@todo Once Dbus launching works, remove this v and uncomment this ^
 	setStartDBus(false);
 	setLaunchTimeout(config->readNumEntry("LaunchTimeout", 30));
 	d->myName = config->readEntry("MyselfName", "Skype");
+	setSkypeCommand(config->readEntry("SkypeCommand", "artsdsp skype --use-session-dbus"));
 
 	//create myself contact
 	SkypeContact *_myself = new SkypeContact(this, "Skype", Kopete::ContactList::self()->myself(), false);
 	setMyself(_myself);
 	//and set default online status (means offline)
-	myself()->setOnlineStatus(protocol->Offline);setSkypeCommand(config->readEntry("SkypeCommand", "artsdsp skype --use-session-dbus"));
+	myself()->setOnlineStatus(protocol->Offline);
 
 	//Now, connect the signals
 	QObject::connect(&d->skype, SIGNAL(wentOnline()), this, SLOT(wentOnline()));
@@ -231,6 +233,7 @@ void SkypeAccount::wentOnline() {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	myself()->setOnlineStatus(d->protocol->Online);//just set the icon
+	d->skype.enablePings(d->pings);
 	emit connectionStatus(true);
 }
 
@@ -493,6 +496,7 @@ const QString &SkypeAccount::getSkypeCommand() const {
 }
 
 void SkypeAccount::setMyselfName(const QString &name) {
+	d->myName = name;
 	myself()->setNickName(name);
 }
 

@@ -112,6 +112,11 @@ Kopete::Account *skypeEditAccount::apply() {
 	skype->setBus(BusGroup->selectedId());
 	skype->setStartDBus(DBusCheck->isChecked());
 	skype->setLaunchTimeout(LaunchSpin->value());
+	if (AutoCloseCallCheck->isChecked()) {
+		skype->setCloseWindowTimeout(CloseTimeoutSpin->value());
+	} else {
+		skype->setCloseWindowTimeout(0);	
+	}
 	skype->save();//save it to config
 	return skype;//return the account
 }

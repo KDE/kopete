@@ -69,12 +69,14 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 	: Kopete::Contact(account, id, parent, QString::null) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
+	setOnlineStatus(account->protocol()->Offline);
+
 	d = new SkypeContactPrivate;//create the insides
 	d->session = 0L;//no session yet
 	d->account = account;//save the account for future, it will be needed
 	account->prepareContact(this);//let the account prepare us
 	d->user = user;
-	d->callContactAction = 0L;
+	d->callContactAction = 0L; 
 	connect(this, SIGNAL(setCallPossible(bool )), this, SLOT(enableCall(bool )));
 	connect(this, SIGNAL(onlineStatusChanged(Kopete::Contact*,const Kopete::OnlineStatus&,const Kopete::OnlineStatus&)), this, SLOT(statusChanged()));
 	if (account->canComunicate() && user)

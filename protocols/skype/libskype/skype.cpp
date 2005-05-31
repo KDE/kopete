@@ -134,6 +134,9 @@ void Skype::setOnline() {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 	d->showDeadMessage = true;
 
+	if ((d->onlineStatus == usOnline) || (d->connStatus == csOnline))
+		return;//Already online
+
 	queueSkypeMessage("SET USERSTATUS ONLINE", true);//just send the message
 }
 
@@ -141,7 +144,7 @@ void Skype::setOffline() {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 	d->showDeadMessage = false;
 
-	queueSkypeMessage("SET USERSTATUS OFFLINE", true);
+	d->connection << QString("SET USERSTATUS OFFLINE");//this one special, do not connect to skype because of that
 }
 
 void Skype::setAway() {
@@ -189,7 +192,7 @@ void Skype::queueSkypeMessage(const QString &message, bool deleteQueue) {
 		if (deleteQueue)
 			d->messageQueue.clear();//delete all old messages
 		d->messageQueue << message;//add the new one
-		d->connection.connectSkype((d->start) ? d->skypeCommand : "", d->appName, PROTOCOL_MAX, d->bus, d->startDBus, d->launchTimeout);//try to connect 
+		d->connection.connectSkype((d->start) ? d->skypeCommand : "", d->appName, PROTOCOL_MAX, d->bus, d->startDBus, d->launchTimeout);//try to connect
 	}
 }
 
@@ -578,10 +581,7 @@ void Skype::enablePings(bool enabled) {
 }
 
 void Skype::ping() {
-	if ((d->connection % QString("PING")).stripWhiteSpace() != "PONG") {
-		d->connection.disconnectSkype(crLost);
-		error(i18n("Could not ping Skype"));
-	}
+	d->connection << QString("PING");
 }
 
 void Skype::setBus(int bus) {
