@@ -16,6 +16,10 @@
 */
 
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3ValueList>
+#include <Q3PtrList>
 
 #include <dcopclient.h>
 #include <kapplication.h>
@@ -54,8 +58,8 @@ KIMIfaceImpl::~KIMIfaceImpl()
 QStringList KIMIfaceImpl::allContacts()
 {
 	QStringList result;
-	QPtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
-	QPtrListIterator<Kopete::MetaContact> it( list );
+	Q3PtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
+	Q3PtrListIterator<Kopete::MetaContact> it( list );
 	for( ; it.current(); ++it )
 	{
 		if ( !it.current()->metaContactId().contains(':') )
@@ -68,8 +72,8 @@ QStringList KIMIfaceImpl::allContacts()
 QStringList KIMIfaceImpl::reachableContacts()
 {
 	QStringList result;
-	QPtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
-	QPtrListIterator<Kopete::MetaContact> it( list );
+	Q3PtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
+	Q3PtrListIterator<Kopete::MetaContact> it( list );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->isReachable() && !it.current()->metaContactId().contains(':') )
@@ -82,8 +86,8 @@ QStringList KIMIfaceImpl::reachableContacts()
 QStringList KIMIfaceImpl::onlineContacts()
 {
 	QStringList result;
-	QPtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
-	QPtrListIterator<Kopete::MetaContact> it( list );
+	Q3PtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
+	Q3PtrListIterator<Kopete::MetaContact> it( list );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->isOnline() && !it.current()->metaContactId().contains(':') )
@@ -96,8 +100,8 @@ QStringList KIMIfaceImpl::onlineContacts()
 QStringList KIMIfaceImpl::fileTransferContacts()
 {
 	QStringList result;
-	QPtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
-	QPtrListIterator<Kopete::MetaContact> it( list );
+	Q3PtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
+	Q3PtrListIterator<Kopete::MetaContact> it( list );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->canAcceptFiles() && !it.current()->metaContactId().contains(':') )
@@ -195,8 +199,8 @@ bool KIMIfaceImpl::canRespond( const QString & uid )
 
 	if ( mc )
 	{
-		QPtrList<Kopete::Contact> list = mc->contacts();
-		QPtrListIterator<Kopete::Contact> it( list );
+		Q3PtrList<Kopete::Contact> list = mc->contacts();
+		Q3PtrListIterator<Kopete::Contact> it( list );
 		Kopete::Contact *contact;
 		while ( ( contact = it.current() ) != 0 )
 		{
@@ -226,8 +230,8 @@ Kopete::MetaContact * KIMIfaceImpl::locateProtocolContact( const QString & conta
 	if ( protocol )
 	{
 		// find its accounts
-		QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( protocol );
-		QDictIterator<Kopete::Account> it( accounts );
+		Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( protocol );
+		Q3DictIterator<Kopete::Account> it( accounts );
 		for( ; it.current(); ++it )
 		{
 			Kopete::Contact *c = Kopete::ContactList::self()->findContact( protocolId, it.currentKey(), contactId  );
@@ -261,9 +265,9 @@ QString KIMIfaceImpl::context( const QString & uid )
 
 QStringList KIMIfaceImpl::protocols()
 {
-	QValueList<KPluginInfo *> protocols = Kopete::PluginManager::self()->availablePlugins( "Protocols" );
+	Q3ValueList<KPluginInfo *> protocols = Kopete::PluginManager::self()->availablePlugins( "Protocols" );
 	QStringList protocolList;
-	for ( QValueList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it )
+	for ( Q3ValueList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it )
 		protocolList.append( (*it)->name() );
 
 	return protocolList;
@@ -318,8 +322,8 @@ bool KIMIfaceImpl::addContact( const QString &contactId, const QString &protocol
 	if ( protocol )
 	{
 		// find its accounts
-		QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( protocol );
-		QDictIterator<Kopete::Account> it( accounts );
+		Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( protocol );
+		Q3DictIterator<Kopete::Account> it( accounts );
 		Kopete::Account *ac = it.toFirst();
 		if ( ac )
 		{

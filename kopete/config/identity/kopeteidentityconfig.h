@@ -3,6 +3,8 @@
 
     Copyright (c) 2005 by Michaël Larouche <shock@shockdev.ca.tc>
 
+    Kopete    (c) 2003-2005 by the Kopete developers  <kopete-devel@kde.org>
+
     *************************************************************************
     *                                                                       *
     * This program is free software; you can redistribute it and/or modify  *
@@ -17,6 +19,7 @@
 #define _IDENTITYCONFIG_H
 
 #include <kcmodule.h>
+#include <kconfigdialog.h>
 
 namespace Kopete
 {
@@ -49,7 +52,7 @@ private:
 private slots:
 	void slotSelectImage();
 	void slotTextChanged(const QString &);
-	void slotSettingsChanged(bool);
+	void slotSettingsChanged();
 	void slotComboActivated(int);
 };
 #endif

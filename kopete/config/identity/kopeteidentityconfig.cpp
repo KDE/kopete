@@ -3,7 +3,7 @@
 
     Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
 
-    Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2003-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -32,7 +32,6 @@
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
-#include <kconfig.h>
 #include <kglobal.h>
 
 #include "kopeteglobal.h"
@@ -42,6 +41,8 @@
 #include "kopeteaccount.h"
 #include "kopetecontactlist.h"
 
+#include "kopeteconfig.h"
+
 typedef KGenericFactory<KopeteIdentityConfig, QWidget> KopeteIdentityConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_identityconfig, KopeteIdentityConfigFactory( "kcm_kopete_identityconfig" ) )
 
@@ -50,13 +51,14 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char *name, co
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	m_view = new KopeteIdentityConfigBase( this, "KopeteIdentityConfig::m_view" );
 
+	addConfig( Kopete::Config::self(), m_view );
 	// Populate the Account Combo Box
 	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
 	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next() )
 	{
 		QString accountName = i->accountLabel();
 		QPixmap accountIcon = i->accountIcon();
-		m_view->m_comboAccount->insertItem(accountIcon, accountName);
+		m_view->kcfg_GlobalIdentity_AccountSelectedId->insertItem(accountIcon, accountName);
 		// Populate QMap for futher use
 		m_listAccounts.insert(accountName, i);
 	}
@@ -67,64 +69,20 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char *name, co
 	connect(m_view->m_selectImage, SIGNAL(clicked()), this, SLOT(slotSelectImage()));
 
 	// Settings signal/slots
-	connect(m_view->m_checkEnableGlobal, SIGNAL(toggled(bool)), this, SLOT(slotSettingsChanged(bool)));
-	connect(m_view->m_checkAccountNick, SIGNAL(toggled(bool)), this, SLOT(slotSettingsChanged(bool)));	
-	connect(m_view->m_useDisplayPicture, SIGNAL(toggled(bool)), this, SLOT(slotSettingsChanged(bool)));
-	connect(m_view->m_lineNickName, SIGNAL(textChanged(const QString &)), this, SLOT(slotTextChanged(const QString &)));
-	connect(m_view->m_comboAccount, SIGNAL(activated(int)), this, SLOT(slotComboActivated(int)));
+	connect(this, SIGNAL(changed()), this, SLOT(slotSettingsChanged()));
 }
 
 void KopeteIdentityConfig::load()
 {
-	KConfig *config = KGlobal::config();
-	
-	config->setGroup("GlobalIdentity");
-	m_useGlobal = config->readBoolEntry("enableGlobalIdentity");
-	m_useAccount = config->readBoolEntry("checkAccountNick");
-	m_nickname = config->readEntry("Nickname");
-
-	m_view->m_checkEnableGlobal->setChecked(m_useGlobal);
-	// Load the latest configured nickname
-	m_view->m_lineNickName->setText(m_nickname);
-	m_view->m_checkAccountNick->setChecked(m_useAccount);
-
-	// Load the latest selected display picture
-	m_view->m_useDisplayPicture->setChecked(config->readBoolEntry("useAvatar"));
-	m_view->m_displayPicture->setPixmap( locateLocal( "appdata", "global-displayphoto.png" ) );
-
-	// Select the account according to the latest setting
-	m_accountSelected = config->readEntry("accountSelected");
-	m_protocolSelected = config->readEntry("protocolSelected");
-	int current=0;
-	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
-	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next() )
-	{
-		if(i->accountLabel() == m_accountSelected && i->protocol()->pluginId() == m_protocolSelected)
-		{
-			m_view->m_comboAccount->setCurrentItem(current);
-		}
-		current++;
-	}
+	KCModule::load();
+	m_view->m_displayPicture->setPixmap(locateLocal("appdata", "global-displayphoto.png"));
 }
 
 void KopeteIdentityConfig::save()
 {
-	m_useGlobal = m_view->m_checkEnableGlobal->isChecked();
-	m_nickname = m_view->m_lineNickName->text();
-	m_useAccount = m_view->m_checkAccountNick->isChecked();
-	m_accountSelected = m_view->m_comboAccount->currentText();
-	m_protocolSelected = m_listAccounts[m_view->m_comboAccount->currentText()]->protocol()->pluginId();
-
-	KConfig *config = KGlobal::config();
-	
-	config->setGroup("GlobalIdentity");
-	config->writeEntry("enableGlobalIdentity", m_useGlobal);
-	config->writeEntry("Nickname", m_nickname);
-	config->writeEntry("checkAccountNick", m_useAccount);
-	config->writeEntry("useAvatar", m_view->m_useDisplayPicture->isChecked());
-	config->writeEntry("accountSelected", m_accountSelected);
-	config->writeEntry("protocolSelected", m_protocolSelected);
-
+	KCModule::save();
+	Kopete::Config::setGlobalIdentity_AccountSelected(m_view->kcfg_GlobalIdentity_AccountSelectedId->currentText());
+	Kopete::Config::setGlobalIdentity_ProtocolSelected(m_listAccounts[m_view->kcfg_GlobalIdentity_AccountSelectedId->currentText()]->protocol()->pluginId());
 	load();
 
 	// Apply the global identity
@@ -197,7 +155,7 @@ void KopeteIdentityConfig::slotTextChanged(const QString &)
 	emit changed(true);
 }
 
-void KopeteIdentityConfig::slotSettingsChanged(bool)
+void KopeteIdentityConfig::slotSettingsChanged()
 {
 	emit changed(true);
 }

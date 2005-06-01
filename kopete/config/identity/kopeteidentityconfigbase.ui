@@ -22,7 +22,7 @@
         </property>
         <widget class="QCheckBox">
             <property name="name">
-                <cstring>m_checkEnableGlobal</cstring>
+                <cstring>kcfg_EnableGlobalIdentity</cstring>
             </property>
             <property name="text">
                 <string>En&amp;able global identity</string>
@@ -63,14 +63,14 @@
                         </widget>
                         <widget class="QLineEdit">
                             <property name="name">
-                                <cstring>m_lineNickName</cstring>
+                                <cstring>kcfg_GlobalIdentity_Nickname</cstring>
                             </property>
                         </widget>
                     </hbox>
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>m_checkAccountNick</cstring>
+                        <cstring>kcfg_GlobalIdentity_CheckAccountNick</cstring>
                     </property>
                     <property name="text">
                         <string>Synchronize my global &amp;nickname with the nickname of this account</string>
@@ -126,7 +126,7 @@
                         </widget>
                         <widget class="QComboBox">
                             <property name="name">
-                                <cstring>m_comboAccount</cstring>
+                                <cstring>kcfg_GlobalIdentity_AccountSelectedId</cstring>
                             </property>
                             <property name="enabled">
                                 <bool>false</bool>
@@ -171,7 +171,7 @@
                         </property>
                         <widget class="QCheckBox">
                             <property name="name">
-                                <cstring>m_useDisplayPicture</cstring>
+                                <cstring>kcfg_GlobalIdentity_UseDisplayPicture</cstring>
                             </property>
                             <property name="text">
                                 <string>E&amp;xport a display picture</string>
@@ -349,43 +349,43 @@
 </widget>
 <connections>
     <connection>
-        <sender>m_useDisplayPicture</sender>
+        <sender>kcfg_GlobalIdentity_UseDisplayPicture</sender>
         <signal>toggled(bool)</signal>
         <receiver>m_displayPicture</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>m_useDisplayPicture</sender>
+        <sender>kcfg_GlobalIdentity_UseDisplayPicture</sender>
         <signal>toggled(bool)</signal>
         <receiver>m_selectImage</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>m_useDisplayPicture</sender>
+        <sender>kcfg_GlobalIdentity_UseDisplayPicture</sender>
         <signal>toggled(bool)</signal>
         <receiver>textLabel1_2</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>m_checkAccountNick</sender>
+        <sender>kcfg_GlobalIdentity_CheckAccountNick</sender>
         <signal>toggled(bool)</signal>
         <receiver>lblAccountName</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>m_checkAccountNick</sender>
+        <sender>kcfg_GlobalIdentity_CheckAccountNick</sender>
         <signal>toggled(bool)</signal>
-        <receiver>m_comboAccount</receiver>
+        <receiver>kcfg_GlobalIdentity_AccountSelectedId</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>m_checkEnableGlobal</sender>
+        <sender>kcfg_EnableGlobalIdentity</sender>
         <signal>toggled(bool)</signal>
         <receiver>groupBox2</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>m_checkEnableGlobal</sender>
+        <sender>kcfg_EnableGlobalIdentity</sender>
         <signal>toggled(bool)</signal>
         <receiver>groupBox3</receiver>
         <slot>setEnabled(bool)</slot>

@@ -22,6 +22,10 @@
 #include <qtimer.h>
 #include <qtooltip.h>
 #include <qregexp.h>
+//Added by qt3to4:
+#include <QMouseEvent>
+#include <QPixmap>
+#include <QEvent>
 
 #include <kwin.h>
 #include <kaboutdata.h>
@@ -299,7 +303,7 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 	bool bOffline = false;
 	Kopete::Contact *c = 0;
 
-	for (QPtrListIterator<Kopete::Account> it(Kopete::AccountManager::self()->accounts()); it.current(); ++it)
+	for (Q3PtrListIterator<Kopete::Account> it(Kopete::AccountManager::self()->accounts()); it.current(); ++it)
 	{
 		c = it.current()->myself();
 		if (!c)

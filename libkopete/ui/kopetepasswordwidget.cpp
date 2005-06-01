@@ -122,7 +122,7 @@ void Kopete::UI::PasswordWidget::setPassword( const QString &pass )
 	mRemembered->setTristate( false );
 
 	// fill in the password text
-	mPassword->clear();
+	mPassword->erase();
 	mPassword->insert( pass );
 	mPassword->setEnabled( remember() );
 }
