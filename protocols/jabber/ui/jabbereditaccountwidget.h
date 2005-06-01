@@ -34,24 +34,21 @@
 class JabberEditAccountWidget:public DlgJabberEditAccountWidget, public KopeteEditAccountWidget
 {
 
-	Q_OBJECT
+Q_OBJECT
 
 public:
 	JabberEditAccountWidget (JabberProtocol * proto, JabberAccount *, QWidget * parent = 0, const char *name = 0);
 	~JabberEditAccountWidget ();
 	virtual bool validateData ();
 	virtual Kopete::Account *apply ();
-	bool settings_changed;
 	JabberAccount *account ();
 
 private slots:
 	void registerClicked ();
-	void slotChangePwDone ();
-	void slotChangePwClicked ();
-	void slotChangePassword ();
+	void slotChangePasswordClicked ();
+	void slotChangePasswordFinished ();
 	void deleteClicked ();
 	void sslToggled (bool);
-	void configChanged ();
 	void updateServerField ();
 
 private:

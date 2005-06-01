@@ -21,6 +21,7 @@ libkopetejabberui_la_SOURCES = \
 	dlgjabbereditaccountwidget.ui jabbereditaccountwidget.cpp \
 	dlgjabberregisteraccount.ui jabberregisteraccount.cpp \
 	dlgjabberchooseserver.ui jabberchooseserver.cpp \
+	dlgchangepassword.ui dlgjabberchangepassword.cpp \
 	empty.cpp
 
 EXTRA_DIST = dlgjabbereditaccountwidget.ui \

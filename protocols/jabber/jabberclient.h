@@ -64,10 +64,10 @@ public:
 	 */
 	enum ErrorCode
 	{
-		Ok,			/** No error. */
+		Ok,					/** No error. */
 		InvalidPassword,	/** Password used to connect to the server was incorrect. */
 		AlreadyConnected,	/** A new connection was attempted while the previous one hasn't been closed. */
-		NoTLS			/** Use of TLS has been forced (see @ref forceTLS) but TLS is not available, either server- or client-side. */
+		NoTLS				/** Use of TLS has been forced (see @ref forceTLS) but TLS is not available, either server- or client-side. */
 	};
 
 	JabberClient();
@@ -314,14 +314,6 @@ public:
 	void sendMessage ( const XMPP::Message &message );
 
 	/**
-	 * Changes the password of the Jabber account.
-	 * @ref passwordChanged is emitted when the
-	 * change has been processed. A change will
-	 * only be attempted if a connection is active.
-	 */
-	void changePassword ( const QString &password );
-
-	/**
 	 * Send raw packet to the server.
 	 */
 	void send ( const QString &packet );
@@ -360,12 +352,6 @@ signals:
 	 * TLS problem encountered.
 	 */
 	void tlsWarning ( int validityResult );
-
-	/**
-	 * Password has been changed. If the change was
-	 * successful, success is true.
-	 */
-	void passwordChanged ( bool success );
 
 	/**
 	 * A new file transfer needs to be handled.
@@ -578,8 +564,6 @@ private slots:
 
 	/* Incoming subscription request. */
 	void slotSubscription (const Jid & jid, const QString & type);
-
-	void slotChangePasswordDone ();
 
 };
 

@@ -657,29 +657,6 @@ bool JabberClient::isConnected () const
 
 }
 
-void JabberClient::changePassword ( const QString &password )
-{
-
-	if ( !isConnected () )
-	{
-		return;
-	}
-
-	XMPP::JT_Register * task = new XMPP::JT_Register ( m_jabberClient->rootTask () );
-	QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotChangePasswordDone () ) );
-
-	task->changepw ( password );
-	task->go ( true );
-
-}
-
-void JabberClient::slotChangePasswordDone ()
-{
-	XMPP::JT_Register * task = (XMPP::JT_Register *) sender ();
-
-	emit passwordChanged ( task->success () );
-}
-
 void JabberClient::joinGroupChat ( const QString &host, const QString &room, const QString &nick )
 {
 
