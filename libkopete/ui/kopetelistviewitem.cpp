@@ -37,6 +37,7 @@
 #include <qtimer.h>
 #include <q3header.h>
 #include <qstyle.h>
+#include <qstyleoption.h>
 //Added by qt3to4:
 #include <Q3ValueList>
 
@@ -1206,7 +1207,7 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 			if ( lv->isEnabled() )
 				how |= QStyle::Style_Enabled;
 
-			lv->style().drawComplexControl( QStyle::CC_ListView,
+			lv->style()->drawComplexControl( QStyle::CC_ListView,
 						p, lv, QRect( 0, 0, width, height() ), lv->colorGroup(),
 						how, QStyle::SC_ListView, QStyle::SC_None,
 						opt );
@@ -1231,7 +1232,7 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 				textheight++;
 			if ( textheight < height() ) {
 				int w = lv->treeStepSize() / 2;
-				lv->style().drawComplexControl( QStyle::CC_ListView, p, lv,
+				lv->style()->drawComplexControl( QStyle::CC_ListView, p, lv,
 								QRect( 0, textheight, w + 1, height() - textheight + 1 ), _cg,
 								lv->isEnabled() ? QStyle::Style_Enabled : QStyle::Style_Default,
 								QStyle::SC_ListViewExpand,
@@ -1262,7 +1263,7 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 	const int alpha = 257 - int(opac * 257);
 	if ( alpha != 0 )
 	{
-		XRenderColor clr = { alpha * rgb.Qt::red(), alpha * rgb.Qt::green(), alpha * rgb.Qt::blue(), alpha * 0xff };
+		XRenderColor clr = { alpha * rgb.red(), alpha * rgb.green(), alpha * rgb.blue(), alpha * 0xff };
 		XRenderFillRectangle( back.x11Display(), PictOpOver, back.x11RenderHandle(),
 		                      &clr, 0, 0, width, height() );
 	}
