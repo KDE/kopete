@@ -103,7 +103,7 @@ bool WPEditAccount::validateData()
 	}
 
 	if (!mProtocol->checkMessageDir()) {
-		KMessageBox::sorry(this, i18n("<qt>There is a serious problem with your working directory!.</qt>"), i18n("WinPopup"));
+		KMessageBox::sorry(this, i18n("<qt>There is a serious problem with your working directory.</qt>"), i18n("WinPopup"));
 		return false;
 	}
 

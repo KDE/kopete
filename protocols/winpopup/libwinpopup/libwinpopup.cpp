@@ -98,10 +98,10 @@ bool WinPopupLib::checkMessageDir()
 {
 	QDir dir(WP_POPUP_DIR);
 	if (! dir.exists()) {
-		int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("Working directory /var/lib/winpopup/ does not exist!\n"
-								     "If you havent't anything configured yet (samba) it may be better to call\n"
+		int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("Working directory /var/lib/winpopup/ does not exist.\n"
+								     "If you have not configured anything yet (samba) it may be better to call\n"
 								     "Install Into Samba (Configure... -> Account -> Edit)\n"
-								     "Shall I create it? (May need root password)"));
+								     "Should the directory be created? (May need root password)"));
 		if (tmpYesNo == KMessageBox::Yes) {
 			QString kdesuArgs = "mkdir -p -m 0777 /var/lib/winpopup";
 			if (KApplication::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
@@ -269,15 +269,15 @@ void WinPopupLib::slotCheckForNewMessages()
 						// QFile::remove() seems to be very persistent, it removes even files with 0444 owned by root
 						// if the directory permissions are 0777 - so this is just for safety. GF
 						kdDebug(14170) << "Message file not removed - how that?" << endl;
-						int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("A message file could not be removed!"
-											"Maybe the permissions are wrong.\n"
+						int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("A message file could not be removed; "
+											"maybe the permissions are wrong.\n"
 											"Fix? (May need root password)"));
 						if (tmpYesNo == KMessageBox::Yes) {
 							QFileInfo messageFileInfo(messageFile);
 							QString kdesuArgs = "chmod 0666 /var/lib/winpopup/" + messageFileInfo.fileName();
 							if (KApplication::kdeinitExecWait("kdesu", kdesuArgs) == 0) {
 								if (!messageFile.remove())
-									KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Can still not remove it! Please fix manually."));
+									KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Still cannot remove it; please fix manually."));
 							}
 						}
 					}

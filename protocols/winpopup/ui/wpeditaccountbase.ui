@@ -225,7 +225,7 @@
                                     <cstring>textLabel2_2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&lt;i&gt;These options apply to all WinPopup accounts!&lt;/i&gt;</string>
+                                    <string>&lt;i&gt;These options apply to all WinPopup accounts.&lt;/i&gt;</string>
                                 </property>
                             </widget>
                         </grid>
