@@ -63,14 +63,14 @@
                         </widget>
                         <widget class="QLineEdit">
                             <property name="name">
-                                <cstring>kcfg_GlobalIdentityNickName</cstring>
+                                <cstring>kcfg_GlobalIdentity_NickName</cstring>
                             </property>
                         </widget>
                     </hbox>
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>kcfg_GlobalIdentityCheckAccountNick</cstring>
+                        <cstring>kcfg_GlobalIdentity_CheckAccountNick</cstring>
                     </property>
                     <property name="text">
                         <string>Synchronize my global &amp;nickname with the nickname of this account</string>
@@ -126,7 +126,7 @@
                         </widget>
                         <widget class="QComboBox">
                             <property name="name">
-                                <cstring>kcfg_GlobalIdentityAccountSelected</cstring>
+                                <cstring>kcfg_GlobalIdentity_AccountSelected</cstring>
                             </property>
                             <property name="enabled">
                                 <bool>false</bool>
@@ -171,7 +171,7 @@
                         </property>
                         <widget class="QCheckBox">
                             <property name="name">
-                                <cstring>kcfg_GlobalIdentityUseDisplayPicture</cstring>
+                                <cstring>kcfg_GlobalIdentity_UseDisplayPicture</cstring>
                             </property>
                             <property name="text">
                                 <string>E&amp;xport a display picture</string>
@@ -349,33 +349,33 @@
 </widget>
 <connections>
     <connection>
-        <sender>kcfg_GlobalIdentityUseDisplayPicture</sender>
+        <sender>kcfg_GlobalIdentity_UseDisplayPicture</sender>
         <signal>toggled(bool)</signal>
         <receiver>m_displayPicture</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>kcfg_GlobalIdentityUseDisplayPicture</sender>
+        <sender>kcfg_GlobalIdentity_UseDisplayPicture</sender>
         <signal>toggled(bool)</signal>
         <receiver>m_selectImage</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>kcfg_GlobalIdentityUseDisplayPicture</sender>
+        <sender>kcfg_GlobalIdentity_UseDisplayPicture</sender>
         <signal>toggled(bool)</signal>
         <receiver>textLabel1_2</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>kcfg_GlobalIdentityCheckAccountNick</sender>
+        <sender>kcfg_GlobalIdentity_CheckAccountNick</sender>
         <signal>toggled(bool)</signal>
         <receiver>lblAccountName</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>kcfg_GlobalIdentityCheckAccountNick</sender>
+        <sender>kcfg_GlobalIdentity_CheckAccountNick</sender>
         <signal>toggled(bool)</signal>
-        <receiver>kcfg_GlobalIdentityAccountSelected</receiver>
+        <receiver>kcfg_GlobalIdentity_AccountSelected</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
