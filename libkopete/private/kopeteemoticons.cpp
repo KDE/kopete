@@ -23,10 +23,13 @@
 
 #include <qdom.h>
 #include <qfile.h>
-#include <qstylesheet.h>
+#include <q3stylesheet.h>
 #include <qimage.h>
 #include <qdatetime.h>
 #include <qfileinfo.h>
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <QTextStream>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -66,7 +69,7 @@ struct Emoticons::EmoticonNode {
 class Emoticons::Private
 {
 public:
-	QMap<QChar, QValueList<Emoticon> > emoticonMap;
+	QMap<QChar, Q3ValueList<Emoticon> > emoticonMap;
 	QMap<QString, QString> emoticonAndPicList;
     QMap<QString, QString> customEmoticonAndPicList;
 		
@@ -92,15 +95,15 @@ QString Emoticons::parseEmoticons(const QString& message, ParseMode mode )  //st
 	 return self()->parse( message, mode );
 }
 
-QValueList<Emoticons::Token> Emoticons::tokenizeEmoticons( const QString& message, ParseMode mode ) // static
+Q3ValueList<Emoticons::Token> Emoticons::tokenizeEmoticons( const QString& message, ParseMode mode ) // static
 {
 	return self()->tokenize( message, mode );
 }
 
-QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode mode )
+Q3ValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode mode )
 {
 	
-	QValueList<Token> result;
+	Q3ValueList<Token> result;
 	if ( !KopetePrefs::prefs()->useEmoticons() )
 	{
 		result.append( Token( Text, message ) );
@@ -113,11 +116,11 @@ QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseM
 	QChar n; /* next character after a match candidate, if strict this should be QChar::null or space */
 
 	/* This is the EmoticonNode container, it will represent each matched emoticon */
-	QValueList<EmoticonNode> foundEmoticons;
-	QValueList<EmoticonNode>::const_iterator found;
+	Q3ValueList<EmoticonNode> foundEmoticons;
+	Q3ValueList<EmoticonNode>::const_iterator found;
 	/* First-pass, store the matched emoticon locations in foundEmoticons */
-	QValueList<Emoticon> emoticonList;
-	QValueList<Emoticon>::const_iterator it;
+	Q3ValueList<Emoticon> emoticonList;
+	Q3ValueList<Emoticon>::const_iterator it;
 	size_t pos;
 
 	bool inHTMLTag = false;
@@ -306,7 +309,7 @@ void Emoticons::addIfPossible( const QString& filenameNoExt, const QStringList &
 		for ( QStringList::const_iterator it = emoticons.constBegin(), end = emoticons.constEnd();
 		      it != end; ++it )
 		{
-			QString matchEscaped=QStyleSheet::escape(*it);
+			QString matchEscaped=Q3StyleSheet::escape(*it);
 			
 			Emoticon e;
 			e.picPath = pic;
@@ -330,7 +333,7 @@ bool Emoticons::addCustomEmoticon(const QString &filename, const QString &emotic
         d->emoticonAndPicList.insert(emoticon, pic);
         d->customEmoticonAndPicList.insert(emoticon, pic);
         
-        QString matchEscaped=QStyleSheet::escape(emoticon);
+        QString matchEscaped=Q3StyleSheet::escape(emoticon);
         
         Emoticon e;
         e.picPath = pic;
@@ -373,7 +376,7 @@ void Emoticons::initEmoticons( const QString &theme )
         KIO::NetAccess::mkdir(dir, static_cast<QWidget*>(0));
         custom = dir + QString::fromLatin1("emoticons.xml");
         QFile f(custom);
-        if (f.open(IO_WriteOnly)) {
+        if (f.open(QIODevice::WriteOnly)) {
             QTextStream str(&f);
             str << "<?xml version = '1.0'?>" << endl
                 << "<messaging-emoticon-map>" << endl
@@ -394,7 +397,7 @@ void Emoticons::initEmoticons( const QString &theme )
     
         
         QFile mapFile( *filename );
-        mapFile.open( IO_ReadOnly );
+        mapFile.open( QIODevice::ReadOnly );
         emoticonMap.setContent( &mapFile );
     
         QDomElement list = emoticonMap.documentElement();
@@ -463,8 +466,8 @@ QString Emoticons::parse( const QString &message, ParseMode mode )
 	if ( !KopetePrefs::prefs()->useEmoticons() )
                 return message;
 	
-	QValueList<Token> tokens = tokenize( message, mode );
-	QValueList<Token>::const_iterator token;
+	Q3ValueList<Token> tokens = tokenize( message, mode );
+	Q3ValueList<Token>::const_iterator token;
 	QString result;
 
 	for ( token = tokens.begin(); token != tokens.end(); ++token )
