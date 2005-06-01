@@ -134,7 +134,7 @@ void Skype::setOnline() {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 	d->showDeadMessage = true;
 
-	if ((d->onlineStatus == usOnline) || (d->connStatus == csOnline))
+	if ((d->onlineStatus == usOnline) && (d->connStatus == csOnline) && (d->connection.connected()))
 		return;//Already online
 
 	queueSkypeMessage("SET USERSTATUS ONLINE", true);//just send the message
