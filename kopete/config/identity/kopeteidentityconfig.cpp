@@ -58,7 +58,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char *name, co
 	{
 		QString accountName = i->accountLabel();
 		QPixmap accountIcon = i->accountIcon();
-		m_view->kcfg_GlobalIdentityAccountSelected->insertItem(accountIcon, accountName);
+		m_view->kcfg_GlobalIdentity_AccountSelected->insertItem(accountIcon, accountName);
 		// Populate QMap for futher use
 		m_listAccounts.insert(accountName, i);
 	}
