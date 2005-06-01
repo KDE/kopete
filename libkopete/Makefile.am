@@ -3,7 +3,8 @@ DOXYGEN_REFERENCES = kio kdecore kdeui
 DOXYGEN_EXCLUDE = compat
 
 if enable_av
-AVDEVICEDIR = avdevice
+AVDEVICEDIR = 
+#avdevice
 else
 AVDEVICEDIR =
 endif

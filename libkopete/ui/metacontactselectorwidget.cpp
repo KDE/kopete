@@ -154,21 +154,21 @@ void MetaContactSelectorWidgetLVI::buildVisualComponents()
 	d->contactIconSize = 16;
 	d->photoSize = 48;
 
-	Component *hbox = new BoxComponent( this, BoxComponent::Horizontal );
-	d->spacerBox = new BoxComponent( hbox, BoxComponent::Horizontal );
+	Component *hbox = new BoxComponent( this, Qt::Horizontal );
+	d->spacerBox = new BoxComponent( hbox, Qt::Horizontal );
 	
 	d->contactIconSize = IconSize( KIcon::Small );
-	Component *imageBox = new BoxComponent( hbox, BoxComponent::Vertical );
+	Component *imageBox = new BoxComponent( hbox, Qt::Vertical );
 	new VSpacerComponent( imageBox );
 	// include borders in size
 	d->metaContactPhoto = new ImageComponent( imageBox, d->photoSize + 2 , d->photoSize + 2 );
 	new VSpacerComponent( imageBox );
-	Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
+	Component *vbox = new BoxComponent( hbox, Qt::Vertical );
 	d->nameText = new DisplayNameComponent( vbox );
 	d->extraText = new TextComponent( vbox );
 
-	Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
-	d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
+	Component *box = new BoxComponent( vbox, Qt::Horizontal );
+	d->contactIconBox = new BoxComponent( box, Qt::Horizontal );
 	
 	slotUpdateContactBox();
 	slotDisplayNameChanged();

@@ -234,7 +234,6 @@ private:
 class BoxComponent : public Component
 {
 public:
-	enum Direction { Horizontal, Vertical };
 	BoxComponent( ComponentBase *parent, Qt::Orientation dir = Qt::Horizontal );
 	~BoxComponent();
 

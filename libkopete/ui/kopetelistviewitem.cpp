@@ -291,8 +291,8 @@ void Component::componentRemoved( Component *component )
 class BoxComponent::Private
 {
 public:
-	Private( BoxComponent::Direction dir ) : direction( dir ) {}
-	BoxComponent::Direction direction;
+	Private( Qt::Orientation dir ) : direction( dir ) {}
+	Qt::Orientation direction;
 
 	static const int padding = 2;
 };
@@ -311,11 +311,11 @@ BoxComponent::~BoxComponent()
 
 int BoxComponent::widthForHeight( int height )
 {
-	if ( d->direction != Horizontal )
+	if ( d->direction != Qt::Horizontal )
 	{
 		int width = 0;
 		for ( uint n = 0; n < components(); ++n )
-			width = QMAX( width, component( n )->widthForHeight( height ) );
+			width = qMax( width, component( n )->widthForHeight( height ) );
 		return width;
 	}
 	else
@@ -329,11 +329,11 @@ int BoxComponent::widthForHeight( int height )
 
 int BoxComponent::heightForWidth( int width )
 {
-	if ( d->direction == Horizontal )
+	if ( d->direction == Qt::Horizontal )
 	{
 		int height = 0;
 		for ( uint n = 0; n < components(); ++n )
-			height = QMAX( height, component( n )->heightForWidth( width ) );
+			height = qMax( height, component( n )->heightForWidth( width ) );
 		return height;
 	}
 	else
@@ -351,9 +351,9 @@ void BoxComponent::calcMinSize()
 	for ( uint n = 0; n < components(); ++n )
 	{
 		Component *comp = component( n );
-		if ( d->direction == Horizontal )
+		if ( d->direction == Qt::Horizontal )
 		{
-			max = QMAX( max, comp->minHeight() );
+			max = qMax( max, comp->minHeight() );
 			sum += comp->minWidth();
 		}
 		else
@@ -364,7 +364,7 @@ void BoxComponent::calcMinSize()
 	}
 
 	bool sizeChanged = false;
-	if ( d->direction == Horizontal )
+	if ( d->direction == Qt::Horizontal )
 	{
 		if ( setMinWidth( sum ) ) sizeChanged = true;
 		if ( setMinHeight( max ) ) sizeChanged = true;
@@ -385,7 +385,7 @@ void BoxComponent::layout( const QRect &rect )
 {
 	Component::layout( rect );
 
-	bool horiz = (d->direction == Horizontal);
+	bool horiz = (d->direction == Qt::Horizontal);
 	int fixedSize = 0;
 	for ( uint n = 0; n < components(); ++n )
 	{
@@ -724,7 +724,7 @@ void DisplayNameComponent::setText( const QString& text )
 		case Kopete::Emoticons::Image:
 			ic = new ImageComponent( this );
 			ic->setPixmap( QPixmap( (*token).picPath ) );
-			ic->scale( std::numeric_limits<int>::max(), fontHeight, QImage::ScaleMin );
+			ic->scale( std::numeric_limits<int>::max(), fontHeight, Qt::KeepAspectRatio );
 		break;
 		default:
 			kdDebug( 14010 ) << k_funcinfo << "This should have not happened!" << endl;
@@ -1191,7 +1191,7 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 		int r = marg;
 	//	const QPixmap * icon = pixmap( column );
 
-		const BackgroundMode bgmode = lv->viewport()->backgroundMode();
+		const Qt::BackgroundMode bgmode = lv->viewport()->backgroundMode();
 		const QColorGroup::ColorRole crole = QPalette::backgroundRoleFromMode( bgmode );
 
 		if ( _cg.brush( crole ) != lv->colorGroup().brush( crole ) )
