@@ -98,7 +98,7 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 				//deleteLater();
 		}
 	}
-	else if(msgStr.message.data()[48] == '\0' )
+	else if(msgStr.message.data()[48] == '\0' && msgStr.dataMessageSize==4)
 	{  //This can be only the data preparaion message.   prepare to download
 		m_file=new KTempFile( locateLocal( "tmp", "msnpicture-" ), ".png" );
 		m_file->setAutoDelete(true);
