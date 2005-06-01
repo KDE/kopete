@@ -23,7 +23,7 @@
 
 #include <qmap.h>
 #include <qtimer.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 namespace Kopete
 {
@@ -62,7 +62,7 @@ MessageHandlerChain::Ptr MessageHandlerChain::create( ChatSession *manager, Mess
 	FactoryList factories = MessageHandlerFactory::messageHandlerFactories();
 	
 	// create a sorted list of handlers
-	typedef QValueList<MessageHandler*> HandlerList;
+	typedef Q3ValueList<MessageHandler*> HandlerList;
 	typedef QMap<int,HandlerList> HandlerMap;
 	HandlerMap handlers;
 	uint count = 0;

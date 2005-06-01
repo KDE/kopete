@@ -46,7 +46,7 @@ class KOPETE_EXPORT AwayAction : public KSelectAction
 		 * @p text, @p pix, @p cut, @p receiver, @p slot, @p parent and
 		 * @p name are all handled by KSelectAction.
 		 **/
-		AwayAction(const QString &text, const QIconSet &pix,
+		AwayAction(const QString &text, const QIcon &pix,
 				   const KShortcut &cut, const QObject *receiver, const char *slot,
 				   QObject *parent, const char *name = 0);
 
@@ -57,7 +57,7 @@ class KOPETE_EXPORT AwayAction : public KSelectAction
 		 * @p text, @p pix, @p cut, @p receiver, @p slot, @p parent and
 		 * @p name are all handled by KSelectAction.
 		 **/
-		AwayAction(const OnlineStatus &status, const QString &text, const QIconSet &pix,
+		AwayAction(const OnlineStatus &status, const QString &text, const QIcon &pix,
 				   const KShortcut &cut, const QObject *receiver, const char *slot,
 				   QObject *parent, const char *name = 0);
 

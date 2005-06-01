@@ -17,9 +17,9 @@
 #ifndef KOPETENOTIFYDATAOBJECT_H
 #define KOPETENOTIFYDATAOBJECT_H
 
-#include <qdict.h>
+#include <q3dict.h>
 #include <qstring.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 #include <kopete_export.h>
 

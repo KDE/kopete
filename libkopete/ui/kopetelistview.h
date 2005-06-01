@@ -20,6 +20,10 @@
 #define KOPETE_LISTVIEW_H
 
 #include <klistview.h>
+//Added by qt3to4:
+#include <QTimerEvent>
+#include <QKeyEvent>
+#include <QEvent>
 
 namespace Kopete {
 namespace UI {
@@ -143,8 +147,8 @@ protected:
 	virtual bool eventFilter( QObject *o, QEvent *e );
 
 private slots:
-	void slotContextMenu(KListView*,QListViewItem *item, const QPoint &point );
-	void slotDoubleClicked( QListViewItem *item );
+	void slotContextMenu(KListView*,Q3ListViewItem *item, const QPoint &point );
+	void slotDoubleClicked( Q3ListViewItem *item );
 	/**
 	 * To enable smooth scroll to focus on highlighted items when they are highlighted
 	 * by a key press we use this slot. slotCurrentChanged is connected to the currentChanged
@@ -152,7 +156,7 @@ private slots:
 	 * by the mouse, then we don't do anything, since the item is on the viewable area already.
 	 * Otherwise, we focus (bring it to the center of the list) smoothly.
 	 */
-	void slotCurrentChanged( QListViewItem *item );
+	void slotCurrentChanged( Q3ListViewItem *item );
 private:
 	struct Private;
 	Private *d;

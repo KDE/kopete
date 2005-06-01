@@ -24,7 +24,9 @@
 #include <kdemacros.h>
 
 #include <qobject.h>
-#include <qdict.h>
+#include <q3dict.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 class QDomNode;
 class KActionMenu;
@@ -210,7 +212,7 @@ public:
 	 * so you can safely use static_cast to your own derived contact class
 	 * if needed.
 	 */
-	const QDict<Contact>& contacts();
+	const Q3Dict<Contact>& contacts();
 
 	/**
 	 * Indicates whether or not we should suppress status notifications

@@ -36,7 +36,7 @@ namespace Kopete
  * Note that the various id strings should be URL-encoded (with, for instance,
  * KURL::encode_string) if they might contain colons.
  */
-class KOPETE_EXPORT MimeSourceFactory : public QMimeSourceFactory
+class KOPETE_EXPORT MimeSourceFactory : public Q3MimeSourceFactory
 {
 public:
 	MimeSourceFactory();

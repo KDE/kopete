@@ -239,7 +239,7 @@ void installEmoticonTheme(const QString &archiveName)
 	kapp->processEvents();
 
 	archive = new KTar(archiveName);
-	if ( !archive->open(IO_ReadOnly) )
+	if ( !archive->open(QIODevice::ReadOnly) )
 	{
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(),
 			KMessageBox::Error,

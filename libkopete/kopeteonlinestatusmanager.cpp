@@ -32,6 +32,9 @@
 #include <kcpuinfo.h> // for WORDS_BIGENDIAN
 
 #include <algorithm> // for min
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3CString>
 
 namespace Kopete {
 
@@ -50,7 +53,7 @@ class OnlineStatusManager::Private
 
 	QPixmap *nullPixmap;
 	QMap<Protocol* , ProtocolMap > registeredStatus;
-	QDict< QPixmap > iconCache;
+	Q3Dict< QPixmap > iconCache;
 };
 
 OnlineStatusManager *OnlineStatusManager::s_self=0L;
@@ -386,7 +389,7 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 		// from the parent's child list.
 		// The description of the onlinestatus is used as the qobject name
 		// This is safe as long as OnlineStatus are immutable
-		QCString actionName = status.description().ascii();
+		Q3CString actionName = status.description().ascii();
 		if ( !( action = static_cast<KAction*>( account->child( actionName ) ) ) )
 		{
 			if(options & OnlineStatusManager::HasAwayMessage)
@@ -416,7 +419,7 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 }
 
 
-OnlineStatusAction::OnlineStatusAction( const OnlineStatus& status, const QString &text, const QIconSet &pix, QObject *parent, const char *name)
+OnlineStatusAction::OnlineStatusAction( const OnlineStatus& status, const QString &text, const QIcon &pix, QObject *parent, const char *name)
 		: KAction( text, pix, KShortcut() , parent, name) , m_status(status)
 {
 	connect(this,SIGNAL(activated()),this,SLOT(slotActivated()));

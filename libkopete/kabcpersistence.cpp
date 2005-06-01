@@ -17,6 +17,8 @@
 
 #include <qstring.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include <kabc/addressbook.h>
 #include <kabc/addressee.h>
@@ -72,7 +74,7 @@ KABCPersistence *KABCPersistence::s_self = 0L;
 
 bool KABCPersistence::s_addrBookWritePending = false;
 
-QPtrList<KABC::Resource> KABCPersistence::s_pendingResources;
+Q3PtrList<KABC::Resource> KABCPersistence::s_pendingResources;
 
 KABC::AddressBook* KABCPersistence::s_addressBook = 0;
 
@@ -113,8 +115,8 @@ void KABCPersistence::write( MetaContact * mc )
 	{
 		// collate the instant messaging data to be inserted into the address book
 		QMap<QString, QStringList> addressMap;
-		QPtrList<Contact> contacts = mc->contacts();
-		QPtrListIterator<Contact> cIt( contacts );
+		Q3PtrList<Contact> contacts = mc->contacts();
+		Q3PtrListIterator<Contact> cIt( contacts );
 		while ( Contact * c = cIt.current() )
 		{
 			QStringList addresses = addressMap[ c->protocol()->addressBookIndexField() ];
@@ -186,7 +188,7 @@ void KABCPersistence::slotWriteAddressBook()
 {
 	//kdDebug(  14010 ) << k_funcinfo << endl;
 	KABC::AddressBook* ab = addressBook();
-	QPtrListIterator<KABC::Resource> it( s_pendingResources );
+	Q3PtrListIterator<KABC::Resource> it( s_pendingResources );
 	for ( ; it.current(); ++it )
 	{
 		//kdDebug(  14010 )  << "Writing resource " << it.current()->resourceName() << endl;
@@ -309,8 +311,8 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 						if ( separatorPos != -1 )
 							*it = (*it).left( separatorPos );
 
-						QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( proto );
-						QDictIterator<Kopete::Account> acs(accounts);
+						Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( proto );
+						Q3DictIterator<Kopete::Account> acs(accounts);
 						Kopete::MetaContact *otherMc = 0;
 						for ( acs.toFirst(); acs.current(); ++acs )
 						{

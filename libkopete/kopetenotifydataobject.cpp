@@ -16,6 +16,8 @@
 */
 
 #include <qdom.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include <kdebug.h>
 #include "kopetenotifydataobject.h"
 #include "kopetenotifyevent.h"
@@ -23,7 +25,7 @@
 class Kopete::NotifyDataObject::Private
 {
 public:
-	QDict<Kopete::NotifyEvent> events;
+	Q3Dict<Kopete::NotifyEvent> events;
 };
 
 Kopete::NotifyDataObject::NotifyDataObject()
@@ -61,16 +63,16 @@ QDomElement Kopete::NotifyDataObject::notifyDataToXML()
 	{
 		//<custom-notifications>
 		notifications = notify.createElement( QString::fromLatin1( "custom-notifications" ) );
-		QDictIterator<Kopete::NotifyEvent> it( d->events );
+		Q3DictIterator<Kopete::NotifyEvent> it( d->events );
 		for ( ; it.current(); ++it )
 		{
 			//<event name="..." suppress-common="true|false">
 			QDomElement event = notify.createElement( QString::fromLatin1( "event" ) );
 			event.setAttribute( QString::fromLatin1( "name" ), it.currentKey() );
 			event.setAttribute( QString::fromLatin1( "suppress-common" ), QString::fromLatin1( it.current()->suppressCommon() ? "true" : "false" ) );
-			QValueList<QDomElement> presentations = it.current()->toXML();
+			Q3ValueList<QDomElement> presentations = it.current()->toXML();
 			//<sound-notification enabled="true|false" src="..." single-shot="">
-			for ( QValueList<QDomElement>::Iterator it = presentations.begin(); it != presentations.end(); ++it )
+			for ( Q3ValueList<QDomElement>::Iterator it = presentations.begin(); it != presentations.end(); ++it )
 				event.appendChild( notify.importNode( *it, true ) );
 			notifications.appendChild( event );
 		}

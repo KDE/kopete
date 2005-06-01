@@ -19,6 +19,8 @@
 #define KOPETEADDRESSBOOKLINK_H
 
 #include "kopete_export.h"
+//Added by qt3to4:
+#include <Q3PtrList>
 
 // Goal is to have all the address book modifying code in one place
 // Currently in 
@@ -98,7 +100,7 @@ class KOPETE_EXPORT KABCPersistence : public QObject
 		static KABCPersistence * s_self;
 		static KABC::AddressBook* s_addressBook;
 		static bool s_addrBookWritePending;
-		static QPtrList<KABC::Resource> s_pendingResources;
+		static Q3PtrList<KABC::Resource> s_pendingResources;
 };
 
 } // end namespace Kopete

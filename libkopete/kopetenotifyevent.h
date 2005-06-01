@@ -19,7 +19,7 @@
 #define KOPETENOTIFYEVENT_H
 
 #include <qstring.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include "kopeteeventpresentation.h"
 
 #include <kopete_export.h>
@@ -45,7 +45,7 @@ public:
 	bool firePresentation( const EventPresentation::PresentationType type );
 	
 	void setSuppressCommon( bool suppress );
-	const QValueList<QDomElement> toXML() const;
+	const Q3ValueList<QDomElement> toXML() const;
 	QString toString();
 private:
 	QString m_event;

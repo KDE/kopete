@@ -23,6 +23,9 @@
 #include <qdir.h>
 #include <qregexp.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <QTextStream>
+#include <Q3PtrList>
 
 #include <kapplication.h>
 #include <kabc/stdaddressbook.h>
@@ -50,10 +53,10 @@ class ContactList::Private
 	/** Flag:  do not save the contactlist until she is completely loaded */
 	bool loaded ;
 
-	QPtrList<MetaContact> contacts;
-	QPtrList<Group> groups;
-	QPtrList<MetaContact> selectedMetaContacts;
-	QPtrList<Group> selectedGroups;
+	Q3PtrList<MetaContact> contacts;
+	Q3PtrList<Group> groups;
+	Q3PtrList<MetaContact> selectedMetaContacts;
+	Q3PtrList<Group> selectedGroups;
 
 	QTimer *saveTimer;
 
@@ -107,13 +110,13 @@ ContactList::~ContactList()
 	delete d;
 }
 
-QPtrList<MetaContact> ContactList::metaContacts() const
+Q3PtrList<MetaContact> ContactList::metaContacts() const
 {
 	return d->contacts;
 }
 
 
-QPtrList<Group> ContactList::groups() const
+Q3PtrList<Group> ContactList::groups() const
 {
 	return d->groups;
 }
@@ -121,7 +124,7 @@ QPtrList<Group> ContactList::groups() const
 
 MetaContact *ContactList::metaContact( const QString &metaContactId ) const
 {
-	QPtrListIterator<MetaContact> it( d->contacts );
+	Q3PtrListIterator<MetaContact> it( d->contacts );
 
 	for( ; it.current(); ++it )
 	{
@@ -161,7 +164,7 @@ Contact *ContactList::findContact( const QString &protocolId,
 
 MetaContact *ContactList::findMetaContactByDisplayName( const QString &displayName ) const
 {
-	QPtrListIterator<MetaContact> it( d->contacts );
+	Q3PtrListIterator<MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 //		kdDebug(14010) << "Display Name: " << it.current()->displayName() << "\n";
@@ -175,8 +178,8 @@ MetaContact *ContactList::findMetaContactByDisplayName( const QString &displayNa
 
 MetaContact* ContactList::findMetaContactByContactId( const QString &contactId ) const
 {
-	QPtrList<Account> acts=AccountManager::self()->accounts();
-	QPtrListIterator<Account> it( acts );
+	Q3PtrList<Account> acts=AccountManager::self()->accounts();
+	Q3PtrListIterator<Account> it( acts );
 	for ( ; it.current(); ++it )
 	{
 		Contact *c=(*it)->contacts()[contactId];
@@ -204,12 +207,12 @@ Group * ContactList::findGroup(const QString& displayName, int type)
 }
 
 
-QPtrList<MetaContact> ContactList::selectedMetaContacts() const
+Q3PtrList<MetaContact> ContactList::selectedMetaContacts() const
 {
 	return d->selectedMetaContacts;
 }
 
-QPtrList<Group> ContactList::selectedGroups() const
+Q3PtrList<Group> ContactList::selectedGroups() const
 {
 	return d->selectedGroups;
 }
@@ -244,7 +247,7 @@ void ContactList::removeMetaContact(MetaContact *m)
 	}
 
 	//removes subcontact from server here and now.
-	QPtrList<Contact> cts=m->contacts();
+	Q3PtrList<Contact> cts=m->contacts();
 	for( Contact *c = cts.first(); c; c = cts.next() )
 	{
 		c->deleteContact();
@@ -280,7 +283,7 @@ void ContactList::removeGroup( Group *g )
 }
 
 
-void ContactList::setSelectedItems(QPtrList<MetaContact> metaContacts , QPtrList<Group> groups)
+void ContactList::setSelectedItems(Q3PtrList<MetaContact> metaContacts , Q3PtrList<Group> groups)
 {
 	kdDebug( 14010 ) << k_funcinfo << metaContacts.count() << " metacontacts, " << groups.count() << " groups selected" << endl;
 	d->selectedMetaContacts=metaContacts;
@@ -366,7 +369,7 @@ void ContactList::loadXML()
 	QDomDocument contactList( QString::fromLatin1( "kopete-contact-list" ) );
 
 	QFile contactListFile( filename );
-	contactListFile.open( IO_ReadOnly );
+	contactListFile.open( QIODevice::ReadOnly );
 	contactList.setContent( &contactListFile );
 
 	QDomElement list = contactList.documentElement();
@@ -390,7 +393,7 @@ void ContactList::loadXML()
 
 		contactList = QDomDocument ( QString::fromLatin1( "kopete-contact-list" ) );
 
-		contactListFile.open( IO_ReadOnly );
+		contactListFile.open( QIODevice::ReadOnly );
 		contactList.setContent( &contactListFile );
 
 		list = contactList.documentElement();
@@ -450,7 +453,7 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 
 	QDomDocument contactList( QString::fromLatin1( "messaging-contact-list" ) );
 	QFile contactListFile( fileName );
-	contactListFile.open( IO_ReadOnly );
+	contactListFile.open( QIODevice::ReadOnly );
 	contactList.setContent( &contactListFile );
 
 	QDomElement oldList = contactList.documentElement();
@@ -809,7 +812,7 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 
 	// kdDebug( 14010 ) << k_funcinfo << "XML output:\n" << newList.toString( 2 ) << endl;
 
-	contactListFile.open( IO_WriteOnly );
+	contactListFile.open( QIODevice::WriteOnly );
 	QTextStream stream( &contactListFile );
 	stream.setEncoding( QTextStream::UnicodeUTF8 );
 	stream << newList.toString( 2 );
@@ -881,7 +884,7 @@ const QDomDocument ContactList::toXML()
 QStringList ContactList::contacts() const
 {
 	QStringList contacts;
-	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
+	Q3PtrListIterator<Kopete::MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		contacts.append( it.current()->displayName() );
@@ -892,7 +895,7 @@ QStringList ContactList::contacts() const
 QStringList ContactList::contactStatuses() const
 {
 	QStringList meta_contacts;
-	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
+	Q3PtrListIterator<Kopete::MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		meta_contacts.append( QString::fromLatin1( "%1 (%2)" ).
@@ -904,7 +907,7 @@ QStringList ContactList::contactStatuses() const
 QStringList ContactList::reachableContacts() const
 {
 	QStringList contacts;
-	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
+	Q3PtrListIterator<Kopete::MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->isReachable() )
@@ -913,16 +916,16 @@ QStringList ContactList::reachableContacts() const
 	return contacts;
 }
 
-QPtrList<Contact> ContactList::onlineContacts() const
+Q3PtrList<Contact> ContactList::onlineContacts() const
 {
-	QPtrList<Kopete::Contact> result;
-	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
+	Q3PtrList<Kopete::Contact> result;
+	Q3PtrListIterator<Kopete::MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->isOnline() )
 		{
-			QPtrList<Kopete::Contact> contacts = it.current()->contacts();
-			QPtrListIterator<Kopete::Contact> cit( contacts );
+			Q3PtrList<Kopete::Contact> contacts = it.current()->contacts();
+			Q3PtrListIterator<Kopete::Contact> cit( contacts );
 			for( ; cit.current(); ++cit )
 			{
 				if ( cit.current()->isOnline() )
@@ -933,10 +936,10 @@ QPtrList<Contact> ContactList::onlineContacts() const
 	return result;
 }
 
-QPtrList<Kopete::MetaContact> Kopete::ContactList::onlineMetaContacts() const
+Q3PtrList<Kopete::MetaContact> Kopete::ContactList::onlineMetaContacts() const
 {
-	QPtrList<Kopete::MetaContact> result;
-	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
+	Q3PtrList<Kopete::MetaContact> result;
+	Q3PtrListIterator<Kopete::MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->isOnline() )
@@ -945,17 +948,17 @@ QPtrList<Kopete::MetaContact> Kopete::ContactList::onlineMetaContacts() const
 	return result;
 }
 
-QPtrList<Kopete::MetaContact> Kopete::ContactList::onlineMetaContacts( const QString &protocolId ) const
+Q3PtrList<Kopete::MetaContact> Kopete::ContactList::onlineMetaContacts( const QString &protocolId ) const
 {
-	QPtrList<Kopete::MetaContact> result;
-	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
+	Q3PtrList<Kopete::MetaContact> result;
+	Q3PtrListIterator<Kopete::MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		// FIXME: This loop is not very efficient :(
 		if ( it.current()->isOnline() )
 		{
-			QPtrList<Kopete::Contact> contacts = it.current()->contacts();
-			QPtrListIterator<Kopete::Contact> cit( contacts );
+			Q3PtrList<Kopete::Contact> contacts = it.current()->contacts();
+			Q3PtrListIterator<Kopete::Contact> cit( contacts );
 			for( ; cit.current(); ++cit )
 			{
 				if( cit.current()->isOnline() && cit.current()->protocol()->pluginId() == protocolId )
@@ -966,17 +969,17 @@ QPtrList<Kopete::MetaContact> Kopete::ContactList::onlineMetaContacts( const QSt
 	return result;
 }
 
-QPtrList<Kopete::Contact> Kopete::ContactList::onlineContacts( const QString &protocolId ) const
+Q3PtrList<Kopete::Contact> Kopete::ContactList::onlineContacts( const QString &protocolId ) const
 {
-	QPtrList<Kopete::Contact> result;
-	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
+	Q3PtrList<Kopete::Contact> result;
+	Q3PtrListIterator<Kopete::MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		// FIXME: This loop is not very efficient :(
 		if ( it.current()->isOnline() )
 		{
-			QPtrList<Kopete::Contact> contacts = it.current()->contacts();
-			QPtrListIterator<Kopete::Contact> cit( contacts );
+			Q3PtrList<Kopete::Contact> contacts = it.current()->contacts();
+			Q3PtrListIterator<Kopete::Contact> cit( contacts );
 			for( ; cit.current(); ++cit )
 			{
 				if( cit.current()->isOnline() && cit.current()->protocol()->pluginId() == protocolId )
@@ -990,7 +993,7 @@ QPtrList<Kopete::Contact> Kopete::ContactList::onlineContacts( const QString &pr
 QStringList Kopete::ContactList::fileTransferContacts() const
 {
 	QStringList contacts;
-	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
+	Q3PtrListIterator<Kopete::MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->canAcceptFiles() )
@@ -1031,9 +1034,9 @@ QStringList Kopete::ContactList::contactFileProtocols(const QString &displayName
 	Kopete::MetaContact *c = findMetaContactByDisplayName( displayName );
 	if( c )
 	{
-		QPtrList<Kopete::Contact> mContacts = c->contacts();
+		Q3PtrList<Kopete::Contact> mContacts = c->contacts();
 		kdDebug(14010) << mContacts.count() << endl;
-		QPtrListIterator<Kopete::Contact> jt( mContacts );
+		Q3PtrListIterator<Kopete::Contact> jt( mContacts );
 		for ( ; jt.current(); ++jt )
 		{
 			kdDebug(14010) << "1" << jt.current()->protocol()->pluginId() << endl;

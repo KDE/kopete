@@ -18,7 +18,7 @@
 
 #include <klocale.h>
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 namespace Kopete
 {
@@ -34,7 +34,7 @@ public:
 
 	Task::Result result;
 	QString errorMessage;
-	QPtrList<Task> subtasks;
+	Q3PtrList<Task> subtasks;
 };
 
 Task::Task()

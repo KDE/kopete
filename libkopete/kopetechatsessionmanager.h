@@ -19,9 +19,9 @@
 #define KOPETEMESSAGEMANAGERFACTORY_H
 
 #include <qobject.h>
-#include <qptrlist.h>
-#include <qintdict.h>
-#include <qvaluelist.h>
+#include <q3ptrlist.h>
+#include <q3intdict.h>
+#include <q3valuelist.h>
 
 #include "kopetechatsession.h"
 #include "kopetemessage.h"
@@ -37,8 +37,8 @@ class Contact;
 class Protocol;
 class MessageEvent;
 
-typedef QPtrList<Contact>        ContactPtrList;
-typedef QValueList<Message>      MessageList;
+typedef Q3PtrList<Contact>        ContactPtrList;
+typedef Q3ValueList<Message>      MessageList;
 
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -85,7 +85,7 @@ public:
 	/**
 	 * Get a list of all open sessions.
 	 */
-	QValueList<ChatSession*> sessions();
+	Q3ValueList<ChatSession*> sessions();
 
 	/**
 	 * @internal

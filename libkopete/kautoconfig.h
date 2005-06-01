@@ -21,7 +21,9 @@
 #define KAUTOCONFIG_H
 
 #include <qobject.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include <kopete_export.h>
 
@@ -195,7 +197,7 @@ public:
    * @param signal - The signal (with "SIGNAL()" wrapper) that should be called.
    */ 
   inline void addWidgetChangedSignal( const QString &widgetName,
-                                      const QCString &signal ){
+                                      const Q3CString &signal ){
     changedMap.insert( widgetName, signal );
   }
 
@@ -248,7 +250,7 @@ protected:
   /**
    * Map of the classes and the signals that they emit when changed. 
    */
-  QMap<QString, QCString> changedMap;
+  QMap<QString, Q3CString> changedMap;
 
   /**
    * Recursive function that finds all known children.
@@ -263,7 +265,7 @@ protected:
    * @see retrieveSettings()
    */ 
   bool parseChildren( const QWidget *widget,
-                      QPtrList<QWidget>&currentGroup, bool trackChanges );
+                      Q3PtrList<QWidget>&currentGroup, bool trackChanges );
 
 private:
   class KAutoConfigPrivate;

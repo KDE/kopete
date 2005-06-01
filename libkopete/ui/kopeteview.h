@@ -20,7 +20,7 @@
 #define KOPETEVIEW_H
 
 #include "kopetemessage.h"
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <kopete_export.h>
 
 namespace Kopete
@@ -78,7 +78,7 @@ class KOPETE_EXPORT KopeteView
 		 *
 		 * The default implementation just call @ref appendMessage() X times
 		 */
-		virtual void appendMessages( QValueList<Kopete::Message> );
+		virtual void appendMessages( Q3ValueList<Kopete::Message> );
 
 		/**
 		 * @brief Raises the view above other windows

@@ -18,6 +18,8 @@
 
 #include <qapplication.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -67,7 +69,7 @@ public:
 	QString accountLabel;
 	bool excludeconnect;
 	uint priority;
-	QDict<Contact> contacts;
+	Q3Dict<Contact> contacts;
 	QColor color;
 	Contact *myself;
 	QTimer suppressStatusTimer;
@@ -95,7 +97,7 @@ Account::~Account()
 	
 	// Delete all registered child contacts first
 	while ( !d->contacts.isEmpty() )
-		delete *QDictIterator<Contact>( d->contacts );
+		delete *Q3DictIterator<Contact>( d->contacts );
 
 	kdDebug( 14010 ) << k_funcinfo << " account '" << d->id << "' about to emit accountDestroyed " << endl;
 	emit accountDestroyed(this);
@@ -220,7 +222,7 @@ void Account::contactDestroyed( Contact *c )
 }
 
 
-const QDict<Contact>& Account::contacts()
+const Q3Dict<Contact>& Account::contacts()
 {
 	return d->contacts;
 }
@@ -419,7 +421,7 @@ void Account::setAllContactsStatus( const Kopete::OnlineStatus &status )
 	d->suppressStatusNotification = true;
 	d->suppressStatusTimer.start( 5000, true );
 
-	for ( QDictIterator<Contact> it( d->contacts ); it.current(); ++it )
+	for ( Q3DictIterator<Contact> it( d->contacts ); it.current(); ++it )
 		if ( it.current() != d->myself )
 			it.current()->setOnlineStatus( status );
 }

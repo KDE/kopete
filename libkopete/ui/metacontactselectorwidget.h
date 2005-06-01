@@ -61,7 +61,7 @@ protected slots:
 	 */
 	void slotLoadMetaContacts();
 signals:
-	void metaContactListClicked( QListViewItem *mc );
+	void metaContactListClicked( Q3ListViewItem *mc );
 private:
 	class Private;
 	Private *d;
@@ -75,7 +75,7 @@ class MetaContactSelectorWidgetLVI : public Kopete::UI::ListView::Item
 {
 	Q_OBJECT
 public:
-	MetaContactSelectorWidgetLVI(Kopete::MetaContact *mc, QListView *parent, QObject *owner = 0, const char *name = 0 );
+	MetaContactSelectorWidgetLVI(Kopete::MetaContact *mc, Q3ListView *parent, QObject *owner = 0, const char *name = 0 );
 	Kopete::MetaContact* metaContact();
 	virtual QString text ( int column ) const;
 protected slots:

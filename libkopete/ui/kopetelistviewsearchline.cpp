@@ -54,7 +54,7 @@ void SearchLine::updateSearch( const QString &s )
 	// If there's a selected item that is visible, make sure that it's visible
 	// when the search changes too (assuming that it still matches).
 	
-	QListViewItem *currentItem = 0;
+	Q3ListViewItem *currentItem = 0;
 	
 	switch( listView()->selectionMode() )
 	{
@@ -64,7 +64,7 @@ void SearchLine::updateSearch( const QString &s )
 		currentItem = listView()->selectedItem();
 		break;
 	default:
-		for( QListViewItemIterator it(listView(), QListViewItemIterator::Selected | QListViewItemIterator::Visible);
+		for( Q3ListViewItemIterator it(listView(), Q3ListViewItemIterator::Selected | Q3ListViewItemIterator::Visible);
 		     it.current() && !currentItem; ++it )
 		{
 			if( listView()->itemRect( it.current() ).isValid() )
@@ -85,10 +85,10 @@ void SearchLine::updateSearch( const QString &s )
 void SearchLine::checkItemParentsNotVisible()
 {
 	//BEGIN code from KSearchLine::checkItemParentsNotVisible
-	QListViewItemIterator it( listView() );
+	Q3ListViewItemIterator it( listView() );
 	for( ; it.current(); ++it )
 	{
-		QListViewItem *item = it.current();
+		Q3ListViewItem *item = it.current();
 		if( itemMatches( item, search ) )
 			setItemVisible( item, true );
 		else
@@ -97,7 +97,7 @@ void SearchLine::checkItemParentsNotVisible()
 	//END code from KSearchLine::checkItemParentsNotVisible
 }
 
-bool SearchLine::checkItemParentsVisible( QListViewItem *item )
+bool SearchLine::checkItemParentsVisible( Q3ListViewItem *item )
 {
 	//BEGIN code from KSearchLine::checkItemParentsVisible
 	bool visible = false;
@@ -123,7 +123,7 @@ bool SearchLine::checkItemParentsVisible( QListViewItem *item )
 	//END code from KSearchLine::checkItemParentsVisible
 }
 
-void SearchLine::setItemVisible( QListViewItem *it, bool b )
+void SearchLine::setItemVisible( Q3ListViewItem *it, bool b )
 {
 	if( Item *item = dynamic_cast<Item*>( it ) )
 		item->setSearchMatch( b );

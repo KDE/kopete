@@ -24,6 +24,8 @@
 
 #include <utility>
 #include <qimage.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 class QPixmap;
 
@@ -233,7 +235,7 @@ class BoxComponent : public Component
 {
 public:
 	enum Direction { Horizontal, Vertical };
-	BoxComponent( ComponentBase *parent, Direction dir = Horizontal );
+	BoxComponent( ComponentBase *parent, Qt::Orientation dir = Qt::Horizontal );
 	~BoxComponent();
 
 	void layout( const QRect &rect );
@@ -298,7 +300,7 @@ public:
 
 	void paint( QPainter *painter, const QColorGroup &cg );
 
-	void scale( int w, int h, QImage::ScaleMode );
+	void scale( int w, int h, Qt::AspectRatioMode );
 	static int RTTI;
 	virtual int rtti() const { return RTTI; }
 private:
@@ -392,8 +394,8 @@ class Item : public QObject, public KListViewItem, public ComponentBase
 {
 	Q_OBJECT
 public:
-	Item( QListView *parent, QObject *owner = 0, const char *name = 0 );
-	Item( QListViewItem *parent, QObject *owner = 0, const char *name = 0  );
+	Item( Q3ListView *parent, QObject *owner = 0, const char *name = 0 );
+	Item( Q3ListViewItem *parent, QObject *owner = 0, const char *name = 0  );
 	~Item();
 
 	void repaint();
@@ -417,7 +419,7 @@ public:
 	 */
 	static void setEffects( bool animation, bool fading, bool folding );
 
-	int width( const QFontMetrics & fm, const QListView * lv, int c ) const;
+	int width( const QFontMetrics & fm, const Q3ListView * lv, int c ) const;
 	
 	/**
 	 * Show or hide this item in a clean way depending on whether it matches

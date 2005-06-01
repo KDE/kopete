@@ -15,7 +15,9 @@
     *************************************************************************
 */
 
-#include <qtextedit.h>
+#include <q3textedit.h>
+//Added by qt3to4:
+#include <QCloseEvent>
 
 #include <klineedit.h>
 #include <kconfig.h>
@@ -36,7 +38,7 @@ KopeteFileConfirmDialog::KopeteFileConfirmDialog(const Kopete::FileTransferInfo 
 	KDialogBase::User1 | KDialogBase::User2, KDialogBase::User1, true, i18n( "&Refuse" ), i18n( "&Accept" ) ),
 	m_info( info )
 {
-	setWFlags( WDestructiveClose );
+	setAttribute ( Qt::WA_DeleteOnClose );
 	m_emited=false;
 
 	m_view=new FileConfirmBase(this, "FileConfirmView");

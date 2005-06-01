@@ -40,6 +40,10 @@
 #include "kopeteglobal.h"
 #include "kopeteprefs.h"
 #include "kopeteuiglobal.h"
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3ValueList>
+#include <Q3PtrList>
 
 namespace Kopete {
 
@@ -53,7 +57,7 @@ const QString PSAID_ELEM = QString::fromLatin1( "photoSourceAccountId" );
 class  MetaContact::Private
 { public:
 
-	QPtrList<Contact> contacts;
+	Q3PtrList<Contact> contacts;
 	QString displayName;
 	QString nameSourceCID;
 	QString nameSourcePID;
@@ -61,7 +65,7 @@ class  MetaContact::Private
 	QString photoSourceCID;
 	QString photoSourcePID;
 	QString photoSourceAID;
-	QPtrList<Group> groups;
+	Q3PtrList<Group> groups;
 	QMap<QString, QMap<QString, QString> > addressBook;
 	bool temporary;
 	QString metaContactId;
@@ -146,7 +150,7 @@ void MetaContact::updateOnlineStatus()
 	Kopete::OnlineStatus::StatusType newStatus = Kopete::OnlineStatus::Unknown;
 	Kopete::OnlineStatus mostSignificantStatus;
 
-	for ( QPtrListIterator<Contact> it( d->contacts ); it.current(); ++it )
+	for ( Q3PtrListIterator<Contact> it( d->contacts ); it.current(); ++it )
 	{
 		// find most significant status
 		if ( it.current()->onlineStatus() > mostSignificantStatus )
@@ -212,7 +216,7 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 Contact *MetaContact::findContact( const QString &protocolId, const QString &accountId, const QString &contactId )
 {
 	//kdDebug( 14010 ) << k_funcinfo << "Num contacts: " << d->contacts.count() << endl;
-	QPtrListIterator<Contact> it( d->contacts );
+	Q3PtrListIterator<Contact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		//kdDebug( 14010 ) << k_funcinfo << "Trying " << it.current()->contactId() << ", proto "
@@ -285,7 +289,7 @@ Contact *MetaContact::preferredContact()
 
 	Contact *contact = 0;
 	bool hasOpenView=false; //has the selected contact already an open chatwindow
-	for ( QPtrListIterator<Contact> it( d->contacts ); it.current(); ++it )
+	for ( Q3PtrListIterator<Contact> it( d->contacts ); it.current(); ++it )
 	{
 		Contact *c=it.current();
 
@@ -350,7 +354,7 @@ Contact *MetaContact::execute()
 unsigned long int MetaContact::idleTime() const
 {
 	unsigned long int time = 0;
-	QPtrListIterator<Contact> it( d->contacts );
+	Q3PtrListIterator<Contact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		unsigned long int i = it.current()->idleTime();
@@ -417,7 +421,7 @@ OnlineStatus::StatusType MetaContact::status() const
 
 bool MetaContact::isOnline() const
 {
-	QPtrListIterator<Contact> it( d->contacts );
+	Q3PtrListIterator<Contact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		if( it.current()->isOnline() )
@@ -431,7 +435,7 @@ bool MetaContact::isReachable() const
 	if ( isOnline() )
 		return true;
 
-	for ( QPtrListIterator<Contact> it( d->contacts ); it.current(); ++it )
+	for ( Q3PtrListIterator<Contact> it( d->contacts ); it.current(); ++it )
 	{
 		if ( it.current()->account()->isConnected() && it.current()->isReachable() )
 			return true;
@@ -445,7 +449,7 @@ bool MetaContact::canAcceptFiles() const
 	if( !isOnline() )
 		return false;
 
-	QPtrListIterator<Contact> it( d->contacts );
+	Q3PtrListIterator<Contact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		if( it.current()->canAcceptFiles() )
@@ -463,7 +467,7 @@ void MetaContact::sendFile( const KURL &sourceURL, const QString &altFileName, u
 
 	//Find the highest ranked protocol that can accept files
 	Contact *contact = d->contacts.first();
-	for( QPtrListIterator<Contact> it( d->contacts ) ; it.current(); ++it )
+	for( Q3PtrListIterator<Contact> it( d->contacts ) ; it.current(); ++it )
 	{
 		if( ( *it )->onlineStatus() > contact->onlineStatus() && ( *it )->canAcceptFiles() )
 			contact = *it;
@@ -497,7 +501,7 @@ void MetaContact::setDisplayName( const QString &name )
 
 	emit displayNameChanged( old , name );
 
-	for( QPtrListIterator<Kopete::Contact> it( d->contacts ) ; it.current(); ++it )
+	for( Q3PtrListIterator<Kopete::Contact> it( d->contacts ) ; it.current(); ++it )
 		( *it )->sync(Contact::DisplayNameChanged);
 
 }
@@ -565,7 +569,7 @@ Contact *MetaContact::nameSource() const
 	if( d->nameSourceCID.isEmpty() )
 		return 0;
 
-	for( QPtrListIterator< Contact > it ( d->contacts ); it.current(); ++it )
+	for( Q3PtrListIterator< Contact > it ( d->contacts ); it.current(); ++it )
 	{
 		if( d->nameSourceCID == it.current()->contactId() &&
 			d->nameSourcePID == it.current()->protocol()->pluginId() &&
@@ -586,7 +590,7 @@ Contact *MetaContact::photoSource() const
 	if( d->photoSourceCID.isEmpty() )
 		return 0;
 
-	for( QPtrListIterator< Contact > it ( d->contacts ); it.current(); ++it )
+	for( Q3PtrListIterator< Contact > it ( d->contacts ); it.current(); ++it )
 	{
 		if( d->photoSourceCID == it.current()->contactId() &&
 			d->photoSourcePID == it.current()->protocol()->pluginId() &&
@@ -752,7 +756,7 @@ void MetaContact::addToGroup( Group *to )
 	emit addedToGroup( this, to );
 }
 
-QPtrList<Group> MetaContact::groups() const
+Q3PtrList<Group> MetaContact::groups() const
 {
 	return d->groups;
 }
@@ -806,8 +810,8 @@ const QDomElement MetaContact::toXML()
 	}
 
 	// Store other plugin data
-	QValueList<QDomElement> pluginData = Kopete::ContactListElement::toXML();
-	for( QValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
+	Q3ValueList<QDomElement> pluginData = Kopete::ContactListElement::toXML();
+	for( Q3ValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
 		metaContact.documentElement().appendChild( metaContact.importNode( *it, true ) );
 
 	// Store custom notification data
@@ -1016,7 +1020,7 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 	}
 }
 
-QPtrList<Contact> MetaContact::contacts() const
+Q3PtrList<Contact> MetaContact::contacts() const
 {
 	return d->contacts;
 }

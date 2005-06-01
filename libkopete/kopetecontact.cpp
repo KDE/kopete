@@ -20,6 +20,8 @@
 #include "kopetecontact.h"
 
 #include <qapplication.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include <kdebug.h>
 
@@ -49,10 +51,10 @@
 #include <qlabel.h>
 #include <qimage.h>
 #include <qmime.h>
-#include <qvbox.h>
+#include <q3vbox.h>
 #include <klistview.h>
 #include <qcheckbox.h>
-#include <qwhatsthis.h>
+#include <q3whatsthis.h>
 
 namespace Kopete {
 
@@ -226,7 +228,7 @@ KPopupMenu* Contact::popupMenu( ChatSession *manager )
 	// through the use of the customContextMenuActions() function
 
 	// Get the custom actions from the protocols ( pure virtual function )
-	QPtrList<KAction> *customActions = customContextMenuActions( manager );
+	Q3PtrList<KAction> *customActions = customContextMenuActions( manager );
 	if( customActions && !customActions->isEmpty() )
 	{
 		menu->insertSeparator();
@@ -261,13 +263,13 @@ void Contact::changeMetaContact()
 	KDialogBase *moveDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "moveDialog", true, i18n( "Move Contact" ),
 		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
 
-	QVBox *w = new QVBox( moveDialog );
+	Q3VBox *w = new Q3VBox( moveDialog );
 	w->setSpacing( KDialog::spacingHint() );
 	Kopete::UI::MetaContactSelectorWidget *selector = new Kopete::UI::MetaContactSelectorWidget(w);
 	selector->setLabelMessage(i18n( "Select the meta contact to which you want to move this contact:" ));
 
 	QCheckBox *chkCreateNew = new QCheckBox( i18n( "Create a new metacontact for this contact" ), w );
-	QWhatsThis::add( chkCreateNew , i18n( "If you select this option, a new metacontact will be created in the top-level group "
+	Q3WhatsThis::add( chkCreateNew , i18n( "If you select this option, a new metacontact will be created in the top-level group "
 		"with the name of this contact and the contact will be moved to it." ) );
 	QObject::connect( chkCreateNew , SIGNAL( toggled(bool) ) ,  selector , SLOT ( setDisabled(bool) ) ) ;
 
@@ -501,12 +503,12 @@ void Contact::setIcon( const QString& icon )
 	return;
 }
 
-QPtrList<KAction> *Contact::customContextMenuActions()
+Q3PtrList<KAction> *Contact::customContextMenuActions()
 {
 	return 0L;
 }
 
-QPtrList<KAction> *Contact::customContextMenuActions( ChatSession * /* manager */ )
+Q3PtrList<KAction> *Contact::customContextMenuActions( ChatSession * /* manager */ )
 {
 	return customContextMenuActions();
 }

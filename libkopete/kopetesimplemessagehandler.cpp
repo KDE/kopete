@@ -19,7 +19,7 @@
 
 #include <kstaticdeleter.h>
 
-#include <qguardedptr.h>
+#include <qpointer.h>
 
 namespace Kopete
 {
@@ -31,7 +31,7 @@ class SimpleMessageHandlerFactory::Private
 public:
 	Message::MessageDirection direction;
 	int position;
-	QGuardedPtr<QObject> target;
+	QPointer<QObject> target;
 	const char *slot;
 };
 

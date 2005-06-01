@@ -200,9 +200,10 @@ public:
 	/**
 	* @todo  find a proper way to do contect-depedent notifications
 	*/
-	static KNotification *event( Kopete::MetaContact *mc, const QString& eventId , const QString& text=QString::null,
-								 const QPixmap& pixmap=QPixmap(), QWidget *widget=0L,
-								 const QStringList &actions=QStringList(),unsigned int flags=CloseOnTimeout);
+	static KNotification *event( Kopete::MetaContact *mc, const QString& eventId , 
+			const QString& text=QString::null, const QPixmap& pixmap=QPixmap(), 
+			QWidget *widget=0L, const QStringList &actions=QStringList(),
+			unsigned int flags=CloseOnTimeout);
 
 };
 

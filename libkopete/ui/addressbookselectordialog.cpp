@@ -20,8 +20,8 @@
 #include "addressbookselectorwidget.h"
 #include <kdialogbase.h>
 #include <qdialog.h>
-#include <qlistview.h>
-#include <qvbox.h>
+#include <q3listview.h>
+#include <q3vbox.h>
 #include <klocale.h>
 #include <kdialog.h>
 
@@ -32,7 +32,7 @@ namespace UI
 
 AddressBookSelectorDialog::AddressBookSelectorDialog(const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent, const char *name, bool modal ) : KDialogBase(parent, name, modal, title, Help|Ok|Cancel, Ok, true )
 {
-	QVBox *vbox=new QVBox(this);
+	Q3VBox *vbox=new Q3VBox(this);
 	m_addressBookSelectorWidget= new AddressBookSelectorWidget(vbox);
 	m_addressBookSelectorWidget->setLabelMessage(message);	
 
@@ -42,7 +42,7 @@ AddressBookSelectorDialog::AddressBookSelectorDialog(const QString &title, const
 	enableButtonOK(false);
 	//setHelp("linkaddressbook");
 
-	connect(m_addressBookSelectorWidget, SIGNAL(addresseeListClicked( QListViewItem * )), SLOT(slotWidgetAddresseeListClicked( QListViewItem * )));
+	connect(m_addressBookSelectorWidget, SIGNAL(addresseeListClicked( Q3ListViewItem * )), SLOT(slotWidgetAddresseeListClicked( Q3ListViewItem * )));
 
 	if ( !preSelectUid.isEmpty() )
 		m_addressBookSelectorWidget->selectAddressee(preSelectUid);
@@ -64,7 +64,7 @@ KABC::Addressee AddressBookSelectorDialog::getAddressee( const QString &title, c
 	return adr;
 }
 
-void AddressBookSelectorDialog::slotWidgetAddresseeListClicked( QListViewItem *addressee )
+void AddressBookSelectorDialog::slotWidgetAddresseeListClicked( Q3ListViewItem *addressee )
 {
 	// enable ok if a valid addressee is selected
 	enableButtonOK( addressee ? addressee->isSelected() : false);

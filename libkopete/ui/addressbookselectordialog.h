@@ -76,7 +76,7 @@ public:
 protected slots:
 	virtual void accept();
 	virtual void reject();
-	void slotWidgetAddresseeListClicked( QListViewItem *addressee );
+	void slotWidgetAddresseeListClicked( Q3ListViewItem *addressee );
 protected:
 	 AddressBookSelectorWidget *m_addressBookSelectorWidget;
 };

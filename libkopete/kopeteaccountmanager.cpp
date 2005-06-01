@@ -21,6 +21,8 @@
 #include <qapplication.h>
 #include <qregexp.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -41,7 +43,7 @@ class AccountManager::Private
 {
 public:
 
-	class AccountPtrList : public QPtrList<Account>
+	class AccountPtrList : public Q3PtrList<Account>
 	{
 		protected:
 			int compareItems( AccountPtrList::Item a, AccountPtrList::Item b )
@@ -87,7 +89,7 @@ AccountManager::~AccountManager()
 
 void AccountManager::connectAll()
 {
-	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 		if(!it.current()->excludeConnect())
 			it.current()->connect();
 }
@@ -96,12 +98,12 @@ void AccountManager::setAvailableAll()
 {
 	Away::setGlobalAway( false );
 	bool anyConnected = false;
-	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		anyConnected |= it.current()->isConnected();
 	}
 	
-	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		if ( anyConnected )
 		{
@@ -116,7 +118,7 @@ void AccountManager::setAvailableAll()
 
 void AccountManager::disconnectAll()
 {
-	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 		it.current()->disconnect();
 }
 
@@ -124,7 +126,7 @@ void AccountManager::setAwayAll( const QString &awayReason, bool away )
 {
 	Away::setGlobalAway( true );
 
-	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		// FIXME: ICQ's invisible online should be set to invisible away
 		Contact *self = it.current()->myself();
@@ -138,7 +140,7 @@ void AccountManager::setOnlineStatus( uint category , const QString& awayMessage
 {
 	OnlineStatusManager::Categories katgor=(OnlineStatusManager::Categories)category;
 
-	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		Account *account=it.current();
 		if(account->isConnected() || (flags & ConnectIfOffline) )
@@ -155,7 +157,7 @@ QColor AccountManager::guessColor( Protocol *protocol ) const
 	//   -- Olivier
 	int protocolCount = 0;
 
-	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		if ( it.current()->protocol()->pluginId() == protocol->pluginId() )
 			protocolCount++;
@@ -203,7 +205,7 @@ Account* AccountManager::registerAccount( Account *account )
 	}
 
 	// If this account already exists, do nothing
-	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		if ( ( account->protocol() == it.current()->protocol() ) && ( account->accountId() == it.current()->accountId() ) )
 		{
@@ -234,15 +236,15 @@ void AccountManager::unregisterAccount( const Account *account )
 	emit accountUnregistered( account );
 }
 
-const QPtrList<Account>& AccountManager::accounts() const
+const Q3PtrList<Account>& AccountManager::accounts() const
 {
 	return d->accounts;
 }
 
-QDict<Account> AccountManager::accounts( const Protocol *protocol ) const
+Q3Dict<Account> AccountManager::accounts( const Protocol *protocol ) const
 {
-	QDict<Account> dict;
-	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	Q3Dict<Account> dict;
+	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		if ( it.current()->protocol() == protocol && !it.current()->accountId().isNull() )
 			dict.insert( it.current()->accountId(), it.current() );
@@ -253,7 +255,7 @@ QDict<Account> AccountManager::accounts( const Protocol *protocol ) const
 
 Account * AccountManager::findAccount( const QString &protocolId, const QString &accountId )
 {
-	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		if ( it.current()->protocol()->pluginId() == protocolId && it.current()->accountId() == accountId )
 			return it.current();
@@ -296,7 +298,7 @@ void AccountManager::save()
 	//kdDebug( 14010 ) << k_funcinfo << endl;
 	d->accounts.sort();
 	
-	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		KConfigBase *config = it.current()->configGroup();
 	

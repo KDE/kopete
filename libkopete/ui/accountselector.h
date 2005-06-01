@@ -23,7 +23,7 @@
 #include <kopete_export.h>
 
 class AccountSelectorPrivate;
-class QListViewItem;
+class Q3ListViewItem;
 /**
  * \brief widget to select an account, based on KListView
  * @author Stefan Gehn <metz AT gehn.net>
@@ -79,7 +79,7 @@ Q_OBJECT
 		void selectionChanged(Kopete::Account *acc);
 
 	private slots:
-		void slotSelectionChanged(QListViewItem *item);
+		void slotSelectionChanged(Q3ListViewItem *item);
 
 	private:
 		void initUI();

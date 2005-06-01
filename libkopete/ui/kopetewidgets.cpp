@@ -4,6 +4,8 @@
 * input file.
 */
 #include <qwidgetplugin.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 #include <kinstance.h>
 #include "kopetelistview.h"
@@ -29,7 +31,7 @@ public:
 	
 	virtual QWidget *create(const QString &key, QWidget *parent = 0, const char *name = 0);
 	
-	virtual QIconSet iconSet(const QString &key) const
+	virtual QIcon iconSet(const QString &key) const
 	{
 #ifdef EMBED_IMAGES
 		QPixmap pix(m_widgets[key].iconSet);
@@ -37,7 +39,7 @@ public:
 		QPixmap pix(locate( "data", 
 			QString::fromLatin1("kopetewidgets/pics/") + m_widgets[key].iconSet));
 #endif
-		return QIconSet(pix);
+		return QIcon(pix);
 	}
 	
 	virtual bool isContainer(const QString &key) const { return m_widgets[key].isContainer; }

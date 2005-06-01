@@ -23,13 +23,15 @@
 
 #include <ksharedptr.h>
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qstring.h>
 #include <qdom.h>
 #include <qcolor.h>
 #include <qfont.h>
 #include <qdatetime.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include <kopete_export.h>
 
@@ -79,7 +81,7 @@ public:
 	 *  show into the chatview, with Emoticons, and URLs
 	 * - Crypted is used only by Jabber and the Cryptography plugin
 	 */
-	enum MessageFormat{ PlainText = 0x01 , RichText =0x02 , ParsedHTML = 0x04|RichText , Crypted = 0x08|PlainText};
+	enum MessageFormat{ PlainText = 0x01 , RichText =0x02 , ParsedHTML = 0x04|Qt::RichText , Crypted = 0x08|Qt::PlainText};
 
 	/**
 	 * Specifies the type of the message.
@@ -117,8 +119,8 @@ public:
 	 * @param requestedPlugin Requested view plugin for the message
 	 * @param type Type of the message, see @ref MessageType
 	 */
-	Message( const Contact *fromKC, const QPtrList<Contact> &toKC, const QString &body,
-		 MessageDirection direction, MessageFormat format = PlainText,
+	Message( const Contact *fromKC, const Q3PtrList<Contact> &toKC, const QString &body,
+		 MessageDirection direction, MessageFormat format = Qt::PlainText,
 		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
 	/**
@@ -132,7 +134,7 @@ public:
 	 * @param type Type of the message, see @ref MessageType
 	 */
 	Message( const Contact *fromKC, const Contact *toKC, const QString &body,
-		 MessageDirection direction, MessageFormat format = PlainText,
+		 MessageDirection direction, MessageFormat format = Qt::PlainText,
 		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
 	/**
@@ -146,8 +148,8 @@ public:
 	 * @param requestedPlugin Requested view plugin for the message
 	 * @param type Type of the message, see @ref MessageType
 	 */
-	Message( const Contact *fromKC, const QPtrList<Contact> &toKC, const QString &body,
-		 const QString &subject, MessageDirection direction, MessageFormat format = PlainText,
+	Message( const Contact *fromKC, const Q3PtrList<Contact> &toKC, const QString &body,
+		 const QString &subject, MessageDirection direction, MessageFormat format = Qt::PlainText,
 		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
 	/**
@@ -161,8 +163,8 @@ public:
 	 * @param requestedPlugin Requested view plugin for the message
 	 * @param type Type of the message, see @ref MessageType
 	 */
-	Message( const QDateTime &timeStamp, const Contact *fromKC, const QPtrList<Contact> &toKC,
-		 const QString &body, MessageDirection direction, MessageFormat format = PlainText,
+	Message( const QDateTime &timeStamp, const Contact *fromKC, const Q3PtrList<Contact> &toKC,
+		 const QString &body, MessageDirection direction, MessageFormat format = Qt::PlainText,
 		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
 	/**
@@ -177,9 +179,9 @@ public:
 	 * @param requestedPlugin Requested view plugin for the message
 	 * @param type Type of the message, see @ref MessageType
 	 */
-	Message( const QDateTime &timeStamp, const Contact *fromKC, const QPtrList<Contact> &toKC,
+	Message( const QDateTime &timeStamp, const Contact *fromKC, const Q3PtrList<Contact> &toKC,
 		const QString &body, const QString &subject, MessageDirection direction,
-		MessageFormat format = PlainText, const QString &requestedPlugin = QString::null,
+		MessageFormat format = Qt::PlainText, const QString &requestedPlugin = QString::null,
 		MessageType type = TypeNormal );
 
 	/**
@@ -210,7 +212,7 @@ public:
 	 * Accessor method for the Contacts that this message was sent to
 	 * @return Pointer list of the Contacts this message was sent to
 	 */
-	QPtrList<Contact> to() const;
+	Q3PtrList<Contact> to() const;
 
 	/**
 	 * @return the @ref MessageType of this message
@@ -296,7 +298,7 @@ public:
 	 * @param body The body
 	 * @param format The format of the message, @see MessageFormat
 	 */
-	void setBody( const QString &body, MessageFormat format = PlainText );
+	void setBody( const QString &body, MessageFormat format = Qt::PlainText );
 
 	/**
 	 * Get the message body back as plain text
@@ -384,7 +386,7 @@ public:  /* static helpers */
 	 *	is defined as a successfull decoding using either UTF8 or the codec you
 	 *	provided. If a guess has to be taken, success will be false.
 	 */
-	static QString decodeString( const QCString &message,
+	static QString decodeString( const Q3CString &message,
  		const QTextCodec *providedCodec = 0L, bool *success = 0L );
 
 

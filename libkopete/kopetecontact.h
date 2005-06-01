@@ -21,6 +21,8 @@
 #define __KOPETECONTACT_H__
 
 #include <qobject.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 #include <kurl.h>
 #include <kdemacros.h>
 #include "kopeteglobal.h"
@@ -41,7 +43,7 @@ class OnlineStatus;
 class Plugin;
 class Protocol;
 class Account;
-typedef QPtrList<Group> GroupList;
+typedef Q3PtrList<Group> GroupList;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -222,12 +224,12 @@ public:
 	 * @return Collection of menu items to be show on the context menu
 	 * @todo if possible, try to use KXMLGUI
 	 */
-	virtual QPtrList<KAction> *customContextMenuActions();
+	virtual Q3PtrList<KAction> *customContextMenuActions();
 
 	/**
 	 * @todo  What is this function for ?
 	 */
-	virtual QPtrList<KAction> *customContextMenuActions( ChatSession *manager );
+	virtual Q3PtrList<KAction> *customContextMenuActions( ChatSession *manager );
 
 	/**
 	 * @brief Get the Context Menu for this contact

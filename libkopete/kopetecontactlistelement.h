@@ -21,6 +21,8 @@
 
 #include <qobject.h>
 #include <qdom.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include <kopete_export.h>
 
@@ -150,7 +152,7 @@ protected:
 	/**
 	 * Return a XML representation of plugin data
 	 */
-	const QValueList<QDomElement> toXML();
+	const Q3ValueList<QDomElement> toXML();
 
 	/**
 	 * Load plugin data from one Dom Element:
