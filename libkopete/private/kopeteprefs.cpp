@@ -19,6 +19,8 @@
 #include <qfile.h>
 #include <qfont.h>
 #include <qmetaobject.h>
+//Added by qt3to4:
+#include <QTextStream>
 
 #include <kapplication.h>
 #include <kglobalsettings.h>
@@ -46,6 +48,9 @@ KopetePrefs::KopetePrefs() : QObject( kapp, "KopetePrefs" )
 void KopetePrefs::load()
 {
 //	kdDebug( 14010 ) << k_funcinfo << endl;
+	QColor defaultWhiteColor( Qt::white );
+	QColor defaultDarkRed( Qt::darkRed );
+
 	config->setGroup("Appearance");
 
 	mIconTheme = config->readEntry("EmoticonTheme", defaultTheme());
@@ -71,7 +76,7 @@ void KopetePrefs::load()
 	mTruncateContactNames = config->readBoolEntry("TruncateContactNames", false);
 	mMaxContactNameLength = config->readNumEntry("MaxContactNameLength", 20);
 
-	mTransparencyColor = config->readColorEntry("ChatView Transparency Tint Color", &Qt::white);
+	mTransparencyColor = config->readColorEntry("ChatView Transparency Tint Color", &defaultWhiteColor);
 	mChatViewBufferSize = config->readNumEntry("ChatView BufferSize", 250);
 
 	QColor tmpColor = KGlobalSettings::highlightColor();
@@ -90,7 +95,7 @@ void KopetePrefs::load()
 	tmpColor = KGlobalSettings::linkColor();
 	mLinkColor = config->readColorEntry("Link Color", &tmpColor );
 	mFontFace = config->readFontEntry("Font Face");
-	tmpColor = darkGray;
+	tmpColor = Qt::darkGray;
 	mIdleContactColor = config->readColorEntry("Idle Contact Color", &tmpColor);
 
 	mShowTray = config->readBoolEntry("Show Systemtray", true);
@@ -121,9 +126,12 @@ void KopetePrefs::load()
 	}
 
 	config->setGroup("ContactList");
-	int n = metaObject()->findProperty( "contactListDisplayMode" );
-	QString value = config->readEntry("DisplayMode",QString::fromLatin1("Default"));
-	mContactListDisplayMode = (ContactDisplayMode)metaObject()->property( n )->keyToValue( value.latin1() );
+	//int n = metaObject()->indexOfProperty( "contactListDisplayMode" );
+	//QString value = config->readEntry("DisplayMode",QString::fromLatin1("Default"));
+	//mContactListDisplayMode = (ContactDisplayMode)metaObject()->property( n )->read( value.latin1() );
+	// FIXME: read mode here
+	mContactListDisplayMode = Default;
+	
 	mContactListIndentContacts = config->readBoolEntry("IndentContacts", false);
 	mContactListHideVerticalScrollBar = config->readBoolEntry("HideVerticalScrollBar", false );
 	mContactListUseCustomFonts = config->readBoolEntry("UseCustomFonts", false);
@@ -134,7 +142,7 @@ void KopetePrefs::load()
 	else
 		font.setPointSizeFloat( font.pointSizeFloat() * 0.75 );
 	mContactListSmallFont = config->readFontEntry("SmallFont", &font);
-	mContactListGroupNameColor = config->readColorEntry("GroupNameColor", &darkRed);
+	mContactListGroupNameColor = config->readColorEntry("GroupNameColor", &defaultDarkRed);
 	mContactListAnimation = config->readBoolEntry("AnimateChanges", true);
 	mContactListFading = config->readBoolEntry("FadeItems", true);
 	mContactListFolding = config->readBoolEntry("FoldItems", true);
@@ -204,8 +212,9 @@ void KopetePrefs::save()
 	config->writeEntry("ToolTipContents", mToolTipContents);
 
 	config->setGroup("ContactList");
-	int n = metaObject()->findProperty( "contactListDisplayMode" );
-	config->writeEntry("DisplayMode", metaObject()->property( n )->valueToKey( mContactListDisplayMode ));
+//FIXME: write DisplayMode here
+//	int n = metaObject()->findProperty( "contactListDisplayMode" );
+//	config->writeEntry("DisplayMode", metaObject()->property( n )->valueToKey( mContactListDisplayMode ));
 	config->writeEntry("IndentContacts", mContactListIndentContacts);
 	config->writeEntry("HideVerticalScrollBar", mContactListHideVerticalScrollBar );
 	config->writeEntry("UseCustomFonts", mContactListUseCustomFonts);
@@ -470,7 +479,7 @@ QString KopetePrefs::fileContents(const QString &path)
 {
  	QString contents;
 	QFile file( path );
-	if ( file.open( IO_ReadOnly ) )
+	if ( file.open( QIODevice::ReadOnly ) )
 	{
 		QTextStream stream( &file );
 		contents = stream.read();
