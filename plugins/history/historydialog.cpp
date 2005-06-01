@@ -70,7 +70,7 @@ private:
 
 
 KListViewDateItem::KListViewDateItem(KListView* parent, QDate date, Kopete::MetaContact *mc)
-		: KListViewItem(parent, date.toString(), mc->displayName())
+		: KListViewItem(parent, date.toString(Qt::LocalDate), mc->displayName())
 {
 	mDate = date;
 	mMetaContact = mc;
@@ -121,6 +121,8 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 
 	if (mMetaContact)
 		mMainWidget->contactComboBox->setCurrentItem(mMetaContactList.find(mMetaContact)+1);
+
+	mMainWidget->dateSearchLine->setListView(mMainWidget->dateListView);
 
 	setMainWidget(mMainWidget);
 
@@ -202,7 +204,8 @@ void HistoryDialog::slotLoadDays()
 		if(mInit.dateMCList.isEmpty())
 		{
 				if (!mMainWidget->searchLine->text().isEmpty())
-				QTimer::singleShot(0, this, SLOT(slotSearch()));
+					QTimer::singleShot(0, this, SLOT(slotSearch()));
+				doneProgressBar();
 				return;
 		}
 		
@@ -302,7 +305,7 @@ void HistoryDialog::dateSelected(QListViewItem* it)
 
 	if (!item) return;
 
-	QDate chosenDate = QDate::fromString(item->text(0));
+	QDate chosenDate = item->date();
 
 	mLogger= new HistoryLogger(item->metaContact(), this);
 	QValueList<Kopete::Message> msgs=mLogger->readMessages(chosenDate);
@@ -381,6 +384,7 @@ void HistoryDialog::slotSearchTextChanged(const QString& searchText)
 	if (searchText.isEmpty())
 	{
 		mMainWidget->searchButton->setEnabled(false);
+		slotSearchErase();
 	}
 	else
 	{
