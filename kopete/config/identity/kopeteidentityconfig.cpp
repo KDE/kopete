@@ -3,7 +3,7 @@
 
     Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
 
-    Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2003-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -58,7 +58,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char *name, co
 	{
 		QString accountName = i->accountLabel();
 		QPixmap accountIcon = i->accountIcon();
-		m_view->kcfg_GlobalIdentity_AccountSelected->insertItem(accountIcon, accountName);
+		m_view->kcfg_GlobalIdentity_AccountSelectedId->insertItem(accountIcon, accountName);
 		// Populate QMap for futher use
 		m_listAccounts.insert(accountName, i);
 	}
@@ -75,11 +75,14 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char *name, co
 void KopeteIdentityConfig::load()
 {
 	KCModule::load();
+	m_view->m_displayPicture->setPixmap(locateLocal("appdata", "global-displayphoto.png"));
 }
 
 void KopeteIdentityConfig::save()
 {
 	KCModule::save();
+	Kopete::Config::setGlobalIdentity_AccountSelected(m_view->kcfg_GlobalIdentity_AccountSelectedId->currentText());
+	Kopete::Config::setGlobalIdentity_ProtocolSelected(m_listAccounts[m_view->kcfg_GlobalIdentity_AccountSelectedId->currentText()]->protocol()->pluginId());
 	load();
 
 	// Apply the global identity

@@ -63,7 +63,7 @@
                         </widget>
                         <widget class="QLineEdit">
                             <property name="name">
-                                <cstring>kcfg_GlobalIdentity_NickName</cstring>
+                                <cstring>kcfg_GlobalIdentity_Nickname</cstring>
                             </property>
                         </widget>
                     </hbox>
@@ -126,7 +126,7 @@
                         </widget>
                         <widget class="QComboBox">
                             <property name="name">
-                                <cstring>kcfg_GlobalIdentity_AccountSelected</cstring>
+                                <cstring>kcfg_GlobalIdentity_AccountSelectedId</cstring>
                             </property>
                             <property name="enabled">
                                 <bool>false</bool>
@@ -375,7 +375,7 @@
     <connection>
         <sender>kcfg_GlobalIdentity_CheckAccountNick</sender>
         <signal>toggled(bool)</signal>
-        <receiver>kcfg_GlobalIdentity_AccountSelected</receiver>
+        <receiver>kcfg_GlobalIdentity_AccountSelectedId</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>

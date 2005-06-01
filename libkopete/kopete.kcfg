@@ -14,6 +14,7 @@
   <entry key="Nickname" type="String" name="GlobalIdentity_Nickname" >
    <label>Your prefered nickname for your global identity</label>
   </entry>
+  <entry key="accountSelectedId" type="Int" name="GlobalIdentity_AccountSelectedId" />
   <entry key="accountSelected" type="String" name="GlobalIdentity_AccountSelected" />
   <entry key="protocolSelected" type="String" name="GlobalIdentity_ProtocolSelected" />
   <entry key="useDisplayPicture" type="Bool" name="GlobalIdentity_UseDisplayPicture" >
