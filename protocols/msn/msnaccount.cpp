@@ -459,7 +459,7 @@ void MSNAccount::slotStatusChanged( const Kopete::OnlineStatus &status )
 		for ( ; it.current(); ++it )
 		{
 			MSNContact *c = static_cast<MSNContact *>( *it );
-			if(c->isDeleted() && c->metaContact() && !c->metaContact()->isTemporary())
+			if(c->isDeleted() && c->metaContact() && !c->metaContact()->isTemporary() && c!=myself())
 			{
 				if(c->serverGroups().isEmpty())
 				{ //the contact is new, add it on the server
@@ -752,7 +752,8 @@ void MSNAccount::slotNewContactList()
 void MSNAccount::slotContactListed( const QString& handle, const QString& publicName, uint lists, const QString& group )
 {
 	// On empty lists handle might be empty, ignore that
-	if ( handle.isEmpty() )
+	// ignore also the myself contact.
+	if ( handle.isEmpty() || handle==accountId())
 		return;
 
 	MSNContact *c = static_cast<MSNContact *>( contacts()[ handle ] );
