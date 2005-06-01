@@ -68,7 +68,12 @@ public:
 	 * - Internal: Messages which are not sent via the network. This is just a notification a plugin can show in a chat view
 	 * - Action: For the /me command , like on irc
 	 */
-	enum MessageDirection { Inbound = 0, Outbound = 1, Internal= 2 };
+	enum MessageDirection
+	{
+		Inbound,
+		Outbound,
+		Internal
+	};
 
 	/**
 	 * Format of body
@@ -81,7 +86,13 @@ public:
 	 *  show into the chatview, with Emoticons, and URLs
 	 * - Crypted is used only by Jabber and the Cryptography plugin
 	 */
-	enum MessageFormat{ PlainText = 0x01 , RichText =0x02 , ParsedHTML = 0x04|Qt::RichText , Crypted = 0x08|Qt::PlainText};
+	enum MessageFormat
+	{
+		PlainText	= 0x01,
+		RichText	= 0x02,
+		ParsedHTML	= 0x04 | RichText,
+		Crypted		= 0x08 | PlainText
+	};
 
 	/**
 	 * Specifies the type of the message.
@@ -89,7 +100,11 @@ public:
 	 * - Normal: a message
 	 * - Action: an IRC-style DESCRIBE action.
 	 */
-	enum MessageType { TypeNormal, TypeAction };
+	enum MessageType
+	{
+		TypeNormal,
+		TypeAction
+	};
 
 	/**
 	 * Specifies the type of notification that will be sent with this message
@@ -97,7 +112,12 @@ public:
 	 * - Normal: Default notification, for normal message
 	 * - Highlight: Highlight notification, for most important messages, which require particular attentions.
 	 */
-	enum MessageImportance { Low = 0, Normal = 1, Highlight = 2 };
+	enum MessageImportance
+	{
+		Low,
+		Normal,
+		Highlight
+	};
 
 	/**
 	 * Constructs a new empty message
@@ -120,7 +140,7 @@ public:
 	 * @param type Type of the message, see @ref MessageType
 	 */
 	Message( const Contact *fromKC, const Q3PtrList<Contact> &toKC, const QString &body,
-		 MessageDirection direction, MessageFormat format = Qt::PlainText,
+		 MessageDirection direction, MessageFormat format = PlainText,
 		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
 	/**
@@ -134,7 +154,7 @@ public:
 	 * @param type Type of the message, see @ref MessageType
 	 */
 	Message( const Contact *fromKC, const Contact *toKC, const QString &body,
-		 MessageDirection direction, MessageFormat format = Qt::PlainText,
+		 MessageDirection direction, MessageFormat format = PlainText,
 		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
 	/**
@@ -149,7 +169,7 @@ public:
 	 * @param type Type of the message, see @ref MessageType
 	 */
 	Message( const Contact *fromKC, const Q3PtrList<Contact> &toKC, const QString &body,
-		 const QString &subject, MessageDirection direction, MessageFormat format = Qt::PlainText,
+		 const QString &subject, MessageDirection direction, MessageFormat format = PlainText,
 		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
 	/**
@@ -164,7 +184,7 @@ public:
 	 * @param type Type of the message, see @ref MessageType
 	 */
 	Message( const QDateTime &timeStamp, const Contact *fromKC, const Q3PtrList<Contact> &toKC,
-		 const QString &body, MessageDirection direction, MessageFormat format = Qt::PlainText,
+		 const QString &body, MessageDirection direction, MessageFormat format = PlainText,
 		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
 	/**
@@ -181,7 +201,7 @@ public:
 	 */
 	Message( const QDateTime &timeStamp, const Contact *fromKC, const Q3PtrList<Contact> &toKC,
 		const QString &body, const QString &subject, MessageDirection direction,
-		MessageFormat format = Qt::PlainText, const QString &requestedPlugin = QString::null,
+		MessageFormat format = PlainText, const QString &requestedPlugin = QString::null,
 		MessageType type = TypeNormal );
 
 	/**
@@ -298,7 +318,7 @@ public:
 	 * @param body The body
 	 * @param format The format of the message, @see MessageFormat
 	 */
-	void setBody( const QString &body, MessageFormat format = Qt::PlainText );
+	void setBody( const QString &body, MessageFormat format = PlainText );
 
 	/**
 	 * Get the message body back as plain text
