@@ -1,6 +1,6 @@
 SUBDIRS = mock .
 AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_ASCII_CAST -DQT_NO_COMPAT \
-	$(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private -I$(top_srcdir)/kopete/libkopete/private -I$(top_srcdir)/kopete/libkopete/tests/mock $(all_includes)
+	$(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private -I$(top_srcdir)/kopete/libkopete/private -I$(top_srcdir)/kopete/libkopete/tests/mock $(all_includes) -DSRCDIR=\"$(top_srcdir)/kopete/libkopete/tests\"
 METASOURCES = AUTO
 
 check_LTLIBRARIES = kunittest_kopetemessage_test.la kunittest_kopetepropertiestest.la kunittest_kopetecontactlist_test.la 
