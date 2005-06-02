@@ -21,6 +21,7 @@
 #include <qdir.h>
 #include <qfile.h>
 #include <kapplication.h>
+#include <kstandarddirs.h>
 #include <kinstance.h>
 #include <kprocess.h>
 #include <kunittest/module.h>
@@ -114,6 +115,11 @@ void KopeteMessage_Test::testFormats()
 
 void KopeteMessage_Test::testValidXML()
 {
+	if ( KStandardDirs::findExe( QString::fromLatin1("xmllint") ).isEmpty() )
+	{
+		SKIP("Sorry, this test requires xmllint installed.");
+	}
+
 	Kopete::Test::Mock::Contact* contactFrom = new Kopete::Test::Mock::Contact( 0L /*account*/, QString::fromLatin1("test-friend"), 0L /* metaContact */);
 	Kopete::Test::Mock::Contact* contactTo = new Kopete::Test::Mock::Contact( 0L /*account*/, QString::fromLatin1("test-myself"), 0L /* metaContact */);
 	
