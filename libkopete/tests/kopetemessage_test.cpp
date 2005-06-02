@@ -19,10 +19,12 @@
 #include <stdlib.h>
 
 #include <qdir.h>
-
+#include <qfile.h>
 #include <kapplication.h>
 #include <kinstance.h>
+#include <kprocess.h>
 #include <kunittest/module.h>
+#include <kdebug.h>
 
 #include "kopetemessage_test.h"
 #include "kopeteaccount_mock.h"
@@ -83,30 +85,12 @@ KopeteMessage_Test::KopeteMessage_Test()
 
 void KopeteMessage_Test::allTests()
 {
-	testKnownGoodHTML();
-	testKnownBrokenHTML();
-	testKnownGoodPlain();
-	testKnownBrokenPlain();
-}
-
-void KopeteMessage_Test::testFormats()
-{
-	
-}
-
-void KopeteMessage_Test::testValidXML()
-{
-
-}
-
-void KopeteMessage_Test::setup()
-{
 	// change user data dir to avoid messing with user's .kde dir
 	setenv( "KDEHOME", QFile::encodeName( QDir::homeDirPath() + "/.kopete-unittest" ), true );
 
-	//KApplication::disableAutoDcopRegistration();
+	KApplication::disableAutoDcopRegistration();
 	//KCmdLineArgs::init(argc,argv,"testkopetemessage", 0, 0, 0, 0);
-	//KApplication app;
+	KApplication app;
 	
 	// create fake objects needed to build a reasonable testeable message
 	m_protocol = new Kopete::Test::Mock::Protocol( new KInstance(QCString("test-kopete-message")), 0L, "test-kopete-message");
@@ -116,6 +100,59 @@ void KopeteMessage_Test::setup()
 	m_contactFrom = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-myself"), m_metaContactMyself, QString::null);
 	m_contactTo = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-dest"), m_metaContactOther, QString::null);
 	m_message = new Kopete::Message( m_contactFrom, m_contactTo, QString::null, Kopete::Message::Outbound, Kopete::Message::PlainText);
+	//testKnownGoodHTML();
+	//testKnownBrokenHTML();
+	//testKnownGoodPlain();
+	//testKnownBrokenPlain();
+	testValidXML();
+}
+
+void KopeteMessage_Test::testFormats()
+{
+	
+}
+
+void KopeteMessage_Test::testValidXML()
+{
+	Kopete::Test::Mock::Contact* contactFrom = new Kopete::Test::Mock::Contact( 0L /*account*/, QString::fromLatin1("test-friend"), 0L /* metaContact */);
+	Kopete::Test::Mock::Contact* contactTo = new Kopete::Test::Mock::Contact( 0L /*account*/, QString::fromLatin1("test-myself"), 0L /* metaContact */);
+	
+	Kopete::Message message( contactFrom, contactTo, QString::fromLatin1("Hello my friend, I am Testing you"), Kopete::Message::Inbound, Kopete::Message::PlainText);
+	
+	kdDebug(14010) << k_funcinfo << endl;
+	QString xml = message.asXML().toString();
+	QFile xmlFile("message.xml");
+	if ( xmlFile.open( IO_WriteOnly ) )
+	{
+		kdDebug(14010) << k_funcinfo << "Writing xml" << endl;
+		QTextStream outXML(&xmlFile);
+		outXML << QString::fromLatin1("<?xml version=\"1.0\"?>\n");
+		outXML << xml;	
+		xmlFile.close();
+	}
+	else
+	{
+		kdDebug(14010) << k_funcinfo << "Cannot open file" << endl;
+	}
+
+	QString schemaPath = QString::fromLatin1( SRCDIR ) + QString::fromLatin1("/kopete-message.xsd");
+	kdDebug() << k_funcinfo << schemaPath;
+	KProcess p;
+	p << "xmllint" << "--noout" << "--schema" << schemaPath << QString::fromLatin1("message.xml"); 
+	p.start(KProcess::Block);
+	if (p.normalExit())
+	{
+		//kdDebug() << k_funcinfo << p.exitStatus();
+		// Exit code 0 NO ERROR on validating.
+		CHECK( p.exitStatus(), 0 );
+	}
+	delete contactTo;
+	delete contactFrom;
+}
+
+void KopeteMessage_Test::setup()
+{
+	
 }
 
 void KopeteMessage_Test::testKnownGoodHTML()
