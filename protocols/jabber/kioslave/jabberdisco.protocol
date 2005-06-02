@@ -1,0 +1,12 @@
+[Protocol]
+exec=kio_jabberdisco
+protocol=jabber
+input=none
+output=filesystem
+reading=true
+writing=false
+makedir=false
+linking=false
+moving=false
+Icon=remote
+Description=A KIO slave for Jabber Service Discovery

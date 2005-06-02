@@ -969,3 +969,5 @@ void JabberClient::slotSubscription ( const Jid &jid, const QString &type )
 	emit subscription ( jid, type );
 
 }
+
+#include "jabberclient.moc"
