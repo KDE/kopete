@@ -57,7 +57,12 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qtimer.h>
-#include <qvbox.h>
+#include <q3vbox.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QCloseEvent>
+#include <QHBoxLayout>
+#include <Q3ValueList>
 
 typedef KGenericFactory<EmailWindowPlugin> EmailWindowPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_emailwindow, EmailWindowPluginFactory( "kopete_emailwindow" )  )
@@ -75,7 +80,7 @@ KopeteView* EmailWindowPlugin::createView( Kopete::ChatSession *manager )
 class KopeteEmailWindow::Private
 {
 public:
-	QValueList<Kopete::Message> messageQueue;
+	Q3ValueList<Kopete::Message> messageQueue;
 	bool showingMessage;
 	bool sendInProgress;
 	bool visible;
@@ -100,13 +105,15 @@ public:
 KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowPlugin *parent, bool foreignMessage )
 	:  KParts::MainWindow( ), KopeteView( manager, parent ), d( new Private )
 {
-	QVBox *v = new QVBox( this );
+	setAttribute( Qt:: WA_DeleteOnClose );
+
+	Q3VBox *v = new Q3VBox( this );
 	setCentralWidget( v );
 
 	setMinimumSize( QSize( 75, 20 ) );
 
 	d->split = new QSplitter( v );
-	d->split->setOrientation( QSplitter::Vertical );
+	d->split->setOrientation( Qt::Vertical );
 
 	d->messagePart = new ChatMessagePart( manager, d->split, "messagePart" );
 
@@ -166,7 +173,6 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowP
 	h->addWidget( d->btnReplySend, 0, Qt::AlignRight | Qt::AlignVCenter );
 
 	initActions();
-	setWFlags(Qt::WDestructiveClose);
 
 	d->showingMessage = false;
 
@@ -209,7 +215,7 @@ void KopeteEmailWindow::initActions(void)
 	d->chatSend = new KAction( i18n( "&Send Message" ), QString::fromLatin1( "mail_send" ), 0,
 		this, SLOT( slotReplySend() ), coll, "chat_send" );
 	//Default to 'Return' for sending messages
-	d->chatSend->setShortcut( QKeySequence( Key_Return ) );
+	d->chatSend->setShortcut( QKeySequence( Qt::Key_Return ) );
 
 	KStdAction::quit ( this, SLOT( slotCloseView() ), coll );
 
@@ -239,8 +245,9 @@ void KopeteEmailWindow::initActions(void)
 
 	// The animated toolbarbutton
 	d->normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
-	d->animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
-	d->animIcon.pause();
+	#warning QMovie
+//	d->animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
+//	d->animIcon.pause();
 
 	d->anim = new QLabel( this, "kde toolbar widget" );
 	d->anim->setMargin( 5 );
@@ -396,7 +403,8 @@ void KopeteEmailWindow::sendMessage()
 	if ( !d->editPart->canSend() )
 		return;
 	d->sendInProgress = true;
-	d->anim->setMovie( d->animIcon );
+	#warning QMovie
+//	d->anim->setMovie( d->animIcon );
 	d->animIcon.unpause();
 	d->editPart->widget()->setEnabled( false );
 	d->editPart->sendMessage();
@@ -477,7 +485,7 @@ void KopeteEmailWindow::toggleMode( WindowMode newMode )
 			d->btnReadPrev->show();
 			break;
 		case Reply:
-			QValueList<int> splitPercent;
+			Q3ValueList<int> splitPercent;
 			// FIXME: should be saved and restored
 			splitPercent.append(50);
 			splitPercent.append(50);

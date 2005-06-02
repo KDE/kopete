@@ -54,13 +54,13 @@ protected:
 	 *		i) a QTextDrag containing their email address, and
 	 *		ii) their vCard representation.
 	 */
-	virtual QDragObject *dragObject();
+	virtual Q3DragObject *dragObject();
 
 private slots:
 	/**
 	 * Show the context menu for @p item at @p point
 	 */
-	void slotContextMenu( KListView*, QListViewItem *item, const QPoint &point );
+	void slotContextMenu( KListView*, Q3ListViewItem *item, const QPoint &point );
 
 	/**
 	 * Called when a contact is added to the chat session.
@@ -87,7 +87,7 @@ private slots:
 	 * Called when a contact is clicked.
 	 * @param item The list view item representing the clicked contact
 	 */
-	void slotExecute( QListViewItem *contact );
+	void slotExecute( Q3ListViewItem *contact );
 
 private:
 	Kopete::ChatSession *m_session;

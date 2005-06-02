@@ -26,8 +26,13 @@
 
 #include <qmovie.h>
 #include <qlayout.h>
-#include <qobjectlist.h>
+#include <qobject.h>
 #include <qtooltip.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QMouseEvent>
+#include <QLabel>
+#include <QGridLayout>
 
 #include <kdebug.h>
 
@@ -35,7 +40,8 @@ EmoticonLabel::EmoticonLabel(const QString &emoticonText, const QString &pixmapP
 	: QLabel(parent,name)
 {
 	mText = emoticonText;
-	setMovie( QMovie(pixmapPath) );
+	#warning FIXME Movie stuff
+//	setMovie( QMovie(pixmapPath) );
 	setAlignment(Qt::AlignCenter);
 	QToolTip::add(this,emoticonText);
 	// Somehow QLabel doesn't tell a reasonable size when you use setMovie
@@ -72,6 +78,8 @@ void EmoticonSelector::prepareList(void)
 	int emoticonsPerRow = static_cast<int>(sqrt(list.count()));
 //	kdDebug(14000) << "emoticonsPerRow=" << emoticonsPerRow << endl;
 
+	#warning Emoticon Stuff
+/*
 	if ( lay )
 	{
 		QObjectList *list = queryList( "EmoticonLabel" );
@@ -81,7 +89,7 @@ void EmoticonSelector::prepareList(void)
 		delete list;
 		delete lay;
 	}
-
+*/
 	lay = new QGridLayout(this, 0, 0, 4, 4, "emoticonLayout");
 	for (QMap<QString, QString>::Iterator it = list.begin(); it != list.end(); ++it )
 	{

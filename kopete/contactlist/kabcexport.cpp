@@ -20,9 +20,9 @@
 */
 
 #include <qpushbutton.h>
-#include <qlistbox.h>
-#include <qlistview.h>
-#include <qptrlist.h>
+#include <q3listbox.h>
+#include <q3listview.h>
+#include <q3ptrlist.h>
 #include <qmap.h>
 
 #include <klocale.h>
@@ -45,10 +45,10 @@
 
 #include "kabcexport.h"
 
-class ContactLVI : public QCheckListItem
+class ContactLVI : public Q3CheckListItem
 {
 	public:
-		ContactLVI ( Kopete::MetaContact * mc, QListView * parent, const QString & text, Type tt = RadioButtonController ) : QCheckListItem( parent, text, tt ), mc( mc )
+		ContactLVI ( Kopete::MetaContact * mc, Q3ListView * parent, const QString & text, Type tt = RadioButtonController ) : Q3CheckListItem( parent, text, tt ), mc( mc )
 		{	}
 		Kopete::MetaContact * mc;
 		QString uid;
@@ -58,7 +58,7 @@ class ContactLVI : public QCheckListItem
 KabcExportWizard::KabcExportWizard( QWidget *parent, const char *name )
 	: KabcExportWizard_Base( parent, name )
 {
-	connect( m_addrBooks, SIGNAL( selectionChanged( QListBoxItem * ) ), SLOT( slotResourceSelectionChanged( QListBoxItem * ) ) );
+	connect( m_addrBooks, SIGNAL( selectionChanged( Q3ListBoxItem * ) ), SLOT( slotResourceSelectionChanged( Q3ListBoxItem * ) ) );
 
 	connect( m_btnSelectAll, SIGNAL( clicked() ), SLOT( slotSelectAll() ) );
 	connect( m_btnDeselectAll, SIGNAL( clicked() ), SLOT( slotDeselectAll() ) );
@@ -66,9 +66,9 @@ KabcExportWizard::KabcExportWizard( QWidget *parent, const char *name )
 	// fill resource selector
 	m_addressBook = Kopete::KABCPersistence::self()->addressBook();
 
-	QPtrList<KABC::Resource> kabcResources = m_addressBook->resources();
+	Q3PtrList<KABC::Resource> kabcResources = m_addressBook->resources();
 
-	QPtrListIterator<KABC::Resource> resIt( kabcResources );
+	Q3PtrListIterator<KABC::Resource> resIt( kabcResources );
 	KABC::Resource *resource;
 	
 	uint counter = 0;
@@ -82,8 +82,8 @@ KabcExportWizard::KabcExportWizard( QWidget *parent, const char *name )
 			counter++;
 		}
 	}
-	setNextEnabled( QWizard::page( 0 ), false );
-	setFinishEnabled( QWizard::page( 1 ), true );
+	setNextEnabled( Q3Wizard::page( 0 ), false );
+	setFinishEnabled( Q3Wizard::page( 1 ), true );
 	// if there were no writable address books, tell the user
 	if ( counter == 0 )
 	{
@@ -96,15 +96,15 @@ KabcExportWizard::KabcExportWizard( QWidget *parent, const char *name )
 		m_addrBooks->setSelected( 0, true );
 	
 	// fill contact list
-	QPtrList<Kopete::MetaContact> contacts = Kopete::ContactList::self()->metaContacts();
-	QPtrListIterator<Kopete::MetaContact> it( contacts );
+	Q3PtrList<Kopete::MetaContact> contacts = Kopete::ContactList::self()->metaContacts();
+	Q3PtrListIterator<Kopete::MetaContact> it( contacts );
 	counter = 0;
 	QString alreadyIn = i18n( " (already in address book)" );
 	for (; it.current(); ++it)
 	{
 		m_contactMap.insert( counter, it.current() );
-		QCheckListItem * lvi = new ContactLVI( it.current(), m_contactList,
-				it.current()->displayName(), QCheckListItem::CheckBox );
+		Q3CheckListItem * lvi = new ContactLVI( it.current(), m_contactList,
+				it.current()->displayName(), Q3CheckListItem::CheckBox );
 		lvi->setOn( false );
 		if ( it.current()->metaContactId().contains(':') )
 		{
@@ -123,7 +123,7 @@ KabcExportWizard::~KabcExportWizard()
 
 void KabcExportWizard::slotDeselectAll()
 {
-	QListViewItemIterator it( m_contactList );
+	Q3ListViewItemIterator it( m_contactList );
 	while ( it.current() )
 	{
 		ContactLVI *item = static_cast<ContactLVI *>( it.current() );
@@ -134,7 +134,7 @@ void KabcExportWizard::slotDeselectAll()
 
 void KabcExportWizard::slotSelectAll()
 {
-	QListViewItemIterator it( m_contactList );
+	Q3ListViewItemIterator it( m_contactList );
 	while ( it.current() )
 	{
 		ContactLVI *item = static_cast<ContactLVI *>( it.current() );
@@ -145,9 +145,9 @@ void KabcExportWizard::slotSelectAll()
 	}
 }
 
-void KabcExportWizard::slotResourceSelectionChanged( QListBoxItem * lbi )
+void KabcExportWizard::slotResourceSelectionChanged( Q3ListBoxItem * lbi )
 {
-	setNextEnabled( QWizard::page( 0 ), lbi->isSelected() );
+	setNextEnabled( Q3Wizard::page( 0 ), lbi->isSelected() );
 }
 
 // accept runs the export algorithm
@@ -159,7 +159,7 @@ void KabcExportWizard::accept()
 			m_resourceMap[ ( m_addrBooks->index( m_addrBooks->selectedItem() ) ) ];
 	// for each item checked
 	{
-		QListViewItemIterator it( m_contactList );
+		Q3ListViewItemIterator it( m_contactList );
 		while ( it.current() )
 		{
 			ContactLVI *item = static_cast<ContactLVI *>( it.current() );
@@ -175,7 +175,7 @@ void KabcExportWizard::accept()
 					addr.setResource( selectedResource );
 
 					// set name
-					QPtrList<Kopete::Contact> contacts = item->mc->contacts();
+					Q3PtrList<Kopete::Contact> contacts = item->mc->contacts();
 					if ( contacts.count() == 1 )
 					{
 						Kopete::ContactProperty prop;
@@ -213,8 +213,8 @@ void KabcExportWizard::accept()
 void KabcExportWizard::exportDetails( Kopete::MetaContact * mc, KABC::Addressee & addr )
 {
 	// for each contact
-	QPtrList<Kopete::Contact> contacts = mc->contacts();
-	QPtrListIterator<Kopete::Contact> cit( contacts );
+	Q3PtrList<Kopete::Contact> contacts = mc->contacts();
+	Q3PtrListIterator<Kopete::Contact> cit( contacts );
 	for( ; cit.current(); ++cit )
 	{
 		Kopete::ContactProperty prop;

@@ -44,7 +44,7 @@ Q_OBJECT
 	protected slots:
 		void slotDeselectAll();
 		void slotSelectAll();
-		void slotResourceSelectionChanged( QListBoxItem * lbi );
+		void slotResourceSelectionChanged( Q3ListBoxItem * lbi );
 	protected:
 		void exportDetails( Kopete::MetaContact * mc, KABC::Addressee & addr );
 	private:

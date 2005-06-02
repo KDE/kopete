@@ -1,10 +1,12 @@
 if enable_av
-AVDEVICEDIR = avdevice
+AVDEVICEDIR = 
+#avdevice
 else
 AVDEVICEDIR =
 endif
 
 
-SUBDIRS = plugins accounts behavior appearance identity $(AVDEVICEDIR)
+SUBDIRS = plugins accounts 
+#behaviour appearance identity $(AVDEVICEDIR)
 
 

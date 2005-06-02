@@ -21,16 +21,17 @@
 #define KOPETESTATUSGROUPVIEWITEM_H
 
 #include <klistview.h>
+
 #include "kopetemetacontact.h"
 
 /**
   *@author Duncan Mac-Vicar Prett <duncan@kde.org>
   */
 
- class KopeteStatusGroupViewItem : public QListViewItem
+class KopeteStatusGroupViewItem : public Q3ListViewItem
 {
 public: 
-	KopeteStatusGroupViewItem( Kopete::OnlineStatus::StatusType status_ , QListView *parent, const char *name=0);
+	KopeteStatusGroupViewItem( Kopete::OnlineStatus::StatusType status_ , Q3ListView *parent, const char *name=0);
 	~KopeteStatusGroupViewItem();
 
 private:

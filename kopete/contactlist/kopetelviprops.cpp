@@ -30,6 +30,12 @@
 #include <qpushbutton.h>
 #include <qtabwidget.h>
 #include <qcombobox.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QBoxLayout>
+#include <Q3PtrList>
 
 #include <kdialogbase.h>
 #include <kfiledialog.h>
@@ -68,8 +74,8 @@ KopeteGVIProps::KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent, const 
 : KDialogBase(parent, name, true, i18n("Properties of Group %1").arg(gvi->group()->displayName()), Ok|Cancel, Ok, false)
 {
 	mainWidget = new KopeteGVIPropsWidget(this, "mainWidget");
-	mainWidget->icnbOpen->setIconSize(KIcon::SizeSmall);
-	mainWidget->icnbClosed->setIconSize(KIcon::SizeSmall);
+//	mainWidget->icnbOpen->setIconSize(KIcon::SizeSmall);
+//	mainWidget->icnbClosed->setIconSize(KIcon::SizeSmall);
 	
 	mNotificationProps = new CustomNotificationProps( this, gvi->group() );
 	mainWidget->tabWidget->addTab( mNotificationProps->widget(), i18n( "Custom &Notifications" ) );
@@ -87,8 +93,8 @@ KopeteGVIProps::KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent, const 
 	QString closeName = item->group()->icon( Kopete::ContactListElement::Closed );
 	if(closeName.isEmpty())
 		closeName = KOPETE_GROUP_DEFAULT_CLOSED_ICON;
-	mainWidget->icnbOpen->setIcon( openName );
-	mainWidget->icnbClosed->setIcon( closeName );
+//	mainWidget->icnbOpen->setIcon( openName );
+//	mainWidget->icnbClosed->setIcon( closeName );
 
 	connect( this, SIGNAL(okClicked()), this, SLOT( slotOkClicked() ) );
 	connect( mainWidget->chkUseCustomIcons, SIGNAL( toggled( bool ) ),
@@ -117,11 +123,11 @@ void KopeteGVIProps::slotOkClicked()
 	// only call setIcon if the icon was changed
 	if( m_dirty )
 	{
-		item->group()->setIcon( mainWidget->icnbOpen->icon(),
-			 Kopete::ContactListElement::Open );
+//		item->group()->setIcon( mainWidget->icnbOpen->icon(),
+//			 Kopete::ContactListElement::Open );
 
-		item->group()->setIcon( mainWidget->icnbClosed->icon(),
-			Kopete::ContactListElement::Closed );
+//		item->group()->setIcon( mainWidget->icnbClosed->icon(),
+//			Kopete::ContactListElement::Closed );
 	}
 	
 	mNotificationProps->storeCurrentCustoms();
@@ -148,10 +154,10 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 {
 	m_countPhotoCapable = 0;
 	mainWidget = new KopeteMetaLVIPropsWidget( this, "mainWidget" );
-	mainWidget->icnbOffline->setIconSize( KIcon::SizeSmall );
-	mainWidget->icnbOnline->setIconSize( KIcon::SizeSmall );
-	mainWidget->icnbAway->setIconSize( KIcon::SizeSmall );
-	mainWidget->icnbUnknown->setIconSize( KIcon::SizeSmall );
+//	mainWidget->icnbOffline->setIconSize( KIcon::SizeSmall );
+//	mainWidget->icnbOnline->setIconSize( KIcon::SizeSmall );
+//	mainWidget->icnbAway->setIconSize( KIcon::SizeSmall );
+//	mainWidget->icnbUnknown->setIconSize( KIcon::SizeSmall );
 
 	mNotificationProps = new CustomNotificationProps( this, lvi->metaContact() );
 	// add a button to the notification props to get the sound from KABC
@@ -183,8 +189,8 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	slotSetPhotoComboEnabled(mainWidget->chkTrackChildPhoto->isChecked());
 	
 	Kopete::Contact* trackingName = item->metaContact()->nameSource();
-	QPtrList< Kopete::Contact > cList = item->metaContact()->contacts();
-	QPtrListIterator<Kopete::Contact> it( cList );
+	Q3PtrList< Kopete::Contact > cList = item->metaContact()->contacts();
+	Q3PtrListIterator<Kopete::Contact> it( cList );
 	for( ; it.current(); ++it )
 	{
 		QString acct = it.current()->property( Kopete::Global::Properties::self()->nickName() ).value().toString() + " <" + it.current()->contactId() + ">";
@@ -200,7 +206,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 
 	m_withPhotoContacts.clear();
 	Kopete::Contact* trackingPhoto = item->metaContact()->photoSource();
-	QPtrListIterator<Kopete::Contact> itp( cList );
+	Q3PtrListIterator<Kopete::Contact> itp( cList );
 	for( ; itp.current(); ++itp )
 	{
 		Kopete::Contact *citem = itp.current();
@@ -246,10 +252,10 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	if(unknownName.isEmpty())
 		unknownName = QString::fromLatin1(MC_UNK); // Default
 
-	mainWidget->icnbOffline->setIcon( offlineName );
-	mainWidget->icnbOnline->setIcon( onlineName );
-	mainWidget->icnbAway->setIcon( awayName );
-	mainWidget->icnbUnknown->setIcon( unknownName );
+//	mainWidget->icnbOffline->setIcon( offlineName );
+//	mainWidget->icnbOnline->setIcon( onlineName );
+//	mainWidget->icnbAway->setIcon( awayName );
+//	mainWidget->icnbUnknown->setIcon( unknownName );
 
 	mAddressBookUid = item->metaContact()->metaContactId();
 
@@ -340,6 +346,7 @@ void KopeteMetaLVIProps::slotOkClicked()
 		mainWidget->chkUseCustomIcons->isChecked() );
 
 	// only call setIcon if any of the icons is not set to default icon
+/*
 	if(
 		mainWidget->icnbOffline->icon() != MC_OFF ||
 		mainWidget->icnbOnline->icon() != MC_ON ||
@@ -358,6 +365,7 @@ void KopeteMetaLVIProps::slotOkClicked()
 		item->metaContact()->setIcon( mainWidget->icnbUnknown->icon(),
 			Kopete::ContactListElement::Unknown );
 	}
+*/
 	// update meta contact's UID
 	item->metaContact()->setMetaContactId( mAddressBookUid );	
 

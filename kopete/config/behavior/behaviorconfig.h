@@ -17,8 +17,11 @@
 #define __BEHAVIOR_H
 
 #include "kcmodule.h"
+//Added by qt3to4:
+#include <Q3Frame>
+#include <Q3ValueList>
 
-class QFrame;
+class Q3Frame;
 class QTabWidget;
 
 class BehaviorConfig_General;
@@ -47,7 +50,7 @@ class BehaviorConfig : public KCModule
 		BehaviorConfig_General *mPrfsGeneral;
 		BehaviorConfig_Chat *mPrfsChat;
 		KopeteAwayConfigBaseUI *mAwayConfigUI;
-		QValueList<KPluginInfo*> viewPlugins;
+		Q3ValueList<KPluginInfo*> viewPlugins;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

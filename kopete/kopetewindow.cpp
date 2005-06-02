@@ -238,15 +238,17 @@ void KopeteWindow::initActions()
 
 	KStdAction::configureToolbars( this, SLOT(slotConfToolbar()), actionCollection() );
 	KStdAction::configureNotifications(this, SLOT(slotConfNotifications()), actionCollection(), "settings_notifications" );
-
-	actionShowOffliners = new KToggleAction( i18n( "Show Offline &Users" ), "viewmag", CTRL + Key_U,
+	
+	#warning FIXME KToggleActions
+/*
+	actionShowOffliners = new KToggleAction( i18n( "Show Offline &Users" ), "viewmag", CTRL + Qt::Key_U,
 			this, SLOT( slotToggleShowOffliners() ), actionCollection(), "settings_show_offliners" );
-	actionShowEmptyGroups = new KToggleAction( i18n( "Show Empty &Groups" ), "folder_green", CTRL + Key_G,
+	actionShowEmptyGroups = new KToggleAction( i18n( "Show Empty &Groups" ), "folder_green", CTRL + Qt::Key_G,
 			this, SLOT( slotToggleShowEmptyGroups() ), actionCollection(), "settings_show_empty_groups" );
 
 	actionShowOffliners->setCheckedState(i18n("Hide Offline &Users"));
 	actionShowEmptyGroups->setCheckedState(i18n("Hide Empty &Groups"));
-
+*/
 	// quick search bar
 	QLabel *searchLabel = new QLabel( i18n("Se&arch:"), 0, "kde toolbar widget" );
 	QWidget *searchBar = new Kopete::UI::ListView::SearchLine( 0, contactlist, "quicksearch_bar" );
@@ -265,15 +267,18 @@ void KopeteWindow::initActions()
 	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
 	slotConfigChanged();
 
+	#warning FIXME KToggleActions
+/*
 	globalAccel = new KGlobalAccel( this );
 	globalAccel->insert( QString::fromLatin1("Read Message"), i18n("Read Message"), i18n("Read the next pending message"),
-		CTRL+SHIFT+Key_I, KKey::QtWIN+CTRL+Key_I, Kopete::ChatSessionManager::self(), SLOT(slotReadMessage()) );
+		CTRL+SHIFT+Key_I, KKey::QtWIN+CTRL+Qt::Key_I, Kopete::ChatSessionManager::self(), SLOT(slotReadMessage()) );
 
 	globalAccel->insert( QString::fromLatin1("Show/Hide Contact List"), i18n("Show/Hide Contact List"), i18n("Show or hide the contact list"),
-		CTRL+SHIFT+Key_A, KKey::QtWIN+CTRL+Key_A, this, SLOT(slotShowHide()) );
+		CTRL+SHIFT+Key_A, KKey::QtWIN+CTRL+Qt::Key_A, this, SLOT(slotShowHide()) );
 
 	globalAccel->readSettings();
 	globalAccel->updateConnections();
+*/
 }
 
 void KopeteWindow::slotShowHide()
@@ -437,8 +442,9 @@ void KopeteWindow::slotConfigChanged()
 	if( isHidden() && !pref->showTray()) // user disabled systray while kopete is hidden, show it!
 		show();
 
-	actionShowOffliners->setChecked( pref->showOffline() );
-	actionShowEmptyGroups->setChecked( pref->showEmptyGroups() );
+	#warning KToogleAction
+//	actionShowOffliners->setChecked( pref->showOffline() );
+//	actionShowEmptyGroups->setChecked( pref->showEmptyGroups() );
 }
 
 void KopeteWindow::slotContactListAppearanceChanged()
@@ -667,7 +673,7 @@ void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 	// Because we want null pixmaps to detect the need for a loadMovie
 	// we can't use the SmallIcon() method directly
 	KIconLoader *loader = KGlobal::instance()->iconLoader();
-
+/*
 	QMovie mv = loader->loadMovie( status.overlayIcons().first(), KIcon::Small );
 
 	if ( mv.isNull() )
@@ -690,6 +696,7 @@ void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 		i->setMovie( mv );
 	}
 	makeTrayToolTip();
+*/
 }
 
 void KopeteWindow::makeTrayToolTip()

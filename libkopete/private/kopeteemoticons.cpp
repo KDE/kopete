@@ -110,10 +110,10 @@ QLinkedList<Emoticons::Token> Emoticons::tokenize( const QString& message, Parse
 
 	/* This is the EmoticonNode container, it will represent each matched emoticon */
 	QLinkedList<EmoticonNode> foundEmoticons;
-	QLinkedList<EmoticonNode>::const_iterator found;
+	QLinkedList<EmoticonNode>::ConstIterator found;
 	/* First-pass, store the matched emoticon locations in foundEmoticons */
 	QLinkedList<Emoticon> emoticonList;
-	QLinkedList<Emoticon>::const_iterator it;
+	QLinkedList<Emoticon>::ConstIterator it;
 	size_t pos;
 
 	bool inHTMLTag = false;
@@ -299,7 +299,7 @@ void Emoticons::addIfPossible( const QString& filenameNoExt, const QStringList &
 	{
 		d->emoticonAndPicList.insert( emoticons.first() , pic);
 
-		for ( QStringList::const_iterator it = emoticons.constBegin(), end = emoticons.constEnd();
+		for ( QStringList::ConstIterator it = emoticons.constBegin(), end = emoticons.constEnd();
 		      it != end; ++it )
 		{
 			QString matchEscaped=Q3StyleSheet::escape(*it);
@@ -460,7 +460,7 @@ QString Emoticons::parse( const QString &message, ParseMode mode )
                 return message;
 	
 	QLinkedList<Token> tokens = tokenize( message, mode );
-	QLinkedList<Token>::const_iterator token;
+	QLinkedList<Token>::ConstIterator token;
 	QString result;
 
 	for ( token = tokens.begin(); token != tokens.end(); ++token )

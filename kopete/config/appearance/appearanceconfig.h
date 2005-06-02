@@ -18,17 +18,19 @@
 #define __APPEARANCE_H
 
 #include "kcmodule.h"
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qmap.h>
+//Added by qt3to4:
+#include <Q3Frame>
 
-class QFrame;
+class Q3Frame;
 class QTabWidget;
 class QCheckBox;
 class KListBox;
 class KTextEdit;
 class KHTMLPart;
 class StyleEditDialog;
-class QListBoxItem;
+class Q3ListBoxItem;
 
 class AppearanceConfig_Emoticons;
 class AppearanceConfig_ChatWindow;
@@ -104,8 +106,8 @@ private:
 
 	// Vars used in ChatWindow TAB
 	StyleEditDialog *styleEditor;
-	QListBoxItem *editedItem;
-	QMap<QListBoxItem*,QString> itemMap;
+	Q3ListBoxItem *editedItem;
+	QMap<Q3ListBoxItem*,QString> itemMap;
 	QString currentStyle;
 	bool loading;
 	bool styleChanged;

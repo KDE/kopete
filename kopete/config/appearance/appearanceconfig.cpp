@@ -33,6 +33,11 @@
 #include <qspinbox.h>
 #include <qslider.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QTextStream>
+#include <Q3Frame>
+#include <QVBoxLayout>
 
 #include <kdeversion.h>
 #include <kinputdialog.h>
@@ -120,7 +125,7 @@ class KopeteStyleNewStuff : public KNewStuff
 			kdDebug(14000) << k_funcinfo << " extracting gzipped tarball: " << origFileName << endl;
 			QString uncompress = "application/x-gzip";
 			KTar tar(fileName, uncompress);
-			tar.open(IO_ReadOnly);
+			tar.open(QIODevice::ReadOnly);
 			const KArchiveDirectory *dir = tar.directory();
 			dir->copyTo( locateLocal( "appdata", QString::fromLatin1( "styles" ) ) );
 			tar.close();
@@ -132,7 +137,7 @@ class KopeteStyleNewStuff : public KNewStuff
 		{
 			kdDebug(14000) << k_funcinfo << " installing gzipped single style file: " << origFileName << endl;
 			QIODevice * iod = KFilterDev::deviceForFile( fileName, "application/x-gzip" );
-			iod->open( IO_ReadOnly );
+			iod->open( QIODevice::ReadOnly );
 			QTextStream stream( iod );
 			QString styleSheet = stream.read();
 			iod->close();
@@ -193,7 +198,7 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	mPrfsChatWindow = new AppearanceConfig_ChatWindow(mAppearanceTabCtl);
 	connect(mPrfsChatWindow->mTransparencyEnabled, SIGNAL(toggled(bool)),
 		this, SLOT(slotTransparencyChanged(bool)));
-	connect(mPrfsChatWindow->styleList, SIGNAL(selectionChanged(QListBoxItem *)),
+	connect(mPrfsChatWindow->styleList, SIGNAL(selectionChanged(Q3ListBoxItem *)),
 		this, SLOT(slotStyleSelected()));
 	connect(mPrfsChatWindow->addButton, SIGNAL(clicked()),
 		this, SLOT(slotAddStyle()));
@@ -213,7 +218,7 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	connect(mPrfsChatWindow->mTransparencyValue, SIGNAL(valueChanged(int)),
 		this, SLOT(emitChanged()));
 
-	mPrfsChatWindow->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
+	mPrfsChatWindow->htmlFrame->setFrameStyle(Q3Frame::WinPanel | Q3Frame::Sunken);
 	QVBoxLayout *l = new QVBoxLayout(mPrfsChatWindow->htmlFrame);
 	preview = new KHTMLPart(mPrfsChatWindow->htmlFrame, "preview");
 	preview->setJScriptEnabled(false);
@@ -223,7 +228,7 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	KHTMLView *htmlWidget = preview->view();
 	htmlWidget->setMarginWidth(4);
 	htmlWidget->setMarginHeight(4);
-	htmlWidget->setFocusPolicy(NoFocus);
+	htmlWidget->setFocusPolicy(Qt::NoFocus);
 	htmlWidget->setSizePolicy(
 		QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 	l->addWidget(htmlWidget);
@@ -479,7 +484,7 @@ void AppearanceConfig::updateEmoticonlist()
 	}
 
 	// Where is that theme in our big-list-o-themes?
-	QListBoxItem *item = mPrfsEmoticons->icon_theme_list->findItem( p->iconTheme() );
+	Q3ListBoxItem *item = mPrfsEmoticons->icon_theme_list->findItem( p->iconTheme() );
 
 	if (item) // found it... make it the currently selected theme
 		mPrfsEmoticons->icon_theme_list->setCurrentItem( item );
@@ -617,7 +622,7 @@ void AppearanceConfig::slotImportStyle()
 
 void AppearanceConfig::slotCopyStyle()
 {
-	QListBoxItem *copiedItem = mPrfsChatWindow->styleList->selectedItem();
+	Q3ListBoxItem *copiedItem = mPrfsChatWindow->styleList->selectedItem();
 	if( copiedItem )
 	{
 		QString styleName =
@@ -651,7 +656,7 @@ void AppearanceConfig::slotDeleteStyle()
 		.arg( mPrfsChatWindow->styleList->selectedItem()->text() ),
 		i18n("Delete Style"), KGuiItem(i18n("Delete Style"),"editdelete")) == KMessageBox::Continue )
 	{
-		QListBoxItem *style = mPrfsChatWindow->styleList->selectedItem();
+		Q3ListBoxItem *style = mPrfsChatWindow->styleList->selectedItem();
 		QString filePath = itemMap[ style ];
 		itemMap.remove( style );
 
@@ -690,7 +695,7 @@ bool AppearanceConfig::addStyle( const QString &styleName, const QString &styleS
 	{
 		QString filePath = locateLocal("appdata", QString::fromLatin1("styles/%1.xsl").arg( styleName ) );
 		QFile out( filePath );
-		if ( out.open( IO_WriteOnly ) )
+		if ( out.open( QIODevice::WriteOnly ) )
 		{
 			QTextStream stream( &out );
 			stream << styleSheet;
@@ -776,7 +781,7 @@ void AppearanceConfig::slotUpdatePreview()
 	if(loading)
 		return;
 
-	QListBoxItem *style = mPrfsChatWindow->styleList->selectedItem();
+	Q3ListBoxItem *style = mPrfsChatWindow->styleList->selectedItem();
 	if( style && style->text() != currentStyle )
 	{
 		//FIXME: should be using a ChatMessagePart
@@ -808,7 +813,7 @@ QString AppearanceConfig::fileContents( const QString &path )
 {
  	QString contents;
 	QFile file( path );
-	if ( file.open( IO_ReadOnly ) )
+	if ( file.open( QIODevice::ReadOnly ) )
 	{
 		QTextStream stream( &file );
 		contents = stream.read();
@@ -844,7 +849,7 @@ void AppearanceConfig::installNewTheme()
 
 void AppearanceConfig::removeSelectedTheme()
 {
-	QListBoxItem *selected = mPrfsEmoticons->icon_theme_list->selectedItem();
+	Q3ListBoxItem *selected = mPrfsEmoticons->icon_theme_list->selectedItem();
 	if(selected==0)
 		return;
 

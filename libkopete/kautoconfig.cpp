@@ -362,7 +362,7 @@ bool KAutoConfig::parseChildren(const QWidget *widget,
 //    return valueChanged;
 
   Q3SqlPropertyMap *propertyMap = Q3SqlPropertyMap::defaultMap();
-  QObjectList::const_iterator it = listOfChildren.constBegin();
+  QObjectList::ConstIterator it = listOfChildren.constBegin();
   QObject *object;
   while ( (object = *it) != 0 )
   {

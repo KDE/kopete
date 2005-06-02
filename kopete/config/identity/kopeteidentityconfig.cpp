@@ -23,6 +23,10 @@
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QVBoxLayout>
+#include <Q3PtrList>
 
 #include <kfiledialog.h>
 #include <kpushbutton.h>
@@ -53,7 +57,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char *name, co
 
 	addConfig( Kopete::Config::self(), m_view );
 	// Populate the Account Combo Box
-	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
+	Q3PtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
 	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next() )
 	{
 		QString accountName = i->accountLabel();

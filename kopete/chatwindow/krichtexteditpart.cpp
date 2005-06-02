@@ -1,3 +1,4 @@
+
 #include <ktextedit.h>
 #include <kaction.h>
 #include <kcolordialog.h>
@@ -10,7 +11,8 @@
 #include <qclipboard.h>
 #include <qevent.h>
 #include <kparts/genericfactory.h>
-#include <private/qrichtext_p.h>
+
+#include <QTextCursor>
 
 #include "krichtexteditpart.h"
 #include "krichtexteditpart.moc"
@@ -24,7 +26,7 @@ class KopeteTextEdit : public KTextEdit
 {
 public:
 	KopeteTextEdit( QWidget *parent ) : KTextEdit( parent ) {}
-	const QTextCursor * cursor() { return textCursor(); }
+	const Q3TextCursor * cursor() { return textCursor(); }
 	bool event(QEvent *event)
 	{
 		// don't allow QTextEdit to override accels
@@ -148,6 +150,8 @@ void KopeteRichTextEditPart::createActions( KActionCollection *ac )
 	connect( action_font_size, SIGNAL( fontSizeChanged(int) ),
 		this, SLOT( setFontSize(int) ) );
 
+	#warning FIXME KToggleAction
+/*
 	//Formatting
 	action_bold = new KToggleAction( i18n("&Bold"), "text_bold", CTRL+Key_B,
 			ac, "format_bold" );
@@ -163,7 +167,7 @@ void KopeteRichTextEditPart::createActions( KActionCollection *ac )
 				ac, "format_underline" );
 	connect( action_underline, SIGNAL( toggled(bool) ),
 		this, SLOT( setUnderline(bool) ) );
-
+*/
 	connect( editor, SIGNAL( currentFontChanged( const QFont & ) ),
 		this, SLOT( updateCharFmt() ) );
 	updateCharFmt();
@@ -265,16 +269,16 @@ void KopeteRichTextEditPart::updateAligment()
 
 	switch ( align )
 	{
-		case AlignRight:
+		case Qt::AlignRight:
 			action_align_right->setChecked( true );
 			break;
-		case AlignCenter:
+		case Qt::AlignCenter:
 			action_align_center->setChecked( true );
 			break;
-		case AlignLeft:
+		case Qt::AlignLeft:
 			action_align_left->setChecked( true );
 			break;
-		case AlignJustify:
+		case Qt::AlignJustify:
 			action_align_justify->setChecked( true );
 			break;
 		default:
@@ -449,32 +453,33 @@ void KopeteRichTextEditPart::setUnderline( bool b )
 void KopeteRichTextEditPart::setAlignLeft( bool yes )
 {
 	if ( yes )
-		editor->setAlignment( AlignLeft );
+		editor->setAlignment( Qt::AlignLeft );
 }
 
 void KopeteRichTextEditPart::setAlignRight( bool yes )
 {
 	if ( yes )
-		editor->setAlignment( AlignRight );
+		editor->setAlignment( Qt::AlignRight );
 }
 
 void KopeteRichTextEditPart::setAlignCenter( bool yes )
 {
 	if ( yes )
-		editor->setAlignment( AlignCenter );
+		editor->setAlignment( Qt::AlignCenter );
 }
 
 void KopeteRichTextEditPart::setAlignJustify( bool yes )
 {
 	if ( yes )
-		editor->setAlignment( AlignJustify );
+		editor->setAlignment( Qt::AlignJustify );
 }
 
 QString KopeteRichTextEditPart::text( Qt::TextFormat fmt ) const
 {
 	if( fmt == editor->textFormat() || fmt != Qt::PlainText )
 		return editor->text();
-	else
-		return editor->cursor()->document()->plainText();
+	#warning QTextCursor stuff
+//	else
+//		return editor->cursor()->document()->plainText();
 }
 

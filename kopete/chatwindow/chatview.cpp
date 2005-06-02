@@ -44,8 +44,13 @@
 #include <kglobalsettings.h>
 #include <kgenericfactory.h>
 #include <khtmlview.h>
-#include <qscrollview.h>
+#include <q3scrollview.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3PtrList>
+#include <QDropEvent>
+#include <QDragEnterEvent>
 
 typedef KGenericFactory<ChatWindowPlugin> ChatWindowPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_chatwindow, ChatWindowPluginFactory( "kopete_chatwindow" )  )
@@ -152,7 +157,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent, const ch
 
 	// add contacts
 	slotContactAdded( mgr->myself(), true );
-	for ( QPtrListIterator<Kopete::Contact> it( mgr->members() ); it.current(); ++it )
+	for ( Q3PtrListIterator<Kopete::Contact> it( mgr->members() ); it.current(); ++it )
 		slotContactAdded( *it, true );
 
 	setFocusProxy( editPart()->widget() );
@@ -391,6 +396,8 @@ void ChatView::setTabState( KopeteTabState newState )
 
 	newState = m_remoteTypingMap.isEmpty() ? m_tabState : Typing ;
 
+	#warning TabColor
+/*
 	if( m_tabBar )
 	{
 		switch( newState )
@@ -417,7 +424,7 @@ void ChatView::setTabState( KopeteTabState newState )
 				break;
 		}
 	}
-
+*/
 	if( newState != Typing )
 	{
 		setStatusText( i18n( "One other person in the chat",
@@ -543,7 +550,7 @@ void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
 
 	// Loop through the map, constructing a string of people typing
 	QStringList typingList;
-	QPtrDictIterator<QTimer> it( m_remoteTypingMap );
+	Q3PtrDictIterator<QTimer> it( m_remoteTypingMap );
 
 	for( ; it.current(); ++it )
 	{
@@ -771,9 +778,9 @@ void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete:
 
 	if ( m_tabBar )
 	{
-		QPtrList<Kopete::Contact> chatMembers = m_manager->members();
+		Q3PtrList<Kopete::Contact> chatMembers = m_manager->members();
 		Kopete::Contact *tempContact = 0L;
-		for ( QPtrListIterator<Kopete::Contact> it ( chatMembers ); it.current(); ++it )
+		for ( Q3PtrListIterator<Kopete::Contact> it ( chatMembers ); it.current(); ++it )
 		{
 			if ( !tempContact || tempContact->onlineStatus() < (*it)->onlineStatus() )
 				tempContact = (*it);
@@ -869,7 +876,7 @@ void ChatView::slotRemoteTypingTimeout()
 {
 	// Remove the topmost timer from the list. Why does QPtrDict use void* keys and not typed keys? *sigh*
 	if ( !m_remoteTypingMap.isEmpty() )
-		remoteTyping( reinterpret_cast<const Kopete::Contact *>( QPtrDictIterator<QTimer>(m_remoteTypingMap).currentKey() ), false );
+		remoteTyping( reinterpret_cast<const Kopete::Contact *>( Q3PtrDictIterator<QTimer>(m_remoteTypingMap).currentKey() ), false );
 }
 
 void ChatView::dragEnterEvent ( QDragEnterEvent * event )
@@ -882,8 +889,8 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 			QString contact=lst[2];
 
 			bool found =false;
-			QPtrList<Kopete::Contact> cts=m_manager->members();
-			for ( QPtrListIterator<Kopete::Contact> it( cts ); it.current(); ++it )
+			Q3PtrList<Kopete::Contact> cts=m_manager->members();
+			for ( Q3PtrListIterator<Kopete::Contact> it( cts ); it.current(); ++it )
 			{
 				if(it.current()->contactId() == contact)
 				{
@@ -903,8 +910,8 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 
 		if( m && m_manager->mayInvite())
 		{
-			QPtrList<Kopete::Contact> cts=m->contacts();
-			for ( QPtrListIterator<Kopete::Contact> it( cts ); it.current(); ++it )
+			Q3PtrList<Kopete::Contact> cts=m->contacts();
+			for ( Q3PtrListIterator<Kopete::Contact> it( cts ); it.current(); ++it )
 			{
 				Kopete::Contact *c=it.current();
 				if(c && c->account() == m_manager->account())
@@ -938,8 +945,8 @@ void ChatView::dropEvent ( QDropEvent * event )
 			QString contact=lst[2];
 
 			bool found =false;
-			QPtrList<Kopete::Contact> cts=m_manager->members();
-			for ( QPtrListIterator<Kopete::Contact> it( cts ); it.current(); ++it )
+			Q3PtrList<Kopete::Contact> cts=m_manager->members();
+			for ( Q3PtrListIterator<Kopete::Contact> it( cts ); it.current(); ++it )
 			{
 				if(it.current()->contactId() == contact)
 				{
@@ -957,8 +964,8 @@ void ChatView::dropEvent ( QDropEvent * event )
 		Kopete::MetaContact *m=Kopete::ContactList::self()->metaContact(metacontactID);
 		if(m && m_manager->mayInvite())
 		{
-			QPtrList<Kopete::Contact> cts=m->contacts();
-			for ( QPtrListIterator<Kopete::Contact> it( cts ); it.current(); ++it )
+			Q3PtrList<Kopete::Contact> cts=m->contacts();
+			for ( Q3PtrListIterator<Kopete::Contact> it( cts ); it.current(); ++it )
 			{
 				Kopete::Contact *c=it.current();
 				if(c && c->account() == m_manager->account() && c->isOnline())
@@ -974,7 +981,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 		Kopete::ContactPtrList members = m_manager->members();
 		Kopete::Contact *contact = members.first();
 
-		if ( !contact || !contact->canAcceptFiles() || !QUriDrag::canDecode( event ) )
+		if ( !contact || !contact->canAcceptFiles() || !Q3UriDrag::canDecode( event ) )
 		{
 			event->ignore();
 			return;

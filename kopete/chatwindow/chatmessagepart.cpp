@@ -26,6 +26,8 @@
 #include <qtextstream.h>
 #include <qfileinfo.h>
 #include <qinputdialog.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 #include <dom/dom_doc.h>
 #include <dom/dom_text.h>
@@ -107,10 +109,12 @@ public:
 	bool transformAllMessages;
 };
 
-class ChatMessagePart::ToolTip : public QToolTip
+#warning FIXME QToolTip stuff
+class ChatMessagePart::ToolTip
+//	: public QToolTip
 {
 public:
-	ToolTip( ChatMessagePart *c ) : QToolTip( c->view()->viewport() )
+	ToolTip( ChatMessagePart *c )
 	{
 		m_chat = c;
 	}
@@ -150,9 +154,9 @@ public:
 				}
 			}
 		}
-
-		if( !toolTipText.isEmpty() )
-			tip( rect, toolTipText );
+		#warning FIXME
+//		if( !toolTipText.isEmpty() )
+//			tip( rect, toolTipText );
 	}
 
 private:
@@ -187,7 +191,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 		QString::fromLatin1("</style></head><body></body></html>") );
 	end();
 
-	view()->setFocusPolicy( QWidget::NoFocus );
+	view()->setFocusPolicy( Qt::NoFocus );
 
 	new ToolTip( this );
 
@@ -394,7 +398,7 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 	QString retVal = html;
 
 	Kopete::ContactPtrList members = m_manager->members();
-	for ( QPtrListIterator<Kopete::Contact> it( members ); it.current(); ++it )
+	for ( Q3PtrListIterator<Kopete::Contact> it( members ); it.current(); ++it )
 	{
 		QString nick = (*it)->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
 		//FIXME: this is really slow in channels with lots of contacts
@@ -520,14 +524,14 @@ Kopete::Contact *ChatMessagePart::contactFromNode( const DOM::Node &n ) const
 	if ( element.hasAttribute( "contactid" ) )
 	{
 		QString contactId = element.getAttribute( "contactid" ).string();
-		for ( QPtrListIterator<Kopete::Contact> it ( m_manager->members() ); it.current(); ++it )
+		for ( Q3PtrListIterator<Kopete::Contact> it ( m_manager->members() ); it.current(); ++it )
 			if ( (*it)->contactId() == contactId )
 				return *it;
 	}
 	else
 	{
 		QString nick = element.innerText().string().stripWhiteSpace();
-		for ( QPtrListIterator<Kopete::Contact> it ( m_manager->members() ); it.current(); ++it )
+		for ( Q3PtrListIterator<Kopete::Contact> it ( m_manager->members() ); it.current(); ++it )
 			if ( (*it)->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString() == nick )
 				return *it;
 	}
@@ -669,7 +673,7 @@ void ChatMessagePart::slotSaveCustomEmoticon()
             //now append to the emoticons.xml file
             QString xml = KGlobal::dirs()->findResource("emoticons", QString::fromLatin1("custom/emoticons.xml"));
             QFile fxml(xml);
-            if (fxml.open(IO_ReadOnly)) {
+            if (fxml.open(QIODevice::ReadOnly)) {
                 QDomDocument doc(QString::fromLatin1("messaging-emoticon-map"));
                 doc.setContent(&fxml);
                 fxml.close();
@@ -684,7 +688,7 @@ void ChatMessagePart::slotSaveCustomEmoticon()
                 root.appendChild(child);
                 
                 // Now save the file
-                if (fxml.open(IO_WriteOnly)) {
+                if (fxml.open(QIODevice::WriteOnly)) {
                     QTextStream ts(&fxml);
                     ts << doc.toString();
                     fxml.close();
@@ -837,12 +841,12 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 #ifndef QT_NO_MIMECLIPBOARD
 	if(!justselection)
 	{
-      	QTextDrag *textdrag = new QTextDrag(text, 0L);
+      	Q3TextDrag *textdrag = new Q3TextDrag(text, 0L);
 	    KMultipleDrag *drag = new KMultipleDrag( );
     	drag->addDragObject( textdrag );
     	if(!htmltext.isEmpty()) {
 	    	htmltext.replace( QChar( 0xa0 ), ' ' );
-    		QTextDrag *htmltextdrag = new QTextDrag(htmltext, 0L);
+    		Q3TextDrag *htmltextdrag = new Q3TextDrag(htmltext, 0L);
     		htmltextdrag->setSubtype("html");
             drag->addDragObject( htmltextdrag );
     	}

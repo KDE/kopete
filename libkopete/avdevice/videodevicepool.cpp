@@ -347,7 +347,7 @@ int VideoDevicePool::scanDevices()
 
 	const QFileInfoList list = videodevice_dir.entryInfoList();
 
-	QFileInfoList::const_iterator fileinfoiterator = list.constBegin();
+	QFileInfoList::ConstIterator fileinfoiterator = list.constBegin();
 
 	m_videodevice.clear();
 	kdDebug() << "libkopete (avdevice): scanDevices() called" << endl;

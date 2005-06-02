@@ -23,8 +23,8 @@
 #include <kdebug.h>
 #include <klistview.h>
 
-#include <qptrlist.h>
-#include <qvaluelist.h>
+#include <q3ptrlist.h>
+#include <q3valuelist.h>
 #include <qmap.h>
 
 #include <kdebug.h>
@@ -33,7 +33,7 @@
 #include "fastaddcontactwizard_base.h"
 
 class AddContactPage;
-class QListViewItem;
+class Q3ListViewItem;
 
 namespace Kopete
 {
@@ -53,10 +53,10 @@ public:
 	~FastAddContactWizard();
 private:
 	QMap <Kopete::Account*,AddContactPage*> protocolPages;
-	QMap <QListViewItem*,Kopete::Account*> m_accountItems;
+	QMap <Q3ListViewItem*,Kopete::Account*> m_accountItems;
 public slots:
 	virtual void accept();
-	void slotProtocolListClicked( QListViewItem * );
+	void slotProtocolListClicked( Q3ListViewItem * );
 protected slots:
 	virtual void next();
 };

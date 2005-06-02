@@ -21,6 +21,13 @@
 
 #include <kparts/mainwindow.h>
 #include <qmovie.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QLabel>
+#include <QVBoxLayout>
+#include <Q3Frame>
+#include <Q3PtrList>
+#include <QCloseEvent>
 #include "kopetecontact.h"
 #include "kdeversion.h"
 
@@ -32,9 +39,9 @@ class QPixmap;
 class QTabWidget;
 class KSqueezedTextLabel;
 class KPushButton;
-class QVBox;
+class Q3VBox;
 class QVBoxLayout;
-class QFrame;
+class Q3Frame;
 class KTabWidget;
 class QLabel;
 class KopeteEmoticonAction;
@@ -48,7 +55,7 @@ class Message;
 class ChatSession;
 class Contact;
 class Protocol;
-typedef QPtrList<Contact>  ContactPtrList;
+typedef Q3PtrList<Contact>  ContactPtrList;
 }
 
 class KopeteChatWindow : public KParts::MainWindow
@@ -102,7 +109,7 @@ public:
 	virtual bool queryExit();
 
 	KTempFile *backgroundFile;
-	QPtrList<ChatView> chatViewList;
+	Q3PtrList<ChatView> chatViewList;
 
 private:
 	// All KopeteChatWindows are created by the findWindow function
@@ -132,7 +139,7 @@ private:
 	KPushButton *m_button_send;
 	KSqueezedTextLabel *m_status_text;
 	QVBoxLayout *mainLayout;
-	QFrame *mainArea;
+	Q3Frame *mainArea;
 	QLabel *anim;
 	QMovie animIcon;
 	QPixmap normalIcon;

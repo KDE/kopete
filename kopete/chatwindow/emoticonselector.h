@@ -22,6 +22,9 @@
 
 #include <qlabel.h>
 #include <qwidget.h>
+//Added by qt3to4:
+#include <QMouseEvent>
+#include <QGridLayout>
 class QGridLayout;
 
 class EmoticonLabel : public QLabel

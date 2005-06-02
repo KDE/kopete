@@ -705,7 +705,7 @@ void DisplayNameComponent::setText( const QString& text )
 		return;
 	d->text = text;
 	QLinkedList<Kopete::Emoticons::Token> tokens;
-	QLinkedList<Kopete::Emoticons::Token>::const_iterator token;
+	QLinkedList<Kopete::Emoticons::Token>::ConstIterator token;
 	
 	clear(); // clear childs
 

@@ -36,8 +36,8 @@ class KopeteGroupViewItem : public Kopete::UI::ListView::Item
 {
 	Q_OBJECT
 public:
-	KopeteGroupViewItem( Kopete::Group *group , QListView *parent, const char *name = 0 );
-	KopeteGroupViewItem( Kopete::Group *group , QListViewItem *parent, const char *name = 0 );
+	KopeteGroupViewItem( Kopete::Group *group , Q3ListView *parent, const char *name = 0 );
+	KopeteGroupViewItem( Kopete::Group *group , Q3ListViewItem *parent, const char *name = 0 );
 	~KopeteGroupViewItem();
 
 	Kopete::Group * group() const;

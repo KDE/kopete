@@ -46,11 +46,11 @@ class Message;
  */
 class KOPETE_EXPORT Group : public ContactListElement, public NotifyDataObject
 {
+	Q_OBJECT
+
 	Q_PROPERTY( QString displayName READ displayName WRITE setDisplayName )
 	Q_PROPERTY( uint groupId READ groupId )
 	Q_PROPERTY( bool expanded READ isExpanded WRITE setExpanded )
-
-	Q_OBJECT
 
 public:
 	enum GroupType { Normal=0, Temporary, TopLevel };

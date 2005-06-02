@@ -22,7 +22,9 @@
 
 #include <math.h>
 
-#include <qwhatsthis.h>
+#include <q3whatsthis.h>
+//Added by qt3to4:
+#include <Q3PopupMenu>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -44,7 +46,8 @@ public:
 		m_stickyMenu = true;
 		m_popup = new KPopupMenu(0L,"KopeteEmoticonActionPrivate::m_popup");
 		emoticonSelector = new EmoticonSelector( m_popup, "KopeteEmoticonActionPrivate::emoticonSelector");
-		m_popup->insertItem( emoticonSelector );
+		#warning FIXME Emoticon Menu Selector
+//		m_popup->insertItem( emoticonSelector );
 		// TODO: Maybe connect to kopeteprefs and redo list only on config changes
 		connect( m_popup, SIGNAL( aboutToShow() ), emoticonSelector, SLOT( prepareList() ) );
 	}
@@ -77,7 +80,7 @@ KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent, const char* name )
 	if ( icon.isNull() )
 		setIcon( "emoticon" );
 	else
-		setIconSet( QIconSet( icon ) );
+		setIconSet( QIcon( icon ) );
 
 	setShortcutConfigurable( false );
 	connect( d->emoticonSelector, SIGNAL( ItemSelected( const QString & ) ),
@@ -131,7 +134,7 @@ int KopeteEmoticonAction::plug( QWidget* widget, int index )
 
 	if ( widget->inherits("QPopupMenu") )
 	{
-		QPopupMenu* menu = static_cast<QPopupMenu*>( widget );
+		Q3PopupMenu* menu = static_cast<Q3PopupMenu*>( widget );
 		int id;
 		if ( hasIcon() )
 			id = menu->insertItem( iconSet(KIcon::Small), text(), d->m_popup, -1, index );
@@ -179,7 +182,7 @@ int KopeteEmoticonAction::plug( QWidget* widget, int index )
 		addContainer( bar, id_ );
 
 		if (!whatsThis().isEmpty())
-			QWhatsThis::add( bar->getButton(id_), whatsThis() );
+			Q3WhatsThis::add( bar->getButton(id_), whatsThis() );
 
 		connect( bar, SIGNAL( destroyed() ), this, SLOT( slotDestroyed() ) );
 

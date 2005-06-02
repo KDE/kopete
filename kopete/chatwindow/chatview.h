@@ -22,7 +22,10 @@
 #include "kopeteviewplugin.h"
 #include <kdockwidget.h>
 #include <ktextedit.h> // for covariant return type of editWidget
-#include <qptrdict.h>
+#include <q3ptrdict.h>
+//Added by qt3to4:
+#include <QDragEnterEvent>
+#include <QDropEvent>
 
 class QTimer;
 
@@ -357,7 +360,7 @@ private:
 	MembersListPolicy membersStatus;
 
 	// miscellany
-	QPtrDict<QTimer> m_remoteTypingMap;
+	Q3PtrDict<QTimer> m_remoteTypingMap;
 	QString unreadMessageFrom;
 	QString m_status;
 

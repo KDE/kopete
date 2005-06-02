@@ -32,11 +32,12 @@
 #include <kmultipledrag.h>
 #include <kpopupmenu.h>
 
-#include <qheader.h>
+#include <q3header.h>
 #include <qtooltip.h>
 
 //BEGIN ChatMembersListWidget::ToolTip
-
+#warning Tooltip code
+/*
 class ChatMembersListWidget::ToolTip : public QToolTip
 {
 public:
@@ -52,7 +53,7 @@ public:
 
 	void maybeTip( const QPoint &pos )
 	{
-		if( QListViewItem *item = m_listView->itemAt( pos ) )
+		if( Q3ListViewItem *item = m_listView->itemAt( pos ) )
 		{
 			QRect itemRect = m_listView->itemRect( item );
 			if( itemRect.contains( pos ) )
@@ -63,7 +64,7 @@ public:
 private:
 	KListView *m_listView;
 };
-
+*/
 //END ChatMembersListWidget::ToolTip
 
 
@@ -109,9 +110,9 @@ void ChatMembersListWidget::ContactItem::reposition()
 	// In particular, this makes adding N items O(N^2) not O(N^2 log N).
 	Kopete::ChatSession *session = static_cast<ChatMembersListWidget*>( listView() )->session();
 	int ourWeight = session->contactOnlineStatus(m_contact).weight();
-	QListViewItem *after = 0;
+	Q3ListViewItem *after = 0;
 
-	for ( QListViewItem *it = KListViewItem::listView()->firstChild(); it; it = it->nextSibling() )
+	for ( Q3ListViewItem *it = KListViewItem::listView()->firstChild(); it; it = it->nextSibling() )
 	{
 		ChatMembersListWidget::ContactItem *item = static_cast<ChatMembersListWidget::ContactItem*>(it);
 		int theirWeight = session->contactOnlineStatus(item->m_contact).weight();
@@ -138,7 +139,8 @@ ChatMembersListWidget::ChatMembersListWidget( Kopete::ChatSession *session, QWid
 {
 	// use our own custom tooltips
 	setShowToolTips( false );
-	m_toolTip = new ToolTip( this );
+	#warning QToolTip code
+//	m_toolTip = new ToolTip( this );
 
 	// set up display: no header
 	setAllColumnsShowFocus( true );
@@ -151,13 +153,13 @@ ChatMembersListWidget::ChatMembersListWidget( Kopete::ChatSession *session, QWid
 
 	// add chat members
 	slotContactAdded( session->myself() );
-	for ( QPtrListIterator<Kopete::Contact> it( session->members() ); it.current(); ++it )
+	for ( Q3PtrListIterator<Kopete::Contact> it( session->members() ); it.current(); ++it )
 		slotContactAdded( *it );
 
-	connect( this, SIGNAL( contextMenu( KListView*, QListViewItem *, const QPoint &) ),
-	         SLOT( slotContextMenu(KListView*, QListViewItem *, const QPoint & ) ) );
-	connect( this, SIGNAL( executed( QListViewItem* ) ),
-	         SLOT( slotExecute( QListViewItem * ) ) );
+	connect( this, SIGNAL( contextMenu( KListView*, Q3ListViewItem *, const QPoint &) ),
+	         SLOT( slotContextMenu(KListView*, Q3ListViewItem *, const QPoint & ) ) );
+	connect( this, SIGNAL( executed( Q3ListViewItem* ) ),
+	         SLOT( slotExecute( Q3ListViewItem * ) ) );
 
 	connect( session, SIGNAL( contactAdded(const Kopete::Contact*, bool) ),
 	         this, SLOT( slotContactAdded(const Kopete::Contact*) ) );
@@ -172,7 +174,7 @@ ChatMembersListWidget::~ChatMembersListWidget()
 	delete m_toolTip;
 }
 
-void ChatMembersListWidget::slotContextMenu( KListView*, QListViewItem *item, const QPoint &point )
+void ChatMembersListWidget::slotContextMenu( KListView*, Q3ListViewItem *item, const QPoint &point )
 {
 	if ( ContactItem *contactItem = dynamic_cast<ContactItem*>(item) )
 	{
@@ -204,15 +206,15 @@ void ChatMembersListWidget::slotContactStatusChanged( Kopete::Contact *contact, 
 		m_members[contact]->setStatus( status );
 }
 
-void ChatMembersListWidget::slotExecute( QListViewItem *item )
+void ChatMembersListWidget::slotExecute( Q3ListViewItem *item )
 {
 	if ( ContactItem *contactItem = dynamic_cast<ContactItem*>(item ) )
 		contactItem->contact()->execute();
 }
 
-QDragObject *ChatMembersListWidget::dragObject()
+Q3DragObject *ChatMembersListWidget::dragObject()
 {
-	QListViewItem *currentLVI = currentItem();
+	Q3ListViewItem *currentLVI = currentItem();
 	if( !currentLVI )
 		return 0L;
 
@@ -222,9 +224,9 @@ QDragObject *ChatMembersListWidget::dragObject()
 
 	Kopete::Contact *c = lvi->contact();
 	KMultipleDrag *drag = new KMultipleDrag( this );
-	drag->addDragObject( new QStoredDrag("application/x-qlistviewitem", 0L ) );
+	drag->addDragObject( new Q3StoredDrag("application/x-qlistviewitem", 0L ) );
 
-	QStoredDrag *d = new QStoredDrag("kopete/x-contact", 0L );
+	Q3StoredDrag *d = new Q3StoredDrag("kopete/x-contact", 0L );
 	d->setEncodedData( QString( c->protocol()->pluginId()+QChar( 0xE000 )+c->account()->accountId()+QChar( 0xE000 )+ c->contactId() ).utf8() );
 	drag->addDragObject( d );
 
@@ -232,12 +234,12 @@ QDragObject *ChatMembersListWidget::dragObject()
 
 	if( !address.isEmpty() )
 	{
-		drag->addDragObject( new QTextDrag( address.fullEmail(), 0L ) );
+		drag->addDragObject( new Q3TextDrag( address.fullEmail(), 0L ) );
 		KABC::VCardConverter converter;
 		QString vcard = converter.createVCard( address );
 		if( !vcard.isNull() )
 		{
-			QStoredDrag *vcardDrag = new QStoredDrag("text/x-vcard", 0L );
+			Q3StoredDrag *vcardDrag = new Q3StoredDrag("text/x-vcard", 0L );
 			vcardDrag->setEncodedData( vcard.utf8() );
 			drag->addDragObject( vcardDrag );
 		}

@@ -20,11 +20,20 @@
 */
 
 #include <qtimer.h>
-#include <qhbox.h>
-#include <qvbox.h>
+#include <q3hbox.h>
+#include <q3vbox.h>
 #include <qlayout.h>
 #include <qtooltip.h>
 #include <qfileinfo.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QTextStream>
+#include <QCloseEvent>
+#include <Q3PtrList>
+#include <Q3Frame>
+#include <QLabel>
+#include <QVBoxLayout>
+#include <Q3PopupMenu>
 
 #include <kapplication.h>
 #include <kcursor.h>
@@ -68,7 +77,7 @@
 typedef QMap<Kopete::Account*,KopeteChatWindow*> AccountMap;
 typedef QMap<Kopete::Group*,KopeteChatWindow*> GroupMap;
 typedef QMap<Kopete::MetaContact*,KopeteChatWindow*> MetaContactMap;
-typedef QPtrList<KopeteChatWindow> WindowList;
+typedef Q3PtrList<KopeteChatWindow> WindowList;
 
 namespace
 {
@@ -166,6 +175,8 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name )
 	: KParts::MainWindow( parent, name )
 {
+	setAttribute( Qt::WA_DeleteOnClose );
+
 	m_activeView = 0L;
 	m_popupView = 0L;
 	backgroundFile = 0L;
@@ -174,15 +185,15 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name )
 
 	initActions();
 
-	QVBox *vBox = new QVBox( this );
+	Q3VBox *vBox = new Q3VBox( this );
 	vBox->setLineWidth( 0 );
 	vBox->setSpacing( 0 );
-	vBox->setFrameStyle( QFrame::NoFrame );
+	vBox->setFrameStyle( Q3Frame::NoFrame );
 	// set default window size.  This could be removed by fixing the size hints of the contents
 	resize( 500, 500 );
 	setCentralWidget( vBox );
 
-	mainArea = new QFrame( vBox );
+	mainArea = new Q3Frame( vBox );
 	mainArea->setLineWidth( 0 );
 	mainArea->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	mainLayout = new QVBoxLayout( mainArea );
@@ -202,13 +213,12 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name )
 		m_button_send = 0L;
 
 	m_status_text = new KSqueezedTextLabel( i18n("Ready."), statusBar(), "m_status_text" );
-	m_status_text->setAlignment( AlignLeft | AlignVCenter );
+	m_status_text->setAlignment( Qt::AlignLeft | Qt::AlignVCenter );
 	m_status_text->setFont( statusBar()->font() );
 	m_status_text->setFixedHeight( statusBar()->sizeHint().height() );
 	statusBar()->addWidget( m_status_text, 1 );
 
 	readOptions();
-	setWFlags( Qt::WDestructiveClose );
 
 	windows.append( this );
 	windowListChanged();
@@ -270,7 +280,7 @@ KopeteChatWindow::~KopeteChatWindow()
 void KopeteChatWindow::windowListChanged()
 {
 	// update all windows' Move Tab to Window action
-	for ( QPtrListIterator<KopeteChatWindow> it( windows ); *it; ++it )
+	for ( Q3PtrListIterator<KopeteChatWindow> it( windows ); *it; ++it )
 		(*it)->checkDetachEnable();
 }
 
@@ -313,7 +323,7 @@ void KopeteChatWindow::initActions(void)
 	chatSend = new KAction( i18n( "&Send Message" ), QString::fromLatin1( "mail_send" ), 0,
 		this, SLOT( slotSendMessage() ), coll, "chat_send" );
 	//Default to 'Return' for sending messages
-	chatSend->setShortcut( QKeySequence(Key_Return) );
+	chatSend->setShortcut( QKeySequence(Qt::Key_Return) );
 	chatSend->setEnabled( false );
 
  	KStdAction::save ( this, SLOT(slotChatSave()), coll );
@@ -330,7 +340,7 @@ void KopeteChatWindow::initActions(void)
 	tabRight->setEnabled( false );
 
 	nickComplete = new KAction( i18n( "Nic&k Completion" ), QString::null, 0, this, SLOT( slotNickComplete() ), coll , "nick_compete");
-	nickComplete->setShortcut( QKeySequence( Key_Tab ) );
+	nickComplete->setShortcut( QKeySequence( Qt::Key_Tab ) );
 
 	tabDetach = new KAction( i18n( "&Detach Chat" ), QString::fromLatin1( "tab_breakoff" ), 0,
 		this, SLOT( slotDetachChat() ), coll, "tabs_detach" );
@@ -346,7 +356,8 @@ void KopeteChatWindow::initActions(void)
 	connect ( actionTabPlacementMenu->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPreparePlacementMenu()) );
 	connect ( actionTabPlacementMenu->popupMenu(), SIGNAL(activated(int)), this, SLOT(slotPlaceTabs(int)) );
 
-	tabDetach->setShortcut( QKeySequence(CTRL + SHIFT + Key_B) );
+	#warning shortcut
+//	tabDetach->setShortcut( QKeySequence(CTRL + SHIFT + Key_B) );
 
 	KStdAction::cut( this, SLOT(slotCut()), coll);
 	KStdAction::copy( this, SLOT(slotCopy()), coll);
@@ -358,11 +369,13 @@ void KopeteChatWindow::initActions(void)
 
 	historyUp = new KAction( i18n( "Previous History" ), QString::null, 0,
 		this, SLOT( slotHistoryUp() ), coll, "history_up" );
-	historyUp->setShortcut( QKeySequence(CTRL + Key_Up) );
+	#warning shortcut
+//	historyUp->setShortcut( QKeySequence(CTRL + Key_Up) );
 
 	historyDown = new KAction( i18n( "Next History" ), QString::null, 0,
 		this, SLOT( slotHistoryDown() ), coll, "history_down" );
-	historyDown->setShortcut( QKeySequence(CTRL + Key_Down) );
+	#warning shortcup
+//	historyDown->setShortcut( QKeySequence(CTRL + Key_Down) );
 
 	KStdAction::prior( this, SLOT( slotPageUp() ), coll, "scroll_up" );
 	KStdAction::next( this, SLOT( slotPageDown() ), coll, "scroll_down" );
@@ -393,7 +406,8 @@ void KopeteChatWindow::initActions(void)
 
 	//The Sending movie
 	normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
-	animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
+	#warning QMovie
+//	animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
 
 	// Pause the animation because otherwise it's running even when we're not
 	// showing it. This eats resources, and also triggers a pixmap leak in
@@ -421,7 +435,7 @@ const QString KopeteChatWindow::fileContents( const QString &path ) const
 {
  	QString contents;
 	QFile file( path );
-	if ( file.open( IO_ReadOnly ) )
+	if ( file.open( QIODevice::ReadOnly ) )
 	{
 		QTextStream stream( &file );
 		contents = stream.read();
@@ -559,7 +573,7 @@ void KopeteChatWindow::createTabBar()
 		m_rightWidget->setIconSet( SmallIcon( "tab_remove" ) );
 		m_rightWidget->adjustSize();
 		QToolTip::add( m_rightWidget, i18n("Close the current tab"));
-		m_tabBar->setCornerWidget( m_rightWidget, QWidget::TopRight );
+		m_tabBar->setCornerWidget( m_rightWidget, Qt::TopRight );
 
 		mainLayout->addWidget( m_tabBar );
 		m_tabBar->show();
@@ -586,7 +600,7 @@ void KopeteChatWindow::slotCloseChat( QWidget *chatView )
 
 void KopeteChatWindow::addTab( ChatView *view )
 {
-	QPtrList<Kopete::Contact> chatMembers=view->msgManager()->members();
+	Q3PtrList<Kopete::Contact> chatMembers=view->msgManager()->members();
 	Kopete::Contact *c=0L;
 	for ( Kopete::Contact *contact = chatMembers.first(); contact; contact = chatMembers.next() )
 	{
@@ -817,6 +831,8 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	//Update chat members actions
 	updateMembersActions();
 
+	#warning QMovie code
+/*
 	if ( m_activeView->sendInProgress() && !animIcon.isNull() )
 	{
 		anim->setMovie( animIcon );
@@ -828,7 +844,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 		if( !animIcon.isNull() )
 			animIcon.pause();
 	}
-
+*/
 	if ( m_alwaysShowTabs || chatViewList.count() > 1 )
 	{
 		if( !m_tabBar )
@@ -848,7 +864,7 @@ void KopeteChatWindow::slotUpdateCaptionIcons( const ChatView *view )
 {
 	if(!view||!m_activeView||view!=m_activeView )
 		return; //(pas de charité)
-	QPtrList<Kopete::Contact> chatMembers=view->msgManager()->members();
+	Q3PtrList<Kopete::Contact> chatMembers=view->msgManager()->members();
 	Kopete::Contact *c=0L;
 	for ( Kopete::Contact *contact = chatMembers.first(); contact; contact = chatMembers.next() )
 	{
@@ -871,7 +887,7 @@ void KopeteChatWindow::slotChatClosed()
 
 void KopeteChatWindow::slotPrepareDetachMenu(void)
 {
-	QPopupMenu *detachMenu = actionDetachMenu->popupMenu();
+	Q3PopupMenu *detachMenu = actionDetachMenu->popupMenu();
 	detachMenu->clear();
 
 	for ( unsigned id=0; id < windows.count(); id++ )
@@ -886,18 +902,21 @@ void KopeteChatWindow::slotSendMessage()
 {
 	if ( m_activeView && m_activeView->canSend() )
 	{
+		#warning QMovie code
+/*
 		if( !animIcon.isNull() )
 		{
 			anim->setMovie( animIcon );
 			animIcon.unpause();
 		}
+*/
 		m_activeView->sendMessage();
 	}
 }
 
 void KopeteChatWindow::slotPrepareContactMenu(void)
 {
-	QPopupMenu *contactsMenu = actionContactMenu->popupMenu();
+	Q3PopupMenu *contactsMenu = actionContactMenu->popupMenu();
 	contactsMenu->clear();
 
 	Kopete::Contact *contact;
@@ -940,7 +959,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 
 void KopeteChatWindow::slotPreparePlacementMenu()
 {
-	QPopupMenu *placementMenu = actionTabPlacementMenu->popupMenu();
+	Q3PopupMenu *placementMenu = actionTabPlacementMenu->popupMenu();
 	placementMenu->clear();
 
 	placementMenu->insertItem( i18n("Top"), 0 );
@@ -1034,7 +1053,7 @@ bool KopeteChatWindow::queryClose()
 //	for( QPtrListIterator<ChatView> it( chatViewList ); it; ++it)
 //		kdDebug( 14010 ) << "  " << *it << " (" << (*it)->caption() << ")" << endl;
 
-	for( QPtrListIterator<ChatView> it( chatViewList ); it; )
+	for( Q3PtrListIterator<ChatView> it( chatViewList ); it; )
 	{
 		ChatView *view = *it;
 		// move out of the way before view is removed
@@ -1098,7 +1117,7 @@ void KopeteChatWindow::slotConfKeys()
 	if( m_activeView )
 	{
 		dlg.insert(m_activeView->msgManager()->actionCollection() , i18n("Plugin Actions") );
-		QPtrListIterator<KXMLGUIClient> it( *m_activeView->msgManager()->childClients() );
+		Q3PtrListIterator<KXMLGUIClient> it( *m_activeView->msgManager()->childClients() );
 		KXMLGUIClient *c = 0;
 		while( (c = it.current()) != 0 )
 		{

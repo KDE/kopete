@@ -25,7 +25,7 @@
 
 #include <qobject.h>
 #include <qpixmap.h>
-#include <qptrdict.h>
+#include <q3ptrdict.h>
 
 #include <klistview.h>
 
@@ -56,8 +56,8 @@ class KopeteMetaContactLVI : public Kopete::UI::ListView::Item
 
 public:
 	KopeteMetaContactLVI( Kopete::MetaContact *contact, KopeteGroupViewItem *parent );
-	KopeteMetaContactLVI( Kopete::MetaContact *contact, QListViewItem *parent );
-	KopeteMetaContactLVI( Kopete::MetaContact *contact, QListView *parent );
+	KopeteMetaContactLVI( Kopete::MetaContact *contact, Q3ListViewItem *parent );
+	KopeteMetaContactLVI( Kopete::MetaContact *contact, Q3ListView *parent );
 	~KopeteMetaContactLVI();
 
 	/**
@@ -74,7 +74,7 @@ public:
 	/**
 	 * parent when top-level
 	 */
-	QListView *parentView() const { return m_parentView; };
+	Q3ListView *parentView() const { return m_parentView; };
 
 	/**
 	 * parent when not top-level
@@ -165,7 +165,7 @@ private:
 
 	Kopete::MetaContact *m_metaContact;
 	KopeteGroupViewItem *m_parentGroup;
-	QListView *m_parentView;
+	Q3ListView *m_parentView;
 	bool m_isTopLevel;
 
 	int m_pixelWide;
@@ -175,7 +175,7 @@ private:
 
 	QTimer *mBlinkTimer;
 
-	QPtrDict<Kopete::Account> m_addContactActions;
+	Q3PtrDict<Kopete::Account> m_addContactActions;
 
 	bool mIsBlinkIcon;
 	int m_blinkLeft;
