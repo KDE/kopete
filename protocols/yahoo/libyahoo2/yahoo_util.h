@@ -1,7 +1,7 @@
 /*
  * libyahoo2: yahoo_util.h
  *
- * Copyright (C) 2002, Philip S Tellis <philip . tellis AT gmx . net>
+ * Copyright (C) 2002-2004, Philip S Tellis <philip.tellis AT gmx.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,8 +61,16 @@
 # define y_renew(type, mem, n)	(type *)realloc(mem, n)
 
 void * y_memdup(const void * addr, int n);
-char ** y_strsplit(char * str, const char * sep, int nelem);
+char ** y_strsplit(char * str, char * sep, int nelem);
 void y_strfreev(char ** vector);
+
+int strncasecmp(const char * s1, const char * s2, size_t n);
+int strcasecmp(const char * s1, const char * s2);
+
+char * strdup(const char *s);
+
+int snprintf(char *str, size_t size, const char *format, ...);
+int vsnprintf(char *str, size_t size, const char *format, va_list ap);
 
 #endif
 
@@ -86,7 +94,7 @@ void y_strfreev(char ** vector);
  * The following three functions return newly allocated memory.
  * You must free it yourself
  */
-char * y_string_append(char * str, const char * append);
+char * y_string_append(char * str, char * append);
 char * y_str_to_utf8(const char * in);
 char * y_utf8_to_str(const char * in);
 

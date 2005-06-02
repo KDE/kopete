@@ -1,7 +1,7 @@
 /*
  * libyahoo2: yahoo_util.c
  *
- * Copyright (C) 2002, Philip S Tellis <philip . tellis AT gmx . net>
+ * Copyright (C) 2002-2004, Philip S Tellis <philip.tellis AT gmx.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ char *strchr (), *strrchr ();
 
 #include "yahoo_util.h"
 
-char * y_string_append(char * string, const char * append)
+char * y_string_append(char * string, char * append)
 {
 	int size = strlen(string) + strlen(append) + 1;
 	char * new_string = y_renew(char, string, size);
@@ -61,7 +61,7 @@ char * y_str_to_utf8(const char *in)
 	char *result = NULL;
 
 	if(in == NULL || *in == '\0')
-		return strdup("");
+		return "";
 	
 	result = y_new(char, strlen(in) * 2 + 1);
 
@@ -87,7 +87,7 @@ char * y_utf8_to_str(const char *in)
 	char *result = NULL;
 
 	if(in == NULL || *in == '\0')
-		return strdup("");
+		return "";
 	
 	result = y_new(char, strlen(in) + 1);
 
@@ -116,20 +116,21 @@ void y_strfreev(char ** vector)
 	FREE(vector);
 }
 
-char ** y_strsplit(char * str, const char * sep, int nelem)
+char ** y_strsplit(char * str, char * sep, int nelem)
 {
 	char ** vector;
-	char *s = 0;
-	char *p = 0;
+	char *s, *p;
 	int i=0;
 	int l = strlen(sep);
-	if(nelem < 0) {
-		char * tmp_s = 0;
+	if(nelem <= 0) {
+		char * s;
 		nelem=0;
-		for(tmp_s=strstr(str, sep); tmp_s; tmp_s=strstr(tmp_s+l, sep),nelem++)
-			;
-		if(strcmp(str+strlen(str)-l, sep))
-			nelem++;
+		if (*str) {
+			for(s=strstr(str, sep); s; s=strstr(s+l, sep),nelem++)
+				;
+			if(strcmp(str+strlen(str)-l, sep))
+				nelem++;
+		}
 	}
 
 	vector = y_new(char *, nelem + 1);
@@ -141,7 +142,7 @@ char ** y_strsplit(char * str, const char * sep, int nelem)
 		vector[i][len] = '\0';
 	}
 
-	if(i<nelem) /* str didn't end with sep */
+	if(i<nelem && *str) /* str didn't end with sep, and str isn't empty */
 		vector[i++] = strdup(p);
 			
 	vector[i] = NULL;

@@ -1,7 +1,7 @@
 /*
  * libyahoo2: yahoo_debug.h
  *
- * Copyright (C) 2002, Philip S Tellis <philip . tellis AT gmx . net>
+ * Copyright (C) 2002-2004, Philip S Tellis <philip.tellis AT gmx.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,19 +19,19 @@
  *
  */
 
-extern int yahoo_log_message(const char *fmt, ...);
+extern int yahoo_log_message(char *fmt, ...);
 
-#define NOTICE(x) if(log_level >= YAHOO_LOG_NOTICE) { yahoo_log_message x; yahoo_log_message("\n"); }
+#define NOTICE(x) if(yahoo_get_log_level() >= YAHOO_LOG_NOTICE) { yahoo_log_message x; yahoo_log_message("\n"); }
 
-#define LOG(x) if(log_level >= YAHOO_LOG_INFO) { yahoo_log_message("%s:%d: ", __FILE__, __LINE__); \
+#define LOG(x) if(yahoo_get_log_level() >= YAHOO_LOG_INFO) { yahoo_log_message("%s:%d: ", __FILE__, __LINE__); \
 	yahoo_log_message x; \
 	yahoo_log_message("\n"); }
 
-#define WARNING(x) if(log_level >= YAHOO_LOG_WARNING) { yahoo_log_message("%s:%d: warning: ", __FILE__, __LINE__); \
+#define WARNING(x) if(yahoo_get_log_level() >= YAHOO_LOG_WARNING) { yahoo_log_message("%s:%d: warning: ", __FILE__, __LINE__); \
 	yahoo_log_message x; \
 	yahoo_log_message("\n"); }
 
-#define DEBUG_MSG(x) if(log_level >= YAHOO_LOG_DEBUG) { yahoo_log_message("%s:%d: debug: ", __FILE__, __LINE__); \
+#define DEBUG_MSG(x) if(yahoo_get_log_level() >= YAHOO_LOG_DEBUG) { yahoo_log_message("%s:%d: debug: ", __FILE__, __LINE__); \
 	yahoo_log_message x; \
 	yahoo_log_message("\n"); }
 

@@ -310,7 +310,7 @@ void YahooSession::setAway( enum yahoo_status state, const QString &msg, int awa
 void YahooSession::addBuddy( const QString &who, const QString &group)
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	yahoo_add_buddy( m_connId, who.local8Bit(), group.local8Bit() );
+	yahoo_add_buddy( m_connId, who.local8Bit(), group.local8Bit(), "Please add me" );
 }
 
 void YahooSession::removeBuddy( const QString &who, const QString &group)
@@ -694,141 +694,148 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_got_cookies )( int /*id*/ )
 	/* Not implemented , No receiver yet */
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_status_changed )( int id, char *who, int stat,
-		char *msg, int away )
-{
-	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_statusChangedReceiver( who, stat, msg, away );
-
-}
-
-void YAHOO_CALLBACK_TYPE( ext_yahoo_got_im )( int id, char *who, char *msg,
-		long tm, int stat, int utf8 )
-{
-	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_gotImReceiver( who, msg, tm, stat, utf8 );
-
-}
-
-void YAHOO_CALLBACK_TYPE( ext_yahoo_got_conf_invite )( int id, char *who, char *room,
-		char *msg, YList *members )
-{
-	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_gotConfInviteReceiver( who, room, msg, members );
-
-}
-
-void YAHOO_CALLBACK_TYPE( ext_yahoo_conf_userdecline )( int id, char *who,
-		char *room, char *msg )
-{
-	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_confUserDeclineReceiver( who, room, msg );
-
-}
-
-void YAHOO_CALLBACK_TYPE( ext_yahoo_conf_userjoin )( int id, char *who, char *room )
-{
-	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_confUserJoinReceiver( who, room );
-
-}
-
-void YAHOO_CALLBACK_TYPE( ext_yahoo_conf_userleave )( int id, char *who, char *room )
-{
-	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_confUserLeaveReceiver( who, room );
-
-}
-
-void YAHOO_CALLBACK_TYPE( ext_yahoo_conf_message )( int id, char *who, char *room,
-		 char *msg, int utf8 )
-{
-	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_confMessageReceiver( who, room, msg, utf8 );
-
-}
-
-void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_cat_xml )( int /*id*/, char* /*xml*/ )
+void YAHOO_CALLBACK_TYPE(ext_yahoo_got_ping)(int id, const char *errormsg)
 {
 	/* Not implemented , No receiver yet */
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_join )( int /*id*/, char* /*room*/,
-		char* /*topic*/, YList* /*members*/ )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_status_changed )( int id, const char *who, int stat,
+		const char *msg, int away, int idle, int mobile )
+{
+	YahooSession *session = YahooSessionManager::manager()->session( id );
+	session->_statusChangedReceiver( (char*)who, stat, (char*)msg, away );
+
+}
+
+void YAHOO_CALLBACK_TYPE( ext_yahoo_got_im )( int id, const char *me, const char *who, 		const char *msg, long tm, int stat, int utf8 )
+{
+	YahooSession *session = YahooSessionManager::manager()->session( id );
+	session->_gotImReceiver( (char*)who, (char*)msg, tm, stat, utf8 );
+
+}
+
+void YAHOO_CALLBACK_TYPE( ext_yahoo_got_conf_invite )(int id, const char *me, const char *who, const char *room, const char *msg, YList *members)
+{
+	YahooSession *session = YahooSessionManager::manager()->session( id );
+	session->_gotConfInviteReceiver( (char*)who, (char*)room, (char*)msg, members );
+
+}
+
+void YAHOO_CALLBACK_TYPE( ext_yahoo_conf_userdecline )(int id, const char *me, const char *who, const char *room, const char *msg)
+{
+	YahooSession *session = YahooSessionManager::manager()->session( id );
+	session->_confUserDeclineReceiver( (char*)who, (char*)room, (char*)msg );
+
+}
+
+void YAHOO_CALLBACK_TYPE( ext_yahoo_conf_userjoin )(int id, const char *me, const char *who, const char *room)
+{
+	YahooSession *session = YahooSessionManager::manager()->session( id );
+	session->_confUserJoinReceiver( (char*)who, (char*)room );
+
+}
+
+void YAHOO_CALLBACK_TYPE( ext_yahoo_conf_userleave )(int id, const char *me, const char *who, const char *room)
+{
+	YahooSession *session = YahooSessionManager::manager()->session( id );
+	session->_confUserLeaveReceiver( (char*)who, (char*)room );
+
+}
+
+void YAHOO_CALLBACK_TYPE( ext_yahoo_conf_message )(int id, const char *me, const char *who, const char *room, const char *msg, int utf8)
+{
+	YahooSession *session = YahooSessionManager::manager()->session( id );
+	session->_confMessageReceiver( (char*)who, (char*)room, (char*)msg, utf8 );
+
+}
+
+void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_cat_xml )( int /*id*/, const char* /*xml*/ )
 {
 	/* Not implemented , No receiver yet */
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_userjoin )( int /*id*/, char* /*room*/,
-		 struct yahoo_chat_member* /*who*/ )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_join )( int id, const char *me, const char *room, const char *topic, YList *members, int fd )
 {
 	/* Not implemented , No receiver yet */
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_userleave )( int /*id*/, char* /*room*/, char* /*who*/ )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_userjoin )( int id, const char *me, const char *room, struct yahoo_chat_member *who )
 {
 	/* Not implemented , No receiver yet */
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_message )( int /*id*/, char* /*who*/, char* /*room*/,
-		char* /*msg*/, int /*msgtype*/, int /*utf8*/ )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_userleave )( int id, const char *me, const char *room, const char *who )
 {
 	/* Not implemented , No receiver yet */
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_got_file )( int id, char *who, char *url, long expires,
-		char *msg, char *fname, unsigned long fesize )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_message )( int id, const char *me, const char *who, const char *room, const char *msg, int msgtype, int utf8)
+{
+	/* Not implemented , No receiver yet */
+}
+
+void YAHOO_CALLBACK_TYPE(ext_yahoo_chat_yahoologout)(int id, const char *me)
+{
+	/* Not implemented , No receiver yet */
+}
+
+void YAHOO_CALLBACK_TYPE(ext_yahoo_chat_yahooerror)(int id, const char *me)
+{
+	/* Not implemented , No receiver yet */
+}
+
+void YAHOO_CALLBACK_TYPE( ext_yahoo_got_file )( int id, const char *me, const char *who, const char *url, long expires, const char *msg, const char *fname, unsigned long fesize)
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_gotFileReceiver( who, url, expires, msg, fname, fesize );
+	session->_gotFileReceiver( (char*)who, (char*)url, expires, (char*)msg, (char*)fname, fesize );
 
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_contact_added )( int id, char *myid, char *who, char *msg )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_contact_added )( int id, const char *myid, const char *who, const char *msg )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_contactAddedReceiver( myid, who, msg );
+	session->_contactAddedReceiver( (char*)myid, (char*)who, (char*)msg );
 
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_rejected )( int id, char *who, char *msg )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_rejected )( int id, const char *who, const char *msg )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_rejectedReceiver( who, msg );
+	session->_rejectedReceiver( (char*)who, (char*)msg );
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_typing_notify )( int id, char *who, int stat )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_typing_notify )( int id, const char *me, const char *who, int stat )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_typingNotifyReceiver( who, stat );
-
-}
-
-void YAHOO_CALLBACK_TYPE( ext_yahoo_game_notify )( int id, char *who, int stat )
-{
-	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_gameNotifyReceiver( who, stat );
+	session->_typingNotifyReceiver( (char*)who, stat );
 
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_mail_notify )( int id, char *from, char *subj, int cnt )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_game_notify )(int id, const char *me, const char *who, int stat)
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_mailNotifyReceiver( from, subj, cnt );
+	session->_gameNotifyReceiver( (char*)who, stat );
 
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_system_message )( int id, char *msg )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_mail_notify )( int id, const char *from, const char *subj, int cnt )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_systemMessageReceiver( msg );
+	session->_mailNotifyReceiver( (char*)from, (char*)subj, cnt );
 
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_error )( int id, char *err, int fatal )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_system_message )( int id, const char *msg )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_errorReceiver( err, fatal );
+	session->_systemMessageReceiver( (char*)msg );
+
+}
+
+void YAHOO_CALLBACK_TYPE( ext_yahoo_error )( int id, const char *err, int fatal, int num )
+{
+	YahooSession *session = YahooSessionManager::manager()->session( id );
+	session->_errorReceiver( (char*)err, fatal );
 
 }
 
@@ -838,11 +845,10 @@ int YAHOO_CALLBACK_TYPE( ext_yahoo_log )( const char* /*fmt*/, ... )
 	return 0;
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_add_handler )( int id, int fd, yahoo_input_condition cond, void * data )
+int YAHOO_CALLBACK_TYPE( ext_yahoo_add_handler )( int id, int fd, yahoo_input_condition cond, void * data )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_addHandlerReceiver( fd, cond, data );
-
+	return session->_addHandlerReceiver( fd, cond, data );
 }
 
 void YAHOO_CALLBACK_TYPE( ext_yahoo_remove_handler )( int id, int fd )
@@ -852,16 +858,16 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_remove_handler )( int id, int fd )
 
 }
 
-int YAHOO_CALLBACK_TYPE( ext_yahoo_connect )( char *host, int port )
+int YAHOO_CALLBACK_TYPE( ext_yahoo_connect )( const char *host, int port )
 {
-	return YahooSessionManager::manager()->_hostConnectReceiver( host, port );
+	return YahooSessionManager::manager()->_hostConnectReceiver( (char*)host, port );
 }
 
-int YAHOO_CALLBACK_TYPE( ext_yahoo_connect_async )( int id, char *host, int port,
+int YAHOO_CALLBACK_TYPE( ext_yahoo_connect_async )( int id, const char *host, int port,
 		yahoo_connect_callback callback, void *callback_data )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
-	return session->_hostAsyncConnectReceiver( host, port, callback, callback_data );
+	return session->_hostAsyncConnectReceiver( (char*)host, port, callback, callback_data );
 }
 
 
@@ -870,27 +876,32 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_got_webcam_image )( int id, const char* who,
 		unsigned int timestamp )
 {
 	YahooSession* session = YahooSessionManager::manager()->session( id );
-	return session->_gotWebcamImage( who, image, image_size, real_size, timestamp );
+	return session->_gotWebcamImage( (char*)who, (unsigned char*)image, image_size, real_size, timestamp );
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_invite )( int id, char* from )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_invite )( int id, const char *me, const char* from )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_gotWebcamInvite( from );
+	session->_gotWebcamInvite( (char*)from );
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_invite_reply )( int /*id*/, char* /*from*/, int /*accept*/ )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_invite_reply )( int /*id*/, const char *me, const char* /*from*/, int /*accept*/ )
 {
 	/* Not implemented , No receiver yet */
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_closed )( int id, char* who, int reason )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_closed )( int id, const char* who, int reason )
 {
 	YahooSession* session = YahooSessionManager::manager()->session( id );
-	session->_webcamDisconnected( who, reason );
+	session->_webcamDisconnected( (char*)who, reason );
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_viewer )( int /*id*/, char* /*who*/, int /*connect*/ )
+void YAHOO_CALLBACK_TYPE(ext_yahoo_got_search_result)(int id, int found, int start, int total, YList *contacts)
+{
+	
+}
+
+void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_viewer )( int /*id*/, const char* /*who*/, int /*connect*/ )
 {
 	/* Not implemented , No receiver yet */
 }
@@ -905,7 +916,7 @@ void receive_file_callback( int id, int fd, int error,
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
 	if ( session )
-		session->_receiveFileProceed( id, fd, error, filename, size, data );
+		session->_receiveFileProceed( id, fd, error, (char*)filename, size, (char*)data );
 }
 /* End of extern C */
 }
@@ -1182,61 +1193,74 @@ int YahooSession::_logReceiver( char */*fmt*/, ... )
 	return 0;
 }
 
-void YahooSession::_addHandlerReceiver( int fd, yahoo_input_condition cond, void *data )
+int YahooSession::_addHandlerReceiver( int fd, yahoo_input_condition cond, void *data )
 {
 	kdDebug(14181) << k_funcinfo << " " << m_connId << " Socket: " << fd << endl;
 
 	m_data = data;
 	if ( fd == -1 )
-		return;
+	{
+		kdDebug(14181) << k_funcinfo << "why is fd -1?" << endl;
+		return -1;
+	}
 	
 	KExtendedSocket* socket = m_connManager.connectionForFD( fd );
 	if ( !socket )
 	{
 		kdDebug(14181) << k_funcinfo << "No existing socket for connection found. We're screwed"
 			<< endl;
-		return;
+		return -1;
 	}
 	
+	/* This works ONLY IF (YAHOO_INPUT_READ==1 && YAHOO_INPUT_WRITE==2) */
+	int tag = 0;
 	if ( cond == YAHOO_INPUT_READ )
 	{
 		kdDebug(14181) << k_funcinfo << " add handler read" << endl;
 		socket->enableRead( true );
 		connect ( socket, SIGNAL( readyRead() ), this, SLOT( slotReadReady() ) );
+		tag = 2*fd + YAHOO_INPUT_READ;
 	}
 	else if ( cond == YAHOO_INPUT_WRITE )
 	{
 		kdDebug(14181) << k_funcinfo << " add handler write" << endl;
 		socket->enableWrite( true );
 		connect ( socket, SIGNAL( readyWrite() ), this, SLOT( slotWriteReady() ) );
+		tag = 2*fd + YAHOO_INPUT_WRITE;
 	}
-
+	return tag;
 }
 
 void YahooSession::addHandler( int /*fd*/, yahoo_input_condition /*cond*/ )
 {
 }
 
-void YahooSession::_removeHandlerReceiver( int fd )
+void YahooSession::_removeHandlerReceiver( int tag )
 {
-	if ( fd == -1 )
+	kdDebug(14181) << k_funcinfo << " " << m_connId << " tag: " << tag << endl;
+
+	if ( tag == 0 )
 		return;
-	
-	KExtendedSocket* socket = m_connManager.connectionForFD( fd );
+
+	KExtendedSocket* socket = m_connManager.connectionForFD( (tag-1)/2 );
 	if ( !socket )
 	{
 		kdDebug(14181) << k_funcinfo << "No existing socket for connection found. We're screwed"
 			<< endl;
 		return;
 	}
-	
-	kdDebug(14181) << k_funcinfo << " read off" << endl;
-	socket->enableRead( false );
-	disconnect ( socket, SIGNAL( readyRead() ), this, SLOT( slotReadReady() ) );
-	
-	kdDebug(14181) << k_funcinfo << " write off" << endl;
-	socket->enableRead( false );
-	disconnect ( socket, SIGNAL( readyWrite() ), this, SLOT( slotWriteReady() ) );
+	/* This works ONLY IF (YAHOO_INPUT_READ==1 && YAHOO_INPUT_WRITE==2) */
+	if( tag % 2 == YAHOO_INPUT_READ ) {
+		kdDebug(14181) << k_funcinfo << " read off" << endl;
+		socket->enableRead( false );
+		disconnect ( socket, SIGNAL( readyRead() ), this, SLOT( slotReadReady() ) );
+	}
+	else 
+	{
+		kdDebug(14181) << k_funcinfo << " write off" << endl;
+		socket->enableWrite( false );
+		disconnect ( socket, SIGNAL( readyWrite() ), this, SLOT( slotWriteReady() ) );
+	}
 }
 
 void YahooSession::removeHandler( int /*fd*/ )
@@ -1312,7 +1336,7 @@ void YahooSession::_gotWebcamImage( const char* who, const unsigned char* image,
 	}
 	currentImage->writeBlock( (char *) image, real_size );
 	//kdDebug(14181) << " real_size " << real_size << " image_size " << image_size << " timestamp " << timestamp << " " << who << endl;
-		
+	
 	if ( currentImage->size() == image_size ) {
 		QPixmap webcamImage;
 		currentImage->close();

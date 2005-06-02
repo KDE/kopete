@@ -1,7 +1,7 @@
 /*
  * libyahoo2: yahoo_httplib.c
  *
- * Copyright (C) 2002, Philip S Tellis <philip . tellis AT gmx . net>
+ * Copyright (C) 2002-2004, Philip S Tellis <philip.tellis AT gmx.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ int yahoo_tcp_readline(char *ptr, int maxlen, int fd)
 
 		do {
 			rc = read(fd, &c, 1);
-		} while(rc == -1 && errno == EINTR);
+		} while(rc == -1 && (errno == EINTR || errno == EAGAIN)); /* this is bad - it should be done asynchronously */
 
 		if (rc == 1) {
 			if(c == '\r')			/* get rid of \r */
@@ -159,7 +159,7 @@ char *yahoo_urlencode(const char *instr)
 	int len = strlen(instr);
 
 	if(!(str = y_new(char, 3*len + 1) ))
-		return strdup("");
+		return "";
 
 	while(instr[ipos]) {
 		while(isurlchar(instr[ipos]))
@@ -189,7 +189,7 @@ char *yahoo_urldecode(const char *instr)
 	int len = strlen(instr);
 
 	if(!(str = y_new(char, len+1) ))
-		return strdup("");
+		return "";
 
 	while(instr[ipos]) {
 		while(instr[ipos] && instr[ipos]!='%')
@@ -200,12 +200,16 @@ char *yahoo_urldecode(const char *instr)
 				str[bpos++] = instr[ipos++];
 		if(!instr[ipos])
 			break;
-		ipos++;
 		
-		entity[0]=instr[ipos++];
-		entity[1]=instr[ipos++];
-		sscanf(entity, "%2x", &dec);
-		str[bpos++] = (char)dec;
+		if(instr[ipos+1] && instr[ipos+2]) {
+			ipos++;
+			entity[0]=instr[ipos++];
+			entity[1]=instr[ipos++];
+			sscanf(entity, "%2x", &dec);
+			str[bpos++] = (char)dec;
+		} else {
+			str[bpos++] = instr[ipos++];
+		}
 	}
 	str[bpos]='\0';
 
@@ -221,7 +225,7 @@ char *yahoo_xmldecode(const char *instr)
 	int ipos=0, bpos=0, epos=0;
 	char *str = NULL;
 	char entity[4]={0,0,0,0};
-	const char *entitymap[5][2]={
+	char *entitymap[5][2]={
 		{"amp;",  "&"}, 
 		{"quot;", "\""},
 		{"lt;",   "<"}, 
@@ -232,7 +236,7 @@ char *yahoo_xmldecode(const char *instr)
 	int len = strlen(instr);
 
 	if(!(str = y_new(char, len+1) ))
-		return strdup("");
+		return "";
 
 	while(instr[ipos]) {
 		while(instr[ipos] && instr[ipos]!='&')
@@ -362,6 +366,7 @@ static void yahoo_got_url_fd(int id, int fd, int error, void *data)
 	char buff[1024];
 	unsigned long filesize=0;
 	char *filename=NULL;
+	int n;
 
 	struct url_data *ud = data;
 
@@ -371,8 +376,8 @@ static void yahoo_got_url_fd(int id, int fd, int error, void *data)
 		return;
 	}
 
-	while(yahoo_tcp_readline(buff, sizeof(buff), fd) > 0) {
-		/* read up to blank line */
+	while((n=yahoo_tcp_readline(buff, sizeof(buff), fd)) > 0) {
+		LOG(("Read:%s:\n", buff));
 		if(!strcmp(buff, ""))
 			break;
 
@@ -410,6 +415,8 @@ static void yahoo_got_url_fd(int id, int fd, int error, void *data)
 		}
 	}
 
+	LOG(("n == %d\n", n));
+	LOG(("Calling callback, filename:%s, size: %ld\n", filename, filesize));
 	ud->callback(id, fd, error, filename, filesize, ud->user_data);
 	FREE(ud);
 	FREE(filename);

@@ -1,7 +1,7 @@
 /*
- * llist.c: linked list routines
+ * yahoo_list.c: linked list routines
  *
- * Some code copyright (C) 2002-2003, Philip S Tellis <philip . tellis AT gmx . net>
+ * Some code copyright (C) 2002-2004, Philip S Tellis <philip.tellis AT gmx.net>
  * Other code copyright Meredydd Luff <meredydd AT everybuddy.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -99,18 +99,18 @@ YList *y_list_remove(YList * list, void *data)
 /* Warning */
 /* link MUST be part of list */
 /* caller must free link using y_list_free_1 */
-YList *y_list_remove_link(YList * list, const YList * listlink)
+YList *y_list_remove_link(YList * list, const YList * link)
 {
-	if (!listlink)
+	if (!link)
 		return list;
 
-	if (listlink->next)
-		listlink->next->prev = listlink->prev;
-	if (listlink->prev)
-		listlink->prev->next = listlink->next;
+	if (link->next)
+		link->next->prev = link->prev;
+	if (link->prev)
+		link->prev->next = link->next;
 
-	if (listlink == list)
-		list = listlink->next;
+	if (link == list)
+		list = link->next;
 	
 	return list;
 }

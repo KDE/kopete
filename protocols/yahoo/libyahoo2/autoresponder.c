@@ -1,12 +1,12 @@
 /*
- * sample yahoo client based on libyahoo2
+ * autoresonder yahoo client based on libyahoo2
  *
  * libyahoo2 is available at http://libyahoo2.sourceforge.net/
  *
- * $Revision$
- * $Date$
+ * $Revision: 1.2 $
+ * $Date: 2005/02/03 09:32:09 $
  * 
- * Copyright (C) 2002-2004, Philip S Tellis <philip.tellis AT gmx.net>
+ * Copyright (C) 2002-2004, A, Craig West <acwest AT craigwest.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,12 @@ int fileno(FILE * stream);
 
 #define MAX_PREF_LEN 255
 
+static void strncpy_term(char* dest, const char* src, int len)
+{
+	strncpy(dest, src, len - 1);
+	dest[len - 1] = '\0';
+}
+
 static char *local_host = NULL;
 
 static int do_mail_notify = 0;
@@ -67,9 +73,16 @@ static int accept_webcam_viewers = 1;
 static int send_webcam_images = 0;
 static int webcam_direction = YAHOO_WEBCAM_DOWNLOAD;
 static time_t curTime = 0;
+static time_t statusTimer = 0;
+static time_t connectTimer = 0;
 static time_t pingTimer = 0;
 static time_t webcamTimer = 0;
 static double webcamStart = 0;
+
+static char* yahoo_id = NULL;
+static char* yahoo_passwd = NULL;
+static char* status_msg = NULL;
+static char* outgoing_msg = NULL;
 
 /* id of the webcam connection (needed for uploading) */
 static int webcam_id = 0;
@@ -79,8 +92,8 @@ static int poll_loop=1;
 static void register_callbacks();
 
 typedef struct {
-	char yahoo_id[255];
-	char password[255];
+	char yahoo_id[MAX_PREF_LEN];
+	char password[MAX_PREF_LEN];
 	int id;
 	int fd;
 	int status;
@@ -88,12 +101,12 @@ typedef struct {
 } yahoo_local_account;
 
 typedef struct {
-	char yahoo_id[255];
-	char name[255];
+	char yahoo_id[MAX_PREF_LEN];
+	char name[MAX_PREF_LEN];
 	int status;
 	int away;
 	char *msg;
-	char group[255];
+	char group[MAX_PREF_LEN];
 } yahoo_account;
 
 typedef struct {
@@ -200,7 +213,7 @@ static char * get_local_addresses()
 	c = strtok( NULL, " " );
 	pclose(f);
 
-	strncpy(gateway,c, 16);
+	strncpy_term(gateway,c, 16);
 
 
 
@@ -225,13 +238,13 @@ static char * get_local_addresses()
 	c = strtok( buff, " " );
 	c = strtok( NULL, " " );
 
-	strncpy ( addresses, c, sizeof(addresses) );
+	strncpy_term ( addresses, c, sizeof(addresses) );
 	c = strtok(addresses, ":" );
-	strncpy ( buff, c, sizeof(buff) );
+	strncpy_term ( buff, c, sizeof(buff) );
 	if((c=strtok(NULL, ":")))
-		strncpy( buff, c, sizeof(buff) );
+		strncpy_term( buff, c, sizeof(buff) );
 
-	strncpy(addresses, buff, sizeof(addresses));
+	strncpy_term(addresses, buff, sizeof(addresses));
 
 	return addresses;
 		
@@ -242,7 +255,7 @@ IP_TEST_2:
 
 	hn = gethostbyname(buff);
 	if(hn)
-		strncpy(addresses, inet_ntoa( *((struct in_addr*)hn->h_addr)), sizeof(addresses) );
+		strncpy_term(addresses, inet_ntoa( *((struct in_addr*)hn->h_addr)), sizeof(addresses) );
 	else
 		addresses[0] = 0;
 
@@ -264,6 +277,24 @@ static int yahoo_ping_timeout_callback()
 	yahoo_keepalive(ylad->id);
 	rearm(&pingTimer, 600);
 	return 1;
+}
+
+void ext_yahoo_login(yahoo_local_account * ylad, int login_mode);
+static int yahoo_connect()
+{
+	if (ylad->status == YAHOO_STATUS_OFFLINE) {
+		print_message(("trying to connect"));
+		ext_yahoo_login(ylad, YAHOO_STATUS_CUSTOM);
+	}
+
+	rearm(&connectTimer, 600); /* retry every ten minutes */
+	return 1;
+}
+
+static void setStatus()
+{
+	yahoo_set_away(ylad->id, YAHOO_STATUS_CUSTOM, status_msg, 1);
+	statusTimer = 0;
 }
 
 static int yahoo_webcam_timeout_callback(int id)
@@ -322,7 +353,7 @@ static const char * get_buddy_name(const char * yid)
 	return yid;
 }
 
-static conf_room * find_conf_room_by_name_and_id(int id, const char * me, const char * name)
+static conf_room * find_conf_room_by_name_and_id(int id, const char *me, const char * name)
 {
 	YList * l;
 	for(l = conferences; l; l=l->next) {
@@ -339,16 +370,15 @@ void ext_yahoo_got_conf_invite(int id, const char *me, const char *who, const ch
 {
 	conf_room * cr = y_new0(conf_room, 1);
 	cr->room_name = strdup(room);
-	cr->me = strdup(me);
 	cr->host = strdup(who);
 	cr->members = members;
 	cr->id = id;
 
 	conferences = y_list_append(conferences, cr);
 
-	print_message(("%s has invited you [%s] to a conference: %s\n"
+	print_message(("%s has invited you to a conference: %s\n"
 				"with the message: %s",
-				who, me, room, msg));
+				who, room, msg));
 
 	for(; members; members=members->next)
 		print_message(("\t%s", (char *)members->data));
@@ -357,7 +387,6 @@ void ext_yahoo_got_conf_invite(int id, const char *me, const char *who, const ch
 void ext_yahoo_conf_userdecline(int id, const char *me, const char *who, const char *room, const char *msg)
 {
 	YList * l;
-	/* TODO: probably have to use the me arg to find the room */
 	conf_room * cr = find_conf_room_by_name_and_id(id, me, room);
 	
 	if(cr)
@@ -371,8 +400,8 @@ void ext_yahoo_conf_userdecline(int id, const char *me, const char *who, const c
 		}
 	}
 
-	print_message(("%s declined the invitation from %s to %s\n"
-				"with the message: %s", who, me, room, msg));
+	print_message(("%s declined the invitation to %s [%s]\n"
+				"with the message: %s", who, room, me, msg));
 }
 void ext_yahoo_conf_userjoin(int id, const char *me, const char *who, const char *room)
 {
@@ -388,7 +417,7 @@ void ext_yahoo_conf_userjoin(int id, const char *me, const char *who, const char
 		cr->members = y_list_append(cr->members, strdup(who));
 	}
 
-	print_message(("%s joined the conference %s [%s]", who, room, me));
+	print_message(("%s joined the conference %s[%s]", who, room, me));
 
 }
 void ext_yahoo_conf_userleave(int id, const char *me, const char *who, const char *room)
@@ -407,7 +436,7 @@ void ext_yahoo_conf_userleave(int id, const char *me, const char *who, const cha
 		}
 	}
 
-	print_message(("%s left the conference %s [%s]", who, room, me));
+	print_message(("%s left the conference %s[%s]", who, room, me));
 }
 void ext_yahoo_conf_message(int id, const char *me, const char *who, const char *room, const char *msg, int utf8)
 {
@@ -418,7 +447,7 @@ void ext_yahoo_conf_message(int id, const char *me, const char *who, const char 
 
 	who = get_buddy_name(who);
 
-	print_message(("%s (in %s [%s]): %s", who, room, me, umsg));
+	print_message(("%s (in %s[%s]): %s", who, room, me, umsg));
 
 	if(utf8)
 		FREE(umsg);
@@ -449,7 +478,7 @@ void ext_yahoo_chat_cat_xml(int id, const char *xml)
 
 void ext_yahoo_chat_join(int id, const char *me, const char *room, const char * topic, YList *members, int fd)
 {
-	print_message(("You [%s] have joined the chatroom %s with topic %s", me, room, topic));
+	print_message(("You[%s] have joined the chatroom %s with topic %s", me, room, topic));
 
 	while(members) {
 		YList *n = members->next;
@@ -468,7 +497,7 @@ void ext_yahoo_chat_join(int id, const char *me, const char *room, const char * 
 void ext_yahoo_chat_userjoin(int id, const char *me, const char *room, struct yahoo_chat_member *who)
 {
 	print_chat_member(who);
-	print_message((" joined the chatroom %s [%s]", room, me));
+	print_message((" joined the chatroom %s[%s]", room, me));
 	FREE(who->id);
 	FREE(who->alias);
 	FREE(who->location);
@@ -476,7 +505,7 @@ void ext_yahoo_chat_userjoin(int id, const char *me, const char *room, struct ya
 }
 void ext_yahoo_chat_userleave(int id, const char *me, const char *room, const char *who)
 {
-	print_message(("%s left the chatroom %s [%s]", who, room, me));
+	print_message(("%s left the chatroom %s[%s]", who, room, me));
 }
 void ext_yahoo_chat_message(int id, const char *me, const char *who, const char *room, const char *msg, int msgtype, int utf8)
 {
@@ -495,9 +524,9 @@ void ext_yahoo_chat_message(int id, const char *me, const char *who, const char 
 	}
 
 	if (msgtype == 2) {
-		print_message(("(in %s [%s]) %s %s", room, me, who, umsg));
+		print_message(("(in %s[%s]) %s %s", room, me, who, umsg));
 	} else {
-		print_message(("(in %s [%s]) %s: %s", room, me, who, umsg));
+		print_message(("(in %s[%s]) %s: %s", room, me, who, umsg));
 	}
 
 	if(utf8)
@@ -509,7 +538,6 @@ void ext_yahoo_status_changed(int id, const char *who, int stat, const char *msg
 	yahoo_account * ya=NULL;
 	YList * b;
 	char buf[1024];
-
 	for(b = buddies; b; b = b->next) {
 		if(!strcmp(((yahoo_account *)b->data)->yahoo_id, who)) {
 			ya = b->data;
@@ -567,10 +595,10 @@ void ext_yahoo_got_buddies(int id, YList * buds)
 	for(; buds; buds = buds->next) {
 		yahoo_account *ya = y_new0(yahoo_account, 1);
 		struct yahoo_buddy *bud = buds->data;
-		strncpy(ya->yahoo_id, bud->id, 255);
+		strncpy_term(ya->yahoo_id, bud->id, MAX_PREF_LEN);
 		if(bud->real_name)
-			strncpy(ya->name, bud->real_name, 255);
-		strncpy(ya->group, bud->group, 255);
+			strncpy_term(ya->name, bud->real_name, MAX_PREF_LEN);
+		strncpy_term(ya->group, bud->group, MAX_PREF_LEN);
 		ya->status = YAHOO_STATUS_OFFLINE;
 		buddies = y_list_append(buddies, ya);
 
@@ -584,6 +612,7 @@ void ext_yahoo_got_ignore(int id, YList * igns)
 
 void ext_yahoo_got_im(int id, const char *me, const char *who, const char *msg, long tm, int stat, int utf8)
 {
+	const char *buddy = get_buddy_name(who);
 	char *umsg = (char *)msg;
 
 	if(stat == 2) {
@@ -597,24 +626,23 @@ void ext_yahoo_got_im(int id, const char *me, const char *who, const char *msg, 
 	if(utf8)
 		umsg = y_utf8_to_str(msg);
 	
-	who = get_buddy_name(who);
-
 	if(tm) {
-		char timestr[255];
+		char timestr[MAX_PREF_LEN];
 
-		strncpy(timestr, ctime((time_t *)&tm), sizeof(timestr));
-		timestr[strlen(timestr) - 1] = '\0';
+		strncpy_term(timestr, ctime((time_t *)&tm), sizeof(timestr));
 
 		print_message(("[Offline message at %s to %s from %s]: %s", 
-				timestr, me, who, umsg))
+				timestr, me, buddy, umsg))
 	} else {
 		if(!strcmp(umsg, "<ding>")) 
 			printf("\a");
-		print_message(("[%s]%s: %s", me, who, umsg))
+		print_message(("[%s]%s: %s", me, buddy, umsg))
 	}
 
 	if(utf8)
 		FREE(umsg);
+	umsg = y_str_to_utf8(outgoing_msg);
+	yahoo_send_im(ylad->id, me, who, umsg, 1);
 }
 
 void ext_yahoo_rejected(int id, const char *who, const char *msg)
@@ -824,21 +852,36 @@ void yahoo_logout()
 	ylad->status = YAHOO_STATUS_OFFLINE;
 	ylad->id = 0;
 
-	poll_loop=0;
+	/* poll_loop=0; */
 
 	print_message(("logged_out"));
+}
+
+void yahoo_set_current_state(int yahoo_state)
+{
+	if (ylad->status != YAHOO_STATUS_OFFLINE && yahoo_state == YAHOO_STATUS_OFFLINE) {
+		yahoo_logout();
+		return;
+	}
+
+	ylad->status = yahoo_state;
+	if(yahoo_state == YAHOO_STATUS_CUSTOM) {
+		printf("DEBUG: calling yahoo_set_away\n");
+		if(ylad->msg)
+			yahoo_set_away(ylad->id, yahoo_state, ylad->msg, 1);
+		else
+			yahoo_set_away(ylad->id, yahoo_state, "delta p * delta x too large", 1);
+	} else
+		yahoo_set_away(ylad->id, yahoo_state, NULL, 1);
 }
 
 void ext_yahoo_login(yahoo_local_account * ylad, int login_mode)
 {
 	LOG(("ext_yahoo_login"));
 
-	ylad->id = yahoo_init_with_attributes(ylad->yahoo_id, ylad->password, 
-			"local_host", local_host,
-			"pager_port", 23,
-			NULL);
+	ylad->id = yahoo_init(ylad->yahoo_id, ylad->password);
 	ylad->status = YAHOO_STATUS_OFFLINE;
-	yahoo_login(ylad->id, login_mode);
+	yahoo_login(ylad->id, YAHOO_STATUS_AVAILABLE);
 
 /*	if (ylad->id <= 0) {
 		print_message(("Could not connect to Yahoo server.  Please verify that you are connected to the net and the pager host and port are correctly entered."));
@@ -860,6 +903,7 @@ void ext_yahoo_login_response(int id, int succ, const char *url)
 	if(succ == YAHOO_LOGIN_OK) {
 		ylad->status = yahoo_current_status(id);
 		print_message(("logged in"));
+	        rearm(&statusTimer, 2);
 		return;
 		
 	} else if(succ == YAHOO_LOGIN_UNAME) {
@@ -886,7 +930,7 @@ void ext_yahoo_login_response(int id, int succ, const char *url)
 	ylad->status = YAHOO_STATUS_OFFLINE;
 	print_message((buff));
 	yahoo_logout();
-	poll_loop=0;
+	/* poll_loop=0; */
 }
 
 void ext_yahoo_error(int id, const char *err, int fatal, int num)
@@ -924,26 +968,6 @@ void ext_yahoo_error(int id, const char *err, int fatal, int num)
 		yahoo_logout();
 }
 
-void yahoo_set_current_state(int yahoo_state)
-{
-	if (ylad->status == YAHOO_STATUS_OFFLINE && yahoo_state != YAHOO_STATUS_OFFLINE) {
-		ext_yahoo_login(ylad, yahoo_state);
-		return;
-	} else if (ylad->status != YAHOO_STATUS_OFFLINE && yahoo_state == YAHOO_STATUS_OFFLINE) {
-		yahoo_logout();
-		return;
-	}
-
-	ylad->status = yahoo_state;
-	if(yahoo_state == YAHOO_STATUS_CUSTOM) {
-		if(ylad->msg)
-			yahoo_set_away(ylad->id, yahoo_state, ylad->msg, 1);
-		else
-			yahoo_set_away(ylad->id, yahoo_state, "delta p * delta x too large", 1);
-	} else
-		yahoo_set_away(ylad->id, yahoo_state, NULL, 1);
-}
-
 int ext_yahoo_connect(const char *host, int port)
 {
 	struct sockaddr_in serv_addr;
@@ -959,7 +983,7 @@ int ext_yahoo_connect(const char *host, int port)
 						h_errno, strerror(h_errno)));
 			return -1;
 		}
-		strncpy(last_host, host, 255);
+		strncpy_term(last_host, host, MAX_PREF_LEN);
 	}
 
 	if((servfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -1142,15 +1166,10 @@ int ext_yahoo_connect_async(int id, const char *host, int port,
 
 static void process_commands(char *line)
 {
-	char *cmd, *to, *msg;
-
-	char *tmp, *start;
 	char *copy = strdup(line);
-
-	enum yahoo_status state;
-
-	start = cmd = copy;
-	tmp = strchr(copy, ' ');
+	char *start = copy;
+	char *cmd = copy;
+	char *tmp = strchr(copy, ' ');
 	if(tmp) {
 		*tmp = '\0';
 		copy = tmp+1;
@@ -1158,298 +1177,14 @@ static void process_commands(char *line)
 		copy = NULL;
 	}
 
-	if(!strncasecmp(cmd, "MSG", strlen("MSG"))) {
-		/* send a message */
-		to = copy;
-		tmp = strchr(copy, ' ');
-		if(tmp) {
-			*tmp = '\0';
-			copy = tmp+1;
-		}
-		msg = copy;
-		if(to && msg) {
-			if(!strcmp(msg, "\a"))
-				yahoo_send_im(ylad->id, NULL, to, "<ding>", 0);
-			else {
-				msg = y_str_to_utf8(msg);
-				yahoo_send_im(ylad->id, NULL, to, msg, 1);
-				FREE(msg);
-			}
-		}
-	} else if(!strncasecmp(cmd, "CMS", strlen("CMS"))) {
-		/* send a message */
-		conf_room * cr;
-		to = copy;
-		tmp = strchr(copy, ' ');
-		if(tmp) {
-			*tmp = '\0';
-			copy = tmp+1;
-		}
-		msg = copy;
-		cr = find_conf_room_by_name_and_id(ylad->id, NULL, to);
-		if(!cr) {
-			print_message(("no such room: %s", copy));
-			goto end_parse;
-		}
-		if(msg)
-			yahoo_conference_message(ylad->id, NULL, cr->members, to, msg, 0);
-	} else if(!strncasecmp(cmd, "CLS", strlen("CLS"))) {
-		YList * l;
-		if(copy) {
-			conf_room * cr = find_conf_room_by_name_and_id(ylad->id, NULL, copy);
-			if(!cr) {
-				print_message(("no such room: %s", copy));
-				goto end_parse;
-			}
-			print_message(("Room: %s", copy));
-			for(l = cr->members; l; l=l->next) {
-				print_message(("%s", (char *)l->data))
-			}
-		} else {
-			print_message(("All Rooms:"));
-			for(l = conferences; l; l=l->next) {
-				conf_room * cr = l->data;
-				print_message(("%s", cr->room_name));
-			}
-		}
-
-	} else if(!strncasecmp(cmd, "CCR", strlen("CCR"))) {
-		conf_room * cr = y_new0(conf_room, 1);
-		while((tmp = strchr(copy, ' ')) != NULL) {
-			*tmp = '\0';
-			if(!cr->room_name)
-				cr->room_name = strdup(copy);
-			else
-				cr->members = y_list_append(cr->members,
-						strdup(copy));
-			copy = tmp+1;
-		}
-		cr->members = y_list_append(cr->members, strdup(copy));
-
-		if(!cr->room_name || !cr->members) {
-			FREE(cr);
-		} else {
-			cr->id = ylad->id;
-			cr->joined = 1;
-			conferences = y_list_append(conferences, cr);
-			yahoo_conference_invite(ylad->id, NULL, cr->members, cr->room_name, "Join my conference");
-			cr->members = y_list_append(cr->members,strdup(ylad->yahoo_id));
-		}
-	} else if(!strncasecmp(cmd, "CIN", strlen("CIN"))) {
-		conf_room * cr;
-		char * room=copy;
-		YList * l1, *l = NULL;
-
-		while((tmp = strchr(copy, ' ')) != NULL) {
-			*tmp = '\0';
-			copy = tmp+1;
-			l = y_list_append(l, copy);
-		}
-
-		cr = find_conf_room_by_name_and_id(ylad->id, NULL, room);
-		if(!cr) {
-			print_message(("no such room: %s", room));
-			y_list_free(l);
-			goto end_parse;
-		}
-
-		for(l1 = l; l1; l1=l1->next) {
-			char * w = l1->data;
-			yahoo_conference_addinvite(ylad->id, NULL, w, room, cr->members, "Join my conference");
-			cr->members = y_list_append(cr->members, strdup(w));
-		}
-		y_list_free(l);
-
-	} else if(!strncasecmp(cmd, "CLN", strlen("CLN"))) {
-		conf_room * cr = find_conf_room_by_name_and_id(ylad->id, NULL, copy);
-		YList * l;
-		if(!cr) {
-			print_message(("no such room: %s", copy));
-			goto end_parse;
-		}
-
-		cr->joined = 1;
-		for(l = cr->members; l; l=l->next) {
-			char * w = l->data;
-			if(!strcmp(w, ylad->yahoo_id))
-				break;
-		}
-		if(!l)
-			cr->members = y_list_append(cr->members, strdup(ylad->yahoo_id));
-		yahoo_conference_logon(ylad->id, NULL, cr->members, copy);
-
-	} else if(!strncasecmp(cmd, "CLF", strlen("CLF"))) {
-		conf_room * cr = find_conf_room_by_name_and_id(ylad->id, NULL, copy);
-		
-		if(!cr) {
-			print_message(("no such room: %s", copy));
-			goto end_parse;
-		}
-
-		yahoo_conference_logoff(ylad->id, NULL, cr->members, copy);
-
-		conferences = y_list_remove(conferences, cr);
-		FREE(cr->room_name);
-		FREE(cr->host);
-		while(cr->members) {
-			YList *n = cr->members->next;
-			FREE(cr->members->data);
-			FREE(cr->members);
-			cr->members=n;
-		}
-		FREE(cr);
-
-	} else if(!strncasecmp(cmd, "CDC", strlen("CDC"))) {
-		conf_room * cr;
-		char * room = copy;
-		tmp = strchr(copy, ' ');
-		if(tmp) {
-			*tmp = '\0';
-			copy = tmp+1;
-			msg = copy;
-		} else {
-			msg = "Thanks, but no thanks!";
-		}
-		
-		cr = find_conf_room_by_name_and_id(ylad->id, NULL, room);
-		if(!cr) {
-			print_message(("no such room: %s", room));
-			goto end_parse;
-		}
-
-		yahoo_conference_decline(ylad->id, NULL, cr->members, room,msg);
-
-		conferences = y_list_remove(conferences, cr);
-		FREE(cr->room_name);
-		FREE(cr->host);
-		while(cr->members) {
-			YList *n = cr->members->next;
-			FREE(cr->members->data);
-			FREE(cr->members);
-			cr->members=n;
-		}
-		FREE(cr);
-
-
-	} else if(!strncasecmp(cmd, "CHL", strlen("CHL"))) {
-		int roomid;
-		roomid = atoi(copy);
-		yahoo_get_chatrooms(ylad->id, roomid);
-	} else if(!strncasecmp(cmd, "CHJ", strlen("CHJ"))) {
-		char *roomid, *roomname;
-/* Linux, FreeBSD, Solaris:1 */
-/* 1600326591 */
-		roomid = copy;
-		tmp = strchr(copy, ' ');
-		if(tmp) {
-			*tmp = '\0';
-			copy = tmp+1;
-		}
-		roomname = copy;
-		if(roomid && roomname) {
-			yahoo_chat_logon(ylad->id, NULL, roomname, roomid);
-		}
-
-	} else if(!strncasecmp(cmd, "CHM", strlen("CHM"))) {
-		char *msg, *roomname;
-		roomname = copy;
-		tmp = strstr(copy, "  ");
-		if(tmp) {
-			*tmp = '\0';
-			copy = tmp+2;
-		}
-		msg = copy;
-		if(roomname && msg) {
-			yahoo_chat_message(ylad->id, NULL, roomname, msg, 1, 0);
-		}
-
-	} else if(!strncasecmp(cmd, "CHX", strlen("CHX"))) {
-		yahoo_chat_logoff(ylad->id, NULL);
-	} else if(!strncasecmp(cmd, "STA", strlen("STA"))) {
-		if(isdigit(copy[0])) {
-			state = (enum yahoo_status)atoi(copy);
-			copy = strchr(copy, ' ');
-			if(state == 99) {
-				if(copy)
-					msg = copy;
-				else
-					msg = "delta x * delta p too large";
-			} else
-				msg = NULL;
-		} else {
-			state = YAHOO_STATUS_CUSTOM;
-			msg = copy;
-		}
-
-		yahoo_set_away(ylad->id, state, msg, 1);
-
-	} else if(!strncasecmp(cmd, "OFF", strlen("OFF"))) {
-		/* go offline */
-		printf("Going offline\n");
+	if(!strncasecmp(cmd, "QUIT", strlen("QUIT"))) {
+		/* exit the program */
+		printf("Exiting autoreponder\n");
 		poll_loop=0;
-	} else if(!strncasecmp(cmd, "IDS", strlen("IDS"))) {
-		/* print identities */
-		const YList * ids = yahoo_get_identities(ylad->id);
-		printf("Identities: ");
-		for(; ids; ids = ids->next)
-			printf("%s, ", (char *)ids->data);
-		printf("\n");
-	} else if(!strncasecmp(cmd, "AID", strlen("AID"))) {
-		/* activate identity */
-		yahoo_set_identity_status(ylad->id, copy, 1);
-	} else if(!strncasecmp(cmd, "DID", strlen("DID"))) {
-		/* deactivate identity */
-		yahoo_set_identity_status(ylad->id, copy, 0);
-	} else if(!strncasecmp(cmd, "LST", strlen("LST"))) {
-		YList * b = buddies;
-		for(; b; b=b->next) {
-			yahoo_account * ya = b->data;
-			if(ya->status == YAHOO_STATUS_OFFLINE)
-				continue;
-			if(ya->msg)
-				print_message(("%s (%s) is now %s", ya->name, ya->yahoo_id, 
-							ya->msg))
-			else
-				print_message(("%s (%s) is now %s", ya->name, ya->yahoo_id, 
-						yahoo_status_code(ya->status)))
-		}
-	} else if(!strncasecmp(cmd, "NAM", strlen("NAM"))) {
-		struct yab * yab;
-		
-		to = copy;
-		tmp = strchr(copy, ' ');
-		if(tmp) {
-			*tmp = '\0';
-			copy = tmp+1;
-		}
-		msg = copy;
-
-		if(to && msg) {
-			yab = y_new0(struct yab, 1);
-			yab->id = to;
-			yab->fname = msg;
-			yahoo_set_yab(ylad->id, yab);
-			FREE(yab);
-		}
-	} else if(!strncasecmp(cmd, "WCAM", strlen("WCAM"))) {
-		if (copy)
-		{
-			printf("Viewing webcam (%s)\n", copy);
-			webcam_direction = YAHOO_WEBCAM_DOWNLOAD;
-			yahoo_webcam_get_feed(ylad->id, copy);
-		} else {
-			printf("Starting webcam\n");
-			webcam_direction = YAHOO_WEBCAM_UPLOAD;
-			yahoo_webcam_get_feed(ylad->id, NULL);
-		}
-	} else if(!strncasecmp(cmd, "WINV", strlen("WINV"))) {
-		printf("Inviting %s to view webcam\n", copy);
-		yahoo_webcam_invite(ylad->id, copy);
 	} else {
 		fprintf(stderr, "Unknown command: %s\n", cmd);
 	}
 
-end_parse:
 	FREE(start);
 }
 
@@ -1495,41 +1230,38 @@ int main(int argc, char * argv[])
 	int fd_stdin = fileno(stdin);
 	YList *l=connections;
 
+	if (argc != 5) {
+		fprintf(stderr, "Usage: autoresponder <yahoo_id> <password> \"staus message\" \"autoresponse message\"\n");
+		return 1;
+	}
+	yahoo_id = argv[1];
+	yahoo_passwd = argv[2];
+	status_msg = argv[3];
+	outgoing_msg = argv[4];
+
 	ylad = y_new0(yahoo_local_account, 1);
 
 	local_host = strdup(get_local_addresses());
 
-	printf("Yahoo Id: ");
-	scanf("%s", ylad->yahoo_id);
-	printf("Password: ");
-	{
-		tcflag_t oflags;
-		struct termios term;
-		tcgetattr(fd_stdin, &term);
-		oflags = term.c_lflag;
-		term.c_lflag = oflags & ~(ECHO | ECHOK | ICANON);
-		term.c_cc[VTIME] = 1;
-		tcsetattr(fd_stdin, TCSANOW, &term);
-		
-		scanf("%s", ylad->password);
+	printf("Yahoo Id: %s\n", yahoo_id);
+	strncpy_term(ylad->yahoo_id, yahoo_id, sizeof(ylad->yahoo_id));
+	printf("Password: %s\n", yahoo_passwd);
+	strncpy_term(ylad->password, yahoo_passwd, sizeof(ylad->password));
 
-		term.c_lflag = oflags;
-		term.c_cc[VTIME] = 0;
-		tcsetattr(fd_stdin, TCSANOW, &term);
-	}
-	printf("\n");
+	printf("Initial Status: \"%s\"\n", status_msg);
+	status = YAHOO_STATUS_CUSTOM;
+	FREE(ylad->msg);
+	ylad->msg = strdup(status_msg);
 
-	printf("Initial Status: ");
-	scanf("%d", &status);
-
-	printf("Log Level: ");
-	scanf("%d", &log_level);
+	printf("Log Level: NONE\n");
+	log_level = YAHOO_LOG_NONE;
 	do_yahoo_debug=log_level;
 
 	register_callbacks();
 	yahoo_set_log_level(log_level);
 
-	ext_yahoo_login(ylad, status);
+	ylad->status = YAHOO_STATUS_OFFLINE;
+	yahoo_connect();
 
 	while(poll_loop) {
 		FD_ZERO(&inp);
@@ -1574,6 +1306,8 @@ int main(int argc, char * argv[])
 				yahoo_callback(c, YAHOO_INPUT_WRITE);
 		}
 
+		if(expired(connectTimer))	yahoo_connect();
+		if(expired(statusTimer))	setStatus();
 		if(expired(pingTimer))		yahoo_ping_timeout_callback();
 		if(expired(webcamTimer))	yahoo_webcam_timeout_callback(webcam_id);
 	}
@@ -1601,6 +1335,16 @@ void ext_yahoo_got_file(int id, const char *me, const char *who, const char *url
 
 void ext_yahoo_got_identities(int id, YList * ids)
 {
+	if (ids)
+		ids=ids->next; /* skip the first one */
+
+	while(ids) {
+		YList *n = ids->next;
+
+		printf("\tgot identity: %s\n", (char*)ids->data);
+		yahoo_set_identity_status(id, (char*)ids->data, 1);
+		ids=n;
+	}
 }
 void ext_yahoo_chat_yahoologout(int id, const char *me)
 { 

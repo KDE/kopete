@@ -1,7 +1,7 @@
 /*
  * libyahoo2: yahoo_httplib.h
  *
- * Copyright (C) 2002, Philip S Tellis <philip . tellis AT gmx . net>
+ * Copyright (C) 2002-2004, Philip S Tellis <philip.tellis AT gmx.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

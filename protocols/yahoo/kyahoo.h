@@ -193,8 +193,8 @@ public:
 	void _systemMessageReceiver(char *msg);
 	void _errorReceiver(char *err, int fatal);
 	int _logReceiver(char *fmt, ...);
-	void _addHandlerReceiver(int fd, yahoo_input_condition cond, void *data);
-	void _removeHandlerReceiver(int fd);
+	int _addHandlerReceiver(int fd, yahoo_input_condition cond, void *data);
+	void _removeHandlerReceiver(int tag);
 	int _hostAsyncConnectReceiver(char *host, int port,  yahoo_connect_callback callback, void *callback_data);
 	
 	//webcam callback receivers
