@@ -432,9 +432,11 @@ QString SkypeAccount::getUserLabel(const QString &userId) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (userId.find(' ') != -1) {//there are more people than just one
-		QString all = userId;
-		all = all.replace(' ', '\n');//Each one on his line
-		return all;
+		QStringList users = QStringList::split(' ', userId);
+		for (QStringList::iterator it = users.begin(); it != users.end(); it++) {
+			(*it) = getUserLabel((*it).stripWhiteSpace());
+		}
+		return users.join("\n");
 	}
 
 	Kopete::Contact *cont = contact(userId);
