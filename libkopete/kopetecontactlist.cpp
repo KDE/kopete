@@ -501,11 +501,11 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 						QString data = oldContactElement.text();
 
 						QString app, key, val;
-						QString separator = QString::fromLatin1( "," );
+						QChar separator = QChar::fromLatin1( ',' );
 						if( id == QString::fromLatin1( "messaging/gadu" ) )
-							separator = QString::fromLatin1( "\n" );
+							separator = QChar::fromLatin1( '\n' );
 						else if( id == QString::fromLatin1( "messaging/icq" ) )
-							separator = QString::fromLatin1( ";" );
+							separator = QChar::fromLatin1( ';' );
 						else if( id == QString::fromLatin1( "messaging/jabber" ) )
 							id = QString::fromLatin1( "messaging/xmpp" );
 

@@ -345,19 +345,15 @@ int VideoDevicePool::scanDevices()
         videodevice_dir.setFilter( QDir::System | QDir::NoSymLinks | QDir::Readable | QDir::Writable );
         videodevice_dir.setSorting( QDir::Name );
 
-	const QFileInfoList *list = videodevice_dir.entryInfoList();
+	const QFileInfoList list = videodevice_dir.entryInfoList();
 
-	if (!list)
-		return EXIT_FAILURE;
-
-	QFileInfoListIterator fileiterator ( *list );
-	QFileInfo *fileinfo;
+	QFileInfoList::const_iterator fileinfoiterator = list.constBegin();
 
 	m_videodevice.clear();
 	kdDebug() << "libkopete (avdevice): scanDevices() called" << endl;
-	while ( (fileinfo = fileiterator.current()) != 0 )
+	while ( fileinfoiterator != list.constEnd() )
 	{
-		videodevice.setFileName(fileinfo->absFilePath());
+		videodevice.setFileName(fileinfoiterator->absFilePath());
 		kdDebug() << "libkopete (avdevice): Found device " << videodevice.full_filename << endl;
 		videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
 		if(videodevice.isOpen())
@@ -366,7 +362,7 @@ int VideoDevicePool::scanDevices()
 			videodevice.close();
 			m_videodevice.push_back(videodevice);
 		}
-		++fileiterator;
+		++fileinfoiterator;
 	}
 #endif
 	kdDebug() << "libkopete (avdevice): scanDevices() exited successfuly" << endl;

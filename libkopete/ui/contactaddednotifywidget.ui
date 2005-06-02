@@ -3,7 +3,7 @@
 <author>Olivier Goffart</author>
 <widget class="QWidget">
     <property name="name">
-        <cstring>Form2</cstring>
+        <cstring>ContactAddedNotifyWidget</cstring>
     </property>
     <property name="geometry">
         <rect>

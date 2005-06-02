@@ -24,9 +24,11 @@
 #include <q3sqlpropertymap.h>
 #include <qobject.h>
 //Added by qt3to4:
+#include <Q3AsciiDict>
 #include <Q3PtrList>
-#include <kconfig.h>
+
 #include <kapplication.h>
+#include <kconfig.h>
 #include <kdeversion.h>
 
 /**
@@ -355,14 +357,14 @@ void KAutoConfig::reloadSettings() const {
 bool KAutoConfig::parseChildren(const QWidget *widget,
     Q3PtrList<QWidget>& currentGroup, bool trackChanges){
   bool valueChanged = false;
-  const Q3PtrList<QObject> *listOfChildren = widget->children();
-  if(!listOfChildren)
-    return valueChanged;
+  const QObjectList listOfChildren = widget->children();
+//  if(!listOfChildren)
+//    return valueChanged;
 
   Q3SqlPropertyMap *propertyMap = Q3SqlPropertyMap::defaultMap();
-  Q3PtrListIterator<QObject> it( *listOfChildren );
+  QObjectList::const_iterator it = listOfChildren.constBegin();
   QObject *object;
-  while ( (object = it.current()) != 0 )
+  while ( (object = *it) != 0 )
   {
     ++it;
     if(!object->isWidgetType()){

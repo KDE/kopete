@@ -52,7 +52,7 @@
  * The thread class that actually performs the XSL processing.
  * Using a thread allows async operation.
  */
-class KopeteXSLThread : public QObject, public QThread
+class KopeteXSLThread : public QThread
 {
 public:
 	/**

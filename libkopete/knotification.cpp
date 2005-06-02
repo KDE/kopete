@@ -467,7 +467,8 @@ static KNotification *performCustomNotifications( QWidget *widget, Kopete::MetaC
 					evt->firePresentation( Kopete::EventPresentation::Chat );
 				}
 				// fire the event
-				n=KNotification::userEvent( text, mc->photo(), widget, QStringList() , present, 0, sound, QString::null, QString::null , KNotification::CloseOnTimeout);
+				#warning Disable the user event notification for now.
+//				n=KNotification::userEvent( text, mc->photo(), widget, QStringList() , present, 0, sound, QString::null, QString::null , KNotification::CloseOnTimeout);
 			}
 		}
 

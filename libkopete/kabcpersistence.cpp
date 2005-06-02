@@ -57,7 +57,7 @@ static QString unionContents( QString arg1, QString arg2 )
 	for ( QStringList::iterator it = arg2List.begin(); it != arg2List.end(); ++it )
 		if ( !outList.contains( *it ) )
 			outList.append( *it );
-	QString out = outList.join( separator );
+	QString out = outList.join( QString(separator) );
 	return out;
 }
 
@@ -132,7 +132,7 @@ void KABCPersistence::write( MetaContact * mc )
 			// read existing data for this key
 			QString currentCustomForProtocol = theAddressee.custom( it.key(), QString::fromLatin1( "All" ) );
 			// merge without duplicating
-			QString toWrite = unionContents( currentCustomForProtocol, it.data().join( QChar( 0xE000 ) ) );
+			QString toWrite = unionContents( currentCustomForProtocol, it.data().join( QString( QChar( 0xE000 ) ) ) );
 			// Note if nothing ends up in the KABC data, this is because insertCustom does nothing if any param is empty.
 			kdDebug( 14010 ) << k_funcinfo << "Writing: " << it.key() << ", " << "All" << ", " << toWrite << endl;
 			theAddressee.insertCustom( it.key(), QString::fromLatin1( "All" ), toWrite );

@@ -930,20 +930,25 @@ public:
 
 	int visibilityLevel;
 	bool visibilityTarget;
-	static const int visibilityFoldSteps = 7;
-#ifdef HAVE_XRENDER
-	static const int visibilityFadeSteps = 7;
-#else
-	static const int visibilityFadeSteps = 0;
-#endif
-	static const int visibilityStepsTotal = visibilityFoldSteps + visibilityFadeSteps;
-	
+	static const int visibilityFoldSteps;
+	static const int visibilityFadeSteps;
+	static const int visibilityStepsTotal;
+
 	bool searchMatch;
 		
 	static bool animateChanges;
 	static bool fadeVisibility;
 	static bool foldVisibility;
 };
+
+const int Item::Private::visibilityFoldSteps = 7;
+#ifdef HAVE_XRENDER
+	const int Item::Private::visibilityFadeSteps = 7;
+#else
+	const int Item::Private::visibilityFadeSteps = 0;
+#endif
+const int Item::Private::visibilityStepsTotal = visibilityFoldSteps + visibilityFadeSteps;
+
 
 bool Item::Private::animateChanges = true;
 bool Item::Private::fadeVisibility = true;

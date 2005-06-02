@@ -23,6 +23,8 @@
 #include <q3ptrlist.h>
 #include <q3dict.h>
 
+#include <QColor>
+
 #include <kopete_export.h>
 
 

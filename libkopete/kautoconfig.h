@@ -22,8 +22,9 @@
 
 #include <qobject.h>
 #include <q3ptrlist.h>
-//Added by qt3to4:
+
 #include <Q3CString>
+#include <QMap>
 
 #include <kopete_export.h>
 
@@ -197,7 +198,7 @@ public:
    * @param signal - The signal (with "SIGNAL()" wrapper) that should be called.
    */ 
   inline void addWidgetChangedSignal( const QString &widgetName,
-                                      const Q3CString &signal ){
+                                      const char *signal ){
     changedMap.insert( widgetName, signal );
   }
 

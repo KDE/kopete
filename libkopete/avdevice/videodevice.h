@@ -40,7 +40,7 @@
 #include <qstring.h>
 #include <qfile.h>
 #include <qimage.h>
-#include <qvaluevector.h>
+#include <q3valuevector.h>
 #include <kcombobox.h>
 
 #include "videoinput.h"
@@ -92,7 +92,7 @@ struct buffer2
 	int width;
 	pixel_format pixelformat;
 	size_t size;
-	QValueVector <uchar> data;
+	Q3ValueVector <uchar> data;
 };
 struct buffer
 {
@@ -156,12 +156,12 @@ public:
 	struct video_capability V4L_capabilities;
 	struct video_buffer V4L_videobuffer;
 #endif	
-	QValueVector<Kopete::AV::VideoInput> input;
+	Q3ValueVector<Kopete::AV::VideoInput> input;
 //	QFile file;
 protected:
 	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
 
-	QValueVector<buffer> buffers;
+	Q3ValueVector<buffer> buffers;
 	unsigned int     n_buffers;
 	buffer2 currentbuffer;
 	int m_buffer_size;

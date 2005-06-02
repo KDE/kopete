@@ -60,7 +60,8 @@ Protocol::Protocol( KInstance *instance, QObject *parent, const char *name )
 	d->mStickFullName = Global::Properties::self()->fullName();
 	d->unloading = false;
 	d->capabilities = 0;
-	d->accountNotConnectedStatus = Kopete::OnlineStatus( Kopete::OnlineStatus::Unknown, 0, this, Kopete::OnlineStatus::AccountOffline, QString::fromLatin1( "account_offline_overlay" ), i18n( "Account Offline" ) );
+	#warning QStringList(const QString&) is explicit :S
+	d->accountNotConnectedStatus = Kopete::OnlineStatus( Kopete::OnlineStatus::Unknown, 0, this, Kopete::OnlineStatus::AccountOffline, QStringList(QString::fromLatin1( "account_offline_overlay" )), i18n( "Account Offline" ) );
 }
 
 Protocol::~Protocol()

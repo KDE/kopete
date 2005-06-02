@@ -544,11 +544,11 @@ QImage MetaContact::photo() const
 				}
 			}
 		}
-		// no kabc association, return null image
-		return QImage();
 	}
 	else
 	{
+		#warning FIXME reenable the photo suport when Trolltech made is mind in QImage/QPixmap support in QVariant
+/*
 		QVariant photoProp=photoSource()->property( Kopete::Global::Properties::self()->photo().key() ).value();
 		QImage img;
 		if(photoProp.canCast( QVariant::Image ))
@@ -560,7 +560,11 @@ QImage MetaContact::photo() const
 			img=QPixmap( photoProp.toString() ).convertToImage();
 		}
 		return img;
+*/
 	}
+
+	// no kabc association, return null image
+	return QImage();
 }
 
 Contact *MetaContact::nameSource() const
@@ -1002,6 +1006,8 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 
 			if ( !theAddressee.isEmpty() )
 			{
+				#warning FIXME Photo support
+/*
 				QImage img;
 				if(newValue.canCast( QVariant::Image ))
 					img=newValue.toImage();
@@ -1015,6 +1021,7 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 
 				KABCPersistence::self()->addressBook()->insertAddressee(theAddressee);
 				KABCPersistence::self()->writeAddressBook( theAddressee.resource() );
+*/
 			}
 		}
 	}

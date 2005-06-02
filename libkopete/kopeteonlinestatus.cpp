@@ -125,7 +125,8 @@ OnlineStatus::OnlineStatus( StatusType status )
 	case Unknown:
 	default:
 		d->description = i18n( "Unknown" );
-		d->overlayIcons = QString::fromLatin1("status_unknown");
+		#warning QStringList(const QString&) is explicit :S
+		d->overlayIcons = QStringList(QString::fromLatin1("status_unknown"));
 		break;
 
 	}
@@ -138,7 +139,8 @@ OnlineStatus::OnlineStatus()
 	d->internalStatus = 0;
 	d->weight = 0;
 	d->protocol = 0L;
-	d->overlayIcons = QString::fromLatin1( "status_unknown" );
+	#warning QStringList(const QString&) is explicit :S
+	d->overlayIcons = QStringList(QString::fromLatin1( "status_unknown" ));
 }
 
 OnlineStatus::OnlineStatus( const OnlineStatus &other )

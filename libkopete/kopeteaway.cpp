@@ -102,18 +102,18 @@ Kopete::Away::Away() : QObject( kapp , "Kopete::Away")
 	// Empty the list
 	d->awayMessageList.clear();
 
-	// set the XAutoLock info
-#ifdef Q_WS_X11
-	Display *dsp = qt_xdisplay();
-#endif
-	d->mouse_x = d->mouse_y=0;
+	d->mouse_x = d->mouse_y = 0;
 	d->mouse_mask = 0;
-#ifdef Q_WS_X11
-	d->root = DefaultRootWindow (dsp);
-	d->screen = ScreenOfDisplay (dsp, DefaultScreen (dsp));
-#endif
 	d->useXidle = false;
 	d->useMit = false;
+
+	// set the XAutoLock info
+	#warning FIXME X11
+//#ifdef Q_WS_X11
+#if 0
+	Display *dsp = qt_xdisplay();
+	d->root = DefaultRootWindow (dsp);
+	d->screen = ScreenOfDisplay (dsp, DefaultScreen (dsp));
 #ifdef HasXidle
 	d->useXidle = XidleQueryExtension(qt_xdisplay(), &dummy, &dummy);
 #endif
@@ -121,9 +121,9 @@ Kopete::Away::Away() : QObject( kapp , "Kopete::Away")
 	if(!d->useXidle)
 		d->useMit = XScreenSaverQueryExtension(qt_xdisplay(), &dummy, &dummy);
 #endif
-#ifdef Q_WS_X11
 	d->xIdleTime = 0;
-#endif
+#endif // Q_WS_X11
+
 	if (d->useXidle)
 		kdDebug(14010) << "using X11 Xidle extension" << endl;
 	if(d->useMit)
@@ -234,12 +234,10 @@ QStringList Kopete::Away::getMessages()
 
 QString Kopete::Away::getMessage( uint messageNumber )
 {
-	QStringList::iterator it = d->awayMessageList.at( messageNumber );
-	if( it != d->awayMessageList.end() )
+	if (messageNumber < d->awayMessageList.size())
 	{
-		QString str = *it;
+		QString str = d->awayMessageList.takeAt( messageNumber );
 		d->awayMessageList.prepend( str );
-		d->awayMessageList.remove( it );
 		save();
 		return str;
 	}
@@ -273,7 +271,9 @@ void Kopete::Away::slotTimerTimeout()
 	// This module is a heavily modified xautolock.
 	// In fact as of KDE 2.0 this code is practically unrecognisable as xautolock.
 
-#ifdef Q_WS_X11
+	#warning FIXME X11
+//#ifdef Q_WS_X11
+#if 0
 	Display *dsp = qt_xdisplay();
 	Window           dummy_w;
 	int              dummy_c;
@@ -307,9 +307,9 @@ void Kopete::Away::slotTimerTimeout()
 			}
 		}
 	}
-#endif
+
 	// =================================================================================
-#ifdef Q_WS_X11
+
 	Time xIdleTime = 0; // millisecs since last input event
 
 	#ifdef HasXidle

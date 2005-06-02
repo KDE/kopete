@@ -60,8 +60,9 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 	: KDialogBase( Global::mainWidget(), "ContactAddedNotify", /*modal=*/false,
 				   i18n("Somone has added you - Kopete"), Ok|Cancel    )
 {
-
-	setWFlags(Qt::WDestructiveClose |  getWFlags() );
+	#warning What is the use of the call to getWFlags here ?
+//	setWFlags(Qt::WDestructiveClose |  getWFlags() );
+	setAttribute(Qt::WA_DeleteOnClose);
 	
 	d=new Private;
 	d->widget=new ContactAddedNotifyWidget(this);

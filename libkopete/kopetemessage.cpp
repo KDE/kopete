@@ -74,13 +74,13 @@ public:
 };
 
 Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
-             const ContactPtrList &to, const QString &body, const QString &subject,
-				 MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
+		const ContactPtrList &to, const QString &body, const QString &subject,
+		MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
 	: from(from), to(to), manager(0), direction(direction), format(f), type(type)
 	, requestedPlugin(requestedPlugin), importance( (to.count() <= 1) ? Normal : Low ), bgOverride(false), fgOverride(false)
 	, rtfOverride(false), timeStamp(timeStamp), body(body), subject(subject)
 {
-	if( format == Qt::RichText )
+	if( format == RichText )
 	{
 		//This is coming from the RichTextEditor component.
 		//Strip off the containing HTML document
@@ -101,8 +101,8 @@ Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
 
 
 Message::Message()
-    : d( new Private( QDateTime::currentDateTime(), 0L, Q3PtrList<Contact>(), QString::null, QString::null, Internal,
-	Qt::PlainText, QString::null, TypeNormal ) )
+    : d( new Private( QDateTime::currentDateTime(), 0L, ContactPtrList(), QString::null, QString::null, Internal,
+	PlainText, QString::null, TypeNormal ) )
 {
 }
 
@@ -208,7 +208,7 @@ void Message::setBody( const QString &body, MessageFormat f )
 	detach();
 
 	QString theBody = body;
-	if( f == Qt::RichText )
+	if( f == RichText )
 	{
 		//This is coming from the RichTextEditor component.
 		//Strip off the containing HTML document
@@ -279,7 +279,7 @@ QString Message::escape( const QString &text )
 QString Message::plainBody() const
 {
 	QString body=d->body;
-	if( d->format & Qt::RichText )
+	if( d->format & RichText )
 	{
 		body = unescape( body );
 	}
@@ -290,7 +290,7 @@ QString Message::escapedBody() const
 {
 	QString escapedBody=d->body;
 
-	if( d->format & Qt::PlainText )
+	if( d->format & PlainText )
 	{
 		escapedBody=escape( escapedBody );
 	}
@@ -326,7 +326,7 @@ QString Message::parseLinks( const QString &message, MessageFormat format )
 	if ( format == ParsedHTML )
 		return message;
 
-	if ( format & Qt::RichText )
+	if ( format & RichText )
 	{
 		// < in HTML *always* means start-of-tag
 		QStringList entries = QStringList::split( QChar('<'), message, true );
@@ -336,7 +336,7 @@ QString Message::parseLinks( const QString &message, MessageFormat format )
 		// first one is different: it doesn't start with an HTML tag.
 		if ( it != entries.end() )
 		{
-			*it = parseLinks( *it, Qt::PlainText );
+			*it = parseLinks( *it, PlainText );
 			++it;
 		}
 
@@ -350,7 +350,7 @@ QString Message::parseLinks( const QString &message, MessageFormat format )
 				continue;
 			QString tag = curr.left( tagclose + 1 );
 			QString body = curr.mid( tagclose + 1 );
-			*it = tag + parseLinks( body, Qt::PlainText );
+			*it = tag + parseLinks( body, PlainText );
 		}
 		return entries.join(QString::fromLatin1("<"));
 	}
@@ -510,6 +510,8 @@ QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
 
 	if( contact->metaContact() )
 	{
+		#warning FIXME reenable photo support
+/*
 		QImage photo = contact->metaContact()->photo();
 		if( !photo.isNull() )
 		{
@@ -519,6 +521,7 @@ QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
 			photo.save ( &buffer, "PNG" );
 			contactNode.setAttribute( QString::fromLatin1("userPhoto"), KCodecs::base64Encode(ba) );
 		}
+*/
 	}
 
 	contactNode.appendChild( metacontactNameNode );
@@ -698,8 +701,9 @@ QString Message::decodeString( const Q3CString &message, const QTextCodec *provi
 	int charsToCheck = message.length();
 	charsToCheck = 128 > charsToCheck ? charsToCheck : 128;
 
+	#warning Rewrite the following code: heuristicContentMatch() do not existe anymore.
 	//They are providing a possible codec. Check if it is valid
-	if( providedCodec && providedCodec->heuristicContentMatch( message, charsToCheck ) >= charsToCheck )
+//	if( providedCodec && providedCodec->heuristicContentMatch( message, charsToCheck ) >= charsToCheck )
 	{
 		//All chars decodable.
 		return providedCodec->toUnicode( message );
@@ -711,7 +715,7 @@ QString Message::decodeString( const Q3CString &message, const QTextCodec *provi
 		//We have a UTF string almost for sure. At least we know it will be decoded.
 		return QString::fromUtf8( message );
 	}
-
+/*
 	//Try codecForContent - exact match
 	QTextCodec *testCodec = QTextCodec::codecForContent(message, charsToCheck);
 	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) >= charsToCheck )
@@ -755,5 +759,7 @@ QString Message::decodeString( const Q3CString &message, const QTextCodec *provi
 	}
 
 	return result;
+*/
+	return QString::null;
 }
 

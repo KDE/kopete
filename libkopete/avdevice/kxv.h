@@ -26,7 +26,7 @@
 #include <X11/Xlib.h>
 #include <qstring.h>
 #include <qstringlist.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 class QWidget;
 class QImage;
@@ -35,7 +35,7 @@ class KXvPrivate;
 class KXvDevice;
 class KXvDevicePrivate;
 
-typedef QPtrList<KXvDevice> KXvDeviceList;
+typedef Q3PtrList<KXvDevice> KXvDeviceList;
 
 
 class KXv
@@ -89,7 +89,7 @@ public:
     Atom atom();
 };
 
-typedef QPtrList<KXvDeviceAttribute> KXvDeviceAttributes;
+typedef Q3PtrList<KXvDeviceAttribute> KXvDeviceAttributes;
 
 
 class KXvDevice

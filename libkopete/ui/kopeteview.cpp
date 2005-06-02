@@ -16,8 +16,6 @@
 */
 
 #include "kopeteview.h"
-//Added by qt3to4:
-#include <Q3ValueList>
 
 KopeteView::KopeteView( Kopete::ChatSession *manager, Kopete::ViewPlugin *plugin )
     : m_manager(manager), m_plugin(plugin)
@@ -36,7 +34,7 @@ void KopeteView::clear()
 
 void KopeteView::appendMessages(Kopete::MessageList msgs)
 {
-	Q3ValueList<Kopete::Message>::iterator it;
+	Kopete::MessageList::iterator it;
 	for ( it = msgs.begin(); it != msgs.end(); ++it )
 	{
 		appendMessage(*it);
