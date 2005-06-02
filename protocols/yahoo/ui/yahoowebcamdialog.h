@@ -35,6 +35,9 @@ public:
 public slots:
 	void newImage( const QPixmap& image );
 	void webcamClosed( int );
+
+signals:
+	void closingWebcamDialog();
 	
 private:
 	QLabel m_imageContainer;

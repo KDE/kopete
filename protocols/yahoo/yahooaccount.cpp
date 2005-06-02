@@ -253,6 +253,12 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::connect(m_session, SIGNAL(gotIdentities(const QStringList &)), this,
 		                 SLOT(slotGotIdentities( const QStringList&)));
+		
+		QObject::connect(m_session, SIGNAL(gotWebcamInvite(const QString&)), this, SLOT(slotGotWebcamInvite(const QString&)));
+				
+		QObject::connect(m_session, SIGNAL(webcamImageReceived(const QString&, const QPixmap& )), this, SLOT(slotGotWebcamImage(const QString&, const QPixmap& )));
+		
+		QObject::connect(m_session, SIGNAL(remoteWebcamClosed(const QString&, int )), this, SLOT(slotWebcamClosed(const QString&, int )));
 	}
 
 	if ( sct == DeleteConnections )
@@ -326,6 +332,12 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::disconnect(m_session, SIGNAL(gotIdentities(const QStringList &)), this,
 		                    SLOT(slotGotIdentities( const QStringList&)));
+		
+		QObject::disconnect(m_session, SIGNAL(gotWebcamInvite(const QString&)), this, SLOT(slotGotWebcamInvite(const QString&)));
+		
+		QObject::disconnect(m_session, SIGNAL(webcamImageReceived(const QString&, const QPixmap& )), this, SLOT(slotGotWebcamImage(const QString&, const QPixmap& )));
+		
+		QObject::disconnect(m_session, SIGNAL(slotWebcamClosed(const QString&, int )), this, SLOT(slotWebcamClosed(const QString&, int )));	
 	}
 }
 
@@ -819,6 +831,36 @@ void YahooAccount::slotError( const QString & err, int fatal )
 void YahooAccount::slotRemoveHandler( int /* fd */ )
 {
 //	kdDebug(14180) << k_funcinfo << endl;
+}
+
+void YahooAccount::slotGotWebcamInvite( const QString& who )
+{
+	YahooContact* kc = contact( who );
+	if ( kc == NULL ) {
+		kdDebug(14180) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		return;
+	}
+	kc->gotWebcamInvite();
+}
+
+void YahooAccount::slotGotWebcamImage( const QString& who, const QPixmap& image )
+{
+	YahooContact* kc = contact( who );
+	if ( kc == NULL ) {
+		kdDebug(14180) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		return;
+	}
+	kc->receivedWebcamImage( image );
+}
+
+void YahooAccount::slotWebcamClosed( const QString& who, int reason )
+{
+	YahooContact* kc = contact( who );
+	if ( kc == NULL ) {
+		kdDebug(14180) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		return;
+	}
+	kc->webcamClosed( reason );
 }
 
 void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason)

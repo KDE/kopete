@@ -39,7 +39,9 @@
 #include <kio/global.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>
-#include <kimageio.h>
+//#include <kimageio.h>
+#include <kprocess.h>
+#include <ktempfile.h>
 
 // System Includes
 #include <cstdlib>
@@ -216,6 +218,7 @@ YahooSession::YahooSession(int id, const QString username, const QString passwor
 	m_Username = username;
 	m_Password = password;
 	m_lastWebcamTimestamp = 0;
+	currentImage = 0;
 }
 
 int YahooSession::sessionId() const
@@ -870,9 +873,10 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_got_webcam_image )( int id, const char* who,
 	return session->_gotWebcamImage( who, image, image_size, real_size, timestamp );
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_invite )( int /*id*/, char* /*from*/ )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_invite )( int id, char* from )
 {
-	/* Not implemented , No receiver yet */
+	YahooSession *session = YahooSessionManager::manager()->session( id );
+	session->_gotWebcamInvite( from );
 }
 
 void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_invite_reply )( int /*id*/, char* /*from*/, int /*accept*/ )
@@ -1285,29 +1289,71 @@ int YahooSession::_hostAsyncConnectReceiver( char *host, int port,
 	}
 }
 
+void YahooSession::_gotWebcamInvite( const char* who )
+{
+	emit gotWebcamInvite( QString::fromLocal8Bit( who ) );
+}
+
 void YahooSession::_gotWebcamImage( const char* who, const unsigned char* image,
                                     unsigned int image_size, unsigned int real_size,
                                     unsigned int timestamp )
 {
-	if ( real_size != image_size )
-		return; //not enough to make a full image
-	
-	if ( timestamp > m_lastWebcamTimestamp )
+	m_lastWebcamTimestamp = timestamp;
+	if ( image_size == 0 || real_size == 0)
 	{
-		kdDebug(14181) << k_funcinfo << "Processing webcam image from " << who << endl;
-		//this is the next image in the sequence. If we get images out of
-		//sequence, they're just dropped.
-		m_lastWebcamTimestamp = timestamp;
+		// use timestamp to handle syncronization here???
+		return;
+	}
+	
+	if ( currentImage == NULL )
+	{
+		currentImage = new QBuffer();
+		currentImage->open(IO_ReadWrite);
+	}
+	currentImage->writeBlock( (char *) image, real_size );
+	//kdDebug(14181) << " real_size " << real_size << " image_size " << image_size << " timestamp " << timestamp << " " << who << endl;
+		
+	if ( currentImage->size() == image_size ) {
 		QPixmap webcamImage;
-		webcamImage.loadFromData( image, real_size );
-		emit webcamImageReceived( webcamImage, QString::fromLatin1( who ) );
+		currentImage->close();
+		// uncomment the following line when jpc is supported by kdelibs
+		//webcamImage.loadFromData( currentImage->buffer() );
+		
+		/****** DELETE below once kdelibs has jpc support ******/
+		KTempFile jpcTmpImageFile;
+		KTempFile bmpTmpImageFile;
+		QFile *file = jpcTmpImageFile.file();;
+		file->writeBlock((currentImage->buffer()).data(), currentImage->size());
+		file->close();
+		
+		KProcess p;
+		p << "jasper";
+		p << "--input" << jpcTmpImageFile.name() << "--output" << bmpTmpImageFile.name() << "--output-format" << "bmp";
+		
+		p.start( KProcess::Block );
+		if( p.exitStatus() != 0 )
+		{
+			kdDebug(14181) << " jasper exited with status " << p.exitStatus() << " " << who << endl;
+		}
+		else
+		{
+			webcamImage.load( bmpTmpImageFile.name() );
+			/******* UPTO THIS POINT ******/
+			kdDebug(14181) << " emitting image " << currentImage->size() << endl;
+			emit webcamImageReceived( QString::fromLatin1( who ), webcamImage );
+		}
+		QFile::remove(jpcTmpImageFile.name());
+		QFile::remove(bmpTmpImageFile.name());
+		
+		delete currentImage;
+		currentImage = NULL;
 	}
 }
 
 void YahooSession::_webcamDisconnected( const char* who, int reason )
 {
 	kdDebug(14181) << k_funcinfo << "Webcam closed remotely, reason: " << reason << endl;
-	emit webcamClosed( QString::fromLocal8Bit( who ), reason );
+	emit remoteWebcamClosed( QString::fromLocal8Bit( who ), reason );
 }
 
 

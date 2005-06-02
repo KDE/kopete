@@ -30,35 +30,49 @@ YahooWebcamDialog::YahooWebcamDialog( YahooContact* contact, QWidget * parent, c
                    KDialogBase::Close, KDialogBase::Close, parent, name, false, true /*seperator*/ ),
 	m_imageContainer( this )
 {
-	setEscapeButton( KDialogBase::Close );
-
-	QObject::connect( contact, SIGNAL( receivedWebcamImage( const QPixmap&  ) ),
-	                  this, SLOT( newImage( const QPixmap& ) ) );
-	QObject::connect( contact, SIGNAL( webcamClosed( int ) ), this, SLOT( webcamClosed( int ) ) );
+	setInitialSize( QSize(320,290), true );
 	
+	setEscapeButton( KDialogBase::Close );
+	/*
+	QObject::connect( contact, SIGNAL( signalReceivedWebcamImage( const QPixmap&  ) ),
+	                  this, SLOT( newImage( const QPixmap& ) ) );
+	*/
+	QObject::connect( this, SIGNAL( closeClicked() ), this, SIGNAL( closingWebcamDialog() ) );
+	/*
+	QObject::connect( contact, SIGNAL( webcamClosed( int ) ), this, SLOT( webcamClosed( int ) ) );
+	*/
 	QFrame* page = plainPage();
 	if ( page )
 	{
 		kdDebug(14180) << k_funcinfo << "Adding webcam image container" << endl;
 		m_imageContainer.setText( i18n( "No webcam image received" ) );
 		m_imageContainer.setAlignment( Qt::AlignCenter );
+		m_imageContainer.setMinimumSize(320,240);
 	}
+	show();
 }
 
 YahooWebcamDialog::~ YahooWebcamDialog( )
 {
+
 }
 
 void YahooWebcamDialog::newImage( const QPixmap & image )
 {
+	kdDebug(14180) << k_funcinfo << "New image received" << endl;
+	kdDebug(14180) << image << endl;
+	m_imageContainer.clear();
 	m_imageContainer.setPixmap( image );
+	show();
 }
 
 void YahooWebcamDialog::webcamClosed( int reason  )
 {
-	kdDebug(14180) << k_funcinfo << "webcam closed with reason " <<  reason <<endl;
+	kdDebug(14180) << k_funcinfo << "webcam closed with reason?? " <<  reason <<endl;
+	m_imageContainer.clear();
 	m_imageContainer.setText( i18n( "Webcam closed with reason %1" ).arg( QString::number( reason ) ) );
 	m_imageContainer.setAlignment( Qt::AlignCenter );
+	show();
 }
 
 // kate: indent-mode csands; tab-width 4;

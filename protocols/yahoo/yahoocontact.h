@@ -55,15 +55,15 @@ public:
 	QString group() const;
 	void setGroup( const QString& );
 
+	void gotWebcamInvite();
+	void receivedWebcamImage( const QPixmap& );
+	void webcamClosed( int );
 
 public slots:
 	virtual void slotUserInfo();
 	virtual void slotSendFile();
 	virtual void deleteContact();
-	void requestWebcam();
-	void closeWebcamDialog();
-	void webcamClosed( const QString& contact, int reason );
-	void buzzContact();
+	
 
 	/**
 	 * Must be called after the contact list has been received
@@ -74,13 +74,20 @@ public slots:
 	void sync(unsigned int flags);
 
 signals:
-	void receivedWebcamImage( const QPixmap& );
-	void webcamClosed( int );
-	
+	void signalReceivedWebcamInvite();
+	void signalReceivedWebcamImage( const QPixmap &pic );
+	void signalWebcamClosed( int reason );
+	void signalWebcamInviteAccepted();	
+
 private slots:
 	void slotChatSessionDestroyed();
 	void slotSendMessage( Kopete::Message& );
 	void slotTyping( bool );
+
+	void requestWebcam();
+	void closeWebcamDialog();
+	//void webcamClosed( const QString& contact, int reason );
+	void buzzContact();
 
 private:
 	QString m_userId; 

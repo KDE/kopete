@@ -165,6 +165,9 @@ protected slots:
 	void slotError(const QString &, int);
 	void slotRemoveHandler(int fd);
 	//void slotHostConnect(const QString &host, int port);
+	void slotGotWebcamInvite(const QString &);
+	void slotGotWebcamImage(const QString&, const QPixmap&);
+	void slotWebcamClosed(const QString&, int);
 
 	void slotBuddyListFetched( int numBuddies );
 

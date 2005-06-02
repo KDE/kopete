@@ -25,6 +25,7 @@
 #include <qfile.h>
 #include <qmap.h>
 #include <qpixmap.h>
+#include <qbuffer.h>
 
 #include "libyahoo2/yahoo2.h"
 #include "libyahoo2/yahoo2_callbacks.h"
@@ -196,7 +197,8 @@ public:
 	void _removeHandlerReceiver(int fd);
 	int _hostAsyncConnectReceiver(char *host, int port,  yahoo_connect_callback callback, void *callback_data);
 	
-	//webcam callbacks
+	//webcam callback receivers
+	void _gotWebcamInvite( const char* who );
 	void _gotWebcamImage( const char* who, const unsigned char* image, unsigned int image_size,
 	                      unsigned int real_size, unsigned int timestamp );
 	void _webcamDisconnected( const char* who, int reason );
@@ -266,11 +268,14 @@ signals:
 	void error( const QString &err, int fatal);
 	//void hostConnect(char *host, int port);
 	
+	/** emitted when a webcam invite is received */
+	void gotWebcamInvite( const QString& from );
+	
 	/** emitted when we have a webcam image available */
-	void webcamImageReceived( const QPixmap&, const QString& from );
+	void webcamImageReceived( const QString& from, const QPixmap& pic );
 	
 	/** emitted when the webcam has been closed from the other side */
-	void webcamClosed( const QString& from, int reason );
+	void remoteWebcamClosed( const QString& from, int reason );
 
 private slots:
 
@@ -309,6 +314,7 @@ private:
 	int m_BuddyListPort;
 	
 	unsigned int m_lastWebcamTimestamp;
+	QBuffer* currentImage;
 };
 
 #endif
