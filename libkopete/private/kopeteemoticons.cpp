@@ -21,14 +21,12 @@
 
 #include "kopeteprefs.h"
 
-#include <qdom.h>
-#include <qfile.h>
 #include <q3stylesheet.h>
-#include <qimage.h>
-#include <qdatetime.h>
-#include <qfileinfo.h>
-//Added by qt3to4:
-#include <Q3ValueList>
+
+#include <qdom.h> // Not ported in QT-4.0 b2
+//#include <QDom>
+//#include <QDomDocument>
+#include <QFile>
 #include <QTextStream>
 
 #include <kapplication.h>
@@ -36,11 +34,6 @@
 #include <kio/netaccess.h>
 #include <kstandarddirs.h>
 #include <kdeversion.h>
-
-#include <set>
-#include <algorithm>
-#include <iterator>
-
 
 /*
  * Testcases can be found in the kopeteemoticontest app in the tests/ directory.
@@ -69,9 +62,9 @@ struct Emoticons::EmoticonNode {
 class Emoticons::Private
 {
 public:
-	QMap<QChar, Q3ValueList<Emoticon> > emoticonMap;
+	QMap<QChar, QLinkedList<Emoticon> > emoticonMap;
 	QMap<QString, QString> emoticonAndPicList;
-    QMap<QString, QString> customEmoticonAndPicList;
+	QMap<QString, QString> customEmoticonAndPicList;
 		
 	/**
 	 * The current icon theme from KopetePrefs
@@ -95,15 +88,15 @@ QString Emoticons::parseEmoticons(const QString& message, ParseMode mode )  //st
 	 return self()->parse( message, mode );
 }
 
-Q3ValueList<Emoticons::Token> Emoticons::tokenizeEmoticons( const QString& message, ParseMode mode ) // static
+QLinkedList<Emoticons::Token> Emoticons::tokenizeEmoticons( const QString& message, ParseMode mode ) // static
 {
 	return self()->tokenize( message, mode );
 }
 
-Q3ValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode mode )
+QLinkedList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode mode )
 {
 	
-	Q3ValueList<Token> result;
+	QLinkedList<Token> result;
 	if ( !KopetePrefs::prefs()->useEmoticons() )
 	{
 		result.append( Token( Text, message ) );
@@ -116,11 +109,11 @@ Q3ValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, Parse
 	QChar n; /* next character after a match candidate, if strict this should be QChar::null or space */
 
 	/* This is the EmoticonNode container, it will represent each matched emoticon */
-	Q3ValueList<EmoticonNode> foundEmoticons;
-	Q3ValueList<EmoticonNode>::const_iterator found;
+	QLinkedList<EmoticonNode> foundEmoticons;
+	QLinkedList<EmoticonNode>::const_iterator found;
 	/* First-pass, store the matched emoticon locations in foundEmoticons */
-	Q3ValueList<Emoticon> emoticonList;
-	Q3ValueList<Emoticon>::const_iterator it;
+	QLinkedList<Emoticon> emoticonList;
+	QLinkedList<Emoticon>::const_iterator it;
 	size_t pos;
 
 	bool inHTMLTag = false;
@@ -466,8 +459,8 @@ QString Emoticons::parse( const QString &message, ParseMode mode )
 	if ( !KopetePrefs::prefs()->useEmoticons() )
                 return message;
 	
-	Q3ValueList<Token> tokens = tokenize( message, mode );
-	Q3ValueList<Token>::const_iterator token;
+	QLinkedList<Token> tokens = tokenize( message, mode );
+	QLinkedList<Token>::const_iterator token;
 	QString result;
 
 	for ( token = tokens.begin(); token != tokens.end(); ++token )

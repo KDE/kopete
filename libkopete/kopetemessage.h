@@ -40,10 +40,8 @@ class QDateTime;
 
 namespace Kopete {
 
-
-  class ChatSession;
+class ChatSession;
 class Contact;
-
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -424,6 +422,8 @@ private:
 
 	QDomElement contactNode( QDomDocument doc, const Contact *contact );
 };
+
+typedef QLinkedList<Kopete::Message> MessageList;
 
 }
 

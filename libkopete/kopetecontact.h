@@ -546,10 +546,9 @@ protected:
 private:
 	class Private;
 	Private *d;
-
-
 };
 
+typedef Q3PtrList<Kopete::Contact> ContactPtrList;
 
 } //END namespace Kopete
 

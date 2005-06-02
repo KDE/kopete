@@ -34,7 +34,7 @@ void KopeteView::clear()
 	//Do nothing
 }
 
-void KopeteView::appendMessages(Q3ValueList<Kopete::Message> msgs)
+void KopeteView::appendMessages(Kopete::MessageList msgs)
 {
 	Q3ValueList<Kopete::Message>::iterator it;
 	for ( it = msgs.begin(); it != msgs.end(); ++it )

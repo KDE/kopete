@@ -24,15 +24,14 @@
 
 #include <qobject.h>
 #include <q3ptrlist.h>
-#include <q3valuelist.h>
+
+#include <QLinkedList>
 
 #include <kxmlguiclient.h>
 
+#include <kopetemessage.h> // for MessageFormat
+#include <kopetemessagehandlerchain.h> // for MessageHandlerChain::Ptr 
 #include <kopete_export.h>
-
-// FIXME: get rid of these includes
-#include "kopetemessage.h"
-#include "kopetemessagehandlerchain.h"
 
 class KMMPrivate;
 
@@ -51,7 +50,6 @@ class MessageHandlerChain;
 class TemporaryKMMCallbackAppendMessageHandler;
 
 typedef Q3PtrList<Contact>   ContactPtrList;
-typedef Q3ValueList<Message> MessageList;
 
 
 /**

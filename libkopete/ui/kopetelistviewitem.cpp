@@ -38,8 +38,8 @@
 #include <q3header.h>
 #include <qstyle.h>
 #include <qstyleoption.h>
-//Added by qt3to4:
-#include <Q3ValueList>
+
+#include <QLinkedList>
 
 #ifdef HAVE_XRENDER
 #  include <X11/Xlib.h>
@@ -704,13 +704,12 @@ void DisplayNameComponent::setText( const QString& text )
 	if ( d->text == text ) 
 		return;
 	d->text = text;
-	Q3ValueList<Kopete::Emoticons::Token> tokens;
-	Q3ValueList<Kopete::Emoticons::Token>::const_iterator token;
+	QLinkedList<Kopete::Emoticons::Token> tokens;
+	QLinkedList<Kopete::Emoticons::Token>::const_iterator token;
 	
 	clear(); // clear childs
 
 	tokens = Kopete::Emoticons::tokenizeEmoticons( text );
-	ImageComponent *ic;
 
 	QFontMetrics fontMetrics( d->font );
 	int fontHeight = fontMetrics.height();
@@ -719,14 +718,18 @@ void DisplayNameComponent::setText( const QString& text )
 		switch ( (*token).type )
 		{
 		case Kopete::Emoticons::Text:
-			TextComponent *t = new TextComponent( this,  d->font, (*token).text );
-			t->setColor( d->color );
-		break;
+			{
+				TextComponent *t = new TextComponent( this,  d->font, (*token).text );
+				t->setColor( d->color );
+			}
+			break;
 		case Kopete::Emoticons::Image:
-			ic = new ImageComponent( this );
-			ic->setPixmap( QPixmap( (*token).picPath ) );
-			ic->scale( std::numeric_limits<int>::max(), fontHeight, Qt::KeepAspectRatio );
-		break;
+			{
+				ImageComponent *ic = new ImageComponent( this );
+				ic->setPixmap( QPixmap( (*token).picPath ) );
+				ic->scale( std::numeric_limits<int>::max(), fontHeight, Qt::KeepAspectRatio );
+			}
+			break;
 		default:
 			kdDebug( 14010 ) << k_funcinfo << "This should have not happened!" << endl;
 		}
@@ -1192,6 +1195,8 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 		int r = marg;
 	//	const QPixmap * icon = pixmap( column );
 
+		#warning Someone with knowledge about ColorRole & Friends FIX this 
+/*
 		const Qt::BackgroundMode bgmode = lv->viewport()->backgroundMode();
 		const QColorGroup::ColorRole crole = QPalette::backgroundRoleFromMode( bgmode );
 
@@ -1239,6 +1244,7 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 								(uint)QStyle::SC_All, QStyleOption( this ) );
 			}
 		}
+		*/
 	}
 	// END OF PASTE
 	
@@ -1264,8 +1270,11 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 	if ( alpha != 0 )
 	{
 		XRenderColor clr = { alpha * rgb.red(), alpha * rgb.green(), alpha * rgb.blue(), alpha * 0xff };
+		#warning Need to port this X11 Specific code ?
+/*
 		XRenderFillRectangle( back.x11Display(), PictOpOver, back.x11RenderHandle(),
 		                      &clr, 0, 0, width, height() );
+*/
 	}
 #endif
 

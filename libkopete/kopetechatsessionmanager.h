@@ -37,9 +37,6 @@ class Contact;
 class Protocol;
 class MessageEvent;
 
-typedef Q3PtrList<Contact>        ContactPtrList;
-typedef Q3ValueList<Message>      MessageList;
-
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  *

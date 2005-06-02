@@ -17,15 +17,17 @@
 #ifndef kopeteemoticons_h__
 #define kopeteemoticons_h__
 
-#include <qobject.h>
-#include <q3valuelist.h>
-#include <qregexp.h>
+#include <QObject>
+#include <QMap>
+#include <QRegExp>
+#include <QLinkedList>
 
 #include <kopete_export.h>
 
 namespace Kopete {
 
-class KOPETE_EXPORT Emoticons : public QObject
+class KOPETE_EXPORT Emoticons
+	: public QObject
 {
 	Q_OBJECT
 public:
@@ -47,10 +49,13 @@ public:
 	/**
 	 * The possible parse modes
 	 */
-	enum ParseMode { RelaxedParse = 0x0, /** Default parse mode where all possible emoticon matches are allowed */
-			StrictParse = 0x1,			/** Strict parsing requires a space between each emoticon */
-			SkipHTML = 0x2,				/** Skip emoticons within HTML */
-			StrictAndSkipHTML = StrictParse | SkipHTML /** Shortcut combining the above */ };
+	enum ParseMode
+	{
+		RelaxedParse		= 0x0, /** Default parse mode where all possible emoticon matches are allowed */
+		StrictParse		= 0x1, /** Strict parsing requires a space between each emoticon */
+		SkipHTML		= 0x2, /** Skip emoticons within HTML */
+		StrictAndSkipHTML	= StrictParse | SkipHTML /** Shortcut combining the above */
+	};
 
 	/**
 	 * Use it to parse emoticons in a text.
@@ -69,10 +74,12 @@ public:
 	/**
 	 * TokenType, a token might be an image ( emoticon ) or text.
 	 */
-	enum TokenType { Undefined, /** Undefined, for completeness only */
-					 Image, 	/** Token contains a path to an image */
-					 Text 		/** Token contains test */
-				   };
+	enum TokenType
+	{
+		Undefined,	/** Undefined, for completeness only */
+		Image,		/** Token contains a path to an image */
+		Text		/** Token contains test */
+	};
 	
 	/**
 	 * A token consists of a QString text which is either a regular text
@@ -95,7 +102,7 @@ public:
 	 * Static function which will call tokenize
 	 * @see tokenize( const QString& )
 	 */
-	static Q3ValueList<Token> tokenizeEmoticons( const QString &message, ParseMode mode = RelaxedParse );
+	static QLinkedList<Token> tokenizeEmoticons( const QString &message, ParseMode mode = RelaxedParse );
 
 	/**
 	 * Tokenizes an message.
@@ -121,7 +128,7 @@ public:
 	 * @author Engin AYDOGAN < engin@bzzzt.biz >
 	 * @since 23-03-05
 	 */
-	Q3ValueList<Token> tokenize( const QString &message, ParseMode mode = RelaxedParse );
+	QLinkedList<Token> tokenize( const QString &message, ParseMode mode = RelaxedParse );
 	
 	/**
 	 * Return all emoticons and the corresponding icon.
