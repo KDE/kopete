@@ -22,8 +22,9 @@
 #include <qtimer.h>
 #include <qtooltip.h>
 #include <qregexp.h>
-//Added by qt3to4:
+
 #include <QMouseEvent>
+#include <QMovie>
 #include <QPixmap>
 #include <QEvent>
 
@@ -33,6 +34,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kiconloader.h>
+
 #include "kopeteuiglobal.h"
 #include "kopetechatsessionmanager.h"
 #include "kopeteballoon.h"
@@ -156,26 +158,21 @@ void KopeteSystemTray::startBlink( const QPixmap &icon )
 	}
 }
 
-void KopeteSystemTray::startBlink( const QMovie &movie )
+void KopeteSystemTray::startBlink( QMovie *movie )
 {
-	#warning FIXME QMovie stuff
-/*
 	//kdDebug( 14010 ) << k_funcinfo << "starting movie." << endl;
-	const_cast<QMovie &>( movie ).unpause();
+	#warning Possible NULL pointer error here.
+	movie->unpause();
 	setMovie( movie );
 	mIsBlinking = true;
-*/
 }
 
 void KopeteSystemTray::startBlink()
 {
-	#warning FIXME QMovie stuff
-/*
-	if ( mMovie.isNull() )
+	if ( !mMovie )
 		mMovie = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Panel );
 
 	startBlink( mMovie );
-*/
 }
 
 void KopeteSystemTray::stopBlink()
@@ -185,8 +182,8 @@ void KopeteSystemTray::stopBlink()
 	else if ( mBlinkTimer->isActive() )
 		mBlinkTimer->stop();
 
-	if ( !mMovie.isNull() )
-		mMovie.pause();
+	if ( mMovie )
+		mMovie->pause();
 
 	mIsBlinkIcon = false;
 	mIsBlinking = false;

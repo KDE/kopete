@@ -40,8 +40,8 @@ EmoticonLabel::EmoticonLabel(const QString &emoticonText, const QString &pixmapP
 	: QLabel(parent,name)
 {
 	mText = emoticonText;
-	#warning FIXME Movie stuff
-//	setMovie( QMovie(pixmapPath) );
+	#warning FIXME QMovie stuff
+//	setMovie( new QMovie(pixmapPath, QByteArray(), this) );
 	setAlignment(Qt::AlignCenter);
 	QToolTip::add(this,emoticonText);
 	// Somehow QLabel doesn't tell a reasonable size when you use setMovie

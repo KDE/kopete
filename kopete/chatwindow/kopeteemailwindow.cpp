@@ -93,7 +93,7 @@ public:
 	KopeteEmailWindow::WindowMode mode;
 	KAction *chatSend;
 	QLabel *anim;
-	QMovie animIcon;
+	QMovie *animIcon;
 	QPixmap normalIcon;
 	QString unreadMessageFrom;
 	ChatTextEditPart *editPart;
@@ -245,9 +245,8 @@ void KopeteEmailWindow::initActions(void)
 
 	// The animated toolbarbutton
 	d->normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
-	#warning QMovie
-//	d->animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
-//	d->animIcon.pause();
+	d->animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
+	d->animIcon->pause();
 
 	d->anim = new QLabel( this, "kde toolbar widget" );
 	d->anim->setMargin( 5 );
@@ -403,9 +402,8 @@ void KopeteEmailWindow::sendMessage()
 	if ( !d->editPart->canSend() )
 		return;
 	d->sendInProgress = true;
-	#warning QMovie
-//	d->anim->setMovie( d->animIcon );
-	d->animIcon.unpause();
+	d->anim->setMovie( d->animIcon );
+	d->animIcon->unpause();
 	d->editPart->widget()->setEnabled( false );
 	d->editPart->sendMessage();
 }
@@ -414,7 +412,7 @@ void KopeteEmailWindow::messageSentSuccessfully()
 {
 	d->sendInProgress = false;
 	d->anim->setPixmap( d->normalIcon );
-	d->animIcon.pause();
+	d->animIcon->pause();
 	closeView();
 }
 

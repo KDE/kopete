@@ -25,12 +25,13 @@
 #include <q3hbox.h>
 #include <qtooltip.h>
 #include <qtimer.h>
-//Added by qt3to4:
+
 #include <QPixmap>
 #include <QCloseEvent>
 #include <Q3PtrList>
 #include <QEvent>
 #include <QLabel>
+#include <QMovie>
 #include <QShowEvent>
 
 #include <kaction.h>
@@ -673,10 +674,9 @@ void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 	// Because we want null pixmaps to detect the need for a loadMovie
 	// we can't use the SmallIcon() method directly
 	KIconLoader *loader = KGlobal::instance()->iconLoader();
-/*
-	QMovie mv = loader->loadMovie( status.overlayIcons().first(), KIcon::Small );
+	QMovie *mv = loader->loadMovie( status.overlayIcons().first(), KIcon::Small );
 
-	if ( mv.isNull() )
+	if ( !mv || mv->isNull() )
 	{
 		// No movie found, fallback to pixmap
 		// Get the icon for our status
@@ -696,7 +696,6 @@ void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 		i->setMovie( mv );
 	}
 	makeTrayToolTip();
-*/
 }
 
 void KopeteWindow::makeTrayToolTip()

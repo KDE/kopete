@@ -21,19 +21,21 @@
 #define SYSTEMTRAY_H
 
 #include <qpixmap.h>
-#include <qmovie.h>
-//Added by qt3to4:
-#include <QMouseEvent>
+
 #include <Q3PtrList>
+#include <QMouseEvent>
 
 #include <ksystemtray.h>
 
 #include "kopetemessageevent.h"
 
-class QTimer;
+class QMovie;
 class QPoint;
-class KPopupMenu;
+class QTimer;
+
 class KActionMenu;
+class KPopupMenu;
+
 class KopeteBalloon;
 
 /**
@@ -57,7 +59,7 @@ public:
 	// One method, multiple interfaces :-)
 	void startBlink( const QString &icon );
 	void startBlink( const QPixmap &icon );
-	void startBlink( const QMovie &movie );
+	void startBlink( QMovie *movie );
 	void startBlink();
 
 	void stopBlink();
@@ -87,7 +89,7 @@ private:
 	QTimer *mBlinkTimer;
 	QPixmap mKopeteIcon;
 	QPixmap mBlinkIcon;
-	QMovie mMovie;
+	QMovie *mMovie;
 
 	bool mIsBlinkIcon;
 	bool mIsBlinking;
