@@ -371,29 +371,6 @@ void JabberAccount::connectWithPassword ( const QString &password )
 
 }
 
-// FIXME FIXME this needs to be in the UI code!
-/*
-void JabberAccount:: slotChangePasswordDone()
-{
-	XMPP::JT_Register * task = (XMPP::JT_Register *) sender ();
-	QObject::disconnect (task, SIGNAL (finished ()), this, SLOT (slotChangePwDone ()));
-	if ( task->success () ) 
-	{
-		KMessageBox::information (Kopete::UI::Global::mainWidget (),
-								  i18n ("Password has been changed but the change isn't instantaneous, you still have to use the old one for a short time."),
-								  i18n ("Jabber Password Change"));
-		emit passwordChangedSuccess ();
-	}
-	else 
-	{
-		KMessageBox::error (Kopete::UI::Global::mainWidget (),
-								  i18n ("Unable to change your password. Either the connection password was incorrect or your server does not allow your password to be changed."),
-								  i18n ("Jabber Password Change"));
-		emit passwordChangedError ();
-	}
-}
-*/
-
 void JabberAccount::slotClientDebugMessage ( const QString &msg )
 {
 
