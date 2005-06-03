@@ -88,7 +88,30 @@ JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStrin
 	propSubscriptionStatus("jabberSubscriptionStatus", i18n ("Subscription"), QString::null, true, false),
 	propAuthorizationStatus("jabberAuthorizationStatus", i18n ("Authorization Status"), QString::null, true, false),
 	propAvailableResources("jabberAvailableResources", i18n ("Available Resources"), "jabber_chatty", false, true),
-	propVCardCacheTimeStamp("jabberVCardCacheTimeStamp", i18n ("vCard Cache Timestamp"), QString::null, true, false, true)
+	propVCardCacheTimeStamp("jabberVCardCacheTimeStamp", i18n ("vCard Cache Timestamp"), QString::null, true, false, true),
+	propJid("jabberVCardJid", i18n("Jabber ID"), QString::null, true, false),
+	propBirthday("jabberVCardBirthday", i18n("Birthday"), QString::null, true, false),
+	propTimezone("jabberVCardTimezone", i18n("Timezone"), QString::null, true, false),
+	propHomepage("jabberVCardHomepage", i18n("Homepage"), QString::null, true, false),
+	propCompanyName("jabberVCardCompanyName", i18n("Company name"), QString::null, true, false),
+	propCompanyDepartement("jabberVCardCompanyDepartement", i18n("Company Departement"), QString::null, true, false),
+	propCompanyPosition("jabberVCardCompanyPosition", i18n("Company Position"), QString::null, true, false),
+	propCompanyRole("jabberVCardCompanyRole", i18n("Company Role"), QString::null, true, false),
+	propWorkStreet("jabberVCardWorkStreet", i18n("Work Street"), QString::null, true, false),
+	propWorkExtAddr("jabberVCardWorkExtAddr", i18n("Work Extra Address"), QString::null, true, false),
+	propWorkPOBox("jabberVCardWorkPOBox", i18n("Work PO Box"), QString::null, true, false),
+	propWorkCity("jabberVCardWorkCity", i18n("Work City"), QString::null, true, false),
+	propWorkPostalCode("jabberVCardWorkPostalCode", i18n("Work Postal Code"), QString::null, true, false),
+	propWorkCountry("jabberVCardWorkCountry", i18n("Work Country"), QString::null, true, false),
+	propWorkEmailAddress("jabberVCardWorkEmailAddress", i18n("Work Email Address"), QString::null, true, false),
+	propHomeStreet("jabberVCardHomeStreet", i18n("Home Street"), QString::null, true, false),
+	propHomeExtAddr("jabberVCardHomeExt", i18n("Home Extra Address"), QString::null, true, false),
+	propHomePOBox("jabberVCardHomePOBox", i18n("Home PO Box"), QString::null, true, false),
+	propHomeCity("jabberVCardHomeCity", i18n("Home City"), QString::null, true, false),
+	propHomePostalCode("jabberVCardHomePostalCode", i18n("Home Postal Code"), QString::null, true, false),
+	propHomeCountry("jabberVCardHomeCountry", i18n("Home Country"), QString::null, true, false),
+	propPhoneFax("jabberVCardPhoneFax", i18n("Fax"), QString::null, true, false),
+	propAbout("jabberVCardAbout", i18n("About"), QString::null, true, false)
 
 {
 

@@ -97,6 +97,30 @@ public:
 	const Kopete::ContactPropertyTmpl propAuthorizationStatus;
 	const Kopete::ContactPropertyTmpl propAvailableResources;
 	const Kopete::ContactPropertyTmpl propVCardCacheTimeStamp;
+	// extra properties to match with vCard
+	const Kopete::ContactPropertyTmpl propJid;
+	const Kopete::ContactPropertyTmpl propBirthday;
+	const Kopete::ContactPropertyTmpl propTimezone;
+	const Kopete::ContactPropertyTmpl propHomepage;
+	const Kopete::ContactPropertyTmpl propCompanyName;
+	const Kopete::ContactPropertyTmpl propCompanyDepartement;
+	const Kopete::ContactPropertyTmpl propCompanyPosition;
+	const Kopete::ContactPropertyTmpl propCompanyRole;
+	const Kopete::ContactPropertyTmpl propWorkStreet;
+	const Kopete::ContactPropertyTmpl propWorkExtAddr;
+	const Kopete::ContactPropertyTmpl propWorkPOBox;
+	const Kopete::ContactPropertyTmpl propWorkCity;
+	const Kopete::ContactPropertyTmpl propWorkPostalCode;
+	const Kopete::ContactPropertyTmpl propWorkCountry;
+	const Kopete::ContactPropertyTmpl propWorkEmailAddress;
+	const Kopete::ContactPropertyTmpl propHomeStreet;
+	const Kopete::ContactPropertyTmpl propHomeExtAddr;
+	const Kopete::ContactPropertyTmpl propHomePOBox;
+	const Kopete::ContactPropertyTmpl propHomeCity;
+	const Kopete::ContactPropertyTmpl propHomePostalCode;
+	const Kopete::ContactPropertyTmpl propHomeCountry;
+	const Kopete::ContactPropertyTmpl propPhoneFax;
+	const Kopete::ContactPropertyTmpl propAbout;
 
 	/**
 	 * This returns our protocol instance

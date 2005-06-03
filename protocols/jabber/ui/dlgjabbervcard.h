@@ -23,6 +23,7 @@
 #include "xmpp_vcard.h"
 
 class JabberAccount;
+class JabberContact;
 class QString;
 class dlgVCard;
 
@@ -31,23 +32,24 @@ class dlgJabberVCard : public KDialogBase
 	Q_OBJECT
 
 public:
-	dlgJabberVCard (JabberAccount *account, const QString &jid, QWidget * parent = 0, const char *name = 0);
+	dlgJabberVCard (JabberAccount *account, JabberContact *contact, QWidget * parent = 0, const char *name = 0);
 	~dlgJabberVCard ();
+
+signals:
+	void informationChanged();
 
 private slots:
 	void slotSaveNickname();
 	void slotSaveVCard();
 	void slotClose();
-	void slotGotVCard();
-	void slotSentVCard();
 	void slotOpenURL(const QString &url);
 
 private:
 	JabberAccount *m_account;
-	QString m_jid;
+	JabberContact *m_contact;
 	dlgVCard *m_mainWidget;
 
-	void assignVCard(const XMPP::VCard &vCard);
+	void assignContactProperties();
 	void setReadOnly(bool state);
 
 };
