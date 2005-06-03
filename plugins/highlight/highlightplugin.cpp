@@ -20,6 +20,7 @@
 #include <knotifyclient.h>
 
 #include "kopetemessagemanagerfactory.h"
+#include "kopeteview.h"
 
 #include "filter.h"
 #include "highlightplugin.h"
@@ -81,6 +82,12 @@ void HighlightPlugin::slotIncomingMessage( Kopete::Message& msg )
 			if(f->playSound)
 				KNotifyClient::userEvent (QString::null, KNotifyClient::Sound, KNotifyClient::Default, f->soundFN );
 
+                        if (f->raiseView &&
+                            msg.manager() && msg.manager()->view()) {
+                            KopeteView *theview = msg.manager()->view();
+                            theview->raise();
+                        }
+                        
 			break; //uh?
 		}
 	}

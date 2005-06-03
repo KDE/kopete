@@ -68,6 +68,7 @@ Filter* HighlightConfig::newFilter()
 	filtre->setBG=false;
 	filtre->setFG=false;
 	filtre->playSound=false;
+	filtre->raiseView=false;
 	filtre->displayName=i18n("-New filter-");
 	m_filters.append(filtre);
 	return filtre;
@@ -136,6 +137,10 @@ void HighlightConfig::load()
 							filtre->soundFN = filterElement.text();
 							filtre->playSound = ( filterElement.attribute( QString::fromLatin1( "set" ), QString::fromLatin1( "0" ) ) == QString::fromLatin1( "1" ) );
 						}
+						else if( filterElement.tagName() == QString::fromLatin1( "raise" ) )
+						{
+							filtre->raiseView = ( filterElement.attribute( QString::fromLatin1( "set" ), QString::fromLatin1( "0" ) ) == QString::fromLatin1( "1" ) );
+						}
 					}
 					filterNode = filterNode.nextSibling();
 				}
@@ -185,6 +190,9 @@ void HighlightConfig::save()
 
 			xml += QString::fromLatin1("    <sound set=\"") + QString::number( static_cast<int>( filtre->playSound ) ) +
 				QString::fromLatin1( "\">" ) + QStyleSheet::escape( filtre->soundFN ) + QString::fromLatin1( "</sound>\n" );
+
+			xml += QString::fromLatin1("    <raise set=\"") + QString::number( static_cast<int>( filtre->raiseView ) ) +
+				QString::fromLatin1( "\"></raise>\n" );
 
 			xml += QString::fromLatin1( "  </filter>\n" );
 		}

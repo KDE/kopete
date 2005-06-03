@@ -47,6 +47,8 @@ public:
 	
 	bool playSound;
 	QString soundFN;
+
+	bool raiseView;
 };
 
 #endif

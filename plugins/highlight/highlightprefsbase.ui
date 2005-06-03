@@ -411,6 +411,24 @@
                         </widget>
                     </hbox>
                 </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout8</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>m_raise</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Raise window</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
             </vbox>
         </widget>
     </vbox>
@@ -432,6 +450,7 @@
     <tabstop>m_FG</tabstop>
     <tabstop>m_sound</tabstop>
     <tabstop>m_soundFN</tabstop>
+    <tabstop>m_raise</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

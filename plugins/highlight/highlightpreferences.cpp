@@ -62,6 +62,7 @@ HighlightPreferences::HighlightPreferences(QWidget *parent, const char* /*name*/
 	connect(preferencesDialog->m_search , SIGNAL(textChanged(const QString&)) , this , SLOT(slotSomethingHasChanged()));
 	connect(preferencesDialog->m_sound , SIGNAL(stateChanged(int)) , this , SLOT(slotSomethingHasChanged()));
 	connect(preferencesDialog->m_soundFN , SIGNAL(textChanged(const QString&)) , this , SLOT(slotSomethingHasChanged()));
+	connect(preferencesDialog->m_raise , SIGNAL(stateChanged(int)) , this , SLOT(slotSomethingHasChanged()));
 	connect(preferencesDialog->m_search , SIGNAL(textChanged(const QString&)) , this , SLOT(slotSomethingHasChanged()));
 	connect(preferencesDialog->m_importance , SIGNAL(activated(int)) , this , SLOT(slotSomethingHasChanged()));
 	connect(preferencesDialog->m_FG , SIGNAL(changed(const QColor&)) , this , SLOT(slotSomethingHasChanged()));
@@ -125,6 +126,7 @@ void HighlightPreferences::slotCurrentFilterChanged()
 		preferencesDialog->m_setFG->setEnabled(false);
 		preferencesDialog->m_soundFN->setEnabled(false);
 		preferencesDialog->m_sound->setEnabled(false);
+		preferencesDialog->m_raise->setEnabled(false);
 		preferencesDialog->m_editregexp->setEnabled(false);
 		preferencesDialog->m_rename->setEnabled(false);
 		preferencesDialog->m_remove->setEnabled(false);
@@ -142,6 +144,7 @@ void HighlightPreferences::slotCurrentFilterChanged()
 	preferencesDialog->m_setBG->setEnabled(true);
 	preferencesDialog->m_setFG->setEnabled(true);
 	preferencesDialog->m_sound->setEnabled(true);
+	preferencesDialog->m_raise->setEnabled(true);
 
 
 	preferencesDialog->m_search->setText(current->search);
@@ -159,6 +162,7 @@ void HighlightPreferences::slotCurrentFilterChanged()
 	preferencesDialog->m_FG->setEnabled(current->setFG);
 	preferencesDialog->m_soundFN->setURL(current->soundFN);
 	preferencesDialog->m_sound->setChecked(current->playSound);
+	preferencesDialog->m_raise->setChecked(current->raiseView);
 	preferencesDialog->m_soundFN->setEnabled(current->playSound);
 
 	donttouch=false;
@@ -230,6 +234,7 @@ void HighlightPreferences::slotSomethingHasChanged()
 	current->soundFN=preferencesDialog->m_soundFN->url();
 	current->playSound=preferencesDialog->m_sound->isChecked();
 	preferencesDialog->m_soundFN->setEnabled(current->playSound);
+	current->raiseView=preferencesDialog->m_raise->isChecked();
 
 	emit KCModule::changed(true);
 }
