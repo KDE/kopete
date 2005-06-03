@@ -112,7 +112,7 @@ void OfflineMessagesTask::handleOfflineMessage()
 	
 	QDate date(year, month, day);
 	QTime time(hour,minute);
-#ifdef TIMEZONE_IS_INT
+#ifndef HAVE_TM_GMTOFF
 	int tz = -( ::timezone );
 #else
 	int tz;
