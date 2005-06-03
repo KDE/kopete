@@ -382,16 +382,22 @@ void MSNP2PWebcam::parseMessage(MessageStruct &msgStr)
 	
 	kdDebug(14141) << k_funcinfo << dataMessage.size() << echoS << endl;
 
-	QString secretHiddenMessage;
-	for(int pos=10; pos<dataMessage.size(); pos+=2)
+	for(uint pos=m_content.isNull() ? 10 : 0; pos<dataMessage.size(); pos+=2)
 	{
-		secretHiddenMessage+=dataMessage[pos];
+		m_content+=dataMessage[pos];
 	}
 
+	if( msgStr.dataMessageSize+msgStr.dataOffset < msgStr.totalSize )
+		return;
 	
-	kdDebug(14141) << k_funcinfo << "Secret hidden message: " << secretHiddenMessage << "\n" << endl;
-	if(secretHiddenMessage.length() < 5)
-		makeSIPMessage(secretHiddenMessage);
+	kdDebug(14141) << k_funcinfo << "Message contents: " << m_content << "\n" << endl;
+	if(m_content.length() < 5)
+		makeSIPMessage(m_content);
+	else if(m_content.contains("<producer>"))
+	{
+		makeSIPMessage(m_content.replace("producer","viewer"));
+	}
+	m_content=QString::null;
 }
 
 void MSNP2PWebcam::makeSIPMessage(const QString &message)
@@ -403,11 +409,11 @@ void MSNP2PWebcam::makeSIPMessage(const QString &message)
 	dataMessage[3]=0x01;
 	dataMessage[4]=0x08;
 	dataMessage[5]=0x00;
-	dataMessage[6]=0x08;
+	dataMessage[6]=message.length()*2+2;
 	dataMessage[7]=0x00;
 	dataMessage[8]=0x00;
 	dataMessage[9]=0x00;
-	for(int f=0; f<message.length(); f++)
+	for(uint f=0; f<message.length(); f++)
 	{
 		dataMessage[10+2*f]=message[f].latin1();
 		dataMessage[11+2*f]=0x00;
@@ -447,11 +453,22 @@ void MSNP2PWebcam::makeSIPMessage(const QString &message)
 	
 	kdDebug(14141) << k_funcinfo << dataMessage.size() << echoS << endl;
 
-
-	
 	m_footer='\4';
-	sendP2PMessage(dataMessage);
+	sendBigP2PMessage(dataMessage);
 	m_footer='\0';
+}
+
+void MSNP2PWebcam::sendBigP2PMessage( const QByteArray & dataMessage)
+{
+	unsigned int size=m_totalDataSize=dataMessage.size();
+	
+	for(unsigned int f=0;f<size;f+=1200)
+	{
+		m_offset=f;
+		QByteArray dm2;
+		dm2.duplicate(dataMessage.data()+m_offset, QMIN(1200,m_totalDataSize-m_offset));
+		sendP2PMessage(dm2);
+	}
 }
 
 

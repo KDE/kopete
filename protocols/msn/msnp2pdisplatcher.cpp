@@ -369,13 +369,13 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 
 				p2p->makeMSNSLPMessage( OK, content);
 
-/*				content="Bridges: TRUDPv1 TCPv1\r\n"
+				content="Bridges: TRUDPv1 TCPv1\r\n"
 						"NetID: -1280904111\r\n"
 						"Conn-Type: Symmetric-NAT\r\n"
 						"UPnPNat: false\r\n"
 						"ICF: false\r\n\r\n";
 
-				p2p->makeMSNSLPMessage( INVITE, content);*/
+				p2p->makeMSNSLPMessage( INVITE, content);
 
 //				p2p->makeSIPMessage("syn");
 

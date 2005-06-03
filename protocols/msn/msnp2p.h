@@ -119,9 +119,12 @@ public:
 	virtual void parseMessage(MessageStruct & );
 	virtual void error();
 
+	//this should be moved in MSNP2P
+	void sendBigP2PMessage( const QByteArray& dataMessage );
+
 //private:
 	void makeSIPMessage(const QString &message);
-
+	QString m_content;
 
 };
 #endif
