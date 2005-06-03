@@ -11,6 +11,7 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Identity
+Name[br]=Anvelezh
 Name[ga]=Aitheantas
 Comment=Here you can manage your global identity
 Comment[ga]=Tig leat d'aitheantas a láimhseáil anseo
