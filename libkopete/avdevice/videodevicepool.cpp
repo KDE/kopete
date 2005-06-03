@@ -77,19 +77,19 @@ int VideoDevicePool::open()
 int VideoDevicePool::open(unsigned int device)
 {
     /// @todo implement me
-	kdDebug() << "libkopete (avdevice): open(" << device << ") called." << endl;
+	kdDebug() <<  k_funcinfo << "open(" << device << ") called." << endl;
 	if(device >= m_videodevice.size())
 	{
-		kdDebug() << "libkopete (avdevice): open(" << device <<"): Device does not exist." << endl;
+		kdDebug() <<  k_funcinfo << "open(" << device <<"): Device does not exist." << endl;
 		return EXIT_FAILURE;
 	}
 	close();
-	kdDebug() << "libkopete (avdevice): open(" << device << ") Setting m_current_Device to " << device << endl;
+	kdDebug() <<  k_funcinfo << "open(" << device << ") Setting m_current_Device to " << device << endl;
 	m_current_device = device;
-	kdDebug() << "libkopete (avdevice): open(" << device << ") Calling open()." << endl;
+	kdDebug() <<  k_funcinfo << "open(" << device << ") Calling open()." << endl;
 	open();
 //	m_videodevice[currentDevice()].initDevice();
-	kdDebug() << "libkopete (avdevice): open(" << device << ") exited successfuly." << endl;
+	kdDebug() <<  k_funcinfo << "open(" << device << ") exited successfuly." << endl;
 	return EXIT_SUCCESS;
 }
 
@@ -150,13 +150,13 @@ int VideoDevicePool::setSize( int newwidth, int newheight)
 		return m_videodevice[currentDevice()].setSize(newwidth, newheight);
 	else
 	{
-		kdDebug() << "libkopete (avdevice): VideoDevicePool::setSize() fallback for no device." << endl;
+		kdDebug() <<  k_funcinfo << "VideoDevicePool::setSize() fallback for no device." << endl;
 		m_buffer.width=newwidth;
 		m_buffer.height=newheight;
 		m_buffer.pixelformat=	PIXELFORMAT_RGB24;
 		m_buffer.data.resize(m_buffer.width*m_buffer.height*3);
 		m_buffer.size=m_buffer.data.size();
-		kdDebug() << "libkopete (avdevice): VideoDevicePool::setSize() buffer size: "<< m_buffer.size << endl;
+		kdDebug() <<  k_funcinfo << "VideoDevicePool::setSize() buffer size: "<< m_buffer.size << endl;
 	}
 	return EXIT_SUCCESS;
 }
@@ -169,7 +169,7 @@ int VideoDevicePool::close()
     /// @todo implement me
 	if(currentDevice() < m_videodevice.size())
 		return m_videodevice[currentDevice()].close();
-	kdDebug() << "libkopete (avdevice): VideoDevicePool::close() Current device out of range." << endl;
+	kdDebug() <<  k_funcinfo << "VideoDevicePool::close() Current device out of range." << endl;
 	return EXIT_FAILURE;
 }
 
@@ -180,6 +180,7 @@ int VideoDevicePool::startCapturing()
 {
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].startCapturing();
+	return EXIT_FAILURE;
 }
 
 
@@ -190,6 +191,7 @@ int VideoDevicePool::stopCapturing()
 {
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].stopCapturing();
+	return EXIT_FAILURE;
 }
 
 
@@ -198,20 +200,20 @@ int VideoDevicePool::stopCapturing()
  */
 int VideoDevicePool::getFrame()
 {
-	kdDebug() << "libkopete (avdevice): VideoDevicePool::getFrame() called." << endl;
+	kdDebug() <<  k_funcinfo << "VideoDevicePool::getFrame() called." << endl;
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].getFrame();
 	else
 	{
-		kdDebug() << "libkopete (avdevice): VideoDevicePool::getFrame() fallback for no device." << endl;
-		for(int loop=0; loop < m_buffer.size; loop+=3)
+		kdDebug() <<  k_funcinfo << "VideoDevicePool::getFrame() fallback for no device." << endl;
+		for(unsigned int loop=0; loop < m_buffer.size; loop+=3)
 		{
 			m_buffer.data[loop]   = 255;
 			m_buffer.data[loop+1] = 0;
 			m_buffer.data[loop+2] = 0;
 		}
 	}
-	kdDebug() << "libkopete (avdevice): VideoDevicePool::getFrame() exited successfuly." << endl;
+	kdDebug() <<  k_funcinfo << "VideoDevicePool::getFrame() exited successfuly." << endl;
 	return EXIT_SUCCESS;
 }
 
@@ -220,12 +222,12 @@ int VideoDevicePool::getFrame()
  */
 int VideoDevicePool::getImage(QImage *qimage)
 {
-	kdDebug() << "libkopete (avdevice): VideoDevicePool::getImage() called." << endl;
+	kdDebug() <<  k_funcinfo << "VideoDevicePool::getImage() called." << endl;
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].getImage(qimage);
 	else
 	{
-		kdDebug() << "libkopete (avdevice): VideoDevicePool::getImage() fallback for no device." << endl;
+		kdDebug() <<  k_funcinfo << "VideoDevicePool::getImage() fallback for no device." << endl;
 		qimage->create(m_buffer.width, m_buffer.height,32, QImage::IgnoreEndian);
 		uchar *bits=qimage->bits();
 		switch(m_buffer.pixelformat)
@@ -239,9 +241,9 @@ int VideoDevicePool::getImage(QImage *qimage)
 			case PIXELFORMAT_RGB565X: break;
 			case PIXELFORMAT_RGB24	:
 				{
-					kdDebug() << "libkopete (avdevice): VideoDevicePool::getImage() fallback for no device - RGB24." << endl;
+					kdDebug() <<  k_funcinfo << "VideoDevicePool::getImage() fallback for no device - RGB24." << endl;
 					int step=0;
-					for(unsigned int loop=0;loop < qimage->numBytes();loop+=4)
+					for(int loop=0;loop < qimage->numBytes();loop+=4)
 					{
 						bits[loop]   = m_buffer.data[step];
 						bits[loop+1] = m_buffer.data[step+1];
@@ -254,7 +256,7 @@ int VideoDevicePool::getImage(QImage *qimage)
 			case PIXELFORMAT_BGR24	: break;
 				{
 					int step=0;
-					for(unsigned int loop=0;loop < qimage->numBytes();loop+=4)
+					for(int loop=0;loop < qimage->numBytes();loop+=4)
 					{
 						bits[loop]   = m_buffer.data[step+2];
 						bits[loop+1] = m_buffer.data[step+1];
@@ -269,7 +271,7 @@ int VideoDevicePool::getImage(QImage *qimage)
 			case PIXELFORMAT_BGR32	: break;
 		}
 	}
-	kdDebug() << "libkopete (avdevice): VideoDevicePool::getImage() exited successfuly." << endl;
+	kdDebug() <<  k_funcinfo << "VideoDevicePool::getImage() exited successfuly." << endl;
 	return EXIT_SUCCESS;
 }
 
@@ -278,7 +280,7 @@ int VideoDevicePool::getImage(QImage *qimage)
  */
 int VideoDevicePool::selectInput(int newinput)
 {
-	kdDebug() << "libkopete (avdevice): VideoDevicePool::selectInput(" << newinput << ") called." << endl;
+	kdDebug() <<  k_funcinfo << "VideoDevicePool::selectInput(" << newinput << ") called." << endl;
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].selectInput(newinput);
 	else
@@ -291,14 +293,14 @@ int VideoDevicePool::selectInput(int newinput)
 int VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
 {
     /// @todo implement me
-	kdDebug() << "libkopete (avdevice): fillInputKComboBox: Called." << endl;
+	kdDebug() <<  k_funcinfo << "fillInputKComboBox: Called." << endl;
 	combobox->clear();
 	if(m_videodevice.size())
 	{
 		for (unsigned int loop=0; loop < m_videodevice.size(); loop++)
 		{
 			combobox->insertItem(m_videodevice[loop].name);
-			kdDebug() << "libkopete (avdevice): DeviceKCombobox: Added device " << loop << ": " << m_videodevice[loop].name << endl;
+			kdDebug() <<  k_funcinfo << "DeviceKCombobox: Added device " << loop << ": " << m_videodevice[loop].name << endl;
 		}
 		combobox->setCurrentItem(currentDevice());
 	}
@@ -311,7 +313,7 @@ int VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
 int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 {
     /// @todo implement me
-	kdDebug() << "libkopete (avdevice): fillInputKComboBox: Called." << endl;
+	kdDebug() <<  k_funcinfo << "fillInputKComboBox: Called." << endl;
 	combobox->clear();
 	if(m_videodevice.size())
 	{
@@ -319,7 +321,7 @@ int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 			for (unsigned int loop=0; loop < m_videodevice[currentDevice()].inputs(); loop++)
 			{
 				combobox->insertItem(m_videodevice[currentDevice()].input[loop].name);
-				kdDebug() << "libkopete (avdevice): InputKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].input[loop].name << " (tuner: " << m_videodevice[currentDevice()].input[loop].hastuner << ")" << endl;
+				kdDebug() <<  k_funcinfo << "InputKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].input[loop].name << " (tuner: " << m_videodevice[currentDevice()].input[loop].hastuner << ")" << endl;
 			}
 		return EXIT_SUCCESS;
 	}
@@ -333,7 +335,7 @@ int VideoDevicePool::scanDevices()
 {
     /// @todo implement me
 
-	kdDebug() << "libkopete (avdevice): scanDevices() called" << endl;
+	kdDebug() <<  k_funcinfo << "called" << endl;
 #ifdef __linux__
 	QDir videodevice_dir;
 	const QString videodevice_dir_path=QString::fromLocal8Bit("/dev/v4l/");
@@ -354,22 +356,22 @@ int VideoDevicePool::scanDevices()
 	QFileInfo *fileinfo;
 
 	m_videodevice.clear();
-	kdDebug() << "libkopete (avdevice): scanDevices() called" << endl;
+	kdDebug() <<  k_funcinfo << "scanning devices..." << endl;
 	while ( (fileinfo = fileiterator.current()) != 0 )
 	{
 		videodevice.setFileName(fileinfo->absFilePath());
-		kdDebug() << "libkopete (avdevice): Found device " << videodevice.full_filename << endl;
+		kdDebug() <<  k_funcinfo << "Found device " << videodevice.full_filename << endl;
 		videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
 		if(videodevice.isOpen())
 		{
-			kdDebug() << "libkopete (avdevice): File " << videodevice.full_filename << " was opened successfuly" << endl;
+			kdDebug() <<  k_funcinfo << "File " << videodevice.full_filename << " was opened successfuly" << endl;
 			videodevice.close();
 			m_videodevice.push_back(videodevice);
 		}
 		++fileiterator;
 	}
 #endif
-	kdDebug() << "libkopete (avdevice): scanDevices() exited successfuly" << endl;
+	kdDebug() <<  k_funcinfo << "exited successfuly" << endl;
 	return EXIT_SUCCESS;
 }
 

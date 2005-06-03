@@ -123,6 +123,7 @@ public:
 	int pixelFormatCode(pixel_format pixelformat);
 	int pixelFormatDepth(pixel_format pixelformat);
 	QString pixelFormatName(pixel_format pixelformat);
+	QString pixelFormatName(int pixelformat);
 	unsigned int currentInput();
 	int selectInput(int input);
 	int startCapturing();
