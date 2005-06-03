@@ -8,3 +8,4 @@ libyahoo2_la_SOURCES = libyahoo2.c crypt.c md5.c \
 
 libyahoo2_la_LDFLAGS = -module
 
+libyahoo2_la_CFLAGS = -fno-inline
