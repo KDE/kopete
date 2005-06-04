@@ -1,7 +1,7 @@
-kopete_srcdir=$(top_srcdir)/kopete
-kopete_builddir=$(top_builddir)/kopete
+kopete_srcdir=$(top_srcdir)/
+kopete_builddir=$(top_builddir)/
 
-INCLUDES = -I$(kopete_srcdir)/kopete
+INCLUDES = -I$(kopete_srcdir)/
 
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(kopete_srcdir)/kopete/conf \

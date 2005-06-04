@@ -1,9 +1,9 @@
 SUBDIRS = libkopete kopete protocols plugins icons sounds styles
 
 api:
-	$(mkinstalldirs) $(top_builddir)/kopete/apidocs/libkopete
-	if test ! -x $(top_builddir)/kopete/apidocs/common; then \
-		$(LN_S) $(kde_libs_htmldir)/en/common $(top_builddir)/kopete/apidocs/common; \
+	$(mkinstalldirs) $(top_builddir)/apidocs/libkopete
+	if test ! -x $(top_builddir)/apidocs/common; then \
+		$(LN_S) $(kde_libs_htmldir)/en/common; \
 	fi
 	doxygen kopete.api
 

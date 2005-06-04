@@ -1,5 +1,5 @@
 AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_ASCII_CAST -DQT_NO_COMPAT \
-	$(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private -I$(top_srcdir)/kopete/libkopete/ui $(all_includes)
+	$(KOPETE_INCLUDES) -I$(top_srcdir)/libkopete/private -I$(top_srcdir)/libkopete/ui $(all_includes)
 METASOURCES = AUTO
 
 check_LTLIBRARIES = kunittest_kopetelinktest.la kunittest_kopetepropertiestest.la kunittest_kopeteemoticontest.la

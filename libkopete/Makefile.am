@@ -14,8 +14,8 @@ METASOURCES = AUTO
 
 AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CAST \
 	$(LIBXML_CFLAGS) $(LIBXSLT_CFLAGS) \
-	$(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private \
-	-I$(top_srcdir)/kopete/libkopete/ui $(all_includes)
+	$(KOPETE_INCLUDES) -I$(top_srcdir)/libkopete/private \
+	-I$(top_srcdir)/libkopete/ui $(all_includes)
 
 lib_LTLIBRARIES = libkopete.la
 
