@@ -33,7 +33,7 @@ class QStringList;
 class QString;
 
 
-namespace Kopete { class Message; }
+namespace Kopete { class Message; class ChatSession; }
 
 /**
   * @author Duncan Mac-Vicar Prett
@@ -53,8 +53,9 @@ public slots:
 	void slotSettingsChanged();
 	void slotMessageAboutToShow( Kopete::Message& msg );
 	void slotMessageAboutToSend( Kopete::Message& msg );
+	void slotNewChatSession( Kopete::ChatSession *KMM);
 
-private:
+public:
 	/**
 	 * gives a latex formula, and return the filename of the file where the latex is stored.
      */
@@ -64,7 +65,9 @@ private:
 	 * return false if the latex formula may contains malicious commands
 	 */
 	bool securityCheck(const QString & formula);
-	
+
+
+private:
 	static LatexPlugin* s_pluginStatic;
 	QString m_convScript;
 	bool mMagickNotFoundShown;

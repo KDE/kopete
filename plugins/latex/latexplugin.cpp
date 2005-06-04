@@ -34,6 +34,7 @@
 
 #include "latexplugin.h"
 #include "latexconfig.h"
+#include "latexguiclient.h"
 
 #define ENCODED_IMAGE_MODE 0
 
@@ -51,9 +52,16 @@ LatexPlugin::LatexPlugin( QObject *parent, const char *name, const QStringList &
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), SLOT( slotMessageAboutToShow( Kopete::Message & ) ) );
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToSend(Kopete::Message& )  ), this,  SLOT(slotMessageAboutToSend(Kopete::Message& )  ) );
 	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
+	connect( Kopete::ChatSessionManager::self(), SIGNAL( chatSessionCreated( Kopete::ChatSession * ) ),
+			 this, SLOT( slotNewChatSession( Kopete::ChatSession * ) ) );
 	
 	m_convScript = KStandardDirs::findExe("kopete_latexconvert.sh");
 	slotSettingsChanged();
+
+		//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
+	QValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+	for (QValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
+		slotNewChatSession( *it );
 }
 
 LatexPlugin::~LatexPlugin()
@@ -67,6 +75,11 @@ LatexPlugin* LatexPlugin::plugin()
 }
 
 LatexPlugin* LatexPlugin::s_pluginStatic = 0L;
+
+void LatexPlugin::slotNewChatSession( Kopete::ChatSession *KMM )
+{
+	new LatexGUIClient( KMM );
+}
 
 
 void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )

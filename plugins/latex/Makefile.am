@@ -6,7 +6,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes)
 
 kde_module_LTLIBRARIES = kopete_latex.la kcm_kopete_latex.la
 
-kopete_latex_la_SOURCES = latexplugin.cpp latexconfig.kcfgc
+kopete_latex_la_SOURCES = latexplugin.cpp latexconfig.kcfgc latexguiclient.cpp
 kopete_latex_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN)
 kopete_latex_la_LIBADD      = ../../libkopete/libkopete.la
 
@@ -23,3 +23,5 @@ kcmdir = $(kde_servicesdir)/kconfiguredialog
 bin_SCRIPTS = kopete_latexconvert.sh
 kde_kcfg_DATA = latexconfig.kcfg
 
+mydatadir = $(kde_datadir)/kopete_latex
+mydata_DATA = latexchatui.rc
