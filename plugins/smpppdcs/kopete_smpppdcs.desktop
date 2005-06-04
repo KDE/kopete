@@ -17,6 +17,7 @@ X-KDE-PluginInfo-EnabledByDefault=true
 Name=SUSE smpppd-enabled Connection Status (SMPPPD)
 Name[da]=SUSE smpppd-aktiveret Forbindelsesstatus (SMPPPD)
 Name[de]=Verbindungsstatus mit Unterstützung für SuSE SMPPPD
+Name[el]=SuSE smpppd-ενεργοποίηση Κατάσταση Σύνδεσης (SMPPPD)
 Name[es]=Estado de conexión con SUSE smpppd habilitado (SMPPPD)
 Name[et]=SUSE smpppd-võimalusega ühenduse staatus (SMPPPD)
 Name[fr]=État de la connexion pour « smpppd-enabled » de Suse (SMPPPD)

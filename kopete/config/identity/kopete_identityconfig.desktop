@@ -12,7 +12,9 @@ X-KDE-ParentComponents=kopete
 
 Name=Identity
 Name[br]=Anvelezh
+Name[da]=Identitet
 Name[ga]=Aitheantas
 Comment=Here you can manage your global identity
+Comment[da]=Her kan du håndtere din globale identitet
 Comment[ga]=Tig leat d'aitheantas a láimhseáil anseo
 
