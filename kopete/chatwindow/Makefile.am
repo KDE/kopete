@@ -1,7 +1,7 @@
 kde_module_LTLIBRARIES = libkrichtexteditpart.la kopete_chatwindow.la kopete_emailwindow.la
 METASOURCES = AUTO
 
-AM_CPPFLAGS = $(KOPETE_INCLUDES) $(KOPETE_COMPAT_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private    -I$(top_srcdir)/kopete/kopete $(all_includes)
+AM_CPPFLAGS = $(KOPETE_INCLUDES) $(KOPETE_COMPAT_INCLUDES) -I$(top_srcdir)/libkopete/private    -I$(top_srcdir)/kopete $(all_includes)
 
 kopete_chatwindow_la_SOURCES = chatmessagepart.cpp emoticonselector.cpp kopeteemoticonaction.cpp \
 	chattexteditpart.cpp krichtexteditpart.cpp chatview.cpp kopetechatwindow.cpp chatmemberslistwidget.cpp
