@@ -227,18 +227,20 @@ QPtrList<KAction> *YahooContact::customContextMenuActions()
 	{
 		m_buzzAction = new KAction( i18n( "&Buzz Contact" ), KShortcut(), this, SLOT( buzzContact() ), this, "buzz_contact");
 	}
-
-	if ( !m_stealthAction )
-	{
-		m_stealthAction = new KAction( i18n( "&Stealth Setting" ), KShortcut(), this, SLOT( stealthContact() ), this, "stealth_contact");
-	}
-	
-	
 	if ( isReachable() )
 		m_buzzAction->setEnabled( true );
 	else
 		m_buzzAction->setEnabled( false );
 	actionCollection->append( m_buzzAction );
+
+	if ( !m_stealthAction )
+	{
+		m_stealthAction = new KAction( i18n( "&Stealth Setting" ), KShortcut(), this, SLOT( stealthContact() ), this, "stealth_contact");
+	}
+	if ( isReachable() )
+		m_stealthAction->setEnabled( true );
+	else
+		m_stealthAction->setEnabled( false );
 	actionCollection->append( m_stealthAction );
 	
 	return actionCollection;

@@ -8,9 +8,15 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>144</width>
-            <height>84</height>
+            <width>195</width>
+            <height>77</height>
         </rect>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>195</width>
+            <height>75</height>
+        </size>
     </property>
     <property name="caption">
         <string>YahooStealthSetting</string>
@@ -23,8 +29,8 @@
             <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>140</width>
-                <height>78</height>
+                <width>190</width>
+                <height>70</height>
             </rect>
         </property>
         <property name="title">
