@@ -532,6 +532,12 @@ void YahooSession::slotLoginResponseReceiver( int /* succ */, char * /* url */ )
 	kdDebug(14181)<< k_funcinfo << endl;
 }
 
+void YahooSession::stealthContact( const QString &who, int unstealth )
+{
+	kdDebug(14181)<< k_funcinfo << "Unstealth: " << unstealth << endl;
+	yahoo_stealth_buddy( m_connId, who.local8Bit(), unstealth );
+}
+
 void YahooSession::getUserInfo( const QString &who )
 {
 	m_targetID = who;

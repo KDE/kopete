@@ -161,6 +161,7 @@ public:
 	QString getProfile_url( void );
 	void getUserInfo( const QString &who );
 	void viewUserProfile( const QString &who );
+	void stealthContact( const QString &who, int unstealth );
 	void saveAdressBookEntry( const YahooUserInfo &entry);
 	
 	//webcam handlers

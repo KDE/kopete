@@ -203,7 +203,8 @@ enum yahoo_service { /* these are easier to see in hex */
 	YAHOO_SERVICE_CHATEXIT = 0x9b,
 	YAHOO_SERVICE_CHATLOGOUT = 0xa0,
 	YAHOO_SERVICE_CHATPING,
-	YAHOO_SERVICE_COMMENT = 0xa8
+	YAHOO_SERVICE_COMMENT = 0xa8,
+	YAHOO_SERVICE_STEALTH = 0xb9
 };
 
 struct yahoo_pair {
@@ -4007,6 +4008,28 @@ void yahoo_ignore_buddy(int id, const char *who, int unignore)
 	yahoo_packet_hash(pkt, 1, yd->user);
 	yahoo_packet_hash(pkt, 7, who);
 	yahoo_packet_hash(pkt, 13, unignore?"2":"1");
+	yahoo_send_packet(yid, pkt, 0);
+	yahoo_packet_free(pkt);
+}
+
+void yahoo_stealth_buddy(int id, const char *who, int unstealth)
+{
+	struct yahoo_input_data *yid = find_input_by_id_and_type(id, YAHOO_CONNECTION_PAGER);
+	struct yahoo_data *yd;
+	struct yahoo_packet *pkt;
+
+	if(!yid)
+		return;
+	yd = yid->yd;
+
+	if (!yd->logged_in)
+		return;
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_STEALTH, YAHOO_STATUS_AVAILABLE, yd->session_id);
+	yahoo_packet_hash(pkt, 1, yd->user);
+	yahoo_packet_hash(pkt, 7, who);
+	yahoo_packet_hash(pkt, 31, unstealth?"2":"1");
+	yahoo_packet_hash(pkt, 13, "2");
 	yahoo_send_packet(yid, pkt, 0);
 	yahoo_packet_free(pkt);
 }

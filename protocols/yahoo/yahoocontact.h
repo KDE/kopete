@@ -64,6 +64,7 @@ public slots:
 	virtual void slotSendFile();
 	virtual void deleteContact();
 	
+	void stealthContact();
 
 	/**
 	 * Must be called after the contact list has been received
@@ -94,6 +95,9 @@ private:
 	QString m_groupName;
 	Kopete::ChatSession *m_manager;
 	YahooAccount* m_account;
+
+	//stealth
+	KAction* m_stealthAction;
 	
 	//webcam handling
 	KAction* m_webcamAction;

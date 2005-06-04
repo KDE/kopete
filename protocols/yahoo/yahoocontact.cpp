@@ -29,9 +29,11 @@
 #include "yahoocontact.h"
 #include "yahooaccount.h"
 #include "yahoowebcamdialog.h"
+#include "yahoostealthsetting.h"
 
 // QT Includes
 #include <qregexp.h>
+#include <qradiobutton.h>
 
 // KDE Includes
 #include <kdebug.h>
@@ -64,6 +66,7 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 	
 	m_webcamDialog = 0L;
 	m_webcamAction = 0L;
+	m_stealthAction = 0L;
 
 	m_buzzAction = 0L;
 }
@@ -224,11 +227,19 @@ QPtrList<KAction> *YahooContact::customContextMenuActions()
 	{
 		m_buzzAction = new KAction( i18n( "&Buzz Contact" ), KShortcut(), this, SLOT( buzzContact() ), this, "buzz_contact");
 	}
+
+	if ( !m_stealthAction )
+	{
+		m_stealthAction = new KAction( i18n( "&Stealth Setting" ), KShortcut(), this, SLOT( stealthContact() ), this, "stealth_contact");
+	}
+	
+	
 	if ( isReachable() )
 		m_buzzAction->setEnabled( true );
 	else
 		m_buzzAction->setEnabled( false );
 	actionCollection->append( m_buzzAction );
+	actionCollection->append( m_stealthAction );
 	
 	return actionCollection;
 	
@@ -248,6 +259,26 @@ void YahooContact::slotUserInfo()
 void YahooContact::slotSendFile()
 {
 	kdDebug(14180) << k_funcinfo << endl;
+}
+
+void YahooContact::stealthContact()
+{
+	kdDebug(14180) << k_funcinfo << endl;
+
+	KDialogBase *stealthSettingDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "stealthSettingDialog", "true",
+				i18n("Stealth Setting"), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
+	YahooStealthSetting *stealthWidget = new YahooStealthSetting( stealthSettingDialog, "stealthSettingWidget" );
+	stealthSettingDialog->setMainWidget( stealthWidget );
+
+	if ( stealthSettingDialog->exec() == QDialog::Rejected )
+		return;
+	
+	if ( stealthWidget->radioOnline->isChecked() )
+		m_account->yahooSession()->stealthContact( m_userId, 1 );
+	else
+		m_account->yahooSession()->stealthContact( m_userId, 0 );
+
+	stealthSettingDialog->delayedDestruct();
 }
 
 void YahooContact::buzzContact()
