@@ -337,7 +337,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::disconnect(m_session, SIGNAL(webcamImageReceived(const QString&, const QPixmap& )), this, SLOT(slotGotWebcamImage(const QString&, const QPixmap& )));
 		
-		QObject::disconnect(m_session, SIGNAL(slotWebcamClosed(const QString&, int )), this, SLOT(slotWebcamClosed(const QString&, int )));	
+		QObject::disconnect(m_session, SIGNAL(remoteWebcamClosed(const QString&, int )), this, SLOT(slotWebcamClosed(const QString&, int )));	
 	}
 }
 
