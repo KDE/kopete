@@ -58,7 +58,7 @@ typedef enum
 #ifdef __linux__
 	VIDEODEV_DRIVER_V4L,
 #ifdef HAVE_V4L2
-	VIDEODEV_DRIVER_V4L2,
+	VIDEODEV_DRIVER_V4L2
 #endif
 #endif
 } videodev_driver;
@@ -75,7 +75,7 @@ typedef enum
 	PIXELFORMAT_RGB24,
 	PIXELFORMAT_BGR24,
 	PIXELFORMAT_RGB32,
-	PIXELFORMAT_BGR32,
+	PIXELFORMAT_BGR32
 } pixel_format;
 
 typedef enum
@@ -83,7 +83,7 @@ typedef enum
 	IO_METHOD_NONE,
 	IO_METHOD_READ,
 	IO_METHOD_MMAP,
-	IO_METHOD_USERPTR,
+	IO_METHOD_USERPTR
 } io_method;
 
 struct buffer2
