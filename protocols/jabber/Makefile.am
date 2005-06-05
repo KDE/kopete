@@ -1,5 +1,5 @@
 METASOURCES = AUTO
-SUBDIRS = ui icons libiris kioslave
+SUBDIRS = ui icons libiris . kioslave
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(srcdir)/libiris/iris/include \
 	-I$(srcdir)/libiris/iris/xmpp-im \
