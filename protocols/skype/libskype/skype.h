@@ -234,6 +234,10 @@ class Skype : public QObject
 		 * Set a command to start skype by
 		 */
 		void setSkypeCommand(const QString &command);
+		/**
+		 * Sets if we wait a bit before connecting to Skype after it's start-up
+		 */
+		void setWaitConnect(int value);
 	signals:
 		/**
 		 * Emited when the skype changes to online (or says it goes online)

@@ -209,6 +209,10 @@ Q_OBJECT
 		 * What is the command that launches skype?
 		 */
 		const QString &getSkypeCommand() const;
+		/**
+		 * Do we wait before connecting?
+		 */
+		int getWaitBeforeConnect() const;
 	public slots:
 		/**
 		 * Disconnects from server.
@@ -301,6 +305,10 @@ Q_OBJECT
 		 * Set command by what the Skype will be started
 		 */
 		void setSkypeCommand(const QString &command);
+		/**
+		 * Set if we wait a while before connecting to just started skype
+		 */
+		void setWaitBeforeConnect(int value);
 	signals:
 		/**
 		 * This is emited when the ID of the last sent message is known

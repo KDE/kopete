@@ -55,8 +55,6 @@ class SkypeConnection : public QObject
 	private:
 		///The D-pointer for internal things
 		SkypeConnectionPrivate *d;
-		///Starts logging into skype
-		void startLogOn();
 	private slots:
 		///This one listens for incoming messages
 		void gotMessage(const DBusQt::Message &);
@@ -64,6 +62,8 @@ class SkypeConnection : public QObject
 		void parseMessage(const QString &message);
 		///Set environment variables set from dbus-launch command (private DBus session)
 		void setEnv(KProcess *, char *buff, int len);
+		///Starts logging into skype
+		void startLogOn();
 		///Another interval try to connect to just started Skype
 		void tryConnect();
 	public slots:
@@ -77,8 +77,9 @@ class SkypeConnection : public QObject
 		 * @param bus 0 - session bus, 1 - system bus
 		 * @param startDbus Start session DBUs if needed (etc. not running and session DBus should be used)
 		 * @param launchTimeout How long max. should wait to tell that launching skype did not work
+		 * @param waitBeforeConnect Do we need to wait a while after skype starts?
 		 */
-		void connectSkype(const QString &start, const QString &appName, int protocolVer, int bus, bool startDBus, int launchTimeout);
+		void connectSkype(const QString &start, const QString &appName, int protocolVer, int bus, bool startDBus, int launchTimeout, int waitBeforeConnect);
 		/**
 		 * Disconnects from skype
 		 * @see connectionClosed

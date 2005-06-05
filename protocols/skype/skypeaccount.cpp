@@ -69,6 +69,8 @@ class SkypeAccountPrivate {
 		QString skypeCommand;
 		///What is my name, by the way?
 		QString myName;
+		///Do we wait before connecting?
+		int waitBeforeConnect;
 };
 
 SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, "Skype", (char *)0) {
@@ -96,6 +98,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 	setLaunchTimeout(config->readNumEntry("LaunchTimeout", 30));
 	d->myName = config->readEntry("MyselfName", "Skype");
 	setSkypeCommand(config->readEntry("SkypeCommand", "artsdsp skype --use-session-dbus"));
+	setWaitBeforeConnect(config->readNumEntry("WaitBeforeConnect", 10));
 
 	//create myself contact
 	SkypeContact *_myself = new SkypeContact(this, "Skype", Kopete::ContactList::self()->myself(), false);
@@ -224,6 +227,7 @@ void SkypeAccount::save() {
 	config->writeEntry("LaunchTimeout", getLaunchTimeout());
 	config->writeEntry("SkypeCommand", getSkypeCommand());
 	config->writeEntry("MyselfName", d->myName);
+	config->writeEntry("WaitBeforeConnect", getWaitBeforeConnect());
 
 	//save it into the skype connection as well
 	d->skype.setValues(launchType, author);
@@ -500,6 +504,15 @@ const QString &SkypeAccount::getSkypeCommand() const {
 void SkypeAccount::setMyselfName(const QString &name) {
 	d->myName = name;
 	myself()->setNickName(name);
+}
+
+void SkypeAccount::setWaitBeforeConnect(int value) {
+	d->waitBeforeConnect = value;
+	d->skype.setWaitConnect(value);
+}
+
+int SkypeAccount::getWaitBeforeConnect() const {
+	return d->waitBeforeConnect;
 }
 
 #include "skypeaccount.moc"

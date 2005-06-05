@@ -96,6 +96,8 @@ class SkypePrivate {
 		int launchTimeout;
 		///By what command is skype started?
 		QString skypeCommand;
+		///Do we wait before connecting?
+		int waitBeforeConnect;
 };
 
 Skype::Skype(SkypeAccount &account) : QObject() {
@@ -192,7 +194,7 @@ void Skype::queueSkypeMessage(const QString &message, bool deleteQueue) {
 		if (deleteQueue)
 			d->messageQueue.clear();//delete all old messages
 		d->messageQueue << message;//add the new one
-		d->connection.connectSkype((d->start) ? d->skypeCommand : "", d->appName, PROTOCOL_MAX, d->bus, d->startDBus, d->launchTimeout);//try to connect
+		d->connection.connectSkype((d->start) ? d->skypeCommand : "", d->appName, PROTOCOL_MAX, d->bus, d->startDBus, d->launchTimeout, d->waitBeforeConnect);//try to connect
 	}
 }
 
@@ -598,6 +600,10 @@ void Skype::setLaunchTimeout(int seconds) {
 
 void Skype::setSkypeCommand(const QString &command) {
 	d->skypeCommand = command;
+}
+
+void Skype::setWaitConnect(int value) {
+	d->waitBeforeConnect;
 }
 
 #include "skype.moc"

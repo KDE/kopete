@@ -46,6 +46,8 @@ class SkypeConnectionPrivate {
 		QTimer *startTimer;
 		///How much time rest? (until I say starting skype did not work)
 		int timeRemaining;
+		///Wait a while before we conect to just-started skype?
+		int waitBeforeConnect;
 };
 
 SkypeConnection::SkypeConnection() {
@@ -68,6 +70,11 @@ SkypeConnection::~SkypeConnection() {
 
 void SkypeConnection::startLogOn() {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
+
+	if (d->startTimer) {
+		d->startTimer->deleteLater();
+		d->startTimer = 0L;
+	}
 
 	DBusQt::Message ping("com.Skype.API", "/com/Skype", "com.Skype.API", "Ping");//create a ping message
 	ping.setAutoActivation(true);
@@ -141,13 +148,18 @@ void SkypeConnection::parseMessage(const QString &message) {
 				d->protocolVer = version;//this will be the used version of protocol
 				d->fase = cfConnected;
 				emit connectionDone(seSuccess, version);//tell him that we are connected at last
+			} else {//the API is not ready yet, try later
+				emit error(i18n("Skype API not ready yet, wait a bit longer"));
+				emit connectionDone(seUnknown, 0);
+				disconnectSkype(crLost);
+				return;
 			}
 			break;//Other messages are ignored, waiting for the protocol response
 		}
 	}
 }
 
-void SkypeConnection::connectSkype(const QString &start, const QString &appName, int protocolVer, int bus, bool startDBus, int launchTimeout) {
+void SkypeConnection::connectSkype(const QString &start, const QString &appName, int protocolVer, int bus, bool startDBus, int launchTimeout, int waitBeforeConnect) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (d->fase != cfNotConnected)
@@ -168,7 +180,7 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 			bus_launch << "--exit-with-session";
 			connect(&bus_launch, SIGNAL(receivedStdout(KProcess *, char *, int)), this, SLOT(setEnv(KProcess *, char*, int )));
 			bus_launch.start(KProcess::Block, KProcess::Stdout);
-			connectSkype(start, appName, protocolVer, bus, false, launchTimeout);//try it once again, but if the dbus start did not work, it won't work that time ether, so do not cycle
+			connectSkype(start, appName, protocolVer, bus, false, launchTimeout, waitBeforeConnect);//try it once again, but if the dbus start did not work, it won't work that time ether, so do not cycle
 			return;
 		}
 		emit error(i18n("Could not connect to DBus"));
@@ -207,6 +219,7 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 				connect(d->startTimer, SIGNAL(timeout()), this, SLOT(tryConnect()));
 				d->startTimer->start(1000);
 				d->timeRemaining = launchTimeout;
+				d->waitBeforeConnect = waitBeforeConnect;
 				return;
 			}
 			emit error(i18n("Could not find Skype"));
@@ -368,7 +381,13 @@ void SkypeConnection::tryConnect() {
 	d->startTimer->stop();
 	d->startTimer->deleteLater();
 	d->startTimer = 0L;
-	startLogOn();//It is responding now, OK to connect now
+	if (d->waitBeforeConnect) {
+		d->startTimer = new QTimer();
+		QObject::connect(d->startTimer, SIGNAL(timeout()), this, SLOT(startLogOn()));
+		d->startTimer->start(1000 * d->waitBeforeConnect, true);
+		//Skype does not like being bothered right after it's start, give it a while to breathe
+	} else
+		startLogOn();//OK, it's your choise
 }
 
 #include "skypeconnection.moc"

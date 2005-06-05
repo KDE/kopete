@@ -65,6 +65,7 @@ skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *acc
 		DBusCheck->setChecked(d->account->getStartDBus());
 		LaunchSpin->setValue(d->account->getLaunchTimeout());
 		CommandEdit->setText(d->account->getSkypeCommand());
+		WaitSpin->setValue(d->account->getWaitBeforeConnect());
 		if (d->account->closeCallWindowTimeout()) {
 			AutoCloseCallCheck->setChecked(true);
 			CloseTimeoutSpin->setValue(d->account->closeCallWindowTimeout());
@@ -114,6 +115,7 @@ Kopete::Account *skypeEditAccount::apply() {
 	skype->setStartDBus(DBusCheck->isChecked());
 	skype->setLaunchTimeout(LaunchSpin->value());
 	skype->setSkypeCommand(CommandEdit->text());
+	skype->setWaitBeforeConnect(WaitSpin->value());
 	if (AutoCloseCallCheck->isChecked()) {
 		skype->setCloseWindowTimeout(CloseTimeoutSpin->value());
 	} else {
