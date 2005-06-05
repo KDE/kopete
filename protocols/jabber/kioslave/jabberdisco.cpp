@@ -374,24 +374,26 @@ void JabberDiscoProtocol::dispatchLoop ()
 
 extern "C"
 {
-	
-	int kdemain ( int argc, char **argv )
+	KDE_EXPORT int kdemain(int argc, char **argv);
+}
+
+
+int kdemain ( int argc, char **argv )
+{
+	KApplication app(argc, argv, "kio_jabberdisco", false, true);
+
+	kdDebug(JABBER_DISCO_DEBUG) << k_funcinfo << endl;
+
+	if ( argc != 4 )
 	{
-		KApplication app(argc, argv, "kio_jabberdisco", false, true);
-
-		kdDebug(JABBER_DISCO_DEBUG) << k_funcinfo << endl;
-
-		if ( argc != 4 )
-		{
-			kdDebug(JABBER_DISCO_DEBUG) << "Usage: kio_jabberdisco protocol domain-socket1 domain-socket2" << endl;
-			exit(-1);
-		}
-
-		JabberDiscoProtocol slave ( argv[2], argv[3] );
-		slave.dispatchLoop ();
-
-		return 0;
+		kdDebug(JABBER_DISCO_DEBUG) << "Usage: kio_jabberdisco protocol domain-socket1 domain-socket2" << endl;
+		exit(-1);
 	}
+
+	JabberDiscoProtocol slave ( argv[2], argv[3] );
+	slave.dispatchLoop ();
+
+	return 0;
 }
 
 #include "jabberdisco.moc"
