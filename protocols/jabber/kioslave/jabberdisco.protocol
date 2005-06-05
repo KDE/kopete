@@ -10,3 +10,4 @@ linking=false
 moving=false
 Icon=remote
 Description=A KIO slave for Jabber Service Discovery
+Description[da]=En kioslave til at opdage jabber service
