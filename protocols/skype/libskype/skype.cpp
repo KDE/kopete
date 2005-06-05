@@ -603,7 +603,7 @@ void Skype::setSkypeCommand(const QString &command) {
 }
 
 void Skype::setWaitConnect(int value) {
-	d->waitBeforeConnect;
+	d->waitBeforeConnect = value;
 }
 
 #include "skype.moc"

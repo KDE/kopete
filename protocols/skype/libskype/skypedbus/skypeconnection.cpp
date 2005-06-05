@@ -382,9 +382,7 @@ void SkypeConnection::tryConnect() {
 	d->startTimer->deleteLater();
 	d->startTimer = 0L;
 	if (d->waitBeforeConnect) {
-		d->startTimer = new QTimer();
-		QObject::connect(d->startTimer, SIGNAL(timeout()), this, SLOT(startLogOn()));
-		d->startTimer->start(1000 * d->waitBeforeConnect, true);
+		QTimer::singleShot(1000 * d->waitBeforeConnect, this, SLOT(startLogOn()));
 		//Skype does not like being bothered right after it's start, give it a while to breathe
 	} else
 		startLogOn();//OK, it's your choise
