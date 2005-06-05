@@ -223,9 +223,6 @@
                             <property name="text">
                                 <string>Override defau&amp;lt server information</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+L</string>
-                            </property>
                             <property name="checked">
                                 <bool>false</bool>
                             </property>

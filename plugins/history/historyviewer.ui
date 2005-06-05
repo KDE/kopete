@@ -26,9 +26,6 @@
             <height>200</height>
         </size>
     </property>
-    <property name="caption">
-        <string>HistoryViewer</string>
-    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -162,9 +159,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Search</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
                     </property>
                 </widget>
             </hbox>

@@ -13,9 +13,6 @@
             <height>383</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>Form1</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -26,9 +23,6 @@
             </property>
             <property name="text">
                 <string>En&amp;able global identity</string>
-            </property>
-            <property name="accel">
-                <string>Alt+A</string>
             </property>
         </widget>
         <widget class="QGroupBox">
@@ -74,9 +68,6 @@
                     </property>
                     <property name="text">
                         <string>Synchronize my global &amp;nickname with the nickname of this account</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+N</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Use the name of the child contact</string>
@@ -176,9 +167,6 @@
                             <property name="text">
                                 <string>E&amp;xport a display picture</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+X</string>
-                            </property>
                         </widget>
                         <widget class="QLabel">
                             <property name="name">
@@ -219,9 +207,6 @@
                                     </property>
                                     <property name="text">
                                         <string>Select &amp;Image...</string>
-                                    </property>
-                                    <property name="accel">
-                                        <string>Alt+I</string>
                                     </property>
                                 </widget>
                                 <spacer>

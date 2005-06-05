@@ -45,9 +45,6 @@
                     <property name="text">
                         <string>Show tree &amp;branch lines</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+B</string>
-                    </property>
                 </widget>
                 <widget class="QLayoutWidget">
                     <property name="name">
@@ -81,9 +78,6 @@
                             <property name="text">
                                 <string>In&amp;dent contacts</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+D</string>
-                            </property>
                         </widget>
                     </hbox>
                 </widget>
@@ -93,9 +87,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Hide vertical scrollbar</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+H</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>&lt;b&gt;Always&lt;/b&gt; disables the vetical scrollbar</string>

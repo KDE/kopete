@@ -18,9 +18,6 @@
             <height>75</height>
         </size>
     </property>
-    <property name="caption">
-        <string>YahooStealthSetting</string>
-    </property>
     <widget class="QButtonGroup">
         <property name="name">
             <cstring>buttonGroup1</cstring>
@@ -69,9 +66,6 @@
             </property>
             <property name="text">
                 <string>per&amp;manently Offline</string>
-            </property>
-            <property name="accel">
-                <string>Alt+M</string>
             </property>
         </widget>
     </widget>

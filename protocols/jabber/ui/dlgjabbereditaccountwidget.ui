@@ -112,9 +112,6 @@
                                 <property name="text">
                                     <string>Re&amp;gister New Account</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+G</string>
-                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Register a new account on this network.</string>
                                 </property>
@@ -222,9 +219,6 @@
                                 </property>
                                 <property name="text">
                                     <string>Change &amp;your password</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+Y</string>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="0" column="0">
