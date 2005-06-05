@@ -133,10 +133,10 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 				buffer.open( IO_WriteOnly );
 				renderedImage.save( &buffer, "PNG" );
 				QString imageURL = QString::fromLatin1("data:image/png;base64,%1").arg( KCodecs::base64Encode( ba ) );
-				replaceMap[Kopete::Message::escape(match)] = imageURL;
+				replaceMap[match] = imageURL;
 			}
 			#else
-			replaceMap[Kopete::Message::escape(match)] = fileName;
+			replaceMap[match] = fileName;
 			#endif
 		}
 	}
@@ -144,18 +144,18 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 	if(replaceMap.isEmpty()) //we haven't found any latex strings
 		return;
 
-	messageText=Kopete::Message::escape(messageText);
+	messageText= msg.escapedBody();
 
+	int imagePxWidth,imagePxHeight;
 	for (QMap<QString,QString>::ConstIterator it = replaceMap.begin(); it != replaceMap.end(); ++it)
 	{
-		int imagePxWidth = 0;
-		int imagePxHeight = 0;
 		QImage theImage(*it);
+		if(theImage.isNull())
+			continue;
 		imagePxWidth = theImage.width();
 		imagePxHeight = theImage.height();
-		QString escapedLATEX=it.key();
-		escapedLATEX.replace("\"","&quot;");  //we need  the escape quotes because that string will be in a title="" argument
-		messageText.replace(it.key(), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(imagePxHeight) + "\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
+		QString escapedLATEX=QStyleSheet::escape(it.key()).replace("\"","&quot;");  //we need  the escape quotes because that string will be in a title="" argument, but not the \n
+		messageText.replace(Kopete::Message::escape(it.key()), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(imagePxHeight) + "\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
 	}
 
 	msg.setBody( messageText, Kopete::Message::RichText );
