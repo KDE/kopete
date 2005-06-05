@@ -57,58 +57,16 @@ void LatexGUIClient::slotPreview()
 
 	Kopete::Message msg = m_manager->view()->currentMessage();
 	QString messageText = msg.plainBody();
-	if ( messageText.isEmpty() )
-		return;
-
-	QRegExp rg("\\$\\$.+\\$\\$");
-	rg.setMinimal(true);
-
-	int pos=0;
-
-	QMap<QString, QString> replaceMap;
-	while (pos >= 0 && (unsigned int)pos < messageText.length())
-	{
-//		kdDebug() << k_funcinfo  << " searching pos: " << pos << endl;
-		pos = rg.search(messageText, pos);
-		
-		if (pos >= 0 )
-		{
-			QString match = rg.cap(0);
-			pos += rg.matchedLength();
-
-			QString formul=match;
-			if(!LatexPlugin::plugin()->securityCheck(formul))
-				continue;
-			
-			QString fileName=LatexPlugin::plugin()->handleLatex(formul.replace("$$",""));
-			
-			replaceMap[match] = fileName;
-		}
-	}
-
-	if(replaceMap.isEmpty()) //we haven't found any latex strings
+	if(!messageText.contains("$$")) //we haven't found any latex strings
 	{
 		KMessageBox::sorry(reinterpret_cast<QWidget*>(m_manager->view()) , i18n("There are no latex in the message you are typing.  The latex formula must be included between $$ and $$ "),	i18n("No Latex formula - Kopete") );
 		return;
 	}
 
-	messageText= msg.escapedBody();
-
-	int imagePxWidth, imagePxHeight;
-	for (QMap<QString,QString>::ConstIterator it = replaceMap.begin(); it != replaceMap.end(); ++it)
-	{
-		QImage theImage(*it);
-		if(theImage.isNull())
-			continue;
-		imagePxWidth = theImage.width();
-		imagePxHeight = theImage.height();
-		
-		QString escapedLATEX=QStyleSheet::escape(it.key()).replace("\"","&quot;");  //we need  the escape quotes because that string will be in a title="" argument, but not the \n
-		messageText.replace(Kopete::Message::escape(it.key()), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(imagePxHeight) + "\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
-	}
-
-	msg.setBody( i18n("<b>Preview of the latex message :</b> <br />%1").arg(messageText), Kopete::Message::RichText );
-	m_manager->appendMessage(msg);
+	msg=Kopete::Message( msg.from() , msg.to() ,
+						 i18n("<b>Preview of the latex message :</b> <br />%1").arg(msg.plainBody()),
+						 Kopete::Message::Internal , Kopete::Message::RichText);
+	m_manager->appendMessage(msg) ;
 }
 
 
