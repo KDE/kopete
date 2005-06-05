@@ -19,12 +19,12 @@
 
 #include <qvariant.h>
 
-#include <kdebug.h>
 #include <kaction.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <qimage.h>
 #include <qregexp.h>
+#include <qstylesheet.h>
 
 #include "kopetechatsession.h"
 #include "kopeteview.h"
@@ -82,7 +82,7 @@ void LatexGUIClient::slotPreview()
 			
 			QString fileName=LatexPlugin::plugin()->handleLatex(formul.replace("$$",""));
 			
-			replaceMap[Kopete::Message::escape(match)] = fileName;
+			replaceMap[match] = fileName;
 		}
 	}
 
@@ -92,21 +92,22 @@ void LatexGUIClient::slotPreview()
 		return;
 	}
 
-	messageText=Kopete::Message::escape(messageText);
+	messageText= msg.escapedBody();
 
+	int imagePxWidth, imagePxHeight;
 	for (QMap<QString,QString>::ConstIterator it = replaceMap.begin(); it != replaceMap.end(); ++it)
 	{
-		int imagePxWidth = 0;
-		int imagePxHeight = 0;
 		QImage theImage(*it);
+		if(theImage.isNull())
+			continue;
 		imagePxWidth = theImage.width();
 		imagePxHeight = theImage.height();
-		QString escapedLATEX=it.key();
-		escapedLATEX.replace("\"","&quot;");  //we need  the escape quotes because that string will be in a title="" argument
-		messageText.replace(it.key(), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(imagePxHeight) + "\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
+		
+		QString escapedLATEX=QStyleSheet::escape(it.key()).replace("\"","&quot;");  //we need  the escape quotes because that string will be in a title="" argument, but not the \n
+		messageText.replace(Kopete::Message::escape(it.key()), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(imagePxHeight) + "\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
 	}
 
-	msg.setBody( i18n("Preview of the latex message : <br />%1").arg(messageText), Kopete::Message::RichText );
+	msg.setBody( i18n("<b>Preview of the latex message :</b> <br />%1").arg(messageText), Kopete::Message::RichText );
 	m_manager->appendMessage(msg);
 }
 
