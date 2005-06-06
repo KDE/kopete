@@ -141,7 +141,6 @@ signals:
 	void error( const QString&, const QString& );
 	void messageReceived( KGaduMessage* );
 	void ackReceived( unsigned int );
-	void notify( KGaduNotify* );
 	void contactStatusChanged( KGaduNotify* );
 	void pong();
 	void connectionFailed( gg_failure_t failure );
