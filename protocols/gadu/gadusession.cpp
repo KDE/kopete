@@ -654,7 +654,6 @@ GaduSession::notify60( gg_event* event )
 	KGaduNotifyList nl;
 	KGaduNotify* gn;
 	unsigned int n;
-	nl.setAutoDelete( TRUE );
 
 	for( n=0 ; event->event.notify60[n].uin ; n++ ) {
 		gn = new KGaduNotify;
@@ -675,6 +674,11 @@ GaduSession::notify60( gg_event* event )
 	}
 	if ( n ) {
 		emit notify( &nl );
+		KGaduNotifyList::iterator notifyListIt;
+		for ( notifyListIt = nl.begin(); notifyListIt != nl.end() ; ++notifyListIt ) {
+			delete *notifyListIt;
+	
+		}
 	}
 }
 

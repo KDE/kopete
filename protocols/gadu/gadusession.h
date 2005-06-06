@@ -69,7 +69,7 @@ struct KGaduNotify {
 	unsigned int contact_id;
 };
 
-typedef QPtrList<KGaduNotify> KGaduNotifyList;
+typedef QValueList<KGaduNotify*> KGaduNotifyList;
 
 struct ResLine{
 	unsigned int uin;

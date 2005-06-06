@@ -91,9 +91,7 @@ public:
 };
 
 // FIXME: use dynamic cache please, i consider this as broken resolution of this problem
-
-static const int NUM_SERVERS = 9;
-static const char* const servers_ip[ NUM_SERVERS ] = {
+static const char* const servers_ip[] = {
 	"217.17.41.88",
 	"217.17.41.92",
 	"217.17.41.93",
@@ -102,8 +100,10 @@ static const char* const servers_ip[ NUM_SERVERS ] = {
 	"217.17.41.86",
 	"217.17.41.84",
 	"217.17.41.83",
-	"217.17.41.82",
+	"217.17.41.82"
 };
+
+#define NUM_SERVERS (sizeof(servers_ip)/sizeof(char*))
 
  GaduAccount::GaduAccount( Kopete::Protocol* parent, const QString& accountID,const char* name )
 : Kopete::PasswordedAccount( parent, accountID, 0, name )
@@ -126,7 +126,7 @@ static const char* const servers_ip[ NUM_SERVERS ] = {
 	p->status = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
 	p->lastDescription = QString::null;
 
-	for ( int i = 0; i < NUM_SERVERS; i++ ) {
+	for ( unsigned int i = 0; i < NUM_SERVERS ; i++ ) {
 		ip.setAddress( QString( servers_ip[i] ) );
 		p->servers.append( htonl( ip.toIPv4Address() ) );
 		kdDebug( 14100 ) << "adding IP: " <<  p->servers[ i ] << " to cache" << endl;
@@ -580,12 +580,11 @@ GaduAccount::ackReceived( unsigned int recipient  )
 void
 GaduAccount::notify( KGaduNotifyList* notifyList )
 {
-	QPtrListIterator<KGaduNotify>notifyListIterator( *notifyList );
-	unsigned int i;
+	KGaduNotifyList::iterator notifyListIt;
 
-	for ( i = notifyList->count() ; i-- ; ++notifyListIterator ) {
-		kdDebug(14100) << "### NOTIFY " << (*notifyListIterator)->contact_id << " " << (*notifyListIterator)->status << endl;
-		contactStatusChanged( (*notifyListIterator) );
+	for ( notifyListIt = notifyList->begin(); notifyListIt != notifyList->end() ; ++notifyListIt ) {
+		kdDebug(14100) << "### NOTIFY " << (*notifyListIt)->contact_id << " " << (*notifyListIt)->status << endl;
+		contactStatusChanged( (*notifyListIt) );
 	}
 }
 
@@ -647,7 +646,7 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 				}
 			}
 			else {
-				if ( p->currentServer == NUM_SERVERS-1 ) {
+				if ( p->currentServer == NUM_SERVERS - 1 ) {
 					p->serverIP = 0;
 					p->currentServer = -1;
 					kdDebug(14100) << "trying : " << "IP from hub " << endl;
