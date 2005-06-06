@@ -41,11 +41,6 @@ GaduDCCServer::GaduDCCServer( QHostAddress* dccIp, unsigned int port )
 {
 	kdDebug( 14100 ) << "dcc socket NULL, creating new liteining socket " << endl;
 
-	if ( dccIp == NULL ) {
-		dccIp = new QHostAddress();
-		dccIp->setAddress( "255.255.255.255" );
-	}
-
 	// don't care about UIN at that point
 	dccSock = gg_dcc_socket_create( (unsigned int)-1, port );
 
@@ -57,7 +52,12 @@ GaduDCCServer::GaduDCCServer( QHostAddress* dccIp, unsigned int port )
 	kdDebug(14100) << "attempt to initialize gadu-dcc listeing socket sucess" << endl;
 
 	// using global variables sucks, don't have too much choice thou
-	gg_dcc_ip = htonl( dccIp->ip4Addr() );
+	if ( dccIp == NULL ) {
+		gg_dcc_ip = 0xffffffff; // 255.255.255.255
+	}
+	else {
+		gg_dcc_ip = htonl( dccIp->ip4Addr() );
+	}
 	gg_dcc_port = dccSock->port;
 
 	createNotifiers( true );
