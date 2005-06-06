@@ -163,8 +163,7 @@ GaduSession::login( KGaduLoginParams* loginp )
 
 	memset( &params_, 0, sizeof(params_) );
 
-	params_.status_descr	= new char[ desc.length() + 1 ];
-	qstrcpy( params_.status_descr, desc );
+	params_.status_descr	= (char*)desc.data();
 
 	params_.uin		= loginp->uin;
 	params_.password	= (char *)( loginp->password.ascii() );
@@ -189,7 +188,6 @@ GaduSession::login( KGaduLoginParams* loginp )
 	kdDebug(14100)<<"gadusession::login, server ( " << loginp->server << " ), tls(" << loginp->useTls << ") " <<endl;
 	login( &params_ );
 
-	delete params_.status_descr;
 }
 
 void
