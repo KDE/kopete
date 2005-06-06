@@ -649,12 +649,17 @@ GaduSession::failureDescription( gg_failure_t f )
 void
 GaduSession::notify60( gg_event* event )
 {
-	KGaduNotifyList nl;
-	KGaduNotify* gn;
+	KGaduNotify* gn = NULL;
 	unsigned int n;
+	
+	if ( event->event.notify60[0].uin ) {
+		gn = new KGaduNotify;
+	}
+	else {
+		return;
+	}
 
 	for( n=0 ; event->event.notify60[n].uin ; n++ ) {
-		gn = new KGaduNotify;
 		gn->contact_id	= event->event.notify60[n].uin;
 		gn->status	= event->event.notify60[n].status;
 		gn->remote_ip.setAddress( ntohl( event->event.notify60[n].remote_ip ) );
@@ -668,16 +673,9 @@ GaduSession::notify60( gg_event* event )
 		gn->version	= event->event.notify60[n].version;
 		gn->image_size	= event->event.notify60[n].image_size;
 		gn->description	= textcodec->toUnicode( event->event.notify60[n].descr );
-		nl.append( gn );
+		emit contactStatusChanged( gn );	
 	}
-	if ( n ) {
-		emit notify( &nl );
-		KGaduNotifyList::iterator notifyListIt;
-		for ( notifyListIt = nl.begin(); notifyListIt != nl.end() ; ++notifyListIt ) {
-			delete *notifyListIt;
-	
-		}
-	}
+	delete gn;
 }
 
 void

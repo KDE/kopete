@@ -190,8 +190,6 @@ GaduAccount::initConnections()
 				SLOT( error( const QString&, const QString& ) ) );
 	QObject::connect( p->session_, SIGNAL( messageReceived( KGaduMessage* ) ),
 				SLOT( messageReceived( KGaduMessage* ) )  );
-	QObject::connect( p->session_, SIGNAL( notify( KGaduNotifyList* ) ),
-				SLOT( notify( KGaduNotifyList* ) ) );
 	QObject::connect( p->session_, SIGNAL( contactStatusChanged( KGaduNotify* ) ),
 				SLOT( contactStatusChanged( KGaduNotify* ) ) );
 	QObject::connect( p->session_, SIGNAL( connectionFailed( gg_failure_t )),
@@ -575,19 +573,6 @@ GaduAccount::ackReceived( unsigned int recipient  )
 		kdDebug(14100) << "####" << "Received an ACK from an unknown user : " << recipient << endl;
 	}
 }
-
-
-void
-GaduAccount::notify( KGaduNotifyList* notifyList )
-{
-	KGaduNotifyList::iterator notifyListIt;
-
-	for ( notifyListIt = notifyList->begin(); notifyListIt != notifyList->end() ; ++notifyListIt ) {
-		kdDebug(14100) << "### NOTIFY " << (*notifyListIt)->contact_id << " " << (*notifyListIt)->status << endl;
-		contactStatusChanged( (*notifyListIt) );
-	}
-}
-
 
 void
 GaduAccount::contactStatusChanged( KGaduNotify* gaduNotify )

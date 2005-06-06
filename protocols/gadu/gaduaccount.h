@@ -124,7 +124,6 @@ protected:
 
 private slots:
 	void startNotify();
-	void notify( KGaduNotifyList* );
 
 	void messageReceived( KGaduMessage* );
 	void ackReceived( unsigned int );

@@ -69,8 +69,6 @@ struct KGaduNotify {
 	unsigned int contact_id;
 };
 
-typedef QValueList<KGaduNotify*> KGaduNotifyList;
-
 struct ResLine{
 	unsigned int uin;
 	QString firstname;
@@ -143,7 +141,7 @@ signals:
 	void error( const QString&, const QString& );
 	void messageReceived( KGaduMessage* );
 	void ackReceived( unsigned int );
-	void notify( KGaduNotifyList* );
+	void notify( KGaduNotify* );
 	void contactStatusChanged( KGaduNotify* );
 	void pong();
 	void connectionFailed( gg_failure_t failure );
