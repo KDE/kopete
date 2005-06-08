@@ -19,4 +19,6 @@ Name=Skype
 Comment=Skype protocol plugin (only wrapper!)
 Comment[fr]=Module pour le protocole Skype (uniquement une encapsulation)
 Comment[it]=Plugin protocollo Skype (solo wrapper!)
+Comment[pa]=Skype ਪ੍ਰੋਟੋਕਾਲ ਪਲੱਗਿੰਨ (ਸਿਰਫ਼ ਰੇਪਰ!)
+Comment[pt]='Plugin' do protocolo Skype (apenas uma interface!)
 Comment[sv]=Skype-protokollinsticksprogram (bara omgivning)
