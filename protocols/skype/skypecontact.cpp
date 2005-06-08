@@ -69,6 +69,8 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 	: Kopete::Contact(account, id, parent, QString::null) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
+	setNickName(id);//Just default, should be replaced later by something.. 
+
 	setOnlineStatus(account->protocol()->Offline);
 
 	d = new SkypeContactPrivate;//create the insides
@@ -76,7 +78,7 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 	d->account = account;//save the account for future, it will be needed
 	account->prepareContact(this);//let the account prepare us
 	d->user = user;
-	d->callContactAction = 0L; 
+	d->callContactAction = 0L;
 	connect(this, SIGNAL(setCallPossible(bool )), this, SLOT(enableCall(bool )));
 	connect(this, SIGNAL(onlineStatusChanged(Kopete::Contact*,const Kopete::OnlineStatus&,const Kopete::OnlineStatus&)), this, SLOT(statusChanged()));
 	if (account->canComunicate() && user)
@@ -96,7 +98,7 @@ Kopete::ChatSession *SkypeContact::manager(Kopete::Contact::CanCreateFlags CanCr
 	if ((!d->session) && (CanCreate)) {//It is not there and I can create it
 		d->session = new SkypeChatSession(d->account, this);
 		connect(d->session, SIGNAL(destroyed()), this, SLOT(removeChat()));//Care about loosing the session
-		connect(d->session, SIGNAL(becameMultiChat()), this, SLOT(removeChat()));//This means it no longer belongs to this user
+		connect(d->session, SIGNAL(becameMultiChat(const QString&, SkypeChatSession* )), this, SLOT(removeChat()));//This means it no longer belongs to this user
 	}
 
 	return d->session;//and return it
@@ -187,7 +189,7 @@ void SkypeContact::setInfo(const QString &change) {
 }
 
 QString SkypeContact::formattedName() const {
-	if (!d->user) 
+	if (!d->user)
 		return nickName();
 	return d->fullName;
 }
@@ -268,7 +270,7 @@ bool SkypeContact::hasChat() const {
 	return d->session;//does it have a chat session?
 }
 
-void SkypeContact::receiveIm(const QString &message) {
+void SkypeContact::receiveIm(const QString &message, const QString &chat) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (!hasChat()) {
@@ -278,6 +280,7 @@ void SkypeContact::receiveIm(const QString &message) {
 	}
 
 	Kopete::Message mes(this, d->account->myself(), message, Kopete::Message::Inbound);//create the message
+	d->session->setChatId(chat);
 	d->session->appendMessage(mes);//add it to the session
 }
 
@@ -304,7 +307,9 @@ void SkypeContact::enableCall(bool value) {
 void SkypeContact::statusChanged() {
 	const Kopete::OnlineStatus &myStatus = onlineStatus();
 	SkypeProtocol * protocol = d->account->protocol();
-	if ((myStatus == protocol->Online) || (myStatus == protocol->Away) || (myStatus == protocol->NotAvailable) || (myStatus == protocol->DoNotDisturb) || (myStatus == protocol->NoAuth) || (myStatus == protocol->NotInList) || (myStatus == protocol->Phone) || (myStatus == protocol->SkypeMe))
+	if (this == d->account->myself()) {
+		emit setCallPossible(false);
+	} else if ((myStatus == protocol->Online) || (myStatus == protocol->Away) || (myStatus == protocol->NotAvailable) || (myStatus == protocol->DoNotDisturb) || (myStatus == protocol->NoAuth) || (myStatus == protocol->NotInList) || (myStatus == protocol->Phone) || (myStatus == protocol->SkypeMe))
 		emit setCallPossible(true);
 	else
 		emit setCallPossible(false);
@@ -321,6 +326,10 @@ void SkypeContact::connectionStatus(bool connected) {
 		statusChanged();
 	} else
 		emit setCallPossible(false);
+}
+
+SkypeChatSession *SkypeContact::getChatSession() {
+	return d->session;
 }
 
 #include "skypecontact.moc"

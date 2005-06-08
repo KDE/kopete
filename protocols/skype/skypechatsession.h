@@ -39,16 +39,6 @@ class SkypeChatSession : public Kopete::ChatSession
 	private slots:
 		///sends message to the skype user who this chat belongs to
 		void message(Kopete::Message&);
-		/**
-		 * This slot is used for knowing the ID of the last message and putting it into the pending list
-		 * @param id ID of the message
-		 */
-		void knowId(const QString &id);
-		/**
-		 * Used for knowing when a message has been sent by skype
-		 * @param id ID of the message that has been sent
-		 */
-		void messageSent(const QString &id);
 	public:
 		/**
 		 * Constructor. The chat session will be created with first message comming out.
@@ -62,14 +52,60 @@ class SkypeChatSession : public Kopete::ChatSession
 		 * @param account The account this belongs to.
 		 * @param session Identificator of the chat session in skype. The list of users will be loaded in startup and therefore they are not needed to be specified.
 		 */
-		SkypeChatSession(SkypeAccount *account, const QString *session);
+		SkypeChatSession(SkypeAccount *account, const QString &session, const Kopete::ContactPtrList &contacts);
 		///Destructor
 		~SkypeChatSession();
+	public slots:
+		/**
+		 * Update the chat topic
+		 * @param chat What chat is it about? Maybe me?
+		 * @param topic What to set as topic
+		 */
+		void setTopic(const QString &chat, const QString &topic);
+		/**
+		 * Set this chat's ID
+		 * @param chatId The new ID
+		 */
+		void setChatId(const QString &chatId);
+		/**
+		 * Add new user to chat
+		 * @param chat To know if he joined this chat
+		 * @param userId ID of that user
+		 */
+		void joinUser(const QString &chat, const QString &userId);
+		/**
+		 * Some user left the chat
+		 * @param chat Is it this chat?
+		 * @param userId ID of that user
+		 * @param reason Why he left
+		 */
+		void leftUser(const QString &chat, const QString &userId, const QString &reason);
+		/**
+		 * This will add message that has been sent out by this user
+		 * @param recv List of receivers. If there are more than one, replaced by an dummy contact of that chat, because it does crash kopete otherwise
+		 * @param body Text to show
+		 */
+		void sentMessage(const QPtrList<Kopete::Contact> *recv, const QString &body);
 	signals:
 		/**
 		 * This is emited when it become a multi-user chat. It should be removed from the contact so when user clicks on the contact, new one with only that one should be created
+		 * @param chatSession Identificator of the chat
+		 * @param previousUser Id of the other user before it became a multichat or empty string if no such user ever was
+		 * @param sender Pointer to the chat session that emited this
 		 */
-		void becameMultiChat();
+		void becameMultiChat(const QString &chatSession, SkypeChatSession *sender);
+		/**
+		 * This is emited when there is an request to get a frindly name of a chat
+		 * @param chat Id of that chat
+		 */
+		void wantTopic(const QString &chat);
+		/**
+		 * This chat's ID has changed
+		 * @param oldId What was before? If it is the first set of the ID, it is empty
+		 * @param newId The new ID. If it is empty, it means that this chat is being deleted right now and should be removed from all lists
+		 * @param sender Pointer to that chat
+		 */
+		void updateChatId(const QString &oldId, const QString &newId, SkypeChatSession *sender);
 };
 
 #endif

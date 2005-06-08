@@ -98,6 +98,8 @@ class SkypePrivate {
 		QString skypeCommand;
 		///Do we wait before connecting?
 		int waitBeforeConnect;
+		///List of alredy received messages (IDs)
+		QValueList<QString> recvMessages;
 };
 
 Skype::Skype(SkypeAccount &account) : QObject() {
@@ -329,19 +331,62 @@ void Skype::skypeMessage(const QString &message) {
 	} else if (messageType == "CHATMESSAGE") {//something with message, maebe incoming/sent
 		QString messageId = message.section(' ', 1, 1).stripWhiteSpace();//get the second part of message - it is the message ID
 		QString type = message.section(' ', 2, 2).stripWhiteSpace().upper();//This part significates what about the message are we talking about (status, body, etc..)
+		QString chatMessageType = (d->connection % QString("GET CHATMESSAGE %1 TYPE").arg(messageId)).section(' ', 3, 3).stripWhiteSpace().upper();
+		if (chatMessageType == "ADDEDMEMBERS") {
+			QString status = message.section(' ', 3, 3).stripWhiteSpace().upper();
+			if (d->recvMessages.find(messageId) != d->recvMessages.end())
+				return;
+			d->recvMessages << messageId;
+			const QString &users = (d->connection % QString("GET CHATMESSAGE %1 USERS").arg(messageId)).section(' ', 3).stripWhiteSpace();
+			QStringList splitUsers = QStringList::split(' ', users);
+			const QString &chatId = (d->connection % QString("GET CHATMESSAGE %1 CHATNAME").arg(messageId)).section(' ', 3, 3).stripWhiteSpace();
+			for (QStringList::iterator it = splitUsers.begin(); it != splitUsers.end(); ++it) {
+				if ((*it).upper() == getMyself().upper())
+					continue;
+				emit joinUser(chatId, *it);
+			}
+			return;
+		} else if (chatMessageType == "LEFT") {
+			QString status = message.section(' ', 3, 3).stripWhiteSpace().upper();
+			if (d->recvMessages.find(messageId) != d->recvMessages.end())
+				return;
+			d->recvMessages << messageId;
+			const QString &chatId = (d->connection % QString("GET CHATMESSAGE %1 CHATNAME").arg(messageId)).section(' ', 3, 3).stripWhiteSpace();
+			const QString &user = (d->connection % QString("GET CHATMESSAGE %1 FROM_HANDLE").arg(messageId)).section(' ', 3, 3).stripWhiteSpace();
+			const QString &reason = (d->connection % QString("GET CHATMESSAGE %1 LEAVEREASON").arg(messageId)).section(' ', 3, 3).stripWhiteSpace().upper();
+			QString showReason = i18n("Unknown");
+			if (reason == "USER_NOT_FOUND") {
+				showReason = i18n("User not found");
+			} else if (reason == "USER_INCAPABLE") {
+				showReason = i18n("Does not have multi-user chat capability");
+			} else if ((reason == "ADDER_MUST_BE_FRIEND") || ("ADDER_MUST_BE_AUTHORIZED")) {
+				showReason = i18n("Chat denied");
+			} else if (reason == "UNSUBSCRIBE") {
+				showReason = "";
+			}
+			emit leftUser(chatId, user, showReason);
+			return;
+		}
 		if (type == "STATUS") {//OK, status of some message has changed, check what is it
 			QString value = message.section(' ', 3, 3).stripWhiteSpace().upper();//get the last part, what status it is
 			if (value == "RECEIVED") {//OK, received new message, possibly read it
-				QString type = (d->connection % QString("GET CHATMESSAGE %1 TYPE").arg(messageId)).section(' ', 3, 3).stripWhiteSpace().upper();//Ask skype for the type and filter out only the type, delete all the bloat
-				if (type == "SAID") {//OK, it is some IM
+				if (chatMessageType == "SAID") {//OK, it is some IM
 					hitchHike(messageId);//receive the message
 				}
-				///@todo other types of messages (like topic etc)
-			} else if (value == "SENT") {//the message has been successfully sent
-				emit sentMessage(messageId);//just inform others it is sent OK
-			} else if (value == "SENDING") {//Sendign out some message, that means it is a new one
+			} else if (value == "SENDING") {
+				if ((d->connection % QString("GET CHATMESSAGE %1 TYPE").arg(messageId)).section(' ', 3, 3).stripWhiteSpace().upper() == "SAID") {
+					emit gotMessageId(messageId);
+				}
+			} else if (value == "SENT") {//Sendign out some message, that means it is a new one
 				if ((d->connection % QString("GET CHATMESSAGE %1 TYPE").arg(messageId)).section(' ', 3, 3).stripWhiteSpace().upper() == "SAID")//it is some message I'm interested in
 					emit gotMessageId(messageId);//Someone may be interested in its ID
+					if (d->recvMessages.find(messageId) != d->recvMessages.end())
+						return;//we already got this one
+					d->recvMessages << messageId;
+					const QString &chat = (d->connection % QString("GET CHATMESSAGE %1 CHATNAME").arg(messageId)).section(' ', 3, 3).stripWhiteSpace();
+					const QString &body = (d->connection % QString("GET CHATMESSAGE %1 BODY").arg(messageId)).section(' ', 3);
+					if (!body.isEmpty())//sometimes skype shows empty messages, just ignore them
+						emit outgoingMessage(body, chat);
 			}
 		}
 	} else if (messageType == "CHATMESSAGES") {
@@ -505,12 +550,26 @@ void Skype::setMarkMode(bool value) {
 void Skype::hitchHike(const QString &messageId) {
 	kdDebug(14311) << k_funcinfo << "Message: " << messageId << endl;//some debug info
 
-	const QString &user = (d->connection % QString("GET CHATMESSAGE %1 FROM_HANDLE").arg(messageId)).section(' ', 3, 3).stripWhiteSpace();//ask skyp for a sender of that message and filter out the blouat around (like CHATMESSAGE 123...)
+	const QString &chat = (d->connection % QString("GET CHATMESSAGE %1 CHATNAME").arg(messageId)).section(' ', 3, 3).stripWhiteSpace();
 
-	if ((d->hitch) || (d->account.userHasChat(user))) {//it can be read eather if the hitchhiking non-chat messages is enabled or if the user already has opened a chat
-		emit receivedIM(user, (d->connection % QString("GET CHATMESSAGE %1 BODY").arg(messageId)).section(' ', 3));//ask skype for the body and filter out the bload, we want only the text and make everyone aware that we received a message
-		if (d->mark) //We should mark it as read
-			d->connection << QString("SET CHATMESSAGE %1 SEEN").arg(messageId);//OK, just tell skype it is read
+	const QString &chatType = (d->connection % QString("GET CHAT %1 STATUS").arg(chat)).section(' ', 3, 3).stripWhiteSpace().upper();
+
+	if ((chatType == "LEGACY_DIALOG") || (chatType == "DIALOG")) {
+
+		const QString &user = (d->connection % QString("GET CHATMESSAGE %1 FROM_HANDLE").arg(messageId)).section(' ', 3, 3).stripWhiteSpace();//ask skyp for a sender of that message and filter out the blouat around (like CHATMESSAGE 123...)
+
+		if ((d->hitch) || (d->account.userHasChat(user))) {//it can be read eather if the hitchhiking non-chat messages is enabled or if the user already has opened a chat
+			emit receivedIM(user, (d->connection % QString("GET CHATMESSAGE %1 BODY").arg(messageId)).section(' ', 3), messageId);//ask skype for the body and filter out the bload, we want only the text and make everyone aware that we received a message
+			if (d->mark) //We should mark it as read
+				d->connection << QString("SET CHATMESSAGE %1 SEEN").arg(messageId);//OK, just tell skype it is read
+		}
+	} else {
+		if ((d->hitch) || (d->account.chatExists(chat))) {
+			const QString &user = (d->connection % QString("GET CHATMESSAGE %1 FROM_HANDLE").arg(messageId)).section(' ', 3, 3).stripWhiteSpace();
+			emit receivedMultiIM(chat, (d->connection % QString("GET CHATMESSAGE %1 BODY").arg(messageId)).section(' ', 3), messageId, user);
+			if (d->mark)
+				d->connection << QString("SET CHATMESSAGE %1 SEEN").arg(messageId);
+		}
 	}
 }
 
@@ -604,6 +663,51 @@ void Skype::setSkypeCommand(const QString &command) {
 
 void Skype::setWaitConnect(int value) {
 	d->waitBeforeConnect = value;
+}
+
+void Skype::sendToChat(const QString &chat, const QString &message) {
+	kdDebug(14311) << k_funcinfo <<  endl;//some debug info
+
+	static int dummyCounter = 0;
+
+	if (d->connection.protocolVer() <= 4) {//Not able to handle it by the API, let Skype do it for me
+		d->connection << QString("OPEN CHAT %1 %2").arg(chat).arg(message);
+		emit gotMessageId("");
+	} else {
+		///@todo When 5 is out, check it out
+	}
+}
+
+void Skype::getTopic(const QString &chat) {
+	kdDebug(14311) << k_funcinfo <<  endl;//some debug info
+
+	emit setTopic(chat, (d->connection % QString("GET CHAT %1 FRIENDLYNAME").arg(chat)).section(' ', 3).stripWhiteSpace());
+}
+
+QString Skype::getMessageChat(const QString &message) {
+	kdDebug(14311) << k_funcinfo <<  endl;//some debug info
+
+	return (d->connection % QString("GET CHATMESSAGE %1 CHATNAME").arg(message)).section(' ', 3, 3).stripWhiteSpace();
+}
+
+QStringList Skype::getChatUsers(const QString &chat) {
+	kdDebug(14311) << k_funcinfo <<  endl;//some debug info
+
+	const QString &me = getMyself();
+	const QString &rawUsers = (d->connection % QString("GET CHAT %1 MEMBERS").arg(chat)).section(' ', 3).stripWhiteSpace();
+	const QStringList &users = QStringList::split(' ', rawUsers);
+	QStringList readyUsers;
+	for (QStringList::const_iterator it = users.begin(); it != users.end(); ++it) {
+		const QString &user = (*it).stripWhiteSpace();
+		if (user.upper() != me.upper())
+			readyUsers.append(user);
+	}
+
+	return readyUsers;
+}
+
+QString Skype::getMyself() {
+	return (d->connection % QString("GET CURRENTUSERHANDLE")).section(' ', 1, 1).stripWhiteSpace();
 }
 
 #include "skype.moc"

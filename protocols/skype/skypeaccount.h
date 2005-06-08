@@ -25,11 +25,14 @@ class SkypeProtocol;
 class QString;
 class SkypeAccountPrivate;
 class SkypeContact;
+class SkypeChatSession;
+template <class X> class QPtrList;
 
 namespace Kopete {
 	class MetaContact;
 	class OnlineStatus;
 	class Message;
+	class Kontact;
 }
 
 #define DBUS_SESSION 0
@@ -46,6 +49,8 @@ Q_OBJECT
 	private:
 		///Some internal things
 		SkypeAccountPrivate *d;
+		///Constructs list of users from their ID list. Have to be deleted later!
+		QPtrList<Kopete::Contact> *constructContactList(const QStringList &users);
 	private slots:
 		/**
 		 * This sets the right icon for the status - online
@@ -88,8 +93,9 @@ Q_OBJECT
 		 * This is used for receiving messages from skype network
 		 * @param user The user that sent it
 		 * @param message The text of the message
+		 * @param messageId Id of that message
 		 */
-		void receivedIm(const QString &user, const QString &message);
+		void receivedIm(const QString &user, const QString &message, const QString &messageId);
 		/**
 		 * New cal to show (or not, depending on setup) the call control window.
 		 * @param callId ID of the new call
@@ -101,6 +107,24 @@ Q_OBJECT
 		 * @param name What the new name is.
 		 */
 		void setMyselfName(const QString &name);
+		/**
+		 * This one keeps track of chat sessions that know their chat id
+		 * @param oldId The old chat ID, or empty if no chat ID was known before
+		 * @param newId The new chat ID, or empty if the chat just exists
+		 * @param sender Pointer to the session
+		 */
+		void setChatId(const QString &oldId, const QString &newId, SkypeChatSession *sender);
+		/**
+		 * Some message is meing sent out by Skype, it should be showed
+		 * @param body Text of the message
+		 * @param chat Id of the chat it was sent to
+		 */
+		void sentMessage(const QString &body, const QString &chat);
+		/**
+		 * An Id of some message is known, use it
+		 * @param messageId New id of that message
+		 */
+		void gotMessageId(const QString &messageId);
 	protected:
 		/**
 		 * Creates new skype contact and adds it into the parentContact.
@@ -116,7 +140,7 @@ Q_OBJECT
 		 */
 		SkypeAccount(SkypeProtocol *protocol);
 		/**
-		 * Destructor 
+		 * Destructor
 		 */
 		~SkypeAccount();
 		/**
@@ -213,6 +237,26 @@ Q_OBJECT
 		 * Do we wait before connecting?
 		 */
 		int getWaitBeforeConnect() const;
+		/**
+		 * Do we have that chat opened?
+		 * @param chatId What chat are you interested in?
+		 */
+		bool chatExists(const QString &chatId);
+		/**
+		 * This one returns contact of that name. If that contact does not exist in the contact list, a temporary one is created
+		 * @param userId ID of that user
+		 */
+		SkypeContact *getContact(const QString &userId);
+		/**
+		 * @param messageId ID of a message
+		 * @return ID of chat the message belongs to. If no such message exists, the result is not defined.
+		 */
+		QString getMessageChat(const QString &messageId);
+		/**
+		 * This will mark last active chat (last that sent out some message). It will be set an ID soon after that, user will not have time to write another message anyway
+		 * @param session Pointer to that chat session
+		 */
+		void registerLastSession(SkypeChatSession *session);
 	public slots:
 		/**
 		 * Disconnects from server.
@@ -244,9 +288,9 @@ Q_OBJECT
 		/**
 		 * This will send message by the skype connection. Will take care of all notifications when it is done and so. (means it will emit messageSent when it is sent)
 		 * @param message What to send.
-		 * @return Id of thet message.
+		 * @param chat Chat to send it to. If it is empty, it is sent just to that person listed in the message
 		 */
-		void sendMessage(Kopete::Message &message);
+		void sendMessage(Kopete::Message &message, const QString &chat);
 		/**
 		 * Enables or disables the HitchHike mode of getting messages. If it is enabled, a new message to unstarted chat will be showed. If not, they will be ignored and you will have to open them in Skype
 		 * @param value True enables HitchHike mode, false disables.
@@ -309,12 +353,20 @@ Q_OBJECT
 		 * Set if we wait a while before connecting to just started skype
 		 */
 		void setWaitBeforeConnect(int value);
-	signals:
 		/**
-		 * This is emited when the ID of the last sent message is known
-		 * @param messageId The ID of the message
+		 * This should be called with all new chat sessions to connect all signals to them
+		 * @param session The chat session
 		 */
-		void gotMessageId(const QString &messageId);
+		void prepareChatSession(SkypeChatSession *session);
+		/**
+		 * This receives a multi-user chat message and delivers it to the chat session
+		 * @param chatId What chat should get it
+		 * @param boty Text of that message
+		 * @param messageId ID of the received message
+		 * @param user The one who sent it
+		 */
+		void receiveMultiIm(const QString &chatId, const QString &body, const QString &messageId, const QString &user);
+	signals:
 		/**
 		 * This is emited when the message has been sent by skype
 		 * @param messageId Id of the message that has been sent

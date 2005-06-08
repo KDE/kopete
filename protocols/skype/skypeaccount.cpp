@@ -22,6 +22,7 @@
 #include "skypecontact.h"
 #include "skype.h"
 #include "skypecalldialog.h"
+#include "skypechatsession.h"
 
 #include <qstring.h>
 #include <kopetemetacontact.h>
@@ -71,6 +72,10 @@ class SkypeAccountPrivate {
 		QString myName;
 		///Do we wait before connecting?
 		int waitBeforeConnect;
+		///List of chat all chat sessions
+		QDict<SkypeChatSession> sessions;
+		///Last used chat session
+		SkypeChatSession *lastSession;
 };
 
 SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, "Skype", (char *)0) {
@@ -117,11 +122,12 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 	QObject::connect(&d->skype, SIGNAL(statusConnecting()), this, SLOT(statusConnecting()));
 	QObject::connect(&d->skype, SIGNAL(newUser(const QString&)), this, SLOT(newUser(const QString&)));
 	QObject::connect(&d->skype, SIGNAL(contactInfo(const QString&, const QString& )), this, SLOT(updateContactInfo(const QString&, const QString& )));
-	QObject::connect(&d->skype, SIGNAL(receivedIM(const QString&, const QString& )), this, SLOT(receivedIm(const QString&, const QString& )));
-	QObject::connect(&d->skype, SIGNAL(gotMessageId(const QString& )), this, SIGNAL(gotMessageId(const QString& )));//every time some ID is known inform the contacts
-	QObject::connect(&d->skype, SIGNAL(sentMessage(const QString& )), this, SIGNAL(sentMessage(const QString& )));//inform contacts of sent messages
+	QObject::connect(&d->skype, SIGNAL(receivedIM(const QString&, const QString&, const QString& )), this, SLOT(receivedIm(const QString&, const QString&, const QString& )));
+	QObject::connect(&d->skype, SIGNAL(gotMessageId(const QString& )), this, SLOT(gotMessageId(const QString& )));//every time some ID is known inform the contacts
 	QObject::connect(&d->skype, SIGNAL(newCall(const QString&, const QString&)), this, SLOT(newCall(const QString&, const QString&)));
 	QObject::connect(&d->skype, SIGNAL(setMyselfName(const QString&)), this, SLOT(setMyselfName(const QString& )));
+	QObject::connect(&d->skype, SIGNAL(receivedMultiIM(const QString&, const QString&, const QString&, const QString& )), this, SLOT(receiveMultiIm(const QString&, const QString&, const QString&, const QString& )));
+	QObject::connect(&d->skype, SIGNAL(outgoingMessage(const QString&, const QString&)), this, SLOT(sentMessage(const QString&, const QString& )));
 
 	//set values for the connection (should be updated if changed)
 	d->skype.setValues(launchType, author);
@@ -129,6 +135,8 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 	setMarkRead(config->readBoolEntry("MarkRead", true));//read the modes of account
 	d->callWindowTimeout = config->readNumEntry("CloseWindowTimeout", 3);
 	setPings(config->readBoolEntry("Pings", true));
+	d->sessions.setAutoDelete(false);
+	d->lastSession = 0L;
 }
 
 
@@ -329,13 +337,19 @@ SkypeProtocol * SkypeAccount::protocol() {
 	return d->protocol;
 }
 
-void SkypeAccount::sendMessage(Kopete::Message &message) {
+void SkypeAccount::sendMessage(Kopete::Message &message, const QString &chat) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
-	const QString &user = message.to().at(0)->contactId();//get id of the first contact, messages to multiple people are not yet possible
-	const QString &body = message.plainBody();//get the text of the message
+	if (chat.isEmpty()) {
+		const QString &user = message.to().at(0)->contactId();//get id of the first contact, messages to multiple people are not yet possible
+		const QString &body = message.plainBody();//get the text of the message
 
-	d->skype.send(user, body);//send it by skype
+		d->skype.send(user, body);//send it by skype
+	} else {
+		const QString &body = message.plainBody();
+
+		d->skype.sendToChat(chat, body);
+	}
 }
 
 bool SkypeAccount::getHitchHike() const {
@@ -365,20 +379,9 @@ bool SkypeAccount::userHasChat(const QString &userId) {
 		return false;//if it does not exist it can not have a chat opened
 }
 
-void SkypeAccount::receivedIm(const QString &user, const QString &message) {
+void SkypeAccount::receivedIm(const QString &user, const QString &message, const QString &messageId) {
 	kdDebug(14311) << k_funcinfo << "User: " << user << ", message: " << message << endl;//some debug info
-
-	SkypeContact *cont = static_cast<SkypeContact *> (contacts().find(user));//get the right contact
-
-	if (!cont) {//We do not know such contact
-		addContact(user, QString::null, 0L, Temporary);//create a temporary contact
-
-		cont = static_cast<SkypeContact *> (contacts().find(user));//It should be there now
-		if (!cont)
-			return;//something odd,.but better do nothing than crash
-	}
-
-	cont->receiveIm(message);//let the contact show the message
+	getContact(user)->receiveIm(message, getMessageChat(messageId));//let the contact show the message
 }
 
 void SkypeAccount::setScanForUnread(bool value) {
@@ -513,6 +516,106 @@ void SkypeAccount::setWaitBeforeConnect(int value) {
 
 int SkypeAccount::getWaitBeforeConnect() const {
 	return d->waitBeforeConnect;
+}
+
+SkypeContact *SkypeAccount::getContact(const QString &userId) {
+	SkypeContact *cont = static_cast<SkypeContact *> (contacts().find(userId));//get the contact
+	if (!cont) {//We do not know such contact
+		addContact(userId, QString::null, 0L, Temporary);//create a temporary contact
+
+		cont = static_cast<SkypeContact *> (contacts().find(userId));//It should be there now
+	}
+	return cont;
+}
+
+void SkypeAccount::prepareChatSession(SkypeChatSession *session) {
+	QObject::connect(session, SIGNAL(updateChatId(const QString&, const QString&, SkypeChatSession* )), this, SLOT(setChatId(const QString&, const QString&, SkypeChatSession* )));
+	QObject::connect(session, SIGNAL(wantTopic(const QString& )), &d->skype, SLOT(getTopic(const QString& )));
+	QObject::connect(&d->skype, SIGNAL(joinUser(const QString&, const QString& )), session, SLOT(joinUser(const QString&, const QString& )));
+	QObject::connect(&d->skype, SIGNAL(leftUser(const QString&, const QString&, const QString& )), session, SLOT(leftUser(const QString&, const QString&, const QString& )));
+	QObject::connect(&d->skype, SIGNAL(setTopic(const QString&, const QString& )), session, SLOT(setTopic(const QString&, const QString& )));
+}
+
+void SkypeAccount::setChatId(const QString &oldId, const QString &newId, SkypeChatSession *sender) {
+	d->sessions.remove(oldId);//remove the old one
+	if (!newId.isEmpty()) {
+		d->sessions.insert(newId, sender);
+	}
+}
+
+bool SkypeAccount::chatExists(const QString &chat) {
+	return d->sessions.find(chat);
+}
+
+void SkypeAccount::receiveMultiIm(const QString &chatId, const QString &body, const QString &messageId, const QString &user) {
+	SkypeChatSession *session = d->sessions.find(chatId);
+
+	if (!session) {
+		QStringList users = d->skype.getChatUsers(chatId);
+		Kopete::ContactPtrList list;
+		for (QStringList::iterator it = users.begin(); it != users.end(); ++it) {
+			list.append(getContact(*it));
+		}
+
+		session = new SkypeChatSession(this, chatId, list);
+	}
+
+	Kopete::Message mes(getContact(user), myself(), body, Kopete::Message::Inbound);
+	session->appendMessage(mes);
+}
+
+QString SkypeAccount::getMessageChat(const QString &messageId) {
+	return d->skype.getMessageChat(messageId);
+}
+
+void SkypeAccount::registerLastSession(SkypeChatSession *lastSession) {
+	d->lastSession = lastSession;
+}
+
+void SkypeAccount::gotMessageId(const QString &messageId) {
+	if ((d->lastSession) && (!messageId.isEmpty())) {
+		d->lastSession->setChatId(d->skype.getMessageChat(messageId));
+	}
+
+	d->lastSession = 0L;
+}
+
+void SkypeAccount::sentMessage(const QString &body, const QString &chat) {
+	kdDebug(14311) << k_funcinfo << "chat: " << chat << endl;//some debug info
+
+	SkypeChatSession *session = d->sessions.find(chat);
+	const QStringList &users = d->skype.getChatUsers(chat);
+	QPtrList<Kopete::Contact> *recv = 0L;
+
+	if (!session)
+		if (d->hitch) {
+			recv = constructContactList(users);
+			if (recv->count() == 1) {
+				SkypeContact *cont = static_cast<SkypeContact *> (recv->at(0));
+				cont->startChat();
+				session = cont->getChatSession();
+				session->setChatId(chat);
+			} else {
+				session = new SkypeChatSession(this, chat, *recv);
+			}
+		} else {
+			return;
+		}
+
+	if (!recv)
+		recv = constructContactList(users);
+
+	session->sentMessage(recv, body);
+	delete recv;
+}
+
+QPtrList<Kopete::Contact> *SkypeAccount::constructContactList(const QStringList &users) {
+	QPtrList<Kopete::Contact> *list= new QPtrList<Kopete::Contact> ();
+	for (QStringList::const_iterator it = users.begin(); it != users.end(); ++it) {
+		list->append(getContact(*it));
+	}
+
+	return list;
 }
 
 #include "skypeaccount.moc"

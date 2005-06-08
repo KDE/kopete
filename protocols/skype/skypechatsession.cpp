@@ -24,21 +24,31 @@
 
 #include <kdebug.h>
 #include <kopetechatsessionmanager.h>
+#include <kopetemetacontact.h>
 #include <qdict.h>
 #include <qstring.h>
 
+static Kopete::MetaContact *dummyContacts = new Kopete::MetaContact();
+
+class ChatDummyContact : public Kopete::Contact {
+	public:
+		ChatDummyContact(SkypeAccount *account, const QString &name) : Kopete::Contact(account, name, dummyContacts) {};
+		virtual Kopete::ChatSession *manager (CanCreateFlags canCreate) {return 0L;};
+};
+
 class SkypeChatSessionPrivate {
+	private:
+		///Dummy contact representink this chat
+		Kopete::Contact *dummyContact;
 	public:
 		///Referenco to the protocol
 		SkypeProtocol *protocol;
 		///Reference to the account
 		SkypeAccount *account;
-		///List of unsent messages
-		QDict<Kopete::Message> pending;
-		///Last sent message, it is used for getting its ID so it can be put in the pending messages
-		Kopete::Message *lastMessage;
 		///Am I connected to the messageSent signal?
 		bool connectedSent;
+		///ID of this chat session
+		QString chatId;
 		/**
 		 * Constructor
 		 * @param _protocol Reference to the Skype protocol
@@ -50,8 +60,19 @@ class SkypeChatSessionPrivate {
 			account = _account;
 			protocol = _protocol;
 
-			lastMessage = 0L;
 			connectedSent = false;
+			chatId = "";
+			dummyContact = 0L;
+		};
+		///Is it multi-user chat?
+		bool isMulti;
+		///Please give me a contact that stands for the whole chat so I can send it to it
+		Kopete::Contact *getDummyContact() {
+			if (dummyContact)
+				return dummyContact;
+			else {
+				return dummyContact = new ChatDummyContact(account, chatId);
+			}
 		};
 };
 
@@ -70,50 +91,79 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact)
 	d = new SkypeChatSessionPrivate(account->protocol(), account);
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
 	connect(this, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)), this, SLOT(message(Kopete::Message& )));//this will send the messages from this user going out
+	account->prepareChatSession(this);
+	d->isMulti = false;
 }
 
+SkypeChatSession::SkypeChatSession(SkypeAccount *account, const QString &session, const Kopete::ContactPtrList &users) :
+		Kopete::ChatSession(account->myself(), users, account->protocol(), (char *) 0L) {
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
+	d = new SkypeChatSessionPrivate(account->protocol(), account);
+	Kopete::ChatSessionManager::self()->registerChatSession(this);
+	connect(this, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)), this, SLOT(message(Kopete::Message& )));
+	account->prepareChatSession(this);
+	d->isMulti = true;
+	d->chatId = session;
+	emit updateChatId("", session, this);
+}
 
 SkypeChatSession::~SkypeChatSession() {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
+	emit updateChatId(d->chatId, "", this);
 	delete d;//remove the D pointer
 }
 
 void SkypeChatSession::message(Kopete::Message &message) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
-	d->lastMessage = new Kopete::Message(message);//copy the message, I need to store it for a while
-	connect(d->account, SIGNAL(gotMessageId(const QString& )), this, SLOT(knowId(const QString& )));//get the Id when it is known
-	d->account->sendMessage(*d->lastMessage);//send it
+	d->account->registerLastSession(this);
+	d->account->sendMessage(message, (d->isMulti) ? (d->chatId) : "");//send it
+	messageSucceeded();
 }
 
-void SkypeChatSession::knowId(const QString &id) {
-	kdDebug(14311) << k_funcinfo << endl;//some debug info
-
-	disconnect(d->account, SIGNAL(gotMessageId(const QString& )), this, SLOT(knowId(const QString& )));//OK, I know it, it is enough, nothing more is needed. THIS IS NEEDED HERE, IT WOULD NOT WORK WITHOUT THIS
-	d->pending.insert(id, d->lastMessage);//put the message into list of unsent
-	if (!d->connectedSent) {//I do not listen for sent message
-		connect(d->account, SIGNAL(sentMessage(const QString& )), this, SLOT(messageSent(const QString& )));//SO start to do so
-		d->connectedSent = true;//Already connected, do not connect again
-	}
-
-	d->lastMessage = 0L;//so, it is not needed now
+void SkypeChatSession::setTopic(const QString &chat, const QString &topic) {
+	///@todo This function
 }
 
-void SkypeChatSession::messageSent(const QString &id) {
-	kdDebug(14311) << k_funcinfo << endl;//some debug info
+void SkypeChatSession::joinUser(const QString &chat, const QString &userId) {
+	kdDebug(14311) << k_funcinfo << "Chat: " << chat << endl;//some debug info
 
-	Kopete::Message *mes = d->pending.take(id);//get the message out of the dictionary
-	if (mes) {//We had the message, it was ours
-		appendMessage(*mes);//show it there
-		delete mes;//it is no longer needed, it is a copy I made for myself
-
-		if ((d->pending.isEmpty()) && (!d->lastMessage)) {//everything sent
-			messageSucceeded();//OK, stop spining the icon in the session window
-			disconnect(d->account, SIGNAL(sentMessage(const QString& )), this, SLOT(messageSent(const QString& )));//No longer listen for sent messages, they are all sent
-			d->connectedSent = false;//no longer connected
-		}
+	if (chat == d->chatId) {
+		addContact(d->account->getContact(userId));
+		d->isMulti = true;
+		emit becameMultiChat(d->chatId, this);
 	}
+}
+
+void SkypeChatSession::leftUser(const QString &chat, const QString &userId, const QString &reason) {
+	kdDebug(14311) << "User: " << userId<< k_funcinfo << endl;//some debug info
+
+	if (chat == d->chatId) {
+		removeContact(d->account->getContact(userId), reason, Kopete::Message::PlainText);
+	}
+}
+
+void SkypeChatSession::setChatId(const QString &chatId) {
+	kdDebug(14311) << k_funcinfo << "ID: " << chatId << endl;//some debug info
+
+	if (d->chatId != chatId) {
+		emit updateChatId(d->chatId, chatId, this);
+		d->chatId = chatId;
+		emit wantTopic(chatId);
+	}
+}
+
+void SkypeChatSession::sentMessage(const QPtrList<Kopete::Contact> *recv, const QString &body) {
+	Kopete::Message *mes;
+	/*if (recv->count() == 1) {
+		mes = new Kopete::Message(d->account->myself(), *recv->begin(), body, Kopete::Message::Outbound);
+	} else {
+		mes = new Kopete::Message(d->account->myself(), d->account->myself(), body, Kopete::Message::Outbound);
+	}*/
+	mes = new Kopete::Message(d->account->myself(), *recv, body, Kopete::Message::Outbound);
+	appendMessage(*mes);
+	delete mes;
 }
 
 #include "skypechatsession.moc"

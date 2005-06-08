@@ -110,6 +110,21 @@ class Skype : public QObject
 		 * @return true if the call is incoming
 		 */
 		bool isCallIncoming(const QString &callId);
+		/**
+		 * Returns ID of chat to what given message belongs
+		 * @param messageId Id of the wanted message
+		 * @return ID of the chat. For unexisten message the result is not defined.
+		 */
+		QString getMessageChat(const QString &messageId);
+		/**
+		 * Returns list of users in that chat without actual user
+		 * @param chat ID of that chat you want to know
+		 */
+		QStringList getChatUsers(const QString &chat);
+		/**
+		 * This will return ID of the actual user this one that uses this skype)
+		 */
+		QString getMyself();
 	public slots:
 		/**
 		 * Tell the skype to go online
@@ -159,9 +174,14 @@ class Skype : public QObject
 		 * Sends a message trough skype
 		 * @param user To who it should be sent
 		 * @param body What to send
-		 * @see sentMessage
 		 */
 		void send(const QString &user, const QString &body);
+		/**
+		 * Send a message to a given chat
+		 * @param chat What chat to send it in
+		 * @param body Text of that message
+		 */
+		void sendToChat(const QString &chat, const QString &body);
 		/**
 		 * Begins new call.
 		 * @param userId ID of user to call
@@ -238,6 +258,11 @@ class Skype : public QObject
 		 * Sets if we wait a bit before connecting to Skype after it's start-up
 		 */
 		void setWaitConnect(int value);
+		/**
+		 * This gets a topic for given chat session
+		 * @param chat What chat wants that
+		 */
+		void getTopic(const QString &chat);
 	signals:
 		/**
 		 * Emited when the skype changes to online (or says it goes online)
@@ -290,18 +315,22 @@ class Skype : public QObject
 		 * This is emited when a new message is received
 		 * @param user Contact ID of user that sent it. It is NOT guaranteed that the user is in list!
 		 * @param body The message body that was received
+		 * @param messageId ID of that message
 		 */
-		void receivedIM(const QString &user, const QString &body);
+		void receivedIM(const QString &user, const QString &body, const QString &messageId);
+		/**
+		 * This is emited when a new message from multi-user chat is received
+		 * @param chat Id of the chat
+		 * @param body Tect of the message
+		 * @param messageId Id of this message to get information about it if needed
+		 * @param user Who sent it to that chat (ID)
+		 */
+		void receivedMultiIM(const QString &chat, const QString &body, const QString &messageId, const QString &user);
 		/**
 		 * This is emited when an Id of the last outgoing message is known
 		 * @param id The ID of that message
 		 */
 		void gotMessageId(const QString &id);
-		/**
-		 * Emited when some message has been successfully sent
-		 * @param id ID of the sent message
-		 */
-		void sentMessage(const QString &id);
 		/**
 		 * This slot notifies about call status (onhold, in progress, routing, finished..)
 		 * @param callId WHat call is it?
@@ -349,6 +378,31 @@ class Skype : public QObject
 		 * @param name The new name
 		 */
 		void setMyselfName(const QString &name);
+		/**
+		 * Some topic has to be set
+		 * @param chat What chat should change its topic
+		 * @param topic The new topic
+		 */
+		void setTopic(const QString &chat, const QString &topic);
+		/**
+		 * This is emited when a new user joins a chat
+		 * @param chat What chat he joined
+		 * @param userId ID of the new user
+		 */
+		void joinUser(const QString &chat, const QString &userId);
+		/**
+		 * This is emited when user leaves a chat
+		 * @param chat What chat did he leave
+		 * @param userId ID of that user
+		 * @param reason Reason why he left
+		 */
+		void leftUser(const QString &chat, const QString &userd, const QString &reason);
+		/**
+		 * Emited when some message is meing sent out right now
+		 * @param body Text of the message
+		 * @param chat Id of the chat it has been sent to
+		 */
+		void outgoingMessage(const QString &body, const QString &chat);
 };
 
 #endif

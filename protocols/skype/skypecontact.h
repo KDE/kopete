@@ -30,6 +30,7 @@ namespace Kopete {
 }
 class KAction;
 template <class T> class QPtrList;
+class SkypeChatSession;
 
 /**
  * @author Kopete Developers
@@ -81,6 +82,8 @@ class SkypeContact : public Kopete::Contact
 		bool hasChat() const;
 		///Tell kopete which actions to show in the contact pop-up menu
 		QPtrList<KAction> *customContextMenuActions();
+		///Give me actually existing chat session
+		SkypeChatSession *getChatSession();
 	public slots:
 		/**
 		 * Please ask for the contact information (emit infoReques with your name)
@@ -94,8 +97,9 @@ class SkypeContact : public Kopete::Contact
 		/**
 		 * This one showes message in the chat session.
 		 * @param message The message to show
+		 * @param chat The chat ID of the chat the message belongs to
 		 */
-		void receiveIm(const QString &message);
+		void receiveIm(const QString &message, const QString &chat);
 		/**
 		 * connection status changed
 		 * @param connected Are we connected now?
