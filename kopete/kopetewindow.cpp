@@ -195,7 +195,7 @@ void KopeteWindow::initActions()
 					 "SetBusyAll" );
 
 
-	actionSetInvisible = new KAction( i18n( "&invisible" ), "kopeteavailable", 0 ,
+	actionSetInvisible = new KAction( i18n( "&Invisible" ), "kopeteavailable", 0 ,
 		  this, SLOT( slotSetInvisibleAll() ), actionCollection(),
 		  "SetInvisibleAll" );
 
