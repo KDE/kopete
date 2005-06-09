@@ -38,6 +38,7 @@ KCodecAction::KCodecAction( const QString &text, const KShortcut &cut,
 
 void KCodecAction::slotActivated( int index )
 {
+	setCurrentItem( index );
 	emit activated( codecMap[ index ] );
 }
 
