@@ -260,7 +260,7 @@ void Engine::numericReply_303(Message &msg)
 /* 307: ":is a registered nick"
  * DALNET: Indicates that this user is identified with NICSERV.
  */
-void Engine::numericReply_307(Message &msg)
+void Engine::numericReply_307(Message & /*msg*/)
 {
 //	emit incomingWhoiIsUserNickIsRegistered(Kopete::Message::unescape(msg.arg(1)));
 }
@@ -284,7 +284,7 @@ void Engine::numericReply_312(Message &msg)
 /* 313: "<nick> :is an IRC operator"
  * Show info about an operator (part of a /whois).
  */
-void Engine::numericReply_313(Message &msg)
+void Engine::numericReply_313(Message & /*msg*/)
 {
 }
 
@@ -449,7 +449,7 @@ void Engine::numericReply_366(Message &msg)
 /* 369:
  * End of WHOWAS Request
  */
-void Engine::numericReply_369(Message &msg)
+void Engine::numericReply_369(Message & /*msg*/)
 {
 }
 
