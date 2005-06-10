@@ -29,8 +29,7 @@ public:
 	//~KopeteLinkTest();
 	void allTests();
 public slots:
-	void testKnownGood();
-	void testKnownBroken();
+	void testEmoticonParser();
 private:
 	
 };

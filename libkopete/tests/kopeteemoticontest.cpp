@@ -16,12 +16,20 @@
     *************************************************************************
 */
 
+#include <stdlib.h>
+
 #include <qstring.h>
+#include <qdir.h>
+#include <qfile.h>
+
+#include <kapplication.h>
 #include <kglobal.h>
 #include <kstandarddirs.h>
+#include <kdebug.h>
 
 #include <kunittest/module.h>
 #include "kopeteemoticontest.h"
+#include "kopetemessage.h"
 #include "kopeteemoticons.h"
 
 using namespace KUnitTest;
@@ -34,79 +42,88 @@ KUNITTEST_MODULE_REGISTER_TESTER( KopeteEmoticonTest );
   working properly in Kopete 0.7.x. When these fail it's a real regression.
 
   The second set are those known to work in the current codebase.
-
   The last set is the set with tests that are known to fail right now.
 
-  Each entry in a set consists of two strings. The first string is the input,
-  the second string is the EXPECTED output. If the two differ the test is
-  considered failed and the actual result is output for comparison.
-
-  A set should end with an entry containing at least one null pointer.
+   the name convention is working|broken-number.input|output
 */
 
-typedef const char * EmoticonTestSet[][ 2 ];
-
-
-static EmoticonTestSet kopete07Baseline =
-{
-	{ NULL, NULL }
-};
-
-static EmoticonTestSet knownGood =
-{
-	{ ":):)", "<img align=\"center\" width=\"20\" height=\"20\" src=\"smile.png\" title=\":)\"/>"
-			  "<img align=\"center\" width=\"20\" height=\"20\" src=\"smile.png\" title=\":)\"/>" },
-	{ "<img src=\"...\" title=\":-)\" />", "<img src=\"...\" title=\":-)\" />" },
-	{ "End of sentence:p", "End of sentence<img align=\"center\" width=\"20\" height=\"20\" src=\"tongue.png\" title=\":p\"/>" },
-	{ "http://www.kde.org", "http://www.kde.org" },
-	{ "&gt;:-)", "<img align=\"center\" width=\"20\" height=\"20\" src=\"devil.png\" title=\"&gt;:-)\"/>" },
-	{ NULL, NULL }
-};
-
-static EmoticonTestSet knownBroken =
-{
-	{ ":))", ":))" },
-	{ "In a sentence:practical example", "In a sentence:practical example" },
-	{ "Bla (&nbsp;)", "Bla (&nbsp;)" },
-	{ ":D and :-D are not the same as :d and :-d", "<img align=\"center\" width=\"20\" height=\"20\" src=\"teeth.png\" title=\":D\"/> and <img align=\"center\" width=\"20\" height=\"20\" src=\"teeth.png\" title=\":-D\"/> are not the same as :d and :-d" },
-	// A future emoticon theme may very well have an emoticon for :d/:-d (an
-	// upward tongue expression - Casey
-	{ "4d:D>:)F:/&gt;:-(:Pu:d9", "4d:D>:)F:/&gt;:-(:Pu:d9" },
-	{ "&lt;::pvar:: test=1&gt;", "&lt;::pvar:: test=1&gt;" },
-	{ "a non-breaking space (&nbsp;) character", "a non-breaking space (&nbsp;) character" },
-	{ "-+-[-:-(-:-)-:-]-+-", "-+-[-:-(-:-)-:-]-+-" },
-	{ "::shrugs::", "::shrugs::" },
-	{ ":Ptesting:P", ":Ptesting:P" },
-	{ NULL, NULL }
-};
 
 void KopeteEmoticonTest::allTests()
 {
-	testKnownGood();
-	testKnownBroken();
+	// change user data dir to avoid messing with user's .kde dir
+	setenv( "KDEHOME", QFile::encodeName( QDir::homeDirPath() + "/.kopete-unittest" ), true );
+
+	//KApplication::disableAutoDcopRegistration();
+	//KApplication app;
+
+	testEmoticonParser();
 }
 
-void KopeteEmoticonTest::testKnownBroken()
+void KopeteEmoticonTest::testEmoticonParser()
 {
-	QString path = KGlobal::dirs()->findResource( "emoticons", "KMess-Cartoon/smile.png" ).replace( "smile.png", QString::null );
-	uint i = 0;
-	while ( knownBroken[ i ][ 0 ] && knownBroken[ i ][ 1 ] )
+	Kopete::Emoticons emo("Default");
+	QString basePath = QString::fromLatin1( SRCDIR ) + QString::fromLatin1("/emoticon-parser-testcases");
+	QDir testCasesDir(basePath);
+	
+	QStringList inputFileNames = testCasesDir.entryList("*.input");
+	for ( QStringList::ConstIterator it = inputFileNames.begin(); it != inputFileNames.end(); ++it)
 	{
-		QString result = Kopete::Emoticons::parseEmoticons( knownBroken[ i ][ 0 ] ).replace( path, QString::null );	
-		XFAIL(result, QString::fromLatin1(knownBroken[ i ][ 1 ]));
-		i++;
+		QString fileName = *it;
+		kdDebug() << "testcase: " << fileName << endl;
+		QString outputFileName = fileName;
+		outputFileName.replace("input","output");
+		// open the input file
+		QFile inputFile(basePath + QString::fromLatin1("/") + fileName);
+		QFile expectedFile(basePath + QString::fromLatin1("/") + outputFileName);
+		// check if the expected output file exists
+		// if it doesn't, skip the testcase
+		if ( ! expectedFile.exists() )
+		{
+			SKIP("Warning! expected output for testcase "+ *it + " not found. Skiping testcase");
+			continue;
+		}
+		if ( inputFile.open( IO_ReadOnly ) && expectedFile.open( IO_ReadOnly ))
+		{
+			QTextStream inputStream(&inputFile);
+			QTextStream expectedStream(&expectedFile);
+			QString inputData;
+			QString expectedData;
+			inputData = inputStream.read();
+			expectedData = expectedStream.read();
+
+			inputFile.close();
+			expectedFile.close();
+
+			QString path = KGlobal::dirs()->findResource( "emoticons", "Default/smile.png" ).replace( "smile.png", QString::null );
+				
+			Kopete::Emoticons::self();
+			QString result = emo.parse( inputData ).replace( path, QString::null );	
+			
+			// HACK to know the test case we applied, concatenate testcase name to both
+			// input and expected string. WIll remove when I can add some sort of metadata
+			// to a CHECK so debug its origin testcase
+			result = fileName + QString::fromLatin1(": ") + result;
+			expectedData = fileName + QString::fromLatin1(": ") + expectedData;
+			// if the test case begins with broken, we expect it to fail, then use XFAIL
+			// otherwise use CHECK
+			if ( fileName.section("-", 0, 0) == QString::fromLatin1("broken") )
+			{
+				kdDebug() << "checking known-broken testcase: " << fileName << endl;
+				XFAIL(result, expectedData);
+			}
+			else
+			{
+				kdDebug() << "checking known-working testcase: " << fileName << endl;
+				CHECK(result, expectedData);
+			}
+		}
+		else
+		{
+			SKIP("Warning! can't open testcase files for "+ *it + ". Skiping testcase");
+			continue;
+		}
 	}
-}
-void KopeteEmoticonTest::testKnownGood()
-{
-	QString path = KGlobal::dirs()->findResource( "emoticons", "KMess-Cartoon/smile.png" ).replace( "smile.png", QString::null );
-	uint i = 0;
-	while ( knownGood[ i ][ 0 ] && knownGood[ i ][ 1 ] )
-	{
-		QString result = Kopete::Emoticons::parseEmoticons( knownGood[ i ][ 0 ] ).replace( path, QString::null );	
-		CHECK(result, QString::fromLatin1(knownGood[ i ][ 1 ]));
-		i++;
-	}
+	
 }
 
 
