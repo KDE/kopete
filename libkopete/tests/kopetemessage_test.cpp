@@ -141,8 +141,8 @@ void KopeteMessage_Test::testValidXML()
 		kdDebug(14010) << k_funcinfo << "Cannot open file" << endl;
 	}
 
-	QString schemaPath = QString::fromLatin1( SRCDIR ) + QString::fromLatin1("/kopete-message.xsd");
-	kdDebug() << k_funcinfo << schemaPath;
+	QString schemaPath = QString::fromLatin1( SRCDIR ) + QString::fromLatin1("/kopetemessage.xsd");
+	kdDebug() << k_funcinfo << schemaPath << endl;
 	KProcess p;
 	p << "xmllint" << "--noout" << "--schema" << schemaPath << QString::fromLatin1("message.xml"); 
 	p.start(KProcess::Block);
