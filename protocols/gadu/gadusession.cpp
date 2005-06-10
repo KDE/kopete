@@ -769,7 +769,6 @@ GaduSession::checkDescriptor()
 		case GG_EVENT_CONN_SUCCESS:
 			kdDebug(14100) << "success server: " << session_->server_addr << endl;
 			emit connectionSucceed();
-			kdDebug(14100) << "getting personal info " << getPersonalInformation() << endl;
 		break;
 		case GG_EVENT_CONN_FAILED:
 			kdDebug(14100) << "failed server: " << session_->server_addr << endl;
