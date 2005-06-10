@@ -9,6 +9,7 @@ libkirc_la_SOURCES = \
 	kircentity.cpp \
 	kircmessage.cpp \
 	kircmessageredirector.cpp \
+	kircsocket.cpp \
 	kirctransfer.cpp \
 	kirctransferhandler.cpp \
 	kirctransferserver.cpp \

@@ -20,21 +20,19 @@
 #ifndef KIRCSOCKET_H
 #define KIRCSOCKET_H
 
-#include <kbufferedsocket.h>
+#include "kircmessage.h"
 
-#include <qdict.h>
-#include <qintdict.h>
+#include <kbufferedsocket.h>
+#include <kresolver.h>
+
 #include <qregexp.h>
 #include <qstring.h>
 #include <qstringlist.h>
 
-class QRegExp;
 class QTextCodec;
 
 namespace KIRC
 {
-
-class Message;
 
 /**
  * @author Nick Betcher <nbetcher@kde.org>
@@ -83,7 +81,7 @@ signals:
 	 */
 	void internalError(const QString &errStr);
 
-	void stateChanged(KIRC::EngineBase::EngineState newstate);
+	void stateChanged(KIRC::Socket::SocketState newstate);
 
 	void receivedMessage(KIRC::Message &message);
 
@@ -91,7 +89,8 @@ public slots:
 	/**
 	 * @return true if the socket is got no error trying to establish the connection.
 	 */
-	bool connectToServer(const QString &host, Q_UINT16 port, bool useSSL);
+	void connectToServer(const QString &host, Q_UINT16 port, bool useSSL);
+	void connectToServer(const KNetwork::KResolverEntry &entry, bool useSSL);
 //	void bind();
 	void close();
 
@@ -100,7 +99,10 @@ public slots:
 
 	void showInfoDialog();
 
-private slots:
+protected:
+	bool setupSocket(bool useSSL);
+
+protected slots:
 	void slotReadyRead();
 
 	void socketStateChanged(int newstate);
@@ -111,7 +113,7 @@ private:
 	KNetwork::KBufferedSocket *m_socket;
 	bool m_useSSL;
 
-	KIRC::SocketBase::SocketState m_state;
+	KIRC::Socket::SocketState m_state;
 };
 
 }

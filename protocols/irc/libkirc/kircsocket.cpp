@@ -20,8 +20,7 @@
 #include <config.h>
 #endif
 
-#include "kircenginebase.h"
-#include "ksslsocket.h"
+#include "kircsocket.h"
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -37,9 +36,9 @@ using namespace KNetwork;
 /* Please note that the regular expression "[\\r\\n]*$" is used in a QString::replace statement many times.
  * This gets rid of trailing \r\n, \r, \n, and \n\r characters.
  */
-const QRegExp EngineBase::m_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
+const QRegExp Socket::m_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
 
-EngineBase::EngineBase(QObject *parent)
+Socket::Socket(QObject *parent)
 	: QObject(parent),
 	  m_socket(0),
 	  m_state(Idle),
@@ -48,31 +47,26 @@ EngineBase::EngineBase(QObject *parent)
 	kdDebug(14120) << k_funcinfo << endl;
 }
 
-EngineBase::~EngineBase()
+Socket::~Socket()
 {
 	kdDebug(14120) << k_funcinfo << endl;
 }
 
-void EngineBase::connectToServer(const QString &host, Q_UINT16 port, bool useSSL)
+void Socket::connectToServer(const QString &host, Q_UINT16 port, bool useSSL)
 {
 //	kdDebug(14120) << k_funcinfo << useSSL << endl;
 	setupSocket(useSSL);
-
-	return connectToServer(KResolverEntry(), useSSL);
+	m_socket->connect(host, QString::number(port));
 }
 
-void EngineBase::connectToServer(const KResolverEntry &entry, bool useSSL)
+void Socket::connectToServer(const KResolverEntry &entry, bool useSSL)
 {
 //	kdDebug(14120) << k_funcinfo << useSSL << endl;
 	setupSocket(useSSL);
-
-	kdDebug(14120) << "Trying to connect to server " << m_Host << ":" << m_Port << endl;
-	kdDebug(14120) << "Sock state: " << m_socket->state() << endl;
-
-	return m_socket->connect(m_Host, QString::number(m_Port)))
+	m_socket->connect(entry);
 }
 
-bool EngineBase::setupSocket(bool useSSL)
+bool Socket::setupSocket(bool useSSL)
 {
 	if (m_socket)
 		delete m_socket;
@@ -109,12 +103,12 @@ bool EngineBase::setupSocket(bool useSSL)
 	}
 }
 
-void EngineBase::close()
+void Socket::close()
 {
 	m_socket->close();
 }
 
-void EngineBase::socketStateChanged(int newstate)
+void Socket::socketStateChanged(int newstate)
 {
 	switch ((KBufferedSocket::SocketState)newstate)
 	{
@@ -138,24 +132,26 @@ void EngineBase::socketStateChanged(int newstate)
 	}
 }
 
-void EngineBase::socketGotError(int errCode)
+void Socket::socketGotError(int errCode)
 {
+	KBufferedSocket::SocketError err = (KBufferedSocket::SocketError)errCode;
+
 	// Ignore spurious error
-	if (errCode == KBufferedSocket::NoError)
+	if (err == KBufferedSocket::NoError)
 		return;
 
-	QString errStr = KBufferedSocket::errorString(errCode);
+	QString errStr = KBufferedSocket::errorString(err);
 	kdDebug(14120) << k_funcinfo << "Socket error: " << errStr << endl;
 	emit internalError(errStr);
 
 	// ignore non-fatal error
-	if (!KBufferedSocket::isFatalError(errCode))
+	if (!KBufferedSocket::isFatalError(err))
 		return;
 
 	close();
 }
 
-void EngineBase::writeRawMessage(const QByteArray &rawMsg)
+void Socket::writeRawMessage(const QByteArray &rawMsg)
 {
 /*	if (!m_socket || m_socket->status())
 	{
@@ -168,7 +164,7 @@ void EngineBase::writeRawMessage(const QByteArray &rawMsg)
 	kdDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg) << endl;
 }
 /*
-void EngineBase::writeRawMessage(const QString &rawMsg, QTextCodec *codec)
+void Socket::writeRawMessage(const QString &rawMsg, QTextCodec *codec)
 {
 	if (!codec)
 		codec = m_defaultCodec;
@@ -182,7 +178,7 @@ void EngineBase::writeRawMessage(const QString &rawMsg, QTextCodec *codec)
 	writeRawMessage(codec->fromUnicode(rawMsg));
 }
 */
-void EngineBase::slotReadyRead()
+void Socket::slotReadyRead()
 {
 	// This condition is buggy when the peer server
 	// close the socket unexpectedly
@@ -190,22 +186,12 @@ void EngineBase::slotReadyRead()
 //	if (m_socket->state() == KSocketBase::Connected && m_socket->canReadLine())
 	if (m_socket->canReadLine())
 	{
-		bool parseSuccess;
-		Message msg = Message::parse(this, &parseSuccess);
-		if (parseSuccess)
-		{
-/*
-		QCString raw = engine->socket()->readLine();
-		raw.replace("\r\n",""); //remove the trailling \r\n if any(there must be in fact)
-		kdDebug(14121) << "<< " << raw << endl;
-
-		return Message(engine, raw);
-*/
+		Message msg(m_socket->readLine());
 
 		if (msg.isValid())
 			emit receivedMessage(msg);
 		else
-			emit internalError(ParsingFailed, msg);
+			emit internalError(i18n("Parse error while parsing: %1").arg(msg.rawLine()));
 
 		QTimer::singleShot( 0, this, SLOT( slotReadyRead() ) );
 	}
@@ -214,7 +200,7 @@ void EngineBase::slotReadyRead()
 //		error();
 }
 
-void EngineBase::showInfoDialog()
+void Socket::showInfoDialog()
 {
 /*	if( m_useSSL )
 	{
@@ -222,4 +208,4 @@ void EngineBase::showInfoDialog()
 	}*/
 }
 
-#include "kircenginebase.moc"
+#include "kircsocket.moc"
