@@ -43,41 +43,8 @@ KUNITTEST_MODULE_REGISTER_TESTER( KopeteMessage_Test );
   There are four sets of tests: for each of plain text and html, we have those
   known to work in the current codebase, and those known to fail right now.
 
-  Each entry in a set consists of two strings. The first string is the input,
-  the second string is the EXPECTED output. If the two differ the test is
-  considered failed and the actual result is output for comparison.
-
-  A set should end with an entry containing at least one null pointer.
+  the name convention is working|broken-plaintext|html-number.input|output
 */
-
-typedef const char * LinkTestSet[][ 2 ];
-
-static LinkTestSet knownGoodPlain =
-{
-	{ "$URL", "<a href=\"$URL\" title=\"$URL\">$URL</a>" },
-	{ "$URL/", "<a href=\"$URL/\" title=\"$URL/\">$URL/</a>" },
-	{ "www.kde.org/", "<a href=\"$URL/\" title=\"$URL/\">www.kde.org/</a>" },
-	{ NULL, NULL }
-};
-
-static LinkTestSet knownBrokenPlain =
-{
-	{ NULL, NULL }
-};
-
-static LinkTestSet knownGoodHTML =
-{
-	{ "$URL", "<a href=\"$URL\" title=\"$URL\">$URL</a>" },
-	{ "<a href=\"$URL\">KDE</a>", "<a href=\"$URL\">KDE</a>" },
-	{ NULL, NULL }
-};
-
-static LinkTestSet knownBrokenHTML =
-{
-	{ "<a href=\"$URL\" title=\"$URL\">$URL</a>", "<a href=\"$URL\" title=\"$URL\">$URL</a>" },
-	{ NULL, NULL }
-};
-
 
 KopeteMessage_Test::KopeteMessage_Test()
 {
@@ -101,10 +68,8 @@ void KopeteMessage_Test::allTests()
 	m_contactFrom = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-myself"), m_metaContactMyself, QString::null);
 	m_contactTo = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-dest"), m_metaContactOther, QString::null);
 	m_message = new Kopete::Message( m_contactFrom, m_contactTo, QString::null, Kopete::Message::Outbound, Kopete::Message::PlainText);
-	//testKnownGoodHTML();
-	//testKnownBrokenHTML();
-	//testKnownGoodPlain();
-	//testKnownBrokenPlain();
+	
+	testLinkParser();
 	testValidXML();
 }
 
@@ -161,61 +126,75 @@ void KopeteMessage_Test::setup()
 	
 }
 
-void KopeteMessage_Test::testKnownGoodHTML()
+void KopeteMessage_Test::testLinkParser()
 {
-	uint i = 0;
-	while ( knownGoodHTML[ i ][ 0 ] && knownGoodHTML[ i ][ 1 ] )
-	{
-		QString input = knownGoodHTML[ i ][ 0 ], expected = knownGoodHTML[ i ][ 1 ];
-		input.replace( "$URL","http://www.kde.org" );
-		expected.replace( "$URL","http://www.kde.org" );
-		QString result = Kopete::Message::parseLinks( input, Kopete::Message::RichText );
+	QString basePath = QString::fromLatin1( SRCDIR ) + QString::fromLatin1("/link-parser-testcases");
+	QDir testCasesDir(basePath);
 	
-		CHECK(result, expected);
-		i++;
-	}
-}
+	QStringList inputFileNames = testCasesDir.entryList("*.input");
+	for ( QStringList::ConstIterator it = inputFileNames.begin(); it != inputFileNames.end(); ++it)
+	{
+		QString fileName = *it;
+		QString outputFileName = fileName;
+		outputFileName.replace("input","output");
+		// open the input file
+		QFile inputFile(basePath + QString::fromLatin1("/") + fileName);
+		QFile expectedFile(basePath + QString::fromLatin1("/") + outputFileName);
+		// check if the expected output file exists
+		// if it doesn't, skip the testcase
+		if ( ! expectedFile.exists() )
+		{
+			SKIP("Warning! expected output for testcase "+ *it + " not found. Skiping testcase");
+			continue;
+		}
+		if ( inputFile.open( IO_ReadOnly ) && expectedFile.open( IO_ReadOnly ))
+		{
+			QTextStream inputStream(&inputFile);
+			QTextStream expectedStream(&expectedFile);
+			QString inputData;
+			QString expectedData;
+			inputData = inputStream.read();
+			expectedData = expectedStream.read();
 
-void KopeteMessage_Test::testKnownBrokenHTML()
-{
-	uint i = 0;
-	while ( knownBrokenHTML[ i ][ 0 ] && knownBrokenHTML[ i ][ 1 ] )
-	{
-		QString input = knownBrokenHTML[ i ][ 0 ], expected = knownBrokenHTML[ i ][ 1 ];
-		input.replace( "$URL","http://www.kde.org" );
-		expected.replace( "$URL","http://www.kde.org" );
-		QString result = Kopete::Message::parseLinks( input, Kopete::Message::RichText );
-	
-		XFAIL(result, expected);
-		i++;
-	}
-}
-void KopeteMessage_Test::testKnownGoodPlain()
-{
-	uint i = 0;
-	while ( knownGoodPlain[ i ][ 0 ] && knownGoodPlain[ i ][ 1 ] )
-	{
-		QString input = knownGoodPlain[ i ][ 0 ], expected = knownGoodPlain[ i ][ 1 ];
-		input.replace( "$URL","http://www.kde.org" );
-		expected.replace( "$URL","http://www.kde.org" );
-		QString result = Kopete::Message::parseLinks( input, Kopete::Message::PlainText );
-	
-		CHECK(result, expected);
-		i++;
-	}
-}
+			inputFile.close();
+			expectedFile.close();
 
-void KopeteMessage_Test::testKnownBrokenPlain()
-{
-	uint i = 0;
-	while ( knownBrokenPlain[ i ][ 0 ] && knownBrokenPlain[ i ][ 1 ] )
-	{
-		QString input = knownBrokenPlain[ i ][ 0 ], expected = knownBrokenPlain[ i ][ 1 ];
-		input.replace( "$URL","http://www.kde.org" );
-		expected.replace( "$URL","http://www.kde.org" );
-		QString result = Kopete::Message::parseLinks( input, Kopete::Message::PlainText );
+			// use a concrete url
+			inputData.replace( "$URL","http://www.kde.org" );
+			expectedData.replace( "$URL","http://www.kde.org" );
+
+			// set message format for parsing according to textcase filename convention
+			Kopete::Message::MessageFormat format;
+			if ( fileName.section("-", 1, 1) == QString::fromLatin1("plaintext") )
+				format = Kopete::Message::PlainText;
+			else
+				format = Kopete::Message::RichText;		
 	
-		XFAIL(result, expected);
-		i++;
+			QString result = Kopete::Message::parseLinks( inputData, format );
+
+			// HACK to know the test case we applied, concatenate testcase name to both
+			// input and expected string. WIll remove when I can add some sort of metadata
+			// to a CHECK so debug its origin testcase
+			result = fileName + QString::fromLatin1(": ") + result;
+			expectedData = fileName + QString::fromLatin1(": ") + expectedData;
+			// if the test case begins with broken, we expect it to fail, then use XFAIL
+			// otherwise use CHECK
+			if ( fileName.section("-", 0, 0) == QString::fromLatin1("broken") )
+			{
+				kdDebug() << "checking known-broken testcase: " << fileName << endl;
+				XFAIL(result, expectedData);
+			}
+			else
+			{
+				kdDebug() << "checking known-working testcase: " << fileName << endl;
+				CHECK(result, expectedData);
+			}
+		}
+		else
+		{
+			SKIP("Warning! can't open testcase files for "+ *it + ". Skiping testcase");
+			continue;
+		}
 	}
+	
 }

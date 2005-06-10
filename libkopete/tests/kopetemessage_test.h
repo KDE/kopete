@@ -38,10 +38,8 @@ public:
 public slots:
 	void testFormats();
 	void testValidXML();
-	void testKnownGoodHTML();
-	void testKnownBrokenHTML();
-	void testKnownGoodPlain();
-	void testKnownBrokenPlain();
+	void testLinkParser();
+
 private:
 	void setup();
 	Kopete::Message *m_message;
