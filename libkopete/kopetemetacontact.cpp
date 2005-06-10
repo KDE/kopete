@@ -793,9 +793,9 @@ const QDomElement MetaContact::toXML()
 	{
 		QDomElement photo = metaContact.createElement( QString::fromLatin1("photo" ) );
 		photo.setAttribute( QString::fromLatin1("syncWithKABC") , QString::fromLatin1( d->photoSyncedWithKABC ? "1" : "0" ) );
-		displayName.setAttribute( PSCID_ELEM, d->nameSourceCID );
-		displayName.setAttribute( PSPID_ELEM, d->nameSourcePID );
-		displayName.setAttribute( PSAID_ELEM, d->nameSourceAID );
+		photo.setAttribute( PSCID_ELEM, d->photoSourceCID );
+		photo.setAttribute( PSPID_ELEM, d->photoSourcePID );
+		photo.setAttribute( PSAID_ELEM, d->photoSourceAID );
 		metaContact.documentElement().appendChild( photo );
 	}
 
