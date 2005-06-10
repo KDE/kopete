@@ -58,6 +58,8 @@
 #include <qlayout.h>
 #include <qtimer.h>
 #include <q3vbox.h>
+
+#include <QMovie>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QCloseEvent>
@@ -244,10 +246,9 @@ void KopeteEmailWindow::initActions(void)
 	KopeteStdAction::preferences( coll , "settings_prefs" );
 
 	// The animated toolbarbutton
-	// FIXME: no QMovie
 	d->normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
-//	d->animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
-//	d->animIcon->pause();
+	d->animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
+	d->animIcon->pause();
 
 	d->anim = new QLabel( this, "kde toolbar widget" );
 	d->anim->setMargin( 5 );
@@ -403,9 +404,8 @@ void KopeteEmailWindow::sendMessage()
 	if ( !d->editPart->canSend() )
 		return;
 	d->sendInProgress = true;
-	// FIXME: no QMovie
-//	d->anim->setMovie( d->animIcon );
-//	d->animIcon->unpause();
+	d->anim->setMovie( d->animIcon );
+	d->animIcon->unpause();
 	d->editPart->widget()->setEnabled( false );
 	d->editPart->sendMessage();
 }
@@ -414,8 +414,7 @@ void KopeteEmailWindow::messageSentSuccessfully()
 {
 	d->sendInProgress = false;
 	d->anim->setPixmap( d->normalIcon );
-//FIXME: no QMovie
-//	d->animIcon->pause();
+	d->animIcon->pause();
 	closeView();
 }
 

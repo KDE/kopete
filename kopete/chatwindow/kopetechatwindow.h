@@ -20,7 +20,7 @@
 #define KOPETECHATWINDOW_H
 
 #include <kparts/mainwindow.h>
-#include <qmovie.h>
+#include <QMovie>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QLabel>

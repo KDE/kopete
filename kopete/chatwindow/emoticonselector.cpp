@@ -24,7 +24,7 @@
 
 #include <math.h>
 
-#include <qmovie.h>
+#include <QMovie>
 #include <qlayout.h>
 #include <qobject.h>
 #include <qtooltip.h>
@@ -40,8 +40,7 @@ EmoticonLabel::EmoticonLabel(const QString &emoticonText, const QString &pixmapP
 	: QLabel(parent,name)
 {
 	mText = emoticonText;
-	#warning FIXME QMovie stuff
-//	setMovie( new QMovie(pixmapPath, QByteArray(), this) );
+	setMovie( new QMovie(pixmapPath, QByteArray(), this) );
 	setAlignment(Qt::AlignCenter);
 	QToolTip::add(this,emoticonText);
 	// Somehow QLabel doesn't tell a reasonable size when you use setMovie
