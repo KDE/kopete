@@ -15,6 +15,7 @@
 */
 
 #undef KDE_NO_COMPAT
+#include <kconfigbase.h>
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -95,7 +96,7 @@ void SMSContact::slotChatSessionDestroyed()
 void SMSContact::slotSendMessage(Kopete::Message &msg)
 {
 	kdWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
-	QString sName = account()->pluginData(protocol(), "ServiceName");
+	QString sName = account()->configGroup()->readEntry("ServiceName", QString::null);
 
 	SMSService *s = ServiceLoader::loadService(sName, account());
 

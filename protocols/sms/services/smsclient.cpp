@@ -22,6 +22,7 @@
 #include <kmessagebox.h>
 #include <kprocess.h>
 #include <kdebug.h>
+#include <kconfigbase.h>
 
 #include "kopeteaccount.h"
 #include "kopeteuiglobal.h"
@@ -56,8 +57,9 @@ void SMSClient::send(const Kopete::Message& msg)
 	if (!m_account) return;
 
 	m_msg = msg;
-
-	QString provider = m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSClient").arg("ProviderName"));
+	
+	KConfigGroup* c = m_account->configGroup();
+	QString provider = c->readEntry(QString("%1:%2").arg("SMSClient").arg("ProviderName"), QString::null);
 
 	if (provider.isNull())
 	{
@@ -65,7 +67,7 @@ void SMSClient::send(const Kopete::Message& msg)
 		return;
 	}
 
-	QString programName = m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSClient").arg("ProgramName"));
+	QString programName = c->readEntry(QString("%1:%2").arg("SMSClient").arg("ProgramName"). QString::null);
 	if (programName.isNull())
 		programName = "/usr/bin/sms_client";
 
@@ -95,14 +97,15 @@ QWidget* SMSClient::configureWidget(QWidget* parent)
 	prefWidget->configDir->setMode(KFile::Directory);
 	QString configDir;
 	if (m_account)
-		configDir = m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSClient").arg("ConfigDir"));
+		configDir = m_account->configGroup()->readEntry(QString("%1:%2").arg("SMSClient").arg("ConfigDir"), QString::null);
 	if (configDir.isNull())
 		configDir = "/etc/sms";
 	prefWidget->configDir->setURL(configDir);
 
 	QString programName;
 	if (m_account)
-		programName = m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSClient").arg("ProgramName"));
+		programName = m_account->configGroup()->readEntry(QString("%1:%2").arg("SMSClient").arg("ProgramName"),
+		                                                  QString::null);
 	if (programName.isNull())
 		programName = "/usr/bin/sms_client";
 	prefWidget->program->setURL(programName);
@@ -111,7 +114,7 @@ QWidget* SMSClient::configureWidget(QWidget* parent)
 
 	if (m_account)
 	{
-		QString pName = m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSClient").arg("ProviderName"));
+		QString pName = m_account->configGroup()->readEntry(QString("%1:%2").arg("SMSClient").arg("ProviderName"));
 		for (int i=0; i < prefWidget->provider->count(); i++)
 		{
 			if (prefWidget->provider->text(i) == pName)
@@ -131,9 +134,11 @@ void SMSClient::savePreferences()
 
 	if (prefWidget != 0L && m_account != 0L)
 	{
-		m_account->setPluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSClient").arg("ProgramName"), prefWidget->program->url());
-		m_account->setPluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSClient").arg("ConfigDir"), prefWidget->configDir->url());
-		m_account->setPluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSClient").arg("ProviderName"), prefWidget->provider->currentText());
+		KConfigGroup* c = m_account->configGroup();
+
+		c->writeEntry(QString("%1:%2").arg("SMSClient").arg("ProgramName"), prefWidget->program->url());
+		c->writeEntry(QString("%1:%2").arg("SMSClient").arg("ConfigDir"), prefWidget->configDir->url());
+		c->writeEntry(QString("%1:%2").arg("SMSClient").arg("ProviderName"), prefWidget->provider->currentText());
 	}
 }
 

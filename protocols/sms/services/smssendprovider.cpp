@@ -18,6 +18,7 @@
 #include <qlabel.h>
 #include <qfile.h>
 
+#include <kconfigbase.h>
 #include <kprocess.h>
 #include <klineedit.h>
 #include <kmessagebox.h>
@@ -86,7 +87,8 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 
 				descriptions.append(args[1]);
 				if (m_account)
-					values.append(m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg(group).arg(names[names.count()-1])));
+					values.append(m_account->configGroup()->readEntry(QString("%1:%2").arg(group).arg(names[names.count()-1]),
+					                                                  QString::null));
 				else
 					values.append("");
 
@@ -192,7 +194,7 @@ void SMSSendProvider::save(QPtrList<KLineEdit>& args)
 //                kdDebug(14160) << k_funcinfo << "saving " << args.at(i) << " to " << names[namesI] << endl;
 		if (!args.at(i)->text().isEmpty())
 		{	values[namesI] = args.at(i)->text();
-			m_account->setPluginData(SMSProtocol::protocol(), QString("%1:%2").arg(group).arg(names[namesI]), values[namesI]);
+			m_account->configGroup()->writeEntry(QString("%1:%2").arg(group).arg(names[namesI]), values[namesI]);
 		}
 	        namesI++;
 	}

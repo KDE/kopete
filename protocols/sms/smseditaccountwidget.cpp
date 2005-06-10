@@ -22,6 +22,7 @@
 #include <qcheckbox.h>
 #include <qradiobutton.h>
 
+#include <kconfigbase.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <krestrictedline.h>
@@ -54,10 +55,10 @@ SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Accoun
 		//Disable changing the account ID for now
 		//FIXME: Remove this when we can safely change the account ID (Matt)
 		preferencesDialog->accountId->setDisabled(true);
-		sName = account->pluginData(protocol, "ServiceName");
-		preferencesDialog->subEnable->setChecked(account->pluginData(protocol, "SubEnable") == "true");
-		preferencesDialog->subCode->setText(account->pluginData(protocol, "SubCode"));
-		preferencesDialog->ifMessageTooLong->setCurrentItem(SMSMsgAction(account->pluginData(protocol, "MsgAction").toInt()));
+		sName = account->configGroup()->readEntry("ServiceName", QString::null);
+		preferencesDialog->subEnable->setChecked(account->configGroup()->readBoolEntry("SubEnable", false));
+		preferencesDialog->subCode->setText(account->configGroup()->readEntry("SubCode", QString::null));
+		preferencesDialog->ifMessageTooLong->setCurrentItem(SMSMsgAction(account->configGroup()->readNumEntry("MsgAction", 0)));
 	}
 
 	preferencesDialog->serviceName->insertStringList(ServiceLoader::services());
@@ -96,11 +97,12 @@ Kopete::Account* SMSEditAccountWidget::apply()
 
 	if (service)
 		service->setAccount(account());
-
-	account()->setPluginData(m_protocol, "ServiceName", preferencesDialog->serviceName->currentText());
-	account()->setPluginData(m_protocol, "SubEnable", preferencesDialog->subEnable->isChecked() ? "true" : "false");
-	account()->setPluginData(m_protocol, "SubCode", preferencesDialog->subCode->text());
-	account()->setPluginData(m_protocol, "MsgAction", QString().setNum((int)(preferencesDialog->ifMessageTooLong->currentItem())));
+	
+	KConfigGroup *c = account()->configGroup();
+	c->writeEntry("ServiceName", preferencesDialog->serviceName->currentText());
+	c->writeEntry("SubEnable", preferencesDialog->subEnable->isChecked() ? "true" : "false");
+	c->writeEntry("SubCode", preferencesDialog->subCode->text());
+	c->writeEntry("MsgAction", preferencesDialog->ifMessageTooLong->currentItem());
 
 	emit saved();
 	return account();

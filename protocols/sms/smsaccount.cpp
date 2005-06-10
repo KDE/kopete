@@ -15,6 +15,7 @@
 */
 
 #undef KDE_NO_COMPAT
+#include <kconfigbase.h>
 #include <kaction.h>
 #include <kpopupmenu.h>
 #include <kprocess.h>
@@ -44,9 +45,9 @@ SMSAccount::~SMSAccount()
 
 void SMSAccount::loadConfig()
 {
-	theSubEnable = pluginData(protocol(), "SubEnable") == "true";
-	theSubCode = pluginData(protocol(), "SubCode");
-	theLongMsgAction = (SMSMsgAction)pluginData(protocol(), "MsgAction").toInt();
+	theSubEnable = configGroup()->readBoolEntry("SubEnable", false);
+	theSubCode = configGroup()->readEntry("SubCode", QString::null);
+	theLongMsgAction = (SMSMsgAction)configGroup()->readNumEntry("MsgAction", 0);
 }
 
 void SMSAccount::translateNumber(QString &theNumber)
