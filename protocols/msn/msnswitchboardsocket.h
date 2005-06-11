@@ -73,6 +73,9 @@ private:
 	/** the number of chunk for currents messages */
 	unsigned int m_chunks;
 
+	/** true is we already sent the x-clientcaps message */
+	bool m_clientcapsSent; 
+
 protected:
 	/**
 	 * Handle an MSN command response line.

@@ -52,6 +52,8 @@
 #include "kopetecontact.h"
 #include "kopeteuiglobal.h"
 #include "private/kopeteemoticons.h"
+//#include "kopeteaccountmanager.h"
+//#include "kopeteprotocol.h"
 
 #include "sha1.h"
 
@@ -64,6 +66,7 @@ MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account , QObject *paren
 	m_recvIcons=0;
 	m_emoticonTimer=0L;
 	m_chunks=0;
+	m_clientcapsSent=false;
 }
 
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
@@ -405,6 +408,54 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	else if( type== "application/x-msnmsgrp2p" )
 	{
 		p2pDisplatcher();  //create a p2p displatcher if none exist yet
+	}
+	else if( type == "text/x-clientcaps" )
+	{
+		
+		rx=QRegExp("Client-Name: ([A-Za-z0-9.$!*/\\-]*)");
+		rx.search(msg);
+		clientStr=rx.cap(1);
+
+		if( !clientStr.isNull() && !m_msgHandle.isNull())
+		{
+			Kopete::Contact *c=m_account->contacts()[m_msgHandle];
+			if(c)
+				c->setProperty(  MSNProtocol::protocol()->propClient , clientStr );
+		}
+
+		if(!m_clientcapsSent)
+		{
+			QString JabberID;
+			//the JabberID field is used by the MSN jabber gateway to allow the user to establish a dirrect connection using Jabber
+#if 0  // Disabled for privacy reason
+			if(msg.contains("JabberID"))
+			{ // Find a Jabber account in order to get the jabberID
+				QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
+				for(Kopete::Account *a=accounts.first() ; a; a=accounts.next() )
+				{
+					if(a->protocol()->pluginId()=="JabberProtocol")
+					{
+						JabberID="JabberID: "+a->accountId() +"\r\n";
+						break;
+					}
+				}
+			}
+#endif
+
+			QCString message = QString( "MIME-Version: 1.0\r\n"
+					"Content-Type: text/x-clientcaps\r\n"
+					"\r\n"
+					"Client-Name: Kopete/"+escape(kapp->aboutData()->version())+"\r\n"
+					+JabberID+
+					"\r\n\r\n" ).utf8();
+
+			QString args = "U";
+			sendCommand( "MSG", args, true, message );
+
+			m_clientcapsSent=true;
+		}
+
+
 	}
 	else
 	{
