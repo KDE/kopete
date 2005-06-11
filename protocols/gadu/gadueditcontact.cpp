@@ -123,7 +123,7 @@ GaduEditContact::init()
 }
 
 void
-GaduEditContact::listClicked( QListViewItem* item )
+GaduEditContact::listClicked( QListViewItem* /*item*/ )
 {
 
 }
