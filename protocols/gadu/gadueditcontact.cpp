@@ -173,21 +173,18 @@ GaduEditContact::slotApply()
 	contact_->setContactDetails( cl_ );
 
 	gl = Kopete::ContactList::self()->groups();
-	bool topLevel = true;
 	for ( QListViewItemIterator it( ui_->groups ); it.current(); ++it ) {
 		QCheckListItem *check = dynamic_cast<QCheckListItem *>( it.current() );
 		if ( check && check->isOn() ) {
 			for( group = gl.first(); group; group = gl.next() ) {
 				if ( group->displayName() == check->text() ) {
 					contact_->metaContact()->addToGroup( group );
-					topLevel = false;
-					break;
 				}
 			}
 		}
 	}
-	if( topLevel )
+	
+	if( contact_->metaContact()->groups().isEmpty() == TRUE )
 		contact_->metaContact()->addToGroup( Kopete::Group::topLevel() );
 }
-
 #include "gadueditcontact.moc"
