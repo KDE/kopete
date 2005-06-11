@@ -22,7 +22,7 @@ AC_ARG_ENABLE(audiovideo,
 	        AC_DEFINE(ENABLE_AV, 1, [enable support for audio and video in Kopete])
 		ENABLE_AV=true
 	      ], [ ENABLE_AV=false ])
-AM_CONDITIONAL(enable_av, test -n "$ENABLE_AV")
+AM_CONDITIONAL(enable_av, test x$ENABLE_AV = xtrue)
 
 AC_ARG_ENABLE(smpppd, [  --enable-smpppd       enable support for smpppd],
 [

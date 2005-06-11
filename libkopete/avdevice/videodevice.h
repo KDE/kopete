@@ -21,7 +21,7 @@
 #include <unistd.h>
 #include <signal.h>
 
-#ifdef __linux__
+#if defined(__linux__) && defined(ENABLE_AV)
 
 #undef __STRICT_ANSI__
 #include <asm/types.h>
@@ -55,7 +55,7 @@ namespace AV {
 typedef enum
 {
 	VIDEODEV_DRIVER_NONE,
-#ifdef __linux__
+#if defined( __linux__) && defined(ENABLE_AV)
 	VIDEODEV_DRIVER_V4L,
 #ifdef HAVE_V4L2
 	VIDEODEV_DRIVER_V4L2
@@ -147,7 +147,7 @@ public:
 	int descriptor;
 
 //protected:
-#ifdef __linux__
+#if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 	struct v4l2_capability V4L2_capabilities;
 	struct v4l2_cropcap cropcap;

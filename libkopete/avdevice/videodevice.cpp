@@ -23,7 +23,6 @@
 #include "videoinput.h"
 #include "videodevice.h"
 
-#undef HAVE_V4L2
 #define CLEAR(x) memset (&(x), 0, sizeof (x))
 
 namespace Kopete {
@@ -129,7 +128,7 @@ int VideoDevice::checkDevice()
 		m_videostream=false;
 
 		m_driver=VIDEODEV_DRIVER_NONE;
-#ifdef __linux__
+#if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 		memset(&V4L2_capabilities, 0, sizeof(V4L2_capabilities));
 
@@ -381,7 +380,7 @@ int VideoDevice::initDevice()
 	m_io_method = IO_METHOD_NONE;
 	switch(m_driver)
 	{
-#ifdef __linux__
+#if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 		case VIDEODEV_DRIVER_V4L2:
 			if(V4L2_capabilities.capabilities & V4L2_CAP_READWRITE)
@@ -426,7 +425,7 @@ int VideoDevice::initDevice()
 	}
 
 // Select video input, video standard and tune here.
-#ifdef __linux__
+#if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 	cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	if (-1 == xioctl (VIDIOC_CROPCAP, &cropcap))
@@ -511,7 +510,7 @@ kdDebug() <<  k_funcinfo << "setSize(" << newwidth << ", " << newheight << ") ca
 // Change resolution for the video device
 		switch(m_driver)
 		{
-#ifdef __linux__
+#if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 			case VIDEODEV_DRIVER_V4L2:
 //				CLEAR (fmt);
@@ -605,7 +604,7 @@ kdDebug() <<  k_funcinfo << "called." << endl;
 // Change the pixel format for the video device
 	switch(m_driver)
 	{
-#ifdef __linux__
+#if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 		case VIDEODEV_DRIVER_V4L2:
 //			CLEAR (fmt);
@@ -674,7 +673,7 @@ int VideoDevice::selectInput(int newinput)
 	{
 		switch (m_driver)
 		{
-#ifdef __linux__
+#if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 			case VIDEODEV_DRIVER_V4L2:
 				if (-1 == ioctl (descriptor, VIDIOC_S_INPUT, &newinput))
@@ -721,7 +720,7 @@ int VideoDevice::startCapturing()
 			case IO_METHOD_READ: // Nothing to do
 				break;
 			case IO_METHOD_MMAP:
-#ifdef __linux__
+#if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 				{
 					unsigned int loop;
@@ -743,7 +742,7 @@ int VideoDevice::startCapturing()
 #endif
 				break;
 			case IO_METHOD_USERPTR:
-#ifdef __linux__
+#if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 				{
 					unsigned int loop;
@@ -781,7 +780,7 @@ int VideoDevice::getFrame()
     /// @todo implement me
 	ssize_t bytesread;
 
-#ifdef __linux__
+#if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 	struct v4l2_buffer buf;
 #endif
@@ -816,7 +815,7 @@ int VideoDevice::getFrame()
 				processImage (buffers[0].start);
 				break;
 			case IO_METHOD_MMAP:
-#ifdef __linux__
+#if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 				CLEAR (buf);
 				buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -840,7 +839,7 @@ int VideoDevice::getFrame()
 #endif
 				break;
 			case IO_METHOD_USERPTR:
-#ifdef __linux__
+#if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 				{
 					unsigned int i;
@@ -994,7 +993,7 @@ int VideoDevice::pixelFormatCode(pixel_format pixelformat)
 {
 	switch(m_driver)
 	{
-#ifdef __linux__
+#if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 		case VIDEODEV_DRIVER_V4L2:
 			switch(pixelformat)
@@ -1081,7 +1080,7 @@ QString VideoDevice::pixelFormatName(int pixelformat)
 	returnvalue = "None";
 	switch(m_driver)
 	{
-#ifdef __linux__
+#if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
 		case VIDEODEV_DRIVER_V4L2:
 			switch(pixelformat)

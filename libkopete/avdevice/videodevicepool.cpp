@@ -336,7 +336,7 @@ int VideoDevicePool::scanDevices()
     /// @todo implement me
 
 	kdDebug() <<  k_funcinfo << "called" << endl;
-#ifdef __linux__
+#if defined(__linux__) && defined(ENABLE_AV)
 	QDir videodevice_dir;
 	const QString videodevice_dir_path=QString::fromLocal8Bit("/dev/v4l/");
 	const QString videodevice_dir_filter=QString::fromLocal8Bit("video*");
