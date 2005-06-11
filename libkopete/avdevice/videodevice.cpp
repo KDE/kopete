@@ -10,7 +10,7 @@
 //
 //
 
-//#include <assert.h>
+#include <assert.h>
 #include <iostream>
 #include <ostream>
 #include <sstream>
