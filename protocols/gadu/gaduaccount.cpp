@@ -65,7 +65,7 @@ public:
 	GaduDCC*	gaduDcc_;
 
 	QTimer*		pingTimer_;
-
+	
 	QTextCodec*	textcodec_;
 	KFileDialog*	saveListDialog;
 	KFileDialog*	loadListDialog;
@@ -83,12 +83,18 @@ public:
 
 	QString		lastDescription;
 	bool		forFriends;
-
-	KConfigGroup*	config;
+        
+	QTimer*         exportTimer_;
+	bool		exportUserlist;
+	
+	KConfigGroup*			config;
 	Kopete::OnlineStatus		status;
 	QValueList<unsigned int>	servers;
 	KGaduLoginParams		loginInfo;
 };
+
+// two minutes
+#define USERLISTEXPORT_TIMEOUT (2*60*1000)
 
 // FIXME: use dynamic cache please, i consider this as broken resolution of this problem
 static const char* const servers_ip[] = {
@@ -144,7 +150,9 @@ static const char* const servers_ip[] = {
 	p->loginInfo.client_addr	= 0;
 
 	p->pingTimer_ = new QTimer( this );
+	p->exportTimer_ = new QTimer( this );
 
+	p->exportUserlist = false;
 	p->gaduDcc_ = NULL;
 
 	p->config = configGroup();
@@ -211,6 +219,9 @@ GaduAccount::initConnections()
 
 	QObject::connect( p->pingTimer_, SIGNAL( timeout() ),
 				SLOT( pingServer() ) );
+
+	QObject::connect( p->exportTimer_, SIGNAL( timeout() ),
+				SLOT( slotUserlistSynch() ) );
 }
 
 void
@@ -338,6 +349,24 @@ GaduAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const QString
 	changeStatus( status, reason);
 }
 
+void
+GaduAccount::slotUserlistSynch()
+{
+	if ( !p->exportUserlist ) {
+		return;
+	}
+	p->exportUserlist = false;
+	kdDebug(14100) << "userlist changed, exporting" << endl;
+	slotExportContactsList();
+}
+
+void
+GaduAccount::userlistChanged()
+{
+	p->exportUserlist = true;
+	p->exportTimer_->changeInterval( USERLISTEXPORT_TIMEOUT );
+}
+
 bool
 GaduAccount::createContact( const QString& contactId, Kopete::MetaContact* parentContact )
 {
@@ -348,6 +377,8 @@ GaduAccount::createContact( const QString& contactId, Kopete::MetaContact* paren
 	newContact->setParentIdentity( accountId() );
 	addNotify( uinNumber );
 
+	userlistChanged();
+	
 	return true;
 }
 
@@ -495,6 +526,7 @@ GaduAccount::removeContact( const GaduContact* c )
 	if ( isConnected() ) {
 		const uin_t u = c->uin();
 		p->session_->removeNotify( u );
+		userlistChanged();
 	}
 }
 
@@ -722,7 +754,11 @@ GaduAccount::connectionSucceed( )
 	startNotify();
 
 	p->session_->requestContacts();
-	p->pingTimer_->start( 180000 );//3 minute timeout
+	p->pingTimer_->start( 3*60*1000 );//3 minute timeout
+	pingServer();
+
+	// check if we need to export userlist every USERLISTEXPORT_TIMEOUT ms
+	p->exportTimer_->start( USERLISTEXPORT_TIMEOUT );
 }
 
 void
@@ -778,6 +814,9 @@ GaduAccount::userlist( const QString& contactsListString )
 	Kopete::MetaContact* metaContact;
 	unsigned int i;
 
+	// don't export any new changes that were just imported :-)
+	p->exportTimer_->stop();
+	
 	for ( i = 0; i != contactsList.size() ; i++ ) {
 		kdDebug(14100) << "uin " << contactsList[i].uin << endl;
 
@@ -818,6 +857,9 @@ GaduAccount::userlist( const QString& contactsListString )
 			}
 		}
 	}
+	// start to check if we need to export userlist 
+	p->exportUserlist = false;	
+	p->exportTimer_->start( USERLISTEXPORT_TIMEOUT );
 }
 
 void

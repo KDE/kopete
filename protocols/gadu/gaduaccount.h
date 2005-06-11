@@ -137,7 +137,8 @@ private slots:
 
 	void userlist( const QString& contacts );
 	GaduContactsList* userlist();
-
+	void slotUserlistSynch();
+	
 	void connectionFailed( gg_failure_t failure );
 	void connectionSucceed( );
 
@@ -156,6 +157,7 @@ private:
 	void initActions();
 	void dccOn();
 	void dccOff();
+	void userlistChanged();
 
 	GaduAccountPrivate* p;
 };

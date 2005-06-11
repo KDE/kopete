@@ -24,6 +24,7 @@
 #include <kaction.h>
 #include <kdebug.h>
 #include <kfiledialog.h>
+#include <kmessagebox.h>
 
 #include "gaduaccount.h"
 #include "gaduprotocol.h"
@@ -224,8 +225,15 @@ GaduContact::slotUserInfo()
 void
 GaduContact::deleteContact()
 {
-	account_->removeContact( this );
-	deleteLater();
+	if ( account_->isConnected() ) {
+		account_->removeContact( this );
+		deleteLater();
+	}
+	else {
+		KMessageBox::error( Kopete::UI::Global::mainWidget(), 
+				i18n( "<qt>Please go online to remove a contact from your contact list.</qt>" ), 
+				i18n( "Gadu-Gadu Plugin" ));
+	}
 }
 
 void
