@@ -101,45 +101,15 @@ ICQ::Presence ICQAccount::presence()
 }
 
 
-KAction* ICQAccount::statusAction( const QString &name, ICQ::Presence::Type type, const char *slot )
-{
-	ICQ::Presence pres( type, presence().visibility() );
-	return new KAction( name, pres.toOnlineStatus().iconFor( this ), 0, this, slot, this );
-}
-
-Kopete::AwayAction* ICQAccount::statusActionAway( const QString &name, ICQ::Presence::Type type, const char *slot )
-{
-	ICQ::Presence pres( type, presence().visibility() );
-	return new Kopete::AwayAction( name, pres.toOnlineStatus().iconFor( this ), 0, this, slot, this );
-}
-
 KActionMenu* ICQAccount::actionMenu()
 {
-	// actionMenu is managed by Kopete::Account.  It is deleted when
-	// it is no longer shown, so we can (safely) just make a new one here.
-	KActionMenu* actionMenu = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ), this );
-	
-	QString myNick = myself()->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-	actionMenu->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ),
-	                                      i18n("%2 <%1>").arg( accountId() ).arg( myNick ) );
-	
-	using namespace ICQ;
-	actionMenu->insert( statusAction( i18n( "O&nline" ), Presence::Online, SLOT( slotGoOnline() ) ) );
-	actionMenu->insert( statusActionAway( i18n( "&Free for Chat" ), Presence::FreeForChat, SLOT( slotGoFFC( const QString & ) ) ) );
-	actionMenu->insert( statusActionAway( i18n( "&Away" ), Presence::Away, SLOT( slotGoAway( const QString & ) ) ) );
-	actionMenu->insert( statusActionAway( i18n( "Not A&vailable" ), Presence::NotAvailable, SLOT( slotGoNA( const QString & ) ) ) );
-	actionMenu->insert( statusActionAway( i18n( "&Do Not Disturb" ), Presence::DoNotDisturb, SLOT( slotGoDND( const QString & ) ) ) );
-	actionMenu->insert( statusActionAway( i18n( "O&ccupied" ), Presence::Occupied, SLOT( slotGoOCC( const QString & ) ) ) );
-	
-	KAction* actionOffline = statusAction( i18n( "O&ffline" ), Presence::Offline, SLOT( slotGoOffline() ) );
-	//actionOffline->setEnabled( isConnected() );
-	actionMenu->insert( actionOffline );
+	KActionMenu* actionMenu = Kopete::Account::actionMenu();
 	
 	actionMenu->popupMenu()->insertSeparator();
 	
 	KToggleAction* actionInvisible = 
 	    new KToggleAction( i18n( "In&visible" ),
-	                       Presence( presence().type(), Presence::Invisible ).toOnlineStatus().iconFor( this ),
+	                       ICQ::Presence( presence().type(), ICQ::Presence::Invisible ).toOnlineStatus().iconFor( this ),
 	                       0, this, SLOT( slotToggleInvisible() ), this );
 	actionInvisible->setChecked( presence().visibility() == ICQ::Presence::Invisible );
 	actionMenu->insert( actionInvisible );
@@ -158,7 +128,12 @@ void ICQAccount::connectWithPassword( const QString &password )
 	
 	kdDebug(14153) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 	
-	ICQ::Presence pres = ICQ::Presence::fromOnlineStatus( initialStatus() );
+	Kopete::OnlineStatus status = initialStatus();
+	if ( status == Kopete::OnlineStatus() &&
+	     status.status() == Kopete::OnlineStatus::Unknown )
+		//use default online in case of invalid online status for connecting 
+		status = Kopete::OnlineStatus( Kopete::OnlineStatus::Online );
+	ICQ::Presence pres = ICQ::Presence::fromOnlineStatus( status );
 	bool accountIsOffline = ( presence().type() == ICQ::Presence::Offline ||
 	                          myself()->onlineStatus() == protocol()->statusManager()->connectingStatus() );
 	
@@ -202,41 +177,6 @@ void ICQAccount::disconnected( DisconnectReason reason )
 }
 
 
-void ICQAccount::slotGoOnline()
-{
-	setPresenceType( ICQ::Presence::Online );
-}
-
-void ICQAccount::slotGoFFC( const QString &reason )
-{
-	setPresenceType( ICQ::Presence::FreeForChat, reason );
-}
-
-void ICQAccount::slotGoAway( const QString &reason )
-{
-	setPresenceType( ICQ::Presence::Away, reason );
-}
-
-void ICQAccount::slotGoNA( const QString &reason )
-{
-	setPresenceType( ICQ::Presence::NotAvailable, reason );
-}
-
-void ICQAccount::slotGoOCC( const QString &reason )
-{
-	setPresenceType( ICQ::Presence::Occupied, reason );
-}
-
-void ICQAccount::slotGoDND( const QString &reason )
-{
-	setPresenceType( ICQ::Presence::DoNotDisturb, reason );
-}
-
-void ICQAccount::slotGoOffline()
-{
-	setPresenceType( ICQ::Presence::Offline );
-}
-
 void ICQAccount::slotToggleInvisible()
 {
 	using namespace ICQ;
@@ -247,9 +187,9 @@ void ICQAccount::setAway( bool away, const QString &awayReason )
 {
 	kdDebug(14153) << k_funcinfo << "account='" << accountId() << "'" << endl;
 	if ( away )
-		slotGoAway( awayReason );
+		setPresenceType( ICQ::Presence::Away, awayReason );
 	else
-		slotGoOnline();
+		setPresenceType( ICQ::Presence::Online );
 }
 
 
@@ -293,6 +233,15 @@ void ICQAccount::setPresenceTarget( const ICQ::Presence &newPres )
 	{
 		engine()->setStatus( newPres.toOscarStatus() );
 	}
+}
+
+
+void ICQAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const QString& reason )
+{
+	if ( status.status() == Kopete::OnlineStatus::Invisible )
+		setInvisible( ICQ::Presence::Invisible );
+	else
+		setPresenceType( ICQ::Presence::fromOnlineStatus( status ).type(), reason );
 }
 
 

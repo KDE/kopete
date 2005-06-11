@@ -184,8 +184,12 @@ void Client::close()
 	}
 	deleteStaticTasks();
 
-	d->connectAsStatus = 0x0;
-	d->connectWithMessage = QString::null;
+	//don't clear the stored status between stage one and two
+	if ( d->stage == ClientPrivate::StageTwo )
+	{
+		d->connectAsStatus = 0x0;
+		d->connectWithMessage = QString::null;
+	}
 //	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Clearing our internal SSI list" << endl;
 	d->ssiManager->clear();
 
