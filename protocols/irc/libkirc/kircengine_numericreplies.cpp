@@ -83,6 +83,7 @@ void Engine::bindNumericReplies()
 	bind(401, this, SLOT(numericReply_401(KIRC::Message &)), 2, 2); // incomingNoNickChan
 //	bind(404, this, SLOT(numericReply_404(KIRC::Message &)), 2, 2); // incomingCannotSendToChannel
 	bind(406, this, SLOT(numericReply_406(KIRC::Message &)), 2, 2); // incomingWasNoNick
+	bind(422, this, SLOT(numericReply_422(KIRC::Message &)), 1, 1);
 	bind(433, this, SLOT(numericReply_433(KIRC::Message &)), 2, 2);
 //	bind(442, this, SLOT(numericReply_442(KIRC::Message &)), 2, 2); // incomingCannotSendToChannel
 	bind(464, this, SLOT(numericReply_464(KIRC::Message &)), 1, 1);
@@ -484,6 +485,15 @@ void Engine::numericReply_401(Message &msg)
 void Engine::numericReply_406(Message &msg)
 {
 	emit incomingNoSuchNickname( Kopete::Message::unescape(msg.arg(1)) );
+}
+
+/* 422: ":MOTD File is missing"
+ *
+ * Server's MOTD file could not be opened by the server.
+ */
+void Engine::numericReply_422(Message &msg)
+{
+	emit incomingMotd(msg.suffix());
 }
 
 /* 433: "<nick> :Nickname is already in use"
