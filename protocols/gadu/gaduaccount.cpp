@@ -93,8 +93,8 @@ public:
 	KGaduLoginParams		loginInfo;
 };
 
-// two minutes
-#define USERLISTEXPORT_TIMEOUT (2*60*1000)
+// half a minute
+#define USERLISTEXPORT_TIMEOUT (30*1000)
 
 // FIXME: use dynamic cache please, i consider this as broken resolution of this problem
 static const char* const servers_ip[] = {
