@@ -175,10 +175,23 @@ GaduEditContact::slotApply()
 	gl = Kopete::ContactList::self()->groups();
 	for ( QListViewItemIterator it( ui_->groups ); it.current(); ++it ) {
 		QCheckListItem *check = dynamic_cast<QCheckListItem *>( it.current() );
-		if ( check && check->isOn() ) {
+		
+		if ( !check ) {
+			continue;
+		}
+
+		if ( check->isOn() ) {
 			for( group = gl.first(); group; group = gl.next() ) {
 				if ( group->displayName() == check->text() ) {
 					contact_->metaContact()->addToGroup( group );
+				}
+			}
+		}
+		else {
+			// check metacontact's in the group, and if so, remove it from
+			for( group = gl.first(); group; group = gl.next() ) {
+				if ( group->displayName() == check->text() ) {
+					contact_->metaContact()->removeFromGroup( group );
 				}
 			}
 		}
