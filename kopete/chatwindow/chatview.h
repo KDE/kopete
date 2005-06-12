@@ -329,6 +329,8 @@ private slots:
 
 	void slotToggleRtfToolbar( bool enabled );
 
+	void editPartTextChanged();
+
 protected:
 	virtual void dragEnterEvent ( QDragEnterEvent * );
 	virtual void dropEvent ( QDropEvent * );
