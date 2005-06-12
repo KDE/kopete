@@ -387,10 +387,10 @@
                                     <cstring>autoConnect</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Exclude from connection</string>
+                                    <string>E&amp;xclude from connect all</string>
                                 </property>
-                                <property name="accel">
-                                    <string></string>
+                                <property name="whatsThis" stdset="0">
+                                    <string>If you check that case, the account will not be connected when you press the "Connect All" button, or at startup even if you selected to automatically connect at startup</string>
                                 </property>
                             </widget>
                             <widget class="QLayoutWidget">
