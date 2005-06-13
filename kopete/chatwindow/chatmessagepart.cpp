@@ -23,9 +23,6 @@
 #include <qtooltip.h>
 #include <qrect.h>
 #include <qcursor.h>
-#include <qtextstream.h>
-#include <qfileinfo.h>
-#include <qinputdialog.h>
 
 #include <dom/dom_doc.h>
 #include <dom/dom_text.h>
@@ -48,7 +45,6 @@
 #include <ktempfile.h>
 #include <kurldrag.h>
 #include <kio/netaccess.h>
-#include <kstandarddirs.h>
 
 #include "chatmemberslistwidget.h"
 #include "kopetechatwindow.h"
@@ -218,7 +214,6 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	printAction = KStdAction::print( this, SLOT(print()),actionCollection() );
 	closeAction = KStdAction::close( this, SLOT(slotCloseView()),actionCollection() );
 	copyURLAction = new KAction( i18n( "Copy Link Address" ), QString::fromLatin1( "editcopy" ), 0, this, SLOT( slotCopyURL() ), actionCollection() );
-    saveCustomEmoticonAction = new KAction (i18n( "Save Custom Emoticon" ), QString::fromLatin1( "editcopy" ), 0, this, SLOT(slotSaveCustomEmoticon()), actionCollection());
 
 	// read formatting override flags
 	readOverrides();
@@ -554,12 +549,6 @@ void ChatMessagePart::slotRightClick( const QString &, const QPoint &point )
 		chatWindowPopup = contact->popupMenu( m_manager );
 		connect( chatWindowPopup, SIGNAL( aboutToHide() ), chatWindowPopup , SLOT( deleteLater() ) );
 	}
-    else if ( activeElement.tagName().lower() == "img" )
-    {
-        chatWindowPopup = new KPopupMenu();
-        saveCustomEmoticonAction->plug( chatWindowPopup );
-        connect( chatWindowPopup, SIGNAL( aboutToHide() ), chatWindowPopup, SLOT( deleteLater() ) );
-    }
 	else
 	{
 		chatWindowPopup = new KPopupMenu();
@@ -643,56 +632,7 @@ void ChatMessagePart::slotCopyURL()
 		QApplication::clipboard()->setText( a.href().string(), QClipboard::Selection );
 	}
 }
-//
-// Save a custom emoticon while promting the use for a text input
-//
-void ChatMessagePart::slotSaveCustomEmoticon()
-{
-    QString imgsrc      = activeElement.getAttribute("src").string();
-    QString emoticon    = activeElement.getAttribute("title").string();
-    
-    QFileInfo fi(imgsrc);
-    
-    KURL destdir, srcfile;
-    destdir.setPath(KGlobal::dirs()->findResourceDir( "emoticons", QString::fromLatin1("custom/emoticons.xml"))+"/custom/"+fi.fileName());
-    srcfile.setPath(imgsrc);
-    
-    kdDebug(14140) << "Copying Selected Custom Emoticon: " << srcfile << " to " << destdir << endl;
-    
-    bool ok;
-    QString text = QInputDialog::getText("Add Emoticon", "Type desired emoticon", QLineEdit::Normal, emoticon, &ok);
-    if (!text.isEmpty() and ok and KIO::NetAccess::file_copy(imgsrc, destdir)) {
-        emoticon = text;
-        // add to our current list
-        if(Kopete::Emoticons::self()->addCustomEmoticon(fi.fileName(), emoticon)) {
-        
-            //now append to the emoticons.xml file
-            QString xml = KGlobal::dirs()->findResource("emoticons", QString::fromLatin1("custom/emoticons.xml"));
-            QFile fxml(xml);
-            if (fxml.open(IO_ReadOnly)) {
-                QDomDocument doc(QString::fromLatin1("messaging-emoticon-map"));
-                doc.setContent(&fxml);
-                fxml.close();
-    
-                // append the new entry
-                QDomElement root    = doc.documentElement();
-                QDomElement child   = doc.createElement("emoticon");
-                child.setAttribute("file", fi.fileName());
-                QDomElement em = doc.createElement("string");
-                em.appendChild(doc.createTextNode(emoticon));
-                child.appendChild(em);
-                root.appendChild(child);
-                
-                // Now save the file
-                if (fxml.open(IO_WriteOnly)) {
-                    QTextStream ts(&fxml);
-                    ts << doc.toString();
-                    fxml.close();
-                }
-            }
-        }
-    }
-}
+
 void ChatMessagePart::slotScrollView()
 {
 	// NB: view()->contentsHeight() is incorrect before the view has been shown in its window.
