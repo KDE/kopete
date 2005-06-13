@@ -56,7 +56,7 @@ public:
 	virtual KActionMenu* actionMenu();
 	
 	/** Reimplementation from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus&, const QString& ) {}
+	void setOnlineStatus( const Kopete::OnlineStatus&, const QString& );
 	
 	virtual void setAway( bool away, const QString &awayReason );
 	
@@ -74,10 +74,6 @@ protected slots:
 	
 
 private:
-	// helpers for actionMenu()
-	KAction* statusAction( const QString &name, ICQ::Presence::Type type, const char *slot );
-	Kopete::AwayAction* statusActionAway( const QString &name, ICQ::Presence::Type type, const char *slot );
-	
 	ICQ::Presence presence();
 	
 	void setInvisible( ICQ::Presence::Visibility );
@@ -87,16 +83,6 @@ private:
 	//const unsigned long fullStatus( const unsigned long plainStatus );
 	
 private slots:
-	// FIXME: this is also declared in OscarAccount as a public non-virtual slot.
-	//        one or the other should be removed.
-	void slotGoOnline();
-	void slotGoAway( const QString & );
-	void slotGoNA( const QString & );
-	void slotGoOCC( const QString & );
-	void slotGoFFC( const QString & );
-	void slotGoDND( const QString & );
-	void slotGoOffline();
-	
 	void slotToggleInvisible();
 	
 private:

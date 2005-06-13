@@ -22,6 +22,7 @@
 #include <kstaticdeleter.h>
 
 #include <kopeteonlinestatus.h>
+#include <kopeteonlinestatusmanager.h>
 
 #include "icqprotocol.h"
 
@@ -38,14 +39,18 @@ struct PresenceTypeData
 	Kopete::OnlineStatus::StatusType onlineStatusType;
 	unsigned long setFlag;
 	unsigned long getFlag;
+	QString caption;
 	QString visibleName;
 	QString invisibleName;
 	const char *visibleIcon;
 	const char *invisibleIcon;
-	
+	unsigned int categories;
+	unsigned int options;
+
 	static const PresenceTypeData *all();
 	static const PresenceTypeData &forType( Presence::Type type );
 	static const PresenceTypeData &forStatus( unsigned long status );
+	static const PresenceTypeData &forOnlineStatusType( const Kopete::OnlineStatus::StatusType statusType );
 };
 
 const PresenceTypeData *PresenceTypeData::all()
@@ -63,13 +68,13 @@ const PresenceTypeData *PresenceTypeData::all()
 	 */
 	static const PresenceTypeData data[] =
 	{
-		{ Presence::Offline,      OnlineStatus::Offline, OFFLINE,  OFFLINE, i18n("Offline"),        i18n("Offline"), 0, "contact_invisible_overlay" },
-		{ Presence::DoNotDisturb, OnlineStatus::Away,    SET_DND,  IS_DND,  i18n("Do Not Disturb"), i18n("Do Not Disturb (Invisible)"), "contact_busy_overlay", "contact_invisible_overlay" },
-		{ Presence::Occupied,     OnlineStatus::Away,    SET_OCC,  IS_OCC,  i18n("Occupied"),       i18n("Occupied (Invisible)"), "contact_busy_overlay", "contact_invisible_overlay" },
-		{ Presence::NotAvailable, OnlineStatus::Away,    SET_NA,   IS_NA,   i18n("Not Available"),  i18n("Not Available (Invisible)"), "contact_xa_overlay", "contact_invisible_overlay" },
-		{ Presence::Away,         OnlineStatus::Away,    SET_AWAY, IS_AWAY, i18n("Away"),           i18n("Away (Invisible)"), "contact_away_overlay", "contact_invisible_overlay" },
-		{ Presence::FreeForChat,  OnlineStatus::Online,  SET_FFC,  IS_FFC,  i18n("Free For Chat"),  i18n("Free For Chat (Invisible)"), "icq_ffc", "contact_invisible_overlay" },
-		{ Presence::Online,       OnlineStatus::Online,  ONLINE,   ONLINE,  i18n("Online"),         i18n("Online (Invisible)"), 0, "contact_invisible_overlay" }
+		{ Presence::Offline,      OnlineStatus::Offline, OFFLINE,  OFFLINE, i18n( "O&ffline" ),        i18n("Offline"),        i18n("Offline"),                    0,                      "contact_invisible_overlay", Kopete::OnlineStatusManager::Offline,      0 },
+		{ Presence::DoNotDisturb, OnlineStatus::Away,    SET_DND,  IS_DND,  i18n( "&Do Not Disturb" ), i18n("Do Not Disturb"), i18n("Do Not Disturb (Invisible)"), "contact_busy_overlay", "contact_invisible_overlay", 0,                                         Kopete::OnlineStatusManager::HasAwayMessage },
+		{ Presence::Occupied,     OnlineStatus::Away,    SET_OCC,  IS_OCC,  i18n( "O&ccupied" ),       i18n("Occupied"),       i18n("Occupied (Invisible)"),       "contact_busy_overlay", "contact_invisible_overlay", Kopete::OnlineStatusManager::Busy,         Kopete::OnlineStatusManager::HasAwayMessage },
+		{ Presence::NotAvailable, OnlineStatus::Away,    SET_NA,   IS_NA,   i18n( "Not A&vailable" ),  i18n("Not Available"),  i18n("Not Available (Invisible)"),  "contact_xa_overlay",   "contact_invisible_overlay", Kopete::OnlineStatusManager::ExtendedAway, Kopete::OnlineStatusManager::HasAwayMessage },
+		{ Presence::Away,         OnlineStatus::Away,    SET_AWAY, IS_AWAY, i18n( "&Away" ),           i18n("Away"),           i18n("Away (Invisible)"),           "contact_away_overlay", "contact_invisible_overlay", Kopete::OnlineStatusManager::Away,         Kopete::OnlineStatusManager::HasAwayMessage },
+		{ Presence::FreeForChat,  OnlineStatus::Online,  SET_FFC,  IS_FFC,  i18n( "&Free for Chat" ),  i18n("Free For Chat"),  i18n("Free For Chat (Invisible)"),  "icq_ffc",              "contact_invisible_overlay", Kopete::OnlineStatusManager::FreeForChat,  0 },
+		{ Presence::Online,       OnlineStatus::Online,  ONLINE,   ONLINE,  i18n( "O&nline" ),         i18n("Online"),         i18n("Online (Invisible)"),         0,                      "contact_invisible_overlay", Kopete::OnlineStatusManager::Online,       0 }
 	};
 	return data;
 }
@@ -97,6 +102,18 @@ const PresenceTypeData &PresenceTypeData::forStatus( unsigned long status )
 	return array[0];
 }
 
+const PresenceTypeData &PresenceTypeData::forOnlineStatusType( const Kopete::OnlineStatus::StatusType statusType )
+{
+	const PresenceTypeData *array = all();
+	for ( int n = Presence::TypeCount - 1; n >= 0; --n )
+	{
+		if ( array[n].onlineStatusType == statusType )
+			return array[n];
+	}
+	kdWarning(14153) << k_funcinfo << "online status " << (int)statusType << " not found! Returning Offline. This should not happen." << endl;
+	return array[0];
+}
+
 //END struct PresenceTypeData
 
 //BEGIN class OnlineStatusManager
@@ -108,12 +125,16 @@ public:
 	
 	// connecting and unknown should have the same internal status as offline, so converting to a Presence gives an Offline one
 	Private()
-		: connecting( Kopete::OnlineStatus::Connecting, Presence::TypeCount - Presence::Offline,
-					  ICQProtocol::protocol(), 99, "icq_connecting", i18n("Connecting...") )
-		, unknown( Kopete::OnlineStatus::Unknown, Presence::TypeCount - Presence::Offline,
-				   ICQProtocol::protocol(), 0, "status_unknown", i18n("Unknown") )
-		, waitingForAuth( Kopete::OnlineStatus::Unknown, Presence::TypeCount - Presence::Offline,
-						  ICQProtocol::protocol(), 1, "button_cancel", i18n("Waiting For Authorization") )
+		: connecting(     Kopete::OnlineStatus::Connecting, 99, ICQProtocol::protocol(),
+					      99,                "icq_connecting", i18n("Connecting...") )
+		, unknown(        Kopete::OnlineStatus::Unknown,     0, ICQProtocol::protocol(),
+					      Presence::Offline, "status_unknown", i18n("Unknown") )
+		, waitingForAuth( Kopete::OnlineStatus::Unknown,     1, ICQProtocol::protocol(),
+				          Presence::Offline, "button_cancel",  i18n("Waiting For Authorization") )
+		, invisible(      Kopete::OnlineStatus::Invisible,   2, ICQProtocol::protocol(),
+						  Presence::Offline, QString::null,    QString::null,
+						  QString::null, Kopete::OnlineStatusManager::Invisible,
+						  Kopete::OnlineStatusManager::HideFromMenu )
 
 	{
 		createStatusList( false, 0, visibleStatusList );
@@ -121,19 +142,34 @@ public:
 	}
 	void createStatusList( bool invisible, const uint invisibleOffset, StatusList &statusList )
 	{
+		//weight 0, 1 and 2 are used by KOS unknown, waitingForAuth and invisible
+		const uint firstUsableWeight = 3;
 		statusList.reserve( Presence::TypeCount );
 		for ( uint n = 0; n < Presence::TypeCount; ++n )
 		{
 			const PresenceTypeData &data = PresenceTypeData::forType( static_cast<Presence::Type>(n) );
+			const uint weight = n + firstUsableWeight;
+			const uint internalStatus = n + invisibleOffset;
 			QStringList overlayIcons( data.visibleIcon );
 			QString description( data.visibleName );
-			if( invisible ) {
+			Kopete::OnlineStatus status;
+			if ( invisible )
+			{
 				overlayIcons << data.invisibleIcon;
 				description = data.invisibleName;
+				//don't add invisible KOS to account's context menu
+				status = Kopete::OnlineStatus( data.onlineStatusType, weight,
+											   ICQProtocol::protocol(), internalStatus,
+											   overlayIcons, description );
 			}
-			Kopete::OnlineStatus status( data.onlineStatusType, Presence::TypeCount - n,
-			                             ICQProtocol::protocol(), n + invisibleOffset,
-										 overlayIcons, description );
+			else
+			{
+				//add visible KOS
+				status = Kopete::OnlineStatus( data.onlineStatusType, weight,
+											   ICQProtocol::protocol(), internalStatus,
+											   overlayIcons, description,
+											   data.caption, data.categories, data.options );
+			}
 			statusList.push_back( status );
 		}
 	}
@@ -142,6 +178,7 @@ public:
 	Kopete::OnlineStatus connecting;
 	Kopete::OnlineStatus unknown;
 	Kopete::OnlineStatus waitingForAuth;
+	Kopete::OnlineStatus invisible;
 };
 
 OnlineStatusManager::OnlineStatusManager()
@@ -186,8 +223,18 @@ Kopete::OnlineStatus OnlineStatusManager::waitingForAuth()
 
 Presence Presence::fromOnlineStatus( const Kopete::OnlineStatus &status )
 {
-	OnlineStatusManager *store = ICQProtocol::protocol()->statusManager();
-	return store->presenceOf( status.internalStatus() );
+	if ( status != Kopete::OnlineStatus() )
+	{
+		OnlineStatusManager *store = ICQProtocol::protocol()->statusManager();
+		return store->presenceOf( status.internalStatus() );
+	}
+	else
+	{
+		//status is a libkopete builtin status object
+		//don't even think about converting it to ICQ::Presence using presenceOf!
+		return Presence( PresenceTypeData::forOnlineStatusType( status.status() ).type,
+						 Presence::Visible );
+	}
 }
 
 Kopete::OnlineStatus Presence::toOnlineStatus() const

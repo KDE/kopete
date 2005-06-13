@@ -172,6 +172,7 @@ ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 	lastName(Kopete::Global::Properties::self()->lastName()),
 	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
 	emailAddress(Kopete::Global::Properties::self()->emailAddress()),
+	ipAddress("ipAddress", i18n("IP Address") ),
 	clientFeatures("clientFeatures", i18n("Client Features"), 0, false),
 	buddyIconHash("iconHash", i18n("Buddy Icon MD5 Hash"), QString::null, true, false, true)
 {

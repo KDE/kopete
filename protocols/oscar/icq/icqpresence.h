@@ -95,8 +95,8 @@ public:
 	/**
 	 * Friendly types this status can be
 	 */
-	enum Type { Offline, NotAvailable, Away, DoNotDisturb, Occupied, Online, FreeForChat };
-	enum { TypeCount = FreeForChat + 1 };
+	enum Type { Offline, DoNotDisturb, Occupied, NotAvailable, Away, FreeForChat, Online };
+	enum { TypeCount = Online + 1 };
 	
 	enum Visibility { Invisible, Visible };
 	

@@ -343,6 +343,14 @@ If you do not currently have an ICQ account, please click the button to create o
                             </widget>
                             <widget class="QCheckBox" row="1" column="0">
                                 <property name="name">
+                                    <cstring>chkRespectRequireAuth</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Respect other contacts' &amp;wish to require authorization</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="2" column="0">
+                                <property name="name">
                                     <cstring>chkHideIP</cstring>
                                 </property>
                                 <property name="text">
@@ -355,7 +363,7 @@ If you do not currently have an ICQ account, please click the button to create o
                                     <string>Checking this box will not allow people to see what your IP address if they view your ICQ user details such as name, address, or age.</string>
                                 </property>
                             </widget>
-                            <widget class="QCheckBox" row="2" column="0">
+                            <widget class="QCheckBox" row="3" column="0">
                                 <property name="name">
                                     <cstring>chkWebAware</cstring>
                                 </property>
