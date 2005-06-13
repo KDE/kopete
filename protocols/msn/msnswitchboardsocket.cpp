@@ -379,7 +379,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	{
 		KConfig *config = KGlobal::config();
 		config->setGroup( "MSN" );
-		if ( config->readBoolEntry( "useCustomEmoticons", false ) )
+		if ( config->readBoolEntry( "useCustomEmoticons", true ) )
 		{
 			QRegExp rx("([^\\s]*)[\\s]*(<msnobj [^>]*>)");
 			rx.setMinimal(true);
@@ -559,19 +559,21 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	}
 #endif
 
-#if 0
-	QMap<QString, QString> emap = Kopete::Emoticons::self()->emoticonAndPicList();
-		
-	// Check the list for any custom emoticons
-	for (QMap<QString, QString>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
+	KConfig *config = KGlobal::config();
+	config->setGroup( "MSN" );
+	if ( config->readBoolEntry( "exportEmoticons", false ) )
 	{
-		if ( msg.plainBody().contains(itr.key()) )
+		QMap<QString, QString> emap = Kopete::Emoticons::self()->emoticonAndPicList();
+			
+		// Check the list for any custom emoticons
+		for (QMap<QString, QString>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
 		{
-			sendCustomEmoticon(itr.key(), itr.data());
+			if ( msg.plainBody().contains(itr.key()) )
+			{
+				sendCustomEmoticon(itr.key(), itr.data());
+			}
 		}
 	}
-#endif
-		
 
 	if( msg.format() & Kopete::Message::RichText )
 	{

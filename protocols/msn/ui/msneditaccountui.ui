@@ -445,9 +445,24 @@
                                 <property name="text">
                                     <string>Download and show c&amp;ustom emoticons</string>
                                 </property>
+                                <property name="checked">
+                                    <bool>true</bool>
+                                </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>MSN Messenger let you select some custom emoticon.
 If this option is enabled, Kopete will download theses emoticons and show them.</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>exportEmoticons</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Export the current emoticon theme to users</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Export all the emoticons themes as custom emoticons.  
+Only work for emoticons in the PNG format.</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox">
