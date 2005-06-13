@@ -828,6 +828,12 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 
 void MSNSwitchBoardSocket::cleanQueue()
 {
+	if(m_emoticonTimer)
+	{
+		m_emoticonTimer->stop();
+		m_emoticonTimer->deleteLater();
+		m_emoticonTimer=0L;
+	}
 	kdDebug(14141) << k_funcinfo << m_msgQueue.count() << endl;
 
 	QValueList<const Kopete::Message>::Iterator it_msg;
