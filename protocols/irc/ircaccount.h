@@ -190,11 +190,11 @@ protected:
 	virtual bool createContact( const QString &contactId, Kopete::MetaContact *parentContact ) ;
 
 private slots:
-	void engineStatusChanged(KIRC::Engine::Status newStatus);
+	void engineStatusChanged(KIRC::ConnectionState newstate);
 
 	void destroyed(IRCContact *contact);
 
-	void receivedMessage(	KIRC::Engine::ServerMessageType type,
+	void receivedMessage(	KIRC::MessageType type,
 				const KIRC::EntityPtr &from,
 				const KIRC::EntityPtrList &to,
 				const QString &msg);

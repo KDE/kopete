@@ -120,7 +120,7 @@ void Engine::numericReply_001(Message &msg)
 	 */
 	receivedServerMessage(msg);
 
-	setStatus(Connected);
+	setConnectionState(Connected);
 }
 
 /* 002: ":Your host is <servername>, running version <ver>"
@@ -504,7 +504,7 @@ void Engine::numericReply_422(Message &msg)
  */
 void Engine::numericReply_433(Message &msg)
 {
-	if(m_status == Authentifying)
+//	if(m_status == Authentifying)
 	{
 		// This tells us that our nickname is, but we aren't logged in.
 		// This differs because the server won't send us a response back telling us our nick changed
@@ -512,12 +512,12 @@ void Engine::numericReply_433(Message &msg)
 		m_FailedNickOnLogin = true;
 		emit incomingFailedNickOnLogin(msg.arg(1));
 	}
-	else
-	{
+//	else
+//	{
 		// And this is the signal for if someone is trying to use the /nick command or such when already logged in,
 		// but it's already in use
-		emit incomingNickInUse(msg.arg(1));
-	}
+//		emit incomingNickInUse(msg.arg(1));
+//	}
 }
 
 /* 464: ":Password Incorrect"

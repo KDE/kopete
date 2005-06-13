@@ -104,8 +104,8 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	QObject::connect(m_engine, SIGNAL(statusChanged(KIRC::Engine::Status)),
 			 this, SLOT(engineStatusChanged(KIRC::Engine::Status)));
 
-	QObject::connect(m_engine, SIGNAL(receivedMessage(KIRC::Engine::ServerMessageType, const KIRC::EntityPtr &, const KIRC::EntityPtrList &, const QString &)),
-			 this, SLOT(receivedMessage(KIRC::Engine::ServerMessageType, const KIRC::EntityPtr &, const KIRC::EntityPtrList &, const QString &)));
+	QObject::connect(m_engine, SIGNAL(receivedMessage(KIRC::MessageType, const KIRC::EntityPtr &, const KIRC::EntityPtrList &, const QString &)),
+			 this, SLOT(receivedMessage(KIRC::MessageType, const KIRC::EntityPtr &, const KIRC::EntityPtrList &, const QString &)));
 
 	mAwayAction = new AwayAction ( i18n("Set Away"),
 		m_protocol->m_UserStatusAway.iconFor( this ), 0, this,
@@ -429,7 +429,7 @@ KActionMenu *IRCAccount::actionMenu()
 	mActionMenu->insert(m_searchChannelAction);
 	mActionMenu->insert( new KAction ( i18n("Show Server Window"), QString::null, 0, this, SLOT(slotShowServerWindow()), mActionMenu ) );
 
-	if( m_engine->isConnected() && m_engine->useSSL() )
+//	if (m_engine->isConnected() && m_engine->useSSL())
 	{
 		mActionMenu->insert( new KAction ( i18n("Show Security Information"), "", 0, m_engine,
 			SLOT(showInfoDialog()), mActionMenu ) );
@@ -506,26 +506,26 @@ void IRCAccount::connectWithPassword(const QString &password)
 	}
 }
 
-void IRCAccount::engineStatusChanged(KIRC::Engine::Status newStatus)
+void IRCAccount::engineStatusChanged(KIRC::ConnectionState newstate)
 {
 	kdDebug(14120) << k_funcinfo << endl;
 
 	mySelf()->updateStatus();
 
-	switch (newStatus)
+	switch (newstate)
 	{
-	case KIRC::Engine::Idle:
+	case KIRC::Idle:
 		// Do nothing.
 		break;
-	case KIRC::Engine::Connecting:
+	case KIRC::Connecting:
 	{
 		if( autoShowServerWindow )
 		    myServer()->startChat();
 		break;
 	}
-	case KIRC::Engine::Authentifying:
+	case KIRC::Authentifying:
 		break;
-	case KIRC::Engine::Connected:
+	case KIRC::Connected:
 		{
 			//Reset the host so re-connection will start over at first server
 			currentHost = 0;
@@ -538,21 +538,17 @@ void IRCAccount::engineStatusChanged(KIRC::Engine::Status newStatus)
 			QTimer::singleShot( 250, this, SLOT( slotPerformOnConnectCommands() ) );
 		}
 		break;
-	case KIRC::Engine::Closing:
+	case KIRC::Closing:
 //		mySelf()->setOnlineStatus( m_protocol->m_UserStatusOffline );
 //		m_contactManager->removeFromNotifyList( m_engine->nickName() );
 
 //		if (m_contactManager && !autoConnect.isNull())
 //			AccountManager::self()->removeAccount( this );
 		break;
-	case KIRC::Engine::AuthentifyingFailed:
-		break;
-	case KIRC::Engine::Timeout:
+//	case KIRC::Timeout:
 		//Try next server
-		connect();
-		break;
-	case KIRC::Engine::Disconnected:
-		break;
+//		connect();
+//		break;
 	}
 }
 
@@ -883,10 +879,11 @@ void IRCAccount::destroyed(IRCContact *contact)
 	m_contacts.remove(contact);
 }
 
-void IRCAccount::receivedMessage(KIRC::Engine::ServerMessageType type,
-				const KIRC::EntityPtr &from,
-				const KIRC::EntityPtrList &to,
-				const QString &message)
+void IRCAccount::receivedMessage(
+		KIRC::MessageType type,
+		const KIRC::EntityPtr &from,
+		const KIRC::EntityPtrList &to,
+		const QString &message)
 {
 	IRCContact *fromContact = getContact(from);
 /*

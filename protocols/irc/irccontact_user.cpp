@@ -39,30 +39,31 @@ void IRCContact::user_updateStatus()
 {
         Kopete::OnlineStatus newStatus;
 
-	switch (kircEngine()->status())
+	switch (kircEngine()->connectionState())
 	{
-		case KIRC::Engine::Idle:
+	case KIRC::Idle:
+		newStatus = m_protocol->m_UserStatusOffline;
+		break;
+
+	case KIRC::Connecting:
+	case KIRC::Authentifying:
+		if (this == ircAccount()->mySelf())
+			newStatus = m_protocol->m_UserStatusConnecting;
+		else
 			newStatus = m_protocol->m_UserStatusOffline;
-			break;
+		break;
 
-		case KIRC::Engine::Connecting:
-		case KIRC::Engine::Authentifying:
-			if (this == ircAccount()->mySelf())
-				newStatus = m_protocol->m_UserStatusConnecting;
-			else
-				newStatus = m_protocol->m_UserStatusOffline;
-			break;
-
-		case KIRC::Engine::Connected:
-		case KIRC::Engine::Closing:
-//			if (m_isAway)
-//				newStatus = m_protocol->m_UserStatusAway;
-//			else if (m_isOnline)
-				newStatus = m_protocol->m_UserStatusOnline;
-			break;
-
-		default:
-			newStatus = m_protocol->m_StatusUnknown;
+	case KIRC::Connected:
+//		if (m_isAway)
+//			newStatus = m_protocol->m_UserStatusAway;
+//		else if (m_isOnline)
+			newStatus = m_protocol->m_UserStatusOnline;
+		break;
+	case KIRC::Closing:
+		newStatus = m_protocol->m_UserStatusOffline;
+		break;
+	default:
+		newStatus = m_protocol->m_StatusUnknown;
 	}
 /*
 	// This may not be created yet ( for myself() on startup )

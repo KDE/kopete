@@ -424,7 +424,7 @@ void IRCProtocol::slotQuoteCommand( const QString &args, ChatSession *manager )
 {
 	if (!args.isEmpty())
 	{
-		static_cast<IRCAccount *>(manager->account())->engine()->writeMessage(args);
+		static_cast<IRCAccount *>(manager->account())->engine()->writeRawMessage(args);
 	}
 	else
 	{
@@ -439,8 +439,8 @@ void IRCProtocol::slotCtcpCommand(const QString &args, ChatSession *manager)
 	{
 		QString user = args.section( ' ', 0, 0 );
 		QString message = args.section( ' ', 1 );
-		static_cast<IRCAccount*>(manager->account())->engine()->writeCtcpQueryMessage(
-			user, QString::null, message);
+//		static_cast<IRCAccount*>(manager->account())->engine()->writeCtcpQueryMessage(
+//			user, QString::null, message);
 	}
 }
 
@@ -527,10 +527,7 @@ void IRCProtocol::slotInviteCommand(const QString &args, ChatSession *manager)
 
 	if( c && c->manager()->contactOnlineStatus( manager->myself() ) == m_UserStatusOp )
 	{
-		static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage(
-			QString::fromLatin1("INVITE %1 %2").arg( argsList[0] ).
-			arg( c->nickName() )
-		);
+		static_cast<IRCAccount*>( manager->account() )->engine()->invite(argsList[0], c->nickName());
 	}
 	else
 	{
@@ -573,16 +570,16 @@ void IRCProtocol::slotWhoisCommand( const QString &args, ChatSession *manager )
 void IRCProtocol::slotWhoCommand( const QString &args, ChatSession *manager )
 {
 	QStringList argsList = CommandHandler::parseArguments( args );
-	static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage(
-		QString::fromLatin1("WHO %1").arg( argsList.first() ) );
+//	static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage(
+//		QString::fromLatin1("WHO %1").arg( argsList.first() ) );
 	static_cast<IRCAccount*>( manager->account() )->setCurrentCommandSource( manager );
 }
 
 void IRCProtocol::slotWhoWasCommand( const QString &args, ChatSession *manager )
 {
 	QStringList argsList = CommandHandler::parseArguments( args );
-	static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage(
-		QString::fromLatin1("WHOWAS %1").arg( argsList.first() ) );
+//	static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage(
+//		QString::fromLatin1("WHOWAS %1").arg( argsList.first() ) );
 	static_cast<IRCAccount*>( manager->account() )->setCurrentCommandSource( manager );
 }
 

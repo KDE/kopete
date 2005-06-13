@@ -21,6 +21,8 @@
 #endif
 
 #include "kircengine.h"
+#include "kircsocket.h"
+
 #include "ksslsocket.h"
 
 #include <kconfig.h>
@@ -35,26 +37,12 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
-/*
-#ifndef KIRC_SSL_SUPPORT
-#define KIRC_SSL_SUPPORT
-#endif
-*/
+
 using namespace KIRC;
-using namespace KNetwork;
 
-// FIXME: Remove slotConnected() and error(int errCode) while going to KNetwork namespace
-
-/* Please note that the regular expression "[\\r\\n]*$" is used in a QString::replace statement many times.
- * This gets rid of trailing \r\n, \r, \n, and \n\r characters.
- */
-const QRegExp Engine::m_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
-
-Engine::Engine(QObject *parent, const char *name)
-	: QObject(parent, QString::fromLatin1("[KIRC::Engine]%1").arg(name).latin1()),
-	  m_socket(0),
+Engine::Engine(QObject *parent)
+	: KIRC::Socket(parent),
 	  m_defaultCodec(QTextCodec::codecForMib(4)),
-	  m_status(Idle),
 	  m_FailedNickOnLogin(false),
 	  m_useSSL(false),
 	  m_server(new Entity(QString::null, Entity::Server)),
@@ -87,50 +75,9 @@ Engine::~Engine()
 {
 	kdDebug(14120) << k_funcinfo << m_Host << endl;
 	quit("KIRC Deleted", true);
-	if (m_socket)
-		delete m_socket;
 }
 
-//bool Engine::setupSocket(bool useSSL)
-void Engine::setUseSSL(bool useSSL)
-{
-	kdDebug(14120) << k_funcinfo << useSSL << endl;
-
-	if (m_socket)
-		delete m_socket;
-
-	if( !m_socket || useSSL != m_useSSL )
-	{
-		m_useSSL = useSSL;
-
-		if( m_useSSL )
-		{
-		#ifdef KIRC_SSL_SUPPORT
-			m_socket = new KSSLSocket(this);
-			m_socket->setSocketFlags( KExtendedSocket::inetSocket );
-		}
-		else
-		#else
-			kdWarning(14120) << "You tried to use SSL, but this version of Kopete was"
-				" not compiled with IRC SSL support. A normal IRC connection will be attempted." << endl;
-		}
-		#endif
-		{
-			m_socket = new KBufferedSocket(QString::null, QString::null, this);
-//			m_socket->setSocketFlags( KExtendedSocket::inputBufferedSocket | KExtendedSocket::inetSocket );
-		}
-
-		QObject::connect(m_socket, SIGNAL(closed(int)),
-				 this, SLOT(slotConnectionClosed()));
-		QObject::connect(m_socket, SIGNAL(readyRead()),
-				 this, SLOT(slotReadyRead()));
-		QObject::connect(m_socket, SIGNAL(connectionSuccess()),
-				 this, SLOT(slotConnected()));
-		QObject::connect(m_socket, SIGNAL(connectionFailed(int)),
-				 this, SLOT(error(int)));
-	}
-}
-
+/*
 void Engine::setStatus(Engine::Status status)
 {
 	kdDebug(14120) << k_funcinfo << status << endl;
@@ -180,77 +127,41 @@ void Engine::setStatus(Engine::Status status)
 		break;
 	}
 }
-
-void Engine::connectToServer(const QString &host, Q_UINT16 port, const QString &nickname, bool useSSL )
-{
-	setUseSSL(useSSL);
-
-	m_Nickname = nickname;
-	m_Host = host;
-	m_Port = port;
-
-	kdDebug(14120) << "Trying to connect to server " << m_Host << ":" << m_Port << endl;
-	kdDebug(14120) << "Sock status: " << m_socket->state() << endl;
-
-	if (m_socket->connect(m_Host, QString::number(m_Port)))
-	{
-		kdDebug(14120) << k_funcinfo << "Success!. Status: " << m_socket->state() << endl;
-		setStatus(Connecting);
-	}
-	else
-	{
-		kdDebug(14120) << k_funcinfo << "Failed. Status: " << m_socket->state() << endl;
-		setStatus(Disconnected);
-	}
-}
-
-void Engine::setDefaultCodec( QTextCodec* codec )
-{
-	m_defaultCodec = codec;
-}
+*/
 
 QTextCodec *Engine::defaultCodec() const
 {
 	return m_defaultCodec;
 }
 
-void Engine::slotConnected()
+void Engine::setDefaultCodec(QTextCodec* codec)
 {
-	setStatus(Authentifying);
+	m_defaultCodec = codec;
 }
 
-void Engine::slotConnectionClosed()
+bool Engine::isDisconnected() const
 {
-	setStatus(Disconnected);
+	return connectionState() == Idle;
 }
 
-void Engine::error(int errCode)
+bool Engine::isConnected() const
 {
-	if (errCode == KSocketBase::WouldBlock)
-		// ignore non-fatal error
-		return;
-
-	kdDebug(14120) << k_funcinfo << "Socket error: " << errCode << endl;
-
-	setStatus(Disconnected);
+	return connectionState() == Connected;
 }
 
 void Engine::setVersionString(const QString &newString)
 {
 	m_VersionString = newString;
-	m_VersionString.remove(m_RemoveLinefeeds);
 }
 
 void Engine::setUserString(const QString &newString)
 {
 	m_UserString = newString;
-	m_UserString.remove(m_RemoveLinefeeds);
 }
 
 void Engine::setSourceString(const QString &newString)
 {
 	m_SourceString = newString;
-	m_SourceString.remove(m_RemoveLinefeeds);
 }
 
 void Engine::setUserName(const QString &newName)
@@ -259,7 +170,6 @@ void Engine::setUserName(const QString &newName)
 		m_Username = QString::fromLatin1(getpwuid(getuid())->pw_name);
 	else
 		m_Username = newName;
-	m_Username.remove(m_RemoveLinefeeds);
 }
 
 void Engine::setRealName(const QString &newName)
@@ -268,7 +178,6 @@ void Engine::setRealName(const QString &newName)
 		m_realName = QString::fromLatin1(getpwuid(getuid())->pw_gecos);
 	else
 		m_realName = newName;
-	m_realName.remove(m_RemoveLinefeeds);
 }
 
 bool Engine::_bind(QDict<KIRC::MessageRedirector> &dict,
@@ -317,37 +226,20 @@ bool Engine::bindCtcpReply(const QString &command, QObject *object, const char *
 		minArgs, maxArgs, helpMessage);
 }
 
-/* Message will be send as passed.
- */
-void Engine::writeRawMessage(const QString &rawMsg)
+void Engine::writeMessage(const QString &rawMsg, QTextCodec *codec)
 {
-	Message::writeRawMessage(this, m_defaultCodec, rawMsg);
+	if (!codec)
+		codec = m_defaultCodec;
+/*
+	if (!codec->canEncode(rawMsg))
+	{
+		kdDebug(14121) << k_funcinfo << "Encoding problem detected:" << str << endl;
+		return;
+	}
+*/
+	writeRawMessage(codec->fromUnicode(rawMsg));
 }
-
-/* Message will be quoted before beeing send.
- */
-void Engine::writeMessage(const QString &msg, const QTextCodec *codec)
-{
-	Message::writeMessage(this, codec ? codec : m_defaultCodec, msg);
-}
-
-void Engine::writeMessage(const QString &command, const QStringList &args, const QString &suffix, const QTextCodec *codec)
-{
-	Message::writeMessage(this, codec ? codec : m_defaultCodec, command, args, suffix );
-}
-
-void Engine::writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage)
-{
-	Message::writeCtcpMessage(this, m_defaultCodec, command, to, ctcpMessage);
-}
-
-void Engine::writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
-		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix, bool )
-{
-//	Message::writeCtcpMessage(this, nick, command, to, suffix,
-//		ctcpCommand, ctcpArgs, ctcpSuffix );
-}
-
+/*
 void Engine::slotReadyRead()
 {
 	// This condition is buggy when the peer server
@@ -404,14 +296,7 @@ void Engine::slotReadyRead()
 //	if(m_socket->socketStatus() != KExtendedSocket::connected)
 //		error();
 }
-
-void Engine::showInfoDialog()
-{
-/*	if( m_useSSL )
-	{
-		static_cast<KSSLSocket*>( m_socket )->showInfoDialog();
-	}*/
-}
+*/
 
 /*
  * The ctcp commands seems to follow the same message behaviours has normal IRC command.

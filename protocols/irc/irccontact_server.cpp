@@ -38,25 +38,26 @@ QString IRCContact::server_caption() const
 */
 void IRCContact::server_updateStatus()
 {
-	KIRC::Engine::Status status = kircEngine()->status();
-	switch( status )
+	KIRC::ConnectionState state = kircEngine()->connectionState();
+	switch(state)
 	{
-		case KIRC::Engine::Idle:
-		case KIRC::Engine::Connecting:
+		case KIRC::Idle:
+		case KIRC::Connecting:
 //			if( m_chatSession )
 //				m_chatSession->setDisplayName( caption() );
 			setOnlineStatus( m_protocol->m_ServerStatusOffline );
 			break;
 
-		case KIRC::Engine::Authentifying:
-		case KIRC::Engine::Connected:
-		case KIRC::Engine::Closing:
+		case KIRC::Authentifying:
+		case KIRC::Connected:
 			// should make some extra check here
 			setOnlineStatus( m_protocol->m_ServerStatusOnline );
 			break;
-
+		case KIRC::Closing:
+			setOnlineStatus(m_protocol->m_ServerStatusOffline);
+			break;
 		default:
-			setOnlineStatus( m_protocol->m_StatusUnknown );
+			setOnlineStatus(m_protocol->m_StatusUnknown);
 	}
 }
 

@@ -23,9 +23,8 @@
 #include "kircentity.h"
 #include "kircmessage.h"
 #include "kircmessageredirector.h"
+#include "kircsocket.h"
 #include "kirctransfer.h"
-
-#include <kbufferedsocket.h>
 
 #include <qdatetime.h>
 #include <qdict.h>
@@ -45,7 +44,7 @@ namespace KIRC
  * @author Jason Keirstead <jason@keirstead.org>
  */
 class Engine
-	: public QObject
+	: public KIRC::Socket
 {
 	Q_OBJECT
 
@@ -65,9 +64,8 @@ class Engine
 //	Q_PROPERTY(QString nick READ nick)
 //	Q_PROPERTY(QStringList portList)
 
-	Q_ENUMS(Status)
-
 public:
+/*
 	enum Error
 	{
 		ParsingFailed,
@@ -76,31 +74,15 @@ public:
 		InvalidNumberOfArguments,
 		MethodFailed
 	};
-
-	enum Status
-	{
-		Idle,
-		Connecting,
-		Authentifying,
-		Connected,
-		Closing,
-		AuthentifyingFailed,
-		Timeout,
-		Disconnected
-	};
-
-	enum ServerMessageType
-	{
-		ErrorMessage = -1,
-		PrivateMessage,
-		InfoMessage,
-
-		MessageOfTheDayMessage,
-		MessageOfTheDayCondensedMessage
-	};
-
-	Engine( QObject *parent = 0, const char* name = 0 );
+*/
+	Engine(QObject *parent = 0);
 	~Engine();
+
+	void setDefaultCodec(QTextCodec *codec);
+	QTextCodec *defaultCodec() const;
+
+	bool isDisconnected() const;
+	bool isConnected() const;
 
 //	QString nick() const;
 //	QStringList nickList() const;
@@ -139,28 +121,9 @@ public:
 	inline void setReqsPassword(bool b)
 		{ m_ReqsPasswd = b; };
 
-	void setUseSSL( bool useSSL );
-	const bool useSSL() const { return m_useSSL; };
-
-	void setDefaultCodec(QTextCodec *codec);
-	QTextCodec *defaultCodec() const;
-
 	void setVersionString(const QString &versionString);
 	void setUserString(const QString &userString);
 	void setSourceString(const QString &sourceString);
-	void connectToServer(const QString &host, Q_UINT16 port, const QString &nickname, bool useSSL = false);
-
-	KNetwork::KBufferedSocket *socket()
-		{ return m_socket; };
-
-	inline KIRC::Engine::Status status() const
-		{ return m_status; }
-
-	inline bool isDisconnected() const
-		{ return m_status == Disconnected || m_status == Idle; }
-
-	inline bool isConnected() const
-		{ return m_status == Connected; }
 
 	/* Custom CTCP replies handling */
 	inline QString &customCtcp( const QString &s )
@@ -174,35 +137,14 @@ public:
 	KIRC::EntityPtr self();
 
 public slots:
-	//Message output
-	void writeRawMessage(const QString &message);
+	void writeMessage(const QString &message, QTextCodec *codec = 0);
 
-	void writeMessage(const QString &message, const QTextCodec *codec = 0 );
-	void writeMessage(const QString &command, const QStringList &args,
-		const QString &suffix = QString::null, const QTextCodec *codec = 0);
+	void writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage, QTextCodec *codec = 0);
 
-	void writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage);
+	void writeCtcpQueryMessage(const QString &to, const QString &ctcpMessage, QTextCodec *codec = 0);
+	void writeCtcpReplyMessage(const QString &to, const QString &ctcpMessage, QTextCodec *codec = 0);
 
-	void writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
-		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix = QString::null,
-		bool emitRepliedCtcp = true);
-
-	inline void writeCtcpQueryMessage(const QString &to, const QString &suffix,
-		const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
-		bool emitRepliedCtcp = true)
-		{ return writeCtcpMessage("PRIVMSG", to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
-
-	inline void writeCtcpReplyMessage(const QString &to, const QString &ctcpMessage)
-		{ writeCtcpMessage("NOTICE", to, ctcpMessage); }
-
-	inline void writeCtcpReplyMessage(const QString &to, const QString &suffix,
-		const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
-		bool emitRepliedCtcp = true)
-		{ return writeCtcpMessage("NOTICE", to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
-
-	inline void writeCtcpErrorMessage(const QString &to, const QString &ctcpLine, const QString &errorMsg,
-		bool emitRepliedCtcp=true)
-		{ return writeCtcpReplyMessage(to, QString::null, "ERRMSG", ctcpLine, errorMsg, emitRepliedCtcp); }
+	void writeCtcpErrorMessage(const QString &to, const QString &ctcpLine, const QString &errorMsg, QTextCodec *codec = 0);
 
 	bool bind(const QString &command, QObject *object, const char *member,
 		  int minArgs = KIRC::MessageRedirector::Unknown,
@@ -226,6 +168,7 @@ public slots:
 
 
 	void away(bool isAway, const QString &awayMessage = QString::null);
+//	void invite();
 	void ison(const QStringList &nickList);
 	void join(const QString &name, const QString &key);
 	void kick(const QString &user, const QString &channel, const QString &reason);
@@ -258,14 +201,8 @@ public slots:
 	void CtcpRequest_ping(const QString &target);
 	void CtcpRequest_version(const QString &target);
 
-public slots:
-	void showInfoDialog();
-
 signals:
-	void statusChanged(KIRC::Engine::Status newStatus);
-	void internalError(KIRC::Engine::Error, KIRC::Message &);
-
-	void receivedMessage(KIRC::Message &);
+//	void internalError(KIRC::Engine::Error, KIRC::Message &);
 
 	/**
 	 * Emit a received message.
@@ -281,7 +218,7 @@ signals:
 	 *	 Lists based messages are sent via dedicated API, therefore they don't use this.
 	 */
 	// @param args the args to apply to this message.
-	void receivedMessage(	KIRC::Engine::ServerMessageType type,
+	void receivedMessage(	KIRC::MessageType type,
 				const KIRC::EntityPtr &from,
 				const KIRC::EntityPtrList &to,
 				const QString &msg);
@@ -362,12 +299,6 @@ signals:
 
 private slots:
 	void destroyed(KIRC::Entity *entity);
-
-	void slotReadyRead();
-
-	void slotConnected();
-	void slotConnectionClosed();
-	void error(int errCode = 0);
 
 	void ignoreMessage(KIRC::Message &msg);
 	void receivedServerMessage(KIRC::Message &msg); // emit the suffix of the message.
@@ -460,7 +391,6 @@ private:
 	void bindNumericReplies();
 	void bindCtcp();
 
-	void setStatus(KIRC::Engine::Status status);
 	bool invokeCtcpCommandOfMessage(const QDict<KIRC::MessageRedirector> &map, KIRC::Message &message);
 
 	/*
@@ -471,13 +401,8 @@ private:
 		QString command, QObject *object, const char *member,
 		int minArgs, int maxArgs, const QString &helpMessage);
 
-	//Static regexes
-	static const QRegExp m_RemoveLinefeeds;
-
-	KNetwork::KBufferedSocket *m_socket;
 	QTextCodec *m_defaultCodec;
 
-	KIRC::Engine::Status m_status;
 	QString m_Host;
 	Q_UINT16 m_Port;
 

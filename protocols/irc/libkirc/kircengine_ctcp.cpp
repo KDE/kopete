@@ -64,6 +64,28 @@ void Engine::bindCtcp()
 		-1,	-1,	"");
 }
 
+void Engine::writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage, QTextCodec *codec)
+{
+	#warning FIXME CTCP MESSAGE NOT SENT
+//	writeRawMessage(command, to, ctcpMessage, codec);
+}
+
+void Engine::writeCtcpQueryMessage(const QString &to, const QString &ctcpQueryMessage, QTextCodec *codec)
+{
+	writeCtcpMessage("PRIVMSG", to, ctcpQueryMessage, codec);
+}
+
+void Engine::writeCtcpReplyMessage(const QString &to, const QString &ctcpReplyMessage, QTextCodec *codec)
+{
+	writeCtcpMessage("NOTICE", to, ctcpReplyMessage, codec);
+}
+
+void Engine::writeCtcpErrorMessage(const QString &to, const QString &ctcpLine, const QString &errorMsg, QTextCodec *codec)
+{
+	#warning FIXME CTCP ERROR MESSAGE NOT SENT
+//	writeCtcpReplyMessage(to, "ERRMSG", ctcpLine, errorMsg);
+}
+
 // Normal order for a ctcp command:
 // CtcpRequest_*
 // CtcpQuery_*
@@ -72,12 +94,12 @@ void Engine::bindCtcp()
 /* Generic ctcp commnd for the /ctcp trigger */
 void Engine::CtcpRequestCommand(const QString &contact, const QString &command)
 {
-	writeCtcpQueryMessage(contact, QString::null, command);
+	writeCtcpQueryMessage(contact, Message::formatCtcp(command));
 }
 
 void Engine::CtcpRequest_action(const QString &contact, const QString &message)
 {
-	writeCtcpQueryMessage(contact, QString::null, "ACTION", message);
+	writeCtcpQueryMessage(contact, Message::formatCtcp(QString::fromLatin1("ACTION %1").arg(message)));
 }
 
 void Engine::CtcpQuery_action(Message &msg)
@@ -106,8 +128,8 @@ void Engine::CtcpQuery_clientinfo(Message &msg)
 			"without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING,"
 			"ACTION.");
 
-	writeCtcpReplyMessage(	msg.prefix(), QString::null,
-				msg.ctcpMessage().command(), QString::null, clientinfo);
+//	writeCtcpReplyMessage(	msg.prefix(), QString::null,
+//				msg.ctcpMessage().command(), QString::null, clientinfo);
 }
 
 void Engine::CtcpRequest_dcc(const QString &nickname, const QString &fileName, uint port, Transfer::Type type)
@@ -255,8 +277,8 @@ void Engine::CtcpRequest_ping(const QString &target)
 
 void Engine::CtcpQuery_ping(Message &msg)
 {
-	writeCtcpReplyMessage(	msg.prefix(), QString::null,
-				msg.ctcpMessage().command(), msg.ctcpMessage().arg(0));
+//	writeCtcpReplyMessage(	msg.prefix(), QString::null,
+//				msg.ctcpMessage().command(), msg.ctcpMessage().arg(0));
 }
 
 void Engine::CtcpReply_ping(Message &msg)
@@ -296,15 +318,15 @@ void Engine::CtcpReply_ping(Message &msg)
 
 void Engine::CtcpQuery_source(Message &msg)
 {
-	writeCtcpReplyMessage(msg.prefix(), QString::null,
-			      msg.ctcpMessage().command(), m_SourceString);
+//	writeCtcpReplyMessage(msg.prefix(), QString::null,
+//			      msg.ctcpMessage().command(), m_SourceString);
 }
 
 void Engine::CtcpQuery_time(Message &msg)
 {
-	writeCtcpReplyMessage(msg.prefix(), QString::null,
-			      msg.ctcpMessage().command(), QDateTime::currentDateTime().toString(),
-			      QString::null, false);
+//	writeCtcpReplyMessage(msg.prefix(), QString::null,
+//			      msg.ctcpMessage().command(), QDateTime::currentDateTime().toString(),
+//			      QString::null, false);
 }
 
 void Engine::CtcpQuery_userinfo(Message &msg)
@@ -314,13 +336,13 @@ void Engine::CtcpQuery_userinfo(Message &msg)
 	if (userinfo.isNull())
 		userinfo = m_UserString;
 
-	writeCtcpReplyMessage(msg.prefix(), QString::null,
-			      msg.ctcpMessage().command(), QString::null, userinfo);
+//	writeCtcpReplyMessage(msg.prefix(), QString::null,
+//			      msg.ctcpMessage().command(), QString::null, userinfo);
 }
 
 void Engine::CtcpRequest_version(const QString &target)
 {
-	writeCtcpQueryMessage(target, QString::null, "VERSION");
+//	writeCtcpQueryMessage(target, QString::null, "VERSION");
 }
 
 void Engine::CtcpQuery_version(Message &msg)
@@ -331,8 +353,8 @@ void Engine::CtcpQuery_version(Message &msg)
 	if (response.isNull())
 		response = m_VersionString;
 
-	writeCtcpReplyMessage(msg.prefix(),
-		msg.ctcpMessage().command() + " " + response);
+//	writeCtcpReplyMessage(msg.prefix(),
+//		msg.ctcpMessage().command() + " " + response);
 }
 
 void Engine::CtcpReply_version(Message &msg)

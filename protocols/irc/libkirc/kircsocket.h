@@ -20,6 +20,7 @@
 #ifndef KIRCSOCKET_H
 #define KIRCSOCKET_H
 
+#include "kircconst.h"
 #include "kircmessage.h"
 
 #include <kbufferedsocket.h>
@@ -44,31 +45,21 @@ class Socket
 {
 	Q_OBJECT
 
-	Q_ENUMS(SocketState)
-
 public:
-	//Static regexes
-	static const QRegExp m_RemoveLinefeeds;
-
-	enum SocketState
-	{
-		Idle,
-		Connecting,
-		Authentifying,
-		Connected,
-		Closing
-	};
-
 	Socket(QObject *parent = 0);
 	~Socket();
+
+	QByteArray convert(const QString &str, QTextCodec *codec = 0) const;
+	QByteArrayList convert(const QStringList &str, QTextCodec *codec = 0) const;
+
+	QTextCodec *defaultCodec() const;
 
 //	QString getHost() const;
 //	Q_UINT16 getPort() const;
 
 //	bool useSSL() const;
 
-	KIRC::Socket::SocketState state() const
-		{ return m_state; }
+	KIRC::ConnectionState connectionState() const;
 
 signals:
 	/**
@@ -77,15 +68,17 @@ signals:
 	 * @param errStr the string describing the error.
 	 *
 	 * @note The signal can be fired on non fatal error also.
-	 *       It's the emiter responsability to change the status accordingly.
+	 *       It's the emiter responsability to change the state accordingly.
 	 */
 	void internalError(const QString &errStr);
 
-	void stateChanged(KIRC::Socket::SocketState newstate);
+	void connectionStateChanged(KIRC::ConnectionState newstate);
 
 	void receivedMessage(KIRC::Message &message);
 
 public slots:
+	void setDefaultCodec(QTextCodec *codec);
+
 	/**
 	 * @return true if the socket is got no error trying to establish the connection.
 	 */
@@ -95,14 +88,14 @@ public slots:
 	void close();
 
 	void writeRawMessage(const QByteArray &rawMessage);
-//	void writeRawMessage(const QString &message, QTextCodec *codec = 0);
+	void writeRawMessage(const QString &message, QTextCodec *codec = 0);
 
 	void showInfoDialog();
 
 protected:
-	bool setupSocket(bool useSSL);
+	void setConnectionState(KIRC::ConnectionState newstate);
 
-protected slots:
+private slots:
 	void slotReadyRead();
 
 	void socketStateChanged(int newstate);
@@ -110,10 +103,13 @@ protected slots:
 	void socketGotError(int code);
 
 private:
+	bool setupSocket(bool useSSL);
+
 	KNetwork::KBufferedSocket *m_socket;
 	bool m_useSSL;
+	KIRC::ConnectionState m_state;
 
-	KIRC::Socket::SocketState m_state;
+	QTextCodec *m_defaultCodec;
 };
 
 }

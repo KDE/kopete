@@ -47,17 +47,18 @@ const QString IRCContact::channel_caption() const
 */
 void IRCContact::channel_updateStatus()
 {
-	KIRC::Engine::Status status = kircEngine()->status();
-	switch (status)
+	KIRC::ConnectionState state = kircEngine()->connectionState();
+	switch (state)
 	{
-		case KIRC::Engine::Idle:
-		case KIRC::Engine::Connecting:
-		case KIRC::Engine::Authentifying:
+		case KIRC::Idle:
+		case KIRC::Connecting:
+		case KIRC::Authentifying:
 			setOnlineStatus(m_protocol->m_ChannelStatusOffline);
 			break;
-		case KIRC::Engine::Connected:
-		case KIRC::Engine::Closing:
+		case KIRC::Connected:
 			setOnlineStatus(m_protocol->m_ChannelStatusOnline);
+		case KIRC::Closing:
+			setOnlineStatus(m_protocol->m_ChannelStatusOffline);
 			break;
 		default:
 			setOnlineStatus(m_protocol->m_StatusUnknown);

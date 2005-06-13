@@ -34,6 +34,10 @@
 // This is due to some changes of the message encoding with 14 arguments.(not very frequent :)
 // #define _IRC_STRICTNESS_
 
+#ifndef QByteArrayList
+#define QByteArrayList QValueList<QByteArray>
+#endif
+
 namespace KIRC
 {
 
@@ -42,38 +46,32 @@ class Engine;
 class Message
 {
 public:
-	static QString Message::format(const QString &command, const QStringList &args, const QString &suffix);
+	static QString format(
+		const QString &command,
+		const QStringList &args = QStringList(),
+		const QString &suffix = QString::null);
+
+	static QByteArray format(
+		const QByteArray &command,
+		const QByteArrayList &args = QByteArrayList(),
+		const QByteArray &suffix = QByteArray());
+
+	static QString formatCtcp(const QString &ctcpMessage);
+	static QByteArray formatCtcp(const QByteArray &ctcpMessage);
 
 	// low level quoting, message quoting
 	static QString quote(const QString &str);
-	static QString unquote(const QString &str);
+	static QByteArray quote(const QByteArray &str);
+
+	static QByteArray unquote(const QByteArray &str);
 
 	// ctcp level quoting
 	static QString ctcpQuote(const QString &str);
-	static QString ctcpUnquote(const QString &str);
+	static QByteArray ctcpQuote(const QByteArray &str);
 
-	static void writeRawMessage(KIRC::Engine *engine, const QTextCodec *codec, const QString &str);
-
-	static void writeMessage(KIRC::Engine *engine, const QTextCodec *codec, const QString &str);
-
-	static void writeMessage(KIRC::Engine *engine, const QTextCodec *codec,
-		const QString &command, const QStringList &args, const QString &suffix);
-
-	static void writeCtcpMessage(KIRC::Engine *engine, const QTextCodec *codec,
-		const QString &command, const QString &to,
-		const QString &ctcpMessage);
-
-	static void writeCtcpMessage(KIRC::Engine *engine, const QTextCodec *codec,
-		const QString &command, const QString &to, const QString &suffix,
-		const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null );
-
-	static KIRC::Message parse(KIRC::Engine *engine, bool *parseSuccess=0);
+	static QByteArray ctcpUnquote(const QByteArray &str);
 
 private:
-	static bool matchForIRCRegExp(KIRC::Message &message);
-	static bool matchForIRCRegExp(QRegExp &regexp, KIRC::Message &message);
-
-	static bool extractCtcpCommand(Message &msg);
 
 	static QRegExp sm_IRCCommandType1;
 #ifdef _IRC_STRICTNESS_
@@ -83,18 +81,19 @@ private:
 	static QRegExp sm_IRCNumericCommand;
 
 public:
-	Message(KIRC::Engine *);
+	Message(const QByteArray &message = QByteArray());
 	Message(const KIRC::Message &obj);
 	Message(const KIRC::Message *obj);
 
 	~Message();
 
-	bool isNumeric() const;
 	bool isValid() const;
+
+	bool isNumeric() const;
 	void dump() const;
 
-	KIRC::EntityPtr entityFromPrefix() const;
-	KIRC::EntityPtr entityFromArg(size_t i) const;
+//	KIRC::EntityPtr entityFromPrefix() const;
+//	KIRC::EntityPtr entityFromArg(size_t i) const;
 
 	QByteArray rawLine() const;
 	QByteArray rawPrefix() const;
@@ -127,7 +126,18 @@ private:
 	 */
 	QTextCodec *checkCodec(QTextCodec *codec) const;
 
-	KIRC::Engine *m_engine;
+	bool parse(const QByteArray &message);
+
+	bool matchForIRCRegExp(QRegExp &regexp);
+
+#ifndef _IRC_STRICTNESS_
+	bool extractCtcpCommand();
+#endif // _IRC_STRICTNESS_
+
+	/**
+	 * Set to true if the parse was successfull.
+	 */
+	bool m_valid;
 
 	/**
 	 * Contains the raw message line.

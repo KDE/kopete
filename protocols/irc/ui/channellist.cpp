@@ -257,7 +257,8 @@ void ChannelList::clear()
 
 void ChannelList::search()
 {
-	if( m_engine->isConnected() || !channelCache.isEmpty() )
+/*
+	if( !m_engine->isDisconnected() || !channelCache.isEmpty() )
 	{
 		mChannelList->clear();
 		mChannelList->setSorting( -1 );
@@ -282,6 +283,7 @@ void ChannelList::search()
 			i18n("Not Connected"), 0
 		);
 	}
+*/
 }
 
 void ChannelList::slotChannelListed( const QString &channel, uint users, const QString &topic )

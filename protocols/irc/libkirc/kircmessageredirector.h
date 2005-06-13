@@ -1,9 +1,9 @@
 /*
     kircmessageredirector.h - IRC Client
 
-    Copyright (c) 2004      by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2004-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2004      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2004-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -52,6 +52,11 @@ public:
 	 * SIGNAL(myslot(KIRC::Message &msg))
 	 */
 	bool connect(QObject *object, const char *member);
+
+	/**
+	 * Return true, if the message redirector has clients.
+	 */
+	int connected() const;
 
 	/**
 	 * Attempt to send the message.

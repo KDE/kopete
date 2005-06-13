@@ -33,11 +33,6 @@
 using namespace KIRC;
 using namespace KNetwork;
 
-/* Please note that the regular expression "[\\r\\n]*$" is used in a QString::replace statement many times.
- * This gets rid of trailing \r\n, \r, \n, and \n\r characters.
- */
-const QRegExp Socket::m_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
-
 Socket::Socket(QObject *parent)
 	: QObject(parent),
 	  m_socket(0),
@@ -52,6 +47,44 @@ Socket::~Socket()
 	kdDebug(14120) << k_funcinfo << endl;
 }
 
+QByteArray Socket::convert(const QString &str, QTextCodec *codec) const
+{
+//	static const QTextCodec *utf8 = QTextCodec::codecFromMib(4);
+
+//	if (!codec->canEncode(str))
+//	{
+//		kdDebug(14121) << k_funcinfo << "Encoding problem detected:" << str << endl;
+//		return;
+//	}
+
+	return codec->fromUnicode(str);
+}
+
+QByteArrayList Socket::convert(const QStringList &strlist, QTextCodec *codec) const
+{
+	QByteArrayList ret;
+
+	for (QStringList::ConstIterator it = strlist.begin(); it != strlist.end(); ++it)
+		ret.append(convert(*it, codec));
+
+	return ret;
+}
+
+QTextCodec *Socket::defaultCodec() const
+{
+	return m_defaultCodec;
+}
+
+void Socket::setDefaultCodec(QTextCodec *codec)
+{
+	codec = m_defaultCodec;
+}
+
+KIRC::ConnectionState Socket::connectionState() const
+{
+	return m_state;
+}
+
 void Socket::connectToServer(const QString &host, Q_UINT16 port, bool useSSL)
 {
 //	kdDebug(14120) << k_funcinfo << useSSL << endl;
@@ -64,6 +97,113 @@ void Socket::connectToServer(const KResolverEntry &entry, bool useSSL)
 //	kdDebug(14120) << k_funcinfo << useSSL << endl;
 	setupSocket(useSSL);
 	m_socket->connect(entry);
+}
+
+void Socket::close()
+{
+	m_socket->close();
+}
+
+void Socket::writeRawMessage(const QByteArray &rawMsg)
+{
+/*	if (!m_socket || m_socket->status())
+	{
+		kdDebug(14121) << k_funcinfo << "Not connected while attempting to write:" << str << endl;
+		return;
+	}
+*/
+	QCString buffer = rawMsg + QCString("\n\r"); // QT-4.0 make this a QByteArray
+	int wrote = m_socket->writeBlock(buffer.data(), buffer.length());
+	kdDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg) << endl;
+}
+
+void Socket::writeRawMessage(const QString &msg, QTextCodec *codec)
+{
+	writeRawMessage(convert(msg, codec));
+}
+
+void Socket::showInfoDialog()
+{
+/*	if( m_useSSL )
+	{
+		static_cast<KSSLSocket*>( m_socket )->showInfoDialog();
+	}*/
+}
+
+void Socket::setConnectionState(KIRC::ConnectionState newstate)
+{
+	if (m_state != newstate)
+	{
+		m_state = newstate;
+		emit connectionStateChanged(newstate);
+	}
+}
+
+void Socket::slotReadyRead()
+{
+	// This condition is buggy when the peer server
+	// close the socket unexpectedly
+
+//	if (m_socket->state() == KSocketBase::Connected && m_socket->canReadLine())
+	if (m_socket->canReadLine())
+	{
+		QByteArray rawMsg = m_socket->readLine();
+//		kdDebug(14121) << QString::fromLatin1("(%1 bytes) << %2").arg(wrote).arg(rawMsg) << endl;
+
+		Message msg(rawMsg);
+		if (msg.isValid())
+			emit receivedMessage(msg);
+		else
+			emit internalError(i18n("Parse error while parsing: %1").arg(msg.rawLine()));
+
+		QTimer::singleShot( 0, this, SLOT( slotReadyRead() ) );
+	}
+
+//	if(m_socket->socketStatus() != KExtendedSocket::connected)
+//		error();
+}
+
+void Socket::socketStateChanged(int newstate)
+{
+	switch ((KBufferedSocket::SocketState)newstate)
+	{
+	case KBufferedSocket::Idle:
+		setConnectionState(Idle);
+		break;
+	case KBufferedSocket::HostLookup:
+	case KBufferedSocket::HostFound:
+//	case KBufferedSocket::Bound: // Should never be Bound, unless writing a server
+	case KBufferedSocket::Connecting:
+		setConnectionState(Connecting);
+		break;
+	case KBufferedSocket::Open:
+		setConnectionState(Authentifying);
+	case KBufferedSocket::Closing:
+		setConnectionState(Closing);
+		break;
+	default:
+		emit internalError(i18n("Unknown SocketState value:%1").arg(newstate));
+		close();
+	}
+}
+
+void Socket::socketGotError(int errCode)
+{
+	KBufferedSocket::SocketError err = (KBufferedSocket::SocketError)errCode;
+
+	// Ignore spurious error
+	if (err == KBufferedSocket::NoError)
+		return;
+
+	QString errStr = KBufferedSocket::errorString(err);
+	kdDebug(14120) << k_funcinfo << "Socket error: " << errStr << endl;
+	emit internalError(errStr);
+
+	// ignore non-fatal error
+	if (!KBufferedSocket::isFatalError(err))
+		return;
+
+	close();
 }
 
 bool Socket::setupSocket(bool useSSL)
@@ -103,109 +243,5 @@ bool Socket::setupSocket(bool useSSL)
 	}
 }
 
-void Socket::close()
-{
-	m_socket->close();
-}
-
-void Socket::socketStateChanged(int newstate)
-{
-	switch ((KBufferedSocket::SocketState)newstate)
-	{
-	case KBufferedSocket::Idle:
-		emit stateChanged(Idle);
-		break;
-	case KBufferedSocket::HostLookup:
-	case KBufferedSocket::HostFound:
-//	case KBufferedSocket::Bound: // Should never be Bound, unless writing a server
-	case KBufferedSocket::Connecting:
-		emit stateChanged(Connecting);
-		break;
-	case KBufferedSocket::Open:
-		emit stateChanged(Authentifying);
-	case KBufferedSocket::Closing:
-		emit stateChanged(Closing);
-		break;
-	default:
-		emit internalError(i18n("Unknown SocketState value:%1").arg(newstate));
-		close();
-	}
-}
-
-void Socket::socketGotError(int errCode)
-{
-	KBufferedSocket::SocketError err = (KBufferedSocket::SocketError)errCode;
-
-	// Ignore spurious error
-	if (err == KBufferedSocket::NoError)
-		return;
-
-	QString errStr = KBufferedSocket::errorString(err);
-	kdDebug(14120) << k_funcinfo << "Socket error: " << errStr << endl;
-	emit internalError(errStr);
-
-	// ignore non-fatal error
-	if (!KBufferedSocket::isFatalError(err))
-		return;
-
-	close();
-}
-
-void Socket::writeRawMessage(const QByteArray &rawMsg)
-{
-/*	if (!m_socket || m_socket->status())
-	{
-		kdDebug(14121) << k_funcinfo << "Not connected while attempting to write:" << str << endl;
-		return;
-	}
-*/
-	QCString buffer = rawMsg + QCString("\n\r"); // QT-4.0 make this a QByteArray
-	int wrote = m_socket->writeBlock(buffer.data(), buffer.length());
-	kdDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg) << endl;
-}
-/*
-void Socket::writeRawMessage(const QString &rawMsg, QTextCodec *codec)
-{
-	if (!codec)
-		codec = m_defaultCodec;
-
-//	if (!codec->canEncode(rawMsg))
-//	{
-//		kdDebug(14121) << k_funcinfo << "Encoding problem detected:" << str << endl;
-//		return;
-//	}
-
-	writeRawMessage(codec->fromUnicode(rawMsg));
-}
-*/
-void Socket::slotReadyRead()
-{
-	// This condition is buggy when the peer server
-	// close the socket unexpectedly
-
-//	if (m_socket->state() == KSocketBase::Connected && m_socket->canReadLine())
-	if (m_socket->canReadLine())
-	{
-		Message msg(m_socket->readLine());
-
-		if (msg.isValid())
-			emit receivedMessage(msg);
-		else
-			emit internalError(i18n("Parse error while parsing: %1").arg(msg.rawLine()));
-
-		QTimer::singleShot( 0, this, SLOT( slotReadyRead() ) );
-	}
-
-//	if(m_socket->socketStatus() != KExtendedSocket::connected)
-//		error();
-}
-
-void Socket::showInfoDialog()
-{
-/*	if( m_useSSL )
-	{
-		static_cast<KSSLSocket*>( m_socket )->showInfoDialog();
-	}*/
-}
-
 #include "kircsocket.moc"
+
