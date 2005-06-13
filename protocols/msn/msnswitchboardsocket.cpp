@@ -498,37 +498,48 @@ void MSNSwitchBoardSocket::slotInviteContact(const QString &handle)
 //
 int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString &filename)
 {
-    int ret = 0;
-    QFileInfo fi(filename);
+	QString picObj;
 
-    // open the icon file
-    QFile pictFile(fi.filePath());
-    if (pictFile.open(IO_ReadOnly)) {
-    
-        QByteArray ar   = pictFile.readAll();
-        pictFile.close();
+	//try to find it in the cache.
+	const QMap<QString,QString> objectList=p2pDisplatcher()->objectList;
+	for (QMap<QString,QString>::ConstIterator it = objectList.begin(); it != objectList.end(); ++it )
+	{
+		if(it.data() == filename)
+		{
+			picObj=it.key();
+			break;
+		}
+	}
+
+	if(picObj.isNull())
+	{ //if not found in the cache, generate the picture object
+		QFileInfo fi(filename);
+		// open the icon file
+		QFile pictFile(fi.filePath());
+		if (pictFile.open(IO_ReadOnly)) {
+		
+			QByteArray ar = pictFile.readAll();
+			pictFile.close();
+			
+			QString sha1d = QString(KCodecs::base64Encode(SHA1::hash(ar)));
+			QString size = QString::number( pictFile.size() );
+			QString all = "Creator" + m_account->accountId() +	"Size" + size + "Type3Location" + fi.fileName() + "FriendlyAAA=SHA1D" + sha1d;
+			QString sha1c = QString(KCodecs::base64Encode(SHA1::hashString(all.utf8())));
+			picObj = "<msnobj Creator=\"" + m_account->accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\""+ fi.fileName() + "\" Friendly=\"AAA=\" SHA1D=\""+sha1d+ "\" SHA1C=\""+sha1c+"\"/>";
+
+			p2pDisplatcher()->objectList.insert(picObj,filename);
+		}
+		else
+			return 0;
+	}
+
+	QString msg = "MIME-Version: 1.0\r\n"
+				"Content-Type: text/x-mms-emoticon\r\n"
+				"\r\n" +
+				name + "\t" + picObj + "\t\r\n";
         
-        QString sha1d   = QString(KCodecs::base64Encode(SHA1::hash(ar)));
-        QString size    = QString::number( pictFile.size() );
-        QString all     = "Creator" + m_account->accountId() +
-                        "Size" + size +
-                        "Type3Location" + fi.fileName() +
-                        "FriendlyAAA=SHA1D" + sha1d;
-        QString sha1c   = QString(KCodecs::base64Encode(SHA1::hashString(all.utf8())));
-        QString picObj  = "<msnobj Creator=\"" + m_account->accountId() + 
-                        "\" Size=\"" + size  + 
-                        "\" Type=\"3\" Location=\""+ fi.fileName() +
-                        "\" Friendly=\"AAA=\" SHA1D=\""+sha1d+
-                        "\" SHA1C=\""+sha1c+"\"/>";
-        QString msg = 
-            "MIME-Version: 1.0\r\n"
-            "Content-Type: text/x-mms-emoticon\r\n"
-            "\r\n" + 
-            name + "\t" + picObj + "\t\r\n";
-        
-        ret = sendCommand("MSG", "A", true, msg.utf8());
-    }
-    return ret;
+	return sendCommand("MSG", "A", true, msg.utf8());
+
 }
 
 // this sends a short message to the server
@@ -548,31 +559,19 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	}
 #endif
 
-    QMap<QString, QString> emap = Kopete::Emoticons::self()->customEmoticonAndPicList();
-    
-    //
-    // This /addem is a temporary hack, someone show remove it at some stage:  sc00t
-    //
-    if(msg.plainBody().contains("/addem"))
+#if 0
+	QMap<QString, QString> emap = Kopete::Emoticons::self()->emoticonAndPicList();
+		
+	// Check the list for any custom emoticons
+	for (QMap<QString, QString>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
 	{
-    	QRegExp rx("^/addem\\s+(\\S+)\\s+(\\S+)\\s*$");
-    	if (rx.search(msg.plainBody()) != -1) {
-            if (!emap.contains(rx.cap(1))) {
-                Kopete::Emoticons::self()->addCustomEmoticon(rx.cap(2), rx.cap(1));
-    	    }
-    	}
-    	return -3; // I'm just guessing what to return here :)
+		if ( msg.plainBody().contains(itr.key()) )
+		{
+			sendCustomEmoticon(itr.key(), itr.data());
+		}
 	}
-    
-    //
-    // Check the list for any custom emoticons
-    //
-    for (QMap<QString, QString>::const_iterator itr = emap.begin(); itr != emap.end(); itr++) {
-        if ( msg.plainBody().contains(itr.key()) ) {
-            sendCustomEmoticon(itr.key(), itr.data());
-        }
-    }
-    
+#endif
+		
 
 	if( msg.format() & Kopete::Message::RichText )
 	{

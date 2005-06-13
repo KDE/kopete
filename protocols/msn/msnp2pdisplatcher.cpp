@@ -251,17 +251,16 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
     		rx.search( dataMessage );
     		QCString msnobj;
     		KCodecs::base64Decode( rx.cap(1).utf8() , msnobj);
+    		//rx=QRegExp("<msnobj\\s+Creator=\"(\\S+)\"\\s+Size=\"(\\S+)\"\\s+Type=\"(\\S+)\"\\s+Location=\"(\\S+)\"\\s+Friendly=\"(\\S+)\"\\s+SHA1D=\"(\\S+)\"\\s+SHA1C=\"(\\S+)\"/>");
     		kdDebug(14140) << "Requesting pic" << msnobj << endl;
-    		rx=QRegExp("<msnobj\\s+Creator=\"(\\S+)\"\\s+Size=\"(\\S+)\"\\s+Type=\"(\\S+)\"\\s+Location=\"(\\S+)\"\\s+Friendly=\"(\\S+)\"\\s+SHA1D=\"(\\S+)\"\\s+SHA1C=\"(\\S+)\"/>");
-    		rx.search(msnobj);
-			
-    		// The display picture's name is 'kopete.tmp'
-    		QString fname = 
-    		  (rx.cap(4) == "kopete.tmp")
-        		? locateLocal( "appdata", "msnpicture-"+m_myHandle.lower().replace(QRegExp("[./~]"),"-")+".png" )
-        		: KGlobal::dirs()->findResource( "emoticons", QString::fromLatin1("custom/") + rx.cap(4));
-    		
-    		//prepare to send the file
+
+			// If the msnobject is contained in the map, it's a custom emoticon.
+			//  Else, it's the display picture.
+			QString fname =  objectList.contains(msnobj)  ?
+					objectList[msnobj]  :
+					locateLocal( "appdata", "msnpicture-"+m_myHandle.lower().replace(QRegExp("[./~]"),"-")+".png" );
+
+			//prepare to send the file
 			p2p->m_Sfile = new QFile( fname );
 			if(!p2p->m_Sfile->open(IO_ReadOnly))  {/* TODO: error?*/ }
 

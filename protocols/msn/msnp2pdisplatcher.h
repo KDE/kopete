@@ -87,6 +87,11 @@ public:
 	 void sendFile(const QString& filename , unsigned int fileSize, const QString &myHandle, const QString &msgHandle);
 #endif
 
+	/**
+	 * the key is the MSNObject xml, and the data is the filename
+	 */
+	QMap<QString,QString> objectList;
+
 protected:
 	virtual void parseMessage(MessageStruct & );
 
