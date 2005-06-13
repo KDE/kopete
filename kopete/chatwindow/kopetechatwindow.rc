@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="28" name="kopetechatwindow">
+<kpartgui version="30" name="kopetechatwindow">
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<text>&amp;Chat</text>
@@ -37,6 +37,7 @@
 				<Action name="options_membersright" />
 				<Action name="options_togglemembers" />
 			</Menu>
+			<Action name="enable_auto_spell_check" />
 			<Action append="show_merge" name="options_styles"/>
 			<Action append="configure_merge" name="settings_prefs" />
 		</Menu>

@@ -376,7 +376,10 @@ void KopeteChatWindow::initActions(void)
 	toggleMembers = new KToggleAction( i18n( "Show" ), QString::null, 0,
 		this, SLOT( slotToggleViewMembers() ), coll, "options_togglemembers" );
 	toggleMembers->setCheckedState(i18n("Hide"));
-
+	toggleAutoSpellCheck = new KToggleAction( i18n( "Automatic Spell Checking" ), QString::null, 0,
+		this, SLOT( toggleAutoSpellChecking() ), coll, "enable_auto_spell_check" );
+	toggleAutoSpellCheck->setChecked( true );
+	
 	actionSmileyMenu = new KopeteEmoticonAction( coll, "format_smiley" );
 	actionSmileyMenu->setDelayed( false );
 	connect(actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
@@ -477,6 +480,32 @@ void KopeteChatWindow::slotToggleViewMembers()
 {
 	m_activeView->toggleMembersVisibility();
 	updateMembersActions();
+}
+
+void KopeteChatWindow::toggleAutoSpellChecking()
+{
+	if ( !m_activeView )
+		return;
+
+	bool currentSetting = m_activeView->editPart()->autoSpellCheckEnabled();
+	m_activeView->editPart()->toggleAutoSpellCheck( !currentSetting );
+	updateSpellCheckAction();
+}
+
+void KopeteChatWindow::updateSpellCheckAction()
+{
+	if ( !m_activeView )
+		return;
+
+	if ( m_activeView->editPart()->richTextEnabled() )
+		toggleAutoSpellCheck->setEnabled( false );
+	else
+		toggleAutoSpellCheck->setEnabled( true );
+
+	if ( m_activeView->editPart()->autoSpellCheckEnabled() )
+		toggleAutoSpellCheck->setChecked( true );
+	else
+		toggleAutoSpellCheck->setChecked( false );
 }
 
 void KopeteChatWindow::slotHistoryUp()
@@ -656,7 +685,8 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 	connect( newView, SIGNAL(captionChanged( bool)), this, SLOT(slotSetCaption(bool)) );
 	connect( newView, SIGNAL(messageSuccess( ChatView* )), this, SLOT(slotStopAnimation( ChatView* )) );
 	connect( newView, SIGNAL(updateStatusIcon( const ChatView* )), this, SLOT(slotUpdateCaptionIcons( const ChatView* )) );
-
+	connect( newView, SIGNAL(rtfEnabled( ChatView*, bool ) ), this, SLOT( slotRTFEnabled( ChatView*, bool ) ) );
+	updateSpellCheckAction();
 	checkDetachEnable();
 }
 
@@ -840,7 +870,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	setCaption( m_activeView->caption() );
 	setStatus( m_activeView->statusText() );
 	m_activeView->setFocus();
-
+	updateSpellCheckAction();
 	slotUpdateSendEnabled();
 }
 
@@ -1024,6 +1054,18 @@ void KopeteChatWindow::slotSmileyActivated(const QString &sm)
 	if ( !sm.isNull() )
 		m_activeView->addText( " " + sm + " " );
 	//we are adding space around the emoticon becasue our parser only display emoticons not in a word.
+}
+
+void KopeteChatWindow::slotRTFEnabled( ChatView* cv, bool enabled)
+{
+	if ( cv != m_activeView )
+		return;
+
+	if ( enabled )
+		toolBar( "formatToolBar" )->show();
+	else
+		toolBar( "formatToolBar" )->hide();
+	updateSpellCheckAction();
 }
 
 bool KopeteChatWindow::queryClose()

@@ -735,10 +735,7 @@ void ChatView::slotMarkMessageRead()
 
 void ChatView::slotToggleRtfToolbar( bool enabled )
 {
-	if ( enabled )
-		m_mainWindow->toolBar( "formatToolBar" )->show();
-	else
-		m_mainWindow->toolBar( "formatToolBar" )->hide();
+	emit rtfEnabled( this, enabled );
 }
 
 void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &newStatus, const Kopete::OnlineStatus &oldStatus )

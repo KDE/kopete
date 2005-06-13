@@ -289,6 +289,11 @@ signals:
 	 */
 	void windowCreated();
 
+	/**
+	 * Emitted when the state of RTF has changed
+	 */
+	void rtfEnabled( ChatView*, bool );
+
 private slots:
 	void slotRemoteTypingTimeout();
 	void slotPropertyChanged( Kopete::Contact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
