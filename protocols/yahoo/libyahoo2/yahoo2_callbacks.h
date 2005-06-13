@@ -428,6 +428,10 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_mail_notify)(int id, const char *from, const 
 void YAHOO_CALLBACK_TYPE(ext_yahoo_system_message)(int id, const char *msg);
 
 
+void YAHOO_CALLBACK_TYPE(ext_yahoo_got_buddyicon)(int id, const char *me, const char *who, const char *url, int checksum);
+
+void YAHOO_CALLBACK_TYPE(ext_yahoo_got_buddyicon_checksum)(int id, const char *me,const char *who, int checksum);
+
 /*
  * Name: ext_yahoo_got_webcam_image
  * 	Called when you get a webcam update

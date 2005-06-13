@@ -33,9 +33,12 @@
 // KDE Includes
 
 class YahooSession;
+class YahooBuddyIconLoader;
 struct YahooUserInfo;
 class KExtendedSocket;
 class QSocketNotifier;
+class KTempFile;
+struct KURL;
 namespace KIO	{ 
 	class Job;
 	class TransferJob; 
@@ -163,6 +166,9 @@ public:
 	void viewUserProfile( const QString &who );
 	void stealthContact( const QString &who, int unstealth );
 	void saveAdressBookEntry( const YahooUserInfo &entry);
+
+	void requestBuddyIcon( const QString &who );
+	void downloadBuddyIcon( const QString &who, KURL url, int checksum );
 	
 	//webcam handlers
 	void requestWebcam( const QString& from );
@@ -197,6 +203,8 @@ public:
 	int _addHandlerReceiver(int fd, yahoo_input_condition cond, void *data);
 	void _removeHandlerReceiver(int tag);
 	int _hostAsyncConnectReceiver(char *host, int port,  yahoo_connect_callback callback, void *callback_data);
+	void _gotBuddyIconReceiver( int id, char *who, char *url, int checksum );
+	void _gotBuddyIconChecksumReceiver( int id, char *who, int checksum );
 	
 	//webcam callback receivers
 	void _gotWebcamInvite( const char* who );
@@ -277,7 +285,15 @@ signals:
 	
 	/** emitted when the webcam has been closed from the other side */
 	void remoteWebcamClosed( const QString& from, int reason );
+	
+	/** emitted when a buddy icon was successfully downloaded */
+	void gotBuddyIcon( const QString &who, KTempFile *file, int checksum );
+	
+	/** emitted when someone send information about his buddy icon */
+	void gotBuddyIconInfo( const QString &who, KURL url, int checksum );
 
+	/** emitted when someone sends a icon checksum, probably because he changed his icon */
+	void gotBuddyIconChecksum( const QString &who, int checksum );
 private slots:
 
 	void slotLoginResponseReceiver( int succ, char *url);
@@ -286,6 +302,7 @@ private slots:
 	void slotUserInfoResult( KIO::Job* );
 	void slotUserInfoData( KIO::Job*, const QByteArray & );
 	void slotUserInfoSaved( KIO::Job* );
+    void slotBuddyIconFetched(const QString &who, KTempFile *file, int checksum);
 	
 private:
 	/* Private constructor */
@@ -316,6 +333,8 @@ private:
 	
 	unsigned int m_lastWebcamTimestamp;
 	QBuffer* currentImage;
+
+	YahooBuddyIconLoader *m_iconLoader;
 };
 
 #endif

@@ -38,6 +38,8 @@ class KActionMenu;
 class YahooContact;
 class YahooAccount;
 class YahooProtocol;
+class KTempFile;
+struct KURL;
 
 class YahooAwayDialog : public KopeteAwayDialog
 {
@@ -168,6 +170,9 @@ protected slots:
 	void slotGotWebcamInvite(const QString &);
 	void slotGotWebcamImage(const QString&, const QPixmap&);
 	void slotWebcamClosed(const QString&, int);
+	void slotGotBuddyIcon(const QString&, KTempFile*, int);
+	void slotGotBuddyIconInfo(const QString&, KURL, int);
+	void slotGotBuddyIconChecksum(const QString&, int);
 
 	void slotBuddyListFetched( int numBuddies );
 

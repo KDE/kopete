@@ -33,6 +33,7 @@
 #include <kmessagebox.h>
 #include <kapplication.h>
 #include <krun.h>
+#include <kurl.h>
 
 // Kopete
 #include <kopetechatsession.h>
@@ -259,6 +260,13 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(webcamImageReceived(const QString&, const QPixmap& )), this, SLOT(slotGotWebcamImage(const QString&, const QPixmap& )));
 		
 		QObject::connect(m_session, SIGNAL(remoteWebcamClosed(const QString&, int )), this, SLOT(slotWebcamClosed(const QString&, int )));
+
+		QObject::connect(m_session, SIGNAL(gotBuddyIcon(const QString&, KTempFile*, int)), this, SLOT(slotGotBuddyIcon(const QString&, KTempFile*, int)) );
+
+		QObject::connect(m_session, SIGNAL(gotBuddyIconInfo(const QString&, KURL, int)), this, SLOT(slotGotBuddyIconInfo(const QString&, KURL, int )));
+
+		QObject::connect(m_session, SIGNAL(gotBuddyIconChecksum(const QString&, int)), this, SLOT(slotGotBuddyIconChecksum(const QString&, int )));
+		
 	}
 
 	if ( sct == DeleteConnections )
@@ -337,7 +345,13 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::disconnect(m_session, SIGNAL(webcamImageReceived(const QString&, const QPixmap& )), this, SLOT(slotGotWebcamImage(const QString&, const QPixmap& )));
 		
-		QObject::disconnect(m_session, SIGNAL(remoteWebcamClosed(const QString&, int )), this, SLOT(slotWebcamClosed(const QString&, int )));	
+		QObject::disconnect(m_session, SIGNAL(remoteWebcamClosed(const QString&, int )), this, SLOT(slotWebcamClosed(const QString&, int )));
+		
+		QObject::disconnect(m_session, SIGNAL(gotBuddyIcon(const QString&, KTempFile*, int )), this, SLOT(slotGotBuddyIcon(const QString&, KTempFile*,int )));
+
+		QObject::disconnect(m_session, SIGNAL(gotBuddyIconInfo(const QString&, KURL, int)), this, SLOT(slotGotBuddyIconInfo(const QString&, KURL, int )));
+		
+		QObject::disconnect(m_session, SIGNAL(gotBuddyIconChecksum(const QString&, int)), this, SLOT(slotGotBuddyIconChecksum(const QString&, int )));
 	}
 }
 
@@ -620,6 +634,10 @@ void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, co
 		addContact(userid, alias.isEmpty() ? userid : alias, g, Kopete::Account::ChangeKABC);
 	}
 
+	if ( true ) // TODO?: make this configurable 
+	{
+		m_session->requestBuddyIcon( userid );
+	}
 }
 
 void YahooAccount::slotGotIgnore( const QStringList & /* igns */ )
@@ -647,6 +665,9 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 		}
 		else
 			kc->removeProperty( m_protocol->awayMessage );
+
+		if( newStatus == static_cast<YahooProtocol*>( m_protocol )->Online )
+			m_session->requestBuddyIcon( who );		// Try to get Buddy Icon
 		
 		if( newStatus == static_cast<YahooProtocol*>( m_protocol )->Idle ) {
 			// TODO: Use the argument 'away' to set the idleTime
@@ -851,6 +872,51 @@ void YahooAccount::slotGotWebcamImage( const QString& who, const QPixmap& image 
 		return;
 	}
 	kc->receivedWebcamImage( image );
+}
+
+void YahooAccount::slotGotBuddyIconChecksum(const QString &who, int checksum)
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	YahooContact *kc = contact( who );
+	if ( kc == NULL ) {
+		kdDebug(14180) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		return;
+	}
+
+	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() )
+	{
+		kdDebug(14180) << k_funcinfo << "Icon already exists. I will not request it again." << endl;
+		return;
+	} else
+		m_session->requestBuddyIcon( who );;	
+}
+
+void YahooAccount::slotGotBuddyIconInfo(const QString &who, KURL url, int checksum)
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	YahooContact *kc = contact( who );
+	if ( kc == NULL ) {
+		kdDebug(14180) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		return;
+	}
+
+	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() )
+	{
+		kdDebug(14180) << k_funcinfo << "Icon already exists. I will not download it again." << endl;
+		return;
+	} else
+		m_session->downloadBuddyIcon( who, url, checksum );
+}
+
+void YahooAccount::slotGotBuddyIcon( const QString &who, KTempFile *file, int checksum )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	YahooContact *kc = contact( who );
+	if ( kc == NULL ) {
+		kdDebug(14180) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		return;
+	}
+	kc->setDisplayPicture( file, checksum );
 }
 
 void YahooAccount::slotWebcamClosed( const QString& who, int reason )

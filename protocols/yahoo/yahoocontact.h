@@ -25,6 +25,7 @@
 #include "kopetecontact.h"
 
 class KAction;
+class KTempFile;
 
 namespace Kopete { class ChatSession; }
 namespace Kopete { class MetaContact; }
@@ -33,6 +34,7 @@ namespace Kopete { class Message; }
 class YahooProtocol;
 class YahooAccount;
 class YahooWebcamDialog;
+class YahooChatSession;
 
 class YahooContact : public Kopete::Contact
 {
@@ -63,8 +65,12 @@ public slots:
 	virtual void slotUserInfo();
 	virtual void slotSendFile();
 	virtual void deleteContact();
+
+	void setDisplayPicture(KTempFile *f, int checksum);
 	
 	void stealthContact();
+	void requestWebcam();
+	void buzzContact();
 
 	/**
 	 * Must be called after the contact list has been received
@@ -78,22 +84,22 @@ signals:
 	void signalReceivedWebcamInvite();
 	void signalReceivedWebcamImage( const QPixmap &pic );
 	void signalWebcamClosed( int reason );
-	void signalWebcamInviteAccepted();	
+	void signalWebcamInviteAccepted();
+	void displayPictureChanged();
 
 private slots:
 	void slotChatSessionDestroyed();
 	void slotSendMessage( Kopete::Message& );
 	void slotTyping( bool );
+	void slotEmitDisplayPictureChanged();
 
-	void requestWebcam();
 	void closeWebcamDialog();
 	//void webcamClosed( const QString& contact, int reason );
-	void buzzContact();
 
 private:
 	QString m_userId; 
 	QString m_groupName;
-	Kopete::ChatSession *m_manager;
+	YahooChatSession *m_manager;
 	YahooAccount* m_account;
 
 	//stealth

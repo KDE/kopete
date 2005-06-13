@@ -30,6 +30,7 @@
 #include "yahooaccount.h"
 #include "yahoowebcamdialog.h"
 #include "yahoostealthsetting.h"
+#include "yahoochatsession.h"
 
 // QT Includes
 #include <qregexp.h>
@@ -43,6 +44,10 @@
 #include <krun.h>
 #include <kshortcut.h>
 #include <kmessagebox.h>
+#include <ktempfile.h>
+#include <kio/global.h>
+#include <kio/job.h>
+#include <kio/jobclasses.h>
 //#include <kimageio.h>
 #include <kstandarddirs.h>
 
@@ -150,12 +155,13 @@ Kopete::ChatSession *YahooContact::manager( Kopete::Contact::CanCreateFlags canC
 	{
 		Kopete::ContactPtrList m_them;
 		m_them.append( this );
-		m_manager = Kopete::ChatSessionManager::self()->create( m_account->myself(), m_them, protocol() );
+		m_manager = new YahooChatSession( protocol(), account()->myself(), m_them  );
 		connect( m_manager, SIGNAL( destroyed() ), this, SLOT( slotChatSessionDestroyed() ) );
 		connect( m_manager, SIGNAL( messageSent ( Kopete::Message&, Kopete::ChatSession* ) ), this, SLOT( slotSendMessage( Kopete::Message& ) ) );
 		connect( m_manager, SIGNAL( myselfTyping( bool) ), this, SLOT( slotTyping( bool ) ) );
 		connect( m_account, SIGNAL( receivedTypingMsg( const QString &, bool ) ), m_manager, SLOT( receivedTypingMsg( const QString&, bool ) ) );
 		connect( this, SIGNAL( signalWebcamInviteAccepted() ), this, SLOT( requestWebcam() ) );
+		connect( this, SIGNAL(displayPictureChanged()), m_manager, SLOT(slotDisplayPictureChanged()));
 	}
 
 	return m_manager;
@@ -306,6 +312,31 @@ void YahooContact::gotWebcamInvite()
 	
 }
 
+void YahooContact::setDisplayPicture(KTempFile *f, int checksum)
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	if( !f )
+		return;
+	// stolen from msncontact.cpp ;)
+	QString newlocation=locateLocal( "appdata", "yahoopictures/"+ contactId().lower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+	setProperty( YahooProtocol::protocol()->iconCheckSum, checksum );
+	
+	KIO::Job *j=KIO::file_move( KURL::fromPathOrURL( f->name() ) , KURL::fromPathOrURL( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
+	
+	f->setAutoDelete(false);
+	delete f;
+	
+	//let the time to KIO to copy the file
+	connect(j, SIGNAL(result(KIO::Job *)) , this, SLOT(slotEmitDisplayPictureChanged() ));
+}
+
+void YahooContact::slotEmitDisplayPictureChanged()
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	QString newlocation=locateLocal( "appdata", "yahoopictures/"+ contactId().lower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
+	emit displayPictureChanged();
+}
 
 void YahooContact::receivedWebcamImage( const QPixmap& image )
 {

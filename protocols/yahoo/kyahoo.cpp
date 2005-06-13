@@ -23,6 +23,7 @@
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
 #include "yahoouserinfo.h"
+#include "yahoobuddyiconloader.h"
 
 // QT Includes
 #include <qfile.h>
@@ -36,12 +37,14 @@
 #include <kmessagebox.h>
 #include <kiconloader.h>
 #include <krun.h>
+#include <kurl.h>
 #include <kio/global.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>
 //#include <kimageio.h>
 #include <kprocess.h>
 #include <ktempfile.h>
+#include <kstandarddirs.h>
 
 // System Includes
 #include <cstdlib>
@@ -218,7 +221,10 @@ YahooSession::YahooSession(int id, const QString username, const QString passwor
 	m_Username = username;
 	m_Password = password;
 	m_lastWebcamTimestamp = 0;
-	currentImage = 0;
+	currentImage = 0L;
+	m_iconLoader = new YahooBuddyIconLoader();
+
+	connect( m_iconLoader, SIGNAL(fetchedBuddyIcon(const QString&, KTempFile*, int )), this, SLOT(slotBuddyIconFetched(const QString&, KTempFile*,  int ) ) );
 }
 
 int YahooSession::sessionId() const
@@ -241,6 +247,7 @@ YahooSession::~YahooSession()
 	yahoo_logoff( m_connId );
 	yahoo_close( m_connId );
 	m_connManager.reset();
+	delete m_iconLoader;
 }
 
 int YahooSession::setLogLevel(enum yahoo_log_level level)
@@ -328,6 +335,17 @@ void YahooSession::ignoreBuddy( const QString &who, int unignore)
 {
 	yahoo_ignore_buddy( m_connId, who.local8Bit(), unignore );
 
+}
+
+void YahooSession::requestBuddyIcon( const QString &who )
+{
+	kdDebug(14181) << k_funcinfo << "Requesting avatar for: " << who << endl;
+	yahoo_buddyicon_request( m_connId, who.local8Bit() );
+}
+
+void YahooSession::downloadBuddyIcon( const QString &who, KURL url, int checksum )
+{
+	m_iconLoader->fetchBuddyIcon( QString(who), KURL(url), checksum );
 }
 
 void YahooSession::changeBuddyGroup( const QString &who, const QString &old_group, const QString &new_group)
@@ -700,20 +718,20 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_got_cookies )( int /*id*/ )
 	/* Not implemented , No receiver yet */
 }
 
-void YAHOO_CALLBACK_TYPE(ext_yahoo_got_ping)(int id, const char *errormsg)
+	void YAHOO_CALLBACK_TYPE(ext_yahoo_got_ping)(int id, const char *errormsg)
 {
 	/* Not implemented , No receiver yet */
 }
 
 void YAHOO_CALLBACK_TYPE( ext_yahoo_status_changed )( int id, const char *who, int stat,
-		const char *msg, int away, int idle, int mobile )
+	const char *msg, int away, int idle, int mobile )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
 	session->_statusChangedReceiver( (char*)who, stat, (char*)msg, away );
 
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_got_im )( int id, const char *me, const char *who, 		const char *msg, long tm, int stat, int utf8 )
+	void YAHOO_CALLBACK_TYPE( ext_yahoo_got_im )( int id, const char *me, const char *who, 		const char *msg, long tm, int stat, int utf8 )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
 	session->_gotImReceiver( (char*)who, (char*)msg, tm, stat, utf8 );
@@ -916,6 +934,20 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_data_request )( int /*id*/, int /*sen
 {
 	/* Not implemented , No receiver yet */
 }
+
+void YAHOO_CALLBACK_TYPE(ext_yahoo_got_buddyicon)(int id, const char *who, const char */*me*/, const char *url, int checksum)
+{
+	YahooSession *session = YahooSessionManager::manager()->session( id );
+	if ( session )
+		session->_gotBuddyIconReceiver( id, (char*)who, (char*)url, checksum );
+}
+
+void YAHOO_CALLBACK_TYPE(ext_yahoo_got_buddyicon_checksum)(int id, const char */*me*/, const char *who, int checksum)
+{
+	YahooSession *session = YahooSessionManager::manager()->session( id );
+	if( session )
+		session->_gotBuddyIconChecksumReceiver( id, (char*)who, checksum );
+}
 	
 void receive_file_callback( int id, int fd, int error,
 	                            const char *filename, unsigned long size, void *data )
@@ -933,6 +965,27 @@ void receive_file_callback( int id, int fd, int error,
     * Private Session Callback Receiver, don't use them                     *
     *************************************************************************
 */
+
+void YahooSession::_gotBuddyIconReceiver( int id, char *who, char *url, int checksum )
+{
+	kdDebug(14181) << k_funcinfo << "BuddyIcon reveived from: " << who << " checksum: " << checksum <<endl;
+	kdDebug(14181) << k_funcinfo << "BuddyIcon-Url: " << url <<endl;
+
+	emit gotBuddyIconInfo( QString( who ), KURL( url ), checksum );
+}
+
+void YahooSession::_gotBuddyIconChecksumReceiver( int id, char *who, int checksum )
+{
+	kdDebug(14181) << k_funcinfo << endl;
+
+	emit gotBuddyIconChecksum( QString( who ), checksum );
+	
+}
+
+void YahooSession::slotBuddyIconFetched(const QString &who, KTempFile *file, int checksum)
+{
+	emit gotBuddyIcon( who, file, checksum );
+}
 
 void YahooSession::_receiveFileProceed( int id, int fd, int /*error*/,
                                         const char */*filename*/, unsigned long /*size*/, void */*data*/ )
@@ -1437,4 +1490,3 @@ void YahooSession::slotWriteReady()
 
 // vim: set noet ts=4 sts=4 sw=4:
 // kate: indent-mode csands; tab-width 4;
-

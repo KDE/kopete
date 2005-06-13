@@ -204,7 +204,11 @@ enum yahoo_service { /* these are easier to see in hex */
 	YAHOO_SERVICE_CHATLOGOUT = 0xa0,
 	YAHOO_SERVICE_CHATPING,
 	YAHOO_SERVICE_COMMENT = 0xa8,
-	YAHOO_SERVICE_STEALTH = 0xb9
+	YAHOO_SERVICE_STEALTH = 0xb9,
+	YAHOO_SERVICE_PICTURE_CHECKSUM = 0xbd,
+	YAHOO_SERVICE_PICTURE = 0xbe,
+	YAHOO_SERVICE_PICTURE_UPDATE = 0xc1,
+	YAHOO_SERVICE_PICTURE_UPLOAD = 0xc2,
 };
 
 struct yahoo_pair {
@@ -1588,6 +1592,82 @@ static void yahoo_process_verify(struct yahoo_input_data *yid, struct yahoo_pack
 
 }
 
+static void yahoo_process_picture_checksum( struct yahoo_input_data *yid, struct yahoo_packet *pkt)
+{
+	struct yahoo_data *yd = yid->yd;
+	char *from;
+	char *to;
+	int checksum = 0;
+	YList *l;
+
+	for(l = pkt->hash; l; l = l->next)
+	{
+		struct yahoo_pair *pair = l->data;
+
+		switch(pair->key)
+		{
+			case 1:
+			case 4:
+				to = pair->value;
+			case 5:
+				from = pair->value;
+				break;
+			case 212:
+				break;
+			case 192:
+				checksum = atoi( pair->value );
+				break;
+		}
+	}
+
+		YAHOO_CALLBACK(ext_yahoo_got_buddyicon_checksum)(yd->client_id,to,from,checksum);
+}
+
+static void yahoo_process_picture(struct yahoo_input_data *yid, struct yahoo_packet *pkt)
+{
+	struct yahoo_data *yd = yid->yd;
+	char *url;
+	char *from;
+	char *to;
+	int status = 0;
+	int checksum = 0;
+	YList *l;
+	
+	for(l = pkt->hash; l; l = l->next)
+	{
+		struct yahoo_pair *pair = l->data;
+
+		switch(pair->key)
+		{
+		case 1:
+		case 4:		/* we */
+			to = pair->value;
+			break;
+		case 5:		/* sender */
+			from = pair->value;
+			break;
+		case 13:		/* request / sending */
+			status = atoi( pair->value );
+			break;
+		case 20:		/* url */
+			url = pair->value;
+			break;
+		case 192:	/*checksum */
+			checksum = atoi( pair->value );
+			break;
+		}
+	}
+
+	switch( status )
+	{
+		case 1:	/* this is a request, ignore for now */
+			break;
+		case 2:	/* this is cool - we get a picture :) */
+			YAHOO_CALLBACK(ext_yahoo_got_buddyicon)(yd->client_id,to, from, url, checksum);
+			break;
+	}
+}
+
 static void yahoo_process_auth_pre_0x0b(struct yahoo_input_data *yid, 
 		const char *seed, const char *sn)
 {
@@ -2636,6 +2716,12 @@ static void yahoo_packet_process(struct yahoo_input_data *yid, struct yahoo_pack
 	case YAHOO_SERVICE_PEERTOPEER:
 		WARNING(("unhandled service 0x%02x", pkt->service));
 		yahoo_dump_unhandled(pkt);
+		break;
+	case YAHOO_SERVICE_PICTURE:
+		yahoo_process_picture(yid, pkt);
+		break;
+	case YAHOO_SERVICE_PICTURE_CHECKSUM:
+		yahoo_process_picture_checksum(yid, pkt);
 		break;
 	default:
 		WARNING(("unknown service 0x%02x", pkt->service));
@@ -4341,6 +4427,28 @@ void yahoo_chat_logoff(int id, const char *from)
 
 	yahoo_packet_free(pkt);
 }
+
+void yahoo_buddyicon_request(int id, const char *who)
+{
+	struct yahoo_input_data *yid = find_input_by_id_and_type(id, YAHOO_CONNECTION_PAGER);
+	struct yahoo_data *yd;
+	struct yahoo_packet *pkt;
+
+	if( !yid )
+		return;
+
+	yd = yid->yd;
+	
+	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, 4, yd->user);
+	yahoo_packet_hash(pkt, 5, who);
+	yahoo_packet_hash(pkt, 13, "1");
+	yahoo_send_packet(yid, pkt, 0);
+
+	yahoo_packet_free(pkt);
+}
+
+
 
 void yahoo_webcam_close_feed(int id, const char *who)
 {

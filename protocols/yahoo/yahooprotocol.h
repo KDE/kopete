@@ -70,6 +70,7 @@ public:
 	const Kopete::OnlineStatus Connecting;
 
 	const Kopete::ContactPropertyTmpl awayMessage;
+	const Kopete::ContactPropertyTmpl iconCheckSum;
 
 	/** Protocol Accessor **/
 	static YahooProtocol *protocol();
