@@ -101,8 +101,8 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	QObject::connect(m_engine, SIGNAL(incomingNoSuchNickname(const QString &)),
 			 this, SLOT(slotNoSuchNickname(const QString &)));
 
-	QObject::connect(m_engine, SIGNAL(statusChanged(KIRC::Engine::Status)),
-			 this, SLOT(engineStatusChanged(KIRC::Engine::Status)));
+	QObject::connect(m_engine, SIGNAL(connectionStateChanged(KIRC::ConnectionState)),
+			 this, SLOT(engineConnectionStateChanged(KIRC::ConnectionState)));
 
 	QObject::connect(m_engine, SIGNAL(receivedMessage(KIRC::MessageType, const KIRC::EntityPtr &, const KIRC::EntityPtrList &, const QString &)),
 			 this, SLOT(receivedMessage(KIRC::MessageType, const KIRC::EntityPtr &, const KIRC::EntityPtrList &, const QString &)));
@@ -506,7 +506,7 @@ void IRCAccount::connectWithPassword(const QString &password)
 	}
 }
 
-void IRCAccount::engineStatusChanged(KIRC::ConnectionState newstate)
+void IRCAccount::engineConnectionStateChanged(KIRC::ConnectionState newstate)
 {
 	kdDebug(14120) << k_funcinfo << endl;
 

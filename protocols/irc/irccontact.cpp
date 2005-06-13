@@ -63,7 +63,7 @@ IRCContact::IRCContact(IRCAccount *account, KIRC::EntityPtr entity, MetaContact 
 	QObject::connect(engine, SIGNAL(incomingQuitIRC(const QString &, const QString &)),
 			this, SLOT( slotUserDisconnected(const QString&, const QString&)));
 
-	QObject::connect(engine, SIGNAL(statusChanged(KIRC::Engine::Status)),
+	QObject::connect(engine, SIGNAL(connectionStateChanged(KIRC::ConnectionState)),
 			this, SLOT(updateStatus()));
 
 	QObject::connect(m_entity, SIGNAL(updated()),
