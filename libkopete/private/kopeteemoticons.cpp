@@ -26,11 +26,9 @@
 #include <qstylesheet.h>
 #include <qimage.h>
 #include <qdatetime.h>
-#include <qfileinfo.h>
 
 #include <kapplication.h>
 #include <kdebug.h>
-#include <kio/netaccess.h>
 #include <kstandarddirs.h>
 #include <kdeversion.h>
 
@@ -68,12 +66,13 @@ class Emoticons::Private
 public:
 	QMap<QChar, QValueList<Emoticon> > emoticonMap;
 	QMap<QString, QString> emoticonAndPicList;
-    QMap<QString, QString> customEmoticonAndPicList;
 		
 	/**
 	 * The current icon theme from KopetePrefs
 	 */
 	QString theme;
+
+
 };
 
 
@@ -318,31 +317,6 @@ void Emoticons::addIfPossible( const QString& filenameNoExt, const QStringList &
 	}
 }
 
-bool Emoticons::addCustomEmoticon(const QString &filename, const QString &emoticon)
-{
-    bool ret = false;
-    QString pic = KGlobal::dirs()->findResource( "emoticons", QString::fromLatin1("custom/") + filename);
-    
-    kdDebug(14010) << "Attempting to add Custom Emoticon (" << emoticon << "): " << pic << endl;
-    
-    if (!d->customEmoticonAndPicList.contains(emoticon) && !pic.isNull())
-    {
-        d->emoticonAndPicList.insert(emoticon, pic);
-        d->customEmoticonAndPicList.insert(emoticon, pic);
-        
-        QString matchEscaped=QStyleSheet::escape(emoticon);
-        
-        Emoticon e;
-        e.picPath = pic;
-        e.matchTextEscaped = matchEscaped;
-        e.matchText = emoticon;
-        d->emoticonMap[ matchEscaped[0] ].append(e);
-        d->emoticonMap[ emoticon[0] ].append(e);
-        ret = true;
-    }
-    return ret;
-}
-
 void Emoticons::initEmoticons( const QString &theme )
 {
 	if(theme.isNull())
@@ -358,93 +332,59 @@ void Emoticons::initEmoticons( const QString &theme )
 //	kdDebug(14010) << k_funcinfo << "Called" << endl;
 	d->emoticonAndPicList.clear();
 	d->emoticonMap.clear();
-    d->customEmoticonAndPicList.clear();
 
-   
 	QDomDocument emoticonMap( QString::fromLatin1( "messaging-emoticon-map" ) );
 
-    QStringList files;
-    files += KGlobal::dirs()->findResource( "emoticons",  d->theme + QString::fromLatin1( "/emoticons.xml" ) );
-    
-    QString custom = KGlobal::dirs()->findResource("emoticons", QString::fromLatin1("custom/emoticons.xml"));
-#if KDE_IS_VERSION(3,4,0)
-    if (custom.isNull()) {// Create the custom dir and default file if it doesnt exist
-        QString dir = KGlobal::dirs()->saveLocation("emoticons", QString::fromLatin1("custom/"));
-        KIO::NetAccess::mkdir(dir, static_cast<QWidget*>(0));
-        custom = dir + QString::fromLatin1("emoticons.xml");
-        QFile f(custom);
-        if (f.open(IO_WriteOnly)) {
-            QTextStream str(&f);
-            str << "<?xml version = '1.0'?>" << endl
-                << "<messaging-emoticon-map>" << endl
-                << "</messaging-emoticon-map>" << endl;
-            f.close();
-        }
-    }
-#endif    
-    files += custom;
-    
-    for (QStringList::ConstIterator filename=files.begin(); filename!=files.end(); ++filename ) 
-    {
-        if( (*filename).isEmpty() )
-        {
-            kdDebug(14010) << "KopeteEmoticons::initEmoticons : WARNING: emoticon-map not found" <<endl;
-            continue ;
-        }
-    
-        
-        QFile mapFile( *filename );
-        mapFile.open( IO_ReadOnly );
-        emoticonMap.setContent( &mapFile );
-    
-        QDomElement list = emoticonMap.documentElement();
-        QDomNode node = list.firstChild();
-        while( !node.isNull() )
-        {
-            QDomElement element = node.toElement();
-            if( !element.isNull() )
-            {
-                if( element.tagName() == QString::fromLatin1( "emoticon" ) )
-                {
-                    QString emoticon_file = element.attribute(
-                        QString::fromLatin1( "file" ), QString::null );
-                    QStringList items;
-    
-                    QDomNode emoticonNode = node.firstChild();
-                    while( !emoticonNode.isNull() )
-                    {
-                        QDomElement emoticonElement = emoticonNode.toElement();
-                        if( !emoticonElement.isNull() )
-                        {
-                            if( emoticonElement.tagName() == QString::fromLatin1( "string" ) )
-                            {
-                                items << emoticonElement.text();
-                            }
-                            else
-                            {
-                                kdDebug(14010) << k_funcinfo <<
-                                    "Warning: Unknown element '" << element.tagName() <<
-                                    "' in emoticon data" << endl;
-                            }
-                        }
-                        emoticonNode = emoticonNode.nextSibling();
-                    }
-    
-                    if ((*filename).contains(QString::fromLatin1("custom/emoticons.xml")))
-                        addCustomEmoticon( emoticon_file, items.first());
-                    else
-                        addIfPossible ( emoticon_file, items );
-                }
-                else
-                {
-                    kdDebug(14010) << k_funcinfo << "Warning: Unknown element '" <<
-                        element.tagName() << "' in map file" << endl;
-                }
-            }
-            node = node.nextSibling();
-        }
-        mapFile.close();
-    }
+    QString filename= KGlobal::dirs()->findResource( "emoticons",  d->theme + QString::fromLatin1( "/emoticons.xml" ) );
+
+	QFile mapFile( filename );
+	mapFile.open( IO_ReadOnly );
+	emoticonMap.setContent( &mapFile );
+
+	QDomElement list = emoticonMap.documentElement();
+	QDomNode node = list.firstChild();
+	while( !node.isNull() )
+	{
+		QDomElement element = node.toElement();
+		if( !element.isNull() )
+		{
+			if( element.tagName() == QString::fromLatin1( "emoticon" ) )
+			{
+				QString emoticon_file = element.attribute(
+						QString::fromLatin1( "file" ), QString::null );
+				QStringList items;
+
+				QDomNode emoticonNode = node.firstChild();
+				while( !emoticonNode.isNull() )
+				{
+					QDomElement emoticonElement = emoticonNode.toElement();
+					if( !emoticonElement.isNull() )
+					{
+						if( emoticonElement.tagName() == QString::fromLatin1( "string" ) )
+						{
+							items << emoticonElement.text();
+						}
+						else
+						{
+							kdDebug(14010) << k_funcinfo <<
+									"Warning: Unknown element '" << element.tagName() <<
+									"' in emoticon data" << endl;
+						}
+					}
+					emoticonNode = emoticonNode.nextSibling();
+				}
+
+				addIfPossible ( emoticon_file, items );
+			}
+			else
+			{
+				kdDebug(14010) << k_funcinfo << "Warning: Unknown element '" <<
+						element.tagName() << "' in map file" << endl;
+			}
+		}
+		node = node.nextSibling();
+	}
+	mapFile.close();
 }
 
 
@@ -453,10 +393,6 @@ QMap<QString, QString> Emoticons::emoticonAndPicList()
 	return d->emoticonAndPicList;
 }
 
-QMap<QString, QString> Emoticons::customEmoticonAndPicList()
-{
-    return d->customEmoticonAndPicList;
-}
 
 QString Emoticons::parse( const QString &message, ParseMode mode )
 {
