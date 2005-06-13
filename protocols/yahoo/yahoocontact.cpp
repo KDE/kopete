@@ -334,6 +334,7 @@ void YahooContact::slotEmitDisplayPictureChanged()
 {
 	kdDebug(14180) << k_funcinfo << endl;
 	QString newlocation=locateLocal( "appdata", "yahoopictures/"+ contactId().lower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+	setProperty( Kopete::Global::Properties::self()->photo(), QString::null );
 	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
 	emit displayPictureChanged();
 }
