@@ -47,27 +47,32 @@ Socket::~Socket()
 	kdDebug(14120) << k_funcinfo << endl;
 }
 
-QByteArray Socket::convert(const QString &str, QTextCodec *codec) const
+QByteArray Socket::encode(const QString &str, bool *success, QTextCodec *codec) const
 {
-//	static const QTextCodec *utf8 = QTextCodec::codecFromMib(4);
+	*success = false;
 
-//	if (!codec->canEncode(str))
-//	{
-//		kdDebug(14121) << k_funcinfo << "Encoding problem detected:" << str << endl;
-//		return;
-//	}
+	if (!codec && !codec->canEncode(str))
+	{
+		if (!m_defaultCodec && !m_defaultCodec->canEncode(str))
+		{
+			if (!UTF8 && !UTF8->canEncode(str))
+			{
+//				emit internalError(i18n("Codec Error: .").arg(codec->name()));
+				return QByteArray();
+			}
+			else
+			{
+//				emit internalError(i18n("Codec Warning: Using codec %1 for:\n%2")
+//					.arg(UTF8->name(), str));
+				codec = UTF8;
+			}
+		}
+		else
+			codec = m_defaultCodec;
+	}
 
+	*success = true;
 	return codec->fromUnicode(str);
-}
-
-QByteArrayList Socket::convert(const QStringList &strlist, QTextCodec *codec) const
-{
-	QByteArrayList ret;
-
-	for (QStringList::ConstIterator it = strlist.begin(); it != strlist.end(); ++it)
-		ret.append(convert(*it, codec));
-
-	return ret;
 }
 
 QTextCodec *Socket::defaultCodec() const
@@ -119,7 +124,9 @@ void Socket::writeRawMessage(const QByteArray &rawMsg)
 
 void Socket::writeRawMessage(const QString &msg, QTextCodec *codec)
 {
-	writeRawMessage(convert(msg, codec));
+	bool encodeSuccess = false;
+	QByteArray rawMsg = encode(msg, &encodeSuccess, codec);
+	writeRawMessage(rawMsg);
 }
 
 void Socket::showInfoDialog()

@@ -21,6 +21,8 @@
 
 #include "kircconst.h"
 
+#include <qtextcodec.h>
+
 using namespace KIRC;
 
 /* Please note that the regular expression "[\\r\\n]*$" is used in a QString::replace statement many times.
@@ -52,4 +54,7 @@ CONST_QSTRING(USER);
 CONST_QSTRING(WHO);
 CONST_QSTRING(WHOIS);
 CONST_QSTRING(WHOWAS);
+#undef CONST_QSTRING
+
+QTextCodec *UTF8 = QTextCodec::codecForName("UTF-8");
 

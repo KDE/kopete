@@ -21,6 +21,8 @@
 #include <qregexp.h>
 #include <qstring.h>
 
+class QTextCodec;
+
 /**
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
  */
@@ -72,6 +74,9 @@ namespace KIRC
 	static const QString WHO;
 	static const QString WHOIS;
 	static const QString WHOWAS;
+
+	// Static codecs
+	static QTextCodec *UTF8;
 }
 
 #endif

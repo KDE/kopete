@@ -49,8 +49,7 @@ public:
 	Socket(QObject *parent = 0);
 	~Socket();
 
-	QByteArray convert(const QString &str, QTextCodec *codec = 0) const;
-	QByteArrayList convert(const QStringList &str, QTextCodec *codec = 0) const;
+	QByteArray encode(const QString &str, bool *success, QTextCodec *codec = 0) const;
 
 	QTextCodec *defaultCodec() const;
 
