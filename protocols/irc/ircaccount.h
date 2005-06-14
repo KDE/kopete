@@ -24,6 +24,8 @@
 
 #include "kircengine.h"
 
+#include "ircnetwork.h"
+
 #include "kopetepasswordedaccount.h"
 
 #include <kdialogbase.h>
@@ -47,21 +49,6 @@ class MetaContact;
 
 class KAction;
 class KActionMenu;
-
-struct IRCHost
-{
-	QString host;
-	uint port;
-	QString password;
-	bool ssl;
-};
-
-struct IRCNetwork
-{
-	QString name;
-	QString description;
-	QValueList<IRCHost*> hosts;
-};
 
 class IRCAccount
 	: public Kopete::PasswordedAccount

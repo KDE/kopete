@@ -182,7 +182,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 			host->ssl = false;
 
 			m_network->hosts.append( host );
-			m_protocol->addNetwork( m_network );
+//			m_protocol->addNetwork( m_network );
 
 			config->writeEntry(CONFIG_NETWORKNAME, m_network->name);
 //			config->writeEntry(CONFIG_NICKNAME, mNickName);

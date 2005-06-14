@@ -14,6 +14,7 @@ libkopeteircui_la_SOURCES = \
 	channellist.cpp \
 	channellistdialog.cpp \
 	networkconfig.ui \
+	networkconfigwidget.cpp \
 	kcodecaction.cpp
 
 EXTRA_DIST = ircadd.ui ircprefs.ui
