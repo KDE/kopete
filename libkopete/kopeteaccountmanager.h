@@ -218,6 +218,7 @@ private slots:
 	void unregisterAccount( const Kopete::Account *account );
 
 private:
+	bool isAnyAccountConnected();
 	static AccountManager *s_self;
 	class Private;
 	Private *d;

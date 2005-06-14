@@ -85,6 +85,16 @@ AccountManager::~AccountManager()
 	delete d;
 }
 
+bool AccountManager::isAnyAccountConnected()
+{
+	bool anyConnected = false;
+	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	{
+		anyConnected |= it.current()->isConnected();
+	}
+	return anyConnected;
+}
+
 void AccountManager::connectAll()
 {
 	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
@@ -95,12 +105,8 @@ void AccountManager::connectAll()
 void AccountManager::setAvailableAll()
 {
 	Away::setGlobalAway( false );
-	bool anyConnected = false;
-	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
-	{
-		anyConnected |= it.current()->isConnected();
-	}
-	
+	bool anyConnected = isAnyAccountConnected();
+
 	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		if ( anyConnected )
@@ -123,27 +129,45 @@ void AccountManager::disconnectAll()
 void AccountManager::setAwayAll( const QString &awayReason, bool away )
 {
 	Away::setGlobalAway( true );
+	bool anyConnected = isAnyAccountConnected();
 
 	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		// FIXME: ICQ's invisible online should be set to invisible away
 		Contact *self = it.current()->myself();
 		bool isInvisible = self && self->onlineStatus().status() == OnlineStatus::Invisible;
-		if ( it.current()->isConnected() && !isInvisible )
-			it.current()->setAway( away, awayReason );
+		if ( anyConnected )
+		{
+			if ( it.current()->isConnected() && !isInvisible )
+				it.current()->setAway( away, awayReason );
+		}
+		else
+		{
+			if ( !it.current()->excludeConnect() && !isInvisible )
+				it.current()->setAway( away, awayReason );
+		}
 	}
 }
 
 void AccountManager::setOnlineStatus( uint category , const QString& awayMessage, uint flags )
 {
 	OnlineStatusManager::Categories katgor=(OnlineStatusManager::Categories)category;
-
+	bool anyConnected = isAnyAccountConnected();
+	
 	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
-		Account *account=it.current();
-		if(account->isConnected() || (flags & ConnectIfOffline) )
-			account->setOnlineStatus( OnlineStatusManager::self()->onlineStatus(account->protocol() , katgor) ,
-			                          awayMessage );
+		Account *account = it.current();
+		Kopete::OnlineStatus status = OnlineStatusManager::self()->onlineStatus(account->protocol() , katgor);
+		if ( anyConnected )
+		{
+			if ( account->isConnected() || ( (flags & ConnectIfOffline) && !account->excludeConnect() ) )
+				account->setOnlineStatus( status , awayMessage );
+		}
+		else
+		{
+			if ( !account->excludeConnect() )
+				account->setOnlineStatus( status , awayMessage );
+		}
 	}
 }
 

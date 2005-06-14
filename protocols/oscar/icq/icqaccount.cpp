@@ -239,9 +239,24 @@ void ICQAccount::setPresenceTarget( const ICQ::Presence &newPres )
 void ICQAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const QString& reason )
 {
 	if ( status.status() == Kopete::OnlineStatus::Invisible )
-		setInvisible( ICQ::Presence::Invisible );
+	{
+		// called from outside, i.e. not by our custom action menu entry...
+		
+		if ( presence().type() == ICQ::Presence::Offline )
+		{
+			// ...when we are offline go online invisible.
+			setPresenceTarget( ICQ::Presence( ICQ::Presence::Online, ICQ::Presence::Invisible ) );
+		}
+		else
+		{
+			// ...when we are not offline set invisible.
+			setInvisible( ICQ::Presence::Invisible );
+		}
+	}
 	else
+	{
 		setPresenceType( ICQ::Presence::fromOnlineStatus( status ).type(), reason );
+	}
 }
 
 
