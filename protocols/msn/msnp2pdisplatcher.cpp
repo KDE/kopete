@@ -242,10 +242,6 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 			p2p->m_msgIdentifier=m_msgIdentifier;
 			m_msgIdentifier=0;
 
-			//Send the OK message.
-			QString content="SessionID: " + QString::number( m_sessionId ) + "\r\n\r\n" ;
-			p2p->makeMSNSLPMessage( OK, content );
-
     		// the context is a Base64 version of the msnobj
 		    rx=QRegExp("Context: ([0-9a-zA-Z+/=]*)");
     		rx.search( dataMessage );
@@ -262,7 +258,16 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 
 			//prepare to send the file
 			p2p->m_Sfile = new QFile( fname );
-			if(!p2p->m_Sfile->open(IO_ReadOnly))  {/* TODO: error?*/ }
+			if(!p2p->m_Sfile->open(IO_ReadOnly))
+			{
+				p2p->error();
+				return;
+			}
+
+			//Send the OK message.
+			QString content="SessionID: " + QString::number( m_sessionId ) + "\r\n\r\n" ;
+			p2p->makeMSNSLPMessage( OK, content );
+
 
 			p2p->m_footer='\1' ;
 
@@ -278,6 +283,16 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 		}
 		else if(AppID==2) //the peer want to transfer a file.
 		{
+			MSNP2PIncoming	*p2p=new MSNP2PIncoming( m_sessionId , this );
+			p2p->m_CallID=m_CallID;
+			p2p->m_branch=m_branch;
+			p2p->m_msgHandle=m_msgHandle;
+			p2p->m_myHandle=m_myHandle;
+			p2p->m_msgIdentifier=m_msgIdentifier;
+			m_msgIdentifier=0;
+			m_p2pList.insert(m_sessionId ,p2p);
+
+			
 			//extract the context from the invitation contents
 			rx=QRegExp("Context: ([0-9a-zA-Z+/=]*)");
 			rx.search( dataMessage );
@@ -292,7 +307,7 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 			KCodecs::base64Decode( context.utf8() , binaryContext );
 			if(binaryContext.size() < 21 )   //security,  (don't crash)
 			{
-				error();
+				p2p->error();
 				return;
 			}
 
@@ -306,15 +321,6 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 
 			//the size is placed in the context in the bytes 8..12  (source: the amsn code)
 			unsigned long int filesize= (unsigned char)(binaryContext[8]) + (unsigned char)(binaryContext[9]) *256 + (unsigned char)(binaryContext[10]) *65536 + (unsigned char)(binaryContext[11]) *16777216 ;
-
-			MSNP2PIncoming	*p2p=new MSNP2PIncoming( m_sessionId , this );
-			p2p->m_CallID=m_CallID;
-			p2p->m_branch=m_branch;
-			p2p->m_msgHandle=m_msgHandle;
-			p2p->m_myHandle=m_myHandle;
-			p2p->m_msgIdentifier=m_msgIdentifier;
-			m_msgIdentifier=0;
-			m_p2pList.insert(m_sessionId ,p2p);
 
 			//ugly hack to get the Kopete::Contact.
 			Kopete::Contact *c=0L;
@@ -332,7 +338,7 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 				// while the contact ptr shouldn't be needed, kopete crash if one pass a null contact.
 				//  cf  Bug 89818
 				kdWarning(14140) << " impossible to get the contact for initiating file transfer " << endl;
-				error();
+				p2p->error();
 				return;
 			}
 			disconnect(Kopete::TransferManager::transferManager(), 0L , this, 0L);
