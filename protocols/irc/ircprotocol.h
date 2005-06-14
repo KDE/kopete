@@ -84,7 +84,9 @@ public:
 	IRCProtocol( QObject *parent, const char *name, const QStringList &args );
 	~IRCProtocol();
 
-	/** Kopete::Protocol reimplementation */
+	/**
+	 * Kopete::Protocol reimplementation
+	 */
 	virtual AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account);
 
 	/**

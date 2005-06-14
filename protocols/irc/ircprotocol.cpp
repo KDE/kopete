@@ -505,7 +505,7 @@ void IRCProtocol::slotInviteCommand(const QString &args, ChatSession *manager)
 	IRCChannelContact *c = 0L;
 	QStringList argsList = CommandHandler::parseArguments( args );
 
-	if( argsList.count() > 1 )
+	if (argsList.count() > 1)
 	{
 		if( KIRC::Entity::isChannel(argsList[1]) )
 		{
@@ -541,7 +541,7 @@ void IRCProtocol::slotQueryCommand(const QString &args, ChatSession *manager)
 	QString user = args.section( ' ', 0, 0 );
 	QString rest = args.section( ' ', 1 );
 
-	if( !KIRC::Entity::isChannel(user) )
+	if (!KIRC::Entity::isChannel(user))
 	{
 		IRCUserContact *c = static_cast<IRCAccount*>( manager->account() )->
 			contactManager()->findUser( user );
@@ -561,42 +561,41 @@ void IRCProtocol::slotQueryCommand(const QString &args, ChatSession *manager)
 	}*/
 }
 
-void IRCProtocol::slotWhoisCommand( const QString &args, ChatSession *manager )
+void IRCProtocol::slotWhoisCommand(const QString &args, ChatSession *manager)
 {
-	static_cast<IRCAccount*>( manager->account() )->engine()->whois( args );
-	static_cast<IRCAccount*>( manager->account() )->setCurrentCommandSource( manager );
+	QStringList argsList = CommandHandler::parseArguments(args);
+	static_cast<IRCAccount*>(manager->account())->engine()->whois(argsList.first());
+	static_cast<IRCAccount*>(manager->account())->setCurrentCommandSource(manager);
 }
 
-void IRCProtocol::slotWhoCommand( const QString &args, ChatSession *manager )
+void IRCProtocol::slotWhoCommand(const QString &args, ChatSession *manager)
 {
-	QStringList argsList = CommandHandler::parseArguments( args );
-//	static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage(
-//		QString::fromLatin1("WHO %1").arg( argsList.first() ) );
-	static_cast<IRCAccount*>( manager->account() )->setCurrentCommandSource( manager );
+	QStringList argsList = CommandHandler::parseArguments(args);
+//	static_cast<IRCAccount*>(manager->account())->engine()->who(argsList.first());
+	static_cast<IRCAccount*>(manager->account())->setCurrentCommandSource(manager);
 }
 
-void IRCProtocol::slotWhoWasCommand( const QString &args, ChatSession *manager )
+void IRCProtocol::slotWhoWasCommand(const QString &args, ChatSession *manager)
 {
-	QStringList argsList = CommandHandler::parseArguments( args );
-//	static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage(
-//		QString::fromLatin1("WHOWAS %1").arg( argsList.first() ) );
-	static_cast<IRCAccount*>( manager->account() )->setCurrentCommandSource( manager );
+	QStringList argsList = CommandHandler::parseArguments(args);
+//	static_cast<IRCAccount*>(manager->account())->engine()->whowas(argsList.first());
+	static_cast<IRCAccount*>(manager->account())->setCurrentCommandSource(manager);
 }
 
-void IRCProtocol::slotQuitCommand( const QString &args, ChatSession *manager )
+void IRCProtocol::slotQuitCommand(const QString &args, ChatSession *manager)
 {
-	static_cast<IRCAccount*>( manager->account() )->quit( args );
+	static_cast<IRCAccount*>(manager->account())->quit(args);
 }
 
-void IRCProtocol::slotNickCommand( const QString &args, ChatSession *manager )
+void IRCProtocol::slotNickCommand(const QString &args, ChatSession *manager)
 {
-	QStringList argsList = CommandHandler::parseArguments( args );
-	static_cast<IRCAccount*>( manager->account() )->engine()->nick( argsList.front() );
+	QStringList argsList = CommandHandler::parseArguments(args);
+	static_cast<IRCAccount*>(manager->account())->engine()->nick(argsList.front());
 }
 
 void IRCProtocol::slotModeCommand(const QString &args, ChatSession *manager)
 {
-	QStringList argsList = CommandHandler::parseArguments( args );
+	QStringList argsList = CommandHandler::parseArguments(args);
 	static_cast<IRCAccount*>( manager->account() )->engine()->mode( argsList.front(),
 		args.section( QRegExp(QString::fromLatin1("\\s+")), 1 ) );
 }
@@ -613,7 +612,7 @@ void IRCProtocol::slotAllMeCommand(const QString &args, ChatSession *)
 {
 	QValueList<ChatSession*> sessions = ChatSessionManager::self()->sessions();
 
-	for( QValueList<ChatSession*>::iterator it = sessions.begin(); it != sessions.end(); ++it )
+	for (QValueList<ChatSession*>::iterator it = sessions.begin(); it != sessions.end(); ++it)
 	{
 		ChatSession *session = *it;
 		if( session->protocol() == this )
@@ -623,13 +622,13 @@ void IRCProtocol::slotAllMeCommand(const QString &args, ChatSession *)
 
 void IRCProtocol::slotKickCommand(const QString &args, ChatSession *manager)
 {
-	if (manager->contactOnlineStatus( manager->myself() ) == m_UserStatusOp)
+	if (manager->contactOnlineStatus(manager->myself()) == m_UserStatusOp)
 	{
 		QRegExp spaces(QString::fromLatin1("\\s+"));
-		QString nick = args.section( spaces, 0, 0);
-		QString reason = args.section( spaces, 1);
+		QString nick = args.section(spaces, 0, 0);
+		QString reason = args.section(spaces, 1);
 		ContactPtrList members = manager->members();
-		QString channel = static_cast<IRCContact*>( members.first() )->nickName();
+		QString channel = static_cast<IRCContact*>(members.first())->nickName();
 		if (KIRC::Entity::isChannel(channel))
 			static_cast<IRCAccount*>(manager->account())->engine()->kick(nick, channel, reason);
 	}
@@ -640,7 +639,7 @@ void IRCProtocol::slotKickCommand(const QString &args, ChatSession *manager)
 	}
 }
 
-void IRCProtocol::slotBanCommand( const QString &args, ChatSession *manager )
+void IRCProtocol::slotBanCommand(const QString &args, ChatSession *manager)
 {/*
 	if( manager->contactOnlineStatus( manager->myself() ) == m_UserStatusOp )
 	{
