@@ -14,9 +14,11 @@ Name=Identity
 Name[bg]=Идентификация
 Name[br]=Anvelezh
 Name[da]=Identitet
+Name[es]=Identidad
 Name[ga]=Aitheantas
 Comment=Here you can manage your global identity
 Comment[bg]=Настройки на идентификацията
 Comment[da]=Her kan du håndtere din globale identitet
+Comment[es]=Aqui puede gestionar su identidad global
 Comment[ga]=Tig leat d'aitheantas a láimhseáil anseo
 
