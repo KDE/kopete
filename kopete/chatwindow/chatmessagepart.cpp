@@ -256,7 +256,7 @@ void ChatMessagePart::save()
 	KTempFile tempFile;
 	tempFile.setAutoDelete( true );
 	QFile* file = tempFile.file();
-	
+
 	QTextStream stream ( file );
 	if ( dlg.currentFilter() == QString::fromLatin1( "text/xml" ) )
 	{
@@ -279,9 +279,9 @@ void ChatMessagePart::save()
 	{
 		stream << htmlDocument().toHTML() << '\n';
 	}
-	
+
 	tempFile.close();
-	
+
 	if ( !KIO::NetAccess::move( KURL( tempFile.name() ), saveURL ) )
 	{
 		KMessageBox::queuedMessageBox( view(), KMessageBox::Error,
@@ -376,7 +376,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 		while ( bufferLen>0 && messageMap.count() >= bufferLen )
 		{
 			htmlDocument().body().removeChild( htmlDocument().body().firstChild() );
-			messageMap.remove( messageMap.begin() );
+			messageMap.pop_front();
 		}
 
 		if ( !scrollPressed )
