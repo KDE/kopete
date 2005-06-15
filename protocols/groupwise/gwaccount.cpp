@@ -746,7 +746,7 @@ int GroupWiseAccount::handleTLSWarning (int warning, QString server, QString acc
 						  arg(server).
 						  arg(accountId).
 						  arg(validityString),
-						  i18n("Jabber Connection Certificate Problem"),
+						  i18n("GroupWise Connection Certificate Problem"),
 						  KStdGuiItem::cont(),
 						  QString("KopeteTLSWarning") + server + code);
 }

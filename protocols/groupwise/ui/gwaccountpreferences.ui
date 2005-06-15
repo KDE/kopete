@@ -155,7 +155,7 @@
                                             <string>The IP address or hostname of the server you would like to connect to.</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>The IP address or hostname of the server you would like to connect to (for example jabber.org).</string>
+                                            <string>The IP address or hostname of the server you would like to connect to (for example im.yourcorp.com).</string>
                                         </property>
                                     </widget>
                                     <widget class="QLineEdit">
@@ -172,7 +172,7 @@
                                             <string>The IP address or hostname of the server you would like to connect to.</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>The IP address or hostname of the server you would like to connect to (for example jabber.org).</string>
+                                            <string>The IP address or hostname of the server you would like to connect to (for example im.yourcorp.com).</string>
                                         </property>
                                     </widget>
                                     <widget class="QLabel">
