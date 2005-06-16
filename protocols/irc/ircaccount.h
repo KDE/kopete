@@ -109,6 +109,7 @@ public:
 	void setDefaultPart( const QString & );
 
 	void setNetwork( const QString & );
+	void setNetwork(const IRCNetwork &network);
 
 	void setDefaultQuit( const QString & );
 
@@ -207,7 +208,7 @@ private:
 	QString autoConnect;
 
 	KIRC::Engine *m_engine;
-	IRCNetwork *m_network;
+	IRCNetwork m_network;
 	uint currentHost;
 	QTextCodec *mCodec;
 

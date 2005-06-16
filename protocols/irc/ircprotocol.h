@@ -42,10 +42,6 @@ class QStringList;
 class QWidget;
 class KopeteView;
 
-class IRCNetwork;
-class IRCHost;
-class NetworkConfig;
-
 class IRCProtocolHandler : public Kopete::MimeTypeHandler
 {
 	public:
@@ -127,10 +123,8 @@ public:
 	bool commandInProgress(){ return m_commandInProgress; }
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }
 
-	QDict<IRCNetwork> &networks(){ return m_networks; }
-	void addNetwork( IRCNetwork *network );
-
-	void editNetworks( const QString &networkName = QString::null );
+public slots:
+	void editNetworks(const QString &networkName);
 
 private slots:
 	void slotMessageFilter(Kopete::Message &msg);
@@ -170,18 +164,11 @@ private:
 
 	void simpleModeChange(const QString &, Kopete::ChatSession *, const QString &mode);
 
-	NetworkConfig *netConf;
-	QString m_uiCurrentNetworkSelection;
-	QString m_uiCurrentHostSelection;
-	// end of network list specific code
-
 	DOM::Node activeNode;
 	IRCAccount *activeAccount;
 
 	bool m_commandInProgress;
 
-	QDict<IRCNetwork> m_networks;
-	QDict<IRCHost> m_hosts;
 	IRCProtocolHandler *m_protocolHandler;
 };
 

@@ -20,6 +20,7 @@
 #ifndef IRCNETWORKLIST_H
 #define IRCNETWORKLIST_H
 
+#include <qobject.h>
 #include <qvaluelist.h>
 
 struct IRCHost
@@ -34,20 +35,30 @@ struct IRCNetwork
 {
 	QString name;
 	QString description;
-	QValueList<IRCHost*> hosts;
+	QValueList<IRCHost> hosts;
 };
 
-/*
 class IRCNetworkList
 	: public QObject
 {
-	void slotSaveNetworkConfig();
-	void slotReadNetworks();
+	Q_OBJECT
 
+private:
+	IRCNetworkList();
 
-	QDict<IRCNetwork> m_networks;
-	QDict<IRCHost> m_hosts;
-}
-*/
+public:
+	static IRCNetworkList *self();
+
+	QValueList<IRCNetwork> networks() const;
+
+public slots:
+	bool slotReadNetworks();
+	bool slotSaveNetworkConfig();
+
+//	void addNetwork(const IRCNetwork &network);
+
+private:
+	QValueList<IRCNetwork> m_networks;
+};
 
 #endif

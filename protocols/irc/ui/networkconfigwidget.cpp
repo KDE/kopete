@@ -65,6 +65,8 @@ IRCNetworkConfigWidget::IRCNetworkConfigWidget(QWidget *parent, WFlags flags)
 {
 //	kdDebug(14120) << k_funcinfo << endl;
 
+	m_networks = IRCNetworkList::self()->networks();
+
 	m_host->setValidator( new QRegExpValidator( QString::fromLatin1("^[\\w-\\.]*$"), this ) );
 	upButton->setIconSet( SmallIconSet( "up" )  );
 	downButton->setIconSet( SmallIconSet( "down" ) );
@@ -113,10 +115,9 @@ void IRCNetworkConfigWidget::editNetworks(const QString &networkName)
 
 	networkList->clear();
 
-	for( QDictIterator<IRCNetwork> it( m_networks ); it.current(); ++it )
+	for(QValueList<IRCNetwork>::ConstIterator it = m_networks.begin(); it != m_networks.end(); ++it)
 	{
-		IRCNetwork *net = it.current();
-		networkList->insertItem( net->name );
+		networkList->insertItem( (*it).name );
 	}
 
 	networkList->sort();
@@ -131,21 +132,32 @@ void IRCNetworkConfigWidget::editNetworks(const QString &networkName)
 
 	//slotUpdateNetworkConfig(); // unnecessary, setSelected emits selectionChanged
 }
+/*
+void IRCNetworkConfigWidget::updateNetworkList()
+{
+	networkList->clear();
+	for(QValueList<IRCNetwork>::ConstIterator it = m_networks.begin(); it != m_networks.end(); ++it)
+		networkList->insertItem( (*it).name );
+	networkList->sort();
 
+//	if (!networkName.isEmpty())
+//		networkList->setSelected(networkList->findItem(networkName), true);
+}
+*/
 void IRCNetworkConfigWidget::slotUpdateNetworkConfig()
 {
 	// update the data structure of the previous selection from the UI
 	storeCurrentNetwork();
-
+/*
 	// update the UI from the data for the current selection
 	IRCNetwork *net = m_networks[ networkList->currentText() ];
-	if( net )
+	if (net)
 	{
 		description->setText( net->description );
 		hostList->clear();
 
-		for( QValueList<IRCHost*>::iterator it = net->hosts.begin(); it != net->hosts.end(); ++it )
-			hostList->insertItem( (*it)->host + QString::fromLatin1(":") + QString::number((*it)->port) );
+		for( QValueList<IRCHost>::Iterator it = net->hosts.begin(); it != net->hosts.end(); ++it )
+			hostList->insertItem( (*it).host + QString::fromLatin1(":") + QString::number((*it).port) );
 
 		// prevent nested event loop crash
 		disconnect(hostList, SIGNAL(selectionChanged()),
@@ -160,10 +172,12 @@ void IRCNetworkConfigWidget::slotUpdateNetworkConfig()
 
 	// record the current selection
 	m_uiCurrentNetworkSelection = networkList->currentText();
+*/
 }
 
 void IRCNetworkConfigWidget::storeCurrentNetwork()
 {
+/*
 	if ( !m_uiCurrentNetworkSelection.isEmpty() )
 	{
 		IRCNetwork *net = m_networks[ m_uiCurrentNetworkSelection ];
@@ -172,12 +186,14 @@ void IRCNetworkConfigWidget::storeCurrentNetwork()
 			net->description = description->text(); // crash on 2nd dialog show here!
 		}
 		else
-			kdDebug( 14020 ) << m_uiCurrentNetworkSelection << " was already gone from the cache!" << endl;
+			kdDebug( 14120 ) << m_uiCurrentNetworkSelection << " was already gone from the cache!" << endl;
 	}
+*/
 }
 
 void IRCNetworkConfigWidget::storeCurrentHost()
 {
+/*
 	if ( !m_uiCurrentHostSelection.isEmpty()  )
 	{
 		IRCHost *host = m_hosts[ m_uiCurrentHostSelection ];
@@ -189,10 +205,12 @@ void IRCNetworkConfigWidget::storeCurrentHost()
 			host->ssl = useSSL->isChecked();
 		}
 	}
+*/
 }
 
 void IRCNetworkConfigWidget::slotHostPortChanged( int value )
 {
+/*
 	QString entryText = m_uiCurrentHostSelection + QString::fromLatin1(":") + QString::number( value );
 	// changeItem causes a take() and insert, and we don't want a selectionChanged() signal that sets all this off again.
 	disconnect(hostList, SIGNAL(selectionChanged()),
@@ -202,10 +220,12 @@ void IRCNetworkConfigWidget::slotHostPortChanged( int value )
 
 	connect(hostList, SIGNAL(selectionChanged()),
 		this, SLOT(slotUpdateNetworkHostConfig()));
+*/
 }
 
 void IRCNetworkConfigWidget::slotUpdateNetworkHostConfig()
 {
+/*
 	storeCurrentHost();
 
 	if (hostList->selectedItem())
@@ -236,10 +256,12 @@ void IRCNetworkConfigWidget::slotUpdateNetworkHostConfig()
 		connect(port, SIGNAL(valueChanged(int)),
 			this, SLOT( slotHostPortChanged( int ) ) );
 	}
+*/
 }
 
 void IRCNetworkConfigWidget::slotDeleteNetwork()
 {
+/*
 	QString network = networkList->currentText();
 	if( KMessageBox::warningContinueCancel(
 		UI::Global::mainWidget(), i18n("<qt>Are you sure you want to delete the network <b>%1</b>?<br>"
@@ -248,21 +270,18 @@ void IRCNetworkConfigWidget::slotDeleteNetwork()
 		KGuiItem(i18n("&Delete Network"),"editdelete"), QString::fromLatin1("AskIRCDeleteNetwork") ) == KMessageBox::Continue )
 	{
 		IRCNetwork *net = m_networks[ network ];
-		for( QValueList<IRCHost*>::iterator it = net->hosts.begin(); it != net->hosts.end(); ++it )
-		{
-			m_hosts.remove( (*it)->host );
-			delete (*it);
-		}
-		m_networks.remove( network );
-		delete net;
+//		m_networks.remove( network );
+//		delete net;
 		networkList->removeItem(networkList->currentItem());
 		slotUpdateNetworkHostConfig();
 
 	}
+*/
 }
 
 void IRCNetworkConfigWidget::slotDeleteHost()
 {
+/*
 	QString hostName = m_host->text();
 	if ( KMessageBox::warningContinueCancel(
 		UI::Global::mainWidget(), i18n("<qt>Are you sure you want to delete the host <b>%1</b>?</qt>")
@@ -284,16 +303,18 @@ void IRCNetworkConfigWidget::slotDeleteHost()
 
 			// remove from network as well
 			IRCNetwork *net = m_networks[ m_uiCurrentNetworkSelection ];
-			net->hosts.remove( host );
+//			net->hosts.remove( host );
 
 			m_hosts.remove( host->host );
 			delete host;
 		}
 	}
+*/
 }
 
 void IRCNetworkConfigWidget::slotNewNetwork()
 {
+/*
 	// create a new network struct
 	IRCNetwork *net = new IRCNetwork;
 	// give it the name of 'New Network' (incrementing number if needed)
@@ -315,10 +336,12 @@ void IRCNetworkConfigWidget::slotNewNetwork()
 	QListBoxItem * justAdded = networkList->findItem(net->name);
 	networkList->setSelected(justAdded, true);
 	networkList->setBottomItem(networkList->index(justAdded));
+*/
 }
 
 void IRCNetworkConfigWidget::slotNewHost()
 {
+/*
 	// create a new host
 	IRCHost *host = new IRCHost;
 	// prompt for a name
@@ -343,7 +366,7 @@ void IRCNetworkConfigWidget::slotNewHost()
 		m_hosts.insert( host->host, host );
 		// add it to the network!
 		IRCNetwork *net = m_networks[networkList->currentText() ];
-		net->hosts.append( host );
+//		net->hosts.append( host );
 		// add it to the gui
 		QString entryText = host->host + QString::fromLatin1(":") + QString::number(host->port);
 		hostList->insertItem( entryText );
@@ -352,10 +375,12 @@ void IRCNetworkConfigWidget::slotNewHost()
 		hostList->setSelected( justAdded, true );
 		//hostList->setBottomItem(hostList->index(justAdded));
 	}
+*/
 }
 
 void IRCNetworkConfigWidget::slotRenameNetwork()
 {
+/*
 	IRCNetwork *net = m_networks[ m_uiCurrentNetworkSelection ];
 	if ( net )
 	{
@@ -389,16 +414,12 @@ void IRCNetworkConfigWidget::slotRenameNetwork()
 			}
 		}
 	}
-}
-
-void IRCNetworkConfigWidget::addNetwork( IRCNetwork *network )
-{
-	m_networks.insert( network->name, network );
-//	slotSaveNetworkConfig();
+*/
 }
 
 void IRCNetworkConfigWidget::slotMoveServerUp()
 {
+/*
 	IRCHost *selectedHost = m_hosts[hostList->currentText().section(':', 0, 0)];
 	IRCNetwork *selectedNetwork = m_networks[networkList->currentText()];
 
@@ -422,20 +443,22 @@ void IRCNetworkConfigWidget::slotMoveServerUp()
 		hostList->insertItem( selectedHost->host, --currentPos );
 		hostList->setSelected( currentPos, true );
 	}
+*/
 }
 
 void IRCNetworkConfigWidget::slotMoveServerDown()
 {
+/*
 	IRCHost *selectedHost = m_hosts[ hostList->currentText().section(':', 0, 0) ];
 	IRCNetwork *selectedNetwork = m_networks[ networkList->currentText() ];
 
 	if( !selectedNetwork || !selectedHost )
 		return;
 
-	QValueList<IRCHost*>::iterator pos = selectedNetwork->hosts.find( selectedHost );
+	QValueList<IRCHost>::Iterator pos = selectedNetwork->hosts.find( selectedHost );
 	if( *pos != selectedNetwork->hosts.back() )
 	{
-		QValueList<IRCHost*>::iterator nextPos = pos;
+		QValueList<IRCHost>::Iterator nextPos = pos;
 		nextPos++;
 		selectedNetwork->hosts.insert( nextPos, selectedHost );
 		selectedNetwork->hosts.remove( pos );
@@ -448,6 +471,7 @@ void IRCNetworkConfigWidget::slotMoveServerDown()
 		hostList->insertItem( selectedHost->host, ++currentPos );
 		hostList->setSelected( currentPos, true );
 	}
+*/
 }
 
 #include "networkconfigwidget.moc"

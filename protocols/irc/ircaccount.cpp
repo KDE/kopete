@@ -66,7 +66,6 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 {
 	m_manager = 0;
 	m_channelList = 0;
-	m_network = 0;
 
 	m_engine = new KIRC::Engine(this);
 
@@ -150,14 +149,15 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 		QString serverInfo = m_accountId.section('@',1);
 		QString hostName = serverInfo.section(':',0,0);
 
-		for( QDictIterator<IRCNetwork> it( m_protocol->networks() ); it.current(); ++it )
+		QValueList<IRCNetwork> networks = IRCNetworkList::self()->networks();
+		for (QValueList<IRCNetwork>::Iterator it = networks.begin(); it != networks.end(); ++it)
 		{
-			IRCNetwork *net = it.current();
-			for( QValueList<IRCHost*>::iterator it2 = net->hosts.begin(); it2 != net->hosts.end(); ++it2 )
+			IRCNetwork net = *it;
+			for (QValueList<IRCHost>::iterator it2 = net.hosts.begin(); it2 != net.hosts.end(); ++it2)
 			{
-				if( (*it2)->host == hostName )
+				if( (*it2).host == hostName )
 				{
-					setNetwork(net->name);
+					setNetwork(net.name);
 					break;
 				}
 			}
@@ -170,21 +170,21 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 		{
 			/* Could not find this host. Add it to the networks structure */
 
-			m_network = new IRCNetwork;
-			m_network->name = i18n("Temporary Network - %1").arg( hostName );
-			m_network->description = i18n("Network imported from previous version of Kopete, or an IRC URI");
+			m_network = IRCNetwork();
+			m_network.name = i18n("Temporary Network - %1").arg( hostName );
+			m_network.description = i18n("Network imported from previous version of Kopete, or an IRC URI");
 
-			IRCHost *host = new IRCHost;
-			host->host = hostName;
-			host->port = serverInfo.section(':',1).toInt();
-			if( !password().cachedValue().isEmpty() )
-				host->password = password().cachedValue();
-			host->ssl = false;
+			IRCHost host;
+			host.host = hostName;
+			host.port = serverInfo.section(':',1).toInt();
+			if (!password().cachedValue().isEmpty())
+				host.password = password().cachedValue();
+			host.ssl = false;
 
-			m_network->hosts.append( host );
+			m_network.hosts.append( host );
 //			m_protocol->addNetwork( m_network );
 
-			config->writeEntry(CONFIG_NETWORKNAME, m_network->name);
+			config->writeEntry(CONFIG_NETWORKNAME, m_network.name);
 //			config->writeEntry(CONFIG_NICKNAME, mNickName);
 		}
 	}
@@ -263,10 +263,7 @@ void IRCAccount::setAutoShowServerWindow( bool show )
 
 const QString IRCAccount::networkName() const
 {
-	if( m_network )
-		return m_network->name;
-	else
-		return i18n("Unknown");
+	return m_network.name;
 }
 
 void IRCAccount::setNickName(const QString &nickName)
@@ -304,6 +301,7 @@ const QString IRCAccount::realName() const
 
 void IRCAccount::setNetwork( const QString &network )
 {
+/*
 	IRCNetwork *net = m_protocol->networks()[ network ];
 	if( net )
 	{
@@ -319,6 +317,14 @@ void IRCAccount::setNetwork( const QString &network )
 		" ensure that the account has a valid network. The account will not be enabled until you do so.</qt>").arg(network),
 		i18n("Problem Loading %1").arg( accountId() ), 0 );
 	}
+*/
+}
+
+void IRCAccount::setNetwork(const IRCNetwork &network)
+{
+	m_network = network;
+//	configGroup()->writeEntry(CONFIG_NETWORKNAME, network.name);
+//	setAccountLabel(network.name);
 }
 
 // FIXME: Possible null pointer usage here
@@ -449,8 +455,9 @@ void IRCAccount::connectWithPassword(const QString &password)
 	}
 	else if( m_engine->isDisconnected() )
 	{
-		if( m_network )
+//		if( m_network )
 		{
+/*
 			QValueList<IRCHost*> &hosts = m_network->hosts;
 			if( hosts.count() == 0 )
 			{
@@ -498,11 +505,12 @@ void IRCAccount::connectWithPassword(const QString &password)
 				m_engine->setPassword(password);
 //				m_engine->connectToServer( host->host, host->port, mNickName, host->ssl );
 			}
+*/
 		}
-		else
-		{
-			kdWarning() << "No network defined!" << endl;
-		}
+//		else
+//		{
+//			kdWarning() << "No network defined!" << endl;
+//		}
 	}
 }
 
@@ -663,7 +671,6 @@ void IRCAccount::setOnlineStatus( const OnlineStatus& status , const QString &re
 	else if ( status.status() == OnlineStatus::Away )
 		slotGoAway( reason );
 }
-
 
 void IRCAccount::successfullyChangedNick(const QString &oldnick, const QString &newnick)
 {

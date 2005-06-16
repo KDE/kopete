@@ -17,48 +17,34 @@
     *************************************************************************
 */
 
-#include "ircaccount.h"
-#include "irccontact.h"
-#include "ircprotocol.h"
+#include "ircnetwork.h"
 
-#include "channellistdialog.h"
-
-#include "kircengine.h"
-
-#include "kopeteaccountmanager.h"
-#include "kopeteaway.h"
-#include "kopeteawayaction.h"
-#include "kopetechatsessionmanager.h"
-#include "kopetecommandhandler.h"
-#include "kopetecontactlist.h"
-#include "kopetemetacontact.h"
-#include "kopeteuiglobal.h"
-#include "kopeteview.h"
-#include "kopetepassword.h"
-
-#include <kaction.h>
-#include <kaboutdata.h>
-#include <kapplication.h>
-#include <kconfig.h>
-#include <kcompletionbox.h>
 #include <kdebug.h>
-#include <kglobal.h>
-#include <kinputdialog.h>
-#include <klineedit.h>
-#include <klineeditdlg.h>
-#include <kmessagebox.h>
-#include <knotifyclient.h>
-#include <kpopupmenu.h>
+#include <kstandarddirs.h> // for locate
 
-#include <qlayout.h>
-#include <qtimer.h>
+#include <qdom.h>
+#include <qfile.h>
 
-using namespace Kopete;
+IRCNetworkList::IRCNetworkList()
+{
+	slotReadNetworks();
+}
 
-void IRCNetworkConfigWidget::slotReadNetworks()
+IRCNetworkList *IRCNetworkList::self()
+{
+	static IRCNetworkList *s_self = new IRCNetworkList();
+
+	return s_self;
+}
+
+QValueList<IRCNetwork> IRCNetworkList::networks() const
+{
+	return m_networks;
+}
+
+bool IRCNetworkList::slotReadNetworks()
 {
 	m_networks.clear();
-	m_hosts.clear();
 
 	QFile xmlFile( locate( "appdata", "ircnetworks.xml" ) );
 	xmlFile.open( IO_ReadOnly );
@@ -68,52 +54,53 @@ void IRCNetworkConfigWidget::slotReadNetworks()
 	QDomElement networkNode = doc.documentElement().firstChild().toElement();
 	while( !networkNode.isNull () )
 	{
-		IRCNetwork *net = new IRCNetwork;
+		IRCNetwork net;
 
 		QDomElement networkChild = networkNode.firstChild().toElement();
 		while( !networkChild.isNull() )
 		{
 			if( networkChild.tagName() == "name" )
-				net->name = networkChild.text();
+				net.name = networkChild.text();
 			else if( networkChild.tagName() == "description" )
-				net->description = networkChild.text();
+				net.description = networkChild.text();
 			else if( networkChild.tagName() == "servers" )
 			{
 				QDomElement server = networkChild.firstChild().toElement();
 				while( !server.isNull() )
 				{
-					IRCHost *host = new IRCHost;
+					IRCHost host;
 
 					QDomElement serverChild = server.firstChild().toElement();
 					while( !serverChild.isNull() )
 					{
 						if( serverChild.tagName() == "host" )
-							host->host = serverChild.text();
+							host.host = serverChild.text();
 						else if( serverChild.tagName() == "port" )
-							host->port = serverChild.text().toInt();
+							host.port = serverChild.text().toInt();
 						else if( serverChild.tagName() == "useSSL" )
-							host->ssl = ( serverChild.text() == "true" );
+							host.ssl = ( serverChild.text() == "true" );
 
 						serverChild = serverChild.nextSibling().toElement();
 					}
 
-					net->hosts.append( host );
-					m_hosts.insert( host->host, host );
+					net.hosts.append( host );
+//					m_hosts.insert( host->host, host );
 					server = server.nextSibling().toElement();
 				}
 			}
 			networkChild = networkChild.nextSibling().toElement();
 		}
 
-		m_networks.insert( net->name, net );
+		m_networks.append(net);
 		networkNode = networkNode.nextSibling().toElement();
 	}
 
 	xmlFile.close();
 }
 
-void IRCNetworkConfigWidget::slotSaveNetworkConfig()
+bool IRCNetworkList::slotSaveNetworkConfig()
 {
+/*
 	// store any changes in the UI
 	storeCurrentNetwork();
 	kdDebug( 14120 ) <<  k_funcinfo << m_uiCurrentHostSelection << endl;
@@ -150,16 +137,26 @@ void IRCNetworkConfigWidget::slotSaveNetworkConfig()
 		}
 	}
 
-	kdDebug(14121) << k_funcinfo << doc.toString(4) << endl;
+//	kdDebug(14121) << k_funcinfo << doc.toString(4) << endl;
 	QFile xmlFile( locateLocal( "appdata", "ircnetworks.xml" ) );
-	QTextStream stream( &xmlFile );
 
-	xmlFile.open( IO_WriteOnly );
-	stream << doc.toString(4);
-	xmlFile.close();
-
-	if (netConf)
-		emit networkConfigUpdated( netConf->networkList->currentText() );
+	if (xmlFile.open(IO_WriteOnly))
+	{
+		QTextStream stream( &xmlFile );
+		stream << doc.toString(4);
+		xmlFile.close();
+		return true;
+	}
+*/
+	kdDebug(14121) << k_funcinfo << "Failed to save the Networks definition file" << endl;
+	return false;
 }
+/*
+void IRCNetworkList::addNetwork( IRCNetwork *network )
+{
+	m_networks.insert( network->name, network );
+//	slotSaveNetworkConfig();
+}
+*/
 
 #include "ircnetwork.moc"

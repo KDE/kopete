@@ -143,11 +143,13 @@ void IRCEditAccountWidget::slotUpdateNetworks( const QString & selectedNetwork )
 
 	uint i = 0;
 	QStringList keys;
-	for( QDictIterator<IRCNetwork> it( IRCProtocol::protocol()->networks() ); it.current(); ++it )
-		keys.append( it.currentKey() );
+	QValueList<IRCNetwork> networks = IRCNetworkList::self()->networks();
+
+	for(QValueList<IRCNetwork>::Iterator it = networks.begin(); it != networks.end(); ++it )
+		keys.append((*it).name);
 
 	keys.sort();
-
+/*
 	QStringList::Iterator end = keys.end();
 	for( QStringList::Iterator it = keys.begin(); it != end; ++it )
 	{
@@ -160,18 +162,19 @@ void IRCEditAccountWidget::slotUpdateNetworks( const QString & selectedNetwork )
 		}
 		++i;
 	}
+*/
 }
 
 void IRCEditAccountWidget::slotEditNetworks()
 {
-	IRCProtocol::protocol()->editNetworks( network->currentText() );
+	IRCProtocol::protocol()->editNetworks(network->currentText());
 }
 
 void IRCEditAccountWidget::slotUpdateNetworkDescription( const QString &network )
 {
-	description->setText(
-		IRCProtocol::protocol()->networks()[ network ]->description
-	);
+//	description->setText(
+//		IRCProtocol::protocol()->networks()[ network ]->description
+//	);
 }
 
 void IRCEditAccountWidget::slotCommandContextMenu( KListView *, QListViewItem *item, const QPoint &p )

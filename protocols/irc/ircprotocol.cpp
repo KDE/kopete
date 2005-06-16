@@ -21,7 +21,7 @@
 #include "ircprotocol.h"
 #include "ksparser.h"
 
-#include "networkconfig.h"
+#include "networkconfigwidget.h"
 #include "channellist.h"
 #include "ircaddcontactpage.h"
 #include "ircguiclient.h"
@@ -260,8 +260,6 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		this, SLOT( slotViewCreated( KopeteView* ) ) );
 
 	setCapabilities(Protocol::RichBFormatting | Kopete::Protocol::RichUFormatting | Kopete::Protocol::RichColor);
-
-	netConf = 0L;
 
 	m_protocolHandler = new IRCProtocolHandler();
 
@@ -718,53 +716,11 @@ void IRCProtocol::simpleModeChange( const QString &args, ChatSession *manager, c
 	}*/
 }
 
-void IRCProtocol::editNetworks( const QString &networkName )
+void IRCProtocol::editNetworks(const QString &networkName)
 {
-/*
-	if( !netConf )
-	{
-		netConf = new NetworkConfig( UI::Global::mainWidget(), "network_config", true );
-		netConf->host->setValidator( new QRegExpValidator( QString::fromLatin1("^[\\w-\\.]*$"), netConf ) );
-		netConf->upButton->setIconSet( SmallIconSet( "up" )  );
-		netConf->downButton->setIconSet( SmallIconSet( "down" ) );
-
-		connect( netConf->networkList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkConfig() ) );
-		connect( netConf->hostList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkHostConfig() ) );
-		connect( netConf, SIGNAL( accepted() ), this, SLOT( slotSaveNetworkConfig() ) );
-		connect( netConf, SIGNAL( rejected() ), this, SLOT( slotReadNetworks() ) );
-		connect( netConf->upButton, SIGNAL( clicked() ), this, SLOT( slotMoveServerUp() ) );
-		connect( netConf->downButton, SIGNAL( clicked() ), this, SLOT( slotMoveServerDown() ) );
-		connect( netConf->removeNetwork, SIGNAL( clicked() ), this, SLOT( slotDeleteNetwork() ) );
-		connect( netConf->removeHost, SIGNAL( clicked() ), this, SLOT( slotDeleteHost() ) );
-		connect( netConf->newHost, SIGNAL( clicked() ), this, SLOT( slotNewHost() ) );
-		connect( netConf->newNetwork, SIGNAL( clicked() ), this, SLOT( slotNewNetwork() ) );
-		connect( netConf->renameNetwork, SIGNAL( clicked() ), this, SLOT( slotRenameNetwork() ) );
-		connect( netConf->port, SIGNAL( valueChanged( int ) ), this, SLOT( slotHostPortChanged( int ) ) );
-	}
-
-	disconnect( netConf->networkList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkConfig() ) );
-	disconnect( netConf->hostList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkHostConfig() ) );
-
-	netConf->networkList->clear();
-
-	for( QDictIterator<IRCNetwork> it( m_networks ); it.current(); ++it )
-	{
-		IRCNetwork *net = it.current();
-		netConf->networkList->insertItem( net->name );
-	}
-
-	netConf->networkList->sort();
-
-	connect( netConf->networkList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkConfig() ) );
-	connect( netConf->hostList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkHostConfig() ) );
-
-	if( !networkName.isEmpty() )
-		netConf->networkList->setSelected( netConf->networkList->findItem( networkName ), true );
-
-	//slotUpdateNetworkConfig(); // unnecessary, setSelected emits selectionChanged
-
+	IRCNetworkConfigWidget *netConf = new IRCNetworkConfigWidget(UI::Global::mainWidget(), Qt::WDestructiveClose);
+	netConf->editNetworks(networkName);
 	netConf->show();
-*/
 }
 
 #include "ircprotocol.moc"

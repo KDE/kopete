@@ -47,6 +47,32 @@ namespace KIRC
 		MessageOfTheDayCondensedMessage
 	};
 
+	typedef enum EntityType
+	{
+		Unknown			=     0,
+		Server			= 1<< 0,
+		Channel			= 1<< 1,
+		Service			= 1<< 2,
+		User			= 1<< 3,
+		// Mask			= Server|Channel|Service|User,
+
+		Online			= 1<< 4,
+
+		// RFC-2811 Channel Modes
+
+		// RFC-2812 User Modes
+		Away			= 1<<16, // a
+		Invisible		= 1<<17, // i
+		Operator		= 1<<18, // o
+		LocalOperator		= 1<<19, // O
+		Restricted		= 1<<20, // r
+		RecieveServerNotice	= 1<<21, // s
+		ReceiveWallOps		= 1<<22, // w
+
+		// Common User Modes
+		Voiced			= 1<<24, // v
+	};
+
 	// Static regular expressions
 	static const QRegExp sm_RemoveLinefeeds;
 

@@ -18,6 +18,8 @@
 #ifndef KIRCENTITY_H
 #define KIRCENTITY_H
 
+#include "kircconst.h"
+
 #include <ksharedptr.h>
 
 #include <qobject.h>
@@ -39,24 +41,15 @@ class Entity
 	Q_OBJECT
 
 public:
-	typedef enum Type
-	{
-		Unknown,
-		Server,
-		Channel,
-		Service,
-		User
-	};
+	static KIRC::EntityType guessType(const QString &name);
 
-	static KIRC::Entity::Type guessType(const QString &name);
-
-	Entity(const QString &name = QString::null, const Type type = Unknown);
+	Entity(const QString &name = QString::null, const KIRC::EntityType type = Unknown);
 	virtual ~Entity();
 
 	bool operator == (const Entity &);
 
-	KIRC::Entity::Type type() const;
-	KIRC::Entity::Type guessType();
+	KIRC::EntityType type() const;
+	KIRC::EntityType guessType();
 
 	void setName(const QString &);
 	QString name() const;
@@ -87,7 +80,7 @@ private:
 	static const QRegExp sm_userStrictRegExp;
 	static const QRegExp sm_channelRegExp;
 
-	KIRC::Entity::Type m_type;
+	KIRC::EntityType m_type;
 
 	QString	m_name;
 	QString m_host;

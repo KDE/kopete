@@ -23,7 +23,7 @@
 
 #include "ircnetwork.h"
 
-#include <qdict.h>
+#include <qvaluelist.h>
 
 class IRCNetworkConfigWidget
 	: public NetworkConfig
@@ -34,13 +34,12 @@ public:
 	IRCNetworkConfigWidget(QWidget *parent, WFlags flags = 0);
 	~IRCNetworkConfigWidget();
 
-	QDict<IRCNetwork> &networks(){ return m_networks; }
-	void addNetwork( IRCNetwork *network );
-
 	void editNetworks( const QString &networkName = QString::null );
 
 signals:
-	void networkConfigUpdated( const QString &selectedNetwork );
+	void networkSelected(const IRCNetwork &network);
+
+	void networkConfigUpdated(const QString &selectedNetwork);
 
 private slots:
 	// FIXME: All the code for managing the networks list should be in another class - Will
@@ -57,16 +56,13 @@ private slots:
 	// end of network list specific code
 
 private:
-	// FIXME: All the code for managing the networks list should be in another class - Will
 	void storeCurrentNetwork();
 	void storeCurrentHost();
 
+	QValueList<IRCNetwork> m_networks;
+
 	QString m_uiCurrentNetworkSelection;
 	QString m_uiCurrentHostSelection;
-	// end of network list specific code
-
-	QDict<IRCNetwork> m_networks;
-	QDict<IRCHost> m_hosts;
 };
 
 #endif
