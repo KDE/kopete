@@ -971,7 +971,7 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 	else if ( list == "RL" )
 	{
 		m_reverseList.remove( handle );
-		configGroup()->writeEntry( "reversekList" , m_reverseList ) ;
+		configGroup()->writeEntry( "reverseList" , m_reverseList ) ;
 
 		if ( c )
 		{
