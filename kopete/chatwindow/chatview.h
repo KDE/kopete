@@ -58,6 +58,9 @@ public:
 	ChatView( Kopete::ChatSession *manager, ChatWindowPlugin *parent, const char *name = 0 );
 	~ChatView();
 
+	/** the state of our chat */
+	enum KopeteTabState { Normal, Highlighted, Changed, Typing, Message, Undefined };
+
 	ChatMembersListWidget *membersList() const { return m_membersList; }
 	ChatMessagePart *messagePart() const { return m_messagePart; }
 	ChatTextEditPart *editPart() const { return m_editPart; }
@@ -113,8 +116,6 @@ public:
 	 */
 	virtual void setCurrentMessage( const Kopete::Message &newMessage );
 
-	void setTabBar( KTabWidget *tabBar );
-
 	/**
 	 * Sets the placement of the chat members list.
 	 * DockLeft, DockRight, or DockNone.
@@ -146,8 +147,6 @@ public:
 	bool visibleMembersList();
 
 	const QString &statusText();
-
-	bool docked() { return ( m_tabBar != 0L ); }
 
 	QString &caption() const;
 
@@ -277,8 +276,17 @@ signals:
 
 	void captionChanged( bool active );
 
-	void updateStatusIcon( const ChatView* );
+	void updateStatusIcon( ChatView* );
 
+	/** Emitted when a possible tab tooltip needs updating */
+	void updateChatTooltip( ChatView*, const QString& );
+	
+	/** Emitted when the state of the chat changes */
+	void updateChatState( ChatView*, int );
+
+	/** Emitted when a possible tab label needs updating */
+	void updateChatLabel( ChatView*, const QString& );
+	
 	/**
 	 * Our send-button-enabled flag has changed
 	 */
@@ -343,7 +351,6 @@ protected:
 private:
 	// widget stuff
 	KopeteChatWindow *m_mainWindow;
-	KTabWidget *m_tabBar;
 
 	KDockWidget *viewDock;
 	ChatMessagePart *m_messagePart;
@@ -354,8 +361,6 @@ private:
 	KDockWidget *editDock;
 	ChatTextEditPart *m_editPart;
 
-	// the state of our tab
-	enum KopeteTabState { Normal, Highlighted, Changed, Typing, Message, Undefined };
 	KopeteTabState m_tabState;
 
 	// position and visibility of the chat member list
@@ -368,7 +373,7 @@ private:
 	QString unreadMessageFrom;
 	QString m_status;
 
-	void setTabState( KopeteTabState state = Undefined );
+	void updateChatState( KopeteTabState state = Undefined );
 
 	/**
 	 * Creates the members list widget
