@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>270</width>
-            <height>250</height>
+            <height>240</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -23,261 +23,170 @@
     <property name="minimumSize">
         <size>
             <width>270</width>
-            <height>250</height>
+            <height>240</height>
         </size>
     </property>
-    <widget class="QLabel">
+    <property name="caption">
+        <string>YahooUserInfoWidget</string>
+    </property>
+    <grid>
         <property name="name">
-            <cstring>textLabel1</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>10</y>
-                <width>80</width>
-                <height>20</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Yahoo ID:</string>
-        </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>textLabel1_2_3</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>100</y>
-                <width>80</width>
-                <height>20</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Nickname:</string>
-        </property>
-    </widget>
-    <widget class="QLineEdit">
-        <property name="name">
-            <cstring>m_fname</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>90</x>
-                <y>40</y>
-                <width>160</width>
-                <height>20</height>
-            </rect>
-        </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>textLabel1_2_4</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>130</y>
-                <width>80</width>
-                <height>20</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Email address:</string>
-        </property>
-    </widget>
-    <widget class="QLineEdit">
-        <property name="name">
-            <cstring>m_userID</cstring>
-        </property>
-        <property name="enabled">
-            <bool>false</bool>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>90</x>
-                <y>10</y>
-                <width>160</width>
-                <height>20</height>
-            </rect>
-        </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>textLabel1_2</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>40</y>
-                <width>80</width>
-                <height>20</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>First name:</string>
-        </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>textLabel1_2_2</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>70</y>
-                <width>80</width>
-                <height>20</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Last name:</string>
-        </property>
-    </widget>
-    <widget class="QLineEdit">
-        <property name="name">
-            <cstring>m_lname</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>90</x>
-                <y>70</y>
-                <width>160</width>
-                <height>20</height>
-            </rect>
-        </property>
-    </widget>
-    <widget class="QLineEdit">
-        <property name="name">
-            <cstring>m_nname</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>90</x>
-                <y>100</y>
-                <width>160</width>
-                <height>20</height>
-            </rect>
-        </property>
-    </widget>
-    <widget class="QLineEdit">
-        <property name="name">
-            <cstring>m_email</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>90</x>
-                <y>130</y>
-                <width>160</width>
-                <height>20</height>
-            </rect>
-        </property>
-    </widget>
-    <widget class="QGroupBox">
-        <property name="name">
-            <cstring>groupBox8</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>160</y>
-                <width>240</width>
-                <height>80</height>
-            </rect>
-        </property>
-        <property name="title">
-            <string>Phone numbers:</string>
-        </property>
-        <widget class="QLineEdit">
+        <widget class="QLayoutWidget" row="0" column="0">
             <property name="name">
-                <cstring>m_hphone</cstring>
+                <cstring>layout7</cstring>
             </property>
-            <property name="geometry">
-                <rect>
-                    <x>80</x>
-                    <y>20</y>
-                    <width>150</width>
-                    <height>20</height>
-                </rect>
-            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>textLabel1_2_3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Nickname:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="4" column="0">
+                    <property name="name">
+                        <cstring>textLabel1_2_4</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Email address:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>textLabel1_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>First name:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Yahoo ID:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="0" column="1">
+                    <property name="name">
+                        <cstring>m_userID</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="1" column="1">
+                    <property name="name">
+                        <cstring>m_fname</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="3" column="1">
+                    <property name="name">
+                        <cstring>m_nname</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>textLabel1_2_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Last name:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="4" column="1">
+                    <property name="name">
+                        <cstring>m_email</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="2" column="1">
+                    <property name="name">
+                        <cstring>m_lname</cstring>
+                    </property>
+                </widget>
+            </grid>
         </widget>
-        <widget class="QLineEdit">
+        <widget class="QGroupBox" row="1" column="0">
             <property name="name">
-                <cstring>m_wphone</cstring>
+                <cstring>groupBox8</cstring>
             </property>
-            <property name="geometry">
-                <rect>
-                    <x>80</x>
-                    <y>50</y>
-                    <width>150</width>
-                    <height>20</height>
-                </rect>
+            <property name="title">
+                <string>Phone numbers:</string>
             </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLayoutWidget" row="0" column="0">
+                    <property name="name">
+                        <cstring>layout15</cstring>
+                    </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLineEdit" row="0" column="1">
+                            <property name="name">
+                                <cstring>m_hphone</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="1" column="0">
+                            <property name="name">
+                                <cstring>textLabel1_2_5_2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Work:</string>
+                            </property>
+                        </widget>
+                        <widget class="QLineEdit" row="1" column="1">
+                            <property name="name">
+                                <cstring>m_wphone</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="0" column="0">
+                            <property name="name">
+                                <cstring>textLabel1_2_5</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Home:</string>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
+            </grid>
         </widget>
-        <widget class="QLineEdit">
+        <spacer row="2" column="0">
             <property name="name">
-                <cstring>m_mphone</cstring>
+                <cstring>spacer7</cstring>
             </property>
-            <property name="geometry">
-                <rect>
-                    <x>80</x>
-                    <y>80</y>
-                    <width>150</width>
-                    <height>20</height>
-                </rect>
+            <property name="orientation">
+                <enum>Vertical</enum>
             </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel1_2_5_2</cstring>
+            <property name="sizeType">
+                <enum>Expanding</enum>
             </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>50</y>
-                    <width>70</width>
-                    <height>20</height>
-                </rect>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>40</height>
+                </size>
             </property>
-            <property name="text">
-                <string>Work:</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel1_2_5_2_2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>80</y>
-                    <width>70</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Mobile:</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel1_2_5</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>11</x>
-                    <y>21</y>
-                    <width>70</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Home:</string>
-            </property>
-        </widget>
-    </widget>
+        </spacer>
+    </grid>
 </widget>
+<tabstops>
+    <tabstop>m_fname</tabstop>
+    <tabstop>m_lname</tabstop>
+    <tabstop>m_nname</tabstop>
+    <tabstop>m_email</tabstop>
+    <tabstop>m_hphone</tabstop>
+    <tabstop>m_wphone</tabstop>
+    <tabstop>m_userID</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
-
