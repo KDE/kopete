@@ -643,10 +643,14 @@ void YahooSession::saveAdressBookEntry( const YahooUserInfo &entry)
 	QString url; 
 	
 	if( entry.abID.toInt() > 0 )	{		// This is an Update --> append entry-ID
-		url = QString::fromLatin1("http://insider.msg.yahoo.com/ycontent/?addab2=0&ee=1&ow=1&id=%0&fn=%1&ln=%2&yid=%3&nn=%4&e=%5&hp=%6&wp=%7").arg(entry.abID).arg(entry.firstName).arg(entry.lastName).arg(entry.userID).arg(entry.nickName).arg(entry.email).arg(entry.phoneHome).arg(entry.phoneWork);
+		url = QString("http://insider.msg.yahoo.com/ycontent/?addab2=0&ee=1&ow=1&id=%0&fn=%1&ln=%2&yid=%3&nn=%4&e=%5&hp=%6&wp=%7")
+			.arg(entry.abID).arg(entry.firstName).arg(entry.lastName).arg(entry.userID).
+			arg(entry.nickName).arg(entry.email).arg(entry.phoneHome).arg(entry.phoneWork);
 		//url += QString::fromLatin1("&%1&%2&%3&%4").arg(getCookie("y")).arg(getCookie("t")).arg(getCookie("b")).arg(getCookie("q"));
 	} else {
-	url = QString::fromLatin1("http://address.yahoo.com/yab/us?A=m&v=PG&ver=2&fn=%0&ln=%1&yid=%2&nn=%3&e=%4&hp=%5&wp=%6").arg(entry.firstName).arg(entry.lastName).arg(entry.userID).arg(entry.nickName).arg(entry.email).arg(entry.phoneHome).arg(entry.phoneWork);
+		url = QString("http://address.yahoo.com/yab/us?A=m&v=PG&ver=2&fn=%0&ln=%1&yid=%2&nn=%3&e=%4&hp=%5&wp=%6")
+			.arg(entry.firstName).arg(entry.lastName).arg(entry.userID).arg(entry.nickName)
+			.arg(entry.email).arg(entry.phoneHome).arg(entry.phoneWork);
 	/*url = QString::fromLatin1("http://insider.msg.yahoo.com/ycontent/?addab2=0&fn=%0&ln=%1&yid=%2&nn=%3&e=%4&hp=%5&wp=%6").arg(entry.firstName).arg(entry.lastName).arg(entry.userID).arg(entry.nickName).arg(entry.email).arg(entry.phoneHome).arg(entry.phoneWork);*/
 		//url += QString::fromLatin1("&%1&%2&%3&%4").arg(getCookie("y")).arg(getCookie("t")).arg(getCookie("b")).arg(getCookie("q"));
 
