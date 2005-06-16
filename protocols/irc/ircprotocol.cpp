@@ -816,7 +816,7 @@ void IRCProtocol::storeCurrentNetwork()
 			net->description = netConf->description->text(); // crash on 2nd dialog show here!
 		}
 		else
-			kdDebug( 14020 ) << m_uiCurrentNetworkSelection << " was already gone from the cache!" << endl;
+			kdDebug( 14120 ) << m_uiCurrentNetworkSelection << " was already gone from the cache!" << endl;
 	}
 }
 
@@ -1069,13 +1069,17 @@ void IRCProtocol::slotSaveNetworkConfig()
 		}
 	}
 
-	kdDebug(14121) << k_funcinfo << doc.toString(4) << endl;
+//	kdDebug(14121) << k_funcinfo << doc.toString(4) << endl;
 	QFile xmlFile( locateLocal( "appdata", "ircnetworks.xml" ) );
-	QTextStream stream( &xmlFile );
 
-	xmlFile.open( IO_WriteOnly );
-	stream << doc.toString(4);
-	xmlFile.close();
+	if (xmlFile.open(IO_WriteOnly))
+	{
+		QTextStream stream(&xmlFile);
+		stream << doc.toString(4);
+		xmlFile.close();
+	}
+	else
+		kdDebug(14121) << k_funcinfo << "Failed to save the Networks definition file" << endl;
 
 	if (netConf)
 		emit networkConfigUpdated( netConf->networkList->currentText() );
