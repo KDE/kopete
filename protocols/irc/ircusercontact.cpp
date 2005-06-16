@@ -285,12 +285,22 @@ void IRCUserContact::newWhoIsUser(const QString &username, const QString &hostna
 void IRCUserContact::newWhoIsServer(const QString &servername, const QString &serverinfo)
 {
 	mInfo.serverName = servername;
-	if( metaContact()->isTemporary() || onlineStatus().status() == Kopete::OnlineStatus::Online )
+	if( metaContact()->isTemporary() || onlineStatus().status() == Kopete::OnlineStatus::Online
+		|| onlineStatus().status() == Kopete::OnlineStatus::Away )
 		mInfo.serverInfo = serverinfo;
 	else
 	{
 		//kdDebug(14120)<< "Setting last online: " << serverinfo << endl;
-		setProperty( m_protocol->propLastSeen, QDateTime::fromString( serverinfo ) );
+
+		// Try to convert first, since server can return depending if
+		// user is online or not:
+		// 
+		//   312 mynick othernick localhost.localdomain :FooNet Server
+		//   312 mynick othernick localhost.localdomain :Thu Jun 16 21:00:36 2005
+
+		QDateTime lastSeen = QDateTime::fromString( serverinfo );
+		if( lastSeen.isValid() )
+			setProperty( m_protocol->propLastSeen, lastSeen );
 	}
 }
 
