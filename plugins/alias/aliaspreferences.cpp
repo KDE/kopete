@@ -150,6 +150,8 @@ AliasPreferences::~AliasPreferences()
 				myChild->text(0)
 			);
 		}
+
+		myChild = myChild->nextSibling();
 	}
 }
 
