@@ -311,6 +311,7 @@ void SkypeAccount::prepareContact(SkypeContact *contact) {
 	QObject::connect(&d->skype, SIGNAL(updateAllContacts()), contact, SLOT(requestInfo()));//all contacts will know that
 	QObject::connect(contact, SIGNAL(infoRequest(const QString& )), &d->skype, SLOT(getContactInfo(const QString& )));//How do we ask for info?
 	QObject::connect(this, SIGNAL(connectionStatus(bool )), contact, SLOT(connectionStatus(bool )));
+	QObject::connect(contact, SIGNAL(setCallPossible(bool )), d->protocol, SLOT(updateCallActionStatus())); 
 }
 
 void SkypeAccount::updateContactInfo(const QString &contact, const QString &change) {
@@ -395,6 +396,10 @@ bool SkypeAccount::getScanForUnread() const {
 
 void SkypeAccount::makeCall(SkypeContact *user) {
 	d->skype.makeCall(user->contactId());
+}
+
+void SkypeAccount::makeCall(const QString &users) {
+	d->skype.makeCall(users);
 }
 
 bool SkypeAccount::getCallControl() const {

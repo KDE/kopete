@@ -12,3 +12,4 @@ libskype_la_LIBADD = skypedbus/libskypedbus.la
 noinst_HEADERS = skype.h
 
 SUBDIRS = skypedbus
+mydatadir = $(kdedatadir)/kopete_skype

@@ -28,6 +28,10 @@
 #include <qstringlist.h>
 #include <qdict.h>
 #include <kdebug.h>
+#include <kaction.h>
+#include <kshortcut.h>
+#include <kopetecontactlist.h>
+#include <kopetemetacontact.h>
 
 typedef KGenericFactory<SkypeProtocol> SkypeProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_skype, SkypeProtocolFactory( "kopete_skype" )  )
@@ -35,11 +39,14 @@ K_EXPORT_COMPONENT_FACTORY( kopete_skype, SkypeProtocolFactory( "kopete_skype" )
 class SkypeProtocolPrivate {
 	private:
 	public:
+		///The "call contact" action
+		KAction *callContactAction;
 		///Pointer to the account
 		SkypeAccount *account;
 		///Constructor
 		SkypeProtocolPrivate() {
 			account = 0L;//no account yet
+			callContactAction = 0L;
 		}
 };
 
@@ -69,6 +76,13 @@ SkypeProtocol::SkypeProtocol(QObject *parent, const char *name, const QStringLis
 	d = new SkypeProtocolPrivate();
 	//add address book field
 	addAddressBookField("messaging/skype", Kopete::Plugin::MakeIndexField);
+	
+	setXMLFile("skypeui.rc"); 
+
+	d->callContactAction = new KAction(i18n("Call (by Skype)"), QString::fromLatin1("call"), 0, this, SLOT(callContacts()), actionCollection(), "callSkypeContact");
+
+	updateCallActionStatus();
+	connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)), this, SLOT(updateCallActionStatus()));
 }
 
 
@@ -123,6 +137,54 @@ Kopete::Contact *SkypeProtocol::deserializeContact(Kopete::MetaContact *metaCont
 	}
 
 	return new SkypeContact(d->account, contactID, metaContact);//create the contact
+}
+
+void SkypeProtocol::updateCallActionStatus() {
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
+	
+	bool enab = false;
+	
+	//Run trough all selected contacts and find if there is any skype contact
+	const QPtrList<Kopete::MetaContact> &selected = Kopete::ContactList::self()->selectedMetaContacts();
+	for (QPtrList<Kopete::MetaContact>::const_iterator met = selected.begin(); met != selected.end(); ++met) {
+		const QPtrList<Kopete::Contact> &metaCont = (*met)->contacts();
+		for (QPtrList<Kopete::Contact>::const_iterator con = metaCont.begin(); con != metaCont.end(); ++con) {
+			if ((*con)->protocol() == this) {//This is skype contact, ask it if it can be called
+				SkypeContact *thisCont = static_cast<SkypeContact *> (*con);
+				if (thisCont->canCall()) {
+					enab = true;
+					goto OUTSIDE;
+				}
+			}
+		}
+	}
+	OUTSIDE:
+	d->callContactAction->setEnabled(enab);
+}
+
+void SkypeProtocol::callContacts() {
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
+	
+	QString list;
+	
+	const QPtrList<Kopete::MetaContact> &selected = Kopete::ContactList::self()->selectedMetaContacts();
+	for (QPtrList<Kopete::MetaContact>::const_iterator met = selected.begin(); met != selected.end(); ++met) {
+		const QPtrList<Kopete::Contact> &metaCont = (*met)->contacts();
+		for (QPtrList<Kopete::Contact>::const_iterator con = metaCont.begin(); con != metaCont.end(); ++con) {
+			if ((*con)->protocol() == this) {//This is skype contact, ask it if it can be called
+				SkypeContact *thisCont = static_cast<SkypeContact *> (*con);
+				if (thisCont->canCall()) {
+					if (!list.isEmpty()) 
+						list += ", ";
+					list += thisCont->contactId();
+				}
+			}
+		}
+	}	
+	
+	if (!list.isEmpty()) {
+		d->account->makeCall(list);
+	}
 }
 
 #include "skypeprotocol.moc"

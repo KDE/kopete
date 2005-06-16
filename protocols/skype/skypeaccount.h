@@ -318,6 +318,11 @@ Q_OBJECT
 		 */
 		void makeCall(SkypeContact *user);
 		/**
+		 * Make conference call to more than one user (possibly)
+		 * @param users comma separated list of user IDs
+		 */
+		void makeCall(const QString &users);
+		/**
 		 * Set if a control window will be showed for calls.
 		 * @param value Is it enabled or disabled now?
 		 */

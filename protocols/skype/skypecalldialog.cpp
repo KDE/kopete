@@ -47,7 +47,7 @@ class SkypeCallDialogPrivate {
 		///Was there some error?
 		bool error;
 		///The timer for updating call info
-		QTimer *updater; 
+		QTimer *updater;
 		///The status of the call
 		callStatus status;
 		///The time the call is running or on hold (in halfes of seconds)
@@ -67,11 +67,11 @@ SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, S
 	d->error = false;
 	d->status = csNotRunning;
 	d->totalTime = 0;
-	d->callTime = 0; 
+	d->callTime = 0;
 
 	d->updater = new QTimer();
 	connect(d->updater, SIGNAL(timeout()), this, SLOT(updateCallInfo()));
-	d->updater->start(500); 
+	d->updater->start(500);
 
 	NameLabel->setText(account->getUserLabel(userId));
 
@@ -132,8 +132,14 @@ void SkypeCallDialog::updateStatus(const QString &callId, const QString &status)
 			AcceptButton->setEnabled(false);
 			StatusLabel->setText(i18n("On hold (local)"));
 			d->status = csOnHold;
-		} else if (status == "ONHOLD") {
+		} else if (status == "REMOTEHOLD") {
 			HoldButton->setEnabled(false);
+			HangButton->setEnabled(true);
+			AcceptButton->setEnabled(false);
+			StatusLabel->setText(i18n("On hold (remote)"));
+			d->status = csOnHold;
+		} else if (status == "ONHOLD") {
+			HoldButton->setEnabled(true);
 			HangButton->setEnabled(true);
 			AcceptButton->setEnabled(false);
 			StatusLabel->setText(i18n("On hold"));
@@ -224,9 +230,9 @@ void SkypeCallDialog::updateError(const QString &callId, const QString &message)
 void SkypeCallDialog::updateCallInfo() {
 	switch (d->status) {
 		case csInProgress:
-			if (d->callTime % 20 == 0) 
+			if (d->callTime % 20 == 0)
 				emit updateSkypeOut();//update the skype out
-			++d->callTime; 
+			++d->callTime;
 			//Do not break, do that as well
 		case csOnHold:
 			++d->totalTime;
@@ -247,7 +253,7 @@ void SkypeCallDialog::skypeOutInfo(int balance, const QString &currency) {
 		symbol = i18n("€");
 		digits = 2;
 	} else {
-		CreditLabel->setText(i18n("Skypeout inactive"));	
+		CreditLabel->setText(i18n("Skypeout inactive"));
 		return;
 	}
 	float value = balance * part;

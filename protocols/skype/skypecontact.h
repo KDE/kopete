@@ -84,6 +84,8 @@ class SkypeContact : public Kopete::Contact
 		QPtrList<KAction> *customContextMenuActions();
 		///Give me actually existing chat session
 		SkypeChatSession *getChatSession();
+		///Can this contact be called now?
+		bool canCall() const;
 	public slots:
 		/**
 		 * Please ask for the contact information (emit infoReques with your name)

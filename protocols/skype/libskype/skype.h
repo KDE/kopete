@@ -184,7 +184,7 @@ class Skype : public QObject
 		void sendToChat(const QString &chat, const QString &body);
 		/**
 		 * Begins new call.
-		 * @param userId ID of user to call
+		 * @param userId ID of user to call (or multiple users separated by comas)
 		 * @see acceptCall
 		 * @see hangUp
 		 * @see holdCall

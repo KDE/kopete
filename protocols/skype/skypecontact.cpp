@@ -69,7 +69,7 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 	: Kopete::Contact(account, id, parent, QString::null) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
-	setNickName(id);//Just default, should be replaced later by something.. 
+	setNickName(id);//Just default, should be replaced later by something..
 
 	setOnlineStatus(account->protocol()->Offline);
 
@@ -78,11 +78,16 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 	d->account = account;//save the account for future, it will be needed
 	account->prepareContact(this);//let the account prepare us
 	d->user = user;
-	d->callContactAction = 0L;
+
+	d->callContactAction = new KAction(i18n("Call Contact"), "call", KShortcut(), this, SLOT(call()), this, "call_contact");
+	statusChanged();//This one takes care of disabling/enabling this action depending on the user's status.
+
 	connect(this, SIGNAL(setCallPossible(bool )), this, SLOT(enableCall(bool )));
 	connect(this, SIGNAL(onlineStatusChanged(Kopete::Contact*,const Kopete::OnlineStatus&,const Kopete::OnlineStatus&)), this, SLOT(statusChanged()));
 	if (account->canComunicate() && user)
 		emit infoRequest(contactId());//retrieve information
+
+
 }
 
 SkypeContact::~SkypeContact() {
@@ -289,19 +294,13 @@ QPtrList<KAction> *SkypeContact::customContextMenuActions() {
 
 	QPtrList<KAction> *actions = new QPtrList<KAction>();
 
-	if (!d->callContactAction) {
-		d->callContactAction = new KAction(i18n("Call Contact"), "call_contact", KShortcut(), this, SLOT(call()), this, "call_contact");
-		statusChanged();//This one takes care of disabling/enabling this action depending on the user's status.
-	}
-
 	actions->append(d->callContactAction);
 
 	return actions;
 }
 
 void SkypeContact::enableCall(bool value) {
-	if (d->callContactAction)
-		d->callContactAction->setEnabled(value);
+	d->callContactAction->setEnabled(value);
 }
 
 void SkypeContact::statusChanged() {
@@ -330,6 +329,14 @@ void SkypeContact::connectionStatus(bool connected) {
 
 SkypeChatSession *SkypeContact::getChatSession() {
 	return d->session;
+}
+
+bool SkypeContact::canCall() const {
+	if (!d->account->canComunicate())
+		return false;
+	if (!d->callContactAction)
+		return false;
+	return d->callContactAction->isEnabled();
 }
 
 #include "skypecontact.moc"

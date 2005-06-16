@@ -119,6 +119,15 @@ class SkypeProtocol : public Kopete::Protocol
 		 * @return Brand new loaded contact
 		 */
 		virtual Kopete::Contact *deserializeContact(Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBokkData);
+	public slots:
+		/**
+		 * This enables or disables the "Call by skype" action depending on weather a contact(s) are selected and have skype contacts
+		 */
+		void updateCallActionStatus();
+		/**
+		 * This calls all selected skype contacts
+		 */
+		void callContacts();
 };
 
 #endif

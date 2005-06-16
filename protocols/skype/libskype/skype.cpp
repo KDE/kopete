@@ -352,6 +352,9 @@ void Skype::skypeMessage(const QString &message) {
 				return;
 			d->recvMessages << messageId;
 			const QString &chatId = (d->connection % QString("GET CHATMESSAGE %1 CHATNAME").arg(messageId)).section(' ', 3, 3).stripWhiteSpace();
+			const QString &chatType = (d->connection % QString("GET CHAT %1 STATUS").arg(chatId)).section(' ', 3, 3).stripWhiteSpace().upper();
+			if ((chatType == "DIALOG") || (chatType == "LEGACY_DIALOG"))
+				return;
 			const QString &user = (d->connection % QString("GET CHATMESSAGE %1 FROM_HANDLE").arg(messageId)).section(' ', 3, 3).stripWhiteSpace();
 			const QString &reason = (d->connection % QString("GET CHATMESSAGE %1 LEAVEREASON").arg(messageId)).section(' ', 3, 3).stripWhiteSpace().upper();
 			QString showReason = i18n("Unknown");
@@ -364,6 +367,8 @@ void Skype::skypeMessage(const QString &message) {
 			} else if (reason == "UNSUBSCRIBE") {
 				showReason = "";
 			}
+			if (user.upper() == getMyself().upper()) 
+				return;
 			emit leftUser(chatId, user, showReason);
 			return;
 		}
