@@ -81,7 +81,7 @@ void Connection::setClient( Client* c )
 
 void Connection::connectToServer( const QString& host, bool auth )
 {
-	connect( d->clientStream, SIGNAL( error( int ) ), this, SIGNAL( error( int ) ) );
+	connect( d->clientStream, SIGNAL( error( int ) ), this, SIGNAL( socketError( int ) ) );
 	connect( d->clientStream, SIGNAL( readyRead() ), this, SLOT( streamReadyRead() ) );
 	connect( d->clientStream, SIGNAL( connected() ), this, SIGNAL( connected() ) );
 	d->clientStream->connectToServer( host, auth );

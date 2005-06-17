@@ -42,6 +42,7 @@
 #include <kconfig.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kpassivepopup.h>
 
 #include "client.h"
 #include "connection.h"
@@ -80,9 +81,10 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, c
 
 	QObject::connect( d->engine, SIGNAL( loggedIn() ), this, SLOT( slotGotSSIList() ) );
 	QObject::connect( d->engine, SIGNAL( messageReceived( const Oscar::Message& ) ),
-						this, SLOT( messageReceived(const Oscar::Message& ) ) );
-	QObject::connect( d->engine, SIGNAL( error( int, int, const QString&  ) ),
-	                  this, SLOT( protocolError( int, int, const QString& ) ) );
+	                  this, SLOT( messageReceived(const Oscar::Message& ) ) );
+	QObject::connect( d->engine, SIGNAL( socketError( int, const QString& ) ),
+	                  this, SLOT( slotSocketError( int, const QString& ) ) );	
+
 	QObject::connect( d->engine, SIGNAL( userStartedTyping( const QString& ) ),
 	                  this, SLOT( userStartedTyping( const QString& ) ) );
 	QObject::connect( d->engine, SIGNAL( userStoppedTyping( const QString& ) ),
@@ -100,10 +102,10 @@ Client* OscarAccount::engine()
 	return d->engine;
 }
 
-void OscarAccount::disconnect()
+void OscarAccount::logOff( Kopete::Account::DisconnectReason reason )
 {
 	kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
-		//disconnect the signals
+	//disconnect the signals
 	Kopete::ContactList* kcl = Kopete::ContactList::self();
 	QObject::disconnect( kcl, SIGNAL( groupRenamed( Kopete::Group*,  const QString& ) ), 
 	                     this, SLOT( kopeteGroupRenamed( Kopete::Group*, const QString& ) ) );
@@ -116,7 +118,13 @@ void OscarAccount::disconnect()
 	
 	d->engine->close();
 	myself()->setOnlineStatus( Kopete::OnlineStatus::Offline );
-	disconnected( Manual );
+	
+	disconnected( reason );
+}
+
+void OscarAccount::disconnect()
+{
+	logOff( Kopete::Account::Manual );
 }
 
 bool OscarAccount::passwordWasWrong()
@@ -445,6 +453,15 @@ void OscarAccount::userStoppedTyping( const QString & contact )
 		OscarContact * oc = static_cast<OscarContact *>( ct );
 		oc->stoppedTyping();
 	}
+}
+
+void OscarAccount::slotSocketError( int errCode, const QString& errString )
+{
+	KPassivePopup::message( i18n( "account has been disconnected", "%1 disconnected" ).arg( accountId() ),
+	                        errString,
+	                        myself()->onlineStatus().protocolIcon(),
+	                        Kopete::UI::Global::mainWidget() );
+	logOff( Kopete::Account::ConnectionReset );
 }
 
 

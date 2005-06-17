@@ -154,8 +154,9 @@ signals:
 	/**
 	 * There was an error on the socket and we've disconnected
 	 * \param errCode the error code from the operating system
+	 * \param errString the i18n'ed string that describes the error
 	 */
-	void socketError();
+	void socketError( int errCode, const QString& errString );
 	
 	
 private:

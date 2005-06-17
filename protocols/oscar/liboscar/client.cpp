@@ -153,7 +153,7 @@ void Client::connectToServer( Connection *c, const QString& server, bool auth )
 		connect( m_loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 	}
 
-	connect( c, SIGNAL( error( int ) ), SLOT( streamError( int ) ) );
+	connect( c, SIGNAL( socketError( int, const QString& ) ), SIGNAL( socketError( int, const QString& ) ) );
 	c->connectToServer(server, auth);
 }
 

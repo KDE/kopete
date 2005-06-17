@@ -53,6 +53,12 @@ public:
 	virtual void disconnect();
 	
 	/**
+	 * Handle the various ways we can be logged off the oscar service
+	 * and handle the passthrough of the disconnection through the API.
+	 */
+	void logOff( Kopete::Account::DisconnectReason );
+	
+	/**
 	 * Was the password wrong last time we tried to connect?
 	 */
 	bool passwordWasWrong();
@@ -125,6 +131,10 @@ protected slots:
 signals:
 	
 	void accountDisconnected( Kopete::Account::DisconnectReason reason );
+
+private slots:
+	/** Handler from socket errors from a connection */
+	void slotSocketError( int, const QString& );
 	
 private:
 	OscarAccountPrivate *d;
