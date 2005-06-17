@@ -200,7 +200,7 @@ void AliasPreferences::slotPluginLoaded( Kopete::Plugin *plugin )
 				QString aliasCommand = config->readEntry( (*it) + "_command" );
 				QStringList protocols = config->readListEntry( (*it) + "_protocols" );
 
-				for( QStringList::iterator it2 = protocols.begin(); it2 != protocols.end(); ++it )
+				for( QStringList::iterator it2 = protocols.begin(); it2 != protocols.end(); ++it2 )
 				{
 					if( *it2 == protocol->pluginId() )
 					{
