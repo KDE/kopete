@@ -45,7 +45,8 @@ Kopete::Account* TestbedEditAccountWidget::apply()
 		accountName = m_preferencesWidget->m_acctName->text();
 	
 	if ( account() )
-		account()->setAccountId( accountName );
+		// FIXME: ? account()->setAccountLabel(accountName);
+		account()->myself()->setProperty( Kopete::Global::Properties::self()->nickName(), accountName );
 	else
 		setAccount( new TestbedAccount( TestbedProtocol::protocol(), accountName ) );
 

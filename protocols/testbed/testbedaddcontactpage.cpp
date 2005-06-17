@@ -51,7 +51,7 @@ bool TestbedAddContactPage::apply( Kopete::Account* a, Kopete::MetaContact* m )
 			ok = true;
 		}
 		if ( ok )
-			return a->addContact(type, name, m, Kopete::Account::ChangeKABC );
+			return a->addContact(type, /* FIXME: ? name, */ m, Kopete::Account::ChangeKABC );
 		else
 			return false;
 	}

@@ -45,22 +45,8 @@ TestbedAccount::~TestbedAccount()
 
 KActionMenu* TestbedAccount::actionMenu()
 {
-	KActionMenu *theActionMenu = new KActionMenu(accountId(), myself()->onlineStatus().iconFor(this) , this);
-	theActionMenu->popupMenu()->insertTitle(myself()->icon(), i18n("Testbed (%1)").arg(accountId()));
-	// NEED FSCKING GO ONLINE OFFLINE ACTIONS HERE!
-	theActionMenu->insert(new KAction (TestbedProtocol::protocol()->testbedOnline.caption(),
-		TestbedProtocol::protocol()->testbedOnline.iconFor(this), 0, this, SLOT (slotGoOnline ()), this,
-		"actionTestbedConnect"));
-
-	theActionMenu->insert(new KAction (TestbedProtocol::protocol()->testbedAway.caption(),
-		TestbedProtocol::protocol()->testbedAway.iconFor(this), 0, this, SLOT (slotGoAway ()), this,
-		"actionTestbedAway"));
-
-	theActionMenu->insert(new KAction (TestbedProtocol::protocol()->testbedOffline.caption(),
-		TestbedProtocol::protocol()->testbedOffline.iconFor(this), 0, this, SLOT (slotGoOffline ()), this,
-		"actionTestbedOfflineDisconnect"));
-
-	return theActionMenu;
+	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
+	return mActionMenu;
 }
 
 bool TestbedAccount::createContact(const QString& contactId, Kopete::MetaContact* parentContact)
@@ -77,7 +63,21 @@ void TestbedAccount::setAway( bool away, const QString & /* reason */ )
 		slotGoOnline();
 }
 
-void TestbedAccount::connect()
+void TestbedAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const QString &reason )
+{
+	if ( status.status() == Kopete::OnlineStatus::Online &&
+			myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
+		slotGoOnline();
+	else if (status.status() == Kopete::OnlineStatus::Online &&
+			myself()->onlineStatus().status() == Kopete::OnlineStatus::Away )
+		setAway( false, reason );
+	else if ( status.status() == Kopete::OnlineStatus::Offline )
+		slotGoOffline();
+	else if ( status.status() == Kopete::OnlineStatus::Away )
+		slotGoAway( /* reason */ );
+}
+
+void TestbedAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 {
 	kdDebug ( 14210 ) << k_funcinfo << endl;
 	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOnline );
@@ -107,6 +107,7 @@ void TestbedAccount::slotGoOnline ()
 		myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOnline );
 	updateContactStatus();
 }
+
 void TestbedAccount::slotGoAway ()
 {
 	kdDebug ( 14210 ) << k_funcinfo << endl;

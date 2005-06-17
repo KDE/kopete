@@ -31,9 +31,9 @@ TestbedProtocol *TestbedProtocol::s_protocol = 0L;
 
 TestbedProtocol::TestbedProtocol( QObject* parent, const char *name, const QStringList &/*args*/ )
 	: Kopete::Protocol( TestbedProtocolFactory::instance(), parent, name ),
-	  testbedOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QString::null,  i18n( "Go O&nline" ),   i18n( "Online" ) ),
-	  testbedAway(  Kopete::OnlineStatus::Away, 25, this, 1, "msn_away",  i18n( "Go &Away" ),   i18n( "Away" ) ),
-	  testbedOffline(  Kopete::OnlineStatus::Offline, 25, this, 2,  QString::null,  i18n( "Go O&ffline" ),   i18n( "Offline" ) )
+	  testbedOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QString::null,  i18n( "Online" ),   i18n( "O&nline" ) ),
+	  testbedAway(  Kopete::OnlineStatus::Away, 25, this, 1, "msn_away",  i18n( "Away" ),   i18n( "&Away" ) ),
+	  testbedOffline(  Kopete::OnlineStatus::Offline, 25, this, 2,  QString::null,  i18n( "Offline" ),   i18n( "O&ffline" ) )
 
 {
 	kdDebug( 14210 ) << k_funcinfo << endl;

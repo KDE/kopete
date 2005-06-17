@@ -10,4 +10,8 @@ if include_jabber
 JABBER=jabber
 endif
 
-SUBDIRS = groupwise msn irc oscar yahoo sms $(JABBER) $(GADU) $(MEANWHILE)
+if include_testbed
+TESTBED=testbed
+endif
+
+SUBDIRS = $(TESTBED) groupwise msn irc oscar yahoo sms $(JABBER) $(GADU) $(MEANWHILE)

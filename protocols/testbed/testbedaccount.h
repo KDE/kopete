@@ -52,9 +52,13 @@ public:
 	 */
 	virtual void setAway(bool away, const QString& reason);
 	/**
+	 * Called when Kopete status is changed globally
+	 */
+	virtual void setOnlineStatus(const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+	/**
 	 * 'Connect' to the testbed server.  Only sets myself() online.
 	 */
-	virtual void connect();
+	virtual void connect( const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus::OnlineStatus() );
 	/**
 	 * Disconnect from the server.  Only sets myself() offline.
 	 */

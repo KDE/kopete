@@ -59,7 +59,7 @@ public:
 	/**
 	 * Returns a Kopete::ChatSession associated with this contact
 	 */
-	virtual Kopete::ChatSession *manager( bool canCreate = false );
+	virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CannotCreate );
 
 public slots:
 	/**

@@ -34,7 +34,7 @@ TestbedContact::TestbedContact( Kopete::Account* _account, const QString &unique
 {
 	kdDebug( 14210 ) << k_funcinfo << " uniqueName: " << uniqueName << ", displayName: " << displayName << endl;
 	m_type = type;
-	setDisplayName( displayName );
+	// FIXME: ? setDisplayName( displayName );
 	m_msgManager = 0L;
 
 	setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
@@ -62,7 +62,7 @@ void TestbedContact::serialize( QMap< QString, QString > &serializedData, QMap< 
 	serializedData[ "contactType" ] = value;
 }
 
-Kopete::ChatSession* TestbedContact::manager( bool )
+Kopete::ChatSession* TestbedContact::manager( CanCreateFlags )
 {
 	kdDebug( 14210 ) << k_funcinfo << endl;
 	if ( m_msgManager )
