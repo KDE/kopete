@@ -76,13 +76,13 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 	d = new SkypeContactPrivate;//create the insides
 	d->session = 0L;//no session yet
 	d->account = account;//save the account for future, it will be needed
+	connect(this, SIGNAL(setCallPossible(bool )), this, SLOT(enableCall(bool )));
 	account->prepareContact(this);//let the account prepare us
 	d->user = user;
 
 	d->callContactAction = new KAction(i18n("Call Contact"), "call", KShortcut(), this, SLOT(call()), this, "call_contact");
 	statusChanged();//This one takes care of disabling/enabling this action depending on the user's status.
 
-	connect(this, SIGNAL(setCallPossible(bool )), this, SLOT(enableCall(bool )));
 	connect(this, SIGNAL(onlineStatusChanged(Kopete::Contact*,const Kopete::OnlineStatus&,const Kopete::OnlineStatus&)), this, SLOT(statusChanged()));
 	if (account->canComunicate() && user)
 		emit infoRequest(contactId());//retrieve information
