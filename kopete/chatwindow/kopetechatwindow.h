@@ -159,6 +159,7 @@ private:
 	KToggleAction* membersLeft;
 	KToggleAction* membersRight;
 	KToggleAction* toggleMembers;
+	KToggleAction* toggleAutoSpellCheck;
 
 	KopeteEmoticonAction *actionSmileyMenu;
 	KActionMenu *actionActionMenu;
@@ -215,13 +216,24 @@ private slots:
 	void slotToggleViewMembers();
 	void slotEnableUpdateBg() { updateBg = true; }
 
+	void toggleAutoSpellChecking();
+	void slotRTFEnabled( ChatView*, bool );
+
 	void slotSetCaption( bool );
-	void slotUpdateCaptionIcons( const ChatView * );
+	void slotUpdateCaptionIcons( ChatView * );
 	void slotChatClosed();
 	void slotTabContextMenu( QWidget*, const QPoint & );
 	void slotStopAnimation( ChatView* );
 	void slotNickComplete();
 	void slotCloseChat( QWidget* );
+
+	//slots for tabs from the chatview widget
+	void updateChatState( ChatView* cv, int state );
+	void updateChatTooltip( ChatView* cv );
+	void updateChatLabel();
+	    
+private:
+	void updateSpellCheckAction();
 
 protected:
 	virtual void closeEvent( QCloseEvent *e );

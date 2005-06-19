@@ -85,7 +85,6 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent, const ch
 
 	m_mainWindow = 0L;
 	membersDock = 0L;
-	m_tabBar = 0L;
 	membersStatus = Smart;
 	m_tabState=Normal;
 
@@ -327,7 +326,7 @@ void ChatView::makeVisible()
 
 bool ChatView::isVisible()
 {
-	return ( m_mainWindow && m_mainWindow->isVisible() && ( d->isActive || docked() ) );
+	return ( m_mainWindow && m_mainWindow->isVisible() );
 }
 
 bool ChatView::visibleMembersList()
@@ -385,48 +384,22 @@ bool ChatView::closeView( bool force )
 	return false;
 }
 
-void ChatView::setTabState( KopeteTabState newState )
+void ChatView::updateChatState( KopeteTabState newState )
 {
 	if ( newState == Undefined )
 		newState = m_tabState;
 	else if ( newState != Typing && ( newState != Changed || ( m_tabState != Message && m_tabState != Highlighted ) )
 		&& ( newState != Message ||  m_tabState != Highlighted ) )
-	{ //if the new state is not a typing state and we don't already have a message or a highlighted message
-	  //change the tab state
+	{ 
+		// if the new state is not a typing state and we don't already have a message or a highlighted message
+		// change the tab state
 		m_tabState = newState;
 	}
 
 	newState = m_remoteTypingMap.isEmpty() ? m_tabState : Typing ;
 
-	#warning TabColor
-/*
-	if( m_tabBar )
-	{
-		switch( newState )
-		{
-			case Highlighted:
-				m_tabBar->setTabColor( this, Qt::blue );
-				break;
-
-			case Message:
-				m_tabBar->setTabColor( this, Qt::red );
-				break;
-
-			case Changed:
-				m_tabBar->setTabColor( this, Qt::darkRed );
-				break;
-
-			case Typing:
-				m_tabBar->setTabColor( this, Qt::darkGreen );
-				break;
-
-			case Normal:
-			default:
-				m_tabBar->setTabColor( this, KGlobalSettings::textColor() );
-				break;
-		}
-	}
-*/
+	emit updateChatState( this, newState );
+	
 	if( newState != Typing )
 	{
 		setStatusText( i18n( "One other person in the chat",
@@ -571,11 +544,11 @@ void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
 			QString statusTyping = typingList.join( QString::fromLatin1( ", " ) );
 			setStatusText( i18n( "%1 is a list of names", "%1 are typing a message" ).arg( statusTyping ) );
 		}
-		setTabState( Typing );
+		updateChatState( Typing );
 	}
 	else
 	{
-		setTabState();
+		updateChatState();
 	}
 }
 
@@ -634,7 +607,7 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 		}
 	}
 
-	setTabState();
+	updateChatState();
 	emit updateStatusIcon( this );
 }
 
@@ -663,7 +636,7 @@ void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString
 		}
 	}
 
-	setTabState();
+	updateChatState();
 	emit updateStatusIcon( this );
 }
 
@@ -686,17 +659,15 @@ void ChatView::setCaption( const QString &text, bool modified )
 	//Call the original set caption
 	KDockMainWindow::setCaption( newCaption, false );
 
-	if( m_tabBar )
-	{
-		m_tabBar->setTabToolTip( this, QString::fromLatin1("<qt>%1</qt>").arg( d->captionText ) );
-		m_tabBar->setTabLabel( this, newCaption  );
+	emit updateChatTooltip( this, QString::fromLatin1("<qt>%1</qt>").arg( d->captionText ) );
+	emit updateChatLabel( this, newCaption );
 
-		//Blink icon if modified and not active
-		if( !d->isActive && modified )
-			setTabState( Changed );
-		else
-			setTabState();
-	}
+	//Blink icon if modified and not active
+	
+	if( !d->isActive && modified )
+		updateChatState( Changed );
+	else
+		updateChatState();
 
 	//Tell the parent we changed our caption
 	emit( captionChanged( d->isActive ) );
@@ -712,16 +683,16 @@ void ChatView::appendMessage(Kopete::Message &message)
 		switch ( message.importance() )
 		{
 			case Kopete::Message::Highlight:
-				setTabState( Highlighted );
+				updateChatState( Highlighted );
 				break;
 			case Kopete::Message::Normal:
 				if ( message.direction() == Kopete::Message::Inbound )
 				{
-					setTabState( Message );
+					updateChatState( Message );
 					break;
 				}
 			default:
-				setTabState( Changed );
+				updateChatState( Changed );
 		}
 	}
 
@@ -742,15 +713,13 @@ void ChatView::slotMarkMessageRead()
 
 void ChatView::slotToggleRtfToolbar( bool enabled )
 {
-	if ( enabled )
-		m_mainWindow->toolBar( "formatToolBar" )->show();
-	else
-		m_mainWindow->toolBar( "formatToolBar" )->hide();
+	emit rtfEnabled( this, enabled );
 }
 
 void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &newStatus, const Kopete::OnlineStatus &oldStatus )
 {
-// 	kdDebug(14000) << k_funcinfo << endl;
+	kdDebug(14000) << k_funcinfo << contact << endl;
+	
 	bool inhibitNotification = ( newStatus.status() == Kopete::OnlineStatus::Unknown ||
 	                             oldStatus.status() == Kopete::OnlineStatus::Unknown );
 	if ( contact && KopetePrefs::prefs()->showEvents() && !inhibitNotification )
@@ -776,19 +745,6 @@ void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete:
 					.arg( newStatus.description(), nick.isEmpty() ? contact->contactId() : nick  ) );
 			}
 		}
-	}
-
-	if ( m_tabBar )
-	{
-		Q3PtrList<Kopete::Contact> chatMembers = m_manager->members();
-		Kopete::Contact *tempContact = 0L;
-		for ( Q3PtrListIterator<Kopete::Contact> it ( chatMembers ); it.current(); ++it )
-		{
-			if ( !tempContact || tempContact->onlineStatus() < (*it)->onlineStatus() )
-				tempContact = (*it);
-		}
-		if ( tempContact )
-			m_tabBar->setTabIconSet( this, m_manager->contactOnlineStatus( tempContact ).iconFor( tempContact ) );
 	}
 
 	// update the windows caption
@@ -864,14 +820,9 @@ void ChatView::setActive( bool value )
 	d->isActive = value;
 	if ( d->isActive )
 	{
-		setTabState( Normal );
+		updateChatState( Normal );
 		emit( activated( static_cast<KopeteView*>(this) ) );
 	}
-}
-
-void ChatView::setTabBar( KTabWidget *tabBar )
-{
-	m_tabBar = tabBar;
 }
 
 void ChatView::slotRemoteTypingTimeout()

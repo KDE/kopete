@@ -25,6 +25,7 @@
 class QTimer;
 
 class KCompletion;
+class KDictSpellingHighlighter;
 
 namespace Kopete
 {
@@ -82,7 +83,19 @@ public:
 	 * @return This part's main widget
 	 */
 	KTextEdit *edit();
-	
+
+	/**
+	 * Enable or Disable the automatic spell checking
+	 * @param enabled the state that auto spell checking should beee
+	 */
+	void toggleAutoSpellCheck( bool enabled );
+				        
+	/**
+	 * Get the state of auto spell checking
+	 * @return true if auto spell checking is turned on, false otherwise
+	 */
+	bool autoSpellCheckEnabled() const;
+								
 public slots:
 	/**
 	 * Go up an entry in the message history.
@@ -164,9 +177,10 @@ private slots:
 	/**
 	 * Update completion to follow changes in users' nicknames
 	 */
-	void slotPropertyChanged( Kopete::Contact *, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
+	void slotPropertyChanged( Kopete::Contact *, const QString &key, const QVariant &oldValue, const QVariant &newValue );
 	
 private:
+	KDictSpellingHighlighter* spellHighlighter();
 	Kopete::ChatSession *m_session;
 	
 	/**
@@ -185,6 +199,7 @@ private:
 	
 	QTimer *m_typingRepeatTimer;
 	QTimer *m_typingStopTimer;
+	bool m_autoSpellCheckEnabled;
 };
 
 #endif

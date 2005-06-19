@@ -55,6 +55,7 @@
 #include <kstringhandler.h>
 #include <ksqueezedtextlabel.h>
 #include <kstdaccel.h>
+#include <kglobalsettings.h>
 
 #include "chatmessagepart.h"
 #include "chattexteditpart.h"
@@ -389,7 +390,10 @@ void KopeteChatWindow::initActions(void)
 	toggleMembers = new KToggleAction( i18n( "Show" ), QString::null, 0,
 		this, SLOT( slotToggleViewMembers() ), coll, "options_togglemembers" );
 	toggleMembers->setCheckedState(i18n("Hide"));
-
+	toggleAutoSpellCheck = new KToggleAction( i18n( "Automatic Spell Checking" ), QString::null, 0,
+		this, SLOT( toggleAutoSpellChecking() ), coll, "enable_auto_spell_check" );	 
+	toggleAutoSpellCheck->setChecked( true );
+	     
 	actionSmileyMenu = new KopeteEmoticonAction( coll, "format_smiley" );
 	actionSmileyMenu->setDelayed( false );
 	connect(actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
@@ -491,6 +495,32 @@ void KopeteChatWindow::slotToggleViewMembers()
 	m_activeView->toggleMembersVisibility();
 	updateMembersActions();
 }
+
+void KopeteChatWindow::toggleAutoSpellChecking()
+{
+	if ( !m_activeView )
+		return;
+		    
+	bool currentSetting = m_activeView->editPart()->autoSpellCheckEnabled();
+	m_activeView->editPart()->toggleAutoSpellCheck( !currentSetting );
+	updateSpellCheckAction();
+}
+
+void KopeteChatWindow::updateSpellCheckAction()
+{
+	if ( !m_activeView )
+		return;
+		      
+	if ( m_activeView->editPart()->richTextEnabled() )
+		toggleAutoSpellCheck->setEnabled( false );
+	else
+		toggleAutoSpellCheck->setEnabled( true );
+							      
+	if ( m_activeView->editPart()->autoSpellCheckEnabled() )
+		toggleAutoSpellCheck->setChecked( true );
+	else
+		toggleAutoSpellCheck->setChecked( false );
+}      
 
 void KopeteChatWindow::slotHistoryUp()
 {
@@ -609,12 +639,14 @@ void KopeteChatWindow::addTab( ChatView *view )
 	QPixmap pluginIcon = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c) : SmallIcon( view->msgManager()->protocol()->pluginIcon() );
 
 	view->reparent( m_tabBar, 0, QPoint(), true );
-	m_tabBar->addTab( view, pluginIcon, QString::null );
-	view->setTabBar( m_tabBar );
+	m_tabBar->addTab( view, pluginIcon, view->caption() );
+
 	if( view == m_activeView )
 		view->show();
 	else
 		view->hide();
+	connect( view, SIGNAL( captionChanged( bool ) ), this, SLOT( updateChatLabel() ) );
+	connect( view, SIGNAL( updateStatusIcon( ChatView* ) ), this, SLOT( slotUpdateCaptionIcons( ChatView* ) ) );
 	view->setCaption( view->caption(), false );
 }
 
@@ -624,7 +656,7 @@ void KopeteChatWindow::setPrimaryChatView( ChatView *view )
 	//reparent clears a lot of stuff out
 	QFont savedFont = view->font();
 	view->reparent( mainArea, 0, QPoint(), true );
-	view->setTabBar( 0L );
+	
 	view->setFont( savedFont );
 	view->show();
 
@@ -668,8 +700,12 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 	KCursor::setAutoHideCursor( newView->editWidget(), true, true );
 	connect( newView, SIGNAL(captionChanged( bool)), this, SLOT(slotSetCaption(bool)) );
 	connect( newView, SIGNAL(messageSuccess( ChatView* )), this, SLOT(slotStopAnimation( ChatView* )) );
-	connect( newView, SIGNAL(updateStatusIcon( const ChatView* )), this, SLOT(slotUpdateCaptionIcons( const ChatView* )) );
+	connect( newView, SIGNAL(rtfEnabled( ChatView*, bool ) ), this, SLOT( slotRTFEnabled( ChatView*, bool ) ) );
+	connect( newView, SIGNAL(updateStatusIcon( ChatView* ) ), this, SLOT(slotUpdateCaptionIcons( ChatView* ) ) );
+	connect( newView, SIGNAL(updateChatState( ChatView*, int ) ), this, SLOT( updateChatState( ChatView*, int ) ) );
+	connect( newView, SIGNAL(updateStatusIcon( const ChatView* )), this, SLOT(slotUpdateCaptionIcons( ChatView* )) );
 
+	updateSpellCheckAction();
 	checkDetachEnable();
 }
 
@@ -691,7 +727,10 @@ void KopeteChatWindow::detachChatView( ChatView *view )
 		return;
 
 	disconnect( view, SIGNAL(captionChanged( bool)), this, SLOT(slotSetCaption(bool)) );
-	disconnect( view, SIGNAL(updateStatusIcon( const ChatView *)), this, SLOT(slotUpdateCaptionIcons( const ChatView * )) );
+	disconnect( view, SIGNAL(updateStatusIcon( const ChatView *)), this, SLOT(slotUpdateCaptionIcons( ChatView * )) );
+	disconnect( view, SIGNAL( updateStatusIcon( ChatView* ) ), this, SLOT( slotUpdateCaptionIcons( ChatView* ) ) );
+	disconnect( view, SIGNAL( updateChatState( ChatView*, int ) ), this, SLOT( updateChatState( ChatView*, int ) ) );
+	
 	view->editWidget()->removeEventFilter( this );
 
 	if( m_tabBar )
@@ -708,7 +747,6 @@ void KopeteChatWindow::detachChatView( ChatView *view )
 				m_tabBar->setCurrentPage( curPage + 1 );
 		}
 
-		view->setTabBar( 0L );
 		m_tabBar->removePage( view );
 
 		if( m_tabBar->currentPage() )
@@ -853,13 +891,13 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	setCaption( m_activeView->caption() );
 	setStatus( m_activeView->statusText() );
 	m_activeView->setFocus();
-
+	updateSpellCheckAction();
 	slotUpdateSendEnabled();
 }
 
-void KopeteChatWindow::slotUpdateCaptionIcons( const ChatView *view )
+void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
 {
-	if(!view||!m_activeView||view!=m_activeView )
+	if(!view)
 		return; //(pas de charité)
 	Q3PtrList<Kopete::Contact> chatMembers=view->msgManager()->members();
 	Kopete::Contact *c=0L;
@@ -868,10 +906,17 @@ void KopeteChatWindow::slotUpdateCaptionIcons( const ChatView *view )
 		if(!c || c->onlineStatus() < contact->onlineStatus())
 			c=contact;
 	}
-	QPixmap icon16 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 16) : SmallIcon( view->msgManager()->protocol()->pluginIcon() );
-	QPixmap icon32 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 32) : SmallIcon( view->msgManager()->protocol()->pluginIcon() );
-
-	KWin::setIcons( winId(), icon32, icon16 );
+	
+	if ( view == m_activeView )
+	{
+		QPixmap icon16 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 16) : SmallIcon( view->msgManager()->protocol()->pluginIcon() );
+		QPixmap icon32 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 32) : SmallIcon( view->msgManager()->protocol()->pluginIcon() );
+		KWin::setIcons( winId(), icon32, icon16 );
+	}
+	if ( m_tabBar )
+	{
+		m_tabBar->setTabIconSet( view, view->msgManager()->contactOnlineStatus( c ).iconFor( c ) );
+	}
 }
 
 void KopeteChatWindow::slotChatClosed()
@@ -1039,6 +1084,17 @@ void KopeteChatWindow::slotSmileyActivated(const QString &sm)
 	//we are adding space around the emoticon becasue our parser only display emoticons not in a word.
 }
 
+void KopeteChatWindow::slotRTFEnabled( ChatView* cv, bool enabled)
+{
+	if ( cv != m_activeView )
+		return;
+	if ( enabled )
+		toolBar( "formatToolBar" )->show();
+	else
+		toolBar( "formatToolBar" )->hide();
+	updateSpellCheckAction();
+}
+
 bool KopeteChatWindow::queryClose()
 {
 	bool canClose = true;
@@ -1142,6 +1198,55 @@ void KopeteChatWindow::slotConfToolbar()
 		applyMainWindowSettings(KGlobal::config(), QString::fromLatin1( "KopeteChatWindow" ));
 	}
 	delete dlg;
+}
+
+void KopeteChatWindow::updateChatState( ChatView* cv, int newState )
+{
+	if ( m_tabBar )
+	{
+#warning "when setTabColor is implemented, enable this bit"
+		/*
+		switch( newState )
+		{
+			case ChatView::Highlighted:
+				m_tabBar->setTabColor( cv, Qt::blue );
+				break;
+			case ChatView::Message:
+				m_tabBar->setTabColor( cv, Qt::red );
+				break;
+			case ChatView::Changed:
+				m_tabBar->setTabColor( cv, Qt::darkRed );
+				break;
+			case ChatView::Typing:
+				m_tabBar->setTabColor( cv, Qt::darkGreen );
+				break;
+			case ChatView::Normal:
+			default:
+				m_tabBar->setTabColor( cv, KGlobalSettings::textColor() );
+				break;
+		}
+		*/
+	}
+}	
+
+void KopeteChatWindow::updateChatTooltip( ChatView* cv )
+{
+	 if ( m_tabBar )
+		  m_tabBar->setTabToolTip( cv, QString::fromLatin1("<qt>%1</qt>").arg( cv->caption() ) );
+}
+
+void KopeteChatWindow::updateChatLabel()
+{
+	const ChatView* cv = dynamic_cast<const ChatView*>( sender() );
+	if ( !cv || !m_tabBar )
+		 return;
+	ChatView* chat  = const_cast<ChatView*>( cv );
+	if ( m_tabBar )
+	{
+		m_tabBar->setTabLabel( chat, chat->caption() );
+		if ( m_tabBar->count() < 2 || m_tabBar->currentPage() == cv )
+			setCaption( chat->caption() );
+	}
 }
 
 #include "kopetechatwindow.moc"

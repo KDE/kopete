@@ -21,6 +21,7 @@
 #include "kopeteonlinestatus.h"
 #include "kopeteprotocol.h"
 #include "kopeteglobal.h"
+#include <ksyntaxhighlighter.h>
 
 #include <kcompletion.h>
 #include <kdebug.h>
@@ -32,6 +33,7 @@
 ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *parent, const char *name )
 	: KopeteRichTextEditPart( parent, name, session->protocol()->capabilities() ), m_session(session)
 {
+	m_autoSpellCheckEnabled = true;
 	historyPos = -1;
 	
 	mComplete = new KCompletion();
@@ -74,6 +76,32 @@ ChatTextEditPart::~ChatTextEditPart()
 KTextEdit *ChatTextEditPart::edit()
 {
 	return static_cast<KTextEdit*>(widget());
+}
+
+void ChatTextEditPart::toggleAutoSpellCheck( bool enabled )
+{
+	if ( richTextEnabled() )
+		enabled = false;
+					      
+	m_autoSpellCheckEnabled = enabled;
+	if ( spellHighlighter() )
+	{
+		spellHighlighter()->setAutomatic( enabled );
+		spellHighlighter()->setActive( enabled );
+	}
+	edit()->setCheckSpellingEnabled( enabled );
+}
+      
+bool ChatTextEditPart::autoSpellCheckEnabled() const
+{
+	return m_autoSpellCheckEnabled;
+}
+      
+KDictSpellingHighlighter* ChatTextEditPart::spellHighlighter()
+{
+	Q3SyntaxHighlighter *qsh = edit()->syntaxHighlighter();
+    KDictSpellingHighlighter* kdsh = dynamic_cast<KDictSpellingHighlighter*>( qsh );
+	return kdsh;
 }
 
 // NAUGHTY, BAD AND WRONG! (but needed to fix nick complete bugs)
