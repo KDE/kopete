@@ -326,9 +326,10 @@ void Emoticons::initEmoticons( const QString &theme )
 	d->emoticonMap.clear();
    
 	QDomDocument emoticonMap( QString::fromLatin1( "messaging-emoticon-map" ) );
-    
-        
-	QFile mapFile( *filename );
+	
+    QString filename= KGlobal::dirs()->findResource( "emoticons",  d->theme + QString::fromLatin1( "/emoticons.xml" ) ); 
+	
+	QFile mapFile( filename );
     mapFile.open( QIODevice::ReadOnly );
     emoticonMap.setContent( &mapFile );
     
