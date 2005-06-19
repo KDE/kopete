@@ -44,6 +44,7 @@
 #include <kglobalsettings.h>
 #include <kgenericfactory.h>
 #include <khtmlview.h>
+#include <ksyntaxhighlighter.h>
 #include <q3scrollview.h>
 #include <qtimer.h>
 //Added by qt3to4:
@@ -107,6 +108,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent, const ch
 
 	// FIXME: is this used these days? it seems totally unnecessary
 	connect( editPart(), SIGNAL( toggleToolbar(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
+	connect( editPart()->edit(), SIGNAL( textChanged() ), this, SLOT( editPartTextChanged() ) );
 
 	connect( editPart(), SIGNAL( messageSent( Kopete::Message & ) ),
 	         this, SIGNAL( messageSent( Kopete::Message & ) ) );
@@ -879,6 +881,22 @@ void ChatView::slotRemoteTypingTimeout()
 		remoteTyping( reinterpret_cast<const Kopete::Contact *>( Q3PtrDictIterator<QTimer>(m_remoteTypingMap).currentKey() ), false );
 }
 
+void ChatView::editPartTextChanged()
+{
+	Q3SyntaxHighlighter* qsh = m_editPart->edit()->syntaxHighlighter();
+	if ( !qsh )
+		return;
+		
+	KDictSpellingHighlighter* kdsh = dynamic_cast<KDictSpellingHighlighter*>( qsh );
+	if ( !kdsh )
+		return;
+	
+	if ( kdsh->automatic() && kdsh->isActive() )
+		setStatusText( i18n("As-you-type spell checking enabled.") );
+	else if ( kdsh->automatic() && !kdsh->isActive() )
+		setStatusText( i18n("As-you-type spell checking disabled.") );
+}
+		
 void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 {
 	if( event->provides( "kopete/x-contact" ) )
