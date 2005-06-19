@@ -385,7 +385,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 		while ( bufferLen>0 && messageMap.count() >= bufferLen )
 		{
 			htmlDocument().body().removeChild( htmlDocument().body().firstChild() );
-			messageMap.remove( messageMap.begin() );
+			messageMap.pop_front();
 		}
 
 		if ( !scrollPressed )
