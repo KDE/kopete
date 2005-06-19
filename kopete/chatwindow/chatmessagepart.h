@@ -134,8 +134,6 @@ private slots:
 
 	void slotCopyURL();
     
-    void slotSaveCustomEmoticon();
-
 	void slotCloseView( bool force = false );
 
 protected:
@@ -161,7 +159,6 @@ private:
 	KAction *printAction;
 	KAction *closeAction;
 	KAction *copyURLAction;
-    KAction *saveCustomEmoticonAction;
 
 	void readOverrides();
 
