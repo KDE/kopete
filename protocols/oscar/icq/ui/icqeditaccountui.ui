@@ -102,13 +102,10 @@
                                     <bool>true</bool>
                                 </property>
                                 <property name="text">
-                                    <string>Do not connect automatically at &amp;startup</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Check to connect automatically when Kopete is started.</string>
+                                    <string>E&amp;xclude from connect all</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
+					<string>If you check that case, the account will not be connected when you press the "Connect All" button, or at startup even if you selected to automatically connect at startup</string>
                                 </property>
                             </widget>
                         </vbox>
