@@ -135,21 +135,6 @@ public:
 	 * (only one emoticon per image)
 	 */
 	QMap<QString, QString> emoticonAndPicList();
-    /**
-     * Return a list of all current custom emoticons and their corresponding icon.
-     */
-    QMap<QString, QString> customEmoticonAndPicList();
-    
-    /**
-     * Adds a custom emoticon to the currect list of emoticons and to
-     * the custom list.
-     * @param filename the filename of the icon, including extension
-     * @param emoticon the emoticon
-     * @return false if already exists, or file doesnt exist
-     * @author sc00t < shikede@gmail.com >
-     */
-    bool addCustomEmoticon(const QString &filename, const QString &emoticon);
-
 
 private:
 	/**
@@ -172,8 +157,6 @@ private slots:
 	/**
 	 * Fills the map with paths and emoticons
 	 * This needs to be done on every emoticon-theme change
-	 * Also loads the current list of custom emoticons from
-	 * $HOME/.kde/share/emoticons/custom/
 	 **/
 	void initEmoticons ( const QString &theme = QString::null );
 };
