@@ -66,6 +66,8 @@ public:
 
 	bool badPassword() { return m_badPassword; }
 
+	QString localIP() { return m_localIP; }
+
 public slots:
 	void slotOpenInbox();
 
@@ -165,6 +167,7 @@ private:
 	QString m_kv;
 	QString m_sid;
 	QString m_loginTime;
+	QString m_localIP;
 	SslLoginHandler *m_sslLoginHandler;
 
 	QTimer *m_keepaliveTimer;

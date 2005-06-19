@@ -682,6 +682,12 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 			m_isHotmailAccount = (rx.cap(1).toUInt() == 1);
 			emit hotmailSeted(m_isHotmailAccount);
 		}
+		if(msg.contains("ClientIP:"))
+		{
+			QRegExp rx("ClientIP: ([0-9.]*)");
+			rx.search(msg);
+			m_localIP = rx.cap(1);
+		}
 	}
 }
 
