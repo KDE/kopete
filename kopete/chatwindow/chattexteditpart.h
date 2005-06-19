@@ -181,6 +181,8 @@ private slots:
 
 private:
 	KDictSpellingHighlighter* spellHighlighter();
+	
+private:
 	Kopete::ChatSession *m_session;
 	
 	/**
