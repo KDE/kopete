@@ -34,6 +34,8 @@
 #include "kopetemetacontact.h"
 #include "msnchatsession.h"
 #include "msnswitchboardsocket.h"
+#include "msnnotifysocket.h"
+#include "msnaccount.h"
 
 using namespace KNetwork;
 
@@ -381,19 +383,23 @@ void MSNFileTransferSocket::parseInvitation(const QString& msg)
 			MSNChatSession* manager=dynamic_cast<MSNChatSession*>(m_contact->manager());
 			if(manager && manager->service())
 			{
+				MSNNotifySocket *notify=static_cast<MSNAccount*>(manager->account())->notifySocket();
+				if(notify){
+				
 				QCString message=QString(
 					"MIME-Version: 1.0\r\n"
 					"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
 					"\r\n"
 					"Invitation-Command: ACCEPT\r\n"
 					"Invitation-Cookie: " + QString::number(cookie()) + "\r\n"
-					"IP-Address: " + manager->service()->getLocalIP() + "\r\n"
+					"IP-Address: " + notify->localIP()  + "\r\n"
 					"Port: 6891\r\n"
 					"AuthCookie: "+QString::number(auth)+"\r\n"
 					"Launch-Application: FALSE\r\n"
 					"Request-Data: IP-Address:\r\n\r\n").utf8();
 
 				manager->service()->sendCommand( "MSG" , "N", true, message );
+				}
 			}
 
 			listen(6891);
