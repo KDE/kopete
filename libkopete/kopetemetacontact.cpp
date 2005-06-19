@@ -671,7 +671,6 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 		if(photoSource() == 0L && !newValue.isNull() &&   photo().isNull() )
 		{
 			setPhotoSource(subcontact);
-			setPhotoSyncedWithKABC(true);
 		}
 		else if(photoSource() == subcontact)
 		{
