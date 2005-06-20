@@ -33,6 +33,8 @@ namespace Kopete { class MetaContact; }
 class KToggleAction;
 class KActionCollection;
 
+typedef QValueList<Kopete::Protocol*> ProtocolList;
+
 class WebPresencePlugin : public Kopete::Plugin
 {
 	Q_OBJECT
@@ -95,7 +97,7 @@ protected:
 	/** 
 	 * Helper method, generates list of all IM protocols
 	 */
-	QPtrList<Kopete::Protocol> allProtocols();
+	ProtocolList allProtocols();
 	/**
 	 * Converts numeric status to a string
 	 */

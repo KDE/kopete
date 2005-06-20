@@ -91,15 +91,17 @@ void WebPresencePlugin::loadSettings()
 void WebPresencePlugin::listenToAllAccounts()
 {
 	// connect to signals notifying of all accounts' status changes
-	QPtrList<Kopete::Protocol> protocols = allProtocols();
-	for ( Kopete::Protocol *p = protocols.first();
-			p; p = protocols.next() )
+	ProtocolList protocols = allProtocols();
+
+	for ( ProtocolList::Iterator it = protocols.begin();
+			it != protocols.end(); ++it )
 	{
-		QDict<Kopete::Account> dict=Kopete::AccountManager::self()->accounts( p );
-		QDictIterator<Kopete::Account> it( dict );
-		for( ; Kopete::Account *account=it.current(); ++it )
+		QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( *it );
+		QDictIterator<Kopete::Account> acIt( accounts );
+
+		for( ; Kopete::Account *account = acIt.current(); ++acIt )
 		{
-			 listenToAccount( account );
+			listenToAccount( account );
 		}
 	}
 	slotWaitMoreStatusChanges();
@@ -350,16 +352,18 @@ bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 #endif
 }
 
-// FIXME: use Kopete::PluginList instead of QPtrList<Kopete::Protocol>
-QPtrList<Kopete::Protocol> WebPresencePlugin::allProtocols()
+ProtocolList WebPresencePlugin::allProtocols()
 {
 	kdDebug( 14309 ) << k_funcinfo << endl;
 
 	Kopete::PluginList plugins = Kopete::PluginManager::self()->loadedPlugins( "Protocols" );
 	Kopete::PluginList::ConstIterator it;
-	QPtrList<Kopete::Protocol> result;
-	for ( it = plugins.begin(); it != plugins.end(); ++it )
+
+	ProtocolList result;
+
+	for ( it = plugins.begin(); it != plugins.end(); ++it ) {
 		result.append( static_cast<Kopete::Protocol *>( *it ) );
+	}
 
 	return result;
 }
