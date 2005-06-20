@@ -53,13 +53,14 @@ K_EXPORT_COMPONENT_FACTORY( kopete_webpresence, WebPresencePluginFactory( "kopet
 WebPresencePlugin::WebPresencePlugin( QObject *parent, const char *name, const QStringList& /*args*/ )
 : Kopete::Plugin( WebPresencePluginFactory::instance(), parent, name )
 {
+	shuttingDown = false;
+
 	m_writeScheduler = new QTimer( this );
 	connect ( m_writeScheduler, SIGNAL( timeout() ), this, SLOT( slotWriteFile() ) );
 	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account*)),
 				this, SLOT( listenToAllAccounts() ) );
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(Kopete::Account*)),
 				this, SLOT( listenToAllAccounts() ) );
-	
 
 	connect(this, SIGNAL(settingsChanged()), this, SLOT( loadSettings() ) );
 	loadSettings();
@@ -371,6 +372,9 @@ ProtocolList WebPresencePlugin::allProtocols()
 
 QString WebPresencePlugin::statusAsString( const Kopete::OnlineStatus &newStatus )
 {
+	if (shuttingDown)
+		return "OFFLINE";
+
 	QString status;
 	switch ( newStatus.status() )
 	{
@@ -389,6 +393,20 @@ QString WebPresencePlugin::statusAsString( const Kopete::OnlineStatus &newStatus
 	}
 
 	return status;
+}
+
+void WebPresencePlugin::aboutToUnload()
+{
+	// Stop timer. Dont need it anymore.
+	m_writeScheduler->stop();
+
+	// Force statusAsString() report all accounts as OFFLINE.
+	shuttingDown = true;
+
+	// Do final update of webpresence file.
+	slotWriteFile();
+
+	emit readyForUnload();
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

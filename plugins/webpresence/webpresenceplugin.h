@@ -48,6 +48,10 @@ private:
 	bool useDefaultStyleSheet;
 	bool justXml;
 	QString userStyleSheet;
+
+	// Is set to true when Kopete has notified us
+	// that we're about to be unloaded.
+	bool shuttingDown;
 		
 	struct ProtoContactStatus
 	{
@@ -59,6 +63,8 @@ private:
 public:
 	WebPresencePlugin( QObject *parent, const char *name, const QStringList &args );
 	virtual ~WebPresencePlugin();
+
+	virtual void aboutToUnload();
 
 protected slots:
 	void loadSettings();
