@@ -137,47 +137,48 @@ void WebPresencePlugin::slotWaitMoreStatusChanges()
 
 void WebPresencePlugin::slotWriteFile()
 {
-	bool error = false;
+	m_writeScheduler->stop();
+
 	// generate the (temporary) XML file representing the current contactlist
 	KURL dest( url );
 	if ( url.isEmpty() || !dest.isValid() )
 	{
 		kdDebug(14309) << "url is empty or not valid. NOT UPDATING!" << endl;
-		error = true;
+		return;
 	}
 
-	if ( !error )
+	KTempFile* xml = generateFile();
+	xml->setAutoDelete( true );
+	kdDebug(14309) << k_funcinfo << " " << xml->name() << endl;
+
+	if ( justXml )
 	{
-		KTempFile* xml = generateFile();
-		xml->setAutoDelete( true );
-		kdDebug(14309) << k_funcinfo << " " << xml->name() << endl;
-
-		if ( justXml )
-		{
-			m_output = xml;
-			xml = 0L;
-		}
-		else
-		{
-			// transform XML to the final format
-			m_output = new KTempFile();
-			m_output->setAutoDelete( true );
-			if ( !transform( xml, m_output ) )
-			{
-				error = true;
-				delete m_output;
-				m_output = 0L;
-			}
-			delete xml; // might make debugging harder!
-		}
-
-		// upload it to the specified URL
-		KURL src( m_output->name() );
-		KIO::FileCopyJob *job = KIO::file_move( src, dest, -1, true, false, false );
-		connect( job, SIGNAL( result( KIO::Job * ) ),
-				SLOT(  slotUploadJobResult( KIO::Job * ) ) );
+		m_output = xml;
+		xml = 0L;
 	}
-	m_writeScheduler->stop();
+	else
+	{
+		// transform XML to the final format
+		m_output = new KTempFile();
+		m_output->setAutoDelete( true );
+
+		if ( !transform( xml, m_output ) )
+		{
+			delete m_output;
+			m_output = 0L;
+
+			delete xml;
+			return;
+		}
+
+		delete xml; // might make debugging harder!
+	}
+
+	// upload it to the specified URL
+	KURL src( m_output->name() );
+	KIO::FileCopyJob *job = KIO::file_move( src, dest, -1, true, false, false );
+	connect( job, SIGNAL( result( KIO::Job * ) ),
+			SLOT(  slotUploadJobResult( KIO::Job * ) ) );
 }
 
 void WebPresencePlugin::slotUploadJobResult( KIO::Job *job )
