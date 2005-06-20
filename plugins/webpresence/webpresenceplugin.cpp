@@ -150,26 +150,26 @@ void WebPresencePlugin::slotWriteFile()
 	{
 		KTempFile* xml = generateFile();
 		xml->setAutoDelete( true );
-	kdDebug(14309) << k_funcinfo << " " << xml->name() << endl;
+		kdDebug(14309) << k_funcinfo << " " << xml->name() << endl;
 
-	if ( justXml )
-	{
-		m_output = xml;
-		xml = 0L;
-	}
-	else
-	{
-		// transform XML to the final format
-		m_output = new KTempFile();
-		m_output->setAutoDelete( true );
-		if ( !transform( xml, m_output ) )
+		if ( justXml )
 		{
-			error = true;
-			delete m_output;
-			m_output = 0L;
+			m_output = xml;
+			xml = 0L;
 		}
-		delete xml; // might make debugging harder!
-	}
+		else
+		{
+			// transform XML to the final format
+			m_output = new KTempFile();
+			m_output->setAutoDelete( true );
+			if ( !transform( xml, m_output ) )
+			{
+				error = true;
+				delete m_output;
+				m_output = 0L;
+			}
+			delete xml; // might make debugging harder!
+		}
 
 		// upload it to the specified URL
 		KURL src( m_output->name() );
@@ -232,11 +232,11 @@ KTempFile* WebPresencePlugin::generateFile()
 			QDomElement acc = doc.createElement( "account" );
 			//output += h.openTag( "account" );
 
-		QDomElement protoName = doc.createElement( "protocol" );
-		QDomText protoNameText = doc.createTextNode(
-				account->protocol()->pluginId() );
-		protoName.appendChild( protoNameText );
-		acc.appendChild( protoName );
+			QDomElement protoName = doc.createElement( "protocol" );
+			QDomText protoNameText = doc.createTextNode(
+					account->protocol()->pluginId() );
+			protoName.appendChild( protoNameText );
+			acc.appendChild( protoName );
 
 			Kopete::Contact* me = account->myself();
 			QString displayName = me->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
