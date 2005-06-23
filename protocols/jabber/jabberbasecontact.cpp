@@ -97,15 +97,21 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 	 */
 	setDontSync ( true );
 
-	// only update the alias if its not empty
-	if ( !item.name().isEmpty () )
+	// The myself contact is not in the roster on server, ignore this code
+	// because the myself MetaContact displayname become the latest 
+	// Jabber acccount jid.
+	if( metaContact() != Kopete::ContactList::self()->myself() )
 	{
-		metaContact()->setDisplayName ( item.name () );
-	}
-	else
-	{
-		// no alias has been set, set it to the contact id
-		metaContact()->setDisplayName ( item.jid().bare () );
+		// only update the alias if its not empty
+		if ( !item.name().isEmpty () )
+		{
+			metaContact()->setDisplayName ( item.name () );
+		}
+		else
+		{
+			// no alias has been set, set it to the contact id
+			metaContact()->setDisplayName ( item.jid().bare () );
+		}
 	}
 
 	/*
