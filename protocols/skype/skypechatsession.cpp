@@ -27,6 +27,9 @@
 #include <kopetemetacontact.h>
 #include <qdict.h>
 #include <qstring.h>
+#include <kaction.h>
+#include <klocale.h>
+#include <kgenericfactory.h>
 
 static Kopete::MetaContact *dummyContacts = new Kopete::MetaContact();
 
@@ -74,6 +77,10 @@ class SkypeChatSessionPrivate {
 				return dummyContact = new ChatDummyContact(account, chatId);
 			}
 		};
+		///The action to call the user(s)
+		KAction *callAction;
+		///The contact if any (and one)
+		SkypeContact *contact;
 };
 
 static Kopete::ContactPtrList constructList(SkypeContact *contact) {
@@ -87,12 +94,22 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact)
 		Kopete::ChatSession(account->myself(), constructList(contact), account->protocol(), (char *)0L) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
+	setInstance(KGenericFactory<SkypeProtocol>::instance());
+
 	//create the D-pointer
 	d = new SkypeChatSessionPrivate(account->protocol(), account);
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
 	connect(this, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)), this, SLOT(message(Kopete::Message& )));//this will send the messages from this user going out
 	account->prepareChatSession(this);
 	d->isMulti = false;
+
+	d->callAction = new KAction(i18n("Call"), QString::fromLatin1("call"), 0, this, SLOT(callChatSession()), actionCollection(), "callSkypeContactFromChat");
+	connect(contact, SIGNAL(setCallPossible(bool )), d->callAction, SLOT(setEnabled(bool )));
+	connect(this, SIGNAL(becameMultiChat(const QString&, SkypeChatSession* )), this, SLOT(disallowCall()));
+
+	d->contact = contact;
+
+	setXMLFile("skypechatui.rc");
 }
 
 SkypeChatSession::SkypeChatSession(SkypeAccount *account, const QString &session, const Kopete::ContactPtrList &users) :
@@ -105,6 +122,11 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, const QString &session
 	d->isMulti = true;
 	d->chatId = session;
 	emit updateChatId("", session, this);
+
+	d->callAction = new KAction(i18n("Call (by Skype)"), QString::fromLatin1("call"), 0, this, SLOT(callChatSession()), actionCollection(), "callSkypeContactFromChat");
+	d->callAction->setEnabled(false);//This is temporary until I make calling multiple people work
+
+	setXMLFile("skypechatui.rc");
 }
 
 SkypeChatSession::~SkypeChatSession() {
@@ -164,6 +186,20 @@ void SkypeChatSession::sentMessage(const QPtrList<Kopete::Contact> *recv, const 
 	mes = new Kopete::Message(d->account->myself(), *recv, body, Kopete::Message::Outbound);
 	appendMessage(*mes);
 	delete mes;
+}
+
+void SkypeChatSession::disallowCall() {
+	d->callAction->setEnabled(false);
+	
+	if (d->contact) {
+		disconnect(d->contact, SIGNAL(setCallPossible(bool )), d->callAction, SLOT(setEnabled(bool )));
+		d->contact = 0L;
+	}
+}
+
+void SkypeChatSession::callChatSession() {
+	if (d->contact)///@todo find a better way to do it later to allow multiple people to call
+		d->contact->call();
 }
 
 #include "skypechatsession.moc"

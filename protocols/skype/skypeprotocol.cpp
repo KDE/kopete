@@ -85,7 +85,6 @@ SkypeProtocol::SkypeProtocol(QObject *parent, const char *name, const QStringLis
 	connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)), this, SLOT(updateCallActionStatus()));
 }
 
-
 SkypeProtocol::~SkypeProtocol() {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 	//release the memory
@@ -144,6 +143,11 @@ void SkypeProtocol::updateCallActionStatus() {
 	
 	bool enab = false;
 	
+	if (Kopete::ContactList::self()->selectedMetaContacts().count() != 1) {
+		d->callContactAction->setEnabled(false);
+		return;
+	}
+
 	//Run trough all selected contacts and find if there is any skype contact
 	const QPtrList<Kopete::MetaContact> &selected = Kopete::ContactList::self()->selectedMetaContacts();
 	for (QPtrList<Kopete::MetaContact>::const_iterator met = selected.begin(); met != selected.end(); ++met) {
@@ -175,7 +179,7 @@ void SkypeProtocol::callContacts() {
 				SkypeContact *thisCont = static_cast<SkypeContact *> (*con);
 				if (thisCont->canCall()) {
 					if (!list.isEmpty()) 
-						list += ", ";
+						list += " , ";
 					list += thisCont->contactId();
 				}
 			}

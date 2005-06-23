@@ -46,8 +46,6 @@ class SkypeContact : public Kopete::Contact
 	private slots:
 		///This will note that the session was destroyed and therefore can't be used again. As well used when the chat becomes multi-user so it no longer belongs to this contact
 		void removeChat();
-		///This slot calls a contact
-		void call();
 		///Enables or disables the call action depending on if it can be called or not.
 		void enableCall(bool value);
 		///The status changed, so there should be update of the availiblity of some things
@@ -107,6 +105,8 @@ class SkypeContact : public Kopete::Contact
 		 * @param connected Are we connected now?
 		 */
 		void connectionStatus(bool connected);
+		///This slot calls a contact
+		void call();
 	signals:
 		/**
 		 * There is a request to get/refresh the contact info from skype

@@ -12,4 +12,7 @@
 	<ToolBar fullWidth="true" name="mainToolBar" noMerge="1"><Text>Main Toolbar</Text>
                 <Action name="callSkypeContact"/>
         </ToolBar>
+	<Menu name="contactlistitems_popup">
+		<Action name="callSkypeContact" />
+	</Menu>
 </kpartgui>

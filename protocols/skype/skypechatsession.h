@@ -38,7 +38,13 @@ class SkypeChatSession : public Kopete::ChatSession
 		SkypeChatSessionPrivate *d;
 	private slots:
 		///sends message to the skype user who this chat belongs to
-		void message(Kopete::Message&);
+		void message(Kopete::Message&); 
+		/**This disables permanently the call button when the chat becomes a multi-user chat
+		 * @todo make this unneeded and allow multiple-user calls
+		 */
+		void disallowCall();
+		///Do a call to all participants of the chat (in future, now it allows only one at onece)	
+		void callChatSession();
 	public:
 		/**
 		 * Constructor. The chat session will be created with first message comming out.
