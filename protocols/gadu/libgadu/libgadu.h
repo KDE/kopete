@@ -943,8 +943,8 @@ int gg_image_queue_remove(struct gg_session *s, struct gg_image_queue *q, int fr
 #define GG_HTTPS_PORT 443
 #define GG_HTTP_USERAGENT "Mozilla/4.7 [en] (Win98; I)"
 
-#define GG_DEFAULT_CLIENT_VERSION "6, 0, 0, 132"
-#define GG_DEFAULT_PROTOCOL_VERSION 0x20
+#define GG_DEFAULT_CLIENT_VERSION "6, 0, 0, 158"
+#define GG_DEFAULT_PROTOCOL_VERSION 0x24
 #define GG_DEFAULT_TIMEOUT 30
 #define GG_HAS_AUDIO_MASK 0x40000000
 #define GG_ERA_OMNIX_MASK 0x04000000
