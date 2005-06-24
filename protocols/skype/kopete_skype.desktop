@@ -17,6 +17,7 @@ X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=Skype
 Comment=Skype protocol plugin (only wrapper!)
+Comment[cs]=Modul pro protokol Skype (pouze wrapper!)
 Comment[et]=Skype protokolli plugin (ainult kest!)
 Comment[fr]=Module pour le protocole Skype (uniquement une encapsulation)
 Comment[it]=Plugin protocollo Skype (solo wrapper!)
