@@ -43,7 +43,8 @@
 
 namespace Kopete {
 
-const QString NSCID_ELEM = QString::fromLatin1( "nameSourceContactId" );
+// this is just to save typing
+const QString NSCID_ELEM = QString::fromLatin1("nameSourceContactId" );
 const QString NSPID_ELEM = QString::fromLatin1( "nameSourcePluginId" );
 const QString NSAID_ELEM = QString::fromLatin1( "nameSourceAccountId" );
 const QString PSCID_ELEM = QString::fromLatin1( "photoSourceContactId" );
@@ -52,19 +53,27 @@ const QString PSAID_ELEM = QString::fromLatin1( "photoSourceAccountId" );
 
 class  MetaContact::Private
 { public:
-
 	QPtrList<Contact> contacts;
+
+	// property sources	
+	PropertySource photoSource;
+	PropertySource displayNameSource;
+
+	// when source is contact
+	Contact *displayNameSourceContact;
+	Contact *photoSourceContact;
+	
+	// used when source is kabc
+	QString metaContactId;
+	
+	// used when source is custom
 	QString displayName;
-	QString nameSourceCID;
-	QString nameSourcePID;
-	QString nameSourceAID;
-	QString photoSourceCID;
-	QString photoSourcePID;
-	QString photoSourceAID;
+	KURL photoUrl;
+
 	QPtrList<Group> groups;
 	QMap<QString, QMap<QString, QString> > addressBook;
 	bool temporary;
-	QString metaContactId;
+	
 	OnlineStatus::StatusType onlineStatus;
 	bool photoSyncedWithKABC;
 };
@@ -74,8 +83,11 @@ MetaContact::MetaContact()
 {
 	d = new Private;
 
-	setNameSource( 0 );
-	setPhotoSource( 0 );
+	setDisplayNameSource(SourceCustom);
+	setPhotoSource(SourceCustom);
+	setDisplayNameSourceContact(0L);
+	setPhotoSourceContact(0L);
+
 	d->temporary = false;
 	d->photoSyncedWithKABC=false;
 
@@ -126,18 +138,25 @@ void MetaContact::addContact( Contact *c )
 		connect( c, SIGNAL( idleStateChanged( Kopete::Contact * ) ),
 			this, SIGNAL( contactIdleStateChanged( Kopete::Contact * ) ) );
 
-		if( d->displayName.isEmpty() )
-		{
-			/*kdDebug(14010) << k_funcinfo <<
-				"empty displayname, using contacts display" << endl;*/
-			QString nick=c->property( Global::Properties::self()->nickName()).value().toString();
-			setDisplayName( nick.isEmpty() ? c->contactId() : nick );
-			setNameSource( c );
-		}
-
 		emit contactAdded(c);
 
 		updateOnlineStatus();
+		
+		// if this is the first contact, probbaly was created by a protocol
+		// so it has empty custom properties, then set sources to the contact
+		if ( d->contacts.count() == 1 )
+		{
+			if ( displayName().isEmpty() )
+			{
+				setDisplayNameSourceContact(c);
+				setDisplayNameSource(SourceContact);
+			}
+			if ( photo().isNull() )
+			{
+				setPhotoSourceContact(c);
+				setPhotoSource(SourceContact);
+			}
+		}
 	}
 }
 
@@ -172,18 +191,54 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 	else
 	{
 		// must check before removing, or will always be false
-		bool wasTrackingName = ( nameSource() == c );
-		// must check before removing, or will always be false
-		bool wasTrackingPhoto = ( photoSource() == c );
+		bool wasTrackingName = ( (displayNameSourceContact() == c) && (displayNameSource() == SourceContact) );
+		bool wasTrackingPhoto = ( (photoSourceContact() == c) && (photoSource() == SourceContact) );
+		// save for later use
+		QString currDisplayName = displayName();
 
 		d->contacts.remove( c );
 
-		// Set new name and photo tracking (or disable if no subcontacts left -- implicit
-		if( wasTrackingName )
-			setNameSource( d->contacts.first() );
+		if ( wasTrackingName )
+		{
+			// Oh! this contact was the source for the metacontact's name
+			// lets do something
+			// is this the only contact?
+			if ( d->contacts.isEmpty() )
+			{
+				// fallback to a custom name as we don't have
+				// more contacts to chose as source.
+				setDisplayNameSource(SourceCustom);
+				// perhaps the custom display name was empty
+				// no problems baby, I saved the old one.
+				setDisplayName(currDisplayName);
+			}
+			else
+			{
+				// we didn't fallback to SourceCustom above so lets use the next
+				// contact as source
+				setDisplayNameSourceContact( d->contacts.first() );
+			}
+		}		
 
-		if( wasTrackingPhoto )
-			setPhotoSource( 0L );
+		if ( wasTrackingPhoto )
+		{
+			// Oh! this contact was the source for the metacontact's name
+			// lets do something
+			// is this the only contact?
+			if ( d->contacts.isEmpty() )
+			{
+				// fallback to a custom name as we don't have
+				// more contacts to chose as source.
+				setPhotoSource(SourceCustom);
+				// FIXME set the custom photo
+			}
+			else
+			{
+				// we didn't fallback to SourceCustom above so lets use the next
+				// contact as source
+				setPhotoSourceContact( d->contacts.first() );
+			}
+		}		
 
 		if(!deleted)
 		{  //If this function is tell by slotContactRemoved, c is maybe just a QObject
@@ -233,6 +288,34 @@ Contact *MetaContact::findContact( const QString &protocolId, const QString &acc
 	// Contact not found
 	return 0L;
 }
+
+void MetaContact::setDisplayNameSource(PropertySource source)
+{
+	QString oldName = displayName();
+	d->displayNameSource = source;
+	QString newName = displayName();
+	if ( oldName != newName)
+		emit displayNameChanged( oldName, newName );
+}
+
+MetaContact::PropertySource MetaContact::displayNameSource() const
+{
+	return d->displayNameSource;
+}
+
+void MetaContact::setPhotoSource(PropertySource source)
+{
+	PropertySource oldSource = photoSource();
+	d->photoSource = source;	
+	if ( source != oldSource )
+		emit photoChanged();
+}
+
+MetaContact::PropertySource MetaContact::photoSource() const
+{
+	return d->photoSource;
+}
+
 
 Contact *MetaContact::sendMessage()
 {
@@ -492,9 +575,6 @@ void MetaContact::setDisplayName( const QString &name )
 	const QString old = d->displayName;
 	d->displayName = name;
 
-	//The name is set by the user, disable tracking
-	setNameSource( 0 );
-
 	emit displayNameChanged( old , name );
 
 	for( QPtrListIterator<Kopete::Contact> it( d->contacts ) ; it.current(); ++it )
@@ -502,178 +582,220 @@ void MetaContact::setDisplayName( const QString &name )
 
 }
 
-QString MetaContact::displayName() const
+QString MetaContact::customDisplayName() const
 {
 	return d->displayName;
 }
 
+QString MetaContact::displayName() const
+{
+	PropertySource source = displayNameSource();
+	if ( source == SourceKABC )
+	{
+		// kabc source, try to get from addressbook
+		// if the metacontact has a kabc association
+		if ( !metaContactId().isEmpty() )
+			return nameFromKABC(metaContactId());
+	}
+	else if ( source == SourceContact )
+	{
+		if ( displayNameSourceContact() )
+			return nameFromContact(displayNameSourceContact());
+	}
+	return d->displayName;
+}
+
+QString nameFromKABC( const QString &id ) /*const*/
+{
+	KABC::AddressBook* ab = KABCPersistence::self()->addressBook();
+	if ( ! id.isEmpty() && !id.contains(':') )
+	{
+		KABC::Addressee theAddressee = ab->findByUid(id);
+		if ( theAddressee.isEmpty() )
+		{
+			kdDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << id << " ) " << " in current address book" << endl;
+		}
+		else
+		{
+			return theAddressee.formattedName();
+		}
+	}
+	// no kabc association, return null image
+	return QString::null;
+}
+
+QString nameFromContact( Kopete::Contact *c) /*const*/
+{
+	if ( !c ) 
+		return QString::null;
+
+	QString contactName;
+	if ( c->hasProperty( Kopete::Global::Properties::self()->nickName().key() ) )
+ 		contactName = c->property( Global::Properties::self()->nickName()).value().toString();
+	return contactName.isEmpty() ? c->contactId() : contactName;
+}
+
+KURL MetaContact::customPhoto() const
+{
+	return d->photoUrl;
+}
+
+void MetaContact::setPhoto( const KURL &url )
+{
+	d->photoUrl = url;
+	if ( photoSource() == SourceCustom )
+		emit photoChanged();
+}
+
 QImage MetaContact::photo() const
 {
-	if ( photoSource() == 0L )
+	if ( photoSource() == SourceKABC )
 	{
-		// no photo source, try to get from addressbook
+		// kabc source, try to get from addressbook
 		// if the metacontact has a kabc association
+		if ( ! metaContactId().isEmpty() )
+			return photoFromKABC(metaContactId());
+	}
+	else if ( photoSource() == SourceContact )
+	{
+		if ( ! photoSourceContact() == 0L )
+			return photoFromContact(photoSourceContact());
+	}
 
-		KABC::AddressBook* ab = KABCPersistence::self()->addressBook();
+	return photoFromCustom();
+}
 
-		// If the metacontact is linked to a kabc entry
-		if ( !d->metaContactId.isEmpty() && !d->metaContactId.contains(':') )
+QImage MetaContact::photoFromCustom() const
+{
+	if ( d->photoUrl.isEmpty() || !d->photoUrl.isValid() )
+		return QImage();
+
+	// FIXME not sure if this is so easy :-P
+	// TODO implement cache
+	return QImage(d->photoUrl.path());
+}
+
+QImage photoFromContact( Kopete::Contact *contact) /*const*/
+{
+	if ( contact == 0L )
+		return QImage();
+
+	QVariant photoProp;
+	if ( contact->hasProperty( Kopete::Global::Properties::self()->photo().key() ) )
+		photoProp = contact->property( Kopete::Global::Properties::self()->photo().key() ).value();
+	
+	QImage img;
+	if(photoProp.canCast( QVariant::Image ))
+		img=photoProp.toImage();
+	else if(photoProp.canCast( QVariant::Pixmap ))
+		img=photoProp.toPixmap().convertToImage();
+	else if(!photoProp.asString().isEmpty())
+	{
+		img=QPixmap( photoProp.toString() ).convertToImage();
+	}
+	return img;
+}
+
+QImage photoFromKABC( const QString &id ) /*const*/
+{
+	KABC::AddressBook* ab = KABCPersistence::self()->addressBook();
+	if ( ! id.isEmpty() && !id.contains(':') )
+	{
+		KABC::Addressee theAddressee = ab->findByUid(id);
+		if ( theAddressee.isEmpty() )
 		{
-			KABC::Addressee theAddressee = ab->findByUid( metaContactId() );
-			if ( theAddressee.isEmpty() )
+			kdDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << id << " ) " << " in current address book" << endl;
+		}
+		else
+		{
+			KABC::Picture pic = theAddressee.photo();
+			if ( pic.data().isNull() && pic.url().isEmpty() )
+				pic = theAddressee.logo();
+
+			if ( pic.isIntern())
 			{
-				kdDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << d->metaContactId << " ) " <<  displayName() << " in current address book" << endl;
+				return pic.data();
 			}
 			else
 			{
-				KABC::Picture pic = theAddressee.photo();
-				if ( pic.data().isNull() && pic.url().isEmpty() )
-					pic = theAddressee.logo();
-
-				if ( pic.isIntern())
-				{
-					return pic.data();
-				}
-				else
-				{
-					return QPixmap( pic.url() ).convertToImage();
-				}
+				return QPixmap( pic.url() ).convertToImage();
 			}
 		}
-		// no kabc association, return null image
-		return QImage();
 	}
-	else
+	// no kabc association, return null image
+	return QImage();
+}
+
+Contact *MetaContact::displayNameSourceContact() const
+{
+	return d->displayNameSourceContact;
+}
+
+Contact *MetaContact::photoSourceContact() const
+{
+	return d->photoSourceContact;
+}
+
+void MetaContact::setDisplayNameSourceContact( Contact *contact )
+{
+	Contact *old = d->displayNameSourceContact;
+	d->displayNameSourceContact = contact;
+	if ( displayNameSource() == SourceContact )
 	{
-		QVariant photoProp=photoSource()->property( Kopete::Global::Properties::self()->photo().key() ).value();
-		QImage img;
-		if(photoProp.canCast( QVariant::Image ))
-			img=photoProp.toImage();
-		else if(photoProp.canCast( QVariant::Pixmap ))
-			img=photoProp.toPixmap().convertToImage();
-		else if(!photoProp.asString().isEmpty())
-		{
-			img=QPixmap( photoProp.toString() ).convertToImage();
-		}
-		return img;
+		emit displayNameChanged( nameFromContact(old), nameFromContact(contact));
 	}
 }
 
-Contact *MetaContact::nameSource() const
+void MetaContact::setPhotoSourceContact( Contact *contact )
 {
-	// quick-out for contacts not tracking
-	if( d->nameSourceCID.isEmpty() )
-		return 0;
-
-	for( QPtrListIterator< Contact > it ( d->contacts ); it.current(); ++it )
+	d->photoSourceContact = contact;
+	
+	if ( photoSource() == SourceContact )
 	{
-		if( d->nameSourceCID == it.current()->contactId() &&
-			d->nameSourcePID == it.current()->protocol()->pluginId() &&
-			d->nameSourceAID == it.current()->account()->accountId() )
-		{
-			return it;
-		}
+		emit photoChanged();
 	}
-
-	// Invalid tracking information.  We don't clear the tracking  it in case the contact
-	// is only temporarily unavailable (ie. plugin was disabled / broken).
-	return 0;
-}
-
-Contact *MetaContact::photoSource() const
-{
-	// quick-out for contacts not tracking
-	if( d->photoSourceCID.isEmpty() )
-		return 0;
-
-	for( QPtrListIterator< Contact > it ( d->contacts ); it.current(); ++it )
-	{
-		if( d->photoSourceCID == it.current()->contactId() &&
-			d->photoSourcePID == it.current()->protocol()->pluginId() &&
-			d->photoSourceAID == it.current()->account()->accountId() )
-		{
-			return it;
-		}
-	}
-
-	// Invalid tracking information.  We don't clear the tracking  it in case the contact
-	// is only temporarily unavailable (ie. plugin was disabled / broken).
-	return 0;
-}
-
-void MetaContact::setNameSource( Contact *contact )
-{
-	if ( contact != 0 )
-	{
-		QString nick = contact->property( Global::Properties::self()->nickName() ).value().toString();
-		setDisplayName( nick.isEmpty() ? contact->contactId() : nick );
-		// We do this after, since setDisplayName clears it.
-		d->nameSourceCID = contact->contactId();
-		d->nameSourcePID = contact->protocol()->pluginId();
-		d->nameSourceAID = contact->account()->accountId();
-	}
-	else
-	{
-		// Clear our name tracking
-		d->nameSourceCID = "";
-		d->nameSourcePID = "";
-		d->nameSourceAID = "";
-	}
-	emit persistentDataChanged();
-}
-
-void MetaContact::setPhotoSource( Contact *contact )
-{
-	if ( contact != 0 )
-	{
-		d->photoSourceCID = contact->contactId();
-		d->photoSourcePID = contact->protocol()->pluginId();
-		d->photoSourceAID = contact->account()->accountId();
-	}
-	else
-	{
-		// Clear our name tracking
-		d->photoSourceCID = "";
-		d->photoSourcePID = "";
-		d->photoSourceAID = "";
-	}
-	emit persistentDataChanged();
-	emit photoChanged();
 }
 
 void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
-		const QVariant&, const QVariant &newValue  )
+		const QVariant &oldValue, const QVariant &newValue  )
 {
-	if( key == Global::Properties::self()->nickName().key() )
+	if ( displayNameSource() == SourceContact )
 	{
-		Contact* ns = nameSource();
-		bool isTrackedSubcontact = ( subcontact == ns );
-		QString newNick=newValue.toString();
-
-		if( isTrackedSubcontact && !newNick.isEmpty() )
+		if( key == Global::Properties::self()->nickName().key() )
 		{
-			// The subcontact we are tracking just changed its name.
-			setDisplayName( newNick );
-			//because nameSource is removed in setDisplayName
-			setNameSource( ns );
-		}
-	}
-	else if ( key == Global::Properties::self()->photo().key() )
-	{
-		if(photoSource() == 0L && !newValue.isNull() &&   photo().isNull() )
-		{
-			setPhotoSource(subcontact);
-		}
-		else if(photoSource() == subcontact)
-		{
-			if(d->photoSyncedWithKABC)
-				setPhotoSyncedWithKABC(true);
-			emit photoChanged();
+			if (displayNameSourceContact() == subcontact)
+			{
+				emit displayNameChanged( oldValue.toString(), newValue.toString());
+			}
+			else
+			{
+				// HACK the displayName that changed is not from the contact we are tracking, but
+				// as the current one is null, lets use this new one
+				if (displayName().isEmpty())
+					setDisplayNameSourceContact(subcontact);
+			}
 		}
 	}
 
-	//TODO:  check if the property was persistent, and emit, not only when it's the displayname
-	emit persistentDataChanged();
+	if (photoSource() == SourceContact)
+	{
+		if ( key == Global::Properties::self()->photo().key() )
+		{
+			if (photoSourceContact() != subcontact)
+			{
+				// HACK the displayName that changed is not from the contact we are tracking, but
+				// as the current one is null, lets use this new one
+				if (photo().isNull())
+					setPhotoSourceContact(subcontact);
+			}
+			else if(photoSourceContact() == subcontact)
+			{
+				if(d->photoSyncedWithKABC)
+					setPhotoSyncedWithKABC(true);
+				emit photoChanged();
+			}
+		}
+	}
 }
 
 void MetaContact::moveToGroup( Group *from, Group *to )
@@ -770,25 +892,68 @@ const QDomElement MetaContact::toXML()
 	metaContact.appendChild( metaContact.createElement( QString::fromLatin1( "meta-contact" ) ) );
 	metaContact.documentElement().setAttribute( QString::fromLatin1( "contactId" ), metaContactId() );
 
+	// the custom display name, used for the custom name source
 	QDomElement displayName = metaContact.createElement( QString::fromLatin1("display-name" ) );
 	displayName.appendChild( metaContact.createTextNode( d->displayName ) );
-	if ( !d->nameSourceCID.isEmpty() )
-	{
-		displayName.setAttribute( NSCID_ELEM, d->nameSourceCID );
-		displayName.setAttribute( NSPID_ELEM, d->nameSourcePID );
-		displayName.setAttribute( NSAID_ELEM, d->nameSourceAID );
-	}
 	metaContact.documentElement().appendChild( displayName );
+	QDomElement photo = metaContact.createElement( QString::fromLatin1("photo" ) );
+	KURL photoUrl = d->photoUrl;
+	photo.appendChild( metaContact.createTextNode( photoUrl.url() ) );
+	metaContact.documentElement().appendChild( photo );
+
+	// Property sources
+	QDomElement propertySources = metaContact.createElement( QString::fromLatin1("property-sources" ) );
+	QDomElement _nameSource = metaContact.createElement( QString::fromLatin1("name") );
+	QDomElement _photoSource = metaContact.createElement( QString::fromLatin1("photo") );
+
+	// set the contact source for display name
+	if ( displayNameSource() == SourceContact )
+		_nameSource.setAttribute(QString::fromLatin1("source"), QString::fromLatin1("contact"));
+	else if (displayNameSource() == SourceKABC )
+		_nameSource.setAttribute(QString::fromLatin1("source"), QString::fromLatin1("addressbook"));
+	else if (displayNameSource() == SourceCustom )
+		_nameSource.setAttribute(QString::fromLatin1("source"), QString::fromLatin1("custom"));
+	else
+		_nameSource.setAttribute(QString::fromLatin1("source"), QString::fromLatin1("custom"));
+	
+	// set contact source metadata
+	if (displayNameSourceContact())
+	{
+		kdDebug(14010) << k_funcinfo << "serializing name source " << nameFromContact(displayNameSourceContact()) << endl;
+		QDomElement contactNameSource = metaContact.createElement( QString::fromLatin1("contact-source") );
+		contactNameSource.setAttribute( NSCID_ELEM, displayNameSourceContact()->contactId() );
+		contactNameSource.setAttribute( NSPID_ELEM, displayNameSourceContact()->protocol()->pluginId() );
+		contactNameSource.setAttribute( NSAID_ELEM, displayNameSourceContact()->account()->accountId() );
+		_nameSource.appendChild( contactNameSource );
+	}
+	// set the contact source for photo
+	if ( photoSource() == SourceContact )
+		_photoSource.setAttribute(QString::fromLatin1("source"), QString::fromLatin1("contact"));
+	else if (photoSource() == SourceKABC )
+		_photoSource.setAttribute(QString::fromLatin1("source"), QString::fromLatin1("addressbook"));
+	else if (photoSource() == SourceCustom )
+		_photoSource.setAttribute(QString::fromLatin1("source"), QString::fromLatin1("custom"));
+	else
+		_photoSource.setAttribute(QString::fromLatin1("source"), QString::fromLatin1("custom"));
 
 	if( !d->metaContactId.isEmpty()  )
+		photo.setAttribute( QString::fromLatin1("syncWithKABC") , QString::fromLatin1( d->photoSyncedWithKABC ? "true" : "false" ) );
+
+	if (photoSourceContact())
 	{
-		QDomElement photo = metaContact.createElement( QString::fromLatin1("photo" ) );
-		photo.setAttribute( QString::fromLatin1("syncWithKABC") , QString::fromLatin1( d->photoSyncedWithKABC ? "1" : "0" ) );
-		photo.setAttribute( PSCID_ELEM, d->photoSourceCID );
-		photo.setAttribute( PSPID_ELEM, d->photoSourcePID );
-		photo.setAttribute( PSAID_ELEM, d->photoSourceAID );
-		metaContact.documentElement().appendChild( photo );
+		kdDebug(14010) << k_funcinfo << "serializing photo source " << nameFromContact(photoSourceContact()) << endl;
+		// set contact source metadata for photo
+		QDomElement contactPhotoSource = metaContact.createElement( QString::fromLatin1("contact-source") );
+		contactPhotoSource.setAttribute( NSCID_ELEM, photoSourceContact()->contactId() );
+		contactPhotoSource.setAttribute( NSPID_ELEM, photoSourceContact()->protocol()->pluginId() );
+		contactPhotoSource.setAttribute( NSAID_ELEM, photoSourceContact()->account()->accountId() );
+		_photoSource.appendChild( contactPhotoSource );
 	}
+	// apend name and photo sources to property sources
+	propertySources.appendChild(_nameSource);
+	propertySources.appendChild(_photoSource);
+	
+	metaContact.documentElement().appendChild(propertySources);
 
 	// Store groups
 	if ( !d->groups.isEmpty() )
@@ -821,6 +986,12 @@ bool MetaContact::fromXML( const QDomElement& element )
 	if( !element.hasChildNodes() )
 		return false;
 
+	bool oldPhotoTracking = false;
+	bool oldNameTracking = false;
+	// temporal
+	QString nameSourceCID, nameSourcePID, nameSourceAID;
+	QString photoSourceCID, photoSourcePID, photoSourceAID;
+
 	QString strContactId = element.attribute( QString::fromLatin1("contactId") );
 	if( !strContactId.isEmpty() )
 		d->metaContactId = strContactId;
@@ -828,23 +999,91 @@ bool MetaContact::fromXML( const QDomElement& element )
 	QDomElement contactElement = element.firstChild().toElement();
 	while( !contactElement.isNull() )
 	{
+		
 		if( contactElement.tagName() == QString::fromLatin1( "display-name" ) )
-		{
-			if ( contactElement.text().isEmpty() )
-				return false;
+		{ // custom display name, used for the custom name source
+			
+			// WTF, why were we not loading the metacontact if nickname was empty.
+			//if ( contactElement.text().isEmpty() )
+			//	return false;
 			d->displayName = contactElement.text();
 
-			d->nameSourceCID = contactElement.attribute( NSCID_ELEM );
-			d->nameSourcePID = contactElement.attribute( NSPID_ELEM );
-			d->nameSourceAID = contactElement.attribute( NSAID_ELEM );
-
+			if ( contactElement.hasAttribute(NSCID_ELEM) && contactElement.hasAttribute(NSPID_ELEM) && contactElement.hasAttribute(NSAID_ELEM))
+			{
+				oldNameTracking = true;
+				kdDebug(14010) << k_funcinfo << "old name tracking" << endl;
+				// retrieve deprecated data (now stored in property-sources)
+				// save temporarely, we will find a Contact* with this later
+				nameSourceCID = contactElement.attribute( NSCID_ELEM );
+				nameSourcePID = contactElement.attribute( NSPID_ELEM );
+				nameSourceAID = contactElement.attribute( NSAID_ELEM );
+			}
+			else
+				kdDebug(14010) << k_funcinfo << "no old name tracking" << endl;
 		}
 		else if( contactElement.tagName() == QString::fromLatin1( "photo" ) )
+		{ // custom photo, used for custom photo source
+			d->photoUrl = KURL(contactElement.text());
+			d->photoSyncedWithKABC = (contactElement.attribute(QString::fromLatin1("syncWithKABC")) == QString::fromLatin1("1")) || (contactElement.attribute(QString::fromLatin1("syncWithKABC")) == QString::fromLatin1("true"));
+
+			// retrieve deprecated data (now stored in property-sources)
+			// save temporarely, we will find a Contact* with this later
+			if ( contactElement.hasAttribute(PSCID_ELEM) && contactElement.hasAttribute(PSPID_ELEM) && contactElement.hasAttribute(PSAID_ELEM))
+			{
+				oldPhotoTracking = true;
+				kdDebug(14010) << k_funcinfo << "old photo tracking" << endl;
+				photoSourceCID = contactElement.attribute( PSCID_ELEM );
+				photoSourcePID = contactElement.attribute( PSPID_ELEM );
+				photoSourceAID = contactElement.attribute( PSAID_ELEM );
+			}
+			else
+				kdDebug(14010) << k_funcinfo << "no old photo tracking" << endl;
+		}
+		else if( contactElement.tagName() == QString::fromLatin1( "property-sources" ) )
 		{
-			d->photoSourceCID = contactElement.attribute( PSCID_ELEM );
-			d->photoSourcePID = contactElement.attribute( PSPID_ELEM );
-			d->photoSourceAID = contactElement.attribute( PSAID_ELEM );
-			d->photoSyncedWithKABC = contactElement.attribute( QString::fromLatin1( "syncWithKABC" ) ) == QString::fromLatin1("1") ;
+			QDomNode property = contactElement.firstChild();
+			while( !property.isNull() )
+			{
+				QDomElement propertyElement = property.toElement();
+
+				if( propertyElement.tagName() == QString::fromLatin1( "name" ) )
+				{
+					QString source = propertyElement.attribute( QString::fromLatin1("source") );
+					setDisplayNameSource(stringToSource(source));
+					// find contact sources now.
+					QDomNode propertyParam = propertyElement.firstChild();
+					while( !propertyParam.isNull() )
+					{
+						QDomElement propertyParamElement = propertyParam.toElement();
+						if( propertyParamElement.tagName() == QString::fromLatin1( "contact-source" ) )
+						{
+							nameSourceCID = propertyParamElement.attribute( NSCID_ELEM );
+							nameSourcePID = propertyParamElement.attribute( NSPID_ELEM );
+							nameSourceAID = propertyParamElement.attribute( NSAID_ELEM );
+						}
+						propertyParam = propertyParam.nextSibling();
+					}
+				}
+				if( propertyElement.tagName() == QString::fromLatin1( "photo" ) )
+				{
+					QString source = propertyElement.attribute( QString::fromLatin1("source") );
+					setPhotoSource(stringToSource(source));
+					// find contact sources now.
+					QDomNode propertyParam = propertyElement.firstChild();
+					while( !propertyParam.isNull() )
+					{
+						QDomElement propertyParamElement = propertyParam.toElement();
+						if( propertyParamElement.tagName() == QString::fromLatin1( "contact-source" ) )
+						{
+							photoSourceCID = propertyParamElement.attribute( NSCID_ELEM );
+							photoSourcePID = propertyParamElement.attribute( NSPID_ELEM );
+							photoSourceAID = propertyParamElement.attribute( NSAID_ELEM );
+						}
+						propertyParam = propertyParam.nextSibling();
+					}
+				}
+				property = property.nextSibling();
+			}
 		}
 		else if( contactElement.tagName() == QString::fromLatin1( "groups" ) )
 		{
@@ -885,6 +1124,42 @@ bool MetaContact::fromXML( const QDomElement& element )
 		contactElement = contactElement.nextSibling().toElement();
 	}
 
+	// now the subcontacts are loaded, set the name and photo sources.
+	setDisplayNameSourceContact(findContact( photoSourcePID, photoSourceAID, photoSourceCID)); 
+	setPhotoSourceContact(findContact( nameSourcePID, nameSourceAID, nameSourceCID));
+
+	if ( oldNameTracking && displayNameSourceContact() )
+	{
+		kdDebug(14010) << k_funcinfo << "Converting old name source" << endl;
+		// even if the old tracking attributes exists, they could have been null, that means custom
+			setDisplayNameSource(SourceContact);
+	}
+	else
+	{
+		// lets do the best conversion for the old name tracking
+		// if the custom display name is the same as kabc name, set the source to kabc
+		if ( !d->metaContactId.isEmpty() && ( d->displayName == nameFromKABC(d->metaContactId)) )
+			setDisplayNameSource(SourceKABC);
+		else
+			setDisplayNameSource(SourceCustom);
+	}
+
+	if ( oldPhotoTracking )
+	{
+		kdDebug(14010) << k_funcinfo << "Converting old photo source" << endl;
+		if ( photoSourceContact() )
+		{
+			setPhotoSource(SourceContact);
+		}
+		else
+		{
+			if ( !d->metaContactId.isEmpty() && !photoFromKABC(d->metaContactId).isNull())
+				setPhotoSource(SourceKABC);
+			else
+				setPhotoSource(SourceCustom);
+		}
+	}
+	
 	// If a plugin is loaded, load data cached
 	connect( Kopete::PluginManager::self(), SIGNAL( pluginLoaded(Kopete::Plugin*) ),
 		this, SLOT( slotPluginLoaded(Kopete::Plugin*) ) );
@@ -893,11 +1168,35 @@ bool MetaContact::fromXML( const QDomElement& element )
 //	if (d->contacts.count() > 1) // Does NOT work as intended
 //		d->trackChildNameChanges=false;
 
-//	kdDebug(14010) << "[Kopete::MetaContact] END fromXML(), d->trackChildNameChanges=" << d->trackChildNameChanges << "." << endl;
+	kdDebug(14010) << k_funcinfo << "END" << endl;
 	return true;
 }
 
-QString Kopete::MetaContact::addressBookField( Kopete::Plugin * /* p */, const QString &app, const QString & key ) const
+QString MetaContact::sourceToString(PropertySource source) const
+{
+	if ( source == SourceCustom )
+		return QString::fromLatin1("custom");
+	else if ( source == SourceKABC )
+		return QString::fromLatin1("addressbook");
+	else if ( source == SourceContact )
+		return QString::fromLatin1("contact");
+	else // recovery
+		return sourceToString(SourceCustom);
+}
+
+MetaContact::PropertySource MetaContact::stringToSource(const QString &name) const
+{
+	if ( name == QString::fromLatin1("custom") )
+		return SourceCustom;
+	else if ( name == QString::fromLatin1("addressbook") )
+		return SourceKABC;
+	else if ( name == QString::fromLatin1("contact") )
+		return SourceContact;
+	else // recovery
+		return SourceCustom;
+}
+
+QString MetaContact::addressBookField( Kopete::Plugin * /* p */, const QString &app, const QString & key ) const
 {
 	return d->addressBook[ app ][ key ];
 }
@@ -918,9 +1217,6 @@ void MetaContact::slotPluginLoaded( Plugin *p )
 		p->deserialize(this,map);
 	}
 }
-
-
-
 
 bool MetaContact::isTemporary() const
 {
@@ -987,10 +1283,11 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 	d->photoSyncedWithKABC=b;
 	if(b)
 	{
-		Contact *source=photoSource();
+		Contact *source= photoSourceContact();
 		if(!source)
 			return;
-		QVariant newValue=source->property( Kopete::Global::Properties::self()->photo() ).value();
+
+		QVariant newValue = source->property( Kopete::Global::Properties::self()->photo() ).value();
 		if ( !d->metaContactId.isEmpty() && !newValue.isNull())
 		{
 			KABC::Addressee theAddressee = KABCPersistence::self()->addressBook()->findByUid( metaContactId() );

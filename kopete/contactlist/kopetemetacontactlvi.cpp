@@ -290,30 +290,51 @@ void KopeteMetaContactLVI::movedToDifferentGroup()
 
 void KopeteMetaContactLVI::rename( const QString& newName )
 {
+	QString oldName = m_metaContact->displayName();
 	KopeteContactListView *lv = dynamic_cast<KopeteContactListView *>( listView() );
 	if ( lv )
 	{
 		KopeteContactListView::UndoItem *u=new KopeteContactListView::UndoItem(KopeteContactListView::UndoItem::MetaContactRename, m_metaContact);
-		if ( m_metaContact->nameSource() == 0 )
-			u->args << m_metaContact->displayName();
-		else
+		// HACK but args are strings not ints
+		u->nameSource = m_metaContact->displayNameSource();
+		// additional args
+		if ( m_metaContact->displayNameSource() == Kopete::MetaContact::SourceCustom )
 		{
-			Kopete::Contact* c = m_metaContact->nameSource();
+			u->args << m_metaContact->customDisplayName();
+		}
+		else if ( m_metaContact->displayNameSource() == Kopete::MetaContact::SourceContact )
+		{
+			Kopete::Contact* c = m_metaContact->displayNameSourceContact();
 			u->args << c->contactId() << c->protocol()->pluginId() << c->account()->accountId();
 		}
+		// source kabc requires no arguments
+
 		lv->insertUndoItem(u);
 	}
 
 	if ( newName.isEmpty() )
 	{
-		// Reset the last display name
+		// fallback to KABC
+		if ( !m_metaContact->metaContactId().isEmpty() )
+		{
+			m_metaContact->setDisplayNameSource(Kopete::MetaContact::SourceKABC);
+			if ( ! m_metaContact->displayName().isEmpty() )
+			{
+				slotDisplayNameChanged();
+				return;
+			}
+		}
+		// bad luck with KABC
+		m_metaContact->setDisplayNameSource(Kopete::MetaContact::SourceContact);
+		// TODO iterate though all subcontacts to check non empty nick
+		m_metaContact->setDisplayNameSourceContact( m_metaContact->contacts().first() );
 		slotDisplayNameChanged();
-		m_metaContact->setNameSource( m_metaContact->contacts().first() );
 	}
-	else // user changed name manually, disable tracking of contact nickname and update displayname
+	else // user changed name manually, set source to custom
 	{
-		m_metaContact->setNameSource( 0 );
+		m_metaContact->setDisplayNameSource( Kopete::MetaContact::SourceCustom );
 		m_metaContact->setDisplayName( newName );
+		slotDisplayNameChanged();
 	}
 
 	kdDebug( 14000 ) << k_funcinfo << "newName=" << newName << endl;
@@ -755,8 +776,8 @@ void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact *contact,
 			d->extraText->setText( QString::null );
 		else
 			d->extraText->setText( newVal.toString() );
-	}
-	else if ( key == QString::fromLatin1("photo") && m_metaContact->photoSource() == contact )
+	} // FIXME wtf? KopeteMetaContact also connects this signals and emits photoChanged! why no connect photoChanged to slotPhotoChanged?
+	else if ( key == QString::fromLatin1("photo") && (m_metaContact->photoSourceContact() == contact) && (m_metaContact->photoSource() == Kopete::MetaContact::SourceContact))
 	{
 		slotPhotoChanged();
 	}

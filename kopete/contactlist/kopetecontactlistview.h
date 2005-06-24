@@ -25,6 +25,7 @@
 #define KOPETE_CONTACTLISTVIEW_H
 
 #include "kopetelistview.h"
+#include "kopetemetacontact.h"
 
 #include <qpixmap.h>
 #include <qptrlist.h>
@@ -222,6 +223,7 @@ struct KopeteContactListView::UndoItem
 	QGuardedPtr<Kopete::Group> group;
 	UndoItem *next;
 	bool isStep;
+	Kopete::MetaContact::PropertySource nameSource;
 
 	UndoItem() : isStep(true) {}
 	UndoItem(Type t, Kopete::MetaContact *m=0L ,Kopete::Group *g=0L)

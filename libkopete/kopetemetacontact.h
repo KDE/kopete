@@ -2,7 +2,7 @@
     kopetemetacontact.h - Kopete Meta Contact
 
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2005 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart @ kde.org>
     Copyright (c) 2003      by Will Stephenson        <will@stevello.free-online.co.uk>
 
@@ -70,6 +70,8 @@ class KOPETE_EXPORT MetaContact : public ContactListElement, public NotifyDataOb
 
 public:
 
+	enum PropertySource { SourceContact, SourceKABC, SourceCustom };
+
 	/**
 	 * constructor
 	 */
@@ -86,14 +88,6 @@ public:
 	 * TODO: make it real
 	 */
 	QString metaContactId() const;
-
-	/**
-	 * @brief Returns this metacontact's photo avatar.
-	 *
-	 * Returns a image for the metacontact. If the metacontact is associated with
-	 * a KDE addressbook contact, it will return the picture stored in the addressbook
-	 */
-	QImage photo() const;
 
 	/**
 	 * @brief Add or change the link to a KDE addressbook (KABC) Addressee.
@@ -119,6 +113,46 @@ public:
 	Contact *findContact( const QString &protocolId, const QString &accountId, const QString &contactId );
 
 	/**
+	 * @brief Set the source of metacontact displayName
+	 *
+	 * This method selects the display name source for one
+	 * of the sources defined in @ref PropertySource
+	 * 
+	 * @see PropertySource
+	 */
+	void setDisplayNameSource(PropertySource source);
+
+	/**
+	 * @brief get the source of metacontact display name
+	 *
+	 * This method obtains the current name source for one
+	 * of the sources defined in @ref PropertySource
+	 * 
+	 * @see PropertySource
+	 */
+	PropertySource displayNameSource() const;
+
+	/**
+	 * @brief Set the source of metacontact photo
+	 *
+	 * This method selects the photo source for one
+	 * of the sources defined in @ref PropertySource
+	 * 
+	 * @see PropertySource
+	 */
+	void setPhotoSource(PropertySource source);
+
+	/**
+	 * @brief get the source of metacontact photo
+	 *
+	 * This method obtains the current photo source for one
+	 * of the sources defined in @ref PropertySource
+	 * 
+	 * @see PropertySource
+	 */
+	PropertySource photoSource() const;
+
+	/**
 	 * @brief the display name showed in the contactlist window
 	 *
 	 * The displayname is the name which should be shown almost everywere to
@@ -130,50 +164,84 @@ public:
 	 * If the protocol support alias serverside, the metacontact displayname
 	 * should probably be syncronized with the alias on the server.
 	 *
-	 * By default, if the user has not set itself any displayname, libkopete will
-	 * take care to syncronize it with the nickName property of child contact.
-	 * The subcontact used is @ref namesource 
+	 * This displayName is obtained from the source set with @ref setDisplayNameSource
 	 */
 	QString displayName() const;
 
 	/**
-	 * @brief Set the displayName.
+	 * @brief the photo showed in the contactlist window
 	 *
+	 * Returns a image for the metacontact. If the metacontact photo source is
+	 * the KDE addressbook. it will return the picture stored in the addressbook
+	 * It can also use a subcontact as the photo source.
+	 *
+	 * This photo is obtained from the source set with @ref setPhotoSource
+	 */
+	QImage photo() const;
+
+	/**
+	 * @brief Set the custom displayName.
+	 *
+	 * This display name is used when name source is Custom
 	 * this metohd may emit @ref displayNameChanged signal.
 	 * And will call @ref Kopete::Contact::sync 
 	 * 
-	 * If @ref nameSource was not null, it will automatically set it to null
-	 * 
 	 * @see displayName()
+	 * @see displayNameSource()
 	 */
 	void setDisplayName( const QString &name );
 
 	/**
-	 * @brief get the subcontact being tracked for its displayname (null if not tracking)
+	 * @brief Returns the custom display name
+	 * 
+	 * @see displayName()
+	 * @see displayNameSource()
+	 */
+	QString customDisplayName() const;
+
+	/**
+	 * @brief Returns the custom display name
+	 * 
+	 * @see displayName()
+	 * @see displayNameSource()
+	 */
+	KURL customPhoto() const;
+
+
+	/**
+	 * @brief Set the custom photo.
+	 *
+	 * This photo is used when photo source is set toCustom
+	 * this metohd may emit @ref photoChanged signal.
+	 * 
+	 * @see photo()
+	 * @see photoSource()
+	 */
+	void setPhoto( const KURL &url );
+
+	/**
+	 * @brief get the subcontact being tracked for its displayname (null if not set)
 	 *
 	 * The MetaContact will adjust its displayName() every time the
 	 * "nameSource" changes its nickname property.
 	 */
-	Contact *nameSource() const;
-
-	/**
-	 * @brief get the subcontact being tracked for its photo(null if not tracking)
-	 *
-	 * The MetaContact will adjust its photo() every time the
-	 * "nameSource" changes its name.
-	 */
-	Contact *photoSource() const;
+	Contact *displayNameSourceContact() const;
 
 	/**
 	 * @brief set the subcontact whose name is to be tracked (set to null to disable tracking)
 	 * @see nameSource
 	 */
-	void setNameSource( Contact* contact );
+	void setDisplayNameSourceContact( Contact* contact );
 
 	/**
-	 * @brief set the subcontact whose photo is to be tracked (set to null to disable tracking)
+	 * @brief get the subcontact being tracked for its photo
 	 */
-	void setPhotoSource( Contact* contact );
+	Contact *photoSourceContact() const;
+
+	/**
+	 * @brief set the subcontact to use for SourceContact source
+	 */
+	void setPhotoSourceContact( Contact* contact );
 
 	/**
 	 * @return true if when a subcontact change his photo, the photo will be set to the kabc contact.
@@ -484,12 +552,25 @@ private slots:
 	 * If a plugin is loaded, maybe data about this plugin are already cached in the metacontact
 	 */
 	void slotPluginLoaded( Kopete::Plugin *plugin );
+protected:
+	//QImage photoFromContact( Kopete::Contact *c) const;
+	//QImage photoFromKABC( const QString &id ) const;
+	QImage photoFromCustom() const;
+	//QString nameFromContact( Kopete::Contact *c) const;
+	//QString nameFromKABC( const QString &id ) const;
 
+	QString sourceToString(PropertySource source) const;
+	PropertySource stringToSource(const QString &name) const;
 private:
-
 	class Private;
 	Private *d;
 };
+
+// util functions shared with metacontact property dialog
+KOPETE_EXPORT QImage photoFromContact( Kopete::Contact *c) /*const*/;
+KOPETE_EXPORT QImage photoFromKABC( const QString &id ) /*const*/;
+KOPETE_EXPORT QString nameFromContact( Kopete::Contact *c) /*const*/;
+KOPETE_EXPORT QString nameFromKABC( const QString &id ) /*const*/;
 
 } //END namespace Kopete
 

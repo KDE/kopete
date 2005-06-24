@@ -191,8 +191,8 @@ void AddContactWizard::accept()
 	// set the display name if required
 	if ( !mDisplayName->text().isEmpty() )
 	{
-		metaContact->setNameSource( 0 );
 		metaContact->setDisplayName( mDisplayName->text() );
+		metaContact->setDisplayNameSource(Kopete::MetaContact::SourceCustom);
 	}
 	
 	// set the metacontact's groups
@@ -222,8 +222,14 @@ void AddContactWizard::accept()
 	if ( ok )
 	{
 		if ( chkAddressee->isChecked() && m_addressbookSelectorWidget->addresseeSelected() )
+		{
 			metaContact->setMetaContactId( m_addressbookSelectorWidget->addressee().uid() );
-
+			// if using kabc link, and the user didn't touch the mc name, set a kabc souce instead of custom
+			if ( chkAddressee->isChecked() && (m_addressbookSelectorWidget->addressee().realName() == mDisplayName->text()))
+			{
+				metaContact->setDisplayNameSource(Kopete::MetaContact::SourceKABC);
+			}
+		}
 		// add it to the contact list
 		Kopete::ContactList::self()->addMetaContact( metaContact );
 	}

@@ -320,7 +320,8 @@ void ContactList::loadGlobalIdentity()
 			if(syncAccount != 0)
 			{
 				// Set the display name source
-				myself()->setNameSource(syncAccount->myself());
+				myself()->setDisplayNameSource(Kopete::MetaContact::SourceContact);
+				myself()->setDisplayNameSourceContact(syncAccount->myself());
 				kdDebug(14010) << k_funcinfo << "Global Identity applied !" << endl;
 			}
 		}

@@ -22,8 +22,12 @@
 #include <kdialogbase.h>
 #include <kabc/sound.h>
 
+#include "kopetemetacontact.h"
+
 #include "kopetegvipropswidget.h"
 #include "kopetemetalvipropswidget.h"
+
+class QButtonGroup;
 
 class CustomNotificationProps;
 class KPushButton;
@@ -73,7 +77,11 @@ class KopeteMetaLVIProps: public KDialogBase
 		int m_countPhotoCapable;
 		QMap<int, Kopete::Contact *> m_withPhotoContacts;
 		QString mAddressBookUid; // the currently selected addressbook UID
-
+		
+		Kopete::MetaContact::PropertySource selectedNameSource() const;
+		Kopete::MetaContact::PropertySource selectedPhotoSource() const;
+		Kopete::Contact* selectedNameSourceContact() const;
+		Kopete::Contact* selectedPhotoSourceContact() const;
 	private slots:
 		void slotOkClicked();
 		void slotUseCustomIconsToggled( bool on );
@@ -83,8 +91,9 @@ class KopeteMetaLVIProps: public KDialogBase
 		void slotImportClicked();
 		void slotFromKABCClicked();
 		void slotOpenSoundDialog( KURLRequester *requester );
-		void slotSetPhotoComboEnabled( bool on );
-		void slotSetNameComboEnabled( bool on );
+		void slotLoadNameSources();
+		void slotLoadPhotoSources();
+		void slotEnableAndDisableWidgets();
 };
 
 #endif

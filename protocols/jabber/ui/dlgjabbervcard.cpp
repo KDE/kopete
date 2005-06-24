@@ -175,7 +175,7 @@ void dlgJabberVCard::slotSaveNickname ()
 	}
 	else
 	{
-		jc->metaContact()->setNameSource ( jc );
+		jc->metaContact()->setDisplayNameSourceContact( jc );
 	}
 
 }

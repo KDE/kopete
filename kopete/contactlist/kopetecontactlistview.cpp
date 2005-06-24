@@ -1849,32 +1849,43 @@ void KopeteContactListView::slotUndo()
 			Kopete::MetaContact *m=m_undo->metacontact;
 			if( m )
 			{
-				if( m_undo->args[1].isEmpty() )
+				// make a copy
+				QStringList undoArgs = m_undo->args;
+				Kopete::MetaContact::PropertySource undoSource = m_undo->nameSource;
+				// set undo undo
+				// set the source first
+				m_undo->nameSource = m->displayNameSource();
+				if ( m->displayNameSource() == Kopete::MetaContact::SourceCustom )
 				{
-					const QString name = m_undo->args[0];
-					m_undo->args[0] = m->nameSource()->contactId();
-					m_undo->args[1] = m->nameSource()->protocol()->pluginId();
-					m_undo->args[2] = m->nameSource()->account()->accountId();
-					m->setDisplayName( name );
+					m_undo->args[0] = m->customDisplayName();
 				}
-				else
+				else if ( m->displayNameSource() == Kopete::MetaContact::SourceContact )
 				{
-					const QString oldName = m->displayName();
-					QPtrList< Kopete::Contact > cList = m->contacts();
-					QPtrListIterator< Kopete::Contact > it (cList);
-					for ( ; it.current(); ++it )
-					{
-						if( m_undo->args[0].compare( it.current()->contactId() ) == 0 &&
-							m_undo->args[1].compare( it.current()->protocol()->pluginId() ) == 0 &&
-							m_undo->args[2].compare( it.current()->account()->accountId() ) == 0 )
-						{
-							m->setNameSource( it.current() );
-							break;
-						}
-					}
-					m_undo->args[0] = oldName;
-					m_undo->args[1] = "";
-					m_undo->args[2] = "";
+					Kopete::Contact* c = m->displayNameSourceContact();
+					m_undo->args[0] = c->contactId();
+					m_undo->args[1] = c->protocol()->pluginId();
+					m_undo->args[2] = c->account()->accountId();
+				}
+				// source kabc requires no arguments
+			
+				// do the undo
+				if ( undoSource == Kopete::MetaContact::SourceContact )
+				{ // do undo
+					Kopete::Contact *c = Kopete::ContactList::self()->findContact( undoArgs[1], undoArgs[2], undoArgs[0]);
+					if (!c)
+						return;
+					// do undo
+					m->setDisplayNameSourceContact(c);
+					m->setDisplayNameSource(Kopete::MetaContact::SourceContact);
+				}
+				else if ( undoSource == Kopete::MetaContact::SourceCustom )
+				{
+					m->setDisplayName(undoArgs[0]);
+					m->setDisplayNameSource(Kopete::MetaContact::SourceCustom);
+				}
+				else if ( undoSource == Kopete::MetaContact::SourceKABC )
+				{
+					m->setDisplayNameSource(Kopete::MetaContact::SourceKABC);
 				}
 				success=true;
 			}
@@ -1992,6 +2003,7 @@ void KopeteContactListView::slotRedo()
 		 }
 		 case UndoItem::MetaContactRename:
 		 {
+			/*
 			Kopete::MetaContact *m=m_redo->metacontact;
 			if( m )
 			{
@@ -1999,9 +2011,9 @@ void KopeteContactListView::slotRedo()
 				if( m_redo->args[1].isEmpty() )
 				{
 					const QString name = m_redo->args[0];
-					m_redo->args[0] = m->nameSource()->contactId();
-					m_redo->args[1] = m->nameSource()->protocol()->pluginId();
-					m_redo->args[2] = m->nameSource()->account()->accountId();
+					m_redo->args[0] = m->displayNameSource()->contactId();
+					m_redo->args[1] = m->displayNameSource()->protocol()->pluginId();
+					m_redo->args[2] = m->displayNameSource()->account()->accountId();
 					m->setDisplayName( name );
 				}
 				else
@@ -2009,16 +2021,12 @@ void KopeteContactListView::slotRedo()
 					const QString oldName = m->displayName();
 					QPtrList< Kopete::Contact > cList = m->contacts();
 					QPtrListIterator< Kopete::Contact > it (cList);
-					for ( ; it.current(); ++it )
-					{
-						if( m_redo->args[0].compare( it.current()->contactId() ) == 0&&
-							m_redo->args[1].compare( it.current()->protocol()->pluginId() ) == 0 &&
-							m_redo->args[2].compare( it.current()->account()->accountId() ) == 0 )
-						{
-							m->setNameSource( it.current() );
-							break;
-						}
-					}
+					Kopete::Contact *c = Kopete::ContactList::self()->findContact( args[0], args[2], args[1]);
+					if ( !c)
+						return;
+					m->setNameSourceContact(c);
+					break;
+
 					m_redo->args[0] = oldName;
 					m_redo->args[1] = "";
 					m_redo->args[2] = "";
@@ -2026,6 +2034,7 @@ void KopeteContactListView::slotRedo()
 				success=true;
 			}
 			break;
+			*/
 		 }
 		 case UndoItem::GroupRename:
 		 {
