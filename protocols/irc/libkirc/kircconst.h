@@ -1,5 +1,5 @@
 /*
-    kirc.h - Constants and enums of the KIRC namespace.
+    kircconst.h - The KIRC constants & enums.
 
     Copyright (c) 2005      by Michel Hermier <michel.hermier@wanadoo.fr>
 
@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef KIRC_H
-#define KIRC_H
+#ifndef KIRCCONST_H
+#define KIRCCONST_H
 
 #include <qregexp.h>
 #include <qstring.h>
@@ -74,35 +74,36 @@ namespace KIRC
 	};
 
 	// Static regular expressions
-	static const QRegExp sm_RemoveLinefeeds;
+	extern const QRegExp sm_RemoveLinefeeds;
 
 	// Static strings
-	static const QString AWAY;
-	static const QString ERROR;
-	static const QString INVITE;
-	static const QString ISON;
-	static const QString JOIN;
-	static const QString KICK;
-	static const QString LIST;
-	static const QString MODE;
-	static const QString MOTD;
-	static const QString NICK;
-	static const QString NOTICE;
-	static const QString PART;
-	static const QString PASS;
-	static const QString PING;
-	static const QString PONG;
-	static const QString PRIVMSG;
-	static const QString QUIT;
-	static const QString SQUIT;
-	static const QString TOPIC;
-	static const QString USER;
-	static const QString WHO;
-	static const QString WHOIS;
-	static const QString WHOWAS;
+	extern const QString AWAY;
+	extern const QString ERROR;
+	extern const QString INVITE;
+	extern const QString ISON;
+	extern const QString JOIN;
+	extern const QString KICK;
+	extern const QString LIST;
+	extern const QString MODE;
+	extern const QString MOTD;
+	extern const QString NICK;
+	extern const QString NOTICE;
+	extern const QString PART;
+	extern const QString PASS;
+	extern const QString PING;
+	extern const QString PONG;
+	extern const QString PRIVMSG;
+	extern const QString QUIT;
+	extern const QString SQUIT;
+	extern const QString TOPIC;
+	extern const QString USER;
+	extern const QString WHO;
+	extern const QString WHOIS;
+	extern const QString WHOWAS;
 
 	// Static codecs
-	static QTextCodec *UTF8;
+	extern QTextCodec *UTF8;
 }
 
 #endif
+

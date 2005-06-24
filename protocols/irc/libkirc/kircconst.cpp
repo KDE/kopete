@@ -1,5 +1,5 @@
 /*
-    kirc.cpp - Constants and enums of the KIRC namespace.
+    kircconst.cpp - The KIRC constants and enums.
 
     Copyright (c) 2005      by Michel Hermier <michel.hermier@wanadoo.fr>
 
@@ -23,14 +23,19 @@
 
 #include <qtextcodec.h>
 
-using namespace KIRC;
+#define CONST_QSTRING(str) const QString str = QString::fromLatin1(#str)
+
+/* The usage of the namespace, instead of the "using" keyword, is intentional.
+ * Not using it introduce compiler confusion, and lead to new symbols declaration.
+ */
+
+namespace KIRC {
 
 /* Please note that the regular expression "[\\r\\n]*$" is used in a QString::replace statement many times.
  * This gets rid of trailing \r\n, \r, \n, and \n\r characters.
  */
-const QRegExp sm_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
+const QRegExp KIRC::sm_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
 
-#define CONST_QSTRING(str) const QString str = QString::fromLatin1(#str)
 CONST_QSTRING(AWAY);
 CONST_QSTRING(ERROR);
 CONST_QSTRING(INVITE);
@@ -54,7 +59,8 @@ CONST_QSTRING(USER);
 CONST_QSTRING(WHO);
 CONST_QSTRING(WHOIS);
 CONST_QSTRING(WHOWAS);
-#undef CONST_QSTRING
 
-QTextCodec *UTF8 = QTextCodec::codecForName("UTF-8");
+QTextCodec *KIRC::UTF8 = QTextCodec::codecForName("UTF-8");
+
+}
 
