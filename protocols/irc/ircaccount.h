@@ -28,11 +28,6 @@
 
 #include "kopetepasswordedaccount.h"
 
-#include <kdialogbase.h>
-
-#include <qstring.h>
-#include <qstringlist.h>
-
 class ChannelListDialog;
 
 class IRCContact;
@@ -53,37 +48,9 @@ class KActionMenu;
 class IRCAccount
 	: public Kopete::PasswordedAccount
 {
-	friend class IRCEditAccountWidget;
-	friend class IRCProtocolHandler;
-
 	Q_OBJECT
 
 public:
-	static const QString CONFIG_CODECMIB;
-	static const QString CONFIG_NETWORKNAME;
-	static const QString CONFIG_NICKNAME;
-	static const QString CONFIG_USERNAME;
-	static const QString CONFIG_REALNAME;
-
-	enum MessageType
-	{
-		ConnectReply = 1,
-		InfoReply = 2,
-		NoticeReply = 4,
-		ErrorReply = 8,
-		UnknownReply = 16,
-		Default = 32
-	};
-
-	enum MessageDestination
-	{
-		ActiveWindow = 1,
-		ServerWindow = 2,
-		AnonymousWindow = 3,
-		KNotify = 4,
-		Ignore = 5
-	};
-
 	IRCAccount(IRCProtocol *p, const QString &accountid, const QString &autoConnect = QString::null,
 			const QString& networkName = QString::null, const QString &nickName = QString::null);
 	virtual ~IRCAccount();
@@ -171,8 +138,9 @@ public slots:
 
 	void listChannels();
 
-	void appendMessage( const QString &message, MessageType type = Default );
-	void appendInternalMessage(const QString &message);
+//	void appendMessage( const QString &message, MessageType type = Default );
+	void appendErrorMessage( const QString &message ); 
+	void appendInternalMessage( const QString &message );
 
 protected:
 	virtual bool createContact( const QString &contactId, Kopete::MetaContact *parentContact ) ;
@@ -210,11 +178,6 @@ private:
 	IRCNetwork m_network;
 	uint currentHost;
 	QTextCodec *mCodec;
-
-	MessageDestination m_serverNotices;
-	MessageDestination m_serverMessages;
-	MessageDestination m_informationReplies;
-	MessageDestination m_errorMessages;
 
 	ChannelListDialog *m_channelList;
 

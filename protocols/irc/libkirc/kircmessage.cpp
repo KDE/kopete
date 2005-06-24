@@ -20,6 +20,8 @@
 
 #include <kdebug.h>
 
+#include <qtextcodec.h>
+
 using namespace KIRC;
 
 //QRegExp Message::sm_("^()\\r\\n$")

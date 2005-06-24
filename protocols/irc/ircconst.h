@@ -24,7 +24,7 @@ namespace IRC {
 
 namespace Config {
 
-//extern const QString CONFIG_AUTOSHOWSERVERWINDOW;
+//extern const QString AUTOSHOWSERVERWINDOW;
 extern const QString CODECMIB;
 extern const QString NETWORKNAME;
 extern const QString NICKNAME;

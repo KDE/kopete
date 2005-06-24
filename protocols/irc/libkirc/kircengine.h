@@ -26,12 +26,8 @@
 #include "kircsocket.h"
 #include "kirctransfer.h"
 
-#include <qdatetime.h>
 #include <qdict.h>
 #include <qintdict.h>
-#include <qregexp.h>
-#include <qstring.h>
-#include <qstringlist.h>
 
 class QRegExp;
 
@@ -237,7 +233,6 @@ signals:
 	//Channel Contact Signals
 	void incomingTopicChange(const QString &, const QString &, const QString &);
 	void incomingExistingTopic(const QString &, const QString &);
-	void incomingTopicUser(const QString &channel, const QString &user, const QDateTime &time);
 	void incomingJoinedChannel(const QString &channel,const QString &nick);
 	void incomingPartedChannel(const QString &channel,const QString &nick, const QString &reason);
 	void incomingNamesList(const QString &channel, const QStringList &nicknames);

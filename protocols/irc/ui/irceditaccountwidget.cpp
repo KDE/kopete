@@ -44,6 +44,7 @@
 #include <qcombobox.h>
 #include <qlistbox.h>
 #include <qlineedit.h>
+#include <qtextcodec.h>
 
 IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident, QWidget *parent, const char * )
 	  : IRCEditAccountBase(parent), KopeteEditAccountWidget(ident)
@@ -75,10 +76,10 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 
 		KConfigGroup *config = account()->configGroup();
 
-		serverNotices->setCurrentItem( config->readNumEntry( "ServerNotices", IRCAccount::ServerWindow ) - 1 );
-		serverMessages->setCurrentItem( config->readNumEntry( "ServerMessages", IRCAccount::ServerWindow ) - 1 );
-		informationReplies->setCurrentItem( config->readNumEntry( "InformationReplies", IRCAccount::ActiveWindow ) - 1 );
-		errorMessages->setCurrentItem( config->readNumEntry( "ErrorMessages", IRCAccount::ActiveWindow ) - 1 );
+//		serverNotices->setCurrentItem( config->readNumEntry( "ServerNotices", IRCAccount::ServerWindow ) - 1 );
+//		serverMessages->setCurrentItem( config->readNumEntry( "ServerMessages", IRCAccount::ServerWindow ) - 1 );
+//		informationReplies->setCurrentItem( config->readNumEntry( "InformationReplies", IRCAccount::ActiveWindow ) - 1 );
+//		errorMessages->setCurrentItem( config->readNumEntry( "ErrorMessages", IRCAccount::ActiveWindow ) - 1 );
 
 		account()->setMessageDestinations( serverNotices->currentItem(), serverMessages->currentItem(),
 		informationReplies->currentItem(), errorMessages->currentItem()

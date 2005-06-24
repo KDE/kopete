@@ -23,8 +23,6 @@
 #include <ksharedptr.h>
 
 #include <qobject.h>
-#include <qregexp.h>
-#include <qstring.h>
 #include <qvaluelist.h>
 
 class QTextCodec;
@@ -87,7 +85,7 @@ private:
 
 	QTextCodec *m_codec;
 };
-
+/*
 class EntityPtr
 	: public KSharedPtr<KIRC::Entity>
 {
@@ -117,7 +115,7 @@ public:
 		: QValueList<EntityPtr>(list)
 	{ }
 };
-
+*/
 }
 
 #endif

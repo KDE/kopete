@@ -20,14 +20,7 @@
 
 #include "kircentity.h"
 
-#include <kbufferedio.h>
-
-#include <qcstring.h>
-#include <qdict.h>
-#include <qstring.h>
 #include <qstringlist.h>
-#include <qtextcodec.h>
-#include <qregexp.h>
 #include <qvaluelist.h>
 
 // Uncoment this if you want a really rfc compliant message handling.
@@ -37,6 +30,8 @@
 #ifndef QByteArrayList
 #define QByteArrayList QValueList<QByteArray>
 #endif
+
+class QTextCodec;
 
 namespace KIRC
 {
@@ -162,7 +157,7 @@ private:
 	/**
 	 * Contains the raw args plitted in a list.
 	 */
-	QValueList<QByteArray> m_argList;
+	QByteArrayList m_argList;
 
 	/**
 	 * Contains the completely dequoted suffix.

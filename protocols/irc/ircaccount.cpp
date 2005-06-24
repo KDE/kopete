@@ -18,6 +18,8 @@
 */
 
 #include "ircaccount.h"
+
+#include "ircconst.h"
 #include "irccontact.h"
 #include "ircprotocol.h"
 
@@ -50,17 +52,10 @@
 #include <knotifyclient.h>
 #include <kpopupmenu.h>
 
-#include <qlayout.h>
-#include <qtimer.h>
+#include <qtextcodec.h>
 
+using namespace IRC;
 using namespace Kopete;
-
-//const QString IRCAccount::CONFIG_AUTOSHOWSERVERWINDOW = QString::fromLatin1("AutoShowServerWindow");
-const QString IRCAccount::CONFIG_CODECMIB = QString::fromLatin1("Codec");
-const QString IRCAccount::CONFIG_NETWORKNAME = QString::fromLatin1("NetworkName");
-const QString IRCAccount::CONFIG_NICKNAME = QString::fromLatin1("NickName");
-const QString IRCAccount::CONFIG_USERNAME = QString::fromLatin1("UserName");
-const QString IRCAccount::CONFIG_REALNAME = QString::fromLatin1("RealName");
 
 IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QString &autoChan, const QString& netName, const QString &nickName)
 	: PasswordedAccount(protocol, accountId, 0, true),
@@ -163,8 +158,8 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 			m_network.hosts.append( host );
 //			m_protocol->addNetwork( m_network );
 
-			config->writeEntry(CONFIG_NETWORKNAME, m_network.name);
-//			config->writeEntry(CONFIG_NICKNAME, mNickName);
+			config->writeEntry(Config::NETWORKNAME, m_network.name);
+//			config->writeEntry(Config::NICKNAME, mNickName);
 		}
 	}
 	else if( !networkName.isEmpty() )
@@ -201,20 +196,20 @@ void IRCAccount::loadProperties()
 
 	QString networkName = netName;
 	if (networkName.isNull())
-		networkName = config->readEntry(CONFIG_NETWORKNAME);
+		networkName = config->readEntry(Config::NETWORKNAME);
 
 	if (!nickName.isNull())
 		setNickName(nickName);
 //	else
-//		mNickName = config->readEntry(CONFIG_NICKNAME);
+//		mNickName = config->readEntry(Config::NICKNAME);
 
-	QString codecMib = config->readEntry(CONFIG_CODECMIB);
-	//	int codecMib = config->readNumEntry(CONFIG_CODECMIB, UTF-8);
+	QString codecMib = config->readEntry(Config::CODECMIB);
+	//	int codecMib = config->readNumEntry(Config::CODECMIB, UTF-8);
 
-	m_serverNotices = (MessageDestination)config->readNumEntry( "ServerNotices", ServerWindow );
-	m_serverMessages = (MessageDestination)config->readNumEntry( "ServerMessages", ServerWindow );
-	m_informationReplies = (MessageDestination)config->readNumEntry( "InformationReplies", ActiveWindow );
-	m_errorMessages = (MessageDestination)config->readNumEntry( "ErrorMessages", ActiveWindow );
+//	m_serverNotices = (MessageDestination)config->readNumEntry( "ServerNotices", ServerWindow );
+//	m_serverMessages = (MessageDestination)config->readNumEntry( "ServerMessages", ServerWindow );
+//	m_informationReplies = (MessageDestination)config->readNumEntry( "InformationReplies", ActiveWindow );
+//	m_errorMessages = (MessageDestination)config->readNumEntry( "ErrorMessages", ActiveWindow );
 	autoShowServerWindow = config->readBoolEntry( "AutoShowServerWindow", false );
 
 	if( !codecMib.isEmpty() )
@@ -266,12 +261,12 @@ void IRCAccount::setAutoShowServerWindow(bool show)
 void IRCAccount::setNickName(const QString &nickName)
 {
 	m_self->setNickName(nickName);
-	configGroup()->writeEntry(CONFIG_NICKNAME, nickName);
+	configGroup()->writeEntry(Config::NICKNAME, nickName);
 }
 
 const QString IRCAccount::nickName() const
 {
-	return configGroup()->readEntry(CONFIG_NICKNAME);
+	return configGroup()->readEntry(Config::NICKNAME);
 }
 /*
 void IRCAccount::setAltNick( const QString &altNick )
@@ -287,23 +282,23 @@ const QString IRCAccount::altNick() const
 void IRCAccount::setUserName(const QString &userName)
 {
 	m_engine->setUserName(userName);
-	configGroup()->writeEntry(CONFIG_USERNAME, userName);
+	configGroup()->writeEntry(Config::USERNAME, userName);
 }
 
 const QString IRCAccount::userName() const
 {
-	return configGroup()->readEntry(CONFIG_USERNAME);
+	return configGroup()->readEntry(Config::USERNAME);
 }
 
 void IRCAccount::setRealName( const QString &userName )
 {
 	m_engine->setRealName(userName);
-	configGroup()->writeEntry(CONFIG_REALNAME, userName);
+	configGroup()->writeEntry(Config::REALNAME, userName);
 }
 
 const QString IRCAccount::realName() const
 {
-	return configGroup()->readEntry(CONFIG_REALNAME);
+	return configGroup()->readEntry(Config::REALNAME);
 }
 
 void IRCAccount::setNetwork( const QString &network )
@@ -313,7 +308,7 @@ void IRCAccount::setNetwork( const QString &network )
 	if( net )
 	{
 		m_network = net;
-		configGroup()->writeEntry(CONFIG_NETWORKNAME, network);
+		configGroup()->writeEntry(Config::NETWORKNAME, network);
 		setAccountLabel(network);
 	}
 	else
@@ -330,7 +325,7 @@ void IRCAccount::setNetwork( const QString &network )
 void IRCAccount::setNetwork(const IRCNetwork &network)
 {
 	m_network = network;
-//	configGroup()->writeEntry(CONFIG_NETWORKNAME, network.name);
+//	configGroup()->writeEntry(Config::NETWORKNAME, network.name);
 //	setAccountLabel(network.name);
 }
 
@@ -343,7 +338,7 @@ const QString IRCAccount::networkName() const
 void IRCAccount::setCodec( QTextCodec *codec )
 {
 	mCodec = codec;
-	configGroup()->writeEntry(CONFIG_CODECMIB, codec->mibEnum());
+	configGroup()->writeEntry(Config::CODECMIB, codec->mibEnum());
 
 	if( mCodec )
 		m_engine->setDefaultCodec( mCodec );
@@ -421,6 +416,7 @@ const QStringList IRCAccount::connectCommands() const
 void IRCAccount::setMessageDestinations( int serverNotices, int serverMessages,
 			     int informationReplies, int errorMessages )
 {
+/*
 	KConfigGroup *config =  configGroup();
 	config->writeEntry( "ServerNotices", serverNotices );
 	config->writeEntry( "ServerMessages", serverMessages );
@@ -431,6 +427,7 @@ void IRCAccount::setMessageDestinations( int serverNotices, int serverMessages,
 	m_serverMessages = (MessageDestination)serverMessages;
 	m_informationReplies = (MessageDestination)informationReplies;
 	m_errorMessages = (MessageDestination)errorMessages;
+*/
 }
 
 KActionMenu *IRCAccount::actionMenu()
@@ -555,7 +552,7 @@ void IRCAccount::engineConnectionStateChanged(KIRC::ConnectionState newstate)
 			// after the 001 is sent, you need to wait until all the init junk is done.
 			// Unfortunatly, there is no way for us to know when it is done (it could be
 			// spewing out any number of replies), so just try delaying it
-			QTimer::singleShot( 250, this, SLOT( slotPerformOnConnectCommands() ) );
+//			QTimer::singleShot( 250, this, SLOT( slotPerformOnConnectCommands() ) );
 		}
 		break;
 	case KIRC::Closing:
@@ -785,72 +782,21 @@ void IRCAccount::slotJoinChannel()
 
 void IRCAccount::slotNewCtcpReply(const QString &type, const QString &/*target*/, const QString &messageReceived)
 {
-	appendMessage( i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived), InfoReply );
+//	appendMessage( i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived), InfoReply );
 }
 
 void IRCAccount::slotNoSuchNickname( const QString &nick )
 {
-	if( KIRC::Entity::isChannel(nick) )
-		appendMessage( i18n("The channel \"%1\" does not exist").arg(nick), UnknownReply );
-	else
-		appendMessage( i18n("The nickname \"%1\" does not exist").arg(nick), UnknownReply );
+//	if( KIRC::Entity::isChannel(nick) )
+//		appendMessage( i18n("The channel \"%1\" does not exist").arg(nick), UnknownReply );
+//	else
+//		appendMessage( i18n("The nickname \"%1\" does not exist").arg(nick), UnknownReply );
 }
 
-void IRCAccount::appendMessage( const QString &message, MessageType type )
+void IRCAccount::appendErrorMessage(const QString &message)
 {
-	// TODO: Impliment a UI where people can pick  multiple destinations
-	// for a message type, and make codethis handle it
-
-	MessageDestination destination;
-
-	switch( type )
-	{
-		case ConnectReply:
-			destination = m_serverMessages;
-			break;
-		case InfoReply:
-			destination = m_informationReplies;
-			break;
-		case NoticeReply:
-			destination = m_serverNotices;
-			break;
-		case ErrorReply:
-			destination = m_errorMessages;
-			break;
-		case UnknownReply:
-		default:
-			destination = ActiveWindow;
-			break;
-	}
-
-	if( destination == ActiveWindow )
-	{
-		KopeteView *activeView = ChatSessionManager::self()->activeView();
-		if (activeView && activeView->msgManager()->account() == this)
-		{
-			ChatSession *manager = activeView->msgManager();
-			Message msg( manager->myself(), manager->members(), message,
-				Message::Internal, Message::RichText, CHAT_VIEW );
-			activeView->appendMessage(msg);
-		}
-	}
-
-	if( destination == AnonymousWindow )
-	{
-		//TODO: Create an anonymous window??? What will this mean...
-	}
-
-	if( destination == ServerWindow )
-	{
-		appendInternalMessage(message);
-	}
-
-	if( destination == KNotify )
-	{
-		KNotifyClient::event(
-			UI::Global::mainWidget()->winId(), QString::fromLatin1("irc_event"), message
-		);
-	}
+	#warning FIXME make a reall message.
+	appendInternalMessage(message);
 }
 
 void IRCAccount::appendInternalMessage(const QString &message)

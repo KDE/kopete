@@ -21,8 +21,8 @@
 #endif
 
 #include "kircengine.h"
-#include "kircsocket.h"
 
+#include "kircsocket.h"
 #include "ksslsocket.h"
 
 #include <kconfig.h>

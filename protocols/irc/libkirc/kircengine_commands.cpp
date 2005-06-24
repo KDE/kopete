@@ -21,8 +21,6 @@
 
 #include <kdebug.h>
 
-#include <qtimer.h>
-
 using namespace KIRC;
 
 void Engine::bindCommands()

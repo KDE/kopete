@@ -15,13 +15,11 @@
     *************************************************************************
 */
 
-#include "kircengine.h"
 #include "kircentity.h"
 
 #include <kdebug.h>
 
 using namespace KIRC;
-using namespace KNetwork;
 
 /**
  * Match a possible user definition:

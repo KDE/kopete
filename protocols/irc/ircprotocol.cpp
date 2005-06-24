@@ -420,8 +420,8 @@ void IRCProtocol::slotRawCommand( const QString &args, ChatSession *manager )
 	}
 	else
 	{
-		static_cast<IRCAccount*>(manager->account())->appendMessage(
-			i18n("You must enter some text to send to the server."), IRCAccount::ErrorReply );
+		static_cast<IRCAccount*>(manager->account())->appendErrorMessage(
+			i18n("You must enter some text to send to the server.") );
 	}
 }
 
@@ -433,8 +433,8 @@ void IRCProtocol::slotQuoteCommand( const QString &args, ChatSession *manager )
 	}
 	else
 	{
-		static_cast<IRCAccount *>(manager->account())->appendMessage(
-			i18n("You must enter some text to send to the server."), IRCAccount::ErrorReply);
+		static_cast<IRCAccount *>(manager->account())->appendErrorMessage(
+			i18n("You must enter some text to send to the server.") );
 	}
 }
 
@@ -482,8 +482,8 @@ void IRCProtocol::slotTopicCommand(const QString &args, ChatSession *manager)
 	}
 	else
 	{
-		static_cast<IRCAccount*>( manager->account() )->appendMessage(
-			i18n("You must be in a channel to use this command."), IRCAccount::ErrorReply );
+		static_cast<IRCAccount*>( manager->account() )->appendErrorMessage(
+			i18n("You must be in a channel to use this command.") );
 	}*/
 }
 
@@ -499,9 +499,9 @@ void IRCProtocol::slotJoinCommand(const QString &arg, ChatSession *manager)
 	}
 	else
 	{
-		static_cast<IRCAccount*>( manager->account() )->appendMessage(
+		static_cast<IRCAccount*>( manager->account() )->appendErrorMessage(
 			i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.")
-			.arg(args[0]), IRCAccount::ErrorReply );
+			.arg(args[0]) );
 	}*/
 }
 
@@ -519,9 +519,9 @@ void IRCProtocol::slotInviteCommand(const QString &args, ChatSession *manager)
 		}
 		else
 		{
-			static_cast<IRCAccount*>( manager->account() )->appendMessage(
+			static_cast<IRCAccount*>( manager->account() )->appendErrorMessage(
 				i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.")
-				.arg(argsList[1]), IRCAccount::ErrorReply );
+				.arg(argsList[1]) );
 		}
 	}
 	else
@@ -536,8 +536,8 @@ void IRCProtocol::slotInviteCommand(const QString &args, ChatSession *manager)
 	}
 	else
 	{
-		static_cast<IRCAccount*>( manager->account() )->appendMessage(
-			i18n("You must be a channel operator to perform this operation."), IRCAccount::ErrorReply );
+		static_cast<IRCAccount*>( manager->account() )->appendErrorMessage(
+			i18n("You must be a channel operator to perform this operation.") );
 	}*/
 }
 
@@ -560,9 +560,8 @@ void IRCProtocol::slotQueryCommand(const QString &args, ChatSession *manager)
 	}
 	else
 	{
-		static_cast<IRCAccount*>( manager->account() )->appendMessage(
-			i18n("\"%1\" is an invalid nickname. Nicknames must not start with '#','!','+', or '&'.").arg(user),
-			IRCAccount::ErrorReply );
+		static_cast<IRCAccount*>( manager->account() )->appendErrorMessage(
+			i18n("\"%1\" is an invalid nickname. Nicknames must not start with '#','!','+', or '&'.").arg(user) );
 	}*/
 }
 
@@ -639,8 +638,8 @@ void IRCProtocol::slotKickCommand(const QString &args, ChatSession *manager)
 	}
 	else
 	{
-		static_cast<IRCAccount*>( manager->account() )->appendMessage(
-			i18n("You must be a channel operator to perform this operation."), IRCAccount::ErrorReply );
+		static_cast<IRCAccount*>( manager->account() )->appendErrorMessage(
+			i18n("You must be a channel operator to perform this operation.") );
 	} */
 }
 
@@ -656,8 +655,8 @@ void IRCProtocol::slotBanCommand(const QString &args, ChatSession *manager)
 	}
 	else
 	{
-		static_cast<IRCAccount*>( manager->account() )->appendMessage(
-			i18n("You must be a channel operator to perform this operation."), IRCAccount::ErrorReply );
+		static_cast<IRCAccount*>( manager->account() )->appendErrorMessage(
+			i18n("You must be a channel operator to perform this operation.") );
 	}*/
 }
 
@@ -677,8 +676,8 @@ void IRCProtocol::slotPartCommand( const QString &args, ChatSession *manager )
 	}
 	else
 	{
-		static_cast<IRCAccount*>( manager->account() )->appendMessage(
-			i18n("You must be in a channel to use this command."), IRCAccount::ErrorReply );
+		static_cast<IRCAccount*>( manager->account() )->appendErrorMessage(
+			i18n("You must be in a channel to use this command.") );
 	}*/
 }
 
@@ -720,8 +719,8 @@ void IRCProtocol::simpleModeChange( const QString &args, ChatSession *manager, c
 	}
 	else
 	{
-		static_cast<IRCAccount*>( manager->account() )->appendMessage(
-			i18n("You must be a channel operator to perform this operation."), IRCAccount::ErrorReply );
+		static_cast<IRCAccount*>( manager->account() )->appendErrorMessage(
+			i18n("You must be a channel operator to perform this operation.") );
 	}*/
 }
 
@@ -733,3 +732,4 @@ void IRCProtocol::editNetworks(const QString &networkName)
 }
 
 #include "ircprotocol.moc"
+

@@ -17,9 +17,12 @@
     *************************************************************************
 */
 
+#ifdef HAVE_CONFIG
 #include "config.h"
+#endif
 
 #include "kircengine.h"
+
 #include "kirctransferhandler.h"
 
 #include "kdebug.h"

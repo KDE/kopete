@@ -1,4 +1,3 @@
-
 /*
     kircnumericreplies.cpp - IRC Client
 
@@ -23,7 +22,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-#include <qtimer.h>
+#include <qdatetime.h>
 
 using namespace KIRC;
 
@@ -407,10 +406,11 @@ void Engine::numericReply_332(Message &msg)
  */
 void Engine::numericReply_333( Message &msg )
 {
-	kdDebug(14120) << k_funcinfo << endl;
+/*
 	QDateTime d;
 	d.setTime_t( msg.arg(3).toLong() );
 	emit incomingTopicUser(msg.arg(1), msg.arg(2), d );
+*/
 }
 
 /* 352:
