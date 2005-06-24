@@ -107,29 +107,30 @@ void IRCProtocolHandler::handleURL(const KURL &url) const
 
 IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
 	: Protocol(IRCProtocolFactory::instance(), parent, name),
-
-	  m_ServerStatusOnline(OnlineStatus::Online, 100, this, OnlineServer, QString::null, i18n("Online")),
-	  m_ServerStatusOffline(OnlineStatus::Offline, 90, this, OfflineServer, QString::null, i18n("Offline")),
-
-	  m_ChannelStatusOnline(OnlineStatus::Online, 80, this, OnlineChannel, QString::null, i18n("Online")),
-	  m_ChannelStatusOffline(OnlineStatus::Offline, 70, this, OfflineChannel, QString::null, i18n("Offline")),
-
-	  m_UserStatusOpVoice(OnlineStatus::Online, 60, this, Operator | Voiced, QStringList::split(' ',"irc_voice irc_op"), i18n("Op")),
-	  m_UserStatusOpVoiceAway(OnlineStatus::Away, 55, this, Operator | Voiced | Away, QStringList::split(' ',"irc_voice irc_op contact_away_overlay"), i18n("Away")),
-	  m_UserStatusOp(OnlineStatus::Online, 50, this, Operator, "irc_op", i18n("Op")),
-	  m_UserStatusOpAway(OnlineStatus::Away, 45, this, Operator | Away, QStringList::split(' ',"irc_op contact_away_overlay"), i18n("Away")),
-	  m_UserStatusVoice(OnlineStatus::Online, 30, this, Voiced, "irc_voice", i18n("Voice")),
-	  m_UserStatusVoiceAway(OnlineStatus::Away, 35, this, Voiced | Away, QStringList::split(' ',"irc_voice contact_away_overlay"),  i18n("Away")),
-	  m_UserStatusOnline(OnlineStatus::Online, 25, this, Online, QString::null, i18n("Online"), i18n("Online"), OnlineStatusManager::Online),
-	  m_UserStatusAway(OnlineStatus::Away, 2, this, Away, "contact_away_overlay", i18n("Away"), i18n("Away"), OnlineStatusManager::Away),
-	  m_UserStatusConnecting(OnlineStatus::Connecting, 1, this, Connecting, "irc_connecting", i18n("Connecting")),
-	  m_UserStatusOffline(OnlineStatus::Offline, 0, this, Offline, QString::null, i18n("Offline"), i18n("Offline"), OnlineStatusManager::Offline),
-
 	  m_StatusUnknown(OnlineStatus::Unknown, 999, this, 999, "status_unknown", i18n("Status not available"))
 {
 //	kdDebug(14120) << k_funcinfo << endl;
 
 	s_protocol = this;
+
+/*
+	ServerStatusOnline(OnlineStatus::Online, 100, this, OnlineServer, QString::null, i18n("Online")),
+	ServerStatusOffline(OnlineStatus::Offline, 90, this, OfflineServer, QString::null, i18n("Offline")),
+
+	ChannelStatusOnline(OnlineStatus::Online, 80, this, OnlineChannel, QString::null, i18n("Online")),
+	ChannelStatusOffline(OnlineStatus::Offline, 70, this, OfflineChannel, QString::null, i18n("Offline")),
+
+	UserStatusOpVoice(OnlineStatus::Online, 60, this, Operator | Voiced, QStringList::split(' ',"irc_voice irc_op"), i18n("Op")),
+	UserStatusOpVoiceAway(OnlineStatus::Away, 55, this, Operator | Voiced | Away, QStringList::split(' ',"irc_voice irc_op contact_away_overlay"), i18n("Away")),
+	UserStatusOp(OnlineStatus::Online, 50, this, Operator, "irc_op", i18n("Op")),
+	UserStatusOpAway(OnlineStatus::Away, 45, this, Operator | Away, QStringList::split(' ',"irc_op contact_away_overlay"), i18n("Away")),
+	UserStatusVoice(OnlineStatus::Online, 30, this, Voiced, "irc_voice", i18n("Voice")),
+	UserStatusVoiceAway(OnlineStatus::Away, 35, this, Voiced | Away, QStringList::split(' ',"irc_voice contact_away_overlay"),  i18n("Away")),
+	UserStatusOnline(OnlineStatus::Online, 25, this, Online, QString::null, i18n("Online"), i18n("Online"), OnlineStatusManager::Online),
+	UserStatusAway(OnlineStatus::Away, 2, this, Away, "contact_away_overlay", i18n("Away"), i18n("Away"), OnlineStatusManager::Away),
+	UserStatusConnecting(OnlineStatus::Connecting, 1, this, Connecting, "irc_connecting", i18n("Connecting")),
+	UserStatusOffline(OnlineStatus::Offline, 0, this, Offline, QString::null, i18n("Offline"), i18n("Offline"), OnlineStatusManager::Offline),
+*/
 
 	//m_status = m_unknownStatus = m_Unknown;
 
@@ -276,8 +277,9 @@ IRCProtocol::~IRCProtocol()
 	delete m_protocolHandler;
 }
 
-const OnlineStatus IRCProtocol::statusLookup( IRCStatus status ) const
+OnlineStatus IRCProtocol::onlineStatusFor(const KIRC::EntityPtr entity) const
 {
+/*
 	kdDebug(14120) << k_funcinfo << "Looking up status for " << status << endl;
 
 	switch( status )
@@ -320,6 +322,13 @@ const OnlineStatus IRCProtocol::statusLookup( IRCStatus status ) const
 		default:
 			return m_StatusUnknown;
 	}
+*/
+	#warning FIXME: use a type mask at enty->type()
+	OnlineStatus ret;
+	if (entity || (ret = m_statuses[entity->type()]).status() == OnlineStatus::Unknown)
+		return m_StatusUnknown;
+	else
+		return ret;
 }
 
 void IRCProtocol::slotViewCreated(KopeteView *view)
@@ -617,7 +626,7 @@ void IRCProtocol::slotAllMeCommand(const QString &args, ChatSession *)
 }
 
 void IRCProtocol::slotKickCommand(const QString &args, ChatSession *manager)
-{
+{/*
 	if (manager->contactOnlineStatus(manager->myself()) == m_UserStatusOp)
 	{
 		QRegExp spaces(QString::fromLatin1("\\s+"));
@@ -632,7 +641,7 @@ void IRCProtocol::slotKickCommand(const QString &args, ChatSession *manager)
 	{
 		static_cast<IRCAccount*>( manager->account() )->appendMessage(
 			i18n("You must be a channel operator to perform this operation."), IRCAccount::ErrorReply );
-	}
+	} */
 }
 
 void IRCProtocol::slotBanCommand(const QString &args, ChatSession *manager)

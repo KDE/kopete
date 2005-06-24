@@ -123,7 +123,7 @@ void IRCContact::entityUpdated()
 //	setProperty(???->topic(), m_entity->topic());
 
 	// Contact properties
-
+/*
 	// Update Icon properties
 	switch(m_entity->type())
 	{
@@ -145,7 +145,7 @@ void IRCContact::entityUpdated()
 		setIcon(QString::null);
 		break;
 	}
-
+*/
 	updateStatus();
 }
 
@@ -156,23 +156,7 @@ QString IRCContact::caption() const
 
 void IRCContact::updateStatus()
 {
-	switch (m_entity->type())
-	{
-//	case KIRC::Entity::Unknown: // Use default
-	case KIRC::Entity::Server:
-		server_updateStatus();
-		break;
-	case KIRC::Entity::Channel:
-		channel_updateStatus();
-		break;
-//	case KIRC::Entity::Service: // Use default for now
-	case KIRC::Entity::User:
-		user_updateStatus();
-		break;
-	default:
-		setOnlineStatus(m_protocol->m_StatusUnknown);
-		break;
-	}
+	setOnlineStatus(IRCProtocol::protocol()->onlineStatusFor(m_entity));
 }
 
 bool IRCContact::isReachable()
@@ -255,7 +239,7 @@ void IRCContact::slotUserDisconnected(const QString &user, const QString &reason
 		if ( c )
 		{
 			m_chatSession->removeContact(c, i18n("Quit: \"%1\" ").arg(reason), Message::RichText);
-			c->setOnlineStatus(m_protocol->m_UserStatusOffline);
+//			c->setOnlineStatus(m_protocol->m_UserStatusOffline);
 		}
 	}
 }

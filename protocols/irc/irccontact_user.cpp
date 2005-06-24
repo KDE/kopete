@@ -34,7 +34,7 @@ QString IRCContact::user_caption() const
 {
 	return i18n("%1 @ %2").arg(m_nickName).arg(kircEngine()->currentHost());
 }
-*/
+
 void IRCContact::user_updateStatus()
 {
         Kopete::OnlineStatus newStatus;
@@ -65,7 +65,7 @@ void IRCContact::user_updateStatus()
 	default:
 		newStatus = m_protocol->m_StatusUnknown;
 	}
-/*
+
 	// This may not be created yet ( for myself() on startup )
 	if( ircAccount()->contactManager() )
 	{
@@ -101,11 +101,9 @@ void IRCContact::user_updateStatus()
 			}
 		}
 	}
-*/
 	setOnlineStatus( newStatus );
 }
 
-/*
 IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString &nickname, Kopete::MetaContact *m )
 	: IRCContact(contactManager, nickname, m ),
 	  m_isAway(false)
@@ -283,13 +281,20 @@ void IRCUserContact::newWhoIsUser(const QString &username, const QString &hostna
 
 void IRCUserContact::newWhoIsServer(const QString &servername, const QString &serverinfo)
 {
-	mInfo.serverName = servername;
-	if( metaContact()->isTemporary() || onlineStatus().status() == Kopete::OnlineStatus::Online )
+//	if( metaContact()->isTemporary() || isOnline() )
+	if( metaContact()->isTemporary() || onlineStatus().status() != Kopete::OnlineStatus::Offline )
 		mInfo.serverInfo = serverinfo;
 	else
 	{
-		//kdDebug(14120)<< "Setting last online: " << serverinfo << endl;
-		setProperty( m_protocol->propLastSeen, QDateTime::fromString( serverinfo ) );
+		// Try to convert first, since server can return depending if
+		// user is online or not:
+		//
+		//   312 mynick othernick localhost.localdomain :FooNet Server
+		//   312 mynick othernick localhost.localdomain :Thu Jun 16 21:00:36 2005
+
+		QDateTime lastSeen = QDateTime::fromString( serverinfo );
+		if( lastSeen.isValid() )
+			setProperty( m_protocol->propLastSeen, lastSeen );
 	}
 }
 

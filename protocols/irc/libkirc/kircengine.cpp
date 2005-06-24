@@ -76,7 +76,6 @@ Engine::~Engine()
 	kdDebug(14120) << k_funcinfo << m_Host << endl;
 	quit("KIRC Deleted", true);
 }
-
 /*
 void Engine::setStatus(Engine::Status status)
 {
@@ -128,7 +127,6 @@ void Engine::setStatus(Engine::Status status)
 	}
 }
 */
-
 QTextCodec *Engine::defaultCodec() const
 {
 	return m_defaultCodec;

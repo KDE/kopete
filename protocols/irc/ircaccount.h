@@ -203,7 +203,6 @@ private slots:
 
 private:
 	Kopete::ChatSession *m_manager;
-	Kopete::AwayAction *mAwayAction;
 	bool autoShowServerWindow;
 	QString autoConnect;
 
@@ -225,6 +224,8 @@ private:
 
 	QMap<QString, QString> m_customCtcp;
 	Kopete::ChatSession *commandSource;
+
+	Kopete::AwayAction *m_awayAction;
 
 	KAction *m_joinChannelAction;
 	KAction *m_searchChannelAction;

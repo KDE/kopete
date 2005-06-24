@@ -35,33 +35,7 @@ QString IRCContact::server_caption() const
 		kircEngine()->currentHost().isEmpty() ? ircAccount()->networkName() : kircEngine()->currentHost()
 	);
 }
-*/
-void IRCContact::server_updateStatus()
-{
-	KIRC::ConnectionState state = kircEngine()->connectionState();
-	switch(state)
-	{
-		case KIRC::Idle:
-		case KIRC::Connecting:
-//			if( m_chatSession )
-//				m_chatSession->setDisplayName( caption() );
-			setOnlineStatus( m_protocol->m_ServerStatusOffline );
-			break;
 
-		case KIRC::Authentifying:
-		case KIRC::Connected:
-			// should make some extra check here
-			setOnlineStatus( m_protocol->m_ServerStatusOnline );
-			break;
-		case KIRC::Closing:
-			setOnlineStatus(m_protocol->m_ServerStatusOffline);
-			break;
-		default:
-			setOnlineStatus(m_protocol->m_StatusUnknown);
-	}
-}
-
-/*
 IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QString &servername, Kopete::MetaContact *m)
 	: IRCContact(contactManager, servername, m, "irc_server")
 {

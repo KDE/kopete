@@ -51,10 +51,6 @@ class QTextCodec;
 /**
  * @author Jason Keirstead <jason@keirstead.org>
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
- *
- * This class is the base class for @ref IRCUserContact and @ref IRCChannelContact.
- * Common routines and signal connections that are required for both types of
- * contacts reside here, to avoid code duplication between these two classes.
  */
 class IRCContact
 	: public Kopete::Contact
@@ -126,13 +122,10 @@ private slots:
 
 private:
 //	QString server_caption() const;
-	void server_updateStatus();
 
 //	QString channel_caption() const;
-	void channel_updateStatus();
 
 //	QString user_caption() const;
-	void user_updateStatus();
 
 private:
 	KIRC::EntityPtr m_entity;

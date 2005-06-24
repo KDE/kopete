@@ -22,8 +22,11 @@
 #include "kopeteprotocol.h"
 #include "kopetemimetypehandler.h"
 
+#include "kircentity.h"
+
 #include <dom/dom_node.h>
 #include <qdict.h>
+#include <qmap.h>
 
 #define m_protocol ((IRCProtocol*)IRCProtocol::protocol())
 
@@ -62,22 +65,9 @@ class IRCProtocol
 	Q_OBJECT
 
 public:
-	enum IRCStatus
-	{
-		Offline = 1,
-		Connecting = 2,
-		Away = 4,
-		Online = 8,
-		Voiced = 16,
-		Operator = 32,
-		ServerOperator = 1024,
-		OfflineChannel = 4096,
-		OnlineChannel = 8192,
-		OfflineServer = 16384,
-		OnlineServer = 32768
-	};
+	static IRCProtocol *protocol();
 
-	IRCProtocol( QObject *parent, const char *name, const QStringList &args );
+	IRCProtocol(QObject *parent, const char *name, const QStringList &args);
 	~IRCProtocol();
 
 	/**
@@ -95,30 +85,9 @@ public:
 
 	virtual Kopete::Account* createNewAccount(const QString &accountId);
 
-	virtual QPtrList<KAction> *customChatWindowPopupActions( const Kopete::Message &, DOM::Node & );
+	virtual QPtrList<KAction> *customChatWindowPopupActions(const Kopete::Message &, DOM::Node &);
 
-	static IRCProtocol *protocol();
-
-	const Kopete::OnlineStatus statusLookup( IRCStatus status ) const;
-
-	const Kopete::OnlineStatus m_ServerStatusOnline;
-	const Kopete::OnlineStatus m_ServerStatusOffline;
-
-	const Kopete::OnlineStatus m_ChannelStatusOnline;
-	const Kopete::OnlineStatus m_ChannelStatusOffline;
-
-	const Kopete::OnlineStatus m_UserStatusOpVoice;
-	const Kopete::OnlineStatus m_UserStatusOpVoiceAway;
-	const Kopete::OnlineStatus m_UserStatusOp;
-	const Kopete::OnlineStatus m_UserStatusOpAway;
-	const Kopete::OnlineStatus m_UserStatusVoice;
-	const Kopete::OnlineStatus m_UserStatusVoiceAway;
-	const Kopete::OnlineStatus m_UserStatusOnline;
-	const Kopete::OnlineStatus m_UserStatusAway;
-	const Kopete::OnlineStatus m_UserStatusConnecting;
-	const Kopete::OnlineStatus m_UserStatusOffline;
-
-	const Kopete::OnlineStatus m_StatusUnknown;
+	Kopete::OnlineStatus onlineStatusFor(const KIRC::EntityPtr entity) const;
 
 	bool commandInProgress(){ return m_commandInProgress; }
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }
@@ -163,6 +132,10 @@ private:
 	static IRCProtocol *s_protocol;
 
 	void simpleModeChange(const QString &, Kopete::ChatSession *, const QString &mode);
+
+	QMap<int, Kopete::OnlineStatus> m_statuses;
+//	const Kopete::OnlineStatus m_connecting;
+	const Kopete::OnlineStatus m_StatusUnknown;
 
 	DOM::Node activeNode;
 	IRCAccount *activeAccount;

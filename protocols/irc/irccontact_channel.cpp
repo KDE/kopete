@@ -44,27 +44,7 @@ const QString IRCContact::channel_caption() const
 
 	return cap;
 }
-*/
-void IRCContact::channel_updateStatus()
-{
-	KIRC::ConnectionState state = kircEngine()->connectionState();
-	switch (state)
-	{
-		case KIRC::Idle:
-		case KIRC::Connecting:
-		case KIRC::Authentifying:
-			setOnlineStatus(m_protocol->m_ChannelStatusOffline);
-			break;
-		case KIRC::Connected:
-			setOnlineStatus(m_protocol->m_ChannelStatusOnline);
-		case KIRC::Closing:
-			setOnlineStatus(m_protocol->m_ChannelStatusOffline);
-			break;
-		default:
-			setOnlineStatus(m_protocol->m_StatusUnknown);
-	}
-}
-/*
+
 //This is the number of nicknames we will process concurrently when joining a channel
 //Lower numbers ensure less GUI blocking, but take marginally longer to complete.
 //Higher numbers are absolute fastest, but block GUI until all members are added

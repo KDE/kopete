@@ -48,7 +48,7 @@ public:
 
 	bool operator == (const Entity &);
 
-	KIRC::EntityType type() const;
+	KIRC::EntityType type(int typeMask = ~0) const;
 	KIRC::EntityType guessType();
 
 	void setName(const QString &);

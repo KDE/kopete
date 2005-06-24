@@ -45,7 +45,7 @@ void Engine::bindNumericReplies()
 	bind(252, this, SLOT(numericReply_252(KIRC::Message &)), 2, 2);
 	bind(253, this, SLOT(numericReply_253(KIRC::Message &)), 2, 2);
 	bind(254, this, SLOT(numericReply_254(KIRC::Message &)), 2, 2);
-	bind(255, this, SLOT(numericReply_255(KIRC::Message &)), 1, 1); // incomingConnectString
+	bind(255, this, SLOT(numericReply_255(KIRC::Message &)), 1, 1);
 
 	bind(263, this, SLOT(numericReply_263(KIRC::Message &))); // incomingServerLoadTooHigh
 	bind(265, this, SLOT(numericReply_265(KIRC::Message &)));
@@ -153,7 +153,7 @@ void Engine::numericReply_004(Message &msg)
  */
 void Engine::numericReply_005(Message &msg)
 {
-//	emit incomingConnectString(msg.toString());
+	receivedServerMessage(msg);
 }
 
 /* 250: ":Highest connection count: <integer> (<integer> clients)
@@ -206,7 +206,7 @@ void Engine::numericReply_255(Message &msg)
 	receivedServerMessage(msg);
 }
 
-/* 263:
+/* 263: "<command> :Please wait a while and try again."
  * Server is too busy.
  */
 void Engine::numericReply_263(Message &)
@@ -358,9 +358,9 @@ void Engine::numericReply_322(Message &msg)
 /* 323: ":End of LIST"
  * End of the LIST command.
  */
-void Engine::numericReply_323(Message &)
+void Engine::numericReply_323(Message &msg)
 {
-	emit incomingEndOfList();
+	emit receivedServerMessage(msg);
 }
 
 /* 324: "<channel> <mode> <mode params>"
@@ -450,7 +450,7 @@ void Engine::numericReply_366(Message &msg)
 	emit incomingEndOfNames(msg.arg(1));
 }
 
-/* 369:
+/* 369: "<nick> :End of WHOWAS"
  * End of WHOWAS Request
  */
 void Engine::numericReply_369(Message &msg)
@@ -472,6 +472,10 @@ void Engine::numericReply_372(Message &msg)
 /* 376: ":End of MOTD command"
  * End of the motd.
  */
+void Engine::numericReply_376(Message &msg)
+{
+//	emit incomingMotd(msg.suffix());
+}
 
 /* 401: "<nickname> :No such nick/channel"
  * Gives a signal to indicate that the command issued failed because the person/channel not being on IRC.
@@ -496,7 +500,7 @@ void Engine::numericReply_406(Message &msg)
  */
 void Engine::numericReply_422(Message &msg)
 {
-	emit incomingMotd(msg.suffix());
+	receivedServerMessage(msg);
 }
 
 /* 433: "<nick> :Nickname is already in use"
@@ -529,7 +533,10 @@ void Engine::numericReply_464(Message &/*msg*/)
 	emit incomingFailedServerPassword();
 }
 
-/* 471:
+/* 465: ":You are banned from this server"
+ */
+
+/* 471: "<channel> :Cannot join channel (+l)"
  * Channel is Full
  */
 void Engine::numericReply_471(Message &msg)
@@ -537,7 +544,10 @@ void Engine::numericReply_471(Message &msg)
 	emit incomingFailedChanFull(msg.arg(1));
 }
 
-/* 473:
+/* 472: "<char> :is unknown mode char to me for <channel>"
+ */
+
+/* 473: "<channel> :Cannot join channel (+i)"
  * Invite Only.
  */
 void Engine::numericReply_473(Message &msg)
@@ -545,7 +555,7 @@ void Engine::numericReply_473(Message &msg)
 	emit incomingFailedChanInvite(msg.arg(1));
 }
 
-/* 474:
+/* 474: "<channel> :Cannot join channel (+b)"
  * Banned.
  */
 void Engine::numericReply_474(Message &msg)
@@ -553,7 +563,7 @@ void Engine::numericReply_474(Message &msg)
 	emit incomingFailedChanBanned(msg.arg(1));
 }
 
-/* 475:
+/* 475: "<channel> :Cannot join channel (+k)"
  * Wrong Chan-key.
  */
 void Engine::numericReply_475(Message &msg)
@@ -561,10 +571,40 @@ void Engine::numericReply_475(Message &msg)
 	emit incomingFailedChankey(msg.arg(1));
 }
 
-/* 477: "<channel> :You need a registered nick to join that channel."
- * Available on DALNET servers only ?
+/* 476: "<channel> :Bad Channel Mask"
+ */
+
+/* 477: "<channel> :Channel doesn't support modes" RFC-2812
+ * 477: "<channel> :You need a registered nick to join that channel." DALNET
  */
 // void Engine::numericReply_477(Message &msg)
 // {
 // 	emit incomingChannelNeedRegistration(msg.arg(2), msg.suffix());
 // }
+
+/* 478: "<channel> <char> :Channel list is full"
+ */
+
+/* 481: ":Permission Denied- You're not an IRC operator"
+ */
+
+/* 482: "<channel> :You're not channel operator"
+ */
+
+/* 483: ":You can't kill a server!"
+ */
+
+/* 484: ":Your connection is restricted!"
+ */
+
+/* 485: ":You're not the original channel operator"
+ */
+
+/* 491: ":No O-lines for your host"
+ */
+
+/* 501: ":Unknown MODE flag"
+ */
+
+/* 502: ":Cannot change mode for other users"
+ */

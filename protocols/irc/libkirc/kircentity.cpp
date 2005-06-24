@@ -73,12 +73,12 @@ QString Entity::host() const
 	return m_host;
 }
 
-KIRC::EntityType Entity::type() const
+EntityType Entity::type(int typeMask) const
 {
-	return m_type;
+	return (EntityType)(m_type & typeMask);
 }
 
-KIRC::EntityType Entity::guessType()
+EntityType Entity::guessType()
 {
 	m_type = guessType(m_name);
 	return m_type;

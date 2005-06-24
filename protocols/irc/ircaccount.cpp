@@ -55,6 +55,7 @@
 
 using namespace Kopete;
 
+//const QString IRCAccount::CONFIG_AUTOSHOWSERVERWINDOW = QString::fromLatin1("AutoShowServerWindow");
 const QString IRCAccount::CONFIG_CODECMIB = QString::fromLatin1("Codec");
 const QString IRCAccount::CONFIG_NETWORKNAME = QString::fromLatin1("NetworkName");
 const QString IRCAccount::CONFIG_NICKNAME = QString::fromLatin1("NickName");
@@ -62,16 +63,20 @@ const QString IRCAccount::CONFIG_USERNAME = QString::fromLatin1("UserName");
 const QString IRCAccount::CONFIG_REALNAME = QString::fromLatin1("RealName");
 
 IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QString &autoChan, const QString& netName, const QString &nickName)
-	: PasswordedAccount(protocol, accountId, 0, true), autoConnect( autoChan ), commandSource(0)
+	: PasswordedAccount(protocol, accountId, 0, true),
+	  m_engine(new KIRC::Engine(this)),
+	  autoConnect(autoChan),
+	  commandSource(0)
 {
 	m_manager = 0;
 	m_channelList = 0;
 
-	m_engine = new KIRC::Engine(this);
+	m_engine->setUserName(userName());
+	m_engine->setRealName(realName());
 
-	QMap< QString, QString> replies = customCtcpReplies();
-	for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
-		m_engine->addCustomCtcp( it.key(), it.data() );
+	QMap<QString, QString> replies = customCtcpReplies();
+	for (QMap<QString, QString>::ConstIterator it = replies.begin(); it != replies.end(); ++it)
+		m_engine->addCustomCtcp(it.key(), it.data());
 
 	QString version=i18n("Kopete IRC Plugin %1 [http://kopete.kde.org]").arg(kapp->aboutData()->version());
 	m_engine->setVersionString( version  );
@@ -106,42 +111,16 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	QObject::connect(m_engine, SIGNAL(receivedMessage(KIRC::MessageType, const KIRC::EntityPtr &, const KIRC::EntityPtrList &, const QString &)),
 			 this, SLOT(receivedMessage(KIRC::MessageType, const KIRC::EntityPtr &, const KIRC::EntityPtrList &, const QString &)));
 
-	mAwayAction = new AwayAction ( i18n("Set Away"),
-		m_protocol->m_UserStatusAway.iconFor( this ), 0, this,
-		SLOT(slotGoAway( const QString & )), this );
-
 	currentHost = 0;
 
-	KConfigGroup *config = configGroup();
+//	loadProperties();
 
-	QString networkName = netName;
-	if (networkName.isNull())
-		networkName = config->readEntry(CONFIG_NETWORKNAME);
-
-	if (!nickName.isNull())
-		setNickName(nickName);
-//	else
-//		mNickName = config->readEntry(CONFIG_NICKNAME);
-
-	QString codecMib = config->readEntry(CONFIG_CODECMIB);
-	//	int codecMib = config->readNumEntry(CONFIG_CODECMIB, UTF-8);
-
-	m_serverNotices = (MessageDestination)config->readNumEntry( "ServerNotices", ServerWindow );
-	m_serverMessages = (MessageDestination)config->readNumEntry( "ServerMessages", ServerWindow );
-	m_informationReplies = (MessageDestination)config->readNumEntry( "InformationReplies", ActiveWindow );
-	m_errorMessages = (MessageDestination)config->readNumEntry( "ErrorMessages", ActiveWindow );
-	autoShowServerWindow = config->readBoolEntry( "AutoShowServerWindow", false );
-
-	if( !codecMib.isEmpty() )
-	{
-		mCodec = QTextCodec::codecForMib( codecMib.toInt() );
-		m_engine->setDefaultCodec( mCodec );
-	}
-	else
-		mCodec = 0;
-
+	m_server = new IRCContact(this, m_engine->server());
+	m_self = new IRCContact(this, m_engine->self());
+	setMyself(m_self);
+/*
 	QString m_accountId = this->accountId();
-	if( networkName.isEmpty() && QRegExp( "[^#+&\\s]+@[\\w-\\.]+:\\d+" ).exactMatch( m_accountId ) )
+	if (networkName.isEmpty() && QRegExp( "[^#+&\\s]+@[\\w-\\.]+:\\d+" ).exactMatch(m_accountId))
 	{
 		kdDebug(14120) << "Creating account from " << m_accountId << endl;
 
@@ -168,7 +147,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 
 		if( networkName.isEmpty() )
 		{
-			/* Could not find this host. Add it to the networks structure */
+			// Could not find this host. Add it to the networks structure
 
 			m_network = IRCNetwork();
 			m_network.name = i18n("Temporary Network - %1").arg( hostName );
@@ -196,16 +175,14 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	{
 		kdError() << "No network name defined, and could not import network information from ID" << endl;
 	}
-
-	m_engine->setUserName(userName());
-	m_engine->setRealName(realName());
-
-	m_server = new IRCContact(this, m_engine->server());
-	m_self = new IRCContact(this, m_engine->self());
-	setMyself(m_self);
+*/
 
 //	setAccountLabel( QString::fromLatin1("%1@%2").arg(mNickName,networkName) );
-
+/*
+	m_awayAction = new AwayAction(i18n("Set Away"),
+		m_protocol->m_UserStatusAway.iconFor(this), 0, this,
+		SLOT(slotGoAway( const QString & )), this);
+*/
 	m_joinChannelAction = new KAction ( i18n("Join Channel..."), QString::null, 0, this,
 				SLOT(slotJoinChannel()), this);
 	m_searchChannelAction = new KAction ( i18n("Search Channels..."), QString::null, 0, this,
@@ -218,6 +195,41 @@ IRCAccount::~IRCAccount()
 		m_engine->quit(i18n("Plugin Unloaded"), true);
 }
 /*
+void IRCAccount::loadProperties()
+{
+	KConfigGroup *config = configGroup();
+
+	QString networkName = netName;
+	if (networkName.isNull())
+		networkName = config->readEntry(CONFIG_NETWORKNAME);
+
+	if (!nickName.isNull())
+		setNickName(nickName);
+//	else
+//		mNickName = config->readEntry(CONFIG_NICKNAME);
+
+	QString codecMib = config->readEntry(CONFIG_CODECMIB);
+	//	int codecMib = config->readNumEntry(CONFIG_CODECMIB, UTF-8);
+
+	m_serverNotices = (MessageDestination)config->readNumEntry( "ServerNotices", ServerWindow );
+	m_serverMessages = (MessageDestination)config->readNumEntry( "ServerMessages", ServerWindow );
+	m_informationReplies = (MessageDestination)config->readNumEntry( "InformationReplies", ActiveWindow );
+	m_errorMessages = (MessageDestination)config->readNumEntry( "ErrorMessages", ActiveWindow );
+	autoShowServerWindow = config->readBoolEntry( "AutoShowServerWindow", false );
+
+	if( !codecMib.isEmpty() )
+	{
+		mCodec = QTextCodec::codecForMib( codecMib.toInt() );
+		m_engine->setDefaultCodec( mCodec );
+	}
+	else
+		mCodec = 0;
+}
+
+void IRCAccount::storeProperties()
+{
+}
+
 void IRCAccount::slotNickInUse( const QString &nick )
 {
 	QString altNickName = altNick();
@@ -240,9 +252,26 @@ void IRCAccount::slotNickInUse( const QString &nick )
 	}
 }
 */
-void IRCAccount::slotNickInUseAlert( const QString &nick )
+void IRCAccount::slotNickInUseAlert(const QString &nick)
 {
 	KMessageBox::error(UI::Global::mainWidget(), i18n("The nickname %1 is already in use").arg(nick), i18n("IRC Plugin"));
+}
+
+void IRCAccount::setAutoShowServerWindow(bool show)
+{
+	autoShowServerWindow = show;
+	configGroup()->writeEntry(QString::fromLatin1("AutoShowServerWindow"), autoShowServerWindow);
+}
+
+void IRCAccount::setNickName(const QString &nickName)
+{
+	m_self->setNickName(nickName);
+	configGroup()->writeEntry(CONFIG_NICKNAME, nickName);
+}
+
+const QString IRCAccount::nickName() const
+{
+	return configGroup()->readEntry(CONFIG_NICKNAME);
 }
 /*
 void IRCAccount::setAltNick( const QString &altNick )
@@ -255,29 +284,7 @@ const QString IRCAccount::altNick() const
 	return configGroup()->readEntry(QString::fromLatin1("altNick"));
 }
 */
-void IRCAccount::setAutoShowServerWindow( bool show )
-{
-	autoShowServerWindow = show;
-	configGroup()->writeEntry(QString::fromLatin1( "AutoShowServerWindow" ), autoShowServerWindow);
-}
-
-const QString IRCAccount::networkName() const
-{
-	return m_network.name;
-}
-
-void IRCAccount::setNickName(const QString &nickName)
-{
-	m_self->setNickName( nickName );
-	configGroup()->writeEntry(CONFIG_NICKNAME, nickName);
-}
-
-const QString IRCAccount::nickName() const
-{
-	return configGroup()->readEntry(CONFIG_NICKNAME);
-}
-
-void IRCAccount::setUserName( const QString &userName )
+void IRCAccount::setUserName(const QString &userName)
 {
 	m_engine->setUserName(userName);
 	configGroup()->writeEntry(CONFIG_USERNAME, userName);
@@ -325,6 +332,11 @@ void IRCAccount::setNetwork(const IRCNetwork &network)
 	m_network = network;
 //	configGroup()->writeEntry(CONFIG_NETWORKNAME, network.name);
 //	setAccountLabel(network.name);
+}
+
+const QString IRCAccount::networkName() const
+{
+	return m_network.name;
 }
 
 // FIXME: Possible null pointer usage here
@@ -660,10 +672,11 @@ bool IRCAccount::isConnected()
 	return m_engine->isConnected();
 }
 
-void IRCAccount::setOnlineStatus( const OnlineStatus& status , const QString &reason )
+void IRCAccount::setOnlineStatus(const OnlineStatus& status , const QString &reason)
 {
 	kdDebug(14120) << k_funcinfo << endl;
 
+	#warning REWRITE ME
 	if ( status.status() == OnlineStatus::Online && myself()->onlineStatus().status() == OnlineStatus::Offline )
 		connect();
 	else if ( status.status() == OnlineStatus::Offline )
