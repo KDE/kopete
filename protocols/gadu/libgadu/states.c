@@ -619,7 +619,7 @@ void gg_state_reading_key(struct gg_session *sess, struct gg_event *e)
 	l.status = gg_fix32(sess->initial_status ? sess->initial_status : GG_STATUS_AVAIL);
 	l.version = gg_fix32(sess->protocol_version);
 	l.local_port = gg_fix16(gg_dcc_port);
-	l.image_size = sess->image_size;
+	l.image_size = gg_fix32(sess->image_size);
 
 	if (sess->external_addr && sess->external_port > 1023) {
 		l.external_ip = sess->external_addr;
