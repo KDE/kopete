@@ -83,6 +83,12 @@ MetaContact::MetaContact()
 {
 	d = new Private;
 
+	// Initialise the private data
+	d->displayNameSource = SourceCustom;
+	d->displayNameSourceContact = 0;
+	d->photoSource = SourceCustom;
+	d->photoSourceContact = 0;
+
 	setDisplayNameSource(SourceCustom);
 	setPhotoSource(SourceCustom);
 	setDisplayNameSourceContact(0L);
