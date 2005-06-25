@@ -3,6 +3,7 @@
 
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
+    Copyright (c) 2005		by Gregg Edghill 		  <gregg.edghill@gmail.com>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -26,6 +27,7 @@
 #include <qtimer.h>
 
 #include <kdebug.h>
+#include <kconfig.h>
 #include <kbufferedsocket.h>
 #include <kserversocket.h>
 #include <kresolver.h>
@@ -37,16 +39,40 @@
 
 using namespace KNetwork;
 
+class MimeMessage
+{
+	public:
+		MimeMessage(const QString &msg) : message(msg) {}
+
+		QString getValue(const QString &key)
+		{
+			QRegExp rx(key+": ([^\r\n]+)");
+			rx.search(message);
+			return rx.cap(1);
+		}
+	private:
+		QString message;
+};
+
 MSNSocket::MSNSocket(QObject* parent)  : QObject (parent)
 {
 	m_onlineStatus = Disconnected;
 	m_socket = 0L;
+	useHttp = false;
+	m_timer  = 0L;
 }
 
 MSNSocket::~MSNSocket()
 {
 	//if ( m_onlineStatus != Disconnected )
 	//	disconnect();
+	if(m_timer)
+	{
+		// Dispose of the http poll timer.
+		delete m_timer;
+		m_timer = 0L;
+	}
+
 	doneDisconnect();
 	if ( m_socket )
 		m_socket->deleteLater();
@@ -77,7 +103,13 @@ void MSNSocket::connect( const QString &server, uint port )
 	//m_sendQueue.clear();
 
 	m_server = server;
+
+	if(!useHttp) {
+		m_host = server;
+	}
+
 	m_port = port;
+
 	m_socket = new KBufferedSocket( server, QString::number(port) );
 
 	m_socket->enableRead( true );
@@ -93,6 +125,16 @@ void MSNSocket::connect( const QString &server, uint port )
 	QObject::connect( m_socket, SIGNAL( gotError( int ) ),         this, SLOT( slotSocketError( int ) ) );
 	QObject::connect( m_socket, SIGNAL( closed( ) ),               this, SLOT( slotSocketClosed( ) ) );
 
+	if(useHttp)
+	{
+		if(m_timer == 0L)
+		{
+			m_timer = new QTimer(this, "Http poll timer");
+			// Connect the slot HttpPoll with the timer timeout signal.
+			QObject::connect(m_timer, SIGNAL(timeout()), this, SLOT(slotHttpPoll()));
+		}
+	}
+
 	aboutToConnect();
 
 	// start the asynchronous connection
@@ -101,6 +143,12 @@ void MSNSocket::connect( const QString &server, uint port )
 
 void MSNSocket::disconnect()
 {
+	if(useHttp)
+		if(m_timer->isActive()) {
+			// If the timer is still active, stop the timer.
+			m_timer->stop();
+		}
+
 	if ( m_socket )
 		m_socket->closeNow();
 	else
@@ -138,7 +186,39 @@ void MSNSocket::slotSocketError( int error )
 	if(!KSocketBase::isFatalError(error))
 		return;
 		//we only care about fatal error
-	
+
+	if(!useHttp)
+	{
+		QString s = QString(this->className()).lower();
+		if(s == "msnnotifysocket")
+			m_type = "NS";
+		else if(s == "msnswitchboardsocket")
+			m_type = "SB";
+		else
+			m_type = QString::null;
+
+		if(!m_type.isNull())
+		{
+			//delete m_socket;
+			m_socket->deleteLater();
+			m_socket = 0L;
+
+			setOnlineStatus( Disconnected );
+
+			useHttp = true;
+			bCanPoll = false;
+			bIsFirstInTransaction = true;
+			pending = false;
+			remaining = 0;
+
+			m_gateway = "gateway.messenger.hotmail.com";
+
+			// Try to connect to the service using the http gateway.
+			this->connect(m_gateway, 80);
+			return;
+		}
+	}
+
 	QString errormsg = i18n( "There was an error while connecting to the MSN server.\nError message:\n" );
 	if ( error == KSocketBase::LookupFailure )
 		errormsg += i18n( "Unable to lookup %1" ).arg( m_socket->peerResolver().nodeName() );
@@ -171,8 +251,9 @@ void MSNSocket::slotDataReceived()
 
 	// incoming data, plus an extra char where we pretend a NUL is so the conversion
 	// to QCString doesn't go over the end of the allocated memory.
-	char *buf = new char[ avail + 1 ];
-	int ret = m_socket->readBlock( buf, avail );
+	char *buffer = new char[ avail + 1 ];
+	int ret = m_socket->readBlock( buffer, avail );
+
 	if ( ret < 0 )
 	{
 		kdWarning( 14140 ) << k_funcinfo << "readBlock() returned " << ret << "!" <<endl;
@@ -196,11 +277,153 @@ void MSNSocket::slotDataReceived()
 			kdDebug( 14140 ) << k_funcinfo << "Read " << ret << " bytes into 4kb block." << endl;
 		}
 
+
+		QString rawData;
+
+		if(useHttp)
+		{
+			bool error = false;
+			QByteArray bytes;
+
+			// Check if all data has arrived.
+			rawData = QString(QCString(buffer, avail + 1));
+			bool headers = (rawData.find(QRegExp("HTTP/\\d\\.\\d (\\d+) ([^\r\n]+)")) != -1);
+
+			if(headers)
+			{
+				// The http header packet arrived.
+				int endOfHeaders = rawData.find("\r\n\r\n");
+				if((endOfHeaders + 4) == avail)
+				{
+					// Only the response headers data is included.
+					QRegExp re("Content-Length: ([^\r\n]+)");
+					if(re.search(rawData) != -1)
+					{
+						bool valid;
+						int l = re.cap(1).toInt(&valid);
+						if(valid && l > 0)
+						{
+							// The packet contains the headers but does not contain the content data;
+							// buffer the data received and read again.
+							m_buffer.add(buffer, avail);
+
+							delete[] buffer;
+							// Update how much data remains.
+							remaining = l;
+							return;
+						}
+					}
+				}
+			}
+			else
+			{
+				// Write the received data to the buffer.
+				m_buffer.add(buffer, avail);
+
+				remaining -= avail;
+				if(remaining != 0)
+				{
+					// We have not received all the content data, read again.
+					delete[] buffer;
+					return;
+				}
+
+				// At this point, we have all the bytes returned from the web request.
+				bytes = m_buffer.take(m_buffer.size());
+				delete[] buffer;
+			}
+
+			if(bytes.size() == 0) {
+				// The response headers and the content came in one packet.
+				bytes.assign(buffer, avail);
+			}
+
+			// Create the web response object from the response bytes.
+			WebResponse response(bytes);
+
+			if(response.getStatusCode() == 200)
+			{
+				// If we received a valid response, read the required headers.
+				// Retrieve the X-MSN-Messenger header.
+				QString header = response.getHeaders()->getValue("X-MSN-Messenger");
+
+				QStringList parts = QStringList::split(";", header.replace(" ", ""));
+				if(!header.isNull() && (parts.count() >= 2))
+				{
+					if(parts[0].find("SessionID", 0) != -1)
+					{
+						// Assign the session id.
+						m_sessionId = parts[0].section("=", 1, 1);
+					}else
+						error = true;
+
+					if(parts[1].find("GW-IP", 0) != -1)
+					{
+						// Assign the gateway IP address.
+						m_gwip = parts[1].section("=", 1, 1);
+					}else
+						error = true;
+
+
+					if(parts.count() > 2)
+						if((parts[2].find("Session", 0) != -1) && (parts[2].section("=", 1, 1) == "close"))
+						{
+							// The http session has been closed by the server, disconnect.
+							kdDebug(14140) << k_funcinfo << "Session closed." << endl;
+							bCanPoll = false;
+							disconnect();
+							return;
+						}
+				}else
+					error = true;
+
+				// Retrieve the content length header.
+				header = response.getHeaders()->getValue("Content-Length");
+
+				if(!header.isNull())
+				{
+					bool valid;
+					int length = header.toInt(&valid);
+					if(valid && (length == 0))
+					{
+						// If the response content length is zero, there is nothing to do.
+						pending  = false;
+						return;
+					}
+
+					if(valid && (length > 0))
+					{
+						// Otherwise, if the content length is greater than zero, get the web response stream.
+						QDataStream *stream = response.getResponseStream();
+						buffer = new char[length];
+						// Read the web response content.
+						stream->readRawBytes(buffer, length);
+						ret = length;
+					}else
+						error = true;
+				}else
+					error = true;
+			}else
+				error = true;
+
+			if(error)
+			{
+				kdDebug(14140) << k_funcinfo << "Http error: " << response.getStatusCode() << " "
+					<< response.getStatusDescription() << endl;
+
+				// If we encountered an error, disconnect and return.
+				bCanPoll = false;
+				// Disconnect from the service.
+				disconnect();
+				return;
+			}
+		}
+
 		// Simple check to avoid dumping the binary data from the icons and emoticons to kdDebug:
 		// all MSN commands start with one or more uppercase characters.
 		// For now just check the first three chars, let's see how accurate it is.
 		// Additionally, if we receive an MSN-P2P packet, strip off anything after the P2P header.
-		QString rawData = QString( QCString( buf, avail + 1 ) ).stripWhiteSpace().replace(
+		rawData = QString( QCString( buffer, ((!useHttp)? avail : ret) + 1 ) ).stripWhiteSpace().replace(
 			QRegExp( "(P2P-Dest:.[a-zA-Z@.]*).*" ), "\\1\n\n(Stripped binary data)" );
 
 		bool isBinary = false;
@@ -216,12 +439,18 @@ void MSNSocket::slotDataReceived()
 			kdDebug( 14141 ) << k_funcinfo << rawData << endl;
 
 		// fill the buffer with the received data
-		m_buffer.add( buf, ret );
+		m_buffer.add( buffer, ret );
 
 		slotReadLine();
+
+		if(useHttp) {
+			// Set data pending to false.
+			pending  = false;
+		}
 	}
-	// Cleanup
-	delete[] buf;
+
+	// Cleanup.
+	delete[] buffer;
 }
 
 void MSNSocket::slotReadLine()
@@ -425,37 +654,29 @@ int MSNSocket::sendCommand( const QString &cmd, const QString &args, bool addId,
 
 	data += "\r\n";
 
-	if ( !binary )
+
+	// the command will be sent in slotReadyWrite
+	QByteArray bytes;
+	const uint length = data.length();
+	bytes.duplicate(data.data(), length);
+	if(!body.isEmpty())
 	{
-		if( !body.isEmpty() )
-			data += QCString( body, body.size() + 1 );
-
-		//kdDebug( 14141 ) << k_funcinfo << "Sending command " << data << endl;
-
-		// the command will be sent in slotReadyWrite
-		m_sendQueue.append( data );
-		m_socket->enableWrite( true );
+		uint l = body.size() - (binary ? 0 : 1);
+		bytes.resize(length + l);
+		for(uint i=0; i < l; i++)
+			bytes[length + i] = body[i];
 	}
-	else
-	{
-		const uint dataLength = data.length();
-		QByteArray data2( dataLength + body.size() );
-		// FIXME: Why not use QByteArray::copy() for the first loop? - Martijn
-		for ( uint f = 0; f < dataLength; f++ )
-			data2[ f ] = data[ f ];
-		for ( uint f = 0; f < body.size(); f++ )
-			data2[ dataLength + f ] = body[ f ];
 
-		sendBytes( data2 ) ;
-
-		//kdDebug( 14141 ) << k_funcinfo << data2.data() << endl;
-	}
+	// Add the request to the queue.
+	m_sendQueue.append(bytes);
+	m_socket->enableWrite(true);
 
 	if ( addId )
 	{
 		++m_id;
 		return m_id - 1;
 	}
+
 	return 0;
 }
 
@@ -463,19 +684,91 @@ void MSNSocket::slotReadyWrite()
 {
 	if ( !m_sendQueue.isEmpty() )
 	{
-		QValueList<QCString>::Iterator it = m_sendQueue.begin();
-		kdDebug( 14141 ) << k_funcinfo << "Sending command: " << QString( *it ).stripWhiteSpace() << endl;
-		m_socket->writeBlock( *it, ( *it ).length() );
-		m_sendQueue.remove( it );
+		// If the command queue is not empty, retrieve the first command.
+		QValueList<QByteArray>::Iterator it = m_sendQueue.begin();
 
-		// If the queue is empty again stop waiting for readyWrite signals
-		// because of the CPU usage
-		if ( m_sendQueue.isEmpty() )
-			m_socket->enableWrite( false );
+		if(useHttp)
+		{
+			// If web response data is not pending, send the http request.
+			if(!pending)
+			{
+				pending = true;
+				// Temporarily disable http polling.
+				bCanPoll = false;
+				// Set the host to the msn gateway by default.
+				QString host = m_gateway;
+				QString query; // Web request query string.
+
+				if(bIsFirstInTransaction)
+				{
+					query.append("Action=open&Server=");
+					query.append(m_type);
+
+					query += "&IP=" + m_host; // messenger.hotmail.com
+
+					bIsFirstInTransaction = false;
+				}
+				else
+				{
+					// If this is not the first request sent in the transaction,
+					// only add the session Id.
+					host = m_gwip;
+					query += "SessionID=" + m_sessionId;
+				}
+
+				// Create the web request headers.
+				QString s = makeHttpRequestString(host, query, (*it).size());
+
+				uint length = s.length();
+				// Create the web request bytes.
+				QByteArray bytes(length + (*it).size());
+
+				// Copy the request headers into the request bytes.
+				for(uint i=0; i < length; i++)
+					bytes[i] = s.ascii()[i];
+				// Copy the request body into the request bytes.
+				for(uint i=0; i < (*it).size(); i++)
+					bytes[length + i] = (*it)[i];
+
+				kdDebug( 14141 ) << k_funcinfo << "Sending http command: " << QString(*it).stripWhiteSpace() << endl;
+
+				// Write the request bytes to the socket.
+				m_socket->writeBlock(bytes.data(), bytes.size());
+
+				// Remove the request from the request queue.
+				m_sendQueue.remove(it);
+
+				if(m_sendQueue.isEmpty())
+				{
+					// Disable sending requests.
+					m_socket->enableWrite(false);
+					// If the request queue is empty, poll the server.
+					bCanPoll = true;
+				}
+			}
+		}
+		else
+		{
+			// Otherwise, send the command normally.
+			kdDebug( 14141 ) << k_funcinfo << "Sending command: " << QString( *it ).stripWhiteSpace() << endl;
+			m_socket->writeBlock( *it, ( *it ).size() );
+			m_sendQueue.remove( it );
+
+			// If the queue is empty agalin stop waiting for readyWrite signals
+			// because of the CPU usage
+			if ( m_sendQueue.isEmpty() )
+				m_socket->enableWrite( false );
+		}
 	}
 	else
 	{
 		m_socket->enableWrite( false );
+
+		if(useHttp)
+		{
+			// If the request queue is empty, poll the server.
+			bCanPoll = true;
+		}
 	}
 }
 
@@ -522,6 +815,16 @@ QString MSNSocket::unescape( const QString &str )
 
 void MSNSocket::slotConnectionSuccess()
 {
+	if(useHttp)
+	{
+		// If we are connected, set the data pending flag to false,
+		// and disable http polling.
+		pending  = false;
+		bCanPoll = false;
+		// If we are connected, start the timer.
+		m_timer->start(2000, false);
+	}
+
 	//kdDebug( 14140 ) << k_funcinfo << endl;
 	doneConnect();
 }
@@ -533,7 +836,7 @@ void MSNSocket::slotHostFound()
 
 void MSNSocket::slotSocketClosed()
 {
-        kdDebug( 14140 ) << k_funcinfo << "Socket closed. " << endl;
+    kdDebug( 14140 ) << k_funcinfo << "Socket closed. " << endl;
 
 	if ( !m_socket ||  m_onlineStatus == Disconnected )
 	{
@@ -551,6 +854,21 @@ void MSNSocket::slotSocketClosed()
 	emit socketClosed();
 }
 
+void MSNSocket::slotHttpPoll()
+{
+	if(pending || !bCanPoll){
+		// If data is pending or poll has been temporary disabled, return.
+		return;
+	}
+
+	// Create the http request headers.
+	const QCString headers = makeHttpRequestString(m_gwip, "Action=poll&SessionID=" + m_sessionId, 0).utf8();
+	m_socket->writeBlock(headers, headers.length());
+	// Wait for the response.
+	pending = true;
+	m_socket->enableWrite(true);
+}
+
 // Used in MSNFileTransferSocket
 // FIXME: Why is this here if it's only used for file transfer? - Martijn
 void MSNSocket::bytesReceived( const QByteArray & /* data */ )
@@ -565,8 +883,17 @@ void MSNSocket::sendBytes( const QByteArray &data )
 		kdWarning( 14140 ) << k_funcinfo << "Not yet connected" << endl;
 		return;
 	}
+
 	m_socket->writeBlock( data, data.size() );
 	m_socket->enableWrite( true );
+}
+
+MSNSocket::Transport MSNSocket::getTransport()
+{
+	if(m_socket->peerResults().serviceName() == "80"){
+		return MSNSocket::HttpTransport;
+	}else
+		return MSNSocket::TcpTransport;
 }
 
 bool MSNSocket::accept( KServerSocket *server )
@@ -661,6 +988,98 @@ QByteArray MSNSocket::Buffer::take( unsigned blockSize )
 
 	return rep;
 }
+
+QString MSNSocket::makeHttpRequestString(const QString& host, const QString& query, uint contentLength)
+{
+	QString s(
+		"POST http://" + host + "/gateway/gateway.dll?" + query + " HTTP/1.1\r\n" +
+		"Accept: */*\r\n" +
+		"Accept-Language: en-us\r\n" +
+		"User-Agent: MSMSGS\r\n" +
+		"Host: " + host + "\r\n" +
+		"Proxy-Connection: Keep-Alive\r\n" +
+		"Connection: Keep-Alive\r\n" +
+		"Pragma: no-cache\r\n" +
+		"Content-Type: application/x-msn-messenger\r\n" +
+		"Content-Length: " + QString::number(contentLength) + "\r\n" +
+		"\r\n");
+	return s;
+}
+
+MSNSocket::WebResponse::WebResponse(const QByteArray& bytes)
+{
+	m_statusCode = 0;
+	m_stream     = 0;
+
+	int     headerEnd;
+  	QString header;
+	QString data(QCString(bytes, bytes.size() + 1));
+
+	// Parse the HTTP status header
+	QRegExp re("HTTP/\\d\\.\\d (\\d+) ([^\r\n]+)");
+	headerEnd  = data.find("\r\n");
+	header     = data.left( (headerEnd == -1) ? 20 : headerEnd );
+
+	re.search(header);
+	m_statusCode = re.cap(1).toInt();
+	m_statusDescription = re.cap(2);
+
+	// Remove the web response status header.
+	data = data.mid(headerEnd + 2, (data.find("\r\n\r\n") + 2) - (headerEnd + 2));
+	// Create a MimeMessage, removing the HTTP status header
+	m_headers = new MimeMessage(data);
+
+	// Retrieve the contentlength header.
+	header = m_headers->getValue("Content-Length");
+	if(!header.isNull())
+	{
+		bool valid;
+		int length = header.toInt(&valid);
+		if(valid && length > 0)
+		{
+			// If the content length is valid, and not zero,
+			// copy the web response content bytes.
+			int offset = bytes.size() - length;
+
+			QByteArray content(length);
+			for(int i=0; i < length; i++)
+				content[i] = bytes[offset + i];
+			// Create the web response stream from the response content bytes.
+			m_stream = new QDataStream(content, IO_ReadOnly);
+		}
+	}
+}
+
+MSNSocket::WebResponse::~WebResponse()
+{
+	if(m_headers)
+		delete m_headers;
+	m_headers = 0;
+	if(m_stream)
+		delete m_stream;
+	m_stream = 0;
+}
+
+MimeMessage* MSNSocket::WebResponse::getHeaders()
+{
+	return m_headers;
+}
+
+QDataStream* MSNSocket::WebResponse::getResponseStream()
+{
+	return m_stream;
+}
+
+int MSNSocket::WebResponse::getStatusCode()
+{
+	return m_statusCode;
+}
+
+QString MSNSocket::WebResponse::getStatusDescription()
+{
+	return m_statusDescription;
+}
+
 
 #include "msnsocket.moc"
 

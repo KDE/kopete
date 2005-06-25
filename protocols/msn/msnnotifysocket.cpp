@@ -833,6 +833,15 @@ QString MSNNotifySocket::statusToString( const Kopete::OnlineStatus &status ) co
 
 void MSNNotifySocket::slotSendKeepAlive()
 {
+	if(getTransport() == MSNSocket::HttpTransport)
+	{
+		// If the base socket is using the http transport,
+		// disable the keep alive timer because it is not
+		// needed since PNG is not supported in Msn http.
+		m_keepaliveTimer->stop();
+		return;
+	}
+
 	//we did not received the previous QNG
 	if(m_ping)
 	{

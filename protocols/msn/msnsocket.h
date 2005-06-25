@@ -3,6 +3,7 @@
 
     Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @ kde.org>
+    Copyright (c) 2005		by Gregg Edghill 		  <gregg.edghill@gmail.com>
     Kopete    (c) 2002      by the Kopete developers  <kopete-devel@kde.org>
 
     Portions of this code are taken from KMerlin,
@@ -22,6 +23,9 @@
 #define MSNSOCKET_H
 
 #include <qobject.h>
+#include <qdatastream.h>
+#include <qstringlist.h>
+#include <qtimer.h>
 #include <qvaluelist.h>
 
 #include <kopete_export.h>
@@ -30,6 +34,8 @@ namespace KNetwork {
   class KBufferedSocket;
   class KServerSocket;
 }
+
+class MimeMessage;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -70,6 +76,7 @@ public:
 	 */
 	enum OnlineStatus { Connecting, Connected, Disconnecting, Disconnected };
 	enum LookupStatus { Processing, Success, Failed };
+	enum Transport { TcpTransport, HttpTransport };
 
 	OnlineStatus onlineStatus() { return m_onlineStatus; }
 
@@ -192,6 +199,16 @@ protected:
 	 */
 	//uint m_lastId;
 
+	//BEGIN Http
+
+	/**
+	 * Returns a value that indicates the network protocol used by the MSNSocket when transmitting data.
+	 * return: either one of the following Transport enumeration type: TcpTransport, or HttpTransport
+	 */
+	Transport getTransport();
+
+	//END
+
 private slots:
 	void slotDataReceived();
 	/**
@@ -217,6 +234,16 @@ private slots:
 
 	void slotSocketClosed();
 
+	//BEGIN Http
+
+	/**
+	 * Sends a poll request to the msn gateway when using HttpTransport.
+	 * equivalent to sending a PNG command over TcpTransport.
+	 */
+	void slotHttpPoll();
+
+	//END
+
 protected slots:
 	virtual void slotReadyWrite();
 
@@ -239,7 +266,7 @@ private:
 	 * Queue of pending commands (should be mostly empty, but is needed to
 	 * send more than one command to the server)
 	 */
-	QValueList<QCString> m_sendQueue;
+	QValueList<QByteArray> m_sendQueue;
 
 	/**
 	 * Parse a single line of data.
@@ -269,6 +296,65 @@ private:
 	};
 
 	Buffer m_buffer;
+
+	//BEGIN Http
+
+	/**
+	 * Makes a http request headers string using the specified, host, query, and content length.
+	 * return: The string containing the http request headers.
+	 */
+	QString makeHttpRequestString(const QString& host, const QString& query, uint contentLength);
+
+	bool useHttp; 				// Indicates whether to use the msn http gateway to connect to the msn service.
+	bool bCanPoll; 				// Indicates whether polling of the http server is allowed.
+	bool bIsFirstInTransaction; // Indicates whether pending message to be sent is the first in the transaction.
+								// If so, the gateway is used.
+	QString m_gateway; 			// Msn http gateway domain name.
+					   			// Use the gateway only for initial connected state; Otherwise, use the host.
+	QString m_gwip;				// The ip address of the msn gateway.
+	QString m_host;				// The domain name or IP address of the host used in normal tcp transport.
+	QString m_sessionId; 		// session id.
+	QTimer *m_timer; 			// Msn http poll timer.
+	QString m_type;				// Indicates the type of socket being used.  NS or SB
+	bool pending; 				// Indicates whether a http response is pending.
+	int remaining;				// Indicates how many bytes of content data remain
+								// to be received if the content bytes are sent in
+								// a seperate packet(s).
+
+	/**
+	 * Provides access to information returned from a URI request.
+	 */
+	class WebResponse
+	{
+	public:
+		 WebResponse(const QByteArray& bytes);
+		~WebResponse();
+
+		/**
+		 * Gets the headers associated with this response from the server.
+		 */
+		MimeMessage* getHeaders();
+		/**
+		 * Gets the data stream used to read the body of the response from the server.
+		 */
+		QDataStream* getResponseStream();
+		/**
+		 * Gets the status code of the response.
+		 */
+		int getStatusCode();
+		/**
+		 * Gets the status description returned with the response.
+		 */
+		QString getStatusDescription();
+
+	private:
+		MimeMessage *m_headers;
+		QDataStream *m_stream;
+		int m_statusCode;
+		QString m_statusDescription;
+	};
+
+	//END
 };
 
 #endif
