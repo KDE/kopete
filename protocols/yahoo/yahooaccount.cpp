@@ -34,6 +34,7 @@
 #include <kapplication.h>
 #include <krun.h>
 #include <kurl.h>
+#include <kstandarddirs.h>
 
 // Kopete
 #include <kopetechatsession.h>
@@ -883,7 +884,8 @@ void YahooAccount::slotGotBuddyIconChecksum(const QString &who, int checksum)
 		return;
 	}
 
-	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() )
+	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() &&
+	     QFile::exists( locateLocal( "appdata", "yahoopictures/"+ who.lower().replace(QRegExp("[./~]"),"-")  +".png" ) ) )
 	{
 		kdDebug(14180) << k_funcinfo << "Icon already exists. I will not request it again." << endl;
 		return;
@@ -900,7 +902,8 @@ void YahooAccount::slotGotBuddyIconInfo(const QString &who, KURL url, int checks
 		return;
 	}
 
-	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() )
+	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt()  &&
+	     QFile::exists( locateLocal( "appdata", "yahoopictures/"+ who.lower().replace(QRegExp("[./~]"),"-")  +".png" ) ))
 	{
 		kdDebug(14180) << k_funcinfo << "Icon already exists. I will not download it again." << endl;
 		return;
