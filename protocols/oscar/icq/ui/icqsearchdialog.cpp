@@ -57,7 +57,6 @@ ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent, const ch
 	p->fillComboFromTable( m_searchUI->gender, p->genders() );
 	p->fillComboFromTable( m_searchUI->country, p->countries() );
 	p->fillComboFromTable( m_searchUI->language, p->languages() );
-	m_searchUI->gender->setCurrentItem( 2 ); //unspecified gender
 	
 	m_contact = NULL;
 	m_infoWidget = NULL;
@@ -92,18 +91,7 @@ void ICQSearchDialog::startSearch()
 		info.nickName = m_searchUI->nickName->text();
 		info.email = m_searchUI->email->text();
 		info.city = m_searchUI->city->text(); // City
-		switch ( m_searchUI->gender->currentItem() )
-		{
-		case 0: //female
-			info.gender = 1;
-			break;
-		case 1: //male 
-			info.gender = 2;
-			break;
-		case 2: //don't care
-			info.gender = 0;
-			break;
-		}
+		info.gender = p->getCodeForCombo(m_searchUI->gender, p->genders()); // Gender
 		info.language = p->getCodeForCombo(m_searchUI->language, p->languages()); // Lang
 		info.country =p->getCodeForCombo(m_searchUI->country, p->countries()); // country code
 		info.onlineOnly = m_searchUI->onlyOnline->isChecked();
