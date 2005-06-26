@@ -24,6 +24,7 @@
 #include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
 #include "kopeteuiglobal.h"
+#include "kopeteview.h"
 
 // Local Includes
 #include "yahoocontact.h"
@@ -295,6 +296,15 @@ void YahooContact::buzzContact()
 	Kopete::Contact *target = m_them.first();
 	
 	m_account->yahooSession()->buzzContact(	static_cast<YahooContact*>(m_account->myself())->m_userId, static_cast<YahooContact*>(target)->m_userId );
+
+	KopeteView *view = manager(Kopete::Contact::CannotCreate)->view(false);
+	if ( view )
+	{
+		Kopete::Message msg = Kopete::Message( manager(Kopete::Contact::CannotCreate)->myself() ,
+									manager(Kopete::Contact::CannotCreate)->members(), i18n("Buzzz!!!"),
+									Kopete::Message::Internal, Kopete::Message::PlainText );
+		view->appendMessage( msg );
+	}
 }
 
 void YahooContact::gotWebcamInvite()

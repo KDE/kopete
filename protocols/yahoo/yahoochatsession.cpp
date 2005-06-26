@@ -53,7 +53,7 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 	setInstance(protocol->instance());
 
 	// Add Actions
-	new KAction( i18n( "Buzz Contact" ), QIconSet(BarIcon("bell")), 0, this, SLOT( slotBuzzContact() ), actionCollection(), "yahooBuzz" ) ;
+	new KAction( i18n( "Buzz Contact" ), QIconSet(BarIcon("bell")), "Ctrl+G", this, SLOT( slotBuzzContact() ), actionCollection(), "yahooBuzz" ) ;
 	new KAction( i18n( "Show User Info" ), QIconSet(BarIcon("idea")), 0, this, SLOT( slotUserInfo() ), actionCollection(), "yahooShowInfo" ) ;
 	new KAction( i18n( "Request Webcam" ), QIconSet(BarIcon("image")), 0, this, SLOT( slotRequestWebcam() ), actionCollection(), "yahooRequestWebcam" ) ;
 
