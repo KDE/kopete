@@ -483,7 +483,8 @@ void Engine::numericReply_376(Message &msg)
  */
 void Engine::numericReply_401(Message &msg)
 {
-	emit incomingNoSuchNickname(msg.arg(1));
+//	i18n("The channel \"%1\" does not exist").arg(nick)
+//	i18n("The nickname \"%1\" does not exist").arg(nick)
 }
 
 /* 406: "<nickname> :There was no such nickname"
@@ -491,7 +492,9 @@ void Engine::numericReply_401(Message &msg)
  */
 void Engine::numericReply_406(Message &msg)
 {
-	emit incomingNoSuchNickname(msg.arg(1));
+	#warning FIXME 406 MEANS *NEVER*, even before
+//	i18n("The channel \"%1\" does not exist").arg(nick)
+//	i18n("The nickname \"%1\" does not exist").arg(nick)
 }
 
 /* 422: ":MOTD File is missing"

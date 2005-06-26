@@ -134,6 +134,11 @@ private:
 
 	QPtrList<Kopete::Contact> mMyself;
 	Kopete::Message::MessageDirection execDir;
+
+	QValueList<KAction *> m_actions;
+	QValueList<KAction *> m_serverActions;
+	QValueList<KAction *> m_channelActions;
+	QValueList<KAction *> m_userActions;
 };
 
 #endif

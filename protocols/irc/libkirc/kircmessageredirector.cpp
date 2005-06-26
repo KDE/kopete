@@ -15,9 +15,9 @@
     *************************************************************************
 */
 
-#include "kircengine.h"
-#include "kircmessage.h"
 #include "kircmessageredirector.h"
+
+#include "kircengine.h"
 
 #include <qsignalslotimp.h> // QT-3.3: Internal stuff, remove for QT-4.0
 

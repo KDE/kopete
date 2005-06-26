@@ -245,7 +245,6 @@ signals:
 	//Contact Signals
 	void incomingQuitIRC(const QString &user, const QString &reason);
 	void incomingUserModeChange(const QString &nick, const QString &mode);
-	void incomingNoSuchNickname(const QString &nick);
 
 	//Response Signals
 	void incomingUserOnline(const QString &nick);

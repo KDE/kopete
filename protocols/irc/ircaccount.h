@@ -75,7 +75,7 @@ public:
 
 	void setDefaultPart( const QString & );
 
-	void setNetwork( const QString & );
+//	void setNetwork( const QString & );
 	void setNetwork(const IRCNetwork &network);
 
 	void setDefaultQuit( const QString & );
@@ -136,10 +136,8 @@ public slots:
 
 	void quit( const QString &quitMessage = QString::null );
 
-	void listChannels();
-
 //	void appendMessage( const QString &message, MessageType type = Default );
-	void appendErrorMessage( const QString &message ); 
+	void appendErrorMessage( const QString &message );
 	void appendInternalMessage( const QString &message );
 
 protected:
@@ -155,19 +153,14 @@ private slots:
 				const KIRC::EntityPtrList &to,
 				const QString &msg);
 
+	void slotPerformOnConnectCommands();
+
 	void slotFailedServerPassword();
 	void slotGoAway( const QString &reason );
-	void slotJoinNamedChannel( const QString &channel );
-	void slotJoinChannel();
-	void slotShowServerWindow();
+//	void slotJoinNamedChannel( const QString &channel );
 //	void slotNickInUse( const QString &nick );
-	void slotNickInUseAlert( const QString &nick );
-	void slotServerBusy();
-	void slotNoSuchNickname( const QString &nick );
-	void slotSearchChannels();
-	void slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
-	void slotJoinedUnknownChannel( const QString &channel, const QString &nick );
-	void slotPerformOnConnectCommands();
+
+	void slotShowServerWindow();
 
 private:
 	Kopete::ChatSession *m_manager;

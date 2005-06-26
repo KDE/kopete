@@ -240,7 +240,7 @@ Kopete::Account *IRCEditAccountWidget::apply()
 	else
 	{
 		account()->setNickName( nickName );
-		account()->setNetwork( networkName );
+//		account()->setNetwork( networkName );
 	}
 
 	mPasswordWidget->save( &account()->password() );

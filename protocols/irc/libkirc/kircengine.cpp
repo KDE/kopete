@@ -303,6 +303,8 @@ void Engine::slotReadyRead()
  */
 bool Engine::invokeCtcpCommandOfMessage(const QDict<MessageRedirector> &map, Message &msg)
 {
+//	appendMessage( i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived) );
+
 	if(msg.hasCtcpMessage() && msg.ctcpMessage().isValid())
 	{
 		Message &ctcpMsg = msg.ctcpMessage();

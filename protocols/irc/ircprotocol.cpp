@@ -463,7 +463,7 @@ void IRCProtocol::slotPingCommand(const QString &args, ChatSession *manager)
 
 void IRCProtocol::slotListCommand(const QString &/*args*/, ChatSession *manager)
 {
-	static_cast<IRCAccount*>(manager->account())->listChannels();
+//	static_cast<IRCAccount*>(manager->account())->listChannels();
 }
 
 void IRCProtocol::slotTopicCommand(const QString &args, ChatSession *manager)

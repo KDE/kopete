@@ -18,8 +18,7 @@
 #ifndef KIRC_MESSAGEREDIRECTOR_H
 #define KIRC_MESSAGEREDIRECTOR_H
 
-#include <qobject.h>
-#include <qstring.h>
+#include "kircmessage.h"
 
 namespace KIRC
 {
