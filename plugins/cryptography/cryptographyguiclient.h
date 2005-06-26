@@ -20,7 +20,6 @@
 
 namespace Kopete { class ChatSession; }
 class KToggleAction;
-namespace Kopete { class MetaContact; }
 
 /**
  *@author Olivier Goffart
@@ -34,7 +33,6 @@ public:
 
 private:
 	KToggleAction *m_action;
-	Kopete::MetaContact *m_first;
 
 private slots:
 	void slotToggled();
