@@ -27,12 +27,17 @@
 #include <klistview.h>
 #include <klocale.h>
 #include <kpushbutton.h>
+#include <kmessagebox.h>
+
+#include "kopeteuiglobal.h"
 
 #include "icqaccount.h"
 #include "icqaddcontactpage.h"
 #include "icqprotocol.h"
 #include "icqsearchbase.h"
 #include "oscartypes.h"
+#include "icqcontact.h"
+#include "icquserinfowidget.h"
 
 ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent, const char* name )
 : KDialogBase( parent, name, true, i18n( "ICQ User Search" ), 0, NoDefault )
@@ -46,12 +51,16 @@ ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent, const ch
 	connect( m_searchUI->clearButton, SIGNAL( clicked() ), this, SLOT( clearResults() ) );
 	connect( m_searchUI->stopButton, SIGNAL( clicked() ), this, SLOT( stopSearch() ) );
 	connect( m_searchUI->closeButton, SIGNAL( clicked() ), this, SLOT( closeDialog() ) );
+	connect( m_searchUI->userInfoButton, SIGNAL( clicked() ), this, SLOT( userInfo() ) );
 	
 	ICQProtocol *p = ICQProtocol::protocol();
 	p->fillComboFromTable( m_searchUI->gender, p->genders() );
 	p->fillComboFromTable( m_searchUI->country, p->countries() );
 	p->fillComboFromTable( m_searchUI->language, p->languages() );
 	m_searchUI->gender->setCurrentItem( 2 ); //unspecified gender
+	
+	m_contact = NULL;
+	m_infoWidget = NULL;
 }
 
 
@@ -127,11 +136,41 @@ void ICQSearchDialog::addContact()
 	}
 }
 
+void ICQSearchDialog::userInfo()
+{
+	m_contact = new ICQContact( m_account,
+								m_searchUI->searchResults->selectedItem()->text( 0 ),
+								NULL);
+
+	m_infoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget(), "icq info" );
+	QObject::connect( m_infoWidget, SIGNAL( finished() ), this, SLOT( closeUserInfo() ) );
+
+	m_infoWidget->setContact( m_contact );
+	m_infoWidget->setModal(true);
+	m_infoWidget->show();
+		if ( m_contact->account()->isConnected() )
+		m_account->engine()->requestFullInfo( m_contact->contactId() );
+	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Displaying user info" << endl;
+}
+
+void ICQSearchDialog::closeUserInfo()
+{
+	// Free the ICQUserInfoWidget
+	QObject::disconnect( this, 0, m_infoWidget, 0 );
+	m_infoWidget->delayedDestruct();
+	m_infoWidget = NULL;
+	
+	// Free the ICQContact
+	delete m_contact;
+	m_contact = NULL;
+}
+
 void ICQSearchDialog::clearResults()
 {
 	stopSearch();
 	m_searchUI->searchResults->clear();
 	m_searchUI->addButton->setEnabled( false );
+	m_searchUI->userInfoButton->setEnabled( false );
 }
 
 void ICQSearchDialog::closeDialog()
@@ -144,9 +183,15 @@ void ICQSearchDialog::closeDialog()
 void ICQSearchDialog::resultSelectionChanged()
 {
 	if ( !m_searchUI->searchResults->selectedItem() )
+	{
 		m_searchUI->addButton->setEnabled( false );
+		m_searchUI->userInfoButton->setEnabled( false );
+	}
 	else
+	{
 		m_searchUI->addButton->setEnabled( true );
+		m_searchUI->userInfoButton->setEnabled( true );
+	}
 }
 
 void ICQSearchDialog::newResult( const ICQSearchResult& info )

@@ -8,31 +8,73 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>511</width>
-            <height>394</height>
+            <width>586</width>
+            <height>433</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>ICQSearchBase</string>
     </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <spacer row="0" column="1">
+        <widget class="KPushButton" row="3" column="1">
             <property name="name">
-                <cstring>spacer6</cstring>
+                <cstring>clearButton</cstring>
             </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
+            <property name="enabled">
+                <bool>false</bool>
             </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
+            <property name="text">
+                <string>C&amp;lear</string>
             </property>
-            <property name="sizeHint">
-                <size>
-                    <width>41</width>
-                    <height>181</height>
-                </size>
+            <property name="accel">
+                <string>Alt+L</string>
             </property>
-        </spacer>
+            <property name="stdItem" stdset="0">
+                <number>10</number>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="6" column="1">
+            <property name="name">
+                <cstring>closeButton</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Close</string>
+            </property>
+            <property name="stdItem" stdset="0">
+                <number>13</number>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="1" column="1">
+            <property name="name">
+                <cstring>searchButton</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Search</string>
+            </property>
+            <property name="accel">
+                <string>Alt+S</string>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="2" column="1">
+            <property name="name">
+                <cstring>stopButton</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>Stop</string>
+            </property>
+            <property name="accel">
+                <string></string>
+            </property>
+            <property name="stdItem" stdset="0">
+                <number>26</number>
+            </property>
+        </widget>
         <widget class="QTabWidget" row="0" column="0">
             <property name="name">
                 <cstring>tabWidget3</cstring>
@@ -267,63 +309,7 @@
                 </grid>
             </widget>
         </widget>
-        <widget class="KPushButton" row="1" column="1">
-            <property name="name">
-                <cstring>searchButton</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Search</string>
-            </property>
-        </widget>
-        <widget class="KPushButton" row="2" column="1">
-            <property name="name">
-                <cstring>stopButton</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="text">
-                <string>Stop</string>
-            </property>
-            <property name="accel">
-                <string></string>
-            </property>
-            <property name="stdItem" stdset="0">
-                <number>26</number>
-            </property>
-        </widget>
-        <widget class="KPushButton" row="3" column="1">
-            <property name="name">
-                <cstring>clearButton</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="text">
-                <string>C&amp;lear</string>
-            </property>
-            <property name="stdItem" stdset="0">
-                <number>10</number>
-            </property>
-        </widget>
-        <widget class="KPushButton" row="4" column="1">
-            <property name="name">
-                <cstring>addButton</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="text">
-                <string>Add</string>
-            </property>
-            <property name="accel">
-                <string></string>
-            </property>
-            <property name="stdItem" stdset="0">
-                <number>27</number>
-            </property>
-        </widget>
-        <widget class="KListView" row="1" column="0" rowspan="5" colspan="1">
+        <widget class="KListView" row="1" column="0" rowspan="6" colspan="1">
             <column>
                 <property name="text">
                     <string>UIN</string>
@@ -400,22 +386,59 @@
                 <string>This is where the results from your search are displayed. If you double-click a result, the search window will close and pass the UIN of the contact you wish to add back to the Add Contact Wizard. You can only add one contact at a time.</string>
             </property>
         </widget>
-        <widget class="KPushButton" row="5" column="1">
+        <spacer row="0" column="1">
             <property name="name">
-                <cstring>closeButton</cstring>
+                <cstring>spacer6</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>41</width>
+                    <height>210</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="KPushButton" row="4" column="1">
+            <property name="name">
+                <cstring>addButton</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
             </property>
             <property name="text">
-                <string>&amp;Close</string>
+                <string>Add</string>
+            </property>
+            <property name="accel">
+                <string></string>
             </property>
             <property name="stdItem" stdset="0">
-                <number>13</number>
+                <number>27</number>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="5" column="1">
+            <property name="name">
+                <cstring>userInfoButton</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>User Info</string>
+            </property>
+            <property name="accel">
+                <string></string>
             </property>
         </widget>
     </grid>
 </widget>
-<customwidgets>
-</customwidgets>
 <tabstops>
+    <tabstop>tabWidget3</tabstop>
+    <tabstop>uin</tabstop>
     <tabstop>nickName</tabstop>
     <tabstop>firstName</tabstop>
     <tabstop>email</tabstop>
@@ -429,9 +452,9 @@
     <tabstop>stopButton</tabstop>
     <tabstop>clearButton</tabstop>
     <tabstop>addButton</tabstop>
-    <tabstop>tabWidget3</tabstop>
+    <tabstop>userInfoButton</tabstop>
+    <tabstop>closeButton</tabstop>
     <tabstop>searchResults</tabstop>
-    <tabstop>uin</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
@@ -440,6 +463,7 @@
     <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
     <includehint>klistview.h</includehint>
+    <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
 </includehints>
 </UI>
