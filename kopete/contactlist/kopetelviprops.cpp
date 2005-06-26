@@ -313,6 +313,8 @@ void KopeteMetaLVIProps::slotLoadPhotoSources()
 	mainWidget->radioPhotoContact->setChecked(photoSource == Kopete::MetaContact::SourceContact);
 	mainWidget->radioPhotoKABC->setChecked(photoSource == Kopete::MetaContact::SourceKABC);
 	mainWidget->radioPhotoCustom->setChecked(photoSource == Kopete::MetaContact::SourceCustom);
+
+	mainWidget->chkSyncPhoto->setChecked(item->metaContact()->isPhotoSyncedWithKABC());
 }
 
 void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
@@ -324,6 +326,12 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 	mainWidget->radioNameKABC->setEnabled(validLink);
 	// kabc source requires a kabc link
 	mainWidget->radioPhotoKABC->setEnabled(validLink);
+	// sync with kabc has no sense if we use kabc as source (sync kabc with kabc? uh?)
+	// it has also no sense if they are no kabc link
+	if( selectedPhotoSource() == Kopete::MetaContact::SourceKABC || !validLink )
+	{
+		mainWidget->chkSyncPhoto->setEnabled(false);
+	}
 
 	mainWidget->radioNameContact->setEnabled(item->metaContact()->contacts().count());
 	mainWidget->radioPhotoContact->setEnabled(!m_withPhotoContacts.isEmpty());
@@ -333,9 +341,7 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 
 	mainWidget->cmbAccountPhoto->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceContact);
 	mainWidget->cmbPhotoUrl->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceCustom);
-	// sync with kabc has no sense if we use kabc as source (sync kabc with kabc? uh?)
-	mainWidget->chkSyncPhoto->setEnabled(selectedPhotoSource() != Kopete::MetaContact::SourceKABC);
-
+	
 	if ( m_withPhotoContacts.isEmpty() )
 	{
 		mainWidget->cmbAccountPhoto->clear();
@@ -356,7 +362,8 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 		photo = QImage(mainWidget->cmbPhotoUrl->url());
 		break;
 	}
-	mainWidget->photoLabel->setPixmap(QPixmap(photo.smoothScale( 64, 92, QImage::ScaleMin )));
+	if( !photo.isNull() )
+		mainWidget->photoLabel->setPixmap(QPixmap(photo.smoothScale( 64, 92, QImage::ScaleMin )));
 }
 
 Kopete::MetaContact::PropertySource KopeteMetaLVIProps::selectedNameSource() const

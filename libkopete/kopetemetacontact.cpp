@@ -4,6 +4,7 @@
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@ kde.org>
     Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
+	Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -53,6 +54,12 @@ const QString PSAID_ELEM = QString::fromLatin1( "photoSourceAccountId" );
 
 class  MetaContact::Private
 { public:
+	Private() :
+		displayNameSource(MetaContact::SourceCustom), photoSource(MetaContact::SourceCustom),
+		displayNameSourceContact(0L),  photoSourceContact(0L), temporary(false), photoSyncedWithKABC(false),
+		onlineStatus(Kopete::OnlineStatus::Offline)
+	{}
+
 	QPtrList<Contact> contacts;
 
 	// property sources	
@@ -82,22 +89,6 @@ MetaContact::MetaContact()
 	: ContactListElement( ContactList::self() )
 {
 	d = new Private;
-
-	// Initialise the private data
-	d->displayNameSource = SourceCustom;
-	d->displayNameSourceContact = 0;
-	d->photoSource = SourceCustom;
-	d->photoSourceContact = 0;
-
-	setDisplayNameSource(SourceCustom);
-	setPhotoSource(SourceCustom);
-	setDisplayNameSourceContact(0L);
-	setPhotoSourceContact(0L);
-
-	d->temporary = false;
-	d->photoSyncedWithKABC=false;
-
-	d->onlineStatus = Kopete::OnlineStatus::Offline;
 
 	connect( this, SIGNAL( pluginDataChanged() ), SIGNAL( persistentDataChanged() ) );
 	connect( this, SIGNAL( iconChanged( Kopete::ContactListElement::IconState, const QString & ) ), SIGNAL( persistentDataChanged() ) );
@@ -605,7 +596,7 @@ QString MetaContact::displayName() const
 	}
 	else if ( source == SourceContact )
 	{
-		if ( displayNameSourceContact() )
+		if ( displayNameSourceContact() != 0L )
 			return nameFromContact(displayNameSourceContact());
 	}
 	return d->displayName;
@@ -664,7 +655,7 @@ QImage MetaContact::photo() const
 	}
 	else if ( photoSource() == SourceContact )
 	{
-		if ( ! photoSourceContact() == 0L )
+		if ( photoSourceContact() != 0L )
 			return photoFromContact(photoSourceContact());
 	}
 
@@ -913,14 +904,7 @@ const QDomElement MetaContact::toXML()
 	QDomElement _photoSource = metaContact.createElement( QString::fromLatin1("photo") );
 
 	// set the contact source for display name
-	if ( displayNameSource() == SourceContact )
-		_nameSource.setAttribute(QString::fromLatin1("source"), QString::fromLatin1("contact"));
-	else if (displayNameSource() == SourceKABC )
-		_nameSource.setAttribute(QString::fromLatin1("source"), QString::fromLatin1("addressbook"));
-	else if (displayNameSource() == SourceCustom )
-		_nameSource.setAttribute(QString::fromLatin1("source"), QString::fromLatin1("custom"));
-	else
-		_nameSource.setAttribute(QString::fromLatin1("source"), QString::fromLatin1("custom"));
+	_nameSource.setAttribute(QString::fromLatin1("source"), sourceToString(displayNameSource()));
 	
 	// set contact source metadata
 	if (displayNameSourceContact())
@@ -932,15 +916,9 @@ const QDomElement MetaContact::toXML()
 		contactNameSource.setAttribute( NSAID_ELEM, displayNameSourceContact()->account()->accountId() );
 		_nameSource.appendChild( contactNameSource );
 	}
+
 	// set the contact source for photo
-	if ( photoSource() == SourceContact )
-		_photoSource.setAttribute(QString::fromLatin1("source"), QString::fromLatin1("contact"));
-	else if (photoSource() == SourceKABC )
-		_photoSource.setAttribute(QString::fromLatin1("source"), QString::fromLatin1("addressbook"));
-	else if (photoSource() == SourceCustom )
-		_photoSource.setAttribute(QString::fromLatin1("source"), QString::fromLatin1("custom"));
-	else
-		_photoSource.setAttribute(QString::fromLatin1("source"), QString::fromLatin1("custom"));
+	_photoSource.setAttribute(QString::fromLatin1("source"), sourceToString(photoSource()));
 
 	if( !d->metaContactId.isEmpty()  )
 		photo.setAttribute( QString::fromLatin1("syncWithKABC") , QString::fromLatin1( d->photoSyncedWithKABC ? "true" : "false" ) );
@@ -1131,23 +1109,26 @@ bool MetaContact::fromXML( const QDomElement& element )
 	}
 
 	// now the subcontacts are loaded, set the name and photo sources.
-	setDisplayNameSourceContact(findContact( photoSourcePID, photoSourceAID, photoSourceCID)); 
-	setPhotoSourceContact(findContact( nameSourcePID, nameSourceAID, nameSourceCID));
+	setDisplayNameSourceContact( findContact( nameSourcePID, nameSourceAID, nameSourceCID) ); 
+	setPhotoSourceContact( findContact( photoSourcePID, photoSourceAID, photoSourceCID) );
 
-	if ( oldNameTracking && displayNameSourceContact() )
+	if( oldNameTracking )
 	{
-		kdDebug(14010) << k_funcinfo << "Converting old name source" << endl;
-		// even if the old tracking attributes exists, they could have been null, that means custom
-			setDisplayNameSource(SourceContact);
-	}
-	else
-	{
-		// lets do the best conversion for the old name tracking
-		// if the custom display name is the same as kabc name, set the source to kabc
-		if ( !d->metaContactId.isEmpty() && ( d->displayName == nameFromKABC(d->metaContactId)) )
-			setDisplayNameSource(SourceKABC);
+		if ( displayNameSourceContact() )
+		{
+			kdDebug(14010) << k_funcinfo << "Converting old name source" << endl;
+			// even if the old tracking attributes exists, they could have been null, that means custom
+				setDisplayNameSource(SourceContact);
+		}
 		else
-			setDisplayNameSource(SourceCustom);
+		{
+			// lets do the best conversion for the old name tracking
+			// if the custom display name is the same as kabc name, set the source to kabc
+			if ( !d->metaContactId.isEmpty() && ( d->displayName == nameFromKABC(d->metaContactId)) )
+				setDisplayNameSource(SourceKABC);
+			else
+				setDisplayNameSource(SourceCustom);
+		}
 	}
 
 	if ( oldPhotoTracking )
@@ -1289,11 +1270,29 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 	d->photoSyncedWithKABC=b;
 	if(b)
 	{
-		Contact *source= photoSourceContact();
-		if(!source)
-			return;
+		PropertySource selectedPhotoSource = photoSource();
+		QVariant newValue;
+		
+		switch( selectedPhotoSource )
+		{
+			case SourceContact:
+			{
+				Contact *source = photoSourceContact();
+				if(source != 0L)
+					newValue = source->property( Kopete::Global::Properties::self()->photo() ).value();
+				break;
+			}
+			case SourceCustom:
+			{
+				if( !d->photoUrl.isEmpty() )
+					newValue = d->photoUrl.url();
+				break;
+			}
+			// Don't sync the photo with KABC if the source is KABC !
+			default:
+				return;
+		}
 
-		QVariant newValue = source->property( Kopete::Global::Properties::self()->photo() ).value();
 		if ( !d->metaContactId.isEmpty() && !newValue.isNull())
 		{
 			KABC::Addressee theAddressee = KABCPersistence::self()->addressBook()->findByUid( metaContactId() );
