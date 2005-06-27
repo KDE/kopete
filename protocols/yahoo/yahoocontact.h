@@ -35,6 +35,7 @@ class YahooProtocol;
 class YahooAccount;
 class YahooWebcamDialog;
 class YahooChatSession;
+struct KURL;
 
 class YahooContact : public Kopete::Contact
 {
@@ -66,11 +67,13 @@ public slots:
 	virtual void slotSendFile();
 	virtual void deleteContact();
 
-	void setDisplayPicture(KTempFile *f, int checksum);
-	
 	void stealthContact();
 	void requestWebcam();
 	void buzzContact();
+	void setDisplayPicture(KTempFile *f, int checksum);
+	void sendBuddyIconInfo( const QString &url, int checksum );
+	void sendBuddyIconUpdate( int type );
+	void sendBuddyIconChecksum( int checksum );
 
 	/**
 	 * Must be called after the contact list has been received

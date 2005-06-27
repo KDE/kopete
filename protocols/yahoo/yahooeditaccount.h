@@ -50,6 +50,7 @@ public slots:
 
 private slots:
 	void slotOpenRegister();
+	void slotSelectPicture();
 };
 
 #endif

@@ -55,7 +55,9 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 	Idle( Kopete::OnlineStatus::Away, 15, this, 999, "yahoo_idle",  i18n( "Idle" ), i18n( "Idle" ), Kopete::OnlineStatusManager::Busy ),
 	Connecting( Kopete::OnlineStatus::Connecting, 2, this, 555, "yahoo_connecting", i18n( "Connecting" ) ),
 	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
-	iconCheckSum("iconCheckSum", i18n("Buddy Icon Checksum"), QString::null, true, false, true)
+	iconCheckSum("iconCheckSum", i18n("Buddy Icon Checksum"), QString::null, true),
+	iconExpire("iconExpire", i18n("Buddy Icon Expire"), QString::null, true),
+	iconRemoteUrl("iconRemoteUrl", i18n("Buddy Icon Remote Url"), QString::null, true)
 
 {
 	kdDebug(14180) << k_funcinfo << endl;

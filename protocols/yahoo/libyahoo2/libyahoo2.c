@@ -757,7 +757,11 @@ static void yahoo_send_packet(struct yahoo_input_data *yid, struct yahoo_packet 
 
 	yahoo_packet_dump(data, len);
 	
+	if( yid->type == YAHOO_CONNECTION_FT )
+		yahoo_send_data(yid->fd, data, len);
+	else
 	yahoo_add_to_send_queue(yid, data, len);
+	
 	FREE(data);
 }
 
@@ -1608,9 +1612,9 @@ static void yahoo_process_picture_checksum( struct yahoo_input_data *yid, struct
 		{
 			case 1:
 			case 4:
-				to = pair->value;
-			case 5:
 				from = pair->value;
+			case 5:
+				to = pair->value;
 				break;
 			case 212:
 				break;
@@ -1640,11 +1644,11 @@ static void yahoo_process_picture(struct yahoo_input_data *yid, struct yahoo_pac
 		switch(pair->key)
 		{
 		case 1:
-		case 4:		/* we */
-			to = pair->value;
-			break;
-		case 5:		/* sender */
+		case 4:		/* sender */
 			from = pair->value;
+			break;
+		case 5:		/* we */
+			to = pair->value;
 			break;
 		case 13:		/* request / sending */
 			status = atoi( pair->value );
@@ -1661,11 +1665,42 @@ static void yahoo_process_picture(struct yahoo_input_data *yid, struct yahoo_pac
 	switch( status )
 	{
 		case 1:	/* this is a request, ignore for now */
+			YAHOO_CALLBACK(ext_yahoo_got_buddyiconrequest)(yd->client_id, to, from);
 			break;
 		case 2:	/* this is cool - we get a picture :) */
 			YAHOO_CALLBACK(ext_yahoo_got_buddyicon)(yd->client_id,to, from, url, checksum);
 			break;
 	}
+}
+
+static void yahoo_process_picture_upload(struct yahoo_input_data *yid, struct yahoo_packet *pkt)
+{
+	struct yahoo_data *yd = yid->yd;
+	YList *l;
+	char *url;
+
+	if ( pkt->status != 1 )
+		return;		/* something went wrong */
+	
+	for(l = pkt->hash; l; l = l->next)
+	{
+		struct yahoo_pair *pair = l->data;
+
+		switch(pair->key)
+		{
+			case 5:		/* we */
+				break;
+			case 20:		/* url */
+				url = pair->value;
+				break;
+			case 27:		/* local filename */
+				break;
+			case 38:		/* time */
+				break;
+		}
+	}
+
+	YAHOO_CALLBACK(ext_yahoo_buddyicon_uploaded)(yd->client_id, url);
 }
 
 static void yahoo_process_auth_pre_0x0b(struct yahoo_input_data *yid, 
@@ -2723,6 +2758,9 @@ static void yahoo_packet_process(struct yahoo_input_data *yid, struct yahoo_pack
 	case YAHOO_SERVICE_PICTURE_CHECKSUM:
 		yahoo_process_picture_checksum(yid, pkt);
 		break;
+	case YAHOO_SERVICE_PICTURE_UPLOAD:
+		yahoo_process_picture_upload(yid, pkt);
+		break;	
 	default:
 		WARNING(("unknown service 0x%02x", pkt->service));
 		yahoo_dump_unhandled(pkt);
@@ -3680,11 +3718,12 @@ int yahoo_get_fd(int id)
 		return yid->fd;
 }
 
-void yahoo_send_im(int id, const char *from, const char *who, const char *what, int utf8)
+void yahoo_send_im(int id, const char *from, const char *who, const char *what, int utf8, int picture)
 {
 	struct yahoo_input_data *yid = find_input_by_id_and_type(id, YAHOO_CONNECTION_PAGER);
 	struct yahoo_packet *pkt = NULL;
 	struct yahoo_data *yd;
+	char pic_str[10];
 
 	if(!yid)
 		return;
@@ -3693,6 +3732,8 @@ void yahoo_send_im(int id, const char *from, const char *who, const char *what, 
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_MESSAGE, YAHOO_STATUS_OFFLINE, yd->session_id);
 
+	snprintf(pic_str, sizeof(pic_str), "%d", picture);
+	
 	if(from && strcmp(from, yd->user))
 		yahoo_packet_hash(pkt, 0, yd->user);
 	yahoo_packet_hash(pkt, 1, from?from:yd->user);
@@ -3704,6 +3745,7 @@ void yahoo_send_im(int id, const char *from, const char *who, const char *what, 
 
 	yahoo_packet_hash(pkt, 63, ";0");	/* imvironment name; or ;0 */
 	yahoo_packet_hash(pkt, 64, "0");
+	yahoo_packet_hash(pkt, 206, pic_str);
 
 
 	yahoo_send_packet(yid, pkt, 0);
@@ -4448,7 +4490,79 @@ void yahoo_buddyicon_request(int id, const char *who)
 	yahoo_packet_free(pkt);
 }
 
+void yahoo_send_picture_info(int id, const char *who, const char *url, int checksum)
+{
+	struct yahoo_input_data *yid = find_input_by_id_and_type(id, YAHOO_CONNECTION_PAGER);
+	struct yahoo_data *yd;
+	struct yahoo_packet *pkt;
+	char checksum_str[10];
 
+	if( !yid )
+		return;
+
+	yd = yid->yd;
+
+	snprintf(checksum_str, sizeof(checksum_str), "%d", checksum);
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, 1, yd->user);
+	yahoo_packet_hash(pkt, 4, yd->user);
+	yahoo_packet_hash(pkt, 5, who);
+	yahoo_packet_hash(pkt, 13, "2");
+	yahoo_packet_hash(pkt, 20, url);
+	yahoo_packet_hash(pkt, 192, checksum_str);
+	yahoo_send_packet(yid, pkt, 0);
+
+	yahoo_packet_free(pkt);
+}
+
+void yahoo_send_picture_update(int id, const char *who, int type)
+{
+	struct yahoo_input_data *yid = find_input_by_id_and_type(id, YAHOO_CONNECTION_PAGER);
+	struct yahoo_data *yd;
+	struct yahoo_packet *pkt;
+	char type_str[10];
+
+	if( !yid )
+		return;
+
+	yd = yid->yd;
+
+	snprintf(type_str, sizeof(type_str), "%d", type);
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_UPDATE, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, 1, yd->user);
+	yahoo_packet_hash(pkt, 5, who);
+	yahoo_packet_hash(pkt, 206, type_str);
+	yahoo_send_packet(yid, pkt, 0);
+
+	yahoo_packet_free(pkt);
+}
+
+void yahoo_send_picture_checksum(int id, const char *who, int checksum)
+{
+	struct yahoo_input_data *yid = find_input_by_id_and_type(id, YAHOO_CONNECTION_PAGER);
+	struct yahoo_data *yd;
+	struct yahoo_packet *pkt;
+	char checksum_str[10];
+
+	if( !yid )
+		return;
+
+	yd = yid->yd;
+	
+	snprintf(checksum_str, sizeof(checksum_str), "%d", checksum);
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_CHECKSUM, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, 1, yd->user);
+	if( who != 0 )
+		yahoo_packet_hash(pkt, 5, who);
+	yahoo_packet_hash(pkt, 192, checksum_str);
+	yahoo_packet_hash(pkt, 212, "1");
+	yahoo_send_packet(yid, pkt, 0);
+
+	yahoo_packet_free(pkt);
+}
 
 void yahoo_webcam_close_feed(int id, const char *who)
 {
@@ -4652,6 +4766,99 @@ struct send_file_data {
 	yahoo_get_fd_callback callback;
 	void *user_data;
 };
+
+static void _yahoo_send_picture_connected(int id, int fd, int error, void *data)
+{
+	struct yahoo_input_data *yid = find_input_by_id_and_type(id, YAHOO_CONNECTION_FT);
+	struct send_file_data *sfd = data;
+	struct yahoo_packet *pkt = sfd->pkt;
+	unsigned char buff[1024];
+
+	if(fd <= 0) {
+		sfd->callback(id, fd, error, sfd->user_data);
+		FREE(sfd);
+		yahoo_packet_free(pkt);
+		inputs = y_list_remove(inputs, yid);
+		FREE(yid);
+		return;
+	}
+
+	yid->fd = fd;
+	yahoo_send_packet(yid, pkt, 8);
+	yahoo_packet_free(pkt);
+
+	snprintf((char *)buff, sizeof(buff), "29");
+	buff[2] = 0xc0;
+	buff[3] = 0x80;
+	
+	write(yid->fd, buff, 4);
+
+	/*	YAHOO_CALLBACK(ext_yahoo_add_handler)(nyd->fd, YAHOO_INPUT_READ); */
+
+	sfd->callback(id, fd, error, sfd->user_data);
+	FREE(sfd);
+	inputs = y_list_remove(inputs, yid);
+	/*
+	while(yahoo_tcp_readline(buff, sizeof(buff), nyd->fd) > 0) {
+	if(!strcmp(buff, ""))
+	break;
+}
+
+	*/
+	yahoo_input_close(yid);
+}
+
+void yahoo_send_picture(int id, const char *name, unsigned long size,
+							yahoo_get_fd_callback callback, void *data)
+{
+	struct yahoo_data *yd = find_conn_by_id(id);
+	struct yahoo_input_data *yid;
+	struct yahoo_server_settings *yss;
+	struct yahoo_packet *pkt = NULL;
+	char size_str[10];
+	char expire_str[10];
+	long content_length=0;
+	unsigned char buff[1024];
+	char url[255];
+	struct send_file_data *sfd;
+
+	if(!yd)
+		return;
+
+	yss = yd->server_settings;
+
+	yid = y_new0(struct yahoo_input_data, 1);
+	yid->yd = yd;
+	yid->type = YAHOO_CONNECTION_FT;
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_UPLOAD, YAHOO_STATUS_AVAILABLE, yd->session_id);
+
+	snprintf(size_str, sizeof(size_str), "%ld", size);
+	snprintf(expire_str, sizeof(expire_str), "%ld", 604800);
+
+	yahoo_packet_hash(pkt, 0, yd->user);
+	yahoo_packet_hash(pkt, 1, yd->user);
+	yahoo_packet_hash(pkt, 14, "");
+	yahoo_packet_hash(pkt, 27, name);
+	yahoo_packet_hash(pkt, 28, size_str);
+	yahoo_packet_hash(pkt, 38, expire_str);
+	
+
+	content_length = YAHOO_PACKET_HDRLEN + yahoo_packet_length(pkt);
+
+	snprintf(url, sizeof(url), "http://%s:%d/notifyft",
+				yss->filetransfer_host, yss->filetransfer_port);
+	snprintf((char *)buff, sizeof(buff), "Y=%s; T=%s",
+				 yd->cookie_y, yd->cookie_t);
+	inputs = y_list_prepend(inputs, yid);
+
+	sfd = y_new0(struct send_file_data, 1);
+	sfd->pkt = pkt;
+	sfd->callback = callback;
+	sfd->user_data = data;
+	yahoo_http_post(yid->yd->client_id, url, (char *)buff, content_length+4+size,
+						_yahoo_send_picture_connected, sfd);
+}
 
 static void _yahoo_send_file_connected(int id, int fd, int error, void *data)
 {

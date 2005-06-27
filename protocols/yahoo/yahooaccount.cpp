@@ -23,6 +23,7 @@
 #include <qdatetime.h>
 #include <qcolor.h>
 #include <qregexp.h>
+#include <qimage.h>
 
 // KDE
 #include <klocale.h>
@@ -34,6 +35,7 @@
 #include <kapplication.h>
 #include <krun.h>
 #include <kurl.h>
+#include <kstandarddirs.h>
 #include <kstandarddirs.h>
 
 // Kopete
@@ -79,6 +81,11 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	YahooContact* _myself=new YahooContact( this, accountId, accountId, Kopete::ContactList::self()->myself() );
 	setMyself( _myself );
 	_myself->setOnlineStatus( parent->Offline );
+	myself()->setProperty( YahooProtocol::protocol()->iconRemoteUrl, configGroup()->readEntry( "iconRemoteUrl", "" ) );
+	myself()->setProperty( Kopete::Global::Properties::self()->photo(), configGroup()->readEntry( "iconLocalUrl", "" ) );
+	myself()->setProperty( YahooProtocol::protocol()->iconCheckSum, configGroup()->readNumEntry( "iconCheckSum", 0 ) );
+	myself()->setProperty( YahooProtocol::protocol()->iconExpire, configGroup()->readNumEntry( "iconExpire", 0 ) );
+
 
 	QString displayName = configGroup()->readEntry(QString::fromLatin1("displayName"));
 	if(!displayName.isEmpty())
@@ -267,6 +274,9 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(gotBuddyIconInfo(const QString&, KURL, int)), this, SLOT(slotGotBuddyIconInfo(const QString&, KURL, int )));
 
 		QObject::connect(m_session, SIGNAL(gotBuddyIconChecksum(const QString&, int)), this, SLOT(slotGotBuddyIconChecksum(const QString&, int )));
+		QObject::connect(m_session, SIGNAL(gotBuddyIconRequest(const QString&)), this, SLOT(slotGotBuddyIconRequest(const QString&)) );
+
+		QObject::connect(m_session, SIGNAL(buddyIconUploaded( const QString &)), this, SLOT(slotBuddyIconChanged(const QString&)));
 		
 	}
 
@@ -351,6 +361,12 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::disconnect(m_session, SIGNAL(gotBuddyIcon(const QString&, KTempFile*, int )), this, SLOT(slotGotBuddyIcon(const QString&, KTempFile*,int )));
 
 		QObject::disconnect(m_session, SIGNAL(gotBuddyIconInfo(const QString&, KURL, int)), this, SLOT(slotGotBuddyIconInfo(const QString&, KURL, int )));
+		
+		
+		QObject::disconnect(m_session, SIGNAL(gotBuddyIconRequest(const QString&)), this, SLOT(slotGotBuddyIconRequest(const QString&)) );
+		
+		QObject::disconnect(m_session, SIGNAL(buddyIconUploaded( const QString & )), this, SLOT(slotBuddyIconChanged(const QString&)));
+
 		
 		QObject::disconnect(m_session, SIGNAL(gotBuddyIconChecksum(const QString&, int)), this, SLOT(slotGotBuddyIconChecksum(const QString&, int )));
 	}
@@ -582,6 +598,8 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		else
 			static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Online );
 
+		 
+		setBuddyIcon( myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString() );
 		m_lastDisconnectCode = 0;
 		return;
 	}
@@ -635,9 +653,16 @@ void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, co
 		addContact(userid, alias.isEmpty() ? userid : alias, g, Kopete::Account::ChangeKABC);
 	}
 
-	if ( true ) // TODO?: make this configurable 
+	if ( true && !(static_cast<YahooContact *>(contact( userid )) == myself() ) ) // TODO?: make this configurable
 	{
-		m_session->requestBuddyIcon( userid );
+		m_session->requestBuddyIcon( userid );		// Try to get Buddy Icon
+
+		if ( !myself()->property( Kopete::Global::Properties::self()->photo() ).isNull() )
+		{
+			static_cast< YahooContact* >( contact( userid ) )->sendBuddyIconUpdate( 2 );
+			static_cast< YahooContact* >( contact( userid ) )->sendBuddyIconChecksum(
+				myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
+		}
 	}
 }
 
@@ -667,7 +692,8 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 		else
 			kc->removeProperty( m_protocol->awayMessage );
 
-		if( newStatus == static_cast<YahooProtocol*>( m_protocol )->Online )
+		if( newStatus == static_cast<YahooProtocol*>( m_protocol )->Online &&
+		    contact(who) != myself() )
 			m_session->requestBuddyIcon( who );		// Try to get Buddy Icon
 		
 		if( newStatus == static_cast<YahooProtocol*>( m_protocol )->Idle ) {
@@ -919,7 +945,99 @@ void YahooAccount::slotGotBuddyIcon( const QString &who, KTempFile *file, int ch
 		kdDebug(14180) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
 		return;
 	}
-	kc->setDisplayPicture( file, checksum );
+	kc->setDisplayPicture( file, checksum );	
+}
+void YahooAccount::slotGotBuddyIconRequest( const QString & who )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	YahooContact *kc = contact( who );
+	if ( kc == NULL ) {
+		kdDebug(14180) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		return;
+	}
+	kc->sendBuddyIconInfo( myself()->property( YahooProtocol::protocol()->iconRemoteUrl ).value().toString(),
+							myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
+}
+
+void YahooAccount::setBuddyIcon( KURL url )
+{
+	kdDebug(14180) << k_funcinfo << "Url: " << url.path() << endl;
+	QString s = url.path();
+	if ( url.path().isEmpty() )
+	{
+		myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
+		myself()->removeProperty( YahooProtocol::protocol()->iconRemoteUrl );
+		myself()->removeProperty( YahooProtocol::protocol()->iconExpire );
+		m_session->setPictureFlag( 0 );
+	}
+	else
+	{
+		QImage image( url.path() );
+		QString newlocation( locateLocal( "appdata", "yahoopictures/"+ url.fileName().lower() ) ) ;
+		QFile iconFile( newlocation );
+		QByteArray data;
+		uint expire = myself()->property( YahooProtocol::protocol()->iconExpire ).value().toInt();
+		
+		if ( image.isNull() ) {
+			return;
+		}
+		image = image.smoothScale( 96, 96, QImage::ScaleMin );
+
+		if( !image.save( newlocation, "PNG" ) || !iconFile.open(IO_ReadOnly) )
+		{
+			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n( "An error occurred when trying to change the display picture." ), i18n( "Yahoo Plugin" ) );
+			return;
+		}
+		
+		data = iconFile.readAll();
+		iconFile.close();
+		
+		// create checksum - taken from qhash.cpp of qt4
+		const uchar *p = reinterpret_cast<const uchar *>(data.data());
+		int n = data.size();
+		uint checksum = 0;
+		uint g;
+		while (n--)
+		{
+			checksum = (checksum << 4) + *p++;
+			if ((g = (checksum & 0xf0000000)) != 0)
+				checksum ^= g >> 23;
+			checksum &= ~g;
+		}
+		
+		myself()->setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
+		configGroup()->writeEntry( "iconLocalUrl", newlocation );
+		
+		m_session->setPictureFlag( 2 );
+		if ( checksum != static_cast<uint>(myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt()) ||
+		     QDateTime::currentDateTime().toTime_t() > expire )
+		{
+			myself()->setProperty( YahooProtocol::protocol()->iconCheckSum, checksum );
+			myself()->setProperty( YahooProtocol::protocol()->iconExpire , QDateTime::currentDateTime().toTime_t() + 604800 );
+			configGroup()->writeEntry( "iconCheckSum", checksum );
+			configGroup()->writeEntry( "iconExpire", myself()->property( YahooProtocol::protocol()->iconExpire ).value().toInt() );
+			
+			m_session->uploadBuddyIcon( newlocation, data.size() );
+		}
+	}
+}
+
+void YahooAccount::slotBuddyIconChanged( const QString &url )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	QDictIterator<Kopete::Contact> it( contacts() );
+	int checksum = myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt();
+
+	myself()->setProperty( YahooProtocol::protocol()->iconRemoteUrl, url );
+	configGroup()->writeEntry( "iconRemoteUrl", url );
+	
+	for ( ; it.current(); ++it )
+	{
+		if ( it.current() == myself() || !it.current()->isReachable() )
+			continue;
+		static_cast< YahooContact* >( it.current() )->sendBuddyIconChecksum( checksum );
+		static_cast< YahooContact* >( it.current() )->sendBuddyIconUpdate( 2 );
+	}
 }
 
 void YahooAccount::slotWebcamClosed( const QString& who, int reason )

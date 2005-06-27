@@ -71,6 +71,8 @@ public:
 
 	const Kopete::ContactPropertyTmpl awayMessage;
 	const Kopete::ContactPropertyTmpl iconCheckSum;
+	const Kopete::ContactPropertyTmpl iconExpire;
+	const Kopete::ContactPropertyTmpl iconRemoteUrl;
 
 	/** Protocol Accessor **/
 	static YahooProtocol *protocol();

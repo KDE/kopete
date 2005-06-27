@@ -35,6 +35,7 @@
 
 // QT Includes
 #include <qregexp.h>
+#include <qfile.h>
 #include <qradiobutton.h>
 
 // KDE Includes
@@ -48,6 +49,7 @@
 #include <ktempfile.h>
 #include <kio/global.h>
 #include <kio/job.h>
+#include <kurl.h>
 #include <kio/jobclasses.h>
 //#include <kimageio.h>
 #include <kstandarddirs.h>
@@ -171,7 +173,7 @@ Kopete::ChatSession *YahooContact::manager( Kopete::Contact::CanCreateFlags canC
 void YahooContact::slotSendMessage( Kopete::Message &message )
 {
 	kdDebug(14180) << k_funcinfo << endl;
-
+	
 	// Yahoo does not understand XML/HTML message data, so send plain text
 	// instead.  (Yahoo has its own format for "rich text".)
 	QString messageText = message.plainBody();
@@ -312,6 +314,7 @@ void YahooContact::gotWebcamInvite()
 	// emit signalReceivedWebcamInvite();
 	
 	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 has invited you to view his/her webcam. Accept?").arg(nickName()) ) )
+		
 	{
 		emit signalWebcamInviteAccepted ( );
 	}
@@ -320,6 +323,25 @@ void YahooContact::gotWebcamInvite()
 		// libyahoo2 doesn't do anything for rejecting invites
 	}
 	
+}
+
+void YahooContact::sendBuddyIconChecksum( int checksum )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	m_account->yahooSession()->sendBuddyIconChecksum( checksum, m_userId );
+	
+}
+
+void YahooContact::sendBuddyIconInfo( const QString &url, int checksum )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	m_account->yahooSession()->sendBuddyIconInfo( m_userId, url, checksum );
+}
+
+void YahooContact::sendBuddyIconUpdate( int type )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	m_account->yahooSession()->sendBuddyIconUpdate( m_userId, type );
 }
 
 void YahooContact::setDisplayPicture(KTempFile *f, int checksum)

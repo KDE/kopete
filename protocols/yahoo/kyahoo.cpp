@@ -69,6 +69,7 @@ int conn_type = 1;
 extern "C" {
 	void receive_file_callback( int id, int fd, int error,
 	                            const char *filename, unsigned long size, void *data );
+	void upload_buddyIcon_callback( int id, int fd, int error, void *data );
 }
 
 struct connect_callback_data
@@ -223,6 +224,7 @@ YahooSession::YahooSession(int id, const QString username, const QString passwor
 	m_lastWebcamTimestamp = 0;
 	currentImage = 0L;
 	m_iconLoader = new YahooBuddyIconLoader();
+	m_picture = 0;
 
 	connect( m_iconLoader, SIGNAL(fetchedBuddyIcon(const QString&, KTempFile*, int )), this, SLOT(slotBuddyIconFetched(const QString&, KTempFile*,  int ) ) );
 }
@@ -277,6 +279,11 @@ void YahooSession::setIdentityStatus( const QString &identity, int active)
 	yahoo_set_identity_status( m_connId, identity.local8Bit(), active );
 }
 
+void YahooSession::setPictureFlag( int picture )
+{
+	m_picture = picture;
+}
+
 void YahooSession::getList()
 {
 	kdDebug(14181) << k_funcinfo << endl;
@@ -289,10 +296,10 @@ void YahooSession::keepalive()
 	yahoo_keepalive( m_connId );
 }
 
-void YahooSession::sendIm( const QString &from, const QString &who, const QString &msg)
+void YahooSession::sendIm( const QString &from, const QString &who, const QString &msg )
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	yahoo_send_im( m_connId, from.local8Bit(), who.local8Bit(), (const char *)msg.utf8(), 1 );
+	yahoo_send_im( m_connId, from.local8Bit(), who.local8Bit(), (const char *)msg.utf8(), 1, m_picture );
 }
 
 void YahooSession::sendTyping( const QString &from, const QString &who, int typ)
@@ -304,7 +311,7 @@ void YahooSession::sendTyping( const QString &from, const QString &who, int typ)
 void YahooSession::buzzContact( const QString &from, const QString &who )
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	yahoo_send_im( m_connId, from.local8Bit(), who.local8Bit(), "<ding>", 1);
+	yahoo_send_im( m_connId, from.local8Bit(), who.local8Bit(), "<ding>", 1, m_picture );
 }
 
 void YahooSession::setAway( enum yahoo_status state, const QString &msg, int away)
@@ -346,6 +353,40 @@ void YahooSession::requestBuddyIcon( const QString &who )
 void YahooSession::downloadBuddyIcon( const QString &who, KURL url, int checksum )
 {
 	m_iconLoader->fetchBuddyIcon( QString(who), KURL(url), checksum );
+}
+
+void YahooSession::sendBuddyIconChecksum( int checksum, const QString &who )
+{
+	kdDebug(14181) << k_funcinfo << checksum << " sent to " << who << endl;
+	if ( who.isEmpty() )
+		yahoo_send_picture_checksum( m_connId, 0, checksum );
+	else
+		yahoo_send_picture_checksum( m_connId, who.local8Bit(), checksum );
+}
+
+void YahooSession::sendBuddyIconInfo( const QString &who, const QString &url, int checksum )
+{
+	kdDebug(14180) << k_funcinfo << "Url: " << url << " checksum: " << checksum << endl;
+	yahoo_send_picture_info( m_connId, who.local8Bit(), url.local8Bit(), checksum );
+}
+
+void YahooSession::sendBuddyIconUpdate( const QString &who, int type )
+{
+	kdDebug(14181) << k_funcinfo << endl;
+	yahoo_send_picture_update( m_connId, who.local8Bit(), type );
+}
+
+void YahooSession::uploadBuddyIcon( const QString &url, int size )
+{
+	kdDebug(14181) << k_funcinfo << endl;
+	YahooBuddyIconUploadData *uploadData = new YahooBuddyIconUploadData();
+	uploadData->url = url;
+	uploadData->size = size;
+	uploadData->transmitted = 0;
+	uploadData->file.setName( url );
+	
+	yahoo_send_picture( m_connId, url.local8Bit(), size, upload_buddyIcon_callback, reinterpret_cast< void*>( uploadData ) );
+
 }
 
 void YahooSession::changeBuddyGroup( const QString &who, const QString &old_group, const QString &new_group)
@@ -939,7 +980,7 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_data_request )( int /*id*/, int /*sen
 	/* Not implemented , No receiver yet */
 }
 
-void YAHOO_CALLBACK_TYPE(ext_yahoo_got_buddyicon)(int id, const char *who, const char */*me*/, const char *url, int checksum)
+void YAHOO_CALLBACK_TYPE(ext_yahoo_got_buddyicon)(int id, const char */*me*/, const char *who, const char *url, int checksum)
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
 	if ( session )
@@ -953,12 +994,33 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_got_buddyicon_checksum)(int id, const char */
 		session->_gotBuddyIconChecksumReceiver( id, (char*)who, checksum );
 }
 	
+void YAHOO_CALLBACK_TYPE(ext_yahoo_got_buddyiconrequest)(int id, const char */*me*/, const char *who)
+{
+	YahooSession *session = YahooSessionManager::manager()->session( id );
+	if ( session )
+		session->_gotBuddyIconRequestReceiver( id, (char*)who );
+}
+	
+void YAHOO_CALLBACK_TYPE(ext_yahoo_buddyicon_uploaded)(int id, const char *url)
+{
+	YahooSession *session = YahooSessionManager::manager()->session( id );
+	if ( session )
+		session->_gotBuddyIconUploadResponseReceiver( id, (char*)url );
+}
+	
 void receive_file_callback( int id, int fd, int error,
 	                            const char *filename, unsigned long size, void *data )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
 	if ( session )
 		session->_receiveFileProceed( id, fd, error, (char*)filename, size, (char*)data );
+}
+
+void upload_buddyIcon_callback( int id, int fd, int error, void *data )
+{
+	YahooSession *session = YahooSessionManager::manager()->session( id );
+	if ( session )
+		session->_uploadBuddyIconReceiver( id, fd, error, (char*)data );
 }
 /* End of extern C */
 }
@@ -970,6 +1032,54 @@ void receive_file_callback( int id, int fd, int error,
     *************************************************************************
 */
 
+void YahooSession::_uploadBuddyIconReceiver( int id, int fd, int error, void *data )
+{
+	YahooBuddyIconUploadData *uploadData = reinterpret_cast< YahooBuddyIconUploadData *>( data );
+	kdDebug(14181) << k_funcinfo << "Url: " << uploadData->url << " Size: " << uploadData->size << endl;
+
+	if( !uploadData->file.open(IO_ReadOnly) )
+		return;
+	
+	slotTransmitBuddyIcon( fd, uploadData );
+}
+
+void YahooSession::slotTransmitBuddyIcon( int fd, YahooBuddyIconUploadData *uploadData )
+{
+	KExtendedSocket* socket = m_connManager.connectionForFD( fd );
+	if( !socket )
+		return;
+	
+	if( uploadData->transmitted >= uploadData->size )      {
+		char buf[1024];
+		int r;
+		if( socket->readBlock( buf, r) <=0 )
+			kdDebug(14181) << k_funcinfo << "Icon " << uploadData->file.name() << " successfully uploaded" << endl;
+		
+		uploadData->file.close();
+		delete uploadData;
+		return;
+	}
+	
+	char buf[1024];
+	int read;
+	
+	read = uploadData->file.readBlock( buf, 512 );
+
+	if ( read < 0 )
+		return;
+	
+	uploadData->transmitted += socket->writeBlock( buf, read );
+	
+	slotTransmitBuddyIcon(fd, uploadData);
+}
+
+void YahooSession::_gotBuddyIconUploadResponseReceiver( int id, const char *url)
+{
+	kdDebug(14181) << k_funcinfo << endl;
+	setPictureFlag( 2 );
+	emit buddyIconUploaded( QString( url ) );
+}
+
 void YahooSession::_gotBuddyIconReceiver( int id, char *who, char *url, int checksum )
 {
 	kdDebug(14181) << k_funcinfo << "BuddyIcon reveived from: " << who << " checksum: " << checksum <<endl;
@@ -980,10 +1090,17 @@ void YahooSession::_gotBuddyIconReceiver( int id, char *who, char *url, int chec
 
 void YahooSession::_gotBuddyIconChecksumReceiver( int id, char *who, int checksum )
 {
-	kdDebug(14181) << k_funcinfo << endl;
+	kdDebug(14181) << k_funcinfo << "checksum: " << checksum << " received from: " << who << endl;
 
 	emit gotBuddyIconChecksum( QString( who ), checksum );
 	
+}
+
+void YahooSession::_gotBuddyIconRequestReceiver( int id, char *who )
+{
+	kdDebug(14181) << k_funcinfo << "Got Buddy Icon Request from: " << who << endl;
+
+	emit gotBuddyIconRequest ( QString( who ) );
 }
 
 void YahooSession::slotBuddyIconFetched(const QString &who, KTempFile *file, int checksum)

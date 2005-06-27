@@ -97,7 +97,7 @@ void yahoo_chat_keepalive(int id);
 
 /* from is the identity you're sending from.  if NULL, the default is used */
 /* utf8 is whether msg is a utf8 string or not. */
-void yahoo_send_im(int id, const char *from, const char *who, const char *msg, int utf8);
+void yahoo_send_im(int id, const char *from, const char *who, const char *msg, int utf8, int picture);
 /* if type is true, send typing notice, else send stopped typing notice */
 void yahoo_send_typing(int id, const char *from, const char *who, int typ);
 
@@ -193,7 +193,11 @@ const char  * yahoo_get_cookie(int id, const char *which);
 const char  * yahoo_get_profile_url( void );
 
 void yahoo_buddyicon_request(int id, const char *who);
-
+void yahoo_send_picture_info(int id, const char *who, const char *url, int checksum);
+void yahoo_send_picture_checksum(int id, const char *who, int checksum);
+void yahoo_send_picture_update(int id, const char *who, int type);
+void yahoo_send_picture(int id, const char *name, unsigned long size,
+							yahoo_get_fd_callback callback, void *data);
 #include "yahoo_httplib.h"
 
 #ifdef __cplusplus

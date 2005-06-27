@@ -24,12 +24,15 @@
 #include <qpushbutton.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>
+#include <qimage.h>
 
 // KDE Includes
 #include <klocale.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <krun.h>
+#include <kurl.h>
+#include <kfiledialog.h>
 #include <kpassdlg.h>
 #include <kconfig.h>
 
@@ -66,9 +69,18 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 			optionOverrideServer->setChecked( false );
 		editServerAddress->setText( pagerServer );
 		sbxServerPort->setValue( pagerPort );
+
+		QString iconUrl = account()->configGroup()->readEntry("pictureUrl", "");
+		bool sendPicture = account()->configGroup()->readBoolEntry("sendPicture", false);
+		optionSendBuddyIcon->setChecked( sendPicture );
+		editPictureUrl->setText( iconUrl );
+		editPictureUrl->setEnabled( sendPicture );
 	}
 
 	QObject::connect(buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
+	QObject::connect(buttonSelectPicture, SIGNAL(clicked()), this, SLOT(slotSelectPicture()));
+
+	optionSendBuddyIcon->setEnabled( account() );
 
 	/* Set tab order to password custom widget correctly */
 	QWidget::setTabOrder( mAutoConnect, mPasswordWidget->mRemembered );
@@ -108,20 +120,44 @@ Kopete::Account *YahooEditAccount::apply()
 
 	mPasswordWidget->save( &yahooAccount->password() );
 
-	if( optionOverrideServer->isChecked() )	{
+	if ( optionOverrideServer->isChecked() )
+	{
 		yahooAccount->setServer( editServerAddress->text() );
 		yahooAccount->setPort( sbxServerPort->value() );
-	} else {
+	}
+	else
+	{
 		yahooAccount->setServer( "scs.msg.yahoo.com" );
 		yahooAccount->setPort( 5050 );
 	}
 
+	account()->configGroup()->writeEntry("pictureUrl", editPictureUrl->text() );
+	account()->configGroup()->writeEntry("sendPicture", optionSendBuddyIcon->isChecked() );
+	if ( optionSendBuddyIcon->isChecked() )
+	{
+		yahooAccount->setBuddyIcon( editPictureUrl->text() );
+	}
+	else
+	{
+		yahooAccount->setBuddyIcon( KURL( QString::null ) );
+	}
+	
 	return yahooAccount;
 }
 
 void YahooEditAccount::slotOpenRegister()
 {
     KRun::runURL( "http://edit.yahoo.com/config/eval_register?new=1", "text/html" );
+}
+
+void YahooEditAccount::slotSelectPicture()
+{
+	KURL file = KFileDialog::getImageOpenURL( QString::null, this, i18n( "Yahoo Buddy Icon" ) );
+
+	if ( file.isEmpty() )
+		return;
+
+	editPictureUrl->setText( file.url() );
 }
 
 #include "yahooeditaccount.moc"

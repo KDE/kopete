@@ -102,6 +102,11 @@ public:
 	 * Set the port of the pager server
 	 */
 	void setPort( int port );
+
+	/**
+	 * Set Buddy Icon
+	 */
+	void setBuddyIcon( KURL url );
 public slots:
 	/**
 	 * Connect to the Yahoo service
@@ -121,6 +126,11 @@ signals:
 	 * Emitted when we receive notification that the person we're talking to is typing
 	 */
 	void receivedTypingMsg(const QString &contactId, bool isTyping);
+
+	/**
+	 * Emitted when our Buddy Icon has changed
+	 */
+	void signalBuddyIconChanged( int type );
 
 protected:
 	/**
@@ -173,6 +183,8 @@ protected slots:
 	void slotGotBuddyIcon(const QString&, KTempFile*, int);
 	void slotGotBuddyIconInfo(const QString&, KURL, int);
 	void slotGotBuddyIconChecksum(const QString&, int);
+	void slotGotBuddyIconRequest(const QString &);
+	void slotBuddyIconChanged(const QString&);
 
 	void slotBuddyListFetched( int numBuddies );
 

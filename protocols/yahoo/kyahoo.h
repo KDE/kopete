@@ -48,6 +48,14 @@ class Transfer;
 class Contact;
 }
 
+struct YahooBuddyIconUploadData
+{
+	QString url;
+	int size;
+	int transmitted;
+	QFile file;
+};
+
 class YahooConnectionManager
 {
 public:
@@ -169,6 +177,11 @@ public:
 
 	void requestBuddyIcon( const QString &who );
 	void downloadBuddyIcon( const QString &who, KURL url, int checksum );
+	void sendBuddyIconInfo( const QString &who, const QString &url, int checksum );
+	void sendBuddyIconUpdate( const QString &who, int type );
+	void sendBuddyIconChecksum( int checksum, const QString &who );
+	void uploadBuddyIcon( const QString &url, int size );
+	void setPictureFlag( int picture );
 	
 	//webcam handlers
 	void requestWebcam( const QString& from );
@@ -205,6 +218,9 @@ public:
 	int _hostAsyncConnectReceiver(char *host, int port,  yahoo_connect_callback callback, void *callback_data);
 	void _gotBuddyIconReceiver( int id, char *who, char *url, int checksum );
 	void _gotBuddyIconChecksumReceiver( int id, char *who, int checksum );
+	void _gotBuddyIconRequestReceiver( int id, char *who );
+	void _uploadBuddyIconReceiver( int id, int fd, int error, void *data );
+	void _gotBuddyIconUploadResponseReceiver( int id, const char *url);
 	
 	//webcam callback receivers
 	void _gotWebcamInvite( const char* who );
@@ -294,6 +310,12 @@ signals:
 
 	/** emitted when someone sends a icon checksum, probably because he changed his icon */
 	void gotBuddyIconChecksum( const QString &who, int checksum );
+	
+	/** emitted when someone requests our buddy icon */
+	void gotBuddyIconRequest( const QString &who );
+	
+	/** emitted when our buddy icon was successfully uploaded*/
+	void buddyIconUploaded( const QString &url );
 private slots:
 
 	void slotLoginResponseReceiver( int succ, char *url);
@@ -303,6 +325,7 @@ private slots:
 	void slotUserInfoData( KIO::Job*, const QByteArray & );
 	void slotUserInfoSaved( KIO::Job* );
     void slotBuddyIconFetched(const QString &who, KTempFile *file, int checksum);
+	void slotTransmitBuddyIcon( int fd, YahooBuddyIconUploadData *uploadData );
 	
 private:
 	/* Private constructor */
@@ -322,7 +345,8 @@ private:
 	QString m_UserInfo;
 	QString m_targetID;					// userID of the target user, e.g. for UserInfo() or SendFile() ...
 	KIO::TransferJob *mTransferJob;
-	
+
+	int m_picture; // Buddy Icon flag: 0 = no picture, 2 = buddy icon
 	int m_Port;
 	int m_Status;
 	int m_connId;
