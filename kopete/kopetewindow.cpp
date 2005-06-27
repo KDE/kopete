@@ -264,6 +264,9 @@ void KopeteWindow::initActions()
 
 	globalAccel->insert( QString::fromLatin1("Show/Hide Contact List"), i18n("Show/Hide Contact List"), i18n("Show or hide the contact list"),
 		CTRL+SHIFT+Key_A, KKey::QtWIN+CTRL+Key_A, this, SLOT(slotShowHide()) );
+	
+	globalAccel->insert( QString::fromLatin1("Set Away/Back"), i18n("Set Away/Back"), i18n("Sets away from keyboard or sets back"),
+		CTRL+SHIFT+Key_W, KKey::QtWIN+CTRL+SHIFT+Key_W, this, SLOT(slotToggleAway()) );
 
 	globalAccel->readSettings();
 	globalAccel->updateConnections();
@@ -288,6 +291,20 @@ void KopeteWindow::slotShowHide()
 			KWin::setOnDesktop(winId(), KWin::currentDesktop());
 		raise();
 		setActiveWindow();
+	}
+}
+
+void KopeteWindow::slotToggleAway()
+{
+	Kopete::Away *mAway = Kopete::Away::getInstance();
+	if ( mAway->globalAway() )
+	{
+		Kopete::AccountManager::self()->setAvailableAll();
+	}
+	else
+	{
+		QString awayReason = mAway->getMessage( 0 );
+		slotGlobalAwayMessageSelect(awayReason);
 	}
 }
 

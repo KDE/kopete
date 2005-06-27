@@ -76,6 +76,7 @@ private slots:
 	void slotConfigurePlugins();
 	void slotConfGlobalKeys();
 	void slotShowHide();
+	void slotToggleAway();
 	
 	/**
 	 * Checks if the mousecursor is in the contact list.
