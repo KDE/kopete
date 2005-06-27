@@ -29,6 +29,7 @@
 #include <kaction.h>
 #include <kpopupmenu.h>
 #include <kmessagebox.h>
+#include <knotifyclient.h>
 
 #include "kabcpersistence.h"
 #include "kopetecontactlist.h"
@@ -116,9 +117,9 @@ void Account::disconnected( DisconnectReason reason )
 	}
 	if(reason== OtherClient)
 	{
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information ,
-			i18n( "You have connected from another client or computer to the account '%1'" ).arg(d->id) ,
-			i18n ("Account Disconnected - Kopete") );
+		KNotifyClient::event(
+			Kopete::UI::Global::mainWidget()->winId(), QString::fromLatin1("connection_error"),
+			i18n( "You have connected from another client or computer to the account '%1'" ).arg(d->id) );
 	}
 }
 

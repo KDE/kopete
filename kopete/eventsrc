@@ -921,3 +921,8 @@ Comment[uk]=Сталась подія IRC
 Comment[xx]=xxAn IRC event has occurredxx
 Comment[zh_CN]=发生了 IRC 事件
 default_presentation=16
+
+[connection_error]
+Name=Connection Error
+Comment=An error on connection has occurred
+default_presentation=2
