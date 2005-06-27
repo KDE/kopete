@@ -981,7 +981,13 @@ void YahooAccount::setBuddyIcon( KURL url )
 		if ( image.isNull() ) {
 			return;
 		}
-		image = image.smoothScale( 96, 96, QImage::ScaleMin );
+		image = image.smoothScale( 96, 96, QImage::ScaleMax );
+		if(image.width() > image.height()) {
+			image = image.copy((image.width()-image.height())/2, 0, image.height(), image.height());
+		}
+		else if(image.height() > image.width()) {
+			image = image.copy(0, (image.height()-image.width())/2, image.width(), image.width());
+		}
 
 		if( !image.save( newlocation, "PNG" ) || !iconFile.open(IO_ReadOnly) )
 		{
