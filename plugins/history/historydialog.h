@@ -138,7 +138,7 @@ class HistoryDialog : public KDialogBase
 
 		struct Search
 		{
-				typedef QMap<QDate, Kopete::MetaContact*> DateSearchMap;
+				typedef QMap<QDate, QValueList<Kopete::MetaContact*> > DateSearchMap;
 				DateSearchMap dateSearchMap;
 
 				KListViewDateItem *item;

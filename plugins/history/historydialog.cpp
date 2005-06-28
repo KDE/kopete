@@ -463,8 +463,8 @@ void HistoryDialog::searchFirstStep()
 		mSearch = 0L;
 		return;
 	}
-
-	if (mSearch->dateSearchMap[mSearch->item->date()] != mSearch->item->metaContact())
+	
+	if (!mSearch->dateSearchMap[mSearch->item->date()].contains(mSearch->item->metaContact()))
 	{
 		if (mMainWidget->contactComboBox->currentItem() == 0
 				|| mMetaContactList.at(mMainWidget->contactComboBox->currentItem()-1) == mSearch->item->metaContact())
@@ -493,7 +493,7 @@ void HistoryDialog::searchFirstStep()
 					if (textLine.contains(mMainWidget->searchLine->text(), false))
 					{
 						rx.search(textLine);
-						mSearch->dateSearchMap[QDate(mSearch->item->date().year(),mSearch->item->date().month(),rx.cap(1).toInt())] = mSearch->item->metaContact();
+						mSearch->dateSearchMap[QDate(mSearch->item->date().year(),mSearch->item->date().month(),rx.cap(1).toInt())].push_back(mSearch->item->metaContact());
 					}
 				}
 				
@@ -518,7 +518,7 @@ void HistoryDialog::searchFirstStep()
 		mSearch->item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
 		do
 		{
-			if (mSearch->dateSearchMap[mSearch->item->date()] == mSearch->item->metaContact())
+			if (mSearch->dateSearchMap[mSearch->item->date()].contains(mSearch->item->metaContact()))
 				mSearch->item->setVisible(true);
 		}
 		while(mSearch->item = static_cast<KListViewDateItem *>(mSearch->item->nextSibling()));
