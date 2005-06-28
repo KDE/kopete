@@ -104,6 +104,8 @@ void yahoo_register_callbacks(struct yahoo_callbacks * tyc)
 #define YAHOO_CALLBACK(x)	x
 #endif
 
+static int yahoo_send_data(int fd, void *data, int len);
+
 int yahoo_log_message(char * fmt, ...)
 {
 	char out[1024];
