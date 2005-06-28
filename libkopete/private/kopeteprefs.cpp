@@ -124,6 +124,10 @@ void KopetePrefs::load()
 	int n = metaObject()->findProperty( "contactListDisplayMode" );
 	QString value = config->readEntry("DisplayMode",QString::fromLatin1("Default"));
 	mContactListDisplayMode = (ContactDisplayMode)metaObject()->property( n )->keyToValue( value.latin1() );
+	n = metaObject()->findProperty( "contactListIconMode" );
+	value = config->readEntry("IconMode",
+                                  QString::fromLatin1("IconDefault"));
+	mContactListIconMode = (IconDisplayMode) metaObject()->property( n )->keyToValue( value.latin1() );
 	mContactListIndentContacts = config->readBoolEntry("IndentContacts", false);
 	mContactListHideVerticalScrollBar = config->readBoolEntry("HideVerticalScrollBar", false );
 	mContactListUseCustomFonts = config->readBoolEntry("UseCustomFonts", false);
@@ -206,6 +210,8 @@ void KopetePrefs::save()
 	config->setGroup("ContactList");
 	int n = metaObject()->findProperty( "contactListDisplayMode" );
 	config->writeEntry("DisplayMode", metaObject()->property( n )->valueToKey( mContactListDisplayMode ));
+	n = metaObject()->findProperty( "contactListIconMode" );
+	config->writeEntry("IconMode", metaObject()->property( n )->valueToKey( mContactListIconMode ));
 	config->writeEntry("IndentContacts", mContactListIndentContacts);
 	config->writeEntry("HideVerticalScrollBar", mContactListHideVerticalScrollBar );
 	config->writeEntry("UseCustomFonts", mContactListUseCustomFonts);
@@ -511,6 +517,12 @@ void KopetePrefs::setContactListDisplayMode( ContactDisplayMode v )
 {
 	if( v != mContactListDisplayMode ) mContactListAppearanceChanged = true;
 	mContactListDisplayMode = v;
+}
+
+void KopetePrefs::setContactListIconMode( IconDisplayMode v )
+{
+	if( v != mContactListIconMode ) mContactListAppearanceChanged = true;
+	mContactListIconMode = v;
 }
 
 void KopetePrefs::setContactListUseCustomFonts( bool v )

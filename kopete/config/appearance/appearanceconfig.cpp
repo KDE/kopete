@@ -248,6 +248,8 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(emitChanged()) );
 	connect(mPrfsContactList->mDisplayMode, SIGNAL(clicked(int)),
 		this, SLOT(emitChanged()));
+	connect(mPrfsContactList->mIconMode, SIGNAL(toggled(bool)),
+		this, SLOT(emitChanged()));
 	connect(mPrfsContactList->mAnimateChanges, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
 	connect(mPrfsContactList->mFadeVisibility, SIGNAL(toggled(bool)),
@@ -344,6 +346,7 @@ void AppearanceConfig::save()
 	p->setContactListIndentContacts(mPrfsContactList->mIndentContacts->isChecked());
 	p->setContactListHideVerticalScrollBar(mPrfsContactList->mHideVerticalScrollBar->isChecked());
 	p->setContactListDisplayMode(KopetePrefs::ContactDisplayMode(mPrfsContactList->mDisplayMode->selectedId()));
+	p->setContactListIconMode(KopetePrefs::IconDisplayMode((mPrfsContactList->mIconMode->isChecked()) ? KopetePrefs::PhotoPic : KopetePrefs::IconPic));
 	p->setContactListAnimation(mPrfsContactList->mAnimateChanges->isChecked());
 	p->setContactListFading(mPrfsContactList->mFadeVisibility->isChecked());
 	p->setContactListFolding(mPrfsContactList->mFoldVisibility->isChecked());
@@ -398,7 +401,17 @@ void AppearanceConfig::load()
 	mPrfsContactList->mSortByGroup->setChecked( p->sortByGroup() );
 	mPrfsContactList->mIndentContacts->setChecked( p->contactListIndentContacts() );
 	mPrfsContactList->mHideVerticalScrollBar->setChecked( p->contactListHideVerticalScrollBar() );
+
+        // convert old single value display mode to dual display/icon modes
+        if (p->contactListDisplayMode() == KopetePrefs::Yagami) {
+            	p->setContactListDisplayMode( KopetePrefs::Detailed);
+            	p->setContactListIconMode( KopetePrefs::PhotoPic );
+        }
+
 	mPrfsContactList->mDisplayMode->setButton( p->contactListDisplayMode() );
+	mPrfsContactList->mIconMode->setChecked( p->contactListIconMode() == KopetePrefs::PhotoPic);
+
+            
 	mPrfsContactList->mAnimateChanges->setChecked( p->contactListAnimation() );
 #ifdef HAVE_XRENDER
 	mPrfsContactList->mFadeVisibility->setChecked( p->contactListFading() );

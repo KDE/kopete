@@ -133,7 +133,7 @@ class KopeteMetaContactLVI::Private
 {
 public:
 	Private() : metaContactIcon( 0L ), nameText( 0L ), extraText( 0L ), contactIconBox( 0L ),
-	            metaContactPhoto( 0L ), currentMode( -1 ) {}
+	            metaContactPhoto( 0L ), currentMode( -1 ), currentIconMode( -1 ) {}
 	ListView::ImageComponent *metaContactIcon;
 	ListView::DisplayNameComponent *nameText;
 	ListView::DisplayNameComponent *extraText;
@@ -148,6 +148,7 @@ public:
 	// metacontact photo size
 	int photoSize;
 	int currentMode;
+	int currentIconMode;
 
 	QPtrList<Kopete::MessageEvent> events;
 };
@@ -638,7 +639,8 @@ void KopeteMetaContactLVI::slotAddToNewGroup()
 
 void KopeteMetaContactLVI::slotConfigChanged()
 {
-	setDisplayMode( KopetePrefs::prefs()->contactListDisplayMode() );
+    setDisplayMode( KopetePrefs::prefs()->contactListDisplayMode(),
+                    KopetePrefs::prefs()->contactListIconMode() );
 
 	// create a spacer if wanted
 	delete d->spacerBox->component( 0 );
@@ -666,11 +668,13 @@ void KopeteMetaContactLVI::setMetaContactToolTipSourceForComponent( ListView::Co
 		comp->setToolTipSource( d->toolTipSource.get() );
 }
 
-void KopeteMetaContactLVI::setDisplayMode( int mode )
+void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 {
-	if ( mode == d->currentMode )
+	if ( mode == d->currentMode && iconmode == d->currentIconMode )
 		return;
+
 	d->currentMode = mode;
+	d->currentIconMode = iconmode;
 
 	// empty...
 	while ( component( 0 ) )
@@ -680,9 +684,14 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 	d->metaContactPhoto = 0L;
 	d->extraText = 0L;
 	d->metaContactIcon = 0L;
-	d->iconSize = IconSize( KIcon::Small );
 	d->contactIconSize = 12;
-	d->photoSize = 48;
+	if (mode == KopetePrefs::Detailed) {
+            	d->photoSize = IconSize( KIcon::Toolbar );
+		d->iconSize = IconSize( KIcon::Toolbar );
+	} else {
+		d->iconSize = IconSize( KIcon::Small );
+		d->photoSize = IconSize( KIcon::Small );
+	}
 
 	disconnect( Kopete::KABCPersistence::self()->addressBook() , 0 , this , 0);
 
@@ -690,50 +699,38 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 	using namespace ListView;
 	Component *hbox = new BoxComponent( this, BoxComponent::Horizontal );
 	d->spacerBox = new BoxComponent( hbox, BoxComponent::Horizontal );
-
-	if( mode == KopetePrefs::Detailed )                // new funky contact
-	{
-		d->metaContactIcon = new ImageComponent( hbox );
-		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
-		d->nameText = new DisplayNameComponent( vbox );
-		d->extraText = new DisplayNameComponent( vbox );
-
-		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
-		d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
-
-		d->iconSize = IconSize( KIcon::Toolbar );
-	}
-	else if( mode == KopetePrefs::Yagami )             // Style with metacontact photo
-	{
-		d->contactIconSize = IconSize( KIcon::Small );
+	
+	if (iconmode == KopetePrefs::PhotoPic) {
 		Component *imageBox = new BoxComponent( hbox, BoxComponent::Vertical );
 		new VSpacerComponent( imageBox );
-		// include borders in size
 		d->metaContactPhoto = new ImageComponent( imageBox, d->photoSize + 2 , d->photoSize + 2 );
 		new VSpacerComponent( imageBox );
-		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
-		d->nameText = new DisplayNameComponent( vbox );
-		d->extraText = new DisplayNameComponent( vbox );
-
-		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
-		d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
-
 		if(!metaContact()->photoSource() && !Kopete::KABCPersistence::self()->addressBook()->findByUid( metaContact()->metaContactId() ).isEmpty()   )
 		{	//if the photo is the one of the kaddressbook,  track every change in the adressbook, it might be the photo of our contact.
 			connect( Kopete::KABCPersistence::self()->addressBook() , SIGNAL(addressBookChanged (AddressBook *) ) ,
-					 this , SLOT(slotPhotoChanged()));
+				 this , SLOT(slotPhotoChanged()));
 		}
+	} else {
+		d->metaContactIcon = new ImageComponent( hbox );
+	}
+	 
+	if( mode == KopetePrefs::Detailed )
+	{
+		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
+		d->nameText = new DisplayNameComponent( vbox );
+		d->extraText = new DisplayNameComponent( vbox );
+
+		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
+		d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
 	}
 	else if( mode == KopetePrefs::RightAligned )       // old right-aligned contact
 	{
-		d->metaContactIcon = new ImageComponent( hbox );
 		d->nameText = new DisplayNameComponent( hbox );
 		new HSpacerComponent( hbox );
 		d->contactIconBox = new BoxComponent( hbox, BoxComponent::Horizontal );
 	}
-	else                                               // older left-aligned contact
+	else					       // older left-aligned contact
 	{
-		d->metaContactIcon = new ImageComponent( hbox );
 		d->nameText = new DisplayNameComponent( hbox );
 		d->contactIconBox = new BoxComponent( hbox, BoxComponent::Horizontal );
 	}

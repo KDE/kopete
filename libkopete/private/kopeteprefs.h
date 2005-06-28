@@ -31,7 +31,8 @@ class KOPETE_EXPORT KopetePrefs : public QObject
 	Q_OBJECT
 	// here so we can use Qt to translate enums<-->strings
 	Q_PROPERTY( ContactDisplayMode contactListDisplayMode READ contactListDisplayMode WRITE setContactListDisplayMode )
-	Q_ENUMS( ContactDisplayMode )
+	Q_PROPERTY( IconDisplayMode contactListIconMode READ contactListIconMode WRITE setContactListIconMode )
+        Q_ENUMS( ContactDisplayMode IconDisplayMode )
 
 public:
 	/**
@@ -98,9 +99,12 @@ public:
 
 	///
 	enum ContactDisplayMode { Classic, RightAligned, Detailed, Yagami, Default = Classic };
+	///
+	enum IconDisplayMode { IconPic, PhotoPic, IconDefault = IconPic };
 	bool contactListIndentContacts() const { return mContactListIndentContacts; }
 	bool contactListHideVerticalScrollBar() const { return mContactListHideVerticalScrollBar; }
 	ContactDisplayMode contactListDisplayMode() const { return mContactListDisplayMode; }
+	IconDisplayMode contactListIconMode() const { return mContactListIconMode; }
 	bool contactListUseCustomFonts() const { return mContactListUseCustomFonts; }
 	QFont contactListCustomNormalFont() const { return mContactListNormalFont; }
 	QFont contactListCustomSmallFont() const { return mContactListSmallFont; }
@@ -159,6 +163,7 @@ public:
 	void setContactListIndentContacts( bool v );
 	void setContactListHideVerticalScrollBar( bool v );
 	void setContactListDisplayMode( ContactDisplayMode v );
+	void setContactListIconMode( IconDisplayMode v );
 	void setContactListUseCustomFonts( bool v );
 	void setContactListCustomNormalFont( const QFont & v );
 	void setContactListCustomSmallFont( const QFont & v );
@@ -256,6 +261,7 @@ private:
 	bool mContactListIndentContacts;
 	bool mContactListHideVerticalScrollBar;
 	ContactDisplayMode mContactListDisplayMode;
+	IconDisplayMode mContactListIconMode;
 	bool mContactListUseCustomFonts;
 	QFont mContactListNormalFont;
 	QFont mContactListSmallFont;

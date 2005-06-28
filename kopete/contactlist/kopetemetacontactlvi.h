@@ -157,7 +157,7 @@ protected:
 
 private:
 	void initLVI();
-	void setDisplayMode( int mode );
+	void setDisplayMode( int mode, int iconMode );
 	void setMetaContactToolTipSourceForComponent( Kopete::UI::ListView::Component *comp );
 	QString key( int column, bool ascending ) const;
 	void updateContactIcon( Kopete::Contact * );

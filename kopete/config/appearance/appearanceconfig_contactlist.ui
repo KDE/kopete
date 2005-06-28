@@ -94,52 +94,65 @@
                 </widget>
             </vbox>
         </widget>
-        <widget class="QButtonGroup" row="0" column="1">
+        <widget class="QGroupBox" row="0" column="1">
             <property name="name">
-                <cstring>mDisplayMode</cstring>
+                <cstring>groupBox10</cstring>
             </property>
             <property name="title">
                 <string>Contact Display Mode</string>
             </property>
             <vbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>radioButton8</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Classic, left-aligned status icons</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>radioButton9</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Right-aligned status icons</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>radioButton10</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Detailed &amp;view</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>radioButton11</cstring>
-                    </property>
-                    <property name="text">
-                        <string>D&amp;etailed with contact photos</string>
-                    </property>
-                </widget>
+            	<property name="name">
+            	    <cstring>unnamed</cstring>
+            	</property>
+            	<widget class="QButtonGroup">
+            	    <property name="name">
+            	        <cstring>mDisplayMode</cstring>
+            	    </property>
+            	    <property name="title">
+            	        <string>List Style</string>
+            	    </property>
+            	    <vbox>
+            	        <property name="name">
+            	            <cstring>unnamed</cstring>
+            	        </property>
+            	        <widget class="QRadioButton">
+            	            <property name="name">
+            	                <cstring>radioButton8</cstring>
+            	            </property>
+            	            <property name="text">
+            	                <string>&amp;Classic, left-aligned status icons</string>
+            	            </property>
+            	            <property name="checked">
+            	                <bool>true</bool>
+            	            </property>
+            	        </widget>
+            	        <widget class="QRadioButton">
+            	            <property name="name">
+            	                <cstring>radioButton9</cstring>
+            	            </property>
+            	            <property name="text">
+            	                <string>&amp;Right-aligned status icons</string>
+            	            </property>
+            	        </widget>
+            	        <widget class="QRadioButton">
+            	            <property name="name">
+            	                <cstring>radioButton10</cstring>
+            	            </property>
+            	            <property name="text">
+            	                <string>Detailed &amp;view</string>
+            	            </property>
+            	        </widget>
+            	    </vbox>
+            	</widget>
+	    	<widget class="QCheckBox">
+            	    <property name="name">
+            	        <cstring>mIconMode</cstring>
+            	    </property>
+            	    <property name="text">
+            	        <string>Use contact photos when available</string>
+            	    </property>
+            	</widget>
             </vbox>
         </widget>
         <widget class="QGroupBox" row="2" column="0" rowspan="1" colspan="2">
