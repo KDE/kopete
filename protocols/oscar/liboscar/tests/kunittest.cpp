@@ -28,6 +28,7 @@
 
 #include "qtester.h"
 #include "tester.h"
+#include "chatnavtests.h"
 
 #include <qapplication.h>
 #include <qtimer.h>
@@ -37,6 +38,7 @@ using namespace std;
 
 void KUnitTest::registerTests()
 {
+      ADD_TEST( ChatNavTests );
 //    ADD_TEST( SampleTest );
 //    ADD_TEST( OnePassTest );
 //    ADD_TEST( TwoPassTest );

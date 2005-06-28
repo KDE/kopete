@@ -1,4 +1,4 @@
-INCLUDES = $(all_includes)
+INCLUDES = $(all_includes) $(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/protocols/oscar/liboscar
 
 check_PROGRAMS = kunittest
 

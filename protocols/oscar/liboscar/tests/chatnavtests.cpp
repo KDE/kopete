@@ -15,7 +15,15 @@
 */
 
 #include "chatnavtests.h"
+
+#include <iostream>
+
 #include "buffer.h"
+#include "oscartypeclasses.h"
+
+using namespace std;
+using namespace Oscar;
+
 
 ChatNavTests::ChatNavTests()
 {
@@ -132,11 +140,83 @@ void ChatNavTests::setupRoomInfoTestBuffer()
 
 void ChatNavTests::allTests()
 {
+	exchangeParsingTest();
 }
 
 void ChatNavTests::exchangeParsingTest()
 {
-	
+	setupExchangeTestBuffer();
+	Buffer testBuffer(*m_buffer);
+	while ( testBuffer.length() != 0 )
+	{
+		TLV t = testBuffer.getTLV();
+		if ( t.type == 0x0002 )
+		{
+			cout << "Max concurrent rooms: " << t.data[0] << endl;
+		}
+		
+		t = testBuffer.getTLV();
+		if ( t.type == 0x0003 )
+		{
+			cout << "TLV of type 3 with length " << t.length << endl;
+			Buffer b(t.data);
+			WORD id = b.getWord();
+			CHECK( id > 0, true );
+			int tlvCount = b.getWord();
+			int realCount = 0;
+			cout << "Expecting " << tlvCount << " TLVs" << endl;
+			while ( b.length() > 0 )
+			{
+				TLV t = b.getTLV();
+				CHECK( t.type != 0, true );
+				switch (t.type)
+				{
+				case 0x02:
+					CHECK( t.length == 2, true );
+					CHECK( t.data.count() == 2, true );
+					break;
+				case 0x03:
+					CHECK( t.length == 1, true );
+					CHECK( t.data.count() == 1, true );
+					CHECK( t.data[0] > 0, true );
+					break;
+				case 0x04:
+					CHECK( t.length == 2, true );
+					CHECK( t.data.count() == 2, true );
+					//CHECK( t.data[0] > 0, true );
+					break;
+				case 0x05:
+					CHECK( t.length > 1, true );
+					break;
+				case 0x06:
+					CHECK( t.length > 2, true );
+					break;
+				case 0xCA:
+					CHECK( t.length == 4, true );
+					break;
+				case 0xD1:
+					CHECK( t.length == 2, true );
+					break;
+				case 0xD2:
+					CHECK( t.length == 2, true );
+					break;
+				case 0xD3:
+					CHECK( t.length > 0, true );
+					CHECK( t.data.count() == t.length, true );
+				case 0xD5:
+					CHECK( t.length == 1, true );
+					break;
+				default:
+					cout << "unknown TLV type " << t.type << endl;
+					break;
+				}
+				realCount++;
+			}
+			CHECK( tlvCount == realCount, true );
+		}
+	}
 }
+
+//kate: indent-mode csands; tab-width 4;
 
 

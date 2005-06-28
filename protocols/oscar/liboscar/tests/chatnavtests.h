@@ -17,25 +17,28 @@
 #ifndef CHATNAVTESTS_H
 #define CHATNAVTESTS_H
 
+#include "tester.h"
+
 class Buffer;
 
 /**
 @author Kopete Developers
 */
-class ChatNavTests{
+class ChatNavTests : public Tester
+{
 public:
 	ChatNavTests();
 	~ChatNavTests();
 
 	void allTests();
 
-	void limitsParsingTest();
+// 	void limitsParsingTest();
 	void exchangeParsingTest();
-	void roominfoParsingTest();
-	void extRoomInfoParsingTest();
-	void memberListParsingTest();
-	void searchInfoParsingTest();
-	void createRoomParsingTest();
+// 	void roominfoParsingTest();
+// 	void extRoomInfoParsingTest();
+// 	void memberListParsingTest();
+// 	void searchInfoParsingTest();
+// 	void createRoomParsingTest();
 
 	void setupExchangeTestBuffer();
 	void setupRoomInfoTestBuffer();
