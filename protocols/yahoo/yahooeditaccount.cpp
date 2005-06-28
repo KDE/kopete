@@ -18,13 +18,13 @@
 
 // QT Includes
 #include <qcheckbox.h>
-#include <qlineedit.h>
 #include <qgroupbox.h>
+#include <qimage.h>
+#include <qlabel.h>
 #include <qlayout.h>
+#include <qlineedit.h>
 #include <qpushbutton.h>
 #include <qspinbox.h>
-#include <qcheckbox.h>
-#include <qimage.h>
 
 // KDE Includes
 #include <klocale.h>
@@ -74,6 +74,8 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 		bool sendPicture = account()->configGroup()->readBoolEntry("sendPicture", false);
 		optionSendBuddyIcon->setChecked( sendPicture );
 		editPictureUrl->setText( iconUrl );
+		if( !iconUrl.isEmpty() )
+			m_Picture->setPixmap( KURL( iconUrl ).path() );
 		editPictureUrl->setEnabled( sendPicture );
 	}
 
@@ -157,7 +159,9 @@ void YahooEditAccount::slotSelectPicture()
 	if ( file.isEmpty() )
 		return;
 
-	editPictureUrl->setText( file.url() );
+	editPictureUrl->setText( file.path() );
+	
+	m_Picture->setPixmap( file.path() );
 }
 
 #include "yahooeditaccount.moc"
