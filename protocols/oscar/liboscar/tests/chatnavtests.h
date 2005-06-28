@@ -34,7 +34,7 @@ public:
 
 // 	void limitsParsingTest();
 	void exchangeParsingTest();
-// 	void roominfoParsingTest();
+	void roominfoParsingTest();
 // 	void extRoomInfoParsingTest();
 // 	void memberListParsingTest();
 // 	void searchInfoParsingTest();

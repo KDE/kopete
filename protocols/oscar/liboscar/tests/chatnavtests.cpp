@@ -141,12 +141,14 @@ void ChatNavTests::setupRoomInfoTestBuffer()
 void ChatNavTests::allTests()
 {
 	exchangeParsingTest();
+	roominfoParsingTest();
 }
 
 void ChatNavTests::exchangeParsingTest()
 {
 	setupExchangeTestBuffer();
 	Buffer testBuffer(*m_buffer);
+	CHECK( testBuffer.length() != 0, true );
 	while ( testBuffer.length() != 0 )
 	{
 		TLV t = testBuffer.getTLV();
@@ -203,6 +205,7 @@ void ChatNavTests::exchangeParsingTest()
 				case 0xD3:
 					CHECK( t.length > 0, true );
 					CHECK( t.data.count() == t.length, true );
+					break;
 				case 0xD5:
 					CHECK( t.length == 1, true );
 					break;
@@ -214,6 +217,80 @@ void ChatNavTests::exchangeParsingTest()
 			}
 			CHECK( tlvCount == realCount, true );
 		}
+		CHECK( testBuffer.length() == 0, true );
+	}
+}
+
+void ChatNavTests::roominfoParsingTest()
+{
+	setupRoomInfoTestBuffer();
+	Buffer testBuffer(*m_buffer);
+	CHECK( testBuffer.length() != 0, true );
+	while ( testBuffer.length() != 0 )
+	{
+		TLV t = testBuffer.getTLV();
+		cout << "TLV of type " << t << " with length " << t.length << endl;
+		CHECK( t.type == 0x04, true );
+		CHECK( t.length > 8, true );
+		Buffer b( t.data );
+		CHECK( b.getWord() > 0, true );
+		BYTE cookieLength = b.getByte();
+		b.skipBytes( cookieLength );
+		CHECK( b.getWord() == 0, true );
+		CHECK( b.getByte() > 0, true );
+		int tlvCount = b.getWord();
+		int realCount = 0;
+		cout << "Expecting " << tlvCount << " TLVs" << endl;
+		while ( b.length() > 0 )
+		{
+			TLV t = b.getTLV();
+			cout << "TLV of type " << t.type << endl;
+			CHECK( t.type != 0, true );
+			switch (t.type)
+			{
+			case 0x02:
+				CHECK( t.length == 2, true );
+				CHECK( t.data.count() == 2, true );
+				break;
+			case 0x03:
+				CHECK( t.length == 1, true );
+				CHECK( t.data.count() == 1, true );
+				CHECK( t.data[0] > 0, true );
+				break;
+			case 0x04:
+				CHECK( t.length == 2, true );
+				CHECK( t.data.count() == 2, true );
+				//CHECK( t.data[0] > 0, true );
+				break;
+			case 0x05:
+				CHECK( t.length > 1, true );
+				break;
+			case 0x06:
+				CHECK( t.length > 2, true );
+				break;
+			case 0xCA:
+				CHECK( t.length == 4, true );
+				break;
+			case 0xD1:
+				CHECK( t.length == 2, true );
+				break;
+			case 0xD2:
+				CHECK( t.length == 2, true );
+				break;
+			case 0xD3:
+				CHECK( t.length > 0, true );
+				CHECK( t.data.count() == t.length, true );
+				break;
+			case 0xD5:
+				cout << "TLV 0xD5 length is " << t.length << endl;
+				CHECK( t.length == 1, true );
+				break;
+			default:
+				break;
+			}
+			realCount++;
+		}
+		CHECK( tlvCount == realCount, true );
 	}
 }
 
