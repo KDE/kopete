@@ -129,11 +129,12 @@ private slots:
 	void slotViewCreated(KopeteView *);
 
 private:
-	static IRCProtocol *s_protocol;
-
+	void initOnlineStatus();
 	void simpleModeChange(const QString &, Kopete::ChatSession *, const QString &mode);
 
-	QMap<int, Kopete::OnlineStatus> m_statuses;
+	static IRCProtocol *s_protocol;
+
+	QMap<int, Kopete::OnlineStatus> m_statusMap;
 //	const Kopete::OnlineStatus m_connecting;
 	const Kopete::OnlineStatus m_StatusUnknown;
 

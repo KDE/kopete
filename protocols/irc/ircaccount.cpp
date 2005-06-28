@@ -183,6 +183,7 @@ IRCAccount::~IRCAccount()
 	if (m_engine->isConnected())
 		m_engine->quit(i18n("Plugin Unloaded"), true);
 }
+
 /*
 void IRCAccount::loadProperties()
 {
@@ -219,48 +220,70 @@ void IRCAccount::storeProperties()
 {
 }
 */
-void IRCAccount::setAutoShowServerWindow(bool show)
+int IRCAccount::codecMib() const
 {
-	autoShowServerWindow = show;
-	configGroup()->writeEntry(QString::fromLatin1("AutoShowServerWindow"), autoShowServerWindow);
+	return configGroup()->readNumEntry(Config::CODECMIB);
 }
 
-void IRCAccount::setNickName(const QString &nickName)
+void IRCAccount::setCodecFromMib(int mib)
 {
-	m_self->setNickName(nickName);
-	configGroup()->writeEntry(Config::NICKNAME, nickName);
+	configGroup()->writeEntry(Config::CODECMIB, mib);
+	m_engine->setDefaultCodec(QTextCodec::codecForMib(mib));
+}
+
+QTextCodec *IRCAccount::codec() const
+{
+	return QTextCodec::codecForMib(codecMib());
+}
+
+void IRCAccount::setCodec( QTextCodec *codec )
+{
+	if (codec)
+		setCodecFromMib(codec->mibEnum());
+	else
+		setCodecFromMib(-1); // MIBenum are >= 0  so we inforce an error value
+}
+
+bool IRCAccount::autoShowServerWindow() const
+{
+	return configGroup()->readBoolEntry(QString::fromLatin1("AutoShowServerWindow"));
+}
+
+void IRCAccount::setAutoShowServerWindow(bool autoShow)
+{
+	configGroup()->writeEntry(QString::fromLatin1("AutoShowServerWindow"), autoShow);
 }
 
 const QString IRCAccount::nickName() const
 {
 	return configGroup()->readEntry(Config::NICKNAME);
 }
-/*
-void IRCAccount::setAltNick( const QString &altNick )
-{
-	configGroup()->writeEntry(QString::fromLatin1( "altNick" ), altNick);
-}
 
+void IRCAccount::setNickName(const QString &nickName)
+{
+	configGroup()->writeEntry(Config::NICKNAME, nickName);
+	m_self->setNickName(nickName);
+}
+/*
 const QString IRCAccount::altNick() const
 {
 	return configGroup()->readEntry(QString::fromLatin1("altNick"));
 }
-*/
-void IRCAccount::setUserName(const QString &userName)
-{
-	m_engine->setUserName(userName);
-	configGroup()->writeEntry(Config::USERNAME, userName);
-}
 
+void IRCAccount::setAltNick( const QString &altNick )
+{
+	configGroup()->writeEntry(QString::fromLatin1( "altNick" ), altNick);
+}
+*/
 const QString IRCAccount::userName() const
 {
 	return configGroup()->readEntry(Config::USERNAME);
 }
 
-void IRCAccount::setRealName( const QString &userName )
+void IRCAccount::setUserName(const QString &userName)
 {
-	m_engine->setRealName(userName);
-	configGroup()->writeEntry(Config::REALNAME, userName);
+	configGroup()->writeEntry(Config::USERNAME, userName);
+	m_engine->setUserName(userName);
 }
 
 const QString IRCAccount::realName() const
@@ -268,31 +291,39 @@ const QString IRCAccount::realName() const
 	return configGroup()->readEntry(Config::REALNAME);
 }
 
-void IRCAccount::setNetwork(const IRCNetwork &network)
+void IRCAccount::setRealName( const QString &userName )
 {
-	m_network = network;
-//	configGroup()->writeEntry(Config::NETWORKNAME, network.name);
-//	setAccountLabel(network.name);
+	configGroup()->writeEntry(Config::REALNAME, userName);
+	m_engine->setRealName(userName);
 }
 
 const QString IRCAccount::networkName() const
 {
 	return m_network.name;
 }
-
-// FIXME: Possible null pointer usage here
-void IRCAccount::setCodec( QTextCodec *codec )
+/*
+void IRCAccount::setNetworkByName(const QString &network)
 {
-	mCodec = codec;
-	configGroup()->writeEntry(Config::CODECMIB, codec->mibEnum());
-
-	if( mCodec )
-		m_engine->setDefaultCodec( mCodec );
+	m_network = network;
+//	configGroup()->writeEntry(Config::NETWORKNAME, network.name);
+//	setAccountLabel(network.name);
 }
 
-QTextCodec *IRCAccount::codec() const
+const IRCNetwork &network() const
 {
-	return mCodec;
+	return m_network;
+}
+*/
+void IRCAccount::setNetwork(const IRCNetwork &network)
+{
+//	configGroup()->writeEntry(Config::NETWORKNAME, network.name);
+	m_network = network;
+//	setAccountLabel(network.name);
+}
+
+KIRC::Engine *IRCAccount::engine() const
+{
+	return m_engine;
 }
 
 // FIXME: Move this to a dictionnary
@@ -482,8 +513,8 @@ void IRCAccount::engineConnectionStateChanged(KIRC::ConnectionState newstate)
 		break;
 	case KIRC::Connecting:
 	{
-		if( autoShowServerWindow )
-		    myServer()->startChat();
+		if (autoShowServerWindow())
+			myServer()->startChat();
 		break;
 	}
 	case KIRC::Authentifying:

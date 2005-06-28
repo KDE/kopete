@@ -113,24 +113,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	s_protocol = this;
 
-/*
-	ServerStatusOnline(OnlineStatus::Online, 100, this, OnlineServer, QString::null, i18n("Online")),
-	ServerStatusOffline(OnlineStatus::Offline, 90, this, OfflineServer, QString::null, i18n("Offline")),
-
-	ChannelStatusOnline(OnlineStatus::Online, 80, this, OnlineChannel, QString::null, i18n("Online")),
-	ChannelStatusOffline(OnlineStatus::Offline, 70, this, OfflineChannel, QString::null, i18n("Offline")),
-
-	UserStatusOpVoice(OnlineStatus::Online, 60, this, Operator | Voiced, QStringList::split(' ',"irc_voice irc_op"), i18n("Op")),
-	UserStatusOpVoiceAway(OnlineStatus::Away, 55, this, Operator | Voiced | Away, QStringList::split(' ',"irc_voice irc_op contact_away_overlay"), i18n("Away")),
-	UserStatusOp(OnlineStatus::Online, 50, this, Operator, "irc_op", i18n("Op")),
-	UserStatusOpAway(OnlineStatus::Away, 45, this, Operator | Away, QStringList::split(' ',"irc_op contact_away_overlay"), i18n("Away")),
-	UserStatusVoice(OnlineStatus::Online, 30, this, Voiced, "irc_voice", i18n("Voice")),
-	UserStatusVoiceAway(OnlineStatus::Away, 35, this, Voiced | Away, QStringList::split(' ',"irc_voice contact_away_overlay"),  i18n("Away")),
-	UserStatusOnline(OnlineStatus::Online, 25, this, Online, QString::null, i18n("Online"), i18n("Online"), OnlineStatusManager::Online),
-	UserStatusAway(OnlineStatus::Away, 2, this, Away, "contact_away_overlay", i18n("Away"), i18n("Away"), OnlineStatusManager::Away),
-	UserStatusConnecting(OnlineStatus::Connecting, 1, this, Connecting, "irc_connecting", i18n("Connecting")),
-	UserStatusOffline(OnlineStatus::Offline, 0, this, Offline, QString::null, i18n("Offline"), i18n("Offline"), OnlineStatusManager::Offline),
-*/
+	initOnlineStatus();
 
 	//m_status = m_unknownStatus = m_Unknown;
 
@@ -277,6 +260,56 @@ IRCProtocol::~IRCProtocol()
 	delete m_protocolHandler;
 }
 
+void IRCProtocol::initOnlineStatus()
+{
+//	OnlineStatus ServerOnline(OnlineStatus::Online, 100, this, KIRC::EntityType::Server|KIRC::EntityType::Online,
+	OnlineStatus ServerOnline(OnlineStatus::Online, 100, this, 0,
+		QString::null, i18n("Online"));
+	m_statusMap.insert(ServerOnline.internalStatus(), ServerOnline);
+/*
+	ServerOffline(OnlineStatus::Offline, 90, this, EntityType::Server|EntityType::Offline,
+		QString::null, i18n("Offline")),
+	m_statusMap.insert(ServerOffline.internalStatus(), ServerOffline);
+
+	ChannelOnline(OnlineStatus::Online, 80, this, EntityType::Channel|EntityType::Online,
+		QString::null, i18n("Online")),
+	m_statusMap.insert(ChannelOnline.internalStatus(), ChannelOnline);
+
+	ChannelOffline(OnlineStatus::Offline, 70, this, EntityType::Channel|EntityType::OfflineChannel,
+		QString::null, i18n("Offline")),
+	m_statusMap.insert(ChannelOffline.internalStatus(), ChannelOffline);
+
+//	UserOpVoice(OnlineStatus::Online, 60, this, Operator | Voiced,
+//		QStringList::split(' ',"irc_voice irc_op"), i18n("Op")),
+//	UserOpVoiceAway(OnlineStatus::Away, 55, this, Operator | Voiced | Away,
+//		QStringList::split(' ',"irc_voice irc_op contact_away_overlay"), i18n("Away")),
+//	UserOp(OnlineStatus::Online, 50, this, Operator,
+//		"irc_op", i18n("Op")),
+//	UserOpAway(OnlineStatus::Away, 45, this, Operator | Away,
+//		QStringList::split(' ',"irc_op contact_away_overlay"), i18n("Away")),
+//	UserVoice(OnlineStatus::Online, 30, this, Voiced,
+//		"irc_voice", i18n("Voice")),
+//	UserVoiceAway(OnlineStatus::Away, 35, this, Voiced | Away,
+//		QStringList::split(' ',"irc_voice contact_away_overlay"),  i18n("Away")),
+
+	UserOnline(OnlineStatus::Online, 25, this, EntityType::User|EntityType::Online,
+		QString::null, i18n("Online"), i18n("Online"), OnlineStatusManager::Online);
+	m_statusMap.insert(UserOnline.internalStatus(), UserOnline);
+
+	UserAway(OnlineStatus::Away, 2, this, EntityType::User|EntityType::Away,
+		"contact_away_overlay", i18n("Away"), i18n("Away"), OnlineStatusManager::Away);
+	m_statusMap.insert(UserAway.internalStatus(), UserAway);
+
+	UserConnecting(OnlineStatus::Connecting, 1, this, EntityType::User|EntityType::Connecting,
+		"irc_connecting", i18n("Connecting"));
+	m_statusMap.insert(UserConnecting.internalStatus(), UserConnecting);
+
+	UserOffline(OnlineStatus::Offline, 0, this, EntityType::User|EntityType::Offline,
+		QString::null, i18n("Offline"), i18n("Offline"), OnlineStatusManager::Offline),
+	m_statusMap.insert(UserOffline.internalStatus(), UserOffline);
+*/
+}
+
 OnlineStatus IRCProtocol::onlineStatusFor(const KIRC::EntityPtr entity) const
 {
 /*
@@ -325,7 +358,7 @@ OnlineStatus IRCProtocol::onlineStatusFor(const KIRC::EntityPtr entity) const
 */
 	#warning FIXME: use a type mask at enty->type()
 	OnlineStatus ret;
-	if (entity || (ret = m_statuses[entity->type()]).status() == OnlineStatus::Unknown)
+	if (entity || (ret = m_statusMap[entity->type()]).status() == OnlineStatus::Unknown)
 		return m_StatusUnknown;
 	else
 		return ret;
