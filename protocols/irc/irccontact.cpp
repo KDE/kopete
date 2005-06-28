@@ -157,7 +157,7 @@ QString IRCContact::caption() const
 
 void IRCContact::updateStatus()
 {
-	setOnlineStatus(IRCProtocol::protocol()->onlineStatusFor(m_entity->status()));
+	setOnlineStatus(IRCProtocol::self()->onlineStatusFor(m_entity->status()));
 }
 
 bool IRCContact::isReachable()
@@ -173,14 +173,14 @@ void IRCContact::setCodec(QTextCodec *codec)
 {
 	m_entity->setCodec(codec);
 	if (codec)
-		metaContact()->setPluginData(m_protocol, QString::fromLatin1("Codec"), QString::number(codec->mibEnum()));
+		metaContact()->setPluginData(IRCProtocol::self(), QString::fromLatin1("Codec"), QString::number(codec->mibEnum()));
 //	else
 //		metaContact()->removePluginData(m_protocol, QString::fromLatin1("Codec"));
 }
 
 QTextCodec *IRCContact::codec()
 {
-	QString codecId = metaContact()->pluginData(m_protocol, QString::fromLatin1("Codec"));
+	QString codecId = metaContact()->pluginData(IRCProtocol::self(), QString::fromLatin1("Codec"));
 	QTextCodec *codec = ircAccount()->codec();
 
 	if( !codecId.isEmpty() )
@@ -240,7 +240,7 @@ void IRCContact::slotUserDisconnected(const QString &user, const QString &reason
 		if ( c )
 		{
 			m_chatSession->removeContact(c, i18n("Quit: \"%1\" ").arg(reason), Message::RichText);
-//			c->setOnlineStatus(m_protocol->m_UserStatusOffline);
+//			c->setOnlineStatus(IRCProtocol::self()->m_UserStatusOffline);
 		}
 	}
 }
@@ -404,6 +404,7 @@ KopeteView *IRCContact::view()
 		return m_chatSession->view(false);
 	return 0L;
 }
+
 void IRCContact::serialize(QMap<QString, QString> & /*serializedData*/, QMap<QString, QString> &addressBookData)
 {
 	addressBookData[protocol()->addressBookIndexField()] = contactId() + QChar(0xE120) + account()->accountId();

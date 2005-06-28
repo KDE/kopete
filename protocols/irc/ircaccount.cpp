@@ -57,8 +57,8 @@
 using namespace IRC;
 using namespace Kopete;
 
-IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QString &autoChan, const QString& netName, const QString &nickName)
-	: PasswordedAccount(protocol, accountId, 0, true),
+IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const QString& netName, const QString &nickName)
+	: PasswordedAccount(IRCProtocol::self(), accountId, 0, true),
 	  m_engine(new KIRC::Engine(this)),
 	  autoConnect(autoChan),
 	  commandSource(0)
@@ -167,11 +167,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 */
 
 //	setAccountLabel( QString::fromLatin1("%1@%2").arg(mNickName,networkName) );
-/*
-	m_awayAction = new AwayAction(i18n("Set Away"),
-		m_protocol->m_UserStatusAway.iconFor(this), 0, this,
-		SLOT(slotGoAway( const QString & )), this);
-*/
+
 	m_joinChannelAction = new KAction ( i18n("Join Channel..."), QString::null, 0, this,
 				SLOT(slotJoinChannel()), this);
 	m_searchChannelAction = new KAction ( i18n("Search Channels..."), QString::null, 0, this,
@@ -201,10 +197,6 @@ void IRCAccount::loadProperties()
 	QString codecMib = config->readEntry(Config::CODECMIB);
 	//	int codecMib = config->readNumEntry(Config::CODECMIB, UTF-8);
 
-//	m_serverNotices = (MessageDestination)config->readNumEntry( "ServerNotices", ServerWindow );
-//	m_serverMessages = (MessageDestination)config->readNumEntry( "ServerMessages", ServerWindow );
-//	m_informationReplies = (MessageDestination)config->readNumEntry( "InformationReplies", ActiveWindow );
-//	m_errorMessages = (MessageDestination)config->readNumEntry( "ErrorMessages", ActiveWindow );
 	autoShowServerWindow = config->readBoolEntry( "AutoShowServerWindow", false );
 
 	if( !codecMib.isEmpty() )
@@ -214,10 +206,6 @@ void IRCAccount::loadProperties()
 	}
 	else
 		mCodec = 0;
-}
-
-void IRCAccount::storeProperties()
-{
 }
 */
 int IRCAccount::codecMib() const
@@ -244,6 +232,29 @@ void IRCAccount::setCodec( QTextCodec *codec )
 		setCodecFromMib(-1); // MIBenum are >= 0  so we inforce an error value
 }
 
+const QString IRCAccount::networkName() const
+{
+	return configGroup()->readEntry(Config::NETWORKNAME);
+}
+
+void IRCAccount::setNetworkByName(const QString &networkName)
+{
+	configGroup()->writeEntry(Config::NETWORKNAME, networkName);
+//	setAccountLabel(network.name);
+}
+/*
+const IRCNetwork &network() const
+{
+	return m_network;
+}
+
+void IRCAccount::setNetwork(const IRCNetwork &network)
+{
+//	configGroup()->writeEntry(Config::NETWORKNAME, network.name);
+	m_network = network;
+//	setAccountLabel(network.name);
+}
+*/
 bool IRCAccount::autoShowServerWindow() const
 {
 	return configGroup()->readBoolEntry(QString::fromLatin1("AutoShowServerWindow"));
@@ -295,30 +306,6 @@ void IRCAccount::setRealName( const QString &userName )
 {
 	configGroup()->writeEntry(Config::REALNAME, userName);
 	m_engine->setRealName(userName);
-}
-
-const QString IRCAccount::networkName() const
-{
-	return m_network.name;
-}
-/*
-void IRCAccount::setNetworkByName(const QString &network)
-{
-	m_network = network;
-//	configGroup()->writeEntry(Config::NETWORKNAME, network.name);
-//	setAccountLabel(network.name);
-}
-
-const IRCNetwork &network() const
-{
-	return m_network;
-}
-*/
-void IRCAccount::setNetwork(const IRCNetwork &network)
-{
-//	configGroup()->writeEntry(Config::NETWORKNAME, network.name);
-	m_network = network;
-//	setAccountLabel(network.name);
 }
 
 KIRC::Engine *IRCAccount::engine() const
@@ -388,23 +375,6 @@ void IRCAccount::setConnectCommands( const QStringList &commands ) const
 const QStringList IRCAccount::connectCommands() const
 {
 	return configGroup()->readListEntry( "ConnectCommands" );
-}
-
-void IRCAccount::setMessageDestinations( int serverNotices, int serverMessages,
-			     int informationReplies, int errorMessages )
-{
-/*
-	KConfigGroup *config =  configGroup();
-	config->writeEntry( "ServerNotices", serverNotices );
-	config->writeEntry( "ServerMessages", serverMessages );
-	config->writeEntry( "InformationReplies", informationReplies );
-	config->writeEntry( "ErrorMessages", errorMessages );
-
-	m_serverNotices = (MessageDestination)serverNotices;
-	m_serverMessages = (MessageDestination)serverMessages;
-	m_informationReplies = (MessageDestination)informationReplies;
-	m_errorMessages = (MessageDestination)errorMessages;
-*/
 }
 
 KActionMenu *IRCAccount::actionMenu()
@@ -594,10 +564,6 @@ void IRCAccount::slotFailedServerPassword()
 	password().setWrong();
 	connect();
 }
-void IRCAccount::slotGoAway( const QString &reason )
-{
-	setAway(true, reason);
-}
 
 void IRCAccount::slotShowServerWindow()
 {
@@ -618,8 +584,8 @@ void IRCAccount::setOnlineStatus(const OnlineStatus& status , const QString &rea
 		connect();
 	else if ( status.status() == OnlineStatus::Offline )
 		disconnect();
-	else if ( status.status() == OnlineStatus::Away )
-		slotGoAway( reason );
+//	else if ( status.status() == OnlineStatus::Away )
+//		slotGoAway( reason );
 }
 
 void IRCAccount::successfullyChangedNick(const QString &oldnick, const QString &newnick)

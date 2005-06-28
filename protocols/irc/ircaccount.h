@@ -20,8 +20,6 @@
 #ifndef IRCACCOUNT_H
 #define IRCACCOUNT_H
 
-#include "ircprotocol.h"
-
 #include "kircengine.h"
 
 #include "ircnetwork.h"
@@ -51,26 +49,24 @@ class IRCAccount
 	Q_OBJECT
 
 	Q_PROPERTY(int codecMib READ codecMib WRITE setCodecFromMib)
-//	Q_PROPERTY(bool autoShowServerWindow READ autoShowServerWindow WRITE setAutoShowServerWindow)
-
-//	Q_PROPERTY(QString networkName READ networkName WRITE setNetworkByName)
+	Q_PROPERTY(QString networkName READ networkName WRITE setNetworkByName)
 
 	Q_PROPERTY(QString nickName READ nickName WRITE setNickName)
 	Q_PROPERTY(QString userName READ userName WRITE setUserName)
 	Q_PROPERTY(QString realName READ realName WRITE setRealName)
 
+	Q_PROPERTY(bool autoShowServerWindow READ autoShowServerWindow WRITE setAutoShowServerWindow)
+
 public:
-	IRCAccount(IRCProtocol *p, const QString &accountid, const QString &autoConnect = QString::null,
+	IRCAccount(const QString &accountid, const QString &autoConnect = QString::null,
 			const QString& networkName = QString::null, const QString &nickName = QString::null);
 	virtual ~IRCAccount();
 
 public: // READ properties accessors.
 
-	bool autoShowServerWindow() const;
-
 	int codecMib() const;
 
-//	void networkName( const QString & );
+	const QString networkName() const;
 
 	const QString nickName() const;
 
@@ -80,13 +76,13 @@ public: // READ properties accessors.
 
 	const QString realName() const;
 
-public slots: // WRITE properties accessors.
+	bool autoShowServerWindow() const;
 
-	void setAutoShowServerWindow( bool autoShow );
+public slots: // WRITE properties accessors.
 
 	void setCodecFromMib(int mib);
 
-//	void setNetworkByName( const QString & );
+	void setNetworkByName( const QString & );
 
 	void setNickName( const QString & );
 
@@ -96,15 +92,18 @@ public slots: // WRITE properties accessors.
 
 	void setRealName( const QString & );
 
+	void setAutoShowServerWindow( bool autoShow );
+
 public:
 	// Returns the KIRC engine instance
 	KIRC::Engine *engine() const;
 
 	QTextCodec *codec() const;
 	void setCodec( QTextCodec *codec );
-
+/*
+	const IRCNetwork &network();
 	void setNetwork(const IRCNetwork &network);
-
+*/
 	const QStringList connectCommands() const;
 
 	void setConnectCommands( const QStringList & ) const;
@@ -115,14 +114,9 @@ public:
 
 
 public:
-	void setMessageDestinations( int serverNotices, int serverMessages,
-		int informationReplies, int errorMessages );
-
 	const QString defaultPart() const;
 
 	const QString defaultQuit() const;
-
-	const QString networkName() const;
 
 	QMap< QString, QString > customCtcp() const;
 
@@ -151,9 +145,6 @@ public slots:
 
 	/** Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
-
-	// Returns the IRCProtocol instance for contacts
-	IRCProtocol *protocol() const { return m_protocol; }
 
 	// Returns the Kopete::Contact of the user
 	IRCContact *mySelf() const;
@@ -187,7 +178,6 @@ private slots:
 	void slotPerformOnConnectCommands();
 
 	void slotFailedServerPassword();
-	void slotGoAway( const QString &reason );
 //	void slotJoinNamedChannel( const QString &channel );
 //	void slotNickInUse( const QString &nick );
 
@@ -217,6 +207,3 @@ private:
 };
 
 #endif
-
-// vim: set noet ts=4 sts=4 sw=4:
-

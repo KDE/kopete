@@ -99,7 +99,7 @@ void IRCProtocolHandler::handleURL(const KURL &url) const
 
 	kdDebug(14120) << accountId << endl;
 
-	IRCAccount *newAccount = new IRCAccount( IRCProtocol::protocol(), accountId, chan );
+	IRCAccount *newAccount = new IRCAccount( accountId, chan );
 	newAccount->setNickName( user.loginName() );
 	newAccount->setUserName( user.loginName() );
 	newAccount->connect();
@@ -250,7 +250,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	IRCTransferHandler::self(); // Initiate the transfer handling system.
 }
 
-IRCProtocol * IRCProtocol::protocol()
+IRCProtocol * IRCProtocol::self()
 {
 	return s_protocol;
 }
@@ -434,12 +434,12 @@ AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent, Account *ac
 
 KopeteEditAccountWidget *IRCProtocol::createEditAccountWidget(Account *account, QWidget *parent)
 {
-	return new IRCEditAccountWidget(this, static_cast<IRCAccount*>(account),parent);
+	return new IRCEditAccountWidget(static_cast<IRCAccount*>(account), parent);
 }
 
 Account *IRCProtocol::createNewAccount(const QString &accountId)
 {
-	return new IRCAccount( this, accountId );
+	return new IRCAccount(accountId);
 }
 
 Contact *IRCProtocol::deserializeContact(MetaContact *metaContact, const QMap<QString, QString> &serializedData,

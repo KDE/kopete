@@ -28,8 +28,6 @@
 #include <qdict.h>
 #include <qmap.h>
 
-#define m_protocol ((IRCProtocol*)IRCProtocol::protocol())
-
 namespace Kopete
 {
 class Account;
@@ -65,7 +63,7 @@ class IRCProtocol
 	Q_OBJECT
 
 public:
-	static IRCProtocol *protocol();
+	static IRCProtocol *self();
 
 	IRCProtocol(QObject *parent, const char *name, const QStringList &args);
 	~IRCProtocol();

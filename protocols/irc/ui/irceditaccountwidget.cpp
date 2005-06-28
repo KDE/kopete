@@ -46,11 +46,9 @@
 #include <qlineedit.h>
 #include <qtextcodec.h>
 
-IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident, QWidget *parent, const char * )
+IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent, const char * )
 	  : IRCEditAccountBase(parent), KopeteEditAccountWidget(ident)
 {
-	mProtocol = proto;
-
 	int currentCodec = 4;
 
 	if( account() )
@@ -75,15 +73,6 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		autoConnect->setChecked( static_cast<Kopete::Account*>(account())->excludeConnect() );
 
 		KConfigGroup *config = account()->configGroup();
-
-//		serverNotices->setCurrentItem( config->readNumEntry( "ServerNotices", IRCAccount::ServerWindow ) - 1 );
-//		serverMessages->setCurrentItem( config->readNumEntry( "ServerMessages", IRCAccount::ServerWindow ) - 1 );
-//		informationReplies->setCurrentItem( config->readNumEntry( "InformationReplies", IRCAccount::ActiveWindow ) - 1 );
-//		errorMessages->setCurrentItem( config->readNumEntry( "ErrorMessages", IRCAccount::ActiveWindow ) - 1 );
-
-		account()->setMessageDestinations( serverNotices->currentItem(), serverMessages->currentItem(),
-		informationReplies->currentItem(), errorMessages->currentItem()
-						     );
 
 		QStringList cmds = account()->connectCommands();
 		for( QStringList::Iterator i = cmds.begin(); i != cmds.end(); ++i )
@@ -123,7 +112,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 	connect( network, SIGNAL( activated( const QString & ) ),
 		this, SLOT( slotUpdateNetworkDescription( const QString &) ) );
 
-	connect( IRCProtocol::protocol(), SIGNAL( networkConfigUpdated( const QString & ) ),
+	connect( IRCProtocol::self(), SIGNAL( networkConfigUpdated( const QString & ) ),
 		this, SLOT( slotUpdateNetworks( const QString & ) ) );
 
 	slotUpdateNetworks( QString::null );
@@ -154,7 +143,7 @@ void IRCEditAccountWidget::slotUpdateNetworks( const QString & selectedNetwork )
 	QStringList::Iterator end = keys.end();
 	for( QStringList::Iterator it = keys.begin(); it != end; ++it )
 	{
-		IRCNetwork * current = IRCProtocol::protocol()->networks()[*it];
+		IRCNetwork * current = IRCProtocol::self()->networks()[*it];
 		network->insertItem( current->name );
 		if ( ( account() && account()->networkName() == current->name ) || current->name == selectedNetwork )
 		{
@@ -168,13 +157,13 @@ void IRCEditAccountWidget::slotUpdateNetworks( const QString & selectedNetwork )
 
 void IRCEditAccountWidget::slotEditNetworks()
 {
-	IRCProtocol::protocol()->editNetworks(network->currentText());
+	IRCProtocol::self()->editNetworks(network->currentText());
 }
 
 void IRCEditAccountWidget::slotUpdateNetworkDescription( const QString &network )
 {
 //	description->setText(
-//		IRCProtocol::protocol()->networks()[ network ]->description
+//		IRCProtocol::self()->networks()[ network ]->description
 //	);
 }
 
@@ -219,7 +208,7 @@ QString IRCEditAccountWidget::generateAccountId( const QString &network )
 	QString nextId = network;
 
 	uint accountNumber = 1;
-	while( config->hasGroup( QString("Account_%1_%2").arg( m_protocol->pluginId() ).arg( nextId ) ) )
+	while( config->hasGroup( QString("Account_%1_%2").arg( IRCProtocol::self()->pluginId() ).arg( nextId ) ) )
 	{
 		nextId = QString::fromLatin1("%1_%2").arg( network ).arg( ++accountNumber );
 	}
@@ -234,7 +223,7 @@ Kopete::Account *IRCEditAccountWidget::apply()
 
 	if( !account() )
 	{
-		setAccount( new IRCAccount( mProtocol, generateAccountId(networkName), QString::null, networkName, nickName ) );
+		setAccount( new IRCAccount( generateAccountId(networkName), QString::null, networkName, nickName ) );
 
 	}
 	else
@@ -252,9 +241,6 @@ Kopete::Account *IRCEditAccountWidget::apply()
 	account()->setDefaultQuit( quitMessage->text() );
 	account()->setAutoShowServerWindow( autoShowServerWindow->isChecked() );
 	account()->setExcludeConnect( autoConnect->isChecked() );
-	account()->setMessageDestinations( serverNotices->currentItem() + 1, serverMessages->currentItem() + 1,
-		informationReplies->currentItem() + 1, errorMessages->currentItem() + 1
-	);
 
 	account()->configGroup()->writeEntry("PreferSSL", preferSSL->isChecked());
 

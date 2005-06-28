@@ -21,7 +21,6 @@
 #include "editaccountwidget.h"
 #include "irceditaccount.h"
 
-class IRCProtocol;
 class IRCAccount;
 class KListView;
 class QListViewItem;
@@ -31,7 +30,7 @@ class IRCEditAccountWidget : public IRCEditAccountBase, public KopeteEditAccount
 	Q_OBJECT
 
 	public:
-		IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *, QWidget *parent=0, const char *name=0);
+		IRCEditAccountWidget(IRCAccount *, QWidget *parent=0, const char *name=0);
 		~IRCEditAccountWidget();
 
 		IRCAccount *account();
@@ -50,8 +49,6 @@ class IRCEditAccountWidget : public IRCEditAccountBase, public KopeteEditAccount
 	private:
 		void readNetworks();
 		QString generateAccountId( const QString &network );
-
-		IRCProtocol *mProtocol;
 };
 
 #endif
