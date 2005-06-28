@@ -39,9 +39,9 @@ const QRegExp Entity::sm_userStrictRegExp(QString::fromLatin1("^([^\\s,:!@]+)!([
 const QRegExp Entity::sm_channelRegExp( QString::fromLatin1("^[#!+&][^\\s,]+$") );
 
 Entity::Entity(const QString &name, const EntityType type)
-	: m_type(type)
 {
 	setName(name);
+	m_status.type = type;
 }
 
 Entity::~Entity()
@@ -71,15 +71,20 @@ QString Entity::host() const
 	return m_host;
 }
 
-EntityType Entity::type(int typeMask) const
+EntityStatus Entity::status() const
 {
-	return (EntityType)(m_type & typeMask);
+	return m_status;
+}
+
+EntityType Entity::type() const
+{
+	return m_status.type;
 }
 
 EntityType Entity::guessType()
 {
-	m_type = guessType(m_name);
-	return m_type;
+	m_status.type = guessType(m_name);
+	return m_status.type;
 }
 
 // FIXME: Implement me

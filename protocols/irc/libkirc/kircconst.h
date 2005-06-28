@@ -52,28 +52,56 @@ namespace KIRC
 
 	typedef enum EntityType
 	{
-		Unknown			=     0,
-		Server			= 1<< 0,
-		Channel			= 1<< 1,
-		Service			= 1<< 2,
-		User			= 1<< 3,
-		// Mask			= Server|Channel|Service|User,
+		// From lower to higher importance
+		Unknown = 0,
+		User,
+		Service,
+		Channel,
+		Server
+	};
 
-		Online			= 1<< 4,
+	typedef struct EntityStatus
+	{
+		KIRC::EntityType type	: 4;
+		bool online		: 1;
 
-		// RFC-2811 Channel Modes
+		bool mode_a		: 1;
+		bool mode_i		: 1;
+		bool mode_o		: 1;
+		bool mode_r		: 1;
+		bool mode_s		: 1;
+		bool mode_v		: 1;
+		bool mode_w		: 1;
+		bool mode_O		: 1;
 
-		// RFC-2812 User Modes
-		Away			= 1<<16, // a
-		Invisible		= 1<<17, // i
-		Operator		= 1<<18, // o
-		LocalOperator		= 1<<19, // O
-		Restricted		= 1<<20, // r
-		RecieveServerNotice	= 1<<21, // s
-		ReceiveWallOps		= 1<<22, // w
+		EntityStatus()
+		{
+			type = KIRC::Unknown;
+			online = false;
 
-		// Common User Modes
-		Voiced			= 1<<24, // v
+			mode_a = false;
+			mode_i = false;
+			mode_o = false;
+			mode_r = false;
+			mode_s = false;
+			mode_v = false;
+			mode_w = false;
+			mode_O = false;
+		}
+
+		bool operator < (const KIRC::EntityStatus &o) const
+		{
+			return	(type < o.type) ||
+				(online < o.online) ||
+				(mode_a < o.mode_a) ||
+				(mode_i < o.mode_i) ||
+				(mode_o < o.mode_o) ||
+				(mode_r < o.mode_r) ||
+				(mode_s < o.mode_s) ||
+				(mode_v < o.mode_v) ||
+				(mode_w < o.mode_w) ||
+				(mode_O < o.mode_O);
+		}
 	};
 
 	// Static regular expressions

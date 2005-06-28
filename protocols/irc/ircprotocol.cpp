@@ -262,13 +262,13 @@ IRCProtocol::~IRCProtocol()
 
 void IRCProtocol::initOnlineStatus()
 {
-//	OnlineStatus ServerOnline(OnlineStatus::Online, 100, this, KIRC::EntityType::Server|KIRC::EntityType::Online,
 	OnlineStatus ServerOnline(OnlineStatus::Online, 100, this, 0,
 		QString::null, i18n("Online"));
-	m_statusMap.insert(ServerOnline.internalStatus(), ServerOnline);
+
+	OnlineStatus ServerOffline(OnlineStatus::Offline, 90, this, 0,
+		QString::null, i18n("Offline"));
 /*
-	ServerOffline(OnlineStatus::Offline, 90, this, EntityType::Server|EntityType::Offline,
-		QString::null, i18n("Offline")),
+	m_statusMap.insert(ServerOnline.internalStatus(), ServerOnline);
 	m_statusMap.insert(ServerOffline.internalStatus(), ServerOffline);
 
 	ChannelOnline(OnlineStatus::Online, 80, this, EntityType::Channel|EntityType::Online,
@@ -278,90 +278,117 @@ void IRCProtocol::initOnlineStatus()
 	ChannelOffline(OnlineStatus::Offline, 70, this, EntityType::Channel|EntityType::OfflineChannel,
 		QString::null, i18n("Offline")),
 	m_statusMap.insert(ChannelOffline.internalStatus(), ChannelOffline);
+*/
+	KIRC::EntityStatus status;
+	status.type = KIRC::User;
 
-//	UserOpVoice(OnlineStatus::Online, 60, this, Operator | Voiced,
-//		QStringList::split(' ',"irc_voice irc_op"), i18n("Op")),
-//	UserOpVoiceAway(OnlineStatus::Away, 55, this, Operator | Voiced | Away,
-//		QStringList::split(' ',"irc_voice irc_op contact_away_overlay"), i18n("Away")),
-//	UserOp(OnlineStatus::Online, 50, this, Operator,
-//		"irc_op", i18n("Op")),
-//	UserOpAway(OnlineStatus::Away, 45, this, Operator | Away,
-//		QStringList::split(' ',"irc_op contact_away_overlay"), i18n("Away")),
-//	UserVoice(OnlineStatus::Online, 30, this, Voiced,
-//		"irc_voice", i18n("Voice")),
-//	UserVoiceAway(OnlineStatus::Away, 35, this, Voiced | Away,
-//		QStringList::split(' ',"irc_voice contact_away_overlay"),  i18n("Away")),
+	onlineStatusFor(status, OnlineStatusManager::Offline);
 
-	UserOnline(OnlineStatus::Online, 25, this, EntityType::User|EntityType::Online,
+	status.online = true;
+	onlineStatusFor(status,  OnlineStatusManager::Online);
+
+	status.mode_a = true;
+	onlineStatusFor(status,  OnlineStatusManager::Away);
+
+/*
+	OnlineStatus UserOnline(OnlineStatus::Online, 25, this, 0,
 		QString::null, i18n("Online"), i18n("Online"), OnlineStatusManager::Online);
-	m_statusMap.insert(UserOnline.internalStatus(), UserOnline);
 
-	UserAway(OnlineStatus::Away, 2, this, EntityType::User|EntityType::Away,
+	OnlineStatus UserAway(OnlineStatus::Away, 2, this, 0,
 		"contact_away_overlay", i18n("Away"), i18n("Away"), OnlineStatusManager::Away);
-	m_statusMap.insert(UserAway.internalStatus(), UserAway);
 
-	UserConnecting(OnlineStatus::Connecting, 1, this, EntityType::User|EntityType::Connecting,
+	OnlineStatus UserConnecting(OnlineStatus::Connecting, 1, this, 0,
 		"irc_connecting", i18n("Connecting"));
-	m_statusMap.insert(UserConnecting.internalStatus(), UserConnecting);
 
-	UserOffline(OnlineStatus::Offline, 0, this, EntityType::User|EntityType::Offline,
-		QString::null, i18n("Offline"), i18n("Offline"), OnlineStatusManager::Offline),
-	m_statusMap.insert(UserOffline.internalStatus(), UserOffline);
+	OnlineStatus UserOffline(OnlineStatus::Offline, 0, this, 0,
+		QString::null, i18n("Offline"), i18n("Offline"), OnlineStatusManager::Offline);
 */
 }
 
-OnlineStatus IRCProtocol::onlineStatusFor(const KIRC::EntityPtr entity) const
+OnlineStatus IRCProtocol::onlineStatusFor(const KIRC::EntityStatus &status)
 {
-/*
-	kdDebug(14120) << k_funcinfo << "Looking up status for " << status << endl;
+	return onlineStatusFor(status, 0);
+}
 
-	switch( status )
+OnlineStatus IRCProtocol::onlineStatusFor(const KIRC::EntityStatus &_status, unsigned categories)
+{
+	// Only copy the needed status
+	KIRC::EntityStatus status;
+	status.online = _status.online;
+	status.mode_a = _status.mode_a;
+//	status.mode_i = _status.mode_i;
+	status.mode_o = _status.mode_o;
+	status.mode_v = _status.mode_v;
+	status.mode_O = _status.mode_O;
+
+	OnlineStatus ret = m_statusMap[status];
+	if (ret.status() == OnlineStatus::Unknown)
 	{
-		case Offline:
-			return m_UserStatusOffline;
-		case Connecting:
-			return m_UserStatusConnecting;
-		case Online:
-			return m_UserStatusOnline;
-		case Away:
-		case Online | Away:
-			return m_UserStatusAway;
-		case Voiced:
-		case Online | Voiced:
-			return m_UserStatusVoice;
-		case Away | Voiced:
-		case Online | Away | Voiced:
-			return m_UserStatusVoiceAway;
-		case Operator:
-		case Online | Operator:
-			return m_UserStatusOp;
-		case Away | Operator:
-		case Online | Away | Operator:
-			return m_UserStatusOpAway;
-		case Operator | Voiced:
-		case Online | Operator | Voiced:
-			return m_UserStatusOpVoice;
-		case Operator | Voiced | Away:
-		case Online | Operator | Voiced | Away:
-		 	return m_UserStatusOpVoiceAway;
-		case OnlineServer:
-			return m_ServerStatusOnline;
-		case OfflineServer:
-			return m_ServerStatusOffline;
-		case OnlineChannel:
-			return m_ChannelStatusOnline;
-		case OfflineChannel:
-			return m_ChannelStatusOffline;
-		default:
-			return m_StatusUnknown;
-	}
+		kdDebug(14120) << k_funcinfo << "New online status." << endl;
+
+		OnlineStatus::StatusType statusType;
+		unsigned weight = 0;
+		QStringList overlayIcons;
+		QString description;
+
+		if (status.online)
+		{
+			statusType = OnlineStatus::Online;
+
+			weight += 1;
+			description = i18n("Online");
+			weight <<= 1;
+
+			// Is operator
+			if (status.mode_o || status.mode_O)
+			{
+				weight += 1;
+				overlayIcons << "irc_op";
+				description = i18n("Operator");
+			}
+			weight <<= 1;
+
+			// Is Voiced
+			if (status.mode_v)
+			{
+				weight += 1;
+				overlayIcons << "irc_voice";
+				description = i18n("Voiced");
+			}
+			weight <<= 1;
+
+			// Is away
+			if (status.mode_a)
+			{
+				statusType = OnlineStatus::Away;
+				weight += 1;
+				overlayIcons << "contact_away_overlay";
+				description = i18n("Away");
+			}
+			weight <<= 1;
+/*
+			// Is Invisible
+			if (status.mode_i)
+			{
+				statusType = OnlineStatus::Invisible;
+				weight += 1;
+			}
+			weight <<= 1;
 */
-	#warning FIXME: use a type mask at enty->type()
-	OnlineStatus ret;
-	if (entity || (ret = m_statusMap[entity->type()]).status() == OnlineStatus::Unknown)
-		return m_StatusUnknown;
-	else
-		return ret;
+		}
+		else
+		{
+			statusType = OnlineStatus::Offline;
+			description = i18n("Offline");
+		}
+
+		OnlineStatus onlineStatus(statusType, weight, this,
+			0, overlayIcons, description, description, categories);
+
+		m_statusMap.insert(status, onlineStatus);
+	}
+
+	return ret;
 }
 
 void IRCProtocol::slotViewCreated(KopeteView *view)
@@ -765,4 +792,3 @@ void IRCProtocol::editNetworks(const QString &networkName)
 }
 
 #include "ircprotocol.moc"
-

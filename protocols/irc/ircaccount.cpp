@@ -688,7 +688,7 @@ IRCContact *IRCAccount::myServer() const
 
 IRCContact *IRCAccount::mySelf() const
 {
-	return static_cast<IRCContact *>( myself() );
+	return m_self;
 }
 
 IRCContact *IRCAccount::getContact(const QString &name, MetaContact *metac)

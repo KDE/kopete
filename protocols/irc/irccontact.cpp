@@ -157,7 +157,7 @@ QString IRCContact::caption() const
 
 void IRCContact::updateStatus()
 {
-	setOnlineStatus(IRCProtocol::protocol()->onlineStatusFor(m_entity));
+	setOnlineStatus(IRCProtocol::protocol()->onlineStatusFor(m_entity->status()));
 }
 
 bool IRCContact::isReachable()

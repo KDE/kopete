@@ -46,7 +46,9 @@ public:
 
 	bool operator == (const Entity &);
 
-	KIRC::EntityType type(int typeMask = ~0) const;
+	KIRC::EntityStatus status() const;
+
+	KIRC::EntityType type() const;
 	KIRC::EntityType guessType();
 
 	void setName(const QString &);
@@ -78,44 +80,14 @@ private:
 	static const QRegExp sm_userStrictRegExp;
 	static const QRegExp sm_channelRegExp;
 
-	KIRC::EntityType m_type;
+	KIRC::EntityStatus m_status;
 
-	QString	m_name;
+	QString m_name;
 	QString m_host;
 
 	QTextCodec *m_codec;
 };
-/*
-class EntityPtr
-	: public KSharedPtr<KIRC::Entity>
-{
-public:
-	EntityPtr(KIRC::Entity *entity = 0)
-		: KSharedPtr<KIRC::Entity>(entity)
-	{ }
 
-	EntityPtr(const KIRC::EntityPtr &entity)
-		: KSharedPtr<KIRC::Entity>(entity)
-	{ }
-};
-
-class EntityPtrList
-	: public QValueList<EntityPtr>
-{
-public:
-	EntityPtrList()
-	{ }
-
-	EntityPtrList(const EntityPtr &entity)
-	{
-		append(entity);
-	}
-
-	EntityPtrList(const QValueList<EntityPtr> &list)
-		: QValueList<EntityPtr>(list)
-	{ }
-};
-*/
 }
 
 #endif
