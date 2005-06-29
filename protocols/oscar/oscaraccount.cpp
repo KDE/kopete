@@ -83,8 +83,9 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, c
 	QObject::connect( d->engine, SIGNAL( messageReceived( const Oscar::Message& ) ),
 	                  this, SLOT( messageReceived(const Oscar::Message& ) ) );
 	QObject::connect( d->engine, SIGNAL( socketError( int, const QString& ) ),
-	                  this, SLOT( slotSocketError( int, const QString& ) ) );	
-
+	                  this, SLOT( slotSocketError( int, const QString& ) ) );
+	QObject::connect( d->engine, SIGNAL( taskError( const Oscar::SNAC&, int, bool ) ),
+	                  this, SLOT( slotTaskError( const Oscar::SNAC&, int, bool ) ) );
 	QObject::connect( d->engine, SIGNAL( userStartedTyping( const QString& ) ),
 	                  this, SLOT( userStartedTyping( const QString& ) ) );
 	QObject::connect( d->engine, SIGNAL( userStoppedTyping( const QString& ) ),
@@ -457,6 +458,7 @@ void OscarAccount::userStoppedTyping( const QString & contact )
 
 void OscarAccount::slotSocketError( int errCode, const QString& errString )
 {
+	Q_UNUSED( errCode );
 	KPassivePopup::message( i18n( "account has been disconnected", "%1 disconnected" ).arg( accountId() ),
 	                        errString,
 	                        myself()->onlineStatus().protocolIcon(),
@@ -464,6 +466,138 @@ void OscarAccount::slotSocketError( int errCode, const QString& errString )
 	logOff( Kopete::Account::ConnectionReset );
 }
 
-
+void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
+{
+	kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "error recieived from task" << endl;
+	kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "service: " << s.family
+		<< " subtype: " << s.subtype << " code: " << code << endl;
+	
+	QString message;
+	if ( s.family == 0 && s.subtype == 0 )
+	{
+		message = getFLAPErrorMessage( code );
+		KPassivePopup::message( i18n( "account has been disconnected", "%1 disconnected" ).arg( accountId() ),
+		                        message, myself()->onlineStatus().protocolIcon(),
+		                        Kopete::UI::Global::mainWidget() );
+		switch ( code )
+		{
+		case 0x0004:
+		case 0x0005:
+			logOff( Kopete::Account::BadPassword );
+			break;
+		case 0x0007:
+		case 0x0008:
+		case 0x0009:
+		case 0x0011:
+			logOff( Kopete::Account::BadUserName );
+			break;
+		default:
+			logOff( Kopete::Account::Manual );
+		}
+	}
+	if ( !fatal )
+		message = i18n("There was an error in the protocol handling. It wasn't fatal so you won't be disconnected");
+	else
+		message = i18n("There was an error in the protocol handling. Automatic reconnection occuring");
+	
+	KPassivePopup::message( i18n("OSCAR Protocol error"), message, myself()->onlineStatus().protocolIcon(),
+	                        Kopete::UI::Global::mainWidget() );
+	if ( fatal )
+		logOff( Kopete::Account::ConnectionReset );
+}
+	
+QString OscarAccount::getFLAPErrorMessage( int code )
+{
+	bool isICQ = d->engine->isIcq();
+	QString acctType = isICQ ? i18n("ICQ") : i18n("AIM");
+	QString acctDescription = isICQ ? i18n("ICQ user id", "UIN") : i18n("AIM user id", "screen name");
+	QString reason;
+	//FLAP errors are always fatal
+	switch ( code )
+	{
+	case 0x0001:
+		if ( isConnected() ) // multiple logins (on same UIN)
+		{
+			reason = i18n( "You have logged in more than once with the same %1," \
+			               " account %2 is now disconnected.")
+				.arg( acctDescription ).arg( accountId() );
+		}
+		else // error while logging in
+		{
+			reason = i18n( "Sign on failed because either your %1 or " \
+			               "password are invalid. Please check your settings for account %2.")
+				.arg( acctDescription ).arg( accountId() );
+			
+		}
+		break;
+	case 0x0002: // Service temporarily unavailable
+	case 0x0014: // Reservation map error
+		reason = i18n("The %1 service is temporarily unavailable. Please try again later.")
+			.arg( acctType );
+		break;
+	case 0x0004: // Incorrect nick or password, re-enter
+	case 0x0005: // Mismatch nick or password, re-enter
+		reason = i18n("Could not sign on to %1 with account %2 as the " \
+		              "password was incorrect.").arg( acctType ).arg( accountId() );
+		break;
+	case 0x0007: // non-existant ICQ#
+	case 0x0008: // non-existant ICQ#
+		reason = i18n("Could not sign on to %1 with nonexistent account %2.")
+			.arg( acctType ).arg( accountId() );
+		break;
+	case 0x0009: // Expired account
+		reason = i18n("Sign on to %1 failed because your account %2 expired.")
+			.arg( acctType ).arg( accountId() );
+		break;
+	case 0x0011: // Suspended account
+		reason = i18n("Sign on to %1 failed because your account %2 is " \
+		              "currently suspended.").arg( acctType ).arg( accountId() );
+		break;
+	case 0x0015: // too many clients from same IP
+	case 0x0016: // too many clients from same IP
+	case 0x0017: // too many clients from same IP (reservation)
+		reason = i18n("Could not sign on to %1 as there are too many clients" \
+		              " from the same computer.").arg( acctType );
+		break;
+	case 0x0018: // rate exceeded (turboing)
+		if ( isConnected() )
+		{
+			reason = i18n("Account %1 was blocked on the %2 server for" \
+							" sending messages too quickly." \
+							" Wait ten minutes and try again." \
+							" If you continue to try, you will" \
+							" need to wait even longer.")
+				.arg( accountId() ).arg( acctType );
+		}
+		else
+		{
+			reason = i18n("Account %1 was blocked on the %2 server for" \
+							" reconnecting too quickly." \
+							" Wait ten minutes and try again." \
+							" If you continue to try, you will" \
+							" need to wait even longer.")
+				.arg( accountId() ).arg( acctType) ;
+		}
+		break;
+	case 0x001C:
+		reason = i18n("The %1 server thinks the client you are using is " \
+		              "too old. Please report this as a bug at http://bugs.kde.org")
+			.arg( acctType );
+		break;
+	case 0x0022: // Account suspended because of your age (age < 13)
+		reason = i18n("Account %1 was disabled on the %2 server because " \
+		              "of your age (less than 13).")
+			.arg( accountId() ).arg( acctType );
+		break;
+	default:
+		if ( !isConnected() )
+		{
+			reason = i18n("Sign on to %1 with your account %2 failed.")
+				.arg( acctType ).arg( accountId() );
+		}
+		break;
+	}
+	return reason;
+}
 #include "oscaraccount.moc"
 //kate: tab-width 4; indent-mode csands;

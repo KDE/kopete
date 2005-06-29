@@ -95,12 +95,12 @@ void Connection::close()
 
 void Connection::taskError( const Oscar::SNAC& s, int errCode )
 {
-	//d->client->taskError( s, errCode, false /*fatal*/ );
+	d->client->notifyTaskError( s, errCode, false /*fatal*/ );
 }
 
 void Connection::fatalTaskError( const Oscar::SNAC& s, int errCode )
 {
-	//d->client->taskError( s, errCode, true /* fatal */ );
+	d->client->notifyTaskError( s, errCode, true /* fatal */ );
 }
 
 Oscar::Settings* Connection::settings() const

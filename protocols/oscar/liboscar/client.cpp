@@ -408,6 +408,16 @@ QCString Client::ipAddress() const
 	return "127.0.0.1";
 }
 
+void Client::notifyTaskError( const Oscar::SNAC& s, int errCode, bool fatal )
+{
+	emit taskError( s, errCode, fatal );
+}
+
+void Client::notifySocketError( int errCode, const QString& msg )
+{
+	emit socketError( errCode, msg );
+}
+
 void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
 {
 	SendMessageTask *sendMsgTask = new SendMessageTask( d->connections.first()->rootTask() );

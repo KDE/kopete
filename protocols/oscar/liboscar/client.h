@@ -30,6 +30,7 @@
 #include "transfer.h"
 #include "icquserinfo.h"
 #include "userdetails.h"
+#include "oscartypeclasses.h"
 
 class Connection;
 class StageOneLoginTask;
@@ -249,7 +250,7 @@ public:
 	void sendTyping( const QString & contact, bool typing );
 
 	/*************
-	  INTERNAL (FOR USE BY TASKS) METHODS 
+	  INTERNAL (FOR USE BY TASKS OR CONNECTIONS) METHODS 
 	 *************/
 	/**
 	 * Print a debug statement
@@ -274,6 +275,12 @@ public:
 	
 	/** Host's IP address */
 	QCString ipAddress() const;
+	
+	/** Notify that a task error was received */
+	void notifyTaskError( const Oscar::SNAC& s, int errCode, bool fatal );
+	
+	/** Notify that a socket error has occured */
+	void notifySocketError( int errCode, const QString& msg );
 	
 signals:
 	/** CONNECTION EVENTS */

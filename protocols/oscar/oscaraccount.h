@@ -132,9 +132,15 @@ signals:
 	
 	void accountDisconnected( Kopete::Account::DisconnectReason reason );
 
+private:
+	QString getFLAPErrorMessage( int code );
+	
 private slots:
 	/** Handler from socket errors from a connection */
 	void slotSocketError( int, const QString& );
+	
+	/** Handle task errors from the client */
+	void slotTaskError( const Oscar::SNAC& s, int errCode, bool fatal ) ;
 	
 private:
 	OscarAccountPrivate *d;
