@@ -37,7 +37,8 @@ Socket::Socket(QObject *parent)
 	: QObject(parent),
 	  m_socket(0),
 	  m_state(Idle),
-	  m_useSSL(false)
+	  m_useSSL(false),
+	  m_defaultCodec(0)
 {
 	kdDebug(14120) << k_funcinfo << endl;
 }
@@ -51,11 +52,11 @@ QByteArray Socket::encode(const QString &str, bool *success, QTextCodec *codec) 
 {
 	*success = false;
 
-	if (!codec && !codec->canEncode(str))
+	if (!codec || !codec->canEncode(str))
 	{
-		if (!m_defaultCodec && !m_defaultCodec->canEncode(str))
+		if (!m_defaultCodec || !m_defaultCodec->canEncode(str))
 		{
-			if (!UTF8 && !UTF8->canEncode(str))
+			if (!UTF8 || !UTF8->canEncode(str))
 			{
 //				emit internalError(i18n("Codec Error: .").arg(codec->name()));
 				return QByteArray();
@@ -106,17 +107,21 @@ void Socket::connectToServer(const KResolverEntry &entry, bool useSSL)
 
 void Socket::close()
 {
-	m_socket->close();
+	if (m_socket)
+	{
+		m_socket->close();
+		m_socket = 0;
+	}
 }
 
 void Socket::writeRawMessage(const QByteArray &rawMsg)
 {
-/*	if (!m_socket || m_socket->status())
+	if (!m_socket || m_socket->state() != KBufferedSocket::Open)
 	{
-		kdDebug(14121) << k_funcinfo << "Not connected while attempting to write:" << str << endl;
+		emit internalError(i18n("Appenting to send while not connected: %1").arg(rawMsg));
 		return;
 	}
-*/
+
 	QCString buffer = rawMsg + QCString("\n\r"); // QT-4.0 make this a QByteArray
 	int wrote = m_socket->writeBlock(buffer.data(), buffer.length());
 	kdDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg) << endl;
@@ -148,11 +153,9 @@ void Socket::setConnectionState(KIRC::ConnectionState newstate)
 
 void Socket::slotReadyRead()
 {
-	// This condition is buggy when the peer server
-	// close the socket unexpectedly
+	// The caller can also be self so lets check the socket still exist
 
-//	if (m_socket->state() == KSocketBase::Connected && m_socket->canReadLine())
-	if (m_socket->canReadLine())
+	if (m_socket && m_socket->canReadLine())
 	{
 		QByteArray rawMsg = m_socket->readLine();
 //		kdDebug(14121) << QString::fromLatin1("(%1 bytes) << %2").arg(wrote).arg(rawMsg) << endl;
@@ -215,39 +218,35 @@ void Socket::socketGotError(int errCode)
 
 bool Socket::setupSocket(bool useSSL)
 {
-	if (m_socket)
-		delete m_socket;
+	close();
 
-	if (!m_socket || useSSL != m_useSSL)
+	m_useSSL = useSSL;
+
+	if( m_useSSL )
 	{
-		m_useSSL = useSSL;
-
-		if( m_useSSL )
-		{
 #ifdef KIRC_SSL_SUPPORT
-			m_socket = new KSSLSocket(this);
-			m_socket->setSocketFlags( KExtendedSocket::inetSocket );
-		}
-		else
-#else
-			kdWarning(14120) << "You tried to use SSL, but this version of Kopete was"
-				" not compiled with IRC SSL support. A normal IRC connection will be attempted." << endl;
-		}
-#endif
-		{
-			m_socket = new KBufferedSocket(QString::null, QString::null, this);
-//			m_socket->setSocketFlags( KExtendedSocket::inputBufferedSocket | KExtendedSocket::inetSocket );
-		}
-
-		QObject::connect(m_socket, SIGNAL(closed(int)),
-				 this, SLOT(slotConnectionClosed()));
-		QObject::connect(m_socket, SIGNAL(readyRead()),
-				 this, SLOT(slotReadyRead()));
-		QObject::connect(m_socket, SIGNAL(connectionSuccess()),
-				 this, SLOT(slotConnected()));
-		QObject::connect(m_socket, SIGNAL(connectionFailed(int)),
-				 this, SLOT(error(int)));
+		m_socket = new KSSLSocket(this);
+		m_socket->setSocketFlags( KExtendedSocket::inetSocket );
 	}
+	else
+#else
+		kdWarning(14120) << "You tried to use SSL, but this version of Kopete was"
+			" not compiled with IRC SSL support. A normal IRC connection will be attempted." << endl;
+	}
+#endif
+	{
+		m_socket = new KBufferedSocket(QString::null, QString::null, this);
+//		m_socket->setSocketFlags( KExtendedSocket::inputBufferedSocket | KExtendedSocket::inetSocket );
+	}
+
+	QObject::connect(m_socket, SIGNAL(closed(int)),
+			 this, SLOT(slotConnectionClosed()));
+	QObject::connect(m_socket, SIGNAL(readyRead()),
+			 this, SLOT(slotReadyRead()));
+	QObject::connect(m_socket, SIGNAL(connectionSuccess()),
+			 this, SLOT(slotConnected()));
+	QObject::connect(m_socket, SIGNAL(connectionFailed(int)),
+			 this, SLOT(error(int)));
 }
 
 #include "kircsocket.moc"
