@@ -924,5 +924,9 @@ default_presentation=16
 
 [connection_error]
 Name=Connection Error
+Name[br]=Fazi ar gevreadenn
+Name[ga]=Earráid Naisc
+Name[sv]=Anslutningsfel
 Comment=An error on connection has occurred
+Comment[sv]=En fel vid anslutning har inträffat
 default_presentation=2
