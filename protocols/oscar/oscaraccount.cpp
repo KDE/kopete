@@ -494,6 +494,7 @@ void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
 		default:
 			logOff( Kopete::Account::Manual );
 		}
+		return;
 	}
 	if ( !fatal )
 		message = i18n("There was an error in the protocol handling. It wasn't fatal so you won't be disconnected");
@@ -537,7 +538,7 @@ QString OscarAccount::getFLAPErrorMessage( int code )
 		break;
 	case 0x0004: // Incorrect nick or password, re-enter
 	case 0x0005: // Mismatch nick or password, re-enter
-		reason = i18n("Could not sign on to %1 with account %2 as the " \
+		reason = i18n("Could not sign on to %1 with account %2 because the " \
 		              "password was incorrect.").arg( acctType ).arg( accountId() );
 		break;
 	case 0x0007: // non-existant ICQ#
