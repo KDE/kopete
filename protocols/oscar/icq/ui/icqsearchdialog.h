@@ -44,6 +44,7 @@ private slots:
 	void closeDialog();
 	void userInfo();
 	void closeUserInfo();
+	void newSearch();
 
 	/// Enable/disable buttons when the selection changes
 	void resultSelectionChanged();
@@ -59,6 +60,8 @@ private:
 	ICQSearchBase* m_searchUI;
 	ICQContact* m_contact;
 	ICQUserInfoWidget* m_infoWidget;
+	
+	void clearFields();
 };
 
 #endif

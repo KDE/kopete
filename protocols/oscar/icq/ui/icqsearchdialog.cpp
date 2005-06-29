@@ -52,11 +52,15 @@ ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent, const ch
 	connect( m_searchUI->stopButton, SIGNAL( clicked() ), this, SLOT( stopSearch() ) );
 	connect( m_searchUI->closeButton, SIGNAL( clicked() ), this, SLOT( closeDialog() ) );
 	connect( m_searchUI->userInfoButton, SIGNAL( clicked() ), this, SLOT( userInfo() ) );
+	connect( m_searchUI->newSearchButton, SIGNAL( clicked() ), this, SLOT( newSearch() ) );
 	
 	ICQProtocol *p = ICQProtocol::protocol();
 	p->fillComboFromTable( m_searchUI->gender, p->genders() );
 	p->fillComboFromTable( m_searchUI->country, p->countries() );
 	p->fillComboFromTable( m_searchUI->language, p->languages() );
+	
+	m_contact = NULL;
+	m_infoWidget = NULL;
 	
 	m_contact = NULL;
 	m_infoWidget = NULL;
@@ -69,34 +73,82 @@ ICQSearchDialog::~ICQSearchDialog()
 
 void ICQSearchDialog::startSearch()
 {
-	clearResults();
-	m_searchUI->stopButton->setEnabled( true );
-	connect( m_account->engine(), SIGNAL( gotSearchResults( const ICQSearchResult& ) ),
-	         this, SLOT( newResult( const ICQSearchResult& ) ) );
-	connect( m_account->engine(), SIGNAL( endOfSearch( int ) ),
-	         this, SLOT( searchFinished( int ) ) );
-	
-	if ( !m_searchUI->uin->text().isEmpty() )
+	// Doing the search only if the account is online, otherwise warn the user
+	if(!m_account->isConnected())
 	{
-		//doing a uin search
-		m_account->engine()->uinSearch( m_searchUI->uin->text() );
+		// Account currently offline
+		m_searchUI->searchButton->setEnabled( false );
+		KMessageBox::sorry( this, i18n("You must be online to search the ICQ Whitepages."), i18n("ICQ Plugin") );
 	}
 	else
 	{
-		//create a ICQWPSearchInfo struct and send it
-		ICQProtocol* p = ICQProtocol::protocol();
-		ICQWPSearchInfo info;
-		info.firstName = m_searchUI->firstName->text();
-		info.lastName = m_searchUI->lastName->text();
-		info.nickName = m_searchUI->nickName->text();
-		info.email = m_searchUI->email->text();
-		info.city = m_searchUI->city->text(); // City
-		info.gender = p->getCodeForCombo(m_searchUI->gender, p->genders()); // Gender
-		info.language = p->getCodeForCombo(m_searchUI->language, p->languages()); // Lang
-		info.country =p->getCodeForCombo(m_searchUI->country, p->countries()); // country code
-		info.onlineOnly = m_searchUI->onlyOnline->isChecked();
-		m_account->engine()->whitePagesSearch( info );
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Starting whitepage search" << endl;
+		// Account is online
+		clearResults();
+	
+		m_searchUI->stopButton->setEnabled( true );
+		m_searchUI->searchButton->setEnabled( false );
+		m_searchUI->newSearchButton->setEnabled( false );
+	
+		connect( m_account->engine(), SIGNAL( gotSearchResults( const ICQSearchResult& ) ),
+				this, SLOT( newResult( const ICQSearchResult& ) ) );
+		connect( m_account->engine(), SIGNAL( endOfSearch( int ) ),
+				this, SLOT( searchFinished( int ) ) );
+		
+		if ( !m_searchUI->uin->text().isEmpty() )
+		{
+			if(m_searchUI->uin->text().toULong() == 0)
+			{
+				// Invalid UIN
+				stopSearch();
+				clearResults();
+				KMessageBox::sorry( this, i18n("You must enter a valid UIN."), i18n("ICQ Plugin") );
+				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Search aborted: invalid UIN " << m_searchUI->uin->text() << endl;
+			}
+			else
+			{
+				//doing a uin search
+				m_account->engine()->uinSearch( m_searchUI->uin->text() );
+			}
+		}
+		else
+		{
+			//create a ICQWPSearchInfo struct and send it
+			ICQProtocol* p = ICQProtocol::protocol();
+			ICQWPSearchInfo info;
+			info.firstName = m_searchUI->firstName->text();
+			info.lastName = m_searchUI->lastName->text();
+			info.nickName = m_searchUI->nickName->text();
+			info.email = m_searchUI->email->text();
+			info.city = m_searchUI->city->text(); // City
+			info.gender = p->getCodeForCombo(m_searchUI->gender, p->genders()); // Gender
+			info.language = p->getCodeForCombo(m_searchUI->language, p->languages()); // Lang
+			info.country =p->getCodeForCombo(m_searchUI->country, p->countries()); // country code
+			info.onlineOnly = m_searchUI->onlyOnline->isChecked();
+	
+			// Check if the user has actually entered things to search
+			if( info.firstName.isEmpty()			&&
+				info.lastName.isEmpty()				&&
+				info.nickName.isEmpty()				&&
+				info.email.isEmpty()				&&
+				info.city.isEmpty()					&&
+				(info.gender == 0)					&&
+				(info.language == 0)				&&
+				(info.country == 0)
+			)
+			{
+				// All fields were blank
+				stopSearch();
+				clearResults();
+				KMessageBox::information(this, i18n("You must enter search criteria!"), i18n("ICQ Plugin") );
+				kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Search aborted: all fields were blank" << endl;
+			}
+			else
+			{
+				// Start the search
+				m_account->engine()->whitePagesSearch( info );
+				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Starting whitepage search" << endl;
+			}
+		}
 	}
 }
 
@@ -106,7 +158,10 @@ void ICQSearchDialog::stopSearch()
 	         this, SLOT( newResult( const ICQSearchResult& ) ) );
 	disconnect( m_account->engine(), SIGNAL( endOfSearch( int ) ),
 	         this, SLOT( searchFinished( int ) ) );
+
 	m_searchUI->stopButton->setEnabled( false );
+	m_searchUI->searchButton->setEnabled( true );
+	m_searchUI->newSearchButton->setEnabled( true );
 }
 
 void ICQSearchDialog::addContact()
@@ -121,24 +176,37 @@ void ICQSearchDialog::addContact()
 		QString uin = m_searchUI->searchResults->selectedItem()->text( 0 );
 		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Passing " << uin << " back to the ACP" << endl;
 		iacp->setUINFromSearch( uin );
+		
+		// Closing the dialog
+		closeDialog();
 	}
 }
 
 void ICQSearchDialog::userInfo()
 {
-	m_contact = new ICQContact( m_account,
-								m_searchUI->searchResults->selectedItem()->text( 0 ),
-								NULL);
-
-	m_infoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget(), "icq info" );
-	QObject::connect( m_infoWidget, SIGNAL( finished() ), this, SLOT( closeUserInfo() ) );
-
-	m_infoWidget->setContact( m_contact );
-	m_infoWidget->setModal(true);
-	m_infoWidget->show();
-		if ( m_contact->account()->isConnected() )
-		m_account->engine()->requestFullInfo( m_contact->contactId() );
-	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Displaying user info" << endl;
+	// Lookup user info only if the account is online, otherwise warn the user
+	if(!m_account->isConnected())
+	{
+		// Account currently offline
+		KMessageBox::sorry( this, i18n("You must be online to display user info."), i18n("ICQ Plugin") );
+	}
+	else
+	{
+		// Account currently online
+		m_contact = new ICQContact( m_account,
+									m_searchUI->searchResults->selectedItem()->text( 0 ),
+									NULL);
+	
+		m_infoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget(), "icq info" );
+		QObject::connect( m_infoWidget, SIGNAL( finished() ), this, SLOT( closeUserInfo() ) );
+	
+		m_infoWidget->setContact( m_contact );
+		m_infoWidget->setModal(true);
+		m_infoWidget->show();
+			if ( m_contact->account()->isConnected() )
+			m_account->engine()->requestFullInfo( m_contact->contactId() );
+		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Displaying user info" << endl;
+	}
 }
 
 void ICQSearchDialog::closeUserInfo()
@@ -159,13 +227,16 @@ void ICQSearchDialog::clearResults()
 	m_searchUI->searchResults->clear();
 	m_searchUI->addButton->setEnabled( false );
 	m_searchUI->userInfoButton->setEnabled( false );
+	m_searchUI->searchButton->setEnabled( true );
 }
 
 void ICQSearchDialog::closeDialog()
 {
 	stopSearch();
 	clearResults();
-	slotYes();
+	clearFields();
+
+	closeClicked();
 }
 
 void ICQSearchDialog::resultSelectionChanged()
@@ -184,7 +255,7 @@ void ICQSearchDialog::resultSelectionChanged()
 
 void ICQSearchDialog::newResult( const ICQSearchResult& info )
 {
-	if ( info.uin == '1' )
+	if ( info.uin == 1 )
 	{
 		//TODO update progress
 		return;
@@ -209,6 +280,29 @@ void ICQSearchDialog::searchFinished( int numLeft )
 	kdWarning(OSCAR_ICQ_DEBUG) << k_funcinfo << "There are " << numLeft << "contact left out of this search" << endl;
 	m_searchUI->stopButton->setEnabled( false );
 	m_searchUI->clearButton->setEnabled( true );
+	m_searchUI->searchButton->setEnabled( true );
+	m_searchUI->newSearchButton->setEnabled( true );
+}
+
+void ICQSearchDialog::clearFields()
+{
+	m_searchUI->uin->setText( QString::null );
+	
+	m_searchUI->firstName->setText( QString::null );
+	m_searchUI->lastName->setText( QString::null );
+	m_searchUI->nickName->setText( QString::null );
+	m_searchUI->email->setText( QString::null );
+	m_searchUI->city->setText( QString::null );
+	m_searchUI->gender->setCurrentItem( 0 ); // Unspecified
+	m_searchUI->country->setCurrentItem( 0 );
+	m_searchUI->language->setCurrentItem( 0 );
+	m_searchUI->onlyOnline->setChecked( false );
+}
+
+void ICQSearchDialog::newSearch()
+{
+	clearResults();
+	clearFields();
 }
 
 //kate: indent-mode csands; space-indent off; replace-tabs off; tab-width 4;
