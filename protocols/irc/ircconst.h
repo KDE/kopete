@@ -1,5 +1,5 @@
 /*
-    ircconst.h - The IRC constants & enums. 
+    ircconst.h - The IRC constants & enums.
 
     Copyright (c) 2005      by Michel Hermier <michel.hermier@wanadoo.fr>
 
@@ -21,6 +21,8 @@
 #include "kopetecontactproperty.h"
 
 namespace IRC {
+
+extern const QString Version;
 
 namespace Config {
 
@@ -49,7 +51,7 @@ extern const Kopete::ContactPropertyTmpl Hops;
 extern const Kopete::ContactPropertyTmpl FullName;
 extern const Kopete::ContactPropertyTmpl IsIdentified;
 
-} // namespace IRC::Properties 
+} // namespace IRC::Properties
 
 } // namespace IRC
 

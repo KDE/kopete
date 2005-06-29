@@ -23,8 +23,6 @@
 #include "irccontact.h"
 #include "ircprotocol.h"
 
-#include "channellistdialog.h"
-
 #include "kircengine.h"
 
 #include "kopeteaccountmanager.h"
@@ -39,8 +37,6 @@
 #include "kopetepassword.h"
 
 #include <kaction.h>
-#include <kaboutdata.h>
-#include <kapplication.h>
 #include <kconfig.h>
 #include <kcompletionbox.h>
 #include <kdebug.h>
@@ -48,6 +44,7 @@
 #include <kinputdialog.h>
 #include <klineedit.h>
 #include <klineeditdlg.h>
+#include <klocale.h>
 #include <kmessagebox.h>
 #include <knotifyclient.h>
 #include <kpopupmenu.h>
@@ -61,20 +58,9 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 	: PasswordedAccount(IRCProtocol::self(), accountId, 0, true),
 	  m_engine(new KIRC::Engine(this)),
 	  autoConnect(autoChan),
-	  commandSource(0)
+	  m_commandSource(0)
 {
 	m_manager = 0;
-	m_channelList = 0;
-
-	m_engine->setUserName(userName());
-	m_engine->setRealName(realName());
-
-	QMap<QString, QString> replies = customCtcpReplies();
-	for (QMap<QString, QString>::ConstIterator it = replies.begin(); it != replies.end(); ++it)
-		m_engine->addCustomCtcp(it.key(), it.data());
-
-	QString version=i18n("Kopete IRC Plugin %1 [http://kopete.kde.org]").arg(kapp->aboutData()->version());
-	m_engine->setVersionString( version  );
 
 	QObject::connect(m_engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)),
 			this, SLOT(successfullyChangedNick(const QString &, const QString &)));
@@ -180,34 +166,24 @@ IRCAccount::~IRCAccount()
 		m_engine->quit(i18n("Plugin Unloaded"), true);
 }
 
-/*
-void IRCAccount::loadProperties()
+
+void IRCAccount::setupEngine()
 {
-	KConfigGroup *config = configGroup();
+	m_engine->setDefaultCodec(codec());
 
-	QString networkName = netName;
-	if (networkName.isNull())
-		networkName = config->readEntry(Config::NETWORKNAME);
+	m_engine->setUserName(userName());
+	m_engine->setRealName(realName());
 
-	if (!nickName.isNull())
-		setNickName(nickName);
-//	else
-//		mNickName = config->readEntry(Config::NICKNAME);
+//	m_engine->setNickName(nickName());
 
-	QString codecMib = config->readEntry(Config::CODECMIB);
-	//	int codecMib = config->readNumEntry(Config::CODECMIB, UTF-8);
-
-	autoShowServerWindow = config->readBoolEntry( "AutoShowServerWindow", false );
-
-	if( !codecMib.isEmpty() )
-	{
-		mCodec = QTextCodec::codecForMib( codecMib.toInt() );
-		m_engine->setDefaultCodec( mCodec );
-	}
-	else
-		mCodec = 0;
-}
+	m_engine->setVersionString(IRC::Version);
+/*
+	QMap<QString, QString> replies = customCtcpReplies();
+	for (QMap<QString, QString>::ConstIterator it = replies.begin(); it != replies.end(); ++it)
+		m_engine->addCustomCtcp(it.key(), it.data());
 */
+}
+
 int IRCAccount::codecMib() const
 {
 	return configGroup()->readNumEntry(Config::CODECMIB);
@@ -273,7 +249,7 @@ const QString IRCAccount::nickName() const
 void IRCAccount::setNickName(const QString &nickName)
 {
 	configGroup()->writeEntry(Config::NICKNAME, nickName);
-	m_self->setNickName(nickName);
+//	m_self->setNickName(nickName);
 }
 /*
 const QString IRCAccount::altNick() const
@@ -320,25 +296,25 @@ void IRCAccount::setDefaultPart( const QString &defaultPart )
 }
 
 // FIXME: Move this to a dictionnary
-void IRCAccount::setDefaultQuit( const QString &defaultQuit )
-{
-	configGroup()->writeEntry( QString::fromLatin1( "defaultQuit" ), defaultQuit );
-}
-
-// FIXME: Move this to a dictionnary
 const QString IRCAccount::defaultPart() const
 {
 	QString partMsg = configGroup()->readEntry(QString::fromLatin1("defaultPart"));
 	if( partMsg.isEmpty() )
-		return QString::fromLatin1("Kopete %1 : http://kopete.kde.org").arg( kapp->aboutData()->version() );
+		return IRC::Version;
 	return partMsg;
+}
+
+// FIXME: Move this to a dictionnary
+void IRCAccount::setDefaultQuit( const QString &defaultQuit )
+{
+	configGroup()->writeEntry( QString::fromLatin1( "defaultQuit" ), defaultQuit );
 }
 
 const QString IRCAccount::defaultQuit() const
 {
 	QString quitMsg = configGroup()->readEntry(QString::fromLatin1("defaultQuit"));
 	if( quitMsg.isEmpty() )
-		return QString::fromLatin1("Kopete %1 : http://kopete.kde.org").arg(kapp->aboutData()->version());
+		return IRC::Version;
 	return quitMsg;
 }
 
@@ -483,6 +459,7 @@ void IRCAccount::engineConnectionStateChanged(KIRC::ConnectionState newstate)
 		break;
 	case KIRC::Connecting:
 	{
+		// m_expectedOnlineStatus check and use it
 		if (autoShowServerWindow())
 			myServer()->startChat();
 		break;
@@ -578,14 +555,19 @@ bool IRCAccount::isConnected()
 void IRCAccount::setOnlineStatus(const OnlineStatus& status , const QString &reason)
 {
 	kdDebug(14120) << k_funcinfo << endl;
+	m_expectedOnlineStatus = status;
+	m_expectedReason = reason;
 
-	#warning REWRITE ME
-	if ( status.status() == OnlineStatus::Online && myself()->onlineStatus().status() == OnlineStatus::Offline )
+	OnlineStatus::StatusType current = myself()->onlineStatus().status();
+	OnlineStatus::StatusType expected = m_expectedOnlineStatus.status();
+
+	if ( expected != OnlineStatus::Offline && current == OnlineStatus::Offline )
+	{
+		setupEngine();
 		connect();
-	else if ( status.status() == OnlineStatus::Offline )
+	}
+	else if ( expected == OnlineStatus::Offline && current != OnlineStatus::Offline )
 		disconnect();
-//	else if ( status.status() == OnlineStatus::Away )
-//		slotGoAway( reason );
 }
 
 void IRCAccount::successfullyChangedNick(const QString &oldnick, const QString &newnick)
@@ -625,12 +607,12 @@ bool IRCAccount::createContact(const QString &contactId, MetaContact *metac)
 
 void IRCAccount::setCurrentCommandSource( ChatSession *session )
 {
-	commandSource = session;
+	m_commandSource = session;
 }
 
 ChatSession *IRCAccount::currentCommandSource()
 {
-	return commandSource;
+	return m_commandSource;
 }
 
 void IRCAccount::appendErrorMessage(const QString &message)

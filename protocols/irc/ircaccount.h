@@ -26,8 +26,6 @@
 
 #include "kopetepasswordedaccount.h"
 
-class ChannelListDialog;
-
 class IRCContact;
 class IRCProtocol;
 
@@ -51,9 +49,12 @@ class IRCAccount
 	Q_PROPERTY(int codecMib READ codecMib WRITE setCodecFromMib)
 	Q_PROPERTY(QString networkName READ networkName WRITE setNetworkByName)
 
-	Q_PROPERTY(QString nickName READ nickName WRITE setNickName)
 	Q_PROPERTY(QString userName READ userName WRITE setUserName)
 	Q_PROPERTY(QString realName READ realName WRITE setRealName)
+//	Q_PROPERTY(QString password READ password WRITE setPassword)
+
+	Q_PROPERTY(QString nickName READ nickName WRITE setNickName)
+//	Q_PROPERTY(QStringList nickNames READ nickNames WRITE setNickNames)
 
 	Q_PROPERTY(bool autoShowServerWindow READ autoShowServerWindow WRITE setAutoShowServerWindow)
 
@@ -178,10 +179,11 @@ private slots:
 	void slotPerformOnConnectCommands();
 
 	void slotFailedServerPassword();
-//	void slotJoinNamedChannel( const QString &channel );
-//	void slotNickInUse( const QString &nick );
 
 	void slotShowServerWindow();
+
+private:
+	void setupEngine();
 
 private:
 	Kopete::ChatSession *m_manager;
@@ -191,14 +193,15 @@ private:
 	IRCNetwork m_network;
 	uint currentHost;
 
-	ChannelListDialog *m_channelList;
-
 	QValueList<IRCContact *> m_contacts;
 	IRCContact *m_server;
 	IRCContact *m_self;
 
+	Kopete::OnlineStatus m_expectedOnlineStatus;
+	QString m_expectedReason;
+
 	QMap<QString, QString> m_customCtcp;
-	Kopete::ChatSession *commandSource;
+	Kopete::ChatSession *m_commandSource;
 
 	Kopete::AwayAction *m_awayAction;
 

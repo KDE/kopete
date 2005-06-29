@@ -1,5 +1,5 @@
 /*
-    ircconst.cpp - The IRC constants & enums. 
+    ircconst.cpp - The IRC constants & enums.
 
     Copyright (c) 2005      by Michel Hermier <michel.hermier@wanadoo.fr>
 
@@ -17,7 +17,9 @@
 
 #include "ircconst.h"
 
-#include "klocale.h"
+#include <kapplication.h>
+#include <kaboutdata.h>
+#include <klocale.h>
 
 using namespace Kopete;
 
@@ -27,9 +29,12 @@ using namespace Kopete;
 
 namespace IRC {
 
+const QString Version = i18n("Kopete IRC Plugin %1 [http://kopete.kde.org]")
+				.arg(kapp->aboutData()->version());
+
 namespace Config {
 
-//const QString CONFIG_AUTOSHOWSERVERWINDOW = QString::fromLatin1("AutoShowServerWindow");
+//const QString AUTOSHOWSERVERWINDOW = QString::fromLatin1("AutoShowServerWindow");
 const QString CODECMIB = QString::fromLatin1("Codec");
 const QString NETWORKNAME = QString::fromLatin1("NetworkName");
 const QString NICKNAME = QString::fromLatin1("NickName");
