@@ -165,4 +165,4 @@ void KUnitTest::qtesterDone( QObject *obj )
         qApp->quit();
 }
 
-// #include "kunittest.moc"
+#include "kunittest.moc"

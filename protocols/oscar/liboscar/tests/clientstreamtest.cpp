@@ -46,4 +46,4 @@ int main(int argc, char ** argv)
 	return 0;
 }
 
-#include "clientstream_test.moc"
+#include "clientstreamtest.moc"

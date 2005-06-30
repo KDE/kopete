@@ -6,6 +6,9 @@ kunittest_SOURCES = main.cpp kunittest.cpp chatnavtests.cpp
 kunittest_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 kunittest_LDADD = $(LIB_KDECORE) ../liboscar.la
 
+#clientstreamtest_SOURCE = clientstreamtest.cpp
+#clientstreamtest_LDADD = $(LIB_QT) $(LIB_KDECORE) ../liboscar.la
+
 logintest_SOURCES = logintest.cpp
 logintest_LDADD = $(LIB_QT) $(LIB_KDECORE) ../liboscar.la
 
