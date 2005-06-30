@@ -19,6 +19,9 @@ servicedir = $(kde_servicesdir)
 kcm_DATA = kopete_webpresence_config.desktop
 kcmdir = $(kde_servicesdir)/kconfiguredialog
 
-mydata_DATA = webpresencedefault.xsl wpimages.xsl
+mydata_DATA = webpresence_html.xsl\
+	      webpresence_html_images.xsl\
+	      webpresence_xhtml.xsl\
+	      webpresence_xhtml_images.xsl
 mydatadir = $(kde_datadir)/kopete/webpresence
 EXTRA_DIST = $(mydata_DATA)

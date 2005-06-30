@@ -3,12 +3,13 @@
 
    Kopete Web Presence plugin
 
+   Copyright (c) 2005      by Tommi Rantala   <tommi.rantala@cs.helsinki.fi>
    Copyright (c) 2002,2003 by Will Stephenson <will@stevello.free-online.co.uk>
 
-   Kopete    (c) 2002,2003 by the Kopete developers  <kopete-devel@kde.org>
+   Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
  *************************************************************************
- *                                                                    	*
+ *                                                                    	 *
  * This program is free software; you can redistribute it and/or modify  *
  * it under the terms of the GNU General Public License as published by  *
  * the Free Software Foundation; either version 2 of the License, or     *
@@ -51,10 +52,9 @@ typedef KGenericFactory<WebPresencePlugin> WebPresencePluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_webpresence, WebPresencePluginFactory( "kopete_webpresence" )  )
 
 WebPresencePlugin::WebPresencePlugin( QObject *parent, const char *name, const QStringList& /*args*/ )
-: Kopete::Plugin( WebPresencePluginFactory::instance(), parent, name )
+	: Kopete::Plugin( WebPresencePluginFactory::instance(), parent, name ),
+	shuttingDown( false ), resultFormatting( WEB_HTML )
 {
-	shuttingDown = false;
-
 	m_writeScheduler = new QTimer( this );
 	connect ( m_writeScheduler, SIGNAL( timeout() ), this, SLOT( slotWriteFile() ) );
 	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account*)),
@@ -75,19 +75,35 @@ void WebPresencePlugin::loadSettings()
 {
 	KConfig *kconfig = KGlobal::config();
 	kconfig->setGroup( "Web Presence Plugin" );
-	
-	frequency = kconfig->readNumEntry("UploadFrequency" , 15);
-	
-	url = kconfig->readPathEntry("uploadURL");
-	useDefaultStyleSheet = kconfig->readBoolEntry("formatDefault", true);
-	justXml = kconfig->readBoolEntry("formatXML", false);
-	userStyleSheet = kconfig->readEntry("formatStylesheetURL");
 
+	frequency = kconfig->readNumEntry("UploadFrequency", 15);
+	resultURL = kconfig->readPathEntry("uploadURL");
+
+	resultFormatting = WEB_UNDEFINED;
+
+	if ( kconfig->readBoolEntry( "formatHTML", false ) ) {
+		resultFormatting = WEB_HTML;
+	} else if ( kconfig->readBoolEntry( "formatXHTML", false ) ) {
+		resultFormatting = WEB_XHTML;
+	} else if ( kconfig->readBoolEntry( "formatXML", false ) ) {
+		resultFormatting = WEB_XML;
+	} else if ( kconfig->readBoolEntry( "formatStylesheet", false ) ) {
+		resultFormatting = WEB_CUSTOM;
+		userStyleSheet = kconfig->readEntry("formatStylesheetURL");
+	}
+
+	// Default to HTML if we dont get anything useful from config file.
+	if ( resultFormatting == WEB_UNDEFINED )
+		resultFormatting = WEB_HTML;
+
+	useImagesInHTML = kconfig->readBoolEntry( "useImagesHTML", false );
 	useImName = kconfig->readBoolEntry("showName", true);
 	userName = kconfig->readEntry("showThisName");
 	showAddresses = kconfig->readBoolEntry("includeIMAddress", false);
-}
 
+	// Update file when settings are changed.
+	slotWriteFile();
+}
 
 void WebPresencePlugin::listenToAllAccounts()
 {
@@ -132,8 +148,7 @@ void WebPresencePlugin::listenToAccount( Kopete::Account* account )
 void WebPresencePlugin::slotWaitMoreStatusChanges()
 {
 	if ( !m_writeScheduler->isActive() )
-		 m_writeScheduler->start( frequency * 1000);
-
+		m_writeScheduler->start( frequency * 1000 );
 }
 
 void WebPresencePlugin::slotWriteFile()
@@ -141,8 +156,8 @@ void WebPresencePlugin::slotWriteFile()
 	m_writeScheduler->stop();
 
 	// generate the (temporary) XML file representing the current contactlist
-	KURL dest( url );
-	if ( url.isEmpty() || !dest.isValid() )
+	KURL dest( resultURL );
+	if ( resultURL.isEmpty() || !dest.isValid() )
 	{
 		kdDebug(14309) << "url is empty or not valid. NOT UPDATING!" << endl;
 		return;
@@ -152,19 +167,20 @@ void WebPresencePlugin::slotWriteFile()
 	xml->setAutoDelete( true );
 	kdDebug(14309) << k_funcinfo << " " << xml->name() << endl;
 
-	if ( justXml )
-	{
+	switch( resultFormatting ) {
+	case WEB_XML:
 		m_output = xml;
 		xml = 0L;
-	}
-	else
-	{
-		// transform XML to the final format
+		break;
+	case WEB_HTML:
+	case WEB_XHTML:
+	case WEB_CUSTOM:
 		m_output = new KTempFile();
 		m_output->setAutoDelete( true );
 
 		if ( !transform( xml, m_output ) )
 		{
+			//TODO: give some error to user, even better if shown only once
 			delete m_output;
 			m_output = 0L;
 
@@ -173,6 +189,9 @@ void WebPresencePlugin::slotWriteFile()
 		}
 
 		delete xml; // might make debugging harder!
+		break;
+	default:
+		return;
 	}
 
 	// upload it to the specified URL
@@ -184,7 +203,7 @@ void WebPresencePlugin::slotWriteFile()
 
 void WebPresencePlugin::slotUploadJobResult( KIO::Job *job )
 {
-	if (  job->error() ) {
+	if ( job->error() ) {
 		kdDebug(14309) << "Error uploading presence info." << endl;
 		KMessageBox::queuedDetailedError( 0, i18n("An error occurred when uploading your presence page.\nCheck the path and write permissions of the destination."), 0, displayName() );
 		delete m_output;
@@ -198,7 +217,11 @@ KTempFile* WebPresencePlugin::generateFile()
 	kdDebug( 14309 ) << k_funcinfo << endl;
 	QString notKnown = i18n( "Not yet known" );
 
-	QDomDocument doc( "webpresence" );
+	QDomDocument doc;
+
+	doc.appendChild( doc.createProcessingInstruction( "xml",
+				"version=\"1.0\" encoding=\"UTF-8\"" ) );
+
 	QDomElement root = doc.createElement( "webpresence" );
 	doc.appendChild( root );
 
@@ -244,24 +267,42 @@ KTempFile* WebPresencePlugin::generateFile()
 			QString displayName = me->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 			QDomElement accName = doc.createElement( "accountname" );
 			QDomText accNameText = doc.createTextNode( ( me )
-					? displayName.latin1()
-					: notKnown.latin1() );
+					? displayName
+					: notKnown );
 			accName.appendChild( accNameText );
 			acc.appendChild( accName );
 
 			QDomElement accStatus = doc.createElement( "accountstatus" );
 			QDomText statusText = doc.createTextNode( ( me )
-					? statusAsString( me->onlineStatus() ).latin1()
-					: notKnown.latin1() ) ;
+					? statusAsString( me->onlineStatus() )
+					: notKnown ) ;
 			accStatus.appendChild( statusText );
+
+			// Dont add these if we're shutting down, because the result
+			// would be quite weird.
+			if ( !shuttingDown ) {
+
+				// Add away message as an attribute, if one exists.
+				if ( me->onlineStatus().status() == Kopete::OnlineStatus::Away &&
+						!me->property("awayMessage").value().toString().isEmpty() ) {
+					accStatus.setAttribute( "awayreason",
+							me->property("awayMessage").value().toString() );
+				}
+
+				// Add the online status description as an attribute, if one exits.
+				if ( !me->onlineStatus().description().isEmpty() ) {
+					accStatus.setAttribute( "statusdescription",
+							me->onlineStatus().description() );
+				}
+			}
 			acc.appendChild( accStatus );
 
 			if ( showAddresses )
 			{
 				QDomElement accAddress = doc.createElement( "accountaddress" );
 				QDomText addressText = doc.createTextNode( ( me )
-						? me->contactId().latin1()
-						: notKnown.latin1() );
+						? me->contactId()
+						: notKnown );
 				accAddress.appendChild( addressText );
 				acc.appendChild( accAddress );
 			}
@@ -274,7 +315,7 @@ KTempFile* WebPresencePlugin::generateFile()
 	KTempFile* file = new KTempFile();
 	QTextStream *stream = file->textStream();
 	stream->setEncoding( QTextStream::UnicodeUTF8 );
-	doc.save( *stream, 0 );
+	doc.save( *stream, 4 );
 	file->close();
 	return file;
 }
@@ -282,70 +323,89 @@ KTempFile* WebPresencePlugin::generateFile()
 bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 {
 #ifdef HAVE_XSLT
-	QString error = "";
+	bool retval = true;
 	xmlSubstituteEntitiesDefault( 1 );
 	xmlLoadExtDtdDefaultValue = 1;
-	// test if the stylesheet exists
-	QFile sheet;
-	if ( useDefaultStyleSheet )
-		sheet.setName( locate( "appdata", "webpresence/webpresencedefault.xsl" ) );
-	else
-		sheet.setName( userStyleSheet );
-	
-	if ( sheet.exists() )
-	{
-		// and if it is a valid stylesheet
-		xsltStylesheetPtr cur = NULL;
-		if ( ( cur = xsltParseStylesheetFile(
-					( const xmlChar *) sheet.name().latin1() ) ) )
-		{
-			// and if we can parse the input XML
-			xmlDocPtr doc = NULL;
-			if ( ( doc = xmlParseFile( QFile::encodeName( src->name() ) ) ) != 0L )
-			{
-				// and if we can apply the stylesheet
-				xmlDocPtr res = NULL;
-				if ( ( res = xsltApplyStylesheet( cur, doc, 0 ) ) )
-				{
-					// and if we can save the result
-					if ( xsltSaveResultToFile(dest->fstream() , res, cur)
-							!= -1 )
-					{
-						// then it all worked!
-						dest->close();
-					}
-					else
-						error = "write result!";
-				}
-				else
-				{
-					error = "apply stylesheet!";
-					error += " Check the stylesheet works using xsltproc";
-				}
-				xmlFreeDoc(res);
-			}
-			else
-				error = "parse input XML!";
-			xmlFreeDoc(doc);
-		}
-		else
-			error = "parse stylesheet!";
-		xsltFreeStylesheet(cur);
-	}
-	else
-		error = "find stylesheet" + sheet.name() + "!";
 
-	xsltCleanupGlobals();
-	xmlCleanupParser();
-	
-	if ( error.isEmpty() )
-		return true;
-	else
-	{
-		kdDebug(14309) << k_funcinfo << " - couldn't "
-			<< error << endl;
+	QFile sheet;
+
+	switch ( resultFormatting ) {
+	case WEB_XML:
+		// Oops! We tried to call transform() but XML was requested.
+		return false;
+	case WEB_HTML:
+		if ( useImagesInHTML ) {
+			sheet.setName( locate( "appdata", "webpresence/webpresence_html_images.xsl" ) );
+		} else {
+			sheet.setName( locate( "appdata", "webpresence/webpresence_html.xsl" ) );
+		}
+		break;
+	case WEB_XHTML:
+		if ( useImagesInHTML ) {
+			sheet.setName( locate( "appdata", "webpresence/webpresence_xhtml_images.xsl" ) );
+		} else {
+			sheet.setName( locate( "appdata", "webpresence/webpresence_xhtml.xsl" ) );
+		}
+		break;
+	case WEB_CUSTOM:
+		sheet.setName( userStyleSheet );
+		break;
+	default:
+		// Shouldn't ever reach here.
 		return false;
 	}
+
+	// TODO: auto / smart pointers would be useful here
+	xsltStylesheetPtr cur = 0;
+	xmlDocPtr doc = 0;
+	xmlDocPtr res = 0;
+
+	if ( !sheet.exists() ) {
+		kdDebug(14309) << k_funcinfo << "ERROR: Style sheet not found" << endl;
+		retval = false;
+		goto end;
+	}
+
+	// is the cast safe?
+	cur = xsltParseStylesheetFile( (const xmlChar *) sheet.name().latin1() );
+	if ( !cur ) {
+		kdDebug(14309) << k_funcinfo << "ERROR: Style sheet parsing failed" << endl;
+		retval = false;
+		goto end;
+	}
+
+	doc = xmlParseFile( QFile::encodeName( src->name() ) );
+	if ( !doc ) {
+		kdDebug(14309) << k_funcinfo << "ERROR: XML parsing failed" << endl;
+		retval = false;
+		goto end;
+	}
+
+	res = xsltApplyStylesheet( cur, doc, 0 );
+	if ( !res ) {
+		kdDebug(14309) << k_funcinfo << "ERROR: Style sheet apply failed" << endl;
+		retval = false;
+		goto end;
+	}
+
+	if ( xsltSaveResultToFile(dest->fstream(), res, cur) == -1 ) {
+		kdDebug(14309) << k_funcinfo << "ERROR: Style sheet apply failed" << endl;
+		retval = false;
+		goto end;
+	}
+
+	// then it all worked!
+	dest->close();
+
+end:
+	xsltCleanupGlobals();
+	xmlCleanupParser();
+	if (doc) xmlFreeDoc(doc);
+	if (res) xmlFreeDoc(res);
+	if (cur) xsltFreeStylesheet(cur);
+
+	return retval;
+
 #else
 	Q_UNUSED( src );
 	Q_UNUSED( dest );

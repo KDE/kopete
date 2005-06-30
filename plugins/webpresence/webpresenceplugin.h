@@ -41,17 +41,25 @@ class WebPresencePlugin : public Kopete::Plugin
 
 private:
 	int frequency;
-	QString url;
 	bool showAddresses;
 	bool useImName;
 	QString userName;
-	bool useDefaultStyleSheet;
-	bool justXml;
 	QString userStyleSheet;
+	bool useImagesInHTML;
 
 	// Is set to true when Kopete has notified us
 	// that we're about to be unloaded.
 	bool shuttingDown;
+
+	enum {
+		WEB_HTML,
+		WEB_XHTML,
+		WEB_XML,
+		WEB_CUSTOM,
+		WEB_UNDEFINED,
+	} resultFormatting;
+
+	QString resultURL;
 
 public:
 	WebPresencePlugin( QObject *parent, const char *name, const QStringList &args );
