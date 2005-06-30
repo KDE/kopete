@@ -443,7 +443,7 @@ bool JabberAccount::handleTLSWarning ( JabberClient *jabberClient, int warning )
 		}
 
 	return ( KMessageBox::warningContinueCancel ( Kopete::UI::Global::mainWidget (),
-						  i18n("The certificate of server %1 could not be validated for account %2: %3").
+						  i18n("<qt><p>The certificate of server %1 could not be validated for account %2: %3</p><p>Do you want to continue?</p></qt>").
 						  arg(server, accountId, validityString),
 						  i18n("Jabber Connection Certificate Problem"),
 						  KStdGuiItem::cont(),
