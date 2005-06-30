@@ -21,9 +21,11 @@
 #include <kcmodule.h>
 #include <kconfigdialog.h>
 
+#include "kopetemetacontact.h"
+
 namespace Kopete
 {
-class Account;
+class Contact;
 }
 
 class KopeteIdentityConfigBase;
@@ -44,16 +46,23 @@ public slots:
 
 private:
 	KopeteIdentityConfigBase *m_view;
-	QMap<QString, Kopete::Account*> m_listAccounts;
-
-	bool m_useGlobal,m_useAccount;
-	QString m_protocolSelected, m_accountSelected, m_nickname;
+	Kopete::MetaContact *myself;
+	
+	QMap<int, Kopete::Contact*> contactPhotoSourceList;
+	
+	Kopete::MetaContact::PropertySource selectedNameSource() const;
+	Kopete::MetaContact::PropertySource selectedPhotoSource() const;
+	Kopete::Contact* selectedNameSourceContact() const;
+	Kopete::Contact* selectedPhotoSourceContact() const;
 
 private slots:
-	void slotSelectImage();
-	void slotTextChanged(const QString &);
+	void slotLoadNameSources();
+	void slotLoadPhotoSources();
+	void slotEnableAndDisableWidgets();
+
+	void slotChangeAddressee();
+
 	void slotSettingsChanged();
-	void slotComboActivated(int);
 };
 #endif
 

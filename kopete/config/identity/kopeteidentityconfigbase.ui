@@ -3,14 +3,14 @@
 <author>Michaël Larouche</author>
 <widget class="QWidget">
     <property name="name">
-        <cstring>Form1</cstring>
+        <cstring>KopeteIdentityConfigBase</cstring>
     </property>
     <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>692</width>
-            <height>383</height>
+            <width>542</width>
+            <height>541</height>
         </rect>
     </property>
     <vbox>
@@ -22,12 +22,54 @@
                 <cstring>kcfg_EnableGlobalIdentity</cstring>
             </property>
             <property name="text">
-                <string>En&amp;able global identity</string>
+                <string>Enable &amp;global identity</string>
             </property>
         </widget>
         <widget class="QGroupBox">
             <property name="name">
-                <cstring>groupBox3</cstring>
+                <cstring>kabcGroupBox</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="title">
+                <string>Address Book Link</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLayoutWidget" row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>layout7</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="KLineEdit">
+                            <property name="name">
+                                <cstring>lineAddressee</cstring>
+                            </property>
+                            <property name="readOnly">
+                                <bool>true</bool>
+                            </property>
+                        </widget>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>buttonChangeAddressee</cstring>
+                            </property>
+                            <property name="text">
+                                <string>C&amp;hange...</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>nicknameButtonGroup</cstring>
             </property>
             <property name="enabled">
                 <bool>false</bool>
@@ -35,92 +77,50 @@
             <property name="title">
                 <string>Nickname</string>
             </property>
-            <vbox>
+            <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLayoutWidget">
+                <widget class="QLayoutWidget" row="0" column="0">
                     <property name="name">
-                        <cstring>layout5</cstring>
+                        <cstring>layout12</cstring>
                     </property>
-                    <hbox>
+                    <vbox>
                         <property name="name">
                             <cstring>unnamed</cstring>
                         </property>
-                        <widget class="QLabel">
+                        <widget class="QRadioButton">
                             <property name="name">
-                                <cstring>textLabel1</cstring>
+                                <cstring>radioNicknameCustom</cstring>
                             </property>
                             <property name="text">
-                                <string>Nickname:</string>
+                                <string>Cu&amp;stom:</string>
                             </property>
                         </widget>
                         <widget class="QLineEdit">
                             <property name="name">
-                                <cstring>kcfg_GlobalIdentity_Nickname</cstring>
+                                <cstring>lineNickname</cstring>
                             </property>
                         </widget>
-                    </hbox>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>kcfg_GlobalIdentity_CheckAccountNick</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Synchronize my global &amp;nickname with the nickname of this account</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Use the name of the child contact</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>If you select this option, the displayname will be synchronized to the displayname of the child contact selected below.</string>
-                    </property>
-                </widget>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>layout18</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <spacer>
+                        <widget class="QRadioButton">
                             <property name="name">
-                                <cstring>spacer8</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Fixed</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>lblAccountName</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
+                                <cstring>radioNicknameKABC</cstring>
                             </property>
                             <property name="text">
-                                <string>Account:</string>
+                                <string>Use address boo&amp;k name (need address book link)</string>
                             </property>
-                            <property name="buddy" stdset="0">
-                                <cstring>cmbAccount</cstring>
+                        </widget>
+                        <widget class="QRadioButton">
+                            <property name="name">
+                                <cstring>radioNicknameContact</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Use &amp;nickname from contact for global nickname:</string>
                             </property>
                         </widget>
                         <widget class="QComboBox">
                             <property name="name">
-                                <cstring>kcfg_GlobalIdentity_AccountSelectedId</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
+                                <cstring>comboNameContact</cstring>
                             </property>
                             <property name="sizePolicy">
                                 <sizepolicy>
@@ -134,19 +134,19 @@
                                 <string>Contact to synchronize the displayname with.</string>
                             </property>
                         </widget>
-                    </hbox>
+                    </vbox>
                 </widget>
-            </vbox>
+            </grid>
         </widget>
-        <widget class="QGroupBox">
+        <widget class="QButtonGroup">
             <property name="name">
-                <cstring>groupBox2</cstring>
+                <cstring>photoButtonGroup</cstring>
             </property>
             <property name="enabled">
                 <bool>false</bool>
             </property>
             <property name="title">
-                <string>Display Picture</string>
+                <string>Photo</string>
             </property>
             <hbox>
                 <property name="name">
@@ -154,139 +154,113 @@
                 </property>
                 <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>layout17</cstring>
+                        <cstring>layout10</cstring>
                     </property>
                     <vbox>
                         <property name="name">
                             <cstring>unnamed</cstring>
                         </property>
-                        <widget class="QCheckBox">
+                        <widget class="QRadioButton">
                             <property name="name">
-                                <cstring>kcfg_GlobalIdentity_UseDisplayPicture</cstring>
+                                <cstring>radioPhotoCustom</cstring>
                             </property>
                             <property name="text">
-                                <string>E&amp;xport a display picture</string>
+                                <string>Cus&amp;tom:</string>
                             </property>
                         </widget>
-                        <widget class="QLabel">
+                        <widget class="KURLComboRequester">
                             <property name="name">
-                                <cstring>textLabel1_2</cstring>
+                                <cstring>comboPhotoURL</cstring>
                             </property>
-                            <property name="enabled">
-                                <bool>false</bool>
+                        </widget>
+                        <widget class="QRadioButton">
+                            <property name="name">
+                                <cstring>radioPhotoKABC</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Use a&amp;ddress book photo (needs address book link)</string>
+                            </property>
+                        </widget>
+                        <widget class="QRadioButton">
+                            <property name="name">
+                                <cstring>radioPhotoContact</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Use photo from contact for glo&amp;bal photo:</string>
+                            </property>
+                        </widget>
+                        <widget class="QComboBox">
+                            <property name="name">
+                                <cstring>comboPhotoContact</cstring>
                             </property>
                             <property name="sizePolicy">
                                 <sizepolicy>
-                                    <hsizetype>5</hsizetype>
-                                    <vsizetype>5</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="text">
-                                <string>Please select a square image. The image will be scaled.</string>
-                            </property>
-                            <property name="alignment">
-                                <set>WordBreak|AlignVCenter</set>
-                            </property>
-                        </widget>
-                        <widget class="QLayoutWidget">
-                            <property name="name">
-                                <cstring>layout13</cstring>
-                            </property>
-                            <hbox>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <widget class="QPushButton">
-                                    <property name="name">
-                                        <cstring>m_selectImage</cstring>
-                                    </property>
-                                    <property name="enabled">
-                                        <bool>false</bool>
-                                    </property>
-                                    <property name="text">
-                                        <string>Select &amp;Image...</string>
-                                    </property>
-                                </widget>
-                                <spacer>
-                                    <property name="name">
-                                        <cstring>spacer5</cstring>
-                                    </property>
-                                    <property name="orientation">
-                                        <enum>Horizontal</enum>
-                                    </property>
-                                    <property name="sizeType">
-                                        <enum>Expanding</enum>
-                                    </property>
-                                    <property name="sizeHint">
-                                        <size>
-                                            <width>61</width>
-                                            <height>21</height>
-                                        </size>
-                                    </property>
-                                </spacer>
-                            </hbox>
-                        </widget>
-                        <spacer>
-                            <property name="name">
-                                <cstring>spacer7_2_2</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Vertical</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Minimum</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>1</height>
-                                </size>
-                            </property>
-                        </spacer>
-                    </vbox>
-                </widget>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>layout16</cstring>
-                    </property>
-                    <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="spacing">
-                            <number>0</number>
-                        </property>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>m_displayPicture</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>0</hsizetype>
+                                    <hsizetype>7</hsizetype>
                                     <vsizetype>0</vsizetype>
                                     <horstretch>0</horstretch>
                                     <verstretch>0</verstretch>
                                 </sizepolicy>
                             </property>
+                        </widget>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>checkSyncPhotoKABC</cstring>
+                            </property>
+                            <property name="text">
+                                <string>S&amp;ync address book photo with global photo.</string>
+                            </property>
+                        </widget>
+                    </vbox>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout11</cstring>
+                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer6</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Vertical</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>20</width>
+                                    <height>36</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>labelPhoto</cstring>
+                            </property>
                             <property name="minimumSize">
                                 <size>
-                                    <width>96</width>
-                                    <height>96</height>
+                                    <width>64</width>
+                                    <height>92</height>
                                 </size>
                             </property>
                             <property name="maximumSize">
                                 <size>
-                                    <width>96</width>
-                                    <height>96</height>
+                                    <width>64</width>
+                                    <height>32767</height>
                                 </size>
                             </property>
                             <property name="frameShape">
-                                <enum>GroupBoxPanel</enum>
+                                <enum>Box</enum>
+                            </property>
+                            <property name="lineWidth">
+                                <number>1</number>
+                            </property>
+                            <property name="text">
+                                <string>Photo</string>
                             </property>
                             <property name="scaledContents">
                                 <bool>true</bool>
@@ -294,18 +268,18 @@
                         </widget>
                         <spacer>
                             <property name="name">
-                                <cstring>spacer7_2</cstring>
+                                <cstring>spacer7</cstring>
                             </property>
                             <property name="orientation">
                                 <enum>Vertical</enum>
                             </property>
                             <property name="sizeType">
-                                <enum>Minimum</enum>
+                                <enum>Expanding</enum>
                             </property>
                             <property name="sizeHint">
                                 <size>
                                     <width>20</width>
-                                    <height>1</height>
+                                    <height>40</height>
                                 </size>
                             </property>
                         </spacer>
@@ -326,7 +300,7 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>20</height>
+                    <height>30</height>
                 </size>
             </property>
         </spacer>
@@ -334,47 +308,29 @@
 </widget>
 <connections>
     <connection>
-        <sender>kcfg_GlobalIdentity_UseDisplayPicture</sender>
+        <sender>kcfg_EnableGlobalIdentity</sender>
         <signal>toggled(bool)</signal>
-        <receiver>m_displayPicture</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>kcfg_GlobalIdentity_UseDisplayPicture</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_selectImage</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>kcfg_GlobalIdentity_UseDisplayPicture</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>textLabel1_2</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>kcfg_GlobalIdentity_CheckAccountNick</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>lblAccountName</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>kcfg_GlobalIdentity_CheckAccountNick</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>kcfg_GlobalIdentity_AccountSelectedId</receiver>
+        <receiver>photoButtonGroup</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
         <sender>kcfg_EnableGlobalIdentity</sender>
         <signal>toggled(bool)</signal>
-        <receiver>groupBox2</receiver>
+        <receiver>kabcGroupBox</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
         <sender>kcfg_EnableGlobalIdentity</sender>
         <signal>toggled(bool)</signal>
-        <receiver>groupBox3</receiver>
+        <receiver>nicknameButtonGroup</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>klineedit.h</includehint>
+    <includehint>kurlrequester.h</includehint>
+    <includehint>kcombobox.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+</includehints>
 </UI>

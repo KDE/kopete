@@ -222,6 +222,42 @@ signals:
 	 */
 	void metaContactSelected(bool);
 
+	/**
+	 * This signal is emitted each time a global identity field change.
+	 *
+	 * <pre>
+	 * HOWTO use:
+	 * 1. Connect signal "globalIdentityChanged(const QString &key, const QVariant 
+	 *    &value) to a slot in your derivate Account class(the best 
+	 *    place to put it).
+	 * 2. In the slot:
+	 *	  -Check the key you want to be sync with global identity.
+	 *    -Update the myself contact and/or update on server.
+	 * </pre>
+	 *
+	 * Example of a typical implemented slot: 
+	 * <pre>
+	 * {
+	 *	connect(Kopete::ContactList::self(), SIGNAL(globalIdentityChanged(const QString&, const QVariant&)), SLOT(slotglobalIdentityChanged(const QString&, const QVariant&)));
+	 * }
+	 * 
+	 * void slotGlobalIdentityChanged(const QString &key, const QVariant &value)
+	 * {
+	 *	if(key == Kopete::Global::Properties::self()->nickName().key())
+	 *	{
+	 * 	    myself()->setProperty(protocol()->propNickname, value.toString());
+	 * 	    this->slotUpdateUserInfo();
+	 *	}
+	 *	else if(key == Kopete::Global::Properties::self()->photo().key())
+	 *	{
+	 * 	    myself()->setProperty(protocol()->propPhotoUrl, value.toString());
+	 * 	   this->slotUpdateDisplayPicture();
+	 *	}
+	 * }
+	 * </pre>
+	 */
+	void globalIdentityChanged( const QString &key, const QVariant &value );
+
 private slots:
 	/**
 	 * Called when the contact list changes. Flags the list dirty and schedules a save for a little while later.
@@ -231,6 +267,22 @@ private slots:
 	 * Called on contactlist load or when KABC has changed, to check if we need to update our contactlist from there.
 	 */
 	void slotKABCChanged();
+	
+	/**
+	  * Apply the global identity.
+	  */
+	void loadGlobalIdentity();
+
+	/**
+	 * Called when the myself displayName changed.
+	 */
+	void slotDisplayNameChanged();
+
+	/**
+	 * Called when the myself photo changed.
+	 */
+	void slotPhotoChanged();
+
 private:
 	
 	/**
@@ -248,7 +300,6 @@ private:
 	class Private;
 	Private *d;
 	
-
 public: //TODO I think all theses method should be moved to the decop interface.
 	/**
 	 * Return all meta contacts
@@ -317,15 +368,6 @@ public: //TODO I think all theses method should be moved to the decop interface.
 	 */
 	void messageContact( const QString &displayName, const QString &messageText = QString::null );
 
-	/**
-	  * Apply the global identity.
-	  */
-	void loadGlobalIdentity();
-
-	/**
-	  * Check if we need to apply the global identity, called in Contact::sync()
-	  */
-	bool checkGlobalIdentity();
 public slots:
 	/**
 	 * @internal

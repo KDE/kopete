@@ -71,6 +71,10 @@ MSNP2PDisplatcher::~MSNP2PDisplatcher()
 	delete it.data();*/
 }
 
+void MSNP2PDisplatcher::setPictureUrl( const QString &url )
+{
+	m_pictureUrl = url;
+}
 
 void MSNP2PDisplatcher::slotReadMessage( const QByteArray &msg )
 {
@@ -253,8 +257,7 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 			// If the msnobject is contained in the map, it's a custom emoticon.
 			//  Else, it's the display picture.
 			QString fname =  objectList.contains(msnobj)  ?
-					objectList[msnobj]  :
-					locateLocal( "appdata", "msnpicture-"+m_myHandle.lower().replace(QRegExp("[./~]"),"-")+".png" );
+					objectList[msnobj]  : m_pictureUrl;
 
 			//prepare to send the file
 			p2p->m_Sfile = new QFile( fname );

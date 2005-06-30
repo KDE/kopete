@@ -75,6 +75,16 @@ public:
 
 
 	/**
+	 * Return the picture url.
+	 */
+	QString pictureUrl();
+
+	/**
+	 * Set the picture url.
+	 */
+	void setPictureUrl(const QString &url);
+
+	/**
 	 * return the <msnobj> tag of the display picture
 	 */
 	QString pictureObject();
@@ -169,7 +179,10 @@ private slots:
 	 */
 	void createNotificationServer( const QString &host, uint port );
 
-
+	/**
+ 	 * When a global identity key get changed.
+	 */
+	void slotGlobalIdentityChanged( const QString &key, const QVariant &value );
 private:
 	MSNNotifySocket *m_notifySocket;
 	KAction *m_openInboxAction;
@@ -208,6 +221,7 @@ private:
 	QString m_awayReason;
 
 	QString m_pictureObj; //a cache of the <msnobj>
+	QString m_pictureFilename; // the picture filename.
 
 	//this is the translation between old to new groups id when syncing from server.
 	QMap<unsigned int, Kopete::Group*> m_oldGroupList;

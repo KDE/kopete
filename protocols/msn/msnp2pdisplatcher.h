@@ -53,6 +53,7 @@ signals:
 private:
 
 	QMap< unsigned long int, MSNP2P* > m_p2pList;
+	QString m_pictureUrl;
 
 
 private slots:
@@ -64,7 +65,7 @@ public slots:
 	/**
 	 * Load the dysplayImage.
 	 */
-	void requestDisplayPicture( const QString &myHandle, const QString &msgHandle, QString msnObject);
+	void requestDisplayPicture( const QString &myHandle, const QString &msgHandle, QString msnObject );
 
 	/**
 	 * Send the following image
@@ -86,6 +87,12 @@ public:
 	 */
 	 void sendFile(const QString& filename , unsigned int fileSize, const QString &myHandle, const QString &msgHandle);
 #endif
+	
+	/**
+	 * set the url of the display picture to be send.
+	 * @param url path of the display picture.
+ 	 */
+	void setPictureUrl(const QString &url);
 
 	/**
 	 * the key is the MSNObject xml, and the data is the filename

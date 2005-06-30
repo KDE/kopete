@@ -56,6 +56,9 @@ public:
 	MSNProtocol *protocol;
 	KAutoConfig *autoConfig;
 	MSNEditAccountUI *ui;
+
+	QString pictureUrl;
+	QImage pictureData;
 };
 
 MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account *account, QWidget *parent, const char * /* name */ )
@@ -125,8 +128,9 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 
 		d->ui->m_blp->setChecked( config->readEntry( "BLP" ) == "BL" );
 
-		d->ui->m_displayPicture->setPixmap( locateLocal( "appdata", "msnpicture-" +
-			account->accountId().lower().replace( QRegExp("[./~]" ), "-" ) + ".png" ) );
+		d->pictureUrl = locateLocal( "appdata", "msnpicture-" +
+			account->accountId().lower().replace( QRegExp("[./~]" ), "-" ) + ".png" );
+		d->ui->m_displayPicture->setPixmap( d->pictureUrl );
 
 		d->ui->m_useDisplayPicture->setChecked( config->readBoolEntry( "exportCustomPicture" ));
 	}
@@ -171,6 +175,19 @@ Kopete::Account * MSNEditAccountWidget::apply()
 		config->writeEntry( "serverPort", "1863" );
 	}
 
+	// Save the avatar image
+	d->pictureUrl = locateLocal( "appdata", "msnpicture-" +
+			account()->accountId().lower().replace( QRegExp("[./~]" ), "-" ) + ".png" );
+	if ( d->pictureData.save( d->pictureUrl, "PNG" ) )
+	{
+		static_cast<MSNAccount *>( account() )->setPictureUrl( d->pictureUrl );
+	}
+	else
+	{
+		KMessageBox::sorry( this, i18n( "<qt>An error occurred when trying to change the display picture.<br>"
+				"Make sure that you have selected a correct image file</qt>" ), i18n( "MSN Plugin" ) );
+	}
+	
 	static_cast<MSNAccount *>( account() )->resetPictureObject();
 
 	if ( account()->isConnected() )
@@ -257,11 +274,6 @@ void MSNEditAccountWidget::slotShowReverseList()
 
 void MSNEditAccountWidget::slotSelectImage()
 {
-	// FIXME: the change will take effect immediately, even if the user presses cancel - Olivier
-	// FIXME: since we need the accountId to create the file HERE (and it's the problem) we need the account - Olivier
-	if ( !account() )
-		return;
-
 	QString path = 0;
 	bool remoteFile = false;
 	KURL filePath = KFileDialog::getImageOpenURL( QString::null, this, i18n( "MSN Display Picture" ) );
@@ -277,8 +289,6 @@ void MSNEditAccountWidget::slotSelectImage()
 	}
 	else path = filePath.path();
 
-	QString futurName = locateLocal( "appdata", "msnpicture-" + account()->accountId().lower().replace( QRegExp( "[./~]" ), "-" ) + ".png" );
-
 	QImage img( path );
 
 	if(!img.isNull()) {
@@ -291,15 +301,9 @@ void MSNEditAccountWidget::slotSelectImage()
 			img = img.copy(0, (img.height()-img.width())/2, img.width(), img.width());
 		}
 
-		if ( img.save( futurName, "PNG" ) )
-		{
-			d->ui->m_displayPicture->setPixmap( futurName );
-		}
-		else
-		{
-			KMessageBox::sorry( this, i18n( "<qt>An error occurred when trying to change the display picture.<br>"
-				"Make sure that you have selected a correct image file</qt>" ), i18n( "MSN Plugin" ) );
-		}
+		QPixmap newAvatar(img);
+		d->ui->m_displayPicture->setPixmap( newAvatar );
+		d->pictureData = img.copy();
 	}
 	else
 	{

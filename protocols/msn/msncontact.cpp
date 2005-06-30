@@ -357,18 +357,6 @@ void MSNContact::clearServerGroups()
 
 void MSNContact::sync( unsigned int changed )
 {
-	// Apply the global identity if applicable
-	if(this == account()->myself())
-	{
-		 // Apply the global identity
-		if(Kopete::ContactList::self()->checkGlobalIdentity())
-		{
-			kdDebug( 14140 ) << k_funcinfo << "Applying Global Identity on a MSN account." << endl;
-			static_cast<MSNAccount*>(account())->setPublicName(metaContact()->displayName());
-		}
-		return;
-	}
-
 	if( !  (changed & Kopete::Contact::MovedBetweenGroup) )
 		return;  //we are only interested by a change in groups
 

@@ -96,6 +96,11 @@ public slots:
 	 */
 	void slotUserInfo ();
 
+	/**
+	 * Update the vCard on the server.
+	 */ 
+	void slotSendVCard();
+
 private slots:
 
 	/**
@@ -165,20 +170,9 @@ private slots:
 	void slotGotLastActivity ();
 
 	/**
-	 * Update the vCard on the server.
-	 */ 
-	void slotSendVCard();
-
-	/**
 	 * Display a error message if the vCard sent was unsuccesful.
 	 */
 	void slotSentVCard();
-
-	/**
-	 * Apply the global identity in the myself vCard.
-	 */ 
-	void slotApplyGlobalIdentity();
-
 private:
 
 	/**

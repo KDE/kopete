@@ -68,6 +68,8 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( groupRemoved( Kopete::Group * ) ),
 		SLOT( slotKopeteGroupRemoved( Kopete::Group * ) ) );
 
+	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged(const QString&, const QVariant& ) ), SLOT( slotGlobalIdentityChanged(const QString&, const QVariant& ) ));
+
 	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
 	m_changeDNAction = new KAction( i18n( "&Change Display Name..." ), QString::null, 0, this, SLOT( slotChangePublicName() ), this, "renameAction" );
 	m_startChatAction = new KAction( i18n( "&Start Chat..." ), "mail_generic", 0, this, SLOT( slotStartChat() ), this, "startChatAction" );
@@ -81,6 +83,10 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 	m_blockList   = config->readListEntry(  "blockList" ) ;
 	m_allowList   = config->readListEntry(  "allowList" ) ;
 	m_reverseList = config->readListEntry(  "reverseList"  ) ;
+
+	// Load the avatar
+	m_pictureFilename = locateLocal( "appdata", "msnpicture-"+ accountId().lower().replace(QRegExp("[./~]"),"-")  +".png"  );
+	resetPictureObject(true);
 
 	static_cast<MSNContact *>( myself() )->setInfo( "PHH", config->readEntry("PHH") );
 	static_cast<MSNContact *>( myself() )->setInfo( "PHM", config->readEntry("PHM") );
@@ -1062,6 +1068,26 @@ void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
 	}
 }
 
+void MSNAccount::slotGlobalIdentityChanged( const QString &key, const QVariant &value )
+{
+	if(key == Kopete::Global::Properties::self()->nickName().key())
+	{
+		QString oldNick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
+		QString newNick = value.toString();
+	
+		if(newNick != oldNick)
+		{
+			setPublicName(myself()->metaContact()->displayName());
+		}
+	}
+	else if(key == Kopete::Global::Properties::self()->photo().key())
+	{
+		m_pictureFilename = value.toString();
+		kdDebug( 14140 ) << k_funcinfo << m_pictureFilename << endl;
+		resetPictureObject(false);
+	}
+}
+
 bool MSNAccount::createContact( const QString &contactId, Kopete::MetaContact *metaContact )
 {
 	if ( !metaContact->isTemporary() && m_notifySocket)
@@ -1137,6 +1163,16 @@ bool MSNAccount::isHotmail() const
 	return m_openInboxAction->isEnabled();
 }
 
+QString MSNAccount::pictureUrl()
+{
+	return m_pictureFilename;
+}
+
+void MSNAccount::setPictureUrl(const QString &url)
+{
+	m_pictureFilename = url;	
+}
+
 QString MSNAccount::pictureObject()
 {
 	if(m_pictureObj.isNull())
@@ -1155,8 +1191,7 @@ void MSNAccount::resetPictureObject(bool silent)
 	}
 	else
 	{
-		QString fn=locateLocal( "appdata", "msnpicture-"+ accountId().lower().replace(QRegExp("[./~]"),"-")  +".png"  );
-		QFile pictFile( fn );
+		QFile pictFile( m_pictureFilename );
 		if(!pictFile.open(IO_ReadOnly))
 		{
 			m_pictureObj="";
@@ -1170,7 +1205,7 @@ void MSNAccount::resetPictureObject(bool silent)
 			QString size=QString::number( pictFile.size() );
 			QString all= "Creator"+accountId()+"Size"+size+"Type3Locationkopete.tmpFriendlyAAA=SHA1D"+ sha1d;
 			m_pictureObj="<msnobj Creator=\"" + accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\"kopete.tmp\" Friendly=\"AAA=\" SHA1D=\""+sha1d+"\" SHA1C=\""+ QString(KCodecs::base64Encode(SHA1::hashString(all.utf8())))  +"\"/>";
-			myself()->setProperty( Kopete::Global::Properties::self()->photo() ,  fn );
+			myself()->setProperty( Kopete::Global::Properties::self()->photo() , m_pictureFilename );
 		}
 	}
 

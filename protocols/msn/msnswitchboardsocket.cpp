@@ -767,7 +767,7 @@ void MSNSwitchBoardSocket::requestDisplayPicture()
 	if(!c)
 		return;
 
-	p2pDisplatcher()->requestDisplayPicture( m_myHandle, m_msgHandle, c->object());
+	p2pDisplatcher()->requestDisplayPicture( m_myHandle, m_msgHandle, c->object() );
 }
 
 void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString &msnObj )
@@ -920,6 +920,7 @@ MSNP2PDisplatcher *MSNSwitchBoardSocket::p2pDisplatcher()
 	if(!m_p2p)
 	{
 		m_p2p=new MSNP2PDisplatcher(this , "msnp2p protocol" );
+		m_p2p->setPictureUrl( m_account->pictureUrl() );
 		QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
 		QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
 						  this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));

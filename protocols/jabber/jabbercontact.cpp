@@ -940,21 +940,6 @@ void JabberContact::deleteContact ()
 
 void JabberContact::sync ( unsigned int )
 {
-	if ( this == account()->myself() && account()->isConnected() )
-	{
-		 // Apply the global identity
-		if( Kopete::ContactList::self()->checkGlobalIdentity() )
-		{
-			// request vCard
-			XMPP::JT_VCard *task = new XMPP::JT_VCard( account()->client()->rootTask () );
-			// Save the global identity in
-			QObject::connect(task, SIGNAL( finished () ), this, SLOT( slotApplyGlobalIdentity()) );
-			task->get(mRosterItem.jid ());
-			task->go (true);
-		}
-		return;
-	}
-
 	// if we are offline or this is a temporary contact or we should not synch, don't bother
 	if ( dontSync () || !account()->isConnected () || metaContact()->isTemporary () )
 		return;
@@ -977,31 +962,6 @@ void JabberContact::sync ( unsigned int )
 	rosterTask->set ( mRosterItem.jid (), metaContact()->displayName (), mRosterItem.groups () );
 	rosterTask->go (true);
 
-}
-
-void JabberContact::slotApplyGlobalIdentity()
-{
-	kdDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Applying Global Identity for Jabber" << endl;
-
-	XMPP::JT_VCard *task = (XMPP::JT_VCard *) sender();
-
-	if ( !task->success () )
-	{
-		// don't attempt to send a vCard if we couldn't retrieve it successfully
-		return;
-	}
-	
-	XMPP::VCard vCard = task->vcard ();
-	
-	vCard.setNickName ( metaContact()->displayName () );
-	
-	// Save the vCard on server.
-	task = new XMPP::JT_VCard ( account()->client()->rootTask() );
-	task->set ( vCard );
-	task->go ( true );
-
-	// Update the nickname property
-	setProperty ( protocol()->propNickName, metaContact()->displayName () );
 }
 
 void JabberContact::sendFile ( const KURL &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )

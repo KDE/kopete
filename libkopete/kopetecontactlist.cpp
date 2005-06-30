@@ -299,49 +299,65 @@ MetaContact* ContactList::myself()
 
 void ContactList::loadGlobalIdentity()
 {
-	QString globalNickname, accountSelected, protocolSelected;
-	bool useAccountNickname;
-	// Load the saved global identity
-	KConfig *configIdentity = KGlobal::config();
-	
-	d->useGlobalIdentity = Kopete::Config::enableGlobalIdentity();
-	useAccountNickname = Kopete::Config::globalIdentity_CheckAccountNick();
-	globalNickname = Kopete::Config::globalIdentity_Nickname();
-	accountSelected = Kopete::Config::globalIdentity_AccountSelected();
-	protocolSelected = Kopete::Config::globalIdentity_ProtocolSelected();
+	bool useGlobalIdentity;
 
-	// Apply the global identity
-	if(d->useGlobalIdentity)
-	{
-		if(useAccountNickname)
+	useGlobalIdentity = Kopete::Config::enableGlobalIdentity();
+ 
+ 	// Apply the global identity
+	if(useGlobalIdentity)
+ 	{
+		connect(myself(), SIGNAL(displayNameChanged(const QString&, const QString&)), this, SLOT(slotDisplayNameChanged()));
+		connect(myself(), SIGNAL(photoChanged()), this, SLOT(slotPhotoChanged()));
+
+		// Ensure that the myself metaContactId is always the KABC whoAmI
+		KABC::Addressee a = KABC::StdAddressBook::self()->whoAmI();
+		if(!a.isEmpty() && a.uid() != myself()->metaContactId())
 		{
-			Account *syncAccount = AccountManager::self()->findAccount(protocolSelected, accountSelected);
-			
-			if(syncAccount != 0)
-			{
-				// Set the display name source
-				myself()->setDisplayNameSource(Kopete::MetaContact::SourceContact);
-				myself()->setDisplayNameSourceContact(syncAccount->myself());
-				kdDebug(14010) << k_funcinfo << "Global Identity applied !" << endl;
-			}
+			myself()->setMetaContactId(a.uid());
 		}
-		// Only apply the new nickname if it's different
-		else if(myself()->displayName() != globalNickname)
-		{
-			kdDebug(14010) << k_funcinfo << "Global Identity applied !" << endl;	
-			myself()->setDisplayName(globalNickname);
-		}
-	}
+
+		// Apply the global identity
+		// Maybe one of the myself contact from a account has a different displayName/photo at startup.
+		slotDisplayNameChanged();
+		slotPhotoChanged();
+ 	}
 }
 
-bool ContactList::checkGlobalIdentity()
-{	
-	 //Check if the user choosed to use the global identity
-	if(d->useGlobalIdentity)
+void ContactList::slotDisplayNameChanged()
+{
+	kdDebug( 14010 ) << k_funcinfo << myself()->displayName() << endl;
+
+	emit globalIdentityChanged(Kopete::Global::Properties::self()->nickName().key(), myself()->displayName());
+}
+
+void ContactList::slotPhotoChanged()
+{
+	QString photoURL;
+	
+	MetaContact::PropertySource photoSource = myself()->photoSource();
+	
+	// Save the image to ~./kde/share/apps/kopete/global-photo.png if the source is not custom.
+	if(photoSource != MetaContact::SourceCustom)
 	{
-		return true;
+		QImage globalPhoto = myself()->photo().copy();
+
+		photoURL = "global-photo.png";
+		photoURL = locateLocal("appdata", photoURL);
+
+		if(!globalPhoto.save(photoURL, "PNG"))
+		{
+				kdDebug( 14010 ) << k_funcinfo << "Error while saving the global photo to file." << endl;
+				return;
+		}
 	}
-	return false;
+	else
+	{
+		photoURL = myself()->customPhoto().path();
+	}
+
+	kdDebug( 14010 ) << k_funcinfo << photoURL << endl;
+
+	emit globalIdentityChanged(Kopete::Global::Properties::self()->photo().key(), photoURL);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -428,6 +444,14 @@ void ContactList::loadXML()
 			else
 			{
 				Kopete::ContactList::self()->addGroup( group );
+			}
+		}
+		else if( element.tagName() == QString::fromLatin1("myself-meta-contact") )
+		{
+			if( !myself()->fromXML( element ) )
+			{
+				delete d->myself;
+				d->myself = 0;
 			}
 		}
 		else
@@ -874,6 +898,11 @@ const QDomDocument ContactList::toXML()
 	for( Kopete::MetaContact *m = d->contacts.first(); m; m = d->contacts.next() )
 		if( !m->isTemporary() )
 			doc.documentElement().appendChild( doc.importNode( m->toXML(), true ) );
+
+	// Save myself metacontact information
+	QDomElement myselfElement = myself()->toXML();
+	myselfElement.setTagName( QString::fromLatin1("myself-meta-contact") );
+	doc.documentElement().appendChild( doc.importNode( myselfElement, true ) );
 
 	return doc;
 }

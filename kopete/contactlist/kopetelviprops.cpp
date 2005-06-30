@@ -332,6 +332,10 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 	{
 		mainWidget->chkSyncPhoto->setEnabled(false);
 	}
+	else
+	{
+		mainWidget->chkSyncPhoto->setEnabled(true);
+	}
 
 	mainWidget->radioNameContact->setEnabled(item->metaContact()->contacts().count());
 	mainWidget->radioPhotoContact->setEnabled(!m_withPhotoContacts.isEmpty());
