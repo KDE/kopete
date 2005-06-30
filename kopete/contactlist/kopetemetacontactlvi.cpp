@@ -686,13 +686,12 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 	d->metaContactIcon = 0L;
 	d->contactIconSize = 12;
 	if (mode == KopetePrefs::Detailed) {
-            	d->photoSize = IconSize( KIcon::Toolbar );
-		d->iconSize = IconSize( KIcon::Toolbar );
+		d->iconSize =  KIcon::SizeMedium;
+		d->photoSize = KIcon::SizeLarge;
 	} else {
 		d->iconSize = IconSize( KIcon::Small );
-		d->photoSize = IconSize( KIcon::Small );
+		d->photoSize = KIcon::SizeMedium;
 	}
-
 	disconnect( Kopete::KABCPersistence::self()->addressBook() , 0 , this , 0);
 
 	// generate our contents
