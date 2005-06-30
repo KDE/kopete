@@ -85,7 +85,8 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	myself()->setProperty( Kopete::Global::Properties::self()->photo(), configGroup()->readEntry( "iconLocalUrl", "" ) );
 	myself()->setProperty( YahooProtocol::protocol()->iconCheckSum, configGroup()->readNumEntry( "iconCheckSum", 0 ) );
 	myself()->setProperty( YahooProtocol::protocol()->iconExpire, configGroup()->readNumEntry( "iconExpire", 0 ) );
-
+	
+	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged(const QString&, const QVariant& ) ), SLOT( slotGlobalIdentityChanged(const QString&, const QVariant& ) ));
 
 	QString displayName = configGroup()->readEntry(QString::fromLatin1("displayName"));
 	if(!displayName.isEmpty())
@@ -577,6 +578,13 @@ bool YahooAccount::createContact(const QString &contactId, Kopete::MetaContact *
 	return false;
 }
 
+void YahooAccount::slotGlobalIdentityChanged( const QString &key, const QVariant &value )
+{
+	if ( key == Kopete::Global::Properties::self()->photo().key() )
+	{
+		setBuddyIcon( KURL( value.toString() ) );
+	}
+}
 
 /***************************************************************************
  *                                                                         *

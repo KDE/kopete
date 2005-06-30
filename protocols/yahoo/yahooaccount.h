@@ -205,6 +205,10 @@ private slots:
 	void slotGoStatus099() { theAwayDialog->show(99); } // Custom
 	void slotGoStatus999() { slotGoStatus(999); } // Idle
 
+	/**
+	 * When a global identity key get changed.
+	 */
+	void slotGlobalIdentityChanged( const QString &key, const QVariant &value );
 private:
 
 	/**
