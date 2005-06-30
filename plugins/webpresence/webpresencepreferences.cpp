@@ -28,19 +28,19 @@ typedef KGenericFactory<WebPresencePreferences> WebPresencePreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_webpresence, WebPresencePreferencesFactory("kcm_kopete_webpresence"))
 
 WebPresencePreferences::WebPresencePreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
-							: KCModule(WebPresencePreferencesFactory::instance(), parent, args)
+		: KCModule(WebPresencePreferencesFactory::instance(), parent, args)
 {
 	// Add actuall widget generated from ui file.
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	preferencesDialog = new WebPresencePrefsUI(this);
 	preferencesDialog->uploadURL->setMode( KFile::File );
-    preferencesDialog->formatStylesheetURL->setFilter( "*.xsl" );
+	preferencesDialog->formatStylesheetURL->setFilter( "*.xsl" );
 
 	// KAutoConfig stuff
 	kautoconfig = new KAutoConfig(KGlobal::config(), this, "kautoconfig");
 	connect(kautoconfig, SIGNAL(widgetModified()), SLOT(widgetModified()));
 	connect(kautoconfig, SIGNAL(settingsChanged()), SLOT(widgetModified()));
-    kautoconfig->addWidget(preferencesDialog, "Web Presence Plugin");
+	kautoconfig->addWidget(preferencesDialog, "Web Presence Plugin");
 	kautoconfig->retrieveSettings(true);
 }
 
