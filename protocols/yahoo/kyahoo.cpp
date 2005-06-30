@@ -1032,13 +1032,25 @@ void upload_buddyIcon_callback( int id, int fd, int error, void *data )
     *************************************************************************
 */
 
-void YahooSession::_uploadBuddyIconReceiver( int /*id*/, int fd, int /*error*/, void *data )
+void YahooSession::_uploadBuddyIconReceiver( int /*id*/, int fd, int error, void *data )
 {
 	YahooBuddyIconUploadData *uploadData = reinterpret_cast< YahooBuddyIconUploadData *>( data );
 	kdDebug(14181) << k_funcinfo << "Url: " << uploadData->url << " Size: " << uploadData->size << endl;
 
-	if( !uploadData->file.open(IO_ReadOnly) )
+	if ( error )
+	{
+		kdDebug(14180) << "Could not upload buddy icon. Error: " << error << endl;
+		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n( "An unknown error occurred when trying to upload the buddy icon."
+			" Your buddy con was not transferred." ), i18n("Error") );
 		return;
+	}
+	
+	if ( !uploadData->file.open(IO_ReadOnly) )
+	{
+		kdDebug(14180) << "Could not open local buddy icon file!" << endl;
+		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n( "Could not open local buddy icon file!" ), i18n("Error") );
+		return;
+	}
 	
 	slotTransmitBuddyIcon( fd, uploadData );
 }
