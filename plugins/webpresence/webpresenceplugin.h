@@ -52,13 +52,6 @@ private:
 	// Is set to true when Kopete has notified us
 	// that we're about to be unloaded.
 	bool shuttingDown;
-		
-	struct ProtoContactStatus
-	{
-		const char *name;
-		const char *id;
-		Kopete::OnlineStatus status;
-	};
 
 public:
 	WebPresencePlugin( QObject *parent, const char *name, const QStringList &args );
