@@ -39,7 +39,7 @@ class IRCContactManager;
  * @author Jason Keirstead <jason@keirstead.org>
  *
  * This class is the @ref Kopete::Contact object representing IRC Channels, not users.
- * It is derrived from IRCContact where much of its functionality is shared with @ref IRCUserContact.
+ * It is derived from IRCContact where much of its functionality is shared with @ref IRCUserContact.
  */
 class IRCChannelContact
 	: public IRCContact
