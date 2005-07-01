@@ -289,7 +289,7 @@ KNotification *KNotification::event( const QString& message , const QString& tex
 {
 	/* NOTE:  this function still use the KNotifyClient,
 	 *        in the future (KDE4) all the function of the knotifyclient will be moved there.
-	 *  Some code of this function fome from the old KNotify deamon
+	 *  Some code here is derrived from the old KNotify deamon
 	 */
 
 	int level=KNotifyClient::Default;
