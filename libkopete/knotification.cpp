@@ -288,7 +288,7 @@ KNotification *KNotification::event( const QString& message , const QString& tex
 			const QStringList &actions, unsigned int flags)
 {
 	/* NOTE:  this function still use the KNotifyClient,
-	 *        in the futur (KDE4) all the function of the knotifyclient will be moved there.
+	 *        in the future (KDE4) all the function of the knotifyclient will be moved there.
 	 *  Some code of this function fome from the old KNotify deamon
 	 */
 
