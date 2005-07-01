@@ -552,6 +552,12 @@ private slots:
 	 * If a plugin is loaded, maybe data about this plugin are already cached in the metacontact
 	 */
 	void slotPluginLoaded( Kopete::Plugin *plugin );
+
+	/**
+	 * When all the plugins are loaded, set the Contact Source.
+	 */
+	void slotAllPluginsLoaded();
+
 protected:
 	//QImage photoFromContact( Kopete::Contact *c) const;
 	//QImage photoFromKABC( const QString &id ) const;

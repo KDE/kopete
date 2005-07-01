@@ -83,6 +83,10 @@ class  MetaContact::Private
 	
 	OnlineStatus::StatusType onlineStatus;
 	bool photoSyncedWithKABC;
+
+	// Used to set contact source at load.
+	QString nameSourcePID, nameSourceAID, nameSourceCID;
+	QString photoSourcePID, photoSourceAID, photoSourceCID;
 };
 
 MetaContact::MetaContact()
@@ -597,7 +601,9 @@ QString MetaContact::displayName() const
 	else if ( source == SourceContact )
 	{
 		if ( displayNameSourceContact() != 0L )
+		{
 			return nameFromContact(displayNameSourceContact());
+		}
 	}
 	return d->displayName;
 }
@@ -973,8 +979,8 @@ bool MetaContact::fromXML( const QDomElement& element )
 	bool oldPhotoTracking = false;
 	bool oldNameTracking = false;
 	// temporal
-	QString nameSourceCID, nameSourcePID, nameSourceAID;
-	QString photoSourceCID, photoSourcePID, photoSourceAID;
+	//QString nameSourceCID, nameSourcePID, nameSourceAID;
+	//QString photoSourceCID, photoSourcePID, photoSourceAID;
 
 	QString strContactId = element.attribute( QString::fromLatin1("contactId") );
 	if( !strContactId.isEmpty() )
@@ -998,9 +1004,9 @@ bool MetaContact::fromXML( const QDomElement& element )
 				kdDebug(14010) << k_funcinfo << "old name tracking" << endl;
 				// retrieve deprecated data (now stored in property-sources)
 				// save temporarely, we will find a Contact* with this later
-				nameSourceCID = contactElement.attribute( NSCID_ELEM );
-				nameSourcePID = contactElement.attribute( NSPID_ELEM );
-				nameSourceAID = contactElement.attribute( NSAID_ELEM );
+				d->nameSourceCID = contactElement.attribute( NSCID_ELEM );
+				d->nameSourcePID = contactElement.attribute( NSPID_ELEM );
+				d->nameSourceAID = contactElement.attribute( NSAID_ELEM );
 			}
 			else
 				kdDebug(14010) << k_funcinfo << "no old name tracking" << endl;
@@ -1016,9 +1022,9 @@ bool MetaContact::fromXML( const QDomElement& element )
 			{
 				oldPhotoTracking = true;
 				kdDebug(14010) << k_funcinfo << "old photo tracking" << endl;
-				photoSourceCID = contactElement.attribute( PSCID_ELEM );
-				photoSourcePID = contactElement.attribute( PSPID_ELEM );
-				photoSourceAID = contactElement.attribute( PSAID_ELEM );
+				d->photoSourceCID = contactElement.attribute( PSCID_ELEM );
+				d->photoSourcePID = contactElement.attribute( PSPID_ELEM );
+				d->photoSourceAID = contactElement.attribute( PSAID_ELEM );
 			}
 			else
 				kdDebug(14010) << k_funcinfo << "no old photo tracking" << endl;
@@ -1041,9 +1047,9 @@ bool MetaContact::fromXML( const QDomElement& element )
 						QDomElement propertyParamElement = propertyParam.toElement();
 						if( propertyParamElement.tagName() == QString::fromLatin1( "contact-source" ) )
 						{
-							nameSourceCID = propertyParamElement.attribute( NSCID_ELEM );
-							nameSourcePID = propertyParamElement.attribute( NSPID_ELEM );
-							nameSourceAID = propertyParamElement.attribute( NSAID_ELEM );
+							d->nameSourceCID = propertyParamElement.attribute( NSCID_ELEM );
+							d->nameSourcePID = propertyParamElement.attribute( NSPID_ELEM );
+							d->nameSourceAID = propertyParamElement.attribute( NSAID_ELEM );
 						}
 						propertyParam = propertyParam.nextSibling();
 					}
@@ -1059,9 +1065,9 @@ bool MetaContact::fromXML( const QDomElement& element )
 						QDomElement propertyParamElement = propertyParam.toElement();
 						if( propertyParamElement.tagName() == QString::fromLatin1( "contact-source" ) )
 						{
-							photoSourceCID = propertyParamElement.attribute( NSCID_ELEM );
-							photoSourcePID = propertyParamElement.attribute( NSPID_ELEM );
-							photoSourceAID = propertyParamElement.attribute( NSAID_ELEM );
+							d->photoSourceCID = propertyParamElement.attribute( NSCID_ELEM );
+							d->photoSourcePID = propertyParamElement.attribute( NSPID_ELEM );
+							d->photoSourceAID = propertyParamElement.attribute( NSAID_ELEM );
 						}
 						propertyParam = propertyParam.nextSibling();
 					}
@@ -1108,10 +1114,6 @@ bool MetaContact::fromXML( const QDomElement& element )
 		contactElement = contactElement.nextSibling().toElement();
 	}
 
-	// now the subcontacts are loaded, set the name and photo sources.
-	setDisplayNameSourceContact( findContact( nameSourcePID, nameSourceAID, nameSourceCID) ); 
-	setPhotoSourceContact( findContact( photoSourcePID, photoSourceAID, photoSourceCID) );
-
 	if( oldNameTracking )
 	{
 		if ( displayNameSourceContact() )
@@ -1150,6 +1152,9 @@ bool MetaContact::fromXML( const QDomElement& element )
 	// If a plugin is loaded, load data cached
 	connect( Kopete::PluginManager::self(), SIGNAL( pluginLoaded(Kopete::Plugin*) ),
 		this, SLOT( slotPluginLoaded(Kopete::Plugin*) ) );
+	// When all plugins are loaded, set the source contact.
+	connect( Kopete::PluginManager::self(), SIGNAL( allPluginsLoaded() ), 
+		this, SLOT( slotAllPluginsLoaded() ) );
 
 	// track changes only works if ONE Contact is inside the MetaContact
 //	if (d->contacts.count() > 1) // Does NOT work as intended
@@ -1203,6 +1208,13 @@ void MetaContact::slotPluginLoaded( Plugin *p )
 	{
 		p->deserialize(this,map);
 	}
+}
+
+void MetaContact::slotAllPluginsLoaded()
+{
+	// Now that the plugins and subcontacts are loaded, set the source contact.
+	setDisplayNameSourceContact( findContact( d->nameSourcePID, d->nameSourceAID, d->nameSourceCID) ); 
+	setPhotoSourceContact( findContact( d->photoSourcePID, d->photoSourceAID, d->photoSourceCID) );
 }
 
 bool MetaContact::isTemporary() const
