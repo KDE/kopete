@@ -1282,10 +1282,9 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 	d->photoSyncedWithKABC=b;
 	if(b)
 	{
-		PropertySource selectedPhotoSource = photoSource();
 		QVariant newValue;
 		
-		switch( selectedPhotoSource )
+		switch( photoSource() )
 		{
 			case SourceContact:
 			{
@@ -1318,7 +1317,18 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 					img=newValue.toPixmap().convertToImage();
 
 				if(img.isNull())
-					theAddressee.setPhoto(newValue.toString());
+				{
+					// Some protocols like MSN save the photo as a url in
+					// contact properties, we should not use this url
+					// to sync with kabc but try first to embed the
+					// photo data in the kabc addressee, because it could
+					// be remote resource and the local url makes no sense
+					QImage fallBackImage = QImage(newValue.toString());
+					if(fallBackImage.isNull())
+						theAddressee.setPhoto(newValue.toString());
+					else
+						theAddressee.setPhoto(fallBackImage);
+				}
 				else
 					theAddressee.setPhoto(img);
 
