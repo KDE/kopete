@@ -715,6 +715,7 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 	 
 	if( mode == KopetePrefs::Detailed )
 	{
+		d->contactIconSize = IconSize( KIcon::Small );
 		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
 		d->nameText = new DisplayNameComponent( vbox );
 		d->extraText = new DisplayNameComponent( vbox );
