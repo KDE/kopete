@@ -144,6 +144,17 @@ k_dcop:
 	 */
 	void setAutoAway();
 
+	/**
+	 * set the global nickname if global identity is enabled.
+	 * @param nickname the new global nickname
+	 */
+	void setGlobalNickname( const QString &nickname );
+
+	/**
+	 * set the global photo if global identity is enabled.
+	 * @param photoUrl URL to the photo
+	 */
+	void setGlobalPhoto( const KURL &photoUrl );
 };
 
 #endif
