@@ -82,7 +82,7 @@
                 </sizepolicy>
             </property>
             <property name="text">
-                <string>&lt;a href="http://www.jabber.org/user/publicservers.php"&gt;Details about free public Jabber servers&lt;/a&gt;</string>
+                <string>&lt;a href="http://www.jabber.org/network/"&gt;Details about free public Jabber servers&lt;/a&gt;</string>
             </property>
         </widget>
         <widget class="QLabel" row="1" column="0">
