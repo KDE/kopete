@@ -24,6 +24,11 @@
 #include "kopeteonlinestatus.h"
 #include "addcontactpage.h"
 
+#include <kdebug.h>
+#define MEANWHILE_DEBUG 14200
+#define HERE kdDebug(MEANWHILE_DEBUG) << k_funcinfo << endl
+#define mwDebug() kdDebug(MEANWHILE_DEBUG)
+
 class MeanwhileAccount;
 class MeanwhileEditAccountWidget;
 class MeanwhileAddContactPage;
@@ -50,11 +55,12 @@ public:
     virtual Kopete::Account * createNewAccount( 
                                     const QString &accountId );                               
 
-    virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
-                     const QMap<QString,QString> &serializedData,
-                     const QMap<QString, QString> &addressBookData );
+    virtual Kopete::Contact *deserializeContact(
+                Kopete::MetaContact *metaContact,
+                const QMap<QString,QString> &serializedData,
+                const QMap<QString, QString> &addressBookData );
 
-/* kopete doesnt know about these funcs */
+    /* kopete doesnt know about these funcs */
     static MeanwhileProtocol *protocol();
 
     const Kopete::OnlineStatus meanwhileOffline;
@@ -68,7 +74,7 @@ public:
     const Kopete::ContactPropertyTmpl awayMessage;
 
 protected:
-	static MeanwhileProtocol *s_protocol;
+    static MeanwhileProtocol *s_protocol;
 };
 
 #endif

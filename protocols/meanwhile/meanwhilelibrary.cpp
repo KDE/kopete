@@ -2,6 +2,7 @@
     meanwhilelibrary.cpp - interface to the 'C' meanwhile library
 
     Copyright (c) 2003-2004 by Sivaram Gottimukkala  <suppandi@gmail.com>
+    Copyright (c) 2005      by Jeremy Kerr <jk@ozlabs.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
@@ -19,436 +20,550 @@
 #include <stdlib.h>
 #include <kmessagebox.h>
 #include <klocale.h>
-#include <kdebug.h>
 
-#define MEANWHILELIBRARY_CPP
-
+#include <kopetepassword.h>
 #include "meanwhilelibrary.h"
 #include "meanwhileprotocol.h"
-#include "meanwhileserver.h"
-#include "meanwhilecontact.h"
-
-#define MEANWHILE_DEBUG 14200
-#define HERE kdDebug( 14200 ) << k_funcinfo << endl;
 
 extern "C"
 {
-#include <meanwhile/channel.h>
-#include <meanwhile/message.h>
-#include <meanwhile/error.h>
-#include <meanwhile/service.h>
-#include <meanwhile/session.h>
-#include <meanwhile/srvc_aware.h>
-#include <meanwhile/srvc_conf.h>
-#include <meanwhile/srvc_im.h>
-
+#include <meanwhile/mw_channel.h>
+#include <meanwhile/mw_message.h>
+#include <meanwhile/mw_error.h>
+#include <meanwhile/mw_service.h>
+#include <meanwhile/mw_session.h>
+#include <meanwhile/mw_srvc_aware.h>
+#include <meanwhile/mw_srvc_conf.h>
+#include <meanwhile/mw_srvc_im.h>
+#include <meanwhile/mw_cipher.h>
 }
 
 #define ADVERTISE_KOPETE(s) (s+" *using kopete")
-void prettyprint(const char *buffer,int c)
+
+/* for these macros:
+ *  func - the name of the function
+ *  args - the full arguments (including type) of the member (and static)
+ *         function. Must be enclosed in brackets. The first argument will be
+ *         used to get a reference to the library - it must be named as per
+ *         the last word of the macro name (but in lower case)
+ *  call - the arguments to the call to the non-static function. This is the
+ *         same as 'args', but without the type delcarations
+ */
+ 
+#define MEANWHILE_HOOK_SESSION(func, args, call)                     \
+void MeanwhileLibrary::_ ## func args                                \
+{                                                                    \
+    MeanwhileLibrary *lib = (MeanwhileLibrary *)                     \
+        mwSession_getClientData(session);                            \
+    if (lib)                                                         \
+        lib-> func call;                                             \
+    else                                                             \
+        mwDebug() << "No client data for session in " #func << endl; \
+}                                                                    \
+void MeanwhileLibrary:: func args 
+
+#define MEANWHILE_HOOK_SERVICE(func, args, call)                     \
+void MeanwhileLibrary::_ ## func args                                \
+{                                                                    \
+    MeanwhileLibrary *lib = (MeanwhileLibrary *)                     \
+        mwService_getClientData((struct mwService *)service);        \
+    if (lib)                                                         \
+        lib-> func call;                                             \
+    else                                                             \
+        mwDebug() << "No client data for service in " #func << endl; \
+}                                                                    \
+void MeanwhileLibrary:: func args 
+
+#define MEANWHILE_HOOK_CONVERSATION(func, args, call)                \
+void MeanwhileLibrary::_ ## func args                                \
+{                                                                    \
+    struct mwService *service = (struct mwService *)                 \
+        mwConversation_getService(conv);                             \
+    MeanwhileLibrary *lib = (MeanwhileLibrary *)                     \
+        mwService_getClientData(service);                            \
+    if (lib)                                                         \
+        lib-> func call;                                             \
+    else                                                             \
+        mwDebug() << "No client data for conv. in " #func << endl;   \
+}                                                                    \
+void MeanwhileLibrary:: func args 
+
+void MeanwhileLibrary::_stateChange(struct mwSession *session,
+        enum mwSessionState state, guint32 data)
 {
-    int i,j;
-    i=j=0;
-    while(i<c)
-    {
-        printf("%.2hhx",*(buffer+i));
-        i++;
-        if (i%30 == 0)
-        {
-            printf(" ");
-            for(;i!=j;j++)
-                printf("%c",(*(buffer+j)<32)?'.':*(buffer+j));
-            printf("\n");
-        }
+    HERE;
+    MeanwhileLibrary *lib =
+        (MeanwhileLibrary *)mwSession_getClientData(session);
+
+    if (lib == 0L) {
+        mwDebug() << "Invalid handler in stateChange callback"
+            << endl;
+        return;
     }
-    printf(" ");
-    for(;i!=j;j++)
-        printf("%c",(*(buffer+j)==0)?'.':*(buffer+j));
-    printf("\n");
+
+    switch (state) {
+        case mwSession_LOGIN_ACK:
+            lib->session_loginAck(session);
+            break;
+
+        case mwSession_STOPPED:
+            lib->session_stop(session, data);
+            break;
+
+        default:
+            mwDebug() << "Unhandled state change " << state << endl;
+    }
+
 }
 
-struct kopete_handler
+void MeanwhileLibrary::_handler_clear(struct mwSession *)
 {
-    struct mwSessionHandler public_data;
-    struct 
-    {
-        MeanwhileLibrary *library;
-    } private_data;
-};
-
-int MeanwhileLibrary::Away = mwStatus_AWAY;
-int MeanwhileLibrary::Active = mwStatus_ACTIVE;
-int MeanwhileLibrary::Idle = mwStatus_IDLE;
-int MeanwhileLibrary::Busy = mwStatus_BUSY;
-
-#define REMOVE_UNUSED_VAR_WARNING(x) x=NULL
-#define NOT_IMPLEMENTED NULL
-
-#define MEANWHILE_HOOK(func,call)                       \
-void MeanwhileLibrary::_ ## func                        \
-{                                                       \
-    MeanwhileLibrary *lib =                             \
-	((struct kopete_handler *)s->handler)->         \
-		private_data.library;                   \
-    lib-> call;                                         \
-}                                                       \
-                                                        \
-void MeanwhileLibrary:: func 
-
-#define MEANWHILE_HOOK_SVC(func,call)                   \
-void MeanwhileLibrary::_ ## func                        \
-{                                                       \
-    struct mwSession *s =                               \
-	((struct mwService*)srvc)->session;             \
-    MeanwhileLibrary *lib =                             \
-	((struct kopete_handler *)s->handler)->         \
-		private_data.library;                   \
-    lib-> call;                                         \
-}                                                       \
-                                                        \
-void MeanwhileLibrary:: func 
-
-#define MEANWHILE_HOOK_CONF(func,call)                  \
-void MeanwhileLibrary::_ ## func                        \
-{                                                       \
-    struct mwSession *s =                               \
-	((struct mwService*)conf->srvc)->session;       \
-    MeanwhileLibrary *lib =                             \
-	((struct kopete_handler *)s->handler)->         \
-		private_data.library;                   \
-    lib-> call;                                         \
-}                                                       \
-                                                        \
-void MeanwhileLibrary:: func 
-
-MEANWHILE_HOOK(on_start(struct mwSession *s),
-               on_start(s))
-{
-HERE
-    onStart_sendHandshake(s);
+    HERE;
 }
 
-
-MEANWHILE_HOOK(on_loginAck(
-                    struct mwSession *s, 
-                    struct mwMsgLoginAck *msg) ,
-               on_loginAck(s,msg))
-
+void MeanwhileLibrary::session_loginAck(struct mwSession *s)
 {
-HERE
-    REMOVE_UNUSED_VAR_WARNING(msg);
-    
-    mwService_start(MW_SERVICE(srvc_aware));
-
-    struct mwUserStatus stat = { mwStatus_ACTIVE, 0, NULL };
-    emit loginDone();
+    HERE;
+    connected = true;
+    struct mwUserStatus stat = { mwStatus_ACTIVE, 0, 0L };
     mwSession_setUserStatus(s, &stat);
+
+    /* get own nickname */
+    struct mwLoginInfo *logininfo = mwSession_getLoginInfo(s);
+    if (logininfo) {
+        mwDebug() << "got login info. username: " << logininfo->user_name <<
+            ", nickname: " << getNickName(logininfo) << endl;
+        account->myself()->setNickName(getNickName(logininfo));
+    } else
+        mwDebug() << "no login info" << endl;
+
+    emit loginDone();
 }
 
-MEANWHILE_HOOK(on_stop(
-                    struct mwSession *s,
-                    guint32 reason) ,
-               on_stop(s,reason))
+void MeanwhileLibrary::session_stop(struct mwSession *, unsigned int status)
 {
-HERE
-    REMOVE_UNUSED_VAR_WARNING(s);
-
-    kdDebug( 14200 ) << "close: " << mwError(reason) << endl;
-    if (reason & ERR_FAILURE)
-    {
-        emit serverNotificationReceived(QString(mwError(reason)));
+    HERE;
+    connected = false;
+    if (status & ERR_FAILURE) {
+        if (status == INCORRECT_LOGIN)
+            account->password().setWrong();
+        char *reason = mwError(status);
+        emit serverNotification(QString(reason));
+        free(reason);
     }
 
+    emit connectionLost();
 }
 
-MEANWHILE_HOOK(on_setUserStatus(
-                    struct mwSession *s,
-                    struct mwMsgSetUserStatus *msg) ,
-               on_setUserStatus(s,msg))
+/* aware attribute handlers */
+void MeanwhileLibrary::_on_attrib(struct mwServiceAware *,
+        struct mwAwareAttribute *)
 {
-HERE
-    kdDebug( 14200 ) << "meanwhile status for " << ((s->login.user_id==NULL)?"null":s->login.user_id) << " changed to " << (msg->status.status) << endl;
-        struct mwAwareIdBlock id = 
-                { 
-                    mwAware_USER,
-                    s->login.user_id, 
-                    s->login.community 
-                };
-
-        mwServiceAware_setStatus(srvc_aware, &id, &msg->status);
+    HERE;
+}
+void MeanwhileLibrary::_attrib_clear(struct mwServiceAware *)
+{
+    HERE;
 }
 
-MEANWHILE_HOOK_SVC(got_aware(
-                    struct mwAwareList *list, 
-                    struct mwSnapshotAwareIdBlock *idb, 
-                    struct mwService *srvc),
-                got_aware(list,idb,srvc))
+/* aware list handlers */
+void MeanwhileLibrary::_on_aware(struct mwAwareList *list,
+        struct mwAwareSnapshot *id)
 {
-HERE
-    REMOVE_UNUSED_VAR_WARNING(list);
-    REMOVE_UNUSED_VAR_WARNING(srvc);
+    HERE;
+    MeanwhileLibrary *lib = (MeanwhileLibrary *)
+        mwAwareList_getClientData(list);
+    if (lib)
+        lib->on_aware(list, id);
+}
 
-    time_t idletime;
-    idletime = 0; 
-    if (idb->status.status == mwStatus_IDLE)
-    	idletime = (idb->status.time == 0xdeadbeef)?
-                            0:idb->status.time;
+#define STATUS(VALUE,onlinestatus)                        \
+    (snapshot->status.status==MeanwhileLibrary::VALUE)?                    \
+            MeanwhileProtocol::protocol()->onlinestatus:
+void MeanwhileLibrary::on_aware(struct mwAwareList *,
+        struct mwAwareSnapshot *snapshot)
+{
+    HERE;
+    MeanwhileContact *contact = static_cast<MeanwhileContact *>
+        (account->contacts()[snapshot->id.user]);
+
+    if (!contact)
+        return;
     
-    emit userStatusChanged(QString(idb->id.user),
-                        idb->online,
-                        idletime,
-                        idb->status.status,
-                        QString(idb->status.desc));
-}
+    contact->setProperty(MeanwhileProtocol::protocol()->statusMessage, 
+            snapshot->status.desc);
+    contact->setProperty(MeanwhileProtocol::protocol()->awayMessage,
+            snapshot->status.desc);
 
-MEANWHILE_HOOK_SVC(got_error(
-                    struct mwServiceIM *srvc, 
-                    struct mwIdBlock *who, 
-                    unsigned int err) ,
-               got_error(srvc,who,err))
-{
-HERE
-    REMOVE_UNUSED_VAR_WARNING(srvc);
-
-    emit mesgSendError(QString(who->user),QString(mwError(err)));
-}
-
-MEANWHILE_HOOK_SVC(got_text(
-                    struct mwServiceIM *srvc, 
-                    struct mwIdBlock *who, 
-                    const char *text) ,
-               got_text(srvc,who,text))
-{
-HERE
-    REMOVE_UNUSED_VAR_WARNING(srvc);
-
-    emit mesgReceived(QString(who->user),QString(text));
-}
-
-MEANWHILE_HOOK_SVC(got_typing(
-                    struct mwServiceIM *srvc, 
-                    struct mwIdBlock *who, 
-                    int typing) ,
-               got_typing(srvc,who,typing))
-{
-HERE
-    REMOVE_UNUSED_VAR_WARNING(srvc);
-
-    emit userTyping(QString(who->user),(typing!=0));
-}
-
-MEANWHILE_HOOK_CONF(got_invite(
-                    struct mwConference *conf,
-                    struct mwIdBlock *id,
-                    const char *text) ,
-               got_invite(conf,id,text))
-{
-HERE
-    emit invitedToConf(conf,
-                QString(id->user),
-                QString(conf->name),
-                QString(conf->topic),
-                QString(text));
-}
-
-MEANWHILE_HOOK_CONF(got_welcome(
-                    struct mwConference *conf,
-                    struct mwIdBlock *members,
-                    gsize count) ,
-               got_welcome(conf,members,count))
-{
-HERE
-    QString *chatMembers = new QString[count];
-    unsigned int i;
-    for(i=0;i<count;i++,members++)
-    {
-        chatMembers[i] = QString(members->user);
+    Kopete::OnlineStatus status;
+    if (snapshot->online) {
+        switch (snapshot->status.status) {
+        case MeanwhileLibrary::Away:
+            status = MeanwhileProtocol::protocol()->meanwhileAway;
+            break;
+        case MeanwhileLibrary::Active:
+            status = MeanwhileProtocol::protocol()->meanwhileOnline;
+            break;
+        case MeanwhileLibrary::Idle:
+            status = MeanwhileProtocol::protocol()->meanwhileIdle;
+            break;
+        case MeanwhileLibrary::Busy:
+            status = MeanwhileProtocol::protocol()->meanwhileBusy;
+            break;
+        default:
+            status = MeanwhileProtocol::protocol()->meanwhileUnknown;
+        }
+    } else {
+        status = MeanwhileProtocol::protocol()->meanwhileOffline;
     }
-    emit welcomeReceived(conf,chatMembers,count);
+    contact->setOnlineStatus(status);
+
+#if 0
+    /* Commented out in previous kopete/meanwhile plugin for some reason,
+     * but has still been ported to the new API.
+     */
+    time_t idletime = 0;
+    if (snapshot->status.status == mwStatus_IDLE) {
+    	idletime = (snapshot->status.time == 0xdeadbeef) ?
+            0 : snapshot->status.time;
+        if (idletime != 0) {
+        contact->setStatusDescription(statusDesc + "[" +
+                QString::number(idletime/60)+" mins]");
+        }
+    } else
+        contact->setStatusDescription(snapshot->status.desc);
+#endif
 }
 
-MEANWHILE_HOOK_CONF(got_closed(
-                    struct mwConference *conf) ,
-               got_closed(conf))
+void MeanwhileLibrary::_on_aware_attrib(struct mwAwareList *,
+        struct mwAwareIdBlock *,
+        struct mwAwareAttribute *)
 {
-HERE
-    emit confClosed(conf);
+    mwDebug() << "_on_aware_attrib() called" << endl;
+}
+void MeanwhileLibrary::_aware_clear(struct mwAwareList *)
+{
+    mwDebug() << "_aware_clear() called" << endl;
 }
 
-MEANWHILE_HOOK_CONF(got_join(
-                    struct mwConference *conf, 
-                    struct mwIdBlock *id) ,
-               got_join(conf,id))
+QString MeanwhileLibrary::getNickName(struct mwLoginInfo *logininfo)
 {
-HERE
-    emit userJoinedConf(conf,QString(id->user));
+    if (logininfo == 0L || logininfo->user_name == 0L)
+        return QString::null;
+
+    /* try to find a friendly name. From what I've seen, usernames are in
+     * the format:
+     *  <userid> - <name>/<domain>/<domain>
+     */
+    QString name = logininfo->user_name;
+    int index = name.find(" - ");
+    if (index != -1)
+        name = name.remove(0, index + 3);
+    index = name.find('/');
+    if (index != -1)
+        name = name.left(index);
+    
+    return name;
 }
 
-
-MEANWHILE_HOOK_CONF(got_part(
-                    struct mwConference *conf, 
-                    struct mwIdBlock *id) ,
-               got_part(conf,id))
+MeanwhileContact *MeanwhileLibrary::convContact(
+        struct mwConversation *conv)
 {
-HERE
-    emit userLeftConf(conf,QString(id->user));
+    struct mwIdBlock *target = mwConversation_getTarget(conv);
+    if (target == 0L || target->user == 0L) {
+        return 0L;
+    }
+    QString user(target->user);
+
+    MeanwhileContact *contact =
+        static_cast<MeanwhileContact *>(account->contacts()[user]);
+
+    if (!contact) {
+        struct mwLoginInfo *logininfo = mwConversation_getTargetInfo(conv);
+        QString name = getNickName(logininfo);
+	account->addContact(user, name, 0L, Kopete::Account::Temporary);
+        contact = static_cast<MeanwhileContact *>(account->contacts()[user]);
+    }
+
+    return contact;
 }
 
-MEANWHILE_HOOK_CONF(got_conf_text(
-                    struct mwConference *conf, 
-                    struct mwIdBlock *id,
-                    const char *text) ,
-               got_conf_text(conf,id,text))
+struct MeanwhileLibrary::conv_data *MeanwhileLibrary::initConvData(
+        struct mwConversation *conv, MeanwhileContact *contact)
 {
-HERE
-    emit confMesgReceived(conf,QString(id->user),
-                          QString(text));
+    struct conv_data *conv_data = (struct conv_data *)malloc(sizeof *conv_data);
+    if (!conv_data)
+        return 0L;
+
+    conv_data->library = this;
+    /* grab a manager from the factory instead? */
+    conv_data->chat = contact->manager();
+    conv_data->chat->ref();
+    conv_data->queue = new QValueList<Kopete::Message>();
+
+    mwConversation_setClientData(conv, conv_data, 0L);
+
+    return conv_data;
 }
 
-MEANWHILE_HOOK_CONF(got_conf_typing(
-                    struct mwConference *conf, 
-                    struct mwIdBlock *id,
-                    int typing) ,
-               got_conf_typing(conf,id,typing))
+/* conversation */
+MEANWHILE_HOOK_CONVERSATION(conversation_opened,
+    (struct mwConversation *conv),
+    (conv))
 {
-HERE
-    emit confUserTyping(conf,
-                    QString(id->user),
-                    typing!=0);
+    HERE;
+    MeanwhileContact *contact = convContact(conv);
+    if (!contact) {
+        mwDebug() << "Couldn't find contact!" << endl;
+        return;
+    }
+
+    struct conv_data *conv_data =
+        (struct conv_data *)mwConversation_getClientData(conv);
+
+    if (!conv_data && !(conv_data = initConvData(conv, contact))) {
+        return;
+
+    } else if (conv_data->queue && !conv_data->queue->isEmpty()) {
+        /* send any messages that were waiting for the conversation to open */
+        QValueList<Kopete::Message>::iterator it;
+        for (it = conv_data->queue->begin(); it != conv_data->queue->end();
+                ++it) {
+            mwConversation_send(conv, mwImSend_PLAIN,
+                    (*it).plainBody().ascii());
+            conv_data->chat->appendMessage(*it);
+            conv_data->chat->messageSucceeded();
+        }
+        conv_data->queue->clear();
+    }
 }
 
-
-MEANWHILE_HOOK(on_handshakeAck(
-                    struct mwSession *s,
-                    struct mwMsgHandshakeAck *msg) ,
-               on_handshakeAck(s,msg))
+MEANWHILE_HOOK_CONVERSATION(conversation_closed,
+    (struct mwConversation *conv, guint32 err),
+    (conv, err))
 {
-HERE
-    onHandshakeAck_sendLogin(s, msg);
+    HERE;
+    /* @todo err is unused. This'll eat the warning */
+    err = 0;
+    struct conv_data *conv_data =
+        (struct conv_data *)mwConversation_getClientData(conv);
+
+    if (!conv_data)
+        return;
+
+    mwConversation_setClientData(conv, 0L, 0L);
+    MeanwhileContact *contact = convContact(conv);
+    if (!contact) {
+        mwDebug() << "Couldn't find contact!" << endl;
+        return;
+    }
+
+    conv_data->chat->removeContact(contact);
+    conv_data->chat->deref();
+    conv_data->chat = 0L;
+    free(conv_data);
 }
 
-MeanwhileLibrary::MeanwhileLibrary(QString server, int port)
+MEANWHILE_HOOK_CONVERSATION(conversation_recv,
+    (struct mwConversation *conv, enum mwImSendType type,
+        gconstpointer msg),
+    (conv, type, msg))
 {
-HERE
-    newSession();
+    HERE;
+    struct conv_data *conv_data =
+        (struct conv_data *)mwConversation_getClientData(conv);
 
-    sock2server = getConnectedSocket(server,port);
-    if (sock2server == NULL);
+    if (!conv_data)
+        return;
+
+    MeanwhileContact *contact = convContact(conv);
+    if (!contact) {
+        mwDebug() << "Couldn't find contact!" << endl;
+        return;
+    }
+
+    switch (type) {
+    case mwImSend_PLAIN:
+        {
+            Kopete::Message message(contact, account->myself(),
+                    QString((char *)msg), Kopete::Message::Inbound);
+            conv_data->chat->appendMessage(message);
+        }
+        break;
+    case mwImSend_TYPING:
+        conv_data->chat->receivedTypingMsg(contact);
+        break;
+    default:
+        mwDebug() << "Unable to handle message type " << type << endl;
+    }
+}
+
+MEANWHILE_HOOK_SESSION(setUserStatus,
+        (struct mwSession *session),
+        (session))
+{
+    struct mwLoginInfo *login;
+    struct mwUserStatus *status;
+
+    HERE;
+    login = mwSession_getLoginInfo(session);
+    status = mwSession_getUserStatus(session);
+
+    mwDebug() << "meanwhile status for " <<
+        ((login->user_id==0L) ?
+             "null" : login->user_id) <<
+        " changed to " << (status->status) << endl;
+
+    struct mwAwareIdBlock id = { 
+        mwAware_USER,
+        login->user_id, 
+        login->community 
+    };
+
+    mwServiceAware_setStatus(srvc_aware, &id, status);
+}
+
+MeanwhileLibrary::MeanwhileLibrary(MeanwhileAccount *a)
+{
+    HERE;
+    account = a;
+    session = 0L;
+    connected = false;
 }
 
 MeanwhileLibrary::~MeanwhileLibrary()
 {
-HERE
-    free(handler);
-    if (session != NULL)
+    HERE;
+    if (connected)
+        logoff();
+    if (session)
         mwSession_free(session);
-    if (sock2server != NULL)
-        delete sock2server; 
+    if (socket)
+        delete socket; 
 }
 
-bool MeanwhileLibrary::bad()
+bool MeanwhileLibrary::isConnected()
 {
-HERE
-    return (sock2server == NULL);
+    HERE;
+    return connected;
 }
 
-void MeanwhileLibrary::login(QString username, QString passwd)
+void MeanwhileLibrary::login()
 {
-HERE
-    session->login.user_id = strdup(username.ascii());
-    session->auth.password = strdup(passwd.ascii());
+    HERE;
+    socket = getConnectedSocket();
+    if (socket == 0L) {
+        mwDebug() << "getConnectedSocket failed" << endl;
+        return;
+    }
+
+    newSession();
+    mwSession_setProperty(session, mwSession_AUTH_USER_ID,
+                    strdup(account->accountId().ascii()), 0L);
+    mwSession_setProperty(session, mwSession_AUTH_PASSWORD,
+                    strdup(account->password().cachedValue().ascii()), 0L);
+    mwSession_setProperty(session, mwSession_CLIENT_TYPE_ID,
+                    GUINT_TO_POINTER(0x1003), 0L);
+    mwSession_setProperty(session, mwSession_CLIENT_VER_MAJOR,
+                    GUINT_TO_POINTER(0x1e), 0L);
+    mwSession_setProperty(session, mwSession_CLIENT_VER_MINOR,
+                    GUINT_TO_POINTER(0x17), 0L);
 
     mwSession_start(session);
 }
 
 void MeanwhileLibrary::logoff()
 {
-HERE
-    if(session) 
-      mwSession_stop(session, ERR_SUCCESS);
+    HERE;
+    if (connected) {
+        mwSession_stop(session, ERR_SUCCESS);
+    }
 }
 
-int MeanwhileLibrary::_writeToSocket(
-                        struct mwSessionHandler *handler,
-                        const char *buffer,
-                        gsize count)
+int MeanwhileLibrary::_writeToSocket(struct mwSession *session,
+    const char *buffer, gsize count)
 {
-HERE
-    return ((kopete_handler*)handler)->private_data.library->
-			writeToSocket(handler,buffer,count);
+    HERE;
+    MeanwhileLibrary *lib = 
+        (MeanwhileLibrary *)mwSession_getClientData(session);
+    return lib->writeToSocket(buffer, count);
 }
 
-int MeanwhileLibrary::writeToSocket(
-                        struct mwSessionHandler *handler,
-                        const char *buffer,
-                        unsigned int count)
+int MeanwhileLibrary::writeToSocket(const char *buffer, unsigned int count)
 {
-HERE
-    REMOVE_UNUSED_VAR_WARNING(handler);
-//prettyprint(buffer,count);
-    int returnval = sock2server->writeBlock(buffer,count);
-    sock2server->flush();
-    return returnval;
+    HERE;
+    int remaining, retval = 0;
+    for (remaining = count; remaining > 0; remaining -= retval) {
+        retval = socket->writeBlock(buffer, count);
+        if (retval <= 0)
+            return 1;
+    }
+    socket->flush();
+    return 0;
 }
 
-void MeanwhileLibrary::_closeSocket(
-                        struct mwSessionHandler *handler) 
+void MeanwhileLibrary::_closeSocket(struct mwSession *session) 
 {
-HERE
-    return ((kopete_handler*)handler)->private_data.library->
-                       closeSocket(handler);
+    HERE;
+    MeanwhileLibrary *lib = 
+        (MeanwhileLibrary *)mwSession_getClientData(session);
+    return lib->closeSocket();
 }
 
-void MeanwhileLibrary::closeSocket(
-                        struct mwSessionHandler *handler)
+void MeanwhileLibrary::closeSocket()
 {
-HERE
-    REMOVE_UNUSED_VAR_WARNING(handler);
-
-    QObject::disconnect(sock2server, SIGNAL(closed(int)),
-                     this,SLOT(slotSocketClosed(int)));
-    sock2server->flush();
-    sock2server->closeNow();
-    emit connectionLost();
+    HERE;
+    QObject::disconnect(socket, SIGNAL(closed(int)),
+                     this, SLOT(slotSocketClosed(int)));
+    socket->flush();
+    socket->closeNow();
 }
 
 void MeanwhileLibrary::newSession()
 {
-HERE
-    /* session setup */
-    session = mwSession_new();
-    session->on_start = _on_start;
-    session->on_stop = _on_stop;
-    
-    session->on_channelOpen = NOT_IMPLEMENTED;
-    session->on_channelClose = NOT_IMPLEMENTED;
-    
-    session->on_handshake = NOT_IMPLEMENTED;
-    session->on_handshakeAck = _on_handshakeAck;
-    session->on_login = NOT_IMPLEMENTED;
-    session->on_loginRedirect = NOT_IMPLEMENTED;
-    session->on_loginContinue = NOT_IMPLEMENTED;
-    session->on_loginAck = _on_loginAck;
-    
-    session->on_setPrivacyInfo = NOT_IMPLEMENTED;
+    HERE;
+    /* set up the session handler */
+    memset(&session_handler, 0, sizeof(session_handler));
+    session_handler.io_write       = _writeToSocket;
+    session_handler.io_close       = _closeSocket;
+    session_handler.clear          = _handler_clear;
+    session_handler.on_stateChange = _stateChange;
+
+    /* create the session */
+    session = mwSession_new(&session_handler);
+    mwSession_setClientData(session, this, 0L);
+
+#if 0
     session->on_setUserStatus = _on_setUserStatus;
-    session->on_admin = NOT_IMPLEMENTED;
+#endif
 
     /* awareness service setup */
-    srvc_aware = mwServiceAware_new(session);
-    aware_list = mwAwareList_new(srvc_aware);
-    mwAwareList_setOnAware(aware_list,
-                        (mwAwareList_onAwareHandler)_got_aware,
-                        srvc_aware);
-    mwSession_putService(session, (struct mwService *) srvc_aware);
+    aware_handler.on_attrib = _on_attrib;
+    aware_handler.clear     = _attrib_clear;
+    srvc_aware = mwServiceAware_new(session, &aware_handler);
 
-    /* im  */
-    srvc_im = mwServiceIM_new(session);
-    srvc_im->got_error = _got_error;
-    srvc_im->got_text = _got_text;
-    srvc_im->got_typing = _got_typing;
-    mwSession_putService(session, (struct mwService *) srvc_im);
+    aware_list_handler.on_aware = _on_aware;
+    aware_list_handler.on_attrib = _on_aware_attrib;
+    aware_list_handler.clear = _aware_clear;
 
+    aware_list = mwAwareList_new(srvc_aware, &aware_list_handler);
+    mwAwareList_setClientData(aware_list, this, 0L);
+
+    mwService_setClientData((struct mwService *)srvc_aware, this, 0L);
+    mwSession_addService(session, (struct mwService *) srvc_aware);
+
+    /* im service setup */
+    im_handler.conversation_opened = _conversation_opened;
+    im_handler.conversation_closed = _conversation_closed;
+    im_handler.conversation_recv = _conversation_recv;
+    im_handler.clear = 0L;
+    
+    srvc_im = mwServiceIm_new(session, &im_handler);
+    mwService_setClientData((struct mwService *)srvc_im, this, 0L);
+    mwSession_addService(session, (struct mwService *) srvc_im);
+
+#if 0
+    /* FIXME: port to new API */
     /* conference */
     struct mwServiceConf *srvc_conf;
     srvc_conf = mwServiceConf_new(session);
@@ -460,21 +575,17 @@ HERE
     srvc_conf->got_text = _got_conf_text;
     srvc_conf->got_typing = _got_conf_typing;
     mwSession_putService(session, (struct mwService *) srvc_conf);
+#endif
 
-    /* socket writer */
-    handler = (struct mwSessionHandler*)
-                    malloc(sizeof(struct kopete_handler));
-    ((struct kopete_handler*)handler)->public_data.write = _writeToSocket;
-    ((struct kopete_handler*)handler)->public_data.close = _closeSocket;
-    ((struct kopete_handler*)handler)->private_data.library = this;
-    session->handler = (struct mwSessionHandler*)handler;
+    /* add a necessary cipher */
+    mwSession_addCipher(session, mwCipher_new_RC2_40(session));
 }
 
-KExtendedSocket *MeanwhileLibrary::getConnectedSocket(QString server, int port)
+KExtendedSocket *MeanwhileLibrary::getConnectedSocket()
 {
-HERE
-    KExtendedSocket *sock = new KExtendedSocket( server, port, 
-                                        KExtendedSocket::bufferedSocket );
+    HERE;
+    KExtendedSocket *sock = new KExtendedSocket(account->serverName(),
+            account->serverPort(), KExtendedSocket::bufferedSocket);
     int error = sock->connect();
     if (error)
     {
@@ -484,10 +595,10 @@ HERE
                         i18n( "Meanwhile Plugin" ), 
                         KMessageBox::Notify );
         delete sock;
-        return NULL;
+        return 0L;
     }
+    /* we want to receive signals when there is data to read */
     sock->enableRead(true);
-//    sock->enableWrite(true);
     QObject::connect(sock, SIGNAL(readyRead()) , 
                      SLOT(slotSocketReader()));
     QObject::connect(sock, SIGNAL(closed(int)),
@@ -497,92 +608,157 @@ HERE
 
 void MeanwhileLibrary::slotSocketReader()
 {
-HERE
+    HERE;
     char buffer[4000];
     int readAmount;
-    readAmount = sock2server->readBlock(buffer,4000);
+    readAmount = socket->readBlock(buffer,4000);
     if (readAmount < 0)
         return;
-//prettyprint(buffer,readAmount);
     mwSession_recv(session, buffer, (unsigned int) readAmount);
 }
 
 void MeanwhileLibrary::slotSocketClosed(int reason)
 {
-    reason = 0; //  something to eat the compile warning
-/*    if (reason == KExtendedSocket::involuntary)
-    { */
-        emit serverNotificationReceived(QString("Server closed connection"));
+    HERE;
+    connected = false;
+    if (reason == KExtendedSocket::involuntary) { 
+        emit serverNotification(
+                QString("Lost connection with Meanwhile server"));
         emit connectionLost();
-//    }
+    }
+}
+
+static void free_iter(void *data, void *p)
+{
+    if (p != 0L)
+        return;
+    free(data);
 }
 
 void MeanwhileLibrary::addContacts(const QDict<Kopete::Contact>& contacts)
 {
-HERE
+    HERE;
     QDictIterator<Kopete::Contact> it(contacts); 
+    GList *buddies = 0L;
 
-    struct mwAwareIdBlock *buddies,*aBuddy;
-    int count;
-
-    count = contacts.count();
-    aBuddy = buddies = 
-                (struct mwAwareIdBlock*)
-			malloc(sizeof(struct mwAwareIdBlock)*count);
-    memset(buddies,0,sizeof(struct mwIdBlock)*count);
-   
-    for( ; it.current(); ++it, aBuddy++ )
-    {
+    /** Convert our QDict of kopete contact to a GList of meanwhile buddies */
+    for( ; it.current(); ++it) {
+        struct mwAwareIdBlock *buddy = (struct mwAwareIdBlock *)
+            malloc(sizeof(*buddy));
         MeanwhileContact *contact = 
                 static_cast<MeanwhileContact *>(it.current());
-        aBuddy->user = (gchar*)contact->meanwhileId.ascii();
-        aBuddy->community = NULL;
-	aBuddy->type = mwAware_USER;
+        if (buddy == 0L)
+            continue;
+        buddy->user = (gchar*)contact->meanwhileId.ascii();
+        buddy->community = 0L;
+        buddy->type = mwAware_USER;
+        mwDebug() << "Adding contact: '" << buddy->user << "'" << endl;
+        buddies = g_list_append(buddies, buddy);
     }
 
-    mwAwareList_addAware(aware_list, buddies, count);
+    mwAwareList_addAware(aware_list, buddies);
 
-    free(buddies);
-HERE
+    g_list_foreach(buddies, free_iter, 0L);
+    g_list_free(buddies);
 }
 
-void MeanwhileLibrary::addContact(const QString & contact)
+void MeanwhileLibrary::addContact(const Kopete::Contact *contact)
 {
-HERE
-    struct mwAwareIdBlock aBuddy = 
-		{ mwAware_USER, (char*) contact.ascii(), NULL };
+    HERE;
+    char *targetID = strdup(static_cast<const MeanwhileContact*>(contact)
+            ->meanwhileId.ascii());
+    struct mwAwareIdBlock buddy = 
+		{ mwAware_USER, targetID, 0L };
+    GList *buddies = 0L;
+    g_list_insert(buddies, &buddy, 0);
     
-    mwAwareList_addAware(aware_list, &aBuddy, 1);
+    mwDebug() << "Adding contact: '" << buddy.user << "'" << endl;
+    mwAwareList_addAware(aware_list, buddies);
+    g_list_free(buddies);
+    free(targetID);
 }
 
-int MeanwhileLibrary::sendIm(const QString &toUser, const QString &msg)
+int MeanwhileLibrary::sendMessage(Kopete::Message &message)
 {
-HERE
-  struct mwIdBlock t = { (char *) toUser.ascii(), NULL };
+    HERE;
+    MeanwhileContact *contact =
+        static_cast<MeanwhileContact *>(message.to().first());
+    if (!contact) {
+        mwDebug() << "No target for message!" <<endl;
+        return 0;
+    }
 
-  kdDebug( 14200 ) << "sending data to user " << toUser.ascii() << endl;
-  kdDebug( 14200 ) << msg.ascii() << endl;
-  //prettyprint(msg.ascii(),14);
-  return !mwServiceIM_sendText(srvc_im, &t, msg.ascii());
+    char *targetID = strdup(contact->meanwhileId.ascii());
+    struct mwIdBlock target = { targetID, 0L };
+    struct mwConversation *conv;
+
+    conv = mwServiceIm_getConversation(srvc_im, &target);
+    if (conv == 0L) {
+        mwDebug() << "No target for conversation with '" << targetID
+            << "'" << endl;
+        free(targetID);
+        return 0;
+    }
+    free(targetID);
+
+    struct conv_data *conv_data = (struct conv_data *)
+        mwConversation_getClientData(conv);
+    if (!conv_data && !(conv_data = initConvData(conv, contact)))
+        return 0;
+
+    /* if there's other messages in the queue, or the conversation isn't open,
+     * then append to the queue instead of sending right away */
+    if ((conv_data->queue && !conv_data->queue->isEmpty()) || 
+            !mwConversation_isOpen(conv)) {
+        conv_data->queue->append(message);
+        mwConversation_open(conv);
+
+    } else if (!mwConversation_send(conv, mwImSend_PLAIN,
+                message.plainBody().ascii())) {
+        conv_data->chat->appendMessage(message);
+        conv_data->chat->messageSucceeded();
+    }
+    return 1;
 }
 
-void MeanwhileLibrary::sendTyping(const QString &toUser, bool isTyping)
+void MeanwhileLibrary::sendTyping(MeanwhileContact *contact, bool isTyping)
 {
-HERE
-  struct mwIdBlock t = { (char *) toUser.ascii(), NULL };
-  mwServiceIM_sendTyping(srvc_im, &t, isTyping);
+    HERE;
+    char *targetID = strdup(contact->meanwhileId.ascii());
+    struct mwIdBlock target = { targetID, 0L };
+    struct mwConversation *conv;
+
+    conv = mwServiceIm_getConversation(srvc_im, &target);
+    if (conv == 0L) {
+        mwDebug() << "No target for typing flag with '" << targetID << "'"
+            << endl;
+        free(targetID);
+        return;
+    }
+    free(targetID);
+
+    if (mwConversation_isOpen(conv))
+        mwConversation_send(conv, mwImSend_TYPING, (void *)isTyping);
 }
 
-void MeanwhileLibrary::setState(int state,const QString &stateMsg)
+void MeanwhileLibrary::setState(Kopete::OnlineStatus state,
+        const QString msg)
 {
-HERE
+    HERE;
+    if (state.internalStatus() == MeanwhileLibrary::Offline ||
+            state.internalStatus() == 0)
+        return;
+
     struct mwUserStatus stat;
-    mwUserStatus_clone(&stat, &session->status);
+    mwUserStatus_clone(&stat, mwSession_getUserStatus(session));
 
     free(stat.desc);
 
-    stat.status = (mwStatusType)state;
-    stat.desc = (gchar*)strdup(ADVERTISE_KOPETE(stateMsg).ascii());
+    stat.status = (mwStatusType)state.internalStatus();
+    if (msg.isNull() || msg.isEmpty())
+        stat.desc = (gchar*)strdup(state.description().ascii());
+    else
+        stat.desc = (gchar*)strdup(msg.ascii());
 
     mwSession_setUserStatus(session,&stat);
     mwUserStatus_clear(&stat);
@@ -590,11 +766,11 @@ HERE
 
 void MeanwhileLibrary::setStatusMesg(const QString &statusMesg)
 {
-HERE
+    HERE;
     if(statusMesg.isNull())
         return;
     struct mwUserStatus stat;
-    mwUserStatus_clone(&stat, &session->status);
+    mwUserStatus_clone(&stat, mwSession_getUserStatus(session));
 
     free(stat.desc);
     stat.desc = (gchar*)strdup(ADVERTISE_KOPETE(statusMesg).ascii());

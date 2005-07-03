@@ -22,7 +22,6 @@
 #include <qlineedit.h>
 
 #include "meanwhileprotocol.h"
-#include "meanwhileserver.h"
 #include "meanwhileaccount.h"
 #include "meanwhileplugin.h"
 

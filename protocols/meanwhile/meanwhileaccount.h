@@ -2,6 +2,7 @@
     meanwhileaccount.h - meanwhile account
 
     Copyright (c) 2003-2004 by Sivaram Gottimukkala  <suppandi@gmail.com>
+    Copyright (c) 2005      by Jeremy Kerr <jk@ozlabs.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
@@ -18,10 +19,10 @@
 #define MEANWHILEACCOUNT_H
 
 #include <kopetepasswordedaccount.h>
+#include "meanwhileprotocol.h"
+#include "meanwhileplugin.h"
 
-class MeanwhileServer;
-class MeanwhileProtocol;
-class MeanwhilePlugin;
+class MeanwhileLibrary;
 
 class MeanwhileAccount : public Kopete::PasswordedAccount
 {
@@ -29,17 +30,17 @@ class MeanwhileAccount : public Kopete::PasswordedAccount
 public:
     MeanwhileAccount(   MeanwhileProtocol *parent,
                         const QString &accountID,
-                        const char *name = 0 );
+                        const char *name = 0L);
 
     ~MeanwhileAccount();
 
-    virtual bool createContact(
-                        const QString &contactId,
+    virtual bool createContact(const QString &contactId,
                         Kopete::MetaContact *parentContact);
 
     virtual void connectWithPassword(const QString &password);
 
     virtual void disconnect();
+    virtual void disconnect(Kopete::Account::DisconnectReason reason);
 
     virtual void setAway(bool away,
                         const QString &reason);
@@ -52,8 +53,12 @@ public:
     void    setServerPort(int port);
     void    setPlugin(MeanwhilePlugin *plugin);
 
-    MeanwhileServer *server;
     MeanwhilePlugin *infoPlugin;
+
+    /**
+     * Get a reference to the meanwhile library object
+     */
+    MeanwhileLibrary *library();
 
 protected slots:
     void meanwhileGoOnline();
@@ -64,20 +69,20 @@ protected slots:
 
 public slots:
     void slotLoginDone();
-    void slotMesgReceived(const QString &fromUser,
-                          const QString &msg);
-    void slotUserTyping(  const QString &user,
-                          bool isTyping);
     void slotServerNotification(const QString &mesg);
-    void slotServerDead();
+    void slotConnectionLost();
 
     /** Reimplemented from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+    void setOnlineStatus(const Kopete::OnlineStatus& status,
+            const QString &reason = QString::null);
 
 private:
-    void initServer();
+    void initLibrary();
     void meanwhileGoAway(const QString &statusmsg);
     QString statusMesg;
+
+    /** The interface to the libmeanwhile library */
+    MeanwhileLibrary *m_library;
 };
 
 #endif

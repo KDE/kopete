@@ -17,8 +17,8 @@
 #include "meanwhileprotocol.h"
 #include "meanwhileaddcontactpage.h"
 #include "meanwhileeditaccountwidget.h"
-#include "meanwhileserver.h"
 #include "meanwhileaccount.h"
+#include "meanwhilelibrary.h"
 #include <kgenericfactory.h>
 #include "kopeteaccountmanager.h"
 #include "kopeteglobal.h"
@@ -35,31 +35,36 @@ MeanwhileProtocol::MeanwhileProtocol( QObject* parent,
                                       const char *name, 
                                       const QStringList &/*args*/)
     : Kopete::Protocol(MeanwhileProtocolFactory::instance(), 
-                     parent, name ),
-      meanwhileOffline( Kopete::OnlineStatus::Offline, 
-                        25, this, 0, QString::null,
-                        i18n( "Offline" ),
-						i18n( "Go Offline" ), Kopete::OnlineStatusManager::Offline ),
-      meanwhileOnline( Kopete::OnlineStatus::Online, 
-                        25, this, 1, QString::null,
-                        i18n( "Online" ), 
-						i18n( "Go Online" ), Kopete::OnlineStatusManager::Online   ),
-      meanwhileAway( Kopete::OnlineStatus::Away, 
-                        25, this, 2, "meanwhile_away",
-                        i18n( "Away" ) ,
-                        i18n( "Go Away" ), Kopete::OnlineStatusManager::Away ),
-      meanwhileBusy( Kopete::OnlineStatus::Away, 
-                        25, this, 3, "meanwhile_dnd",
-                        i18n( "Busy" ) , 
-						i18n( "Mark as Busy" ), Kopete::OnlineStatusManager::Busy ),
-      meanwhileIdle( Kopete::OnlineStatus::Away, 
-                        25, this, 4, "meanwhile_idle",
-                        i18n( "Idle" ), 
-                        i18n( "Marked as Idle" ), Kopete::OnlineStatusManager::Idle ),
-      meanwhileUnknown( Kopete::OnlineStatus::Unknown, 
-                        25, this, 5, "meanwhile_unknown",
-                        i18n( "Catch me if you can" ) ),
-      statusMessage(QString::fromLatin1("statusMessage"), i18n("Status Message"),QString::null,false,true),
+                     parent, name),
+
+      meanwhileOffline(Kopete::OnlineStatus::Offline,  25, this, 
+              MeanwhileLibrary::Offline,
+              QString::null, i18n( "Offline" ), i18n( "Go Offline" ),
+              Kopete::OnlineStatusManager::Offline),
+
+      meanwhileOnline(Kopete::OnlineStatus::Online, 25, this, 
+              MeanwhileLibrary::Active, QString::null, i18n( "Online" ),
+              i18n( "Go Online" ), Kopete::OnlineStatusManager::Online),
+
+      meanwhileAway(Kopete::OnlineStatus::Away, 25, this, 
+              MeanwhileLibrary::Away, "meanwhile_away", i18n( "Away" ),
+              i18n( "Go Away" ), Kopete::OnlineStatusManager::Away),
+
+      meanwhileBusy(Kopete::OnlineStatus::Away, 25, this, 
+              MeanwhileLibrary::Busy, "meanwhile_dnd",
+              i18n( "Busy" ) , i18n( "Mark as Busy" ),
+              Kopete::OnlineStatusManager::Busy),
+
+      meanwhileIdle(Kopete::OnlineStatus::Away, 25, this, 
+              MeanwhileLibrary::Idle, "meanwhile_idle",
+              i18n( "Idle" ), i18n( "Marked as Idle" ),
+              Kopete::OnlineStatusManager::Idle),
+
+      meanwhileUnknown(Kopete::OnlineStatus::Unknown, 25, this, 0,
+              "meanwhile_unknown", i18n( "Catch me if you can" )),
+
+      statusMessage(QString::fromLatin1("statusMessage"),
+              i18n("Status Message"), QString::null, false, true),
 	  awayMessage(Kopete::Global::Properties::self()->awayMessage())
 {
 //    LOG("MeanwhileProtocol()");

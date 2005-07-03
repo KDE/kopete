@@ -2,6 +2,7 @@
     meanwhileaccount.cpp - a meanwhile account
 
     Copyright (c) 2003-2004 by Sivaram Gottimukkala  <suppandi@gmail.com>
+    Copyright (c) 2005      by Jeremy Kerr <jk@ozlabs.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
@@ -16,83 +17,50 @@
 */
 #include <signal.h>
 #include "meanwhileprotocol.h"
-#include "meanwhileserver.h"
 #include "meanwhileplugin.h"
 #include "meanwhileaccount.h"
 #include "meanwhilecontact.h"
+#include "meanwhilelibrary.h"
 #include "kopetechatsession.h"
 #include "kopetepassword.h"
-#include "kopetecontactlist.h"
 
 #include <kaction.h>
 #include <kpopupmenu.h>
 #include <klocale.h>
+#include <kconfigbase.h>
 #include "kopeteaway.h"
 #include <kinputdialog.h>
 #include <kmessagebox.h>
 #include <qdict.h>
 
-#include "log.h"
-
-#define INIT_SERVER()    \
-    if (server == NULL)  \
-        initServer();    \
-    if (server != NULL)
-
 MeanwhileAccount::MeanwhileAccount(
                         MeanwhileProtocol *parent,
                         const QString &accountID,
                         const char *name)
-    : Kopete::PasswordedAccount ( parent, accountID, 0, name )
+    : Kopete::PasswordedAccount(parent, accountID, 0, name)
 {
+    HERE;
     //signal(SIGSEGV,SIG_DFL);
-    //LOG("MeanwhileAccount");
-    setMyself( new MeanwhileContact(
-                        accountId(),
-                        accountId(),
-                        this,
-						Kopete::ContactList::self()->myself()));
+    setMyself(new MeanwhileContact(accountId(), accountId(), this, 0L));
     myself()->setOnlineStatus(MeanwhileProtocol::protocol()->meanwhileOffline);
-    server = NULL;
+    m_library = 0L;
     infoPlugin = new MeanwhilePlugin();
 }
 
-void MeanwhileAccount::initServer()
+void MeanwhileAccount::initLibrary()
 {
-    server = new MeanwhileServer(serverName(),serverPort());
-    if (server->bad())
-    {
-        delete server;
-        server = NULL;
-    }
-    else
-    {
-        QObject::connect(server,
-                     SIGNAL(loginDone()),
-                     this,
-                     SLOT(slotLoginDone()));
-        QObject::connect(server,
-                     SIGNAL(mesgReceived(const QString &,
-                                         const QString &)),
-                     SLOT(slotMesgReceived(const QString &,
-                                         const QString &)));
-        QObject::connect(server,
-                     SIGNAL(userTyping(const QString &,
-                                       bool)),
-                     SLOT(slotUserTyping(const QString &,
-                                         bool)));
-        QObject::connect(server,
-                     SIGNAL(connectionLost()),
-                     SLOT(slotServerDead()));
-        QObject::connect(server,
-                     SIGNAL(notification(const QString &)),
-                     SLOT(slotServerNotification(const QString&)));
-    }
+}
+
+MeanwhileLibrary *MeanwhileAccount::library()
+{
+    return m_library;
 }
 
 MeanwhileAccount::~MeanwhileAccount()
 {
     meanwhileGoOffline();
+    if (m_library)
+        delete m_library;
 }
 
 void MeanwhileAccount::setPlugin(MeanwhilePlugin *plugin)
@@ -105,45 +73,74 @@ bool MeanwhileAccount::createContact(
                         const QString & contactId ,
                         Kopete::MetaContact * parentContact)
 {
-	MeanwhileContact* newContact =
-                new MeanwhileContact(contactId,
-                                     parentContact->displayName(),
-                                     this,
-                                     parentContact);
-    if ((newContact != NULL) && (server != NULL)
+    MeanwhileContact* newContact =
+            new MeanwhileContact(contactId,
+                                 parentContact->displayName(),
+                                 this,
+                                 parentContact);
+    if ((newContact != 0L) && (m_library != 0L)
         && (myself()->onlineStatus() !=
                 MeanwhileProtocol::protocol()->meanwhileOffline))
-        server->addContact(newContact,contacts());
+        m_library->addContact(newContact);
 
-	return newContact != NULL;
+    return newContact != 0L;
 }
 
 void MeanwhileAccount::connectWithPassword(const QString &password)
 {
-    if (password.isEmpty())
+    if (password.isEmpty()) {
+        disconnect(Kopete::Account::Manual);
         return;
+    }
 
-    if (server==NULL)
-        meanwhileGoOnline();
+    if (m_library == 0L) {
+        m_library = new MeanwhileLibrary(this);
+        if (!m_library) {
+            mwDebug() << "library creation failed" << endl;
+            return;
+        }
+
+        QObject::connect(m_library, SIGNAL(loginDone()),
+                this, SLOT(slotLoginDone()));
+        QObject::connect(m_library, SIGNAL(connectionLost()),
+                this, SLOT(slotConnectionLost()));
+        QObject::connect(m_library,
+                SIGNAL(serverNotification(const QString &)),
+                this, SLOT(slotServerNotification(const QString&)));
+    }
+        
+    if (!m_library->isConnected()) {
+        m_library->login();
+    }
 }
 
 void MeanwhileAccount::disconnect()
 {
-    meanwhileGoOffline();
+    disconnect(Manual);
 }
 
-void MeanwhileAccount::setAway(
-                        bool away,
-                        const QString &reason)
+void MeanwhileAccount::disconnect(Kopete::Account::DisconnectReason reason)
+{
+    if (m_library != 0L  && m_library->isConnected())
+        m_library->logoff();
+
+    if (m_library != 0L) {
+        delete m_library;
+        m_library = 0L;
+    }
+
+    myself()->setOnlineStatus(MeanwhileProtocol::protocol()->meanwhileOffline);
+    setAllContactsStatus(MeanwhileProtocol::protocol()->meanwhileOffline);
+    disconnected(reason);
+    emit isConnectedChanged();
+}
+
+void MeanwhileAccount::setAway(bool away, const QString &reason)
 {
     if (away)
-    {
         meanwhileGoAway(reason);
-    }
     else
-    {
         meanwhileGoOnline();
-    }
 }
 
 KActionMenu * MeanwhileAccount::actionMenu()
@@ -189,40 +186,16 @@ KActionMenu * MeanwhileAccount::actionMenu()
 
 void MeanwhileAccount::meanwhileGoOnline()
 {
-    if (server!=NULL)
-    {
-        server->goActive(statusMesg);
-        return;
-    }
-
-    QString passwd = password().cachedValue();
-    if (!passwd.isNull())
-    {
-        INIT_SERVER()
-        {
-            server->login(accountId(),passwd);
-        }
-    }
+    HERE;
+    if (m_library != 0L && m_library->isConnected())
+        m_library->setState(MeanwhileProtocol::protocol()->meanwhileOnline);
     else
-    {
-        connect();
-    }
+        connect(MeanwhileProtocol::protocol()->meanwhileOnline);
 }
 
 void MeanwhileAccount::meanwhileGoOffline()
 {
-    if ((server!=NULL) &&
-        (myself()->onlineStatus() !=
-            MeanwhileProtocol::protocol()->meanwhileOffline))
-            server->logoff();
-    if (server!=NULL)
-    {
-        delete server;
-        server = NULL;
-    }
-    myself()->setOnlineStatus(MeanwhileProtocol::protocol()->meanwhileOffline);
-    setAllContactsStatus(MeanwhileProtocol::protocol()->meanwhileOffline);
-    disconnected( Manual );
+    disconnect();
 }
 
 void MeanwhileAccount::meanwhileGoAway()
@@ -232,97 +205,58 @@ void MeanwhileAccount::meanwhileGoAway()
 
 void MeanwhileAccount::meanwhileGoAway(const QString &statusmsg)
 {
-    if ((server!=NULL) &&
-        (myself()->onlineStatus() !=
+    if ((m_library != 0L) && (myself()->onlineStatus() !=
             MeanwhileProtocol::protocol()->meanwhileOffline))
-        server->goAway(statusmsg);
+        m_library->setState(MeanwhileProtocol::protocol()->meanwhileAway,
+                statusmsg);
 }
 
 void MeanwhileAccount::meanwhileGoDND()
 {
-    if ((server!=NULL) &&
-        (myself()->onlineStatus() !=
+    if ((m_library != 0L) && (myself()->onlineStatus() !=
             MeanwhileProtocol::protocol()->meanwhileOffline))
-        server->goDND(QString("Please do not disturb"));
+        m_library->setState(MeanwhileProtocol::protocol()->meanwhileBusy);
 }
 
 void MeanwhileAccount::slotLoginDone()
 {
     myself()->setOnlineStatus(MeanwhileProtocol::protocol()->meanwhileOnline);
     statusMesg = QString("I am active");
-    server->changeStatus(statusMesg);
-    server->addContacts(contacts());
+    m_library->setState(MeanwhileProtocol::protocol()->meanwhileOnline);
+    m_library->addContacts(contacts());
+    emit isConnectedChanged();
 }
 
 QString MeanwhileAccount::serverName()
 {
-    return pluginData(protocol(),"Server");
+    return configGroup()->readEntry("Server");
 }
 
 int MeanwhileAccount::serverPort()
 {
-    return pluginData(protocol(),"Port").toInt();
+    return configGroup()->readNumEntry("Port");
 }
 
 void MeanwhileAccount::setServerName(const QString &server)
 {
-    setPluginData(protocol(), "Server", server);
+    configGroup()->writeEntry("Server", server);
 }
 
 void MeanwhileAccount::setServerPort(int port)
 {
-    setPluginData(protocol(), "Port", QString::number(port));
-}
-
-void MeanwhileAccount::slotMesgReceived(
-                            const QString &fromUser,
-                            const QString &msg)
-{
-    MeanwhileContact *contact = static_cast<MeanwhileContact *>(contacts()[fromUser]);
-    if(!contact)
-        addContact( fromUser, 0L, Kopete::Account::DontChangeKABC );
-
-    contact = static_cast<MeanwhileContact *>(contacts()[fromUser]);
-    // Create a Kopete::Message
-    Kopete::ContactPtrList contactList;
-    contactList.append( myself() );
-    Kopete::Message newMessage( contact, contactList, msg, Kopete::Message::Inbound );
-
-    // Add it to the manager
-    Kopete::ChatSession *mm = contact->manager(Kopete::Contact::CanCreate);
-    mm->appendMessage(newMessage);
-}
-
-void MeanwhileAccount::slotUserTyping(
-                            const QString &user,
-                            bool isTyping)
-{
-    MeanwhileContact *contact = static_cast<MeanwhileContact *>(contacts()[user]);
-    if(!contact)
-        addContact( user, 0L, Kopete::Account::DontChangeKABC );
-
-    contact = static_cast<MeanwhileContact *>(contacts()[user]);
-    // Create a Kopete::Message
-    Kopete::ContactPtrList contactList;
-    contactList.append( myself() );
-
-    // Add it to the manager
-    Kopete::ChatSession *mm = contact->manager(Kopete::Contact::CanCreate);
-    mm->receivedTypingMsg(contact, isTyping);
+    configGroup()->writeEntry("Port", port);
 }
 
 void MeanwhileAccount::meanwhileChangeStatus()
 {
     bool ok;
-    statusMesg = KInputDialog::getText( i18n( "Change Status Message - Meanwhile Plugin" ),
-        i18n( "Enter the message to show under your status:" ),
-        statusMesg, &ok );
+    statusMesg = KInputDialog::getText(
+            i18n("Change Status Message - Meanwhile Plugin"),
+            i18n("Enter the message to show under your status:"),
+            statusMesg, &ok);
 
-    if ( ok )
-    {
-        if ( server!=NULL )
-            server->changeStatus(statusMesg);
-    }
+    if (ok && m_library != 0L)
+        m_library->setStatusMesg(statusMesg);
 }
 
 void MeanwhileAccount::slotServerNotification(const QString &mesg)
@@ -334,22 +268,29 @@ void MeanwhileAccount::slotServerNotification(const QString &mesg)
                         KMessageBox::Notify );
 }
 
-void MeanwhileAccount::slotServerDead()
+void MeanwhileAccount::slotConnectionLost()
 {
-    delete server;
-    server = NULL;
+    delete m_library;
+    m_library = 0L;
     meanwhileGoOffline();
 }
 
-void MeanwhileAccount::setOnlineStatus( const Kopete::OnlineStatus & status  , const QString &reason)
+void MeanwhileAccount::setOnlineStatus(const Kopete::OnlineStatus & status,
+        const QString &reason)
 {
- 	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Online )
-		connect( status );
-	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Offline )
-		disconnect();
-	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Away )
-		setAway( true, reason );
+    Kopete::OnlineStatus mystatus = myself()->onlineStatus().status();
 
+    if (mystatus == Kopete::OnlineStatus::Offline
+            && status.status() == Kopete::OnlineStatus::Online )
+        connect(status);
+
+    else if (mystatus != Kopete::OnlineStatus::Offline
+            && status.status() == Kopete::OnlineStatus::Offline )
+        disconnect();
+
+    else if (mystatus != Kopete::OnlineStatus::Offline
+            && status.status() == Kopete::OnlineStatus::Away )
+        setAway(true, reason);
 }
 
 

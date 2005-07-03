@@ -58,11 +58,11 @@ public slots:
 protected slots:
 	void showContactSettings();
 	void slotChatSessionDestroyed();
-	void slotMeTypingMsg(bool isTyping);
+	void slotSendTyping(bool isTyping);
 	
 protected:
-	Kopete::ChatSession* m_msgManager;
-	KActionCollection* m_actionCollection;
+        Kopete::ChatSession *m_msgManager;
+	KActionCollection *m_actionCollection;
 	KAction* m_actionPrefs;
 };
 

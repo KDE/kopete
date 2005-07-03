@@ -25,11 +25,8 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include "meanwhileprotocol.h"
-#include "meanwhileserver.h"
 #include "meanwhileaccount.h"
 #include "meanwhileeditaccountwidget.h"
-
-#include "log.h"
 
 #define DEFAULT_SERVER "messaging.opensource.ibm.com"
 #define DEFAULT_PORT 1533

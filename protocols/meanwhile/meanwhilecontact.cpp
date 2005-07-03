@@ -24,22 +24,18 @@
 #include "kopetemetacontact.h"
 
 #include "meanwhileprotocol.h"
-#include "meanwhileserver.h"
+#include "meanwhilelibrary.h"
 #include "meanwhileaccount.h"
 #include "meanwhilecontact.h"
 #include "meanwhileplugin.h"
 
-MeanwhileContact::MeanwhileContact( 
-						QString _userId , 
-						QString _nickname,
-						MeanwhileAccount *_account,
-						Kopete::MetaContact *_parent )
-	: Kopete::Contact( _account, _userId, _parent )
+MeanwhileContact::MeanwhileContact(QString _userId, QString _nickname,
+		MeanwhileAccount *_account, Kopete::MetaContact *_parent)
+		: Kopete::Contact(_account, _userId, _parent)
 {
-	setNickName( _nickname );
+	setNickName(_nickname);
 	m_msgManager = 0L;
 	meanwhileId = _userId;
-
 	setOnlineStatus( MeanwhileProtocol::protocol()->meanwhileOffline );
 }
 
@@ -61,37 +57,6 @@ void MeanwhileContact::serialize(
 	Kopete::Contact::serialize(serializedData, addressBookData);
 }
 
-Kopete::ChatSession* MeanwhileContact::manager( Kopete::Contact::CanCreateFlags canCreate  )
-{
-	if ( m_msgManager || canCreate != Kopete::Contact::CanCreate )
-	{
-		return m_msgManager;
-	}
-	else
-	{
-		QPtrList<Kopete::Contact> contacts;
-		contacts.append(this);
-
-		m_msgManager = 
-				Kopete::ChatSessionManager::self()->create(
-									account()->myself(), 
-									contacts, protocol());
-
-		connect(m_msgManager, 
-				SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)),
-				this, SLOT( sendMessage( Kopete::Message& ) ) );
-
-		connect(m_msgManager, SIGNAL(destroyed()), 
-				this, SLOT(slotChatSessionDestroyed()));
-
-		connect(m_msgManager, SIGNAL(myselfTyping(bool)),
-				this, SLOT(slotMeTypingMsg(bool)));
-
-		return m_msgManager;
-	}
-}
-
-
 QPtrList<KAction> *MeanwhileContact::customContextMenuActions() 
 {
 	return 0L;
@@ -107,17 +72,43 @@ void MeanwhileContact::slotUserInfo()
 	theAccount->infoPlugin->showUserInfo(meanwhileId);
 }
 
-void MeanwhileContact::sendMessage( Kopete::Message &message )
+Kopete::ChatSession* MeanwhileContact::manager(CanCreateFlags canCreate)
 {
-	Kopete::ContactPtrList m_them = manager(Kopete::Contact::CanCreate)->members();
-    Kopete::Contact *target = m_them.first();
-	(static_cast<MeanwhileAccount *>( account() ))->server->sendIm(
-			static_cast<MeanwhileContact*>(target),
-			message.plainBody() ); 
-	manager(Kopete::Contact::CanCreate)->appendMessage( message );
-	manager(Kopete::Contact::CanCreate)->messageSucceeded();
+	if (m_msgManager || canCreate == Kopete::Contact::CannotCreate)
+		return m_msgManager;
+
+	QPtrList<Kopete::Contact> contacts;
+	contacts.append(this);
+	m_msgManager = Kopete::ChatSessionManager::self()->
+		create(account()->myself(), contacts, protocol());
+
+	connect(m_msgManager,
+			SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)),
+			this, SLOT(sendMessage(Kopete::Message&)));
+
+	connect(m_msgManager, SIGNAL(myselfTyping(bool)),
+			this, SLOT(slotSendTyping(bool)));
+
+	connect(m_msgManager, SIGNAL(destroyed()),
+			this, SLOT(slotChatSessionDestroyed()));
+
+	return m_msgManager;
 }
 
+void MeanwhileContact::sendMessage(Kopete::Message &message)
+{
+	/*
+	Kopete::ChatSession *manager = this->manager(Kopete::Contact::CanCreate);
+	*/
+	static_cast<MeanwhileAccount *>(account())->library()->sendMessage(message);
+}
+
+void MeanwhileContact::slotSendTyping(bool isTyping)
+{
+	static_cast<MeanwhileAccount *>(account())->library()->
+		sendTyping(this, isTyping);
+}
+	
 void MeanwhileContact::receivedMessage( const QString &message )
 {
 	Kopete::Message *newMessage;
@@ -135,14 +126,6 @@ void MeanwhileContact::receivedMessage( const QString &message )
 void MeanwhileContact::slotChatSessionDestroyed()
 {
 	m_msgManager = 0L;
-}
-
-void MeanwhileContact::slotMeTypingMsg(bool isTyping)
-{
-	Kopete::ContactPtrList m_them = manager(Kopete::Contact::CanCreate)->members();
-    Kopete::Contact *target = m_them.first();
-	(static_cast<MeanwhileAccount *>( account() ))->server->sendTyping(
-			static_cast<MeanwhileContact*>(target),isTyping);
 }
 
 #include "meanwhilecontact.moc"
