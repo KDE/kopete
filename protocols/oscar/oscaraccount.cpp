@@ -514,6 +514,8 @@ QString OscarAccount::getFLAPErrorMessage( int code )
 	QString acctDescription = isICQ ? i18n("ICQ user id", "UIN") : i18n("AIM user id", "screen name");
 	QString reason;
 	//FLAP errors are always fatal
+	//negative codes are things added by liboscar developers
+	//to indicate generic errors in the task
 	switch ( code )
 	{
 	case 0x0001:
