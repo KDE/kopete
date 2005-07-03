@@ -5,7 +5,7 @@ api:
 	if test ! -x $(top_builddir)/kopete/apidocs/common; then \
 		$(LN_S) $(kde_libs_htmldir)/en/common $(top_builddir)/kopete/apidocs/common; \
 	fi
-	doxygen kopete.api
+	doxygen $(top_srcdir)/kopete/kopete.api
 
 
 messages:
