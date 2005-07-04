@@ -30,6 +30,7 @@
 #include "transfer.h"
 #include "icquserinfo.h"
 #include "userdetails.h"
+#include "oscartypeclasses.h"
 
 class Connection;
 class StageOneLoginTask;
@@ -249,7 +250,7 @@ public:
 	void sendTyping( const QString & contact, bool typing );
 
 	/*************
-	  INTERNAL (FOR USE BY TASKS) METHODS 
+	  INTERNAL (FOR USE BY TASKS OR CONNECTIONS) METHODS 
 	 *************/
 	/**
 	 * Print a debug statement
@@ -275,6 +276,12 @@ public:
 	/** Host's IP address */
 	QCString ipAddress() const;
 	
+	/** Notify that a task error was received */
+	void notifyTaskError( const Oscar::SNAC& s, int errCode, bool fatal );
+	
+	/** Notify that a socket error has occured */
+	void notifySocketError( int errCode, const QString& msg );
+	
 signals:
 	/** CONNECTION EVENTS */
 
@@ -290,14 +297,6 @@ signals:
 	/** We were disconnected because we connected elsewhere */
 	void connectedElsewhere();
 
-	/**
-	 * A protocol error happened
-	 * \param code the generic error code for this error
-	 * \param psError the protocol specific error code for this error
-	 * \param error the i18n'ed message for the erro
-	 */
-	void error( int code, int psError, const QString& error );
-	
 	/** We have our own user info */
 	void haveOwnInfo();
 	
@@ -318,6 +317,16 @@ signals:
 	
 	/** we've received an authorization reply */
 	void authReplyReceived( const QString& contact, const QString& reason, bool auth );
+	
+	/** 
+	 * we've received an error from a task and need to notify somebody
+	 */
+	void taskError( const Oscar::SNAC& s, int errCode, bool fatal );
+	
+	/**
+	 * we've received a socket error and need to notify somebody
+	 */
+	void socketError( int errCode, const QString& msg );
 	
 	void receivedIcqShortInfo( const QString& contact );
 	void receivedIcqLongInfo( const QString& contact );
@@ -358,16 +367,6 @@ protected slots:
 	/** Stream connected for stage two login */
 	void streamConnected();
 
-	/**
-	 * Used by the client stream to notify errors to upper layers.
-	 */
-	void streamError( int error );
-	
-	/**
-	 * Used by the connection to notify about errors in tasks
-	 */
-	void taskError( const QString& message );
-	
 	/** We have our own user info */
 	void haveOwnUserInfo();
 	
@@ -379,8 +378,6 @@ protected slots:
 	
 	/** we have normal user info for a contact */
 	void receivedInfo( Q_UINT16 sequence );
-	
-	void disconnectionError( int, const QString& );
 	
 	void offlineUser( const QString&, const UserDetails& );
 	

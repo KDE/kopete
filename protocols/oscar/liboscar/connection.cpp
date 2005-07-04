@@ -2,12 +2,12 @@
 	Kopete Oscar Protocol
 	connection.cpp - independent protocol encapsulation
 
-	Copyright (c) 2004 by Matt Rogers <mattr@kde.org>
+	Copyright (c) 2004-2005 by Matt Rogers <mattr@kde.org>
 
 	Based on code Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
 	Based on Iris, Copyright (C) 2003  Justin Karneges
 
-	Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+	Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
 	*************************************************************************
 	*                                                                       *
@@ -29,6 +29,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 
+#include "oscartypeclasses.h"
 
 
 class ConnectionPrivate
@@ -80,7 +81,7 @@ void Connection::setClient( Client* c )
 
 void Connection::connectToServer( const QString& host, bool auth )
 {
-	connect( d->clientStream, SIGNAL( error( int ) ), this, SIGNAL( error( int ) ) );
+	connect( d->clientStream, SIGNAL( error( int ) ), this, SIGNAL( socketError( int ) ) );
 	connect( d->clientStream, SIGNAL( readyRead() ), this, SLOT( streamReadyRead() ) );
 	connect( d->clientStream, SIGNAL( connected() ), this, SIGNAL( connected() ) );
 	d->clientStream->connectToServer( host, auth );
@@ -90,6 +91,16 @@ void Connection::close()
 {
 	d->clientStream->close();
 	reset();
+}
+
+void Connection::taskError( const Oscar::SNAC& s, int errCode )
+{
+	d->client->notifyTaskError( s, errCode, false /*fatal*/ );
+}
+
+void Connection::fatalTaskError( const Oscar::SNAC& s, int errCode )
+{
+	d->client->notifyTaskError( s, errCode, true /* fatal */ );
 }
 
 Oscar::Settings* Connection::settings() const
@@ -166,11 +177,6 @@ void Connection::forcedSend( Transfer* request ) const
 		return;
 	}
 	d->clientStream->write( request );
-}
-
-void Connection::taskError( const QString& message )
-{
-	emit error( message );
 }
 
 void Connection::initSequence()

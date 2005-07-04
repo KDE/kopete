@@ -188,8 +188,7 @@ void StageTwoLoginTask::onGo()
 		send( ft );
 	}
 	else
-		setError( -1, i18n( "Unknown error, unable to login" ) );
-
+		setError( -1, QString::null );
 	return;
 }
 

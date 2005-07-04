@@ -2,9 +2,9 @@
 Kopete Oscar Protocol
 connection.h - independent protocol encapsulation
 
-Copyright (c) 2004 by Matt Rogers <mattr@kde.org>
+Copyright (c) 2004-2005 by Matt Rogers <mattr@kde.org>
 
-Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
 *************************************************************************
 *                                                                       *
@@ -33,14 +33,16 @@ class RateClassManager;
 class SSIManager;
 class Task;
 
+
 namespace Oscar
 {
 class Settings;
 }
 
 /**
- * This class encapsulates both the low level network layer code and the high level OSCAR protocol
- * code required to create a single independent connection to an OSCAR server
+ * This class encapsulates both the low level network layer code and the high 
+ * level OSCAR protocol code required to create a single independent 
+ * connection to an OSCAR server
  * @author Matt Rogers
  */
 class Connection : public QObject
@@ -88,6 +90,25 @@ public:
 	 */
 	void addToRateClasses( RateClass* rc );
 	
+	/**
+	 * Indicate to the connection that there has been an error in a task. The
+	 * error won't require us to go offline, but the user should be notified
+	 * about the error
+	 * \param s the SNAC the error occured from
+	 * \param errCode the error code 
+	 */
+	void taskError( const Oscar::SNAC& s, int errCode );
+	
+	/**
+	 * Indicate to the connection that there has been a fatal error in a task.
+	 * This error will require a disconnection from the OSCAR service and if
+	 * necessary, the user should be prompted to reconnect manually or an
+	 * automatic reconnection should be attempted.
+	 * \param s the SNAC the error occured from
+	 * \param errCode the error code 
+	 */
+	void fatalTaskError( const Oscar::SNAC& s, int errCode );
+	
 	/** Get the user settings object */
 	Oscar::Settings* settings() const;
 	
@@ -118,15 +139,9 @@ public:
 	
 	void send( Transfer* t ) const;
 	void forcedSend( Transfer* t ) const;
-	void taskError( const QString& message );
 	
 signals:
-	/** There was an error in the stream */
-	void error( int );
-	
-	/** There was an error from one of the tasks */
-	void error( const QString& message );
-	
+
 	/** There's data ready to read */
 	void readyRead();
 	
@@ -135,6 +150,13 @@ signals:
 	
 	/** We were disconnected */
 	void disconnected();
+	
+	/**
+	 * There was an error on the socket and we've disconnected
+	 * \param errCode the error code from the operating system
+	 * \param errString the i18n'ed string that describes the error
+	 */
+	void socketError( int errCode, const QString& errString );
 	
 	
 private:
@@ -162,4 +184,4 @@ private:
 
 #endif
 
-//kate: tab-width 4; indent-mode csands;
+//kate: tab-width 4; indent-mode csands; auto-insert-doxygen on;

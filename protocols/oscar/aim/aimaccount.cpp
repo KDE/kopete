@@ -301,7 +301,7 @@ void AIMAccount::connectWithPassword( const QString & )
 	{
 		kdDebug(14150) << "Kopete is unable to attempt to sign-on to the "
 			<< "AIM network because no password was specified in the "
-			<< "preferences.";
+			<< "preferences." << endl;
 	}
 	else if ( myself()->onlineStatus() == static_cast<AIMProtocol*>( protocol() )->statusOffline )
 	{

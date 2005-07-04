@@ -42,6 +42,7 @@
 #include <kconfig.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kpassivepopup.h>
 
 #include "client.h"
 #include "connection.h"
@@ -80,9 +81,11 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, c
 
 	QObject::connect( d->engine, SIGNAL( loggedIn() ), this, SLOT( slotGotSSIList() ) );
 	QObject::connect( d->engine, SIGNAL( messageReceived( const Oscar::Message& ) ),
-						this, SLOT( messageReceived(const Oscar::Message& ) ) );
-	QObject::connect( d->engine, SIGNAL( error( int, int, const QString&  ) ),
-	                  this, SLOT( protocolError( int, int, const QString& ) ) );
+	                  this, SLOT( messageReceived(const Oscar::Message& ) ) );
+	QObject::connect( d->engine, SIGNAL( socketError( int, const QString& ) ),
+	                  this, SLOT( slotSocketError( int, const QString& ) ) );
+	QObject::connect( d->engine, SIGNAL( taskError( const Oscar::SNAC&, int, bool ) ),
+	                  this, SLOT( slotTaskError( const Oscar::SNAC&, int, bool ) ) );
 	QObject::connect( d->engine, SIGNAL( userStartedTyping( const QString& ) ),
 	                  this, SLOT( userStartedTyping( const QString& ) ) );
 	QObject::connect( d->engine, SIGNAL( userStoppedTyping( const QString& ) ),
@@ -100,10 +103,10 @@ Client* OscarAccount::engine()
 	return d->engine;
 }
 
-void OscarAccount::disconnect()
+void OscarAccount::logOff( Kopete::Account::DisconnectReason reason )
 {
 	kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
-		//disconnect the signals
+	//disconnect the signals
 	Kopete::ContactList* kcl = Kopete::ContactList::self();
 	QObject::disconnect( kcl, SIGNAL( groupRenamed( Kopete::Group*,  const QString& ) ), 
 	                     this, SLOT( kopeteGroupRenamed( Kopete::Group*, const QString& ) ) );
@@ -116,7 +119,13 @@ void OscarAccount::disconnect()
 	
 	d->engine->close();
 	myself()->setOnlineStatus( Kopete::OnlineStatus::Offline );
-	disconnected( Manual );
+	
+	disconnected( reason );
+}
+
+void OscarAccount::disconnect()
+{
+	logOff( Kopete::Account::Manual );
 }
 
 bool OscarAccount::passwordWasWrong()
@@ -214,55 +223,6 @@ void OscarAccount::slotGoOnline()
 	//do nothing
 }
 
-void OscarAccount:: protocolError( int error, int psError, const QString& message )
-{
-	QString realMessage = message;
-	if ( error == Client::NoError )
-		return;
-	
-	if ( error == Client::NotConnectedError )
-	{
-		KMessageBox::queuedMessageBox( 0, KMessageBox::Error, message, i18n( "%1 Not Connected to %2" )
-		                               .arg( d->engine->userId(), d->engine->isIcq() ? i18n( "ICQ" ) : i18n( "AIM" ) ) );
-	}
-	
-	if ( error == Client::FatalProtocolError )
-	{
-		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Received fatal protocol error" << error << ", " 
-			<< psError << endl;
-		disconnect();
-		if ( psError == 5 )
-		{
-			disconnected( Kopete::Account::BadPassword );
-			password().setWrong( true );
-			return;
-		}
-		
-		if ( psError == 16 || psError == 2 )
-		{
-			disconnected( Kopete::Account::Manual );
-			realMessage = i18n("The %1 service is temporarily unavailable. Please try again later.")
-			              .arg( d->engine->isIcq() ? i18n( "ICQ" ) : i18n( "AIM" ) );
-		}
-		
-		if ( psError == 0 ) //zero is a generic error when i don't know what's wrong. :/
-		{
-			disconnected( Kopete::Account::Manual );
-		}
-		
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-		                               realMessage, i18n( "%1 Disconnected" ).arg( d->engine->userId() ) );
-		return;
-	}
-	
-	if ( error == Client::NonFatalProtocolError )
-	{
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-		                               message, i18n( "account id", "%1" ).arg( d->engine->userId() ) );
-	}
-}
-
-
 void OscarAccount::kopeteGroupRemoved( Kopete::Group* group )
 {
 	if ( isConnected() )
@@ -338,13 +298,6 @@ void OscarAccount::setServerPort(int port)
 		configGroup()->writeEntry( QString::fromLatin1( "Port" ), port );
 	else //set to default 5190
 		configGroup()->writeEntry( QString::fromLatin1( "Port" ), 5190 );
-}
-
-void OscarAccount::slotPasswordWrong()
-{
-	OscarAccount::disconnect();
-	password().setWrong();
-	QTimer::singleShot(0, this, SLOT(connect()));
 }
 
 Connection* OscarAccount::setupConnection( const QString& server, uint port )
@@ -503,6 +456,151 @@ void OscarAccount::userStoppedTyping( const QString & contact )
 	}
 }
 
+void OscarAccount::slotSocketError( int errCode, const QString& errString )
+{
+	Q_UNUSED( errCode );
+	KPassivePopup::message( i18n( "account has been disconnected", "%1 disconnected" ).arg( accountId() ),
+	                        errString,
+	                        myself()->onlineStatus().protocolIcon(),
+	                        Kopete::UI::Global::mainWidget() );
+	logOff( Kopete::Account::ConnectionReset );
+}
 
+void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
+{
+	kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "error recieived from task" << endl;
+	kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "service: " << s.family
+		<< " subtype: " << s.subtype << " code: " << code << endl;
+	
+	QString message;
+	if ( s.family == 0 && s.subtype == 0 )
+	{
+		message = getFLAPErrorMessage( code );
+		KPassivePopup::message( i18n( "account has been disconnected", "%1 disconnected" ).arg( accountId() ),
+		                        message, myself()->onlineStatus().protocolIcon(),
+		                        Kopete::UI::Global::mainWidget() );
+		switch ( code )
+		{
+		case 0x0004:
+		case 0x0005:
+			logOff( Kopete::Account::BadPassword );
+			break;
+		case 0x0007:
+		case 0x0008:
+		case 0x0009:
+		case 0x0011:
+			logOff( Kopete::Account::BadUserName );
+			break;
+		default:
+			logOff( Kopete::Account::Manual );
+		}
+		return;
+	}
+	if ( !fatal )
+		message = i18n("There was an error in the protocol handling. It wasn't fatal so you won't be disconnected");
+	else
+		message = i18n("There was an error in the protocol handling. Automatic reconnection occuring");
+	
+	KPassivePopup::message( i18n("OSCAR Protocol error"), message, myself()->onlineStatus().protocolIcon(),
+	                        Kopete::UI::Global::mainWidget() );
+	if ( fatal )
+		logOff( Kopete::Account::ConnectionReset );
+}
+	
+QString OscarAccount::getFLAPErrorMessage( int code )
+{
+	bool isICQ = d->engine->isIcq();
+	QString acctType = isICQ ? i18n("ICQ") : i18n("AIM");
+	QString acctDescription = isICQ ? i18n("ICQ user id", "UIN") : i18n("AIM user id", "screen name");
+	QString reason;
+	//FLAP errors are always fatal
+	//negative codes are things added by liboscar developers
+	//to indicate generic errors in the task
+	switch ( code )
+	{
+	case 0x0001:
+		if ( isConnected() ) // multiple logins (on same UIN)
+		{
+			reason = i18n( "You have logged in more than once with the same %1," \
+			               " account %2 is now disconnected.")
+				.arg( acctDescription ).arg( accountId() );
+		}
+		else // error while logging in
+		{
+			reason = i18n( "Sign on failed because either your %1 or " \
+			               "password are invalid. Please check your settings for account %2.")
+				.arg( acctDescription ).arg( accountId() );
+			
+		}
+		break;
+	case 0x0002: // Service temporarily unavailable
+	case 0x0014: // Reservation map error
+		reason = i18n("The %1 service is temporarily unavailable. Please try again later.")
+			.arg( acctType );
+		break;
+	case 0x0004: // Incorrect nick or password, re-enter
+	case 0x0005: // Mismatch nick or password, re-enter
+		reason = i18n("Could not sign on to %1 with account %2 because the " \
+		              "password was incorrect.").arg( acctType ).arg( accountId() );
+		break;
+	case 0x0007: // non-existant ICQ#
+	case 0x0008: // non-existant ICQ#
+		reason = i18n("Could not sign on to %1 with nonexistent account %2.")
+			.arg( acctType ).arg( accountId() );
+		break;
+	case 0x0009: // Expired account
+		reason = i18n("Sign on to %1 failed because your account %2 expired.")
+			.arg( acctType ).arg( accountId() );
+		break;
+	case 0x0011: // Suspended account
+		reason = i18n("Sign on to %1 failed because your account %2 is " \
+		              "currently suspended.").arg( acctType ).arg( accountId() );
+		break;
+	case 0x0015: // too many clients from same IP
+	case 0x0016: // too many clients from same IP
+	case 0x0017: // too many clients from same IP (reservation)
+		reason = i18n("Could not sign on to %1 as there are too many clients" \
+		              " from the same computer.").arg( acctType );
+		break;
+	case 0x0018: // rate exceeded (turboing)
+		if ( isConnected() )
+		{
+			reason = i18n("Account %1 was blocked on the %2 server for" \
+							" sending messages too quickly." \
+							" Wait ten minutes and try again." \
+							" If you continue to try, you will" \
+							" need to wait even longer.")
+				.arg( accountId() ).arg( acctType );
+		}
+		else
+		{
+			reason = i18n("Account %1 was blocked on the %2 server for" \
+							" reconnecting too quickly." \
+							" Wait ten minutes and try again." \
+							" If you continue to try, you will" \
+							" need to wait even longer.")
+				.arg( accountId() ).arg( acctType) ;
+		}
+		break;
+	case 0x001C:
+		reason = i18n("The %1 server thinks the client you are using is " \
+		              "too old. Please report this as a bug at http://bugs.kde.org")
+			.arg( acctType );
+		break;
+	case 0x0022: // Account suspended because of your age (age < 13)
+		reason = i18n("Account %1 was disabled on the %2 server because " \
+		              "of your age (less than 13).")
+			.arg( accountId() ).arg( acctType );
+		break;
+	default:
+		if ( !isConnected() )
+		{
+			reason = i18n("Sign on to %1 with your account %2 failed.")
+				.arg( acctType ).arg( accountId() );
+		}
+		break;
+	}
+	return reason;
+}
 #include "oscaraccount.moc"
 //kate: tab-width 4; indent-mode csands;

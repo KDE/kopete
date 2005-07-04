@@ -53,6 +53,12 @@ public:
 	virtual void disconnect();
 	
 	/**
+	 * Handle the various ways we can be logged off the oscar service
+	 * and handle the passthrough of the disconnection through the API.
+	 */
+	void logOff( Kopete::Account::DisconnectReason );
+	
+	/**
 	 * Was the password wrong last time we tried to connect?
 	 */
 	bool passwordWasWrong();
@@ -77,8 +83,6 @@ public slots:
 	void slotGoOffline();
 	
 	void slotGoOnline();
-	
-	void protocolError( int error, int psError, const QString& message );
 
 protected:
 	/**
@@ -105,8 +109,6 @@ protected:
 
 protected slots:
 	
-	void slotPasswordWrong();
-	
 	void slotGotSSIList();
 	
 	void kopeteGroupRemoved( Kopete::Group* g );
@@ -129,6 +131,16 @@ protected slots:
 signals:
 	
 	void accountDisconnected( Kopete::Account::DisconnectReason reason );
+
+private:
+	QString getFLAPErrorMessage( int code );
+	
+private slots:
+	/** Handler from socket errors from a connection */
+	void slotSocketError( int, const QString& );
+	
+	/** Handle task errors from the client */
+	void slotTaskError( const Oscar::SNAC& s, int errCode, bool fatal ) ;
 	
 private:
 	OscarAccountPrivate *d;
