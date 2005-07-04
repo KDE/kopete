@@ -200,7 +200,7 @@ ICQProtocol::~ICQProtocol()
 
 void ICQProtocol::initGenders()
 {
-	mGenders.insert(0, i18n("Unspecified"));
+	mGenders.insert(0, ""); // unspecified
 	mGenders.insert(1, i18n("Female"));
 	mGenders.insert(2, i18n("Male"));
 }

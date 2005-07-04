@@ -17,6 +17,7 @@
 #include "icqaddcontactpage.h"
 
 #include <ctype.h>
+
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qcombobox.h>
@@ -24,11 +25,13 @@
 #include <qlineedit.h>
 #include <qtabwidget.h>
 #include <qlabel.h>
+
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <klistview.h>
 #include <klocale.h>
 #include <kpushbutton.h>
+#include <kmessagebox.h>
 
 #include "icqadd.h"
 #include "icqaccount.h"
@@ -46,13 +49,6 @@ ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent, const c
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	addUI = new icqAddUI(this);
 	connect( addUI->searchButton, SIGNAL( clicked() ), this, SLOT( showSearchDialog() ) );
-	
-	if ( !mAccount->isConnected() )
-	{
-		addUI->searchButton->setEnabled( false );
-		addUI->uinEdit->setReadOnly( true );
-		addUI->uinEdit->setText( i18n( "%1 is offline. Unable to add contacts" ).arg( mAccount->accountLabel() ) );
-	}
 }
 
 ICQAddContactPage::~ICQAddContactPage()
@@ -83,13 +79,26 @@ bool ICQAddContactPage::apply(Kopete::Account* , Kopete::MetaContact *parentCont
 bool ICQAddContactPage::validateData()
 {
 	if(!mAccount->isConnected())
+	{
+		// Account currently offline
+		addUI->searchButton->setEnabled( false );
+		addUI->uinEdit->setEnabled( false );
+		KMessageBox::sorry( this, i18n("You must be online to add a contact."), i18n("ICQ Plugin") );
 		return false;
+	}
 	
 	Q_ULONG uin = addUI->uinEdit->text().toULong();
 	if ( uin < 1000 )
+	{
+		// Invalid (or missing) UIN
+		KMessageBox::sorry( this, i18n("You must enter a valid UIN."), i18n("ICQ Plugin") );
 		return false;
+	}
 	else
+	{
+		// UIN is valid
 		return true;
+	}
 }
 
 void ICQAddContactPage::showSearchDialog()
@@ -100,13 +109,15 @@ void ICQAddContactPage::showSearchDialog()
 	{
 		m_searchDialog = new ICQSearchDialog( mAccount, this, "icqSearchDialog" );
 		m_searchDialog->show();
-		connect( m_searchDialog, SIGNAL( destroyed() ), this, SLOT( searchDialogDestroyed() ) );
+		connect( m_searchDialog, SIGNAL( closeClicked() ), this, SLOT( searchDialogDestroyed() ) );
 	}
 }
 
 void ICQAddContactPage::searchDialogDestroyed()
 {
-	m_searchDialog = 0L;
+	QObject::disconnect( this, 0, m_searchDialog, 0 );
+	m_searchDialog->delayedDestruct();
+	m_searchDialog = NULL;
 }
 
 
