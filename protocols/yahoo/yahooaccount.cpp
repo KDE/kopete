@@ -660,18 +660,6 @@ void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, co
 		Kopete::Group *g=Kopete::ContactList::self()->findGroup(group);
 		addContact(userid, alias.isEmpty() ? userid : alias, g, Kopete::Account::ChangeKABC);
 	}
-
-	if ( true && !(static_cast<YahooContact *>(contact( userid )) == myself() ) ) // TODO?: make this configurable
-	{
-		m_session->requestBuddyIcon( userid );		// Try to get Buddy Icon
-
-		if ( !myself()->property( Kopete::Global::Properties::self()->photo() ).isNull() )
-		{
-			static_cast< YahooContact* >( contact( userid ) )->sendBuddyIconUpdate( 2 );
-			static_cast< YahooContact* >( contact( userid ) )->sendBuddyIconChecksum(
-				myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
-		}
-	}
 }
 
 void YahooAccount::slotGotIgnore( const QStringList & /* igns */ )
@@ -691,6 +679,7 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 	if ( kc )
 	{
 		Kopete::OnlineStatus newStatus = static_cast<YahooProtocol*>( m_protocol )->statusFromYahoo( stat );
+		Kopete::OnlineStatus oldStatus = kc->onlineStatus();
 
 		if( newStatus == static_cast<YahooProtocol*>( m_protocol )->Custom ) {
 			if( away == 0 )
@@ -700,9 +689,18 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 		else
 			kc->removeProperty( m_protocol->awayMessage );
 
-		if( newStatus == static_cast<YahooProtocol*>( m_protocol )->Online &&
-		    contact(who) != myself() )
+		if( newStatus != static_cast<YahooProtocol*>( m_protocol )->Offline &&
+		    oldStatus == static_cast<YahooProtocol*>( m_protocol )->Offline && contact(who) != myself() )
+		{
 			m_session->requestBuddyIcon( who );		// Try to get Buddy Icon
+
+			if ( !myself()->property( Kopete::Global::Properties::self()->photo() ).isNull() )
+			{
+				static_cast< YahooContact* >( contact( who ) )->sendBuddyIconUpdate( 2 );
+				static_cast< YahooContact* >( contact( who ) )->sendBuddyIconChecksum(
+					myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
+			}
+		}
 		
 		if( newStatus == static_cast<YahooProtocol*>( m_protocol )->Idle ) {
 			// TODO: Use the argument 'away' to set the idleTime
