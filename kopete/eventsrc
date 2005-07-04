@@ -925,8 +925,10 @@ default_presentation=16
 [connection_error]
 Name=Connection Error
 Name[br]=Fazi ar gevreadenn
+Name[et]=Ühenduse viga
 Name[ga]=Earráid Naisc
 Name[sv]=Anslutningsfel
 Comment=An error on connection has occurred
+Comment[et]=Ühendusega tekkis viga
 Comment[sv]=En fel vid anslutning har inträffat
 default_presentation=2
