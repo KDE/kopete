@@ -1,12 +1,12 @@
 INCLUDES = $(all_includes) $(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/protocols/oscar/liboscar
 METASOURCES = AUTO
-check_PROGRAMS = kunittest clientstram_test logintest userinfotest ssigrouptest redirecttest ipaddrtest
+check_PROGRAMS = kunittest clientstream_test logintest userinfotest ssigrouptest redirecttest ipaddrtest
 
 kunittest_SOURCES = main.cpp kunittest.cpp chatnavtests.cpp
 kunittest_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 kunittest_LDADD = $(LIB_KDECORE) ../liboscar.la
 
-clientstream_test_SOURCE = clientstream_test.cpp
+clientstream_test_SOURCES = clientstream_test.cpp
 clientstream_test_LDADD = $(LIB_QT) $(LIB_KDECORE) ../liboscar.la
 
 logintest_SOURCES = logintest.cpp

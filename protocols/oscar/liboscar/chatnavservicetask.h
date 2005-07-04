@@ -40,6 +40,10 @@ public:
 	virtual void onGo();
 
 private:
+	void handleExchangeInfo( const TLV& t );
+	void handleBasicRoomInfo( const TLV& t );
+	
+private:
 	
 	RequestType m_type;
 };

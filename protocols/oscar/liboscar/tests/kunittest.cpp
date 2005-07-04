@@ -26,7 +26,6 @@
  */
 #include "kunittest.h"
 
-#include "qtester.h"
 #include "tester.h"
 #include "chatnavtests.h"
 
@@ -55,15 +54,15 @@ KUnitTest::KUnitTest()
     QTimer::singleShot( 0, this, SLOT(checkRun()) );
 
     m_tests.setAutoDelete( TRUE );
-    m_qtests.setAutoDelete( TRUE );
+//    m_qtests.setAutoDelete( TRUE );
 
     registerTests();
 }
 
 void KUnitTest::checkRun()
 {
-    if ( m_qtests.isEmpty() )
-        qApp->exit();
+//    if ( m_qtests.isEmpty() )
+//        qApp->exit();
 }
 
 int KUnitTest::runTests()
@@ -151,18 +150,18 @@ int KUnitTest::runTests()
     return m_tests.count();
 }
 
-void KUnitTest::addTester( QTester *test )
-{
-    m_qtests.insert( test, test );
-    connect( test, SIGNAL(destroyed(QObject*)),
-             SLOT(qtesterDone(QObject* )) );
-}
+//void KUnitTest::addTester( QTester *test )
+//{
+//    m_qtests.insert( test, test );
+//    connect( test, SIGNAL(destroyed(QObject*)),
+//             SLOT(qtesterDone(QObject* )) );
+//}
 
 void KUnitTest::qtesterDone( QObject *obj )
 {
-    m_qtests.remove( obj );
-    if ( m_qtests.isEmpty() )
-        qApp->quit();
+//    m_qtests.remove( obj );
+//    if ( m_qtests.isEmpty() )
+//        qApp->quit();
 }
 
 #include "kunittest.moc"

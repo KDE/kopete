@@ -154,19 +154,19 @@ void ChatNavTests::exchangeParsingTest()
 		TLV t = testBuffer.getTLV();
 		if ( t.type == 0x0002 )
 		{
-			cout << "Max concurrent rooms: " << t.data[0] << endl;
+// 			cout << "Max concurrent rooms: " << t.data << endl;
 		}
 		
 		t = testBuffer.getTLV();
 		if ( t.type == 0x0003 )
 		{
-			cout << "TLV of type 3 with length " << t.length << endl;
+// 			cout << "TLV of type 3 with length " << t.length << endl;
 			Buffer b(t.data);
 			WORD id = b.getWord();
 			CHECK( id > 0, true );
 			int tlvCount = b.getWord();
 			int realCount = 0;
-			cout << "Expecting " << tlvCount << " TLVs" << endl;
+// 			cout << "Expecting " << tlvCount << " TLVs" << endl;
 			while ( b.length() > 0 )
 			{
 				TLV t = b.getTLV();
@@ -210,7 +210,9 @@ void ChatNavTests::exchangeParsingTest()
 					CHECK( t.length == 1, true );
 					break;
 				default:
-					cout << "unknown TLV type " << t.type << endl;
+// 					ios::fmtflags origFlags = cout.flags(ios::hex|ios::showbase);
+// 					cout << "unknown TLV type " << t.type << endl;
+// 					cout.flags(origFlags);
 					break;
 				}
 				realCount++;
@@ -229,7 +231,10 @@ void ChatNavTests::roominfoParsingTest()
 	while ( testBuffer.length() != 0 )
 	{
 		TLV t = testBuffer.getTLV();
-		cout << "TLV of type " << t << " with length " << t.length << endl;
+		
+// 		cout << "TLV of type " << t.type << " with length " << t.length << endl;
+		
+		
 		CHECK( t.type == 0x04, true );
 		CHECK( t.length > 8, true );
 		Buffer b( t.data );
@@ -240,11 +245,13 @@ void ChatNavTests::roominfoParsingTest()
 		CHECK( b.getByte() > 0, true );
 		int tlvCount = b.getWord();
 		int realCount = 0;
-		cout << "Expecting " << tlvCount << " TLVs" << endl;
+// 		cout << "Expecting " << tlvCount << " TLVs" << endl;
 		while ( b.length() > 0 )
 		{
 			TLV t = b.getTLV();
-			cout << "TLV of type " << t.type << endl;
+// 			ios::fmtflags origFlags = cout.flags(ios::hex|ios::showbase);
+// 			cout << "TLV of type " << t.type << endl;
+// 			cout.flags(origFlags);
 			CHECK( t.type != 0, true );
 			switch (t.type)
 			{
@@ -282,7 +289,6 @@ void ChatNavTests::roominfoParsingTest()
 				CHECK( t.data.count() == t.length, true );
 				break;
 			case 0xD5:
-				cout << "TLV 0xD5 length is " << t.length << endl;
 				CHECK( t.length == 1, true );
 				break;
 			default:

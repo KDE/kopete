@@ -27,7 +27,6 @@
 #ifndef KUNITTEST_H
 #define KUNITTEST_H
 
-#include "qtester.h"
 #include "tester.h"
 
 #include <qobject.h>
@@ -49,7 +48,7 @@ public:
     {
         m_tests.insert( name, test );
     }
-    void addTester( QTester *test );
+//    void addTester( QTester *test );
 
 private slots:
     void qtesterDone( QObject *obj );
@@ -60,7 +59,7 @@ private:
 
 private:
     QAsciiDict<Tester> m_tests;
-    QPtrDict<QTester> m_qtests;
+//    QPtrDict<QTester> m_qtests;
     int globalTests;
     int globalPasses;
     int globalFails;
