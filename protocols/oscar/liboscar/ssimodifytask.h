@@ -58,8 +58,8 @@ public:
 	virtual bool take( Transfer* transfer );
 
 	/* Contact properties */
-	enum OperationType { NoType, Add, Remove, Rename, Change };
-	enum OperationSubject { NoSubject, Contact, Group, Visibility, Invisibility };
+	enum OperationType { NoType = 0x00, Add = 0x10, Remove = 0x20, Rename = 0x40, Change = 0x80 };
+	enum OperationSubject { NoSubject = 0x000, Contact = 0x100, Group = 0x200, Visibility = 0x400, Invisibility = 0x800 };
 	
 	//! Set up the stuff needed to add a contact.
 	//! @return true if we can send the packet
