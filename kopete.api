@@ -3,7 +3,7 @@
 # General configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = Kopete
-PROJECT_NUMBER         = 0.8.90
+PROJECT_NUMBER         = 0.10.90
 OUTPUT_DIRECTORY       = apidocs
 OUTPUT_LANGUAGE        = English
 EXTRACT_ALL            = NO
@@ -81,7 +81,7 @@ IGNORE_PREFIX          = Kopete
 # configuration options related to the HTML output
 #---------------------------------------------------------------------------
 GENERATE_HTML          = YES
-HTML_OUTPUT            = libkopete/html
+HTML_OUTPUT            = html
 HTML_HEADER            = apidocs/common/header.html
 HTML_FOOTER            = apidocs/common/footer.html
 HTML_STYLESHEET        = apidocs/common/doxygen.css
