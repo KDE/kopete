@@ -163,7 +163,7 @@ m4_define(meanwhile_version_max,        0.5.0)
 
 # Let the user disable the plugin
 AC_ARG_ENABLE(sametime-plugin,
-      AC_HELP_STRING([--enable-sametime-plugin], [build the KopeteSametime plugin @<:@default=no@>:@]),
+      AC_HELP_STRING([--enable-sametime-plugin], [build the Kopete Sametime plugin @<:@default=no@:>@]),
       [compile_meanwhile=$enableval],
       [compile_meanwhile=no]
       )
