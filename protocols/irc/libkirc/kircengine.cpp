@@ -77,7 +77,7 @@ Engine::Engine(QObject *parent, const char *name)
 	m_UserString = QString::fromLatin1("Response not supplied by user.");
 	m_SourceString = QString::fromLatin1("Unknown client, known source.");
 
-	defaultCodec = QTextCodec::codecForMib(4);
+	defaultCodec = QTextCodec::codecForMib(106); // UTF8 mib is 106
 	kdDebug(14120) << "Setting default engine codec, " << defaultCodec->name() << endl;
 
 	m_sock = 0L;
