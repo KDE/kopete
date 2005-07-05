@@ -257,25 +257,32 @@ bool Message::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const 
 		msg.m_command = unquote(regexp.cap(2));
 		msg.m_args = QStringList::split(' ', regexp.cap(3));
 
-		QCString suffix = regexp.cap(4).latin1();
+		QCString suffix = codec->fromUnicode(unquote(regexp.cap(4)));
 		if (!suffix.isNull() && suffix.length() > 0)
 		{
-			if (extractCtcpCommand(suffix, msg.m_ctcpRaw, codec))
+			QCString ctcpRaw;
+			if (extractCtcpCommand(suffix, ctcpRaw))
 			{
-				msg.m_ctcpMessage = new Message();
-				msg.m_ctcpMessage->m_raw = msg.m_ctcpRaw.latin1();
+				msg.m_ctcpRaw = codec->toUnicode(ctcpRaw); 
 
-				int space = msg.m_ctcpRaw.find(' ');
+				msg.m_ctcpMessage = new Message();
+				msg.m_ctcpMessage->m_raw = codec->fromUnicode(ctcpUnquote(msg.m_ctcpRaw));
+
+				int space = ctcpRaw.find(' ');
 				if (!matchForIRCRegExp(msg.m_ctcpMessage->m_raw, codec, *msg.m_ctcpMessage))
 				{
+					QCString command;
 					if (space > 0)
-						msg.m_ctcpMessage->m_command = msg.m_ctcpRaw.mid(0, space).upper();
+						command = ctcpRaw.mid(0, space).upper();
 					else
-						msg.m_ctcpMessage->m_command = msg.m_ctcpRaw.upper();
+						command = ctcpRaw.upper();
+					msg.m_ctcpMessage->m_command =
+						Kopete::Message::decodeString( KSParser::parse(command), codec );
 				}
 
 				if (space > 0)
-					msg.m_ctcpMessage->m_ctcpRaw = msg.m_ctcpRaw.mid(space).latin1();
+					msg.m_ctcpMessage->m_ctcpRaw =
+						Kopete::Message::decodeString( KSParser::parse(ctcpRaw.mid(space)), codec );
 			}
 
 			msg.m_suffix = Kopete::Message::decodeString( KSParser::parse(suffix), codec );
@@ -324,13 +331,13 @@ bool Message::isValid() const
  * string is splited to get the first part of the message and fill the ctcp command.
  * FIXME: The code currently only match for a textual message or a ctcp message not both mixed as it can be (even if very rare).
  */
-bool Message::extractCtcpCommand(QCString &message, QString &ctcpline, const QTextCodec *codec)
+bool Message::extractCtcpCommand(QCString &message, QCString &ctcpline)
 {
 	uint len = message.length();
 
 	if( message[0] == 1 && message[len-1] == 1 )
 	{
-		ctcpline = ctcpUnquote( unquote( Kopete::Message::decodeString(KSParser::parse(message.mid(1,len-2)), codec) ) );
+		ctcpline = message.mid(1,len-2);
 		message.truncate(0);
 
 		return true;

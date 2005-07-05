@@ -134,7 +134,7 @@ private:
 	static QString ctcpQuote(const QString &str);
 	static QString ctcpUnquote(const QString &str);
 
-	static bool extractCtcpCommand(QCString &str, QString &ctcpline, const QTextCodec *codec);
+	static bool extractCtcpCommand(QCString &str, QCString &ctcpline);
 
 	static bool matchForIRCRegExp(const QCString &line, const QTextCodec *codec, KIRC::Message &message);
 	static bool matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const QCString &line, KIRC::Message &message);
