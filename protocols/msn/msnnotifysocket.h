@@ -26,10 +26,16 @@
 #include "msnsocket.h"
 #include "msnprotocol.h"
 
+#define OLDSSLLOGIN 1
+
 class MSNDispatchSocket;
 class MSNAccount;
 class KTempFile;
+#ifdef OLDSSLLOGIN
 class SslLoginHandler;
+#else
+class MSNSecureLoginHandler;
+#endif
 
 #include <kio/job.h>
 
@@ -139,7 +145,7 @@ private slots:
 
 	void sslLoginFailed();
 	void sslLoginIncorrect();
-	void sslLoginSucceeded(QString);
+	void sslLoginSucceeded(QString ticket);
 
 
 private:
@@ -171,7 +177,11 @@ private:
 	QString m_sid;
 	QString m_loginTime;
 	QString m_localIP;
+#ifdef OLDSSLLOGIN
 	SslLoginHandler *m_sslLoginHandler;
+#else
+	MSNSecureLoginHandler *m_secureLoginHandler;
+#endif
 
 	QTimer *m_keepaliveTimer;
 

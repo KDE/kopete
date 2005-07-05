@@ -23,7 +23,12 @@
 #include "msnnotifysocket.h"
 #include "msncontact.h"
 #include "msnaccount.h"
+
+#ifdef OLDSSLLOGIN
 #include "sslloginhandler.h"
+#else
+#include "msnsecureloginhandler.h"
+#endif
 
 #include <qregexp.h>
 
@@ -50,7 +55,11 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 : MSNSocket( account )
 {
 	m_newstatus = MSNProtocol::protocol()->NLN;
+#ifdef OLDSSLLOGIN
 	m_sslLoginHandler=0l;
+#else
+	m_secureLoginHandler=0L;
+#endif
 
 	m_isHotmailAccount=false;
 	m_ping=false;
@@ -67,7 +76,11 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 
 MSNNotifySocket::~MSNNotifySocket()
 {
+#ifdef OLDSSLLOGIN
 	delete m_sslLoginHandler;
+#else
+	delete m_secureLoginHandler;
+#endif
 	kdDebug(14140) << k_funcinfo << endl;
 }
 
@@ -276,6 +289,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		if( data.section( ' ', 1, 1 ) == "S" )
 		{
+			#ifdef OLDSSLLOGIN
 			m_sslLoginHandler = new SslLoginHandler();
 			QObject::connect( m_sslLoginHandler, SIGNAL(       loginFailed()        ),
 					 this,            SLOT  (    sslLoginFailed()        ) );
@@ -285,6 +299,15 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 					 this,            SLOT  ( sslLoginSucceeded(QString) ) );
 
 			m_sslLoginHandler->login( data.section( ' ' , 2 , 2 ), m_account->accountId() , m_password );
+			#else
+			m_secureLoginHandler = new MSNSecureLoginHandler(m_account->accountId(), m_password, data.section( ' ' , 2 , 2 ));
+
+			QObject::connect(m_secureLoginHandler, SIGNAL(loginFailed()), this, SLOT(sslLoginFailed()));
+			QObject::connect(m_secureLoginHandler, SIGNAL(loginSuccesful(const QString& )), this, SLOT(sslLoginSucceeded(const QString& )));
+
+			m_secureLoginHandler->login();
+			#endif
+	
 		}
 		else
 		{
@@ -593,16 +616,24 @@ void MSNNotifySocket::sslLoginFailed()
 	m_disconnectReason=Kopete::Account::InvalidHost;
 	disconnect();
 }
+
 void MSNNotifySocket::sslLoginIncorrect()
 {
 	m_disconnectReason=Kopete::Account::BadPassword;
 	disconnect();
 }
-void MSNNotifySocket::sslLoginSucceeded(QString a)
+
+void MSNNotifySocket::sslLoginSucceeded(QString ticket)
 {
-	sendCommand("USR" , "TWN S " + a);
+	sendCommand("USR" , "TWN S " + ticket);
+
+#ifdef OLDSSLLOGIN
 	m_sslLoginHandler->deleteLater();
-	m_sslLoginHandler=0;
+	m_sslLoginHandler = 0L;
+#else
+	m_secureLoginHandler->deleteLater();
+	m_secureLoginHandler = 0L;
+#endif
 }
 
 
