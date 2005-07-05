@@ -52,7 +52,7 @@ void Engine::bindNumericReplies()
 	bind(303, this, SLOT(numericReply_303(KIRC::Message &)), 1, 1); // incomingUserOnline
 	bind(305, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 ); // You are no longer marked as away
 	bind(306, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 ); // You are marked as away
-	bind(307, this, SLOT(dumpSuffix(KIRC::Message&)),0,0); // Who Knows?
+	bind(307, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 ); // DALNET: Nick is registered 
 	bind(311, this, SLOT(numericReply_311(KIRC::Message &)), 5, 5);
 	bind(312, this, SLOT(numericReply_312(KIRC::Message &)), 3, 3);
 //	bind(313, this, SLOT(numericReply_313(KIRC::Message &)), 2, 2); // incomingWhoIsOperator
