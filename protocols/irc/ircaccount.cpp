@@ -231,14 +231,27 @@ void IRCAccount::setNetwork(const IRCNetwork &network)
 //	setAccountLabel(network.name);
 }
 */
-bool IRCAccount::autoShowServerWindow() const
+
+const QString IRCAccount::userName() const
 {
-	return configGroup()->readBoolEntry(QString::fromLatin1("AutoShowServerWindow"));
+	return configGroup()->readEntry(Config::USERNAME);
 }
 
-void IRCAccount::setAutoShowServerWindow(bool autoShow)
+void IRCAccount::setUserName(const QString &userName)
 {
-	configGroup()->writeEntry(QString::fromLatin1("AutoShowServerWindow"), autoShow);
+	configGroup()->writeEntry(Config::USERNAME, userName);
+	m_engine->setUserName(userName);
+}
+
+const QString IRCAccount::realName() const
+{
+	return configGroup()->readEntry(Config::REALNAME);
+}
+
+void IRCAccount::setRealName( const QString &userName )
+{
+	configGroup()->writeEntry(Config::REALNAME, userName);
+	m_engine->setRealName(userName);
 }
 
 const QString IRCAccount::nickName() const
@@ -262,41 +275,7 @@ void IRCAccount::setAltNick( const QString &altNick )
 	configGroup()->writeEntry(QString::fromLatin1( "altNick" ), altNick);
 }
 */
-const QString IRCAccount::userName() const
-{
-	return configGroup()->readEntry(Config::USERNAME);
-}
-
-void IRCAccount::setUserName(const QString &userName)
-{
-	configGroup()->writeEntry(Config::USERNAME, userName);
-	m_engine->setUserName(userName);
-}
-
-const QString IRCAccount::realName() const
-{
-	return configGroup()->readEntry(Config::REALNAME);
-}
-
-void IRCAccount::setRealName( const QString &userName )
-{
-	configGroup()->writeEntry(Config::REALNAME, userName);
-	m_engine->setRealName(userName);
-}
-
-KIRC::Engine *IRCAccount::engine() const
-{
-	return m_engine;
-}
-
-// FIXME: Move this to a dictionnary
-void IRCAccount::setDefaultPart( const QString &defaultPart )
-{
-	configGroup()->writeEntry( QString::fromLatin1( "defaultPart" ), defaultPart );
-}
-
-// FIXME: Move this to a dictionnary
-const QString IRCAccount::defaultPart() const
+const QString IRCAccount::defaultPartMessage() const
 {
 	QString partMsg = configGroup()->readEntry(QString::fromLatin1("defaultPart"));
 	if( partMsg.isEmpty() )
@@ -304,18 +283,37 @@ const QString IRCAccount::defaultPart() const
 	return partMsg;
 }
 
-// FIXME: Move this to a dictionnary
-void IRCAccount::setDefaultQuit( const QString &defaultQuit )
+void IRCAccount::setDefaultPartMessage( const QString &defaultPart )
 {
-	configGroup()->writeEntry( QString::fromLatin1( "defaultQuit" ), defaultQuit );
+	configGroup()->writeEntry( QString::fromLatin1( "defaultPart" ), defaultPart );
 }
 
-const QString IRCAccount::defaultQuit() const
+const QString IRCAccount::defaultQuitMessage() const
 {
 	QString quitMsg = configGroup()->readEntry(QString::fromLatin1("defaultQuit"));
 	if( quitMsg.isEmpty() )
 		return IRC::Version;
 	return quitMsg;
+}
+
+void IRCAccount::setDefaultQuitMessage( const QString &defaultQuit )
+{
+	configGroup()->writeEntry( QString::fromLatin1( "defaultQuit" ), defaultQuit );
+}
+
+bool IRCAccount::autoShowServerWindow() const
+{
+	return configGroup()->readBoolEntry(QString::fromLatin1("AutoShowServerWindow"));
+}
+
+void IRCAccount::setAutoShowServerWindow(bool autoShow)
+{
+	configGroup()->writeEntry(QString::fromLatin1("AutoShowServerWindow"), autoShow);
+}
+
+KIRC::Engine *IRCAccount::engine() const
+{
+	return m_engine;
 }
 
 void IRCAccount::setCustomCtcpReplies( const QMap< QString, QString > &replies ) const
@@ -507,17 +505,12 @@ void IRCAccount::slotPerformOnConnectCommands()
 		CommandHandler::commandHandler()->processMessage(*it, manager);
 }
 
-void IRCAccount::disconnect()
-{
-	quit();
-}
-
 void IRCAccount::quit( const QString &quitMessage )
 {
 	kdDebug(14120) << "Quitting IRC: " << quitMessage << endl;
 
 	if( quitMessage.isNull() || quitMessage.isEmpty() )
-		m_engine->quit( defaultQuit() );
+		m_engine->quit( defaultQuitMessage() );
 	else
 		m_engine->quit( quitMessage );
 }
@@ -566,8 +559,9 @@ void IRCAccount::setOnlineStatus(const OnlineStatus& status , const QString &rea
 		setupEngine();
 		connect();
 	}
-	else if ( expected == OnlineStatus::Offline && current != OnlineStatus::Offline )
-		disconnect();
+
+	if ( expected == OnlineStatus::Offline && current != OnlineStatus::Offline )
+		quit(reason);
 }
 
 void IRCAccount::successfullyChangedNick(const QString &oldnick, const QString &newnick)

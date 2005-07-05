@@ -61,8 +61,8 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent, c
 		mUserName->setText( account()->userName() );
 		m_realNameLineEdit->setText( account()->realName() );
 
-		partMessage->setText( account()->defaultPart() );
-		quitMessage->setText( account()->defaultQuit() );
+		partMessage->setText( account()->defaultPartMessage() );
+		quitMessage->setText( account()->defaultQuitMessage() );
 		if( account()->codec() )
 			currentCodec = account()->codec()->mibEnum();
 
@@ -237,8 +237,8 @@ Kopete::Account *IRCEditAccountWidget::apply()
 //	account()->setAltNick( mAltNickname->text() );
 	account()->setUserName( mUserName->text() );
 	account()->setRealName( m_realNameLineEdit->text() );
-	account()->setDefaultPart( partMessage->text() );
-	account()->setDefaultQuit( quitMessage->text() );
+	account()->setDefaultPartMessage( partMessage->text() );
+	account()->setDefaultQuitMessage( quitMessage->text() );
 	account()->setAutoShowServerWindow( autoShowServerWindow->isChecked() );
 	account()->setExcludeConnect( autoConnect->isChecked() );
 

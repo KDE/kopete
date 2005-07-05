@@ -56,6 +56,9 @@ class IRCAccount
 	Q_PROPERTY(QString nickName READ nickName WRITE setNickName)
 //	Q_PROPERTY(QStringList nickNames READ nickNames WRITE setNickNames)
 
+	Q_PROPERTY(QString defaultPartMessage READ defaultPartMessage WRITE setDefaultPartMessage)
+	Q_PROPERTY(QString defaultQuitMessage READ defaultQuitMessage WRITE setDefaultQuitMessage)
+
 	Q_PROPERTY(bool autoShowServerWindow READ autoShowServerWindow WRITE setAutoShowServerWindow)
 
 public:
@@ -69,13 +72,17 @@ public: // READ properties accessors.
 
 	const QString networkName() const;
 
+	const QString userName() const;
+
+	const QString realName() const;
+
 	const QString nickName() const;
 
 //	const QString altNick() const;
 
-	const QString userName() const;
+	const QString defaultPartMessage() const;
 
-	const QString realName() const;
+	const QString defaultQuitMessage() const;
 
 	bool autoShowServerWindow() const;
 
@@ -85,13 +92,17 @@ public slots: // WRITE properties accessors.
 
 	void setNetworkByName( const QString & );
 
+	void setUserName( const QString & );
+
+	void setRealName( const QString & );
+
 	void setNickName( const QString & );
 
 //	void setAltNick( const QString & );
 
-	void setUserName( const QString & );
+	void setDefaultPartMessage( const QString & );
 
-	void setRealName( const QString & );
+	void setDefaultQuitMessage( const QString & );
 
 	void setAutoShowServerWindow( bool autoShow );
 
@@ -109,15 +120,7 @@ public:
 
 	void setConnectCommands( const QStringList & ) const;
 
-	void setDefaultPart( const QString & );
-
-	void setDefaultQuit( const QString & );
-
-
 public:
-	const QString defaultPart() const;
-
-	const QString defaultQuit() const;
 
 	QMap< QString, QString > customCtcp() const;
 
@@ -142,7 +145,7 @@ public slots:
 
 	virtual void connectWithPassword( const QString & );
 
-	virtual void disconnect();
+	virtual void disconnect() { quit(); } // REMOVE ME ASAP
 
 	/** Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
