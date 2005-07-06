@@ -33,7 +33,6 @@
 #include "icquserinfotask.h"
 #include "logintask.h"
 #include "connection.h"
-#include "connectionlist.h"
 #include "messagereceivertask.h"
 #include "onlinenotifiertask.h"
 #include "oscarclientstream.h"
@@ -668,84 +667,84 @@ void Client::updateProfile( const QString& profile )
 
 void Client::sendTyping( const QString & contact, bool typing )
 {
-d->typingNotifyTask->setParams( contact, ( typing ? TypingNotifyTask::Begin : TypingNotifyTask::Finished ) );
+	d->typingNotifyTask->setParams( contact, ( typing ? TypingNotifyTask::Begin : TypingNotifyTask::Finished ) );
 	d->typingNotifyTask->go( false ); 	// don't delete the task after sending
 }
 
 void Client::requestBuddyIcon( const QString& user, const QByteArray& hash )
 {
-	if ( d->connections.count() == 1 )
-	{
-		emit haveIconForContact( user, QByteArray() );
-		requestServerRedirect( 0x0010 );
-		return;
-	}
-
-	BuddyIconTask* bit = new BuddyIconTask( d->connections.last()->rootTask() );
-	connect( bit, SIGNAL( haveIcon( const QString&, const QByteArray& ) ),
-	         this, SIGNAL( haveIconForContact( const QString&, const QByteArray& ) ) );
-	bit->requestIconFor( user );
-	bit->setHash( hash );
-	bit->go( true );
+// 	if ( d->connections.count() == 1 )
+// 	{
+// 		emit haveIconForContact( user, QByteArray() );
+// 		requestServerRedirect( 0x0010 );
+// 		return;
+// 	}
+// 
+// 	BuddyIconTask* bit = new BuddyIconTask( d->connections.last()->rootTask() );
+// 	connect( bit, SIGNAL( haveIcon( const QString&, const QByteArray& ) ),
+// 	         this, SIGNAL( haveIconForContact( const QString&, const QByteArray& ) ) );
+// 	bit->requestIconFor( user );
+// 	bit->setHash( hash );
+// 	bit->go( true );
 
 }
 
 void Client::requestServerRedirect( WORD family )
 {
-	if ( d->redirectRequested == false  )
-	{
-		d->redirectRequested = true;
-		ServerRedirectTask* srt = new ServerRedirectTask( d->connections.first()->rootTask() );
-		connect( srt, SIGNAL( haveServer( const QString&, const QByteArray&, WORD ) ),
-		         this, SLOT( haveServerForRedirect( const QString&, const QByteArray&, WORD ) ) );
-		srt->setService( family );
-		srt->go( true );
-	}
+// 	if ( d->redirectRequested == false  )
+// 	{
+// 		d->redirectRequested = true;
+// 		ServerRedirectTask* srt = new ServerRedirectTask( d->connections.first()->rootTask() );
+// 		connect( srt, SIGNAL( haveServer( const QString&, const QByteArray&, WORD ) ),
+// 		         this, SLOT( haveServerForRedirect( const QString&, const QByteArray&, WORD ) ) );
+// 		srt->setService( family );
+// 		srt->go( true );
+// 	}
 
 }
 
 void Client::haveServerForRedirect( const QString& host, const QByteArray& cookie, WORD )
 {
-	//create a new connection and set it up
-	int colonPos = host.find(':');
-	QString realHost, realPort;
-	if ( colonPos != -1 )
-	{
-		realHost = host.left( colonPos );
-		realPort = host.right(4); //we only need 4 bytes
-	}
-	else
-	{
-		realHost = host;
-		realPort = QString::fromLatin1("5190");
-	}
-
-	Connection* c = createConnection( realHost, realPort );
-	d->connections.append( c );
-	//create the new login task
-	m_loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
-	m_loginTaskTwo->setCookie( cookie );
-	QObject::connect( m_loginTaskTwo, SIGNAL( finished() ), this, SLOT( serverRedirectFinished() ) );
-
-
-	//connect
-	connectToServer( c, d->host, false );
-	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
+// 	//create a new connection and set it up
+// 	int colonPos = host.find(':');
+// 	QString realHost, realPort;
+// 	if ( colonPos != -1 )
+// 	{
+// 		realHost = host.left( colonPos );
+// 		realPort = host.right(4); //we only need 4 bytes
+// 	}
+// 	else
+// 	{
+// 		realHost = host;
+// 		realPort = QString::fromLatin1("5190");
+// 	}
+// 
+// 	Connection* c = createConnection( realHost, realPort );
+// 	d->connections.append( c );
+// 	//create the new login task
+// 	m_loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
+// 	m_loginTaskTwo->setCookie( cookie );
+// 	QObject::connect( m_loginTaskTwo, SIGNAL( finished() ), this, SLOT( serverRedirectFinished() ) );
+// 
+// 
+// 	//connect
+// 	connectToServer( c, d->host, false );
+// 	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
 }
 
-void Client::serverRedirectFinished( )
+void Client::serverRedirectFinished()
 {
-	if ( m_loginTaskTwo->statusCode() == 0 )
-	{ //stage two was successful
-		ClientReadyTask* crt = new ClientReadyTask( d->connections.last()->rootTask() );
-		QValueList<int> families;
-		families.append( 0x0001 );
-		families.append( 0x0010 ); //FIXME un-hardcode icon connection family
-		crt->setFamilies( families );
-		crt->go( true );
-	}
-
-	emit iconServerConnected();
+// 	if ( m_loginTaskTwo->statusCode() == 0 )
+// 	{ //stage two was successful
+// 		ClientReadyTask* crt = new ClientReadyTask( d->connections.last()->rootTask() );
+// 		QValueList<int> families;
+// 		families.append( 0x0001 );
+// 		families.append( 0x0010 ); //FIXME un-hardcode icon connection family
+// 		crt->setFamilies( families );
+// 		crt->go( true );
+// 	}
+// 
+// 	emit iconServerConnected();
 }
 
 Connection* Client::createConnection( const QString& host, const QString& port )
