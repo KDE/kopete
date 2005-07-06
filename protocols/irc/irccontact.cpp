@@ -243,7 +243,7 @@ void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::ChatSession *)
 
 		for( QStringList::Iterator it = messages.begin(); it != messages.end(); ++it )
 		{
-			Kopete::Message msg(message.from(), message.to(), sendMessage(*it), message.direction(),
+			Kopete::Message msg(message.from(), message.to(), Kopete::Message::escape(sendMessage(*it)), message.direction(),
 			                    Kopete::Message::RichText, CHAT_VIEW, message.type());
 
 			msg.setBg(QColor());
@@ -255,7 +255,7 @@ void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::ChatSession *)
 	}
 	else
 	{
-		message.setBody( sendMessage( htmlString ), Kopete::Message::RichText );
+		message.setBody( Kopete::Message::escape(sendMessage( htmlString )), Kopete::Message::RichText );
 
 		message.setBg( QColor() );
 		message.setFg( QColor() );
