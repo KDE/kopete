@@ -61,7 +61,8 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 	propPhoneHome(Kopete::Global::Properties::self()->privatePhone()),
 	propPhoneWork(Kopete::Global::Properties::self()->workPhone()),
 	propPhoneMobile(Kopete::Global::Properties::self()->privateMobilePhone()),
-	propClient("client", i18n("Remote Client"), 0, false)
+	propClient("client", i18n("Remote Client"), 0, false),
+	propGuid("guid", i18n("Contact GUID"), 0, true)
 {
 	s_protocol = this;
 

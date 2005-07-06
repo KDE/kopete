@@ -87,7 +87,7 @@ MSNNotifySocket::~MSNNotifySocket()
 void MSNNotifySocket::doneConnect()
 {
 //	kdDebug( 14140 ) << k_funcinfo << "Negotiating server protocol version" << endl;
-	sendCommand( "VER", "MSNP9" );
+	sendCommand( "VER", "MSNP11 MSNP10 CVR0" );
 }
 
 
@@ -271,7 +271,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 
 	if ( cmd == "VER" )
 	{
-		sendCommand( "CVR", "0x0409 winnt 5.1 i386 MSNMSGR 6.2.0205 MSMSGS " + m_account->accountId() );
+		sendCommand( "CVR", "0x0409 winnt 5.1 i386 MSNMSGR 7.0.0813 MSMSGS " + m_account->accountId() );
 /*
 		struct utsname utsBuf;
 		uname ( &utsBuf );
@@ -303,7 +303,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			m_secureLoginHandler = new MSNSecureLoginHandler(m_account->accountId(), m_password, data.section( ' ' , 2 , 2 ));
 
 			QObject::connect(m_secureLoginHandler, SIGNAL(loginFailed()), this, SLOT(sslLoginFailed()));
-			QObject::connect(m_secureLoginHandler, SIGNAL(loginSuccesful(const QString& )), this, SLOT(sslLoginSucceeded(const QString& )));
+			QObject::connect(m_secureLoginHandler, SIGNAL(loginSuccesful(QString )), this, SLOT(sslLoginSucceeded(QString )));
 
 			m_secureLoginHandler->login();
 			#endif
@@ -329,15 +329,38 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			slotSendKeepAlive();
 		}
 	}
-	else if( cmd == "LST" )
+	else if( cmd == "LST" ) 
 	{
-		//The hanlde is used if we receive some BRP
-		m_tmpLastHandle=data.section( ' ', 0, 0 );
+		// MSNP11 changed command. Now it's: 
+		// LST N=passport@hotmail.com F=Display%20Name C=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx 13 xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+		// But can be
+		// LST N=passport@hotmail.com 10
+		QString publicName, guid, groups;
+		uint lists;
 
-		// handle, publicName, lists, group
+		if(data.contains(' ') < 2) // Receiving LST N=passport@hotmail.com 10
+		{
+			QRegExp rx("N=(.*) (.*)");
+			rx.search(data);
+			m_tmpLastHandle=rx.cap(1);
+			lists = rx.cap(2).toUInt();
+		}
+		else
+		{
+			QRegExp rx("N=(.*) F=(.*) C=(.*)");
+			rx.search(data);
+			m_tmpLastHandle=rx.cap(1);
+			publicName = rx.cap(2);
+			guid = rx.cap(3);
+			
+			// Maybe the contact is not in a group. 
+			lists = data.section(' ', 3, 3).toUInt();
+			groups = data.section(' ', 4, 4);
+		}
+		
+		// handle, publicName, Contact GUID, lists, Group GUID
 		emit contactList(  m_tmpLastHandle ,
-			unescape( data.section( ' ', 1, 1 ) ), data.section( ' ', 2, 2 ).toUInt(),
-			data.section( ' ', 3, 3 ) );
+			unescape( publicName ), guid, lists, groups );
 	}
 	else if( cmd == "MSG" )
 	{
@@ -404,7 +427,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		emit invitedToChat( QString::number( id ), data.section( ' ', 0, 0 ), data.section( ' ', 2, 2 ),
 			data.section( ' ', 3, 3 ), unescape( data.section( ' ', 4, 4 ) ) );
 	}
-	else if( cmd == "ADD" )
+	else if( cmd == "ADD" ) // TODO: MSNP11 depreced
 	{
 		QString msnId = data.section( ' ', 2, 2 );
 		uint group;
@@ -499,6 +522,9 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "SYN" )
 	{
+		// TODO: Syntax have changed in MSNP11. The new is: 
+	    // SYN 8 2005-05-24T07:46:38.3730000-07:00 2005-05-23T17:53:43.2400000-07:00
+	
 		// this is the current serial on the server, if its different with the own we can get the user list
 		QString serial = data.section( ' ', 0, 0 );
 		if( serial != m_account->configGroup()->readEntry("serial") )

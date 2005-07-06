@@ -37,9 +37,6 @@ class SslLoginHandler;
 class MSNSecureLoginHandler;
 #endif
 
-#include <kio/job.h>
-
-
 /**
  * @author Olaf Lueg
  * @author Olivier Goffart
@@ -82,7 +79,7 @@ public slots:
 
 signals:
 	void newContactList();
-	void contactList(const QString& handle, const QString& displayname, uint lists, const QString& groups);
+	void contactList(const QString& handle, const QString& publicName, const QString &contactGuid, uint lists, const QString& groups);
 //	void contactList(const QString&, const QString&, uint);
 	void contactStatus(const QString&, const QString&, const QString& );
 	void contactAdded(const QString&, const QString&, const QString&, uint);

@@ -106,6 +106,7 @@ public:
 	const Kopete::ContactPropertyTmpl propPhoneWork;
 	const Kopete::ContactPropertyTmpl propPhoneMobile;
 	const Kopete::ContactPropertyTmpl propClient;
+	const Kopete::ContactPropertyTmpl propGuid;
 
 	enum List
 	{

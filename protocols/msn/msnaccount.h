@@ -129,7 +129,7 @@ private slots:
 	void slotPublicNameChanged(const QString& publicName);
 	void slotContactRemoved(const QString& handle, const QString& list,  uint group );
 	void slotContactAdded(const QString& handle, const QString& publicName, const QString& list,  uint group );
-	void slotContactListed( const QString& handle, const QString& publicName, uint lists, const QString& group );
+	void slotContactListed( const QString& handle, const QString& publicName, const QString &contactGuid, uint lists, const QString& groups );
 	void slotNewContactList();
 	/**
 	 * The group has successful renamed in the server
