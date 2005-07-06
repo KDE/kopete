@@ -319,7 +319,8 @@ void KopeteChatWindow::initActions(void)
 
  	KStdAction::save ( this, SLOT(slotChatSave()), coll );
  	KStdAction::print ( this, SLOT(slotChatPrint()), coll );
-	KStdAction::quit ( this, SLOT(close()), coll );
+	KAction* quitAction = KStdAction::quit ( this, SLOT(close()), coll );
+	quitAction->setText( i18n("Close All Chats") );
 
 	tabClose = KStdAction::close ( this, SLOT(slotChatClosed()), coll, "tabs_close" );
 
