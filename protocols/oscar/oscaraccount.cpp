@@ -497,9 +497,9 @@ void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
 		return;
 	}
 	if ( !fatal )
-		message = i18n("There was an error in the protocol handling. It wasn't fatal so you won't be disconnected");
+		message = i18n("There was an error in the protocol handling; it was not fatal, so you will not be disconnected.");
 	else
-		message = i18n("There was an error in the protocol handling. Automatic reconnection occuring");
+		message = i18n("There was an error in the protocol handling; automatic reconnection occurring.");
 	
 	KPassivePopup::message( i18n("OSCAR Protocol error"), message, myself()->onlineStatus().protocolIcon(),
 	                        Kopete::UI::Global::mainWidget() );

@@ -139,7 +139,7 @@ void ICQSearchDialog::startSearch()
 				// All fields were blank
 				stopSearch();
 				clearResults();
-				KMessageBox::information(this, i18n("You must enter search criteria!"), i18n("ICQ Plugin") );
+				KMessageBox::information(this, i18n("You must enter search criteria."), i18n("ICQ Plugin") );
 				kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Search aborted: all fields were blank" << endl;
 			}
 			else

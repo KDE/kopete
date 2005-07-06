@@ -1047,7 +1047,7 @@ void YahooSession::_uploadBuddyIconReceiver( int /*id*/, int fd, int error, void
 	
 	if ( !uploadData->file.open(IO_ReadOnly) )
 	{
-		kdDebug(14180) << "Could not open local buddy icon file!" << endl;
+		kdDebug(14180) << "Could not open local buddy icon file." << endl;
 		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n( "Could not open local buddy icon file!" ), i18n("Error") );
 		return;
 	}
