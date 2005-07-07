@@ -66,6 +66,7 @@ Connection::Connection( Connector* connector, ClientStream* cs, const char* name
 
 Connection::~Connection()
 {
+	
 	delete d->rateClassManager;
 	delete d->clientStream;
 	delete d->connector;
@@ -91,6 +92,21 @@ void Connection::close()
 {
 	d->clientStream->close();
 	reset();
+}
+
+bool Connection::isSupported( int family ) const
+{
+	return ( d->familyList.findIndex( family ) != -1 );
+}
+
+void Connection::addToSupportedFamilies( const QValueList<int>& familyList )
+{
+	d->familyList += familyList;
+}
+
+void Connection::addToSupportedFamilies( int family )
+{
+	d->familyList.append( family );
 }
 
 void Connection::taskError( const Oscar::SNAC& s, int errCode )
@@ -198,12 +214,7 @@ void Connection::distribute( Transfer * transfer ) const
 void Connection::reset()
 {
 	//clear the family list
-	QValueList<int>::iterator flit = d->familyList.begin();
-	while ( flit != d->familyList.end() )
-	{
-		flit = d->familyList.remove( flit );
-		++flit;
-	}
+	d->familyList.clear();
 	d->rateClassManager->reset();
 }
 

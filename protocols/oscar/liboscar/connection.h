@@ -62,13 +62,21 @@ public:
 	void close();
 	
 	/**
+	 * Check to see if the family specified by @p family is supported by this
+	 * connection.
+	 * @param family the family number to check
+	 */
+	bool isSupported( int family ) const;
+	
+	/**
 	 * Add the SNAC families in \p familyList to the list of supported families for
 	 * this connection
 	 * \param familyList the list of families to add
 	 */
 	void addToSupportedFamilies( const QValueList<int>& familyList );
 	
-	/** Add the SNAC family in \p family to the list of supported families for
+	/**
+	 * Add the SNAC family in \p family to the list of supported families for
 	 * this connection
 	 * \overload
 	 * \param family the single family to add to the list

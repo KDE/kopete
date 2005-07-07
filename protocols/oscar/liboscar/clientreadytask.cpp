@@ -56,7 +56,6 @@ void ClientReadyTask::onGo()
 	for ( QValueList<int>::const_iterator it = m_familyList.constBegin(); it != rcEnd; ++it )
 	{
 		//I have no idea what any of these values mean. I just copied them from oscarsocket
-		kdDebug( OSCAR_RAW_DEBUG ) << "Adding family " << ( *it ) << " to CLI_READY packet" << endl;
 		int i = ( *it );
 		buffer->addWord( i );
 		switch ( i )
