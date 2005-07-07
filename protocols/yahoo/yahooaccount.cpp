@@ -967,6 +967,7 @@ void YahooAccount::slotGotBuddyIconRequest( const QString & who )
 
 void YahooAccount::setBuddyIcon( KURL url )
 {
+	
 	kdDebug(14180) << k_funcinfo << "Url: " << url.path() << endl;
 	QString s = url.path();
 	if ( url.path().isEmpty() )
@@ -974,7 +975,8 @@ void YahooAccount::setBuddyIcon( KURL url )
 		myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
 		myself()->removeProperty( YahooProtocol::protocol()->iconRemoteUrl );
 		myself()->removeProperty( YahooProtocol::protocol()->iconExpire );
-		m_session->setPictureFlag( 0 );
+		if ( m_session != 0 )
+			m_session->setPictureFlag( 0 );
 		
 		slotBuddyIconChanged( QString::null );
 	}
@@ -1022,7 +1024,9 @@ void YahooAccount::setBuddyIcon( KURL url )
 		myself()->setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
 		configGroup()->writeEntry( "iconLocalUrl", newlocation );
 		
-		m_session->setPictureFlag( 2 );
+		if ( m_session != 0 )
+			m_session->setPictureFlag( 2 );
+		
 		if ( checksum != static_cast<uint>(myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt()) ||
 		     QDateTime::currentDateTime().toTime_t() > expire )
 		{
@@ -1030,8 +1034,8 @@ void YahooAccount::setBuddyIcon( KURL url )
 			myself()->setProperty( YahooProtocol::protocol()->iconExpire , QDateTime::currentDateTime().toTime_t() + 604800 );
 			configGroup()->writeEntry( "iconCheckSum", checksum );
 			configGroup()->writeEntry( "iconExpire", myself()->property( YahooProtocol::protocol()->iconExpire ).value().toInt() );
-			
-			m_session->uploadBuddyIcon( newlocation, data.size() );
+			if ( m_session != 0 )
+				m_session->uploadBuddyIcon( newlocation, data.size() );
 		}
 	}
 }
