@@ -19,7 +19,7 @@
 #ifndef CONNECTIONHANDLER_H
 #define CONNECTIONHANDLER_H
 
-#include <qvaluelist.h>
+
 class Connection;
 
 /**
@@ -36,19 +36,24 @@ public:
 	 * tracked and queried for later.
 	 * @param c The connection to add to the handler
 	 */
-	void addConnection( Connection* c );
+	void append( Connection* c );
 
 	/**
 	 * Remove a connection from the handler
 	 * @param c The connection object to remove
 	 */
-	void removeConnection( Connection* c );
+	void remove( Connection* c );
 
 	/**
 	 * Remove a connection from the handler
 	 * @param family The SNAC family for the connection to remove
 	 */
-	void removeConnection( int family );
+	void remove( int family );
+
+	/**
+	 * Clear all the connections.
+	 */
+	void clear();
 
 	/**
 	 * Get the connection for a particular SNAC family. If there is
@@ -57,6 +62,14 @@ public:
 	 * @return A valid connection object for the family or 0
 	 */
 	Connection* connectionForFamily( int family ) const;
+
+	/**
+	 * Get the default connection. Returns zero when we're handling more than
+	 * one connection.
+	 * @return The only connection object we're tracking or zero if we have
+	 * more than one.
+	 */
+	Connection* defaultConnection() const;
 
 private:
 	class Private;
