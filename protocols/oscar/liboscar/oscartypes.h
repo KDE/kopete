@@ -24,6 +24,11 @@
 #include <qdatetime.h>
 #include <qstring.h>
 
+//! Debug Areas
+const int OSCAR_RAW_DEBUG = 14151;
+const int OSCAR_GEN_DEBUG = 14150;
+const int OSCAR_AIM_DEBUG = 14152;
+const int OSCAR_ICQ_DEBUG = 14153;
 
 namespace Oscar
 {
@@ -166,13 +171,7 @@ const cap oscar_caps[] =
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
 };
 
-	//! Debug Areas
-const int OSCAR_RAW_DEBUG = 14151;
-const int OSCAR_GEN_DEBUG = 14150;
-const int OSCAR_AIM_DEBUG = 14152;
-const int OSCAR_ICQ_DEBUG = 14153;
-
-	//! Oscar Data Types 
+//! Oscar Data Types 
 typedef Q_UINT8 BYTE;
 typedef Q_UINT16 WORD;
 typedef Q_UINT32 DWORD;
