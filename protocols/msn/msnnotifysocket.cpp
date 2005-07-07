@@ -4,6 +4,7 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
+	Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -23,12 +24,7 @@
 #include "msnnotifysocket.h"
 #include "msncontact.h"
 #include "msnaccount.h"
-
-#ifdef OLDSSLLOGIN
-#include "sslloginhandler.h"
-#else
 #include "msnsecureloginhandler.h"
-#endif
 
 #include <qregexp.h>
 
@@ -55,11 +51,7 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 : MSNSocket( account )
 {
 	m_newstatus = MSNProtocol::protocol()->NLN;
-#ifdef OLDSSLLOGIN
-	m_sslLoginHandler=0l;
-#else
 	m_secureLoginHandler=0L;
-#endif
 
 	m_isHotmailAccount=false;
 	m_ping=false;
@@ -76,11 +68,8 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 
 MSNNotifySocket::~MSNNotifySocket()
 {
-#ifdef OLDSSLLOGIN
-	delete m_sslLoginHandler;
-#else
 	delete m_secureLoginHandler;
-#endif
+
 	kdDebug(14140) << k_funcinfo << endl;
 }
 
@@ -289,8 +278,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		if( data.section( ' ', 1, 1 ) == "S" )
 		{
-			#ifdef OLDSSLLOGIN
-			m_sslLoginHandler = new SslLoginHandler();
+			// TODO: Remote that commented stuff.
+			/*m_sslLoginHandler = new SslLoginHandler();
 			QObject::connect( m_sslLoginHandler, SIGNAL(       loginFailed()        ),
 					 this,            SLOT  (    sslLoginFailed()        ) );
 			QObject::connect( m_sslLoginHandler, SIGNAL(    loginIncorrect()        ),
@@ -298,16 +287,13 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			QObject::connect( m_sslLoginHandler, SIGNAL(    loginSucceeded(QString) ),
 					 this,            SLOT  ( sslLoginSucceeded(QString) ) );
 
-			m_sslLoginHandler->login( data.section( ' ' , 2 , 2 ), m_account->accountId() , m_password );
-			#else
+			m_sslLoginHandler->login( data.section( ' ' , 2 , 2 ), m_account->accountId() , m_password );*/
 			m_secureLoginHandler = new MSNSecureLoginHandler(m_account->accountId(), m_password, data.section( ' ' , 2 , 2 ));
 
 			QObject::connect(m_secureLoginHandler, SIGNAL(loginFailed()), this, SLOT(sslLoginFailed()));
 			QObject::connect(m_secureLoginHandler, SIGNAL(loginSuccesful(QString )), this, SLOT(sslLoginSucceeded(QString )));
 
 			m_secureLoginHandler->login();
-			#endif
-	
 		}
 		else
 		{

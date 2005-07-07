@@ -30,7 +30,6 @@ MSNSecureLoginHandler::MSNSecureLoginHandler(const QString &accountId, const QSt
 	
 }
 
-
 MSNSecureLoginHandler::~MSNSecureLoginHandler()
 {
 	kdDebug(14140) << k_funcinfo << endl;
@@ -71,30 +70,21 @@ void MSNSecureLoginHandler::slotLoginServerReceived(KIO::Job *loginJob)
 		KIO::Job *authJob = KIO::get(KURL(authURL), true, false);
 		authJob->addMetaData("cookies", "manual");
 
-		QString authRequest = "Passport1.4 "
+		QString authRequest = "Authorization: Passport1.4 "
 								"OrgVerb=GET,"
 								"OrgURL=http%3A%2F%2Fmessenger%2Emsn%2Ecom,"
 								"sign-in=" + KURL::encode_string(m_accountId) +
 								",pwd=" + KURL::encode_string( m_password ) +
-								"," + m_authentification;
+								"," + m_authentification + "\r\n";
 
 		kdDebug(14140) << k_funcinfo << "Auth request: " << authRequest << endl;
 
-		authJob->addMetaData("Authorization", authRequest);
-		authJob->addMetaData("User-Agent", "MSMSGS"); // Make sure the server won't discriminate
-		authJob->addMetaData("Host", loginServer);
-		authJob->addMetaData("Connection", "Keep-Alive");
-		authJob->addMetaData("Cache-Control", "no-cache");
+		authJob->addMetaData("customHTTPHeader", authRequest);
+		authJob->addMetaData("SendLanguageSettings", "false");
 		authJob->addMetaData("PropagateHttpHeader", "true");
 		authJob->addMetaData("cookies", "manual");
 		authJob->addMetaData("cache", "reload");
 		
-		displayMetaData(authJob->outgoingMetaData()); // For DEBUG !!!!
-
-		/*job->addMetaData("PropagateHttpHeader", "true");
-		//This should force kio to download the page even is we are in the konqueror offline mode.  [see bug #68483]
-		job->addMetaData("cache", "reload");*/
-
 		connect(authJob, SIGNAL(result(KIO::Job *)), this, SLOT(slotTweenerReceived(KIO::Job* )));
 	}
 	else
@@ -126,15 +116,6 @@ void MSNSecureLoginHandler::slotTweenerReceived(KIO::Job *authJob)
 		kdDebug(14140) << k_funcinfo << authJob->errorString() << endl;
 
 		emit loginFailed();
-	}
-}
-
-void MSNSecureLoginHandler::displayMetaData(KIO::MetaData data)
-{
-	KIO::MetaData::Iterator it;
-	for ( it = data.begin(); it != data.end(); ++it ) 
-	{
-		kdDebug(14140) << it.key() << ": " << it.data() << endl;
 	}
 }
 #include "msnsecureloginhandler.moc"
