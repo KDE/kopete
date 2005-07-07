@@ -4,7 +4,7 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
-	Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
+	Copyright (c) 2005      by Michaï¿½ Larouche       <shock@shockdev.ca.tc>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -25,7 +25,9 @@
 #include "msncontact.h"
 #include "msnaccount.h"
 #include "msnsecureloginhandler.h"
+#include "msnchallengehandler.h"
 
+#include <qdatetime.h>
 #include <qregexp.h>
 
 #include <kdebug.h>
@@ -252,11 +254,9 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 }
 
-void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
-	const QString &data )
+void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &data )
 {
 	//kdDebug(14140) << "MSNNotifySocket::parseCommand: Command: " << cmd << endl;
-
 
 	if ( cmd == "VER" )
 	{
@@ -297,14 +297,25 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		}
 		else
 		{
-			// Successful auth
+			// Successful authentication.
 			m_disconnectReason=Kopete::Account::Unknown;
 
-			// sync contact list
-			QString serial=m_account->configGroup()->readEntry( "serial" , "0" );
-			if(serial.isEmpty()) //0.9 comatibility
-				serial= "0";
-			sendCommand( "SYN", serial );
+			// Synchronize with the server.
+			QString newSyncTime, lastSyncTime;
+			QDateTime now = QDateTime::currentDateTime();
+			// Retrieve the last synchronization timestamp.
+			lastSyncTime = m_account->configGroup()->readEntry( "lastsynctime");
+			// Set the new synchronization timestamp.
+			newSyncTime = QString("%1%2").arg(now.toString(Qt::ISODate), ".0000000-07:00");
+			
+			if (lastSyncTime.isEmpty())
+			{
+				// If the last sync time is unknown, last sync time is now.
+				lastSyncTime = QString("%1%2").arg(now.toString(Qt::ISODate), ".0000000-07:00");
+				newSyncTime = lastSyncTime;
+			}
+			
+			sendCommand( "SYN", QString("%1 %2").arg(newSyncTime, lastSyncTime));
 
 			// this is our current user and friendly name
 			// do some nice things with it  :-)
@@ -348,6 +359,10 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		emit contactList(  m_tmpLastHandle ,
 			unescape( publicName ), guid, lists, groups );
 	}
+	else if( cmd == "GCF" )
+	{
+		readBlock( data.section( ' ', 1, 1 ).toUInt() );
+	}
 	else if( cmd == "MSG" )
 	{
 		readBlock( data.section( ' ', 2, 2 ).toUInt() );
@@ -378,6 +393,14 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 					c->setProperty(  MSNProtocol::protocol()->propClient , i18n("Kopete") );
 			}
 		}
+	}
+	else if( cmd == "UBX" )
+	{
+		readBlock( data.section( ' ', 1, 1 ).toUInt() );
+	}
+	else if( cmd == "UUX" )
+	{
+		readBlock( data.section( ' ', 1, 1 ).toUInt() );
 	}
 	else if( cmd == "FLN" )
 	{
@@ -413,7 +436,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		emit invitedToChat( QString::number( id ), data.section( ' ', 0, 0 ), data.section( ' ', 2, 2 ),
 			data.section( ' ', 3, 3 ), unescape( data.section( ' ', 4, 4 ) ) );
 	}
-	else if( cmd == "ADD" ) // TODO: MSNP11 depreced
+	else if( cmd == "ADD" ) // TODO: MSNP11 deprecated
 	{
 		QString msnId = data.section( ' ', 2, 2 );
 		uint group;
@@ -453,7 +476,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		setOnlineStatus( Connected );
 		emit statusChanged( convertOnlineStatus( status ) );
 	}
-	else if( cmd == "REA" )
+	else if( cmd == "REA" ) // TODO MSNP11 deprecated
 	{
 		QString handle=data.section( ' ', 1, 1 );
 		if( handle == m_account->accountId() )
@@ -466,7 +489,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		}
 		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
 	}
-	else if( cmd == "LSG" )
+	else if( cmd == "LSG" ) // TODO New Format: LSG Friends xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 	{
 		//the LSG syntax depends if it is called from SYN or from LSG
 		if(data.contains(' ') > 4) //FROM LSG
@@ -501,22 +524,20 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd  == "CHL" )
 	{
-//		kdDebug(14140) << k_funcinfo <<"Sending final Authentication" << endl;
-		KMD5 context( ( data.section( ' ', 0, 0 ) + "Q1P7W2E4J9R8U3S5" ).utf8() );
-		sendCommand( "QRY", "msmsgs@msnmsgr.com", true,
-			context.hexDigest());
+		MsnChallengeHandler mch("YMM8C_H7KCQ2S_KL", "PROD0090YUAUV{2B");
+		QString chlResponse = mch.computeHash(data.section(' ', 0, 0));
+		sendCommand("QRY", mch.productId(), true, chlResponse.utf8());
 	}
 	else if( cmd == "SYN" )
 	{
-		// TODO: Syntax have changed in MSNP11. The new is: 
-	    // SYN 8 2005-05-24T07:46:38.3730000-07:00 2005-05-23T17:53:43.2400000-07:00
-	
-		// this is the current serial on the server, if its different with the own we can get the user list
-		QString serial = data.section( ' ', 0, 0 );
-		if( serial != m_account->configGroup()->readEntry("serial") )
+		// Retrieve the last synchronization timestamp known to the server.
+		QString lastSyncTime = data.section( ' ', 0, 0 );
+		if( lastSyncTime != m_account->configGroup()->readEntry("lastsynctime") )
 		{
+			// If the server timestamp and the local timestamp are different,
+			// prepare to receive the contact list.
 			emit newContactList();  // remove all contacts datas, msn sends a new contact list
-			m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
+			m_account->configGroup()->writeEntry( "lastsynctime" , data.section( ' ', 0, 0 ) );
 		}
 		// set the status
 		setStatus( m_newstatus );
@@ -557,6 +578,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "QRY" )
 	{
+		/// FIXME Shouldn't we be reseting the keep alive timer to the new
+		/// ping interval; QRY [ping interval] ??
 		//do nothing
 	}
 	else if( cmd == "QNG" )
@@ -742,6 +765,8 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 			m_localIP = rx.cap(1);
 		}
 	}
+
+	// TODO Add support for UUX, UBX, and GCF commands.
 }
 
 void MSNNotifySocket::addGroup(const QString& groupName)
@@ -807,6 +832,7 @@ void MSNNotifySocket::removeContact( const QString &handle, uint group,	int list
 	m_tmpHandles[id]=handle;
 }
 
+// TODO New Format: Add a MsnObject to the end of the command paramters.
 void MSNNotifySocket::setStatus( const Kopete::OnlineStatus &status )
 {
 //	kdDebug( 14140 ) << k_funcinfo << statusToString( status ) << endl;
@@ -824,6 +850,8 @@ void MSNNotifySocket::changePublicName(  QString publicName, const QString &hand
 		publicName=publicName.left(387);
 	}
 
+// TODO Remove comments
+/*
 	if( handle.isNull() )
 	{
 		unsigned int id=sendCommand( "REA", m_account->accountId() + " " + escape ( publicName ) );
@@ -834,6 +862,9 @@ void MSNNotifySocket::changePublicName(  QString publicName, const QString &hand
 		unsigned int id=sendCommand( "REA", handle + " " + escape ( publicName ) );
 		m_tmpHandles[id]=handle;
 	}
+*/
+	unsigned int key = sendCommand("PRP", "MFN " + escape(publicName));
+	m_tmpHandles[key] = m_account->accountId();
 }
 
 void MSNNotifySocket::changePhoneNumber( const QString &key, const QString &data )
