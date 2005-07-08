@@ -113,7 +113,8 @@ public:
 		FL,    // forward
 		AL,    // allow
 		BL,    // blocked
-		RL     // reverse
+		RL,    // reverse
+		PL     // pending
 	};
 
 	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
