@@ -72,7 +72,7 @@ public:
 	 */
 	bool isReversed() const;
 	void setReversed( bool d );
-
+	
 	/**
 	 * set one phone number
 	 */
@@ -81,7 +81,7 @@ public:
 	/**
 	 * The groups in which the user is located on the server.
 	 */
-	const QMap<uint, Kopete::Group *>  serverGroups() const;
+	const QMap<QString, Kopete::Group *>  serverGroups() const;
 	/**
 	 * clear that map
 	 */
@@ -94,8 +94,8 @@ public:
 	/**
 	 * update the server group map
 	 */
-	void contactRemovedFromGroup( unsigned int group );
-	void contactAddedToGroup( uint groupNumber, Kopete::Group *group );
+	void contactRemovedFromGroup( const QString& groupId );
+	void contactAddedToGroup(const QString& groupId, Kopete::Group *group );
 
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
@@ -115,6 +115,12 @@ public:
 	 */
 	void setOnlineStatus(const Kopete::OnlineStatus&);
 
+	/**
+	 * Set the global unique identifier of this contact.
+	 */
+	void setGuid(const QString& guid);
+	QString guid();
+	
 	QString phoneHome();
 	QString phoneWork();
 	QString phoneMobile();
@@ -151,7 +157,7 @@ private slots:
 	void slotUserInfoDialogReversedToggled();
 
 private:
-	QMap<uint, Kopete::Group *> m_serverGroups;
+	QMap<QString, Kopete::Group *> m_serverGroups;
 
 	bool m_blocked;
 	bool m_allowed;
@@ -160,6 +166,8 @@ private:
 
 	bool m_moving;
 
+	QString m_guid;
+	
 	QString m_phoneHome;
 	QString m_phoneWork;
 	QString m_phoneMobile;
