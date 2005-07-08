@@ -107,7 +107,7 @@ void ServerVersionsTask::handleFamilies()
 	{
 		m_familiesList.append( outbuf->getWord() );
 	}
-
+	client()->addToSupportedFamilies( m_familiesList );
 	requestFamilyVersions(); // send back a CLI_FAMILIES packet
 }
 
