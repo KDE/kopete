@@ -4,7 +4,7 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
-	Copyright (c) 2005      by Michaï¿½ Larouche       <shock@shockdev.ca.tc>
+	Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -662,13 +662,8 @@ void MSNNotifySocket::sslLoginSucceeded(QString ticket)
 {
 	sendCommand("USR" , "TWN S " + ticket);
 
-#ifdef OLDSSLLOGIN
-	m_sslLoginHandler->deleteLater();
-	m_sslLoginHandler = 0L;
-#else
 	m_secureLoginHandler->deleteLater();
 	m_secureLoginHandler = 0L;
-#endif
 }
 
 
