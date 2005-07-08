@@ -978,9 +978,6 @@ bool MetaContact::fromXML( const QDomElement& element )
 
 	bool oldPhotoTracking = false;
 	bool oldNameTracking = false;
-	// temporal
-	//QString nameSourceCID, nameSourcePID, nameSourceAID;
-	//QString photoSourceCID, photoSourcePID, photoSourceAID;
 
 	QString strContactId = element.attribute( QString::fromLatin1("contactId") );
 	if( !strContactId.isEmpty() )

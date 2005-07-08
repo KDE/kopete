@@ -364,7 +364,8 @@ void ContactList::slotPhotoChanged()
 void ContactList::load()
 {
 	loadXML();
-	loadGlobalIdentity();
+	// Apply the global identity when all the protocols plugins are loaded.
+	connect(PluginManager::self(), SIGNAL(allPluginsLoaded()), this, SLOT(loadGlobalIdentity()));
 }
 
 void ContactList::loadXML()
