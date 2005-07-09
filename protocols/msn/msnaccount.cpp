@@ -3,6 +3,7 @@
 
     Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart@ kde.org>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
+    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
 
     Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
@@ -429,7 +430,7 @@ void MSNAccount::setPublicName( const QString &publicName )
 {
 	if ( m_notifySocket )
 	{
-		m_notifySocket->changePublicName( publicName );
+		m_notifySocket->changePublicName( publicName, QString::null );
 	}
 }
 

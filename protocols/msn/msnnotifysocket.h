@@ -4,6 +4,7 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
+    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -54,7 +55,7 @@ public:
 	void removeGroup( const QString& group );
 	void renameGroup( const QString& groupName, const QString& groupGuid );
 
-	void changePublicName( QString publicName , const QString &handle=QString::null );
+	void changePublicName( const QString& publicName , const QString &handle=QString::null );
 
 	void changePhoneNumber( const QString &key, const QString &data );
 

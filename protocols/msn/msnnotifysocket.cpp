@@ -4,7 +4,7 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
-	Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
+    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -524,7 +524,22 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		setOnlineStatus( Connected );
 		emit statusChanged( convertOnlineStatus( status ) );
 	}
-	else if( cmd == "REA" ) // TODO: MSNP11 deprecated
+	else if( cmd == "SBP" )
+	{
+		QString contactGuid, type, publicName;
+		contactGuid = data.section( ' ', 0, 0 );
+		type = data.section( ' ', 1, 1 );
+		if(type == "MFN" )
+		{
+			publicName = unescape( data.section( ' ', 2, 2 ) );
+			MSNContact *c = m_account->findContactByGuid( contactGuid );
+			if(c != 0L)
+			{
+				c->setProperty( Kopete::Global::Properties::self()->nickName(), publicName );
+			}
+		}
+	}
+	/*else if( cmd == "REA" ) MSNP11 deprecated
 	{
 		QString handle=data.section( ' ', 1, 1 );
 		if( handle == m_account->accountId() )
@@ -536,7 +551,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 				c->setProperty( Kopete::Global::Properties::self()->nickName() , unescape( data.section( ' ', 2, 2 ) ) );
 		}
 		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
-	}
+	}*/
 	else if( cmd == "LSG" )
 	{
 		// New Format: LSG Friends xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
@@ -587,20 +602,17 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	}
 	else if( cmd == "PRP" )
 	{
-		// TODO: Rewrite propertly
 		MSNContact *c = static_cast<MSNContact*>( m_account->myself() );
 		if( c )
 		{
-			if( id > 0 ) //FROM PRP
+			QString type = data.section( ' ', 0, 0 );
+			QString prpData = unescape( data.section( ' ', 1, 1 ) ); //SECURITY????????
+			c->setInfo( type, prpData );
+			m_account->configGroup()->writeEntry( type, prpData ); 
+			// Emit publicNameChanged if the type is MFN
+			if( type == "MFN" )
 			{
-				m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
-				m_account->configGroup()->writeEntry( data.section( ' ', 1, 1 ),unescape(data.section( ' ', 2, 2 ) )); //SECURITY????????
-				c->setInfo(data.section( ' ', 1, 1 ),unescape(data.section( ' ', 2, 2 )));
-			}
-			else //FROM SYN
-			{
-				c->setInfo(data.section( ' ', 0, 0 ),unescape(data.section( ' ', 1, 1 )));
-				m_account->configGroup()->writeEntry(data.section( ' ', 0, 0 ),unescape(data.section( ' ', 1, 1 ) )); //SECURITY????????
+				emit publicNameChanged( prpData );
 			}
 		}
 	}
@@ -877,7 +889,6 @@ void MSNNotifySocket::removeContact( const QString &handle, int list, const QStr
 	m_tmpHandles[id]=handle;
 }
 
-// TODO New Format: Add a MsnObject to the end of the command paramters.
 void MSNNotifySocket::setStatus( const Kopete::OnlineStatus &status )
 {
 //	kdDebug( 14140 ) << k_funcinfo << statusToString( status ) << endl;
@@ -888,28 +899,26 @@ void MSNNotifySocket::setStatus( const Kopete::OnlineStatus &status )
 		sendCommand( "CHG", statusToString( status ) + " 268435492 " + escape(m_account->pictureObject()) );
 }
 
-void MSNNotifySocket::changePublicName(  QString publicName, const QString &handle )
+void MSNNotifySocket::changePublicName( const QString &publicName, const QString &handle )
 {
+	QString tempPublicName = publicName.copy();
+
 	if( escape(publicName).length() > 387 )
 	{
-		publicName=publicName.left(387);
+		tempPublicName = publicName.left(387);
 	}
 
-// TODO: Recheck, maybe REA is still here in MSNP11
-/*
 	if( handle.isNull() )
 	{
-		unsigned int id=sendCommand( "REA", m_account->accountId() + " " + escape ( publicName ) );
-		m_tmpHandles[id]=m_account->accountId();
+		unsigned int id = sendCommand( "PRP", "MFN " + escape( tempPublicName ) );
+		m_tmpHandles[id] = m_account->accountId();
 	}
 	else
 	{
-		unsigned int id=sendCommand( "REA", handle + " " + escape ( publicName ) );
-		m_tmpHandles[id]=handle;
+		MSNContact *currentContact = static_cast<MSNContact *>(m_account->contacts()[handle]);
+		unsigned int id = sendCommand( "SBP", currentContact->guid() + " MFN " + escape( tempPublicName ) );
+		m_tmpHandles[id] = handle;
 	}
-*/
-	unsigned int key = sendCommand("PRP", "MFN " + escape(publicName));
-	m_tmpHandles[key] = m_account->accountId();
 }
 
 void MSNNotifySocket::changePhoneNumber( const QString &key, const QString &data )

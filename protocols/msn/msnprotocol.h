@@ -4,6 +4,7 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart @ kde.org>
+    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -107,6 +108,7 @@ public:
 	const Kopete::ContactPropertyTmpl propPhoneMobile;
 	const Kopete::ContactPropertyTmpl propClient;
 	const Kopete::ContactPropertyTmpl propGuid;
+	const Kopete::ContactPropertyTmpl propPersonalMessage; // it's the equivalent of away message.
 
 	enum List
 	{

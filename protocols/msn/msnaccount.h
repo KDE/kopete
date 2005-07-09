@@ -2,6 +2,8 @@
     msnaccount.h - Manages a single MSN account
 
     Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart@ kde.org>
+    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
+
     Kopete    (c) 2003-2005 by The Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
@@ -203,16 +205,17 @@ private:
 	 */
 	void addContactServerside(const QString &contactId, QPtrList<Kopete::Group> groupList);
 
-	/**
-	 * Find and retrive a MSNContact by its contactGuid. (Helper function)
-	 */
-	MSNContact *findContactByGuid(const QString &contactGuid);
+	
 
 public: //FIXME: should be private
 	QMap<QString, Kopete::Group*> m_groupList;
 
 	void addGroup( const QString &groupName, const QString &contactToAdd = QString::null );
 
+	/**
+	 * Find and retrive a MSNContact by its contactGuid. (Helper function)
+	 */
+	MSNContact *findContactByGuid(const QString &contactGuid);
 private:
 
 	// server data

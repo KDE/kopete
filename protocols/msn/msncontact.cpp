@@ -5,6 +5,7 @@
     Copyright (c) 2002      by Ryan Cumming           <bodnar42@phalynx.dhs.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
+    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -301,6 +302,10 @@ void MSNContact::setInfo(const  QString &type,const QString &data )
 		else
 			kdDebug( 14140 ) << k_funcinfo << "Unknown MOB " << data << endl;
 	}
+	else if( type == "MFN" )
+	{
+		setProperty(Kopete::Global::Properties::self()->nickName(), data );
+	}
 	else
 	{
 		kdDebug( 14140 ) << k_funcinfo << "Unknow info " << type << " " << data << endl;
@@ -512,11 +517,11 @@ void MSNContact::rename( const QString &newName )
 /*	if( newName == displayName() )
 		return;*/
 
+	// FIXME: This should be called anymore.
 	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
 	if( notify )
 	{
-// 		notify->changePublicName( newName, contactId() ); // TODO remove comment. deprecated
-		notify->changePublicName(newName);
+		notify->changePublicName( newName, contactId() );
 	}
 }
 

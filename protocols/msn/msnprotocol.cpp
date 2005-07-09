@@ -4,6 +4,7 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart @ kde.org>
+    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -62,7 +63,8 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 	propPhoneWork(Kopete::Global::Properties::self()->workPhone()),
 	propPhoneMobile(Kopete::Global::Properties::self()->privateMobilePhone()),
 	propClient("client", i18n("Remote Client"), 0, false),
-	propGuid("guid", i18n("Contact GUID"), 0, true)
+	propGuid("guid", i18n("Contact GUID"), 0, true),
+	propPersonalMessage(Kopete::Global::Properties::self()->awayMessage())
 {
 	s_protocol = this;
 
