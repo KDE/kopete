@@ -225,7 +225,7 @@ void Client::setStatus( DWORD status, const QString &message )
 			cvt->setVisible( true );
 		}
 		cvt->go( true );
-		c = d->connections.connectionForFamily( 0x001E );
+		c = d->connections.connectionForFamily( 0x0002 );
 		if ( !c )
 			return;
 		
