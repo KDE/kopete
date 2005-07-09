@@ -61,6 +61,8 @@ public:
 	enum {
 		Normal = 0x0000,
 		AutoResponse = 0x0001,
+		WWP = 0x0002,
+		EMail = 0x0004,
 		UCS2 = 0x0010,
 		Latin = 0x0020,
 		UTF8 = 0x0040

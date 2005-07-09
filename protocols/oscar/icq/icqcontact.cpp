@@ -32,6 +32,7 @@
 
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteuiglobal.h"
+#include "kopetemetacontact.h"
 
 #include "icquserinfo.h"
 #include "icqreadaway.h"
@@ -126,6 +127,9 @@ void ICQContact::userOffline( const QString& userId )
 
 void ICQContact::loggedIn()
 {
+	if ( metaContact()->isTemporary() )
+		return;
+	
 	if ( m_ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 

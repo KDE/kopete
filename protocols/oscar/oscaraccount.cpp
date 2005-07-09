@@ -289,10 +289,10 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	 * Append to the chat window
 	 */
 	QString sender = Oscar::normalize( message.sender() );
-	if ( !contacts()[ sender ] )
+	if ( !contacts()[sender] )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << "Adding '" << message.sender() << "' as temporary contact" << endl;
-		addContact( message.sender(), QString::null, 0,  Kopete::Account::Temporary );
+		kdDebug(OSCAR_RAW_DEBUG) << "Adding '" << sender << "' as temporary contact" << endl;
+		addContact( sender, QString::null, 0,  Kopete::Account::Temporary );
 	}
 	
 	OscarContact* ocSender = static_cast<OscarContact *> ( contacts()[sender] ); //should exist now
@@ -300,8 +300,15 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	if ( !ocSender )
 	{
 		kdWarning(OSCAR_RAW_DEBUG) << "Temporary contact creation failed for '" 
-			<< message.sender() << "'! Discarding message: " << message.text() << endl;
+			<< sender << "'! Discarding message: " << message.text() << endl;
 		return;
+	}
+	else
+	{
+		if ( message.properties() & Oscar::Message::WWP == Oscar::Message::WWP )
+			ocSender->setNickName( i18n("ICQ Web Express") );
+		if ( message.properties() & Oscar::Message::EMail == Oscar::Message::EMail )
+			ocSender->setNickName( i18n("ICQ Email Express") );
 	}
 	
 	Kopete::ChatSession* chatSession = ocSender->manager( Kopete::Contact::CanCreate );
