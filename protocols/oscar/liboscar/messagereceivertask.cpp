@@ -188,10 +188,36 @@ void MessageReceiverTask::handleType4Message()
 	kdDebug(14151) << k_funcinfo << "Received server message. type = " << msgType
 		<< ", flags = " << msgFlags << endl;
 		
-	QCString msgText = tlv5buffer.getLNTS();
-	
+	//handle the special user types
 	Oscar::Message msg;
-	msg.addProperty( Oscar::Message::UTF8 );
+	QString msgSender;
+	switch ( msgType )
+	{
+	case 0x0D:
+		msgSender = "ICQ Web Express";
+		msg.addProperty( Oscar::Message::WWP );
+		break;
+	case 0x0E:
+		msgSender = "ICQ Email Express";
+		msg.addProperty( Oscar::Message::EMail );
+		break;
+	default:
+		msgSender = m_fromUser;
+		break;
+	};
+	
+	QByteArray msgText = tlv5buffer.getLNTS();
+	int msgLength = msgText.size();
+	if ( msgType == 0x0D || msgType == 0x0E )
+	{
+		for ( int i = 0; i < msgLength; i++ )
+		{
+			if ( msgText[i] == (char)0xFE )
+				msgText[i] = 0x20;
+		}
+	}
+	
+	msg.addProperty( Oscar::Message::Latin );
 	switch ( msgFlags )
 	{
 	case 0x03:
@@ -207,9 +233,9 @@ void MessageReceiverTask::handleType4Message()
 	
 	msg.setType( 0x04 );
 	msg.setTimestamp( QDateTime::currentDateTime() );
-	msg.setSender( m_fromUser );
+	msg.setSender( msgSender );
 	msg.setReceiver( client()->userId() );
-	msg.setText( QString::fromUtf8( msgText, msgText.length() ) );
+	msg.setText( QString(msgText) );
 	emit receivedMessage( msg );
 }
 

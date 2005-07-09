@@ -128,8 +128,6 @@ Client::~Client()
 	//delete the connections differently than in deleteConnections()
 	//deleteLater() seems to cause destruction order issues
 	deleteStaticTasks();
-	//all connections support family 1 so they'll all be deleted (HACK)
-	d->connections.remove( 0x0001 );
 	delete d->ssiManager;
 	delete d;
 }
@@ -740,46 +738,45 @@ void Client::requestServerRedirect( WORD family )
 
 void Client::haveServerForRedirect( const QString& host, const QByteArray& cookie, WORD )
 {
-// 	//create a new connection and set it up
-// 	int colonPos = host.find(':');
-// 	QString realHost, realPort;
-// 	if ( colonPos != -1 )
-// 	{
-// 		realHost = host.left( colonPos );
-// 		realPort = host.right(4); //we only need 4 bytes
-// 	}
-// 	else
-// 	{
-// 		realHost = host;
-// 		realPort = QString::fromLatin1("5190");
-// 	}
-// 
-// 	Connection* c = createConnection( realHost, realPort );
-// 	d->connections.append( c );
-// 	//create the new login task
-// 	m_loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
-// 	m_loginTaskTwo->setCookie( cookie );
-// 	QObject::connect( m_loginTaskTwo, SIGNAL( finished() ), this, SLOT( serverRedirectFinished() ) );
-// 
-// 
-// 	//connect
-// 	connectToServer( c, d->host, false );
-// 	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
+	//create a new connection and set it up
+	int colonPos = host.find(':');
+	QString realHost, realPort;
+	if ( colonPos != -1 )
+	{
+		realHost = host.left( colonPos );
+		realPort = host.right(4); //we only need 4 bytes
+	}
+	else
+	{
+		realHost = host;
+		realPort = QString::fromLatin1("5190");
+	}
+
+	Connection* c = createConnection( realHost, realPort );
+	//create the new login task
+	m_loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
+	m_loginTaskTwo->setCookie( cookie );
+	QObject::connect( m_loginTaskTwo, SIGNAL( finished() ), this, SLOT( serverRedirectFinished() ) );
+
+	//connect
+	connectToServer( c, d->host, false );
+	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
 }
 
 void Client::serverRedirectFinished()
 {
-// 	if ( m_loginTaskTwo->statusCode() == 0 )
-// 	{ //stage two was successful
-// 		ClientReadyTask* crt = new ClientReadyTask( d->connections.last()->rootTask() );
-// 		QValueList<int> families;
-// 		families.append( 0x0001 );
-// 		families.append( 0x0010 ); //FIXME un-hardcode icon connection family
-// 		crt->setFamilies( families );
-// 		crt->go( true );
-// 	}
-// 
-// 	emit iconServerConnected();
+	//FIXME un-hardcode icon stuff
+	if ( m_loginTaskTwo->statusCode() == 0 )
+	{ //stage two was successful
+		Connection* c = d->connections.connectionForFamily( 0x0010 );
+		if ( !c )
+			return;
+		ClientReadyTask* crt = new ClientReadyTask( c->rootTask() );
+		crt->setFamilies( c->supportedFamilies() );
+		crt->go( true );
+	}
+
+	emit iconServerConnected();
 }
 
 Connection* Client::createConnection( const QString& host, const QString& port )

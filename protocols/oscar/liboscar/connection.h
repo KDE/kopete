@@ -69,6 +69,12 @@ public:
 	bool isSupported( int family ) const;
 	
 	/**
+	 * Get the list of supported families
+	 * @return The list of families supported on this connection
+	 */
+	QValueList<int> supportedFamilies() const;
+	
+	/**
 	 * Add the SNAC families in \p familyList to the list of supported families for
 	 * this connection
 	 * \param familyList the list of families to add

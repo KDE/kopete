@@ -99,6 +99,11 @@ bool Connection::isSupported( int family ) const
 	return ( d->familyList.findIndex( family ) != -1 );
 }
 
+QValueList<int> Connection::supportedFamilies() const
+{
+	return d->familyList;
+}
+
 void Connection::addToSupportedFamilies( const QValueList<int>& familyList )
 {
 	d->familyList += familyList;
