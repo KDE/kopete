@@ -4,7 +4,8 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
-    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
+    Copyright (c) 2005      by Michaï¿½ Larouche       <shock@shockdev.ca.tc>
+    Copyright (c) 2005      by Gregg Edghill          <gregg.edghill@gmail.com>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -32,6 +33,7 @@ class MSNDispatchSocket;
 class MSNAccount;
 class KTempFile;
 class MSNSecureLoginHandler;
+class MsnChallengeHandler;
 
 /**
  * @author Olaf Lueg
@@ -162,6 +164,7 @@ private:
 	//know the last handle used
 	QString m_tmpLastHandle;
 	QMap <unsigned int,QString> m_tmpHandles;
+	QString m_configFile;
 
 	//for hotmail inbox opening
 	bool m_isHotmailAccount;
@@ -172,8 +175,9 @@ private:
 	QString m_localIP;
 	MSNSecureLoginHandler *m_secureLoginHandler;
 
+	MsnChallengeHandler *m_challengeHandler;
 	QTimer *m_keepaliveTimer;
-
+	
 	bool m_ping;
 
 	int m_disconnectReason;

@@ -1,7 +1,7 @@
 /*
     msnchallengehandler.h - Computes a msn challenge response hash key.
 
-    Copyright (c) 2005 by Gregg Edghill       <edghill@kde.org>
+    Copyright (c) 2005 by Gregg Edghill       <gregg.edghill@gmail.com>
     Kopete    (c) 2003-2005 by The Kopete developers <kopete-devel@kde.org>
 
     Portions taken from
@@ -76,7 +76,7 @@ QString MsnChallengeHandler::computeHash(const QString& challenge)
 
 	// Step Three: Create the 64-bit key.
 	long long high = 0;
-	long long low  = 0;
+	unsigned long long low  = 0;
 
 	for(uint i=0; i < chlString.length() / 4; i += 2)
 	{

@@ -4,7 +4,8 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
-    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
+	Copyright (c) 2005      by Michaï¿½ Larouche       <shock@shockdev.ca.tc>
+	Copyright (c) 2005      by Gregg Edghill          <gregg.edghill@gmail.com>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -54,6 +55,7 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 {
 	m_newstatus = MSNProtocol::protocol()->NLN;
 	m_secureLoginHandler=0L;
+	m_challengeHandler = new MsnChallengeHandler("YMM8C_H7KCQ2S_KL", "PROD0090YUAUV{2B");
 
 	m_isHotmailAccount=false;
 	m_ping=false;
@@ -71,6 +73,7 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 MSNNotifySocket::~MSNNotifySocket()
 {
 	delete m_secureLoginHandler;
+	delete m_challengeHandler;
 
 	kdDebug(14140) << k_funcinfo << endl;
 }
@@ -361,6 +364,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	}
 	else if( cmd == "GCF" )
 	{
+		m_configFile = data.section(' ', 0, 0);
 		readBlock( data.section( ' ', 1, 1 ).toUInt() );
 	}
 	else if( cmd == "MSG" )
@@ -396,11 +400,15 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	}
 	else if( cmd == "UBX" )
 	{
-		readBlock( data.section( ' ', 1, 1 ).toUInt() );
+		m_tmpLastHandle = data.section(' ', 0, 0);
+		uint length = data.section( ' ', 1, 1 ).toUInt();
+		if(length > 0) {
+			readBlock( length );
+		}
 	}
 	else if( cmd == "UUX" )
 	{
-		readBlock( data.section( ' ', 1, 1 ).toUInt() );
+		kdDebug(14140) << k_funcinfo << "UUX OK" << endl;
 	}
 	else if( cmd == "FLN" )
 	{
@@ -576,9 +584,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	}
 	else if( cmd  == "CHL" )
 	{
-		MsnChallengeHandler mch("YMM8C_H7KCQ2S_KL", "PROD0090YUAUV{2B");
-		QString chlResponse = mch.computeHash(data.section(' ', 0, 0));
-		sendCommand("QRY", mch.productId(), true, chlResponse.utf8());
+		QString chlResponse = m_challengeHandler->computeHash(data.section(' ', 0, 0));
+		sendCommand("QRY", m_challengeHandler->productId(), true, chlResponse.utf8());
 	}
 	else if( cmd == "SYN" )
 	{
@@ -811,7 +818,23 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 		}
 	}
 
-	// TODO Add support for UUX, UBX, and GCF commands.
+	if(!m_configFile.isNull())
+	{
+		// TODO Global configuration file.
+	}
+
+	if(!m_tmpLastHandle.isNull())
+	{
+		QRegExp regex("^<Data><PSM>(.*)</PSM><CurrentMedia>(.*)</CurrentMedia></Data>$");
+		regex.search(msg);
+		MSNContact *contact = static_cast<MSNContact*>(m_account->contacts()[ m_tmpLastHandle ]);
+		if(contact){
+		kdDebug(14140) << k_funcinfo << m_tmpLastHandle << " " << unescape(regex.cap(1)) << endl;
+			contact->setProperty(MSNProtocol::protocol()->propPersonalMessage, unescape(regex.cap(1)));
+			// TODO Current Media
+		}
+		m_tmpLastHandle = QString::null;
+	}
 }
 
 void MSNNotifySocket::addGroup(const QString& groupName)
