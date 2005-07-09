@@ -165,14 +165,14 @@ void MSNContact::slotBlockUser()
 
 	if( m_blocked )
 	{
-		notify->removeContact( contactId(), 0, MSNProtocol::BL );
+		notify->removeContact( contactId(), MSNProtocol::BL, QString::null, QString::null );
 	}
 	else
 	{
 		if(m_allowed)
-			notify->removeContact( contactId(), 0, MSNProtocol::AL);
+			notify->removeContact( contactId(), MSNProtocol::AL, QString::null, QString::null );
 		else
-			notify->addContact( contactId(), contactId(), 0, MSNProtocol::BL );
+			notify->addContact( contactId(), MSNProtocol::BL, QString::null, QString::null, QString::null );
 	}
 }
 
@@ -218,7 +218,7 @@ void MSNContact::deleteContact()
 		}
 
 		for( QMap<QString, Kopete::Group*>::Iterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
-			notify->removeContact( contactId(), it.key(), MSNProtocol::FL );
+			notify->removeContact( contactId(), MSNProtocol::FL, guid(), it.key() );
 	}
 	else
 	{
@@ -273,12 +273,6 @@ bool MSNContact::isDeleted() const
 void MSNContact::setDeleted( bool deleted )
 {
 	m_deleted= deleted;
-}
-
-
-void MSNContact::setGuid(const QString& guid)
-{
-	m_guid = guid;
 }
 
 void MSNContact::setInfo(const  QString &type,const QString &data )
@@ -345,7 +339,8 @@ void MSNContact::serialize( QMap<QString, QString> &serializedData, QMap<QString
 	serializedData[ "obj" ] = m_obj;
 }
 
-QString MSNContact::guid(){ return m_guid; }
+
+QString MSNContact::guid(){ return property(MSNProtocol::protocol()->propGuid).value().toString(); }
 
 QString MSNContact::phoneHome(){ return m_phoneHome ;}
 QString MSNContact::phoneWork(){ return m_phoneWork ;}
@@ -429,8 +424,7 @@ void MSNContact::sync( unsigned int changed )
 			else if( !m_serverGroups.contains(Gid) )
 			{
 				//Add the contact to the group on the server
-				QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
-				notify->addContact( contactId(), nick.isEmpty() ? contactId() : nick, Gid, MSNProtocol::FL );
+				notify->addContact( contactId(), MSNProtocol::FL, QString::null, guid(), Gid );
 				count++;
 				m_moving=true;
 			}
@@ -477,7 +471,7 @@ void MSNContact::sync( unsigned int changed )
 		if( !metaContact()->groups().contains(group) )
 		{
 			m_moving=true;
-			notify->removeContact( contactId(), it.key(), MSNProtocol::FL );
+			notify->removeContact( contactId(), MSNProtocol::FL, guid(), it.key() );
 			count--;
 		}
 	}
@@ -490,12 +484,11 @@ void MSNContact::sync( unsigned int changed )
 	//   we add the contact to the group #0 (the default one)
 	if(count==0)
 	{
-		QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
-		notify->addContact( contactId(), nick.isEmpty() ? contactId() : nick, 0, MSNProtocol::FL );
+		notify->addContact( contactId(), MSNProtocol::FL, QString::null, guid(), QString::null );
 	}
 }
 
-void MSNContact::contactAddedToGroup( contst QString& groupId, Kopete::Group *group )
+void MSNContact::contactAddedToGroup( const QString& groupId, Kopete::Group *group )
 {
 	m_serverGroups.insert( groupId, group );
 	m_moving=false;

@@ -115,12 +115,7 @@ public:
 	 */
 	void setOnlineStatus(const Kopete::OnlineStatus&);
 
-	/**
-	 * Set the global unique identifier of this contact.
-	 */
-	void setGuid(const QString& guid);
 	QString guid();
-	
 	QString phoneHome();
 	QString phoneWork();
 	QString phoneMobile();
@@ -166,8 +161,6 @@ private:
 
 	bool m_moving;
 
-	QString m_guid;
-	
 	QString m_phoneHome;
 	QString m_phoneWork;
 	QString m_phoneMobile;

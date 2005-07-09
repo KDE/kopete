@@ -47,14 +47,14 @@ public:
 	virtual void disconnect();
 
 	void setStatus( const Kopete::OnlineStatus &status );
-	void addContact( const QString &handle, const QString& pulicName, uint group , int list );
-	void removeContact( const QString &handle, uint group, int list );
+	void addContact( const QString &handle, int list, const QString& publicName, const QString& contactGuid, const QString& groupGuid );
+	void removeContact( const QString &handle, int list, const QString &contactGuid, const QString &groupGuid );
 
 	void addGroup( const QString& groupName );
-	void removeGroup( uint group );
-	void renameGroup(const QString& groupName, uint group);
+	void removeGroup( const QString& group );
+	void renameGroup( const QString& groupName, const QString& groupGuid );
 
-	void changePublicName(  QString publicName , const QString &handle=QString::null );
+	void changePublicName( QString publicName , const QString &handle=QString::null );
 
 	void changePhoneNumber( const QString &key, const QString &data );
 
@@ -75,15 +75,15 @@ public slots:
 signals:
 	void newContactList();
 	void contactList(const QString& handle, const QString& publicName, const QString &contactGuid, uint lists, const QString& groups);
-//	void contactList(const QString&, const QString&, uint);
 	void contactStatus(const QString&, const QString&, const QString& );
-	void contactAdded(const QString&, const QString&, const QString&, uint);
-	void contactRemoved(const QString&, const QString&, uint);
+	void contactAdded(const QString& handle, const QString& list, const QString& publicName, const QString& contactGuid, const QString& groupGuid);
+	//void contactRemoved(const QString&, const QString&, uint);
+	void contactRemoved(const QString& handle, const QString& list, const QString& contactGuid, const QString& groupGuid);
 
-	void groupListed(const QString&, uint group);
-	void groupAdded( const QString&, uint group);
-	void groupRenamed( const QString&, uint group);
-	void groupRemoved( uint );
+	void groupListed(const QString&, const QString&);
+	void groupAdded( const QString&, const QString&);
+	void groupRenamed( const QString&, const QString& );
+	void groupRemoved( const QString& );
 
 	void invitedToChat(const QString&, const QString&, const QString&, const QString&, const QString& );
 	void startChat( const QString&, const QString& );

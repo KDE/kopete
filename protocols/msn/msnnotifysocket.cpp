@@ -344,7 +344,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		}
 		else
 		{
-			QRegExp rx("N=(.*) F=(.*) C=(.*)");
+			QRegExp rx("N=(.*) F=(.*)\\sC=([0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12})\\s");
 			rx.search(data);
 			m_tmpLastHandle=rx.cap(1);
 			publicName = rx.cap(2);
@@ -436,7 +436,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		emit invitedToChat( QString::number( id ), data.section( ' ', 0, 0 ), data.section( ' ', 2, 2 ),
 			data.section( ' ', 3, 3 ), unescape( data.section( ' ', 4, 4 ) ) );
 	}
-	else if( cmd == "ADD" ) // TODO: MSNP11 deprecated
+	/*else if( cmd == "ADD" ) // MSNP11 deprecated
 	{
 		QString msnId = data.section( ' ', 2, 2 );
 		uint group;
@@ -449,18 +449,66 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		emit contactAdded( msnId, unescape( data.section( ' ', 2, 2 ) ),
 			data.section( ' ', 0, 0 ), group );
 		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 1, 1 ) );
+	}*/
+	else if( cmd == "ADC" )
+	{
+		QString msnId, list, publicName, contactGuid, groupGuid;
+		
+		list = data.section( ' ', 0, 0 );
+		// Adding a contact to our AL or BL list
+		if( data.contains( ' ' ) < 2 ) // ADC TrID xL N=example@passport.com
+		{
+			QRegExp rx("N=(.*)");
+			rx.search( data.section( ' ', 1 ) );
+			msnId = rx.cap(1);
+		}
+		// Adding a contact to a group
+		else if( data.contains( ' ' ) < 3) // ADC TrID FL C=contactGuid groupdGuid
+		{
+			QRegExp rx("C=(.*)");
+			rx.search( data.section( ' ', 1, 1 ) );
+			contactGuid = rx.cap(1);
+			groupGuid = data.section( ' ' , 2, 2 );
+		}
+		// Adding a new contact
+		else if( data.contains( ' ' ) < 4) // ADC TrID FL N=ex@pas.com F=My%20Name C=contactGuid
+		{
+			QRegExp rx("N=(.*) F=(.*) C=(.*)");
+			rx.search( data.section( ' ', 1) );
+			msnId = rx.cap(1);
+			publicName = unescape(rx.cap(2));
+			contactGuid = rx.cap(3);
+		}
+
+		// handle, list, publicName, contactGuid, groupGuid
+		emit contactAdded( msnId, list, publicName, contactGuid, groupGuid );
 	}
 	else if( cmd == "REM" ) // someone is removed from a list
 	{
-		uint group;
-		if( data.section( ' ', 0, 0 ) == "FL" )
-			group = data.section( ' ', 3, 3 ).toUInt();
+		QString handle, list, contactGuid, groupGuid;
+		list = data.section( ' ', 0, 0 );
+		if( list  == "FL" )
+		{
+			// Removing a contact
+		 	if( data.contains( ' ' ) < 2 )
+			{
+				contactGuid = data.section( ' ', 1, 1 );
+			}
+			// Removing a contact from a group
+			else if( data.contains( ' ' ) < 3 )
+			{
+				contactGuid = data.section( ' ', 1, 1 );
+				groupGuid = data.section( ' ', 2, 2 );
+			}
+		}
 		else
-			group = 0;
+		{
+			handle = data.section( ' ', 1, 1);
+		}
 
-		// handle, list, group
-		emit contactRemoved( data.section( ' ', 2, 2 ), data.section( ' ', 0, 0 ), group );
-		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 1, 1 ) );
+		// handle, list, contactGuid, groupGuid
+		emit contactRemoved( handle, list, contactGuid, groupGuid );
+		
 	}
 	else if( cmd == "OUT" )
 	{
@@ -476,7 +524,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		setOnlineStatus( Connected );
 		emit statusChanged( convertOnlineStatus( status ) );
 	}
-	else if( cmd == "REA" ) // TODO MSNP11 deprecated
+	else if( cmd == "REA" ) // TODO: MSNP11 deprecated
 	{
 		QString handle=data.section( ' ', 1, 1 );
 		if( handle == m_account->accountId() )
@@ -489,38 +537,27 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		}
 		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
 	}
-	else if( cmd == "LSG" ) // TODO New Format: LSG Friends xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+	else if( cmd == "LSG" )
 	{
-		//the LSG syntax depends if it is called from SYN or from LSG
-		if(data.contains(' ') > 4) //FROM LSG
-		{ //   --NOTE:  since 2003-11-14 , The MSN Server does not accept anymere the LSG command.  So this is maybe useless now.
-			emit groupListed( unescape( data.section( ' ', 4, 4 ) ), data.section( ' ', 3, 3 ).toUInt() );
-		}
-		else //from SYN
-		{
-			//this command has not id, and the first param is a number, so MSNSocket think it is the ID
-			emit groupListed( unescape( data.section( ' ', 0, 0 ) ), id );
-		}
+		// New Format: LSG Friends xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+		// groupDisplayName, groupGuid
+		emit groupListed( unescape( data.section( ' ', 0, 0 ) ), data.section( ' ', 1, 1) );
 	}
 	else if( cmd == "ADG" )
 	{
-		// groupName, group
-		emit groupAdded( unescape( data.section( ' ', 1, 1 ) ),
-			data.section( ' ', 2, 2 ).toUInt() );
-		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
+		// groupName, groupGuid
+		emit groupAdded( unescape( data.section( ' ', 0, 0 ) ),
+			data.section( ' ', 1, 1 ) );
 	}
 	else if( cmd == "REG" )
 	{
-		// groupName, group
-		emit groupRenamed( unescape( data.section( ' ', 2, 2 ) ),
-			data.section( ' ', 1, 1 ).toUInt() );
-		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
+		// groupGuid, groupName
+		emit groupRenamed( data.section( ' ', 0, 0 ), unescape( data.section( ' ', 1, 1 ) ) );
 	}
 	else if( cmd == "RMG" )
 	{
-		// group
-		emit groupRemoved( data.section( ' ', 1, 1 ).toUInt() );
-		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
+		// groupGuid
+		emit groupRemoved( data.section( ' ', 1, 1 ) );
 	}
 	else if( cmd  == "CHL" )
 	{
@@ -550,6 +587,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	}
 	else if( cmd == "PRP" )
 	{
+		// TODO: Rewrite propertly
 		MSNContact *c = static_cast<MSNContact*>( m_account->myself() );
 		if( c )
 		{
@@ -767,51 +805,63 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 void MSNNotifySocket::addGroup(const QString& groupName)
 {
 	// escape spaces
-	sendCommand( "ADG", escape( groupName ) + " 0" );
+	sendCommand( "ADG", escape( groupName ) );
 }
 
-void MSNNotifySocket::renameGroup( const QString& groupName, uint group )
+void MSNNotifySocket::renameGroup( const QString& groupName, const QString& groupGuid )
 {
 	// escape spaces
-	sendCommand( "REG", QString::number( group ) + " " +
-		escape( groupName ) + " 0" );
+	sendCommand( "REG", groupGuid + " " + escape( groupName ) );
 }
 
-void MSNNotifySocket::removeGroup( uint group )
+void MSNNotifySocket::removeGroup( const QString& groupGuid )
 {
-	sendCommand( "RMG", QString::number( group ) );
+	sendCommand( "RMG",  groupGuid );
 }
 
-void MSNNotifySocket::addContact( const QString &handle, const QString& publicName, uint group, int list )
+void MSNNotifySocket::addContact( const QString &handle, int list, const QString& publicName, const QString& contactGuid, const QString& groupGuid )
 {
 	QString args;
 	switch( list )
 	{
-	case MSNProtocol::FL:
-		args = "FL " + handle + " " + escape( publicName ) + " " + QString::number( group );
-		break;
-	case MSNProtocol::AL:
-		args = "AL " + handle + " " + escape( publicName );
-		break;
-	case MSNProtocol::BL:
-		args = "BL " + handle + " " + escape( publicName );
-		break;
-	default:
-		kdDebug(14140) << k_funcinfo <<"WARNING! Unknown list " <<
-			list << "!" << endl;
-		return;
+		case MSNProtocol::FL:
+		{
+			// Adding the contact to a group
+			if( !contactGuid.isEmpty() && !groupGuid.isEmpty() )
+			{
+				args = QString("FL C=%1 %2").arg( contactGuid ).arg( groupGuid );
+			}
+			// Adding a new contact
+			else
+			{
+				args = QString("FL N=%1 F=%2").arg( handle ).arg( escape( publicName ) );
+			}
+			break;
+		}	
+		case MSNProtocol::AL:
+			args = QString("AL N=%1").arg( handle );
+			break;
+		case MSNProtocol::BL:
+			args = QString("BL N=%1").arg( handle );
+			break;
+		default:
+			kdDebug(14140) << k_funcinfo <<"WARNING! Unknown list " << list << "!" << endl;
+			return;
 	}
-	unsigned int id=sendCommand( "ADD", args );
+	unsigned int id=sendCommand( "ADC", args );
 	m_tmpHandles[id]=handle;
 }
 
-void MSNNotifySocket::removeContact( const QString &handle, uint group,	int list )
+void MSNNotifySocket::removeContact( const QString &handle, int list, const QString& contactGuid, const QString& groupGuid )
 {
 	QString args;
 	switch( list )
 	{
 	case MSNProtocol::FL:
-		args = "FL " + handle + " " + QString::number( group );
+		args = "FL " + contactGuid;
+		// Removing a contact from a group
+		if( !groupGuid.isEmpty() )
+			args += " " + groupGuid;
 		break;
 	case MSNProtocol::AL:
 		args = "AL " + handle;
@@ -845,7 +895,7 @@ void MSNNotifySocket::changePublicName(  QString publicName, const QString &hand
 		publicName=publicName.left(387);
 	}
 
-// TODO Remove comments
+// TODO: Recheck, maybe REA is still here in MSNP11
 /*
 	if( handle.isNull() )
 	{

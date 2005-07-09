@@ -127,23 +127,23 @@ private slots:
 	void slotStatusChanged( const Kopete::OnlineStatus &status );
 	void slotNotifySocketClosed();
 	void slotPublicNameChanged(const QString& publicName);
-	void slotContactRemoved(const QString& handle, const QString& list,  uint group );
-	void slotContactAdded(const QString& handle, const QString& publicName, const QString& list,  uint group );
+	void slotContactRemoved(const QString& handle, const QString& list, const QString& contactGuid, const QString& groupGuid );
+	void slotContactAdded(const QString& handle, const QString& list, const QString& publicName, const QString& contactGuid, const QString &groupGuid );
 	void slotContactListed( const QString& handle, const QString& publicName, const QString &contactGuid, uint lists, const QString& groups );
 	void slotNewContactList();
 	/**
 	 * The group has successful renamed in the server
 	 * groupName: is new new group name
 	 */
-	void slotGroupRenamed( const QString& groupName, uint group );
+	void slotGroupRenamed(const QString &groupGuid, const QString& groupName );
 	/**
 	 * A new group was created on the server (or received durring an LSG command)
 	 */
-	void slotGroupAdded( const QString& groupName, uint groupNumber );
+	void slotGroupAdded( const QString& groupName, const QString &groupGuid );
 	/**
 	 * Group was removed from the server
 	 */
-	void slotGroupRemoved( uint group );
+	void slotGroupRemoved( const QString &groupGuid );
 	/**
 	 * Incoming RING command: connect to the Switchboard server and send
 	 * the startChat signal
@@ -203,8 +203,13 @@ private:
 	 */
 	void addContactServerside(const QString &contactId, QPtrList<Kopete::Group> groupList);
 
+	/**
+	 * Find and retrive a MSNContact by its contactGuid. (Helper function)
+	 */
+	MSNContact *findContactByGuid(const QString &contactGuid);
+
 public: //FIXME: should be private
-	QMap<unsigned int, Kopete::Group*> m_groupList;
+	QMap<QString, Kopete::Group*> m_groupList;
 
 	void addGroup( const QString &groupName, const QString &contactToAdd = QString::null );
 
@@ -224,7 +229,7 @@ private:
 	QString m_pictureFilename; // the picture filename.
 
 	//this is the translation between old to new groups id when syncing from server.
-	QMap<unsigned int, Kopete::Group*> m_oldGroupList;
+	QMap<QString, Kopete::Group*> m_oldGroupList;
 
 	/**
 	 * I need the password in createNotificationServer.

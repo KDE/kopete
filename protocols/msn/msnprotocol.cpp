@@ -91,7 +91,7 @@ Kopete::Contact *MSNProtocol::deserializeContact( Kopete::MetaContact *metaConta
 	MSNContact *c = new MSNContact( account, contactId, metaContact );
 
 	for( QStringList::Iterator it = groups.begin() ; it != groups.end(); ++it )
-		c->contactAddedToGroup( ( *it ).toUInt(), 0L  /* FIXME - m_groupList[ ( *it ).toUInt() ]*/ );
+		c->contactAddedToGroup( *it, 0L  /* FIXME - m_groupList[ ( *it ).toUInt() ]*/ );
 
 	c->m_obj= serializedData[ "obj" ];
 	c->setInfo( "PHH" , serializedData[ "PHH" ] );
