@@ -66,13 +66,8 @@ MSNSocket::~MSNSocket()
 {
 	//if ( m_onlineStatus != Disconnected )
 	//	disconnect();
-	if(m_timer)
-	{
-		// Dispose of the http poll timer.
-		delete m_timer;
-		m_timer = 0L;
-	}
-
+	delete m_timer;
+	m_timer = 0L;
 	doneDisconnect();
 	if ( m_socket )
 		m_socket->deleteLater();
@@ -1052,11 +1047,9 @@ MSNSocket::WebResponse::WebResponse(const QByteArray& bytes)
 
 MSNSocket::WebResponse::~WebResponse()
 {
-	if(m_headers)
-		delete m_headers;
+	delete m_headers;
 	m_headers = 0;
-	if(m_stream)
-		delete m_stream;
+	delete m_stream;
 	m_stream = 0;
 }
 
