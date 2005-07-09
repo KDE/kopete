@@ -403,6 +403,13 @@ class Skype : public QObject
 		 * @param chat Id of the chat it has been sent to
 		 */
 		void outgoingMessage(const QString &body, const QString &chat);
+		/**
+		 * Put this call into a group, where other calls are (will be), used with conference calls
+		 * @param callId Id of the call
+		 * @param groupId The id of a group
+		 * Note: the group should be closed when all it's calls are closed
+		 */
+		void groupCall(const QString &callId, const QString &groupId);
 };
 
 #endif

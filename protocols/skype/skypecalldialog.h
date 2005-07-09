@@ -88,6 +88,11 @@ class SkypeCallDialog : public SkypeCallDialogBase
 		 * Tell me the skype out balance, please
 		 */
 		void updateSkypeOut();
+		/**
+		 * This is emited when a call dialog is closed and is going to be deleted
+		 * @param callId Id of it's call
+		 */
+		void callFinished(const QString &callId);
 };
 
 #endif

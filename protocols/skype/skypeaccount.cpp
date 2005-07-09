@@ -23,6 +23,7 @@
 #include "skype.h"
 #include "skypecalldialog.h"
 #include "skypechatsession.h"
+#include "skypeconference.h"
 
 #include <qstring.h>
 #include <kopetemetacontact.h>
@@ -76,6 +77,10 @@ class SkypeAccountPrivate {
 		QDict<SkypeChatSession> sessions;
 		///Last used chat session
 		SkypeChatSession *lastSession;
+		///List of the conference calls
+		QDict<SkypeConference> conferences;
+		///List of existing calls
+		QDict<SkypeCallDialog> calls;
 };
 
 SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, "Skype", (char *)0) {
@@ -86,6 +91,8 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 
 	//the d pointer
 	d = new SkypeAccountPrivate(*this);
+	d->calls.setAutoDelete(false);
+	d->conferences.setAutoDelete(false);
 	//remember the protocol, it will be needed
 	d->protocol = protocol;
 
@@ -128,6 +135,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 	QObject::connect(&d->skype, SIGNAL(setMyselfName(const QString&)), this, SLOT(setMyselfName(const QString& )));
 	QObject::connect(&d->skype, SIGNAL(receivedMultiIM(const QString&, const QString&, const QString&, const QString& )), this, SLOT(receiveMultiIm(const QString&, const QString&, const QString&, const QString& )));
 	QObject::connect(&d->skype, SIGNAL(outgoingMessage(const QString&, const QString&)), this, SLOT(sentMessage(const QString&, const QString& )));
+	QObject::connect(&d->skype, SIGNAL(groupCall(const QString&, const QString& )), this, SLOT(groupCall(const QString&, const QString& )));
 
 	//set values for the connection (should be updated if changed)
 	d->skype.setValues(launchType, author);
@@ -311,7 +319,7 @@ void SkypeAccount::prepareContact(SkypeContact *contact) {
 	QObject::connect(&d->skype, SIGNAL(updateAllContacts()), contact, SLOT(requestInfo()));//all contacts will know that
 	QObject::connect(contact, SIGNAL(infoRequest(const QString& )), &d->skype, SLOT(getContactInfo(const QString& )));//How do we ask for info?
 	QObject::connect(this, SIGNAL(connectionStatus(bool )), contact, SLOT(connectionStatus(bool )));
-	QObject::connect(contact, SIGNAL(setCallPossible(bool )), d->protocol, SLOT(updateCallActionStatus())); 
+	QObject::connect(contact, SIGNAL(setCallPossible(bool )), d->protocol, SLOT(updateCallActionStatus()));
 }
 
 void SkypeAccount::updateContactInfo(const QString &contact, const QString &change) {
@@ -422,7 +430,10 @@ void SkypeAccount::newCall(const QString &callId, const QString &userId) {
 		QObject::connect(&d->skype, SIGNAL(callError(const QString&, const QString& )), dialog, SLOT(updateError(const QString&, const QString& )));
 		QObject::connect(&d->skype, SIGNAL(skypeOutInfo(int, const QString& )), dialog, SLOT(skypeOutInfo(int, const QString& )));
 		QObject::connect(dialog, SIGNAL(updateSkypeOut()), &d->skype, SLOT(getSkypeOut()));
+		QObject::connect(dialog, SIGNAL(callFinished(const QString& )), this, SLOT(removeCall(const QString& )));
 		d->skype.getSkypeOut();
+
+		d->calls.insert(callId, dialog);
 	}
 }
 
@@ -621,6 +632,36 @@ QPtrList<Kopete::Contact> *SkypeAccount::constructContactList(const QStringList 
 	}
 
 	return list;
+}
+
+void SkypeAccount::groupCall(const QString &callId, const QString &groupId) {
+	kdDebug(14311) << k_funcinfo << endl;
+
+	//TODO: Find out a way to embet qdialog into another one after creation
+	return;
+
+	if (!d->callControl)
+		return;
+
+	SkypeConference *conf;
+	if (!(conf = d->conferences[groupId])) {//does it already exist?
+		conf = new SkypeConference(groupId);//no, create one then..
+		d->conferences.insert(groupId, conf);
+
+		QObject::connect(conf, SIGNAL(removeConference(const QString& )), this, SLOT(removeCallGroup(const QString& )));
+	}
+
+	conf->embedCall(d->calls[callId]);
+}
+
+void SkypeAccount::removeCall(const QString &callId) {
+	kdDebug(14311) << k_funcinfo << endl;
+	d->calls.remove(callId);
+}
+
+void SkypeAccount::removeCallGroup(const QString &groupId) {
+	kdDebug(14311) << k_funcinfo << endl;
+	d->conferences.remove(groupId);
 }
 
 #include "skypeaccount.moc"

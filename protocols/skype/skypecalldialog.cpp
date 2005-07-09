@@ -83,6 +83,8 @@ SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, S
 SkypeCallDialog::~SkypeCallDialog(){
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
+	emit callFinished(d->callId);
+
 	delete d->updater;
 	delete d;
 }

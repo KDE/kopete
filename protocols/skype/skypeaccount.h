@@ -125,6 +125,22 @@ Q_OBJECT
 		 * @param messageId New id of that message
 		 */
 		void gotMessageId(const QString &messageId);
+		/**
+		 * This is used to group conference call participants together
+		 * @param callId What call to add to the group
+		 * @param groupIt to what group to add it
+		 */
+		void groupCall(const QString &callId, const QString &groupId);
+		/**
+		 * Remove that call from list
+		 * @param callId what call
+		 */
+		void removeCall(const QString &callId);
+		/**
+		 * Remove reference to a call group
+		 * @param groupId What group to remove
+		 */
+		void removeCallGroup(const QString &groupId);
 	protected:
 		/**
 		 * Creates new skype contact and adds it into the parentContact.

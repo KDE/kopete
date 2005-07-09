@@ -27,7 +27,7 @@
 #include <kmessagebox.h>
 #include <qtimer.h>
 
-#define PROTOCOL_MAX 4
+#define PROTOCOL_MAX 5
 #define PROTOCOL_MIN 3
 #define TEST_QUIT if (!d->connection.connected()) return;
 
@@ -367,7 +367,7 @@ void Skype::skypeMessage(const QString &message) {
 			} else if (reason == "UNSUBSCRIBE") {
 				showReason = "";
 			}
-			if (user.upper() == getMyself().upper()) 
+			if (user.upper() == getMyself().upper())
 				return;
 			emit leftUser(chatId, user, showReason);
 			return;
@@ -406,6 +406,17 @@ void Skype::skypeMessage(const QString &message) {
 		}
 	} else if (messageType == "CALL") {
 		const QString &callId = message.section(' ', 1, 1).stripWhiteSpace();
+		if (message.section(' ', 2, 2).stripWhiteSpace().upper() == "CONF_ID") {
+			if (d->knownCalls.findIndex(callId) == -1) {//new call
+				d->knownCalls << callId;
+				const QString &userId = (d->connection % QString("GET CALL %1 PARTNER_HANDLE").arg(callId)).section(' ', 3, 3).stripWhiteSpace();
+				emit newCall(callId, userId);
+			}
+			const QString &confId = message.section(' ', 3, 3).stripWhiteSpace().upper();
+			if (confId != "0") {//It is an conference
+				emit groupCall(callId, confId);
+			}
+		}
 		if (message.section(' ', 2, 2).stripWhiteSpace().upper() == "STATUS") {
 			if (d->knownCalls.findIndex(callId) == -1) {//new call
 				d->knownCalls << callId;
@@ -679,7 +690,7 @@ void Skype::sendToChat(const QString &chat, const QString &message) {
 		d->connection << QString("OPEN CHAT %1 %2").arg(chat).arg(message);
 		emit gotMessageId("");
 	} else {
-		///@todo When 5 is out, check it out
+		d->connection << QString("CHATMESSAGE %1 %2").arg(chat).arg(message);
 	}
 }
 
