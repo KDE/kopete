@@ -8,9 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>397</width>
+            <width>328</width>
             <height>480</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>ICQWorkInfoWidget</string>
     </property>
     <vbox>
         <property name="name">
@@ -35,12 +38,7 @@
                         <string>Phone:</string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>phoneEdit</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="3">
+                <widget class="QLabel" row="1" column="2">
                     <property name="name">
                         <cstring>textLabel11</cstring>
                     </property>
@@ -48,12 +46,7 @@
                         <string>Fax:</string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="1" column="4" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>faxEdit</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
+                <widget class="QLabel" row="0" column="0">
                     <property name="name">
                         <cstring>textLabel6</cstring>
                     </property>
@@ -61,12 +54,12 @@
                         <string>Department:</string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="0" column="2">
+                <widget class="QLineEdit" row="0" column="1">
                     <property name="name">
                         <cstring>departmentEdit</cstring>
                     </property>
                 </widget>
-                <widget class="QLabel" row="0" column="3" rowspan="1" colspan="2">
+                <widget class="QLabel" row="0" column="2">
                     <property name="name">
                         <cstring>textLabel7</cstring>
                     </property>
@@ -74,9 +67,19 @@
                         <string>Position:</string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="0" column="5">
+                <widget class="QLineEdit" row="0" column="3">
                     <property name="name">
                         <cstring>positionEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="1" column="1">
+                    <property name="name">
+                        <cstring>phoneEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="1" column="3">
+                    <property name="name">
+                        <cstring>faxEdit</cstring>
                     </property>
                 </widget>
             </grid>
@@ -92,12 +95,7 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLineEdit" row="0" column="3" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>companyEdit</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0" rowspan="1" colspan="3">
+                <widget class="QLabel" row="0" column="0">
                     <property name="name">
                         <cstring>textLabel1</cstring>
                     </property>
@@ -105,7 +103,7 @@
                         <string>Name:</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="1" column="0" rowspan="1" colspan="4">
+                <widget class="QLabel" row="1" column="0">
                     <property name="name">
                         <cstring>textLabel8</cstring>
                     </property>
@@ -113,22 +111,12 @@
                         <string>Homepage:</string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="1" column="4">
-                    <property name="name">
-                        <cstring>homepageEdit</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="0" rowspan="1" colspan="3">
+                <widget class="QLabel" row="2" column="0">
                     <property name="name">
                         <cstring>textLabel2</cstring>
                     </property>
                     <property name="text">
                         <string>Address:</string>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="2" column="3" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>addressEdit</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="5" column="0">
@@ -139,22 +127,12 @@
                         <string>Zip:</string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="5" column="1" rowspan="1" colspan="4">
-                    <property name="name">
-                        <cstring>zipEdit</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="4" column="0" rowspan="1" colspan="2">
+                <widget class="QLabel" row="4" column="0">
                     <property name="name">
                         <cstring>textLabel5</cstring>
                     </property>
                     <property name="text">
                         <string>State:</string>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="4" column="2" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>stateEdit</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="3" column="0">
@@ -165,12 +143,7 @@
                         <string>City:</string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="3" column="2" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>cityEdit</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="6" column="0" rowspan="1" colspan="3">
+                <widget class="QLabel" row="6" column="0">
                     <property name="name">
                         <cstring>textLabel9</cstring>
                     </property>
@@ -186,7 +159,37 @@
                         <string>Country:</string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="6" column="3" rowspan="1" colspan="2">
+                <widget class="QLineEdit" row="0" column="1">
+                    <property name="name">
+                        <cstring>companyEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="1" column="1">
+                    <property name="name">
+                        <cstring>homepageEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="2" column="1">
+                    <property name="name">
+                        <cstring>addressEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="3" column="1">
+                    <property name="name">
+                        <cstring>cityEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="4" column="1">
+                    <property name="name">
+                        <cstring>stateEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="5" column="1">
+                    <property name="name">
+                        <cstring>zipEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="6" column="1">
                     <property name="name">
                         <cstring>countryEdit</cstring>
                     </property>
