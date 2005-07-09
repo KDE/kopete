@@ -176,8 +176,13 @@ void KSSLSocket::slotConnected()
 
 void KSSLSocket::slotDisconnected()
 {
+	kdDebug(14120) << k_funcinfo << "Disconnected" << endl;
+
 	if( readNotifier() )
 		readNotifier()->setEnabled(false);
+
+	delete d->kssl;
+	d->kssl = 0L;
 }
 
 void KSSLSocket::showInfoDialog()

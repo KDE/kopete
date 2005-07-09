@@ -198,7 +198,9 @@ void Engine::quit(const QString &reason, bool /*now*/)
 	if (isDisconnected())
 		return;
 
-	writeMessage("QUIT", QString::null, reason);
+	if (isConnected())
+		writeMessage("QUIT", QString::null, reason);
+
 	setStatus(Closing);
 }
 
