@@ -189,9 +189,18 @@ OnlineStatusManager::OnlineStatusManager()
 Presence OnlineStatusManager::presenceOf( uint internalStatus )
 {
 	if ( internalStatus < Presence::TypeCount )
+	{
 		return Presence( static_cast<Presence::Type>( internalStatus ), Presence::Visible );
-	else
+	}
+	else if ( internalStatus < 2 * Presence::TypeCount )
+	{
 		return Presence( static_cast<Presence::Type>( internalStatus - Presence::TypeCount ), Presence::Invisible );
+	}
+	else
+	{
+		kdWarning(14153) << k_funcinfo << "No presence exists for internal status " << internalStatus << "! Returning Offline" << endl;
+		return Presence( Presence::Offline, Presence::Visible );
+	}	
 }
 
 Kopete::OnlineStatus OnlineStatusManager::onlineStatusOf( const Presence &presence )
