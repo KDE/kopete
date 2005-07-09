@@ -56,7 +56,7 @@ QString MsnChallengeHandler::computeHash(const QString& challenge)
 	// Pad to multiple of 8.
 	chlString = chlString.leftJustify(chlString.length() + (8 - chlString.length() % 8), '0');
 
-	int *chlArray = new int[chlString.length() / 4];
+	uint *chlArray = new uint[chlString.length() / 4];
 	for(uint i=0; i < chlString.length() / 4; i++)
 	{
 		QString sNum = chlString.mid(i*4, 4);
@@ -71,7 +71,7 @@ QString MsnChallengeHandler::computeHash(const QString& challenge)
 		// swap because of the byte ordering issue.
 		sNumHex = hexSwap(sNumHex);
 		// Assign the converted number.
-		chlArray[i] = sNumHex.toInt(0, 16);
+		chlArray[i] = sNumHex.toUInt(0, 16);
 	}
 
 	// Step Three: Create the 64-bit key.
