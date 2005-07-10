@@ -63,8 +63,11 @@ public:
 
 	QString host() const;
 
-	QString awayMessage();
+	QString awayMessage() const;
 	void setAwayMessage(const QString &);
+
+	QString modes() const;
+	QString setModes(const QString &);
 
 	QTextCodec *codec() const;
 	void setCodec(QTextCodec *);

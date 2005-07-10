@@ -52,8 +52,8 @@ void Engine::bindNumericReplies()
 
 	bind(301, this, SLOT(numericReply_301(KIRC::Message &)), 2, 2);
 	bind(303, this, SLOT(numericReply_303(KIRC::Message &)), 1, 1);
-	bind(305, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0 ); // You are no longer marked as away
-	bind(306, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0 ); // You are marked as away
+	bind(305, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0 );
+	bind(306, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0 );
 	bind(307, this, SLOT(numericReply_307(KIRC::Message &)), 1, 1);
 	bind(311, this, SLOT(numericReply_311(KIRC::Message &)), 5, 5);
 	bind(312, this, SLOT(numericReply_312(KIRC::Message &)), 3, 3);
@@ -235,6 +235,9 @@ void Engine::numericReply_266(Message &msg)
 void Engine::numericReply_301(Message &msg)
 {
 	emit incomingUserIsAway(msg.arg(1), msg.suffix());
+//	Entity entity = msg.entityFromArg(1);
+//	entity->setAwayMessage(msg.suffix);
+//	entity->setMode("+a");
 }
 
 /* 303: ":*1<nick> *(" " <nick> )"
@@ -251,16 +254,21 @@ void Engine::numericReply_303(Message &msg)
 
 /* 305: ":You are no longer marked as being away"
  */
-// void Engine::numericReply_305(Message &msg)
-// {
-// }
+void Engine::numericReply_305(Message &msg)
+{
+	EntityPtr self = this->self();
+	self->setAwayMessage(QString::null);
+//	self->setModes("-a");
+}
 
 
 /* 306: ":You have been marked as being away"
  */
-// void Engine::numericReply_306(Message &msg)
-// {
-// }
+void Engine::numericReply_306(Message &msg)
+{
+	EntityPtr self = this->self();
+//	self->setModes("+a");
+}
 
 /* 307: ":is a registered nick"
  * DALNET: Indicates that this user is identified with NICSERV.

@@ -67,6 +67,7 @@ public:
 	KIRC::EntityStatus status;
 
 	QString awayMessage;
+	QString modes;
 
 	QTextCodec *codec;
 };
@@ -156,6 +157,22 @@ void Entity::setAwayMessage(const QString &awayMessage)
 		d->awayMessage = awayMessage;
 		emit updated();
 	}
+}
+
+QString Entity::modes() const
+{
+	return d->modes;
+}
+
+QString Entity::setModes(const QString &modes)
+{
+	#warning this needs more logic to handle the +/- modes.
+	if ( d->modes != modes )
+	{
+		d->modes = modes;
+		emit updated();
+	}
+	return d->modes;
 }
 
 QTextCodec *Entity::codec() const
