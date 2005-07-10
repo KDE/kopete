@@ -56,7 +56,7 @@ private:
 		WEB_XHTML,
 		WEB_XML,
 		WEB_CUSTOM,
-		WEB_UNDEFINED,
+		WEB_UNDEFINED
 	} resultFormatting;
 
 	QString resultURL;
