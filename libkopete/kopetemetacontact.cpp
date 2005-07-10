@@ -191,9 +191,15 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 	}
 	else
 	{
+		// if the contact was a source of property data, clean
+		if (displayNameSourceContact() == c)
+			setDisplayNameSourceContact(0L);
+		if (photoSourceContact() == c)
+			setPhotoSourceContact(0L);
+
 		// must check before removing, or will always be false
-		bool wasTrackingName = ( (displayNameSourceContact() == c) && (displayNameSource() == SourceContact) );
-		bool wasTrackingPhoto = ( (photoSourceContact() == c) && (photoSource() == SourceContact) );
+		bool wasTrackingName = ( !displayNameSourceContact() && (displayNameSource() == SourceContact) );
+		bool wasTrackingPhoto = ( !photoSourceContact() && (photoSource() == SourceContact) );
 		// save for later use
 		QString currDisplayName = displayName();
 
@@ -219,16 +225,16 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 				// contact as source
 				setDisplayNameSourceContact( d->contacts.first() );
 			}
-		}		
+		}
 
 		if ( wasTrackingPhoto )
 		{
-			// Oh! this contact was the source for the metacontact's name
+			// Oh! this contact was the source for the metacontact's photo
 			// lets do something
 			// is this the only contact?
 			if ( d->contacts.isEmpty() )
 			{
-				// fallback to a custom name as we don't have
+				// fallback to a custom photo as we don't have
 				// more contacts to chose as source.
 				setPhotoSource(SourceCustom);
 				// FIXME set the custom photo
