@@ -682,9 +682,7 @@ void Skype::setWaitConnect(int value) {
 }
 
 void Skype::sendToChat(const QString &chat, const QString &message) {
-	kdDebug(14311) << k_funcinfo <<  endl;//some debug info
-
-	static int dummyCounter = 0;
+	kdDebug(14311) << k_funcinfo <<  endl;//some debug info`
 
 	if (d->connection.protocolVer() <= 4) {//Not able to handle it by the API, let Skype do it for me
 		d->connection << QString("OPEN CHAT %1 %2").arg(chat).arg(message);
@@ -724,6 +722,31 @@ QStringList Skype::getChatUsers(const QString &chat) {
 
 QString Skype::getMyself() {
 	return (d->connection % QString("GET CURRENTUSERHANDLE")).section(' ', 1, 1).stripWhiteSpace();
+}
+
+void Skype::inviteUser(const QString &chatId, const QString &userId) {
+	kdDebug(14311) << k_funcinfo << " " << chatId << " " << userId << endl;//some debug info
+
+	if (d->connection.protocolVer() <= 4) {
+		KMessageBox::error(0L, i18n("This version of Skype does not support adding users to chat"), i18n("Skype protocol"));
+		return;
+	}
+
+	d->connection << QString("ALTER CHAT %1 ADDMEMBERS %2").arg(chatId).arg(userId);
+}
+
+QString Skype::createChat(const QString &users) {
+	kdDebug(14311) << k_funcinfo <<  endl;//some debug info
+
+	const QString &chatDesc = d->connection % QString("CHAT CREATE %1").arg(users);
+	kdDebug(14311) << "New chat ID: " << chatDesc.section(' ', 1, 1) << endl;
+	return chatDesc.section(' ', 1, 1);
+}
+
+void Skype::leaveChat(const QString &chatId) {
+	kdDebug(14311) << k_funcinfo <<  endl;//some debug info
+
+	d->connection << QString("ALTER CHAT %1 LEAVE").arg(chatId);
 }
 
 #include "skype.moc"

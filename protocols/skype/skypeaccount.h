@@ -273,6 +273,16 @@ Q_OBJECT
 		 * @param session Pointer to that chat session
 		 */
 		void registerLastSession(SkypeChatSession *session);
+		/**
+		 * Create a chat with given members
+		 * @param users Comma sepparated list of members
+		 * @return ID of the chat
+		 */
+		QString createChat(const QString &users);
+		/**
+		 * Should chat leave when it's window is closed?
+		 */
+		bool leaveOnExit() const;
 	public slots:
 		/**
 		 * Disconnects from server.
@@ -387,6 +397,10 @@ Q_OBJECT
 		 * @param user The one who sent it
 		 */
 		void receiveMultiIm(const QString &chatId, const QString &body, const QString &messageId, const QString &user);
+		/**
+		 * Set if chat window should close a chat window when you close it
+		 */
+		void setLeaveOnExit(bool value);
 	signals:
 		/**
 		 * This is emited when the message has been sent by skype

@@ -41,7 +41,7 @@ class ChatDummyContact : public Kopete::Contact {
 
 class SkypeChatSessionPrivate {
 	private:
-		///Dummy contact representink this chat
+		///Dummy contact representing this chat
 		Kopete::Contact *dummyContact;
 	public:
 		///Referenco to the protocol
@@ -109,12 +109,16 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact)
 
 	d->contact = contact;
 
+	setMayInvite(true);//It is possible to invite people to chat with Skype
 	setXMLFile("skypechatui.rc");
 }
 
 SkypeChatSession::SkypeChatSession(SkypeAccount *account, const QString &session, const Kopete::ContactPtrList &users) :
 		Kopete::ChatSession(account->myself(), users, account->protocol(), (char *) 0L) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
+
+	setInstance(KGenericFactory<SkypeProtocol>::instance());
+
 	d = new SkypeChatSessionPrivate(account->protocol(), account);
 	Kopete::ChatSessionManager::self()->registerChatSession(this);
 	connect(this, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)), this, SLOT(message(Kopete::Message& )));
@@ -123,16 +127,20 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, const QString &session
 	d->chatId = session;
 	emit updateChatId("", session, this);
 
-	d->callAction = new KAction(i18n("Call (by Skype)"), QString::fromLatin1("call"), 0, this, SLOT(callChatSession()), actionCollection(), "callSkypeContactFromChat");
-	d->callAction->setEnabled(false);//This is temporary until I make calling multiple people work
 
+	d->callAction = new KAction(i18n("Call"), QString::fromLatin1("call"), 0, this, SLOT(callChatSession()), actionCollection(), "callSkypeContactFromChat");
+	disallowCall();//TODO I hope it will not be needed in future
+
+	setMayInvite(true);//It is possible to invite people to chat with Skype
 	setXMLFile("skypechatui.rc");
 }
 
 SkypeChatSession::~SkypeChatSession() {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
-	emit updateChatId(d->chatId, "", this);
+	if (d->account->leaveOnExit())
+		emit updateChatId(d->chatId, "", this);
+	emit leaveChat(d->chatId);
 	delete d;//remove the D pointer
 }
 
@@ -145,7 +153,7 @@ void SkypeChatSession::message(Kopete::Message &message) {
 }
 
 void SkypeChatSession::setTopic(const QString &chat, const QString &topic) {
-	///@todo This function
+	///TODO This function
 }
 
 void SkypeChatSession::joinUser(const QString &chat, const QString &userId) {
@@ -190,7 +198,7 @@ void SkypeChatSession::sentMessage(const QPtrList<Kopete::Contact> *recv, const 
 
 void SkypeChatSession::disallowCall() {
 	d->callAction->setEnabled(false);
-	
+
 	if (d->contact) {
 		disconnect(d->contact, SIGNAL(setCallPossible(bool )), d->callAction, SLOT(setEnabled(bool )));
 		d->contact = 0L;
@@ -200,6 +208,15 @@ void SkypeChatSession::disallowCall() {
 void SkypeChatSession::callChatSession() {
 	if (d->contact)///@todo find a better way to do it later to allow multiple people to call
 		d->contact->call();
+}
+
+void SkypeChatSession::inviteContact(const QString &contactId) {
+	if (d->chatId.isEmpty()) {
+		d->chatId = d->account->createChat(d->contact->contactId());
+		emit updateChatId("", d->chatId, this);
+	}
+
+	emit inviteUserToChat(d->chatId, contactId);
 }
 
 #include "skypechatsession.moc"

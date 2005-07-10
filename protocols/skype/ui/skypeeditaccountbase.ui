@@ -536,6 +536,9 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                         <property name="text">
                             <string>Hitchhike incoming &amp;messages</string>
                         </property>
+                        <property name="accel">
+                            <string>Alt+M</string>
+                        </property>
                         <property name="checked">
                             <bool>true</bool>
                         </property>
@@ -767,6 +770,26 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                             <string>This keeps track of wether Skype is running. Turning this off makes only sence it you're trying to get some not-flooded debug output.</string>
                         </property>
                     </widget>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>LeaveCheck</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Leave On E&amp;xit</string>
+                        </property>
+                        <property name="accel">
+                            <string>Alt+X</string>
+                        </property>
+                        <property name="checked">
+                            <bool>true</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Leave a chat on window exit</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Leave a chat when it's chat window is closed. Makes difference only with multi-user chats, if it is unchecked, you will continue receiving messages from that chat even after closing the window.</string>
+                        </property>
+                    </widget>
                     <spacer>
                         <property name="name">
                             <cstring>spacer13</cstring>
@@ -780,7 +803,7 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>60</height>
+                                <height>70</height>
                             </size>
                         </property>
                     </spacer>

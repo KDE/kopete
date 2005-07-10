@@ -38,12 +38,12 @@ class SkypeChatSession : public Kopete::ChatSession
 		SkypeChatSessionPrivate *d;
 	private slots:
 		///sends message to the skype user who this chat belongs to
-		void message(Kopete::Message&); 
+		void message(Kopete::Message&);
 		/**This disables permanently the call button when the chat becomes a multi-user chat
 		 * @todo make this unneeded and allow multiple-user calls
 		 */
 		void disallowCall();
-		///Do a call to all participants of the chat (in future, now it allows only one at onece)	
+		///Do a call to all participants of the chat (in future, now it allows only one at onece)
 		void callChatSession();
 	public:
 		/**
@@ -61,6 +61,11 @@ class SkypeChatSession : public Kopete::ChatSession
 		SkypeChatSession(SkypeAccount *account, const QString &session, const Kopete::ContactPtrList &contacts);
 		///Destructor
 		~SkypeChatSession();
+		/**
+		 * Invites a contact to the chat
+		 * @param contactId What contact
+		 */
+		virtual void inviteContact(const QString &contactId);
 	public slots:
 		/**
 		 * Update the chat topic
@@ -112,6 +117,17 @@ class SkypeChatSession : public Kopete::ChatSession
 		 * @param sender Pointer to that chat
 		 */
 		void updateChatId(const QString &oldId, const QString &newId, SkypeChatSession *sender);
+		/**
+		 * Request inviting user to a chat
+		 * @param chatId What chat
+		 * @param userId What user
+		 */
+		void inviteUserToChat(const QString &chatId, const QString &userId);
+		/**
+		 * Request leaving the chat
+		 * @param chatId What chat
+		 */
+		void leaveChat(const QString &chatId);
 };
 
 #endif

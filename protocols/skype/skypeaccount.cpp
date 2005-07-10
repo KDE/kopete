@@ -81,6 +81,8 @@ class SkypeAccountPrivate {
 		QDict<SkypeConference> conferences;
 		///List of existing calls
 		QDict<SkypeCallDialog> calls;
+		///Shall chat window leave the chat whenit is closed
+		bool leaveOnExit;
 };
 
 SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, "Skype", (char *)0) {
@@ -111,6 +113,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 	d->myName = config->readEntry("MyselfName", "Skype");
 	setSkypeCommand(config->readEntry("SkypeCommand", "artsdsp skype --use-session-dbus"));
 	setWaitBeforeConnect(config->readNumEntry("WaitBeforeConnect", 10));
+	setLeaveOnExit(config->readBoolEntry("LeaveOnExit", true));
 
 	//create myself contact
 	SkypeContact *_myself = new SkypeContact(this, "Skype", Kopete::ContactList::self()->myself(), false);
@@ -244,6 +247,7 @@ void SkypeAccount::save() {
 	config->writeEntry("SkypeCommand", getSkypeCommand());
 	config->writeEntry("MyselfName", d->myName);
 	config->writeEntry("WaitBeforeConnect", getWaitBeforeConnect());
+	config->writeEntry("LeaveOnExit", leaveOnExit());
 
 	//save it into the skype connection as well
 	d->skype.setValues(launchType, author);
@@ -550,6 +554,8 @@ void SkypeAccount::prepareChatSession(SkypeChatSession *session) {
 	QObject::connect(&d->skype, SIGNAL(joinUser(const QString&, const QString& )), session, SLOT(joinUser(const QString&, const QString& )));
 	QObject::connect(&d->skype, SIGNAL(leftUser(const QString&, const QString&, const QString& )), session, SLOT(leftUser(const QString&, const QString&, const QString& )));
 	QObject::connect(&d->skype, SIGNAL(setTopic(const QString&, const QString& )), session, SLOT(setTopic(const QString&, const QString& )));
+	QObject::connect(session, SIGNAL(inviteUserToChat(const QString&, const QString& )), &d->skype, SLOT(inviteUser(const QString&, const QString& )));
+	QObject::connect(session, SIGNAL(leaveChat(const QString& )), &d->skype, SLOT(leaveChat(const QString& )));
 }
 
 void SkypeAccount::setChatId(const QString &oldId, const QString &newId, SkypeChatSession *sender) {
@@ -662,6 +668,18 @@ void SkypeAccount::removeCall(const QString &callId) {
 void SkypeAccount::removeCallGroup(const QString &groupId) {
 	kdDebug(14311) << k_funcinfo << endl;
 	d->conferences.remove(groupId);
+}
+
+QString SkypeAccount::createChat(const QString &users) {
+	return d->skype.createChat(users);
+}
+
+bool SkypeAccount::leaveOnExit() const {
+	return d->leaveOnExit;
+}
+
+void SkypeAccount::setLeaveOnExit(bool value) {
+	d->leaveOnExit = value;
 }
 
 #include "skypeaccount.moc"

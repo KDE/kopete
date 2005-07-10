@@ -125,6 +125,12 @@ class Skype : public QObject
 		 * This will return ID of the actual user this one that uses this skype)
 		 */
 		QString getMyself();
+		/**
+		 * Create a chat with that members
+		 * @param users List of users separated by coma (user_1, user_2, user...)
+		 * @return Id of the new chat
+		 */
+		QString createChat(const QString &users);
 	public slots:
 		/**
 		 * Tell the skype to go online
@@ -263,6 +269,17 @@ class Skype : public QObject
 		 * @param chat What chat wants that
 		 */
 		void getTopic(const QString &chat);
+		/**
+		 * Invites a user to a chat
+		 * @param chatId What chat
+		 * @param userId What user
+		 */
+		void inviteUser(const QString &chatId, const QString &userId);
+		/**
+		 * Closes/leaves a chat
+		 * @param chatId What chat
+		 */
+		void leaveChat(const QString &chatId);
 	signals:
 		/**
 		 * Emited when the skype changes to online (or says it goes online)

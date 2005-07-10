@@ -70,8 +70,9 @@ skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *acc
 			AutoCloseCallCheck->setChecked(true);
 			CloseTimeoutSpin->setValue(d->account->closeCallWindowTimeout());
 		} else AutoCloseCallCheck->setChecked(false);
+		LeaveCheck->setChecked(d->account->leaveOnExit());
 	} else {
-		///@todo Make this unneeded :)
+		//TODO Make this unneeded :)
 		KMessageBox::information(this, i18n("Please note that this version of Skype plugin is a development version and it is probable it will cause more problems than solve. You have been warned"), i18n("Version info"));
 	}
 }
@@ -116,10 +117,11 @@ Kopete::Account *skypeEditAccount::apply() {
 	skype->setLaunchTimeout(LaunchSpin->value());
 	skype->setSkypeCommand(CommandEdit->text());
 	skype->setWaitBeforeConnect(WaitSpin->value());
+	skype->setLeaveOnExit(LeaveCheck->isChecked());
 	if (AutoCloseCallCheck->isChecked()) {
 		skype->setCloseWindowTimeout(CloseTimeoutSpin->value());
 	} else {
-		skype->setCloseWindowTimeout(0);	
+		skype->setCloseWindowTimeout(0);
 	}
 	skype->save();//save it to config
 	return skype;//return the account
