@@ -6,7 +6,7 @@ kde_module_LTLIBRARIES = kopete_webpresence.la kcm_kopete_webpresence.la
 
 kopete_webpresence_la_SOURCES     = webpresenceplugin.cpp
 
-kopete_webpresence_la_LDFLAGS     = -module  -no-undefined $(KDE_PLUGIN)
+kopete_webpresence_la_LDFLAGS     = -module  -no-undefined $(KDE_PLUGIN) $(all_libraries)
 kopete_webpresence_la_LIBADD      = ../../libkopete/libkopete.la $(LIBXML_LIBS) $(LIBXSLT_LIBS)
 
 kcm_kopete_webpresence_la_SOURCES = webpresencepreferences.cpp webpresenceprefs.ui

@@ -8,7 +8,7 @@ kde_module_LTLIBRARIES = kopete_statistics.la
 
 kopete_statistics_la_SOURCES = statisticsplugin.cpp statisticsdb.cpp statisticsdialog.cpp statisticswidget.ui statisticscontact.cpp statisticsdcopiface.skel
 
-kopete_statistics_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN)
+kopete_statistics_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
 kopete_statistics_la_LIBADD      = ../../libkopete/libkopete.la sqlite/libsqlite.la
 
 service_DATA = kopete_statistics.desktop

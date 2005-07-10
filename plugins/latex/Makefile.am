@@ -7,7 +7,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes)
 kde_module_LTLIBRARIES = kopete_latex.la kcm_kopete_latex.la
 
 kopete_latex_la_SOURCES = latexplugin.cpp latexconfig.kcfgc latexguiclient.cpp
-kopete_latex_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN)
+kopete_latex_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
 kopete_latex_la_LIBADD      = ../../libkopete/libkopete.la
 
 kcm_kopete_latex_la_SOURCES = latexprefsbase.ui latexpreferences.cpp latexconfig.kcfgc
