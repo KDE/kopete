@@ -794,6 +794,11 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 		slotContactAdded( handle, "RL", publicName, QString::null, QString::null );
 	else if(c)
 		c->setReversed(false);
+	if ( lists & 16 ) // This contact is on the pending list. Add to the reverse list and delete from the pending list
+	{
+		notifySocket()->addContact( handle, MSNProtocol::RL, QString::null, QString::null, QString::null );
+		notifySocket()->removeContact( handle, MSNProtocol::PL, QString::null, QString::null );
+	}
 }
 
 void MSNAccount::slotContactAdded( const QString& handle, const QString& list, const QString& publicName, const QString& contactGuid, const QString &groupGuid )
@@ -808,15 +813,29 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& list, c
 			Kopete::MetaContact *m= m_addWizard_metaContact ? m_addWizard_metaContact :  new Kopete::MetaContact();
 
 			MSNContact *c = new MSNContact( this, handle, m );
-			c->contactAddedToGroup( groupGuid, m_groupList[ groupGuid ] );
 			c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName);
 			c->setProperty( MSNProtocol::protocol()->propGuid, contactGuid );
-
-			if ( !m_addWizard_metaContact )
+			// Add the new contact to the group he belongs.
+			if ( tmp_addNewContactToGroup.contains(handle) )
 			{
-				m->addToGroup( m_groupList[ groupGuid ] );
-				Kopete::ContactList::self()->addMetaContact( m );
+				QStringList list = tmp_addNewContactToGroup[handle];
+				for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
+				{
+					QString groupGuid = *it;
+					
+					kdDebug( 14140 ) << k_funcinfo << "Adding " << handle << "to group: " << groupGuid <<  endl;
+					notifySocket()->addContact( handle, MSNProtocol::FL, QString::null, contactGuid, groupGuid );
+					
+					c->contactAddedToGroup( groupGuid, m_groupList[ groupGuid ] );
+					if ( !m_addWizard_metaContact )
+					{
+						m->addToGroup( m_groupList[ groupGuid ] );
+						Kopete::ContactList::self()->addMetaContact( m );
+					}
+				}
+				tmp_addNewContactToGroup.remove(handle);
 			}
+			
 			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
 
 			m_addWizard_metaContact = 0L;
@@ -1168,9 +1187,24 @@ void MSNAccount::addContactServerside(const QString &contactId, QPtrList<Kopete:
 			else
 			{
 				// Add the contact to the group on the server
-				// FIXME: Maybe the contactGuid will be null
 				kdDebug( 14140 ) << k_funcinfo << "Add the contact to the group on the server " << endl;
-				m_notifySocket->addContact( contactId, MSNProtocol::FL, contactId, static_cast<MSNContact *>(contacts()[contactId])->guid(), Gid );
+				MSNContact *c = static_cast<MSNContact *>(contacts()[contactId]);
+				if(c)
+				{	
+					if( c->hasProperty(MSNProtocol::protocol()->propGuid.key()) )
+					{
+						m_notifySocket->addContact( contactId, MSNProtocol::FL, QString::null, c->guid(), Gid );
+					}
+				}
+				else
+				{
+					m_notifySocket->addContact( contactId, MSNProtocol::FL, contactId, QString::null, QString::null );
+					// Add the group that the contact belong to add it when we will receive the contact GUID.
+					if( tmp_addNewContactToGroup.contains( contactId ) )
+						tmp_addNewContactToGroup[contactId].append(Gid);
+					else
+						tmp_addNewContactToGroup.insert(contactId, QStringList(Gid) );
+				}
 				added = true;
 			}
 		}

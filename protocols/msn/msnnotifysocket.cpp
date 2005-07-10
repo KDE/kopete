@@ -472,6 +472,14 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			rx.search( data.section( ' ', 1 ) );
 			msnId = rx.cap(1);
 		}
+		// A contact has added us to his forward list
+		else if( list == "RL" && data.contains( ' ' ) < 3 )
+		{
+			QRegExp rx("N=(.*) F=(.*)");
+			rx.search( data.section( ' ', 1 ) );
+			msnId = rx.cap(1);
+			publicName = rx.cap(2);
+		}
 		// Adding a contact to a group
 		else if( data.contains( ' ' ) < 3) // ADC TrID FL C=contactGuid groupdGuid
 		{
@@ -489,6 +497,21 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			publicName = unescape(rx.cap(2));
 			contactGuid = rx.cap(3);
 		}
+		// Examples of received data
+		// ADC TrID xL N=example@passport.com
+		// ADC TrID FL C=contactGuid groupdGuid
+		// ADC TrID RL N=example@passport.com F=friednly%20name
+		// ADC TrID FL N=ex@pas.com F=My%20Name C=contactGuid
+		// Thanks Gregg for that complex RegExp.
+		/*QRegExp rx("N=(\\S+)\\s?(?:F=(\\S+))?\\s?(?:C=([0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}))?\\s?((?:[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12},?)*)$");
+		
+		rx.search( data.section( ' ', 1 ) );
+		msnId = rx.cap(1);
+		publicName = unescape( rx.cap(2) );
+		contactGuid = rx.cap(3);
+		groupGuid = rx.cap(4);*/
+
+		kdDebug(14140) << k_funcinfo << list << " msnId: " << msnId << " publicName: " << publicName << " contactGuid: " << contactGuid << " groupGuid: " << groupGuid << endl;
 
 		// handle, list, publicName, contactGuid, groupGuid
 		emit contactAdded( msnId, list, publicName, contactGuid, groupGuid );
@@ -849,6 +872,8 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 			rx.search(msg);
 			uint dataCastId = rx.cap(1).toUInt();
 			// TODO: Display the nudge !
+			if( dataCastId == 1 )
+				kdDebug(14140) << k_funcinfo << "Received a nudge !" << endl;
 		}
 	}
 
@@ -914,6 +939,9 @@ void MSNNotifySocket::addContact( const QString &handle, int list, const QString
 		case MSNProtocol::BL:
 			args = QString("BL N=%1").arg( handle );
 			break;
+		case MSNProtocol::RL:
+			args = QString("RL N=%1").arg( handle );
+			break;
 		default:
 			kdDebug(14140) << k_funcinfo <<"WARNING! Unknown list " << list << "!" << endl;
 			return;
@@ -938,6 +966,9 @@ void MSNNotifySocket::removeContact( const QString &handle, int list, const QStr
 		break;
 	case MSNProtocol::BL:
 		args = "BL " + handle;
+		break;
+	case MSNProtocol::PL:
+		args = "PL " + handle;
 		break;
 	default:
 		kdDebug(14140) <<k_funcinfo  << "WARNING! Unknown list " << list << "!" << endl;

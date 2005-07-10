@@ -225,6 +225,7 @@ private:
 
 	Kopete::MetaContact *m_addWizard_metaContact;
 	QMap< QString, QStringList > tmp_addToNewGroup;
+	QMap< QString, QStringList > tmp_addNewContactToGroup;
 
 	QString m_awayReason;
 
