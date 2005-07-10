@@ -41,6 +41,7 @@
 #include "kopetepluginmanager.h"
 #include "kopetegroup.h"
 #include "kopeteprefs.h"
+#include "kopeteutils.h"
 #include "kopeteuiglobal.h"
 #include "kopeteblacklister.h"
 #include "kopeteonlinestatusmanager.h"
@@ -117,9 +118,7 @@ void Account::disconnected( DisconnectReason reason )
 	}
 	if(reason== OtherClient)
 	{
-		KNotifyClient::event(
-			Kopete::UI::Global::mainWidget()->winId(), QString::fromLatin1("connection_error"),
-			i18n( "You have connected from another client or computer to the account '%1'" ).arg(d->id) );
+		Kopete::Utils::notifyConnectionLost(this, i18n("You have been disconnected"), i18n( "You have connected from another client or computer to the account '%1'" ).arg(d->id), i18n("Most proprietary Instant Messaging services does not allow you to connect from more than one location. Check that nobody is using you account without your permission. If you need a service that supports connection from various locations at the same time, use the Jabber protocol."));
 	}
 }
 
