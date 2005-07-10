@@ -1,7 +1,7 @@
 /*
     msnchallengehandler.h - Computes a msn challenge response hash key.
 
-    Copyright (c) 2005 by Gregg Edghill       <edghill@kde.org>
+    Copyright (c) 2005 by Gregg Edghill       <gregg.edghill@gmail.com>
     Kopete    (c) 2003-2005 by The Kopete developers <kopete-devel@kde.org>
 
     Portions taken from
@@ -23,11 +23,9 @@
 #include <qobject.h>
 
 /**
-@author Gregg Edghill
-*/
-
-/**
  * Provides a simple way to compute a msn challenge response hash key.
+ *
+ * @author Gregg Edghill
  */
 class MsnChallengeHandler : public QObject
 {
