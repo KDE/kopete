@@ -1118,6 +1118,7 @@ void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
 
 	if(dialog->added())
 	{
+		m_notifySocket->addContact( handle, MSNProtocol::FL, handle, QString::null, QString::null );
 		dialog->addContact();
 	}
 }

@@ -478,7 +478,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			QRegExp rx("N=(.*) F=(.*)");
 			rx.search( data.section( ' ', 1 ) );
 			msnId = rx.cap(1);
-			publicName = rx.cap(2);
+			publicName = unescape( rx.cap(2) );
 		}
 		// Adding a contact to a group
 		else if( data.contains( ' ' ) < 3) // ADC TrID FL C=contactGuid groupdGuid
@@ -862,18 +862,6 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 			QRegExp rx("ClientIP: ([0-9.]*)");
 			rx.search(msg);
 			m_localIP = rx.cap(1);
-		}
-	}
-	else if(msg.contains("text/x-msnmsgr-datacast"))
-	{
-		if(msg.contains("ID:"))
-		{
-			QRegExp rx("ID: ([0-9]*)");
-			rx.search(msg);
-			uint dataCastId = rx.cap(1).toUInt();
-			// TODO: Display the nudge !
-			if( dataCastId == 1 )
-				kdDebug(14140) << k_funcinfo << "Received a nudge !" << endl;
 		}
 	}
 
