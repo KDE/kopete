@@ -308,6 +308,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			QDateTime now = QDateTime::currentDateTime();
 			// Retrieve the last synchronization timestamp.
 			lastSyncTime = m_account->configGroup()->readEntry( "lastsynctime");
+			// FIXME yyyy-mm-ddThh:mm:ss.xxxxxxx-07:00
+			// the xxxxxxx might be the serial???
 			// Set the new synchronization timestamp.
 			newSyncTime = QString("%1%2").arg(now.toString(Qt::ISODate), ".0000000-07:00");
 			
@@ -408,7 +410,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	}
 	else if( cmd == "UUX" )
 	{
-		kdDebug(14140) << k_funcinfo << "UUX OK" << endl;
+		// Do nothing.
 	}
 	else if( cmd == "FLN" )
 	{
@@ -635,9 +637,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	}
 	else if( cmd == "QRY" )
 	{
-		/// FIXME Shouldn't we be reseting the keep alive timer to the new
-		/// ping interval; QRY [ping interval] ??
-		//do nothing
+		// Do nothing
 	}
 	else if( cmd == "QNG" )
 	{
@@ -650,6 +650,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	}
 	else if( cmd == "URL" )
 	{
+		// URL 6 /cgi-bin/HoTMaiL https://loginnet.passport.com/ppsecure/md5auth.srf?lc=1033 2
 		//example of reply: URL 10 /cgi-bin/HoTMaiL https://msnialogin.passport.com/ppsecure/md5auth.srf?lc=1036 3
 		QString from_action_url = data.section( ' ', 1, 1 );
 		QString rru = data.section( ' ', 0, 0 );
@@ -736,20 +737,43 @@ void MSNNotifySocket::sendMail(const QString &email)
 
 void MSNNotifySocket::slotReadMessage( const QString &msg )
 {
-	if(msg.contains("text/x-msmsgsinitialemailnotification"))
+	if(msg.contains("text/x-msmsgsinitialmdatanotification"))
 	{
-		 //this sends the server if we are going online, contains the unread message count
-		QString m = msg.right(msg.length() - msg.find("Inbox-Unread:") );
-		m = m.left(msg.find("\r\n"));
-		mailCount = m.right(m.length() -m.find(" ")-1).toUInt();
-
-		if(mailCount > 0 )
+		//Mail-Data: <MD><E><I>301</I><IU>1</IU><O>4</O><OU>2</OU></E><Q><QTM>409600</QTM><QNM>204800</QNM></Q></MD>
+		// MD - Mail Data
+		// E  - email
+		// I  - initial mail
+		// IU - initial unread
+		// O  - other mail
+		// OU - other unread.
+		QRegExp regex("<MD><E><I>(\\d+)?</I>(?:<IU>(\\d+)?</IU>)<O>(\\d+)?</O><OU>(\\d+)?</OU></E><Q>.*</Q></MD>");
+		regex.search(msg);
+		
+		bool unread;
+		// Retrieve the number of unread email messages.
+		mailCount = regex.cap(2).toUInt(&unread);
+		if(unread && mailCount > 0)
 		{
+			// If there are new email message available, raise the unread email event.
 			QObject::connect(KNotification::event( "msn_mail", i18n( "You have one unread message in your MSN inbox.",
 					"You have %n unread messages in your MSN inbox.", mailCount ), 0 , 0 , i18n( "Open &Inbox..." ) ),
 				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 		}
 	}
+// 	else if(msg.contains("text/x-msmsgsinitialemailnotification"))
+// 	{
+// 		 //this sends the server if we are going online, contains the unread message count
+// 		QString m = msg.right(msg.length() - msg.find("Inbox-Unread:") );
+// 		m = m.left(msg.find("\r\n"));
+// 		mailCount = m.right(m.length() -m.find(" ")-1).toUInt();
+// 
+// 		if(mailCount > 0 )
+// 		{
+// 			QObject::connect(KNotification::event( "msn_mail", i18n( "You have one unread message in your MSN inbox.",
+// 					"You have %n unread messages in your MSN inbox.", mailCount ), 0 , 0 , i18n( "Open &Inbox..." ) ),
+// 				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
+// 		}
+// 	}
 	else if(msg.contains("text/x-msmsgsactivemailnotification"))
 	{
 		 //this sends the server if mails are deleted
@@ -829,7 +853,6 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 		regex.search(msg);
 		MSNContact *contact = static_cast<MSNContact*>(m_account->contacts()[ m_tmpLastHandle ]);
 		if(contact){
-		kdDebug(14140) << k_funcinfo << m_tmpLastHandle << " " << unescape(regex.cap(1)) << endl;
 			contact->setProperty(MSNProtocol::protocol()->propPersonalMessage, unescape(regex.cap(1)));
 			// TODO Current Media
 		}
