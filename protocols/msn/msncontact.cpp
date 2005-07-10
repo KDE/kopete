@@ -429,6 +429,7 @@ void MSNContact::sync( unsigned int changed )
 			else if( !m_serverGroups.contains(Gid) )
 			{
 				//Add the contact to the group on the server
+				kdDebug(14140) << k_funcinfo << "Adding " << contactId() << " on STEP ONE. We are here. " << endl;
 				notify->addContact( contactId(), MSNProtocol::FL, QString::null, guid(), Gid );
 				count++;
 				m_moving=true;
@@ -489,7 +490,9 @@ void MSNContact::sync( unsigned int changed )
 	//   we add the contact to the group #0 (the default one)
 	if(count==0)
 	{
-		notify->addContact( contactId(), MSNProtocol::FL, QString::null, guid(), QString::null );
+		// FIXME: I think that this is not needed anymore.
+		kdDebug(14140) << k_funcinfo << "Adding " << contactId() << "to top level. We are here. " << endl;
+//		notify->addContact( contactId(), MSNProtocol::FL, QString::null, guid(), "0");
 	}
 }
 

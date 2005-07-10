@@ -841,6 +841,16 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 			m_localIP = rx.cap(1);
 		}
 	}
+	else if(msg.contains("text/x-msnmsgr-datacast"))
+	{
+		if(msg.contains("ID:"))
+		{
+			QRegExp rx("ID: ([0-9]*)");
+			rx.search(msg);
+			uint dataCastId = rx.cap(1).toUInt();
+			// TODO: Display the nudge !
+		}
+	}
 
 	if(!m_configFile.isNull())
 	{
@@ -885,14 +895,16 @@ void MSNNotifySocket::addContact( const QString &handle, int list, const QString
 		case MSNProtocol::FL:
 		{
 			// Adding the contact to a group
-			if( !contactGuid.isEmpty() && !groupGuid.isEmpty() )
+			if( !contactGuid.isEmpty() )
 			{
 				args = QString("FL C=%1 %2").arg( contactGuid ).arg( groupGuid );
+				kdDebug(14140) << k_funcinfo << "In adding contact to a group" << endl;
 			}
 			// Adding a new contact
 			else
 			{
 				args = QString("FL N=%1 F=%2").arg( handle ).arg( escape( publicName ) );
+				kdDebug(14140) << k_funcinfo << "In adding contact to a new contact" << endl;
 			}
 			break;
 		}	

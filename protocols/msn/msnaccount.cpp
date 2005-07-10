@@ -837,8 +837,11 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& list, c
 			}
 		}
 
-		if ( !m_allowList.contains( handle ) && !m_blockList.contains( handle ) )
+		if ( !handle.isEmpty() && !m_allowList.contains( handle ) && !m_blockList.contains( handle ) && contactGuid.isEmpty() )
+		{
+			kdDebug(14140) << k_funcinfo << "Trying to add contact from FL to AL. " << endl;
 			notifySocket()->addContact(handle, MSNProtocol::AL, QString::null, QString::null, QString::null );
+		}
 	}
 	else if ( list == "BL" )
 	{
@@ -1166,6 +1169,7 @@ void MSNAccount::addContactServerside(const QString &contactId, QPtrList<Kopete:
 			{
 				// Add the contact to the group on the server
 				// FIXME: Maybe the contactGuid will be null
+				kdDebug( 14140 ) << k_funcinfo << "Add the contact to the group on the server " << endl;
 				m_notifySocket->addContact( contactId, MSNProtocol::FL, contactId, static_cast<MSNContact *>(contacts()[contactId])->guid(), Gid );
 				added = true;
 			}
@@ -1185,12 +1189,14 @@ void MSNAccount::addContactServerside(const QString &contactId, QPtrList<Kopete:
 	{
 		// only on top-level, or in no groups ( add it to the default group )
 		// FIXME: Maybe the contactGuid will be null
-		m_notifySocket->addContact( contactId, MSNProtocol::FL, contactId, QString::null, QString::null );
+		kdDebug( 14140 ) << k_funcinfo << "Add " << contactId << " to the top-level" << endl;
+		//m_notifySocket->addContact( contactId, MSNProtocol::FL, contactId, QString::null, QString::null );
 	}
 }
 
 MSNContact *MSNAccount::findContactByGuid(const QString &contactGuid)
 {
+	kdDebug(14140) << k_funcinfo << endl;
 	QDictIterator<Kopete::Contact> it( contacts() );
 	for ( ; it.current(); ++it )
 	{
@@ -1198,6 +1204,7 @@ MSNContact *MSNAccount::findContactByGuid(const QString &contactGuid)
 
 		if( c->property( MSNProtocol::protocol()->propGuid ).value().toString() == contactGuid )
 		{
+			kdDebug(14140) << k_funcinfo << "OK found a contact. " << endl;
 			// Found the contact GUID
 			return c;
 		}
