@@ -682,4 +682,10 @@ void SkypeAccount::setLeaveOnExit(bool value) {
 	d->leaveOnExit = value;
 }
 
+void SkypeAccount::chatUser(const QString &userId) {
+	SkypeContact *contact = getContact(userId);
+
+	contact->execute();
+}
+
 #include "skypeaccount.moc"

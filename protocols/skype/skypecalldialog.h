@@ -41,6 +41,8 @@ class SkypeCallDialog : public SkypeCallDialogBase
 		void deathTimeout();
 		///Update the call info now
 		void updateCallInfo();
+		///Call the user back
+		void callBack();
 	protected slots:
 		///The accept button was clicked, accept the call
 		virtual void acceptCall();
@@ -48,6 +50,9 @@ class SkypeCallDialog : public SkypeCallDialogBase
 		virtual void holdCall();
 		///Hang up the call
 		virtual void hangUp();
+		///Start chat to the user
+		virtual void chatUser();
+	protected:
 		///I want to know when I'm closed
 		virtual void closeEvent(QCloseEvent *e);
 	public:

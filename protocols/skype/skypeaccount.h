@@ -401,6 +401,11 @@ Q_OBJECT
 		 * Set if chat window should close a chat window when you close it
 		 */
 		void setLeaveOnExit(bool value);
+		/**
+		 * Open chat to the user
+		 * @param userId
+		 */
+		void chatUser(const QString &userId);
 	signals:
 		/**
 		 * This is emited when the message has been sent by skype

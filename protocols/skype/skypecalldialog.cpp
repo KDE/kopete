@@ -117,9 +117,12 @@ void SkypeCallDialog::updateStatus(const QString &callId, const QString &status)
 		} else if (status == "MISSED") {
 			HoldButton->setEnabled(false);
 			HangButton->setEnabled(false);
-			AcceptButton->setEnabled(false);
+			AcceptButton->setEnabled(true);
+			AcceptButton->setText(i18n("Call Back"));
 			StatusLabel->setText(i18n("Missed"));
 			d->status = csNotRunning;
+			disconnect(AcceptButton, SIGNAL(clicked()), this, SLOT(acceptCall()));
+			connect(AcceptButton, SIGNAL(clicked()), this, SLOT(callBack()));
 		} else if (status == "FINISHED") {
 			HoldButton->setEnabled(false);
 			HangButton->setEnabled(false);
@@ -261,5 +264,16 @@ void SkypeCallDialog::skypeOutInfo(int balance, const QString &currency) {
 	float value = balance * part;
 	CreditLabel->setText(KGlobal::locale()->formatMoney(value, symbol, digits));
 }
+
+void SkypeCallDialog::chatUser() {
+	d->account->chatUser(d->userId);
+}
+
+void SkypeCallDialog::callBack() {
+	deleteLater();//close this window
+
+	d->account->makeCall(d->userId);
+}
+
 
 #include "skypecalldialog.moc"

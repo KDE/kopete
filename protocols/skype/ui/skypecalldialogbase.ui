@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>385</width>
-            <height>211</height>
+            <width>430</width>
+            <height>235</height>
         </rect>
     </property>
     <property name="caption">
@@ -158,7 +158,7 @@
         </widget>
         <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>layout4</cstring>
+                <cstring>layout9</cstring>
             </property>
             <hbox>
                 <property name="name">
@@ -176,7 +176,7 @@
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>50</width>
+                            <width>48</width>
                             <height>20</height>
                         </size>
                     </property>
@@ -219,11 +219,31 @@
                     <property name="text">
                         <string>H&amp;old</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+O</string>
+                    </property>
                     <property name="toolTip" stdset="0">
                         <string>Hold the call</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>Interrupt the call for a moment and resume (or hang up) it later</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>pushButton4</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Chat</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Open chat to the person</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Open chat to the person you are talking with</string>
                     </property>
                 </widget>
                 <spacer>
@@ -238,7 +258,7 @@
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>50</width>
+                            <width>49</width>
                             <height>20</height>
                         </size>
                     </property>
@@ -266,11 +286,18 @@
         <receiver>SkypeCallDialogBase</receiver>
         <slot>holdCall()</slot>
     </connection>
+    <connection>
+        <sender>pushButton4</sender>
+        <signal>clicked()</signal>
+        <receiver>SkypeCallDialogBase</receiver>
+        <slot>chatUser()</slot>
+    </connection>
 </connections>
 <slots>
     <slot access="protected" specifier="pure virtual">acceptCall()</slot>
     <slot access="protected" specifier="pure virtual">holdCall()</slot>
     <slot access="protected" specifier="pure virtual">hangUp()</slot>
+    <slot access="protected" specifier="pure virtual">chatUser()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
