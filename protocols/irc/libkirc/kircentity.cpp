@@ -38,15 +38,55 @@ const QRegExp Entity::sm_userStrictRegExp(QString::fromLatin1("^([^\\s,:!@]+)!([
 
 const QRegExp Entity::sm_channelRegExp( QString::fromLatin1("^[#!+&][^\\s,]+$") );
 
+// FIXME: Implement me
+EntityType Entity::guessType(const QString &)
+{
+	return Unknown;
+}
+
+bool Entity::isUser( const QString &name )
+{
+	return sm_userRegExp.exactMatch(name);
+}
+
+bool Entity::isChannel( const QString &name )
+{
+	return sm_channelRegExp.exactMatch(name);
+}
+
+class KIRC::EntityPrivate
+{
+public:
+	EntityPrivate()
+		: codec(0)
+	{ }
+
+	QString name;
+	QString host;
+
+	KIRC::EntityStatus status;
+
+	QString awayMessage;
+
+	QTextCodec *codec;
+};
+
 Entity::Entity(const QString &name, const EntityType type)
+	: d( new EntityPrivate )
 {
 	setName(name);
-	m_status.type = type;
+	setType(type);
+
+	if (d->status.type == Unknown)
+		guessType();
 }
 
 Entity::~Entity()
 {
 	emit destroyed(this);
+
+	delete d;
+	d = 0;
 }
 
 bool Entity::operator == (const Entity &)
@@ -55,53 +95,81 @@ bool Entity::operator == (const Entity &)
 	return false;
 }
 
-void Entity::setName(const QString &name)
-{
-	m_name = name;
-	emit updated();
-}
-
-QString Entity::name() const
-{
-	return m_name;
-}
-
-QString Entity::host() const
-{
-	return m_host;
-}
-
 EntityStatus Entity::status() const
 {
-	return m_status;
+	return d->status;
 }
 
 EntityType Entity::type() const
 {
-	return m_status.type;
+	return d->status.type;
+}
+
+bool Entity::isChannel() const
+{
+	return type() == Channel;
+}
+
+bool Entity::isUser() const
+{
+	return type() == User;
+}
+
+void Entity::setType( EntityType type )
+{
+	if ( d->status.type != type )
+	{
+		d->status.type = guessType(d->name);
+		emit updated();
+	}
 }
 
 EntityType Entity::guessType()
 {
-	m_status.type = guessType(m_name);
-	return m_status.type;
+	setType( guessType(d->name) );
+	return type();
 }
 
-// FIXME: Implement me
-KIRC::EntityType Entity::guessType(const QString &)
+QString Entity::name() const
 {
-	return Unknown;
+	return d->name;
 }
 
-void Entity::setCodec(QTextCodec *codec)
+void Entity::setName(const QString &name)
 {
-	m_codec = codec;
-	emit updated();
+	if ( d->name != name )
+	{
+		d->name = name;
+		emit updated();
+	}
+}
+
+QString Entity::host() const
+{
+	return d->host;
+}
+
+void Entity::setAwayMessage(const QString &awayMessage)
+{
+	if ( d->awayMessage != awayMessage )
+	{
+		d->awayMessage = awayMessage;
+		emit updated();
+	}
 }
 
 QTextCodec *Entity::codec() const
 {
-	return m_codec;
+	return d->codec;
+}
+
+void Entity::setCodec(QTextCodec *codec)
+{
+	if ( d->codec != codec )
+	{
+		d->codec = codec;
+		emit updated();
+	}
 }
 
 #include "kircentity.moc"

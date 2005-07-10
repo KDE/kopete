@@ -31,6 +31,7 @@ namespace KIRC
 {
 
 class Engine;
+class EntityPrivate;
 
 class Entity
 	: public QObject,
@@ -40,6 +41,8 @@ class Entity
 
 public:
 	static KIRC::EntityType guessType(const QString &name);
+	static bool isChannel( const QString &name );
+	static bool isUser( const QString &name );
 
 	Entity(const QString &name = QString::null, const KIRC::EntityType type = Unknown);
 	virtual ~Entity();
@@ -49,23 +52,22 @@ public:
 	KIRC::EntityStatus status() const;
 
 	KIRC::EntityType type() const;
+	bool isChannel() const;
+	bool isUser() const;
+	void setType( KIRC::EntityType );
+
 	KIRC::EntityType guessType();
 
-	void setName(const QString &);
 	QString name() const;
+	void setName(const QString &);
 
 	QString host() const;
 
-	void setCodec(QTextCodec *);
-	QTextCodec *codec() const;
+	QString awayMessage();
+	void setAwayMessage(const QString &);
 
-	// FIXME: Remove these is* functions ... They are duplicate with the ::guessType(const QString&)
-	inline static bool isUser( const QString &s )
-		{ return sm_userRegExp.exactMatch(s); };
-	inline bool isChannel()
-		{ return isChannel(m_name); };
-	inline static bool isChannel( const QString &s )
-		{ return sm_channelRegExp.exactMatch(s); };
+	QTextCodec *codec() const;
+	void setCodec(QTextCodec *);
 
 signals:
 	void destroyed(KIRC::Entity *self);
@@ -80,12 +82,7 @@ private:
 	static const QRegExp sm_userStrictRegExp;
 	static const QRegExp sm_channelRegExp;
 
-	KIRC::EntityStatus m_status;
-
-	QString m_name;
-	QString m_host;
-
-	QTextCodec *m_codec;
+	EntityPrivate *d;
 };
 
 }

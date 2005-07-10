@@ -312,7 +312,7 @@ void IRCContact::slotSendMsg(Message &message, ChatSession *)
 
 		for( QStringList::Iterator it = messages.begin(); it != messages.end(); ++it )
 		{
-			Message msg(message.from(), message.to(), sendMessage(*it), message.direction(),
+			Message msg(message.from(), message.to(), Kopete::Message::escape(sendMessage(*it)), message.direction(),
 			                    Message::RichText, CHAT_VIEW, message.type());
 
 			msg.setBg(QColor());
@@ -324,7 +324,7 @@ void IRCContact::slotSendMsg(Message &message, ChatSession *)
 	}
 	else
 	{
-		message.setBody( sendMessage( htmlString ), Message::RichText );
+		message.setBody( Kopete::Message::escape(sendMessage( htmlString )), Message::RichText );
 
 		message.setBg( QColor() );
 		message.setFg( QColor() );

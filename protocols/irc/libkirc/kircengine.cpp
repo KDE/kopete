@@ -42,7 +42,7 @@ using namespace KIRC;
 
 Engine::Engine(QObject *parent)
 	: KIRC::Socket(parent),
-	  m_defaultCodec(QTextCodec::codecForMib(4)),
+	  m_defaultCodec(UTF8),
 	  m_FailedNickOnLogin(false),
 	  m_useSSL(false),
 	  m_server(new Entity(QString::null, KIRC::Server)),
