@@ -932,3 +932,23 @@ Comment=An error on connection has occurred
 Comment[et]=Ühendusega tekkis viga
 Comment[sv]=En fel vid anslutning har inträffat
 default_presentation=2
+
+[connection_lost]
+Name=Connection Lost
+Comment=The connection have been lost
+default_presentation=16
+
+[cannot_connect]
+Name=Cannot Connect
+Comment=Kopete cann't connect to the service
+default_presentation=16
+
+[network_problems]
+Name=Network Problems
+Comment=The network is experimenting problems
+default_presentation=16
+
+[server_error]
+Name=Server Internal Error
+Comment=An service internal error has occurred
+default_presentation=2
