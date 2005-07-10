@@ -104,4 +104,3 @@ void notifyCannotConnect( const Account *account, const QString explanation, con
 } // end ns ErrorNotifier
 } // end ns Kopete
 
-#include "kopeteutils.moc"
