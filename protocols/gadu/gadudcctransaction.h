@@ -42,7 +42,7 @@ public:
 
 	bool setupIncoming( const unsigned int, GaduContact* );
 	bool setupIncoming( gg_dcc* );
-	bool setupOutgoing( GaduContact* );
+	bool setupOutgoing( GaduContact*, QString& );
 	unsigned int recvUIN();
 	unsigned int peerUIN();
 

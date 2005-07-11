@@ -1071,10 +1071,10 @@ GaduAccount::slotSearchResult( const SearchResult& result, unsigned int seq )
 }
 
 void
-GaduAccount::sendFile( GaduContact* peer )
+GaduAccount::sendFile( GaduContact* peer, QString& filePath )
 {
 	GaduDCCTransaction* gtran = new GaduDCCTransaction( p->gaduDcc_ );
-	gtran->setupOutgoing( peer );
+	gtran->setupOutgoing( peer, filePath );
 }
 
 void

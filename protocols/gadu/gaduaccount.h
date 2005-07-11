@@ -62,7 +62,7 @@ public:
 	void setAway( bool isAway, const QString& awayMessage = QString::null );
 	KActionMenu* actionMenu();
 	void dccRequest( GaduContact* );
-	void sendFile( GaduContact* );
+	void sendFile( GaduContact* , QString& );
 	//}
 	enum tlsConnection{ TLS_ifAvaliable = 0, TLS_only, TLS_no };
 	unsigned int getPersonalInformation();

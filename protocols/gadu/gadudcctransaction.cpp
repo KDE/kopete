@@ -31,6 +31,7 @@
 #include <kmessagebox.h>
 
 #include "kopetetransfermanager.h"
+#include "kopetemetacontact.h"
 #include "kopeteuiglobal.h"
 
 #include <qsocketnotifier.h>
@@ -78,7 +79,7 @@ GaduDCCTransaction::peerUIN()
 }
 
 bool
-GaduDCCTransaction::setupOutgoing( GaduContact* peerContact )
+GaduDCCTransaction::setupOutgoing( GaduContact* peerContact, QString& filePath )
 {
 	GaduContact* me;
 	GaduAccount* metoo;
@@ -91,11 +92,20 @@ GaduDCCTransaction::setupOutgoing( GaduContact* peerContact )
 
 	QString aaa =  peerContact->contactIp().toString();
 	kdDebug( 14100 ) << "slotOutgoin for UIN: " << peerContact->uin() << " port " << peerContact->contactPort() << " ip " <<aaa<<  endl;
+	kdDebug( 14100 ) << "File path is " << filePath << endl;
 
-	if ( peerContact->contactPort() >= 10 ) {
-		gg_dcc_send_file( htonl( peerContact->contactIp().ip4Addr() ), peerContact->contactPort(), me->uin(), peerContact->uin() );
+	if ( peerContact->contactPort() >= 10 ) {  
+		dccSock_ = gg_dcc_send_file( htonl( peerContact->contactIp().ip4Addr() ), peerContact->contactPort(), me->uin(), peerContact->uin() );
+		gg_dcc_fill_file_info(dccSock_,filePath.ascii());
+		transfer_ = Kopete::TransferManager::transferManager()->addTransfer ( peerContact,
+		filePath,  dccSock_->file_info.size, peerContact->metaContact()->displayName(),	Kopete::FileTransferInfo::Outgoing );
+		createNotifiers( true );
+		enableNotifiers( dccSock_->check  );
 	}
 	else {
+		kdDebug( 14100 ) << "Peer is passive, requesting reverse connection" << endl;
+		// TODO: save this request in a list, then match incoming dcc connection
+		return false;
 		metoo = static_cast<GaduAccount*>( me->account() );
 		metoo->dccRequest( peerContact );
 	}
@@ -133,7 +143,7 @@ GaduDCCTransaction::setupIncoming( gg_dcc* dccS )
 	dccSock_ = dccS;
 
 	peer = dccS->uin;
-
+	
 	connect ( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString & ) ),
 			  this, SLOT( slotIncomingTransferAccepted ( Kopete::Transfer *, const QString & ) ) );
 	connect ( Kopete::TransferManager::transferManager(), SIGNAL( refused( const Kopete::FileTransferInfo & ) ),

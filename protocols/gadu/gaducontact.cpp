@@ -60,7 +60,7 @@ GaduContact::GaduContact( uin_t uin, const QString& name, Kopete::Account* accou
 
 	// don't call libkopete functions like these until the object is fully
 	// constructed. all GaduContact construction must be above this point.
-	setFileCapable( false );
+	setFileCapable( true );
 
 	//offline
 	setOnlineStatus( GaduProtocol::protocol()->convertStatus( 0 ) );
@@ -87,9 +87,19 @@ GaduContact::uin() const
 }
 
 void
-GaduContact::sendFile( const KURL &/*sourceURL*/, const QString &/*fileName*/, uint /*fileSize*/ )
+GaduContact::sendFile( const KURL &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )
 {
-	account_->sendFile( this );
+	QString filePath;
+
+	//If the file location is null, then get it from a file open dialog
+	if( !sourceURL.isValid() )
+		filePath = KFileDialog::getOpenFileName(QString::null, "*", 0l  , i18n("Kopete File Transfer"));
+	else
+		filePath = sourceURL.path(-1);
+
+	kdDebug(14120) << k_funcinfo << "File chosen to send:" << filePath << endl;
+
+	account_->sendFile( this, filePath );
 }
 
 
