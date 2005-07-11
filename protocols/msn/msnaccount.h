@@ -54,6 +54,7 @@ public:
 	 * change the publicName to this new name
 	 */
 	void setPublicName( const QString &name );
+	void setPersonalMessage(const QString &type, const QString &personalMessage );
 
 	/**
 	 * Returns the address of the MSN server
@@ -117,6 +118,7 @@ private slots:
 	void slotStartChat();
 	void slotOpenInbox();
 	void slotChangePublicName();
+	void slotChangePersonalMessage();
 
 //#if !defined NDEBUG //(Stupid moc which don't see when he don't need to slot this slot)
 	/**
@@ -129,6 +131,7 @@ private slots:
 	void slotStatusChanged( const Kopete::OnlineStatus &status );
 	void slotNotifySocketClosed();
 	void slotPublicNameChanged(const QString& publicName);
+	void slotPersonalMessageChanged(const QString& personalMessage);
 	void slotContactRemoved(const QString& handle, const QString& list, const QString& contactGuid, const QString& groupGuid );
 	void slotContactAdded(const QString& handle, const QString& list, const QString& publicName, const QString& contactGuid, const QString &groupGuid );
 	void slotContactListed( const QString& handle, const QString& publicName, const QString &contactGuid, uint lists, const QString& groups );
@@ -190,6 +193,7 @@ private:
 	KAction *m_openInboxAction;
 	KAction *m_startChatAction;
 	KAction *m_changeDNAction;
+	KAction *m_changePMAction;
 
 	// status which will be using for connecting
 	Kopete::OnlineStatus m_connectstatus;

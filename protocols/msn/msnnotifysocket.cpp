@@ -967,6 +967,25 @@ void MSNNotifySocket::changePublicName( const QString &publicName, const QString
 	}
 }
 
+void MSNNotifySocket::changePersonalMessage( const QString& type, const QString &personalMessage )
+{
+	QString tempPersonalMessage = personalMessage.copy();
+	
+	//Magic number : 129 characters
+	if( escape(personalMessage).length() > 129 )
+	{
+		// We cut. for now.
+		tempPersonalMessage = personalMessage.left(129);
+	}
+
+	// TODO : Music type, Office type. Integrate with KOffice and the NowListening thingy.
+	QString xmlMessageToSend = "<Data><PSM>"+escape(personalMessage)+"</PSM><CurrentMedia></CurrentMedia></Data>";
+
+	unsigned int id = sendCommand("UUX","",true, xmlMessageToSend.utf8(), false);
+	m_tmpHandles[id] = m_account->accountId();
+
+}
+
 void MSNNotifySocket::changePhoneNumber( const QString &key, const QString &data )
 {
 	sendCommand( "PRP", key + " " + escape ( data ) );

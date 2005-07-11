@@ -73,6 +73,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 
 	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
 	m_changeDNAction = new KAction( i18n( "&Change Display Name..." ), QString::null, 0, this, SLOT( slotChangePublicName() ), this, "renameAction" );
+	m_changePMAction = new KAction( i18n( "&Change Personal Message..." ), QString::null, 0, this, SLOT( slotChangePersonalMessage() ), this, "messageAction" );
 	m_startChatAction = new KAction( i18n( "&Start Chat..." ), "mail_generic", 0, this, SLOT( slotStartChat() ), this, "startChatAction" );
 
 
@@ -219,17 +220,20 @@ KActionMenu * MSNAccount::actionMenu()
 		m_openInboxAction->setEnabled( true );
 		m_startChatAction->setEnabled( true );
 		m_changeDNAction->setEnabled( true );
+		m_changePMAction->setEnabled( true );
 	}
 	else
 	{
 		m_openInboxAction->setEnabled( false );
 		m_startChatAction->setEnabled( false );
 		m_changeDNAction->setEnabled( false );
+		m_changePMAction->setEnabled( false );
 	}
 
 	m_actionMenu->popupMenu()->insertSeparator();
 
 	m_actionMenu->insert( m_changeDNAction );
+	m_actionMenu->insert( m_changePMAction );
 	m_actionMenu->insert( m_startChatAction );
 
 //	m_actionMenu->popupMenu()->insertSeparator();
@@ -340,6 +344,42 @@ void MSNAccount::slotChangePublicName()
 	}
 }
 
+void MSNAccount::slotChangePersonalMessage()
+{
+	bool ok;
+	QString message = KInputDialog::getText( i18n( "Change Personal Message - MSN Plugin" ),
+		i18n( "Enter the new personal message you want to send to your friends on MSN:" ),
+		myself()->property( MSNProtocol::protocol()->propPersonalMessage).value().toString(), &ok );
+
+	if ( ok )
+	{
+		//Magic number : 129 characters MAX
+		if ( message.length() > 129 )
+		{
+			KMessageBox::error( Kopete::UI::Global::mainWidget(),
+				i18n( "<qt>The message you entered is too long. Please enter a shorter message.\n"
+					"Your comment has <b>not</b> been changed.</qt>" ),
+				i18n( "Change Personal Message - MSN Plugin" ) );
+			return;
+		}
+
+		if ( isConnected() )
+		{
+			// The placeholder is there because next are the
+			// Office, Game and Music features.
+			setPersonalMessage( "placeholder", message );
+		}
+		else
+		{
+			// Bypass the protocol, it doesn't work, call the slot
+			// directly. Upon connect the name will be synced.
+			// FIXME: Use a single code path instead!
+			slotPersonalMessageChanged( message );
+			// m_publicNameSyncMode = SyncToServer;
+		}
+	}
+}
+
 void MSNAccount::slotOpenInbox()
 {
 	if ( m_notifySocket )
@@ -426,11 +466,29 @@ void MSNAccount::slotPublicNameChanged( const QString& publicName )
 	}
 }
 
+void MSNAccount::slotPersonalMessageChanged( const QString& personalMessage )
+{
+	QString oldPersonalMessage=myself()->property(MSNProtocol::protocol()->propPersonalMessage).value().toString() ;
+	if ( personalMessage != oldPersonalMessage )
+	{
+		myself()->setProperty( MSNProtocol::protocol()->propPersonalMessage, personalMessage );
+		configGroup()->writeEntry( "personalMessage" , personalMessage );
+	}
+}
+
 void MSNAccount::setPublicName( const QString &publicName )
 {
 	if ( m_notifySocket )
 	{
 		m_notifySocket->changePublicName( publicName, QString::null );
+	}
+}
+
+void MSNAccount::setPersonalMessage( const QString &type, const QString &personalMessage )
+{
+	if ( m_notifySocket )
+	{
+		m_notifySocket->changePersonalMessage( QString::null, personalMessage );
 	}
 }
 
@@ -1314,4 +1372,5 @@ void MSNAccount::resetPictureObject(bool silent)
 #include "msnaccount.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
+
 
