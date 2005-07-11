@@ -73,6 +73,7 @@
 #include "kopetegrouplistaction.h"
 
 #include <memory>
+#include <typeinfo>
 
 class ContactListViewStrategy;
 
@@ -495,12 +496,8 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 
 	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotMetaContactSelected( bool ) ) );
 
-	QPtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
-	for( Kopete::Account *acc = accounts.first() ; acc ; acc = accounts.next() )
-	{
-		KAction *action = new KAction( acc->accountId(), acc->accountIcon(), 0, this, SLOT( slotAddContact() ), acc );
-		actionAddContact->insert( action );
-	}
+	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered( Kopete::Account* )), SLOT(slotAddSubContactActionNewAccount(Kopete::Account*)));
+	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered( const Kopete::Account* )), SLOT(slotAddSubContactActionAccountDeleted(const Kopete::Account *)));
 
 	actionProperties = new KAction( i18n( "&Properties" ), "", Qt::Key_Alt + Qt::Key_Return,
 		this, SLOT( slotProperties() ), ac, "contactProperties" );
@@ -512,6 +509,23 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 KopeteContactListView::~KopeteContactListView()
 {
 	delete d;
+}
+
+void KopeteContactListView::slotAddSubContactActionNewAccount(Kopete::Account* account)
+{
+	KAction *action = new KAction( account->accountLabel(), account->accountIcon(), 0 , this, SLOT(slotAddContact()), account);
+	m_accountAddContactMap.insert( account, action);
+	actionAddContact->insert(action);
+}
+
+void KopeteContactListView::slotAddSubContactActionAccountDeleted(const Kopete::Account *account)
+{
+	kdDebug(14000) << k_funcinfo << endl;
+	if (m_accountAddContactMap.contains(account))
+	{
+		KAction *action = m_accountAddContactMap[account];
+		actionAddContact->remove(action);
+	}
 }
 
 void KopeteContactListView::slotMetaContactAdded( Kopete::MetaContact *mc )

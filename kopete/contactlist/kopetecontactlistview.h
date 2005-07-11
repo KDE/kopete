@@ -114,6 +114,16 @@ protected:
 	void updateActionsForSelection( QPtrList<Kopete::MetaContact> contacts, QPtrList<Kopete::Group> groups );
 
 private slots:
+	/**
+	 * When an account is added, so we add it to the menu action
+	 */
+	void slotAddSubContactActionNewAccount(Kopete::Account*);
+	/**
+	 * When an account is destroyed, the child add subcontact action is deleted
+	 * so we remove it from the menu action
+	 */
+	void slotAddSubContactActionAccountDeleted(const Kopete::Account *);
+
 	void slotViewSelectionChanged();
 	void slotListSelectionChanged();
 	void slotContextMenu(KListView*,QListViewItem *item, const QPoint &point );
@@ -213,6 +223,7 @@ public:
 	// This is public so the chatwinodw can handle sub actions
 	// FIXME: do we not believe in accessor functions any more?
 	KActionMenu *actionAddContact;
+	QMap<const Kopete::Account *, KAction *> m_accountAddContactMap;
 };
 
 struct KopeteContactListView::UndoItem

@@ -621,11 +621,6 @@ void KopeteWindow::slotAccountRegistered( Kopete::Account *account )
 		SLOT( slotAccountStatusIconRightClicked( Kopete::Account *,
 		const QPoint & ) ) );
 
-	// this should be placed in contactlistview, but i am lazy to redo a new slot
-	contactlist->actionAddContact->insert(new KAction( account->accountLabel() ,
-		account->accountIcon(), 0 ,
-		contactlist, SLOT( slotAddContact() ), account));
-
 	m_accountStatusBarIcons.insert( account, sbIcon );
 	slotAccountStatusIconChanged( account->myself() );
 }
