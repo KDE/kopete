@@ -73,7 +73,6 @@
 #include "kopetegrouplistaction.h"
 
 #include <memory>
-#include <typeinfo>
 
 class ContactListViewStrategy;
 
