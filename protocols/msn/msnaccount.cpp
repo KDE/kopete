@@ -525,9 +525,11 @@ void MSNAccount::slotGroupAdded( const QString& groupName, const QString &groupG
 		QStringList list=tmp_addToNewGroup[groupName];
 		for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
 		{
-			QString contactId =*it;
+			QString contactId = *it;
 			kdDebug( 14140 ) << k_funcinfo << "Adding to new group: " << contactId <<  endl;
-			notifySocket()->addContact( contactId, MSNProtocol::FL, QString::null, static_cast<MSNContact *>(contacts()[contactId])->guid(), groupGuid );
+			MSNContact *c = static_cast<MSNContact *>(contacts()[contactId]);
+			if(c)
+				notifySocket()->addContact( contactId, MSNProtocol::FL, QString::null, c->guid(), groupGuid );
 		}
 		tmp_addToNewGroup.remove(groupName);
 	}

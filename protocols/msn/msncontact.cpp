@@ -181,9 +181,11 @@ void MSNContact::slotUserInfo()
 {
 	KDialogBase *infoDialog=new KDialogBase( 0l, "infoDialog", /*modal = */false, QString::null, KDialogBase::Close , KDialogBase::Close, false );
 	QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
+	QString personalMessage=property( MSNProtocol::protocol()->propPersonalMessage).value().toString();
 	MSNInfo *info=new MSNInfo ( infoDialog,"info");
 	info->m_id->setText( contactId() );
 	info->m_displayName->setText(nick);
+	info->m_personalMessage->setText(personalMessage);
 	info->m_phh->setText(m_phoneHome);
 	info->m_phw->setText(m_phoneWork);
 	info->m_phm->setText(m_phoneMobile);
