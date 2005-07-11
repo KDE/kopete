@@ -337,32 +337,27 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		// LST N=passport@hotmail.com F=Display%20Name C=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx 13 xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 		// But can be
 		// LST N=passport@hotmail.com 10
-		QString publicName, guid, groups;
+		QString publicName, contactGuid, groups;
 		uint lists;
 
-		if(data.contains(' ') < 2) // Receiving LST N=passport@hotmail.com 10
-		{
-			QRegExp rx("N=(.*) (.*)");
-			rx.search(data);
-			m_tmpLastHandle=rx.cap(1);
-			lists = rx.cap(2).toUInt();
-		}
-		else
-		{
-			QRegExp rx("N=(.*) F=(.*)\\sC=([0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12})\\s");
-			rx.search(data);
-			m_tmpLastHandle=rx.cap(1);
-			publicName = rx.cap(2);
-			guid = rx.cap(3);
-			
-			// Maybe the contact is not in a group. 
-			lists = data.section(' ', 3, 3).toUInt();
-			groups = data.section(' ', 4, 4);
-		}
+		QRegExp regex("N=(\\S+)\\s?(?:F=(\\S+))?\\s?(?:C=([0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}))?\\s?(\\d+)\\s?((?:[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12},?)*)$");
+		regex.search(data);
 		
+		// Capture passport email.
+		m_tmpLastHandle = regex.cap(1);
+		// Capture public name.
+		publicName = unescape( regex.cap(2) );
+		// Capture contact guid.
+		contactGuid = regex.cap(3);
+		// Capture list enum type.
+		lists = regex.cap(4).toUInt();
+		// Capture contact group(s) guid(s)
+		groups = regex.cap(5);
+		
+// 		kdDebug(14140) << k_funcinfo << " msnId: " << m_tmpLastHandle << " publicName: " << publicName << " contactGuid: " << guid << " list: " << lists << " groupGuid: " << groups << endl;
+
 		// handle, publicName, Contact GUID, lists, Group GUID
-		emit contactList(  m_tmpLastHandle ,
-			unescape( publicName ), guid, lists, groups );
+		emit contactList(  m_tmpLastHandle , publicName, contactGuid, lists, groups );
 	}
 	else if( cmd == "GCF" )
 	{
@@ -463,55 +458,29 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	else if( cmd == "ADC" )
 	{
 		QString msnId, list, publicName, contactGuid, groupGuid;
-		
+
+		// Retrieve the list parameter (FL/AL/BL/RL)
 		list = data.section( ' ', 0, 0 );
-		// Adding a contact to our AL or BL list
-		if( data.contains( ' ' ) < 2 ) // ADC TrID xL N=example@passport.com
-		{
-			QRegExp rx("N=(.*)");
-			rx.search( data.section( ' ', 1 ) );
-			msnId = rx.cap(1);
-		}
-		// A contact has added us to his forward list
-		else if( list == "RL" && data.contains( ' ' ) < 3 )
-		{
-			QRegExp rx("N=(.*) F=(.*)");
-			rx.search( data.section( ' ', 1 ) );
-			msnId = rx.cap(1);
-			publicName = unescape( rx.cap(2) );
-		}
-		// Adding a contact to a group
-		else if( data.contains( ' ' ) < 3) // ADC TrID FL C=contactGuid groupdGuid
-		{
-			QRegExp rx("C=(.*)");
-			rx.search( data.section( ' ', 1, 1 ) );
-			contactGuid = rx.cap(1);
-			groupGuid = data.section( ' ' , 2, 2 );
-		}
-		// Adding a new contact
-		else if( data.contains( ' ' ) < 4) // ADC TrID FL N=ex@pas.com F=My%20Name C=contactGuid
-		{
-			QRegExp rx("N=(.*) F=(.*) C=(.*)");
-			rx.search( data.section( ' ', 1) );
-			msnId = rx.cap(1);
-			publicName = unescape(rx.cap(2));
-			contactGuid = rx.cap(3);
-		}
+
 		// Examples of received data
 		// ADC TrID xL N=example@passport.com
 		// ADC TrID FL C=contactGuid groupdGuid
 		// ADC TrID RL N=example@passport.com F=friednly%20name
 		// ADC TrID FL N=ex@pas.com F=My%20Name C=contactGuid
 		// Thanks Gregg for that complex RegExp.
-		/*QRegExp rx("N=(\\S+)\\s?(?:F=(\\S+))?\\s?(?:C=([0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}))?\\s?((?:[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12},?)*)$");
+		QRegExp regex("(?:N=(\\S+))?\\s?(?:F=(\\S+))?\\s?(?:C=([0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}))?\\s?((?:[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12},?)*)$");
+		regex.search( data.section( ' ', 1 ) );
 		
-		rx.search( data.section( ' ', 1 ) );
-		msnId = rx.cap(1);
-		publicName = unescape( rx.cap(2) );
-		contactGuid = rx.cap(3);
-		groupGuid = rx.cap(4);*/
+		// Capture passport email.
+		msnId = regex.cap(1);
+		// Capture public name.
+		publicName = unescape( regex.cap(2) );
+		// Capture contact guid.
+		contactGuid = regex.cap(3);
+		// Capture contact group(s) guid(s)
+		groupGuid = regex.cap(4);
 
-		kdDebug(14140) << k_funcinfo << list << " msnId: " << msnId << " publicName: " << publicName << " contactGuid: " << contactGuid << " groupGuid: " << groupGuid << endl;
+// 		kdDebug(14140) << k_funcinfo << list << " msnId: " << msnId << " publicName: " << publicName << " contactGuid: " << contactGuid << " groupGuid: " << groupGuid << endl;
 
 		// handle, list, publicName, contactGuid, groupGuid
 		emit contactAdded( msnId, list, publicName, contactGuid, groupGuid );
