@@ -5,7 +5,6 @@ libgadu_copy_la_LDFLAGS = $(SSL_LDFLAGS)
 libgadu_copy_la_LIBADD =  $(LIBSSL) $(LIBPTHREAD) 
 libgadu_copy_la_SOURCES = common.c \
 			  dcc.c \
-			  states.c \
 			  events.c \
 			  http.c \
 			  libgadu.c \
