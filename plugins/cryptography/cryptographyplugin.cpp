@@ -28,7 +28,7 @@
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopetesimplemessagehandler.h"
 #include "kopeteuiglobal.h"
 #include "kopetecontact.h"
