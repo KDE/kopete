@@ -35,5 +35,3 @@ servicedir = $(kde_servicesdir)
 
 mydatadir = $(kde_datadir)/kopete_msn
 mydata_DATA = msnchatui.rc
-
-noinst_HEADERS = msnsecureloginhandler.h

@@ -4,7 +4,7 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
-	Copyright (c) 2005      by Micha� Larouche       <shock@shockdev.ca.tc>
+	Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
 	Copyright (c) 2005      by Gregg Edghill          <gregg.edghill@gmail.com>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
@@ -281,16 +281,6 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	{
 		if( data.section( ' ', 1, 1 ) == "S" )
 		{
-			// TODO: Remote that commented stuff.
-			/*m_sslLoginHandler = new SslLoginHandler();
-			QObject::connect( m_sslLoginHandler, SIGNAL(       loginFailed()        ),
-					 this,            SLOT  (    sslLoginFailed()        ) );
-			QObject::connect( m_sslLoginHandler, SIGNAL(    loginIncorrect()        ),
-					 this,            SLOT  ( sslLoginIncorrect()        ) );
-			QObject::connect( m_sslLoginHandler, SIGNAL(    loginSucceeded(QString) ),
-					 this,            SLOT  ( sslLoginSucceeded(QString) ) );
-
-			m_sslLoginHandler->login( data.section( ' ' , 2 , 2 ), m_account->accountId() , m_password );*/
 			m_secureLoginHandler = new MSNSecureLoginHandler(m_account->accountId(), m_password, data.section( ' ' , 2 , 2 ));
 
 			QObject::connect(m_secureLoginHandler, SIGNAL(loginFailed()), this, SLOT(sslLoginFailed()));

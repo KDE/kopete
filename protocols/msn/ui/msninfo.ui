@@ -12,9 +12,6 @@
             <height>360</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>MSNInfo</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -189,9 +186,6 @@
             </property>
             <property name="text">
                 <string>I am on &amp;the contact list of this contact</string>
-            </property>
-            <property name="accel">
-                <string>Alt+T</string>
             </property>
             <property name="toolTip" stdset="0">
                 <string>Show whether you are on the contact list of this user</string>
