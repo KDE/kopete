@@ -48,7 +48,7 @@ private:
 	/**
 	 * Swaps the bytes in a hex string.
 	 */
-	QString hexSwap(QString in);
+	QString hexSwap(const QString& in);
 	
 	QString m_productKey;
 	QString m_productId;

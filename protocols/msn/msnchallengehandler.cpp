@@ -45,7 +45,7 @@ QString MsnChallengeHandler::computeHash(const QString& challenge)
  	QString initHash(md5Hash);
  	kdDebug(14140) << k_funcinfo << "md5: " << initHash << endl;
 
- 	int *md5HashArray = new int[4];
+ 	int md5HashArray[4];
  	for(int i=0; i < 4; i++)
  	{
  		md5HashArray[i] = hexSwap(initHash.mid(0, 8)).toUInt(0, 16) & 0x7FFFFFFF;
@@ -60,7 +60,7 @@ QString MsnChallengeHandler::computeHash(const QString& challenge)
 
 	kdDebug(14140) << k_funcinfo << "challenge key: " << chlString << endl;
 	
-	int *chlArray = new int[chlString.length() / 4];
+	int chlArray[chlString.length() / 4];
 	for(uint i=0; i < chlString.length() / 4; i++)
 	{
 		QString sNum = chlString.mid(i*4, 4);
@@ -139,9 +139,6 @@ QString MsnChallengeHandler::computeHash(const QString& challenge)
 		kdDebug(14140) << k_funcinfo << "low value conversion error" << endl;
 		return "0";
 	}
-
-	delete[] md5HashArray;
- 	delete[] chlArray;
  	
 	// bit shift high to the top end of a QWORD, add low on the end to form a full QWORD.
 	long long key = (high << 32) + low;
@@ -155,13 +152,13 @@ QString MsnChallengeHandler::computeHash(const QString& challenge)
 	return finalHash;
 }
 
-QString MsnChallengeHandler::hexSwap(QString in)
+QString MsnChallengeHandler::hexSwap(const QString& in)
 {
-	QString swapped = "";
-	while(in.length() > 0)
+	QString sHex = in, swapped;
+	while(sHex.length() > 0)
 	{
-		swapped = swapped + in.mid(in.length() - 2, 2);
-		in = in.remove(in.length() - 2, 2);
+		swapped = swapped + sHex.mid(sHex.length() - 2, 2);
+		sHex = sHex.remove(sHex.length() - 2, 2);
 	}
 	return swapped;
 }
