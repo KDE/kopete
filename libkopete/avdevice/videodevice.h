@@ -27,15 +27,18 @@
 
 #if defined(__linux__) && defined(ENABLE_AV)
 
-#undef __STRICT_ANSI__
 #include <asm/types.h>
-#include <linux/fs.h>
-#include <linux/kernel.h>
-
+#undef __STRICT_ANSI__
 #ifndef __u64 //required by videodev.h
 #define __u64 unsigned long long
 #endif // __u64
 
+#ifndef pgoff_t
+#define pgoff_t unsigned long
+#endif
+
+#include <linux/fs.h>
+#include <linux/kernel.h>
 #include <linux/videodev.h>
 #define __STRICT_ANSI__
 
@@ -58,10 +61,12 @@ namespace AV {
 */
 typedef enum
 {
-	VIDEODEV_DRIVER_NONE,
+	VIDEODEV_DRIVER_NONE
 #if defined( __linux__) && defined(ENABLE_AV)
-	VIDEODEV_DRIVER_V4L,
+        ,
+	VIDEODEV_DRIVER_V4L
 #ifdef HAVE_V4L2
+        ,
 	VIDEODEV_DRIVER_V4L2
 #endif
 #endif

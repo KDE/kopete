@@ -420,6 +420,7 @@ int VideoDevice::initDevice()
 			break;
 #endif
 		case VIDEODEV_DRIVER_NONE:
+		default:
 
 			break;
 	}
@@ -566,6 +567,7 @@ kdDebug() << "------------- width: " << V4L_videowindow.width << " Height: " << 
 				break;
 #endif
 			case VIDEODEV_DRIVER_NONE:
+			default:
 				break;
 		}
 		m_buffer_size = width() * height() * pixelFormatDepth(m_pixelformat) / 8;
@@ -642,6 +644,7 @@ kdDebug() <<  k_funcinfo << "called." << endl;
 			break;
 #endif
 		case VIDEODEV_DRIVER_NONE:
+		default:
 			break;
 	}
 	return PIXELFORMAT_NONE;
@@ -695,6 +698,7 @@ int VideoDevice::selectInput(int newinput)
 				break;
 #endif
 			case VIDEODEV_DRIVER_NONE:
+			default:
 				break;
 		}
 		kdDebug() <<  k_funcinfo << "Selected input " << newinput << " (" << input[newinput].name << ")" << endl;
@@ -1030,6 +1034,7 @@ int VideoDevice::pixelFormatCode(pixel_format pixelformat)
 			break;
 #endif
 		case VIDEODEV_DRIVER_NONE:
+		default:
 			return PIXELFORMAT_NONE;	break;
 	}
 	return PIXELFORMAT_NONE;
@@ -1111,6 +1116,7 @@ QString VideoDevice::pixelFormatName(int pixelformat)
 			break;
 #endif
 		case VIDEODEV_DRIVER_NONE:
+		default:
 			break;
 	}
 	return returnvalue;
