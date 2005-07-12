@@ -4,6 +4,8 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
+	Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
+	Copyright (c) 2005      by Gregg Edghill          <gregg.edghill@gmail.com>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -23,8 +25,10 @@
 #include "msnnotifysocket.h"
 #include "msncontact.h"
 #include "msnaccount.h"
-#include "sslloginhandler.h"
+#include "msnsecureloginhandler.h"
+#include "msnchallengehandler.h"
 
+#include <qdatetime.h>
 #include <qregexp.h>
 
 #include <kdebug.h>
@@ -50,7 +54,8 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 : MSNSocket( account )
 {
 	m_newstatus = MSNProtocol::protocol()->NLN;
-	m_sslLoginHandler=0l;
+	m_secureLoginHandler=0L;
+	m_challengeHandler = new MsnChallengeHandler("YMM8C_H7KCQ2S_KL", "PROD0090YUAUV{2B");
 
 	m_isHotmailAccount=false;
 	m_ping=false;
@@ -67,14 +72,16 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 
 MSNNotifySocket::~MSNNotifySocket()
 {
-	delete m_sslLoginHandler;
+	delete m_secureLoginHandler;
+	delete m_challengeHandler;
+
 	kdDebug(14140) << k_funcinfo << endl;
 }
 
 void MSNNotifySocket::doneConnect()
 {
 //	kdDebug( 14140 ) << k_funcinfo << "Negotiating server protocol version" << endl;
-	sendCommand( "VER", "MSNP9" );
+	sendCommand( "VER", "MSNP11 MSNP10 CVR0" );
 }
 
 
@@ -250,15 +257,13 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 }
 
-void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
-	const QString &data )
+void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &data )
 {
 	//kdDebug(14140) << "MSNNotifySocket::parseCommand: Command: " << cmd << endl;
 
-
 	if ( cmd == "VER" )
 	{
-		sendCommand( "CVR", "0x0409 winnt 5.1 i386 MSNMSGR 6.2.0205 MSMSGS " + m_account->accountId() );
+		sendCommand( "CVR", "0x0409 winnt 5.1 i386 MSNMSGR 7.0.0813 MSMSGS " + m_account->accountId() );
 /*
 		struct utsname utsBuf;
 		uname ( &utsBuf );
@@ -276,26 +281,36 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		if( data.section( ' ', 1, 1 ) == "S" )
 		{
-			m_sslLoginHandler = new SslLoginHandler();
-			QObject::connect( m_sslLoginHandler, SIGNAL(       loginFailed()        ),
-					 this,            SLOT  (    sslLoginFailed()        ) );
-			QObject::connect( m_sslLoginHandler, SIGNAL(    loginIncorrect()        ),
-					 this,            SLOT  ( sslLoginIncorrect()        ) );
-			QObject::connect( m_sslLoginHandler, SIGNAL(    loginSucceeded(QString) ),
-					 this,            SLOT  ( sslLoginSucceeded(QString) ) );
+			m_secureLoginHandler = new MSNSecureLoginHandler(m_account->accountId(), m_password, data.section( ' ' , 2 , 2 ));
 
-			m_sslLoginHandler->login( data.section( ' ' , 2 , 2 ), m_account->accountId() , m_password );
+			QObject::connect(m_secureLoginHandler, SIGNAL(loginFailed()), this, SLOT(sslLoginFailed()));
+			QObject::connect(m_secureLoginHandler, SIGNAL(loginSuccesful(QString )), this, SLOT(sslLoginSucceeded(QString )));
+
+			m_secureLoginHandler->login();
 		}
 		else
 		{
-			// Successful auth
+			// Successful authentication.
 			m_disconnectReason=Kopete::Account::Unknown;
 
-			// sync contact list
-			QString serial=m_account->configGroup()->readEntry( "serial" , "0" );
-			if(serial.isEmpty()) //0.9 comatibility
-				serial= "0";
-			sendCommand( "SYN", serial );
+			// Synchronize with the server.
+			QString newSyncTime, lastSyncTime;
+			QDateTime now = QDateTime::currentDateTime();
+			// Retrieve the last synchronization timestamp.
+			lastSyncTime = m_account->configGroup()->readEntry( "lastsynctime");
+			// FIXME yyyy-mm-ddThh:mm:ss.xxxxxxx-07:00
+			// the xxxxxxx might be the serial???
+			// Set the new synchronization timestamp.
+			newSyncTime = QString("%1%2").arg(now.toString(Qt::ISODate), ".0000000-07:00");
+			
+			if (lastSyncTime.isEmpty())
+			{
+				// If the last sync time is unknown, last sync time is now.
+				lastSyncTime = QString("%1%2").arg(now.toString(Qt::ISODate), ".0000000-07:00");
+				newSyncTime = lastSyncTime;
+			}
+			
+			sendCommand( "SYN", QString("%1 %2").arg(newSyncTime, lastSyncTime));
 
 			// this is our current user and friendly name
 			// do some nice things with it  :-)
@@ -306,15 +321,38 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			slotSendKeepAlive();
 		}
 	}
-	else if( cmd == "LST" )
+	else if( cmd == "LST" ) 
 	{
-		//The hanlde is used if we receive some BRP
-		m_tmpLastHandle=data.section( ' ', 0, 0 );
+		// MSNP11 changed command. Now it's: 
+		// LST N=passport@hotmail.com F=Display%20Name C=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx 13 xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+		// But can be
+		// LST N=passport@hotmail.com 10
+		QString publicName, contactGuid, groups;
+		uint lists;
 
-		// handle, publicName, lists, group
-		emit contactList(  m_tmpLastHandle ,
-			unescape( data.section( ' ', 1, 1 ) ), data.section( ' ', 2, 2 ).toUInt(),
-			data.section( ' ', 3, 3 ) );
+		QRegExp regex("N=(\\S+)\\s?(?:F=(\\S+))?\\s?(?:C=([0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}))?\\s?(\\d+)\\s?((?:[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12},?)*)$");
+		regex.search(data);
+		
+		// Capture passport email.
+		m_tmpLastHandle = regex.cap(1);
+		// Capture public name.
+		publicName = unescape( regex.cap(2) );
+		// Capture contact guid.
+		contactGuid = regex.cap(3);
+		// Capture list enum type.
+		lists = regex.cap(4).toUInt();
+		// Capture contact group(s) guid(s)
+		groups = regex.cap(5);
+		
+// 		kdDebug(14140) << k_funcinfo << " msnId: " << m_tmpLastHandle << " publicName: " << publicName << " contactGuid: " << guid << " list: " << lists << " groupGuid: " << groups << endl;
+
+		// handle, publicName, Contact GUID, lists, Group GUID
+		emit contactList(  m_tmpLastHandle , publicName, contactGuid, lists, groups );
+	}
+	else if( cmd == "GCF" )
+	{
+		m_configFile = data.section(' ', 0, 0);
+		readBlock( data.section( ' ', 1, 1 ).toUInt() );
 	}
 	else if( cmd == "MSG" )
 	{
@@ -346,6 +384,18 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 					c->setProperty(  MSNProtocol::protocol()->propClient , i18n("Kopete") );
 			}
 		}
+	}
+	else if( cmd == "UBX" )
+	{
+		m_tmpLastHandle = data.section(' ', 0, 0);
+		uint length = data.section( ' ', 1, 1 ).toUInt();
+		if(length > 0) {
+			readBlock( length );
+		}
+	}
+	else if( cmd == "UUX" )
+	{
+		// Do nothing.
 	}
 	else if( cmd == "FLN" )
 	{
@@ -381,7 +431,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		emit invitedToChat( QString::number( id ), data.section( ' ', 0, 0 ), data.section( ' ', 2, 2 ),
 			data.section( ' ', 3, 3 ), unescape( data.section( ' ', 4, 4 ) ) );
 	}
-	else if( cmd == "ADD" )
+	/*else if( cmd == "ADD" ) // MSNP11 deprecated
 	{
 		QString msnId = data.section( ' ', 2, 2 );
 		uint group;
@@ -394,18 +444,63 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		emit contactAdded( msnId, unescape( data.section( ' ', 2, 2 ) ),
 			data.section( ' ', 0, 0 ), group );
 		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 1, 1 ) );
+	}*/
+	else if( cmd == "ADC" )
+	{
+		QString msnId, list, publicName, contactGuid, groupGuid;
+
+		// Retrieve the list parameter (FL/AL/BL/RL)
+		list = data.section( ' ', 0, 0 );
+
+		// Examples of received data
+		// ADC TrID xL N=example@passport.com
+		// ADC TrID FL C=contactGuid groupdGuid
+		// ADC TrID RL N=example@passport.com F=friednly%20name
+		// ADC TrID FL N=ex@pas.com F=My%20Name C=contactGuid
+		// Thanks Gregg for that complex RegExp.
+		QRegExp regex("(?:N=(\\S+))?\\s?(?:F=(\\S+))?\\s?(?:C=([0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}))?\\s?((?:[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12},?)*)$");
+		regex.search( data.section( ' ', 1 ) );
+		
+		// Capture passport email.
+		msnId = regex.cap(1);
+		// Capture public name.
+		publicName = unescape( regex.cap(2) );
+		// Capture contact guid.
+		contactGuid = regex.cap(3);
+		// Capture contact group(s) guid(s)
+		groupGuid = regex.cap(4);
+
+// 		kdDebug(14140) << k_funcinfo << list << " msnId: " << msnId << " publicName: " << publicName << " contactGuid: " << contactGuid << " groupGuid: " << groupGuid << endl;
+
+		// handle, list, publicName, contactGuid, groupGuid
+		emit contactAdded( msnId, list, publicName, contactGuid, groupGuid );
 	}
 	else if( cmd == "REM" ) // someone is removed from a list
 	{
-		uint group;
-		if( data.section( ' ', 0, 0 ) == "FL" )
-			group = data.section( ' ', 3, 3 ).toUInt();
+		QString handle, list, contactGuid, groupGuid;
+		list = data.section( ' ', 0, 0 );
+		if( list  == "FL" )
+		{
+			// Removing a contact
+		 	if( data.contains( ' ' ) < 2 )
+			{
+				contactGuid = data.section( ' ', 1, 1 );
+			}
+			// Removing a contact from a group
+			else if( data.contains( ' ' ) < 3 )
+			{
+				contactGuid = data.section( ' ', 1, 1 );
+				groupGuid = data.section( ' ', 2, 2 );
+			}
+		}
 		else
-			group = 0;
+		{
+			handle = data.section( ' ', 1, 1);
+		}
 
-		// handle, list, group
-		emit contactRemoved( data.section( ' ', 2, 2 ), data.section( ' ', 0, 0 ), group );
-		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 1, 1 ) );
+		// handle, list, contactGuid, groupGuid
+		emit contactRemoved( handle, list, contactGuid, groupGuid );
+		
 	}
 	else if( cmd == "OUT" )
 	{
@@ -421,7 +516,22 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		setOnlineStatus( Connected );
 		emit statusChanged( convertOnlineStatus( status ) );
 	}
-	else if( cmd == "REA" )
+	else if( cmd == "SBP" )
+	{
+		QString contactGuid, type, publicName;
+		contactGuid = data.section( ' ', 0, 0 );
+		type = data.section( ' ', 1, 1 );
+		if(type == "MFN" )
+		{
+			publicName = unescape( data.section( ' ', 2, 2 ) );
+			MSNContact *c = m_account->findContactByGuid( contactGuid );
+			if(c != 0L)
+			{
+				c->setProperty( Kopete::Global::Properties::self()->nickName(), publicName );
+			}
+		}
+	}
+	/*else if( cmd == "REA" ) MSNP11 deprecated
 	{
 		QString handle=data.section( ' ', 1, 1 );
 		if( handle == m_account->accountId() )
@@ -433,55 +543,44 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 				c->setProperty( Kopete::Global::Properties::self()->nickName() , unescape( data.section( ' ', 2, 2 ) ) );
 		}
 		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
-	}
+	}*/
 	else if( cmd == "LSG" )
 	{
-		//the LSG syntax depends if it is called from SYN or from LSG
-		if(data.contains(' ') > 4) //FROM LSG
-		{ //   --NOTE:  since 2003-11-14 , The MSN Server does not accept anymere the LSG command.  So this is maybe useless now.
-			emit groupListed( unescape( data.section( ' ', 4, 4 ) ), data.section( ' ', 3, 3 ).toUInt() );
-		}
-		else //from SYN
-		{
-			//this command has not id, and the first param is a number, so MSNSocket think it is the ID
-			emit groupListed( unescape( data.section( ' ', 0, 0 ) ), id );
-		}
+		// New Format: LSG Friends xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+		// groupDisplayName, groupGuid
+		emit groupListed( unescape( data.section( ' ', 0, 0 ) ), data.section( ' ', 1, 1) );
 	}
 	else if( cmd == "ADG" )
 	{
-		// groupName, group
-		emit groupAdded( unescape( data.section( ' ', 1, 1 ) ),
-			data.section( ' ', 2, 2 ).toUInt() );
-		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
+		// groupName, groupGuid
+		emit groupAdded( unescape( data.section( ' ', 0, 0 ) ),
+			data.section( ' ', 1, 1 ) );
 	}
 	else if( cmd == "REG" )
 	{
-		// groupName, group
-		emit groupRenamed( unescape( data.section( ' ', 2, 2 ) ),
-			data.section( ' ', 1, 1 ).toUInt() );
-		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
+		// groupGuid, groupName
+		emit groupRenamed( data.section( ' ', 0, 0 ), unescape( data.section( ' ', 1, 1 ) ) );
 	}
 	else if( cmd == "RMG" )
 	{
-		// group
-		emit groupRemoved( data.section( ' ', 1, 1 ).toUInt() );
-		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
+		// groupGuid
+		emit groupRemoved( data.section( ' ', 1, 1 ) );
 	}
 	else if( cmd  == "CHL" )
 	{
-//		kdDebug(14140) << k_funcinfo <<"Sending final Authentication" << endl;
-		KMD5 context( ( data.section( ' ', 0, 0 ) + "Q1P7W2E4J9R8U3S5" ).utf8() );
-		sendCommand( "QRY", "msmsgs@msnmsgr.com", true,
-			context.hexDigest());
+		QString chlResponse = m_challengeHandler->computeHash(data.section(' ', 0, 0));
+		sendCommand("QRY", m_challengeHandler->productId(), true, chlResponse.utf8());
 	}
 	else if( cmd == "SYN" )
 	{
-		// this is the current serial on the server, if its different with the own we can get the user list
-		QString serial = data.section( ' ', 0, 0 );
-		if( serial != m_account->configGroup()->readEntry("serial") )
+		// Retrieve the last synchronization timestamp known to the server.
+		QString lastSyncTime = data.section( ' ', 0, 0 );
+		if( lastSyncTime != m_account->configGroup()->readEntry("lastsynctime") )
 		{
+			// If the server timestamp and the local timestamp are different,
+			// prepare to receive the contact list.
 			emit newContactList();  // remove all contacts datas, msn sends a new contact list
-			m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
+			m_account->configGroup()->writeEntry( "lastsynctime" , data.section( ' ', 0, 0 ) );
 		}
 		// set the status
 		setStatus( m_newstatus );
@@ -497,16 +596,14 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		MSNContact *c = static_cast<MSNContact*>( m_account->myself() );
 		if( c )
 		{
-			if( id > 0 ) //FROM PRP
+			QString type = data.section( ' ', 0, 0 );
+			QString prpData = unescape( data.section( ' ', 1, 1 ) ); //SECURITY????????
+			c->setInfo( type, prpData );
+			m_account->configGroup()->writeEntry( type, prpData ); 
+			// Emit publicNameChanged if the type is MFN
+			if( type == "MFN" )
 			{
-				m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
-				m_account->configGroup()->writeEntry( data.section( ' ', 1, 1 ),unescape(data.section( ' ', 2, 2 ) )); //SECURITY????????
-				c->setInfo(data.section( ' ', 1, 1 ),unescape(data.section( ' ', 2, 2 )));
-			}
-			else //FROM SYN
-			{
-				c->setInfo(data.section( ' ', 0, 0 ),unescape(data.section( ' ', 1, 1 )));
-				m_account->configGroup()->writeEntry(data.section( ' ', 0, 0 ),unescape(data.section( ' ', 1, 1 ) )); //SECURITY????????
+				emit publicNameChanged( prpData );
 			}
 		}
 	}
@@ -522,7 +619,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "QRY" )
 	{
-		//do nothing
+		// Do nothing
 	}
 	else if( cmd == "QNG" )
 	{
@@ -535,6 +632,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "URL" )
 	{
+		// URL 6 /cgi-bin/HoTMaiL https://loginnet.passport.com/ppsecure/md5auth.srf?lc=1033 2
 		//example of reply: URL 10 /cgi-bin/HoTMaiL https://msnialogin.passport.com/ppsecure/md5auth.srf?lc=1036 3
 		QString from_action_url = data.section( ' ', 1, 1 );
 		QString rru = data.section( ' ', 0, 0 );
@@ -593,16 +691,19 @@ void MSNNotifySocket::sslLoginFailed()
 	m_disconnectReason=Kopete::Account::InvalidHost;
 	disconnect();
 }
+
 void MSNNotifySocket::sslLoginIncorrect()
 {
 	m_disconnectReason=Kopete::Account::BadPassword;
 	disconnect();
 }
-void MSNNotifySocket::sslLoginSucceeded(QString a)
+
+void MSNNotifySocket::sslLoginSucceeded(QString ticket)
 {
-	sendCommand("USR" , "TWN S " + a);
-	m_sslLoginHandler->deleteLater();
-	m_sslLoginHandler=0;
+	sendCommand("USR" , "TWN S " + ticket);
+
+	m_secureLoginHandler->deleteLater();
+	m_secureLoginHandler = 0L;
 }
 
 
@@ -618,20 +719,43 @@ void MSNNotifySocket::sendMail(const QString &email)
 
 void MSNNotifySocket::slotReadMessage( const QString &msg )
 {
-	if(msg.contains("text/x-msmsgsinitialemailnotification"))
+	if(msg.contains("text/x-msmsgsinitialmdatanotification"))
 	{
-		 //this sends the server if we are going online, contains the unread message count
-		QString m = msg.right(msg.length() - msg.find("Inbox-Unread:") );
-		m = m.left(msg.find("\r\n"));
-		mailCount = m.right(m.length() -m.find(" ")-1).toUInt();
-
-		if(mailCount > 0 )
+		//Mail-Data: <MD><E><I>301</I><IU>1</IU><O>4</O><OU>2</OU></E><Q><QTM>409600</QTM><QNM>204800</QNM></Q></MD>
+		// MD - Mail Data
+		// E  - email
+		// I  - initial mail
+		// IU - initial unread
+		// O  - other mail
+		// OU - other unread.
+		QRegExp regex("<MD><E><I>(\\d+)?</I>(?:<IU>(\\d+)?</IU>)<O>(\\d+)?</O><OU>(\\d+)?</OU></E><Q>.*</Q></MD>");
+		regex.search(msg);
+		
+		bool unread;
+		// Retrieve the number of unread email messages.
+		mailCount = regex.cap(2).toUInt(&unread);
+		if(unread && mailCount > 0)
 		{
+			// If there are new email message available, raise the unread email event.
 			QObject::connect(KNotification::event( "msn_mail", i18n( "You have one unread message in your MSN inbox.",
 					"You have %n unread messages in your MSN inbox.", mailCount ), 0 , 0 , i18n( "Open &Inbox..." ) ),
 				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 		}
 	}
+// 	else if(msg.contains("text/x-msmsgsinitialemailnotification"))
+// 	{
+// 		 //this sends the server if we are going online, contains the unread message count
+// 		QString m = msg.right(msg.length() - msg.find("Inbox-Unread:") );
+// 		m = m.left(msg.find("\r\n"));
+// 		mailCount = m.right(m.length() -m.find(" ")-1).toUInt();
+// 
+// 		if(mailCount > 0 )
+// 		{
+// 			QObject::connect(KNotification::event( "msn_mail", i18n( "You have one unread message in your MSN inbox.",
+// 					"You have %n unread messages in your MSN inbox.", mailCount ), 0 , 0 , i18n( "Open &Inbox..." ) ),
+// 				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
+// 		}
+// 	}
 	else if(msg.contains("text/x-msmsgsactivemailnotification"))
 	{
 		 //this sends the server if mails are deleted
@@ -699,62 +823,99 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 			m_localIP = rx.cap(1);
 		}
 	}
+
+	if(!m_configFile.isNull())
+	{
+		// TODO Global configuration file.
+	}
+
+	if(!m_tmpLastHandle.isNull())
+	{
+		QRegExp regex("^<Data><PSM>(.*)</PSM><CurrentMedia>(.*)</CurrentMedia></Data>$");
+		regex.search(msg);
+		MSNContact *contact = static_cast<MSNContact*>(m_account->contacts()[ m_tmpLastHandle ]);
+		if(contact){
+			contact->setProperty(MSNProtocol::protocol()->propPersonalMessage, unescape(regex.cap(1)));
+			// TODO Current Media
+		}
+		m_tmpLastHandle = QString::null;
+	}
 }
 
 void MSNNotifySocket::addGroup(const QString& groupName)
 {
 	// escape spaces
-	sendCommand( "ADG", escape( groupName ) + " 0" );
+	sendCommand( "ADG", escape( groupName ) );
 }
 
-void MSNNotifySocket::renameGroup( const QString& groupName, uint group )
+void MSNNotifySocket::renameGroup( const QString& groupName, const QString& groupGuid )
 {
 	// escape spaces
-	sendCommand( "REG", QString::number( group ) + " " +
-		escape( groupName ) + " 0" );
+	sendCommand( "REG", groupGuid + " " + escape( groupName ) );
 }
 
-void MSNNotifySocket::removeGroup( uint group )
+void MSNNotifySocket::removeGroup( const QString& groupGuid )
 {
-	sendCommand( "RMG", QString::number( group ) );
+	sendCommand( "RMG",  groupGuid );
 }
 
-void MSNNotifySocket::addContact( const QString &handle, const QString& publicName, uint group, int list )
+void MSNNotifySocket::addContact( const QString &handle, int list, const QString& publicName, const QString& contactGuid, const QString& groupGuid )
 {
 	QString args;
 	switch( list )
 	{
-	case MSNProtocol::FL:
-		args = "FL " + handle + " " + escape( publicName ) + " " + QString::number( group );
-		break;
-	case MSNProtocol::AL:
-		args = "AL " + handle + " " + escape( publicName );
-		break;
-	case MSNProtocol::BL:
-		args = "BL " + handle + " " + escape( publicName );
-		break;
-	default:
-		kdDebug(14140) << k_funcinfo <<"WARNING! Unknown list " <<
-			list << "!" << endl;
-		return;
+		case MSNProtocol::FL:
+		{
+			// Adding the contact to a group
+			if( !contactGuid.isEmpty() )
+			{
+				args = QString("FL C=%1 %2").arg( contactGuid ).arg( groupGuid );
+				kdDebug(14140) << k_funcinfo << "In adding contact to a group" << endl;
+			}
+			// Adding a new contact
+			else
+			{
+				args = QString("FL N=%1 F=%2").arg( handle ).arg( escape( publicName ) );
+				kdDebug(14140) << k_funcinfo << "In adding contact to a new contact" << endl;
+			}
+			break;
+		}	
+		case MSNProtocol::AL:
+			args = QString("AL N=%1").arg( handle );
+			break;
+		case MSNProtocol::BL:
+			args = QString("BL N=%1").arg( handle );
+			break;
+		case MSNProtocol::RL:
+			args = QString("RL N=%1").arg( handle );
+			break;
+		default:
+			kdDebug(14140) << k_funcinfo <<"WARNING! Unknown list " << list << "!" << endl;
+			return;
 	}
-	unsigned int id=sendCommand( "ADD", args );
+	unsigned int id=sendCommand( "ADC", args );
 	m_tmpHandles[id]=handle;
 }
 
-void MSNNotifySocket::removeContact( const QString &handle, uint group,	int list )
+void MSNNotifySocket::removeContact( const QString &handle, int list, const QString& contactGuid, const QString& groupGuid )
 {
 	QString args;
 	switch( list )
 	{
 	case MSNProtocol::FL:
-		args = "FL " + handle + " " + QString::number( group );
+		args = "FL " + contactGuid;
+		// Removing a contact from a group
+		if( !groupGuid.isEmpty() )
+			args += " " + groupGuid;
 		break;
 	case MSNProtocol::AL:
 		args = "AL " + handle;
 		break;
 	case MSNProtocol::BL:
 		args = "BL " + handle;
+		break;
+	case MSNProtocol::PL:
+		args = "PL " + handle;
 		break;
 	default:
 		kdDebug(14140) <<k_funcinfo  << "WARNING! Unknown list " << list << "!" << endl;
@@ -774,23 +935,45 @@ void MSNNotifySocket::setStatus( const Kopete::OnlineStatus &status )
 		sendCommand( "CHG", statusToString( status ) + " 268435492 " + escape(m_account->pictureObject()) );
 }
 
-void MSNNotifySocket::changePublicName(  QString publicName, const QString &handle )
+void MSNNotifySocket::changePublicName( const QString &publicName, const QString &handle )
 {
+	QString tempPublicName = publicName.copy();
+
 	if( escape(publicName).length() > 387 )
 	{
-		publicName=publicName.left(387);
+		tempPublicName = publicName.left(387);
 	}
 
 	if( handle.isNull() )
 	{
-		unsigned int id=sendCommand( "REA", m_account->accountId() + " " + escape ( publicName ) );
-		m_tmpHandles[id]=m_account->accountId();
+		unsigned int id = sendCommand( "PRP", "MFN " + escape( tempPublicName ) );
+		m_tmpHandles[id] = m_account->accountId();
 	}
 	else
 	{
-		unsigned int id=sendCommand( "REA", handle + " " + escape ( publicName ) );
-		m_tmpHandles[id]=handle;
+		MSNContact *currentContact = static_cast<MSNContact *>(m_account->contacts()[handle]);
+		unsigned int id = sendCommand( "SBP", currentContact->guid() + " MFN " + escape( tempPublicName ) );
+		m_tmpHandles[id] = handle;
 	}
+}
+
+void MSNNotifySocket::changePersonalMessage( const QString& type, const QString &personalMessage )
+{
+	QString tempPersonalMessage = personalMessage.copy();
+	
+	//Magic number : 129 characters
+	if( escape(personalMessage).length() > 129 )
+	{
+		// We cut. for now.
+		tempPersonalMessage = personalMessage.left(129);
+	}
+
+	// TODO : Music type, Office type. Integrate with KOffice and the NowListening thingy.
+	QString xmlMessageToSend = "<Data><PSM>"+escape(personalMessage)+"</PSM><CurrentMedia></CurrentMedia></Data>";
+
+	unsigned int id = sendCommand("UUX","",true, xmlMessageToSend.utf8(), false);
+	m_tmpHandles[id] = m_account->accountId();
+
 }
 
 void MSNNotifySocket::changePhoneNumber( const QString &key, const QString &data )

@@ -3,6 +3,7 @@
 
     Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart@ kde.org>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
+    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
 
     Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
@@ -72,6 +73,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 
 	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
 	m_changeDNAction = new KAction( i18n( "&Change Display Name..." ), QString::null, 0, this, SLOT( slotChangePublicName() ), this, "renameAction" );
+	m_changePMAction = new KAction( i18n( "&Change Personal Message..." ), QString::null, 0, this, SLOT( slotChangePersonalMessage() ), this, "messageAction" );
 	m_startChatAction = new KAction( i18n( "&Start Chat..." ), "mail_generic", 0, this, SLOT( slotStartChat() ), this, "startChatAction" );
 
 
@@ -97,9 +99,9 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 	QPtrList<Kopete::Group> groupList = Kopete::ContactList::self()->groups();
 	for ( Kopete::Group *g = groupList.first(); g; g = groupList.next() )
 	{
-		QString groupNumber=g->pluginData( protocol(), accountId() + " id" );
-		if ( !groupNumber.isEmpty() )
-			m_groupList.insert( groupNumber.toUInt() , g );
+		QString groupGuid=g->pluginData( protocol(), accountId() + " id" );
+		if ( !groupGuid.isEmpty() )
+			m_groupList.insert( groupGuid , g );
 	}
 }
 
@@ -169,20 +171,20 @@ void MSNAccount::createNotificationServer( const QString &host, uint port )
 
 	m_notifySocket = new MSNNotifySocket( this, accountId() , m_password);
 
-	QObject::connect( m_notifySocket, SIGNAL( groupAdded( const QString&, uint ) ),
-		SLOT( slotGroupAdded( const QString&, uint ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( groupRenamed( const QString&, uint ) ),
-		SLOT( slotGroupRenamed( const QString&, uint ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( groupListed( const QString&, uint ) ),
-		SLOT( slotGroupAdded( const QString&, uint ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( groupRemoved( uint ) ),
-		SLOT( slotGroupRemoved( uint ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( contactList( const QString&, const QString&, uint, const QString& ) ),
-		SLOT( slotContactListed( const QString&, const QString&, uint, const QString& ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( contactAdded( const QString&, const QString&, const QString&, uint ) ),
-		SLOT( slotContactAdded( const QString&, const QString&, const QString&, uint ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( contactRemoved( const QString&, const QString&, uint ) ),
-		SLOT( slotContactRemoved( const QString&, const QString&, uint ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( groupAdded( const QString&, const QString& ) ),
+		SLOT( slotGroupAdded( const QString&, const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( groupRenamed( const QString&, const QString& ) ),
+		SLOT( slotGroupRenamed( const QString&, const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( groupListed( const QString&, const QString& ) ),
+		SLOT( slotGroupAdded( const QString&, const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( groupRemoved( const QString& ) ),
+		SLOT( slotGroupRemoved( const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( contactList(const QString&, const QString&, const QString&, uint, const QString& ) ),
+		SLOT( slotContactListed(const QString&, const QString&, const QString&, uint, const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL(contactAdded(const QString&, const QString&, const QString&, const QString&, const QString& ) ),
+		SLOT( slotContactAdded(const QString&, const QString&, const QString&, const QString&, const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( contactRemoved(const QString&, const QString&, const QString&, const QString& ) ),
+		SLOT( slotContactRemoved(const QString&, const QString&, const QString&, const QString& ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( statusChanged( const Kopete::OnlineStatus & ) ),
 		SLOT( slotStatusChanged( const Kopete::OnlineStatus & ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( publicNameChanged( const QString& ) ),
@@ -218,17 +220,20 @@ KActionMenu * MSNAccount::actionMenu()
 		m_openInboxAction->setEnabled( true );
 		m_startChatAction->setEnabled( true );
 		m_changeDNAction->setEnabled( true );
+		m_changePMAction->setEnabled( true );
 	}
 	else
 	{
 		m_openInboxAction->setEnabled( false );
 		m_startChatAction->setEnabled( false );
 		m_changeDNAction->setEnabled( false );
+		m_changePMAction->setEnabled( false );
 	}
 
 	m_actionMenu->popupMenu()->insertSeparator();
 
 	m_actionMenu->insert( m_changeDNAction );
+	m_actionMenu->insert( m_changePMAction );
 	m_actionMenu->insert( m_startChatAction );
 
 //	m_actionMenu->popupMenu()->insertSeparator();
@@ -339,6 +344,42 @@ void MSNAccount::slotChangePublicName()
 	}
 }
 
+void MSNAccount::slotChangePersonalMessage()
+{
+	bool ok;
+	QString message = KInputDialog::getText( i18n( "Change Personal Message - MSN Plugin" ),
+		i18n( "Enter the new personal message you want to send to your friends on MSN:" ),
+		myself()->property( MSNProtocol::protocol()->propPersonalMessage).value().toString(), &ok );
+
+	if ( ok )
+	{
+		//Magic number : 129 characters MAX
+		if ( message.length() > 129 )
+		{
+			KMessageBox::error( Kopete::UI::Global::mainWidget(),
+				i18n( "<qt>The message you entered is too long. Please enter a shorter message.\n"
+					"Your comment has <b>not</b> been changed.</qt>" ),
+				i18n( "Change Personal Message - MSN Plugin" ) );
+			return;
+		}
+
+		if ( isConnected() )
+		{
+			// The placeholder is there because next are the
+			// Office, Game and Music features.
+			setPersonalMessage( "placeholder", message );
+		}
+		else
+		{
+			// Bypass the protocol, it doesn't work, call the slot
+			// directly. Upon connect the name will be synced.
+			// FIXME: Use a single code path instead!
+			slotPersonalMessageChanged( message );
+			// m_publicNameSyncMode = SyncToServer;
+		}
+	}
+}
+
 void MSNAccount::slotOpenInbox()
 {
 	if ( m_notifySocket )
@@ -425,17 +466,35 @@ void MSNAccount::slotPublicNameChanged( const QString& publicName )
 	}
 }
 
+void MSNAccount::slotPersonalMessageChanged( const QString& personalMessage )
+{
+	QString oldPersonalMessage=myself()->property(MSNProtocol::protocol()->propPersonalMessage).value().toString() ;
+	if ( personalMessage != oldPersonalMessage )
+	{
+		myself()->setProperty( MSNProtocol::protocol()->propPersonalMessage, personalMessage );
+		configGroup()->writeEntry( "personalMessage" , personalMessage );
+	}
+}
+
 void MSNAccount::setPublicName( const QString &publicName )
 {
 	if ( m_notifySocket )
 	{
-		m_notifySocket->changePublicName( publicName );
+		m_notifySocket->changePublicName( publicName, QString::null );
 	}
 }
 
-void MSNAccount::slotGroupAdded( const QString& groupName, uint groupNumber )
+void MSNAccount::setPersonalMessage( const QString &type, const QString &personalMessage )
 {
-	if ( m_groupList.contains( groupNumber ) )
+	if ( m_notifySocket )
+	{
+		m_notifySocket->changePersonalMessage( QString::null, personalMessage );
+	}
+}
+
+void MSNAccount::slotGroupAdded( const QString& groupName, const QString &groupGuid )
+{
+	if ( m_groupList.contains( groupGuid ) )
 	{
 		// Group can already be in the list since the idle timer does a 'List Groups'
 		// command. Simply return, don't issue a warning.
@@ -448,7 +507,7 @@ void MSNAccount::slotGroupAdded( const QString& groupName, uint groupNumber )
 	Kopete::Group *fallBack = 0L;
 
 	//check if we have one in the old group list. if yes, update the id translate map.
-	for(QMap<unsigned int, Kopete::Group*>::Iterator it=m_oldGroupList.begin() ; it != m_oldGroupList.end() ; ++it )
+	for(QMap<QString, Kopete::Group*>::Iterator it=m_oldGroupList.begin() ; it != m_oldGroupList.end() ; ++it )
 	{
 		Kopete::Group *g=it.data();
 		if (g && g->pluginData( protocol(), accountId() + " displayName" ) == groupName  &&
@@ -485,7 +544,7 @@ void MSNAccount::slotGroupAdded( const QString& groupName, uint groupNumber )
 				}
 			}
 			else {*/
-			if ( g->displayName() == groupName && (groupNumber==0 || g->type()==Kopete::Group::Normal)  &&
+			if ( g->displayName() == groupName && (groupGuid.isEmpty()|| g->type()==Kopete::Group::Normal)  &&
 					g->pluginData( protocol(), accountId() + " id" ).isEmpty()  )
 			{
 				fallBack = g;
@@ -497,7 +556,7 @@ void MSNAccount::slotGroupAdded( const QString& groupName, uint groupNumber )
 
 	if ( !fallBack )
 	{
-		if( groupNumber==0  )
+		if( groupGuid.isEmpty()  )
 		{	// The group #0 is an unremovable group. his default name is "~" ,
 			// but the official client rename it i18n("others contact") at the first
 			// connection.
@@ -514,9 +573,9 @@ void MSNAccount::slotGroupAdded( const QString& groupName, uint groupNumber )
 		}
 	}
 
-	fallBack->setPluginData( protocol(), accountId() + " id", QString::number( groupNumber ) );
+	fallBack->setPluginData( protocol(), accountId() + " id", groupGuid );
 	fallBack->setPluginData( protocol(), accountId() + " displayName", groupName );
-	m_groupList.insert( groupNumber, fallBack );
+	m_groupList.insert( groupGuid, fallBack );
 
 	// We have pending groups that we need add a contact to
 	if ( tmp_addToNewGroup.contains(groupName) )
@@ -524,36 +583,38 @@ void MSNAccount::slotGroupAdded( const QString& groupName, uint groupNumber )
 		QStringList list=tmp_addToNewGroup[groupName];
 		for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
 		{
-			QString contactId =*it;
+			QString contactId = *it;
 			kdDebug( 14140 ) << k_funcinfo << "Adding to new group: " << contactId <<  endl;
-			notifySocket()->addContact( contactId, contacts()[ contactId ] ?
-					contacts()[contactId]->property( Kopete::Global::Properties::self()->nickName()).value().toString()
-					: contactId, groupNumber, MSNProtocol::FL );
+			MSNContact *c = static_cast<MSNContact *>(contacts()[contactId]);
+			if(c)
+				notifySocket()->addContact( contactId, MSNProtocol::FL, QString::null, c->guid(), groupGuid );
+			else
+				notifySocket()->addContact( contactId, MSNProtocol::FL, contactId, QString::null, QString::null );
 		}
 		tmp_addToNewGroup.remove(groupName);
 	}
 }
 
-void MSNAccount::slotGroupRenamed( const QString& groupName, uint groupNumber )
+void MSNAccount::slotGroupRenamed( const QString &groupGuid, const QString& groupName )
 {
-	if ( m_groupList.contains( groupNumber ) )
+	if ( m_groupList.contains( groupGuid ) )
 	{
-		m_groupList[ groupNumber ]->setPluginData( protocol(), accountId() + " id", QString::number( groupNumber ) );
-		m_groupList[ groupNumber ]->setPluginData( protocol(), accountId() + " displayName", groupName );
-		m_groupList[ groupNumber ]->setDisplayName( groupName );
+		m_groupList[ groupGuid ]->setPluginData( protocol(), accountId() + " id", groupGuid );
+		m_groupList[ groupGuid ]->setPluginData( protocol(), accountId() + " displayName", groupName );
+		m_groupList[ groupGuid ]->setDisplayName( groupName );
 	}
 	else
 	{
-		slotGroupAdded( groupName, groupNumber );
+		slotGroupAdded( groupName, groupGuid );
 	}
 }
 
-void MSNAccount::slotGroupRemoved( uint group )
+void MSNAccount::slotGroupRemoved( const QString& groupGuid )
 {
-	if ( m_groupList.contains( group ) )
+	if ( m_groupList.contains( groupGuid ) )
 	{
-		m_groupList[ group ]->setPluginData( protocol(), QMap<QString,QString>() );
-		m_groupList.remove( group );
+		m_groupList[ groupGuid ]->setPluginData( protocol(), QMap<QString,QString>() );
+		m_groupList.remove( groupGuid );
 	}
 }
 
@@ -587,9 +648,9 @@ void MSNAccount::slotKopeteGroupRenamed( Kopete::Group *g )
 	{
 		if ( !g->pluginData( protocol(), accountId() + " id" ).isEmpty() &&
 			g->displayName() != g->pluginData( protocol(), accountId() + " displayName" ) &&
-			m_groupList.contains( g->pluginData( protocol(), accountId() + " id" ).toUInt() ) )
+			m_groupList.contains( g->pluginData( protocol(), accountId() + " id" ) ) )
 		{
-			notifySocket()->renameGroup( g->displayName(), g->pluginData( protocol(), accountId() + " id" ).toUInt() );
+			notifySocket()->renameGroup( g->displayName(), g->pluginData( protocol(), accountId() + " id" ) );
 		}
 	}
 }
@@ -605,26 +666,26 @@ void MSNAccount::slotKopeteGroupRemoved( Kopete::Group *g )
 	
 	if ( !g->pluginData( protocol(), accountId() + " id" ).isEmpty() )
 	{
-		unsigned int groupNumber = g->pluginData( protocol(), accountId() + " id" ).toUInt();
-		if ( !m_groupList.contains( groupNumber ) )
+		QString groupGuid = g->pluginData( protocol(), accountId() + " id" );
+		if ( !m_groupList.contains( groupGuid ) )
 		{
 			// the group is maybe already removed in the server
-			slotGroupRemoved( groupNumber );
+			slotGroupRemoved( groupGuid );
 			return;
 		}
 
 		//this is also done later, but he have to do it now!
 		// (in slotGroupRemoved)
-		m_groupList.remove(groupNumber);
+		m_groupList.remove(groupGuid);
 
-		if ( groupNumber == 0 )
+		if ( groupGuid.isEmpty() )
 		{
 			// the group #0 can't be deleted
 			// then we set it as the top-level group
 			if ( g->type() == Kopete::Group::TopLevel )
 				return;
 
-			Kopete::Group::topLevel()->setPluginData( protocol(), accountId() + " id", "0" );
+			Kopete::Group::topLevel()->setPluginData( protocol(), accountId() + " id", "" );
 			Kopete::Group::topLevel()->setPluginData( protocol(), accountId() + " displayName", g->pluginData( protocol(), accountId() + " displayName" ) );
 			g->setPluginData( protocol(), accountId() + " id", QString::null ); // the group should be soon deleted, but make sure
 
@@ -639,7 +700,7 @@ void MSNAccount::slotKopeteGroupRemoved( Kopete::Group *g )
 			for ( ; it.current(); ++it )
 			{
 				MSNContact *c = static_cast<MSNContact *>( it.current() );
-				if ( c->serverGroups().contains( groupNumber )  )
+				if ( c->serverGroups().contains( groupGuid )  )
 				{
 					/** don't do that becasue theses may already have been sent
 					m_notifySocket->removeContact( c->contactId(), groupNumber, MSNProtocol::FL );
@@ -649,7 +710,7 @@ void MSNAccount::slotKopeteGroupRemoved( Kopete::Group *g )
 				}
 			}
 			if(!still_have_contact)
-				m_notifySocket->removeGroup( groupNumber );
+				m_notifySocket->removeGroup( groupGuid );
 		}
 	}
 }
@@ -657,7 +718,7 @@ void MSNAccount::slotKopeteGroupRemoved( Kopete::Group *g )
 void MSNAccount::slotNewContactList()
 {
 		m_oldGroupList=m_groupList;
-		for(QMap<unsigned int, Kopete::Group*>::Iterator it=m_oldGroupList.begin() ; it != m_oldGroupList.end() ; ++it )
+		for(QMap<QString, Kopete::Group*>::Iterator it=m_oldGroupList.begin() ; it != m_oldGroupList.end() ; ++it )
 		{	//they are about to be changed
 			it.data()->setPluginData( protocol(), accountId() + " id", QString::null );
 		}
@@ -684,11 +745,12 @@ void MSNAccount::slotNewContactList()
 			c->setInfo( "PHH", QString::null );
 			c->setInfo( "PHW", QString::null );
 			c->setInfo( "PHM", QString::null );
+			c->removeProperty( MSNProtocol::protocol()->propGuid );
 		}
 		m_newContactList=true;
 }
 
-void MSNAccount::slotContactListed( const QString& handle, const QString& publicName, uint lists, const QString& group )
+void MSNAccount::slotContactListed( const QString& handle, const QString& publicName, const QString &contactGuid, uint lists, const QString& groups )
 {
 	// On empty lists handle might be empty, ignore that
 	// ignore also the myself contact.
@@ -699,7 +761,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 
 	if ( lists & 1 )	// FL
 	{
-		QStringList contactGroups = QStringList::split( ",", group, false );
+		QStringList contactGroups = QStringList::split( ",", groups, false );
 		if ( c )
 		{
 			if( !c->metaContact() )
@@ -714,23 +776,24 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 			// Contact exists, update data.
 			// Merging difference between server contact list and Kopete::Contact's contact list into MetaContact's contact-list
 			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
-			c->setProperty( Kopete::Global::Properties::self()->nickName() ,  publicName );
+			c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName );
+			c->setProperty( MSNProtocol::protocol()->propGuid, contactGuid);
 
-			const QMap<uint, Kopete::Group *> oldServerGroups = c->serverGroups();
+			const QMap<QString, Kopete::Group *> oldServerGroups = c->serverGroups();
 			c->clearServerGroups();
 			for ( QStringList::ConstIterator it = contactGroups.begin(); it != contactGroups.end(); ++it )
 			{
-				uint newServerGroupID =  ( *it ).toUInt();
+				QString newServerGroupID =  *it;
 				Kopete::Group *newServerGroup=m_groupList[ newServerGroupID ];
 				c->contactAddedToGroup( newServerGroupID, newServerGroup );
 				if( !c->metaContact()->groups().contains(newServerGroup) )
 				{
 					// The contact has been added in a group by another client
-					c->metaContact()->addToGroup( newServerGroup   );
+					c->metaContact()->addToGroup( newServerGroup );
 				}
 			}
 
-			for ( QMap<uint, Kopete::Group *>::ConstIterator it = oldServerGroups.begin(); it != oldServerGroups.end(); ++it )
+			for ( QMap<QString, Kopete::Group *>::ConstIterator it = oldServerGroups.begin(); it != oldServerGroups.end(); ++it )
 			{
 				Kopete::Group *old_group=m_oldGroupList[it.key()];
 				if(old_group)
@@ -756,13 +819,14 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 			c->setDeleted(true); //we don't want to sync
 			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
 			c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName );
+			c->setProperty( MSNProtocol::protocol()->propGuid, contactGuid );
 
 			for ( QStringList::Iterator it = contactGroups.begin();
 				it != contactGroups.end(); ++it )
 			{
-				uint groupNumber = ( *it ).toUInt();
-				c->contactAddedToGroup( groupNumber, m_groupList[ groupNumber ] );
-				metaContact->addToGroup( m_groupList[ groupNumber ] );
+				QString groupGuid = *it;
+				c->contactAddedToGroup( groupGuid, m_groupList[ groupGuid ] );
+				metaContact->addToGroup( m_groupList[ groupGuid ] );
 			}
 			Kopete::ContactList::self()->addMetaContact( metaContact );
 			
@@ -781,21 +845,25 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 		}
 	}
 	if ( lists & 2 )
-		slotContactAdded( handle, publicName, "AL", 0 );
+		slotContactAdded( handle, "AL", publicName, QString::null, QString::null );
 	else if(c)
 		c->setAllowed(false);
 	if ( lists & 4 )
-		slotContactAdded( handle, publicName, "BL", 0 );
+		slotContactAdded( handle, "BL", publicName, QString::null, QString::null );
 	else if(c)
 		c->setBlocked(false);
 	if ( lists & 8 )
-		slotContactAdded( handle, publicName, "RL", 0 );
+		slotContactAdded( handle, "RL", publicName, QString::null, QString::null );
 	else if(c)
 		c->setReversed(false);
+	if ( lists & 16 ) // This contact is on the pending list. Add to the reverse list and delete from the pending list
+	{
+		notifySocket()->addContact( handle, MSNProtocol::RL, QString::null, QString::null, QString::null );
+		notifySocket()->removeContact( handle, MSNProtocol::PL, QString::null, QString::null );
+	}
 }
 
-void MSNAccount::slotContactAdded( const QString& handle, const QString& publicName,
-	const QString& list, uint group )
+void MSNAccount::slotContactAdded( const QString& handle, const QString& list, const QString& publicName, const QString& contactGuid, const QString &groupGuid )
 {
 	if ( list == "FL" )
 	{
@@ -807,32 +875,58 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 			Kopete::MetaContact *m= m_addWizard_metaContact ? m_addWizard_metaContact :  new Kopete::MetaContact();
 
 			MSNContact *c = new MSNContact( this, handle, m );
-			c->contactAddedToGroup( group, m_groupList[ group ] );
 			c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName);
-
-			if ( !m_addWizard_metaContact )
+			c->setProperty( MSNProtocol::protocol()->propGuid, contactGuid );
+			// Add the new contact to the group he belongs.
+			if ( tmp_addNewContactToGroup.contains(handle) )
 			{
-				m->addToGroup( m_groupList[ group ] );
-				Kopete::ContactList::self()->addMetaContact( m );
+				QStringList list = tmp_addNewContactToGroup[handle];
+				for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
+				{
+					QString groupGuid = *it;
+					
+					kdDebug( 14140 ) << k_funcinfo << "Adding " << handle << "to group: " << groupGuid <<  endl;
+					notifySocket()->addContact( handle, MSNProtocol::FL, QString::null, contactGuid, groupGuid );
+					
+					c->contactAddedToGroup( groupGuid, m_groupList[ groupGuid ] );
+					if ( !m_addWizard_metaContact )
+					{
+						m->addToGroup( m_groupList[ groupGuid ] );
+						Kopete::ContactList::self()->addMetaContact( m );
+					}
+				}
+				tmp_addNewContactToGroup.remove(handle);
 			}
+			
 			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
 
 			m_addWizard_metaContact = 0L;
 		}
 		if ( !new_contact )
 		{
-			MSNContact *c = static_cast<MSNContact *>( contacts()[ handle ] );
-			if ( c->onlineStatus() == MSNProtocol::protocol()->UNK )
-				c->setOnlineStatus( MSNProtocol::protocol()->FLN );
+			// Contact has been added to a group
+			MSNContact *c = findContactByGuid(contactGuid);
+			if(c != 0L)
+			{
+				// Make sure that the contact has always his contactGUID.
+				if( !c->hasProperty(MSNProtocol::protocol()->propGuid.key()) )
+					c->setProperty( MSNProtocol::protocol()->propGuid, contactGuid );
 
-			if ( c->metaContact() && c->metaContact()->isTemporary() )
-				c->metaContact()->setTemporary( false, m_groupList[ group ] );
-			else
-				c->contactAddedToGroup( group, m_groupList[ group ] );
+				if ( c->onlineStatus() == MSNProtocol::protocol()->UNK )
+					c->setOnlineStatus( MSNProtocol::protocol()->FLN );
+	
+				if ( c->metaContact() && c->metaContact()->isTemporary() )
+					c->metaContact()->setTemporary( false, m_groupList[ groupGuid ] );
+				else
+					c->contactAddedToGroup( groupGuid, m_groupList[ groupGuid ] );
+			}
 		}
 
-		if ( !m_allowList.contains( handle ) && !m_blockList.contains( handle ) )
-			notifySocket()->addContact( handle, handle, 0, MSNProtocol::AL );
+		if ( !handle.isEmpty() && !m_allowList.contains( handle ) && !m_blockList.contains( handle ) )
+		{
+			kdDebug(14140) << k_funcinfo << "Trying to add contact to AL. " << endl;
+			notifySocket()->addContact(handle, MSNProtocol::AL, QString::null, QString::null, QString::null );
+		}
 	}
 	else if ( list == "BL" )
 	{
@@ -886,7 +980,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 	}
 }
 
-void MSNAccount::slotContactRemoved( const QString& handle, const QString& list, uint group )
+void MSNAccount::slotContactRemoved( const QString& handle, const QString& list, const QString& contactGuid, const QString& groupGuid )
 {
 	MSNContact *c=static_cast<MSNContact *>( contacts()[ handle ] );
 	if ( list == "BL" )
@@ -894,7 +988,7 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 		m_blockList.remove( handle );
 		configGroup()->writeEntry( "blockList" , m_blockList ) ;
 		if ( !m_allowList.contains( handle ) )
-			notifySocket()->addContact( handle, handle, 0, MSNProtocol::AL );
+			notifySocket()->addContact( handle, MSNProtocol::AL, QString::null, QString::null, QString::null );
 
 		if(c)
 			c->setBlocked( false );
@@ -904,7 +998,7 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 		m_allowList.remove( handle );
 		configGroup()->writeEntry( "allowList" , m_allowList ) ;
 		if ( !m_blockList.contains( handle ) )
-			notifySocket()->addContact( handle, handle, 0, MSNProtocol::BL );
+			notifySocket()->addContact( handle, MSNProtocol::BL, QString::null, QString::null, QString::null );
 
 		if(c)
 			c->setAllowed( false );
@@ -934,27 +1028,58 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 	}
 	else if ( list == "FL" )
 	{
-		// Contact is removed from the FL list, remove it from the group
-		if(c)
-			c->contactRemovedFromGroup( group );
-		
-		//check if the group is now empty to remove it
-		if ( group != 0 && m_notifySocket )
+		// The FL list only use the contact GUID, use the contact referenced by the GUID.
+		MSNContact *contactRemoved = findContactByGuid(contactGuid);
+
+		QStringList groupGuidList;
+		// Remove the contact from the contact list for all the group he is a member.
+		if( groupGuid.isEmpty() )
 		{
-			bool still_have_contact=false;
-				// if contact are contains only in the group we are removing, abort the 
-			QDictIterator<Kopete::Contact> it( contacts() );
-			for ( ; it.current(); ++it )
+			if(contactRemoved)
 			{
-				MSNContact *c2 = static_cast<MSNContact *>( it.current() );
-				if ( c2->serverGroups().contains( group ) )
+				QPtrList<Kopete::Group> groupList = contactRemoved->metaContact()->groups();
+				for( Kopete::Group *group = groupList.first(); group; groupList.next() )
 				{
-					still_have_contact=true;
-					break;
+					if ( !group->pluginData( protocol(), accountId() + " id" ).isEmpty() )
+					{
+						groupGuidList.append( group->pluginData( protocol(), accountId() + " id" ) );
+					}
 				}
 			}
-			if(!still_have_contact)
-				m_notifySocket->removeGroup( group );
+		}
+		else
+		{
+			groupGuidList.append( groupGuid );
+		}
+		
+		if( !groupGuidList.isEmpty() )
+		{
+			QStringList::const_iterator stringIt;
+			for( stringIt = groupGuidList.begin(); stringIt != groupGuidList.end(); ++stringIt )
+			{
+				// Contact is removed from the FL list, remove it from the group
+				if(contactRemoved != 0L)
+						contactRemoved->contactRemovedFromGroup( *stringIt );
+					
+				//check if the group is now empty to remove it
+				if ( m_notifySocket )
+				{
+					bool still_have_contact=false;
+					// if contact are contains only in the group we are removing, abort the 
+					QDictIterator<Kopete::Contact> it( contacts() );
+					for ( ; it.current(); ++it )
+					{
+						MSNContact *c2 = static_cast<MSNContact *>( it.current() );
+						if ( c2->serverGroups().contains( *stringIt ) )
+						{
+							still_have_contact=true;
+							break;
+						}
+					}
+					if(!still_have_contact)
+						m_notifySocket->removeGroup( *stringIt );
+				}
+			}
 		}
 	}
 }
@@ -1047,25 +1172,27 @@ void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
 	if(!dialog || !m_notifySocket)
 		return;
 
-	if ( !dialog->authorized() )
-	{
-		if ( m_allowList.contains( handle ) )
-			m_notifySocket->removeContact( handle, 0, MSNProtocol::AL );
-		else if ( !m_blockList.contains( handle ) )
-			m_notifySocket->addContact( handle, handle, 0, MSNProtocol::BL );
-	}
-	else
-	{
-		if ( m_blockList.contains( handle ) )
-			m_notifySocket->removeContact( handle, 0, MSNProtocol::BL );
-		else if ( !m_allowList.contains( handle ) )
-			m_notifySocket->addContact( handle, handle, 0, MSNProtocol::AL );
-	}
-
 	if(dialog->added())
 	{
 		dialog->addContact();
 	}
+
+	if ( !dialog->authorized() )
+	{
+		if ( m_allowList.contains( handle ) )
+			m_notifySocket->removeContact( handle, MSNProtocol::AL, QString::null, QString::null );
+		else if ( !m_blockList.contains( handle ) )
+			m_notifySocket->addContact( handle, MSNProtocol::BL, QString::null, QString::null, QString::null );
+	}
+	else
+	{
+		if ( m_blockList.contains( handle ) )
+			m_notifySocket->removeContact( handle, MSNProtocol::BL, QString::null, QString::null );
+		else if ( !m_allowList.contains( handle ) )
+			m_notifySocket->addContact( handle, MSNProtocol::AL, QString::null, QString::null, QString::null );
+	}
+
+	
 }
 
 void MSNAccount::slotGlobalIdentityChanged( const QString &key, const QVariant &value )
@@ -1119,7 +1246,7 @@ void MSNAccount::addContactServerside(const QString &contactId, QPtrList<Kopete:
 				// For each group, ensure it is on the MSN server
 		if ( !group->pluginData( protocol(), accountId() + " id" ).isEmpty() )
 		{
-			int Gid=group->pluginData( protocol(), accountId() + " id" ).toUInt();
+			QString Gid = group->pluginData( protocol(), accountId() + " id" );
 			if(!m_groupList.contains(Gid))
 			{ // ohoh!   something is corrupted on the contactlist.xml
 					  // anyway, we never should add a contact to an unexisting group on the server.
@@ -1133,7 +1260,25 @@ void MSNAccount::addContactServerside(const QString &contactId, QPtrList<Kopete:
 			else
 			{
 				// Add the contact to the group on the server
-				m_notifySocket->addContact( contactId, contactId, Gid, MSNProtocol::FL );
+				kdDebug( 14140 ) << k_funcinfo << "Add the contact to the group on the server " << endl;
+				MSNContact *c = static_cast<MSNContact *>(contacts()[contactId]);
+				if(c)
+				{	
+					// The contact exists already, just add it to a new group
+					if( c->hasProperty(MSNProtocol::protocol()->propGuid.key()) )
+					{
+						m_notifySocket->addContact( contactId, MSNProtocol::FL, QString::null, c->guid(), Gid );
+					}
+				}
+				else
+				{
+					m_notifySocket->addContact( contactId, MSNProtocol::FL, contactId, QString::null, QString::null );
+					// Add the group that the contact belong to add it when we will receive the contact GUID.
+					if( tmp_addNewContactToGroup.contains( contactId ) )
+						tmp_addNewContactToGroup[contactId].append(Gid);
+					else
+						tmp_addNewContactToGroup.insert(contactId, QStringList(Gid) );
+				}
 				added = true;
 			}
 		}
@@ -1151,10 +1296,29 @@ void MSNAccount::addContactServerside(const QString &contactId, QPtrList<Kopete:
 	if ( !added )
 	{
 		// only on top-level, or in no groups ( add it to the default group )
-		m_notifySocket->addContact( contactId, contactId, 0, MSNProtocol::FL );
+		kdDebug( 14140 ) << k_funcinfo << "Add " << contactId << " to the top-level" << endl;
+		m_notifySocket->addContact( contactId, MSNProtocol::FL, contactId, QString::null, QString::null );
 	}
 }
 
+MSNContact *MSNAccount::findContactByGuid(const QString &contactGuid)
+{
+	kdDebug(14140) << k_funcinfo << endl;
+	QDictIterator<Kopete::Contact> it( contacts() );
+	for ( ; it.current(); ++it )
+	{
+		MSNContact *c = static_cast<MSNContact *>( *it );
+
+		if(c && c->property( MSNProtocol::protocol()->propGuid ).value().toString() == contactGuid )
+		{
+			kdDebug(14140) << k_funcinfo << "OK found a contact. " << endl;
+			// Found the contact GUID
+			return c;
+		}
+	}
+	
+	return 0L;
+}
 
 bool MSNAccount::isHotmail() const
 {
@@ -1220,4 +1384,5 @@ void MSNAccount::resetPictureObject(bool silent)
 #include "msnaccount.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
+
 

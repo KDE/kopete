@@ -4,6 +4,8 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
+    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
+    Copyright (c) 2005      by Gregg Edghill          <gregg.edghill@gmail.com>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -26,13 +28,12 @@
 #include "msnsocket.h"
 #include "msnprotocol.h"
 
+
 class MSNDispatchSocket;
 class MSNAccount;
 class KTempFile;
-class SslLoginHandler;
-
-#include <kio/job.h>
-
+class MSNSecureLoginHandler;
+class MsnChallengeHandler;
 
 /**
  * @author Olaf Lueg
@@ -49,14 +50,15 @@ public:
 	virtual void disconnect();
 
 	void setStatus( const Kopete::OnlineStatus &status );
-	void addContact( const QString &handle, const QString& pulicName, uint group , int list );
-	void removeContact( const QString &handle, uint group, int list );
+	void addContact( const QString &handle, int list, const QString& publicName, const QString& contactGuid, const QString& groupGuid );
+	void removeContact( const QString &handle, int list, const QString &contactGuid, const QString &groupGuid );
 
 	void addGroup( const QString& groupName );
-	void removeGroup( uint group );
-	void renameGroup(const QString& groupName, uint group);
+	void removeGroup( const QString& group );
+	void renameGroup( const QString& groupName, const QString& groupGuid );
 
-	void changePublicName(  QString publicName , const QString &handle=QString::null );
+	void changePublicName( const QString& publicName , const QString &handle=QString::null );
+	void changePersonalMessage( const QString& type , const QString& personalMessage );
 
 	void changePhoneNumber( const QString &key, const QString &data );
 
@@ -76,16 +78,16 @@ public slots:
 
 signals:
 	void newContactList();
-	void contactList(const QString& handle, const QString& displayname, uint lists, const QString& groups);
-//	void contactList(const QString&, const QString&, uint);
+	void contactList(const QString& handle, const QString& publicName, const QString &contactGuid, uint lists, const QString& groups);
 	void contactStatus(const QString&, const QString&, const QString& );
-	void contactAdded(const QString&, const QString&, const QString&, uint);
-	void contactRemoved(const QString&, const QString&, uint);
+	void contactAdded(const QString& handle, const QString& list, const QString& publicName, const QString& contactGuid, const QString& groupGuid);
+	//void contactRemoved(const QString&, const QString&, uint);
+	void contactRemoved(const QString& handle, const QString& list, const QString& contactGuid, const QString& groupGuid);
 
-	void groupListed(const QString&, uint group);
-	void groupAdded( const QString&, uint group);
-	void groupRenamed( const QString&, uint group);
-	void groupRemoved( uint );
+	void groupListed(const QString&, const QString&);
+	void groupAdded( const QString&, const QString&);
+	void groupRenamed( const QString&, const QString& );
+	void groupRemoved( const QString& );
 
 	void invitedToChat(const QString&, const QString&, const QString&, const QString&, const QString& );
 	void startChat( const QString&, const QString& );
@@ -139,7 +141,7 @@ private slots:
 
 	void sslLoginFailed();
 	void sslLoginIncorrect();
-	void sslLoginSucceeded(QString);
+	void sslLoginSucceeded(QString ticket);
 
 
 private:
@@ -163,6 +165,7 @@ private:
 	//know the last handle used
 	QString m_tmpLastHandle;
 	QMap <unsigned int,QString> m_tmpHandles;
+	QString m_configFile;
 
 	//for hotmail inbox opening
 	bool m_isHotmailAccount;
@@ -171,10 +174,11 @@ private:
 	QString m_sid;
 	QString m_loginTime;
 	QString m_localIP;
-	SslLoginHandler *m_sslLoginHandler;
+	MSNSecureLoginHandler *m_secureLoginHandler;
 
+	MsnChallengeHandler *m_challengeHandler;
 	QTimer *m_keepaliveTimer;
-
+	
 	bool m_ping;
 
 	int m_disconnectReason;

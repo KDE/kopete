@@ -4,6 +4,7 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart @ kde.org>
+    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -61,7 +62,9 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 	propPhoneHome(Kopete::Global::Properties::self()->privatePhone()),
 	propPhoneWork(Kopete::Global::Properties::self()->workPhone()),
 	propPhoneMobile(Kopete::Global::Properties::self()->privateMobilePhone()),
-	propClient("client", i18n("Remote Client"), 0, false)
+	propClient("client", i18n("Remote Client"), 0, false),
+	propGuid("guid", i18n("Contact GUID"), 0, true),
+	propPersonalMessage(Kopete::Global::Properties::self()->awayMessage())
 {
 	s_protocol = this;
 
@@ -90,7 +93,7 @@ Kopete::Contact *MSNProtocol::deserializeContact( Kopete::MetaContact *metaConta
 	MSNContact *c = new MSNContact( account, contactId, metaContact );
 
 	for( QStringList::Iterator it = groups.begin() ; it != groups.end(); ++it )
-		c->contactAddedToGroup( ( *it ).toUInt(), 0L  /* FIXME - m_groupList[ ( *it ).toUInt() ]*/ );
+		c->contactAddedToGroup( *it, 0L  /* FIXME - m_groupList[ ( *it ).toUInt() ]*/ );
 
 	c->m_obj= serializedData[ "obj" ];
 	c->setInfo( "PHH" , serializedData[ "PHH" ] );

@@ -240,7 +240,7 @@ void MSNEditAccountWidget::slotAllow()
 	MSNNotifySocket *notify = static_cast<MSNAccount *>( account() )->notifySocket();
 	if ( !notify )
 		return;
-	notify->removeContact( handle, 0, MSNProtocol::BL );
+	notify->removeContact( handle, MSNProtocol::BL, QString::null, QString::null );
 
 	d->ui->m_BL->takeItem( item );
 	d->ui->m_AL->insertItem( item );
@@ -259,7 +259,7 @@ void MSNEditAccountWidget::slotBlock()
 	if ( !notify )
 		return;
 
-	notify->removeContact( handle, 0, MSNProtocol::AL );
+	notify->removeContact( handle, MSNProtocol::AL, QString::null, QString::null );
 
 	d->ui->m_AL->takeItem( item );
 	d->ui->m_BL->insertItem( item );

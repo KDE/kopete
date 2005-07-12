@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>MSNInfo</class>
 <widget class="QWidget">
     <property name="name">
@@ -96,6 +96,29 @@
                 </widget>
             </hbox>
         </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout3</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Personal Message:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>m_personalMessage</cstring>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
         <widget class="QGroupBox">
             <property name="name">
                 <cstring>GroupBox2</cstring>
@@ -162,7 +185,7 @@
                 <cstring>m_reversed</cstring>
             </property>
             <property name="text">
-                <string>I am on the contact list of this contact</string>
+                <string>I am on &amp;the contact list of this contact</string>
             </property>
             <property name="toolTip" stdset="0">
                 <string>Show whether you are on the contact list of this user</string>
@@ -185,7 +208,7 @@ If not, the user has not added you to their list, or has removed you.</string>
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>20</height>
+                    <height>40</height>
                 </size>
             </property>
         </spacer>

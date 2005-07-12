@@ -5,6 +5,7 @@
     Copyright (c) 2002      by Ryan Cumming           <bodnar42@phalynx.dhs.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
+    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -35,6 +36,7 @@
 #include <kconfig.h>
 #include <kglobal.h>
 #include <qregexp.h>
+#include <kio/job.h>
 
 #include "kopetecontactlist.h"
 #include "kopetechatsessionmanager.h"
@@ -164,14 +166,14 @@ void MSNContact::slotBlockUser()
 
 	if( m_blocked )
 	{
-		notify->removeContact( contactId(), 0, MSNProtocol::BL );
+		notify->removeContact( contactId(), MSNProtocol::BL, QString::null, QString::null );
 	}
 	else
 	{
 		if(m_allowed)
-			notify->removeContact( contactId(), 0, MSNProtocol::AL);
+			notify->removeContact( contactId(), MSNProtocol::AL, QString::null, QString::null );
 		else
-			notify->addContact( contactId(), contactId(), 0, MSNProtocol::BL );
+			notify->addContact( contactId(), MSNProtocol::BL, QString::null, QString::null, QString::null );
 	}
 }
 
@@ -179,9 +181,11 @@ void MSNContact::slotUserInfo()
 {
 	KDialogBase *infoDialog=new KDialogBase( 0l, "infoDialog", /*modal = */false, QString::null, KDialogBase::Close , KDialogBase::Close, false );
 	QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
+	QString personalMessage=property( MSNProtocol::protocol()->propPersonalMessage).value().toString();
 	MSNInfo *info=new MSNInfo ( infoDialog,"info");
 	info->m_id->setText( contactId() );
 	info->m_displayName->setText(nick);
+	info->m_personalMessage->setText(personalMessage);
 	info->m_phh->setText(m_phoneHome);
 	info->m_phw->setText(m_phoneWork);
 	info->m_phm->setText(m_phoneMobile);
@@ -211,13 +215,21 @@ void MSNContact::deleteContact()
 	{
 		if( m_serverGroups.isEmpty() || onlineStatus() == MSNProtocol::protocol()->UNK )
 		{
-			kdDebug( 14140 ) << k_funcinfo << "The contact is already removed from server, just delete it" << endl;
-			deleteLater();
+			if( hasProperty(MSNProtocol::protocol()->propGuid.key()) )
+			{
+				kdDebug( 14140 ) << k_funcinfo << "Removing contact from top-level." << endl;
+				notify->removeContact( contactId(), MSNProtocol::FL, guid(), QString::null );
+			}
+			else
+			{
+				kdDebug( 14140 ) << k_funcinfo << "The contact is already removed from server, just delete it" << endl;
+				deleteLater();
+			}
 			return;
 		}
 
-		for( QMap<uint, Kopete::Group*>::Iterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
-			notify->removeContact( contactId(), it.key(), MSNProtocol::FL );
+		for( QMap<QString, Kopete::Group*>::Iterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
+			notify->removeContact( contactId(), MSNProtocol::FL, guid(), it.key() );
 	}
 	else
 	{
@@ -274,8 +286,6 @@ void MSNContact::setDeleted( bool deleted )
 	m_deleted= deleted;
 }
 
-
-
 void MSNContact::setInfo(const  QString &type,const QString &data )
 {
 	if( type == "PHH" )
@@ -302,6 +312,10 @@ void MSNContact::setInfo(const  QString &type,const QString &data )
 		else
 			kdDebug( 14140 ) << k_funcinfo << "Unknown MOB " << data << endl;
 	}
+	else if( type == "MFN" )
+	{
+		setProperty(Kopete::Global::Properties::self()->nickName(), data );
+	}
 	else
 	{
 		kdDebug( 14140 ) << k_funcinfo << "Unknow info " << type << " " << data << endl;
@@ -314,14 +328,14 @@ void MSNContact::serialize( QMap<QString, QString> &serializedData, QMap<QString
 	// Contact id and display name are already set for us, only add the rest
 	QString groups;
 	bool firstEntry = true;
-	for( QMap<uint, Kopete::Group *>::ConstIterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
+	for( QMap<QString, Kopete::Group *>::ConstIterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
 	{
 		if( !firstEntry )
 		{
 			groups += ",";
 			firstEntry = true;
 		}
-		groups += QString::number( it.key() );
+		groups += it.key();
 	}
 
 	QString lists="C";
@@ -340,12 +354,15 @@ void MSNContact::serialize( QMap<QString, QString> &serializedData, QMap<QString
 	serializedData[ "obj" ] = m_obj;
 }
 
+
+QString MSNContact::guid(){ return property(MSNProtocol::protocol()->propGuid).value().toString(); }
+
 QString MSNContact::phoneHome(){ return m_phoneHome ;}
 QString MSNContact::phoneWork(){ return m_phoneWork ;}
 QString MSNContact::phoneMobile(){ return m_phoneMobile ;}
 
 
-const QMap<uint, Kopete::Group*>  MSNContact::serverGroups() const
+const QMap<QString, Kopete::Group*>  MSNContact::serverGroups() const
 {
 	return m_serverGroups;
 }
@@ -400,7 +417,7 @@ void MSNContact::sync( unsigned int changed )
 		//For each group, ensure it is on the MSN server
 		if( !group->pluginData( protocol() , account()->accountId() + " id" ).isEmpty() )
 		{
-			int Gid=group->pluginData( protocol(), account()->accountId() + " id" ).toUInt();
+			QString Gid=group->pluginData( protocol(), account()->accountId() + " id" );
 			if( !static_cast<MSNAccount*>( account() )->m_groupList.contains(Gid) ) 
 			{ // ohoh!   something is corrupted on the contactlist.xml
 			  // anyway, we never should add a contact to an unexisting group on the server.
@@ -422,8 +439,7 @@ void MSNContact::sync( unsigned int changed )
 			else if( !m_serverGroups.contains(Gid) )
 			{
 				//Add the contact to the group on the server
-				QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
-				notify->addContact( contactId(), nick.isEmpty() ? contactId() : nick, Gid, MSNProtocol::FL );
+				notify->addContact( contactId(), MSNProtocol::FL, QString::null, guid(), Gid );
 				count++;
 				m_moving=true;
 			}
@@ -444,10 +460,11 @@ void MSNContact::sync( unsigned int changed )
 	}
 
 	//STEP TWO : remove the contact from groups where the MC is not, but let it at least in one group
+
+	//contact is not in that group. on the server. we will remove them dirrectly after the loop
+	QValueList<QString> removinglist; 
 	
-	QValueList<int> removinglist; //contact is not in that group. on the server. we will remove them dirrectly after the loop
-	
-	for( QMap<uint, Kopete::Group*>::Iterator it = m_serverGroups.begin();(count > 1 && it != m_serverGroups.end()); ++it )
+	for( QMap<QString, Kopete::Group*>::Iterator it = m_serverGroups.begin();(count > 1 && it != m_serverGroups.end()); ++it )
 	{
 		if( !static_cast<MSNAccount*>( account() )->m_groupList.contains(it.key()) )
 		{ // ohoh!   something is corrupted on the contactlist.xml
@@ -469,33 +486,32 @@ void MSNContact::sync( unsigned int changed )
 		if( !metaContact()->groups().contains(group) )
 		{
 			m_moving=true;
-			notify->removeContact( contactId(), it.key(), MSNProtocol::FL );
+			notify->removeContact( contactId(), MSNProtocol::FL, guid(), it.key() );
 			count--;
 		}
 	}
 	
-	for(QValueList<int>::Iterator it= removinglist.begin() ; it != removinglist.end() ; ++it )
+	for(QValueList<QString>::Iterator it= removinglist.begin() ; it != removinglist.end() ; ++it )
 		contactRemovedFromGroup(*it);
 
 	//FINAL TEST: is the contact at least in a group..
 	//   this may happens if we just added a temporary contact to top-level
 	//   we add the contact to the group #0 (the default one)
-	if(count==0)
+	/*if(count==0)
 	{
-		QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
-		notify->addContact( contactId(), nick.isEmpty() ? contactId() : nick, 0, MSNProtocol::FL );
-	}
+//		notify->addContact( contactId(), MSNProtocol::FL, QString::null, guid(), "0");
+	}*/
 }
 
-void MSNContact::contactAddedToGroup( uint groupNumber, Kopete::Group *group )
+void MSNContact::contactAddedToGroup( const QString& groupId, Kopete::Group *group )
 {
-	m_serverGroups.insert( groupNumber, group );
+	m_serverGroups.insert( groupId, group );
 	m_moving=false;
 }
 
-void MSNContact::contactRemovedFromGroup( unsigned int group )
+void MSNContact::contactRemovedFromGroup( const QString& groupId )
 {
-	m_serverGroups.remove( group );
+	m_serverGroups.remove( groupId );
 	if(m_serverGroups.isEmpty() && !m_moving)
 	{
 		deleteLater();
@@ -511,6 +527,7 @@ void MSNContact::rename( const QString &newName )
 /*	if( newName == displayName() )
 		return;*/
 
+	// FIXME: This should be called anymore.
 	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
 	if( notify )
 	{
