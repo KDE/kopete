@@ -935,20 +935,28 @@ default_presentation=2
 
 [connection_lost]
 Name=Connection Lost
+Name[et]=Ühendus kadus
 Comment=The connection have been lost
+Comment[et]=Ühendus kadus
 default_presentation=16
 
 [cannot_connect]
 Name=Cannot Connect
+Name[et]=Ühendumine ebaõnnestus
 Comment=Kopete cann't connect to the service
+Comment[et]=Kopetel ebaõnnestus ühendumine teenusega
 default_presentation=16
 
 [network_problems]
 Name=Network Problems
+Name[et]=Võrguprobleemid
 Comment=The network is experimenting problems
+Comment[et]=Võrguga on mingeid probleeme
 default_presentation=16
 
 [server_error]
 Name=Server Internal Error
+Name[et]=Serveri sisemine viga
 Comment=An service internal error has occurred
+Comment[et]=Tekkis teenuse sisemine viga
 default_presentation=2
