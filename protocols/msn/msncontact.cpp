@@ -215,8 +215,16 @@ void MSNContact::deleteContact()
 	{
 		if( m_serverGroups.isEmpty() || onlineStatus() == MSNProtocol::protocol()->UNK )
 		{
-			kdDebug( 14140 ) << k_funcinfo << "The contact is already removed from server, just delete it" << endl;
-			deleteLater();
+			if( hasProperty(MSNProtocol::protocol()->propGuid.key()) )
+			{
+				kdDebug( 14140 ) << k_funcinfo << "Removing contact from top-level." << endl;
+				notify->removeContact( contactId(), MSNProtocol::FL, guid(), QString::null );
+			}
+			else
+			{
+				kdDebug( 14140 ) << k_funcinfo << "The contact is already removed from server, just delete it" << endl;
+				deleteLater();
+			}
 			return;
 		}
 
@@ -431,7 +439,6 @@ void MSNContact::sync( unsigned int changed )
 			else if( !m_serverGroups.contains(Gid) )
 			{
 				//Add the contact to the group on the server
-				kdDebug(14140) << k_funcinfo << "Adding " << contactId() << " on STEP ONE. We are here. " << endl;
 				notify->addContact( contactId(), MSNProtocol::FL, QString::null, guid(), Gid );
 				count++;
 				m_moving=true;
@@ -490,12 +497,10 @@ void MSNContact::sync( unsigned int changed )
 	//FINAL TEST: is the contact at least in a group..
 	//   this may happens if we just added a temporary contact to top-level
 	//   we add the contact to the group #0 (the default one)
-	if(count==0)
+	/*if(count==0)
 	{
-		// FIXME: I think that this is not needed anymore.
-		kdDebug(14140) << k_funcinfo << "Adding " << contactId() << "to top level. We are here. " << endl;
 //		notify->addContact( contactId(), MSNProtocol::FL, QString::null, guid(), "0");
-	}
+	}*/
 }
 
 void MSNContact::contactAddedToGroup( const QString& groupId, Kopete::Group *group )

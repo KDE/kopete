@@ -588,6 +588,8 @@ void MSNAccount::slotGroupAdded( const QString& groupName, const QString &groupG
 			MSNContact *c = static_cast<MSNContact *>(contacts()[contactId]);
 			if(c)
 				notifySocket()->addContact( contactId, MSNProtocol::FL, QString::null, c->guid(), groupGuid );
+			else
+				notifySocket()->addContact( contactId, MSNProtocol::FL, contactId, QString::null, QString::null );
 		}
 		tmp_addToNewGroup.remove(groupName);
 	}
@@ -906,6 +908,10 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& list, c
 			MSNContact *c = findContactByGuid(contactGuid);
 			if(c != 0L)
 			{
+				// Make sure that the contact has always his contactGUID.
+				if( !c->hasProperty(MSNProtocol::protocol()->propGuid.key()) )
+					c->setProperty( MSNProtocol::protocol()->propGuid, contactGuid );
+
 				if ( c->onlineStatus() == MSNProtocol::protocol()->UNK )
 					c->setOnlineStatus( MSNProtocol::protocol()->FLN );
 	
@@ -916,9 +922,9 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& list, c
 			}
 		}
 
-		if ( !handle.isEmpty() && !m_allowList.contains( handle ) && !m_blockList.contains( handle ) && contactGuid.isEmpty() )
+		if ( !handle.isEmpty() && !m_allowList.contains( handle ) && !m_blockList.contains( handle ) )
 		{
-			kdDebug(14140) << k_funcinfo << "Trying to add contact from FL to AL. " << endl;
+			kdDebug(14140) << k_funcinfo << "Trying to add contact to AL. " << endl;
 			notifySocket()->addContact(handle, MSNProtocol::AL, QString::null, QString::null, QString::null );
 		}
 	}
@@ -1029,12 +1035,15 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 		// Remove the contact from the contact list for all the group he is a member.
 		if( groupGuid.isEmpty() )
 		{
-			QPtrList<Kopete::Group> groupList = contactRemoved->metaContact()->groups();
-			for( Kopete::Group *group = groupList.first(); group; groupList.next() )
+			if(contactRemoved)
 			{
-				if ( !group->pluginData( protocol(), accountId() + " id" ).isEmpty() )
+				QPtrList<Kopete::Group> groupList = contactRemoved->metaContact()->groups();
+				for( Kopete::Group *group = groupList.first(); group; groupList.next() )
 				{
-					groupGuidList.append( group->pluginData( protocol(), accountId() + " id" ) );
+					if ( !group->pluginData( protocol(), accountId() + " id" ).isEmpty() )
+					{
+						groupGuidList.append( group->pluginData( protocol(), accountId() + " id" ) );
+					}
 				}
 			}
 		}
@@ -1043,33 +1052,35 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 			groupGuidList.append( groupGuid );
 		}
 		
-		QStringList::const_iterator stringIt;
-		for( stringIt = groupGuidList.begin(); stringIt != groupGuidList.end(); ++stringIt )
+		if( !groupGuidList.isEmpty() )
 		{
-			// Contact is removed from the FL list, remove it from the group
-			if(contactRemoved != 0L)
-					contactRemoved->contactRemovedFromGroup( *stringIt );
-				
-			//check if the group is now empty to remove it
-			if ( m_notifySocket )
+			QStringList::const_iterator stringIt;
+			for( stringIt = groupGuidList.begin(); stringIt != groupGuidList.end(); ++stringIt )
 			{
-				bool still_have_contact=false;
-				// if contact are contains only in the group we are removing, abort the 
-				QDictIterator<Kopete::Contact> it( contacts() );
-				for ( ; it.current(); ++it )
+				// Contact is removed from the FL list, remove it from the group
+				if(contactRemoved != 0L)
+						contactRemoved->contactRemovedFromGroup( *stringIt );
+					
+				//check if the group is now empty to remove it
+				if ( m_notifySocket )
 				{
-					MSNContact *c2 = static_cast<MSNContact *>( it.current() );
-					if ( c2->serverGroups().contains( *stringIt ) )
+					bool still_have_contact=false;
+					// if contact are contains only in the group we are removing, abort the 
+					QDictIterator<Kopete::Contact> it( contacts() );
+					for ( ; it.current(); ++it )
 					{
-						still_have_contact=true;
-						break;
+						MSNContact *c2 = static_cast<MSNContact *>( it.current() );
+						if ( c2->serverGroups().contains( *stringIt ) )
+						{
+							still_have_contact=true;
+							break;
+						}
 					}
+					if(!still_have_contact)
+						m_notifySocket->removeGroup( *stringIt );
 				}
-				if(!still_have_contact)
-					m_notifySocket->removeGroup( *stringIt );
 			}
 		}
-		
 	}
 }
 
@@ -1161,6 +1172,11 @@ void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
 	if(!dialog || !m_notifySocket)
 		return;
 
+	if(dialog->added())
+	{
+		dialog->addContact();
+	}
+
 	if ( !dialog->authorized() )
 	{
 		if ( m_allowList.contains( handle ) )
@@ -1176,11 +1192,7 @@ void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
 			m_notifySocket->addContact( handle, MSNProtocol::AL, QString::null, QString::null, QString::null );
 	}
 
-	if(dialog->added())
-	{
-		m_notifySocket->addContact( handle, MSNProtocol::FL, handle, QString::null, QString::null );
-		dialog->addContact();
-	}
+	
 }
 
 void MSNAccount::slotGlobalIdentityChanged( const QString &key, const QVariant &value )
@@ -1252,6 +1264,7 @@ void MSNAccount::addContactServerside(const QString &contactId, QPtrList<Kopete:
 				MSNContact *c = static_cast<MSNContact *>(contacts()[contactId]);
 				if(c)
 				{	
+					// The contact exists already, just add it to a new group
 					if( c->hasProperty(MSNProtocol::protocol()->propGuid.key()) )
 					{
 						m_notifySocket->addContact( contactId, MSNProtocol::FL, QString::null, c->guid(), Gid );
@@ -1283,9 +1296,8 @@ void MSNAccount::addContactServerside(const QString &contactId, QPtrList<Kopete:
 	if ( !added )
 	{
 		// only on top-level, or in no groups ( add it to the default group )
-		// FIXME: Maybe the contactGuid will be null
 		kdDebug( 14140 ) << k_funcinfo << "Add " << contactId << " to the top-level" << endl;
-		//m_notifySocket->addContact( contactId, MSNProtocol::FL, contactId, QString::null, QString::null );
+		m_notifySocket->addContact( contactId, MSNProtocol::FL, contactId, QString::null, QString::null );
 	}
 }
 
@@ -1297,7 +1309,7 @@ MSNContact *MSNAccount::findContactByGuid(const QString &contactGuid)
 	{
 		MSNContact *c = static_cast<MSNContact *>( *it );
 
-		if( c->property( MSNProtocol::protocol()->propGuid ).value().toString() == contactGuid )
+		if(c && c->property( MSNProtocol::protocol()->propGuid ).value().toString() == contactGuid )
 		{
 			kdDebug(14140) << k_funcinfo << "OK found a contact. " << endl;
 			// Found the contact GUID
