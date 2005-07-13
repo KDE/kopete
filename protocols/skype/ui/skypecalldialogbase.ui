@@ -219,9 +219,6 @@
                     <property name="text">
                         <string>H&amp;old</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+O</string>
-                    </property>
                     <property name="toolTip" stdset="0">
                         <string>Hold the call</string>
                     </property>
