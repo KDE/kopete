@@ -156,7 +156,7 @@ QString KopeteXSLThread::xsltTransform( const QString &xmlString, xsltStylesheet
 				int size;
 				xmlDocDumpMemory( resultDoc, &mem, &size );
 				resultString = QString::fromUtf8( QCString( ( char * )( mem ), size + 1 ) );
-				free( mem );
+				xmlFree( mem );
 				xmlFreeDoc( resultDoc );
 			}
 			else
