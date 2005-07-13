@@ -19,6 +19,7 @@ Name[es]=Identidad
 Name[et]=Identiteet
 Name[ga]=Aitheantas
 Name[sv]=Identitet
+Name[tr]=Kimlik
 Comment=Here you can manage your global identity
 Comment[bg]=Настройки на идентификацията
 Comment[da]=Her kan du håndtere din globale identitet
@@ -26,5 +27,6 @@ Comment[es]=Aqui puede gestionar su identidad global
 Comment[et]=Siin saab hallata oma globaalset identiteeti
 Comment[ga]=Tig leat d'aitheantas a láimhseáil anseo
 Comment[sv]=Här kan du hantera din generella identitet
+Comment[tr]=Bütün Kimliklerinizi Buradan Yönetilebilir
 
 DocPath=kopete/configure-dialog.html#configuring-identity
