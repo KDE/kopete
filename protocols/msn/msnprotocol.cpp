@@ -72,6 +72,9 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 
 	setCapabilities( Kopete::Protocol::BaseFgColor | Kopete::Protocol::BaseFont | Kopete::Protocol::BaseFormatting );
 
+	// Build the MSN clientId. It sets what MSN feature we support.
+	m_clientId = MSNC4;
+
 	// m_status = m_unknownStatus = UNK;
 }
 
@@ -151,6 +154,11 @@ MSNProtocol* MSNProtocol::protocol()
 bool MSNProtocol::validContactId(const QString& userid)
 {
 	return ( userid.contains('@') ==1 && userid.contains('.') >=1 && userid.contains(' ') == 0);
+}
+
+QString MSNProtocol::clientId()
+{
+	return QString::number(m_clientId, 10);
 }
 
 #include "msnprotocol.moc"

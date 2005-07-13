@@ -164,6 +164,8 @@ void MSNChatSession::createChat( const QString &handle,
 		this, SLOT( slotAcknowledgement(unsigned int, bool) ) );
 	connect( m_chatService, SIGNAL( invitation( const QString&, const QString& ) ),
 		this, SLOT( slotInvitation( const QString&, const QString& ) ) );
+	connect( m_chatService, SIGNAL( nudgeReceived() ),
+		this, SLOT( slotNudgeReceived() ) );
 }
 
 void MSNChatSession::slotUserJoined( const QString &handle, const QString &publicName, bool IRO )
@@ -642,6 +644,14 @@ void MSNChatSession::slotSendNudge()
 		m_chatService->sendNudge();
 }
 
+void MSNChatSession::slotNudgeReceived()
+{
+	// FIXME: Better display of the nudge.
+	// FIXME: WHhen nudge is the first received message, you can't see your own message you send before the others send you a message.
+	QString nudgeBody = i18n( "You have received a nudge !" );
+	Kopete::Message msg = Kopete::Message(myself(), members(), nudgeBody, Kopete::Message::Internal, Kopete::Message::PlainText );
+	appendMessage( msg );
+}
 #include "msnchatsession.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

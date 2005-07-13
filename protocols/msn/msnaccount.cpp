@@ -439,7 +439,7 @@ void MSNAccount::slotStatusChanged( const Kopete::OnlineStatus &status )
 		for ( ; it.current(); ++it )
 		{
 			MSNContact *c = static_cast<MSNContact *>( *it );
-			if(c->isDeleted() && c->metaContact() && !c->metaContact()->isTemporary() && c!=myself())
+			if(c && c->isDeleted() && c->metaContact() && !c->metaContact()->isTemporary() && c!=myself())
 			{
 				if(c->serverGroups().isEmpty())
 				{ //the contact is new, add it on the server
@@ -700,7 +700,7 @@ void MSNAccount::slotKopeteGroupRemoved( Kopete::Group *g )
 			for ( ; it.current(); ++it )
 			{
 				MSNContact *c = static_cast<MSNContact *>( it.current() );
-				if ( c->serverGroups().contains( groupGuid )  )
+				if ( c && c->serverGroups().contains( groupGuid )  )
 				{
 					/** don't do that becasue theses may already have been sent
 					m_notifySocket->removeContact( c->contactId(), groupNumber, MSNProtocol::FL );

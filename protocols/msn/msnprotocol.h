@@ -119,6 +119,25 @@ public:
 		PL     // pending
 	};
 
+	// Enums used to build the Kopete's MSN ClientId.
+	enum MSNClientInformationFields
+	{
+		WindowsMobile = 0x1,
+		InkFormatGIF = 0x04,
+		InkFormatISF = 0x08,
+		SupportWebcam = 0x10,
+		SupportMultiPacketMessaging = 0x20,
+		MSNMobileDevice = 0x40,
+		MSNDirectDevice = 0x80,
+		WebMessenger = 0x100,
+		SupportDirectIM =  0x4000,
+		SupportWinks = 0x8000,
+		MSNC1 = 0x10000000,
+		MSNC2 = 0x20000000,
+		MSNC3 = 0x30000000,
+		MSNC4 = 0x40000000
+	};
+
 	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
@@ -128,6 +147,7 @@ public:
 
 	static MSNProtocol* protocol();
 	static bool validContactId(const QString&);
+	QString clientId();
 
 private slots:
 	void slotSyncContactList();
@@ -135,6 +155,7 @@ private slots:
 private:
 
 	static MSNProtocol *s_protocol;
+	uint m_clientId;
 
 signals:
 	/**

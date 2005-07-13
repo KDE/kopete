@@ -89,6 +89,8 @@ private slots:
 
 	void slotSendNudge();
 
+	void slotNudgeReceived();
+
 private:
 
 	MSNSwitchBoardSocket *m_chatService;

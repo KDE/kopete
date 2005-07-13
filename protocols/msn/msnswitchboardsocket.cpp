@@ -249,9 +249,11 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			QRegExp rx("ID: ([0-9]*)");
 			rx.search(msg);
 			uint dataCastId = rx.cap(1).toUInt();
-			// TODO: Display the nudge !
 			if( dataCastId == 1 )
+			{
 				kdDebug(14140) << k_funcinfo << "Received a nudge !" << endl;
+				emit nudgeReceived();
+			}
 		}
 	}
 	else if(type=="text/plain"   || type.isEmpty() )

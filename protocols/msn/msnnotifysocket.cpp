@@ -932,12 +932,12 @@ void MSNNotifySocket::setStatus( const Kopete::OnlineStatus &status )
 	if( onlineStatus() == Disconnected )
 		m_newstatus = status;
 	else
-		sendCommand( "CHG", statusToString( status ) + " 268435492 " + escape(m_account->pictureObject()) );
+		sendCommand( "CHG", statusToString( status ) + " " + MSNProtocol::protocol()->clientId() + " " + escape(m_account->pictureObject()) );
 }
 
 void MSNNotifySocket::changePublicName( const QString &publicName, const QString &handle )
 {
-	QString tempPublicName = publicName.copy();
+	QString tempPublicName = publicName;
 
 	if( escape(publicName).length() > 387 )
 	{
@@ -952,14 +952,17 @@ void MSNNotifySocket::changePublicName( const QString &publicName, const QString
 	else
 	{
 		MSNContact *currentContact = static_cast<MSNContact *>(m_account->contacts()[handle]);
-		unsigned int id = sendCommand( "SBP", currentContact->guid() + " MFN " + escape( tempPublicName ) );
-		m_tmpHandles[id] = handle;
+		if(currentContact)
+		{
+			unsigned int id = sendCommand( "SBP", currentContact->guid() + " MFN " + escape( tempPublicName ) );
+			m_tmpHandles[id] = handle;
+		}
 	}
 }
 
 void MSNNotifySocket::changePersonalMessage( const QString& type, const QString &personalMessage )
 {
-	QString tempPersonalMessage = personalMessage.copy();
+	QString tempPersonalMessage = personalMessage;
 	
 	//Magic number : 129 characters
 	if( escape(personalMessage).length() > 129 )
