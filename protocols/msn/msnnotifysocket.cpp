@@ -312,11 +312,6 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			
 			sendCommand( "SYN", QString("%1 %2").arg(newSyncTime, lastSyncTime));
 
-			// this is our current user and friendly name
-			// do some nice things with it  :-)
-			QString publicName = unescape( data.section( ' ', 2, 2 ) );
-			emit publicNameChanged( publicName );
-
 			// We are connected start to ping
 			slotSendKeepAlive();
 		}
@@ -365,7 +360,9 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		if( c && c->contactId() != m_account->accountId() )
 		{
 			QString publicName=unescape( data.section( ' ', 2, 2 ) );
-			if (publicName!=c->property( Kopete::Global::Properties::self()->nickName()).value().toString())
+			if ( (publicName!=c->contactId() ||  c->hasProperty(Kopete::Global::Properties::self()->nickName().key())  ) &&
+						 publicName!=c->property( Kopete::Global::Properties::self()->nickName()).value().toString() )
+						 
 				changePublicName(publicName,c->contactId());
 			QString obj=unescape(data.section( ' ', 4, 4 ));
 			c->setObject( obj );
@@ -600,11 +597,6 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			QString prpData = unescape( data.section( ' ', 1, 1 ) ); //SECURITY????????
 			c->setInfo( type, prpData );
 			m_account->configGroup()->writeEntry( type, prpData ); 
-			// Emit publicNameChanged if the type is MFN
-			if( type == "MFN" )
-			{
-				emit publicNameChanged( prpData );
-			}
 		}
 	}
 	else if( cmd == "BLP" )

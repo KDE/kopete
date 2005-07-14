@@ -79,9 +79,6 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 
 	KConfigGroup *config=configGroup();
 
-	QString publicName = config->readEntry(  QString::fromLatin1( "displayName" ) );
-	if ( !publicName.isNull() )
-		myself()->setProperty( Kopete::Global::Properties::self()->nickName() , publicName );
 	m_blockList   = config->readListEntry(  "blockList" ) ;
 	m_allowList   = config->readListEntry(  "allowList" ) ;
 	m_reverseList = config->readListEntry(  "reverseList"  ) ;
@@ -93,6 +90,8 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 	static_cast<MSNContact *>( myself() )->setInfo( "PHH", config->readEntry("PHH") );
 	static_cast<MSNContact *>( myself() )->setInfo( "PHM", config->readEntry("PHM") );
 	static_cast<MSNContact *>( myself() )->setInfo( "PHW", config->readEntry("PHW") );
+	//this is the display name
+	static_cast<MSNContact *>( myself() )->setInfo( "MFN", config->readEntry("MFN") );
 
 	//construct the group list
 	//Before 2003-11-14 the MSN server allowed us to download the group list without downloading the whole contactlist, but it's not possible anymore
@@ -187,8 +186,6 @@ void MSNAccount::createNotificationServer( const QString &host, uint port )
 		SLOT( slotContactRemoved(const QString&, const QString&, const QString&, const QString& ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( statusChanged( const Kopete::OnlineStatus & ) ),
 		SLOT( slotStatusChanged( const Kopete::OnlineStatus & ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( publicNameChanged( const QString& ) ),
-		SLOT( slotPublicNameChanged( const QString& ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( invitedToChat( const QString&, const QString&, const QString&, const QString&, const QString& ) ),
 		SLOT( slotCreateChat( const QString&, const QString&, const QString&, const QString&, const QString& ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( startChat( const QString&, const QString& ) ),
@@ -315,6 +312,12 @@ void MSNAccount::slotDebugRawCommand()
 
 void MSNAccount::slotChangePublicName()
 {
+	if ( !isConnected() )
+	{
+		return;
+		//TODO:  change it anyway, and sync at the next connection
+	}
+		
 	bool ok;
 	QString name = KInputDialog::getText( i18n( "Change Display Name - MSN Plugin" ),
 		i18n( "Enter the new display name by which you want to be visible to your friends on MSN:" ),
@@ -331,16 +334,7 @@ void MSNAccount::slotChangePublicName()
 			return;
 		}
 
-		if ( isConnected() )
-			setPublicName( name );
-		else
-		{
-			// Bypass the protocol, it doesn't work, call the slot
-			// directly. Upon connect the name will be synced.
-			// FIXME: Use a single code path instead!
-			slotPublicNameChanged( name );
-			// m_publicNameSyncMode = SyncToServer;
-		}
+		setPublicName( name );
 	}
 }
 
@@ -456,15 +450,6 @@ void MSNAccount::slotStatusChanged( const Kopete::OnlineStatus &status )
 	}
 }
 
-void MSNAccount::slotPublicNameChanged( const QString& publicName )
-{
-	QString oldNick=myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ;
-	if ( publicName != oldNick )
-	{
-		myself()->setProperty( Kopete::Global::Properties::self()->nickName(), publicName );
-		configGroup()->writeEntry( "displayName" , publicName );
-	}
-}
 
 void MSNAccount::slotPersonalMessageChanged( const QString& personalMessage )
 {
@@ -776,7 +761,10 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 			// Contact exists, update data.
 			// Merging difference between server contact list and Kopete::Contact's contact list into MetaContact's contact-list
 			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
-			c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName );
+			if(!publicName.isEmpty() && publicName!=handle)
+				c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName );
+			else
+				c->removeProperty( Kopete::Global::Properties::self()->nickName() );
 			c->setProperty( MSNProtocol::protocol()->propGuid, contactGuid);
 
 			const QMap<QString, Kopete::Group *> oldServerGroups = c->serverGroups();
@@ -818,7 +806,10 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 			c = new MSNContact( this, handle, metaContact );
 			c->setDeleted(true); //we don't want to sync
 			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
-			c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName );
+			if(!publicName.isEmpty() && publicName!=handle)
+				c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName );
+			else
+				c->removeProperty( Kopete::Global::Properties::self()->nickName() );
 			c->setProperty( MSNProtocol::protocol()->propGuid, contactGuid );
 
 			for ( QStringList::Iterator it = contactGroups.begin();
@@ -875,7 +866,10 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& list, c
 			Kopete::MetaContact *m= m_addWizard_metaContact ? m_addWizard_metaContact :  new Kopete::MetaContact();
 
 			MSNContact *c = new MSNContact( this, handle, m );
-			c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName);
+			if(!publicName.isEmpty() && publicName!=handle)
+				c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName );
+			else
+				c->removeProperty( Kopete::Global::Properties::self()->nickName() );
 			c->setProperty( MSNProtocol::protocol()->propGuid, contactGuid );
 			// Add the new contact to the group he belongs.
 			if ( tmp_addNewContactToGroup.contains(handle) )

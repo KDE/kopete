@@ -130,7 +130,6 @@ private slots:
 	// notifySocket related
 	void slotStatusChanged( const Kopete::OnlineStatus &status );
 	void slotNotifySocketClosed();
-	void slotPublicNameChanged(const QString& publicName);
 	void slotPersonalMessageChanged(const QString& personalMessage);
 	void slotContactRemoved(const QString& handle, const QString& list, const QString& contactGuid, const QString& groupGuid );
 	void slotContactAdded(const QString& handle, const QString& list, const QString& publicName, const QString& contactGuid, const QString &groupGuid );

@@ -92,7 +92,6 @@ signals:
 	void invitedToChat(const QString&, const QString&, const QString&, const QString&, const QString& );
 	void startChat( const QString&, const QString& );
 
-	void publicNameChanged( const QString& );
 	void statusChanged( const Kopete::OnlineStatus &newStatus );
 
 	void hotmailSeted(bool) ;
