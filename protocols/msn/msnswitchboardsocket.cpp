@@ -773,13 +773,15 @@ Kopete::Message &MSNSwitchBoardSocket::parseCustomEmoticons(Kopete::Message &kms
 			message.replace( QRegExp(QString::fromLatin1( "(^|[\\W\\s]|%1)(%2)(?!\\w)" ).arg(em).arg(em)),
 								QString::fromLatin1("\\1<img align=\"center\" width=\"") +
 			#endif
-			message.replace( es,
+			//match any occurence which is not in a html tag.
+			message.replace( QRegExp(QString::fromLatin1("%1(?![^><]*>)").arg(QRegExp::escape(es))),
 						QString::fromLatin1("<img align=\"center\" width=\"") +
 						QString::number(iconImage.width()) +
 						QString::fromLatin1("\" height=\"") +
 						QString::number(iconImage.height()) +
 						QString::fromLatin1("\" src=\"") + imgPath +
 						QString::fromLatin1("\" title=\"") + es +
+						QString::fromLatin1("\" alt=\"") + es +
 						QString::fromLatin1( "\"/>" ) );
 			kmsg.setBody(message, Kopete::Message::RichText);
 		}
