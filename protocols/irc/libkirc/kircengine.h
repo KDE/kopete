@@ -222,13 +222,7 @@ signals:
 	void successfullyChangedNick(const QString &, const QString &);
 
 	//ServerContact Signals
-	void incomingMotd(const QString &motd);
 	void incomingNotice(const QString &originating, const QString &message);
-	void incomingHostInfo(const QString &servername, const QString &version,
-		const QString &userModes, const QString &channelModes);
-	void incomingYourHostInfo(const QString &servername, const QString &version,
-		const QString &userModes, const QString &channelModes);
-	void incomingConnectString(const QString &clients);
 
 	//Channel Contact Signals
 	void incomingTopicChange(const QString &, const QString &, const QString &);
@@ -236,15 +230,9 @@ signals:
 	void incomingJoinedChannel(const QString &channel,const QString &nick);
 	void incomingPartedChannel(const QString &channel,const QString &nick, const QString &reason);
 	void incomingNamesList(const QString &channel, const QStringList &nicknames);
-	void incomingEndOfNames(const QString &channel);
-	void incomingChannelMode(const QString &channel, const QString &mode, const QString &params);
-	void incomingCannotSendToChannel(const QString  &channel, const QString &message);
-	void incomingChannelModeChange(const QString &channel, const QString &nick, const QString &mode);
-	void incomingChannelHomePage(const QString &channel, const QString &url);
 
 	//Contact Signals
 	void incomingQuitIRC(const QString &user, const QString &reason);
-	void incomingUserModeChange(const QString &nick, const QString &mode);
 
 	//Response Signals
 	void incomingUserOnline(const QString &nick);
@@ -253,43 +241,23 @@ signals:
 	void incomingWhoWasUser(const QString &nickname, const QString &username,
 		const QString &hostname, const QString &realname);
 	void incomingWhoIsServer(const QString &nickname, const QString &server, const QString &serverInfo);
-	void incomingWhoIsOperator(const QString &nickname);
 	void incomingWhoIsIdentified(const QString &nickname);
 	void incomingWhoIsChannels(const QString &nickname, const QString &channel);
 	void incomingWhoIsIdle(const QString &nickname, unsigned long seconds); /* 317 */
 	void incomingSignOnTime(const QString &nickname, unsigned long seconds); /* 317 */
-	void incomingEndOfWhois(const QString &nickname);
-	void incomingEndOfWhoWas(const QString &nickname);
 
 	void incomingWhoReply( const QString &nick, const QString &channel, const QString &user, const QString &host,
 		const QString &server,bool away, const QString &flag, uint hops, const QString &realName );
 
-	void incomingEndOfWho( const QString &query );
-
 	//Error Message Signals
-	void incomingServerLoadTooHigh();
-	void incomingNickInUse(const QString &usingNick);
 	void incomingNickChange(const QString &, const QString &);
-	void incomingFailedServerPassword();
-	void incomingFailedChankey(const QString &);
-	void incomingFailedChanBanned(const QString &);
-	void incomingFailedChanInvite(const QString &);
-	void incomingFailedChanFull(const QString &);
 	void incomingFailedNickOnLogin(const QString &);
-	void incomingNoNickChan(const QString &);
-	void incomingWasNoNick(const QString &);
 
-	//General Signals
-	void incomingUnknown(const QString &);
-	void incomingUnknownCtcp(const QString &);
 	void incomingKick(const QString &channel, const QString &nick,
 		const QString &nickKicked, const QString &reason);
 
 	void incomingUserIsAway(const QString &nick, const QString &awayMessage);
 	void incomingListedChan(const QString &chan, uint users, const QString &topic);
-	void incomingEndOfList();
-
-	void incomingCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
 
 private slots:
 	void destroyed(KIRC::Entity *entity);
@@ -364,7 +332,6 @@ private slots:
 	void numericReply_473(KIRC::Message &msg);
 	void numericReply_474(KIRC::Message &msg);
 	void numericReply_475(KIRC::Message &msg);
-
 
 	void CtcpQuery_action(KIRC::Message &msg);
 	void CtcpQuery_clientinfo(KIRC::Message &msg);

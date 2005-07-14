@@ -46,7 +46,7 @@ void Engine::bindNumericReplies()
 	bind(254, this, SLOT(numericReply_254(KIRC::Message &)), 2, 2);
 	bind(255, this, SLOT(numericReply_255(KIRC::Message &)), 1, 1);
 
-	bind(263, this, SLOT(numericReply_263(KIRC::Message &))); // incomingServerLoadTooHigh
+	bind(263, this, SLOT(numericReply_263(KIRC::Message &)));
 	bind(265, this, SLOT(numericReply_265(KIRC::Message &)));
 	bind(266, this, SLOT(numericReply_266(KIRC::Message &)));
 
@@ -82,9 +82,9 @@ void Engine::bindNumericReplies()
 	bind(375, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 );
 	bind(376, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 );
 
-	bind(401, this, SLOT(numericReply_401(KIRC::Message &)), 2, 2); // incomingNoNickChan
+	bind(401, this, SLOT(numericReply_401(KIRC::Message &)), 2, 2);
 //	bind(404, this, SLOT(numericReply_404(KIRC::Message &)), 2, 2); // incomingCannotSendToChannel
-	bind(406, this, SLOT(numericReply_406(KIRC::Message &)), 2, 2); // incomingWasNoNick
+	bind(406, this, SLOT(numericReply_406(KIRC::Message &)), 2, 2);
 	bind(422, this, SLOT(numericReply_422(KIRC::Message &)), 1, 1);
 	bind(433, this, SLOT(numericReply_433(KIRC::Message &)), 2, 2);
 //	bind(442, this, SLOT(numericReply_442(KIRC::Message &)), 2, 2); // incomingCannotSendToChannel
@@ -178,7 +178,7 @@ void Engine::numericReply_251(Message &msg)
  */
 void Engine::numericReply_252(Message &msg)
 {
-	receivedServerMessage(msg, i18n("There are %1 operators online").arg(msg.arg(1)));
+	receivedServerMessage(msg, i18n("There are %1 operators online.").arg(msg.arg(1)));
 }
 
 /* 253: "<integer> :unknown connection(s)"
@@ -186,7 +186,7 @@ void Engine::numericReply_252(Message &msg)
  */
 void Engine::numericReply_253(Message &msg)
 {
-	receivedServerMessage(msg, i18n("There are %1 unknown connections").arg(msg.arg(1)));
+	receivedServerMessage(msg, i18n("There are %1 unknown connections.").arg(msg.arg(1)));
 }
 
 /* 254: "<integer> :channels formed"
@@ -194,7 +194,7 @@ void Engine::numericReply_253(Message &msg)
  *  */
 void Engine::numericReply_254(Message &msg)
 {
-	receivedServerMessage(msg, i18n("There are %1 channel formed").arg(msg.arg(1)));
+	receivedServerMessage(msg, i18n("There are %1 channel formed.").arg(msg.arg(1)));
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"
@@ -208,9 +208,9 @@ void Engine::numericReply_255(Message &msg)
 /* 263: "<command> :Please wait a while and try again."
  * Server is too busy.
  */
-void Engine::numericReply_263(Message &)
+void Engine::numericReply_263(Message &msg)
 {
-	emit incomingServerLoadTooHigh();
+	receivedServerMessage(msg, i18n("Server was too busy to execute %1.").arg(msg.arg(1)));
 }
 
 /* 265: ":Current local  users: <integer>  Max: <integer>"
@@ -259,6 +259,7 @@ void Engine::numericReply_305(Message &msg)
 	EntityPtr self = this->self();
 	self->setAwayMessage(QString::null);
 //	self->setModes("-a");
+	receivedServerMessage(msg, i18n("You are no longer marked as being away."));
 }
 
 
@@ -268,6 +269,7 @@ void Engine::numericReply_306(Message &msg)
 {
 	EntityPtr self = this->self();
 //	self->setModes("+a");
+	receivedServerMessage(msg, i18n("You have been marked as being away."));
 }
 
 /* 307: ":is a registered nick"
@@ -275,7 +277,7 @@ void Engine::numericReply_306(Message &msg)
  */
 void Engine::numericReply_307(Message &msg)
 {
-//	emit incomingWhoiIsUserNickIsRegistered(msg.arg(1));
+	receivedServerMessage(msg, i18n("%1 is a registered nick.").arg(msg.arg(1)));
 }
 
 /* 311: "<nick> <user> <host> * :<real name>"
@@ -299,6 +301,7 @@ void Engine::numericReply_312(Message &msg)
  */
 void Engine::numericReply_313(Message &msg)
 {
+	receivedServerMessage(msg, i18n("%1 is an IRC operator.").arg(msg.arg(1)));
 }
 
 /* 314: "<nick> <user> <host> * :<real name>"
@@ -309,9 +312,12 @@ void Engine::numericReply_314(Message &msg)
 	emit incomingWhoWasUser(msg.arg(1), msg.arg(2), msg.arg(3), msg.suffix());
 }
 
+/* 315: "<name> :End of WHO list"
+ * End of WHO list.
+ */
 void Engine::numericReply_315(Message &msg)
 {
-	emit incomingEndOfWho(msg.arg(1));
+	receivedServerMessage(msg);
 }
 
 /* RFC say: "<nick> <integer> :seconds idle"
@@ -330,7 +336,7 @@ void Engine::numericReply_317(Message &msg)
  */
 void Engine::numericReply_318(Message &msg)
 {
-	emit incomingEndOfWhois(msg.arg(1));
+	emit receivedServerMessage(msg);
 }
 
 /* 319: "<nick> :{[@|+]<channel><space>}"
@@ -374,15 +380,14 @@ void Engine::numericReply_323(Message &msg)
  */
 void Engine::numericReply_324(Message &msg)
 {
-	emit incomingChannelMode(msg.arg(1), msg.arg(2), msg.arg(3));
+//	emit incomingChannelMode(msg.arg(1), msg.arg(2), msg.arg(3));
 }
 
 /* 328: "<channel> <mode> <mode params>"
  */
 void Engine::numericReply_328(Message &msg)
 {
-	kdDebug(14120) << k_funcinfo << endl;
-	emit incomingChannelHomePage(msg.arg(1), msg.suffix());
+//	emit incomingChannelHomePage(msg.arg(1), msg.suffix());
 }
 
 /* 329: "%s %lu"
@@ -455,7 +460,7 @@ void Engine::numericReply_353(Message &msg)
  */
 void Engine::numericReply_366(Message &msg)
 {
-	emit incomingEndOfNames(msg.arg(1));
+	emit receivedServerMessage(msg);
 }
 
 /* 369: "<nick> :End of WHOWAS"
@@ -463,6 +468,7 @@ void Engine::numericReply_366(Message &msg)
  */
 void Engine::numericReply_369(Message &msg)
 {
+	emit receivedServerMessage(msg);
 }
 
 /* 372: ":- <text>"
@@ -470,7 +476,8 @@ void Engine::numericReply_369(Message &msg)
  */
 void Engine::numericReply_372(Message &msg)
 {
-	emit incomingMotd(msg.suffix());
+	#warning FIXME remove the "- " in front.
+	receivedServerMessage(msg);
 }
 
 /* 375: ":- <server> Message of the day - "
@@ -482,7 +489,7 @@ void Engine::numericReply_372(Message &msg)
  */
 void Engine::numericReply_376(Message &msg)
 {
-//	emit incomingMotd(msg.suffix());
+	receivedServerMessage(msg);
 }
 
 /* 401: "<nickname> :No such nick/channel"
@@ -541,7 +548,7 @@ void Engine::numericReply_433(Message &msg)
 void Engine::numericReply_464(Message &/*msg*/)
 {
 	/* Server need pass.. Call disconnect*/
-	emit incomingFailedServerPassword();
+//	emit incomingFailedServerPassword();
 }
 
 /* 465: ":You are banned from this server"
@@ -552,7 +559,7 @@ void Engine::numericReply_464(Message &/*msg*/)
  */
 void Engine::numericReply_471(Message &msg)
 {
-	emit incomingFailedChanFull(msg.arg(1));
+	receivedServerMessage(msg, i18n("Cannot join %1, channel is full.").arg(msg.arg(1)) );
 }
 
 /* 472: "<char> :is unknown mode char to me for <channel>"
@@ -563,7 +570,7 @@ void Engine::numericReply_471(Message &msg)
  */
 void Engine::numericReply_473(Message &msg)
 {
-	emit incomingFailedChanInvite(msg.arg(1));
+	receivedServerMessage(msg, i18n("Cannot join %1, channel is invite only.").arg(msg.arg(1)) );
 }
 
 /* 474: "<channel> :Cannot join channel (+b)"
@@ -571,7 +578,7 @@ void Engine::numericReply_473(Message &msg)
  */
 void Engine::numericReply_474(Message &msg)
 {
-	emit incomingFailedChanBanned(msg.arg(1));
+	receivedServerMessage(msg, i18n("Cannot join %1, you are banned from that channel.").arg(msg.arg(1)) );
 }
 
 /* 475: "<channel> :Cannot join channel (+k)"
@@ -579,7 +586,7 @@ void Engine::numericReply_474(Message &msg)
  */
 void Engine::numericReply_475(Message &msg)
 {
-	emit incomingFailedChankey(msg.arg(1));
+	receivedServerMessage(msg, i18n("Cannot join %1, wrong channel key was given.").arg(msg.arg(1)) );
 }
 
 /* 476: "<channel> :Bad Channel Mask"

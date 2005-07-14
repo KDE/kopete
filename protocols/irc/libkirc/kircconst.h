@@ -43,6 +43,7 @@ namespace KIRC
 	enum MessageType
 	{
 		ErrorMessage = -1,
+
 		PrivateMessage,
 		InfoMessage,
 

@@ -154,10 +154,13 @@ void Engine::mode(Message &msg)
 {
 	QStringList args = msg.argList();
 	args.pop_front();
-	if (Entity::isChannel(msg.arg(0)))
-		emit incomingChannelModeChange(msg.arg(0), msg.prefix(), args.join(" "));
-	else
-		emit incomingUserModeChange(msg.prefix(), args.join(" "));
+/*
+	EntityPtr *fromEntity = msg.entityFromPrefix();
+	EntityPtr *toEntity = msg.entityFromArg(0)
+
+	emit receivedMessage(Info, fromEntity, KIRC::EntityPtrList::null, i18n(""));
+	toEntity->setModes(args.join(" "));
+*/
 }
 
 void Engine::motd(const QString &server)
