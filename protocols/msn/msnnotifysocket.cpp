@@ -301,16 +301,15 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			// FIXME yyyy-mm-ddThh:mm:ss.xxxxxxx-07:00
 			// the xxxxxxx might be the serial???
 			// Set the new synchronization timestamp.
-			newSyncTime = QString("%1%2").arg(now.toString(Qt::ISODate), ".0000000-07:00");
+			newSyncTime = now.toString(Qt::ISODate) + ".0000000-07:00";
 			
 			if (lastSyncTime.isEmpty())
 			{
 				// If the last sync time is unknown, last sync time is now.
-				lastSyncTime = QString("%1%2").arg(now.toString(Qt::ISODate), ".0000000-07:00");
-				newSyncTime = lastSyncTime;
+				lastSyncTime = newSyncTime;
 			}
 			
-			sendCommand( "SYN", QString("%1 %2").arg(newSyncTime, lastSyncTime));
+			sendCommand( "SYN", newSyncTime +" " + lastSyncTime);
 
 			// We are connected start to ping
 			slotSendKeepAlive();
@@ -428,20 +427,6 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		emit invitedToChat( QString::number( id ), data.section( ' ', 0, 0 ), data.section( ' ', 2, 2 ),
 			data.section( ' ', 3, 3 ), unescape( data.section( ' ', 4, 4 ) ) );
 	}
-	/*else if( cmd == "ADD" ) // MSNP11 deprecated
-	{
-		QString msnId = data.section( ' ', 2, 2 );
-		uint group;
-		if( data.section( ' ', 0, 0 ) == "FL" )
-			group = data.section( ' ', 4, 4 ).toUInt();
-		else
-			group = 0;
-
-		// handle, publicName, List,  group
-		emit contactAdded( msnId, unescape( data.section( ' ', 2, 2 ) ),
-			data.section( ' ', 0, 0 ), group );
-		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 1, 1 ) );
-	}*/
 	else if( cmd == "ADC" )
 	{
 		QString msnId, list, publicName, contactGuid, groupGuid;
@@ -528,19 +513,6 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			}
 		}
 	}
-	/*else if( cmd == "REA" ) MSNP11 deprecated
-	{
-		QString handle=data.section( ' ', 1, 1 );
-		if( handle == m_account->accountId() )
-			emit publicNameChanged( unescape( data.section( ' ', 2, 2 ) ) );
-		else
-		{
-			MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ handle ] );
-			if( c )
-				c->setProperty( Kopete::Global::Properties::self()->nickName() , unescape( data.section( ' ', 2, 2 ) ) );
-		}
-		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
-	}*/
 	else if( cmd == "LSG" )
 	{
 		// New Format: LSG Friends xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
@@ -734,20 +706,6 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 		}
 	}
-// 	else if(msg.contains("text/x-msmsgsinitialemailnotification"))
-// 	{
-// 		 //this sends the server if we are going online, contains the unread message count
-// 		QString m = msg.right(msg.length() - msg.find("Inbox-Unread:") );
-// 		m = m.left(msg.find("\r\n"));
-// 		mailCount = m.right(m.length() -m.find(" ")-1).toUInt();
-// 
-// 		if(mailCount > 0 )
-// 		{
-// 			QObject::connect(KNotification::event( "msn_mail", i18n( "You have one unread message in your MSN inbox.",
-// 					"You have %n unread messages in your MSN inbox.", mailCount ), 0 , 0 , i18n( "Open &Inbox..." ) ),
-// 				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
-// 		}
-// 	}
 	else if(msg.contains("text/x-msmsgsactivemailnotification"))
 	{
 		 //this sends the server if mails are deleted
@@ -764,6 +722,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 		mailCount++;
 
+		//TODO:  it is also possible to get the subject  (but warning about the encoding)
 		QObject::connect(KNotification::event( "msn_mail",i18n( "You have one new email from %1 in your MSN inbox." ).arg(m),
 										0 , 0 , i18n( "Open &Inbox..." ) ),
 				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
