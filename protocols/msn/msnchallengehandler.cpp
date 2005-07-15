@@ -24,19 +24,19 @@
 #include <kdebug.h>
 #include <kmdcodec.h>
 
-MsnChallengeHandler::MsnChallengeHandler(const QString& productKey, const QString& productId)
+MSNChallengeHandler::MSNChallengeHandler(const QString& productKey, const QString& productId)
 {
 	m_productKey = productKey;
 	m_productId  = productId;
 }
 
 
-MsnChallengeHandler::~MsnChallengeHandler()
+MSNChallengeHandler::~MSNChallengeHandler()
 {
 	kdDebug(14140) << k_funcinfo << endl;
 }
 
-QString MsnChallengeHandler::computeHash(const QString& challengeString)
+QString MSNChallengeHandler::computeHash(const QString& challengeString)
 {
   	// Step One: THe MD5 Hash.
 
@@ -98,7 +98,7 @@ QString MsnChallengeHandler::computeHash(const QString& challengeString)
 	return (DWordUpper + DWordLower);
 }
 
-Q_LLONG MsnChallengeHandler::createHashKey(const QValueVector<Q_INT32>& md5Integers,
+Q_LLONG MSNChallengeHandler::createHashKey(const QValueVector<Q_INT32>& md5Integers,
 	const QValueVector<Q_INT32>& challengeIntegers)
 {
 	kdDebug(14140) << k_funcinfo << "Creating 64-bit key." << endl;
@@ -132,7 +132,7 @@ Q_LLONG MsnChallengeHandler::createHashKey(const QValueVector<Q_INT32>& md5Integ
 	return key;
 }
 
-QString MsnChallengeHandler::hexSwap(const QString& in)
+QString MSNChallengeHandler::hexSwap(const QString& in)
 {
 	QString sHex = in, swapped;
 	while(sHex.length() > 0)
@@ -143,7 +143,7 @@ QString MsnChallengeHandler::hexSwap(const QString& in)
 	return swapped;
 }
 
-QString MsnChallengeHandler::productId()
+QString MSNChallengeHandler::productId()
 {
 	return m_productId;
 }

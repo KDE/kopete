@@ -33,7 +33,7 @@ class MSNDispatchSocket;
 class MSNAccount;
 class KTempFile;
 class MSNSecureLoginHandler;
-class MsnChallengeHandler;
+class MSNChallengeHandler;
 
 /**
  * @author Olaf Lueg
@@ -175,7 +175,7 @@ private:
 	QString m_localIP;
 	MSNSecureLoginHandler *m_secureLoginHandler;
 
-	MsnChallengeHandler *m_challengeHandler;
+	MSNChallengeHandler *m_challengeHandler;
 	QTimer *m_keepaliveTimer;
 	
 	bool m_ping;

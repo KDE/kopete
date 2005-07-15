@@ -28,12 +28,12 @@
  *
  * @author Gregg Edghill
  */
-class MsnChallengeHandler : public QObject
+class MSNChallengeHandler : public QObject
 {
 Q_OBJECT
 public:
-	MsnChallengeHandler(const QString& productKey, const QString& productId);
-    ~MsnChallengeHandler();
+	MSNChallengeHandler(const QString& productKey, const QString& productId);
+    ~MSNChallengeHandler();
 
 	/**
 	 * Computes the response hash string for the specified challenge string.

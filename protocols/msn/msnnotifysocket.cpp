@@ -55,7 +55,7 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 {
 	m_newstatus = MSNProtocol::protocol()->NLN;
 	m_secureLoginHandler=0L;
-	m_challengeHandler = new MsnChallengeHandler("YMM8C_H7KCQ2S_KL", "PROD0090YUAUV{2B");
+	m_challengeHandler = new MSNChallengeHandler("YMM8C_H7KCQ2S_KL", "PROD0090YUAUV{2B");
 
 	m_isHotmailAccount=false;
 	m_ping=false;
