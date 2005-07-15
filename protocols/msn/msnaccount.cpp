@@ -357,20 +357,10 @@ void MSNAccount::slotChangePersonalMessage()
 			return;
 		}
 
-		if ( isConnected() )
-		{
-			// The placeholder is there because next are the
-			// Office, Game and Music features.
-			setPersonalMessage( "placeholder", message );
-		}
-		else
-		{
-			// Bypass the protocol, it doesn't work, call the slot
-			// directly. Upon connect the name will be synced.
-			// FIXME: Use a single code path instead!
-			slotPersonalMessageChanged( message );
-			// m_publicNameSyncMode = SyncToServer;
-		}
+		// The placeholder is there because next are the
+		// Office, Game and Music features.
+		setPersonalMessage( "placeholder", message );
+
 	}
 }
 
@@ -474,6 +464,10 @@ void MSNAccount::setPersonalMessage( const QString &type, const QString &persona
 	if ( m_notifySocket )
 	{
 		m_notifySocket->changePersonalMessage( QString::null, personalMessage );
+	}
+	else
+	{
+		slotPersonalMessageChanged( personalMessage );
 	}
 }
 
@@ -1198,7 +1192,7 @@ void MSNAccount::slotGlobalIdentityChanged( const QString &key, const QVariant &
 	
 		if(newNick != oldNick)
 		{
-			setPublicName(myself()->metaContact()->displayName());
+			setPublicName( value.toString() );
 		}
 	}
 	else if(key == Kopete::Global::Properties::self()->photo().key())

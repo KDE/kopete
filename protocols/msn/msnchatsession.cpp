@@ -39,6 +39,7 @@
 #include "kopetechatsessionmanager.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
+#include "kopeteutils.h"
 #include "kopeteview.h"
 
 #include "msncontact.h"
@@ -648,9 +649,10 @@ void MSNChatSession::slotNudgeReceived()
 {
 	// FIXME: Better display of the nudge.
 	// FIXME: WHhen nudge is the first received message, you can't see your own message you send before the others send you a message.
-	QString nudgeBody = i18n( "You have received a nudge !" );
+	QString nudgeBody = i18n( "You have received a nudge!" );
 	Kopete::Message msg = Kopete::Message(myself(), members(), nudgeBody, Kopete::Message::Internal, Kopete::Message::PlainText );
 	appendMessage( msg );
+	Kopete::Utils::notifyBuzz( myself()->account(), nudgeBody );
 }
 #include "msnchatsession.moc"
 

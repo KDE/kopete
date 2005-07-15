@@ -782,12 +782,32 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 	if(!m_tmpLastHandle.isNull())
 	{
-		QRegExp regex("^<Data><PSM>(.*)</PSM><CurrentMedia>(.*)</CurrentMedia></Data>$");
-		regex.search(msg);
-		MSNContact *contact = static_cast<MSNContact*>(m_account->contacts()[ m_tmpLastHandle ]);
-		if(contact){
-			contact->setProperty(MSNProtocol::protocol()->propPersonalMessage, unescape(regex.cap(1)));
-			// TODO Current Media
+		QString personalMessage;
+		QDomDocument psm;
+		if( psm.setContent(msg) )
+		{
+			// Get the first child of the xml "document";
+			QDomElement psmElement = psm.documentElement().firstChild().toElement();
+	
+			while( !psmElement.isNull() )
+			{
+				if(psmElement.tagName() == QString::fromUtf8("PSM"))
+				{
+					personalMessage = psmElement.text();
+					kdDebug(14140) << k_funcinfo << "Personnal Message received: " << personalMessage << endl;
+				}
+				else if(psmElement.tagName() == QString::fromUtf8("CurrentMedia"))
+				{
+					//TODO: Process CurrentMedia
+				}
+				psmElement = psmElement.nextSibling().toElement();
+			}
+	
+			MSNContact *contact = static_cast<MSNContact*>(m_account->contacts()[ m_tmpLastHandle ]);
+			if(contact)
+			{
+				contact->setProperty(MSNProtocol::protocol()->propPersonalMessage, personalMessage);
+			}
 		}
 		m_tmpLastHandle = QString::null;
 	}
@@ -922,10 +942,19 @@ void MSNNotifySocket::changePersonalMessage( const QString& type, const QString 
 		tempPersonalMessage = personalMessage.left(129);
 	}
 
-	// TODO : Music type, Office type. Integrate with KOffice and the NowListening thingy.
-	QString xmlMessageToSend = "<Data><PSM>"+escape(personalMessage)+"</PSM><CurrentMedia></CurrentMedia></Data>";
+	QDomDocument xmlMessage;
+	xmlMessage.appendChild( xmlMessage.createElement( "Data" ) );
+	
+	QDomElement psm = xmlMessage.createElement("PSM");
+	psm.appendChild( xmlMessage.createTextNode( tempPersonalMessage ) );
+	xmlMessage.documentElement().appendChild( psm );
 
-	unsigned int id = sendCommand("UUX","",true, xmlMessageToSend.utf8(), false);
+	// TODO : Music type, Office type. Integrate with KOffice and the NowListening thingy.
+	QDomElement currentMedia = xmlMessage.createElement("CurrentMedia");
+	currentMedia.appendChild( xmlMessage.createTextNode( "" ) );
+	xmlMessage.documentElement().appendChild( currentMedia );
+
+	unsigned int id = sendCommand("UUX","",true, xmlMessage.toString().utf8(), false);
 	m_tmpHandles[id] = m_account->accountId();
 
 }
