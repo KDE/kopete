@@ -21,6 +21,7 @@
 #define MSNCHALLENGEHANDLER_H
 
 #include <qobject.h>
+#include <qvaluevector.h>
 
 /**
  * Provides a simple way to compute a msn challenge response hash key.
@@ -35,9 +36,9 @@ public:
     ~MsnChallengeHandler();
 
 	/**
-	 *Computes the response hash value for the specified challenge string.
+	 * Computes the response hash string for the specified challenge string.
 	 */
-    QString computeHash(const QString& challenge);
+    QString computeHash(const QString& challengeString);
 
 	/**
 	 * Returns the product id used by the challenge handler.
@@ -45,6 +46,12 @@ public:
     QString productId();
     
 private:
+
+	/**
+	 * Creates a 64-bit hash key.
+	 */
+	 Q_LLONG createHashKey(const QValueVector<Q_INT32>& md5Integers, const QValueVector<Q_INT32>& challengeIntegers);
+	 
 	/**
 	 * Swaps the bytes in a hex string.
 	 */
