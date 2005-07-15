@@ -219,46 +219,6 @@ signals:
 				const KIRC::EntityPtrList &to,
 				const QString &msg);
 
-	void successfullyChangedNick(const QString &, const QString &);
-
-	//ServerContact Signals
-	void incomingNotice(const QString &originating, const QString &message);
-
-	//Channel Contact Signals
-	void incomingTopicChange(const QString &, const QString &, const QString &);
-	void incomingExistingTopic(const QString &, const QString &);
-	void incomingJoinedChannel(const QString &channel,const QString &nick);
-	void incomingPartedChannel(const QString &channel,const QString &nick, const QString &reason);
-	void incomingNamesList(const QString &channel, const QStringList &nicknames);
-
-	//Contact Signals
-	void incomingQuitIRC(const QString &user, const QString &reason);
-
-	//Response Signals
-	void incomingUserOnline(const QString &nick);
-	void incomingWhoIsUser(const QString &nickname, const QString &username,
-		const QString &hostname, const QString &realname);
-	void incomingWhoWasUser(const QString &nickname, const QString &username,
-		const QString &hostname, const QString &realname);
-	void incomingWhoIsServer(const QString &nickname, const QString &server, const QString &serverInfo);
-	void incomingWhoIsIdentified(const QString &nickname);
-	void incomingWhoIsChannels(const QString &nickname, const QString &channel);
-	void incomingWhoIsIdle(const QString &nickname, unsigned long seconds); /* 317 */
-	void incomingSignOnTime(const QString &nickname, unsigned long seconds); /* 317 */
-
-	void incomingWhoReply( const QString &nick, const QString &channel, const QString &user, const QString &host,
-		const QString &server,bool away, const QString &flag, uint hops, const QString &realName );
-
-	//Error Message Signals
-	void incomingNickChange(const QString &, const QString &);
-	void incomingFailedNickOnLogin(const QString &);
-
-	void incomingKick(const QString &channel, const QString &nick,
-		const QString &nickKicked, const QString &reason);
-
-	void incomingUserIsAway(const QString &nick, const QString &awayMessage);
-	void incomingListedChan(const QString &chan, uint users, const QString &topic);
-
 private slots:
 	void destroyed(KIRC::Entity *entity);
 
@@ -324,9 +284,11 @@ private slots:
 	void numericReply_376(KIRC::Message &msg);
 
 	void numericReply_401(KIRC::Message &msg);
+	void numericReply_404(KIRC::Message &msg);
 	void numericReply_406(KIRC::Message &msg);
 	void numericReply_422(KIRC::Message &msg);
 	void numericReply_433(KIRC::Message &msg);
+	void numericReply_442(KIRC::Message &msg);
 	void numericReply_464(KIRC::Message &msg);
 	void numericReply_471(KIRC::Message &msg);
 	void numericReply_473(KIRC::Message &msg);

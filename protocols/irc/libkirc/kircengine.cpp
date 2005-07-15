@@ -238,61 +238,49 @@ void Engine::writeMessage(const QString &rawMsg, QTextCodec *codec)
 	writeRawMessage(codec->fromUnicode(rawMsg));
 }
 /*
-void Engine::slotReadyRead()
+void Engine::slotReceivedMessage( const KIRC::Message &msg )
 {
-	// This condition is buggy when the peer server
-	// close the socket unexpectedly
-	bool parseSuccess;
+	KIRC::MessageRedirector *mr;
+	QStringList errors;
 
-//	if (m_socket->state() == KSocketBase::Connected && m_socket->canReadLine())
-	if (m_socket->canReadLine())
+	if (msg.isNumeric())
 	{
-		Message msg = Message::parse(this, &parseSuccess);
-		if (parseSuccess)
+		if (m_FailedNickOnLogin)
 		{
-			emit receivedMessage(msg);
-
-			KIRC::MessageRedirector *mr;
-			if (msg.isNumeric())
-//				mr = m_numericCommands[ msg.command().toInt() ];
-				// we do this conversion because some dummy servers sends 1 instead of 001
-				// numbers are stored as "1" instead of "001" to make convertion faster (no 0 pading).
-				mr = m_commands[ QString::number(msg.command().toInt()) ];
-			else
-				mr = m_commands[ msg.command() ];
-
-			if (mr)
-			{
-				QStringList errors = mr->operator()(msg);
-
-				if (!errors.isEmpty())
-				{
-//					kdDebug(14120) << "Method error for line:" << msg.raw() << endl;
-					emit internalError(MethodFailed, msg);
-				}
-			}
-			else if (msg.isNumeric())
-			{
-//				kdWarning(14120) << "Unknown IRC numeric reply for line:" << msg.raw() << endl;
-//				emit incomingUnknown(msg.raw());
-			}
-			else
-			{
-//				kdWarning(14120) << "Unknown IRC command for line:" << msg.raw() << endl;
-				emit internalError(UnknownCommand, msg);
-			}
+			// this is if we had a "Nickname in use" message when connecting and we set another nick.
+			// This signal emits that the nick was accepted and we are now logged in
+			emit successfullyChangedNick(m_Nickname, m_PendingNick);
+			m_Nickname = m_PendingNick;
+			m_FailedNickOnLogin = false;
 		}
-		else
-		{
-//			emit incomingUnknown(msg.raw());
-			emit internalError(ParsingFailed, msg);
-		}
+//		mr = m_numericCommands[ msg.command().toInt() ];
+		// we do this conversion because some dummy servers sends 1 instead of 001
+		// numbers are stored as "1" instead of "001" to make convertion faster (no 0 pading).
+		mr = m_commands[ QString::number(msg.command().toInt()) ];
+	}
+	else
+		mr = m_commands[ msg.command() ];
 
-		QTimer::singleShot( 0, this, SLOT( slotReadyRead() ) );
+	if (mr)
+	{
+		errors = mr->operator()(msg);
+	}
+	else if (msg.isNumeric())
+	{
+//		kdWarning(14120) << "Unknown IRC numeric reply for line:" << msg.raw() << endl;
+//		emit incomingUnknown(msg.raw());
+	}
+	else
+	{
+//		kdWarning(14120) << "Unknown IRC command for line:" << msg.raw() << endl;
+		emit internalError(UnknownCommand, msg);
 	}
 
-//	if(m_socket->socketStatus() != KExtendedSocket::connected)
-//		error();
+	if (!errors.isEmpty())
+	{
+//		kdDebug(14120) << "Method error for line:" << msg.raw() << endl;
+		emit internalError(MethodFailed, msg);
+	}
 }
 */
 

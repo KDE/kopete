@@ -83,11 +83,11 @@ void Engine::bindNumericReplies()
 	bind(376, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 );
 
 	bind(401, this, SLOT(numericReply_401(KIRC::Message &)), 2, 2);
-//	bind(404, this, SLOT(numericReply_404(KIRC::Message &)), 2, 2); // incomingCannotSendToChannel
+	bind(404, this, SLOT(numericReply_404(KIRC::Message &)), 2, 2);
 	bind(406, this, SLOT(numericReply_406(KIRC::Message &)), 2, 2);
 	bind(422, this, SLOT(numericReply_422(KIRC::Message &)), 1, 1);
 	bind(433, this, SLOT(numericReply_433(KIRC::Message &)), 2, 2);
-//	bind(442, this, SLOT(numericReply_442(KIRC::Message &)), 2, 2); // incomingCannotSendToChannel
+	bind(442, this, SLOT(numericReply_442(KIRC::Message &)), 2, 2);
 	bind(464, this, SLOT(numericReply_464(KIRC::Message &)), 1, 1);
 	bind(471, this, SLOT(numericReply_471(KIRC::Message &)), 2, 2);
 	bind(473, this, SLOT(numericReply_473(KIRC::Message &)), 2, 2);
@@ -104,15 +104,6 @@ void Engine::bindNumericReplies()
 void Engine::numericReply_001(Message &msg)
 {
 	kdDebug(14121) << k_funcinfo << endl;
-
-	if (m_FailedNickOnLogin)
-	{
-		// this is if we had a "Nickname in use" message when connecting and we set another nick.
-		// This signal emits that the nick was accepted and we are now logged in
-		emit successfullyChangedNick(m_Nickname, m_PendingNick);
-		m_Nickname = m_PendingNick;
-		m_FailedNickOnLogin = false;
-	}
 
 	/* At this point we are connected and the server is ready for us to being taking commands
 	 * although the MOTD comes *after* this.
@@ -234,32 +225,39 @@ void Engine::numericReply_266(Message &msg)
  */
 void Engine::numericReply_301(Message &msg)
 {
-	emit incomingUserIsAway(msg.arg(1), msg.suffix());
-//	Entity entity = msg.entityFromArg(1);
-//	entity->setAwayMessage(msg.suffix);
-//	entity->setMode("+a");
+/*
+	Entity entity = msg.entityFromArg(1);
+	entity->setAwayMessage(msg.suffix);
+	entity->setMode("+a");
+
+	receivedServerMessage(msg);
+*/
 }
 
 /* 303: ":*1<nick> *(" " <nick> )"
  */
 void Engine::numericReply_303(Message &msg)
 {
+/*
 	QStringList nicks = QStringList::split(QRegExp(QChar(' ')), msg.suffix());
 	for(QStringList::Iterator it = nicks.begin(); it != nicks.end(); ++it)
 	{
 		if (!(*it).stripWhiteSpace().isEmpty())
 			emit incomingUserOnline(*it);
 	}
+*/
 }
 
 /* 305: ":You are no longer marked as being away"
  */
 void Engine::numericReply_305(Message &msg)
 {
+/*
 	EntityPtr self = this->self();
 	self->setAwayMessage(QString::null);
 //	self->setModes("-a");
 	receivedServerMessage(msg, i18n("You are no longer marked as being away."));
+*/
 }
 
 
@@ -285,7 +283,7 @@ void Engine::numericReply_307(Message &msg)
  */
 void Engine::numericReply_311(Message &msg)
 {
-	emit incomingWhoIsUser(msg.arg(1), msg.arg(2), msg.arg(3), msg.suffix());
+//	emit incomingWhoIsUser(msg.arg(1), msg.arg(2), msg.arg(3), msg.suffix());
 }
 
 /* 312: "<nick> <server> :<server info>"
@@ -293,7 +291,7 @@ void Engine::numericReply_311(Message &msg)
  */
 void Engine::numericReply_312(Message &msg)
 {
-	emit incomingWhoIsServer(msg.arg(1), msg.arg(2), msg.suffix());
+//	emit incomingWhoIsServer(msg.arg(1), msg.arg(2), msg.suffix());
 }
 
 /* 313: "<nick> :is an IRC operator"
@@ -309,7 +307,7 @@ void Engine::numericReply_313(Message &msg)
  */
 void Engine::numericReply_314(Message &msg)
 {
-	emit incomingWhoWasUser(msg.arg(1), msg.arg(2), msg.arg(3), msg.suffix());
+//	emit incomingWhoWasUser(msg.arg(1), msg.arg(2), msg.arg(3), msg.suffix());
 }
 
 /* 315: "<name> :End of WHO list"
@@ -326,9 +324,11 @@ void Engine::numericReply_315(Message &msg)
  */
 void Engine::numericReply_317(Message &msg)
 {
+/*
 	emit incomingWhoIsIdle(msg.arg(1), msg.arg(2).toULong());
 	if (msg.argsSize()==4)
 		emit incomingSignOnTime(msg.arg(1),msg.arg(3).toULong());
+*/
 }
 
 /* 318: "<nick>{<space><realname>} :End of /WHOIS list"
@@ -344,7 +344,7 @@ void Engine::numericReply_318(Message &msg)
  */
 void Engine::numericReply_319(Message &msg)
 {
-	emit incomingWhoIsChannels(msg.arg(1), msg.suffix());
+//	emit incomingWhoIsChannels(msg.arg(1), msg.suffix());
 }
 
 /* 320:
@@ -352,7 +352,7 @@ void Engine::numericReply_319(Message &msg)
  */
 void Engine::numericReply_320(Message &msg)
 {
-	emit incomingWhoIsIdentified(msg.arg(1));
+//	emit incomingWhoIsIdentified(msg.arg(1));
 }
 
 /* 321: "<channel> :Users  Name" ("Channel :Users  Name")
@@ -365,7 +365,7 @@ void Engine::numericReply_320(Message &msg)
  */
 void Engine::numericReply_322(Message &msg)
 {
-	emit incomingListedChan(msg.arg(1), msg.arg(2).toUInt(), msg.suffix());
+//	emit incomingListedChan(msg.arg(1), msg.arg(2).toUInt(), msg.suffix());
 }
 
 /* 323: ":End of LIST"
@@ -394,14 +394,14 @@ void Engine::numericReply_328(Message &msg)
  * NOTE: What is the meaning of this arguments. DAL-ircd say it's a RPL_CREATIONTIME
  * NOT IN RFC1459 NOR RFC2812
  */
-void Engine::numericReply_329( Message &)
+void Engine::numericReply_329( Message & )
 {
 }
 
 /* 331: "<channel> :No topic is set"
  * Gives the existing topic for a channel after a join.
  */
-void Engine::numericReply_331( Message &)
+void Engine::numericReply_331( Message & )
 {
 //	emit incomingExistingTopic(msg.arg(1), suffix);
 }
@@ -409,9 +409,9 @@ void Engine::numericReply_331( Message &)
 /* 332: "<channel> :<topic>"
  * Gives the existing topic for a channel after a join.
  */
-void Engine::numericReply_332(Message &msg)
+void Engine::numericReply_332( Message &msg )
 {
-	emit incomingExistingTopic(msg.arg(1), msg.suffix());
+//	emit incomingExistingTopic(msg.arg(1), msg.suffix());
 }
 
 /* 333:
@@ -431,6 +431,7 @@ void Engine::numericReply_333( Message &msg )
  */
 void Engine::numericReply_352(Message &msg)
 {
+/*
 	QStringList suffix = QStringList::split( ' ', msg.suffix() );
 
 	emit incomingWhoReply(
@@ -444,6 +445,7 @@ void Engine::numericReply_352(Message &msg)
 		msg.suffix().section(' ', 0, 1 ).toUInt(),
 		msg.suffix().section(' ', 1 )
 	);
+*/
 }
 
 
@@ -452,7 +454,7 @@ void Engine::numericReply_352(Message &msg)
  */
 void Engine::numericReply_353(Message &msg)
 {
-	emit incomingNamesList(msg.arg(2), QStringList::split(' ', msg.suffix()));
+//	emit incomingNamesList(msg.arg(2), QStringList::split(' ', msg.suffix()));
 }
 
 /* 366: "<channel> :End of NAMES list"
@@ -502,12 +504,19 @@ void Engine::numericReply_401(Message &msg)
 //	i18n("The nickname \"%1\" does not exist").arg(nick)
 }
 
+/* 404: "<channel name> :Cannot send to channel"
+ */
+void Engine::numericReply_404(Message &msg)
+{
+	receivedServerMessage(msg, i18n("You cannot send message to channel %2.").arg(msg.arg(1)));
+}
+
 /* 406: "<nickname> :There was no such nickname"
  * Like case 401, but when there *was* no such nickname.
  */
 void Engine::numericReply_406(Message &msg)
 {
-	#warning FIXME 406 MEANS *NEVER*, even before
+	#warning FIXME 406 MEANS *NEVER*, unlike 401
 //	i18n("The channel \"%1\" does not exist").arg(nick)
 //	i18n("The nickname \"%1\" does not exist").arg(nick)
 }
@@ -531,8 +540,8 @@ void Engine::numericReply_433(Message &msg)
 		// This tells us that our nickname is, but we aren't logged in.
 		// This differs because the server won't send us a response back telling us our nick changed
 		// (since we aren't logged in).
-		m_FailedNickOnLogin = true;
-		emit incomingFailedNickOnLogin(msg.arg(1));
+//		m_FailedNickOnLogin = true;
+//		emit incomingFailedNickOnLogin(msg.arg(1));
 	}
 //	else
 //	{
@@ -540,6 +549,13 @@ void Engine::numericReply_433(Message &msg)
 		// but it's already in use
 //		emit incomingNickInUse(msg.arg(1));
 //	}
+}
+
+/* 442: "<channel> :You're not on that channel"
+ */
+void Engine::numericReply_442(Message &msg)
+{
+	receivedServerMessage(msg, i18n("You are not on channel %1.").arg(msg.arg(1)));
 }
 
 /* 464: ":Password Incorrect"

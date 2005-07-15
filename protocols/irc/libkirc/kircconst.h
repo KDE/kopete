@@ -44,8 +44,12 @@ namespace KIRC
 	{
 		ErrorMessage = -1,
 
+		JoinMessage,
+		PartMessage,
+
 		PrivateMessage,
 		InfoMessage,
+		NoticeMessage,
 
 		MessageOfTheDayMessage,
 		MessageOfTheDayCondensedMessage

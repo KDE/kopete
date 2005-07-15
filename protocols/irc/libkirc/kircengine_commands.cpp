@@ -109,10 +109,18 @@ void Engine::join(const QString &name, const QString &key)
  */
 void Engine::join(Message &msg)
 {
+/*
 	if (msg.argsSize()==1)
 		emit incomingJoinedChannel(msg.arg(0), msg.prefix());
 	else
 		emit incomingJoinedChannel(msg.suffix(), msg.prefix());
+
+	emit receivedMessage(
+		JoinMessage,
+		fromEntity,
+		toEntity,
+		i18n(""));
+*/
 }
 
 void Engine::kick(const QString &user, const QString &channel, const QString &reason)
@@ -130,7 +138,14 @@ void Engine::kick(const QString &user, const QString &channel, const QString &re
  */
 void Engine::kick(Message &msg)
 {
+/*
 	emit incomingKick(msg.arg(0), msg.prefix(), msg.arg(1), msg.suffix());
+	emit receivedMessage(
+		PartMessage,
+		fromEntity,
+		toEntity,
+		i18n(""));
+*/
 }
 
 void Engine::list()
@@ -158,7 +173,12 @@ void Engine::mode(Message &msg)
 	EntityPtr *fromEntity = msg.entityFromPrefix();
 	EntityPtr *toEntity = msg.entityFromArg(0)
 
-	emit receivedMessage(Info, fromEntity, KIRC::EntityPtrList::null, i18n(""));
+	emit receivedMessage(
+		Info,
+		fromEntity,
+		KIRC::EntityPtrList::null,
+		i18n(""));
+
 	toEntity->setModes(args.join(" "));
 */
 }
@@ -188,20 +208,27 @@ void Engine::nick(const QString &newNickname)
  */
 void Engine::nick(Message &msg)
 {
-	QString oldNick = msg.prefix().section('!', 0, 0);
-	QString newNick = msg.suffix();
+/*
+	// FIXME: Find better i18n strings
+
+	QString message;
 
 	if (oldNick.lower() == m_Nickname.lower())
 	{
-		emit successfullyChangedNick(oldNick, msg.suffix());
 		m_Nickname = msg.suffix();
+		message = i18n("Your nick has changed from %1 to %2");
 	}
 	else
-		emit incomingNickChange(oldNick, msg.suffix());
+		message = i18n("User nick has changed from %1 to %2");
 
-//	Entity *fromEntity = msg.entityPrefic();
-//	emit receivedMessage(Info, fromEntity, KIRC::EntityPtrList::null, i18n(""));
-//	fromEntity->rename();
+	emit receivedMessage(
+		InfoMessage,
+		msg.entityFromPrefix(),
+		KIRC::EntityPtrList::null,
+		message);
+
+	fromEntity->rename();
+*/
 }
 
 void Engine::notice(const QString &target, const QString &message)
@@ -217,8 +244,17 @@ void Engine::notice(const QString &target, const QString &message)
 
 void Engine::notice(Message &msg)
 {
-	if(!msg.suffix().isEmpty())
-		emit incomingNotice(msg.arg(0), msg.suffix());
+	if (!msg.suffix().isEmpty())
+	{
+/*
+		emit receivedMessage(
+			NoticeMessage,
+			msg.entityFromPrefix(),
+			msg.entityFromArg(0), // shoul allways return myself
+			msg.suffix()
+		);
+*/
+	}
 
 	if(msg.hasCtcpMessage())
 		invokeCtcpCommandOfMessage(m_ctcpReplies, msg);
@@ -242,8 +278,13 @@ void Engine::part(const QString &channel, const QString &reason)
  */
 void Engine::part(Message &msg)
 {
-	kdDebug(14120) << "User parting" << endl;
-	emit incomingPartedChannel(msg.arg(0), msg.prefix(), msg.suffix());
+/*
+	emit receivedMessage(
+		PartMessage,
+		msg.entityFromPrefix(),
+		msg.entityFromArg(0),
+		msg.suffix());
+*/
 }
 
 void Engine::pass(const QString &password)
@@ -319,11 +360,13 @@ void Engine::quit(const QString &reason, bool /*now*/)
 
 void Engine::quit(Message &msg)
 {
-	/* This signal emits when a user quits irc.
-	 */
-	kdDebug(14120) << "User quiting" << endl;
-	emit incomingQuitIRC(msg.prefix(), msg.suffix());
-//	emit receivedMessage(InfoMessage, msg.prefixEntity(), m_server, msg.suffix());
+/*
+	emit receivedMessage(
+		QuitMessage,
+		msg.prefixEntity(),
+		m_server,
+		msg.suffix());
+*/
 }
 
 void Engine::topic(const QString &channel, const QString &topic)
@@ -337,20 +380,28 @@ void Engine::topic(const QString &channel, const QString &topic)
 		);
 }
 
+/* "<channel> [ <topic> ]"
+ * The topic of a channel changed. emit the channel, new topic, and the person who changed it.
+ */
 void Engine::topic(Message &msg)
 {
-	/* The topic of a channel changed. emit the channel, new topic, and the person who changed it.
-	 * "<channel> [ <topic> ]"
-	 */
+/*
 	emit incomingTopicChange(msg.arg(0), msg.prefix(), msg.suffix());
+	emit receivedMessage(
+		QuitMessage,
+		msg.prefixEntity(),
+		m_server,
+		msg.suffix());
+*/
 }
 
+/* RFC1459: "<username> <hostname> <servername> <realname>"
+ * The USER command is used at the beginning of connection to specify
+ * the username, hostname and realname of a new user.
+ * hostname is usualy set to "127.0.0.1"
+ */
 void Engine::user(const QString &newUserName, const QString &hostname, const QString &newRealName)
 {
-	/* RFC1459: "<username> <hostname> <servername> <realname>"
-	* The USER command is used at the beginning of connection to specify
-	* the username, hostname and realname of a new user.
-	* hostname is usualy set to "127.0.0.1" */
 	m_Username = newUserName;
 	m_realName = newRealName;
 
