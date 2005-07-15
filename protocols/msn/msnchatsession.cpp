@@ -39,7 +39,7 @@
 #include "kopetechatsessionmanager.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
-#include "kopeteutils.h"
+//#include "kopeteutils.h"
 #include "kopeteview.h"
 
 #include "msncontact.h"
@@ -652,7 +652,7 @@ void MSNChatSession::slotNudgeReceived()
 	QString nudgeBody = i18n( "You have received a nudge!" );
 	Kopete::Message msg = Kopete::Message(myself(), members(), nudgeBody, Kopete::Message::Internal, Kopete::Message::PlainText );
 	appendMessage( msg );
-	Kopete::Utils::notifyBuzz( myself()->account(), nudgeBody );
+	//Kopete::Utils::notifyBuzz( myself()->account(), nudgeBody );
 }
 #include "msnchatsession.moc"
 
