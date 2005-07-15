@@ -294,22 +294,13 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			m_disconnectReason=Kopete::Account::Unknown;
 
 			// Synchronize with the server.
-			QString newSyncTime, lastSyncTime;
-			QDateTime now = QDateTime::currentDateTime();
-			// Retrieve the last synchronization timestamp.
-			lastSyncTime = m_account->configGroup()->readEntry( "lastsynctime");
-			// FIXME yyyy-mm-ddThh:mm:ss.xxxxxxx-07:00
-			// the xxxxxxx might be the serial???
-			// Set the new synchronization timestamp.
-			newSyncTime = now.toString(Qt::ISODate) + ".0000000-07:00";
+			QString lastSyncTime, lastChange;
 			
-			if (lastSyncTime.isEmpty())
-			{
-				// If the last sync time is unknown, last sync time is now.
-				lastSyncTime = newSyncTime;
-			}
+			// Retrieve the last synchronization timestamp, and last change timestamp.
+			lastSyncTime = m_account->configGroup()->readEntry( "lastsynctime", "0");
+			lastChange = m_account->configGroup()->readEntry("lastchange", "0");
 			
-			sendCommand( "SYN", newSyncTime +" " + lastSyncTime);
+			sendCommand( "SYN", lastChange + " " + lastSyncTime);
 
 			// We are connected start to ping
 			slotSendKeepAlive();
@@ -543,14 +534,17 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	else if( cmd == "SYN" )
 	{
 		// Retrieve the last synchronization timestamp known to the server.
-		QString lastSyncTime = data.section( ' ', 0, 0 );
+		QString lastSyncTime = data.section( ' ', 1, 1 );
 		if( lastSyncTime != m_account->configGroup()->readEntry("lastsynctime") )
 		{
 			// If the server timestamp and the local timestamp are different,
 			// prepare to receive the contact list.
 			emit newContactList();  // remove all contacts datas, msn sends a new contact list
-			m_account->configGroup()->writeEntry( "lastsynctime" , data.section( ' ', 0, 0 ) );
-		}
+			m_account->configGroup()->writeEntry( "lastsynctime" , data.section( ' ', 1, 1 ) );
+			m_account->configGroup()->writeEntry( "lastchange", data.section (' ', 0, 0 ) );
+		}else
+			kdDebug(14140) << k_funcinfo << "Contact list up-to-date." << endl;
+			
 		// set the status
 		setStatus( m_newstatus );
 	}
