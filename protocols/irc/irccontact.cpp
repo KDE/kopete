@@ -57,12 +57,6 @@ IRCContact::IRCContact(IRCAccount *account, KIRC::EntityPtr entity, MetaContact 
 	mMyself.append( static_cast<Contact*>( this ) );
 
 	// KIRC stuff
-	QObject::connect(engine, SIGNAL(incomingNickChange(const QString &, const QString &)),
-			this, SLOT( slotNewNickChange(const QString&, const QString&)));
-	QObject::connect(engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)),
-			this, SLOT(slotNewNickChange(const QString &, const QString &)));
-	QObject::connect(engine, SIGNAL(incomingQuitIRC(const QString &, const QString &)),
-			this, SLOT( slotUserDisconnected(const QString&, const QString&)));
 
 	QObject::connect(engine, SIGNAL(connectionStateChanged(KIRC::ConnectionState)),
 			this, SLOT(updateStatus()));
@@ -229,38 +223,6 @@ void IRCContact::chatSessionDestroyed()
 
 	if (metaContact()->isTemporary() && !isChatting())
 		deleteLater();
-}
-
-void IRCContact::slotUserDisconnected(const QString &user, const QString &reason)
-{
-	if (m_chatSession)
-	{
-		QString nickname = user.section('!', 0, 0);
-		Contact *c = locateUser( nickname );
-		if ( c )
-		{
-			m_chatSession->removeContact(c, i18n("Quit: \"%1\" ").arg(reason), Message::RichText);
-//			c->setOnlineStatus(IRCProtocol::self()->m_UserStatusOffline);
-		}
-	}
-}
-
-void IRCContact::slotNewNickChange(const QString &oldnickname, const QString &newnickname)
-{
-	IRCAccount *account = ircAccount();
-
-	IRCContact *user = static_cast<IRCContact*>( locateUser(oldnickname) );
-	if( user )
-	{
-		user->setNickName( newnickname );
-
-		//If the user is in our contact list, then change the notify list nickname
-//		if (!user->metaContact()->isTemporary())
-//		{
-//			account->contactManager()->removeFromNotifyList( oldnickname );
-//			account->contactManager()->addToNotifyList( newnickname );
-//		}
-	}
 }
 
 void IRCContact::slotSendMsg(Message &message, ChatSession *)

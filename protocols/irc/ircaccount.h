@@ -26,6 +26,7 @@
 
 #include "kopetepasswordedaccount.h"
 
+class IRCAccountPrivate;
 class IRCContact;
 class IRCProtocol;
 
@@ -135,20 +136,12 @@ public:
 	IRCContact *getContact(const QString &name, Kopete::MetaContact *metac=0);
 	IRCContact *getContact(KIRC::EntityPtr entity, Kopete::MetaContact *metac=0);
 
-public slots:
+	virtual bool isConnected();
 
 	virtual KActionMenu *actionMenu();
 
-	virtual void setAway( bool isAway, const QString &awayMessage = QString::null );
-
-	virtual bool isConnected();
-
-	virtual void connectWithPassword( const QString & );
-
-	virtual void disconnect() { quit(); } // REMOVE ME ASAP
-
 	/** Reimplemented from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+	virtual void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
 
 	// Returns the Kopete::Contact of the user
 	IRCContact *mySelf() const;
@@ -156,8 +149,13 @@ public slots:
 	// Returns the Kopete::Contact of the server of the user
 	IRCContact *myServer() const;
 
-	void successfullyChangedNick(const QString &, const QString &);
+public slots:
 
+	virtual void setAway( bool isAway, const QString &awayMessage = QString::null );
+
+	virtual void connectWithPassword( const QString & );
+
+	virtual void disconnect() { quit(); } // REMOVE ME ASAP
 
 public slots:
 	void quit( const QString &quitMessage = QString::null );
@@ -181,35 +179,13 @@ private slots:
 
 	void slotPerformOnConnectCommands();
 
-	void slotFailedServerPassword();
-
 	void slotShowServerWindow();
 
 private:
 	void setupEngine();
 
 private:
-	Kopete::ChatSession *m_manager;
-	QString autoConnect;
-
-	KIRC::Engine *m_engine;
-	IRCNetwork m_network;
-	uint currentHost;
-
-	QValueList<IRCContact *> m_contacts;
-	IRCContact *m_server;
-	IRCContact *m_self;
-
-	Kopete::OnlineStatus m_expectedOnlineStatus;
-	QString m_expectedReason;
-
-	QMap<QString, QString> m_customCtcp;
-	Kopete::ChatSession *m_commandSource;
-
-	Kopete::AwayAction *m_awayAction;
-
-	KAction *m_joinChannelAction;
-	KAction *m_searchChannelAction;
+	IRCAccountPrivate *d;
 };
 
 #endif

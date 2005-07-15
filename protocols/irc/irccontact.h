@@ -114,9 +114,6 @@ private slots:
 
 	void chatSessionDestroyed();
 
-	void slotNewNickChange( const QString &oldnickname, const QString &newnickname);
-	void slotUserDisconnected( const QString &nickname, const QString &reason);
-
 	void deleteContact();
 	void initConversation() {};
 
