@@ -25,7 +25,7 @@
 #include <kdebug.h>
 
 MSNSecureLoginHandler::MSNSecureLoginHandler(const QString &accountId, const QString &password, const QString &authParameters)
- : m_accountId(accountId), m_password(password), m_authentification(authParameters)
+  : m_password(password), m_accountId(accountId), m_authentification(authParameters)
 {
 	
 }
