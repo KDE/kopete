@@ -55,9 +55,9 @@ const QString PSAID_ELEM = QString::fromLatin1( "photoSourceAccountId" );
 class  MetaContact::Private
 { public:
 	Private() :
-		displayNameSource(MetaContact::SourceCustom), photoSource(MetaContact::SourceCustom),
-		displayNameSourceContact(0L),  photoSourceContact(0L), temporary(false), photoSyncedWithKABC(false),
-		onlineStatus(Kopete::OnlineStatus::Offline)
+		photoSource(MetaContact::SourceCustom), displayNameSource(MetaContact::SourceCustom),
+		displayNameSourceContact(0L),  photoSourceContact(0L), temporary(false), onlineStatus(Kopete::OnlineStatus::Offline),
+		photoSyncedWithKABC(false)
 	{}
 
 	QPtrList<Contact> contacts;
@@ -87,6 +87,9 @@ class  MetaContact::Private
 	// Used to set contact source at load.
 	QString nameSourcePID, nameSourceAID, nameSourceCID;
 	QString photoSourcePID, photoSourceAID, photoSourceCID;
+
+	// The photo cache. Reduce disk access and CPU usage.
+	QImage customPhotoCache, contactPhotoCache;
 };
 
 MetaContact::MetaContact()
@@ -652,6 +655,9 @@ KURL MetaContact::customPhoto() const
 void MetaContact::setPhoto( const KURL &url )
 {
 	d->photoUrl = url;
+	// Create the cache for the photo.
+	d->customPhotoCache = photoFromCustom();
+
 	if ( photoSource() == SourceCustom )
 		emit photoChanged();
 }
@@ -667,11 +673,10 @@ QImage MetaContact::photo() const
 	}
 	else if ( photoSource() == SourceContact )
 	{
-		if ( photoSourceContact() != 0L )
-			return photoFromContact(photoSourceContact());
+		return d->contactPhotoCache;
 	}
 
-	return photoFromCustom();
+	return d->customPhotoCache;
 }
 
 QImage MetaContact::photoFromCustom() const
@@ -679,8 +684,6 @@ QImage MetaContact::photoFromCustom() const
 	if ( d->photoUrl.isEmpty() || !d->photoUrl.isValid() )
 		return QImage();
 
-	// FIXME not sure if this is so easy :-P
-	// TODO implement cache
 	return QImage(d->photoUrl.path());
 }
 
@@ -759,6 +762,10 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 {
 	d->photoSourceContact = contact;
 	
+	// Create a cache for the contact photo.
+	if(d->photoSourceContact != 0L)
+		d->contactPhotoCache = photoFromContact(d->photoSourceContact);
+
 	if ( photoSource() == SourceContact )
 	{
 		emit photoChanged();
@@ -803,6 +810,9 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 					setPhotoSyncedWithKABC(true);
 				emit photoChanged();
 			}
+
+			// Update the contact photo cache.
+			d->contactPhotoCache = photoFromContact(subcontact);
 		}
 	}
 }
