@@ -121,13 +121,6 @@ public:
 	void setUserString(const QString &userString);
 	void setSourceString(const QString &sourceString);
 
-	/* Custom CTCP replies handling */
-	inline QString &customCtcp( const QString &s )
-	{ return customCtcpMap[s];  }
-
-	inline void addCustomCtcp( const QString &ctcp, const QString &reply )
-	{ customCtcpMap[ ctcp.lower() ] = reply; }
-
 	KIRC::EntityPtr getEntity(const QString &name);
 	KIRC::EntityPtr server();
 	KIRC::EntityPtr self();
@@ -352,8 +345,6 @@ private:
 //	QIntDict<KIRC::MessageRedirector> m_numericCommands;
 	QDict<KIRC::MessageRedirector> m_ctcpQueries;
 	QDict<KIRC::MessageRedirector> m_ctcpReplies;
-
-	QMap<QString, QString> customCtcpMap;
 };
 
 }

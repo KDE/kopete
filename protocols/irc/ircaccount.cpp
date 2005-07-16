@@ -334,6 +334,7 @@ KIRC::Engine *IRCAccount::engine() const
 
 void IRCAccount::setCustomCtcpReplies( const QMap< QString, QString > &replies ) const
 {
+/*
 	QStringList val;
 	for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
 	{
@@ -342,10 +343,12 @@ void IRCAccount::setCustomCtcpReplies( const QMap< QString, QString > &replies )
 	}
 
 	configGroup()->writeEntry( "CustomCtcp", val );
+*/
 }
 
 const QMap< QString, QString > IRCAccount::customCtcpReplies() const
 {
+/*
 	QMap< QString, QString > replies;
 	QStringList replyList;
 
@@ -355,6 +358,7 @@ const QMap< QString, QString > IRCAccount::customCtcpReplies() const
 		replies[ (*it).section('=', 0, 0 ) ] = (*it).section('=', 1 );
 
 	return replies;
+*/
 }
 
 void IRCAccount::setConnectCommands( const QStringList &commands ) const

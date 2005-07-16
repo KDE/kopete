@@ -124,10 +124,7 @@ bool Engine::CtcpReply_action(Message &msg)
 //	FIXME: the API can now answer to help commands.
 void Engine::CtcpQuery_clientinfo(Message &msg)
 {
-	QString clientinfo = customCtcpMap[ QString::fromLatin1("clientinfo") ];
-
-	if (clientinfo.isNull())
-		clientinfo = QString::fromLatin1("The following commands are supported, but "
+	QString clientinfo = QString::fromLatin1("The following commands are supported, but "
 			"without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING,"
 			"ACTION.");
 
@@ -334,10 +331,7 @@ void Engine::CtcpQuery_time(Message &msg)
 
 void Engine::CtcpQuery_userinfo(Message &msg)
 {
-	QString userinfo = customCtcpMap[ QString::fromLatin1("userinfo") ];
-
-	if (userinfo.isNull())
-		userinfo = m_UserString;
+	QString userinfo = m_UserString;
 
 //	writeCtcpReplyMessage(msg.prefix(), QString::null,
 //			      msg.ctcpMessage().command(), QString::null, userinfo);
@@ -350,11 +344,7 @@ void Engine::CtcpRequest_version(const QString &target)
 
 void Engine::CtcpQuery_version(Message &msg)
 {
-	QString response = customCtcpMap[ QString::fromLatin1("version") ];
-	kdDebug(14120) << "Version check: " << response << endl;
-
-	if (response.isNull())
-		response = m_VersionString;
+	QString response = m_VersionString;
 
 //	writeCtcpReplyMessage(msg.prefix(),
 //		msg.ctcpMessage().command() + " " + response);
