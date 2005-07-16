@@ -207,7 +207,14 @@ void ChatMembersListWidget::slotContactStatusChanged( Kopete::Contact *contact, 
 void ChatMembersListWidget::slotExecute( QListViewItem *item )
 {
 	if ( ContactItem *contactItem = dynamic_cast<ContactItem*>(item ) )
-		contactItem->contact()->execute();
+	{
+		Kopete::Contact *contact=contactItem->contact();
+
+		if(!contact || contact == contact->account()->myself())
+			return;
+				
+		contact->execute();
+	}
 }
 
 QDragObject *ChatMembersListWidget::dragObject()
