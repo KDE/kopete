@@ -904,9 +904,12 @@ void MSNNotifySocket::changePublicName( const QString &publicName, const QString
 {
 	QString tempPublicName = publicName;
 
-	if( escape(publicName).length() > 387 )
+	//The maximum length is 387.  but with utf8 or encodage, each character may be triple
+	//  387/3 = 129   so we make sure the lenght is not logner than 129 char,  even if
+	// it's possible to have longer nicks.
+	if( escape(publicName).length() > 129 )
 	{
-		tempPublicName = publicName.left(387);
+		tempPublicName = publicName.left(129);
 	}
 
 	if( handle.isNull() )
