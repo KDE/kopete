@@ -23,7 +23,7 @@
 #include "msnnotifysocket.h"
 #include "msncontact.h"
 #include "msnaccount.h"
-#include "sslloginhandler.h"
+#include "msnsecureloginhandler.h"
 
 #include <qregexp.h>
 
@@ -49,7 +49,7 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 : MSNSocket( account )
 {
 	m_newstatus = MSNProtocol::protocol()->NLN;
-	m_sslLoginHandler=0l;
+	m_secureLoginHandler=0L;
 
 	m_isHotmailAccount=false;
 	m_ping=false;
@@ -65,7 +65,7 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 
 MSNNotifySocket::~MSNNotifySocket()
 {
-	delete m_sslLoginHandler;
+	delete m_secureLoginHandler;
 	kdDebug(14140) << k_funcinfo << endl;
 }
 
@@ -269,15 +269,13 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		if( data.section( ' ', 1, 1 ) == "S" )
 		{
-			m_sslLoginHandler = new SslLoginHandler();
-			QObject::connect( m_sslLoginHandler, SIGNAL(       loginFailed()        ),
-					 this,            SLOT  (    sslLoginFailed()        ) );
-			QObject::connect( m_sslLoginHandler, SIGNAL(    loginIncorrect()        ),
-					 this,            SLOT  ( sslLoginIncorrect()        ) );
-			QObject::connect( m_sslLoginHandler, SIGNAL(    loginSucceeded(QString) ),
-					 this,            SLOT  ( sslLoginSucceeded(QString) ) );
+			m_secureLoginHandler = new MSNSecureLoginHandler(m_account->accountId(), m_password, data.section( ' ' , 2 , 2 ));
 
-			m_sslLoginHandler->login( data.section( ' ' , 2 , 2 ), m_account->accountId() , m_password );
+			QObject::connect(m_secureLoginHandler, SIGNAL(loginFailed()), this, SLOT(sslLoginFailed()));
+			QObject::connect(m_secureLoginHandler, SIGNAL(loginSuccesful(QString )), this, SLOT(sslLoginSucceeded(QString )));
+
+			m_secureLoginHandler->login();
+
 		}
 		else
 		{
@@ -593,8 +591,9 @@ void MSNNotifySocket::sslLoginIncorrect()
 void MSNNotifySocket::sslLoginSucceeded(QString a)
 {
 	sendCommand("USR" , "TWN S " + a);
-	m_sslLoginHandler->deleteLater();
-	m_sslLoginHandler=0;
+
+	m_secureLoginHandler->deleteLater();
+	m_secureLoginHandler = 0L;
 }
 
 

@@ -29,7 +29,7 @@
 class MSNDispatchSocket;
 class MSNAccount;
 class KTempFile;
-class SslLoginHandler;
+class MSNSecureLoginHandler;
 
 #include <kio/job.h>
 
@@ -168,7 +168,7 @@ private:
 	QString m_sid;
 	QString m_loginTime;
 	QString m_localIP;
-	SslLoginHandler *m_sslLoginHandler;
+	MSNSecureLoginHandler *m_secureLoginHandler;
 
 	QTimer *m_keepaliveTimer;
 
