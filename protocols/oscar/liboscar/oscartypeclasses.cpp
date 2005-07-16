@@ -252,6 +252,7 @@ void Oscar::SSI::setTLVList( QValueList<TLV> list )
 
 void Oscar::SSI::refreshTLVLength()
 {
+	m_tlvLength = 0;
 	QValueList<TLV>::iterator it = m_tlvList.begin();
 	for( ; it != m_tlvList.end(); ++it )
 	{
@@ -262,14 +263,6 @@ void Oscar::SSI::refreshTLVLength()
 
 void Oscar::SSI::checkTLVs()
 {
-	Buffer evil;
-	QValueList<TLV>::iterator it = m_tlvList.begin();
-	for( ; it != m_tlvList.end(); ++it )
-		evil.addWord( ( *it ).type );
-	
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "item has the following TLVs: "
-		<< evil.getBlock( evil.length() ) << endl;
-	
 	//check for the auth TLV
 	TLV authTLV = findTLV( m_tlvList, 0x0066 );
 	if ( authTLV )
@@ -317,6 +310,16 @@ void Oscar::SSI::setWaitingAuth( bool waiting )
 	m_waitingAuth = waiting;
 }
 
+void Oscar::SSI::setIconHash( QByteArray hash )
+{
+	
+}
+
+QByteArray Oscar::SSI::iconHash( ) const
+{
+	
+}
+
 QString Oscar::SSI::toString() const
 {
 	QString ssiString = QString::fromLatin1( "name: " );
@@ -328,8 +331,7 @@ QString Oscar::SSI::toString() const
 	ssiString += " type: ";
 	ssiString += QString::number( m_type );
 	ssiString += " tlv length: ";
-	ssiString += QString::number( m_tlvLength );
-	
+	ssiString += QString::number( m_tlvLength );	
 	return ssiString;
 }
 

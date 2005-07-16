@@ -183,6 +183,10 @@ public:
 	/** Set whether we are waiting authorization or not from this item */
 	void setWaitingAuth( bool waiting );
 	
+	void setIconHash( QByteArray hash );
+	
+	QByteArray iconHash() const;
+	
 	/** \brief String representation of our SSI object */
 	QString toString() const;
 	

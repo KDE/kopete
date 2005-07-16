@@ -80,7 +80,6 @@ DWORD getNumericalIP( const QString& address );
  */
 QString getDottedDecimal( DWORD address );
 
-
 }
 
 #endif

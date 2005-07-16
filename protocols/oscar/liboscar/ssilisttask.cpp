@@ -114,7 +114,6 @@ void SSIListTask::handleSSIListReply()
 			itemName = Oscar::normalize( itemName );
 		
 		Oscar::SSI s( itemName, groupId, itemId, itemType, tlvList );
-		s.setTLVListLength( tlvLength );
 		
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got SSI Item: " << s.toString() << endl;
 		if ( s.type() == ROSTER_GROUP )
