@@ -237,7 +237,7 @@ public:
 	void updateProfile( const QString& profile );
 	
 	//! Get buddy icon information for a person
-	void requestBuddyIcon( const QString& user, const QByteArray& hash );
+	void requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE hashType );
 
 	//! Start a server redirect for a different service
 	void requestServerRedirect( WORD family );
@@ -248,6 +248,10 @@ public:
 
 	/** Send a typing notification */
 	void sendTyping( const QString & contact, bool typing );
+	
+	/** Make a connection to the icon server */
+	void connectToIconServer();
+	
 
 	/*************
 	  INTERNAL (FOR USE BY TASKS OR CONNECTIONS) METHODS 
@@ -347,7 +351,7 @@ signals:
 	void userStoppedTyping( const QString& contact );
 
 	/* Buddy icons */
-	void haveIconForContact( const QString&, const QByteArray& iconData );
+	void haveIconForContact( const QString&, QByteArray iconData );
 	void iconServerConnected();
 	
 
@@ -392,7 +396,7 @@ private:
 	
 	/** Delete the static tasks */
 	void deleteStaticTasks();
-	
+
 	Connection* createConnection( const QString& host, const QString& port );
 	
 private:

@@ -209,6 +209,10 @@ void OscarAccount::slotGotSSIList()
 	                  this, SLOT( ssiContactAdded( const Oscar::SSI& ) ) );
 	QObject::connect( listManager, SIGNAL( groupAdded( const Oscar::SSI& ) ),
 	                  this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
+	
+	//make the icon server connection
+	if ( !d->engine->isIcq() )
+		d->engine->connectToIconServer();
 }
 
 

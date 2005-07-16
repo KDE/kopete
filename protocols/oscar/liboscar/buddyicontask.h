@@ -27,16 +27,21 @@ class Transfer;
 
 class BuddyIconTask : public Task
 {
+Q_OBJECT
 public:
 	BuddyIconTask( Task* parent );
 
 	void requestIconFor( const QString& user );
 	void setHash( const QByteArray& md5Hash );
+	void setHashType( BYTE type );
 
 	//! Task implementation
 	void onGo();
 	bool forMe( const Transfer* transfer );
 	bool take( Transfer* transfer );
+
+signals:
+	void haveIcon( const QString&, QByteArray );
 
 private:
 	void sendAIMBuddyIconRequest();
@@ -47,6 +52,8 @@ private:
 private:
 	QString m_user;
 	QByteArray m_hash;
+	BYTE m_hashType;
+	DWORD m_seq;
 };
 
 #endif

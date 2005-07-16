@@ -77,6 +77,8 @@ protected slots:
 	virtual void slotSendMsg(Kopete::Message& message, Kopete::ChatSession *);
 	
 private slots:
+	void requestBuddyIcon();
+	void haveIcon( const QString&, QByteArray );
 	void closeUserInfoDialog();
 	void warnUser();
 

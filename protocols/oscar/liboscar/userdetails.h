@@ -45,6 +45,7 @@ public:
 	QDateTime memberSinceTime() const; //! Member since accessor
 	int userClass() const; //! User class accessor
 	DWORD extendedStatus() const; //!User status accessor
+	BYTE iconCheckSumType() const; //!Buddy icon hash type
 	QByteArray buddyIconHash() const; //! Buddy icon md5 hash accessor
 	QString clientName() const; //! Client name and version
 	
@@ -82,6 +83,7 @@ private:
 	DWORD m_dcLastInfoUpdateTime; /// DC last info update time - TLV 0x0C
 	DWORD m_dcLastExtInfoUpdateTime; /// DC last exteneded info update time - TLV 0x0C
 	DWORD m_dcLastExtStatusUpdateTime; /// DC last extended status update time - TLV 0x0C
+	BYTE m_iconChecksumType; /// The OSCAR checksum type for the buddy icon TLV 0x1D
 	QByteArray m_md5IconHash; /// Buddy Icon MD5 Hash - TLV 0x1D
 	QString m_availableMessage; /// Message a person can have when available - TLV 0x0D
 	

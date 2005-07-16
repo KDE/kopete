@@ -16,9 +16,11 @@
 
 #include <time.h>
 
-#include <qapplication.h>
+#include <qimage.h>
 #include <qregexp.h>
+#include <qtimer.h>
 
+#include <kapplication.h>
 #include <kactionclasses.h>
 #include <klocale.h>
 #include <kdebug.h>
@@ -55,14 +57,16 @@ AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::M
 	
 	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
 	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
-	//QObject::connect( mAccount->engine(), SIGNAL( userIsOnline( const QString& ) ), this, SLOT( userOnline( const QString& ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( userIsOffline( const QString& ) ), this, SLOT( userOffline( const QString& ) ) );	
+	QObject::connect( mAccount->engine(), SIGNAL( userIsOffline( const QString& ) ),
+	                  this, SLOT( userOffline( const QString& ) ) );	
 	QObject::connect( mAccount->engine(), SIGNAL( receivedAwayMessage( const QString&, const QString& ) ),
 	                  this, SLOT( updateAwayMessage( const QString&, const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedProfile( const QString&, const QString& ) ),
 	                  this, SLOT( updateProfile( const QString&, const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( userWarned( const QString&, Q_UINT16, Q_UINT16 ) ),
 	                  this, SLOT( gotWarning( const QString&, Q_UINT16, Q_UINT16 ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL( haveIconForContact( const QString&, QByteArray ) ),
+	                  this, SLOT( haveIcon( const QString&, QByteArray ) ) );
 }
 
 AIMContact::~AIMContact()
@@ -150,6 +154,7 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 
+	OscarContact::userInfoUpdated( contact, details );
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << endl;
 	
 	//if they don't have an SSI alias, make sure we use the capitalization from the
@@ -174,12 +179,12 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 		}
 	}
 	
-	if ( details.buddyIconHash().size() > 0 )
-		account()->engine()->requestBuddyIcon( contactId(), m_details.buddyIconHash() );
-
-	OscarContact::userInfoUpdated( contact, details );
-
-
+	if ( m_details.buddyIconHash().size() > 0 )
+	{
+		int time = ( ( KApplication::random() % 25 ) + 10 ) * 1000;
+		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating buddy icon in " << time/1000 << " seconds" << endl;
+		QTimer::singleShot( time, this, SLOT( requestBuddyIcon() ) );
+	}
 }
 
 
@@ -242,6 +247,32 @@ void AIMContact::gotWarning( const QString& contact, Q_UINT16 increase, Q_UINT16
 		m_warningLevel = newLevel;
 	
 	//TODO add a KNotify event after merge to HEAD
+}
+
+void AIMContact::requestBuddyIcon()
+{
+	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Updating buddy icon for " << contactId() << endl;
+	if ( m_details.buddyIconHash().size() > 0 )
+	{
+		account()->engine()->requestBuddyIcon( contactId(), m_details.buddyIconHash(),
+		                                       m_details.iconCheckSumType() );
+	}
+}
+
+void AIMContact::haveIcon( const QString& user, QByteArray icon )
+{
+	if ( Oscar::normalize( user ) != Oscar::normalize( contactId() ) )
+		return;
+	
+	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Updating icon for " << contactId() << endl;
+	QImage buddyIcon( icon );
+	if ( buddyIcon.isNull() )
+	{
+		kdWarning(OSCAR_AIM_DEBUG) << k_funcinfo << "Failed to convert buddy icon to QImage" << endl;
+		return;
+	}
+	
+	setProperty( Kopete::Global::Properties::self()->photo(), buddyIcon );
 }
 
 void AIMContact::closeUserInfoDialog()

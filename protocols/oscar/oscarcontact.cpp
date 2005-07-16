@@ -175,6 +175,7 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 	setProperty( Kopete::Global::Properties::self()->onlineSince(), details.onlineSinceTime() );
 	setIdleTime( details.idleTime() );
 	m_warningLevel = details.warningLevel();
+	m_details = details;
 }
 
 void OscarContact::startedTyping()

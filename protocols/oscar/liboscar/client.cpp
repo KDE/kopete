@@ -700,20 +700,27 @@ void Client::sendTyping( const QString & contact, bool typing )
 	d->typingNotifyTask->go( false ); 	// don't delete the task after sending
 }
 
-void Client::requestBuddyIcon( const QString& user, const QByteArray& hash )
+void Client::connectToIconServer()
+{
+	Connection* c = d->connections.connectionForFamily( 0x0010 );
+	if ( c )
+		return;
+	
+	requestServerRedirect( 0x0010 );
+	return;
+}
+
+void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE hashType )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0010 );
 	if ( !c )
-	{
-		emit haveIconForContact( user, QByteArray() );
-		requestServerRedirect( 0x0010 );
 		return;
-	}
 
 	BuddyIconTask* bit = new BuddyIconTask( c->rootTask() );
-	connect( bit, SIGNAL( haveIcon( const QString&, const QByteArray& ) ),
-	         this, SIGNAL( haveIconForContact( const QString&, const QByteArray& ) ) );
+	connect( bit, SIGNAL( haveIcon( const QString&, QByteArray ) ),
+	         this, SIGNAL( haveIconForContact( const QString&, QByteArray ) ) );
 	bit->requestIconFor( user );
+	bit->setHashType( hashType );
 	bit->setHash( hash );
 	bit->go( true );
 }

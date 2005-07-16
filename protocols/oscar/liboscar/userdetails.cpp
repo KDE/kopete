@@ -101,6 +101,11 @@ DWORD UserDetails::extendedStatus() const
 	return m_extendedStatus;
 }
 
+BYTE UserDetails::iconCheckSumType() const
+{
+	return m_iconChecksumType;
+}
+
 QByteArray UserDetails::buddyIconHash() const
 {
 	return m_md5IconHash;
@@ -194,11 +199,19 @@ void UserDetails::fill( Buffer * buffer )
 						b.skipBytes(length);
 						break;
 					case 0x0001:
-						kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got icon checksum" << endl;
- 						if ( length > 0 && number == 0x01 )
+						if ( length > 0 && ( number == 0x01 || number == 0x00 ) )
+						{
+							kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got icon checksum" << endl;
+							m_iconChecksumType = number;
  							m_md5IconHash.duplicate( b.getBlock( length ), length );
+							kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksum:" << m_md5IconHash << endl;
+						}
  						else
+ 						{
+	 						kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "icon checkum indicated"
+		 						<< " but unable to parse checksum" << endl;
 							b.skipBytes( length );
+ 						}
 						break;
 					case 0x0002:
 						kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got an available message" << endl;
@@ -212,6 +225,8 @@ void UserDetails::fill( Buffer * buffer )
 								kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Encoding:" << b.getBSTR() << endl;
 							}
 						}
+						else
+							kdDebug(OSCAR_RAW_DEBUG) << "not enough bytes for available message" << endl;
 						break;
 					default:
 						break;

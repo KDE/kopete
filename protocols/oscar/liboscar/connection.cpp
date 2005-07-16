@@ -202,8 +202,8 @@ void Connection::forcedSend( Transfer* request ) const
 
 void Connection::initSequence()
 {
-	d->snacSequence = KApplication::random();
-	d->flapSequence = KApplication::random();
+	d->snacSequence = (KApplication::random() & 0xFFFF);
+	d->flapSequence = (KApplication::random() & 0xFFFF);
 }
 
 void Connection::distribute( Transfer * transfer ) const

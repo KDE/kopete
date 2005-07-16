@@ -184,7 +184,7 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 	WORD s1, s2 = 0;
 	uint bytesParsed = 0;
 	
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Current packet" << toString(wire) << endl;
+	//kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Current packet" << toString(wire) << endl;
 	if ( wire.size() < 6 ) //check for valid flap length
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo 

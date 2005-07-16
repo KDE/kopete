@@ -25,11 +25,12 @@
 #include "connection.h"
 #include "transfer.h"
 #include "oscarutils.h"
+#include <typeinfo>
 
 BuddyIconTask::BuddyIconTask( Task* parent )
 	:Task( parent )
 {
-
+	m_seq = 0;
 }
 
 void BuddyIconTask::requestIconFor( const QString& user )
@@ -40,6 +41,11 @@ void BuddyIconTask::requestIconFor( const QString& user )
 void BuddyIconTask::setHash( const QByteArray& md5Hash )
 {
 	m_hash = md5Hash;
+}
+
+void BuddyIconTask::setHashType( BYTE type )
+{
+	m_hashType = type;
 }
 
 void BuddyIconTask::onGo()
@@ -54,32 +60,23 @@ void BuddyIconTask::onGo()
 bool BuddyIconTask::forMe( const Transfer* transfer )
 {
 	const SnacTransfer* st = dynamic_cast<const SnacTransfer*>( transfer );
-	if ( st )
+	if ( !st )
 		return false;
+
+	if ( st->snacRequest() != m_seq )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sequences don't match" << endl;
+		return false;
+	}
 
 	if ( st->snacService() == 0x0010 )
 	{
-		QString user;
 		switch( st->snacSubtype() )
 		{
 		case 0x0005:
-		{
-			user = const_cast<Buffer*>( st->buffer() )->peekBSTR();
-			if ( Oscar::normalize( user ) != Oscar::normalize( m_user ) )
-				return false;
-			else
-				return true;
-		}
-		break;
 		case 0x0007:
-		{
-			user = const_cast<Buffer*>( st->buffer() )->peekBUIN();
-			if ( Oscar::normalize( user ) != Oscar::normalize( m_user ) )
-				return false;
-			else
-				return true;
-		}
-		break;
+			return true;
+			break;
 		default:
 			return false;
 			break;
@@ -104,21 +101,24 @@ bool BuddyIconTask::take( Transfer* transfer )
 // else
 // 		handleICQBuddyIconResponse();
 
+	setSuccess( 0, QString::null );
 	return true;
 }
 
 void BuddyIconTask::sendAIMBuddyIconRequest()
 {
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting buddy icon for " << m_user << endl;
 	FLAP f = { 0x02, client()->flapSequence(), 0 };
-	SNAC s = { 0x0010, 0x0004, 0x0000, client()->snacSequence() };
+	m_seq = client()->snacSequence();
+	SNAC s = { 0x0010, 0x0004, 0x0000, m_seq };
 	Buffer* b = new Buffer;
 
-	b->addBSTR( m_user.latin1() ); //TODO check encoding
+	b->addBUIN( m_user.latin1() ); //TODO: check encoding
 	b->addByte( 0x01 );
 	b->addWord( 0x0001 );
-	b->addByte( 0x01 );
-	b->addByte( 0x10 ); //MD5 Hash Size
-	b->addString( m_hash, 0x10 ); //MD5 Hash
+	b->addByte( m_hashType );
+	b->addByte( m_hash.size() ); //MD5 Hash Size
+	b->addString( m_hash, m_hash.size() ); //MD5 Hash
 	Transfer* t = createTransfer( f, s, b );
 	send( t );
 }
@@ -126,6 +126,19 @@ void BuddyIconTask::sendAIMBuddyIconRequest()
 void BuddyIconTask::handleAIMBuddyIconResponse()
 {
 	Buffer* b = transfer()->buffer();
+	QString user = b->getBUIN();
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Receiving buddy icon for " << user << endl;
+	b->skipBytes(2); //unknown field. not used
+	BYTE iconType = b->getByte();
+	BYTE hashSize = b->getByte();
+	QByteArray iconHash;
+	iconHash.duplicate( b->getBlock(hashSize) );
+	WORD iconSize = b->getWord();
+	QByteArray icon;
+	icon.duplicate( b->getBlock(iconSize) );
+	emit haveIcon( user, icon );
 }
+
+#include "buddyicontask.moc"
 
 

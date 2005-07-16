@@ -32,6 +32,7 @@
 
 #include <kdialogbase.h>
 #include <kmessagebox.h>
+#include <kimageio.h>
 
 typedef KGenericFactory<AIMProtocol> AIMProtocolFactory;
 
@@ -169,6 +170,7 @@ AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
 	setCapabilities(0x1FFF); // setting capabilities - FIXME to use proper enum
 	kdDebug(14152) << k_funcinfo << "capabilities set to 0x1FFF" << endl;
 	addAddressBookField("messaging/aim", Kopete::Plugin::MakeIndexField);
+	KImageIO::registerFormats();
 }
 
 AIMProtocol::~AIMProtocol()
