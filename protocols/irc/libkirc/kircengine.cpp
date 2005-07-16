@@ -69,6 +69,15 @@ Engine::Engine(QObject *parent)
 	m_SourceString = QString::fromLatin1("Unknown client, known source.");
 
 //	kdDebug(14120) << "Setting default engine codec, " << defaultCodec->name() << endl;
+/*
+	connect(this, SIGNAL(internalError(const QString &)),
+		this, SLOT());
+*/
+	connect(this, SIGNAL(connectionStateChanged(KIRC::ConnectionState)),
+		this, SLOT(onConnectionStateChanged(KIRC::ConnectionState)));
+
+	connect(this, SIGNAL(receivedMessage(KIRC::Message &)),
+		this, SLOT(onReceivedMessage(KIRC::Message &)));
 }
 
 Engine::~Engine()
@@ -76,57 +85,7 @@ Engine::~Engine()
 	kdDebug(14120) << k_funcinfo << m_Host << endl;
 	quit("KIRC Deleted", true);
 }
-/*
-void Engine::setStatus(Engine::Status status)
-{
-	kdDebug(14120) << k_funcinfo << status << endl;
 
-	if (m_status == status)
-		return;
-
-//	Engine::Status oldStatus = m_status;
-	m_status = status;
-	emit statusChanged(status);
-
-	switch (m_status)
-	{
-	case Idle:
-		// Do nothing.
-		break;
-	case Connecting:
-		// Do nothing.
-		break;
-	case Authentifying:
-		m_socket->enableRead(true);
-
-		// If password is given for this server, send it now, and don't expect a reply
-		if (!(password()).isEmpty())
-			pass(password());
-
-		user(m_Username, 0, m_realName);
-		nick(m_Nickname);
-
-		break;
-	case Connected:
-		// Do nothing.
-		break;
-	case Closing:
-		m_socket->close();
-		m_socket->reset();
-		setStatus(Idle);
-		break;
-	case AuthentifyingFailed:
-		setStatus(Closing);
-		break;
-	case Timeout:
-		setStatus(Closing);
-		break;
-	case Disconnected:
-		setStatus(Closing);
-		break;
-	}
-}
-*/
 QTextCodec *Engine::defaultCodec() const
 {
 	return m_defaultCodec;
@@ -237,8 +196,36 @@ void Engine::writeMessage(const QString &rawMsg, QTextCodec *codec)
 */
 	writeRawMessage(codec->fromUnicode(rawMsg));
 }
-/*
-void Engine::slotReceivedMessage( const KIRC::Message &msg )
+
+void Engine::onConnectionStateChanged(KIRC::ConnectionState state)
+{
+	switch (state)
+	{
+	case Idle:
+		// Do nothing.
+		break;
+	case Connecting:
+		// Do nothing.
+		break;
+	case Authentifying:
+		// If password is given for this server, send it now, and don't expect a reply
+		if (!(password()).isEmpty())
+			pass(password());
+
+		user(m_Username, 0, m_realName);
+		nick(m_Nickname);
+
+		break;
+	case Connected:
+		// Do nothing.
+		break;
+	case Closing:
+		// Do nothing.
+		break;
+	}
+}
+
+void Engine::onReceivedMessage( KIRC::Message &msg )
 {
 	KIRC::MessageRedirector *mr;
 	QStringList errors;
@@ -249,7 +236,7 @@ void Engine::slotReceivedMessage( const KIRC::Message &msg )
 		{
 			// this is if we had a "Nickname in use" message when connecting and we set another nick.
 			// This signal emits that the nick was accepted and we are now logged in
-			emit successfullyChangedNick(m_Nickname, m_PendingNick);
+//			emit successfullyChangedNick(m_Nickname, m_PendingNick);
 			m_Nickname = m_PendingNick;
 			m_FailedNickOnLogin = false;
 		}
@@ -263,7 +250,7 @@ void Engine::slotReceivedMessage( const KIRC::Message &msg )
 
 	if (mr)
 	{
-		errors = mr->operator()(msg);
+//		errors = mr->operator()(msg);
 	}
 	else if (msg.isNumeric())
 	{
@@ -273,16 +260,15 @@ void Engine::slotReceivedMessage( const KIRC::Message &msg )
 	else
 	{
 //		kdWarning(14120) << "Unknown IRC command for line:" << msg.raw() << endl;
-		emit internalError(UnknownCommand, msg);
+//		emit internalError(UnknownCommand, msg);
 	}
 
 	if (!errors.isEmpty())
 	{
 //		kdDebug(14120) << "Method error for line:" << msg.raw() << endl;
-		emit internalError(MethodFailed, msg);
+//		emit internalError(MethodFailed, msg);
 	}
 }
-*/
 
 /*
  * The ctcp commands seems to follow the same message behaviours has normal IRC command.

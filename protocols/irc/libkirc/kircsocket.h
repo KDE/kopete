@@ -31,6 +31,8 @@ class QTextCodec;
 namespace KIRC
 {
 
+class SocketPrivate;
+
 /**
  * @author Nick Betcher <nbetcher@kde.org>
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
@@ -100,11 +102,7 @@ private slots:
 private:
 	bool setupSocket(bool useSSL);
 
-	KNetwork::KBufferedSocket *m_socket;
-	bool m_useSSL;
-	KIRC::ConnectionState m_state;
-
-	QTextCodec *m_defaultCodec;
+	SocketPrivate *d;
 };
 
 }

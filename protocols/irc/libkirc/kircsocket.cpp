@@ -33,12 +33,26 @@
 using namespace KIRC;
 using namespace KNetwork;
 
+class KIRC::SocketPrivate
+{
+public:
+	SocketPrivate()
+		: socket(0),
+		  useSSL(false),
+		  state(Idle),
+		  defaultCodec(0)
+	{ }
+
+	KNetwork::KBufferedSocket *socket;
+	bool useSSL;
+	KIRC::ConnectionState state;
+
+	QTextCodec *defaultCodec;
+};
+
 Socket::Socket(QObject *parent)
 	: QObject(parent),
-	  m_socket(0),
-	  m_state(Idle),
-	  m_useSSL(false),
-	  m_defaultCodec(0)
+	  d( new SocketPrivate )
 {
 	kdDebug(14120) << k_funcinfo << endl;
 }
@@ -46,6 +60,7 @@ Socket::Socket(QObject *parent)
 Socket::~Socket()
 {
 	kdDebug(14120) << k_funcinfo << endl;
+	delete d;
 }
 
 QByteArray Socket::encode(const QString &str, bool *success, QTextCodec *codec) const
@@ -54,7 +69,7 @@ QByteArray Socket::encode(const QString &str, bool *success, QTextCodec *codec) 
 
 	if (!codec || !codec->canEncode(str))
 	{
-		if (!m_defaultCodec || !m_defaultCodec->canEncode(str))
+		if (!d->defaultCodec || !d->defaultCodec->canEncode(str))
 		{
 			if (!UTF8 || !UTF8->canEncode(str))
 			{
@@ -69,7 +84,7 @@ QByteArray Socket::encode(const QString &str, bool *success, QTextCodec *codec) 
 			}
 		}
 		else
-			codec = m_defaultCodec;
+			codec = d->defaultCodec;
 	}
 
 	*success = true;
@@ -78,52 +93,52 @@ QByteArray Socket::encode(const QString &str, bool *success, QTextCodec *codec) 
 
 QTextCodec *Socket::defaultCodec() const
 {
-	return m_defaultCodec;
+	return d->defaultCodec;
 }
 
 void Socket::setDefaultCodec(QTextCodec *codec)
 {
-	codec = m_defaultCodec;
+	codec = d->defaultCodec;
 }
 
 KIRC::ConnectionState Socket::connectionState() const
 {
-	return m_state;
+	return d->state;
 }
 
 void Socket::connectToServer(const QString &host, Q_UINT16 port, bool useSSL)
 {
 //	kdDebug(14120) << k_funcinfo << useSSL << endl;
 	setupSocket(useSSL);
-	m_socket->connect(host, QString::number(port));
+	d->socket->connect(host, QString::number(port));
 }
 
 void Socket::connectToServer(const KResolverEntry &entry, bool useSSL)
 {
 //	kdDebug(14120) << k_funcinfo << useSSL << endl;
 	setupSocket(useSSL);
-	m_socket->connect(entry);
+	d->socket->connect(entry);
 }
 
 void Socket::close()
 {
-	if (m_socket)
+	if (d->socket)
 	{
-		m_socket->close();
-		m_socket = 0;
+		d->socket->close();
+		d->socket = 0;
 	}
 }
 
 void Socket::writeRawMessage(const QByteArray &rawMsg)
 {
-	if (!m_socket || m_socket->state() != KBufferedSocket::Open)
+	if (!d->socket || d->socket->state() != KBufferedSocket::Open)
 	{
 		emit internalError(i18n("Appenting to send while not connected: %1").arg(rawMsg));
 		return;
 	}
 
 	QCString buffer = rawMsg + QCString("\n\r"); // QT-4.0 make this a QByteArray
-	int wrote = m_socket->writeBlock(buffer.data(), buffer.length());
+	int wrote = d->socket->writeBlock(buffer.data(), buffer.length());
 	kdDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg) << endl;
 }
 
@@ -136,17 +151,18 @@ void Socket::writeRawMessage(const QString &msg, QTextCodec *codec)
 
 void Socket::showInfoDialog()
 {
-/*	if( m_useSSL )
+/*	if( d->useSSL )
 	{
-		static_cast<KSSLSocket*>( m_socket )->showInfoDialog();
+		static_cast<KSSLSocket*>( d->socket )->showInfoDialog();
 	}*/
 }
 
 void Socket::setConnectionState(KIRC::ConnectionState newstate)
 {
-	if (m_state != newstate)
+	if (d->state != newstate)
 	{
-		m_state = newstate;
+		kdDebug(14121) << k_funcinfo << d->state << "->" << newstate << endl;
+		d->state = newstate;
 		emit connectionStateChanged(newstate);
 	}
 }
@@ -155,9 +171,9 @@ void Socket::slotReadyRead()
 {
 	// The caller can also be self so lets check the socket still exist
 
-	if (m_socket && m_socket->canReadLine())
+	if (d->socket && d->socket->canReadLine())
 	{
-		QByteArray rawMsg = m_socket->readLine();
+		QByteArray rawMsg = d->socket->readLine();
 //		kdDebug(14121) << QString::fromLatin1("(%1 bytes) << %2").arg(wrote).arg(rawMsg) << endl;
 
 		Message msg(rawMsg);
@@ -169,7 +185,7 @@ void Socket::slotReadyRead()
 		QTimer::singleShot( 0, this, SLOT( slotReadyRead() ) );
 	}
 
-//	if(m_socket->socketStatus() != KExtendedSocket::connected)
+//	if(d->socket->socketStatus() != KExtendedSocket::connected)
 //		error();
 }
 
@@ -187,7 +203,10 @@ void Socket::socketStateChanged(int newstate)
 		setConnectionState(Connecting);
 		break;
 	case KBufferedSocket::Open:
+//		d->socket->enableRead(true);
+//		d->socket->enableWrite(true); // Should no be needed
 		setConnectionState(Authentifying);
+		break;
 	case KBufferedSocket::Closing:
 		setConnectionState(Closing);
 		break;
@@ -220,13 +239,13 @@ bool Socket::setupSocket(bool useSSL)
 {
 	close();
 
-	m_useSSL = useSSL;
+	d->useSSL = useSSL;
 
-	if( m_useSSL )
+	if( d->useSSL )
 	{
 #ifdef KIRC_SSL_SUPPORT
-		m_socket = new KSSLSocket(this);
-		m_socket->setSocketFlags( KExtendedSocket::inetSocket );
+		d->socket = new KSSLSocket(this);
+		d->socket->setSocketFlags( KExtendedSocket::inetSocket );
 	}
 	else
 #else
@@ -235,18 +254,18 @@ bool Socket::setupSocket(bool useSSL)
 	}
 #endif
 	{
-		m_socket = new KBufferedSocket(QString::null, QString::null, this);
-//		m_socket->setSocketFlags( KExtendedSocket::inputBufferedSocket | KExtendedSocket::inetSocket );
+		d->socket = new KBufferedSocket(QString::null, QString::null, this);
+//		d->socket->setSocketFlags( KExtendedSocket::inputBufferedSocket | KExtendedSocket::inetSocket );
 	}
 
-	QObject::connect(m_socket, SIGNAL(closed(int)),
-			 this, SLOT(slotConnectionClosed()));
-	QObject::connect(m_socket, SIGNAL(readyRead()),
-			 this, SLOT(slotReadyRead()));
-	QObject::connect(m_socket, SIGNAL(connectionSuccess()),
-			 this, SLOT(slotConnected()));
-	QObject::connect(m_socket, SIGNAL(connectionFailed(int)),
-			 this, SLOT(error(int)));
+	connect(d->socket, SIGNAL(closed(int)),
+		this, SLOT(slotConnectionClosed()));
+	connect(d->socket, SIGNAL(readyRead()),
+		this, SLOT(slotReadyRead()));
+	connect(d->socket, SIGNAL(connectionSuccess()),
+		this, SLOT(slotConnected()));
+	connect(d->socket, SIGNAL(connectionFailed(int)),
+		this, SLOT(error(int)));
 }
 
 #include "kircsocket.moc"

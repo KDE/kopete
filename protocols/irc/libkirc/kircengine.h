@@ -74,6 +74,11 @@ public:
 	Engine(QObject *parent = 0);
 	~Engine();
 
+public: // READ properties accessors.
+
+public slots: // WRITE properties accessors.
+
+public:
 	void setDefaultCodec(QTextCodec *codec);
 	QTextCodec *defaultCodec() const;
 
@@ -213,6 +218,10 @@ signals:
 				const QString &msg);
 
 private slots:
+
+	void onConnectionStateChanged(KIRC::ConnectionState state);
+	void onReceivedMessage( KIRC::Message &msg );
+
 	void destroyed(KIRC::Entity *entity);
 
 	void ignoreMessage(KIRC::Message &msg);
