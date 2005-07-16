@@ -82,7 +82,7 @@ void Connection::setClient( Client* c )
 
 void Connection::connectToServer( const QString& host, bool auth )
 {
-	connect( d->clientStream, SIGNAL( error( int ) ), this, SIGNAL( socketError( int ) ) );
+	connect( d->clientStream, SIGNAL( error( int ) ), this, SLOT( streamSocketError( int ) ) );
 	connect( d->clientStream, SIGNAL( readyRead() ), this, SLOT( streamReadyRead() ) );
 	connect( d->clientStream, SIGNAL( connected() ), this, SIGNAL( connected() ) );
 	d->clientStream->connectToServer( host, auth );
@@ -233,6 +233,11 @@ void Connection::streamReadyRead()
 void Connection::loggedIn()
 {
 	m_loggedIn = true;
+}
+
+void Connection::streamSocketError( int code )
+{
+	emit socketError( code, d->clientStream->errorText() );
 }
 
 #include "connection.moc"

@@ -190,6 +190,8 @@ private slots:
 	/** We've finished logging in */
 	void loggedIn();
 	
+	void streamSocketError( int );
+	
 private:
 	
 	ConnectionPrivate* d;

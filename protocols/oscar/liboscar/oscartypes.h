@@ -129,10 +129,10 @@ const cap oscar_caps[] =
 	// NOTE change with each Kopete Release!
 	// first number, major version
 	// second number,  minor version
-	// third number, point version
-	// fourth number,  point version
+	// third number, point version 100+
+	// fourth number,  point version 0-99
 	{'K', 'o', 'p', 'e', 't', 'e', ' ', 'I',
-			'C', 'Q', ' ', ' ', 0, 10, 89, 0},
+			'C', 'Q', ' ', ' ', 0, 10, 0, 89},
 		
 	// CAP_MICQ
 	// last 4 bytes determine version

@@ -196,17 +196,21 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 	if ( details.hasCap( CAP_UTF8 ) )
 		capList << i18n( "UTF-8" );
 	if ( details.hasCap( CAP_RTFMSGS ) )
-		capList << i18n( "Rich Text Messages" );
+		capList << i18n( "Rich text messages" );
 	if ( details.hasCap( CAP_CHAT ) )
-		capList << i18n( "Groupchat" );
+		capList << i18n( "Group chat" );
 	if ( details.hasCap( CAP_VOICE ) )
-		capList << i18n( "Voicechat" );
+		capList << i18n( "Voice chat" );
 	if ( details.hasCap( CAP_IMIMAGE ) )
 		capList << i18n( "DirectIM/IMImage" );
 	if ( details.hasCap( CAP_SENDBUDDYLIST ) )
-		capList << i18n( "Send Buddylist" );
+		capList << i18n( "Send buddy list" );
 	if ( details.hasCap( CAP_SENDFILE ) )
-		capList << i18n( "File Transfers" );
+		capList << i18n( "File transfers" );
+	if ( details.hasCap( CAP_GAMES ) || details.hasCap( CAP_GAMES2 ) )
+		capList << i18n( "Games" );
+	if ( details.hasCap( CAP_TRILLIAN ) )
+		capList << i18n( "Trillian user" );
 	
 	m_clientFeatures = capList.join( ", " );
 	emit featuresUpdated();

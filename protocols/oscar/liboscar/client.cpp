@@ -319,8 +319,8 @@ void Client::startStageTwo()
 	//create a new connection and set it up
 	Connection* c = createConnection( d->host, QString::number( d->port ) );
 	d->closeConnectionTask = new CloseConnectionTask( c->rootTask() );
-	QObject::connect( d->closeConnectionTask, SIGNAL( disconnected( int, const QString& ) ),
-	                  this, SLOT( disconnectionError( int, const QString& ) ) );
+// 	QObject::connect( d->closeConnectionTask, SIGNAL( disconnected( int, const QString& ) ),
+// 	                  this, SLOT( disconnectionError( int, const QString& ) ) );
 
 	//create the new login task
 	m_loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
