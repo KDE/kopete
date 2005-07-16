@@ -287,21 +287,25 @@ void Group::sendMessage( Message& msg )
 {
 	QPtrList<MetaContact> list = onlineMembers();
 	Kopete::MetaContact *mc = list.first();
-	Kopete::Contact *c = msg.to().first();
+	ChatSession *cs=msg.manager();
+	if(  cs )
+	{
+		disconnect( cs, SIGNAL( messageSent( Kopete::Message&, Kopete::ChatSession* ) ), this, SLOT( sendMessage( Kopete::Message& ) ) );
+	}
 	
 	if(!mc)
 		return;
 	list.remove( msg.to().first()->metaContact() );
 	for( mc = list.first(); mc; mc = list.next() )
 	{
-		if( mc->preferredContact()->manager( Contact::CanCreate ) )
+		if(mc->isReachable())
 		{
-			mc->preferredContact()->manager( )->sendMessage( msg );
+			Contact *kcontact=mc->preferredContact();
+			if( kcontact->manager( Contact::CanCreate ) )
+			{
+				kcontact->manager( Contact::CanCreate )->sendMessage( msg );
+			}
 		}
-	}
-	if( c->manager( Contact::CannotCreate ) )
-	{
-		disconnect( c->manager(), SIGNAL( messageSent( Kopete::Message&, Kopete::ChatSession* ) ), this, SLOT( sendMessage( Kopete::Message& ) ) );
 	}
 }
 
