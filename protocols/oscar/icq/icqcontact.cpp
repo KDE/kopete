@@ -69,6 +69,7 @@ ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaCo
 	                  this, SLOT( receivedLongInfo( const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
 	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
+	QObject::connect( this, SIGNAL( featuresUpdated() ), this, SLOT( updateFeatures() ) );
 
 }
 
@@ -287,6 +288,10 @@ void ICQContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();
 }
 
+void ICQContact::updateFeatures()
+{
+	setProperty( static_cast<ICQProtocol*>(protocol())->clientFeatures, m_clientFeatures );
+}
 
 #if 0
 void ICQContact::slotContactChanged(const UserInfo &u)

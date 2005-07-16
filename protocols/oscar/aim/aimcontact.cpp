@@ -67,6 +67,7 @@ AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::M
 	                  this, SLOT( gotWarning( const QString&, Q_UINT16, Q_UINT16 ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( haveIconForContact( const QString&, QByteArray ) ),
 	                  this, SLOT( haveIcon( const QString&, QByteArray ) ) );
+	QObject::connect( this, SIGNAL( featuresUpdated() ), this, SLOT( updateFeatures() ) );
 }
 
 AIMContact::~AIMContact()
@@ -188,8 +189,6 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	
 	OscarContact::userInfoUpdated( contact, details );
 }
-
-
 
 void AIMContact::userOnline( const QString& userId )
 {
@@ -380,6 +379,11 @@ void AIMContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
 	// Show the message we just sent in the chat window
 	manager(Kopete::Contact::CanCreate)->appendMessage(message);
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();
+}
+
+void AIMContact::updateFeatures()
+{
+	setProperty( static_cast<AIMProtocol*>(protocol())->clientFeatures, m_clientFeatures );
 }
 
 void AIMContact::sendAutoResponse(Kopete::Message& msg)

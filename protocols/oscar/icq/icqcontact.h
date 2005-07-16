@@ -100,6 +100,7 @@ private:
 	*/
 protected slots:
 	virtual void slotSendMsg(Kopete::Message& message, Kopete::ChatSession *);
+	virtual void updateFeatures();
 	
 private slots:
 	/** Request authorization from this contact */

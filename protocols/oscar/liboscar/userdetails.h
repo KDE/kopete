@@ -48,6 +48,7 @@ public:
 	BYTE iconCheckSumType() const; //!Buddy icon hash type
 	QByteArray buddyIconHash() const; //! Buddy icon md5 hash accessor
 	QString clientName() const; //! Client name and version
+	bool hasCap( int capNumber ) const; //! Tell if we have this capability
 	
 	/** 
 	 * Fill the class with data from a buffer
@@ -58,8 +59,7 @@ private:
 	//! Do client detection 
 	void detectClient();
 	
-	//! Tell if we have this capability
-	bool hasCap( int capNumber );
+
 private:
 	QString m_userId; /// the screename/uin of the contact
 	int m_warningLevel; /// the warning level of the contact

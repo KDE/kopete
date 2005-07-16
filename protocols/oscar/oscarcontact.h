@@ -103,9 +103,11 @@ public slots:
 
 protected slots:
 	void slotTyping( bool typing );
+	virtual void updateFeatures() = 0;
 
 signals:
 	void updatedSSI();
+	void featuresUpdated();
 	
 protected:
 	OscarAccount *mAccount;
@@ -114,6 +116,7 @@ protected:
 	UserDetails m_details;
 	SSI m_ssiItem;
 	int m_warningLevel;
+	QString m_clientFeatures;
 	
 private:
 	void initActions();

@@ -176,6 +176,40 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 	setIdleTime( details.idleTime() );
 	m_warningLevel = details.warningLevel();
 	m_details = details;
+	
+	QStringList capList;
+	// Append client name and version in case we found one
+	if ( details.userClass() & 0x0080 /* WIRELESS */ )
+		capList << i18n( "Mobile AIM Client" );
+	else
+	{
+		if ( !details.clientName().isEmpty() )
+		{
+			capList << i18n( "Translators: client name and version",
+			                "%1").arg( details.clientName() );
+		}
+	}
+	
+	// and now for some general informative capabilities
+	if ( details.hasCap( CAP_BUDDYICON ) )
+		capList << i18n( "Buddy icons" );
+	if ( details.hasCap( CAP_UTF8 ) )
+		capList << i18n( "UTF-8" );
+	if ( details.hasCap( CAP_RTFMSGS ) )
+		capList << i18n( "Rich Text Messages" );
+	if ( details.hasCap( CAP_CHAT ) )
+		capList << i18n( "Groupchat" );
+	if ( details.hasCap( CAP_VOICE ) )
+		capList << i18n( "Voicechat" );
+	if ( details.hasCap( CAP_IMIMAGE ) )
+		capList << i18n( "DirectIM/IMImage" );
+	if ( details.hasCap( CAP_SENDBUDDYLIST ) )
+		capList << i18n( "Send Buddylist" );
+	if ( details.hasCap( CAP_SENDFILE ) )
+		capList << i18n( "File Transfers" );
+	
+	m_clientFeatures = capList.join( ", " );
+	emit featuresUpdated();
 }
 
 void OscarContact::startedTyping()

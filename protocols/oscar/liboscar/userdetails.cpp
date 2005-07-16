@@ -418,9 +418,9 @@ void UserDetails::detectClient()
 	*/
 }
 
-bool UserDetails::hasCap( int capNumber )
+bool UserDetails::hasCap( int capNumber ) const
 {
-	bool capPresent = ( m_capabilities & ( 1 << capNumber ) ) == ( 1 << capNumber );
+	bool capPresent = ( ( m_capabilities & ( 1 << capNumber ) ) != 0 );
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "have cap " << Oscar::capName( capNumber ) << capPresent << endl;
 	return capPresent;
 }
