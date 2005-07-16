@@ -769,37 +769,7 @@ void MSNSocket::slotReadyWrite()
 
 QString MSNSocket::escape( const QString &str )
 {
-	//return ( KURL::encode_string( str, 106 ) );
-	//It's not needed to encode everything. The official msn client only encode spaces and %
-	//If we encode more, the size can be longer than excepted.
-
-	int old_length= str.length();
-	QChar *new_segment = new QChar[ old_length * 3 + 1 ];
-	int new_length = 0;
-
-	for	( int i = 0; i < old_length; i++ )
-	{
-		unsigned short character = str[i].unicode();
-
-		if( character <= 32 || character == '%' )
-		{
-			new_segment[ new_length++ ] = '%';
-
-			unsigned int c = character / 16;
-			c += (c > 9) ? ('A' - 10) : '0';
-			new_segment[ new_length++ ] = c;
-
-			c = character % 16;
-			c += (c > 9) ? ('A' - 10) : '0';
-			new_segment[ new_length++ ] = c;
-		}
-		else
-			new_segment[ new_length++ ] = str[i];
-	}
-
-	QString result = QString(new_segment, new_length);
-	delete [] new_segment;
-	return result;
+	return ( KURL::encode_string( str, 106 ) );
 }
 
 QString MSNSocket::unescape( const QString &str )
