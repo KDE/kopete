@@ -284,6 +284,12 @@ void ChatView::raise( bool activate )
 	if ( !KWin::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).onAllDesktops() )
 		KWin::setOnDesktop( m_mainWindow->winId(), KWin::currentDesktop() );
 
+	if(m_mainWindow->isMinimized())
+	{
+		m_mainWindow->showNormal();
+	}
+	
+
 	m_mainWindow->raise();
 
 	/* Removed Nov 2003
@@ -317,6 +323,8 @@ void ChatView::makeVisible()
 		// scroll down post show and layout, otherwise the geometry is wrong to scroll to the bottom.
 		m_messagePart->keepScrolledDown();
 	}
+
+	
 
 	m_mainWindow->setActiveView( this );
 }
