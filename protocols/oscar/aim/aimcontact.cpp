@@ -154,7 +154,6 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 
-	OscarContact::userInfoUpdated( contact, details );
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << endl;
 	
 	//if they don't have an SSI alias, make sure we use the capitalization from the
@@ -179,12 +178,15 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 		}
 	}
 	
-	if ( m_details.buddyIconHash().size() > 0 )
+	if ( details.buddyIconHash().size() > 0 &&
+	     details.buddyIconHash() !=  m_details.buddyIconHash() )
 	{
 		int time = ( ( KApplication::random() % 25 ) + 10 ) * 1000;
 		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating buddy icon in " << time/1000 << " seconds" << endl;
 		QTimer::singleShot( time, this, SLOT( requestBuddyIcon() ) );
 	}
+	
+	OscarContact::userInfoUpdated( contact, details );
 }
 
 
