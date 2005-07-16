@@ -144,13 +144,10 @@ void ICQContact::loggedIn()
 	if ( m_ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 
-	QString nickname = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-	if ( nickname.isEmpty() || Oscar::normalize( nickname ) == Oscar::normalize( contactId() ) )
-	{
-		int time = ( KApplication::random() % 25 ) * 1000;
-		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating nickname in " << time/1000 << " seconds" << endl;
-		QTimer::singleShot( time, this, SLOT( requestShortInfo() ) );
-	}
+	int time = ( KApplication::random() % 20 ) * 1000;
+	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating nickname in " << time/1000 << " seconds" << endl;
+	QTimer::singleShot( time, this, SLOT( requestShortInfo() ) );
+
 }
 
 void ICQContact::requestShortInfo()
@@ -227,6 +224,8 @@ void ICQContact::receivedLongInfo( const QString& contact )
 	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "received long info from engine" << endl;
 	
 	ICQGeneralUserInfo genInfo = mAccount->engine()->getGeneralInfo( contact );
+	if ( !genInfo.nickname.isEmpty() )
+		setNickName( genInfo.nickname );
 	emit haveBasicInfo( genInfo );
 	
 	ICQWorkUserInfo workInfo = mAccount->engine()->getWorkInfo( contact );
