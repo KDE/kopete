@@ -47,7 +47,7 @@ QString MSNChallengeHandler::computeHash(const QString& challengeString)
  	kdDebug(14140) << k_funcinfo << "md5: " << digest << endl;
 
  	QValueVector<Q_INT32> md5Integers(4);
- 	for(Q_INT32 i=0; i < md5Integers.count(); i++)
+ 	for(Q_UINT32 i=0; i < md5Integers.count(); i++)
  	{
  		md5Integers[i] = hexSwap(digest.mid(i*8, 8)).toUInt(0, 16) & 0x7FFFFFFF;
  		kdDebug(14140) << k_funcinfo << ("0x" + hexSwap(digest.mid(i*8, 8))) << " " << md5Integers[i] << endl;
@@ -82,32 +82,32 @@ QString MSNChallengeHandler::computeHash(const QString& challengeString)
 	// Step Three: Create the 64-bit hash key.
 
 	// Get the hash key using the specified arrays.
-	Q_LLONG key = createHashKey(md5Integers, challengeIntegers);
+	Q_INT64 key = createHashKey(md5Integers, challengeIntegers);
 	kdDebug(14140) << k_funcinfo << "key: " << key << endl;
 
 	// Step Four: Create the final hash key.
 
-	QString DWordUpper = QString::number(QString(digest.mid(0, 16)).toULongLong(0, 16)^key, 16);
-	if(DWordUpper.length() % 16 != 0)
-		DWordUpper = DWordUpper.rightJustify(DWordUpper.length() + (16 - DWordUpper.length() % 16), '0');
+	QString upper = QString::number(QString(digest.mid(0, 16)).toULongLong(0, 16)^key, 16);
+	if(upper.length() % 16 != 0)
+		upper = upper.rightJustify(upper.length() + (16 - upper.length() % 16), '0');
 
-	QString DWordLower = QString::number(QString(digest.mid(16, 16)).toULongLong(0, 16)^key, 16);
-	if(DWordLower.length() % 16 != 0)
-		DWordLower = DWordLower.rightJustify(DWordLower.length() + (16 - DWordLower.length() % 16), '0');
+	QString lower = QString::number(QString(digest.mid(16, 16)).toULongLong(0, 16)^key, 16);
+	if(lower.length() % 16 != 0)
+		lower = lower.rightJustify(lower.length() + (16 - lower.length() % 16), '0');
 
-	return (DWordUpper + DWordLower);
+	return (upper + lower);
 }
 
-Q_LLONG MSNChallengeHandler::createHashKey(const QValueVector<Q_INT32>& md5Integers,
+Q_INT64 MSNChallengeHandler::createHashKey(const QValueVector<Q_INT32>& md5Integers,
 	const QValueVector<Q_INT32>& challengeIntegers)
 {
 	kdDebug(14140) << k_funcinfo << "Creating 64-bit key." << endl;
 
-	Q_LLONG magicNumber = 0x0E79A9C1L, high = 0L, low = 0L;
+	Q_INT64 magicNumber = 0x0E79A9C1L, high = 0L, low = 0L;
 		
 	for(uint i=0; i < challengeIntegers.count(); i += 2)
 	{
-		Q_LLONG temp = ((challengeIntegers[i] * magicNumber) % 0x7FFFFFFF) + high;
+		Q_INT64 temp = ((challengeIntegers[i] * magicNumber) % 0x7FFFFFFF) + high;
 		temp = ((temp * md5Integers[0]) + md5Integers[1]) % 0x7FFFFFFF;
 
 		high = (challengeIntegers[i + 1] + temp) % 0x7FFFFFFF;
@@ -121,12 +121,12 @@ Q_LLONG MSNChallengeHandler::createHashKey(const QValueVector<Q_INT32>& md5Integ
 
 	QDataStream buffer(QByteArray(8), IO_ReadWrite);
 	buffer.setByteOrder(QDataStream::LittleEndian);
-	buffer << (Q_LONG)high;
-	buffer << (Q_LONG)low;
+	buffer << (Q_INT32)high;
+	buffer << (Q_INT32)low;
 
 	buffer.device()->reset();
 	buffer.setByteOrder(QDataStream::BigEndian);
-	Q_LLONG key;
+	Q_INT64 key;
 	buffer >> key;
 	
 	return key;
