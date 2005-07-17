@@ -32,7 +32,7 @@ MSNSecureLoginHandler::MSNSecureLoginHandler(const QString &accountId, const QSt
 
 MSNSecureLoginHandler::~MSNSecureLoginHandler()
 {
-	kdDebug(14140) << k_funcinfo << endl;
+//	kdDebug(14140) << k_funcinfo << endl;
 }
 
 void MSNSecureLoginHandler::login()
@@ -77,7 +77,8 @@ void MSNSecureLoginHandler::slotLoginServerReceived(KIO::Job *loginJob)
 								",pwd=" + KURL::encode_string( m_password ) +
 								"," + m_authentification + "\r\n";
 
-		kdDebug(14140) << k_funcinfo << "Auth request: " << authRequest << endl;
+//   warning, this debug contains the password
+//		kdDebug(14140) << k_funcinfo << "Auth request: " << authRequest << endl;
 
 		authJob->addMetaData("customHTTPHeader", authRequest);
 		authJob->addMetaData("SendLanguageSettings", "false");
@@ -101,13 +102,13 @@ void MSNSecureLoginHandler::slotTweenerReceived(KIO::Job *authJob)
 	{
 		QString httpHeaders = authJob->queryMetaData("HTTP-Headers");
 
-		kdDebug(14140) << k_funcinfo << "HTTP headers: " << httpHeaders << endl;
+//		kdDebug(14140) << k_funcinfo << "HTTP headers: " << httpHeaders << endl;
 
 		QRegExp rx("from-PP='(.*)'");
 		rx.search(httpHeaders);
 		QString ticket = rx.cap(1);
 	
-		kdDebug(14140) << k_funcinfo << "Received ticket: " << ticket << endl;
+//		kdDebug(14140) << k_funcinfo << "Received ticket: " << ticket << endl;
 
 		emit loginSuccesful(ticket);
 	}
