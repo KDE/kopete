@@ -4,7 +4,7 @@
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@ kde.org>
     Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
-	Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
+    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -1025,8 +1025,10 @@ bool MetaContact::fromXML( const QDomElement& element )
 				kdDebug(14010) << k_funcinfo << "no old name tracking" << endl;
 		}
 		else if( contactElement.tagName() == QString::fromLatin1( "photo" ) )
-		{ // custom photo, used for custom photo source
-			d->photoUrl = KURL(contactElement.text());
+		{
+			// custom photo, used for custom photo source
+			setPhoto( KURL(contactElement.text()) );
+
 			d->photoSyncedWithKABC = (contactElement.attribute(QString::fromLatin1("syncWithKABC")) == QString::fromLatin1("1")) || (contactElement.attribute(QString::fromLatin1("syncWithKABC")) == QString::fromLatin1("true"));
 
 			// retrieve deprecated data (now stored in property-sources)
