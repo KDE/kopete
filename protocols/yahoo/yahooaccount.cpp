@@ -1010,6 +1010,7 @@ void YahooAccount::setBuddyIcon( KURL url )
 		uint expire = myself()->property( YahooProtocol::protocol()->iconExpire ).value().toInt();
 		
 		if ( image.isNull() ) {
+			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n( "<qt>The selected buddy icon could not be opened. <br>Please set a new buddy icon.</qt>" ), i18n( "Yahoo Plugin" ) );
 			return;
 		}
 		image = image.smoothScale( 96, 96, QImage::ScaleMax );
