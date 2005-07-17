@@ -176,19 +176,67 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 	
 	// Yahoo does not understand XML/HTML message data, so send plain text
 	// instead.  (Yahoo has its own format for "rich text".)
-	QString messageText = message.plainBody();
-	kdDebug(14180) << "Original message: " << messageText << endl;
+	QRegExp regExp;
+	int pos = 0;
+	regExp.setMinimal( true );
 	
-	// Apply size, bold, italic, underlined and color-settings
-	messageText = QString("<font face=\"%1\" size=\"%2\">%3").arg(message.font().family()).arg(message.font().pointSize()).arg(messageText); 
-	if( message.font().bold() )
-		messageText = QString("\033[1m%1\033[x1m").arg(messageText);
-	if( message.font().italic() )
-		messageText = QString("\033[2m%1\033[x2m").arg(messageText);
-	if( message.font().underline() )
-		messageText = QString("\033[4m%1\033[x4m").arg(messageText);
-	if( message.fg() != Qt::black )
-		messageText = QString("\033[%1m%2\033[#000000m").arg(message.fg().name()).arg(messageText);
+	QString messageText = message.escapedBody();
+	kdDebug(14180) << "Original message: " << messageText << endl;
+
+	// find and replace Bold-formattings
+	regExp.setPattern( "<span([^>]*)font-weight:600([^>]*)>(.*)</span>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( messageText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+		messageText.replace( regExp, QString::fromLatin1("<span\\1font-weight:600\\2>\033[1m\\3\033[x1m</span>" ) );
+		}
+	}
+	
+	// find and replace Underline-formattings
+	regExp.setPattern( "<span([^>]*)text-decoration:underline([^>]*)>(.*)</span>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( messageText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			messageText.replace( regExp, QString::fromLatin1("<span\\1text-decoration:underline\\2>\033[4m\\3\033[x4m</span>" ) );
+		}
+	}
+	
+	// find and replace Italic-formattings
+	regExp.setPattern( "<span([^>]*)font-style:italic([^>]*)>(.*)</span>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( messageText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			messageText.replace( regExp, QString::fromLatin1("<span\\1font-style:italic\\2>\033[2m\\3\033[x2m</span>" ) );
+		}
+	}
+	
+	// find and replace Color-formattings
+	regExp.setPattern( "<span([^>]*)color:#([0-9a-zA-Z]*)([^>]*)>(.*)</span>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( messageText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			messageText.replace( regExp, QString::fromLatin1("<span\\1\\3>\033[#\\2m\\4\033[#000000m</span>" ) );
+		}
+	}
+	
+	// remove span-tags
+	regExp.setPattern( "<span([^>]*)>(.*)</span>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( messageText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			messageText.replace( regExp, QString::fromLatin1("\\2") );
+		}
+	}
 	
 	kdDebug(14180) << "Converted message: " << messageText << endl;
 	

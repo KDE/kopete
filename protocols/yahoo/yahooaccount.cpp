@@ -715,6 +715,8 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	QFont msgFont;
 	QDateTime msgDT;
 	Kopete::ContactPtrList justMe;
+	QRegExp regExp;
+	int pos = 0;
 	
 	if( !contact( who ) )
 	{
@@ -734,9 +736,17 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	QString newMsgText = stripMsgColorCodes( msg );
 	
 	kdDebug(14180) << "Message after stripping color codes '" << newMsgText << "'" << endl;
-	
-	newMsgText.replace( QRegExp("<font([^>]*)size=\"([^>]*)\"([^>]*)>"), 
-	                    QString::fromLatin1("<font\\1style=\"font-size:\\2pt\">" ) );
+
+	regExp.setMinimal( true );
+	regExp.setPattern( "<font([^>]*)size=\"([^>]*)\"([^>]*)>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( newMsgText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			newMsgText.replace( regExp, QString::fromLatin1("<font\\1style=\"font-size:\\2pt\">" ) );
+		}
+	}
 	
 	kdDebug(14180) << "Message after fixing font tags '" << newMsgText << "'" << endl;
 	

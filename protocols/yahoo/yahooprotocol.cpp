@@ -63,7 +63,7 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 	kdDebug(14180) << k_funcinfo << endl;
 
 	s_protocolStatic_ = this;
-	setCapabilities( BaseFgColor | BaseFormatting | BaseFont );
+	setCapabilities( RichFgColor | RichFormatting | RichFont );
 	addAddressBookField( "messaging/yahoo", Kopete::Plugin::MakeIndexField );
 }
 
