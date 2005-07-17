@@ -1120,12 +1120,20 @@ void YahooSession::slotBuddyIconFetched(const QString &who, KTempFile *file, int
 	emit gotBuddyIcon( who, file, checksum );
 }
 
-void YahooSession::_receiveFileProceed( int id, int fd, int /*error*/,
+void YahooSession::_receiveFileProceed( int id, int fd, int error,
                                         const char */*filename*/, unsigned long /*size*/, void */*data*/ )
 {
 	kdDebug(14181) << k_funcinfo << "FD:" << fd << " Filename:" << m_Filename <<endl;
 	int read = 0, received = 0;
 	char buf[1024];
+
+	if ( error )
+	{
+		kdDebug(14180) << "Could not download file. Error: " << error << endl;
+		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n( "An error occurred when trying to download the file." ), i18n("Error") );
+		return;
+	}
+	
 	KExtendedSocket* socket = m_connManager.connectionForFD( fd );
 	if ( !socket )
 	{
