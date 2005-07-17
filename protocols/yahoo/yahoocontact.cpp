@@ -244,7 +244,7 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 	Kopete::Contact *target = m_them.first();
 
 	m_account->yahooSession()->sendIm( static_cast<YahooContact*>(m_account->myself())->m_userId,
-		static_cast<YahooContact *>(target)->m_userId, messageText );
+							static_cast<YahooContact *>(target)->m_userId, messageText, m_account->pictureFlag());
 
 	// append message to window
 	manager(Kopete::Contact::CanCreate)->appendMessage(message);
@@ -345,7 +345,7 @@ void YahooContact::buzzContact()
 	Kopete::ContactPtrList m_them = manager(Kopete::Contact::CanCreate)->members();
 	Kopete::Contact *target = m_them.first();
 	
-	m_account->yahooSession()->buzzContact(	static_cast<YahooContact*>(m_account->myself())->m_userId, static_cast<YahooContact*>(target)->m_userId );
+	m_account->yahooSession()->buzzContact(	static_cast<YahooContact*>(m_account->myself())->m_userId, static_cast<YahooContact*>(target)->m_userId, m_account->pictureFlag() );
 
 	KopeteView *view = manager(Kopete::Contact::CannotCreate)->view(false);
 	if ( view )

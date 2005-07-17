@@ -146,9 +146,9 @@ public slots:
 	void refresh();
 
 public:
-	void sendIm( const QString &from, const QString &who, const QString &msg);
+	void sendIm( const QString &from, const QString &who, const QString &msg, int picture);
 	void sendTyping( const QString &from, const QString &who, int typ);
- 	void buzzContact( const QString &from, const QString&who );
+ 	void buzzContact( const QString &from, const QString&who, int picture );
 	void setAway( enum yahoo_status state, const QString &msg, int away);
 	void addBuddy( const QString &who, const QString &group);
 	void removeBuddy( const QString &who, const QString &group);
@@ -181,7 +181,6 @@ public:
 	void sendBuddyIconUpdate( const QString &who, int type );
 	void sendBuddyIconChecksum( int checksum, const QString &who );
 	void uploadBuddyIcon( const QString &url, int size );
-	void setPictureFlag( int picture );
 	
 	//webcam handlers
 	void requestWebcam( const QString& from );
@@ -346,7 +345,6 @@ private:
 	QString m_targetID;					// userID of the target user, e.g. for UserInfo() or SendFile() ...
 	KIO::TransferJob *mTransferJob;
 
-	int m_picture; // Buddy Icon flag: 0 = no picture, 2 = buddy icon
 	int m_Port;
 	int m_Status;
 	int m_connId;

@@ -77,6 +77,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	m_session = 0;
 	m_lastDisconnectCode = 0;
 	m_currentMailCount = 0;
+	m_pictureFlag = 0;
 
 	YahooContact* _myself=new YahooContact( this, accountId, accountId, Kopete::ContactList::self()->myself() );
 	setMyself( _myself );
@@ -586,6 +587,17 @@ void YahooAccount::slotGlobalIdentityChanged( const QString &key, const QVariant
 	}
 }
 
+void YahooAccount::setPictureFlag( int flag )
+{
+	kdDebug(14180) << k_funcinfo << " PictureFlag: " << flag << endl;
+	m_pictureFlag = flag;
+}
+
+int YahooAccount::pictureFlag()
+{
+	return m_pictureFlag;
+}
+
 /***************************************************************************
  *                                                                         *
  *   Slot for KYahoo signals                                               *
@@ -696,7 +708,7 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 
 			if ( !myself()->property( Kopete::Global::Properties::self()->photo() ).isNull() )
 			{
-				static_cast< YahooContact* >( contact( who ) )->sendBuddyIconUpdate( 2 );
+				static_cast< YahooContact* >( contact( who ) )->sendBuddyIconUpdate( pictureFlag() );
 				static_cast< YahooContact* >( contact( who ) )->sendBuddyIconChecksum(
 					myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
 			}
@@ -985,8 +997,7 @@ void YahooAccount::setBuddyIcon( KURL url )
 		myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
 		myself()->removeProperty( YahooProtocol::protocol()->iconRemoteUrl );
 		myself()->removeProperty( YahooProtocol::protocol()->iconExpire );
-		if ( m_session != 0 )
-			m_session->setPictureFlag( 0 );
+		setPictureFlag( 0 );
 		
 		slotBuddyIconChanged( QString::null );
 	}
@@ -1034,8 +1045,7 @@ void YahooAccount::setBuddyIcon( KURL url )
 		myself()->setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
 		configGroup()->writeEntry( "iconLocalUrl", newlocation );
 		
-		if ( m_session != 0 )
-			m_session->setPictureFlag( 2 );
+		setPictureFlag( 2 );
 		
 		if ( checksum != static_cast<uint>(myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt()) ||
 		     QDateTime::currentDateTime().toTime_t() > expire )
@@ -1055,17 +1065,17 @@ void YahooAccount::slotBuddyIconChanged( const QString &url )
 	kdDebug(14180) << k_funcinfo << endl;
 	QDictIterator<Kopete::Contact> it( contacts() );
 	int checksum = myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt();
-	int picture = 2;
 
 	if ( url.isEmpty() )	// remove pictures from buddie's clients
 	{
 		checksum = 0;	
-		picture = 0;
+		setPictureFlag( 0 );
 	}
 	else
 	{
 		myself()->setProperty( YahooProtocol::protocol()->iconRemoteUrl, url );
 		configGroup()->writeEntry( "iconRemoteUrl", url );
+		setPictureFlag( 2 );
 	}
 	
 	for ( ; it.current(); ++it )
@@ -1073,7 +1083,7 @@ void YahooAccount::slotBuddyIconChanged( const QString &url )
 		if ( it.current() == myself() || !it.current()->isReachable() )
 			continue;
 		static_cast< YahooContact* >( it.current() )->sendBuddyIconChecksum( checksum );
-		static_cast< YahooContact* >( it.current() )->sendBuddyIconUpdate( picture );
+		static_cast< YahooContact* >( it.current() )->sendBuddyIconUpdate( pictureFlag() );
 	}
 }
 

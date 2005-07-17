@@ -224,7 +224,6 @@ YahooSession::YahooSession(int id, const QString username, const QString passwor
 	m_lastWebcamTimestamp = 0;
 	currentImage = 0L;
 	m_iconLoader = new YahooBuddyIconLoader();
-	m_picture = 0;
 
 	connect( m_iconLoader, SIGNAL(fetchedBuddyIcon(const QString&, KTempFile*, int )), this, SLOT(slotBuddyIconFetched(const QString&, KTempFile*,  int ) ) );
 }
@@ -279,11 +278,6 @@ void YahooSession::setIdentityStatus( const QString &identity, int active)
 	yahoo_set_identity_status( m_connId, identity.local8Bit(), active );
 }
 
-void YahooSession::setPictureFlag( int picture )
-{
-	m_picture = picture;
-}
-
 void YahooSession::getList()
 {
 	kdDebug(14181) << k_funcinfo << endl;
@@ -296,10 +290,10 @@ void YahooSession::keepalive()
 	yahoo_keepalive( m_connId );
 }
 
-void YahooSession::sendIm( const QString &from, const QString &who, const QString &msg )
+void YahooSession::sendIm( const QString &from, const QString &who, const QString &msg, int picture )
 {
-	kdDebug(14181) << k_funcinfo << endl;
-	yahoo_send_im( m_connId, from.local8Bit(), who.local8Bit(), (const char *)msg.utf8(), 1, m_picture );
+	kdDebug(14181) << k_funcinfo << " Picture: " << picture <<  endl;
+	yahoo_send_im( m_connId, from.local8Bit(), who.local8Bit(), (const char *)msg.utf8(), 1, picture );
 }
 
 void YahooSession::sendTyping( const QString &from, const QString &who, int typ)
@@ -308,10 +302,10 @@ void YahooSession::sendTyping( const QString &from, const QString &who, int typ)
 	yahoo_send_typing( m_connId, from.local8Bit(), who.local8Bit(), typ );
 }
 
-void YahooSession::buzzContact( const QString &from, const QString &who )
+void YahooSession::buzzContact( const QString &from, const QString &who, int pictureFlag )
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	yahoo_send_im( m_connId, from.local8Bit(), who.local8Bit(), "<ding>", 1, m_picture );
+	yahoo_send_im( m_connId, from.local8Bit(), who.local8Bit(), "<ding>", 1, pictureFlag );
 }
 
 void YahooSession::setAway( enum yahoo_status state, const QString &msg, int away)
@@ -1088,7 +1082,6 @@ void YahooSession::slotTransmitBuddyIcon( int fd, YahooBuddyIconUploadData *uplo
 void YahooSession::_gotBuddyIconUploadResponseReceiver( int /*id*/, const char *url)
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	setPictureFlag( 2 );
 	emit buddyIconUploaded( QString( url ) );
 }
 
