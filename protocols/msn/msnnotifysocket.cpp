@@ -315,7 +315,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		QString publicName, contactGuid, groups;
 		uint lists;
 
-		QRegExp regex("N=(\\S+)(?:\\sF=(\\S+))?(?:\\sC=([0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}))?\\s(\\d+)\\s?((?:[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12},?)*)$");
+		QRegExp regex("N=([^ ]+)(?: F=([^ ]+))?(?: C=([0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}))? (\\d+)\\s?((?:[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12},?)*)$");
 		regex.search(data);
 		
 		// Capture passport email.
@@ -329,7 +329,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		// Capture contact group(s) guid(s)
 		groups = regex.cap(5);
 		
-// 		kdDebug(14140) << k_funcinfo << " msnId: " << m_tmpLastHandle << " publicName: " << publicName << " contactGuid: " << guid << " list: " << lists << " groupGuid: " << groups << endl;
+// 		kdDebug(14140) << k_funcinfo << " msnId: " << m_tmpLastHandle << " publicName: " << publicName << " contactGuid: " << contactGuid << " list: " << lists << " groupGuid: " << groups << endl;
 
 		// handle, publicName, Contact GUID, lists, Group GUID
 		emit contactList(  m_tmpLastHandle , publicName, contactGuid, lists, groups );
@@ -431,7 +431,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		// ADC TrID RL N=example@passport.com F=friednly%20name
 		// ADC TrID FL N=ex@pas.com F=My%20Name C=contactGuid
 		// Thanks Gregg for that complex RegExp.
-		QRegExp regex("(?:N=(\\S+))?\\s?(?:F=(\\S+))?\\s?(?:C=([0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}))?\\s?((?:[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12},?)*)$");
+		QRegExp regex("(?:N=([^ ]+))?(?: F=([^ ]+))?(?: C=([0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}))?\\s?((?:[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12},?)*)$");
 		regex.search( data.section( ' ', 1 ) );
 		
 		// Capture passport email.
