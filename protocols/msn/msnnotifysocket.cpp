@@ -543,8 +543,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			// If the server timestamp and the local timestamp are different,
 			// prepare to receive the contact list.
 			emit newContactList();  // remove all contacts datas, msn sends a new contact list
-			m_account->configGroup()->writeEntry( "lastsynctime" , data.section( ' ', 1, 1 ) );
-			m_account->configGroup()->writeEntry( "lastchange", data.section (' ', 0, 0 ) );
+			m_account->configGroup()->writeEntry( "lastsynctime" , data.section( ' ', 1, 1 ));
+			m_account->configGroup()->writeEntry( "lastchange", data.section (' ', 0, 0 ));
 		}else
 			kdDebug(14140) << k_funcinfo << "Contact list is up-to-date." << endl;
 			
