@@ -15,14 +15,14 @@
     <description/>
     <ignoreparts>
       <part>kdevabbrev</part>
-      <part>kdevdebugger</part>
-      <part>kdevvalgrind</part>
-      <part>kdevctags2</part>
       <part>kdevbookmarks</part>
       <part>kdevsnippet</part>
-      <part>kdevquickopen</part>
+      <part>kdevctags2</part>
+      <part>kdevdebugger</part>
       <part>kdevfileselector</part>
       <part>kdevdistpart</part>
+      <part>kdevquickopen</part>
+      <part>kdevvalgrind</part>
     </ignoreparts>
     <secondaryLanguages/>
     <versioncontrol>kdevsubversion</versioncontrol>
@@ -130,7 +130,7 @@
       <abortonerror>true</abortonerror>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin>make</makebin>
+      <makebin>unsermake</makebin>
       <prio>0</prio>
     </make>
     <general>

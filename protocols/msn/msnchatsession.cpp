@@ -653,6 +653,22 @@ void MSNChatSession::slotNudgeReceived()
 	Kopete::Message msg = Kopete::Message(myself(), members(), nudgeBody, Kopete::Message::Internal, Kopete::Message::PlainText );
 	appendMessage( msg );
 	//Kopete::Utils::notifyBuzz( myself()->account(), nudgeBody );
+	KMainWindow *w= view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) : 0L;
+	if(w)
+	{
+		QPoint p = w->pos();
+		for(int i=0; i < 400; i++)
+		{
+			if((i%4)== 0){
+				w->move(p.x() + 2, p.y());
+			}
+
+			if((i%4) == 2){
+				w->move(p.x() - 2, p.y());
+			}
+		}
+		w->move(p);
+	}
 }
 #include "msnchatsession.moc"
 

@@ -139,6 +139,6 @@ void BuddyIconTask::handleAIMBuddyIconResponse()
 	emit haveIcon( user, icon );
 }
 
-#include "buddyicontask.moc"
+// #include "buddyicontask.moc"
 
 
