@@ -534,11 +534,10 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	else if( cmd == "SYN" )
 	{
 		// Retrieve the last synchronization timestamp known to the server.
-		QString lastChange = data.section( ' ', 0, 0 );
 		QString lastSyncTime = data.section( ' ', 1, 1 );
-		
+		QString lastChange   = data.section( ' ', 1, 1 );
 		if( lastSyncTime != m_account->configGroup()->readEntry("lastsynctime") ||
-			lastChange != m_account->configGroup()->readEntry("lastchange"))
+			lastChange != m_account->configGroup()->readEntry("lastchange") )
 		{
 			// If the server timestamp and the local timestamp are different,
 			// prepare to receive the contact list.
@@ -546,7 +545,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			m_account->configGroup()->writeEntry( "lastsynctime" , data.section( ' ', 1, 1 ));
 			m_account->configGroup()->writeEntry( "lastchange", data.section (' ', 0, 0 ));
 		}else
-			kdDebug(14140) << k_funcinfo << "Contact list is up-to-date." << endl;
+			kdDebug(14140) << k_funcinfo << "Contact list up-to-date." << endl;
 			
 		// set the status
 		setStatus( m_newstatus );
@@ -775,17 +774,6 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 	if(!m_configFile.isNull())
 	{
 		// TODO Global configuration file.
-		QDomDocument gcf;
-		if(gcf.setContent(msg))
-		{
-			// Get the first child of the xml "document";
-			QDomElement element = gcf.documentElement().firstChild().toElement();
-			while( !element.isNull() )
-			{
-				kdDebug(14140) << k_funcinfo << element.tagName() << endl;
-				element = element.nextSibling().toElement();
-			}
-		}
 	}
 
 	if(!m_tmpLastHandle.isNull())
