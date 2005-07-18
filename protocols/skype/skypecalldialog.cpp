@@ -25,6 +25,7 @@
 #include <qtimer.h>
 #include <kglobal.h>
 #include <qdatetime.h>
+#include <kwin.h>
 
 #include "skypecalldialog.h"
 #include "skypeaccount.h"
@@ -54,6 +55,15 @@ class SkypeCallDialogPrivate {
 		int totalTime;
 		///The time the call is actually running (in halfes of seconds)
 		int callTime;
+		///Did I reported the ed of call already?
+		bool callEnded;
+		///Report that the call has ended, please
+		void endCall() {
+			if (!callEnded) {
+				callEnded = true;
+				account->endCall();
+			}
+		};
 };
 
 SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, SkypeAccount *account) : SkypeCallDialogBase() {
@@ -68,6 +78,7 @@ SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, S
 	d->status = csNotRunning;
 	d->totalTime = 0;
 	d->callTime = 0;
+	d->callEnded = false;
 
 	d->updater = new QTimer();
 	connect(d->updater, SIGNAL(timeout()), this, SLOT(updateCallInfo()));
@@ -77,6 +88,7 @@ SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, S
 
 	//Show the window
 	show();
+	KWin::activateWindow(winId());
 }
 
 
@@ -84,6 +96,7 @@ SkypeCallDialog::~SkypeCallDialog(){
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	emit callFinished(d->callId);
+	d->endCall();
 
 	delete d->updater;
 	delete d;
@@ -189,6 +202,7 @@ void SkypeCallDialog::updateStatus(const QString &callId, const QString &status)
 }
 
 void SkypeCallDialog::acceptCall() {
+	d->account->startCall();
 	emit acceptTheCall(d->callId);
 }
 
@@ -213,6 +227,8 @@ void SkypeCallDialog::deathTimeout() {
 
 void SkypeCallDialog::closeLater() {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
+
+	d->endCall();
 
 	if ((d->account->closeCallWindowTimeout()) && (d->status != csShuttingDown)) {
 		QTimer::singleShot(1000 * d->account->closeCallWindowTimeout(), this, SLOT(deathTimeout()));

@@ -71,6 +71,14 @@ skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *acc
 			CloseTimeoutSpin->setValue(d->account->closeCallWindowTimeout());
 		} else AutoCloseCallCheck->setChecked(false);
 		LeaveCheck->setChecked(d->account->leaveOnExit());
+		const QString &startCallCommand = d->account->startCallCommand();
+		StartCallCommandCheck->setChecked(!startCallCommand.isEmpty());
+		StartCallCommandEdit->setText(startCallCommand);
+		WaitForStartCallCommandCheck->setChecked(d->account->waitForStartCallCommand());
+		const QString &endCallCommand = d->account->endCallCommand();
+		EndCallCommandCheck->setChecked(!endCallCommand.isEmpty());
+		EndCallCommandEdit->setText(endCallCommand);
+		OlnlyLastCallCommandCheck->setChecked(d->account->endCallCommandOnlyLast());
 	} else {
 		//TODO Make this unneeded :)
 		KMessageBox::information(this, i18n("Please note that this version of Skype plugin is a development version and it is probable it will cause more problems than solve. You have been warned"), i18n("Version info"));
@@ -123,6 +131,18 @@ Kopete::Account *skypeEditAccount::apply() {
 	} else {
 		skype->setCloseWindowTimeout(0);
 	}
+	if (StartCallCommandCheck->isChecked()) {
+		skype->setStartCallCommand(StartCallCommandEdit->text());
+	} else {
+		skype->setStartCallCommand("");
+	}
+	skype->setWaitForStartCallCommand(WaitForStartCallCommandCheck->isChecked());
+	if (EndCallCommandCheck->isChecked()) {
+		skype->setEndCallCommand(EndCallCommandEdit->text());
+	} else {
+		skype->setEndCallCommand("");
+	}
+	skype->setEndCallCommandOnlyForLast(OlnlyLastCallCommandCheck->isChecked());
 	skype->save();//save it to config
 	return skype;//return the account
 }

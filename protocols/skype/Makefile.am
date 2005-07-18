@@ -25,3 +25,4 @@ noinst_HEADERS = skypeeditaccount.h skypeaccount.h skypecontact.h \
 				skypeaddcontact.h skypechatsession.h skypecalldialog.h skypeconference.h
 mydatadir = $(kde_datadir)/kopete_skype
 mydata_DATA = skypeui.rc skypechatui.rc
+mydata_SCRIPTS = call_end call_start

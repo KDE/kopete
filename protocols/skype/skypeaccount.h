@@ -283,6 +283,24 @@ Q_OBJECT
 		 * Should chat leave when it's window is closed?
 		 */
 		bool leaveOnExit() const;
+		/**
+		 * Returns the call that should be executed before making a call.
+		 * @return The command or empty string if nothing should be executed
+		 */
+		QString startCallCommand() const;
+		/**
+		 * Should we wait for the startCallCommand to finish before making the call.
+		 */
+		bool waitForStartCallCommand() const;
+		/**
+		 * The command that should be executed after the call is finished.
+		 * @return The command or empty string if user does not want to execute anything.
+		 */
+		QString endCallCommand() const;
+		/**
+		 * Should be tha command executed only for the last call?
+		 */
+		bool endCallCommandOnlyLast() const;
 	public slots:
 		/**
 		 * Disconnects from server.
@@ -406,6 +424,30 @@ Q_OBJECT
 		 * @param userId
 		 */
 		void chatUser(const QString &userId);
+		/**
+		 * Sets the command to be executed before making/accepting call (or empty if nothing)
+		 */
+		void setStartCallCommand(const QString &value);
+		/**
+		 * Set the command that will be executed when a call is finished
+		 */
+		void setEndCallCommand(const QString &value);
+		/**
+		 * Do we wait for the command to be executed before making the call?
+		 */
+		void setWaitForStartCallCommand(bool value);
+		/**
+		 * Should be the end command executed only for the last closed call or for every call that is closed?
+		 */
+		void setEndCallCommandOnlyForLast(bool value);
+		/**
+		 * Notify me when a call has begun and I should run the start call command
+		 */
+		void startCall();
+		/**
+		 * Notify me when the call ends to run the end call command
+		 */
+		void endCall();
 	signals:
 		/**
 		 * This is emited when the message has been sent by skype
