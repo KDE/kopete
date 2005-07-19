@@ -450,7 +450,6 @@ void GroupWiseAccount::sendInvitation( const GroupWise::ConferenceGuid & guid, c
 
 void GroupWiseAccount::slotLoggedIn()
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	reconcileOfflineChanges();
 	
 	myself()->setOnlineStatus( protocol()->groupwiseAvailable );
@@ -461,6 +460,7 @@ void GroupWiseAccount::slotLoggedIn()
 
 void GroupWiseAccount::reconcileOfflineChanges()
 {
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	m_dontSync = true;
 	//sanity check the server side model vs our contact list.
 	//Contacts might have been removed from some groups or entirely on the server.  
@@ -1501,20 +1501,24 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 			candidateGrp = grpIt;
 			++grpIt;
 			GWFolder * destinationFolder = m_serverListModel->findFolderByName( ( ( *candidateGrp )->displayName() ) );
-			Q_ASSERT( destinationFolder ); // might not exist on the server yet
-			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - add a contact instance for group '" << destinationFolder->displayName << "'" << endl;
-
 			CreateContactInstanceTask * ccit = new CreateContactInstanceTask( client()->rootTask() );
-			QObject::connect( ccit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
 
+			contact->setNickName( contact->metaContact()->displayName() );
 			// does this group exist on the server?  Create the contact appropriately
-			int parentId = destinationFolder->id;
-			if ( true )
+			if ( destinationFolder )
+			{
+				int parentId = destinationFolder->id;
 				ccit->contactFromUserId( contact->dn(), contact->metaContact()->displayName(), parentId );
+			}
 			else
 			{
-				// discover the next free sequence number and add the group using that
-				ccit->contactFromUserIdAndFolder( contact->dn(), contact->metaContact()->displayName(), nextFreeSequence++, ( *candidateGrp )->displayName() );
+				if ( ( *candidateGrp ) == Kopete::Group::topLevel() )
+					ccit->contactFromUserId( contact->dn(), contact->metaContact()->displayName(),
+							m_serverListModel->rootFolder->id );
+				else
+					// discover the next free sequence number and add the group using that
+					ccit->contactFromUserIdAndFolder( contact->dn(), contact->metaContact()->displayName(),
+							nextFreeSequence++, ( *candidateGrp )->displayName() );
 			}
 			ccit->go( true );
 			groupList.remove( candidateGrp );
