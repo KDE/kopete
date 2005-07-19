@@ -67,6 +67,8 @@ AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::M
 	                  this, SLOT( gotWarning( const QString&, Q_UINT16, Q_UINT16 ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( haveIconForContact( const QString&, QByteArray ) ),
 	                  this, SLOT( haveIcon( const QString&, QByteArray ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL( iconServerConnected() ),
+	                  this, SLOT( requestBuddyIcon() ) );
 	QObject::connect( this, SIGNAL( featuresUpdated() ), this, SLOT( updateFeatures() ) );
 }
 
@@ -179,10 +181,10 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 		}
 	}
 	
-	if ( details.buddyIconHash().size() > 0 &&
-	     details.buddyIconHash() !=  m_details.buddyIconHash() )
+	if ( mAccount->engine()->hasIconConnection() && details.buddyIconHash().size() > 0 &&
+	     details.buddyIconHash() != m_details.buddyIconHash() )
 	{
-		int time = ( ( KApplication::random() % 25 ) + 10 ) * 1000;
+		int time = ( KApplication::random() % 25 ) * 1000;
 		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating buddy icon in " << time/1000 << " seconds" << endl;
 		QTimer::singleShot( time, this, SLOT( requestBuddyIcon() ) );
 	}

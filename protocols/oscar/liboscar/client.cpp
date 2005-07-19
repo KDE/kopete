@@ -820,5 +820,11 @@ void Client::deleteStaticTasks()
 	d->typingNotifyTask = 0;
 }
 
+bool Client::hasIconConnection( ) const
+{
+	Connection* c = d->connections.connectionForFamily( 0x0010 );
+	return c;
+}
+
 #include "client.moc"
 //kate: tab-width 4; indent-mode csands; space-indent off; replace-tabs off;

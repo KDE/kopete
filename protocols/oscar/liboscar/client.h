@@ -252,6 +252,8 @@ public:
 	/** Make a connection to the icon server */
 	void connectToIconServer();
 	
+	bool hasIconConnection() const;
+	
 
 	/*************
 	  INTERNAL (FOR USE BY TASKS OR CONNECTIONS) METHODS 
