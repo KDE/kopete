@@ -33,10 +33,6 @@
 extern "C" {
 #endif
 
-#ifdef HAVE_STDINT_H
-#include <stdint.h>
-#endif
-	
 #include <libgadu-config.h>
 #include <sys/types.h>
 #include <stdio.h>
@@ -350,7 +346,7 @@ struct gg_login_params {
 	uint16_t external_port;		/* port widziany na zewnatrz */
 	int tls;			/* czy ³±czymy po TLS? */
 	int image_size;			/* maksymalny rozmiar obrazka w KiB */
-        int era_omnix;          /*czy udawa? klienta era omnix? */
+	int era_omnix;			/* czy udawaæ klienta era omnix? */
 
 	char dummy[6 * sizeof(int)];	/* miejsce na kolejnych 6 zmiennych,
 					 * ¿eby z dodaniem parametru nie 
