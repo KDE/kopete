@@ -15,7 +15,8 @@
  *
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
+ *  USA.
  */
 
 #include <sys/types.h>
@@ -90,7 +91,7 @@ cleanup:
  */
 char *gg_vsaprintf(const char *format, va_list ap)
 {
-        int size = 0;
+	int size = 0;
 	const char *start;
 	char *buf = NULL;
 	
@@ -192,23 +193,23 @@ char *gg_saprintf(const char *format, ...)
  */
 char *gg_get_line(char **ptr)
 {
-        char *foo, *res;
+	char *foo, *res;
 
-        if (!ptr || !*ptr || !strcmp(*ptr, ""))
-                return NULL;
+	if (!ptr || !*ptr || !strcmp(*ptr, ""))
+		return NULL;
 
-        res = *ptr;
+	res = *ptr;
 
-        if (!(foo = strchr(*ptr, '\n')))
-                *ptr += strlen(*ptr);
-        else {
-                *ptr = foo + 1;
-                *foo = 0;
-                if (strlen(res) > 1 && res[strlen(res) - 1] == '\r')
-                        res[strlen(res) - 1] = 0;
-        }
+	if (!(foo = strchr(*ptr, '\n')))
+		*ptr += strlen(*ptr);
+	else {
+		*ptr = foo + 1;
+		*foo = 0;
+		if (strlen(res) > 1 && res[strlen(res) - 1] == '\r')
+			res[strlen(res) - 1] = 0;
+	}
 
-        return res;
+	return res;
 }
 
 /*
@@ -226,10 +227,10 @@ char *gg_get_line(char **ptr)
  */
 int gg_connect(void *addr, int port, int async)
 {
-	int sock, one = 1;
+	int sock, one = 1, errno2;
 	struct sockaddr_in sin;
 	struct in_addr *a = addr;
-        struct sockaddr_in myaddr;
+	struct sockaddr_in myaddr;
 
 	gg_debug(GG_DEBUG_FUNCTION, "** gg_connect(%s, %d, %d);\n", inet_ntoa(*a), port, async);
 	
@@ -238,15 +239,15 @@ int gg_connect(void *addr, int port, int async)
 		return -1;
 	}
 
-        memset(&myaddr, 0, sizeof(myaddr));
-        myaddr.sin_family = AF_INET;
+	memset(&myaddr, 0, sizeof(myaddr));
+	myaddr.sin_family = AF_INET;
 
-        myaddr.sin_addr.s_addr = gg_local_ip;
-        
-        if(bind(sock, (struct sockaddr *) &myaddr, sizeof(myaddr)) == -1) {
-                gg_debug(GG_DEBUG_MISC, "// gg_connect() bind() failed (errno=%d, %s)\n", errno, strerror(errno));
-                return -1;
-        }
+	myaddr.sin_addr.s_addr = gg_local_ip;
+
+	if (bind(sock, (struct sockaddr *) &myaddr, sizeof(myaddr)) == -1) {
+		gg_debug(GG_DEBUG_MISC, "// gg_connect() bind() failed (errno=%d, %s)\n", errno, strerror(errno));
+		return -1;
+	}
 
 #ifdef ASSIGN_SOCKETS_TO_THREADS
 	gg_win32_thread_socket(0, sock);
@@ -259,7 +260,9 @@ int gg_connect(void *addr, int port, int async)
 		if (fcntl(sock, F_SETFL, O_NONBLOCK) == -1) {
 #endif
 			gg_debug(GG_DEBUG_MISC, "// gg_connect() ioctl() failed (errno=%d, %s)\n", errno, strerror(errno));
+			errno2 = errno;
 			close(sock);
+			errno = errno2;
 			return -1;
 		}
 	}
@@ -271,7 +274,9 @@ int gg_connect(void *addr, int port, int async)
 	if (connect(sock, (struct sockaddr*) &sin, sizeof(sin)) == -1) {
 		if (errno && (!async || errno != EINPROGRESS)) {
 			gg_debug(GG_DEBUG_MISC, "// gg_connect() connect() failed (errno=%d, %s)\n", errno, strerror(errno));
+			errno2 = errno;
 			close(sock);
+			errno = errno2;
 			return -1;
 		}
 		gg_debug(GG_DEBUG_MISC, "// gg_connect() connect() in progress\n");
@@ -289,11 +294,15 @@ int gg_connect(void *addr, int port, int async)
  *  - buf - wska¼nik do bufora
  *  - length - d³ugo¶æ bufora
  *
- * je¶li trafi na b³±d odczytu, zwraca NULL. inaczej zwraca buf.
+ * je¶li trafi na b³±d odczytu lub podano nieprawid³owe parametry, zwraca NULL.
+ * inaczej zwraca buf.
  */
 char *gg_read_line(int sock, char *buf, int length)
 {
 	int ret;
+
+	if (!buf || length < 0)
+		return NULL;
 
 	for (; length > 1; buf++, length--) {
 		do {
@@ -327,13 +336,17 @@ char *gg_read_line(int sock, char *buf, int length)
  */
 void gg_chomp(char *line)
 {
-	if (!line || strlen(line) < 1)
+	int len;
+	
+	if (!line)
 		return;
 
-	if (line[strlen(line) - 1] == '\n')
-		line[strlen(line) - 1] = 0;
-	if (line[strlen(line) - 1] == '\r')
-		line[strlen(line) - 1] = 0;
+	len = strlen(line);
+	
+	if (len > 0 && line[len - 1] == '\n')
+		line[--len] = 0;
+	if (len > 0 && line[len - 1] == '\r')
+		line[--len] = 0;
 }
 
 /*
@@ -351,10 +364,10 @@ char *gg_urlencode(const char *str)
 {
 	char *q, *buf, hex[] = "0123456789abcdef";
 	const char *p;
-	int size = 0;
+	unsigned int size = 0;
 
-	if (!str && !(str = strdup("")))
-		return NULL;
+	if (!str)
+		str = "";
 
 	for (p = str; *p; p++, size++) {
 		if (!((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9') || *p == ' ') || (*p == '@') || (*p == '.') || (*p == '-'))
@@ -403,18 +416,18 @@ int gg_http_hash(const char *format, ...)
 	va_start(ap, format);
 
 	for (j = 0; j < strlen(format); j++) {
-		unsigned char *arg, buf[16];
+		char *arg, buf[16];
 
 		if (format[j] == 'u') {
 			snprintf(buf, sizeof(buf), "%d", va_arg(ap, uin_t));
 			arg = buf;
 		} else {
-			if (!(arg = va_arg(ap, unsigned char*)))
+			if (!(arg = va_arg(ap, char*)))
 				arg = "";
 		}	
 
 		i = 0;
-		while ((c = (int) arg[i++]) != 0) {
+		while ((c = (unsigned char) arg[i++]) != 0) {
 			a = (c ^ b) + (c << 8);
 			b = (a >> 24) | (a << 8);
 		}
@@ -428,28 +441,90 @@ int gg_http_hash(const char *format, ...)
 /*
  * gg_gethostbyname() // funkcja pomocnicza
  *
- * odpowiednik gethostbyname() u¿ywaj±cy gethostbyname_r(), gdy potrzebna
- * jest wielobie¿no¶æ. chwilowo korzysta ze zwyk³ego gethostbyname().
+ * odpowiednik gethostbyname() troszcz±cy siê o wspó³bie¿no¶æ, gdy mamy do
+ * dyspozycji funkcjê gethostbyname_r().
  *
  *  - hostname - nazwa serwera
  *
- * zaalokowany bufor, który nale¿y zwolniæ lub NULL w przypadku b³êdu.
+ * zwraca wska¼nik na strukturê in_addr, któr± nale¿y zwolniæ.
  */
-struct hostent *gg_gethostbyname(const char *hostname)
+struct in_addr *gg_gethostbyname(const char *hostname)
 {
-	/* XXX u¿yæ gethostbyname_r() */
+	struct in_addr *addr = NULL;
 
-	struct hostent *hp, *hp2;
+#ifdef HAVE_GETHOSTBYNAME_R
+	char *tmpbuf = NULL, *buf = NULL;
+	struct hostent *hp = NULL, *hp2 = NULL;
+	int h_errnop, ret;
+	size_t buflen = 1024;
+	int new_errno;
+	
+	new_errno = ENOMEM;
+	
+	if (!(addr = malloc(sizeof(struct in_addr))))
+		goto cleanup;
+	
+	if (!(hp = calloc(1, sizeof(*hp))))
+		goto cleanup;
+
+	if (!(buf = malloc(buflen)))
+		goto cleanup;
+
+	tmpbuf = buf;
+	
+	while ((ret = gethostbyname_r(hostname, hp, buf, buflen, &hp2, &h_errnop)) == ERANGE) {
+		buflen *= 2;
+		
+		if (!(tmpbuf = realloc(buf, buflen)))
+			break;
+		
+		buf = tmpbuf;
+	}
+	
+	if (ret)
+		new_errno = h_errnop;
+
+	if (ret || !hp2 || !tmpbuf)
+		goto cleanup;
+	
+	memcpy(addr, hp->h_addr, sizeof(struct in_addr));
+	
+	free(buf);
+	free(hp);
+	
+	return addr;
+	
+cleanup:
+	errno = new_errno;
+	
+	if (addr)
+		free(addr);
+	if (hp)
+		free(hp);
+	if (buf)
+		free(buf);
+	
+	return NULL;
+#else
+	struct hostent *hp;
+
+	if (!(addr = malloc(sizeof(struct in_addr)))) {
+		goto cleanup;
+	}
 
 	if (!(hp = gethostbyname(hostname)))
-		return NULL;
+		goto cleanup;
 
-	if (!(hp2 = calloc(1, sizeof(*hp))))
-		return NULL;
+	memcpy(addr, hp->h_addr, sizeof(struct in_addr));
 
-	memcpy(hp2, hp, sizeof(*hp));
+	return addr;
+	
+cleanup:
+	if (addr)
+		free(addr);
 
-	return hp2;
+	return NULL;
+#endif
 }
 
 #ifdef ASSIGN_SOCKETS_TO_THREADS
@@ -493,37 +568,36 @@ int gg_win32_thread_socket(int thread_id, int socket)
 		if ((thread_id == -1 && wsk->socket == socket) || wsk->id == thread_id) {
 			if (close) {
 				/* socket zostaje usuniety */
-                        	closesocket(wsk->socket);
-         			*p_wsk = wsk->next;
-         			free(wsk);
-         			return 1;
-                        } else if (!socket) {
+				closesocket(wsk->socket);
+				*p_wsk = wsk->next;
+				free(wsk);
+				return 1;
+			} else if (!socket) {
 				/* socket zostaje zwrocony */
 				return wsk->socket;
-                        } else {
+			} else {
 				/* socket zostaje ustawiony */
 				wsk->socket = socket;
 				return socket;
 			}
-               }
-		
-               p_wsk = &(wsk->next);
-               wsk = wsk->next;
-        }
-	
-        if (close && socket != -1)
+		}
+		p_wsk = &(wsk->next);
+		wsk = wsk->next;
+	}
+
+	if (close && socket != -1)
 		closesocket(socket);
-        if (close || !socket)
+	if (close || !socket)
 		return 0;
 	
-        /* Dodaje nowy element */
-        wsk = malloc(sizeof(gg_win32_thread));
-        wsk->id = thread_id;
-        wsk->socket = socket;
-        wsk->next = 0;
-        *p_wsk = wsk;
-	
-        return socket;
+	/* Dodaje nowy element */
+	wsk = malloc(sizeof(gg_win32_thread));
+	wsk->id = thread_id;
+	wsk->socket = socket;
+	wsk->next = 0;
+	*p_wsk = wsk;
+
+	return socket;
 }
 
 #endif /* ASSIGN_SOCKETS_TO_THREADS */
@@ -543,7 +617,7 @@ static char gg_base64_charset[] =
 char *gg_base64_encode(const char *buf)
 {
 	char *out, *res;
-	int i = 0, j = 0, k = 0, len = strlen(buf);
+	unsigned int i = 0, j = 0, k = 0, len = strlen(buf);
 	
 	res = out = malloc((len / 3 + 1) * 4 + 2);
 
@@ -601,7 +675,7 @@ char *gg_base64_decode(const char *buf)
 {
 	char *res, *save, *foo, val;
 	const char *end;
-	int index = 0;
+	unsigned int index = 0;
 
 	if (!buf)
 		return NULL;
@@ -694,8 +768,8 @@ static int gg_crc32_initialized = 0;
  */
 static void gg_crc32_make_table()
 {
-	uint32_t h = 0;
-	int i, j;
+	uint32_t h = 1;
+	unsigned int i, j;
 
 	memset(gg_crc32_table, 0, sizeof(gg_crc32_table));
 
@@ -724,6 +798,9 @@ uint32_t gg_crc32(uint32_t crc, const unsigned char *buf, int len)
 {
 	if (!gg_crc32_initialized)
 		gg_crc32_make_table();
+
+	if (!buf || len < 0)
+		return crc;
 
 	crc ^= 0xffffffffL;
 

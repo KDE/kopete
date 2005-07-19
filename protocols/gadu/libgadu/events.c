@@ -16,7 +16,8 @@
  *
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
+ *  USA.
  */
 
 #include <sys/types.h>
@@ -59,47 +60,60 @@ void gg_event_free(struct gg_event *e)
 	if (!e)
 		return;
 	
-	if (e->type == GG_EVENT_MSG) {
-		free(e->event.msg.message);
-		free(e->event.msg.formats);
-		free(e->event.msg.recipients);
-	}
+	switch (e->type) {
+		case GG_EVENT_MSG:
+			free(e->event.msg.message);
+			free(e->event.msg.formats);
+			free(e->event.msg.recipients);
+			break;
 	
-	if (e->type == GG_EVENT_NOTIFY)
-		free(e->event.notify);
+		case GG_EVENT_NOTIFY:
+			free(e->event.notify);
+			break;
 	
-	if (e->type == GG_EVENT_NOTIFY60) {
-		int i;
+		case GG_EVENT_NOTIFY60:
+		{
+			int i;
 
-		for (i = 0; e->event.notify60[i].uin; i++)
-			free(e->event.notify60[i].descr);
+			for (i = 0; e->event.notify60[i].uin; i++)
+				free(e->event.notify60[i].descr);
 		
-		free(e->event.notify60);
-	}
+			free(e->event.notify60);
 
-	if (e->type == GG_EVENT_STATUS60)
-		free(e->event.status60.descr);
+			break;
+		}
+
+		case GG_EVENT_STATUS60:
+			free(e->event.status60.descr);
+			break;
 	
-	if (e->type == GG_EVENT_STATUS)
-		free(e->event.status.descr);
+		case GG_EVENT_STATUS:
+			free(e->event.status.descr);
+			break;
 
-	if (e->type == GG_EVENT_NOTIFY_DESCR) {
-		free(e->event.notify_descr.notify);
-		free(e->event.notify_descr.descr);
-	}
+		case GG_EVENT_NOTIFY_DESCR:
+			free(e->event.notify_descr.notify);
+			free(e->event.notify_descr.descr);
+			break;
 
-	if (e->type == GG_EVENT_DCC_VOICE_DATA)
-		free(e->event.dcc_voice_data.data);
+		case GG_EVENT_DCC_VOICE_DATA:
+			free(e->event.dcc_voice_data.data);
+			break;
 
-	if (e->type == GG_EVENT_PUBDIR50_SEARCH_REPLY || e->type == GG_EVENT_PUBDIR50_READ || e->type == GG_EVENT_PUBDIR50_WRITE)
-		gg_pubdir50_free(e->event.pubdir50);
+		case GG_EVENT_PUBDIR50_SEARCH_REPLY:
+		case GG_EVENT_PUBDIR50_READ:
+		case GG_EVENT_PUBDIR50_WRITE:
+			gg_pubdir50_free(e->event.pubdir50);
+			break;
 
-	if (e->type == GG_EVENT_USERLIST)
-		free(e->event.userlist.reply);
+		case GG_EVENT_USERLIST:
+			free(e->event.userlist.reply);
+			break;
 	
-	if (e->type == GG_EVENT_IMAGE_REPLY) {
-		free(e->event.image_reply.filename);
-		free(e->event.image_reply.image);
+		case GG_EVENT_IMAGE_REPLY:
+			free(e->event.image_reply.filename);
+			free(e->event.image_reply.image);
+			break;
 	}
 
 	free(e);
@@ -119,7 +133,7 @@ void gg_event_free(struct gg_event *e)
 int gg_image_queue_remove(struct gg_session *s, struct gg_image_queue *q, int freeq)
 {
 	if (!s || !q) {
-		errno = EINVAL;
+		errno = EFAULT;
 		return -1;
 	}
 
@@ -153,13 +167,15 @@ int gg_image_queue_remove(struct gg_session *s, struct gg_image_queue *q, int fr
  *  - e - opis zdarzenia
  *  - 
  */
-static void gg_image_queue_parse(struct gg_event *e, char *p, int len, struct gg_session *sess, uin_t sender)
+static void gg_image_queue_parse(struct gg_event *e, char *p, unsigned int len, struct gg_session *sess, uin_t sender)
 {
 	struct gg_msg_image_reply *i = (void*) p;
 	struct gg_image_queue *q, *qq;
 
-	if (!p || !sess || !e)
+	if (!p || !sess || !e) {
+		errno = EFAULT;
 		return;
+	}
 
 	/* znajd¼ dany obrazek w kolejce danej sesji */
 	
@@ -285,19 +301,21 @@ static int gg_handle_recv_msg(struct gg_header *h, struct gg_event *e, struct gg
 
 				count = gg_fix32(m->count);
 
-				if (p + count * sizeof(uin_t) > packet_end) {
+				if (p + count * sizeof(uin_t) > packet_end || p + count * sizeof(uin_t) < p || count > 0xffff) {
 					gg_debug(GG_DEBUG_MISC, "// gg_handle_recv_msg() packet out of bounds (1.5)\n");
 					goto malformed;
 				}
 			
 				if (!(e->event.msg.recipients = (void*) malloc(count * sizeof(uin_t)))) {
 					gg_debug(GG_DEBUG_MISC, "// gg_handle_recv_msg() not enough memory for recipients data\n");
-					errno = ENOMEM;
 					goto fail;
 				}
 			
-				for (i = 0; i < count; i++, p += sizeof(uin_t))
-					e->event.msg.recipients[i] = gg_fix32(*((uint32_t*) p));
+				for (i = 0; i < count; i++, p += sizeof(uint32_t)) {
+					uint32_t u;
+					memcpy(&u, p, sizeof(uint32_t));
+					e->event.msg.recipients[i] = gg_fix32(u);
+				}
 				
 				e->event.msg.recipients_count = count;
 				
@@ -306,7 +324,7 @@ static int gg_handle_recv_msg(struct gg_header *h, struct gg_event *e, struct gg
 
 			case 0x02:		/* richtext */
 			{
-				unsigned short len;
+				uint16_t len;
 				char *buf;
 			
 				if (p + 3 > packet_end) {
@@ -314,11 +332,11 @@ static int gg_handle_recv_msg(struct gg_header *h, struct gg_event *e, struct gg
 					goto malformed;
 				}
 
-				len = gg_fix16(*((unsigned short*) (p + 1)));
+				memcpy(&len, p + 1, sizeof(uint16_t));
+				len = gg_fix16(len);
 
 				if (!(buf = malloc(len))) {
 					gg_debug(GG_DEBUG_MISC, "// gg_handle_recv_msg() not enough memory for richtext data\n");
-					errno = ENOMEM;
 					goto fail;
 				}
 
@@ -361,12 +379,29 @@ static int gg_handle_recv_msg(struct gg_header *h, struct gg_event *e, struct gg
 			case 0x05:		/* image_reply */
 			case 0x06:
 			{
-				if (p + sizeof(struct gg_msg_image_reply) + 1 > packet_end) {
+				struct gg_msg_image_reply *rep = (void*) p;
+
+				if (p + sizeof(struct gg_msg_image_reply) == packet_end) {
+
+					/* pusta odpowied¼ - klient po drugiej stronie nie ma ¿±danego obrazka */
+
+					e->type = GG_EVENT_IMAGE_REPLY;
+					e->event.image_reply.sender = gg_fix32(r->sender);
+					e->event.image_reply.size = 0;
+					e->event.image_reply.crc32 = gg_fix32(rep->crc32);
+					e->event.image_reply.filename = NULL;
+					e->event.image_reply.image = NULL;
+					return 0;
+
+				} else if (p + sizeof(struct gg_msg_image_reply) + 1 > packet_end) {
+
 					gg_debug(GG_DEBUG_MISC, "// gg_handle_recv_msg() packet out of bounds (4)\n");
 					goto malformed;
 				}
 
-				gg_image_queue_parse(e, p, (int)(packet_end - p), sess, gg_fix32(r->sender));
+				rep->size = gg_fix32(rep->size);
+				rep->crc32 = gg_fix32(rep->crc32);
+				gg_image_queue_parse(e, p, (unsigned int)(packet_end - p), sess, gg_fix32(r->sender));
 
 				return 0;
 			}
@@ -443,7 +478,7 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 		case GG_NOTIFY_REPLY:
 		{
 			struct gg_notify_reply *n = (void*) p;
-			int count, i;
+			unsigned int count, i;
 			char *tmp;
 
 			gg_debug(GG_DEBUG_MISC, "// gg_watch_fd_connected() received a notify reply\n");
@@ -454,24 +489,23 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 				goto fail;
 			}
 
-			if (gg_fix32(n->status) == GG_STATUS_BUSY_DESCR || gg_fix32(n->status == GG_STATUS_NOT_AVAIL_DESCR) || gg_fix32(n->status) == GG_STATUS_AVAIL_DESCR) {
+			if (gg_fix32(n->status) == GG_STATUS_BUSY_DESCR || gg_fix32(n->status) == GG_STATUS_NOT_AVAIL_DESCR || gg_fix32(n->status) == GG_STATUS_AVAIL_DESCR) {
 				e->type = GG_EVENT_NOTIFY_DESCR;
 				
 				if (!(e->event.notify_descr.notify = (void*) malloc(sizeof(*n) * 2))) {
 					gg_debug(GG_DEBUG_MISC, "// gg_watch_fd_connected() not enough memory for notify data\n");
-					errno = ENOMEM;
 					goto fail;
 				}
 				e->event.notify_descr.notify[1].uin = 0;
 				memcpy(e->event.notify_descr.notify, p, sizeof(*n));
 				e->event.notify_descr.notify[0].uin = gg_fix32(e->event.notify_descr.notify[0].uin);
 				e->event.notify_descr.notify[0].status = gg_fix32(e->event.notify_descr.notify[0].status);
+				e->event.notify_descr.notify[0].remote_ip = e->event.notify_descr.notify[0].remote_ip;
 				e->event.notify_descr.notify[0].remote_port = gg_fix16(e->event.notify_descr.notify[0].remote_port);
 
 				count = h->length - sizeof(*n);
 				if (!(tmp = malloc(count + 1))) {
 					gg_debug(GG_DEBUG_MISC, "// gg_watch_fd_connected() not enough memory for notify data\n");
-					errno = ENOMEM;
 					goto fail;
 				}
 				memcpy(tmp, p + sizeof(*n), count);
@@ -483,7 +517,6 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 				
 				if (!(e->event.notify = (void*) malloc(h->length + 2 * sizeof(*n)))) {
 					gg_debug(GG_DEBUG_MISC, "// gg_watch_fd_connected() not enough memory for notify data\n");
-					errno = ENOMEM;
 					goto fail;
 				}
 				
@@ -494,7 +527,8 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 				for (i = 0; i < count; i++) {
 					e->event.notify[i].uin = gg_fix32(e->event.notify[i].uin);
 					e->event.notify[i].status = gg_fix32(e->event.notify[i].status);
-					e->event.notify[i].remote_port = gg_fix16(e->event.notify[i].remote_port);		
+					e->event.notify[i].remote_ip = e->event.notify[i].remote_ip;
+					e->event.notify[i].remote_port = gg_fix16(e->event.notify[i].remote_port);
 				}
 			}
 
@@ -557,6 +591,11 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 				e->event.notify60[i].descr = NULL;
 				e->event.notify60[i].time = 0;
 
+				if (uin & 0x40000000)
+					e->event.notify60[i].version |= GG_HAS_AUDIO_MASK;
+				if (uin & 0x08000000)
+					e->event.notify60[i].version |= GG_ERA_OMNIX_MASK;
+
 				if (GG_S_D(n->status)) {
 					unsigned char descr_len = *((char*) n + sizeof(struct gg_notify_reply60));
 
@@ -616,6 +655,8 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 
 			if (uin & 0x40000000)
 				e->event.status60.version |= GG_HAS_AUDIO_MASK;
+			if (uin & 0x08000000)
+				e->event.status60.version |= GG_ERA_OMNIX_MASK;
 
 			if (h->length > sizeof(*s)) {
 				int len = h->length - sizeof(*s);
@@ -628,8 +669,11 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 
 				e->event.status60.descr = buf;
 
-				if (len > 4 && p[h->length - 5] == 0)
-					e->event.status60.time = *((int*) (p + h->length - 4));
+				if (len > 4 && p[h->length - 5] == 0) {
+					uint32_t t;
+					memcpy(&t, p + h->length - 4, sizeof(uint32_t));
+					e->event.status60.time = gg_fix32(t);
+				}
 			}
 
 			break;
@@ -695,7 +739,7 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 
 			if (h->length > 1) {
 				char *tmp;
-				int len = (sess->userlist_reply) ? strlen(sess->userlist_reply) : 0;
+				unsigned int len = (sess->userlist_reply) ? strlen(sess->userlist_reply) : 0;
 				
 				gg_debug(GG_DEBUG_MISC, "userlist_reply=%p, len=%d\n", sess->userlist_reply, len);
 				
@@ -753,6 +797,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 	struct gg_event *e;
 	int res = 0;
 	int port = 0;
+	int errno2 = 0;
 
 	gg_debug(GG_DEBUG_FUNCTION, "** gg_watch_fd(%p);\n", sess);
 	
@@ -779,6 +824,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			if (read(sess->fd, &addr, sizeof(addr)) < (signed)sizeof(addr) || addr.s_addr == INADDR_NONE) {
 				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() resolving failed\n");
 				failed = 1;
+				errno2 = errno;
 			}
 			
 			close(sess->fd);
@@ -795,8 +841,10 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			}
 #endif
 
-			if (failed)
+			if (failed) {
+				errno = errno2;
 				goto fail_resolving;
+			}
 
 			/* je¶li jeste¶my w resolverze i mamy ustawiony port
 			 * proxy, znaczy, ¿e resolvowali¶my proxy. zatem
@@ -837,7 +885,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 		case GG_STATE_CONNECTING_HUB:
 		{
-			char buf[1024], *client;
+			char buf[1024], *client, *auth;
 			int res = 0, res_size = sizeof(res);
 			const char *host, *appmsg;
 
@@ -890,12 +938,18 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 #endif
 				appmsg = "appmsg2.asp";
 
+			auth = gg_proxy_auth();
+
 			snprintf(buf, sizeof(buf) - 1,
 				"GET %s/appsvc/%s?fmnumber=%u&version=%s&lastmsg=%d HTTP/1.0\r\n"
 				"Host: " GG_APPMSG_HOST "\r\n"
 				"User-Agent: " GG_HTTP_USERAGENT "\r\n"
 				"Pragma: no-cache\r\n"
-				"\r\n", host, appmsg, sess->uin, client, sess->last_sysmsg);
+				"%s" 
+				"\r\n", host, appmsg, sess->uin, client, sess->last_sysmsg, (auth) ? auth : "");
+
+			if (auth)
+				free(auth);
 			
 			free(client);
 
@@ -905,7 +959,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 				sess->client_version = NULL;
 			}
 
-    			gg_debug(GG_DEBUG_MISC, "=> -----BEGIN-HTTP-QUERY-----\n%s\n=> -----END-HTTP-QUERY-----\n", buf);
+			gg_debug(GG_DEBUG_MISC, "=> -----BEGIN-HTTP-QUERY-----\n%s\n=> -----END-HTTP-QUERY-----\n", buf);
 	 
 			/* zapytanie jest krótkie, wiêc zawsze zmie¶ci siê
 			 * do bufora gniazda. je¶li write() zwróci mniej,
@@ -1037,7 +1091,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 			if ((tmp = strchr(host, ':'))) {
 				*tmp = 0;
-				port = atoi(tmp+1);
+				port = atoi(tmp + 1);
 			}
 
 			addr.s_addr = inet_addr(host);
@@ -1136,8 +1190,14 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			/* je¶li mamy proxy, wy¶lijmy zapytanie. */
 			if (sess->proxy_addr && sess->proxy_port) {
 				char buf[100], *auth = gg_proxy_auth();
+				struct in_addr addr;
 
-				snprintf(buf, sizeof(buf), "CONNECT %s:%d HTTP/1.0\r\n", inet_ntoa(*((struct in_addr*) &sess->server_addr)), sess->port);
+				if (sess->server_addr)
+					addr.s_addr = sess->server_addr;
+				else
+					addr.s_addr = sess->hub_addr;
+
+				snprintf(buf, sizeof(buf), "CONNECT %s:%d HTTP/1.0\r\n", inet_ntoa(addr), sess->port);
 
 				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() proxy request:\n//   %s", buf);
 				
@@ -1307,7 +1367,9 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 				e->type = GG_EVENT_CONN_FAILED;
 				e->event.failure = GG_FAILURE_READING;
 				sess->state = GG_STATE_IDLE;
+				errno2 = errno;
 				close(sess->fd);
+				errno = errno2;
 				sess->fd = -1;
 				break;
 			}
@@ -1336,7 +1398,11 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			free(sess->password);
 			sess->password = NULL;
 
-			gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() gg_dcc_ip = %s\n", inet_ntoa(*((struct in_addr*) &gg_dcc_ip)));
+			{
+				struct in_addr dcc_ip;
+				dcc_ip.s_addr = gg_dcc_ip;
+				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() gg_dcc_ip = %s\n", inet_ntoa(dcc_ip));
+			}
 			
 			if (gg_dcc_ip == (unsigned long) inet_addr("255.255.255.255")) {
 				struct sockaddr_in sin;
@@ -1363,7 +1429,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			
 			if (sess->external_addr && sess->external_port > 1023) {
 				l.external_ip = sess->external_addr;
-				l.external_port = sess->external_port;
+				l.external_port = gg_fix16(sess->external_port);
 			}
 
 			gg_debug(GG_DEBUG_TRAFFIC, "// gg_watch_fd() sending GG_LOGIN60 packet\n");
@@ -1374,8 +1440,9 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 			if (ret == -1) {
 				gg_debug(GG_DEBUG_TRAFFIC, "// gg_watch_fd() sending packet failed. (errno=%d, %s)\n", errno, strerror(errno));
-
+				errno2 = errno;
 				close(sess->fd);
+				errno = errno2;
 				sess->fd = -1;
 				e->type = GG_EVENT_CONN_FAILED;
 				e->event.failure = GG_FAILURE_WRITING;
@@ -1399,7 +1466,9 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 				e->type = GG_EVENT_CONN_FAILED;
 				e->event.failure = GG_FAILURE_READING;
 				sess->state = GG_STATE_IDLE;
+				errno2 = errno;
 				close(sess->fd);
+				errno = errno2;
 				sess->fd = -1;
 				break;
 			}
@@ -1430,7 +1499,9 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 			e->type = GG_EVENT_CONN_FAILED;
 			sess->state = GG_STATE_IDLE;
+			errno2 = errno;
 			close(sess->fd);
+			errno = errno2;
 			sess->fd = -1;
 			free(h);
 
@@ -1467,7 +1538,9 @@ done:
 	
 fail_connecting:
 	if (sess->fd != -1) {
+		errno2 = errno;
 		close(sess->fd);
+		errno = errno2;
 		sess->fd = -1;
 	}
 	e->type = GG_EVENT_CONN_FAILED;

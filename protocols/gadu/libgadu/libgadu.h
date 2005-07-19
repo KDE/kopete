@@ -19,7 +19,8 @@
  *
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
+ *  USA.
  */
 
 #ifndef __GG_LIBGADU_H
@@ -52,10 +53,10 @@ typedef uint32_t uin_t;
  * ogólna struktura opisuj±ca ró¿ne sesje. przydatna w klientach.
  */
 #define gg_common_head(x) \
-        int fd;                 /* podgl±dany deskryptor */ \
-        int check;              /* sprawdzamy zapis czy odczyt */ \
-        int state;              /* aktualny stan maszynki */ \
-        int error;              /* kod b³êdu dla GG_STATE_ERROR */ \
+	int fd;			/* podgl±dany deskryptor */ \
+	int check;		/* sprawdzamy zapis czy odczyt */ \
+	int state;		/* aktualny stan maszynki */ \
+	int error;		/* kod b³êdu dla GG_STATE_ERROR */ \
 	int type;		/* rodzaj sesji */ \
 	int id;			/* identyfikator */ \
 	int timeout;		/* sugerowany timeout w sekundach */ \
@@ -106,7 +107,7 @@ struct gg_session {
 
 	char *recv_buf;		/* bufor na otrzymywane pakiety */
 	int recv_done;		/* ile ju¿ wczytano do bufora */
-        int recv_left;		/* i ile jeszcze trzeba wczytaæ */
+	int recv_left;		/* i ile jeszcze trzeba wczytaæ */
 
 	int protocol_version;	/* wersja u¿ywanego protoko³u */
 	char *client_version;	/* wersja u¿ywanego klienta */
@@ -145,17 +146,17 @@ struct gg_session {
 struct gg_http {
 	gg_common_head(struct gg_http)
 
-        int async;              /* czy po³±czenie asynchroniczne */
+	int async;              /* czy po³±czenie asynchroniczne */
 	int pid;                /* pid procesu resolvera */
 	int port;               /* port, z którym siê ³±czymy */
 
-        char *query;            /* bufor zapytania http */
-        char *header;           /* bufor nag³ówka */
-        int header_size;        /* rozmiar wczytanego nag³ówka */
-        char *body;             /* bufor otrzymanych informacji */
-        unsigned int body_size; /* oczekiwana ilo¶æ informacji */
+	char *query;            /* bufor zapytania http */
+	char *header;           /* bufor nag³ówka */
+	int header_size;        /* rozmiar wczytanego nag³ówka */
+	char *body;             /* bufor otrzymanych informacji */
+	unsigned int body_size; /* oczekiwana ilo¶æ informacji */
 
-        void *data;             /* dane danej operacji http */
+	void *data;             /* dane danej operacji http */
 
 	char *user_data;	/* dane u¿ytkownika, nie s± zwalniane przez gg_http_free() */
 
@@ -260,27 +261,27 @@ enum gg_session_t {
  * opisuje stan asynchronicznej maszyny.
  */
 enum gg_state_t {
-        /* wspólne */
-        GG_STATE_IDLE = 0,		/* nie powinno wyst±piæ. */
-        GG_STATE_RESOLVING,             /* wywo³a³ gethostbyname() */
+		/* wspólne */
+	GG_STATE_IDLE = 0,		/* nie powinno wyst±piæ. */
+	GG_STATE_RESOLVING,             /* wywo³a³ gethostbyname() */
 	GG_STATE_CONNECTING,            /* wywo³a³ connect() */
 	GG_STATE_READING_DATA,		/* czeka na dane http */
 	GG_STATE_ERROR,			/* wyst±pi³ b³±d. kod w x->error */
 
-        /* gg_session */
+		/* gg_session */
 	GG_STATE_CONNECTING_HUB,	/* wywo³a³ connect() na huba */
 	GG_STATE_CONNECTING_GG,         /* wywo³a³ connect() na serwer */
 	GG_STATE_READING_KEY,           /* czeka na klucz */
 	GG_STATE_READING_REPLY,         /* czeka na odpowied¼ */
 	GG_STATE_CONNECTED,             /* po³±czy³ siê */
 
-        /* gg_http */
+		/* gg_http */
 	GG_STATE_SENDING_QUERY,		/* wysy³a zapytanie http */
 	GG_STATE_READING_HEADER,	/* czeka na nag³ówek http */
 	GG_STATE_PARSING,               /* przetwarza dane */
 	GG_STATE_DONE,                  /* skoñczy³ */
 
-	/* gg_dcc */
+		/* gg_dcc */
 	GG_STATE_LISTENING,		/* czeka na po³±czenia */
 	GG_STATE_READING_UIN_1,		/* czeka na uin peera */
 	GG_STATE_READING_UIN_2,		/* czeka na swój uin */
@@ -345,8 +346,9 @@ struct gg_login_params {
 	uint16_t external_port;		/* port widziany na zewnatrz */
 	int tls;			/* czy ³±czymy po TLS? */
 	int image_size;			/* maksymalny rozmiar obrazka w KiB */
+	int era_omnix;			/* czy udawaæ klienta era omnix? */
 
-	char dummy[7 * sizeof(int)];	/* miejsce na kolejnych 8 zmiennych,
+	char dummy[6 * sizeof(int)];	/* miejsce na kolejnych 6 zmiennych,
 					 * ¿eby z dodaniem parametru nie 
 					 * zmienia³ siê rozmiar struktury */
 };
@@ -495,8 +497,8 @@ typedef struct gg_pubdir50_s *gg_pubdir50_t;
  */
 struct gg_event {
 	int type;	/* rodzaj zdarzenia -- gg_event_t */
-        union {		/* @event */
-                struct gg_notify_reply *notify;	/* informacje o li¶cie kontaktów -- GG_EVENT_NOTIFY */
+	union {		/* @event */
+		struct gg_notify_reply *notify;	/* informacje o li¶cie kontaktów -- GG_EVENT_NOTIFY */
 
 		enum gg_failure_t failure;	/* b³±d po³±czenia -- GG_EVENT_FAILURE */
 
@@ -517,20 +519,20 @@ struct gg_event {
 			
 			int formats_length;	/* d³ugo¶æ informacji o formatowaniu tekstu */
 			void *formats;		/* informacje o formatowaniu tekstu */
-                } msg;
+		} msg;
 		
 		struct {			/* @notify_descr informacje o li¶cie kontaktów z opisami stanu -- GG_EVENT_NOTIFY_DESCR */
 			struct gg_notify_reply *notify;	/* informacje o li¶cie kontaktów */
 			char *descr;		/* opis stanu */
 		} notify_descr;
 		
-                struct {			/* @status zmiana stanu -- GG_EVENT_STATUS */
+		struct {			/* @status zmiana stanu -- GG_EVENT_STATUS */
 			uin_t uin;		/* numer */
 			uint32_t status;	/* nowy stan */
 			char *descr;		/* opis stanu */
 		} status;
 
-                struct {			/* @status60 zmiana stanu -- GG_EVENT_STATUS60 */
+		struct {			/* @status60 zmiana stanu -- GG_EVENT_STATUS60 */
 			uin_t uin;		/* numer */
 			int status;	/* nowy stan */
 			uint32_t remote_ip;	/* adres ip */
@@ -743,6 +745,7 @@ struct gg_http *gg_unregister3(uin_t uin, const char *password, const char *toke
 /* przypomnienie has³a e-mailem */
 struct gg_http *gg_remind_passwd(uin_t uin, int async);
 struct gg_http *gg_remind_passwd2(uin_t uin, const char *tokenid, const char *tokenval, int async);
+struct gg_http *gg_remind_passwd3(uin_t uin, const char *email, const char *tokenid, const char *tokenval, int async);
 #define gg_remind_passwd_watch_fd gg_pubdir_watch_fd
 #define gg_remind_passwd_free gg_pubdir_free
 #define gg_free_remind_passwd gg_pubdir_free
@@ -808,6 +811,7 @@ struct gg_dcc *gg_dcc_get_file(uint32_t ip, uint16_t port, uin_t my_uin, uin_t p
 struct gg_dcc *gg_dcc_voice_chat(uint32_t ip, uint16_t port, uin_t my_uin, uin_t peer_uin);
 void gg_dcc_set_type(struct gg_dcc *d, int type);
 int gg_dcc_fill_file_info(struct gg_dcc *d, const char *filename);
+int gg_dcc_fill_file_info2(struct gg_dcc *d, const char *filename, const char *local_filename);
 int gg_dcc_voice_send(struct gg_dcc *d, char *buf, int length);
 
 #define GG_DCC_VOICE_FRAME_LENGTH 195
@@ -903,7 +907,7 @@ char *gg_vsaprintf(const char *format, va_list ap);
 char *gg_get_line(char **ptr);
 
 int gg_connect(void *addr, int port, int async);
-struct hostent *gg_gethostbyname(const char *hostname);
+struct in_addr *gg_gethostbyname(const char *hostname);
 char *gg_read_line(int sock, char *buf, int length);
 void gg_chomp(char *line);
 char *gg_urlencode(const char *str);
@@ -935,11 +939,12 @@ int gg_image_queue_remove(struct gg_session *s, struct gg_image_queue *q, int fr
 #define GG_HTTPS_PORT 443
 #define GG_HTTP_USERAGENT "Mozilla/4.7 [en] (Win98; I)"
 
-#define GG_DEFAULT_CLIENT_VERSION "6, 0, 0, 132"
-#define GG_DEFAULT_PROTOCOL_VERSION 0x20
+#define GG_DEFAULT_CLIENT_VERSION "6, 1, 0, 158"
+#define GG_DEFAULT_PROTOCOL_VERSION 0x24
 #define GG_DEFAULT_TIMEOUT 30
 #define GG_HAS_AUDIO_MASK 0x40000000
-#define GG_LIBGADU_VERSION "1.4.20040512"
+#define GG_ERA_OMNIX_MASK 0x04000000
+#define GG_LIBGADU_VERSION "CVS"
 
 #define GG_DEFAULT_DCC_PORT 1550
 
@@ -1200,8 +1205,10 @@ struct gg_msg_image_reply {
 
 #define GG_SEND_MSG_ACK 0x0005
 
+#define GG_ACK_BLOCKED 0x0001
 #define GG_ACK_DELIVERED 0x0002
 #define GG_ACK_QUEUED 0x0003
+#define GG_ACK_MBOXFULL 0x0004
 #define GG_ACK_NOT_DELIVERED 0x0006
 	
 struct gg_send_msg_ack {
