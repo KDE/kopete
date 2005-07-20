@@ -1,4 +1,4 @@
-ence/*
+/*
     Kopete Utils.
     Copyright (c) 2005 Duncan Mac-Vicar Prett <duncan@kde.org>
 
