@@ -33,6 +33,10 @@
 extern "C" {
 #endif
 
+#ifdef HAVE_STDINT_H
+#include <stdint.h>
+#endif
+	
 #include <libgadu-config.h>
 #include <sys/types.h>
 #include <stdio.h>
