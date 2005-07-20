@@ -485,4 +485,9 @@ QString Buffer::peekBUIN()
 	mReadPos = lastPos;
 	return QString( qba );
 }
+
+Buffer::operator QByteArray() const
+{
+	return mBuffer;
+}
 //kate: tab-width 4; indent-mode csands;

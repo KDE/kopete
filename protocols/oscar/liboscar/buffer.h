@@ -232,6 +232,8 @@ class Buffer
 		int addBUIN(const char * s);
 		QByteArray getBUIN();
 		QString peekBUIN();
+	
+		operator QByteArray() const;
 
 	private:
 		/**

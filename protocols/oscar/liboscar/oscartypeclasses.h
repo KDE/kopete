@@ -193,6 +193,9 @@ public:
 	bool operator==( const SSI& item ) const;
 	operator bool() const;
 	
+	operator QByteArray() const;
+	
+	
 private:
 	void refreshTLVLength();
 	

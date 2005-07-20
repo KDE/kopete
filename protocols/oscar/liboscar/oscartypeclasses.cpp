@@ -21,6 +21,7 @@
 #include <qvaluelist.h>
 #include <kdebug.h>
 #include "oscarutils.h"
+#include "buffer.h"
 
 
 using namespace Oscar;
@@ -347,5 +348,26 @@ Oscar::SSI::operator bool() const
 {
 	return isValid();
 }
+
+Oscar::SSI::operator QByteArray() const
+{
+	Buffer b;
+	b.addWord( m_name.length() );
+	b.addString( m_name.latin1(), m_name.length() ); //TODO check encoding
+	b.addWord( m_gid );
+	b.addWord( m_bid );
+	b.addWord( m_type );
+	b.addWord( m_tlvLength );
+	QValueList<Oscar::TLV>::const_iterator it = m_tlvList.begin();
+	for( ; it != m_tlvList.end(); ++it )
+	{
+		b.addWord( (*it).type );
+		b.addWord( (*it).length );
+		b.addString( (*it).data, (*it).data.size() );
+	}
+	
+	return (QByteArray) b;
+}
+	
 
 //kate: indent-mode csands;
