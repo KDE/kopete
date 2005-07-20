@@ -1,4 +1,4 @@
-/*
+ence/*
     Kopete Utils.
     Copyright (c) 2005 Duncan Mac-Vicar Prett <duncan@kde.org>
 
@@ -37,11 +37,11 @@
 
 static const QString notifyConnectionLost_DefaultMessage = i18n("You have been disconnected.");
 static const QString notifyConnectionLost_DefaultCaption = i18n("Connection Lost.");
-static const QString notifyConnectionLost_DefaultExplanation = i18n("Kopete lost the channel used to talk to the instant messaging system.\nThis can be either your internet access went down, , the service is experimenting problems, or the service disconnected you because you tried to connect with the same account from another location. Try connecting again later.");
+static const QString notifyConnectionLost_DefaultExplanation = i18n("Kopete lost the channel used to talk to the instant messaging system.\nThis can be either your internet access went down, , the service is experiencing problems, or the service disconnected you because you tried to connect with the same account from another location. Try connecting again later.");
 
 static const QString notifyCannotConnect_DefaultMessage = i18n("Can't connect with the instant messaging server or peers.");
 static const QString notifyCannotConnect_DefaultCaption = i18n("Can't connect.");
-static const QString notifyCannotConnect_DefaultExplanation = i18n("This means Kopete can't reach the instant messaging server or peers.\nThis can be either your internet access is down or the server is experimenting problems. Try connecting again later.");
+static const QString notifyCannotConnect_DefaultExplanation = i18n("This means Kopete can't reach the instant messaging server or peers.\nThis can be either your internet access is down or the server is experiencing problems. Try connecting again later.");
 
 namespace Kopete
 {
