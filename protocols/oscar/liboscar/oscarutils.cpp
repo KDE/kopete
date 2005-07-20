@@ -255,23 +255,17 @@ const QString Oscar::capName( int capNumber )
 
 DWORD Oscar::getNumericalIP(const QString &address)
 {
-        QHostAddress addr;
-	
-	if (addr.setAddress(address)==false)
-	{
+	QHostAddress addr;
+	if ( addr.setAddress( address ) == false )
 		return 0;
-	}
 
 	return (DWORD)addr.toIPv4Address();
-
 }
 
 QString Oscar::getDottedDecimal( DWORD address )
 {
 	QHostAddress addr;
-
 	addr.setAddress((Q_UINT32)address);
-	
 	return addr.toString();
 }
 
