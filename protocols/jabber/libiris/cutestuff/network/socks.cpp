@@ -1219,3 +1219,5 @@ void SocksServer::sn_activated(int)
 }
 
 // CS_NAMESPACE_END
+
+#include "socks.moc"
