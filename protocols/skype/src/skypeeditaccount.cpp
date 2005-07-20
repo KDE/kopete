@@ -78,7 +78,10 @@ skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *acc
 		const QString &endCallCommand = d->account->endCallCommand();
 		EndCallCommandCheck->setChecked(!endCallCommand.isEmpty());
 		EndCallCommandEdit->setText(endCallCommand);
-		OlnlyLastCallCommandCheck->setChecked(d->account->endCallCommandOnlyLast());
+		OnlyLastCallCommandCheck->setChecked(d->account->endCallCommandOnlyLast());
+		const QString &incomingCommand = d->account->incomingCommand();
+		IncomingCommandCheck->setChecked(!incomingCommand.isEmpty());
+		IncomingCommandEdit->setText(incomingCommand);
 	} else {
 		//TODO Make this unneeded :)
 		KMessageBox::information(this, i18n("Please note that this version of Skype plugin is a development version and it is probable it will cause more problems than solve. You have been warned"), i18n("Version info"));
@@ -142,7 +145,13 @@ Kopete::Account *skypeEditAccount::apply() {
 	} else {
 		skype->setEndCallCommand("");
 	}
-	skype->setEndCallCommandOnlyForLast(OlnlyLastCallCommandCheck->isChecked());
+	if (IncomingCommandCheck->isChecked()) {
+		skype->setIncomingCommand(IncomingCommandEdit->text());
+	} else {
+		skype->setIncomingCommand("");
+	}
+
+	skype->setEndCallCommandOnlyForLast(OnlyLastCallCommandCheck->isChecked());
 	skype->save();//save it to config
 	return skype;//return the account
 }

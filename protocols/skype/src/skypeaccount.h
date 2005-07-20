@@ -301,6 +301,10 @@ Q_OBJECT
 		 * Should be tha command executed only for the last call?
 		 */
 		bool endCallCommandOnlyLast() const;
+		/**
+		 * Command that should be executed on incomming call, or empty string if nothing to execute
+		 */
+		QString incomingCommand() const;
 	public slots:
 		/**
 		 * Disconnects from server.
@@ -448,6 +452,10 @@ Q_OBJECT
 		 * Notify me when the call ends to run the end call command
 		 */
 		void endCall();
+		/**
+		 * Sets a command to be executed for incoming call
+		 */
+		void setIncomingCommand(const QString &command);
 	signals:
 		/**
 		 * This is emited when the message has been sent by skype

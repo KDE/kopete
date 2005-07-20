@@ -94,6 +94,8 @@ class SkypeAccountPrivate {
 		bool endCallCommandOnlyLats;
 		///How many calls are opened now?
 		int callCount;
+		///Command executed on incoming call
+		QString incommingCommand;
 };
 
 SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, "Skype", (char *)0) {
@@ -129,6 +131,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 	setEndCallCommand(config->readEntry("EndCallCommand", ""));
 	setWaitForStartCallCommand(config->readBoolEntry("WaitForStartCallCommand", false));
 	setEndCallCommandOnlyForLast(config->readBoolEntry("EndCallCommandOnlyLast", false));
+	setIncomingCommand(config->readEntry("IncomingCall", ""));
 
 	//create myself contact
 	SkypeContact *_myself = new SkypeContact(this, "Skype", Kopete::ContactList::self()->myself(), false);
@@ -268,6 +271,7 @@ void SkypeAccount::save() {
 	config->writeEntry("EndCallCommand", endCallCommand());
 	config->writeEntry("WaitForStartCallCommand", waitForStartCallCommand());
 	config->writeEntry("EndCallCommandOnlyLast", endCallCommandOnlyLast());
+	config->writeEntry("IncomingCall", incomingCommand());
 
 	//save it into the skype connection as well
 	d->skype.setValues(launchType, author);
@@ -459,6 +463,14 @@ void SkypeAccount::newCall(const QString &callId, const QString &userId) {
 		d->skype.getSkypeOut();
 
 		d->calls.insert(callId, dialog);
+	}
+
+	if ((!d->incommingCommand.isEmpty()) && (d->skype.isCallIncoming(callId))) {
+		kdDebug(14311) << "Running ring command" << endl;
+		KProcess *proc = new KProcess();
+		(*proc) << QStringList::split(' ', d->incommingCommand);
+		QObject::connect(proc, SIGNAL(processExited(KProcess* )), proc, SLOT(deleteLater()));
+		proc->start();
 	}
 }
 
@@ -744,7 +756,7 @@ void SkypeAccount::startCall() {
 	kdDebug(14311) << k_funcinfo << endl;
 
 	KProcess *proc = new KProcess();
-	QObject::connect(proc, SIGNAL(processExited(KProcess*)), proc, SLOT(deleteLater()));
+	QObject::connect(proc, SIGNAL(processExited(KProcess* )), proc, SLOT(deleteLater()));
 	QStringList args = QStringList::split(' ', d->startCallCommand);
 	(*proc) << args;//set what will be executed
 	KProcess::RunMode mode = d->waitForStartCallCommand ? KProcess::Block : KProcess::NotifyOnExit;
@@ -757,12 +769,20 @@ void SkypeAccount::endCall() {
 
 	if ((--d->callCount == 0) || (!d->endCallCommandOnlyLats)) {
 		KProcess *proc = new KProcess();
-		QObject::connect(proc, SIGNAL(processExited(KProcess*)), proc, SLOT(deleteLater()));
+		QObject::connect(proc, SIGNAL(processExited(KProcess* )), proc, SLOT(deleteLater()));
 		(*proc) << QStringList::split(' ', d->endCallCommand);
 		proc->start();
 	}
 	if (d->callCount < 0)
 		d->callCount = 0;
+}
+
+void SkypeAccount::setIncomingCommand(const QString &command) {
+	d->incommingCommand = command;
+}
+
+QString SkypeAccount::incomingCommand() const {
+	return d->incommingCommand;
 }
 
 #include "skypeaccount.moc"

@@ -1,6 +1,0 @@
-#!/bin/bash
-
-kill -9 `ps -A | grep artsd`
-artsd -a null &
-
-

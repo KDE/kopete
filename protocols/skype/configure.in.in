@@ -1,0 +1,98 @@
+#MIN_CONFIG(3.2.0)
+
+AM_INIT_AUTOMAKE(kopete_skype, 0.1)
+AC_C_BIGENDIAN
+AC_CHECK_KDEMAXPATHLEN
+
+#check for DBus (needed by skype protocol)
+#write what you are doing first
+AC_MSG_CHECKING(for DBus)
+#nothing found yet
+dbus_inc=NOTFOUND
+dbus_lib=NOTFOUND
+dbus=NOTFOUND
+#try to find the include files
+search_incs="$kde_includes /usr/include /usr/include/dbus-1.0 /usr/local/include /usr/local/include/dbus-1.0"
+#look for the connection qt header, it should be there (I'm not interested in the low-level dbus.h)
+AC_FIND_FILE(dbus/dbus.h, $search_incs, dbus_incdir)
+search_incs_arch_deps="$kde_includes /usr/lib/dbus-1.0/include /usr/local/lib/dbus-1.0/include"
+#look for the arch-deps header
+AC_FIND_FILE(dbus/dbus-arch-deps.h, $search_incs_arch_deps, dbus_incdir_arch_deps)
+#was it found?
+if [test -r $dbus_incdir/dbus/dbus.h] && [test -r $dbus_incdir_arch_deps/dbus/dbus-arch-deps.h] ; then
+	#set the compile flag
+	DBUS_INCS="-I$dbus_incdir -I$dbus_incdir_arch_deps"
+	#yeah, we found it
+	dbus_inc=FOUND
+fi
+#now, find the libs
+search_libs="$kde_libraries /usr/lib /usr/local/lib"
+AC_FIND_FILE(libdbus-1.so, $search_libs, dbus_libdir)
+if test -r $dbus_libdir/libdbus-1.so ; then
+	#some linker flags
+	DBUS_LIBS="-L$dbus_libdir -ldbus-1"
+	#and we found something
+	dbus_lib=FOUND
+fi
+if [test $dbus_inc = FOUND] && [test $dbus_lib = FOUND] ; then
+	#we have everything
+	AC_MSG_RESULT(headers $dbus_incdir $dbus_incdir_arch_deps  libraries $dbus_libdir)
+	dbus=FOUND
+	COMPILE_SKYPE=true
+	AC_SUBST(COMPILE_SKYPE)
+else
+	#something missing
+	AC_MSG_RESULT(not found)
+	COMPILE_SKYPE=
+	AC_SUBST(COMPILE_SKYPE)
+fi
+AC_SUBST(DBUS_INCS)
+AC_SUBST(DBUS_LIBS)
+if test "$COMPILE_SKYPE" != "true" ; then
+	AC_MSG_FAILURE([Could not find DBus])
+fi
+AM_CONDITIONAL(include_skype, test -n "$COMPILE_SKYPE")
+
+AC_MSG_CHECKING(for Kopete)
+#nothing found yet
+kopete_inc=NOTFOUND
+kopete_lib=NOTFOUND
+kopete=NOTFOUND
+#try to find the include files
+search_incs="$kde_includes /usr/include"
+AC_FIND_FILE(kopete/kopetemessage.h, $search_incs, kopete_incdir)
+#was it found? 
+if test -r $kopete_incdir/kopete/kopetemessage.h ; then
+	#set the compile flag
+	KOPETE_INCS="-I$kopete_incdir/kopete -I$kopete_incdir/kopete/ui"
+	#yeah, we found it
+	kopete_inc=FOUND
+fi
+#now, find the libs
+search_libs="$kde_libraries /usr/lib /usr/local/lib"
+AC_FIND_FILE(libkopete.la, $search_libs, kopete_libdir)
+if test -r $dbus_libdir/libdbus-1.so ; then
+	#some linker flags
+	DBUS_LIBS="-L$kopete_libdir -lkopete"
+	#and we found something
+	kopete_lib=FOUND
+fi
+if [test $kopete_inc = FOUND] && [test $kopete_lib = FOUND] ; then
+	#we have everything
+	AC_MSG_RESULT(headers $kopete_incdir/kopete $kopete_incdir/kopete/ui libraries $kopete_libdir)
+	kopete=FOUND
+	COMPILE_SKYPE=true
+	AC_SUBST(COMPILE_SKYPE)
+else
+	#something missing
+	AC_MSG_RESULT(not found)
+	COMPILE_SKYPE=
+	AC_SUBST(COMPILE_SKYPE)
+fi
+
+AC_SUBST(KOPETE_INCS)
+AC_SUBST(KOPETE_LIBS)
+
+if test "$COMPILE_SKYPE" != "true" ; then
+	AC_MSG_FAILURE([Could not find Kopete])
+fi

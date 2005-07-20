@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>561</width>
-            <height>404</height>
+            <height>444</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -808,7 +808,7 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Calls</string>
+                    <string>&amp;Calls</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -975,7 +975,7 @@ Note that it will freeze kopete for the time.</string>
                             </spacer>
                             <widget class="QCheckBox">
                                 <property name="name">
-                                    <cstring>OlnlyLastCallCommandCheck</cstring>
+                                    <cstring>OnlyLastCallCommandCheck</cstring>
                                 </property>
                                 <property name="enabled">
                                     <bool>false</bool>
@@ -985,6 +985,49 @@ Note that it will freeze kopete for the time.</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Ususally makes no difference, just when there are some other calls on hold, it is executend only for the last ended one.</string>
+                                </property>
+                            </widget>
+                        </hbox>
+                    </widget>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>IncomingCommandCheck</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Execute On Inco&amp;ming Call</string>
+                        </property>
+                    </widget>
+                    <widget class="QLayoutWidget">
+                        <property name="name">
+                            <cstring>layout12</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <spacer>
+                                <property name="name">
+                                    <cstring>spacer15_2</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Fixed</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <widget class="QLineEdit">
+                                <property name="name">
+                                    <cstring>IncomingCommandEdit</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>false</bool>
                                 </property>
                             </widget>
                         </hbox>
@@ -1013,7 +1056,7 @@ Note that it will freeze kopete for the time.</string>
                         <property name="sizeHint">
                             <size>
                                 <width>21</width>
-                                <height>81</height>
+                                <height>20</height>
                             </size>
                         </property>
                     </spacer>
@@ -1068,7 +1111,13 @@ Note that it will freeze kopete for the time.</string>
     <connection>
         <sender>EndCallCommandCheck</sender>
         <signal>toggled(bool)</signal>
-        <receiver>OlnlyLastCallCommandCheck</receiver>
+        <receiver>OnlyLastCallCommandCheck</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>IncomingCommandCheck</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>IncomingCommandEdit</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
