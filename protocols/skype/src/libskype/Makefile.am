@@ -2,8 +2,8 @@ noinst_LTLIBRARIES = libskype.la
 
 AM_CPPFLAGS = $(all_includes) \
 		$(KOPETE_INCS) \
-		-I$(top_srcdir)/src/ \
-		-I$(top_srcdir)/src/libskype/skypedbus
+		-I$(top_srcdir)/kopete_skype/src/ \
+		-I$(top_srcdir)/kopete_skype/src/libskype/skypedbus
 METASOURCES = AUTO
 
 libskype_la_SOURCES = skype.cpp
