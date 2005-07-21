@@ -44,14 +44,13 @@ else
 	#something missing
 	AC_MSG_RESULT(not found)
 	COMPILE_SKYPE=
-	AC_SUBST(COMPILE_SKYPE)
 fi
 AC_SUBST(DBUS_INCS)
 AC_SUBST(DBUS_LIBS)
+REASON=""
 if test "$COMPILE_SKYPE" != "true" ; then
-	AC_MSG_FAILURE([Could not find DBus])
+	REASON="NO_DBUS"
 fi
-AM_CONDITIONAL(include_skype, test -n "$COMPILE_SKYPE")
 
 AC_MSG_CHECKING(for Kopete)
 #nothing found yet
@@ -87,12 +86,24 @@ else
 	#something missing
 	AC_MSG_RESULT(not found)
 	COMPILE_SKYPE=
-	AC_SUBST(COMPILE_SKYPE)
 fi
 
 AC_SUBST(KOPETE_INCS)
 AC_SUBST(KOPETE_LIBS)
 
 if test "$COMPILE_SKYPE" != "true" ; then
-	AC_MSG_FAILURE([Could not find Kopete])
+	REASON="NO_KOPETE"
 fi
+
+if test "$REASON" != "" ; then
+	COMPILE_SKYPE=""
+else
+	COMPILE_SKYPE="true"
+fi
+
+SKYPE_FAIL_REASON=$REASON
+AC_SUBST(SKYPE_FAIL_REASON)
+AC_SUBST(COMPILE_SKYPE)
+
+AM_CONDITIONAL(include_skype, test -n "$COMPILE_SKYPE")
+

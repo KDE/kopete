@@ -1,0 +1,15 @@
+
+if test "$SKYPE_FAIL_REASON" == "NO_DBUS"; then 
+  echo ""
+  echo "You're missing DBus. The Kopete Skype plugin won't compile"
+  echo "Please install DBUs development libs"
+  echo ""
+  all_tests=bad
+fi
+
+if test "$SKYPE_FAIL_REASON" == "NO_KOPETE" ; then
+  echo ""
+  echo "Kopete not found, can not compile Skype plugin"
+  echo "Please make sure Kopete is installed and its headers are present"
+  echo ""
+fi
