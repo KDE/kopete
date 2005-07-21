@@ -791,6 +791,7 @@ Connection* Client::createConnection( const QString& host, const QString& port )
 	KNetworkConnector* knc = new KNetworkConnector( this );
 	knc->setOptHostPort( host, port.toUInt() );
 	ClientStream* cs = new ClientStream( knc, knc );
+	cs->setNoopTime( 60000 );
 	Connection* c = new Connection( knc, cs, "BOS" );
 	cs->setConnection( c );
 	c->setClient( this );

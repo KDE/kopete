@@ -194,14 +194,15 @@ void ClientStream::setNoopTime(int mills)
 {
 	d->noop_time = mills;
 
-	if(d->state != Active)
-		return;
-
 	if(d->noop_time == 0) {
 		d->noopTimer.stop();
 		return;
 	}
-	d->noopTimer.start(d->noop_time);
+	
+	if( d->state != Active )
+		return;
+	
+	d->noopTimer.start( d->noop_time );
 }
 
 void ClientStream::setLocalAddr(const QHostAddress &addr, Q_UINT16 port)
@@ -334,6 +335,10 @@ void ClientStream::cr_connected()
 	connect(d->bs, SIGNAL(bytesWritten(int)), SLOT(bs_bytesWritten(int)));
 	connect(d->bs, SIGNAL(error(int)), SLOT(bs_error(int)));
 
+	d->state = Active;
+	if ( d->noop_time )
+		d->noopTimer.start( d->noop_time );
+
 	QByteArray spare = d->bs->read();
 
 	QGuardedPtr<QObject> self = this;
@@ -412,9 +417,15 @@ bool ClientStream::handleNeed()
 	return false;
 }
 
-
 void ClientStream::doNoop()
 {
+	if ( d->state != Active )
+		return;
+	
+	FLAP f = { 0x05, d->connection->flapSequence(), 0 };
+	Buffer* b = new Buffer(); //deleted in Transfer destructor
+	Transfer* t = new FlapTransfer( f, b ); //deleted after being sent
+	write( t );
 }
 
 void ClientStream::handleError()
