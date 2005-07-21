@@ -178,8 +178,11 @@ void IRCServerContact::appendMessage(Kopete::Message &msg)
 
 	if (m_chatSession && m_chatSession->view(false))
 		m_chatSession->appendMessage(msg);
+/*
+//	disable the buffering for now: cause a memleak since we don't made it a *fixed size fifo*
 	else
 		mMsgBuffer.append( msg );
+*/
 }
 
 void IRCServerContact::slotDumpMessages()
