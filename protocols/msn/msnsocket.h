@@ -77,6 +77,7 @@ public:
 	enum OnlineStatus { Connecting, Connected, Disconnecting, Disconnected };
 	enum LookupStatus { Processing, Success, Failed };
 	enum Transport { TcpTransport, HttpTransport };
+	enum ErrorType { ErrorNormal, ErrorInternal, ErrorInformation, ErrorSorry };
 
 	OnlineStatus onlineStatus() { return m_onlineStatus; }
 
@@ -130,6 +131,11 @@ signals:
 	 * The connection was closed
 	 */
 	void socketClosed();
+	
+	/**
+	 * A error has occured. Handle the display of the message.
+	 */
+	void errorMessage( int type, const QString &msg );
 
 protected:
 	/**

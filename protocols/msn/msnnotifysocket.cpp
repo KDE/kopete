@@ -4,10 +4,10 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
-	Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
-	Copyright (c) 2005      by Gregg Edghill          <gregg.edghill@gmail.com>
+    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
+    Copyright (c) 2005      by Gregg Edghill          <gregg.edghill@gmail.com>
 
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     Portions taken from
     KMerlin   (c) 2001      by Olaf Lueg              <olueg@olsd.de>
@@ -103,6 +103,8 @@ void MSNNotifySocket::disconnect()
 
 void MSNNotifySocket::handleError( uint code, uint id )
 {
+	kdDebug(14140) << k_funcinfo << endl;
+
 	QString handle;
 	if(m_tmpHandles.contains(id))
 		handle=m_tmpHandles[id];
@@ -117,20 +119,21 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 208:
 	{
 		QString msg = i18n( "<qt>The MSN user '%1' does not exist.<br>Please check the MSN ID.</qt>" ).arg( handle );
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
+		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
+		emit errorMessage( MSNSocket::ErrorSorry, msg );
 		break;
 	}
 	case 207:
 	case 218:
 	case 540:
 	{
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information,
-			i18n( "<qt>An internal error occurred in the MSN plugin.<br>"
+		QString msg =i18n( "<qt>An internal error occurred in the MSN plugin.<br>"
 			      "MSN Error: %1<br>"
 			      "please send us a detailed bug report "
 			      "at kopete-devel@kde.org containing the raw debug output on the "
-			      "console (in gzipped format, as it is probably a lot of output.)" ).arg(code) ,
-			i18n( "MSN Internal Error" ) );
+			      "console (in gzipped format, as it is probably a lot of output.)" ).arg(code);
+		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg , i18n( "MSN Internal Error" ) );
+		emit errorMessage( MSNSocket::ErrorInternal, msg );
 		break;
 
 	}
@@ -140,7 +143,8 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		{
 			QString msg = i18n( "Unable to change your display name.\n"
 				"Please ensure your display is not too long and does not contains censored words." );
-			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
+			//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
+			emit errorMessage( MSNSocket::ErrorSorry, msg );
 		}
 		/*else
 		 {
@@ -153,9 +157,9 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 210:
 	{
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
-			i18n("Your contact list is full; you cannot add any new contacts."),
-			i18n( "MSN Contact List Full" ) );
+		QString msg = i18n("Your contact list is full; you cannot add any new contacts.");
+		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Contact List Full" ) );
+		emit errorMessage( MSNSocket::ErrorSorry, msg );
 		break;
 	}
 	case 215:
@@ -164,7 +168,8 @@ void MSNNotifySocket::handleError( uint code, uint id )
 			"if Kopete does not show the user, please send us a detailed bug report "
 			"at kopete-devel@kde.org containing the raw debug output on the "
 			"console (in gzipped format, as it is probably a lot of output.)</qt>" ).arg(handle);
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
+		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
+		emit errorMessage( MSNSocket::ErrorInformation, msg );
 		break;
 	}
 	case 216:
@@ -178,39 +183,42 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 219:
 	{
 		QString msg = i18n( "The user '%1' seems to already be blocked or allowed on the server." ).arg(handle);
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
+		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
+		emit errorMessage( MSNSocket::ErrorSorry, msg );
 		break;
 	}
 	case 223:
 	{
 		QString msg = i18n( "You have reached the maximum number of groups:\n"
 			"MSN does not support more than 30 groups." );
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
+		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
+		emit errorMessage( MSNSocket::ErrorSorry, msg );
 		break;
 	}
 	case 224:
 	case 225:
 	case 230:
 	{
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information,
-			i18n("Kopete is trying to perform an operation on a group or a contact that does not exists on the server.\n"
-			"This might happen if the Kopete contact list and the MSN-server contact list are not correctly synchronized; if this is the case, you probably should send a bug report."),
-			i18n( "MSN Plugin" ) );
+		QString msg = i18n("Kopete is trying to perform an operation on a group or a contact that does not exists on the server.\n"
+			"This might happen if the Kopete contact list and the MSN-server contact list are not correctly synchronized; if this is the case, you probably should send a bug report.");
+		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information,msg, i18n( "MSN Plugin" ) );
+		emit errorMessage( MSNSocket::ErrorInformation, msg );
 		break;
 	}
 
 	case 229:
 	{
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
-			i18n("The group name is too long; it has not been changed on the MSN server."),
-			i18n( "Invalid group name - MSN Plugin" ) );
+		QString msg = i18n("The group name is too long; it has not been changed on the MSN server.");
+		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "Invalid group name - MSN Plugin" ) );
+		emit errorMessage( MSNSocket::ErrorSorry, msg );
 		break;
 	}
 	case 710:
 	{
 		QString msg = i18n( "You cannot open a Hotmail inbox because you do not have an MSN account with a valid "
 			"Hotmail or MSN mailbox." );
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
+		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
+		emit errorMessage( MSNSocket::ErrorSorry, msg );
 		break;
 	}
 	case 715:
@@ -242,14 +250,17 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 913:
 	{
 		QString msg = i18n( "You can not send messages when you are offline or when you are invisible." );
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
+		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
+		emit errorMessage( MSNSocket::ErrorSorry, msg );
 		break;
 	}
 	case 923:
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
-			i18n( "You are trying to perform an action you are not allowed to perform in 'kid mode'." ) ,
-			i18n( "MSN Plugin" ) );
+	{
+		QString msg = i18n( "You are trying to perform an action you are not allowed to perform in 'kid mode'." );
+		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
+		emit errorMessage( MSNSocket::ErrorSorry, msg );
 		break;
+	}
 
 	default:
 		MSNSocket::handleError( code, id );
@@ -922,7 +933,7 @@ void MSNNotifySocket::changePublicName( const QString &publicName, const QString
 	else
 	{
 		MSNContact *currentContact = static_cast<MSNContact *>(m_account->contacts()[handle]);
-		if(currentContact)
+		if(currentContact && !currentContact->guid().isEmpty() )
 		{
 			unsigned int id = sendCommand( "SBP", currentContact->guid() + " MFN " + escape( tempPublicName ) );
 			m_tmpHandles[id] = handle;

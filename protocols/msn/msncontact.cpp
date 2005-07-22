@@ -352,6 +352,7 @@ void MSNContact::serialize( QMap<QString, QString> &serializedData, QMap<QString
 	serializedData[ "PHM" ]  = m_phoneMobile;
 	serializedData[ "lists" ] = lists;
 	serializedData[ "obj" ] = m_obj;
+	serializedData[ "contactGuid" ] = guid();
 }
 
 

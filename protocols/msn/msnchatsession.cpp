@@ -167,6 +167,7 @@ void MSNChatSession::createChat( const QString &handle,
 		this, SLOT( slotInvitation( const QString&, const QString& ) ) );
 	connect( m_chatService, SIGNAL( nudgeReceived() ),
 		this, SLOT( slotNudgeReceived() ) );
+	connect( m_chatService, SIGNAL( errorMessage(int, const QString& ) ), static_cast<MSNAccount *>(myself()->account()), SLOT( slotErrorMessageReceived(int, const QString& ) ) );
 }
 
 void MSNChatSession::slotUserJoined( const QString &handle, const QString &publicName, bool IRO )

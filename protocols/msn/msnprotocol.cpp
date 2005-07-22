@@ -85,6 +85,7 @@ Kopete::Contact *MSNProtocol::deserializeContact( Kopete::MetaContact *metaConta
 	QString accountId   = serializedData[ "accountId" ] ;
 	QString lists = serializedData[ "lists" ];
 	QStringList groups  = QStringList::split( ",", serializedData[ "groups" ] );
+	QString contactGuid = serializedData[ "contactGuid" ] ;
 
 	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
 
@@ -102,6 +103,7 @@ Kopete::Contact *MSNProtocol::deserializeContact( Kopete::MetaContact *metaConta
 	c->setInfo( "PHH" , serializedData[ "PHH" ] );
 	c->setInfo( "PHW" , serializedData[ "PHW" ] );
 	c->setInfo( "PHM" , serializedData[ "PHM" ] );
+	c->setProperty( propGuid, contactGuid );
 
 	c->setBlocked(  (bool)(lists.contains('B')) );
 	c->setAllowed(  (bool)(lists.contains('A')) );

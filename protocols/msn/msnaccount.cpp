@@ -198,6 +198,8 @@ void MSNAccount::createNotificationServer( const QString &host, uint port )
 		SLOT(createNotificationServer(const QString&, uint ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( hotmailSeted( bool ) ),
 		m_openInboxAction, SLOT( setEnabled( bool ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( errorMessage(int, const QString& ) ), 
+		SLOT( slotErrorMessageReceived(int, const QString& ) ) );
 
 	m_notifySocket->setStatus( m_connectstatus );
 	m_notifySocket->connect(host, port);
@@ -565,7 +567,7 @@ void MSNAccount::slotGroupAdded( const QString& groupName, const QString &groupG
 			QString contactId = *it;
 			kdDebug( 14140 ) << k_funcinfo << "Adding to new group: " << contactId <<  endl;
 			MSNContact *c = static_cast<MSNContact *>(contacts()[contactId]);
-			if(c)
+			if(c && c->hasProperty(MSNProtocol::protocol()->propGuid.key()) )
 				notifySocket()->addContact( contactId, MSNProtocol::FL, QString::null, c->guid(), groupGuid );
 			else
 				notifySocket()->addContact( contactId, MSNProtocol::FL, contactId, QString::null, QString::null );
@@ -1203,6 +1205,46 @@ void MSNAccount::slotGlobalIdentityChanged( const QString &key, const QVariant &
 	}
 }
 
+void MSNAccount::slotErrorMessageReceived( int type, const QString &msg )
+{
+	KMessageBox::DialogType msgBoxType;
+	QString caption = i18n( "MSN Plugin" );
+
+	switch(type)
+	{
+		case MSNSocket::ErrorNormal:
+		{
+			msgBoxType = KMessageBox::Error;
+			break;
+		}
+		case MSNSocket::ErrorSorry:
+		{
+			msgBoxType = KMessageBox::Sorry;
+			break;
+		}
+		case MSNSocket::ErrorInformation:
+		{
+			msgBoxType = KMessageBox::Information;
+			break;
+		}
+		case MSNSocket::ErrorInternal:
+		{
+			msgBoxType = KMessageBox::Information;
+			caption = i18n( "MSN Internal Error" );
+			break;
+		}
+		default:
+		{
+			msgBoxType = KMessageBox::Error;
+			break;
+		}
+	}
+
+	kdDebug(14140) << k_funcinfo << msg << endl;
+	// Display the error
+	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), msgBoxType, msg, caption );
+}
+
 bool MSNAccount::createContact( const QString &contactId, Kopete::MetaContact *metaContact )
 {
 	if ( !metaContact->isTemporary() && m_notifySocket)
@@ -1249,24 +1291,12 @@ void MSNAccount::addContactServerside(const QString &contactId, QPtrList<Kopete:
 			{
 				// Add the contact to the group on the server
 				kdDebug( 14140 ) << k_funcinfo << "Add the contact to the group on the server " << endl;
-				MSNContact *c = static_cast<MSNContact *>(contacts()[contactId]);
-				if(c)
-				{	
-					// The contact exists already, just add it to a new group
-					if( c->hasProperty(MSNProtocol::protocol()->propGuid.key()) )
-					{
-						m_notifySocket->addContact( contactId, MSNProtocol::FL, QString::null, c->guid(), Gid );
-					}
-				}
+				m_notifySocket->addContact( contactId, MSNProtocol::FL, contactId, QString::null, QString::null );
+				// Add the group that the contact belong to add it when we will receive the contact GUID.
+				if( tmp_addNewContactToGroup.contains( contactId ) )
+					tmp_addNewContactToGroup[contactId].append(Gid);
 				else
-				{
-					m_notifySocket->addContact( contactId, MSNProtocol::FL, contactId, QString::null, QString::null );
-					// Add the group that the contact belong to add it when we will receive the contact GUID.
-					if( tmp_addNewContactToGroup.contains( contactId ) )
-						tmp_addNewContactToGroup[contactId].append(Gid);
-					else
-						tmp_addNewContactToGroup.insert(contactId, QStringList(Gid) );
-				}
+					tmp_addNewContactToGroup.insert(contactId, QStringList(Gid) );
 				added = true;
 			}
 		}

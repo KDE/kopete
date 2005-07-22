@@ -229,7 +229,8 @@ void MSNSocket::slotSocketError( int error )
 	//like if the socket is closed
 	emit socketClosed();
 
-	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, errormsg, i18n( "MSN Plugin" ) );
+	//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, errormsg, i18n( "MSN Plugin" ) );
+	emit errorMessage( ErrorNormal, errormsg );
 }
 
 void MSNSocket::slotDataReceived()
@@ -558,6 +559,7 @@ void MSNSocket::parseLine( const QString &str )
 
 void MSNSocket::handleError( uint code, uint /* id */ )
 {
+	kdDebug(14140) << k_funcinfo << endl;
 	QString msg;
 
 	switch ( code )
@@ -623,7 +625,8 @@ void MSNSocket::handleError( uint code, uint /* id */ )
 	}
 
 	if ( !msg.isEmpty() )
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
+		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
+		emit errorMessage( ErrorNormal, msg );
 
 	return;
 }

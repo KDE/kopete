@@ -109,6 +109,11 @@ public slots:
 	 */
 	void slotStartChatSession( const QString& handle );
 
+	/**
+	 * Single slot to display error message.
+	 */
+	void slotErrorMessageReceived( int type, const QString &msg );
+
 protected:
 	virtual bool createContact( const QString &contactId, Kopete::MetaContact *parentContact );
 
@@ -187,6 +192,7 @@ private slots:
  	 * When a global identity key get changed.
 	 */
 	void slotGlobalIdentityChanged( const QString &key, const QVariant &value );
+
 private:
 	MSNNotifySocket *m_notifySocket;
 	KAction *m_openInboxAction;
