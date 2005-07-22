@@ -55,7 +55,7 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 {
 	m_newstatus = MSNProtocol::protocol()->NLN;
 	m_secureLoginHandler=0L;
-	m_challengeHandler = new MSNChallengeHandler("YMM8C_H7KCQ2S_KL", "PROD0090YUAUV{2B");
+	m_challengeHandler = 0L;
 
 	m_isHotmailAccount=false;
 	m_ping=false;
@@ -306,20 +306,22 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 
 			// Synchronize with the server.
 			QString lastSyncTime, lastChange;
-			
+
 			// Retrieve the last synchronization timestamp, and last change timestamp.
-			lastSyncTime = m_account->configGroup()->readEntry( "lastsynctime", "0");
+			lastSyncTime = m_account->configGroup()->readEntry("lastsynctime", "0");
 			lastChange = m_account->configGroup()->readEntry("lastchange", "0");
-			
+
 			sendCommand( "SYN", lastChange + " " + lastSyncTime);
+			// Get client features.
+			sendCommand( "GCF", "Shields.xml");
 
 			// We are connected start to ping
 			slotSendKeepAlive();
 		}
 	}
-	else if( cmd == "LST" ) 
+	else if( cmd == "LST" )
 	{
-		// MSNP11 changed command. Now it's: 
+		// MSNP11 changed command. Now it's:
 		// LST N=passport@hotmail.com F=Display%20Name C=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx 13 xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 		// But can be
 		// LST N=passport@hotmail.com 10
@@ -328,7 +330,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 
 		QRegExp regex("N=([^ ]+)(?: F=([^ ]+))?(?: C=([0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}))? (\\d+)\\s?((?:[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12},?)*)$");
 		regex.search(data);
-		
+
 		// Capture passport email.
 		m_tmpLastHandle = regex.cap(1);
 		// Capture public name.
@@ -339,7 +341,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		lists = regex.cap(4).toUInt();
 		// Capture contact group(s) guid(s)
 		groups = regex.cap(5);
-		
+
 // 		kdDebug(14140) << k_funcinfo << " msnId: " << m_tmpLastHandle << " publicName: " << publicName << " contactGuid: " << contactGuid << " list: " << lists << " groupGuid: " << groups << endl;
 
 		// handle, publicName, Contact GUID, lists, Group GUID
@@ -363,7 +365,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			QString publicName=unescape( data.section( ' ', 2, 2 ) );
 			if ( (publicName!=c->contactId() ||  c->hasProperty(Kopete::Global::Properties::self()->nickName().key())  ) &&
 						 publicName!=c->property( Kopete::Global::Properties::self()->nickName()).value().toString() )
-						 
+
 				changePublicName(publicName,c->contactId());
 			QString obj=unescape(data.section( ' ', 4, 4 ));
 			c->setObject( obj );
@@ -444,7 +446,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		// Thanks Gregg for that complex RegExp.
 		QRegExp regex("(?:N=([^ ]+))?(?: F=([^ ]+))?(?: C=([0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}))?\\s?((?:[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12},?)*)$");
 		regex.search( data.section( ' ', 1 ) );
-		
+
 		// Capture passport email.
 		msnId = regex.cap(1);
 		// Capture public name.
@@ -484,7 +486,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 
 		// handle, list, contactGuid, groupGuid
 		emit contactRemoved( handle, list, contactGuid, groupGuid );
-		
+
 	}
 	else if( cmd == "OUT" )
 	{
@@ -539,25 +541,30 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	}
 	else if( cmd  == "CHL" )
 	{
+		m_challengeHandler = new MSNChallengeHandler("CFHUR$52U_{VIX5T", "PROD0101{0RM?UBW");
+		// Compute the challenge response hash, and send the response.
 		QString chlResponse = m_challengeHandler->computeHash(data.section(' ', 0, 0));
 		sendCommand("QRY", m_challengeHandler->productId(), true, chlResponse.utf8());
+		// Dispose of the challenge handler.
+		m_challengeHandler->deleteLater();
+		m_challengeHandler = 0L;
 	}
 	else if( cmd == "SYN" )
 	{
 		// Retrieve the last synchronization timestamp known to the server.
 		QString lastSyncTime = data.section( ' ', 1, 1 );
-		QString lastChange   = data.section( ' ', 1, 1 );
+		QString lastChange   = data.section( ' ', 0, 0 );
 		if( lastSyncTime != m_account->configGroup()->readEntry("lastsynctime") ||
 			lastChange != m_account->configGroup()->readEntry("lastchange") )
 		{
 			// If the server timestamp and the local timestamp are different,
 			// prepare to receive the contact list.
 			emit newContactList();  // remove all contacts datas, msn sends a new contact list
-			m_account->configGroup()->writeEntry( "lastsynctime" , data.section( ' ', 1, 1 ));
-			m_account->configGroup()->writeEntry( "lastchange", data.section (' ', 0, 0 ));
+			m_account->configGroup()->writeEntry( "lastsynctime" , lastSyncTime);
+			m_account->configGroup()->writeEntry( "lastchange", lastChange);
 		}else
 			kdDebug(14140) << k_funcinfo << "Contact list up-to-date." << endl;
-			
+
 		// set the status
 		setStatus( m_newstatus );
 	}
@@ -575,7 +582,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			QString type = data.section( ' ', 0, 0 );
 			QString prpData = unescape( data.section( ' ', 1, 1 ) ); //SECURITY????????
 			c->setInfo( type, prpData );
-			m_account->configGroup()->writeEntry( type, prpData ); 
+			m_account->configGroup()->writeEntry( type, prpData );
 		}
 	}
 	else if( cmd == "BLP" )
@@ -701,7 +708,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 		// OU - other unread.
 		QRegExp regex("<MD><E><I>(\\d+)?</I>(?:<IU>(\\d+)?</IU>)<O>(\\d+)?</O><OU>(\\d+)?</OU></E><Q>.*</Q></MD>");
 		regex.search(msg);
-		
+
 		bool unread;
 		// Retrieve the number of unread email messages.
 		mailCount = regex.cap(2).toUInt(&unread);
@@ -784,7 +791,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 	if(!m_configFile.isNull())
 	{
-		// TODO Global configuration file.
+		// TODO Get client features.
 	}
 
 	if(!m_tmpLastHandle.isNull())
@@ -795,7 +802,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 		{
 			// Get the first child of the xml "document";
 			QDomElement psmElement = psm.documentElement().firstChild().toElement();
-	
+
 			while( !psmElement.isNull() )
 			{
 				if(psmElement.tagName() == QString::fromUtf8("PSM"))
@@ -809,7 +816,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 				}
 				psmElement = psmElement.nextSibling().toElement();
 			}
-	
+
 			MSNContact *contact = static_cast<MSNContact*>(m_account->contacts()[ m_tmpLastHandle ]);
 			if(contact)
 			{
@@ -857,7 +864,7 @@ void MSNNotifySocket::addContact( const QString &handle, int list, const QString
 				kdDebug(14140) << k_funcinfo << "In adding contact to a new contact" << endl;
 			}
 			break;
-		}	
+		}
 		case MSNProtocol::AL:
 			args = QString("AL N=%1").arg( handle );
 			break;
@@ -935,6 +942,7 @@ void MSNNotifySocket::changePublicName( const QString &publicName, const QString
 		MSNContact *currentContact = static_cast<MSNContact *>(m_account->contacts()[handle]);
 		if(currentContact && !currentContact->guid().isEmpty() )
 		{
+			// FIXME if there is not guid server disconnects.
 			unsigned int id = sendCommand( "SBP", currentContact->guid() + " MFN " + escape( tempPublicName ) );
 			m_tmpHandles[id] = handle;
 		}
@@ -944,7 +952,7 @@ void MSNNotifySocket::changePublicName( const QString &publicName, const QString
 void MSNNotifySocket::changePersonalMessage( const QString& type, const QString &personalMessage )
 {
 	QString tempPersonalMessage = personalMessage;
-	
+
 	//Magic number : 129 characters
 	if( escape(personalMessage).length() > 129 )
 	{
@@ -954,7 +962,7 @@ void MSNNotifySocket::changePersonalMessage( const QString& type, const QString 
 
 	QDomDocument xmlMessage;
 	xmlMessage.appendChild( xmlMessage.createElement( "Data" ) );
-	
+
 	QDomElement psm = xmlMessage.createElement("PSM");
 	psm.appendChild( xmlMessage.createTextNode( tempPersonalMessage ) );
 	xmlMessage.documentElement().appendChild( psm );
