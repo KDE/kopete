@@ -969,6 +969,7 @@ Name[et]=Võrguprobleemid
 Name[pt_BR]=Problemas na Rede
 Name[tr]=Ağ Problemleri
 Comment=The network is experiencing problems
+Comment[et]=Võrguga on mingeid probleeme
 default_presentation=16
 
 [server_error]
