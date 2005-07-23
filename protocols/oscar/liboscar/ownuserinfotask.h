@@ -43,6 +43,12 @@ public:
 signals:
 	/** Emitted when user info is recieved. Needed because succeeded() is only emitted once. */
 	void gotInfo();
+	
+	void haveAvailableMessage( const QString& );
+	
+	void haveIconChecksum( const QString& );
+	
+	void buddyIconUploadRequested();
 
 private:
 	UserDetails m_details;

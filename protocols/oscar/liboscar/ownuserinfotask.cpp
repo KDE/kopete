@@ -44,7 +44,8 @@ bool OwnUserInfoTask::forMe( const Transfer* transfer ) const
 		return false;
 	else
 	{
-		if ( st->snacService() == 0x01 && st->snacSubtype() == 0x0F )
+		if ( st->snacService() == 0x01 &&
+		     ( st->snacSubtype() == 0x0F || st->snacSubtype() == 0x21 ) )
 			return true;
 		else
 			return false;
@@ -56,13 +57,51 @@ bool OwnUserInfoTask::take( Transfer* transfer )
 {
 	if ( forMe( transfer ) )
 	{
+		SnacTransfer* st = dynamic_cast<SnacTransfer*>( transfer );
+		if ( !st )
+			return false;
+		
 		Buffer* b = transfer->buffer();
-		UserDetails ud;
-		ud.fill( b );
-		m_details = ud;
-		emit gotInfo();
-		setSuccess( 0, QString::null );
-		return true;
+		if ( st->snacSubtype() == 0x0F )
+		{
+			UserDetails ud;
+			ud.fill( b );
+			m_details = ud;
+			emit gotInfo();
+			setSuccess( 0, QString::null );
+			return true;
+		}
+		else
+		{
+			WORD infoType = b->getWord();
+			if ( infoType == 0x0000 || infoType == 0x0001 )
+			{
+				BYTE flags = b->getByte();
+				if ( flags & 0x80 )
+				{ //we need to do a buddy upload when bit 8 = 1
+					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Buddy icon upload requested" << endl;
+					emit buddyIconUploadRequested();
+				}
+			
+				if ( b->length() != 0 )
+				{ //buffer might be empty if flags bit 8 = 1
+					BYTE checksumLength = b->getByte();
+					QByteArray qba;
+					qba.duplicate( b->getBlock( checksumLength ) );
+					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Self icon checksum: " << qba << endl;
+				}
+			}
+			
+			if ( infoType == 0x0002 )
+			{
+				QString availableMsg( b->getBSTR() );
+				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "self available message: " << endl;
+			}
+			
+			setSuccess( 0, QString::null );
+			return true;
+		}
+		
 	}
 
 	return false;
