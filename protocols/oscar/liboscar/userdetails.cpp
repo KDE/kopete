@@ -185,11 +185,12 @@ void UserDetails::fill( Buffer * buffer )
 				break;
 			case 0x001D:
 			{
-				//AOL decided to crap a bunch of shit in here.
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Icon and available message info" << endl;
-
+				if ( t.length == 0 )
+					break;
+				
 				while ( b.length() > 0 )
 				{
+					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Icon and available message info" << endl;
 					WORD type2 = b.getWord();
 					BYTE number = b.getByte();
 					BYTE length = b.getByte();
@@ -208,14 +209,14 @@ void UserDetails::fill( Buffer * buffer )
 						}
  						else
  						{
-	 						kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "icon checkum indicated"
+	 						kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "icon checkum indicated"
 		 						<< " but unable to parse checksum" << endl;
 							b.skipBytes( length );
  						}
 						break;
 					case 0x0002:
 						kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got an available message" << endl;
-						if ( length >= 4 )
+						if ( length > 0 )
 						{
 							m_availableMessage = QString( b.getBSTR() );
 							kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "available message:" << m_availableMessage << endl;
