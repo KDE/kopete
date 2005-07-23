@@ -307,7 +307,7 @@ void KopeteMetaLVIProps::slotLoadPhotoSources()
 		}
 	}
 	
-	mainWidget->cmbPhotoUrl->setURL(item->metaContact()->customPhoto().url());
+	mainWidget->cmbPhotoUrl->setKURL(item->metaContact()->customPhoto().url());
 	Kopete::MetaContact::PropertySource photoSource = item->metaContact()->photoSource();
 
 	mainWidget->radioPhotoContact->setChecked(photoSource == Kopete::MetaContact::SourceContact);
@@ -363,7 +363,7 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 		photo = Kopete::photoFromContact(selectedNameSourceContact());
 		break;
 		case Kopete::MetaContact::SourceCustom:
-		photo = QImage(mainWidget->cmbPhotoUrl->url());
+		photo = QImage(KURL::decode_string(mainWidget->cmbPhotoUrl->url()));
 		break;
 	}
 	if( !photo.isNull() )
@@ -421,7 +421,7 @@ void KopeteMetaLVIProps::slotOkClicked()
 	item->metaContact()->setPhotoSource(selectedPhotoSource());
 	item->metaContact()->setPhotoSourceContact( selectedPhotoSourceContact() );
 	if ( !mainWidget->cmbPhotoUrl->url().isEmpty())
-		item->metaContact()->setPhoto(KURL(mainWidget->cmbPhotoUrl->url()));
+		item->metaContact()->setPhoto(KURL::fromPathOrURL((mainWidget->cmbPhotoUrl->url())));
 	item->metaContact()->setPhotoSyncedWithKABC( mainWidget->chkSyncPhoto->isChecked() );
 	
 	item->metaContact()->setUseCustomIcon(
