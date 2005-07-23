@@ -376,7 +376,7 @@ void ClientStream::bs_readyRead()
 	//qDebug( "size of storage for incoming data is %i bytes.", a.size() );
 	a = d->bs->read();
 
-#ifdef LIBOSCAR_DEBUG
+#if LIBOSCAR_DEBUG
 	QCString cs(a.data(), a.size()+1);
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "recv: " << a.size() << "bytes" << endl;
 	cs_dump( a );
@@ -387,7 +387,7 @@ void ClientStream::bs_readyRead()
 
 void ClientStream::bs_bytesWritten(int bytes)
 {
-#ifdef LIBOSCAR_DEBUG
+#if LIBOSCAR_DEBUG
  	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << bytes << " bytes written" << endl;
 	Q_UNUSED( bytes );
 #else
