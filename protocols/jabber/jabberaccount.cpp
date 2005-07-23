@@ -1031,7 +1031,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 				if ( ( !metaContact || metaContact->isTemporary() ) &&
 					 ( KMessageBox::questionYesNo (Kopete::UI::Global::mainWidget (),
 												   i18n ( "Do you want to add %1 to your contact list in return?").
-												   arg (jid.userHost (), 1), i18n ("Add Jabber User?")) == KMessageBox::Yes) )
+												   arg (jid.userHost (), 1), i18n ("Add Jabber User?"),i18n("Add"), i18n("Do Not Add")) == KMessageBox::Yes) )
 				{
 					// Subscribe to user's presence.
 					task = new XMPP::JT_Presence ( client()->rootTask () );
@@ -1085,7 +1085,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 								  ("The Jabber user %1 removed %2's subscription to them. "
 								   "This account will no longer be able to view their online/offline status. "
 								   "Do you want to delete the contact?").
-								  arg (jid.userHost (), 1).arg (accountId(), 2), i18n ("Notification")))
+								  arg (jid.userHost (), 1).arg (accountId(), 2), i18n ("Notification"), KStdGuiItem::del(), i18n("Keep")))
 		{
 
 			case KMessageBox::Yes:

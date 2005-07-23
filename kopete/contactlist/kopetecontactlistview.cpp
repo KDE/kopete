@@ -998,7 +998,7 @@ void KopeteContactListView::addDraggedContactToGroup( Kopete::MetaContact *conta
 	int r=KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
 					i18n( "<qt>Would you like to add <b>%1</b> to your contact list as a member of <b>%2</b>?</qt>" )
 					.arg( contact->displayName(), group->displayName() ),
-					i18n( "Kopete" ), KStdGuiItem::yes(), KStdGuiItem::no(),
+					i18n( "Kopete" ), i18n("Add"), i18n("Do Not Add"),
 					"addTemporaryWhenMoving" );
 
 	if( r == KMessageBox::Yes )
@@ -1013,7 +1013,7 @@ void KopeteContactListView::addDraggedContactToMetaContact( Kopete::Contact *con
 	int r = KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
 					i18n( "<qt>Would you like to add <b>%1</b> to your contact list as a child contact of <b>%2</b>?</qt>" )
 					.arg( contact->contactId(), parent->displayName() ),
-					i18n( "Kopete" ), KStdGuiItem::yes(), KStdGuiItem::no(),
+					i18n( "Kopete" ), i18n("Add"), i18n("Do Not Add"),
 					"addTemporaryWhenMoving" );
 
 	if( r == KMessageBox::Yes )
@@ -1480,7 +1480,7 @@ void KopeteContactListView::slotMoveToGroup()
 	{
 		if( KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
 			i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
-			i18n( "Kopete" ), KStdGuiItem::yes(), KStdGuiItem::no(),
+			i18n( "Kopete" ), i18n("Add"), i18n("Do Not Add"),
 			"addTemporaryWhenMoving" ) == KMessageBox::Yes )
 		{
 			m->setTemporary(false,to);
@@ -1733,7 +1733,7 @@ void KopeteContactListView::slotAddTemporaryContact()
 	{
 /*		int r=KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
 			i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
-			i18n( "Kopete" ), KStdGuiItem::yes(), KStdGuiItem::no(),
+			i18n( "Kopete" ), i18n("Add"), i18n("Do Not Add"),
 			"addTemporaryWhenMoving" );
 
 		if(r==KMessageBox::Yes)*/

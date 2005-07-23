@@ -1,5 +1,5 @@
 /*  *************************************************************************
-    *   copyright: (C) 2003 Richard Lärkäng <nouseforaname@home.se>         *
+    *   copyright: (C) 2003 Richard Lï¿½kï¿½g <nouseforaname@home.se>         *
     *   copyright: (C) 2003 Gav Wood <gav@kde.org>                          *
     *************************************************************************
 */
@@ -61,7 +61,7 @@ const bool SMSAccount::splitNowMsgTooLong(int max, int msgLength)
 	if(theLongMsgAction == ACT_CANCEL) return false;
 	if(theLongMsgAction == ACT_SPLIT) return true;
 	if(KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(), i18n("This message is longer than the maximum length (%1). Should it be divided to %2 messages?").arg(max).arg(msgLength / max + 1),
-		i18n("Message Too Long")) == KMessageBox::Yes)
+		i18n("Message Too Long"), i18n("Divide"), i18n("Do Not Divide")) == KMessageBox::Yes)
 		return true;
 	else
 		return false;

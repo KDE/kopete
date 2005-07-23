@@ -151,7 +151,7 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 		// even be at the computer. We just need to add the contact --Matt
 		if( KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n( "An external application is attempting to add the "
 			" '%1' contact '%2' to your contact list. Do you want to allow this?" )
-			.arg( protocolName ).arg( contactName ), i18n( "Allow Contact?" ) ) == 3 ) // Yes == 3
+			.arg( protocolName ).arg( contactName ), i18n( "Allow Contact?" ), i18n("Allow"), i18n("Reject") ) == 3 ) // Yes == 3
 		{
 			//User said Yes
 			myAccount->addContact( contactId, contactName, realGroup, Kopete::Account::DontChangeKABC);

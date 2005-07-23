@@ -65,7 +65,7 @@ HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringLi
 			KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
 				i18n( "Old history files from Kopete 0.6.x or older has been detected.\n"
 				"Do you want to import and convert it to the new history format?" ),
-				i18n( "History Plugin" ) ) == KMessageBox::Yes )
+				i18n( "History Plugin" ), i18n("Import && Convert"), i18n("Do Not Import") ) == KMessageBox::Yes )
 		{
 			convertOldHistory();
 		}

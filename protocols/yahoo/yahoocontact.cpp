@@ -361,7 +361,7 @@ void YahooContact::gotWebcamInvite()
 {
 	// emit signalReceivedWebcamInvite();
 	
-	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 has invited you to view his/her webcam. Accept?").arg(nickName()) ) )
+	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 has invited you to view his/her webcam. Accept?").arg(nickName()), QString::null, i18n("Accept"), i18n("Ignore") ) )
 		
 	{
 		emit signalWebcamInviteAccepted ( );

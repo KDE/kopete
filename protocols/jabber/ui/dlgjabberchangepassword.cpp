@@ -78,7 +78,7 @@ void DlgJabberChangePassword::slotOk ()
 	{
 		if ( KMessageBox::questionYesNo ( this,
 										  i18n ( "Your account needs to be connected before the password can be changed. Do you want to try to connect now?" ),
-										  i18n ( "Jabber Password Change" ) ) == KMessageBox::Yes )
+										  i18n ( "Jabber Password Change" ), i18n("Connect"), i18n("Stay Offline") ) == KMessageBox::Yes )
 		{
 			connect ( m_account, SIGNAL ( isConnectedChanged () ), this, SLOT ( slotChangePassword () ) );
 			m_account->connect ();

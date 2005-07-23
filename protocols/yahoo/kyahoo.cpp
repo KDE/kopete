@@ -651,7 +651,7 @@ void YahooSession::slotUserInfoResult( KIO::Job* job )
 		}
 		
 		// If we get here, no entry was found --> ask to create a new one
-		if( KMessageBox::Yes == KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(), i18n( "Do you want to create a new entry?" ), i18n( "No Yahoo Addressbook Entry Found" )) ){
+    	if( KMessageBox::Yes == KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(), i18n( "Do you want to create a new entry?" ), i18n( "No Yahoo Addressbook Entry Found" ), i18n("Create Entry"), i18n("Do Not Create")) ){
 			YahooUserInfo info;
 			info.userID = m_targetID;
 			info.abID = "-1";

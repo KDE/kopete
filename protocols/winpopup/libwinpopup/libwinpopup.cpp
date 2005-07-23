@@ -101,7 +101,7 @@ bool WinPopupLib::checkMessageDir()
 		int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("Working directory /var/lib/winpopup/ does not exist.\n"
 								     "If you have not configured anything yet (samba) it may be better to call\n"
 								     "Install Into Samba (Configure... -> Account -> Edit)\n"
-								     "Should the directory be created? (May need root password)"));
+								     "Should the directory be created? (May need root password)"), QString::null, i18n("Create Directory"), i18n("Do Not Create"));
 		if (tmpYesNo == KMessageBox::Yes) {
 			QString kdesuArgs = "mkdir -p -m 0777 /var/lib/winpopup";
 			if (KApplication::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
@@ -116,7 +116,7 @@ bool WinPopupLib::checkMessageDir()
 
 			int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("Permissions of the working directory "
 									     "/var/lib/winpopup/ are wrong!\n"
-									     "Fix? (May need root password)"));
+									     "Fix? (May need root password)"), QString::null, i18n("Fix"), i18n("Do Not Fix"));
 			if (tmpYesNo == KMessageBox::Yes) {
 				QString kdesuArgs = "chmod 0777 /var/lib/winpopup";
 				if (KApplication::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
@@ -271,7 +271,7 @@ void WinPopupLib::slotCheckForNewMessages()
 						kdDebug(14170) << "Message file not removed - how that?" << endl;
 						int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("A message file could not be removed; "
 											"maybe the permissions are wrong.\n"
-											"Fix? (May need root password)"));
+											"Fix? (May need root password)"), QString::null, i18n("Fix"), i18n("Do Not Fix"));
 						if (tmpYesNo == KMessageBox::Yes) {
 							QFileInfo messageFileInfo(messageFile);
 							QString kdesuArgs = "chmod 0666 /var/lib/winpopup/" + messageFileInfo.fileName();
