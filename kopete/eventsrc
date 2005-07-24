@@ -928,6 +928,7 @@ default_presentation=16
 
 [connection_error]
 Name=Connection Error
+Name[bg]=Грешка при връзка
 Name[br]=Fazi ar gevreadenn
 Name[et]=Ühenduse viga
 Name[ga]=Earráid Naisc
@@ -935,6 +936,7 @@ Name[pt_BR]=Erro na Conexão
 Name[sv]=Anslutningsfel
 Name[tr]=Bağlantı Hatası
 Comment=An error on connection has occurred
+Comment[bg]=Грешка по време на установяване на връзка
 Comment[et]=Ühendusega tekkis viga
 Comment[pt_BR]=Ocorreu um erro na conexão
 Comment[sv]=En fel vid anslutning har inträffat
@@ -943,10 +945,12 @@ default_presentation=2
 
 [connection_lost]
 Name=Connection Lost
+Name[bg]=Връзката е прекъсната
 Name[et]=Ühendus kadus
 Name[pt_BR]=Conexão Perdida
 Name[tr]=Bağlantı Kesildi
 Comment=The connection have been lost
+Comment[bg]=Връзката е прекъсната
 Comment[et]=Ühendus kadus
 Comment[pt_BR]=A conexão foi perdida
 Comment[tr]=Bağlantı kesildi
@@ -954,10 +958,12 @@ default_presentation=16
 
 [cannot_connect]
 Name=Cannot Connect
+Name[bg]=Невъзможна връзка
 Name[et]=Ühendumine ebaõnnestus
 Name[pt_BR]=Não foi possível efetuar a conexão
 Name[tr]=Bağlanılamıyor
 Comment=Kopete cann't connect to the service
+Comment[bg]=Установяването на връзка е невъзможно
 Comment[et]=Kopetel ebaõnnestus ühendumine teenusega
 Comment[pt_BR]=O Kopete não pode se conectar ao serviço
 Comment[tr]=Kopete servise bağlanamıyor
@@ -965,19 +971,23 @@ default_presentation=16
 
 [network_problems]
 Name=Network Problems
+Name[bg]=Мрежови проблеми
 Name[et]=Võrguprobleemid
 Name[pt_BR]=Problemas na Rede
 Name[tr]=Ağ Problemleri
 Comment=The network is experiencing problems
+Comment[bg]=Мрежови проблеми
 Comment[et]=Võrguga on mingeid probleeme
 default_presentation=16
 
 [server_error]
 Name=Server Internal Error
+Name[bg]=Вътрешна грешка на сървъра
 Name[et]=Serveri sisemine viga
 Name[pt_BR]=Erro interno do Servidor
 Name[tr]=Sunucu İç Hatası
 Comment=An service internal error has occurred
+Comment[bg]=Вътрешна грешка на сървъра
 Comment[et]=Tekkis teenuse sisemine viga
 Comment[pt_BR]=Ocorreu um erro interno do serviço
 Comment[tr]=Servis İç Hatası meydana geldi
