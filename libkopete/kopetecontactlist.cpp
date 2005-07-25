@@ -339,7 +339,7 @@ void ContactList::slotPhotoChanged()
 	// Save the image to ~./kde/share/apps/kopete/global-photo.png if the source is not custom.
 	if(photoSource != MetaContact::SourceCustom)
 	{
-		QImage globalPhoto = myself()->photo().copy();
+		QImage globalPhoto = myself()->photo();
 
 		photoURL = "global-photo.png";
 		photoURL = locateLocal("appdata", photoURL);

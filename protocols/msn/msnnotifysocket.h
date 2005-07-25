@@ -161,6 +161,11 @@ private:
 	 */
 	QString statusToString( const Kopete::OnlineStatus &status ) const;
 
+	/**
+	 * Process the currrent Media tag.
+	 */
+	QString processCurrentMedia( const QString &mediaXmlElement );
+
 	//know the last handle used
 	QString m_tmpLastHandle;
 	QMap <unsigned int,QString> m_tmpHandles;

@@ -129,6 +129,7 @@ int KopeteEmoticonAction::plug( QWidget* widget, int index )
 
 //	kdDebug(14010) << "KopeteEmoticonAction::plug( " << widget << ", " << index << " )" << endl;
 
+	// KDE4/Qt TODO: Use qobject_cast instead.
 	if ( widget->inherits("QPopupMenu") )
 	{
 		QPopupMenu* menu = static_cast<QPopupMenu*>( widget );
@@ -149,6 +150,7 @@ int KopeteEmoticonAction::plug( QWidget* widget, int index )
 
 		return containerCount() - 1;
 	}
+	// KDE4/Qt TODO: Use qobject_cast instead.
 	else if ( widget->inherits( "KToolBar" ) )
 	{
 		KToolBar *bar = static_cast<KToolBar *>( widget );
@@ -193,6 +195,7 @@ int KopeteEmoticonAction::plug( QWidget* widget, int index )
 
 		return containerCount() - 1;
 	}
+	// KDE4/Qt TODO: Use qobject_cast instead.
 	else if ( widget->inherits( "QMenuBar" ) )
 	{
 		QMenuBar *bar = static_cast<QMenuBar *>( widget );

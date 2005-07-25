@@ -103,6 +103,7 @@ void EmoticonSelector::prepareList(void)
 void EmoticonSelector::emoticonClicked(const QString &str)
 {
 //	kdDebug(14000) << "selected emoticon '" << str << "'" << endl;
+	// KDE4/Qt TODO: use qobject_cast instead.
 	emit ItemSelected ( str );
 	if ( isVisible() && parentWidget() &&
 		parentWidget()->inherits("QPopupMenu") )

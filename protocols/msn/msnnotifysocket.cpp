@@ -796,7 +796,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 	if(!m_tmpLastHandle.isNull())
 	{
-		QString personalMessage;
+		QString personalMessage, currentMedia;
 		QDomDocument psm;
 		if( psm.setContent(msg) )
 		{
@@ -812,7 +812,11 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 				}
 				else if(psmElement.tagName() == QString::fromUtf8("CurrentMedia"))
 				{
-					//TODO: Process CurrentMedia
+					if( !psmElement.text().isEmpty() )
+					{
+						kdDebug(14140) << k_funcinfo << "XML CurrentMedia: " << psmElement.text() << endl;
+						currentMedia = processCurrentMedia( psmElement.text() );
+					}
 				}
 				psmElement = psmElement.nextSibling().toElement();
 			}
@@ -820,11 +824,72 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 			MSNContact *contact = static_cast<MSNContact*>(m_account->contacts()[ m_tmpLastHandle ]);
 			if(contact)
 			{
-				contact->setProperty(MSNProtocol::protocol()->propPersonalMessage, personalMessage);
+				contact->setProperty(MSNProtocol::protocol()->propPersonalMessage, currentMedia.isEmpty() ? personalMessage : currentMedia);
 			}
 		}
 		m_tmpLastHandle = QString::null;
 	}
+}
+
+QString MSNNotifySocket::processCurrentMedia( const QString &mediaXmlElement )
+{
+	/*
+		The value of the CurrentMedia tag you can think of like an array 
+		seperated by "\0" characters (literal backslash followed by zero, not NULL). 
+		
+		The elements of this "array" are as follows:
+
+		* Application - This is the app you are using. Usually empty
+		* Type - This is the type of PSM, either “Music”, “Games” or “Office”
+		* Enabled - This is a boolean value (0/1) to enable/disable
+		* Format - A formatter string ala .Net; For example, “{0} - {1}”
+		* First line - The first line (Matches {0} in the Format)
+		* Second line - The second line (Matches {1} in the Format)
+		* Third line - The third line (Matches {2} in the Format) 
+
+		There is probably no limit to the number of lines unless you go over the maximum length of the tag. 
+	
+		Example of currentMedia xml tag:
+		<CurrentMedia>\0Music\01\0{0} - {1}\0 Song Title\0Song Artist\0Song Album\0\0</CurrentMedia>
+		<CurrentMedia>\0Games\01\0Playing {0}\0Game Name\0</CurrentMedia>
+		<CurrentMedia>\0Office\01\0Office Message\0Office App Name\0</CurrentMedia>
+
+		From http://msnpiki.msnfanatic.com/index.php/MSNP11:Changes
+	*/
+	QString application, type, format, currentMedia;
+	bool enabled=false, test;
+	// \0 is textual, it's the "array" separator.
+	QStringList argumentLists = QStringList::split(QString::fromUtf8("\\0"), mediaXmlElement, true);
+	
+	// Retrive the "stable" array elements.
+	application = argumentLists[0];
+	type = argumentLists[1];
+	enabled = argumentLists[2].toInt(&test);
+	format = argumentLists[3];
+	
+	// Get the formatter strings
+	QStringList formatterStrings;
+	QStringList::ConstIterator it;
+	for( it = argumentLists.at(4); it != argumentLists.end(); ++it )
+	{
+		formatterStrings.append( *it );
+	}
+	
+	// Replace the formatter in the format string.
+	currentMedia = format;
+	for(uint i=0; i<formatterStrings.size(); i++)
+	{
+		currentMedia = currentMedia.replace(QString("{%1}").arg(i), formatterStrings[i]);
+	}
+	
+	if( type == QString::fromUtf8("Music") )
+	{
+		currentMedia = i18n("Current music playing: (8) %1 (8)").arg(currentMedia);
+	}
+
+	kdDebug(1414) << "Current Media received: " << currentMedia << endl;
+
+	return currentMedia;
 }
 
 void MSNNotifySocket::addGroup(const QString& groupName)

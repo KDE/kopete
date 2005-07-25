@@ -176,18 +176,21 @@ Kopete::Account * MSNEditAccountWidget::apply()
 	}
 
 	// Save the avatar image
-	d->pictureUrl = locateLocal( "appdata", "msnpicture-" +
-			account()->accountId().lower().replace( QRegExp("[./~]" ), "-" ) + ".png" );
-	if ( d->pictureData.save( d->pictureUrl, "PNG" ) )
+	if( d->ui->m_useDisplayPicture->isChecked() )
 	{
-		static_cast<MSNAccount *>( account() )->setPictureUrl( d->pictureUrl );
+		d->pictureUrl = locateLocal( "appdata", "msnpicture-" +
+				account()->accountId().lower().replace( QRegExp("[./~]" ), "-" ) + ".png" );
+		if ( d->pictureData.save( d->pictureUrl, "PNG" ) )
+		{
+			static_cast<MSNAccount *>( account() )->setPictureUrl( d->pictureUrl );
+		}
+		else
+		{
+			KMessageBox::sorry( this, i18n( "<qt>An error occurred when trying to change the display picture.<br>"
+					"Make sure that you have selected a correct image file</qt>" ), i18n( "MSN Plugin" ) );
+		}
 	}
-	else
-	{
-		KMessageBox::sorry( this, i18n( "<qt>An error occurred when trying to change the display picture.<br>"
-				"Make sure that you have selected a correct image file</qt>" ), i18n( "MSN Plugin" ) );
-	}
-	
+
 	static_cast<MSNAccount *>( account() )->resetPictureObject();
 
 	if ( account()->isConnected() )
