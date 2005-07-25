@@ -144,9 +144,12 @@ void ICQContact::loggedIn()
 	if ( m_ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 
-	int time = ( KApplication::random() % 20 ) * 1000;
-	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating nickname in " << time/1000 << " seconds" << endl;
-	QTimer::singleShot( time, this, SLOT( requestShortInfo() ) );
+	if ( nickName().isEmpty() ) 
+	{
+		int time = ( KApplication::random() % 20 ) * 1000;
+		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating nickname in " << time/1000 << " seconds" << endl;
+		QTimer::singleShot( time, this, SLOT( requestShortInfo() ) );
+	}
 
 }
 
