@@ -72,6 +72,7 @@ class Buffer
 		/**
 		 * adds the given string to the buffer (make sure it's NULL-terminated)
 		 */
+		int addString(QByteArray);
 		int addString(QByteArray, DWORD);
 		int addString(const char*, DWORD);
 		int addString(const unsigned char*, DWORD);

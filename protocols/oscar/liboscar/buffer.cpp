@@ -110,31 +110,36 @@ int Buffer::addLEDWord(const DWORD dw)
 	return mBuffer.size();
 }
 
+int Buffer::addString(QByteArray s)
+{
+	unsigned int pos = mBuffer.size();
+	int len = s.size();
+	expandBuffer(len);
+	
+	for ( int i = 0; i < len; i++ )
+		mBuffer[pos + i] = s[i];
+	
+	return mBuffer.size();
+}
 
 int Buffer::addString(QByteArray s, DWORD len)
 {
-	unsigned int pos = mBuffer.size();
-	expandBuffer(len);
-	
-	//concatenate the new string onto the buffer
-	for ( unsigned int i = 0; i < len; i++ )
-		mBuffer[pos + i] = s[i];
-
-	return mBuffer.size();
+	Q_UNUSED( len );
+	return addString( s );
 }
 
 int Buffer::addString( const char* s, DWORD len )
 {
 	QByteArray qba;
 	qba.duplicate( s, len );
-	return addString( qba, len );
+	return addString( qba );
 }
 
 int Buffer::addString(const unsigned char* s, DWORD len)
 {
 	QByteArray qba;
 	qba.duplicate( (const char*) s, len );
-	return addString( qba, len );
+	return addString( qba );
 }
 
 int Buffer::addLEString(const char *s, const DWORD len)

@@ -231,11 +231,11 @@ void SSIModifyTask::handleSSIAck()
 void SSIModifyTask::sendSSIUpdate()
 {
 	//what type of update are we sending?
-	if ( m_oldItem.isValid() && m_newItem.isValid() && m_groupItem.isValid() )
+	if ( m_opSubject == Group && m_opType == Change )
 		changeGroupOnServer();
 	
 	//add an item to the ssi list
-	if ( m_newItem.isValid() && !m_oldItem && !m_groupItem )
+	if ( m_opType == Add )
 	{
 		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding an item to the SSI list" << endl;
 		sendEditStart();
@@ -245,7 +245,7 @@ void SSIModifyTask::sendSSIUpdate()
 		m_id = client()->snacSequence();
 		SNAC s1 = { 0x0013, 0x0008, 0x0000, m_id };
 		Buffer* ssiBuffer = new Buffer;
-		addItemToBuffer( m_newItem, ssiBuffer );
+		ssiBuffer->addString( m_newItem );
 		Transfer* t2 = createTransfer( f1, s1, ssiBuffer );
 		send( t2 );
 		
@@ -253,7 +253,7 @@ void SSIModifyTask::sendSSIUpdate()
 	}
 	
 	//remove an item
-	if ( m_oldItem.isValid() && !m_newItem && !m_groupItem )
+	if ( m_opType == Remove )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << m_oldItem.name() << " from SSI" << endl;
 		sendEditStart();
@@ -263,12 +263,7 @@ void SSIModifyTask::sendSSIUpdate()
 		m_id = client()->snacSequence();
 		SNAC s1 = { 0x0013, 0x000A, 0x0000, m_id };
 		Buffer* ssiBuffer = new Buffer;
-		ssiBuffer->addBSTR( m_oldItem.name().latin1() );
-		ssiBuffer->addWord( m_oldItem.gid() );
-		ssiBuffer->addWord( m_oldItem.bid() );
-		ssiBuffer->addWord( m_oldItem.type() );
-		ssiBuffer->addWord( 0 );
-		
+		ssiBuffer->addString( m_oldItem );
 		Transfer* t2 = createTransfer( f1, s1, ssiBuffer );
 		send( t2 );
 		
@@ -276,7 +271,7 @@ void SSIModifyTask::sendSSIUpdate()
 	}
 
 	//change the group name
-	if ( m_oldItem.isValid() && m_newItem.isValid() && !m_groupItem )
+	if ( m_opType == Rename )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Renaming the group" << m_oldItem.name() << " to " << m_newItem.name() << endl;
 		sendEditStart();
@@ -284,7 +279,7 @@ void SSIModifyTask::sendSSIUpdate()
 		//change the group name
 		FLAP f1 = { 0x02, client()->flapSequence(), 0 };
 		m_id = client()->snacSequence();
-		SNAC s1 = { 0x0013, 0x000A, 0x0000, m_id };
+		SNAC s1 = { 0x0013, 0x0009, 0x0000, m_id };
 		Buffer* ssiBuffer = new Buffer;
 		Transfer* t2 = createTransfer( f1, s1, ssiBuffer );
 		send( t2 );

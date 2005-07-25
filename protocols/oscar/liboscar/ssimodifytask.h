@@ -87,6 +87,11 @@ public:
 	//! @return true if we can send the packet
 	bool renameGroup( const QString& oldName, const QString& newName );
 	
+	//! Modify an item on the SSI list
+	//! Should be used for other items we don't have explicit functions for
+	//! like icon hashs, privacy settings, non-icq contacts, etc.
+	bool modifyItem( const SSI& item );
+	
 protected:
 	virtual bool forMe( const Transfer* transfer ) const;
 
