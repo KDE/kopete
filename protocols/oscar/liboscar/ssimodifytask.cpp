@@ -152,6 +152,8 @@ bool SSIModifyTask::removeGroup( const QString& groupName )
 
 bool SSIModifyTask::renameGroup( const QString& oldName, const QString & newName )
 {
+	return false; //rename group is unimplemented
+	
 	m_opType = Rename;
 	m_opSubject = Group;
 	if ( oldName == newName )
