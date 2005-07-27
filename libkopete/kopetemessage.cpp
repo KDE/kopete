@@ -676,6 +676,7 @@ const QDomDocument Message::asXML()
 	return doc;
 }
 
+// KDE4: Move that to a utils class/namespace
 QString Message::decodeString( const QCString &message, const QTextCodec *providedCodec, bool *success )
 {
 	/*
@@ -696,7 +697,7 @@ QString Message::decodeString( const QCString &message, const QTextCodec *provid
 	charsToCheck = 128 > charsToCheck ? charsToCheck : 128;
 
 	//They are providing a possible codec. Check if it is valid
-	if( providedCodec && providedCodec->heuristicContentMatch( message, charsToCheck ) >= charsToCheck )
+	if( providedCodec && providedCodec->heuristicContentMatch( message, charsToCheck ) >= 0 )
 	{
 		//All chars decodable.
 		return providedCodec->toUnicode( message );
@@ -711,7 +712,7 @@ QString Message::decodeString( const QCString &message, const QTextCodec *provid
 
 	//Try codecForContent - exact match
 	QTextCodec *testCodec = QTextCodec::codecForContent(message, charsToCheck);
-	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) >= charsToCheck )
+	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) >= 0 )
 	{
 		//All chars decodable.
 		return testCodec->toUnicode( message );
@@ -725,7 +726,7 @@ QString Message::decodeString( const QCString &message, const QTextCodec *provid
 
 	//Try local codec
 	testCodec = QTextCodec::codecForLocale();
-	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) >= charsToCheck )
+	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) >= 0 )
 	{
 		//All chars decodable.
 		kdDebug(14000) << k_funcinfo << "Using locale's codec" << endl;
@@ -734,7 +735,7 @@ QString Message::decodeString( const QCString &message, const QTextCodec *provid
 
 	//Try latin1 codec
 	testCodec = QTextCodec::codecForMib(4);
-	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) >= charsToCheck )
+	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) >= 0 )
 	{
 		//All chars decodable.
 		kdDebug(14000) << k_funcinfo << "Using latin1" << endl;
