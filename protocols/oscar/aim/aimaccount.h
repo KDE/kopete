@@ -83,6 +83,8 @@ public slots:
 	void slotEditInfo();
 	void slotGoOnline();
 	
+	void globalIdentityChanged( const QString&, const QVariant& );
+	
 protected slots:
 	void slotGoAway(const QString&);
 	

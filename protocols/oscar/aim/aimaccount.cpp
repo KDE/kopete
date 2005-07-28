@@ -24,6 +24,7 @@
 #include "kopetepassword.h"
 #include "kopetestdaction.h"
 #include "kopeteuiglobal.h"
+#include "kopetecontactlist.h"
 
 #include "aimprotocol.h"
 #include "aimaccount.h"
@@ -77,6 +78,13 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID, const char *
 	QString profile = configGroup()->readEntry( "Profile",
 		i18n( "Visit the Kopete website at <a href=\"http://kopete.kde.org\">http://kopete.kde.org</a>") );
 	mc->setOwnProfile( profile );
+	
+	QObject::connect( Kopete::ContactList::self(), 
+	                  SIGNAL( globalIdentityChanged( const QString&, const QVariant& ) ),
+	                  this,
+	                  SLOT( globalIdentityChanged( const QString&, const QVariant& ) ) );
+	
+	
 }
 
 AIMAccount::~AIMAccount()
@@ -207,6 +215,14 @@ void AIMAccount::slotEditInfo()
 {
 	AIMUserInfoDialog *myInfo = new AIMUserInfoDialog(static_cast<AIMContact *>( myself() ), this, true, 0L, "myInfo");
 	myInfo->exec(); // This is a modal dialog
+}
+
+void AIMAccount::globalIdentityChanged( const QString& key, const QVariant& value )
+{
+	//do something with the photo
+	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Global identity changed" << endl;
+	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "key: " << key << endl;
+	
 }
 
 
