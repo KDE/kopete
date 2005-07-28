@@ -31,11 +31,22 @@ BuddyIconTask::BuddyIconTask( Task* parent )
 	:Task( parent )
 {
 	m_seq = 0;
+	m_refNum = -1;
+	m_iconLength = 0;
+	m_hashType = 0;
+}
+
+void BuddyIconTask::uploadIcon( WORD length, const QByteArray& data )
+{
+	m_iconLength = length;
+	m_icon = data;
+	m_action = Send;
 }
 
 void BuddyIconTask::requestIconFor( const QString& user )
 {
 	m_user = user;
+	m_action = Receive;
 }
 
 void BuddyIconTask::setHash( const QByteArray& md5Hash )
@@ -50,7 +61,10 @@ void BuddyIconTask::setHashType( BYTE type )
 
 void BuddyIconTask::onGo()
 {
-	if ( m_user.isEmpty() || m_hash.count() == 0 )
+	if ( m_action == Send && ( m_icon.count() == 0 || m_hash.count() == 0 || m_refNum == -1 ) )
+		return;
+
+	if ( m_action == Receive && ( m_user.isEmpty() || m_hash.count() == 0 ) )
 		return;
 
 	if ( !client()->isIcq() )
@@ -108,6 +122,19 @@ bool BuddyIconTask::take( Transfer* transfer )
 	return true;
 }
 
+void BuddyIconTask::sendIcon()
+{
+	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	m_seq = client()->snacSequence();
+	SNAC s = { 0x0010, 0x0002, 0x0000, m_seq };
+	Buffer* b = new Buffer;
+	b->addWord( m_refNum );
+	b->addWord( m_iconLength );
+	b->addString( m_icon );
+	Transfer* t = createTransfer( f, s, b );
+	send( t );
+}
+
 void BuddyIconTask::handleUploadResponse()
 {
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "server acked icon upload" << endl;
@@ -144,6 +171,7 @@ void BuddyIconTask::handleAIMBuddyIconResponse()
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Receiving buddy icon for " << user << endl;
 	b->skipBytes(2); //unknown field. not used
 	BYTE iconType = b->getByte();
+	Q_UNUSED( iconType );
 	BYTE hashSize = b->getByte();
 	QByteArray iconHash;
 	iconHash.duplicate( b->getBlock(hashSize) );
