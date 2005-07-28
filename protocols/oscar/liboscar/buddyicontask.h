@@ -31,7 +31,9 @@ Q_OBJECT
 public:
 	BuddyIconTask( Task* parent );
 
-	
+	void uploadIcon( WORD length, const QByteArray& data );
+	void setReferenceNum( WORD num );
+
 	void requestIconFor( const QString& user );
 	void setHash( const QByteArray& md5Hash );
 	void setHashType( BYTE type );
@@ -45,6 +47,7 @@ signals:
 	void haveIcon( const QString&, QByteArray );
 
 private:
+	void sendIcon();
 	void handleUploadResponse();
 	void sendAIMBuddyIconRequest();
 	void handleAIMBuddyIconResponse();
@@ -52,6 +55,11 @@ private:
 	void handleICQBuddyIconResponse();
 
 private:
+	enum Action { Send, Receive };
+	Action m_action;
+	WORD m_iconLength;
+	int m_refNum;
+	QByteArray m_icon;
 	QString m_user;
 	QByteArray m_hash;
 	BYTE m_hashType;
