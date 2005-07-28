@@ -931,7 +931,7 @@ const QDomElement MetaContact::toXML()
 	// set contact source metadata
 	if (displayNameSourceContact())
 	{
-		kdDebug(14010) << k_funcinfo << "serializing name source " << nameFromContact(displayNameSourceContact()) << endl;
+		//kdDebug(14010) << k_funcinfo << "serializing name source " << nameFromContact(displayNameSourceContact()) << endl;
 		QDomElement contactNameSource = metaContact.createElement( QString::fromLatin1("contact-source") );
 		contactNameSource.setAttribute( NSCID_ELEM, displayNameSourceContact()->contactId() );
 		contactNameSource.setAttribute( NSPID_ELEM, displayNameSourceContact()->protocol()->pluginId() );
@@ -947,7 +947,7 @@ const QDomElement MetaContact::toXML()
 
 	if (photoSourceContact())
 	{
-		kdDebug(14010) << k_funcinfo << "serializing photo source " << nameFromContact(photoSourceContact()) << endl;
+		//kdDebug(14010) << k_funcinfo << "serializing photo source " << nameFromContact(photoSourceContact()) << endl;
 		// set contact source metadata for photo
 		QDomElement contactPhotoSource = metaContact.createElement( QString::fromLatin1("contact-source") );
 		contactPhotoSource.setAttribute( NSCID_ELEM, photoSourceContact()->contactId() );
