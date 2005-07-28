@@ -73,6 +73,7 @@ bool BuddyIconTask::forMe( const Transfer* transfer )
 	{
 		switch( st->snacSubtype() )
 		{
+		case 0x0003:
 		case 0x0005:
 		case 0x0007:
 			return true;
@@ -96,6 +97,8 @@ bool BuddyIconTask::take( Transfer* transfer )
 		return false;
 
 	setTransfer( transfer );
+	if ( st->snacSubtype() == 0x0003 )
+		handleUploadResponse();
 	if ( st->snacSubtype() == 0x0005 )
 		handleAIMBuddyIconResponse();
 // else
@@ -104,6 +107,17 @@ bool BuddyIconTask::take( Transfer* transfer )
 	setSuccess( 0, QString::null );
 	return true;
 }
+
+void BuddyIconTask::handleUploadResponse()
+{
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "server acked icon upload" << endl;
+	Buffer* b = transfer()->buffer();
+	b->skipBytes( 4 );
+	BYTE iconHashSize = b->getByte();
+	QByteArray hash( b->getBlock( iconHashSize ) );
+	//check the hash
+}
+
 
 void BuddyIconTask::sendAIMBuddyIconRequest()
 {
