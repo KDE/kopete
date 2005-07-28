@@ -129,6 +129,20 @@ void SSIManager::loadFromExisting( const QValueList<Oscar::SSI*>& newList )
 	//FIXME: NOT Implemented!
 }
 
+bool SSIManager::hasItem( const Oscar::SSI& item ) const
+{
+	QValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
+	
+	for ( it = d->SSIList.begin(); it != listEnd; ++it )
+	{
+		Oscar::SSI s = ( *it );
+		if ( s == item )
+			return true;
+	}
+	
+	return false;
+}
+
 Oscar::SSI SSIManager::findGroup( const QString &group ) const
 {
 	QValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();

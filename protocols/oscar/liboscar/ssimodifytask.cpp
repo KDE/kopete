@@ -152,8 +152,6 @@ bool SSIModifyTask::removeGroup( const QString& groupName )
 
 bool SSIModifyTask::renameGroup( const QString& oldName, const QString & newName )
 {
-	return false; //rename group is unimplemented
-	
 	m_opType = Rename;
 	m_opSubject = Group;
 	if ( oldName == newName )
@@ -162,6 +160,38 @@ bool SSIModifyTask::renameGroup( const QString& oldName, const QString & newName
 	m_oldItem = m_ssiManager->findGroup( oldName );
 	Oscar::SSI newItem( newName, m_oldItem.gid(), m_oldItem.bid(), ROSTER_GROUP, m_oldItem.tlvList() );
 	m_newItem = newItem;
+	return true;
+}
+
+bool SSIModifyTask::addItem( const SSI& item )
+{
+	m_opType = Add;
+	m_opSubject = NoSubject;
+	m_newItem = item;
+	return true;
+}
+
+bool SSIModifyTask::removeItem( const SSI& item )
+{
+	m_opType = Remove;
+	m_opSubject = NoSubject;
+	m_oldItem = item;
+	return false;
+}
+
+bool SSIModifyTask::modifyItem( const SSI& oldItem, const SSI& newItem )
+{
+	if ( !m_ssiManager->hasItem( oldItem ) )
+		return false;
+	
+	//make sure there are some common things between the two items
+	if ( oldItem.type() != newItem.type() )
+		return false;
+	
+	m_oldItem = oldItem;
+	m_newItem = newItem;
+	m_opType = Change;
+	m_opSubject = NoSubject;
 	return true;
 }
 
@@ -272,10 +302,12 @@ void SSIModifyTask::sendSSIUpdate()
 		sendEditEnd();
 	}
 
-	//change the group name
-	if ( m_opType == Rename )
+	//modify an item
+	//we use rename for group and change for other items
+	if ( m_opType == Rename || ( m_opType == Change && m_opSubject != Group ) )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Renaming the group" << m_oldItem.name() << " to " << m_newItem.name() << endl;
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Modifying the item: " << m_oldItem.toString() << endl;
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "changing it to: " << m_newItem.toString() << endl;
 		sendEditStart();
 		
 		//change the group name
@@ -283,6 +315,7 @@ void SSIModifyTask::sendSSIUpdate()
 		m_id = client()->snacSequence();
 		SNAC s1 = { 0x0013, 0x0009, 0x0000, m_id };
 		Buffer* ssiBuffer = new Buffer;
+		ssiBuffer->addString( m_oldItem );
 		Transfer* t2 = createTransfer( f1, s1, ssiBuffer );
 		send( t2 );
 		
