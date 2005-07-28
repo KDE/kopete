@@ -74,6 +74,8 @@ public:
 	 * replaced with the data from the new list
 	 */
 	void loadFromExisting( const QValueList<Oscar::SSI*>& newList );
+	
+	bool hasItem( const Oscar::SSI& item ) const;
 
 	Oscar::SSI findGroup( const QString& group ) const;
 	Oscar::SSI findGroup( int groupId ) const;
