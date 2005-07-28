@@ -315,7 +315,7 @@ void SSIModifyTask::sendSSIUpdate()
 		m_id = client()->snacSequence();
 		SNAC s1 = { 0x0013, 0x0009, 0x0000, m_id };
 		Buffer* ssiBuffer = new Buffer;
-		ssiBuffer->addString( m_oldItem );
+		ssiBuffer->addString( m_newItem );
 		Transfer* t2 = createTransfer( f1, s1, ssiBuffer );
 		send( t2 );
 		
