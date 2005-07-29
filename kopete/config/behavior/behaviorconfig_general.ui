@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>493</width>
-            <height>449</height>
+            <width>536</width>
+            <height>535</height>
         </rect>
     </property>
     <property name="caption">
@@ -70,12 +70,168 @@
                         <string>Show a &amp;bubble on new message</string>
                     </property>
                 </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout11</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer10_2</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Fixed</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>16</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>mBalloonNotifyIgnoreClosesChatViewChk</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Button "&amp;Ignore" closes chat view</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
                 <widget class="QCheckBox">
                     <property name="name">
                         <cstring>mTrayflashNotifyChk</cstring>
                     </property>
                     <property name="text">
                         <string>&amp;Flash the system tray on new messages</string>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout6</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer10</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Fixed</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>16</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>mTrayflashNotifyUnreadMessageChk</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Flash on &amp;unread messages</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout7</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer11</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Fixed</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>16</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>mTrayflashNotifyOnlyHighlightedInGroupChatChk</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Flash only on highlighted un&amp;read messages in group chats</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout7_2</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer11_2</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Fixed</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>16</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>mTrayflashNotifyOnlyOnAnotherDesktopChk</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Flash only on unread messages in chat windows on another desktop</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mTrayflashNotifyLeftClickOpensMessageChk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Left mouse click on system tray opens message</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mTrayflashNotifySetCurrentDesktopToChatViewChk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Opening message sets current des&amp;ktop to chat view's</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -155,12 +311,38 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>30</height>
+                    <height>16</height>
                 </size>
             </property>
         </spacer>
     </vbox>
 </widget>
+<connections>
+    <connection>
+        <sender>mBalloonNotifyChk</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>mBalloonNotifyIgnoreClosesChatViewChk</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>mTrayflashNotifyChk</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>mTrayflashNotifyUnreadMessageChk</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>mTrayflashNotifyChk</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>mTrayflashNotifyOnlyHighlightedInGroupChatChk</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>mTrayflashNotifyChk</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>mTrayflashNotifyOnlyOnAnotherDesktopChk</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
 <tabstops>
     <tabstop>mUseQueueChk</tabstop>
     <tabstop>mShowTrayChk</tabstop>

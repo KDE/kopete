@@ -76,7 +76,19 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsGeneral->mBalloonNotifyChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsGeneral->mBalloonNotifyIgnoreClosesChatViewChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsGeneral->mTrayflashNotifyChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsGeneral->mTrayflashNotifyUnreadMessageChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsGeneral->mTrayflashNotifyOnlyHighlightedInGroupChatChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsGeneral->mTrayflashNotifyOnlyOnAnotherDesktopChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsGeneral->mTrayflashNotifyLeftClickOpensMessageChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsGeneral->mTrayflashNotifySetCurrentDesktopToChatViewChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsGeneral->mSoundIfAwayChk, SIGNAL(toggled(bool)),
 			this, SLOT(slotSettingsChanged(bool)));
@@ -131,7 +143,13 @@ void BehaviorConfig::save()
 	p->setStartDocked(mPrfsGeneral->mStartDockedChk->isChecked());
 	p->setUseQueue(mPrfsGeneral->mUseQueueChk->isChecked());
 	p->setTrayflashNotify(mPrfsGeneral->mTrayflashNotifyChk->isChecked());
+	p->setTrayflashNotifyUnreadMessage(mPrfsGeneral->mTrayflashNotifyUnreadMessageChk->isChecked());
+	p->setTrayflashNotifyOnlyHighlightedInGroupChat(mPrfsGeneral->mTrayflashNotifyOnlyHighlightedInGroupChatChk->isChecked());
+	p->setTrayflashNotifyOnlyOnAnotherDesktop(mPrfsGeneral->mTrayflashNotifyOnlyOnAnotherDesktopChk->isChecked());
+	p->setTrayflashNotifyLeftClickOpensMessage(mPrfsGeneral->mTrayflashNotifyLeftClickOpensMessageChk->isChecked());
+	p->setTrayflashNotifySetCurrentDesktopToChatView(mPrfsGeneral->mTrayflashNotifySetCurrentDesktopToChatViewChk->isChecked());
 	p->setBalloonNotify(mPrfsGeneral->mBalloonNotifyChk->isChecked());
+	p->setBalloonNotifyIgnoreClosesChatView(mPrfsGeneral->mBalloonNotifyIgnoreClosesChatViewChk->isChecked());
 	p->setSoundIfAway(mPrfsGeneral->mSoundIfAwayChk->isChecked());
 	p->setAutoConnect(mPrfsGeneral->mAutoConnect->isChecked());
 	p->setContactListMouseNavigation(mPrfsGeneral->mMouseNavigation->isChecked());
@@ -176,7 +194,13 @@ void BehaviorConfig::load()
 	mPrfsGeneral->mStartDockedChk->setChecked( p->startDocked() );
 	mPrfsGeneral->mUseQueueChk->setChecked( p->useQueue() );
 	mPrfsGeneral->mTrayflashNotifyChk->setChecked ( p->trayflashNotify() );
+	mPrfsGeneral->mTrayflashNotifyUnreadMessageChk->setChecked ( p->trayflashNotifyUnreadMessage() );
+	mPrfsGeneral->mTrayflashNotifyOnlyHighlightedInGroupChatChk->setChecked ( p->trayflashNotifyOnlyHighlightedInGroupChat() );
+	mPrfsGeneral->mTrayflashNotifyOnlyOnAnotherDesktopChk->setChecked ( p->trayflashNotifyOnlyOnAnotherDesktop() );
+	mPrfsGeneral->mTrayflashNotifyLeftClickOpensMessageChk->setChecked ( p->trayflashNotifyLeftClickOpensMessage() );
+	mPrfsGeneral->mTrayflashNotifySetCurrentDesktopToChatViewChk->setChecked ( p->trayflashNotifySetCurrentDesktopToChatView() );
 	mPrfsGeneral->mBalloonNotifyChk->setChecked ( p->balloonNotify() );
+	mPrfsGeneral->mBalloonNotifyIgnoreClosesChatViewChk->setChecked ( p->balloonNotifyIgnoreClosesChatView() );
 	mPrfsGeneral->mSoundIfAwayChk->setChecked( p->soundIfAway() );
 	mPrfsGeneral->mAutoConnect->setChecked( p->autoConnect() );
 	mPrfsGeneral->mMouseNavigation->setChecked( p->contactListMouseNavigation() );

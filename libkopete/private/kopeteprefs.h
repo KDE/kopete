@@ -65,7 +65,13 @@ public:
 	bool raiseMsgWindow() const{ return mRaiseMsgWindow; }
 	bool showEvents() const{ return mShowEvents; }
 	bool trayflashNotify() const { return mTrayflashNotify; }
+	bool trayflashNotifyUnreadMessage() const { return mTrayflashNotifyUnreadMessage; }
+	bool trayflashNotifyOnlyHighlightedInGroupChat() const { return mTrayflashNotifyOnlyHighlightedInGroupChat; }
+	bool trayflashNotifyOnlyOnAnotherDesktop() const { return mTrayflashNotifyOnlyOnAnotherDesktop; }
+	bool trayflashNotifyLeftClickOpensMessage() const { return mTrayflashNotifyLeftClickOpensMessage; }
+	bool trayflashNotifySetCurrentDesktopToChatView() const { return mTrayflashNotifySetCurrentDesktopToChatView; }
 	bool balloonNotify() const { return mBalloonNotify; }
+	bool balloonNotifyIgnoreClosesChatView() const { return mBalloonNotifyIgnoreClosesChatView; }
 	bool soundIfAway() const { return mSoundIfAway; }
 	bool transparencyEnabled() const { return mTransparencyEnabled; }
 	int transparencyValue() const { return mTransparencyValue; }
@@ -135,7 +141,13 @@ public:
 	void setRaiseMsgWindow(bool);
 	void setShowEvents(bool);
 	void setTrayflashNotify(bool);
+	void setTrayflashNotifyUnreadMessage(bool);
+	void setTrayflashNotifyOnlyHighlightedInGroupChat(bool);
+	void setTrayflashNotifyOnlyOnAnotherDesktop(bool);
+	void setTrayflashNotifyLeftClickOpensMessage(bool);
+	void setTrayflashNotifySetCurrentDesktopToChatView(bool);
 	void setBalloonNotify(bool);
+	void setBalloonNotifyIgnoreClosesChatView(bool);
 	void setSoundIfAway(bool);
 	void setBeepNotify(bool);
 	void setChatWindowPolicy(int);
@@ -220,7 +232,13 @@ private:
 	bool mRaiseMsgWindow;
 	bool mShowEvents;
 	bool mTrayflashNotify;
+	bool mTrayflashNotifyUnreadMessage;
+	bool mTrayflashNotifyOnlyHighlightedInGroupChat;
+	bool mTrayflashNotifyOnlyOnAnotherDesktop;
+	bool mTrayflashNotifyLeftClickOpensMessage;
+	bool mTrayflashNotifySetCurrentDesktopToChatView;
 	bool mBalloonNotify;
+	bool mBalloonNotifyIgnoreClosesChatView;
 	bool mSoundIfAway;
 	bool mTransparencyEnabled;
 	int mTransparencyValue;

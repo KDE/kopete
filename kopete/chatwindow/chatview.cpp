@@ -282,7 +282,10 @@ void ChatView::raise( bool activate )
 		makeVisible();
 
 	if ( !KWin::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).onAllDesktops() )
-		KWin::setOnDesktop( m_mainWindow->winId(), KWin::currentDesktop() );
+		if( KopetePrefs::prefs()->trayflashNotifySetCurrentDesktopToChatView() && activate )
+			KWin::setCurrentDesktop( KWin::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).desktop() );
+		else
+			KWin::setOnDesktop( m_mainWindow->winId(), KWin::currentDesktop() );
 
 	if(m_mainWindow->isMinimized())
 	{
