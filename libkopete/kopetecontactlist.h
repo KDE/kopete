@@ -236,7 +236,7 @@ signals:
 	 * </pre>
 	 *
 	 * Example of a typical implemented slot: 
-	 * <pre>
+	 * \code
 	 * {
 	 *	connect(Kopete::ContactList::self(), SIGNAL(globalIdentityChanged(const QString&, const QVariant&)), SLOT(slotglobalIdentityChanged(const QString&, const QVariant&)));
 	 * }
@@ -254,7 +254,7 @@ signals:
 	 * 	   this->slotUpdateDisplayPicture();
 	 *	}
 	 * }
-	 * </pre>
+	 * \code
 	 */
 	void globalIdentityChanged( const QString &key, const QVariant &value );
 
