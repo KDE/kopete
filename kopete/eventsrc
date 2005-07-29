@@ -979,6 +979,7 @@ Name[tr]=Ağ Problemleri
 Comment=The network is experiencing problems
 Comment[bg]=Мрежови проблеми
 Comment[et]=Võrguga on mingeid probleeme
+Comment[pt_BR]=A rede está com problemas
 default_presentation=16
 
 [server_error]
