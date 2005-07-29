@@ -100,7 +100,8 @@ KopeteSystemTray::~KopeteSystemTray()
 void KopeteSystemTray::mousePressEvent( QMouseEvent *me )
 {
 	if (
-		(me->button() == QEvent::MidButton || me->button() == QEvent::LeftButton) &&
+		(me->button() == QEvent::MidButton ||
+			(me->button() == QEvent::LeftButton && KopetePrefs::prefs()->trayflashNotifyLeftClickOpensMessage())) &&
 		mIsBlinking )
 	{
 		mouseDoubleClickEvent( me );

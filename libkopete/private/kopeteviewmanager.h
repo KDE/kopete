@@ -73,7 +73,7 @@ class KOPETE_EXPORT KopeteViewManager : public QObject
 		 * @param manager The originating Kopete::ChatSession.
 		 * @param foreignMessage Whether the message is inbound or outbound.
 		 */
-		void readMessages( Kopete::ChatSession*, bool outgoingMessage );
+		void readMessages( Kopete::ChatSession*, bool outgoingMessage, bool activate = false );
 
 		/**
 		 * Called when a new message has been appended to the given

@@ -60,7 +60,13 @@ void KopetePrefs::load()
 	mRaiseMsgWindow = config->readBoolEntry("Raise Msg Window", false);
 	mShowEvents = config->readBoolEntry("Show Events in Chat Window", true);
 	mTrayflashNotify = config->readBoolEntry("Trayflash Notification", true);
+	mTrayflashNotifyUnreadMessage = config->readBoolEntry("Trayflash Notification Unread Message", false);
+	mTrayflashNotifyOnlyHighlightedInGroupChat = config->readBoolEntry("Trayflash Notification Only Highlighted In Group Chat", false);
+	mTrayflashNotifyOnlyOnAnotherDesktop = config->readBoolEntry("Trayflash Notification Only On Another Desktop", false);
+	mTrayflashNotifyLeftClickOpensMessage = config->readBoolEntry("Trayflash Notification Left Click Opens Message", false);
+	mTrayflashNotifySetCurrentDesktopToChatView = config->readBoolEntry("Trayflash Notification Set Current Desktop To Chat View", false);
 	mBalloonNotify = config->readBoolEntry("Balloon Notification", true);
+	mBalloonNotifyIgnoreClosesChatView = config->readBoolEntry("Balloon Notification Ignore Closes Chat View", false);
 	mSoundIfAway = config->readBoolEntry("Sound Notification If Away", true);
 	mChatWindowPolicy = config->readNumEntry("Chatwindow Policy", 0);
 	mTransparencyEnabled = config->readBoolEntry("ChatView Transparency Enabled", false);
@@ -176,7 +182,13 @@ void KopetePrefs::save()
 	config->writeEntry("Raise Msg Window", mRaiseMsgWindow);
 	config->writeEntry("Show Events in Chat Window", mShowEvents);
 	config->writeEntry("Trayflash Notification", mTrayflashNotify);
+	config->writeEntry("Trayflash Notification Unread Message", mTrayflashNotifyUnreadMessage);
+	config->writeEntry("Trayflash Notification Only Highlighted In Group Chat", mTrayflashNotifyOnlyHighlightedInGroupChat);
+	config->writeEntry("Trayflash Notification Only On Another Desktop", mTrayflashNotifyOnlyOnAnotherDesktop);
+	config->writeEntry("Trayflash Notification Left Click Opens Message", mTrayflashNotifyLeftClickOpensMessage);
+	config->writeEntry("Trayflash Notification Set Current Desktop To Chat View", mTrayflashNotifySetCurrentDesktopToChatView);
 	config->writeEntry("Balloon Notification", mBalloonNotify);
+	config->writeEntry("Balloon Notification Ignore Closes Chat View", mBalloonNotifyIgnoreClosesChatView);
 	config->writeEntry("Sound Notification If Away", mSoundIfAway);
 	config->writeEntry("Chatwindow Policy", mChatWindowPolicy);
 	config->writeEntry("ChatView Transparency Enabled", mTransparencyEnabled);
@@ -327,9 +339,39 @@ void KopetePrefs::setTrayflashNotify(bool value)
 	mTrayflashNotify = value;
 }
 
+void KopetePrefs::setTrayflashNotifyUnreadMessage(bool value)
+{
+	mTrayflashNotifyUnreadMessage = value;
+}
+
+void KopetePrefs::setTrayflashNotifyOnlyHighlightedInGroupChat(bool value)
+{
+	mTrayflashNotifyOnlyHighlightedInGroupChat = value;
+}
+
+void KopetePrefs::setTrayflashNotifyOnlyOnAnotherDesktop(bool value)
+{
+	mTrayflashNotifyOnlyOnAnotherDesktop = value;
+}
+
+void KopetePrefs::setTrayflashNotifyLeftClickOpensMessage(bool value)
+{
+	mTrayflashNotifyLeftClickOpensMessage = value;
+}
+
+void KopetePrefs::setTrayflashNotifySetCurrentDesktopToChatView(bool value)
+{
+	mTrayflashNotifySetCurrentDesktopToChatView = value;
+}
+
 void KopetePrefs::setBalloonNotify(bool value)
 {
 	mBalloonNotify = value;
+}
+
+void KopetePrefs::setBalloonNotifyIgnoreClosesChatView(bool value)
+{
+	mBalloonNotifyIgnoreClosesChatView = value;
 }
 
 void KopetePrefs::setSoundIfAway(bool value)

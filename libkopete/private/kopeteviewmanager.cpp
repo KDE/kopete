@@ -24,6 +24,7 @@
 #include <kplugininfo.h>
 #include <knotification.h>
 #include <kglobal.h>
+#include <kwin.h>
 
 #include "kopeteprefs.h"
 #include "kopeteaccount.h"
@@ -31,6 +32,7 @@
 #include "kopeteviewplugin.h"
 #include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
+#include "kopetenotifyevent.h"
 #include "kopetemessageevent.h"
 #include "kopeteview.h"
 //#include "systemtray.h"
@@ -48,6 +50,10 @@ struct KopeteViewManagerPrivate
 
 	bool useQueue;
 	bool raiseWindow;
+	bool trayflashNotifyUnreadMessage;
+	bool trayflashNotifyOnlyHighlightedInGroupChat;
+	bool trayflashNotifyOnlyOnAnotherDesktop;
+	bool balloonNotifyIgnoreClosesChatView;
 	bool foreignMessage;
 };
 
@@ -94,6 +100,10 @@ void KopeteViewManager::slotPrefsChanged()
 {
 	d->useQueue = KopetePrefs::prefs()->useQueue();
 	d->raiseWindow = KopetePrefs::prefs()->raiseMsgWindow();
+	d->trayflashNotifyUnreadMessage = KopetePrefs::prefs()->trayflashNotifyUnreadMessage();
+	d->trayflashNotifyOnlyHighlightedInGroupChat = KopetePrefs::prefs()->trayflashNotifyOnlyHighlightedInGroupChat();
+	d->trayflashNotifyOnlyOnAnotherDesktop = KopetePrefs::prefs()->trayflashNotifyOnlyOnAnotherDesktop();
+	d->balloonNotifyIgnoreClosesChatView = KopetePrefs::prefs()->balloonNotifyIgnoreClosesChatView();
 }
 
 KopeteView *KopeteViewManager::view( Kopete::ChatSession* session, const QString &requestedPlugin )
@@ -157,18 +167,36 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		manager->view(true,msg.requestedPlugin())->appendMessage( msg );
 		d->foreignMessage=false; //the view is created, reset the flag
 
-		if ( d->useQueue && !view( manager )->isVisible()  )
+		bool appendMessageEvent = d->useQueue;
+
+		QWidget *w;
+		if( d->trayflashNotifyUnreadMessage && ( w = dynamic_cast<QWidget*>(view( manager )) ) )
+		{
+			// append msg event to queue if chat window is active but not the chat view in it...
+			appendMessageEvent &= !(w->isActiveWindow() && manager->view() == d->activeView);
+			// ...and chat window is on another desktop
+			appendMessageEvent &= !d->trayflashNotifyOnlyOnAnotherDesktop || !KWin::windowInfo( w->topLevelWidget()->winId(), NET::WMDesktop ).isOnCurrentDesktop();
+		}
+		else
+		{
+			// append if no chat window exists already
+			appendMessageEvent &= !view( manager )->isVisible();
+		}
+
+		// in group chats always append highlighted messages to queue
+		appendMessageEvent &= !d->trayflashNotifyOnlyHighlightedInGroupChat || manager->members().count() == 1 || msg.importance() == Kopete::Message::Highlight;
+
+		if( appendMessageEvent )
 		{
 			if ( !outgoingMessage )
 			{
-
 				Kopete::MessageEvent *event=new Kopete::MessageEvent(msg,manager);
 				d->eventList.append( event );
 				connect(event, SIGNAL(done(Kopete::MessageEvent *)), this, SLOT(slotEventDeleted(Kopete::MessageEvent *)));
 				Kopete::ChatSessionManager::self()->postNewEvent(event);
 			}
 		}
-		else
+		else if( d->eventList.isEmpty() )
 		{
 			readMessages( manager, outgoingMessage );
 		}
@@ -215,15 +243,14 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 	}
 }
 
-void KopeteViewManager::readMessages( Kopete::ChatSession *manager, bool outgoingMessage )
+void KopeteViewManager::readMessages( Kopete::ChatSession *manager, bool outgoingMessage, bool activate )
 {
 // 	kdDebug( 14000 ) << k_funcinfo << endl;
 	d->foreignMessage=!outgoingMessage; //let know for the view we are about to create
 	KopeteView *thisView = manager->view( true );
 	d->foreignMessage=false; //the view is created, reset the flag
- 	if( ( outgoingMessage && !thisView->isVisible() ) || d->raiseWindow )
-		thisView->raise();
-
+	if( ( outgoingMessage && !thisView->isVisible() ) || d->raiseWindow || activate )
+		thisView->raise( activate );
 	else if( !thisView->isVisible() )
 		thisView->makeVisible();
 
@@ -251,9 +278,9 @@ void KopeteViewManager::slotEventDeleted( Kopete::MessageEvent *event )
 	
 	if ( event->state() == Kopete::MessageEvent::Applied )
 	{
-		readMessages( kmm, false );
+		readMessages( kmm, false, true );
 	}
-	else if ( event->state() == Kopete::MessageEvent::Ignored )
+	else if ( event->state() == Kopete::MessageEvent::Ignored && d->balloonNotifyIgnoreClosesChatView )
 	{
 		bool bAnotherWithThisManager = false;
 		for( QPtrListIterator<Kopete::MessageEvent> it( d->eventList ); it; ++it )
