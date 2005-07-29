@@ -87,6 +87,13 @@ public:
 	 */
 	QString getLocalIP();
 
+	//BEGIN Http
+
+	virtual bool setUseHttpMethod( bool useHttp );
+	bool useHttpMethod() const;
+
+	//END
+
 public slots:
 	void connect( const QString &server, uint port );
 	virtual void disconnect();
@@ -205,16 +212,6 @@ protected:
 	 */
 	//uint m_lastId;
 
-	//BEGIN Http
-
-	/**
-	 * Returns a value that indicates the network protocol used by the MSNSocket when transmitting data.
-	 * return: either one of the following Transport enumeration type: TcpTransport, or HttpTransport
-	 */
-	Transport getTransport();
-
-	//END
-
 private slots:
 	void slotDataReceived();
 	/**
@@ -311,21 +308,20 @@ private:
 	 */
 	QString makeHttpRequestString(const QString& host, const QString& query, uint contentLength);
 
-	bool useHttp; 				// Indicates whether to use the msn http gateway to connect to the msn service.
-	bool bCanPoll; 				// Indicates whether polling of the http server is allowed.
-	bool bIsFirstInTransaction; // Indicates whether pending message to be sent is the first in the transaction.
-								// If so, the gateway is used.
-	QString m_gateway; 			// Msn http gateway domain name.
-					   			// Use the gateway only for initial connected state; Otherwise, use the host.
+	bool m_useHttp; 			// Indicates whether to use the msn http gateway to connect to the msn service.
+	bool m_bCanPoll; 			// Indicates whether polling of the http server is allowed.
+	bool m_bIsFirstInTransaction; 		// Indicates whether pending message to be sent is the first in the transaction.
+						// If so, the gateway is used.
+						// Use the gateway only for initial connected state; Otherwise, use the host.
+	QString m_gateway;			// Msn http gateway domain name.
 	QString m_gwip;				// The ip address of the msn gateway.
-	QString m_host;				// The domain name or IP address of the host used in normal tcp transport.
-	QString m_sessionId; 		// session id.
+	QString m_sessionId; 			// session id.
 	QTimer *m_timer; 			// Msn http poll timer.
 	QString m_type;				// Indicates the type of socket being used.  NS or SB
-	bool pending; 				// Indicates whether a http response is pending.
-	int remaining;				// Indicates how many bytes of content data remain
-								// to be received if the content bytes are sent in
-								// a seperate packet(s).
+	bool m_pending; 			// Indicates whether a http response is pending.
+	int m_remaining;			// Indicates how many bytes of content data remain
+						// to be received if the content bytes are sent in
+						// a seperate packet(s).
 
 	/**
 	 * Provides access to information returned from a URI request.

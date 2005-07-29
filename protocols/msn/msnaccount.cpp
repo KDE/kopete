@@ -115,6 +115,10 @@ uint MSNAccount::serverPort()
 	return configGroup()->readNumEntry(  "serverPort" , 1863 );
 }
 
+bool MSNAccount::useHttpMethod() const
+{
+	return configGroup()->readBoolEntry(  "useHttpMethod" , false );
+}
 
 void MSNAccount::connectWithPassword( const QString &passwd )
 {
@@ -169,6 +173,7 @@ void MSNAccount::createNotificationServer( const QString &host, uint port )
 
 
 	m_notifySocket = new MSNNotifySocket( this, accountId() , m_password);
+	m_notifySocket->setUseHttpMethod( useHttpMethod() );
 
 	QObject::connect( m_notifySocket, SIGNAL( groupAdded( const QString&, const QString& ) ),
 		SLOT( slotGroupAdded( const QString&, const QString& ) ) );

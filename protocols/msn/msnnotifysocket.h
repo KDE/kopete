@@ -73,6 +73,8 @@ public:
 
 	QString localIP() { return m_localIP; }
 
+	bool setUseHttpMethod( bool useHttpMethod );
+	
 public slots:
 	void slotOpenInbox();
 

@@ -145,6 +145,7 @@ void MSNChatSession::createChat( const QString &handle,
 //	setCanBeDeleted( false );
 
 	m_chatService = new MSNSwitchBoardSocket( static_cast<MSNAccount*>( myself()->account() ) , this);
+	m_chatService->setUseHttpMethod( static_cast<MSNAccount*>( myself()->account() )->useHttpMethod() );
 	m_chatService->setHandle( myself()->account()->accountId() );
 	m_chatService->setMsgHandle( handle );
 	m_chatService->connectToSwitchBoard( ID, address, auth );

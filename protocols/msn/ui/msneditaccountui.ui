@@ -327,6 +327,17 @@
                                     </widget>
                                 </hbox>
                             </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>optionUseHttpMethod</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Use HTTP Method</string>
+                                </property>
+                                <property name="accel">
+                                    <string></string>
+                                </property>
+                            </widget>
                         </vbox>
                     </widget>
                     <widget class="QGroupBox">
@@ -1284,6 +1295,7 @@ If this option is enabled, Kopete will send the away message automatically.</str
     <tabstop>optionOverrideServer</tabstop>
     <tabstop>m_serverName</tabstop>
     <tabstop>m_serverPort</tabstop>
+    <tabstop>optionUseHttpMethod</tabstop>
     <tabstop>NotifyNewChat</tabstop>
     <tabstop>DownloadPicture</tabstop>
     <tabstop>useCustomEmoticons</tabstop>

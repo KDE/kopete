@@ -99,6 +99,12 @@ public:
 	 */
 	void resetPictureObject(bool silent=false);
 
+	//BEGIN Http
+
+	bool useHttpMethod() const;
+
+	//END
+
 public slots:
 	virtual void connectWithPassword( const QString &password ) ;
 	virtual void disconnect() ;

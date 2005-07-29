@@ -58,7 +58,7 @@ MSNSocket::MSNSocket(QObject* parent)  : QObject (parent)
 {
 	m_onlineStatus = Disconnected;
 	m_socket = 0L;
-	useHttp = false;
+	m_useHttp = false;
 	m_timer  = 0L;
 }
 
@@ -98,14 +98,13 @@ void MSNSocket::connect( const QString &server, uint port )
 	//m_sendQueue.clear();
 
 	m_server = server;
-
-	if(!useHttp) {
-		m_host = server;
-	}
-
 	m_port = port;
 
-	m_socket = new KBufferedSocket( server, QString::number(port) );
+	if(!m_useHttp)	
+		m_socket = new KBufferedSocket( server, QString::number(port) );
+	else {
+		m_socket = new KBufferedSocket( m_gateway, "80" );
+	}
 
 	m_socket->enableRead( true );
 
@@ -120,7 +119,7 @@ void MSNSocket::connect( const QString &server, uint port )
 	QObject::connect( m_socket, SIGNAL( gotError( int ) ),         this, SLOT( slotSocketError( int ) ) );
 	QObject::connect( m_socket, SIGNAL( closed( ) ),               this, SLOT( slotSocketClosed( ) ) );
 
-	if(useHttp)
+	if(m_useHttp)
 	{
 		if(m_timer == 0L)
 		{
@@ -138,7 +137,7 @@ void MSNSocket::connect( const QString &server, uint port )
 
 void MSNSocket::disconnect()
 {
-	if(useHttp)
+	if(m_useHttp)
 		if(m_timer->isActive()) {
 			// If the timer is still active, stop the timer.
 			m_timer->stop();
@@ -181,38 +180,6 @@ void MSNSocket::slotSocketError( int error )
 	if(!KSocketBase::isFatalError(error))
 		return;
 		//we only care about fatal error
-
-	if(!useHttp)
-	{
-		QString s = QString(this->className()).lower();
-		if(s == "msnnotifysocket")
-			m_type = "NS";
-		else if(s == "msnswitchboardsocket")
-			m_type = "SB";
-		else
-			m_type = QString::null;
-
-		if(!m_type.isNull())
-		{
-			//delete m_socket;
-			m_socket->deleteLater();
-			m_socket = 0L;
-
-			setOnlineStatus( Disconnected );
-
-			useHttp = true;
-			bCanPoll = false;
-			bIsFirstInTransaction = true;
-			pending = false;
-			remaining = 0;
-
-			m_gateway = "gateway.messenger.hotmail.com";
-
-			// Try to connect to the service using the http gateway.
-			this->connect(m_gateway, 80);
-			return;
-		}
-	}
 
 	QString errormsg = i18n( "There was an error while connecting to the MSN server.\nError message:\n" );
 	if ( error == KSocketBase::LookupFailure )
@@ -276,7 +243,7 @@ void MSNSocket::slotDataReceived()
 
 		QString rawData;
 
-		if(useHttp)
+		if(m_useHttp)
 		{
 			bool error = false;
 			QByteArray bytes;
@@ -305,7 +272,7 @@ void MSNSocket::slotDataReceived()
 
 							delete[] buffer;
 							// Update how much data remains.
-							remaining = l;
+							m_remaining = l;
 							return;
 						}
 					}
@@ -316,8 +283,8 @@ void MSNSocket::slotDataReceived()
 				// Write the received data to the buffer.
 				m_buffer.add(buffer, avail);
 
-				remaining -= avail;
-				if(remaining != 0)
+				m_remaining -= avail;
+				if(m_remaining != 0)
 				{
 					// We have not received all the content data, read again.
 					delete[] buffer;
@@ -336,6 +303,10 @@ void MSNSocket::slotDataReceived()
 
 			// Create the web response object from the response bytes.
 			WebResponse response(bytes);
+
+			if(response.getStatusCode() == 100) {
+				return;
+			}
 
 			if(response.getStatusCode() == 200)
 			{
@@ -366,7 +337,7 @@ void MSNSocket::slotDataReceived()
 						{
 							// The http session has been closed by the server, disconnect.
 							kdDebug(14140) << k_funcinfo << "Session closed." << endl;
-							bCanPoll = false;
+							m_bCanPoll = false;
 							disconnect();
 							return;
 						}
@@ -383,7 +354,7 @@ void MSNSocket::slotDataReceived()
 					if(valid && (length == 0))
 					{
 						// If the response content length is zero, there is nothing to do.
-						pending  = false;
+						m_pending  = false;
 						return;
 					}
 
@@ -408,7 +379,7 @@ void MSNSocket::slotDataReceived()
 					<< response.getStatusDescription() << endl;
 
 				// If we encountered an error, disconnect and return.
-				bCanPoll = false;
+				m_bCanPoll = false;
 				// Disconnect from the service.
 				disconnect();
 				return;
@@ -419,7 +390,7 @@ void MSNSocket::slotDataReceived()
 		// all MSN commands start with one or more uppercase characters.
 		// For now just check the first three chars, let's see how accurate it is.
 		// Additionally, if we receive an MSN-P2P packet, strip off anything after the P2P header.
-		rawData = QString( QCString( buffer, ((!useHttp)? avail : ret) + 1 ) ).stripWhiteSpace().replace(
+		rawData = QString( QCString( buffer, ((!m_useHttp)? avail : ret) + 1 ) ).stripWhiteSpace().replace(
 			QRegExp( "(P2P-Dest:.[a-zA-Z@.]*).*" ), "\\1\n\n(Stripped binary data)" );
 
 		bool isBinary = false;
@@ -439,9 +410,9 @@ void MSNSocket::slotDataReceived()
 
 		slotReadLine();
 
-		if(useHttp) {
+		if(m_useHttp) {
 			// Set data pending to false.
-			pending  = false;
+			m_pending  = false;
 		}
 	}
 
@@ -685,26 +656,26 @@ void MSNSocket::slotReadyWrite()
 		// If the command queue is not empty, retrieve the first command.
 		QValueList<QByteArray>::Iterator it = m_sendQueue.begin();
 
-		if(useHttp)
+		if(m_useHttp)
 		{
 			// If web response data is not pending, send the http request.
-			if(!pending)
+			if(!m_pending)
 			{
-				pending = true;
+				m_pending = true;
 				// Temporarily disable http polling.
-				bCanPoll = false;
+				m_bCanPoll = false;
 				// Set the host to the msn gateway by default.
 				QString host = m_gateway;
 				QString query; // Web request query string.
 
-				if(bIsFirstInTransaction)
+				if(m_bIsFirstInTransaction)
 				{
 					query.append("Action=open&Server=");
 					query.append(m_type);
 
-					query += "&IP=" + m_host; // messenger.hotmail.com
+					query += "&IP=" + m_server;
 
-					bIsFirstInTransaction = false;
+					m_bIsFirstInTransaction = false;
 				}
 				else
 				{
@@ -741,7 +712,7 @@ void MSNSocket::slotReadyWrite()
 					// Disable sending requests.
 					m_socket->enableWrite(false);
 					// If the request queue is empty, poll the server.
-					bCanPoll = true;
+					m_bCanPoll = true;
 				}
 			}
 		}
@@ -762,10 +733,10 @@ void MSNSocket::slotReadyWrite()
 	{
 		m_socket->enableWrite( false );
 
-		if(useHttp)
+		if(m_useHttp)
 		{
 			// If the request queue is empty, poll the server.
-			bCanPoll = true;
+			m_bCanPoll = true;
 		}
 	}
 }
@@ -813,12 +784,12 @@ QString MSNSocket::unescape( const QString &str )
 
 void MSNSocket::slotConnectionSuccess()
 {
-	if(useHttp)
+	if(m_useHttp)
 	{
 		// If we are connected, set the data pending flag to false,
 		// and disable http polling.
-		pending  = false;
-		bCanPoll = false;
+		m_pending  = false;
+		m_bCanPoll = false;
 		// If we are connected, start the timer.
 		m_timer->start(2000, false);
 	}
@@ -854,7 +825,7 @@ void MSNSocket::slotSocketClosed()
 
 void MSNSocket::slotHttpPoll()
 {
-	if(pending || !bCanPoll){
+	if(m_pending || !m_bCanPoll){
 		// If data is pending or poll has been temporary disabled, return.
 		return;
 	}
@@ -863,7 +834,7 @@ void MSNSocket::slotHttpPoll()
 	const QCString headers = makeHttpRequestString(m_gwip, "Action=poll&SessionID=" + m_sessionId, 0).utf8();
 	m_socket->writeBlock(headers, headers.length());
 	// Wait for the response.
-	pending = true;
+	m_pending = true;
 	m_socket->enableWrite(true);
 }
 
@@ -886,12 +857,41 @@ void MSNSocket::sendBytes( const QByteArray &data )
 	m_socket->enableWrite( true );
 }
 
-MSNSocket::Transport MSNSocket::getTransport()
+bool MSNSocket::setUseHttpMethod( bool useHttp )
 {
-	if(m_socket->peerResults().serviceName() == "80"){
-		return MSNSocket::HttpTransport;
-	}else
-		return MSNSocket::TcpTransport;
+	if( m_useHttp == useHttp )
+		return true;
+
+	if( useHttp ) {
+		QString s = QString( this->className() ).lower();
+		if( s == "msnnotifysocket" )
+			m_type = "NS";
+		else if( s == "msnswitchboardsocket" )
+			m_type = "SB";
+		else
+			m_type = QString::null;
+
+		if( m_type.isNull() )
+			return false;
+
+		m_bCanPoll = false;
+		m_bIsFirstInTransaction = true;
+		m_pending = false;
+		m_remaining = 0;
+		m_gateway = "gateway.messenger.hotmail.com";		
+	}
+	
+	if ( m_onlineStatus != Disconnected )
+		disconnect();
+
+	m_useHttp = useHttp;
+
+	return true;	
+}
+
+bool MSNSocket::useHttpMethod() const
+{
+	return m_useHttp;
 }
 
 bool MSNSocket::accept( KServerSocket *server )

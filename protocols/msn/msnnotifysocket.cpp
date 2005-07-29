@@ -65,9 +65,7 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 	m_password=password;
 	QObject::connect( this, SIGNAL( blockRead( const QString & ) ),
 		this, SLOT( slotReadMessage( const QString & ) ) );
-
-	m_keepaliveTimer = new QTimer( this, "m_keepaliveTimer" );
-	QObject::connect( m_keepaliveTimer, SIGNAL( timeout() ), SLOT( slotSendKeepAlive() ) );
+	m_keepaliveTimer = 0L;
 }
 
 MSNNotifySocket::~MSNNotifySocket()
@@ -92,7 +90,8 @@ void MSNNotifySocket::disconnect()
 	if( onlineStatus() == Connected )
 		sendCommand( "OUT", QString::null, false );
 
-	m_keepaliveTimer->stop();
+	if( m_keepaliveTimer )
+		m_keepaliveTimer->stop();
 
 	// the socket is not connected yet, so I should force the signals
 	if ( onlineStatus() == Disconnected || onlineStatus() == Connecting )
@@ -313,10 +312,11 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 
 			sendCommand( "SYN", lastChange + " " + lastSyncTime);
 			// Get client features.
-			sendCommand( "GCF", "Shields.xml");
-
-			// We are connected start to ping
-			slotSendKeepAlive();
+			if(!useHttpMethod()) {
+				sendCommand( "GCF", "Shields.xml");
+				// We are connected start to ping
+				slotSendKeepAlive();
+			}
 		}
 	}
 	else if( cmd == "LST" )
@@ -605,7 +605,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		m_ping=false;
 
 		// id is the timeout in fact, and we remove 5% of it
-		m_keepaliveTimer->start( id * 950, true );
+		if( m_keepaliveTimer )
+			m_keepaliveTimer->start( id * 950, true );
 		kdDebug( 14140 ) << k_funcinfo << "timerTimeout=" << id << "sec"<< endl;
 	}
 	else if( cmd == "URL" )
@@ -693,6 +694,26 @@ void MSNNotifySocket::slotOpenInbox()
 void MSNNotifySocket::sendMail(const QString &email)
 {
 	sendCommand("URL", QString("COMPOSE " + email).utf8() );
+}
+
+bool MSNNotifySocket::setUseHttpMethod(bool useHttp)
+{
+	bool ret = MSNSocket::setUseHttpMethod( useHttp );
+	
+	if( useHttpMethod() ) {
+		if( m_keepaliveTimer ) {
+			delete m_keepaliveTimer;
+			m_keepaliveTimer = 0L;
+		}
+	}
+	else {	
+		if( !m_keepaliveTimer ) {
+			m_keepaliveTimer = new QTimer( this, "m_keepaliveTimer" );
+			QObject::connect( m_keepaliveTimer, SIGNAL( timeout() ), SLOT( slotSendKeepAlive() ) );
+		}
+	}
+
+	return ret;
 }
 
 void MSNNotifySocket::slotReadMessage( const QString &msg )
@@ -1082,15 +1103,6 @@ QString MSNNotifySocket::statusToString( const Kopete::OnlineStatus &status ) co
 
 void MSNNotifySocket::slotSendKeepAlive()
 {
-	if(getTransport() == MSNSocket::HttpTransport)
-	{
-		// If the base socket is using the http transport,
-		// disable the keep alive timer because it is not
-		// needed since PNG is not supported in Msn http.
-		m_keepaliveTimer->stop();
-		return;
-	}
-
 	//we did not received the previous QNG
 	if(m_ping)
 	{
