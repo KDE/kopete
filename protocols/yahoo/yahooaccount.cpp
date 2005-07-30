@@ -488,7 +488,6 @@ void YahooAccount::slotBuddyListFetched( int numBuddies )
 KActionMenu *YahooAccount::actionMenu()
 {
 //	kdDebug(14180) << k_funcinfo << endl;
-	//TODO: Use a QSignalMapper so all the slots can be consolidated into one function
 	
 	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
 	
