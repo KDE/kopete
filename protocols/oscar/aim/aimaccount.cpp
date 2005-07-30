@@ -14,11 +14,13 @@
 */
 
 #include <qdom.h>
+#include <qfile.h>
 #include <kdebug.h>
 #include <kconfig.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
 #include <kmessagebox.h>
+#include <kmdcodec.h>
 
 #include "kopeteawayaction.h"
 #include "kopetepassword.h"
@@ -34,6 +36,7 @@
 
 #include "oscarutils.h"
 #include "client.h"
+#include "ssimanager.h"
 
 
 const DWORD AIM_ONLINE = 0x0;
@@ -84,7 +87,8 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID, const char *
 	                  this,
 	                  SLOT( globalIdentityChanged( const QString&, const QVariant& ) ) );
 	
-	
+	QObject::connect( engine(), SIGNAL( iconNeedsUploading( int ) ), this,
+	                  SLOT( sendBuddyIcon() ) );
 }
 
 AIMAccount::~AIMAccount()
@@ -222,7 +226,30 @@ void AIMAccount::globalIdentityChanged( const QString& key, const QVariant& valu
 	//do something with the photo
 	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Global identity changed" << endl;
 	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "key: " << key << endl;
+	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "value: " << value << endl;
+	if ( key == Kopete::Global::Properties::self()->nickName().key() )
+	{
+		//edit ssi item to change alias (if possible)
+	}
 	
+	if ( key == Kopete::Global::Properties::self()->photo().key() )
+	{
+		//generate a new icon hash
+		//photo is a url, gotta load it first.
+		QFile iconFile( value.toString() );
+		kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "hashing global identity image" << endl;
+		KMD5 iconHash;
+		iconHash.update( iconFile );
+		kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo  << "hash is :" << iconHash.hexDigest() << endl;
+		//find old item, create updated item
+		if ( engine()->isActive() )
+		{
+			SSIManager* ssi = engine()->ssiManager();
+			Oscar::SSI item = ssi->findItemForIcon( iconHash.hexDigest() );
+			QByteArray iconData( iconFile.readAll() );
+			//engine()->sendBuddyIcon( iconData, iconHash.hexDigest(), 1 );
+		}
+	}
 }
 
 
@@ -270,7 +297,6 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 	kdDebug(14152) << k_funcinfo << "Checking to see if I'm online.." << endl;
 	if( myself()->onlineStatus().status() == Kopete::OnlineStatus::Away )
 	{
-		kdDebug(14152) << k_funcinfo << "I'm AWAY, getting the sender" << endl;
 		QString sender = Oscar::normalize( message.sender() );
 		AIMContact* aimSender = static_cast<AIMContact *> ( contacts()[sender] ); //should exist now
 		if ( !aimSender )
@@ -279,20 +305,14 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 				<< "That this message is from: " << message.sender() << ", Discarding message" << endl;
 			return;
 		}
-		
-		kdDebug(14152) << k_funcinfo << "Got sender, getting chat session" << endl;
-		
 		// Create, or get, a chat session with the contact
 		Kopete::ChatSession* chatSession = aimSender->manager( Kopete::Contact::CanCreate );
 		
-		kdDebug(14152) << k_funcinfo << "Getting my away message" << endl;
 		// get the away message we have set
 		AIMMyselfContact* myContact = static_cast<AIMMyselfContact *> ( myself() );
-		kdDebug(14152) << k_funcinfo << "Got myself, getting away message" << endl;
 		QString msg = myContact->lastAwayMessage();
 		kdDebug(14152) << k_funcinfo << "Got away message: " << msg << endl;
 		// Create the message
-		kdDebug(14152) << k_funcinfo << "Creating chat message" << endl;
 		Kopete::Message chatMessage( myself(), aimSender, msg, Kopete::Message::Outbound,
 		                             Kopete::Message::RichText );
 		kdDebug(14152) << k_funcinfo << "Sending autoresponse" << endl;
