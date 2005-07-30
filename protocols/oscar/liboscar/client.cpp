@@ -486,6 +486,8 @@ void Client::initializeStaticTasks()
 	         this, SLOT( offlineUser( const QString&, const UserDetails & ) ) );
 
 	connect( d->ownStatusTask, SIGNAL( gotInfo() ), this, SLOT( haveOwnUserInfo() ) );
+	connect( d->ownStatusTask, SIGNAL( buddyIconUploadRequested() ), this,
+	         SIGNAL( iconNeedsUploading() ) );
 
 	connect( d->messageReceiverTask, SIGNAL( receivedMessage( const Oscar::Message& ) ),
 	         this, SIGNAL( messageReceived( const Oscar::Message& ) ) );
@@ -566,6 +568,18 @@ void Client::renameGroup( const QString & oldGroupName, const QString & newGroup
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Renaming group " << oldGroupName << " to " << newGroupName << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->renameGroup( oldGroupName, newGroupName ) )
+		ssimt->go( true );
+}
+
+void Client::modifySSIItem( const Oscar::SSI& oldItem, const Oscar::SSI& newItem )
+{
+	Connection* c = d->connections.connectionForFamily( 0x0013 );
+	if ( !c )
+		return;
+	
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Modifiying item on server" << endl;
+	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
+	if ( ssimt->modifyItem( oldItem, newItem ) )
 		ssimt->go( true );
 }
 

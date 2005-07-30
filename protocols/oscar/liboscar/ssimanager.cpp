@@ -229,6 +229,29 @@ Oscar::SSI SSIManager::findContact( int contactId ) const
 	return m_dummyItem;
 }
 
+Oscar::SSI SSIManager::findItemForIcon( QByteArray iconHash ) const
+{
+	QValueList<Oscar::SSI>::const_iterator it,  listEnd = d->SSIList.end();
+	
+	for ( it = d->SSIList.begin(); it!= listEnd; ++it )
+	{
+		if ( ( *it ).type() == ROSTER_BUDDYICONS )
+		{
+			TLV t = Oscar::findTLV( ( *it ).tlvList(), 0x00D5 );
+			Buffer b(t.data);
+			b.skipBytes(1); //don't care about flags
+			BYTE iconSize = b.getByte();
+			QByteArray hash( b.getBlock( iconSize ) );
+			if ( hash == iconHash )
+			{
+				Oscar::SSI s = ( *it );
+				return s;
+			}
+		}
+	}
+	return m_dummyItem;
+}
+
 QValueList<Oscar::SSI> SSIManager::groupList() const
 {
 	QValueList<Oscar::SSI> list;

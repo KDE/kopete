@@ -79,10 +79,13 @@ public:
 
 	Oscar::SSI findGroup( const QString& group ) const;
 	Oscar::SSI findGroup( int groupId ) const;
+	
 
 	Oscar::SSI findContact( const QString& contact, const QString& group ) const;
 	Oscar::SSI findContact( const QString& contact ) const;
 	Oscar::SSI findContact( int contactId ) const;
+	
+	Oscar::SSI findItemForIcon( QByteArray iconHash ) const;
 
 	QValueList<Oscar::SSI> groupList() const;
 	QValueList<Oscar::SSI> contactList() const;
