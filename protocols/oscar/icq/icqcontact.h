@@ -84,6 +84,7 @@ signals:
 	void haveMoreInfo( const ICQMoreUserInfo& );
 
 private:
+	bool m_requestingNickname;
 	ICQProtocol *mProtocol;
 	ICQUserInfoWidget* m_infoWidget;
 	/*
