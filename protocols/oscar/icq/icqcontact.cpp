@@ -50,12 +50,13 @@ ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaCo
 {
 	mProtocol = static_cast<ICQProtocol *>(protocol());
 	m_infoWidget = 0L;
+	m_requestingNickname = false;
 	
 	if ( ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 	else 
 		setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::Visible ).toOnlineStatus() );
-
+	
 	QObject::connect( mAccount->engine(), SIGNAL( loggedIn() ), this, SLOT( loggedIn() ) );
 	//QObject::connect( mAccount->engine(), SIGNAL( userIsOnline( const QString& ) ), this, SLOT( userOnline( const QString&, UserDetails ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( userIsOffline( const QString& ) ), this, SLOT( userOffline( const QString& ) ) );
@@ -144,8 +145,12 @@ void ICQContact::loggedIn()
 	if ( m_ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 
-	if ( hasProperty( "nickName" ) )
+	if ( ( ( hasProperty( Kopete::Global::Properties::self()->nickName().key() )
+	         && nickName() == contactId() )
+	     || !hasProperty( Kopete::Global::Properties::self()->nickName().key() ) ) &&
+	     !m_requestingNickname )
 	{
+		m_requestingNickname = true;
 		int time = ( KApplication::random() % 20 ) * 1000;
 		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating nickname in " << time/1000 << " seconds" << endl;
 		QTimer::singleShot( time, this, SLOT( requestShortInfo() ) );
@@ -244,6 +249,7 @@ void ICQContact::receivedShortInfo( const QString& contact )
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 	
+	m_requestingNickname = false; //done requesting nickname
 	ICQShortInfo shortInfo = mAccount->engine()->getShortInfo( contact );
 	/*
 	if(!shortInfo.firstName.isEmpty())
