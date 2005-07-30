@@ -197,20 +197,6 @@ protected slots:
 	void slotReceiveFileAccepted( Kopete::Transfer *trans, const QString& fileName );
 
 private slots:
-	// various status slots for the action menu
-	void slotGoStatus001() { slotGoStatus(1); } // Be Right Back
-	void slotGoStatus002() { slotGoStatus(2); } // Busy
-	void slotGoStatus003() { slotGoStatus(3); } // Not At Home
-	void slotGoStatus004() { slotGoStatus(4); } // Not At My Desk
-	void slotGoStatus005() { slotGoStatus(5); } // Not In The Office
-	void slotGoStatus006() { slotGoStatus(6); } // On The Phone
-	void slotGoStatus007() { slotGoStatus(7); } // On Vacation
-	void slotGoStatus008() { slotGoStatus(8); } // Out To Lunch
-	void slotGoStatus009() { slotGoStatus(9); } // Stepped Out
-	void slotGoStatus012() { slotGoStatus(12); } // Invisible
-	void slotGoStatus099() { theAwayDialog->show(99); } // Custom
-	void slotGoStatus999() { slotGoStatus(999); } // Idle
-
 	/**
 	 * When a global identity key get changed.
 	 */
