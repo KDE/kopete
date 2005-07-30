@@ -51,10 +51,8 @@
 
 #else
 
-# include <stdio.h>
+# include <stdlib.h>
 # include <stdarg.h>
-# include <string.h>
-# include <strings.h>
 
 # define FREE(x)		if(x) {free(x); x=NULL;}
 
@@ -65,6 +63,14 @@
 void * y_memdup(const void * addr, int n);
 char ** y_strsplit(char * str, char * sep, int nelem);
 void y_strfreev(char ** vector);
+
+int strncasecmp(const char * s1, const char * s2, size_t n);
+int strcasecmp(const char * s1, const char * s2);
+
+char * strdup(const char *s);
+
+int snprintf(char *str, size_t size, const char *format, ...);
+int vsnprintf(char *str, size_t size, const char *format, va_list ap);
 
 #endif
 
