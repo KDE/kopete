@@ -15,9 +15,6 @@
             <height>554</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>WebPresencePrefsUI</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -202,9 +199,6 @@ Note that some web browsers do not support XHTML. You should also make sure your
                     <property name="text">
                         <string>Repla&amp;ce protocol text with images in (X)HTML</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+C</string>
-                    </property>
                     <property name="toolTip" stdset="0">
                         <string>Replaces the protocol names, such as MSN and IRC with images.</string>
                     </property>
@@ -252,9 +246,6 @@ images/winpopup_protocol.png</string>
                     <property name="text">
                         <string>Use one of &amp;your IM names</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+Y</string>
-                    </property>
                     <property name="checked">
                         <bool>true</bool>
                     </property>
@@ -265,9 +256,6 @@ images/winpopup_protocol.png</string>
                     </property>
                     <property name="text">
                         <string>Use another &amp;name:</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+N</string>
                     </property>
                 </widget>
                 <widget class="QLayoutWidget">
@@ -311,9 +299,6 @@ images/winpopup_protocol.png</string>
                     </property>
                     <property name="text">
                         <string>Include &amp;IM addresses</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+I</string>
                     </property>
                 </widget>
             </vbox>

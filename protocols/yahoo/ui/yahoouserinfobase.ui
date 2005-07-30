@@ -26,9 +26,6 @@
             <height>240</height>
         </size>
     </property>
-    <property name="caption">
-        <string>YahooUserInfoWidget</string>
-    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -116,7 +113,7 @@
                 <cstring>groupBox8</cstring>
             </property>
             <property name="title">
-                <string>Phone numbers:</string>
+                <string>Phone Numbers</string>
             </property>
             <grid>
                 <property name="name">

@@ -52,7 +52,7 @@
                 <cstring>buttonGroup1</cstring>
             </property>
             <property name="title">
-                <string>Advertising mode</string>
+                <string>Advertising Mode</string>
             </property>
             <vbox>
                 <property name="name">
@@ -65,7 +65,7 @@
                     <property name="text">
                         <string>Explicit via "Tools-&gt;Send Media Info",
 or by typing "/media" in the chat
-window edit area.</string>
+window edit area</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton">
@@ -73,7 +73,7 @@ window edit area.</string>
                         <cstring>m_autoAdvertising</cstring>
                     </property>
                     <property name="text">
-                        <string>Automatic (when the track has changed).</string>
+                        <string>Automatic (when the track has changed)</string>
                     </property>
                 </widget>
             </vbox>
@@ -136,7 +136,7 @@ Expressions in brackets depend on a substitution being made.</string>
                         <cstring>m_header</cstring>
                     </property>
                     <property name="text">
-                        <string>Now Listening To: </string>
+                        <string>Now listening to: </string>
                     </property>
                 </widget>
                 <widget class="QLabel">

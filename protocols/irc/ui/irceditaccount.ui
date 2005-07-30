@@ -881,7 +881,7 @@
                             </size>
                         </property>
                         <property name="title">
-                            <string>Run The Following Commands on Connect</string>
+                            <string>Run Following Commands on Connect</string>
                         </property>
                         <grid>
                             <property name="name">

@@ -31,7 +31,7 @@
             </rect>
         </property>
         <property name="title">
-            <string>Show me as ...</string>
+            <string>Show Me As</string>
         </property>
         <widget class="QRadioButton">
             <property name="name">
@@ -65,7 +65,7 @@
                 </rect>
             </property>
             <property name="text">
-                <string>per&amp;manently Offline</string>
+                <string>Per&amp;manently offline</string>
             </property>
         </widget>
     </widget>

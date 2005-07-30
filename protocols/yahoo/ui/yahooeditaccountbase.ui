@@ -248,9 +248,6 @@
                             <property name="text">
                                 <string>O&amp;verride default server information</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+V</string>
-                            </property>
                             <property name="checked">
                                 <bool>false</bool>
                             </property>
@@ -376,7 +373,7 @@
                                 <cstring>buttonSelectPicture</cstring>
                             </property>
                             <property name="text">
-                                <string>Select Picture</string>
+                                <string>Select Picture...</string>
                             </property>
                             <property name="accel">
                                 <string></string>
@@ -416,7 +413,7 @@
                                 <cstring>optionSendBuddyIcon</cstring>
                             </property>
                             <property name="text">
-                                <string>Send Buddy Icon to other users</string>
+                                <string>Send buddy icon to other users</string>
                             </property>
                             <property name="accel">
                                 <string></string>

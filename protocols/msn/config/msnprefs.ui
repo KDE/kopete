@@ -73,7 +73,7 @@
                 <cstring>useCustomEmoticons</cstring>
             </property>
             <property name="text">
-                <string>Download and show custom emoticons (Experimental)</string>
+                <string>Download and show custom emoticons (experimental)</string>
             </property>
         </widget>
         <widget class="QLabel">
