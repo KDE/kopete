@@ -252,6 +252,24 @@ Oscar::SSI SSIManager::findItemForIcon( QByteArray iconHash ) const
 	return m_dummyItem;
 }
 
+Oscar::SSI SSIManager::findItemForIconByRef( int ref ) const
+{
+	QValueList<Oscar::SSI>::const_iterator it,  listEnd = d->SSIList.end();
+	
+	for ( it = d->SSIList.begin(); it!= listEnd; ++it )
+	{
+		if ( ( *it ).type() == ROSTER_BUDDYICONS )
+		{
+			if ( ( *it ).name().toInt() == ref )
+			{
+				Oscar::SSI s = ( *it );
+				return s;
+			}
+		}
+	}
+	return m_dummyItem;	
+}
+
 QValueList<Oscar::SSI> SSIManager::groupList() const
 {
 	QValueList<Oscar::SSI> list;
