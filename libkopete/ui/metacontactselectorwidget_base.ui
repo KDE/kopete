@@ -21,7 +21,7 @@
         </sizepolicy>
     </property>
     <property name="caption">
-        <string>Select contact</string>
+        <string>Select Contact</string>
     </property>
     <vbox>
         <property name="name">

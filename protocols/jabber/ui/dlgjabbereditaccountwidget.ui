@@ -207,7 +207,7 @@
                             </sizepolicy>
                         </property>
                         <property name="title">
-                            <string>Change password</string>
+                            <string>Change Password</string>
                         </property>
                         <grid>
                             <property name="name">
@@ -218,7 +218,7 @@
                                     <cstring>btnChangePassword</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Change &amp;your password</string>
+                                    <string>Change &amp;Your Password</string>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="0" column="0">
@@ -898,7 +898,7 @@ If two resources have the same priority, the messages will be sent to the one co
                             <cstring>groupBox7</cstring>
                         </property>
                         <property name="title">
-                            <string>General privacy</string>
+                            <string>General Privacy</string>
                         </property>
                         <grid>
                             <property name="name">

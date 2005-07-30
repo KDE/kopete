@@ -269,7 +269,7 @@
                                                     <bool>false</bool>
                                                 </property>
                                                 <property name="text">
-                                                    <string>Po&amp;rt:</string>
+                                                    <string>po&amp;rt:</string>
                                                 </property>
                                                 <property name="buddy" stdset="0">
                                                     <cstring>m_serverPort</cstring>
@@ -401,7 +401,7 @@
                                             <cstring>textLabel1_4</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>Download the msn picture :</string>
+                                            <string>Download the msn picture:</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
                                             <string>&lt;qt&gt;&lt;p&gt;Indicate when Kopete will download the pictures of contacts&lt;/p&gt;
@@ -472,7 +472,7 @@ If this option is enabled, Kopete will download theses emoticons and show them.<
                                     <string>Export the current emoticon theme to users</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>Export all the emoticons themes as custom emoticons.  
+                                    <string>Export all the emoticons themes as custom emoticons.
 Only work for emoticons in the PNG format.</string>
                                 </property>
                             </widget>

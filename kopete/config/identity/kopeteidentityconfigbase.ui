@@ -207,7 +207,7 @@
                                 <cstring>checkSyncPhotoKABC</cstring>
                             </property>
                             <property name="text">
-                                <string>S&amp;ync address book photo with global photo.</string>
+                                <string>S&amp;ync address book photo with global photo</string>
                             </property>
                         </widget>
                     </vbox>

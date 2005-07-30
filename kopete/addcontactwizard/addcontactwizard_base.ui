@@ -39,7 +39,7 @@
                     </sizepolicy>
                 </property>
                 <property name="text">
-                    <string>&lt;h2&gt;Welcome to the Add Contact Wizard.&lt;/h2&gt;
+                    <string>&lt;h2&gt;Welcome to the Add Contact Wizard&lt;/h2&gt;
 
 &lt;p&gt;This wizard will guide you through the process of adding a new contact to Kopete.&lt;/p&gt;</string>
                 </property>
@@ -61,7 +61,7 @@
                     <cstring>textLabel1_3</cstring>
                 </property>
                 <property name="text">
-                    <string>&lt;p&gt;Press the "Next" button to begin...&lt;/p&gt;</string>
+                    <string>&lt;p&gt;Press the "Next" button to begin.&lt;/p&gt;</string>
                 </property>
             </widget>
             <widget class="QLabel" row="0" column="0" rowspan="5" colspan="1">
@@ -166,7 +166,7 @@
             <cstring>selectGroup</cstring>
         </property>
         <attribute name="title">
-            <string>Select Display Name and Group</string>
+            <string>Select Display Name &amp; Group</string>
         </attribute>
         <grid>
             <property name="name">
@@ -417,7 +417,7 @@
             <cstring>finis</cstring>
         </property>
         <attribute name="title">
-            <string>Finished.</string>
+            <string>Finished</string>
         </attribute>
         <grid>
             <property name="name">
@@ -436,7 +436,7 @@
                     </sizepolicy>
                 </property>
                 <property name="text">
-                    <string>&lt;p&gt;&lt;h2&gt;Congratulations.&lt;/h2&gt;&lt;/p&gt;
+                    <string>&lt;p&gt;&lt;h2&gt;Congratulations&lt;/h2&gt;&lt;/p&gt;
 
 &lt;p&gt;You have finished configuring a contact. Please click Finish and your contact will be added to your contact list.&lt;/p&gt;
 

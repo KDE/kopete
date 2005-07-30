@@ -241,7 +241,7 @@
                                                                     </sizepolicy>
                                                                 </property>
                                                                 <property name="text">
-                                                                    <string>Bright</string>
+                                                                    <string>Bright:</string>
                                                                 </property>
                                                             </widget>
                                                             <widget class="QLabel">
@@ -257,7 +257,7 @@
                                                                     </sizepolicy>
                                                                 </property>
                                                                 <property name="text">
-                                                                    <string>Contrast</string>
+                                                                    <string>Contrast:</string>
                                                                 </property>
                                                             </widget>
                                                             <widget class="QLabel">
@@ -273,7 +273,7 @@
                                                                     </sizepolicy>
                                                                 </property>
                                                                 <property name="text">
-                                                                    <string>Saturation</string>
+                                                                    <string>Saturation:</string>
                                                                 </property>
                                                             </widget>
                                                             <widget class="QLabel">
@@ -289,7 +289,7 @@
                                                                     </sizepolicy>
                                                                 </property>
                                                                 <property name="text">
-                                                                    <string>Hue</string>
+                                                                    <string>Hue:</string>
                                                                 </property>
                                                             </widget>
                                                         </vbox>

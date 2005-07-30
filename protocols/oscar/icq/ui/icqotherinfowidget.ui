@@ -51,7 +51,7 @@
                 <cstring>textLabel13</cstring>
             </property>
             <property name="text">
-                <string>Contact Notes:</string>
+                <string>Contact notes:</string>
             </property>
         </widget>
         <widget class="QTextEdit" row="3" column="0" rowspan="1" colspan="2">

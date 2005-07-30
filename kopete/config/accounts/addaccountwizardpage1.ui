@@ -19,7 +19,7 @@
         </size>
     </property>
     <property name="caption">
-        <string>Step One: Select the Messaging Service</string>
+        <string>Step One: Select Messaging Service</string>
     </property>
     <grid>
         <property name="name">

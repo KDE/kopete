@@ -13,7 +13,7 @@
         </rect>
     </property>
     <property name="caption">
-        <string>Finished.</string>
+        <string>Finished</string>
     </property>
     <grid>
         <property name="name">
@@ -35,7 +35,7 @@
                 </sizepolicy>
             </property>
             <property name="text">
-                <string>&lt;h2&gt;Congratulations.&lt;/h2&gt; 
+                <string>&lt;h2&gt;Congratulations&lt;/h2&gt;
 &lt;p&gt;You have finished configuring the account. Please click the "Finish" button.&lt;/p&gt;</string>
             </property>
             <property name="alignment">

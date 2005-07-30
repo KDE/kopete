@@ -116,7 +116,7 @@
                 <cstring>groupBox8</cstring>
             </property>
             <property name="title">
-                <string>Phone numbers:</string>
+                <string>Phone Numbers</string>
             </property>
             <grid>
                 <property name="name">

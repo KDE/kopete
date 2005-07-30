@@ -351,7 +351,7 @@ If you do not currently have an ICQ account, please click the button to create o
                                     <cstring>chkHideIP</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Hide &amp;IP Address</string>
+                                    <string>Hide &amp;IP address</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check this to hide your IP address from people when they view your user info</string>

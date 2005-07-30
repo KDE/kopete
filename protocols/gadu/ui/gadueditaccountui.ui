@@ -263,7 +263,7 @@ If you do not currently have an account, please click the button to create one.<
                                     <bool>true</bool>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;Use direct connections (DCC).</string>
+                                    <string>&amp;Use direct connections (DCC)</string>
                                 </property>
                                 <property name="checked">
                                     <bool>true</bool>
@@ -419,7 +419,7 @@ If you do not currently have an account, please click the button to create one.<
                                                     <cstring>textLabel1_5</cstring>
                                                 </property>
                                                 <property name="text">
-                                                    <string>Name</string>
+                                                    <string>Name:</string>
                                                 </property>
                                             </widget>
                                             <widget class="QLabel">
@@ -427,7 +427,7 @@ If you do not currently have an account, please click the button to create one.<
                                                     <cstring>uiSurnamea</cstring>
                                                 </property>
                                                 <property name="text">
-                                                    <string>Surname</string>
+                                                    <string>Surname:</string>
                                                 </property>
                                             </widget>
                                             <widget class="QLabel">
@@ -435,7 +435,7 @@ If you do not currently have an account, please click the button to create one.<
                                                     <cstring>textLabel1_5_3</cstring>
                                                 </property>
                                                 <property name="text">
-                                                    <string>Your Nick Name</string>
+                                                    <string>Your nick name:</string>
                                                 </property>
                                             </widget>
                                             <widget class="QLabel">
@@ -443,7 +443,7 @@ If you do not currently have an account, please click the button to create one.<
                                                     <cstring>textLabel1_5_3_2</cstring>
                                                 </property>
                                                 <property name="text">
-                                                    <string>Gender</string>
+                                                    <string>Gender:</string>
                                                 </property>
                                             </widget>
                                             <widget class="QLabel">
@@ -451,7 +451,7 @@ If you do not currently have an account, please click the button to create one.<
                                                     <cstring>textLabel1_5_3_2_2</cstring>
                                                 </property>
                                                 <property name="text">
-                                                    <string>Year of Birth</string>
+                                                    <string>Year of birth:</string>
                                                 </property>
                                             </widget>
                                             <widget class="QLabel">
@@ -459,7 +459,7 @@ If you do not currently have an account, please click the button to create one.<
                                                     <cstring>textLabel1_5_3_2_3</cstring>
                                                 </property>
                                                 <property name="text">
-                                                    <string>City</string>
+                                                    <string>City:</string>
                                                 </property>
                                             </widget>
                                         </vbox>
@@ -585,7 +585,7 @@ If you do not currently have an account, please click the button to create one.<
                                                     <cstring>textLabel1_5_3_2_4</cstring>
                                                 </property>
                                                 <property name="text">
-                                                    <string>Maiden Name</string>
+                                                    <string>Maiden name:</string>
                                                 </property>
                                             </widget>
                                             <widget class="QLabel">
@@ -593,7 +593,7 @@ If you do not currently have an account, please click the button to create one.<
                                                     <cstring>textLabel1_5_3_2_4_3</cstring>
                                                 </property>
                                                 <property name="text">
-                                                    <string>City of orgin</string>
+                                                    <string>City of origin:</string>
                                                 </property>
                                             </widget>
                                         </vbox>
@@ -712,7 +712,7 @@ If you do not currently have an account, please click the button to create one.<
                                                     <bool>false</bool>
                                                 </property>
                                                 <property name="text">
-                                                    <string>Po&amp;rt:</string>
+                                                    <string>po&amp;rt:</string>
                                                 </property>
                                                 <property name="buddy" stdset="0">
                                                     <cstring>dccPort</cstring>

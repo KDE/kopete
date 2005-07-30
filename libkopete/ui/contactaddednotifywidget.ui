@@ -58,7 +58,7 @@
                         <cstring>m_infoButton</cstring>
                     </property>
                     <property name="text">
-                        <string>Read more info about this contact</string>
+                        <string>Read More Info About This Contact</string>
                     </property>
                 </widget>
             </hbox>
@@ -79,7 +79,7 @@
                 <cstring>m_addCb</cstring>
             </property>
             <property name="text">
-                <string>Add this contact in my contactlist.</string>
+                <string>Add this contact in my contactlist</string>
             </property>
             <property name="checked">
                 <bool>true</bool>
@@ -109,7 +109,7 @@
                                 <cstring>textLabel7</cstring>
                             </property>
                             <property name="text">
-                                <string>Display Name :</string>
+                                <string>Display name:</string>
                             </property>
                             <property name="toolTip" stdset="0">
                                 <string>The display name of the contact.  Leave it empty to use the contact nickname</string>
@@ -146,7 +146,7 @@ Leave it empty if you want to see the contact nickname as display name.</string>
                                 <cstring>textLabel5</cstring>
                             </property>
                             <property name="text">
-                                <string>In the group :</string>
+                                <string>In the group:</string>
                             </property>
                             <property name="whatsThis" stdset="0">
                                 <string>Enter the group where the contact should be added. Leave it empty to add it in the top level group.</string>
@@ -178,7 +178,7 @@ Leave it empty if you want to see the contact nickname as display name.</string>
                         <cstring>textLabel6</cstring>
                     </property>
                     <property name="text">
-                        <string>Addressbook Link :</string>
+                        <string>Addressbook link:</string>
                     </property>
                 </widget>
                 <widget class="QLayoutWidget">
