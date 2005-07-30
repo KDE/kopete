@@ -135,6 +135,12 @@ public:
 	void renameGroup( const QString& oldGroupName, const QString& newGroupName );
 	
 	/**
+	 * Modify an SSI item on the SSI list
+	 * \param item the item to send to the server
+	 */
+	void modifySSIItem( const Oscar::SSI& oldItem, const Oscar::SSI& newItem );
+	
+	/**
 	 * Change a contact's group on the server
 	 * \param contact the contact to change
 	 * \param newGroup the new group to move the contact to
@@ -241,6 +247,9 @@ public:
 
 	//! Start a server redirect for a different service
 	void requestServerRedirect( WORD family );
+	
+	//! Start uploading a buddy icon
+	//void sendBuddyIcon( QByteArray imageData, QByteArray hash, int refNum );
 
 	/** Accessors needed for login */
 	QString host();
@@ -355,6 +364,7 @@ signals:
 	/* Buddy icons */
 	void haveIconForContact( const QString&, QByteArray iconData );
 	void iconServerConnected();
+	void iconNeedsUploading( int referenceNumber );
 	
 
 protected slots:
