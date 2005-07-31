@@ -21,6 +21,7 @@
 
 #include "msnswitchboardsocket.h"
 
+#include <stdlib.h>
 #include <time.h>
 #include <cmath>
 
