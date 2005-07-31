@@ -61,14 +61,20 @@ void BuddyIconTask::setHashType( BYTE type )
 
 void BuddyIconTask::onGo()
 {
-	if ( m_action == Send && ( m_icon.count() == 0 || m_hash.count() == 0 || m_refNum == -1 ) )
+	if ( m_action == Send && m_icon.count() == 0 )
 		return;
 
 	if ( m_action == Receive && ( m_user.isEmpty() || m_hash.count() == 0 ) )
 		return;
 
 	if ( !client()->isIcq() )
-		sendAIMBuddyIconRequest();
+	{
+		if ( m_action == Receive )
+			sendAIMBuddyIconRequest();
+		else
+			sendIcon();
+	}
+	
 }
 
 bool BuddyIconTask::forMe( const Transfer* transfer )
@@ -124,11 +130,12 @@ bool BuddyIconTask::take( Transfer* transfer )
 
 void BuddyIconTask::sendIcon()
 {
+	kdDebug(OSCAR_RAW_DEBUG) << "icon length: " << m_iconLength << endl;
 	FLAP f = { 0x02, client()->flapSequence(), 0 };
 	m_seq = client()->snacSequence();
 	SNAC s = { 0x0010, 0x0002, 0x0000, m_seq };
 	Buffer* b = new Buffer;
-	b->addWord( m_refNum );
+	b->addWord( 1 ); //gaim hard codes it, so will we
 	b->addWord( m_iconLength );
 	b->addString( m_icon );
 	Transfer* t = createTransfer( f, s, b );
@@ -143,6 +150,8 @@ void BuddyIconTask::handleUploadResponse()
 	BYTE iconHashSize = b->getByte();
 	QByteArray hash( b->getBlock( iconHashSize ) );
 	//check the hash
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "hash " << hash << endl;
+	setSuccess( 0, QString::null );
 }
 
 

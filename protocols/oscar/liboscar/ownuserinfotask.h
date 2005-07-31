@@ -48,7 +48,7 @@ signals:
 	
 	void haveIconChecksum( const QString& );
 	
-	void buddyIconUploadRequested( int refNumber );
+	void buddyIconUploadRequested();
 
 private:
 	UserDetails m_details;

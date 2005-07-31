@@ -573,14 +573,33 @@ void Client::renameGroup( const QString & oldGroupName, const QString & newGroup
 
 void Client::modifySSIItem( const Oscar::SSI& oldItem, const Oscar::SSI& newItem )
 {
+	int action = 0; //0 modify, 1 add, 2 remove TODO cleanup!
 	Connection* c = d->connections.connectionForFamily( 0x0013 );
 	if ( !c )
 		return;
 	
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Modifiying item on server" << endl;
+	if ( !oldItem && newItem )
+		action = 1;
+	if ( oldItem && !newItem )
+		action = 2;
+	
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Add/Mod/Del item on server" << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
-	if ( ssimt->modifyItem( oldItem, newItem ) )
-		ssimt->go( true );
+	switch ( action )
+	{
+	case 0:
+		if ( ssimt->modifyItem( oldItem, newItem ) )
+			ssimt->go( true );
+		break;
+	case 1:
+		if ( ssimt->addItem( newItem ) )
+			ssimt->go( true );
+		break;
+	case 2:
+		if ( ssimt->removeItem( oldItem ) )
+			ssimt->go( true );
+		break;
+	}
 }
 
 void Client::changeContactGroup( const QString& contact, const QString& newGroupName )
@@ -798,6 +817,18 @@ void Client::serverRedirectFinished()
 	}
 
 	emit iconServerConnected();
+}
+
+void Client::sendBuddyIcon( const QByteArray& iconData )
+{
+	Connection* c = d->connections.connectionForFamily( 0x0010 );
+	if ( !c )
+		return;
+	
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "icon length is " << iconData.size() << endl;
+	BuddyIconTask* bit = new BuddyIconTask( c->rootTask() );
+	bit->uploadIcon( iconData.size(), iconData );
+	bit->go( true );
 }
 
 Connection* Client::createConnection( const QString& host, const QString& port )

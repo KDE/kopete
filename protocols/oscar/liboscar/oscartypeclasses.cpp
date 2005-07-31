@@ -313,12 +313,12 @@ void Oscar::SSI::setWaitingAuth( bool waiting )
 
 void Oscar::SSI::setIconHash( QByteArray hash )
 {
-	
+	m_hash.duplicate( hash );
 }
 
 QByteArray Oscar::SSI::iconHash( ) const
 {
-	
+	return m_hash;
 }
 
 QString Oscar::SSI::toString() const

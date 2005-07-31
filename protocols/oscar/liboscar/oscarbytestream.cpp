@@ -71,8 +71,8 @@ int KNetworkByteStream::tryWrite ()
 {
 	// send all data from the buffers to the socket
 	QByteArray writeData = takeWrite();
+	kdDebug(14151) << k_funcinfo << "writing " << writeData.size() << " bytes." << endl;
 	socket()->writeBlock( writeData.data (), writeData.size () );
-
 	return writeData.size();
 }
 
