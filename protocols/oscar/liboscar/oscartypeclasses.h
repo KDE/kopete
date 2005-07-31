@@ -195,10 +195,8 @@ public:
 	
 	operator QByteArray() const;
 	
-	
-private:
 	void refreshTLVLength();
-	
+
 	//! parse the TLVs checking for aliases and auth and stuff like that
 	void checkTLVs();
 	
@@ -211,7 +209,7 @@ private:
 	int m_tlvLength;
 	bool m_waitingAuth;
 	QString m_alias;
-	
+	QByteArray m_hash;
 };
 
 }

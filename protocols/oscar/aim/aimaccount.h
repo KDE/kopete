@@ -84,6 +84,7 @@ public slots:
 	void slotGoOnline();
 	
 	void globalIdentityChanged( const QString&, const QVariant& );
+	void sendBuddyIcon();
 	
 protected slots:
 	void slotGoAway(const QString&);

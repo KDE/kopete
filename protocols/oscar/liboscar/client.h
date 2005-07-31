@@ -249,7 +249,7 @@ public:
 	void requestServerRedirect( WORD family );
 	
 	//! Start uploading a buddy icon
-	//void sendBuddyIcon( QByteArray imageData, QByteArray hash, int refNum );
+	void sendBuddyIcon( const QByteArray& imageData );
 
 	/** Accessors needed for login */
 	QString host();
@@ -364,7 +364,7 @@ signals:
 	/* Buddy icons */
 	void haveIconForContact( const QString&, QByteArray iconData );
 	void iconServerConnected();
-	void iconNeedsUploading( int referenceNumber );
+	void iconNeedsUploading();
 	
 
 protected slots:

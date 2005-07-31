@@ -80,7 +80,7 @@ bool OwnUserInfoTask::take( Transfer* transfer )
 			if ( infoType == 0x0000 || infoType == 0x0001 )
 			{
 				BYTE flags = b->getByte();
-				if ( flags & 0x80 )  //we need to do a buddy upload when bit 8 = 1
+				if ( flags == 0x41 )  //we need to do a buddy upload when bit 8 = 1
 					needUpload = true;
 				
 				QByteArray qba;
@@ -94,19 +94,11 @@ bool OwnUserInfoTask::take( Transfer* transfer )
 				if ( needUpload )
 				{
 					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Buddy icon upload requested" << endl;
-					SSIManager* ssi = client()->ssiManager();
-					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "looking for item with hash: " << qba << endl;
-					Oscar::SSI s = ssi->findItemForIcon( qba );
-					if ( s )
-					{
-					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "icon item for hash found with ref id: " 
-							<< s.name() << endl;
-						emit buddyIconUploadRequested( s.name().toInt() );
-					}
-					else
-					{
-						kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "no item for hash found" << endl;
-					}
+					emit buddyIconUploadRequested();
+				}
+				else
+				{
+					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "no item for hash found" << endl;
 				}
 			}
 			
