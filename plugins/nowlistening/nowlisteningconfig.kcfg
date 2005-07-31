@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Author: Michaël Larouche-->
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+	<kcfgfile name="kopeterc"/>
+
+	<group name="Now Listening Plugin">
+		<entry name="Header" type="String">
+			<label>Header of the message advertised.</label>
+			<default>Now Listening To: </default>
+		</entry>
+
+		<entry name="PerTrack" type="String">
+			<label>Core of the message advertised.</label>
+			<default>%track( by %artist)( on %album)</default>
+		</entry>
+
+		<entry name="Conjunction" type="String">
+			<label>Conjunction when multiple track are playing.</label>
+			<default>, and </default>
+		</entry>
+
+		<entry name="ExplicitAdvertising" type="Bool">
+			<label>Show explicitly the current music listened via a menu or /media command.</label>
+			<default>true</default>
+		</entry>
+
+		<entry name="ChatAdvertising" type="Bool">
+			<label>Show the current music listened in chat window.</label>
+			<default>false</default>
+		</entry>
+
+		<entry name="StatusAdvertising" type="Bool">
+			<label>Show the current music listened in your status message.</label>
+			<default>false</default>
+		</entry>
+	</group>
+</kcfg>

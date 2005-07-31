@@ -4,6 +4,7 @@
     Kopete Now Listening To plugin
 
     Copyright (c) 2002,2003,2004 by Will Stephenson <will@stevello.free-online.co.uk>
+    Copyright (c) 2005           by Michaël Larouche <shock@shockdev.ca.tc>
 
     Kopete    (c) 2002,2003,2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -27,10 +28,13 @@
 #include <kaction.h>
 
 #include "config.h"
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
 #include "kopetecommandhandler.h"
+#include "kopeteaccount.h"
+#include "kopeteprotocol.h"
+#include "kopeteaccountmanager.h"
 #include "nowlisteningconfig.h"
 #include "nowlisteningplugin.h"
 #include "nlmediaplayer.h"
@@ -40,6 +44,7 @@
 #include "nlamarok.h"
 #include "nlkaffeine.h"
 #include "nowlisteningguiclient.h"
+
 
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && defined HAVE_XMMS
 #include "nlxmms.h"
@@ -62,9 +67,6 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 	m_actionWantsAdvert = 0L;
 	m_currentMetaContact = 0L;
 	m_currentChatSession = 0L;
-
-	// initialise preferences
-	m_config = new NowListeningConfig;
 
 	// Connection for the "/media" command (always needed)
 	connect( Kopete::ChatSessionManager::self(), SIGNAL(
@@ -109,6 +111,11 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 	);
 
 	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
+
+	// Advert the accounts with the current listened track.
+	advertTimer = new QTimer(this);
+	connect(advertTimer, SIGNAL( timeout() ), this, SLOT( slotAdvertCurrentMusic() ) );
+	advertTimer->start(5000); // Update every 5 seconds
 }
 
 NowListeningPlugin::~NowListeningPlugin()
@@ -116,7 +123,6 @@ NowListeningPlugin::~NowListeningPlugin()
 	//kdDebug( 14307 ) << k_funcinfo << endl;
 
 	delete m_mediaPlayer;
-	delete m_config;
 	delete m_musicSentTo;
 
 	pluginStatic_ = 0L;
@@ -156,13 +162,13 @@ void NowListeningPlugin::slotMediaCommand( const QString &args, Kopete::ChatSess
 void NowListeningPlugin::slotOutgoingMessage(Kopete::Message& msg)
 {
 	// Only do stuff if autoadvertising is on
-	if(!m_config->autoAdvertising())
+	if(!NowListeningConfig::self()->chatAdvertising())
 		return;
 
 	QString originalBody = msg.plainBody();
 
 	// If it is a /media message, don't process it
-	if(originalBody.startsWith(m_config->header()))
+	if(originalBody.startsWith(NowListeningConfig::self()->header()))
 		return;
 
 	// What will be sent
@@ -213,11 +219,58 @@ void NowListeningPlugin::slotOutgoingMessage(Kopete::Message& msg)
  	}
 }
 
+void NowListeningPlugin::slotAdvertCurrentMusic()
+{
+	// Do anything when statusAdvertising is off.
+	if( !NowListeningConfig::self()->statusAdvertising() )
+		return; 
+
+	// This slot is called every 5 seconds, so we check if we have a new track playing.
+	if( newTrackPlaying() )
+	{
+		QString advert;
+
+		QPtrList<Kopete::Account> accountsList = Kopete::AccountManager::self()->accounts();
+		for( Kopete::Account* a = accountsList.first(); a; a = accountsList.next() )
+		{
+			/*
+				NOTE:
+				MSN status message(personal message) use a special tag to advert the current music playing. 
+				So, we don't send the all formatted string, send a special string seperated by ",".
+			*/
+			if( a->protocol()->pluginId() == "MSNProtocol" )
+			{
+				QString track, artist, album, mediaList;
+				bool isPlaying=false;
+				for ( NLMediaPlayer* i = m_mediaPlayer->first(); i; i = m_mediaPlayer->next() )
+				{
+					if( i->playing() )
+					{
+						track = i->track();
+						artist = i->artist();
+						album = i->album();
+						mediaList = track + "," + artist + "," + album;
+						isPlaying = true;
+					}
+				}
+				// KDE4 TODO: Use the new status message framework, and remove this "hack".
+				if( isPlaying )
+					advert = QString("[Music]%1").arg(mediaList);
+			}
+			else
+			{
+				advert = allPlayerAdvert(false); // newTrackPlaying has done the update.
+			}
+			a->setOnlineStatus(a->myself()->onlineStatus(), advert);
+		}
+	}
+}
+
 QString NowListeningPlugin::allPlayerAdvert(bool update) const
 {
 	// generate message for all players
 	QString message = "";
-	QString perTrack = m_config->perTrack();
+	QString perTrack = NowListeningConfig::self()->perTrack();
 
 	for ( NLMediaPlayer* i = m_mediaPlayer->first(); i; i = m_mediaPlayer->next() )
 	{
@@ -227,10 +280,10 @@ QString NowListeningPlugin::allPlayerAdvert(bool update) const
 		{
 			kdDebug( 14307 ) << k_funcinfo << i->name() << " is playing" << endl;
 			if ( message.isEmpty() )
-				message = m_config->header();
+				message = NowListeningConfig::self()->header();
 
-			if (  message != m_config->header() ) // > 1 track playing!
-				message = message + m_config->conjunction();
+			if (  message != NowListeningConfig::self()->header() ) // > 1 track playing!
+				message = message + NowListeningConfig::self()->conjunction();
 			message = message + substDepthFirst( i, perTrack, false );
 		}
 	}
@@ -356,16 +409,32 @@ void NowListeningPlugin::advertiseToChat( Kopete::ChatSession *theChat, QString 
 
 void NowListeningPlugin::slotSettingsChanged()
 {
-	m_config->load();
+	// Force reading config
+	NowListeningConfig::self()->readConfig();
+
 	disconnect(Kopete::ChatSessionManager::self(),
 			   SIGNAL(aboutToSend(Kopete::Message&)),
 			   this,
 			   SLOT(slotOutgoingMessage(Kopete::Message&)));
-	if(m_config->autoAdvertising()) {
+
+	advertTimer->stop();
+	disconnect(advertTimer, SIGNAL(timeout()), this, SLOT(slotAdvertCurrentMusic()));
+
+	if( NowListeningConfig::self()->chatAdvertising() ) 
+	{
+		kdDebug(14307) << k_funcinfo << "Now using chat window advertising." << endl;
+
 		connect(Kopete::ChatSessionManager::self(),
 				SIGNAL(aboutToSend(Kopete::Message&)),
 				this,
 				SLOT(slotOutgoingMessage(Kopete::Message&)));
+	}
+	else if( NowListeningConfig::self()->statusAdvertising() )
+	{
+		kdDebug(14307) << k_funcinfo << "Now using status message advertising." << endl;
+
+		connect(advertTimer, SIGNAL(timeout()), this, SLOT(slotAdvertCurrentMusic()));
+		advertTimer->start(5000);
 	}
 }
 

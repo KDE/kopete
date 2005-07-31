@@ -54,7 +54,7 @@ public:
 	 * change the publicName to this new name
 	 */
 	void setPublicName( const QString &name );
-	void setPersonalMessage(const QString &type, const QString &personalMessage );
+	void setPersonalMessage(MSNProtocol::PersonalMessageType type, const QString &personalMessage );
 
 	/**
 	 * Returns the address of the MSN server
@@ -67,9 +67,6 @@ public:
 	uint serverPort();
 
 	MSNNotifySocket *notifySocket();
-
-	QString awayReason()
-		{ return m_awayReason; }
 
 	/**
 	 * return true if we are able to send mail, or to open hotmail inbox
@@ -98,6 +95,12 @@ public:
 	 * if @param silent is set to true
 	 */
 	void resetPictureObject(bool silent=false);
+
+	//BEGIN Http
+
+	bool useHttpMethod() const;
+
+	//END
 
 public slots:
 	virtual void connectWithPassword( const QString &password ) ;
@@ -235,8 +238,6 @@ private:
 	Kopete::MetaContact *m_addWizard_metaContact;
 	QMap< QString, QStringList > tmp_addToNewGroup;
 	QMap< QString, QStringList > tmp_addNewContactToGroup;
-
-	QString m_awayReason;
 
 	QString m_pictureObj; //a cache of the <msnobj>
 	QString m_pictureFilename; // the picture filename.

@@ -4,6 +4,7 @@
     Kopete Now Listening To plugin
 
     Copyright (c) 2002,2003,2004 by Will Stephenson <will@stevello.free-online.co.uk>
+    Copyright (c) 2005           by Michaël Larouche <shock@shockdev.ca.tc>
 
     Kopete    (c) 2002,2003,2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -38,49 +39,25 @@ NowListeningPreferences::NowListeningPreferences(QWidget *parent, const char* /*
 {
 	(  new QVBoxLayout(  this ) )->setAutoAdd(  true );
 	preferencesDialog = new NowListeningPrefsUI( this );
-	config = new NowListeningConfig;
 
-	connect ( preferencesDialog->m_header, SIGNAL( textChanged( const QString & ) ),
-		  this, SLOT( slotSettingsChanged() ) );
-	connect ( preferencesDialog->m_perTrack, SIGNAL( textChanged( const QString & ) ),
-		  this, SLOT( slotSettingsChanged() ) );
-	connect ( preferencesDialog->m_conjunction, SIGNAL( textChanged( const QString & ) ),
-		  this, SLOT( slotSettingsChanged() ) );
-	connect ( preferencesDialog->m_autoAdvertising, SIGNAL( toggled( bool ) ),
-		  this, SLOT( slotSettingsChanged() ) );
+	addConfig( NowListeningConfig::self(), preferencesDialog );
+
 	load();
 }
 
 NowListeningPreferences::~NowListeningPreferences( )
 {
 	delete preferencesDialog;
-	delete config;
 }
 
 void NowListeningPreferences::save()
 {
-	config->setHeader( preferencesDialog->m_header->text() );
-	config->setPerTrack( preferencesDialog->m_perTrack->text() );
-	config->setConjunction( preferencesDialog->m_conjunction->text() );
-	config->setAutoAdvertising( preferencesDialog->m_autoAdvertising->isChecked() );
-	config->save();
-
 	KCModule::save();
-
-	emit changed( false );
 }
 
 void NowListeningPreferences::load()
 {
-	config->load();
-	preferencesDialog->m_header->setText( config->header() );
-	preferencesDialog->m_perTrack->setText( config->perTrack() );
-	preferencesDialog->m_conjunction->setText( config->conjunction() );
-	preferencesDialog->m_autoAdvertising->setChecked( config->autoAdvertising() );
-
 	KCModule::load();
-
-	emit changed( false );
 }
 
 void NowListeningPreferences::slotSettingsChanged()
@@ -90,10 +67,10 @@ void NowListeningPreferences::slotSettingsChanged()
 
 void NowListeningPreferences::defaults()
 {
-	preferencesDialog->m_header->setText( i18n("Now Listening To: "));
+	/*preferencesDialog->m_header->setText( i18n("Now Listening To: "));
 	preferencesDialog->m_perTrack->setText(i18n("%track( by %artist)( on %album)"));
 	preferencesDialog->m_conjunction->setText( i18n(", and "));
-	preferencesDialog->m_autoAdvertising->setChecked( false );
+	preferencesDialog->m_autoAdvertising->setChecked( false );*/
 }
 
 /*

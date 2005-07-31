@@ -138,6 +138,14 @@ public:
 		MSNC4 = 0x40000000
 	};
 
+	enum PersonalMessageType
+	{
+		PersonalMessageNormal,
+		PersonalMessageMusic,
+		PersonalMessageGame,
+		PersonalMessageOffice
+	};
+
 	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 

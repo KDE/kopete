@@ -58,7 +58,7 @@ public:
 	void renameGroup( const QString& groupName, const QString& groupGuid );
 
 	void changePublicName( const QString& publicName , const QString &handle=QString::null );
-	void changePersonalMessage( const QString& type , const QString& personalMessage );
+	void changePersonalMessage( MSNProtocol::PersonalMessageType type , const QString& personalMessage );
 
 	void changePhoneNumber( const QString &key, const QString &data );
 
@@ -73,6 +73,8 @@ public:
 
 	QString localIP() { return m_localIP; }
 
+	bool setUseHttpMethod( bool useHttpMethod );
+	
 public slots:
 	void slotOpenInbox();
 

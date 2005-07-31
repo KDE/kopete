@@ -145,6 +145,7 @@ void MSNChatSession::createChat( const QString &handle,
 //	setCanBeDeleted( false );
 
 	m_chatService = new MSNSwitchBoardSocket( static_cast<MSNAccount*>( myself()->account() ) , this);
+	m_chatService->setUseHttpMethod( static_cast<MSNAccount*>( myself()->account() )->useHttpMethod() );
 	m_chatService->setHandle( myself()->account()->accountId() );
 	m_chatService->setMsgHandle( handle );
 	m_chatService->connectToSwitchBoard( ID, address, auth );
@@ -268,25 +269,6 @@ void MSNChatSession::slotMessageReceived( Kopete::Message &msg )
 		msg.setFont( f );
 	}
 	appendMessage( msg );
-	if( account()->isAway() && !static_cast<MSNAccount *>( account() )->awayReason().isEmpty() )
-	{
-		KConfig *config = KGlobal::config();
-		config->setGroup( "MSN" );
-		if ( config->readBoolEntry( "SendAwayMessages", false ) &&
-			( !m_awayMessageTime.isValid() ||
-			m_awayMessageTime.elapsed() > 1000 * config->readNumEntry( "AwayMessageSeconds", 90 ) )  )
-		{
-			// Don't translate "Auto-Message:" This string is caught by MSN Plus! (and also by kopete now)
-			Kopete::Message msg2( myself(), members(),
-				"AutoMessage: " + static_cast<MSNAccount *>( account() )->awayReason(), Kopete::Message::Outbound );
-			msg2.setFg( QColor( "SlateGray3" ) );
-			QFont f;
-			f.setItalic( true );
-			msg2.setFont( f );
-			slotMessageSent( msg2, this );
-			m_awayMessageTime.restart();
-		}
-	}
 }
 
 void MSNChatSession::slotActionInviteAboutToShow()

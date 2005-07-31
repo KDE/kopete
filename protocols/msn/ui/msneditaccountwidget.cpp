@@ -94,6 +94,8 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 			d->ui->optionOverrideServer->setChecked( true );
 		}
 
+		d->ui->optionUseHttpMethod->setChecked( static_cast<MSNAccount*>(account)->useHttpMethod() );
+		
 		MSNContact *myself = static_cast<MSNContact *>( account->myself() );
 
 		d->ui->m_displayName->setText( myself->property( Kopete::Global::Properties::self()->nickName()).value().toString() );
@@ -174,6 +176,8 @@ Kopete::Account * MSNEditAccountWidget::apply()
 		config->writeEntry( "serverName", "messenger.hotmail.com" );
 		config->writeEntry( "serverPort", "1863" );
 	}
+
+	config->writeEntry( "useHttpMethod", d->ui->optionUseHttpMethod->isChecked() );
 
 	// Save the avatar image
 	if( d->ui->m_useDisplayPicture->isChecked() )
