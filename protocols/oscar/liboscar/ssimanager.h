@@ -38,9 +38,9 @@ SSI management
 @author Gustavo Pichorim Boiko
 @author Matt Rogers
 */
-class SSIManager : public QObject
+class KOPETE_EXPORT SSIManager : public QObject
 {
-Q_OBJECT
+        Q_OBJECT
 public:
 	SSIManager( QObject* parent = 0, const char* name = 0 );
 
