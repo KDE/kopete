@@ -1035,15 +1035,21 @@ void MSNNotifySocket::changePublicName( const QString &publicName, const QString
 	}
 }
 
-void MSNNotifySocket::changePersonalMessage( const QString& type, const QString &personalMessage )
+void MSNNotifySocket::changePersonalMessage( MSNProtocol::PersonalMessageType type, const QString &personalMessage )
 {
-	QString tempPersonalMessage = personalMessage;
+	QString tempPersonalMessage;
+	QString xmlCurrentMedia;
 
-	//Magic number : 129 characters
-	if( escape(personalMessage).length() > 129 )
+	// Only espace and cut the personalMessage is the type is normal.
+	if(type == MSNProtocol::PersonalMessageNormal)
 	{
-		// We cut. for now.
-		tempPersonalMessage = personalMessage.left(129);
+		tempPersonalMessage = personalMessage;
+		//Magic number : 129 characters
+		if( escape(personalMessage).length() > 129 )
+		{
+			// We cut. for now.
+			tempPersonalMessage = personalMessage.left(129);
+		}
 	}
 
 	QDomDocument xmlMessage;
@@ -1053,9 +1059,44 @@ void MSNNotifySocket::changePersonalMessage( const QString& type, const QString 
 	psm.appendChild( xmlMessage.createTextNode( tempPersonalMessage ) );
 	xmlMessage.documentElement().appendChild( psm );
 
-	// TODO : Music type, Office type. Integrate with KOffice and the NowListening thingy.
 	QDomElement currentMedia = xmlMessage.createElement("CurrentMedia");
-	currentMedia.appendChild( xmlMessage.createTextNode( "" ) );
+
+	/* Example of currentMedia xml tag:
+		<CurrentMedia>\0Music\01\0{0} - {1}\0 Song Title\0Song Artist\0Song Album\0\0</CurrentMedia>
+		<CurrentMedia>\0Games\01\0Playing {0}\0Game Name\0</CurrentMedia>
+		<CurrentMedia>\0Office\01\0Office Message\0Office App Name\0</CurrentMedia>
+	*/
+	switch(type)
+	{
+		case MSNProtocol::PersonalMessageMusic:
+		{
+			xmlCurrentMedia = "\\0Music\\01\\0";
+			QStringList mediaList = QStringList::split(",", personalMessage);
+			QString formatterArguments;
+			if( !mediaList[0].isEmpty() ) // Current Track
+			{
+				xmlCurrentMedia += "{0}";
+				formatterArguments += QString("%1\\0").arg(mediaList[0]);
+			}
+			if( !mediaList[1].isEmpty() ) // Current Artist
+			{
+				xmlCurrentMedia += " - {1}";
+				formatterArguments += QString("%1\\0").arg(mediaList[1]);
+			}
+			if( !mediaList[2].isEmpty() ) // Current Album
+			{
+				xmlCurrentMedia += " ({2})";
+				formatterArguments += QString("%1\\0").arg(mediaList[2]);
+			}
+			xmlCurrentMedia += "\\0" + formatterArguments + "\\0";
+			break;
+		}
+		default:
+			break;
+	}
+	
+	currentMedia.appendChild( xmlMessage.createTextNode( xmlCurrentMedia ) );
+	
 	xmlMessage.documentElement().appendChild( currentMedia );
 
 	unsigned int id = sendCommand("UUX","",true, xmlMessage.toString().utf8(), false);

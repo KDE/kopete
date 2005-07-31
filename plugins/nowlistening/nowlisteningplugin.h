@@ -51,6 +51,7 @@ friend class NowListeningGUIClient;
 	public slots:
 		void slotMediaCommand( const QString &, Kopete::ChatSession *theChat );
 		void slotOutgoingMessage(Kopete::Message&);
+		void slotAdvertCurrentMusic();
 
 	protected:
 		/**
@@ -89,8 +90,6 @@ friend class NowListeningGUIClient;
 		void slotSettingsChanged();
 
 	private:
-		// used to access the GUI settings
-		NowListeningConfig *m_config;
 		// abstracted media player interfaces
 		QPtrList<NLMediaPlayer> *m_mediaPlayer;
 		// Needed for DCOP interprocess communication
@@ -104,6 +103,9 @@ friend class NowListeningGUIClient;
 		// Used when using automatic advertising to know who has already gotten
 		// the music information
 		QStringList *m_musicSentTo;
+
+		// Used when advertising to status message.
+		QTimer *advertTimer;
 
 		static NowListeningPlugin* pluginStatic_;
 };

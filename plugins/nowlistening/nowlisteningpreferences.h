@@ -44,7 +44,6 @@ private slots:
 
 private:
 	NowListeningPrefsUI *preferencesDialog;
-	NowListeningConfig *config;
 
 };
 

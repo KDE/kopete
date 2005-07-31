@@ -1,7 +1,7 @@
 /*
     kopeteidentityconfig.cpp  -  Kopete Identity config page
 
-    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
+    Copyright (c) 2005      by MichaÃ«l Larouche       <shock@shockdev.ca.tc>
 
     Kopete    (c) 2003-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -236,8 +236,6 @@ void KopeteIdentityConfig::slotEnableAndDisableWidgets()
 	m_view->comboPhotoContact->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceContact);
 	m_view->comboPhotoURL->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceCustom);
 	
-	
-
 	if(contactPhotoSourceList.isEmpty() )
 	{
 		m_view->comboPhotoContact->clear();

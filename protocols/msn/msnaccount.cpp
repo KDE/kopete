@@ -31,6 +31,7 @@
 
 #include <qfile.h>
 #include <qregexp.h>
+#include <qvalidator.h>
 
 #include "msncontact.h"
 #include "msnnotifysocket.h"
@@ -263,17 +264,28 @@ MSNNotifySocket *MSNAccount::notifySocket()
 
 void MSNAccount::setOnlineStatus( const Kopete::OnlineStatus &status , const QString &reason)
 {
-	m_awayReason = reason;
-	if(status.status()== Kopete::OnlineStatus::Offline)
-		disconnect();
-	else if ( m_notifySocket )
+	// Only update the personal/status message, don't change the online status
+	// since it's the same.
+	if( reason.contains("[Music]") )
 	{
-		m_notifySocket->setStatus( status );
+		QString personalMessage = reason.section("[Music]", 1);
+		setPersonalMessage( MSNProtocol::PersonalMessageMusic, personalMessage );
 	}
 	else
 	{
-		m_connectstatus = status;
-		connect();
+		setPersonalMessage( MSNProtocol::PersonalMessageNormal, reason );
+
+		if(status.status()== Kopete::OnlineStatus::Offline)
+			disconnect();
+		else if ( m_notifySocket )
+		{
+			m_notifySocket->setStatus( status );
+		}
+		else
+		{
+			m_connectstatus = status;
+			connect();
+		}
 	}
 }
 
@@ -348,10 +360,15 @@ void MSNAccount::slotChangePublicName()
 void MSNAccount::slotChangePersonalMessage()
 {
 	bool ok;
-	QString message = KInputDialog::getText( i18n( "Change Personal Message - MSN Plugin" ),
-		i18n( "Enter the new personal message you want to send to your friends on MSN:" ),
-		myself()->property( MSNProtocol::protocol()->propPersonalMessage).value().toString(), &ok );
+	// Allow empty input.
+	QRegExp emptyInput(".*");
+	QRegExpValidator emptyValidator(emptyInput, 0);
 
+	QString message = KInputDialog::getText( i18n( "Change Personal Message - MSN Plugin" ),
+			i18n( "Enter the new personal message you want to send to your friends on MSN:" ),
+			myself()->property( MSNProtocol::protocol()->propPersonalMessage).value().toString(), &ok,
+			Kopete::UI::Global::mainWidget(), "personalMessageInput", &emptyValidator); 
+	
 	if ( ok )
 	{
 		//Magic number : 129 characters MAX
@@ -361,13 +378,10 @@ void MSNAccount::slotChangePersonalMessage()
 				i18n( "<qt>The message you entered is too long. Please enter a shorter message.\n"
 					"Your comment has <b>not</b> been changed.</qt>" ),
 				i18n( "Change Personal Message - MSN Plugin" ) );
-			return;
+				return;
 		}
-
-		// The placeholder is there because next are the
-		// Office, Game and Music features.
-		setPersonalMessage( "placeholder", message );
-
+	
+		setPersonalMessage( MSNProtocol::PersonalMessageNormal, message );
 	}
 }
 
@@ -466,13 +480,13 @@ void MSNAccount::setPublicName( const QString &publicName )
 	}
 }
 
-void MSNAccount::setPersonalMessage( const QString &type, const QString &personalMessage )
+void MSNAccount::setPersonalMessage( MSNProtocol::PersonalMessageType type, const QString &personalMessage )
 {
 	if ( m_notifySocket )
 	{
-		m_notifySocket->changePersonalMessage( QString::null, personalMessage );
+		m_notifySocket->changePersonalMessage( type, personalMessage );
 	}
-	else
+	else if(type == MSNProtocol::PersonalMessageNormal) // Normal personalMessage, not a dynamic one that need formatting.
 	{
 		slotPersonalMessageChanged( personalMessage );
 	}
@@ -1402,7 +1416,6 @@ void MSNAccount::resetPictureObject(bool silent)
 		m_notifySocket->setStatus( myself()->onlineStatus() );
 	}
 }
-
 
 #include "msnaccount.moc"
 
