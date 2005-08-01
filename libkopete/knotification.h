@@ -34,18 +34,18 @@ namespace Kopete { class MetaContact; }
  *
  * It covers severals kind of notifications
  *
- * @li Interface events:
- * For notify the user he/she just performed an operation, like maximizing a
- * window. This permit to play sounds when a dialog appears.
- * This is an instent notification.  It ends automatically after a small timeout
+ * @li Interface feedback events:
+ * For notifying the user that he/she just performed an operation, like maximizing a
+ * window. This allows us to play sounds when a dialog appears.
+ * This is an instant notification.  It ends automatically after a small timeout
  *
  * @li complex notifications:
  * Notify when one received a new message, or when something important happened
  * the user has to know.  This notification has a start and a end.  It start when
- * the event actually occurs, and finish when the message is readed. 
+ * the event actually occurs, and finish when the message is acknowledged.
  *
  *
- * use the static funciton event() to fire an event
+ * use the static function event() to fire an event
  *
  * the returned KNotification pointer may be used to connect signals or slots
  *
@@ -100,7 +100,7 @@ public:
 	void activated();
 	/**
 	 * Emit when an action has been activated.
-	 * @param action will be 0 is the default aciton was activated, or any aciton id
+	 * @param action will be 0 is the default aciton was activated, or any actiton id
 	 */
 	void activated(unsigned int action);
 
@@ -170,10 +170,10 @@ public:
 	 * @note the text is shown in a QLabel, you should make sure to escape the html is needed.
 	 *
 	 * @param eventId is the name of the event
-	 * @param text is the text of the notification which may be shown in the popup.
-	 * @param pixmap is a picture which may be shown in the popup
-	 * @param widget is a widget where the notification raports to
-	 * @param actions is a list of actions text.
+	 * @param text is the text of the notification to show in the popup.
+	 * @param pixmap is a picture which may be shown in the popup.  
+	 * @param widget is a widget where the notification reports to
+	 * @param actions is a list of action texts.
 	 * @param flags is a bitmask of NotificationsFlags  
 	 */
 	static KNotification *event( const QString& eventId , const QString& text=QString::null,
@@ -182,9 +182,9 @@ public:
 
 
 	/**
-	 * @brief emit an custom event
+	 * @brief emit a custom event
 	 *
-	 * @param text is the text of the notification which may be shown in the popup.
+	 * @param text is the text of the notification to show in the popup.
 	 * @param pixmap is a picture which may be shown in the popup
 	 * @param widget is a widget where the notification raports to
 	 * @param actions is a list of actions text.
@@ -198,7 +198,7 @@ public:
 
 
 	/**
-	* @todo  find a proper way to do contect-depedent notifications
+	* @todo find a proper way to do context-dependent notifications
 	*/
 	static KNotification *event( Kopete::MetaContact *mc, const QString& eventId , const QString& text=QString::null,
 								 const QPixmap& pixmap=QPixmap(), QWidget *widget=0L,
