@@ -1,5 +1,6 @@
+if !enable_av
 AVDEVICEDIR =
-if enable_av
+else
 AVDEVICEDIR = avdevice
 endif
 
