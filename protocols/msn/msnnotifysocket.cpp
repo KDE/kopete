@@ -737,7 +737,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 		{
 			// If there are new email message available, raise the unread email event.
 			QObject::connect(KNotification::event( "msn_mail", i18n( "You have one unread message in your MSN inbox.",
-					"You have %n unread messages in your MSN inbox.", mailCount ), 0 , 0 , i18n( "Open &Inbox..." ) ),
+					"You have %n unread messages in your MSN inbox.", mailCount ), 0 , 0 , i18n( "Open Inbox..." ) ),
 				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 		}
 	}
@@ -759,7 +759,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 		//TODO:  it is also possible to get the subject  (but warning about the encoding)
 		QObject::connect(KNotification::event( "msn_mail",i18n( "You have one new email from %1 in your MSN inbox." ).arg(m),
-										0 , 0 , i18n( "Open &Inbox..." ) ),
+										0 , 0 , i18n( "Open Inbox..." ) ),
 				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 	}
 	else if(msg.contains("text/x-msmsgsprofile"))
