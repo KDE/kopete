@@ -11,7 +11,7 @@ ac_libgadu_includes=""
 ac_libgadu_libs=""
 
 AC_ARG_WITH(external-libgadu,
-  [AS_HELP_STRING(--with-external-libgadu,
+  [AC_HELP_STRING(--with-external-libgadu,
     [use external libgadu library @<:@default=check@:>@])],
   [], with_external_libgadu=check)
 

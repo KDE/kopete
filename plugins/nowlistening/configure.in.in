@@ -42,7 +42,7 @@ AC_DEFUN([AC_CHECK_XMMS],
 ])
 
 AC_ARG_WITH(xmms,
-  [AS_HELP_STRING(--with-xmms,
+  [AC_HELP_STRING(--with-xmms,
     [enable support for XMMS @<:@default=check@:>@])],
   [], with_xmms=check)
 
