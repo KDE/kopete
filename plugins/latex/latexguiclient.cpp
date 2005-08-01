@@ -41,7 +41,7 @@ LatexGUIClient::LatexGUIClient( Kopete::ChatSession *parent, const char *name )
 
 	m_manager = parent;
 
-	new KAction( i18n( "Preview Latex images" ), "latex", CTRL + Key_L, this, SLOT( slotPreview() ), actionCollection(), "latexPreview" );
+	new KAction( i18n( "Preview Latex Images" ), "latex", CTRL + Key_L, this, SLOT( slotPreview() ), actionCollection(), "latexPreview" );
 	
 	setXMLFile( "latexchatui.rc" );
 }
@@ -59,7 +59,7 @@ void LatexGUIClient::slotPreview()
 	QString messageText = msg.plainBody();
 	if(!messageText.contains("$$")) //we haven't found any latex strings
 	{
-		KMessageBox::sorry(reinterpret_cast<QWidget*>(m_manager->view()) , i18n("There are no latex in the message you are typing.  The latex formula must be included between $$ and $$ "),	i18n("No Latex formula - Kopete") );
+		KMessageBox::sorry(reinterpret_cast<QWidget*>(m_manager->view()) , i18n("There are no latex in the message you are typing.  The latex formula must be included between $$ and $$ "),	i18n("No Latex Formula") );
 		return;
 	}
 

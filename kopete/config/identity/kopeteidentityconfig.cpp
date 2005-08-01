@@ -239,7 +239,7 @@ void KopeteIdentityConfig::slotEnableAndDisableWidgets()
 	if(contactPhotoSourceList.isEmpty() )
 	{
 		m_view->comboPhotoContact->clear();
-		m_view->comboPhotoContact->insertItem(i18n("No contacts with photo support"));
+		m_view->comboPhotoContact->insertItem(i18n("No Contacts with Photo Support"));
 		m_view->comboPhotoContact->setEnabled(false);
 	}
 
@@ -265,7 +265,7 @@ void KopeteIdentityConfig::slotEnableAndDisableWidgets()
 
 void KopeteIdentityConfig::slotChangeAddressee()
 {
-	KABC::Addressee a = Kopete::UI::AddressBookSelectorDialog::getAddressee(i18n("Addressbook association"), i18n("Choose the person who is yourself."), myself->metaContactId(), this);
+	KABC::Addressee a = Kopete::UI::AddressBookSelectorDialog::getAddressee(i18n("Addressbook Association"), i18n("Choose the person who is yourself."), myself->metaContactId(), this);
 
 	if ( !a.isEmpty() )
 	{

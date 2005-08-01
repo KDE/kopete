@@ -550,7 +550,7 @@ void GroupWiseAccount::reconcileOfflineChanges()
 	} //end for, now check the next groupwise contact
 	if ( conflicts )
 		// show queuedmessagebox
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, i18n( "A change happened to your GroupWise contact list while you were offline which was impossible to reconcile." ), i18n( "Conflicting changes made offline" ) );
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, i18n( "A change happened to your GroupWise contact list while you were offline which was impossible to reconcile." ), i18n( "Conflicting Changes Made Offline" ) );
 	m_dontSync = false;
 }
 

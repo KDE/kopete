@@ -177,7 +177,7 @@ void GroupWisePrivacyDialog::slotAddClicked()
 	if ( !m_searchDlg )
 	{
 		m_searchDlg = new KDialogBase( this, "privacysearchdialog", false, 
-				i18n( "Search For Contact To Block" ),
+				i18n( "Search for Contact to Block" ),
 				KDialogBase::Ok|KDialogBase::Cancel );
 		m_search = new GroupWiseSearch( m_account, QListView::Multi, false, m_searchDlg, "privacysearchwidget" );
 		m_searchDlg->setMainWidget( m_search );

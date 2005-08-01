@@ -349,7 +349,7 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 	if ( m_withPhotoContacts.isEmpty() )
 	{
 		mainWidget->cmbAccountPhoto->clear();
-		mainWidget->cmbAccountPhoto->insertItem(i18n("No contacts with photo support"));
+		mainWidget->cmbAccountPhoto->insertItem(i18n("No Contacts with Photo Support"));
 		mainWidget->cmbAccountPhoto->setEnabled(false);
 	}
 
@@ -477,7 +477,7 @@ void KopeteMetaLVIProps::slotClearAddresseeClicked()
 
 void KopeteMetaLVIProps::slotSelectAddresseeClicked()
 {
-	KABC::Addressee a = Kopete::UI::AddressBookSelectorDialog::getAddressee( i18n("Addressbook association"), i18n("Choose the person who '%1' is.").arg(item->metaContact()->displayName() ), item->metaContact()->metaContactId() , this);
+	KABC::Addressee a = Kopete::UI::AddressBookSelectorDialog::getAddressee( i18n("Addressbook Association"), i18n("Choose the person who '%1' is.").arg(item->metaContact()->displayName() ), item->metaContact()->metaContactId() , this);
 
 	if ( !a.isEmpty() )
 	{
