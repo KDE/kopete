@@ -208,7 +208,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 229:
 	{
 		QString msg = i18n("The group name is too long; it has not been changed on the MSN server.");
-		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "Invalid group name - MSN Plugin" ) );
+		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "Invalid Group Name - MSN Plugin" ) );
 		emit errorMessage( MSNSocket::ErrorSorry, msg );
 		break;
 	}

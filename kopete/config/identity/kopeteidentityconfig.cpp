@@ -86,7 +86,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char */*name*/
 	connect(m_view->comboPhotoURL, SIGNAL(urlSelected(const QString& )), this, SLOT(slotEnableAndDisableWidgets()));
 
 	connect(m_view->checkSyncPhotoKABC, SIGNAL(toggled(bool )), this, SLOT(slotSettingsChanged()));
-	connect(m_view->lineNickname, SIGNAL(textChanged(const QString& )), this, SLOT(slotSettingsChanged()));	
+	connect(m_view->lineNickname, SIGNAL(textChanged(const QString& )), this, SLOT(slotSettingsChanged()));
 	connect(m_view->comboNameContact, SIGNAL(activated(int )), this, SLOT(slotSettingsChanged()));
 	connect(m_view->comboPhotoContact, SIGNAL(activated(int )), this, SLOT(slotEnableAndDisableWidgets()));
 
@@ -115,7 +115,7 @@ void KopeteIdentityConfig::load()
 void KopeteIdentityConfig::save()
 {
 	KCModule::save();
-	
+
 	// Don't save the new global identity if it's not activated.
 	if(m_view->kcfg_EnableGlobalIdentity->isChecked())
 	{
@@ -123,10 +123,10 @@ void KopeteIdentityConfig::save()
 		// Nickname settings.
 		if(m_view->lineNickname->text() != myself->customDisplayName())
 			myself->setDisplayName(m_view->lineNickname->text());
-	
+
 		myself->setDisplayNameSource(selectedNameSource());
 		myself->setDisplayNameSourceContact(selectedNameSourceContact());
-		
+
 		// Photo settings
 		myself->setPhotoSource(selectedPhotoSource());
 		myself->setPhotoSourceContact(selectedPhotoSourceContact());
@@ -134,14 +134,14 @@ void KopeteIdentityConfig::save()
 			myself->setPhoto(m_view->comboPhotoURL->url());
 		myself->setPhotoSyncedWithKABC(m_view->checkSyncPhotoKABC->isChecked());
 	}
-	
+
 	load();
 }
 
 void KopeteIdentityConfig::slotLoadNameSources()
 {
 	Kopete::Contact *nameSourceContact = myself->displayNameSourceContact();
-	
+
 	QPtrList<Kopete::Contact> contactList = myself->contacts();
 	QPtrListIterator<Kopete::Contact> it(contactList);
 
@@ -152,7 +152,7 @@ void KopeteIdentityConfig::slotLoadNameSources()
 		QString account = it.current()->property(Kopete::Global::Properties::self()->nickName()).value().toString() + " <" + it.current()->contactId() + ">";
 		QPixmap accountIcon = it.current()->account()->accountIcon();
 		m_view->comboNameContact->insertItem(accountIcon,  account);
-		
+
 		// Select this item if it's the one we're tracking.
 		if(it.current() == nameSourceContact)
 		{
@@ -163,7 +163,7 @@ void KopeteIdentityConfig::slotLoadNameSources()
 	m_view->lineNickname->setText(myself->customDisplayName());
 
 	Kopete::MetaContact::PropertySource nameSource = myself->displayNameSource();
-	
+
 	m_view->radioNicknameCustom->setChecked(nameSource == Kopete::MetaContact::SourceCustom);
 	m_view->radioNicknameKABC->setChecked(nameSource == Kopete::MetaContact::SourceKABC);
 	m_view->radioNicknameContact->setChecked(nameSource == Kopete::MetaContact::SourceContact);
@@ -172,7 +172,7 @@ void KopeteIdentityConfig::slotLoadNameSources()
 void KopeteIdentityConfig::slotLoadPhotoSources()
 {
 	Kopete::Contact *photoSourceContact = myself->photoSourceContact();
-	
+
 	QPtrList<Kopete::Contact> contactList = myself->contacts();
 	QPtrListIterator<Kopete::Contact> it(contactList);
 
@@ -200,7 +200,7 @@ void KopeteIdentityConfig::slotLoadPhotoSources()
 
 	m_view->comboPhotoURL->setURL(myself->customPhoto().url());
 	Kopete::MetaContact::PropertySource photoSource = myself->photoSource();
-	
+
 	m_view->radioPhotoCustom->setChecked(photoSource == Kopete::MetaContact::SourceCustom);
 	m_view->radioPhotoContact->setChecked(photoSource == Kopete::MetaContact::SourceContact);
 	m_view->radioPhotoKABC->setChecked(photoSource == Kopete::MetaContact::SourceKABC);
@@ -229,17 +229,17 @@ void KopeteIdentityConfig::slotEnableAndDisableWidgets()
 
 	m_view->radioNicknameContact->setEnabled(myself->contacts().count());
 	m_view->radioPhotoContact->setEnabled(!contactPhotoSourceList.isEmpty());
-	
+
 	m_view->comboNameContact->setEnabled(selectedNameSource() == Kopete::MetaContact::SourceContact);
 	m_view->lineNickname->setEnabled(selectedNameSource() == Kopete::MetaContact::SourceCustom);
 
 	m_view->comboPhotoContact->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceContact);
 	m_view->comboPhotoURL->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceCustom);
-	
+
 	if(contactPhotoSourceList.isEmpty() )
 	{
 		m_view->comboPhotoContact->clear();
-		m_view->comboPhotoContact->insertItem(i18n("No contacts with photo support"));
+		m_view->comboPhotoContact->insertItem(i18n("No Contacts with Photo Support"));
 		m_view->comboPhotoContact->setEnabled(false);
 	}
 
@@ -265,7 +265,7 @@ void KopeteIdentityConfig::slotEnableAndDisableWidgets()
 
 void KopeteIdentityConfig::slotChangeAddressee()
 {
-	KABC::Addressee a = Kopete::UI::AddressBookSelectorDialog::getAddressee(i18n("Addressbook association"), i18n("Choose the person who is yourself."), myself->metaContactId(), this);
+	KABC::Addressee a = Kopete::UI::AddressBookSelectorDialog::getAddressee(i18n("Addressbook Association"), i18n("Choose the person who is yourself."), myself->metaContactId(), this);
 
 	if ( !a.isEmpty() )
 	{
@@ -273,7 +273,7 @@ void KopeteIdentityConfig::slotChangeAddressee()
 		KABC::StdAddressBook::self()->setWhoAmI(a);
 		myself->setMetaContactId(a.uid());
 	}
-	
+
 	emit changed(true);
 }
 

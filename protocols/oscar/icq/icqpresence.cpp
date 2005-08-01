@@ -130,7 +130,7 @@ public:
 		, unknown(        Kopete::OnlineStatus::Unknown,     0, ICQProtocol::protocol(),
 					      Presence::Offline, "status_unknown", i18n("Unknown") )
 		, waitingForAuth( Kopete::OnlineStatus::Unknown,     1, ICQProtocol::protocol(),
-				          Presence::Offline, "button_cancel",  i18n("Waiting For Authorization") )
+				          Presence::Offline, "button_cancel",  i18n("Waiting for Authorization") )
 		, invisible(      Kopete::OnlineStatus::Invisible,   2, ICQProtocol::protocol(),
 						  Presence::Offline, QString::null,    QString::null,
 						  QString::null, Kopete::OnlineStatusManager::Invisible,
