@@ -95,15 +95,14 @@ typedef enum
 	IO_METHOD_USERPTR
 } io_method;
 
-struct buffer2
+struct imagebuffer
 {
 	int height;
 	int width;
 	pixel_format pixelformat;
-	size_t size;
-	QValueVector <uchar> data;
+	QValueVector <uchar> data; // maybe it should be a rawbuffer instead of it? It could make us avoid a memory copy
 };
-struct buffer
+struct rawbuffer // raw buffer
 {
 	uchar * start;
 	size_t length;
@@ -137,7 +136,6 @@ public:
 	int selectInput(int input);
 	int startCapturing();
 	int getFrame();
-	int processImage(const void *p);
 	int getImage(QImage *qimage);
 	int stopCapturing();
 	int close();
@@ -171,9 +169,9 @@ public:
 protected:
 	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
 
-	QValueVector<buffer> buffers;
-	unsigned int     n_buffers;
-	buffer2 currentbuffer;
+	QValueVector<rawbuffer> m_rawbuffers;
+	unsigned int m_streambuffers;
+	imagebuffer m_currentbuffer;
 	int m_buffer_size;
 
 	int m_current_input;

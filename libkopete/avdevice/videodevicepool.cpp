@@ -99,14 +99,6 @@ bool VideoDevicePool::isOpen()
 }
 
 /*!
-    \fn VideoDevicePool::processImage(const void *p)
- */
-int VideoDevicePool::processImage(const void * p)
-{
-	return m_videodevice[currentDevice()].processImage(p);
-}
-
-/*!
     \fn VideoDevicePool::showDeviceCapabilities(int device)
  */
 int VideoDevicePool::showDeviceCapabilities(unsigned int device)
@@ -155,8 +147,7 @@ int VideoDevicePool::setSize( int newwidth, int newheight)
 		m_buffer.height=newheight;
 		m_buffer.pixelformat=	PIXELFORMAT_RGB24;
 		m_buffer.data.resize(m_buffer.width*m_buffer.height*3);
-		m_buffer.size=m_buffer.data.size();
-		kdDebug() <<  k_funcinfo << "VideoDevicePool::setSize() buffer size: "<< m_buffer.size << endl;
+		kdDebug() <<  k_funcinfo << "VideoDevicePool::setSize() buffer size: "<< m_buffer.data.size() << endl;
 	}
 	return EXIT_SUCCESS;
 }
@@ -206,7 +197,7 @@ int VideoDevicePool::getFrame()
 	else
 	{
 		kdDebug() <<  k_funcinfo << "VideoDevicePool::getFrame() fallback for no device." << endl;
-		for(unsigned int loop=0; loop < m_buffer.size; loop+=3)
+		for(unsigned int loop=0; loop < m_buffer.data.size(); loop+=3)
 		{
 			m_buffer.data[loop]   = 255;
 			m_buffer.data[loop+1] = 0;

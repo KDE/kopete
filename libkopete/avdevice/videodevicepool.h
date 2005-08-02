@@ -73,14 +73,12 @@ public:
 	unsigned int inputs();
 
 protected:
-protected:
 	int xioctl(int request, void *arg);
-	int processImage(const void *p);
 	int errnoReturn(const char* s);
 	int showDeviceCapabilities(unsigned int device);
 	void guessDriver();
 	unsigned int m_current_device;
-	struct buffer2 m_buffer; // only used when no devices were found
+	struct imagebuffer m_buffer; // only used when no devices were found
 private:
 	VideoDevicePool();
 	static VideoDevicePool* s_self;
