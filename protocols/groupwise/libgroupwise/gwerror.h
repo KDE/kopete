@@ -233,4 +233,8 @@ namespace GroupWise
 #define MSGPRES_ERR_RECIPIENT_TOO_OLD			(NMERR_SERVER_BASE + 0x005C) // The recipient's client version is too old.
 #define MSGPRES_ERR_CHAT_NO_LONGER_VALID		(NMERR_SERVER_BASE + 0x005D) // The chat has been removed from the server.
 
+#define CMSGPRES_SUPPORTS_NO_DETAILS_ON_LOGIN 3
+#define CMSGPRES_SUPPORTS_BROADCAST 4
+#define CMSGPRES_SUPPORTS_CHAT 5
+
 #endif
