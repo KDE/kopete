@@ -76,7 +76,17 @@ namespace GroupWise
 						ConferenceReject		= 119,
 						ReceiveAutoReply		= 121,
 						Start					= InvalidRecipient,
-						Stop					= ReceiveAutoReply
+						/* Event codes >= 122 are new in GW7 protocol */
+						ReceivedBroadcast		= 122,
+						ReceivedSystemBroadcast = 123,
+						ConferenceAttribUpdate 	= 128,
+						ConferenceTopicChanged	= 129,
+						ChatroomNameChanged		= 130,
+						ConferenceRightsChanged = 131,
+						ConferenceRemoved		= 132, /* you were kicked */
+						ChatOwnerChanged		= 133,
+						Stop					= ChatOwnerChanged
+						
 				};
 	
 	enum ConferenceFlags { 	Logging = 0x00000001,
@@ -206,5 +216,21 @@ namespace GroupWise
 #define NMERR_CREDENTIALS_MISSING   	(NMERR_SERVER_BASE + 0x0046)
 #define NMERR_AUTHENTICATION_FAILED		(NMERR_SERVER_BASE + 0x0049)
 #define NMERR_EVAL_CONNECTION_LIMIT		(NMERR_SERVER_BASE + 0x004A)
+
+/* Error codes that are new in GW7 */
+#define MSGPRES_ERR_UNSUPPORTED_CLIENT_VERSION  (NMERR_SERVER_BASE + 0x004B) // This version of the client is not supported.
+#define MSGPRES_ERR_DUPLICATE_CHAT              (NMERR_SERVER_BASE + 0x0051) // A duplicate chat was found.
+#define MSGPRES_ERR_CHAT_NOT_FOUND				(NMERR_SERVER_BASE + 0x0052) // The chat was not found.
+#define MSGPRES_ERR_INVALID_NAME				(NMERR_SERVER_BASE + 0x0053) // The chat name is not valid.
+#define MSGPRES_ERR_CHAT_ACTIVE					(NMERR_SERVER_BASE + 0x0054) // Cannot delete an active chat.
+#define MSGPRES_ERR_INSUF_CONV_RIGHTS			(NMERR_SERVER_BASE + 0x0055) // Insufficient conversation rights to perform an action.
+#define MSGPRES_ERR_CHAT_BUSY					(NMERR_SERVER_BASE + 0x0056) // Chat is busy; try again.
+#define MSGPRES_ERR_REQUEST_TOO_SOON 			(NMERR_SERVER_BASE + 0x0057) // Tried a request too soon after another one; try again.
+#define MSGPRES_INFO_NO_LIST_CHANGE				(NMERR_SERVER_BASE + 0x0058) // The chat list has not changed since the last search.
+#define MSGPRES_ERR_CHAT_NOT_ACTIVE				(NMERR_SERVER_BASE + 0x0059) // The chat subsystem is not active!
+#define MSGPRES_ERR_INVALID_CHAT_UPDATE			(NMERR_SERVER_BASE + 0x005A) // The chat update request is invalid.
+#define MSGPRES_ERR_DIRECTORY_MISMATCH			(NMERR_SERVER_BASE + 0x005B) // Write failed due to directory mismatch.
+#define MSGPRES_ERR_RECIPIENT_TOO_OLD			(NMERR_SERVER_BASE + 0x005C) // The recipient's client version is too old.
+#define MSGPRES_ERR_CHAT_NO_LONGER_VALID		(NMERR_SERVER_BASE + 0x005D) // The chat has been removed from the server.
 
 #endif

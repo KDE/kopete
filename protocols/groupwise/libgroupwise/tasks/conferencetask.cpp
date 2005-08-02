@@ -37,7 +37,10 @@ ConferenceTask::ConferenceTask( Task* parent )
 	registerEvent( GroupWise::ConferenceInviteNotify );
 	registerEvent( GroupWise::ConferenceReject );
 	registerEvent( GroupWise::ReceiveAutoReply );
-	
+	// GW7
+	registerEvent( GroupWise::ReceivedBroadcast );
+	registerEvent( GroupWise::ReceivedSystemBroadcast );
+
 	// listen to the UserDetailsManager telling us that user details are available
 	connect( client()->userDetailsManager(), SIGNAL( gotContactDetails( const GroupWise::ContactDetails & ) ), 
 		SLOT( slotReceiveUserDetails( const GroupWise::ContactDetails & ) ) );
@@ -137,6 +140,21 @@ bool ConferenceTask::take( Transfer * transfer )
 				client()->debug( "ReceiveAutoReply" );
 				client()->debug( QString( "message: %1" ).arg( event.message.ascii() ) );
 				emit autoReply( event );
+				break;
+			case GroupWise::ReceivedBroadcast:
+				Q_ASSERT( incomingEvent->hasMessage() );
+				event.message = incomingEvent->message();
+				client()->debug( "ReceivedBroadCast" );
+				client()->debug( QString( "message: %1" ).arg( event.message ) );
+				if ( !queueWhileAwaitingData( event ) )
+					emit broadcast( event );
+				break;
+			case GroupWise::ReceivedSystemBroadcast:
+				Q_ASSERT( incomingEvent->hasMessage() );
+				event.message = incomingEvent->message();
+				client()->debug( "ReceivedSystemBroadCast" );
+				client()->debug( QString( "message: %1" ).arg( event.message ) );
+				emit systemBroadcast( event );
 				break;
 			default:
 				client()->debug( QString( "WARNING: didn't handle registered event %1, on conference %2" ).arg( incomingEvent->eventType() ).arg( event.guid.ascii() ) );

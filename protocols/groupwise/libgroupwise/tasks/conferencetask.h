@@ -51,6 +51,9 @@ signals:
 	void closed( const ConferenceEvent & );
 	void message( const ConferenceEvent &);
 	void autoReply( const ConferenceEvent & );
+	// GW7
+	void broadcast( const ConferenceEvent &);
+	void systemBroadcast( const ConferenceEvent &);
 protected slots:
 	void slotReceiveUserDetails( const GroupWise::ContactDetails & );
 protected:

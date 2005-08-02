@@ -57,10 +57,11 @@ public:
 	RequestFactory * requestFactory;
 	UserDetailsManager * userDetailsMgr;
 	PrivacyManager * privacyMgr;
+	uint protocolVersion;
 };
 
-Client::Client(QObject *par)
-:QObject(par, "groupwiseclient" )
+Client::Client(QObject *par, uint protocolVersion )
+:QObject(par, "groupwiseclient")
 {
 	d = new ClientPrivate;
 /*	d->tzoffset = 0;*/
@@ -74,6 +75,7 @@ Client::Client(QObject *par)
 	d->userDetailsMgr = new UserDetailsManager( this, "userdetailsmgr" );
 	d->privacyMgr = new PrivacyManager( this, "privacymgr" );
 	d->stream = 0;
+	d->protocolVersion = protocolVersion;
 }
 
 Client::~Client()
@@ -183,6 +185,10 @@ void Client::initialiseEventTasks()
 	connect( ct, SIGNAL( invitationDeclined( const ConferenceEvent & ) ), SIGNAL( invitationDeclined( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( closed( const ConferenceEvent & ) ), SIGNAL( conferenceClosed( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( autoReply( const ConferenceEvent & ) ), SIGNAL( autoReplyReceived( const ConferenceEvent & ) ) );
+	connect( ct, SIGNAL( broadcast( const ConferenceEvent & ) ), SIGNAL( broadcastReceived( const ConferenceEvent & ) ) );
+	connect( ct, SIGNAL( systemBroadcast( const ConferenceEvent & ) ), SIGNAL( systemBroadcastReceived( const ConferenceEvent & ) ) );
+	
+
 	// The ConnectionTask handles incoming connection events
 	ConnectionTask* cont = new ConnectionTask( d->root );
 	connect( cont, SIGNAL( connectedElsewhere() ), SIGNAL( connectedElsewhere() ) );
@@ -329,10 +335,6 @@ void Client::ct_messageReceived( const ConferenceEvent & messageEvent )
 	ConferenceEvent transformedEvent = messageEvent;
 	RTF2HTML parser;
 	QString rtf = messageEvent.message;
-	//QRegExp rx( "&(?!amp;)" );      // match ampersands but not &amp; (?! is negative lookahead
-// 	QRegExp rx( "(\\u\d+) (\?)"
-//     QString line1 = "This & that";
-//     line1.replace( rx, "&amp;" );
 	if ( !rtf.isEmpty() )
 		transformedEvent.message = parser.Parse( rtf.latin1(), "" );
 
@@ -461,4 +463,8 @@ Task * Client::rootTask()
 	return d->root;
 }
 
+uint Client::protocolVersion() const
+{
+	return d->protocolVersion;
+}
 #include "client.moc"

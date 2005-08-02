@@ -288,7 +288,7 @@ void GroupWiseAccount::performConnectWithPassword( const QString &password )
 	// not implemented: error
 	QObject::connect( m_clientStream, SIGNAL( error(int) ), SLOT( slotCSError(int) ) );
 
-	m_client = new Client( this );
+	m_client = new Client( this, 3 );
 
 	// NB these are prefixed with QObject:: to avoid any chance of a clash with our connect() methods.
 	// we connected successfully
@@ -304,9 +304,9 @@ void GroupWiseAccount::performConnectWithPassword( const QString &password )
 	// contact status changed
 	QObject::connect( m_client, SIGNAL( statusReceived( const QString &, Q_UINT16, const QString & ) ), SLOT( receiveStatus( const QString &, Q_UINT16 , const QString & ) ) );
 	// incoming message
-	QObject::connect( m_client, SIGNAL( messageReceived( const ConferenceEvent & ) ), SLOT( receiveMessage( const ConferenceEvent & ) ) );
+	QObject::connect( m_client, SIGNAL( messageReceived( const ConferenceEvent & ) ), SLOT( handleIncomingMessage( const ConferenceEvent & ) ) );
 	// auto reply to one of our messages because the recipient is away
-	QObject::connect( m_client, SIGNAL( autoReplyReceived( const ConferenceEvent & ) ), SLOT( receiveAutoReply( const ConferenceEvent & ) ) );
+	QObject::connect( m_client, SIGNAL( autoReplyReceived( const ConferenceEvent & ) ), SLOT( handleIncomingMessage( const ConferenceEvent & ) ) );
 
 	QObject::connect( m_client, SIGNAL( ourStatusChanged( GroupWise::Status, const QString &, const QString & ) ), SLOT( changeOurStatus( GroupWise::Status, const QString &, const QString & ) ) );
 	// conference events
@@ -332,6 +332,10 @@ void GroupWiseAccount::performConnectWithPassword( const QString &password )
 	QObject::connect( m_client, SIGNAL( connectedElsewhere() ), SLOT( slotConnectedElsewhere() ) );
 	// privacy - contacts can't connect directly to this signal because myself() is initialised before m_client
 	QObject::connect( m_client->privacyManager(), SIGNAL( privacyChanged( const QString &, bool ) ), SIGNAL( privacyChanged( const QString &, bool ) ) );
+
+	// GW7
+	QObject::connect( m_client, SIGNAL( broadcastReceived( const ConferenceEvent & ) ), SLOT( handleIncomingMessage( const ConferenceEvent & ) ) );
+	QObject::connect( m_client, SIGNAL( systemBroadcastReceived( const ConferenceEvent & ) ), SLOT( handleIncomingMessage( const ConferenceEvent & ) ) );
 
 	struct utsname utsBuf;
 	uname (&utsBuf);
@@ -759,22 +763,19 @@ void GroupWiseAccount::slotTLSReady( int secLayerCode )
 	m_client->start( server(), port(), accountId(), password().cachedValue() );
 }
 
-void GroupWiseAccount::receiveMessage( const ConferenceEvent & event )
+void GroupWiseAccount::handleIncomingMessage( const ConferenceEvent & message )
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got a message in conference: " << event.guid << ",  from: " << event.user << ", message is: " << event.message << endl;
-	handleIncomingMessage( event, false );
-}
+	QString typeName = "UNKNOWN";
+	if ( message.type == ReceiveMessage )
+		typeName = "message";
+	else if ( message.type == ReceiveAutoReply )
+		typeName = "autoreply";
+	else if ( message.type == ReceivedBroadcast )
+		typeName = "broadcast";
+	else if ( message.type == ReceivedSystemBroadcast )
+		typeName = "system broadcast";
 
-void GroupWiseAccount::receiveAutoReply( const ConferenceEvent & event )
-{
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got an auto reply in conference: " << event.guid << ",  from: " << event.user << ", message is: " << event.message << endl;
-	handleIncomingMessage( event, true );
-}
-
-void GroupWiseAccount::handleIncomingMessage( const ConferenceEvent & message,
-bool autoReply )
-{
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << message.user << " sent a " << ( autoReply ? "auto-reply" : "message" ) << " to conference: " << message.guid << ", message: " << message.message << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " received a " <<  typeName << " from " << message.user << ", to conference: " << message.guid << ", message: " << message.message << endl;
 
 	GroupWiseContact * sender = contactForDN( message.user );
 	if ( !sender )
@@ -787,18 +788,31 @@ bool autoReply )
 
 	// add an auto-reply indicator if needed
 	QString messageMunged = message.message;
-	if ( autoReply )
+	if ( message.type == ReceiveAutoReply )
 	{
-		QString autoReplyPrefix = i18n("Prefix used for automatically generated auto-reply"
+		QString prefix = i18n("Prefix used for automatically generated auto-reply"
 			" messages when the contact is Away, contains contact's name",
 			"Auto reply from %1: " ).arg( sender->metaContact()->displayName() );
-		messageMunged = autoReplyPrefix + message.message;
+		messageMunged = prefix + message.message;
 	}
+	if ( message.type == GroupWise::ReceivedBroadcast )
+	{
+		QString prefix = i18n("Prefix used for broadcast messages",
+			"Broadcast message from %1: " ).arg( sender->metaContact()->displayName() );
+		messageMunged = prefix + message.message;
+	}
+	if ( message.type == GroupWise::ReceivedSystemBroadcast )
+	{
+		QString prefix = i18n("Prefix used for system broadcast messages",
+			"System Broadcast message from %1: " ).arg( sender->metaContact()->displayName() );
+		messageMunged = prefix + message.message;
+	}
+
 	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << " message before KopeteMessage and appending: " << messageMunged << endl;
 	Kopete::Message * newMessage = 
 			new Kopete::Message( message.timeStamp, sender, contactList, messageMunged,
 								 Kopete::Message::Inbound, 
-								 autoReply ? Kopete::Message::PlainText : Kopete::Message::RichText );
+								 ( message.type == ReceiveAutoReply ) ? Kopete::Message::PlainText : Kopete::Message::RichText );
 	Q_ASSERT( sess );
 	sess->appendMessage( *newMessage );
 	kdDebug(GROUPWISE_DEBUG_GLOBAL) << "message from KopeteMessage: plainbody: " << newMessage->plainBody() << " parsedbody: " << newMessage->parsedBody() << endl;
