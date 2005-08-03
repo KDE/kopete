@@ -207,6 +207,27 @@ struct RateInfo
 	BYTE currentState;
 };
 
+struct ChatExchangeInfo
+{
+	WORD number;
+	BYTE maxNameLength;
+	BYTE flags;
+	QString description;
+	BYTE canCreate;
+	QString charset1;
+	QString charset2;
+	QString lang1;
+	QString lang2;
+};
+
+struct ChatRoomInfo
+{
+	WORD exchange;
+	QByteArray cookie;
+	WORD instance;
+	
+};
+
 	/* ICQ Version Characteristics */
 	const unsigned char ICQ_TCP_VERSION 	= 0x0008;
 	const char ICQ_CLIENTSTRING[] 		= "ICQ Inc. - Product of ICQ (TM).2003a.5.45.1.3777.85";
