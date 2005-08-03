@@ -31,6 +31,7 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <QX11Info>
 
 unsigned int QVideo::bytesppForFormat(ImageFormat fmt)
 {
@@ -72,13 +73,13 @@ bool QVideo::findDisplayProperties(ImageFormat& fmt, int& depth, unsigned int& b
     int d         = 0;
     
 	vi_out.screen = QPaintDevice::x11AppScreen();
-	vi_in         = XGetVisualInfo(qt_xdisplay(), mask, &vi_out, &nvis);
+	vi_in         = XGetVisualInfo(QX11Info::display(), mask, &vi_out, &nvis);
 
 	if (vi_in) {
 		for (int i = 0; i < nvis; i++) {
             bpp = 0;
 			int n;
-			XPixmapFormatValues *pf = XListPixmapFormats(qt_xdisplay(),&n);
+			XPixmapFormatValues *pf = XListPixmapFormats(QX11Info::display(),&n);
             d = vi_in[i].depth;
 			for (int j = 0; j < n; j++) {
 				if (pf[j].depth == d) {
