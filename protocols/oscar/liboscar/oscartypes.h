@@ -232,16 +232,16 @@ struct RateInfo
 	const char AIM_LANG[]           = "en";
 	
 	/* SSI types */
-	const WORD ROSTER_CONTACT   = 0x0000; // a normal contact
-	const WORD ROSTER_GROUP     = 0x0001; // a group of contacts
-	const WORD ROSTER_VISIBLE   = 0x0002; // a contact on the visible list
-	const WORD ROSTER_INVISIBLE = 0x0003; // a contact on the invisible list
+	const WORD ROSTER_CONTACT       = 0x0000; // a normal contact
+	const WORD ROSTER_GROUP         = 0x0001; // a group of contacts
+	const WORD ROSTER_VISIBLE       = 0x0002; // a contact on the visible list
+	const WORD ROSTER_INVISIBLE     = 0x0003; // a contact on the invisible list
 	const WORD ROSTER_VISIBILITY    = 0x0004; // this entry contains visibility setting TLV(0xca)=TLV(202)
-	const WORD ROSTER_PRESENCE  = 0x0005; // Presence info (if others can see your idle status, etc)
+	const WORD ROSTER_PRESENCE      = 0x0005; // Presence info (if others can see your idle status, etc)
 	const WORD ROSTER_ICQSHORTCUT   = 0x0009; // Unknown or ICQ2k shortcut bar items
-	const WORD ROSTER_IGNORE    = 0x000e; // a contact on the ignore list
+	const WORD ROSTER_IGNORE        = 0x000e; // a contact on the ignore list
 	const WORD ROSTER_LASTUPDATE    = 0x000F; // Last update date (name: "LastUpdateDate")
-	const WORD ROSTER_NONICQ    = 0x0010; // a non-icq contact, no UIN, used to send SMS
+	const WORD ROSTER_NONICQ        = 0x0010; // a non-icq contact, no UIN, used to send SMS
 	const WORD ROSTER_IMPORTTIME    = 0x0013; // roster import time (name: "Import time")
 	const WORD ROSTER_BUDDYICONS    = 0x0014; // Buddy icon info. (names: from "0" and incrementing by one)
 }
