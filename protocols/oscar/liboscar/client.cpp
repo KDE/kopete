@@ -72,6 +72,7 @@ public:
 	//Protocol specific data
 	bool isIcq;
 	bool redirectRequested;
+	WORD redirectFamily;
 	QByteArray cookie;
 	DWORD connectAsStatus; // icq only
 	QString connectWithMessage; // icq only
@@ -762,18 +763,19 @@ void Client::requestServerRedirect( WORD family )
 {
 	//making the assumption that family 2 will always be the BOS connection
 	//use it instead since we can't query for family 1
-	Connection* c = d->connections.connectionForFamily( 0x0002 );
+	Connection* c = d->connections.connectionForFamily( family );
+	if ( c )
+		return; //we already have the connection
+	
+	c = d->connections.connectionForFamily( 0x0002 );
 	if ( !c )
 		return;
-	if ( d->redirectRequested == false  )
-	{
-		d->redirectRequested = true;
-		ServerRedirectTask* srt = new ServerRedirectTask( c->rootTask() );
-		connect( srt, SIGNAL( haveServer( const QString&, const QByteArray&, WORD ) ),
-		         this, SLOT( haveServerForRedirect( const QString&, const QByteArray&, WORD ) ) );
-		srt->setService( family );
-		srt->go( true );
-	}
+	ServerRedirectTask* srt = new ServerRedirectTask( c->rootTask() );
+	connect( srt, SIGNAL( haveServer( const QString&, const QByteArray&, WORD ) ),
+	         this, SLOT( haveServerForRedirect( const QString&, const QByteArray&, WORD ) ) );
+	srt->setService( family );
+	d->redirectFamily = family;
+	srt->go( true );
 }
 
 void Client::haveServerForRedirect( const QString& host, const QByteArray& cookie, WORD )
@@ -805,18 +807,19 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 
 void Client::serverRedirectFinished()
 {
-	//FIXME un-hardcode icon stuff
 	if ( m_loginTaskTwo->statusCode() == 0 )
 	{ //stage two was successful
-		Connection* c = d->connections.connectionForFamily( 0x0010 );
+		Connection* c = d->connections.connectionForFamily( d->redirectFamily );
 		if ( !c )
 			return;
 		ClientReadyTask* crt = new ClientReadyTask( c->rootTask() );
 		crt->setFamilies( c->supportedFamilies() );
 		crt->go( true );
 	}
-
-	emit iconServerConnected();
+	
+	if ( d->redirectFamily == 0x0010 )
+		emit iconServerConnected();
+	
 }
 
 void Client::sendBuddyIcon( const QByteArray& iconData )
