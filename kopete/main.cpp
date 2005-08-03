@@ -25,7 +25,7 @@
 #include "kopeteiface.h"
 #include "kimifaceimpl.h"
 
-#define KOPETE_VERSION "0.10.90 >= 20050522"
+#define KOPETE_VERSION "0.10.91"
 
 static const char description[] =
 	I18N_NOOP( "Kopete, the KDE Instant Messenger" );
