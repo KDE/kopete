@@ -1,8 +1,9 @@
 /*
-   kcodecaction.h
+    kcodecaction.h
 
-    Copyright (c) 2003 by Jason Keirstead        <jason@keirstead.org>
-    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2005      by Tommi Rantala  <tommi.rantala@cs.helsinki.fi>
+    Copyright (c) 2003      by Jason Keirstead        <jason@keirstead.org>
+    Kopete    (c) 2003-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -34,14 +35,13 @@ class KCodecAction : public KSelectAction
 
 		void setCodec( const QTextCodec *codec );
 
+		static QStringList supportedEncodings( bool usAscii = false );
+
 	signals:
 		void activated( const QTextCodec * );
 
 	private slots:
-		void slotActivated( int );
-
-	private:
-		QIntDict<QTextCodec> codecMap;
+		void slotActivated( const QString & );
 };
 
 #endif

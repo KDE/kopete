@@ -1,10 +1,10 @@
 /*
     irceditaccountwidget.cpp - IRC Account Widget
 
-    Copyright (c) 2003 by Olivier Goffart  <ogoffart @ kde.org>
-    Copyright (c) 2003 by Jason Keirstead  <jason@keirstead.org>
-
-    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2005      by Tommi Rantala  <tommi.rantala@cs.helsinki.fi>
+    Copyright (c) 2003      by Olivier Goffart  <ogoffart @ kde.org>
+    Copyright (c) 2003      by Jason Keirstead  <jason@keirstead.org>
+    Kopete    (c) 2003-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -21,6 +21,7 @@
 #include "ircaccount.h"
 #include "ircusercontact.h"
 #include "ircprotocol.h"
+#include "kcodecaction.h"
 
 #include "kircengine.h"
 
@@ -50,6 +51,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 {
 	mProtocol = proto;
 
+	// iso latin 1
 	int currentCodec = 4;
 
 	if( account() )
@@ -97,13 +99,12 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 	mNickName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mNickName ) );
 	mAltNickname->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mAltNickname ) );
 
-	KCharsets *c = KGlobal::charsets();
-	charset->insertStringList( c->availableEncodingNames() );
+	charset->insertStringList( KCodecAction::supportedEncodings() );
 
-	for( int i = 0; i < charset->count(); ++i )
-	{
-		if( c->codecForName( charset->text(i) )->mibEnum() == currentCodec )
-		{
+	for (int i = 0; i < charset->count(); ++i) {
+		QString encoding = KGlobal::charsets()->encodingForName(charset->text(i));
+		
+		if (KGlobal::charsets()->codecForName(encoding)->mibEnum() == currentCodec) {
 			charset->setCurrentItem( i );
 			break;
 		}
