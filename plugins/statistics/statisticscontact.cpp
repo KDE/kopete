@@ -20,6 +20,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
+#include <q3tl.h>
 
 #include "kopetemetacontact.h"
 #include "kopeteonlinestatus.h"
