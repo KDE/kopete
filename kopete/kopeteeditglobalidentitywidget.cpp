@@ -1,7 +1,7 @@
 /*
     kopeteeditglobalidentitywidget.cpp  -  Kopete Edit Global Identity widget
 
-    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
+    Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
