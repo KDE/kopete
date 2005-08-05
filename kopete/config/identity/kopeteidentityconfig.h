@@ -1,7 +1,7 @@
 /*
     kopeteidentityconfig.h  -  Kopete identity config page
 
-    Copyright (c) 2005 by Michaël Larouche <shock@shockdev.ca.tc>
+    Copyright (c) 2005 by MichaÃ«l Larouche <michael.larouche@kdemail.net>
 
     Kopete    (c) 2003-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -31,7 +31,7 @@ class Contact;
 class KopeteIdentityConfigBase;
 
 /**
- * @author Michaël Larouche <shock@shockdev.ca.tc>
+ * @author MichaÃ«l Larouche <shock@shockdev.ca.tc>
  */
 class KopeteIdentityConfig : public KCModule
 {

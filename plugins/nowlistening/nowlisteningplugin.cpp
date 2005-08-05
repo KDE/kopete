@@ -4,7 +4,7 @@
     Kopete Now Listening To plugin
 
     Copyright (c) 2002,2003,2004 by Will Stephenson <will@stevello.free-online.co.uk>
-    Copyright (c) 2005           by Michaël Larouche <shock@shockdev.ca.tc>
+    Copyright (c) 2005           by Michaël Larouche <michael.larouche@kdemail.net>
 
     Kopete    (c) 2002,2003,2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -236,7 +236,7 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 			/*
 				NOTE:
 				MSN status message(personal message) use a special tag to advert the current music playing. 
-				So, we don't send the all formatted string, send a special string seperated by ",".
+				So, we don't send the all formatted string, send a special string seperated by ";".
 			*/
 			if( a->protocol()->pluginId() == "MSNProtocol" )
 			{
@@ -249,7 +249,7 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 						track = i->track();
 						artist = i->artist();
 						album = i->album();
-						mediaList = track + "," + artist + "," + album;
+						mediaList = track + ";" + artist + ";" + album;
 						isPlaying = true;
 					}
 				}

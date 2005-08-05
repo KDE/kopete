@@ -2,7 +2,7 @@
     msnaccount.h - Manages a single MSN account
 
     Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart@ kde.org>
-    Copyright (c) 2005      by Michaêl Larouche       <shock@shockdev.ca.tc>
+    Copyright (c) 2005      by Michaêl Larouche       <michael.larouche@kdemail.net>
 
     Kopete    (c) 2003-2005 by The Kopete developers <kopete-devel@kde.org>
 

@@ -4,7 +4,7 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
-    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
+    Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
     Copyright (c) 2005      by Gregg Edghill          <gregg.edghill@gmail.com>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
@@ -1071,7 +1071,7 @@ void MSNNotifySocket::changePersonalMessage( MSNProtocol::PersonalMessageType ty
 		case MSNProtocol::PersonalMessageMusic:
 		{
 			xmlCurrentMedia = "\\0Music\\01\\0";
-			QStringList mediaList = QStringList::split(",", personalMessage);
+			QStringList mediaList = QStringList::split(";", personalMessage);
 			QString formatterArguments;
 			if( !mediaList[0].isEmpty() ) // Current Track
 			{

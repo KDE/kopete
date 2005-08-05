@@ -26,7 +26,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 
-#include "kopetemessagemanager.h"
+#include "kopetechatsessionmanager.h"
 #include "kopeteview.h"
 
 #include "nowlisteningplugin.h"

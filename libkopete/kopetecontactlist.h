@@ -234,13 +234,16 @@ signals:
 	 *	  -Check the key you want to be sync with global identity.
 	 *    -Update the myself contact and/or update on server.
 	 * </pre>
-	 *
-	 * Example of a typical implemented slot: 
-	 * \code
-	 * {
-	 *	connect(Kopete::ContactList::self(), SIGNAL(globalIdentityChanged(const QString&, const QVariant&)), SLOT(slotglobalIdentityChanged(const QString&, const QVariant&)));
-	 * }
 	 * 
+	 * For now, when photo is changed, it always send the photo file path.
+	 *
+	 * Connect signal in your Account constructor:
+	 * @code
+	 * connect(Kopete::ContactList::self(), SIGNAL(globalIdentityChanged(const QString&, const QVariant&)), SLOT(slotglobalIdentityChanged(const QString&, const QVariant&)));
+	 * @endcode
+	 *
+	 * Example of a typical implemented slot:
+	 * @code
 	 * void slotGlobalIdentityChanged(const QString &key, const QVariant &value)
 	 * {
 	 *	if(key == Kopete::Global::Properties::self()->nickName().key())
@@ -254,7 +257,7 @@ signals:
 	 * 	   this->slotUpdateDisplayPicture();
 	 *	}
 	 * }
-	 * \code
+	 * @endcode
 	 */
 	void globalIdentityChanged( const QString &key, const QVariant &value );
 

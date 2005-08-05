@@ -23,12 +23,9 @@ METASOURCES = AUTO
 SUBDIRS = addcontactwizard contactlist config . chatwindow kconf_update
 
 bin_PROGRAMS = kopete
-kopete_SOURCES = main.cpp \
-	kopeteapplication.cpp kopeteiface.cpp kopeteiface.skel \
-	systemtray.cpp \
-	kopeteballoon.cpp kopetewindow.cpp \
-	kopeteaccountstatusbaricon.cpp \
-	kimifaceimpl.cpp kimiface.skel
+kopete_SOURCES = main.cpp 	kopeteapplication.cpp kopeteiface.cpp \
+	kopeteiface.skel 	systemtray.cpp 	kopeteballoon.cpp kopetewindow.cpp \
+		kopeteaccountstatusbaricon.cpp 	kimifaceimpl.cpp kimiface.skel kopeteeditglobalidentitywidget.cpp
 
 kimiface_DIR = $(kde_includes)
 
@@ -49,4 +46,4 @@ mime_DATA    = x-kopete-emoticons.desktop
 xdg_apps_DATA = kopete.desktop
 
 # vim: set noet:
-noinst_HEADERS =  kimifaceimpl.h
+noinst_HEADERS = kimifaceimpl.h
