@@ -1071,7 +1071,7 @@ void MSNNotifySocket::changePersonalMessage( MSNProtocol::PersonalMessageType ty
 		case MSNProtocol::PersonalMessageMusic:
 		{
 			xmlCurrentMedia = "\\0Music\\01\\0";
-			QStringList mediaList = QStringList::split(",", personalMessage);
+			QStringList mediaList = QStringList::split(";", personalMessage);
 			QString formatterArguments;
 			if( !mediaList[0].isEmpty() ) // Current Track
 			{

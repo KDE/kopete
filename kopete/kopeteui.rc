@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kopete" version="21">
+<kpartgui name="kopete" version="22">
 	<MenuBar>
 		<Menu name="file" noMerge="1">
 			<text>&amp;File</text>
@@ -57,6 +57,10 @@
 		<Action name="quicksearch_reset"/>
 		<Action name="quicksearch_label"/>
 		<Action name="quicksearch_bar"/>
+	</ToolBar>
+	
+	<ToolBar fullWidth="true" name="editGlobalIdentityBar" noMerge="1" hidden="true" newline="true"><Text>Global Identity Bar</Text>
+		<Action name="editglobal_widget"/>
 	</ToolBar>
 
 	<Menu name="contact_popup">

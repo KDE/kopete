@@ -67,6 +67,7 @@
 #include "kopeteuiglobal.h"
 #include "systemtray.h"
 #include "kopeteonlinestatusmanager.h"
+#include "kopeteeditglobalidentitywidget.h"
 
 /* KMainWindow is very broken from our point of view - it deref()'s the app
  * when the last visible KMainWindow is destroyed. But when our main window is 
@@ -254,6 +255,12 @@ void KopeteWindow::initActions()
 	resetQuickSearch->setWhatsThis( i18n( "Reset Quick Search\n"
 		"Resets the quick search so that all contacts and groups are shown again." ) );
 
+	// Edit global identity widget/bar
+	editGlobalIdentityWidget = new KopeteEditGlobalIdentityWidget(this, "editglobalBar");
+	KWidgetAction *editGlobalAction = new KWidgetAction( editGlobalIdentityWidget, i18n("Edit Global Identity Widget"), 0, 0, 0, actionCollection(), "editglobal_widget");
+	editGlobalAction->setAutoSized( true );
+	
+
 	// sync actions, config and prefs-dialog
 	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
 	slotConfigChanged();
@@ -339,6 +346,11 @@ void KopeteWindow::loadOptions()
 
 	toolBar("mainToolBar")->applySettings( config, "ToolBar Settings" );
 	toolBar("quickSearchBar")->applySettings( config, "QuickSearchBar Settings" );
+	toolBar("editGlobalIdentityBar")->applySettings( config, "EditGlobalIdentityBar Settings" );
+
+	// FIXME: HACK: Is there a way to do that automatic ? 
+	editGlobalIdentityWidget->setIconSize(toolBar("editGlobalIdentityBar")->iconSize());
+	connect(toolBar("editGlobalIdentityBar"), SIGNAL(modechange()), editGlobalIdentityWidget, SLOT(iconSizeChanged()));
 
 	applyMainWindowSettings( config, "General Options" );
 	config->setGroup("General Options");
@@ -381,6 +393,7 @@ void KopeteWindow::saveOptions()
 
 	toolBar("mainToolBar")->saveSettings ( config, "ToolBar Settings" );
 	toolBar("quickSearchBar")->saveSettings( config, "QuickSearchBar Settings" );
+	toolBar("editGlobalIdentityBar")->saveSettings( config, "EditGlobalIdentityBar Settings" );
 
 	saveMainWindowSettings( config, "General Options" );
 
@@ -512,8 +525,6 @@ void KopeteWindow::slotSetInvisibleAll(  )
 {
 	Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Invisible  );
 }
-
-
 
 bool KopeteWindow::queryClose()
 {

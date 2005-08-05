@@ -38,6 +38,7 @@ class KopeteAccountStatusBarIcon;
 class KopeteContactListView;
 class KopetePluginConfig;
 class KopeteSystemTray;
+class KopeteEditGlobalIdentityWidget;
 
 namespace Kopete
 {
@@ -188,6 +189,7 @@ public:
 	KToggleAction *actionShowEmptyGroups;
 	KGlobalAccel *globalAccel;
 
+	KopeteEditGlobalIdentityWidget *editGlobalIdentityWidget;
 private:
 	void initView();
 	void initActions();
