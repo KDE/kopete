@@ -20,7 +20,6 @@
 
 // QT Includes
 #include <qobject.h>
-#include <kextendedsocket.h>
 #include <qstring.h>
 #include <qfile.h>
 #include <qmap.h>
@@ -31,11 +30,14 @@
 #include "libyahoo2/yahoo2_callbacks.h"
 
 // KDE Includes
+#include <kstreamsocket.h>
+#include <ksocketdevice.h>
+
+using namespace KNetwork;
 
 class YahooSession;
 class YahooBuddyIconLoader;
 struct YahooUserInfo;
-class KExtendedSocket;
 class QSocketNotifier;
 class KTempFile;
 struct KURL;
@@ -52,7 +54,7 @@ struct YahooBuddyIconUploadData
 {
 	QString url;
 	int size;
-	int transmitted;
+	uint transmitted;
 	QFile file;
 };
 
@@ -68,18 +70,18 @@ public:
 	 * from the connection manager and a new connection of that type is expected
 	 * to be created.
 	 */
-	void addConnection( KExtendedSocket* socket );
+	void addConnection( KStreamSocket* socket );
 	
 	/**
 	 * Get the connection by its file descriptor
 	 */
-	KExtendedSocket* connectionForFD( int fd );
+	KStreamSocket* connectionForFD( int fd );
 	
 	/**
 	 * Remove a connection from the manager
 	 * @overload
 	 */
-	void remove( KExtendedSocket* socket );
+	void remove( KStreamSocket* socket );
 	
 	/**
 	 * Reset the connection manager.
@@ -87,8 +89,7 @@ public:
 	void reset();
 	
 private:
-	
-	QValueList<KExtendedSocket*> m_connectionList;
+	QValueList<KStreamSocket*> m_connectionList;
 };
 	
 	
@@ -318,6 +319,8 @@ signals:
 private slots:
 
 	void slotLoginResponseReceiver( int succ, char *url);
+	void slotAsyncConnectFailed( int error );
+	void slotAsyncConnectSucceeded();
 	void slotReadReady();
 	void slotWriteReady();
 	void slotUserInfoResult( KIO::Job* );
@@ -332,7 +335,9 @@ private:
 
 	void addHandler(int fd, yahoo_input_condition cond);
 	void removeHandler(int fd);
-
+	
+	struct connect_callback_data *m_ccd;
+	
 	YahooConnectionManager m_connManager;
 	void *m_data;
 	
