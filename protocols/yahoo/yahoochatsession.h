@@ -1,7 +1,7 @@
 /*
     yahoochatsession.h - Yahoo! Message Manager
 
-    Copyright (c) 2005 by André Duffeck        <andre@duffeck.de>
+    Copyright (c) 2005 by Andre Duffeck        <andre@duffeck.de>
 
     *************************************************************************
     *                                                                       *
@@ -25,7 +25,7 @@ class QLabel;
 
 
 /**
- * @author André Duffeck
+ * @author Andre Duffeck
  */
 class KOPETE_EXPORT YahooChatSession : public Kopete::ChatSession
 {
