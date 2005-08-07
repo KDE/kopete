@@ -382,8 +382,8 @@ QString NowListeningPlugin::substDepthFirst( NLMediaPlayer *player,
 	// were in brackets and if we were, if a substitution was made.
 	if ( inBrackets && !done )
 		return "";
-	else
-		return in;
+
+	return in;
 }
 
 void NowListeningPlugin::advertiseToChat( Kopete::ChatSession *theChat, QString message )
