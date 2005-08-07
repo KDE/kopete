@@ -28,7 +28,7 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kstringhandler.h>
-#include <kcodecs.h>
+#include <kmdcodec.h>
 
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"

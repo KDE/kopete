@@ -20,7 +20,7 @@
 #include <klocale.h>
 #include <kpopupmenu.h>
 #include <kmessagebox.h>
-#include <kcodecs.h>
+#include <kmdcodec.h>
 
 #include "kopeteawayaction.h"
 #include "kopetepassword.h"

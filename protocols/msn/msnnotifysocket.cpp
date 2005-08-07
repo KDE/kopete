@@ -34,7 +34,7 @@
 #include <kdebug.h>
 #include <kdeversion.h>
 #include <klocale.h>
-#include <kcodecs.h>
+#include <kmdcodec.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <ktempfile.h>

@@ -26,7 +26,7 @@
 #include <kstandarddirs.h>
 #include <kprocess.h>
 #include <ktempfile.h>
-#include <kcodecs.h>
+#include <kmdcodec.h>
 #include <kmessagebox.h>
 
 #include "kopetechatsessionmanager.h"

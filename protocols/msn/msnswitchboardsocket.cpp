@@ -39,7 +39,7 @@
 #include <kaboutdata.h>
 #include <ktempfile.h>
 #include <kconfig.h>
-#include <kcodecs.h>
+#include <kmdcodec.h>
 
 // for the display picture
 #include "msnp2pdisplatcher.h"

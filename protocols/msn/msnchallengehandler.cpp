@@ -22,7 +22,7 @@
 #include <qdatastream.h>
 
 #include <kdebug.h>
-#include <kcodecs.h>
+#include <kmdcodec.h>
 
 MSNChallengeHandler::MSNChallengeHandler(const QString& productKey, const QString& productId)
 {
