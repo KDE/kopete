@@ -44,6 +44,11 @@ NowListeningGUIClient::NowListeningGUIClient( Kopete::ChatSession *parent )
 void NowListeningGUIClient::slotAdvertToCurrentChat()
 {
 	kdDebug( 14307 ) << k_funcinfo << endl;
+
+	// Sanity check - don't crash if the plugin is unloaded and we get called.
+	if (!NowListeningPlugin::plugin())
+		return;
+
 	QString message = NowListeningPlugin::plugin()->allPlayerAdvert();
 
 	// We warn in a mode appropriate to the mode the user invoked the plugin - GUI on menu action, in message if they typed '/media'
