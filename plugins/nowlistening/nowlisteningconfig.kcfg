@@ -36,5 +36,14 @@
 			<label>Show the current music listened in your status message.</label>
 			<default>false</default>
 		</entry>
+	
+		<entry name="UseSpecifiedMediaPlayer" type="Bool">
+			<label>Use the specified media player.</label>
+			<default>false</default>
+		</entry>
+		
+		<entry name="SelectedMediaPlayer" type="Int">
+			<label>Selected Media Player for source of listening advertising.</label>
+		</entry>
 	</group>
 </kcfg>

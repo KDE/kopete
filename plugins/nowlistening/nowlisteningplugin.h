@@ -4,8 +4,9 @@
     Kopete Now Listening To plugin
 
     Copyright (c) 2002,2003,2004 by Will Stephenson <will@stevello.free-online.co.uk>
+    Copyright (c) 2005           by Michaël Larouche <michael.larouche@kdemail.net>
 
-    Kopete    (c) 2002,2003,2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005      by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -26,16 +27,12 @@
 
 namespace Kopete { class ChatSession; class Message; }
 
-class QTimer;
-class DCOPClient;
-class KActionCOllection;
-class KToggleAction;
-class NowListeningConfig;
 class NLMediaPlayer;
 class QStringList;
 
 /**
  * @author Will Stephenson
+ * @author Michaël Larouche
  */
 class NowListeningPlugin : public Kopete::Plugin
 {
@@ -55,13 +52,16 @@ friend class NowListeningGUIClient;
 
 	protected:
 		/**
-		 * Constructs a string containing the track information for all
-		 * players.
+		 * Constructs a string containing the track information.
 		 * @param update Whether the players must update their data. It can be
 		 *               useful to set it to false if one already has called
 		 *               update somewhere else, for instance in newTrackPlaying().
 		 */
-		QString allPlayerAdvert(bool update = true) const;
+		QString mediaPlayerAdvert(bool update = true) const;
+		/**
+		 * @internal Build the message for @ref mediaPlayerAdvert
+		 */
+		QString buildTrackMessage( NLMediaPlayer *player, bool update) const;
 		/**
 		 * @return true if one of the players has changed track since the last message.
 		 */
@@ -77,7 +77,10 @@ friend class NowListeningGUIClient;
 		 * Sends a message to a single chat
 		 */
 		void advertiseToChat( Kopete::ChatSession* theChat, QString message );
-
+		/**
+		 * Update the currentMedia pointer on config change.
+		 */
+		void updateCurrentMediaPlayer();
 	protected slots:
 		/**
 		 * Reacts to a new chat starting and adds actions to its GUI
@@ -90,22 +93,8 @@ friend class NowListeningGUIClient;
 		void slotSettingsChanged();
 
 	private:
-		// abstracted media player interfaces
-		QPtrList<NLMediaPlayer> *m_mediaPlayer;
-		// Needed for DCOP interprocess communication
-		DCOPClient *m_client;
-		// Support GUI actions
-		KActionCollection *m_actionCollection;
-		Kopete::ChatSession *m_currentChatSession;
-		KToggleAction *m_actionWantsAdvert;
-		Kopete::MetaContact *m_currentMetaContact;
-
-		// Used when using automatic advertising to know who has already gotten
-		// the music information
-		QStringList *m_musicSentTo;
-
-		// Used when advertising to status message.
-		QTimer *advertTimer;
+		class Private;
+		Private *d;
 
 		static NowListeningPlugin* pluginStatic_;
 };
