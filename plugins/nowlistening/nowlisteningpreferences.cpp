@@ -6,7 +6,7 @@
     Copyright (c) 2002,2003,2004 by Will Stephenson <will@stevello.free-online.co.uk>
     Copyright (c) 2005           by Michaël Larouche <michael.larouche@kdemail.net>
 
-    Kopete    (c) 2002,2003,2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005      by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -22,9 +22,11 @@
 #include <qlayout.h>
 #include <qradiobutton.h>
 
+#include <klistbox.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
 
+#include "config.h" // for HAVE_XMMS
 #include "nowlisteningprefs.h"
 #include "nowlisteningconfig.h"
 #include "nowlisteningpreferences.h"
@@ -42,6 +44,15 @@ NowListeningPreferences::NowListeningPreferences(QWidget *parent, const char* /*
 
 	addConfig( NowListeningConfig::self(), preferencesDialog );
 
+	// Fill the media player listbox.
+	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Kscd"));
+	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Noatun"));
+	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Juk"));
+	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("amaroK"));
+	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Kaffeine"));
+#if defined Q_WS_X11 && !defined K_WS_QTONLY && HAVE_XMMS
+	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("XMMS"));
+#endif
 	load();
 }
 

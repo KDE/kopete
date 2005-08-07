@@ -3,7 +3,7 @@
 
     Kopete Now Listening To plugin
 
-	Copyright (c) 2005           by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
+    Copyright (c) 2005           by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
     Copyright (c) 2002,2003,2004 by Will Stephenson <will@stevello.free-online.co.uk>
 
     Kopete    (c) 2002-2005      by the Kopete developers  <kopete-devel@kde.org>
@@ -47,7 +47,7 @@ void NowListeningGUIClient::slotAdvertToCurrentChat()
 	if (!NowListeningPlugin::plugin())
 		return;
 
-	QString message = NowListeningPlugin::plugin()->allPlayerAdvert();
+	QString message = NowListeningPlugin::plugin()->mediaPlayerAdvert();
 
 	// We warn in a mode appropriate to the mode the user invoked the
 	// plugin - GUI on menu action, in message if they typed '/media'
