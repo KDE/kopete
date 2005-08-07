@@ -130,7 +130,7 @@ NowListeningPlugin::~NowListeningPlugin()
 
 void NowListeningPlugin::slotNewKMM(Kopete::ChatSession *KMM)
 {
-	new NowListeningGUIClient( KMM );
+	new NowListeningGUIClient( KMM, this );
 }
 
 NowListeningPlugin* NowListeningPlugin::plugin()
