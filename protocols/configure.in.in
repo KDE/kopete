@@ -75,7 +75,7 @@ if test "x$with_external_libgadu" != xno; then
 	CFLAGS="$ac_save_CFLAGS"
 
 	if test "x$with_external_libgadu" != xcheck && test -z "$COMPILE_GADU"; then
-		AC_MSG_FAILURE([--with-external-libgadu was given, but test for libgadu failed])
+		AC_MSG_ERROR([--with-external-libgadu was given, but test for libgadu failed])
 	fi
 fi
 

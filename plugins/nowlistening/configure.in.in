@@ -50,7 +50,7 @@ if test "x$with_xmms" != xno; then
   AC_CHECK_XMMS
 
   if test "x$with_xmms" != xcheck && test "x$ac_cv_have_xmms" = xno; then
-    AC_MSG_FAILURE([--with-xmms was given, but test for XMMS failed])
+    AC_MSG_ERROR([--with-xmms was given, but test for XMMS failed])
   fi
 fi
 
