@@ -53,6 +53,7 @@
 #include <kio/jobclasses.h>
 //#include <kimageio.h>
 #include <kstandarddirs.h>
+#include <kfiledialog.h>
 
 YahooContact::YahooContact( YahooAccount *account, const QString &userId, const QString &fullName, Kopete::MetaContact *metaContact )
 	: Kopete::Contact( account, userId, metaContact )
@@ -68,7 +69,8 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 	// Update ContactList
 	setNickName( fullName );
 	setOnlineStatus( static_cast<YahooProtocol*>( m_account->protocol() )->Offline );
-
+	setFileCapable( true );
+	
 	if ( m_account->haveContactList() )
 		syncToServer();
 	
@@ -249,6 +251,25 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 	// append message to window
 	manager(Kopete::Contact::CanCreate)->appendMessage(message);
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();
+}
+
+void YahooContact::sendFile( const KURL &sourceURL, const QString &/*fileName*/, uint fileSize )
+{
+	QString file;
+	if( sourceURL.isValid() )
+		file = sourceURL.path();
+	else
+	{
+		file = KFileDialog::getOpenFileName( QString::null, "*", 0, i18n("Kopete File Transfer") );
+		if( !file.isEmpty() )
+		{
+			fileSize = QFile( file ).size();
+		}
+		else
+			return;
+	}
+	
+	m_account->yahooSession()->sendFile( m_userId, QString(), file, fileSize );
 }
 
 void YahooContact::slotTyping(bool isTyping_ )
