@@ -57,14 +57,14 @@ public:
 		NonFatalProtocolError = 2,
 		FatalProtocolError = 3
 	};
-			
+
 	/*************
-	  EXTERNAL API 
+	  EXTERNAL API
 	 *************/
 
 	Client(QObject *parent=0);
 	~Client();
-	
+
 	/**
 	 * Get the settings object for this client instance
 	 */
@@ -84,18 +84,18 @@ public:
 	 * @param host - probably could obtain this back from the connector - used for outgoing tasks to determine destination
 	 * @param user The user name to log in as.
 	 * @param pass The password to use when logging in
-	 */ 
+	 */
 	void start( const QString &host, const uint port, const QString &userId, const QString &pass );
 
 	/** Logout and disconnect */
 	void close();
 
-	enum AIMStatus { Online = 0, Away };	
+	enum AIMStatus { Online = 0, Away };
 	/** Set our status for AIM */
 	void setStatus( AIMStatus status, const QString &message = QString::null );
 	/** Set our status for ICQ */
  	void setStatus( DWORD status, const QString &message = QString::null );
-	
+
 	/** Retrieve our user info */
 	UserDetails ourInfo() const;
 
@@ -105,62 +105,62 @@ public:
 	 * \return true if the group removal was successful
 	 */
 	void removeGroup( const QString& groupName );
-	
+
 	/**
 	 * Add a group from the contact list
 	 * \param groupName the name of the group to add
 	 * \return true if the group addition was successful
 	 */
 	void addGroup( const QString& groupName );
-	
+
 	/**
 	 * Add a contact to the contact list
 	 * \param contactName the screen name of the new contact to add
 	 * \return true if the contact addition was successful
 	 */
 	void addContact( const QString& contactName, const QString& groupName );
-	
+
 	/**
 	 * Remove a contact from the contact list
 	 * \param contactName the screen name of the contact to remove
 	 * \return true if the contact removal was successful
 	 */
 	void removeContact( const QString &contactName );
-	
+
 	/**
 	 * Rename a group on the contact list
 	 * \param oldGroupName the old group name
 	 * \param newGroupName the new group name
 	 */
 	void renameGroup( const QString& oldGroupName, const QString& newGroupName );
-	
+
 	/**
 	 * Modify an SSI item on the SSI list
 	 * \param item the item to send to the server
 	 */
 	void modifySSIItem( const Oscar::SSI& oldItem, const Oscar::SSI& newItem );
-	
+
 	/**
 	 * Change a contact's group on the server
 	 * \param contact the contact to change
 	 * \param newGroup the new group to move the contact to
 	 */
 	void changeContactGroup( const QString& contact, const QString& newGroupName );
-	
-	/** 
+
+	/**
 	 * Send a message to a contact
 	 * \param msg the message to be sent
 	 * \param auto the message is an autoresponse message, default to false
 	 */
 	void sendMessage( const Oscar::Message& msg, bool isAuto = false );
-	
+
 	/**
 	 * Request authorization from a contact
 	 * \param contactid the id of the contact to request auth from
 	 * \param reason the reason for this authorization request
 	 */
 	void requestAuth( const QString& contactid, const QString& reason );
-	
+
 	/**
 	 * Grant or decline authorization to a contact
 	 * \param contactid the id of the contact to grant/decline authorization
@@ -168,86 +168,86 @@ public:
 	 * \param auth grant or decline authorization
 	 */
 	void sendAuth( const QString& contactid, const QString& reason, bool auth=true );
-	
+
 	/**
 	 * Request full user info from an ICQ contact
 	 * \param contactId the UIN of the contact to get info for
 	 */
 	void requestFullInfo( const QString& contactId );
-	
+
 	/**
 	 * Request short info for an ICQ contact
 	 * \param contactId the UIN of the contact to get info for
 	 */
 	void requestShortInfo( const QString& contactId );
-	
+
 	/**
 	 * Send a warning to the OSCAR servers about a contact
 	 * \param contact the contact to send the warning to
 	 * \param anon indicate whether to do it anonymously
 	 */
 	void sendWarning( const QString& contact, bool anonymous );
-	
+
 	/**
 	 * Get the general ICQ info for a client
 	 * \param contact the contact to get info for
 	 */
 	ICQGeneralUserInfo getGeneralInfo( const QString& contact );
-	
+
 	/**
 	 * Get the work info for a contact
 	 * \param contact the contact to get info for
 	 */
 	ICQWorkUserInfo getWorkInfo( const QString& contact );
-	
+
 	/**
 	 * Get the email info for a contact
 	 * \param contact the contact to get info for
 	 */
 	ICQEmailInfo getEmailInfo( const QString& contact );
-	
+
 	/**
 	 * Get the additional info available for a contact
 	 * \param contact the contact to get info for
 	 */
 	ICQMoreUserInfo getMoreInfo( const QString& contact );
-	
+
 	/**
 	 * Get the short info available for an icq contact
 	 * \param contact the contact to get info for
 	 */
 	ICQShortInfo getShortInfo( const QString& contact );
-	
+
 	/**
 	 * Request the aim profile
 	 * \param contact the contact to get info for
 	 */
 	void requestAIMProfile( const QString& contact );
-	
+
 	/**
 	 * Request the aim away message
 	 * \param contact the contact to get info for
 	 */
 	void requestAIMAwayMessage( const QString& contact );
-	
+
 	/** Request the extended status info */
 	void requestStatusInfo( const QString& contact );
-	
+
 	//! Run a whitepages search
 	void whitePagesSearch( const ICQWPSearchInfo& info );
-	
+
 	//! Run a UIN search
 	void uinSearch( const QString& uin );
-	
+
 	//! Update the user's AIM profile
 	void updateProfile( const QString& profile );
-	
+
 	//! Get buddy icon information for a person
 	void requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE hashType );
 
 	//! Start a server redirect for a different service
 	void requestServerRedirect( WORD family );
-	
+
 	//! Start uploading a buddy icon
 	void sendBuddyIcon( const QByteArray& imageData );
 
@@ -257,15 +257,15 @@ public:
 
 	/** Send a typing notification */
 	void sendTyping( const QString & contact, bool typing );
-	
+
 	/** Make a connection to the icon server */
 	void connectToIconServer();
-	
+
 	bool hasIconConnection() const;
-	
+
 
 	/*************
-	  INTERNAL (FOR USE BY TASKS OR CONNECTIONS) METHODS 
+	  INTERNAL (FOR USE BY TASKS OR CONNECTIONS) METHODS
 	 *************/
 	/**
 	 * Print a debug statement
@@ -277,7 +277,7 @@ public:
 
 	/** Accessor for the SSI Manager */
 	SSIManager* ssiManager() const;
-	
+
 	/** The current user's user ID */
 	QString userId() const;
 
@@ -287,16 +287,16 @@ public:
 	/** ICQ Settings */
 	bool isIcq() const;
 	void setIsIcq( bool isIcq );
-	
+
 	/** Host's IP address */
 	QCString ipAddress() const;
-	
+
 	/** Notify that a task error was received */
 	void notifyTaskError( const Oscar::SNAC& s, int errCode, bool fatal );
-	
+
 	/** Notify that a socket error has occured */
 	void notifySocketError( int errCode, const QString& msg );
-	
+
 signals:
 	/** CONNECTION EVENTS */
 
@@ -314,49 +314,49 @@ signals:
 
 	/** We have our own user info */
 	void haveOwnInfo();
-	
+
 	/** We have our SSI list */
 	void haveSSIList();
-	
+
 	/** a user is online. */
 	void userIsOnline( const QString& );
-	
+
 	/** a user is offline. */
 	void userIsOffline( const QString& );
-	
+
 	/** we've received a message */
 	void messageReceived( const Oscar::Message& );
-	
+
 	/** we've received an authorization request */
 	void authRequestReceived( const QString& contact, const QString& reason );
-	
+
 	/** we've received an authorization reply */
 	void authReplyReceived( const QString& contact, const QString& reason, bool auth );
-	
-	/** 
+
+	/**
 	 * we've received an error from a task and need to notify somebody
 	 */
 	void taskError( const Oscar::SNAC& s, int errCode, bool fatal );
-	
+
 	/**
 	 * we've received a socket error and need to notify somebody
 	 */
 	void socketError( int errCode, const QString& msg );
-	
+
 	void receivedIcqShortInfo( const QString& contact );
 	void receivedIcqLongInfo( const QString& contact );
-	
+
 	void receivedProfile( const QString& contact, const QString& profile );
 	void receivedAwayMessage( const QString& contact, const QString& message );
 	void receivedUserInfo( const QString& contact, const UserDetails& details );
-	
+
 	/** We warned a user */
 	void userWarned( const QString& contact, Q_UINT16 increase, Q_UINT16 newLevel );
-	
+
 	/** Search signals */
 	void gotSearchResults( const ICQSearchResult& );
 	void endOfSearch( int);
-	
+
 	/* Typing signals */
 	void userStartedTyping( const QString& contact );
 	void userStoppedTyping( const QString& contact );
@@ -365,7 +365,13 @@ signals:
 	void haveIconForContact( const QString&, QByteArray iconData );
 	void iconServerConnected();
 	void iconNeedsUploading();
-	
+
+	/* Chat rooms */
+	void chatNavigationConnected();
+
+	/* service redirection */
+	void redirectionFinished( WORD );
+
 
 protected slots:
 	// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
@@ -385,32 +391,36 @@ protected slots:
 
 	/** We have our own user info */
 	void haveOwnUserInfo();
-	
+
 	/** Service setup finished */
 	void serviceSetupFinished();
-	
+
 	/** we have icq info for a contact */
 	void receivedIcqInfo( const QString& contact, unsigned int type );
-	
+
 	/** we have normal user info for a contact */
 	void receivedInfo( Q_UINT16 sequence );
-	
-	void offlineUser( const QString&, const UserDetails& );
-	
-	void haveServerForRedirect( const QString& host, const QByteArray& cookie, WORD family );
 
+	void offlineUser( const QString&, const UserDetails& );
+
+	void haveServerForRedirect( const QString& host, const QByteArray& cookie, WORD family );
 	void serverRedirectFinished();
+	void checkRedirectionQueue( WORD );
+
+	void requestChatNavLimits();
+
+
 
 private:
-	
+
 	/** Initialize some static tasks */
 	void initializeStaticTasks();
-	
+
 	/** Delete the static tasks */
 	void deleteStaticTasks();
 
 	Connection* createConnection( const QString& host, const QString& port );
-	
+
 private:
 	class ClientPrivate;
 	ClientPrivate* d;

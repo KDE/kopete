@@ -20,6 +20,9 @@
 
 #include "transfer.h"
 #include "buffer.h"
+#include "connection.h"
+#include "oscartypes.h"
+
 
 
 ChatNavServiceTask::ChatNavServiceTask( Task* parent ) : Task( parent )
@@ -48,9 +51,9 @@ bool ChatNavServiceTask::forMe( const Transfer* transfer ) const
 	const SnacTransfer* st = dynamic_cast<const SnacTransfer*>( transfer );
 	if ( !st )
 		return false;
-	if ( st->snacService() == 0x0004 && st->snacSubtype() == 0x0009 )
+	if ( st->snacService() == 0x000D && st->snacSubtype() == 0x0009 )
 		return true;
-	
+
 	return false;
 }
 
@@ -61,34 +64,42 @@ bool ChatNavServiceTask::take( Transfer* transfer )
 
 	setTransfer( transfer );
 	Buffer* b = transfer->buffer();
-	TLV t = b->getTLV();
-	switch ( t.type )
-	{
-	case 0x0001:
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got chat redirect TLV" << endl;
-		break;
-	case 0x0002:
-	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got max concurrent rooms TLV" << endl;
-		Buffer tlvTwo(t.data);
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "max concurrent rooms is " << tlvTwo.getByte() << endl;
-		break;
-	}
-	case 0x0003:
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "exchange info TLV found" << endl;
-		break;
-	case 0x0004:
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "room info TLV found" << endl;
-		break;
-	};
-	
+    while ( b->length() > 0 )
+    {
+        TLV t = b->getTLV();
+        switch ( t.type )
+        {
+        case 0x0001:
+            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got chat redirect TLV" << endl;
+            break;
+        case 0x0002:
+        {
+            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got max concurrent rooms TLV" << endl;
+            Buffer tlvTwo(t.data);
+            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "max concurrent rooms is " << tlvTwo.getByte() << endl;
+            break;
+        }
+        case 0x0003:
+            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "exchange info TLV found" << endl;
+            break;
+        case 0x0004:
+            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "room info TLV found" << endl;
+            break;
+        };
+    }
+    setSuccess( 0, QString::null );
 	return true;
-	
+
 }
 
 void ChatNavServiceTask::onGo()
 {
+    FLAP f =  { 0x02, client()->flapSequence(), 0x00 };
+    SNAC s = { 0x000D, m_type, 0x0000, client()->snacSequence() };
+    Buffer* b = new Buffer();
 
+    Transfer* t = createTransfer( f, s, b );
+    send( t );
 }
 
 void ChatNavServiceTask::handleExchangeInfo( const TLV& t )

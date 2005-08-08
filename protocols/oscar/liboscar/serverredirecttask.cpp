@@ -60,7 +60,9 @@ bool ServerRedirectTask::take( Transfer* transfer )
 		return false;
 
 	setTransfer( transfer );
-	return handleRedirect();
+    bool value = handleRedirect();
+    setSuccess( 0, QString::null );
+	return value;
 }
 
 void ServerRedirectTask::requestNewService()
@@ -85,13 +87,17 @@ bool ServerRedirectTask::handleRedirect()
 	WORD typeDLen = b->getWord();
 	if ( typeD == 0x000D && typeDLen == 0x0002)
 	{
-		if ( b->getWord() != m_service )
+        WORD realService = b->getWord();
+		if ( realService != m_service )
 		{
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "wrong service for this task" << endl;
+			kdDebug(OSCAR_RAW_DEBUG ) << k_funcinfo << "should be " << m_service << " is "
+			                          << realService << endl;
 			return false;
 		}
 	}
-	else return false;
+	else
+		return false;
 
 	TLV server = b->getTLV();
 	m_newHost = QString( server.data );
@@ -101,12 +107,12 @@ bool ServerRedirectTask::handleRedirect()
 		return false;
 
 	TLV cookie = b->getTLV();
-	
+
 	if ( cookie.length == 0 || cookie.data.isEmpty() )
 		return false;
 	else
 		m_cookie = cookie.data;
-	
+
 	emit haveServer( m_newHost, m_cookie, m_service );
 	return true;
 }
