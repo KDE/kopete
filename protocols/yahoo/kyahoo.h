@@ -50,9 +50,8 @@ class Transfer;
 class Contact;
 }
 
-struct YahooBuddyIconUploadData
+struct YahooUploadData
 {
-	QString url;
 	int size;
 	uint transmitted;
 	QFile file;
@@ -219,8 +218,8 @@ public:
 	void _gotBuddyIconReceiver( int id, char *who, char *url, int checksum );
 	void _gotBuddyIconChecksumReceiver( int id, char *who, int checksum );
 	void _gotBuddyIconRequestReceiver( int id, char *who );
-	void _uploadBuddyIconReceiver( int id, int fd, int error, void *data );
 	void _gotBuddyIconUploadResponseReceiver( int id, const char *url);
+	void _uploadFileReceiver( int id, int fd, int error, void *data );
 	
 	//webcam callback receivers
 	void _gotWebcamInvite( const char* who );
@@ -327,7 +326,7 @@ private slots:
 	void slotUserInfoData( KIO::Job*, const QByteArray & );
 	void slotUserInfoSaved( KIO::Job* );
     void slotBuddyIconFetched(const QString &who, KTempFile *file, int checksum);
-	void slotTransmitBuddyIcon( int fd, YahooBuddyIconUploadData *uploadData );
+	void slotTransmitFile( int fd, YahooUploadData *uploadData );
 	
 private:
 	/* Private constructor */

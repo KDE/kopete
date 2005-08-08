@@ -69,7 +69,7 @@ int conn_type = 1;
 extern "C" {
 	void receive_file_callback( int id, int fd, int error,
 	                            const char *filename, unsigned long size, void *data );
-	void upload_buddyIcon_callback( int id, int fd, int error, void *data );
+	void upload_file_callback( int id, int fd, int error, void *data );
 }
 
 struct connect_callback_data
@@ -378,14 +378,12 @@ void YahooSession::sendBuddyIconUpdate( const QString &who, int type )
 void YahooSession::uploadBuddyIcon( const QString &url, int size )
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	YahooBuddyIconUploadData *uploadData = new YahooBuddyIconUploadData();
-	uploadData->url = url;
+	YahooUploadData *uploadData = new YahooUploadData();
 	uploadData->size = size;
 	uploadData->transmitted = 0;
 	uploadData->file.setName( url );
 	
-	yahoo_send_picture( m_connId, url.local8Bit(), size, upload_buddyIcon_callback, reinterpret_cast< void*>( uploadData ) );
-
+	yahoo_send_picture( m_connId, url.local8Bit(), size, upload_file_callback, reinterpret_cast< void*>( uploadData ) );
 }
 
 void YahooSession::changeBuddyGroup( const QString &who, const QString &old_group, const QString &new_group)
@@ -510,16 +508,18 @@ void YahooSession::conferenceLogoff( const QString &from, const QStringList &who
 	y_list_free( tmplist );
 }
 
-int YahooSession::sendFile( const QString& /*who*/, const QString& /*msg*/,
-               const QString& /*name*/, long /*size*/ )
+int YahooSession::sendFile( const QString& who, const QString& msg,
+               const QString& name, long size )
 {	
-	// FIXME 0,0 is the callback and void *data
-	// void (*yahoo_get_fd_callback)(int id, int fd, int error, void *data);
+	kdDebug(14181) << k_funcinfo << "Offering file " << name << " (" << size << ") to " << who << endl;
+	YahooUploadData *upload = new YahooUploadData();
+	upload->size = size;
+	upload->transmitted = 0;
+	upload->file.setName( name );
 	
-	//return yahoo_send_file(m_connId, who.local8Bit(), msg.local8Bit(),
-	//                               name.local8Bit(), size, file_send_callback ,0);
+	yahoo_send_file( m_connId, who.local8Bit(), msg.local8Bit(), name.local8Bit(), size, upload_file_callback, upload );
+	
 	return 0;
-	
 }
 
 
@@ -1015,11 +1015,12 @@ void receive_file_callback( int id, int fd, int error,
 		session->_receiveFileProceed( id, fd, error, (char*)filename, size, (char*)data );
 }
 
-void upload_buddyIcon_callback( int id, int fd, int error, void *data )
+void upload_file_callback( int id, int fd, int error, void *data )
 {
+	
 	YahooSession *session = YahooSessionManager::manager()->session( id );
 	if ( session )
-		session->_uploadBuddyIconReceiver( id, fd, error, (char*)data );
+		session->_uploadFileReceiver( id, fd, error, data );
 }
 /* End of extern C */
 }
@@ -1031,30 +1032,30 @@ void upload_buddyIcon_callback( int id, int fd, int error, void *data )
     *************************************************************************
 */
 
-void YahooSession::_uploadBuddyIconReceiver( int /*id*/, int fd, int error, void *data )
+void YahooSession::_uploadFileReceiver( int /*id*/, int fd, int error, void *data )
 {
-	YahooBuddyIconUploadData *uploadData = reinterpret_cast< YahooBuddyIconUploadData *>( data );
-	kdDebug(14181) << k_funcinfo << "Url: " << uploadData->url << " Size: " << uploadData->size << endl;
+	YahooUploadData *uploadData = reinterpret_cast< YahooUploadData *>( data );
+	kdDebug(14181) << k_funcinfo << "Url: " << uploadData->file.name() << " Size: " << uploadData->size << endl;
 
 	if ( error )
 	{
-		kdDebug(14180) << "Could not upload buddy icon. Error: " << error << endl;
-		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n( "An unknown error occurred when trying to upload the buddy icon."
-			" Your buddy con was not transferred." ), i18n("Error") );
+		kdDebug(14180) << "Could not upload file " << uploadData->file.name() << ". Error: " << error << endl;
+		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n( "An unknown error occurred when trying to upload the file."
+			" The file was not transferred." ), i18n("Error") );
 		return;
 	}
 	
 	if ( !uploadData->file.open(IO_ReadOnly) )
 	{
-		kdDebug(14180) << "Could not open local buddy icon file." << endl;
-		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n( "Could not open local buddy icon file!" ), i18n("Error") );
+		kdDebug(14180) << "Could not open local file." << endl;
+		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n( "Could not open local file!" ), i18n("Error") );
 		return;
 	}
 	
-	slotTransmitBuddyIcon( fd, uploadData );
+	slotTransmitFile( fd, uploadData );
 }
 
-void YahooSession::slotTransmitBuddyIcon( int fd, YahooBuddyIconUploadData *uploadData )
+void YahooSession::slotTransmitFile( int fd, YahooUploadData *uploadData )
 {
 	KStreamSocket* socket = m_connManager.connectionForFD( fd );
 	if( !socket )
@@ -1062,7 +1063,7 @@ void YahooSession::slotTransmitBuddyIcon( int fd, YahooBuddyIconUploadData *uplo
 	
 	if( uploadData->transmitted >= uploadData->file.size() )
 	{
-		kdDebug(14181) << k_funcinfo << "Buddy icon successfully uploaded." << endl;
+		kdDebug(14181) << k_funcinfo << "File successfully uploaded." << endl;
 		uploadData->file.close();
 		delete uploadData;
 		m_connManager.remove( socket );
@@ -1072,11 +1073,11 @@ void YahooSession::slotTransmitBuddyIcon( int fd, YahooBuddyIconUploadData *uplo
 	
 	uint written;
 	uint read;
-	char buf[512];
+	char buf[2048];
 	
 	socket->setBlocking( true );
 	
-	read = uploadData->file.readBlock( buf, 512 );
+	read = uploadData->file.readBlock( buf, 2048 );
 	
 	written = socket->writeBlock( buf, read );
 	
@@ -1084,13 +1085,13 @@ void YahooSession::slotTransmitBuddyIcon( int fd, YahooBuddyIconUploadData *uplo
 	
 	if( written != read )
 	{
-		kdDebug(14181) << k_funcinfo << "An error occured while sending the buddy icon: " << socket->error() << " transmitted: " << uploadData->transmitted << endl;
+		kdDebug(14181) << k_funcinfo << "An error occured while sending the file: " << socket->error() << " transmitted: " << uploadData->transmitted << endl;
 		uploadData->file.close();
 		delete uploadData;
 		m_connManager.remove( socket );
 	}
 	else
-		slotTransmitBuddyIcon( fd, uploadData );
+		slotTransmitFile( fd, uploadData );
 }
 
 void YahooSession::_gotBuddyIconUploadResponseReceiver( int /*id*/, const char *url)
