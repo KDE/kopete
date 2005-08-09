@@ -5,9 +5,10 @@
 /*
     ksslsocket.h - KDE SSL Socket
 
+    Copyright (c) 2005      by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
     Copyright (c) 2004      by Jason Keirstead <jason@keirstead.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -42,6 +43,8 @@ class KSSLSocket : public KExtendedSocket
 
 	signals:
 		void sslFailure();
+		void certificateAccepted();
+		void certificateRejected();
 
 	private slots:
 		void slotConnected();
