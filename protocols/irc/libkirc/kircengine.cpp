@@ -1,10 +1,11 @@
 /*
     kirc.cpp - IRC Client
 
+    Copyright (c) 2005      by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
     Copyright (c) 2003-2004 by Michel Hermier <michel.hermier@wanadoo.fr>
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
 
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -108,6 +109,10 @@ void Engine::setUseSSL( bool useSSL )
 		#ifdef KIRC_SSL_SUPPORT
 			m_sock = new KSSLSocket;
 			m_sock->setSocketFlags( KExtendedSocket::inetSocket );
+
+			connect(m_sock, SIGNAL(certificateAccepted()), SLOT(slotConnected()));
+			connect(m_sock, SIGNAL(certificateRejected()), SLOT(slotConnectionClosed()));
+			connect(m_sock, SIGNAL(sslFailure()),          SLOT(slotConnectionClosed()));
 		}
 		else
 		#else
@@ -118,16 +123,13 @@ void Engine::setUseSSL( bool useSSL )
 		{
 			m_sock = new KExtendedSocket;
 			m_sock->setSocketFlags( KExtendedSocket::inputBufferedSocket | KExtendedSocket::inetSocket );
+
+			connect(m_sock, SIGNAL(connectionSuccess()),   SLOT(slotConnected()));
+			connect(m_sock, SIGNAL(connectionFailed(int)), SLOT(error(int)));
 		}
 
-		QObject::connect(m_sock, SIGNAL(closed(int)),
-				 this, SLOT(slotConnectionClosed()));
-		QObject::connect(m_sock, SIGNAL(readyRead()),
-				 this, SLOT(slotReadyRead()));
-		QObject::connect(m_sock, SIGNAL(connectionSuccess()),
-				 this, SLOT(slotConnected()));
-		QObject::connect(m_sock, SIGNAL(connectionFailed(int)),
-				 this, SLOT(error(int)));
+		connect(m_sock, SIGNAL(closed(int)), SLOT(slotConnectionClosed()));
+		connect(m_sock, SIGNAL(readyRead()), SLOT(slotReadyRead()));
 	}
 }
 
@@ -459,3 +461,5 @@ bool Engine::invokeCtcpCommandOfMessage(const QDict<MessageRedirector> &map, Mes
 }
 
 #include "kircengine.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:

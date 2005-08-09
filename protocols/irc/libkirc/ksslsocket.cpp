@@ -1,9 +1,10 @@
 /*
     ksslsocket.cpp - KDE SSL Socket
 
+    Copyright (c) 2005      by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
     Copyright (c) 2004      by Jason Keirstead <jason@keirstead.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -127,51 +128,41 @@ void KSSLSocket::slotReadData()
 
 void KSSLSocket::slotConnected()
 {
-	if( KSSL::doesSSLWork() )
-	{
-		if( d->kssl )
-		{
-			kdDebug(14120) << k_funcinfo << "ReInitialize SSL connection..." << endl;
-			d->kssl->reInitialize();
-		}
-		else
-		{
-			kdDebug(14120) << k_funcinfo << "Trying SSL connection..." << endl;
-
-			d->kssl = new KSSL();
-			if( d->kssl->connect( sockfd ) == 1)
-			{
-				//Disconnect the KExtSocket notifier slot, we use our own
-				QObject::disconnect( readNotifier(), SIGNAL(activated( int )),
-					this, SLOT( socketActivityRead() ) );
-
-				QObject::connect( readNotifier(), SIGNAL(activated( int )),
-					this, SLOT( slotReadData() ) );
-			}
-			else
-			{
-				delete d->kssl;
-				d->kssl = 0;
-			}
-		}
-	}
-
-	if( d->kssl )
-	{
-		readNotifier()->setEnabled(true);
-
-		if( verifyCertificate() != 1 )
-		{
-			closeNow();
-		}
-	}
-	else
-	{
+	if (!KSSL::doesSSLWork()) {
 		kdError(14120) << k_funcinfo << "SSL not functional!" << endl;
 
-		emit sslFailure();
 		closeNow();
+		emit sslFailure();
+		return;
 	}
+
+	delete d->kssl;
+	d->kssl = new KSSL();
+
+	if (d->kssl->connect( sockfd ) != 1) {
+		kdError(14120) << k_funcinfo << "SSL connect() failed." << endl;
+
+		closeNow();
+		emit sslFailure();
+		return;
+	}
+
+	//Disconnect the KExtSocket notifier slot, we use our own
+	QObject::disconnect( readNotifier(), SIGNAL(activated( int )),
+			this, SLOT(socketActivityRead()) );
+
+	QObject::connect( readNotifier(), SIGNAL(activated( int )),
+			this, SLOT(slotReadData()) );
+
+	readNotifier()->setEnabled(true);
+
+	if (verifyCertificate() != 1) {
+		closeNow();
+		emit certificateRejected();
+		return;
+	}
+
+	emit certificateAccepted();
 }
 
 void KSSLSocket::slotDisconnected()
