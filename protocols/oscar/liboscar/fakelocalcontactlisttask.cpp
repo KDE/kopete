@@ -29,17 +29,17 @@
 
 using namespace Oscar;
 
-FakeLocalContactListTask::FakeLocalContactListTask(Task* parent): Task(parent)
+LocalContactListTask::LocalContactListTask(Task* parent): Task(parent)
 {
 }
 
 
-FakeLocalContactListTask::~FakeLocalContactListTask()
+LocalContactListTask::~LocalContactListTask()
 {
 }
 
 
-void FakeLocalContactListTask::onGo()
+void LocalContactListTask::onGo()
 {
 	if( !client()->settings()->respectRequireAuth() )
 	{

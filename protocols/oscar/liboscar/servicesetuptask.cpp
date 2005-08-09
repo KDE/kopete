@@ -110,8 +110,8 @@ void ServiceSetupTask::childTaskFinished()
 		crt->setFamilies( familyList );
 		sitt->go( true );
 		crt->go( true ); //autodelete
-		FakeLocalContactListTask* flclt = new FakeLocalContactListTask( client()->rootTask() );
-		flclt->go( true );
+		LocalContactListTask* lclt = new LocalContactListTask( client()->rootTask() );
+		lclt->go( true );
 	}
 	
 	if ( m_finishedTaskCount == 8 )

@@ -15,8 +15,8 @@
   *                                                                       *
   *************************************************************************
 */
-#ifndef FAKELOCALCONTACTLISTTASK_H
-#define FAKELOCALCONTACTLISTTASK_H
+#ifndef LOCALCONTACTLISTTASK_H
+#define LOCALCONTACTLISTTASK_H
 
 #include "task.h"
 
@@ -26,11 +26,11 @@ This will show status of "waiting for authorization" contacts
 
 @author Jan Ritzerfeld
 */
-class FakeLocalContactListTask : public Task
+class LocalContactListTask : public Task
 {
 public:
-	FakeLocalContactListTask( Task* parent );
-	~FakeLocalContactListTask();
+	LocalContactListTask( Task* parent );
+	~LocalContactListTask();
 	virtual void onGo();
 };
 
