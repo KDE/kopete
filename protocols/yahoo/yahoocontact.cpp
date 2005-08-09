@@ -182,7 +182,7 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 	int pos = 0;
 	regExp.setMinimal( true );
 	
-	QString messageText = message.escapedBody();
+	QString messageText = message.plainBody();
 	kdDebug(14180) << "Original message: " << messageText << endl;
 
 	// find and replace Bold-formattings
