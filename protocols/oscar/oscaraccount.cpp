@@ -172,12 +172,13 @@ void OscarAccount::processSSIList()
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 
 	SSIManager* listManager = d->engine->ssiManager();
-		//first add groups
+
+    //first add groups
 	QValueList<SSI> groupList = listManager->groupList();
 	QValueList<SSI>::const_iterator git = groupList.constBegin();
 	QValueList<SSI>::const_iterator listEnd = groupList.constEnd();
-		//the protocol dictates that there is at least one group that has contacts
-		//so i don't have to check for an empty group list
+	//the protocol dictates that there is at least one group that has contacts
+	//so i don't have to check for an empty group list
 
 	kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Adding " << groupList.count() << " groups to contact list" << endl;
 	for( ; git != listEnd; ++git )
@@ -187,7 +188,7 @@ void OscarAccount::processSSIList()
 		kcl->findGroup( ( *git ).name() );
 	}
 
-		//then add contacts
+	//then add contacts
 	QValueList<SSI> contactList = listManager->contactList();
 	QValueList<SSI>::const_iterator bit = contactList.constBegin();
 	QValueList<SSI>::const_iterator blistEnd = contactList.constEnd();
@@ -212,6 +213,7 @@ void OscarAccount::processSSIList()
 		else
 			addContact( ( *bit ).name(), QString::null, group, Kopete::Account::DontChangeKABC );
 	}
+
 	QObject::connect( kcl, SIGNAL( groupRenamed( Kopete::Group*,  const QString& ) ),
 	                  this, SLOT( kopeteGroupRenamed( Kopete::Group*, const QString& ) ) );
 	QObject::connect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ),
