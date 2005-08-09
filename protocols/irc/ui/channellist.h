@@ -22,10 +22,7 @@
 #include <qmap.h>
 #include <qpair.h>
 
-namespace KIRC
-{
-class Engine;
-}
+#include "kircengine.h"
 
 class QVBoxLayout;
 class QHBoxLayout;
@@ -59,8 +56,8 @@ class ChannelList
 		void slotItemSelected( QListViewItem * i );
 		void slotChannelListed( const QString & channel, uint users, const QString & topic );
 		void slotListEnd();
-		void slotDisconnected();
 		void slotSearchCache();
+		void slotStatusChanged( KIRC::Engine::Status );
 
 	private:
 		void checkSearchResult( const QString & channel, uint users, const QString & topic );

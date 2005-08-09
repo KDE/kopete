@@ -226,8 +226,8 @@ ChannelList::ChannelList( QWidget* parent, KIRC::Engine *engine )
 
 	connect( m_engine, SIGNAL( incomingEndOfList() ), this, SLOT( slotListEnd() ) );
 
-	connect( m_engine, SIGNAL( connectedToServer() ), this, SLOT( reset() ) );
-	connect( m_engine, SIGNAL( disconnected() ), this, SLOT( slotDisconnected() ) );
+	connect( m_engine, SIGNAL( statusChanged(KIRC::Engine::Status) ),
+			this, SLOT( slotStatusChanged(KIRC::Engine::Status) ) );
 
 	show();
 }
@@ -240,6 +240,28 @@ void ChannelList::slotItemDoubleClicked( QListViewItem *i )
 void ChannelList::slotItemSelected( QListViewItem *i )
 {
 	emit channelSelected( i->text(0) );
+}
+
+void ChannelList::slotStatusChanged(KIRC::Engine::Status newStatus)
+{
+	switch(newStatus) {
+	case KIRC::Engine::Connected:
+		this->reset();
+		break;
+	case KIRC::Engine::Disconnected:
+		if (mSearching) {
+			KMessageBox::queuedMessageBox(
+				this, KMessageBox::Error,
+				i18n("You have been disconnected from the IRC server."),
+				i18n("Disconnected"), 0
+				);
+		}
+
+		slotListEnd();
+		break;
+	default:
+		break;
+	}
 }
 
 void ChannelList::reset()
@@ -312,16 +334,6 @@ void ChannelList::slotSearchCache()
 	{
 		slotListEnd();
 	}
-}
-
-void ChannelList::slotDisconnected()
-{
-	KMessageBox::queuedMessageBox(
-		this, KMessageBox::Error, i18n("You have been disconnected from the IRC server."),
-		i18n("Disconnected"), 0
-	);
-
-	slotListEnd();
 }
 
 void ChannelList::slotListEnd()
