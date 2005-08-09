@@ -50,9 +50,9 @@ struct KopeteViewManagerPrivate
 
 	bool useQueue;
 	bool raiseWindow;
-	bool trayflashNotifyUnreadMessage;
-	bool trayflashNotifyOnlyHighlightedInGroupChat;
-	bool trayflashNotifyOnlyOnAnotherDesktop;
+	bool queueUnreadMessages;
+	bool queueOnlyHighlightedMessagesInGroupChats;
+	bool queueOnlyMessagesOnAnotherDesktop;
 	bool balloonNotifyIgnoreClosesChatView;
 	bool foreignMessage;
 };
@@ -100,9 +100,9 @@ void KopeteViewManager::slotPrefsChanged()
 {
 	d->useQueue = KopetePrefs::prefs()->useQueue();
 	d->raiseWindow = KopetePrefs::prefs()->raiseMsgWindow();
-	d->trayflashNotifyUnreadMessage = KopetePrefs::prefs()->trayflashNotifyUnreadMessage();
-	d->trayflashNotifyOnlyHighlightedInGroupChat = KopetePrefs::prefs()->trayflashNotifyOnlyHighlightedInGroupChat();
-	d->trayflashNotifyOnlyOnAnotherDesktop = KopetePrefs::prefs()->trayflashNotifyOnlyOnAnotherDesktop();
+	d->queueUnreadMessages = KopetePrefs::prefs()->queueUnreadMessages();
+	d->queueOnlyHighlightedMessagesInGroupChats = KopetePrefs::prefs()->queueOnlyHighlightedMessagesInGroupChats();
+	d->queueOnlyMessagesOnAnotherDesktop = KopetePrefs::prefs()->queueOnlyMessagesOnAnotherDesktop();
 	d->balloonNotifyIgnoreClosesChatView = KopetePrefs::prefs()->balloonNotifyIgnoreClosesChatView();
 }
 
@@ -170,12 +170,12 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		bool appendMessageEvent = d->useQueue;
 
 		QWidget *w;
-		if( d->trayflashNotifyUnreadMessage && ( w = dynamic_cast<QWidget*>(view( manager )) ) )
+		if( d->queueUnreadMessages && ( w = dynamic_cast<QWidget*>(view( manager )) ) )
 		{
 			// append msg event to queue if chat window is active but not the chat view in it...
 			appendMessageEvent &= !(w->isActiveWindow() && manager->view() == d->activeView);
 			// ...and chat window is on another desktop
-			appendMessageEvent &= !d->trayflashNotifyOnlyOnAnotherDesktop || !KWin::windowInfo( w->topLevelWidget()->winId(), NET::WMDesktop ).isOnCurrentDesktop();
+			appendMessageEvent &= !d->queueOnlyMessagesOnAnotherDesktop || !KWin::windowInfo( w->topLevelWidget()->winId(), NET::WMDesktop ).isOnCurrentDesktop();
 		}
 		else
 		{
@@ -184,7 +184,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		}
 
 		// in group chats always append highlighted messages to queue
-		appendMessageEvent &= !d->trayflashNotifyOnlyHighlightedInGroupChat || manager->members().count() == 1 || msg.importance() == Kopete::Message::Highlight;
+		appendMessageEvent &= !d->queueOnlyHighlightedMessagesInGroupChats || manager->members().count() == 1 || msg.importance() == Kopete::Message::Highlight;
 
 		if( appendMessageEvent )
 		{

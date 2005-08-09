@@ -65,9 +65,9 @@ public:
 	bool raiseMsgWindow() const{ return mRaiseMsgWindow; }
 	bool showEvents() const{ return mShowEvents; }
 	bool trayflashNotify() const { return mTrayflashNotify; }
-	bool trayflashNotifyUnreadMessage() const { return mTrayflashNotifyUnreadMessage; }
-	bool trayflashNotifyOnlyHighlightedInGroupChat() const { return mTrayflashNotifyOnlyHighlightedInGroupChat; }
-	bool trayflashNotifyOnlyOnAnotherDesktop() const { return mTrayflashNotifyOnlyOnAnotherDesktop; }
+	bool queueUnreadMessages() const { return mQueueUnreadMessages; }
+	bool queueOnlyHighlightedMessagesInGroupChats() const { return mQueueOnlyHighlightedMessagesInGroupChats; }
+	bool queueOnlyMessagesOnAnotherDesktop() const { return mQueueOnlyMessagesOnAnotherDesktop; }
 	bool trayflashNotifyLeftClickOpensMessage() const { return mTrayflashNotifyLeftClickOpensMessage; }
 	bool trayflashNotifySetCurrentDesktopToChatView() const { return mTrayflashNotifySetCurrentDesktopToChatView; }
 	bool balloonNotify() const { return mBalloonNotify; }
@@ -141,9 +141,9 @@ public:
 	void setRaiseMsgWindow(bool);
 	void setShowEvents(bool);
 	void setTrayflashNotify(bool);
-	void setTrayflashNotifyUnreadMessage(bool);
-	void setTrayflashNotifyOnlyHighlightedInGroupChat(bool);
-	void setTrayflashNotifyOnlyOnAnotherDesktop(bool);
+	void setQueueUnreadMessages(bool);
+	void setQueueOnlyHighlightedMessagesInGroupChats(bool);
+	void setQueueOnlyMessagesOnAnotherDesktop(bool);
 	void setTrayflashNotifyLeftClickOpensMessage(bool);
 	void setTrayflashNotifySetCurrentDesktopToChatView(bool);
 	void setBalloonNotify(bool);
@@ -232,9 +232,9 @@ private:
 	bool mRaiseMsgWindow;
 	bool mShowEvents;
 	bool mTrayflashNotify;
-	bool mTrayflashNotifyUnreadMessage;
-	bool mTrayflashNotifyOnlyHighlightedInGroupChat;
-	bool mTrayflashNotifyOnlyOnAnotherDesktop;
+	bool mQueueUnreadMessages;
+	bool mQueueOnlyHighlightedMessagesInGroupChats;
+	bool mQueueOnlyMessagesOnAnotherDesktop;
 	bool mTrayflashNotifyLeftClickOpensMessage;
 	bool mTrayflashNotifySetCurrentDesktopToChatView;
 	bool mBalloonNotify;

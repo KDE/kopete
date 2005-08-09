@@ -42,6 +42,8 @@ MessageEvent::MessageEvent( const Message& m, QObject *parent, const char *name 
 {
 	d->message = m;
 	d->state = Nothing;
+	if( d->message.from()->metaContact() )
+		kdDebug(14010) << k_funcinfo << d->message.from()->metaContact()->displayName() << "->isTemporary() is " << d->message.from()->metaContact()->isTemporary() << endl;
 }
 
 MessageEvent::~MessageEvent()
