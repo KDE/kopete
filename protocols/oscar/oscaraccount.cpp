@@ -58,15 +58,15 @@ public:
 
 	//The liboscar hook for the account
 	Client* engine;
-
+	
 	Q_UINT32 ssiLastModTime;
 
 	//contacts waiting on SSI add ack and their metacontact
 	QMap<QString, Kopete::MetaContact*> addContactMap;
-
+	
 	//contacts waiting on their group to be added
 	QMap<QString, QString> contactAddQueue;
-
+	
 
 };
 
@@ -79,7 +79,7 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, c
 	d = new OscarAccountPrivate;
 	d->engine = new Client( this );
 
-    QObject::connect( d->engine, SIGNAL( loggedIn() ), this, SLOT( loginActions() ) );
+	QObject::connect( d->engine, SIGNAL( loggedIn() ), this, SLOT( slotGotSSIList() ) );
 	QObject::connect( d->engine, SIGNAL( messageReceived( const Oscar::Message& ) ),
 	                  this, SLOT( messageReceived(const Oscar::Message& ) ) );
 	QObject::connect( d->engine, SIGNAL( socketError( int, const QString& ) ),
@@ -108,7 +108,7 @@ void OscarAccount::logOff( Kopete::Account::DisconnectReason reason )
 	kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 	//disconnect the signals
 	Kopete::ContactList* kcl = Kopete::ContactList::self();
-	QObject::disconnect( kcl, SIGNAL( groupRenamed( Kopete::Group*,  const QString& ) ),
+	QObject::disconnect( kcl, SIGNAL( groupRenamed( Kopete::Group*,  const QString& ) ), 
 	                     this, SLOT( kopeteGroupRenamed( Kopete::Group*, const QString& ) ) );
 	QObject::disconnect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ),
 	                     this, SLOT( kopeteGroupRemoved( Kopete::Group* ) ) );
@@ -116,10 +116,10 @@ void OscarAccount::logOff( Kopete::Account::DisconnectReason reason )
 	                     this, SLOT( ssiContactAdded( const Oscar::SSI& ) ) );
 	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupAdded( const Oscar::SSI& ) ),
 	                     this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
-
+	
 	d->engine->close();
 	myself()->setOnlineStatus( Kopete::OnlineStatus::Offline );
-
+	
 	disconnected( reason );
 }
 
@@ -146,28 +146,20 @@ void OscarAccount::updateContact( Oscar::SSI item )
 	}
 }
 
-void OscarAccount::loginActions()
+void OscarAccount::slotGotSSIList()
 {
-    password().setWrong( false );
-    kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "processing SSI list" << endl;
-    processSSIList();
-
-    //start a chat nav connection
-    kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "sending request for chat nav service" << endl;
-    d->engine->requestServerRedirect( 0x000D );
-}
-
-void OscarAccount::processSSIList()
-{
+	//login was successful
+	password().setWrong( false );
+	
 	//disconnect signals so we don't attempt to add things to SSI!
 	Kopete::ContactList* kcl = Kopete::ContactList::self();
 	QObject::disconnect( kcl, SIGNAL( groupRenamed( Kopete::Group*,  const QString& ) ),
 	                     this, SLOT( kopeteGroupRenamed( Kopete::Group*, const QString& ) ) );
 	QObject::disconnect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ),
 	                     this, SLOT( kopeteGroupRemoved( Kopete::Group* ) ) );
-
+	
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
-
+	
 	SSIManager* listManager = d->engine->ssiManager();
 		//first add groups
 	QValueList<SSI> groupList = listManager->groupList();
@@ -183,7 +175,7 @@ void OscarAccount::processSSIList()
 			<< "' to the kopete contact list" << endl;
 		kcl->findGroup( ( *git ).name() );
 	}
-
+	
 		//then add contacts
 	QValueList<SSI> contactList = listManager->contactList();
 	QValueList<SSI>::const_iterator bit = contactList.constBegin();
@@ -197,7 +189,7 @@ void OscarAccount::processSSIList()
 			group = kcl->findGroup( groupForAdd.name() ); //add if not present
 		else
 			group = kcl->findGroup( i18n( "Buddies" ) );
-
+		
 		kdDebug( OSCAR_GEN_DEBUG ) << k_funcinfo << "Adding contact '" << ( *bit ).name() << "' to kopete list in group " <<
 			group->displayName() << endl;
 		OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[( *bit ).name()] );
@@ -217,7 +209,7 @@ void OscarAccount::processSSIList()
 	                  this, SLOT( ssiContactAdded( const Oscar::SSI& ) ) );
 	QObject::connect( listManager, SIGNAL( groupAdded( const Oscar::SSI& ) ),
 	                  this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
-
+	
 	//make the icon server connection
 	if ( !d->engine->isIcq() )
 		d->engine->connectToIconServer();
@@ -275,12 +267,12 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 		kdDebug(OSCAR_RAW_DEBUG) << "Adding '" << sender << "' as temporary contact" << endl;
 		addContact( sender, QString::null, 0,  Kopete::Account::Temporary );
 	}
-
+	
 	OscarContact* ocSender = static_cast<OscarContact *> ( contacts()[sender] ); //should exist now
-
+	
 	if ( !ocSender )
 	{
-		kdWarning(OSCAR_RAW_DEBUG) << "Temporary contact creation failed for '"
+		kdWarning(OSCAR_RAW_DEBUG) << "Temporary contact creation failed for '" 
 			<< sender << "'! Discarding message: " << message.text() << endl;
 		return;
 	}
@@ -291,17 +283,17 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 		if ( message.properties() & Oscar::Message::EMail == Oscar::Message::EMail )
 			ocSender->setNickName( i18n("ICQ Email Express") );
 	}
-
+	
 	Kopete::ChatSession* chatSession = ocSender->manager( Kopete::Contact::CanCreate );
 	chatSession->receivedTypingMsg( ocSender, false ); //person is done typing
-
+	
 	QString sanitizedMsg = sanitizedMessage( message );
-
+	
 	Kopete::ContactPtrList me;
 	me.append( myself() );
 	Kopete::Message chatMessage( message.timestamp(), ocSender, me, sanitizedMsg,
 	                             Kopete::Message::Inbound, Kopete::Message::RichText );
-
+	
 	chatSession->appendMessage( chatMessage );
 }
 
@@ -324,13 +316,13 @@ Connection* OscarAccount::setupConnection( const QString& server, uint port )
 	//set up the connector
 	KNetworkConnector* knc = new KNetworkConnector( 0 );
 	knc->setOptHostPort( server, port );
-
+	
 	//set up the clientstream
 	ClientStream* cs = new ClientStream( knc, knc );
-
+	
 	Connection* c = new Connection( knc, cs, "AUTHORIZER" );
 	c->setClient( d->engine );
-
+	
 	return c;
 }
 
@@ -346,7 +338,7 @@ bool OscarAccount::createContact(const QString &contactId,
 		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Can't add contact, we are offline!" << endl;
 		return false;
 	}
-
+	
 	/* Logic for SSI additions
 	If the contact is temporary, no SSI addition at all. Just create the contact and be done with it
 	If the contact is not temporary, we need to do the following:
@@ -363,11 +355,11 @@ bool OscarAccount::createContact(const QString &contactId,
 		SSI tempItem( contactId, 0, 0, 0xFFFF, dummyList, 0 );
 		return createNewContact( contactId, parentContact, tempItem );
 	}
-
+	
 	SSI ssiItem = d->engine->ssiManager()->findContact( contactId );
 	if ( ssiItem )
 	{
-		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Have new SSI entry. Finding contact" << endl;
+		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Have new SSI entry. Finding contact" << endl;	
 		if ( contacts()[ssiItem.name()] )
 		{
 			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Found contact in list. Updating SSI item" << endl;
@@ -385,12 +377,12 @@ bool OscarAccount::createContact(const QString &contactId,
 	{ //new contact, check temporary, if temporary, don't add to SSI. otherwise, add.
 		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "New contact '" << contactId << "' not in SSI."
 			<< " Creating new contact" << endl;
-
+		
 		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Adding " << contactId << " to server side list" << endl;
-
+		
 		QString groupName;
 		Kopete::GroupList kopeteGroups = parentContact->groups(); //get the group list
-
+		
 		if ( kopeteGroups.isEmpty() || kopeteGroups.first() == Kopete::Group::topLevel() )
 		{
 			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Contact with NO group. " << "Adding to group 'Buddies'" << endl;
@@ -401,17 +393,17 @@ bool OscarAccount::createContact(const QString &contactId,
 				//apparently kopeteGroups.first() can be invalid. Attempt to prevent
 				//crashes in SSIData::findGroup(const QString& name)
 			groupName = kopeteGroups.first() ? kopeteGroups.first()->displayName() : i18n("Buddies");
-
+			
 			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Contact with group." << " No. of groups = " << kopeteGroups.count() <<
 				" Name of first group = " << groupName << endl;
 		}
-
+		
 		if( groupName.isEmpty() )
 		{ // emergency exit, should never occur
 			kdWarning(OSCAR_GEN_DEBUG) << k_funcinfo << "Could not add contact because no groupname was given" << endl;
 			return false;
 		}
-
+		
 		if ( !d->engine->ssiManager()->findGroup( groupName ) )
 		{ //group isn't on SSI
 			d->contactAddQueue[Oscar::normalize( contactId )] = groupName;
@@ -419,7 +411,7 @@ bool OscarAccount::createContact(const QString &contactId,
 			d->engine->addGroup( groupName );
 			return true;
 		}
-
+		
 		d->addContactMap[Oscar::normalize( contactId )] = parentContact;
 		d->engine->addContact( Oscar::normalize( contactId ), groupName );
 		return true;
@@ -454,7 +446,7 @@ void OscarAccount::ssiGroupAdded( const Oscar::SSI& item )
 		}
 	}
 }
-
+	
 void OscarAccount::userStartedTyping( const QString & contact )
 {
 	Kopete::Contact * ct = contacts()[ Oscar::normalize( contact ) ];
@@ -490,7 +482,7 @@ void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
 	kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "error recieived from task" << endl;
 	kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "service: " << s.family
 		<< " subtype: " << s.subtype << " code: " << code << endl;
-
+	
 	QString message;
 	if ( s.family == 0 && s.subtype == 0 )
 	{
@@ -519,13 +511,13 @@ void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
 		message = i18n("There was an error in the protocol handling; it was not fatal, so you will not be disconnected.");
 	else
 		message = i18n("There was an error in the protocol handling; automatic reconnection occurring.");
-
+	
 	KPassivePopup::message( i18n("OSCAR Protocol error"), message, myself()->onlineStatus().protocolIcon(),
 	                        Kopete::UI::Global::mainWidget() );
 	if ( fatal )
 		logOff( Kopete::Account::ConnectionReset );
 }
-
+	
 QString OscarAccount::getFLAPErrorMessage( int code )
 {
 	bool isICQ = d->engine->isIcq();
@@ -549,7 +541,7 @@ QString OscarAccount::getFLAPErrorMessage( int code )
 			reason = i18n( "Sign on failed because either your %1 or " \
 			               "password are invalid. Please check your settings for account %2.")
 				.arg( acctDescription ).arg( accountId() );
-
+			
 		}
 		break;
 	case 0x0002: // Service temporarily unavailable

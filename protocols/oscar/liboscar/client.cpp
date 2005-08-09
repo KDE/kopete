@@ -29,7 +29,6 @@
 #include "clientreadytask.h"
 #include "connectionhandler.h"
 #include "changevisibilitytask.h"
-#include "chatnavservicetask.h"
 #include "errortask.h"
 #include "icquserinfo.h"
 #include "icquserinfotask.h"
@@ -73,8 +72,7 @@ public:
 	//Protocol specific data
 	bool isIcq;
 	bool redirectRequested;
-	QValueList<WORD> redirectionServices;
-    WORD currentRedirect;
+	WORD redirectFamily;
 	QByteArray cookie;
 	DWORD connectAsStatus; // icq only
 	QString connectWithMessage; // icq only
@@ -110,7 +108,6 @@ Client::Client( QObject* parent )
 	d->active = false;
 	d->isIcq = false; //default to AIM
 	d->redirectRequested = false;
-    d->currentRedirect = 0;
 	d->connectAsStatus = 0x0; // default to online
 	d->ssiManager = new SSIManager( this );
 	d->settings = new Oscar::Settings();
@@ -124,10 +121,6 @@ Client::Client( QObject* parent )
 	d->closeConnectionTask = 0L;
 	d->stage = ClientPrivate::StageOne;
 	d->typingNotifyTask = 0L;
-
-	connect( this, SIGNAL( redirectionFinished( WORD ) ),
-	         this, SLOT( checkRedirectionQueue( WORD ) ) );
-
 }
 
 Client::~Client()
@@ -171,6 +164,8 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 void Client::close()
 {
 	d->active = false;
+//	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Closing " << d->connections.count() << " connections" << endl;
+	//these are based on a connection. delete them.
 	d->connections.clear();
 	deleteStaticTasks();
 
@@ -180,8 +175,9 @@ void Client::close()
 		d->connectAsStatus = 0x0;
 		d->connectWithMessage = QString::null;
 	}
+//	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Clearing our internal SSI list" << endl;
+	d->ssiManager->clear();
 
-    d->ssiManager->clear();
 }
 
 void Client::setStatus( AIMStatus status, const QString &_message )
@@ -217,7 +213,7 @@ void Client::setStatus( DWORD status, const QString &message )
 		Connection* c = d->connections.connectionForFamily( 0x0013 );
 		if ( !c )
 			return; //TODO trigger an error of some sort?
-
+		
 		ChangeVisibilityTask* cvt = new ChangeVisibilityTask( c->rootTask() );
 		if ( ( status & 0x0100 ) == 0x0100 )
 		{
@@ -233,7 +229,7 @@ void Client::setStatus( DWORD status, const QString &message )
 		c = d->connections.connectionForFamily( 0x0002 );
 		if ( !c )
 			return;
-
+		
 		SendDCInfoTask* sdcit = new SendDCInfoTask( c->rootTask(), status );
 		sdcit->go( true ); //autodelete
 		// TODO: send away message
@@ -336,7 +332,7 @@ void Client::startStageTwo()
 	//connect
 	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
 	connectToServer( c, d->host, false ) ;
-
+	
 }
 
 void Client::serviceSetupFinished()
@@ -351,7 +347,7 @@ void Client::serviceSetupFinished()
 		Connection* c = d->connections.connectionForFamily( 0x0015 );
 		if ( !c )
 			return;
-
+		
 		OfflineMessagesTask *offlineMsgTask = new OfflineMessagesTask( c->rootTask() );
 		connect( offlineMsgTask, SIGNAL( receivedOfflineMessage(const Oscar::Message& ) ),
 				this, SIGNAL( messageReceived(const Oscar::Message& ) ) );
@@ -582,12 +578,12 @@ void Client::modifySSIItem( const Oscar::SSI& oldItem, const Oscar::SSI& newItem
 	Connection* c = d->connections.connectionForFamily( 0x0013 );
 	if ( !c )
 		return;
-
+	
 	if ( !oldItem && newItem )
 		action = 1;
 	if ( oldItem && !newItem )
 		action = 2;
-
+	
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Add/Mod/Del item on server" << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	switch ( action )
@@ -743,7 +739,7 @@ void Client::connectToIconServer()
 	Connection* c = d->connections.connectionForFamily( 0x0010 );
 	if ( c )
 		return;
-
+	
 	requestServerRedirect( 0x0010 );
 	return;
 }
@@ -770,23 +766,15 @@ void Client::requestServerRedirect( WORD family )
 	Connection* c = d->connections.connectionForFamily( family );
 	if ( c )
 		return; //we already have the connection
-
+	
 	c = d->connections.connectionForFamily( 0x0002 );
 	if ( !c )
 		return;
-
-    if ( d->redirectionServices.findIndex( family ) == -1 )
-        d->redirectionServices.append( family ); //don't add families twice
-
-    if ( d->currentRedirect != 0 )
-        return; //we're already doing one redirection
-
-	d->currentRedirect = family;
-
 	ServerRedirectTask* srt = new ServerRedirectTask( c->rootTask() );
 	connect( srt, SIGNAL( haveServer( const QString&, const QByteArray&, WORD ) ),
 	         this, SLOT( haveServerForRedirect( const QString&, const QByteArray&, WORD ) ) );
 	srt->setService( family );
+	d->redirectFamily = family;
 	srt->go( true );
 }
 
@@ -821,52 +809,17 @@ void Client::serverRedirectFinished()
 {
 	if ( m_loginTaskTwo->statusCode() == 0 )
 	{ //stage two was successful
-		Connection* c = d->connections.connectionForFamily( d->currentRedirect );
+		Connection* c = d->connections.connectionForFamily( d->redirectFamily );
 		if ( !c )
 			return;
 		ClientReadyTask* crt = new ClientReadyTask( c->rootTask() );
 		crt->setFamilies( c->supportedFamilies() );
 		crt->go( true );
 	}
-
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "redirection finished for service "
-	                         << d->currentRedirect << endl;
-
-	if ( d->currentRedirect == 0x0010 )
+	
+	if ( d->redirectFamily == 0x0010 )
 		emit iconServerConnected();
-
-	if ( d->currentRedirect == 0x000D )
-	{
-		connect( this, SIGNAL( chatNavigationConnected() ),
-				 this, SLOT( requestChatNavLimits() ) );
-		emit chatNavigationConnected();
-	}
-
-	emit redirectionFinished( d->currentRedirect );
-}
-
-void Client::checkRedirectionQueue( WORD family )
-{
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checking redirection queue" << endl;
-	d->redirectionServices.remove( family );
-    d->currentRedirect = 0;
-	if ( !d->redirectionServices.isEmpty() )
-	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "scheduling new redirection" << endl;
-		requestServerRedirect( d->redirectionServices.front() );
-	}
-}
-
-
-void Client::requestChatNavLimits()
-{
-	Connection* c = d->connections.connectionForFamily( 0x000D );
-	if ( !c )
-		return;
-
-	ChatNavServiceTask* cnst = new ChatNavServiceTask( c->rootTask() );
-    cnst->setRequestType( ChatNavServiceTask::Limits );
-
+	
 }
 
 void Client::sendBuddyIcon( const QByteArray& iconData )
@@ -874,7 +827,7 @@ void Client::sendBuddyIcon( const QByteArray& iconData )
 	Connection* c = d->connections.connectionForFamily( 0x0010 );
 	if ( !c )
 		return;
-
+	
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "icon length is " << iconData.size() << endl;
 	BuddyIconTask* bit = new BuddyIconTask( c->rootTask() );
 	bit->uploadIcon( iconData.size(), iconData );

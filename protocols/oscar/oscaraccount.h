@@ -51,13 +51,13 @@ public:
 
 	/** Disconnects this account */
 	virtual void disconnect();
-
+	
 	/**
 	 * Handle the various ways we can be logged off the oscar service
 	 * and handle the passthrough of the disconnection through the API.
 	 */
 	void logOff( Kopete::Account::DisconnectReason );
-
+	
 	/**
 	 * Was the password wrong last time we tried to connect?
 	 */
@@ -72,16 +72,16 @@ public:
 	 * Accessor method for the action menu
 	 */
 	virtual KActionMenu* actionMenu() = 0;
-
+	
 	/** Set the server address */
 	void setServerAddress( const QString& server );
-
+	
 	/** Set the server port */
 	void setServerPort( int port );
 
 public slots:
 	void slotGoOffline();
-
+	
 	void slotGoOnline();
 
 protected:
@@ -89,7 +89,7 @@ protected:
 	 * Setup a connection for a derived account based on the host and port
 	 */
 	Connection* setupConnection( const QString& server, uint port );
-
+	
 	/**
 	 * Adds a contact to a meta contact
 	 */
@@ -104,24 +104,21 @@ protected:
 	 * @return whether the creation succeeded or not
 	 */
 	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const SSI& ssiItem ) = 0;
-
+	
 	virtual QString sanitizedMessage( const Oscar::Message& message ) = 0;
 
 protected slots:
-
-	//! do stuff on login
-	void loginActions();
-
-    void processSSIList();
-
+	
+	void slotGotSSIList();
+	
 	void kopeteGroupRemoved( Kopete::Group* g );
 	void kopeteGroupAdded( Kopete::Group* g );
 	void kopeteGroupRenamed( Kopete::Group* g, const QString& oldName );
 
 	virtual void messageReceived( const Oscar::Message& message );
-
+	
 	void updateContact( Oscar::SSI );
-
+	
 	void ssiGroupAdded( const Oscar::SSI& );
 	void ssiGroupRemoved( const Oscar::SSI& ) {}
 	void ssiContactAdded( const Oscar::SSI& );
@@ -130,21 +127,21 @@ protected slots:
 	/* slots for receiving typing notifications, and notify the appropriate OscarContact */
 	void userStartedTyping( const QString & contact );
 	void userStoppedTyping( const QString & contact );
-
+	
 signals:
-
+	
 	void accountDisconnected( Kopete::Account::DisconnectReason reason );
 
 private:
 	QString getFLAPErrorMessage( int code );
-
+	
 private slots:
 	/** Handler from socket errors from a connection */
 	void slotSocketError( int, const QString& );
-
+	
 	/** Handle task errors from the client */
 	void slotTaskError( const Oscar::SNAC& s, int errCode, bool fatal ) ;
-
+	
 private:
 	OscarAccountPrivate *d;
 
