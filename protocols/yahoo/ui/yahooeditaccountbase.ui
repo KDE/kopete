@@ -395,9 +395,6 @@
                                 <property name="text">
                                     <string>Se&amp;nd buddy icon to other users</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+N</string>
-                                </property>
                             </widget>
                         </grid>
                     </widget>
