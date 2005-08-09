@@ -225,7 +225,9 @@ struct ChatRoomInfo
 	WORD exchange;
 	QByteArray cookie;
 	WORD instance;
-	
+	QString description;
+	WORD maxMsgLength;
+	QString name;
 };
 
 	/* ICQ Version Characteristics */

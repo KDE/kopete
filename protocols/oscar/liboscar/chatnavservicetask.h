@@ -30,11 +30,12 @@ public:
 	ChatNavServiceTask( Task* parent );
 	~ChatNavServiceTask();
 
-	enum RequestType { Limits, Exchange, Room, ExtRoom, Members };
-	
+	enum RequestType { Limits = 0x0002, Exchange, Room, ExtRoom, Members,
+	                   Search, Create };
+
 	void setRequestType( RequestType );
 	RequestType requestType();
-	
+
 	virtual bool forMe( const Transfer* transfer ) const;
 	virtual bool take( Transfer* transfer );
 	virtual void onGo();
@@ -42,9 +43,9 @@ public:
 private:
 	void handleExchangeInfo( const TLV& t );
 	void handleBasicRoomInfo( const TLV& t );
-	
+
 private:
-	
+
 	RequestType m_type;
 };
 
