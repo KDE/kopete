@@ -16,7 +16,7 @@
    *                                                                       *
    *************************************************************************
 */
-#include "fakelocalcontactlisttask.h"
+#include "localcontactlisttask.h"
 
 #include <kdebug.h>
 #include "buffer.h"

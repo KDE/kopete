@@ -21,7 +21,7 @@
 #include "blmlimitstask.h"
 #include "connection.h"
 #include "clientreadytask.h"
-#include "fakelocalcontactlisttask.h"
+#include "localcontactlisttask.h"
 #include "icbmparamstask.h"
 #include "locationrightstask.h"
 #include "ownuserinfotask.h"
