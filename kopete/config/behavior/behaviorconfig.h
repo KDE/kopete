@@ -38,6 +38,9 @@ class BehaviorConfig : public KCModule
 
 	private slots:
 		void slotShowTrayChanged(bool);
+		void slotQueueUnreadMessagesChanged(bool);
+		void slotBalloonNotifyChanged(bool);
+		void slotTrayflashNotifyChanged(bool);
 		void slotSettingsChanged(bool);
 		void slotValueChanged(int);
 		void slotUpdatePluginLabel(int);
