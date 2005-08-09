@@ -158,6 +158,13 @@ void OscarAccount::loginActions()
 		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "sending request for chat nav service" << endl;
 		d->engine->requestServerRedirect( 0x000D );
 	}
+
+	//ICQ handles icons but we don't support those right now
+	if ( !engine()->isIcq() )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending request for icon service" << endl;
+		d->engine->requestServerRedirect( 0x0010 );
+	}
 }
 
 void OscarAccount::processSSIList()
@@ -223,9 +230,7 @@ void OscarAccount::processSSIList()
 	QObject::connect( listManager, SIGNAL( groupAdded( const Oscar::SSI& ) ),
 	                  this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
 
-	//make the icon server connection
-	if ( !d->engine->isIcq() )
-		d->engine->connectToIconServer();
+    //TODO: check the kopete contact list and handle non server side contacts appropriately.
 }
 
 
