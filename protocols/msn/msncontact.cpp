@@ -228,8 +228,13 @@ void MSNContact::deleteContact()
 			return;
 		}
 
+		// Remove from all groups he belongs (if applicable)
 		for( QMap<QString, Kopete::Group*>::Iterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
 			notify->removeContact( contactId(), MSNProtocol::FL, guid(), it.key() );
+
+		// Then trully remove it from server contact list, 
+		// because only removing the contact from his groups isn't sufficent from MSNP11.
+		notify->removeContact( contactId(), MSNProtocol::FL, guid(), QString::null);
 	}
 	else
 	{
