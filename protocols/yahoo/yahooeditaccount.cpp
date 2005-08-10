@@ -73,6 +73,8 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 		QString iconUrl = account()->configGroup()->readEntry("pictureUrl", "");
 		bool sendPicture = account()->configGroup()->readBoolEntry("sendPicture", false);
 		optionSendBuddyIcon->setChecked( sendPicture );
+    buttonSelectPicture->setEnabled( sendPicture );  
+    connect( optionSendBuddyIcon, SIGNAL( toggled( bool ) ), buttonSelectPicture, SLOT( setEnabled( bool ) ) ); 
 		editPictureUrl->setText( iconUrl );
 		if( !iconUrl.isEmpty() )
 			m_Picture->setPixmap( KURL( iconUrl ).path() );
