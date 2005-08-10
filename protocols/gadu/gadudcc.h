@@ -45,6 +45,7 @@ public:
 	void execute();
 	GaduAccount* account( unsigned int );
 	
+	QMap<unsigned int,QString> requests;	
 signals:
 	void dccConnect( GaduDCCTransaction* dccTransaction );
 

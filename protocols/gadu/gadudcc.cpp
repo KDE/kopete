@@ -150,9 +150,10 @@ GaduDCC::slotIncoming( gg_dcc* incoming, bool& handled )
 	kdDebug( 14100 ) << "slotIncomming for UIN: " << incoming->uin  << endl;
 
 	// no uin? I'm so sorry
-	if ( !incoming->uin ) {
-		return;
-	}
+	// this screws file receiving (using kadu 0.4.x as peer) for me
+//	if ( !incoming->uin ) {
+//		return;
+//	}
 
 	handled = true;
 	// TODO: limit number of connections per contact, or maybe even use parametr for that
