@@ -45,6 +45,7 @@ Name[zh_CN]=书签
 Name[zu]=Amamaki  encwadi
 Comment=Automatically bookmark links in incoming messages
 Comment[bg]=Автоматично добавяне на връзките във входящите съобщения към отметките
+Comment[ca]=Apunta automàticaments els enllaços en els missatges entrants
 Comment[cs]=Automaticky přidat do záložek odkazy z příchozích zpráv
 Comment[da]=Sæt link til indkommende breve automatisk
 Comment[de]=Verknüpfungen in eingehenden Nachrichten automatisch als Lesezeichen ablegen

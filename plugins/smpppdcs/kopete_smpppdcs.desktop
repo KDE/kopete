@@ -15,6 +15,7 @@ X-KDE-PluginInfo-Depends=
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=true
 Name=SUSE smpppd-enabled Connection Status (SMPPPD)
+Name[ca]=Estat actiu de la connexió SUSE smpppd (SMPPPD)
 Name[cs]=Stav spojení SUSE smpppd-enabled (SMPPPD)
 Name[da]=SUSE smpppd-aktiveret Forbindelsesstatus (SMPPPD)
 Name[de]=Verbindungsstatus mit Unterstützung für SuSE SMPPPD
