@@ -57,11 +57,17 @@ friend class NowListeningGUIClient;
 		 *               useful to set it to false if one already has called
 		 *               update somewhere else, for instance in newTrackPlaying().
 		 */
-		QString mediaPlayerAdvert(bool update = true) const;
+		QString mediaPlayerAdvert(bool update = true);
 		/**
 		 * @internal Build the message for @ref mediaPlayerAdvert
+		 * @param message Reference to the messsage, because return QString cause data loss.
+		 * @param player Pointer to the current Media Player. 
+		 *               Used to get the information about the current track playing.
+		 * @param update Whether the players must update their data. It can be
+		 *               useful to set it to false if one already has called
+		 *               update somewhere else, for instance in newTrackPlaying().
 		 */
-		QString buildTrackMessage( NLMediaPlayer *player, bool update) const;
+		void buildTrackMessage(QString &message, NLMediaPlayer *player, bool update);
 		/**
 		 * @return true if one of the players has changed track since the last message.
 		 */
@@ -81,6 +87,7 @@ friend class NowListeningGUIClient;
 		 * Update the currentMedia pointer on config change.
 		 */
 		void updateCurrentMediaPlayer();
+
 	protected slots:
 		/**
 		 * Reacts to a new chat starting and adds actions to its GUI
