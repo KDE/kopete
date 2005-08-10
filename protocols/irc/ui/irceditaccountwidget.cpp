@@ -230,17 +230,20 @@ Kopete::Account *IRCEditAccountWidget::apply()
 
 	if( !account() )
 	{
-		setAccount( new IRCAccount( mProtocol, generateAccountId(networkName) ) );
+		setAccount( new IRCAccount( mProtocol, generateAccountId(networkName), QString::null, networkName, nickName ) );
 
+	}
+	else
+	{
+		account()->setNickName( nickName );
+		account()->setNetwork( networkName );
 	}
 
 	mPasswordWidget->save( &account()->password() );
 
-	account()->setNickName( nickName );
 	account()->setAltNick( mAltNickname->text() );
 	account()->setUserName( mUserName->text() );
 	account()->setRealName( m_realNameLineEdit->text() );
-	account()->setNetwork( networkName );
 	account()->setDefaultPart( partMessage->text() );
 	account()->setDefaultQuit( quitMessage->text() );
 	account()->setAutoShowServerWindow( autoShowServerWindow->isChecked() );

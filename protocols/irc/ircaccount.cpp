@@ -93,7 +93,7 @@ const QString IRCAccount::CONFIG_NICKNAME = QString::fromLatin1("NickName");
 const QString IRCAccount::CONFIG_USERNAME = QString::fromLatin1("UserName");
 const QString IRCAccount::CONFIG_REALNAME = QString::fromLatin1("RealName");
 
-IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QString &autoChan )
+IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QString &autoChan, const QString& netName, const QString &nickName)
 	: Kopete::PasswordedAccount(protocol, accountId, 0, true), autoConnect( autoChan )
 {
 	m_manager = 0L;
@@ -146,8 +146,16 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	currentHost = 0;
 
 	KConfigGroup *config = configGroup();
-	QString networkName = config->readEntry(CONFIG_NETWORKNAME);
-	mNickName = config->readEntry(CONFIG_NICKNAME);
+
+	QString networkName = netName;
+	if (networkName.isNull())
+		networkName = config->readEntry(CONFIG_NETWORKNAME);
+
+	if (!nickName.isNull())
+		setNickName(nickName);
+	else
+		mNickName = config->readEntry(CONFIG_NICKNAME);
+
 	QString codecMib = config->readEntry(CONFIG_CODECMIB);
 	//	int codecMib = config->readNumEntry(CONFIG_CODECMIB, UTF-8);
 
