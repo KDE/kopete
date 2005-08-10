@@ -65,7 +65,13 @@ class KOPETE_EXPORT KCAutoConfigModule : public KCModule
 		KCAutoConfigModule( KInstance * instance, QWidget * parent = 0, const QStringList & args = QStringList() );
 
 		/**
+		*  Constructor.
 		*  @param config the KConfig to use
+		*  @param instance KInstance object for this KCM
+		*  @param parent parent widget
+		*  @param args special arguments for this KCM
+		*
+		*  @todo document what the args mean (inherited from KCModule?)
 		*/
 		KCAutoConfigModule(KConfig* config, KInstance * instance, QWidget * parent = 0, const QStringList & args = QStringList() );
 
