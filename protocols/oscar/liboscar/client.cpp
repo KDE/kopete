@@ -864,8 +864,10 @@ void Client::requestChatNavLimits()
 	if ( !c )
 		return;
 
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting chat nav service limits" << endl;
 	ChatNavServiceTask* cnst = new ChatNavServiceTask( c->rootTask() );
     cnst->setRequestType( ChatNavServiceTask::Limits );
+	cnst->go( true ); //autodelete
 
 }
 
