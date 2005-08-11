@@ -905,7 +905,8 @@ QString MSNNotifySocket::processCurrentMedia( const QString &mediaXmlElement )
 	
 	if( type == QString::fromUtf8("Music") )
 	{
-		currentMedia = i18n("Current music playing: (8) %1 (8)").arg(currentMedia);
+		// the  "♫" is encoded in utf8 (and should be in utf8)
+		currentMedia = i18n("Now Listening: ♫ %1 ♫").arg(currentMedia);
 	}
 
 	kdDebug(1414) << "Current Media received: " << currentMedia << endl;
