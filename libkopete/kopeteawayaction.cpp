@@ -75,10 +75,13 @@ void AwayAction::slotAwayChanged()
 	{
 		(*it) = KStringHandler::rsqueeze( *it );
 	}
-
 	d->reasonCount = awayMessages.count();
-	awayMessages.append( i18n( "New Message..." ) );
-	setItems( awayMessages );
+	QStringList menu;
+	menu << i18n( "No Message" );
+	menu << i18n( "New Message..." );
+	menu << QString::null ;  //separator
+	menu += awayMessages ;
+	setItems( menu );
 	setCurrentItem( -1 );
 }
 
@@ -92,26 +95,29 @@ void AwayAction::slotSelectAway( int index )
 	if( index == -1 )
 		index = 0;
 	
-	if( index < d->reasonCount )
+	switch(index)
 	{
-		awayReason = mAway->getMessage( index );
+		case 0:
+			awayReason = QString::null;
+			break;
+		case 1:
+			bool ok;
+			awayReason = KInputDialog::getText( i18n( "New Away Message" ), i18n( "Please enter your away reason:" ) , QString::null , &ok );
+			if(!ok) //the user canceled
+				return;
+			if( !awayReason.isEmpty() )
+				Kopete::Away::getInstance()->addMessage( awayReason );
+			break;
+		case 2:
+			//not possible case, that's a separator
+			break;
+		default:
+			if( index-3 < d->reasonCount )
+				awayReason = mAway->getMessage( index-3 );
 	}
-	else
-	{
-		awayReason = KInputDialog::getText(
-			i18n( "New Away Message" ),
-			i18n( "Please enter your away reason:" )
-			);
 
-		if( !awayReason.isEmpty() )
-			Kopete::Away::getInstance()->addMessage( awayReason );
-	}
-
-	if( !awayReason.isEmpty() )
-	{
-		emit awayMessageSelected( awayReason ) ;
-		emit awayMessageSelected( d->status, awayReason );
-	}
+	emit awayMessageSelected( awayReason ) ;
+	emit awayMessageSelected( d->status, awayReason );
 	setCurrentItem( -1 );
 }
 
