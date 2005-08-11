@@ -5,3 +5,4 @@ Singleton=true
 Mutators=true
 MemberVariables=private
 GlobalEnums=true
+IncludeFiles=klocale.h

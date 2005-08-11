@@ -102,7 +102,7 @@ void AccountManager::connectAll()
 			it.current()->connect();
 }
 
-void AccountManager::setAvailableAll()
+void AccountManager::setAvailableAll( const QString &awayReason )
 {
 	Away::setGlobalAway( false );
 	bool anyConnected = isAnyAccountConnected();
@@ -111,8 +111,8 @@ void AccountManager::setAvailableAll()
 	{
 		if ( anyConnected )
 		{
-			if ( it.current()->isConnected() && it.current()->isAway() )
-				it.current()->setAway( false );
+			if ( it.current()->isConnected() )
+				it.current()->setAway( false, awayReason );
 		}
 		else 
 			if(!it.current()->excludeConnect())

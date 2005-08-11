@@ -395,7 +395,10 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	}
 	else if( cmd == "UUX" )
 	{
-		// Do nothing.
+		// UUX is sended to acknowledge that the server has received and processed the personal Message.
+		// if the result is 0, set the myself() contact personalMessage.
+		if( data.section(' ', 0, 0) == QString::fromUtf8("0") )
+			m_account->myself()->setProperty(MSNProtocol::protocol()->propPersonalMessage, m_propertyPersonalMessage);
 	}
 	else if( cmd == "FLN" )
 	{
@@ -1097,6 +1100,9 @@ void MSNNotifySocket::changePersonalMessage( MSNProtocol::PersonalMessageType ty
 	}
 	
 	currentMedia.appendChild( xmlMessage.createTextNode( xmlCurrentMedia ) );
+
+	// Set the status message for myself, check if currentMedia is empty, for either using the normal or Music personal
+	m_propertyPersonalMessage = xmlCurrentMedia.isEmpty() ? tempPersonalMessage : processCurrentMedia( currentMedia.text() );
 	
 	xmlMessage.documentElement().appendChild( currentMedia );
 

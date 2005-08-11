@@ -9,17 +9,17 @@
 	<group name="Now Listening Plugin">
 		<entry name="Header" type="String">
 			<label>Header of the message advertised.</label>
-			<default>Now Listening To: </default>
+			<default code="true">i18n("Now listening to:")</default>
 		</entry>
 
 		<entry name="PerTrack" type="String">
 			<label>Core of the message advertised.</label>
-			<default>%track( by %artist)( on %album)</default>
+			<default code="true">i18n("%track( by %artist)( on %album)")</default>
 		</entry>
 
 		<entry name="Conjunction" type="String">
 			<label>Conjunction when multiple track are playing.</label>
-			<default>, and </default>
+			<default code="true">i18n(", and ")</default>
 		</entry>
 
 		<entry name="ExplicitAdvertising" type="Bool">

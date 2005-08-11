@@ -202,9 +202,14 @@ void KopeteWindow::initActions()
 
 	
 
-	actionSetAvailable = new KAction( i18n( "&Online" ),
+	/*actionSetAvailable = new KAction( i18n( "&Online" ),
 		"kopeteavailable", 0 , Kopete::AccountManager::self(),
 		SLOT( setAvailableAll() ), actionCollection(),
+		"SetAvailableAll" );*/
+
+	actionSetAvailable = new Kopete::AwayAction( i18n("&Online"), 
+		SmallIcon("kopeteavailable"), 0, this, 
+		SLOT( slotGlobalAvailableMessageSelect( const QString & ) ), actionCollection(),
 		"SetAvailableAll" );
 
 	actionAwayMenu = new KActionMenu( i18n("&Set Status"), "kopeteaway",
@@ -519,6 +524,12 @@ void KopeteWindow::slotGlobalBusyMessageSelect( const QString &awayReason )
 	Kopete::Away::getInstance()->setGlobalAwayMessage( awayReason );
 	Kopete::AccountManager::self()->setOnlineStatus(
 			Kopete::OnlineStatusManager::Busy , awayReason );
+}
+
+void KopeteWindow::slotGlobalAvailableMessageSelect( const QString &awayReason )
+{
+	Kopete::Away::getInstance()->setGlobalAwayMessage( awayReason );
+	Kopete::AccountManager::self()->setAvailableAll( awayReason );
 }
 
 void KopeteWindow::slotSetInvisibleAll(  )
