@@ -166,6 +166,115 @@ void MessageReceiverTask::handleType1Message()
 	emit receivedMessage( msg );
 }
 
+void MessageReceiverTask::handleType2Message()
+{
+	kdDebug(14151) << k_funcinfo << "We don't _really_ support type2 messages yet..." << endl;
+
+	Oscar::Message msg;
+	QValueList<TLV> messageTLVList = transfer()->buffer()->getTLVList();
+	TLV t = Oscar::findTLV( messageTLVList, 0x0005 );
+	if ( !t )
+	{
+		kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Received a channel 2 message packet with no message!" << endl;
+		return;
+	}
+	Buffer messageBuffer( t.data );
+	QValueList<TLV> innerTLVList = messageBuffer.getTLVList();
+	QValueList<TLV>::iterator it = innerTLVList.begin(), listEnd = innerTLVList.end();
+	for ( ; (*it); ++it )
+	{
+		switch ( ( *it ).type )
+		{
+		case 0x0004:
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got external ip: "
+				<< ( *it ).length << " data: " << ( *it ).data << endl;
+			break;
+		case 0x0005:
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got listening port: "
+				<< ( *it ).length << " data: " << ( *it ).data << endl;
+			break;
+		case 0x000A:
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got Acktype: " // 0x0001 normal message, 2 Abort Request, 3 Acknowledge request
+				<< ( *it ).length << " data: " << ( *it ).data << endl;
+			break;
+		case 0x000B:
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got unknown TLV 0x000B: "
+				<< ( *it ).length << " data: " << ( *it ).data << endl;
+			break;
+		case 0x000F:
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got unknown empty TLV 0x000F" << endl;
+			break;
+		case 0x2711:
+		{
+			Buffer tlv2711Buffer( ( *it ).data );
+
+			int length1 =  tlv2711Buffer.getLEWord();
+			if ( length1 != 0x001B )
+			{	// all real messages (actually their header) have length 0x1B
+				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Weired Message length. Bailing out!" << endl;
+				return;
+			}
+			
+			int protocolVersion = tlv2711Buffer.getLEWord(); // dunno what to do with it...
+			
+			for ( int i = 0; i < 25; i++ )
+			{	// 25 bytes of unneeded stuff
+				tlv2711Buffer.getByte();
+			}
+
+			// the next one is length (of a counter + following all-zero field), but also indicates what type of message this is
+			int length2 = tlv2711Buffer.getLEWord();
+
+			// the only length usable ATM is 0x000E, which is a message
+			switch( length2 )
+			{
+			case 0x000E:
+			{
+				int cookie = tlv2711Buffer.getLEWord();
+				for ( int i = 0; i < 12; i++ )
+				{	// 12 bytes all zeros
+					tlv2711Buffer.getByte();
+				}
+
+				// now starts the real message
+				msg.setType( tlv2711Buffer.getByte() );
+				// TODO if type is PLAIN, there is an additional TLV with color and font information at the end...
+				
+				int flag = tlv2711Buffer.getByte();
+				if ( flag == 0x03 ) // 0x03 = FLAG_AUTORESPONSE
+				{
+					msg.addProperty( Oscar::Message::AutoResponse );
+				}
+				else
+				{
+					msg.addProperty( Oscar::Message::Normal ); // copied from above, but: is this necessary?? Normal = 0
+				}
+
+				int status = tlv2711Buffer.getLEWord(); // don't know what status this is or what to use it for
+				int priority = tlv2711Buffer.getLEWord(); // don't know what that's good for either
+				QString messageText = tlv2711Buffer.getLELNTS();
+				msg.setText( messageText );
+				msg.setSender( m_fromUser );
+				msg.setReceiver( client()->userId() );
+				msg.setTimestamp( QDateTime::currentDateTime() );
+
+				
+				emit receivedMessage( msg );
+			}
+			default:
+				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got unknown message with length2 " << length2 << endl;
+			}
+
+
+			break;
+		} //end case
+		default:
+			kdDebug(OSCAR_RAW_DEBUG) << "Ignoring TLV of type " << ( *it ).type << endl;
+			break;
+		} //end switch
+	}
+}
+
 void MessageReceiverTask::handleType4Message()
 {
 	TLV tlv5 = transfer()->buffer()->getTLV();
