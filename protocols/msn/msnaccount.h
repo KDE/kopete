@@ -126,7 +126,6 @@ private slots:
 	void slotStartChat();
 	void slotOpenInbox();
 	void slotChangePublicName();
-	void slotChangePersonalMessage();
 
 //#if !defined NDEBUG //(Stupid moc which don't see when he don't need to slot this slot)
 	/**
@@ -201,7 +200,6 @@ private:
 	KAction *m_openInboxAction;
 	KAction *m_startChatAction;
 	KAction *m_changeDNAction;
-	KAction *m_changePMAction;
 
 	// status which will be using for connecting
 	Kopete::OnlineStatus m_connectstatus;

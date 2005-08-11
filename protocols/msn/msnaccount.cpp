@@ -74,7 +74,6 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 
 	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
 	m_changeDNAction = new KAction( i18n( "&Change Display Name..." ), QString::null, 0, this, SLOT( slotChangePublicName() ), this, "renameAction" );
-	m_changePMAction = new KAction( i18n( "&Change Personal Message..." ), QString::null, 0, this, SLOT( slotChangePersonalMessage() ), this, "messageAction" );
 	m_startChatAction = new KAction( i18n( "&Start Chat..." ), "mail_generic", 0, this, SLOT( slotStartChat() ), this, "startChatAction" );
 
 
@@ -225,20 +224,17 @@ KActionMenu * MSNAccount::actionMenu()
 		m_openInboxAction->setEnabled( true );
 		m_startChatAction->setEnabled( true );
 		m_changeDNAction->setEnabled( true );
-		m_changePMAction->setEnabled( true );
 	}
 	else
 	{
 		m_openInboxAction->setEnabled( false );
 		m_startChatAction->setEnabled( false );
 		m_changeDNAction->setEnabled( false );
-		m_changePMAction->setEnabled( false );
 	}
 
 	m_actionMenu->popupMenu()->insertSeparator();
 
 	m_actionMenu->insert( m_changeDNAction );
-	m_actionMenu->insert( m_changePMAction );
 	m_actionMenu->insert( m_startChatAction );
 
 //	m_actionMenu->popupMenu()->insertSeparator();
@@ -357,33 +353,6 @@ void MSNAccount::slotChangePublicName()
 	}
 }
 
-void MSNAccount::slotChangePersonalMessage()
-{
-	bool ok;
-	// Allow empty input.
-	QRegExp emptyInput(".*");
-	QRegExpValidator emptyValidator(emptyInput, 0);
-
-	QString message = KInputDialog::getText( i18n( "Change Personal Message - MSN Plugin" ),
-			i18n( "Enter the new personal message you want to send to your friends on MSN:" ),
-			myself()->property( MSNProtocol::protocol()->propPersonalMessage).value().toString(), &ok,
-			Kopete::UI::Global::mainWidget(), "personalMessageInput", &emptyValidator); 
-	
-	if ( ok )
-	{
-		//Magic number : 129 characters MAX
-		if ( message.length() > 129 )
-		{
-			KMessageBox::error( Kopete::UI::Global::mainWidget(),
-				i18n( "<qt>The message you entered is too long. Please enter a shorter message.\n"
-					"Your comment has <b>not</b> been changed.</qt>" ),
-				i18n( "Change Personal Message - MSN Plugin" ) );
-				return;
-		}
-	
-		setPersonalMessage( MSNProtocol::PersonalMessageNormal, message );
-	}
-}
 
 void MSNAccount::slotOpenInbox()
 {
@@ -486,10 +455,11 @@ void MSNAccount::setPersonalMessage( MSNProtocol::PersonalMessageType type, cons
 	{
 		m_notifySocket->changePersonalMessage( type, personalMessage );
 	}
+	/*  Eh,  if we can't change the display name, don't let make the user think it has changed
 	else if(type == MSNProtocol::PersonalMessageNormal) // Normal personalMessage, not a dynamic one that need formatting.
 	{
 		slotPersonalMessageChanged( personalMessage );
-	}
+	}*/
 }
 
 void MSNAccount::slotGroupAdded( const QString& groupName, const QString &groupGuid )
