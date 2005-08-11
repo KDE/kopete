@@ -81,6 +81,7 @@ bool ChatNavServiceTask::take( Transfer* transfer )
         }
         case 0x0003:
             kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "exchange info TLV found" << endl;
+			handleExchangeInfo( t );
             break;
         case 0x0004:
             kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "room info TLV found" << endl;
@@ -146,8 +147,11 @@ void ChatNavServiceTask::handleExchangeInfo( const TLV& t )
 			kdDebug(OSCAR_RAW_DEBUG) << "max occupancy" << t.data << endl;
 			break;
 		case 0xD3:
-			kdDebug(OSCAR_RAW_DEBUG) << "exchange name" << endl;
+		{
+			QString eName( t.data );
+			kdDebug(OSCAR_RAW_DEBUG) << "exchange name: " << eName << endl;
 			break;
+		}
 		case 0xD4:
 			kdDebug(OSCAR_RAW_DEBUG) << "got optional channels" << endl;
 			break;
@@ -160,6 +164,7 @@ void ChatNavServiceTask::handleExchangeInfo( const TLV& t )
 		}
 		realCount++;
 	}
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "real tlv count is: " << realCount << endl;
 }
 
 void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
