@@ -341,13 +341,52 @@ int VideoDevicePool::scanDevices()
 	const QFileInfoList *list = videodevice_dir.entryInfoList();
 
 	if (!list)
-		return EXIT_FAILURE;
+	{
+		kdDebug() << k_funcinfo << "Found no suitable devices in " << videodevice_dir_path << endl;
+		QDir videodevice_dir;
+		const QString videodevice_dir_path=QString::fromLocal8Bit("/dev/");
+		const QString videodevice_dir_filter=QString::fromLocal8Bit("video*");
+		VideoDevice videodevice;
 
+		videodevice_dir.setPath(videodevice_dir_path);
+		videodevice_dir.setNameFilter(videodevice_dir_filter);
+        	videodevice_dir.setFilter( QDir::System | QDir::NoSymLinks | QDir::Readable | QDir::Writable );
+        	videodevice_dir.setSorting( QDir::Name );
+
+		const QFileInfoList *list = videodevice_dir.entryInfoList();
+
+		if (!list)
+		{
+			kdDebug() << k_funcinfo << "Found no suitable devices in " << videodevice_dir_path << endl;
+			return EXIT_FAILURE;
+		}
+		QFileInfoListIterator fileiterator ( *list );
+		QFileInfo *fileinfo;
+
+		m_videodevice.clear();
+		kdDebug() <<  k_funcinfo << "scanning devices in " << videodevice_dir_path << "..." << endl;
+		while ( (fileinfo = fileiterator.current()) != 0 )
+		{
+			videodevice.setFileName(fileinfo->absFilePath());
+			kdDebug() <<  k_funcinfo << "Found device " << videodevice.full_filename << endl;
+			videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
+			if(videodevice.isOpen())
+			{
+				kdDebug() <<  k_funcinfo << "File " << videodevice.full_filename << " was opened successfuly" << endl;
+				videodevice.close();
+				m_videodevice.push_back(videodevice);
+			}
+			++fileiterator;
+		}
+
+
+		return EXIT_FAILURE;
+	}
 	QFileInfoListIterator fileiterator ( *list );
 	QFileInfo *fileinfo;
 
 	m_videodevice.clear();
-	kdDebug() <<  k_funcinfo << "scanning devices..." << endl;
+	kdDebug() <<  k_funcinfo << "scanning devices in " << videodevice_dir_path << "..." << endl;
 	while ( (fileinfo = fileiterator.current()) != 0 )
 	{
 		videodevice.setFileName(fileinfo->absFilePath());
