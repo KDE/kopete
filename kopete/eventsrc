@@ -989,6 +989,7 @@ Name[sr@Latn]=Повезивање немогуће
 Name[tr]=Bağlanılamıyor
 Name[zh_CN]=无法连接
 Comment=Kopete can't connect to the service
+Comment[zh_CN]=Kopete 无法连接到服务
 default_presentation=16
 
 [network_problems]
