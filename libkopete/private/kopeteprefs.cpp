@@ -50,6 +50,7 @@ void KopetePrefs::load()
 
 	mIconTheme = config->readEntry("EmoticonTheme", defaultTheme());
 	mUseEmoticons = config->readBoolEntry("Use Emoticons", true);
+	mEmoticonsRequireSpaces = config->readBoolEntry("EmoticonsRequireSpaces" , true );
 	mShowOffline = config->readBoolEntry("ShowOfflineUsers", true);
 	mShowEmptyGroups = config->readBoolEntry("ShowEmptyGroups", true);
 	mGreyIdle = config->readBoolEntry("GreyIdleMetaContacts", true);
@@ -172,6 +173,7 @@ void KopetePrefs::save()
 
 	config->writeEntry("EmoticonTheme", mIconTheme);
 	config->writeEntry("Use Emoticons", mUseEmoticons);
+	config->writeEntry("EmoticonsRequireSpaces", mEmoticonsRequireSpaces);
 	config->writeEntry("ShowOfflineUsers", mShowOffline);
 	config->writeEntry("ShowEmptyGroups", mShowEmptyGroups);
 	config->writeEntry("GreyIdleMetaContacts", mGreyIdle);
@@ -268,13 +270,21 @@ void KopetePrefs::save()
 
 void KopetePrefs::setIconTheme(const QString &value)
 {
-	if( mIconTheme != value ) mMessageAppearanceChanged = true;
+	if( mIconTheme != value )
+	{
+		mMessageAppearanceChanged = true;
+		mContactListAppearanceChanged = true;
+	}
 	mIconTheme = value;
 }
 
 void KopetePrefs::setUseEmoticons(bool value)
 {
-	if( mUseEmoticons != value ) mMessageAppearanceChanged = true;
+	if( mUseEmoticons != value )
+	{
+		 mMessageAppearanceChanged = true;
+		 mContactListAppearanceChanged = true;
+	}
 	mUseEmoticons = value;
 }
 
@@ -650,10 +660,19 @@ void KopetePrefs::setReconnectOnDisconnect( bool newSetting )
 	mReconnectOnDisconnect = newSetting;
 }
 
-
 void KopetePrefs::setAutoConnect(bool b)
 {
 	mAutoConnect=b;
+}
+
+void KopetePrefs::setEmoticonsRequireSpaces( bool b )
+{
+	if( mEmoticonsRequireSpaces != b )
+	{
+		 mMessageAppearanceChanged = true;
+		 mContactListAppearanceChanged = true;
+	}
+	mEmoticonsRequireSpaces=b;
 }
 
 #include "kopeteprefs.moc"

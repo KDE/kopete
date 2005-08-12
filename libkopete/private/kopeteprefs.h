@@ -128,6 +128,7 @@ public:
 
 	bool truncateContactNames() const { return mTruncateContactNames; }
 	int maxConactNameLength() const { return mMaxContactNameLength; }
+	bool emoticonsRequireSpaces() const { return mEmoticonsRequireSpaces; }
 
 	void setIconTheme(const QString &value);
 	void setUseEmoticons(bool value);
@@ -191,6 +192,7 @@ public:
 	void setTruncateContactNames( bool );
 	void setMaxContactNameLength( int );
 	void setAutoConnect( bool );
+	void setEmoticonsRequireSpaces( bool );
 
 signals:
 	/**
@@ -293,6 +295,7 @@ private:
 	unsigned int mContactListAutoHideTimeout;
 
 	bool mReconnectOnDisconnect;
+	bool mEmoticonsRequireSpaces;
 
 	QString fileContents(const QString &path);
 	void _setStyleSheet (const QString &);

@@ -177,7 +177,9 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	// "Emoticons" TAB ==========================================================
 	mPrfsEmoticons = new AppearanceConfig_Emoticons(mAppearanceTabCtl);
 	connect(mPrfsEmoticons->chkUseEmoticons, SIGNAL(toggled(bool)),
-		this, SLOT(slotUseEmoticonsChanged(bool)));
+		this, SLOT(emitChanged()));
+	connect(mPrfsEmoticons->chkRequireSpaces, SIGNAL(toggled(bool)),
+			this, SLOT(emitChanged()));
 	connect(mPrfsEmoticons->icon_theme_list, SIGNAL(selectionChanged()),
 		this, SLOT(slotSelectedEmoticonsThemeChanged()));
 	connect(mPrfsEmoticons->btnInstallTheme, SIGNAL(clicked()),
@@ -331,6 +333,7 @@ void AppearanceConfig::save()
 	// "Emoticons" TAB ==========================================================
 	p->setIconTheme( mPrfsEmoticons->icon_theme_list->currentText() );
 	p->setUseEmoticons ( mPrfsEmoticons->chkUseEmoticons->isChecked() );
+	p->setEmoticonsRequireSpaces( mPrfsEmoticons->chkRequireSpaces->isChecked() );
 
 	// "Chat Window" TAB ========================================================
 	p->setTransparencyColor( mPrfsChatWindow->mTransparencyTintColor->color() );
@@ -388,7 +391,7 @@ void AppearanceConfig::load()
 	// "Emoticons" TAB ==========================================================
 	updateEmoticonlist();
 	mPrfsEmoticons->chkUseEmoticons->setChecked( p->useEmoticons() );
-	slotUseEmoticonsChanged ( p->useEmoticons() );
+	mPrfsEmoticons->chkRequireSpaces->setChecked( p->emoticonsRequireSpaces() );
 
 	// "Chat Window" TAB ========================================================
 	mPrfsChatWindow->mTransparencyEnabled->setChecked( p->transparencyEnabled() );
@@ -498,11 +501,6 @@ void AppearanceConfig::updateEmoticonlist()
 		mPrfsEmoticons->icon_theme_list->setCurrentItem( item );
 	else // Er, it's not there... select the current item
 		mPrfsEmoticons->icon_theme_list->setCurrentItem( 0 );
-}
-
-void AppearanceConfig::slotUseEmoticonsChanged( bool  )
-{
-	emitChanged();
 }
 
 void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
@@ -889,7 +887,7 @@ void AppearanceConfig::slotGetThemes()
 	config->writeEntry( "Uncompress", "application/x-gzip" );
 	config->sync();
 	
-	KNS::DownloadDialog::open( "emoticons" );
+	KNS::DownloadDialog::open( "emoticons", i18n( "Get new Emoticons") );
 	updateEmoticonlist();
 }
 
