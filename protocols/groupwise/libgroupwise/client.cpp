@@ -68,7 +68,7 @@ Client::Client(QObject *par)
 	d->osname = "N/A";
 	d->clientName = "N/A";
 	d->clientVersion = "0.0";
-
+	d->id_seed = 0xaaaa;
 	d->root = new Task(this, true);
 	d->requestFactory = new RequestFactory;
 	d->userDetailsMgr = new UserDetailsManager( this, "userdetailsmgr" );
