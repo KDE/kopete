@@ -1156,10 +1156,20 @@ void GroupWiseAccount::receiveContactCreated()
 	}
 	else
 	{
-		// delete the contact created optimistically the supplied userid;
-		Kopete::Contact * c = contacts()[ cct->userId() ];
+		// delete the contact created optimistically using the supplied userid;
+		Kopete::Contact * c = contacts()[ protocol()->dnToDotted( cct->userId() ) ];
 		if ( c )
-			delete c;
+		{
+			if ( c->metaContact()->contacts().count() == 1 )
+				Kopete::ContactList::self()->removeMetaContact( c->metaContact() );
+			else	
+				delete c;
+		}
+
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget (), KMessageBox::Error,
+							i18n ("The contact %1 could not be added to the contact list, with error message: %2").
+							arg(cct->userId() ).arg( cct->statusString() ),
+							i18n ("Error adding contact") );
 	}
 }
 
