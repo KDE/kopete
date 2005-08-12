@@ -329,13 +329,10 @@ void Client::ct_messageReceived( const ConferenceEvent & messageEvent )
 	ConferenceEvent transformedEvent = messageEvent;
 	RTF2HTML parser;
 	QString rtf = messageEvent.message;
-	//QRegExp rx( "&(?!amp;)" );      // match ampersands but not &amp; (?! is negative lookahead
-// 	QRegExp rx( "(\\u\d+) (\?)"
-//     QString line1 = "This & that";
-//     line1.replace( rx, "&amp;" );
 	if ( !rtf.isEmpty() )
 		transformedEvent.message = parser.Parse( rtf.latin1(), "" );
-
+	QRegExp rx(" </span> </span> </span><br>$");
+	transformedEvent.message.replace( rx, "</span></span></span>" );
 	emit messageReceived( transformedEvent );
 }
 
