@@ -337,6 +337,8 @@ void Client::ct_messageReceived( const ConferenceEvent & messageEvent )
 	QString rtf = messageEvent.message;
 	if ( !rtf.isEmpty() )
 		transformedEvent.message = parser.Parse( rtf.latin1(), "" );
+	QRegExp rx(" </span> </span> </span><br>$");
+	transformedEvent.message.replace( rx, "</span></span></span>" );
 
 	emit messageReceived( transformedEvent );
 }
