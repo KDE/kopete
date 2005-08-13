@@ -101,6 +101,7 @@ public:
 	 */
 	QTimer refreshtimer;
 	bool transformAllMessages;
+	ToolTip *tt;
 };
 
 class ChatMessagePart::ToolTip : public QToolTip
@@ -185,7 +186,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 
 	view()->setFocusPolicy( QWidget::NoFocus );
 
-	new ToolTip( this );
+	d->tt=new ToolTip( this );
 
 	// It is not possible to drag and drop on our widget
 	view()->setAcceptDrops(false);
@@ -230,6 +231,7 @@ ChatMessagePart::~ChatMessagePart()
 		delete backgroundFile;
 	}
 
+	delete d->tt;
 	delete d->xsltParser;
 	delete d;
 }
