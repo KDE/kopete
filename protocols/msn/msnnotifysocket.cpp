@@ -370,19 +370,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			QString obj=unescape(data.section( ' ', 4, 4 ));
 			c->setObject( obj );
 			c->setOnlineStatus( convertOnlineStatus( data.section( ' ', 0, 0 ) ) );
-
-			if(!c->hasProperty( MSNProtocol::protocol()->propClient.key() ))
-			{
-				unsigned int clientID=data.section( ' ', 3, 3 ).toUInt();
-				if( clientID & 512)
-					c->setProperty(  MSNProtocol::protocol()->propClient , i18n("Web Messenger") );
-				else if(clientID & 1)
-					c->setProperty(  MSNProtocol::protocol()->propClient , i18n("Windows Mobile") );
-				else if(clientID & 64)
-					c->setProperty(  MSNProtocol::protocol()->propClient , i18n("MSN Mobile") );
-				else if(obj.contains("kopete")  )
-					c->setProperty(  MSNProtocol::protocol()->propClient , i18n("Kopete") );
-			}
+			c->setClientFlags(data.section( ' ', 3, 3 ).toUInt());
 		}
 	}
 	else if( cmd == "UBX" )

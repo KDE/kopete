@@ -97,6 +97,7 @@ private:
 	QString otherString;
 	KActionMenu *m_actionInvite;
 	QPtrList<KAction> m_inviteactions;
+	KAction *m_actionNudge;
 
 	//Messages sent before the ending of the connection are queued
 	QValueList<Kopete::Message> m_messagesQueue;

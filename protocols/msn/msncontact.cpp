@@ -58,6 +58,8 @@ MSNContact::MSNContact( Kopete::Account *account, const QString &id, Kopete::Met
 	m_blocked = false;
 	m_reversed = false;
 	m_moving = false;
+	
+	m_clientFlags=0;
 
 	setFileCapable( true );
 
@@ -289,6 +291,31 @@ bool MSNContact::isDeleted() const
 void MSNContact::setDeleted( bool deleted )
 {
 	m_deleted= deleted;
+}
+
+uint MSNContact::clientFlags() const
+{
+	return m_clientFlags;
+}
+
+void MSNContact::setClientFlags( uint flags )
+{
+	if(m_clientFlags != flags) 
+	{
+		if(hasProperty( MSNProtocol::protocol()->propClient.key() ))
+		{
+			if( flags & MSNProtocol::WebMessenger)
+				setProperty(  MSNProtocol::protocol()->propClient , i18n("Web Messenger") );
+			else if( flags & MSNProtocol::WindowsMobile)
+				setProperty(  MSNProtocol::protocol()->propClient , i18n("Windows Mobile") );
+			else if( flags & MSNProtocol::MSNMobileDevice)
+				setProperty(  MSNProtocol::protocol()->propClient , i18n("MSN Mobile") );
+			else if( m_obj.contains("kopete")  )
+				setProperty(  MSNProtocol::protocol()->propClient , i18n("Kopete") );
+		}
+
+	}
+	m_clientFlags=flags;
 }
 
 void MSNContact::setInfo(const  QString &type,const QString &data )
