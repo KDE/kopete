@@ -408,14 +408,20 @@ GaduAccount::changeStatus( const Kopete::OnlineStatus& status, const QString& de
 	}
 	else {
 		// if status is for no desc, but we get some desc, than convert it to status with desc
-		if (!descr.isEmpty()) {
+		if (!descr.isEmpty() && !GaduProtocol::protocol()->statusWithDescription( status.internalStatus() ) ) {
+			// and rerun us again. This won't cause any recursive call, as both conversions are static
 			ns = GaduProtocol::protocol()->statusToWithDescription( status );
-			if ( ns != status.internalStatus() ) {
-				// and rerun us again. This won't cause any recursive call, as both conversions are static
-				changeStatus( GaduProtocol::protocol()->convertStatus( ns ), descr );
-				return;
-			}
+			changeStatus( GaduProtocol::protocol()->convertStatus( ns ), descr );
+			return;
 		}
+
+		// well, if it's empty but we want to set status with desc, change it too
+                if (descr.isEmpty() && GaduProtocol::protocol()->statusWithDescription( status.internalStatus() ) ) {
+			ns = GaduProtocol::protocol()->statusToWithoutDescription( status );
+			changeStatus( GaduProtocol::protocol()->convertStatus( ns ), descr );
+			return;
+		}
+				
 		if ( !p->session_->isConnected() ) {
 			if ( password().cachedValue().isEmpty() ) {
 				// FIXME: when status string added to connect(), use it here
