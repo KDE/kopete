@@ -39,10 +39,12 @@ public:
 	virtual bool forMe( const Transfer* transfer ) const;
 	virtual bool take( Transfer* transfer );
 	virtual void onGo();
+    void createRoom( WORD exchange, const QString& name ); //create a room. sends the packet as well
 
 private:
 	void handleExchangeInfo( const TLV& t );
 	void handleBasicRoomInfo( const TLV& t );
+    void handleCreateRoomInfo( const TLV& t );
 
 private:
 

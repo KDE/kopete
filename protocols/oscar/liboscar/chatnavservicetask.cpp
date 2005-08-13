@@ -101,7 +101,47 @@ void ChatNavServiceTask::onGo()
 
     Transfer* t = createTransfer( f, s, b );
     send( t );
+	delete t;
 }
+
+void ChatNavServiceTask::createRoom( WORD exchange, const QString& name )
+{
+	//most of this comes from gaim. thanks to them for figuring it out
+	QString cookie = "create"; //hardcoded, seems to be ignored by AOL
+	QString lang = "en";
+	QString charset = "us-ascii";
+
+	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	SNAC s = { 0x000D, 0x0008, 0x0000, client()->snacSequence() };
+	Buffer *b = new Buffer;
+
+	b->addWord( exchange );
+	b->addBUIN( cookie.latin1() );
+	b->addWord( 0xFFFF ); //assign the last instance
+	b->addByte( 0x01 ); //detail level
+
+	//just send three TLVs
+	b->addWord( 0x0003 );
+
+	//i'm lazy, add TLVs manually
+
+	b->addWord( 0x00D3 ); //type of 0x00D3 - name
+	b->addWord( name.length() );
+	b->addString( name.latin1(), name.length() );
+
+	b->addWord( 0x00D6 ); //type of 0x00D6 - charset
+	b->addWord( charset.length() );
+	b->addString( charset.latin1(), charset.length() );
+
+	b->addWord( 0x00D7 ); //type of 0x00D7 - lang
+	b->addWord( lang.length() );
+	b->addString( lang.latin1(), lang.length() );
+
+	Transfer* t = createTransfer( f, s, b );
+	send( t );
+	delete t;
+}
+
 
 void ChatNavServiceTask::handleExchangeInfo( const TLV& t )
 {
@@ -233,6 +273,57 @@ void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
 			break;
 		}
 		realCount++;
+	}
+}
+
+void ChatNavServiceTask::handleCreateRoomInfo( const TLV& t )
+{
+	Buffer b( t.data );
+	WORD exchange = b.getWord();
+	WORD cookieLength = b.getByte();
+	QByteArray cookie( b.getBlock( cookieLength ) );
+	WORD instance = b.getWord();
+	BYTE detailLevel = b.getByte();
+
+	if ( detailLevel != 0x02 )
+	{
+		kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "unknown detail level in response" << endl;
+		return;
+	}
+
+	WORD numberTlvs = b.getWord();
+	QValueList<Oscar::TLV> roomTLVList = b.getTLVList();
+	QValueList<Oscar::TLV>::iterator itEnd = roomTLVList.end();
+	for ( QValueList<Oscar::TLV>::iterator it = roomTLVList.begin();
+		  it != itEnd; ++ it )
+	{
+		switch( ( *it ).type )
+		{
+		case 0x006A:
+		{
+			QString fqcn = QString( ( *it ).data );
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "fqcn: " << fqcn << endl;
+			break;
+		}
+		case 0x00C9:
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "flags: " << t.data << endl;
+			break;
+		case 0x00CA:
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "create time: " << t.data << endl;
+			break;
+		case 0x00D1:
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "max msg len: " << t.data << endl;
+			break;
+		case 0x00D2:
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "max occupancy: " << t.data << endl;
+			break;
+		case 0x00D3:
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "name: " << QString( t.data ) << endl;
+			break;
+		case 0x00D5:
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "create perms: " << t.data << endl;
+			break;
+		};
 	}
 }
 
