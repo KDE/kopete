@@ -238,6 +238,8 @@ private:
 
 
 	YahooAwayDialog *theAwayDialog;	// Our away message dialog
+
+	KAction *m_openInboxAction;	//Menu item openInbox
 };
 
 

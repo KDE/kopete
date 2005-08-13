@@ -491,6 +491,9 @@ KActionMenu *YahooAccount::actionMenu()
 	
 	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
 	
+	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
+	theActionMenu->insert( m_openInboxAction );	
+	
 	return theActionMenu;
 }
 
