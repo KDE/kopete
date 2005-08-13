@@ -131,6 +131,16 @@ void ICQUserInfoWidget::fillMoreInfo( const ICQMoreUserInfo& ui )
 	QString gender = static_cast<ICQProtocol*>( m_contact->protocol() )->genders()[ui.gender];
 	m_genInfoWidget->genderEdit->setText( gender );
 	m_genInfoWidget->homepageEdit->setText( ui.homepage );
+
+	QString ms = static_cast<ICQProtocol*>( m_contact->protocol() )->maritals()[ui.marital];
+	m_genInfoWidget->marital->setText( ms );
+
+	m_genInfoWidget->oCityEdit->setText(ui.ocity);
+	m_genInfoWidget->oStateEdit->setText(ui.ostate);
+	
+	QString ocountry = static_cast<ICQProtocol*>( m_contact->protocol() )->countries()[ui.ocountry];
+	m_genInfoWidget->oCountryEdit->setText( ocountry );
+	
 	//TODO languages	
 }
 

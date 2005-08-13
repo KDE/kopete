@@ -128,6 +128,10 @@ public:
 	unsigned int lang1;
 	unsigned int lang2;
 	unsigned int lang3;
+	QString ocity;
+	QString ostate;
+	int ocountry;
+	int marital;
 };
 
 class KOPETE_EXPORT ICQEmailInfo : public ICQInfoBase

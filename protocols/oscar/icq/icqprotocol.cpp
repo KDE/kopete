@@ -190,6 +190,7 @@ ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 	initLang();
 	initCountries();
 	initEncodings();
+	initMaritals();
 }
 
 ICQProtocol::~ICQProtocol()
@@ -577,6 +578,18 @@ utf16 -- Unicode
 CP874
 Apple Roman
 */
+}
+void ICQProtocol::initMaritals()
+{
+	mMarital.insert(0 , "");
+	mMarital.insert(10 , i18n("Single"));
+	mMarital.insert(11 , i18n("Long term relationship"));
+	mMarital.insert(12 , i18n("Engaged"));
+	mMarital.insert(20 , i18n("Married"));
+	mMarital.insert(30 , i18n("Divorced"));
+	mMarital.insert(31 , i18n("Separated"));
+	mMarital.insert(40 , i18n("Widowed"));
+
 }
 
 void ICQProtocol::fillComboFromTable(QComboBox *box, const QMap<int, QString> &map)

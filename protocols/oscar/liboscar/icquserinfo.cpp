@@ -115,6 +115,8 @@ ICQMoreUserInfo::ICQMoreUserInfo()
 	lang1 = 0;
 	lang2 = 0;
 	lang3 = 0;
+	ocountry = 0;
+	marital = 0;
 }
 
 void ICQMoreUserInfo::fill( Buffer* buffer )
@@ -137,6 +139,11 @@ void ICQMoreUserInfo::fill( Buffer* buffer )
 		lang1 = buffer->getByte();
 		lang2 = buffer->getByte();
 		lang3 = buffer->getByte();
+		buffer->getLEWord(); //emtpy field
+		ocity = buffer->getLELNTS();
+		ostate = buffer->getLELNTS();
+		ocountry = buffer->getLEWord();
+		marital = buffer->getLEWord();
 	}
 	else
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ work user info packet" << endl;
