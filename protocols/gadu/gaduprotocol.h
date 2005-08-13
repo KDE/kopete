@@ -71,10 +71,11 @@ public:
 	//!Plugin reimplementation
 
 	Kopete::OnlineStatus convertStatus( uint ) const;
-	bool statusWithDesciption( uint status );
+	bool statusWithDescription( uint status );
 
 	uint statusToWithDescription( Kopete::OnlineStatus status );
-
+	uint statusToWithoutDescription( Kopete::OnlineStatus status );
+	
 	const Kopete::ContactPropertyTmpl propFirstName;
 	const Kopete::ContactPropertyTmpl propLastName;
 	const Kopete::ContactPropertyTmpl propEmail;

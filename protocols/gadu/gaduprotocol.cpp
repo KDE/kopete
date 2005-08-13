@@ -157,13 +157,31 @@ GaduProtocol::statusToWithDescription( Kopete::OnlineStatus status )
 		return GG_STATUS_INVISIBLE_DESCR;
 	}
 
-    return GG_STATUS_AVAIL_DESCR;
+	return GG_STATUS_AVAIL_DESCR;
+}
+
+uint
+GaduProtocol::statusToWithoutDescription( Kopete::OnlineStatus status )
+{
+        if ( status == gaduStatusOffline_ || status == gaduStatusOfflineDescr_ ) {
+		return GG_STATUS_NOT_AVAIL;
+	}
+
+	if ( status == gaduStatusBusyDescr_ || status == gaduStatusBusy_ ){
+		return GG_STATUS_BUSY;
+	}
+
+	if ( status == gaduStatusInvisibleDescr_ || status == gaduStatusInvisible_ ){
+		return GG_STATUS_INVISIBLE;
+	}		
+	
+	return GG_STATUS_AVAIL;
 }
 
 bool
-GaduProtocol::statusWithDesciption( uint status )
+GaduProtocol::statusWithDescription( uint status )
 {
-	switch( status ){
+	switch( status ) {
 		case GG_STATUS_NOT_AVAIL:
 		case GG_STATUS_BUSY:
 		case GG_STATUS_INVISIBLE:
@@ -183,7 +201,7 @@ GaduProtocol::statusWithDesciption( uint status )
 Kopete::OnlineStatus
 GaduProtocol::convertStatus( uint status ) const
 {
-	switch( status ){
+	switch( status ) {
 		case GG_STATUS_NOT_AVAIL:
 			return gaduStatusOffline_;
 		case GG_STATUS_NOT_AVAIL_DESCR:
