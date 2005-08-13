@@ -385,9 +385,13 @@ GaduAccount::createContact( const QString& contactId, Kopete::MetaContact* paren
 void
 GaduAccount::changeStatus( const Kopete::OnlineStatus& status, const QString& descr )
 {
+	unsigned int ns;
+	
+	kdDebug(14100) << "##### change status #####" << endl;
 	kdDebug(14100) << "### Status = " << p->session_->isConnected() << endl;
 	kdDebug(14100) << "### Status description = \"" << descr << "\"" << endl;
 
+	// if change to not available, log off
 	if ( GG_S_NA( status.internalStatus() ) ) {
 		if ( !p->session_->isConnected() ) {
 			return;//already logged off
@@ -403,6 +407,15 @@ GaduAccount::changeStatus( const Kopete::OnlineStatus& status, const QString& de
 		dccOff();
 	}
 	else {
+		// if status is for no desc, but we get some desc, than convert it to status with desc
+		if (!descr.isEmpty()) {
+			ns = GaduProtocol::protocol()->statusToWithDescription( status );
+			if ( ns != status.internalStatus() ) {
+				// and rerun us again. This won't cause any recursive call, as both conversions are static
+				changeStatus( GaduProtocol::protocol()->convertStatus( ns ), descr );
+				return;
+			}
+		}
 		if ( !p->session_->isConnected() ) {
 			if ( password().cachedValue().isEmpty() ) {
 				// FIXME: when status string added to connect(), use it here
