@@ -19,7 +19,7 @@ liboscar_la_SOURCES = oscarutils.cpp client.cpp task.cpp connector.cpp \
 	offlinemessagestask.cpp ssiauthtask.cpp userinfotask.cpp icquserinfo.cpp icquserinfotask.cpp \
 	usersearchtask.cpp warningtask.cpp changevisibilitytask.cpp typingnotifytask.cpp \
 	buddyicontask.cpp serverredirecttask.cpp oscarsettings.cpp \
-	localcontactlisttask.cpp chatnavservicetask.cpp connectionhandler.cpp
+	localcontactlisttask.cpp chatnavservicetask.cpp connectionhandler.cpp chatservicetask.cpp
 
 liboscar_la_LDFLAGS = -no-undefined $(all_libraries)
 liboscar_la_LIBADD = $(LIB_QT) $(LIB_KDECORE)
