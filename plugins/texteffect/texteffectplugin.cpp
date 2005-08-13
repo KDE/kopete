@@ -20,7 +20,7 @@
 #include <kdebug.h>
 #include <kgenericfactory.h>
 
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 
 #include "texteffectplugin.h"
 #include "texteffectconfig.h"

@@ -24,7 +24,7 @@
 #include <kstandarddirs.h>
 #include <kdeversion.h>
 
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
 #include "kopeteview.h"
 #include "kopetecontactlist.h"
@@ -46,8 +46,9 @@ static const KAboutData aboutdata("kopete_statistics", I18N_NOOP("Statistics") ,
 K_EXPORT_COMPONENT_FACTORY( kopete_statistics, StatisticsPluginFactory( &aboutdata )  )
 
 StatisticsPlugin::StatisticsPlugin( QObject *parent, const char *name, const QStringList &)
-	: Kopete::Plugin( StatisticsPluginFactory::instance(), parent, name ),
-      DCOPObject("StatisticsDCOPIface")
+      : DCOPObject("StatisticsDCOPIface"), 
+        Kopete::Plugin( StatisticsPluginFactory::instance(), parent, name )
+      
 
 {
 	KAction *viewMetaContactStatistics = new KAction( i18n("View &Statistics" ),

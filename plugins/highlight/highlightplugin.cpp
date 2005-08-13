@@ -19,7 +19,7 @@
 #include <kgenericfactory.h>
 #include <knotifyclient.h>
 
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopeteview.h"
 
 #include "filter.h"
