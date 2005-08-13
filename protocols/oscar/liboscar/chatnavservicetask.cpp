@@ -101,7 +101,6 @@ void ChatNavServiceTask::onGo()
 
     Transfer* t = createTransfer( f, s, b );
     send( t );
-	delete t;
 }
 
 void ChatNavServiceTask::createRoom( WORD exchange, const QString& name )
@@ -139,7 +138,6 @@ void ChatNavServiceTask::createRoom( WORD exchange, const QString& name )
 
 	Transfer* t = createTransfer( f, s, b );
 	send( t );
-	delete t;
 }
 
 
