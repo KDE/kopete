@@ -39,6 +39,7 @@ class YahooContact;
 class YahooAccount;
 class YahooProtocol;
 class KTempFile;
+class QTimer;
 struct KURL;
 
 class YahooAwayDialog : public KopeteAwayDialog
@@ -201,6 +202,7 @@ private slots:
 	 * When a global identity key get changed.
 	 */
 	void slotGlobalIdentityChanged( const QString &key, const QVariant &value );
+	void slotKeepalive();
 private:
 
 	/**
@@ -223,6 +225,7 @@ private:
 
 	bool theHaveContactList;	// Do we have the full server-side contact list yet?
 	int stateOnConnection;		// The state to change to on connection
+	QTimer* m_keepaliveTimer;
 
 	/**
 	 * External Settings and Descriptors

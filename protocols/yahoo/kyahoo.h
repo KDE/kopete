@@ -353,6 +353,7 @@ private:
 	int m_Status;
 	int m_connId;
 	int m_fd;
+	bool m_waitingForResponse;
 
 	QString m_BuddyListServer; // Buddy List server
 	int m_BuddyListPort;

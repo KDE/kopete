@@ -24,6 +24,7 @@
 #include <qcolor.h>
 #include <qregexp.h>
 #include <qimage.h>
+#include <qtimer.h>
 
 // KDE
 #include <klocale.h>
@@ -78,6 +79,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	m_lastDisconnectCode = 0;
 	m_currentMailCount = 0;
 	m_pictureFlag = 0;
+	m_keepaliveTimer = new QTimer( this, "keepaliveTimer" );
 
 	YahooContact* _myself=new YahooContact( this, accountId, accountId, Kopete::ContactList::self()->myself() );
 	setMyself( _myself );
@@ -88,6 +90,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	myself()->setProperty( YahooProtocol::protocol()->iconExpire, configGroup()->readNumEntry( "iconExpire", 0 ) );
 	
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged(const QString&, const QVariant& ) ), SLOT( slotGlobalIdentityChanged(const QString&, const QVariant& ) ));
+	QObject::connect( m_keepaliveTimer, SIGNAL( timeout() ), this, SLOT( slotKeepalive() ) );
 
 	QString displayName = configGroup()->readEntry(QString::fromLatin1("displayName"));
 	if(!displayName.isEmpty())
@@ -434,6 +437,7 @@ void YahooAccount::disconnect()
 		for ( QDictIterator<Kopete::Contact> i( contacts() ); i.current(); ++i )
 			static_cast<YahooContact *>( i.current() )->setOnlineStatus( m_protocol->Offline );
 		
+		m_keepaliveTimer->stop();
 		disconnected( Manual );
 	}
 	else
@@ -446,6 +450,12 @@ void YahooAccount::disconnect()
 
 	initConnectionSignals( DeleteConnections );
 	theHaveContactList = false;
+}
+
+void YahooAccount::slotKeepalive()
+{
+	if( isConnected() && m_session )
+		m_session->refresh();
 }
 
 void YahooAccount::setAway(bool status, const QString &awayMessage)
@@ -569,6 +579,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		 
 		setBuddyIcon( myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString() );
 		m_lastDisconnectCode = 0;
+		m_keepaliveTimer->start( 60 * 1000 );
 		return;
 	}
 	else if(succ == YAHOO_LOGIN_PASSWD)
@@ -634,7 +645,7 @@ void YahooAccount::slotGotIdentities( const QStringList & /* ids */ )
 
 void YahooAccount::slotStatusChanged( const QString &who, int stat, const QString &msg, int  away )
 {
-//	kdDebug(14180) << k_funcinfo << endl;
+	//kdDebug(14180) << k_funcinfo << endl;
 	Kopete::Contact *kc = contact( who );
 	
 	if( contact( who ) == myself() )
@@ -848,10 +859,12 @@ void YahooAccount::slotSystemMessage( const QString & /* msg */ )
 //	kdDebug(14180) << k_funcinfo << msg << endl;
 }
 
-void YahooAccount::slotError( const QString & err, int fatal )
+void YahooAccount::slotError( const QString &err, int fatal )
 {
 	kdDebug(14180) << k_funcinfo << err << endl;
 	m_lastDisconnectCode = fatal;
+	KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n( "<qt>The connection with the Yahoo server was lost.</qt>" ), 
+							i18n( "Connection Lost - Yahoo Plugin" ) );
 	if ( fatal == 1 || fatal == 2 || fatal == -1 )
 		disconnect();
 }
@@ -883,7 +896,6 @@ void YahooAccount::slotGotWebcamImage( const QString& who, const QPixmap& image 
 
 void YahooAccount::slotGotBuddyIconChecksum(const QString &who, int checksum)
 {
-	kdDebug(14180) << k_funcinfo << endl;
 	YahooContact *kc = contact( who );
 	if ( kc == NULL ) {
 		kdDebug(14180) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
