@@ -332,7 +332,7 @@
                                     <cstring>optionUseHttpMethod</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Use HTTP Method</string>
+                                    <string>Use HTTP method</string>
                                 </property>
                                 <property name="accel">
                                     <string></string>
@@ -413,12 +413,12 @@
                                     <widget class="QComboBox">
                                         <item>
                                             <property name="text">
-                                                <string>Only manually</string>
+                                                <string>Only Manually</string>
                                             </property>
                                         </item>
                                         <item>
                                             <property name="text">
-                                                <string>When a chat is open (default)</string>
+                                                <string>When a Chat is Open (default)</string>
                                             </property>
                                         </item>
                                         <item>

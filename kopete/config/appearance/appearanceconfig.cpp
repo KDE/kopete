@@ -887,7 +887,7 @@ void AppearanceConfig::slotGetThemes()
 	config->writeEntry( "Uncompress", "application/x-gzip" );
 	config->sync();
 	
-	KNS::DownloadDialog::open( "emoticons", i18n( "Get new Emoticons") );
+	KNS::DownloadDialog::open( "emoticons", i18n( "Get New Emoticons") );
 	updateEmoticonlist();
 }
 

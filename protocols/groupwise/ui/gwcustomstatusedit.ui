@@ -62,7 +62,7 @@
                         <cstring>textLabel2</cstring>
                     </property>
                     <property name="text">
-                        <string>Awa&amp;y Message</string>
+                        <string>Awa&amp;y message:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>lineEdit2</cstring>
@@ -73,7 +73,7 @@
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Name</string>
+                        <string>&amp;Name:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>lineEdit1</cstring>

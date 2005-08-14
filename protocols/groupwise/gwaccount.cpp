@@ -1169,7 +1169,7 @@ void GroupWiseAccount::receiveContactCreated()
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget (), KMessageBox::Error,
 							i18n ("The contact %1 could not be added to the contact list, with error message: %2").
 							arg(cct->userId() ).arg( cct->statusString() ),
-							i18n ("Error adding contact") );
+							i18n ("Error Adding Contact") );
 	}
 }
 

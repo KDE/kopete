@@ -235,7 +235,7 @@ window edit area.</string>
                                             <cstring>kcfg_ChatAdvertising</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>Show in Chat &amp;Window (Automatic).</string>
+                                            <string>Show in chat &amp;window (automatic)</string>
                                         </property>
                                     </widget>
                                     <widget class="QRadioButton">
@@ -243,7 +243,7 @@ window edit area.</string>
                                             <cstring>kcfg_StatusAdvertising</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>Show in &amp;your status message (Automatic).</string>
+                                            <string>Show in &amp;your status message (automatic)</string>
                                         </property>
                                     </widget>
                                 </vbox>
