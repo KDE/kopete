@@ -191,6 +191,7 @@ ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 	initCountries();
 	initEncodings();
 	initMaritals();
+	initInterests();
 }
 
 ICQProtocol::~ICQProtocol()
@@ -589,6 +590,63 @@ void ICQProtocol::initMaritals()
 	mMarital.insert(30 , i18n("Divorced"));
 	mMarital.insert(31 , i18n("Separated"));
 	mMarital.insert(40 , i18n("Widowed"));
+
+}
+
+void ICQProtocol::initInterests()
+{
+	mInterests.insert(0 , "");
+	mInterests.insert(100, i18n("Art"));
+	mInterests.insert(101, i18n("Cars"));
+	mInterests.insert(102, i18n("Celebrities"));
+	mInterests.insert(103, i18n("Collections"));
+	mInterests.insert(104, i18n("Computers"));
+	mInterests.insert(105, i18n("Culture"));
+	mInterests.insert(106, i18n("Fitness"));
+	mInterests.insert(107, i18n("Games"));
+	mInterests.insert(108, i18n("Hobbies"));
+	mInterests.insert(109, i18n("ICQ - Help"));
+	mInterests.insert(110, i18n("Internet"));
+	mInterests.insert(111, i18n("Lifestyle"));
+	mInterests.insert(112, i18n("Movies"));
+	mInterests.insert(113, i18n("Music"));
+	mInterests.insert(114, i18n("Outdoors"));
+	mInterests.insert(115, i18n("Parenting"));
+	mInterests.insert(116, i18n("Pets and animals"));
+	mInterests.insert(117, i18n("Religion"));
+	mInterests.insert(118, i18n("Science"));
+	mInterests.insert(119, i18n("Skills"));
+	mInterests.insert(120, i18n("Sports"));
+	mInterests.insert(121, i18n("Web design"));
+	mInterests.insert(122, i18n("Ecology"));
+	mInterests.insert(123, i18n("News and media"));
+	mInterests.insert(124, i18n("Government"));
+	mInterests.insert(125, i18n("Business"));
+	mInterests.insert(126, i18n("Mystics"));
+	mInterests.insert(127, i18n("Travel"));
+	mInterests.insert(128, i18n("Astronomy"));
+	mInterests.insert(129, i18n("Space"));
+	mInterests.insert(130, i18n("Clothing"));
+	mInterests.insert(131, i18n("Parties"));
+	mInterests.insert(132, i18n("Women"));
+	mInterests.insert(133, i18n("Social science"));
+	mInterests.insert(134, i18n("60's"));
+	mInterests.insert(135, i18n("70's"));
+	mInterests.insert(136, i18n("40's"));
+	mInterests.insert(137, i18n("50's"));
+	mInterests.insert(138, i18n("Finance and corporate"));
+	mInterests.insert(139, i18n("Entertainment"));
+	mInterests.insert(140, i18n("Consumer electronics"));
+	mInterests.insert(141, i18n("Retail stores"));
+	mInterests.insert(142, i18n("Health and beauty"));
+	mInterests.insert(143, i18n("Media"));
+	mInterests.insert(144, i18n("Household products"));
+	mInterests.insert(145, i18n("Mail order catalogue"));
+	mInterests.insert(146, i18n("Business services"));
+	mInterests.insert(147, i18n("Audio and visual"));
+	mInterests.insert(148, i18n("Sporting and athletic"));
+	mInterests.insert(149, i18n("Publishing"));
+	mInterests.insert(150, i18n("Home automation"));
 
 }
 

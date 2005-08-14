@@ -673,6 +673,11 @@ ICQMoreUserInfo Client::getMoreInfo( const QString& contact )
 	return d->icqInfoTask->moreInfoFor( contact );
 }
 
+ICQInterestInfo Client::getInterestInfo( const QString& contact )
+{
+	return d->icqInfoTask->interestInfoFor( contact );
+}
+
 ICQShortInfo Client::getShortInfo( const QString& contact )
 {
 	return d->icqInfoTask->shortInfoFor( contact );

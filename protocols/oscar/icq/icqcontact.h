@@ -35,6 +35,7 @@ class ICQReadAway;
 class ICQGeneralUserInfo;
 class ICQWorkUserInfo;
 class ICQUserInfoWidget;
+class ICQInterestInfoWidget;
 
 /**
  * Contact for ICQ over Oscar protocol
@@ -82,6 +83,7 @@ signals:
 	void haveWorkInfo( const ICQWorkUserInfo& );
 	void haveEmailInfo( const ICQEmailInfo& );
 	void haveMoreInfo( const ICQMoreUserInfo& );
+	void haveInterestInfo( const ICQInterestInfo& );
 
 private:
 	bool m_requestingNickname;

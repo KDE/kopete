@@ -145,6 +145,19 @@ public:
 	QValueList<QString> emailList;
 };
 
+class KOPETE_EXPORT ICQInterestInfo : public ICQInfoBase
+{
+public:
+	ICQInterestInfo();
+	~ICQInterestInfo() {}
+	void fill( Buffer* buffer );
+	
+public:
+	int count;
+	int topics[4];
+	QString descriptions[4];
+};
+
 
 class KOPETE_EXPORT ICQSearchResult
 {

@@ -211,6 +211,12 @@ public:
 	 * \param contact the contact to get info for
 	 */
 	ICQMoreUserInfo getMoreInfo( const QString& contact );
+	
+	/**
+	 * Get the interest info available for a contact
+	 * \param contact the contact to get info for
+	 */
+	ICQInterestInfo getInterestInfo( const QString& contact );
 
 	/**
 	 * Get the short info available for an icq contact
