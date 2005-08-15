@@ -182,7 +182,7 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 	int pos = 0;
 	regExp.setMinimal( true );
 	
-	QString messageText = message.plainBody();
+	QString messageText = message.escapedBody();
 	kdDebug(14180) << "Original message: " << messageText << endl;
 
 	// find and replace Bold-formattings
@@ -239,6 +239,13 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 			messageText.replace( regExp, QString::fromLatin1("\\2") );
 		}
 	}
+	
+	// convert escaped chars
+	messageText.replace( QString::fromLatin1( "&gt;" ), QString::fromLatin1( ">" ) );
+	messageText.replace( QString::fromLatin1( "&lt;" ), QString::fromLatin1( "<" ) );
+	messageText.replace( QString::fromLatin1( "&quot;" ), QString::fromLatin1( "\"" ) );
+	messageText.replace( QString::fromLatin1( "&nbsp;" ), QString::fromLatin1( " " ) );
+	messageText.replace( QString::fromLatin1( "&amp;" ), QString::fromLatin1( "&" ) );
 	
 	kdDebug(14180) << "Converted message: " << messageText << endl;
 	
