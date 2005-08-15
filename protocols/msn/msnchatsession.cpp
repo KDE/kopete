@@ -465,32 +465,33 @@ void MSNChatSession::invitationDone(MSNInvitation* MFTS)
 void MSNChatSession::sendFile(const QString &fileLocation, const QString &/*fileName*/,
 	long unsigned int fileSize)
 {
-#if MSN_NEWFILETRANSFER
-	if(m_chatService && members().getFirst())
-	{
-		m_chatService->p2pDisplatcher()->sendFile(fileLocation, fileSize, account()->accountId() , members().getFirst()->contactId()   );
-	}
-#else
-//	if(m_chatService)
-//	{
-		//If the alternate filename is null, then get the filename from the location (FIXME)
-		/*QString theFileName;
-		if( fileName.isNull() ) {
-			theFileName = fileLocation.right( fileLocation.length()
-				- fileLocation.findRev( '/' ) ) - 1 );
-		} else {
-			theFileName = fileName;
-		}*/
-
-		QPtrList<Kopete::Contact>contacts=members();
-		MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(myself()->account()->accountId(),contacts.first(), false,this);
-
-		//Call the setFile command to let the MFTS know what file we are sending
-		MFTS->setFile(fileLocation, fileSize);
-
-		initInvitation(MFTS);
-//	}
-#endif
+	m_chatService->PeerDispatcher()->sendFile(fileLocation, (Q_INT64)fileSize, members().getFirst()->contactId());
+// #if MSN_NEWFILETRANSFER
+// 	if(m_chatService && members().getFirst())
+// 	{
+// 		m_chatService->p2pDisplatcher()->sendFile(fileLocation, fileSize, account()->accountId() , members().getFirst()->contactId()   );
+// 	}
+// #else
+// //	if(m_chatService)
+// //	{
+// 		//If the alternate filename is null, then get the filename from the location (FIXME)
+// 		/*QString theFileName;
+// 		if( fileName.isNull() ) {
+// 			theFileName = fileLocation.right( fileLocation.length()
+// 				- fileLocation.findRev( '/' ) ) - 1 );
+// 		} else {
+// 			theFileName = fileName;
+// 		}*/
+// 
+// 		QPtrList<Kopete::Contact>contacts=members();
+// 		MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(myself()->account()->accountId(),contacts.first(), false,this);
+// 
+// 		//Call the setFile command to let the MFTS know what file we are sending
+// 		MFTS->setFile(fileLocation, fileSize);
+// 
+// 		initInvitation(MFTS);
+// //	}
+// #endif
 }
 
 void MSNChatSession::initInvitation(MSNInvitation* invitation)
