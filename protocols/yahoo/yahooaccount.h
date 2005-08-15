@@ -158,7 +158,8 @@ protected slots:
 	void slotConnected();
 	void slotGoOnline();
 	void slotGoOffline();
-	void slotOpenInbox();				// Open Yahoo Mailbox in browser
+	void slotOpenInbox();			// Open Yahoo Mailbox in browser
+	void slotOpenYAB();			// Open Yahoo Addressbook in browser
 
 	void slotGoStatus(int status, const QString &awayMessage = QString::null);
 	void slotLoginResponse(int succ, const QString &url);
@@ -242,7 +243,8 @@ private:
 
 	YahooAwayDialog *theAwayDialog;	// Our away message dialog
 
-	KAction *m_openInboxAction;	//Menu item openInbox
+	KAction *m_openInboxAction;	// Menu item openInbox
+	KAction *m_openYABAction;	// Menu item openYahooAddressbook
 };
 
 

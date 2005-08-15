@@ -80,6 +80,9 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	m_currentMailCount = 0;
 	m_pictureFlag = 0;
 	m_keepaliveTimer = new QTimer( this, "keepaliveTimer" );
+	
+	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
+	m_openYABAction = new KAction( i18n( "Open &Addressbook..." ), "contents", 0, this, SLOT( slotOpenYAB() ), this, "m_openYABAction" );
 
 	YahooContact* _myself=new YahooContact( this, accountId, accountId, Kopete::ContactList::self()->myself() );
 	setMyself( _myself );
@@ -501,9 +504,9 @@ KActionMenu *YahooAccount::actionMenu()
 	
 	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
 	
-	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
 	theActionMenu->popupMenu()->insertSeparator();
-	theActionMenu->insert( m_openInboxAction );	
+	theActionMenu->insert( m_openInboxAction );
+	theActionMenu->insert( m_openYABAction );
 	
 	return theActionMenu;
 }
@@ -1090,6 +1093,11 @@ void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const Q
 void YahooAccount::slotOpenInbox()
 {
 	KRun::runURL( KURL( QString::fromLatin1("http://mail.yahoo.com/") ) , "text/html" );
+}
+
+void YahooAccount::slotOpenYAB()
+{
+	KRun::runURL( KURL( QString::fromLatin1("http://address.yahoo.com/") ) , "text/html" );
 }
 
 #include "yahooaccount.moc"
