@@ -37,7 +37,10 @@ NLKaffeine::NLKaffeine( DCOPClient *client ) : NLMediaPlayer()
 void NLKaffeine::update()
 {
 	m_playing = false;
+	m_newTrack = false;
 	QString newTrack;
+	bool error = true; // Asume we have a error first. 
+	QCString kaffeineIface("Kaffeine"), kaffeineGetTrack("getTitle()");
 
 	// see if kaffeine is  registered with DCOP
 	if ( m_client->isApplicationRegistered( "kaffeine" ) )
@@ -46,29 +49,50 @@ void NLKaffeine::update()
 		QByteArray data, replyData;
 		QCString replyType;
 		QString result;
-		if ( !m_client->call( "kaffeine", "Kaffeine", "isPlaying()", data,
+		if ( !m_client->call( "kaffeine", kaffeineIface, "isPlaying()", data,
 					replyType, replyData ) )
 		{
-			kdDebug( 14307 ) << k_funcinfo << " DCOP error on Kaffeine." << endl;
+			kdDebug ( 14307 ) << k_funcinfo << " Trying DCOP interface of Kaffeine >= 0.5" << endl;
+			// Trying with the new Kaffeine DCOP interface (>=0.5)
+			kaffeineIface = "KaffeineIface";
+			kaffeineGetTrack = "title()";
+			if( !m_client->call( "kaffeine", kaffeineIface, "isPlaying()", data, replyType, replyData ) )
+			{
+				kdDebug( 14307 ) << k_funcinfo << " DCOP error on Kaffeine." << endl;
+			}
+			else
+			{
+				error = false;
+			}
 		}
 		else
 		{
+			error = false;
+		}
+			
+		// If we didn't get any DCOP error, check if Kaffeine is playing.
+		if(!error)
+		{
 			QDataStream reply( replyData, IO_ReadOnly );
 			if ( replyType == "bool" ) {
-				reply >> m_playing;
-				kdDebug( 14307 ) << "checked if Kaffeine is playing!" << endl;
+					reply >> m_playing;
+					kdDebug( 14307 ) << "checked if Kaffeine is playing!" << endl;
 			}
 		}
 
-		if ( m_client->call( "kaffeine", "Kaffeine", "getTitle()", data,
+		if ( m_client->call( "kaffeine", kaffeineIface, kaffeineGetTrack, data,
 					replyType, replyData ) )
 		{
 			QDataStream reply( replyData, IO_ReadOnly );
 
 			if ( replyType == "QString" ) {
-				reply >> result;
-				m_track = result;
+				reply >> newTrack;
 			}
+		}
+		if( newTrack != m_track )
+		{
+			m_newTrack = true;
+			m_track = newTrack;
 		}
 	}
 	else
