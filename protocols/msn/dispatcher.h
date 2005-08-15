@@ -56,6 +56,7 @@ namespace P2P{
 		signals:
 			void sendCommand(const QString &cmd, const QString &args = QString::null, bool addId = true, const QByteArray &body = QByteArray(), bool binary=false);
 			void displayIconReceived(KTempFile* file, const QString& msnObject);
+			void incomingTransfer(const QString& from, const QString& fileName, Q_INT64 fileSize);
 
 		private:
 				class CallbackChannel

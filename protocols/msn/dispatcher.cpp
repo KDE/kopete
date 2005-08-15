@@ -439,6 +439,8 @@ void Dispatcher::dispatch(const Message& message)
 				ts.setEncoding(QTextStream::Unicode);
 				QString fileName;
 				fileName = ts.readLine().utf8();
+
+				emit incomingTransfer(from, fileName, fileSize);
 				
    				kdDebug(14140) <<
    					QString("%1, %2 bytes.").arg(fileName, QString::number(fileSize))

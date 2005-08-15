@@ -81,7 +81,7 @@ MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
 
 // 	if(m_dispatcher)
 // 	{
-// 		delete m_dispatcher;
+// 		m_dispatcher->deleteLater();
 // 		m_dispatcher = 0l;
 // 	}
 	
@@ -714,6 +714,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		QRegExp regex("^\\s*<img src=\"([^>\"]+)\"[^>]*>\\s*$");
 		if(regex.search(msg.escapedBody()) != -1)
 		{
+			// FIXME why are we sending the images.. the contact should request them.
 // 			p2pDisplatcher()->sendImage(rx.cap(1));
 			PeerDispatcher()->sendImage(regex.cap(1), m_msgHandle);
 			return -3;
@@ -961,6 +962,31 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 	}
 }
 
+void MSNSwitchBoardSocket::slotIncomingFileTransfer(const QString& from, const QString& fileName, Q_INT64 fileSize)
+{
+	QPtrList<Kopete::Contact> others;
+	others.append( m_account->myself() );
+	QStringList::iterator it2;
+	for( it2 = m_chatMembers.begin(); it2 != m_chatMembers.end(); ++it2 )
+	{
+		if( *it2 != m_msgHandle )
+			others.append( m_account->contacts()[ *it2 ] );
+	}
+
+	if(!m_account->contacts()[m_msgHandle])
+	{
+		//this may happens if the contact has been deleted.
+		kdDebug(14140) << k_funcinfo <<"WARNING: contact is null, adding it" <<endl;
+		if( !m_chatMembers.contains( m_msgHandle ) )
+			m_chatMembers.append( m_msgHandle );
+		emit userJoined( m_msgHandle , m_msgHandle , false);
+	}
+	QString invite = QString("%1 sends %2, %3 bytes.").arg(from, fileName, QString::number(fileSize));
+	Kopete::Message msg =
+		Kopete::Message(m_account->contacts()[from], others, invite, Kopete::Message::Internal, Kopete::Message::PlainText);
+	emit msgReceived(msg);
+}
+
 void MSNSwitchBoardSocket::cleanQueue()
 {
 	if(m_emoticonTimer)
@@ -1067,14 +1093,15 @@ MSNP2PDisplatcher *MSNSwitchBoardSocket::p2pDisplatcher()
 
 Dispatcher* MSNSwitchBoardSocket::PeerDispatcher()
 {
-	if(m_dispatcher == 0l)
+	if(!m_dispatcher)
 	{
 		// Create a new msnslp dispatcher to handle
 		// all peer to peer requests.
 		m_dispatcher = new Dispatcher(this, m_account->accountId());
 
 		QObject::connect(this, SIGNAL(blockRead(const QByteArray&)), m_dispatcher, SLOT(slotReadMessage(const QByteArray&)));
-		QObject::connect(m_dispatcher, SIGNAL(sendCommand(const QString&, const QString&, bool, const QByteArray&, bool)), this, SLOT(sendCommand(const QString&, const QString&, bool, const QByteArray&, bool)));
+// 		QObject::connect(m_dispatcher, SIGNAL(sendCommand(const QString&, const QString&, bool, const QByteArray&, bool)), this, SLOT(sendCommand(const QString&, const QString&, bool, const QByteArray&, bool)));
+		QObject::connect(m_dispatcher, SIGNAL(incomingTransfer(const QString&, const QString&, Q_INT64)), this, SLOT(slotIncomingFileTransfer(const QString&, const QString&, Q_INT64)));
 		QObject::connect(m_dispatcher, SIGNAL(displayIconReceived(KTempFile *, const QString&)), this, SLOT(slotEmoticonReceived( KTempFile *, const QString&)));
 		QObject::connect(this, SIGNAL(msgAcknowledgement(unsigned int, bool)), m_dispatcher, SLOT(messageAcknowledged(unsigned int, bool)));
 		m_dispatcher->m_pictureUrl = m_account->pictureUrl();

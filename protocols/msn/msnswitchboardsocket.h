@@ -130,7 +130,7 @@ private slots:
 	void slotSocketClosed(  );
 	void slotReadMessage( const QString &msg );
 	void slotEmoticonReceived( KTempFile *, const QString& );
-
+	void slotIncomingFileTransfer(const QString& from, const QString& fileName, Q_INT64 fileSize);
 	void cleanQueue();
 
 signals:
