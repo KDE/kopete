@@ -12,10 +12,11 @@ lib_LTLIBRARIES = libkopete_msn_shared.la
 CLEANFILES = dummy.cpp
 
 libkopete_msn_shared_la_SOURCES = msnprotocol.cpp msnaccount.cpp \
-	msnaddcontactpage.cpp msncontact.cpp 	msnsocket.cpp msnchatsession.cpp msndebugrawcmddlg.cpp \
-		msnnotifysocket.cpp msnswitchboardsocket.cpp msnfiletransfersocket.cpp msninvitation.cpp \
-		msnp2p.cpp msnp2pdisplatcher.cpp msnp2pincoming.cpp msnp2poutgoing.cpp sha1.cpp \
-		msnsecureloginhandler.cpp msnchallengehandler.cpp
+		msnaddcontactpage.cpp msncontact.cpp 	msnsocket.cpp msnchatsession.cpp msndebugrawcmddlg.cpp \
+			msnnotifysocket.cpp msnswitchboardsocket.cpp msnfiletransfersocket.cpp msninvitation.cpp \
+			msnp2p.cpp msnp2pdisplatcher.cpp msnp2pincoming.cpp msnp2poutgoing.cpp sha1.cpp \
+			msnsecureloginhandler.cpp msnchallengehandler.cpp dispatcher.cpp p2p.cpp messageformatter.cpp \
+	incomingtransfer.cpp outgoingtransfer.cpp
 
 libkopete_msn_shared_la_LIBADD  = ./ui/libkopetemsnui.la ../../libkopete/libkopete.la $(LIB_KIO)
 libkopete_msn_shared_la_LDFLAGS = -version-info 0:0:0 -no-undefined $(all_libraries)
@@ -35,3 +36,5 @@ servicedir = $(kde_servicesdir)
 
 mydatadir = $(kde_datadir)/kopete_msn
 mydata_DATA = msnchatui.rc
+noinst_HEADERS = p2p.h dispatcher.h messageformatter.h incomingtransfer.h \
+	outgoingtransfer.h
