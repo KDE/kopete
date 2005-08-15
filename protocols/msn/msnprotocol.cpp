@@ -73,7 +73,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 	setCapabilities( Kopete::Protocol::BaseFgColor | Kopete::Protocol::BaseFont | Kopete::Protocol::BaseFormatting );
 
 	// Build the MSN clientId. It sets what MSN feature we support.
-	m_clientId = MSNC4 | InkFormatGIF;
+	m_clientId = MSNC4 | InkFormatGIF | SupportMultiPacketMessaging;
 
 	// m_status = m_unknownStatus = UNK;
 }
