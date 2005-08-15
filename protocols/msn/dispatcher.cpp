@@ -135,40 +135,36 @@ void Dispatcher::sendFile(const QString& path, Q_INT64 fileSize, const QString& 
 	current->m_file = new QFile(path);
 	// Create the file context data.
 	QString context;
-// TODO clean up the following, too tired to do it now.
-// FIXME there is an error in the file context data.
-//       Construct file context data correctly.
-//////////////////////////////////
 
-	QByteArray binaryContext(574);
-	binaryContext.fill('\0');
-	MKDWORD(binaryContext,0,574);  //this is probably the size
-	MKDWORD(binaryContext,4,2);    //I don't know.what's this
-	MKDWORD(binaryContext,8,fileSize);
-	MKDWORD(binaryContext,16,1);    //we don't have preview.
+	QByteArray header(638);
+	header.fill('\0');
+	QDataStream writer(header, IO_WriteOnly);
+	writer.setByteOrder(QDataStream::LittleEndian);
 
-	QByteArray utf16FileName;
-	QDataStream stream(utf16FileName, IO_WriteOnly);
-	stream.setByteOrder(QDataStream::LittleEndian);
-	stream << path.right( path.length() - path.findRev( '/' ) - 1 );
+	// Write the header length to the stream.
+	writer << (Q_INT32)638;
+	// Write client version to the stream.
+	writer << (Q_INT32)3;
+	// Write the file size to the stream.
+	writer << fileSize;
+	// Write the file transfer flag to the stream.
+	// TODO support file preview. For now disable file preview.
+	writer << (Q_INT32)1;
+	// Write the file name in utf-16 to the stream.
+	QTextStream ts(header, IO_WriteOnly);
+	ts.setEncoding(QTextStream::Unicode);
+	ts.device()->at(20);
+	ts << path.section('/', -1);
+	// NOTE Background Sharing base64 [540..569]
+	// TODO add support for background sharing.
+	// Write file exchange type to the stream.
+	// NOTE File - 0xFFFFFFFF
+	// NOTE Background Sharing - 0xFFFFFFFE
+	writer.device()->at(570);
+	writer << (Q_UINT32)0xFFFFFFFF;
 
-	unsigned int taille = utf16FileName.size();
-	if(taille > 574-19-16)
-		taille= 574-19-16;
-	
-
-	taille-=4; //to skip the string size
-	kdDebug() << k_funcinfo << taille << endl;
-
-	for(unsigned int f=0; f<taille; f++)
-	{
-		//+4 to skip the string length
-		binaryContext[20+f]=utf16FileName[f+4];
-	}
-
-	binaryContext[570]=binaryContext[571]=binaryContext[572]=binaryContext[573]=0xFF;
-	context=QString::fromUtf8(KCodecs::base64Encode( binaryContext ));
-//////////////////////////////////
+	// Encode the file context header to base64 encoding.
+	context = QString::fromUtf8(KCodecs::base64Encode(header));
 
 	// Send an INVITE message to the recipient.
 	QString content = "EUF-GUID: {5D3E02AB-6190-11D3-BBBB-00C04F795683}\r\n"
