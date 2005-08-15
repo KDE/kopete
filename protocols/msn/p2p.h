@@ -110,6 +110,7 @@ namespace P2P{
 			Q_UINT32 m_baseIdentifier;
 			TransferDirection m_direction;
 			P2P::Dispatcher *m_dispatcher;
+			bool m_isComplete;
 			Q_INT64 m_offset;
 			P2P::MessageFormatter m_messageFormatter;
 			QString m_recipient;

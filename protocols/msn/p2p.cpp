@@ -29,6 +29,9 @@ using P2P::TransferType;
 // Qt includes
 #include <qfile.h>
 
+// Kopete includes
+#include <kopetetransfermanager.h>
+
 QString P2P::Uid::createUid()
 {
 	return (QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
@@ -47,6 +50,7 @@ TransferContext::TransferContext(P2P::Dispatcher *dispatcher) : QObject(dispatch
 	m_identifier = 0;
 	m_dispatcher = dispatcher;
  	m_file = 0l;
+ 	m_isComplete = false;
 	m_sender = dispatcher->localContact();
 	m_socket = 0l;
 	m_state = Invitation;
@@ -140,7 +144,13 @@ void TransferContext::sendData(const QByteArray& bytes)
 	outbound.header.ackUniqueIdentifier  = 0;
 	outbound.header.ackDataSize = 0l;
 	outbound.body = bytes;
-	outbound.applicationIdentifier = 1l;
+	if(m_type == UserDisplayIcon){
+		outbound.applicationIdentifier = 1l;
+	}
+	else if(m_type == File){
+		outbound.applicationIdentifier = 2l;
+	}
+	
 	outbound.destination = m_recipient;
 
 	QByteArray stream;
@@ -337,10 +347,33 @@ void TransferContext::setType(TransferType type)
 
 void TransferContext::abort()
 {
+	kdDebug(14140) << k_funcinfo << endl;
 	if(m_transfer)
 	{
-		m_state = Finished;
-		sendMessage(BYE, "\r\n");
+		if(m_transfer->error() == KIO::ERR_ABORTED)
+		{
+			switch(m_direction)
+			{
+				case P2P::Outgoing:
+					if(m_type == File)
+					{
+						// Do nothing.
+					}
+					break;
+
+				case P2P::Incoming:
+					if(m_type == File)
+					{
+						// Do nothing.
+					}
+					break;
+			}
+		}
+		else
+		{
+			m_state = Finished;
+			sendMessage(BYE, "\r\n");
+		}
 	}
 }
 

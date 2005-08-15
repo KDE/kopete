@@ -70,22 +70,23 @@ void OutgoingTransfer::slotSendData()
 	{
 		sendData(buffer);
 		m_offset += bytesRead;
-		if(m_transfer){
-			m_transfer->slotProcessed(m_offset);
-		}
-// 		QTimer::singleShot(10, this, SLOT(slotSendData()));
 	}
 	else
 	{
 		// Send the last chunk of the file.
 		sendData(buffer);
-		if(m_transfer){
-			m_transfer->slotProcessed(m_file->size());
-		}
+		m_offset += buffer.size();
+		m_isComplete = true;
 		// Close the file.
 		m_file->close();
-
-		if(m_transfer) m_transfer->slotComplete();
+	}
+	
+	if(m_transfer){
+		m_transfer->slotProcessed(m_offset);
+		if(m_isComplete){
+			// The transfer is complete.
+			m_transfer->slotComplete();
+		}
 	}
 }
 
@@ -163,6 +164,15 @@ void OutgoingTransfer::processMessage(const Message& message)
 		m_state = Finished;
 		// Send the recipient an acknowledge message.
 		acknowledge(message);
+		if(!m_isComplete)
+		{
+			// The peer cancelled the transfer.
+			if(m_transfer)
+			{
+				// Inform the user of the file transfer cancelation.
+				m_transfer->slotError(KIO::ERR_ABORTED, i18n("File transfer cancelled."));
+			}
+		}
 		// Dispose of this transfer context.
 		m_dispatcher->detach(this);
 	}
@@ -266,11 +276,10 @@ void OutgoingTransfer::processMessage(const Message& message)
 		if(m_transfer)
 		{
 			// Inform the user of the file transfer cancelation.
-			m_transfer->slotError(KIO::ERR_USER_CANCELED, i18n("File transfer cancelled."));
-			m_transfer = 0l; // TODO handle error
+			m_transfer->slotError(KIO::ERR_ABORTED, i18n("File transfer cancelled."));
 		}
 
-		if(m_file){
+		if(m_file && m_file->isOpen()){
 			// Close the file.
 			m_file->close();
 		}

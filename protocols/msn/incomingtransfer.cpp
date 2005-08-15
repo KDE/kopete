@@ -114,12 +114,10 @@ void IncomingTransfer::processMessage(const Message& message)
 			}
 			else
 			{
-// 				if(m_transfer){
-// 					m_transfer->slotComplete();
-// 				}
 				m_file->close();
 			}
 
+			m_isComplete = true;
 			// Send data acknowledge message.
 			acknowledge(message);
 
@@ -254,7 +252,7 @@ void IncomingTransfer::processMessage(const Message& message)
 
 			if(m_file && m_transfer)
 			{
-				if(m_file->size() == m_transfer->info().size()){
+				if(m_isComplete){
 					// The transfer is complete.
 					m_transfer->slotComplete();
 				}
@@ -262,9 +260,8 @@ void IncomingTransfer::processMessage(const Message& message)
 				{
 					// The transfer has been canceled remotely.
 					if(m_transfer){
-						kdDebug(14140) << "User canceled file transfer." << endl;
 						// Inform the user of the file transfer cancelation.
-						m_transfer->slotError(KIO::ERR_USER_CANCELED, i18n("File transfer canceled."));
+						m_transfer->slotError(KIO::ERR_ABORTED, i18n("File transfer canceled."));
 					}
 					// Remove the partially received file.
 					m_file->remove();
