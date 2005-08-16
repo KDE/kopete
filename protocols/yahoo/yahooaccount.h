@@ -227,6 +227,7 @@ private:
 	bool theHaveContactList;	// Do we have the full server-side contact list yet?
 	int stateOnConnection;		// The state to change to on connection
 	QTimer* m_keepaliveTimer;
+	bool m_waitingForResponse;
 
 	/**
 	 * External Settings and Descriptors

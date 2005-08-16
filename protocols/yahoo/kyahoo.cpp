@@ -228,7 +228,6 @@ YahooSession::YahooSession(int id, const QString username, const QString passwor
 	m_Password = password;
 	m_lastWebcamTimestamp = 0;
 	currentImage = 0L;
-	m_waitingForResponse = false;
 	m_iconLoader = new YahooBuddyIconLoader();
 	
 	connect( m_iconLoader, SIGNAL(fetchedBuddyIcon(const QString&, KTempFile*, int )), this, SLOT(slotBuddyIconFetched(const QString&, KTempFile*,  int ) ) );
@@ -275,10 +274,6 @@ void YahooSession::logOff()
 void YahooSession::refresh()
 {
 	kdDebug(14181) << k_funcinfo << endl;	
-	if( m_waitingForResponse ){
-		emit error( QString("Connection timed out."), 1 );			// previous ping packet wasn't sent --> we are probably disconnected
-	}
-	m_waitingForResponse = true;
 	yahoo_refresh( m_connId );
 }
 
@@ -297,7 +292,6 @@ void YahooSession::getList()
 void YahooSession::keepalive()
 {
 	kdDebug(14181) << k_funcinfo << "Sending keepalive packet." << endl;
-
 	yahoo_keepalive( m_connId );
 }
 
@@ -1267,8 +1261,6 @@ void YahooSession::_gotIdentitiesReceiver( YList *ids )
 void YahooSession::_statusChangedReceiver( char *who, int stat, char *msg, int away )
 {
 //	kdDebug(14181) << k_funcinfo << endl;
-	m_waitingForResponse = false;
-
 	emit statusChanged( QString::fromLocal8Bit( who ), stat, QString::fromLocal8Bit( msg ), away );
 }
 

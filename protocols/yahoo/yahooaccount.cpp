@@ -440,7 +440,6 @@ void YahooAccount::disconnect()
 		for ( QDictIterator<Kopete::Contact> i( contacts() ); i.current(); ++i )
 			static_cast<YahooContact *>( i.current() )->setOnlineStatus( m_protocol->Offline );
 		
-		m_keepaliveTimer->stop();
 		disconnected( Manual );
 	}
 	else
@@ -457,8 +456,18 @@ void YahooAccount::disconnect()
 
 void YahooAccount::slotKeepalive()
 {
+	if( m_waitingForResponse )
+	{
+		m_waitingForResponse = false;
+		slotError( QString::null, 1 );
+		return;
+	}
 	if( isConnected() && m_session )
-		m_session->refresh();
+	{	
+		m_session->sendIm( accountId(), accountId(), QString("<ping>"), pictureFlag() );
+		kdDebug(14180) << "Ping paket sent." << endl;
+	}
+	m_waitingForResponse = true;
 }
 
 void YahooAccount::setAway(bool status, const QString &awayMessage)
@@ -697,6 +706,14 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	QRegExp regExp;
 	int pos = 0;
 	
+	// Check for ping-messages
+	if( contact( who ) == myself() && msg.startsWith("<ping>") )
+	{
+		kdDebug(14180) << "Ping paket received." << endl;
+		m_waitingForResponse = false;
+		return;
+	}
+	
 	if( !contact( who ) )
 	{
 		kdDebug(14180) << "Adding contact " << who << endl;
@@ -865,10 +882,12 @@ void YahooAccount::slotSystemMessage( const QString & /* msg */ )
 
 void YahooAccount::slotError( const QString &err, int fatal )
 {
-	kdDebug(14180) << k_funcinfo << err << endl;
+	kdDebug(14180) << k_funcinfo << fatal << ": " << err << endl;
 	m_lastDisconnectCode = fatal;
+	m_keepaliveTimer->stop();
 	KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n( "<qt>The connection with the Yahoo server was lost.</qt>" ), 
-							i18n( "Connection Lost - Yahoo Plugin" ) );
+						i18n( "Connection Lost - Yahoo Plugin" ) );
+	
 	if ( fatal == 1 || fatal == 2 || fatal == -1 )
 		disconnect();
 }
