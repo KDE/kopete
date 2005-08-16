@@ -223,7 +223,7 @@ QString StatisticsContact::statusAt(QDateTime dt)
 			"ORDER BY datetimebegin;"
 			).arg(metaContact()->metaContactId()).arg(dt.toTime_t()).arg(dt.toTime_t()));	
 	
-	if (!values.isEmpty()) return values[0];
+	if (!values.isEmpty()) return Kopete::OnlineStatus(Kopete::OnlineStatus::statusStringToType(values[0])).description();
 	else return "";
 }
 
