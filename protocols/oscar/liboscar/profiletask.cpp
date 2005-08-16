@@ -73,15 +73,15 @@ void ProfileTask::sendProfileUpdate()
 	SNAC s = { 0x0002, 0x0004, 0x0000, client()->snacSequence() };
 	Buffer *buffer = new Buffer();
 	Buffer capBuf;
-	
-	if ( !m_profileText.isNull() && !client()->isIcq() )	
+
+	if ( !m_profileText.isNull() && !client()->isIcq() )
 	{
 		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
 		buffer->addTLV(0x0001, defencoding.length(), defencoding.latin1());
 		buffer->addTLV(0x0002, m_profileText.length(), m_profileText.local8Bit());
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting profile = " << m_profileText << endl;
 	}
-	
+
 	if ( !m_awayMessage.isNull() && !client()->isIcq() )
 	{
 		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
@@ -89,7 +89,7 @@ void ProfileTask::sendProfileUpdate()
 		buffer->addTLV(0x0004, m_awayMessage.length(), m_awayMessage.local8Bit());
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting away message = " << m_awayMessage << endl;
 	}
-	
+
 	if ( client()->isIcq() )
 	{
 		//capBuf.addString( oscar_caps[CAP_ICQSERVERRELAY], 16 ); // we support type-2 messages
@@ -97,21 +97,22 @@ void ProfileTask::sendProfileUpdate()
 		capBuf.addString( oscar_caps[CAP_ISICQ], 16 ); // I think this is an icq client, but maybe I'm wrong
 		capBuf.addString( oscar_caps[CAP_KOPETE], 16 ); // we are the borg, resistance is futile
 		//capBuf.addString( oscar_caps[CAP_RTFMSGS], 16 ); // we do incoming RTF messages
-		capBuf.addString( oscar_caps[CAP_TYPING], 16 ); // we can send/receive typing notifications
+		capBuf.addString( oscar_caps[CAP_TYPING], 16 ); // we know you're typing something to us!
 	}
 	else
 	{
 		capBuf.addString( oscar_caps[CAP_UTF8], 16 ); //we can send/receive UTF encoded messages
 		capBuf.addString( oscar_caps[CAP_KOPETE], 16 ); // we are the borg, resistance is futile
-		capBuf.addString( oscar_caps[CAP_TYPING], 16 );
+		capBuf.addString( oscar_caps[CAP_TYPING], 16 ); // we know you're typing something to us!
+        capBuf.addString( oscar_caps[CAP_BUDDYICON], 16 ); //can you take my picture?
 	}
-	
+
 	//kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "adding capabilities, size=" << capBuf.length() << endl;
 	buffer->addTLV(0x0005, capBuf.length(), capBuf.buffer());
 	Transfer* st = createTransfer( f, s , buffer );
 	send( st );
 	setSuccess( 0, QString::null );
-	
+
 }
 
 //kate: tab-width 4; indent-mode csands;
