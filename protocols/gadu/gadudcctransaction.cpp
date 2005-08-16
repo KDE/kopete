@@ -290,7 +290,6 @@ void
 GaduDCCTransaction::slotTransferResult()
 {
 	if ( transfer_->error() == KIO::ERR_USER_CANCELED ) {
-		transfer_->slotError( KIO::ERR_USER_CANCELED, QString::null );
 		closeDCC();
 		deleteLater();
 	}
