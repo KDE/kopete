@@ -31,6 +31,8 @@ namespace P2P{
 			OutgoingTransfer(const QString& to, P2P::Dispatcher *dispatcher, Q_UINT32 sessionId);
 			virtual ~OutgoingTransfer();
 
+			void sendImage(const QByteArray& image);
+
 		private slots:
 			void slotConnected();
 			void slotRead();

@@ -78,12 +78,6 @@ MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account , QObject *paren
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
 {
 	kdDebug(14140) << k_funcinfo << endl;
-
-// 	if(m_dispatcher)
-// 	{
-// 		m_dispatcher->deleteLater();
-// 		m_dispatcher = 0l;
-// 	}
 	
 	QMap<QString , QPair<QString , KTempFile*> >::Iterator it;
 	for ( it = m_emoticons.begin(); it != m_emoticons.end(); ++it )
@@ -440,6 +434,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	else if( type== "application/x-msnmsgrp2p" )
 	{
 // 		p2pDisplatcher();  //create a p2p displatcher if none exist yet
+		// FIXME This causes an error. It misses the first message.
 		PeerDispatcher();
 	}
 	else if( type == "text/x-clientcaps" )
@@ -490,104 +485,102 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 
 
 	}
-	else if(type == "image/gif" || msg.contains("Message-ID"))
+	else if(type == "image/gif" || msg.contains("Message-ID:"))
 	{
-//      TODO finish inkformatgif
-// 		QRegExp regex("Message-ID: \\{([0-9A-F\\-]*)\\}");
-// 		regex.search(msg);
-// 		QString messageId = regex.cap(1);
-// 		regex = QRegExp("Chunks: (\\d+)");
-// 		regex.search(msg);
-// 		QString chunks = regex.cap(1);
-// 		regex = QRegExp("Chunk: (\\d+)");
-// 		regex.search(msg);
-// 		QString chunk = regex.cap(1);
-// 
-// 		if(chunks.isNull() && chunks.isNull())
-// 		{
-// 			// The informatgif only has one chunk and it
-// 			// is included in the received message.
-// 			regex = QRegExp("base64:([0-9a-zA-Z+/=]*)");
-// 			regex.search(msg);
-// 			// Retrieve the first chunk of the ink format gif.
-// 			QString base64 = regex.cap(1);
-// 			QByteArray image;
-// 			// Convert from base64 encoded string to byte array.
-// 			KCodecs::base64Decode(base64.utf8() , image);
-// 
-// 			KTempFile *imageFile = new KTempFile(locateLocal( "tmp", "msntypewrite-" ), ".gif");
-// 			imageFile->setAutoDelete(true);
-// 			imageFile->file()->writeBlock(image.data() , image.size());
-// 			imageFile->file()->close();
-// 
-// 			slotEmoticonReceived(imageFile , "typewrite");
-// 			return;
-// 		}
-// 		else if(!chunks.isNull())
-// 		{
-// 			regex = QRegExp("base64:([0-9a-zA-Z+/=]*)");
-// 			if(regex.search(msg) > 0)
-// 			{
-// 				// Retrieve the first chunk of the ink format gif.
-// 				QString base64 = regex.cap(1);
-// 				if(chunks.toUInt() > 1){
-// 					// If more chunks are expected, buffer the chunk received.
-// 					QValueVector<QString> typewrite(chunks.toUInt());
-// 					typewrite[0] = base64;
-// 					m_typewriteDictionary.insert(messageId, typewrite);
-// 					return;
-// 				}
-// 			}
-// 		}
-// 
-// 		Q_INT32 chunkOrdinal = chunk.toUInt();
-// 		if(m_typewriteDictionary.contains(messageId))
-// 		{
-// 			QValueVector<QString> typewrite = m_typewriteDictionary[messageId];
-// 			if(chunkOrdinal + 1 == typewrite.count())
-// 			{
-// 				// All chunks of the inkformatgif been received.
-// 				// Write the data chunks to the file.
-// 
-// 				QString base64;
-// 				QValueVector<QString>::Iterator current = typewrite.begin();
-// 				while(current != typewrite.end()){
-// 					base64 += *current;
-// 					current++;
-// 				}
-// 
-// 				// Add the received chunk before converting to an image.
-// 				base64 += msg.right(msg.length() - msg.find("\r\n\r\n") - 4);
-// 
-// 				QByteArray image;
-// 				// Convert from base64 encoded string to byte array.
-// 				KCodecs::base64Decode( base64.utf8() , image );
-// 
-// 				KTempFile *imageFile = new KTempFile( locateLocal( "tmp", "msntypewrite-" ), ".gif");
-// 				imageFile->setAutoDelete(true);
-// 				Q_INT32 offset = 0, size = image.size(), chunkLength = 1202;
-// 				while(offset < size)
-// 				{
-// 					if(offset + chunkLength < size)
-// 					{
-// 						imageFile->file()->writeBlock(image.data() + offset, chunkLength);
-// 						offset += chunkLength;
-// 					}
-// 					else
-// 					{
-// 						imageFile->file()->writeBlock(image.data(), (offset == 0) ? size : size%offset);
-// 						offset += size%offset;
-// 					}
-// 				}
-// 				imageFile->file()->close();
-// 
-// 				slotEmoticonReceived(imageFile , "typewrite");
-// 			}
-// 			else
-// 			{
-// 				typewrite[chunkOrdinal] = msg.right(msg.length() - msg.find("\r\n\r\n") - 4);
-// 			}
-// 		}
+		// Incoming inkformatgif.
+		QRegExp regex("Message-ID: \\{([0-9A-F\\-]*)\\}");
+		regex.search(msg);
+		QString messageId = regex.cap(1);
+		regex = QRegExp("Chunks: (\\d+)");
+		regex.search(msg);
+		QString chunks = regex.cap(1);
+		regex = QRegExp("Chunk: (\\d+)");
+		regex.search(msg);
+		QString chunk = regex.cap(1);
+
+		if(chunks.isNull() && chunk.isNull())
+		{
+			// The informatgif only has one chunk and it
+			// is included in the received message.
+			regex = QRegExp("base64:([0-9a-zA-Z+/=]*)");
+			regex.search(msg);
+			// Retrieve the first chunk of the ink format gif.
+			QString base64 = regex.cap(1);
+			QByteArray image;
+			// Convert from base64 encoded string to byte array.
+			KCodecs::base64Decode(base64.utf8() , image);
+			KTempFile *imageFile = new KTempFile(locateLocal( "tmp", "inkformatgif-" ), ".gif");
+			imageFile->setAutoDelete(true);
+			imageFile->file()->writeBlock(image.data(), image.size());
+			imageFile->file()->close();
+
+			slotEmoticonReceived(imageFile , "inkformatgif");
+			imageFile = 0l;
+		}
+		else if(!chunks.isNull())
+		{
+			regex = QRegExp("base64:([0-9a-zA-Z+/=]+)");
+			regex.search(msg);
+			// Retrieve the first chunk of the ink format gif.
+			QString base64 = regex.cap(1);
+			kdDebug(14140) << k_funcinfo << chunks.toUInt() << ", chunks" << endl;
+			// If more chunks are expected, buffer the chunk received.
+			QValueVector<QString> typewrite(chunks.toUInt());
+			typewrite[0] = base64;
+			m_typewriteDictionary.insert(messageId, typewrite);
+		}
+		else if(!chunk.isNull())
+		{
+			// Retrieve the inkformatgif chunk index.
+			Q_UINT32 index = chunk.toUInt();
+			kdDebug(14140) << k_funcinfo << "chunk, " << index << endl;
+			if(m_typewriteDictionary.contains(messageId))
+			{
+				QValueVector<QString> typewrite = m_typewriteDictionary[messageId];
+				// Copy the chunk into it's corresponding index.
+				typewrite[index] = msg.section("\r\n\r\n", -1);
+
+				bool done = false;
+				// Determine if all chunks have been received.
+				if(index == (typewrite.count() - 1)) done = true;
+
+				if(done)
+				{
+					m_typewriteDictionary.remove(messageId);
+					
+					QString base64;
+					QValueVector<QString>::Iterator current = typewrite.begin();
+					while(current != typewrite.end()){
+						base64 += *current;
+						current++;
+					}
+
+					QByteArray image;
+					// Convert from base64 encoded string to byte array.
+					KCodecs::base64Decode(base64.utf8() , image);
+					// Create a temporary file to store the image data.
+					KTempFile *imageFile = new KTempFile( locateLocal( "tmp", "inkformatgif-" ), ".gif");
+					imageFile->setAutoDelete(true);
+	
+					Q_INT32 offset = 0, size = image.size(), chunkLength = 1202;
+					while(offset + chunkLength < size){
+						imageFile->file()->writeBlock(image.data() + offset, chunkLength);
+						offset += chunkLength;
+					}
+	
+					if(offset < size){
+						// Write last chunk to the file.
+						imageFile->file()->writeBlock(image.data() + offset, size - offset);
+					}
+	
+					// Close the ink formatted gif file.
+					imageFile->file()->close();
+	
+					slotEmoticonReceived(imageFile , "inkformatgif");
+					imageFile = 0l;
+				}
+			}
+		}
 	}
 	else
 	{
@@ -919,7 +912,7 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 		if ( m_recvIcons <= 0 )
 			cleanQueue();
 	}
-	else if(msnObj=="typewrite")
+	else if(msnObj == "inkformatgif")
 	{
 		QString msg=i18n("<img src=\"%1\" alt=\"Typewrited message\" />" ).arg( file->name() );
 
@@ -981,7 +974,7 @@ void MSNSwitchBoardSocket::slotIncomingFileTransfer(const QString& from, const Q
 			m_chatMembers.append( m_msgHandle );
 		emit userJoined( m_msgHandle , m_msgHandle , false);
 	}
-	QString invite = QString("%1 sends %2, %3 bytes.").arg(from, fileName, QString::number(fileSize));
+	QString invite = "Incoming file transfer.";
 	Kopete::Message msg =
 		Kopete::Message(m_account->contacts()[from], others, invite, Kopete::Message::Internal, Kopete::Message::PlainText);
 	emit msgReceived(msg);

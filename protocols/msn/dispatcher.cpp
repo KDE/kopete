@@ -67,15 +67,6 @@ Dispatcher::~Dispatcher()
 		delete m_callbackChannel;
 		m_callbackChannel = 0l;
 	}
-/*  // NOTE Object deletes it's children.
-	TransferContext *current = 0l;
-	QMap<Q_UINT32, TransferContext*>::Iterator it = m_sessions.begin();
-	for(; it != m_sessions.end(); it++)
-	{
-		current = it.data();
-		delete current;
-	}
-*/
 }
 
 void Dispatcher::detach(TransferContext* transfer)
@@ -177,12 +168,24 @@ void Dispatcher::sendFile(const QString& path, Q_INT64 fileSize, const QString& 
 
 void Dispatcher::sendImage(const QString& fileName, const QString& to)
 {
-	// TODO have to ask Gof.
+// 	TODO kdDebug(14140) << k_funcinfo << endl;
+// 	QFile imageFile(fileName);
+// 	if(!imageFile.open(IO_ReadOnly))
+// 	{
+// 		kdDebug(14140) << k_funcinfo << "Error opening image file."
+// 			<< endl;
+// 		return;
+// 	}
+// 
+// 	OutgoingTransfer *outbound =
+// 		new OutgoingTransfer(to, this, 64);
+// 
+// 	outbound->sendImage(imageFile.readAll());
 }
 
 void Dispatcher::slotReadMessage(const QByteArray& stream)
 {
-	Message receivedMessage =
+	P2P::Message receivedMessage =
 		m_messageFormatter.readMessage(stream);
 
 	if(receivedMessage.contentType == "application/x-msnmsgrp2p")
@@ -201,6 +204,8 @@ void Dispatcher::slotReadMessage(const QByteArray& stream)
 			
 			if(current){
     			// Inform the transfer object of the acknowledge.
+    			current->m_ackSessionIdentifier = receivedMessage.header.identifier;
+    			current->m_ackUniqueIdentifier = receivedMessage.header.ackSessionIdentifier;
 				current->acknowledged();
 			}
 			else
@@ -241,7 +246,7 @@ void Dispatcher::slotReadMessage(const QByteArray& stream)
 	}
 }
 
-void Dispatcher::dispatch(const Message& message)
+void Dispatcher::dispatch(const P2P::Message& message)
 
 {
 	TransferContext *messageHandler = 0l;
@@ -299,6 +304,8 @@ void Dispatcher::dispatch(const Message& message)
 	if(messageHandler){
 		// Process the received message using the
 		// retrieved registered handler.
+		messageHandler->m_ackSessionIdentifier = message.header.identifier;
+    	messageHandler->m_ackUniqueIdentifier = message.header.ackSessionIdentifier;
 		messageHandler->processMessage(message);
 	}
 	else
@@ -387,6 +394,9 @@ void Dispatcher::dispatch(const Message& message)
 				current->m_file = source;
 				// Acknowledge the session request.
 				current->acknowledge(message);
+				
+				current->m_ackSessionIdentifier = message.header.identifier;
+    			current->m_ackUniqueIdentifier = message.header.ackSessionIdentifier;
 				// Send a 200 OK message to the recipient.
 				QString content = QString("SessionID: %1\r\n\r\n").arg(sessionId);
 				current->sendMessage(OK, content);
@@ -450,6 +460,9 @@ void Dispatcher::dispatch(const Message& message)
 				{
 					transfer->acknowledge(message);
 					
+					transfer->m_ackSessionIdentifier = message.header.identifier;
+    				transfer->m_ackUniqueIdentifier = message.header.ackSessionIdentifier;
+					
 					QObject::disconnect(Kopete::TransferManager::transferManager(), 0l, this, 0l);
 					QObject::connect(Kopete::TransferManager::transferManager(), SIGNAL(accepted(Kopete::Transfer*, const QString&)), this, SLOT(slotTransferAccepted(Kopete::Transfer*, const QString&)));
 					QObject::connect(Kopete::TransferManager::transferManager(), SIGNAL(refused(const Kopete::FileTransferInfo&)), this, SLOT(slotTransferRefused(const Kopete::FileTransferInfo&)));
@@ -462,6 +475,8 @@ void Dispatcher::dispatch(const Message& message)
 					kdWarning(14140) << fileName << " from " << from
 						<< " has failed; could not retrieve contact from contact list."
 						<< endl;
+					transfer->m_ackSessionIdentifier = message.header.identifier;
+    				transfer->m_ackUniqueIdentifier = message.header.ackSessionIdentifier;
 					transfer->sendMessage(ERROR);
 				}
 			}
@@ -472,42 +487,43 @@ void Dispatcher::dispatch(const Message& message)
 		}
 		else
 		{
+			// Check for inkformatgif over msnslp.
 			QRegExp regex("Content-Type: ([A-Za-z0-9$!*/\\-]*)");
 			regex.search(body);
 			QString contentType = regex.cap(1);
 
-			if(contentType == "image/gif")
+			if(contentType == "image/gif" || message.header.sessionId == 64)
 			{
-// 				TODO inkformatgif.
-// 				regex = QRegExp("base64:([0-9a-zA-Z+/=]*)");
-// 				if(regex.search(body) > 0)
-// 				{
-// 					QString base64 = regex.cap(1);
-// 					kdDebug(14140) << k_funcinfo << "received inkformatgif, " << base64 << endl;
-// 					QByteArray image;
-// 					// Convert from base64 encoded string to byte array.
-// 					KCodecs::base64Decode( base64.utf8() , image );
-// 
-// 					KTempFile *imageFile = new KTempFile( locateLocal( "tmp", "msntypewrite-" ), ".gif");
-// 					imageFile->setAutoDelete(true);
-// 					Q_INT32 offset = 0, size = image.size(), chunkLength = 1202;
-// 					while(offset < size)
-// 					{
-// 						if(offset + chunkLength < size)
-// 						{
-// 							imageFile->file()->writeBlock(image.data() + offset, chunkLength);
-// 							offset += chunkLength;
-// 						}
-// 						else
-// 						{
-// 							imageFile->file()->writeBlock(image.data(), (offset == 0) ? size : size%offset);
-// 							offset += size%offset;
-// 						}
-// 					}
-// 					imageFile->file()->close();
-// 
-// 					displayIconReceived(imageFile , "typewrite");
-// 				}
+				// Received an inkformatgif message.
+				regex = QRegExp("base64:([0-9a-zA-Z+/=]*)");
+				if(regex.search(body) > 0)
+				{
+					QString base64 = regex.cap(1);
+					kdDebug(14140) << k_funcinfo << "received inkformatgif, " << base64 << endl;
+					QByteArray image;
+					// Convert from base64 encoded string to byte array.
+					KCodecs::base64Decode( base64.utf8() , image );
+					// Create a temporary file to store the image data.
+					KTempFile *imageFile = new KTempFile( locateLocal( "tmp", "inkformatgif-" ), ".gif");
+					imageFile->setAutoDelete(true);
+					
+					Q_INT32 offset = 0, size = image.size(), chunkLength = 1202;
+					while(offset + chunkLength < size){
+						imageFile->file()->writeBlock(image.data() + offset, chunkLength);
+						offset += chunkLength;
+					}
+
+					if(offset < size){
+						// Write last chunk to the file.
+						imageFile->file()->writeBlock(image.data() + offset, size - offset);
+					}
+
+					// Close the ink formatted gif file.
+					imageFile->file()->close();
+					
+					displayIconReceived(imageFile , "inkformatgif");
+					imageFile = 0l;
+				}
 			}
 		}
 	}

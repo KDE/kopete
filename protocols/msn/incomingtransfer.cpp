@@ -184,8 +184,9 @@ void IncomingTransfer::processMessage(const Message& message)
 			else if(connType == "IP-Restrict-NAT"){
 				wouldListen = true;
 			}
-
+#if 1
 			wouldListen = false; // TODO Direct connection support
+#endif			
 			QString content;
 			
 			if(wouldListen)
@@ -328,7 +329,6 @@ void IncomingTransfer::slotSocketRead()
 	{
 		QByteArray buffer(available);
 		m_socket->readBlock(buffer.data(), buffer.size());
-		kdDebug(14140) << k_funcinfo << QString(buffer) << endl;
 
 		if(QString(buffer) == "foo"){
 			kdDebug(14140) << "Connection Check." << endl;

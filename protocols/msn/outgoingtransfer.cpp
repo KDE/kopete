@@ -1,5 +1,5 @@
 /*
-    outgoingtransfer.h - msn p2p protocol
+    outgoingtransfer.cpp - msn p2p protocol
 
     Copyright (c) 2003-2005 by Olivier Goffart        <ogoffart@ kde.org>
     Copyright (c) 2005      by Gregg Edghill          <gregg.edghill@gmail.com>
@@ -26,6 +26,7 @@ using P2P::Message;
 #include <kbufferedsocket.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <kmdcodec.h>
 using namespace KNetwork;
 
 // Qt includes
@@ -35,6 +36,8 @@ using namespace KNetwork;
 
 // Kopete includes
 #include <kopetetransfermanager.h>
+
+#include <netinet/in.h> // For htonl
 
 OutgoingTransfer::OutgoingTransfer(const QString& to, P2P::Dispatcher *dispatcher, Q_UINT32 sessionId)
 : TransferContext(dispatcher)
@@ -49,6 +52,36 @@ OutgoingTransfer::OutgoingTransfer(const QString& to, P2P::Dispatcher *dispatche
 OutgoingTransfer::~OutgoingTransfer()
 {
 	kdDebug(14140) << k_funcinfo << endl;
+}
+
+void OutgoingTransfer::sendImage(const QByteArray& image)
+{
+	
+// 	TODO QByteArray base64 = KCodecs::base64Encode(image);
+// 
+// 	QCString body = "MIME-Version: 1.0\r\n"
+// 		"Content-Type: image/gif\r\n"
+// 		"\r\n"
+// 		"base64:" +
+// 
+// 	Message outbound;
+// 	outbound.header.sessionId  = m_sessionId;
+// 	outbound.header.identifier = m_baseIdentifier;
+// 	outbound.header.dataOffset = 0;
+// 	outbound.header.totalDataSize = 4;
+// 	outbound.header.dataSize = 4;
+// 	outbound.header.flag = 0;
+// 	outbound.header.ackSessionIdentifier = rand()%0x8FFFFFF0 + 4;
+// 	outbound.header.ackUniqueIdentifier  = 0;
+// 	outbound.header.ackDataSize   = 0l;
+// 	QByteArray bytes(4);
+// 	bytes.fill('\0');
+// 	outbound.body = bytes;
+// 	outbound.applicationIdentifier = 0;
+// 	outbound.attachApplicationId = false;
+// 	outbound.destination = m_recipient;
+// 
+// 	sendMessage(outbound, body);
 }
 
 void OutgoingTransfer::slotSendData()
@@ -73,10 +106,10 @@ void OutgoingTransfer::slotSendData()
 	}
 	else
 	{
+		m_isComplete = true;
 		// Send the last chunk of the file.
 		sendData(buffer);
 		m_offset += buffer.size();
-		m_isComplete = true;
 		// Close the file.
 		m_file->close();
 	}
@@ -237,8 +270,9 @@ void OutgoingTransfer::processMessage(const Message& message)
 
 			m_state = DataTransfer;
 
+#if 1
 			isListening = false; // TODO complete direct connection.
-				
+#endif				
 			if(isListening)
 			{
 				// Retrieve the hashed nonce for this direct connection instance.
@@ -289,9 +323,9 @@ void OutgoingTransfer::processMessage(const Message& message)
 
 void OutgoingTransfer::readyToSend()
 {
-	if(m_file){
-		// If the file is not open, do nothing.
-		if(!m_file->isOpen()) return;
+	if(m_isComplete){
+		// Ignore, do nothing.
+		return;
 	}
 		
 	slotSendData();
@@ -323,26 +357,49 @@ void OutgoingTransfer::slotConnected()
 	{
 		// Not all data was written, close the socket.
 		m_socket->closeNow();
-		// Send the data through the session.
-		slotSendData();
+		// Schedule the data to be sent through the existing session.
+		QTimer::singleShot(2000, this, SLOT(slotSendData()));
 		return;
 	}
 
-	// TODO Send data handshake message.
+	// Send data handshake message.
+	P2P::Message handshake;
+	handshake.header.sessionId  = 0;
+	handshake.header.identifier = ++m_identifier;
+	handshake.header.dataOffset = 0l;
+	handshake.header.totalDataSize = 0l;
+	handshake.header.dataSize = 0;
+	// Set the flag to indicate that this is
+	// a direct connection handshake message.
+	handshake.header.flag = 0x100;
+	QString nonce = m_nonce.remove('-');
+	handshake.header.ackSessionIdentifier = nonce.mid(0, 8).toUInt(0, 16);
+	handshake.header.ackUniqueIdentifier  =
+		nonce.mid(8, 4).toUInt(0, 16) | (nonce.mid(12, 4).toUInt(0, 16) << 16);
+	handshake.header.ackDataSize =
+		((Q_INT64)htonl(nonce.mid(16, 8).toUInt(0, 16))) | (((Q_INT64)htonl(nonce.mid(24, 8).toUInt(0, 16))) << 32);
+
+	QByteArray stream;
+	// Write the message to the memory stream.
+	m_messageFormatter.writeMessage(handshake, stream, true);
+	// Send the byte stream over the wire.
+	m_socket->writeBlock(stream.data(), stream.size());
 }
 
 void OutgoingTransfer::slotRead()
-{}
+{
+	Q_INT32 bytesAvailable = m_socket->bytesAvailable();
+	kdDebug(14140) << k_funcinfo << bytesAvailable << ", bytes available." << endl;
+}
 
 void OutgoingTransfer::slotSocketError(int)
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kdDebug(14140) << k_funcinfo << m_socket->errorString() << endl;
 	// If an error has occurred, try to connect
 	// to another available peer endpoint.
 	// If there are no more available endpoints,
 	// send the data through the session.
-	delete m_socket;
-	m_socket = 0l;
+	m_socket->closeNow();
 
 	// Move to the next available endpoint.
 	m_endpointIterator++;
@@ -353,7 +410,8 @@ void OutgoingTransfer::slotSocketError(int)
 	else
 	{
 		// Otherwise, send the data through the session.
-		slotSendData();
+		m_identifier -= 1;
+		QTimer::singleShot(2000, this, SLOT(slotSendData()));
 	}
 }
 

@@ -67,6 +67,7 @@ namespace P2P{
 			TransportHeader header;
 			QByteArray body;
 			Q_INT32 applicationIdentifier;
+			bool attachApplicationIdentifier;
 	};
 
 	class Uid
@@ -82,7 +83,7 @@ namespace P2P{
 			void acknowledge(const Message& message);
 			virtual void acknowledged() = 0;
 			void error();
-			virtual void processMessage(const Message& message) = 0;
+			virtual void processMessage(const P2P::Message& message) = 0;
 			void sendDataPreparation();
 			void sendMessage(MessageType type, const QString& content=QString::null, Q_INT32 flag=0, Q_INT32 appId=0);
 			void setType(TransferType type);
@@ -93,9 +94,10 @@ namespace P2P{
 			QString  m_branch;
 			QString  m_callId;
 			QFile   *m_file;
-			// TODO do we really need this?
 			QString  m_object;
 			Q_UINT32 m_transactionId;
+			Q_UINT32 m_ackSessionIdentifier;
+			Q_UINT32 m_ackUniqueIdentifier;
 			Kopete::Transfer *m_transfer;
 
 		public slots:
@@ -105,6 +107,7 @@ namespace P2P{
 		protected:
 			TransferContext(P2P::Dispatcher *dispatcher);
 			void sendData(const QByteArray& bytes);
+			void sendMessage(P2P::Message& outbound, const QByteArray& body);
 			virtual void readyToSend();
 			
 			Q_UINT32 m_baseIdentifier;

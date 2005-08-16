@@ -57,6 +57,8 @@ TransferContext::TransferContext(P2P::Dispatcher *dispatcher) : QObject(dispatch
 	m_transactionId = 0;
 	m_transfer = 0l;
 	m_type = File;
+	m_ackSessionIdentifier = 0;
+	m_ackUniqueIdentifier = 0;
 }
 
 TransferContext::~TransferContext()
@@ -108,9 +110,18 @@ void TransferContext::acknowledge(const Message& message)
 	outbound.destination = m_recipient;
 
 	QByteArray stream;
-	m_messageFormatter.writeMessage(outbound, stream);
-	// Send the acknowledge message.
-	m_dispatcher->callbackChannel()->send(stream);
+	// Write the acknowledge message to the stream.
+	m_messageFormatter.writeMessage(outbound, stream, (m_socket != 0l));
+	if(!m_socket)
+	{
+		// Send the acknowledge message.
+		m_dispatcher->callbackChannel()->send(stream);
+	}
+	else
+	{
+		// Send acknowledge message directly.
+		m_socket->writeBlock(stream.data(), stream.size());
+	}
 }
 
 void TransferContext::error()
@@ -222,9 +233,9 @@ void TransferContext::sendMessage(MessageType type, const QString& content, Q_IN
 		
 	outbound.header.identifier = m_identifier;
 	outbound.header.flag = flag;
-	outbound.header.ackSessionIdentifier = m_baseIdentifier + 10;
-	outbound.header.ackUniqueIdentifier  = 0;
-	outbound.header.ackDataSize = 0L;
+	outbound.header.ackSessionIdentifier = m_ackSessionIdentifier;
+	outbound.header.ackUniqueIdentifier  = m_ackUniqueIdentifier;
+	outbound.header.ackDataSize = 0l;
 	outbound.applicationIdentifier = appId;
 	outbound.destination = m_recipient;
 	
@@ -295,7 +306,13 @@ void TransferContext::sendMessage(MessageType type, const QString& content, Q_IN
 	// QCString by chance automatically adds a \0 to the
 	// end of the string.
 
-	outbound.header.totalDataSize  = body.size();
+	outbound.header.totalDataSize = body.size();
+	// Send the outbound message.
+	sendMessage(outbound, body);
+}
+
+void TransferContext::sendMessage(Message& outbound, const QByteArray& body)
+{
 	Q_INT64 offset = 0L, bytesLeft = outbound.header.totalDataSize;
 	Q_INT16 chunkLength = 1202;
 
@@ -304,6 +321,7 @@ void TransferContext::sendMessage(MessageType type, const QString& content, Q_IN
 	{
 		if(bytesLeft < chunkLength)
 		{
+			// Copy the last chunk of the multipart message.
 			outbound.body.duplicate(body.data() + offset, bytesLeft);
 			outbound.header.dataSize = bytesLeft;
 			outbound.header.dataOffset = offset;
@@ -311,6 +329,7 @@ void TransferContext::sendMessage(MessageType type, const QString& content, Q_IN
 		}
 		else
 		{
+			// Copy the next chunk of the multipart message in the sequence.
 			outbound.body.duplicate(body.data() + offset, chunkLength);
 			outbound.header.dataSize = chunkLength;
 			outbound.header.dataOffset = offset;
@@ -327,14 +346,12 @@ void TransferContext::sendMessage(MessageType type, const QString& content, Q_IN
 		m_messageFormatter.writeMessage(outbound, stream, (m_socket != 0l));
 		if(!m_socket)
 		{
-			// Send the data message.
-// 			m_dispatcher->sendCommand("MSG", "D", true, stream, true);
-// 			TODO wait for an acknowledge with the correlation transaction id
+			// Send the outbound message.
 			m_dispatcher->callbackChannel()->send(stream);
 		}
 		else
 		{
-			// Send data directly.
+			// Send outbound message directly.
 			m_socket->writeBlock(stream.data(), stream.size());
 		}
 	}

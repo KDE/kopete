@@ -141,7 +141,9 @@ void MessageFormatter::writeMessage(const Message& message, QByteArray& stream, 
 	else
 	{
 		// Set the capacity of the message buffer.
-		stream.resize(48 + message.body.size());
+		stream.resize(4 + 48 + message.body.size());
+		// Write the message size to the stream.
+		writer << (Q_INT32)(48+message.body.size());
 	}
 
 	

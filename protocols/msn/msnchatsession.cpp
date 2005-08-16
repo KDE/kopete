@@ -46,7 +46,6 @@
 #include "msnfiletransfersocket.h"
 #include "msnaccount.h"
 #include "msnswitchboardsocket.h"
-#include "msnp2pdisplatcher.h"
 
 #if !defined NDEBUG
 #include "msndebugrawcmddlg.h"
