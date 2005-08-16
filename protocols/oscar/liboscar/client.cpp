@@ -154,7 +154,7 @@ void Client::connectToServer( Connection *c, const QString& server, bool auth )
 		connect( m_loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 	}
 
-	connect( c, SIGNAL( socketError( int, const QString& ) ), SIGNAL( socketError( int, const QString& ) ) );
+	connect( c, SIGNAL( socketError( int, const QString& ) ), this, SLOT( determineDisconnection( int, const QString& ) ) );
 	c->connectToServer(server, auth);
 }
 
@@ -874,6 +874,25 @@ void Client::requestChatNavLimits()
     cnst->setRequestType( ChatNavServiceTask::Limits );
 	cnst->go( true ); //autodelete
 
+}
+
+void Client::determineDisconnection( int code, const QString& string )
+{
+    if ( !sender() )
+        return;
+
+    //yay for the sender() hack!
+    QObject* obj = const_cast<QObject*>( sender() );
+    Connection* c = dynamic_cast<Connection*>( obj );
+    if ( !c )
+        return;
+
+    if ( c->isSupported( 0x0002 ) )
+        emit socketError( code, string );
+
+    //connection is deleted. deleteLater() is used
+    d->connections.remove( c );
+    c = 0;
 }
 
 void Client::sendBuddyIcon( const QByteArray& iconData )

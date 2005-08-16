@@ -211,7 +211,7 @@ public:
 	 * \param contact the contact to get info for
 	 */
 	ICQMoreUserInfo getMoreInfo( const QString& contact );
-	
+
 	/**
 	 * Get the interest info available for a contact
 	 * \param contact the contact to get info for
@@ -415,7 +415,7 @@ protected slots:
 
 	void requestChatNavLimits();
 
-
+    void determineDisconnection( int, const QString& );
 
 private:
 
