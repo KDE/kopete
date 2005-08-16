@@ -137,7 +137,7 @@ class KOPETE_EXPORT KopeteView
 		 * @param target A target QObject for the contextMenuEvent signal of the view
 		 * @param slot A slot that matches the signature ( QString&, KPopupMenu *)
 		 */
-		virtual void registerContextMenuHandler( QObject * /*target*/, const char* /*slot*/ ){};
+		virtual void registerContextMenuHandler( QObject *target, const char*slot ){ Q_UNUSED(target); Q_UNUSED(slot); };
 
 		/**
 		* @brief Register a handler for the tooltip
@@ -153,7 +153,7 @@ class KOPETE_EXPORT KopeteView
 		* @param target A target QObject for the contextMenuEvent signal of the view
 		* @param slot A slot that matches the signature ( QString&, KPopupMenu *)
 		*/
-		virtual void registerTooltipHandler( QObject */*target*/, const char*/*slot*/ ){};
+		virtual void registerTooltipHandler( QObject *target, const char*slot ){ Q_UNUSED(target); Q_UNUSED(slot); };
 
 		/**
 		 * @brief Returns the Kopete::ViewPlugin responsible for this view
