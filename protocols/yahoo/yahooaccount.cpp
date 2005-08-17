@@ -79,6 +79,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	m_lastDisconnectCode = 0;
 	m_currentMailCount = 0;
 	m_pictureFlag = 0;
+	m_waitingForResponse = false;
 	m_keepaliveTimer = new QTimer( this, "keepaliveTimer" );
 	
 	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
@@ -464,6 +465,7 @@ void YahooAccount::slotKeepalive()
 	}
 	if( isConnected() && m_session )
 	{	
+		m_session->keepalive();
 		m_session->sendIm( accountId(), accountId(), QString("<ping>"), pictureFlag() );
 		kdDebug(14180) << "Ping paket sent." << endl;
 	}
@@ -885,7 +887,7 @@ void YahooAccount::slotError( const QString &err, int fatal )
 	kdDebug(14180) << k_funcinfo << fatal << ": " << err << endl;
 	m_lastDisconnectCode = fatal;
 	m_keepaliveTimer->stop();
-	KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n( "<qt>The connection with the Yahoo server was lost.</qt>" ), 
+	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, i18n( "<qt>The connection with the Yahoo server was lost.</qt>" ), 
 						i18n( "Connection Lost - Yahoo Plugin" ) );
 	
 	if ( fatal == 1 || fatal == 2 || fatal == -1 )
