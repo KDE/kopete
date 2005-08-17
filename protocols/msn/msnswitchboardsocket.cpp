@@ -45,7 +45,6 @@
 #include <ktempfile.h>
 
 // for the display picture
-#include "msnp2pdisplatcher.h"
 #include <msncontact.h>
 #include "msnnotifysocket.h"
 
@@ -68,7 +67,6 @@ MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account , QObject *paren
 : MSNSocket( parent )
 {
 	m_account = account;
-	m_p2p=0l;
 	m_recvIcons=0;
 	m_emoticonTimer=0L;
 	m_chunks=0;
@@ -434,8 +432,6 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	}
 	else if( type== "application/x-msnmsgrp2p" )
 	{
-// 		p2pDisplatcher();  //create a p2p displatcher if none exist yet
-		// FIXME This causes an error. It misses the first message.
 		PeerDispatcher();
 	}
 	else if( type == "text/x-clientcaps" )
@@ -1068,21 +1064,6 @@ QString MSNSwitchBoardSocket::parseFontAttr(QString str, QString attr)
 		tmp = str.mid(pos1+3, pos2 - pos1 - 3);
 
 	return tmp;
-}
-
-// TODO remove.
-MSNP2PDisplatcher *MSNSwitchBoardSocket::p2pDisplatcher()
-{
-	if(!m_p2p)
-	{
-		m_p2p=new MSNP2PDisplatcher(this , "msnp2p protocol" );
-		m_p2p->setPictureUrl( m_account->pictureUrl() );
-		QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
-		QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
-						  this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
-		QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile *, const QString& ) ) , this , SLOT(slotEmoticonReceived( KTempFile *, const QString& ) ) ) ;
-	}
-	return m_p2p;
 }
 
 Dispatcher* MSNSwitchBoardSocket::PeerDispatcher()

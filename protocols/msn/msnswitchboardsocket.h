@@ -66,8 +66,6 @@ private:
 	QString m_auth;
 	QStringList m_chatMembers;
 
-	MSNP2PDisplatcher *m_p2p ;
-
 	//used for emoticons
 	QValueList<const Kopete::Message> m_msgQueue;
 	unsigned  m_recvIcons;
@@ -111,7 +109,6 @@ public:
 
 	int sendNudge();
 
-	MSNP2PDisplatcher *p2pDisplatcher();
 	P2P::Dispatcher* PeerDispatcher();
 
 public slots:
