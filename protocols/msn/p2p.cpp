@@ -245,6 +245,10 @@ void TransferContext::sendMessage(MessageType type, const QString& content, Q_IN
 	{
 		case DataTransfer:
 			contentType = "application/x-msnmsgr-transreqbody";
+			if(m_type == File && m_direction == Incoming)
+			{
+				contentType = "application/x-msnmsgr-transrespbody";
+			}
 			break;
 		case Finished:
 			contentType = "application/x-msnmsgr-sessionclosebody";
