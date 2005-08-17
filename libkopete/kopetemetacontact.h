@@ -335,8 +335,10 @@ public:
 	/**
 	 * Return a XML representation of the metacontact
 	 * @internal
+	 * @param minimal When true, it doesn't save the
+	 * plugins, groups and notification data. False by default.
 	 */
-	const QDomElement toXML();
+	const QDomElement toXML(bool minimal = false);
 
 	/**
 	 * Creates a metacontact from XML
