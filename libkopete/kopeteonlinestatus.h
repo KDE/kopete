@@ -163,13 +163,13 @@ public:
 	 * more than once. Weight is also used for picking the most important
 	 * 'Away' status for a protocol when going Away.
 	 * @param protocol is a pointer to the protocol used. This is used when
-	 * comparing two states using @ref operator=().
+	 * comparing two online status objects.
 	 * @param internalStatus is the status as used internally by the protocol.
 	 * This status is usually a lot more fine-grained than the status as used
 	 * by libkopete and should be unique per protocol.
 	 * @param overlayIcons is a list of QStrings which are the name of status
 	 * icons to be used by the KDE icon loader. (Statuses which don't have icons
-	 * to overlay like Online and Offline should use QString::null as icon 
+	 * to overlay like Online and Offline should use QString::null as icon
 	 * name ).  NOTE if the string is a movie ( *.mng ) it must be the first string in the list.
 	 * TODO: KDE4 sort out movies and overlay icons.
 	 * @param description is a description in e.g. tooltips.
@@ -197,7 +197,7 @@ public:
 	 * more than once. Weight is also used for picking the most important
 	 * 'Away' status for a protocol when going Away. Additionally, Weight determinesis also
 	 * @param protocol is a pointer to the protocol used. This is used when
-	 * comparing two states using @ref operator=().
+	 * comparing two online status objects.
 	 * @param internalStatus is the status as used internally by the protocol.
 	 * This status is usually a lot more fine-grained than the status as used
 	 * by libkopete and should be unique per protocol.

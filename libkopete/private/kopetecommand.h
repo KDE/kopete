@@ -41,9 +41,13 @@ class Command : public KAction
 		 *   accept two parameters, a QString of arguments, and a Kopete::ChatSession
 		 *   pointer to the Manager under which the command was sent.
 		 * @param help An optional help string to be shown when the user uses
-		 *   /help <command>
+		 *   /help <i>command</i>
 		 * @param type If this command is an alias, and what type
 		 * @param formatString The formatString of the alias if any
+		 * @param minArgs Minimum number of arguments
+		 * @param maxArgs Maximum number of arguments
+		 * @param cut The shortcut for the command
+		 * @param pix The icon to use for the command
 		 */
 		 Command( QObject *parent, const QString &command, const char* handlerSlot,
 		 	const QString &help = QString::null, CommandHandler::CommandType type = CommandHandler::Normal, const QString &formatString = QString::null,

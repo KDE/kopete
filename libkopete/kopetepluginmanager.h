@@ -60,7 +60,7 @@ public:
 	 *
 	 * If you pass an empty string you get the complete list of ALL plugins.
 	 *
-	 * You can query all information on the plugins through the @ref KPluginInfo
+	 * You can query all information on the plugins through the KPluginInfo
 	 * interface.
 	 */
 	QValueList<KPluginInfo *> availablePlugins( const QString &category = QString::null ) const;
@@ -83,13 +83,13 @@ public:
 	 * the pointer to the plugin if it's already loaded.
 	 */
 	Plugin *plugin( const QString &pluginName ) const;
-	
+
 	/**
 	 * @return the KPluginInfo for the specified plugin
 	 */
 	KPluginInfo *pluginInfo( const Kopete::Plugin *plugin ) const;
 
-	
+
 	/**
 	 * Shuts down the plugin manager on Kopete shutdown, but first
 	 * unloads all plugins asynchronously.
@@ -113,11 +113,12 @@ public:
 	 *
 	 * @param name is the name of the plugin as it is listed in the .desktop
 	 * file in the X-KDE-Library field.
+	 * @param enabled sets whether or not the plugin is enabled
 	 *
 	 * Returns false when no appropriate plugin can be found.
 	 */
 	bool setPluginEnabled( const QString &name, bool enabled = true );
-	
+
 	/**
 	 * Plugin loading mode. Used by @ref loadPlugin(). Code that doesn't want to block
 	 * the GUI and/or lot a lot of plugins at once should use asynchronous loading (@c LoadAsync).
@@ -205,7 +206,7 @@ private slots:
 	 * Schedules itself again if more plugins are pending.
 	 */
 	void slotLoadNextPlugin();
-	
+
 private:
 	/**
 	 * @internal

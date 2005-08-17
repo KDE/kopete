@@ -71,7 +71,14 @@ public:
 	Password &password();
 
 	void connect();
-	void connect( const OnlineStatus& );
+
+   	/**
+	 * @brief Go online for this service.
+	 *
+	 * @param initialStatus is the status to connect with. If it is an invalid status for this
+	 * account, the default online for the account should be used.
+	 */
+	void connect( const OnlineStatus& initialStatus );
 
 	/**
 	 * \brief Get the initial status
@@ -81,10 +88,10 @@ public:
 	/**
 	 * @brief Remove the account from the server.
 	 *
-	 * reimplementation of @ref Account::removeAccount  to remove the password from the wallet.
-	 * if your protocol reimplment this function, you should call this one anyway.
+	 * Reimplementation of Account::removeAccount() to remove the password from the wallet.
+	 * if your protocol reimplements this function, this function should still be called.
 	 *
-	 * @return true
+	 * @return Always true
 	 */
 	virtual bool removeAccount();
 

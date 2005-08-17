@@ -31,17 +31,19 @@ namespace UI {
 /**
  * @brief Dialog which is shown when a contact added you in the contactlist.
  *
- * This dialog ask the user to give the authorization, and to add the contact to the contactlist.
+ * This dialog asks the user to give authorization for the addition to the
+ * person who added the user and also asks the user if the contact who you've
+ * received the notification for should be added to the user's contact list
  *
  * example of usage
- * @code 
+ * @code
 
 	Kopete::UI::ContactAddedNotifyDialog *dialog =
 			new ContactAddedNotifyDialog(contactId, QString::null,account);
 	QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),this,SLOT(contactAddedDialogApplied()));
 	QObject::connect(dialog,SIGNAL(infoClicked(const QString&)),this,SLOT(contactAddedDialogInfo()));
 	dialog->show();
-	
+
  * @endcode
  *
  * and in your contactAddedDialogApplied slot
@@ -56,7 +58,7 @@ namespace UI {
 		dialog->addContact();
  * @endcode
  *
- * Note that you can also use exec() but this is not recommanded
+ * Note that you can also use exec() but this is not recommended
  *
  * @author Olivier Goffart
  * @since 0.11
@@ -75,17 +77,17 @@ public:
 		AddCheckBox = 0x04, /**< the checkbox which ask if the contact should be added */
 		AddGroupBox = 0x08 /**< all the widget about metacontact properties */
 	};
-	
+
 	/**
 	 * @brief Constructor
 	 *
-	 * The dialog is by default not modal, and wil delete itself when closed
-	 * 
+	 * The dialog is by default not modal, and will delete itself when closed
+	 *
 	 * @param contactId the contactId of the contact which just added the user
 	 * @param contactNick the nickname of the contact if available.
 	 * @param account is used to display the account icon and informaiton about the account
-	 * @param show a bitmask of HideWidget used to hide some widget. By default, everything is shown.
-	 * 
+	 * @param hide a bitmask of HideWidget used to hide some widget. By default, everything is shown.
+	 *
 	 */
 	ContactAddedNotifyDialog(const QString& contactId, const QString& contactNick=QString::null,
 				Kopete::Account *account=0L, uint hide=0x00);
@@ -97,11 +99,13 @@ public:
 
 	/**
 	 * @brief return if the user has checked the "authorize" checkbox
+	 * @return true if the authorize checkbox is checked, false otherwise
 	 */
 	bool authorized() const;
 
 	/**
 	 * @brief return if the user has checked the "add" checkbox
+	 * @return true if the add checkbox is checked, false otherwise
 	 */
 	bool added() const;
 
@@ -109,9 +113,11 @@ public:
 	 * @brief return the display name the user has entered
 	 */
 	QString displayName() const;
+
 	/**
 	 * @brief return the group the user has selected
-	 * if the user has entered a group which doesn't exist yet, it will be created now
+	 *
+	 * If the user has entered a group which doesn't exist yet, it will be created now
 	 */
 	Group* group() const;
 
@@ -124,8 +130,8 @@ public slots:
 	 * it will return 0L.
 	 *
 	 * it uses the Account::addContact function to add the contact
-	 * 
-	 * @return the new metacontact created, or 0l if the operation failed.
+	 *
+	 * @return the new metacontact created, or 0L if the operation failed.
 	 */
 	MetaContact *addContact() const;
 
@@ -135,17 +141,18 @@ signals:
 	 * @param contactId is the id of the contact passed in the constructor.
 	 */
 	void applyClicked(const QString &contactId);
+
 	/**
 	 * @brief the button "info" has been pressed
-	 * If you haven't hide the more info button, you should connect this signal to
-	 * a slot which show a dialog with more info about the contact.
-	 * 
+	 * If you haven't hidden the more info button, you should connect this
+	 * signal to a slot which show a dialog with more info about the
+	 * contact.
+	 *
 	 * hint: you can use sender() as parent of the new dialog
-	 * 
 	 * @param contactId is the id of the contact passed in the constructor.
 	 */
 	void infoClicked(const QString &contactId);
-	
+
 
 private slots:
 	void slotClearAddresseeClicked();

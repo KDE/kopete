@@ -53,6 +53,7 @@ public:
 	 *
 	 * @param configGroup The configuration group to save passwords in.
 	 * @param maxLength The maximum length of the password, or 0 if no maximum exists.
+	 * @param name The name for this object
 	 *
 	 * @deprecated Use the constructor that specifies if a blank password is allowed
 	 */
@@ -64,6 +65,7 @@ public:
 	 * @param configGroup The configuration group to save passwords in.
 	 * @param maxLength The maximum length of the password, or 0 if no maximum exists.
 	 * @param allowBlankPassword If this password is allowed to be blank
+	 * @param name The name for this object
 	 */
 	explicit Password( const QString &configGroup, uint maxLength = 0,
 		bool allowBlankPassword = false, const char *name = 0 );
@@ -126,14 +128,19 @@ public:
 	 * @param slot The slot on receiver to call at the end of the request. The signature
 	 *        of this function should be slot( const QString &password ). password will
 	 *        be the password if successful, or QString::null if failed.
+	 * @param image The icon to display in the dialog when asking for the password
 	 * @param prompt The message to display to the user, asking for a
 	 *        password. Can be any Qt RichText string.
+	 * @param source The source the password is taken from if a wrong or
+	 *        invalid password is entered or the password could not be found in the wallet
 	 */
 	void request( QObject *receiver, const char *slot, const QPixmap &image,
 		const QString &prompt, PasswordSource source = FromConfigOrUser );
 
 	/**
-	 * Start an asynchronous password request. Do not pop up a password entry dialog
+	 * @brief Start an asynchronous password request without a prompt
+	 *
+	 * Starts an asynchronous password request. Does not pop up a password entry dialog
 	 * if there is no password.
 	 * @see request(QObject*,const char*,const QPixmap&,const QString&,bool,unsigned int)
 	 * The password given to the provided slot will be NULL if no password could be retrieved for

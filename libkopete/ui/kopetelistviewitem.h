@@ -186,7 +186,7 @@ public:
 	 */
 
 	enum RttiValues {
-		Rtti_Component, Rtti_BoxComponent, Rtti_TextComponent, 
+		Rtti_Component, Rtti_BoxComponent, Rtti_TextComponent,
 		Rtti_ImageComponent, Rtti_DisplayNameComponent,
 		Rtti_HSpacerComponent, Rtti_VSpacerComponent
 	};
@@ -240,7 +240,7 @@ public:
 
 	virtual int widthForHeight( int height );
 	virtual int heightForWidth( int width );
-	
+
 	static int RTTI;
 	virtual int rtti() const { return RTTI; }
 
@@ -339,10 +339,9 @@ class DisplayNameComponent : public BoxComponent
 public:
 	/**
 	 * Constructor
-	 * @param displayName is the display name to be rendered
 	 */
 	DisplayNameComponent( ComponentBase *parent );
-	
+
 	/**
 	 * Dtor
 	 */
@@ -356,7 +355,7 @@ public:
 	void setDefaultColor();
 	static int RTTI;
 	virtual int rtti() const { return RTTI; }
-	
+
 private:
 	class Private;
 	Private *d;
@@ -377,7 +376,7 @@ class VSpacerComponent : public Component
 public:
 	VSpacerComponent( ComponentBase *parent );
 	int heightForWidth( int );
-	
+
 	static int RTTI;
 	virtual int rtti() const { return RTTI; }
 };
@@ -418,7 +417,7 @@ public:
 	static void setEffects( bool animation, bool fading, bool folding );
 
 	int width( const QFontMetrics & fm, const QListView * lv, int c ) const;
-	
+
 	/**
 	 * Show or hide this item in a clean way depending on whether it matches
 	 * the current quick search

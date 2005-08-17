@@ -38,37 +38,40 @@ namespace Utils
  *
  * @param host The host to be cheked
  */
-bool isHostReachable(const QString &host);
+bool isHostReachable( const QString &host );
 
 /**
  * Notifies the user connection has been lost without coupling plugins with GUI code.
  *
- * @param account The account that lost the connection and want to notify the user.
- * @param sev Severity of the error. See @ref Severity for more information about the Severities wich
- * will determine how the error is displayed.
- * @param caption brief subject line, used where possible if the presentation allows it.
+ * @param account The account that lost the connection and wants to notify the user.
+ * @param caption A brief subject line, used where possible if the presentation allows it.
  * @param message A short description of the error.
  * @param explanation A long description on how the error occured and what the user can do about it.
  * @param debugInfo Debug info that can be sent to the developers or to the network service owners.
  *
- * You can not provide debugInfo without an user explanation. If you don't provide caption, message or
- * explaination, Kopete will use a default one.
+ * You can not provide debugInfo without an user explanation. If you don't provide a caption, message, or
+ * explanation, Kopete will use a default explanation.
  */
-void KOPETE_EXPORT notifyConnectionLost( const Account *account, const QString caption = QString::null, const QString message = QString::null, const QString explanation = QString::null, const QString debugInfo = QString::null);
+void KOPETE_EXPORT notifyConnectionLost( const Account *account,
+                                         const QString caption = QString::null,
+                                         const QString message = QString::null,
+                                         const QString explanation = QString::null,
+                                         const QString debugInfo = QString::null );
 
 
-	/**
-	 * Notifies the user the server is not reachable without coupling plugins with GUI code.
-	 *
-	 * @param account The account that cannot establish a connection and want to notify the user about that.
-	 * @param caption brief subject line, used where possible if the presentation allows it.
-	 * @param message A short description of the error.
-	 * @param explanation A long description on how the error occured and what the user can do about it.
-	 * @param debugInfo Debug info that can be sent to the developers or to the network service owners.
-	 *
-	 * You can not provide debugInfo without an user explanation.
-	 */
-void KOPETE_EXPORT notifyCannotConnect( const Account *account, const QString explanation = QString::null, const QString debugInfo = QString::null);
+/**
+ * Notifies the user the server is not reachable without coupling plugins with GUI code.
+ *
+ * @param account The account that cannot establish a connection and want to notify the user about that.
+ * @param explanation A long description on how the error occured and what the user can do about it.
+ * @param debugInfo Debug info that can be sent to the developers or to the network service owners.
+ *
+ * You can not provide debugInfo without an user explanation. If you don't provide a caption, message, or
+ * explanation, Kopete will use a default explanation.
+ */
+void KOPETE_EXPORT notifyCannotConnect( const Account *account,
+                                        const QString explanation = QString::null,
+                                        const QString debugInfo = QString::null);
 
 } // end ns Utils
 } // end ns Kopete

@@ -182,7 +182,7 @@ public slots:
 	/**
 	 * @brief Inform the job that an error has occurred while transferring the file.
 	 *
-	 * @param error A member of the @ref KIO::Error enumeration indicating what error occurred.
+	 * @param error A member of the KIO::Error enumeration indicating what error occurred.
 	 * @param errorText A string to aid understanding of the error, often the offending URL.
 	 */
 	void slotError( int error, const QString &errorText );
