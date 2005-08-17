@@ -577,7 +577,7 @@ void MSNContact::slotShowProfile()
 /**
  * FIXME: Make this a standard KMM API call
  */
-void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, uint fileSize )
+void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, uint /*fileSize*/ )
 {
 	QString filePath;
 
@@ -591,6 +591,7 @@ void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, ui
 
 	if ( !filePath.isEmpty() )
 	{
+		Q_UINT32 fileSize = QFileInfo(filePath).size();
 		//Send the file
 		static_cast<MSNChatSession*>( manager(Kopete::Contact::CanCreate) )->sendFile( filePath, altFileName, fileSize );
 
