@@ -41,11 +41,11 @@ class Contact;
  *
  * The contactList is a singleton you can uses with @ref ContactList::self()
  *
- * it let you get a list of metacontact with @ref metaContacts()
+ * it let you get a list of metacontact with metaContacts()
  * Only metacontact which are on the contactlist are returned.
  *
  * @author Martijn Klingens <klingens@kde.org>
- * @author Olivier Goffart <ogoffart @tiscalinet.be>
+ * @author Olivier Goffart <ogoffart@tiscalinet.be>
  */
 class KOPETE_EXPORT ContactList : public QObject
 {
@@ -114,7 +114,7 @@ public:
 	 * If a group already exists with the given name and the given type, the existing group will be returned.
  	 * Otherwise, a new group will be created.
 	 * @param displayName is the display name to search
-	 * @param type is the @ref Group::GroupType to search, the default value is group::Normal
+	 * @param type is the Group::GroupType to search, the default value is group::Normal
 	 * @return always a valid Group
 	 */
 	Group * findGroup( const QString &displayName, int type = 0/*Group::Normal*/ );
@@ -131,7 +131,7 @@ public:
 
 	/**
 	  * return the metacontact that represent the user itself.
-	  * This metacontact should be the parent of every @ref KopeteAccount::myself() contacts.
+	  * This metacontact should be the parent of every Kopete::Account::myself() contacts.
 	  *
 	  * This metacontact is not in the contactlist.
 	  */
@@ -224,16 +224,14 @@ signals:
 
 	/**
 	 * This signal is emitted each time a global identity field change.
-	 *
-	 * <pre>
 	 * HOWTO use:
-	 * 1. Connect signal "globalIdentityChanged(const QString &key, const QVariant 
-	 *    &value) to a slot in your derivate Account class(the best 
+	 *
+	 * - Connect signal globalIdentityChanged(const QString &key, const QVariant 
+	 *    &value) to a slot in your derivate Account class (the best 
 	 *    place to put it).
-	 * 2. In the slot:
-	 *	  -Check the key you want to be sync with global identity.
-	 *    -Update the myself contact and/or update on server.
-	 * </pre>
+	 * - In the slot:
+	 *    - Check the key you want to be sync with global identity.
+	 *    - Update the myself contact and/or update on server.
 	 * 
 	 * For now, when photo is changed, it always send the photo file path.
 	 *
