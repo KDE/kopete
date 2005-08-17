@@ -17,6 +17,7 @@
 #include "dispatcher.h"
 #include "incomingtransfer.h"
 #include "outgoingtransfer.h"
+#include "webcam.h"
 using P2P::Dispatcher;
 using P2P::Message;
 using P2P::TransferContext;
@@ -52,11 +53,9 @@ using P2P::OutgoingTransfer;
 	(VAR)[(START)+3]=(char)( ((VAL)&0xFF000000)  >> 24 ) ; \
 }
 
-Dispatcher::Dispatcher(QObject *parent, const QString& contact) : QObject(parent)
-{
-	m_contact = contact;
-	m_callbackChannel = 0l;
-}
+Dispatcher::Dispatcher(QObject *parent, const QString& contact, const QString &ip)
+	: QObject(parent) ,  m_contact(contact) , m_callbackChannel(0l) , m_ip(ip)
+{}
 
 Dispatcher::~Dispatcher()
 {
@@ -482,7 +481,38 @@ void Dispatcher::dispatch(const P2P::Message& message)
 			}
 			else if(applicationId == 4)
 			{
-				// TODO Webcam support.
+#if MSN_WEBCAM
+				//TODO invitation ......
+
+				//accept webcam
+				TransferContext *current =
+						new P2P::Webcam(from,this,sessionId.toUInt());
+				current->m_branch = branch;
+				current->m_callId = callId;
+				current->setType(P2P::WebcamType);
+							
+/*				p2p->m_msgHandle=m_msgHandle;
+				p2p->m_myHandle=m_myHandle;*/
+				
+				// Add the transfer to the list.
+				m_sessions.insert(sessionId.toUInt(), current);
+
+				// Acknowledge the session request.
+				current->acknowledge(message);
+				// Send a 200 OK message to the recipient.
+				QString content = QString("SessionID: %1\r\n\r\n").arg(sessionId);
+				current->sendMessage(OK, content);
+				
+				current->m_branch=Uid::createUid();
+				
+				content="Bridges: TRUDPv1 TCPv1\r\n"
+						"NetID: -1280904111\r\n"
+						"Conn-Type: Symmetric-NAT\r\n"
+						"UPnPNat: false\r\n"
+						"ICF: false\r\n\r\n";
+
+				current->sendMessage(INVITE, content);
+#endif
 			}
 		}
 		else

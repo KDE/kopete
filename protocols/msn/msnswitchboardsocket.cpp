@@ -47,6 +47,7 @@
 // for the display picture
 #include "msnp2pdisplatcher.h"
 #include <msncontact.h>
+#include "msnnotifysocket.h"
 
 //kopete
 #include "msnaccount.h"
@@ -1090,7 +1091,7 @@ Dispatcher* MSNSwitchBoardSocket::PeerDispatcher()
 	{
 		// Create a new msnslp dispatcher to handle
 		// all peer to peer requests.
-		m_dispatcher = new Dispatcher(this, m_account->accountId());
+		m_dispatcher = new Dispatcher(this, m_account->accountId(), m_account->notifySocket() ? m_account->notifySocket()->localIP() : QString("") );
 
 		QObject::connect(this, SIGNAL(blockRead(const QByteArray&)), m_dispatcher, SLOT(slotReadMessage(const QByteArray&)));
 // 		QObject::connect(m_dispatcher, SIGNAL(sendCommand(const QString&, const QString&, bool, const QByteArray&, bool)), this, SLOT(sendCommand(const QString&, const QString&, bool, const QByteArray&, bool)));

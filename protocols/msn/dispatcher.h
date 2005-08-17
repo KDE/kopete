@@ -36,7 +36,7 @@ namespace P2P{
 	class Dispatcher : public QObject
 	{	Q_OBJECT
 		public:
-			Dispatcher(QObject *parent, const QString& contact);
+			Dispatcher(QObject *parent, const QString& contact, const QString &ip);
 			~Dispatcher();
 
 			void detach(TransferContext* transfer);
@@ -73,6 +73,10 @@ namespace P2P{
 
 		public:
 			CallbackChannel* callbackChannel();
+			/**
+			 * The Ip of the computer on the internet  (as seen by the server)
+			 */
+			QString localIp() { return m_ip; }
 			
 		private:
 			void dispatch(const P2P::Message& message);
@@ -83,6 +87,7 @@ namespace P2P{
 			QMap<Q_UINT32, P2P::Message> m_messageBuffer;
 			QString m_contact;
 			CallbackChannel *m_callbackChannel;
+			QString m_ip;
 			
 			friend class P2P::TransferContext;
 			friend class P2P::IncomingTransfer;

@@ -21,6 +21,8 @@
 #include <qobject.h>
 #include "messageformatter.h"
 
+#define MSN_WEBCAM 0
+
 namespace Kopete { class Transfer; }
 namespace Kopete { struct FileTransferInfo; }
 namespace P2P { class Dispatcher; }
@@ -33,7 +35,7 @@ class KTempFile;
 */
 namespace P2P{
 
-	enum TransferType { UserDisplayIcon = 1, CustomEmotions = 2, File = 8};
+	enum TransferType { UserDisplayIcon = 1, CustomEmotions = 2, WebcamType=4, File = 8};
 	enum TransferDirection { Incoming = 1, Outgoing = 8};
 	enum MessageType { BYE, OK, DECLINE, ERROR, INVITE };
 
@@ -115,6 +117,7 @@ namespace P2P{
 			P2P::Dispatcher *m_dispatcher;
 			bool m_isComplete;
 			Q_INT64 m_offset;
+			Q_INT64 m_totalDataSize;
 			P2P::MessageFormatter m_messageFormatter;
 			QString m_recipient;
 			QString m_sender;

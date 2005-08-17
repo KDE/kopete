@@ -46,6 +46,9 @@ QString P2P::Uid::createUid()
 
 TransferContext::TransferContext(P2P::Dispatcher *dispatcher) : QObject(dispatcher)
 {
+	
+	kdDebug(14140) << k_funcinfo <<  "dispatcher="<<dispatcher<<" this=" << this << endl;
+		
 	m_baseIdentifier = rand()%0x0FFFFFF0 + 4;
 	m_identifier = 0;
 	m_dispatcher = dispatcher;
@@ -57,6 +60,7 @@ TransferContext::TransferContext(P2P::Dispatcher *dispatcher) : QObject(dispatch
 	m_transactionId = 0;
 	m_transfer = 0l;
 	m_type = File;
+	m_totalDataSize=0;
 	m_ackSessionIdentifier = 0;
 	m_ackUniqueIdentifier = 0;
 }
@@ -73,7 +77,7 @@ TransferContext::~TransferContext()
 
 void TransferContext::acknowledge(const Message& message)
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kdDebug(14140) << k_funcinfo << m_dispatcher<< endl;
 	
 	Message outbound;
 	outbound.header.sessionId = message.header.sessionId;
@@ -141,7 +145,7 @@ void TransferContext::sendData(const QByteArray& bytes)
 		outbound.header.totalDataSize = m_file->size();
 	}
 	else
-		error();
+		outbound.header.totalDataSize = m_totalDataSize;
 	
 	outbound.header.dataSize = bytes.size();
 	if(m_type == UserDisplayIcon){
@@ -150,6 +154,7 @@ void TransferContext::sendData(const QByteArray& bytes)
 	else if(m_type == P2P::File){
 		outbound.header.flag = 0x01000030;
 	}
+	else  outbound.header.flag = 0;
 		 
 	outbound.header.ackSessionIdentifier = rand()%0x8FFFFFF0 + 4;
 	outbound.header.ackUniqueIdentifier  = 0;
@@ -161,6 +166,8 @@ void TransferContext::sendData(const QByteArray& bytes)
 	else if(m_type == File){
 		outbound.applicationIdentifier = 2l;
 	}
+	else if(m_type == WebcamType)
+		outbound.applicationIdentifier = 4l;
 	
 	outbound.destination = m_recipient;
 
@@ -216,17 +223,13 @@ void TransferContext::sendMessage(MessageType type, const QString& content, Q_IN
 	if(m_identifier == 0){
 		m_identifier = m_baseIdentifier;
 	}
-	else if(m_state == Invitation && m_direction == P2P::Outgoing)
+	else if(m_state == Invitation && m_direction == P2P::Outgoing && m_type == UserDisplayIcon)
 	{
-		if(m_type == UserDisplayIcon){
 			m_identifier -= 3;
-		}
 	}
-	else if(m_state == Invitation && m_direction == P2P::Incoming)
+	else if(m_state == Invitation && m_direction == P2P::Incoming && m_type == File)
 	{
-		if(m_type == File){
 			m_identifier -= 3;
-		}
 	}
 	else
 		++m_identifier;
@@ -260,6 +263,10 @@ void TransferContext::sendMessage(MessageType type, const QString& content, Q_IN
 				if(m_state == Negotiation){
 					contentType = "application/x-msnmsgr-transreqbody";
 				}
+			}
+			if(m_type == P2P::WebcamType && type==P2P::INVITE)
+			{
+				contentType = "application/x-msnmsgr-transreqbody";
 			}
 			break;
 	}

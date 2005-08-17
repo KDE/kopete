@@ -16,12 +16,12 @@ libkopete_msn_shared_la_SOURCES = msnprotocol.cpp msnaccount.cpp \
 			msnnotifysocket.cpp msnswitchboardsocket.cpp msnfiletransfersocket.cpp msninvitation.cpp \
 			msnp2p.cpp msnp2pdisplatcher.cpp msnp2pincoming.cpp msnp2poutgoing.cpp sha1.cpp \
 			msnsecureloginhandler.cpp msnchallengehandler.cpp dispatcher.cpp p2p.cpp messageformatter.cpp \
-	incomingtransfer.cpp outgoingtransfer.cpp
+			incomingtransfer.cpp outgoingtransfer.cpp webcam.cpp
 
 libkopete_msn_shared_la_LIBADD  = ./ui/libkopetemsnui.la ../../libkopete/libkopete.la $(LIB_KIO)
 libkopete_msn_shared_la_LDFLAGS = -version-info 0:0:0 -no-undefined $(all_libraries)
 
-kopete_msn_la_SOURCES = dummy.cpp
+kopete_msn_la_SOURCES = dummy.cpp webcam.cpp
 kopete_msn_la_LIBADD = libkopete_msn_shared.la
 
 kopete_msn_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
@@ -37,4 +37,4 @@ servicedir = $(kde_servicesdir)
 mydatadir = $(kde_datadir)/kopete_msn
 mydata_DATA = msnchatui.rc
 noinst_HEADERS = p2p.h dispatcher.h messageformatter.h incomingtransfer.h \
-	outgoingtransfer.h
+		outgoingtransfer.h webcam.h
