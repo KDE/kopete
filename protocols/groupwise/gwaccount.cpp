@@ -356,9 +356,8 @@ void GroupWiseAccount::setOnlineStatus( const Kopete::OnlineStatus& status, cons
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	if ( status == protocol()->groupwiseUnknown
-			|| status == protocol()->groupwiseConnecting 
-			|| status == protocol()->groupwiseInvalid
-			|| status == protocol()->groupwiseAwayIdle )
+			|| status == protocol()->groupwiseConnecting
+			|| status == protocol()->groupwiseInvalid )
 	{
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " called with invalid status \"" 
 				<< status.description() << "\"" << endl;
