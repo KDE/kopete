@@ -257,46 +257,32 @@ void PluginManager::loadAllPlugins()
 	// FIXME: We need session management here - Martijn
 
 	KConfig *config = KGlobal::config();
-	if ( config->hasKey( QString::fromLatin1( "Plugins" ) ) )
+	QMap<QString, QString> entries = config->entryMap( QString::fromLatin1( "Plugins" ) );
+	QMap<QString, QString>::Iterator it;
+	for ( it = entries.begin(); it != entries.end(); ++it )
 	{
-		QMap<QString, QString> entries = config->entryMap( QString::fromLatin1( "Plugins" ) );
-		QMap<QString, QString>::Iterator it;
-		for ( it = entries.begin(); it != entries.end(); ++it )
+		QString key = it.key();
+		if ( key.endsWith( QString::fromLatin1( "Enabled" ) ) )
 		{
-			QString key = it.key();
-			if ( key.endsWith( QString::fromLatin1( "Enabled" ) ) )
+			key.setLength( key.length() - 7 );
+			//kdDebug(14010) << k_funcinfo << "Set " << key << " to " << it.data() << endl;
+
+			if ( it.data() == QString::fromLatin1( "true" ) )
 			{
-				key.setLength( key.length() - 7 );
-				//kdDebug(14010) << k_funcinfo << "Set " << key << " to " << it.data() << endl;
-	
-				if ( it.data() == QString::fromLatin1( "true" ) )
-				{
-					if ( !plugin( key ) )
-						d->pluginsToLoad.push( key );
-				}
-				else
-				{
-					//This happens if the user unloaded plugins with the config plugin page.
-					// No real need to be assync because the user usualy unload few plugins 
-					// compared tto the number of plugin to load in a cold start. - Olivier
-					if ( plugin( key ) )
-						unloadPlugin( key );
-				}
+				if ( !plugin( key ) )
+					d->pluginsToLoad.push( key );
+			}
+			else
+			{
+				//This happens if the user unloaded plugins with the config plugin page.
+				// No real need to be assync because the user usualy unload few plugins 
+				// compared tto the number of plugin to load in a cold start. - Olivier
+				if ( plugin( key ) )
+					unloadPlugin( key );
 			}
 		}
 	}
-	else
-	{
-		// we had no config, so we load any plugins that should be loaded by default.
-		QValueList<KPluginInfo *> plugins = availablePlugins( QString::null );
-		QValueList<KPluginInfo *>::ConstIterator it = plugins.begin();
-		QValueList<KPluginInfo *>::ConstIterator end = plugins.end();
-		for ( ; it != end; ++it )
-		{
-			if ( (*it)->isPluginEnabledByDefault() )
-				d->pluginsToLoad.push( (*it)->pluginName() );
-		}
-	}
+
 	// Schedule the plugins to load
 	QTimer::singleShot( 0, this, SLOT( slotLoadNextPlugin() ) );
 }
