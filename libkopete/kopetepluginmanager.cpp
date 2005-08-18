@@ -53,7 +53,7 @@ namespace Kopete
 class PluginManager::Private
 {
 public:
-	Private() : shutdownMode( StartingUp ), isAllPluginsLoaded(false) {}
+	Private() : shutdownMode( StartingUp ) {}
 
 	// All available plugins, regardless of category, and loaded or not
 	QValueList<KPluginInfo *> plugins;
@@ -74,8 +74,6 @@ public:
 	QValueStack<QString> pluginsToLoad;
 
 	static KStaticDeleter<PluginManager> deleter;
-
-	bool isAllPluginsLoaded;
 };
 
 KStaticDeleter<PluginManager> PluginManager::Private::deleter;
@@ -310,7 +308,6 @@ void PluginManager::slotLoadNextPlugin()
 		if ( d->shutdownMode == Private::StartingUp )
 		{
 			d->shutdownMode = Private::Running;
-			d->isAllPluginsLoaded = true;
 			emit allPluginsLoaded();
 		}
 		return;
@@ -507,10 +504,6 @@ bool PluginManager::setPluginEnabled( const QString &_pluginId, bool enabled /* 
 	return true;
 }
 
-bool PluginManager::isAllPluginsLoaded() const
-{
-	return d->isAllPluginsLoaded;
-}
 
 } //END namespace Kopete
 
