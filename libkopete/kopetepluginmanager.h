@@ -120,6 +120,12 @@ public:
 	bool setPluginEnabled( const QString &name, bool enabled = true );
 
 	/**
+	 * This method check if all the plugins are loaded.
+	 * @return true if all the plugins are loaded.
+	 */
+	bool isAllPluginsLoaded() const;
+
+	/**
 	 * Plugin loading mode. Used by @ref loadPlugin(). Code that doesn't want to block
 	 * the GUI and/or lot a lot of plugins at once should use asynchronous loading (@c LoadAsync).
 	 * The default is synchronous loading (@c LoadSync).

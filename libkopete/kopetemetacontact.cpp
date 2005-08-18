@@ -1170,9 +1170,14 @@ bool MetaContact::fromXML( const QDomElement& element )
 	// If a plugin is loaded, load data cached
 	connect( Kopete::PluginManager::self(), SIGNAL( pluginLoaded(Kopete::Plugin*) ),
 		this, SLOT( slotPluginLoaded(Kopete::Plugin*) ) );
-	// When all plugins are loaded, set the source contact.
-	connect( Kopete::PluginManager::self(), SIGNAL( allPluginsLoaded() ), 
-		this, SLOT( slotAllPluginsLoaded() ) );
+
+	// All plugins are already loaded, call manually the contact setting slot.
+	if( Kopete::PluginManager::self()->isAllPluginsLoaded() )
+		slotAllPluginsLoaded();
+	else
+		// When all plugins are loaded, set the source contact.
+		connect( Kopete::PluginManager::self(), SIGNAL( allPluginsLoaded() ), 
+			this, SLOT( slotAllPluginsLoaded() ) );
 
 	// track changes only works if ONE Contact is inside the MetaContact
 //	if (d->contacts.count() > 1) // Does NOT work as intended
