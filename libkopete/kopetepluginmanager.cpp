@@ -259,7 +259,7 @@ void PluginManager::loadAllPlugins()
 	// FIXME: We need session management here - Martijn
 
 	KConfig *config = KGlobal::config();
-	if ( config->hasKey( QString::fromLatin1( "Plugins" ) ) )
+	if ( config->hasGroup( QString::fromLatin1( "Plugins" ) ) )
 	{
 		QMap<QString, QString> entries = config->entryMap( QString::fromLatin1( "Plugins" ) );
 		QMap<QString, QString>::Iterator it;
