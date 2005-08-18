@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>360</width>
-            <height>504</height>
+            <height>522</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -204,189 +204,201 @@
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
+                                    <widget class="QCheckBox" row="1" column="0">
+                                        <property name="name">
+                                            <cstring>mImageAutoAdjustBrightContrast</cstring>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>3</hsizetype>
+                                                <vsizetype>1</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="text">
+                                            <string>Au&amp;tomatic bright/contrast adjustment</string>
+                                        </property>
+                                        <property name="accel">
+                                            <string>Alt+T</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QCheckBox" row="2" column="0">
+                                        <property name="name">
+                                            <cstring>mImageAutoColorCorrection</cstring>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>3</hsizetype>
+                                                <vsizetype>1</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="text">
+                                            <string>Automatic color correction</string>
+                                        </property>
+                                        <property name="accel">
+                                            <string></string>
+                                        </property>
+                                    </widget>
                                     <widget class="QLayoutWidget" row="0" column="0">
                                         <property name="name">
-                                            <cstring>layout25</cstring>
+                                            <cstring>layout24</cstring>
                                         </property>
-                                        <vbox>
+                                        <hbox>
                                             <property name="name">
                                                 <cstring>unnamed</cstring>
                                             </property>
                                             <widget class="QLayoutWidget">
                                                 <property name="name">
-                                                    <cstring>layout24</cstring>
+                                                    <cstring>layout22</cstring>
                                                 </property>
-                                                <hbox>
+                                                <vbox>
                                                     <property name="name">
                                                         <cstring>unnamed</cstring>
                                                     </property>
-                                                    <widget class="QLayoutWidget">
+                                                    <widget class="QLabel">
                                                         <property name="name">
-                                                            <cstring>layout22</cstring>
+                                                            <cstring>brightLabel</cstring>
                                                         </property>
-                                                        <vbox>
-                                                            <property name="name">
-                                                                <cstring>unnamed</cstring>
-                                                            </property>
-                                                            <widget class="QLabel">
-                                                                <property name="name">
-                                                                    <cstring>brightLabel</cstring>
-                                                                </property>
-                                                                <property name="sizePolicy">
-                                                                    <sizepolicy>
-                                                                        <hsizetype>1</hsizetype>
-                                                                        <vsizetype>5</vsizetype>
-                                                                        <horstretch>0</horstretch>
-                                                                        <verstretch>0</verstretch>
-                                                                    </sizepolicy>
-                                                                </property>
-                                                                <property name="text">
-                                                                    <string>Bright:</string>
-                                                                </property>
-                                                            </widget>
-                                                            <widget class="QLabel">
-                                                                <property name="name">
-                                                                    <cstring>contrastLabel</cstring>
-                                                                </property>
-                                                                <property name="sizePolicy">
-                                                                    <sizepolicy>
-                                                                        <hsizetype>1</hsizetype>
-                                                                        <vsizetype>5</vsizetype>
-                                                                        <horstretch>0</horstretch>
-                                                                        <verstretch>0</verstretch>
-                                                                    </sizepolicy>
-                                                                </property>
-                                                                <property name="text">
-                                                                    <string>Contrast:</string>
-                                                                </property>
-                                                            </widget>
-                                                            <widget class="QLabel">
-                                                                <property name="name">
-                                                                    <cstring>saturationLabel</cstring>
-                                                                </property>
-                                                                <property name="sizePolicy">
-                                                                    <sizepolicy>
-                                                                        <hsizetype>1</hsizetype>
-                                                                        <vsizetype>5</vsizetype>
-                                                                        <horstretch>0</horstretch>
-                                                                        <verstretch>0</verstretch>
-                                                                    </sizepolicy>
-                                                                </property>
-                                                                <property name="text">
-                                                                    <string>Saturation:</string>
-                                                                </property>
-                                                            </widget>
-                                                            <widget class="QLabel">
-                                                                <property name="name">
-                                                                    <cstring>hueLabel</cstring>
-                                                                </property>
-                                                                <property name="sizePolicy">
-                                                                    <sizepolicy>
-                                                                        <hsizetype>1</hsizetype>
-                                                                        <vsizetype>5</vsizetype>
-                                                                        <horstretch>0</horstretch>
-                                                                        <verstretch>0</verstretch>
-                                                                    </sizepolicy>
-                                                                </property>
-                                                                <property name="text">
-                                                                    <string>Hue:</string>
-                                                                </property>
-                                                            </widget>
-                                                        </vbox>
+                                                        <property name="sizePolicy">
+                                                            <sizepolicy>
+                                                                <hsizetype>1</hsizetype>
+                                                                <vsizetype>5</vsizetype>
+                                                                <horstretch>0</horstretch>
+                                                                <verstretch>0</verstretch>
+                                                            </sizepolicy>
+                                                        </property>
+                                                        <property name="text">
+                                                            <string>Bright:</string>
+                                                        </property>
                                                     </widget>
-                                                    <widget class="QLayoutWidget">
+                                                    <widget class="QLabel">
                                                         <property name="name">
-                                                            <cstring>layout23</cstring>
+                                                            <cstring>contrastLabel</cstring>
                                                         </property>
-                                                        <vbox>
-                                                            <property name="name">
-                                                                <cstring>unnamed</cstring>
-                                                            </property>
-                                                            <widget class="QSlider">
-                                                                <property name="name">
-                                                                    <cstring>mBrightSlider</cstring>
-                                                                </property>
-                                                                <property name="sizePolicy">
-                                                                    <sizepolicy>
-                                                                        <hsizetype>3</hsizetype>
-                                                                        <vsizetype>0</vsizetype>
-                                                                        <horstretch>0</horstretch>
-                                                                        <verstretch>0</verstretch>
-                                                                    </sizepolicy>
-                                                                </property>
-                                                                <property name="orientation">
-                                                                    <enum>Horizontal</enum>
-                                                                </property>
-                                                            </widget>
-                                                            <widget class="QSlider">
-                                                                <property name="name">
-                                                                    <cstring>mContrastSlider</cstring>
-                                                                </property>
-                                                                <property name="sizePolicy">
-                                                                    <sizepolicy>
-                                                                        <hsizetype>3</hsizetype>
-                                                                        <vsizetype>0</vsizetype>
-                                                                        <horstretch>0</horstretch>
-                                                                        <verstretch>0</verstretch>
-                                                                    </sizepolicy>
-                                                                </property>
-                                                                <property name="orientation">
-                                                                    <enum>Horizontal</enum>
-                                                                </property>
-                                                            </widget>
-                                                            <widget class="QSlider">
-                                                                <property name="name">
-                                                                    <cstring>mSaturationSlider</cstring>
-                                                                </property>
-                                                                <property name="sizePolicy">
-                                                                    <sizepolicy>
-                                                                        <hsizetype>3</hsizetype>
-                                                                        <vsizetype>0</vsizetype>
-                                                                        <horstretch>0</horstretch>
-                                                                        <verstretch>0</verstretch>
-                                                                    </sizepolicy>
-                                                                </property>
-                                                                <property name="orientation">
-                                                                    <enum>Horizontal</enum>
-                                                                </property>
-                                                            </widget>
-                                                            <widget class="QSlider">
-                                                                <property name="name">
-                                                                    <cstring>mHueSlider</cstring>
-                                                                </property>
-                                                                <property name="sizePolicy">
-                                                                    <sizepolicy>
-                                                                        <hsizetype>3</hsizetype>
-                                                                        <vsizetype>0</vsizetype>
-                                                                        <horstretch>0</horstretch>
-                                                                        <verstretch>0</verstretch>
-                                                                    </sizepolicy>
-                                                                </property>
-                                                                <property name="orientation">
-                                                                    <enum>Horizontal</enum>
-                                                                </property>
-                                                            </widget>
-                                                        </vbox>
+                                                        <property name="sizePolicy">
+                                                            <sizepolicy>
+                                                                <hsizetype>1</hsizetype>
+                                                                <vsizetype>5</vsizetype>
+                                                                <horstretch>0</horstretch>
+                                                                <verstretch>0</verstretch>
+                                                            </sizepolicy>
+                                                        </property>
+                                                        <property name="text">
+                                                            <string>Contrast:</string>
+                                                        </property>
                                                     </widget>
-                                                </hbox>
+                                                    <widget class="QLabel">
+                                                        <property name="name">
+                                                            <cstring>saturationLabel</cstring>
+                                                        </property>
+                                                        <property name="sizePolicy">
+                                                            <sizepolicy>
+                                                                <hsizetype>1</hsizetype>
+                                                                <vsizetype>5</vsizetype>
+                                                                <horstretch>0</horstretch>
+                                                                <verstretch>0</verstretch>
+                                                            </sizepolicy>
+                                                        </property>
+                                                        <property name="text">
+                                                            <string>Saturation:</string>
+                                                        </property>
+                                                    </widget>
+                                                    <widget class="QLabel">
+                                                        <property name="name">
+                                                            <cstring>hueLabel</cstring>
+                                                        </property>
+                                                        <property name="sizePolicy">
+                                                            <sizepolicy>
+                                                                <hsizetype>1</hsizetype>
+                                                                <vsizetype>5</vsizetype>
+                                                                <horstretch>0</horstretch>
+                                                                <verstretch>0</verstretch>
+                                                            </sizepolicy>
+                                                        </property>
+                                                        <property name="text">
+                                                            <string>Hue:</string>
+                                                        </property>
+                                                    </widget>
+                                                </vbox>
                                             </widget>
-                                            <widget class="QCheckBox">
+                                            <widget class="QLayoutWidget">
                                                 <property name="name">
-                                                    <cstring>mImageAutoAdjustBrightContrast</cstring>
+                                                    <cstring>layout23</cstring>
                                                 </property>
-                                                <property name="sizePolicy">
-                                                    <sizepolicy>
-                                                        <hsizetype>3</hsizetype>
-                                                        <vsizetype>1</vsizetype>
-                                                        <horstretch>0</horstretch>
-                                                        <verstretch>0</verstretch>
-                                                    </sizepolicy>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Au&amp;tomatic bright/contrast adjustment</string>
-                                                </property>
+                                                <vbox>
+                                                    <property name="name">
+                                                        <cstring>unnamed</cstring>
+                                                    </property>
+                                                    <widget class="QSlider">
+                                                        <property name="name">
+                                                            <cstring>mBrightSlider</cstring>
+                                                        </property>
+                                                        <property name="sizePolicy">
+                                                            <sizepolicy>
+                                                                <hsizetype>3</hsizetype>
+                                                                <vsizetype>0</vsizetype>
+                                                                <horstretch>0</horstretch>
+                                                                <verstretch>0</verstretch>
+                                                            </sizepolicy>
+                                                        </property>
+                                                        <property name="orientation">
+                                                            <enum>Horizontal</enum>
+                                                        </property>
+                                                    </widget>
+                                                    <widget class="QSlider">
+                                                        <property name="name">
+                                                            <cstring>mContrastSlider</cstring>
+                                                        </property>
+                                                        <property name="sizePolicy">
+                                                            <sizepolicy>
+                                                                <hsizetype>3</hsizetype>
+                                                                <vsizetype>0</vsizetype>
+                                                                <horstretch>0</horstretch>
+                                                                <verstretch>0</verstretch>
+                                                            </sizepolicy>
+                                                        </property>
+                                                        <property name="orientation">
+                                                            <enum>Horizontal</enum>
+                                                        </property>
+                                                    </widget>
+                                                    <widget class="QSlider">
+                                                        <property name="name">
+                                                            <cstring>mSaturationSlider</cstring>
+                                                        </property>
+                                                        <property name="sizePolicy">
+                                                            <sizepolicy>
+                                                                <hsizetype>3</hsizetype>
+                                                                <vsizetype>0</vsizetype>
+                                                                <horstretch>0</horstretch>
+                                                                <verstretch>0</verstretch>
+                                                            </sizepolicy>
+                                                        </property>
+                                                        <property name="orientation">
+                                                            <enum>Horizontal</enum>
+                                                        </property>
+                                                    </widget>
+                                                    <widget class="QSlider">
+                                                        <property name="name">
+                                                            <cstring>mHueSlider</cstring>
+                                                        </property>
+                                                        <property name="sizePolicy">
+                                                            <sizepolicy>
+                                                                <hsizetype>3</hsizetype>
+                                                                <vsizetype>0</vsizetype>
+                                                                <horstretch>0</horstretch>
+                                                                <verstretch>0</verstretch>
+                                                            </sizepolicy>
+                                                        </property>
+                                                        <property name="orientation">
+                                                            <enum>Horizontal</enum>
+                                                        </property>
+                                                    </widget>
+                                                </vbox>
                                             </widget>
-                                        </vbox>
+                                        </hbox>
                                     </widget>
                                 </grid>
                             </widget>

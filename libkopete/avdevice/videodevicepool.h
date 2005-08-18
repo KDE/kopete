@@ -71,6 +71,8 @@ public:
 	unsigned int currentDevice();
 	int currentInput();
 	unsigned int inputs();
+	bool getAutoColorCorrection();
+	bool setAutoColorCorrection(bool colorcorrection);
 
 protected:
 	int xioctl(int request, void *arg);

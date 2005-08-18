@@ -33,6 +33,8 @@ VideoDevice::VideoDevice()
 //	kdDebug() << "libkopete (avdevice): VideoDevice() called" << endl;
 	descriptor = -1;
 	m_streambuffers  = 0;
+	m_autobrightcontrast = false;
+	m_autocolorcorrection = false;
 //	kdDebug() << "libkopete (avdevice): VideoDevice() exited successfuly" << endl;
 }
 
@@ -491,11 +493,11 @@ kdDebug() <<  k_funcinfo << "setSize(" << newwidth << ", " << newheight << ") ca
 	if(isOpen())
 	{
 // It should not be there. It must remain in a completely distict place, cause this method should not change the pixelformat.
-		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB32))
+		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
 		{
-			kdDebug() <<  k_funcinfo << "Card seems to not support RGB32 format. Trying RGB32." << endl;
-			if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
-				kdDebug() <<  k_funcinfo << "Card seems to not support RGB24 format. Fallback to it is not yet implemented." << endl;
+			kdDebug() <<  k_funcinfo << "Card seems to not support RGB24 format. Trying BGR24." << endl;
+			if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR24))
+				kdDebug() <<  k_funcinfo << "Card seems to not support BGR24 format. Fallback to it is not yet implemented." << endl;
 		}
 
 		if(newwidth  > maxwidth ) newwidth  = maxwidth;
@@ -915,6 +917,47 @@ memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_current
 #endif
 				break;
 		}
+
+// Automatic color correction. Now it just swaps R and B channels in RGB24/BGR24 modes.
+		if(m_autocolorcorrection)
+		{
+			switch(m_currentbuffer.pixelformat)
+			{
+				case PIXELFORMAT_NONE	: break;
+				case PIXELFORMAT_GREY	: break;
+				case PIXELFORMAT_RGB332	: break;
+				case PIXELFORMAT_RGB555	: break;
+				case PIXELFORMAT_RGB555X: break;
+				case PIXELFORMAT_RGB565	: break;
+				case PIXELFORMAT_RGB565X: break;
+				case PIXELFORMAT_RGB24	:
+				case PIXELFORMAT_BGR24	:
+					{
+						unsigned char temp;
+						for(unsigned int loop=0;loop < m_currentbuffer.data.size();loop+=3)
+						{
+							temp = m_currentbuffer.data[loop];
+							m_currentbuffer.data[loop] = m_currentbuffer.data[loop+2];
+							m_currentbuffer.data[loop+2] = temp;
+						}
+					}
+					break;
+				case PIXELFORMAT_RGB32	:
+				case PIXELFORMAT_BGR32	:
+					{
+						unsigned char temp;
+						for(unsigned int loop=0;loop < m_currentbuffer.data.size();loop+=4)
+						{
+							temp = m_currentbuffer.data[loop];
+							m_currentbuffer.data[loop] = m_currentbuffer.data[loop+2];
+							m_currentbuffer.data[loop+2] = temp;
+						}
+					}
+					break;
+			}
+		}
+
+
 // put frame copy operation here
 		kdDebug() <<  k_funcinfo << "exited successfuly." << endl;
 		return EXIT_SUCCESS;
@@ -1035,7 +1078,17 @@ int VideoDevice::close()
 	return EXIT_SUCCESS;
 }
 
+bool VideoDevice::getAutoColorCorrection()
+{
+	return m_autocolorcorrection;
+}
 
+bool VideoDevice::setAutoColorCorrection(bool colorcorrection)
+{
+	kdDebug() <<  k_funcinfo << "VideoDevice::setAutoColorCorrection(" << colorcorrection << ") called." << endl;
+	m_autocolorcorrection = colorcorrection;
+	return m_autocolorcorrection;
+}
 
 
 int VideoDevice::pixelFormatCode(pixel_format pixelformat)

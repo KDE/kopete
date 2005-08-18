@@ -185,6 +185,26 @@ int VideoDevicePool::stopCapturing()
 	return EXIT_FAILURE;
 }
 
+/*!
+    \fn VideoDevicePool::getAutoColorCorrection()
+ */
+bool VideoDevicePool::getAutoColorCorrection()
+{
+	if(m_videodevice.size())
+		return m_videodevice[currentDevice()].getAutoColorCorrection();
+	return false;
+}
+
+/*!
+    \fn VideoDevicePool::setAutoColorCorrection(bool colorcorrection)
+ */
+bool VideoDevicePool::setAutoColorCorrection(bool colorcorrection)
+{
+	kdDebug() <<  k_funcinfo << "VideoDevicePool::setAutoColorCorrection(" << colorcorrection << ") called." << endl;
+	if(m_videodevice.size())
+		return m_videodevice[currentDevice()].setAutoColorCorrection(colorcorrection);
+	return false;
+}
 
 /*!
     \fn VideoDevicePool::getFrame()

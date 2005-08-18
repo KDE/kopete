@@ -140,6 +140,9 @@ public:
 	int stopCapturing();
 	int close();
 
+	bool getAutoColorCorrection();
+	bool setAutoColorCorrection(bool colorcorrection);
+
 	bool canCapture();
 	bool canChromakey();
 	bool canScale();
@@ -185,6 +188,9 @@ protected:
 	bool m_videoread;
 	bool m_videoasyncio;
 	bool m_videostream;
+
+	bool m_autobrightcontrast;
+	bool m_autocolorcorrection;
 
 	int xioctl(int request, void *arg);
 	int errnoReturn(const char* s);
