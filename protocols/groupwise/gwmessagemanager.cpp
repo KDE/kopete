@@ -199,6 +199,7 @@ void GroupWiseChatSession::slotCreationFailed( const int failedId, const int sta
 		Kopete::Message failureNotify = Kopete::Message( myself(), members(), i18n("An error occurred when trying to start a chat: %1").arg( statusCode ), Kopete::Message::Internal, Kopete::Message::PlainText);
 		appendMessage( failureNotify );
 		setClosed();
+		messageSucceeded();
 	}
 }
 
