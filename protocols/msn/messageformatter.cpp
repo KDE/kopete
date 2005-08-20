@@ -60,7 +60,7 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 		if(contentType != "application/x-msnmsgrp2p")
 			return inbound;
 
-		kdDebug(14140) << k_funcinfo << endl;
+//		kdDebug(14140) << k_funcinfo << endl;
 	
 		regex = QRegExp("MIME-Version: (\\d.\\d)");
 		regex.search(messageHeader);
@@ -88,7 +88,7 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 	reader >> inbound.header.ackUniqueIdentifier;
 	reader >> inbound.header.ackDataSize;
 
-	kdDebug(14140)
+/*	kdDebug(14140)
 		<< "session id, "             << inbound.header.sessionId << endl
 		<< "identifier, "             << inbound.header.identifier << endl
 		<< "data offset, "            << inbound.header.dataOffset << endl
@@ -99,7 +99,7 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 		<< "ack unique identifier, "  << inbound.header.ackUniqueIdentifier << endl
 		<< "ack data size, "          << inbound.header.ackDataSize
 		<< endl;
-
+*/
 	// Read the message body from the stream.
 	if(inbound.header.dataSize > 0){
 		inbound.body.resize(inbound.header.dataSize);
@@ -112,9 +112,9 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 		// Read the message application identifier from the stream.
 		reader >> inbound.applicationIdentifier;
 
-		kdDebug(14140)
+/*		kdDebug(14140)
 			<< "application identifier, " << inbound.applicationIdentifier
-			<< endl;
+		<< endl;*/
 	}
 		
 	return inbound;
@@ -122,7 +122,7 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 
 void MessageFormatter::writeMessage(const Message& message, QByteArray& stream, bool compact)
 {
-	kdDebug(14140) << k_funcinfo << endl;
+//	kdDebug(14140) << k_funcinfo << endl;
 
 	QDataStream writer(stream, IO_WriteOnly);
 	writer.setByteOrder(QDataStream::LittleEndian);
@@ -158,7 +158,7 @@ void MessageFormatter::writeMessage(const Message& message, QByteArray& stream, 
 	writer << message.header.ackUniqueIdentifier;
 	writer << message.header.ackDataSize;
 
-	kdDebug(14140)
+/*	kdDebug(14140)
 		<< "session id, "             << message.header.sessionId << endl
 		<< "identifier, "             << message.header.identifier << endl
 		<< "data offset, "            << message.header.dataOffset << endl
@@ -169,7 +169,7 @@ void MessageFormatter::writeMessage(const Message& message, QByteArray& stream, 
 		<< "ack unique identifier, "  << message.header.ackUniqueIdentifier << endl
 		<< "ack data size, "          << message.header.ackDataSize
 		<< endl;
-
+*/
 	if(message.body.size() > 0){
 		// Write the messge body to the stream.
 		writer.writeRawBytes(message.body.data(), message.body.size());
@@ -182,9 +182,10 @@ void MessageFormatter::writeMessage(const Message& message, QByteArray& stream, 
 		// Write the message application identifier to the stream.
 		writer << message.applicationIdentifier;
 
-		kdDebug(14140)
+/*		kdDebug(14140)
 			<< "application identifier, " << message.applicationIdentifier
 			<< endl;
+		*/
 	}
 }
 

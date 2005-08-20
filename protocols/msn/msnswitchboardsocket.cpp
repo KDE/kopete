@@ -423,7 +423,6 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 
 					// we are receiving emoticons, so delay message display until received signal
 					m_recvIcons++;
-// 					p2pDisplatcher()->requestDisplayPicture( m_myHandle, m_msgHandle, msnobj );
 					PeerDispatcher()->requestDisplayIcon(m_msgHandle, msnobj);
 				}
 				pos=rx.search(msg, pos+rx.matchedLength());
@@ -624,7 +623,6 @@ int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString 
 
 	//try to find it in the cache.
 	const QMap<QString, QString> objectList = PeerDispatcher()->objectList;
-// 	const QMap<QString,QString> objectList=p2pDisplatcher()->objectList;
 	for (QMap<QString,QString>::ConstIterator it = objectList.begin(); it != objectList.end(); ++it )
 	{
 		if(it.data() == filename)
@@ -650,7 +648,6 @@ int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString 
 			QString sha1c = QString(KCodecs::base64Encode(SHA1::hashString(all.utf8())));
 			picObj = "<msnobj Creator=\"" + m_account->accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\""+ fi.fileName() + "\" Friendly=\"AAA=\" SHA1D=\""+sha1d+ "\" SHA1C=\""+sha1c+"\"/>";
 
-// 			p2pDisplatcher()->objectList.insert(picObj,filename);
 			PeerDispatcher()->objectList.insert(picObj, filename);
 		}
 		else
@@ -675,7 +672,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		return -1;
 	}
 
-#if MSN_WEBCAM   //this is to test webcam
+#if 0   //this is to test webcam
 	if(msg.plainBody().contains("/webcam"))
 	{
 		p2pDisplatcher()->startWebcam( m_myHandle , m_msgHandle);
@@ -705,7 +702,6 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		if(regex.search(msg.escapedBody()) != -1)
 		{
 			// FIXME why are we sending the images.. the contact should request them.
-// 			p2pDisplatcher()->sendImage(rx.cap(1));
 			PeerDispatcher()->sendImage(regex.cap(1), m_msgHandle);
 			return -3;
 		}
