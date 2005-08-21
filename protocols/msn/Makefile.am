@@ -1,8 +1,8 @@
 KDE_OPTIONS = nofinal
 METASOURCES = AUTO
-SUBDIRS = ui . icons config
+SUBDIRS = ui webcam . icons config
 AM_CPPFLAGS = -I$(srcdir)/ui \
-	-I./ui \
+	-I$(srcdir)/webcam \
 	$(KOPETE_INCLUDES) \
 	$(all_includes)
 
@@ -18,7 +18,7 @@ libkopete_msn_shared_la_SOURCES = msnprotocol.cpp msnaccount.cpp \
 	p2p.cpp messageformatter.cpp incomingtransfer.cpp outgoingtransfer.cpp \
 	webcam.cpp
 
-libkopete_msn_shared_la_LIBADD  = ./ui/libkopetemsnui.la ../../libkopete/libkopete.la $(LIB_KIO)
+libkopete_msn_shared_la_LIBADD  = ./ui/libkopetemsnui.la ../../libkopete/libkopete.la ./webcam/libmimicwrapper.la $(LIB_KIO)
 libkopete_msn_shared_la_LDFLAGS = -version-info 0:0:0 -no-undefined $(all_libraries)
 
 kopete_msn_la_SOURCES = dummy.cpp webcam.cpp

@@ -20,6 +20,9 @@
 
 namespace KNetwork{ class KServerSocket; class KBufferedSocket;  }
 
+class MimicWrapper;
+class QLabel;
+
 namespace P2P {
 
 
@@ -42,9 +45,12 @@ class Webcam  : public TransferContext
 		KNetwork::KServerSocket   *m_listener;
 		KNetwork::KBufferedSocket *m_webcamSocket;
 		
-		enum { wsNegotiating , wsConnecting, wsAuth , wsTransfer   } m_state;
+		enum { wsNegotiating , wsConnecting, wsTransfer  } m_state;
 		
 		QString m_auth;
+		
+		MimicWrapper *m_mimic;
+		QLabel *m_widget;
 		
 		
 	private slots:

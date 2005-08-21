@@ -21,7 +21,7 @@
 #include <qobject.h>
 #include "messageformatter.h"
 
-#define MSN_WEBCAM 0
+#define MSN_WEBCAM 1
 
 namespace Kopete { class Transfer; }
 namespace Kopete { struct FileTransferInfo; }
