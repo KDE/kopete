@@ -417,7 +417,7 @@ void KopeteIdentityConfig::slotCopyIdentity()
 	}
 	else
 	{
-		KMessageBox::error(this, i18n("A identity with the same name was found."), i18n("Identity Configuration"));
+		KMessageBox::error(this, i18n("An identity with the same name was found."), i18n("Identity Configuration"));
 	}
 }
 
@@ -433,7 +433,7 @@ void KopeteIdentityConfig::slotRenameIdentity()
 	}
 	else
 	{
-		KMessageBox::error(this, i18n("A identity with the same name was found."), i18n("Identity Configuration"));
+		KMessageBox::error(this, i18n("An identity with the same name was found."), i18n("Identity Configuration"));
 	}
 }
 
