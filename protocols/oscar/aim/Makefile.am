@@ -8,7 +8,7 @@ AM_CPPFLAGS = -I$(srcdir)/../ \
 
 kde_module_LTLIBRARIES = kopete_aim.la
 
-kopete_aim_la_SOURCES = aimprotocol.cpp aimaccount.cpp aimcontact.cpp aimuserinfo.cpp
+kopete_aim_la_SOURCES = aimprotocol.cpp aimaccount.cpp aimcontact.cpp aimuserinfo.cpp aimjoinchat.cpp
 
 kopete_aim_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_aim_la_LIBADD  = ../libkopete_oscar.la ui/libkopeteaimui.la \

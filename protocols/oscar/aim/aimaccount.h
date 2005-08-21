@@ -38,6 +38,7 @@ class KAction;
 class OscarContact;
 class AIMContact;
 class AIMAccount;
+class AIMJoinChatUI;
 
 class AIMMyselfContact : public OscarMyselfContact
 {
@@ -85,9 +86,12 @@ public slots:
 	
 	void globalIdentityChanged( const QString&, const QVariant& );
 	void sendBuddyIcon();
+    void slotJoinChat();
+
 	
 protected slots:
 	void slotGoAway(const QString&);
+    void joinChatDialogClosed();
 	
 	virtual void disconnected( Kopete::Account::DisconnectReason reason );
 	
@@ -103,7 +107,8 @@ protected:
 
 	QString sanitizedMessage( const Oscar::Message& message );
 	
-	
+private:
+    AIMJoinChatUI* m_joinChatDialog;
 };
 #endif
 //kate: tab-width 4; indent-mode csands;

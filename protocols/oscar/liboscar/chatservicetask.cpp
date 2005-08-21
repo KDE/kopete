@@ -85,7 +85,59 @@ bool ChatServiceTask::take( Transfer* t )
     };
 
     setSuccess( 0, QString::null );
+    return true;
+}
 
+void ChatServiceTask::parseRoomInfo()
+{
+    WORD exchange, instance;
+    BYTE detailLevel;
+    Buffer* b = transfer()->buffer();
+
+    exchange = b->getWord();
+    QString name( b->getBUIN() );
+    instance = b->getByte();
+
+    detailLevel = b->getByte();
+
+    //skip the tlv count, we don't care. Buffer::getTLVList() handles this all
+    //correctly anyways
+    b->skipBytes( 2 );
+
+    QValueList<Oscar::TLV> tlvList = b->getTLVList();
+    QValueList<Oscar::TLV>::iterator it = tlvList.begin();
+    QValueList<Oscar::TLV>::iterator itEnd = tlvList.end();
+    for ( ; it != itEnd; ++it )
+    {
+        switch ( ( *it ).type )
+        {
+        case 0x006A:
+            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "room name: " << QString( ( *it ).data ) << endl;
+            break;
+        case 0x006F:
+            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "num occupants: " << ( *it ).data << endl;
+            break;
+        case 0x0073:
+            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "occupant list" << endl;
+            break;
+        case 0x00C9:
+            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "flags" << endl;
+            break;
+        case 0x00CA: //creation time
+        case 0x00D1: //max message length
+        case 0x00D3: //room description
+        case 0x00D6: //encoding 1
+        case 0x00D7: //language 1
+        case 0x00D8: //encoding 2
+        case 0x00D9: //language 2
+        case 0x00DA: //maximum visible message length
+            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "unhandled TLV type " << ( *it ).type << endl;
+            break;
+        default:
+            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "unknown TLV type " << ( *it ).type << endl;
+            break;
+        }
+    }
 }
 
 void ChatServiceTask::parseJoinNotification()
@@ -146,11 +198,67 @@ void ChatServiceTask::parseLeftNotification()
 
 void ChatServiceTask::parseChatMessage()
 {
+    Buffer* b = transfer()->buffer();
+    bool whisper = true, reflection = false;
+    QString language, encoding, message;
+    QByteArray icbmCookie( b->getBlock( 8 ) );
+    b->skipBytes( 2 ); //message channel always 0x03
+    QValueList<Oscar::TLV> chatTLVs = b->getTLVList();
+    QValueList<Oscar::TLV>::iterator it,  itEnd = chatTLVs.end();
+    for ( it = chatTLVs.begin(); it != itEnd; ++it )
+    {
+        switch ( ( *it ).type )
+        {
+        case 0x0001: //if present, message was sent to the room
+            whisper = false;
+            break;
+        case 0x0006: //enable reflection
+            reflection = true;
+            break;
+        case 0x0005: //the good stuff - the actual message
+        {
+            //oooh! look! more TLVS! i love those!
+            Buffer b( ( *it ).data );
+            QValueList<Oscar::TLV> messageTLVs = b.getTLVList();
+            QValueList<Oscar::TLV>::iterator mit,  mitEnd = messageTLVs.end();
+            for ( mit = messageTLVs.begin(); mit != mitEnd; ++mit )
+            {
+                switch( ( *it ).type )
+                {
+                case 0x0003:
+                    language = QString( ( *it ).data );
+                    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "language: " << language << endl;
+                    break;
+                case 0x0002:
+                    encoding = QString( ( *it ).data );
+                    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "encoding: " << encoding << endl;
+                    break;
+                case 0x0001:
+                    message = QString( ( *it ).data );
+                    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message: " << message << endl;
+                    break;
+                }
+            }
+        }
+        break;
+        case 0x0003: //user info
+            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got user info" << endl;
+            break;
+        }
+    }
 
+    Oscar::Message omessage;
+    omessage.setReceiver( client()->userId() );
+    omessage.setTimestamp( QDateTime::currentDateTime() );
+    omessage.setText( message );
+    omessage.setType( 0x03 );
 }
 
 void ChatServiceTask::parseChatError()
 {
 
 }
+
+
+#include "chatservicetask.moc"
 

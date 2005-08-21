@@ -1,6 +1,6 @@
-// Kopete Oscar Protocol - Chat service handling
+// aimjoinchat.h
 
-// Copyright (C)  2005  Matt Rogers <mattr@kde.org>
+// Copyright (C)  2005	Matt Rogers <mattr@kde.org>
 
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -9,7 +9,7 @@
 
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
 // Lesser General Public License for more details.
 
 // You should have received a copy of the GNU Lesser General Public
@@ -17,38 +17,33 @@
 // Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA
 // 02110-1301  USA
 
-#ifndef CHATSERVICETASK_H
-#define CHATSERVICETASK_H
+#ifndef AIMJOINCHAT_H
+#define AIMJOINCHAT_H
 
-#include "task.h"
+#include <kdialogbase.h>
 
-class Transfer;
+class AIMAccount;
+class AIMJoinChatBase;
 
-class ChatServiceTask : public Task
+class AIMJoinChatUI : public KDialogBase
 {
 Q_OBJECT
 public:
-    ChatServiceTask( Task* parent );
-    ~ChatServiceTask();
+	AIMJoinChatUI( AIMAccount*,  bool modal, QWidget* parent = 0,
+	               const char* name = 0 );
+	~AIMJoinChatUI();
 
-    void onGo();
-    bool take( Transfer* t );
-
-    void parseRoomInfo();
-
-    void parseJoinNotification();
-    void parseLeftNotification();
-
-    void parseChatMessage();
-    void parseChatError();
-
-    void sendChatMessage();
+protected slots:
+	void joinChat();
+	void closeClicked();
 
 signals:
-    void newChatMessage( Oscar::Message msg );
+	void closing();
 
-protected:
-    bool forMe( const Transfer* t ) const;
+private:
+	AIMJoinChatBase* m_joinUI;
+	AIMAccount* m_account;
+
 };
 
 #endif
