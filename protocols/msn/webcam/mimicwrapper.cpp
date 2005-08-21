@@ -48,6 +48,7 @@ QPixmap MimicWrapper::decode(const QByteArray& data)
 		m_init=true;
 	}
 	
+	QByteArray buff(m_bufferSize);
 	if(!mimic_decode_frame(m_mimctx, (guchar*)(data.data()) , (guchar*)(buff.data()) ) )
 	{
 		kdWarning(14140) << k_funcinfo << "Impossible to decode frame" << endl;
