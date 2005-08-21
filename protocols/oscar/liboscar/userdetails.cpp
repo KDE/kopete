@@ -25,6 +25,7 @@
 #include <klocale.h>
 #include <qptrlist.h>
 #include "oscarutils.h"
+#include "oscardebug.h"
 
 using namespace Oscar;
 
@@ -124,9 +125,11 @@ void UserDetails::fill( Buffer * buffer )
 		m_userId = user;
 	m_warningLevel = buffer->getWord();
 	WORD numTLVs = buffer->getWord();
-	
+
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Got user info for " << user << endl;
+#ifdef OSCAR_USERINFO_DEBUG
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Warning level is " << m_warningLevel << endl;
+#endif
 	//start parsing TLVs
 	for( int i = 0; i < numTLVs; ++i  )
 	{
@@ -138,28 +141,40 @@ void UserDetails::fill( Buffer * buffer )
 			{
 			case 0x0001: //user class
 				m_userClass = b.getWord();
+#ifdef OSCAR_USERINFO_DEBUG
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "User class is " << m_userClass << endl;
+#endif
 				break;
 			case 0x0002: //member since
 			case 0x0005: //member since
 				m_memberSince.setTime_t( b.getDWord() );
+#ifdef OSCAR_USERINFO_DEBUG
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Member since " << m_memberSince << endl;
+#endif
 				break;
 			case 0x0003: //sigon time
 				m_onlineSince.setTime_t( b.getDWord() );
+#ifdef OSCAR_USERINFO_DEBUG
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Signed on at " << m_onlineSince << endl;
+#endif
 				break;
 			case 0x0004: //idle time
 				m_idleTime = b.getWord();
+#ifdef OSCAR_USERINFO_DEBUG
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Idle time is " << m_idleTime << endl;
+#endif
 				break;
 			case 0x0006: //extended user status
 				m_extendedStatus = b.getDWord();
+#ifdef OSCAR_USERINFO_DEBUG
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Extended status is " << QString::number( m_extendedStatus, 16 ) << endl;
-				break;
+#endif
+                break;
 			case 0x000A: //external IP address
 				m_dcOutsideIp = KNetwork::KIpAddress( ntohl( b.getDWord() ) );
+#ifdef OSCAR_USERINFO_DEBUG
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "External IP address is " << m_dcOutsideIp.toString() << endl;
+#endif
 				break;
 			case 0x000C: //DC info
 				m_dcInsideIp = KNetwork::KIpAddress( ntohl( b.getDWord() ) );
@@ -173,7 +188,9 @@ void UserDetails::fill( Buffer * buffer )
 				m_dcLastExtInfoUpdateTime = b.getDWord();
 				m_dcLastExtStatusUpdateTime = b.getDWord();
 				b.getWord(); //unknown.
+#ifdef OSCAR_USERINFO_DEBUG
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got DC info" << endl;
+#endif
 				break;
 			case 0x000D: //capability info
 				m_capabilities = Oscar::parseCapabilities( b, m_clientVersion );
@@ -181,16 +198,20 @@ void UserDetails::fill( Buffer * buffer )
 			case 0x0010:
 			case 0x000F: //online time
 				m_numSecondsOnline = b.getDWord();
+#ifdef OSCAR_USERINFO_DEBUG
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Online for " << m_numSecondsOnline << endl;
+#endif
 				break;
 			case 0x001D:
 			{
 				if ( t.length == 0 )
 					break;
-				
+
 				while ( b.length() > 0 )
 				{
+#ifdef OSCAR_USERINFO_DEBUG
 					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Icon and available message info" << endl;
+#endif
 					WORD type2 = b.getWord();
 					BYTE number = b.getByte();
 					BYTE length = b.getByte();
@@ -202,24 +223,26 @@ void UserDetails::fill( Buffer * buffer )
 					case 0x0001:
 						if ( length > 0 && ( number == 0x01 || number == 0x00 ) )
 						{
-							kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got icon checksum" << endl;
 							m_iconChecksumType = number;
  							m_md5IconHash.duplicate( b.getBlock( length ), length );
+#ifdef OSCAR_USERINFO_DEBUG
 							kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksum:" << m_md5IconHash << endl;
+#endif
 						}
  						else
  						{
-	 						kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "icon checkum indicated"
+	 						kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "icon checksum indicated"
 		 						<< " but unable to parse checksum" << endl;
 							b.skipBytes( length );
  						}
 						break;
 					case 0x0002:
-						kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got an available message" << endl;
 						if ( length > 0 )
 						{
 							m_availableMessage = QString( b.getBSTR() );
+#ifdef OSCAR_USERINFO_DEBUG
 							kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "available message:" << m_availableMessage << endl;
+#endif
 							if ( b.length() >= 4 && b.getWord() == 0x0001 )
 							{
 								b.skipBytes( 2 );
@@ -244,7 +267,7 @@ void UserDetails::fill( Buffer * buffer )
 			b.clear();
 		}
 	}
-	
+
 	//do client detection on fill
 	detectClient();
 }
@@ -295,7 +318,7 @@ void UserDetails::detectClient()
 				m_clientName=i18n("Licq SSL");
 			else
 				m_clientName=i18n("Licq");
-			
+
 			if (ver % 10)
 				m_clientVersion.sprintf("%d%d%u", ver/1000, (ver/10)%100, ver%10);
 			else
@@ -304,7 +327,7 @@ void UserDetails::detectClient()
 		}
 		else // some client we could not detect using capabilities
 		{
-		
+
 			clientMatched=true; // default case will set it to false again if we did not find anything
 			switch (m_dcLastInfoUpdateTime)
 			{
@@ -314,7 +337,7 @@ void UserDetails::detectClient()
 						m_clientName=QString::fromLatin1("Miranda alpha");
 					else
 						m_clientName=QString::fromLatin1("Miranda");
-					
+
 					DWORD version = (m_dcLastExtInfoUpdateTime & 0xFFFFFF);
 					BYTE major1 = ((version >> 24) & 0xFF);
 					BYTE major2 = ((version >> 16) & 0xFF);
@@ -363,7 +386,7 @@ void UserDetails::detectClient()
 			}
 		}
 	}
-	
+
 	if (!clientMatched) // now the fuzzy clientsearch starts =)
 	{
 		if (hasCap(CAP_TYPING))
@@ -413,8 +436,8 @@ void UserDetails::detectClient()
 			m_clientName = QString::fromLatin1("GnomeICU");
 		}
 	}
-	
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "detected client as: " << m_clientName 
+
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "detected client as: " << m_clientName
 		<< " " << m_clientVersion << endl;
 	*/
 }
