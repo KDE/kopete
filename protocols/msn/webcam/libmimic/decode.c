@@ -19,10 +19,6 @@
 #include "mimic-private.h"
 
 
-#include <stdio.h>
-
-#define DEBUG( AAA)   printf( AAA )
-
 static gboolean decode(MimCtx *ctx, gboolean is_pframe);
 
 /**
@@ -38,8 +34,6 @@ gboolean mimic_decode_frame(MimCtx *ctx,
                             const guchar *input_buffer,
                             guchar *output_buffer)
 {
-	printf("hello\n");
-
     gboolean result, is_pframe;
     guchar *input_y, *input_cr, *input_cb;
     gint width, height;
@@ -49,13 +43,11 @@ gboolean mimic_decode_frame(MimCtx *ctx,
      */
     if (ctx == NULL || input_buffer == NULL || output_buffer == NULL)
     {
-	    printf("sanity failed  1\n");
         return FALSE;
     }
 
     if (!ctx->decoder_initialized)
     {
-	    printf("sanity failed  2\n");
         return FALSE;
     }
     
@@ -71,7 +63,6 @@ gboolean mimic_decode_frame(MimCtx *ctx,
     if (width  != ctx->frame_width ||
         height != ctx->frame_height)
     {
-	    DEBUG("Resolution changing is not supported.\n");
         return FALSE;
     }
     
@@ -99,7 +90,6 @@ gboolean mimic_decode_frame(MimCtx *ctx,
         result = decode(ctx, is_pframe);
     else
     {
-	    DEBUG("pas la meme que au debut.\n");
         result = FALSE;
     }
 
@@ -171,7 +161,6 @@ static gboolean decode(MimCtx *ctx, gboolean is_pframe)
                     
                     if (_vlc_decode_block(ctx, dct_block, ctx->num_coeffs) == FALSE) {
 
-			    DEBUG(" Corruped frame, return. \n");
                         return FALSE;
                     }
 
@@ -261,7 +250,7 @@ static gboolean decode(MimCtx *ctx, gboolean is_pframe)
 
                     if (_vlc_decode_block(ctx, dct_block, ctx->num_coeffs) == FALSE) {
 
-			    DEBUG("/* Corrupted frame: clear Cr and Cb planes and return. */");
+                         /* Corrupted frame: clear Cr and Cb planes and return. */
                         p = ctx->cur_frame_buf + ctx->y_size;
                         memset(p, 128, ctx->crcb_size * 2);
 

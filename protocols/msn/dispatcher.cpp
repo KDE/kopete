@@ -17,7 +17,11 @@
 #include "dispatcher.h"
 #include "incomingtransfer.h"
 #include "outgoingtransfer.h"
+
+#if MSN_WEBCAM
 #include "webcam.h"
+#endif
+
 using P2P::Dispatcher;
 using P2P::Message;
 using P2P::TransferContext;
@@ -482,36 +486,17 @@ void Dispatcher::dispatch(const P2P::Message& message)
 			else if(applicationId == 4)
 			{
 #if MSN_WEBCAM
-				//TODO invitation ......
-
-				//accept webcam
 				TransferContext *current =
 						new P2P::Webcam(from,this,sessionId.toUInt());
 				current->m_branch = branch;
 				current->m_callId = callId;
-				current->setType(P2P::WebcamType);
 							
-/*				p2p->m_msgHandle=m_msgHandle;
-				p2p->m_myHandle=m_myHandle;*/
-				
 				// Add the transfer to the list.
 				m_sessions.insert(sessionId.toUInt(), current);
-
 				// Acknowledge the session request.
 				current->acknowledge(message);
-				// Send a 200 OK message to the recipient.
-				QString content = QString("SessionID: %1\r\n\r\n").arg(sessionId);
-				current->sendMessage(OK, content);
 				
-				current->m_branch=Uid::createUid();
-				
-				content="Bridges: TRUDPv1 TCPv1\r\n"
-						"NetID: -1280904111\r\n"
-						"Conn-Type: Symmetric-NAT\r\n"
-						"UPnPNat: false\r\n"
-						"ICF: false\r\n\r\n";
-
-				current->sendMessage(INVITE, content);
+				QTimer::singleShot(0,current, SLOT(askIncommingInvitation()) );
 #endif
 			}
 		}

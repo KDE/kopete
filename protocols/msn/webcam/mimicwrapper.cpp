@@ -63,13 +63,12 @@ QPixmap MimicWrapper::decode(const QByteArray& data)
 	int b2=0;
 	for(int f=0;f<m_bufferSize;f+=3)
 	{
-		buff2[b2+3]=0x00;
-		buff2[b2+0]=buff[f];
+		buff2[b2+0]=buff[f+2];
 		buff2[b2+1]=buff[f+1];
-		buff2[b2+2]=buff[f+2];
+		buff2[b2+2]=buff[f+0];
 		b2+=4;
 	}
 
-	QImage img( (uchar*)(buff2.data())   , width , height ,  32  , 0L , 0,  QImage::IgnoreEndian  );
+	QImage img( (uchar*)(buff2.data())   , width , height ,  32  , 0L , 0,  QImage::BigEndian  );
 	return QPixmap(img);
 }

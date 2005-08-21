@@ -22,6 +22,7 @@ namespace KNetwork{ class KServerSocket; class KBufferedSocket;  }
 
 class MimicWrapper;
 class QLabel;
+class MSNWebcamDialog;
 
 namespace P2P {
 
@@ -32,8 +33,12 @@ class Webcam  : public TransferContext
 		Webcam( const QString& to, Dispatcher *parent, Q_UINT32 sessionID);
 		~Webcam( );
 
-		virtual void acknowledged();
 		virtual void processMessage(const Message& message);
+		
+	public slots:
+		void askIncommingInvitation();
+		virtual void acknowledged();
+		void sendBYEMessage();
 	
 	private:
 		void makeSIPMessage(const QString &message);
@@ -41,18 +46,19 @@ class Webcam  : public TransferContext
 		QString m_content;
 		
 		QString xml(uint session , uint rid);
+
 		
 		KNetwork::KServerSocket   *m_listener;
 		KNetwork::KBufferedSocket *m_webcamSocket;
 		
-		enum { wsNegotiating , wsConnecting, wsTransfer  } m_state;
+		enum { wsNegotiating , wsConnecting, wsTransfer  } m_webcamState;
 		
 		QString m_auth;
 		
 		MimicWrapper *m_mimic;
-		QLabel *m_widget;
+		MSNWebcamDialog *m_widget;
 		
-		
+	
 	private slots:
 		void slotListenError(int errorCode);
 		void slotAccept();

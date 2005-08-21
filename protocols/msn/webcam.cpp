@@ -22,11 +22,15 @@
 #include <kbufferedsocket.h>
 #include <klocale.h>
 #include <kserversocket.h>
+#include <kmessagebox.h>
 #include <qlabel.h>
+#include <qguardedptr.h>
+#include <qtimer.h>
 
 #include "dispatcher.h"
 
 #include "mimicwrapper.h"
+#include "msnwebcamdialog.h"
 
 
 using namespace KNetwork;
@@ -36,90 +40,134 @@ namespace P2P {
 Webcam::Webcam( const QString& to, Dispatcher *parent, Q_UINT32 sessionId)
 	: TransferContext(parent)
 {
+	setType(P2P::WebcamType);
 	m_direction = Incoming;
 	m_sessionId  = sessionId;
 	m_recipient  = to;
 	m_offset = 0l;
 	m_listener  = 0l;
 	m_webcamSocket=0L;
-	m_state=wsNegotiating;
+	m_webcamState=wsNegotiating;
 	
 	m_mimic=0L;
 	m_widget=0L;
-	
-	m_widget=new QLabel(0L);
-	m_widget->show();
-	m_widget->setText("bhou");
 }
 
 Webcam::~Webcam()
 {
+	m_dispatcher=0l;
 	delete m_mimic;
 	delete m_webcamSocket;
 	delete m_widget;
 }
 
+void Webcam::askIncommingInvitation()
+{
+	//protect, in case this is deleted when the messagebox is active
+	QGuardedPtr<Webcam> _this = this;
+	int result=KMessageBox::questionYesNo( 0L , i18n("The contact %1 want to show you his webcam, do you want to see it?").arg(m_recipient),
+										   i18n("Webcam invitation - Kopete MSN Plugin") , i18n("Accept") , i18n("Decline"));
+	if(!_this)
+		return;
+	
+	QString content = QString("SessionID: %1\r\n\r\n").arg(m_sessionId);
+	if(result==KMessageBox::Yes)
+	{
+		//Send two message, an OK, and an invite.
+		//Normaly, the user should decline the invite (i hope)
+		
+		// Send a 200 OK message to the recipient.
+		sendMessage(OK, content);
+				
+		
+		//send an INVITE message we want the user decline
+		//need to change the branch of the second message
+		m_branch=Uid::createUid();
+				
+		content=QString("Bridges: TRUDPv1 TCPv1\r\n"
+						"NetID: -1280904111\r\n"
+						"Conn-Type: Symmetric-NAT\r\n"
+						"UPnPNat: false\r\n"
+						"ICF: false\r\n\r\n");
+
+		sendMessage(INVITE, content);
+		
+	}
+	else
+	{
+		//Decline the invitation
+		sendMessage(DECLINE, content);
+		m_state=Finished;
+	}
+}
+
+void Webcam::sendBYEMessage()
+{
+	m_state=Finished;
+	QString content="Context: dAMAgQ==\r\n";
+	sendMessage(BYE,content);
+	
+	//If ever the opposite client was dead or something, we'll ack anyway, so everything get cleaned
+	QTimer::singleShot(60*1000 , this, SLOT(acknowledged()));
+}
+
+
+
 void Webcam::acknowledged()
 {
-//	kdDebug(14140) << k_funcinfo << endl;
+	kdDebug(14140) << k_funcinfo << endl;
 	
-// 	switch(m_state)
-// 	{
-// /*	case Invitation:
-// 		{
-// 			if(m_type == UserDisplayIcon)
-// 			{
-// 				m_state = Negotiation;
-// 				Send data preparation message.
-// 				sendDataPreparation();
-// 			}
-// 			break;
-// 	}*/
-// 		/*
-// 		case Negotiation:
-// 		{
-// 			if(m_type == UserDisplayIcon)
-// 			{
-// 				<<< Data preparation acknowledge message.
-// 				m_state = DataTransfer;
-// 				m_identifier++;
-// 				Start sending data.
-// 				slotSendData();
-// 			}
-// 			break;
-// 		}
-// 		
-// 		case DataTransfer:
-// 			NOTE <<< Data acknowledged message.
-// 			<<< Bye message should follow.
-// 			if(m_type == File)
-// 			{
-// 				if(m_handshake == 0x01)
-// 				{
-// 					Data handshake acknowledge message.
-// 					Start sending data.
-// 					slotSendData();
-// 				}
-// 				else if(m_handshake == 0x02)
-// 				{
-// 					Data acknowledge message.
-// 					Send the recipient a BYE message.
-// 					m_state = Finished;
-// 					sendMessage(BYE, "\r\n");
-// 				}
-// 			}
-// 			
-// 			break;
-// 		*/
-// /*		case Finished:
-// 			if(m_type == File)
-// 			{
-// 				BYE acknowledge message.
-// 				m_dispatcher->detach(this);
-// 			}
-// 			
-// 		break;*/
-// 	}
+	switch(m_state)
+	{
+		case Invitation:
+		{
+			m_state=Negotiation;
+			break;
+		}
+		
+		/*
+		case Negotiation:
+		{
+			if(m_type == UserDisplayIcon)
+			{
+				<<< Data preparation acknowledge message.
+				m_state = DataTransfer;
+				m_identifier++;
+				Start sending data.
+				slotSendData();
+			}
+			break;
+		}
+		
+		case DataTransfer:
+			NOTE <<< Data acknowledged message.
+			<<< Bye message should follow.
+			if(m_type == File)
+			{
+				if(m_handshake == 0x01)
+				{
+					Data handshake acknowledge message.
+					Start sending data.
+					slotSendData();
+				}
+				else if(m_handshake == 0x02)
+				{
+					Data acknowledge message.
+					Send the recipient a BYE message.
+					m_state = Finished;
+					sendMessage(BYE, "\r\n");
+				}
+			}
+			
+			break;
+		*/
+		case Finished:
+			//BYE or DECLINE acknowledge message.
+			m_dispatcher->detach(this);
+			break;
+		default:
+			break;
+	}
 }
 
 
@@ -128,47 +176,32 @@ void Webcam::acknowledged()
 void Webcam::processMessage(const Message& message)
 {
 	if(message.header.dataOffset+message.header.dataSize >= message.header.totalDataSize)
-		acknowledge( message );
+		acknowledge( message ); //aknowledge if needed
 	
 	if(message.applicationIdentifier != 4l)
-		return;
-
-	QByteArray dataMessage=message.body;
-	
-	QString echoS="";
-//QString debug2="";
-
-	unsigned int f=0;
-	while(f<dataMessage.size())
 	{
-		echoS+="\n";
-	
-		for(unsigned int q=0; q<16 ; q++)
-		{
-			if(q+f<dataMessage.size())
-			{
-				unsigned int N=(unsigned int) (dataMessage[q+f]);
-				if(N<16)
-					echoS+="0";
-				echoS+=QString::number( N  ,16)+" ";
-			}
-			else
-				echoS+="   ";
-		}
-		echoS+="   ";
-	
-		for(unsigned int q=0; (q<16 && (q+f)<dataMessage.size()) ; q++)
-		{
-			unsigned char X=dataMessage[q+f];
-			char C=((char)(( X<128 && X>31 ) ? X : '.'));
-			echoS+=QString::fromLatin1(&C,1);
-		}
+		QString body = QCString(message.body.data(), message.header.dataSize);
+		kdDebug(14141) << k_funcinfo << "received, " << body << endl;
 
-		f+=16;
+		if(body.startsWith("MSNSLP/1.0 603 DECLINE"))
+		{
+			//that's the declinaison of the second invitaiton message, don't care for now
+		}
+		else if(body.startsWith("BYE"))
+		{
+			m_state = Finished;
+
+			// Dispose of this transfer context.
+			m_dispatcher->detach(this);
+		}
+		return;
 	}
+	
+	
+	//Let's take the fun, we entering into the delicious webcam  negotiation binary protocol
 
-	kdDebug(14141) << k_funcinfo << dataMessage.size() << echoS << endl;
-
+	//well, there is maybe better to take utf16,  but it's ascii, so no problem.
+	QByteArray dataMessage=message.body;
 	for(uint pos=m_content.isNull() ? 10 : 0; pos<dataMessage.size(); pos+=2)
 	{
 		if(dataMessage[pos] !=0 )
@@ -205,47 +238,34 @@ void Webcam::processMessage(const Message& message)
 		bool isListening = m_listener->listen(1);
 		kdDebug(14140) << k_funcinfo << (isListening ? "listening" : "not listening") << endl;
 		kdDebug(14140) << k_funcinfo << "local endpoint, " << m_listener->localAddress().nodeName() << endl;
-				
-		
 
 	}
 	else if(m_content.contains("receivedViewerData"))
 	{
-
+		//I'm happy you received the xml i sent, really.
 	}
 	m_content=QString::null;
 }
 
 void Webcam::makeSIPMessage(const QString &message)
 {
-	QByteArray  dataMessage(12+message.length()*2);
-	dataMessage[0]=0x80;
-	dataMessage[1]=0x17; //XX
-	dataMessage[2]=0x2a; //YY
-	dataMessage[3]=0x01; //ZZ
-	dataMessage[4]=0x08;
-	dataMessage[5]=0x00;
-	uint size=message.length()*2+2;
-	dataMessage[6]=(size & 0X000000FF);
-	dataMessage[7]=(size & 0X0000FF00)>>8;
-	dataMessage[8]=(size & 0X00FF0000)>>16;
-	dataMessage[9]=(size & 0XFF000000)>>24;
-	for(uint f=0; f<message.length(); f++)
-	{
-		dataMessage[10+2*f]=message[f].latin1();
-		dataMessage[11+2*f]=0x00;
-	}
-	dataMessage[10+message.length()*2]=0x00;
-	dataMessage[11+message.length()*2]=0x00;
+	QByteArray dataMessage; //(12+message.length()*2);
+	QDataStream writer(dataMessage, IO_WriteOnly);
+	writer.setByteOrder(QDataStream::LittleEndian);
+	writer << (Q_UINT8)0x80;
+	writer << (Q_UINT8)0x17; //XX
+	writer << (Q_UINT8)0x2a; //YY
+	writer << (Q_UINT8)0x01; //ZZ
+	writer << (Q_UINT8)0x08;
+	writer << (Q_UINT8)0x00;
+	writer << message+'\0';
+	//writer << (Q_UINT16)0x0000;
 
-	QString echoS="";
-//QString debug2="";
-
+	/*QString echoS="";
 	unsigned int f=0;
 	while(f<dataMessage.size())
 	{
 		echoS+="\n";
-	
 		for(unsigned int q=0; q<16 ; q++)
 		{
 			if(q+f<dataMessage.size())
@@ -259,19 +279,18 @@ void Webcam::makeSIPMessage(const QString &message)
 				echoS+="   ";
 		}
 		echoS+="   ";
-	
+				
 		for(unsigned int q=0; (q<16 && (q+f)<dataMessage.size()) ; q++)
 		{
 			unsigned char X=dataMessage[q+f];
 			char C=((char)(( X<128 && X>31 ) ? X : '.'));
 			echoS+=QString::fromLatin1(&C,1);
 		}
-
 		f+=16;
 	}
-
-	kdDebug(14141) << k_funcinfo << dataMessage.size() << echoS << endl;
-
+	kdDebug(14141) << k_funcinfo << dataMessage.size() << echoS << endl;*/
+				
+	
 	sendBigP2PMessage(dataMessage);
 }
 
@@ -311,16 +330,16 @@ QString Webcam::xml(uint session , uint rid)
 			"<codec></codec><channelmode>1</channelmode></"+who+">\r\n\r\n";
 }
 
-/////////////////////////////////
+/* ---------- Now functions about the dirrect connection  --------- */
+
 
 void Webcam::slotListenError(int errorCode)
 {
-	kdDebug(14140) << k_funcinfo << m_listener->errorString() << endl;
+	kdWarning(14140) << k_funcinfo << "Error " << errorCode << " : " << m_listener->errorString() << endl;
 }
 
 void Webcam::slotAccept()
 {
-	kdDebug(14140) << "" <<k_funcinfo << endl;
 	// Try to accept an incoming connection from the sending client.
 	m_webcamSocket = static_cast<KBufferedSocket*>(m_listener->accept());
 	if(!m_webcamSocket)
@@ -361,15 +380,15 @@ void Webcam::slotSocketRead()
 	uint available = m_webcamSocket->bytesAvailable();
 	kdDebug(14140) << k_funcinfo << available << ", bytes available." << endl;
 	const QString connected_str("connected\r\n\r\n");
-	switch(m_state)
+	switch(m_webcamState)
 	{
 		case wsNegotiating:
 		{
-			/*if(available < m_auth.length())
+			if(available < m_auth.length())
 			{
 				kdDebug(14140) << k_funcinfo << "waiting more data   ( " << available << "  of  " <<m_auth.length()<< " )"<<  endl;
 				break;
-			}*/
+			}
 			QByteArray buffer(available);
 			m_webcamSocket->readBlock(buffer.data(), buffer.size());
 		
@@ -382,12 +401,13 @@ void Webcam::slotSocketRead()
 				QCString conne=connected_str.utf8();
 				
 				m_webcamSocket->writeBlock(conne.data(), conne.length());
-				m_state=wsConnecting;
+				m_webcamState=wsConnecting;
 			}
 			else
 			{
 				kdWarning(14140) << k_funcinfo << "Auth failed" << endl;
 				m_webcamSocket->disconnect();
+				sendBYEMessage();
 			}
 			break;
 		}
@@ -403,13 +423,17 @@ void Webcam::slotSocketRead()
 	
 			if(QString(buffer) == connected_str)
 			{
-				m_state=wsTransfer;
+				m_webcamState=wsTransfer;
 				m_mimic=new MimicWrapper();
+				
+				m_widget=new MSNWebcamDialog(m_recipient);
+				connect(m_widget, SIGNAL( closingWebcamDialog() ) , this , SLOT(sendBYEMessage()));
 			}
 			else
 			{
 				kdWarning(14140) << k_funcinfo << "Connecting failed" << endl;
 				m_webcamSocket->disconnect();
+				sendBYEMessage();
 			}
 			break;
 		}
@@ -435,34 +459,14 @@ void Webcam::slotSocketRead()
 			buffer.resize(paysize);
 			m_webcamSocket->readBlock(buffer.data(), buffer.size());
 			
-			
-			/*QString echoS="";
-			QByteArray dataMessage=buffer;
-			unsigned int f=0;
-			while(f<dataMessage.size())
+			QPixmap pix=m_mimic->decode(buffer);
+			if(pix.isNull())
 			{
-				echoS+="\n";
-	
-				for(unsigned int q=0; q<16 ; q++)
-				{
-					if(q+f<dataMessage.size())
-					{
-						unsigned int N=(unsigned int)(dataMessage[q+f]&0xff)   & 0xff;
-						if(N<16)
-							echoS+="0";
-						echoS+=QString::number( N  ,16)+" ";
-					}
-					else
-						echoS+="   ";
-				}
-				echoS+="   ";
-
-				f+=16;
+				kdWarning(14140) << k_funcinfo << "incorrect pixmap returned, better to stop everything"<<  endl;
+				m_webcamSocket->disconnect();
+				sendBYEMessage();
 			}
-			kdDebug(14141) << k_funcinfo << echoS << endl;*/
-			
-			
-			m_widget->setPixmap(m_mimic->decode(buffer));
+			m_widget->newImage(pix);
 			break;
 		}
 		default:
@@ -473,12 +477,16 @@ void Webcam::slotSocketRead()
 
 void Webcam::slotSocketClosed()
 {
+	if(!m_dispatcher) //we are in this destructor
+		return; 
 	kdDebug(14140) << k_funcinfo << endl;
+	sendBYEMessage();
 }
 
 void Webcam::slotSocketError(int errorCode)
 {
 	kdDebug(14140) << k_funcinfo <<  errorCode <<  endl;
+	sendBYEMessage();
 }
 
 
