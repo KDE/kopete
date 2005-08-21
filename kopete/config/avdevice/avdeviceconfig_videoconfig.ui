@@ -219,9 +219,6 @@
                                         <property name="text">
                                             <string>Au&amp;tomatic bright/contrast adjustment</string>
                                         </property>
-                                        <property name="accel">
-                                            <string>Alt+T</string>
-                                        </property>
                                     </widget>
                                     <widget class="QCheckBox" row="2" column="0">
                                         <property name="name">

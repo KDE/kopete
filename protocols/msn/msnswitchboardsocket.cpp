@@ -948,7 +948,7 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 	}
 }
 
-void MSNSwitchBoardSocket::slotIncomingFileTransfer(const QString& from, const QString& fileName, Q_INT64 fileSize)
+void MSNSwitchBoardSocket::slotIncomingFileTransfer(const QString& from, const QString& /*fileName*/, Q_INT64 /*fileSize*/)
 {
 	QPtrList<Kopete::Contact> others;
 	others.append( m_account->myself() );

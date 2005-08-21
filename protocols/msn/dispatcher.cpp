@@ -165,7 +165,7 @@ void Dispatcher::sendFile(const QString& path, Q_INT64 fileSize, const QString& 
 	current->sendMessage(INVITE, content);
 }
 
-void Dispatcher::sendImage(const QString& fileName, const QString& to)
+void Dispatcher::sendImage(const QString& /*fileName*/, const QString& /*to*/)
 {
 // 	TODO kdDebug(14140) << k_funcinfo << endl;
 // 	QFile imageFile(fileName);
