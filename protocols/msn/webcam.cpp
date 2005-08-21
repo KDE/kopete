@@ -236,9 +236,60 @@ void Webcam::processMessage(const Message& message)
 		QObject::connect(m_listener, SIGNAL(gotError(int)), this, SLOT(slotListenError(int)));
 				// Listen for incoming connections.
 		bool isListening = m_listener->listen(1);
-		kdDebug(14140) << k_funcinfo << (isListening ? "listening" : "not listening") << endl;
-		kdDebug(14140) << k_funcinfo << "local endpoint, " << m_listener->localAddress().nodeName() << endl;
+		kdDebug(14140) << k_funcinfo << (isListening ? QString("listening %1").arg(m_listener->localAddress().nodeName()) : QString("not listening")) << endl;
+		
+		rx=QRegExp("<tcpport>([^<]*)</tcpport>");
+		rx.search(m_content);
+		QString port1=rx.cap(1);
+		
+		rx=QRegExp("<tcplocalport>([^<]*)</tcplocalport>");
+		rx.search(m_content);
+		QString port2=rx.cap(1);
+		if(port2==port1)
+			port2=QString::null;
+		
+		rx=QRegExp("<tcpexternalport>([^<]*)</tcpexternalport>");
+		rx.search(m_content);
+		QString port3=rx.cap(1);
+		if(port3==port1 || port3==port2)
+			port3=QString::null;
 
+		int an=0;
+		while(true)
+		{
+			an++;
+			if(!m_content.contains( QString("<tcpipaddress%1>").arg(an)  ))
+				break;
+			rx=QRegExp(QString("<tcpipaddress%1>([^<]*)</tcpipaddress%2>").arg(an).arg(an));
+			rx.search(m_content);
+			QString ip=rx.cap(1);
+			if(ip.isNull())
+				continue;
+			
+			if(!port1.isNull())
+			{
+				kdDebug(14140) << k_funcinfo << "trying to connect on " << ip <<":" << port1 << endl;
+				m_allSockets.append(new KBufferedSocket( ip, port2, this ));
+			}
+			if(!port2.isNull())
+			{
+				kdDebug(14140) << k_funcinfo << "trying to connect on " << ip <<":" << port2 << endl;
+				m_allSockets.append(new KBufferedSocket( ip, port2, this ));
+			}
+			if(!port2.isNull())
+			{
+				kdDebug(14140) << k_funcinfo << "trying to connect on " << ip <<":" << port2 << endl;
+				m_allSockets.append(new KBufferedSocket( ip, port2, this ));
+			}
+		}
+		QValueList<KBufferedSocket*>::iterator it;
+		for ( it = m_allSockets.begin(); it != m_allSockets.end(); ++it )
+		{
+			KBufferedSocket *sock=(*it);
+			QObject::connect( sock, SIGNAL( connected( const KResolverEntry&) ), this, SLOT( slotSocketConnected() ) );
+			sock->enableRead( false );
+			sock->connect();
+		}
 	}
 	else if(m_content.contains("receivedViewerData"))
 	{
@@ -332,14 +383,52 @@ QString Webcam::xml(uint session , uint rid)
 
 /* ---------- Now functions about the dirrect connection  --------- */
 
-
-void Webcam::slotListenError(int errorCode)
+void Webcam::slotSocketConnected()
 {
-	kdWarning(14140) << k_funcinfo << "Error " << errorCode << " : " << m_listener->errorString() << endl;
+	if(m_webcamSocket)
+		return;
+	m_webcamSocket=const_cast<KBufferedSocket*>(static_cast<const KBufferedSocket*>(sender()));
+	if(!m_webcamSocket)
+		return;
+	
+	delete m_listener;
+	m_listener=0L;
+	
+	QValueList<KBufferedSocket*>::iterator it;
+	for ( it = m_allSockets.begin(); it != m_allSockets.end(); ++it )
+	{
+		KBufferedSocket *sock=(*it);
+		if(sock!=m_webcamSocket)
+			delete sock;
+	}
+	m_allSockets.clear();
+	
+	kdDebug(14140) << k_funcinfo << "Connection established." << endl;
+	
+	m_webcamSocket->setBlocking(false);
+	m_webcamSocket->enableRead(true);
+	m_webcamSocket->enableWrite(false);
+
+	// Create the callback that will try to read bytes from the accepted socket.
+	QObject::connect(m_webcamSocket, SIGNAL(readyRead()),   this, SLOT(slotSocketRead()));
+	// Create the callback that will try to handle the socket close event.
+	QObject::connect(m_webcamSocket, SIGNAL(closed()),      this, SLOT(slotSocketClosed()));
+	// Create the callback that will try to handle the socket error event.
+	QObject::connect(m_webcamSocket, SIGNAL(gotError(int)), this, SLOT(slotSocketError(int)));
+
+	m_webcamState=wsConnected;
+	QCString to_send=m_auth.utf8();
+	m_webcamSocket->writeBlock(to_send.data(), to_send.length());
+
 }
+
 
 void Webcam::slotAccept()
 {
+	if(m_webcamSocket)
+		return;
+	
+	
 	// Try to accept an incoming connection from the sending client.
 	m_webcamSocket = static_cast<KBufferedSocket*>(m_listener->accept());
 	if(!m_webcamSocket)
@@ -373,6 +462,14 @@ void Webcam::slotAccept()
 	//m_lisener->close();
 	delete m_listener;
 	m_listener=0l;
+	
+	QValueList<KBufferedSocket*>::iterator it;
+	for ( it = m_allSockets.begin(); it != m_allSockets.end(); ++it )
+	{
+		KBufferedSocket *sock=(*it);
+		delete sock;
+	}
+	m_allSockets.clear();
 }
 
 void Webcam::slotSocketRead()
@@ -397,9 +494,7 @@ void Webcam::slotSocketRead()
 			if(QString(buffer) == m_auth )
 			{
 				kdDebug(14140) << k_funcinfo << "Sending " << connected_str << endl;
-				
 				QCString conne=connected_str.utf8();
-				
 				m_webcamSocket->writeBlock(conne.data(), conne.length());
 				m_webcamState=wsConnecting;
 			}
@@ -412,6 +507,7 @@ void Webcam::slotSocketRead()
 			break;
 		}
 		case wsConnecting:
+		case wsConnected:
 		{
 			if(available < connected_str.length())
 			{
@@ -423,11 +519,20 @@ void Webcam::slotSocketRead()
 	
 			if(QString(buffer) == connected_str)
 			{
-				m_webcamState=wsTransfer;
+
 				m_mimic=new MimicWrapper();
 				
 				m_widget=new MSNWebcamDialog(m_recipient);
 				connect(m_widget, SIGNAL( closingWebcamDialog() ) , this , SLOT(sendBYEMessage()));
+				
+				if(m_webcamState==wsConnected)
+				{
+					kdDebug(14140) << k_funcinfo << "Sending " << connected_str << endl;
+					QCString conne=connected_str.utf8();
+					m_webcamSocket->writeBlock(conne.data(), conne.length());
+				}
+				
+				m_webcamState=wsTransfer;
 			}
 			else
 			{
@@ -473,6 +578,11 @@ void Webcam::slotSocketRead()
 			break;
 	}
 
+}
+
+void Webcam::slotListenError(int errorCode)
+{
+	kdWarning(14140) << k_funcinfo << "Error " << errorCode << " : " << m_listener->errorString() << endl;
 }
 
 void Webcam::slotSocketClosed()

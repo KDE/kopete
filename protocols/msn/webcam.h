@@ -51,20 +51,22 @@ class Webcam  : public TransferContext
 		KNetwork::KServerSocket   *m_listener;
 		KNetwork::KBufferedSocket *m_webcamSocket;
 		
-		enum { wsNegotiating , wsConnecting, wsTransfer  } m_webcamState;
+		enum { wsNegotiating , wsConnecting, wsConnected, wsTransfer  } m_webcamState;
 		
 		QString m_auth;
 		
 		MimicWrapper *m_mimic;
 		MSNWebcamDialog *m_widget;
 		
-	
+		QValueList<KNetwork::KBufferedSocket* > m_allSockets;
+
 	private slots:
 		void slotListenError(int errorCode);
 		void slotAccept();
 		void slotSocketRead();
 		void slotSocketClosed();
 		void slotSocketError(int errorCode);
+		void slotSocketConnected();
 //		void slotReadyWrite();
 };
 

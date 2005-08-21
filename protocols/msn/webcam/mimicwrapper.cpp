@@ -66,6 +66,7 @@ QPixmap MimicWrapper::decode(const QByteArray& data)
 		buff2[b2+0]=buff[f+2];
 		buff2[b2+1]=buff[f+1];
 		buff2[b2+2]=buff[f+0];
+		buff2[b2+3]=0x00;
 		b2+=4;
 	}
 
