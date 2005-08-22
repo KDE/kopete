@@ -23,13 +23,11 @@
 
 #include <qtextcodec.h>
 
-#define CONST_QSTRING(str) const QString str = QString::fromLatin1(#str)
+#define CONST_QSTRING(str) const QString KIRC::str = QString::fromLatin1(#str)
 
 /* The usage of the namespace, instead of the "using" keyword, is intentional.
  * Not using it introduce compiler confusion, and lead to new symbols declaration.
  */
-
-namespace KIRC {
 
 /* Please note that the regular expression "[\\r\\n]*$" is used in a QString::replace statement many times.
  * This gets rid of trailing \r\n, \r, \n, and \n\r characters.
@@ -61,6 +59,4 @@ CONST_QSTRING(WHOIS);
 CONST_QSTRING(WHOWAS);
 
 QTextCodec *KIRC::UTF8 = QTextCodec::codecForName("UTF-8");
-
-}
 

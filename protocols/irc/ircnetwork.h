@@ -31,11 +31,13 @@ struct IRCHost
 	bool ssl;
 };
 
+typedef QValueList<IRCHost> IRCHostList;
+
 struct IRCNetwork
 {
 	QString name;
 	QString description;
-	QValueList<IRCHost> hosts;
+	IRCHostList hosts;
 };
 
 class IRCNetworkList

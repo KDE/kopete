@@ -114,8 +114,7 @@ public:
 	QTextCodec *codec() const;
 	void setCodec( QTextCodec *codec );
 /*
-	const IRCNetwork &network();
-	void setNetwork(const IRCNetwork &network);
+	IRCNetwork network();
 */
 	const QStringList connectCommands() const;
 
@@ -182,7 +181,8 @@ private slots:
 	void slotShowServerWindow();
 
 private:
-	void setupEngine();
+	void engineSetup();
+	void engineConnect();
 
 private:
 	IRCAccountPrivate *d;

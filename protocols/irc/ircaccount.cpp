@@ -183,7 +183,7 @@ IRCAccount::~IRCAccount()
 }
 
 
-void IRCAccount::setupEngine()
+void IRCAccount::engineSetup()
 {
 	d->engine->setDefaultCodec(codec());
 
@@ -197,6 +197,70 @@ void IRCAccount::setupEngine()
 	QMap<QString, QString> replies = customCtcpReplies();
 	for (QMap<QString, QString>::ConstIterator it = replies.begin(); it != replies.end(); ++it)
 		d->engine->addCustomCtcp(it.key(), it.data());
+*/
+
+//	d->network = IRCNetworkList::self()->network(networkName());
+/*
+	// if prefer SSL is set, sort by SSL first
+	if (configGroup()->readBoolEntry("PreferSSL"))
+	{
+		IRCHostList sslFirst;
+
+		IRCHostList::iterator it = host.begin();
+		IRCHostList::iterator end = host.end();
+		for ( it = host.begin(); it != end; ++it )
+		{
+			if ( (*it)->ssl == true )
+			{
+				sslFirst.append( *it );
+				it = hosts.remove( it );
+			}
+		}
+		for ( it = hosts.begin(); it != hosts.end(); ++it )
+			sslFirst.append( *it );
+
+		d->network.hosts = sslFirst;
+	}
+*/
+}
+
+void IRCAccount::engineConnect()
+{
+/*
+	if (d->network.name.isEmpty())
+	{
+		KMessageBox::queuedMessageBox(
+			UI::Global::mainWidget(), KMessageBox::Error,
+			i18n("<qt>The network associated with this account, <b>%1</b>, has no valid hosts. Please ensure that the account has a valid network.</qt>").arg(d->network->name),
+			i18n("Network is Empty"), 0 );
+	}
+
+	QValueList<IRCHost> &hosts = d->network->hosts;
+	if( hosts.count() == 0 )
+	{
+		KMessageBox::queuedMessageBox(
+			UI::Global::mainWidget(), KMessageBox::Error,
+			i18n("<qt>The network associated with this account, <b>%1</b>, has no valid hosts. Please ensure that the account has a valid network.</qt>").arg(d->network->name),
+			i18n("Network is Empty"), 0 );
+	}
+	else if( currentHost == hosts.count() )
+	{
+		KMessageBox::queuedMessageBox(
+			UI::Global::mainWidget(), KMessageBox::Error,
+			i18n("<qt>Kopete could not connect to any of the servers in the network associated with this account (<b>%1</b>). Please try again later.</qt>").arg(d->network->name),
+			i18n("Network is Unavailable"), 0 );
+
+			currentHost = 0;
+	}
+	else
+	{
+
+		IRCHost *host = hosts[ currentHost++ ];
+		appendInternalMessage( i18n("Connecting to %1...").arg( host->host ) );
+		if( host->ssl )
+			appendInternalMessage( i18n("Using SSL") );
+//		d->engine->connectToServer( host->host, host->port, mNickName, host->ssl );
+	}
 */
 }
 
@@ -235,19 +299,11 @@ void IRCAccount::setNetworkByName(const QString &networkName)
 //	setAccountLabel(network.name);
 }
 /*
-const IRCNetwork &network() const
+IRCNetwork network() const
 {
 	return d->network;
 }
-
-void IRCAccount::setNetwork(const IRCNetwork &network)
-{
-//	configGroup()->writeEntry(Config::NETWORKNAME, network.name);
-	d->network = network;
-//	setAccountLabel(network.name);
-}
 */
-
 const QString IRCAccount::userName() const
 {
 	return configGroup()->readEntry(Config::USERNAME);
@@ -396,72 +452,8 @@ KActionMenu *IRCAccount::actionMenu()
 
 void IRCAccount::connectWithPassword(const QString &password)
 {
-	//TODO:  honor the initial status
-
-	if ( d->engine->isConnected() )
-	{
-		if( isAway() )
-			setAway( false );
-	}
-	else if ( d->engine->isDisconnected() )
-	{
-//		if( d->network )
-		{
-/*
-			QValueList<IRCHost*> &hosts = d->network->hosts;
-			if( hosts.count() == 0 )
-			{
-				KMessageBox::queuedMessageBox(
-					UI::Global::mainWidget(), KMessageBox::Error,
-					i18n("<qt>The network associated with this account, <b>%1</b>, has no valid hosts. Please ensure that the account has a valid network.</qt>").arg(d->network->name),
-					i18n("Network is Empty"), 0 );
-			}
-			else if( currentHost == hosts.count() )
-			{
-			    KMessageBox::queuedMessageBox(
-				    UI::Global::mainWidget(), KMessageBox::Error,
-			    i18n("<qt>Kopete could not connect to any of the servers in the network associated with this account (<b>%1</b>). Please try again later.</qt>").arg(d->network->name),
-			    i18n("Network is Unavailable"), 0 );
-
-			    currentHost = 0;
-			}
-			else
-			{
-				// if prefer SSL is set, sort by SSL first
-				if (configGroup()->readBoolEntry("PreferSSL"))
-				{
-					typedef QValueList<IRCHost*> IRCHostList;
-					IRCHostList sslFirst;
-					IRCHostList::iterator it;
-					for ( it = hosts.begin(); it != hosts.end(); ++it )
-					{
-						if ( (*it)->ssl == true )
-						{
-							sslFirst.append( *it );
-							it = hosts.remove( it );
-						}
-					}
-					for ( it = hosts.begin(); it != hosts.end(); ++it )
-						sslFirst.append( *it );
-
-					hosts = sslFirst;
-				}
-
-				IRCHost *host = hosts[ currentHost++ ];
-				appendInternalMessage( i18n("Connecting to %1...").arg( host->host ) );
-				if( host->ssl )
-					appendInternalMessage( i18n("Using SSL") );
-
-				d->engine->setPassword(password);
-//				d->engine->connectToServer( host->host, host->port, mNickName, host->ssl );
-			}
-*/
-		}
-//		else
-//		{
-//			kdWarning() << "No network defined!" << endl;
-//		}
-	}
+	d->engine->setPassword(password);
+	engineConnect();
 }
 
 void IRCAccount::engineConnectionStateChanged(KIRC::ConnectionState newstate)
@@ -574,12 +566,17 @@ void IRCAccount::setOnlineStatus(const OnlineStatus& status , const QString &rea
 
 	if ( expected != OnlineStatus::Offline && current == OnlineStatus::Offline )
 	{
-		setupEngine();
+		kdDebug(14120) << k_funcinfo << "Connecting." << endl;
+		engineSetup();
+//		engineConnect();
 		connect();
 	}
 
 	if ( expected == OnlineStatus::Offline && current != OnlineStatus::Offline )
+	{
+		kdDebug(14120) << k_funcinfo << "Disconnecting." << endl;
 		quit(reason);
+	}
 }
 
 bool IRCAccount::createContact(const QString &contactId, MetaContact *metac)
@@ -677,44 +674,32 @@ void IRCAccount::receivedMessage(
 		const QString &message)
 {
 	IRCContact *fromContact = getContact(from);
+	IRCContact *toContact = getContact(to);
+//	IRCContact *postContact = toContact;
 /*
-	Message msg(fromContact, manager()->members(), message, Kopete::Message::Inbound,
-		    Kopete::Message::RichText, CHAT_VIEW);
+	Kopete::Message::Direction msgDirection =
+		fromContact == mySelf ? Kopete::Message::OutBound : Kopete::Message::Indound;
 
-		toContact->appendMessage(msg);
+	Kopete::Message::Type msgType;
+	switch (type)
+	{
+	case KIRC::????: // Action
+		msgType = Kopete::Message::TypeAction;
+		break;
+	default:
+		msgType = Kopete::Message::????;
+	}
+
+//	make a notification if needed, istead of posting the message to the toContact.
+//	toContact may be the wrong contact where to post in case of private user chat
+
+	Message msg(fromContact, manager()->members(), message, msgDirection,
+		    Kopete::Message::RichText, CHAT_VIEW, msgType);
+
+		postContact->appendMessage(msg);
 */
 }
 /*
-void IRCChannelContact::newAction(const QString &from, const QString &action)
-{
-	IRCAccount *account = ircAccount();
-
-	IRCUserContact *f = account->contactManager()->findUser(from);
-	Kopete::Message::MessageDirection dir =
-		(f == account->mySelf()) ? Kopete::Message::Outbound : Kopete::Message::Inbound;
-	Kopete::Message msg(f, manager()->members(), action, dir, Kopete::Message::RichText,
-			    CHAT_VIEW, Kopete::Message::TypeAction);
-	appendMessage(msg);
-}
-
-void IRCUserContact::newAction(const QString &to, const QString &action)
-{
-	IRCAccount *account = ircAccount();
-
-	IRCContact *t = account->contactManager()->findUser(to);
-
-	Kopete::Message::MessageDirection dir =
-		(this == account->mySelf()) ? Kopete::Message::Outbound : Kopete::Message::Inbound;
-	Kopete::Message msg(this, t, action, dir, Kopete::Message::RichText,
-			CHAT_VIEW, Kopete::Message::TypeAction);
-
-	//Either this is from me to a guy, or from a guy to me. Either way its a PM
-	if (dir == Kopete::Message::Outbound)
-		t->appendMessage(msg);
-	else
-		appendMessage(msg);
-}
-
 void IRCContact::slotUserDisconnected(const QString &user, const QString &reason)
 {
 	if (d->chatSession)
@@ -757,3 +742,4 @@ void IRCAccount::successfullyChangedNick(const QString &oldnick, const QString &
 }
 */
 #include "ircaccount.moc"
+
