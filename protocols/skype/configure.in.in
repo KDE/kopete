@@ -1,9 +1,3 @@
-#MIN_CONFIG(3.2.0)
-
-AM_INIT_AUTOMAKE(kopete_skype, 0.1)
-AC_C_BIGENDIAN
-AC_CHECK_KDEMAXPATHLEN
-
 #check for DBus (needed by skype protocol)
 #write what you are doing first
 AC_MSG_CHECKING(for DBus)
