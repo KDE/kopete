@@ -24,8 +24,7 @@
 #include <dcopclient.h>
 #include "kopeteiface.h"
 #include "kimifaceimpl.h"
-
-#define KOPETE_VERSION "0.10.91"
+#include "kopeteversion.h"
 
 static const char description[] =
 	I18N_NOOP( "Kopete, the KDE Instant Messenger" );
@@ -51,7 +50,7 @@ static KCmdLineOptions options[] =
 int main( int argc, char *argv[] )
 {
 	KAboutData aboutData( "kopete", I18N_NOOP("Kopete"),
-		KOPETE_VERSION, description, KAboutData::License_GPL,
+		KOPETE_VERSION_STRING, description, KAboutData::License_GPL,
 		I18N_NOOP("(c) 2001-2004, Duncan Mac-Vicar Prett\n(c) 2002-2005, Kopete Development Team"), "kopete-devel@kde.org", "http://kopete.kde.org");
 
 	aboutData.addAuthor ( "Duncan Mac-Vicar Prett", I18N_NOOP("Original author, Developer"), "duncan@kde.org", "http://www.mac-vicar.org/~duncan" );
