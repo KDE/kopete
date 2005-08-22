@@ -24,7 +24,7 @@
 namespace Kopete
 {
 	class MetaContact;
-};
+}
 class QDomDocument;
 
 /**
