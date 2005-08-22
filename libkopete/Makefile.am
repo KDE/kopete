@@ -9,7 +9,7 @@ else
 AVDEVICEDIR = avdevice
 endif
 
-SUBDIRS = private ui . $(AVDEVICEDIR)
+SUBDIRS = private ui . 
 
 METASOURCES = AUTO
 
@@ -63,7 +63,7 @@ kopeteinclude_HEADERS = kopeteaccount.h kopeteaccountmanager.h kopeteawayaction.
 	kopeteonlinestatus.h kopeteonlinestatusmanager.h kopetepasswordedaccount.h \
 	kopetepassword.h kopeteplugin.h kopeteprotocol.h kopetesimplemessagehandler.h kopetetask.h \
 	kopetetransfermanager.h kopeteuiglobal.h kopetexsl.h kabcpersistence.h managedconnectionaccount.h \
-	kopetenotifydataobject.h
+	kopetenotifydataobject.h kopeteversion.h
 
 # vim: set noet:
 
