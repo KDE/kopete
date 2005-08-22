@@ -382,6 +382,7 @@ void YahooSession::uploadBuddyIcon( const QString &url, int size )
 	uploadData->size = size;
 	uploadData->transmitted = 0;
 	uploadData->file.setName( url );
+	uploadData->reportSuccess = false;
 	
 	yahoo_send_picture( m_connId, url.local8Bit(), size, upload_file_callback, reinterpret_cast< void*>( uploadData ) );
 }
@@ -516,6 +517,7 @@ int YahooSession::sendFile( const QString& who, const QString& msg,
 	upload->size = size;
 	upload->transmitted = 0;
 	upload->file.setName( name );
+	upload->reportSuccess = true;
 	
 	yahoo_send_file( m_connId, who.local8Bit(), msg.local8Bit(), name.local8Bit(), size, upload_file_callback, upload );
 	
@@ -1064,6 +1066,8 @@ void YahooSession::slotTransmitFile( int fd, YahooUploadData *uploadData )
 	if( uploadData->transmitted >= uploadData->file.size() )
 	{
 		kdDebug(14181) << k_funcinfo << "File successfully uploaded." << endl;
+		if( uploadData->reportSuccess )
+			KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Information, i18n("The File was successfully transmitted.") );
 		uploadData->file.close();
 		delete uploadData;
 		m_connManager.remove( socket );
@@ -1086,6 +1090,8 @@ void YahooSession::slotTransmitFile( int fd, YahooUploadData *uploadData )
 	if( written != read )
 	{
 		kdDebug(14181) << k_funcinfo << "An error occured while sending the file: " << socket->error() << " transmitted: " << uploadData->transmitted << endl;
+		if( uploadData->reportSuccess )
+			KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, i18n("An error occured while sending the file: ").arg( socket->error() ) );
 		uploadData->file.close();
 		delete uploadData;
 		m_connManager.remove( socket );
