@@ -36,12 +36,10 @@ using namespace KNetwork;
 #include <kopetetransfermanager.h>
 
 IncomingTransfer::IncomingTransfer(const QString& from, P2P::Dispatcher *dispatcher, Q_UINT32 sessionId)
-: TransferContext(dispatcher)
+: TransferContext(from,dispatcher,sessionId)
 {
 	m_direction = P2P::Incoming;
 	m_listener  = 0l;
-	m_recipient = from;
-	m_sessionId = sessionId;
 }
 
 IncomingTransfer::~IncomingTransfer()
@@ -59,6 +57,38 @@ IncomingTransfer::~IncomingTransfer()
 		m_socket = 0l;
 	}
 }
+
+
+void IncomingTransfer::slotTransferAccepted(Kopete::Transfer* transfer, const QString& /*fileName*/)
+{
+	Q_UINT32 sessionId = transfer->info().internalId().toUInt();
+	if(sessionId!=m_sessionId)
+		return;
+	
+	QObject::connect(transfer , SIGNAL(transferCanceled()), this, SLOT(abort()));
+	m_transfer = transfer;
+		
+	QString content = QString("SessionID: %1\r\n\r\n").arg(sessionId);
+	sendMessage(OK, content);
+	
+	QObject::disconnect(Kopete::TransferManager::transferManager(), 0l, this, 0l);
+}
+
+void IncomingTransfer::slotTransferRefused(const Kopete::FileTransferInfo& info)
+{
+	Q_UINT32 sessionId = info.internalId().toUInt();
+	if(sessionId!=m_sessionId)
+		return;
+	
+	QString content = QString("SessionID: %1\r\n\r\n").arg(sessionId);
+	// Send the sending client a cancelation message.
+	sendMessage(DECLINE, content);
+	m_state=Finished;
+	
+	QObject::disconnect(Kopete::TransferManager::transferManager(), 0l, this, 0l);
+}
+
+
 
 void IncomingTransfer::acknowledged()
 {
@@ -283,7 +313,7 @@ void IncomingTransfer::processMessage(const Message& message)
 	}
 }
 
-void IncomingTransfer::slotListenError(int errorCode)
+void IncomingTransfer::slotListenError(int /*errorCode*/)
 {
 	kdDebug(14140) << k_funcinfo << m_listener->errorString() << endl;
 }
@@ -343,7 +373,7 @@ void IncomingTransfer::slotSocketClosed()
 
 void IncomingTransfer::slotSocketError(int errorCode)
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kdDebug(14140) << k_funcinfo << errorCode << endl;
 }
 
 #include "incomingtransfer.moc"

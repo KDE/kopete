@@ -41,6 +41,10 @@ namespace P2P{
 			void slotSocketClosed();
 			void slotSocketError(int errorCode);
 			
+			void slotTransferAccepted(Kopete::Transfer* transfer, const QString& fileName);
+			void slotTransferRefused(const Kopete::FileTransferInfo& info);
+
+			
 		private:
 			virtual void acknowledged();
 			virtual void processMessage(const Message& message);

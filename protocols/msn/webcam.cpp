@@ -38,13 +38,10 @@ using namespace KNetwork;
 namespace P2P {
 
 Webcam::Webcam( const QString& to, Dispatcher *parent, Q_UINT32 sessionId)
-	: TransferContext(parent)
+	: TransferContext(to,parent,sessionId)
 {
 	setType(P2P::WebcamType);
 	m_direction = Incoming;
-	m_sessionId  = sessionId;
-	m_recipient  = to;
-	m_offset = 0l;
 	m_listener  = 0l;
 	m_webcamSocket=0L;
 	m_webcamState=wsNegotiating;

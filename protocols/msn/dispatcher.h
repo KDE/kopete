@@ -49,8 +49,6 @@ namespace P2P{
 			
 		public slots:
 			void slotReadMessage(const QByteArray& stream);
-			void slotTransferAccepted(Kopete::Transfer* transfer, const QString& fileName);
-			void slotTransferRefused(const Kopete::FileTransferInfo& info);
 			void messageAcknowledged(unsigned int correlationId, bool fullReceive);
 			
 		signals:

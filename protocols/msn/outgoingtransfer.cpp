@@ -40,13 +40,10 @@ using namespace KNetwork;
 #include <netinet/in.h> // For htonl
 
 OutgoingTransfer::OutgoingTransfer(const QString& to, P2P::Dispatcher *dispatcher, Q_UINT32 sessionId)
-: TransferContext(dispatcher)
+: TransferContext(to,dispatcher,sessionId)
 {
 	m_direction = Outgoing;
 	m_handshake = 0x01;
-	m_sessionId  = sessionId;
-	m_recipient  = to;
-	m_offset = 0l;
 }
 
 OutgoingTransfer::~OutgoingTransfer()

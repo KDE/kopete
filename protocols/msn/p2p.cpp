@@ -44,25 +44,27 @@ QString P2P::Uid::createUid()
 			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)).upper();
 }
 
-TransferContext::TransferContext(P2P::Dispatcher *dispatcher) : QObject(dispatcher)
+TransferContext::TransferContext(const QString &contact, P2P::Dispatcher *dispatcher, Q_UINT32 sessionId) 
+	: QObject(dispatcher) ,
+	   m_sessionId(sessionId) ,
+	   m_identifier(0) ,
+	   m_file(0) ,
+	   m_transactionId (0),
+	   m_ackSessionIdentifier (0) ,
+	   m_ackUniqueIdentifier ( 0 ),
+	   m_transfer ( 0l)  ,
+
+	   m_baseIdentifier(rand()%0x0FFFFFF0 + 4),
+	   m_dispatcher (dispatcher),
+	   m_isComplete (false) ,
+	   m_offset(0),
+	   m_totalDataSize(0),
+	   m_recipient(contact),
+	   m_sender(dispatcher->localContact()),
+	   m_socket(0),
+	   m_state ( Invitation)
 {
-	
-	kdDebug(14140) << k_funcinfo <<  "dispatcher="<<dispatcher<<" this=" << this << endl;
-		
-	m_baseIdentifier = rand()%0x0FFFFFF0 + 4;
-	m_identifier = 0;
-	m_dispatcher = dispatcher;
- 	m_file = 0l;
- 	m_isComplete = false;
-	m_sender = dispatcher->localContact();
-	m_socket = 0l;
-	m_state = Invitation;
-	m_transactionId = 0;
-	m_transfer = 0l;
-	m_type = File;
-	m_totalDataSize=0;
-	m_ackSessionIdentifier = 0;
-	m_ackUniqueIdentifier = 0;
+	m_type = File ;   //uh,  why??? -Olivier
 }
 
 TransferContext::~TransferContext()
@@ -160,14 +162,7 @@ void TransferContext::sendData(const QByteArray& bytes)
 	outbound.header.ackUniqueIdentifier  = 0;
 	outbound.header.ackDataSize = 0l;
 	outbound.body = bytes;
-	if(m_type == UserDisplayIcon){
-		outbound.applicationIdentifier = 1l;
-	}
-	else if(m_type == File){
-		outbound.applicationIdentifier = 2l;
-	}
-	else if(m_type == WebcamType)
-		outbound.applicationIdentifier = 4l;
+	outbound.applicationIdentifier = (uint)m_type;
 	
 	outbound.destination = m_recipient;
 

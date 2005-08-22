@@ -466,9 +466,8 @@ void Dispatcher::dispatch(const P2P::Message& message)
 					transfer->m_ackSessionIdentifier = message.header.identifier;
     				transfer->m_ackUniqueIdentifier = message.header.ackSessionIdentifier;
 					
-					QObject::disconnect(Kopete::TransferManager::transferManager(), 0l, this, 0l);
-					QObject::connect(Kopete::TransferManager::transferManager(), SIGNAL(accepted(Kopete::Transfer*, const QString&)), this, SLOT(slotTransferAccepted(Kopete::Transfer*, const QString&)));
-					QObject::connect(Kopete::TransferManager::transferManager(), SIGNAL(refused(const Kopete::FileTransferInfo&)), this, SLOT(slotTransferRefused(const Kopete::FileTransferInfo&)));
+					QObject::connect(Kopete::TransferManager::transferManager(), SIGNAL(accepted(Kopete::Transfer*, const QString&)), transfer, SLOT(slotTransferAccepted(Kopete::Transfer*, const QString&)));
+					QObject::connect(Kopete::TransferManager::transferManager(), SIGNAL(refused(const Kopete::FileTransferInfo&)), transfer, SLOT(slotTransferRefused(const Kopete::FileTransferInfo&)));
 
 					// Show the file transfer accept/decline dialog.
 					Kopete::TransferManager::transferManager()->askIncomingTransfer(contact, fileName, fileSize, QString::null, sessionId);
@@ -541,35 +540,6 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				}
 			}
 		}
-	}
-}
-
-// TODO these slots should be in TransferContext
-void Dispatcher::slotTransferAccepted(Kopete::Transfer* transfer, const QString& /*fileName*/)
-{
-	Q_UINT32 sessionId = transfer->info().internalId().toUInt();
-	TransferContext *current = 0l;
-	if(m_sessions.contains(sessionId))
-	{
-		current = m_sessions[sessionId];
-		QObject::connect(transfer , SIGNAL(transferCanceled()), current, SLOT(abort()));
-		current->m_transfer = transfer;
-		
-		QString content = QString("SessionID: %1\r\n\r\n").arg(sessionId);
-		current->sendMessage(OK, content);
-	}
-}
-
-void Dispatcher::slotTransferRefused(const Kopete::FileTransferInfo& info)
-{
-	Q_UINT32 sessionId = info.internalId().toUInt();
-	TransferContext *current = 0l;
-	if(m_sessions.contains(sessionId))
-	{
-		current = m_sessions[sessionId];
-		QString content = QString("SessionID: %1\r\n\r\n").arg(sessionId);
-		// Send the sending client a cancelation message.
-		current->sendMessage(DECLINE, content);
 	}
 }
 

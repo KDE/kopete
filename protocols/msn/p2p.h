@@ -35,7 +35,7 @@ class KTempFile;
 */
 namespace P2P{
 
-	enum TransferType { UserDisplayIcon = 1, CustomEmotions = 2, WebcamType=4, File = 8};
+	enum TransferType { UserDisplayIcon = 1, File = 2, WebcamType=4};
 	enum TransferDirection { Incoming = 1, Outgoing = 8};
 	enum MessageType { BYE, OK, DECLINE, ERROR, INVITE };
 
@@ -93,21 +93,22 @@ namespace P2P{
 		public:
 			Q_UINT32 m_sessionId;
 			Q_UINT32 m_identifier;
-			QString  m_branch;
-			QString  m_callId;
 			QFile   *m_file;
-			QString  m_object;
 			Q_UINT32 m_transactionId;
 			Q_UINT32 m_ackSessionIdentifier;
 			Q_UINT32 m_ackUniqueIdentifier;
 			Kopete::Transfer *m_transfer;
+			QString  m_branch;
+			QString  m_callId;
+			QString  m_object;
+
 
 		public slots:
 			void abort();
 			void readyWrite();
 			
 		protected:
-			TransferContext(P2P::Dispatcher *dispatcher);
+			TransferContext(const QString& contact, P2P::Dispatcher *dispatcher,Q_UINT32 sessionId);
 			void sendData(const QByteArray& bytes);
 			void sendMessage(P2P::Message& outbound, const QByteArray& body);
 			virtual void readyToSend();
