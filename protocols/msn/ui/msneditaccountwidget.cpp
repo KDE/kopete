@@ -39,6 +39,7 @@
 #include <kpassdlg.h>
 #include <krun.h>
 #include <kconfig.h>
+#include <kpixmapregionselectordialog.h>
 
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
@@ -49,6 +50,7 @@
 #include "msncontact.h"
 #include "msneditaccountui.h"
 #include "msnnotifysocket.h"
+#include "msnprotocol.h"
 
 class MSNEditAccountWidgetPrivate
 {
@@ -297,20 +299,14 @@ void MSNEditAccountWidget::slotSelectImage()
 	else path = filePath.path();
 
 	QImage img( path );
+	img = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(img), 96, 96, this );
 
-	if(!img.isNull()) {
-		img = img.smoothScale( 96, 96, QImage::ScaleMax );
-		// crop image if not square
-		if(img.width() > img.height()) {
-			img = img.copy((img.width()-img.height())/2, 0, img.height(), img.height());
-		}
-		else if(img.height() > img.width()) {
-			img = img.copy(0, (img.height()-img.width())/2, img.width(), img.width());
-		}
-
-		QPixmap newAvatar(img);
-		d->ui->m_displayPicture->setPixmap( newAvatar );
-		d->pictureData = img.copy();
+	if(!img.isNull()) 
+	{
+		img = MSNProtocol::protocol()->scalePicture(img);
+	
+		d->ui->m_displayPicture->setPixmap( QPixmap(img) );
+		d->pictureData = img;
 	}
 	else
 	{

@@ -40,9 +40,12 @@
 #include <kglobal.h>
 #include <kurlrequester.h>
 #include <kinputdialog.h>
+#include <kpixmapregionselectordialog.h>
 
+// KDE KIO includes
 #include <kio/netaccess.h>
 
+// KDE KABC(AddressBook) includes
 #include <kabc/addresseedialog.h>
 #include <kabc/stdaddressbook.h>
 #include <kabc/addressee.h>
@@ -58,6 +61,7 @@
 #include "addressbookselectordialog.h"
 #include "kopeteconfig.h"
 
+// Local includes
 #include "kopeteidentityconfigbase.h"
 #include "globalidentitiesmanager.h"
 #include "kopeteidentityconfigpreferences.h"
@@ -128,6 +132,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char */*name*/
 	connect(d->m_view->buttonCopyIdentity, SIGNAL(clicked()), this, SLOT(slotCopyIdentity()));
 	connect(d->m_view->buttonRenameIdentity, SIGNAL(clicked()), this, SLOT(slotRenameIdentity()));
 	connect(d->m_view->buttonRemoveIdentity, SIGNAL(clicked()), this, SLOT(slotRemoveIdentity()));
+	connect(d->m_view->comboPhotoURL, SIGNAL(urlSelected(const QString& )), this, SLOT(slotChangePhoto(const QString& )));
 
 	// Settings signal/slots
 	connect(d->m_view->radioNicknameContact, SIGNAL(toggled(bool )), this, SLOT(slotEnableAndDisableWidgets()));
@@ -137,7 +142,6 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char */*name*/
 	connect(d->m_view->radioPhotoContact, SIGNAL(toggled(bool )), this, SLOT(slotEnableAndDisableWidgets()));
 	connect(d->m_view->radioPhotoCustom, SIGNAL(toggled(bool )), this, SLOT(slotEnableAndDisableWidgets()));
 	connect(d->m_view->radioPhotoKABC, SIGNAL(toggled(bool )), this, SLOT(slotEnableAndDisableWidgets()));
-	connect(d->m_view->comboPhotoURL, SIGNAL(urlSelected(const QString& )), this, SLOT(slotEnableAndDisableWidgets()));
 
 	connect(d->m_view->checkSyncPhotoKABC, SIGNAL(toggled(bool )), this, SLOT(slotSettingsChanged()));
 	connect(d->m_view->lineNickname, SIGNAL(textChanged(const QString& )), this, SLOT(slotSettingsChanged()));
@@ -475,6 +479,41 @@ void KopeteIdentityConfig::slotChangeAddressee()
 	}
 
 	emit changed(true);
+}
+
+void KopeteIdentityConfig::slotChangePhoto(const QString &photoUrl)
+{
+	QString saveLocation = locateLocal("appdata", "globalidentitiespictures/"+d->selectedIdentity.replace(" ", "-")+".png");
+
+	QImage photo(photoUrl);
+	// use KABC photo size 100x140
+	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(photo), 100, 140, this );
+
+	if(!photo.isNull())
+	{
+		if(photo.width() != 100 || photo.height() != 140)
+		{
+			 if (photo.height() > photo.width())
+				photo = photo.scaleHeight(140);
+			else
+				photo = photo.scaleWidth(100);
+		}
+
+		if(!photo.save(saveLocation, "PNG"))
+		{
+			KMessageBox::sorry(this, 
+					i18n("An error occurred when trying to save the custom photo for %1 identity.").arg(d->selectedIdentity),
+					i18n("Identity Configuration"));
+		}
+		d->m_view->comboPhotoURL->setURL(saveLocation);
+		slotEnableAndDisableWidgets();
+	}
+	else
+	{
+		KMessageBox::sorry(this, 
+					i18n("An error occurred when trying to save the custom photo for %1 identity.").arg(d->selectedIdentity),
+					i18n("Identity Configuration"));
+	}
 }
 
 void KopeteIdentityConfig::slotSettingsChanged()

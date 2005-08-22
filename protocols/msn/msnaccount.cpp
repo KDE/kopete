@@ -32,6 +32,7 @@
 #include <qfile.h>
 #include <qregexp.h>
 #include <qvalidator.h>
+#include <qimage.h>
 
 #include "msncontact.h"
 #include "msnnotifysocket.h"
@@ -1362,6 +1363,33 @@ void MSNAccount::resetPictureObject(bool silent)
 	}
 	else
 	{
+		// Check if the picture is a 96x96 image, if not scale, crop and save.
+		QImage picture(m_pictureFilename);
+		if(picture.isNull())
+		{	
+			m_pictureObj="";
+			myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
+		}
+		else
+		{
+			if(picture.width() != 96 || picture.height() != 96)
+			{
+				// Save to a new location in msnpictures.
+				QString newLocation( locateLocal( "appdata", "msnpictures/"+ KURL(m_pictureFilename).fileName().lower() ) );
+	
+				// Scale and crop the picture.
+				picture = MSNProtocol::protocol()->scalePicture(picture);
+	
+				// Use the cropped/scaled image now.
+				if(!picture.save(newLocation, "PNG"))
+				{
+					m_pictureObj="";
+					myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
+				}
+				m_pictureFilename = newLocation;
+			}
+		}
+
 		QFile pictFile( m_pictureFilename );
 		if(!pictFile.open(IO_ReadOnly))
 		{

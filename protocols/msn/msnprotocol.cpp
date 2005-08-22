@@ -18,6 +18,8 @@
     *************************************************************************
 */
 
+#include <qimage.h>
+
 #include <kdebug.h>
 #include <kgenericfactory.h>
 #include <kconfig.h>
@@ -163,6 +165,22 @@ QString MSNProtocol::clientId()
 	return QString::number(m_clientId, 10);
 }
 
+QImage MSNProtocol::scalePicture(const QImage &picture)
+{
+	QImage img(picture);
+	img = img.smoothScale( 96, 96, QImage::ScaleMax );
+	// crop image if not square
+	if(img.width() > img.height()) 
+	{
+		img = img.copy((img.width()-img.height())/2, 0, img.height(), img.height());
+	}
+	else 
+	{
+		img = img.copy(0, (img.height()-img.width())/2, img.width(), img.width());
+	}
+
+	return img;
+}
 #include "msnprotocol.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

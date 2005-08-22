@@ -65,6 +65,7 @@ private slots:
 	void slotRemoveIdentity();
 
 	void slotChangeAddressee();
+	void slotChangePhoto(const QString &photoUrl);
 
 	void slotSettingsChanged();
 
