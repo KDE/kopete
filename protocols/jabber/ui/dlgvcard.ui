@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>dlgVCard</class>
 <widget class="QWidget">
     <property name="name">
@@ -25,68 +25,111 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>General</string>
+                    <string>&amp;General</string>
                 </attribute>
                 <grid>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QLayoutWidget" row="0" column="0">
+                    <widget class="QLayoutWidget" row="4" column="0" rowspan="1" colspan="3">
                         <property name="name">
-                            <cstring>layout7</cstring>
+                            <cstring>layout13</cstring>
                         </property>
-                        <grid>
+                        <hbox>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLineEdit" row="0" column="1">
+                            <widget class="QLabel">
                                 <property name="name">
-                                    <cstring>leNick</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="1" column="3">
-                                <property name="name">
-                                    <cstring>leTimezone</cstring>
-                                </property>
-                            </widget>
-                            <widget class="KPushButton" row="6" column="3">
-                                <property name="name">
-                                    <cstring>btnSaveNick</cstring>
+                                    <cstring>lblBirthday</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Save Nickname to Contact List</string>
+                                    <string>Birthday:</string>
                                 </property>
                             </widget>
-                            <widget class="QLabel" row="2" column="0">
-                                <property name="name">
-                                    <cstring>lblJID</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Jabber ID:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="1" column="0">
-                                <property name="name">
-                                    <cstring>lblName</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Full name:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="0" column="3">
+                            <widget class="QLineEdit">
                                 <property name="name">
                                     <cstring>leBirthday</cstring>
                                 </property>
-                            </widget>
-                            <widget class="QLabel" row="0" column="0">
-                                <property name="name">
-                                    <cstring>lblNick</cstring>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>7</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
                                 </property>
-                                <property name="text">
-                                    <string>Nickname:</string>
-                                </property>
                             </widget>
-                            <widget class="QLabel" row="3" column="0">
+                        </hbox>
+                    </widget>
+                    <widget class="KPushButton" row="7" column="2">
+                        <property name="name">
+                            <cstring>btnSaveNick</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Save Nickname to Contact List</string>
+                        </property>
+                    </widget>
+                    <spacer row="6" column="1">
+                        <property name="name">
+                            <cstring>spacer9</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>85</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <spacer row="6" column="0">
+                        <property name="name">
+                            <cstring>spacer22</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>85</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <spacer row="7" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>spacer23</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>270</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QLayoutWidget" row="3" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>layout12</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
                                 <property name="name">
                                     <cstring>lblHomepage</cstring>
                                 </property>
@@ -94,62 +137,7 @@
                                     <string>Homepage:</string>
                                 </property>
                             </widget>
-                            <widget class="QLineEdit" row="2" column="1">
-                                <property name="name">
-                                    <cstring>leJID</cstring>
-                                </property>
-                            </widget>
-                            <spacer row="5" column="1">
-                                <property name="name">
-                                    <cstring>spacer9</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Vertical</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>110</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="QLabel" row="1" column="2">
-                                <property name="name">
-                                    <cstring>lblTimezone</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Timezone:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="1" column="1">
-                                <property name="name">
-                                    <cstring>leName</cstring>
-                                </property>
-                                <property name="text">
-                                    <string></string>
-                                </property>
-                            </widget>
-                            <spacer row="4" column="0" rowspan="2" colspan="1">
-                                <property name="name">
-                                    <cstring>spacer22</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Vertical</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>150</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="QWidgetStack" row="3" column="1" rowspan="2" colspan="3">
+                            <widget class="QWidgetStack">
                                 <property name="name">
                                     <cstring>wsHomepage</cstring>
                                 </property>
@@ -186,6 +174,14 @@
                                                 <height>18</height>
                                             </rect>
                                         </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>7</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
                                     </widget>
                                 </widget>
                                 <widget class="QWidget">
@@ -207,35 +203,145 @@
                                                 <height>25</height>
                                             </rect>
                                         </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>7</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
                                     </widget>
                                 </widget>
                             </widget>
-                            <widget class="QLabel" row="0" column="2">
+                        </hbox>
+                    </widget>
+                    <widget class="QLayoutWidget" row="5" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>layout14</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
                                 <property name="name">
-                                    <cstring>lblBirthday</cstring>
+                                    <cstring>lblTimezone</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Birthday:</string>
+                                    <string>Timezone:</string>
                                 </property>
                             </widget>
-                            <spacer row="6" column="0" rowspan="1" colspan="3">
+                            <widget class="QLineEdit">
                                 <property name="name">
-                                    <cstring>spacer23</cstring>
+                                    <cstring>leTimezone</cstring>
                                 </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>7</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
                                 </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
+                            </widget>
+                        </hbox>
+                    </widget>
+                    <widget class="QLayoutWidget" row="2" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>layout11</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>lblJID</cstring>
                                 </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>394</width>
-                                        <height>20</height>
-                                    </size>
+                                <property name="text">
+                                    <string>Jabber ID:</string>
                                 </property>
-                            </spacer>
-                        </grid>
+                            </widget>
+                            <widget class="QLineEdit">
+                                <property name="name">
+                                    <cstring>leJID</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>7</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                            </widget>
+                        </hbox>
+                    </widget>
+                    <widget class="QLayoutWidget" row="1" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>layout10</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>lblName</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Full name:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit">
+                                <property name="name">
+                                    <cstring>leName</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>7</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string></string>
+                                </property>
+                            </widget>
+                        </hbox>
+                    </widget>
+                    <widget class="QLayoutWidget" row="0" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>layout9</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>lblNick</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Nickname:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit">
+                                <property name="name">
+                                    <cstring>leNick</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>7</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                            </widget>
+                        </hbox>
                     </widget>
                 </grid>
             </widget>
@@ -244,7 +350,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Home Address</string>
+                    <string>&amp;Home Address</string>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -442,7 +548,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Work Address</string>
+                    <string>&amp;Work Address</string>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -640,7 +746,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Work Information</string>
+                    <string>Wor&amp;k Information</string>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -732,7 +838,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Phone Numbers</string>
+                    <string>Phone &amp;Numbers</string>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -824,7 +930,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>About</string>
+                    <string>A&amp;bout</string>
                 </attribute>
                 <grid>
                     <property name="name">
