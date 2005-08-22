@@ -785,4 +785,32 @@ QString SkypeAccount::incomingCommand() const {
 	return d->incommingCommand;
 }
 
+void SkypeAccount::registerContact(const QString &contactId) {
+	d -> skype.addContact(contactId);
+}
+
+void SkypeAccount::removeContact(const QString &contactId) {
+	d -> skype.removeContact(contactId);
+}
+
+bool SkypeAccount::ableMultiCall() {
+	return (d->skype.ableConference());
+}
+
+bool SkypeAccount::canAlterAuth() {
+	return (d->skype.canComunicate());
+}
+
+void SkypeAccount::authorizeUser(const QString &userId) {
+	d->skype.setAuthor(userId, Skype::Author);
+}
+
+void SkypeAccount::disAuthorUser(const QString &userId) {
+	d->skype.setAuthor(userId, Skype::Deny);
+}
+
+void SkypeAccount::blockUser(const QString &userId) {
+	d->skype.setAuthor(userId, Skype::Block);
+}
+
 #include "skypeaccount.moc"

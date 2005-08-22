@@ -30,6 +30,7 @@
 #include <qptrlist.h>
 #include <kaction.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 
 typedef enum {
 	osOffline,
@@ -63,6 +64,12 @@ class SkypeContactPrivate {
 		SkypeChatSession *session;
 		///The action to call the user
 		KAction *callContactAction;
+		///Authorization action
+		KAction *authorizeAction;
+		///Remove authorization action
+		KAction *disAuthorAction;
+		///Block user action
+		KAction *blockAction;
 };
 
 SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::MetaContact *parent, bool user)
@@ -81,13 +88,14 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 	d->user = user;
 
 	d->callContactAction = new KAction(i18n("Call Contact"), "call", KShortcut(), this, SLOT(call()), this, "call_contact");
+	d->authorizeAction = new KAction(i18n("(Re)send Authorization To"), "mail_forward", KShortcut(), this, SLOT(authorize()), this, "authorize_contact");
+	d->disAuthorAction = new KAction(i18n("Remove Authorization From"), "mail_delete", KShortcut(), this, SLOT(disAuthor()), this, "dis_authorize_contact");
+	d->blockAction = new KAction(i18n("Block"), "cancel", KShortcut(), this, SLOT(block()), this, "block_contact");
 	statusChanged();//This one takes care of disabling/enabling this action depending on the user's status.
 
 	connect(this, SIGNAL(onlineStatusChanged(Kopete::Contact*,const Kopete::OnlineStatus&,const Kopete::OnlineStatus&)), this, SLOT(statusChanged()));
 	if (account->canComunicate() && user)
 		emit infoRequest(contactId());//retrieve information
-
-
 }
 
 SkypeContact::~SkypeContact() {
@@ -164,7 +172,7 @@ void SkypeContact::setInfo(const QString &change) {
 				d->buddy = bsNotInList;
 				break;
 			case 1:
-				deleteLater();
+				d->buddy = bsNotInList;
 				return;
 			case 2:
 				d->buddy = bsNoAuth;
@@ -248,6 +256,10 @@ void SkypeContact::resetStatus() {
 bool SkypeContact::isReachable() {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
+	const Kopete::OnlineStatus &st = d->account->myself()->onlineStatus();
+	if ((st == d->account->protocol()->Offline) || (st == d->account->protocol()->Connecting))
+		return false;
+
 	switch (d->buddy) {
 		case bsNotInList:
 		case bsNoAuth://I do not know, weather he is online, but I will send it trough the server
@@ -257,7 +269,7 @@ bool SkypeContact::isReachable() {
 	}
 
 	switch (d->status) {
-		case osOffline://he is offline
+		//case osOffline://he is offline
 		case osSkypeOut://This one can not get messages, it is skype-out contact
 			return false;
 		default://some kind of online
@@ -292,9 +304,15 @@ void SkypeContact::receiveIm(const QString &message, const QString &chat) {
 QPtrList<KAction> *SkypeContact::customContextMenuActions() {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
+	if (d->account->myself() == this)
+		return 0L;
+	
 	QPtrList<KAction> *actions = new QPtrList<KAction>();
 
 	actions->append(d->callContactAction);
+	actions->append(d->authorizeAction);
+	actions->append(d->disAuthorAction);
+	actions->append(d->blockAction);
 
 	return actions;
 }
@@ -304,8 +322,17 @@ void SkypeContact::enableCall(bool value) {
 }
 
 void SkypeContact::statusChanged() {
-	const Kopete::OnlineStatus &myStatus = onlineStatus();
 	SkypeProtocol * protocol = d->account->protocol();
+	const Kopete::OnlineStatus &myStatus = (d->account->myself()) ? d->account->myself()->onlineStatus() : protocol->Offline;
+	if (d->account->canAlterAuth()) {
+		d->authorizeAction->setEnabled(true);
+		d->disAuthorAction->setEnabled(true);
+		d->blockAction->setEnabled(true);
+	} else {
+		d->authorizeAction->setEnabled(false);
+		d->disAuthorAction->setEnabled(false);
+		d->blockAction->setEnabled(false);
+	}
 	if (this == d->account->myself()) {
 		emit setCallPossible(false);
 	} else if ((myStatus == protocol->Online) || (myStatus == protocol->Away) || (myStatus == protocol->NotAvailable) || (myStatus == protocol->DoNotDisturb) || (myStatus == protocol->NoAuth) || (myStatus == protocol->NotInList) || (myStatus == protocol->Phone) || (myStatus == protocol->SkypeMe))
@@ -337,6 +364,35 @@ bool SkypeContact::canCall() const {
 	if (!d->callContactAction)
 		return false;
 	return d->callContactAction->isEnabled();
+}
+
+void SkypeContact::slotUserInfo() {
+	KMessageBox::information(0L, i18n("Sorry, but this is not implemented yet, I want to do it soon"));
+}
+
+void SkypeContact::deleteContact() {
+	d->account->removeContact(contactId());
+	deleteLater();
+}
+
+void SkypeContact::sync(unsigned int changed) {
+	kdDebug(14311) << k_funcinfo << endl;
+
+	if (changed & MovedBetweenGroup) {
+		d->account->registerContact(contactId());
+	}
+}
+
+void SkypeContact::authorize() {
+	d->account->authorizeUser(contactId());
+}
+
+void SkypeContact::disAuthor() {
+	d->account->disAuthorUser(contactId());
+}
+
+void SkypeContact::block() {
+	d->account->blockUser(contactId());
 }
 
 #include "skypecontact.moc"

@@ -170,6 +170,14 @@ Q_OBJECT
 		 */
 		int launchType;
 		/**
+		 * Is this verson of protocol able to create call conferences?
+		 */
+		bool ableMultiCall();
+		/**
+		 * Is it possible to alter the authorization now?
+		 */
+		bool canAlterAuth();
+		/**
 		 * How shoul kopete authorize it self? (empty means as kopete)
 		 */
 		QString author;
@@ -305,6 +313,11 @@ Q_OBJECT
 		 * Command that should be executed on incomming call, or empty string if nothing to execute
 		 */
 		QString incomingCommand() const;
+		/**
+		 * Registers this contact to the skype contact list
+		 * @param contactId What user should be added?
+		 */
+		void registerContact(const QString &contactId);
 	public slots:
 		/**
 		 * Disconnects from server.
@@ -456,6 +469,25 @@ Q_OBJECT
 		 * Sets a command to be executed for incoming call
 		 */
 		void setIncomingCommand(const QString &command);
+		/**
+		 * Removes a given contact from skype
+		 */
+		void removeContact(const QString &contactId);
+		/**
+		 * authorizes a user
+		 * @param userId what user
+		 */
+		void authorizeUser(const QString &userId);
+		/**
+		 * removes authorization from user
+		 * @param userId what user
+		 */
+		void disAuthorUser(const QString &userId);
+		/**
+		 * Blocks a user (no more messages will be accepted)
+		 * @param userId what user
+		 */
+		void blockUser(const QString &userId);
 	signals:
 		/**
 		 * This is emited when the message has been sent by skype

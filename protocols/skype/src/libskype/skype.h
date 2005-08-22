@@ -131,6 +131,23 @@ class Skype : public QObject
 		 * @return Id of the new chat
 		 */
 		QString createChat(const QString &users);
+		/**
+		 * Says if the contact should be authorize, not authorized or blocked
+		 */
+		enum AuthorType {
+			Author,
+			Deny,
+			Block
+		};
+		/**
+		 * Ask if the user how is the user authorized
+		 * @param contactId What user are you interested in?
+		 */
+		AuthorType getAuthor(const QString &contactId);
+		/**
+		 * Is this version of protocol able to create conference calls?
+		 */
+		bool ableConference();
 	public slots:
 		/**
 		 * Tell the skype to go online
@@ -280,6 +297,23 @@ class Skype : public QObject
 		 * @param chatId What chat
 		 */
 		void leaveChat(const QString &chatId);
+		/**
+		 * Removes a contact from the contact list
+		 * @param contactId Id of the contact you want to remove
+		 */
+		void removeContact(const QString &contactId);
+		/**
+		 * Adds a contact to the list
+		 * @param contactId Id of the contact to add
+		 * @param contactId
+		 */
+		void addContact(const QString &contactId);
+		/**
+		 * Sets users authorization
+		 * @param contactId ID of that user
+		 * @param author for what is he authorized
+		 */
+		void setAuthor(const QString &contactId, AuthorType author);
 	signals:
 		/**
 		 * Emited when the skype changes to online (or says it goes online)

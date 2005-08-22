@@ -83,8 +83,7 @@ skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *acc
 		IncomingCommandCheck->setChecked(!incomingCommand.isEmpty());
 		IncomingCommandEdit->setText(incomingCommand);
 	} else {
-		//TODO Make this unneeded :)
-		KMessageBox::information(this, i18n("Please note that this version of Skype plugin is a development version and it is probable it will cause more problems than solve. You have been warned"), i18n("Version info"));
+		//KMessageBox::information(this, i18n("Please note that this version of Skype plugin is a development version and it is probable it will cause more problems than solve. You have been warned"), i18n("Version info")); - I hope it is not needed any more
 	}
 }
 

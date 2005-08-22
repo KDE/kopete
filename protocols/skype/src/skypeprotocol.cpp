@@ -143,7 +143,7 @@ void SkypeProtocol::updateCallActionStatus() {
 	
 	bool enab = false;
 	
-	if (Kopete::ContactList::self()->selectedMetaContacts().count() != 1) {
+	if ((Kopete::ContactList::self()->selectedMetaContacts().count() != 1) && ((!d->account) || (!d->account->ableMultiCall()))) {
 		d->callContactAction->setEnabled(false);
 		return;
 	}
@@ -179,7 +179,7 @@ void SkypeProtocol::callContacts() {
 				SkypeContact *thisCont = static_cast<SkypeContact *> (*con);
 				if (thisCont->canCall()) {
 					if (!list.isEmpty()) 
-						list += " , ";
+						list += ", ";
 					list += thisCont->contactId();
 				}
 			}

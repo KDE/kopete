@@ -749,4 +749,47 @@ void Skype::leaveChat(const QString &chatId) {
 	d->connection << QString("ALTER CHAT %1 LEAVE").arg(chatId);
 }
 
+void Skype::removeContact(const QString &contactId) {
+	kdDebug(14311) << k_funcinfo << endl;
+
+	d->connection << QString("SET USER %1 BUDDYSTATUS 1").arg(contactId);
+}
+
+void Skype::addContact(const QString &contactId) {
+	kdDebug(14311) << k_funcinfo << endl;
+
+	d->connection % QString("SET USER %1 BUDDYSTATUS 2").arg(contactId);//do NOT parse this so the contact won't be created automatically
+}
+
+void Skype::setAuthor(const QString &contactId, AuthorType author) {
+	kdDebug(14311) << k_funcinfo << endl;
+
+	switch (author) {
+		case Author:
+			d->connection << QString("SET USER %1 ISBLOCKED FALSE").arg(contactId);
+			d->connection << QString("SET USER %1 ISAUTHORIZED TRUE").arg(contactId);
+			break;
+		case Deny:
+			d->connection << QString("SET USER %1 ISBLOCKED FALSE").arg(contactId);
+			d->connection << QString("SET USER %1 ISAUTHORIZED FALSE").arg(contactId);
+			break;
+		case Block:
+			d->connection << QString("SET USER %1 ISBLOCKED TRUE").arg(contactId);
+			break;
+	}
+}
+
+Skype::AuthorType Skype::getAuthor(const QString &contactId) {
+	if ((d->connection % QString("GET USER %1 ISBLOCKED").arg(contactId)).section(' ', 3, 3).stripWhiteSpace().upper() == "TRUE")
+		return Block;
+	else if ((d->connection % QString("GET USER %1 ISAUTHORIZED").arg(contactId)).section(' ', 3, 3).stripWhiteSpace().upper() == "TRUE")
+		return Author;
+	else 
+		return Deny;
+}
+
+bool Skype::ableConference() {
+	return false;
+}
+
 #include "skype.moc"

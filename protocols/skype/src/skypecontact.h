@@ -84,6 +84,19 @@ class SkypeContact : public Kopete::Contact
 		SkypeChatSession *getChatSession();
 		///Can this contact be called now?
 		bool canCall() const;
+	private slots:
+		/**
+		 * Authorize the user to see if I'm online
+		 */
+		void authorize();
+		/**
+		 * Remove authorization from that user
+		 */
+		void disAuthor();
+		/**
+		 * Block this user, no more messages
+		 */
+		void block();
 	public slots:
 		/**
 		 * Please ask for the contact information (emit infoReques with your name)
@@ -107,6 +120,20 @@ class SkypeContact : public Kopete::Contact
 		void connectionStatus(bool connected);
 		///This slot calls a contact
 		void call();
+		/**
+		 * This slot should show the user info
+		 * TODO: Implement this
+		 * Now it only shows a messagebox
+		 */
+		virtual void slotUserInfo();
+		/**
+		 * Remove the contact from skype server
+		 */
+		virtual void deleteContact();
+		/**
+		 * Save me to the Skype
+		 */
+		virtual void sync(unsigned int changed);
 	signals:
 		/**
 		 * There is a request to get/refresh the contact info from skype
