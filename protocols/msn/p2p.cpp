@@ -259,7 +259,7 @@ void TransferContext::sendMessage(MessageType type, const QString& content, Q_IN
 					contentType = "application/x-msnmsgr-transreqbody";
 				}
 			}
-			if(m_type == P2P::WebcamType && type==P2P::INVITE)
+			if(m_type == P2P::WebcamType && type==P2P::INVITE && m_state == Negotiation)
 			{
 				contentType = "application/x-msnmsgr-transreqbody";
 			}
@@ -276,7 +276,6 @@ void TransferContext::sendMessage(MessageType type, const QString& content, Q_IN
 		case DECLINE:
 			method = "MSNSLP/1.0 603 DECLINE";
 			cSeq   = "1";
-			m_state = Finished;
 			break;
 
 		case ERROR:

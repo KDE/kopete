@@ -186,11 +186,40 @@ void Dispatcher::sendImage(const QString& /*fileName*/, const QString& /*to*/)
 // 	outbound->sendImage(imageFile.readAll());
 }
 
+#if MSN_WEBCAM
+void Dispatcher::startWebcam(const QString &myHandle, const QString &msgHandle)
+{
+	Q_UINT32 sessionId = rand()%0xFFFFFF00 + 4;
+	TransferContext* current =
+			new Webcam(msgHandle, this, sessionId);
+
+	current->m_branch = P2P::Uid::createUid();
+	current->m_callId = P2P::Uid::createUid();
+	current->setType(P2P::WebcamType);
+	// Add the transfer to the list.
+	m_sessions.insert(sessionId, current);
+
+	//  {4BD96FC0-AB17-4425-A14A-439185962DC8}  <- i want to show you my webcam  (not supported yet)
+	//  {1C9AA97E-9C05-4583-A3BD-908A196F1E92}  <- i want to see your webcam
+        
+	QString content="EUF-GUID: {1C9AA97E-9C05-4583-A3BD-908A196F1E92}\r\n"
+			"SessionID: "+ QString::number(sessionId)+"\r\n"
+			"AppID: 4\r\n"
+			"Context: ewBCADgAQgBFADcAMABEAEUALQBFADIAQwBBAC0ANAA0ADAAMAAtAEEARQAwADMALQA4ADgARgBGADgANQBCADkARgA0AEUAOAB9AA==\r\n\r\n";
+
+        // context is the base64 of the utf16 of {B8BE70DE-E2CA-4400-AE03-88FF85B9F4E8}
+
+	current->sendMessage( INVITE , content );
+}
+#endif
+
+
+
 void Dispatcher::slotReadMessage(const QByteArray& stream)
 {
 	P2P::Message receivedMessage =
 		m_messageFormatter.readMessage(stream);
-
+	
 	if(receivedMessage.contentType == "application/x-msnmsgrp2p")
 	{
 		if((receivedMessage.header.dataSize == 0)/* && ((receivedMessage.header.flag & 0x02) == 0x02)*/)
@@ -216,7 +245,7 @@ void Dispatcher::slotReadMessage(const QByteArray& stream)
 				kdDebug(14140) << k_funcinfo
 					<< "no transfer context with identifier, "
 					<< receivedMessage.header.ackSessionIdentifier
-					<< " found." << endl;
+						<< " (found.  for delivering ack)" << endl;
 			}
 			return;
 		}
@@ -258,6 +287,11 @@ void Dispatcher::dispatch(const P2P::Message& message)
 	{
 		if(m_sessions.contains(message.header.sessionId)){
 			messageHandler = m_sessions[message.header.sessionId];
+			kdDebug(14140) << k_funcinfo << "oki " << messageHandler << endl;
+		}
+		else
+		{
+			kdDebug(14140) << k_funcinfo << "what ?!?   no session id  "<< message.header.sessionId <<endl;
 		}
 	}
 	else
@@ -485,17 +519,36 @@ void Dispatcher::dispatch(const P2P::Message& message)
 			else if(applicationId == 4)
 			{
 #if MSN_WEBCAM
+				regex = QRegExp("EUF-GUID: \\{([0-9a-zA-Z\\-]*)\\}");
+				regex.search(body);
+				QString GUID=regex.cap(1);
+				
+				kdDebug(14140) << k_funcinfo << "webcam " << GUID << endl;
+					
 				TransferContext *current =
 						new P2P::Webcam(from,this,sessionId.toUInt());
 				current->m_branch = branch;
 				current->m_callId = callId;
-							
-				// Add the transfer to the list.
+								
+					// Add the transfer to the list.
 				m_sessions.insert(sessionId.toUInt(), current);
-				// Acknowledge the session request.
+					// Acknowledge the session request.
 				current->acknowledge(message);
+					
 				
-				QTimer::singleShot(0,current, SLOT(askIncommingInvitation()) );
+				if(GUID=="4BD96FC0-AB17-4425-A14A-439185962DC8")
+				{  //that mean "I want to send MY webcam"
+					QTimer::singleShot(0,current, SLOT(askIncommingInvitation()) );
+				}
+				else if(GUID=="1C9AA97E-9C05-4583-A3BD-908A196F1E92")
+				{ //that mean "I want YOU to send YOUR webcam"
+					//not supported yet
+					QTimer::singleShot(0,current, SLOT(sendBYEMessage()) );
+				}
+				else
+				{ //unknown GUID
+					current->error();
+				}
 #endif
 			}
 		}

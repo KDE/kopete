@@ -88,7 +88,7 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 	reader >> inbound.header.ackUniqueIdentifier;
 	reader >> inbound.header.ackDataSize;
 
-/*	kdDebug(14140)
+	/*kdDebug(14140)
 		<< "session id, "             << inbound.header.sessionId << endl
 		<< "identifier, "             << inbound.header.identifier << endl
 		<< "data offset, "            << inbound.header.dataOffset << endl
@@ -98,8 +98,8 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 		<< "ack session identifier, " << inbound.header.ackSessionIdentifier << endl
 		<< "ack unique identifier, "  << inbound.header.ackUniqueIdentifier << endl
 		<< "ack data size, "          << inbound.header.ackDataSize
-		<< endl;
-*/
+	<< endl;*/
+
 	// Read the message body from the stream.
 	if(inbound.header.dataSize > 0){
 		inbound.body.resize(inbound.header.dataSize);

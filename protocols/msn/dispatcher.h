@@ -47,6 +47,11 @@ namespace P2P{
 			QString m_pictureUrl;
 			QMap<QString, QString> objectList;
 			
+#if MSN_WEBCAM
+			void startWebcam(const QString &myHandle, const QString &msgHandle);
+#endif
+
+			
 		public slots:
 			void slotReadMessage(const QByteArray& stream);
 			void messageAcknowledged(unsigned int correlationId, bool fullReceive);
@@ -75,6 +80,7 @@ namespace P2P{
 			 * The Ip of the computer on the internet  (as seen by the server)
 			 */
 			QString localIp() { return m_ip; }
+			
 			
 		private:
 			void dispatch(const P2P::Message& message);

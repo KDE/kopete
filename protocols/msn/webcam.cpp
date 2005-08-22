@@ -52,6 +52,7 @@ Webcam::Webcam( const QString& to, Dispatcher *parent, Q_UINT32 sessionId)
 
 Webcam::~Webcam()
 {
+	kdDebug(14140) << k_funcinfo << endl;
 	m_dispatcher=0l;
 	delete m_mimic;
 	delete m_webcamSocket;
@@ -60,6 +61,7 @@ Webcam::~Webcam()
 
 void Webcam::askIncommingInvitation()
 {
+	m_direction = Incoming;
 	//protect, in case this is deleted when the messagebox is active
 	QGuardedPtr<Webcam> _this = this;
 	int result=KMessageBox::questionYesNo( 0L , i18n("The contact %1 want to show you his webcam, do you want to see it?").arg(m_recipient),
@@ -80,6 +82,7 @@ void Webcam::askIncommingInvitation()
 		//send an INVITE message we want the user decline
 		//need to change the branch of the second message
 		m_branch=Uid::createUid();
+		m_state = Negotiation;  //set type to application/x-msnmsgr-transreqbody
 				
 		content=QString("Bridges: TRUDPv1 TCPv1\r\n"
 						"NetID: -1280904111\r\n"
@@ -118,7 +121,7 @@ void Webcam::acknowledged()
 	{
 		case Invitation:
 		{
-			m_state=Negotiation;
+//			m_state=Negotiation;
 			break;
 		}
 		
@@ -180,9 +183,26 @@ void Webcam::processMessage(const Message& message)
 		QString body = QCString(message.body.data(), message.header.dataSize);
 		kdDebug(14141) << k_funcinfo << "received, " << body << endl;
 
-		if(body.startsWith("MSNSLP/1.0 603 DECLINE"))
+		if(body.startsWith("MSNSLP/1.0 200 OK"))
 		{
-			//that's the declinaison of the second invitaiton message, don't care for now
+			m_direction = Outgoing;
+		}
+		if(body.startsWith("INVITE"))
+		{
+			if(m_direction == Outgoing)
+			{
+				QRegExp regex(";branch=\\{([0-9A-F\\-]*)\\}\r\n");
+				regex.search(body);
+				m_branch=regex.cap(1);
+				//decline
+				sendMessage(DECLINE);
+				makeSIPMessage("syn",0x17,0x2a,0x01);
+			}
+		}
+		else if(body.startsWith("MSNSLP/1.0 603 DECLINE"))
+		{
+			//if it is the declinaison of the second invite message, we have to don't care
+			//TODO anyway, if it's the declinaison of our invitation, we have to something
 		}
 		else if(body.startsWith("BYE"))
 		{
@@ -195,10 +215,47 @@ void Webcam::processMessage(const Message& message)
 	}
 	
 	
+	
 	//Let's take the fun, we entering into the delicious webcam  negotiation binary protocol
 
 	//well, there is maybe better to take utf16,  but it's ascii, so no problem.
 	QByteArray dataMessage=message.body;
+	
+#if 0
+	QString echoS="";
+	unsigned int f=0;
+	while(f<dataMessage.size())
+	{
+		echoS+="\n";
+		for(unsigned int q=0; q<16 ; q++)
+		{
+			if(q+f<dataMessage.size())
+			{
+				unsigned int N=(unsigned int) (dataMessage[q+f]);
+				if(N<16)
+					echoS+="0";
+				echoS+=QString::number( N  ,16)+" ";
+			}
+			else
+				echoS+="   ";
+		}
+		echoS+="   ";
+				
+		for(unsigned int q=0; (q<16 && (q+f)<dataMessage.size()) ; q++)
+		{
+			unsigned char X=dataMessage[q+f];
+			char C=((char)(( X<128 && X>31 ) ? X : '.'));
+			echoS+=QString::fromLatin1(&C,1);
+		}
+		f+=16;
+	}
+	kdDebug(14141) << k_funcinfo << dataMessage.size() << echoS << endl;
+#endif
+	
+	
+	
+	
+	
 	for(uint pos=m_content.isNull() ? 10 : 0; pos<dataMessage.size(); pos+=2)
 	{
 		if(dataMessage[pos] !=0 )
@@ -209,8 +266,27 @@ void Webcam::processMessage(const Message& message)
 		return;
 
 	kdDebug(14141) << k_funcinfo << "Message contents: " << m_content << "\n" << endl;
-	if(m_content.length() < 5)
-		makeSIPMessage(m_content);
+	if(m_content.startsWith("syn"))
+	{
+		if(m_direction == Incoming)
+			makeSIPMessage("syn",0x17,0x2a,0x01);
+		else
+			makeSIPMessage("ack",0xea,0x00,0x00);
+	}
+	else if(m_content.startsWith("ack"))
+	{
+		if(m_direction == Incoming)
+			makeSIPMessage("ack",0xea,0x00,0x00);
+/*		else
+		{
+			uint sess=rand()%1000+5000;
+			uint rid=rand()%100+50;
+			m_auth=QString("recipientid=%1&sessionid=%2\r\n\r\n").arg(rid).arg(sess);
+			QString  viewerxml=xml(sess , rid);
+			kdDebug(14140) << k_funcinfo << "viewerxml= " << viewerxml << endl; 
+			makeSIPMessage(producerxml);
+	}*/
+	}
 	else if(m_content.contains("<producer>"))
 	{
 		QRegExp rx("<rid>([0-9]*)</rid>.*<session>([0-9]*)</session>");
@@ -219,11 +295,8 @@ void Webcam::processMessage(const Message& message)
 		QString sess=rx.cap(2);
 		QString viewerxml=xml(sess.toUInt() , rid.toUInt());
 		kdDebug(14140) << k_funcinfo << "vewerxml= " << viewerxml << endl; 
-		makeSIPMessage(  viewerxml );
-//		FarsightWrapper *farsight=new FarsightWrapper( viewerxml , m_content , this );
-		
+		makeSIPMessage(  viewerxml ,0x00,0x09,0x00 );
 		m_auth=QString("recipientid=%1&sessionid=%2\r\n\r\n").arg(rid,sess);
-		
 		kdDebug(14140) << k_funcinfo << "m_auth= " << m_auth << endl;
 	
 		m_listener = new KServerSocket("7786",this);
@@ -288,22 +361,28 @@ void Webcam::processMessage(const Message& message)
 			sock->connect();
 		}
 	}
+	/*else if(m_content.contains("<viewer>"))
+	{
+		makeSIPMessage("receivedViewerData", 0xec , 0xda , 0x03);
+	}*/
 	else if(m_content.contains("receivedViewerData"))
 	{
 		//I'm happy you received the xml i sent, really.
 	}
+	else
+		error();
 	m_content=QString::null;
 }
 
-void Webcam::makeSIPMessage(const QString &message)
+void Webcam::makeSIPMessage(const QString &message, Q_UINT8 XX, Q_UINT8 YY , Q_UINT8 ZZ)
 {
 	QByteArray dataMessage; //(12+message.length()*2);
 	QDataStream writer(dataMessage, IO_WriteOnly);
 	writer.setByteOrder(QDataStream::LittleEndian);
 	writer << (Q_UINT8)0x80;
-	writer << (Q_UINT8)0x17; //XX
-	writer << (Q_UINT8)0x2a; //YY
-	writer << (Q_UINT8)0x01; //ZZ
+	writer << (Q_UINT8)XX;
+	writer << (Q_UINT8)YY;
+	writer << (Q_UINT8)ZZ;
 	writer << (Q_UINT8)0x08;
 	writer << (Q_UINT8)0x00;
 	writer << message+'\0';
@@ -364,16 +443,12 @@ void Webcam::sendBigP2PMessage( const QByteArray & dataMessage)
 
 QString Webcam::xml(uint session , uint rid)
 {
-	if(session==0) 
-		session=rand()%1000+5000;
-	if(rid==0) 
-		rid=rand()%100+50;
 	QString who= false ? QString("producer") : QString("viewer");
 	
 	QString ip= m_dispatcher->localIp();
 	
 	return "<" + who + "><version>2.0</version><rid>"+QString::number(rid)+"</rid><udprid>"+QString::number(rid+1)+"</udprid><session>"+QString::number(session)+"</session><ctypes>0</ctypes><cpu>2931</cpu>" +
-			"<tcp><tcpport>7786</tcpport>\t\t\t\t\t\t\t\t  <tcplocalport>7786</tcplocalport>\t\t\t\t\t\t\t\t  <tcpexternalport>7786</tcpexternalport><tcpipaddress1>"+ip+"</tcpipaddress1><tcpipaddress2>192.168.0.1</tcpipaddress2>,</tcp>"+
+			"<tcp><tcpport>7786</tcpport>\t\t\t\t\t\t\t\t  <tcplocalport>7786</tcplocalport>\t\t\t\t\t\t\t\t  <tcpexternalport>7786</tcpexternalport><tcpipaddress1>"+ip+"</tcpipaddress1><tcpipaddress2>192.168.0.1</tcpipaddress2></tcp>"+
 			"<udp><udplocalport>7786</udplocalport><udpexternalport>31863</udpexternalport><udpexternalip>"+ ip +"</udpexternalip><a1_port>31859</a1_port><b1_port>31860</b1_port><b2_port>31861</b2_port><b3_port>31862</b3_port><symmetricallocation>1</symmetricallocation><symmetricallocationincrement>1</symmetricallocationincrement><udpversion>1</udpversion><udpinternalipaddress1>127.0.0.1</udpinternalipaddress1></udp>"+
 			"<codec></codec><channelmode>1</channelmode></"+who+">\r\n\r\n";
 }
@@ -472,7 +547,7 @@ void Webcam::slotAccept()
 void Webcam::slotSocketRead()
 {
 	uint available = m_webcamSocket->bytesAvailable();
-	kdDebug(14140) << k_funcinfo << available << ", bytes available." << endl;
+	kdDebug(14140) << k_funcinfo  << available << " bytes available." << endl;
 	const QString connected_str("connected\r\n\r\n");
 	switch(m_webcamState)
 	{
@@ -549,7 +624,6 @@ void Webcam::slotSocketRead()
 			QByteArray buffer(available);
 			m_webcamSocket->peekBlock(buffer.data(), buffer.size());
 			
-			kdDebug(14140) << k_funcinfo << "header   ( " << (uint)(buffer[8]) << " " <<(uint)(buffer[9]) << " " <<(uint)(buffer[10]) << " " <<(uint)(buffer[11]) << " " <<endl;
 			Q_UINT32 paysize=(uchar)buffer[8] + ((uchar)buffer[9]<<8) + ((uchar)buffer[10]<<16) + ((uchar)buffer[11]<<24);
 			
 			if(available < (paysize+24))

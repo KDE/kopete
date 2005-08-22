@@ -41,7 +41,7 @@ class Webcam  : public TransferContext
 		void sendBYEMessage();
 	
 	private:
-		void makeSIPMessage(const QString &message);
+		void makeSIPMessage(const QString &message, Q_UINT8 XX=0, Q_UINT8 YY=9 , Q_UINT8 ZZ=0);
 		void sendBigP2PMessage( const QByteArray& dataMessage );
 		QString m_content;
 		
