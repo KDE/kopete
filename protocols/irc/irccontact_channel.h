@@ -33,7 +33,6 @@ namespace Kopete { class Message; }
 class KopeteView;
 
 class IRCAccount;
-class IRCContactManager;
 
 /**
  * @author Jason Keirstead <jason@keirstead.org>

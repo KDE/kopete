@@ -29,9 +29,9 @@
 #include <qptrlist.h>
 #include <qmap.h>
 
-class IRCProtocol;
 class IRCAccount;
-class IRCContactManager;
+class IRCContactPrivate;
+class IRCProtocol;
 
 namespace KIRC
 {
@@ -89,8 +89,6 @@ public:
 
 	QTextCodec *codec();
 
-	KopeteView *view();
-
 	/**
 	 * We serialise the contactId and the server group in 'contactId'
 	 * so that other IRC programs reading this from KAddressBook have a chance of figuring
@@ -118,13 +116,6 @@ private slots:
 	void initConversation() {};
 
 private:
-//	QString server_caption() const;
-
-//	QString channel_caption() const;
-
-//	QString user_caption() const;
-
-private:
 	KIRC::EntityPtr m_entity;
 
 	Kopete::ChatSession *m_chatSession;
@@ -136,6 +127,8 @@ private:
 	QValueList<KAction *> m_serverActions;
 	QValueList<KAction *> m_channelActions;
 	QValueList<KAction *> m_userActions;
+
+	IRCContactPrivate *d;
 };
 
 #endif

@@ -29,48 +29,6 @@
 
 #include <qtimer.h>
 /*
-QString IRCContact::server_caption() const
-{
-	return i18n("%1 @ %2").arg(ircAccount()->mySelf()->nickName() ).arg(
-		kircEngine()->currentHost().isEmpty() ? ircAccount()->networkName() : kircEngine()->currentHost()
-	);
-}
-
-IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QString &servername, Kopete::MetaContact *m)
-	: IRCContact(contactManager, servername, m, "irc_server")
-{
-	KIRC::Engine *engine = kircEngine();
-
-	QObject::connect(engine, SIGNAL(internalError(KIRC::Engine::Error, KIRC::Message &)),
-			this, SLOT(engineInternalError(KIRC::Engine::Error, KIRC::Message &)));
-
-	//FIXME: Have some kind of a debug option for raw input/ouput display??
-//	QObject::connect(engine, SIGNAL(sentMessage(KIRC::Message &)),
-//			this, SLOT(engineSentMessage(KIRC::Message &)));
-//	QObject::connect(engine, SIGNAL(receivedMessage(KIRC::Message &)),
-//			this, SLOT(engineReceivedMessage(KIRC::Message &)));
-
-	QObject::connect(engine, SIGNAL(incomingNotice(const QString &, const QString &)),
-			this, SLOT(slotIncomingNotice(const QString &, const QString &)));
-
-	QObject::connect(engine, SIGNAL(incomingCannotSendToChannel(const QString &, const QString &)),
-			this, SLOT(slotCannotSendToChannel(const QString &, const QString &)));
-
-	QObject::connect(engine, SIGNAL(incomingUnknown(const QString &)),
-			this, SLOT(slotIncomingUnknown(const QString &)));
-
-	QObject::connect(engine, SIGNAL(incomingConnectString(const QString &)),
-			this, SLOT(slotIncomingConnect(const QString &)));
-
-	QObject::connect(engine, SIGNAL(incomingMotd(const QString &)),
-			this, SLOT(slotIncomingMotd(const QString &)));
-
-	QObject::connect(Kopete::ChatSessionManager::self(), SIGNAL(viewCreated(KopeteView*)),
-			this, SLOT(slotViewCreated(KopeteView*)) );
-
-	updateStatus();
-}
-
 void IRCServerContact::engineInternalError(KIRC::Engine::Error engineError, KIRC::Message &ircmsg)
 {
 	QString error;
@@ -124,36 +82,6 @@ void IRCServerContact::slotIncomingNotice( const QString &orig, const QString &n
 		),
 		IRCAccount::NoticeReply
 	);
-}
-
-void IRCServerContact::slotIncomingUnknown(const QString &message)
-{
-	ircAccount()->appendMessage(message, IRCAccount::UnknownReply);
-}
-
-void IRCServerContact::slotIncomingConnect(const QString &message)
-{
-	ircAccount()->appendMessage(message, IRCAccount::ConnectReply);
-}
-
-void IRCServerContact::slotIncomingMotd(const QString &message)
-{
-	ircAccount()->appendMessage(message, IRCAccount::InfoReply);
-}
-
-void IRCServerContact::slotCannotSendToChannel(const QString &channel, const QString &message)
-{
-	ircAccount()->appendMessage(QString::fromLatin1("%1: %2").arg(channel).arg(message), IRCAccount::ErrorReply);
-}
-
-void IRCServerContact::appendMessage(Kopete::Message &msg)
-{
-	msg.setImportance( Kopete::Message::Low ); //to don't distrub the user
-
-	if (m_chatSession && m_chatSession->view(false))
-		m_chatSession->appendMessage(msg);
-	else
-		mMsgBuffer.append( msg );
 }
 
 void IRCServerContact::slotDumpMessages()

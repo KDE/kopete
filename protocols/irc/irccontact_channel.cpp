@@ -36,14 +36,6 @@
 
 #include <qtimer.h>
 /*
-const QString IRCContact::channel_caption() const
-{
-	QString cap = QString::fromLatin1("%1 @ %2").arg(m_nickName).arg(kircEngine()->currentHost());
-	if(!mTopic.isEmpty())
-		cap.append( QString::fromLatin1(" - %1").arg(Kopete::Message::unescape(mTopic)) );
-
-	return cap;
-}
 
 //This is the number of nicknames we will process concurrently when joining a channel
 //Lower numbers ensure less GUI blocking, but take marginally longer to complete.
@@ -53,17 +45,6 @@ const QString IRCContact::channel_caption() const
 IRCChannelContact::IRCChannelContact(IRCAccount *account, const QString &channel, Kopete::MetaContact *metac)
 	: IRCContact(account, channel, metac, "irc_channel")
 {
-	KIRC::Engine *engine = kircEngine();
-
-	mInfoTimer = new QTimer( this );
-	QObject::connect(mInfoTimer, SIGNAL(timeout()), this, SLOT( slotUpdateInfo() ) );
-
-	QObject::connect(engine, SIGNAL(incomingUserIsAway(const QString &, const QString &)),
-		this, SLOT(slotIncomingUserIsAway(const QString &, const QString &)));
-
-	QObject::connect(engine, SIGNAL(incomingListedChan(const QString &, uint, const QString &)),
-		this, SLOT(slotChannelListed(const QString &, uint, const QString &)));
-
 	actionJoin = 0L;
 	actionModeT = new KToggleAction(i18n("Only Operators Can Change &Topic"), 0, this, SLOT(slotModeChanged()), this );
 	actionModeN = new KToggleAction(i18n("&No Outside Messages"), 0, this, SLOT(slotModeChanged()), this );
@@ -73,10 +54,6 @@ IRCChannelContact::IRCChannelContact(IRCAccount *account, const QString &channel
 	actionHomePage = 0L;
 
 	updateStatus();
-}
-
-IRCChannelContact::~IRCChannelContact()
-{
 }
 
 void IRCChannelContact::slotUpdateInfo()

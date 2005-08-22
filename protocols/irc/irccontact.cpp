@@ -37,10 +37,21 @@
 
 using namespace Kopete;
 
+class IRCContactPrivate
+{
+public:
+	KIRC::EntityPtr entity;
+
+	Kopete::ChatSession chatSession; // really necessary ?
+
+//	QList<IRContact *> members;
+};
+
 IRCContact::IRCContact(IRCAccount *account, KIRC::EntityPtr entity, MetaContact *metac, const QString& icon)
 	: Contact(account, entity->name(), metac, icon),
 	  m_entity(entity),
 	  m_chatSession(0)
+	  d (new IRCContactPrivate)
 {
 	kdDebug(14120) << k_funcinfo << entity->name() << endl;
 
@@ -74,6 +85,9 @@ IRCContact::~IRCContact()
 		metaContact()->deleteLater();
 
 	emit destroyed(this);
+
+	delete d;
+	d = 0;
 }
 
 void IRCContact::deleteContact()
@@ -146,7 +160,14 @@ void IRCContact::entityUpdated()
 
 QString IRCContact::caption() const
 {
-	return QString::null;
+	QString ret = QString::fromLatin1("%1 @ %2")
+		.arg(m_nickName)
+		.arg(ircAccount()->networkName());
+
+	if(!mTopic.isEmpty())
+		ret.append( QString::fromLatin1(" - %1").arg(Kopete::Message::unescape(mTopic)) );
+
+	return cap;
 }
 
 void IRCContact::updateStatus()
@@ -193,7 +214,7 @@ QTextCodec *IRCContact::codec()
 	return codec;
 }
 
-ChatSession *IRCContact::manager(Contact::CanCreateFlags canCreate)
+ChatSession *IRCContact::chatSessionCreate()
 {
 	IRCAccount *account = ircAccount();
 	KIRC::Engine *engine = kircEngine();
@@ -217,7 +238,7 @@ ChatSession *IRCContact::manager(Contact::CanCreateFlags canCreate)
 	return m_chatSession;
 }
 
-void IRCContact::chatSessionDestroyed()
+void IRCContact::chatSessionDestroyed(ChatSession *chatSession)
 {
 	m_chatSession = 0;
 
@@ -225,7 +246,7 @@ void IRCContact::chatSessionDestroyed()
 		deleteLater();
 }
 
-void IRCContact::slotSendMsg(Message &message, ChatSession *)
+void IRCContact::slotSendMsg(Message &message, ChatSession *chatSession)
 {
 	QString htmlString = message.escapedBody();
 
@@ -281,7 +302,7 @@ void IRCContact::slotSendMsg(Message &message, ChatSession *)
 			msg.setFg(QColor());
 
 			appendMessage(msg);
-			manager(Contact::CanCreate)->messageSucceeded();
+			chatSession->messageSucceeded();
 		}
 	}
 	else
@@ -292,7 +313,7 @@ void IRCContact::slotSendMsg(Message &message, ChatSession *)
 		message.setFg( QColor() );
 
 		appendMessage(message);
-		manager(Contact::CanCreate)->messageSucceeded();
+		chatSession->messageSucceeded();
 	}
 }
 
@@ -343,11 +364,11 @@ bool IRCContact::isChatting(ChatSession *avoid) const
 	if (!account)
 		return false;
 
-	QValueList<ChatSession*> sessions = ChatSessionManager::self()->sessions();
-	for (QValueList<ChatSession*>::Iterator it= sessions.begin(); it!=sessions.end() ; ++it)
+	foreach (ChatSession *chatSession, ChatSessionManager::self()->sessions())
 	{
-	  if( (*it) != avoid && (*it)->account() == account &&
-			   (*it)->members().contains(this) )
+		if( chatSession != avoid &&
+			chatSession->account() == account &&
+			chatSession->members().contains(this) )
 		{
 			return true;
 		}
@@ -357,15 +378,19 @@ bool IRCContact::isChatting(ChatSession *avoid) const
 
 void IRCContact::appendMessage(Message &msg)
 {
-	manager(Contact::CanCreate)->appendMessage(msg);
+//	manager(Contact::CanCreate)->appendMessage(msg);
 }
-
-KopeteView *IRCContact::view()
+/*
+void IRCServerContact::appendMessage(Kopete::Message &msg)
 {
-	if (m_chatSession)
-		return m_chatSession->view(false);
-	return 0L;
+	msg.setImportance( Kopete::Message::Low ); //to don't distrub the user
+
+	if (m_chatSession && m_chatSession->view(false))
+		m_chatSession->appendMessage(msg);
+	else
+		mMsgBuffer.append( msg );
 }
+*/
 
 void IRCContact::serialize(QMap<QString, QString> & /*serializedData*/, QMap<QString, QString> &addressBookData)
 {
