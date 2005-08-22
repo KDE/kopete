@@ -150,6 +150,9 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 	connect( d->ui->m_selectImage, SIGNAL( pressed() ), this, SLOT( slotSelectImage() ) );
 	connect( d->ui->m_RLButton, SIGNAL( pressed() ), this, SLOT( slotShowReverseList() ) );
 	connect( d->ui->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
+	QWidget::setTabOrder( d->ui->m_login, d->ui->m_password->mRemembered );
+	QWidget::setTabOrder( d->ui->m_password->mRemembered, d->ui->m_password->mPassword );
+	QWidget::setTabOrder( d->ui->m_password->mPassword, d->ui->m_autologin );
 }
 
 MSNEditAccountWidget::~MSNEditAccountWidget()
