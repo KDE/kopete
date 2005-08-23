@@ -46,6 +46,7 @@ class Webcam  : public TransferContext
 	private:
 		void makeSIPMessage(const QString &message, Q_UINT8 XX=0, Q_UINT8 YY=9 , Q_UINT8 ZZ=0);
 		void sendBigP2PMessage( const QByteArray& dataMessage );
+		void closeAllOtherSockets();
 		QString m_content;
 		
 		QString xml(uint session , uint rid);

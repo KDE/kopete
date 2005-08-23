@@ -498,9 +498,6 @@ void Webcam::slotSocketConnected()
 {
 	kdDebug(14140) << k_funcinfo <<"##########################" << endl;
 	
-	if(m_webcamSocket)
-		return;
-
 	m_webcamSocket=const_cast<KBufferedSocket*>(static_cast<const KBufferedSocket*>(sender()));
 	if(!m_webcamSocket)
 		return;
@@ -540,12 +537,6 @@ void Webcam::slotSocketConnected()
 
 void Webcam::slotAccept()
 {
-	kdDebug(14140) << k_funcinfo <<"##########################" << endl;
-	
-	if(m_webcamSocket)
-		return;
-	
-	
 	// Try to accept an incoming connection from the sending client.
 	m_webcamSocket = static_cast<KBufferedSocket*>(m_listener->accept());
 	if(!m_webcamSocket)
@@ -576,24 +567,16 @@ void Webcam::slotAccept()
 	// Create the callback that will try to handle the socket error event.
 	QObject::connect(m_webcamSocket, SIGNAL(gotError(int)), this, SLOT(slotSocketError(int)));
 	
-	//m_lisener->close();
-	delete m_listener;
-	m_listener=0l;
-	
-	QValueList<KBufferedSocket*>::iterator it;
-	for ( it = m_allSockets.begin(); it != m_allSockets.end(); ++it )
-	{
-		KBufferedSocket *sock=(*it);
-		delete sock;
-	}
-	m_allSockets.clear();
+	m_allSockets.append(m_webcamSocket);
 }
 
 void Webcam::slotSocketRead()
 {
+	m_webcamSocket=const_cast<KBufferedSocket*>(static_cast<const KBufferedSocket*>(sender()));
+
 	uint available = m_webcamSocket->bytesAvailable();
-	kdDebug(14140) << k_funcinfo  << "############# " << available << " bytes available." << endl;
-	const QString connected_str("connected\r\n\r\n");
+	kdDebug(14140) << k_funcinfo  <<  m_webcamSocket <<  "############# " << available << " bytes available." << endl;
+	static const QString connected_str("connected\r\n\r\n");
 	switch(m_webcamState)
 	{
 		case wsNegotiating:
@@ -610,6 +593,7 @@ void Webcam::slotSocketRead()
 
 			if(QString(buffer) == m_myAuth )
 			{
+				closeAllOtherSockets();
 				kdDebug(14140) << k_funcinfo << "Sending " << connected_str << endl;
 				QCString conne=connected_str.utf8();
 				m_webcamSocket->writeBlock(conne.data(), conne.length());
@@ -640,7 +624,10 @@ void Webcam::slotSocketRead()
 			{
 				kdWarning(14140) << k_funcinfo << "Auth failed" << endl;
 				m_webcamSocket->disconnect();
-				sendBYEMessage();
+				m_webcamSocket->deleteLater();
+				m_allSockets.remove(m_webcamSocket);
+				m_webcamSocket=0l;
+				//sendBYEMessage();
 			}
 			break;
 		}
@@ -662,6 +649,7 @@ void Webcam::slotSocketRead()
 			{
 				if(m_webcamState==wsConnected)
 				{
+					closeAllOtherSockets();
 					kdDebug(14140) << k_funcinfo << "Sending " << connected_str << endl;
 					QCString conne=connected_str.utf8();
 					m_webcamSocket->writeBlock(conne.data(), conne.length());
@@ -695,7 +683,9 @@ void Webcam::slotSocketRead()
 			{
 				kdWarning(14140) << k_funcinfo << "Connecting failed" << endl;
 				m_webcamSocket->disconnect();
-				sendBYEMessage();
+				m_webcamSocket->deleteLater();
+				m_allSockets.remove(m_webcamSocket);
+				m_webcamSocket=0l;
 			}
 			break;
 		}
@@ -760,6 +750,20 @@ void Webcam::slotSocketError(int errorCode)
 	//sendBYEMessage();
 }
 
+void Webcam::closeAllOtherSockets()
+{
+	//m_lisener->close();
+	delete m_listener;
+	m_listener=0l;
+	
+	QValueList<KBufferedSocket*>::iterator it;
+	for ( it = m_allSockets.begin(); it != m_allSockets.end(); ++it )
+	{
+		KBufferedSocket *sock=(*it);
+		delete sock;
+	}
+	m_allSockets.clear();
+}
 
 
 void Webcam::timerEvent( QTimerEvent *e )
@@ -783,7 +787,7 @@ void Webcam::timerEvent( QTimerEvent *e )
 	uchar *bits=img.bits();
 	QByteArray image_data(img.width()*img.height()*3);
 	uint b2=0;
-	uint imgsize=img.height()*img.height()*4;
+	uint imgsize=img.width()*img.height()*4;
 	for(uint f=0; f< imgsize; f+=4)
 	{
 		image_data[b2+0]=bits[f+2];
