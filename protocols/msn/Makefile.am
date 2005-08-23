@@ -1,7 +1,7 @@
 KDE_OPTIONS = nofinal
 METASOURCES = AUTO
 SUBDIRS = ui webcam . icons config
-AM_CPPFLAGS = -I$(srcdir)/ui \
+AM_CPPFLAGS = -Iui \
 	-I$(srcdir)/webcam \
 	$(KOPETE_INCLUDES) \
 	$(all_includes)
