@@ -9,4 +9,4 @@ endif
 SUBDIRS = latex autoreplace history contactnotes cryptography\
 	connectionstatus translator nowlistening webpresence texteffect\
 	highlight alias $(MOTIONAUTOAWAY_SUBDIR) netmeeting addbookmarks\
-	statistics $(SMPPPDCS_SUBDIR)
+	$(SMPPPDCS_SUBDIR)
