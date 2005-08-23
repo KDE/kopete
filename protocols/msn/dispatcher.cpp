@@ -187,11 +187,12 @@ void Dispatcher::sendImage(const QString& /*fileName*/, const QString& /*to*/)
 }
 
 #if MSN_WEBCAM
-void Dispatcher::startWebcam(const QString &myHandle, const QString &msgHandle)
+void Dispatcher::startWebcam(const QString &/*myHandle*/, const QString &msgHandle)
 {
 	Q_UINT32 sessionId = rand()%0xFFFFFF00 + 4;
+	Webcam::Who who=Webcam::wProducer;
 	TransferContext* current =
-			new Webcam(msgHandle, this, sessionId);
+			new Webcam(who, msgHandle, this, sessionId);
 
 	current->m_branch = P2P::Uid::createUid();
 	current->m_callId = P2P::Uid::createUid();
@@ -199,10 +200,11 @@ void Dispatcher::startWebcam(const QString &myHandle, const QString &msgHandle)
 	// Add the transfer to the list.
 	m_sessions.insert(sessionId, current);
 
-	//  {4BD96FC0-AB17-4425-A14A-439185962DC8}  <- i want to show you my webcam  (not supported yet)
+	//  {4BD96FC0-AB17-4425-A14A-439185962DC8}  <- i want to show you my webcam
 	//  {1C9AA97E-9C05-4583-A3BD-908A196F1E92}  <- i want to see your webcam
+	QString GUID= (who==Webcam::wProducer) ? "4BD96FC0-AB17-4425-A14A-439185962DC8" : "1C9AA97E-9C05-4583-A3BD-908A196F1E92"  ;
         
-	QString content="EUF-GUID: {1C9AA97E-9C05-4583-A3BD-908A196F1E92}\r\n"
+	QString content="EUF-GUID: {"+GUID+"}\r\n"
 			"SessionID: "+ QString::number(sessionId)+"\r\n"
 			"AppID: 4\r\n"
 			"Context: ewBCADgAQgBFADcAMABEAEUALQBFADIAQwBBAC0ANAA0ADAAMAAtAEEARQAwADMALQA4ADgARgBGADgANQBCADkARgA0AEUAOAB9AA==\r\n\r\n";
@@ -524,9 +526,24 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				QString GUID=regex.cap(1);
 				
 				kdDebug(14140) << k_funcinfo << "webcam " << GUID << endl;
+				
+				Webcam::Who who;
+				if(GUID=="4BD96FC0-AB17-4425-A14A-439185962DC8")
+				{  //that mean "I want to send MY webcam"
+					who=Webcam::wViewer;
+				}
+				else if(GUID=="1C9AA97E-9C05-4583-A3BD-908A196F1E92")
+				{ //that mean "I want YOU to send YOUR webcam"
+					who=Webcam::wProducer;
+				}
+				else
+				{ //unknown GUID
+					//current->error();
+					kdWarning(14140) << k_funcinfo << "Unknown GUID " << GUID << endl;
+					return;
+				}
 					
-				TransferContext *current =
-						new P2P::Webcam(from,this,sessionId.toUInt());
+				TransferContext *current = new P2P::Webcam(who, from, this, sessionId.toUInt());
 				current->m_branch = branch;
 				current->m_callId = callId;
 								
@@ -534,21 +551,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				m_sessions.insert(sessionId.toUInt(), current);
 					// Acknowledge the session request.
 				current->acknowledge(message);
-					
-				
-				if(GUID=="4BD96FC0-AB17-4425-A14A-439185962DC8")
-				{  //that mean "I want to send MY webcam"
-					QTimer::singleShot(0,current, SLOT(askIncommingInvitation()) );
-				}
-				else if(GUID=="1C9AA97E-9C05-4583-A3BD-908A196F1E92")
-				{ //that mean "I want YOU to send YOUR webcam"
-					//not supported yet
-					QTimer::singleShot(0,current, SLOT(sendBYEMessage()) );
-				}
-				else
-				{ //unknown GUID
-					current->error();
-				}
+				QTimer::singleShot(0,current, SLOT(askIncommingInvitation()) );
 #endif
 			}
 		}

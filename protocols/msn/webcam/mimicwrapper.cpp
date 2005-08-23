@@ -60,8 +60,8 @@ QPixmap MimicWrapper::decode(const QByteArray& data)
 	
 	
 	QByteArray buff2(m_bufferSize*4/3);
-	int b2=0;
-	for(unsigned int f=0;f<m_bufferSize;f+=3)
+	uint b2=0;
+	for(uint f=0;f<m_bufferSize;f+=3)
 	{
 		buff2[b2+0]=buff[f+2];
 		buff2[b2+1]=buff[f+1];
@@ -72,4 +72,34 @@ QPixmap MimicWrapper::decode(const QByteArray& data)
 
 	QImage img( (uchar*)(buff2.data())   , width , height ,  32  , 0L , 0,  QImage::BigEndian  );
 	return QPixmap(img);
+}
+
+QByteArray MimicWrapper::encode(const QByteArray& data)
+{
+	if(!m_init)
+	{
+		if(!mimic_encoder_init(m_mimctx, MIMIC_RES_HIGH))
+		{
+			kdWarning(14140) << k_funcinfo << "Impossible to init encoder" << endl;
+			return QByteArray();
+		}
+		if (!mimic_get_property( m_mimctx, "buffer_size", &m_bufferSize) )
+		{
+			kdWarning(14140) << k_funcinfo << "Impossible to get buffer size" << endl;
+			return QByteArray();
+		}
+		m_init=true;
+		m_numFrames=0;
+	}
+	
+	QByteArray buff(m_bufferSize);
+	int buff_new_size;
+	if(!mimic_encode_frame(m_mimctx, (guchar*)(data.data()) , (guchar*)(buff.data()) , (gint*)(&buff_new_size) ,  m_numFrames%15==0  ) )
+	{
+		kdWarning(14140) << k_funcinfo << "Impossible to decode frame" << endl;
+		return QByteArray();
+	}
+	buff.resize(buff_new_size);
+	++m_numFrames;
+	return buff;
 }

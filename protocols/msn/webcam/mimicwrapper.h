@@ -27,11 +27,13 @@ class KOPETE_EXPORT MimicWrapper
 		~MimicWrapper();
 		
 		QPixmap decode(const QByteArray &data);
+		QByteArray encode(const QByteArray &data);
 		
 	private:
 		MimCtx *m_mimctx;
 		bool m_init;
 		uint m_bufferSize;
+		uint m_numFrames;
 };
 
 #endif

@@ -672,13 +672,13 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		return -1;
 	}
 
-//#if MSN_WEBCAM   //this is to test webcam   //TODO: nice invitation action
+#if MSN_WEBCAM   //this is to test webcam   //TODO: nice invitation action
 	if(msg.plainBody().contains("/webcam"))
 	{
 		PeerDispatcher()->startWebcam( m_myHandle , m_msgHandle);
 		return -3;
 	}
-//#endif
+#endif
 
 	KConfig *config = KGlobal::config();
 	config->setGroup( "MSN" );
