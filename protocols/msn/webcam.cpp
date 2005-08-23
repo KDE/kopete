@@ -763,7 +763,7 @@ void Webcam::timerEvent( QTimerEvent *e )
 	}
 
 	uchar *bits=img.bits();
-	QByteArray image_data(img.height()*img.height()*3);
+	QByteArray image_data(img.width()*img.height()*3);
 	uint b2=0;
 	uint imgsize=img.height()*img.height()*4;
 	for(uint f=0; f< imgsize; f+=4)
