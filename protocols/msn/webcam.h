@@ -58,14 +58,15 @@ class Webcam  : public TransferContext
 		
 		Who m_who;
 		
-		QString m_auth;
+		QString m_myAuth;
+		QString m_peerAuth;
 		
 		MimicWrapper *m_mimic;
 		MSNWebcamDialog *m_widget;
 				
 		QValueList<KNetwork::KBufferedSocket* > m_allSockets;
 		
-		uint m_timerId;
+		int m_timerId;
 
 	private slots:
 		void slotListenError(int errorCode);

@@ -1068,7 +1068,14 @@ Dispatcher* MSNSwitchBoardSocket::PeerDispatcher()
 	{
 		// Create a new msnslp dispatcher to handle
 		// all peer to peer requests.
-		m_dispatcher = new Dispatcher(this, m_account->accountId(), m_account->notifySocket() ? m_account->notifySocket()->localIP() : QString("") );
+		QStringList ip;
+		if(m_account->notifySocket())
+		{
+			ip << m_account->notifySocket()->localIP();
+			if(m_account->notifySocket()->localIP() != m_account->notifySocket()->getLocalIP())
+				ip << m_account->notifySocket()->getLocalIP();
+		}
+		m_dispatcher = new Dispatcher(this, m_account->accountId(),ip );
 
 		QObject::connect(this, SIGNAL(blockRead(const QByteArray&)), m_dispatcher, SLOT(slotReadMessage(const QByteArray&)));
 // 		QObject::connect(m_dispatcher, SIGNAL(sendCommand(const QString&, const QString&, bool, const QByteArray&, bool)), this, SLOT(sendCommand(const QString&, const QString&, bool, const QByteArray&, bool)));

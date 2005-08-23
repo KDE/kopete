@@ -57,7 +57,7 @@ using P2P::OutgoingTransfer;
 	(VAR)[(START)+3]=(char)( ((VAL)&0xFF000000)  >> 24 ) ; \
 }
 
-Dispatcher::Dispatcher(QObject *parent, const QString& contact, const QString &ip)
+Dispatcher::Dispatcher(QObject *parent, const QString& contact, const QStringList &ip)
 	: QObject(parent) ,  m_contact(contact) , m_callbackChannel(0l) , m_ip(ip)
 {}
 

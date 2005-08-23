@@ -18,6 +18,7 @@
 #define DISPATCHER_H
 
 #include <qobject.h>
+#include <qstringlist.h>
 
 #include <kopete_export.h>
 
@@ -40,7 +41,7 @@ namespace P2P{
 	class KOPETE_EXPORT Dispatcher : public QObject
 	{	Q_OBJECT
 		public:
-			Dispatcher(QObject *parent, const QString& contact, const QString &ip);
+			Dispatcher(QObject *parent, const QString& contact, const QStringList &ip);
 			~Dispatcher();
 
 			void detach(TransferContext* transfer);
@@ -81,9 +82,9 @@ namespace P2P{
 		public:
 			CallbackChannel* callbackChannel();
 			/**
-			 * The Ip of the computer on the internet  (as seen by the server)
+			 * IP's of this compiter,  the first one is the one seen by the server.
 			 */
-			QString localIp() { return m_ip; }
+			QStringList localIp() { return m_ip; }
 			
 			
 		private:
@@ -95,7 +96,7 @@ namespace P2P{
 			QMap<Q_UINT32, P2P::Message> m_messageBuffer;
 			QString m_contact;
 			CallbackChannel *m_callbackChannel;
-			QString m_ip;
+			QStringList m_ip;
 			
 			friend class P2P::TransferContext;
 			friend class P2P::IncomingTransfer;
