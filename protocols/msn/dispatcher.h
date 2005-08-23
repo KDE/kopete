@@ -53,7 +53,7 @@ namespace P2P{
 			QMap<QString, QString> objectList;
 			
 #if MSN_WEBCAM
-			void startWebcam(const QString &myHandle, const QString &msgHandle);
+			void startWebcam(const QString &myHandle, const QString &msgHandle, bool wantToReceive);
 #endif
 
 			

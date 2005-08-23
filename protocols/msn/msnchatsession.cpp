@@ -80,6 +80,10 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 
 	m_actionNudge=new KAction( i18n( "Send Nudge" ), 0, this, SLOT(slotSendNudge() ), actionCollection(), "msnSendNudge" ) ;
 	m_actionNudge->setEnabled(false);
+	m_actionWebcamReceive=new KAction( i18n( "Invite to recieve user webcam" ), 0, this, SLOT(slotWebcamReceive() ), actionCollection(), "msnWebcamReceive" ) ;
+	m_actionWebcamSend=new KAction( i18n( "Send webcam" ), 0, this, SLOT(slotWebcamSend() ), actionCollection(), "msnWebcamSend" ) ;
+	
+	
 
 	MSNContact *c = static_cast<MSNContact*>( others.first() );
 	(new KAction( i18n( "Request Display Picture" ), "image", 0,  this, SLOT( slotRequestPicture() ), actionCollection(), "msnRequestDisplayPicture" ))->setEnabled(!c->object().isEmpty());
@@ -612,6 +616,7 @@ void MSNChatSession::slotSendNudge()
 		m_chatService->sendNudge();
 }
 
+
 void MSNChatSession::slotNudgeReceived()
 {
 	// FIXME: Better display of the nudge.
@@ -621,6 +626,26 @@ void MSNChatSession::slotNudgeReceived()
 	appendMessage( msg );
 	//Kopete::Utils::notifyBuzz( myself()->account(), nudgeBody );
 }
+
+
+void MSNChatSession::slotWebcamReceive()
+{
+	if(m_chatService && members().getFirst())
+	{
+		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().getFirst()->contactId() , true);
+	}
+}
+
+void MSNChatSession::slotWebcamSend()
+{
+	kdDebug(14140) << k_funcinfo << endl;
+	if(m_chatService && members().getFirst())
+	{
+		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().getFirst()->contactId() , false);
+	}
+}
+
+
 #include "msnchatsession.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

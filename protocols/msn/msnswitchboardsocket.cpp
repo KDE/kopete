@@ -672,7 +672,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		return -1;
 	}
 
-#if MSN_WEBCAM   //this is to test webcam   //TODO: nice invitation action
+#if 0   //this is to test webcam
 	if(msg.plainBody().contains("/webcam"))
 	{
 		PeerDispatcher()->startWebcam( m_myHandle , m_msgHandle);

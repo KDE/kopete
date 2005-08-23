@@ -88,6 +88,8 @@ private slots:
 	void slotDebugRawCommand();
 
 	void slotSendNudge();
+	void slotWebcamReceive();
+	void slotWebcamSend();
 
 	void slotNudgeReceived();
 
@@ -98,6 +100,8 @@ private:
 	KActionMenu *m_actionInvite;
 	QPtrList<KAction> m_inviteactions;
 	KAction *m_actionNudge;
+	KAction *m_actionWebcamReceive;
+	KAction *m_actionWebcamSend;
 
 	//Messages sent before the ending of the connection are queued
 	QValueList<Kopete::Message> m_messagesQueue;

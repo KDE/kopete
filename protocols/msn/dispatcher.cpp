@@ -187,10 +187,10 @@ void Dispatcher::sendImage(const QString& /*fileName*/, const QString& /*to*/)
 }
 
 #if MSN_WEBCAM
-void Dispatcher::startWebcam(const QString &/*myHandle*/, const QString &msgHandle)
+void Dispatcher::startWebcam(const QString &/*myHandle*/, const QString &msgHandle, bool wantToReceive)
 {
 	Q_UINT32 sessionId = rand()%0xFFFFFF00 + 4;
-	Webcam::Who who=Webcam::wProducer;
+	Webcam::Who who= wantToReceive ? Webcam::wViewer : Webcam::wProducer;
 	TransferContext* current =
 			new Webcam(who, msgHandle, this, sessionId);
 
