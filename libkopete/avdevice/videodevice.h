@@ -136,6 +136,7 @@ public:
 	int selectInput(int input);
 	int startCapturing();
 	int getFrame();
+	int getFrame(imagebuffer *imgbuffer);
 	int getImage(QImage *qimage);
 	int stopCapturing();
 	int close();

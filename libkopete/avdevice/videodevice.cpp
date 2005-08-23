@@ -966,6 +966,21 @@ memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_current
 }
 
 /*!
+    \fn VideoDevice::getFrame(imagebuffer *imgbuffer)
+ */
+int VideoDevice::getFrame(imagebuffer *imgbuffer)
+{
+	if(imgbuffer)
+	{
+		getFrame();
+		imgbuffer->height      = m_currentbuffer.height;
+		imgbuffer->width       = m_currentbuffer.width;
+		imgbuffer->pixelformat = m_currentbuffer.pixelformat;
+		imgbuffer->data        = m_currentbuffer.data;
+	}
+}
+
+/*!
     \fn Kopete::AV::VideoDevice::getImage(const QImage *qimage)
  */
 int VideoDevice::getImage(QImage *qimage)
