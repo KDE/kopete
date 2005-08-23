@@ -21,6 +21,8 @@
 #include <qobject.h>
 #include "messageformatter.h"
 
+#include <kopete_export.h>
+
 #define MSN_WEBCAM 1
 
 namespace Kopete { class Transfer; }
@@ -77,7 +79,7 @@ namespace P2P{
 		public: static QString createUid();
 	};
 	
-	class TransferContext : public QObject
+	class KOPETE_EXPORT TransferContext : public QObject
 	{	Q_OBJECT
 		public:
 			virtual ~TransferContext();

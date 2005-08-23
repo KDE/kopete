@@ -61,7 +61,7 @@ QPixmap MimicWrapper::decode(const QByteArray& data)
 	
 	QByteArray buff2(m_bufferSize*4/3);
 	int b2=0;
-	for(int f=0;f<m_bufferSize;f+=3)
+	for(unsigned int f=0;f<m_bufferSize;f+=3)
 	{
 		buff2[b2+0]=buff[f+2];
 		buff2[b2+1]=buff[f+1];

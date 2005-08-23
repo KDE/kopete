@@ -3,6 +3,7 @@ METASOURCES = AUTO
 SUBDIRS = ui webcam . icons config
 AM_CPPFLAGS = -Iui \
 	-I$(srcdir)/webcam \
+	-I$(srcdir)/ui \
 	$(KOPETE_INCLUDES) \
 	$(all_includes)
 

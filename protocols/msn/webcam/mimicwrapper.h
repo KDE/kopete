@@ -16,9 +16,11 @@
 
 #include <qpixmap.h>
 
+#include <kopete_export.h>
+
 typedef struct _MimCtx MimCtx;
 
-class MimicWrapper
+class KOPETE_EXPORT MimicWrapper
 {
 	public:
 		MimicWrapper();

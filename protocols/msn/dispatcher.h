@@ -18,10 +18,14 @@
 #define DISPATCHER_H
 
 #include <qobject.h>
+
+#include <kopete_export.h>
+
 #include "p2p.h"
 #include "messageformatter.h"
 #include "incomingtransfer.h"
 #include "outgoingtransfer.h"
+
 
 namespace Kopete { class Contact; }
 class MSNSwitchBoardSocket;
@@ -33,7 +37,7 @@ namespace P2P{
 	class IncomingTransfer;
 	class OutgoingTransfer;
 	
-	class Dispatcher : public QObject
+	class KOPETE_EXPORT Dispatcher : public QObject
 	{	Q_OBJECT
 		public:
 			Dispatcher(QObject *parent, const QString& contact, const QString &ip);
