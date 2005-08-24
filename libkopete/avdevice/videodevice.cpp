@@ -224,7 +224,9 @@ int VideoDevice::checkDevice()
 		}
 		else
 		{
-			kdDebug() <<  k_funcinfo << "checkDevice(): " << full_filename << " is no V4L2 device." << endl;
+// V4L-only drivers should return an EINVAL in errno to indicate they cannot handle V4L2 calls. Not every driver is compliant, so
+// it will try the V4L api even if the error code is different than expected.
+			kdDebug() <<  k_funcinfo << "checkDevice(): " << full_filename << " is not a V4L2 device." << endl;
 		}
 #endif
 
