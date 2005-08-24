@@ -21,6 +21,7 @@
 #include "kopeteonlinestatus.h"
 #include "kopeteprotocol.h"
 #include "kopeteglobal.h"
+#include "kopeteprefs.h"
 
 #include <kcompletion.h>
 #include <kdebug.h>
@@ -33,8 +34,9 @@
 ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *parent, const char *name )
 	: KopeteRichTextEditPart( parent, name, session->protocol()->capabilities() ), m_session(session)
 {
-	m_autoSpellCheckEnabled = true;
 	historyPos = -1;
+	
+	toggleAutoSpellCheck(KopetePrefs::prefs()->spellCheck());
 	
 	mComplete = new KCompletion();
 	mComplete->setIgnoreCase( true );

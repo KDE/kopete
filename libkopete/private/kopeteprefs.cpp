@@ -60,6 +60,7 @@ void KopetePrefs::load()
 	mUseQueue = config->readBoolEntry("Use Queue", true);
 	mRaiseMsgWindow = config->readBoolEntry("Raise Msg Window", false);
 	mShowEvents = config->readBoolEntry("Show Events in Chat Window", true);
+	mSpellCheck = config->readBoolEntry("SpellCheck", true);
 	mQueueUnreadMessages = config->readBoolEntry("Queue Unread Messages", false);
 	mQueueOnlyHighlightedMessagesInGroupChats = config->readBoolEntry("Queue Only Highlighted Messages In Group Chats", false);
 	mQueueOnlyMessagesOnAnotherDesktop = config->readBoolEntry("Queue Only Messages On Another Desktop", false);
@@ -183,6 +184,7 @@ void KopetePrefs::save()
 	config->writeEntry("Use Queue", mUseQueue);
 	config->writeEntry("Raise Msg Window", mRaiseMsgWindow);
 	config->writeEntry("Show Events in Chat Window", mShowEvents);
+	config->writeEntry("SpellCheck", mSpellCheck);
 	config->writeEntry("Queue Unread Messages", mQueueUnreadMessages);
 	config->writeEntry("Queue Only Highlighted Messages In Group Chats", mQueueOnlyHighlightedMessagesInGroupChats);
 	config->writeEntry("Queue Only Messages On Another Desktop", mQueueOnlyMessagesOnAnotherDesktop);
@@ -347,6 +349,11 @@ void KopetePrefs::setShowEvents(bool value)
 void KopetePrefs::setTrayflashNotify(bool value)
 {
 	mTrayflashNotify = value;
+}
+
+void KopetePrefs::setSpellCheck(bool value)
+{
+	mSpellCheck = value;
 }
 
 void KopetePrefs::setQueueUnreadMessages(bool value)

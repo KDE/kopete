@@ -19,7 +19,7 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QButtonGroup" row="3" column="0">
+        <widget class="QButtonGroup" row="4" column="0">
             <property name="name">
                 <cstring>interfaceGroup</cstring>
             </property>
@@ -65,7 +65,7 @@
                 </spacer>
             </hbox>
         </widget>
-        <spacer row="7" column="0">
+        <spacer row="8" column="0">
             <property name="name">
                 <cstring>spacer2</cstring>
             </property>
@@ -82,67 +82,60 @@
                 </size>
             </property>
         </spacer>
-        <widget class="QButtonGroup" row="4" column="0">
+        <widget class="QButtonGroup" row="5" column="0">
             <property name="name">
                 <cstring>chatWindowGroup</cstring>
             </property>
             <property name="title">
                 <string>Chat Window Grouping Policy</string>
             </property>
-            <vbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QRadioButton">
+            <grid>
+                <widget class="QComboBox" row="7" column="0">
+                    <item>
+                        <property name="text">
+                            <string>Open all messages in a new chat window</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Group messages from the same account in the same chat window</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Group all messages in the same chat window</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Group messages from contacts in the same group in the same chat window</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Group messages from the same metacontact in the same chat window</string>
+                        </property>
+                    </item>
                     <property name="name">
-                        <cstring>mNewWindow</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Open all messages in a new chat window</string>
+                        <cstring>cmbChatGroupingPolicy</cstring>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Every chat will have its own window.</string>
+                        <string>&lt;dl&gt;
+                                &lt;dt&gt;&lt;tt&gt;Open all messages in a new chat window&lt;/tt&gt;
+                                &lt;dd&gt;Every chat will have its own window.
+                                &lt;dt&gt;&lt;tt&gt;Group messages from the same account in the same chat window&lt;/tt&gt;
+                                &lt;dd&gt;All chats for one account get grouped in to one window by using tabs.
+                                &lt;dt&gt;&lt;tt&gt;Group all messages in the same chat window&lt;/tt&gt;
+                                &lt;dd&gt;All chats get grouped in to one window by using tabs.
+                                &lt;dt&gt;&lt;tt&gt;Group messages from contacts in the same group in the same chat window&lt;/tt&gt;
+                                &lt;dd&gt;All chats from one group get grouped in to one window by using tabs.
+                                &lt;dt&gt;&lt;tt&gt;Group messages from the same metacontact in the same chat window&lt;/tt&gt;
+                                &lt;dd&gt;All chats from one metacontact get grouped in to one window by using tabs.
+                                &lt;/dl&gt;
+                        </string>
                     </property>
                 </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>mTabAccountWindow</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Group messages from the same account in the same chat window</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>All chats for one account get grouped in to one window by using tabs.</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>mTabWindow</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Group all messages in the same chat window</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>All chats get grouped in to one window by using tabs.</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>mTabGroup</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Group messages from contacts in the same group in the same chat window</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>mTabMetaContact</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Group messages from the same metacontact in the same chat window</string>
-                    </property>
-                </widget>
-            </vbox>
+            </grid>
         </widget>
         <widget class="QCheckBox" row="2" column="0">
             <property name="name">
@@ -158,6 +151,25 @@
             </property>
             <property name="text">
                 <string>Highlight messages containing your &amp;nickname</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="3" column="0">
+            <property name="name">
+                <cstring>cb_SpellCheckChk</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>Enable &amp;automatic spell checking</string>
+            </property>
+            <property name="accel">
+                <string>Alt+A</string>
             </property>
         </widget>
         <widget class="QCheckBox" row="1" column="0">
@@ -176,7 +188,7 @@
                 <string>&amp;Raise window/tab on new messages</string>
             </property>
         </widget>
-        <widget class="QLayoutWidget" row="5" column="0">
+        <widget class="QLayoutWidget" row="6" column="0">
             <property name="name">
                 <cstring>layout3</cstring>
             </property>
@@ -225,7 +237,7 @@
                 </widget>
             </hbox>
         </widget>
-        <widget class="QLayoutWidget" row="6" column="0">
+        <widget class="QLayoutWidget" row="7" column="0">
             <property name="name">
                 <cstring>layout4</cstring>
             </property>
@@ -294,9 +306,11 @@
     <tabstop>cb_RaiseMsgWindowChk</tabstop>
     <tabstop>cb_ShowEventsChk</tabstop>
     <tabstop>highlightEnabled</tabstop>
-    <tabstop>mNewWindow</tabstop>
-    <tabstop>mTabAccountWindow</tabstop>
-    <tabstop>mTabWindow</tabstop>
+    <tabstop>cb_SpellCheckChk</tabstop>
+    <tabstop>viewPlugin</tabstop>
+    <tabstop>cmbChatGroupingPolicy</tabstop>
+    <tabstop>truncateContactNameEnabled</tabstop>
+    <tabstop>mMaxContactNameLength</tabstop>
     <tabstop>mChatViewBufferSize</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>

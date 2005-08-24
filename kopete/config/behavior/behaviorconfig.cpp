@@ -115,9 +115,9 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		this, SLOT(slotSettingsChanged(bool)));
 	connect( mPrfsChat->highlightEnabled, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
-	connect( mPrfsChat->chatWindowGroup, SIGNAL(clicked(int)),
-		this, SLOT(slotValueChanged(int)));
-	connect( mPrfsChat->interfaceGroup, SIGNAL(clicked(int)),
+	connect( mPrfsChat->cb_SpellCheckChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect( mPrfsChat->cmbChatGroupingPolicy, SIGNAL(activated(int)),
 		this, SLOT(slotValueChanged(int)));
 	connect( mPrfsChat->mChatViewBufferSize, SIGNAL(valueChanged(int)),
 		this, SLOT(slotValueChanged(int)));
@@ -178,12 +178,10 @@ void BehaviorConfig::save()
 	p->setRaiseMsgWindow(mPrfsChat->cb_RaiseMsgWindowChk->isChecked());
 	p->setShowEvents(mPrfsChat->cb_ShowEventsChk->isChecked());
 	p->setHighlightEnabled(mPrfsChat->highlightEnabled->isChecked());
-	p->setChatWindowPolicy(mPrfsChat->chatWindowGroup->id(
-		mPrfsChat->chatWindowGroup->selected())
-	);
-
+	p->setSpellCheck(mPrfsChat->cb_SpellCheckChk->isChecked());
 	p->setInterfacePreference( viewPlugins[mPrfsChat->viewPlugin->currentItem()]->pluginName() );
-
+	p->setChatWindowPolicy(mPrfsChat->cmbChatGroupingPolicy->currentItem());
+	
 	p->setChatViewBufferSize(mPrfsChat->mChatViewBufferSize->value());
 	p->setTruncateContactNames(mPrfsChat->truncateContactNameEnabled->isChecked());
 	p->setMaxContactNameLength(mPrfsChat->mMaxContactNameLength->value());
@@ -227,7 +225,9 @@ void BehaviorConfig::load()
 	mPrfsChat->cb_RaiseMsgWindowChk->setChecked(p->raiseMsgWindow());
 	mPrfsChat->cb_ShowEventsChk->setChecked(p->showEvents());
 	mPrfsChat->highlightEnabled->setChecked(p->highlightEnabled());
-	mPrfsChat->chatWindowGroup->setButton(p->chatWindowPolicy());
+	mPrfsChat->cb_SpellCheckChk->setChecked(p->spellCheck());
+	mPrfsChat->cmbChatGroupingPolicy->setCurrentItem(p->chatWindowPolicy());
+
 	mPrfsChat->mChatViewBufferSize->setValue(p->chatViewBufferSize());
 	mPrfsChat->truncateContactNameEnabled->setChecked(p->truncateContactNames());
 	mPrfsChat->mMaxContactNameLength->setValue(p->maxConactNameLength());

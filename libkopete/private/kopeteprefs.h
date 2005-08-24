@@ -65,6 +65,7 @@ public:
 	bool raiseMsgWindow() const{ return mRaiseMsgWindow; }
 	bool showEvents() const{ return mShowEvents; }
 	bool trayflashNotify() const { return mTrayflashNotify; }
+	bool spellCheck() const { return mSpellCheck; }
 	bool queueUnreadMessages() const { return mQueueUnreadMessages; }
 	bool queueOnlyHighlightedMessagesInGroupChats() const { return mQueueOnlyHighlightedMessagesInGroupChats; }
 	bool queueOnlyMessagesOnAnotherDesktop() const { return mQueueOnlyMessagesOnAnotherDesktop; }
@@ -142,6 +143,7 @@ public:
 	void setRaiseMsgWindow(bool);
 	void setShowEvents(bool);
 	void setTrayflashNotify(bool);
+	void setSpellCheck(bool);
 	void setQueueUnreadMessages(bool);
 	void setQueueOnlyHighlightedMessagesInGroupChats(bool);
 	void setQueueOnlyMessagesOnAnotherDesktop(bool);
@@ -234,6 +236,7 @@ private:
 	bool mRaiseMsgWindow;
 	bool mShowEvents;
 	bool mTrayflashNotify;
+	bool mSpellCheck;
 	bool mQueueUnreadMessages;
 	bool mQueueOnlyHighlightedMessagesInGroupChats;
 	bool mQueueOnlyMessagesOnAnotherDesktop;
