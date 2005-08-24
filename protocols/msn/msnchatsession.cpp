@@ -47,6 +47,8 @@
 #include "msnaccount.h"
 #include "msnswitchboardsocket.h"
 
+#include "config.h"
+
 #if !defined NDEBUG
 #include "msndebugrawcmddlg.h"
 #endif
@@ -78,10 +80,14 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 	new KAction( i18n( "Send Raw C&ommand..." ), 0, this, SLOT( slotDebugRawCommand() ), actionCollection(), "msnDebugRawCommand" ) ;
 	#endif
 
+
 	m_actionNudge=new KAction( i18n( "Send Nudge" ), 0, this, SLOT(slotSendNudge() ), actionCollection(), "msnSendNudge" ) ;
 	m_actionNudge->setEnabled(false);
+#if MSN_WEBCAM
 	m_actionWebcamReceive=new KAction( i18n( "Invite to recieve user webcam" ), 0, this, SLOT(slotWebcamReceive() ), actionCollection(), "msnWebcamReceive" ) ;
+	m_actionWebcamReceive->setEnabled(false);
 	m_actionWebcamSend=new KAction( i18n( "Send webcam" ), 0, this, SLOT(slotWebcamSend() ), actionCollection(), "msnWebcamSend" ) ;
+#endif
 	
 	
 
@@ -188,6 +194,12 @@ void MSNChatSession::slotUserJoined( const QString &handle, const QString &publi
 	{
 		m_actionNudge->setEnabled(true);
 	}
+#if MSN_WEBCAM
+	if(c->clientFlags() & MSNProtocol::SupportWebcam )
+	{
+		m_actionWebcamReceive->setEnabled(true);
+	}
+#endif
 
 	addContact(c , IRO); // don't show notificaions when we join wesalef
 	if(!m_messagesQueue.empty() || !m_invitations.isEmpty())
@@ -630,19 +642,23 @@ void MSNChatSession::slotNudgeReceived()
 
 void MSNChatSession::slotWebcamReceive()
 {
+#if MSN_WEBCAM
 	if(m_chatService && members().getFirst())
 	{
 		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().getFirst()->contactId() , true);
 	}
+#endif
 }
 
 void MSNChatSession::slotWebcamSend()
 {
+#if MSN_WEBCAM
 	kdDebug(14140) << k_funcinfo << endl;
 	if(m_chatService && members().getFirst())
 	{
 		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().getFirst()->contactId() , false);
 	}
+#endif
 }
 
 
