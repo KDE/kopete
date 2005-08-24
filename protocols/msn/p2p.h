@@ -74,7 +74,7 @@ namespace P2P{
 			bool attachApplicationIdentifier;
 	};
 
-	class Uid
+	class KOPETE_EXPORT Uid
 	{
 		public: static QString createUid();
 	};

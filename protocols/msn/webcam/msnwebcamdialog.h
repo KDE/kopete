@@ -24,12 +24,14 @@
 #include <qlabel.h>
 #include <kdialogbase.h>
 
+#include <kopete_export.h>
+
 
 class QPixmap;
 class QWidget;
 class MSNContact;
 
-class MSNWebcamDialog : public KDialogBase
+class KOPETE_EXPORT MSNWebcamDialog : public KDialogBase
 {
 Q_OBJECT
 public:
