@@ -550,7 +550,7 @@ void Webcam::slotAccept()
 		return;
 	}
 
-	kdDebug(14140) << k_funcinfo << "Direct connection established." << endl;
+	kdDebug(14140) << k_funcinfo << "################################  Direct connection established." << endl;
 
 	// Set the socket to non blocking,
 	// enable the ready read signal and disable
@@ -576,7 +576,15 @@ void Webcam::slotSocketRead()
 
 	uint available = m_webcamSocket->bytesAvailable();
 	kdDebug(14140) << k_funcinfo  <<  m_webcamSocket <<  "############# " << available << " bytes available." << endl;
-	static const QString connected_str("connected\r\n\r\n");
+		
+	QByteArray avail_buff(available);
+	m_webcamSocket->peekBlock(avail_buff.data(), avail_buff.size());
+	
+	kdDebug(14140) << k_funcinfo  <<  m_webcamSocket << avail_buff << endl;
+	
+	
+	
+	const QString connected_str("connected\r\n\r\n");
 	switch(m_webcamState)
 	{
 		case wsNegotiating:
@@ -701,7 +709,7 @@ void Webcam::slotSocketRead()
 				kdDebug(14140) << k_funcinfo << "waiting more data   ( " << available << "  of  " <<24<< " )"<<  endl;
 				break;
 			}
-			QByteArray buffer(available);
+			QByteArray buffer(24);
 			m_webcamSocket->peekBlock(buffer.data(), buffer.size());
 			
 			Q_UINT32 paysize=(uchar)buffer[8] + ((uchar)buffer[9]<<8) + ((uchar)buffer[10]<<16) + ((uchar)buffer[11]<<24);
@@ -740,13 +748,27 @@ void Webcam::slotSocketClosed()
 {
 	if(!m_dispatcher) //we are in this destructor
 		return; 
-	kdDebug(14140) << k_funcinfo << endl;
-	sendBYEMessage();
+	
+	KBufferedSocket *m_webcamSocket=const_cast<KBufferedSocket*>(static_cast<const KBufferedSocket*>(sender()));
+	
+	kdDebug(14140) << k_funcinfo <<  m_webcamSocket <<  endl;
+	
+	if(m_listener)
+	{ //if we are still waiting for other socket to connect, just remove this socket from the socket list
+		m_webcamSocket->disconnect();
+		m_webcamSocket->deleteLater();
+		m_allSockets.remove(m_webcamSocket);
+		m_webcamSocket=0l;
+	}
+	else // else, close the session
+		sendBYEMessage();
+	
 }
 
 void Webcam::slotSocketError(int errorCode)
 {
-	kdDebug(14140) << k_funcinfo <<  errorCode <<  endl;
+	KBufferedSocket *socket=const_cast<KBufferedSocket*>(static_cast<const KBufferedSocket*>(sender()));
+	kdDebug(14140) << k_funcinfo <<  socket << " -  " << errorCode << " : " << socket->errorString() << endl;
 	//sendBYEMessage();
 }
 
@@ -760,7 +782,8 @@ void Webcam::closeAllOtherSockets()
 	for ( it = m_allSockets.begin(); it != m_allSockets.end(); ++it )
 	{
 		KBufferedSocket *sock=(*it);
-		delete sock;
+		if(sock != m_webcamSocket)
+			delete sock;
 	}
 	m_allSockets.clear();
 }
