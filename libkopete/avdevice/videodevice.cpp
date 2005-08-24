@@ -224,14 +224,7 @@ int VideoDevice::checkDevice()
 		}
 		else
 		{
-			if (EINVAL == errno)
-			{
 			kdDebug() <<  k_funcinfo << "checkDevice(): " << full_filename << " is no V4L2 device." << endl;
-			}
-			else
-			{
-				return errnoReturn ("VIDIOC_QUERYCAP");
-			}
 		}
 #endif
 
