@@ -48,7 +48,7 @@ Webcam::Webcam(Who who, const QString& to, Dispatcher *parent, Q_UINT32 sessionI
 	m_direction = Incoming;
 	m_listener  = 0l;
 	m_webcamSocket=0L;
-	m_webcamState=wsNegotiating;
+//	m_webcamState=wsNegotiating;
 	
 	m_mimic=0L;
 	m_widget=0L;
@@ -502,18 +502,6 @@ void Webcam::slotSocketConnected()
 	if(!m_webcamSocket)
 		return;
 	
-	delete m_listener;
-	m_listener=0L;
-	
-	QValueList<KBufferedSocket*>::iterator it;
-	for ( it = m_allSockets.begin(); it != m_allSockets.end(); ++it )
-	{
-		KBufferedSocket *sock=(*it);
-		if(sock!=m_webcamSocket)
-			delete sock;
-	}
-	m_allSockets.clear();
-	
 	kdDebug(14140) << k_funcinfo << "Connection established on  " <<  m_webcamSocket->peerAddress().toString() << " ; " << m_webcamSocket->localAddress().toString()  << endl;
 	
 	m_webcamSocket->setBlocking(false);
@@ -527,7 +515,7 @@ void Webcam::slotSocketConnected()
 	// Create the callback that will try to handle the socket error event.
 //	QObject::connect(m_webcamSocket, SIGNAL(gotError(int)), this, SLOT(slotSocketError(int)));
 
-	m_webcamState=wsConnected;
+	m_webcamStates[m_webcamSocket]=wsConnected;
 	QCString to_send=m_peerAuth.utf8();
 	m_webcamSocket->writeBlock(to_send.data(), to_send.length());
 	kdDebug(14140) << k_funcinfo << "sending "<< m_peerAuth << endl;
@@ -568,6 +556,7 @@ void Webcam::slotAccept()
 	QObject::connect(m_webcamSocket, SIGNAL(gotError(int)), this, SLOT(slotSocketError(int)));
 	
 	m_allSockets.append(m_webcamSocket);
+	m_webcamStates[m_webcamSocket]=wsNegotiating;
 }
 
 void Webcam::slotSocketRead()
@@ -585,7 +574,7 @@ void Webcam::slotSocketRead()
 	
 	
 	const QString connected_str("connected\r\n\r\n");
-	switch(m_webcamState)
+	switch(m_webcamStates[m_webcamSocket])
 	{
 		case wsNegotiating:
 		{
@@ -605,7 +594,7 @@ void Webcam::slotSocketRead()
 				kdDebug(14140) << k_funcinfo << "Sending " << connected_str << endl;
 				QCString conne=connected_str.utf8();
 				m_webcamSocket->writeBlock(conne.data(), conne.length());
-				m_webcamState=wsConnecting;
+				m_webcamStates[m_webcamSocket]=wsConnecting;
 				
 				//SHOULD NOT BE THERE
 				if(m_who==wProducer)
@@ -655,7 +644,7 @@ void Webcam::slotSocketRead()
 	
 			if(QString(buffer) == connected_str)
 			{
-				if(m_webcamState==wsConnected)
+				if(m_webcamStates[m_webcamSocket]==wsConnected)
 				{
 					closeAllOtherSockets();
 					kdDebug(14140) << k_funcinfo << "Sending " << connected_str << endl;
@@ -684,7 +673,7 @@ void Webcam::slotSocketRead()
 				
 				
 				}
-				m_webcamState=wsTransfer;
+				m_webcamStates[m_webcamSocket]=wsTransfer;
 
 			}
 			else

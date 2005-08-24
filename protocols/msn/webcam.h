@@ -55,7 +55,7 @@ class Webcam  : public TransferContext
 		KNetwork::KServerSocket   *m_listener;
 		KNetwork::KBufferedSocket *m_webcamSocket;
 		
-		enum { wsNegotiating , wsConnecting, wsConnected, wsTransfer  } m_webcamState;
+		enum WebcamStatus { wsNegotiating , wsConnecting, wsConnected, wsTransfer  } ;
 		
 		Who m_who;
 		
@@ -66,6 +66,7 @@ class Webcam  : public TransferContext
 		MSNWebcamDialog *m_widget;
 				
 		QValueList<KNetwork::KBufferedSocket* > m_allSockets;
+		QMap<KNetwork::KBufferedSocket*, WebcamStatus> m_webcamStates;
 		
 		int m_timerId;
 
