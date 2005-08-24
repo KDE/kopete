@@ -358,6 +358,7 @@ int VideoDevicePool::scanDevices()
         videodevice_dir.setFilter( QDir::System | QDir::NoSymLinks | QDir::Readable | QDir::Writable );
         videodevice_dir.setSorting( QDir::Name );
 
+	kdDebug() <<  k_funcinfo << "Looking for devices in " << videodevice_dir_path << endl;
 	const QFileInfoList *list = videodevice_dir.entryInfoList();
 
 	if (!list)
@@ -373,6 +374,7 @@ int VideoDevicePool::scanDevices()
         	videodevice_dir.setFilter( QDir::System | QDir::NoSymLinks | QDir::Readable | QDir::Writable );
         	videodevice_dir.setSorting( QDir::Name );
 
+		kdDebug() <<  k_funcinfo << "Looking for devices in " << videodevice_dir_path << endl;
 		const QFileInfoList *list = videodevice_dir.entryInfoList();
 
 		if (!list)
