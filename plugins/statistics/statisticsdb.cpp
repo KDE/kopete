@@ -68,6 +68,15 @@ StatisticsDB::StatisticsDB()
 	// Creates the tables if they do not exist.
 	QStringList result = query("SELECT name FROM sqlite_master WHERE type='table'");
 	
+	if (!result.contains("contacts"))
+	{
+		query(QString("CREATE TABLE contacts "
+			"(id INTEGER PRIMARY KEY,"
+			"statisticid TEXT,"
+			"contactid TEXT"
+			");"));
+	}
+
 	if (!result.contains("contactstatus"))
 	{
 		kdDebug() << "[Statistics] Database empty"<< endl;
@@ -92,6 +101,7 @@ StatisticsDB::StatisticsDB()
 			");"));
 	}
 
+	/// @fixme This is not used anywhere
 	if (!result.contains("statsgroup"))
 	{
 		query(QString("CREATE TABLE statsgroup"

@@ -65,6 +65,8 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const char *name, const QSt
 		viewMetaContactStatistics, SLOT(setEnabled(bool)));
 	connect(Kopete::ContactList::self(), SIGNAL(metaContactAdded(Kopete::MetaContact*)),
 			this, SLOT(slotMetaContactAdded(Kopete::MetaContact*)));	
+	connect(Kopete::ContactList::self(), SIGNAL(metaContactRemoved(Kopete::MetaContact*)),
+			this, SLOT(slotMetaContactRemoved(Kopete::MetaContact*)));	
 
 	setXMLFile("statisticsui.rc");
 
@@ -81,18 +83,18 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const char *name, const QSt
 
 StatisticsPlugin::~StatisticsPlugin()
 {
-	map<QString, StatisticsContact*>::iterator it;
-	for (it = statisticsContactMap.begin(); it != statisticsContactMap.end(); ++it)
+	QMap<Kopete::MetaContact*, StatisticsContact*>::Iterator it;
+        for ( it = statisticsMetaContactMap.begin(); it != statisticsMetaContactMap.end(); ++it )
 	{
-		delete it->second;
-		it->second = 0;
+		delete it.data();
 	}
+	delete m_db;
 }
 
 void StatisticsPlugin::slotAboutToReceive(Kopete::Message& m)
 {
-	if (!m.from()->metaContact()->metaContactId().isEmpty() && statisticsContactMap[m.from()->metaContact()->metaContactId()])
-		statisticsContactMap[m.from()->metaContact()->metaContactId()]->newMessageReceived(m);
+	if ( statisticsMetaContactMap.contains(m.from()->metaContact()) )
+		statisticsMetaContactMap[m.from()->metaContact()]->newMessageReceived(m);
 }
 
 void StatisticsPlugin::slotViewCreated(Kopete::ChatSession* session)
@@ -108,44 +110,84 @@ void StatisticsPlugin::slotViewClosed(Kopete::ChatSession* session)
 	for (; it.current(); ++it)
 	{
 		// If this contact is not in other chat sessions
-		if (!it.current()->manager() && !it.current()->metaContact()->metaContactId().isEmpty()
-				   && statisticsContactMap[it.current()->metaContact()->metaContactId()])
-		statisticsContactMap[it.current()->metaContact()->metaContactId()]->setIsChatWindowOpen(false);
+		if (!it.current()->manager() && statisticsMetaContactMap.contains(it.current()->metaContact()))
+			statisticsMetaContactMap[it.current()->metaContact()]->setIsChatWindowOpen(false);
 	}
 }
 
 void StatisticsPlugin::slotViewStatistics()
 {
-	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
+	Kopete::MetaContact *mc=Kopete::ContactList::self()->selectedMetaContacts().first();
 	
-	kdDebug() << k_funcinfo << "statistics - dialog :"+ m->displayName() << endl;
+	kdDebug() << k_funcinfo << "statistics - dialog :"+ mc->displayName() << endl;
 	
-	if (m && !m->metaContactId().isEmpty())
+	if ( mc && statisticsMetaContactMap.contains(mc) )
 	{
-		(new StatisticsDialog(statisticsContactMap[m->metaContactId()], db()))->show();
+		(new StatisticsDialog(statisticsMetaContactMap[mc], db()))->show();
 	}
 }
 
-void StatisticsPlugin::slotOnlineStatusChanged(Kopete::MetaContact *contact, Kopete::OnlineStatus::StatusType status)
+void StatisticsPlugin::slotOnlineStatusChanged(Kopete::MetaContact *mc, Kopete::OnlineStatus::StatusType status)
 {
-	if (statisticsContactMap[contact->metaContactId()])
-			statisticsContactMap[contact->metaContactId()]->onlineStatusChanged(status);
+	if ( statisticsMetaContactMap.contains(mc) )
+		statisticsMetaContactMap[mc]->onlineStatusChanged(status);
 }
 
 void StatisticsPlugin::slotMetaContactAdded(Kopete::MetaContact *mc)
 {
-	connect(mc, SIGNAL(onlineStatusChanged( Kopete::MetaContact *, Kopete::OnlineStatus::StatusType)), this, 		
-					SLOT(slotOnlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)));
+	statisticsMetaContactMap[mc] = new StatisticsContact(mc, db());
 	
-	if (!mc->metaContactId().isEmpty())
-		statisticsContactMap[mc->metaContactId()] = new StatisticsContact(mc, db());
+	QPtrList<Kopete::Contact> clist = mc->contacts();
+	Kopete::Contact *contact;
+	
+	// we need to call slotContactAdded if MetaContact allready have contacts
+	for ( contact = clist.first(); contact; contact = clist.next() )
+	{
+		this->slotContactAdded(contact);
+	}
+	
+	connect(mc, SIGNAL(onlineStatusChanged( Kopete::MetaContact *, Kopete::OnlineStatus::StatusType)), this,
+					SLOT(slotOnlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)));
+	connect(mc, SIGNAL(contactAdded( Kopete::Contact *)), this,
+					SLOT(slotContactAdded( Kopete::Contact *)));
+	connect(mc, SIGNAL(contactRemoved( Kopete::Contact *)), this,
+					SLOT(slotContactRemoved( Kopete::Contact *)));
+}
+
+void StatisticsPlugin::slotMetaContactRemoved(Kopete::MetaContact *mc)
+{
+	if (statisticsMetaContactMap.contains(mc))
+	{
+		StatisticsContact *sc = statisticsMetaContactMap[mc];
+		statisticsMetaContactMap.remove(mc);
+		sc->removeFromDB();
+		delete sc;
+	}
+}
+
+void StatisticsPlugin::slotContactAdded( Kopete::Contact *c)
+{
+	if (statisticsMetaContactMap.contains(c->metaContact()))
+	{
+		StatisticsContact *sc = statisticsMetaContactMap[c->metaContact()];
+		sc->contactAdded(c);
+		statisticsContactMap[c->contactId()] = sc;
+	}
+}
+
+void StatisticsPlugin::slotContactRemoved( Kopete::Contact *c)
+{
+	if (statisticsMetaContactMap.contains(c->metaContact()))
+		statisticsMetaContactMap[c->metaContact()]->contactRemoved(c);
+	
+	statisticsContactMap.remove(c->contactId());
 }
 
 void StatisticsPlugin::dcopStatisticsDialog(QString id)
 {
 	kdDebug() << k_funcinfo << "statistics - DCOP dialog :" << id << endl;
 	
-	if (statisticsContactMap[id])
+	if (statisticsContactMap.contains(id))
 	{
 		(new StatisticsDialog(statisticsContactMap[id], db()))->show();
 	}	
@@ -191,7 +233,7 @@ bool StatisticsPlugin::dcopWasStatus(QString id, QDateTime dateTime, Kopete::Onl
 {
 	kdDebug() << k_funcinfo << "statistics - DCOP wasOnline :" << id << endl;
 	
-	if (dateTime.isValid() && statisticsContactMap[id])
+	if (dateTime.isValid() && statisticsContactMap.contains(id))
 	{
 		return statisticsContactMap[id]->wasStatus(dateTime, status);
 	}
@@ -211,7 +253,7 @@ QString StatisticsPlugin::dcopStatus(QString id, QString dateTime)
 {
 	QDateTime dt = QDateTime::fromString(dateTime);
 	
-	if (dt.isValid() && statisticsContactMap[id])
+	if (dt.isValid() && statisticsContactMap.contains(id))
 	{
 		return statisticsContactMap[id]->statusAt(dt);
 	}
@@ -223,7 +265,7 @@ QString StatisticsPlugin::dcopMainStatus(QString id, int timeStamp)
 {
 	QDateTime dt;
 	dt.setTime_t(timeStamp);
-	if (dt.isValid() && statisticsContactMap[id])
+	if (dt.isValid() && statisticsContactMap.contains(id))
 	{
 		return statisticsContactMap[id]->mainStatusDate(dt.date());
 	}

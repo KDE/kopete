@@ -17,9 +17,6 @@
 #ifndef STATISTICSPLUGIN_H
 #define STATISTICSPLUGIN_H
 
-#include <map>
-using namespace std;
-
 #include <qobject.h>
 #include <qmap.h>
 #include <qstring.h>
@@ -152,12 +149,27 @@ public slots:
 	/**
 	 * Slot called when a new metacontact is added to make some slots connections and to create a new
 	 * StatisticsContact object.
-     * 
+	 *
 	 * In the constructor, we connect the metacontacts already existing to some slots, but we need to do this
 	 * when new metacontacts are added.
 	 * This function is also called when we loop over the contact list in the constructor.
- 	*/
+	*/
 	void slotMetaContactAdded(Kopete::MetaContact *mc);
+	
+	/**
+	 * Slot called when a metacontact is removed to delete statistic data from db and to remove StatisticsContact object.
+	*/
+	void slotMetaContactRemoved(Kopete::MetaContact *mc);
+	
+	/**
+	 * Slot called when a contact is added to metacontact.
+	 */
+	void slotContactAdded(Kopete::Contact *c);
+	
+	/**
+	 * Slot called when a contact is removed from metacontact.
+	 */
+	void slotContactRemoved(Kopete::Contact *c);
 
 
 	/*
@@ -184,13 +196,14 @@ public slots:
 
 private:	
 	StatisticsDB *m_db;
-	/** Associate a StatisticsContact to a Kopete::MetaContact id to retrieve
-	* the StatisticsContact corresponding to the MetaContact in the slots
+	/** Associate a Kopete::Contact id to a StatisticsContact to retrieve
+	* the StatisticsContact corresponding to the Kopete::Contact
 	*/
-	map<QString, StatisticsContact*> statisticsContactMap; 
-
-
-	
+	QMap<QString, StatisticsContact*> statisticsContactMap;
+	/** Associate a Kopete::MetaContact to a StatisticsContact to retrieve
+	* the StatisticsContact corresponding to the MetaContact
+	*/
+	QMap<Kopete::MetaContact*, StatisticsContact*> statisticsMetaContactMap;
 };
 
 

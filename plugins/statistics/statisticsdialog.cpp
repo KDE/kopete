@@ -106,7 +106,7 @@ void StatisticsDialog::slotOpenURLRequest(const KURL& url, const KParts::URLArgs
 void StatisticsDialog::generatePageForMonth(const int monthOfYear)
 {
 	QStringList values = m_db->query(QString("SELECT status, datetimebegin, datetimeend "
-	"FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin;").arg(m_contact->metaContact()->metaContactId()));	
+	"FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin;").arg(m_contact->statisticsContactId()));	
 	
 	QStringList values2;
 	
@@ -128,7 +128,7 @@ void StatisticsDialog::generatePageForMonth(const int monthOfYear)
 void StatisticsDialog::generatePageForDay(const int dayOfWeek)
 {
 	QStringList values = m_db->query(QString("SELECT status, datetimebegin, datetimeend "
-	"FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin;").arg(m_contact->metaContact()->metaContactId()));	
+	"FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin;").arg(m_contact->statisticsContactId()));	
 	
 	QStringList values2;
 	
@@ -477,7 +477,7 @@ void StatisticsDialog::generatePageGeneral()
 	QStringList values;
 	values = m_db->query(QString("SELECT status, datetimebegin, datetimeend "
 				"FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin;")
-				.arg(m_contact->metaContact()->metaContactId()));
+				.arg(m_contact->statisticsContactId()));
 	generatePageFromQStringList(values, i18n("General information"));
 }
 

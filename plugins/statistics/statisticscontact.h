@@ -48,6 +48,12 @@ public:
 	 *  \return m_metaContact
 	 */
 	Kopete::MetaContact *metaContact() { return m_metaContact; }
+	
+	/** \brief Access method
+	 *  \return m_statisticsContactId
+	 */
+	QString statisticsContactId() { return m_statisticsContactId; }
+	
 	/** \brief Access method
 	 *  \return m_oldStatus
 	 */
@@ -139,9 +145,29 @@ public:
 	QValueList<QTime> mainEvents(const Kopete::OnlineStatus::StatusType& status);
 	/// \brief used by mainEvents()
 	QValueList<int> computeCentroids(const QValueList<int>& centroids, const QValueList<int>& values);
-
 	
-private:	
+	/**
+	 * \brief adds contact to "contacts" database and generates m_statisticsContactId if needed
+	 */
+	void contactAdded( Kopete::Contact *c );
+	
+	/**
+	 * \brief removes contact from "contacts" database
+	 */
+	void contactRemoved( Kopete::Contact *c );
+	
+	/**
+	 * \brief removes all records from database that are related to this class and clears m_statisticsContactId
+	 */
+	void removeFromDB();
+	
+private:
+	/**
+	 * \brief initializes this object and sets m_statisticsContactId
+	 *
+	 */
+	void initialize(Kopete::Contact *c);
+	
 	/**
 	 * \brief Checks if the value name exists in "commonstats" table, if not, add the row.
 	 *
@@ -222,6 +248,12 @@ private:
 	 */
 	QDateTime m_lastPresent;
 	bool m_lastPresentChanged;
+	
+	/**
+	 * Unique id that identifies StatisticsContact
+	 * It's also identifier for database records
+	 */
+	QString m_statisticsContactId;
 };
 
 
