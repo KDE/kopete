@@ -426,6 +426,17 @@ int VideoDevicePool::scanDevices()
 }
 
 /*!
+    \fn Kopete::AV::VideoDevicePool::hasDevices()
+ */
+bool VideoDevicePool::hasDevices()
+{
+    /// @todo implement me
+	if(m_videodevice.size())
+		return true;
+	return false;
+}
+
+/*!
     \fn Kopete::AV::VideoDevicePool::currentDevice()
  */
 unsigned int VideoDevicePool::currentDevice()
