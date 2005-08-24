@@ -33,7 +33,7 @@ template <class T> class QPtrList;
 class SkypeChatSession;
 
 /**
- * @author Kopete Developers
+ * @author Michal Vaner (VORNER) <michal.vaner@kdemail.net>
  */
 class SkypeContact : public Kopete::Contact
 {

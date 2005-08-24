@@ -25,7 +25,7 @@ class QString;
 class SkypeAccount;
 
 /**
- * @author Michal Vaner (VORNER)
+ * @author Michal Vaner (VORNER) <michal.vaner@kdemail.net>
  * Dialog that shows users details
  */
 class SkypeDetails : public SkypeDetailsBase {

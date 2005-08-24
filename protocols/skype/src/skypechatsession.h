@@ -28,7 +28,7 @@ class SkypeChatSessionPrivate;
 
 /**
  * The chat session for the Skype protocol
- * @author Kopete Developers
+ * @author Michal Vaner (VORNER) <michal.vaner@kdemail.net>
  */
 class SkypeChatSession : public Kopete::ChatSession
 {
