@@ -65,6 +65,7 @@ public:
 	int selectInput(int newinput);
 	int scanDevices();
 	bool hasDevices();
+	size_t size();
 	~VideoDevicePool();
 	QValueVector<Kopete::AV::VideoDevice> m_videodevice;
 	int fillDeviceKComboBox(KComboBox *combobox);
