@@ -23,7 +23,7 @@
 
 #include <kopete_export.h>
 
-#define MSN_WEBCAM 1
+#include <config.h>
 
 namespace Kopete { class Transfer; }
 namespace Kopete { struct FileTransferInfo; }

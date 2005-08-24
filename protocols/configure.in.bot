@@ -10,4 +10,10 @@ if test -n "$include_jabber_TRUE"; then
   all_tests=bad
 fi
 
- 
+if test "$have_glib" = no; then
+  echo ""
+  echo "You're missing glib >= 2.0 and its development files. Kopete's MSN"
+  echo "plugin will not have webcam support. If you want webcam support for"
+  echo "MSN, be sure to install glib and its development packages"
+  all_tests=bad
+fi
