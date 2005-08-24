@@ -28,7 +28,7 @@
 #include <qtimer.h>
 
 #define PROTOCOL_MAX 5
-#define PROTOCOL_MIN 3
+#define PROTOCOL_MIN 5
 #define TEST_QUIT if (!d->connection.connected()) return;
 
 ///This one indicates, weather the Skype is connected (does not mean weather it is marked as online, just if it has connection to the site)
@@ -324,7 +324,7 @@ void Skype::skypeMessage(const QString &message) {
 		if ((type == "FULLNAME") || (type == "DISPLAYNAME") || (type == "SEX") ||
 			(type == "PHONE_HOME") || (type == "PHONE_OFFICE") ||
 			(type == "PHONE_MOBILE") ||
-			(type == "ONLINESTATUS") || (type == "BUDDYSTATUS")) {
+			(type == "ONLINESTATUS") || (type == "BUDDYSTATUS") || (type == "HOMEPAGE")) {
 			const QString &info = message.section(' ', 2);//and the rest is just the message for that contact
 			emit contactInfo(contactId, info);//and let the contact know
 		} else kdDebug(14311) << "Unknown message for contact, ignored" << endl;
@@ -543,11 +543,12 @@ void Skype::getContactInfo(const QString &contact) {
 
 	d->connection << QString("GET USER %1 FULLNAME").arg(contact)//ask for full name
 	<< QString("GET USER %1 SEX").arg(contact)//ask for sex
-	<< QString("GET USER %1 DISPLAYNAME").arg(contact)//ask for the nick-name
-	<< QString("GET USER %1 PHONE_HOME").arg(contact)//ask for the nick-name
-	<< QString("GET USER %1 PHONE_OFFICE").arg(contact)//ask for the nick-name
-	<< QString("GET USER %1 PHONE_MOBILE").arg(contact)//ask for the nick-name
-	<< QString("GET USER %1 ONLINESTATUS").arg(contact)//ask for the online status
+	<< QString("GET USER %1 DISPLAYNAME").arg(contact)
+	<< QString("GET USER %1 PHONE_HOME").arg(contact)
+	<< QString("GET USER %1 PHONE_OFFICE").arg(contact)
+	<< QString("GET USER %1 PHONE_MOBILE").arg(contact)
+	<< QString("GET USER %1 ONLINESTATUS").arg(contact)
+	<< QString("GET USER %1 HOMEPAGE").arg(contact)
 	<< QString("GET USER %1 BUDDYSTATUS").arg(contact);//and the rest of info
 }
 
@@ -784,7 +785,7 @@ Skype::AuthorType Skype::getAuthor(const QString &contactId) {
 		return Block;
 	else if ((d->connection % QString("GET USER %1 ISAUTHORIZED").arg(contactId)).section(' ', 3, 3).stripWhiteSpace().upper() == "TRUE")
 		return Author;
-	else 
+	else
 		return Deny;
 }
 

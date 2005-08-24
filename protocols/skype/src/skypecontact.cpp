@@ -20,6 +20,7 @@
 #include "skypeaccount.h"
 #include "skypeprotocol.h"
 #include "skypechatsession.h"
+#include "skypedetails.h"
 
 #include <kdebug.h>
 #include <qstring.h>
@@ -70,15 +71,21 @@ class SkypeContactPrivate {
 		KAction *disAuthorAction;
 		///Block user action
 		KAction *blockAction;
+		///The private phone
+		QString privatePhone;
+		///The private mobile phone
+		QString privateMobile;
+		///The work phone
+		QString workPhone;
+		///The homepage
+		QString homepage;
+		///The contacts sex
+		QString sex;
 };
 
 SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::MetaContact *parent, bool user)
 	: Kopete::Contact(account, id, parent, QString::null) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
-
-	setNickName(id);//Just default, should be replaced later by something..
-
-	setOnlineStatus(account->protocol()->Offline);
 
 	d = new SkypeContactPrivate;//create the insides
 	d->session = 0L;//no session yet
@@ -96,6 +103,10 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 	connect(this, SIGNAL(onlineStatusChanged(Kopete::Contact*,const Kopete::OnlineStatus&,const Kopete::OnlineStatus&)), this, SLOT(statusChanged()));
 	if (account->canComunicate() && user)
 		emit infoRequest(contactId());//retrieve information
+
+	setNickName(id);//Just default, should be replaced later by something..
+
+	setOnlineStatus(account->protocol()->Offline);
 }
 
 SkypeContact::~SkypeContact() {
@@ -155,8 +166,7 @@ void SkypeContact::setInfo(const QString &change) {
 		} else if (status == "NA") {
 			d->status = osNA;
 		} else if (status == "DND") {
-			d->status = osDND;	kdDebug(14311) << k_funcinfo << endl;//some debug info
-
+			d->status = osDND;
 		} else if (status == "SKYPEOUT") {
 			d->status = osSkypeOut;
 		} else if (status == "SKYPEME") {
@@ -190,12 +200,23 @@ void SkypeContact::setInfo(const QString &change) {
 		{
 			if ( receivedProperty == "PHONE_HOME" ) {
 				setProperty( d->account->protocol()->propPrivatePhone, change.section(' ', 1).stripWhiteSpace() );
+				d->privatePhone = change.section(' ', 1).stripWhiteSpace();
 			} else if ( receivedProperty == "PHONE_OFFICE" ) {
 				setProperty( d->account->protocol()->propWorkPhone, change.section(' ', 1).stripWhiteSpace() );
+				d->workPhone = change.section(' ', 1).stripWhiteSpace();
 			} else if ( receivedProperty == "PHONE_MOBILE" ) {
-				setProperty( d->account->protocol()->propPrivateMobilePhone, change.section(' ', 1).stripWhiteSpace() );
+				setProperty(d->account->protocol()->propPrivateMobilePhone, change.section(' ', 1).stripWhiteSpace());
+				d->privateMobile = change.section(' ', 1).stripWhiteSpace();
 			} else if ( receivedProperty == "HOMEPAGE" ) {
-				setProperty( d->account->protocol()->propPrivateMobilePhone, change.section(' ', 1).stripWhiteSpace() );
+				//setProperty( d->account->protocol()->propPrivateMobilePhone, change.section(' ', 1).stripWhiteSpace() ); << This is odd, isn't it?
+				d->homepage = change.section(' ', 1).stripWhiteSpace();
+			} else if (receivedProperty == "SEX") {
+				if (change.section(' ', 1).stripWhiteSpace().upper() == "MALE") {
+					d->sex = i18n("Male");
+				} else if (change.section(' ', 1).stripWhiteSpace().upper() == "FEMALE") {
+					d->sex = i18n("Female");
+				} else
+					d->sex = "";
 			}
 		}
 	}
@@ -306,7 +327,7 @@ QPtrList<KAction> *SkypeContact::customContextMenuActions() {
 
 	if (d->account->myself() == this)
 		return 0L;
-	
+
 	QPtrList<KAction> *actions = new QPtrList<KAction>();
 
 	actions->append(d->callContactAction);
@@ -367,7 +388,9 @@ bool SkypeContact::canCall() const {
 }
 
 void SkypeContact::slotUserInfo() {
-	KMessageBox::information(0L, i18n("Sorry, but this is not implemented yet, I want to do it soon"));
+	kdDebug(14311) << k_funcinfo << endl;
+
+	(new SkypeDetails)->setNames(contactId(), nickName(), formattedName()).setPhones(d->privatePhone, d->privateMobile, d->workPhone).setHomepage(d->homepage).setAuthor(d->account->getAuthor(contactId()), d->account).setSex(d->sex).exec();
 }
 
 void SkypeContact::deleteContact() {

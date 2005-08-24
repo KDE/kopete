@@ -318,6 +318,11 @@ Q_OBJECT
 		 * @param contactId What user should be added?
 		 */
 		void registerContact(const QString &contactId);
+		/**
+		 * returns how is user authorized
+		 * @return 0 if he is authorized, 1 if not and 2 if he is blocked
+		 */
+		int getAuthor(const QString &contactId);
 	public slots:
 		/**
 		 * Disconnects from server.

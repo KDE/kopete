@@ -6,4 +6,4 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 		$(all_includes)
 
 libkopeteskypeui_la_SOURCES = empty.cpp skypeeditaccountbase.ui \
-		skypeaddcontactbase.ui skypecalldialogbase.ui
+	skypeaddcontactbase.ui skypecalldialogbase.ui skypedetailsbase.ui

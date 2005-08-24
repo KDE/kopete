@@ -786,6 +786,7 @@ QString SkypeAccount::incomingCommand() const {
 }
 
 void SkypeAccount::registerContact(const QString &contactId) {
+	kdDebug(14311) << k_funcinfo << endl;
 	d -> skype.addContact(contactId);
 }
 
@@ -811,6 +812,17 @@ void SkypeAccount::disAuthorUser(const QString &userId) {
 
 void SkypeAccount::blockUser(const QString &userId) {
 	d->skype.setAuthor(userId, Skype::Block);
+}
+
+int SkypeAccount::getAuthor(const QString &contactId) {
+	switch (d->skype.getAuthor(contactId)) {
+		case Skype::Author:
+			return 0;
+		case Skype::Deny:
+			return 1;
+		case Skype::Block:
+			return 2;
+	}
 }
 
 #include "skypeaccount.moc"

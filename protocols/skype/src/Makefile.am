@@ -10,8 +10,8 @@ AM_CPPFLAGS = $(KOPETE_INCS) \
 kde_module_LTLIBRARIES = kopete_skype.la
 
 kopete_skype_la_SOURCES = skypeprotocol.cpp skypeeditaccount.cpp \
-				skypeaccount.cpp skypecontact.cpp skypeaddcontact.cpp skypechatsession.cpp \
-				skypecalldialog.cpp skypeconference.cpp
+					skypeaccount.cpp skypecontact.cpp skypeaddcontact.cpp skypechatsession.cpp \
+					skypecalldialog.cpp skypeconference.cpp skypedetails.cpp
 kopete_skype_la_LDFLAGS     = -module $(KDE_PLUGIN) $(DBUS_LIBS) $(KOPETE_LIBS)
 kopete_skype_la_LIBADD = libskype/libskype.la \
 			ui/libkopeteskypeui.la 
@@ -22,7 +22,7 @@ servicedir = $(kde_servicesdir)
 SUBDIRS = ui icons libskype
 
 noinst_HEADERS = skypeeditaccount.h skypeaccount.h skypecontact.h \
-				skypeaddcontact.h skypechatsession.h skypecalldialog.h skypeconference.h
+					skypeaddcontact.h skypechatsession.h skypecalldialog.h skypeconference.h skypedetails.h
 mydatadir = $(kde_datadir)/kopete_skype
 mydata_DATA = skypeui.rc skypechatui.rc
 mydata_SCRIPTS = call_end call_start

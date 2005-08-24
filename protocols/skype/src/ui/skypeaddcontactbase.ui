@@ -121,18 +121,6 @@
                 </widget>
             </hbox>
         </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel1_2</cstring>
-            </property>
-            <property name="text">
-                <string>If you have older version of Skype, this may not work. In that case, add them in Skype, they will be showed in Kopete as well.&lt;br&gt;&lt;br&gt;
-Sometimes it behaves oddly when you add previously deleted contact.</string>
-            </property>
-            <property name="alignment">
-                <set>WordBreak|AlignVCenter</set>
-            </property>
-        </widget>
         <spacer>
             <property name="name">
                 <cstring>spacer4</cstring>
