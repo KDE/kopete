@@ -235,7 +235,7 @@ class BoxComponent : public Component
 {
 public:
 	enum Direction { Horizontal, Vertical };
-	BoxComponent( ComponentBase *parent, Qt::Orientation dir = Qt::Horizontal );
+	BoxComponent( ComponentBase *parent, Direction dir = Horizontal );
 	~BoxComponent();
 
 	void layout( const QRect &rect );

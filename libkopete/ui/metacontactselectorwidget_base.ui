@@ -93,8 +93,8 @@
     </vbox>
 </widget>
 <includes>
-    <include location="local" impldecl="in declaration">kopetelistviewsearchline.h</include>
-    <include location="local" impldecl="in declaration">kopetelistview.h</include>
+    <include location="global" impldecl="in declaration">kopetelistviewsearchline.h</include>
+    <include location="global" impldecl="in declaration">kopetelistview.h</include>
     <include location="global" impldecl="in declaration">qheader.h</include>
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
@@ -104,4 +104,18 @@
     <includehint>kopetelistviewsearchline.h</includehint>
     <includehint>kopetelistview.h</includehint>
 </includehints>
+<customwidgets>
+	<customwidget>
+		<class>Kopete::UI::ListView::ListView</class>
+		<header>kopetelistview.h</header>
+	</customwidget>
+	<customwidget>
+		<class>Kopete::UI::ListView::SearchLine</class>
+		<header>kopetelistviewsearchline.h</header>
+	</customwidget>
+	<customwidget>
+		<class>KActiveLabel</class>
+		<header>kactivelabel.h</header>
+	</customwidget>
+</customwidgets>
 </UI>

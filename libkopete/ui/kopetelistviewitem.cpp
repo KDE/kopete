@@ -37,8 +37,9 @@
 #include <qtimer.h>
 #include <q3header.h>
 #include <qstyle.h>
+#include <qstyleoption.h>
 //Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
 
 #ifdef HAVE_XRENDER
 #  include <X11/Xlib.h>
@@ -297,7 +298,7 @@ public:
 	static const int padding = 2;
 };
 
-BoxComponent::BoxComponent( ComponentBase *parent, Qt::Orientation dir )
+BoxComponent::BoxComponent( ComponentBase *parent, Direction dir )
  : Component( parent ), d( new Private( dir ) )
 {
 }
@@ -415,7 +416,7 @@ void BoxComponent::layout( const QRect &rect )
 	for ( uint n = 0; n < components(); ++n )
 	{
 		Component *comp = component( n );
-		
+
 		QRect rc;
 		if ( horiz )
 		{
@@ -681,7 +682,7 @@ void DisplayNameComponent::layout( const QRect &rect )
 					comp->hide();
 				}
 			}
-			else 
+			else
 			{
 				comp->show();
 				comp->layout( QRect( usedWidth+ rect.left(), rect.top(),
@@ -700,12 +701,12 @@ void DisplayNameComponent::layout( const QRect &rect )
 
 void DisplayNameComponent::setText( const QString& text )
 {
-	if ( d->text == text ) 
+	if ( d->text == text )
 		return;
 	d->text = text;
 	Q3ValueList<Kopete::Emoticons::Token> tokens;
 	Q3ValueList<Kopete::Emoticons::Token>::const_iterator token;
-	
+
 	clear(); // clear childs
 
 	tokens = Kopete::Emoticons::tokenizeEmoticons( text );
@@ -725,7 +726,7 @@ void DisplayNameComponent::setText( const QString& text )
 		case Kopete::Emoticons::Image:
 			ic = new ImageComponent( this );
 			ic->setPixmap( QPixmap( (*token).picPath ) );
-			ic->scale( std::numeric_limits<int>::max(), fontHeight, QImage::ScaleMin );
+			ic->scale( std::numeric_limits<int>::max(), fontHeight, Qt::KeepAspectRatio );
 		break;
 		default:
 			kdDebug( 14010 ) << k_funcinfo << "This should have not happened!" << endl;
@@ -910,7 +911,7 @@ public:
 		static SharedTimer timer( 10 );
 		return timer;
 	}
-	
+
 	bool animateLayout;
 	int layoutAnimateSteps;
 	static const int layoutAnimateStepsTotal = 10;
@@ -934,9 +935,9 @@ public:
 	static const int visibilityFadeSteps = 0;
 #endif
 	static const int visibilityStepsTotal = visibilityFoldSteps + visibilityFadeSteps;
-	
+
 	bool searchMatch;
-		
+
 	static bool animateChanges;
 	static bool fadeVisibility;
 	static bool foldVisibility;
@@ -1055,7 +1056,7 @@ void Item::setOpacity( float opacity )
 void Item::setSearchMatch( bool match )
 {
 	d->searchMatch = match;
-	
+
 	if ( !match )
 		setVisible( false );
 	else
@@ -1191,9 +1192,9 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 		int marg = lv->itemMargin();
 		int r = marg;
 	//	const QPixmap * icon = pixmap( column );
-
-		const BackgroundMode bgmode = lv->viewport()->backgroundMode();
-		const QColorGroup::ColorRole crole = QPalette::backgroundRoleFromMode( bgmode );
+#warning Item::paintCell needs fixing
+/*
+        const QPalette::ColorRole crole = backgroundRole();
 
 		if ( _cg.brush( crole ) != lv->colorGroup().brush( crole ) )
 			p->fillRect( 0, 0, width, height(), _cg.brush( crole ) );
@@ -1203,13 +1204,13 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 
 			//lv->paintEmptyArea( p, QRect( 0, 0, width, height() ) );
 			QStyleOption opt( lv->sortColumn(), 0 ); // ### hack; in 3.1, add a property in QListView and QHeader
-			QStyle::SFlags how = QStyle::Style_Default;
+			QStyle::SFlags how = QStyle::State_Default;
 			if ( lv->isEnabled() )
-				how |= QStyle::Style_Enabled;
+				how |= QStyle::State_Enabled;
 
-			lv->style().drawComplexControl( QStyle::CC_ListView,
+			lv->style()->drawComplexControl( QStyle::CC_Q3ListView,
 						p, lv, QRect( 0, 0, width, height() ), lv->colorGroup(),
-						how, QStyle::SC_ListView, QStyle::SC_None,
+						how, QStyle::SC_Q3ListView, QStyle::SC_None,
 						opt );
 		}
 
@@ -1232,21 +1233,22 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 				textheight++;
 			if ( textheight < height() ) {
 				int w = lv->treeStepSize() / 2;
-				lv->style().drawComplexControl( QStyle::CC_ListView, p, lv,
+				lv->style()->drawComplexControl( QStyle::CC_Q3ListView, p, lv,
 								QRect( 0, textheight, w + 1, height() - textheight + 1 ), _cg,
-								lv->isEnabled() ? QStyle::Style_Enabled : QStyle::Style_Default,
-								QStyle::SC_ListViewExpand,
+								lv->isEnabled() ? QStyle::State_Enabled : QStyle::State_Default,
+								QStyle::SC_Q3ListViewExpand,
 								(uint)QStyle::SC_All, QStyleOption( this ) );
 			}
-		}
+        }
+       */
 	}
 	// END OF PASTE
-	
-	
+
+
 	//do you see a better way to tell the TextComponent we are selected ?  - Olivier 2004-09-02
-	if ( isSelected() ) 
+	if ( isSelected() )
 		_cg.setColor(QColorGroup::Text , _cg.highlightedText() );
-	
+
 	if ( Component *comp = component( column ) )
 		comp->paint( &paint, _cg );
 	paint.end();
@@ -1256,15 +1258,15 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 	float opac = 1.0;
 	if ( d->visibilityTimer.isActive() && Private::fadeVisibility )
 	{
-		int vis = QMAX( d->visibilityLevel - Private::visibilityFoldSteps, 0 );
+		int vis = qMax( d->visibilityLevel - Private::visibilityFoldSteps, 0 );
 		opac = float(vis) / Private::visibilityFadeSteps;
 	}
 	opac *= opacity();
 	const int alpha = 257 - int(opac * 257);
 	if ( alpha != 0 )
 	{
-		XRenderColor clr = { alpha * rgb.Qt::red(), alpha * rgb.Qt::green(), alpha * rgb.Qt::blue(), alpha * 0xff };
-		XRenderFillRectangle( back.x11Display(), PictOpOver, back.x11RenderHandle(),
+		XRenderColor clr = { alpha * rgb.red(), alpha * rgb.green(), alpha * rgb.blue(), alpha * 0xff };
+		XRenderFillRectangle( back.x11Display(), PictOpOver, back.x11PictureHandle(),
 		                      &clr, 0, 0, width, height() );
 	}
 #endif

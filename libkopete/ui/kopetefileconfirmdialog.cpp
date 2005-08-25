@@ -38,7 +38,7 @@ KopeteFileConfirmDialog::KopeteFileConfirmDialog(const Kopete::FileTransferInfo 
 	KDialogBase::User1 | KDialogBase::User2, KDialogBase::User1, true, i18n( "&Refuse" ), i18n( "&Accept" ) ),
 	m_info( info )
 {
-	setWFlags( WDestructiveClose );
+    setAttribute( Qt::WA_DeleteOnClose );
 	m_emited=false;
 
 	m_view=new FileConfirmBase(this, "FileConfirmView");
@@ -47,7 +47,7 @@ KopeteFileConfirmDialog::KopeteFileConfirmDialog(const Kopete::FileTransferInfo 
 	m_view->m_size->setText( KGlobal::locale()->formatNumber( long( info.size() ) ) );
 	m_view->m_description->setText( description );
 	m_view->m_filename->setText( info.file() );
-	
+
 	KGlobal::config()->setGroup("File Transfer");
 	const QString defaultPath=KGlobal::config()->readEntry("defaultPath" , QDir::homeDirPath() );
 	m_view->m_saveto->setText(defaultPath  + QString::fromLatin1( "/" ) + info.file() );
@@ -82,7 +82,7 @@ void KopeteFileConfirmDialog::slotUser2()
 			KGlobal::config()->setGroup("File Transfer");
 			KGlobal::config()->writeEntry("defaultPath" , directory );
 		}
-		
+
 		if(QFile(m_view->m_saveto->text()).exists())
 		{
 			int ret=KMessageBox::warningContinueCancel(this,  i18n("The file '%1' already exists.\nDo you want to overwrite it ?").arg(m_view->m_saveto->text()) ,
@@ -90,7 +90,7 @@ void KopeteFileConfirmDialog::slotUser2()
 			if(ret==KMessageBox::Cancel)
 				return;
 		}
-	 
+
 		emit accepted(m_info,m_view->m_saveto->text());
 		close();
 	}

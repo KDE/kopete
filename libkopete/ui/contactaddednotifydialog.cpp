@@ -60,13 +60,12 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 	: KDialogBase( Global::mainWidget(), "ContactAddedNotify", /*modal=*/false,
 				   i18n("Somone Has Added You"), Ok|Cancel    )
 {
+    setAttribute( Qt::WA_DeleteOnClose );
 
-	setWFlags(Qt::WDestructiveClose |  getWFlags() );
-	
 	d=new Private;
 	d->widget=new ContactAddedNotifyWidget(this);
 	setMainWidget(d->widget);
-	
+
 	d->account=account;
 	d->contactId=contactId;
 	d->widget->m_label->setText(i18n("<qt><img src=\"kopete-account-icon:%1\" /> The contact <b>%2</b> has added you in his contactlist. (Account %3)</qt>")
@@ -156,7 +155,7 @@ MetaContact *ContactAddedNotifyDialog::addContact() const
 void ContactAddedNotifyDialog::slotSelectAddresseeClicked()
 {
 	KABC::Addressee a = Kopete::UI::AddressBookSelectorDialog::getAddressee( i18n("Addressbook association"), i18n("Choose the person who '%1' is.").arg(d->contactId ), d->addressbookId , this);
-	
+
 	if ( !a.isEmpty() )
 	{
 		d->widget->edtAddressee->setText( a.realName() );
