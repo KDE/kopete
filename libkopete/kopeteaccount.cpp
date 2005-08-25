@@ -59,6 +59,7 @@ public:
 	 , excludeconnect( true ), priority( 0 ), myself( 0 )
 	 , suppressStatusTimer( 0 ), suppressStatusNotification( false )
 	 , blackList( new Kopete::BlackLister( protocol->pluginId(), accountId ) )
+	 , connectionTry(0)
 	{ }
 
 
@@ -76,6 +77,7 @@ public:
 	bool suppressStatusNotification;
 	Kopete::BlackLister *blackList;
 	KConfigGroup *configGroup;
+	uint connectionTry;
 };
 
 Account::Account( Protocol *parent, const QString &accountId, const char *name )
@@ -113,8 +115,11 @@ void Account::disconnected( DisconnectReason reason )
 	if ( ( KopetePrefs::prefs()->reconnectOnDisconnect() == true && reason > Manual ) ||
 	     reason == BadPassword )
 	{
+		if(reason != BadPassword) 
+			d->connectionTry++;
 		//use a timer to allow the plugins to clean up after return
-		QTimer::singleShot(0, this, SLOT(connect()));
+		if(d->connectionTry < 3)
+			QTimer::singleShot( 0, this, SLOT(connect()));
 	}
 	if(reason== OtherClient)
 	{
@@ -405,6 +410,7 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 		// connection's speed and your computer's speed you *will* need it.
 		d->suppressStatusNotification = true;
 		d->suppressStatusTimer.start( 5000, true );
+		//the timer is also used to reset the d->connectionTry
 	}
 
 /*	kdDebug(14010) << k_funcinfo << "account " << d->id << " changed status. was "
@@ -427,6 +433,8 @@ void Account::setAllContactsStatus( const Kopete::OnlineStatus &status )
 void Account::slotStopSuppression()
 {
 	d->suppressStatusNotification = false;
+	if(isConnected())
+		d->connectionTry=0;
 }
 
 bool Account::suppressStatusNotification() const
