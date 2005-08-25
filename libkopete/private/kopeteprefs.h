@@ -32,7 +32,7 @@ class KOPETE_EXPORT KopetePrefs : public QObject
 	// here so we can use Qt to translate enums<-->strings
 	Q_PROPERTY( ContactDisplayMode contactListDisplayMode READ contactListDisplayMode WRITE setContactListDisplayMode )
 	Q_PROPERTY( IconDisplayMode contactListIconMode READ contactListIconMode WRITE setContactListIconMode )
-        Q_ENUMS( ContactDisplayMode IconDisplayMode )
+	Q_ENUMS( ContactDisplayMode IconDisplayMode )
 
 public:
 	/**

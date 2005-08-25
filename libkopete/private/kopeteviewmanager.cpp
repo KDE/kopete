@@ -214,14 +214,14 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					msgFrom = msg.from()->metaContact()->displayName();
 				else
 					msgFrom = msg.from()->contactId();
-	
+
 				QString msgText = msg.plainBody();
 				if( msgText.length() > 90 )
 					msgText = msgText.left(88) + QString::fromLatin1("...");
-	
+
 				QString event;
 				QString body =i18n( "<qt>Incoming message from %1<br>\"%2\"</qt>" );
-	
+
 				switch( msg.importance() )
 				{
 					case Kopete::Message::Low:
@@ -234,8 +234,9 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					default:
 						event = QString::fromLatin1( "kopete_contact_incoming" );
 				}
-				KNotification *notify=KNotification::event(msg.from()->metaContact() , event, body.arg( Q3StyleSheet::escape(msgFrom), Q3StyleSheet::escape(msgText) ), 0, /*msg.from()->metaContact(),*/
-							w , i18n("View") );
+				KNotification *notify=KNotification::event(msg.from()->metaContact() , event,
+                                                           body.arg( Q3StyleSheet::escape(msgFrom), Q3StyleSheet::escape(msgText) ),
+                                                           QPixmap(), w, QStringList( i18n( "View" ) ) );
 
 				connect(notify,SIGNAL(activated(unsigned int )), const_cast<Kopete::Contact*>(msg.from()) , SLOT(execute()) );
 			}
@@ -275,7 +276,7 @@ void KopeteViewManager::slotEventDeleted( Kopete::MessageEvent *event )
 		return;
 
 	d->eventList.remove( event );
-	
+
 	if ( event->state() == Kopete::MessageEvent::Applied )
 	{
 		readMessages( kmm, false, true );

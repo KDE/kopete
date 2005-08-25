@@ -28,6 +28,7 @@
 #include <qdatetime.h>
 //Added by qt3to4:
 #include <Q3ValueList>
+#include <QMap>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -68,7 +69,7 @@ class Emoticons::Private
 public:
 	QMap<QChar, Q3ValueList<Emoticon> > emoticonMap;
 	QMap<QString, QString> emoticonAndPicList;
-		
+
 	/**
 	 * The current icon theme from KopetePrefs
 	 */
@@ -106,13 +107,13 @@ Q3ValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint 
 		result.append( Token( Text, message ) );
 		return result;
 	}
-	
+
 	if( ! ( mode & (StrictParse|RelaxedParse) ) )
 	{
 		//if none of theses two mode are selected, use the mode from the config
 		mode |=  KopetePrefs::prefs()->emoticonsRequireSpaces() ? StrictParse : RelaxedParse  ;
 	}
-	
+
 	/* previous char, in the firs iteration assume that it is space since we want
 	 * to let emoticons at the beginning, the very first previous QChar must be a space. */
 	QChar p = ' ';
@@ -125,7 +126,7 @@ Q3ValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint 
 	/* First-pass, store the matched emoticon locations in foundEmoticons */
 	Q3ValueList<Emoticon> emoticonList;
 	Q3ValueList<Emoticon>::const_iterator it;
-	size_t pos;
+	int pos;
 
 	bool inHTMLTag = false;
 	bool inHTMLLink = false;
@@ -134,7 +135,7 @@ Q3ValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint 
 	for ( pos = 0; pos < message.length(); pos++ )
 	{
 		c = message[ pos ];
-		
+
 		if ( mode & SkipHTML ) // Shall we skip HTML ?
 		{
 			if ( !inHTMLTag ) // Are we already in an HTML tag ?
@@ -183,8 +184,8 @@ Q3ValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint 
 		if ( mode & StrictParse )
 			if ( !p.isSpace() )
 			{
-				p = c; 
-				continue; 
+				p = c;
+				continue;
 			} /* strict requires space before the emoticon */
 		if ( d->emoticonMap.contains( c ) )
 		{
@@ -261,7 +262,7 @@ Q3ValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint 
 	}
 
 	if ( message.length() - pos ) // if there is remaining regular text
-	{ 
+	{
 		result.append( Token( Text, message.mid( pos ) ) );
 	}
 
@@ -314,7 +315,7 @@ void Emoticons::addIfPossible( const QString& filenameNoExt, const QStringList &
 		      it != end; ++it )
 		{
 			QString matchEscaped=Q3StyleSheet::escape(*it);
-			
+
 			Emoticon e;
 			e.picPath = pic;
 			e.matchTextEscaped = matchEscaped;
@@ -408,7 +409,7 @@ QString Emoticons::parse( const QString &message, ParseMode mode )
 {
 	if ( !KopetePrefs::prefs()->useEmoticons() )
                 return message;
-	
+
 	Q3ValueList<Token> tokens = tokenize( message, mode );
 	Q3ValueList<Token>::const_iterator token;
 	QString result;
@@ -423,10 +424,10 @@ QString Emoticons::parse( const QString &message, ParseMode mode )
 		case Image:
 			// Shall we do this at emoticon initialization ? But in that case tokenize() will
 			// return this (useless) information for contact lists too
-			result += QString::fromLatin1( "<img align=\"center\" src=\"" ) + 
-				  (*token).picPath + 
+			result += QString::fromLatin1( "<img align=\"center\" src=\"" ) +
+				  (*token).picPath +
 				  QString::fromLatin1( "\" title=\"" ) +
-				  (*token).text + 
+				  (*token).text +
 				  QString::fromLatin1( "\"/>" );
 		break;
 		default:
