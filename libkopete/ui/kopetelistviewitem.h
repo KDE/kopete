@@ -85,6 +85,7 @@ private:
 class ToolTipSource
 {
 public:
+	virtual ~ToolTipSource(){}
 	/**
 	 * Get the tooltip string and rect for a component
 	 *

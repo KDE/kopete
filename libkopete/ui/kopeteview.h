@@ -39,6 +39,7 @@ namespace Kopete
 class KOPETE_EXPORT KopeteView
 {
 	public:
+		virtual ~KopeteView(){}
 		/**
 		 * constructor
 		 */
