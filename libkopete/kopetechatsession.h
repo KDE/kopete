@@ -23,8 +23,8 @@
 #define __KOPETECHATSESSION_H__
 
 #include <qobject.h>
-#include <qptrlist.h>
-#include <qvaluelist.h>
+#include <q3ptrlist.h>
+#include <q3valuelist.h>
 
 #include <kxmlguiclient.h>
 
@@ -50,8 +50,8 @@ class ChatSessionManager;
 class MessageHandlerChain;
 class TemporaryKMMCallbackAppendMessageHandler;
 
-typedef QPtrList<Contact>   ContactPtrList;
-typedef QValueList<Message> MessageList;
+typedef Q3PtrList<Contact>   ContactPtrList;
+typedef Q3ValueList<Message> MessageList;
 
 
 /**

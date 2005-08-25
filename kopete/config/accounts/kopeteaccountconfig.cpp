@@ -20,6 +20,9 @@
 
 #include <qcheckbox.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <Q3PtrList>
 
 #include <kcolorbutton.h>
 #include <kpushbutton.h>
@@ -67,7 +70,7 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const char * /* name 
 	connect( m_view->mButtonUp,     SIGNAL( clicked() ), this, SLOT( slotAccountUp() ) );
 	connect( m_view->mButtonDown,   SIGNAL( clicked() ), this, SLOT( slotAccountDown() ) );
 	connect( m_view->mAccountList,  SIGNAL( selectionChanged() ), this, SLOT( slotItemSelected() ) );
-	connect( m_view->mAccountList,  SIGNAL( doubleClicked( QListViewItem * ) ), this, SLOT( slotEditAccount() ) );
+	connect( m_view->mAccountList,  SIGNAL( doubleClicked( Q3ListViewItem * ) ), this, SLOT( slotEditAccount() ) );
 	connect( m_view->mUseColor,     SIGNAL( toggled( bool ) ), this, SLOT( slotColorChanged() ) );
 	connect( m_view->mColorButton,  SIGNAL( changed( const QColor & ) ), this, SLOT( slotColorChanged() ) );
 
@@ -104,7 +107,7 @@ void KopeteAccountConfig::load()
 
 	m_view->mAccountList->clear();
 
-	QPtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
+	Q3PtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
 	for ( Kopete::Account *i = accounts.first() ; i; i = accounts.next() )
 	{
 		// Insert the item after the previous one

@@ -20,7 +20,7 @@
 #define RATECLASSMANAGER_H
 
 #include <qobject.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <qmap.h>
 #include "oscartypes.h"
 
@@ -51,7 +51,7 @@ public:
 	void queue( Transfer* t );
 
 	/** Get the list of rate classes */
-	QValueList<RateClass*> classList() const;
+	Q3ValueList<RateClass*> classList() const;
 	
 	/** Recalculate the rate levels for all the classes */
 	void recalcRateLevels();

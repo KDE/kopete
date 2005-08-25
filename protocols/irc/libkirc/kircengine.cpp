@@ -265,7 +265,7 @@ void Engine::setRealName(const QString &newName)
 	m_realName.remove(m_RemoveLinefeeds);
 }
 
-bool Engine::_bind(QDict<KIRC::MessageRedirector> &dict,
+bool Engine::_bind(Q3Dict<KIRC::MessageRedirector> &dict,
 		QString command, QObject *object, const char *member,
 		int minArgs, int maxArgs, const QString &helpMessage)
 {
@@ -427,7 +427,7 @@ void Engine::showInfoDialog()
  * (Only missing the \n\r final characters)
  * So applying the same parsing rules to the messages.
  */
-bool Engine::invokeCtcpCommandOfMessage(const QDict<MessageRedirector> &map, Message &msg)
+bool Engine::invokeCtcpCommandOfMessage(const Q3Dict<MessageRedirector> &map, Message &msg)
 {
 	if(msg.hasCtcpMessage() && msg.ctcpMessage().isValid())
 	{

@@ -20,16 +20,19 @@
 ////////////////////////////////////////////////////////   code  for choosing a public key from a list for encryption
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qptrlist.h>
-#include <qwhatsthis.h>
+#include <q3ptrlist.h>
+#include <q3whatsthis.h>
 #include <qpainter.h>
-#include <qiconset.h>
-#include <qbuttongroup.h>
+#include <qicon.h>
+#include <q3buttongroup.h>
 #include <qcheckbox.h>
 #include <qhbuttongroup.h>
 #include <qtoolbutton.h>
 #include <qapplication.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 #include <kdeversion.h>
 #include <klistview.h>
@@ -57,13 +60,13 @@
 class UpdateViewItem2 : public KListViewItem
 {
 public:
-        UpdateViewItem2(QListView *parent, QString name,QString mail,QString id,bool isDefault);
+        UpdateViewItem2(Q3ListView *parent, QString name,QString mail,QString id,bool isDefault);
         virtual void paintCell(QPainter *p, const QColorGroup &cg,int col, int width, int align);
 	virtual QString key(int c,bool ) const;
 	bool def;
 };
 
-UpdateViewItem2::UpdateViewItem2(QListView *parent, QString name,QString mail,QString id,bool isDefault)
+UpdateViewItem2::UpdateViewItem2(Q3ListView *parent, QString name,QString mail,QString id,bool isDefault)
                 : KListViewItem(parent)
 {
 def=isDefault;
@@ -111,7 +114,7 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
         if (filemode) setCaption(i18n("Select Public Key for %1").arg(sfile));
         fmode=filemode;	
 	
-	QHButtonGroup *hBar=new QHButtonGroup(page);
+	Q3HButtonGroup *hBar=new Q3HButtonGroup(page);
 	//hBar->setFrameStyle(QFrame::NoFrame);
 	hBar->setMargin(0);
 	
@@ -136,12 +139,12 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
         keysList->setFullWidth(true);
 	keysList->setAllColumnsShowFocus(true);
         keysList->setSelectionModeExt(KListView::Extended);
-	keysList->setColumnWidthMode(0,QListView::Manual);
-	keysList->setColumnWidthMode(1,QListView::Manual);
+	keysList->setColumnWidthMode(0,Q3ListView::Manual);
+	keysList->setColumnWidthMode(1,Q3ListView::Manual);
 	keysList->setColumnWidth(0,210);
 	keysList->setColumnWidth(1,210);
 
-        boutonboxoptions=new QButtonGroup(5,Qt::Vertical ,page,0);
+        boutonboxoptions=new Q3ButtonGroup(5,Qt::Vertical ,page,0);
 	
 	KActionCollection *actcol=new KActionCollection(this);
 	(void) new KAction(i18n("&Go to Default Key"),goDefaultKey, this, SLOT(slotGotoDefaultKey()),actcol,"go_default_key");
@@ -151,15 +154,15 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
         CBuntrusted=new QCheckBox(i18n("Allow encryption with untrusted keys"),boutonboxoptions);
         CBhideid=new QCheckBox(i18n("Hide user id"),boutonboxoptions);
         setDetailsWidget(boutonboxoptions);
-        QWhatsThis::add
+        Q3WhatsThis::add
                 (keysList,i18n("<b>Public keys list</b>: select the key that will be used for encryption."));
-        QWhatsThis::add
+        Q3WhatsThis::add
                 (CBarmor,i18n("<b>ASCII encryption</b>: makes it possible to open the encrypted file/message in a text editor"));
-        QWhatsThis::add
+        Q3WhatsThis::add
                 (CBhideid,i18n("<b>Hide user ID</b>: Do not put the keyid into encrypted packets. This option hides the receiver "
                                 "of the message and is a countermeasure against traffic analysis. It may slow down the decryption process because "
                                 "all available secret keys are tried."));
-        QWhatsThis::add
+        Q3WhatsThis::add
                 (CBuntrusted,i18n("<b>Allow encryption with untrusted keys</b>: when you import a public key, it is usually "
                                   "marked as untrusted and you cannot use it unless you sign it in order to make it 'trusted'. Checking this "
                                   "box enables you to use any key, even if it has not be signed."));
@@ -170,7 +173,7 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
 		//shredBox->setFrameStyle(QFrame::NoFrame);
 		//shredBox->setMargin(0);
 	       CBshred=new QCheckBox(i18n("Shred source file"),parentBox);
-                QWhatsThis::add
+                Q3WhatsThis::add
                         (CBshred,i18n("<b>Shred source file</b>: permanently remove source file. No recovery will be possible"));
 			
 		QString shredWhatsThis = i18n( "<qt><b>Shred source file:</b><br /><p>Checking this option will shred (overwrite several times before erasing) the files you have encrypted. This way, it is almost impossible that the source file is recovered.</p><p><b>But you must be aware that this is not secure</b> on all file systems, and that parts of the file may have been saved in a temporary file or in the spooler of your printer if you previously opened it in an editor or tried to print it. Only works on files (not on folders).</p></qt>");
@@ -180,7 +183,7 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
         }
 
 	        CBsymmetric=new QCheckBox(i18n("Symmetrical encryption"),boutonboxoptions);
-                QWhatsThis::add
+                Q3WhatsThis::add
                         (CBsymmetric,i18n("<b>Symmetrical encryption</b>: encryption does not use keys. You just need to give a password "
                                           "to encrypt/decrypt the file"));
                 QObject::connect(CBsymmetric,SIGNAL(toggled(bool)),this,SLOT(isSymetric(bool)));
@@ -215,7 +218,7 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
                         (optiontxt,i18n("<b>Custom option</b>: for experienced users only, allows you to enter a gpg command line option, like: '--armor'"));
                 QObject::connect(optiontxt,SIGNAL(textChanged ( const QString & )),this,SLOT(customOpts(const QString & )));
         }*/
-        QObject::connect(keysList,SIGNAL(doubleClicked(QListViewItem *,const QPoint &,int)),this,SLOT(slotOk()));
+        QObject::connect(keysList,SIGNAL(doubleClicked(Q3ListViewItem *,const QPoint &,int)),this,SLOT(slotOk()));
 //	QObject::connect(this,SIGNAL(okClicked()),this,SLOT(crypte()));
         QObject::connect(CBuntrusted,SIGNAL(toggled(bool)),this,SLOT(refresh(bool)));
 
@@ -251,7 +254,7 @@ accept();
 
 void popupPublic::enable()
 {
-        QListViewItem *current = keysList->firstChild();
+        Q3ListViewItem *current = keysList->firstChild();
         if (current==NULL)
                 return;
         current->setVisible(true);
@@ -265,7 +268,7 @@ void popupPublic::enable()
 void popupPublic::sort()
 {
         bool reselect=false;
-        QListViewItem *current = keysList->firstChild();
+        Q3ListViewItem *current = keysList->firstChild();
         if (current==NULL)
                 return;
 
@@ -289,7 +292,7 @@ void popupPublic::sort()
         }
 
         if (reselect) {
-                QListViewItem *firstvisible;
+                Q3ListViewItem *firstvisible;
                 firstvisible=keysList->firstChild();
                 while (firstvisible->isVisible()!=true) {
                         firstvisible=firstvisible->nextSibling();
@@ -357,7 +360,7 @@ void popupPublic::refreshkeys()
 
 void popupPublic::slotpreselect()
 {
-QListViewItem *it;
+Q3ListViewItem *it;
         //if (fmode) it=keysList->findItem(KGpgSettings::defaultKey(),2);
         //else {
                 it=keysList->firstChild();
@@ -482,7 +485,7 @@ void popupPublic::slotOk()
 kdDebug(2100)<<"Ok pressed"<<endl;
         QStringList selectedKeys;
 	QString userid;
-        QPtrList<QListViewItem> list=keysList->selectedItems();
+        Q3PtrList<Q3ListViewItem> list=keysList->selectedItems();
 
         for ( uint i = 0; i < list.count(); ++i )
                 if ( list.at(i) ) {

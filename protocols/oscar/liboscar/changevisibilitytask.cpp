@@ -18,7 +18,7 @@
 
 #include "changevisibilitytask.h"
 
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <kdebug.h>
 #include "buffer.h"
 #include "client.h"
@@ -89,9 +89,9 @@ void ChangeVisibilityTask::onGo()
 	//change in visibility.
 	manager->removeItem( item );
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found visibility item. changing setting" << endl;
-	newSSI = Oscar::SSI( item.name(), item.gid(), item.bid(), item.type(), QValueList<TLV>(), 0 );
-	QValueList<TLV> newList;
-	QValueList<TLV>::const_iterator it = item.tlvList().begin(), listEnd = item.tlvList().end();
+	newSSI = Oscar::SSI( item.name(), item.gid(), item.bid(), item.type(), Q3ValueList<TLV>(), 0 );
+	Q3ValueList<TLV> newList;
+	Q3ValueList<TLV>::const_iterator it = item.tlvList().begin(), listEnd = item.tlvList().end();
 	for ( ; it != listEnd; ++it )
 	{
 		if ( ( *it ).type != 0x00CA )
@@ -123,8 +123,8 @@ void ChangeVisibilityTask::onGo()
 	b->addWord( newSSI.type() );
 	b->addWord( newSSI.tlvListLength() );
 	
-	QValueList<TLV>::const_iterator it2 =  newSSI.tlvList().begin();
-	QValueList<TLV>::const_iterator listEnd2 = newSSI.tlvList().end();
+	Q3ValueList<TLV>::const_iterator it2 =  newSSI.tlvList().begin();
+	Q3ValueList<TLV>::const_iterator listEnd2 = newSSI.tlvList().end();
 	for( ; it2 != listEnd2; ++it2 )
 		b->addTLV( ( *it2 ) );
 	

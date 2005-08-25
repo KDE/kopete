@@ -26,9 +26,11 @@
     but future layers might not.
 */
 
-#include<qguardedptr.h>
-#include<qvaluelist.h>
+#include<qpointer.h>
+#include<q3valuelist.h>
 #include<qtimer.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include"securestream.h"
 
@@ -66,7 +68,7 @@ void LayerTracker::specifyEncoded(int encoded, int plain)
 int LayerTracker::finished(int encoded)
 {
 	int plain = 0;
-	for(QValueList<Item>::Iterator it = list.begin(); it != list.end();) {
+	for(Q3ValueList<Item>::Iterator it = list.begin(); it != list.end();) {
 		Item &i = *it;
 
 		// not enough?
@@ -259,7 +261,7 @@ class SecureStream::Private
 {
 public:
 	ByteStream *bs;
-	QPtrList<SecureLayer> layers;
+	Q3PtrList<SecureLayer> layers;
 	int pending;
 	int errorCode;
 	bool active;
@@ -267,7 +269,7 @@ public:
 
 	bool haveTLS() const
 	{
-		QPtrListIterator<SecureLayer> it(layers);
+		Q3PtrListIterator<SecureLayer> it(layers);
 		for(SecureLayer *s; (s = it.current()); ++it) {
 			if(s->type == SecureLayer::TLS
 #ifdef USE_TLSHANDLER
@@ -282,7 +284,7 @@ public:
 
 	bool haveSASL() const
 	{
-		QPtrListIterator<SecureLayer> it(layers);
+		Q3PtrListIterator<SecureLayer> it(layers);
 		for(SecureLayer *s; (s = it.current()); ++it) {
 			if(s->type == SecureLayer::SASL)
 				return true;
@@ -323,7 +325,7 @@ void SecureStream::linkLayer(QObject *s)
 int SecureStream::calcPrebytes() const
 {
 	int x = 0;
-	QPtrListIterator<SecureLayer> it(d->layers);
+	Q3PtrListIterator<SecureLayer> it(d->layers);
 	for(SecureLayer *s; (s = it.current()); ++it)
 		x += s->prebytes;
 	return (d->pending - x);
@@ -442,7 +444,7 @@ void SecureStream::bs_readyRead()
 
 void SecureStream::bs_bytesWritten(int bytes)
 {
-	QPtrListIterator<SecureLayer> it(d->layers);
+	Q3PtrListIterator<SecureLayer> it(d->layers);
 	for(SecureLayer *s; (s = it.current()); ++it)
 		bytes = s->finished(bytes);
 
@@ -468,7 +470,7 @@ void SecureStream::layer_tlsClosed(const QByteArray &)
 void SecureStream::layer_readyRead(const QByteArray &a)
 {
 	SecureLayer *s = (SecureLayer *)sender();
-	QPtrListIterator<SecureLayer> it(d->layers);
+	Q3PtrListIterator<SecureLayer> it(d->layers);
 	while(it.current() != s)
 		++it;
 
@@ -484,7 +486,7 @@ void SecureStream::layer_readyRead(const QByteArray &a)
 void SecureStream::layer_needWrite(const QByteArray &a)
 {
 	SecureLayer *s = (SecureLayer *)sender();
-	QPtrListIterator<SecureLayer> it(d->layers);
+	Q3PtrListIterator<SecureLayer> it(d->layers);
 	while(it.current() != s)
 		++it;
 

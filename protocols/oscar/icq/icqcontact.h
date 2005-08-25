@@ -21,6 +21,8 @@
 
 #include "oscarcontact.h"
 #include "userdetails.h"
+//Added by qt3to4:
+#include <Q3PtrList>
 
 class KAction;
 class KToggleAction;
@@ -58,7 +60,7 @@ public:
 	 * Returns a set of custom menu items for
 	 * the context menu
 	 */
-	virtual QPtrList<KAction> *customContextMenuActions();
+	virtual Q3PtrList<KAction> *customContextMenuActions();
 	
 	/** Return whether or not this contact is reachable. */
 	virtual bool isReachable();

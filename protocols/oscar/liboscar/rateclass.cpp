@@ -17,6 +17,8 @@
 
 #include "rateclass.h"
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include <kdebug.h>
 #include "transfer.h"
 
@@ -70,8 +72,8 @@ void RateClass::addMember( WORD family, WORD subtype )
 
 bool RateClass::isMember(const SNAC &s) const
 {
-	QValueList<SnacPair>::const_iterator it;
-	QValueList<SnacPair>::const_iterator spEnd = m_members.constEnd();
+	Q3ValueList<SnacPair>::const_iterator it;
+	Q3ValueList<SnacPair>::const_iterator spEnd = m_members.constEnd();
 	for ( it = m_members.constBegin(); it != spEnd; ++it )
 	{
 		if ( ( *it ).family == s.family && ( *it ).subtype == s.subtype )
@@ -83,8 +85,8 @@ bool RateClass::isMember(const SNAC &s) const
 bool RateClass::isMember( WORD family, WORD subtype ) const
 {
 
-	QValueList<SnacPair>::const_iterator it;
-	QValueList<SnacPair>::const_iterator spEnd = m_members.constEnd();
+	Q3ValueList<SnacPair>::const_iterator it;
+	Q3ValueList<SnacPair>::const_iterator spEnd = m_members.constEnd();
 	for ( it = m_members.constBegin(); it != spEnd; ++it )
 	{
 		if ( ( *it ).family == family && ( *it ).subtype == subtype )
@@ -214,7 +216,7 @@ void RateClass::updateRateInfo()
 
 void RateClass::dumpQueue()
 {
-	QValueList<Transfer*>::iterator it = m_packetQueue.begin();
+	Q3ValueList<Transfer*>::iterator it = m_packetQueue.begin();
 	while ( it != m_packetQueue.end() && m_packetQueue.count() > 0 )
 	{
 		Transfer* t = ( *it );

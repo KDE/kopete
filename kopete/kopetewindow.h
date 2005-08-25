@@ -20,11 +20,15 @@
 #ifndef KOPETEWINDOW_H
 #define KOPETEWINDOW_H
 
-#include <qptrdict.h>
+#include <q3ptrdict.h>
+//Added by qt3to4:
+#include <QShowEvent>
+#include <QEvent>
+#include <QCloseEvent>
 
 #include <kmainwindow.h>
 
-class QHBox;
+class Q3HBox;
 class QTimer;
 
 class KAction;
@@ -208,7 +212,7 @@ private:
 	bool hidden;
 	int deskRight;
 	QPoint position;
-	QHBox *m_statusBarWidget;
+	Q3HBox *m_statusBarWidget;
 	KopeteSystemTray *m_tray;
 	bool m_autoHide;
 	unsigned int m_autoHideTimeout;
@@ -222,7 +226,7 @@ private:
 	 * that work. And since I don't want to include that whole file here,
 	 * use QObject instead.
 	 */
-	QPtrDict<QObject> m_accountStatusBarIcons;
+	Q3PtrDict<QObject> m_accountStatusBarIcons;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

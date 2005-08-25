@@ -21,8 +21,8 @@
 #ifndef CS_SRVRESOLVER_H
 #define CS_SRVRESOLVER_H
 
-#include<qvaluelist.h>
-#include<qdns.h>
+#include<q3valuelist.h>
+#include<q3dns.h>
 
 // CS_NAMESPACE_BEGIN
 
@@ -39,7 +39,7 @@ public:
 	void stop();
 	bool isBusy() const;
 
-	QValueList<QDns::Server> servers() const;
+	Q3ValueList<Q3Dns::Server> servers() const;
 
 	bool failed() const;
 	QHostAddress resultAddress() const;

@@ -31,6 +31,8 @@
 
 #include <kconfig.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 #include <kapplication.h>
 
 #include <klocale.h>
@@ -67,7 +69,7 @@ struct KopeteAwayPrivate
 	bool goAvailable;
 	int awayTimeout;
 	bool useAutoAway;
-	QPtrList<Kopete::Account> autoAwayAccounts;
+	Q3PtrList<Kopete::Account> autoAwayAccounts;
 
 	int mouse_x;
 	int mouse_y;
@@ -389,7 +391,7 @@ void Kopete::Away::setAutoAway()
 	// Set all accounts that are not away already to away.
 	// We remember them so later we only set the accounts to
 	// available that we set to away (and not the user).
-	QPtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
+	Q3PtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
 	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next()  )
 	{
 		if(i->myself()->onlineStatus().status() == Kopete::OnlineStatus::Online)

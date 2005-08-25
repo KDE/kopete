@@ -20,10 +20,12 @@
 
 #include "oscarclientstream.h"
 
-#include <qguardedptr.h> 
+#include <qpointer.h> 
 #include <qobject.h>
-#include <qptrqueue.h>
+#include <q3ptrqueue.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include <kdebug.h>
 
@@ -98,7 +100,7 @@ public:
 	int errCond;
 	QString errText;
 
-	QPtrQueue<Transfer> in;
+	Q3PtrQueue<Transfer> in;
 
 	QTimer noopTimer; // used to send icq keepalive
 	int noop_time;
@@ -341,7 +343,7 @@ void ClientStream::cr_connected()
 
 	QByteArray spare = d->bs->read();
 
-	QGuardedPtr<QObject> self = this;
+	QPointer<QObject> self = this;
 	emit connected();
 	if(!self)
 		return;
@@ -377,7 +379,7 @@ void ClientStream::bs_readyRead()
 	a = d->bs->read();
 
 #if LIBOSCAR_DEBUG
-	QCString cs(a.data(), a.size()+1);
+	Q3CString cs(a.data(), a.size()+1);
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "recv: " << a.size() << "bytes" << endl;
 	cs_dump( a );
 #endif

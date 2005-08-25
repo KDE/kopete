@@ -171,11 +171,11 @@ void ConferenceTask::slotReceiveUserDetails( const GroupWise::ContactDetails & d
 	client()->debug( "ConferenceTask::slotReceiveUserDetails()" );
 	
 	// dequeue any events which are deliverable now we have these details 
-	QValueListIterator< ConferenceEvent > end = m_pendingEvents.end();
-	QValueListIterator< ConferenceEvent > it = m_pendingEvents.begin();
+	Q3ValueListIterator< ConferenceEvent > end = m_pendingEvents.end();
+	Q3ValueListIterator< ConferenceEvent > it = m_pendingEvents.begin();
 	while ( it != end )
 	{
-		QValueListIterator< ConferenceEvent > current = it;
+		Q3ValueListIterator< ConferenceEvent > current = it;
 		++it;
 		// if the details relate to event, try again to handle it
 		if ( details.dn == (*current).user )

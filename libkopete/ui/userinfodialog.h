@@ -80,7 +80,7 @@ namespace Kopete {
 		 */
 		void setStyleSheet( const QString& css );
 
-		QHBox* addLabelEdit( const QString& label, const QString& text, KLineEdit*& edit );
+		Q3HBox* addLabelEdit( const QString& label, const QString& text, KLineEdit*& edit );
 
 	private:
 		struct UserInfoDialogPrivate;

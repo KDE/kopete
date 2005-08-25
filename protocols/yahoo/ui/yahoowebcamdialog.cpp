@@ -16,9 +16,11 @@
 
 #include "yahoowebcamdialog.h"
 
-#include <qframe.h>
+#include <q3frame.h>
 #include <qobject.h>
 #include <qwidget.h>
+//Added by qt3to4:
+#include <QPixmap>
 #include <kdebug.h>
 #include <klocale.h>
 #include "yahoocontact.h"
@@ -41,7 +43,7 @@ YahooWebcamDialog::YahooWebcamDialog( YahooContact* contact, QWidget * parent, c
 	/*
 	QObject::connect( contact, SIGNAL( webcamClosed( int ) ), this, SLOT( webcamClosed( int ) ) );
 	*/
-	QFrame* page = plainPage();
+	Q3Frame* page = plainPage();
 	if ( page )
 	{
 		kdDebug(14180) << k_funcinfo << "Adding webcam image container" << endl;

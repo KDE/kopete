@@ -30,6 +30,8 @@
 
 
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3CString>
 #include <kprocess.h>
 
 NetMeetingInvitation::NetMeetingInvitation(bool incoming, MSNContact *c, QObject *parent)
@@ -73,7 +75,7 @@ void NetMeetingInvitation::parseInvitation(const QString& msg)
 		{
 			if(result==3) // Yes == 3
 			{
-				QCString message=QString(
+				Q3CString message=QString(
 					"MIME-Version: 1.0\r\n"
 					"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
 					"\r\n"
@@ -105,7 +107,7 @@ void NetMeetingInvitation::parseInvitation(const QString& msg)
 			MSNChatSession* manager=dynamic_cast<MSNChatSession*>(m_contact->manager());
 			if(manager && manager->service())
 			{
-				QCString message=QString(
+				Q3CString message=QString(
 					"MIME-Version: 1.0\r\n"
 					"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
 					"\r\n"

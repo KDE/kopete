@@ -27,6 +27,8 @@
 #include <qdatastream.h>
 #include <qdatetime.h>
 #include <qtextstream.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include <kdebug.h>
 #include <ctype.h>
@@ -194,7 +196,7 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		return bytesParsed;
 	}	
 	
-	m_din = new QDataStream( wire, IO_ReadOnly );
+	m_din = new QDataStream( wire, QIODevice::ReadOnly );
 	
 	// look at first four bytes and decide what to do with the chunk
 	if ( okToProceed() )
@@ -265,7 +267,7 @@ void CoreProtocol::reset()
 	m_in.resize( 0 );
 }
 
-void CoreProtocol::slotOutgoingData( const QCString &out )
+void CoreProtocol::slotOutgoingData( const Q3CString &out )
 {
 	kdDebug(OSCAR_RAW_DEBUG) << out.data() << endl;
 }

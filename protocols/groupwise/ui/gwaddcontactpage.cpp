@@ -25,11 +25,13 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qtabwidget.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -53,7 +55,7 @@ GroupWiseAddContactPage::GroupWiseAddContactPage( Kopete::Account * owner, QWidg
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	if (owner->isConnected ())
 	{
-		m_searchUI = new GroupWiseSearch( m_account, QListView::Single, false,
+		m_searchUI = new GroupWiseSearch( m_account, Q3ListView::Single, false,
 				 this, "acwsearchwidget" );
 		show();
 		m_canadd = true;
@@ -80,7 +82,7 @@ bool GroupWiseAddContactPage::apply( Kopete::Account* account, Kopete::MetaConta
 		QString contactId;
 		QString displayName;
 
-		QValueList< ContactDetails > selected = m_searchUI->selectedResults();
+		Q3ValueList< ContactDetails > selected = m_searchUI->selectedResults();
 		if ( selected.count() == 1 )
 		{
 			ContactDetails dt = selected.first();

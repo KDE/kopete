@@ -20,10 +20,10 @@
 
 #include"bsocket.h"
 
-#include<qcstring.h>
-#include<qsocket.h>
-#include<qdns.h>
-#include<qguardedptr.h>
+#include<q3cstring.h>
+#include<q3socket.h>
+#include<q3dns.h>
+#include<qpointer.h>
 #include"safedelete.h"
 #ifndef NO_NDNS
 #include"ndns.h"
@@ -46,7 +46,7 @@ public:
 		qsock = 0;
 	}
 
-	QSocket *qsock;
+	Q3Socket *qsock;
 	int state;
 
 #ifndef NO_NDNS
@@ -108,7 +108,7 @@ void BSocket::reset(bool clear)
 void BSocket::ensureSocket()
 {
 	if(!d->qsock) {
-		d->qsock = new QSocket;
+		d->qsock = new Q3Socket;
 #if QT_VERSION >= 0x030200
 		d->qsock->setReadBufferSize(READBUFSIZE);
 #endif
@@ -193,7 +193,7 @@ void BSocket::write(const QByteArray &a)
 	if(d->state != Connected)
 		return;
 #ifdef BS_DEBUG
-	QCString cs;
+	Q3CString cs;
 	cs.resize(a.size()+1);
 	memcpy(cs.data(), a.data(), a.size());
 	QString s = QString::fromUtf8(cs);
@@ -216,7 +216,7 @@ QByteArray BSocket::read(int bytes)
 		block = ByteStream::read(bytes);
 
 #ifdef BS_DEBUG
-	QCString cs;
+	Q3CString cs;
 	cs.resize(block.size()+1);
 	memcpy(cs.data(), block.data(), block.size());
 	QString s = QString::fromUtf8(cs);
@@ -375,17 +375,17 @@ void BSocket::qs_error(int x)
 	SafeDeleteLock s(&d->sd);
 
 	// connection error during SRV host connect?  try next
-	if(d->state == HostLookup && (x == QSocket::ErrConnectionRefused || x == QSocket::ErrHostNotFound)) {
+	if(d->state == HostLookup && (x == Q3Socket::ErrConnectionRefused || x == Q3Socket::ErrHostNotFound)) {
 		d->srv.next();
 		return;
 	}
 
 	reset();
-	if(x == QSocket::ErrConnectionRefused)
+	if(x == Q3Socket::ErrConnectionRefused)
 		error(ErrConnectionRefused);
-	else if(x == QSocket::ErrHostNotFound)
+	else if(x == Q3Socket::ErrHostNotFound)
 		error(ErrHostNotFound);
-	else if(x == QSocket::ErrSocketRead)
+	else if(x == Q3Socket::ErrSocketRead)
 		error(ErrRead);
 }
 

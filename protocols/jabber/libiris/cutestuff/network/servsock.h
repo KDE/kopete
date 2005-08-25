@@ -21,7 +21,7 @@
 #ifndef CS_SERVSOCK_H
 #define CS_SERVSOCK_H
 
-#include<qserversocket.h>
+#include<q3serversocket.h>
 
 // CS_NAMESPACE_BEGIN
 
@@ -49,7 +49,7 @@ private:
 	Private *d;
 };
 
-class ServSockSignal : public QServerSocket
+class ServSockSignal : public Q3ServerSocket
 {
 	Q_OBJECT
 public:

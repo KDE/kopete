@@ -22,7 +22,10 @@
 #include <qtimer.h>
 #include <qvariant.h>
 #include <qmime.h>
-#include <qstylesheet.h>
+#include <q3stylesheet.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3PtrList>
 
 #include "knotification.h"
 #include <kdebug.h>
@@ -96,7 +99,7 @@ public:
 		toolTip += QString::fromLatin1("</td><td>");
 		toolTip += QString::fromLatin1("<b><font size=\"+1\">%1</font></b><br><br>").arg(Kopete::Emoticons::parseEmoticons( metaContact->displayName()) );
 
-		QPtrList<Contact> contacts = metaContact->contacts();
+		Q3PtrList<Contact> contacts = metaContact->contacts();
 		if ( contacts.count() == 1 )
 		{
 			return toolTip + contacts.first()->toolTip() + QString::fromLatin1("</td></tr></table></qt>");
@@ -150,7 +153,7 @@ public:
 	int currentMode;
 	int currentIconMode;
 
-	QPtrList<Kopete::MessageEvent> events;
+	Q3PtrList<Kopete::MessageEvent> events;
 };
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, KopeteGroupViewItem *parent )
@@ -166,7 +169,7 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, Kopete
 	parent->refreshDisplayName();
 }
 
-KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, QListViewItem *parent )
+KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, Q3ListViewItem *parent )
 : ListView::Item( parent, contact, "MetaContactLVI" )
 //: QObject( contact, "MetaContactLVI" ), KListViewItem( parent )
 {
@@ -179,7 +182,7 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, QListV
 	initLVI();
 }
 
-KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, QListView *parent )
+KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, Q3ListView *parent )
 : ListView::Item( parent, contact, "MetaContactLVI" )
 //: QObject( contact, "MetaContactLVI" ), KListViewItem( parent )
 {
@@ -368,8 +371,8 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 			//int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 
 			QString text = i18n( "<qt><i>%1</i> is now %2.</qt>" )
-					.arg( Kopete::Emoticons::parseEmoticons( QStyleSheet::escape(m_metaContact->displayName()) ) ,
-						  QStyleSheet::escape(c->onlineStatus().description()));
+					.arg( Kopete::Emoticons::parseEmoticons( Q3StyleSheet::escape(m_metaContact->displayName()) ) ,
+						  Q3StyleSheet::escape(c->onlineStatus().description()));
 			
 			// figure out what's happened
 			enum ChangeType { noChange, noEvent, signedIn, changedStatus, signedOut };
@@ -746,8 +749,8 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 	slotPhotoChanged();
 
 	// finally, re-add all contacts so their icons appear. remove them first for consistency.
-	QPtrList<Kopete::Contact> contacts = m_metaContact->contacts();
-	for ( QPtrListIterator<Kopete::Contact> it( contacts ); it.current(); ++it )
+	Q3PtrList<Kopete::Contact> contacts = m_metaContact->contacts();
+	for ( Q3PtrListIterator<Kopete::Contact> it( contacts ); it.current(); ++it )
 	{
 		slotContactRemoved( *it );
 		slotContactAdded( *it );
@@ -812,8 +815,8 @@ void KopeteMetaContactLVI::slotContactRemoved( Kopete::Contact *c )
 void KopeteMetaContactLVI::updateContactIcons()
 {
 	// show offline contacts setting may have changed
-	QPtrList<Kopete::Contact> contacts = m_metaContact->contacts();
-	for ( QPtrListIterator<Kopete::Contact> it( contacts ); it.current(); ++it )
+	Q3PtrList<Kopete::Contact> contacts = m_metaContact->contacts();
+	for ( Q3PtrListIterator<Kopete::Contact> it( contacts ); it.current(); ++it )
 		updateContactIcon( *it );
 }
 

@@ -25,6 +25,8 @@
 
 #include <qobject.h>
 #include <qstring.h>
+//Added by qt3to4:
+#include <Q3CString>
 #include <kopete_export.h>
 #include "rtf2html.h"
 #include "transfer.h"
@@ -295,7 +297,7 @@ public:
 	void setIsIcq( bool isIcq );
 
 	/** Host's IP address */
-	QCString ipAddress() const;
+	Q3CString ipAddress() const;
 
 	/** Notify that a task error was received */
 	void notifyTaskError( const Oscar::SNAC& s, int errCode, bool fatal );

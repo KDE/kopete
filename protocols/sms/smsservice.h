@@ -20,6 +20,8 @@
 #include <qstring.h>
 #include <qwidget.h>
 #include <qobject.h>
+//Added by qt3to4:
+#include <QGridLayout>
 
 #include "kopetemessage.h"
 

@@ -19,15 +19,17 @@
 
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qregexp.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 #include <klocale.h>
 #include <kdebug.h>
 
 #include "addresseeitem.h"
 
-AddresseeItem::AddresseeItem( QListView *parent, const KABC::Addressee &addressee) :
+AddresseeItem::AddresseeItem( Q3ListView *parent, const KABC::Addressee &addressee) :
   KListViewItem( parent ),
   mAddressee( addressee )
 {

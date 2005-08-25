@@ -18,6 +18,8 @@
 #include <qlayout.h>
 #include <qobject.h>
 #include <qcheckbox.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <kgenericfactory.h>
 #include <klineedit.h>

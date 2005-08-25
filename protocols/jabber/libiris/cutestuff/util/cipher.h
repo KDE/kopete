@@ -22,7 +22,7 @@
 #define CS_CIPHER_H
 
 #include<qstring.h>
-#include<qcstring.h>
+#include<q3cstring.h>
 
 namespace Cipher
 {
@@ -47,8 +47,8 @@ namespace Cipher
 	Key generateKey(Type);
 	QByteArray generateIV(Type);
 	int ivSize(Type);
-	QByteArray encrypt(const QByteArray &, const Key &, const QByteArray &iv, bool pad, bool *ok=0);
-	QByteArray decrypt(const QByteArray &, const Key &, const QByteArray &iv, bool pad, bool *ok=0);
+	QByteArray encrypt(const QByteArray &, const Qt::Key &, const QByteArray &iv, bool pad, bool *ok=0);
+	QByteArray decrypt(const QByteArray &, const Qt::Key &, const QByteArray &iv, bool pad, bool *ok=0);
 }
 
 class RSAKey

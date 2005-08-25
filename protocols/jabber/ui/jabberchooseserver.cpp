@@ -24,7 +24,7 @@
 #include <kio/global.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>
-#include <qtable.h>
+#include <q3table.h>
 #include <qlabel.h>
 #include "jabberprotocol.h"
 #include "dlgjabberchooseserver.h"

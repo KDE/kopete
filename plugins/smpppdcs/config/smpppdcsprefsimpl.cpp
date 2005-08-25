@@ -17,7 +17,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qcursor.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qradiobutton.h>
 
 #include <kapplication.h>
@@ -27,7 +27,7 @@
 #include "smpppdcsprefsimpl.h"
 #include "smpppdsearcher.h"
 
-SMPPPDCSPrefs::SMPPPDCSPrefs(QWidget* parent, const char* name, WFlags fl)
+SMPPPDCSPrefs::SMPPPDCSPrefs(QWidget* parent, const char* name, Qt::WFlags fl)
  : SMPPPDCSPrefsBase(parent, name, fl) {
  	
 	// signals and slots connections

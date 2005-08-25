@@ -17,6 +17,9 @@
 
 #include <qlayout.h>
 #include <qcheckbox.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <Q3PtrList>
 
 #include <kcombobox.h>
 #include <klineedit.h>
@@ -84,14 +87,14 @@ void HighlightPreferences::load()
 	preferencesDialog->m_list->clear();
 	m_filterItems.clear();
 
-	QPtrList<Filter> filters=m_config->filters();
-	QPtrListIterator<Filter> it( filters );
+	Q3PtrList<Filter> filters=m_config->filters();
+	Q3PtrListIterator<Filter> it( filters );
 	Filter *f;
 	bool first=true;
 	while ( (f=it.current()) != 0 )
 	{
 		++it;
-		QListViewItem* lvi= new QListViewItem(preferencesDialog->m_list);
+		Q3ListViewItem* lvi= new Q3ListViewItem(preferencesDialog->m_list);
 		lvi->setText(0,f->displayName );
 		m_filterItems.insert(lvi,f);
 		if(first)
@@ -171,7 +174,7 @@ void HighlightPreferences::slotCurrentFilterChanged()
 void HighlightPreferences::slotAddFilter()
 {
 	Filter *filtre=m_config->newFilter();
-	QListViewItem* lvi= new QListViewItem(preferencesDialog->m_list);
+	Q3ListViewItem* lvi= new Q3ListViewItem(preferencesDialog->m_list);
 	lvi->setText(0,filtre->displayName );
 	m_filterItems.insert(lvi,filtre);
 	preferencesDialog->m_list->setSelected(lvi, true);
@@ -179,7 +182,7 @@ void HighlightPreferences::slotAddFilter()
 
 void HighlightPreferences::slotRemoveFilter()
 {
-	QListViewItem *lvi=preferencesDialog->m_list->selectedItem();
+	Q3ListViewItem *lvi=preferencesDialog->m_list->selectedItem();
 	if(!lvi)
 		return;
 	Filter *current=m_filterItems[lvi];
@@ -194,7 +197,7 @@ void HighlightPreferences::slotRemoveFilter()
 
 void HighlightPreferences::slotRenameFilter()
 {
-	QListViewItem *lvi=preferencesDialog->m_list->selectedItem();
+	Q3ListViewItem *lvi=preferencesDialog->m_list->selectedItem();
 	if(!lvi)
 		return;
 	Filter *current=m_filterItems[lvi];

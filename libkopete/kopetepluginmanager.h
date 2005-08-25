@@ -23,7 +23,7 @@
 #include <qobject.h>
 #include <qstring.h>
 #include <qstringlist.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 #include <kopete_export.h>
 
@@ -34,7 +34,7 @@ namespace Kopete
 
 class Plugin;
 
-typedef QValueList<Plugin*> PluginList;
+typedef Q3ValueList<Plugin*> PluginList;
 
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -63,7 +63,7 @@ public:
 	 * You can query all information on the plugins through the KPluginInfo
 	 * interface.
 	 */
-	QValueList<KPluginInfo *> availablePlugins( const QString &category = QString::null ) const;
+	Q3ValueList<KPluginInfo *> availablePlugins( const QString &category = QString::null ) const;
 
 	/**
 	 * Returns a list of all plugins that are actually loaded.

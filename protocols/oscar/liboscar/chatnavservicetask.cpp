@@ -22,6 +22,8 @@
 #include "buffer.h"
 #include "connection.h"
 #include "oscartypes.h"
+//Added by qt3to4:
+#include <Q3ValueList>
 
 
 
@@ -290,9 +292,9 @@ void ChatNavServiceTask::handleCreateRoomInfo( const TLV& t )
 	}
 
 	WORD numberTlvs = b.getWord();
-	QValueList<Oscar::TLV> roomTLVList = b.getTLVList();
-	QValueList<Oscar::TLV>::iterator itEnd = roomTLVList.end();
-	for ( QValueList<Oscar::TLV>::iterator it = roomTLVList.begin();
+	Q3ValueList<Oscar::TLV> roomTLVList = b.getTLVList();
+	Q3ValueList<Oscar::TLV>::iterator itEnd = roomTLVList.end();
+	for ( Q3ValueList<Oscar::TLV>::iterator it = roomTLVList.begin();
 		  it != itEnd; ++ it )
 	{
 		switch( ( *it ).type )

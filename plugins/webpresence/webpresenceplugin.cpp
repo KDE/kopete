@@ -23,6 +23,9 @@
 #include <qdom.h>
 #include <qtimer.h>
 #include <qfile.h>
+//Added by qt3to4:
+#include <QTextStream>
+#include <Q3PtrList>
 
 #include <kdebug.h>
 #include <kconfig.h>
@@ -113,8 +116,8 @@ void WebPresencePlugin::listenToAllAccounts()
 	for ( ProtocolList::Iterator it = protocols.begin();
 			it != protocols.end(); ++it )
 	{
-		QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( *it );
-		QDictIterator<Kopete::Account> acIt( accounts );
+		Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( *it );
+		Q3DictIterator<Kopete::Account> acIt( accounts );
 
 		for( ; Kopete::Account *account = acIt.current(); ++acIt )
 		{
@@ -246,11 +249,11 @@ KTempFile* WebPresencePlugin::generateFile()
 	QDomElement accounts = doc.createElement( "accounts" );
 	root.appendChild( accounts );
 
-	QPtrList<Kopete::Account> list = Kopete::AccountManager::self()->accounts();
+	Q3PtrList<Kopete::Account> list = Kopete::AccountManager::self()->accounts();
 	// If no accounts, stop here
 	if ( !list.isEmpty() )
 	{
-		for( QPtrListIterator<Kopete::Account> it( list );
+		for( Q3PtrListIterator<Kopete::Account> it( list );
 			 Kopete::Account *account=it.current();
 			 ++it )
 		{

@@ -19,8 +19,8 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <qptrlist.h>
-#include <qstylesheet.h>
+#include <q3ptrlist.h>
+#include <q3stylesheet.h>
 #include <kplugininfo.h>
 #include <knotification.h>
 #include <kglobal.h>
@@ -40,7 +40,7 @@
 #include "kopeteviewmanager.h"
 
 typedef QMap<Kopete::ChatSession*,KopeteView*> ManagerMap;
-typedef QPtrList<Kopete::MessageEvent> EventList;
+typedef Q3PtrList<Kopete::MessageEvent> EventList;
 
 struct KopeteViewManagerPrivate
 {
@@ -234,7 +234,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					default:
 						event = QString::fromLatin1( "kopete_contact_incoming" );
 				}
-				KNotification *notify=KNotification::event(msg.from()->metaContact() , event, body.arg( QStyleSheet::escape(msgFrom), QStyleSheet::escape(msgText) ), 0, /*msg.from()->metaContact(),*/
+				KNotification *notify=KNotification::event(msg.from()->metaContact() , event, body.arg( Q3StyleSheet::escape(msgFrom), Q3StyleSheet::escape(msgText) ), 0, /*msg.from()->metaContact(),*/
 							w , i18n("View") );
 
 				connect(notify,SIGNAL(activated(unsigned int )), const_cast<Kopete::Contact*>(msg.from()) , SLOT(execute()) );
@@ -254,7 +254,7 @@ void KopeteViewManager::readMessages( Kopete::ChatSession *manager, bool outgoin
 	else if( !thisView->isVisible() )
 		thisView->makeVisible();
 
-	QPtrListIterator<Kopete::MessageEvent> it( d->eventList );
+	Q3PtrListIterator<Kopete::MessageEvent> it( d->eventList );
 	Kopete::MessageEvent* event;
 	while ( ( event = it.current() ) != 0 )
 	{
@@ -283,7 +283,7 @@ void KopeteViewManager::slotEventDeleted( Kopete::MessageEvent *event )
 	else if ( event->state() == Kopete::MessageEvent::Ignored && d->balloonNotifyIgnoreClosesChatView )
 	{
 		bool bAnotherWithThisManager = false;
-		for( QPtrListIterator<Kopete::MessageEvent> it( d->eventList ); it; ++it )
+		for( Q3PtrListIterator<Kopete::MessageEvent> it( d->eventList ); it; ++it )
 		{
 			Kopete::MessageEvent *event = it.current();
 			if ( event->message().manager() == kmm )
@@ -312,7 +312,7 @@ void KopeteViewManager::slotViewActivated( KopeteView *view )
 // 	kdDebug( 14000 ) << k_funcinfo << endl;
 	d->activeView = view;
 
-	QPtrListIterator<Kopete::MessageEvent> it ( d->eventList );
+	Q3PtrListIterator<Kopete::MessageEvent> it ( d->eventList );
 	Kopete::MessageEvent* event;
 	while ( ( event = it.current() ) != 0 )
 	{

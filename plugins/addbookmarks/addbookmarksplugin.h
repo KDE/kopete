@@ -17,7 +17,7 @@
 #include <kopeteplugin.h>
 #include <kbookmarkmanager.h>
 #include <kio/job.h>
-#include <qcstring.h>
+#include <q3cstring.h>
 #include <qmap.h>
 
 /**

@@ -22,7 +22,7 @@
 #include "jabberdisco.h"
 
 #include <stdlib.h>
-#include <qcstring.h>
+#include <q3cstring.h>
 #include <qthread.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -32,7 +32,7 @@
 #include <xmpp_tasks.h>
 #include "jabberclient.h"
 
-JabberDiscoProtocol::JabberDiscoProtocol ( const QCString &pool_socket, const QCString &app_socket )
+JabberDiscoProtocol::JabberDiscoProtocol ( const Q3CString &pool_socket, const Q3CString &app_socket )
 	: KIO::SlaveBase ( "kio_jabberdisco", pool_socket, app_socket )
 {
 	kdDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Slave launched." << endl;

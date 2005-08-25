@@ -20,9 +20,11 @@
 
 #include"srvresolver.h"
 
-#include<qcstring.h>
+#include<q3cstring.h>
 #include<qtimer.h>
-#include<qdns.h>
+#include<q3dns.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include"safedelete.h"
 
 #ifndef NO_NDNS
@@ -31,14 +33,14 @@
 
 // CS_NAMESPACE_BEGIN
 
-static void sortSRVList(QValueList<QDns::Server> &list)
+static void sortSRVList(Q3ValueList<Q3Dns::Server> &list)
 {
-	QValueList<QDns::Server> tmp = list;
+	Q3ValueList<Q3Dns::Server> tmp = list;
 	list.clear();
 
 	while(!tmp.isEmpty()) {
-		QValueList<QDns::Server>::Iterator p = tmp.end();
-		for(QValueList<QDns::Server>::Iterator it = tmp.begin(); it != tmp.end(); ++it) {
+		Q3ValueList<Q3Dns::Server>::Iterator p = tmp.end();
+		for(Q3ValueList<Q3Dns::Server>::Iterator it = tmp.begin(); it != tmp.end(); ++it) {
 			if(p == tmp.end())
 				p = it;
 			else {
@@ -60,7 +62,7 @@ class SrvResolver::Private
 public:
 	Private() {}
 
-	QDns *qdns;
+	Q3Dns *qdns;
 #ifndef NO_NDNS
 	NDns ndns;
 #endif
@@ -71,7 +73,7 @@ public:
 
 	bool srvonly;
 	QString srv;
-	QValueList<QDns::Server> servers;
+	Q3ValueList<Q3Dns::Server> servers;
 	bool aaaa;
 
 	QTimer t;
@@ -105,9 +107,9 @@ void SrvResolver::resolve(const QString &server, const QString &type, const QStr
 	d->srvonly = false;
 	d->srv = QString("_") + type + "._" + proto + '.' + server;
 	d->t.start(15000, true);
-	d->qdns = new QDns;
+	d->qdns = new Q3Dns;
 	connect(d->qdns, SIGNAL(resultsReady()), SLOT(qdns_done()));
-	d->qdns->setRecordType(QDns::Srv);
+	d->qdns->setRecordType(Q3Dns::Srv);
 	d->qdns->setLabel(d->srv);
 }
 
@@ -119,9 +121,9 @@ void SrvResolver::resolveSrvOnly(const QString &server, const QString &type, con
 	d->srvonly = true;
 	d->srv = QString("_") + type + "._" + proto + '.' + server;
 	d->t.start(15000, true);
-	d->qdns = new QDns;
+	d->qdns = new Q3Dns;
 	connect(d->qdns, SIGNAL(resultsReady()), SLOT(qdns_done()));
-	d->qdns->setRecordType(QDns::Srv);
+	d->qdns->setRecordType(Q3Dns::Srv);
 	d->qdns->setLabel(d->srv);
 }
 
@@ -165,7 +167,7 @@ bool SrvResolver::isBusy() const
 		return false;
 }
 
-QValueList<QDns::Server> SrvResolver::servers() const
+Q3ValueList<Q3Dns::Server> SrvResolver::servers() const
 {
 	return d->servers;
 }
@@ -190,12 +192,12 @@ void SrvResolver::tryNext()
 #ifndef NO_NDNS
 	d->ndns.resolve(d->servers.first().name);
 #else
-	d->qdns = new QDns;
+	d->qdns = new Q3Dns;
 	connect(d->qdns, SIGNAL(resultsReady()), SLOT(ndns_done()));
 	if(d->aaaa)
-		d->qdns->setRecordType(QDns::Aaaa); // IPv6
+		d->qdns->setRecordType(Q3Dns::Aaaa); // IPv6
 	else
-		d->qdns->setRecordType(QDns::A); // IPv4
+		d->qdns->setRecordType(Q3Dns::A); // IPv4
 	d->qdns->setLabel(d->servers.first().name);
 #endif
 }
@@ -213,8 +215,8 @@ void SrvResolver::qdns_done()
 	SafeDeleteLock s(&d->sd);
 
 	// grab the server list and destroy the qdns object
-	QValueList<QDns::Server> list;
-	if(d->qdns->recordType() == QDns::Srv)
+	Q3ValueList<Q3Dns::Server> list;
+	if(d->qdns->recordType() == Q3Dns::Srv)
 		list = d->qdns->servers();
 	d->qdns->disconnect(this);
 	d->sd.deleteLater(d->qdns);
@@ -273,8 +275,8 @@ void SrvResolver::ndns_done()
 	SafeDeleteLock s(&d->sd);
 
 	// grab the address list and destroy the qdns object
-	QValueList<QHostAddress> list;
-	if(d->qdns->recordType() == QDns::A || d->qdns->recordType() == QDns::Aaaa)
+	Q3ValueList<QHostAddress> list;
+	if(d->qdns->recordType() == Q3Dns::A || d->qdns->recordType() == Q3Dns::Aaaa)
 		list = d->qdns->addresses();
 	d->qdns->disconnect(this);
 	d->sd.deleteLater(d->qdns);

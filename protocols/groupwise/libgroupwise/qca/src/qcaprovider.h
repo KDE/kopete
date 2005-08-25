@@ -27,6 +27,9 @@
 #include<qobject.h>
 #include<qhostaddress.h>
 #include"qca.h"
+//Added by qt3to4:
+#include <Q3PtrList>
+#include <Q3ValueList>
 
 #define QCA_PLUGIN_VERSION 1
 
@@ -110,8 +113,8 @@ public:
 	virtual QString serialNumber() const=0;
 	virtual QString subjectString() const=0;
 	virtual QString issuerString() const=0;
-	virtual QValueList<QCA_CertProperty> subject() const=0;
-	virtual QValueList<QCA_CertProperty> issuer() const=0;
+	virtual Q3ValueList<QCA_CertProperty> subject() const=0;
+	virtual Q3ValueList<QCA_CertProperty> issuer() const=0;
 	virtual QDateTime notBefore() const=0;
 	virtual QDateTime notAfter() const=0;
 	virtual bool matchesAddress(const QString &realHost) const=0;
@@ -124,8 +127,8 @@ public:
 	virtual ~QCA_TLSContext() {}
 
 	virtual void reset()=0;
-	virtual bool startClient(const QPtrList<QCA_CertContext> &store, const QCA_CertContext &cert, const QCA_RSAKeyContext &key)=0;
-	virtual bool startServer(const QPtrList<QCA_CertContext> &store, const QCA_CertContext &cert, const QCA_RSAKeyContext &key)=0;
+	virtual bool startClient(const Q3PtrList<QCA_CertContext> &store, const QCA_CertContext &cert, const QCA_RSAKeyContext &key)=0;
+	virtual bool startServer(const Q3PtrList<QCA_CertContext> &store, const QCA_CertContext &cert, const QCA_RSAKeyContext &key)=0;
 
 	virtual int handshake(const QByteArray &in, QByteArray *out)=0;
 	virtual int shutdown(const QByteArray &in, QByteArray *out)=0;

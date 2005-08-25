@@ -23,6 +23,8 @@
 #include "createcontactinstancetask.h"
 
 #include "createcontacttask.h"
+//Added by qt3to4:
+#include <Q3ValueList>
 
 CreateContactTask::CreateContactTask(Task* parent): Task(parent)
 {
@@ -53,7 +55,7 @@ bool CreateContactTask::take( Transfer * transfer )
 	return false;
 }
 
-void CreateContactTask::contactFromUserId( const QString & userId, const QString & displayName, const int firstSeqNo, const QValueList< FolderItem > folders, bool topLevel )
+void CreateContactTask::contactFromUserId( const QString & userId, const QString & displayName, const int firstSeqNo, const Q3ValueList< FolderItem > folders, bool topLevel )
 {
 	m_userId = userId;
 	m_displayName = displayName;
@@ -65,8 +67,8 @@ void CreateContactTask::contactFromUserId( const QString & userId, const QString
 void CreateContactTask::onGo()
 {
 	client()->debug( "CreateContactTask::onGo() - Welcome to the Create Contact Task Show!");
-	QValueList<FolderItem>::ConstIterator it = m_folders.begin();
-	const QValueList<FolderItem>::ConstIterator end = m_folders.end();
+	Q3ValueList<FolderItem>::ConstIterator it = m_folders.begin();
+	const Q3ValueList<FolderItem>::ConstIterator end = m_folders.end();
 	
 	// create contacts on the server
 	for ( ; it != end; ++it )

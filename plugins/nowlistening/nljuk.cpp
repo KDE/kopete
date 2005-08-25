@@ -23,6 +23,8 @@
 
 #include <kdebug.h>
 #include <qstring.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include "nlmediaplayer.h"
 #include "nljuk.h"
@@ -44,25 +46,25 @@ void NLJuk::update()
 	{
 		// see if it's playing
 		QByteArray data, replyData;
-		QCString replyType;
+		Q3CString replyType;
 		QString result;
 
 		if ( m_client->call( "juk", "Player", "playing()", data, 
 					replyType, replyData ) )
 		{
-			QDataStream reply( replyData, IO_ReadOnly );
+			QDataStream reply( replyData, QIODevice::ReadOnly );
 			if ( replyType == "bool" ) {
 				reply >> m_playing;
 			}
 		}
 		
 		{
-			QDataStream arg( data, IO_WriteOnly );
+			QDataStream arg( data, QIODevice::WriteOnly );
 			arg << QString::fromLatin1("Album");
 			if ( m_client->call( "juk", "Player", "trackProperty(QString)", data,
 						replyType, replyData ) )
 			{
-				QDataStream reply( replyData, IO_ReadOnly );
+				QDataStream reply( replyData, QIODevice::ReadOnly );
 	
 				if ( replyType == "QString" ) {
 					reply >> m_album;
@@ -71,12 +73,12 @@ void NLJuk::update()
 		}
 		
 		{
-			QDataStream arg( data, IO_WriteOnly );
+			QDataStream arg( data, QIODevice::WriteOnly );
 			arg << QString::fromLatin1("Artist");
 			if ( m_client->call( "juk", "Player", "trackProperty(QString)", data,
 						replyType, replyData ) )
 			{
-				QDataStream reply( replyData, IO_ReadOnly );
+				QDataStream reply( replyData, QIODevice::ReadOnly );
 	
 				if ( replyType == "QString" ) {
 					reply >> m_artist;
@@ -85,12 +87,12 @@ void NLJuk::update()
 		}
 
 		{
-			QDataStream arg( data, IO_WriteOnly );
+			QDataStream arg( data, QIODevice::WriteOnly );
 			arg << QString::fromLatin1("Title");
 			if ( m_client->call( "juk", "Player", "trackProperty(QString)", data,
 						replyType, replyData ) )
 			{
-				QDataStream reply( replyData, IO_ReadOnly );
+				QDataStream reply( replyData, QIODevice::ReadOnly );
 	
 				if ( replyType == "QString" ) {
 					reply >> newTrack;

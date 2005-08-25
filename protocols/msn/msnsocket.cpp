@@ -25,6 +25,9 @@
 
 #include <qregexp.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <Q3CString>
 
 #include <kdebug.h>
 #include <kconfig.h>
@@ -249,7 +252,7 @@ void MSNSocket::slotDataReceived()
 			QByteArray bytes;
 
 			// Check if all data has arrived.
-			rawData = QString(QCString(buffer, avail + 1));
+			rawData = QString(Q3CString(buffer, avail + 1));
 			bool headers = (rawData.find(QRegExp("HTTP/\\d\\.\\d (\\d+) ([^\r\n]+)")) != -1);
 
 			if(headers)
@@ -390,7 +393,7 @@ void MSNSocket::slotDataReceived()
 		// all MSN commands start with one or more uppercase characters.
 		// For now just check the first three chars, let's see how accurate it is.
 		// Additionally, if we receive an MSN-P2P packet, strip off anything after the P2P header.
-		rawData = QString( QCString( buffer, ((!m_useHttp)? avail : ret) + 1 ) ).stripWhiteSpace().replace(
+		rawData = QString( Q3CString( buffer, ((!m_useHttp)? avail : ret) + 1 ) ).stripWhiteSpace().replace(
 			QRegExp( "(P2P-Dest:.[a-zA-Z@.]*).*" ), "\\1\n\n(Stripped binary data)" );
 
 		bool isBinary = false;
@@ -610,7 +613,7 @@ int MSNSocket::sendCommand( const QString &cmd, const QString &args, bool addId,
 		return -1;
 	}
 
-	QCString data = cmd.utf8();
+	Q3CString data = cmd.utf8();
 	if ( addId )
 		data += " " + QString::number( m_id ).utf8();
 
@@ -654,7 +657,7 @@ void MSNSocket::slotReadyWrite()
 	if ( !m_sendQueue.isEmpty() )
 	{
 		// If the command queue is not empty, retrieve the first command.
-		QValueList<QByteArray>::Iterator it = m_sendQueue.begin();
+		Q3ValueList<QByteArray>::Iterator it = m_sendQueue.begin();
 
 		if(m_useHttp)
 		{
@@ -831,7 +834,7 @@ void MSNSocket::slotHttpPoll()
 	}
 
 	// Create the http request headers.
-	const QCString headers = makeHttpRequestString(m_gwip, "Action=poll&SessionID=" + m_sessionId, 0).utf8();
+	const Q3CString headers = makeHttpRequestString(m_gwip, "Action=poll&SessionID=" + m_sessionId, 0).utf8();
 	m_socket->writeBlock(headers, headers.length());
 	// Wait for the response.
 	m_pending = true;
@@ -1011,7 +1014,7 @@ MSNSocket::WebResponse::WebResponse(const QByteArray& bytes)
 
 	int     headerEnd;
   	QString header;
-	QString data(QCString(bytes, bytes.size() + 1));
+	QString data(Q3CString(bytes, bytes.size() + 1));
 
 	// Parse the HTTP status header
 	QRegExp re("HTTP/\\d\\.\\d (\\d+) ([^\r\n]+)");
@@ -1043,7 +1046,7 @@ MSNSocket::WebResponse::WebResponse(const QByteArray& bytes)
 			for(int i=0; i < length; i++)
 				content[i] = bytes[offset + i];
 			// Create the web response stream from the response content bytes.
-			m_stream = new QDataStream(content, IO_ReadOnly);
+			m_stream = new QDataStream(content, QIODevice::ReadOnly);
 		}
 	}
 }

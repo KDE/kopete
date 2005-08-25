@@ -17,10 +17,13 @@
 */
 
 #include <qfile.h>
-#include <qstylesheet.h>
+#include <q3stylesheet.h>
 #include <qregexp.h>
 #include <qdir.h>
 #include <qdom.h>
+//Added by qt3to4:
+#include <QTextStream>
+#include <Q3PtrList>
 
 #include <ksavefile.h>
 #include <kstandarddirs.h>
@@ -53,7 +56,7 @@ void HighlightConfig::appendFilter(Filter *f)
 	m_filters.append(f);
 }
 
-QPtrList<Filter> HighlightConfig::filters() const
+Q3PtrList<Filter> HighlightConfig::filters() const
 {
 	return m_filters;
 }
@@ -85,7 +88,7 @@ void HighlightConfig::load()
 	QDomDocument filterList( QString::fromLatin1( "highlight-plugin" ) );
 
 	QFile filterListFile( filename );
-	filterListFile.open( IO_ReadOnly );
+	filterListFile.open( QIODevice::ReadOnly );
 	filterList.setContent( &filterListFile );
 
 	QDomElement list = filterList.documentElement();
@@ -168,28 +171,28 @@ void HighlightConfig::save()
 			"<highlight-plugin>\n" );
 
 			// Save metafilter information.
-		QPtrListIterator<Filter> filtreIt( m_filters );
+		Q3PtrListIterator<Filter> filtreIt( m_filters );
 		for( ; filtreIt.current(); ++filtreIt )
 		{
 			Filter *filtre = *filtreIt;
 			xml += QString::fromLatin1( "  <filter>\n    <display-name>" )
-				+ QStyleSheet::escape(filtre->displayName)
+				+ Q3StyleSheet::escape(filtre->displayName)
 				+ QString::fromLatin1( "</display-name>\n" );
 
 			xml += QString::fromLatin1("    <search caseSensitive=\"") + QString::number( static_cast<int>( filtre->caseSensitive ) ) +
 				QString::fromLatin1("\" regExp=\"") + QString::number( static_cast<int>( filtre->isRegExp ) ) +
-				QString::fromLatin1( "\">" ) + QStyleSheet::escape( filtre->search ) + QString::fromLatin1( "</search>\n" );
+				QString::fromLatin1( "\">" ) + Q3StyleSheet::escape( filtre->search ) + QString::fromLatin1( "</search>\n" );
 
 			xml += QString::fromLatin1("    <BG set=\"") + QString::number( static_cast<int>( filtre->setBG ) ) +
-				QString::fromLatin1( "\">" ) + QStyleSheet::escape( filtre->BG.name() ) + QString::fromLatin1( "</BG>\n" );
+				QString::fromLatin1( "\">" ) + Q3StyleSheet::escape( filtre->BG.name() ) + QString::fromLatin1( "</BG>\n" );
 			xml += QString::fromLatin1("    <FG set=\"") + QString::number( static_cast<int>( filtre->setFG ) ) +
-				QString::fromLatin1( "\">" ) + QStyleSheet::escape( filtre->FG.name() ) + QString::fromLatin1( "</FG>\n" );
+				QString::fromLatin1( "\">" ) + Q3StyleSheet::escape( filtre->FG.name() ) + QString::fromLatin1( "</FG>\n" );
 
 			xml += QString::fromLatin1("    <importance set=\"") + QString::number( static_cast<int>( filtre->setImportance ) ) +
 				QString::fromLatin1( "\">" ) + QString::number( filtre->importance ) + QString::fromLatin1( "</importance>\n" );
 
 			xml += QString::fromLatin1("    <sound set=\"") + QString::number( static_cast<int>( filtre->playSound ) ) +
-				QString::fromLatin1( "\">" ) + QStyleSheet::escape( filtre->soundFN ) + QString::fromLatin1( "</sound>\n" );
+				QString::fromLatin1( "\">" ) + Q3StyleSheet::escape( filtre->soundFN ) + QString::fromLatin1( "</sound>\n" );
 
 			xml += QString::fromLatin1("    <raise set=\"") + QString::number( static_cast<int>( filtre->raiseView ) ) +
 				QString::fromLatin1( "\"></raise>\n" );

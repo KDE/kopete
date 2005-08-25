@@ -26,7 +26,7 @@
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qmap.h>
 
 class IRCProtocol;
@@ -145,7 +145,7 @@ protected:
 	QString m_nickName;
 	Kopete::ChatSession *m_chatSession;
 
-	QPtrList<Kopete::Contact> mMyself;
+	Q3PtrList<Kopete::Contact> mMyself;
 	Kopete::Message::MessageDirection execDir;
 };
 

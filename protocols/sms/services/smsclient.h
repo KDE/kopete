@@ -22,10 +22,12 @@
 
 #include <qobject.h>
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <QGridLayout>
 
 class SMSClientPrefsUI;
 class SMSContact;
-class QListViewItem;
+class Q3ListViewItem;
 class KProcess;
 
 class SMSClient : public SMSService

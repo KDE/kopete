@@ -27,6 +27,8 @@
 #include "jabberchatsession.h"
 #include "jabbercontactpool.h"
 #include "kopetemetacontact.h"
+//Added by qt3to4:
+#include <Q3PtrList>
 
 /**
  * JabberGroupMemberContact constructor
@@ -55,7 +57,7 @@ JabberGroupMemberContact::~JabberGroupMemberContact ()
 	
 }
 
-QPtrList<KAction> *JabberGroupMemberContact::customContextMenuActions ()
+Q3PtrList<KAction> *JabberGroupMemberContact::customContextMenuActions ()
 {
 
 	return 0;

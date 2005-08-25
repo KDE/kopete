@@ -19,6 +19,8 @@
 #include <qimage.h>
 #include <qregexp.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include <kapplication.h>
 #include <kactionclasses.h>
@@ -81,10 +83,10 @@ bool AIMContact::isReachable()
 	return true;
 }
 
-QPtrList<KAction> *AIMContact::customContextMenuActions()
+Q3PtrList<KAction> *AIMContact::customContextMenuActions()
 {
 
-	QPtrList<KAction> *actionCollection = new QPtrList<KAction>();
+	Q3PtrList<KAction> *actionCollection = new Q3PtrList<KAction>();
 	if ( !m_warnUserAction )
 	{
 		m_warnUserAction = new KAction( i18n( "&Warn User" ), 0, this, SLOT( warnUser() ), this, "warnAction" );

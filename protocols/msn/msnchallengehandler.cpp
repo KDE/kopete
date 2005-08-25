@@ -20,6 +20,8 @@
 #include "msnchallengehandler.h"
 
 #include <qdatastream.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include <kdebug.h>
 #include <kmdcodec.h>
@@ -42,11 +44,11 @@ QString MSNChallengeHandler::computeHash(const QString& challengeString)
 
   	// Combine the received challenge string with the product key.
  	KMD5 md5((challengeString + m_productKey).utf8());
- 	QCString digest = md5.hexDigest();
+ 	Q3CString digest = md5.hexDigest();
 
  	kdDebug(14140) << k_funcinfo << "md5: " << digest << endl;
 
- 	QValueVector<Q_INT32> md5Integers(4);
+ 	Q3ValueVector<Q_INT32> md5Integers(4);
  	for(Q_UINT32 i=0; i < md5Integers.count(); i++)
  	{
  		md5Integers[i] = hexSwap(digest.mid(i*8, 8)).toUInt(0, 16) & 0x7FFFFFFF;
@@ -61,7 +63,7 @@ QString MSNChallengeHandler::computeHash(const QString& challengeString)
 
 	kdDebug(14140) << k_funcinfo << "challenge key: " << challengeKey << endl;
 
-	QValueVector<Q_INT32> challengeIntegers(challengeKey.length() / 4);
+	Q3ValueVector<Q_INT32> challengeIntegers(challengeKey.length() / 4);
 	for(Q_UINT32 i=0; i < challengeIntegers.count(); i++)
 	{
 		QString sNum = challengeKey.mid(i*4, 4), sNumHex;
@@ -98,8 +100,8 @@ QString MSNChallengeHandler::computeHash(const QString& challengeString)
 	return (upper + lower);
 }
 
-Q_INT64 MSNChallengeHandler::createHashKey(const QValueVector<Q_INT32>& md5Integers,
-	const QValueVector<Q_INT32>& challengeIntegers)
+Q_INT64 MSNChallengeHandler::createHashKey(const Q3ValueVector<Q_INT32>& md5Integers,
+	const Q3ValueVector<Q_INT32>& challengeIntegers)
 {
 	kdDebug(14140) << k_funcinfo << "Creating 64-bit key." << endl;
 
@@ -119,7 +121,7 @@ Q_INT64 MSNChallengeHandler::createHashKey(const QValueVector<Q_INT32>& md5Integ
 	high = (high + md5Integers[1]) % 0x7FFFFFFF;
 	low  = (low  + md5Integers[3]) % 0x7FFFFFFF;
 
-	QDataStream buffer(QByteArray(8), IO_ReadWrite);
+	QDataStream buffer(QByteArray(8), QIODevice::ReadWrite);
 	buffer.setByteOrder(QDataStream::LittleEndian);
 	buffer << (Q_INT32)high;
 	buffer << (Q_INT32)low;

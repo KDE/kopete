@@ -27,6 +27,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <qfile.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include <kprocio.h>
 
@@ -59,7 +61,7 @@ QString KgpgInterface::KgpgEncryptText(QString text,QString userIDs, QString Opt
 	}
 	dests+=" --recipient "+userIDs;
 	
-	QCString gpgcmd = "echo -n ";
+	Q3CString gpgcmd = "echo -n ";
 	gpgcmd += KShellProcess::quote( text ).utf8();
 	gpgcmd += " | gpg --no-secmem-warning --no-tty ";
 	gpgcmd += Options.local8Bit();
@@ -85,7 +87,7 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
 	
 	char buffer[200];
 	int counter=0,ppass[2];
-	QCString password = CryptographyPlugin::cachedPass();
+	Q3CString password = CryptographyPlugin::cachedPass();
 	bool passphraseHandling=CryptographyPlugin::passphraseHandling();
 	
 	while ((counter<3) && (encResult.isEmpty()))
@@ -116,7 +118,7 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
 			fclose(pass);
 		}
 	
-		QCString gpgcmd="echo ";
+		Q3CString gpgcmd="echo ";
 		gpgcmd += KShellProcess::quote(text).utf8();
 		gpgcmd += " | gpg --no-secmem-warning --no-tty ";
 		if(passphraseHandling)
@@ -129,7 +131,7 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
 			encResult += QString::fromUtf8(buffer);
 		
 		pclose(fp);
-		password = QCString();
+		password = Q3CString();
 	}
 	
 	if( !encResult.isEmpty() )

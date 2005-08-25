@@ -27,6 +27,8 @@
 
 #include <qimage.h> // needed for image format recognition
 #include <qbuffer.h>
+//Added by qt3to4:
+#include <QImageIO>
 
 // Justin's XML helper functions
 
@@ -92,7 +94,7 @@ using namespace XMPP;
 static QString image2type(const QByteArray &ba)
 {
 	QBuffer buf(ba);
-	buf.open(IO_ReadOnly);
+	buf.open(QIODevice::ReadOnly);
 	QString format = QImageIO::imageFormat( &buf );
 
 	// TODO: add more formats

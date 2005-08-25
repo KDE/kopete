@@ -37,6 +37,9 @@
 #include <qregexp.h>
 #include <qfile.h>
 #include <qradiobutton.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3PtrList>
 
 // KDE Includes
 #include <kdebug.h>
@@ -294,9 +297,9 @@ void YahooContact::slotChatSessionDestroyed()
 	m_manager = 0L;
 }
 
-QPtrList<KAction> *YahooContact::customContextMenuActions()
+Q3PtrList<KAction> *YahooContact::customContextMenuActions()
 {
-	QPtrList<KAction> *actionCollection = new QPtrList<KAction>();
+	Q3PtrList<KAction> *actionCollection = new Q3PtrList<KAction>();
 	if ( !m_webcamAction )
 	{
 		m_webcamAction = new KAction( i18n( "View &Webcam" ), "camera_unmount", KShortcut(),

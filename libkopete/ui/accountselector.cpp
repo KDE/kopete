@@ -19,9 +19,12 @@
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 
-#include <qheader.h>
+#include <q3header.h>
 #include <qlayout.h>
 #include <qpixmap.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <Q3PtrList>
 
 #include <kdebug.h>
 #include <klistview.h>
@@ -32,7 +35,7 @@ class AccountListViewItem : public KListViewItem
 		Kopete::Account *mAccount;
 
 	public:
-		AccountListViewItem(QListView *parent, Kopete::Account *acc)
+		AccountListViewItem(Q3ListView *parent, Kopete::Account *acc)
 			: KListViewItem(parent)
 		{
 			if (acc==0)
@@ -101,8 +104,8 @@ void AccountSelector::initUI()
 	if(d->proto != 0)
 	{
 		kdDebug(14010) << k_funcinfo << "creating list for a certain protocol" << endl;
-		QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(d->proto);
-		QDictIterator<Kopete::Account> it(accounts);
+		Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(d->proto);
+		Q3DictIterator<Kopete::Account> it(accounts);
 		for(; Kopete::Account *account = it.current(); ++it)
 		{
 			new AccountListViewItem(d->lv, account);
@@ -111,7 +114,7 @@ void AccountSelector::initUI()
 	else
 	{
 		kdDebug(14010) << k_funcinfo << "creating list of all accounts" << endl;
-		QPtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
+		Q3PtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
 		Kopete::Account *account = 0;
 		for(account = accounts.first(); account; account = accounts.next())
 		{
@@ -119,8 +122,8 @@ void AccountSelector::initUI()
 		}
 	}
 
-	connect(d->lv, SIGNAL(selectionChanged(QListViewItem *)),
-		this, SLOT(slotSelectionChanged(QListViewItem *)));
+	connect(d->lv, SIGNAL(selectionChanged(Q3ListViewItem *)),
+		this, SLOT(slotSelectionChanged(Q3ListViewItem *)));
 }
 
 
@@ -129,7 +132,7 @@ void AccountSelector::setSelected(Kopete::Account *account)
 	if (account==0)
 		return;
 
-	QListViewItemIterator it(d->lv);
+	Q3ListViewItemIterator it(d->lv);
 	while (it.current())
 	{
 		if(static_cast<AccountListViewItem *>(it.current())->account() == account)
@@ -146,7 +149,7 @@ bool AccountSelector::isSelected(Kopete::Account *account)
 	if (account==0)
 		return false;
 
-	QListViewItemIterator it(d->lv);
+	Q3ListViewItemIterator it(d->lv);
 	while (it.current())
 	{
 		if(static_cast<AccountListViewItem *>(it.current())->account() == account)
@@ -166,7 +169,7 @@ Kopete::Account *AccountSelector::selectedItem()
 }
 
 
-void AccountSelector::slotSelectionChanged(QListViewItem *item)
+void AccountSelector::slotSelectionChanged(Q3ListViewItem *item)
 {
 	//kdDebug(14010) << k_funcinfo << endl;
 	if (item != 0)

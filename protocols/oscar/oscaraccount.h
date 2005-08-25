@@ -18,7 +18,7 @@
 #ifndef OSCARACCOUNT_H
 #define OSCARACCOUNT_H
 
-#include <qdict.h>
+#include <q3dict.h>
 #include <qstring.h>
 #include <qwidget.h>
 

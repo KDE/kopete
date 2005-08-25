@@ -41,6 +41,8 @@
 #include "kopeteuiglobal.h"
 
 #include "userinfodialog.h"
+//Added by qt3to4:
+#include <Q3PtrList>
 
 using Kopete::UserInfoDialog;
 
@@ -187,10 +189,10 @@ GaduContact::isReachable()
 	return account_->isConnected();
 }
 
-QPtrList<KAction>*
+Q3PtrList<KAction>*
 GaduContact::customContextMenuActions()
 {
-	QPtrList<KAction> *fakeCollection = new QPtrList<KAction>();
+	Q3PtrList<KAction> *fakeCollection = new Q3PtrList<KAction>();
 	//show profile
 	KAction* actionShowProfile = new KAction( i18n("Show Profile") , "info", 0,
 						this, SLOT( slotShowPublicProfile() ),

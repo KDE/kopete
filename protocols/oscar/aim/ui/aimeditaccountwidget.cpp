@@ -6,6 +6,8 @@
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qspinbox.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <kdebug.h>
 #include <krun.h>

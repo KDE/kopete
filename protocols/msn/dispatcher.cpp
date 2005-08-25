@@ -20,6 +20,8 @@
 
 #if MSN_WEBCAM
 #include "webcam.h"
+//Added by qt3to4:
+#include <Q3CString>
 #endif
 
 using P2P::Dispatcher;
@@ -132,7 +134,7 @@ void Dispatcher::sendFile(const QString& path, Q_INT64 fileSize, const QString& 
 
 	QByteArray header(638);
 	header.fill('\0');
-	QDataStream writer(header, IO_WriteOnly);
+	QDataStream writer(header, QIODevice::WriteOnly);
 	writer.setByteOrder(QDataStream::LittleEndian);
 
 	// Write the header length to the stream.
@@ -145,7 +147,7 @@ void Dispatcher::sendFile(const QString& path, Q_INT64 fileSize, const QString& 
 	// TODO support file preview. For now disable file preview.
 	writer << (Q_INT32)1;
 	// Write the file name in utf-16 to the stream.
-	QTextStream ts(header, IO_WriteOnly);
+	QTextStream ts(header, QIODevice::WriteOnly);
 	ts.setEncoding(QTextStream::Unicode);
 	ts.device()->at(20);
 	ts << path.section('/', -1);
@@ -299,7 +301,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 	else
 	{
 		QString body =
-			QCString(message.body.data(), message.header.dataSize);
+			Q3CString(message.body.data(), message.header.dataSize);
 		QRegExp regex("SessionID: ([0-9]*)\r\n");
 		if(regex.search(body) > 0)
 		{
@@ -364,7 +366,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 		}
 
 		QString body =
-			QCString(message.body.data(), message.header.dataSize);
+			Q3CString(message.body.data(), message.header.dataSize);
 		kdDebug(14140) << k_funcinfo << "received, " << body << endl;
 
 		if(body.startsWith("INVITE"))
@@ -399,7 +401,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 
 				regex = QRegExp("Context: ([0-9a-zA-Z+/=]*)");
 				regex.search(body);
-				QCString msnobj;
+				Q3CString msnobj;
 
 				// Decode the msn object from base64 encoding.
 				KCodecs::base64Decode(regex.cap(1).utf8() , msnobj);
@@ -424,7 +426,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				// Try to open the source file for reading.
 				// If an error occurs, send an internal
 				// error message to the recipient.
-				if(!source->open(IO_ReadOnly))
+				if(!source->open(QIODevice::ReadOnly))
 				{
 					current->error();
 					return;
@@ -463,7 +465,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 
 				// Decode the file context from base64 encoding.
 				KCodecs::base64Decode(regex.cap(1).utf8(), context);
-				QDataStream reader(context, IO_ReadOnly);
+				QDataStream reader(context, QIODevice::ReadOnly);
 				reader.setByteOrder(QDataStream::LittleEndian);
 				//Retrieve the file info from the context field.
 				// File Size [8..15] Int64
@@ -480,7 +482,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				// FileName UTF16 (Unicode) [19..539]
 				QByteArray bytes(520);
 				reader.readRawBytes(bytes.data(), bytes.size());
-				QTextStream ts(bytes, IO_ReadOnly);
+				QTextStream ts(bytes, QIODevice::ReadOnly);
 				ts.setEncoding(QTextStream::Unicode);
 				QString fileName;
 				fileName = ts.readLine().utf8();

@@ -28,6 +28,8 @@
 
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
+//Added by qt3to4:
+#include <Q3PtrList>
 
 KopeteGroupListAction::KopeteGroupListAction( const QString &text, const QString &pix, const KShortcut &cut, const QObject *receiver,
 	const char *slot, QObject *parent, const char *name )
@@ -50,7 +52,7 @@ void KopeteGroupListAction::slotUpdateList()
 	QStringList groupList;
 
 	// Add groups to our list
-	QPtrList<Kopete::Group> groups = Kopete::ContactList::self()->groups();
+	Q3PtrList<Kopete::Group> groups = Kopete::ContactList::self()->groups();
 	for ( Kopete::Group *it = groups.first(); it; it = groups.next() )
 	{
 		if(it->type() == Kopete::Group::Normal)

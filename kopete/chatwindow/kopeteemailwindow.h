@@ -24,6 +24,8 @@
 #include "kopeteviewplugin.h"
 #include <kmainwindow.h>
 #include <kparts/mainwindow.h>
+//Added by qt3to4:
+#include <QCloseEvent>
 
 namespace KParts { struct URLArgs; }
 class EmailWindowPlugin;

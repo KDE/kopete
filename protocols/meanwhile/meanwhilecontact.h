@@ -18,6 +18,8 @@
 #define MEANWHILECONTACT_H
 
 #include <qmap.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 #include "meanwhileaccount.h"
@@ -43,7 +45,7 @@ public:
 
 	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 
-	virtual QPtrList<KAction> *customContextMenuActions();
+	virtual Q3PtrList<KAction> *customContextMenuActions();
 
 	virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CanCreate );
 

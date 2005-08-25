@@ -23,6 +23,13 @@
 #include "kopeteprefs.h"
 
 #include <qapplication.h>
+//Added by qt3to4:
+#include <QWheelEvent>
+#include <QKeyEvent>
+#include <QEvent>
+#include <QDragMoveEvent>
+#include <QTimerEvent>
+#include <QMouseEvent>
 #include <kdebug.h>
 
 #include <qtimer.h>
@@ -206,10 +213,10 @@ ListView::ListView( QWidget *parent, const char *name )
 	setShowToolTips( false );
 	d->toolTip.reset( new ToolTip( viewport(), this ) );
 
-	connect( this, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
-	         SLOT( slotContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
-	connect( this, SIGNAL( doubleClicked( QListViewItem * ) ),
-	         SLOT( slotDoubleClicked( QListViewItem * ) ) );
+	connect( this, SIGNAL( contextMenu( KListView *, Q3ListViewItem *, const QPoint & ) ),
+	         SLOT( slotContextMenu( KListView *, Q3ListViewItem *, const QPoint & ) ) );
+	connect( this, SIGNAL( doubleClicked( Q3ListViewItem * ) ),
+	         SLOT( slotDoubleClicked( Q3ListViewItem * ) ) );
 
 	// set up flags for nicer painting
 	clearWFlags( WStaticContents );
@@ -237,7 +244,7 @@ ListView::~ListView()
 	delete d;
 }
 
-void ListView::slotDoubleClicked( QListViewItem *item )
+void ListView::slotDoubleClicked( Q3ListViewItem *item )
 {
 	kdDebug( 14000 ) << k_funcinfo << endl;
 
@@ -246,7 +253,7 @@ void ListView::slotDoubleClicked( QListViewItem *item )
 }
 
 void ListView::slotContextMenu( KListView * /*listview*/,
-	QListViewItem *item, const QPoint &/*point*/ )
+	Q3ListViewItem *item, const QPoint &/*point*/ )
 {
 	if ( item && !item->isSelected() )
 	{
@@ -285,7 +292,7 @@ void ListView::setShowTreeLines( bool bShowAsTree )
  */
 void ListView::keyPressEvent( QKeyEvent *e )
 {
-	QListViewItem *item = currentItem();
+	Q3ListViewItem *item = currentItem();
 	if ( (e->key() == Qt::Key_F2) && item && item->isVisible() )
 		rename( item, 0 );
 	else if ( (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) && item && item->isVisible() )
@@ -332,7 +339,7 @@ void ListView::setSmoothScrolling( bool b )
 		// Install the timer
 		d->smoothScrollingTimer = startTimer( (int)d->smoothScrollingTimerInterval );
 		// If we want to enable smooth scrolling when item has changed with keypresses etc, we need this
-		connect( this, SIGNAL( currentChanged( QListViewItem* ) ), this, SLOT( slotCurrentChanged(QListViewItem*) ) );
+		connect( this, SIGNAL( currentChanged( Q3ListViewItem* ) ), this, SLOT( slotCurrentChanged(Q3ListViewItem*) ) );
 		// Disable autoscroll, we will do it the smooth way.
 		d->smoothScrollDragAutoScroll = dragAutoScroll();
 		setDragAutoScroll( false );
@@ -351,7 +358,7 @@ void ListView::setSmoothScrolling( bool b )
 		killTimer( (int)d->smoothScrollingTimer );
 		d->smoothScrollingTimer = 0;
 		// We don't need to list currentChanged anymore
-		disconnect( this, SIGNAL( currentChanged( QListViewItem* ) ), this, SLOT( slotCurrentChanged(QListViewItem*) ) );
+		disconnect( this, SIGNAL( currentChanged( Q3ListViewItem* ) ), this, SLOT( slotCurrentChanged(Q3ListViewItem*) ) );
 		// Restore the autoscroll
 		setDragAutoScroll( d->smoothScrollDragAutoScroll );
 		// Kill the continuous press timers
@@ -747,7 +754,7 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 	return false;
 }
 
-void ListView::slotCurrentChanged( QListViewItem *item )
+void ListView::slotCurrentChanged( Q3ListViewItem *item )
 {
 	if( !item ) return;
 	// If the current item changed due to mouse click then don't center it in the listview. Do this just for key presses.

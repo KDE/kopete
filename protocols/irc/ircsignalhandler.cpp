@@ -21,6 +21,8 @@
 #include "ircsignalhandler.h"
 
 #include "kircengine.h"
+//Added by qt3to4:
+#include <Q3ValueList>
 
 IRCSignalHandler::IRCSignalHandler(IRCContactManager *m)
 	: QObject(m),
@@ -130,7 +132,7 @@ IRCSignalHandler::IRCSignalHandler(IRCContactManager *m)
 IRCSignalHandler::~IRCSignalHandler()
 {
 	//Delete our mapping pointers
-	for( QValueList<IRCSignalMappingBase*>::iterator it = mappings.begin(); it != mappings.end(); ++it )
+	for( Q3ValueList<IRCSignalMappingBase*>::iterator it = mappings.begin(); it != mappings.end(); ++it )
 		delete *it;
 }
 

@@ -25,6 +25,8 @@
 
 #include "kopeteplugin.h"
 #include "kopeteaccount.h"
+//Added by qt3to4:
+#include <Q3CString>
 
 #define SMPPPDCS_CONFIG_GROUP "SMPPPDCS Plugin"
 
@@ -132,7 +134,7 @@ private:
 	KExtendedSocket   *m_sock;
     QStringList        m_ifcfgs;
 	DCOPClient        *m_client;
-    static QCString    m_kinternetApp;
+    static Q3CString    m_kinternetApp;
 #endif
 
     bool               m_pluginConnected;

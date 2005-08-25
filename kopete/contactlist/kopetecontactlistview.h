@@ -28,11 +28,14 @@
 #include "kopetemetacontact.h"
 
 #include <qpixmap.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qstringlist.h>
 #include <qrect.h>
 #include <qtimer.h>
-#include <qguardedptr.h>
+#include <qpointer.h>
+//Added by qt3to4:
+#include <QMouseEvent>
+#include <QDropEvent>
 
 class KopeteMetaContactLVI;
 class KopeteGroupViewItem;
@@ -100,18 +103,18 @@ protected:
 	 * Start a drag operation
 	 * @return a KMultipleDrag containing: 1) A QStoredDrag of type "application/x-qlistviewitem", 2) If the MC is associated with a KABC entry, i) a QTextDrag containing their email address, and ii) their vCard representation.
 	 */
-	virtual QDragObject *dragObject();
+	virtual Q3DragObject *dragObject();
 
 	/**
 	 * Since KDE 3.1.1 ,  the original find Drop return 0L for afterme if the group is open.
 	 * This woraround allow us to keep the highlight of the item, and give always a correct position
 	 */
-	virtual void findDrop(const QPoint &pos, QListViewItem *&parent, QListViewItem *&after);
+	virtual void findDrop(const QPoint &pos, Q3ListViewItem *&parent, Q3ListViewItem *&after);
 
 	/**
 	 * The selected items have changed; update our actions to show what's possible.
 	 */
-	void updateActionsForSelection( QPtrList<Kopete::MetaContact> contacts, QPtrList<Kopete::Group> groups );
+	void updateActionsForSelection( Q3PtrList<Kopete::MetaContact> contacts, Q3PtrList<Kopete::Group> groups );
 
 private slots:
 	/**
@@ -126,13 +129,13 @@ private slots:
 
 	void slotViewSelectionChanged();
 	void slotListSelectionChanged();
-	void slotContextMenu(KListView*,QListViewItem *item, const QPoint &point );
-	void slotExpanded( QListViewItem *item );
-	void slotCollapsed( QListViewItem *item );
+	void slotContextMenu(KListView*,Q3ListViewItem *item, const QPoint &point );
+	void slotExpanded( Q3ListViewItem *item );
+	void slotCollapsed( Q3ListViewItem *item );
 
 	void slotSettingsChanged( void );
 	void slotUpdateAllGroupIcons();
-	void slotExecuted( QListViewItem *item, const QPoint &pos, int c );
+	void slotExecuted( Q3ListViewItem *item, const QPoint &pos, int c );
 
 	void slotAddedToGroup( Kopete::MetaContact *mc, Kopete::Group *to );
 	void slotRemovedFromGroup( Kopete::MetaContact *mc, Kopete::Group *from );
@@ -149,7 +152,7 @@ private slots:
 
 	void slotContactStatusChanged( Kopete::MetaContact *mc );
 
-	void slotDropped(QDropEvent *e, QListViewItem *parent, QListViewItem*);
+	void slotDropped(QDropEvent *e, Q3ListViewItem *parent, Q3ListViewItem*);
 
 	void slotShowAddContactDialog();
 	void slotNewMessageEvent(Kopete::MessageEvent *);
@@ -157,7 +160,7 @@ private slots:
 	/**
 	 * Handle renamed items by renaming the meta contact
 	 */
-	void slotItemRenamed( QListViewItem *item );
+	void slotItemRenamed( Q3ListViewItem *item );
 
 	/** Actions related slots **/
 	void slotSendMessage();
@@ -180,8 +183,8 @@ private:
 	bool mShowAsTree;
 
 	// TODO: do we really need to store these?
-	QPtrList<KopeteMetaContactLVI> m_selectedContacts;
-	QPtrList<KopeteGroupViewItem> m_selectedGroups;
+	Q3PtrList<KopeteMetaContactLVI> m_selectedContacts;
+	Q3PtrList<KopeteGroupViewItem> m_selectedGroups;
 
 	bool mSortByGroup;
 	KRootPixmap *root;
@@ -210,7 +213,7 @@ private:
 	void addDraggedContactToGroup( Kopete::MetaContact *contact, Kopete::Group *group );
 	void addDraggedContactToMetaContact( Kopete::Contact *contact, Kopete::MetaContact *parent );
 	void addDraggedContactByInfo( const QString &protocolId, const QString &accountId,
-		const QString &contactId, QListViewItem *after );
+		const QString &contactId, Q3ListViewItem *after );
 
 public:
 	struct UndoItem;
@@ -230,8 +233,8 @@ struct KopeteContactListView::UndoItem
 {
 	enum Type { MetaContactAdd, MetaContactRemove , MetaContactCopy , MetaContactRename, MetaContactChange, ContactAdd, GroupRename } type;
 	QStringList args;
-	QGuardedPtr<Kopete::MetaContact> metacontact;
-	QGuardedPtr<Kopete::Group> group;
+	QPointer<Kopete::MetaContact> metacontact;
+	QPointer<Kopete::Group> group;
 	UndoItem *next;
 	bool isStep;
 	Kopete::MetaContact::PropertySource nameSource;

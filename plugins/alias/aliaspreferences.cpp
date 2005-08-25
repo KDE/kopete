@@ -17,6 +17,11 @@
 #include <kconfig.h>
 #include <qregexp.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QVBoxLayout>
+#include <Q3ValueList>
+#include <Q3PtrList>
 #include <kplugininfo.h>
 #include <kiconloader.h>
 #include <qpainter.h>
@@ -32,14 +37,14 @@
 
 typedef KGenericFactory<AliasPreferences> AliasPreferencesFactory;
 
-class AliasItem : public QListViewItem
+class AliasItem : public Q3ListViewItem
 {
 	public:
-		AliasItem( QListView *parent,
+		AliasItem( Q3ListView *parent,
 			uint number,
 			const QString &alias,
 			const QString &command, const ProtocolList &p ) :
-		QListViewItem( parent, alias, command )
+		Q3ListViewItem( parent, alias, command )
 		{
 			protocolList = p;
 			id = number;
@@ -58,10 +63,10 @@ class AliasItem : public QListViewItem
 				if ( cellWidth < 0 )
 					cellWidth = 0;
 
-				QListViewItem::paintCell( p, cg, column, cellWidth, align );
+				Q3ListViewItem::paintCell( p, cg, column, cellWidth, align );
 
 				// Draw the rest of the background
-				QListView *lv = listView();
+				Q3ListView *lv = listView();
 				if ( !lv )
 					return;
 
@@ -99,16 +104,16 @@ class AliasItem : public QListViewItem
 			else
 			{
 				// Use Qt's own drawing
-				QListViewItem::paintCell( p, cg, column, width, align );
+				Q3ListViewItem::paintCell( p, cg, column, width, align );
 			}
 		}
 };
 
-class ProtocolItem : public QListViewItem
+class ProtocolItem : public Q3ListViewItem
 {
 	public:
-		ProtocolItem( QListView *parent, KPluginInfo *p ) :
-		QListViewItem( parent, p->name() )
+		ProtocolItem( Q3ListView *parent, KPluginInfo *p ) :
+		Q3ListViewItem( parent, p->name() )
 		{
 			this->setPixmap( 0, SmallIcon( p->icon() ) );
 			id = p->pluginName();
@@ -139,7 +144,7 @@ AliasPreferences::AliasPreferences( QWidget *parent, const char *, const QString
 
 AliasPreferences::~AliasPreferences()
 {
-	QListViewItem *myChild = preferencesDialog->aliasList->firstChild();
+	Q3ListViewItem *myChild = preferencesDialog->aliasList->firstChild();
         while( myChild )
 	{
 		ProtocolList protocols = static_cast<AliasItem*>( myChild )->protocolList;
@@ -352,7 +357,7 @@ void AliasPreferences::slotAddAlias()
 const ProtocolList AliasPreferences::selectedProtocols( EditAliasDialog *dialog )
 {
 	ProtocolList protocolList;
-	QListViewItem *item = dialog->protocolList->firstChild();
+	Q3ListViewItem *item = dialog->protocolList->firstChild();
 
 	while( item )
 	{
@@ -375,8 +380,8 @@ const ProtocolList AliasPreferences::selectedProtocols( EditAliasDialog *dialog 
 
 void AliasPreferences::loadProtocols( EditAliasDialog *dialog )
 {
-	QValueList<KPluginInfo*> plugins = Kopete::PluginManager::self()->availablePlugins("Protocols");
-	for( QValueList<KPluginInfo*>::Iterator it = plugins.begin(); it != plugins.end(); ++it )
+	Q3ValueList<KPluginInfo*> plugins = Kopete::PluginManager::self()->availablePlugins("Protocols");
+	for( Q3ValueList<KPluginInfo*>::Iterator it = plugins.begin(); it != plugins.end(); ++it )
 	{
 		ProtocolItem *item = new ProtocolItem( dialog->protocolList, *it );
 		itemMap[ (Kopete::Protocol*)Kopete::PluginManager::self()->plugin( (*it)->pluginName() ) ] = item;
@@ -388,7 +393,7 @@ void AliasPreferences::slotEditAlias()
 	EditAliasDialog editDialog;
 	loadProtocols( &editDialog );
 
-	QListViewItem *item = preferencesDialog->aliasList->selectedItems().first();
+	Q3ListViewItem *item = preferencesDialog->aliasList->selectedItems().first();
 	if( item )
 	{
 		QString oldAlias = item->text(0);
@@ -453,8 +458,8 @@ void AliasPreferences::slotDeleteAliases()
 {
 	if( KMessageBox::warningContinueCancel(this, i18n("Are you sure you want to delete the selected aliases?"), i18n("Delete Aliases"), KGuiItem(i18n("Delete"), "editdelete") ) == KMessageBox::Continue )
 	{
-		QPtrList< QListViewItem > items = preferencesDialog->aliasList->selectedItems();
-		for( QListViewItem *i = items.first(); i; i = items.next() )
+		Q3PtrList< Q3ListViewItem > items = preferencesDialog->aliasList->selectedItems();
+		for( Q3ListViewItem *i = items.first(); i; i = items.next() )
 		{
 			ProtocolList protocols = static_cast<AliasItem*>( i )->protocolList;
 			for( ProtocolList::Iterator it = protocols.begin(); it != protocols.end(); ++it )

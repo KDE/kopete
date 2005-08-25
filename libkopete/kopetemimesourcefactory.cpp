@@ -26,9 +26,11 @@
 #include <kdebug.h>
 #include <kiconloader.h>
 
-#include <qdragobject.h>
+#include <q3dragobject.h>
 #include <qstring.h>
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 namespace Kopete
 {
@@ -125,7 +127,7 @@ const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 			{
 				QImage photo = mc->photo();
 				delete d->lastMimeSource;
-				d->lastMimeSource = new QImageDrag( photo );
+				d->lastMimeSource = new Q3ImageDrag( photo );
 				return d->lastMimeSource;	
 			}
 		}
@@ -164,7 +166,7 @@ const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 
 	delete d->lastMimeSource;
 	if ( completed )
-		d->lastMimeSource = new QImageDrag( img.convertToImage() );
+		d->lastMimeSource = new Q3ImageDrag( img.convertToImage() );
 	else
 		d->lastMimeSource = 0;
 	return d->lastMimeSource;

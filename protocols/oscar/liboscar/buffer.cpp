@@ -22,6 +22,9 @@
 #include "buffer.h"
 
 #include <ctype.h>
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <Q3CString>
 
 Buffer::Buffer()
 {
@@ -279,9 +282,9 @@ WORD *Buffer::getWordBlock(WORD len)
 }
 
 
-QCString Buffer::getLEBlock(WORD len)
+Q3CString Buffer::getLEBlock(WORD len)
 {
-	QCString ch;
+	Q3CString ch;
 	for (unsigned int i=0;i<len;i++)
 		ch += getLEByte();
 	
@@ -319,9 +322,9 @@ TLV Buffer::getTLV()
 	return t;
 }
 
-QValueList<TLV> Buffer::getTLVList()
+Q3ValueList<TLV> Buffer::getTLVList()
 {
-	QValueList<TLV> ql;
+	Q3ValueList<TLV> ql;
 
 	while (mReadPos < mBuffer.size())
 	{
@@ -355,21 +358,21 @@ int Buffer::addChatTLV(const WORD type, const WORD exchange,
 
 void Buffer::expandBuffer(unsigned int inc)
 {
-	mBuffer.resize(mBuffer.size()+inc, QGArray::SpeedOptim);
+	mBuffer.resize(mBuffer.size()+inc, Q3GArray::SpeedOptim);
 }
 
-QCString Buffer::getLNTS()
+Q3CString Buffer::getLNTS()
 {
 	WORD len = getLEWord();
-	QCString qcs;
+	Q3CString qcs;
 	qcs.duplicate( getBlock(len) );
 	return qcs;
 }
 
-QCString Buffer::getLELNTS()
+Q3CString Buffer::getLELNTS()
 {
 	WORD len = getLEWord();
-	QCString qcs;
+	Q3CString qcs;
 	qcs.duplicate( getBlock(len) );
 	return qcs;
 }

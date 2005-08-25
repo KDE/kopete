@@ -20,6 +20,8 @@
 
 #include <qdatetime.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include "client.h"
 #include "gwerror.h"
@@ -48,7 +50,7 @@ SearchTask::~SearchTask()
 {
 }
 
-void SearchTask::search( const QValueList<UserSearchQueryTerm> & query )
+void SearchTask::search( const Q3ValueList<UserSearchQueryTerm> & query )
 {
 	m_queryHandle = QString::number( QDateTime::currentDateTime().toTime_t () );
 	Field::FieldList lst;
@@ -59,8 +61,8 @@ void SearchTask::search( const QValueList<UserSearchQueryTerm> & query )
 	}
 	// object Id identifies the search for later reference
 	lst.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, m_queryHandle ) );
-	QValueList<UserSearchQueryTerm>::ConstIterator it = query.begin();
-	const QValueList<UserSearchQueryTerm>::ConstIterator end = query.end();
+	Q3ValueList<UserSearchQueryTerm>::ConstIterator it = query.begin();
+	const Q3ValueList<UserSearchQueryTerm>::ConstIterator end = query.end();
 	for ( ; it != end; ++it )
 	{
 		Field::SingleField * fld =  new Field::SingleField( (*it).field.ascii(), (*it).operation, 0, NMFIELD_TYPE_UTF8, (*it).argument );
@@ -129,7 +131,7 @@ void SearchTask::slotGotPollResults()
 	}
 }
 
-QValueList< GroupWise::ContactDetails > SearchTask::results()
+Q3ValueList< GroupWise::ContactDetails > SearchTask::results()
 {
 	return m_results;
 }

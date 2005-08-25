@@ -22,6 +22,9 @@
 #include "msncontact.h"
 
 #include <qcheckbox.h>
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <Q3PtrList>
 
 #undef KDE_NO_COMPAT
 #include <kaction.h>
@@ -124,9 +127,9 @@ Kopete::ChatSession *MSNContact::manager( Kopete::Contact::CanCreateFlags canCre
 	return manager;
 }
 
-QPtrList<KAction> *MSNContact::customContextMenuActions()
+Q3PtrList<KAction> *MSNContact::customContextMenuActions()
 {
-	QPtrList<KAction> *m_actionCollection = new QPtrList<KAction>;
+	Q3PtrList<KAction> *m_actionCollection = new Q3PtrList<KAction>;
 
 	// Block/unblock Contact
 	QString label = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
@@ -444,7 +447,7 @@ void MSNContact::sync( unsigned int changed )
 		return;
 
 	//STEP ONE : add the contact to every kopetegroups where the MC is
-	QPtrList<Kopete::Group> groupList = metaContact()->groups();
+	Q3PtrList<Kopete::Group> groupList = metaContact()->groups();
 	for ( Kopete::Group *group = groupList.first(); group; group = groupList.next() )
 	{
 		//For each group, ensure it is on the MSN server
@@ -495,7 +498,7 @@ void MSNContact::sync( unsigned int changed )
 	//STEP TWO : remove the contact from groups where the MC is not, but let it at least in one group
 
 	//contact is not in that group. on the server. we will remove them dirrectly after the loop
-	QValueList<QString> removinglist; 
+	Q3ValueList<QString> removinglist; 
 	
 	for( QMap<QString, Kopete::Group*>::Iterator it = m_serverGroups.begin();(count > 1 && it != m_serverGroups.end()); ++it )
 	{
@@ -524,7 +527,7 @@ void MSNContact::sync( unsigned int changed )
 		}
 	}
 	
-	for(QValueList<QString>::Iterator it= removinglist.begin() ; it != removinglist.end() ; ++it )
+	for(Q3ValueList<QString>::Iterator it= removinglist.begin() ; it != removinglist.end() ; ++it )
 		contactRemovedFromGroup(*it);
 
 	//FINAL TEST: is the contact at least in a group..

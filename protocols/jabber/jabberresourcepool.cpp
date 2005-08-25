@@ -15,7 +15,7 @@
   * *************************************************************************
   */
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <kdebug.h>
 #include "jabberresourcepool.h"
 #include "jabberresource.h"
@@ -58,7 +58,7 @@ void JabberResourcePool::slotResourceDestroyed (QObject *sender)
 void JabberResourcePool::slotResourceUpdated ( JabberResource *resource )
 {
 
-	QPtrList<JabberBaseContact> list = mAccount->contactPool()->findRelevantSources ( resource->jid () );
+	Q3PtrList<JabberBaseContact> list = mAccount->contactPool()->findRelevantSources ( resource->jid () );
 
 	for(JabberBaseContact *mContact = list.first (); mContact; mContact = list.next ())
 	{
@@ -70,7 +70,7 @@ void JabberResourcePool::slotResourceUpdated ( JabberResource *resource )
 void JabberResourcePool::notifyRelevantContacts ( const XMPP::Jid &jid )
 {
 
-	QPtrList<JabberBaseContact> list = mAccount->contactPool()->findRelevantSources ( jid );
+	Q3PtrList<JabberBaseContact> list = mAccount->contactPool()->findRelevantSources ( jid );
 
 	for(JabberBaseContact *mContact = list.first (); mContact; mContact = list.next ())
 	{

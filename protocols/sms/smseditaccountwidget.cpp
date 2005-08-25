@@ -21,6 +21,10 @@
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QGridLayout>
+#include <QBoxLayout>
 
 #include <kconfigbase.h>
 #include <klocale.h>

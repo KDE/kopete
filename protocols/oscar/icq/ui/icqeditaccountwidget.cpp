@@ -21,9 +21,11 @@
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qlineedit.h>
-#include <qtextedit.h>
+#include <q3textedit.h>
 #include <qspinbox.h>
 #include <qpushbutton.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <kconfig.h>
 #include <kdebug.h>

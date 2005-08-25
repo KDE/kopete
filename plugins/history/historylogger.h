@@ -18,6 +18,8 @@
 #define HISTORYLOGGER_H
 
 #include <qobject.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include "kopetemessage.h" //TODO: REMOVE
 
 namespace Kopete { class Contact; }
@@ -83,7 +85,7 @@ public:
 	 * read @param lines message from the current position
 	 * from Kopete::Contact @param c in the given @param sens
 	 */
-	QValueList<Kopete::Message> readMessages(unsigned int lines,
+	Q3ValueList<Kopete::Message> readMessages(unsigned int lines,
 		const Kopete::Contact *c=0, Sens sens=Default,
 		bool reverseOrder=false, bool colorize=true);
 
@@ -92,7 +94,7 @@ public:
 	 * because its structure is really different.
 	 * Read all the messages for the given @param date
      */
-	QValueList<Kopete::Message> readMessages(QDate date);
+	Q3ValueList<Kopete::Message> readMessages(QDate date);
 
 
 	/**
@@ -113,7 +115,7 @@ public:
 	/**
      * @return The list of the days for which there is a log for m_metaContact for month of *  @param date (don't care of the day)
      */
-	QValueList<int> getDaysForMonth(QDate date);
+	Q3ValueList<int> getDaysForMonth(QDate date);
 
 	/**
 	 * Get the filename of the xml file which contains the history from the
@@ -199,7 +201,7 @@ private:
 	 * due to a bug in QT, i have to keep the document element in the memory to
 	 * prevent crashes
 	 */
-	QValueList<QDomElement> workaround;
+	Q3ValueList<QDomElement> workaround;
 
 private slots:
 	/**

@@ -25,13 +25,13 @@
 
 #include "kopeteaccount.h"
 
-#include <qvaluelist.h>
-#include <qptrlist.h>
+#include <q3valuelist.h>
+#include <q3ptrlist.h>
 #include <qobject.h>
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qdatetime.h>
-#include <qcstring.h>
+#include <q3cstring.h>
 #include <qhostaddress.h>
 
 #include "gaducontactlist.h"
@@ -82,7 +82,7 @@ struct ResLine{
 	int status;
 };
 
-typedef QValueList<ResLine> SearchResult;
+typedef Q3ValueList<ResLine> SearchResult;
 
 class QSocketNotifier;
 class QStringList;

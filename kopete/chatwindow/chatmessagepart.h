@@ -22,9 +22,11 @@
 
 #include <dom/html_element.h>
 
-#include <qptrdict.h>
-#include <qvaluelist.h>
+#include <q3ptrdict.h>
+#include <q3valuelist.h>
 #include <qpair.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 #include "kopeteview.h"
 

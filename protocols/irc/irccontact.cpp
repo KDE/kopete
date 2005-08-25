@@ -22,6 +22,8 @@
 
 #include <qtimer.h>
 #include <qtextcodec.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include "ircaccount.h"
 #include "kopeteglobal.h"
@@ -331,8 +333,8 @@ bool IRCContact::isChatting(Kopete::ChatSession *avoid) const
 	if (!account)
 		return false;
 
-	QValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
-	for (QValueList<Kopete::ChatSession*>::Iterator it= sessions.begin(); it!=sessions.end() ; ++it)
+	Q3ValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+	for (Q3ValueList<Kopete::ChatSession*>::Iterator it= sessions.begin(); it!=sessions.end() ; ++it)
 	{
 	  if( (*it) != avoid && (*it)->account() == account &&
 			   (*it)->members().contains(this) )

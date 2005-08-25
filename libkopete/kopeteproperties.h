@@ -17,7 +17,7 @@
 #ifndef KOPETEPROPERTIES_H
 #define KOPETEPROPERTIES_H
 
-#include <qasciidict.h>
+#include <q3asciidict.h>
 
 #include <typeinfo>
 
@@ -121,7 +121,7 @@ struct PropertyData
  */
 class PropertyStorage
 {
-	typedef QAsciiDict<PropertyData> PropertyDict;
+	typedef Q3AsciiDict<PropertyData> PropertyDict;
 	// setCustomPropertyData can be called on a const object, allowing the
 	// guarantee that DataProperty::data() never returns 0.
 	mutable PropertyDict _storage;

@@ -18,7 +18,7 @@
 #define TOOLTIPEDITDIALOG_H
 
 #include <kdebug.h>
-#include <qhbox.h>
+#include <q3hbox.h>
 #include <kdialogbase.h>
 class TooltipEditWidget;
 
@@ -30,8 +30,8 @@ class TooltipEditDialog : public KDialogBase
 		TooltipEditDialog(QWidget *parent=0, const char* name="ToolTipEditDialog");
 
 	private slots:
-		void slotUnusedSelected(QListViewItem *);
-		void slotUsedSelected(QListViewItem *);
+		void slotUnusedSelected(Q3ListViewItem *);
+		void slotUsedSelected(Q3ListViewItem *);
 		void slotUpButton();
 		void slotDownButton();
 		void slotAddButton();

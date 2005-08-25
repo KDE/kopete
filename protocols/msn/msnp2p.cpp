@@ -25,6 +25,8 @@
 #include <qregexp.h>
 #include <qfile.h>
 #include <qtextcodec.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 // kde
 #include <kdebug.h>
@@ -111,7 +113,7 @@ void MSNP2P::makeMSNSLPMessage( MessageType type, QString content )
 			break;
 	}
 
-	QCString dataMessage= QString(
+	Q3CString dataMessage= QString(
 			method + "\r\n"
 			"To: <msnmsgr:"+m_msgHandle+">\r\n"
 			"From: <msnmsgr:"+m_myHandle+">\r\n"
@@ -132,7 +134,7 @@ void MSNP2P::makeMSNSLPMessage( MessageType type, QString content )
 
 void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 {
-	const QCString messageHeader=QString(
+	const Q3CString messageHeader=QString(
 			"MIME-Version: 1.0\r\n"
 			"Content-Type: application/x-msnmsgrp2p\r\n"
 			"P2P-Dest: "+ m_msgHandle  +"\r\n\r\n").utf8();
@@ -217,7 +219,7 @@ void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 void MSNP2P::sendP2PAck( const char* originalHeader )
 {
 
-	const QCString messageHeader=QString(
+	const Q3CString messageHeader=QString(
 			"MIME-Version: 1.0\r\n"
 			"Content-Type: application/x-msnmsgrp2p\r\n"
 			"P2P-Dest: "+ m_msgHandle  +"\r\n\r\n").utf8();
@@ -307,7 +309,7 @@ void MSNP2P::parseMessage(MessageStruct &msgStr)
 	if(m_msgHandle.isEmpty())
 	{ //if these addresses were not previously set, get it, they should be provided in the first message at last.
 
-		QString dataMessage=QCString((msgStr.message.data()+48) , msgStr.dataMessageSize);
+		QString dataMessage=Q3CString((msgStr.message.data()+48) , msgStr.dataMessageSize);
 
 		QRegExp rx("To: <msnmsgr:([^>]*)>");
 		if( rx.search( dataMessage ) != -1 )

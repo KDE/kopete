@@ -155,13 +155,13 @@ bool Transfer::initiate()
 		break;
 	case FileIncoming:
 		kdDebug(14121) << k_funcinfo << "Stting up an incoming file transfer." << endl;
-		m_file.open(IO_WriteOnly);
+		m_file.open(QIODevice::WriteOnly);
 		connect(m_socket, SIGNAL(readyRead()),
 			this, SLOT(readyReadFileIncoming()));
 		break;
 	case FileOutgoing:
 		kdDebug(14121) << k_funcinfo << "Stting up an outgoing file transfer." << endl;
-		m_file.open(IO_ReadOnly);
+		m_file.open(QIODevice::ReadOnly);
 		connect(m_socket, SIGNAL(readyRead()),
 			this, SLOT(readyReadFileOutgoing()));
 //		timer = new QTimer(this);

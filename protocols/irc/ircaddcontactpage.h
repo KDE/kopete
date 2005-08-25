@@ -23,7 +23,7 @@
 class ircAddUI;
 namespace Kopete { class MetaContact; }
 class IRCAccount;
-class QListViewItem;
+class Q3ListViewItem;
 class ChannelList;
 
 /**

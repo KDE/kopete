@@ -28,6 +28,8 @@
 #define TESTER_H
 
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <QTextStream>
 
 #define CHECK( x, y ) check( __FILE__, __LINE__, #x, x, y, false )
 #define XFAIL( x, y ) check( __FILE__, __LINE__, #x, x, y, true )
@@ -69,7 +71,7 @@ public:
     void skip( const char *file, int line, QString msg )
     {
 	QString skipEntry;
-	QTextStream ts( &skipEntry, IO_WriteOnly );
+	QTextStream ts( &skipEntry, QIODevice::WriteOnly );
 	ts << file << "["<< line <<"]: " << msg;
 	m_skipList.append( skipEntry );
 
@@ -84,7 +86,7 @@ protected:
     {
 	if ( result != expectedResult ) {
             QString error;
-            QTextStream ts( &error, IO_WriteOnly );
+            QTextStream ts( &error, QIODevice::WriteOnly );
             ts << file << "["<< line <<"]:"
                <<" failed on \""<<  str <<"\""
                << "\n\t\t result = '"
@@ -100,7 +102,7 @@ protected:
 	    // we were expecting a failure
 	    if (expectedFailure) {
 		QString error;
-		QTextStream ts( &error, IO_WriteOnly );
+		QTextStream ts( &error, QIODevice::WriteOnly );
 		ts << file << "["<< line <<"]:"
 		   <<" unexpectedly passed on \""
 		   <<  str <<"\"";

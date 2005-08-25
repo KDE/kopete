@@ -26,12 +26,17 @@
 #include "kopeteuiglobal.h"
 
 #include <qcursor.h>
-#include <qdragobject.h>
-#include <qheader.h>
-#include <qstylesheet.h>
+#include <q3dragobject.h>
+#include <q3header.h>
+#include <q3stylesheet.h>
 #include <qtimer.h>
 #include <qtooltip.h>
-#include <qguardedptr.h>
+#include <qpointer.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3PtrList>
+#include <QDropEvent>
+#include <QMouseEvent>
 
 #include <kaction.h>
 #include <kapplication.h>
@@ -97,13 +102,13 @@ public:
 	void addCurrentItems()
 	{
 		// Add the already existing groups now
-		QPtrList<Kopete::Group> grps = Kopete::ContactList::self()->groups();
-		for ( QPtrListIterator<Kopete::Group> groupIt( grps ); groupIt.current(); ++groupIt )
+		Q3PtrList<Kopete::Group> grps = Kopete::ContactList::self()->groups();
+		for ( Q3PtrListIterator<Kopete::Group> groupIt( grps ); groupIt.current(); ++groupIt )
 			addGroup( groupIt.current() );
 
 		// Add the already existing meta contacts now
-		QPtrList<Kopete::MetaContact> metaContacts = Kopete::ContactList::self()->metaContacts();
-		for ( QPtrListIterator<Kopete::MetaContact> it( metaContacts ); it.current(); ++it )
+		Q3PtrList<Kopete::MetaContact> metaContacts = Kopete::ContactList::self()->metaContacts();
+		for ( Q3PtrListIterator<Kopete::MetaContact> it( metaContacts ); it.current(); ++it )
 			addMetaContact( it.current() );
 	}
 
@@ -125,7 +130,7 @@ protected:
 	void addMetaContactToGroupInner( Kopete::MetaContact *mc, GroupViewItem *gpi )
 	{
 		// check if the contact isn't already in the group
-		for( QListViewItem *item = gpi->firstChild(); item; item = item->nextSibling() )
+		for( Q3ListViewItem *item = gpi->firstChild(); item; item = item->nextSibling() )
 			if ( KopeteMetaContactLVI *mci = dynamic_cast<KopeteMetaContactLVI*>(item) )
 				if ( mci->metaContact() == mc )
 					return;
@@ -135,7 +140,7 @@ protected:
 	template<typename GroupViewItem>
 	void removeMetaContactFromGroupInner( Kopete::MetaContact *mc, GroupViewItem *gpi )
 	{
-		for( QListViewItem *item = gpi->firstChild(); item; item = item->nextSibling() )
+		for( Q3ListViewItem *item = gpi->firstChild(); item; item = item->nextSibling() )
 			if ( KopeteMetaContactLVI *mci = dynamic_cast<KopeteMetaContactLVI*>(item) )
 				if ( mci->metaContact() == mc )
 					delete mci;
@@ -215,7 +220,7 @@ private:
 	KopeteGroupViewItem *findGroupItem( Kopete::Group *gp )
 	{
 		if ( gp->type() == Kopete::Group::TopLevel ) return 0;
-		for( QListViewItem *item = listView()->firstChild(); item; item = item->nextSibling() )
+		for( Q3ListViewItem *item = listView()->firstChild(); item; item = item->nextSibling() )
 			if ( KopeteGroupViewItem *gvi = dynamic_cast<KopeteGroupViewItem*>(item) )
 				if ( gvi->group() == gp )
 					return gvi;
@@ -324,15 +329,15 @@ private:
 		}
 
 		// check if the contact is already in the correct "group"
-		QListViewItem *currentGroup = mc->isOnline() ? m_onlineItem : m_offlineItem;
-		for( QListViewItem *lvi = currentGroup->firstChild(); lvi; lvi = lvi->nextSibling() )
+		Q3ListViewItem *currentGroup = mc->isOnline() ? m_onlineItem : m_offlineItem;
+		for( Q3ListViewItem *lvi = currentGroup->firstChild(); lvi; lvi = lvi->nextSibling() )
 			if ( KopeteMetaContactLVI *kc = dynamic_cast<KopeteMetaContactLVI*>( lvi ) )
 				if ( kc->metaContact() == mc )
 					return;
 
 		// item not found in the right group; look for it in the other group
-		QListViewItem *oppositeGroup = mc->isOnline() ? m_offlineItem : m_onlineItem;
-		for( QListViewItem *lvi = oppositeGroup->firstChild(); lvi; lvi = lvi->nextSibling() )
+		Q3ListViewItem *oppositeGroup = mc->isOnline() ? m_offlineItem : m_onlineItem;
+		for( Q3ListViewItem *lvi = oppositeGroup->firstChild(); lvi; lvi = lvi->nextSibling() )
 		{
 			if ( KopeteMetaContactLVI *kc = dynamic_cast<KopeteMetaContactLVI*>( lvi ) )
 			{
@@ -373,9 +378,9 @@ void KopeteContactListViewPrivate::updateViewStrategy( KListView *view )
 
 // returns the next item in a depth-first descent of the list view.
 // much like QLVI::itemBelow but does not depend on visibility of items, etc.
-static QListViewItem *nextItem( QListViewItem *item )
+static Q3ListViewItem *nextItem( Q3ListViewItem *item )
 {
-	if ( QListViewItem *it = item->firstChild() )
+	if ( Q3ListViewItem *it = item->firstChild() )
 		return it;
 	while ( item && !item->nextSibling() )
 		item = item->parent();
@@ -408,17 +413,17 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 
 	setFullWidth( true );
 
-	connect( this, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
-	         SLOT( slotContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
-	connect( this, SIGNAL( expanded( QListViewItem * ) ),
-	         SLOT( slotExpanded( QListViewItem * ) ) );
-	connect( this, SIGNAL( collapsed( QListViewItem * ) ),
-	         SLOT( slotCollapsed( QListViewItem * ) ) );
-	connect( this, SIGNAL( executed( QListViewItem *, const QPoint &, int ) ),
-	         SLOT( slotExecuted( QListViewItem *, const QPoint &, int ) ) );
+	connect( this, SIGNAL( contextMenu( KListView *, Q3ListViewItem *, const QPoint & ) ),
+	         SLOT( slotContextMenu( KListView *, Q3ListViewItem *, const QPoint & ) ) );
+	connect( this, SIGNAL( expanded( Q3ListViewItem * ) ),
+	         SLOT( slotExpanded( Q3ListViewItem * ) ) );
+	connect( this, SIGNAL( collapsed( Q3ListViewItem * ) ),
+	         SLOT( slotCollapsed( Q3ListViewItem * ) ) );
+	connect( this, SIGNAL( executed( Q3ListViewItem *, const QPoint &, int ) ),
+	         SLOT( slotExecuted( Q3ListViewItem *, const QPoint &, int ) ) );
 	connect( this, SIGNAL( selectionChanged() ), SLOT( slotViewSelectionChanged() ) );
-	connect( this, SIGNAL( itemRenamed( QListViewItem * ) ),
-	         SLOT( slotItemRenamed( QListViewItem * ) ) );
+	connect( this, SIGNAL( itemRenamed( Q3ListViewItem * ) ),
+	         SLOT( slotItemRenamed( Q3ListViewItem * ) ) );
 
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ), SLOT( slotSettingsChanged() ) );
 
@@ -436,8 +441,8 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( newEvent( Kopete::MessageEvent * ) ),
 	         this, SLOT( slotNewMessageEvent( Kopete::MessageEvent * ) ) );
 
-	connect( this, SIGNAL( dropped( QDropEvent *, QListViewItem *, QListViewItem * ) ),
-	         this, SLOT( slotDropped( QDropEvent *, QListViewItem *, QListViewItem * ) ) );
+	connect( this, SIGNAL( dropped( QDropEvent *, Q3ListViewItem *, Q3ListViewItem * ) ),
+	         this, SLOT( slotDropped( QDropEvent *, Q3ListViewItem *, Q3ListViewItem * ) ) );
 
 	connect( &undoTimer, SIGNAL(timeout()) , this, SLOT (slotTimeout() ) );
 
@@ -450,7 +455,7 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 	setItemsMovable( false );
 	setDropVisualizer( false );
 	setDropHighlighter( true );
-	setSelectionMode( QListView::Extended );
+	setSelectionMode( Q3ListView::Extended );
 
 	// Load in the user's initial settings
 	slotSettingsChanged();
@@ -609,7 +614,7 @@ void KopeteContactListView::slotGroupAdded( Kopete::Group *group )
 	d->viewStrategy->addGroup( group );
 }
 
-void KopeteContactListView::slotExpanded( QListViewItem *item )
+void KopeteContactListView::slotExpanded( Q3ListViewItem *item )
 {
 	KopeteGroupViewItem *groupLVI = dynamic_cast<KopeteGroupViewItem *>( item );
 	if ( groupLVI )
@@ -622,7 +627,7 @@ void KopeteContactListView::slotExpanded( QListViewItem *item )
 	delayedSort();
 }
 
-void KopeteContactListView::slotCollapsed( QListViewItem *item )
+void KopeteContactListView::slotCollapsed( Q3ListViewItem *item )
 {
 	KopeteGroupViewItem *groupLVI = dynamic_cast<KopeteGroupViewItem*>( item );
 	if ( groupLVI )
@@ -633,7 +638,7 @@ void KopeteContactListView::slotCollapsed( QListViewItem *item )
 }
 
 void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
-	QListViewItem *item, const QPoint &point )
+	Q3ListViewItem *item, const QPoint &point )
 {
 	// FIXME: this code should be moved to the various list view item classes.
 	KopeteMetaContactLVI *metaLVI = dynamic_cast<KopeteMetaContactLVI *>( item );
@@ -692,7 +697,7 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 
 				// Submenus for separate contact actions
 				bool sep = false;  //FIXME: find if there is already a separator in the end - Olivier
-				QPtrList<Kopete::Contact> it = metaLVI->metaContact()->contacts();
+				Q3PtrList<Kopete::Contact> it = metaLVI->metaContact()->contacts();
 				for( Kopete::Contact *c = it.first(); c; c = it.next() )
 				{
 					if( sep )
@@ -808,12 +813,12 @@ void KopeteContactListView::slotUpdateAllGroupIcons()
 {
 	// FIXME: groups can (should?) do this for themselves
 	// HACK: assume all groups are top-level. works for now, until the fixme above is dealt with
-	for ( QListViewItem *it = firstChild(); it; it = it->nextSibling() )
+	for ( Q3ListViewItem *it = firstChild(); it; it = it->nextSibling() )
 		if ( KopeteGroupViewItem *gpi = dynamic_cast<KopeteGroupViewItem*>( it ) )
 			gpi->updateIcon();
 }
 
-void KopeteContactListView::slotExecuted( QListViewItem *item, const QPoint &p, int /* col */ )
+void KopeteContactListView::slotExecuted( Q3ListViewItem *item, const QPoint &p, int /* col */ )
 {
 	item->setSelected( false );
 	KopeteMetaContactLVI *metaContactLVI = dynamic_cast<KopeteMetaContactLVI *>( item );
@@ -841,7 +846,7 @@ void KopeteContactListView::slotContactStatusChanged( Kopete::MetaContact *mc )
 	d->viewStrategy->metaContactStatusChanged( mc );
 }
 
-void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListViewItem *after)
+void KopeteContactListView::slotDropped(QDropEvent *e, Q3ListViewItem *, Q3ListViewItem *after)
 {
 	if(!acceptDrag(e))
 		return;
@@ -851,7 +856,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 
 	if( const_cast<const QWidget *>( e->source() ) == this )
 	{
-		QPtrListIterator<KopeteMetaContactLVI> it( m_selectedContacts );
+		Q3PtrListIterator<KopeteMetaContactLVI> it( m_selectedContacts );
 
 		while ( it.current() )
 		{
@@ -925,7 +930,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 	}
 	else if( e->provides("text/uri-list") )
 	{
-		if ( !QUriDrag::canDecode( e ) )
+		if ( !Q3UriDrag::canDecode( e ) )
 		{
 			e->ignore();
 			return;
@@ -1028,7 +1033,7 @@ void KopeteContactListView::addDraggedContactToMetaContact( Kopete::Contact *con
 }
 
 void KopeteContactListView::addDraggedContactByInfo( const QString &protocolId, const QString &accountId,
-			      const QString &contactId, QListViewItem *after )
+			      const QString &contactId, Q3ListViewItem *after )
 {
 	kdDebug(14000) << k_funcinfo << "protocolId=" << protocolId <<
 		", accountId=" << accountId << ", contactId=" << contactId << endl;
@@ -1036,7 +1041,7 @@ void KopeteContactListView::addDraggedContactByInfo( const QString &protocolId, 
 	Kopete::Account *account = Kopete::AccountManager::self()->findAccount( protocolId,accountId );
 	if( account )
 	{
-		QDict<Kopete::Contact> contacts = account->contacts();
+		Q3Dict<Kopete::Contact> contacts = account->contacts();
 		Kopete::Contact *source_contact = contacts[ contactId ];
 
 		if( source_contact )
@@ -1072,9 +1077,9 @@ void KopeteContactListView::addDraggedContactByInfo( const QString &protocolId, 
 
 bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 {
-	QListViewItem *source=currentItem();
-	QListViewItem *parent;
-	QListViewItem *afterme;
+	Q3ListViewItem *source=currentItem();
+	Q3ListViewItem *parent;
+	Q3ListViewItem *afterme;
 	// Due to a little design problem in KListView::findDrop() we can't
 	// call it directly from a const method until KDE 4.0, but as the
 	// method is in fact const we can of course get away with a
@@ -1169,7 +1174,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 				}
 			}
 
-			if ( !QUriDrag::canDecode(e) )
+			if ( !Q3UriDrag::canDecode(e) )
 				return false;
 
 			KURL::List urlList;
@@ -1191,7 +1196,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 		else
 		{
 			QString text;
-			QTextDrag::decode(e, text);
+			Q3TextDrag::decode(e, text);
 			kdDebug(14000) << k_funcinfo << "drop with mimetype:" << e->format() << " data as text:" << text << endl;
 		}
 
@@ -1200,8 +1205,8 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 	return false;
 }
 
-void KopeteContactListView::findDrop(const QPoint &pos, QListViewItem *&parent,
-	QListViewItem *&after)
+void KopeteContactListView::findDrop(const QPoint &pos, Q3ListViewItem *&parent,
+	Q3ListViewItem *&after)
 {
 	//Since KDE 3.1.1 ,  the original find Drop return 0L for afterme if the group is open.
 	//This woraround allow us to keep the highlight of the item, and give always a correct position
@@ -1217,7 +1222,7 @@ void KopeteContactListView::contentsMousePressEvent( QMouseEvent *e )
 	if (e->button() == LeftButton )
 	{
 		QPoint p=contentsToViewport(e->pos());
-		QListViewItem *i=itemAt( p );
+		Q3ListViewItem *i=itemAt( p );
 		if( i )
 		{
 			//Maybe we are starting a drag?
@@ -1242,14 +1247,14 @@ void KopeteContactListView::slotNewMessageEvent(Kopete::MessageEvent *event)
 		if(!m)
 			return;
 
-		for ( QListViewItem *item = firstChild(); item; item = nextItem(item) )
+		for ( Q3ListViewItem *item = firstChild(); item; item = nextItem(item) )
 			if ( KopeteMetaContactLVI *li = dynamic_cast<KopeteMetaContactLVI*>(item) )
 				if ( li->metaContact() == m )
 					li->catchEvent(event);
 	}
 }
 
-QDragObject *KopeteContactListView::dragObject()
+Q3DragObject *KopeteContactListView::dragObject()
 {
 	// Discover what the drag started on.
 	// If it's a MetaContactLVI, it was either on the MCLVI itself
@@ -1258,7 +1263,7 @@ QDragObject *KopeteContactListView::dragObject()
 	// we set the pixmap for the drag to the MC's pixmap
 	// or the child contact's small icon
 
-	QListViewItem *currentLVI = currentItem();
+	Q3ListViewItem *currentLVI = currentItem();
 	if( !currentLVI )
 		return 0L;
 
@@ -1269,15 +1274,15 @@ QDragObject *KopeteContactListView::dragObject()
 	QPixmap pm;
 	Kopete::Contact *c = metaLVI->contactForPoint( m_startDragPos );
         KMultipleDrag *drag = new KMultipleDrag( this );
-	drag->addDragObject( new QStoredDrag("application/x-qlistviewitem", 0L ) );
+	drag->addDragObject( new Q3StoredDrag("application/x-qlistviewitem", 0L ) );
 
-	QStoredDrag *d = new QStoredDrag("kopete/x-metacontact", 0L );
+	Q3StoredDrag *d = new Q3StoredDrag("kopete/x-metacontact", 0L );
 	d->setEncodedData( metaLVI->metaContact()->metaContactId().utf8() );
 	drag->addDragObject( d );
 
 	if ( c ) 	// dragging a contact
 	{
-		QStoredDrag *d = new QStoredDrag("kopete/x-contact", 0L );
+		Q3StoredDrag *d = new Q3StoredDrag("kopete/x-contact", 0L );
 		d->setEncodedData( QString( c->protocol()->pluginId() +QChar( 0xE000 )+ c->account()->accountId() +QChar( 0xE000 )+ c->contactId() ).utf8() );
 		drag->addDragObject( d );
 
@@ -1298,12 +1303,12 @@ QDragObject *KopeteContactListView::dragObject()
 
 	if( !address.isEmpty() )
 	{
-		drag->addDragObject( new QTextDrag( address.fullEmail(), 0L ) );
+		drag->addDragObject( new Q3TextDrag( address.fullEmail(), 0L ) );
 		KABC::VCardConverter converter;
 		QString vcard = converter.createVCard( address );
 		if( !vcard.isNull() )
 		{
-			QStoredDrag *vcardDrag = new QStoredDrag("text/x-vcard", 0L );
+			Q3StoredDrag *vcardDrag = new Q3StoredDrag("text/x-vcard", 0L );
 			vcardDrag->setEncodedData( vcard.utf8() );
 			drag->addDragObject( vcardDrag );
 		}
@@ -1317,16 +1322,16 @@ QDragObject *KopeteContactListView::dragObject()
 
 void KopeteContactListView::slotViewSelectionChanged()
 {
-	QPtrList<Kopete::MetaContact> contacts;
-	QPtrList<Kopete::Group> groups;
+	Q3PtrList<Kopete::MetaContact> contacts;
+	Q3PtrList<Kopete::Group> groups;
 
 	m_selectedContacts.clear();
 	m_selectedGroups.clear();
 
-	QListViewItemIterator it( this );
+	Q3ListViewItemIterator it( this );
 	while ( it.current() )
 	{
-		QListViewItem *item = it.current();
+		Q3ListViewItem *item = it.current();
 		++it;
 
 		if ( item->isSelected() )
@@ -1352,8 +1357,8 @@ void KopeteContactListView::slotViewSelectionChanged()
 
 void KopeteContactListView::slotListSelectionChanged()
 {
-	QPtrList<Kopete::MetaContact> contacts = Kopete::ContactList::self()->selectedMetaContacts();
-	QPtrList<Kopete::Group> groups = Kopete::ContactList::self()->selectedGroups();
+	Q3PtrList<Kopete::MetaContact> contacts = Kopete::ContactList::self()->selectedMetaContacts();
+	Q3PtrList<Kopete::Group> groups = Kopete::ContactList::self()->selectedGroups();
 
 	//TODO: update the list to select the items that should be selected.
 	// make sure slotViewSelectionChanged is *not* called.
@@ -1361,7 +1366,7 @@ void KopeteContactListView::slotListSelectionChanged()
 }
 
 void KopeteContactListView::updateActionsForSelection(
-	QPtrList<Kopete::MetaContact> contacts, QPtrList<Kopete::Group> groups )
+	Q3PtrList<Kopete::MetaContact> contacts, Q3PtrList<Kopete::Group> groups )
 {
 	bool singleContactSelected = groups.isEmpty() && contacts.count() == 1;
 	bool inkabc=false;
@@ -1535,8 +1540,8 @@ void KopeteContactListView::slotCopyToGroup()
 
 void KopeteContactListView::slotRemove()
 {
-	QPtrList<Kopete::MetaContact> contacts = Kopete::ContactList::self()->selectedMetaContacts();
-	QPtrList<Kopete::Group> groups = Kopete::ContactList::self()->selectedGroups();
+	Q3PtrList<Kopete::MetaContact> contacts = Kopete::ContactList::self()->selectedMetaContacts();
+	Q3PtrList<Kopete::Group> groups = Kopete::ContactList::self()->selectedGroups();
 
 	if(groups.count() + contacts.count() == 0)
 		return;
@@ -1604,10 +1609,10 @@ void KopeteContactListView::slotRemove()
 		else
 		{
 			//try to guess from what group we are removing that contact.
-			QListViewItemIterator lvi_it( this );
+			Q3ListViewItemIterator lvi_it( this );
 			while ( lvi_it.current() )
 			{
-				QListViewItem *item = lvi_it.current();
+				Q3ListViewItem *item = lvi_it.current();
 				++lvi_it;
 
 				if ( item->isSelected() )
@@ -1636,7 +1641,7 @@ void KopeteContactListView::slotRemove()
 
 	for( Kopete::Group *it = groups.first(); it; it = groups.next() )
 	{
-		QPtrList<Kopete::MetaContact> list = it->members();
+		Q3PtrList<Kopete::MetaContact> list = it->members();
 		for( list.first(); list.current(); list.next() )
 		{
 			Kopete::MetaContact *mc = list.current();
@@ -1792,7 +1797,7 @@ void KopeteContactListView::slotProperties()
 	}
 }
 
-void KopeteContactListView::slotItemRenamed( QListViewItem */*item*/ )
+void KopeteContactListView::slotItemRenamed( Q3ListViewItem */*item*/ )
 {
 	//everithing is now done in  KopeteMetaContactLVI::rename
 

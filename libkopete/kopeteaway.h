@@ -21,7 +21,7 @@
 
 #include <qstring.h>
 #include <qobject.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 #include "kopeteawaydialog.h"
 #include <kopete_export.h>

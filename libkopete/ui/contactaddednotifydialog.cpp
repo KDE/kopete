@@ -16,11 +16,11 @@
 #include "contactaddednotifydialog.h"
 
 
-#include <qvbox.h>
+#include <q3vbox.h>
 #include <qlabel.h>
 #include <qcheckbox.h>
-#include <qgroupbox.h>
-#include <qstylesheet.h>
+#include <q3groupbox.h>
+#include <q3stylesheet.h>
 #include <qapplication.h>
 
 #include <klocale.h>
@@ -61,7 +61,7 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 				   i18n("Somone Has Added You"), Ok|Cancel    )
 {
 
-	setWFlags(WDestructiveClose |  getWFlags() );
+	setWFlags(Qt::WDestructiveClose |  getWFlags() );
 	
 	d=new Private;
 	d->widget=new ContactAddedNotifyWidget(this);

@@ -27,12 +27,14 @@
 #include "gaduaccount.h"
 #include "gaduprotocol.h"
 
-#include <qwidgetstack.h>
-#include <qlistview.h>
-#include <qptrlist.h>
+#include <q3widgetstack.h>
+#include <q3listview.h>
+#include <q3ptrlist.h>
 #include <qradiobutton.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 #include <kcombobox.h>
 #include <krestrictedline.h>
@@ -118,7 +120,7 @@ void
 GaduPublicDir::slotAddContact()
 {
 	GaduContactsList::ContactLine* cl = new GaduContactsList::ContactLine;
-	QListViewItem* item = mMainWidget->listFound->currentItem();
+	Q3ListViewItem* item = mMainWidget->listFound->currentItem();
 
 	cl->ignored	= false;
 	cl->firstname	= item->text( 1 );
@@ -134,7 +136,7 @@ GaduPublicDir::slotAddContact()
 void
 GaduPublicDir::slotListSelected(  )
 {
-	QListViewItem* item = mMainWidget->listFound->currentItem();
+	Q3ListViewItem* item = mMainWidget->listFound->currentItem();
 	if ( item ) {
 		enableButton( User3, true );
 	}
@@ -238,17 +240,17 @@ GaduPublicDir::iconForStatus( uint status )
 void
 GaduPublicDir::slotSearchResult( const SearchResult& result, unsigned int )
 {
-	QListView* list = mMainWidget->listFound;
+	Q3ListView* list = mMainWidget->listFound;
 
 	kdDebug(14100) << "searchResults(" << result.count() <<")" << endl;
 
-	QListViewItem* sl;
+	Q3ListViewItem* sl;
 
 	SearchResult::const_iterator r;
 
 	for ( r = result.begin(); r != result.end() ; ++r ){
 		kdDebug(14100) << "adding" << (*r).uin << endl;
-		sl= new QListViewItem(
+		sl= new Q3ListViewItem(
 					list, QString::fromAscii(""),
 					(*r).firstname,
 					(*r).nickname,

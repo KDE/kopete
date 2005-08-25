@@ -19,6 +19,8 @@
  */
 
 #include"bytestream.h"
+//Added by qt3to4:
+#include <Q3CString>
 
 // CS_NAMESPACE_BEGIN
 
@@ -130,7 +132,7 @@ int ByteStream::bytesToWrite() const
 
 //!
 //! Writes string \a cs to the stream.
-void ByteStream::write(const QCString &cs)
+void ByteStream::write(const Q3CString &cs)
 {
 	QByteArray block(cs.length());
 	memcpy(block.data(), cs.data(), block.size());

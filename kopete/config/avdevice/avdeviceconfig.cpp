@@ -26,6 +26,8 @@
 #include <qspinbox.h>
 #include <qcombobox.h>
 #include <qslider.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <kplugininfo.h>
 #include <klocale.h>

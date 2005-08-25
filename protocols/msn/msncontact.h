@@ -27,9 +27,12 @@
 #include "kopeteonlinestatus.h"
 
 #include <kurl.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3PtrList>
 
-class QListView;
-class QListViewItem;
+class Q3ListView;
+class Q3ListViewItem;
 class QPixmap;
 class QTimer;
 
@@ -96,7 +99,7 @@ public:
 
 	virtual bool isReachable();
 
-	virtual QPtrList<KAction> *customContextMenuActions();
+	virtual Q3PtrList<KAction> *customContextMenuActions();
 
 	/**
 	 * update the server group map

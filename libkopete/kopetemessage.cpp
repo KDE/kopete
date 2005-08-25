@@ -21,9 +21,12 @@
 #include <qcolor.h>
 #include <qbuffer.h>
 #include <qimage.h>
-#include <qstylesheet.h>
+#include <q3stylesheet.h>
 #include <qregexp.h>
 #include <qtextcodec.h>
+//Added by qt3to4:
+#include <Q3CString>
+#include <Q3PtrList>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kiconloader.h>
@@ -77,7 +80,7 @@ Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
 	, requestedPlugin(requestedPlugin), importance( (to.count() <= 1) ? Normal : Low ), bgOverride(false), fgOverride(false)
 	, rtfOverride(false), timeStamp(timeStamp), body(body), subject(subject)
 {
-	if( format == RichText )
+	if( format == Qt::RichText )
 	{
 		//This is coming from the RichTextEditor component.
 		//Strip off the containing HTML document
@@ -98,12 +101,12 @@ Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
 
 
 Message::Message()
-    : d( new Private( QDateTime::currentDateTime(), 0L, QPtrList<Contact>(), QString::null, QString::null, Internal,
-	PlainText, QString::null, TypeNormal ) )
+    : d( new Private( QDateTime::currentDateTime(), 0L, Q3PtrList<Contact>(), QString::null, QString::null, Internal,
+	Qt::PlainText, QString::null, TypeNormal ) )
 {
 }
 
-Message::Message( const Contact *fromKC, const QPtrList<Contact> &toKC, const QString &body,
+Message::Message( const Contact *fromKC, const Q3PtrList<Contact> &toKC, const QString &body,
 		  MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
     : d( new Private( QDateTime::currentDateTime(), fromKC, toKC, body, QString::null, direction, f, requestedPlugin, type ) )
 {
@@ -112,25 +115,25 @@ Message::Message( const Contact *fromKC, const QPtrList<Contact> &toKC, const QS
 Message::Message( const Contact *fromKC, const Contact *toKC, const QString &body,
 		  MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
 {
-	QPtrList<Contact> to;
+	Q3PtrList<Contact> to;
 	to.append(toKC);
 	d = new Private( QDateTime::currentDateTime(), fromKC, to, body, QString::null, direction, f, requestedPlugin, type );
 }
 
-Message::Message( const Contact *fromKC, const QPtrList<Contact> &toKC, const QString &body,
+Message::Message( const Contact *fromKC, const Q3PtrList<Contact> &toKC, const QString &body,
 		  const QString &subject, MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
     : d( new Private( QDateTime::currentDateTime(), fromKC, toKC, body, subject, direction, f, requestedPlugin, type ) )
 {
 }
 
-Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QPtrList<Contact> &toKC,
+Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const Q3PtrList<Contact> &toKC,
 		  const QString &body, MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
     : d( new Private( timeStamp, fromKC, toKC, body, QString::null, direction, f, requestedPlugin, type ) )
 {
 }
 
 
-Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QPtrList<Contact> &toKC,
+Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const Q3PtrList<Contact> &toKC,
 		  const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
     : d( new Private( timeStamp, fromKC, toKC, body, subject, direction, f, requestedPlugin, type ) )
 {
@@ -205,7 +208,7 @@ void Message::setBody( const QString &body, MessageFormat f )
 	detach();
 
 	QString theBody = body;
-	if( f == RichText )
+	if( f == Qt::RichText )
 	{
 		//This is coming from the RichTextEditor component.
 		//Strip off the containing HTML document
@@ -258,7 +261,7 @@ QString Message::unescape( const QString &xml )
 
 QString Message::escape( const QString &text )
 {
-	QString html = QStyleSheet::escape( text );
+	QString html = Q3StyleSheet::escape( text );
  	//Replace carriage returns inside the text
 	html.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br />" ) );
 	//Replace a tab with 4 spaces
@@ -276,7 +279,7 @@ QString Message::escape( const QString &text )
 QString Message::plainBody() const
 {
 	QString body=d->body;
-	if( d->format & RichText )
+	if( d->format & Qt::RichText )
 	{
 		body = unescape( body );
 	}
@@ -287,7 +290,7 @@ QString Message::escapedBody() const
 {
 	QString escapedBody=d->body;
 
-	if( d->format & PlainText )
+	if( d->format & Qt::PlainText )
 	{
 		escapedBody=escape( escapedBody );
 	}
@@ -323,7 +326,7 @@ QString Message::parseLinks( const QString &message, MessageFormat format )
 	if ( format == ParsedHTML )
 		return message;
 
-	if ( format & RichText )
+	if ( format & Qt::RichText )
 	{
 		// < in HTML *always* means start-of-tag
 		QStringList entries = QStringList::split( QChar('<'), message, true );
@@ -333,7 +336,7 @@ QString Message::parseLinks( const QString &message, MessageFormat format )
 		// first one is different: it doesn't start with an HTML tag.
 		if ( it != entries.end() )
 		{
-			*it = parseLinks( *it, PlainText );
+			*it = parseLinks( *it, Qt::PlainText );
 			++it;
 		}
 
@@ -347,7 +350,7 @@ QString Message::parseLinks( const QString &message, MessageFormat format )
 				continue;
 			QString tag = curr.left( tagclose + 1 );
 			QString body = curr.mid( tagclose + 1 );
-			*it = tag + parseLinks( body, PlainText );
+			*it = tag + parseLinks( body, Qt::PlainText );
 		}
 		return entries.join(QString::fromLatin1("<"));
 	}
@@ -397,7 +400,7 @@ const Contact *Message::from() const
 	return d->from;
 }
 
-QPtrList<Contact> Message::to() const
+Q3PtrList<Contact> Message::to() const
 {
 	return d->to;
 }
@@ -496,14 +499,14 @@ QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
 	QDomElement contactNameNode = doc.createElement( QString::fromLatin1("contactDisplayName") );
 	contactNameNode.setAttribute( QString::fromLatin1("dir"), contactName.isRightToLeft() ?
 	                              QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
-	contactNameNode.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( contactName ) );
+	contactNameNode.setAttribute( QString::fromLatin1("text"), Q3StyleSheet::escape( contactName ) );
 	contactNode.appendChild( contactNameNode );
 
 
 	QDomElement metacontactNameNode = doc.createElement( QString::fromLatin1("metaContactDisplayName") );
 	metacontactNameNode.setAttribute( QString::fromLatin1("dir"), metacontactName.isRightToLeft() ?
 	                                  QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
-	metacontactNameNode.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( metacontactName ) );
+	metacontactNameNode.setAttribute( QString::fromLatin1("text"), Q3StyleSheet::escape( metacontactName ) );
 
 	if( contact->metaContact() )
 	{
@@ -512,7 +515,7 @@ QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
 		{
 			QByteArray ba;
 			QBuffer buffer( ba );
-			buffer.open( IO_WriteOnly );
+			buffer.open( QIODevice::WriteOnly );
 			photo.save ( &buffer, "PNG" );
 			contactNode.setAttribute( QString::fromLatin1("userPhoto"), KCodecs::base64Encode(ba) );
 		}
@@ -561,7 +564,7 @@ const QDomDocument Message::asXML()
 		messageNode.setAttribute( QString::fromLatin1("formattedTimestamp"),
 			KGlobal::locale()->formatDateTime(d->timeStamp) );
 	}
-	messageNode.setAttribute( QString::fromLatin1("subject"), QStyleSheet::escape( d->subject ) );
+	messageNode.setAttribute( QString::fromLatin1("subject"), Q3StyleSheet::escape( d->subject ) );
 
 	/**
 	 * @deprecated backwards-compatibility direction attribute for old XSLT
@@ -677,7 +680,7 @@ const QDomDocument Message::asXML()
 }
 
 // KDE4: Move that to a utils class/namespace
-QString Message::decodeString( const QCString &message, const QTextCodec *providedCodec, bool *success )
+QString Message::decodeString( const Q3CString &message, const QTextCodec *providedCodec, bool *success )
 {
 	/*
 	Note to everyone. This function is not the most efficient, that is for sure.

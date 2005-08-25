@@ -15,7 +15,7 @@
     *************************************************************************
 */
 
-#include <qobjectlist.h>
+#include <qobject.h>
 
 #include <kdebug.h>
 

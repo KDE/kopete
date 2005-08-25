@@ -19,6 +19,10 @@
 #define MSNMESSAGEMANAGER_H
 
 #include "kopetechatsession.h"
+//Added by qt3to4:
+#include <QLabel>
+#include <Q3ValueList>
+#include <Q3PtrList>
 
 class MSNSwitchBoardSocket;
 class KActionCollection;
@@ -98,13 +102,13 @@ private:
 	MSNSwitchBoardSocket *m_chatService;
 	QString otherString;
 	KActionMenu *m_actionInvite;
-	QPtrList<KAction> m_inviteactions;
+	Q3PtrList<KAction> m_inviteactions;
 	KAction *m_actionNudge;
 	KAction *m_actionWebcamReceive;
 	KAction *m_actionWebcamSend;
 
 	//Messages sent before the ending of the connection are queued
-	QValueList<Kopete::Message> m_messagesQueue;
+	Q3ValueList<Kopete::Message> m_messagesQueue;
 	void sendMessageQueue();
 
 	QMap<unsigned int, Kopete::Message> m_messagesSent;

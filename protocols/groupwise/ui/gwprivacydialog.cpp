@@ -17,10 +17,13 @@
 */
 
 #include <qlabel.h>
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qpushbutton.h>
 #include <qstringlist.h>
-#include <qlistview.h>
+#include <q3listview.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3ValueList>
 
 #include <kdebug.h>
 #include <kiconloader.h>
@@ -36,11 +39,11 @@
 #include "userdetailsmanager.h"
 #include "gwprivacydialog.h"
 
-class PrivacyLBI : public QListBoxPixmap
+class PrivacyLBI : public Q3ListBoxPixmap
 {
 public:
-	PrivacyLBI( QListBox * listBox, const QPixmap & pixmap, const QString & text, const QString & dn )
-	: QListBoxPixmap( listBox, pixmap, text ), m_dn( dn )
+	PrivacyLBI( Q3ListBox * listBox, const QPixmap & pixmap, const QString & text, const QString & dn )
+	: Q3ListBoxPixmap( listBox, pixmap, text ), m_dn( dn )
 	{
 	}
 	QString dn() { return m_dn; }
@@ -65,8 +68,8 @@ GroupWisePrivacyDialog::GroupWisePrivacyDialog( GroupWiseAccount * account, QWid
 
 	populateWidgets();
 
-	m_privacy->m_allowList->setSelectionMode( QListBox::Extended );
-	m_privacy->m_denyList->setSelectionMode( QListBox::Extended );
+	m_privacy->m_allowList->setSelectionMode( Q3ListBox::Extended );
+	m_privacy->m_denyList->setSelectionMode( Q3ListBox::Extended );
 
 	connect( m_privacy->m_btnAllow, SIGNAL( clicked() ), SLOT( slotAllowClicked() ) );
 	connect( m_privacy->m_btnBlock, SIGNAL( clicked() ), SLOT( slotBlockClicked() ) );
@@ -99,9 +102,9 @@ void GroupWisePrivacyDialog::populateWidgets()
 	// default policy
 	QString defaultPolicyText = i18n( "<Everyone Else>" );
 	if ( mgr->defaultAllow() )
-		m_defaultPolicy = new QListBoxText( m_privacy->m_allowList, defaultPolicyText );
+		m_defaultPolicy = new Q3ListBoxText( m_privacy->m_allowList, defaultPolicyText );
 	else
-		m_defaultPolicy = new QListBoxText( m_privacy->m_denyList, defaultPolicyText );
+		m_defaultPolicy = new Q3ListBoxText( m_privacy->m_denyList, defaultPolicyText );
 
 	QPixmap icon = m_account->protocol()->groupwiseAvailable.iconFor( m_account );
 
@@ -148,7 +151,7 @@ void GroupWisePrivacyDialog::slotBlockClicked()
 		if ( m_privacy->m_allowList->isSelected( i ) )
 		{
 			m_dirty = true;
-			QListBoxItem * lbi = m_privacy->m_allowList->item( i );
+			Q3ListBoxItem * lbi = m_privacy->m_allowList->item( i );
 			m_privacy->m_allowList->takeItem( lbi );
 			m_privacy->m_denyList->insertItem( lbi );
 		}
@@ -164,7 +167,7 @@ void GroupWisePrivacyDialog::slotAllowClicked()
 		if ( m_privacy->m_denyList->isSelected( i ) )
 		{
 			m_dirty = true;
-			QListBoxItem * lbi = m_privacy->m_denyList->item( i );
+			Q3ListBoxItem * lbi = m_privacy->m_denyList->item( i );
 			m_privacy->m_denyList->takeItem( lbi );
 			m_privacy->m_allowList->insertItem( lbi );
 		}
@@ -179,7 +182,7 @@ void GroupWisePrivacyDialog::slotAddClicked()
 		m_searchDlg = new KDialogBase( this, "privacysearchdialog", false, 
 				i18n( "Search for Contact to Block" ),
 				KDialogBase::Ok|KDialogBase::Cancel );
-		m_search = new GroupWiseSearch( m_account, QListView::Multi, false, m_searchDlg, "privacysearchwidget" );
+		m_search = new GroupWiseSearch( m_account, Q3ListView::Multi, false, m_searchDlg, "privacysearchwidget" );
 		m_searchDlg->setMainWidget( m_search );
 		connect( m_searchDlg, SIGNAL( okClicked() ), SLOT( slotSearchedForUsers() ) );
 		connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOK( bool ) ) );
@@ -191,9 +194,9 @@ void GroupWisePrivacyDialog::slotAddClicked()
 void GroupWisePrivacyDialog::slotSearchedForUsers()
 {
 	// create an item for each result, in the block list
-	QValueList< ContactDetails > selected = m_search->selectedResults();
-	QValueList< ContactDetails >::Iterator it = selected.begin();
-	const QValueList< ContactDetails >::Iterator end = selected.end();
+	Q3ValueList< ContactDetails > selected = m_search->selectedResults();
+	Q3ValueList< ContactDetails >::Iterator it = selected.begin();
+	const Q3ValueList< ContactDetails >::Iterator end = selected.end();
 	QPixmap icon = m_account->protocol()->groupwiseAvailable.iconFor( m_account );
 	for ( ; it != end; ++it )
 	{
@@ -213,7 +216,7 @@ void GroupWisePrivacyDialog::slotRemoveClicked()
 		if ( m_privacy->m_denyList->isSelected( i ) )
 		{
 			m_dirty = true;
-			QListBoxItem * lbi = m_privacy->m_denyList->item( i );
+			Q3ListBoxItem * lbi = m_privacy->m_denyList->item( i );
 			// can't remove the default policy
 			if ( lbi == m_defaultPolicy )
 				continue;
@@ -225,7 +228,7 @@ void GroupWisePrivacyDialog::slotRemoveClicked()
 		if ( m_privacy->m_allowList->isSelected( i ) )
 		{
 			m_dirty = true;
-			QListBoxItem * lbi = m_privacy->m_allowList->item( i );
+			Q3ListBoxItem * lbi = m_privacy->m_allowList->item( i );
 			// can't remove the default policy
 			if ( lbi == m_defaultPolicy )
 				continue;

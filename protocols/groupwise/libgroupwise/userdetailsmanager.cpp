@@ -75,8 +75,8 @@ void UserDetailsManager::requestDetails( const QStringList & dnList, bool onlyUn
 {
 	// build a list of DNs that are not already subject to a pending request
 	QStringList requestList;
-	QValueListConstIterator<QString> end = dnList.end();
-	for ( QValueListConstIterator<QString> it = dnList.begin(); it != end; ++it )
+	Q3ValueListConstIterator<QString> end = dnList.end();
+	for ( Q3ValueListConstIterator<QString> it = dnList.begin(); it != end; ++it )
 	{
 		// don't request our own details
 		if ( *it == m_client->userDN() )

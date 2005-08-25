@@ -19,6 +19,8 @@
  */
 
 #include"base64.h"
+//Added by qt3to4:
+#include <Q3CString>
 
 // CS_NAMESPACE_BEGIN
 
@@ -143,7 +145,7 @@ QByteArray Base64::decode(const QByteArray &s)
 QString Base64::arrayToString(const QByteArray &a)
 {
 	QByteArray b = encode(a);
-	QCString c;
+	Q3CString c;
 	c.resize(b.size()+1);
 	memcpy(c.data(), b.data(), b.size());
 	return QString::fromLatin1(c);
@@ -172,7 +174,7 @@ QByteArray Base64::stringToArray(const QString &s)
 //! Encodes string \a s and returns the result as a string.
 QString Base64::encodeString(const QString &s)
 {
-	QCString c = s.utf8();
+	Q3CString c = s.utf8();
 	int len = c.length();
 	QByteArray b(len);
 	memcpy(b.data(), c.data(), len);

@@ -23,9 +23,9 @@
 
 #include <qstring.h>
 #include <qstringlist.h>
-#include <qcstring.h>
+#include <q3cstring.h>
 
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <qdom.h>
 
 class QDate;
@@ -107,7 +107,7 @@ namespace XMPP
 			QString pcode;
 			QString country;
 		};
-		typedef QValueList<Address> AddressList;
+		typedef Q3ValueList<Address> AddressList;
 		const AddressList &addressList() const;
 		void setAddressList(const AddressList &);
 
@@ -127,7 +127,7 @@ namespace XMPP
 
 			QStringList lines;
 		};
-		typedef QValueList<Label> LabelList;
+		typedef Q3ValueList<Label> LabelList;
 		const LabelList &labelList() const;
 		void setLabelList(const LabelList &);
 
@@ -152,7 +152,7 @@ namespace XMPP
 
 			QString number;
 		};
-		typedef QValueList<Phone> PhoneList;
+		typedef Q3ValueList<Phone> PhoneList;
 		const PhoneList &phoneList() const;
 		void setPhoneList(const PhoneList &);
 
@@ -168,7 +168,7 @@ namespace XMPP
 
 			QString userid;
 		};
-		typedef QValueList<Email> EmailList;
+		typedef Q3ValueList<Email> EmailList;
 		const EmailList &emailList() const;
 		void setEmailList(const EmailList &);
 

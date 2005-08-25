@@ -22,6 +22,8 @@
 #define LIBGW_CLIENT_H
 
 #include <qstring.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include "gwclientstream.h"
 #include "gwerror.h"
@@ -204,7 +206,7 @@ fd		 * @param password
 		/**
 		 * Host's IP address
 		 */
-		QCString ipAddress();
+		Q3CString ipAddress();
 		
 		/**
 		 * Get a reference to the RequestFactory for this Client. 

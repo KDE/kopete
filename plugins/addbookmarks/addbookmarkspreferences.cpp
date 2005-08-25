@@ -16,10 +16,12 @@
 #include <kopetepluginmanager.h>
 #include <kopetecontactlist.h>
 #include <qlayout.h>
-#include <qbuttongroup.h>
-#include <qlistbox.h>
+#include <q3buttongroup.h>
+#include <q3listbox.h>
 #include <qnamespace.h>
 #include <qradiobutton.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 
 typedef KGenericFactory<BookmarksPreferences> BookmarksPreferencesFactory;
@@ -80,7 +82,7 @@ void BookmarksPreferences::load()
 {
 	QStringList list;
 	QStringList::iterator it;
-	QListBoxItem* item;
+	Q3ListBoxItem* item;
 	
 	m_settings.load();
 	p_dialog->buttonGroup1->setButton(m_settings.isFolderForEachContact());

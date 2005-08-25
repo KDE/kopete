@@ -21,6 +21,11 @@
 #include <qwidget.h>
 #include <qmap.h>
 #include <qpair.h>
+//Added by qt3to4:
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGridLayout>
 
 #include "kircengine.h"
 
@@ -32,7 +37,7 @@ class QLineEdit;
 class QPushButton;
 class KListView;
 class QSpinBox;
-class QListViewItem;
+class Q3ListViewItem;
 
 class ChannelList
 	: public QWidget
@@ -52,8 +57,8 @@ class ChannelList
 		void channelSelected( const QString &channel );
 
 	private slots:
-		void slotItemDoubleClicked( QListViewItem * i );
-		void slotItemSelected( QListViewItem * i );
+		void slotItemDoubleClicked( Q3ListViewItem * i );
+		void slotItemSelected( Q3ListViewItem * i );
 		void slotChannelListed( const QString & channel, uint users, const QString & topic );
 		void slotListEnd();
 		void slotSearchCache();

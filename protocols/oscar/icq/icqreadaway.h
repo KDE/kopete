@@ -23,7 +23,7 @@
 class ICQAccount;
 class ICQContact;
 class KTextBrowser;
-class QVBox;
+class Q3VBox;
 
 class ICQReadAway : public KDialogBase
 {
@@ -45,7 +45,7 @@ class ICQReadAway : public KDialogBase
 	private:
 		ICQAccount *mAccount;
 		ICQContact *mContact;
-		QVBox *mMainWidget;
+		Q3VBox *mMainWidget;
 		KTextBrowser *awayMessageBrowser;
 };
 #endif

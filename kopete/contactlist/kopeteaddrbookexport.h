@@ -25,6 +25,8 @@
 #include <kabc/addressee.h>
 
 #include "kopetecontactproperty.h"
+//Added by qt3to4:
+#include <QPixmap>
 
 class AddressBookExportUI;
 class KDialogBase;

@@ -23,6 +23,8 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <qstring.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include "connection.h"
 #include "oscarutils.h"
 #include "transfer.h"
@@ -75,7 +77,7 @@ bool SSIModifyTask::addContact( const QString& contact, const QString& group, bo
 	}
 	
 	//create new SSI item and populate the TLV list
-	QValueList<TLV> tlvList;
+	Q3ValueList<TLV> tlvList;
 	if ( requiresAuth )
 	{
 		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "This contact requires auth. adding appropriate tlv" << endl;
@@ -134,7 +136,7 @@ bool SSIModifyTask::addGroup( const QString& groupName )
 	m_opType = Add;
 	m_opSubject = Group;
 	m_newItem = m_ssiManager->findGroup( groupName );
-	QValueList<TLV> dummy;
+	Q3ValueList<TLV> dummy;
 	Oscar::SSI newItem( groupName, m_ssiManager->nextGroupId(), 0, ROSTER_GROUP, dummy );
 	m_newItem = newItem;
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding group '" << m_newItem.name() << "' to SSI" << endl;
@@ -360,7 +362,7 @@ void SSIModifyTask::changeGroupOnServer()
 		
 	//Change the 0x00C8 TLV in the old group item to remove the bid we're
 	//moving to a different group
-	QValueList<TLV> list = oldGroupItem.tlvList();
+	Q3ValueList<TLV> list = oldGroupItem.tlvList();
 	TLV oldIds = Oscar::findTLV( list, 0x00C8 );
 	if ( oldIds.type == 0x00C8 )
 	{
@@ -383,7 +385,7 @@ void SSIModifyTask::changeGroupOnServer()
 
 	//Change the 0x00C8 TLV in the new group item to add the bid we're
 	//adding to this group
-	QValueList<TLV> list2 = m_groupItem.tlvList();
+	Q3ValueList<TLV> list2 = m_groupItem.tlvList();
 	TLV oldIds2 = Oscar::findTLV( list2, 0x00C8 );
 	TLV newGroupTLV;
 	if ( oldIds2.type == 0x00C8 )
@@ -473,8 +475,8 @@ void SSIModifyTask::addItemToBuffer( Oscar::SSI item, Buffer* buffer )
 	buffer->addWord( item.type() );
 	buffer->addWord( item.tlvListLength() );
 	
-	QValueList<TLV>::const_iterator it =  item.tlvList().begin();
-	QValueList<TLV>::const_iterator listEnd = item.tlvList().end();
+	Q3ValueList<TLV>::const_iterator it =  item.tlvList().begin();
+	Q3ValueList<TLV>::const_iterator listEnd = item.tlvList().end();
 	for( ; it != listEnd; ++it )
 		buffer->addTLV( ( *it ) );
 }

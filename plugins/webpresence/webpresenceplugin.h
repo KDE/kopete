@@ -20,7 +20,9 @@
 #ifndef WEBPRESENCEPLUGIN_H
 #define WEBPRESENCEPLUGIN_H
 
-#include <qvaluestack.h>
+#include <q3valuestack.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include <kio/job.h>
 
@@ -33,7 +35,7 @@ namespace Kopete { class MetaContact; }
 class KToggleAction;
 class KActionCollection;
 
-typedef QValueList<Kopete::Protocol*> ProtocolList;
+typedef Q3ValueList<Kopete::Protocol*> ProtocolList;
 
 class WebPresencePlugin : public Kopete::Plugin
 {

@@ -33,6 +33,8 @@
 #include <kdialogbase.h>
 #include <kmessagebox.h>
 #include <kimageio.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 typedef KGenericFactory<AIMProtocol> AIMProtocolFactory;
 
@@ -97,11 +99,11 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
 		QString screenname = command;
 
 		Kopete::Account *account = 0;
-		QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(proto);
+		Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(proto);
 		// do not show chooser if we only have one account to "choose" from
 		if (accounts.count() == 1)
 		{
-			QDictIterator<Kopete::Account> it(accounts);
+			Q3DictIterator<Kopete::Account> it(accounts);
 			account = it.current();
 
 			if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
@@ -193,7 +195,7 @@ Kopete::Contact *AIMProtocol::deserializeContact(Kopete::MetaContact *metaContac
 	QString displayName = serializedData["displayName"];
 
 	// Get the account it belongs to
-	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
+	Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
 	Kopete::Account *account = accounts[accountId];
 
 	if ( !account ) //no account
@@ -213,7 +215,7 @@ Kopete::Contact *AIMProtocol::deserializeContact(Kopete::MetaContact *metaContac
 		ssiType = serializedData["ssi_type"].toUInt();
 	}
 	
-	Oscar::SSI item( ssiName, ssiGid, ssiBid, ssiType, QValueList<TLV>(), 0 );
+	Oscar::SSI item( ssiName, ssiGid, ssiBid, ssiType, Q3ValueList<TLV>(), 0 );
 	item.setWaitingAuth( ssiWaitingAuth );
 	
 	AIMContact *c = new AIMContact( account, contactId, metaContact, QString::null, item );

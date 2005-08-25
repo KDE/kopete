@@ -22,9 +22,16 @@
 
 #include <qcursor.h>
 #include <qlayout.h>
-#include <qhbox.h>
+#include <q3hbox.h>
 #include <qtooltip.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QCloseEvent>
+#include <Q3PtrList>
+#include <QEvent>
+#include <QLabel>
+#include <QShowEvent>
 
 #include <kaction.h>
 #include <kactionclasses.h>
@@ -94,14 +101,14 @@
  */
 
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
-: KMainWindow( parent, name, WType_TopLevel )
+: KMainWindow( parent, name, Qt::WType_TopLevel )
 {
 	// Applications should ensure that their StatusBar exists before calling createGUI()
 	// so that the StatusBar is always correctly positioned when KDE is configured to use
 	// a MacOS-style MenuBar.
 	// This fixes a "statusbar drawn over the top of the toolbar" bug
 	// e.g. it can happen when you switch desktops on Kopete startup
-	m_statusBarWidget = new QHBox(statusBar(), "m_statusBarWidget");
+	m_statusBarWidget = new Q3HBox(statusBar(), "m_statusBarWidget");
 	m_statusBarWidget->setMargin( 2 );
 	m_statusBarWidget->setSpacing( 1 );
 	statusBar()->addWidget(m_statusBarWidget, 0, true);
@@ -146,7 +153,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 		slotPluginLoaded( *it );
 
 	// If some account alrady loaded, build the status icon
-	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
+	Q3PtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
 	for(Kopete::Account *a=accounts.first() ; a; a=accounts.next() )
 		slotAccountRegistered(a);
 }
@@ -650,7 +657,7 @@ void KopeteWindow::slotAccountRegistered( Kopete::Account *account )
 void KopeteWindow::slotAccountUnregistered( const Kopete::Account *account)
 {
 //	kdDebug(14000) << k_funcinfo << "Called." << endl;
-	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
+	Q3PtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
 	if (accounts.isEmpty())
 	{
 //		actionConnect->setEnabled(false);
@@ -727,7 +734,7 @@ void KopeteWindow::makeTrayToolTip()
 		QToolTip::remove(m_tray);
 
 		QString tt = QString::fromLatin1("<qt>");
-		QPtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
+		Q3PtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
 		for(Kopete::Account *a = accounts.first(); a; a = accounts.next())
 		{
 			Kopete::Contact *self = a->myself();
@@ -753,7 +760,7 @@ void KopeteWindow::slotAccountStatusIconRightClicked( Kopete::Account *account, 
 
 void KopeteWindow::slotTrayAboutToShowMenu( KPopupMenu * popup )
 {
-	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
+	Q3PtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
 	for(Kopete::Account *a=accounts.first() ; a; a=accounts.next() )
 	{
 		KActionMenu *menu = a->actionMenu();

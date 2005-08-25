@@ -96,9 +96,9 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 				pointer += sizeof( gg_msg_richtext_format );
 				i += sizeof( gg_msg_richtext_format );
 				gg_msg_richtext_color *color = (gg_msg_richtext_color*)( pointer );
-				r = (int)color->red;
-				g = (int)color->green;
-				b = (int)color->blue;
+				r = (int)color->Qt::red;
+				g = (int)color->Qt::green;
+				b = (int)color->Qt::blue;
 			}
 			style += QString(" color: rgb( %1, %2, %3 ); ").arg( r ).arg( g ).arg( b );
 

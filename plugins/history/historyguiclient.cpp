@@ -24,6 +24,9 @@
 #include <kaction.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <Q3PtrList>
 
 class HistoryPlugin;
 
@@ -38,7 +41,7 @@ HistoryGUIClient::HistoryGUIClient(Kopete::ChatSession *parent, const char *name
 	if(!m_manager || m_manager->members().isEmpty())
 		deleteLater();
 
-	QPtrList<Kopete::Contact> mb=m_manager->members();
+	Q3PtrList<Kopete::Contact> mb=m_manager->members();
 	m_logger=new HistoryLogger( mb.first() , this );
 
 	actionLast=new KAction( i18n("History Last" ), QString::fromLatin1( "finish" ), 0, this, SLOT(slotLast()), actionCollection() , "historyLast" );
@@ -64,8 +67,8 @@ void HistoryGUIClient::slotPrevious()
 	KopeteView *m_currentView = m_manager->view(true);
 	m_currentView->clear();
 
-	QPtrList<Kopete::Contact> mb = m_manager->members();
-	QValueList<Kopete::Message> msgs = m_logger->readMessages(
+	Q3PtrList<Kopete::Contact> mb = m_manager->members();
+	Q3ValueList<Kopete::Message> msgs = m_logger->readMessages(
 			HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
 		HistoryLogger::AntiChronological, true);
 
@@ -81,9 +84,9 @@ void HistoryGUIClient::slotLast()
 	KopeteView *m_currentView = m_manager->view(true);
 	m_currentView->clear();
 
-	QPtrList<Kopete::Contact> mb = m_manager->members();
+	Q3PtrList<Kopete::Contact> mb = m_manager->members();
 	m_logger->setPositionToLast();
-	QValueList<Kopete::Message> msgs = m_logger->readMessages(
+	Q3ValueList<Kopete::Message> msgs = m_logger->readMessages(
 			HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
 		HistoryLogger::AntiChronological, true);
 
@@ -100,8 +103,8 @@ void HistoryGUIClient::slotNext()
 	KopeteView *m_currentView = m_manager->view(true);
 	m_currentView->clear();
 
-	QPtrList<Kopete::Contact> mb = m_manager->members();
-	QValueList<Kopete::Message> msgs = m_logger->readMessages(
+	Q3PtrList<Kopete::Contact> mb = m_manager->members();
+	Q3ValueList<Kopete::Message> msgs = m_logger->readMessages(
 			HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
 		HistoryLogger::Chronological, false);
 

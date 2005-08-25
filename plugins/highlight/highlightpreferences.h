@@ -23,7 +23,7 @@
 
 class HighlightPrefsUI;
 class Filter;
-class QListViewItem;
+class Q3ListViewItem;
 
 /**
   *@author Olivier Goffart
@@ -42,7 +42,7 @@ public:
 private:
 	HighlightPrefsUI *preferencesDialog;
 	HighlightConfig *m_config;
-	QMap <QListViewItem*,Filter*> m_filterItems;
+	QMap <Q3ListViewItem*,Filter*> m_filterItems;
 
 	bool donttouch;
 

@@ -19,7 +19,7 @@
 #ifndef _OSCAR_LOGINTASK_H_
 #define _OSCAR_LOGINTASK_H_
 
-#include <qcstring.h>
+#include <q3cstring.h>
 #include "oscartypes.h"
 #include "task.h"
 

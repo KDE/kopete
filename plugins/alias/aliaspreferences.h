@@ -11,8 +11,10 @@
 #define AliasPREFERENCES_H
 
 #include "kcmodule.h"
+//Added by qt3to4:
+#include <Q3ValueList>
 
-typedef QValueList<Kopete::Protocol*> ProtocolList;
+typedef Q3ValueList<Kopete::Protocol*> ProtocolList;
 
 class AliasDialogBase;
 namespace Kopete { class Protocol; }

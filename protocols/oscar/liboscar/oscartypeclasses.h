@@ -22,9 +22,9 @@
 
 #include <qglobal.h>
 #include <qstring.h>
-#include <qcstring.h>
+#include <q3cstring.h>
 #include <qdatetime.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <kopete_export.h>
 
 namespace Oscar
@@ -123,7 +123,7 @@ class KOPETE_EXPORT SSI
 {
 public:
 	SSI();
-	SSI( const QString &name, int gid, int bid, int type, const QValueList<TLV>& tlvlist, int tlvLength = 0 );
+	SSI( const QString &name, int gid, int bid, int type, const Q3ValueList<TLV>& tlvlist, int tlvLength = 0 );
 	SSI( const SSI& other );
 	~SSI();
 	
@@ -148,10 +148,10 @@ public:
 	Q_UINT16 type() const;
 	
 	/** \brief the TLV list for the item */
-	const QValueList<TLV>& tlvList() const;
+	const Q3ValueList<TLV>& tlvList() const;
 	
 	/** \brief Set the TLV list for the item */
-	void setTLVList( QValueList<TLV> );
+	void setTLVList( Q3ValueList<TLV> );
 	
 	/**
 	 * \brief Set the length of the TLV list
@@ -205,7 +205,7 @@ private:
 	int m_gid;
 	int m_bid;
 	int m_type;
-	QValueList<TLV> m_tlvList;
+	Q3ValueList<TLV> m_tlvList;
 	int m_tlvLength;
 	bool m_waitingAuth;
 	QString m_alias;

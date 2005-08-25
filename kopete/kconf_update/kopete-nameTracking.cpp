@@ -20,7 +20,7 @@
 
 #include <kstandarddirs.h>
 
-static QTextStream qcerr( stderr, IO_WriteOnly );
+static QTextStream qcerr( stderr, QIODevice::WriteOnly );
 
 int main()
 {
@@ -29,7 +29,7 @@ int main()
 	
 	// Load contact list & save backup.
 	QFile contactListFile( filename );
-	contactListFile.open( IO_ReadOnly );
+	contactListFile.open( QIODevice::ReadOnly );
 	QDomDocument contactList;
 	contactList.setContent( &contactListFile );
 	contactListFile.close();
@@ -121,7 +121,7 @@ int main()
 	}
 
 	// Save converted contactlist
-	contactListFile.open( IO_WriteOnly );
+	contactListFile.open( QIODevice::WriteOnly );
 	QTextStream stream( &contactListFile );
 	stream.setEncoding( QTextStream::UnicodeUTF8 );
 	stream << contactList.toString( 4 );

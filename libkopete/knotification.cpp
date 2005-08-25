@@ -32,11 +32,13 @@
 #include <kwin.h>
 
 
-#include <qvbox.h>
+#include <q3vbox.h>
+//Added by qt3to4:
+#include <QPixmap>
 #include <dcopclient.h>
-#include <qcstring.h>
-#include <qguardedptr.h>
-#include <qstylesheet.h>
+#include <q3cstring.h>
+#include <qpointer.h>
+#include <q3stylesheet.h>
 #include <qlabel.h>
 #include <qtimer.h>
 #include <qtabwidget.h>
@@ -133,7 +135,7 @@ void KNotification::notifyByMessagebox()
 	else
 	{ //we may show the specific action button
 		int result=0;
-		QGuardedPtr<KNotification> _this=this; //this can be deleted
+		QPointer<KNotification> _this=this; //this can be deleted
 		switch( d->level )
 		{
 			default:
@@ -175,12 +177,12 @@ void KNotification::notifyByPassivePopup(const QPixmap &pix )
 	KPassivePopup *pop = new KPassivePopup( checkWinId(appName, winId) );
 	QObject::connect(this, SIGNAL(closed()), pop, SLOT(deleteLater()));
 
-	QVBox *vb = pop->standardView( title, pix.isNull() ? d->text: QString::null , icon );
-	QVBox *vb2=vb;
+	Q3VBox *vb = pop->standardView( title, pix.isNull() ? d->text: QString::null , icon );
+	Q3VBox *vb2=vb;
 
 	if(!pix.isNull())
 	{
-		QHBox *hb = new QHBox(vb);
+		Q3HBox *hb = new Q3HBox(vb);
 		hb->setSpacing(KDialog::spacingHint());
 		QLabel *pil=new QLabel(hb);
 		pil->setPixmap(pix);
@@ -195,9 +197,9 @@ void KNotification::notifyByPassivePopup(const QPixmap &pix )
 			pil->setMaximumWidth(80);
 			pil->setMaximumHeight(80*pix.height()/pix.width());
 		}
-		vb=new QVBox(hb);
+		vb=new Q3VBox(hb);
 		QLabel *msg = new QLabel( d->text, vb, "msg_label" );
-		msg->setAlignment( AlignLeft );
+		msg->setAlignment( Qt::AlignLeft );
 	}
 
 
@@ -208,7 +210,7 @@ void KNotification::notifyByPassivePopup(const QPixmap &pix )
 		for ( QStringList::ConstIterator it = d->actions.begin() ; it != d->actions.end(); ++it )
 		{
 			i++;
-			linkCode+=QString::fromLatin1("&nbsp;<a href=\"%1\">%2</a> ").arg( QString::number(i) , QStyleSheet::escape(*it)  );
+			linkCode+=QString::fromLatin1("&nbsp;<a href=\"%1\">%2</a> ").arg( QString::number(i) , Q3StyleSheet::escape(*it)  );
 		}
 		linkCode+=QString::fromLatin1("</p>");
 		KActiveLabel *link = new KActiveLabel(linkCode , vb );

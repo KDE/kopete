@@ -24,7 +24,9 @@
 #include "kopetemimetypehandler.h"
 
 #include <dom/dom_node.h>
-#include <qdict.h>
+#include <q3dict.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #define m_protocol ((IRCProtocol*)IRCProtocol::protocol())
 
@@ -97,7 +99,7 @@ public:
 
 	virtual Kopete::Account* createNewAccount(const QString &accountId);
 
-	virtual QPtrList<KAction> *customChatWindowPopupActions( const Kopete::Message &, DOM::Node & );
+	virtual Q3PtrList<KAction> *customChatWindowPopupActions( const Kopete::Message &, DOM::Node & );
 
 	static IRCProtocol *protocol();
 
@@ -139,7 +141,7 @@ public:
 	bool commandInProgress(){ return m_commandInProgress; }
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }
 
-	QDict<IRCNetwork> &networks(){ return m_networks; }
+	Q3Dict<IRCNetwork> &networks(){ return m_networks; }
 	void addNetwork( IRCNetwork *network );
 
 	void editNetworks( const QString &networkName = QString::null );
@@ -214,8 +216,8 @@ private:
 
 	bool m_commandInProgress;
 
-	QDict<IRCNetwork> m_networks;
-	QDict<IRCHost> m_hosts;
+	Q3Dict<IRCNetwork> m_networks;
+	Q3Dict<IRCHost> m_hosts;
 	IRCProtocolHandler *m_protocolHandler;
 };
 

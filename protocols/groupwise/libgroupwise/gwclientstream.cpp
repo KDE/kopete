@@ -31,10 +31,12 @@
 // #include"protocol.h"
 
 #include <qapplication.h>  // for qdebug
-#include <qguardedptr.h> 
+#include <qpointer.h> 
 #include <qobject.h>
-#include <qptrqueue.h>
+#include <q3ptrqueue.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include "bytestream.h"
 #include "connector.h"
@@ -137,7 +139,7 @@ public:
 	int errCond;
 	QString errText;
 
-	QPtrQueue<Transfer> in;
+	Q3PtrQueue<Transfer> in;
 
 	QTimer noopTimer; // probably not needed
 	int noop_time;
@@ -473,7 +475,7 @@ void ClientStream::cr_connected()
 	d->client.doTLS = d->tlsHandler ? true: false;
 	d->client.doBinding = d->doBinding;*/
 
-	QGuardedPtr<QObject> self = this;
+	QPointer<QObject> self = this;
 	emit connected();
 	if(!self)
 		return;
@@ -518,7 +520,7 @@ void ClientStream::ss_readyRead()
 	a = d->ss->read();
 
 #ifdef LIBGW_DEBUG
-	QCString cs(a.data(), a.size()+1);
+	Q3CString cs(a.data(), a.size()+1);
 	CoreProtocol::debug( QString( "ClientStream: ss_readyRead() recv: %1 bytes" ).arg( a.size() ) );
 	cs_dump( a );
 #endif
@@ -539,7 +541,7 @@ void ClientStream::ss_bytesWritten(int bytes)
 
 void ClientStream::ss_tlsHandshaken()
 {
-	QGuardedPtr<QObject> self = this;
+	QPointer<QObject> self = this;
 	emit securityLayerActivated(LayerTLS);
 	if(!self)
 		return;

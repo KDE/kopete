@@ -21,6 +21,10 @@
 #include <qimage.h>
 #include <qtooltip.h>
 #include <qfile.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3ValueList>
+#include <Q3PtrList>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -291,7 +295,7 @@ void MSNChatSession::slotActionInviteAboutToShow()
 	m_actionInvite->popupMenu()->clear();
 
 	
-	QDictIterator<Kopete::Contact> it( account()->contacts() );
+	Q3DictIterator<Kopete::Contact> it( account()->contacts() );
 	for( ; it.current(); ++it )
 	{
 		if( !members().contains( it.current() ) && it.current()->isOnline() && it.current() != myself() )
@@ -356,7 +360,7 @@ void MSNChatSession::sendMessageQueue()
 		return;
 	}
 //	kdDebug(14140) << "MSNChatSession::sendMessageQueue: " << m_messagesQueue.count() <<endl;
-	for ( QValueList<Kopete::Message>::iterator it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
+	for ( Q3ValueList<Kopete::Message>::iterator it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
 	{
 		//m_chatService->sendMsg( *it)  ;
 		slotMessageSent(*it , this);
@@ -487,14 +491,14 @@ void MSNChatSession::initInvitation(MSNInvitation* invitation)
 	}
 	else
 	{
-		QPtrList<Kopete::Contact> mb=members();
+		Q3PtrList<Kopete::Contact> mb=members();
 		static_cast<MSNAccount*>( account() )->slotStartChatSession( mb.first()->contactId() );
 	}
 }
 
 void MSNChatSession::slotRequestPicture()
 {
-	QPtrList<Kopete::Contact> mb=members();
+	Q3PtrList<Kopete::Contact> mb=members();
 	MSNContact *c = static_cast<MSNContact*>( mb.first() );
 	if(!c)
 	 return;
@@ -518,7 +522,7 @@ void MSNChatSession::slotRequestPicture()
 
 void MSNChatSession::slotDisplayPictureChanged()
 {
-	QPtrList<Kopete::Contact> mb=members();
+	Q3PtrList<Kopete::Contact> mb=members();
 	MSNContact *c = static_cast<MSNContact *>( mb.first() );
 	if ( c && m_image )
 	{
@@ -533,7 +537,7 @@ void MSNChatSession::slotDisplayPictureChanged()
 				//We connected that in the constructor.  we don't need to keep this slot active.
 				disconnect( Kopete::ChatSessionManager::self() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );
 			
-				QPtrListIterator<KToolBar>  it=w->toolBarIterator() ;
+				Q3PtrListIterator<KToolBar>  it=w->toolBarIterator() ;
 				KAction *imgAction=actionCollection()->action("msnDisplayPicture");
 				if(imgAction)  while(it)
 				{

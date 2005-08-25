@@ -82,7 +82,7 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 
 	mAccount = account;
 	mLocalFile.setName ( file );
-	mLocalFile.open ( IO_ReadOnly );
+	mLocalFile.open ( QIODevice::ReadOnly );
 
 	mKopeteTransfer = Kopete::TransferManager::transferManager()->addTransfer ( contact,
 																			  mLocalFile.name (),
@@ -137,8 +137,8 @@ void JabberFileTransfer::slotIncomingTransferAccepted ( Kopete::Transfer *transf
 	mLocalFile.setName ( fileName );
 
 	bool couldOpen = false;
-	Q_LLONG offset = 0;
-	Q_LLONG length = 0;
+	qlonglong offset = 0;
+	qlonglong length = 0;
 
 	mBytesTransferred = 0;
 	mBytesToTransfer = mXMPPTransfer->fileSize ();
@@ -154,7 +154,7 @@ void JabberFileTransfer::slotIncomingTransferAccepted ( Kopete::Transfer *transf
 													resumeButton, overwriteButton ) )
 		{
 			case KMessageBox::Yes:		// resume
-										couldOpen = mLocalFile.open ( IO_ReadWrite );
+										couldOpen = mLocalFile.open ( QIODevice::ReadWrite );
 										if ( couldOpen )
 										{
 											offset = mLocalFile.size ();
@@ -166,7 +166,7 @@ void JabberFileTransfer::slotIncomingTransferAccepted ( Kopete::Transfer *transf
 										break;
 
 			case KMessageBox::No:		// overwrite
-										couldOpen = mLocalFile.open ( IO_WriteOnly );
+										couldOpen = mLocalFile.open ( QIODevice::WriteOnly );
 										break;
 
 			default:					// cancel
@@ -177,7 +177,7 @@ void JabberFileTransfer::slotIncomingTransferAccepted ( Kopete::Transfer *transf
 	else
 	{
 		// overwrite by default
-		couldOpen = mLocalFile.open ( IO_WriteOnly );
+		couldOpen = mLocalFile.open ( QIODevice::WriteOnly );
 	}
 
 	if ( !couldOpen )

@@ -18,7 +18,7 @@
 #ifndef GW_EVENTTRANSFER_H
 #define GW_EVENTTRANSFER_H
 
-#include <qcstring.h>
+#include <q3cstring.h>
 #include <qdatetime.h>
 
 #include "gwerror.h" 

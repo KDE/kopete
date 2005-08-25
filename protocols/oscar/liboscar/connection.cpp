@@ -30,6 +30,8 @@
 #include <kdebug.h>
 
 #include "oscartypeclasses.h"
+//Added by qt3to4:
+#include <Q3ValueList>
 
 
 class ConnectionPrivate
@@ -38,7 +40,7 @@ public:
 	DWORD snacSequence;
 	WORD flapSequence;
 
-	QValueList<int> familyList;
+	Q3ValueList<int> familyList;
 	RateClassManager* rateClassManager;
 
 	ClientStream* clientStream;
@@ -99,12 +101,12 @@ bool Connection::isSupported( int family ) const
 	return ( d->familyList.findIndex( family ) != -1 );
 }
 
-QValueList<int> Connection::supportedFamilies() const
+Q3ValueList<int> Connection::supportedFamilies() const
 {
 	return d->familyList;
 }
 
-void Connection::addToSupportedFamilies( const QValueList<int>& familyList )
+void Connection::addToSupportedFamilies( const Q3ValueList<int>& familyList )
 {
 	d->familyList += familyList;
 }

@@ -18,7 +18,7 @@
 #define TESTBEDFAKESERVER_H
 
 #include "qobject.h"
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 class TestbedIncomingMessage;
 
@@ -60,7 +60,7 @@ protected:
 	/**
 	 * List of incoming messages
 	 */
-	QPtrList<TestbedIncomingMessage> m_incomingMessages;
+	Q3PtrList<TestbedIncomingMessage> m_incomingMessages;
 };
 
 #endif

@@ -29,7 +29,7 @@
 #include "kopetewalletmanager.h"
 #include "kopetewallettest_program.h"
 
-static QTextStream _out( stdout, IO_WriteOnly );
+static QTextStream _out( stdout, QIODevice::WriteOnly );
 
 void closeWallet()
 {

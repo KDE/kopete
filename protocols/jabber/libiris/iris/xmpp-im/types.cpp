@@ -22,6 +22,8 @@
 
 #include<qmap.h>
 #include<qapplication.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #define NS_XML     "http://www.w3.org/XML/1998/namespace"
 
@@ -187,7 +189,7 @@ public:
 	// extensions
 	QDateTime timeStamp;
 	UrlList urlList;
-	QValueList<MsgEvent> eventList;
+	Q3ValueList<MsgEvent> eventList;
 	QString eventId;
 	QString xencrypted, invite;
 
@@ -501,7 +503,7 @@ Stanza Message::toStanza(Stream *stream) const
 	}*/
 
 	// urls
-	for(QValueList<Url>::ConstIterator uit = d->urlList.begin(); uit != d->urlList.end(); ++uit) {
+	for(Q3ValueList<Url>::ConstIterator uit = d->urlList.begin(); uit != d->urlList.end(); ++uit) {
 		QDomElement x = s.createElement("jabber:x:oob", "x");
 		x.appendChild(s.createTextElement("jabber:x:oob", "url", (*uit).url()));
 		if(!(*uit).desc().isEmpty())
@@ -520,7 +522,7 @@ Stanza Message::toStanza(Stream *stream) const
 				x.appendChild(s.createTextElement("jabber:x:event","id",d->eventId));
 		}
 
-		for(QValueList<MsgEvent>::ConstIterator ev = d->eventList.begin(); ev != d->eventList.end(); ++ev) {
+		for(Q3ValueList<MsgEvent>::ConstIterator ev = d->eventList.begin(); ev != d->eventList.end(); ++ev) {
 			switch (*ev) {
 				case OfflineEvent:
 					x.appendChild(s.createElement("jabber:x:event", "offline"));
@@ -890,7 +892,7 @@ void Resource::setStatus(const Status & _status)
 // ResourceList
 //---------------------------------------------------------------------------
 ResourceList::ResourceList()
-:QValueList<Resource>()
+:Q3ValueList<Resource>()
 {
 }
 
@@ -1094,7 +1096,7 @@ bool RosterItem::fromXml(const QDomElement &item)
 // Roster
 //---------------------------------------------------------------------------
 Roster::Roster()
-:QValueList<RosterItem>()
+:Q3ValueList<RosterItem>()
 {
 }
 
@@ -1251,7 +1253,7 @@ QString FormField::typeToTagName(int type) const
 // Form
 //---------------------------------------------------------------------------
 Form::Form(const Jid &j)
-:QValueList<FormField>()
+:Q3ValueList<FormField>()
 {
 	setJid(j);
 }

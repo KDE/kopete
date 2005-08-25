@@ -2,6 +2,8 @@
 #define NETWORKSTATUS_COMMON_H
 
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 namespace NetworkStatus
 {
@@ -16,7 +18,7 @@ namespace NetworkStatus
 		// policy for on-demand usage as defined by the service
 		EnumOnDemandPolicy onDemandPolicy;
 		// identifier for the service
-		QCString service;
+		Q3CString service;
 		// indicate that the connection is to 'the internet' - similar to default gateway in routing
 		bool internet;
 		// list of netmasks that the network connects to - overridden by above internet

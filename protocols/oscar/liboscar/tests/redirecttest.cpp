@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include "redirecttest.h"
-#include <qcstring.h>
+#include <q3cstring.h>
 
 using namespace std;
 RedirectTest::RedirectTest(int argc, char ** argv)

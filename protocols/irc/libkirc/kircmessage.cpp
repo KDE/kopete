@@ -26,6 +26,8 @@
 #include <kextsock.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 using namespace KIRC;
 
@@ -101,7 +103,7 @@ void Message::writeRawMessage(Engine *engine, const QTextCodec *codec, const QSt
 
 	QString txt = str + QString::fromLatin1("\r\n");
 
-	QCString s(codec->fromUnicode(txt));
+	Q3CString s(codec->fromUnicode(txt));
         kdDebug(14120) << "Message is " << s.length() << " chars" << endl;
 	// FIXME: Should check the amount of data really writen.
 	int wrote = engine->socket()->writeBlock(s.data(), s.length());
@@ -157,7 +159,7 @@ Message Message::parse(Engine *engine, const QTextCodec *codec, bool *parseSucce
 
 	if (engine->socket()->canReadLine())
 	{
-		QCString raw(engine->socket()->bytesAvailable()+1);
+		Q3CString raw(engine->socket()->bytesAvailable()+1);
 		Q_LONG length = engine->socket()->readLine(raw.data(), raw.count());
 
 		if( length > -1 )
@@ -235,7 +237,7 @@ QString Message::ctcpUnquote(const QString &str)
 	return tmp;
 }
 
-bool Message::matchForIRCRegExp(const QCString &line, const QTextCodec *codec, Message &message)
+bool Message::matchForIRCRegExp(const Q3CString &line, const QTextCodec *codec, Message &message)
 {
 	if(matchForIRCRegExp(m_IRCCommandType1, codec, line, message))
 		return true;
@@ -248,7 +250,7 @@ bool Message::matchForIRCRegExp(const QCString &line, const QTextCodec *codec, M
 
 // FIXME: remove the decodeStrings calls or update them.
 // FIXME: avoid the recursive call, it make the ctcp command unquoted twice (wich is wrong, but valid in most of the cases)
-bool Message::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const QCString &line, Message &msg )
+bool Message::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const Q3CString &line, Message &msg )
 {
 	if( regexp.exactMatch( codec->toUnicode(line) ) )
 	{
@@ -257,10 +259,10 @@ bool Message::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const 
 		msg.m_command = unquote(regexp.cap(2));
 		msg.m_args = QStringList::split(' ', regexp.cap(3));
 
-		QCString suffix = codec->fromUnicode(unquote(regexp.cap(4)));
+		Q3CString suffix = codec->fromUnicode(unquote(regexp.cap(4)));
 		if (!suffix.isNull() && suffix.length() > 0)
 		{
-			QCString ctcpRaw;
+			Q3CString ctcpRaw;
 			if (extractCtcpCommand(suffix, ctcpRaw))
 			{
 				msg.m_ctcpRaw = codec->toUnicode(ctcpRaw); 
@@ -271,7 +273,7 @@ bool Message::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const 
 				int space = ctcpRaw.find(' ');
 				if (!matchForIRCRegExp(msg.m_ctcpMessage->m_raw, codec, *msg.m_ctcpMessage))
 				{
-					QCString command;
+					Q3CString command;
 					if (space > 0)
 						command = ctcpRaw.mid(0, space).upper();
 					else
@@ -331,7 +333,7 @@ bool Message::isValid() const
  * string is splited to get the first part of the message and fill the ctcp command.
  * FIXME: The code currently only match for a textual message or a ctcp message not both mixed as it can be (even if very rare).
  */
-bool Message::extractCtcpCommand(QCString &message, QCString &ctcpline)
+bool Message::extractCtcpCommand(Q3CString &message, Q3CString &ctcpline)
 {
 	uint len = message.length();
 

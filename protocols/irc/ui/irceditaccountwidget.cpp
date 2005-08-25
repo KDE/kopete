@@ -37,13 +37,13 @@
 #include <kcharsets.h>
 
 #include <qlabel.h>
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 #include <qpushbutton.h>
 #include <qcheckbox.h>
 #include <qconnection.h>
 #include <qvalidator.h>
 #include <qcombobox.h>
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qlineedit.h>
 
 IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident, QWidget *parent, const char * )
@@ -88,11 +88,11 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 
 		QStringList cmds = account()->connectCommands();
 		for( QStringList::Iterator i = cmds.begin(); i != cmds.end(); ++i )
-			new QListViewItem( commandList, *i );
+			new Q3ListViewItem( commandList, *i );
 
 		const QMap< QString, QString > replies = account()->customCtcpReplies();
 		for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
-			new QListViewItem( ctcpList, it.key(), it.data() );
+			new Q3ListViewItem( ctcpList, it.key(), it.data() );
 	}
 
 	mUserName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^\\s]*$"), mUserName ) );
@@ -110,11 +110,11 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		}
 	}
 
-	connect( commandList, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
-		this, SLOT( slotCommandContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
+	connect( commandList, SIGNAL( contextMenu( KListView *, Q3ListViewItem *, const QPoint & ) ),
+		this, SLOT( slotCommandContextMenu( KListView *, Q3ListViewItem *, const QPoint & ) ) );
 
-	connect( ctcpList, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
-		this, SLOT( slotCtcpContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
+	connect( ctcpList, SIGNAL( contextMenu( KListView *, Q3ListViewItem *, const QPoint & ) ),
+		this, SLOT( slotCtcpContextMenu( KListView *, Q3ListViewItem *, const QPoint & ) ) );
 
 	connect( addButton, SIGNAL( clicked() ), this, SLOT( slotAddCommand() ) );
 	connect( editButton, SIGNAL( clicked() ), this, SLOT(slotEditNetworks() ) );
@@ -144,7 +144,7 @@ void IRCEditAccountWidget::slotUpdateNetworks( const QString & selectedNetwork )
 
 	uint i = 0;
 	QStringList keys;
-	for( QDictIterator<IRCNetwork> it( IRCProtocol::protocol()->networks() ); it.current(); ++it )
+	for( Q3DictIterator<IRCNetwork> it( IRCProtocol::protocol()->networks() ); it.current(); ++it )
 		keys.append( it.currentKey() );
 
 	keys.sort();
@@ -175,17 +175,17 @@ void IRCEditAccountWidget::slotUpdateNetworkDescription( const QString &network 
 	);
 }
 
-void IRCEditAccountWidget::slotCommandContextMenu( KListView *, QListViewItem *item, const QPoint &p )
+void IRCEditAccountWidget::slotCommandContextMenu( KListView *, Q3ListViewItem *item, const QPoint &p )
 {
-	QPopupMenu popup;
+	Q3PopupMenu popup;
 	popup.insertItem( i18n("Remove Command"), 1 );
 	if( popup.exec( p ) == 1 )
 		delete item;
 }
 
-void IRCEditAccountWidget::slotCtcpContextMenu( KListView *, QListViewItem *item, const QPoint &p )
+void IRCEditAccountWidget::slotCtcpContextMenu( KListView *, Q3ListViewItem *item, const QPoint &p )
 {
-	QPopupMenu popup;
+	Q3PopupMenu popup;
 	popup.insertItem( i18n("Remove CTCP Reply"), 1 );
 	if( popup.exec( p ) == 1 )
 		delete item;
@@ -195,7 +195,7 @@ void IRCEditAccountWidget::slotAddCommand()
 {
     if ( !commandEdit->text().isEmpty() )
     {
-	new QListViewItem( commandList, commandEdit->text() );
+	new Q3ListViewItem( commandList, commandEdit->text() );
 	commandEdit->clear();
     }
 }
@@ -204,7 +204,7 @@ void IRCEditAccountWidget::slotAddCtcp()
 {
     if (  !newCTCP->text().isEmpty() && !newReply->text().isEmpty() )
     {
-	new QListViewItem( ctcpList, newCTCP->text(), newReply->text() );
+	new Q3ListViewItem( ctcpList, newCTCP->text(), newReply->text() );
 	newCTCP->clear();
 	newReply->clear();
     }
@@ -256,11 +256,11 @@ Kopete::Account *IRCEditAccountWidget::apply()
 	account()->configGroup()->writeEntry("PreferSSL", preferSSL->isChecked());
 
 	QStringList cmds;
-	for( QListViewItem *i = commandList->firstChild(); i; i = i->nextSibling() )
+	for( Q3ListViewItem *i = commandList->firstChild(); i; i = i->nextSibling() )
 		cmds.append( i->text(0) );
 
 	QMap< QString, QString > replies;
-	for( QListViewItem *i = ctcpList->firstChild(); i; i = i->nextSibling() )
+	for( Q3ListViewItem *i = ctcpList->firstChild(); i; i = i->nextSibling() )
 		replies[ i->text(0) ] = i->text(1);
 
 	account()->setCustomCtcpReplies( replies );

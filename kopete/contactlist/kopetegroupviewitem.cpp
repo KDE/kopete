@@ -67,14 +67,14 @@ private:
 } // END namespace UI
 } // END namespace Kopete
 
-KopeteGroupViewItem::KopeteGroupViewItem( Kopete::Group *group_, QListView *parent, const char *name )
+KopeteGroupViewItem::KopeteGroupViewItem( Kopete::Group *group_, Q3ListView *parent, const char *name )
 : Kopete::UI::ListView::Item( parent, group_, name )
 {
 	m_group = group_;
 	initLVI();
 }
 
-KopeteGroupViewItem::KopeteGroupViewItem( Kopete::Group *group_, QListViewItem *parent, const char *name )
+KopeteGroupViewItem::KopeteGroupViewItem( Kopete::Group *group_, Q3ListViewItem *parent, const char *name )
  : Kopete::UI::ListView::Item( parent, group_, name )
 {
 	m_group = group_;
@@ -149,7 +149,7 @@ void KopeteGroupViewItem::refreshDisplayName()
 	totalMemberCount = 0;
 	onlineMemberCount = 0;
 
-	for ( QListViewItem *lvi = firstChild(); lvi; lvi = lvi->nextSibling() )
+	for ( Q3ListViewItem *lvi = firstChild(); lvi; lvi = lvi->nextSibling() )
 	{
 		if ( KopeteMetaContactLVI *kc = dynamic_cast<KopeteMetaContactLVI*>( lvi ) )
 		{
@@ -223,7 +223,7 @@ void KopeteGroupViewItem::updateVisibility()
 			// When calling setVisible(true) EVERY child item will be shown,
 			// even if they should be hidden.
 			// We just re-update the visibility of all child items
-			for ( QListViewItem *lvi = firstChild(); lvi; lvi = lvi->nextSibling() )
+			for ( Q3ListViewItem *lvi = firstChild(); lvi; lvi = lvi->nextSibling() )
 			{
 				if ( KopeteMetaContactLVI *kmc = dynamic_cast<KopeteMetaContactLVI *>( lvi ) )
 					kmc->updateVisibility();

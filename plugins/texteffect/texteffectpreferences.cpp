@@ -19,6 +19,8 @@
 #include <qlayout.h>
 #include <qcheckbox.h>
 #include <qpushbutton.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <klocale.h>
 #include <kcolordialog.h>
@@ -177,7 +179,7 @@ void TextEffectPreferences::slotUpPressed()
 	int p=preferencesDialog->mColorsListBox->currentItem();
 	if(p <= 0 )
 		return;
-	QListBoxItem *i=preferencesDialog->mColorsListBox->selectedItem();
+	Q3ListBoxItem *i=preferencesDialog->mColorsListBox->selectedItem();
 	if(!i)
 		return;
 	preferencesDialog->mColorsListBox->setSelected(i,false);
@@ -194,7 +196,7 @@ void TextEffectPreferences::slotDownPressed()
 	int p=preferencesDialog->mColorsListBox->currentItem();
 	if(p < 0 )
 		return;
-	QListBoxItem *i=preferencesDialog->mColorsListBox->selectedItem();
+	Q3ListBoxItem *i=preferencesDialog->mColorsListBox->selectedItem();
 	if(!i)
 		return;
 	preferencesDialog->mColorsListBox->setSelected(i,false);

@@ -64,8 +64,8 @@ private:
 	Kopete::Transfer *mKopeteTransfer;
 	QFile mLocalFile;
 	int mTransferId;
-	Q_LLONG mBytesTransferred;
-	Q_LLONG mBytesToTransfer;
+	qlonglong mBytesTransferred;
+	qlonglong mBytesToTransfer;
 
 };
 

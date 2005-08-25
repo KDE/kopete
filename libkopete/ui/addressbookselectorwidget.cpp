@@ -41,7 +41,7 @@
 #include <klistviewsearchline.h>
 #include <qlabel.h>
 #include <qtooltip.h>
-#include <qwhatsthis.h>
+#include <q3whatsthis.h>
 
 #include "addressbookselectorwidget.h"
 #include <addresseeitem.h>
@@ -63,12 +63,12 @@ AddressBookSelectorWidget::AddressBookSelectorWidget( QWidget *parent, const cha
 	connect( addAddresseeButton, SIGNAL( clicked() ), SLOT( slotAddAddresseeClicked() ) );
 	connect( addAddresseeButton, SIGNAL( clicked() ), SIGNAL( addAddresseeClicked() ) );	
 
-	connect( addresseeListView, SIGNAL( clicked(QListViewItem * ) ),
-			SIGNAL( addresseeListClicked( QListViewItem * ) ) );
-	connect( addresseeListView, SIGNAL( selectionChanged( QListViewItem * ) ),
-			SIGNAL( addresseeListClicked( QListViewItem * ) ) );
-	connect( addresseeListView, SIGNAL( spacePressed( QListViewItem * ) ),
-			SIGNAL( addresseeListClicked( QListViewItem * ) ) );
+	connect( addresseeListView, SIGNAL( clicked(Q3ListViewItem * ) ),
+			SIGNAL( addresseeListClicked( Q3ListViewItem * ) ) );
+	connect( addresseeListView, SIGNAL( selectionChanged( Q3ListViewItem * ) ),
+			SIGNAL( addresseeListClicked( Q3ListViewItem * ) ) );
+	connect( addresseeListView, SIGNAL( spacePressed( Q3ListViewItem * ) ),
+			SIGNAL( addresseeListClicked( Q3ListViewItem * ) ) );
 	
 	connect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
 	
@@ -79,7 +79,7 @@ AddressBookSelectorWidget::AddressBookSelectorWidget( QWidget *parent, const cha
 	kListViewSearchLine->setListView(addresseeListView);
 	slotLoadAddressees();
 
-	addresseeListView->setColumnWidthMode(0, QListView::Manual);
+	addresseeListView->setColumnWidthMode(0, Q3ListView::Manual);
 	addresseeListView->setColumnWidth(0, 63); //Photo is 60, and it's nice to have a small gap, imho
 }
 
@@ -104,7 +104,7 @@ KABC::Addressee AddressBookSelectorWidget::addressee()
 void AddressBookSelectorWidget::selectAddressee( const QString &uid )
 {
 	// iterate trough list view
-	QListViewItemIterator it( addresseeListView );
+	Q3ListViewItemIterator it( addresseeListView );
 	while( it.current() )
 	{
 		AddresseeItem *addrItem = (AddresseeItem *) it.current();
@@ -154,7 +154,7 @@ void AddressBookSelectorWidget::slotAddAddresseeClicked()
 		Kopete::KABCPersistence::self()->writeAddressBook( 0 );
 		slotLoadAddressees();
 		// select the addressee we just added
-		QListViewItem * added = addresseeListView->findItem( addresseeName, 1 );
+		Q3ListViewItem * added = addresseeListView->findItem( addresseeName, 1 );
 		addresseeListView->setSelected( added, true );
 		addresseeListView->ensureItemVisible( added );
 	}

@@ -15,6 +15,8 @@
 
 #include <qdom.h>
 #include <qfile.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include <kdebug.h>
 #include <kconfig.h>
 #include <kdialogbase.h>
@@ -250,7 +252,7 @@ void AIMAccount::globalIdentityChanged( const QString& key, const QVariant& valu
 		//generate a new icon hash
 		//photo is a url, gotta load it first.
 		QFile iconFile( value.toString() );
-		iconFile.open( IO_ReadOnly );
+		iconFile.open( QIODevice::ReadOnly );
 		kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "hashing global identity image" << endl;
 		KMD5 iconHash;
 		iconHash.update( iconFile );
@@ -273,7 +275,7 @@ void AIMAccount::globalIdentityChanged( const QString& key, const QVariant& valu
 				memcpy(t.data.data() + 2, iconHash.rawDigest(), 16);
 				t.length = t.data.size();
 				
-				QValueList<Oscar::TLV> list;
+				Q3ValueList<Oscar::TLV> list;
 				list.append( t );
 				
 				Oscar::SSI s( "1", 0, ssi->nextContactId(), ROSTER_BUDDYICONS, list );
@@ -287,7 +289,7 @@ void AIMAccount::globalIdentityChanged( const QString& key, const QVariant& valu
 				Oscar::SSI s(item);
 				kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "modifying old item in ssi."
 					<< endl;
-				QValueList<TLV> tList( item.tlvList() );
+				Q3ValueList<TLV> tList( item.tlvList() );
 				TLV t = Oscar::findTLV( tList, 0x00D5 );
 				if ( !t )
 					return;
@@ -313,7 +315,7 @@ void AIMAccount::sendBuddyIcon()
 	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
 	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << photoPath << endl;
 	QFile iconFile( photoPath );
-	iconFile.open( IO_ReadOnly );
+	iconFile.open( QIODevice::ReadOnly );
 	QByteArray imageData = iconFile.readAll();
 	engine()->sendBuddyIcon( imageData );
 }

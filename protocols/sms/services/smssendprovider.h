@@ -19,9 +19,11 @@
 
 #include <qstring.h>
 #include <qstringlist.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qlabel.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include <klineedit.h>
 
@@ -48,7 +50,7 @@ public:
 	const QString& description(int i);
 	const bool isHidden(int i);
 
-	void save(QPtrList<KLineEdit>& args);
+	void save(Q3PtrList<KLineEdit>& args);
 	void send(const Kopete::Message& msg);
 
 	int maxSize();
@@ -59,7 +61,7 @@ private:
 	QStringList names;
 	QStringList descriptions;
 	QStringList values;
-	QValueList<bool> isHiddens;
+	Q3ValueList<bool> isHiddens;
 
 	int messagePos;
 	int telPos;
@@ -67,7 +69,7 @@ private:
 
 	QString provider;
 	QString prefix;
-	QCString output;
+	Q3CString output;
 
 	Kopete::Account* m_account;
 

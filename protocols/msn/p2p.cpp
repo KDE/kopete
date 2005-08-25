@@ -16,6 +16,8 @@
 
 #include "p2p.h"
 #include "dispatcher.h"
+//Added by qt3to4:
+#include <Q3CString>
 using P2P::TransferContext;
 using P2P::Message;
 using P2P::MessageType;
@@ -295,7 +297,7 @@ void TransferContext::sendMessage(MessageType type, const QString& content, Q_IN
 			break;
 	}
 
-	QCString body = QString(method + "\r\n"
+	Q3CString body = QString(method + "\r\n"
 		"To: <msnmsgr:" + m_recipient + ">\r\n"
 		"From: <msnmsgr:" + m_sender  + ">\r\n"
 		"Via: MSNSLP/1.0/TLP ;branch={" + m_branch.upper() + "}\r\n"
@@ -343,7 +345,7 @@ void TransferContext::sendMessage(Message& outbound, const QByteArray& body)
 		}
 
 		kdDebug(14140) << k_funcinfo <<
-			QCString(outbound.body.data(), outbound.body.size())
+			Q3CString(outbound.body.data(), outbound.body.size())
 			<< endl;
 
 		QByteArray stream;

@@ -23,6 +23,11 @@
 #include <qpixmap.h>
 #include <qtooltip.h>
 #include <qcursor.h>
+//Added by qt3to4:
+#include <QMouseEvent>
+#include <QLabel>
+#include <Q3Frame>
+#include <QHBoxLayout>
 
 // KDE include
 #include <klineedit.h>
@@ -125,7 +130,7 @@ void KopeteEditGlobalIdentityWidget::createGUI()
 	d->labelPicture = new ClickableLabel(this);
 	d->labelPicture->setMinimumSize(QSize(d->iconSize, d->iconSize));
 	d->labelPicture->setMaximumSize(QSize(d->iconSize, d->iconSize));
-	d->labelPicture->setFrameShape(QFrame::Box);
+	d->labelPicture->setFrameShape(Q3Frame::Box);
 	d->mainLayout->addWidget(d->labelPicture);
 	connect(d->labelPicture, SIGNAL(clicked()), this, SLOT(photoClicked()));
 	

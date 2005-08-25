@@ -22,6 +22,8 @@
 #define SECURESTREAM_H
 
 #include<qca.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include "tlshandler.h"
 #include"bytestream.h"
 
@@ -96,7 +98,7 @@ USE_TLSHANDLER
 	int finished(int encoded);
 
 	int p;
-	QValueList<Item> list;
+	Q3ValueList<Item> list;
 };
 
 

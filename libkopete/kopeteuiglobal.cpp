@@ -17,7 +17,7 @@
 
 #include "kopeteuiglobal.h"
 
-#include <qguardedptr.h>
+#include <qpointer.h>
 
 
 namespace Kopete
@@ -26,7 +26,7 @@ namespace Kopete
 
 namespace
 {
-	QGuardedPtr<QWidget> g_mainWidget;
+	QPointer<QWidget> g_mainWidget;
 	int g_sysTrayWId;
 }
 

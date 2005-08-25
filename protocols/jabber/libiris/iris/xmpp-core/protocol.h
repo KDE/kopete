@@ -22,6 +22,8 @@
 #define PROTOCOL_H
 
 #include<qpair.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include"xmlprotocol.h"
 #include"xmpp.h"
 
@@ -227,7 +229,7 @@ namespace XMPP
 			QString stringToSend;
 			bool doWhitespace;
 		};
-		QValueList<SendItem> sendList;
+		Q3ValueList<SendItem> sendList;
 
 		bool doShutdown, delayedError, closeError, ready;
 		int stanzasPending, stanzasWritten;
@@ -309,7 +311,7 @@ namespace XMPP
 			GetAuthSetResponse  // read auth-set response
 		};
 
-		QValueList<DBItem> dbrequests, dbpending, dbvalidated;
+		Q3ValueList<DBItem> dbrequests, dbpending, dbvalidated;
 
 		bool server, dialback, dialback_verify;
 		int step;

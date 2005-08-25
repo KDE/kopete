@@ -17,12 +17,12 @@
 */
 
 #include <qclipboard.h>
-#include <qheader.h>
+#include <q3header.h>
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <klistview.h>
 #include <qmap.h>
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -83,8 +83,8 @@ void GroupWiseContactProperties::init()
 	// set up the context menu and copy action
 	m_copyAction = KStdAction::copy( this, SLOT( slotCopy() ), 0 );
 	connect( m_propsWidget->m_propsView, 
-			 SIGNAL( contextMenuRequested( QListViewItem *, const QPoint & , int) ),
-			 SLOT( slotShowContextMenu( QListViewItem *, const QPoint & ) ) );
+			 SIGNAL( contextMenuRequested( Q3ListViewItem *, const QPoint & , int) ),
+			 SLOT( slotShowContextMenu( Q3ListViewItem *, const QPoint & ) ) );
 
 	// insert the props widget into the dialog
 	m_dialog->setMainWidget( m_propsWidget );
@@ -121,13 +121,13 @@ void GroupWiseContactProperties::setupProperties( QMap< QString, QString > serve
 	}
 }
 
-void GroupWiseContactProperties::slotShowContextMenu( QListViewItem * item, const QPoint & pos )
+void GroupWiseContactProperties::slotShowContextMenu( Q3ListViewItem * item, const QPoint & pos )
 {
 	if ( item )
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "for item " << item->text(0) << ", " << item->text(1) << endl;
 	else
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "no selected item" << endl;
-	QPopupMenu * popupMenu = new QPopupMenu( m_propsWidget->m_propsView );
+	Q3PopupMenu * popupMenu = new Q3PopupMenu( m_propsWidget->m_propsView );
 	m_copyAction->plug( popupMenu );
 	popupMenu->exec( pos );
 }

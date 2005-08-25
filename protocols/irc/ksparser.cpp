@@ -25,7 +25,9 @@ Modified by Jason Keirstead <jason@keirstead.org>
 #include <kdebug.h>
 #include <qbuffer.h>
 #include <qdatastream.h>
-#include <qstylesheet.h>
+#include <q3stylesheet.h>
+//Added by qt3to4:
+#include <Q3CString>
 #include "ksparser.h"
 #include <stdlib.h>
 
@@ -73,16 +75,16 @@ KSParser::~KSParser()
 }
 
 /* NOTE: If thread corruption are seen simply ad a qlock here */
-QCString KSParser::parse(const QCString &message)
+Q3CString KSParser::parse(const Q3CString &message)
 {
 	return m_parser._parse(message);
 }
 
-QCString KSParser::_parse(const QCString &message)
+Q3CString KSParser::_parse(const Q3CString &message)
 {
-	QCString data( message.size() * 2 );
+	Q3CString data( message.size() * 2 );
 	QBuffer buff( data );
-	buff.open( IO_WriteOnly );
+	buff.open( QIODevice::WriteOnly );
 
 	m_tags.clear();
 	m_attributes.clear();
@@ -154,7 +156,7 @@ QCString KSParser::_parse(const QCString &message)
 				if (cur < QChar(' ')) // search for control characters
 					toAppend = QString::fromLatin1("&lt;%1&gt;").arg(cur, 2, 16).upper();
 				else
-					toAppend = QStyleSheet::escape(cur);
+					toAppend = Q3StyleSheet::escape(cur);
 		}
 
 		chars += toAppend.length();
@@ -207,7 +209,7 @@ QString KSParser::popTag(const QString &tag)
 		return QString::null;
 
 	QString res;
-	QValueStack<QString> savedTags;
+	Q3ValueStack<QString> savedTags;
 	while(m_tags.top() != tag)
 	{
 		savedTags.push(m_tags.pop());

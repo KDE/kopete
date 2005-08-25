@@ -20,6 +20,9 @@
 
 #include <qtimer.h>
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <Q3PtrList>
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
@@ -58,7 +61,7 @@ public:
 	{}
 
 	// abstracted media player interfaces
-	QPtrList<NLMediaPlayer> *m_mediaPlayerList;
+	Q3PtrList<NLMediaPlayer> *m_mediaPlayerList;
 	NLMediaPlayer *m_currentMediaPlayer;
 
 	// Needed for DCOP interprocess communication
@@ -100,15 +103,15 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 			this,
 			SLOT(slotOutgoingMessage(Kopete::Message&)));
 
-	QValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
-	for (QValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
+	Q3ValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+	for (Q3ValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
 	  slotNewKMM( *it );
 
 	// get a pointer to the dcop client
 	d->m_client = kapp->dcopClient(); //new DCOPClient();
 
 	// set up known media players
-	d->m_mediaPlayerList = new QPtrList<NLMediaPlayer>;
+	d->m_mediaPlayerList = new Q3PtrList<NLMediaPlayer>;
 	d->m_mediaPlayerList->setAutoDelete( true );
 	d->m_mediaPlayerList->append( new NLKscd( d->m_client ) );
 	d->m_mediaPlayerList->append( new NLNoatun( d->m_client ) );
@@ -256,7 +259,7 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 	{
 		QString advert;
 
-		QPtrList<Kopete::Account> accountsList = Kopete::AccountManager::self()->accounts();
+		Q3PtrList<Kopete::Account> accountsList = Kopete::AccountManager::self()->accounts();
 		for( Kopete::Account* a = accountsList.first(); a; a = accountsList.next() )
 		{
 			/*

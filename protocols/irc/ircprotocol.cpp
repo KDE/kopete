@@ -61,6 +61,10 @@
 #include <qregexp.h>
 #include <qspinbox.h>
 #include <qvalidator.h>
+//Added by qt3to4:
+#include <QTextStream>
+#include <Q3PtrList>
+#include <Q3ValueList>
 
 #include <dom/html_element.h>
 #include <unistd.h>
@@ -355,7 +359,7 @@ void IRCProtocol::slotMessageFilter( Kopete::Message &msg )
 	}
 }
 
-QPtrList<KAction> *IRCProtocol::customChatWindowPopupActions( const Kopete::Message &m, DOM::Node &n )
+Q3PtrList<KAction> *IRCProtocol::customChatWindowPopupActions( const Kopete::Message &m, DOM::Node &n )
 {
 	DOM::HTMLElement e = n;
 
@@ -398,7 +402,7 @@ Kopete::Contact *IRCProtocol::deserializeContact( Kopete::MetaContact *metaConta
 	if( displayName.isEmpty() )
 		displayName = contactId;
 
-	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
+	Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
 	if( !accounts.isEmpty() )
 	{
 		Kopete::Account *a = accounts[ serializedData[ "accountId" ] ];
@@ -623,9 +627,9 @@ void IRCProtocol::slotMeCommand(const QString &args, Kopete::ChatSession *manage
 
 void IRCProtocol::slotAllMeCommand(const QString &args, Kopete::ChatSession *)
 {
-	QValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+	Q3ValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
 
-	for( QValueList<Kopete::ChatSession*>::iterator it = sessions.begin(); it != sessions.end(); ++it )
+	for( Q3ValueList<Kopete::ChatSession*>::iterator it = sessions.begin(); it != sessions.end(); ++it )
 	{
 		Kopete::ChatSession *session = *it;
 		if( session->protocol() == this )
@@ -761,7 +765,7 @@ void IRCProtocol::editNetworks( const QString &networkName )
 
 	netConf->networkList->clear();
 
-	for( QDictIterator<IRCNetwork> it( m_networks ); it.current(); ++it )
+	for( Q3DictIterator<IRCNetwork> it( m_networks ); it.current(); ++it )
 	{
 		IRCNetwork *net = it.current();
 		netConf->networkList->insertItem( net->name );
@@ -792,7 +796,7 @@ void IRCProtocol::slotUpdateNetworkConfig()
 		netConf->description->setText( net->description );
 		netConf->hostList->clear();
 
-		for( QValueList<IRCHost*>::iterator it = net->hosts.begin(); it != net->hosts.end(); ++it )
+		for( Q3ValueList<IRCHost*>::iterator it = net->hosts.begin(); it != net->hosts.end(); ++it )
 			netConf->hostList->insertItem( (*it)->host + QString::fromLatin1(":") + QString::number((*it)->port) );
 
 		// prevent nested event loop crash
@@ -886,7 +890,7 @@ void IRCProtocol::slotDeleteNetwork()
 		KGuiItem(i18n("&Delete Network"),"editdelete"), QString::fromLatin1("AskIRCDeleteNetwork") ) == KMessageBox::Continue )
 	{
 		IRCNetwork *net = m_networks[ network ];
-		for( QValueList<IRCHost*>::iterator it = net->hosts.begin(); it != net->hosts.end(); ++it )
+		for( Q3ValueList<IRCHost*>::iterator it = net->hosts.begin(); it != net->hosts.end(); ++it )
 		{
 			m_hosts.remove( (*it)->host );
 			delete (*it);
@@ -912,7 +916,7 @@ void IRCProtocol::slotDeleteHost()
 		{
 			disconnect( netConf->hostList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkHostConfig() ) );
 			QString entryText = host->host + QString::fromLatin1(":") + QString::number(host->port);
-			QListBoxItem * justAdded = netConf->hostList->findItem( entryText );
+			Q3ListBoxItem * justAdded = netConf->hostList->findItem( entryText );
 			netConf->hostList->removeItem( netConf->hostList->index( justAdded ) );
 			connect( netConf->hostList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkHostConfig() ) );
 
@@ -946,7 +950,7 @@ void IRCProtocol::slotNewNetwork()
 	// and add it to the networks dict and list
 	m_networks.insert( net->name, net );
 	netConf->networkList->insertItem( net->name );
-	QListBoxItem * justAdded = netConf->networkList->findItem( net->name );
+	Q3ListBoxItem * justAdded = netConf->networkList->findItem( net->name );
 	netConf->networkList->setSelected( justAdded, true );
 	netConf->networkList->setBottomItem( netConf->networkList->index( justAdded ) );
 }
@@ -982,7 +986,7 @@ void IRCProtocol::slotNewHost()
 		QString entryText = host->host + QString::fromLatin1(":") + QString::number(host->port);
 		netConf->hostList->insertItem( entryText );
 		// select it in the gui
-		QListBoxItem * justAdded = netConf->hostList->findItem( entryText );
+		Q3ListBoxItem * justAdded = netConf->hostList->findItem( entryText );
 		netConf->hostList->setSelected( justAdded, true );
 		//netConf->hostList->setBottomItem( netConf->hostList->index( justAdded ) );
 	}
@@ -1041,7 +1045,7 @@ void IRCProtocol::slotSaveNetworkConfig()
 	QDomDocument doc("irc-networks");
 	QDomNode root = doc.appendChild( doc.createElement("networks") );
 
-	for( QDictIterator<IRCNetwork> it( m_networks ); it.current(); ++it )
+	for( Q3DictIterator<IRCNetwork> it( m_networks ); it.current(); ++it )
 	{
 		IRCNetwork *net = it.current();
 
@@ -1054,7 +1058,7 @@ void IRCProtocol::slotSaveNetworkConfig()
 
 		QDomNode serversNode = networkNode.appendChild( doc.createElement("servers") );
 
-		for( QValueList<IRCHost*>::iterator it2 = net->hosts.begin(); it2 != net->hosts.end(); ++it2 )
+		for( Q3ValueList<IRCHost*>::iterator it2 = net->hosts.begin(); it2 != net->hosts.end(); ++it2 )
 		{
 			QDomNode serverNode = serversNode.appendChild( doc.createElement("server") );
 
@@ -1072,7 +1076,7 @@ void IRCProtocol::slotSaveNetworkConfig()
 //	kdDebug(14121) << k_funcinfo << doc.toString(4) << endl;
 	QFile xmlFile( locateLocal( "appdata", "ircnetworks.xml" ) );
 
-	if (xmlFile.open(IO_WriteOnly))
+	if (xmlFile.open(QIODevice::WriteOnly))
 	{
 		QTextStream stream(&xmlFile);
 		stream << doc.toString(4);
@@ -1091,7 +1095,7 @@ void IRCProtocol::slotReadNetworks()
 	m_hosts.clear();
 
 	QFile xmlFile( locate( "appdata", "ircnetworks.xml" ) );
-	xmlFile.open( IO_ReadOnly );
+	xmlFile.open( QIODevice::ReadOnly );
 
 	QDomDocument doc;
 	doc.setContent( &xmlFile );
@@ -1150,10 +1154,10 @@ void IRCProtocol::slotMoveServerUp()
 	if( !selectedNetwork || !selectedHost )
 		return;
 
-	QValueList<IRCHost*>::iterator pos = selectedNetwork->hosts.find( selectedHost );
+	Q3ValueList<IRCHost*>::iterator pos = selectedNetwork->hosts.find( selectedHost );
 	if( pos != selectedNetwork->hosts.begin() )
 	{
-		QValueList<IRCHost*>::iterator lastPos = pos;
+		Q3ValueList<IRCHost*>::iterator lastPos = pos;
 		lastPos--;
 		selectedNetwork->hosts.insert( lastPos, selectedHost );
 		selectedNetwork->hosts.remove( pos );
@@ -1177,10 +1181,10 @@ void IRCProtocol::slotMoveServerDown()
 	if( !selectedNetwork || !selectedHost )
 		return;
 
-	QValueList<IRCHost*>::iterator pos = selectedNetwork->hosts.find( selectedHost );
+	Q3ValueList<IRCHost*>::iterator pos = selectedNetwork->hosts.find( selectedHost );
 	if( *pos != selectedNetwork->hosts.back() )
 	{
-		QValueList<IRCHost*>::iterator nextPos = pos;
+		Q3ValueList<IRCHost*>::iterator nextPos = pos;
 		nextPos++;
 		selectedNetwork->hosts.insert( nextPos, selectedHost );
 		selectedNetwork->hosts.remove( pos );

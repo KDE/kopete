@@ -21,7 +21,9 @@
 
 #include <kgenericfactory.h>
 #include <qlayout.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 #include <kcolorbutton.h>
 #include <knuminput.h>
 #include <qcheckbox.h>

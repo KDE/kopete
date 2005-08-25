@@ -29,7 +29,7 @@ namespace Kopete
 }
 
 class KopeteView;
-class QTextEdit;
+class Q3TextEdit;
 
 struct KopeteViewManagerPrivate;
 

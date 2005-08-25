@@ -34,12 +34,12 @@
 #include <kopetecontactlist.h>
 #include <kopetemetacontact.h>
 
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
 #include <qradiobutton.h>
 #include <qlineedit.h>
 #include <qlayout.h>
-#include <qlistview.h>
-#include <qptrlist.h>
+#include <q3listview.h>
+#include <q3ptrlist.h>
 
 #include <krestrictedline.h>
 
@@ -83,8 +83,8 @@ void
 GaduEditContact::fillGroups()
 {
 	Kopete::Group *g, *cg;
-	QPtrList<Kopete::Group> cgl;
-	QPtrList<Kopete::Group> gl;
+	Q3PtrList<Kopete::Group> cgl;
+	Q3PtrList<Kopete::Group> gl;
 
 	if ( contact_ ) {
 		cgl = contact_->metaContact()->groups();
@@ -96,7 +96,7 @@ GaduEditContact::fillGroups()
 		if ( g->type() == Kopete::Group::Temporary ) {
 			continue;
 		}
-		QCheckListItem* item = new QCheckListItem( ui_->groups, g->displayName(), QCheckListItem::CheckBox );
+		Q3CheckListItem* item = new Q3CheckListItem( ui_->groups, g->displayName(), Q3CheckListItem::CheckBox );
 		// FIXME: optimize this O(2) search
 		for( cg = cgl.first(); cg; cg = cgl.next() ) {
 			if ( cg->groupId() == g->groupId() ) {
@@ -119,11 +119,11 @@ GaduEditContact::init()
 
 	show();
 	connect( this, SIGNAL( okClicked() ), SLOT( slotApply() ) );
-	connect( ui_->groups, SIGNAL( clicked( QListViewItem * ) ), SLOT( listClicked( QListViewItem * ) ) );
+	connect( ui_->groups, SIGNAL( clicked( Q3ListViewItem * ) ), SLOT( listClicked( Q3ListViewItem * ) ) );
 }
 
 void
-GaduEditContact::listClicked( QListViewItem* /*item*/ )
+GaduEditContact::listClicked( Q3ListViewItem* /*item*/ )
 {
 
 }
@@ -147,7 +147,7 @@ GaduEditContact::fillIn()
 void
 GaduEditContact::slotApply()
 {
-	QPtrList<Kopete::Group> gl;
+	Q3PtrList<Kopete::Group> gl;
 	Kopete::Group* group;
 
 	cl_->firstname = ui_->fornameEdit_->text().stripWhiteSpace();
@@ -173,8 +173,8 @@ GaduEditContact::slotApply()
 	contact_->setContactDetails( cl_ );
 
 	gl = Kopete::ContactList::self()->groups();
-	for ( QListViewItemIterator it( ui_->groups ); it.current(); ++it ) {
-		QCheckListItem *check = dynamic_cast<QCheckListItem *>( it.current() );
+	for ( Q3ListViewItemIterator it( ui_->groups ); it.current(); ++it ) {
+		Q3CheckListItem *check = dynamic_cast<Q3CheckListItem *>( it.current() );
 		
 		if ( !check ) {
 			continue;

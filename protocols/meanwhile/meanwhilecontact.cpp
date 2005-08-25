@@ -28,6 +28,8 @@
 #include "meanwhileaccount.h"
 #include "meanwhilecontact.h"
 #include "meanwhileplugin.h"
+//Added by qt3to4:
+#include <Q3PtrList>
 
 MeanwhileContact::MeanwhileContact(QString _userId, QString _nickname,
 		MeanwhileAccount *_account, Kopete::MetaContact *_parent)
@@ -57,7 +59,7 @@ void MeanwhileContact::serialize(
 	Kopete::Contact::serialize(serializedData, addressBookData);
 }
 
-QPtrList<KAction> *MeanwhileContact::customContextMenuActions() 
+Q3PtrList<KAction> *MeanwhileContact::customContextMenuActions() 
 {
 	return 0L;
 }
@@ -77,7 +79,7 @@ Kopete::ChatSession* MeanwhileContact::manager(CanCreateFlags canCreate)
 	if (m_msgManager || canCreate == Kopete::Contact::CannotCreate)
 		return m_msgManager;
 
-	QPtrList<Kopete::Contact> contacts;
+	Q3PtrList<Kopete::Contact> contacts;
 	contacts.append(this);
 	m_msgManager = Kopete::ChatSessionManager::self()->
 		create(account()->myself(), contacts, protocol());

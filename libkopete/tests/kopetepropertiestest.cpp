@@ -37,7 +37,7 @@ KUNITTEST_MODULE_REGISTER_TESTER( KopetePropertiesTest );
 
 using namespace Kopete::Properties;
 
-static QTextStream _out( stdout, IO_WriteOnly );
+static QTextStream _out( stdout, QIODevice::WriteOnly );
 
 class PropertyHost : public WithProperties<PropertyHost> {};
 

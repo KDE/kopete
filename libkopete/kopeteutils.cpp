@@ -18,6 +18,9 @@
 */
 
 #include <qmap.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3CString>
 
 #include <kmessagebox.h>
 #include <knotifyclient.h>
@@ -76,17 +79,17 @@ bool isHostReachable(const QString &host)
 {
 	const int NetWorkStatusUnknown = 1;
 	const int NetWorkStatusOnline = 8;
-	QCString replyType;
+	Q3CString replyType;
 	QByteArray params;
 	QByteArray reply;
 
-	QDataStream stream(params, IO_WriteOnly);
+	QDataStream stream(params, QIODevice::WriteOnly);
 	stream << host;
 
 	if ( KApplication::kApplication()->dcopClient()->call( "kded", "networkstatus", "status(QString)", params, replyType, reply ) && (replyType == "int") )
 	{
 		int result;
-		QDataStream stream2( reply, IO_ReadOnly );
+		QDataStream stream2( reply, QIODevice::ReadOnly );
 		stream2 >> result;
 		return (result != NetWorkStatusUnknown) && (result != NetWorkStatusOnline);
 	}

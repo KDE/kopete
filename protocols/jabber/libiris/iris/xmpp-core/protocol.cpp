@@ -26,6 +26,9 @@
 #include"protocol.h"
 
 #include<qca.h>
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <Q3CString>
 #include"base64.h"
 #include"hash.h"
 
@@ -530,7 +533,7 @@ bool BasicProtocol::doStep(const QDomElement &e)
 		if(!sendList.isEmpty()) {
 			SendItem i;
 			{
-				QValueList<SendItem>::Iterator it = sendList.begin();
+				Q3ValueList<SendItem>::Iterator it = sendList.begin();
 				i = (*it);
 				sendList.remove(it);
 			}
@@ -879,7 +882,7 @@ bool CoreProtocol::isValidStanza(const QDomElement &e) const
 
 bool CoreProtocol::grabPendingItem(const Jid &to, const Jid &from, int type, DBItem *item)
 {
-	for(QValueList<DBItem>::Iterator it = dbpending.begin(); it != dbpending.end(); ++it) {
+	for(Q3ValueList<DBItem>::Iterator it = dbpending.begin(); it != dbpending.end(); ++it) {
 		const DBItem &i = *it;
 		if(i.type == type && i.to.compare(to) && i.from.compare(from)) {
 			const DBItem &i = (*it);
@@ -904,7 +907,7 @@ bool CoreProtocol::dialbackStep(const QDomElement &e)
 		// process a request
 		DBItem i;
 		{
-			QValueList<DBItem>::Iterator it = dbrequests.begin();
+			Q3ValueList<DBItem>::Iterator it = dbrequests.begin();
 			i = (*it);
 			dbrequests.remove(it);
 		}
@@ -1193,7 +1196,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 				QCA::insertProvider(createProviderHash());
 
 			p = doc.createElement("digest");
-			QCString cs = id.utf8() + password.utf8();
+			Q3CString cs = id.utf8() + password.utf8();
 			p.appendChild(doc.createTextNode(QCA::SHA1::hashToString(cs)));
 		}
 		else {

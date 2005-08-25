@@ -16,7 +16,7 @@
     *************************************************************************
 */
 
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <kdebug.h>
 
 
@@ -30,7 +30,7 @@ class RateClassManagerPrivate
 {
 public:
 	//! The list of rate classes owned by this manager
-	QValueList<RateClass*> classList;
+	Q3ValueList<RateClass*> classList;
 	Connection* client;
 };
 
@@ -49,7 +49,7 @@ RateClassManager::~RateClassManager()
 
 void RateClassManager::reset()
 {
-	QValueList<RateClass*>::iterator it = d->classList.begin();
+	Q3ValueList<RateClass*>::iterator it = d->classList.begin();
 	while ( it != d->classList.end() && d->classList.count() > 0)
 	{
 		RateClass* rc = ( *it );
@@ -110,7 +110,7 @@ void RateClassManager::queue( Transfer* t )
 		transferReady( t );
 }
 
-QValueList<RateClass*> RateClassManager::classList() const
+Q3ValueList<RateClass*> RateClassManager::classList() const
 {
 	return d->classList;
 }
@@ -128,8 +128,8 @@ RateClass* RateClassManager::findRateClass( SnacTransfer* st ) const
 	SNAC s = st->snac();
 	//kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Looking for SNAC " << s.family << ", " << s.subtype << endl;
 	RateClass* rc = 0L;
-	QValueList<RateClass*>::const_iterator it;
-	QValueList<RateClass*>::const_iterator rcEnd = d->classList.constEnd();
+	Q3ValueList<RateClass*>::const_iterator it;
+	Q3ValueList<RateClass*>::const_iterator rcEnd = d->classList.constEnd();
 
 	for ( it = d->classList.constBegin(); it != rcEnd; ++it )
 	{
@@ -146,8 +146,8 @@ RateClass* RateClassManager::findRateClass( SnacTransfer* st ) const
 
 void RateClassManager::recalcRateLevels()
 {
-	QValueList<RateClass*>::iterator it;
-	QValueList<RateClass*>::iterator rcEnd = d->classList.end();
+	Q3ValueList<RateClass*>::iterator it;
+	Q3ValueList<RateClass*>::iterator rcEnd = d->classList.end();
 	for ( it = d->classList.begin(); it != rcEnd; ++it )
 		( *it )->updateRateInfo();
 }

@@ -17,7 +17,7 @@
 
 #include "jabbercontactpool.h"
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include "kopeteuiglobal.h"
@@ -262,9 +262,9 @@ JabberBaseContact *JabberContactPool::findRelevantRecipient ( const XMPP::Jid &j
 
 }
 
-QPtrList<JabberBaseContact> JabberContactPool::findRelevantSources ( const XMPP::Jid &jid )
+Q3PtrList<JabberBaseContact> JabberContactPool::findRelevantSources ( const XMPP::Jid &jid )
 {
-	QPtrList<JabberBaseContact> list;
+	Q3PtrList<JabberBaseContact> list;
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{

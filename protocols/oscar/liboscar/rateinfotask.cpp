@@ -18,7 +18,7 @@
 
 #include "rateinfotask.h"
 
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <kdebug.h>
 #include "rateclass.h"
 #include "rateclassmanager.h"
@@ -79,7 +79,7 @@ void RateInfoTask::sendRateInfoRequest()
 
 void RateInfoTask::handleRateInfoResponse()
 {
-	QValueList<RateClass*> rates;
+	Q3ValueList<RateClass*> rates;
 	Oscar::RateInfo ri;
 	
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "handling rate info response (SNAC 0x01, 0x07)" << endl;
@@ -118,7 +118,7 @@ void RateInfoTask::handleRateInfoResponse()
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding snac members to group " << groupNum << endl;
 		
 		RateClass* rc = 0L;
-		QValueList<RateClass*>::iterator it = rates.begin();
+		Q3ValueList<RateClass*>::iterator it = rates.begin();
 		for ( ; it != rates.end(); ++it )
 		{
 			if ( ( *it )->id() == groupNum )
@@ -138,8 +138,8 @@ void RateInfoTask::handleRateInfoResponse()
 		}
 	}
 
-	QValueList<RateClass*>::iterator it = rates.begin();
-	QValueList<RateClass*>::iterator rcEnd = rates.end();
+	Q3ValueList<RateClass*>::iterator it = rates.begin();
+	Q3ValueList<RateClass*>::iterator rcEnd = rates.end();
 	for ( ; it != rcEnd; ++it )
 		client()->rateManager()->registerClass( ( *it ) );
 	
@@ -153,8 +153,8 @@ void RateInfoTask::sendRateInfoAck()
 	SNAC s = { 0x0001, 0x0008, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
 
-	QValueListConstIterator<int> cit = m_rateGroups.begin();
-	QValueListConstIterator<int> end = m_rateGroups.end();
+	Q3ValueListConstIterator<int> cit = m_rateGroups.begin();
+	Q3ValueListConstIterator<int> end = m_rateGroups.end();
 	for ( cit = m_rateGroups.begin(); cit != end; ++cit )
 	{
 		//kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding rate " << (*cit) << " to rate ack" << endl;

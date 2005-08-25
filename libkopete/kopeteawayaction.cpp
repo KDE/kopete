@@ -36,7 +36,7 @@ public:
 };
 
 
-AwayAction::AwayAction(const QString &text, const QIconSet &pix, const KShortcut &cut,
+AwayAction::AwayAction(const QString &text, const QIcon &pix, const KShortcut &cut,
 	const QObject *receiver, const char *slot, QObject *parent, const char *name )
 	: KSelectAction(text, pix, cut, parent, name ) , d(new Private( OnlineStatus() ) )
 {
@@ -52,7 +52,7 @@ AwayAction::AwayAction(const QString &text, const QIconSet &pix, const KShortcut
 	slotAwayChanged();
 }
 
-AwayAction::AwayAction( const OnlineStatus& status, const QString &text, const QIconSet &pix, const KShortcut &cut,
+AwayAction::AwayAction( const OnlineStatus& status, const QString &text, const QIcon &pix, const KShortcut &cut,
 					   const QObject *receiver, const char *slot, QObject *parent, const char *name )
 	: KSelectAction(text, pix, cut, parent, name ) , d(new Private( status ) )
 {

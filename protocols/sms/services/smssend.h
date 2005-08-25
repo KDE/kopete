@@ -20,6 +20,9 @@
 #include <qobject.h>
 #include <qmap.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <QGridLayout>
+#include <Q3PtrList>
 
 #include <klineedit.h>
 
@@ -27,7 +30,7 @@
 
 class SMSSendProvider;
 class SMSSendPrefsUI;
-class QListViewItem;
+class Q3ListViewItem;
 class QGridLayout;
 
 class SMSSend : public SMSService
@@ -58,8 +61,8 @@ private:
 	QGridLayout *settingsBoxLayout;
 	SMSSendProvider* m_provider;
 	SMSSendPrefsUI* prefWidget;
-	QPtrList<KLineEdit> args;
-	QPtrList<QLabel> labels;
+	Q3PtrList<KLineEdit> args;
+	Q3PtrList<QLabel> labels;
 	QString m_description;
 } ;
 

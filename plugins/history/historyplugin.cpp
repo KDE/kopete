@@ -36,6 +36,9 @@
 #include "historylogger.h"
 #include "historyguiclient.h"
 #include "historyconfig.h"
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <Q3PtrList>
 
 typedef KGenericFactory<HistoryPlugin> HistoryPluginFactory;
 static const KAboutData aboutdata("kopete_history", I18N_NOOP("History") , "1.0" );
@@ -73,8 +76,8 @@ HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringLi
 
 	// Add GUI action to all existing kmm objects
 	// (Needed if the plugin is enabled while kopete is already running)
-	QValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
-	for (QValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
+	Q3ValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+	for (Q3ValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
 	{
 	  if(!m_loggers.contains(*it))
 		{
@@ -112,7 +115,7 @@ void HistoryPlugin::messageDisplayed(const Kopete::Message &m)
 	HistoryLogger *l=m_loggers[m.manager()]->logger();
 	if(l)
 	{
-		QPtrList<Kopete::Contact> mb=m.manager()->members();
+		Q3PtrList<Kopete::Contact> mb=m.manager()->members();
 		l->appendMessage(m,mb.first());
 	}
 
@@ -144,7 +147,7 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
 
 	KopeteView *m_currentView = v;
 	Kopete::ChatSession *m_currentChatSession = v->msgManager();
-	QPtrList<Kopete::Contact> mb = m_currentChatSession->members();
+	Q3PtrList<Kopete::Contact> mb = m_currentChatSession->members();
 
 	if(!m_currentChatSession)
 		return; //i am sorry
@@ -163,7 +166,7 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
 
 	logger->setPositionToLast();
 
-	QValueList<Kopete::Message> msgs = logger->readMessages(nbAutoChatWindow,
+	Q3ValueList<Kopete::Message> msgs = logger->readMessages(nbAutoChatWindow,
 			/*mb.first()*/ 0L, HistoryLogger::AntiChronological, true, true);
 
 	// make sure the last message is not the one which will be appened right

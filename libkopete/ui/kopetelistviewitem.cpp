@@ -32,11 +32,13 @@
 #include <qapplication.h>
 #include <qpixmap.h>
 #include <qpainter.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qrect.h>
 #include <qtimer.h>
-#include <qheader.h>
+#include <q3header.h>
 #include <qstyle.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #ifdef HAVE_XRENDER
 #  include <X11/Xlib.h>
@@ -55,7 +57,7 @@ namespace ListView {
 class ComponentBase::Private
 {
 public:
-	QPtrList<Component> components;
+	Q3PtrList<Component> components;
 };
 
 ComponentBase::ComponentBase()
@@ -295,7 +297,7 @@ public:
 	static const int padding = 2;
 };
 
-BoxComponent::BoxComponent( ComponentBase *parent, Direction dir )
+BoxComponent::BoxComponent( ComponentBase *parent, Qt::Orientation dir )
  : Component( parent ), d( new Private( dir ) )
 {
 }
@@ -524,7 +526,7 @@ void ImageComponent::paint( QPainter *painter, const QColorGroup & )
 	painter->drawPixmap( rc & ourRc, d->image );
 }
 
-void ImageComponent::scale( int w, int h, QImage::ScaleMode mode )
+void ImageComponent::scale( int w, int h, Qt::AspectRatioMode mode )
 {
 	QImage im = d->image.convertToImage();
 	setPixmap( QPixmap( im.smoothScale( w, h, mode ) ) );
@@ -701,8 +703,8 @@ void DisplayNameComponent::setText( const QString& text )
 	if ( d->text == text ) 
 		return;
 	d->text = text;
-	QValueList<Kopete::Emoticons::Token> tokens;
-	QValueList<Kopete::Emoticons::Token>::const_iterator token;
+	Q3ValueList<Kopete::Emoticons::Token> tokens;
+	Q3ValueList<Kopete::Emoticons::Token>::const_iterator token;
 	
 	clear(); // clear childs
 
@@ -944,13 +946,13 @@ bool Item::Private::animateChanges = true;
 bool Item::Private::fadeVisibility = true;
 bool Item::Private::foldVisibility = true;
 
-Item::Item( QListViewItem *parent, QObject *owner, const char *name )
+Item::Item( Q3ListViewItem *parent, QObject *owner, const char *name )
  : QObject( owner, name ), KListViewItem( parent ), d( new Private(this) )
 {
 	initLVI();
 }
 
-Item::Item( QListView *parent, QObject *owner, const char *name )
+Item::Item( Q3ListView *parent, QObject *owner, const char *name )
  : QObject( owner, name ), KListViewItem( parent ), d( new Private(this) )
 {
 	initLVI();
@@ -1152,7 +1154,7 @@ void Item::setHeight( int )
 	KListViewItem::setHeight( minHeight );
 }
 
-int Item::width( const QFontMetrics &, const QListView *lv, int c ) const
+int Item::width( const QFontMetrics &, const Q3ListView *lv, int c ) const
 {
 	// Qt computes the itemRect from this. we want the whole item to be
 	// clickable, so we return the widest we could possibly be.
@@ -1176,7 +1178,7 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 	{
 		QPainter *p = &paint;
 
-		QListView *lv = listView();
+		Q3ListView *lv = listView();
 		if ( !lv )
 			return;
 		QFontMetrics fm( p->fontMetrics() );
@@ -1261,7 +1263,7 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 	const int alpha = 257 - int(opac * 257);
 	if ( alpha != 0 )
 	{
-		XRenderColor clr = { alpha * rgb.red(), alpha * rgb.green(), alpha * rgb.blue(), alpha * 0xff };
+		XRenderColor clr = { alpha * rgb.Qt::red(), alpha * rgb.Qt::green(), alpha * rgb.Qt::blue(), alpha * 0xff };
 		XRenderFillRectangle( back.x11Display(), PictOpOver, back.x11RenderHandle(),
 		                      &clr, 0, 0, width, height() );
 	}

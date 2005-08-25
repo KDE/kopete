@@ -17,9 +17,11 @@
  ***************************************************************************/
 
 #include <kpushbutton.h>
-#include <qgroupbox.h>
-#include <qtable.h>
+#include <q3groupbox.h>
+#include <q3table.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include <kmessagebox.h>
 #include <klocale.h>
@@ -41,7 +43,7 @@ dlgJabberBrowse::dlgJabberBrowse (JabberAccount *account, const XMPP::Jid & jid,
 	tblResults->setNumRows (0);
 
 	// disable user selections
-	tblResults->setSelectionMode (QTable::NoSelection);
+	tblResults->setSelectionMode (Q3Table::NoSelection);
 
 	XMPP::JT_Search * task = new XMPP::JT_Search (m_account->client()->rootTask ());
 
@@ -120,7 +122,7 @@ void dlgJabberBrowse::slotSentForm ()
 
 	int row = 0;
 
-	for (QValueList < XMPP::SearchResult >::const_iterator it = task->results ().begin (); it != task->results ().end (); ++it)
+	for (Q3ValueList < XMPP::SearchResult >::const_iterator it = task->results ().begin (); it != task->results ().end (); ++it)
 	{
 		tblResults->setText (row, 0, (*it).jid ().userHost ());
 		tblResults->setText (row, 1, (*it).first ());

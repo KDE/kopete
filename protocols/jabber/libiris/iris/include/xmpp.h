@@ -25,7 +25,7 @@
 #include<qstring.h>
 #include<qhostaddress.h>
 #include<qstring.h>
-#include<qcstring.h>
+#include<q3cstring.h>
 #include<qxml.h>
 #include<qdom.h>
 

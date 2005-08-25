@@ -20,7 +20,7 @@
 #define _ICQUSERINFO_H_
 
 #include <qstring.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <qdatetime.h>
 #include <kopete_export.h>
 
@@ -142,7 +142,7 @@ public:
 	void fill( Buffer* buffer );
 	
 public:
-	QValueList<QString> emailList;
+	Q3ValueList<QString> emailList;
 };
 
 class KOPETE_EXPORT ICQInterestInfo : public ICQInfoBase

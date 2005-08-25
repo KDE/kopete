@@ -22,8 +22,8 @@
 
 #include "oscartypes.h"
 
-#include <qvaluelist.h>
-#include <qcstring.h>
+#include <q3valuelist.h>
+#include <q3cstring.h>
 
 class QString;
 
@@ -189,14 +189,14 @@ class Buffer
 		/**
 		 * Same as above but returning little-endian
 		 */
-		QCString getLEBlock(WORD len);
+		Q3CString getLEBlock(WORD len);
 
 		/**
 		 * Convenience function that gets a LNTS (long null terminated string)
 		 * from the buffer. Otherwise you'd need a getWord() + getBlock() call :)
 		 */
-		QCString getLNTS();
-		QCString getLELNTS();
+		Q3CString getLNTS();
+		Q3CString getLELNTS();
 
 		/**
 		 * adds a 16-bit long TLV
@@ -216,7 +216,7 @@ class Buffer
 		/**
 		 * Gets a list of TLV's
 		 */
-		QValueList<TLV> getTLVList();
+		Q3ValueList<TLV> getTLVList();
 
 		/**
 		 * Creates a chat data segment for a tlv and calls addTLV with that data

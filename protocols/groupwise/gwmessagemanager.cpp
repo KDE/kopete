@@ -12,6 +12,8 @@
 
 #include <qlabel.h>
 #include <qvalidator.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include <kdebug.h>
 #include <kdialogbase.h>
 #include <kiconloader.h>
@@ -175,7 +177,7 @@ void GroupWiseChatSession::receiveGuid( const int newMmId, const GroupWise::Conf
 		// they are removed from the chat member list GUI.  By re-adding them here, we guarantee they appear
 		// in the UI again, at the price of a debug message when starting up a new chatwindow
 		
-		QPtrListIterator< Kopete::Contact > it( members() );
+		Q3PtrListIterator< Kopete::Contact > it( members() );
 		Kopete::Contact * contact;
 		while ( ( contact = it.current() ) )
 		{
@@ -276,14 +278,14 @@ void GroupWiseChatSession::slotGotNotTypingNotification( const ConferenceEvent& 
 void GroupWiseChatSession::dequeueMessagesAndInvites()
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	for ( QValueListIterator< Kopete::Message > it = m_pendingOutgoingMessages.begin();
+	for ( Q3ValueListIterator< Kopete::Message > it = m_pendingOutgoingMessages.begin();
 		  it != m_pendingOutgoingMessages.end();
 		  ++it )
 	{
 		slotMessageSent( *it, this );
 	}
 	m_pendingOutgoingMessages.clear();
-	QPtrListIterator< Kopete::Contact > it( m_pendingInvites );
+	Q3PtrListIterator< Kopete::Contact > it( m_pendingInvites );
 	Kopete::Contact * contact;
 	while ( ( contact = it.current() ) )
 	{
@@ -304,7 +306,7 @@ void GroupWiseChatSession::slotActionInviteAboutToShow()
 	m_actionInvite->popupMenu()->clear();
 
 	
-	QDictIterator<Kopete::Contact> it( account()->contacts() );
+	Q3DictIterator<Kopete::Contact> it( account()->contacts() );
 	for( ; it.current(); ++it )
 	{
 		if( !members().contains( it.current() ) && it.current()->isOnline() && it.current() != myself() )
@@ -361,7 +363,7 @@ void GroupWiseChatSession::slotInviteOtherContact()
 		QWidget * w = ( view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) : 
 					Kopete::UI::Global::mainWidget() );
 		m_searchDlg = new KDialogBase( w, "invitesearchdialog", false, i18n( "Search for Contact to Invite" ), KDialogBase::Ok|KDialogBase::Cancel );
-		m_search = new GroupWiseSearch( account(), QListView::Single, true, m_searchDlg, "invitesearchwidget" );
+		m_search = new GroupWiseSearch( account(), Q3ListView::Single, true, m_searchDlg, "invitesearchwidget" );
 		m_searchDlg->setMainWidget( m_search );
 		connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOK( bool ) ) );
 		m_searchDlg->enableButtonOK( false );
@@ -372,7 +374,7 @@ void GroupWiseChatSession::slotInviteOtherContact()
 void GroupWiseChatSession::slotSearchedForUsers()
 {
 	// create an item for each result, in the block list
-	QValueList< ContactDetails > selected = m_search->selectedResults();
+	Q3ValueList< ContactDetails > selected = m_search->selectedResults();
 	if ( selected.count() )
 	{
 		QWidget * w = ( view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) :
@@ -476,7 +478,7 @@ void GroupWiseChatSession::inviteDeclined( GroupWiseContact * c )
 void GroupWiseChatSession::updateArchiving()
 {
 	bool archiving = false;
-	QPtrListIterator< Kopete::Contact > it( members() );
+	Q3PtrListIterator< Kopete::Contact > it( members() );
 	GroupWiseContact * contact;
 	while ( ( contact = static_cast<GroupWiseContact*>( it.current() ) ) )
 	{

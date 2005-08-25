@@ -20,7 +20,7 @@
 
 #include "oscartypes.h"
 #include <qobject.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <qdatetime.h>
 #include <qpair.h>
 
@@ -113,8 +113,8 @@ private slots:
 private:
 
 	Oscar::RateInfo m_rateInfo;
-	QValueList<SnacPair> m_members;
-	QValueList<Transfer*> m_packetQueue;
+	Q3ValueList<SnacPair> m_members;
+	Q3ValueList<Transfer*> m_packetQueue;
 	QTime m_packetTimer;
 	
 	// we are waiting for the QTimer::singleShot() to send 

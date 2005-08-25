@@ -17,6 +17,8 @@
  ***************************************************************************/
 
 #include <qpushbutton.h>
+//Added by qt3to4:
+#include <QBoxLayout>
 
 #include <kmessagebox.h>
 #include <klocale.h>

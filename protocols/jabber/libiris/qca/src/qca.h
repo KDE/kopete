@@ -22,10 +22,10 @@
 #define QCA_H
 
 #include<qstring.h>
-#include<qcstring.h>
+#include<q3cstring.h>
 #include<qdatetime.h>
 #include<qmap.h>
-#include<qptrlist.h>
+#include<q3ptrlist.h>
 #include<qobject.h>
 
 #ifdef Q_OS_WIN32
@@ -126,7 +126,7 @@ namespace QCA
 			return obj.final();
 		}
 
-		static QByteArray hash(const QCString &cs)
+		static QByteArray hash(const Q3CString &cs)
 		{
 			QByteArray a(cs.length());
 			memcpy(a.data(), cs.data(), a.size());
@@ -138,7 +138,7 @@ namespace QCA
 			return arrayToHex(hash(a));
 		}
 
-		static QString hashToString(const QCString &cs)
+		static QString hashToString(const Q3CString &cs)
 		{
 			return arrayToHex(hash(cs));
 		}
@@ -336,7 +336,7 @@ namespace QCA
 		~TLS();
 
 		void setCertificate(const Cert &cert, const RSAKey &key);
-		void setCertificateStore(const QPtrList<Cert> &store);  // note: store must persist
+		void setCertificateStore(const Q3PtrList<Cert> &store);  // note: store must persist
 
 		void reset();
 		bool startClient(const QString &host="");

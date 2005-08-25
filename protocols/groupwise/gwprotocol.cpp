@@ -21,6 +21,9 @@
 */
 #include <qregexp.h>
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <QTextStream>
+#include <Q3CString>
 
 #include <kgenericfactory.h>
 #include <kdebug.h>
@@ -97,7 +100,7 @@ Kopete::Contact *GroupWiseProtocol::deserializeContact(
 	int parentId = serializedData[ "parentId" ].toInt();
 	int sequence = serializedData[ "sequenceNumber" ].toInt();
 	
-	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
+	Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
 
 	Kopete::Account *account = accounts[ accountId ];
 	if ( !account )
@@ -178,7 +181,7 @@ QString GroupWiseProtocol::rtfizeText( const QString & plain )
 						"{\\colortbl ;\\red0\\green0\\blue0;}\n"
 						"\\uc1\\cf1\\f0\\fs18 %1\\par\n}");
 	QString outputText; // output text
-	QCString plainUtf8 = plain.utf8(); // encoded as UTF8, because that's what this encoding algorithm, taken from Gaim's Novell plugin
+	Q3CString plainUtf8 = plain.utf8(); // encoded as UTF8, because that's what this encoding algorithm, taken from Gaim's Novell plugin
 	uint index = 0; // current char to transcode
 	while ( index  < plainUtf8.length() )
 	{

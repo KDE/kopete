@@ -18,7 +18,7 @@
 #ifndef KOPETE_AVVIDEODEVICE_H
 #define KOPETE_AVVIDEODEVICE_H
 
-#include <qvaluevector.h>
+#include <q3valuevector.h>
 #include <iostream>
 
 
@@ -26,7 +26,7 @@
 #include "videoinput.h"
 #include <qstring.h>
 #include <qimage.h>
-#include <qvaluevector.h>
+#include <q3valuevector.h>
 #include <kcombobox.h>
 #include "videodevice.h"
 
@@ -65,7 +65,7 @@ public:
 	int selectInput(int newinput);
 	int scanDevices();
 	~VideoDevicePool();
-	QValueVector<Kopete::AV::VideoDevice> m_videodevice;
+	Q3ValueVector<Kopete::AV::VideoDevice> m_videodevice;
 	int fillDeviceKComboBox(KComboBox *combobox);
 	int fillInputKComboBox(KComboBox *combobox);
 	unsigned int currentDevice();

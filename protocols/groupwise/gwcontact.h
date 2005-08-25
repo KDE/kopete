@@ -27,8 +27,10 @@
 #ifndef GW_CONTACT_H
 #define GW_CONTACT_H
 
-#include <qdict.h>
+#include <q3dict.h>
 #include <qmap.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include "kopetecontact.h"
 #include "kopetemessage.h"
@@ -99,7 +101,7 @@ public:
 	/**
 	 * Return the actions for this contact
 	 */
-	virtual QPtrList<KAction> *customContextMenuActions();
+	virtual Q3PtrList<KAction> *customContextMenuActions();
 	
 	/**
 	 * Returns a Kopete::ChatSession associated with this contact

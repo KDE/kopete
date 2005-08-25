@@ -30,8 +30,8 @@
 #include "tester.h"
 
 #include <qobject.h>
-#include <qasciidict.h>
-#include <qptrdict.h>
+#include <q3asciidict.h>
+#include <q3ptrdict.h>
 
 #define ADD_TEST(x) addTester( #x, new x )
 #define ADD_QTEST(x) addTester( new x )
@@ -58,7 +58,7 @@ private:
     void registerTests();
 
 private:
-    QAsciiDict<Tester> m_tests;
+    Q3AsciiDict<Tester> m_tests;
 //    QPtrDict<QTester> m_qtests;
     int globalTests;
     int globalPasses;

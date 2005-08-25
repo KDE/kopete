@@ -20,8 +20,8 @@
 #include <kdialogbase.h>
 #include "kopetemetacontact.h"
 
-class QCanvasView;
-class QCanvas;
+class Q3CanvasView;
+class Q3Canvas;
 class QStringList;
 
 class StatisticsWidget;

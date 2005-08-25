@@ -261,7 +261,7 @@ void ICQSearchDialog::newResult( const ICQSearchResult& info )
 		return;
 	}
 		
-	QListViewItem *item = new QListViewItem( m_searchUI->searchResults, QString::number( info.uin ),
+	Q3ListViewItem *item = new Q3ListViewItem( m_searchUI->searchResults, QString::number( info.uin ),
 	                                         info.nickName, info.firstName, info.lastName, info.email,
 	                                         info.auth ? i18n( "Yes" ) : i18n( "No" ) );
 	

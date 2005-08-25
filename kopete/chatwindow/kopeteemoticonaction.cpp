@@ -22,7 +22,9 @@
 
 #include <math.h>
 
-#include <qwhatsthis.h>
+#include <q3whatsthis.h>
+//Added by qt3to4:
+#include <Q3PopupMenu>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -77,7 +79,7 @@ KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent, const char* name )
 	if ( icon.isNull() )
 		setIcon( "emoticon" );
 	else
-		setIconSet( QIconSet( icon ) );
+		setIconSet( QIcon( icon ) );
 
 	setShortcutConfigurable( false );
 	connect( d->emoticonSelector, SIGNAL( ItemSelected( const QString & ) ),
@@ -132,7 +134,7 @@ int KopeteEmoticonAction::plug( QWidget* widget, int index )
 	// KDE4/Qt TODO: Use qobject_cast instead.
 	if ( widget->inherits("QPopupMenu") )
 	{
-		QPopupMenu* menu = static_cast<QPopupMenu*>( widget );
+		Q3PopupMenu* menu = static_cast<Q3PopupMenu*>( widget );
 		int id;
 		if ( hasIcon() )
 			id = menu->insertItem( iconSet(KIcon::Small), text(), d->m_popup, -1, index );
@@ -181,7 +183,7 @@ int KopeteEmoticonAction::plug( QWidget* widget, int index )
 		addContainer( bar, id_ );
 
 		if (!whatsThis().isEmpty())
-			QWhatsThis::add( bar->getButton(id_), whatsThis() );
+			Q3WhatsThis::add( bar->getButton(id_), whatsThis() );
 
 		connect( bar, SIGNAL( destroyed() ), this, SLOT( slotDestroyed() ) );
 

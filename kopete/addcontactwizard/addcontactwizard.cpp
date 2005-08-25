@@ -44,7 +44,9 @@
 
 #include <qcheckbox.h>
 #include <qlayout.h>
-#include <qvbox.h>
+#include <q3vbox.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 #include <kapplication.h>
 #include <kconfig.h>
 #include <klocale.h>
@@ -84,18 +86,18 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	{
 		QString groupname = it->displayName();
 		if ( !groupname.isEmpty() )
-			m_groupItems.insert(new QCheckListItem( groupList, groupname, QCheckListItem::CheckBox) , it ) ;
+			m_groupItems.insert(new Q3CheckListItem( groupList, groupname, Q3CheckListItem::CheckBox) , it ) ;
 	}
 
 	protocolListView->clear();
 	m_accountItems.clear();
 
 	// Populate the accounts list
-	QCheckListItem* accountLVI = 0;
-	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
+	Q3CheckListItem* accountLVI = 0;
+	Q3PtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
 	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next() )
 	{
-		accountLVI= new QCheckListItem( protocolListView, i->accountLabel(), QCheckListItem::CheckBox);
+		accountLVI= new Q3CheckListItem( protocolListView, i->accountLabel(), Q3CheckListItem::CheckBox);
 		accountLVI->setText(1,i->protocol()->displayName() + QString::fromLatin1(" ") );
 		//FIXME - I'm not sure the column 1 is a right place for the colored icon -Olivier
 		accountLVI->setPixmap( 1, i->accountIcon() );
@@ -117,15 +119,15 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	// Addressee validation connections
 	connect( chkAddressee, SIGNAL( toggled( bool ) ),
 			SLOT( slotCheckAddresseeChoice( bool ) ) );
-	connect( m_addressbookSelectorWidget, SIGNAL(addresseeListClicked( QListViewItem * )), SLOT(slotAddresseeListClicked( QListViewItem * )) );
+	connect( m_addressbookSelectorWidget, SIGNAL(addresseeListClicked( Q3ListViewItem * )), SLOT(slotAddresseeListClicked( Q3ListViewItem * )) );
 
 	// Group manipulation connection
 	connect( addGroupButton, SIGNAL(clicked()) , SLOT(slotAddGroupClicked()) );
 
 	// Account choice validation connections
-	connect( protocolListView, SIGNAL(clicked(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
-	connect( protocolListView, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
-	connect( protocolListView, SIGNAL(spacePressed(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
+	connect( protocolListView, SIGNAL(clicked(Q3ListViewItem *)), this, SLOT(slotProtocolListClicked(Q3ListViewItem *)));
+	connect( protocolListView, SIGNAL(selectionChanged(Q3ListViewItem *)), this, SLOT(slotProtocolListClicked(Q3ListViewItem *)));
+	connect( protocolListView, SIGNAL(spacePressed(Q3ListViewItem *)), this, SLOT(slotProtocolListClicked(Q3ListViewItem *)));
 
 	// read sticky settings
 	KConfig *config = kapp->config();
@@ -147,7 +149,7 @@ void AddContactWizard::slotCheckAddresseeChoice( bool on )
 	setAppropriate( selectAddressee, on );
 }
 
-void AddContactWizard::slotAddresseeListClicked( QListViewItem */*addressee*/ )
+void AddContactWizard::slotAddresseeListClicked( Q3ListViewItem */*addressee*/ )
 {
 	// enable next if a valid addressee is selected
 	bool selected = m_addressbookSelectorWidget->addresseeSelected();
@@ -164,17 +166,17 @@ void AddContactWizard::slotAddGroupClicked()
 		i18n( "Please enter the name for the new group:" )
 		);
 	if ( !groupName.isNull() )
-		( new QCheckListItem( groupList, groupName, QCheckListItem::CheckBox ) )->setOn( true );
+		( new Q3CheckListItem( groupList, groupName, Q3CheckListItem::CheckBox ) )->setOn( true );
 }
 
-void AddContactWizard::slotProtocolListClicked( QListViewItem *)
+void AddContactWizard::slotProtocolListClicked( Q3ListViewItem *)
 {
 	// Just makes sure a protocol is selected before allowing the user to continue
 	bool oneIsChecked = false;
 
-	for (QListViewItemIterator it(protocolListView); it.current(); ++it)
+	for (Q3ListViewItemIterator it(protocolListView); it.current(); ++it)
 	{
-		QCheckListItem *check = dynamic_cast<QCheckListItem *>(it.current());
+		Q3CheckListItem *check = dynamic_cast<Q3CheckListItem *>(it.current());
 		if (check && check->isOn())
 		{
 			oneIsChecked = true;
@@ -197,9 +199,9 @@ void AddContactWizard::accept()
 	
 	// set the metacontact's groups
 	bool topLevel = true;
-	for ( QListViewItemIterator it( groupList ); it.current(); ++it )
+	for ( Q3ListViewItemIterator it( groupList ); it.current(); ++it )
 	{
-		QCheckListItem *check = dynamic_cast<QCheckListItem *>( it.current() );
+		Q3CheckListItem *check = dynamic_cast<Q3CheckListItem *>( it.current() );
 		if ( check && check->isOn() )
 		{
 			if(m_groupItems.contains(check))
@@ -246,7 +248,7 @@ void AddContactWizard::accept()
 
 void AddContactWizard::reject()
 {
-	QWizard::reject();
+	Q3Wizard::reject();
 }
 
 void AddContactWizard::next()
@@ -259,9 +261,9 @@ void AddContactWizard::next()
 	{
 		QStringList usedAccounts;
 		// We don't keep track of this pointer because it gets deleted when the wizard does (which is what we want)
-		for (QListViewItemIterator it(protocolListView); it.current(); ++it)
+		for (Q3ListViewItemIterator it(protocolListView); it.current(); ++it)
 		{
-			QCheckListItem *item = dynamic_cast<QCheckListItem *>(it.current());
+			Q3CheckListItem *item = dynamic_cast<Q3CheckListItem *>(it.current());
 			if (item && item->isOn())
 			{
 				Kopete::Account *i=m_accountItems[item];
@@ -299,7 +301,7 @@ void AddContactWizard::next()
 				protocolPages.remove(it);
 			}
 		}
-		QWizard::next();
+		Q3Wizard::next();
 		return;
 	}
 
@@ -316,7 +318,7 @@ void AddContactWizard::next()
 			return;
 	}
 
-	QWizard::next();
+	Q3Wizard::next();
 }
 
 void AddContactWizard::showPage( QWidget *page )
@@ -324,7 +326,7 @@ void AddContactWizard::showPage( QWidget *page )
 	if ( page == intro )
 		setNextEnabled( page, true); // make sure the first page's Next is always enabled
 
-	QWizard::showPage( page );
+	Q3Wizard::showPage( page );
 
 	if ( page == finis )
 		finishButton()->setFocus();

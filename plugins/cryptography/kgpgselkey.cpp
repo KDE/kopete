@@ -25,6 +25,8 @@
 
 #include <qlayout.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <klistview.h>
 #include <klocale.h>
@@ -156,8 +158,8 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal):KDialog
   pclose(fp);
 
 
-  QObject::connect(keysListpr,SIGNAL(doubleClicked(QListViewItem *,const QPoint &,int)),this,SLOT(slotpreOk()));
-  QObject::connect(keysListpr,SIGNAL(clicked(QListViewItem *)),this,SLOT(slotSelect(QListViewItem *)));
+  QObject::connect(keysListpr,SIGNAL(doubleClicked(Q3ListViewItem *,const QPoint &,int)),this,SLOT(slotpreOk()));
+  QObject::connect(keysListpr,SIGNAL(clicked(Q3ListViewItem *)),this,SLOT(slotSelect(Q3ListViewItem *)));
 
 
   keysListpr->setSelected(keysListpr->firstChild(),true);
@@ -196,7 +198,7 @@ void KgpgSelKey::slotOk()
     accept();
 }
 
-void KgpgSelKey::slotSelect(QListViewItem *item)
+void KgpgSelKey::slotSelect(Q3ListViewItem *item)
 {
   if (item==NULL) return;
   if (item->depth()!=0)

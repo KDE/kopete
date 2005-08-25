@@ -15,6 +15,10 @@
 #define P2PWEBCAM_H
 
 #include "p2p.h"
+//Added by qt3to4:
+#include <QLabel>
+#include <QTimerEvent>
+#include <Q3ValueList>
 
 #if MSN_WEBCAM
 
@@ -65,7 +69,7 @@ class Webcam  : public TransferContext
 		MimicWrapper *m_mimic;
 		MSNWebcamDialog *m_widget;
 				
-		QValueList<KNetwork::KBufferedSocket* > m_allSockets;
+		Q3ValueList<KNetwork::KBufferedSocket* > m_allSockets;
 		
 		int m_timerId;
 

@@ -20,8 +20,11 @@
 
 #include <qapplication.h>
 #include <qregexp.h>
-#include <qsignal.h>
+#include <q3signal.h>
 #include <qstring.h>
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <Q3CString>
 
 #include <kdebug.h>
 #include <kaction.h>
@@ -82,8 +85,8 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QSt
 	setXMLFile( "translatorui.rc" );
 
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	QValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
-	for (QValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
+	Q3ValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+	for (Q3ValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
 	  slotNewKMM( *it );
 
 	loadSettings();
@@ -218,7 +221,7 @@ void TranslatorPlugin::slotOutgoingMessage( Kopete::Message &msg )
 
 void TranslatorPlugin::translateMessage( const QString &msg, const QString &from, const QString &to, QObject *obj, const char* slot )
 {
-	QSignal completeSignal;
+	Q3Signal completeSignal;
 	completeSignal.connect( obj, slot );
 
 	QString result = translateMessage( msg, from, to );
@@ -261,7 +264,7 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QStr
 	QString body = KURL::encode_string( msg );
 	QString lp = from + "|" + to;
 
-	QCString postData = QString( "text=" + body + "&langpair=" + lp ).utf8();
+	Q3CString postData = QString( "text=" + body + "&langpair=" + lp ).utf8();
 
 	QString gurl = "http://translate.google.com/translate_t?text=" + body +"&langpair=" + lp;
 	kdDebug(14308) << k_funcinfo << " URL: " << gurl << endl;
@@ -379,7 +382,7 @@ void TranslatorPlugin::sendTranslation( Kopete::Message &msg, const QString &tra
 
 void TranslatorPlugin::slotDataReceived ( KIO::Job *job, const QByteArray &data )
 {
-	m_data[ job ] += QCString( data, data.size() + 1 );
+	m_data[ job ] += Q3CString( data, data.size() + 1 );
 }
 
 void TranslatorPlugin::slotJobDone ( KIO::Job *job )

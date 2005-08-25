@@ -50,7 +50,7 @@
 #include"parser.h"
 
 #include<qtextcodec.h>
-#include<qptrlist.h>
+#include<q3ptrlist.h>
 #include<string.h>
 
 using namespace XMPP;
@@ -544,7 +544,7 @@ namespace XMPP
 		int depth;
 		QStringList nsnames, nsvalues;
 		QDomElement elem, current;
-		QPtrList<Parser::Event> eventList;
+		Q3PtrList<Parser::Event> eventList;
 		bool needMore;
 	};
 };

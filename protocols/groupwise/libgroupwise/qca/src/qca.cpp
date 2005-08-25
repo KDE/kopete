@@ -20,7 +20,7 @@
 
 #include"qca.h"
 
-#include<qptrlist.h>
+#include<q3ptrlist.h>
 #include<qdir.h>
 #include<qfileinfo.h>
 #include<qstringlist.h>
@@ -28,7 +28,10 @@
 #include<qtimer.h>
 #include<qhostaddress.h>
 #include<qapplication.h>
-#include<qguardedptr.h>
+#include<qpointer.h>
+//Added by qt3to4:
+#include <Q3CString>
+#include <Q3ValueList>
 #include<stdlib.h>
 #include"qcaprovider.h"
 
@@ -103,12 +106,12 @@ private:
 	}
 };
 
-static QPtrList<ProviderItem> providerList;
+static Q3PtrList<ProviderItem> providerList;
 static bool qca_init = false;
 
 static bool plugin_have(const QString &fname)
 {
-	QPtrListIterator<ProviderItem> it(providerList);
+	Q3PtrListIterator<ProviderItem> it(providerList);
 	for(ProviderItem *i; (i = it.current()); ++it) {
 		if(i->fname == fname)
 			return true;
@@ -166,7 +169,7 @@ static void plugin_unloadall()
 static int plugin_caps()
 {
 	int caps = 0;
-	QPtrListIterator<ProviderItem> it(providerList);
+	Q3PtrListIterator<ProviderItem> it(providerList);
 	for(ProviderItem *i; (i = it.current()); ++it)
 		caps |= i->p->capabilities();
 	return caps;
@@ -239,7 +242,7 @@ static void *getContext(int cap)
 	if(!QCA::isSupported(cap))
 		return 0;
 
-	QPtrListIterator<ProviderItem> it(providerList);
+	Q3PtrListIterator<ProviderItem> it(providerList);
 	for(ProviderItem *i; (i = it.current()); ++it) {
 		if(i->p->capabilities() & cap) {
 			i->ensureInit();
@@ -583,7 +586,7 @@ QString RSAKey::toPEM(bool publicOnly) const
 	if(!d->c->toPEM(&out, publicOnly))
 		return QByteArray();
 
-	QCString cs;
+	Q3CString cs;
 	cs.resize(out.size()+1);
 	memcpy(cs.data(), out.data(), out.size());
 	return QString::fromLatin1(cs);
@@ -591,7 +594,7 @@ QString RSAKey::toPEM(bool publicOnly) const
 
 bool RSAKey::fromPEM(const QString &str)
 {
-	QCString cs = str.latin1();
+	Q3CString cs = str.latin1();
 	QByteArray a(cs.length());
 	memcpy(a.data(), cs.data(), a.size());
 	return d->c->createFromPEM(a.data(), a.size());
@@ -750,18 +753,18 @@ QString Cert::issuerString() const
 
 CertProperties Cert::subject() const
 {
-	QValueList<QCA_CertProperty> list = d->c->subject();
+	Q3ValueList<QCA_CertProperty> list = d->c->subject();
 	CertProperties props;
-	for(QValueList<QCA_CertProperty>::ConstIterator it = list.begin(); it != list.end(); ++it)
+	for(Q3ValueList<QCA_CertProperty>::ConstIterator it = list.begin(); it != list.end(); ++it)
 		props[(*it).var] = (*it).val;
 	return props;
 }
 
 CertProperties Cert::issuer() const
 {
-	QValueList<QCA_CertProperty> list = d->c->issuer();
+	Q3ValueList<QCA_CertProperty> list = d->c->issuer();
 	CertProperties props;
-	for(QValueList<QCA_CertProperty>::ConstIterator it = list.begin(); it != list.end(); ++it)
+	for(Q3ValueList<QCA_CertProperty>::ConstIterator it = list.begin(); it != list.end(); ++it)
 		props[(*it).var] = (*it).val;
 	return props;
 }
@@ -795,7 +798,7 @@ QString Cert::toPEM() const
 	if(!d->c->toPEM(&out))
 		return QByteArray();
 
-	QCString cs;
+	Q3CString cs;
 	cs.resize(out.size()+1);
 	memcpy(cs.data(), out.data(), out.size());
 	return QString::fromLatin1(cs);
@@ -803,7 +806,7 @@ QString Cert::toPEM() const
 
 bool Cert::fromPEM(const QString &str)
 {
-	QCString cs = str.latin1();
+	Q3CString cs = str.latin1();
 	QByteArray a(cs.length());
 	memcpy(a.data(), cs.data(), a.size());
 	return d->c->createFromPEM(a.data(), a.size());
@@ -861,7 +864,7 @@ public:
 
 	Cert ourCert;
 	RSAKey ourKey;
-	QPtrList<QCA_CertContext> store;
+	Q3PtrList<QCA_CertContext> store;
 };
 
 TLS::TLS(QObject *parent)
@@ -881,11 +884,11 @@ void TLS::setCertificate(const Cert &cert, const RSAKey &key)
 	d->ourKey = key;
 }
 
-void TLS::setCertificateStore(const QPtrList<Cert> &store)
+void TLS::setCertificateStore(const Q3PtrList<Cert> &store)
 {
 	// convert the cert list into a context list
 	d->store.clear();
-	QPtrListIterator<Cert> it(store);
+	Q3PtrListIterator<Cert> it(store);
 	for(Cert *cert; (cert = it.current()); ++it)
 		d->store.append(cert->d->c);
 }
@@ -981,7 +984,7 @@ void TLS::update()
 	bool force_read = false;
 	bool eof = false;
 	bool done = false;
-	QGuardedPtr<TLS> self = this;
+	QPointer<TLS> self = this;
 
 	if(d->closing) {
 		QByteArray a;

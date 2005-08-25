@@ -18,7 +18,7 @@
 #define kopeteemoticons_h__
 
 #include <qobject.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <qregexp.h>
 
 #include <kopete_export.h>
@@ -96,7 +96,7 @@ public:
 	 * Static function which will call tokenize
 	 * @see tokenize( const QString& )
 	 */
-	static QValueList<Token> tokenizeEmoticons( const QString &message, ParseMode mode = DefaultParseMode );
+	static Q3ValueList<Token> tokenizeEmoticons( const QString &message, ParseMode mode = DefaultParseMode );
 
 	/**
 	 * Tokenizes an message.
@@ -122,7 +122,7 @@ public:
 	 * @author Engin AYDOGAN < engin@bzzzt.biz >
 	 * @since 23-03-05
 	 */
-	QValueList<Token> tokenize( const QString &message, uint mode = DefaultParseMode );
+	Q3ValueList<Token> tokenize( const QString &message, uint mode = DefaultParseMode );
 	
 	/**
 	 * Return all emoticons and the corresponding icon.

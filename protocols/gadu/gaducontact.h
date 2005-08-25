@@ -25,6 +25,8 @@
 
 #include <qpoint.h>
 #include <qhostaddress.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include "gaducontactlist.h"
 
@@ -51,7 +53,7 @@ public:
 
 	virtual bool isReachable();
 	virtual void serialize( QMap<QString, QString>&, QMap<QString, QString>& );
-	virtual QPtrList<KAction>* customContextMenuActions();
+	virtual Q3PtrList<KAction>* customContextMenuActions();
 	virtual QString identityId() const;
 
 	GaduContactsList::ContactLine* contactDetails();
@@ -102,7 +104,7 @@ private:
 	KAction*		actionInfo_;
 	KAction*		actionRemove_;
 
-	QPtrList<Kopete::Contact>	thisContact_;
+	Q3PtrList<Kopete::Contact>	thisContact_;
 
 
 	QHostAddress remote_ip;

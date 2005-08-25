@@ -18,7 +18,9 @@
 
 #ifndef GWSEARCH_H
 #define GWSEARCH_H
-#include <qlistview.h>
+#include <q3listview.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include "gwsearchwidget.h"
 
 class GroupWiseAccount;
@@ -34,10 +36,10 @@ class GroupWiseSearch : public GroupWiseSearchWidget
 {
 Q_OBJECT
 public:
-	GroupWiseSearch( GroupWiseAccount * account, QListView::SelectionMode mode, bool onlineOnly, 
+	GroupWiseSearch( GroupWiseAccount * account, Q3ListView::SelectionMode mode, bool onlineOnly, 
 			QWidget *parent = 0, const char *name = 0);
 	~GroupWiseSearch();
-	QValueList< GroupWise::ContactDetails > selectedResults();
+	Q3ValueList< GroupWise::ContactDetails > selectedResults();
 signals:
 	void selectionValidates( bool );
 protected:
@@ -50,7 +52,7 @@ protected slots:
 	void slotShowDetails();
 	void slotValidateSelection();
 private:
-	QValueList< GroupWise::ContactDetails > m_searchResults;
+	Q3ValueList< GroupWise::ContactDetails > m_searchResults;
 	GroupWiseAccount * m_account;
 	bool m_onlineOnly;
 };

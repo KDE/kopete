@@ -23,6 +23,8 @@
 
 #include <kdebug.h>
 #include <qstring.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include "nlmediaplayer.h"
 #include "nlamarok.h"
@@ -40,7 +42,7 @@ void NLamaroK::update()
 	m_newTrack = false;
 	QString newTrack;
 	QByteArray data, replyData;
-	QCString replyType;
+	Q3CString replyType;
 	QString result;
 
 	// see if amaroK is  registered with DCOP
@@ -64,7 +66,7 @@ void NLamaroK::update()
 		}
 		else
 		{
-			QDataStream reply( replyData, IO_ReadOnly );
+			QDataStream reply( replyData, QIODevice::ReadOnly );
 			if ( replyType == "bool" ) {
 				reply >> m_playing;
 			}
@@ -74,7 +76,7 @@ void NLamaroK::update()
 	{
 		int status = 0;
 
-		QDataStream reply( replyData, IO_ReadOnly );
+		QDataStream reply( replyData, QIODevice::ReadOnly );
 		if ( replyType == "int" ) {
 			reply >> status;
 			kdDebug( 14307 ) << k_funcinfo << "Amarok status()=" << status << endl;
@@ -89,7 +91,7 @@ void NLamaroK::update()
 	if ( m_client->call( "amarok", "player", "title()", data,
 				replyType, replyData ) )
 	{
-		QDataStream reply( replyData, IO_ReadOnly );
+		QDataStream reply( replyData, QIODevice::ReadOnly );
 
 		if ( replyType == "QString" ) {
 			reply >> newTrack;
@@ -105,7 +107,7 @@ void NLamaroK::update()
 	if ( m_client->call( "amarok", "player", "album()", data,
 				replyType, replyData ) )
 	{
-		QDataStream reply( replyData, IO_ReadOnly );
+		QDataStream reply( replyData, QIODevice::ReadOnly );
 
 		if ( replyType == "QString" ) {
 			reply >> m_album;
@@ -115,7 +117,7 @@ void NLamaroK::update()
 	if ( m_client->call( "amarok", "player", "artist()", data,
 				replyType, replyData ) )
 	{
-		QDataStream reply( replyData, IO_ReadOnly );
+		QDataStream reply( replyData, QIODevice::ReadOnly );
 
 		if ( replyType == "QString" ) {
 			reply >> m_artist;

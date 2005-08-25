@@ -31,7 +31,7 @@
 #include <qtextedit.h>
 
 #include <kdatewidget.h>*/
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <kdialogbase.h>
 /*
 #include <klineedit.h>
@@ -106,11 +106,11 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KURL & url) co
 	QString email = file.readEntry("Email");
 
 	Kopete::Account *account = 0;
-	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(proto);
+	Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(proto);
 	// do not show chooser if we only have one account to "choose" from
 	if (accounts.count() == 1)
 	{
-		QDictIterator<Kopete::Account> it(accounts);
+		Q3DictIterator<Kopete::Account> it(accounts);
 		account = it.current();
 		QString nickuin = nick.isEmpty() ?
 			i18n("'%1'").arg(uin) :
@@ -746,7 +746,7 @@ Kopete::Contact *ICQProtocol::deserializeContact( Kopete::MetaContact *metaConta
                                                   const QMap<QString, QString> &/*addressBookData*/ )
 {
 	QString accountId = serializedData["accountId"];
-	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(this);
+	Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(this);
 	ICQAccount *account = static_cast<ICQAccount*>(accounts[accountId]);
 
 	if(!account)
@@ -768,7 +768,7 @@ Kopete::Contact *ICQProtocol::deserializeContact( Kopete::MetaContact *metaConta
 	ssiBid = serializedData["ssi_bid"].toUInt();
 	ssiType = serializedData["ssi_type"].toUInt();
 	
-	Oscar::SSI item( ssiName, ssiGid, ssiBid, ssiType, QValueList<TLV>(), 0 );
+	Oscar::SSI item( ssiName, ssiGid, ssiBid, ssiType, Q3ValueList<TLV>(), 0 );
 	item.setWaitingAuth( ssiWaitingAuth );
 	ICQContact *c = new ICQContact( account, contactId, metaContact, QString::null, item );
 	return c;

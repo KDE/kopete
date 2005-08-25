@@ -24,6 +24,9 @@
 #include "kopetechatsession.h"
 
 #include <klocale.h>
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <Q3PtrList>
 
 namespace Kopete {
 
@@ -87,9 +90,9 @@ Group::~Group()
 	delete d;
 }
 
-QPtrList<MetaContact> Group::members() const
+Q3PtrList<MetaContact> Group::members() const
 {
-	QPtrList<MetaContact> members = ContactList::self()->metaContacts();
+	Q3PtrList<MetaContact> members = ContactList::self()->metaContacts();
 	// members is a *copy* of the meta contacts, so using first(), next() and remove() is fine.
 	for( members.first(); members.current(); )
 	{
@@ -129,8 +132,8 @@ const QDomElement Group::toXML()
 	group.documentElement().appendChild( displayName );
 
 	// Store other plugin data
-	QValueList<QDomElement> pluginData = ContactListElement::toXML();
-	for ( QValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
+	Q3ValueList<QDomElement> pluginData = ContactListElement::toXML();
+	for ( Q3ValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
 		group.documentElement().appendChild( group.importNode( *it, true ) );
 
 	// Store custom notification data
@@ -269,7 +272,7 @@ uint Group::groupId() const
 
 void Group::sendMessage()
 {
-	QPtrList<Kopete::MetaContact> list = onlineMembers();
+	Q3PtrList<Kopete::MetaContact> list = onlineMembers();
 	Kopete::MetaContact *mc = list.first();
 	Kopete::Contact *c;
 	
@@ -285,7 +288,7 @@ void Group::sendMessage()
 
 void Group::sendMessage( Message& msg )
 {
-	QPtrList<MetaContact> list = onlineMembers();
+	Q3PtrList<MetaContact> list = onlineMembers();
 	Kopete::MetaContact *mc = list.first();
 	ChatSession *cs=msg.manager();
 	if(  cs )
@@ -309,9 +312,9 @@ void Group::sendMessage( Message& msg )
 	}
 }
 
-QPtrList<MetaContact> Group::onlineMembers() const
+Q3PtrList<MetaContact> Group::onlineMembers() const
 {
-	QPtrList<MetaContact> list = members();
+	Q3PtrList<MetaContact> list = members();
 	
 	for( list.first(); list.current(); )
 		if( list.current()->isReachable() )

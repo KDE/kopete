@@ -15,6 +15,8 @@
 */
 
 #include "outgoingtransfer.h"
+//Added by qt3to4:
+#include <Q3CString>
 using P2P::TransferContext;
 using P2P::Dispatcher;
 using P2P::OutgoingTransfer;
@@ -186,7 +188,7 @@ void OutgoingTransfer::acknowledged()
 void OutgoingTransfer::processMessage(const Message& message)
 {
 	QString body =
-		QCString(message.body.data(), message.header.dataSize);
+		Q3CString(message.body.data(), message.header.dataSize);
 	kdDebug(14140) << k_funcinfo << "received, " << body << endl;
 
 	if(body.startsWith("BYE"))
@@ -222,7 +224,7 @@ void OutgoingTransfer::processMessage(const Message& message)
 			// Try to open the file for reading.
 			// If an error occurs, send an internal
 			// error message to the recipient.
-			if(!m_file->open(IO_ReadOnly)){
+			if(!m_file->open(QIODevice::ReadOnly)){
 				error();
 				return;
 			}
@@ -349,7 +351,7 @@ void OutgoingTransfer::slotConnected()
 {
 	kdDebug(14140) << k_funcinfo << endl;
 	// Check if connection is ok.
-	Q_UINT32 bytesWritten = m_socket->writeBlock(QCString("foo").data(), 4);
+	Q_UINT32 bytesWritten = m_socket->writeBlock(Q3CString("foo").data(), 4);
 	if(bytesWritten != 4)
 	{
 		// Not all data was written, close the socket.

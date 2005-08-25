@@ -34,11 +34,13 @@
 #endif
 
 #include <qdatetime.h>
-#include <qdict.h>
-#include <qintdict.h>
+#include <q3dict.h>
+#include <q3intdict.h>
 #include <qregexp.h>
 #include <qstring.h>
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 class QRegExp;
 
@@ -479,13 +481,13 @@ private:
 	void bindCtcp();
 
 	void setStatus(KIRC::Engine::Status status);
-	bool invokeCtcpCommandOfMessage(const QDict<KIRC::MessageRedirector> &map, KIRC::Message &message);
+	bool invokeCtcpCommandOfMessage(const Q3Dict<KIRC::MessageRedirector> &map, KIRC::Message &message);
 
 	/*
 	 * Methods that handles all the bindings creations.
 	 * This methods is used by all the bind(...) methods.
 	 */
-	bool _bind(QDict<KIRC::MessageRedirector> &dict,
+	bool _bind(Q3Dict<KIRC::MessageRedirector> &dict,
 		QString command, QObject *object, const char *member,
 		int minArgs, int maxArgs, const QString &helpMessage);
 
@@ -506,7 +508,7 @@ private:
 	bool m_FailedNickOnLogin;
 	bool m_useSSL;
 
-	QValueList<KIRC::Entity *> m_entities;
+	Q3ValueList<KIRC::Entity *> m_entities;
 	KIRC::EntityPtr m_server;
 	KIRC::EntityPtr m_self;
 
@@ -515,13 +517,13 @@ private:
 	QString m_SourceString;
 	QString m_PendingNick;
 
-	QDict<KIRC::MessageRedirector> m_commands;
+	Q3Dict<KIRC::MessageRedirector> m_commands;
 //	QIntDict<KIRC::MessageRedirector> m_numericCommands;
-	QDict<KIRC::MessageRedirector> m_ctcpQueries;
-	QDict<KIRC::MessageRedirector> m_ctcpReplies;
+	Q3Dict<KIRC::MessageRedirector> m_ctcpQueries;
+	Q3Dict<KIRC::MessageRedirector> m_ctcpReplies;
 
 	QMap<QString, QString> customCtcpMap;
-	QDict<QTextCodec> codecs;
+	Q3Dict<QTextCodec> codecs;
 	QTextCodec *defaultCodec;
 
 	KExtendedSocket *m_sock;

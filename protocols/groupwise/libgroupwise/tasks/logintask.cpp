@@ -24,6 +24,8 @@
 #include "userdetailsmanager.h"
 
 #include "logintask.h"
+//Added by qt3to4:
+#include <Q3CString>
 
 LoginTask::LoginTask( Task * parent )
  : RequestTask( parent )
@@ -251,7 +253,7 @@ void LoginTask::extractPrivacy( Field::FieldList & fields )
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "locked is " << privacyLocked << ", default is " << defaultDeny << "\nallow list is: " << allowList << "\ndeny list is: " << denyList << endl;
 }
 
-QStringList LoginTask::readPrivacyItems( const QCString & tag, Field::FieldList & fields )
+QStringList LoginTask::readPrivacyItems( const Q3CString & tag, Field::FieldList & fields )
 {
 	QStringList items;
 	

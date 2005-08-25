@@ -23,7 +23,7 @@
 
 #include <qapplication.h>
 #include <qtoolbutton.h>
-#include <qheader.h>
+#include <q3header.h>
 #include <qstringlist.h>
 
 #include <kiconloader.h>
@@ -39,7 +39,7 @@ class TooltipItem : public KListViewItem
 		{
 		}
 
-		TooltipItem(KListView *parent, QListViewItem *item, const QString& label, const QString& propertyName)
+		TooltipItem(KListView *parent, Q3ListViewItem *item, const QString& label, const QString& propertyName)
 			: KListViewItem(parent, item, label),
 				mPropName(propertyName)
 		{
@@ -88,12 +88,12 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent, const char* name)
 			new TooltipItem(mMainWidget->lstUnusedItems, it.data().label(), it.key());
 	}
 
-	connect(mMainWidget->lstUnusedItems, SIGNAL(selectionChanged(QListViewItem *)),
-		this, SLOT(slotUnusedSelected(QListViewItem *)));
-	connect(mMainWidget->lstUsedItems, SIGNAL(selectionChanged(QListViewItem *)),
-		this, SLOT(slotUsedSelected(QListViewItem *)));
+	connect(mMainWidget->lstUnusedItems, SIGNAL(selectionChanged(Q3ListViewItem *)),
+		this, SLOT(slotUnusedSelected(Q3ListViewItem *)));
+	connect(mMainWidget->lstUsedItems, SIGNAL(selectionChanged(Q3ListViewItem *)),
+		this, SLOT(slotUsedSelected(Q3ListViewItem *)));
 
-	QIconSet iconSet;
+	QIcon iconSet;
 	iconSet = SmallIconSet("up");
 	mMainWidget->tbUp->setIconSet(iconSet);
 	mMainWidget->tbUp->setEnabled(false);
@@ -123,7 +123,7 @@ void TooltipEditDialog::slotOkClicked()
 {
 	QStringList oldList = KopetePrefs::prefs()->toolTipContents();
 	QStringList newList;
-	QListViewItemIterator it(mMainWidget->lstUsedItems);
+	Q3ListViewItemIterator it(mMainWidget->lstUsedItems);
 	QString keyname;
 
 	while(it.current())
@@ -144,13 +144,13 @@ void TooltipEditDialog::slotOkClicked()
 }
 
 
-void TooltipEditDialog::slotUnusedSelected(QListViewItem *item)
+void TooltipEditDialog::slotUnusedSelected(Q3ListViewItem *item)
 {
 	//mMainWidget->tbRemove->setEnabled(false);
 	mMainWidget->tbAdd->setEnabled(item!=0);
 }
 
-void TooltipEditDialog::slotUsedSelected(QListViewItem *item)
+void TooltipEditDialog::slotUsedSelected(Q3ListViewItem *item)
 {
 	mMainWidget->tbRemove->setEnabled(item!=0);
 	//mMainWidget->tbAdd->setEnabled(false);
@@ -168,8 +168,8 @@ void TooltipEditDialog::slotUsedSelected(QListViewItem *item)
 
 void TooltipEditDialog::slotUpButton()
 {
-	QListViewItem *item = mMainWidget->lstUsedItems->currentItem();
-	QListViewItem *prev = item->itemAbove();
+	Q3ListViewItem *item = mMainWidget->lstUsedItems->currentItem();
+	Q3ListViewItem *prev = item->itemAbove();
 	if(prev == 0) // we are first item already
 		return;
 
@@ -179,8 +179,8 @@ void TooltipEditDialog::slotUpButton()
 
 void TooltipEditDialog::slotDownButton()
 {
-	QListViewItem *item = mMainWidget->lstUsedItems->currentItem();
-	QListViewItem *next = item->itemBelow();
+	Q3ListViewItem *item = mMainWidget->lstUsedItems->currentItem();
+	Q3ListViewItem *next = item->itemBelow();
 	if(next == 0) // we are last item already
 		return;
 

@@ -35,7 +35,7 @@
 #include <qhostaddress.h>
 #include <qmap.h>
 #include <qstring.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <kaction.h>
 #include <kfiledialog.h>
 

@@ -21,6 +21,8 @@
 
 #include "icqtask.h"
 #include <qstring.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include "icquserinfo.h"
 
 /**
@@ -52,7 +54,7 @@ signals:
 	void searchFinished( int );
 	
 private:
-	QValueList<ICQSearchResult> m_results;
+	Q3ValueList<ICQSearchResult> m_results;
 	QString m_uin;
 	Q_UINT16 m_seq;
 	SearchType m_type;

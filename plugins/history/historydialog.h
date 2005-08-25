@@ -21,6 +21,9 @@
 
 #include <qfile.h>
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <Q3PtrList>
 
 #include <kdialogbase.h>
 #include <klistview.h>
@@ -80,7 +83,7 @@ class HistoryDialog : public KDialogBase
 		void slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args*/);
 
 		// Called when a date is selected in the treeview
-		void dateSelected(QListViewItem *);
+		void dateSelected(Q3ListViewItem *);
 
 		void slotSearch();
 
@@ -107,7 +110,7 @@ class HistoryDialog : public KDialogBase
 		/**
 		 * Show the messages in the HTML View
 		 */
-		void setMessages(QValueList<Kopete::Message> m);
+		void setMessages(Q3ValueList<Kopete::Message> m);
 
 		void listViewShowElements(bool s);
 
@@ -123,7 +126,7 @@ class HistoryDialog : public KDialogBase
 		 */
 		Kopete::MetaContact *mMetaContact;
 
-		QPtrList<Kopete::MetaContact> mMetaContactList;
+		Q3PtrList<Kopete::MetaContact> mMetaContactList;
 
 		// History View
 		KHTMLView *mHtmlView;
@@ -133,12 +136,12 @@ class HistoryDialog : public KDialogBase
 
 		struct Init
 		{
-			QValueList<DMPair> dateMCList; // mc for MetaContact
+			Q3ValueList<DMPair> dateMCList; // mc for MetaContact
 		} mInit;
 
 		struct Search
 		{
-				typedef QMap<QDate, QValueList<Kopete::MetaContact*> > DateSearchMap;
+				typedef QMap<QDate, Q3ValueList<Kopete::MetaContact*> > DateSearchMap;
 				DateSearchMap dateSearchMap;
 
 				KListViewDateItem *item;

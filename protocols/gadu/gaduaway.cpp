@@ -29,7 +29,7 @@
 #include <ktextedit.h>
 #include <klocale.h>
 
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
 #include <qradiobutton.h>
 #include <qlineedit.h>
 

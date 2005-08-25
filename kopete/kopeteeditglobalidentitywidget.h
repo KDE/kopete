@@ -20,6 +20,8 @@
 
 #include <qwidget.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <QMouseEvent>
 
 /**
  * This is a simple widget added to a toolbar in KopeteWindow.

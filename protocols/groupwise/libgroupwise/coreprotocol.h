@@ -21,9 +21,9 @@
 #ifndef GW_CORE_PROTOCOL_H
 #define GW_CORE_PROTOCOL_H
 
-#include <qcstring.h>
+#include <q3cstring.h>
 #include <qobject.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 #include "gwfield.h"
 
@@ -166,7 +166,7 @@ protected slots:
 	/**
 	 * Just a debug method to test emitting to the socket, atm - should go to the ClientStream
 	 */
-	void slotOutgoingData( const QCString & );
+	void slotOutgoingData( const Q3CString & );
 	
 protected:
 	/**

@@ -98,7 +98,7 @@ void ServSock::sss_connectionReady(int s)
 // ServSockSignal
 //----------------------------------------------------------------------------
 ServSockSignal::ServSockSignal(int port)
-:QServerSocket(port, 16)
+:Q3ServerSocket(port, 16)
 {
 }
 

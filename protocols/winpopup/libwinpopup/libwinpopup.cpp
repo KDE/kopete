@@ -19,6 +19,8 @@
 #include <qdir.h>
 #include <qfileinfo.h>
 #include <qregexp.h>
+//Added by qt3to4:
+#include <QTextStream>
 
 // KDE Includes
 #include <kapplication.h>
@@ -240,7 +242,7 @@ void WinPopupLib::slotCheckForNewMessages()
 				messageFilePath.append(messageFileName);
 				QFile messageFile(messageFilePath);
 
-				if (messageFile.open(IO_ReadOnly)) {
+				if (messageFile.open(QIODevice::ReadOnly)) {
 					QTextStream stream(&messageFile);
 					QString sender;
 					QDateTime time;

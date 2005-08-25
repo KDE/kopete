@@ -22,9 +22,9 @@
 #include <kaction.h>
 
 // Qt Includes
-#include <qvaluestack.h>
+#include <q3valuestack.h>
 #include <qdatetime.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qtimer.h>
 #include <qstringlist.h>
 
@@ -40,8 +40,8 @@
 #include "wpuserinfo.h"
 
 class QTimer;
-class QListView;
-class QListViewItem;
+class Q3ListView;
+class Q3ListViewItem;
 class KPopupMenu;
 class KAction;
 namespace Kopete { class MetaContact; }
@@ -55,7 +55,7 @@ public:
 
 //	virtual bool isOnline() const;
 	virtual bool isReachable();
-	virtual QPtrList<KAction> *customContextMenuActions();
+	virtual Q3PtrList<KAction> *customContextMenuActions();
 	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate);
 	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 

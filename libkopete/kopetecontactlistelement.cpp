@@ -23,6 +23,8 @@
 #include <kglobal.h>
 
 #include "kopeteplugin.h"
+//Added by qt3to4:
+#include <Q3ValueList>
 
 namespace Kopete {
 
@@ -86,10 +88,10 @@ QString ContactListElement::pluginData( Plugin *plugin, const QString &key ) con
 	return d->pluginData[ plugin->pluginId() ][ key ];
 }
 
-const QValueList<QDomElement> ContactListElement::toXML()
+const Q3ValueList<QDomElement> ContactListElement::toXML()
 {
 	QDomDocument pluginData;
-	QValueList<QDomElement> pluginNodes;
+	Q3ValueList<QDomElement> pluginNodes;
 	pluginData.appendChild( pluginData.createElement( QString::fromLatin1( "plugin-data" ) ) );
 
 	if ( !d->pluginData.isEmpty() )

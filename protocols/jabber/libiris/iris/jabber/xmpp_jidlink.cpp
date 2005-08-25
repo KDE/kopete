@@ -22,6 +22,8 @@
 
 #include<qdom.h>
 #include<qtimer.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 #include"im.h"
 #include"s5b.h"
 #include"xmpp_ibb.h"
@@ -283,7 +285,7 @@ public:
 	Private() {}
 
 	Client *client;
-	QPtrList<JidLink> incomingList;
+	Q3PtrList<JidLink> incomingList;
 };
 
 JidLinkManager::JidLinkManager(Client *par)

@@ -26,6 +26,8 @@
 #include "oscartypes.h"
 #include "oscarutils.h"
 #include "transfer.h"
+//Added by qt3to4:
+#include <Q3ValueList>
 
 using namespace Oscar;
 
@@ -48,9 +50,9 @@ void LocalContactListTask::onGo()
 		Buffer* buffer = new Buffer();
 		
 		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending contact list" << endl;
-		QValueList<Oscar::SSI> contactList = client()->ssiManager()->contactList();
-		QValueList<Oscar::SSI>::const_iterator cEnd = contactList.constEnd();
-		for ( QValueList<Oscar::SSI>::const_iterator it = contactList.constBegin(); it != cEnd; ++it )
+		Q3ValueList<Oscar::SSI> contactList = client()->ssiManager()->contactList();
+		Q3ValueList<Oscar::SSI>::const_iterator cEnd = contactList.constEnd();
+		for ( Q3ValueList<Oscar::SSI>::const_iterator it = contactList.constBegin(); it != cEnd; ++it )
 		{
 			kdDebug( OSCAR_RAW_DEBUG ) << "Adding contact " << ( *it ).name() << " to CLI_BUDDYLIST_ADD packet" << endl;
 			buffer->addBUIN( ( *it ).name().latin1() );

@@ -21,7 +21,7 @@
 #ifndef GW_EVENTTASK_H
 #define GW_EVENTTASK_H
 
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 #include "eventtransfer.h"
 #include "task.h"
@@ -37,7 +37,7 @@ Q_OBJECT
 		bool forMe( Transfer * transfer, EventTransfer *& event ) const;
 		void registerEvent( GroupWise::Event e );
 	private:
-		QValueList<int> m_eventCodes;
+		Q3ValueList<int> m_eventCodes;
 };
 
 #endif

@@ -22,10 +22,12 @@
 #define CS_NDNS_H
 
 #include<qobject.h>
-#include<qcstring.h>
+#include<q3cstring.h>
 #include<qthread.h>
 #include<qmutex.h>
 #include<qhostaddress.h>
+//Added by qt3to4:
+#include <QEvent>
 
 // CS_NAMESPACE_BEGIN
 

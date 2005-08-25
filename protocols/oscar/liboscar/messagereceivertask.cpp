@@ -17,6 +17,9 @@
 #include "messagereceivertask.h"
 
 #include <qtextcodec.h>
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <Q3CString>
 #include <kdebug.h>
 #include "transfer.h"
 #include "buffer.h"
@@ -90,7 +93,7 @@ bool MessageReceiverTask::take( Transfer* transfer )
 void MessageReceiverTask::handleType1Message()
 {
 	Oscar::Message msg;
-	QValueList<TLV> messageTLVList = transfer()->buffer()->getTLVList();
+	Q3ValueList<TLV> messageTLVList = transfer()->buffer()->getTLVList();
 	TLV t = Oscar::findTLV( messageTLVList, 0x0002 );
 	if ( !t )
 	{
@@ -98,8 +101,8 @@ void MessageReceiverTask::handleType1Message()
 		return;
 	}
 	Buffer messageBuffer( t.data );
-	QValueList<TLV> innerTLVList = messageBuffer.getTLVList();
-	QValueList<TLV>::iterator it = innerTLVList.begin(), listEnd = innerTLVList.end();
+	Q3ValueList<TLV> innerTLVList = messageBuffer.getTLVList();
+	Q3ValueList<TLV>::iterator it = innerTLVList.begin(), listEnd = innerTLVList.end();
 	for ( ; (*it); ++it )
 	{
 		switch ( ( *it ).type )
@@ -171,7 +174,7 @@ void MessageReceiverTask::handleType2Message()
 	kdDebug(14151) << k_funcinfo << "We don't _really_ support type2 messages yet..." << endl;
 
 	Oscar::Message msg;
-	QValueList<TLV> messageTLVList = transfer()->buffer()->getTLVList();
+	Q3ValueList<TLV> messageTLVList = transfer()->buffer()->getTLVList();
 	TLV t = Oscar::findTLV( messageTLVList, 0x0005 );
 	if ( !t )
 	{
@@ -179,8 +182,8 @@ void MessageReceiverTask::handleType2Message()
 		return;
 	}
 	Buffer messageBuffer( t.data );
-	QValueList<TLV> innerTLVList = messageBuffer.getTLVList();
-	QValueList<TLV>::iterator it = innerTLVList.begin(), listEnd = innerTLVList.end();
+	Q3ValueList<TLV> innerTLVList = messageBuffer.getTLVList();
+	Q3ValueList<TLV>::iterator it = innerTLVList.begin(), listEnd = innerTLVList.end();
 	for ( ; (*it); ++it )
 	{
 		switch ( ( *it ).type )
@@ -348,7 +351,7 @@ void MessageReceiverTask::handleType4Message()
 	emit receivedMessage( msg );
 }
 
-QTextCodec* MessageReceiverTask::guessCodec( const QCString& string )
+QTextCodec* MessageReceiverTask::guessCodec( const Q3CString& string )
 {
 	Q_UNUSED( string );
 	return 0;

@@ -57,7 +57,12 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qtimer.h>
-#include <qvbox.h>
+#include <q3vbox.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QCloseEvent>
+#include <QHBoxLayout>
+#include <Q3ValueList>
 
 typedef KGenericFactory<EmailWindowPlugin> EmailWindowPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_emailwindow, EmailWindowPluginFactory( "kopete_emailwindow" )  )
@@ -75,7 +80,7 @@ KopeteView* EmailWindowPlugin::createView( Kopete::ChatSession *manager )
 class KopeteEmailWindow::Private
 {
 public:
-	QValueList<Kopete::Message> messageQueue;
+	Q3ValueList<Kopete::Message> messageQueue;
 	bool showingMessage;
 	bool sendInProgress;
 	bool visible;
@@ -100,7 +105,7 @@ public:
 KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowPlugin *parent, bool foreignMessage )
 	:  KParts::MainWindow( ), KopeteView( manager, parent ), d( new Private )
 {
-	QVBox *v = new QVBox( this );
+	Q3VBox *v = new Q3VBox( this );
 	setCentralWidget( v );
 
 	setMinimumSize( QSize( 75, 20 ) );
@@ -477,7 +482,7 @@ void KopeteEmailWindow::toggleMode( WindowMode newMode )
 			d->btnReadPrev->show();
 			break;
 		case Reply:
-			QValueList<int> splitPercent;
+			Q3ValueList<int> splitPercent;
 			// FIXME: should be saved and restored
 			splitPercent.append(50);
 			splitPercent.append(50);

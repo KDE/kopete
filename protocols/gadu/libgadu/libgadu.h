@@ -1179,9 +1179,9 @@ struct gg_msg_richtext_image {
 #define GG_FONT_IMAGE 0x80
 
 struct gg_msg_richtext_color { 
-	uint8_t red;
-	uint8_t green;
-	uint8_t blue;
+	uint8_t Qt::red;
+	uint8_t Qt::green;
+	uint8_t Qt::blue;
 } GG_PACKED;
 
 struct gg_msg_recipients {

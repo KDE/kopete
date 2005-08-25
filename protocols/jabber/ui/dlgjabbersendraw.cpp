@@ -20,7 +20,7 @@
 
 #include <qcombobox.h>
 #include <qpushbutton.h>
-#include <qtextedit.h>
+#include <q3textedit.h>
 #include <kdebug.h>
 #include "jabberclient.h"
 

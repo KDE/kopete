@@ -23,7 +23,9 @@
 #include <kaction.h>
 #include <klocale.h>
 
-#include <qdict.h>
+#include <q3dict.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
@@ -64,12 +66,12 @@ Protocol::Protocol( KInstance *instance, QObject *parent, const char *name )
 Protocol::~Protocol()
 {
 	// Remove all active accounts
-	QDict<Account> accounts = AccountManager::self()->accounts( this );
+	Q3Dict<Account> accounts = AccountManager::self()->accounts( this );
 	if ( !accounts.isEmpty() )
 	{
 		kdWarning( 14010 ) << k_funcinfo << "Deleting protocol with existing accounts! Did the account unloading go wrong?" << endl;
 
-		for( QDictIterator<Account> it( accounts ); it.current() ; ++it )
+		for( Q3DictIterator<Account> it( accounts ); it.current() ; ++it )
 			delete *it;
 	}
 
@@ -107,7 +109,7 @@ void Protocol::slotAccountOnlineStatusChanged( Contact *self )
 
 void Protocol::slotAccountDestroyed( )
 {
-	QDict<Account> dict = AccountManager::self()->accounts( this );
+	Q3Dict<Account> dict = AccountManager::self()->accounts( this );
 	if ( dict.isEmpty() )
 	{
 		// While at this point we are still in a stack trace from the destroyed
@@ -124,11 +126,11 @@ void Protocol::aboutToUnload()
 	d->unloading = true;
 
 	// Disconnect all accounts
-	QDict<Account> accounts = AccountManager::self()->accounts( this );
+	Q3Dict<Account> accounts = AccountManager::self()->accounts( this );
 	
 	if ( accounts.isEmpty() )
 		emit readyForUnload();
-	else for ( QDictIterator<Account> it( accounts ); it.current() ; ++it )
+	else for ( Q3DictIterator<Account> it( accounts ); it.current() ; ++it )
 	{
 		if ( it.current()->myself() && it.current()->myself()->isOnline() )
 		{
@@ -163,7 +165,7 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 
 	//kdDebug( 14010 ) << "Protocol::metaContactAboutToSave: protocol " << pluginId() << ": serializing " << metaContact->displayName() << endl;
 
-	QPtrList<Contact> contacts=metaContact->contacts();
+	Q3PtrList<Contact> contacts=metaContact->contacts();
 	for (Contact *c=contacts.first() ; c ; c=contacts.next() )
 	{
 		if( c->protocol()->pluginId() != pluginId() )
@@ -302,10 +304,10 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 		// who migrate from 0.6, as there's only one account in that case
 		if( accountId.isNull() )
 		{
-			QDict<Account> accounts = AccountManager::self()->accounts( this );
+			Q3Dict<Account> accounts = AccountManager::self()->accounts( this );
 			if ( accounts.count() > 0 )
 			{
-				sd[ QString::fromLatin1( "accountId" ) ] = QDictIterator<Account>( accounts ).currentKey();
+				sd[ QString::fromLatin1( "accountId" ) ] = Q3DictIterator<Account>( accounts ).currentKey();
 			}
 			else
 			{

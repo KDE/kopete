@@ -20,8 +20,8 @@
 #define __kopeteaccountmanager_h__
 
 #include <qobject.h>
-#include <qptrlist.h>
-#include <qdict.h>
+#include <q3ptrlist.h>
+#include <q3dict.h>
 
 #include <kopete_export.h>
 
@@ -65,7 +65,7 @@ public:
 	 * \brief Retrieve the list of accounts
 	 * \return a list of all the accounts
 	 */
-	const QPtrList<Account> & accounts() const;
+	const Q3PtrList<Account> & accounts() const;
 
 	/**
 	 * \brief Retrieve a QDict of accounts for the given protocol
@@ -74,7 +74,7 @@ public:
 	 * protocol
 	 * \param p is the Protocol object you want accounts for
 	 */
-	QDict<Account> accounts( const Protocol *p ) const;
+	Q3Dict<Account> accounts( const Protocol *p ) const;
 
 	/**
 	 * \brief Return the account asked

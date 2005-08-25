@@ -24,6 +24,8 @@
 #include <kconfig.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 class CryptographyPlugin;
 
@@ -36,7 +38,7 @@ CryptographyGUIClient::CryptographyGUIClient(Kopete::ChatSession *parent )
 		return;
 	}
 
-	QPtrList<Kopete::Contact> mb=parent->members();
+	Q3PtrList<Kopete::Contact> mb=parent->members();
 	Kopete::MetaContact *first=mb.first()->metaContact();
 
 	if(!first)
@@ -60,7 +62,7 @@ CryptographyGUIClient::~CryptographyGUIClient()
 
 void CryptographyGUIClient::slotToggled()
 {
-	QPtrList<Kopete::Contact> mb=static_cast<Kopete::ChatSession*>(parent())->members();
+	Q3PtrList<Kopete::Contact> mb=static_cast<Kopete::ChatSession*>(parent())->members();
 	Kopete::MetaContact *first=mb.first()->metaContact();
 
 	if(!first)

@@ -75,7 +75,7 @@ int KUnitTest::runTests()
     int globalSkipped = 0;
 
     cout << "# Running normal tests... #" << endl << endl;
-    QAsciiDictIterator<Tester> it( m_tests );
+    Q3AsciiDictIterator<Tester> it( m_tests );
 
     for( ; it.current(); ++it ) {
         Tester* test = it.current();

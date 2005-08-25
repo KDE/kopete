@@ -146,7 +146,7 @@ void TestbedAccount::receivedMessage( const QString &message )
 
 void TestbedAccount::updateContactStatus()
 {
-	QDictIterator<Kopete::Contact> itr( contacts() );
+	Q3DictIterator<Kopete::Contact> itr( contacts() );
 	for ( ; itr.current(); ++itr )
 		itr.current()->setOnlineStatus( myself()->onlineStatus() );
 }

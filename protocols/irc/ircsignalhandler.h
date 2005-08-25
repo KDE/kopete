@@ -22,6 +22,8 @@
 #include <qobject.h>
 #include <qstringlist.h>
 #include <qdatetime.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include <kdebug.h>
 
@@ -276,7 +278,7 @@ class IRCSignalHandler : public QObject
 
 	private:
 		IRCContactManager *manager;
-		QValueList<IRCSignalMappingBase*> mappings;
+		Q3ValueList<IRCSignalMappingBase*> mappings;
 
 		/****
 		Signal mapping functions

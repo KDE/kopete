@@ -56,6 +56,8 @@
 
 #include <qlayout.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 const QString IRCAccount::CONFIG_CODECMIB = QString::fromLatin1("Codec");
 const QString IRCAccount::CONFIG_NETWORKNAME = QString::fromLatin1("NetworkName");
@@ -152,10 +154,10 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 		QString serverInfo = m_accountId.section('@',1);
 		QString hostName = serverInfo.section(':',0,0);
 
-		for( QDictIterator<IRCNetwork> it( m_protocol->networks() ); it.current(); ++it )
+		for( Q3DictIterator<IRCNetwork> it( m_protocol->networks() ); it.current(); ++it )
 		{
 			IRCNetwork *net = it.current();
-			for( QValueList<IRCHost*>::iterator it2 = net->hosts.begin(); it2 != net->hosts.end(); ++it2 )
+			for( Q3ValueList<IRCHost*>::iterator it2 = net->hosts.begin(); it2 != net->hosts.end(); ++it2 )
 			{
 				if( (*it2)->host == hostName )
 				{
@@ -450,7 +452,7 @@ void IRCAccount::connectWithPassword(const QString &password)
 	{
 		if( m_network )
 		{
-			QValueList<IRCHost*> &hosts = m_network->hosts;
+			Q3ValueList<IRCHost*> &hosts = m_network->hosts;
 			if( hosts.count() == 0 )
 			{
 				KMessageBox::queuedMessageBox(
@@ -472,7 +474,7 @@ void IRCAccount::connectWithPassword(const QString &password)
 				// if prefer SSL is set, sort by SSL first
 				if (configGroup()->readBoolEntry("PreferSSL"))
 				{
-					typedef QValueList<IRCHost*> IRCHostList;
+					typedef Q3ValueList<IRCHost*> IRCHostList;
 					IRCHostList sslFirst;
 					IRCHostList::iterator it;
 					for ( it = hosts.begin(); it != hosts.end(); ++it )

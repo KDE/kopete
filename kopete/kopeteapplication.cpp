@@ -85,7 +85,7 @@ KopeteApplication::KopeteApplication()
 	QTimer::singleShot( 0, this, SLOT( slotLoadPlugins() ) );
 
 	m_mimeFactory = new Kopete::MimeSourceFactory;
-	QMimeSourceFactory::addFactory( m_mimeFactory );
+	Q3MimeSourceFactory::addFactory( m_mimeFactory );
 
 	//Create the emoticon installer
 	m_emoticonHandler = new Kopete::EmoticonMimeTypeHandler;
@@ -232,7 +232,7 @@ void KopeteApplication::slotAllPluginsLoaded()
 				continue;
 		}
 
-		QPtrListIterator<Kopete::Account> it( Kopete::AccountManager::self()->accounts() );
+		Q3PtrListIterator<Kopete::Account> it( Kopete::AccountManager::self()->accounts() );
 		Kopete::Account *account;
 		while ( ( account = it.current() ) != 0 )
 		{
@@ -304,7 +304,7 @@ void KopeteApplication::quitKopete()
 	m_isShuttingDown = true;
 
 	// close all windows
-	QPtrListIterator<KMainWindow> it(*KMainWindow::memberList);
+	Q3PtrListIterator<KMainWindow> it(*KMainWindow::memberList);
 	for (it.toFirst(); it.current(); ++it)
 	{
 		if ( !it.current()->close() )

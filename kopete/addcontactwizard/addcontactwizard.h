@@ -20,8 +20,8 @@
 #ifndef ADDCONTACTWIZARD_H
 #define ADDCONTACTWIZARD_H
 
-#include <qptrlist.h>
-#include <qvaluelist.h>
+#include <q3ptrlist.h>
+#include <q3valuelist.h>
 #include <qmap.h>
 
 #include <kdebug.h>
@@ -29,7 +29,7 @@
 #include "addcontactwizard_base.h"
 
 class AddContactPage;
-class QCheckListItem;
+class Q3CheckListItem;
 
 namespace Kopete
 {
@@ -60,22 +60,22 @@ private:
 	//Kopete::Protocol *currentProtocol;
 	//AddContactPage *currentDataWidget;
 	QMap <Kopete::Account*,AddContactPage*> protocolPages;
-	QMap <QCheckListItem*,Kopete::Account*> m_accountItems;
-	QMap <QCheckListItem*,Kopete::Group*> m_groupItems;
+	QMap <Q3CheckListItem*,Kopete::Account*> m_accountItems;
+	QMap <Q3CheckListItem*,Kopete::Group*> m_groupItems;
 	Kopete::UI::AddressBookSelectorWidget *m_addressbookSelectorWidget;
 
 public slots:
 	virtual void accept();
 	virtual void reject();
 
-	void slotProtocolListClicked( QListViewItem * );
+	void slotProtocolListClicked( Q3ListViewItem * );
 
 	void slotAddGroupClicked();
 
 protected slots:
 	virtual void next();
 	void slotCheckAddresseeChoice( bool on );
-	void slotAddresseeListClicked( QListViewItem *addressee );
+	void slotAddresseeListClicked( Q3ListViewItem *addressee );
 	void slotDataValid( AddContactPage *onPage, bool bOn);
 };
 

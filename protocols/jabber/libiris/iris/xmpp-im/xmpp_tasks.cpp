@@ -28,7 +28,7 @@
 #include"xmpp_vcard.h"
 
 #include<qregexp.h>
-#include<qvaluelist.h>
+#include<q3valuelist.h>
 
 using namespace XMPP;
 
@@ -303,7 +303,7 @@ public:
 	Private() {}
 
 	Roster roster;
-	QValueList<QDomElement> itemList;
+	Q3ValueList<QDomElement> itemList;
 };
 
 JT_Roster::JT_Roster(Task *parent)
@@ -361,7 +361,7 @@ void JT_Roster::onGo()
 		QDomElement query = doc()->createElement("query");
 		query.setAttribute("xmlns", "jabber:iq:roster");
 		iq.appendChild(query);
-		for(QValueList<QDomElement>::ConstIterator it = d->itemList.begin(); it != d->itemList.end(); ++it)
+		for(Q3ValueList<QDomElement>::ConstIterator it = d->itemList.begin(); it != d->itemList.end(); ++it)
 			query.appendChild(*it);
 		send(iq);
 	}
@@ -379,7 +379,7 @@ QString JT_Roster::toString() const
 
 	QDomElement i = doc()->createElement("request");
 	i.setAttribute("type", "JT_Roster");
-	for(QValueList<QDomElement>::ConstIterator it = d->itemList.begin(); it != d->itemList.end(); ++it)
+	for(Q3ValueList<QDomElement>::ConstIterator it = d->itemList.begin(); it != d->itemList.end(); ++it)
 		i.appendChild(*it);
 	return lineEncode(Stream::xmlToString(i));
 	return "";
@@ -1037,7 +1037,7 @@ public:
 
 	Jid jid;
 	Form form;
-	QValueList<SearchResult> resultList;
+	Q3ValueList<SearchResult> resultList;
 };
 
 JT_Search::JT_Search(Task *parent)
@@ -1087,7 +1087,7 @@ const Form & JT_Search::form() const
 	return d->form;
 }
 
-const QValueList<SearchResult> & JT_Search::results() const
+const Q3ValueList<SearchResult> & JT_Search::results() const
 {
 	return d->resultList;
 }

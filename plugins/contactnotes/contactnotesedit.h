@@ -20,10 +20,12 @@
 
 #include <qwidget.h>
 #include <qstring.h>
+//Added by qt3to4:
+#include <QLabel>
 #include <kdialogbase.h>
 
 class QLabel;
-class QTextEdit;
+class Q3TextEdit;
 namespace Kopete { class MetaContact; }
 class ContactNotesPlugin;
 
@@ -42,7 +44,7 @@ private:
 	Kopete::MetaContact *m_metaContact;
 
 	QLabel *m_label;
-	QTextEdit *m_linesEdit;
+	Q3TextEdit *m_linesEdit;
 	
 protected slots: // Protected slots
 	virtual void slotOk();

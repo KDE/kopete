@@ -21,6 +21,9 @@
 #include <kabc/phonenumber.h>
 #include <qcombobox.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3PtrList>
 
 #include <kdialogbase.h>
 #include <kiconloader.h>
@@ -123,8 +126,8 @@ void KopeteAddressBookExport::fetchPhoneNumbers( KListBox * listBox, int type, u
 
 void KopeteAddressBookExport::fetchIMData()
 {	
-	QPtrList<Kopete::Contact> contacts = mMetaContact->contacts();
-	QPtrListIterator<Kopete::Contact> cit( contacts );
+	Q3PtrList<Kopete::Contact> contacts = mMetaContact->contacts();
+	Q3PtrListIterator<Kopete::Contact> cit( contacts );
 	for( ; cit.current(); ++cit )
 	{
 		// for each contact, get the property content

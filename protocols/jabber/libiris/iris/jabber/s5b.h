@@ -22,9 +22,9 @@
 #define XMPP_S5B_H
 
 #include<qobject.h>
-#include<qcstring.h>
-#include<qptrlist.h>
-#include<qvaluelist.h>
+#include<q3cstring.h>
+#include<q3ptrlist.h>
+#include<q3valuelist.h>
 #include"im.h"
 #include"bytestream.h"
 
@@ -38,9 +38,9 @@ namespace XMPP
 	class S5BManager;
 	class S5BServer;
 	struct S5BRequest;
-	typedef QValueList<StreamHost> StreamHostList;
-	typedef QPtrList<S5BConnection> S5BConnectionList;
-	typedef QPtrListIterator<S5BConnection> S5BConnectionListIt;
+	typedef Q3ValueList<StreamHost> StreamHostList;
+	typedef Q3PtrList<S5BConnection> S5BConnectionList;
+	typedef Q3PtrListIterator<S5BConnection> S5BConnectionListIt;
 
 	class S5BDatagram
 	{
@@ -256,7 +256,7 @@ namespace XMPP
 		void link(S5BManager *);
 		void unlink(S5BManager *);
 		void unlinkAll();
-		const QPtrList<S5BManager> & managerList() const;
+		const Q3PtrList<S5BManager> & managerList() const;
 		void writeUDP(const QHostAddress &addr, int port, const QByteArray &data);
 	};
 

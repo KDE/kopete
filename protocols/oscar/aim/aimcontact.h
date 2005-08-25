@@ -19,6 +19,8 @@
 #define AIMCONTACT_H
 
 #include <qdatetime.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include "oscarcontact.h"
 
@@ -42,7 +44,7 @@ public:
 	virtual ~AIMContact();
 
 	bool isReachable();
-	QPtrList<KAction> *customContextMenuActions();
+	Q3PtrList<KAction> *customContextMenuActions();
 
 	const QString &userProfile() { return mUserProfile; }
 

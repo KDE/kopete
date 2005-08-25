@@ -81,7 +81,7 @@ void Kopete::UI::PasswordWidget::receivePassword( const QString &pwd )
 {
 	// pwd == null could mean user declined to open wallet
 	// don't uncheck the remembered field in this case.
-	if ( !pwd.isNull() && mRemembered->state() == QButton::NoChange )
+	if ( !pwd.isNull() && mRemembered->state() == QCheckBox::NoChange )
 	{
 		mRemembered->setChecked( true );
 		setPassword( pwd );
@@ -90,7 +90,7 @@ void Kopete::UI::PasswordWidget::receivePassword( const QString &pwd )
 
 void Kopete::UI::PasswordWidget::save( Kopete::Password *target )
 {
-	if ( !target || mRemembered->state() == QButton::NoChange )
+	if ( !target || mRemembered->state() == QCheckBox::NoChange )
 		return;
 	
 	if ( mRemembered->isChecked() )
@@ -113,7 +113,7 @@ QString Kopete::UI::PasswordWidget::password() const
 
 bool Kopete::UI::PasswordWidget::remember() const
 {
-	return mRemembered->state() == QButton::On;
+	return mRemembered->state() == QCheckBox::On;
 }
 
 void Kopete::UI::PasswordWidget::setPassword( const QString &pass )

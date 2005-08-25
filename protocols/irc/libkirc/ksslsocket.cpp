@@ -17,6 +17,9 @@
 */
 
 #include <qsocketnotifier.h>
+//Added by qt3to4:
+#include <Q3CString>
+#include <Q3PtrList>
 
 #include <dcopclient.h>
 #include <klocale.h>
@@ -186,8 +189,8 @@ void KSSLSocket::showInfoDialog()
 		}
 
 		QByteArray data, ignore;
-		QCString ignoretype;
-		QDataStream arg(data, IO_WriteOnly);
+		Q3CString ignoretype;
+		QDataStream arg(data, QIODevice::WriteOnly);
 		arg << "irc://" + peerAddress()->pretty() + ":" + port() << d->metaData;
 		d->dcc->call("kio_uiserver", "UIServer",
 			"showSSLInfoDialog(QString,KIO::MetaData)", data, ignoretype, ignore);
@@ -225,8 +228,8 @@ int KSSLSocket::messageBox( KIO::SlaveBase::MessageBoxType type, const QString &
 {
 	kdDebug(14120) << "messageBox " << type << " " << text << " - " << caption << buttonYes << buttonNo << endl;
 	QByteArray data, result;
-	QCString returnType;
-	QDataStream arg(data, IO_WriteOnly);
+	Q3CString returnType;
+	QDataStream arg(data, QIODevice::WriteOnly);
 	arg << (int)1 << (int)type << text << caption << buttonYes << buttonNo;
 
 	if (!d->dcc->isApplicationRegistered("kio_uiserver"))
@@ -240,7 +243,7 @@ int KSSLSocket::messageBox( KIO::SlaveBase::MessageBoxType type, const QString &
 	if( returnType == "int" )
 	{
 		int res;
-		QDataStream r(result, IO_ReadOnly);
+		QDataStream r(result, QIODevice::ReadOnly);
 		r >> res;
 		return res;
 	}
@@ -301,7 +304,7 @@ int KSSLSocket::verifyCertificate()
 	if (pc.chain().isValid() && pc.chain().depth() > 1)
 	{
 		QString theChain;
-		QPtrList<KSSLCertificate> chain = pc.chain().getChain();
+		Q3PtrList<KSSLCertificate> chain = pc.chain().getChain();
 		for (KSSLCertificate *c = chain.first(); c; c = chain.next())
 		{
 			theChain += c->toString();

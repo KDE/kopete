@@ -18,6 +18,8 @@
 #include "icqcontact.h"
 
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include <kaction.h>
 #include <kactionclasses.h>
@@ -432,9 +434,9 @@ bool ICQContact::isReachable()
 	return account()->isConnected();
 }
 
-QPtrList<KAction> *ICQContact::customContextMenuActions()
+Q3PtrList<KAction> *ICQContact::customContextMenuActions()
 {
-	QPtrList<KAction> *actionCollection = new QPtrList<KAction>();
+	Q3PtrList<KAction> *actionCollection = new Q3PtrList<KAction>();
 /*
 	QString awTxt;
 	QString awIcn;

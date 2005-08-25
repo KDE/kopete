@@ -241,14 +241,14 @@ GaduDCCTransaction::slotIncomingTransferAccepted ( Kopete::Transfer* transfer, c
 		{
 			// resume
 			case KMessageBox::Yes:
-				if ( localFile_.open( IO_WriteOnly | IO_Append ) ) {
+				if ( localFile_.open( QIODevice::WriteOnly | QIODevice::Append ) ) {
 					dccSock_->offset  = localFile_.size();
 					dccSock_->file_fd = localFile_.handle();
 				}
 			break;
 			// overwrite
 			case KMessageBox::No:
-				if ( localFile_.open( IO_ReadWrite ) ) {
+				if ( localFile_.open( QIODevice::ReadWrite ) ) {
 					dccSock_->offset  = 0;
 					dccSock_->file_fd = localFile_.handle();
 				}
@@ -269,7 +269,7 @@ GaduDCCTransaction::slotIncomingTransferAccepted ( Kopete::Transfer* transfer, c
 	}
 	else {
 		// overwrite by default
-		if ( localFile_.open( IO_ReadWrite ) == FALSE ) {
+		if ( localFile_.open( QIODevice::ReadWrite ) == FALSE ) {
 			transfer->slotError ( KIO::ERR_COULD_NOT_WRITE, fileName );
 			closeDCC();
 			deleteLater ();

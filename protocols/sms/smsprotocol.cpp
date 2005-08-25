@@ -74,7 +74,7 @@ Kopete::Contact *SMSProtocol::deserializeContact(Kopete::MetaContact *metaContac
 	QString accountId = serializedData["accountId"];
 	QString displayName = serializedData["displayName"];
 
-	QDict<Kopete::Account> accounts=Kopete::AccountManager::self()->accounts(this);
+	Q3Dict<Kopete::Account> accounts=Kopete::AccountManager::self()->accounts(this);
 
 	Kopete::Account *account = accounts[accountId];
 	if (!account)

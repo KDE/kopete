@@ -21,19 +21,22 @@
 #include"showtextdlg.h"
 
 #include<qlayout.h>
-#include<qtextedit.h>
+#include<q3textedit.h>
 #include<qpushbutton.h>
 #include<qfile.h>
 #include<qtextstream.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 
 ShowTextDlg::ShowTextDlg(const QString &fname, bool rich, QWidget *parent, const char *name)
-:QDialog(parent, name, FALSE, WDestructiveClose)
+:QDialog(parent, name, FALSE, Qt::WDestructiveClose)
 {
 	QString text;
 
 	QFile f(fname);
-	if(f.open(IO_ReadOnly)) {
+	if(f.open(QIODevice::ReadOnly)) {
 		QTextStream t(&f);
 		while(!t.eof())
 			text += t.readLine() + '\n';
@@ -41,9 +44,9 @@ ShowTextDlg::ShowTextDlg(const QString &fname, bool rich, QWidget *parent, const
 	}
 
 	QVBoxLayout *vb1 = new QVBoxLayout(this, 8);
-	QTextEdit *te = new QTextEdit(this);
+	Q3TextEdit *te = new Q3TextEdit(this);
 	te->setReadOnly(TRUE);
-	te->setTextFormat(rich ? QTextEdit::RichText : QTextEdit::PlainText);
+	te->setTextFormat(rich ? Q3TextEdit::RichText : Q3TextEdit::PlainText);
 	te->setText(text);
 
 	vb1->addWidget(te);

@@ -33,11 +33,13 @@
 #include <stdlib.h>
 
 #include <qregexp.h>
-#include <qsignal.h>
-#include <qstylesheet.h>
+#include <q3signal.h>
+#include <q3stylesheet.h>
 #include <qthread.h>
 #include <qevent.h>
 #include <qmutex.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -115,7 +117,7 @@ bool KopeteXSLThread::event( QEvent *event )
 		dataMutex.lock();
 		if( m_target && m_slotCompleted )
 		{
-			QSignal completeSignal( m_target );
+			Q3Signal completeSignal( m_target );
 			completeSignal.connect( m_target, m_slotCompleted );
 			completeSignal.setValue( m_resultString );
 			completeSignal.activate();
@@ -130,7 +132,7 @@ bool KopeteXSLThread::event( QEvent *event )
 QString KopeteXSLThread::xsltTransform( const QString &xmlString, xsltStylesheetPtr styleSheet )
 {
 	// Convert QString into a C string
-	QCString xmlCString = xmlString.utf8();
+	Q3CString xmlCString = xmlString.utf8();
 
 	QString resultString;
 	QString errorMsg;
@@ -140,7 +142,7 @@ QString KopeteXSLThread::xsltTransform( const QString &xmlString, xsltStylesheet
 	{
 		if ( styleSheet )
 		{
-			static QCString appPath( QString::fromLatin1("\"%1\"").arg( KApplication::kApplication()->dirs()->findDirs("appdata", QString::fromLatin1("styles/data") ).front() ).utf8() );
+			static Q3CString appPath( QString::fromLatin1("\"%1\"").arg( KApplication::kApplication()->dirs()->findDirs("appdata", QString::fromLatin1("styles/data") ).front() ).utf8() );
 
 			static const char* params[3] = {
 				"appdata",
@@ -155,7 +157,7 @@ QString KopeteXSLThread::xsltTransform( const QString &xmlString, xsltStylesheet
 				xmlChar *mem;
 				int size;
 				xmlDocDumpMemory( resultDoc, &mem, &size );
-				resultString = QString::fromUtf8( QCString( ( char * )( mem ), size + 1 ) );
+				resultString = QString::fromUtf8( Q3CString( ( char * )( mem ), size + 1 ) );
 				xmlFree( mem );
 				xmlFreeDoc( resultDoc );
 			}
@@ -362,7 +364,7 @@ void Kopete::XSLT::setXSLT( const QString &_document )
 	d->xslDoc = 0;
 	d->flags = 0;
 
-	QCString rawDocument = document.utf8();
+	Q3CString rawDocument = document.utf8();
 	d->xslDoc = xmlParseMemory( rawDocument, rawDocument.length() );
 
 	if( d->xslDoc )
@@ -377,7 +379,7 @@ void Kopete::XSLT::setXSLT( const QString &_document )
 				if( child->type == XML_PI_NODE )
 				{
 					//We have a flag. Enable it;
-					QCString flagData( (const char*)child->content );
+					Q3CString flagData( (const char*)child->content );
 
 					if( flagData.contains( "Flag:" ) )
 					{

@@ -19,8 +19,10 @@
 #include <qregexp.h>
 #include <qimage.h>
 #include <qbuffer.h>
-#include <qcstring.h>
-#include <qstylesheet.h>
+#include <q3cstring.h>
+#include <q3stylesheet.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include <kgenericfactory.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
@@ -59,8 +61,8 @@ LatexPlugin::LatexPlugin( QObject *parent, const char *name, const QStringList &
 	slotSettingsChanged();
 
 		//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	QValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
-	for (QValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
+	Q3ValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+	for (Q3ValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
 		slotNewChatSession( *it );
 }
 
@@ -143,7 +145,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 			{
 				QByteArray ba;
 				QBuffer buffer( ba );
-				buffer.open( IO_WriteOnly );
+				buffer.open( QIODevice::WriteOnly );
 				renderedImage.save( &buffer, "PNG" );
 				QString imageURL = QString::fromLatin1("data:image/png;base64,%1").arg( KCodecs::base64Encode( ba ) );
 				replaceMap[match] = imageURL;
@@ -167,7 +169,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 			continue;
 		imagePxWidth = theImage.width();
 		imagePxHeight = theImage.height();
-		QString escapedLATEX=QStyleSheet::escape(it.key()).replace("\"","&quot;");  //we need  the escape quotes because that string will be in a title="" argument, but not the \n
+		QString escapedLATEX=Q3StyleSheet::escape(it.key()).replace("\"","&quot;");  //we need  the escape quotes because that string will be in a title="" argument, but not the \n
 		messageText.replace(Kopete::Message::escape(it.key()), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(imagePxHeight) + "\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
 	}
 
@@ -206,7 +208,7 @@ void LatexPlugin::slotMessageAboutToSend( Kopete::Message& msg)
 
 		if(!url.isNull())
 		{
-			QString escapedLATEX= QStyleSheet::escape(messageText).replace("\"","&quot;");
+			QString escapedLATEX= Q3StyleSheet::escape(messageText).replace("\"","&quot;");
 			QString messageText="<img src=\"" + url + "\" alt=\"" + escapedLATEX + "\" title=\"" + escapedLATEX +"\"  />";
 			msg.setBody( messageText, Kopete::Message::RichText );
 		}

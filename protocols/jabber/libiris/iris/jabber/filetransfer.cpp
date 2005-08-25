@@ -21,8 +21,8 @@
 #include"filetransfer.h"
 
 #include<qtimer.h>
-#include<qptrlist.h>
-#include<qguardedptr.h>
+#include<q3ptrlist.h>
+#include<qpointer.h>
 #include<qfileinfo.h>
 #include"xmpp_xmlcommon.h"
 #include"s5b.h"
@@ -53,11 +53,11 @@ public:
 	JT_FT *ft;
 	Jid peer;
 	QString fname;
-	Q_LLONG size;
-	Q_LLONG sent;
+	qlonglong size;
+	qlonglong sent;
 	QString desc;
 	bool rangeSupported;
-	Q_LLONG rangeOffset, rangeLength, length;
+	qlonglong rangeOffset, rangeLength, length;
 	QString streamType;
 	bool needStream;
 	QString id, iq_id;
@@ -104,7 +104,7 @@ void FileTransfer::setProxy(const Jid &proxy)
 	d->proxy = proxy;
 }
 
-void FileTransfer::sendFile(const Jid &to, const QString &fname, Q_LLONG size, const QString &desc)
+void FileTransfer::sendFile(const Jid &to, const QString &fname, qlonglong size, const QString &desc)
 {
 	d->state = Requesting;
 	d->peer = to;
@@ -127,9 +127,9 @@ int FileTransfer::dataSizeNeeded() const
 	int pending = d->c->bytesToWrite();
 	if(pending >= SENDBUFSIZE)
 		return 0;
-	Q_LLONG left = d->length - (d->sent + pending);
+	qlonglong left = d->length - (d->sent + pending);
 	int size = SENDBUFSIZE - pending;
-	if((Q_LLONG)size > left)
+	if((qlonglong)size > left)
 		size = (int)left;
 	return size;
 }
@@ -137,12 +137,12 @@ int FileTransfer::dataSizeNeeded() const
 void FileTransfer::writeFileData(const QByteArray &a)
 {
 	int pending = d->c->bytesToWrite();
-	Q_LLONG left = d->length - (d->sent + pending);
+	qlonglong left = d->length - (d->sent + pending);
 	if(left == 0)
 		return;
 
 	QByteArray block;
-	if((Q_LLONG)a.size() > left) {
+	if((qlonglong)a.size() > left) {
 		block = a.copy();
 		block.resize((uint)left);
 	}
@@ -161,7 +161,7 @@ QString FileTransfer::fileName() const
 	return d->fname;
 }
 
-Q_LLONG FileTransfer::fileSize() const
+qlonglong FileTransfer::fileSize() const
 {
 	return d->size;
 }
@@ -176,17 +176,17 @@ bool FileTransfer::rangeSupported() const
 	return d->rangeSupported;
 }
 
-Q_LLONG FileTransfer::offset() const
+qlonglong FileTransfer::offset() const
 {
 	return d->rangeOffset;
 }
 
-Q_LLONG FileTransfer::length() const
+qlonglong FileTransfer::length() const
 {
 	return d->length;
 }
 
-void FileTransfer::accept(Q_LLONG offset, Q_LLONG length)
+void FileTransfer::accept(qlonglong offset, qlonglong length)
 {
 	d->state = Connecting;
 	d->rangeOffset = offset;
@@ -275,8 +275,8 @@ void FileTransfer::s5b_connectionClosed()
 void FileTransfer::s5b_readyRead()
 {
 	QByteArray a = d->c->read();
-	Q_LLONG need = d->length - d->sent;
-	if((Q_LLONG)a.size() > need)
+	qlonglong need = d->length - d->sent;
+	if((qlonglong)a.size() > need)
 		a.resize((uint)need);
 	d->sent += a.size();
 	if(d->sent == d->length)
@@ -327,7 +327,7 @@ class FileTransferManager::Private
 {
 public:
 	Client *client;
-	QPtrList<FileTransfer> list, incoming;
+	Q3PtrList<FileTransfer> list, incoming;
 	JT_PushFT *pft;
 };
 
@@ -399,7 +399,7 @@ void FileTransferManager::pft_incoming(const FTRequest &req)
 
 void FileTransferManager::s5b_incomingReady(S5BConnection *c)
 {
-	QPtrListIterator<FileTransfer> it(d->list);
+	Q3PtrListIterator<FileTransfer> it(d->list);
 	FileTransfer *ft = 0;
 	for(FileTransfer *i; (i = it.current()); ++it) {
 		if(i->d->needStream && i->d->peer.compare(c->peer()) && i->d->id == c->sid()) {
@@ -445,7 +445,7 @@ class JT_FT::Private
 public:
 	QDomElement iq;
 	Jid to;
-	Q_LLONG size, rangeOffset, rangeLength;
+	qlonglong size, rangeOffset, rangeLength;
 	QString streamType;
 	QStringList streamTypes;
 };
@@ -461,7 +461,7 @@ JT_FT::~JT_FT()
 	delete d;
 }
 
-void JT_FT::request(const Jid &to, const QString &_id, const QString &fname, Q_LLONG size, const QString &desc, const QStringList &streamTypes)
+void JT_FT::request(const Jid &to, const QString &_id, const QString &fname, qlonglong size, const QString &desc, const QStringList &streamTypes)
 {
 	QDomElement iq;
 	d->to = to;
@@ -512,12 +512,12 @@ void JT_FT::request(const Jid &to, const QString &_id, const QString &fname, Q_L
 	d->iq = iq;
 }
 
-Q_LLONG JT_FT::rangeOffset() const
+qlonglong JT_FT::rangeOffset() const
 {
 	return d->rangeOffset;
 }
 
-Q_LLONG JT_FT::rangeLength() const
+qlonglong JT_FT::rangeLength() const
 {
 	return d->rangeLength;
 }
@@ -546,8 +546,8 @@ bool JT_FT::take(const QDomElement &x)
 
 		QString id = si.attribute("id");
 
-		Q_LLONG range_offset = 0;
-		Q_LLONG range_length = 0;
+		qlonglong range_offset = 0;
+		qlonglong range_length = 0;
 
 		QDomElement file = si.elementsByTagName("file").item(0).toElement();
 		if(!file.isNull()) {
@@ -636,7 +636,7 @@ JT_PushFT::~JT_PushFT()
 {
 }
 
-void JT_PushFT::respondSuccess(const Jid &to, const QString &id, Q_LLONG rangeOffset, Q_LLONG rangeLength, const QString &streamType)
+void JT_PushFT::respondSuccess(const Jid &to, const QString &id, qlonglong rangeOffset, qlonglong rangeLength, const QString &streamType)
 {
 	QDomElement iq = createIQ(doc(), "result", to.full(), id);
 	QDomElement si = doc()->createElement("si");
@@ -718,9 +718,9 @@ bool JT_PushFT::take(const QDomElement &e)
 
 	bool ok;
 #if QT_VERSION >= 0x030200
-	Q_LLONG size = file.attribute("size").toLongLong(&ok);
+	qlonglong size = file.attribute("size").toLongLong(&ok);
 #else
-	Q_LLONG size = file.attribute("size").toLong(&ok);
+	qlonglong size = file.attribute("size").toLong(&ok);
 #endif
 	if(!ok || size < 0) {
 		respondError(from, id, 400, "Bad file size");

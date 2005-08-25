@@ -26,6 +26,8 @@
 #include "gwerror.h"
 
 #include <managedconnectionaccount.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 class KActionMenu;
 
@@ -317,7 +319,7 @@ private:
 	Client * m_client;
 
 	QString m_initialReason;
-	QValueList<GroupWiseChatSession*> m_chatSessions;
+	Q3ValueList<GroupWiseChatSession*> m_chatSessions;
 	bool m_dontSync;
 	GWContactList * m_serverListModel;
 };

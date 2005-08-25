@@ -17,6 +17,8 @@
 #include "msninvitation.h"
 #include <stdlib.h>
 #include <qregexp.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 MSNInvitation::MSNInvitation(bool incoming, const QString &applicationID , const QString &applicationName)
 {
@@ -32,7 +34,7 @@ MSNInvitation::~MSNInvitation()
 {
 }
 
-QCString MSNInvitation::unimplemented(long unsigned int cookie)
+Q3CString MSNInvitation::unimplemented(long unsigned int cookie)
 {
 	return QString( "MIME-Version: 1.0\r\n"
 					"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
@@ -56,7 +58,7 @@ QString MSNInvitation::invitationHead()
 					"Invitation-Cookie: " +QString::number(m_cookie) +"\r\n");
 }
 
-QCString MSNInvitation::rejectMessage(const QString & rejectcode)
+Q3CString MSNInvitation::rejectMessage(const QString & rejectcode)
 {
 	return QString( "MIME-Version: 1.0\r\n"
 					"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"

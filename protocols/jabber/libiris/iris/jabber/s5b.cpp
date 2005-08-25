@@ -21,7 +21,10 @@
 #include"s5b.h"
 
 #include<qtimer.h>
-#include<qguardedptr.h>
+#include<qpointer.h>
+//Added by qt3to4:
+#include <Q3CString>
+#include <Q3PtrList>
 #include<stdlib.h>
 #include<qca.h>
 #include"xmpp_xmlcommon.h"
@@ -173,7 +176,7 @@ public:
 	S5BRequest req;
 	Jid proxy;
 	Mode mode;
-	QPtrList<S5BDatagram> dglist;
+	Q3PtrList<S5BDatagram> dglist;
 };
 
 static int id_conn = 0;
@@ -552,7 +555,7 @@ public:
 	QString sid;
 	JT_S5B *query;
 	StreamHost proxyInfo;
-	QGuardedPtr<S5BServer> relatedServer;
+	QPointer<S5BServer> relatedServer;
 
 	bool udp_init;
 	QHostAddress udp_addr;
@@ -564,7 +567,7 @@ class S5BManager::Private
 public:
 	Client *client;
 	S5BServer *serv;
-	QPtrList<Entry> activeList;
+	Q3PtrList<Entry> activeList;
 	S5BConnectionList incomingConns;
 	JT_PushS5B *ps;
 };
@@ -762,7 +765,7 @@ bool S5BManager::isAcceptableSID(const Jid &peer, const QString &sid) const
 
 S5BConnection *S5BManager::findIncoming(const Jid &from, const QString &sid) const
 {
-	QPtrListIterator<S5BConnection> it(d->incomingConns);
+	Q3PtrListIterator<S5BConnection> it(d->incomingConns);
 	for(S5BConnection *c; (c = it.current()); ++it) {
 		if(c->d->peer.compare(from) && c->d->sid == sid)
 			return c;
@@ -772,7 +775,7 @@ S5BConnection *S5BManager::findIncoming(const Jid &from, const QString &sid) con
 
 S5BManager::Entry *S5BManager::findEntry(S5BConnection *c) const
 {
-	QPtrListIterator<Entry> it(d->activeList);
+	Q3PtrListIterator<Entry> it(d->activeList);
 	for(Entry *e; (e = it.current()); ++it) {
 		if(e->c == c)
 			return e;
@@ -782,7 +785,7 @@ S5BManager::Entry *S5BManager::findEntry(S5BConnection *c) const
 
 S5BManager::Entry *S5BManager::findEntry(Item *i) const
 {
-	QPtrListIterator<Entry> it(d->activeList);
+	Q3PtrListIterator<Entry> it(d->activeList);
 	for(Entry *e; (e = it.current()); ++it) {
 		if(e->i == i)
 			return e;
@@ -792,7 +795,7 @@ S5BManager::Entry *S5BManager::findEntry(Item *i) const
 
 S5BManager::Entry *S5BManager::findEntryByHash(const QString &key) const
 {
-	QPtrListIterator<Entry> it(d->activeList);
+	Q3PtrListIterator<Entry> it(d->activeList);
 	for(Entry *e; (e = it.current()); ++it) {
 		if(e->i && e->i->key == key)
 			return e;
@@ -802,7 +805,7 @@ S5BManager::Entry *S5BManager::findEntryByHash(const QString &key) const
 
 S5BManager::Entry *S5BManager::findEntryBySID(const Jid &peer, const QString &sid) const
 {
-	QPtrListIterator<Entry> it(d->activeList);
+	Q3PtrListIterator<Entry> it(d->activeList);
 	for(Entry *e; (e = it.current()); ++it) {
 		if(e->i && e->i->peer.compare(peer) && e->sid == sid)
 			return e;
@@ -812,8 +815,8 @@ S5BManager::Entry *S5BManager::findEntryBySID(const Jid &peer, const QString &si
 
 S5BManager::Entry *S5BManager::findServerEntryByHash(const QString &key) const
 {
-	const QPtrList<S5BManager> &manList = d->serv->managerList();
-	QPtrListIterator<S5BManager> it(manList);
+	const Q3PtrList<S5BManager> &manList = d->serv->managerList();
+	Q3PtrListIterator<S5BManager> it(manList);
 	for(S5BManager *m; (m = it.current()); ++it) {
 		Entry *e = m->findEntryByHash(key);
 		if(e)
@@ -1021,7 +1024,7 @@ void S5BManager::entryContinue(Entry *e)
 
 void S5BManager::queryProxy(Entry *e)
 {
-	QGuardedPtr<QObject> self = this;
+	QPointer<QObject> self = this;
 	e->c->proxyQuery(); // signal
 	if(!self)
 		return;
@@ -1040,7 +1043,7 @@ void S5BManager::query_finished()
 	JT_S5B *query = (JT_S5B *)sender();
 	Entry *e;
 	bool found = false;
-	QPtrListIterator<Entry> it(d->activeList);
+	Q3PtrListIterator<Entry> it(d->activeList);
 	for(; (e = it.current()); ++it) {
 		if(e->query == query) {
 			found = true;
@@ -1066,7 +1069,7 @@ void S5BManager::query_finished()
 #endif
 	}
 
-	QGuardedPtr<QObject> self = this;
+	QPointer<QObject> self = this;
 	e->c->proxyResult(query->success()); // signal
 	if(!self)
 		return;
@@ -1196,7 +1199,7 @@ void S5BManager::Item::handleFast(const StreamHostList &hosts, const QString &iq
 {
 	targetMode = Fast;
 
-	QGuardedPtr<QObject> self = this;
+	QPointer<QObject> self = this;
 	accepted();
 	if(!self)
 		return;
@@ -1288,7 +1291,7 @@ void S5BManager::Item::doIncoming()
 	conn = new S5BConnector;
 	connect(conn, SIGNAL(result(bool)), SLOT(conn_result(bool)));
 
-	QGuardedPtr<QObject> self = this;
+	QPointer<QObject> self = this;
 	tryingHosts(list);
 	if(!self)
 		return;
@@ -1330,7 +1333,7 @@ void S5BManager::Item::jt_finished()
 	if(state == Initiator) {
 		if(targetMode == Unknown) {
 			targetMode = NotFast;
-			QGuardedPtr<QObject> self = this;
+			QPointer<QObject> self = this;
 			accepted();
 			if(!self)
 				return;
@@ -1386,7 +1389,7 @@ void S5BManager::Item::jt_finished()
 			StreamHostList list;
 			list += proxy;
 
-			QGuardedPtr<QObject> self = this;
+			QPointer<QObject> self = this;
 			proxyConnect();
 			if(!self)
 				return;
@@ -1612,12 +1615,12 @@ void S5BManager::Item::tryActivation()
 
 void S5BManager::Item::checkForActivation()
 {
-	QPtrList<SocksClient> clientList;
+	Q3PtrList<SocksClient> clientList;
 	if(client)
 		clientList.append(client);
 	if(client_out)
 		clientList.append(client_out);
-	QPtrListIterator<SocksClient> it(clientList);
+	Q3PtrListIterator<SocksClient> it(clientList);
 	for(SocksClient *sc; (sc = it.current()); ++it) {
 #ifdef S5B_DEBUG
 		printf("checking for activation\n");
@@ -1821,7 +1824,7 @@ private slots:
 		}
 
 		// send initialization with our JID
-		QCString cs = jid.full().utf8();
+		Q3CString cs = jid.full().utf8();
 		QByteArray a(cs.length());
 		memcpy(a.data(), cs.data(), a.size());
 		client_udp->write(a);
@@ -1852,7 +1855,7 @@ class S5BConnector::Private
 public:
 	SocksClient *active;
 	SocksUDP *active_udp;
-	QPtrList<Item> itemList;
+	Q3PtrList<Item> itemList;
 	QString key;
 	StreamHost activeHost;
 	QTimer t;
@@ -1959,7 +1962,7 @@ void S5BConnector::t_timeout()
 void S5BConnector::man_udpSuccess(const Jid &streamHost)
 {
 	// was anyone sending to this streamhost?
-	QPtrListIterator<Item> it(d->itemList);
+	Q3PtrListIterator<Item> it(d->itemList);
 	for(Item *i; (i = it.current()); ++it) {
 		if(i->host.jid().compare(streamHost) && i->client_udp) {
 			i->udpSuccess();
@@ -2042,8 +2045,8 @@ class S5BServer::Private
 public:
 	SocksServer serv;
 	QStringList hostList;
-	QPtrList<S5BManager> manList;
-	QPtrList<Item> itemList;
+	Q3PtrList<S5BManager> manList;
+	Q3PtrList<Item> itemList;
 };
 
 S5BServer::S5BServer(QObject *parent)
@@ -2107,7 +2110,7 @@ void S5BServer::ss_incomingUDP(const QString &host, int port, const QHostAddress
 	if(port != 0 || port != 1)
 		return;
 
-	QPtrListIterator<S5BManager> it(d->manList);
+	Q3PtrListIterator<S5BManager> it(d->manList);
 	for(S5BManager *m; (m = it.current()); ++it) {
 		if(m->srv_ownsHash(host)) {
 			m->srv_incomingUDP(port == 1 ? true : false, addr, sourcePort, host, data);
@@ -2133,7 +2136,7 @@ void S5BServer::item_result(bool b)
 	d->itemList.removeRef(i);
 
 	// find the appropriate manager for this incoming connection
-	QPtrListIterator<S5BManager> it(d->manList);
+	Q3PtrListIterator<S5BManager> it(d->manList);
 	for(S5BManager *m; (m = it.current()); ++it) {
 		if(m->srv_ownsHash(key)) {
 			m->srv_incomingReady(c, key);
@@ -2157,13 +2160,13 @@ void S5BServer::unlink(S5BManager *m)
 
 void S5BServer::unlinkAll()
 {
-	QPtrListIterator<S5BManager> it(d->manList);
+	Q3PtrListIterator<S5BManager> it(d->manList);
 	for(S5BManager *m; (m = it.current()); ++it)
 		m->srv_unlink();
 	d->manList.clear();
 }
 
-const QPtrList<S5BManager> & S5BServer::managerList() const
+const Q3PtrList<S5BManager> & S5BServer::managerList() const
 {
 	return d->manList;
 }

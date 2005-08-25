@@ -23,7 +23,7 @@
 
 // QT Includes
 #include <qpixmap.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qdatetime.h>
 
 // Kopete Includes

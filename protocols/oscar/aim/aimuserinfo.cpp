@@ -25,6 +25,9 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <Q3Frame>
 
 #include <klocale.h>
 #include <kstandarddirs.h>
@@ -74,7 +77,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, bool 
 		mMainWidget->lblAwayMessage->hide();
 
 		userInfoView=0L;
-		mMainWidget->userInfoFrame->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
+		mMainWidget->userInfoFrame->setFrameStyle(Q3Frame::NoFrame | Q3Frame::Plain);
 		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
 		userInfoEdit = new KTextEdit(QString::null, QString::null,
 			mMainWidget->userInfoFrame, "userInfoEdit");
@@ -93,7 +96,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, bool 
 	else
 	{
 		userInfoEdit=0L;
-		mMainWidget->userInfoFrame->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
+		mMainWidget->userInfoFrame->setFrameStyle(Q3Frame::NoFrame | Q3Frame::Plain);
 		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
 		userInfoView = new KTextBrowser(mMainWidget->userInfoFrame, "userInfoView");
 		userInfoView->setTextFormat(AutoText);

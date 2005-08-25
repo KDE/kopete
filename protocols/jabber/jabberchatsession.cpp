@@ -17,7 +17,7 @@
 
 #include "jabberchatsession.h"
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -133,7 +133,7 @@ void JabberChatSession::sendNotification( XMPP::MsgEvent event )
 		return;
 
 	JabberContact *contact;
-	QPtrListIterator<Kopete::Contact> listIterator ( members () );
+	Q3PtrListIterator<Kopete::Contact> listIterator ( members () );
 
 	while ( ( contact = dynamic_cast<JabberContact*>( listIterator.current () ) ) != 0 )
 	{

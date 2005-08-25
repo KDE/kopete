@@ -18,10 +18,14 @@
     *************************************************************************
 */
 
-#include <qpointarray.h>
+#include <q3pointarray.h>
 #include <qpushbutton.h>
 #include <qtooltip.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 #include <kdeversion.h>
 #include <kglobalsettings.h>
@@ -62,8 +66,8 @@ void KopeteActiveLabel::openLink( const QString& link )
 }
 
 KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
-: QWidget(0L, "KopeteBalloon", WStyle_StaysOnTop | WStyle_Customize |
-	WStyle_NoBorder | WStyle_Tool | WX11BypassWM)
+: QWidget(0L, "KopeteBalloon", Qt::WStyle_StaysOnTop | Qt::WStyle_Customize |
+	Qt::WStyle_NoBorder | Qt::WStyle_Tool | Qt::WX11BypassWM)
 {
 	setCaption("");
 
@@ -144,7 +148,7 @@ void KopeteBalloon::updateMask()
 
 	for (int i = 0; i < 4; ++i)
 	{
-		QPointArray corner;
+		Q3PointArray corner;
 		corner.makeArc(corners[i].x(), corners[i].y(), 40, 40,
 			i * 16 * 90, 16 * 90);
 		corner.resize(corner.size() + 1);
@@ -159,7 +163,7 @@ void KopeteBalloon::updateMask()
 	bool bottom = (mAnchor.y() + height()) > ((deskRect.y() + deskRect.height()-48));
 	bool right = (mAnchor.x() + width()) > ((deskRect.x() + deskRect.width()-48));
 
-	QPointArray arrow(4);
+	Q3PointArray arrow(4);
 	arrow.setPoint(0, QPoint(right ? width() : 0, bottom ? height() : 0));
 	arrow.setPoint(1, QPoint(right ? width() - 10 : 10,
 		bottom ? height() - 30 : 30));

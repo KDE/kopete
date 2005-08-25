@@ -23,6 +23,8 @@
 #include <qregexp.h>
 #include <qfile.h>
 #include <qtextcodec.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 // kde
 #include <kdebug.h>
@@ -107,7 +109,7 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 	}
 	else
 	{
-		QString dataMessage=QCString((msgStr.message.data()+48) , msgStr.dataMessageSize);
+		QString dataMessage=Q3CString((msgStr.message.data()+48) , msgStr.dataMessageSize);
 		kdDebug(14141) << k_funcinfo <<" dataMessage: "  << dataMessage << endl;
 
 		if (dataMessage.contains("INVITE") )
@@ -133,7 +135,7 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 			makeMSNSLPMessage(OK, content);
 
 			m_Rfile=new QFile( m_kopeteTransfer->destinationURL().path() );
-			if(!m_Rfile->open(IO_WriteOnly))
+			if(!m_Rfile->open(QIODevice::WriteOnly))
 			{
 				if(m_kopeteTransfer)
 				{

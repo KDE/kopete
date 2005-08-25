@@ -20,6 +20,8 @@
 
 #include <qtimer.h>
 #include <qregexp.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include <kdebug.h>
 #include <kconfig.h>
@@ -35,7 +37,7 @@
 #include "kopetepluginmanager.h"
 #include "kopeteaccountmanager.h"
 
-QCString SMPPPDCSPlugin::m_kinternetApp = "";
+Q3CString SMPPPDCSPlugin::m_kinternetApp = "";
 
 typedef KGenericFactory<SMPPPDCSPlugin> SMPPPDCSPluginFactory;
 K_EXPORT_COMPONENT_FACTORY(kopete_smpppdcs, SMPPPDCSPluginFactory("kopete_smpppdcs"))
@@ -127,7 +129,7 @@ void SMPPPDCSPlugin::connectAllowed()
 	QStringList list = config->readListEntry("ignoredAccounts");
 	
 	Kopete::AccountManager * m = Kopete::AccountManager::self();
-	for(QPtrListIterator<Kopete::Account> it(m->accounts()); it.current(); ++it) {
+	for(Q3PtrListIterator<Kopete::Account> it(m->accounts()); it.current(); ++it) {
 		if(!list.contains(it.current()->protocol()->pluginId() + "_" + it.current()->accountId())) {
 			it.current()->connect();
 		}
@@ -141,7 +143,7 @@ void SMPPPDCSPlugin::disconnectAllowed()
 	QStringList list = config->readListEntry("ignoredAccounts");
 	
 	Kopete::AccountManager * m = Kopete::AccountManager::self();
-	for(QPtrListIterator<Kopete::Account> it(m->accounts()); it.current(); ++it) {
+	for(Q3PtrListIterator<Kopete::Account> it(m->accounts()); it.current(); ++it) {
 		if(!list.contains(it.current()->protocol()->pluginId() + "_" + it.current()->accountId())) {
 			it.current()->disconnect();
 		}
@@ -257,15 +259,15 @@ void SMPPPDCSPlugin::smpppdCheckStatus() {
     // we try to inquire an running kinternet
 	if(m_kinternetApp != "" && m_client) {
 		QByteArray data, replyData;
-		QCString replyType;
-		QDataStream arg(data, IO_WriteOnly);
+		Q3CString replyType;
+		QDataStream arg(data, QIODevice::WriteOnly);
 		
 		kdDebug( 0 ) << k_funcinfo << "Start inquiring " << m_kinternetApp << " via DCOP" << endl;
 		
 		if(!m_client->call(m_kinternetApp, "KInternetIface", "isOnline()", data, replyType, replyData)) {
 			kdDebug( 0 ) << k_funcinfo << "there was some error using DCOP." << endl;
 		} else {
-  			QDataStream reply(replyData, IO_ReadOnly);
+  			QDataStream reply(replyData, QIODevice::ReadOnly);
   			if(replyType == "bool") {
     			bool result;
     			reply >> result;

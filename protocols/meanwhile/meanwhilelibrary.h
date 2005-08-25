@@ -18,9 +18,11 @@
 #ifndef MEANWHILELIBRARY_H
 #define MEANWHILELIBRARY_H
 
-#include <qptrlist.h>
-#include <qdict.h>
+#include <q3ptrlist.h>
+#include <q3dict.h>
 #include <qobject.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include <glib/ghash.h>
 #include <kextsock.h>
@@ -82,7 +84,7 @@ public:
      * Register contacts for presence updates
      * @param contacts A set of contacts to add
      */
-    void addContacts(const QDict<Kopete::Contact> &contacts);
+    void addContacts(const Q3Dict<Kopete::Contact> &contacts);
 
     /**
      * Register a single contact for presence awareness
@@ -217,7 +219,7 @@ void func
     struct conv_data {
         MeanwhileLibrary  *library; /**< The library for this conv. */
         Kopete::ChatSession *chat;  /**< The chatsession for this conv. */
-        QValueList<Kopete::Message> *queue; /**< Unsent message queue */
+        Q3ValueList<Kopete::Message> *queue; /**< Unsent message queue */
     };
 
     /**

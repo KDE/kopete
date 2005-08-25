@@ -19,6 +19,8 @@
 #define JABBERRESOURCEPOOL_H
 
 #include <qobject.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 #include <im.h>
 
 class JabberResource;
@@ -35,7 +37,7 @@ Q_OBJECT
 public:
 	static XMPP::Resource EmptyResource;
 
-	typedef QPtrList<JabberResource> ResourceList;
+	typedef Q3PtrList<JabberResource> ResourceList;
 
 	/**
 	 * Default constructor
@@ -107,8 +109,8 @@ private slots:
 	void slotResourceUpdated ( JabberResource *resource );
 
 private:
-	QPtrList<JabberResource> mPool;
-	QPtrList<JabberResource> mLockList;
+	Q3PtrList<JabberResource> mPool;
+	Q3PtrList<JabberResource> mLockList;
 
 	JabberAccount *mAccount;
 

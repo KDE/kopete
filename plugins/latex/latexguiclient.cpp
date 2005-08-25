@@ -24,7 +24,7 @@
 #include <kmessagebox.h>
 #include <qimage.h>
 #include <qregexp.h>
-#include <qstylesheet.h>
+#include <q3stylesheet.h>
 
 #include "kopetechatsession.h"
 #include "kopeteview.h"

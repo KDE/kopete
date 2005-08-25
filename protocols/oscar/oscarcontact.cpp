@@ -19,6 +19,8 @@
 #include <time.h>
 
 #include <qapplication.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include <kaction.h>
 #include <kdebug.h>
@@ -91,7 +93,7 @@ Kopete::ChatSession* OscarContact::manager( CanCreateFlags canCreate )
 		/*kdDebug(14190) << k_funcinfo <<
 			"Creating new ChatSession for contact '" << displayName() << "'" << endl;*/
 
-		QPtrList<Kopete::Contact> theContact;
+		Q3PtrList<Kopete::Contact> theContact;
 		theContact.append(this);
 
 		mMsgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), theContact, protocol());

@@ -21,7 +21,7 @@
 
 #include <qwidget.h>
 #include <qlayout.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlabel.h>
 
 #include "im.h"

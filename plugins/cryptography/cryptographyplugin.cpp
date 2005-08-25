@@ -15,9 +15,13 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qstylesheet.h>
+#include <q3stylesheet.h>
 #include <qtimer.h>
 #include <qregexp.h>
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <Q3CString>
+#include <Q3PtrList>
 
 #include <kdebug.h>
 #include <kaction.h>
@@ -78,8 +82,8 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 	
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( chatSessionCreated( Kopete::ChatSession * )) , SLOT( slotNewKMM( Kopete::ChatSession * ) ) );
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	QValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
-	for (QValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
+	Q3ValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+	for (Q3ValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
 	{
 		slotNewKMM(*it);
 	}
@@ -117,12 +121,12 @@ CryptographyPlugin* CryptographyPlugin::plugin()
 
 CryptographyPlugin* CryptographyPlugin::pluginStatic_ = 0L;
 
-QCString CryptographyPlugin::cachedPass()
+Q3CString CryptographyPlugin::cachedPass()
 {
 	return pluginStatic_->m_cachedPass;
 }
 
-void CryptographyPlugin::setCachedPass(const QCString& p)
+void CryptographyPlugin::setCachedPass(const Q3CString& p)
 {
 	if(pluginStatic_->mCacheMode==Never)
 		return;
@@ -176,7 +180,7 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 			//Check if this is a RTF message before escaping it
 			if( !isHTML.exactMatch( plainBody ) )
 			{
-				plainBody = QStyleSheet::escape( plainBody );
+				plainBody = Q3StyleSheet::escape( plainBody );
 
 				//this is the same algoritm as in Kopete::Message::escapedBody();
 				plainBody.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) )
@@ -231,7 +235,7 @@ void CryptographyPlugin::slotOutgoingMessage( Kopete::Message& msg )
 		return;
 
 	QStringList keys;
-	QPtrList<Kopete::Contact> contactlist = msg.to();
+	Q3PtrList<Kopete::Contact> contactlist = msg.to();
 	for( Kopete::Contact *c = contactlist.first(); c; c = contactlist.next() )
 	{
 		QString tmpKey;
@@ -308,7 +312,7 @@ void CryptographyPlugin::slotSelectContactKey()
 
 void CryptographyPlugin::slotForgetCachedPass()
 {
-	m_cachedPass=QCString();
+	m_cachedPass=Q3CString();
 	m_cachedPass_timer->stop();
 }
 

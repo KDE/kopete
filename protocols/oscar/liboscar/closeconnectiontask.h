@@ -20,7 +20,7 @@
 #define CLOSECONNECTIONTASK_H
 
 #include <task.h>
-#include <qcstring.h>
+#include <q3cstring.h>
 
 class Transfer;
 class QString;

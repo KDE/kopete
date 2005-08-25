@@ -17,6 +17,8 @@
 
 // Qt Includes
 #include <qregexp.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 // KDE Includes
 #include <kdebug.h>
@@ -55,7 +57,7 @@ WPContact::WPContact(Kopete::Account *account, const QString &newHostName, const
 	m_infoDialog = 0;
 }
 
-QPtrList<KAction> * WPContact::customContextMenuActions()
+Q3PtrList<KAction> * WPContact::customContextMenuActions()
 {
 	//myActionCollection = new KActionCollection(parent);
 	return 0;
@@ -72,7 +74,7 @@ Kopete::ChatSession* WPContact::manager( Kopete::Contact::CanCreateFlags /*canCr
 {
 	if (m_manager == 0) {
 		// Set up the message managers
-		QPtrList<Kopete::Contact> singleContact;
+		Q3PtrList<Kopete::Contact> singleContact;
 		singleContact.append(this);
 
 		m_manager = Kopete::ChatSessionManager::self()->create( account()->myself(), singleContact, protocol() );
@@ -159,7 +161,7 @@ void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 {
 	kdDebug(14170) << "WPContact::slotNewMessage(" << Body << ", " << Arrival.toString() << ")" << endl;
 
-	QPtrList<Kopete::Contact> contactList;
+	Q3PtrList<Kopete::Contact> contactList;
 	contactList.append(account()->myself());
 
 	QRegExp subj("^Subject: ([^\n]*)\n(.*)$");

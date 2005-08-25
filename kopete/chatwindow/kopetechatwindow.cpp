@@ -20,11 +20,20 @@
 */
 
 #include <qtimer.h>
-#include <qhbox.h>
-#include <qvbox.h>
+#include <q3hbox.h>
+#include <q3vbox.h>
 #include <qlayout.h>
 #include <qtooltip.h>
 #include <qfileinfo.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QTextStream>
+#include <QCloseEvent>
+#include <Q3PtrList>
+#include <Q3Frame>
+#include <QLabel>
+#include <QVBoxLayout>
+#include <Q3PopupMenu>
 
 #include <kapplication.h>
 #include <kcursor.h>
@@ -69,7 +78,7 @@
 typedef QMap<Kopete::Account*,KopeteChatWindow*> AccountMap;
 typedef QMap<Kopete::Group*,KopeteChatWindow*> GroupMap;
 typedef QMap<Kopete::MetaContact*,KopeteChatWindow*> MetaContactMap;
-typedef QPtrList<KopeteChatWindow> WindowList;
+typedef Q3PtrList<KopeteChatWindow> WindowList;
 
 namespace
 {
@@ -175,15 +184,15 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name )
 
 	initActions();
 
-	QVBox *vBox = new QVBox( this );
+	Q3VBox *vBox = new Q3VBox( this );
 	vBox->setLineWidth( 0 );
 	vBox->setSpacing( 0 );
-	vBox->setFrameStyle( QFrame::NoFrame );
+	vBox->setFrameStyle( Q3Frame::NoFrame );
 	// set default window size.  This could be removed by fixing the size hints of the contents
 	resize( 500, 500 );
 	setCentralWidget( vBox );
 
-	mainArea = new QFrame( vBox );
+	mainArea = new Q3Frame( vBox );
 	mainArea->setLineWidth( 0 );
 	mainArea->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	mainLayout = new QVBoxLayout( mainArea );
@@ -271,7 +280,7 @@ KopeteChatWindow::~KopeteChatWindow()
 void KopeteChatWindow::windowListChanged()
 {
 	// update all windows' Move Tab to Window action
-	for ( QPtrListIterator<KopeteChatWindow> it( windows ); *it; ++it )
+	for ( Q3PtrListIterator<KopeteChatWindow> it( windows ); *it; ++it )
 		(*it)->checkDetachEnable();
 }
 
@@ -426,7 +435,7 @@ const QString KopeteChatWindow::fileContents( const QString &path ) const
 {
  	QString contents;
 	QFile file( path );
-	if ( file.open( IO_ReadOnly ) )
+	if ( file.open( QIODevice::ReadOnly ) )
 	{
 		QTextStream stream( &file );
 		contents = stream.read();
@@ -617,7 +626,7 @@ void KopeteChatWindow::slotCloseChat( QWidget *chatView )
 
 void KopeteChatWindow::addTab( ChatView *view )
 {
-	QPtrList<Kopete::Contact> chatMembers=view->msgManager()->members();
+	Q3PtrList<Kopete::Contact> chatMembers=view->msgManager()->members();
 	Kopete::Contact *c=0L;
 	for ( Kopete::Contact *contact = chatMembers.first(); contact; contact = chatMembers.next() )
 	{
@@ -882,7 +891,7 @@ void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
 	if ( !view )
 		return; //(pas de charité)
 
-	QPtrList<Kopete::Contact> chatMembers=view->msgManager()->members();
+	Q3PtrList<Kopete::Contact> chatMembers=view->msgManager()->members();
 	Kopete::Contact *c=0L;
 	for ( Kopete::Contact *contact = chatMembers.first(); contact; contact = chatMembers.next() )
 	{
@@ -913,7 +922,7 @@ void KopeteChatWindow::slotChatClosed()
 
 void KopeteChatWindow::slotPrepareDetachMenu(void)
 {
-	QPopupMenu *detachMenu = actionDetachMenu->popupMenu();
+	Q3PopupMenu *detachMenu = actionDetachMenu->popupMenu();
 	detachMenu->clear();
 
 	for ( unsigned id=0; id < windows.count(); id++ )
@@ -939,7 +948,7 @@ void KopeteChatWindow::slotSendMessage()
 
 void KopeteChatWindow::slotPrepareContactMenu(void)
 {
-	QPopupMenu *contactsMenu = actionContactMenu->popupMenu();
+	Q3PopupMenu *contactsMenu = actionContactMenu->popupMenu();
 	contactsMenu->clear();
 
 	Kopete::Contact *contact;
@@ -982,7 +991,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 
 void KopeteChatWindow::slotPreparePlacementMenu()
 {
-	QPopupMenu *placementMenu = actionTabPlacementMenu->popupMenu();
+	Q3PopupMenu *placementMenu = actionTabPlacementMenu->popupMenu();
 	placementMenu->clear();
 
 	placementMenu->insertItem( i18n("Top"), 0 );
@@ -1088,7 +1097,7 @@ bool KopeteChatWindow::queryClose()
 //	for( QPtrListIterator<ChatView> it( chatViewList ); it; ++it)
 //		kdDebug( 14010 ) << "  " << *it << " (" << (*it)->caption() << ")" << endl;
 
-	for( QPtrListIterator<ChatView> it( chatViewList ); it; )
+	for( Q3PtrListIterator<ChatView> it( chatViewList ); it; )
 	{
 		ChatView *view = *it;
 		// move out of the way before view is removed
@@ -1152,7 +1161,7 @@ void KopeteChatWindow::slotConfKeys()
 	if( m_activeView )
 	{
 		dlg.insert(m_activeView->msgManager()->actionCollection() , i18n("Plugin Actions") );
-		QPtrListIterator<KXMLGUIClient> it( *m_activeView->msgManager()->childClients() );
+		Q3PtrListIterator<KXMLGUIClient> it( *m_activeView->msgManager()->childClients() );
 		KXMLGUIClient *c = 0;
 		while( (c = it.current()) != 0 )
 		{

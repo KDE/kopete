@@ -15,6 +15,8 @@
 */
 
 #include <qfile.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include "sqlite/sqlite3.h"
 
@@ -33,13 +35,13 @@
 
 StatisticsDB::StatisticsDB()
 {
-	QCString path = (::locateLocal("appdata", "kopete_statistics-0.1.db")).latin1();
+	Q3CString path = (::locateLocal("appdata", "kopete_statistics-0.1.db")).latin1();
 	kdDebug() << "statistics: DB path:" << path << endl;
 
 	// Open database file and check for correctness
 	bool failOpen = true;
 	QFile file( path );
-	if ( file.open( IO_ReadOnly ) ) 
+	if ( file.open( QIODevice::ReadOnly ) ) 
 	{
 		QString format;
 		file.readLine( format, 50 );

@@ -20,7 +20,9 @@
 
 #include"xmpp.h"
 
-#include<qdict.h>
+#include<q3dict.h>
+//Added by qt3to4:
+#include <Q3CString>
 #include<stringprep.h>
 
 using namespace XMPP;
@@ -52,7 +54,7 @@ public:
 			return true;
 		}
 
-		QCString cs = in.utf8();
+		Q3CString cs = in.utf8();
 		cs.resize(maxbytes);
 		if(stringprep(cs.data(), maxbytes, (Stringprep_profile_flags)0, stringprep_nameprep) != 0)
 		{
@@ -88,7 +90,7 @@ public:
 			return true;
 		}
 
-		QCString cs = in.utf8();
+		Q3CString cs = in.utf8();
 		cs.resize(maxbytes);
 		if(stringprep(cs.data(), maxbytes, (Stringprep_profile_flags)0, stringprep_xmpp_nodeprep) != 0)
 		{
@@ -124,7 +126,7 @@ public:
 			return true;
 		}
 
-		QCString cs = in.utf8();
+		Q3CString cs = in.utf8();
 		cs.resize(maxbytes);
 		if(stringprep(cs.data(), maxbytes, (Stringprep_profile_flags)0, stringprep_xmpp_resourceprep) != 0)
 		{
@@ -159,9 +161,9 @@ private:
 		}
 	};
 
-	QDict<Result> nameprep_table;
-	QDict<Result> nodeprep_table;
-	QDict<Result> resourceprep_table;
+	Q3Dict<Result> nameprep_table;
+	Q3Dict<Result> nodeprep_table;
+	Q3Dict<Result> resourceprep_table;
 
 	static StringPrepCache *instance;
 

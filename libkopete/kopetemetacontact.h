@@ -22,7 +22,7 @@
 #define kopetemetacontact_h__
 
 #include "kopetecontactlistelement.h"
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qstring.h>
 
 #include <kdemacros.h>
@@ -98,12 +98,12 @@ public:
 	/**
 	 * @brief Retrieve the list of contacts that are part of the meta contact
 	 */
-	QPtrList<Contact> contacts() const;
+	Q3PtrList<Contact> contacts() const;
 
 	/**
 	 * @brief The groups the contact is stored in
 	 */
-	QPtrList<Group> groups() const;
+	Q3PtrList<Group> groups() const;
 
 	/**
 	 * Find the Contact to a given contact. If contact

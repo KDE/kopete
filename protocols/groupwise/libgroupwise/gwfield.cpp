@@ -17,7 +17,7 @@
     *************************************************************************
 */
 
-#include <qcstring.h>
+#include <q3cstring.h>
 
 #include "gwerror.h"
 
@@ -36,13 +36,13 @@ FieldList::~FieldList()
 {
 }
 
-FieldListIterator FieldList::find( QCString tag )
+FieldListIterator FieldList::find( Q3CString tag )
 {
 	FieldListIterator it = begin();
 	return find( it, tag );
 }
 
-FieldListIterator FieldList::find( FieldListIterator &it, QCString tag )
+FieldListIterator FieldList::find( FieldListIterator &it, Q3CString tag )
 {
 	FieldListIterator theEnd = end();
 	//cout << "FieldList::find() looking for " << tag.data() << endl;
@@ -55,7 +55,7 @@ FieldListIterator FieldList::find( FieldListIterator &it, QCString tag )
 	return it;
 }
 
-int FieldList::findIndex( QCString tag )
+int FieldList::findIndex( Q3CString tag )
 {
 	FieldListIterator it = begin();
 	FieldListIterator theEnd = end();
@@ -105,13 +105,13 @@ void FieldList::purge()
 // THIS IS AN ATTEMPT TO HIDE THE POLYMORPHISM INSIDE THE LIST
 // HOWEVER IT FAILS BECAUSE WE NEED BOTH THE ITERATOR AND THE CASTED Single|MultiField it points to
 
-SingleField * FieldList::findSingleField( QCString tag )
+SingleField * FieldList::findSingleField( Q3CString tag )
 {
 	FieldListIterator it = begin();
 	return findSingleField( it, tag );
 }
 
-SingleField * FieldList::findSingleField( FieldListIterator &it, QCString tag )
+SingleField * FieldList::findSingleField( FieldListIterator &it, Q3CString tag )
 {
 	FieldListIterator found = find( it, tag );
 	if ( found == end() )
@@ -120,13 +120,13 @@ SingleField * FieldList::findSingleField( FieldListIterator &it, QCString tag )
 		return dynamic_cast<SingleField *>( *found );
 }
 
-MultiField * FieldList::findMultiField( QCString tag )
+MultiField * FieldList::findMultiField( Q3CString tag )
 {
 	FieldListIterator it = begin();
 	return findMultiField( it, tag );
 }
 
-MultiField * FieldList::findMultiField( FieldListIterator &it, QCString tag )
+MultiField * FieldList::findMultiField( FieldListIterator &it, Q3CString tag )
 {
 	FieldListIterator found = find( it, tag );
 	if ( found == end() )
@@ -138,13 +138,13 @@ MultiField * FieldList::findMultiField( FieldListIterator &it, QCString tag )
 
 /* === FieldBase ========================================================= */
 
-FieldBase::FieldBase( QCString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type )
+FieldBase::FieldBase( Q3CString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type )
 : m_tag( tag ), m_method( method ), m_flags( flags ), m_type( type )
 {
 
 }
 
-QCString FieldBase::tag() const
+Q3CString FieldBase::tag() const
 {
 	return m_tag;
 }
@@ -171,12 +171,12 @@ void FieldBase::setFlags( const Q_UINT8 flags )
 
 /* === SingleField ========================================================= */
 
-SingleField::SingleField( QCString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, QVariant value )
+SingleField::SingleField( Q3CString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, QVariant value )
 : FieldBase( tag, method, flags, type ), m_value( value )
 {
 }
 
-SingleField::SingleField( QCString tag, Q_UINT8 flags, Q_UINT8 type, QVariant value )
+SingleField::SingleField( Q3CString tag, Q_UINT8 flags, Q_UINT8 type, QVariant value )
 : FieldBase( tag, NMFIELD_METHOD_VALID, flags, type ), m_value( value )
 {
 }
@@ -197,12 +197,12 @@ QVariant SingleField::value() const
 
 /* === MultiField ========================================================= */
 
-MultiField::MultiField( QCString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, FieldList fields )
+MultiField::MultiField( Q3CString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, FieldList fields )
 : FieldBase( tag, method, flags, type ), m_fields( fields )
 {
 }
 
-MultiField::MultiField( QCString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type )
+MultiField::MultiField( Q3CString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type )
 : FieldBase( tag, method, flags, type )
 {
 }

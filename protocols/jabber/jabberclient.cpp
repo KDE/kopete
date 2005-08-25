@@ -24,6 +24,8 @@
 #include <qregexp.h>
 
 #include <qca.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 #include <bsocket.h>
 #include <filetransfer.h>
 #include <xmpp_tasks.h>
@@ -524,7 +526,7 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 			QObject::connect ( m_jabberTLSHandler, SIGNAL ( tlsHandshaken() ), this, SLOT ( slotTLSHandshaken () ) );
 		}
 
-		QPtrList<QCA::Cert> certStore;
+		Q3PtrList<QCA::Cert> certStore;
 		m_jabberTLS->setCertificateStore ( certStore );
 	}
 

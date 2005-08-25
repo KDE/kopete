@@ -23,6 +23,8 @@
 #include <qevent.h>
 #include <qimage.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <QKeyEvent>
 
 #include <kdebug.h>
 #include "kxv.h"

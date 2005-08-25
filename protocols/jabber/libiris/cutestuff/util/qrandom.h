@@ -1,7 +1,7 @@
 #ifndef CS_QRANDOM_H
 #define CS_QRANDOM_H
 
-#include<qcstring.h>
+#include<q3cstring.h>
 
 class QRandom
 {

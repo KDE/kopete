@@ -21,6 +21,10 @@
 #include"xmlprotocol.h"
 
 #include"bytestream.h"
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <QTextStream>
+#include <Q3CString>
 
 using namespace XMPP;
 
@@ -93,7 +97,7 @@ static QString xmlToString(const QDomElement &e, const QString &fakeNS, const QS
 	fake = stripExtraNS(fake);
 	QString out;
 	{
-		QTextStream ts(&out, IO_WriteOnly);
+		QTextStream ts(&out, QIODevice::WriteOnly);
 		fake.firstChild().save(ts, 0);
 	}
 	// 'clip' means to remove any unwanted (and unneeded) characters, such as a trailing newline
@@ -123,7 +127,7 @@ static void createRootXmlTags(const QDomElement &root, QString *xmlHeader, QStri
 	// convert to xml->text
 	QString str;
 	{
-		QTextStream ts(&str, IO_WriteOnly);
+		QTextStream ts(&str, QIODevice::WriteOnly);
 		e.save(ts, 0);
 	}
 
@@ -207,7 +211,7 @@ QByteArray XmlProtocol::takeOutgoingData()
 
 void XmlProtocol::outgoingDataWritten(int bytes)
 {
-	for(QValueList<TrackItem>::Iterator it = trackQueue.begin(); it != trackQueue.end();) {
+	for(Q3ValueList<TrackItem>::Iterator it = trackQueue.begin(); it != trackQueue.end();) {
 		TrackItem &i = *it;
 
 		// enough bytes?
@@ -451,7 +455,7 @@ int XmlProtocol::internalWriteData(const QByteArray &a, TrackItem::Type t, int i
 
 int XmlProtocol::internalWriteString(const QString &s, TrackItem::Type t, int id)
 {
-	QCString cs = s.utf8();
+	Q3CString cs = s.utf8();
 	QByteArray a(cs.length());
 	memcpy(a.data(), cs.data(), a.size());
 	return internalWriteData(a, t, id);
@@ -533,7 +537,7 @@ bool XmlProtocol::baseStep(const Parser::Event &pe)
 
 void XmlProtocol::setIncomingAsExternal()
 {
-	for(QValueList<TransferItem>::Iterator it = transferItemList.begin(); it != transferItemList.end(); ++it) {
+	for(Q3ValueList<TransferItem>::Iterator it = transferItemList.begin(); it != transferItemList.end(); ++it) {
 		TransferItem &i = *it;
 		// look for elements received
 		if(!i.isString && !i.isSent)

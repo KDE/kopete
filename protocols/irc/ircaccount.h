@@ -29,6 +29,8 @@
 
 #include <qstring.h>
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 class ChannelListDialog;
 
@@ -63,7 +65,7 @@ struct IRCNetwork
 {
 	QString name;
 	QString description;
-	QValueList<IRCHost*> hosts;
+	Q3ValueList<IRCHost*> hosts;
 };
 
 class IRCAccount
@@ -231,7 +233,7 @@ private:
 
 	ChannelListDialog *m_channelList;
 
-	QValueList<IRCContact *> m_contacts;
+	Q3ValueList<IRCContact *> m_contacts;
 	IRCContactManager *m_contactManager;
 	IRCServerContact *m_myServer;
 

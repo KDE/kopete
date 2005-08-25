@@ -15,7 +15,9 @@
 */
 
 #include <qfile.h>
-#include <qdict.h>
+#include <q3dict.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include <kgenericfactory.h>
 #include <kaboutdata.h>
@@ -71,8 +73,8 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const char *name, const QSt
 	// Initializes the database
 	m_db = new StatisticsDB();
 	
-	QPtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
-	QPtrListIterator<Kopete::MetaContact> it( list );
+	Q3PtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
+	Q3PtrListIterator<Kopete::MetaContact> it( list );
 	for (; it.current(); ++it)
 	{
 		slotMetaContactAdded(it.current());
@@ -102,8 +104,8 @@ void StatisticsPlugin::slotViewCreated(Kopete::ChatSession* session)
 
 void StatisticsPlugin::slotViewClosed(Kopete::ChatSession* session)
 {
-	QPtrList<Kopete::Contact> list = session->members();
-	QPtrListIterator<Kopete::Contact> it( list );
+	Q3PtrList<Kopete::Contact> list = session->members();
+	Q3PtrListIterator<Kopete::Contact> it( list );
 	
 	for (; it.current(); ++it)
 	{

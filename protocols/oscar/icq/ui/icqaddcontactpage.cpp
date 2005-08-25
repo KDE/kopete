@@ -25,6 +25,9 @@
 #include <qlineedit.h>
 #include <qtabwidget.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <QShowEvent>
+#include <QVBoxLayout>
 
 #include <kdebug.h>
 #include <kiconloader.h>

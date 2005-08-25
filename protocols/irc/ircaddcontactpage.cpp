@@ -25,8 +25,10 @@
 
 #include <qlayout.h>
 #include <qlineedit.h>
-#include <qframe.h>
+#include <q3frame.h>
 #include <qtabwidget.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>

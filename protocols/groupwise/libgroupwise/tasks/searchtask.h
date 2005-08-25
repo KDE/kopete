@@ -22,6 +22,8 @@
 #define SEARCHTASK_H
 
 #include "requesttask.h"
+//Added by qt3to4:
+#include <Q3ValueList>
 
 class QTimer;
 
@@ -41,7 +43,7 @@ public:
 	 * Create the search query
 	 * @param query a list of search terms
 	 */
-	void search( const QValueList<GroupWise::UserSearchQueryTerm> & query);
+	void search( const Q3ValueList<GroupWise::UserSearchQueryTerm> & query);
 	/** 
 	 * If the query was accepted, start a timer to poll for results using PollSearchResultsTask
 	 */
@@ -49,14 +51,14 @@ public:
 	/**
 	 * Access the results of the search
 	 */
-	QValueList< GroupWise::ContactDetails > results();
+	Q3ValueList< GroupWise::ContactDetails > results();
 protected slots:
 	void slotPollForResults();
 	void slotGotPollResults();
 private: 
 	QString m_queryHandle;  // used to identify our query to the server, so we can poll for its results
 	QTimer * m_resultsPollTimer;
-	QValueList< GroupWise::ContactDetails > m_results;
+	Q3ValueList< GroupWise::ContactDetails > m_results;
 	int m_polls;
 };
 

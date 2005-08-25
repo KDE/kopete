@@ -22,6 +22,8 @@
 #include <qfile.h>
 #include <qtextcodec.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 // kde
 #include <kdebug.h>
@@ -46,7 +48,7 @@ void MSNP2POutgoing::parseMessage(MessageStruct &msgStr)
 {
 	MSNP2P::parseMessage(msgStr);
 
-	QString dataMessage=QCString((msgStr.message.data()+48) , msgStr.dataMessageSize);
+	QString dataMessage=Q3CString((msgStr.message.data()+48) , msgStr.dataMessageSize);
 	kdDebug(14141) << k_funcinfo <<" dataMessage: "  << dataMessage << endl;
 
 	if (dataMessage.contains("BYE"))
@@ -68,7 +70,7 @@ void MSNP2POutgoing::parseMessage(MessageStruct &msgStr)
 		}
 		else //if(dataMessage.contains("application/x-msnmsgr-transreqbody"))
 		{
-			m_Sfile->open(IO_ReadOnly);
+			m_Sfile->open(QIODevice::ReadOnly);
 			m_footer='\2';
 			m_totalDataSize=m_Sfile->size();
 			m_offset=0;

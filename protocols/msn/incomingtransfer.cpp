@@ -15,6 +15,8 @@
 */
 
 #include "incomingtransfer.h"
+//Added by qt3to4:
+#include <Q3CString>
 using P2P::TransferContext;
 using P2P::IncomingTransfer;
 using P2P::Message;
@@ -172,7 +174,7 @@ void IncomingTransfer::processMessage(const Message& message)
 	else
 	{
 		QString body =
-			QCString(message.body.data(), message.header.dataSize);
+			Q3CString(message.body.data(), message.header.dataSize);
 		kdDebug(14140) << k_funcinfo << "received, " << body << endl;
 
 		if(body.startsWith("INVITE"))
@@ -257,7 +259,7 @@ void IncomingTransfer::processMessage(const Message& message)
 				// NOTE The sending client can ask for a direct connections
 				// if one was established before.
 				QFile *destionation = new QFile(m_transfer->destinationURL().path());
-				if(!destionation->open(IO_WriteOnly))
+				if(!destionation->open(QIODevice::WriteOnly))
 				{
 					if(m_transfer){
 						m_transfer->slotError(KIO::ERR_CANNOT_OPEN_FOR_WRITING, i18n("Cannot open file for writing"));

@@ -24,7 +24,7 @@
 
 #include <kopete_export.h>
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 class QDomElement;
 
@@ -105,7 +105,7 @@ public:
 	 * This function is not very efficient - it searches through all the metacontacts in the contact list
 	 * \return the members of this group
 	 */
-	QPtrList<MetaContact> members() const;
+	Q3PtrList<MetaContact> members() const;
 
 	/**
 	 * \brief Set if the group is expanded.
@@ -177,7 +177,7 @@ private:
 	/**
 	 * @internal  used to get reachabe contact to send message to thom.
 	 */
-	QPtrList<MetaContact> onlineMembers() const;
+	Q3PtrList<MetaContact> onlineMembers() const;
 };
 
 } //END namespace Kopete 

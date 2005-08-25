@@ -31,6 +31,8 @@
 #include <qdir.h>
 #include <qdom.h>
 #include <qregexp.h>
+//Added by qt3to4:
+#include <QTextStream>
 
 #define CBUFLENGTH 512 // buffer length for fgets()
 
@@ -60,7 +62,7 @@ void HistoryPlugin::convertOldHistory()
 		if( Kopete::Protocol *p = dynamic_cast<Kopete::Protocol *>( Kopete::PluginManager::self()->plugin( fi->fileName() ) ) )
 		{
 			protocolId=p->pluginId();
-			QDictIterator<Kopete::Account> it(Kopete::AccountManager::self()->accounts(p));
+			Q3DictIterator<Kopete::Account> it(Kopete::AccountManager::self()->accounts(p));
 			Kopete::Account *a = it.current();
 			if(a)
 				accountId=a->accountId();

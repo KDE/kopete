@@ -19,7 +19,7 @@
 
 #include "snacprotocol.h"
 
-#include <qcstring.h>
+#include <q3cstring.h>
 #include <qdatastream.h>
 #include <qobject.h>
 #include <kdebug.h>
@@ -47,7 +47,7 @@ Transfer* SnacProtocol::parse( const QByteArray & packet, uint& bytes )
 	FLAP f;
 	SNAC s;
 	SnacTransfer *st;
-	QDataStream* m_din = new QDataStream( packet, IO_ReadOnly );
+	QDataStream* m_din = new QDataStream( packet, QIODevice::ReadOnly );
 
 	//flap parsing
 	*m_din >> b; //this should be the start byte

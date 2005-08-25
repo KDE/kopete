@@ -31,12 +31,14 @@
 
 #include"xmpp.h"
 
-#include<qguardedptr.h>
+#include<qpointer.h>
 #include<qca.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include"safedelete.h"
 
 #ifdef NO_NDNS
-#include<qdns.h>
+#include<q3dns.h>
 #else
 #include"ndns.h"
 #endif
@@ -198,7 +200,7 @@ public:
 	int mode;
 	ByteStream *bs;
 #ifdef NO_NDNS
-	QDns *qdns;
+	Q3Dns *qdns;
 #else
 	NDns dns;
 #endif
@@ -212,7 +214,7 @@ public:
 
 	QString host;
 	int port;
-	QValueList<QDns::Server> servers;
+	Q3ValueList<Q3Dns::Server> servers;
 	int errorCode;
 
 	bool multi, using_srv;
@@ -348,7 +350,7 @@ void AdvancedConnector::connectToServer(const QString &server)
 		else {
 			d->multi = true;
 
-			QGuardedPtr<QObject> self = this;
+			QPointer<QObject> self = this;
 			srvLookup(d->server);
 			if(!self)
 				return;
@@ -388,12 +390,12 @@ void AdvancedConnector::do_resolve()
 {
 #ifdef NO_NDNS
 	printf("resolving (aaaa=%d)\n", d->aaaa);
-	d->qdns = new QDns;
+	d->qdns = new Q3Dns;
 	connect(d->qdns, SIGNAL(resultsReady()), SLOT(dns_done()));
 	if(d->aaaa)
-		d->qdns->setRecordType(QDns::Aaaa); // IPv6
+		d->qdns->setRecordType(Q3Dns::Aaaa); // IPv6
 	else
-		d->qdns->setRecordType(QDns::A); // IPv4
+		d->qdns->setRecordType(Q3Dns::A); // IPv4
 	d->qdns->setLabel(d->host);
 #else
 	d->dns.resolve(d->host);
@@ -416,7 +418,7 @@ void AdvancedConnector::dns_done()
 	//SafeDeleteLock s(&d->sd);
 
         // grab the address list and destroy the qdns object
-	QValueList<QHostAddress> list = d->qdns->addresses();
+	Q3ValueList<QHostAddress> list = d->qdns->addresses();
 	d->qdns->disconnect(this);
 	d->qdns->deleteLater();
 	//d->sd.deleteLater(d->qdns);
@@ -545,7 +547,7 @@ void AdvancedConnector::tryNextSrv()
 
 void AdvancedConnector::srv_done()
 {
-	QGuardedPtr<QObject> self = this;
+	QPointer<QObject> self = this;
 #ifdef XMPP_DEBUG
 	printf("srv_done1\n");
 #endif

@@ -25,6 +25,8 @@
 #include <qmap.h>
 #include <qpixmap.h>
 #include <qbuffer.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include "libyahoo2/yahoo2.h"
 #include "libyahoo2/yahoo2_callbacks.h"
@@ -89,7 +91,7 @@ public:
 	void reset();
 	
 private:
-	QValueList<KStreamSocket*> m_connectionList;
+	Q3ValueList<KStreamSocket*> m_connectionList;
 };
 	
 	

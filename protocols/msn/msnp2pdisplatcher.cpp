@@ -26,6 +26,8 @@
 #include <qfile.h>
 #include <qtextcodec.h>
 #include <qapplication.h> //to be removed
+//Added by qt3to4:
+#include <Q3CString>
 
 // kde
 #include <kdebug.h>
@@ -79,7 +81,7 @@ void MSNP2PDisplatcher::setPictureUrl( const QString &url )
 void MSNP2PDisplatcher::slotReadMessage( const QByteArray &msg )
 {
 	//parse the message
-	QString messageHeader=QCString(msg.data() , (msg.find('\0')==-1) ? msg.size() : msg.find('\0') );
+	QString messageHeader=Q3CString(msg.data() , (msg.find('\0')==-1) ? msg.size() : msg.find('\0') );
 
 	QRegExp rx("Content-Type: ([A-Za-z0-9$!*/\\-]*)");
 	rx.search( messageHeader );
@@ -165,7 +167,7 @@ void MSNP2PDisplatcher::slotReadMessage( const QByteArray &msg )
 		}
 		else
 		{
-			QString dataMessage=QCString((msg.data()+startBinHeader+48) , msgStr.dataMessageSize);
+			QString dataMessage=Q3CString((msg.data()+startBinHeader+48) , msgStr.dataMessageSize);
 			rx=QRegExp("SessionID: ([0-9]*)\r\n");
 			rx.search( dataMessage );
 			sessionID=rx.cap(1).toUInt();
@@ -211,7 +213,7 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 {
 	MSNP2P::parseMessage(msgStr);
 
-	QString dataMessage=QCString((msgStr.message.data()+48) , msgStr.dataMessageSize);
+	QString dataMessage=Q3CString((msgStr.message.data()+48) , msgStr.dataMessageSize);
 
 	if (dataMessage.contains("INVITE"))
 	{
@@ -249,7 +251,7 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
     		// the context is a Base64 version of the msnobj
 		    rx=QRegExp("Context: ([0-9a-zA-Z+/=]*)");
     		rx.search( dataMessage );
-    		QCString msnobj;
+    		Q3CString msnobj;
     		KCodecs::base64Decode( rx.cap(1).utf8() , msnobj);
     		//rx=QRegExp("<msnobj\\s+Creator=\"(\\S+)\"\\s+Size=\"(\\S+)\"\\s+Type=\"(\\S+)\"\\s+Location=\"(\\S+)\"\\s+Friendly=\"(\\S+)\"\\s+SHA1D=\"(\\S+)\"\\s+SHA1C=\"(\\S+)\"/>");
     		kdDebug(14140) << "Requesting pic" << msnobj << endl;
@@ -261,7 +263,7 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 
 			//prepare to send the file
 			p2p->m_Sfile = new QFile( fname );
-			if(!p2p->m_Sfile->open(IO_ReadOnly))
+			if(!p2p->m_Sfile->open(QIODevice::ReadOnly))
 			{
 				p2p->error();
 				return;
@@ -483,7 +485,7 @@ void MSNP2PDisplatcher::sendImage(const QString& fileName)
 	kdDebug(14140) << k_funcinfo << fileName <<endl;
 
 	QFile pictFile( fileName );
-	if(!pictFile.open(IO_ReadOnly))
+	if(!pictFile.open(QIODevice::ReadOnly))
 	{
 		kdWarning(14140) << k_funcinfo << "impossible to open " <<fileName <<endl;
 		return;
@@ -609,7 +611,7 @@ void MSNP2PDisplatcher::sendFile(const QString& fileN ,unsigned int fileSize, co
 	int taille;
 	QCString utf16FileName=codec->fromUnicode(fileN.right( fileN.length() - fileN.findRev( '/' ) - 1 ) , taille );*/
 	QByteArray utf16FileName;
-	QDataStream stream(utf16FileName, IO_WriteOnly);
+	QDataStream stream(utf16FileName, QIODevice::WriteOnly);
 	stream.setByteOrder(QDataStream::LittleEndian);
 	stream << fileN.right( fileN.length() - fileN.findRev( '/' ) - 1 );
 

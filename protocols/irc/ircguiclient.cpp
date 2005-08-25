@@ -30,7 +30,7 @@
 // ------------------------------------------------------------
 #endif
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <kdebug.h>
 #include <qdom.h>
 
@@ -62,7 +62,7 @@ IRCGUIClient::IRCGUIClient( Kopete::ChatSession *parent ) : QObject(parent) , KX
 
 		QDomDocument doc = domDocument();
 		QDomNode menu = doc.documentElement().firstChild().firstChild();
-		QPtrList<KAction> *actions = m_user->customContextMenuActions( parent );
+		Q3PtrList<KAction> *actions = m_user->customContextMenuActions( parent );
 		if( actions )
 		{
 			for( KAction *a = actions->first(); a; a = actions->next() )

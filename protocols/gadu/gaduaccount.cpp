@@ -50,9 +50,12 @@
 #include <qdialog.h>
 #include <qtimer.h>
 #include <qtextcodec.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qtextstream.h>
 #include <qhostaddress.h>
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <Q3CString>
 
 #include <netinet/in.h>
 
@@ -89,7 +92,7 @@ public:
 	
 	KConfigGroup*			config;
 	Kopete::OnlineStatus		status;
-	QValueList<unsigned int>	servers;
+	Q3ValueList<unsigned int>	servers;
 	KGaduLoginParams		loginInfo;
 };
 
@@ -583,7 +586,7 @@ void
 GaduAccount::messageReceived( KGaduMessage* gaduMessage )
 {
 	GaduContact* contact = 0;
-	QPtrList<Kopete::Contact> contactsListTmp;
+	Q3PtrList<Kopete::Contact> contactsListTmp;
 
 	// FIXME:check for ignored users list
 	// FIXME:anonymous (those not on the list) users should be ignored, as an option
@@ -788,7 +791,7 @@ GaduAccount::startNotify()
 		return;
 	}
 
-	QDictIterator<Kopete::Contact> kopeteContactsList( contacts() );
+	Q3DictIterator<Kopete::Contact> kopeteContactsList( contacts() );
 
 	uin_t* userlist = 0;
 	userlist = new uin_t[ contacts().count() ];
@@ -917,7 +920,7 @@ GaduAccount::slotExportContactsListToFile()
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
 
 	if ( p->saveListDialog->exec() == QDialog::Accepted ) {
-		QCString list = p->textcodec_->fromUnicode( userlist()->asString() );
+		Q3CString list = p->textcodec_->fromUnicode( userlist()->asString() );
 
 		if ( tempFile.status() ) {
 			// say cheese, can't create file.....
@@ -948,7 +951,7 @@ void
 GaduAccount::slotImportContactsFromFile()
 {
 	KURL url;
-	QCString list;
+	Q3CString list;
 	QString oname;
 
 	if ( p->loadListDialog ) {
@@ -967,7 +970,7 @@ GaduAccount::slotImportContactsFromFile()
 		kdDebug(14100) << "a:" << url << "\nb:" << oname << endl;
 		if ( KIO::NetAccess::download( url, oname, Kopete::UI::Global::mainWidget() ) ) {
 			QFile tempFile( oname );
-			if ( tempFile.open( IO_ReadOnly ) ) {
+			if ( tempFile.open( QIODevice::ReadOnly ) ) {
 				list = tempFile.readAll();
 				tempFile.close();
 				KIO::NetAccess::removeTempFile( oname );
@@ -1022,7 +1025,7 @@ GaduAccount::userlist()
 		return contactsList;
 	}
 
-	QDictIterator<Kopete::Contact> contactsIterator( contacts() );
+	Q3DictIterator<Kopete::Contact> contactsIterator( contacts() );
 
 	for( i=0 ; contactsIterator.current() ; ++contactsIterator ) {
 		contact = static_cast<GaduContact*>( *contactsIterator );

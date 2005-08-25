@@ -22,10 +22,10 @@
 
 #include "dlgjabbervcard.h"
 
-#include <qtextedit.h>
+#include <q3textedit.h>
 
 #include <qapplication.h>
-#include <qwidgetstack.h>
+#include <q3widgetstack.h>
 #include <kdebug.h>
 #include <kpushbutton.h>
 #include <klineedit.h>

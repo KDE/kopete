@@ -24,6 +24,8 @@
 #include <kopetepassword.h>
 #include "meanwhilelibrary.h"
 #include "meanwhileprotocol.h"
+//Added by qt3to4:
+#include <Q3ValueList>
 
 extern "C"
 {
@@ -299,7 +301,7 @@ struct MeanwhileLibrary::conv_data *MeanwhileLibrary::initConvData(
     /* grab a manager from the factory instead? */
     conv_data->chat = contact->manager();
     conv_data->chat->ref();
-    conv_data->queue = new QValueList<Kopete::Message>();
+    conv_data->queue = new Q3ValueList<Kopete::Message>();
 
     mwConversation_setClientData(conv, conv_data, 0L);
 
@@ -326,7 +328,7 @@ MEANWHILE_HOOK_CONVERSATION(conversation_opened,
 
     } else if (conv_data->queue && !conv_data->queue->isEmpty()) {
         /* send any messages that were waiting for the conversation to open */
-        QValueList<Kopete::Message>::iterator it;
+        Q3ValueList<Kopete::Message>::iterator it;
         for (it = conv_data->queue->begin(); it != conv_data->queue->end();
                 ++it) {
             mwConversation_send(conv, mwImSend_PLAIN,
@@ -635,10 +637,10 @@ static void free_iter(void *data, void *p)
     free(data);
 }
 
-void MeanwhileLibrary::addContacts(const QDict<Kopete::Contact>& contacts)
+void MeanwhileLibrary::addContacts(const Q3Dict<Kopete::Contact>& contacts)
 {
     HERE;
-    QDictIterator<Kopete::Contact> it(contacts); 
+    Q3DictIterator<Kopete::Contact> it(contacts); 
     GList *buddies = 0L;
 
     /** Convert our QDict of kopete contact to a GList of meanwhile buddies */

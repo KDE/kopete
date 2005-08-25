@@ -23,6 +23,8 @@
 #include "gwfield.h"
 
 #include "inputprotocolbase.h"
+//Added by qt3to4:
+#include <Q3CString>
 
 /**
 Handles the parsing of incoming Response messages
@@ -57,7 +59,7 @@ protected:
 	/**
 	 * read a line ending in \r\n, including the \r\n
 	 */
-	bool readGroupWiseLine( QCString & );
+	bool readGroupWiseLine( Q3CString & );
 	/**
 	 * Read in a response
 	 */

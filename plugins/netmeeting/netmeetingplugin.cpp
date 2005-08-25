@@ -30,6 +30,8 @@
 
 #include "netmeetinginvitation.h"
 #include "netmeetingguiclient.h"
+//Added by qt3to4:
+#include <Q3ValueList>
 
 
 static const KAboutData aboutdata("kopete_netmeeting", I18N_NOOP("NetMeeting") , "1.0" );
@@ -46,8 +48,8 @@ NetMeetingPlugin::NetMeetingPlugin( QObject *parent, const char *name, const QSt
 
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( chatSessionCreated( Kopete::ChatSession * )) , SLOT( slotNewKMM( Kopete::ChatSession * ) ) );
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	QValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
-	for (QValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
+	Q3ValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+	for (Q3ValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
 	{
 		slotNewKMM(*it);
 	}

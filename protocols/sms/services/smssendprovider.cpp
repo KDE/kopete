@@ -14,9 +14,12 @@
     *************************************************************************
 */
 
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <qlabel.h>
 #include <qfile.h>
+//Added by qt3to4:
+#include <QTextStream>
+#include <Q3PtrList>
 
 #include <kconfigbase.h>
 #include <kprocess.h>
@@ -46,7 +49,7 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 
 	QString file = prefix + "/share/smssend/" + provider + ".sms";
 	QFile f(file);
-	if (f.open(IO_ReadOnly))
+	if (f.open(QIODevice::ReadOnly))
 	{
 		QTextStream t(&f);
 		QString group = QString("SMSSend-%1").arg(provider);
@@ -170,7 +173,7 @@ const bool SMSSendProvider::isHidden(int i)
 	return isHiddens[i];
 }
 
-void SMSSendProvider::save(QPtrList<KLineEdit>& args)
+void SMSSendProvider::save(Q3PtrList<KLineEdit>& args)
 {
 	kdDebug( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
 	if (!m_account) return;		// prevent crash in worst case

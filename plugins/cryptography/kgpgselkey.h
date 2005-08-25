@@ -22,6 +22,8 @@
 
 
 #include <kdialogbase.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 class KListView;
 class QCheckBox;
@@ -50,7 +52,7 @@ QCheckBox *local;
 private slots:
 void slotOk();
 void slotpreOk();
-void slotSelect(QListViewItem *item);
+void slotSelect(Q3ListViewItem *item);
 QString extractKeyName(QString fullName);
 
 public:

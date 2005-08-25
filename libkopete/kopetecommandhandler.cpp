@@ -16,6 +16,8 @@
 
 #include <kapplication.h>
 #include <qregexp.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kprocess.h>
@@ -53,7 +55,7 @@ class KopeteCommandGUIClient : public QObject, public KXMLGUIClient
 					manager->protocol()
 			);
 
-			for( QDictIterator<Kopete::Command> it( mCommands ); it.current(); ++it )
+			for( Q3DictIterator<Kopete::Command> it( mCommands ); it.current(); ++it )
 			{
 				KAction *a = static_cast<KAction*>( it.current() );
 				actionCollection()->insert( a );
@@ -89,7 +91,7 @@ struct CommandHandlerPrivate
 	Kopete::CommandHandler *s_handler;
 	QMap<KProcess*,ManagerPair> processMap;
 	bool inCommand;
-	QPtrList<KAction> m_commands;
+	Q3PtrList<KAction> m_commands;
 };
 
 CommandHandlerPrivate *Kopete::CommandHandler::p = 0L;
@@ -234,7 +236,7 @@ void Kopete::CommandHandler::slotHelpCommand( const QString &args, Kopete::ChatS
 		output = i18n( "Available Commands:\n" );
 
 		CommandList mCommands = commands( manager->myself()->protocol() );
-		QDictIterator<Kopete::Command> it( mCommands );
+		Q3DictIterator<Kopete::Command> it( mCommands );
 		for( ; it.current(); ++it )
 		{
 			output.append( it.current()->command().upper() + '\t' );
@@ -401,7 +403,7 @@ bool Kopete::CommandHandler::commandHandledByProtocol( const QString &command, K
 
 	// Fetch the commands for the protocol
 	CommandList commandList = commands( protocol );
-	QDictIterator<Kopete::Command> it ( commandList );
+	Q3DictIterator<Kopete::Command> it ( commandList );
 
 	// Loop through commands and check if they match the supplied command
 	for( ; it.current(); ++it )
@@ -448,7 +450,7 @@ CommandList Kopete::CommandHandler::commands( Kopete::Protocol *protocol )
 
 void Kopete::CommandHandler::addCommands( CommandList &from, CommandList &to, CommandType type )
 {
-	QDictIterator<Kopete::Command> itDict( from );
+	Q3DictIterator<Kopete::Command> itDict( from );
 	for( ; itDict.current(); ++itDict )
 	{
 		if( !to[ itDict.currentKey() ] &&

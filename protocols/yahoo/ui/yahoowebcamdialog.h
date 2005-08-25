@@ -18,6 +18,8 @@
 #define YAHOOWEBCAMDIALOG_H_
 
 #include <qlabel.h>
+//Added by qt3to4:
+#include <QPixmap>
 #include <kdialogbase.h>
 
 

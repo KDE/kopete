@@ -23,6 +23,9 @@
 #include <qspinbox.h>
 #include <qcombobox.h>
 #include <qobject.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <Q3Frame>
 
 #include <kdatewidget.h>
 #include <kdebug.h>
@@ -44,28 +47,28 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, const char * name )
 {
 	kdDebug(14153) << k_funcinfo << "Creating new icq user info widget" << endl;
 	
-	QFrame* genInfo = addPage( i18n( "General Info" ),
+	Q3Frame* genInfo = addPage( i18n( "General Info" ),
 	                                         i18n( "General ICQ Information" ),
 	                                         KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "identity" ), KIcon::Desktop ) );
 	QVBoxLayout* genLayout = new QVBoxLayout( genInfo );
 	m_genInfoWidget = new ICQGeneralInfoWidget( genInfo, "Basic Information" );
 	genLayout->addWidget( m_genInfoWidget );
 	
-	QFrame* workInfo = addPage( i18n( "Work Info" ),
+	Q3Frame* workInfo = addPage( i18n( "Work Info" ),
 	                                          i18n( "Work Information" ),
 	                                          KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "attach" ), KIcon::Desktop ) );
 	QVBoxLayout* workLayout = new QVBoxLayout( workInfo );
 	m_workInfoWidget = new ICQWorkInfoWidget( workInfo, "Work Information" );
 	workLayout->addWidget( m_workInfoWidget );
 	
-	QFrame* otherInfo = addPage( i18n( "Other Info" ),
+	Q3Frame* otherInfo = addPage( i18n( "Other Info" ),
 	                                           i18n( "Other ICQ Information" ),
 	                                           KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "email" ), KIcon::Desktop ) );
 	QVBoxLayout* otherLayout = new QVBoxLayout( otherInfo );
 	m_otherInfoWidget = new ICQOtherInfoWidget( otherInfo, "Other Information"  );
 	otherLayout->addWidget( m_otherInfoWidget );
 	
-	QFrame* interestInfo = addPage( i18n( "Interest Info" ),
+	Q3Frame* interestInfo = addPage( i18n( "Interest Info" ),
 	                                           i18n( "Interest" ),
 	                                           KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "email" ), KIcon::Desktop ) );
 	QVBoxLayout* interestLayout = new QVBoxLayout( interestInfo );

@@ -18,6 +18,8 @@
 
 #include "oscarutils.h"
 #include <qhostaddress.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include <kapplication.h>
 #include <kdebug.h>
 
@@ -39,10 +41,10 @@ bool Oscar::operator==( TLV a, TLV b )
 		return false;
 }
 
-TLV Oscar::findTLV( const QValueList<TLV>& list, int type )
+TLV Oscar::findTLV( const Q3ValueList<TLV>& list, int type )
 {
 	TLV t;
-	QValueList<TLV>::const_iterator it;
+	Q3ValueList<TLV>::const_iterator it;
 	for ( it = list.begin(); it != list.end(); ++it )
 	{
 		if ( ( *it ).type == type )

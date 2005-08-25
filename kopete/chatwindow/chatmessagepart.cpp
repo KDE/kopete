@@ -23,6 +23,9 @@
 #include <qtooltip.h>
 #include <qrect.h>
 #include <qcursor.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QTextStream>
 
 #include <dom/dom_doc.h>
 #include <dom/dom_text.h>
@@ -391,7 +394,7 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 	QString retVal = html;
 
 	Kopete::ContactPtrList members = m_manager->members();
-	for ( QPtrListIterator<Kopete::Contact> it( members ); it.current(); ++it )
+	for ( Q3PtrListIterator<Kopete::Contact> it( members ); it.current(); ++it )
 	{
 		QString nick = (*it)->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
 		//FIXME: this is really slow in channels with lots of contacts
@@ -517,14 +520,14 @@ Kopete::Contact *ChatMessagePart::contactFromNode( const DOM::Node &n ) const
 	if ( element.hasAttribute( "contactid" ) )
 	{
 		QString contactId = element.getAttribute( "contactid" ).string();
-		for ( QPtrListIterator<Kopete::Contact> it ( m_manager->members() ); it.current(); ++it )
+		for ( Q3PtrListIterator<Kopete::Contact> it ( m_manager->members() ); it.current(); ++it )
 			if ( (*it)->contactId() == contactId )
 				return *it;
 	}
 	else
 	{
 		QString nick = element.innerText().string().stripWhiteSpace();
-		for ( QPtrListIterator<Kopete::Contact> it ( m_manager->members() ); it.current(); ++it )
+		for ( Q3PtrListIterator<Kopete::Contact> it ( m_manager->members() ); it.current(); ++it )
 			if ( (*it)->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString() == nick )
 				return *it;
 	}
@@ -779,12 +782,12 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 #ifndef QT_NO_MIMECLIPBOARD
 	if(!justselection)
 	{
-      	QTextDrag *textdrag = new QTextDrag(text, 0L);
+      	Q3TextDrag *textdrag = new Q3TextDrag(text, 0L);
 	    KMultipleDrag *drag = new KMultipleDrag( );
     	drag->addDragObject( textdrag );
     	if(!htmltext.isEmpty()) {
 	    	htmltext.replace( QChar( 0xa0 ), ' ' );
-    		QTextDrag *htmltextdrag = new QTextDrag(htmltext, 0L);
+    		Q3TextDrag *htmltextdrag = new Q3TextDrag(htmltext, 0L);
     		htmltextdrag->setSubtype("html");
             drag->addDragObject( htmltextdrag );
     	}

@@ -17,9 +17,11 @@
 
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qgroupbox.h>
-#include <qheader.h>
-#include <qlistview.h>
+#include <q3groupbox.h>
+#include <q3header.h>
+#include <q3listview.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <klocale.h>
 #include <klineedit.h>
@@ -85,7 +87,7 @@ void AutoReplacePreferences::load()
 	for ( it = map.begin(); it != map.end(); ++it )
 	{
 		// notice: insertItem is called automatically by the constructor
-		new QListViewItem( preferencesDialog->m_list, it.key(), it.data() );
+		new Q3ListViewItem( preferencesDialog->m_list, it.key(), it.data() );
 	}
 
 	m_wordListChanged = false;
@@ -97,7 +99,7 @@ void AutoReplacePreferences::save()
 {
 	// make a list reading all values from gui
 	AutoReplaceConfig::WordsToReplace newWords;
-	for ( QListViewItem * i = preferencesDialog->m_list->firstChild(); i != 0; i = i->nextSibling() )
+	for ( Q3ListViewItem * i = preferencesDialog->m_list->firstChild(); i != 0; i = i->nextSibling() )
 		newWords[ i->text( 0 ) ] = i->text( 1 );
 
 	// save the words list
@@ -115,12 +117,12 @@ void AutoReplacePreferences::slotAddCouple()
 	QString v = preferencesDialog->m_value->text();
 	if ( !k.isEmpty() && !k.isNull() && !v.isEmpty() && !v.isNull() )
 	{
-		QListViewItem * lvi;
-		QListViewItem * oldLvi = 0;
+		Q3ListViewItem * lvi;
+		Q3ListViewItem * oldLvi = 0;
 		// see if we are replacing an existing entry
 		if ( ( oldLvi = preferencesDialog->m_list->findItem( k, 0 ) ) )
 			delete oldLvi;
-		lvi = new QListViewItem( preferencesDialog->m_list, k, v );
+		lvi = new Q3ListViewItem( preferencesDialog->m_list, k, v );
 		// Triggers a size, geometry and content update
 		// during the next iteration of the event loop
 		preferencesDialog->m_list->triggerUpdate();
@@ -137,7 +139,7 @@ void AutoReplacePreferences::slotEditCouple()
 {
 	QString k = preferencesDialog->m_key->text();
 	QString v = preferencesDialog->m_value->text();
-	QListViewItem * lvi;
+	Q3ListViewItem * lvi;
 	if ( ( lvi = preferencesDialog->m_list->selectedItem() ) && !k.isEmpty() && !k.isNull() && !v.isEmpty() && !v.isNull() )
 	{
 		lvi->setText( 0, k );
@@ -166,7 +168,7 @@ void AutoReplacePreferences::slotEnableAddEdit( const QString & keyText )
 
 void AutoReplacePreferences::slotSelectionChanged()
 {
-	QListViewItem *selection = 0;
+	Q3ListViewItem *selection = 0;
 	if ( ( selection = preferencesDialog->m_list->selectedItem() ) )
 	{
 		// enable the remove button
@@ -198,7 +200,7 @@ void AutoReplacePreferences::defaults()
     for ( it = map.begin(); it != map.end(); ++it )
     {
         // notice: insertItem is called automatically by the constructor
-        new QListViewItem( preferencesDialog->m_list, it.key(), it.data() );
+        new Q3ListViewItem( preferencesDialog->m_list, it.key(), it.data() );
     }
     m_wordListChanged = true;
     slotWidgetModified();

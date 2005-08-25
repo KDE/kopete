@@ -19,7 +19,7 @@
 
 #include "transfer.h"
 #include <ctype.h>
-#include <qdeepcopy.h>
+#include <q3deepcopy.h>
 #include <kdebug.h>
 
 Transfer::Transfer()

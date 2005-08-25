@@ -24,13 +24,13 @@
 #include <config.h>
 #endif
 
-#include <qguardedptr.h>
+#include <qpointer.h>
 
 #include <kuniqueapplication.h>
 
 class KopeteWindow;
 class QSessionManager;
-class QMimeSourceFactory;
+class Q3MimeSourceFactory;
 
 namespace Kopete
 {
@@ -79,10 +79,10 @@ private slots:
 private:
 	// The main window might get deleted behind our back (W_DestructiveClose),
 	// so use a guarded pointer
-	QGuardedPtr<KopeteWindow> m_mainWindow;
+	QPointer<KopeteWindow> m_mainWindow;
 	bool m_isShuttingDown;
 	Kopete::MimeTypeHandler *m_emoticonHandler;
-	QMimeSourceFactory *m_mimeFactory;
+	Q3MimeSourceFactory *m_mimeFactory;
 
 private:
 	void handleURLArgs();

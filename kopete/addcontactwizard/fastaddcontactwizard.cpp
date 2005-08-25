@@ -17,7 +17,7 @@
     *                                                                       *
     *************************************************************************
 */
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <addcontactpage.h>
 
 #include <kiconloader.h>
@@ -36,11 +36,11 @@ FastAddContactWizard::FastAddContactWizard( QWidget *parent, const char *name )
 	m_accountItems.clear();
 
 	// Populate the accounts list
-	QListViewItem* accountLVI = 0L;
-	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
+	Q3ListViewItem* accountLVI = 0L;
+	Q3PtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
 	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next() )
 	{
-		accountLVI= new QListViewItem( protocolListView, i->accountLabel() );
+		accountLVI= new Q3ListViewItem( protocolListView, i->accountLabel() );
 		accountLVI->setText(1,i->protocol()->displayName() + QString::fromLatin1(" ") );
 		accountLVI->setPixmap( 1, SmallIcon( i->protocol()->pluginIcon() ) );
 		m_accountItems.insert(accountLVI,i);
@@ -50,9 +50,9 @@ FastAddContactWizard::FastAddContactWizard( QWidget *parent, const char *name )
 		protocolListView->setCurrentItem( accountLVI );
 
 	// Account choice validation connections
-	connect( protocolListView, SIGNAL(clicked(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
-	connect( protocolListView, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
-	connect( protocolListView, SIGNAL(spacePressed(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
+	connect( protocolListView, SIGNAL(clicked(Q3ListViewItem *)), this, SLOT(slotProtocolListClicked(Q3ListViewItem *)));
+	connect( protocolListView, SIGNAL(selectionChanged(Q3ListViewItem *)), this, SLOT(slotProtocolListClicked(Q3ListViewItem *)));
+	connect( protocolListView, SIGNAL(spacePressed(Q3ListViewItem *)), this, SLOT(slotProtocolListClicked(Q3ListViewItem *)));
 
 	setNextEnabled( selectService, false );
 	setFinishEnabled(finis, true);
@@ -62,7 +62,7 @@ FastAddContactWizard::~FastAddContactWizard()
 {
 }
 
-void FastAddContactWizard::slotProtocolListClicked( QListViewItem *account)
+void FastAddContactWizard::slotProtocolListClicked( Q3ListViewItem *account)
 {
 	setNextEnabled( selectService, account? account->isSelected() : false );
 }
@@ -81,7 +81,7 @@ void FastAddContactWizard::next()
 		}
 		protocolPages.clear();
 
-		QListViewItem* item = protocolListView->selectedItem();
+		Q3ListViewItem* item = protocolListView->selectedItem();
 		AddContactPage *addPage = m_accountItems[item]->protocol()->createAddContactWidget(this, m_accountItems[item] );
 		if (addPage)
 		{
@@ -92,7 +92,7 @@ void FastAddContactWizard::next()
 			insertPage( addPage, title, indexOf( finis ) );
 			protocolPages.insert( m_accountItems[item] , addPage );
 		}
-		QWizard::next();
+		Q3Wizard::next();
 		return;
 	}
 
@@ -105,7 +105,7 @@ void FastAddContactWizard::next()
 			return;
 	}
 
-	QWizard::next();
+	Q3Wizard::next();
 }
 
 void FastAddContactWizard::accept()

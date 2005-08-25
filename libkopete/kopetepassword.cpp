@@ -25,6 +25,8 @@
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 #include <kactivelabel.h>
 #include <kapplication.h>

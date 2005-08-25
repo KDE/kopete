@@ -24,7 +24,7 @@
 
 class GroupWiseContactPropsWidget;
 class KDialogBase;
-class QListViewItem;
+class Q3ListViewItem;
 class KAction;
 
 /**
@@ -49,7 +49,7 @@ protected:
 	void setupProperties( QMap< QString, QString > serverProps );
 	void init();
 protected slots:
-	void slotShowContextMenu( QListViewItem *, const QPoint & );
+	void slotShowContextMenu( Q3ListViewItem *, const QPoint & );
 	void slotCopy();
 private:
 	GroupWiseContactPropsWidget * m_propsWidget;

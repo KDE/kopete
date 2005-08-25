@@ -20,7 +20,7 @@
 #define SERVERVERSIONSTASK_H
 
 #include "task.h"
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include "oscartypes.h"
 
 class Transfer;
@@ -52,7 +52,7 @@ private:
 	void requestFamilyVersions();
 	
 private:
-	QValueList<int> m_familiesList;
+	Q3ValueList<int> m_familiesList;
 	WORD m_family;
 };
 

@@ -20,6 +20,8 @@
 #include "jabberaddcontactpage.h"
 
 #include <qlayout.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 #include <klineedit.h>
 #include <klocale.h>
 #include <kopeteaccount.h>

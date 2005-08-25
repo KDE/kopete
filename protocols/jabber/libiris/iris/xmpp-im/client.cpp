@@ -70,9 +70,11 @@
 //!  \endcode
 
 #include<stdarg.h>
-#include<qobjectlist.h>
+#include<qobject.h>
 #include<qtimer.h>
-#include<qguardedptr.h>
+#include<qpointer.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include"xmpp_tasks.h"
 #include"xmpp_xmlcommon.h"
 #include"s5b.h"
@@ -136,7 +138,7 @@ public:
 	JidLinkManager *jlman;
 	FileTransferManager *ftman;
 	bool ftEnabled;
-	QValueList<GroupChat> groupChatList;
+	Q3ValueList<GroupChat> groupChatList;
 };
 
 
@@ -263,7 +265,7 @@ bool Client::isActive() const
 void Client::groupChatChangeNick(const QString &host, const QString &room, const QString &nick, const Status &_s)
 {
 	Jid jid(room + "@" + host + "/" + nick);
-	for(QValueList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
+	for(Q3ValueList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
 		GroupChat &i = *it;
 		if(i.j.compare(jid, false)) {
 			i.j = jid;
@@ -283,7 +285,7 @@ void Client::groupChatChangeNick(const QString &host, const QString &room, const
 bool Client::groupChatJoin(const QString &host, const QString &room, const QString &nick)
 {
 	Jid jid(room + "@" + host + "/" + nick);
-	for(QValueList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end();) {
+	for(Q3ValueList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end();) {
 		GroupChat &i = *it;
 		if(i.j.compare(jid, false)) {
 			// if this room is shutting down, then free it up
@@ -313,7 +315,7 @@ void Client::groupChatSetStatus(const QString &host, const QString &room, const 
 {
 	Jid jid(room + "@" + host);
 	bool found = false;
-	for(QValueList<GroupChat>::ConstIterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
+	for(Q3ValueList<GroupChat>::ConstIterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
 		const GroupChat &i = *it;
 		if(i.j.compare(jid, false)) {
 			found = true;
@@ -335,7 +337,7 @@ void Client::groupChatSetStatus(const QString &host, const QString &room, const 
 void Client::groupChatLeave(const QString &host, const QString &room)
 {
 	Jid jid(room + "@" + host);
-	for(QValueList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
+	for(Q3ValueList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
 		GroupChat &i = *it;
 
 		if(!i.j.compare(jid, false))
@@ -369,7 +371,7 @@ void Client::close(bool)
 {
 	if(d->stream) {
 		if(d->active) {
-			for(QValueList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
+			for(Q3ValueList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
 				GroupChat &i = *it;
 				i.status = GroupChat::Closing;
 
@@ -472,7 +474,7 @@ static QDomElement oldStyleNS(const QDomElement &e)
 void Client::streamReadyRead()
 {
 	// HACK HACK HACK
-	QGuardedPtr<ClientStream> pstream = d->stream;
+	QPointer<ClientStream> pstream = d->stream;
 
 	while(pstream && d->stream->stanzaAvailable()) {
 		Stanza s = d->stream->read();
@@ -684,7 +686,7 @@ void Client::ppPresence(const Jid &j, const Status &s)
 	else
 		debug(QString("Client: %1 is unavailable.\n").arg(j.full()));
 
-	for(QValueList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
+	for(Q3ValueList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
 		GroupChat &i = *it;
 
 		if(i.j.compare(j, false)) {
@@ -823,7 +825,7 @@ void Client::pmMessage(const Message &m)
 	debug(QString("Client: Message from %1\n").arg(m.from().full()));
 
 	if(m.type() == "groupchat") {
-		for(QValueList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
+		for(Q3ValueList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
 			const GroupChat &i = *it;
 
 			if(!i.j.compare(m.from(), false))
@@ -1389,7 +1391,7 @@ void LiveRosterItem::setFlagForDelete(bool b)
 // LiveRoster
 //---------------------------------------------------------------------------
 LiveRoster::LiveRoster()
-:QValueList<LiveRosterItem>()
+:Q3ValueList<LiveRosterItem>()
 {
 }
 

@@ -19,7 +19,7 @@
 
 #include "flapprotocol.h"
 
-#include <qcstring.h>
+#include <q3cstring.h>
 #include <qdatastream.h>
 #include <qobject.h>
 #include <kdebug.h>
@@ -39,7 +39,7 @@ FlapProtocol::~FlapProtocol()
 
 Transfer* FlapProtocol::parse( const QByteArray & packet, uint& bytes )
 {
-	QDataStream* m_din = new QDataStream( packet, IO_ReadOnly );
+	QDataStream* m_din = new QDataStream( packet, QIODevice::ReadOnly );
 	
 	BYTE b;
 	WORD w;

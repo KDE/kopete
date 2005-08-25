@@ -3,6 +3,9 @@
 #include "ssitest.h"
 
 #include <qstring.h>
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <Q3PtrList>
 
 SSITest::SSITest(int argc, char ** argv) : QApplication( argc, argv )
 {
@@ -19,7 +22,7 @@ SSITest::~SSITest()
 
 void SSITest::testIt()
 {
-	QPtrList<TLV> tlvs;
+	Q3PtrList<TLV> tlvs;
 	
 	//add three groups
 	SSI *ssi = new SSI( "FirstGroup", 1, 1, ROSTER_GROUP, tlvs); 
@@ -85,14 +88,14 @@ void SSITest::testIt()
 		qDebug( "Good! It has detected the group is invalid :)" );
 
 	//contacts from a group
-	QValueList<SSI*> list = m_manager->contactsFromGroup("FirstGroup");
-	QValueList<SSI*>::iterator it;
+	Q3ValueList<SSI*> list = m_manager->contactsFromGroup("FirstGroup");
+	Q3ValueList<SSI*>::iterator it;
 	qDebug( "Contacts from group FirtsGroup:" );
 	for ( it = list.begin(); it != list.end(); ++it)
 		qDebug( QString("      name=%1").arg( (*it)->name() ).latin1() );
 
 	//the group list
-	QValueList<SSI*> list2 = m_manager->groupList();
+	Q3ValueList<SSI*> list2 = m_manager->groupList();
 	qDebug( "Group list:" );
 	for ( it = list2.begin(); it != list2.end(); ++it)
 		qDebug( QString("      name=%1").arg( (*it)->name() ).latin1() );

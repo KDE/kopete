@@ -22,6 +22,8 @@
 #include "xmpp_vcard.h"
 
 #include "kopetechatsession.h" // needed for silly Kopete::ContactPtrList
+//Added by qt3to4:
+#include <Q3PtrList>
 
 class JabberChatSession;
 
@@ -39,7 +41,7 @@ public:
 	 * Create custom context menu items for the contact
 	 * FIXME: implement manager version here?
 	 */
-	QPtrList<KAction> *customContextMenuActions ();
+	Q3PtrList<KAction> *customContextMenuActions ();
 
 	/**
 	 * Start a rename request.
@@ -216,7 +218,7 @@ private:
 	 * The casts in manager() and slotChatSessionDeleted()
 	 * are thus legal.
 	 */
-	QPtrList<JabberChatSession> mManagers;
+	Q3PtrList<JabberChatSession> mManagers;
 
 	/**
 	 * Indicates whether the vCard is currently

@@ -22,6 +22,8 @@
 #include "kopetecontact.h"
 #include "xmpp.h"
 #include "im.h"
+//Added by qt3to4:
+#include <Q3PtrList>
 
 class dlgJabberVCard;
 class JabberProtocol;
@@ -66,7 +68,7 @@ public:
 	 * Create custom context menu items for the contact
 	 * FIXME: implement manager version here?
 	 */
-	virtual QPtrList<KAction> *customContextMenuActions () = 0;
+	virtual Q3PtrList<KAction> *customContextMenuActions () = 0;
 
 	/**
 	 * Serialize contact

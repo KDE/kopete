@@ -21,6 +21,9 @@
 #include <sys/utsname.h>
 
 #include <qvalidator.h>
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <Q3PtrList>
 
 #include <kaboutdata.h>
 #include <kapplication.h>
@@ -187,7 +190,7 @@ GroupWiseChatSession * GroupWiseAccount::chatSession( Kopete::ContactPtrList oth
 GroupWiseChatSession * GroupWiseAccount::findChatSessionByGuid( const GroupWise::ConferenceGuid & guid )
 {
 	GroupWiseChatSession * chatSession = 0;
-	QValueList<GroupWiseChatSession *>::ConstIterator it;
+	Q3ValueList<GroupWiseChatSession *>::ConstIterator it;
 	for ( it = m_chatSessions.begin(); it != m_chatSessions.end(); ++it )
 	{
 		if ( (*it)->guid() == guid )
@@ -201,7 +204,7 @@ GroupWiseChatSession * GroupWiseAccount::findChatSessionByGuid( const GroupWise:
 
 GroupWiseContact * GroupWiseAccount::contactForDN( const QString & dn )
 {
-	QDictIterator<Kopete::Contact> it( contacts() );
+	Q3DictIterator<Kopete::Contact> it( contacts() );
 	// check if we have a DN for them
 	for( ; it.current(); ++it )
 	{
@@ -487,7 +490,7 @@ void GroupWiseAccount::reconcileOfflineChanges()
 	//             // affecting other protocols' contacts
 	//       	set flag to warn user that incompatible changes were made on other client
 	bool conflicts = false;
-	QDictIterator<Kopete::Contact> it( contacts() );
+	Q3DictIterator<Kopete::Contact> it( contacts() );
 	for ( ; it.current(); ++it )
 	{
 		if ( *it == myself() )
@@ -495,11 +498,11 @@ void GroupWiseAccount::reconcileOfflineChanges()
 
 		GroupWiseContact * c = static_cast< GroupWiseContact *>( *it );
 		GWContactInstanceList instances = m_serverListModel->instancesWithDn( c->dn() );
-		QPtrList<Kopete::Group> groups = c->metaContact()->groups();
-		QPtrListIterator<Kopete::Group> grpIt( groups );
+		Q3PtrList<Kopete::Group> groups = c->metaContact()->groups();
+		Q3PtrListIterator<Kopete::Group> grpIt( groups );
 		while ( *grpIt )
 		{
-			QPtrListIterator<Kopete::Group> candidate = grpIt;
+			Q3PtrListIterator<Kopete::Group> candidate = grpIt;
 			++grpIt;
 			bool found = false;
 			GWContactInstanceList::Iterator instIt = instances.begin();
@@ -836,7 +839,7 @@ void GroupWiseAccount::receiveFolder( const FolderItem & folder )
 
 	// either find a local group and record these details there, or create a new group to suit
 	Kopete::Group * found = 0;
-	QPtrList<Kopete::Group> groupList = Kopete::ContactList::self()->groups();
+	Q3PtrList<Kopete::Group> groupList = Kopete::ContactList::self()->groups();
 	for ( Kopete::Group *grp = groupList.first(); grp; grp = groupList.next() )
 	{
 		// see if there is already a local group that matches this group
@@ -1067,7 +1070,7 @@ bool GroupWiseAccount::createContact( const QString& contactId, Kopete::MetaCont
 	// record, in a folderitem, their display names and groupwise object id
 	// Set object id to 0 if not found - they do not exist on the server
 	bool topLevel = false;
-	QValueList< FolderItem > folders;
+	Q3ValueList< FolderItem > folders;
 	Kopete::GroupList groupList = parentContact->groups();
 	for ( Kopete::Group *group = groupList.first(); group; group = groupList.next() )
 	{
@@ -1242,7 +1245,7 @@ void GroupWiseAccount::receiveConferenceJoin( const GroupWise::ConferenceGuid & 
 	Kopete::ContactPtrList others;
 	GroupWiseChatSession * sess = chatSession( others, guid, Kopete::Contact::CanCreate);
 	// find each contact and add them to the GWMM, and tell them they are in the conference
-	for ( QValueList<QString>::ConstIterator it = participants.begin(); it != participants.end(); ++it )
+	for ( Q3ValueList<QString>::ConstIterator it = participants.begin(); it != participants.end(); ++it )
 	{
 		GroupWiseContact * c = contactForDN( *it );
 		if ( c )
@@ -1253,7 +1256,7 @@ void GroupWiseAccount::receiveConferenceJoin( const GroupWise::ConferenceGuid & 
 			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a contact for participant DN: " << *it << endl;
 	}
 	// add each invitee too
-	for ( QValueList<QString>::ConstIterator it = invitees.begin(); it != invitees.end(); ++it )
+	for ( Q3ValueList<QString>::ConstIterator it = invitees.begin(); it != invitees.end(); ++it )
 	{
 		GroupWiseContact * c = contactForDN( *it );
 		if ( c )
@@ -1390,7 +1393,7 @@ void GroupWiseAccount::dumpManagers()
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " for: " << accountId()
 		<< " containing: " << m_chatSessions.count() << " managers " << endl;
-	QValueList<GroupWiseChatSession *>::ConstIterator it;
+	Q3ValueList<GroupWiseChatSession *>::ConstIterator it;
 	for ( it = m_chatSessions.begin() ; it != m_chatSessions.end(); ++it )
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "guid: " << (*it)->guid() << endl;
 }
@@ -1430,16 +1433,16 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 		int nextFreeSequence = m_serverListModel->maxSequenceNumber() + 1;
 		// 1)
 		// make a list of all the groups the metacontact is in
-		QPtrList<Kopete::Group> groupList = contact->metaContact()->groups();
+		Q3PtrList<Kopete::Group> groupList = contact->metaContact()->groups();
 		// make a list of all the groups this contact is in, according to the server model
 		GWContactInstanceList instances = m_serverListModel->instancesWithDn( contact->dn() );
 
 		// seek corresponding pairs in both lists and remove
 		// ( for each group )
-		QPtrListIterator< Kopete::Group > grpIt( groupList );
+		Q3PtrListIterator< Kopete::Group > grpIt( groupList );
 		while ( *grpIt )
 		{
-			QPtrListIterator< Kopete::Group > candidateGrp( groupList );
+			Q3PtrListIterator< Kopete::Group > candidateGrp( groupList );
 			candidateGrp = grpIt;
 			++grpIt;
 	
@@ -1472,7 +1475,7 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 		// ( take the first pair and carry out a move )
 		while ( *grpIt && !instances.isEmpty() )
 		{
-			QPtrListIterator< Kopete::Group > candidateGrp( groupList );
+			Q3PtrListIterator< Kopete::Group > candidateGrp( groupList );
 			candidateGrp = grpIt;
 			++grpIt;
 			GWContactInstanceList::Iterator instIt = instances.begin();
@@ -1520,7 +1523,7 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 		grpIt.toFirst();
 		while ( *grpIt )
 		{
-			QPtrListIterator< Kopete::Group > candidateGrp( groupList );
+			Q3PtrListIterator< Kopete::Group > candidateGrp( groupList );
 			candidateGrp = grpIt;
 			++grpIt;
 			GWFolder * destinationFolder = m_serverListModel->findFolderByName( ( ( *candidateGrp )->displayName() ) );
@@ -1576,7 +1579,7 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 			const GWContactInstanceList::Iterator end = instances.end();
 			for ( ; it != end; ++it )
 			{
-				QValueList< ContactItem > instancesToChange;
+				Q3ValueList< ContactItem > instancesToChange;
 				ContactItem instance;
 				instance.id = (*it)->id;
 				instance.parentId = ::qt_cast<GWFolder *>( (*it)->parent() )->id;

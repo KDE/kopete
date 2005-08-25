@@ -23,6 +23,8 @@
 
 #include <qobject.h>
 #include <qstring.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include <ktempfile.h>
 
@@ -71,7 +73,7 @@ private:
 	static LatexPlugin* s_pluginStatic;
 	QString m_convScript;
 	bool mMagickNotFoundShown;
-	QPtrList<KTempFile> m_tempFiles;
+	Q3PtrList<KTempFile> m_tempFiles;
 };
 
 #endif

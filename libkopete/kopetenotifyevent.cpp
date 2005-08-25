@@ -16,6 +16,8 @@
 */
 
 #include <qdom.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include <kdebug.h>
 #include "kopetenotifyevent.h"
 #include "kopeteeventpresentation.h"
@@ -138,10 +140,10 @@ void Kopete::NotifyEvent::setSuppressCommon( const bool suppress )
 	m_suppressCommon = suppress;
 }
 
-const QValueList<QDomElement> Kopete::NotifyEvent::toXML() const
+const Q3ValueList<QDomElement> Kopete::NotifyEvent::toXML() const
 {
 	QDomDocument eventData;
-	QValueList<QDomElement> eventNodes;
+	Q3ValueList<QDomElement> eventNodes;
 	if ( m_sound && !m_sound->content().isEmpty() )
 	{
 		QDomElement soundElmt = eventData.createElement( QString::fromLatin1( "sound-presentation" ) );

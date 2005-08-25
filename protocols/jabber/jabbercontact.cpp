@@ -22,7 +22,9 @@
 
 #include <qtimer.h>
 #include <qdatetime.h>
-#include <qstylesheet.h>
+#include <q3stylesheet.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -107,10 +109,10 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 	mRequestComposingEvent = false;
 }
 
-QPtrList<KAction> *JabberContact::customContextMenuActions ()
+Q3PtrList<KAction> *JabberContact::customContextMenuActions ()
 {
 
-	QPtrList<KAction> *actionCollection = new QPtrList<KAction>();
+	Q3PtrList<KAction> *actionCollection = new Q3PtrList<KAction>();
 
 	KActionMenu *actionAuthorization = new KActionMenu ( i18n ("Authorization"), "connect_established", this, "jabber_authorization");
 
@@ -182,7 +184,7 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 				 * Select icon, using bestResource() without lock for the automatic entry
 				 * and the resources' respective status icons for the rest.
 				 */
-				QIconSet iconSet ( !i ?
+				QIcon iconSet ( !i ?
 					protocol()->resourceToKOS ( account()->resourcePool()->bestResource ( mRosterItem.jid(), false ) ).iconFor ( account () ) : protocol()->resourceToKOS ( *availableResources.find(*it) ).iconFor ( account () ));
 
 				actionSelectResource->insert ( new KAction( ( *it ), iconSet, 0, this, SLOT( slotSelectResource() ),
@@ -303,7 +305,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 
 		for ( XMPP::UrlList::const_iterator it = urlList.begin (); it != urlList.end (); ++it )
 		{
-			QString description = (*it).desc().isEmpty() ? (*it).url() : QStyleSheet::escape ( (*it).desc() );
+			QString description = (*it).desc().isEmpty() ? (*it).url() : Q3StyleSheet::escape ( (*it).desc() );
 			QString url = (*it).url ();
 
 			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList,

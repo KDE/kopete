@@ -24,6 +24,10 @@
 #include <qdatetime.h>
 #include <qdom.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <QTextStream>
+#include <Q3PtrList>
+#include <Q3ValueList>
 
 #include <kdebug.h>
 #include <kstandarddirs.h>
@@ -175,7 +179,7 @@ QDomDocument HistoryLogger::getDocument(const Kopete::Contact *c, const QDate da
 	QDomDocument doc( "Kopete-History" );
 
 	QFile file( FileName );
-	if ( !file.open( IO_ReadOnly ) )
+	if ( !file.open( QIODevice::ReadOnly ) )
 	{
 		if(contain)
 			*contain=false;
@@ -207,7 +211,7 @@ void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Co
 	const Kopete::Contact *c = ct;
 	if(!c && msg.manager() )
 	{
-		QPtrList<Kopete::Contact> mb=msg.manager()->members() ;
+		Q3PtrList<Kopete::Contact> mb=msg.manager()->members() ;
 		c = mb.first();
 	}
 	if(!c)  //If the contact is still not initialized, use the message author.
@@ -331,14 +335,14 @@ void HistoryLogger::saveToDisk()
 
 }
 
-QValueList<Kopete::Message> HistoryLogger::readMessages(QDate date)
+Q3ValueList<Kopete::Message> HistoryLogger::readMessages(QDate date)
 {
 	QRegExp rxTime("(\\d+) (\\d+):(\\d+)($|:)(\\d*)"); //(with a 0.7.x compatibility)
-	QValueList<Kopete::Message> messages;
+	Q3ValueList<Kopete::Message> messages;
 
 
-	QPtrList<Kopete::Contact> ct=m_metaContact->contacts();
-	QPtrListIterator<Kopete::Contact> it( ct );
+	Q3PtrList<Kopete::Contact> ct=m_metaContact->contacts();
+	Q3PtrListIterator<Kopete::Contact> it( ct );
 
 	for( ; it.current(); ++it )
 	{
@@ -382,7 +386,7 @@ QValueList<Kopete::Message> HistoryLogger::readMessages(QDate date)
 				
 
 					// We insert it at the good place, given its date
- 					QValueListIterator<Kopete::Message> msgIt;
+ 					Q3ValueListIterator<Kopete::Message> msgIt;
 					
 					for (msgIt = messages.begin(); msgIt != messages.end(); ++msgIt)
 					{
@@ -400,12 +404,12 @@ QValueList<Kopete::Message> HistoryLogger::readMessages(QDate date)
 	return messages;
 }
 
-QValueList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
+Q3ValueList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
 	const Kopete::Contact *c, Sens sens, bool reverseOrder, bool colorize)
 {
 	//QDate dd =  QDate::currentDate().addMonths(0-m_currentMonth);
 
-	QValueList<Kopete::Message> messages;
+	Q3ValueList<Kopete::Message> messages;
 
 	// A regexp useful for this function
 	QRegExp rxTime("(\\d+) (\\d+):(\\d+)($|:)(\\d*)"); //(with a 0.7.x compatibility)
@@ -461,8 +465,8 @@ QValueList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
 
 		if(!c && m_metaContact->contacts().count()>1)
 		{ //we have to merge the differents subcontact history
-			QPtrList<Kopete::Contact> ct=m_metaContact->contacts();
-			QPtrListIterator<Kopete::Contact> it( ct );
+			Q3PtrList<Kopete::Contact> ct=m_metaContact->contacts();
+			Q3PtrListIterator<Kopete::Contact> it( ct );
 			for( ; it.current(); ++it )
 			{ //we loop over each contact. we are searching the contact with the next message with the smallest date,
 			  // it will becomes our current contact, and the contact with the mext message with the second smallest
@@ -763,8 +767,8 @@ unsigned int HistoryLogger::getFirstMonth()
 		return 0;
 
 	int m=0;
-	QPtrList<Kopete::Contact> contacts=m_metaContact->contacts();
-	QPtrListIterator<Kopete::Contact> it( contacts );
+	Q3PtrList<Kopete::Contact> contacts=m_metaContact->contacts();
+	Q3PtrListIterator<Kopete::Contact> it( contacts );
 	for( ; it.current(); ++it )
 	{
 		int m2=getFirstMonth(*it);
@@ -806,21 +810,21 @@ bool HistoryLogger::filterRegExp() const
 	return m_filterRegExp;
 }
 
-QValueList<int> HistoryLogger::getDaysForMonth(QDate date)
+Q3ValueList<int> HistoryLogger::getDaysForMonth(QDate date)
 {
 	QRegExp rxTime("time=\"(\\d+) \\d+:\\d+(:\\d+)?\""); //(with a 0.7.x compatibility)
 
-	QValueList<int> dayList;
+	Q3ValueList<int> dayList;
 
-	QPtrList<Kopete::Contact> contacts = m_metaContact->contacts();
-	QPtrListIterator<Kopete::Contact> it(contacts);
+	Q3PtrList<Kopete::Contact> contacts = m_metaContact->contacts();
+	Q3PtrListIterator<Kopete::Contact> it(contacts);
 
 	int lastDay=0;
 	for(; it.current(); ++it)
 	{
 //		kdDebug() << getFileName(*it, date) << endl;
 		QFile file(getFileName(*it, date));
-		if(!file.open(IO_ReadOnly))
+		if(!file.open(QIODevice::ReadOnly))
 		{
 			continue;
 		}

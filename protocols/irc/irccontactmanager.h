@@ -18,10 +18,12 @@
 #ifndef IRCCONTACTMANAGER_H
 #define IRCCONTACTMANAGER_H
 
-#include <qdict.h>
+#include <q3dict.h>
 #include <qobject.h>
 #include <qstring.h>
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 class IRCContact;
 class IRCAccount;
@@ -73,7 +75,7 @@ class IRCContactManager
 		IRCContact *findContact(const QString &nick, Kopete::MetaContact *m=0);
 		IRCContact *existContact( const QString &id ) const;
 
-		QValueList<IRCChannelContact*> findChannelsByMember( IRCUserContact *contact );
+		Q3ValueList<IRCChannelContact*> findChannelsByMember( IRCUserContact *contact );
 
 		static IRCContact *existContact(const KIRC::Engine *engine, const QString &nick);
 
@@ -98,8 +100,8 @@ class IRCContactManager
 		void slotContactAdded( Kopete::MetaContact *contact );
 
 	private:
-		QDict<IRCChannelContact> m_channels;
-		QDict<IRCUserContact> m_users;
+		Q3Dict<IRCChannelContact> m_channels;
+		Q3Dict<IRCUserContact> m_users;
 
 		IRCAccount *m_account;
 		IRCServerContact *m_myServer;

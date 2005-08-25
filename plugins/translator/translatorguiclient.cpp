@@ -18,6 +18,8 @@
 */
 
 #include <qvariant.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include <kdebug.h>
 #include <kaction.h>
@@ -63,7 +65,7 @@ void TranslatorGUIClient::slotTranslateChat()
 	QString src_lang = TranslatorPlugin::plugin()->m_myLang;
 	QString dst_lang;
 
-	QPtrList<Kopete::Contact> list = m_manager->members();
+	Q3PtrList<Kopete::Contact> list = m_manager->members();
 	Kopete::MetaContact *to = list.first()->metaContact();
 	dst_lang = to->pluginData( TranslatorPlugin::plugin(), "languageKey" );
 	if ( dst_lang.isEmpty() || dst_lang == "null" )

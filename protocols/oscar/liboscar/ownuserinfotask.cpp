@@ -16,7 +16,7 @@
     *************************************************************************
 */
 #include "ownuserinfotask.h"
-#include <qcstring.h>
+#include <q3cstring.h>
 #include <kdebug.h>
 #include "buffer.h"
 #include "connection.h"

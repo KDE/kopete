@@ -42,7 +42,7 @@ SMPPPDCSPreferences::SMPPPDCSPreferences(QWidget * parent, const char * /* name 
  	Kopete::AccountManager * manager = Kopete::AccountManager::self(); 
 	m_ui = new SMPPPDCSPrefs(this);
 
-	for(QPtrListIterator<Kopete::Account> it(manager->accounts()); it.current(); ++it)
+	for(Q3PtrListIterator<Kopete::Account> it(manager->accounts()); it.current(); ++it)
 	{
 		QString protoName;
 		QRegExp rex("(.*)Protocol");
@@ -52,8 +52,8 @@ SMPPPDCSPreferences::SMPPPDCSPreferences(QWidget * parent, const char * /* name 
 			protoName = (*it)->protocol()->pluginId();
 		}
 		
-		QCheckListItem * cli = new QCheckListItem(m_ui->accountList, 
-			(*it)->accountId() + " (" + protoName + ")", QCheckListItem::CheckBox);
+		Q3CheckListItem * cli = new Q3CheckListItem(m_ui->accountList, 
+			(*it)->accountId() + " (" + protoName + ")", Q3CheckListItem::CheckBox);
 		cli->setPixmap(0, (*it)->accountIcon());
 		
 		m_accountMapOld[cli->text(0)] = AccountPrivMap(FALSE, (*it)->protocol()->pluginId() + "_" + (*it)->accountId());
@@ -65,7 +65,7 @@ SMPPPDCSPreferences::SMPPPDCSPreferences(QWidget * parent, const char * /* name 
 	autoConfig()->addWidget(m_ui->tabWidget->page(0), CONFIGGROUP);
 	setMainWidget(m_ui, CONFIGGROUP);
 
-	connect(m_ui->accountList, SIGNAL(clicked(QListViewItem *)), this, SLOT(listClicked(QListViewItem *)));
+	connect(m_ui->accountList, SIGNAL(clicked(Q3ListViewItem *)), this, SLOT(listClicked(Q3ListViewItem *)));
 	
 	load();
 }
@@ -74,9 +74,9 @@ SMPPPDCSPreferences::~SMPPPDCSPreferences() {
 	delete m_ui;
 }
 
-void SMPPPDCSPreferences::listClicked(QListViewItem * item)
+void SMPPPDCSPreferences::listClicked(Q3ListViewItem * item)
 {
-	QCheckListItem * cli = dynamic_cast<QCheckListItem *>(item);
+	Q3CheckListItem * cli = dynamic_cast<Q3CheckListItem *>(item);
 	
 	if(cli->isOn() != m_accountMapCur[cli->text(0)].m_on) {
 		AccountMap::iterator itOld = m_accountMapOld.begin();
@@ -96,9 +96,9 @@ void SMPPPDCSPreferences::listClicked(QListViewItem * item)
 
 void SMPPPDCSPreferences::defaults()
 {
-	QListViewItemIterator it(m_ui->accountList);
+	Q3ListViewItemIterator it(m_ui->accountList);
 	while(it.current()) {
-		QCheckListItem * cli = dynamic_cast<QCheckListItem *>(it.current());
+		Q3CheckListItem * cli = dynamic_cast<Q3CheckListItem *>(it.current());
 		cli->setOn(FALSE);
 		++it;
 	}
@@ -113,9 +113,9 @@ void SMPPPDCSPreferences::load()
 	
 	QRegExp rex("^(.*) \\((.*)\\)");
 	QStringList list = config->readListEntry("ignoredAccounts");
-	QListViewItemIterator it(m_ui->accountList);
+	Q3ListViewItemIterator it(m_ui->accountList);
 	while(it.current()) {
-		QCheckListItem * cli = dynamic_cast<QCheckListItem *>(it.current());
+		Q3CheckListItem * cli = dynamic_cast<Q3CheckListItem *>(it.current());
 		if(rex.search(cli->text(0)) > -1) {
 			bool isOn = list.contains(rex.cap(2) + "Protocol_" + rex.cap(1));
 			// m_accountMapOld[cli->text(0)].m_on = isOn;
@@ -134,10 +134,10 @@ void SMPPPDCSPreferences::save()
 	config->setGroup(CONFIGGROUP);
 	
 	QStringList list;
-	QListViewItemIterator it(m_ui->accountList);
+	Q3ListViewItemIterator it(m_ui->accountList);
 	while(it.current()) {
 	
-		QCheckListItem * cli = dynamic_cast<QCheckListItem *>(it.current());
+		Q3CheckListItem * cli = dynamic_cast<Q3CheckListItem *>(it.current());
 		if(cli->isOn()) {
 			list.append(m_accountMapCur[cli->text(0)].m_id);
 		}

@@ -22,9 +22,11 @@
 
 #include<qhostaddress.h>
 #include<qstringlist.h>
-#include<qptrlist.h>
-#include<qvaluelist.h>
+#include<q3ptrlist.h>
+#include<q3valuelist.h>
 #include<qca.h>
+//Added by qt3to4:
+#include <Q3CString>
 #include<stdlib.h>
 #include"base64.h"
 
@@ -33,17 +35,17 @@ namespace XMPP
 
 struct Prop
 {
-	QCString var, val;
+	Q3CString var, val;
 };
 
-class PropList : public QValueList<Prop>
+class PropList : public Q3ValueList<Prop>
 {
 public:
-	PropList() : QValueList<Prop>()
+	PropList() : Q3ValueList<Prop>()
 	{
 	}
 
-	void set(const QCString &var, const QCString &val)
+	void set(const Q3CString &var, const Q3CString &val)
 	{
 		Prop p;
 		p.var = var;
@@ -51,18 +53,18 @@ public:
 		append(p);
 	}
 
-	QCString get(const QCString &var)
+	Q3CString get(const Q3CString &var)
 	{
 		for(ConstIterator it = begin(); it != end(); ++it) {
 			if((*it).var == var)
 				return (*it).val;
 		}
-		return QCString();
+		return Q3CString();
 	}
 
-	QCString toString() const
+	Q3CString toString() const
 	{
-		QCString str;
+		Q3CString str;
 		bool first = true;
 		for(ConstIterator it = begin(); it != end(); ++it) {
 			if(!first)
@@ -73,7 +75,7 @@ public:
 		return str;
 	}
 
-	bool fromString(const QCString &str)
+	bool fromString(const Q3CString &str)
 	{
 		PropList list;
 		int at = 0;
@@ -81,7 +83,7 @@ public:
 			int n = str.find('=', at);
 			if(n == -1)
 				break;
-			QCString var, val;
+			Q3CString var, val;
 			var = str.mid(at, n-at);
 			at = n + 1;
 			if(str[at] == '\"') {
@@ -122,7 +124,7 @@ public:
 		return true;
 	}
 
-	int varCount(const QCString &var)
+	int varCount(const Q3CString &var)
 	{
 		int n = 0;
 		for(ConstIterator it = begin(); it != end(); ++it) {
@@ -132,7 +134,7 @@ public:
 		return n;
 	}
 
-	QStringList getValues(const QCString &var)
+	QStringList getValues(const Q3CString &var)
 	{
 		QStringList list;
 		for(ConstIterator it = begin(); it != end(); ++it) {
@@ -349,7 +351,7 @@ public:
 				return NeedParams;
 
 			// get props
-			QCString cs(in_buf.data(), in_buf.size()+1);
+			Q3CString cs(in_buf.data(), in_buf.size()+1);
 			PropList in;
 			if(!in.fromString(cs)) {
 				err = QCA::SASL::BadProto;
@@ -360,27 +362,27 @@ public:
 			QByteArray a(32);
 			for(int n = 0; n < (int)a.size(); ++n)
 				a[n] = (char)(256.0*rand()/(RAND_MAX+1.0));
-			QCString cnonce = Base64::arrayToString(a).latin1();
+			Q3CString cnonce = Base64::arrayToString(a).latin1();
 
 			// make other variables
 			realm = host;
-			QCString nonce = in.get("nonce");
-			QCString nc = "00000001";
-			QCString uri = service.utf8() + '/' + host.utf8();
-			QCString qop = "auth";
+			Q3CString nonce = in.get("nonce");
+			Q3CString nc = "00000001";
+			Q3CString uri = service.utf8() + '/' + host.utf8();
+			Q3CString qop = "auth";
 
 			// build 'response'
-			QCString X = user.utf8() + ':' + realm.utf8() + ':' + pass.utf8();
+			Q3CString X = user.utf8() + ':' + realm.utf8() + ':' + pass.utf8();
 			QByteArray Y = QCA::MD5::hash(X);
-			QCString tmp = QCString(":") + nonce + ':' + cnonce + ':' + authz.utf8();
+			Q3CString tmp = Q3CString(":") + nonce + ':' + cnonce + ':' + authz.utf8();
 			QByteArray A1(Y.size() + tmp.length());
 			memcpy(A1.data(), Y.data(), Y.size());
 			memcpy(A1.data() + Y.size(), tmp.data(), tmp.length());
-			QCString A2 = "AUTHENTICATE:" + uri;
-			QCString HA1 = QCA::MD5::hashToString(A1).latin1();
-			QCString HA2 = QCA::MD5::hashToString(A2).latin1();
-			QCString KD = HA1 + ':' + nonce + ':' + nc + ':' + cnonce + ':' + qop + ':' + HA2;
-			QCString Z = QCA::MD5::hashToString(KD).latin1();
+			Q3CString A2 = "AUTHENTICATE:" + uri;
+			Q3CString HA1 = QCA::MD5::hashToString(A1).latin1();
+			Q3CString HA2 = QCA::MD5::hashToString(A2).latin1();
+			Q3CString KD = HA1 + ':' + nonce + ':' + nc + ':' + cnonce + ':' + qop + ':' + HA2;
+			Q3CString Z = QCA::MD5::hashToString(KD).latin1();
 
 			// build output
 			PropList out;
@@ -396,7 +398,7 @@ public:
 			out.set("response", Z);
 			out.set("charset", "utf-8");
 			out.set("authzid", authz.utf8());
-			QCString s = out.toString();
+			Q3CString s = out.toString();
 
 			// done
 			out_buf.resize(s.length());

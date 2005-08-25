@@ -39,7 +39,7 @@ Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 	m_bytes = 0;
 	//m_din = new QDataStream( wire, IO_ReadOnly );
 	QBuffer inBuf( wire );
-	inBuf.open( IO_ReadOnly); 
+	inBuf.open( QIODevice::ReadOnly); 
 	m_din.setDevice( &inBuf );
 	m_din.setByteOrder( QDataStream::LittleEndian );
 	Q_UINT32 type;

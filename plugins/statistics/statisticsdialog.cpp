@@ -16,10 +16,10 @@
 
 #include <qtabwidget.h>
 #include <qwidget.h>
-#include <qhbox.h>
+#include <q3hbox.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qtextedit.h>
+#include <q3textedit.h>
 #include <qcombobox.h>
 #include <qstring.h>
 
@@ -51,7 +51,7 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 	setMinimumHeight(400);
 	adjustSize();
 
-	QHBox *hbox = new QHBox(this);
+	Q3HBox *hbox = new Q3HBox(this);
 	
 	generalHTMLPart = new KHTMLPart(hbox);
 	connect ( generalHTMLPart->browserExtension(), SIGNAL( openURLRequestDelayed( const KURL &, const KParts::URLArgs & ) ),

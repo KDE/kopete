@@ -23,7 +23,7 @@
 
 #include <kwizard.h>
 
-class QListViewItem;
+class Q3ListViewItem;
 
 class KPluginInfo;
 
@@ -47,8 +47,8 @@ public:
 	AddAccountWizard( QWidget *parent = 0, const char *name = 0 , bool modal = false );
 
 private slots:
-	void slotProtocolListClicked( QListViewItem *item );
-	void slotProtocolListDoubleClicked( QListViewItem *lvi );
+	void slotProtocolListClicked( Q3ListViewItem *item );
+	void slotProtocolListDoubleClicked( Q3ListViewItem *lvi );
 
 protected slots:
 	virtual void back();
@@ -57,7 +57,7 @@ protected slots:
 	virtual void reject();
 
 private:
-	QMap<QListViewItem *, KPluginInfo *>  m_protocolItems;
+	QMap<Q3ListViewItem *, KPluginInfo *>  m_protocolItems;
 	KopeteEditAccountWidget              *m_accountPage;
 	AddAccountWizardPage1                *m_selectService;
 	AddAccountWizardPage2                *m_finish;

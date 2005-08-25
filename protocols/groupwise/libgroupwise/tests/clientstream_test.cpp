@@ -1,4 +1,6 @@
 #include "clientstream_test.h"
+//Added by qt3to4:
+#include <Q3CString>
 
 ClientStreamTest::ClientStreamTest(int argc, char ** argv) : QApplication( argc, argv )
 {
@@ -58,7 +60,7 @@ void ClientStreamTest::slotsend(int layer)
 	// we're not connecting...
 	qDebug( "sending request" );
 	// send a request
-	QCString command("login");
+	Q3CString command("login");
 	Request * firstRequest = testFactory.request( command );
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( NM_A_SZ_USERID, 0, NMFIELD_TYPE_UTF8, "maeuschen" ) );

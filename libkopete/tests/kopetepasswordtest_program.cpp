@@ -28,7 +28,7 @@
 #include <kglobal.h>
 #include <kstandarddirs.h>
 
-static QTextStream _out( stdout, IO_WriteOnly );
+static QTextStream _out( stdout, QIODevice::WriteOnly );
 
 static KCmdLineOptions opts[] =
 {

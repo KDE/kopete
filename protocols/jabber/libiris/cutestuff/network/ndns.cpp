@@ -51,9 +51,13 @@
 #include"ndns.h"
 
 #include<qapplication.h>
-#include<qsocketdevice.h>
-#include<qptrlist.h>
+#include<q3socketdevice.h>
+#include<q3ptrlist.h>
 #include<qeventloop.h>
+//Added by qt3to4:
+#include <QCustomEvent>
+#include <QEvent>
+#include <Q3CString>
 
 #ifdef Q_OS_UNIX
 #include<netdb.h>
@@ -81,7 +85,7 @@ public:
 class NDnsWorker : public QThread
 {
 public:
-	NDnsWorker(QObject *, const QCString &);
+	NDnsWorker(QObject *, const Q3CString &);
 
 	bool success;
 	bool cancelled;
@@ -91,7 +95,7 @@ protected:
 	void run();
 
 private:
-	QCString host;
+	Q3CString host;
 	QObject *par;
 };
 //! \endif
@@ -118,7 +122,7 @@ class NDnsManager::Private
 public:
 	Item *find(const NDns *n)
 	{
-		QPtrListIterator<Item> it(list);
+		Q3PtrListIterator<Item> it(list);
 		for(Item *i; (i = it.current()); ++it) {
 			if(i->ndns == n)
 				return i;
@@ -128,7 +132,7 @@ public:
 
 	Item *find(const NDnsWorker *w)
 	{
-		QPtrListIterator<Item> it(list);
+		Q3PtrListIterator<Item> it(list);
 		for(Item *i; (i = it.current()); ++it) {
 			if(i->worker == w)
 				return i;
@@ -136,7 +140,7 @@ public:
 		return 0;
 	}
 
-	QPtrList<Item> list;
+	Q3PtrList<Item> list;
 };
 
 NDnsManager::NDnsManager()
@@ -149,7 +153,7 @@ NDnsManager::NDnsManager()
 #ifdef Q_OS_WIN32
 	if(!winsock_init) {
 		winsock_init = true;
-		QSocketDevice *sd = new QSocketDevice;
+		Q3SocketDevice *sd = new Q3SocketDevice;
 		delete sd;
 	}
 #endif
@@ -331,7 +335,7 @@ NDnsWorkerEvent::NDnsWorkerEvent(NDnsWorker *p)
 //----------------------------------------------------------------------------
 // NDnsWorker
 //----------------------------------------------------------------------------
-NDnsWorker::NDnsWorker(QObject *_par, const QCString &_host)
+NDnsWorker::NDnsWorker(QObject *_par, const Q3CString &_host)
 {
 	success = cancelled = false;
 	par = _par;

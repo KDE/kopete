@@ -31,7 +31,7 @@
 #include "kopeteaway.h"
 #include <kinputdialog.h>
 #include <kmessagebox.h>
-#include <qdict.h>
+#include <q3dict.h>
 
 MeanwhileAccount::MeanwhileAccount(
                         MeanwhileProtocol *parent,

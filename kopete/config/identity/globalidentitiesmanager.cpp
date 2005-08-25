@@ -20,6 +20,8 @@
 #include <qdom.h>
 #include <qfile.h>
 #include <qtextstream.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 // KDE includes
 #include <kdebug.h>
@@ -133,7 +135,7 @@ void GlobalIdentitiesManager::loadXML()
 	QDomDocument globalIdentitiesList( QString::fromUtf8( "kopete-global-identities-list" ) );
 	
 	QFile globalIdentitiesListFile( filename );
-	globalIdentitiesListFile.open( IO_ReadOnly );
+	globalIdentitiesListFile.open( QIODevice::ReadOnly );
 	globalIdentitiesList.setContent( &globalIdentitiesListFile );
 
 	QDomElement list = globalIdentitiesList.documentElement();
@@ -216,11 +218,11 @@ const QDomDocument GlobalIdentitiesManager::toXML()
 Kopete::MetaContact *GlobalIdentitiesManager::createNewMetaContact()
 {
 	Kopete::MetaContact *newMetaContact = new Kopete::MetaContact();
-	QPtrList<Kopete::Contact> contactList = Kopete::ContactList::self()->myself()->contacts();
+	Q3PtrList<Kopete::Contact> contactList = Kopete::ContactList::self()->myself()->contacts();
 
 	// Copy the contacts list to the new metacontact, so Kopete::Contact for SourceContact
 	// will not be null.
-	QPtrListIterator<Kopete::Contact> it( contactList);
+	Q3PtrListIterator<Kopete::Contact> it( contactList);
 	for ( ; it.current(); ++it )
 	{
 		newMetaContact->addContact(it.current());

@@ -33,8 +33,8 @@ void SendInviteTask::invite( const GroupWise::ConferenceGuid & guid, const QStri
 	Field::FieldList lst, tmp;
 	tmp.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, guid ) );
 	lst.append( new Field::MultiField( NM_A_FA_CONVERSATION, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, tmp ) );
-	QValueListConstIterator<QString> end = invitees.end();
-	for ( QValueListConstIterator<QString> it = invitees.begin(); it != end; ++it )
+	Q3ValueListConstIterator<QString> end = invitees.end();
+	for ( Q3ValueListConstIterator<QString> it = invitees.begin(); it != end; ++it )
 		lst.append( new Field::SingleField( NM_A_SZ_DN, 0, NMFIELD_TYPE_DN, *it ) );
 	if ( !msg.message.isEmpty() )
 		lst.append( new Field::SingleField( NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, msg.message ) );

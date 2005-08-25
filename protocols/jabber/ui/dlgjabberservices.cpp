@@ -22,7 +22,7 @@
 
 #include <qpushbutton.h>
 #include <qlineedit.h>
-#include <qtable.h>
+#include <q3table.h>
 
 #include "jabberaccount.h"
 #include "jabberclient.h"
@@ -57,7 +57,7 @@ dlgJabberServices::dlgJabberServices (JabberAccount *account, QWidget *parent, c
 	tblServices->setColumnStretchable (1, true);
 
 	// disable user selections
-	tblServices->setSelectionMode (QTable::NoSelection);
+	tblServices->setSelectionMode (Q3Table::NoSelection);
 
 	// name table headers
 	tblServices->horizontalHeader ()->setLabel (0, i18n ("Name"));
@@ -81,7 +81,7 @@ void dlgJabberServices::slotSetSelection (int row, int, int, const QPoint &)
 	if(serviceTask && (uint(row) <= serviceTask->agents().count()))
 	{
 		tblServices->clearSelection (true);
-		tblServices->addSelection (QTableSelection (row, 0, row, 1));
+		tblServices->addSelection (Q3TableSelection (row, 0, row, 1));
 
 		// query the agent list about the selected item
 		btnRegister->setDisabled (!serviceTask->agents()[row].features().canRegister ());

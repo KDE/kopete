@@ -23,6 +23,8 @@
 
 #include<qstring.h>
 #include<qdom.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include"im.h"
 #include"xmpp_vcard.h"
@@ -271,7 +273,7 @@ namespace XMPP
 		~JT_Search();
 
 		const Form & form() const;
-		const QValueList<SearchResult> & results() const;
+		const Q3ValueList<SearchResult> & results() const;
 
 		void get(const Jid &);
 		void set(const Form &);

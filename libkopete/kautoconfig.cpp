@@ -21,8 +21,10 @@
 #include "kautoconfig.h"
 
 #include <kglobal.h>
-#include <qsqlpropertymap.h>
-#include <qobjectlist.h>
+#include <q3sqlpropertymap.h>
+#include <qobject.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 #include <kconfig.h>
 #include <kapplication.h>
 #include <kdeversion.h>
@@ -63,12 +65,12 @@ public:
   { init(); }
 
   // Widgets to parse
-  QPtrList<QWidget> widgets;
+  Q3PtrList<QWidget> widgets;
   // Name of the group that KConfig should be set to for each widget.
   QMap<QWidget*, QString> groups;
 
   // Child widgets of widgets to ignore
-  QPtrList<QWidget> ignore;
+  Q3PtrList<QWidget> ignore;
 
   // Reset to false after saveSettings returns true.
   bool changed;
@@ -79,11 +81,11 @@ public:
 #endif
 
   // Known widgets that can be configured
-  QMap<QWidget*, QPtrList<QWidget> > autoWidgets;
+  QMap<QWidget*, Q3PtrList<QWidget> > autoWidgets;
   // Default values for the widgets.
   QMap<QWidget*, QVariant> defaultValues;
   // Widgets to not get properties on (QLabel etc)
-  QAsciiDict<int> ignoreTheseWidgets;
+  Q3AsciiDict<int> ignoreTheseWidgets;
 
   void init(){
     ignoreTheseWidgets.insert("QLabel", new int(1));
@@ -119,7 +121,7 @@ void KAutoConfig::addWidget(QWidget *widget, const QString &group){
   functionCallPostOrderCheck("addWidget",);
   d->groups.insert(widget, group);
   d->widgets.append(widget);
-  QPtrList<QWidget> newAutoConfigWidget;
+  Q3PtrList<QWidget> newAutoConfigWidget;
   d->autoWidgets.insert(widget, newAutoConfigWidget );
 }
 
@@ -184,7 +186,7 @@ bool KAutoConfig::retrieveSettings(bool trackChanges){
   }
 
   // Go through all of the children of the widgets and find all known widgets
-  QPtrListIterator<QWidget> it( d->widgets );
+  Q3PtrListIterator<QWidget> it( d->widgets );
   QWidget *widget;
   bool usingDefaultValues = false;
   while ( (widget = it.current()) != 0 ) {
@@ -198,16 +200,16 @@ bool KAutoConfig::retrieveSettings(bool trackChanges){
 bool KAutoConfig::saveSettings() {
   functionCallPreOrderCheck("saveSettings", false);
 
-  QSqlPropertyMap *propertyMap = QSqlPropertyMap::defaultMap();
+  Q3SqlPropertyMap *propertyMap = Q3SqlPropertyMap::defaultMap();
   // Go through all of the widgets
-  QPtrListIterator<QWidget> it( d->widgets );
+  Q3PtrListIterator<QWidget> it( d->widgets );
   QWidget *widget;
   while ( (widget = it.current()) != 0 ) {
     ++it;
     config->setGroup(d->groups[widget]);
 
     // Go through the known autowidgets of this widget and save
-    QPtrListIterator<QWidget> it( d->autoWidgets[widget] );
+    Q3PtrListIterator<QWidget> it( d->autoWidgets[widget] );
     QWidget *groupWidget;
     bool widgetChanged = false;
     while ( (groupWidget = it.current()) != 0 ){
@@ -248,15 +250,15 @@ bool KAutoConfig::saveSettings() {
 bool KAutoConfig::hasChanged() const {
   functionCallPreOrderCheck("hasChanged", false);
 
-  QSqlPropertyMap *propertyMap = QSqlPropertyMap::defaultMap();
+  Q3SqlPropertyMap *propertyMap = Q3SqlPropertyMap::defaultMap();
   // Go through all of the widgets
-  QPtrListIterator<QWidget> it( d->widgets );
+  Q3PtrListIterator<QWidget> it( d->widgets );
   QWidget *widget;
   while ( (widget = it.current()) != 0 ) {
     ++it;
     config->setGroup(d->groups[widget]);
     // Go through the known autowidgets of this widget and save
-    QPtrListIterator<QWidget> it( d->autoWidgets[widget] );
+    Q3PtrListIterator<QWidget> it( d->autoWidgets[widget] );
     QWidget *groupWidget;
     while ( (groupWidget = it.current()) != 0 ){
       ++it;
@@ -277,15 +279,15 @@ bool KAutoConfig::hasChanged() const {
 bool KAutoConfig::isDefault() const {
   functionCallPreOrderCheck("isDefault", false);
 
-  QSqlPropertyMap *propertyMap = QSqlPropertyMap::defaultMap();
+  Q3SqlPropertyMap *propertyMap = Q3SqlPropertyMap::defaultMap();
   // Go through all of the widgets
-  QPtrListIterator<QWidget> it( d->widgets );
+  Q3PtrListIterator<QWidget> it( d->widgets );
   QWidget *widget;
   while ( (widget = it.current()) != 0 ) {
     ++it;
     config->setGroup(d->groups[widget]);
     // Go through the known autowidgets of this widget and save
-    QPtrListIterator<QWidget> it( d->autoWidgets[widget] );
+    Q3PtrListIterator<QWidget> it( d->autoWidgets[widget] );
     QWidget *groupWidget;
     while ( (groupWidget = it.current()) != 0 ){
       ++it;
@@ -303,16 +305,16 @@ bool KAutoConfig::isDefault() const {
 void KAutoConfig::resetSettings() const {
   functionCallPreOrderCheck("resetSettings",);
 
-  QSqlPropertyMap *propertyMap = QSqlPropertyMap::defaultMap();
+  Q3SqlPropertyMap *propertyMap = Q3SqlPropertyMap::defaultMap();
   // Go through all of the widgets
-  QPtrListIterator<QWidget> it( d->widgets );
+  Q3PtrListIterator<QWidget> it( d->widgets );
   QWidget *widget;
   while ( (widget = it.current()) != 0 ) {
     ++it;
     config->setGroup(d->groups[widget]);
 
     // Go through the known autowidgets of this widget and save
-    QPtrListIterator<QWidget> it( d->autoWidgets[widget] );
+    Q3PtrListIterator<QWidget> it( d->autoWidgets[widget] );
     QWidget *groupWidget;
     while ( (groupWidget = it.current()) != 0 ){
       ++it;
@@ -328,16 +330,16 @@ void KAutoConfig::resetSettings() const {
 void KAutoConfig::reloadSettings() const {
   functionCallPreOrderCheck("reloadSettings", );
 
-  QSqlPropertyMap *propertyMap = QSqlPropertyMap::defaultMap();
+  Q3SqlPropertyMap *propertyMap = Q3SqlPropertyMap::defaultMap();
   // Go through all of the widgets
-  QPtrListIterator<QWidget> it( d->widgets );
+  Q3PtrListIterator<QWidget> it( d->widgets );
   QWidget *pageWidget;
   while ( (pageWidget = it.current()) != 0 ) {
     ++it;
     config->setGroup(d->groups[pageWidget]);
 
     // Go through the known widgets of this page and reload
-    QPtrListIterator<QWidget> it( d->autoWidgets[pageWidget] );
+    Q3PtrListIterator<QWidget> it( d->autoWidgets[pageWidget] );
     QWidget *widget;
     while ( (widget = it.current()) != 0 ){
       ++it;
@@ -351,14 +353,14 @@ void KAutoConfig::reloadSettings() const {
 }
 
 bool KAutoConfig::parseChildren(const QWidget *widget,
-    QPtrList<QWidget>& currentGroup, bool trackChanges){
+    Q3PtrList<QWidget>& currentGroup, bool trackChanges){
   bool valueChanged = false;
-  const QPtrList<QObject> *listOfChildren = widget->children();
+  const Q3PtrList<QObject> *listOfChildren = widget->children();
   if(!listOfChildren)
     return valueChanged;
 
-  QSqlPropertyMap *propertyMap = QSqlPropertyMap::defaultMap();
-  QPtrListIterator<QObject> it( *listOfChildren );
+  Q3SqlPropertyMap *propertyMap = Q3SqlPropertyMap::defaultMap();
+  Q3PtrListIterator<QObject> it( *listOfChildren );
   QObject *object;
   while ( (object = it.current()) != 0 )
   {

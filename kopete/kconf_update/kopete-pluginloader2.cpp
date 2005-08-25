@@ -19,9 +19,9 @@
 #include <qtextstream.h>
 #include <qregexp.h>
 
-static QTextStream qcin ( stdin,  IO_ReadOnly );
-static QTextStream qcout( stdout, IO_WriteOnly );
-static QTextStream qcerr( stderr, IO_WriteOnly );
+static QTextStream qcin ( stdin,  QIODevice::ReadOnly );
+static QTextStream qcout( stdout, QIODevice::WriteOnly );
+static QTextStream qcerr( stderr, QIODevice::WriteOnly );
 
 void parseKey( const QString &group, const QString &key, const QString &value, const QString &rawLine )
 {

@@ -32,6 +32,8 @@
 #include "kopetegroup.h"
 #include "kopetecontact.h"
 #include "kopeteconfig.h"
+//Added by qt3to4:
+#include <Q3PtrList>
 
 KopeteIface::KopeteIface() : DCOPObject( "KopeteIface" )
 {
@@ -63,8 +65,8 @@ QStringList KopeteIface::reachableContacts()
 QStringList KopeteIface::onlineContacts()
 {
 	QStringList result;
-	QPtrList<Kopete::Contact> list = Kopete::ContactList::self()->onlineContacts();
-	QPtrListIterator<Kopete::Contact> it( list );
+	Q3PtrList<Kopete::Contact> list = Kopete::ContactList::self()->onlineContacts();
+	Q3PtrListIterator<Kopete::Contact> it( list );
 	for( ; it.current(); ++it )
 		result.append( it.current()->contactId() );
 
@@ -175,8 +177,8 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 QStringList KopeteIface::accounts()
 {
 	QStringList list;
-	QPtrList<Kopete::Account> m_accounts=Kopete::AccountManager::self()->accounts();
-	QPtrListIterator<Kopete::Account> it( m_accounts );
+	Q3PtrList<Kopete::Account> m_accounts=Kopete::AccountManager::self()->accounts();
+	Q3PtrListIterator<Kopete::Account> it( m_accounts );
 	Kopete::Account *account;
 	while ( ( account = it.current() ) != 0 )
 	{
@@ -191,7 +193,7 @@ QStringList KopeteIface::accounts()
 
 void KopeteIface::connect(const QString &protocolId, const QString &accountId )
 {
-	QPtrListIterator<Kopete::Account> it( Kopete::AccountManager::self()->accounts() );
+	Q3PtrListIterator<Kopete::Account> it( Kopete::AccountManager::self()->accounts() );
 	Kopete::Account *account;
 	while ( ( account = it.current() ) != 0 )
 	{
@@ -210,7 +212,7 @@ void KopeteIface::connect(const QString &protocolId, const QString &accountId )
 
 void KopeteIface::disconnect(const QString &protocolId, const QString &accountId )
 {
-	QPtrListIterator<Kopete::Account> it( Kopete::AccountManager::self()->accounts() );
+	Q3PtrListIterator<Kopete::Account> it( Kopete::AccountManager::self()->accounts() );
 	Kopete::Account *account;
 	while ( ( account = it.current() ) != 0 )
 	{

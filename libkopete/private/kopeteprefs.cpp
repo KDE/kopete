@@ -19,6 +19,8 @@
 #include <qfile.h>
 #include <qfont.h>
 #include <qmetaobject.h>
+//Added by qt3to4:
+#include <QTextStream>
 
 #include <kapplication.h>
 #include <kglobalsettings.h>
@@ -97,7 +99,7 @@ void KopetePrefs::load()
 	tmpColor = KGlobalSettings::linkColor();
 	mLinkColor = config->readColorEntry("Link Color", &tmpColor );
 	mFontFace = config->readFontEntry("Font Face");
-	tmpColor = darkGray;
+	tmpColor = Qt::darkGray;
 	mIdleContactColor = config->readColorEntry("Idle Contact Color", &tmpColor);
 
 	mShowTray = config->readBoolEntry("Show Systemtray", true);
@@ -145,7 +147,7 @@ void KopetePrefs::load()
 	else
 		font.setPointSizeFloat( font.pointSizeFloat() * 0.75 );
 	mContactListSmallFont = config->readFontEntry("SmallFont", &font);
-	mContactListGroupNameColor = config->readColorEntry("GroupNameColor", &darkRed);
+	mContactListGroupNameColor = config->readColorEntry("GroupNameColor", &Qt::darkRed);
 	mContactListAnimation = config->readBoolEntry("AnimateChanges", true);
 	mContactListFading = config->readBoolEntry("FadeItems", true);
 	mContactListFolding = config->readBoolEntry("FoldItems", true);
@@ -528,7 +530,7 @@ QString KopetePrefs::fileContents(const QString &path)
 {
  	QString contents;
 	QFile file( path );
-	if ( file.open( IO_ReadOnly ) )
+	if ( file.open( QIODevice::ReadOnly ) )
 	{
 		QTextStream stream( &file );
 		contents = stream.read();

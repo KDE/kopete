@@ -38,6 +38,8 @@
 #include <kmessagebox.h>
 
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 //This is the number of nicknames we will process concurrently when joining a channel
 //Lower numbers ensure less GUI blocking, but take marginally longer to complete.
@@ -562,10 +564,10 @@ bool IRCChannelContact::modeEnabled( QChar mode, QString *value )
 	return false;
 }
 
-QPtrList<KAction> *IRCChannelContact::customContextMenuActions()
+Q3PtrList<KAction> *IRCChannelContact::customContextMenuActions()
 {
 	// KAction stuff
-	QPtrList<KAction> *mCustomActions = new QPtrList<KAction>();
+	Q3PtrList<KAction> *mCustomActions = new Q3PtrList<KAction>();
 	if( !actionJoin )
 	{
 		actionJoin = new KAction(i18n("&Join"), 0, this, SLOT(join()), this, "actionJoin");

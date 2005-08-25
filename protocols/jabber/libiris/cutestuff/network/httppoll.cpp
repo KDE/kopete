@@ -21,10 +21,12 @@
 #include"httppoll.h"
 
 #include<qstringlist.h>
-#include<qurl.h>
+#include<q3url.h>
 #include<qtimer.h>
-#include<qguardedptr.h>
+#include<qpointer.h>
 #include<qca.h>
+//Added by qt3to4:
+#include <Q3CString>
 #include<stdlib.h>
 #include"bsocket.h"
 #include"base64.h"
@@ -53,7 +55,7 @@ static QString hpk(int n, const QString &s)
 	if(n == 0)
 		return s;
 	else
-		return Base64::arrayToString( QCA::SHA1::hash( QCString(hpk(n - 1, s).latin1()) ) );
+		return Base64::arrayToString( QCA::SHA1::hash( Q3CString(hpk(n - 1, s).latin1()) ) );
 }
 
 class HttpPoll::Private
@@ -140,7 +142,7 @@ void HttpPoll::connectToHost(const QString &proxyHost, int proxyPort, const QStr
 		d->use_proxy = true;
 	}
 	else {
-		QUrl u = url;
+		Q3Url u = url;
 		d->host = u.host();
 		if(u.hasPort())
 			d->port = u.port();
@@ -161,7 +163,7 @@ void HttpPoll::connectToHost(const QString &proxyHost, int proxyPort, const QStr
 	else
 		fprintf(stderr, ", auth {%s,%s}\n", d->user.latin1(), d->pass.latin1());
 #endif
-	QGuardedPtr<QObject> self = this;
+	QPointer<QObject> self = this;
 	syncStarted();
 	if(!self)
 		return;
@@ -183,7 +185,7 @@ QByteArray HttpPoll::makePacket(const QString &ident, const QString &key, const 
 		str += newkey;
 	}
 	str += ',';
-	QCString cs = str.latin1();
+	Q3CString cs = str.latin1();
 	int len = cs.length();
 
 	QByteArray a(len + block.size());
@@ -221,7 +223,7 @@ void HttpPoll::close()
 void HttpPoll::http_result()
 {
 	// check for death :)
-	QGuardedPtr<QObject> self = this;
+	QPointer<QObject> self = this;
 	syncFinished();
 	if(!self)
 		return;
@@ -344,7 +346,7 @@ void HttpPoll::do_sync()
 		newkey = getKey(&last);
 	}
 
-	QGuardedPtr<QObject> self = this;
+	QPointer<QObject> self = this;
 	syncStarted();
 	if(!self)
 		return;
@@ -384,7 +386,7 @@ static QString extractLine(QByteArray *buf, bool *found)
 	int n;
 	for(n = 0; n < (int)buf->size()-1; ++n) {
 		if(buf->at(n) == '\r' && buf->at(n+1) == '\n') {
-			QCString cstr;
+			Q3CString cstr;
 			cstr.resize(n+1);
 			memcpy(cstr.data(), buf->data(), n);
 			n += 2; // hack off CR/LF
@@ -526,7 +528,7 @@ void HttpProxyPost::sock_connected()
 	d->inHeader = true;
 	d->headerLines.clear();
 
-	QUrl u = d->url;
+	Q3Url u = d->url;
 
 	// connected, now send the request
 	QString s;
@@ -548,7 +550,7 @@ void HttpProxyPost::sock_connected()
 	s += "\r\n";
 
 	// write request
-	QCString cs = s.utf8();
+	Q3CString cs = s.utf8();
 	QByteArray block(cs.length());
 	memcpy(block.data(), cs.data(), block.size());
 	d->sock.write(block);

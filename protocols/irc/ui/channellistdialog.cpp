@@ -23,6 +23,8 @@
 #include "kopeteuiglobal.h"
 
 #include "qlayout.h"
+//Added by qt3to4:
+#include <QHBoxLayout>
 
 ChannelListDialog::ChannelListDialog(KIRC::Engine *engine, const QString &caption, QObject *target, const char* slotJoinChan)
 	: KDialogBase(Kopete::UI::Global::mainWidget(), "channel_list_widget", false, caption, Close)

@@ -19,7 +19,7 @@ Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 #define CONNECTION_H
 
 #include <qobject.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include "oscartypes.h"
 #include "rateclass.h"
 
@@ -72,14 +72,14 @@ public:
 	 * Get the list of supported families
 	 * @return The list of families supported on this connection
 	 */
-	QValueList<int> supportedFamilies() const;
+	Q3ValueList<int> supportedFamilies() const;
 	
 	/**
 	 * Add the SNAC families in \p familyList to the list of supported families for
 	 * this connection
 	 * \param familyList the list of families to add
 	 */
-	void addToSupportedFamilies( const QValueList<int>& familyList );
+	void addToSupportedFamilies( const Q3ValueList<int>& familyList );
 	
 	/**
 	 * Add the SNAC family in \p family to the list of supported families for
@@ -94,7 +94,7 @@ public:
 	 * need to be filtered on
 	 * \param rateClassList the list of rate classes to add
 	 */
-	void addToRateClasses( const QValueList<RateClass*> rateClassList );
+	void addToRateClasses( const Q3ValueList<RateClass*> rateClassList );
 	
 	/**
 	 * Add the rate class in \p rc to the list of rate classes packets

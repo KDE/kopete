@@ -89,7 +89,7 @@ Kopete::Contact *MSNProtocol::deserializeContact( Kopete::MetaContact *metaConta
 	QStringList groups  = QStringList::split( ",", serializedData[ "groups" ] );
 	QString contactGuid = serializedData[ "contactGuid" ] ;
 
-	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
+	Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
 
 	Kopete::Account *account = accounts[ accountId ];
 	if( !account )
@@ -168,7 +168,7 @@ QString MSNProtocol::clientId()
 QImage MSNProtocol::scalePicture(const QImage &picture)
 {
 	QImage img(picture);
-	img = img.smoothScale( 96, 96, QImage::ScaleMax );
+	img = img.smoothScale( 96, 96, Qt::KeepAspectRatioByExpanding );
 	// crop image if not square
 	if(img.width() > img.height()) 
 	{

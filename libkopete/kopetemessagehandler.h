@@ -25,7 +25,7 @@
 // to avoid this being included everywhere
 #include "kopetemessage.h"
 
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 namespace Kopete
 {
@@ -124,7 +124,7 @@ public:
 	 */
 	virtual ~MessageHandlerFactory();
 	
-	typedef QValueList<MessageHandlerFactory*> FactoryList;
+	typedef Q3ValueList<MessageHandlerFactory*> FactoryList;
 	/**
 	 * @return the list of registered message handler factories
 	 */

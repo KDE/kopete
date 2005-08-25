@@ -17,7 +17,7 @@
 */
 
 #include "connectionhandler.h"
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <kdebug.h>
 #include "connection.h"
 #include "oscartypes.h"
@@ -25,7 +25,7 @@
 class ConnectionHandler::Private
 {
 public:
-	QValueList<Connection*> connections;
+	Q3ValueList<Connection*> connections;
 };
 
 ConnectionHandler::ConnectionHandler()
@@ -57,8 +57,8 @@ void ConnectionHandler::remove( int family )
 {
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing all connections " <<
 		"supporting family " << family << endl;
-	QValueList<Connection*>::iterator it = d->connections.begin();
-	QValueList<Connection*>::iterator itEnd = d->connections.end();
+	Q3ValueList<Connection*>::iterator it = d->connections.begin();
+	Q3ValueList<Connection*>::iterator itEnd = d->connections.end();
 	for ( ; it != itEnd; ++it )
 	{
 		if ( ( *it )->isSupported( family ) )
@@ -86,8 +86,8 @@ void ConnectionHandler::clear()
 
 Connection* ConnectionHandler::connectionForFamily( int family ) const
 {
-	QValueList<Connection*>::iterator it = d->connections.begin();
-	QValueList<Connection*>::iterator itEnd = d->connections.end();
+	Q3ValueList<Connection*>::iterator it = d->connections.begin();
+	Q3ValueList<Connection*>::iterator itEnd = d->connections.end();
 	int connectionCount = 0;
 	Connection* lastConnection = 0;
 	for ( ; it != itEnd; ++it )

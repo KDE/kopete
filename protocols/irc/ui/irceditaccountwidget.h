@@ -24,7 +24,7 @@
 class IRCProtocol;
 class IRCAccount;
 class KListView;
-class QListViewItem;
+class Q3ListViewItem;
 
 class IRCEditAccountWidget : public IRCEditAccountBase, public KopeteEditAccountWidget
 {
@@ -39,8 +39,8 @@ class IRCEditAccountWidget : public IRCEditAccountBase, public KopeteEditAccount
 		virtual Kopete::Account *apply();
 
 	private slots:
-		void slotCommandContextMenu( KListView*, QListViewItem*, const QPoint & );
-		void slotCtcpContextMenu( KListView*, QListViewItem*, const QPoint & );
+		void slotCommandContextMenu( KListView*, Q3ListViewItem*, const QPoint & );
+		void slotCtcpContextMenu( KListView*, Q3ListViewItem*, const QPoint & );
 		void slotAddCommand();
 		void slotAddCtcp();
 		void slotEditNetworks();

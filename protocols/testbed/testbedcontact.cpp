@@ -27,6 +27,8 @@
 #include "testbedaccount.h"
 #include "testbedfakeserver.h"
 #include "testbedprotocol.h"
+//Added by qt3to4:
+#include <Q3PtrList>
 
 TestbedContact::TestbedContact( Kopete::Account* _account, const QString &uniqueName,
 		const TestbedContactType type, const QString &displayName, Kopete::MetaContact *parent )
@@ -71,7 +73,7 @@ Kopete::ChatSession* TestbedContact::manager( CanCreateFlags )
 	}
 	else
 	{
-		QPtrList<Kopete::Contact> contacts;
+		Q3PtrList<Kopete::Contact> contacts;
 		contacts.append(this);
 		m_msgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), contacts, protocol());
 		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)),
@@ -82,7 +84,7 @@ Kopete::ChatSession* TestbedContact::manager( CanCreateFlags )
 }
 
 
-QPtrList<KAction> *TestbedContact::customContextMenuActions() //OBSOLETE
+Q3PtrList<KAction> *TestbedContact::customContextMenuActions() //OBSOLETE
 {
 	//FIXME!!!  this function is obsolete, we should use XMLGUI instead
 	/*m_actionCollection = new KActionCollection( this, "userColl" );

@@ -20,8 +20,8 @@
 #include <kdebug.h>
 #include "kopetestatusgroupviewitem.h"
 
-KopeteStatusGroupViewItem::KopeteStatusGroupViewItem( Kopete::OnlineStatus::StatusType status_ , QListView *parent, const char *name )
-		: QListViewItem(parent,name)
+KopeteStatusGroupViewItem::KopeteStatusGroupViewItem( Kopete::OnlineStatus::StatusType status_ , Q3ListView *parent, const char *name )
+		: Q3ListViewItem(parent,name)
 {
 	m_status = status_;
 }

@@ -22,7 +22,7 @@
 
 #include <qobject.h>
 #include <qstring.h>
-#include <qcstring.h>
+#include <q3cstring.h>
 
 #include <kurl.h>
 #include <kio/global.h>
@@ -39,7 +39,7 @@ class JabberDiscoProtocol : public QObject, public KIO::SlaveBase
 Q_OBJECT
 
 public:
-	JabberDiscoProtocol ( const QCString &pool_socket, const QCString &app_socket );
+	JabberDiscoProtocol ( const Q3CString &pool_socket, const Q3CString &app_socket );
 	virtual ~JabberDiscoProtocol ();
 
 	void setHost ( const QString &host, int port, const QString &user, const QString &pass );

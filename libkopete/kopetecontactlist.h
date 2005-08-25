@@ -20,7 +20,7 @@
 #define KOPETECONTACTLIST_H__
 
 #include <qobject.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 #include <kopete_export.h>
 
@@ -70,12 +70,12 @@ public:
 	 * The contained MetaContacts are obviously _not_ duplicates, so
 	 * changing those *will* have the expected result :-)
 	 */
-	QPtrList<MetaContact> metaContacts() const;
+	Q3PtrList<MetaContact> metaContacts() const;
 	
 	/**
 	 * @return all groups
 	 */
-	QPtrList<Group> groups() const;
+	Q3PtrList<Group> groups() const;
 
 	/**
 	 * Return the metacontact referenced by the given id. is none is found, return 0L
@@ -122,12 +122,12 @@ public:
 	/**
 	 * return the list of metacontact actually selected in the contactlist UI
 	 */
-	QPtrList<MetaContact> selectedMetaContacts() const;
+	Q3PtrList<MetaContact> selectedMetaContacts() const;
 
 	/**
 	 * return the list of groups actualy selected in the contactlist UI
 	 */
-	QPtrList<Group> selectedGroups() const ;
+	Q3PtrList<Group> selectedGroups() const ;
 
 	/**
 	  * return the metacontact that represent the user itself.
@@ -171,7 +171,7 @@ public slots:
 	 * This method has to be called by the contactlist UI side.
 	 * it stores the selected items, and emits signals
 	 */
-	 void setSelectedItems(QPtrList<MetaContact> metaContacts , QPtrList<Group> groups);
+	 void setSelectedItems(Q3PtrList<MetaContact> metaContacts , Q3PtrList<Group> groups);
 
 signals:
 	/**
@@ -315,24 +315,24 @@ public: //TODO I think all theses method should be moved to the decop interface.
 	/**
 	 * Return all contacts that are online
 	 */
-	QPtrList<Contact> onlineContacts() const;
+	Q3PtrList<Contact> onlineContacts() const;
 
 	/**
 	 * Overloaded method of @ref onlineContacts() that only returns
 	 * the online contacts for a single protocol
 	 */
-	QPtrList<Contact> onlineContacts( const QString &protocolId ) const;
+	Q3PtrList<Contact> onlineContacts( const QString &protocolId ) const;
 
 	/**
 	 * Return all meta contacts that are online
 	 */
-	QPtrList<MetaContact> onlineMetaContacts() const;
+	Q3PtrList<MetaContact> onlineMetaContacts() const;
 
 	/**
 	 * Overloaded method of @ref onlineMetaContacts() that only returns
 	 * the online meta contacts for a single protocol
 	 */
-	QPtrList<MetaContact> onlineMetaContacts( const QString &protocolId ) const;
+	Q3PtrList<MetaContact> onlineMetaContacts( const QString &protocolId ) const;
 
 	/**
 	 * Returns all contacts which can accept file transfers

@@ -27,6 +27,8 @@
 #include <qdatastream.h>
 #include <qdatetime.h>
 #include <qtextstream.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 
 #include <kdebug.h>
@@ -50,7 +52,7 @@
 
 //#define GW_COREPROTOCOL_DEBUG
 
-QCString
+Q3CString
 url_escape_string( const char *src)
 {
 	uint escape = 0;
@@ -62,7 +64,7 @@ url_escape_string( const char *src)
 	static const char hex_table[17] = "0123456789abcdef";
 
 	if (src == NULL) {
-		return QCString();
+		return Q3CString();
 	}
 
 	/* Find number of chars to escape */
@@ -73,7 +75,7 @@ url_escape_string( const char *src)
 		}
 	}
 
-	QCString encoded((p - src) + (escape * 2) + 1);
+	Q3CString encoded((p - src) + (escape * 2) + 1);
 
 	/* Escape the string */
 	for (p = src, q = 0; *p != '\0'; p++) {
@@ -215,12 +217,12 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 	
 	// convert to QByteArray
 	QByteArray bytesOut;
-	QTextStream dout( bytesOut, IO_WriteOnly );
+	QTextStream dout( bytesOut, QIODevice::WriteOnly );
 	dout.setEncoding( QTextStream::Latin1 );
 	//dout.setByteOrder( QDataStream::LittleEndian );
 
 	// strip out any embedded host and port in the command string 
-	QCString command, host, port;
+	Q3CString command, host, port;
 	if ( request->command().section( ':', 0, 0 ) == "login" )
 	{
 		command = "login";
@@ -270,7 +272,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		field = *it;
 		//debug( " - writing a field" );
 		QByteArray bytesOut;
-		QDataStream dout( bytesOut, IO_WriteOnly );
+		QDataStream dout( bytesOut, QIODevice::WriteOnly );
 		dout.setByteOrder( QDataStream::LittleEndian );
 		
 		// these fields are ignored by Gaim's novell
@@ -330,9 +332,9 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		//dout.writeRawBytes( GW_URLVAR_TYPE, sizeof( GW_URLVAR_TYPE ) );
 
 		//dout << QString::number( field->type() ).ascii();
-		QCString typeString;
+		Q3CString typeString;
 		typeString.setNum( field->type() );
-		QCString outgoing = GW_URLVAR_TAG + field->tag() 
+		Q3CString outgoing = GW_URLVAR_TAG + field->tag() 
 								+ GW_URLVAR_METHOD + (char)encode_method( field->method() ) 
 								+ GW_URLVAR_VAL + (const char *)valString 
 								+ GW_URLVAR_TYPE + typeString;
@@ -357,7 +359,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 	{
 		// very important, don't send put the \r\n on the wire as a string or it will be preceded with the string length and 0 terminated, which the server reads as a request to disconnect.
 		QByteArray bytesOut;
-		QDataStream dout( bytesOut, IO_WriteOnly );
+		QDataStream dout( bytesOut, QIODevice::WriteOnly );
 		dout.setByteOrder( QDataStream::LittleEndian );
 		dout.writeRawBytes( "\r\n", 2 );
 		emit outgoingData( bytesOut );
@@ -371,7 +373,7 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 	// processing incoming data and reassembling it into transfers
 	// may be an event or a response
 	uint bytesParsed = 0;
-	m_din = new QDataStream( wire, IO_ReadOnly );
+	m_din = new QDataStream( wire, QIODevice::ReadOnly );
 	m_din->setByteOrder( QDataStream::LittleEndian );
 	
 	// look at first four bytes and decide what to do with the chunk
@@ -483,7 +485,7 @@ QChar CoreProtocol::encode_method( Q_UINT8 method )
 	return str;
 }
 
-void CoreProtocol::slotOutgoingData( const QCString &out )
+void CoreProtocol::slotOutgoingData( const Q3CString &out )
 {
 	debug( QString( "CoreProtocol::slotOutgoingData() %1" ).arg( out ) );
 }

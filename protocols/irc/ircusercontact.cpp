@@ -32,6 +32,9 @@
 #include <klocale.h>
 
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <Q3PtrList>
 
 IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString &nickname, Kopete::MetaContact *m )
 	: IRCContact(contactManager, nickname, m ),
@@ -91,9 +94,9 @@ void IRCUserContact::updateStatus()
 	// This may not be created yet ( for myself() on startup )
 	if( ircAccount()->contactManager() )
 	{
-		QValueList<IRCChannelContact*> channels = ircAccount()->contactManager()->findChannelsByMember(this);
+		Q3ValueList<IRCChannelContact*> channels = ircAccount()->contactManager()->findChannelsByMember(this);
 
-		for( QValueList<IRCChannelContact*>::iterator it = channels.begin(); it != channels.end(); ++it )
+		for( Q3ValueList<IRCChannelContact*>::iterator it = channels.begin(); it != channels.end(); ++it )
 		{
 			IRCChannelContact *channel = *it;
 			Kopete::OnlineStatus currentStatus = channel->manager()->contactOnlineStatus(this);
@@ -427,11 +430,11 @@ void IRCUserContact::newWhoReply( const QString &channel, const QString &user, c
 	}
 }
 
-QPtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::ChatSession *manager )
+Q3PtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::ChatSession *manager )
 {
 	if( manager )
 	{
-		QPtrList<KAction> *mCustomActions = new QPtrList<KAction> ();
+		Q3PtrList<KAction> *mCustomActions = new Q3PtrList<KAction> ();
 		mActiveManager = manager;
 		Kopete::ContactPtrList members = mActiveManager->members();
 		IRCChannelContact *isChannel = dynamic_cast<IRCChannelContact*>( members.first() );

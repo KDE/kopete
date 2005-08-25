@@ -25,6 +25,9 @@
 #include "gwerror.h"
 
 #include <addcontactpage.h>
+//Added by qt3to4:
+#include <QLabel>
+#include <Q3ValueList>
 
 class QLabel;
 namespace Kopete { class Account; }
@@ -53,7 +56,7 @@ public:
 	 */
     virtual bool validateData();
 protected:
-	QValueList< GroupWise::ContactDetails > m_searchResults;
+	Q3ValueList< GroupWise::ContactDetails > m_searchResults;
 	unsigned char searchOperation( int comboIndex );
 	GroupWiseAccount * m_account;
 	GroupWiseAddUI * m_gwAddUI;

@@ -42,9 +42,9 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 	
 	// set params on the edit widget
 	edit()->setMinimumSize( QSize( 75, 20 ) );
-	edit()->setWordWrap( QTextEdit::WidgetWidth );
-	edit()->setWrapPolicy( QTextEdit::AtWhiteSpace );
-	edit()->setAutoFormatting( QTextEdit::AutoNone );
+	edit()->setWordWrap( Q3TextEdit::WidgetWidth );
+	edit()->setWrapPolicy( Q3TextEdit::AtWhiteSpace );
+	edit()->setAutoFormatting( Q3TextEdit::AutoNone );
 
 	// some signals and slots connections
 	connect( edit(), SIGNAL( textChanged()), this, SLOT( slotTextChanged() ) );
@@ -64,7 +64,7 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 	
 	slotContactAdded( session->myself() );
-	for ( QPtrListIterator<Kopete::Contact> it( session->members() ); it.current(); ++it )
+	for ( Q3PtrListIterator<Kopete::Contact> it( session->members() ); it.current(); ++it )
 		slotContactAdded( *it );
 }
 
@@ -99,7 +99,7 @@ bool ChatTextEditPart::autoSpellCheckEnabled() const
 
 KDictSpellingHighlighter* ChatTextEditPart::spellHighlighter()
 {
-	QSyntaxHighlighter *qsh = edit()->syntaxHighlighter();
+	Q3SyntaxHighlighter *qsh = edit()->syntaxHighlighter();
 	KDictSpellingHighlighter* kdsh = dynamic_cast<KDictSpellingHighlighter*>( qsh );
 	return kdsh;
 }
@@ -225,7 +225,7 @@ bool ChatTextEditPart::canSend()
 		bool reachableContactFound = false;
 
 		//TODO: does this perform badly in large / busy IRC channels? - no, doesn't seem to
-		QPtrListIterator<Kopete::Contact> it ( members );
+		Q3PtrListIterator<Kopete::Contact> it ( members );
 		for( ; it.current(); ++it )
 		{
 			if ( (*it)->isReachable() )
@@ -341,7 +341,7 @@ void ChatTextEditPart::historyUp()
 	
 	QString newText = historyList[historyPos];
 	edit()->setText( historyList[historyPos] );
-	edit()->moveCursor( QTextEdit::MoveEnd, false );
+	edit()->moveCursor( Q3TextEdit::MoveEnd, false );
 }
 
 void ChatTextEditPart::historyDown()
@@ -362,7 +362,7 @@ void ChatTextEditPart::historyDown()
 	
 	QString newText = ( historyPos >= 0 ? historyList[historyPos] : QString::null );
 	edit()->setText( newText );
-	edit()->moveCursor( QTextEdit::MoveEnd, false );
+	edit()->moveCursor( Q3TextEdit::MoveEnd, false );
 }
 
 void ChatTextEditPart::addText( const QString &text )

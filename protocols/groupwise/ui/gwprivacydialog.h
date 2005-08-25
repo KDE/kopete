@@ -24,7 +24,7 @@
 class GroupWiseAccount;
 class GroupWisePrivacyWidget;
 class GroupWiseSearch;
-class QListBoxItem;
+class Q3ListBoxItem;
 
 /**
 Logic for the UI part managing the allow and deny lists, and the default privacy setting.
@@ -59,7 +59,7 @@ private:
 	GroupWiseAccount * m_account;
 	GroupWisePrivacyWidget * m_privacy;
 	GroupWiseSearch * m_search;
-	QListBoxItem * m_defaultPolicy;
+	Q3ListBoxItem * m_defaultPolicy;
 	bool m_dirty;
 	KDialogBase * m_searchDlg;
 };

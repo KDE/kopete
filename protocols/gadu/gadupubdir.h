@@ -27,13 +27,15 @@
 
 #include <kdebug.h>
 #include <kdialogbase.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 class GaduAccount;
 class GaduProtocol;
 class GaduContact;
 class GaduAccount;
 class GaduPublicDirectory;
-class QListViewItem;
+class Q3ListViewItem;
 class GaduContact;
 
 class GaduPublicDir : public KDialogBase

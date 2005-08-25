@@ -24,6 +24,9 @@
 #define GADUADDCONTACTPAGE_H
 
 #include "addcontactpage.h"
+//Added by qt3to4:
+#include <QLabel>
+#include <QShowEvent>
 
 class GaduAccount;
 class GaduAddUI;

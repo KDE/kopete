@@ -21,7 +21,7 @@
 #define JABBERCHOOSESERVER_H
 
 #include <kdialogbase.h>
-#include <qcstring.h>
+#include <q3cstring.h>
 
 class JabberRegisterAccount;
 class DlgJabberChooseServer;

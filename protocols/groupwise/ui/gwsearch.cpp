@@ -19,8 +19,11 @@
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qlineedit.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qpushbutton.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3ValueList>
 //#include <qvaluelist.h>
 
 #include <kdebug.h>
@@ -38,11 +41,11 @@
 
 #include "gwsearch.h"
 
-class GWSearchResultsLVI : public QListViewItem
+class GWSearchResultsLVI : public Q3ListViewItem
 {
 public:
-	GWSearchResultsLVI( QListView * parent, GroupWise::ContactDetails details, int status, const QPixmap & statusPM/*, const QString & userId */)
-	: QListViewItem( parent, QString::null, details.givenName, details.surname, GroupWiseProtocol::protocol()->dnToDotted( details.dn ) ), m_details( details ), m_status( status )
+	GWSearchResultsLVI( Q3ListView * parent, GroupWise::ContactDetails details, int status, const QPixmap & statusPM/*, const QString & userId */)
+	: Q3ListViewItem( parent, QString::null, details.givenName, details.surname, GroupWiseProtocol::protocol()->dnToDotted( details.dn ) ), m_details( details ), m_status( status )
 	{
 		setPixmap( 0, statusPM );
 	}
@@ -51,13 +54,13 @@ public:
 		if ( column == 0 )
 			return QString::number( 99 - m_status );
 		else
-			return QListViewItem::key( column, ascending );
+			return Q3ListViewItem::key( column, ascending );
 	}
 	GroupWise::ContactDetails m_details;
 	int m_status;
 };
 
-GroupWiseSearch::GroupWiseSearch( GroupWiseAccount * account, QListView::SelectionMode mode, bool onlineOnly,  QWidget *parent, const char *name)
+GroupWiseSearch::GroupWiseSearch( GroupWiseAccount * account, Q3ListView::SelectionMode mode, bool onlineOnly,  QWidget *parent, const char *name)
  : GroupWiseSearchWidget(parent, name), m_account( account ), m_onlineOnly( onlineOnly )
 {
 	m_results->setSelectionMode( mode );
@@ -85,7 +88,7 @@ void GroupWiseSearch::slotClear()
 void GroupWiseSearch::slotDoSearch()
 {
 	// build a query
-	QValueList< GroupWise::UserSearchQueryTerm > searchTerms;
+	Q3ValueList< GroupWise::UserSearchQueryTerm > searchTerms;
 	if ( !m_firstName->text().isEmpty() )
 	{
 		GroupWise::UserSearchQueryTerm arg;
@@ -146,7 +149,7 @@ void GroupWiseSearch::slotShowDetails()
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	// get the first selected result
-	QValueList< ContactDetails > selected = selectedResults();
+	Q3ValueList< ContactDetails > selected = selectedResults();
 	if ( selected.count() )
 	{
 		// if they are already in our contact list, show that version
@@ -168,8 +171,8 @@ void GroupWiseSearch::slotGotSearchResults()
 	m_matchCount->setText( i18n( "1 matching user found", "%n matching users found", m_searchResults.count() ) );
 
 	m_results->clear();
-	QValueList< GroupWise::ContactDetails >::Iterator it = m_searchResults.begin();
-	QValueList< GroupWise::ContactDetails >::Iterator end = m_searchResults.end();
+	Q3ValueList< GroupWise::ContactDetails >::Iterator it = m_searchResults.begin();
+	Q3ValueList< GroupWise::ContactDetails >::Iterator end = m_searchResults.end();
 	for ( ; it != end; ++it )
 	{
 		// it's necessary to change the status used for the LVIs,
@@ -211,10 +214,10 @@ void GroupWiseSearch::slotGotSearchResults()
 	slotValidateSelection();
 }
 
-QValueList< GroupWise::ContactDetails > GroupWiseSearch::selectedResults()
+Q3ValueList< GroupWise::ContactDetails > GroupWiseSearch::selectedResults()
 {
-    QValueList< GroupWise::ContactDetails > lst;
-    QListViewItemIterator it( m_results );
+    Q3ValueList< GroupWise::ContactDetails > lst;
+    Q3ListViewItemIterator it( m_results );
     while ( it.current() ) {
         if ( it.current()->isSelected() )
             lst.append( static_cast< GWSearchResultsLVI * >( it.current() )->m_details );
@@ -249,7 +252,7 @@ void GroupWiseSearch::slotValidateSelection()
 	if ( m_onlineOnly )
 	{
 		// check that one of the selected items is online
-		QListViewItemIterator it( m_results );
+		Q3ListViewItemIterator it( m_results );
 		while ( it.current() )
 		{
 			if ( it.current()->isSelected() && 
@@ -264,7 +267,7 @@ void GroupWiseSearch::slotValidateSelection()
 	else
 	{
 		// check that at least one item is selected
-		QListViewItemIterator it( m_results );
+		Q3ListViewItemIterator it( m_results );
 		while ( it.current() )
 		{
 			if ( it.current()->isSelected() )

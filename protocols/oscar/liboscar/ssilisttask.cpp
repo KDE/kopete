@@ -22,6 +22,8 @@
 #include "oscarutils.h"
 #include "ssimanager.h"
 #include "transfer.h"
+//Added by qt3to4:
+#include <Q3ValueList>
 
 SSIListTask::SSIListTask( Task* parent ) : Task( parent )
 {
@@ -86,7 +88,7 @@ void SSIListTask::onGo()
 
 void SSIListTask::handleSSIListReply()
 {
-	QValueList<TLV> tlvList;
+	Q3ValueList<TLV> tlvList;
 
 	Buffer* buffer = transfer()->buffer();
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SSI Protocol version: " << buffer->getByte() << endl;

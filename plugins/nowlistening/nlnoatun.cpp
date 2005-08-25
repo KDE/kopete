@@ -24,6 +24,8 @@
 #include <kdebug.h>
 #include "nlmediaplayer.h"
 #include "nlnoatun.h"
+//Added by qt3to4:
+#include <Q3CString>
 
 NLNoatun::NLNoatun( DCOPClient *client ) : NLMediaPlayer()
 {
@@ -39,12 +41,12 @@ void NLNoatun::update()
 	m_playing = false;
 	QString newTrack;
 	// see if it's registered with DCOP
-	QCString appname = find();
+	Q3CString appname = find();
 	if ( !appname.isEmpty() )
 	{
 		// see if it's playing
 		QByteArray data, replyData;
-		QCString replyType;
+		Q3CString replyType;
 		if ( !m_client->call( appname, "Noatun", "state()", data,
 					replyType, replyData ) )
 		{
@@ -52,7 +54,7 @@ void NLNoatun::update()
 		}
 		else
 		{
-			QDataStream reply( replyData, IO_ReadOnly );
+			QDataStream reply( replyData, QIODevice::ReadOnly );
 			if ( replyType == "int" ) {
 				int state = 0;
 				reply >> state;
@@ -75,7 +77,7 @@ void NLNoatun::update()
 				kdDebug( 14307 ) <<  "NLNoatun::update() DCOP error on " << appname 
 					<< endl;
 			else {
-				QDataStream reply( replyData, IO_ReadOnly );
+				QDataStream reply( replyData, QIODevice::ReadOnly );
 				if ( replyType == "QString" ) {
 					reply >> newTrack;
 				} else
@@ -97,9 +99,9 @@ void NLNoatun::update()
 		kdDebug( 14307 ) << "NLNoatun::update() - noatun not found" << endl;
 }
 
-QCString NLNoatun::find() const
+Q3CString NLNoatun::find() const
 {
-	QCString app = "noatun";
+	Q3CString app = "noatun";
 	if ( !m_client->isApplicationRegistered( app ) )
 	{
 		// looking for a registered app prefixed with 'app'
@@ -121,11 +123,11 @@ QCString NLNoatun::find() const
 	return app;
 }
 		
-QString NLNoatun::currentProperty( QCString appname, QString property ) const
+QString NLNoatun::currentProperty( Q3CString appname, QString property ) const
 {
 	QByteArray data, replyData;
-	QCString replyType;
-	QDataStream arg( data, IO_WriteOnly );
+	Q3CString replyType;
+	QDataStream arg( data, QIODevice::WriteOnly );
 	QString result = "";
 	arg << property;
 	if ( !m_client->call( appname, "Noatun",
@@ -136,7 +138,7 @@ QString NLNoatun::currentProperty( QCString appname, QString property ) const
 	}	
 	else
 	{
-		QDataStream reply( replyData, IO_ReadOnly );
+		QDataStream reply( replyData, QIODevice::ReadOnly );
 		if ( replyType == "QString" )
 		{
 			reply >> result;

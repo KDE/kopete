@@ -17,6 +17,8 @@
 #include "meanwhileaddcontactpage.h"
 #include <qpushbutton.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 #include <kopeteaccount.h>
 #include <kopetemetacontact.h>
 #include <qlineedit.h>

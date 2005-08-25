@@ -19,6 +19,8 @@
 // Qt includes
 #include <qdatastream.h>
 #include <qregexp.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 // Kde includes
 #include <kdebug.h>
@@ -49,7 +51,7 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 		}
 
 		// Retrieve the message header.
-		QString messageHeader = QCString(stream.data(), index);
+		QString messageHeader = Q3CString(stream.data(), index);
 
 		// Retrieve the message mime version, content type,
 		// and p2p destination.
@@ -71,7 +73,7 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 		QString destination = regex.cap(1);
 	}
 	
-	QDataStream reader(stream, IO_ReadOnly);
+	QDataStream reader(stream, QIODevice::ReadOnly);
 	reader.setByteOrder(QDataStream::LittleEndian);
 	// Seek to the start position of the message
 	// transport header.
@@ -124,12 +126,12 @@ void MessageFormatter::writeMessage(const Message& message, QByteArray& stream, 
 {
 //	kdDebug(14140) << k_funcinfo << endl;
 
-	QDataStream writer(stream, IO_WriteOnly);
+	QDataStream writer(stream, QIODevice::WriteOnly);
 	writer.setByteOrder(QDataStream::LittleEndian);
 
 	if(compact == false)
 	{
-		const QCString messageHeader = QString("MIME-Version: 1.0\r\n"
+		const Q3CString messageHeader = QString("MIME-Version: 1.0\r\n"
 			"Content-Type: application/x-msnmsgrp2p\r\n"
 			"P2P-Dest: " + message.destination + "\r\n"
 			"\r\n").utf8();

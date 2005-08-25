@@ -19,15 +19,18 @@
 #include "msneditaccountwidget.h"
 
 #include <qcheckbox.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qimage.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qpushbutton.h>
 #include <qregexp.h>
 #include <qspinbox.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QVBoxLayout>
 
 #include <kautoconfig.h>
 #include <kfiledialog.h>
@@ -243,7 +246,7 @@ bool MSNEditAccountWidget::validateData()
 void MSNEditAccountWidget::slotAllow()
 {
 	//TODO: play with multiple selection
-	QListBoxItem *item = d->ui->m_BL->selectedItem();
+	Q3ListBoxItem *item = d->ui->m_BL->selectedItem();
 	if ( !item )
 		return;
 
@@ -261,7 +264,7 @@ void MSNEditAccountWidget::slotAllow()
 void MSNEditAccountWidget::slotBlock()
 {
 	//TODO: play with multiple selection
-	QListBoxItem *item = d->ui->m_AL->selectedItem();
+	Q3ListBoxItem *item = d->ui->m_AL->selectedItem();
 	if ( !item )
 		return;
 

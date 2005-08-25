@@ -38,9 +38,12 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
-#include <qlistview.h>
-#include <qptrlist.h>
+#include <q3listview.h>
+#include <q3ptrlist.h>
 #include <qcombobox.h>
+//Added by qt3to4:
+#include <QShowEvent>
+#include <QVBoxLayout>
 #include <krestrictedline.h>
 
 GaduAddContactPage::GaduAddContactPage( GaduAccount* owner, QWidget* parent, const char* name )

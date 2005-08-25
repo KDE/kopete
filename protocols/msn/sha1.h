@@ -22,12 +22,14 @@
 #define CS_SHA1_H
 
 #include<qstring.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 class SHA1
 {
 public:
 	static QByteArray hash(const QByteArray &);
-	static QByteArray hashString(const QCString &);
+	static QByteArray hashString(const Q3CString &);
 	static QString digest(const QString &);
 
 private:

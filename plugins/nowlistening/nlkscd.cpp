@@ -23,6 +23,8 @@
 
 #include <kdebug.h>
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include "nlmediaplayer.h"
 
@@ -44,7 +46,7 @@ void NLKscd::update()
 	{
 		// see if it's playing
 		QByteArray data, replyData;
-		QCString replyType;
+		Q3CString replyType;
 		if ( !m_client->call( "kscd", "CDPlayer", "playing()", data,
 					replyType, replyData ) )
 		{
@@ -55,7 +57,7 @@ void NLKscd::update()
 		}
 		else
 		{
-			QDataStream reply( replyData, IO_ReadOnly );
+			QDataStream reply( replyData, QIODevice::ReadOnly );
 			if ( replyType == "bool" ) {
 				reply >> m_playing;
 //				kdDebug( 14307 ) << "NLKscd::update() - KsCD is " <<
@@ -68,7 +70,7 @@ void NLKscd::update()
 			kdDebug( 14307 ) <<  "NLKscd::update() DCOP error"
 				<< endl;
 		else {
-			QDataStream reply( replyData, IO_ReadOnly );
+			QDataStream reply( replyData, QIODevice::ReadOnly );
 			if ( replyType == "QString" )
 				reply >> m_artist;
 			else
@@ -81,7 +83,7 @@ void NLKscd::update()
 			kdDebug( 14307 ) <<  "NLKscd::update() DCOP error"
 				<< endl;
 		else {
-			QDataStream reply( replyData, IO_ReadOnly );
+			QDataStream reply( replyData, QIODevice::ReadOnly );
 			if ( replyType == "QString" )
 				reply >> m_album;
 			else
@@ -93,7 +95,7 @@ void NLKscd::update()
 					"currentTrackTitle()", data, replyType, replyData ) )
 			kdDebug( 14307 ) << "NLKscd::update() - there was some error using DCOP." << endl;
 		else {
-			QDataStream reply( replyData, IO_ReadOnly );
+			QDataStream reply( replyData, QIODevice::ReadOnly );
 			if ( replyType == "QString" ) {
 				reply >> newTrack;
 				//kdDebug( 14307 ) << "the result is: " << newTrack.latin1()

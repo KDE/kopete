@@ -19,6 +19,8 @@
 #define JABBERCONTACTPOOL_H
 
 #include <qobject.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 #include <im.h>
 
 namespace Kopete { class MetaContact; }
@@ -91,7 +93,7 @@ public:
 	 * Find relevant sources for a given JID.
 	 * This will match user@domain/resource for a given user@domain.
 	 */
-	QPtrList<JabberBaseContact> findRelevantSources ( const XMPP::Jid &jid );
+	Q3PtrList<JabberBaseContact> findRelevantSources ( const XMPP::Jid &jid );
 
 private slots:
 	void slotContactDestroyed ( Kopete::Contact *contact );
@@ -99,7 +101,7 @@ private slots:
 private:
 	JabberContactPoolItem *findPoolItem ( const XMPP::RosterItem &contact );
 
-	QPtrList<JabberContactPoolItem> mPool;
+	Q3PtrList<JabberContactPoolItem> mPool;
 	JabberAccount *mAccount;
 
 };

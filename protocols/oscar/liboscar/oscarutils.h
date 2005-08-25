@@ -20,7 +20,7 @@
 #define _OSCARUTILS_H_
 
 #include <qglobal.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <qstring.h>
 #include "oscartypes.h"
 #include "buffer.h"
@@ -37,7 +37,7 @@ KOPETE_EXPORT bool operator==( TLV, TLV );
 /**
  * Find the TLV corresponding to the type in the list
  */
-KOPETE_EXPORT TLV findTLV( const QValueList<TLV>&, int type );
+KOPETE_EXPORT TLV findTLV( const Q3ValueList<TLV>&, int type );
 
 /**
  * Get the value of the capability that corresponds to the value

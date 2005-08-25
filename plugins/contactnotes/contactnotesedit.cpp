@@ -16,8 +16,8 @@
  ***************************************************************************/
 
 #include <qlabel.h>
-#include <qtextedit.h>
-#include <qvbox.h>
+#include <q3textedit.h>
+#include <q3vbox.h>
 
 #include <klocale.h>
 
@@ -31,10 +31,10 @@ ContactNotesEdit::ContactNotesEdit(Kopete::MetaContact *m,ContactNotesPlugin *p,
 	m_plugin=p;
 	m_metaContact=m;
 
-	QVBox *w=new QVBox(this);
+	Q3VBox *w=new Q3VBox(this);
 	w->setSpacing(KDialog::spacingHint());
 	m_label = new QLabel(i18n("Notes about %1:").arg(m->displayName()) , w , "m_label");
-	m_linesEdit= new QTextEdit ( w , "m_linesEdit");
+	m_linesEdit= new Q3TextEdit ( w , "m_linesEdit");
 
 	m_linesEdit->setText(p->notes(m));
 

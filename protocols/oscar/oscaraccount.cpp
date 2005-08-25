@@ -34,9 +34,11 @@
 
 #include <qapplication.h>
 #include <qregexp.h>
-#include <qstylesheet.h>
+#include <q3stylesheet.h>
 #include <qtimer.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include <kdebug.h>
 #include <kconfig.h>
@@ -181,9 +183,9 @@ void OscarAccount::processSSIList()
 	SSIManager* listManager = d->engine->ssiManager();
 
     //first add groups
-	QValueList<SSI> groupList = listManager->groupList();
-	QValueList<SSI>::const_iterator git = groupList.constBegin();
-	QValueList<SSI>::const_iterator listEnd = groupList.constEnd();
+	Q3ValueList<SSI> groupList = listManager->groupList();
+	Q3ValueList<SSI>::const_iterator git = groupList.constBegin();
+	Q3ValueList<SSI>::const_iterator listEnd = groupList.constEnd();
 	//the protocol dictates that there is at least one group that has contacts
 	//so i don't have to check for an empty group list
 
@@ -196,9 +198,9 @@ void OscarAccount::processSSIList()
 	}
 
 	//then add contacts
-	QValueList<SSI> contactList = listManager->contactList();
-	QValueList<SSI>::const_iterator bit = contactList.constBegin();
-	QValueList<SSI>::const_iterator blistEnd = contactList.constEnd();
+	Q3ValueList<SSI> contactList = listManager->contactList();
+	Q3ValueList<SSI>::const_iterator bit = contactList.constBegin();
+	Q3ValueList<SSI>::const_iterator blistEnd = contactList.constEnd();
 	kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Adding " << contactList.count() << " contacts to contact list" << endl;
 	for ( ; bit != blistEnd; ++bit )
 	{
@@ -367,7 +369,7 @@ bool OscarAccount::createContact(const QString &contactId,
 		2.c. create kopete contact
 	 */
 
-	QValueList<TLV> dummyList;
+	Q3ValueList<TLV> dummyList;
 	if ( parentContact->isTemporary() )
 	{
 		SSI tempItem( contactId, 0, 0, 0xFFFF, dummyList, 0 );

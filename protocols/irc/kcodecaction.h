@@ -18,7 +18,7 @@
 #define KCODECACTION_H
 
 #include <kdeversion.h>
-#include <qintdict.h>
+#include <q3intdict.h>
 
 #if KDE_IS_VERSION( 3, 1, 90 )
 	#include <kactionclasses.h>

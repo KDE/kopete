@@ -23,7 +23,7 @@
 
 #include "task.h"
 
-#include <qcstring.h>
+#include <q3cstring.h>
 
 #include "oscartypes.h"
 

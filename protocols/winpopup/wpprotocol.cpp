@@ -20,7 +20,7 @@
 
 // QT Includes
 #include <qmap.h>
-#include <qdict.h>
+#include <q3dict.h>
 
 // KDE Includes
 #include <kapplication.h>
@@ -153,9 +153,9 @@ void WPProtocol::slotReceivedMessage(const QString &Body, const QDateTime &Time,
 {
 	bool foundContact = false;
 	QString accountKey = QString::null;
-	QDict<Kopete::Account> Accounts = Kopete::AccountManager::self()->accounts(protocol());
-	for (QDictIterator<Kopete::Account> it(Accounts); it.current(); ++it) {
-		QDict<Kopete::Contact> Contacts = it.current()->contacts();
+	Q3Dict<Kopete::Account> Accounts = Kopete::AccountManager::self()->accounts(protocol());
+	for (Q3DictIterator<Kopete::Account> it(Accounts); it.current(); ++it) {
+		Q3Dict<Kopete::Contact> Contacts = it.current()->contacts();
 		Kopete::Contact *theContact = Contacts[From];
 		if (theContact != 0) {
 			foundContact = true;

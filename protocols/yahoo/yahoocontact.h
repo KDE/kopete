@@ -23,6 +23,9 @@
 
 /* Kopete Includes */
 #include "kopetecontact.h"
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3PtrList>
 
 class KAction;
 class KTempFile;
@@ -47,7 +50,7 @@ public:
 	/** Base Class Reimplementations **/
 	virtual bool isOnline() const;
 	virtual bool isReachable();
-	virtual QPtrList<KAction> *customContextMenuActions();
+	virtual Q3PtrList<KAction> *customContextMenuActions();
 	virtual Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags canCreate= Kopete::Contact::CanCreate );
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 

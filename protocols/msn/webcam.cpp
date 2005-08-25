@@ -19,12 +19,17 @@
 #include <stdlib.h>
 #include <kdebug.h>
 #include <qregexp.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3CString>
+#include <Q3ValueList>
+#include <QTimerEvent>
 #include <kbufferedsocket.h>
 #include <klocale.h>
 #include <kserversocket.h>
 #include <kmessagebox.h>
 #include <qlabel.h>
-#include <qguardedptr.h>
+#include <qpointer.h>
 #include <qtimer.h>
 #include <qevent.h>
 #include <qdatetime.h>
@@ -67,7 +72,7 @@ void Webcam::askIncommingInvitation()
 {
 	m_direction = Incoming;
 	//protect, in case this is deleted when the messagebox is active
-	QGuardedPtr<Webcam> _this = this;
+	QPointer<Webcam> _this = this;
 	QString message= (m_who==wProducer)  ?
 			i18n("<qt>The contact %1 want to see <b>your</b> webcam, do you want to see it?</qt>")  :
 			i18n("The contact %1 want to show you his webcam, do you want to see it?")  ;
@@ -187,7 +192,7 @@ void Webcam::processMessage(const Message& message)
 	
 	if(message.applicationIdentifier != 4l)
 	{
-		QString body = QCString(message.body.data(), message.header.dataSize);
+		QString body = Q3CString(message.body.data(), message.header.dataSize);
 		kdDebug(14141) << k_funcinfo << "received, " << body << endl;
 
 		if(body.startsWith("MSNSLP/1.0 200 OK"))
@@ -386,7 +391,7 @@ void Webcam::processMessage(const Message& message)
 				sock->connect(ip, port3);
 			}
 		}
-		QValueList<KBufferedSocket*>::iterator it;
+		Q3ValueList<KBufferedSocket*>::iterator it;
 		for ( it = m_allSockets.begin(); it != m_allSockets.end(); ++it )
 		{
 			KBufferedSocket *sock=(*it);
@@ -407,7 +412,7 @@ void Webcam::processMessage(const Message& message)
 void Webcam::makeSIPMessage(const QString &message, Q_UINT8 XX, Q_UINT8 YY , Q_UINT8 ZZ)
 {
 	QByteArray dataMessage; //(12+message.length()*2);
-	QDataStream writer(dataMessage, IO_WriteOnly);
+	QDataStream writer(dataMessage, QIODevice::WriteOnly);
 	writer.setByteOrder(QDataStream::LittleEndian);
 	writer << (Q_UINT8)0x80;
 	writer << (Q_UINT8)XX;
@@ -505,7 +510,7 @@ void Webcam::slotSocketConnected()
 	delete m_listener;
 	m_listener=0L;
 	
-	QValueList<KBufferedSocket*>::iterator it;
+	Q3ValueList<KBufferedSocket*>::iterator it;
 	for ( it = m_allSockets.begin(); it != m_allSockets.end(); ++it )
 	{
 		KBufferedSocket *sock=(*it);
@@ -528,7 +533,7 @@ void Webcam::slotSocketConnected()
 //	QObject::connect(m_webcamSocket, SIGNAL(gotError(int)), this, SLOT(slotSocketError(int)));
 
 	m_webcamState=wsConnected;
-	QCString to_send=m_peerAuth.utf8();
+	Q3CString to_send=m_peerAuth.utf8();
 	m_webcamSocket->writeBlock(to_send.data(), to_send.length());
 	kdDebug(14140) << k_funcinfo << "sending "<< m_peerAuth << endl;
 
@@ -595,7 +600,7 @@ void Webcam::slotSocketRead()
 			{
 				closeAllOtherSockets();
 				kdDebug(14140) << k_funcinfo << "Sending " << connected_str << endl;
-				QCString conne=connected_str.utf8();
+				Q3CString conne=connected_str.utf8();
 				m_webcamSocket->writeBlock(conne.data(), conne.length());
 				m_webcamState=wsConnecting;
 				
@@ -651,7 +656,7 @@ void Webcam::slotSocketRead()
 				{
 					closeAllOtherSockets();
 					kdDebug(14140) << k_funcinfo << "Sending " << connected_str << endl;
-					QCString conne=connected_str.utf8();
+					Q3CString conne=connected_str.utf8();
 					m_webcamSocket->writeBlock(conne.data(), conne.length());
 												
 					//SHOULD BE DONE IN ALL CASE
@@ -756,7 +761,7 @@ void Webcam::closeAllOtherSockets()
 	delete m_listener;
 	m_listener=0l;
 	
-	QValueList<KBufferedSocket*>::iterator it;
+	Q3ValueList<KBufferedSocket*>::iterator it;
 	for ( it = m_allSockets.begin(); it != m_allSockets.end(); ++it )
 	{
 		KBufferedSocket *sock=(*it);
@@ -803,7 +808,7 @@ void Webcam::timerEvent( QTimerEvent *e )
 	//build the header.
 	QByteArray header;
 	
-	QDataStream writer(header, IO_WriteOnly);
+	QDataStream writer(header, QIODevice::WriteOnly);
 	writer.setByteOrder(QDataStream::LittleEndian);
 	writer << (Q_UINT16)24;  // header size
 	writer << (Q_UINT16)img.width();

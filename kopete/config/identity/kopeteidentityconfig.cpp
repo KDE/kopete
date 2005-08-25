@@ -26,6 +26,10 @@
 #include <qradiobutton.h>
 #include <qcombobox.h>
 #include <qapplication.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QVBoxLayout>
+#include <Q3PtrList>
 
 // KDE includes
 #include <kcombobox.h>
@@ -257,8 +261,8 @@ void KopeteIdentityConfig::slotLoadNameSources()
 {
 	Kopete::Contact *nameSourceContact = d->currentIdentity->displayNameSourceContact();
 
-	QPtrList<Kopete::Contact> contactList = d->myself->contacts(); // Use myself contact PtrList. Safer.
-	QPtrListIterator<Kopete::Contact> it(contactList);
+	Q3PtrList<Kopete::Contact> contactList = d->myself->contacts(); // Use myself contact PtrList. Safer.
+	Q3PtrListIterator<Kopete::Contact> it(contactList);
 
 	d->m_view->comboNameContact->clear();
 
@@ -288,8 +292,8 @@ void KopeteIdentityConfig::slotLoadPhotoSources()
 {
 	Kopete::Contact *photoSourceContact = d->currentIdentity->photoSourceContact();
 
-	QPtrList<Kopete::Contact> contactList = d->myself->contacts(); // Use myself contact PtrList. Safer.
-	QPtrListIterator<Kopete::Contact> it(contactList);
+	Q3PtrList<Kopete::Contact> contactList = d->myself->contacts(); // Use myself contact PtrList. Safer.
+	Q3PtrListIterator<Kopete::Contact> it(contactList);
 
 	d->m_view->comboPhotoContact->clear();
 	d->m_view->comboPhotoURL->clear();

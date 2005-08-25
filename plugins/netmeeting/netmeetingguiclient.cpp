@@ -18,6 +18,8 @@
 */
 
 #include <qvariant.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include <kdebug.h>
 #include <kaction.h>
@@ -50,7 +52,7 @@ NetMeetingGUIClient::~NetMeetingGUIClient()
 
 void NetMeetingGUIClient::slotStartInvitation()
 {
-	QPtrList<Kopete::Contact> c=m_manager->members();
+	Q3PtrList<Kopete::Contact> c=m_manager->members();
 	NetMeetingInvitation *i=new NetMeetingInvitation(false, static_cast<MSNContact*>(c.first()),m_manager);
 	m_manager->initInvitation(i);
 }

@@ -22,8 +22,11 @@
 #define MSNSWITCHBOARDSOCKET_H
 
 #include <qobject.h>
-#include <qstrlist.h>
-#include <qvaluevector.h>
+#include <q3strlist.h>
+#include <q3valuevector.h>
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <Q3PtrList>
 
 #include <kstringhandler.h>
 
@@ -67,13 +70,13 @@ private:
 	QStringList m_chatMembers;
 
 	//used for emoticons
-	QValueList<const Kopete::Message> m_msgQueue;
+	Q3ValueList<const Kopete::Message> m_msgQueue;
 	unsigned  m_recvIcons;
 	QMap<QString , QPair<QString , KTempFile*> >  m_emoticons;
 	Kopete::Message &parseCustomEmoticons(Kopete::Message &msg);
 	QTimer *m_emoticonTimer;
-	QPtrList<KTempFile> m_typewrited;
-	QMap<QString, QValueVector<QString> > m_typewriteDictionary;
+	Q3PtrList<KTempFile> m_typewrited;
+	QMap<QString, Q3ValueVector<QString> > m_typewriteDictionary;
 
 	/** the number of chunk for currents messages */
 	unsigned int m_chunks;

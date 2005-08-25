@@ -23,8 +23,8 @@
 
 #include <qobject.h>
 #include <qmap.h>
-#include <qcstring.h>
-#include <qintdict.h>
+#include <q3cstring.h>
+#include <q3intdict.h>
 
 
 #include <kio/job.h>
@@ -89,7 +89,7 @@ protected:
 
 private:
 
-	QMap< KIO::Job *, QCString> m_data;
+	QMap< KIO::Job *, Q3CString> m_data;
 	QMap< KIO::Job *, bool> m_completed;
 
 	KSelectAction* m_actionLanguage;

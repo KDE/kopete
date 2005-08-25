@@ -21,7 +21,7 @@
 #ifndef POLLSEARCHRESULTSTASK_H
 #define POLLSEARCHRESULTSTASK_H
 
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 #include "gwerror.h"
 
@@ -42,11 +42,11 @@ public:
 	void poll( const QString & queryHandle);
 	bool take( Transfer * transfer );
 	int queryStatus();
-	QValueList< GroupWise::ContactDetails > results();
+	Q3ValueList< GroupWise::ContactDetails > results();
 GroupWise::ContactDetails extractUserDetails( Field::FieldList & fields );
 private:
 	int m_queryStatus;
-	QValueList< GroupWise::ContactDetails > m_results;
+	Q3ValueList< GroupWise::ContactDetails > m_results;
 };
 
 #endif

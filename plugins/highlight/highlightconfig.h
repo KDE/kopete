@@ -20,6 +20,8 @@
 
 #include <qmap.h>
 #include <qstring.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 class Filter;
 
@@ -32,13 +34,13 @@ public:
 	void load();
 	void save();
 
-	QPtrList<Filter> filters() const;
+	Q3PtrList<Filter> filters() const;
 	void removeFilter (Filter *f);
 	void appendFilter (Filter *f);
 	Filter* newFilter();
 
 private:
-	QPtrList<Filter> m_filters;
+	Q3PtrList<Filter> m_filters;
 };
 
 #endif

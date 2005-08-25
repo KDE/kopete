@@ -24,6 +24,8 @@
 #define GADUEDITCONTACT_H
 
 #include <kdialogbase.h>
+//Added by qt3to4:
+#include <QLabel>
 
 class GaduAccount;
 class GaduAddUI;
@@ -32,7 +34,7 @@ class QString;
 class QWidget;
 class GaduContact;
 class GaduContactsList::ContactLine;
-class QListViewItem;
+class Q3ListViewItem;
 
 class GaduEditContact : public KDialogBase
 {
@@ -45,7 +47,7 @@ public:
 		    QWidget* parent = 0, const char* name = 0 );
 protected slots:
 	void slotApply();
-	void listClicked( QListViewItem* );
+	void listClicked( Q3ListViewItem* );
 private:
 
 	void init();

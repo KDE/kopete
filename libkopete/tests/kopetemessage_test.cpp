@@ -20,6 +20,9 @@
 
 #include <qdir.h>
 #include <qfile.h>
+//Added by qt3to4:
+#include <QTextStream>
+#include <Q3CString>
 #include <kapplication.h>
 #include <kstandarddirs.h>
 #include <kinstance.h>
@@ -61,7 +64,7 @@ void KopeteMessage_Test::allTests()
 	KApplication app;
 	
 	// create fake objects needed to build a reasonable testeable message
-	m_protocol = new Kopete::Test::Mock::Protocol( new KInstance(QCString("test-kopete-message")), 0L, "test-kopete-message");
+	m_protocol = new Kopete::Test::Mock::Protocol( new KInstance(Q3CString("test-kopete-message")), 0L, "test-kopete-message");
 	m_account = new Kopete::Test::Mock::Account(m_protocol, "testaccount");
 	m_metaContactMyself = new Kopete::Test::Mock::MetaContact();
 	m_metaContactOther = new Kopete::Test::Mock::MetaContact();
@@ -93,7 +96,7 @@ void KopeteMessage_Test::testValidXML()
 	kdDebug(14010) << k_funcinfo << endl;
 	QString xml = message.asXML().toString();
 	QFile xmlFile("message.xml");
-	if ( xmlFile.open( IO_WriteOnly ) )
+	if ( xmlFile.open( QIODevice::WriteOnly ) )
 	{
 		kdDebug(14010) << k_funcinfo << "Writing xml" << endl;
 		QTextStream outXML(&xmlFile);
@@ -147,7 +150,7 @@ void KopeteMessage_Test::testLinkParser()
 			SKIP("Warning! expected output for testcase "+ *it + " not found. Skiping testcase");
 			continue;
 		}
-		if ( inputFile.open( IO_ReadOnly ) && expectedFile.open( IO_ReadOnly ))
+		if ( inputFile.open( QIODevice::ReadOnly ) && expectedFile.open( QIODevice::ReadOnly ))
 		{
 			QTextStream inputStream(&inputFile);
 			QTextStream expectedStream(&expectedFile);

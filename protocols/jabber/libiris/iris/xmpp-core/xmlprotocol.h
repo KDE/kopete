@@ -22,7 +22,7 @@
 #define XMLPROTOCOL_H
 
 #include<qdom.h>
-#include<qvaluelist.h>
+#include<q3valuelist.h>
 #include"parser.h"
 
 #define NS_XML "http://www.w3.org/XML/1998/namespace"
@@ -86,7 +86,7 @@ namespace XMPP
 			QString str;
 			QDomElement elem;
 		};
-		QValueList<TransferItem> transferItemList;
+		Q3ValueList<TransferItem> transferItemList;
 		void setIncomingAsExternal();
 
 	protected:
@@ -131,7 +131,7 @@ namespace XMPP
 
 		Parser xml;
 		QByteArray outData;
-		QValueList<TrackItem> trackQueue;
+		Q3ValueList<TrackItem> trackQueue;
 
 		void init();
 		int internalWriteData(const QByteArray &a, TrackItem::Type t, int id=-1);

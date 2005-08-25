@@ -26,12 +26,16 @@
 #include <cmath>
 
 // qt
-#include <qstylesheet.h>
+#include <q3stylesheet.h>
 #include <qregexp.h>
 #include <qimage.h>
 #include <qtimer.h>
 #include <qfile.h>
 #include <qfileinfo.h>
+//Added by qt3to4:
+#include <Q3CString>
+#include <Q3PtrList>
+#include <Q3ValueList>
 
 // kde
 #include <kdebug.h>
@@ -332,7 +336,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			}
 		}
 
-		QPtrList<Kopete::Contact> others;
+		Q3PtrList<Kopete::Contact> others;
 		others.append( m_account->myself() );
 		QStringList::iterator it2;
 		for( it2 = m_chatMembers.begin(); it2 != m_chatMembers.end(); ++it2 )
@@ -454,7 +458,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 #if 0  // Disabled for privacy reason
 			if(msg.contains("JabberID"))
 			{ // Find a Jabber account in order to get the jabberID
-				QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
+				Q3PtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
 				for(Kopete::Account *a=accounts.first() ; a; a=accounts.next() )
 				{
 					if(a->protocol()->pluginId()=="JabberProtocol")
@@ -466,7 +470,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			}
 #endif
 
-			QCString message = QString( "MIME-Version: 1.0\r\n"
+			Q3CString message = QString( "MIME-Version: 1.0\r\n"
 					"Content-Type: text/x-clientcaps\r\n"
 					"\r\n"
 					"Client-Name: Kopete/"+escape(kapp->aboutData()->version())+"\r\n"
@@ -521,7 +525,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			QString base64 = regex.cap(1);
 			kdDebug(14140) << k_funcinfo << chunks.toUInt() << ", chunks" << endl;
 			// If more chunks are expected, buffer the chunk received.
-			QValueVector<QString> typewrite(chunks.toUInt());
+			Q3ValueVector<QString> typewrite(chunks.toUInt());
 			typewrite[0] = base64;
 			m_typewriteDictionary.insert(messageId, typewrite);
 		}
@@ -532,7 +536,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			kdDebug(14140) << k_funcinfo << "chunk, " << index << endl;
 			if(m_typewriteDictionary.contains(messageId))
 			{
-				QValueVector<QString> typewrite = m_typewriteDictionary[messageId];
+				Q3ValueVector<QString> typewrite = m_typewriteDictionary[messageId];
 				// Copy the chunk into it's corresponding index.
 				typewrite[index] = msg.section("\r\n\r\n", -1);
 
@@ -545,7 +549,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 					m_typewriteDictionary.remove(messageId);
 					
 					QString base64;
-					QValueVector<QString>::Iterator current = typewrite.begin();
+					Q3ValueVector<QString>::Iterator current = typewrite.begin();
 					while(current != typewrite.end()){
 						base64 += *current;
 						current++;
@@ -598,7 +602,7 @@ void MSNSwitchBoardSocket::sendTypingMsg( bool isTyping )
 	}
 
 
-	QCString message = QString( "MIME-Version: 1.0\r\n"
+	Q3CString message = QString( "MIME-Version: 1.0\r\n"
 		"Content-Type: text/x-msmsgscontrol\r\n"
 		"TypingUser: " + m_myHandle + "\r\n"
 		"\r\n" ).utf8();
@@ -637,7 +641,7 @@ int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString 
 		QFileInfo fi(filename);
 		// open the icon file
 		QFile pictFile(fi.filePath());
-		if (pictFile.open(IO_ReadOnly)) {
+		if (pictFile.open(QIODevice::ReadOnly)) {
 		
 			QByteArray ar = pictFile.readAll();
 			pictFile.close();
@@ -740,7 +744,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	// Color support
 	if (msg.fg().isValid())
 	{
-		QString colorCode = QColor(msg.fg().blue(),msg.fg().green(),msg.fg().red()).name().remove(0,1);  //colors aren't sent in RGB but in BGR (O.G.)
+		QString colorCode = QColor(msg.fg().Qt::blue(),msg.fg().Qt::green(),msg.fg().Qt::red()).name().remove(0,1);  //colors aren't sent in RGB but in BGR (O.G.)
 		head += "CO=" + colorCode;
 	}
 	else
@@ -854,7 +858,7 @@ void MSNSwitchBoardSocket::slotOnlineStatusChanged( MSNSocket::OnlineStatus stat
 {
 	if (status == Connected)
 	{
-		QCString command;
+		Q3CString command;
 		QString args;
 
 		if( !m_ID ) // we're inviting
@@ -914,7 +918,7 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 		m_typewrited.append(file);
 		m_typewrited.setAutoDelete(true);
 
-		QPtrList<Kopete::Contact> others;
+		Q3PtrList<Kopete::Contact> others;
 		others.append( m_account->myself() );
 
 		QStringList::iterator it2;
@@ -950,7 +954,7 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 
 void MSNSwitchBoardSocket::slotIncomingFileTransfer(const QString& from, const QString& /*fileName*/, Q_INT64 /*fileSize*/)
 {
-	QPtrList<Kopete::Contact> others;
+	Q3PtrList<Kopete::Contact> others;
 	others.append( m_account->myself() );
 	QStringList::iterator it2;
 	for( it2 = m_chatMembers.begin(); it2 != m_chatMembers.end(); ++it2 )
@@ -983,7 +987,7 @@ void MSNSwitchBoardSocket::cleanQueue()
 	}
 	kdDebug(14141) << k_funcinfo << m_msgQueue.count() << endl;
 
-	QValueList<const Kopete::Message>::Iterator it_msg;
+	Q3ValueList<const Kopete::Message>::Iterator it_msg;
 	for ( it_msg = m_msgQueue.begin(); it_msg != m_msgQueue.end(); ++it_msg )
 	{
 	 	Kopete::Message kmsg = (*it_msg);
@@ -998,7 +1002,7 @@ Kopete::Message &MSNSwitchBoardSocket::parseCustomEmoticons(Kopete::Message &kms
 	QMap<QString , QPair<QString , KTempFile*> >::Iterator it;
 	for ( it = m_emoticons.begin(); it != m_emoticons.end(); ++it )
 	{
-		QString es=QStyleSheet::escape(it.data().first);
+		QString es=Q3StyleSheet::escape(it.data().first);
 		KTempFile *f=it.data().second;
 		if(message.contains(es) && f)
 		{
@@ -1029,7 +1033,7 @@ Kopete::Message &MSNSwitchBoardSocket::parseCustomEmoticons(Kopete::Message &kms
 
 int MSNSwitchBoardSocket::sendNudge()
 {
-	QCString message = QString( "MIME-Version: 1.0\r\n"
+	Q3CString message = QString( "MIME-Version: 1.0\r\n"
 			"Content-Type: text/x-msnmsgr-datacast\r\n"
 			"\r\n"
 			"ID: 1\r\n"

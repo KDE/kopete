@@ -22,7 +22,7 @@
 #include <qstring.h>
 
 class LatexPrefsUI;
-class QListViewItem;
+class Q3ListViewItem;
 
 /**
   *@author Duncan Mac-Vicar Prett

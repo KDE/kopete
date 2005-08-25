@@ -22,6 +22,8 @@
 
 //qt
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 // kde
 #include <kdebug.h>
@@ -85,7 +87,7 @@ void MSNFileTransferSocket::parseCommand(const QString & cmd, uint id, const QSt
 		m_downsize=0;
 		m_file=new QFile(m_fileName);
 
-		if( m_file->open( IO_WriteOnly ))
+		if( m_file->open( QIODevice::WriteOnly ))
 			sendCommand( "TFR" ,NULL,false);
 		else
 		{
@@ -264,7 +266,7 @@ void MSNFileTransferSocket::setFile( const QString &fn, long unsigned int fileSi
 			delete m_file;
 		}
 		m_file = new QFile( fn );
-		if(!m_file->open(IO_ReadOnly))
+		if(!m_file->open(QIODevice::ReadOnly))
 		{
 			//FIXME: abort transfer here
 			kdDebug(14140) << "MSNFileTransferSocket::setFileName: WARNING unable to open the file" << endl;
@@ -387,7 +389,7 @@ void MSNFileTransferSocket::parseInvitation(const QString& msg)
 				MSNNotifySocket *notify=static_cast<MSNAccount*>(manager->account())->notifySocket();
 				if(notify){
 				
-				QCString message=QString(
+				Q3CString message=QString(
 					"MIME-Version: 1.0\r\n"
 					"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
 					"\r\n"
@@ -432,7 +434,7 @@ void MSNFileTransferSocket::slotFileTransferAccepted(Kopete::Transfer *trans, co
 	{
 		setFile(fileName);
 
-		QCString message=QString(
+		Q3CString message=QString(
 			"MIME-Version: 1.0\r\n"
 			"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
 			"\r\n"

@@ -25,7 +25,7 @@
 #include <qobject.h>
 #include <qregexp.h>
 #include <qstring.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 namespace KIRC
 {
@@ -107,7 +107,7 @@ public:
 };
 
 class EntityPtrList
-	: public QValueList<EntityPtr>
+	: public Q3ValueList<EntityPtr>
 {
 public:
 	EntityPtrList()
@@ -118,8 +118,8 @@ public:
 		append(entity);
 	}
 
-	EntityPtrList(const QValueList<EntityPtr> &list)
-		: QValueList<EntityPtr>(list)
+	EntityPtrList(const Q3ValueList<EntityPtr> &list)
+		: Q3ValueList<EntityPtr>(list)
 	{ }
 };
 

@@ -19,7 +19,7 @@
 
 #include <kcautoconfigmodule.h>
 
-class QListViewItem;
+class Q3ListViewItem;
 
 class SMPPPDCSPrefs;
 
@@ -60,7 +60,7 @@ public:
 	virtual void defaults();
 	
 protected slots:
-	void listClicked(QListViewItem * item);
+	void listClicked(Q3ListViewItem * item);
 
 protected:
 

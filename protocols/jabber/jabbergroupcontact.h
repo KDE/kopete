@@ -19,6 +19,8 @@
 #define JABBERGROUPCONTACT_H
 
 #include "jabberbasecontact.h"
+//Added by qt3to4:
+#include <Q3PtrList>
 
 namespace Kopete { class MetaContact; }
 class JabberGroupChatManager;
@@ -39,7 +41,7 @@ public:
 	 * Create custom context menu items for the contact
 	 * FIXME: implement manager version here?
 	 */
-	QPtrList<KAction> *customContextMenuActions ();
+	Q3PtrList<KAction> *customContextMenuActions ();
 
 	/**
 	 * Deal with an incoming message for this contact.
@@ -86,8 +88,8 @@ private slots:
 
 private:
 
-	QPtrList<Kopete::Contact> mContactList;
-	QPtrList<Kopete::MetaContact> mMetaContactList;
+	Q3PtrList<Kopete::Contact> mContactList;
+	Q3PtrList<Kopete::MetaContact> mMetaContactList;
 
 	JabberGroupChatManager *mManager;
 

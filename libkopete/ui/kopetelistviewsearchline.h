@@ -52,8 +52,8 @@ public:
 	
 protected:
 	virtual void checkItemParentsNotVisible();
-	virtual bool checkItemParentsVisible( QListViewItem *it );
-	virtual void setItemVisible( QListViewItem *it, bool visible );
+	virtual bool checkItemParentsVisible( Q3ListViewItem *it );
+	virtual void setItemVisible( Q3ListViewItem *it, bool visible );
 	
 private:
 	QString search;

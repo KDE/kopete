@@ -41,8 +41,8 @@ void CreateConferenceTask::conference( const int confId, const QStringList &part
 	tmp.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, m_guid ) );
 	lst.append( new Field::MultiField( NM_A_FA_CONVERSATION, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, tmp ) );
 	// series of participants (may be empty )
-	QValueListConstIterator<QString> end = participants.end();
-	for ( QValueListConstIterator<QString> it = participants.begin(); it != end; ++it )
+	Q3ValueListConstIterator<QString> end = participants.end();
+	for ( Q3ValueListConstIterator<QString> it = participants.begin(); it != end; ++it )
 		lst.append( new Field::SingleField( NM_A_SZ_DN, 0, NMFIELD_TYPE_DN, *it ) );
 	lst.append( new Field::SingleField( NM_A_SZ_DN, 0, NMFIELD_TYPE_DN, client()->userDN() ) );
 	createTransfer( "createconf", lst );

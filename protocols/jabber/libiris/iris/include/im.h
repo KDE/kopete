@@ -22,6 +22,8 @@
 #define XMPP_IM_H
 
 #include<qdatetime.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include"xmpp.h"
 
 namespace XMPP
@@ -45,7 +47,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	typedef QValueList<Url> UrlList;
+	typedef Q3ValueList<Url> UrlList;
 	typedef QMap<QString, QString> StringMap;
 	typedef enum { OfflineEvent, DeliveredEvent, DisplayedEvent,
 			ComposingEvent, CancelEvent } MsgEvent;
@@ -204,7 +206,7 @@ namespace XMPP
 		class ResourcePrivate *d;
 	};
 
-	class ResourceList : public QValueList<Resource>
+	class ResourceList : public Q3ValueList<Resource>
 	{
 	public:
 		ResourceList();
@@ -257,7 +259,7 @@ namespace XMPP
 		class RosterItemPrivate *d;
 	};
 
-	class Roster : public QValueList<RosterItem>
+	class Roster : public Q3ValueList<RosterItem>
 	{
 	public:
 		Roster();
@@ -342,7 +344,7 @@ namespace XMPP
 		Features v_features;
 	};
 
-	typedef QValueList<AgentItem> AgentList;
+	typedef Q3ValueList<AgentItem> AgentList;
 
 	class DiscoItem
 	{
@@ -377,7 +379,7 @@ namespace XMPP
 			QString type;
 		};
 
-		typedef QValueList<Identity> Identities;
+		typedef Q3ValueList<Identity> Identities;
 
 		const Identities &identities() const;
 		void setIdentities(const Identities &);
@@ -398,7 +400,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	typedef QValueList<DiscoItem> DiscoList;
+	typedef Q3ValueList<DiscoItem> DiscoList;
 
 	class FormField
 	{
@@ -427,7 +429,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class Form : public QValueList<FormField>
+	class Form : public Q3ValueList<FormField>
 	{
 	public:
 		Form(const Jid &j="");
@@ -675,7 +677,7 @@ namespace XMPP
 		LiveRosterItemPrivate *d;
 	};
 
-	class LiveRoster : public QValueList<LiveRosterItem>
+	class LiveRoster : public Q3ValueList<LiveRosterItem>
 	{
 	public:
 		LiveRoster();

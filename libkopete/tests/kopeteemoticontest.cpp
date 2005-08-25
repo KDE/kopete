@@ -21,6 +21,8 @@
 #include <qstring.h>
 #include <qdir.h>
 #include <qfile.h>
+//Added by qt3to4:
+#include <QTextStream>
 
 #include <kapplication.h>
 #include <kglobal.h>
@@ -82,7 +84,7 @@ void KopeteEmoticonTest::testEmoticonParser()
 			SKIP("Warning! expected output for testcase "+ *it + " not found. Skiping testcase");
 			continue;
 		}
-		if ( inputFile.open( IO_ReadOnly ) && expectedFile.open( IO_ReadOnly ))
+		if ( inputFile.open( QIODevice::ReadOnly ) && expectedFile.open( QIODevice::ReadOnly ))
 		{
 			QTextStream inputStream(&inputFile);
 			QTextStream expectedStream(&expectedFile);

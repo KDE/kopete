@@ -26,6 +26,8 @@
 */
 
 #include <qmap.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include <kaction.h>
 #include <kdebug.h>
@@ -161,9 +163,9 @@ Kopete::ChatSession * GroupWiseContact::manager( Kopete::Contact::CanCreateFlags
 	return account()->chatSession( chatMembers, QString::null, canCreate );
 }
 
-QPtrList<KAction> *GroupWiseContact::customContextMenuActions() 
+Q3PtrList<KAction> *GroupWiseContact::customContextMenuActions() 
 {
-	QPtrList<KAction> *m_actionCollection = new QPtrList<KAction>;
+	Q3PtrList<KAction> *m_actionCollection = new Q3PtrList<KAction>;
 
 	// Block/unblock Contact
 	QString label = account()->isContactBlocked( m_dn ) ? i18n( "Unblock User" ) : i18n( "Block User" );

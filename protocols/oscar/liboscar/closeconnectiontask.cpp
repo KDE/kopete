@@ -19,7 +19,7 @@
 #include "closeconnectiontask.h"
 
 #include <qstring.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include "connection.h"
@@ -70,7 +70,7 @@ bool CloseConnectionTask::take( Transfer* transfer )
 			return false;
 		}
 		
-		QValueList<TLV> tlvList = ft->buffer()->getTLVList();
+		Q3ValueList<TLV> tlvList = ft->buffer()->getTLVList();
 			
 		TLV uin = findTLV( tlvList, 0x0001 );
 		if ( uin )

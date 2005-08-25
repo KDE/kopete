@@ -26,6 +26,8 @@
 #include "transfer.h"
 #include "buffer.h"
 #include "oscartypes.h"
+//Added by qt3to4:
+#include <Q3ValueList>
 
 ChatServiceTask::ChatServiceTask( Task* parent )
 	: Task( parent )
@@ -104,9 +106,9 @@ void ChatServiceTask::parseRoomInfo()
     //correctly anyways
     b->skipBytes( 2 );
 
-    QValueList<Oscar::TLV> tlvList = b->getTLVList();
-    QValueList<Oscar::TLV>::iterator it = tlvList.begin();
-    QValueList<Oscar::TLV>::iterator itEnd = tlvList.end();
+    Q3ValueList<Oscar::TLV> tlvList = b->getTLVList();
+    Q3ValueList<Oscar::TLV>::iterator it = tlvList.begin();
+    Q3ValueList<Oscar::TLV>::iterator itEnd = tlvList.end();
     for ( ; it != itEnd; ++it )
     {
         switch ( ( *it ).type )
@@ -203,8 +205,8 @@ void ChatServiceTask::parseChatMessage()
     QString language, encoding, message;
     QByteArray icbmCookie( b->getBlock( 8 ) );
     b->skipBytes( 2 ); //message channel always 0x03
-    QValueList<Oscar::TLV> chatTLVs = b->getTLVList();
-    QValueList<Oscar::TLV>::iterator it,  itEnd = chatTLVs.end();
+    Q3ValueList<Oscar::TLV> chatTLVs = b->getTLVList();
+    Q3ValueList<Oscar::TLV>::iterator it,  itEnd = chatTLVs.end();
     for ( it = chatTLVs.begin(); it != itEnd; ++it )
     {
         switch ( ( *it ).type )
@@ -219,8 +221,8 @@ void ChatServiceTask::parseChatMessage()
         {
             //oooh! look! more TLVS! i love those!
             Buffer b( ( *it ).data );
-            QValueList<Oscar::TLV> messageTLVs = b.getTLVList();
-            QValueList<Oscar::TLV>::iterator mit,  mitEnd = messageTLVs.end();
+            Q3ValueList<Oscar::TLV> messageTLVs = b.getTLVList();
+            Q3ValueList<Oscar::TLV>::iterator mit,  mitEnd = messageTLVs.end();
             for ( mit = messageTLVs.begin(); mit != mitEnd; ++mit )
             {
                 switch( ( *it ).type )

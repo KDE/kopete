@@ -19,6 +19,8 @@
 #define kopeteonlinestatusmanager_h__
 
 #include <qobject.h>
+//Added by qt3to4:
+#include <QPixmap>
 #include "kopeteonlinestatus.h"
 #include "kaction.h"
 
@@ -151,7 +153,7 @@ class OnlineStatusAction : public KAction
 {
 	Q_OBJECT
   public:
-	OnlineStatusAction ( const OnlineStatus& status, const QString &text, const QIconSet &pix, QObject *parent=0, const char *name=0);
+	OnlineStatusAction ( const OnlineStatus& status, const QString &text, const QIcon &pix, QObject *parent=0, const char *name=0);
   signals:
 	void activated( const Kopete::OnlineStatus& status );
   private slots:

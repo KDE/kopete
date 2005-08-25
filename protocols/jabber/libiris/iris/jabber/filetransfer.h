@@ -24,7 +24,7 @@
 #include"im.h"
 
 #if QT_VERSION < 0x030200
-typedef long int Q_LLONG;
+typedef long int qlonglong;
 #endif
 
 namespace XMPP
@@ -43,19 +43,19 @@ namespace XMPP
 		void setProxy(const Jid &proxy);
 
 		// send
-		void sendFile(const Jid &to, const QString &fname, Q_LLONG size, const QString &desc);
-		Q_LLONG offset() const;
-		Q_LLONG length() const;
+		void sendFile(const Jid &to, const QString &fname, qlonglong size, const QString &desc);
+		qlonglong offset() const;
+		qlonglong length() const;
 		int dataSizeNeeded() const;
 		void writeFileData(const QByteArray &a);
 
 		// receive
 		Jid peer() const;
 		QString fileName() const;
-		Q_LLONG fileSize() const;
+		qlonglong fileSize() const;
 		QString description() const;
 		bool rangeSupported() const;
-		void accept(Q_LLONG offset=0, Q_LLONG length=0);
+		void accept(qlonglong offset=0, qlonglong length=0);
 
 		// both
 		void close(); // reject, or stop sending/receiving
@@ -127,9 +127,9 @@ namespace XMPP
 		JT_FT(Task *parent);
 		~JT_FT();
 
-		void request(const Jid &to, const QString &id, const QString &fname, Q_LLONG size, const QString &desc, const QStringList &streamTypes);
-		Q_LLONG rangeOffset() const;
-		Q_LLONG rangeLength() const;
+		void request(const Jid &to, const QString &id, const QString &fname, qlonglong size, const QString &desc, const QStringList &streamTypes);
+		qlonglong rangeOffset() const;
+		qlonglong rangeLength() const;
 		QString streamType() const;
 
 		void onGo();
@@ -145,7 +145,7 @@ namespace XMPP
 		Jid from;
 		QString iq_id, id;
 		QString fname;
-		Q_LLONG size;
+		qlonglong size;
 		QString desc;
 		bool rangeSupported;
 		QStringList streamTypes;
@@ -157,7 +157,7 @@ namespace XMPP
 		JT_PushFT(Task *parent);
 		~JT_PushFT();
 
-		void respondSuccess(const Jid &to, const QString &id, Q_LLONG rangeOffset, Q_LLONG rangeLength, const QString &streamType);
+		void respondSuccess(const Jid &to, const QString &id, qlonglong rangeOffset, qlonglong rangeLength, const QString &streamType);
 		void respondError(const Jid &to, const QString &id, int code, const QString &str);
 
 		bool take(const QDomElement &);

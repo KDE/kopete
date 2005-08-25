@@ -22,6 +22,8 @@
 #define LOGINTASK_H
 
 #include "requesttask.h"
+//Added by qt3to4:
+#include <Q3CString>
 
 using namespace GroupWise;
 
@@ -48,7 +50,7 @@ protected:
 	void extractContact( Field::MultiField * contactContainer );
 	ContactDetails extractUserDetails( Field::FieldList & fields );
 	void extractPrivacy( Field::FieldList & fields );
-	QStringList readPrivacyItems( const QCString & tag, Field::FieldList & fields );
+	QStringList readPrivacyItems( const Q3CString & tag, Field::FieldList & fields );
 
 signals:
 	void gotMyself( const GroupWise::ContactDetails & );

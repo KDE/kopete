@@ -30,6 +30,10 @@
 #include <qtimer.h>
 #include <qdom.h>
 #include <qtextstream.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3ValueList>
+#include <Q3CString>
 
 // KDE Includes
 #include <klocale.h>
@@ -97,7 +101,7 @@ void YahooConnectionManager::addConnection( KStreamSocket* socket )
 KStreamSocket* YahooConnectionManager::connectionForFD( int fd )
 {
 	//kdDebug(14181) << k_funcinfo << "Looking for socket with fd " << fd << endl;
-	QValueList<KStreamSocket*>::const_iterator it, ycEnd = m_connectionList.constEnd();
+	Q3ValueList<KStreamSocket*>::const_iterator it, ycEnd = m_connectionList.constEnd();
 	KSocketDevice *dev;
 	
 	for ( it = m_connectionList.begin(); it != ycEnd; ++it )
@@ -116,7 +120,7 @@ KStreamSocket* YahooConnectionManager::connectionForFD( int fd )
 
 void YahooConnectionManager::remove( KStreamSocket* socket )
 {
-	QValueList<KStreamSocket*>::iterator it, ycEnd = m_connectionList.end();
+	Q3ValueList<KStreamSocket*>::iterator it, ycEnd = m_connectionList.end();
 	
 	for ( it = m_connectionList.begin(); it != ycEnd; it++ )
 	{
@@ -132,7 +136,7 @@ void YahooConnectionManager::remove( KStreamSocket* socket )
 
 void YahooConnectionManager::reset()
 {
-	QValueList<KStreamSocket*>::iterator it, ycEnd = m_connectionList.end();
+	Q3ValueList<KStreamSocket*>::iterator it, ycEnd = m_connectionList.end();
 	
 	for ( it = m_connectionList.begin(); it != ycEnd; it++ )
 	{
@@ -317,7 +321,7 @@ void YahooSession::setAway( enum yahoo_status state, const QString &msg, int awa
 {
 	kdDebug(14181)<< k_funcinfo << state << ", " << msg << ", " << away << "]" << m_connId << endl;
 
-	yahoo_set_away( m_connId, state, msg.isNull() ? QCString() : msg.local8Bit(), away );
+	yahoo_set_away( m_connId, state, msg.isNull() ? Q3CString() : msg.local8Bit(), away );
 }
 
 void YahooSession::addBuddy( const QString &who, const QString &group)
@@ -1047,7 +1051,7 @@ void YahooSession::_uploadFileReceiver( int /*id*/, int fd, int error, void *dat
 		return;
 	}
 	
-	if ( !uploadData->file.open(IO_ReadOnly) )
+	if ( !uploadData->file.open(QIODevice::ReadOnly) )
 	{
 		kdDebug(14180) << "Could not open local file." << endl;
 		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n( "Could not open local file!" ), i18n("Error") );
@@ -1156,7 +1160,7 @@ void YahooSession::_receiveFileProceed( int id, int fd, int error,
 	}
 	
 	QFile file( m_Filename );
-	if ( file.open(IO_WriteOnly ) )
+	if ( file.open(QIODevice::WriteOnly ) )
 	{
 		QTextStream stream( &file );
 		while( (read = socket->readBlock( buf, 1024 )) > 0 )
@@ -1546,7 +1550,7 @@ void YahooSession::_gotWebcamImage( const char* who, const unsigned char* image,
 	if ( currentImage == NULL )
 	{
 		currentImage = new QBuffer();
-		currentImage->open(IO_ReadWrite);
+		currentImage->open(QIODevice::ReadWrite);
 	}
 	currentImage->writeBlock( (char *) image, real_size );
 	//kdDebug(14181) << " real_size " << real_size << " image_size " << image_size << " timestamp " << timestamp << " " << who << endl;

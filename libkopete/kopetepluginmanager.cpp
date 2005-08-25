@@ -31,7 +31,9 @@
 #include <qfile.h>
 #include <qregexp.h>
 #include <qtimer.h>
-#include <qvaluestack.h>
+#include <q3valuestack.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -56,7 +58,7 @@ public:
 	Private() : shutdownMode( StartingUp ), isAllPluginsLoaded(false) {}
 
 	// All available plugins, regardless of category, and loaded or not
-	QValueList<KPluginInfo *> plugins;
+	Q3ValueList<KPluginInfo *> plugins;
 
 	// Dict of all currently loaded plugins, mapping the KPluginInfo to
 	// a plugin
@@ -71,7 +73,7 @@ public:
 	ShutdownMode shutdownMode;
 
 	// Plugins pending for loading
-	QValueStack<QString> pluginsToLoad;
+	Q3ValueStack<QString> pluginsToLoad;
 
 	static KStaticDeleter<PluginManager> deleter;
 
@@ -119,13 +121,13 @@ PluginManager::~PluginManager()
 	delete d;
 }
 
-QValueList<KPluginInfo *> PluginManager::availablePlugins( const QString &category ) const
+Q3ValueList<KPluginInfo *> PluginManager::availablePlugins( const QString &category ) const
 {
 	if ( category.isEmpty() )
 		return d->plugins;
 
-	QValueList<KPluginInfo *> result;
-	QValueList<KPluginInfo *>::ConstIterator it;
+	Q3ValueList<KPluginInfo *> result;
+	Q3ValueList<KPluginInfo *>::ConstIterator it;
 	for ( it = d->plugins.begin(); it != d->plugins.end(); ++it )
 	{
 		if ( ( *it )->category() == category )
@@ -290,9 +292,9 @@ void PluginManager::loadAllPlugins()
 	else
 	{
 		// we had no config, so we load any plugins that should be loaded by default.
-		QValueList<KPluginInfo *> plugins = availablePlugins( QString::null );
-		QValueList<KPluginInfo *>::ConstIterator it = plugins.begin();
-		QValueList<KPluginInfo *>::ConstIterator end = plugins.end();
+		Q3ValueList<KPluginInfo *> plugins = availablePlugins( QString::null );
+		Q3ValueList<KPluginInfo *>::ConstIterator it = plugins.begin();
+		Q3ValueList<KPluginInfo *>::ConstIterator end = plugins.end();
 		for ( ; it != end; ++it )
 		{
 			if ( (*it)->isPluginEnabledByDefault() )
@@ -476,7 +478,7 @@ Plugin* PluginManager::plugin( const QString &_pluginId ) const
 
 KPluginInfo * PluginManager::infoForPluginId( const QString &pluginId ) const
 {
-	QValueList<KPluginInfo *>::ConstIterator it;
+	Q3ValueList<KPluginInfo *>::ConstIterator it;
 	for ( it = d->plugins.begin(); it != d->plugins.end(); ++it )
 	{
 		if ( ( *it )->pluginName() == pluginId )

@@ -19,6 +19,8 @@
 
 #include "kopeteonlinestatus.h"
 #include "kopetemessage.h"
+//Added by qt3to4:
+#include <Q3ValueList>
 
 class StatisticsDB;
 class QDateTime;
@@ -136,9 +138,9 @@ public:
 	/**
 	 * \brief computes the main "status" events for the contact
 	 */
-	QValueList<QTime> mainEvents(const Kopete::OnlineStatus::StatusType& status);
+	Q3ValueList<QTime> mainEvents(const Kopete::OnlineStatus::StatusType& status);
 	/// \brief used by mainEvents()
-	QValueList<int> computeCentroids(const QValueList<int>& centroids, const QValueList<int>& values);
+	Q3ValueList<int> computeCentroids(const Q3ValueList<int>& centroids, const Q3ValueList<int>& values);
 
 	
 private:	

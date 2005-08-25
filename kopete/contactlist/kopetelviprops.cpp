@@ -31,6 +31,12 @@
 #include <qradiobutton.h>
 #include <qtabwidget.h>
 #include <qcombobox.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QBoxLayout>
+#include <Q3PtrList>
 
 #include <kdialogbase.h>
 #include <kfiledialog.h>
@@ -255,8 +261,8 @@ KopeteMetaLVIProps::~KopeteMetaLVIProps()
 void KopeteMetaLVIProps::slotLoadNameSources()
 {
 	Kopete::Contact* trackingName = item->metaContact()->displayNameSourceContact();
-	QPtrList< Kopete::Contact > cList = item->metaContact()->contacts();
-	QPtrListIterator<Kopete::Contact> it( cList );
+	Q3PtrList< Kopete::Contact > cList = item->metaContact()->contacts();
+	Q3PtrListIterator<Kopete::Contact> it( cList );
 	mainWidget->cmbAccountName->clear();
 	for( ; it.current(); ++it )
 	{
@@ -284,11 +290,11 @@ void KopeteMetaLVIProps::slotLoadNameSources()
 void KopeteMetaLVIProps::slotLoadPhotoSources()
 {
 	// fill photo contact sources
-	QPtrList< Kopete::Contact > cList = item->metaContact()->contacts();
+	Q3PtrList< Kopete::Contact > cList = item->metaContact()->contacts();
 	m_withPhotoContacts.clear();
 	Kopete::Contact* trackingPhoto = item->metaContact()->photoSourceContact();
 	mainWidget->cmbAccountPhoto->clear();
-	QPtrListIterator<Kopete::Contact> itp( cList );
+	Q3PtrListIterator<Kopete::Contact> itp( cList );
 	for( ; itp.current(); ++itp )
 	{
 		Kopete::Contact *citem = itp.current();

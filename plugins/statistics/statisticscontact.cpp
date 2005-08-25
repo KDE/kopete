@@ -16,7 +16,7 @@
 
 #include <stdlib.h>
 
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -281,10 +281,10 @@ QString StatisticsContact::mainStatusDate(const QDate& date)
 // 	
 // }
 
-QValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::StatusType& status)
+Q3ValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::StatusType& status)
 {
 	QStringList buffer;
-	QValueList<QTime> mainEvents;
+	Q3ValueList<QTime> mainEvents;
 	
 	
 	QDateTime currentDateTime = QDateTime::currentDateTime();
@@ -315,7 +315,7 @@ QValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::Stat
 	kdDebug() << "statistics: average events per day : " <<avEventsPerDay << endl;
 	
 	// We want to work on hours
-	QValueList<int> hoursValues;
+	Q3ValueList<int> hoursValues;
 	for (uint i=0; i<values.count(); i++)
 	{
 		QDateTime dt;
@@ -327,7 +327,7 @@ QValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::Stat
 	qHeapSort(hoursValues);
 	
 	// Then we put some centroids (centroids in [0..24[)
-	QValueList<int> centroids;
+	Q3ValueList<int> centroids;
 	int incr=qRound((double)hoursValues.count()/(double)avEventsPerDay);
 	incr = incr ? incr : 1;
 	for (uint i=0; i<hoursValues.count(); i+=incr)
@@ -354,12 +354,12 @@ QValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::Stat
 	return mainEvents;
 }
 
-QValueList<int> StatisticsContact::computeCentroids(const QValueList<int>& centroids, const QValueList<int>& values)
+Q3ValueList<int> StatisticsContact::computeCentroids(const Q3ValueList<int>& centroids, const Q3ValueList<int>& values)
 {
 	kdDebug() << "statistics: enter compute centroids"<< endl;
 
-	QValueList<int> whichCentroid; // whichCentroid[i] = j <=> values[i] has centroid j for closest one
-	QValueList<int> newCentroids;
+	Q3ValueList<int> whichCentroid; // whichCentroid[i] = j <=> values[i] has centroid j for closest one
+	Q3ValueList<int> newCentroids;
 	for (uint i=0; i<values.count(); i++)
 	// Iterates over the values. For each one we need to get the closest centroid.
 	{

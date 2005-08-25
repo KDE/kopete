@@ -35,11 +35,13 @@
 #include <kstandarddirs.h>
 
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 IRCContactManager::IRCContactManager(const QString &nickName, IRCAccount *account, const char *name)
 	: QObject(account, name),
-	  m_channels( QDict<IRCChannelContact>( 17, false ) ),
-	  m_users( QDict<IRCUserContact>( 577, false ) ),
+	  m_channels( Q3Dict<IRCChannelContact>( 17, false ) ),
+	  m_users( Q3Dict<IRCUserContact>( 577, false ) ),
 	  m_account( account )
 {
 	m_mySelf = findUser(nickName);
@@ -112,10 +114,10 @@ void IRCContactManager::unregister(Kopete::Contact *contact)
 	unregisterUser(contact, true);
 }
 
-QValueList<IRCChannelContact*> IRCContactManager::findChannelsByMember( IRCUserContact *contact )
+Q3ValueList<IRCChannelContact*> IRCContactManager::findChannelsByMember( IRCUserContact *contact )
 {
-	QValueList<IRCChannelContact*> retVal;
-	for( QDictIterator<IRCChannelContact> it(m_channels); it.current(); ++it )
+	Q3ValueList<IRCChannelContact*> retVal;
+	for( Q3DictIterator<IRCChannelContact> it(m_channels); it.current(); ++it )
 	{
 		if( it.current()->manager(Kopete::Contact::CannotCreate) )
 		{
@@ -126,7 +128,7 @@ QValueList<IRCChannelContact*> IRCContactManager::findChannelsByMember( IRCUserC
 				bool c = true;
 
 				Kopete::ContactPtrList members = it.current()->manager()->members();
-				for( QPtrListIterator<Kopete::Contact> it2( members ); c && it2.current(); ++it2 )
+				for( Q3PtrListIterator<Kopete::Contact> it2( members ); c && it2.current(); ++it2 )
 				{
 					if( it2.current() == contact )
 					{
@@ -215,8 +217,8 @@ IRCContact *IRCContactManager::findContact( const QString &id, Kopete::MetaConta
 
 IRCContact *IRCContactManager::existContact( const KIRC::Engine *engine, const QString &id )
 {
-	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( IRCProtocol::protocol() );
-	QDictIterator<Kopete::Account> it(accounts);
+	Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( IRCProtocol::protocol() );
+	Q3DictIterator<Kopete::Account> it(accounts);
 	for( ; it.current(); ++it )
 	{
 		IRCAccount *account = (IRCAccount *)it.current();
@@ -249,7 +251,7 @@ void IRCContactManager::unregisterUser(Kopete::Contact *contact, bool force )
 
 void IRCContactManager::slotContactAdded( Kopete::MetaContact *contact )
 {
-	for( QPtrListIterator<Kopete::Contact> it( contact->contacts() ); it.current(); ++it )
+	for( Q3PtrListIterator<Kopete::Contact> it( contact->contacts() ); it.current(); ++it )
 	{
 		if( it.current()->account() == m_account )
 		{

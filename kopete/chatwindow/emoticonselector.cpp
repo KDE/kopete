@@ -26,8 +26,13 @@
 
 #include <qmovie.h>
 #include <qlayout.h>
-#include <qobjectlist.h>
+#include <qobject.h>
 #include <qtooltip.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QMouseEvent>
+#include <QLabel>
+#include <QGridLayout>
 
 #include <kdebug.h>
 

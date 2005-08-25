@@ -26,8 +26,10 @@
 #include <kdebug.h>
 
 #include <qlabel.h>
-#include <qvbox.h>
+#include <q3vbox.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 namespace Kopete {
 
@@ -133,9 +135,9 @@ void UserInfoDialog::addHTMLText( const QString& /*str*/ )
 
 }
 
-QHBox* UserInfoDialog::addLabelEdit( const QString& label, const QString& text, KLineEdit*& edit )
+Q3HBox* UserInfoDialog::addLabelEdit( const QString& label, const QString& text, KLineEdit*& edit )
 {
-	QHBox *box = new QHBox( d->page );
+	Q3HBox *box = new Q3HBox( d->page );
 	new QLabel( label, box );
 	edit = new KLineEdit( box );
   edit->setAlignment( Qt::AlignHCenter );
@@ -233,7 +235,7 @@ void UserInfoDialog::fillWidgets()
 	}
 
 	if ( !d->awayMessage.isEmpty() ) {
-		QVBox *awayBox = new QVBox( d->page );
+		Q3VBox *awayBox = new Q3VBox( d->page );
 		new QLabel( i18n("Away message:"), awayBox );
 		d->awayBrowser = new KTextBrowser( awayBox );
 		d->awayBrowser->setText( d->awayMessage );
@@ -241,7 +243,7 @@ void UserInfoDialog::fillWidgets()
 	}
 
 	if ( !d->info.isEmpty() ) {
-		QVBox *infoBox = new QVBox( d->page );
+		Q3VBox *infoBox = new Q3VBox( d->page );
 		new QLabel( i18n("User info:"), infoBox );
 		d->infoBrowser = new KTextBrowser( infoBox );
 		d->infoBrowser->setText( d->info );

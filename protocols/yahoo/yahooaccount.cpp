@@ -25,6 +25,8 @@
 #include <qregexp.h>
 #include <qimage.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 // KDE
 #include <klocale.h>
@@ -438,7 +440,7 @@ void YahooAccount::disconnect()
 		m_session->logOff();
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 
-		for ( QDictIterator<Kopete::Contact> i( contacts() ); i.current(); ++i )
+		for ( Q3DictIterator<Kopete::Contact> i( contacts() ); i.current(); ++i )
 			static_cast<YahooContact *>( i.current() )->setOnlineStatus( m_protocol->Offline );
 		
 		disconnected( Manual );
@@ -447,7 +449,7 @@ void YahooAccount::disconnect()
 	{       //make sure we set everybody else offline explicitly, just for cleanup
 		kdDebug(14180) << "Ignoring disconnect request (not fully connected)." << endl;
 
-		for ( QDictIterator<Kopete::Contact> i(contacts()); i.current(); ++i )
+		for ( Q3DictIterator<Kopete::Contact> i(contacts()); i.current(); ++i )
 			static_cast<YahooContact*>( i.current() )->setOnlineStatus( m_protocol->Offline );
 	}
 
@@ -1010,7 +1012,7 @@ void YahooAccount::setBuddyIcon( KURL url )
 			image = image.copy(0, (image.height()-image.width())/2, image.width(), image.width());
 		}
 
-		if( !image.save( newlocation, "PNG" ) || !iconFile.open(IO_ReadOnly) )
+		if( !image.save( newlocation, "PNG" ) || !iconFile.open(QIODevice::ReadOnly) )
 		{
 			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n( "An error occurred when trying to change the display picture." ), i18n( "Yahoo Plugin" ) );
 			return;
@@ -1053,7 +1055,7 @@ void YahooAccount::setBuddyIcon( KURL url )
 void YahooAccount::slotBuddyIconChanged( const QString &url )
 {
 	kdDebug(14180) << k_funcinfo << endl;
-	QDictIterator<Kopete::Contact> it( contacts() );
+	Q3DictIterator<Kopete::Contact> it( contacts() );
 	int checksum = myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt();
 
 	if ( url.isEmpty() )	// remove pictures from buddie's clients

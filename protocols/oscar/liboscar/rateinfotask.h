@@ -20,7 +20,7 @@
 #define RATEINFOTASK_H
 
 #include "task.h"
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 using namespace Oscar;
 
@@ -56,7 +56,7 @@ private slots:
 
 private:
 	bool m_needRateAck;
-	QValueList<int> m_rateGroups;
+	Q3ValueList<int> m_rateGroups;
 };
 
 //kate: tab-width 4; indent-mode csands;
