@@ -42,6 +42,7 @@ Name[sv]=SUSE SMPPPD anslutningsstatus
 Name[uk]=Стан з'єднання SUSE SMPPPD
 Name[zh_CN]=SUSE SMPPPD 连接状态
 Comment=SMPPPDCS Plugin
+Comment[br]=Lugant SMPPPDCS
 Comment[ca]=Connector SMPPPDCS
 Comment[cs]=SMPPPDCS modul
 Comment[da]=SMPPPDCS-Plugin
