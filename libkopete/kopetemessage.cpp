@@ -31,7 +31,7 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kstringhandler.h>
-#include <kmdcodec.h>
+#include <kcodecs.h>
 
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"

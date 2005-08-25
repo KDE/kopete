@@ -30,7 +30,7 @@
 
 // kde
 #include <kdebug.h>
-#include <kmdcodec.h>
+#include <kcodecs.h>
 #include <ktempfile.h>
 #include <krun.h>
 #include <klocale.h>

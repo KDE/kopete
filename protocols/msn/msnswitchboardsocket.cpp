@@ -44,7 +44,7 @@
 #include <kaboutdata.h>
 #include <ktempfile.h>
 #include <kconfig.h>
-#include <kmdcodec.h>
+#include <kcodecs.h>
 #include <kstandarddirs.h>
 #include <ktempfile.h>
 

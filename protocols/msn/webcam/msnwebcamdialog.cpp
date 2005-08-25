@@ -45,7 +45,7 @@ MSNWebcamDialog::MSNWebcamDialog( const QString& contact, QWidget * parent, cons
 	/*
 	QObject::connect( contact, SIGNAL( webcamClosed( int ) ), this, SLOT( webcamClosed( int ) ) );
 	*/
-	Q3Frame* page = plainPage();
+	QFrame* page = plainPage();
 	if ( page )
 	{
 		kdDebug(14180) << k_funcinfo << "Adding webcam image container" << endl;

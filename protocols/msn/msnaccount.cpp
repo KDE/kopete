@@ -26,7 +26,7 @@
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <kstandarddirs.h>
-#include <kmdcodec.h>
+#include <kcodecs.h>
 #include <klocale.h>
 
 #include <qfile.h>

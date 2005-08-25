@@ -47,28 +47,28 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, const char * name )
 {
 	kdDebug(14153) << k_funcinfo << "Creating new icq user info widget" << endl;
 	
-	Q3Frame* genInfo = addPage( i18n( "General Info" ),
+	QFrame* genInfo = addPage( i18n( "General Info" ),
 	                                         i18n( "General ICQ Information" ),
 	                                         KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "identity" ), KIcon::Desktop ) );
 	QVBoxLayout* genLayout = new QVBoxLayout( genInfo );
 	m_genInfoWidget = new ICQGeneralInfoWidget( genInfo, "Basic Information" );
 	genLayout->addWidget( m_genInfoWidget );
 	
-	Q3Frame* workInfo = addPage( i18n( "Work Info" ),
+	QFrame* workInfo = addPage( i18n( "Work Info" ),
 	                                          i18n( "Work Information" ),
 	                                          KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "attach" ), KIcon::Desktop ) );
 	QVBoxLayout* workLayout = new QVBoxLayout( workInfo );
 	m_workInfoWidget = new ICQWorkInfoWidget( workInfo, "Work Information" );
 	workLayout->addWidget( m_workInfoWidget );
 	
-	Q3Frame* otherInfo = addPage( i18n( "Other Info" ),
+	QFrame* otherInfo = addPage( i18n( "Other Info" ),
 	                                           i18n( "Other ICQ Information" ),
 	                                           KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "email" ), KIcon::Desktop ) );
 	QVBoxLayout* otherLayout = new QVBoxLayout( otherInfo );
 	m_otherInfoWidget = new ICQOtherInfoWidget( otherInfo, "Other Information"  );
 	otherLayout->addWidget( m_otherInfoWidget );
 	
-	Q3Frame* interestInfo = addPage( i18n( "Interest Info" ),
+	QFrame* interestInfo = addPage( i18n( "Interest Info" ),
 	                                           i18n( "Interest" ),
 	                                           KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "email" ), KIcon::Desktop ) );
 	QVBoxLayout* interestLayout = new QVBoxLayout( interestInfo );

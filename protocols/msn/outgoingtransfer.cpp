@@ -28,7 +28,7 @@ using P2P::Message;
 #include <kbufferedsocket.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kmdcodec.h>
+#include <kcodecs.h>
 using namespace KNetwork;
 
 // Qt includes

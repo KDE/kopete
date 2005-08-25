@@ -34,7 +34,7 @@ using P2P::OutgoingTransfer;
 
 // Kde includes
 #include <kdebug.h>
-#include <kmdcodec.h>
+#include <kcodecs.h>
 #include <kstandarddirs.h>
 #include <ktempfile.h>
 
