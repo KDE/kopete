@@ -368,7 +368,8 @@ void KIMIfaceImpl::slotContactStatusChanged( Kopete::MetaContact *mc )
 		// tell anyone who's listening over DCOP
 		contactPresenceChanged( mc->metaContactId(), kapp->name(), p );
 /*		QByteArray params;
-		QDataStream stream(params, IO_WriteOnly);
+		QDataStream stream( &params,IO_WriteOnly);
+		stream.setVersion(QDataStream::Qt_3_1);
 		stream << mc->metaContactId();
 		stream << kapp->name();
 		stream << p;

@@ -121,7 +121,8 @@ Q_INT64 MSNChallengeHandler::createHashKey(const Q3ValueVector<Q_INT32>& md5Inte
 	high = (high + md5Integers[1]) % 0x7FFFFFFF;
 	low  = (low  + md5Integers[3]) % 0x7FFFFFFF;
 
-	QDataStream buffer(QByteArray(8), QIODevice::ReadWrite);
+	QDataStream buffer(QByteArray( &8),QIODevice::ReadWrite);
+	buffer(QByteArray.setVersion(QDataStream::Qt_3_1);
 	buffer.setByteOrder(QDataStream::LittleEndian);
 	buffer << (Q_INT32)high;
 	buffer << (Q_INT32)low;

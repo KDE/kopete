@@ -66,7 +66,8 @@ void NLamaroK::update()
 		}
 		else
 		{
-			QDataStream reply( replyData, QIODevice::ReadOnly );
+			QDataStream reply( &replyData,QIODevice::ReadOnly );
+			reply.setVersion(QDataStream::Qt_3_1);
 			if ( replyType == "bool" ) {
 				reply >> m_playing;
 			}
@@ -76,7 +77,8 @@ void NLamaroK::update()
 	{
 		int status = 0;
 
-		QDataStream reply( replyData, QIODevice::ReadOnly );
+		QDataStream reply( &replyData,QIODevice::ReadOnly );
+		reply.setVersion(QDataStream::Qt_3_1);
 		if ( replyType == "int" ) {
 			reply >> status;
 			kdDebug( 14307 ) << k_funcinfo << "Amarok status()=" << status << endl;
@@ -91,7 +93,8 @@ void NLamaroK::update()
 	if ( m_client->call( "amarok", "player", "title()", data,
 				replyType, replyData ) )
 	{
-		QDataStream reply( replyData, QIODevice::ReadOnly );
+		QDataStream reply( &replyData,QIODevice::ReadOnly );
+		reply.setVersion(QDataStream::Qt_3_1);
 
 		if ( replyType == "QString" ) {
 			reply >> newTrack;
@@ -107,7 +110,8 @@ void NLamaroK::update()
 	if ( m_client->call( "amarok", "player", "album()", data,
 				replyType, replyData ) )
 	{
-		QDataStream reply( replyData, QIODevice::ReadOnly );
+		QDataStream reply( &replyData,QIODevice::ReadOnly );
+		reply.setVersion(QDataStream::Qt_3_1);
 
 		if ( replyType == "QString" ) {
 			reply >> m_album;
@@ -117,7 +121,8 @@ void NLamaroK::update()
 	if ( m_client->call( "amarok", "player", "artist()", data,
 				replyType, replyData ) )
 	{
-		QDataStream reply( replyData, QIODevice::ReadOnly );
+		QDataStream reply( &replyData,QIODevice::ReadOnly );
+		reply.setVersion(QDataStream::Qt_3_1);
 
 		if ( replyType == "QString" ) {
 			reply >> m_artist;

@@ -75,7 +75,8 @@ void NLKaffeine::update()
 		// If we didn't get any DCOP error, check if Kaffeine is playing.
 		if(!error)
 		{
-			QDataStream reply( replyData, QIODevice::ReadOnly );
+			QDataStream reply( &replyData,QIODevice::ReadOnly );
+			reply.setVersion(QDataStream::Qt_3_1);
 			if ( replyType == "bool" ) {
 					reply >> m_playing;
 					kdDebug( 14307 ) << "checked if Kaffeine is playing!" << endl;
@@ -85,7 +86,8 @@ void NLKaffeine::update()
 		if ( m_client->call( "kaffeine", kaffeineIface, kaffeineGetTrack, data,
 					replyType, replyData ) )
 		{
-			QDataStream reply( replyData, QIODevice::ReadOnly );
+			QDataStream reply( &replyData,QIODevice::ReadOnly );
+			reply.setVersion(QDataStream::Qt_3_1);
 
 			if ( replyType == "QString" ) {
 				reply >> newTrack;

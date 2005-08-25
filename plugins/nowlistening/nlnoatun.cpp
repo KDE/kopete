@@ -54,7 +54,8 @@ void NLNoatun::update()
 		}
 		else
 		{
-			QDataStream reply( replyData, QIODevice::ReadOnly );
+			QDataStream reply( &replyData,QIODevice::ReadOnly );
+			reply.setVersion(QDataStream::Qt_3_1);
 			if ( replyType == "int" ) {
 				int state = 0;
 				reply >> state;
@@ -77,7 +78,8 @@ void NLNoatun::update()
 				kdDebug( 14307 ) <<  "NLNoatun::update() DCOP error on " << appname 
 					<< endl;
 			else {
-				QDataStream reply( replyData, QIODevice::ReadOnly );
+				QDataStream reply( &replyData,QIODevice::ReadOnly );
+				reply.setVersion(QDataStream::Qt_3_1);
 				if ( replyType == "QString" ) {
 					reply >> newTrack;
 				} else
@@ -127,7 +129,8 @@ QString NLNoatun::currentProperty( Q3CString appname, QString property ) const
 {
 	QByteArray data, replyData;
 	Q3CString replyType;
-	QDataStream arg( data, QIODevice::WriteOnly );
+	QDataStream arg( &data,QIODevice::WriteOnly );
+	arg.setVersion(QDataStream::Qt_3_1);
 	QString result = "";
 	arg << property;
 	if ( !m_client->call( appname, "Noatun",
@@ -138,7 +141,8 @@ QString NLNoatun::currentProperty( Q3CString appname, QString property ) const
 	}	
 	else
 	{
-		QDataStream reply( replyData, QIODevice::ReadOnly );
+		QDataStream reply( &replyData,QIODevice::ReadOnly );
+		reply.setVersion(QDataStream::Qt_3_1);
 		if ( replyType == "QString" )
 		{
 			reply >> result;

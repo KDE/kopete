@@ -611,7 +611,8 @@ void MSNP2PDisplatcher::sendFile(const QString& fileN ,unsigned int fileSize, co
 	int taille;
 	QCString utf16FileName=codec->fromUnicode(fileN.right( fileN.length() - fileN.findRev( '/' ) - 1 ) , taille );*/
 	QByteArray utf16FileName;
-	QDataStream stream(utf16FileName, QIODevice::WriteOnly);
+	QDataStream stream( &utf16FileName,QIODevice::WriteOnly);
+	stream.setVersion(QDataStream::Qt_3_1);
 	stream.setByteOrder(QDataStream::LittleEndian);
 	stream << fileN.right( fileN.length() - fileN.findRev( '/' ) - 1 );
 

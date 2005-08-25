@@ -21,7 +21,7 @@
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <q3ptrlist.h>
-#include <q3whatsthis.h>
+
 #include <qpainter.h>
 #include <qicon.h>
 #include <q3buttongroup.h>

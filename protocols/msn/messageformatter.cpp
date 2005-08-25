@@ -73,7 +73,8 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 		QString destination = regex.cap(1);
 	}
 	
-	QDataStream reader(stream, QIODevice::ReadOnly);
+	QDataStream reader( &stream,QIODevice::ReadOnly);
+	reader.setVersion(QDataStream::Qt_3_1);
 	reader.setByteOrder(QDataStream::LittleEndian);
 	// Seek to the start position of the message
 	// transport header.
@@ -126,7 +127,8 @@ void MessageFormatter::writeMessage(const Message& message, QByteArray& stream, 
 {
 //	kdDebug(14140) << k_funcinfo << endl;
 
-	QDataStream writer(stream, QIODevice::WriteOnly);
+	QDataStream writer( &stream,QIODevice::WriteOnly);
+	writer.setVersion(QDataStream::Qt_3_1);
 	writer.setByteOrder(QDataStream::LittleEndian);
 
 	if(compact == false)

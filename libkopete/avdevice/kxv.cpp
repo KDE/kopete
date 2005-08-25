@@ -87,7 +87,7 @@ bool KXv::haveXv()
     return false;
 #else
     unsigned int tmp;
-    if (Success != XvQueryExtension(qt_xdisplay(),
+    if (Success != XvQueryExtension(QX11Info::display(),
                                     &tmp,
                                     &tmp,
                                     &tmp,
@@ -121,7 +121,7 @@ bool KXv::init(Drawable d)
 #ifndef HAVE_LIBXV
     return false;
 #else
-    if (Success != XvQueryExtension(qt_xdisplay(),
+    if (Success != XvQueryExtension(QX11Info::display(),
                                     &xv_version,
                                     &xv_release,
                                     &xv_request,
@@ -133,12 +133,12 @@ bool KXv::init(Drawable d)
 
 #ifdef HAVE_LIBXVMC
     // Causes crashes for some people.
-    //  if (Success == XvMCQueryExtension(qt_xdisplay(),0,0)) {
+    //  if (Success == XvMCQueryExtension(QX11Info::display(),0,0)) {
     //    kdDebug() << "Found XvMC!" << endl;
     //  }
 #endif
 
-    if (Success != XvQueryAdaptors(qt_xdisplay(),
+    if (Success != XvQueryAdaptors(QX11Info::display(),
                                    d,
                                    &xv_adaptors,
                                    (XvAdaptorInfo **)&xv_adaptor_info)) {
@@ -226,13 +226,13 @@ int KXvDevice::displayImage(Window win, const unsigned char *const data, int w, 
         return -1;
 
     if (win != xv_last_win && xv_gc) {
-        XFreeGC(qt_xdisplay(), xv_gc);
+        XFreeGC(QX11Info::display(), xv_gc);
         xv_gc = 0;
     }
 
     if (!xv_gc) {
         xv_last_win = win;
-        xv_gc = XCreateGC(qt_xdisplay(), win, 0, NULL);
+        xv_gc = XCreateGC(QX11Info::display(), win, 0, NULL);
     }
 
     int rc = 0;
@@ -240,17 +240,17 @@ int KXvDevice::displayImage(Window win, const unsigned char *const data, int w, 
     if (!_shm) {
         static_cast<XvImage*>(xv_image)->data =
             (char *)const_cast<unsigned char*>(data);
-        rc = XvPutImage(qt_xdisplay(), xv_port, win, xv_gc,
+        rc = XvPutImage(QX11Info::display(), xv_port, win, xv_gc,
                         static_cast<XvImage*>(xv_image), x, y, sw, sh, 0, 0, dw, dh);
     } else {
 #ifdef HAVE_XSHM
         memcpy(static_cast<XvImage*>(xv_image)->data, data, static_cast<XvImage*>(xv_image)->data_size);
-        rc = XvShmPutImage(qt_xdisplay(), xv_port, win, xv_gc,
+        rc = XvShmPutImage(QX11Info::display(), xv_port, win, xv_gc,
                            static_cast<XvImage*>(xv_image), x, y, sw, sh, 0, 0, dw, dh, 0);
 #endif
     }
 
-    XSync(qt_xdisplay(), False);
+    XSync(QX11Info::display(), False);
     return rc;
 #endif
 }
@@ -284,13 +284,13 @@ bool KXvDevice::startVideo(Window w, int dw, int dh)
     }
 
     if (w != xv_last_win && xv_gc) {
-        XFreeGC(qt_xdisplay(), xv_gc);
+        XFreeGC(QX11Info::display(), xv_gc);
         xv_gc = 0;
     }
 
     if (!xv_gc) {
         xv_last_win = w;
-        xv_gc = XCreateGC(qt_xdisplay(), w, 0, NULL);
+        xv_gc = XCreateGC(QX11Info::display(), w, 0, NULL);
     }
 
     if (-1 != xv_encoding) {
@@ -301,11 +301,11 @@ bool KXvDevice::startVideo(Window w, int dw, int dh)
     // xawtv does this here:
     //  ng_ratio_fixup(&dw, &dh, &dx, &dy);
 
-    kdDebug() << "XvPutVideo: " << qt_xdisplay()
+    kdDebug() << "XvPutVideo: " << QX11Info::display()
               << " " << xv_port << " " << w << " " << xv_gc
               << " " << sx << " " << sy << " " << sw << " " << sh
               << " " << dx << " " << dy << " " << dw << " " << dh << endl;
-    XvPutVideo(qt_xdisplay(), xv_port, w, xv_gc, sx, sy, sw, sh, dx, dy, dw, dh);
+    XvPutVideo(QX11Info::display(), xv_port, w, xv_gc, sx, sy, sw, sh, dx, dy, dw, dh);
 
     videoStarted = true;
     videoWindow = w;
@@ -325,7 +325,7 @@ bool KXvDevice::stopVideo()
         return false;
     }
 
-    XvStopVideo(qt_xdisplay(), xv_port, videoWindow);
+    XvStopVideo(QX11Info::display(), xv_port, videoWindow);
     videoStarted = false;
     return true;
 #endif
@@ -346,7 +346,7 @@ KXvDevice::KXvDevice()
 #ifdef HAVE_LIBXV
     xv_imageformat = 0x32595559;  // FIXME (YUY2)
 #ifdef HAVE_XSHM
-    if (!XShmQueryExtension(qt_xdisplay())) {
+    if (!XShmQueryExtension(QX11Info::display())) {
         _haveShm = false;
     } else {
         _shm = true;
@@ -637,6 +637,7 @@ bool KXvDevice::usingShm() const
 
 
 #include <unistd.h>
+#include <QX11Info>
 void KXvDevice::rebuildImage(int w, int h, bool shm)
 {
     if (xv_image) {

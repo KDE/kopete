@@ -134,7 +134,8 @@ void Dispatcher::sendFile(const QString& path, Q_INT64 fileSize, const QString& 
 
 	QByteArray header(638);
 	header.fill('\0');
-	QDataStream writer(header, QIODevice::WriteOnly);
+	QDataStream writer( &header,QIODevice::WriteOnly);
+	writer.setVersion(QDataStream::Qt_3_1);
 	writer.setByteOrder(QDataStream::LittleEndian);
 
 	// Write the header length to the stream.
@@ -465,7 +466,8 @@ void Dispatcher::dispatch(const P2P::Message& message)
 
 				// Decode the file context from base64 encoding.
 				KCodecs::base64Decode(regex.cap(1).utf8(), context);
-				QDataStream reader(context, QIODevice::ReadOnly);
+				QDataStream reader( &context,QIODevice::ReadOnly);
+				reader.setVersion(QDataStream::Qt_3_1);
 				reader.setByteOrder(QDataStream::LittleEndian);
 				//Retrieve the file info from the context field.
 				// File Size [8..15] Int64

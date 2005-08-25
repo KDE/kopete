@@ -51,6 +51,7 @@
 #ifdef HAVE_XSCREENSAVER
 #define HasScreenSaver
 #include <X11/extensions/scrnsaver.h>
+#include <QX11Info>
 #endif
 #endif // Q_WS_X11
 
@@ -116,11 +117,11 @@ Kopete::Away::Away() : QObject( kapp , "Kopete::Away")
 	d->useXidle = false;
 	d->useMit = false;
 #ifdef HasXidle
-	d->useXidle = XidleQueryExtension(qt_xdisplay(), &dummy, &dummy);
+	d->useXidle = XidleQueryExtension(QX11Info::display(), &dummy, &dummy);
 #endif
 #ifdef HasScreenSaver
 	if(!d->useXidle)
-		d->useMit = XScreenSaverQueryExtension(qt_xdisplay(), &dummy, &dummy);
+		d->useMit = XScreenSaverQueryExtension(QX11Info::display(), &dummy, &dummy);
 #endif
 #ifdef Q_WS_X11
 	d->xIdleTime = 0;

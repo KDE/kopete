@@ -272,7 +272,8 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		field = *it;
 		//debug( " - writing a field" );
 		QByteArray bytesOut;
-		QDataStream dout( bytesOut, QIODevice::WriteOnly );
+		QDataStream dout( &bytesOut,QIODevice::WriteOnly );
+		dout.setVersion(QDataStream::Qt_3_1);
 		dout.setByteOrder( QDataStream::LittleEndian );
 		
 		// these fields are ignored by Gaim's novell
@@ -359,7 +360,8 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 	{
 		// very important, don't send put the \r\n on the wire as a string or it will be preceded with the string length and 0 terminated, which the server reads as a request to disconnect.
 		QByteArray bytesOut;
-		QDataStream dout( bytesOut, QIODevice::WriteOnly );
+		QDataStream dout( &bytesOut,QIODevice::WriteOnly );
+		dout.setVersion(QDataStream::Qt_3_1);
 		dout.setByteOrder( QDataStream::LittleEndian );
 		dout.writeRawBytes( "\r\n", 2 );
 		emit outgoingData( bytesOut );
@@ -373,7 +375,8 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 	// processing incoming data and reassembling it into transfers
 	// may be an event or a response
 	uint bytesParsed = 0;
-	m_din = new QDataStream( wire, QIODevice::ReadOnly );
+	m_din = new QDataStream( &wire,QIODevice::ReadOnly );
+	m_din = new .setVersion(QDataStream::Qt_3_1);
 	m_din->setByteOrder( QDataStream::LittleEndian );
 	
 	// look at first four bytes and decide what to do with the chunk

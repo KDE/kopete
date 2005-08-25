@@ -54,7 +54,7 @@
 #include <q3vbox.h>
 #include <klistview.h>
 #include <qcheckbox.h>
-#include <q3whatsthis.h>
+
 
 namespace Kopete {
 
@@ -269,7 +269,7 @@ void Contact::changeMetaContact()
 	selector->setLabelMessage(i18n( "Select the meta contact to which you want to move this contact:" ));
 
 	QCheckBox *chkCreateNew = new QCheckBox( i18n( "Create a new metacontact for this contact" ), w );
-	Q3WhatsThis::add( chkCreateNew , i18n( "If you select this option, a new metacontact will be created in the top-level group "
+	chkCreateNew ->setWhatsThis( i18n( "If you select this option, a new metacontact will be created in the top-level group "
 		"with the name of this contact and the contact will be moved to it." ) );
 	QObject::connect( chkCreateNew , SIGNAL( toggled(bool) ) ,  selector , SLOT ( setDisabled(bool) ) ) ;
 

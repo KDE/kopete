@@ -52,19 +52,22 @@ void NLJuk::update()
 		if ( m_client->call( "juk", "Player", "playing()", data, 
 					replyType, replyData ) )
 		{
-			QDataStream reply( replyData, QIODevice::ReadOnly );
+			QDataStream reply( &replyData,QIODevice::ReadOnly );
+			reply.setVersion(QDataStream::Qt_3_1);
 			if ( replyType == "bool" ) {
 				reply >> m_playing;
 			}
 		}
 		
 		{
-			QDataStream arg( data, QIODevice::WriteOnly );
+			QDataStream arg( &data,QIODevice::WriteOnly );
+			arg.setVersion(QDataStream::Qt_3_1);
 			arg << QString::fromLatin1("Album");
 			if ( m_client->call( "juk", "Player", "trackProperty(QString)", data,
 						replyType, replyData ) )
 			{
-				QDataStream reply( replyData, QIODevice::ReadOnly );
+				QDataStream reply( &replyData,QIODevice::ReadOnly );
+				reply.setVersion(QDataStream::Qt_3_1);
 	
 				if ( replyType == "QString" ) {
 					reply >> m_album;
@@ -73,12 +76,14 @@ void NLJuk::update()
 		}
 		
 		{
-			QDataStream arg( data, QIODevice::WriteOnly );
+			QDataStream arg( &data,QIODevice::WriteOnly );
+			arg.setVersion(QDataStream::Qt_3_1);
 			arg << QString::fromLatin1("Artist");
 			if ( m_client->call( "juk", "Player", "trackProperty(QString)", data,
 						replyType, replyData ) )
 			{
-				QDataStream reply( replyData, QIODevice::ReadOnly );
+				QDataStream reply( &replyData,QIODevice::ReadOnly );
+				reply.setVersion(QDataStream::Qt_3_1);
 	
 				if ( replyType == "QString" ) {
 					reply >> m_artist;
@@ -87,12 +92,14 @@ void NLJuk::update()
 		}
 
 		{
-			QDataStream arg( data, QIODevice::WriteOnly );
+			QDataStream arg( &data,QIODevice::WriteOnly );
+			arg.setVersion(QDataStream::Qt_3_1);
 			arg << QString::fromLatin1("Title");
 			if ( m_client->call( "juk", "Player", "trackProperty(QString)", data,
 						replyType, replyData ) )
 			{
-				QDataStream reply( replyData, QIODevice::ReadOnly );
+				QDataStream reply( &replyData,QIODevice::ReadOnly );
+				reply.setVersion(QDataStream::Qt_3_1);
 	
 				if ( replyType == "QString" ) {
 					reply >> newTrack;

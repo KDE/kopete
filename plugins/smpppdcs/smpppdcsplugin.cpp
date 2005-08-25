@@ -260,14 +260,16 @@ void SMPPPDCSPlugin::smpppdCheckStatus() {
 	if(m_kinternetApp != "" && m_client) {
 		QByteArray data, replyData;
 		Q3CString replyType;
-		QDataStream arg(data, QIODevice::WriteOnly);
+		QDataStream arg( &data,QIODevice::WriteOnly);
+		arg.setVersion(QDataStream::Qt_3_1);
 		
 		kdDebug( 0 ) << k_funcinfo << "Start inquiring " << m_kinternetApp << " via DCOP" << endl;
 		
 		if(!m_client->call(m_kinternetApp, "KInternetIface", "isOnline()", data, replyType, replyData)) {
 			kdDebug( 0 ) << k_funcinfo << "there was some error using DCOP." << endl;
 		} else {
-  			QDataStream reply(replyData, QIODevice::ReadOnly);
+  			QDataStream reply( &replyData,QIODevice::ReadOnly);
+  			reply.setVersion(QDataStream::Qt_3_1);
   			if(replyType == "bool") {
     			bool result;
     			reply >> result;

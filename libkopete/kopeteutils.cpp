@@ -79,7 +79,7 @@ bool isHostReachable(const QString &host)
 {
 	const int NetWorkStatusUnknown = 1;
 	const int NetWorkStatusOnline = 8;
-	Q3CString replyType;
+	DCOPCString replyType;
 	QByteArray params;
 	QByteArray reply;
 

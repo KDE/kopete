@@ -190,7 +190,8 @@ void KSSLSocket::showInfoDialog()
 
 		QByteArray data, ignore;
 		Q3CString ignoretype;
-		QDataStream arg(data, QIODevice::WriteOnly);
+		QDataStream arg( &data,QIODevice::WriteOnly);
+		arg.setVersion(QDataStream::Qt_3_1);
 		arg << "irc://" + peerAddress()->pretty() + ":" + port() << d->metaData;
 		d->dcc->call("kio_uiserver", "UIServer",
 			"showSSLInfoDialog(QString,KIO::MetaData)", data, ignoretype, ignore);
@@ -229,7 +230,8 @@ int KSSLSocket::messageBox( KIO::SlaveBase::MessageBoxType type, const QString &
 	kdDebug(14120) << "messageBox " << type << " " << text << " - " << caption << buttonYes << buttonNo << endl;
 	QByteArray data, result;
 	Q3CString returnType;
-	QDataStream arg(data, QIODevice::WriteOnly);
+	QDataStream arg( &data,QIODevice::WriteOnly);
+	arg.setVersion(QDataStream::Qt_3_1);
 	arg << (int)1 << (int)type << text << caption << buttonYes << buttonNo;
 
 	if (!d->dcc->isApplicationRegistered("kio_uiserver"))
@@ -243,7 +245,8 @@ int KSSLSocket::messageBox( KIO::SlaveBase::MessageBoxType type, const QString &
 	if( returnType == "int" )
 	{
 		int res;
-		QDataStream r(result, QIODevice::ReadOnly);
+		QDataStream r( &result,QIODevice::ReadOnly);
+		r.setVersion(QDataStream::Qt_3_1);
 		r >> res;
 		return res;
 	}

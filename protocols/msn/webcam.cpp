@@ -412,7 +412,8 @@ void Webcam::processMessage(const Message& message)
 void Webcam::makeSIPMessage(const QString &message, Q_UINT8 XX, Q_UINT8 YY , Q_UINT8 ZZ)
 {
 	QByteArray dataMessage; //(12+message.length()*2);
-	QDataStream writer(dataMessage, QIODevice::WriteOnly);
+	QDataStream writer( &dataMessage,QIODevice::WriteOnly);
+	writer.setVersion(QDataStream::Qt_3_1);
 	writer.setByteOrder(QDataStream::LittleEndian);
 	writer << (Q_UINT8)0x80;
 	writer << (Q_UINT8)XX;
@@ -808,7 +809,8 @@ void Webcam::timerEvent( QTimerEvent *e )
 	//build the header.
 	QByteArray header;
 	
-	QDataStream writer(header, QIODevice::WriteOnly);
+	QDataStream writer( &header,QIODevice::WriteOnly);
+	writer.setVersion(QDataStream::Qt_3_1);
 	writer.setByteOrder(QDataStream::LittleEndian);
 	writer << (Q_UINT16)24;  // header size
 	writer << (Q_UINT16)img.width();

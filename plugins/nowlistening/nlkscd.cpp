@@ -57,7 +57,8 @@ void NLKscd::update()
 		}
 		else
 		{
-			QDataStream reply( replyData, QIODevice::ReadOnly );
+			QDataStream reply( &replyData,QIODevice::ReadOnly );
+			reply.setVersion(QDataStream::Qt_3_1);
 			if ( replyType == "bool" ) {
 				reply >> m_playing;
 //				kdDebug( 14307 ) << "NLKscd::update() - KsCD is " <<
@@ -70,7 +71,8 @@ void NLKscd::update()
 			kdDebug( 14307 ) <<  "NLKscd::update() DCOP error"
 				<< endl;
 		else {
-			QDataStream reply( replyData, QIODevice::ReadOnly );
+			QDataStream reply( &replyData,QIODevice::ReadOnly );
+			reply.setVersion(QDataStream::Qt_3_1);
 			if ( replyType == "QString" )
 				reply >> m_artist;
 			else
@@ -83,7 +85,8 @@ void NLKscd::update()
 			kdDebug( 14307 ) <<  "NLKscd::update() DCOP error"
 				<< endl;
 		else {
-			QDataStream reply( replyData, QIODevice::ReadOnly );
+			QDataStream reply( &replyData,QIODevice::ReadOnly );
+			reply.setVersion(QDataStream::Qt_3_1);
 			if ( replyType == "QString" )
 				reply >> m_album;
 			else
@@ -95,7 +98,8 @@ void NLKscd::update()
 					"currentTrackTitle()", data, replyType, replyData ) )
 			kdDebug( 14307 ) << "NLKscd::update() - there was some error using DCOP." << endl;
 		else {
-			QDataStream reply( replyData, QIODevice::ReadOnly );
+			QDataStream reply( &replyData,QIODevice::ReadOnly );
+			reply.setVersion(QDataStream::Qt_3_1);
 			if ( replyType == "QString" ) {
 				reply >> newTrack;
 				//kdDebug( 14307 ) << "the result is: " << newTrack.latin1()
