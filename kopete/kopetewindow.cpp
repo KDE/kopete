@@ -812,7 +812,7 @@ void KopeteWindow::slotAutoHide()
 
 void KopeteWindow::startAutoHideTimer()
 {
-	if ( m_autoHideTimeout > 0 && m_autoHide == true && isVisible() )
+	if ( m_autoHideTimeout > 0 && m_autoHide == true && isVisible() && KopetePrefs::prefs()->showTray())
 		m_autoHideTimer->start( m_autoHideTimeout * 1000 );
 }
 
