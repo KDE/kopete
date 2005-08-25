@@ -79,6 +79,7 @@ bool ICQUserInfoRequestTask::take( Transfer* transfer )
 		ICQMoreUserInfo moreInfo;
 		ICQEmailInfo emailInfo;
 		ICQShortInfo shortInfo;
+		ICQInterestInfo interestInfo;
 		
 		setTransfer( transfer );
 		TLV tlv1 = transfer->buffer()->getTLV();
@@ -120,7 +121,10 @@ bool ICQUserInfoRequestTask::take( Transfer* transfer )
 			m_emailInfoMap[seq] = emailInfo;
 			break;
 		case 0x00F0:  //interests user info
-			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Got interests info, but we don't support it yet" << endl;
+			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received interest info" << endl;
+			interestInfo.setSequenceNumber( seq );
+			interestInfo.fill( buffer );
+			m_interestInfoMap[seq] = interestInfo;
 			break;
 		case 0x00FA:  //affliations user info
 			//affliations seems to be the last info we get, so be hacky and only emit the signal once
@@ -210,6 +214,12 @@ ICQShortInfo ICQUserInfoRequestTask::shortInfoFor( const QString& contact )
 {
 	int seq = m_reverseContactMap[contact];
 	return m_shortInfoMap[seq];
+}
+
+ICQInterestInfo ICQUserInfoRequestTask::interestInfoFor( const QString& contact )
+{
+	int seq = m_reverseContactMap[contact];
+	return m_interestInfoMap[seq];
 }
 
 QString ICQUserInfoRequestTask::notesInfoFor( const QString& contact )

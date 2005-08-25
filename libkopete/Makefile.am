@@ -1,13 +1,9 @@
 include ../../admin/Doxyfile.am
 DOXYGEN_REFERENCES = kio kdecore kdeui
 DOXYGEN_EXCLUDE = compat
+DOXYGEN_SET_PROJECT_NAME = libkopete
 
-AVDEVICEDIR =
-if enable_av
-AVDEVICEDIR = avdevice
-endif
-
-SUBDIRS = private ui . $(AVDEVICEDIR)
+SUBDIRS = private ui . avdevice
 
 METASOURCES = AUTO
 
@@ -61,7 +57,7 @@ kopeteinclude_HEADERS = kopeteaccount.h kopeteaccountmanager.h kopeteawayaction.
 	kopeteonlinestatus.h kopeteonlinestatusmanager.h kopetepasswordedaccount.h \
 	kopetepassword.h kopeteplugin.h kopeteprotocol.h kopetesimplemessagehandler.h kopetetask.h \
 	kopetetransfermanager.h kopeteuiglobal.h kopetexsl.h kabcpersistence.h managedconnectionaccount.h \
-	kopetenotifydataobject.h
+	kopetenotifydataobject.h kopeteversion.h
 
 # vim: set noet:
 

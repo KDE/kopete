@@ -242,6 +242,9 @@ void ICQContact::receivedLongInfo( const QString& contact )
 	ICQMoreUserInfo moreInfo = mAccount->engine()->getMoreInfo( contact );
 	emit haveMoreInfo( moreInfo );
 	
+	ICQInterestInfo interestInfo = mAccount->engine()->getInterestInfo( contact );
+	emit haveInterestInfo( interestInfo );
+	
 }
 
 void ICQContact::receivedShortInfo( const QString& contact )

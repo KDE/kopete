@@ -17,6 +17,7 @@
 #include <qfile.h>
 #include <kdebug.h>
 #include <kconfig.h>
+#include <kdialogbase.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
 #include <kmessagebox.h>
@@ -28,11 +29,13 @@
 #include "kopeteuiglobal.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
+#include <kopeteuiglobal.h>
 
 #include "aimprotocol.h"
 #include "aimaccount.h"
 #include "aimcontact.h"
 #include "aimuserinfo.h"
+#include "aimjoinchat.h"
 #include "oscarmyselfcontact.h"
 
 #include "oscarutils.h"
@@ -83,6 +86,7 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID, const char *
 		i18n( "Visit the Kopete website at <a href=\"http://kopete.kde.org\">http://kopete.kde.org</a>") );
 	mc->setOwnProfile( profile );
 	
+    m_joinChatDialog = 0;
 	QObject::connect( Kopete::ContactList::self(), 
 	                  SIGNAL( globalIdentityChanged( const QString&, const QVariant& ) ),
 	                  this,
@@ -183,6 +187,9 @@ KActionMenu* AIMAccount::actionMenu()
 	mActionMenu->insert( mActionOffline );
 	mActionMenu->popupMenu()->insertSeparator();
 
+//    KAction* m_joinChatAction = new KAction( i18n( "Join a chat..." ), QString::null,  0,  this,
+//                                             SLOT( slotJoinChat() ), mActionMenu, "join_a_chat" );
+//    mActionMenu->insert( m_joinChatAction );
 	//mActionMenu->insert( KopeteStdAction::contactInfo( this, SLOT( slotEditInfo() ), mActionMenu, "AIMAccount::mActionEditInfo" ) );
 
 	return mActionMenu;
@@ -311,6 +318,20 @@ void AIMAccount::sendBuddyIcon()
 	engine()->sendBuddyIcon( imageData );
 }
 
+void AIMAccount::slotJoinChat()
+{
+    //get the exchange info
+    //create the dialog
+    //join the chat room
+    if ( !m_joinChatDialog )
+    {
+        m_joinChatDialog = new AIMJoinChatUI( this, false, Kopete::UI::Global::mainWidget() );
+        m_joinChatDialog->show();
+    }
+    else
+        m_joinChatDialog->raise();
+}
+
 void AIMAccount::slotGoOnline()
 {
 	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Away )
@@ -334,6 +355,12 @@ void AIMAccount::slotGoAway(const QString &message)
 {
 	kdDebug(14152) << k_funcinfo << message << endl;
 	setAway(true, message);
+}
+
+void AIMAccount::joinChatDialogClosed()
+{
+    m_joinChatDialog->delayedDestruct();
+    m_joinChatDialog = 0L;
 }
 
 void AIMAccount::disconnected( DisconnectReason reason )

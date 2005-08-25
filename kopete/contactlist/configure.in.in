@@ -13,4 +13,3 @@ if test "$kde_use_qt_emb" = "no" && test "$kde_use_qt_mac" = "no"; then
   fi
 fi
 AC_SUBST(LIB_XRENDER)
-

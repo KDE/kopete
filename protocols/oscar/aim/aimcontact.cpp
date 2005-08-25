@@ -47,18 +47,18 @@ AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::M
 {
 	mProtocol=static_cast<AIMProtocol *>(protocol());
 	setOnlineStatus( mProtocol->statusOffline );
-	
+
 	m_infoDialog = 0L;
 	m_warnUserAction = 0L;
 	mUserProfile="";
 	m_haveAwayMessage = false;
 	// Set the last autoresponse time to the current time yesterday
 	m_lastAutoresponseTime = QDateTime::currentDateTime().addDays(-1);
-	
+
 	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
 	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( userIsOffline( const QString& ) ),
-	                  this, SLOT( userOffline( const QString& ) ) );	
+	                  this, SLOT( userOffline( const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedAwayMessage( const QString&, const QString& ) ),
 	                  this, SLOT( updateAwayMessage( const QString&, const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedProfile( const QString&, const QString& ) ),
@@ -83,15 +83,15 @@ bool AIMContact::isReachable()
 
 QPtrList<KAction> *AIMContact::customContextMenuActions()
 {
-	
+
 	QPtrList<KAction> *actionCollection = new QPtrList<KAction>();
 	if ( !m_warnUserAction )
 	{
 		m_warnUserAction = new KAction( i18n( "&Warn User" ), 0, this, SLOT( warnUser() ), this, "warnAction" );
 	}
-	
+
 	m_warnUserAction->setEnabled( account()->isConnected() );
-	
+
 	actionCollection->append( m_warnUserAction );
 	return actionCollection;
 }
@@ -158,13 +158,13 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 		return;
 
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << endl;
-	
+
 	//if they don't have an SSI alias, make sure we use the capitalization from the
 	//server so their contact id looks all pretty.
 	QString nickname = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if ( Oscar::normalize( nickname ) == Oscar::normalize( details.userId() ) )
 		setProperty( Kopete::Global::Properties::self()->nickName(), details.userId() );
-	
+
 	if ( ( details.userClass() & 32 ) == 0 )
 	{
 		setOnlineStatus( mProtocol->statusOnline ); //we're online
@@ -180,15 +180,17 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 			m_haveAwayMessage = true;
 		}
 	}
-	
-	if ( mAccount->engine()->hasIconConnection() && details.buddyIconHash().size() > 0 &&
-	     details.buddyIconHash() != m_details.buddyIconHash() )
+
+	if ( details.buddyIconHash().size() > 0 && details.buddyIconHash() != m_details.buddyIconHash() )
 	{
-		int time = ( KApplication::random() % 25 ) * 1000;
+        if ( !mAccount->engine()->hasIconConnection() )
+            mAccount->engine()->requestServerRedirect( 0x0010 );
+
+		int time = ( KApplication::random() % 10 ) * 1000;
 		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating buddy icon in " << time/1000 << " seconds" << endl;
 		QTimer::singleShot( time, this, SLOT( requestBuddyIcon() ) );
 	}
-	
+
 	OscarContact::userInfoUpdated( contact, details );
 }
 
@@ -229,7 +231,7 @@ void AIMContact::updateAwayMessage( const QString& contact, const QString& messa
 			setOnlineStatus( mProtocol->statusAway );
 		}
 	}
-	
+
 	emit updatedProfile();
 }
 
@@ -237,7 +239,7 @@ void AIMContact::updateProfile( const QString& contact, const QString& profile )
 {
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
-	
+
 	setProperty( mProtocol->clientProfile, profile );
 	emit updatedProfile();
 }
@@ -248,7 +250,7 @@ void AIMContact::gotWarning( const QString& contact, Q_UINT16 increase, Q_UINT16
 	Q_UNUSED( increase );
 	if ( Oscar::normalize( contact ) == Oscar::normalize( contactId() ) )
 		m_warningLevel = newLevel;
-	
+
 	//TODO add a KNotify event after merge to HEAD
 }
 
@@ -266,7 +268,7 @@ void AIMContact::haveIcon( const QString& user, QByteArray icon )
 {
 	if ( Oscar::normalize( user ) != Oscar::normalize( contactId() ) )
 		return;
-	
+
 	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Updating icon for " << contactId() << endl;
 	QImage buddyIcon( icon );
 	if ( buddyIcon.isNull() )
@@ -274,7 +276,7 @@ void AIMContact::haveIcon( const QString& user, QByteArray icon )
 		kdWarning(OSCAR_AIM_DEBUG) << k_funcinfo << "Failed to convert buddy icon to QImage" << endl;
 		return;
 	}
-	
+
 	setProperty( Kopete::Global::Properties::self()->photo(), buddyIcon );
 }
 
@@ -292,12 +294,12 @@ void AIMContact::warnUser()
 	                        " increasing for the user you warn. Once this level has reached a" \
 	                        " certain point, they will not be able to sign on. Please do not abuse" \
 	                        " this function, it is meant for legitimate practices.)</qt>" ).arg( nick );
-	
-	
+
+
 	int result = KMessageBox::questionYesNoCancel( Kopete::UI::Global::mainWidget(), message,
 	                                               i18n( "Warn User %1?" ).arg( nick ),
 	                                               i18n( "Warn Anonymously" ), i18n( "Warn" ) );
-	
+
 	if ( result == KMessageBox::Yes )
 		mAccount->engine()->sendWarning( contactId(), true);
 	else if ( result == KMessageBox::No )
@@ -308,46 +310,46 @@ void AIMContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
 {
 	Oscar::Message msg;
 	QString s;
-	
+
 	if (message.plainBody().isEmpty()) // no text, do nothing
 		return;
 	//okay, now we need to change the message.escapedBody from real HTML to aimhtml.
 	//looking right now for docs on that "format".
 	//looks like everything except for alignment codes comes in the format of spans
-	
+
 	//font-style:italic -> <i>
 	//font-weight:600 -> <b> (anything > 400 should be <b>, 400 is not bold)
 	//text-decoration:underline -> <u>
 	//font-family: -> <font face="">
 	//font-size:xxpt -> <font ptsize=xx>
-	
+
 	s=message.escapedBody();
 	s.replace ( QRegExp( QString::fromLatin1("<span style=\"([^\"]*)\">([^<]*)</span>")),
 			QString::fromLatin1("<style>\\1;\"\\2</style>"));
 
 	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)font-style:italic;([^\"]*)\"([^<]*)</style>")),
 	            QString::fromLatin1("<i><style>\\1\\2\"\\3</style></i>"));
-	
+
 	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)font-weight:600;([^\"]*)\"([^<]*)</style>")),
 	            QString::fromLatin1("<b><style>\\1\\2\"\\3</style></b>"));
-	
+
 	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)text-decoration:underline;([^\"]*)\"([^<]*)</style>")),
 	            QString::fromLatin1("<u><style>\\1\\2\"\\3</style></u>"));
 
 	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)font-family:([^;]*);([^\"]*)\"([^<]*)</style>")),
 	            QString::fromLatin1("<font face=\"\\2\"><style>\\1\\3\"\\4</style></font>"));
-	
+
 	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)font-size:([^p]*)pt;([^\"]*)\"([^<]*)</style>")),
 				QString::fromLatin1("<font ptsize=\"\\2\"><style>\\1\\3\"\\4</style></font>"));
-	
+
 	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)color:([^;]*);([^\"]*)\"([^<]*)</style>")),
 	            QString::fromLatin1("<font color=\"\\2\"><style>\\1\\3\"\\4</style></font>"));
-	
+
 	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)\"([^<]*)</style>")),
 	            QString::fromLatin1("\\2"));
-	
+
 	//okay now change the <font ptsize="xx"> to <font size="xx">
-	
+
 	//0-9 are size 1
 	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"\\d\">")),
 	            QString::fromLatin1("<font size=\"1\">"));
@@ -367,17 +369,17 @@ void AIMContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
 	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"2[3456789]\">")),QString::fromLatin1("<font size=\"6\">"));
 	//30- (and any I missed) are size 7
 	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"[^\"]*\">")),QString::fromLatin1("<font size=\"7\">"));
-	
+
 	kdDebug(14190) << k_funcinfo << "sending "
 		<< s << endl;
-	
+
 	msg.setText(s);
 	msg.setReceiver(mName);
 	msg.setTimestamp(message.timestamp());
 	msg.setType(0x01);
-	
+
 	mAccount->engine()->sendMessage(msg);
-	
+
 	// Show the message we just sent in the chat window
 	manager(Kopete::Contact::CanCreate)->appendMessage(message);
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();
@@ -402,14 +404,14 @@ void AIMContact::sendAutoResponse(Kopete::Message& msg)
 		// This code was yoinked straight from OscarContact::slotSendMsg()
 		// If only that slot wasn't private, but I'm not gonna change it right now.
 		Oscar::Message message;
-	
+
 		message.setText( msg.plainBody() );
-		
+
 		message.setTimestamp( msg.timestamp() );
 		message.setSender( mAccount->accountId() );
 		message.setReceiver( mName );
 		message.setType( 0x01 );
-		
+
 		// isAuto defaults to false
 		mAccount->engine()->sendMessage( message, true);
 		kdDebug(14152) << k_funcinfo << "Sent auto response" << endl;

@@ -17,3 +17,6 @@ messages:
 	fi
 	-rm xml_doc.cpp
 
+
+DOXYGEN_EMPTY = YES
+include $(top_srcdir)/admin/Doxyfile.am

@@ -98,6 +98,7 @@ private slots:
 	 */
 	void slotGlobalAwayMessageSelect( const QString & );
 	void slotGlobalBusyMessageSelect( const QString & );
+	void slotGlobalAvailableMessageSelect( const QString & );
 	void slotSetInvisibleAll(  );
 
 	

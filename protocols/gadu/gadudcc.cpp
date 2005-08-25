@@ -16,8 +16,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA
-// 02110-1301, USA.
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+// 02111-1307, USA.
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -150,9 +150,10 @@ GaduDCC::slotIncoming( gg_dcc* incoming, bool& handled )
 	kdDebug( 14100 ) << "slotIncomming for UIN: " << incoming->uin  << endl;
 
 	// no uin? I'm so sorry
-	if ( !incoming->uin ) {
-		return;
-	}
+	// this screws file receiving (using kadu 0.4.x as peer) for me
+//	if ( !incoming->uin ) {
+//		return;
+//	}
 
 	handled = true;
 	// TODO: limit number of connections per contact, or maybe even use parametr for that

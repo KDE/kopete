@@ -332,7 +332,7 @@
                                     <cstring>optionUseHttpMethod</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Use HTTP Method</string>
+                                    <string>Use HTTP method</string>
                                 </property>
                                 <property name="accel">
                                     <string></string>
@@ -363,7 +363,7 @@
                                     </color>
                                 </property>
                                 <property name="text">
-                                    <string>&lt;qt&gt;&lt;b&gt;Note:&lt;/b&gt; These settings are applicable for all MSN accounts</string>
+                                    <string>&lt;qt&gt;&lt;b&gt;Note:&lt;/b&gt; These settings are applicable to all MSN accounts</string>
                                 </property>
                                 <property name="alignment">
                                     <set>WordBreak|AlignCenter</set>
@@ -385,7 +385,7 @@
                                     <string>Au&amp;tomatically open a chat window when someone starts a conversation</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>This option will notify you when a contact start typing his message, before the message is sent or finished.</string>
+                                    <string>This option will notify you when a contact starts typing their message, before the message is sent or finished.</string>
                                 </property>
                             </widget>
                             <widget class="QLayoutWidget">
@@ -413,12 +413,12 @@
                                     <widget class="QComboBox">
                                         <item>
                                             <property name="text">
-                                                <string>Only manually</string>
+                                                <string>Only Manually</string>
                                             </property>
                                         </item>
                                         <item>
                                             <property name="text">
-                                                <string>When a chat is open (default)</string>
+                                                <string>When a Chat is Open (default)</string>
                                             </property>
                                         </item>
                                         <item>
@@ -441,10 +441,10 @@
                                             <number>1</number>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>&lt;qt&gt;&lt;p&gt;Indicate when Koete will download the picture oh contacts&lt;/p&gt;
-&lt;dl&gt;&lt;dt&gt;Only manually&lt;/dt&gt;&lt;dd&gt;The picture is not downloaded automatically, but only when the user request it&lt;/dd&gt;
+                                            <string>&lt;qt&gt;&lt;p&gt;Indicate when Kopete will download the picture of contacts&lt;/p&gt;
+&lt;dl&gt;&lt;dt&gt;Only manually&lt;/dt&gt;&lt;dd&gt;The picture is not downloaded automatically but only when the user request it&lt;/dd&gt;
 &lt;dt&gt;When a chat is open&lt;/dt&gt;&lt;dd&gt;The picture is downloaded when a conversation socket is open, ie. when you open a chatwindow&lt;/dd&gt;
-&lt;dt&gt;Automatically&lt;/dt&gt;&lt;dd&gt;Always try to download the picture if the contact has one.  &lt;b&gt;Note :&lt;/b&gt; this will open a socket, and let know the user you are downloading his picture.&lt;/dd&gt;&lt;/dl&gt;</string>
+&lt;dt&gt;Automatically&lt;/dt&gt;&lt;dd&gt;Always try to download the picture if the contact has one.  &lt;b&gt;Note :&lt;/b&gt; this will open a socket, and let the user know you are downloading their picture.&lt;/dd&gt;&lt;/dl&gt;</string>
                                         </property>
                                     </widget>
                                 </hbox>
@@ -460,8 +460,8 @@
                                     <bool>true</bool>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>MSN Messenger let you select some custom emoticon.
-If this option is enabled, Kopete will download theses emoticons and show them.</string>
+                                    <string>MSN Messenger lets you select some custom emoticon.
+If this option is enabled, Kopete will download these emoticons and show them.</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox">
@@ -472,8 +472,8 @@ If this option is enabled, Kopete will download theses emoticons and show them.<
                                     <string>E&amp;xport the current emoticon theme to users</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>Export all the emoticons themes as custom emoticons.
-Only work for emoticons in the PNG format.</string>
+                                    <string>Export all the emoticon themes as custom emoticons.
+Only works for emoticons in the PNG format.</string>
                                 </property>
                             </widget>
                         </vbox>
@@ -1032,10 +1032,10 @@ Only work for emoticons in the PNG format.</string>
                                     <string>View &amp;Reverse List</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
-                                    <string>The reverse list is the list of contact who added you in their own contact list.</string>
+                                    <string>The reverse list is the list of contacts who added you to their own contact list.</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>The reverse list is the list of contact who added you in their own contact list.</string>
+                                    <string>The reverse list is the list of contacts who added you to their own contact list.</string>
                                 </property>
                             </widget>
                             <spacer>

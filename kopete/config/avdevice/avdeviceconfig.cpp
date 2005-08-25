@@ -60,6 +60,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	connect(mPrfsVideoDevice->mSaturationSlider,              SIGNAL(valueChanged(int)), this, SLOT(slotSaturationSliderChanged(int)));
 	connect(mPrfsVideoDevice->mHueSlider,                     SIGNAL(valueChanged(int)), this, SLOT(slotHueSliderChanged(int)));
 	connect(mPrfsVideoDevice->mImageAutoAdjustBrightContrast, SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoAdjustBrightContrastChanged(bool)));
+	connect(mPrfsVideoDevice->mImageAutoColorCorrection,      SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoColorCorrectionChanged(bool)));
 
 	mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
 	mAVDeviceTabCtl->addTab(mPrfsVideoDevice, i18n("&Video"));
@@ -159,6 +160,12 @@ void AVDeviceConfig::slotHueSliderChanged(int){
 
 void AVDeviceConfig::slotImageAutoAdjustBrightContrastChanged(bool){
   emit changed( true );
+}
+
+void AVDeviceConfig::slotImageAutoColorCorrectionChanged(bool){
+	kdDebug() << "kopete:config (avdevice): slotImageAutoColorCorrectionChanged(" << mPrfsVideoDevice->mImageAutoColorCorrection->isChecked() << ") called. " << endl;
+	d->setAutoColorCorrection(mPrfsVideoDevice->mImageAutoColorCorrection->isChecked());
+	emit changed( true );
 }
 
 void AVDeviceConfig::slotUpdateImage()

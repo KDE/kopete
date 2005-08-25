@@ -61,12 +61,12 @@ Connection::Connection( Connector* connector, ClientStream* cs, const char* name
 	d->root = new Task( this, true /* isRoot */ );
 	m_loggedIn = false;
 	initSequence();
-	
+
 }
 
 Connection::~Connection()
 {
-	
+
 	delete d->rateClassManager;
 	delete d->clientStream;
 	delete d->connector;
@@ -134,7 +134,7 @@ Q_UINT16 Connection::flapSequence()
 	d->flapSequence++;
 	if ( d->flapSequence >= 0x8000 ) //the max flap sequence is 0x8000 ( HEX )
 		d->flapSequence = 1;
-	
+
 	return d->flapSequence;
 }
 
@@ -182,12 +182,12 @@ RateClassManager* Connection::rateManager() const
 void Connection::send( Transfer* request ) const
 {
 	if( !d->clientStream )
-	{	
+	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No stream to write on!" << endl;
 		return;
 	}
 	d->rateClassManager->queue( request );
-	
+
 }
 
 void Connection::forcedSend( Transfer* request ) const
@@ -202,8 +202,8 @@ void Connection::forcedSend( Transfer* request ) const
 
 void Connection::initSequence()
 {
-	d->snacSequence = (KApplication::random() & 0xFFFF);
-	d->flapSequence = (KApplication::random() & 0xFFFF);
+	d->snacSequence = ( KApplication::random() & 0xFFFF );
+	d->flapSequence = ( KApplication::random() & 0xFFFF );
 }
 
 void Connection::distribute( Transfer * transfer ) const

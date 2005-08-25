@@ -306,8 +306,12 @@ void KopeteMetaLVIProps::slotLoadPhotoSources()
 			m_withPhotoContacts.insert(mainWidget->cmbAccountPhoto->count() - 1  , citem );
 		}
 	}
-	
+#if KDE_IS_VERSION(3,4,0)
 	mainWidget->cmbPhotoUrl->setKURL(item->metaContact()->customPhoto().url());
+#else
+	mainWidget->cmbPhotoUrl->setURL(item->metaContact()->customPhoto().url());
+#endif
+
 	Kopete::MetaContact::PropertySource photoSource = item->metaContact()->photoSource();
 
 	mainWidget->radioPhotoContact->setChecked(photoSource == Kopete::MetaContact::SourceContact);

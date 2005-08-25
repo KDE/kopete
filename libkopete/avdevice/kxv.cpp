@@ -15,8 +15,8 @@
  *
  * You should have received a copy of the GNU Library General Public License
  * along with this library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
- * Boston, MA 02110-1301, USA.
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #include <assert.h>
@@ -87,7 +87,7 @@ bool KXv::haveXv()
     return false;
 #else
     unsigned int tmp;
-    if (Success != XvQueryExtension(QX11Info::display(),
+    if (Success != XvQueryExtension(qt_xdisplay(),
                                     &tmp,
                                     &tmp,
                                     &tmp,
@@ -121,7 +121,7 @@ bool KXv::init(Drawable d)
 #ifndef HAVE_LIBXV
     return false;
 #else
-    if (Success != XvQueryExtension(QX11Info::display(), 
+    if (Success != XvQueryExtension(qt_xdisplay(), 
                                     &xv_version,
                                     &xv_release,
                                     &xv_request,
@@ -133,12 +133,12 @@ bool KXv::init(Drawable d)
     
 #ifdef HAVE_LIBXVMC
     // Causes crashes for some people.
-    //  if (Success == XvMCQueryExtension(QX11Info::display(),0,0)) {
+    //  if (Success == XvMCQueryExtension(qt_xdisplay(),0,0)) {
     //    kdDebug() << "Found XvMC!" << endl;
     //  }
 #endif
     
-    if (Success != XvQueryAdaptors(QX11Info::display(),
+    if (Success != XvQueryAdaptors(qt_xdisplay(),
                                    d,
                                    &xv_adaptors, 
                                    (XvAdaptorInfo **)&xv_adaptor_info)) {
@@ -226,13 +226,13 @@ int KXvDevice::displayImage(Window win, const unsigned char *const data, int w, 
         return -1;
     
     if (win != xv_last_win && xv_gc) {
-        XFreeGC(QX11Info::display(), xv_gc);
+        XFreeGC(qt_xdisplay(), xv_gc);
         xv_gc = 0;
     }
     
     if (!xv_gc) {
         xv_last_win = win;   
-        xv_gc = XCreateGC(QX11Info::display(), win, 0, NULL);
+        xv_gc = XCreateGC(qt_xdisplay(), win, 0, NULL);
     }
     
     int rc = 0;
@@ -240,17 +240,17 @@ int KXvDevice::displayImage(Window win, const unsigned char *const data, int w, 
     if (!_shm) {
         static_cast<XvImage*>(xv_image)->data = 
             (char *)const_cast<unsigned char*>(data);
-        rc = XvPutImage(QX11Info::display(), xv_port, win, xv_gc, 
+        rc = XvPutImage(qt_xdisplay(), xv_port, win, xv_gc, 
                         static_cast<XvImage*>(xv_image), x, y, sw, sh, 0, 0, dw, dh);
     } else {
 #ifdef HAVE_XSHM
         memcpy(static_cast<XvImage*>(xv_image)->data, data, static_cast<XvImage*>(xv_image)->data_size);
-        rc = XvShmPutImage(QX11Info::display(), xv_port, win, xv_gc, 
+        rc = XvShmPutImage(qt_xdisplay(), xv_port, win, xv_gc, 
                            static_cast<XvImage*>(xv_image), x, y, sw, sh, 0, 0, dw, dh, 0);
 #endif
     }
 
-    XSync(QX11Info::display(), False);
+    XSync(qt_xdisplay(), False);
     return rc;
 #endif
 }
@@ -284,13 +284,13 @@ bool KXvDevice::startVideo(Window w, int dw, int dh)
     }
 
     if (w != xv_last_win && xv_gc) {
-        XFreeGC(QX11Info::display(), xv_gc);
+        XFreeGC(qt_xdisplay(), xv_gc);
         xv_gc = 0;
     }
     
     if (!xv_gc) {
         xv_last_win = w;   
-        xv_gc = XCreateGC(QX11Info::display(), w, 0, NULL);
+        xv_gc = XCreateGC(qt_xdisplay(), w, 0, NULL);
     }
     
     if (-1 != xv_encoding) {
@@ -301,11 +301,11 @@ bool KXvDevice::startVideo(Window w, int dw, int dh)
     // xawtv does this here:
     //  ng_ratio_fixup(&dw, &dh, &dx, &dy);
     
-    kdDebug() << "XvPutVideo: " << QX11Info::display() 
+    kdDebug() << "XvPutVideo: " << qt_xdisplay() 
               << " " << xv_port << " " << w << " " << xv_gc 
               << " " << sx << " " << sy << " " << sw << " " << sh 
               << " " << dx << " " << dy << " " << dw << " " << dh << endl;
-    XvPutVideo(QX11Info::display(), xv_port, w, xv_gc, sx, sy, sw, sh, dx, dy, dw, dh);
+    XvPutVideo(qt_xdisplay(), xv_port, w, xv_gc, sx, sy, sw, sh, dx, dy, dw, dh);
     
     videoStarted = true;
     videoWindow = w;
@@ -325,7 +325,7 @@ bool KXvDevice::stopVideo()
         return false;
     }
 
-    XvStopVideo(QX11Info::display(), xv_port, videoWindow);
+    XvStopVideo(qt_xdisplay(), xv_port, videoWindow);
     videoStarted = false;
     return true;
 #endif
@@ -346,7 +346,7 @@ KXvDevice::KXvDevice()
 #ifdef HAVE_LIBXV
     xv_imageformat = 0x32595559;  // FIXME (YUY2)
 #ifdef HAVE_XSHM
-    if (!XShmQueryExtension(QX11Info::display())) {
+    if (!XShmQueryExtension(qt_xdisplay())) {
         _haveShm = false;
     } else {
         _shm = true;
@@ -382,11 +382,11 @@ KXvDevice::~KXvDevice()
     destroyImage();
 #endif
     if (xv_gc)
-        XFreeGC(QX11Info::display(), xv_gc);
+        XFreeGC(qt_xdisplay(), xv_gc);
 
 #ifdef HAVE_LIBXV
     if (xv_port != -1)
-        XvUngrabPort(QX11Info::display(), xv_port, CurrentTime);
+        XvUngrabPort(qt_xdisplay(), xv_port, CurrentTime);
 #endif
 }
 
@@ -398,12 +398,12 @@ bool KXvDevice::init()
 #else
     assert(xv_port != -1);   // make sure we were prepped by KXv already.
 
-    if (XvGrabPort(QX11Info::display(), xv_port, CurrentTime)) {
+    if (XvGrabPort(qt_xdisplay(), xv_port, CurrentTime)) {
         kdWarning() << "KXvDevice::init(): Unable to grab Xv port." << endl;
         return false;
     }
 
-    if (Success != XvQueryEncodings(QX11Info::display(),
+    if (Success != XvQueryEncodings(qt_xdisplay(),
                                     xv_port,
                                     &xv_encodings,
                                     (XvEncodingInfo **)&xv_encoding_info)) {
@@ -417,7 +417,7 @@ bool KXvDevice::init()
         _encodingList << ((XvEncodingInfo *)xv_encoding_info)[i].name;
     }
     
-    xv_attr = XvQueryPortAttributes(QX11Info::display(), 
+    xv_attr = XvQueryPortAttributes(qt_xdisplay(), 
                                     xv_port, 
                                     &xv_encoding_attributes);
     XvAttribute *xvattr = (XvAttribute *)xv_attr;
@@ -439,7 +439,7 @@ bool KXvDevice::init()
     }
     
     XvImageFormatValues  *fo;
-    fo = XvListImageFormats(QX11Info::display(), xv_port, &xv_formats);
+    fo = XvListImageFormats(qt_xdisplay(), xv_port, &xv_formats);
     xv_formatvalues = (void *)fo;
     kdDebug() << "Image formats for port " << xv_port << endl;
     for (int i = 0; i < xv_formats; i++) {
@@ -531,7 +531,7 @@ bool KXvDevice::getAttribute(const QString& attribute, int *val)
     for (KXvDeviceAttribute *at = _attrs.first(); at != NULL; at = _attrs.next()) {
         if (at->name == attribute) {
             if (val)
-                XvGetPortAttribute(QX11Info::display(), xv_port, at->atom(), val);
+                XvGetPortAttribute(qt_xdisplay(), xv_port, at->atom(), val);
             return true;
         }
     }
@@ -547,8 +547,8 @@ bool KXvDevice::setAttribute(const QString& attribute, int val)
 #else
     for (KXvDeviceAttribute *at = _attrs.first(); at != NULL; at = _attrs.next()) {
         if (at->name == attribute) {
-            XvSetPortAttribute(QX11Info::display(), xv_port, at->atom(), val);
-            XSync(QX11Info::display(), False);
+            XvSetPortAttribute(qt_xdisplay(), xv_port, at->atom(), val);
+            XSync(qt_xdisplay(), False);
             return true;
         }
     }
@@ -582,7 +582,7 @@ bool KXvDevice::encoding(QString& encoding)
     
     for (KXvDeviceAttribute *at = _attrs.first(); at != 0L; at = _attrs.next()) {
         if (at->name == "XV_ENCODING") {
-            XvGetPortAttribute(QX11Info::display(), xv_port, at->atom(), (int*)&enc);
+            XvGetPortAttribute(qt_xdisplay(), xv_port, at->atom(), (int*)&enc);
             kdDebug() << "KXvDevice: encoding: " << enc << endl;
             encoding = enc;
             return true;
@@ -637,7 +637,6 @@ bool KXvDevice::usingShm() const
 
 
 #include <unistd.h>
-#include <QX11Info>
 void KXvDevice::rebuildImage(int w, int h, bool shm)
 {
     if (xv_image) {
@@ -645,7 +644,7 @@ void KXvDevice::rebuildImage(int w, int h, bool shm)
     }
 #ifdef HAVE_LIBXV
     if (!shm) {
-        xv_image = (void*)XvCreateImage(QX11Info::display(), xv_port, xv_imageformat, 
+        xv_image = (void*)XvCreateImage(qt_xdisplay(), xv_port, xv_imageformat, 
                                         0, w, h);
         if (!xv_image) {
             kdWarning() << "KXvDevice::rebuildImage: XvCreateImage failed." << endl;
@@ -653,13 +652,13 @@ void KXvDevice::rebuildImage(int w, int h, bool shm)
     } else {
 #ifdef HAVE_XSHM
         memset(xv_shminfo, 0, sizeof(XShmSegmentInfo));
-        xv_image = (void*)XvShmCreateImage(QX11Info::display(), xv_port, xv_imageformat, 
+        xv_image = (void*)XvShmCreateImage(qt_xdisplay(), xv_port, xv_imageformat, 
                                            0, w, h, static_cast<XShmSegmentInfo*>(xv_shminfo));
         if (!xv_image) {
             kdWarning() << "KXvDevice::rebuildImage: Error using SHM with Xv! Disabling SHM..." << endl;
             _haveShm = false;
             _shm = false;
-            xv_image = (void*)XvCreateImage(QX11Info::display(), xv_port, xv_imageformat,
+            xv_image = (void*)XvCreateImage(qt_xdisplay(), xv_port, xv_imageformat,
                                             0, w, h);
             if (!xv_image) {
                 kdWarning() << "KXvDevice::rebuildImage: XvCreateImage failed." << endl;
@@ -674,8 +673,8 @@ void KXvDevice::rebuildImage(int w, int h, bool shm)
             static_cast<XShmSegmentInfo*>(xv_shminfo)->readOnly = True;
             static_cast<XvImage*>(xv_image)->data =
                 static_cast<XShmSegmentInfo*>(xv_shminfo)->shmaddr;
-            XShmAttach(QX11Info::display(), static_cast<XShmSegmentInfo*>(xv_shminfo));
-            XSync(QX11Info::display(), False);
+            XShmAttach(qt_xdisplay(), static_cast<XShmSegmentInfo*>(xv_shminfo));
+            XSync(qt_xdisplay(), False);
             shmctl(static_cast<XShmSegmentInfo*>(xv_shminfo)->shmid, IPC_RMID, 0);
         }
 #endif
@@ -709,5 +708,5 @@ void KXvDevice::destroyImage()
 
 Atom KXvDeviceAttribute::atom()
 {
-    return XInternAtom(QX11Info::display(), name.latin1(), False);
+    return XInternAtom(qt_xdisplay(), name.latin1(), False);
 }

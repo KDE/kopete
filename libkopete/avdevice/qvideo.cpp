@@ -20,8 +20,8 @@
  *
  * You should have received a copy of the GNU Library General Public License
  * along with this library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
- * Boston, MA 02110-1301, USA.
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #include "qvideo.h"
@@ -31,7 +31,6 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <QX11Info>
 
 unsigned int QVideo::bytesppForFormat(ImageFormat fmt)
 {
@@ -73,13 +72,13 @@ bool QVideo::findDisplayProperties(ImageFormat& fmt, int& depth, unsigned int& b
     int d         = 0;
     
 	vi_out.screen = QPaintDevice::x11AppScreen();
-	vi_in         = XGetVisualInfo(QX11Info::display(), mask, &vi_out, &nvis);
+	vi_in         = XGetVisualInfo(qt_xdisplay(), mask, &vi_out, &nvis);
 
 	if (vi_in) {
 		for (int i = 0; i < nvis; i++) {
             bpp = 0;
 			int n;
-			XPixmapFormatValues *pf = XListPixmapFormats(QX11Info::display(),&n);
+			XPixmapFormatValues *pf = XListPixmapFormats(qt_xdisplay(),&n);
             d = vi_in[i].depth;
 			for (int j = 0; j < n; j++) {
 				if (pf[j].depth == d) {

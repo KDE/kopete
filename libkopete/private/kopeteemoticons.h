@@ -47,10 +47,11 @@ public:
 	/**
 	 * The possible parse modes
 	 */
-	enum ParseMode { RelaxedParse = 0x0, /** Default parse mode where all possible emoticon matches are allowed */
+	enum ParseMode {  DefaultParseMode = 0x0 ,  /**  Use strict or relaxed according the config  */
 			StrictParse = 0x1,			/** Strict parsing requires a space between each emoticon */
-			SkipHTML = 0x2,				/** Skip emoticons within HTML */
-			StrictAndSkipHTML = StrictParse | SkipHTML /** Shortcut combining the above */ };
+			RelaxedParse = 0x4,         /** Default parse mode where all possible emoticon matches are allowed */
+			SkipHTML = 0x2				/** Skip emoticons within HTML */
+		 };
 
 	/**
 	 * Use it to parse emoticons in a text.
@@ -95,7 +96,7 @@ public:
 	 * Static function which will call tokenize
 	 * @see tokenize( const QString& )
 	 */
-	static QValueList<Token> tokenizeEmoticons( const QString &message, ParseMode mode = RelaxedParse );
+	static QValueList<Token> tokenizeEmoticons( const QString &message, ParseMode mode = DefaultParseMode );
 
 	/**
 	 * Tokenizes an message.
@@ -116,12 +117,12 @@ public:
 	 * 4- /path/to/kiss.png
 	 * Note: quotation marks are used to emphasize white spaces.
 	 * @param message is the message to tokenize
-	 * @param strict if true spaces would be required around emoticons
+	 * @param mode is a bitmask of ParseMode enum
 	 * @return a QValueList which consiste of ordered tokens of the text.
 	 * @author Engin AYDOGAN < engin@bzzzt.biz >
 	 * @since 23-03-05
 	 */
-	QValueList<Token> tokenize( const QString &message, ParseMode mode = RelaxedParse );
+	QValueList<Token> tokenize( const QString &message, uint mode = DefaultParseMode );
 	
 	/**
 	 * Return all emoticons and the corresponding icon.

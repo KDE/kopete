@@ -17,8 +17,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA
-// 02110-1301, USA
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+// 02111-1307, USA
 
 #include "gaduaccount.h"
 #include "gaducontact.h"
@@ -385,9 +385,13 @@ GaduAccount::createContact( const QString& contactId, Kopete::MetaContact* paren
 void
 GaduAccount::changeStatus( const Kopete::OnlineStatus& status, const QString& descr )
 {
+	unsigned int ns;
+	
+	kdDebug(14100) << "##### change status #####" << endl;
 	kdDebug(14100) << "### Status = " << p->session_->isConnected() << endl;
 	kdDebug(14100) << "### Status description = \"" << descr << "\"" << endl;
 
+	// if change to not available, log off
 	if ( GG_S_NA( status.internalStatus() ) ) {
 		if ( !p->session_->isConnected() ) {
 			return;//already logged off
@@ -403,6 +407,21 @@ GaduAccount::changeStatus( const Kopete::OnlineStatus& status, const QString& de
 		dccOff();
 	}
 	else {
+		// if status is for no desc, but we get some desc, than convert it to status with desc
+		if (!descr.isEmpty() && !GaduProtocol::protocol()->statusWithDescription( status.internalStatus() ) ) {
+			// and rerun us again. This won't cause any recursive call, as both conversions are static
+			ns = GaduProtocol::protocol()->statusToWithDescription( status );
+			changeStatus( GaduProtocol::protocol()->convertStatus( ns ), descr );
+			return;
+		}
+
+		// well, if it's empty but we want to set status with desc, change it too
+                if (descr.isEmpty() && GaduProtocol::protocol()->statusWithDescription( status.internalStatus() ) ) {
+			ns = GaduProtocol::protocol()->statusToWithoutDescription( status );
+			changeStatus( GaduProtocol::protocol()->convertStatus( ns ), descr );
+			return;
+		}
+				
 		if ( !p->session_->isConnected() ) {
 			if ( password().cachedValue().isEmpty() ) {
 				// FIXME: when status string added to connect(), use it here

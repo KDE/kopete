@@ -198,41 +198,57 @@ Expressions in brackets depend on a substitution being made.</string>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QLayoutWidget">
+                    <widget class="QButtonGroup">
                         <property name="name">
-                            <cstring>layout3</cstring>
+                            <cstring>buttonGroup2</cstring>
                         </property>
-                        <vbox>
+                        <property name="frameShape">
+                            <enum>NoFrame</enum>
+                        </property>
+                        <property name="title">
+                            <string></string>
+                        </property>
+                        <grid>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QRadioButton">
+                            <widget class="QLayoutWidget" row="0" column="0">
                                 <property name="name">
-                                    <cstring>kcfg_ExplicitAdvertising</cstring>
+                                    <cstring>layout6</cstring>
                                 </property>
-                                <property name="text">
-                                    <string>Explicit &amp;via "Tools-&gt;Send Media Info",
+                                <vbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QRadioButton">
+                                        <property name="name">
+                                            <cstring>kcfg_ExplicitAdvertising</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Explicit &amp;via "Tools-&gt;Send Media Info",
 or by typing "/media" in the chat
 window edit area.</string>
-                                </property>
+                                        </property>
+                                    </widget>
+                                    <widget class="QRadioButton">
+                                        <property name="name">
+                                            <cstring>kcfg_ChatAdvertising</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Show in chat &amp;window (automatic)</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QRadioButton">
+                                        <property name="name">
+                                            <cstring>kcfg_StatusAdvertising</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Show in &amp;your status message (automatic)</string>
+                                        </property>
+                                    </widget>
+                                </vbox>
                             </widget>
-                            <widget class="QRadioButton">
-                                <property name="name">
-                                    <cstring>kcfg_ChatAdvertising</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Show in Chat &amp;Window (Automatic).</string>
-                                </property>
-                            </widget>
-                            <widget class="QRadioButton">
-                                <property name="name">
-                                    <cstring>kcfg_StatusAdvertising</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Show in &amp;your status message (Automatic).</string>
-                                </property>
-                            </widget>
-                        </vbox>
+                        </grid>
                     </widget>
                     <spacer>
                         <property name="name">

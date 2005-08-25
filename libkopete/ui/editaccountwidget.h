@@ -44,15 +44,7 @@ class KopeteEditAccountWidgetPrivate;
  *   field has to be marked as ReadOnly or shown as a label if the account already exists. Remember
  *   that accountId should be constant after account creation!
  *
- * - The password, and the remember password checkboxes. When creating the widget you have to get if
- *   the password is remembered, with @ref Kopete::Account::rememberPassword(). If it returns true
- *   you can use @ref Kopete::Account::password() to get the password field.
- *
- *   WARNING: Do not use password() if the password is not remembered, or Kopete will popup a dialog
- *            to ask the password!
- *
- *   To set the password use @ref Kopete::Account::setPassword(). If the user has not selected the
- *   'remember password' checkbox, set the password to QString::null.
+ * - The password, and the remember password checkboxes.
  *
  * - The auto connect checkbox: use @ref Kopete::Account::excludeConnect() and
  *   @ref Kopete::Account::setExcludeConnect() to get/set this flag.

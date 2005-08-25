@@ -10,7 +10,6 @@
 //
 //
 
-#include <assert.h>
 #include <iostream>
 #include <ostream>
 #include <sstream>
@@ -33,7 +32,9 @@ VideoDevice::VideoDevice()
 {
 //	kdDebug() << "libkopete (avdevice): VideoDevice() called" << endl;
 	descriptor = -1;
-	n_buffers  = 0;
+	m_streambuffers  = 0;
+	m_autobrightcontrast = false;
+	m_autocolorcorrection = false;
 //	kdDebug() << "libkopete (avdevice): VideoDevice() exited successfuly" << endl;
 }
 
@@ -492,11 +493,11 @@ kdDebug() <<  k_funcinfo << "setSize(" << newwidth << ", " << newheight << ") ca
 	if(isOpen())
 	{
 // It should not be there. It must remain in a completely distict place, cause this method should not change the pixelformat.
-		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB32))
+		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
 		{
-			kdDebug() <<  k_funcinfo << "Card seems to not support RGB32 format. Trying RGB24." << endl;
-			if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
-				kdDebug() <<  k_funcinfo << "Card seems to not support RGB24 format. Fallback to it is not yet implemented." << endl;
+			kdDebug() <<  k_funcinfo << "Card seems to not support RGB24 format. Trying BGR24." << endl;
+			if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR24))
+				kdDebug() <<  k_funcinfo << "Card seems to not support BGR24 format. Fallback to it is not yet implemented." << endl;
 		}
 
 		if(newwidth  > maxwidth ) newwidth  = maxwidth;
@@ -522,11 +523,14 @@ kdDebug() <<  k_funcinfo << "setSize(" << newwidth << ", " << newheight << ") ca
 				fmt.fmt.pix.height      = height();
 				fmt.fmt.pix.field       = V4L2_FIELD_ANY;
 				if (-1 == xioctl (VIDIOC_S_FMT, &fmt))
+				{
 					kdDebug() << k_funcinfo << "VIDIOC_S_FMT failed (" << errno << ").Returned width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height << endl;
 					// Note VIDIOC_S_FMT may change width and height.
+				}
 				else
 				{
 // Buggy driver paranoia.
+kdDebug() << k_funcinfo << "VIDIOC_S_FMT worked (" << errno << ").Returned width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height << endl;
 					unsigned int min = fmt.fmt.pix.width * 2;
 					if (fmt.fmt.pix.bytesperline < min)
 						fmt.fmt.pix.bytesperline = min;
@@ -572,6 +576,9 @@ kdDebug() << "------------- width: " << V4L_videowindow.width << " Height: " << 
 		}
 		m_buffer_size = width() * height() * pixelFormatDepth(m_pixelformat) / 8;
 kdDebug() << "------------------------- ------- -- m_buffer_size: " << m_buffer_size << " !!! -- ------- -----------------------------------------" << endl;
+
+		m_currentbuffer.pixelformat=m_pixelformat;
+		m_currentbuffer.data.resize(m_buffer_size);
 
 		switch (m_io_method)
 		{
@@ -728,7 +735,7 @@ int VideoDevice::startCapturing()
 #ifdef HAVE_V4L2
 				{
 					unsigned int loop;
-					for (loop = 0; loop < n_buffers; ++loop)
+					for (loop = 0; loop < m_streambuffers; ++loop)
 					{
 						struct v4l2_buffer buf;
 						CLEAR (buf);
@@ -750,14 +757,14 @@ int VideoDevice::startCapturing()
 #ifdef HAVE_V4L2
 				{
 					unsigned int loop;
-					for (loop = 0; loop < n_buffers; ++loop)
+					for (loop = 0; loop < m_streambuffers; ++loop)
 					{
 						struct v4l2_buffer buf;
 						CLEAR (buf);
 						buf.type      = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 						buf.memory    = V4L2_MEMORY_USERPTR;
-						buf.m.userptr = (unsigned long) buffers[loop].start;
-						buf.length    = buffers[loop].length;
+						buf.m.userptr = (unsigned long) m_rawbuffers[loop].start;
+						buf.length    = m_rawbuffers[loop].length;
 						if (-1 == xioctl (VIDIOC_QBUF, &buf))
 							return errnoReturn ("VIDIOC_QBUF");
 					}
@@ -786,7 +793,7 @@ int VideoDevice::getFrame()
 
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
-	struct v4l2_buffer buf;
+	struct v4l2_buffer v4l2buffer;
 #endif
 #endif
 	kdDebug() <<  k_funcinfo << "getFrame() called." << endl;
@@ -798,8 +805,8 @@ int VideoDevice::getFrame()
 				return EXIT_FAILURE;
 				break;
 			case IO_METHOD_READ:
-				kdDebug() <<  k_funcinfo << "Using IO_METHOD_READ.File descriptor: " << descriptor << " Buffer address: " << &currentbuffer.data[0] << " Size: " << currentbuffer.data.size() << endl;
-				bytesread = read (descriptor, &currentbuffer.data[0], currentbuffer.data.size());
+				kdDebug() <<  k_funcinfo << "Using IO_METHOD_READ.File descriptor: " << descriptor << " Buffer address: " << &m_currentbuffer.data[0] << " Size: " << m_currentbuffer.data.size() << endl;
+				bytesread = read (descriptor, &m_currentbuffer.data[0], m_currentbuffer.data.size());
 				if (-1 == bytesread)
 				{
 					kdDebug() <<  k_funcinfo << "IO_METHOD_READ failed." << endl;
@@ -812,32 +819,69 @@ int VideoDevice::getFrame()
 						return errnoReturn ("read");
 					}
 				}
-				if((int)currentbuffer.data.size() < bytesread)
+				if((int)m_currentbuffer.data.size() < bytesread)
 				{
-					kdDebug() <<  k_funcinfo << "IO_METHOD_READ returned less bytes (" << bytesread << ") than it was asked for (" << currentbuffer.data.size() <<")." << endl;
+					kdDebug() <<  k_funcinfo << "IO_METHOD_READ returned less bytes (" << bytesread << ") than it was asked for (" << m_currentbuffer.data.size() <<")." << endl;
 				}
-				processImage (buffers[0].start);
 				break;
 			case IO_METHOD_MMAP:
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
-				CLEAR (buf);
-				buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-				buf.memory = V4L2_MEMORY_MMAP;
-				if (-1 == xioctl (VIDIOC_DQBUF, &buf))
+				CLEAR (v4l2buffer);
+				v4l2buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+				v4l2buffer.memory = V4L2_MEMORY_MMAP;
+				if (-1 == xioctl (VIDIOC_DQBUF, &v4l2buffer))
 				{
+					kdDebug() <<  k_funcinfo << full_filename << " MMAPed getFrame failed." << endl;
 					switch (errno)
 					{
 						case EAGAIN:
+						{
+							kdDebug() <<  k_funcinfo << full_filename << " MMAPed getFrame failed: EAGAIN. Pointer: " << endl;
 							return EXIT_FAILURE;
+						}
 						case EIO: /* Could ignore EIO, see spec. fall through */
 						default:
 							return errnoReturn ("VIDIOC_DQBUF");
 					}
 				}
-				assert (buf.index < n_buffers);
-				processImage (buffers[buf.index].start);
-				if (-1 == xioctl (VIDIOC_QBUF, &buf))
+/*				if (v4l2buffer.index < m_streambuffers)
+					return EXIT_FAILURE;*/ //it was an assert()
+kdDebug() << k_funcinfo << "m_rawbuffers[" << v4l2buffer.index << "].start: " << (void *)m_rawbuffers[v4l2buffer.index].start << "   Size: " << m_currentbuffer.data.size() << endl;
+
+
+
+/*{
+	unsigned long long result=0;
+	unsigned long long R=0, G=0, B=0, A=0;
+	int Rmax=0, Gmax=0, Bmax=0, Amax=0;
+	int Rmin=255, Gmin=255, Bmin=255, Amin=0;
+
+	for(unsigned int loop=0;loop < m_currentbuffer.data.size();loop+=4)
+	{
+		R+=m_rawbuffers[v4l2buffer.index].start[loop];
+		G+=m_rawbuffers[v4l2buffer.index].start[loop+1];
+		B+=m_rawbuffers[v4l2buffer.index].start[loop+2];
+//		A+=currentbuffer.data[loop+3];
+		if (m_currentbuffer.data[loop]   < Rmin) Rmin = m_currentbuffer.data[loop];
+		if (m_currentbuffer.data[loop+1] < Gmin) Gmin = m_currentbuffer.data[loop+1];
+		if (m_currentbuffer.data[loop+2] < Bmin) Bmin = m_currentbuffer.data[loop+2];
+//		if (m_currentbuffer.data[loop+3] < Amin) Amin = m_currentbuffer.data[loop+3];
+		if (m_currentbuffer.data[loop]   > Rmax) Rmax = m_currentbuffer.data[loop];
+		if (m_currentbuffer.data[loop+1] > Gmax) Gmax = m_currentbuffer.data[loop+1];
+		if (m_currentbuffer.data[loop+2] > Bmax) Bmax = m_currentbuffer.data[loop+2];
+//		if (m_currentbuffer.data[loop+3] > Amax) Amax = m_currentbuffer.data[loop+3];
+	}
+	kdDebug() << " R: " << R << " G: " << G << " B: " << B << " A: " << A <<
+		" Rmin: " << Rmin << " Gmin: " << Gmin << " Bmin: " << Bmin << " Amin: " << Amin <<
+		" Rmax: " << Rmax << " Gmax: " << Gmax << " Bmax: " << Bmax << " Amax: " << Amax << endl;
+}*/
+
+
+
+memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_currentbuffer.data.size());
+
+				if (-1 == xioctl (VIDIOC_QBUF, &v4l2buffer))
 					return errnoReturn ("VIDIOC_QBUF");
 #endif
 #endif
@@ -847,10 +891,10 @@ int VideoDevice::getFrame()
 #ifdef HAVE_V4L2
 				{
 					unsigned int i;
-					CLEAR (buf);
-					buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-					buf.memory = V4L2_MEMORY_USERPTR;
-					if (-1 == xioctl (VIDIOC_DQBUF, &buf))
+					CLEAR (v4l2buffer);
+					v4l2buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+					v4l2buffer.memory = V4L2_MEMORY_USERPTR;
+					if (-1 == xioctl (VIDIOC_DQBUF, &v4l2buffer))
 					{
 						switch (errno)
 						{
@@ -861,18 +905,59 @@ int VideoDevice::getFrame()
 								return errnoReturn ("VIDIOC_DQBUF");
 						}
 					}
-					for (i = 0; i < n_buffers; ++i)
-						if (buf.m.userptr == (unsigned long) buffers[i].start && buf.length == buffers[i].length)
+					for (i = 0; i < m_streambuffers; ++i)
+						if (v4l2buffer.m.userptr == (unsigned long) m_rawbuffers[i].start && v4l2buffer.length == m_rawbuffers[i].length)
 							break;
-					assert (i < n_buffers);
-					processImage ((void *) buf.m.userptr);
-					if (-1 == xioctl (VIDIOC_QBUF, &buf))
+					if (i < m_streambuffers)
+						return EXIT_FAILURE;
+					if (-1 == xioctl (VIDIOC_QBUF, &v4l2buffer))
 					return errnoReturn ("VIDIOC_QBUF");
 				}
 #endif
 #endif
 				break;
 		}
+
+// Automatic color correction. Now it just swaps R and B channels in RGB24/BGR24 modes.
+		if(m_autocolorcorrection)
+		{
+			switch(m_currentbuffer.pixelformat)
+			{
+				case PIXELFORMAT_NONE	: break;
+				case PIXELFORMAT_GREY	: break;
+				case PIXELFORMAT_RGB332	: break;
+				case PIXELFORMAT_RGB555	: break;
+				case PIXELFORMAT_RGB555X: break;
+				case PIXELFORMAT_RGB565	: break;
+				case PIXELFORMAT_RGB565X: break;
+				case PIXELFORMAT_RGB24	:
+				case PIXELFORMAT_BGR24	:
+					{
+						unsigned char temp;
+						for(unsigned int loop=0;loop < m_currentbuffer.data.size();loop+=3)
+						{
+							temp = m_currentbuffer.data[loop];
+							m_currentbuffer.data[loop] = m_currentbuffer.data[loop+2];
+							m_currentbuffer.data[loop+2] = temp;
+						}
+					}
+					break;
+				case PIXELFORMAT_RGB32	:
+				case PIXELFORMAT_BGR32	:
+					{
+						unsigned char temp;
+						for(unsigned int loop=0;loop < m_currentbuffer.data.size();loop+=4)
+						{
+							temp = m_currentbuffer.data[loop];
+							m_currentbuffer.data[loop] = m_currentbuffer.data[loop+2];
+							m_currentbuffer.data[loop+2] = temp;
+						}
+					}
+					break;
+			}
+		}
+
+
 // put frame copy operation here
 		kdDebug() <<  k_funcinfo << "exited successfuly." << endl;
 		return EXIT_SUCCESS;
@@ -881,12 +966,18 @@ int VideoDevice::getFrame()
 }
 
 /*!
-    \fn VideoDevice::processImage(const void *p)
+    \fn VideoDevice::getFrame(imagebuffer *imgbuffer)
  */
-int VideoDevice::processImage(const void * /* p */)
+int VideoDevice::getFrame(imagebuffer *imgbuffer)
 {
-    /// @todo implement me
-	return EXIT_SUCCESS;
+	if(imgbuffer)
+	{
+		getFrame();
+		imgbuffer->height      = m_currentbuffer.height;
+		imgbuffer->width       = m_currentbuffer.width;
+		imgbuffer->pixelformat = m_currentbuffer.pixelformat;
+		imgbuffer->data        = m_currentbuffer.data;
+	}
 }
 
 /*!
@@ -897,24 +988,36 @@ int VideoDevice::getImage(QImage *qimage)
     /// @todo implement me
 	qimage->create(width(), height(),32, QImage::IgnoreEndian);
 	uchar *bits=qimage->bits();
-kdDebug() <<  k_funcinfo << "Capturing in " << pixelFormatName(currentbuffer.pixelformat) << endl;
-	switch(currentbuffer.pixelformat)
+kdDebug() <<  k_funcinfo << "Capturing in " << pixelFormatName(m_currentbuffer.pixelformat) << endl;
+	switch(m_currentbuffer.pixelformat)
 	{
 		case PIXELFORMAT_NONE	: break;
 		case PIXELFORMAT_GREY	: break;
 		case PIXELFORMAT_RGB332	: break;
 		case PIXELFORMAT_RGB555	: break;
 		case PIXELFORMAT_RGB555X: break;
-		case PIXELFORMAT_RGB565	: break;
+		case PIXELFORMAT_RGB565	:
+			{
+				int step=0;
+				for(int loop=0;loop < qimage->numBytes();loop+=4)
+				{
+					bits[loop] = (m_currentbuffer.data[step]<<3)+(m_currentbuffer.data[step]<<3>>5);
+					bits[loop+1] = ((m_currentbuffer.data[step+1])<<5)|m_currentbuffer.data[step]>>5;
+					bits[loop+2]   = ((m_currentbuffer.data[step+1])&248)+((m_currentbuffer.data[step+1])>>5);
+					bits[loop+3] = 255;
+					step+=2;
+				}
+			}
+			break;
 		case PIXELFORMAT_RGB565X: break;
 		case PIXELFORMAT_RGB24	:
 			{
 				int step=0;
 				for(int loop=0;loop < qimage->numBytes();loop+=4)
 				{
-					bits[loop]   = currentbuffer.data[step];
-					bits[loop+1] = currentbuffer.data[step+1];
-					bits[loop+2] = currentbuffer.data[step+2];
+					bits[loop]   = m_currentbuffer.data[step];
+					bits[loop+1] = m_currentbuffer.data[step+1];
+					bits[loop+2] = m_currentbuffer.data[step+2];
 					bits[loop+3] = 255;
 					step+=3;
 				}
@@ -925,15 +1028,15 @@ kdDebug() <<  k_funcinfo << "Capturing in " << pixelFormatName(currentbuffer.pix
 				int step=0;
 				for(int loop=0;loop < qimage->numBytes();loop+=4)
 				{
-					bits[loop]   = currentbuffer.data[step+2];
-					bits[loop+1] = currentbuffer.data[step+1];
-					bits[loop+2] = currentbuffer.data[step];
+					bits[loop]   = m_currentbuffer.data[step+2];
+					bits[loop+1] = m_currentbuffer.data[step+1];
+					bits[loop+2] = m_currentbuffer.data[step];
 					bits[loop+3] = 255;
 					step+=3;
 				}
 			}
 			break;
-		case PIXELFORMAT_RGB32	: memcpy(bits,&currentbuffer.data[0], currentbuffer.data.size());
+		case PIXELFORMAT_RGB32	: memcpy(bits,&m_currentbuffer.data[0], m_currentbuffer.data.size());
 			break;
 		case PIXELFORMAT_BGR32	: break;
 	}
@@ -990,7 +1093,17 @@ int VideoDevice::close()
 	return EXIT_SUCCESS;
 }
 
+bool VideoDevice::getAutoColorCorrection()
+{
+	return m_autocolorcorrection;
+}
 
+bool VideoDevice::setAutoColorCorrection(bool colorcorrection)
+{
+	kdDebug() <<  k_funcinfo << "VideoDevice::setAutoColorCorrection(" << colorcorrection << ") called." << endl;
+	m_autocolorcorrection = colorcorrection;
+	return m_autocolorcorrection;
+}
 
 
 int VideoDevice::pixelFormatCode(pixel_format pixelformat)
@@ -1132,23 +1245,19 @@ int VideoDevice::initRead()
 	kdDebug() <<  k_funcinfo << "called." << endl;
 	if(isOpen())
 	{
-		buffers.resize(1);
-		if (buffers.size()==0)
+		m_rawbuffers.resize(1);
+		if (m_rawbuffers.size()==0)
 		{
 			fprintf (stderr, "Out of memory\n");
 			return EXIT_FAILURE;
 		}
 		kdDebug() <<  k_funcinfo << "m_buffer_size: " << m_buffer_size << endl;
 
-//		buffers[0].pixelformat=m_pixelformat;
-		buffers[0].length = m_buffer_size;
-		buffers[0].start = (uchar *)malloc (m_buffer_size);
+//		m_rawbuffers[0].pixelformat=m_pixelformat;
+		m_rawbuffers[0].length = m_buffer_size;
+		m_rawbuffers[0].start = (uchar *)malloc (m_buffer_size);
 
-		currentbuffer.pixelformat=m_pixelformat;
-		currentbuffer.size = m_buffer_size; // not really useful, cause currentbuffer.data.size() does the same thing
-		currentbuffer.data.resize(m_buffer_size);
-
-		if (!buffers[0].start)
+		if (!m_rawbuffers[0].start)
 		{
 			fprintf (stderr, "Out of memory\n");
 			return EXIT_FAILURE;
@@ -1166,14 +1275,16 @@ int VideoDevice::initRead()
 int VideoDevice::initMmap()
 {
     /// @todo implement me
+#define BUFFERS 2
 	if(isOpen())
 	{
+		kdDebug() <<  k_funcinfo << full_filename << " Trying to MMAP" << endl;
 #ifdef HAVE_V4L2
 		struct v4l2_requestbuffers req;
 
 		CLEAR (req);
 
-		req.count  = 2;
+		req.count  = BUFFERS;
 		req.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 		req.memory = V4L2_MEMORY_MMAP;
 
@@ -1190,42 +1301,42 @@ int VideoDevice::initMmap()
 			}
 		}
 
-		if (req.count < 2)
+		if (req.count < BUFFERS)
 		{
 			kdDebug() <<  k_funcinfo << "Insufficient buffer memory on " << full_filename << endl;
 			return EXIT_FAILURE;
 		}
 
-		buffers.resize(req.count);
+		m_rawbuffers.resize(req.count);
 
-		if (buffers.size()==0)
+		if (m_rawbuffers.size()==0)
 		{
 			kdDebug() <<  k_funcinfo <<  "Out of memory" << endl;
 			return EXIT_FAILURE;
 		}
 
-		for (n_buffers = 0; n_buffers < req.count; ++n_buffers)
+		for (m_streambuffers = 0; m_streambuffers < req.count; ++m_streambuffers)
 		{
-			struct v4l2_buffer buf;
+			struct v4l2_buffer v4l2buffer;
 
-			CLEAR (buf);
+			CLEAR (v4l2buffer);
 
-			buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-			buf.memory = V4L2_MEMORY_MMAP;
-			buf.index  = n_buffers;
+			v4l2buffer.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+			v4l2buffer.memory = V4L2_MEMORY_MMAP;
+			v4l2buffer.index  = m_streambuffers;
 
-			if (-1 == xioctl (VIDIOC_QUERYBUF, &buf))
+			if (-1 == xioctl (VIDIOC_QUERYBUF, &v4l2buffer))
 				return errnoReturn ("VIDIOC_QUERYBUF");
 
-			buffers[n_buffers].length = buf.length;
-			buffers[n_buffers].start = (uchar *) mmap (NULL /* start anywhere */, buf.length, PROT_READ | PROT_WRITE /* required */, MAP_SHARED /* recommended */, descriptor, buf.m.offset);
+			m_rawbuffers[m_streambuffers].length = v4l2buffer.length;
+			m_rawbuffers[m_streambuffers].start = (uchar *) mmap (NULL /* start anywhere */, v4l2buffer.length, PROT_READ | PROT_WRITE /* required */, MAP_SHARED /* recommended */, descriptor, v4l2buffer.m.offset);
 
-			if (MAP_FAILED == buffers[n_buffers].start)
+			if (MAP_FAILED == m_rawbuffers[m_streambuffers].start)
 			return errnoReturn ("mmap");
 		}
 #endif
-		currentbuffer.size = buffers[0].length; // not really useful, cause currentbuffer.data.size() does the same thing
-		currentbuffer.data.resize(buffers[0].length);
+		m_currentbuffer.data.resize(m_rawbuffers[0].length); // Makes the imagesize.data buffer size equal to the rawbuffer size
+		kdDebug() <<  k_funcinfo << full_filename << " m_currentbuffer.data.size(): " << m_currentbuffer.data.size() << endl;
 		return EXIT_SUCCESS;
 	}
 	return EXIT_FAILURE;
@@ -1262,20 +1373,20 @@ int VideoDevice::initUserptr()
 			}
 		}
 
-		buffers.resize(4);
+		m_rawbuffers.resize(4);
 
-		if (buffers.size()==0)
+		if (m_rawbuffers.size()==0)
 		{
 			fprintf (stderr, "Out of memory\n");
 			return EXIT_FAILURE;
 		}
 
-		for (n_buffers = 0; n_buffers < 4; ++n_buffers)
+		for (m_streambuffers = 0; m_streambuffers < 4; ++m_streambuffers)
 		{
-			buffers[n_buffers].length = m_buffer_size;
-			buffers[n_buffers].start = (uchar *) malloc (m_buffer_size);
+			m_rawbuffers[m_streambuffers].length = m_buffer_size;
+			m_rawbuffers[m_streambuffers].start = (uchar *) malloc (m_buffer_size);
 
-			if (!buffers[n_buffers].start)
+			if (!m_rawbuffers[m_streambuffers].start)
 			{
 				kdDebug() <<  k_funcinfo <<  "Out of memory" << endl;
 				return EXIT_FAILURE;

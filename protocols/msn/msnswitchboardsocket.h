@@ -23,6 +23,7 @@
 
 #include <qobject.h>
 #include <qstrlist.h>
+#include <qvaluevector.h>
 
 #include <kstringhandler.h>
 
@@ -35,7 +36,11 @@ class QTimer;
 class MSNP2PDisplatcher;
 class KTempFile;
 
-class MSNSwitchBoardSocket : public MSNSocket
+namespace P2P { class Dispatcher; }
+
+#include "dispatcher.h"
+
+class KOPETE_EXPORT MSNSwitchBoardSocket : public MSNSocket
 {
 	Q_OBJECT
 
@@ -47,6 +52,7 @@ public:
 	~MSNSwitchBoardSocket();
 
 private:
+	P2P::Dispatcher *m_dispatcher;
 	MSNAccount *m_account;
 
 	QString m_myHandle; // our handle
@@ -59,8 +65,6 @@ private:
 	QString m_ID;
 	QString m_auth;
 	QStringList m_chatMembers;
-	
-	MSNP2PDisplatcher *m_p2p ;
 
 	//used for emoticons
 	QValueList<const Kopete::Message> m_msgQueue;
@@ -69,12 +73,13 @@ private:
 	Kopete::Message &parseCustomEmoticons(Kopete::Message &msg);
 	QTimer *m_emoticonTimer;
 	QPtrList<KTempFile> m_typewrited;
+	QMap<QString, QValueVector<QString> > m_typewriteDictionary;
 
 	/** the number of chunk for currents messages */
 	unsigned int m_chunks;
 
 	/** true is we already sent the x-clientcaps message */
-	bool m_clientcapsSent; 
+	bool m_clientcapsSent;
 
 protected:
 	/**
@@ -104,7 +109,7 @@ public:
 
 	int sendNudge();
 
-	MSNP2PDisplatcher *p2pDisplatcher();
+	P2P::Dispatcher* PeerDispatcher();
 
 public slots:
 	void slotCloseSession();
@@ -122,7 +127,7 @@ private slots:
 	void slotSocketClosed(  );
 	void slotReadMessage( const QString &msg );
 	void slotEmoticonReceived( KTempFile *, const QString& );
-	
+	void slotIncomingFileTransfer(const QString& from, const QString& fileName, Q_INT64 fileSize);
 	void cleanQueue();
 
 signals:

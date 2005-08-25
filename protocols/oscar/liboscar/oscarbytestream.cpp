@@ -60,8 +60,9 @@ bool KNetworkByteStream::isOpen() const
 
 void KNetworkByteStream::close ()
 {
+#ifdef OSCAR_EXCESSIVE_DEBUG
 	kdDebug ( 14151 ) << k_funcinfo << "Closing stream." << endl;
-
+#endif
 	// close the socket and set flag that we are closing it ourselves
 	mClosing = true;
 	socket()->close();
@@ -71,7 +72,9 @@ int KNetworkByteStream::tryWrite ()
 {
 	// send all data from the buffers to the socket
 	QByteArray writeData = takeWrite();
+#ifdef OSCAR_EXCESSIVE_DEBUG
 	kdDebug(14151) << k_funcinfo << "writing " << writeData.size() << " bytes." << endl;
+#endif
 	socket()->writeBlock( writeData.data (), writeData.size () );
 	return writeData.size();
 }

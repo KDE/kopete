@@ -12,8 +12,8 @@
 
     You should have received a copy of the GNU Library General Public License
     along with this library; see the file COPYING.LIB.  If not, write to
-    the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
-    Boston, MA 02110-1301, USA.
+    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.
 
 */
 
@@ -65,12 +65,23 @@ class KOPETE_EXPORT KCAutoConfigModule : public KCModule
 		KCAutoConfigModule( KInstance * instance, QWidget * parent = 0, const QStringList & args = QStringList() );
 
 		/**
+		*  Constructor.
 		*  @param config the KConfig to use
+		*  @param instance KInstance object for this KCM
+		*  @param parent parent widget
+		*  @param args special arguments for this KCM
+		*
+		*  @todo document what the args mean (inherited from KCModule?)
 		*/
 		KCAutoConfigModule(KConfig* config, KInstance * instance, QWidget * parent = 0, const QStringList & args = QStringList() );
 
 		/**
+		*  Constructor, much like the one above, except with
+		*  no instance and with a name.
 		*  @param config the KConfig to use
+		*  @param parent parent widget
+		*  @param name name of the object
+		*  @param args special arguments for this KCM
 		*/
 		KCAutoConfigModule(KConfig* config, QWidget * parent = 0, const char * name=0 , const QStringList & args = QStringList() );
 

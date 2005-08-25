@@ -53,6 +53,7 @@ class KOPETE_EXPORT Group : public ContactListElement, public NotifyDataObject
 	Q_OBJECT
 
 public:
+	/** Kinds of groups. */
 	enum GroupType { Normal=0, Temporary, TopLevel };
 
 	/**

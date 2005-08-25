@@ -36,20 +36,18 @@ class KopeteIdentityConfigBase;
 class KopeteIdentityConfig : public KCModule
 {
 	Q_OBJECT
-
 public:
 	KopeteIdentityConfig(QWidget *parent, const char *name, const QStringList &args );
+	~KopeteIdentityConfig();
 
 public slots:
 	virtual void save();
 	virtual void load();
 
 private:
-	KopeteIdentityConfigBase *m_view;
-	Kopete::MetaContact *myself;
-	
-	QMap<int, Kopete::Contact*> contactPhotoSourceList;
-	
+	void loadIdentities();
+	void saveCurrentIdentity();
+
 	Kopete::MetaContact::PropertySource selectedNameSource() const;
 	Kopete::MetaContact::PropertySource selectedPhotoSource() const;
 	Kopete::Contact* selectedNameSourceContact() const;
@@ -60,9 +58,21 @@ private slots:
 	void slotLoadPhotoSources();
 	void slotEnableAndDisableWidgets();
 
+	void slotUpdateCurrentIdentity(const QString &selectedIdentity);
+	void slotNewIdentity();
+	void slotCopyIdentity();
+	void slotRenameIdentity();
+	void slotRemoveIdentity();
+
 	void slotChangeAddressee();
+	void slotChangePhoto(const QString &photoUrl);
 
 	void slotSettingsChanged();
+
+private:
+	class Private;
+	Private *d;
+
 };
 #endif
 

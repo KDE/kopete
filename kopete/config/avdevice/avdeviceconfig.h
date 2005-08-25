@@ -58,6 +58,7 @@ private slots:
 	void slotSaturationSliderChanged(int);
 	void slotHueSliderChanged(int);
 	void slotImageAutoAdjustBrightContrastChanged(bool);
+	void slotImageAutoColorCorrectionChanged(bool);
 	void slotUpdateImage();
 private:
 	QTabWidget* mAVDeviceTabCtl;

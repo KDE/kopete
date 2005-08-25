@@ -29,7 +29,7 @@ class ChatSession;
 /**
  * @author Jason Keirstead
  *
- * @brief Factory plugin for creating @ref KopeteView objects.
+ * @brief Factory plugin for creating KopeteView objects.
  *
  * Kopete ships with two of these currently, a Chat Window view plugin, and
  * an Email Window view plugin.
@@ -49,7 +49,7 @@ class KOPETE_EXPORT ViewPlugin : public Plugin
 		virtual KopeteView *createView( ChatSession * /*session*/ ){ return 0L; };
 
 		/**
-		 * @brief Reimplemented from @ref KopetePlugin
+		 * @brief Reimplemented from Kopete::Plugin
 		 */
 		virtual void aboutToUnload();
 };

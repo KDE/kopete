@@ -62,7 +62,6 @@ public:
 	virtual void load();
 
 private slots:
-	void slotUseEmoticonsChanged(bool);
 	void slotSelectedEmoticonsThemeChanged();
 	void slotTransparencyChanged(bool);
 	void slotUpdatePreview();

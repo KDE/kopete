@@ -45,10 +45,10 @@ class Account;
 /**
  * @brief base class of every protocols.
  *
- * A protocol is just a particular case of @ref Plugin
+ * A protocol is just a particular case of Plugin
  *
- * Protocol is an abstract classe, you need to reimplement @ref createNewAccount ,
- * @ref createAddContactPage , @ref createEditAccountWidget
+ * Protocol is an abstract class, you need to reimplement createNewAccount,
+ * createAddContactPage, createEditAccountWidget
  *
  *
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -62,7 +62,7 @@ class KOPETE_EXPORT Protocol : public Plugin
 public:
 
 	/**
-	 * @todo  idealy, the destructor should be protect.  but we need it public to allow QPtrList<Protocol>
+	 * @todo  Ideally, the destructor should be protected. but we need it public to allow QPtrList<Protocol>
 	 */
 	virtual ~Protocol();
 
@@ -73,7 +73,7 @@ public:
 	 * @param accountId - the account ID to create the account with. This is usually
 	 * the login name of the account
 	 *
-	 * you don't need to register the account to the AccountManager in this function.  
+	 * you don't need to register the account to the AccountManager in this function.
 	 * But if you want to use this function don't forget to call  @ref AccountManager::registerAccount
 	 *
 	 * @return The new @ref Account object created by this function
@@ -148,7 +148,7 @@ public:
 
 		CanSendOffline = 0x10000 ///< If it's possible to send  offline messages
 	};
-	
+
 	/**
 	 * @brief Returns the status used for contacts when accounts of this protocol are offline
 	 */
@@ -159,7 +159,7 @@ protected:
 	/**
 	 * @brief Constructor for Protocol
 	 *
-	 * @param instance The protocol's instance, every plugin needs to have a @ref KInstance of its own
+	 * @param instance The protocol's instance, every plugin needs to have a KInstance of its own
 	 * @param parent The protocol's parent object
 	 * @param name The protocol's name
 	 */
@@ -174,7 +174,7 @@ protected:
 	void setCapabilities( unsigned int );
 
 public:
-	
+
 	/**
 	 * Reimplemented from Kopete::Plugin.
 	 *

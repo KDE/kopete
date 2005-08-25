@@ -74,6 +74,7 @@ void Task::init()
 	d->autoDelete = false;
 	d->done = false;
 	d->transfer = 0;
+	d->statusCode = 0;
 }
 
 Task *Task::parent() const

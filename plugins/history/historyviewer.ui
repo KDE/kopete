@@ -231,9 +231,6 @@
             <property name="rootIsDecorated">
                 <bool>false</bool>
             </property>
-            <property name="shadeSortColumn">
-                <bool>false</bool>
-            </property>
         </widget>
         <widget class="KListViewSearchLine" row="1" column="0">
             <property name="name">

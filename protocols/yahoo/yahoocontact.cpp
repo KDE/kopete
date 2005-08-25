@@ -240,6 +240,13 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 		}
 	}
 	
+	// convert escaped chars
+	messageText.replace( QString::fromLatin1( "&gt;" ), QString::fromLatin1( ">" ) );
+	messageText.replace( QString::fromLatin1( "&lt;" ), QString::fromLatin1( "<" ) );
+	messageText.replace( QString::fromLatin1( "&quot;" ), QString::fromLatin1( "\"" ) );
+	messageText.replace( QString::fromLatin1( "&nbsp;" ), QString::fromLatin1( " " ) );
+	messageText.replace( QString::fromLatin1( "&amp;" ), QString::fromLatin1( "&" ) );
+	
 	kdDebug(14180) << "Converted message: " << messageText << endl;
 	
 	Kopete::ContactPtrList m_them = manager(Kopete::Contact::CanCreate)->members();

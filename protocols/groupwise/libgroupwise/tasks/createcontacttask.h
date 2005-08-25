@@ -75,6 +75,7 @@ public:
 	void onGo();
 protected slots:
 	void slotContactAdded( const ContactItem & );
+	void slotCheckContactInstanceCreated();
 private:
 	int m_firstSequenceNumber;
 	QString m_userId;

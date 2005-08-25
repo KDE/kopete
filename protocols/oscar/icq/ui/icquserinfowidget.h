@@ -26,6 +26,7 @@ class KJanusWidget;
 class ICQGeneralInfoWidget;
 class ICQWorkInfoWidget;
 class ICQOtherInfoWidget;
+class ICQInterestInfoWidget;
 class ICQContact;
 
 class ICQUserInfoWidget : public KDialogBase
@@ -40,11 +41,13 @@ public slots:
 	void fillWorkInfo( const ICQWorkUserInfo& );
 	void fillEmailInfo( const ICQEmailInfo& );
 	void fillMoreInfo( const ICQMoreUserInfo& );
+	void fillInterestInfo( const ICQInterestInfo& );
 
 private:
 	ICQGeneralInfoWidget* m_genInfoWidget;
 	ICQWorkInfoWidget* m_workInfoWidget;
 	ICQOtherInfoWidget* m_otherInfoWidget;
+	ICQInterestInfoWidget * m_interestInfoWidget;
 	KJanusWidget* m_janusWidget;
 	ICQContact* m_contact;
 	

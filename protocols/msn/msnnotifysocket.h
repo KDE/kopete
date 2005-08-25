@@ -164,7 +164,8 @@ private:
 	QString statusToString( const Kopete::OnlineStatus &status ) const;
 
 	/**
-	 * Process the currrent Media tag.
+	 * Process the CurrentMedia XML element. 
+	 * @param mediaXmlElement the source XML element as text.
 	 */
 	QString processCurrentMedia( const QString &mediaXmlElement );
 
@@ -188,6 +189,12 @@ private:
 	bool m_ping;
 
 	int m_disconnectReason;
+
+	/**
+	 * Used to set the myself() personalMessage when the acknowledge(UUX) command is received.
+	 * The personalMessage is built into @ref changePersonalMessage
+	 */
+	QString m_propertyPersonalMessage;
 };
 
 #endif

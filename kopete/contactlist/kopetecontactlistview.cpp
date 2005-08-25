@@ -1714,10 +1714,19 @@ void KopeteContactListView::slotAddContact()
 					{
 						metacontact = new Kopete::MetaContact();
 						metacontact->addToGroup( group );
-						Kopete::ContactList::self()->addMetaContact( metacontact );
+						if (addContactPage->apply( account, metacontact ))
+						{
+							Kopete::ContactList::self()->addMetaContact( metacontact );
+						}
+						else
+						{
+							delete metacontact;
+						}
 					}
-
-					addContactPage->apply( account, metacontact );
+					else
+					{
+						addContactPage->apply( account, metacontact );
+					}
 				}
 			}
 		}

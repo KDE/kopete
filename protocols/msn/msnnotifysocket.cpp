@@ -370,19 +370,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			QString obj=unescape(data.section( ' ', 4, 4 ));
 			c->setObject( obj );
 			c->setOnlineStatus( convertOnlineStatus( data.section( ' ', 0, 0 ) ) );
-
-			if(!c->hasProperty( MSNProtocol::protocol()->propClient.key() ))
-			{
-				unsigned int clientID=data.section( ' ', 3, 3 ).toUInt();
-				if( clientID & 512)
-					c->setProperty(  MSNProtocol::protocol()->propClient , i18n("Web Messenger") );
-				else if(clientID & 1)
-					c->setProperty(  MSNProtocol::protocol()->propClient , i18n("Windows Mobile") );
-				else if(clientID & 64)
-					c->setProperty(  MSNProtocol::protocol()->propClient , i18n("MSN Mobile") );
-				else if(obj.contains("kopete")  )
-					c->setProperty(  MSNProtocol::protocol()->propClient , i18n("Kopete") );
-			}
+			c->setClientFlags(data.section( ' ', 3, 3 ).toUInt());
 		}
 	}
 	else if( cmd == "UBX" )
@@ -395,7 +383,10 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	}
 	else if( cmd == "UUX" )
 	{
-		// Do nothing.
+		// UUX is sended to acknowledge that the server has received and processed the personal Message.
+		// if the result is 0, set the myself() contact personalMessage.
+		if( data.section(' ', 0, 0) == QString::fromUtf8("0") )
+			m_account->myself()->setProperty(MSNProtocol::protocol()->propPersonalMessage, m_propertyPersonalMessage);
 	}
 	else if( cmd == "FLN" )
 	{
@@ -905,7 +896,8 @@ QString MSNNotifySocket::processCurrentMedia( const QString &mediaXmlElement )
 	
 	if( type == QString::fromUtf8("Music") )
 	{
-		currentMedia = i18n("Current music playing: (8) %1 (8)").arg(currentMedia);
+		// the  "♫" is encoded in utf8 (and should be in utf8)
+		currentMedia = i18n("Now Listening: ♫ %1 ♫").arg(currentMedia);
 	}
 
 	kdDebug(1414) << "Current Media received: " << currentMedia << endl;
@@ -1096,6 +1088,9 @@ void MSNNotifySocket::changePersonalMessage( MSNProtocol::PersonalMessageType ty
 	}
 	
 	currentMedia.appendChild( xmlMessage.createTextNode( xmlCurrentMedia ) );
+
+	// Set the status message for myself, check if currentMedia is empty, for either using the normal or Music personal
+	m_propertyPersonalMessage = xmlCurrentMedia.isEmpty() ? tempPersonalMessage : processCurrentMedia( currentMedia.text() );
 	
 	xmlMessage.documentElement().appendChild( currentMedia );
 

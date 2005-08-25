@@ -72,7 +72,8 @@ GroupWiseEditAccountWidget::~GroupWiseEditAccountWidget()
 
 GroupWiseAccount *GroupWiseEditAccountWidget::account ()
 {
-	return dynamic_cast< GroupWiseAccount *>(KopeteEditAccountWidget::account () );
+	Q_ASSERT( KopeteEditAccountWidget::account() );
+	return dynamic_cast< GroupWiseAccount *>( KopeteEditAccountWidget::account() );
 }
 
 void GroupWiseEditAccountWidget::reOpen()

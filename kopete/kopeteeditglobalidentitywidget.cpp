@@ -34,6 +34,7 @@
 #include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <kio/netaccess.h>
+#include <kpixmapregionselectordialog.h>
 
 // Kopete include
 #include "kopeteglobal.h"
@@ -168,8 +169,30 @@ void KopeteEditGlobalIdentityWidget::photoClicked()
 		return;
 	}
 
+	QString saveLocation(locateLocal("appdata", "global-photo.png"));
+	QImage photo(photoURL.path());
+	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(photo), 100, 140, this );
+
+	if(!photo.isNull())
+	{
+		if(photo.width() != 100 || photo.height() != 140)
+		{
+			 if (photo.height() > photo.width())
+				photo = photo.scaleHeight(140);
+			else
+				photo = photo.scaleWidth(100);
+		}
+
+		if(!photo.save(saveLocation, "PNG"))
+		{
+			KMessageBox::sorry(this, 
+					i18n("An error occurred when trying to save the global photo."),
+					i18n("Global Photo"));
+		}
+	}
+
 	d->myself->setPhotoSource(Kopete::MetaContact::SourceCustom);
-	d->myself->setPhoto(photoURL);
+	d->myself->setPhoto(KURL(saveLocation));
 }
 
 void KopeteEditGlobalIdentityWidget::lineNicknameTextChanged(const QString &text)

@@ -16,8 +16,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA
-// 02110-1301, USA.
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+// 02111-1307, USA.
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -103,10 +103,9 @@ GaduDCCTransaction::setupOutgoing( GaduContact* peerContact, QString& filePath )
 		enableNotifiers( dccSock_->check  );
 	}
 	else {
-		kdDebug( 14100 ) << "Peer is passive, requesting reverse connection" << endl;
-		// TODO: save this request in a list, then match incoming dcc connection
-		return false;
+		kdDebug( 14100 ) << "Peer " << peerContact->uin() << " is passive, requesting reverse connection" << endl;
 		metoo = static_cast<GaduAccount*>( me->account() );
+		gaduDCC_->requests[peerContact->uin()]=filePath;
 		metoo->dccRequest( peerContact );
 	}
 
@@ -291,7 +290,6 @@ void
 GaduDCCTransaction::slotTransferResult()
 {
 	if ( transfer_->error() == KIO::ERR_USER_CANCELED ) {
-		transfer_->slotError( KIO::ERR_USER_CANCELED, QString::null );
 		closeDCC();
 		deleteLater();
 	}
@@ -367,6 +365,9 @@ GaduDCCTransaction::watcher() {
 			}
 
 			break;
+		case GG_EVENT_DCC_CALLBACK:
+			kdDebug(14100) << "GG_DCC_EVENT_CALLBACK" << endl;
+			break;
 		case GG_EVENT_NONE:
 			kdDebug(14100) << " GG_EVENT_NONE" << endl;
 			// update gui with progress
@@ -380,6 +381,21 @@ GaduDCCTransaction::watcher() {
 			gg_free_event( dccEvent );
 			askIncommingTransfer();
 			return;
+			break;
+		case GG_EVENT_DCC_NEED_FILE_INFO:
+			if (gaduDCC_->requests.contains(dccSock_->peer_uin)) {
+			    QString filePath = gaduDCC_->requests[dccSock_->peer_uin];
+			    kdDebug() << "Callback request found. Sending " << filePath << endl;
+			    gaduDCC_->requests.remove(dccSock_->peer_uin);
+		    	    gg_dcc_fill_file_info(dccSock_,filePath.ascii());
+			    transfer_ = Kopete::TransferManager::transferManager()->addTransfer ( contact,
+			    filePath,  dccSock_->file_info.size, contact->metaContact()->displayName(),	Kopete::FileTransferInfo::Outgoing );
+			} else {
+				gg_free_event( dccEvent );
+				closeDCC();
+				deleteLater();
+				return;
+			}
 			break;
 
 		case GG_EVENT_DCC_ERROR:

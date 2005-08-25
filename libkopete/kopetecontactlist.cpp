@@ -901,7 +901,7 @@ const QDomDocument ContactList::toXML()
 			doc.documentElement().appendChild( doc.importNode( m->toXML(), true ) );
 
 	// Save myself metacontact information
-	QDomElement myselfElement = myself()->toXML();
+	QDomElement myselfElement = myself()->toXML(true); // Save minimal information.
 	myselfElement.setTagName( QString::fromLatin1("myself-meta-contact") );
 	doc.documentElement().appendChild( doc.importNode( myselfElement, true ) );
 

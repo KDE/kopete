@@ -115,6 +115,8 @@ ICQMoreUserInfo::ICQMoreUserInfo()
 	lang1 = 0;
 	lang2 = 0;
 	lang3 = 0;
+	ocountry = 0;
+	marital = 0;
 }
 
 void ICQMoreUserInfo::fill( Buffer* buffer )
@@ -137,6 +139,11 @@ void ICQMoreUserInfo::fill( Buffer* buffer )
 		lang1 = buffer->getByte();
 		lang2 = buffer->getByte();
 		lang3 = buffer->getByte();
+		buffer->getLEWord(); //emtpy field
+		ocity = buffer->getLELNTS();
+		ostate = buffer->getLELNTS();
+		ocountry = buffer->getLEWord();
+		marital = buffer->getLEWord();
 	}
 	else
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ work user info packet" << endl;
@@ -160,6 +167,38 @@ void ICQEmailInfo::fill( Buffer* buffer )
 	}
 	else
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Coudln't parse ICQ email user info packet" << endl;
+}
+
+ICQInterestInfo::ICQInterestInfo()
+{
+	count=0;
+}
+
+void ICQInterestInfo::fill( Buffer* buffer )
+{
+	if ( buffer->getByte() == 0x0A )
+	{
+		count=0; //valid interests
+		int len= buffer->getByte();  //interests we get
+		for ( int i = 0; i < len; i++ )
+		{
+			int t=buffer->getLEWord();
+			QString d = buffer->getLELNTS();
+			if (t>0) { //there is some topic
+				if (count<4) { //i think this could not happen, i have never seen more
+					topics[count]=t;
+					descriptions[count]=d;
+					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got topic: "<<topics[count]<<" desc: " << topics[count] << endl;
+					count++;
+				} else {
+					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got more than four interest infos" << endl;
+				}
+			}
+		}
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "LEN: "<< len << " COUNT: " << count<< endl;
+	}
+	else
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Coudln't parse ICQ interest user info packet" << endl;
 }
 
 ICQSearchResult::ICQSearchResult()

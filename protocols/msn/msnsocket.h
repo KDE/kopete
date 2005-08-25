@@ -44,7 +44,7 @@ class MimeMessage;
  * Server, the Notification Server and the Switchboard Server. It is
  * inherited by the various specialized classes.
  */
-class KDE_EXPORT MSNSocket : public QObject
+class KOPETE_EXPORT MSNSocket : public QObject
 {
 	Q_OBJECT
 
@@ -138,7 +138,7 @@ signals:
 	 * The connection was closed
 	 */
 	void socketClosed();
-	
+
 	/**
 	 * A error has occured. Handle the display of the message.
 	 */

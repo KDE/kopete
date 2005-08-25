@@ -9,15 +9,18 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "addbookmarksplugin.h"
-#include <kopetecontact.h>
-#include <kbookmark.h>
-#include <qregexp.h>
-#include <kopetemessagemanagerfactory.h>
+
 #include <kdebug.h>
+#include <kbookmark.h>
 #include <qvariant.h>
-#include <kopeteglobal.h>
 #include <qtextcodec.h>
+#include <qregexp.h>
+
+#include "addbookmarksplugin.h"
+#include "kopetecontact.h"
+#include "kopetechatsessionmanager.h"
+#include "kopeteglobal.h"
+
 
 K_EXPORT_COMPONENT_FACTORY( kopete_addbookmarks, BookmarksPluginFactory( "kopete_addbookmarks" )  )
 

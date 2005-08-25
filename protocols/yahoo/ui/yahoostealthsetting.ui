@@ -18,57 +18,43 @@
             <height>75</height>
         </size>
     </property>
-    <widget class="QButtonGroup">
+    <vbox>
         <property name="name">
-            <cstring>buttonGroup1</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>190</width>
-                <height>70</height>
-            </rect>
-        </property>
-        <property name="title">
-            <string>Show Me As</string>
-        </property>
-        <widget class="QRadioButton">
+        <widget class="QButtonGroup">
             <property name="name">
-                <cstring>radioOnline</cstring>
+                <cstring>buttonGroup1</cstring>
             </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>20</y>
-                    <width>55</width>
-                    <height>17</height>
-                </rect>
+            <property name="title">
+                <string>Show Me As</string>
             </property>
-            <property name="text">
-                <string>Online</string>
-            </property>
-            <property name="checked">
-                <bool>true</bool>
-            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>radioOnline</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Online</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>radioOffline</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Per&amp;manently offline</string>
+                    </property>
+                </widget>
+            </vbox>
         </widget>
-        <widget class="QRadioButton">
-            <property name="name">
-                <cstring>radioOffline</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>11</x>
-                    <y>42</y>
-                    <width>119</width>
-                    <height>17</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Per&amp;manently offline</string>
-            </property>
-        </widget>
-    </widget>
+    </vbox>
 </widget>
 <tabstops>
     <tabstop>radioOnline</tabstop>

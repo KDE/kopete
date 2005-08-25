@@ -46,7 +46,7 @@ class Group;
  * @author Will Stephenson <will@stevello.free-online.co.uk>
  * @author Martijn Klingens <klingens@kde.org>
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
- * @author Olivier Goffart <ogoffart @tiscalinet.be>
+ * @author Olivier Goffart <ogoffart@tiscalinet.be>
  *
  * A metacontact represent a person. This is a kind of entry to
  * the contactlist. All information of a contact is contained in
@@ -117,7 +117,7 @@ public:
 	 *
 	 * This method selects the display name source for one
 	 * of the sources defined in @ref PropertySource
-	 * 
+	 *
 	 * @see PropertySource
 	 */
 	void setDisplayNameSource(PropertySource source);
@@ -127,7 +127,7 @@ public:
 	 *
 	 * This method obtains the current name source for one
 	 * of the sources defined in @ref PropertySource
-	 * 
+	 *
 	 * @see PropertySource
 	 */
 	PropertySource displayNameSource() const;
@@ -137,7 +137,7 @@ public:
 	 *
 	 * This method selects the photo source for one
 	 * of the sources defined in @ref PropertySource
-	 * 
+	 *
 	 * @see PropertySource
 	 */
 	void setPhotoSource(PropertySource source);
@@ -147,7 +147,7 @@ public:
 	 *
 	 * This method obtains the current photo source for one
 	 * of the sources defined in @ref PropertySource
-	 * 
+	 *
 	 * @see PropertySource
 	 */
 	PropertySource photoSource() const;
@@ -184,8 +184,8 @@ public:
 	 *
 	 * This display name is used when name source is Custom
 	 * this metohd may emit @ref displayNameChanged signal.
-	 * And will call @ref Kopete::Contact::sync 
-	 * 
+	 * And will call @ref Kopete::Contact::sync
+	 *
 	 * @see displayName()
 	 * @see displayNameSource()
 	 */
@@ -193,7 +193,7 @@ public:
 
 	/**
 	 * @brief Returns the custom display name
-	 * 
+	 *
 	 * @see displayName()
 	 * @see displayNameSource()
 	 */
@@ -201,7 +201,7 @@ public:
 
 	/**
 	 * @brief Returns the custom display name
-	 * 
+	 *
 	 * @see displayName()
 	 * @see displayNameSource()
 	 */
@@ -213,7 +213,7 @@ public:
 	 *
 	 * This photo is used when photo source is set toCustom
 	 * this metohd may emit @ref photoChanged signal.
-	 * 
+	 *
 	 * @see photo()
 	 * @see photoSource()
 	 */
@@ -335,8 +335,10 @@ public:
 	/**
 	 * Return a XML representation of the metacontact
 	 * @internal
+	 * @param minimal When true, it doesn't save the
+	 * plugins, groups and notification data. False by default.
 	 */
-	const QDomElement toXML();
+	const QDomElement toXML(bool minimal = false);
 
 	/**
 	 * Creates a metacontact from XML
@@ -358,6 +360,7 @@ public:
 	 * book in the first place - if you could use "" as application
 	 * then probably you should use the plugin data API instead of the
 	 * address book fields.
+	 * @param key The name of the address book field to get or set
 	 *
 	 * @todo: In the code the requirement that fields are registered first
 	 *        is already lifted, but the API needs some review before we
@@ -372,6 +375,9 @@ public:
 	 *
 	 * @see also @ref addressBookField()
 	 * @param p The Plugin by which uses this field
+	 * @param app The application ID in the KABC database
+	 * @param key The name of the address book field to set
+	 * @param value The value of the address book field to set
 	 */
 	void setAddressBookField( Plugin *p, const QString &app, const QString &key, const QString &value );
 

@@ -87,6 +87,12 @@ public:
 	 * clear that map
 	 */
 	void clearServerGroups();
+	
+	/**
+	 * client flags  (say what version of msn messenger the contact is using)
+	 */
+	uint clientFlags() const;
+	void setClientFlags( uint );
 
 	virtual bool isReachable();
 
@@ -159,13 +165,15 @@ private:
 	bool m_allowed;
 	bool m_deleted;
 	bool m_reversed;
-
 	bool m_moving;
+	bool m_phone_mob;
+	
+	uint m_clientFlags;
 
 	QString m_phoneHome;
 	QString m_phoneWork;
 	QString m_phoneMobile;
-	bool m_phone_mob;
+
 
 	KAction *actionBlock;
 	KAction *actionShowProfile;

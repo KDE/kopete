@@ -40,7 +40,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Basic Se&amp;tup</string>
+                    <string>&amp;Basic Setup</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -100,7 +100,7 @@
                                     <cstring>mAutoConnect</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Exc&amp;lude from connection</string>
+                                    <string>E&amp;xclude from connect all</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
@@ -160,7 +160,7 @@
                                     <bool>true</bool>
                                 </property>
                                 <property name="text">
-                                    <string>Register Ne&amp;w Account</string>
+                                    <string>Register &amp;New Account</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Register a new account on this network.</string>
@@ -195,7 +195,7 @@
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>A&amp;ccount Preferences</string>
+                    <string>&amp;Account Preferences</string>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -235,9 +235,6 @@
                                 </property>
                                 <property name="text">
                                     <string>O&amp;verride default server information</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+V</string>
                                 </property>
                                 <property name="checked">
                                     <bool>false</bool>
@@ -396,10 +393,7 @@
                                     <cstring>optionSendBuddyIcon</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Send buddy icon to other users</string>
-                                </property>
-                                <property name="accel">
-                                    <string></string>
+                                    <string>Se&amp;nd buddy icon to other users</string>
                                 </property>
                             </widget>
                         </grid>

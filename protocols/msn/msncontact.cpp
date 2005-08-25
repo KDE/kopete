@@ -58,6 +58,8 @@ MSNContact::MSNContact( Kopete::Account *account, const QString &id, Kopete::Met
 	m_blocked = false;
 	m_reversed = false;
 	m_moving = false;
+	
+	m_clientFlags=0;
 
 	setFileCapable( true );
 
@@ -228,8 +230,13 @@ void MSNContact::deleteContact()
 			return;
 		}
 
+		// Remove from all groups he belongs (if applicable)
 		for( QMap<QString, Kopete::Group*>::Iterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
 			notify->removeContact( contactId(), MSNProtocol::FL, guid(), it.key() );
+
+		// Then trully remove it from server contact list, 
+		// because only removing the contact from his groups isn't sufficent from MSNP11.
+		notify->removeContact( contactId(), MSNProtocol::FL, guid(), QString::null);
 	}
 	else
 	{
@@ -284,6 +291,31 @@ bool MSNContact::isDeleted() const
 void MSNContact::setDeleted( bool deleted )
 {
 	m_deleted= deleted;
+}
+
+uint MSNContact::clientFlags() const
+{
+	return m_clientFlags;
+}
+
+void MSNContact::setClientFlags( uint flags )
+{
+	if(m_clientFlags != flags) 
+	{
+		if(hasProperty( MSNProtocol::protocol()->propClient.key() ))
+		{
+			if( flags & MSNProtocol::WebMessenger)
+				setProperty(  MSNProtocol::protocol()->propClient , i18n("Web Messenger") );
+			else if( flags & MSNProtocol::WindowsMobile)
+				setProperty(  MSNProtocol::protocol()->propClient , i18n("Windows Mobile") );
+			else if( flags & MSNProtocol::MSNMobileDevice)
+				setProperty(  MSNProtocol::protocol()->propClient , i18n("MSN Mobile") );
+			else if( m_obj.contains("kopete")  )
+				setProperty(  MSNProtocol::protocol()->propClient , i18n("Kopete") );
+		}
+
+	}
+	m_clientFlags=flags;
 }
 
 void MSNContact::setInfo(const  QString &type,const QString &data )
@@ -545,7 +577,7 @@ void MSNContact::slotShowProfile()
 /**
  * FIXME: Make this a standard KMM API call
  */
-void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, uint fileSize )
+void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, uint /*fileSize*/ )
 {
 	QString filePath;
 
@@ -559,6 +591,7 @@ void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, ui
 
 	if ( !filePath.isEmpty() )
 	{
+		Q_UINT32 fileSize = QFileInfo(filePath).size();
 		//Send the file
 		static_cast<MSNChatSession*>( manager(Kopete::Contact::CanCreate) )->sendFile( filePath, altFileName, fileSize );
 

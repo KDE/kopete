@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="4" name="kopete_msn_chat">
+<kpartgui version="5" name="kopete_msn_chat">
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<text>&amp;Chat</text>
@@ -10,6 +10,11 @@
 				<text>&amp;Debug</text>
 				<Action name="msnDebugRawCommand" />
 			</Menu> -->
+			<Menu name="webcam">
+				<text>&amp;Webcam</text>
+				<Action name="msnWebcamSend" />
+				<Action name="msnWebcamReceive" />
+			</Menu> 
 		</Menu>
 	</MenuBar>
 

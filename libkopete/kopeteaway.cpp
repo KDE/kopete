@@ -48,7 +48,6 @@
 #ifdef HAVE_XSCREENSAVER
 #define HasScreenSaver
 #include <X11/extensions/scrnsaver.h>
-#include <QX11Info>
 #endif
 #endif // Q_WS_X11
 
@@ -103,7 +102,7 @@ Kopete::Away::Away() : QObject( kapp , "Kopete::Away")
 
 	// set the XAutoLock info
 #ifdef Q_WS_X11
-	Display *dsp = QX11Info::display();
+	Display *dsp = qt_xdisplay();
 #endif
 	d->mouse_x = d->mouse_y=0;
 	d->mouse_mask = 0;
@@ -114,11 +113,11 @@ Kopete::Away::Away() : QObject( kapp , "Kopete::Away")
 	d->useXidle = false;
 	d->useMit = false;
 #ifdef HasXidle
-	d->useXidle = XidleQueryExtension(QX11Info::display(), &dummy, &dummy);
+	d->useXidle = XidleQueryExtension(qt_xdisplay(), &dummy, &dummy);
 #endif
 #ifdef HasScreenSaver
 	if(!d->useXidle)
-		d->useMit = XScreenSaverQueryExtension(QX11Info::display(), &dummy, &dummy);
+		d->useMit = XScreenSaverQueryExtension(qt_xdisplay(), &dummy, &dummy);
 #endif
 #ifdef Q_WS_X11
 	d->xIdleTime = 0;
@@ -273,7 +272,7 @@ void Kopete::Away::slotTimerTimeout()
 	// In fact as of KDE 2.0 this code is practically unrecognisable as xautolock.
 
 #ifdef Q_WS_X11
-	Display *dsp = QX11Info::display();
+	Display *dsp = qt_xdisplay();
 	Window           dummy_w;
 	int              dummy_c;
 	unsigned int     mask;               /* modifier mask                 */

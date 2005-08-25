@@ -36,6 +36,7 @@
 #include "icqprotocol.h"
 #include "icqworkinfowidget.h"
 #include "icqotherinfowidget.h"
+#include "icqinterestinfowidget.h"
 
 
 ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, const char * name )
@@ -64,6 +65,13 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, const char * name )
 	m_otherInfoWidget = new ICQOtherInfoWidget( otherInfo, "Other Information"  );
 	otherLayout->addWidget( m_otherInfoWidget );
 	
+	QFrame* interestInfo = addPage( i18n( "Interest Info" ),
+	                                           i18n( "Interest" ),
+	                                           KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "email" ), KIcon::Desktop ) );
+	QVBoxLayout* interestLayout = new QVBoxLayout( interestInfo );
+	m_interestInfoWidget = new ICQInterestInfoWidget( interestInfo, "Other Information"  );
+	interestLayout->addWidget( m_interestInfoWidget );
+
 }
 
 void ICQUserInfoWidget::setContact( ICQContact* contact )
@@ -77,6 +85,8 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 	                  this, SLOT( fillEmailInfo( const ICQEmailInfo& ) ) );
 	QObject::connect( contact, SIGNAL( haveMoreInfo( const ICQMoreUserInfo& ) ),
 	                  this, SLOT( fillMoreInfo( const ICQMoreUserInfo& ) ) );
+	QObject::connect( contact, SIGNAL( haveInterestInfo( const ICQInterestInfo& ) ),
+	                  this, SLOT( fillInterestInfo( const ICQInterestInfo& ) ) );
 }
 
 void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
@@ -122,6 +132,30 @@ void ICQUserInfoWidget::fillEmailInfo( const ICQEmailInfo& )
 {
 }
 
+void ICQUserInfoWidget::fillInterestInfo( const ICQInterestInfo& info)
+{
+	if (info.count>0) {
+		QString topic = static_cast<ICQProtocol*>( m_contact->protocol() )->interests()[info.topics[0]];
+		m_interestInfoWidget->topic1->setText( topic );
+		m_interestInfoWidget->desc1->setText(info.descriptions[0]);
+	}
+	if (info.count>1) {
+		QString topic = static_cast<ICQProtocol*>( m_contact->protocol() )->interests()[info.topics[1]];
+		m_interestInfoWidget->topic2->setText( topic );
+		m_interestInfoWidget->desc2->setText(info.descriptions[1]);
+	}
+	if (info.count>2) {
+		QString topic = static_cast<ICQProtocol*>( m_contact->protocol() )->interests()[info.topics[2]];
+		m_interestInfoWidget->topic3->setText( topic );
+		m_interestInfoWidget->desc3->setText(info.descriptions[2]);
+	}
+	if (info.count>3) {
+		QString topic = static_cast<ICQProtocol*>( m_contact->protocol() )->interests()[info.topics[3]];
+		m_interestInfoWidget->topic4->setText( topic );
+		m_interestInfoWidget->desc4->setText(info.descriptions[3]);
+	}
+}
+
 void ICQUserInfoWidget::fillMoreInfo( const ICQMoreUserInfo& ui )
 {
 	m_genInfoWidget->ageSpinBox->setValue( ui.age );
@@ -131,6 +165,16 @@ void ICQUserInfoWidget::fillMoreInfo( const ICQMoreUserInfo& ui )
 	QString gender = static_cast<ICQProtocol*>( m_contact->protocol() )->genders()[ui.gender];
 	m_genInfoWidget->genderEdit->setText( gender );
 	m_genInfoWidget->homepageEdit->setText( ui.homepage );
+
+	QString ms = static_cast<ICQProtocol*>( m_contact->protocol() )->maritals()[ui.marital];
+	m_genInfoWidget->marital->setText( ms );
+
+	m_genInfoWidget->oCityEdit->setText(ui.ocity);
+	m_genInfoWidget->oStateEdit->setText(ui.ostate);
+	
+	QString ocountry = static_cast<ICQProtocol*>( m_contact->protocol() )->countries()[ui.ocountry];
+	m_genInfoWidget->oCountryEdit->setText( ocountry );
+	
 	//TODO languages	
 }
 

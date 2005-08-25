@@ -179,6 +179,17 @@ Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 		case ConferenceRename:		//116
 			// unhandled because unhandled in Gaim
 			break;
+		/* GW7 */
+		case ReceivedBroadcast:		//122
+		case ReceivedSystemBroadcast: //123
+			// message
+			if ( !readString( message ) )
+			{
+				m_din.unsetDevice();
+				return 0;
+			}
+			tentative->setMessage( message );
+			break;
 		default:
 			debug( QString( "EventProtocol::parse() - found unexpected event type %1" ).arg( type ) );
 			break;

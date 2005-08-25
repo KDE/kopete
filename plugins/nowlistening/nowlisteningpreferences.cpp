@@ -50,7 +50,7 @@ NowListeningPreferences::NowListeningPreferences(QWidget *parent, const char* /*
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Juk"));
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("amaroK"));
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Kaffeine"));
-#if defined Q_WS_X11 && !defined K_WS_QTONLY && HAVE_XMMS
+#if defined Q_WS_X11 && !defined K_WS_QTONLY && defined HAVE_XMMS
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("XMMS"));
 #endif
 	load();

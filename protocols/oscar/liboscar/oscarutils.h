@@ -32,12 +32,12 @@ namespace Oscar
 KOPETE_EXPORT QString normalize( const QString& );
 
 ///compare TLVs for equality
-bool operator==( TLV, TLV );
+KOPETE_EXPORT bool operator==( TLV, TLV );
 
 /**
  * Find the TLV corresponding to the type in the list
  */
-TLV findTLV( const QValueList<TLV>&, int type );
+KOPETE_EXPORT TLV findTLV( const QValueList<TLV>&, int type );
 
 /**
  * Get the value of the capability that corresponds to the value

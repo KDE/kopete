@@ -308,20 +308,20 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 	}
 }
 
-QString NowListeningPlugin::mediaPlayerAdvert(bool update) const
+QString NowListeningPlugin::mediaPlayerAdvert(bool update)
 {
 	// generate message for all players
-	QString message = "";
+	QString message;
 	
 	if( NowListeningConfig::self()->useSpecifiedMediaPlayer() && d->m_currentMediaPlayer != 0L )
 	{
-		message = buildTrackMessage(d->m_currentMediaPlayer, update);
+		buildTrackMessage(message, d->m_currentMediaPlayer, update);
 	}
 	else
 	{
 		for ( NLMediaPlayer* i = d->m_mediaPlayerList->first(); i; i = d->m_mediaPlayerList->next() )
 		{
-			message = buildTrackMessage(i, update);
+			buildTrackMessage(message, i, update);
 		}
 	}
 
@@ -330,9 +330,8 @@ QString NowListeningPlugin::mediaPlayerAdvert(bool update) const
 	return message;
 }
 
-QString NowListeningPlugin::buildTrackMessage(NLMediaPlayer *player, bool update) const
+void NowListeningPlugin::buildTrackMessage(QString &message, NLMediaPlayer *player, bool update)
 {
-	QString message("");
 	QString perTrack = NowListeningConfig::self()->perTrack();
 
 	if(update)
@@ -343,12 +342,10 @@ QString NowListeningPlugin::buildTrackMessage(NLMediaPlayer *player, bool update
 		if ( message.isEmpty() )
 			message = NowListeningConfig::self()->header();
 	
-		if (  message != NowListeningConfig::self()->header() ) // > 1 track playing!
+		if ( message != NowListeningConfig::self()->header() ) // > 1 track playing!
 			message = message + NowListeningConfig::self()->conjunction();
 		message = message + substDepthFirst( player, perTrack, false );
 	}
-
-	return message;
 }
 
 bool NowListeningPlugin::newTrackPlaying(void) const

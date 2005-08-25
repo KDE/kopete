@@ -78,8 +78,8 @@ Comment=Plugin that do some nice stuff
 	}
  \endcode
  *
- * Kopete::Plugin inherits from @ref KXMLGUIClient.  That client is added
- * to the Kopete's mainwindow @ref KXMLGUIFactory. So you may add actions
+ * Kopete::Plugin inherits from KXMLGUIClient.  That client is added
+ * to the Kopete's mainwindow KXMLGUIFactory. So you may add actions
  * on the main window (for hinstance in the meta contact popup menu).
  * Please note the the client is added right after the plugin is created.
  * so you have to create every actions in the constructor
@@ -119,7 +119,8 @@ public:
 	QString displayName() const;
 
 	/**
-	 * Returns the plugin id, defined to be the result of calling @ref QObject::className().
+	 * @brief Get the plugin id
+	 * @return the plugin's id which is gotten by calling QObject::className().
 	 */
 	QString pluginId() const;
 

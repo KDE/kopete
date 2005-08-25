@@ -58,6 +58,7 @@ class GroupWiseAccount : public Kopete::ManagedConnectionAccount
 public:
 	GroupWiseAccount( GroupWiseProtocol *parent, const QString& accountID, const char *name = 0 );
 	~GroupWiseAccount();
+
 	/**
 	 * Construct the context menu used for the status bar icon
 	 */
@@ -196,14 +197,14 @@ protected slots:
 	 * Handles the response to deleting a contact on the server
 	 */
 	void receiveContactDeleted( const ContactItem & instance );
+
 	// SLOTS HANDLING PROTOCOL EVENTS
 	/**
-	 * Called when the server has a message for us.
-	 * This identifies the sending Kopete::Contact and passes the message on to it,
-	 * in order to locate the ChatSession and finally pass to the GUI.
-	 */
-	void receiveMessage( const ConferenceEvent & event );
-	void receiveAutoReply( const ConferenceEvent & event );
+	* Received a message from the server.
+	* Find the conversation that this message belongs to, and display it there.
+	* @param event contains event type, sender, content, flags.  Type is used to handle autoreplies, normal messages, and [system] broadcasts.
+	*/
+	void handleIncomingMessage( const ConferenceEvent & );
 	/**
 	 * A contact changed status
 	 */
@@ -290,13 +291,6 @@ protected:
 	 * Sends a status message to the server - called by the status specific slotGoAway etc
 	 */
 	//void setStatus( GroupWise::Status status, const QString & reason = QString::null );
-
-	/**
-	* Received a message from the server.
-	* Find the conversation that this message belongs to, and display it there.
-	* @param autoReply Indicates that the message is an auto reply - doesn't contain any RTF.
-	*/
-	void handleIncomingMessage( const ConferenceEvent & event, bool autoReply );
 
 	int handleTLSWarning (int warning, QString server, QString accountId);
 

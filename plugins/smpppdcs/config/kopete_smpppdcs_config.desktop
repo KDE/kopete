@@ -13,6 +13,7 @@ X-KDE-ParentComponents=kopete_smpppdcs
 X-Kopete-Version=1000900
 
 Name=SUSE SMPPPD Connection Status
+Name[ca]=Estatus de la connexió SUSE SMPPPD 
 Name[cs]=Stav spojení SUSE SMPPPD
 Name[da]=SUSE SMPPD Forbindelsesstatus
 Name[de]=SuSE SMPPPD-Verbindungsstatus
@@ -39,6 +40,7 @@ Name[uk]=Стан з'єднання SUSE SMPPPD
 Name[zh_CN]=SUSE SMPPPD 连接状态
 Comment=SMPPPDCS Plugin
 Comment[br]=Lugant SMPPPDCS
+Comment[ca]=Connector SMPPPDCS
 Comment[cs]=SMPPPDCS modul
 Comment[da]=SMPPPDCS-Plugin
 Comment[de]=SMPPPDCS-Modul

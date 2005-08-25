@@ -35,6 +35,8 @@
 #include <kfiledialog.h>
 #include <kpassdlg.h>
 #include <kconfig.h>
+#include <kstandarddirs.h>
+#include <kpixmapregionselectordialog.h>
 
 // Kopete Includes
 #include <addcontactpage.h>
@@ -73,6 +75,8 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 		QString iconUrl = account()->configGroup()->readEntry("pictureUrl", "");
 		bool sendPicture = account()->configGroup()->readBoolEntry("sendPicture", false);
 		optionSendBuddyIcon->setChecked( sendPicture );
+    buttonSelectPicture->setEnabled( sendPicture );  
+    connect( optionSendBuddyIcon, SIGNAL( toggled( bool ) ), buttonSelectPicture, SLOT( setEnabled( bool ) ) ); 
 		editPictureUrl->setText( iconUrl );
 		if( !iconUrl.isEmpty() )
 			m_Picture->setPixmap( KURL( iconUrl ).path() );
@@ -159,6 +163,23 @@ void YahooEditAccount::slotSelectPicture()
 	if ( file.isEmpty() )
 		return;
 
+	QImage picture(file.path());
+	if( !picture.isNull() )
+	{
+		picture = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(picture), 96, 96, this );
+		QString newlocation( locateLocal( "appdata", "yahoopictures/"+ file.fileName().lower() ) ) ;
+		file = KURL(newlocation);
+		if( !picture.save( newlocation, "PNG" ))
+		{
+			KMessageBox::sorry( this, i18n( "An error occurred when trying to change the display picture." ), i18n( "Yahoo Plugin" ) );
+			return;
+		}
+	}
+	else
+	{
+		KMessageBox::sorry( this, i18n( "<qt>The selected buddy icon could not be opened. <br>Please set a new buddy icon.</qt>" ), i18n( "Yahoo Plugin" ) );
+		return;
+	}
 	editPictureUrl->setText( file.path() );
 	
 	m_Picture->setPixmap( file.path() );

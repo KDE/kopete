@@ -96,15 +96,21 @@ QValueList<Emoticons::Token> Emoticons::tokenizeEmoticons( const QString& messag
 	return self()->tokenize( message, mode );
 }
 
-QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode mode )
+QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint mode )
 {
-	
 	QValueList<Token> result;
 	if ( !KopetePrefs::prefs()->useEmoticons() )
 	{
 		result.append( Token( Text, message ) );
 		return result;
 	}
+	
+	if( ! ( mode & (StrictParse|RelaxedParse) ) )
+	{
+		//if none of theses two mode are selected, use the mode from the config
+		mode |=  KopetePrefs::prefs()->emoticonsRequireSpaces() ? StrictParse : RelaxedParse  ;
+	}
+	
 	/* previous char, in the firs iteration assume that it is space since we want
 	 * to let emoticons at the beginning, the very first previous QChar must be a space. */
 	QChar p = ' ';
@@ -327,7 +333,9 @@ void Emoticons::initEmoticons( const QString &theme )
 		d->theme = KopetePrefs::prefs()->iconTheme();
 	}
 	else
+	{
 		d->theme = theme;
+	}
 
 //	kdDebug(14010) << k_funcinfo << "Called" << endl;
 	d->emoticonAndPicList.clear();

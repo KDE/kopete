@@ -53,7 +53,7 @@ namespace Kopete
 class PluginManager::Private
 {
 public:
-	Private() : shutdownMode( StartingUp ) {}
+	Private() : shutdownMode( StartingUp ), isAllPluginsLoaded(false) {}
 
 	// All available plugins, regardless of category, and loaded or not
 	QValueList<KPluginInfo *> plugins;
@@ -74,6 +74,8 @@ public:
 	QValueStack<QString> pluginsToLoad;
 
 	static KStaticDeleter<PluginManager> deleter;
+
+	bool isAllPluginsLoaded;
 };
 
 KStaticDeleter<PluginManager> PluginManager::Private::deleter;
@@ -257,32 +259,46 @@ void PluginManager::loadAllPlugins()
 	// FIXME: We need session management here - Martijn
 
 	KConfig *config = KGlobal::config();
-	QMap<QString, QString> entries = config->entryMap( QString::fromLatin1( "Plugins" ) );
-	QMap<QString, QString>::Iterator it;
-	for ( it = entries.begin(); it != entries.end(); ++it )
+	if ( config->hasGroup( QString::fromLatin1( "Plugins" ) ) )
 	{
-		QString key = it.key();
-		if ( key.endsWith( QString::fromLatin1( "Enabled" ) ) )
+		QMap<QString, QString> entries = config->entryMap( QString::fromLatin1( "Plugins" ) );
+		QMap<QString, QString>::Iterator it;
+		for ( it = entries.begin(); it != entries.end(); ++it )
 		{
-			key.setLength( key.length() - 7 );
-			//kdDebug(14010) << k_funcinfo << "Set " << key << " to " << it.data() << endl;
-
-			if ( it.data() == QString::fromLatin1( "true" ) )
+			QString key = it.key();
+			if ( key.endsWith( QString::fromLatin1( "Enabled" ) ) )
 			{
-				if ( !plugin( key ) )
-					d->pluginsToLoad.push( key );
-			}
-			else
-			{
-				//This happens if the user unloaded plugins with the config plugin page.
-				// No real need to be assync because the user usualy unload few plugins 
-				// compared tto the number of plugin to load in a cold start. - Olivier
-				if ( plugin( key ) )
-					unloadPlugin( key );
+				key.setLength( key.length() - 7 );
+				//kdDebug(14010) << k_funcinfo << "Set " << key << " to " << it.data() << endl;
+	
+				if ( it.data() == QString::fromLatin1( "true" ) )
+				{
+					if ( !plugin( key ) )
+						d->pluginsToLoad.push( key );
+				}
+				else
+				{
+					//This happens if the user unloaded plugins with the config plugin page.
+					// No real need to be assync because the user usualy unload few plugins 
+					// compared tto the number of plugin to load in a cold start. - Olivier
+					if ( plugin( key ) )
+						unloadPlugin( key );
+				}
 			}
 		}
 	}
-
+	else
+	{
+		// we had no config, so we load any plugins that should be loaded by default.
+		QValueList<KPluginInfo *> plugins = availablePlugins( QString::null );
+		QValueList<KPluginInfo *>::ConstIterator it = plugins.begin();
+		QValueList<KPluginInfo *>::ConstIterator end = plugins.end();
+		for ( ; it != end; ++it )
+		{
+			if ( (*it)->isPluginEnabledByDefault() )
+				d->pluginsToLoad.push( (*it)->pluginName() );
+		}
+	}
 	// Schedule the plugins to load
 	QTimer::singleShot( 0, this, SLOT( slotLoadNextPlugin() ) );
 }
@@ -294,6 +310,7 @@ void PluginManager::slotLoadNextPlugin()
 		if ( d->shutdownMode == Private::StartingUp )
 		{
 			d->shutdownMode = Private::Running;
+			d->isAllPluginsLoaded = true;
 			emit allPluginsLoaded();
 		}
 		return;
@@ -490,6 +507,10 @@ bool PluginManager::setPluginEnabled( const QString &_pluginId, bool enabled /* 
 	return true;
 }
 
+bool PluginManager::isAllPluginsLoaded() const
+{
+	return d->isAllPluginsLoaded;
+}
 
 } //END namespace Kopete
 

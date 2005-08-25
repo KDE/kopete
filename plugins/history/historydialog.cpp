@@ -111,7 +111,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 	mMainWidget->searchLine->setFocus();
 	mMainWidget->searchErase->setPixmap(BarIcon("locationbar_erase"));
 
-	mMainWidget->contactComboBox->insertItem("All");
+	mMainWidget->contactComboBox->insertItem(i18n("All"));
 	mMetaContactList = Kopete::ContactList::self()->metaContacts();
 	QPtrListIterator<Kopete::MetaContact> it(mMetaContactList);
 	for(; it.current(); ++it)
@@ -407,7 +407,7 @@ void HistoryDialog::listViewShowElements(bool s)
 // metacontact selected in the combobox)
 void HistoryDialog::slotSearchErase()
 {
-	mMainWidget->searchLine->setText(QString::null);
+	mMainWidget->searchLine->clear();
 	listViewShowElements(true);
 }
 
@@ -432,7 +432,7 @@ void HistoryDialog::slotSearch()
 
 	if (mSearch)
 	{
-		mMainWidget->searchButton->setText("&Search");
+		mMainWidget->searchButton->setText(i18n("&Search"));
 		delete mSearch;
 		mSearch = 0L;
 		return;
@@ -444,8 +444,8 @@ void HistoryDialog::slotSearch()
 	mSearch->item = 0;
 	mSearch->foundPrevious = false;
 
-	initProgressBar("Searching ...",mMainWidget->dateListView->childCount() );
-	mMainWidget->searchButton->setText("&Cancel");
+	initProgressBar(i18n("Searching ..."), mMainWidget->dateListView->childCount() );
+	mMainWidget->searchButton->setText(i18n("&Cancel"));
 
 	mSearch->item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
 	searchFirstStep();
@@ -522,7 +522,7 @@ void HistoryDialog::searchFirstStep()
 				mSearch->item->setVisible(true);
 		}
 		while(mSearch->item = static_cast<KListViewDateItem *>(mSearch->item->nextSibling()));
-		mMainWidget->searchButton->setText("&Search");
+		mMainWidget->searchButton->setText(i18n("&Search"));
 
 		delete mSearch;
 		mSearch = 0L;
@@ -559,7 +559,7 @@ void HistoryDialog::initProgressBar(const QString& text, int nbSteps)
 void HistoryDialog::doneProgressBar()
 {
 		mMainWidget->searchProgress->hide();
-		mMainWidget->statusLabel->setText("Ready");
+		mMainWidget->statusLabel->setText(i18n("Ready"));
 }
 
 #include "historydialog.moc"

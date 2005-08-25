@@ -30,6 +30,9 @@
 
 #include "msnsocket.h"
 
+
+class QImage;
+
 class KAction;
 class KActionMenu;
 
@@ -156,6 +159,7 @@ public:
 	static MSNProtocol* protocol();
 	static bool validContactId(const QString&);
 	QString clientId();
+	QImage scalePicture(const QImage &picture);
 
 private slots:
 	void slotSyncContactList();

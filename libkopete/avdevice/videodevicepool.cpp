@@ -99,14 +99,6 @@ bool VideoDevicePool::isOpen()
 }
 
 /*!
-    \fn VideoDevicePool::processImage(const void *p)
- */
-int VideoDevicePool::processImage(const void * p)
-{
-	return m_videodevice[currentDevice()].processImage(p);
-}
-
-/*!
     \fn VideoDevicePool::showDeviceCapabilities(int device)
  */
 int VideoDevicePool::showDeviceCapabilities(unsigned int device)
@@ -155,8 +147,7 @@ int VideoDevicePool::setSize( int newwidth, int newheight)
 		m_buffer.height=newheight;
 		m_buffer.pixelformat=	PIXELFORMAT_RGB24;
 		m_buffer.data.resize(m_buffer.width*m_buffer.height*3);
-		m_buffer.size=m_buffer.data.size();
-		kdDebug() <<  k_funcinfo << "VideoDevicePool::setSize() buffer size: "<< m_buffer.size << endl;
+		kdDebug() <<  k_funcinfo << "VideoDevicePool::setSize() buffer size: "<< m_buffer.data.size() << endl;
 	}
 	return EXIT_SUCCESS;
 }
@@ -194,6 +185,26 @@ int VideoDevicePool::stopCapturing()
 	return EXIT_FAILURE;
 }
 
+/*!
+    \fn VideoDevicePool::getAutoColorCorrection()
+ */
+bool VideoDevicePool::getAutoColorCorrection()
+{
+	if(m_videodevice.size())
+		return m_videodevice[currentDevice()].getAutoColorCorrection();
+	return false;
+}
+
+/*!
+    \fn VideoDevicePool::setAutoColorCorrection(bool colorcorrection)
+ */
+bool VideoDevicePool::setAutoColorCorrection(bool colorcorrection)
+{
+	kdDebug() <<  k_funcinfo << "VideoDevicePool::setAutoColorCorrection(" << colorcorrection << ") called." << endl;
+	if(m_videodevice.size())
+		return m_videodevice[currentDevice()].setAutoColorCorrection(colorcorrection);
+	return false;
+}
 
 /*!
     \fn VideoDevicePool::getFrame()
@@ -206,7 +217,7 @@ int VideoDevicePool::getFrame()
 	else
 	{
 		kdDebug() <<  k_funcinfo << "VideoDevicePool::getFrame() fallback for no device." << endl;
-		for(unsigned int loop=0; loop < m_buffer.size; loop+=3)
+		for(unsigned int loop=0; loop < m_buffer.data.size(); loop+=3)
 		{
 			m_buffer.data[loop]   = 255;
 			m_buffer.data[loop+1] = 0;
@@ -350,13 +361,52 @@ int VideoDevicePool::scanDevices()
 	const QFileInfoList *list = videodevice_dir.entryInfoList();
 
 	if (!list)
-		return EXIT_FAILURE;
+	{
+		kdDebug() << k_funcinfo << "Found no suitable devices in " << videodevice_dir_path << endl;
+		QDir videodevice_dir;
+		const QString videodevice_dir_path=QString::fromLocal8Bit("/dev/");
+		const QString videodevice_dir_filter=QString::fromLocal8Bit("video*");
+		VideoDevice videodevice;
 
+		videodevice_dir.setPath(videodevice_dir_path);
+		videodevice_dir.setNameFilter(videodevice_dir_filter);
+        	videodevice_dir.setFilter( QDir::System | QDir::NoSymLinks | QDir::Readable | QDir::Writable );
+        	videodevice_dir.setSorting( QDir::Name );
+
+		const QFileInfoList *list = videodevice_dir.entryInfoList();
+
+		if (!list)
+		{
+			kdDebug() << k_funcinfo << "Found no suitable devices in " << videodevice_dir_path << endl;
+			return EXIT_FAILURE;
+		}
+		QFileInfoListIterator fileiterator ( *list );
+		QFileInfo *fileinfo;
+
+		m_videodevice.clear();
+		kdDebug() <<  k_funcinfo << "scanning devices in " << videodevice_dir_path << "..." << endl;
+		while ( (fileinfo = fileiterator.current()) != 0 )
+		{
+			videodevice.setFileName(fileinfo->absFilePath());
+			kdDebug() <<  k_funcinfo << "Found device " << videodevice.full_filename << endl;
+			videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
+			if(videodevice.isOpen())
+			{
+				kdDebug() <<  k_funcinfo << "File " << videodevice.full_filename << " was opened successfuly" << endl;
+				videodevice.close();
+				m_videodevice.push_back(videodevice);
+			}
+			++fileiterator;
+		}
+
+
+		return EXIT_FAILURE;
+	}
 	QFileInfoListIterator fileiterator ( *list );
 	QFileInfo *fileinfo;
 
 	m_videodevice.clear();
-	kdDebug() <<  k_funcinfo << "scanning devices..." << endl;
+	kdDebug() <<  k_funcinfo << "scanning devices in " << videodevice_dir_path << "..." << endl;
 	while ( (fileinfo = fileiterator.current()) != 0 )
 	{
 		videodevice.setFileName(fileinfo->absFilePath());

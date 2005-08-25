@@ -29,6 +29,7 @@ AIMAddContactPage::AIMAddContactPage(bool connected, QWidget *parent,
 					 const char *name )
 	: AddContactPage(parent,name)
 {
+    m_gui = 0;
 	(new QVBoxLayout(this))->setAutoAdd(true);
 
 	if(connected)
@@ -51,6 +52,12 @@ AIMAddContactPage::~AIMAddContactPage()
 
 bool AIMAddContactPage::validateData()
 {
+    if ( !canadd )
+        return false;
+
+    if ( !m_gui )
+        return false;
+
 	QString sn = m_gui->addSN->text();
 	if ( sn.isEmpty() )
 	{

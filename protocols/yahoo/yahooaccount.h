@@ -39,6 +39,7 @@ class YahooContact;
 class YahooAccount;
 class YahooProtocol;
 class KTempFile;
+class QTimer;
 struct KURL;
 
 class YahooAwayDialog : public KopeteAwayDialog
@@ -157,7 +158,8 @@ protected slots:
 	void slotConnected();
 	void slotGoOnline();
 	void slotGoOffline();
-	void slotOpenInbox();				// Open Yahoo Mailbox in browser
+	void slotOpenInbox();			// Open Yahoo Mailbox in browser
+	void slotOpenYAB();			// Open Yahoo Addressbook in browser
 
 	void slotGoStatus(int status, const QString &awayMessage = QString::null);
 	void slotLoginResponse(int succ, const QString &url);
@@ -201,6 +203,7 @@ private slots:
 	 * When a global identity key get changed.
 	 */
 	void slotGlobalIdentityChanged( const QString &key, const QVariant &value );
+	void slotKeepalive();
 private:
 
 	/**
@@ -223,6 +226,8 @@ private:
 
 	bool theHaveContactList;	// Do we have the full server-side contact list yet?
 	int stateOnConnection;		// The state to change to on connection
+	QTimer* m_keepaliveTimer;
+	bool m_waitingForResponse;
 
 	/**
 	 * External Settings and Descriptors
@@ -238,6 +243,9 @@ private:
 
 
 	YahooAwayDialog *theAwayDialog;	// Our away message dialog
+
+	KAction *m_openInboxAction;	// Menu item openInbox
+	KAction *m_openYABAction;	// Menu item openYahooAddressbook
 };
 
 

@@ -21,6 +21,7 @@
 
 #include "msnswitchboardsocket.h"
 
+#include <stdlib.h>
 #include <time.h>
 #include <cmath>
 
@@ -40,10 +41,12 @@
 #include <ktempfile.h>
 #include <kconfig.h>
 #include <kmdcodec.h>
+#include <kstandarddirs.h>
+#include <ktempfile.h>
 
 // for the display picture
-#include "msnp2pdisplatcher.h"
 #include <msncontact.h>
+#include "msnnotifysocket.h"
 
 //kopete
 #include "msnaccount.h"
@@ -57,22 +60,24 @@
 
 #include "sha1.h"
 
+#include "dispatcher.h"
+using P2P::Dispatcher;
 
 MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account , QObject *parent )
 : MSNSocket( parent )
 {
 	m_account = account;
-	m_p2p=0l;
 	m_recvIcons=0;
 	m_emoticonTimer=0L;
 	m_chunks=0;
 	m_clientcapsSent=false;
+	m_dispatcher = 0l;
 }
 
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
 {
 	kdDebug(14140) << k_funcinfo << endl;
-
+	
 	QMap<QString , QPair<QString , KTempFile*> >::Iterator it;
 	for ( it = m_emoticons.begin(); it != m_emoticons.end(); ++it )
 	{
@@ -219,11 +224,11 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint  id ,
 
 void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 {
-	QRegExp rx("Content-Type: ([A-Za-z0-9$!*/\\-]*)");
+	QRegExp rx("Content-Type: ([A-Za-z0-9/\\-]*)");
 	rx.search(msg);
 	QString type=rx.cap(1);
 
-	rx=QRegExp("User-Agent: ([A-Za-z0-9.$!*/\\-]*)");
+	rx=QRegExp("User-Agent: ([A-Za-z0-9./\\-]*)");
 	rx.search(msg);
 	QString clientStr=rx.cap(1);
 
@@ -246,7 +251,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		message = message.replace(  "\r\n" ,"" );
 		emit receivedTypingMsg( message.lower(), true );
 	}
-	else if(msg.contains("text/x-msnmsgr-datacast"))
+	else if(type == "text/x-msnmsgr-datacast")
 	{
 		if(msg.contains("ID:"))
 		{
@@ -260,7 +265,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			}
 		}
 	}
-	else if(type=="text/plain"   || type.isEmpty() )
+	else if(type=="text/plain" /*  || type.isEmpty()*/ )
 	{
 		// Some MSN Clients (like CCMSN) don't like to stick to the rules.
 		// In case of CCMSN, it doesn't send what the content type is when
@@ -395,6 +400,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	}
 	else if( type== "text/x-mms-emoticon" || type== "text/x-mms-animemoticon")
 	{
+		// TODO remove Displatcher.
 		KConfig *config = KGlobal::config();
 		config->setGroup( "MSN" );
 		if ( config->readBoolEntry( "useCustomEmoticons", true ) )
@@ -417,7 +423,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 
 					// we are receiving emoticons, so delay message display until received signal
 					m_recvIcons++;
-					p2pDisplatcher()->requestDisplayPicture( m_myHandle, m_msgHandle, msnobj );
+					PeerDispatcher()->requestDisplayIcon(m_msgHandle, msnobj);
 				}
 				pos=rx.search(msg, pos+rx.matchedLength());
 			}
@@ -425,7 +431,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	}
 	else if( type== "application/x-msnmsgrp2p" )
 	{
-		p2pDisplatcher();  //create a p2p displatcher if none exist yet
+		PeerDispatcher();
 	}
 	else if( type == "text/x-clientcaps" )
 	{
@@ -475,6 +481,103 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 
 
 	}
+	else if(type == "image/gif" || msg.contains("Message-ID:"))
+	{
+		// Incoming inkformatgif.
+		QRegExp regex("Message-ID: \\{([0-9A-F\\-]*)\\}");
+		regex.search(msg);
+		QString messageId = regex.cap(1);
+		regex = QRegExp("Chunks: (\\d+)");
+		regex.search(msg);
+		QString chunks = regex.cap(1);
+		regex = QRegExp("Chunk: (\\d+)");
+		regex.search(msg);
+		QString chunk = regex.cap(1);
+
+		if(chunks.isNull() && chunk.isNull())
+		{
+			// The informatgif only has one chunk and it
+			// is included in the received message.
+			regex = QRegExp("base64:([0-9a-zA-Z+/=]*)");
+			regex.search(msg);
+			// Retrieve the first chunk of the ink format gif.
+			QString base64 = regex.cap(1);
+			QByteArray image;
+			// Convert from base64 encoded string to byte array.
+			KCodecs::base64Decode(base64.utf8() , image);
+			KTempFile *imageFile = new KTempFile(locateLocal( "tmp", "inkformatgif-" ), ".gif");
+			imageFile->setAutoDelete(true);
+			imageFile->file()->writeBlock(image.data(), image.size());
+			imageFile->file()->close();
+
+			slotEmoticonReceived(imageFile , "inkformatgif");
+			imageFile = 0l;
+		}
+		else if(!chunks.isNull())
+		{
+			regex = QRegExp("base64:([0-9a-zA-Z+/=]+)");
+			regex.search(msg);
+			// Retrieve the first chunk of the ink format gif.
+			QString base64 = regex.cap(1);
+			kdDebug(14140) << k_funcinfo << chunks.toUInt() << ", chunks" << endl;
+			// If more chunks are expected, buffer the chunk received.
+			QValueVector<QString> typewrite(chunks.toUInt());
+			typewrite[0] = base64;
+			m_typewriteDictionary.insert(messageId, typewrite);
+		}
+		else if(!chunk.isNull())
+		{
+			// Retrieve the inkformatgif chunk index.
+			Q_UINT32 index = chunk.toUInt();
+			kdDebug(14140) << k_funcinfo << "chunk, " << index << endl;
+			if(m_typewriteDictionary.contains(messageId))
+			{
+				QValueVector<QString> typewrite = m_typewriteDictionary[messageId];
+				// Copy the chunk into it's corresponding index.
+				typewrite[index] = msg.section("\r\n\r\n", -1);
+
+				bool done = false;
+				// Determine if all chunks have been received.
+				if(index == (typewrite.count() - 1)) done = true;
+
+				if(done)
+				{
+					m_typewriteDictionary.remove(messageId);
+					
+					QString base64;
+					QValueVector<QString>::Iterator current = typewrite.begin();
+					while(current != typewrite.end()){
+						base64 += *current;
+						current++;
+					}
+
+					QByteArray image;
+					// Convert from base64 encoded string to byte array.
+					KCodecs::base64Decode(base64.utf8() , image);
+					// Create a temporary file to store the image data.
+					KTempFile *imageFile = new KTempFile( locateLocal( "tmp", "inkformatgif-" ), ".gif");
+					imageFile->setAutoDelete(true);
+	
+					Q_INT32 offset = 0, size = image.size(), chunkLength = 1202;
+					while(offset + chunkLength < size){
+						imageFile->file()->writeBlock(image.data() + offset, chunkLength);
+						offset += chunkLength;
+					}
+	
+					if(offset < size){
+						// Write last chunk to the file.
+						imageFile->file()->writeBlock(image.data() + offset, size - offset);
+					}
+	
+					// Close the ink formatted gif file.
+					imageFile->file()->close();
+	
+					slotEmoticonReceived(imageFile , "inkformatgif");
+					imageFile = 0l;
+				}
+			}
+		}
+	}
 	else
 	{
 		kdDebug(14140) << k_funcinfo <<" Unknown type '" << type << "' message: \n"<< msg <<endl;
@@ -519,7 +622,7 @@ int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString 
 	QString picObj;
 
 	//try to find it in the cache.
-	const QMap<QString,QString> objectList=p2pDisplatcher()->objectList;
+	const QMap<QString, QString> objectList = PeerDispatcher()->objectList;
 	for (QMap<QString,QString>::ConstIterator it = objectList.begin(); it != objectList.end(); ++it )
 	{
 		if(it.data() == filename)
@@ -545,7 +648,7 @@ int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString 
 			QString sha1c = QString(KCodecs::base64Encode(SHA1::hashString(all.utf8())));
 			picObj = "<msnobj Creator=\"" + m_account->accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\""+ fi.fileName() + "\" Friendly=\"AAA=\" SHA1D=\""+sha1d+ "\" SHA1C=\""+sha1c+"\"/>";
 
-			p2pDisplatcher()->objectList.insert(picObj,filename);
+			PeerDispatcher()->objectList.insert(picObj, filename);
 		}
 		else
 			return 0;
@@ -569,10 +672,10 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		return -1;
 	}
 
-#if MSN_WEBCAM   //this is to test webcam
+#if 0   //this is to test webcam
 	if(msg.plainBody().contains("/webcam"))
 	{
-		p2pDisplatcher()->startWebcam( m_myHandle , m_msgHandle);
+		PeerDispatcher()->startWebcam( m_myHandle , m_msgHandle);
 		return -3;
 	}
 #endif
@@ -595,11 +698,11 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 
 	if( msg.format() & Kopete::Message::RichText )
 	{
-		QRegExp rx("^\\s*<img src=\"([^>\"]+)\"[^>]*>\\s*$");
-		if(rx.search(msg.escapedBody()) != -1)
+		QRegExp regex("^\\s*<img src=\"([^>\"]+)\"[^>]*>\\s*$");
+		if(regex.search(msg.escapedBody()) != -1)
 		{
-			p2pDisplatcher()->sendImage(rx.cap(1));
-
+			// FIXME why are we sending the images.. the contact should request them.
+			PeerDispatcher()->sendImage(regex.cap(1), m_msgHandle);
 			return -3;
 		}
 	}
@@ -628,7 +731,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		head += "; ";
 	}
 	else head+="FN=; EF=; ";
-	/**
+	/*
 	 * I don't know what to set by default, so i decided to set nothing.  CF Bug 82734
 	 * (but don't forgeto to add an empty FN= and EF= ,  or webmessenger will break. (CF Bug 102371) )
 	else head+="FN=MS%20Serif; EF=; ";
@@ -781,11 +884,10 @@ void MSNSwitchBoardSocket::userLeftChat(const QString& handle , const QString &r
 
 void MSNSwitchBoardSocket::requestDisplayPicture()
 {
-	MSNContact *c=static_cast<MSNContact*>(m_account->contacts()[m_msgHandle]);
-	if(!c)
-		return;
+	MSNContact *contact = static_cast<MSNContact*>(m_account->contacts()[m_msgHandle]);
+	if(!contact) return;
 
-	p2pDisplatcher()->requestDisplayPicture( m_myHandle, m_msgHandle, c->object() );
+	PeerDispatcher()->requestDisplayIcon(m_msgHandle, contact->object());
 }
 
 void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString &msnObj )
@@ -803,11 +905,11 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 		if ( m_recvIcons <= 0 )
 			cleanQueue();
 	}
-	else if(msnObj=="typewrite")
+	else if(msnObj == "inkformatgif")
 	{
 		QString msg=i18n("<img src=\"%1\" alt=\"Typewrited message\" />" ).arg( file->name() );
 
-	kdDebug(14140) << k_funcinfo << file->name()  <<endl;
+		kdDebug(14140) << k_funcinfo << file->name()  <<endl;
 
 		m_typewrited.append(file);
 		m_typewrited.setAutoDelete(true);
@@ -844,6 +946,31 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 		else
 			delete file;
 	}
+}
+
+void MSNSwitchBoardSocket::slotIncomingFileTransfer(const QString& from, const QString& /*fileName*/, Q_INT64 /*fileSize*/)
+{
+	QPtrList<Kopete::Contact> others;
+	others.append( m_account->myself() );
+	QStringList::iterator it2;
+	for( it2 = m_chatMembers.begin(); it2 != m_chatMembers.end(); ++it2 )
+	{
+		if( *it2 != m_msgHandle )
+			others.append( m_account->contacts()[ *it2 ] );
+	}
+
+	if(!m_account->contacts()[m_msgHandle])
+	{
+		//this may happens if the contact has been deleted.
+		kdDebug(14140) << k_funcinfo <<"WARNING: contact is null, adding it" <<endl;
+		if( !m_chatMembers.contains( m_msgHandle ) )
+			m_chatMembers.append( m_msgHandle );
+		emit userJoined( m_msgHandle , m_msgHandle , false);
+	}
+	QString invite = "Incoming file transfer.";
+	Kopete::Message msg =
+		Kopete::Message(m_account->contacts()[from], others, invite, Kopete::Message::Internal, Kopete::Message::PlainText);
+	emit msgReceived(msg);
 }
 
 void MSNSwitchBoardSocket::cleanQueue()
@@ -935,18 +1062,29 @@ QString MSNSwitchBoardSocket::parseFontAttr(QString str, QString attr)
 	return tmp;
 }
 
-MSNP2PDisplatcher *MSNSwitchBoardSocket::p2pDisplatcher()
+Dispatcher* MSNSwitchBoardSocket::PeerDispatcher()
 {
-	if(!m_p2p)
+	if(!m_dispatcher)
 	{
-		m_p2p=new MSNP2PDisplatcher(this , "msnp2p protocol" );
-		m_p2p->setPictureUrl( m_account->pictureUrl() );
-		QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
-		QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
-						  this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
-		QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile *, const QString& ) ) , this , SLOT(slotEmoticonReceived( KTempFile *, const QString& ) ) ) ;
+		// Create a new msnslp dispatcher to handle
+		// all peer to peer requests.
+		QStringList ip;
+		if(m_account->notifySocket())
+		{
+			ip << m_account->notifySocket()->localIP();
+			if(m_account->notifySocket()->localIP() != m_account->notifySocket()->getLocalIP())
+				ip << m_account->notifySocket()->getLocalIP();
+		}
+		m_dispatcher = new Dispatcher(this, m_account->accountId(),ip );
+
+		QObject::connect(this, SIGNAL(blockRead(const QByteArray&)), m_dispatcher, SLOT(slotReadMessage(const QByteArray&)));
+// 		QObject::connect(m_dispatcher, SIGNAL(sendCommand(const QString&, const QString&, bool, const QByteArray&, bool)), this, SLOT(sendCommand(const QString&, const QString&, bool, const QByteArray&, bool)));
+		QObject::connect(m_dispatcher, SIGNAL(incomingTransfer(const QString&, const QString&, Q_INT64)), this, SLOT(slotIncomingFileTransfer(const QString&, const QString&, Q_INT64)));
+		QObject::connect(m_dispatcher, SIGNAL(displayIconReceived(KTempFile *, const QString&)), this, SLOT(slotEmoticonReceived( KTempFile *, const QString&)));
+		QObject::connect(this, SIGNAL(msgAcknowledgement(unsigned int, bool)), m_dispatcher, SLOT(messageAcknowledged(unsigned int, bool)));
+		m_dispatcher->m_pictureUrl = m_account->pictureUrl();
 	}
-	return m_p2p;
+	return m_dispatcher;
 }
 
 #include "msnswitchboardsocket.moc"

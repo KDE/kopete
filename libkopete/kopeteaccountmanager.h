@@ -160,8 +160,9 @@ public slots:
 	 * Accounts which are @ref excludeConnect() are excepted from connection.
 	 * Accounts which are already connected are controlled regardless of their excludeConnect() setting.
 	 * This is a slot, so you can connect directly to it from e.g. a KAction.
+	 * @param awayReason is the away(status) message that will be set.
 	 */
-	void setAvailableAll();
+	void setAvailableAll( const QString &awayReason = QString::null );
 	
 	/**
 	 * \internal

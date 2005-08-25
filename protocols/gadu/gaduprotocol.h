@@ -17,8 +17,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA
-// 02110-1301, USA.
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+// 02111-1307, USA.
 
 #ifndef GADUPROTOCOL_H
 #define GADUPROTOCOL_H
@@ -71,10 +71,11 @@ public:
 	//!Plugin reimplementation
 
 	Kopete::OnlineStatus convertStatus( uint ) const;
-	bool statusWithDesciption( uint status );
+	bool statusWithDescription( uint status );
 
 	uint statusToWithDescription( Kopete::OnlineStatus status );
-
+	uint statusToWithoutDescription( Kopete::OnlineStatus status );
+	
 	const Kopete::ContactPropertyTmpl propFirstName;
 	const Kopete::ContactPropertyTmpl propLastName;
 	const Kopete::ContactPropertyTmpl propEmail;

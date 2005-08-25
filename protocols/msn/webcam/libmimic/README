@@ -1,0 +1,40 @@
+ABOUT
+-----
+
+libmimic is an open source video encoding/decoding library for Mimic V2.x-
+encoded content (fourCC: ML20), which is the encoding used by MSN Messenger
+for webcam conversations.
+
+It was written because there was no third-party MSN-client that supported
+this feature due to this proprietary/unknown codec involved. I didn't like
+this lack of interoperability, so I decided to do something about it. After
+studying the official MSN-client a little closer, it became clear that the
+codec involved was statically linked into the executable, so there was no
+easy way to use the codec code through Wine. So for fun, and challenge, I
+reverse-engineered the original implementation by studying the massive
+amount of assembly code involved, and after a lot of hard work I ended
+up with this implementation in C.
+
+It should be noted that reverse-engineering for interoperability is 100%
+legal here in Norway (and in most European countries).
+
+
+THANKS
+------
+
+Special thanks to Rob Taylor and the rest of the Farsight-team for all
+the feedback and inspiration during development, you guys rock! :-)
+
+
+BOTTOM LINE
+-----------
+
+If you like my work and decide to use it in your project, please feel free
+to credit me. I put a lot of time and hard work into this, so I hope others
+will find it useful.
+
+Well, enough chit chat, enjoy! :-)
+
+Ole André Vadla Ravnås
+oleavr at gmail dot com
+

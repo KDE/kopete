@@ -4,6 +4,7 @@
                              -------------------
     begin                : Thu Aug 08 2002
     copyright            : (C) 2002-2003 by Till Gerken <till@tantalo.net>
+    copyright            : (C) 2005      by Michaël Larouche <michael.larouche@kdemail.net>
     email                : kopete-devel@kde.org
 
     Rewritten version of the original dialog
@@ -101,7 +102,11 @@ void dlgJabberVCard::assignContactProperties ()
 	// general tab
 	m_mainWidget->leNick->setText (m_contact->property(m_account->protocol()->propNickName).value().toString());
 	m_mainWidget->leName->setText (m_contact->property(m_account->protocol()->propFullName).value().toString());
-	m_mainWidget->leJID->setText (m_contact->property(m_account->protocol()->propJid).value().toString());
+	// Guess the JID from the Kopete::Contact if the propJid is empty.
+	if( m_contact->property( m_account->protocol()->propJid ).value().toString().isEmpty() )
+		m_mainWidget->leJID->setText (m_contact->contactId());
+	else
+		m_mainWidget->leJID->setText (m_contact->property(m_account->protocol()->propJid).value().toString());
 	m_mainWidget->leBirthday->setText (m_contact->property(m_account->protocol()->propBirthday).value().toString());
 	m_mainWidget->leTimezone->setText (m_contact->property(m_account->protocol()->propTimezone).value().toString());
 

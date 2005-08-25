@@ -9,8 +9,11 @@
             <x>0</x>
             <y>0</y>
             <width>289</width>
-            <height>480</height>
+            <height>473</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>ICQOtherInfoWidget</string>
     </property>
     <grid>
         <property name="name">
@@ -57,6 +60,9 @@
         <widget class="QTextEdit" row="3" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>notesEdit</cstring>
+            </property>
+            <property name="readOnly">
+                <bool>true</bool>
             </property>
         </widget>
     </grid>

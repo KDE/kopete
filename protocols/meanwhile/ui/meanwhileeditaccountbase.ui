@@ -64,7 +64,7 @@
                                             <cstring>label1</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>&amp;Meanwhile username:</string>
+                                            <string>Meanwhile &amp;username:</string>
                                         </property>
                                         <property name="buddy" stdset="0">
                                             <cstring>mScreenName</cstring>
@@ -92,6 +92,17 @@
                             <widget class="Kopete::UI::PasswordWidget">
                                 <property name="name">
                                     <cstring>mPasswordWidget</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>mAutoConnect</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>E&amp;xclude from connect all</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
                                 </property>
                             </widget>
                         </vbox>
@@ -145,20 +156,6 @@
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>mAutoConnect</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Exclude from connection</string>
-                                </property>
-                                <property name="accel">
-                                    <string></string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
-                                </property>
-                            </widget>
                             <widget class="QLayoutWidget">
                                 <property name="name">
                                     <cstring>layout205</cstring>
@@ -313,12 +310,11 @@
 </customwidgets>
 <images>
     <image name="image0">
-        <data format="PNG" length="826">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b0000030149444154388db59531681b5718c77f0e377c070e3c810a3a70e0041eac51852e0a19e45134830a1d9a4c69a04bc8928e990a693a640e1d0c8642b08742321894c1507991b484c890902bb8701a047760c3bd21701fe4201dde49b6a41a32b8df72dcbbeffdbefffbbfefbd5b1b0c07cce266ebe667ae2006c3c1dada0cdc3be87d6e6c35b0d692a409d9c7ec8b20d65ae29398d19b1114e7e3de4ce98b3f5e10dc0053cf0951b4506496e1b964bf7ce6c585d9054c62d01d617ca48be0596553cf496d8f2c8b01c5f795fc93904e85ec4c01a152857a5d9175d0b2805c872080f18595ccc1499a10a225d4e2fbc2877786fe81253ab6c04c8d106e09db5d43ab0d146e5c64d1a23938fb98a185cea1c33eecfd9eba49eb427dcb201e245365f2b7b2fb5b4a3a31dcb927178afe07d86901df870fefa4842aed6f6b74ba42e52b4014d580e1eb9cbd9d94de7e4aad16d2f9be02d805f0b5e532f927a1ffcacea1777f122a8105b164a7c25faf323a5d9f1f1fd600e1e5bec59e2d4b5c7ef5209d0ad17b8b31864e57c0b3e0815ac3ee33253ab664a770ff5185d1a1cb8d2267d3e58aa1dc7d2508cbe597d0e74fdd269aaaf0f52d414c4ea3e9762c996869e42560d7a72e41c4799a2586e74f95e8d8151481fa86efbe7b3398ac58b1a2b8527589f15451ad303ac2293542ad6648a796278f13a27185e4c4754310facb98c53a79e19a3fdc1426ff28c3d7399d1f7cb25343eb96106cf83c790ce9c4f2eb831855c55485663327992eb6dc8a6259874ed700b0b793323cccb9ffa842b30d6133e3e75fea989ac15a8b16ca76b746b0b92278d919774c5b6d48a78697fb29bbcf52468742a32120909c24e899ce67beed5be2db01e22d1e9485bb620e47f9ee9e606a21bd3f5d3744c7e7c54d55e87443867d8b554515ac5db4620e8e4f62263170fd1cdee90aad7640141992891b0f367c9adfe4049bb07d3b7022bd8c687c0978f46684ee084150b65ac1fcca94591b7a90a496e4c095164fb016a2b192a497795cc0f84817aebe25f7bf70ccc54a575c555c03f78ffa5fc0570d1f0c076bff0232285a09643cc7ce0000000049454e44ae426082</data>
+        <data format="PNG" length="866">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b0000032949444154388db59531681b6714c77f32373c8186ef0305eea005093258900eca26d30e3174a8a807d1c9ee940e5d4a276f09a414e22974ee609a4c75a0857a70a20c199ce93424e43414aee0c26910dc8105f7410df706413a7c915551db049a3e38b87bf7bedffddfc7ff7d578be398456c6c6cbce13d441cc7b5da02fcf4e8e99bde7a8f899b501515d959f64e10e71cd949c6e8d508e6cb7cb050fae49727444d87ed08a566dc0cea545a621b96725e62c522f312c4929ff9e7725e6203439282ec0bc72f74150c30c927d89690163f539619a044564973a1980ae54c01c136a1db518a0024808942780dead16a27e7e0ca55949a81668023b242fcd2901c394663072cd408ad75e18b6d43a7076143710aa1b9049ccd326e064a5979e8f0191cfc5878544368af1b24807caa4cfe507ef8aea0bf6dd8b92de7f00bc1562c95e64416e297f216aadcfa3ca43f10da1f8243112286871507fb05c3c7059d568bde96c5885b01af2d6e4a2db10dc8ff128e0fdd39f4cbaf8576dbe170702afcf6b86467bbce57df8680f0d3230767e0e62bdc55c5e53c476742fabbc318437f209886c3cd41d4b0f74049c78ef21476ef5846cf7ded2831848d55f0aa62816caade11adb7ed2fa0f71ce9d8619ac2e627824a45a72b00e413c5a95c0cf63e052bbe2014bfa738c3de3d251dfb0f8a80fda04e6480600113cc558a11a0e10b93a9225886cff04a8d10868662eab87f37271e59f2136f85a855bfda15f9594eb7a3b4ae0b933f95e161c5ceed88f254e97f2ad49b75eedf8562e2d8fb264355314da1dbada866abe47fedb106d01f78b71fec170c8f7276ef58da3de8f64a76bf6f634283730e9d2b9b8390ce0dae565c6a8e04b0710b746678f8a8e0e18382d173a1d7151c909fe4e84ccf57be3e76245b115143584ee73f27afc8e80b4c667e4c37b7054c8be1afde0de978a9c63485fea0457cec70aa089015ab9297e0938c240573cdb7651a4a7f20f43feb304a72aac2e73bd723da1fe5746ec0682bc26070f38c345905d7e238f6077c00dd8f85280211fcd91af84b02ef94a50c004502c1394813252f14575ca09839242f9484cb42df31e763edd237ff31d6c0ffa3fe17f0fb86c7715cfb1ba8bd86cc8d2decd30000000049454e44ae426082</data>
     </image>
 </images>
 <tabstops>
     <tabstop>mScreenName</tabstop>
-    <tabstop>mAutoConnect</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

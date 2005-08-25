@@ -128,6 +128,10 @@ public:
 	unsigned int lang1;
 	unsigned int lang2;
 	unsigned int lang3;
+	QString ocity;
+	QString ostate;
+	int ocountry;
+	int marital;
 };
 
 class KOPETE_EXPORT ICQEmailInfo : public ICQInfoBase
@@ -139,6 +143,19 @@ public:
 	
 public:
 	QValueList<QString> emailList;
+};
+
+class KOPETE_EXPORT ICQInterestInfo : public ICQInfoBase
+{
+public:
+	ICQInterestInfo();
+	~ICQInterestInfo() {}
+	void fill( Buffer* buffer );
+	
+public:
+	int count;
+	int topics[4];
+	QString descriptions[4];
 };
 
 

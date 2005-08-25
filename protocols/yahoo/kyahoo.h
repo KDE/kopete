@@ -55,6 +55,7 @@ struct YahooUploadData
 	int size;
 	uint transmitted;
 	QFile file;
+	bool reportSuccess;
 };
 
 class YahooConnectionManager

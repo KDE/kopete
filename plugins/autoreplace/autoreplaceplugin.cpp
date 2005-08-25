@@ -19,7 +19,7 @@
 
 #include <kopetecontact.h>
 
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 
 #include "autoreplaceplugin.h"
 #include "autoreplaceconfig.h"

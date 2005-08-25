@@ -49,6 +49,7 @@ public:
 	ICQWorkUserInfo workInfoFor( const QString& contact );
 	QString notesInfoFor( const QString& contact );
 	ICQShortInfo shortInfoFor( const QString& contact );
+	ICQInterestInfo interestInfoFor( const QString& contact );
 	
 	virtual bool forMe( const Transfer* transfer ) const;
 	virtual bool take( Transfer* transfer );
@@ -63,6 +64,7 @@ private:
 	QMap<int, ICQMoreUserInfo> m_moreInfoMap;
 	QMap<int, ICQWorkUserInfo> m_workInfoMap;
 	QMap<int, ICQShortInfo> m_shortInfoMap;
+	QMap<int, ICQInterestInfo> m_interestInfoMap;
 	QMap<int, QString> m_notesInfoMap;
 	QMap<int, QString> m_contactSequenceMap;
 	QMap<QString, int> m_reverseContactMap;

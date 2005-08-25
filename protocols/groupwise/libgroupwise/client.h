@@ -45,13 +45,12 @@ Q_OBJECT
 		  EXTERNAL API 
 		 *************/
 		  
-		Client(QObject *parent=0);
+		Client( QObject *parent = 0, uint protocolVersion = 2 );
 		~Client();
 		void setOSName( const QString &name );
 		void setClientName( const QString &s );
 		void setClientVersion( const QString &s );
 		void setUserDN( const QString & userDN );
-
 		/**
 		 * Start a connection to the server using the supplied @ref ClientStream.
 		 * This is only a transport layer connection.
@@ -173,6 +172,11 @@ fd		 * @param password
 		 * Print a debug statement
 		 */
 		void debug( const QString &str );
+
+		/**
+		 * The protocol version of the Client
+		 */
+		uint protocolVersion() const;
 		/**
 		 * Generate a unique ID for Tasks.
 		 */
@@ -324,6 +328,14 @@ fd		 * @param password
 		 * We received a temporary contact related to a conference 
 		 */
 		void tempContactReceived( const GroupWise::ContactDetails & );
+		/**
+		 * We received a broadcast message
+		 */
+		void broadcastReceived( const ConferenceEvent & );
+		/**
+		 * We received a system broadcast
+		 */
+		void systemBroadcastReceived ( const ConferenceEvent & );
 		/** CONTACT LIST MANAGEMENT EVENTS */
 		/** TBD! */
 	protected:

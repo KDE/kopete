@@ -29,7 +29,7 @@ class NowListeningPlugin;
 
 namespace Kopete {
 	class ChatSession;
-};
+}
 
 class NowListeningGUIClient : public QObject, public KXMLGUIClient
 {

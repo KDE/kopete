@@ -26,9 +26,6 @@
             <height>240</height>
         </size>
     </property>
-    <property name="caption">
-        <string>YahooUserInfoWidget</string>
-    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>

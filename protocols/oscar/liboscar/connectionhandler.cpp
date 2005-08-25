@@ -46,10 +46,11 @@ void ConnectionHandler::append( Connection* c )
 
 void ConnectionHandler::remove( Connection* c )
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing connection " 
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing connection "
 		<< c << endl;
 	d->connections.remove( c );
-	delete c;
+	c->deleteLater();
+    c = 0;
 }
 
 void ConnectionHandler::remove( int family )

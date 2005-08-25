@@ -46,7 +46,6 @@
 #include "msnfiletransfersocket.h"
 #include "msnaccount.h"
 #include "msnswitchboardsocket.h"
-#include "msnp2pdisplatcher.h"
 
 #if !defined NDEBUG
 #include "msndebugrawcmddlg.h"
@@ -79,7 +78,12 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 	new KAction( i18n( "Send Raw C&ommand..." ), 0, this, SLOT( slotDebugRawCommand() ), actionCollection(), "msnDebugRawCommand" ) ;
 	#endif
 
-	new KAction( i18n( "Send Nudge" ), 0, this, SLOT(slotSendNudge() ), actionCollection(), "msnSendNudge" ) ;
+	m_actionNudge=new KAction( i18n( "Send Nudge" ), 0, this, SLOT(slotSendNudge() ), actionCollection(), "msnSendNudge" ) ;
+	m_actionNudge->setEnabled(false);
+	m_actionWebcamReceive=new KAction( i18n( "Invite to recieve user webcam" ), 0, this, SLOT(slotWebcamReceive() ), actionCollection(), "msnWebcamReceive" ) ;
+	m_actionWebcamSend=new KAction( i18n( "Send webcam" ), 0, this, SLOT(slotWebcamSend() ), actionCollection(), "msnWebcamSend" ) ;
+	
+	
 
 	MSNContact *c = static_cast<MSNContact*>( others.first() );
 	(new KAction( i18n( "Request Display Picture" ), "image", 0,  this, SLOT( slotRequestPicture() ), actionCollection(), "msnRequestDisplayPicture" ))->setEnabled(!c->object().isEmpty());
@@ -179,6 +183,11 @@ void MSNChatSession::slotUserJoined( const QString &handle, const QString &publi
 	MSNContact *c = static_cast<MSNContact*>( account()->contacts()[ handle ] );
 
 	c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName);
+	
+	if(c->clientFlags() & MSNProtocol::MSNC4 )
+	{
+		m_actionNudge->setEnabled(true);
+	}
 
 	addContact(c , IRO); // don't show notificaions when we join wesalef
 	if(!m_messagesQueue.empty() || !m_invitations.isEmpty())
@@ -459,32 +468,11 @@ void MSNChatSession::invitationDone(MSNInvitation* MFTS)
 void MSNChatSession::sendFile(const QString &fileLocation, const QString &/*fileName*/,
 	long unsigned int fileSize)
 {
-#if MSN_NEWFILETRANSFER
+	// TODO create a switchboard to send the file is one is not available.
 	if(m_chatService && members().getFirst())
 	{
-		m_chatService->p2pDisplatcher()->sendFile(fileLocation, fileSize, account()->accountId() , members().getFirst()->contactId()   );
+		m_chatService->PeerDispatcher()->sendFile(fileLocation, (Q_INT64)fileSize, members().getFirst()->contactId());
 	}
-#else
-//	if(m_chatService)
-//	{
-		//If the alternate filename is null, then get the filename from the location (FIXME)
-		/*QString theFileName;
-		if( fileName.isNull() ) {
-			theFileName = fileLocation.right( fileLocation.length()
-				- fileLocation.findRev( '/' ) ) - 1 );
-		} else {
-			theFileName = fileName;
-		}*/
-
-		QPtrList<Kopete::Contact>contacts=members();
-		MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(myself()->account()->accountId(),contacts.first(), false,this);
-
-		//Call the setFile command to let the MFTS know what file we are sending
-		MFTS->setFile(fileLocation, fileSize);
-
-		initInvitation(MFTS);
-//	}
-#endif
 }
 
 void MSNChatSession::initInvitation(MSNInvitation* invitation)
@@ -628,6 +616,7 @@ void MSNChatSession::slotSendNudge()
 		m_chatService->sendNudge();
 }
 
+
 void MSNChatSession::slotNudgeReceived()
 {
 	// FIXME: Better display of the nudge.
@@ -637,6 +626,26 @@ void MSNChatSession::slotNudgeReceived()
 	appendMessage( msg );
 	//Kopete::Utils::notifyBuzz( myself()->account(), nudgeBody );
 }
+
+
+void MSNChatSession::slotWebcamReceive()
+{
+	if(m_chatService && members().getFirst())
+	{
+		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().getFirst()->contactId() , true);
+	}
+}
+
+void MSNChatSession::slotWebcamSend()
+{
+	kdDebug(14140) << k_funcinfo << endl;
+	if(m_chatService && members().getFirst())
+	{
+		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().getFirst()->contactId() , false);
+	}
+}
+
+
 #include "msnchatsession.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

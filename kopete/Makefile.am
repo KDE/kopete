@@ -4,7 +4,7 @@ kopete_builddir=$(top_builddir)/kopete
 INCLUDES = -I$(kopete_srcdir)/kopete
 
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
-	-I$(kopete_srcdir)/kopete/conf \
+	-I$(kopete_srcdir)/kopete/config \
 	-I$(kopete_srcdir)/kopete/addcontactwizard \
 	-I$(kopete_builddir)/kopete/addcontactwizard \
 	-I$(kopete_srcdir)/libkopete/ui \
@@ -12,7 +12,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(kopete_builddir)/kopete/contactlist \
 	-I$(kopete_srcdir)/kopete/chatwindow \
 	-I$(kopete_srcdir)/kopete/config/plugins \
-	-I$(kopete_builddir)/kopete/conf \
+	-I$(kopete_builddir)/kopete/config \
 	-I$(kopete_srcdir)/libkopete/private \
 	-I$(kopete_srcdir)/libkopete/avdevice \
 	-I$(kopete_srcdir) \

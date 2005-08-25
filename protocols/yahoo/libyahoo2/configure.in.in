@@ -35,4 +35,3 @@ AM_CONDITIONAL(SAMPLE_CLIENT, test "$enable_sample_client" != "no")
 
 YAHOOPKGREQ=""
 AC_SUBST(YAHOOPKGREQ)
-

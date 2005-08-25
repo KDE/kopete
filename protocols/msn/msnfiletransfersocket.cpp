@@ -17,6 +17,7 @@
 
 #include "msnfiletransfersocket.h"
 
+#include <stdlib.h>
 #include <math.h>
 
 //qt

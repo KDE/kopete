@@ -9,7 +9,7 @@ AM_CPPFLAGS = -I$(srcdir)/../ \
 noinst_LTLIBRARIES = libkopeteicqui.la
 
 libkopeteicqui_la_SOURCES = icqadd.ui icqeditaccountui.ui \
-	icqeditaccountwidget.cpp icqgeneralinfo.ui icqotherinfowidget.ui 	icqworkinfowidget.ui \
+	icqeditaccountwidget.cpp icqgeneralinfo.ui icqotherinfowidget.ui icqworkinfowidget.ui icqinterestinfowidget.ui\
 	icquserinfowidget.cpp icqauthreplyui.ui icqauthreplydialog.cpp icqaddcontactpage.cpp \
 		icqsearchbase.ui icqsearchdialog.cpp icqsearchdialog.h
 

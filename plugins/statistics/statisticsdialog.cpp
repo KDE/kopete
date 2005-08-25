@@ -21,6 +21,7 @@
 #include <qpushbutton.h>
 #include <qtextedit.h>
 #include <qcombobox.h>
+#include <qstring.h>
 
 #include "kdialogbase.h"
 #include "klocale.h"
@@ -331,15 +332,25 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 		QString color;
 		if (today)
 		{
+			QString status;
 			if (Kopete::OnlineStatus::statusStringToType(values[i]) == Kopete::OnlineStatus::Online) 
+			{
 				color="blue";
+				status = i18n("Online");
+			}
 			else if (Kopete::OnlineStatus::statusStringToType(values[i]) == Kopete::OnlineStatus::Away) 	
+			{
 				color="navy";
+				status = i18n("Away");
+			}
 			else if (Kopete::OnlineStatus::statusStringToType(values[i]) == Kopete::OnlineStatus::Offline) 
+			{
 				color="gray";
+				status = i18n("Offline");
+			}
 			else color="white";
 		
-			todayString.append(QString("<tr style=\"color:%1\"><td>%2</td><td>%3</td><td>%4</td></tr>").arg(color,values[i], dateTime1.time().toString(), dateTime2.time().toString()));
+			todayString.append(QString("<tr style=\"color:%1\"><td>%2</td><td>%3</td><td>%4</td></tr>").arg(color, status, dateTime1.time().toString(), dateTime2.time().toString()));
 		
 		}
 		
@@ -392,8 +403,8 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 		generalHTMLPart->write(QString("</div>"));
 	
 		generalHTMLPart->write(QString("<div class=\"statgroup\">"));
-		generalHTMLPart->write(i18n("<b title=\"The last time you talked with %1\">Last talk :</b> %2<br>").arg(m_contact->metaContact()->displayName()).arg(m_contact->lastTalk().toString()));
-		generalHTMLPart->write(i18n("<b title=\"The last time I have seen %1 online or away\">Last time contact was present :</b> %2").arg(m_contact->metaContact()->displayName()).arg(m_contact->lastPresent().toString()));
+		generalHTMLPart->write(i18n("<b title=\"The last time you talked with %1\">Last talk :</b> %2<br>").arg(m_contact->metaContact()->displayName()).arg(KGlobal::locale()->formatDateTime(m_contact->lastTalk())));
+		generalHTMLPart->write(i18n("<b title=\"The last time I have seen %1 online or away\">Last time contact was present :</b> %2").arg(m_contact->metaContact()->displayName()).arg(KGlobal::locale()->formatDateTime(m_contact->lastPresent())));
 		generalHTMLPart->write(QString("</div>"));
 
 		//generalHTMLPart->write(QString("<div class=\"statgroup\">"));
@@ -403,9 +414,10 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 		//generalHTMLPart->write(QString("%1<br>").arg(mainEvents[i].toString()));
 		//generalHTMLPart->write(QString("</div>"));
  
-		generalHTMLPart->write(QString("<div title=\"Current status\" class=\"statgroup\">"));
+		generalHTMLPart->write("<div title=\"" +i18n("Current status") + "\" class=\"statgroup\">");
 		generalHTMLPart->write(i18n("Is <b>%1</b> since <b>%2</b>").arg(
-				Kopete::OnlineStatus::statusTypeToString(m_contact->oldStatus()),m_contact->oldStatusDateTime().toString()));
+				Kopete::OnlineStatus(m_contact->oldStatus()).description(),
+				KGlobal::locale()->formatDateTime(m_contact->oldStatusDateTime())));
 		generalHTMLPart->write(QString("</div>"));
 	}
 		
@@ -509,9 +521,13 @@ QString StatisticsDialog::stringFromSeconds(const int seconds)
 void StatisticsDialog::slotAskButtonClicked()
 {
 	if (mainWidget->questionComboBox->currentItem()==0)
-		mainWidget->answerEdit->setText(mainWidget->datePicker->date().toString() + i18n(" at ")
-				+mainWidget->timePicker->time().toString()+", "+m_contact->metaContact()->displayName()+i18n(" was " )+
-				m_contact->statusAt(QDateTime(mainWidget->datePicker->date(), mainWidget->timePicker->time())));
+	{
+		QString text = i18n("1 is date, 2 is contact name, 3 is online status", "%1, %2 was %3")
+		    .arg(KGlobal::locale()->formatDateTime(QDateTime(mainWidget->datePicker->date(), mainWidget->timePicker->time())))
+		    .arg(m_contact->metaContact()->displayName())
+		    .arg(m_contact->statusAt(QDateTime(mainWidget->datePicker->date(), mainWidget->timePicker->time())));
+		mainWidget->answerEdit->setText(text);
+	}
 	else if (mainWidget->questionComboBox->currentItem()==1)
 	{
 		mainWidget->answerEdit->setText(m_contact->mainStatusDate(mainWidget->datePicker->date()));
