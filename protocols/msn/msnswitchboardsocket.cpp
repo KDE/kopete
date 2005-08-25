@@ -435,10 +435,9 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	}
 	else if( type == "text/x-clientcaps" )
 	{
-		
-		rx=QRegExp("Client-Name: ([A-Za-z0-9.$!*/\\-]*)");
+		rx=QRegExp("Client-Name: ([A-Za-z0-9.$!*/% \\-]*)");
 		rx.search(msg);
-		clientStr=rx.cap(1);
+		clientStr=unescape( rx.cap(1) );
 
 		if( !clientStr.isNull() && !m_msgHandle.isNull())
 		{
@@ -449,33 +448,29 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 
 		if(!m_clientcapsSent)
 		{
+			KConfig *config = KGlobal::config();
+			config->setGroup( "MSN" );
+
 			QString JabberID;
-			//the JabberID field is used by the MSN jabber gateway to allow the user to establish a dirrect connection using Jabber
-#if 0  // Disabled for privacy reason
-			if(msg.contains("JabberID"))
-			{ // Find a Jabber account in order to get the jabberID
-				QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
-				for(Kopete::Account *a=accounts.first() ; a; a=accounts.next() )
-				{
-					if(a->protocol()->pluginId()=="JabberProtocol")
-					{
-						JabberID="JabberID: "+a->accountId() +"\r\n";
-						break;
-					}
-				}
+			if(config->readBoolEntry("SendJabber", true))
+				JabberID=config->readEntry("JabberAccount");
+			
+			if(!JabberID.isEmpty())
+				JabberID="JabberID: "+JabberID +"\r\n";
+			
+			if( config->readBoolEntry("SendClientInfo", true)   ||  !JabberID.isEmpty())
+			{
+				
+				QCString message = QString( "MIME-Version: 1.0\r\n"
+						"Content-Type: text/x-clientcaps\r\n"
+						"\r\n"
+						"Client-Name: Kopete/"+escape(kapp->aboutData()->version())+"\r\n"
+						+JabberID+
+						"\r\n\r\n" ).utf8();
+	
+				QString args = "U";
+				sendCommand( "MSG", args, true, message );
 			}
-#endif
-
-			QCString message = QString( "MIME-Version: 1.0\r\n"
-					"Content-Type: text/x-clientcaps\r\n"
-					"\r\n"
-					"Client-Name: Kopete/"+escape(kapp->aboutData()->version())+"\r\n"
-					+JabberID+
-					"\r\n\r\n" ).utf8();
-
-			QString args = "U";
-			sendCommand( "MSG", args, true, message );
-
 			m_clientcapsSent=true;
 		}
 
@@ -706,18 +701,25 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 			return -3;
 		}
 	}
-
+	
 	// User-Agent is not a official flag, but GAIM has it
+	QString UA;
+	if( config->readBoolEntry("SendClientInfo", true) )
+	{
+		UA="User-Agent: Kopete/"+escape(kapp->aboutData()->version())+"\r\n";
+	}
+	
 	QString head =
 		"MIME-Version: 1.0\r\n"
 		"Content-Type: text/plain; charset=UTF-8\r\n"
-		"User-Agent: Kopete/"+escape(kapp->aboutData()->version())+"\r\n"
+		+UA+
 		"X-MMS-IM-Format: ";
 
 	if(msg.font() != QFont() )
 	{
 		//It's verry strange that if the font name is bigger than 31 char, the _server_ close the socket and don't deliver the message.
 		//  the real question is why ?   my guess is that MS patched the server because a bug in their client,  but that's just a guess.
+		//      - Olivier   06-2005
 		head += "FN=" + escape( msg.font().family().left(31));
 		head += "; EF=";
 		if(msg.font().bold())

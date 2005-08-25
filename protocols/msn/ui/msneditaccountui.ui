@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>698</width>
-            <height>533</height>
+            <height>479</height>
         </rect>
     </property>
     <property name="caption">
@@ -203,142 +203,27 @@
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Accou&amp;nt Preferences</string>
+                    <string>MSN &amp;Settings</string>
                 </attribute>
                 <vbox>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QGroupBox">
+                    <widget class="QLabel">
                         <property name="name">
-                            <cstring>groupBox66</cstring>
+                            <cstring>textLabel1_3</cstring>
                         </property>
-                        <property name="title">
-                            <string>Connection Preferences</string>
+                        <property name="font">
+                            <font>
+                                <italic>1</italic>
+                            </font>
                         </property>
-                        <vbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>optionOverrideServer</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Override default server information</string>
-                                </property>
-                            </widget>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout20</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout19</cstring>
-                                        </property>
-                                        <hbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <property name="spacing">
-                                                <number>3</number>
-                                            </property>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>labelServer</cstring>
-                                                </property>
-                                                <property name="enabled">
-                                                    <bool>false</bool>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Ser&amp;ver /</string>
-                                                </property>
-                                                <property name="buddy" stdset="0">
-                                                    <cstring>m_serverName</cstring>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>labelPort</cstring>
-                                                </property>
-                                                <property name="enabled">
-                                                    <bool>false</bool>
-                                                </property>
-                                                <property name="text">
-                                                    <string>po&amp;rt:</string>
-                                                </property>
-                                                <property name="buddy" stdset="0">
-                                                    <cstring>m_serverPort</cstring>
-                                                </property>
-                                            </widget>
-                                        </hbox>
-                                    </widget>
-                                    <widget class="QLineEdit">
-                                        <property name="name">
-                                            <cstring>m_serverName</cstring>
-                                        </property>
-                                        <property name="enabled">
-                                            <bool>false</bool>
-                                        </property>
-                                        <property name="sizePolicy">
-                                            <sizepolicy>
-                                                <hsizetype>3</hsizetype>
-                                                <vsizetype>0</vsizetype>
-                                                <horstretch>0</horstretch>
-                                                <verstretch>0</verstretch>
-                                            </sizepolicy>
-                                        </property>
-                                        <property name="text">
-                                            <string>messenger.hotmail.com</string>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="QSpinBox">
-                                        <property name="name">
-                                            <cstring>m_serverPort</cstring>
-                                        </property>
-                                        <property name="enabled">
-                                            <bool>false</bool>
-                                        </property>
-                                        <property name="maxValue">
-                                            <number>65535</number>
-                                        </property>
-                                        <property name="minValue">
-                                            <number>1</number>
-                                        </property>
-                                        <property name="value">
-                                            <number>1863</number>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
-                                        </property>
-                                    </widget>
-                                </hbox>
-                            </widget>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>optionUseHttpMethod</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Use HTTP method</string>
-                                </property>
-                                <property name="accel">
-                                    <string></string>
-                                </property>
-                            </widget>
-                        </vbox>
+                        <property name="text">
+                            <string>&lt;qt&gt;&lt;b&gt;Note:&lt;/b&gt; These settings are applicable to all MSN accounts</string>
+                        </property>
+                        <property name="alignment">
+                            <set>WordBreak|AlignCenter</set>
+                        </property>
                     </widget>
                     <widget class="QGroupBox">
                         <property name="name">
@@ -351,24 +236,6 @@
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLabel">
-                                <property name="name">
-                                    <cstring>textLabel1_3</cstring>
-                                </property>
-                                <property name="paletteForegroundColor">
-                                    <color>
-                                        <red>255</red>
-                                        <green>0</green>
-                                        <blue>0</blue>
-                                    </color>
-                                </property>
-                                <property name="text">
-                                    <string>&lt;qt&gt;&lt;b&gt;Note:&lt;/b&gt; These settings are applicable to all MSN accounts</string>
-                                </property>
-                                <property name="alignment">
-                                    <set>WordBreak|AlignCenter</set>
-                                </property>
-                            </widget>
                             <widget class="QCheckBox">
                                 <property name="name">
                                     <cstring>NotifyNewChat</cstring>
@@ -390,7 +257,7 @@
                             </widget>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout13</cstring>
+                                    <cstring>layout13_2</cstring>
                                 </property>
                                 <hbox>
                                     <property name="name">
@@ -418,12 +285,12 @@
                                         </item>
                                         <item>
                                             <property name="text">
-                                                <string>When a Chat is Open (default)</string>
+                                                <string>When a Chat is Open</string>
                                             </property>
                                         </item>
                                         <item>
                                             <property name="text">
-                                                <string>Automatically (read help)</string>
+                                                <string>Automatically</string>
                                             </property>
                                         </item>
                                         <property name="name">
@@ -438,13 +305,13 @@
                                             </sizepolicy>
                                         </property>
                                         <property name="currentItem">
-                                            <number>1</number>
+                                            <number>2</number>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>&lt;qt&gt;&lt;p&gt;Indicate when Kopete will download the picture of contacts&lt;/p&gt;
-&lt;dl&gt;&lt;dt&gt;Only manually&lt;/dt&gt;&lt;dd&gt;The picture is not downloaded automatically but only when the user request it&lt;/dd&gt;
-&lt;dt&gt;When a chat is open&lt;/dt&gt;&lt;dd&gt;The picture is downloaded when a conversation socket is open, ie. when you open a chatwindow&lt;/dd&gt;
-&lt;dt&gt;Automatically&lt;/dt&gt;&lt;dd&gt;Always try to download the picture if the contact has one.  &lt;b&gt;Note :&lt;/b&gt; this will open a socket, and let the user know you are downloading their picture.&lt;/dd&gt;&lt;/dl&gt;</string>
+                                            <string>&lt;qt&gt;&lt;p&gt;Indicate when Kopete will download the pictures of contacts&lt;/p&gt;
+&lt;dl&gt;&lt;dt&gt;Only manually&lt;/dt&gt;&lt;dd&gt;The picture is not downloaded automatically, only when the user requests it&lt;/dd&gt;
+&lt;dt&gt;When a chat is open&lt;/dt&gt;&lt;dd&gt;The picture is downloaded when a conversation socket is opened, i.e. when you open a chat window&lt;/dd&gt;
+&lt;dt&gt;Automatically&lt;/dt&gt;&lt;dd&gt;Always try to download the picture if the contact has one.  &lt;b&gt;Note :&lt;/b&gt; this will open a socket, and let know the user you are downloading their picture.&lt;/dd&gt;&lt;/dl&gt;</string>
                                         </property>
                                     </widget>
                                 </hbox>
@@ -471,6 +338,9 @@ If this option is enabled, Kopete will download these emoticons and show them.</
                                 <property name="text">
                                     <string>E&amp;xport the current emoticon theme to users</string>
                                 </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Only work with emoticons in the PNG format</string>
+                                </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>Export all the emoticon themes as custom emoticons.
 Only works for emoticons in the PNG format.</string>
@@ -478,9 +348,143 @@ Only works for emoticons in the PNG format.</string>
                             </widget>
                         </vbox>
                     </widget>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>privacy_page</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Privacy</string>
+                        </property>
+                        <vbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>SendClientInfo</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="text">
+                                    <string>Send client information</string>
+                                </property>
+                                <property name="accel">
+                                    <string></string>
+                                </property>
+                                <property name="checked">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>&lt;qt&gt;Make possible to your contact to detect you are using Kopete.&lt;br&gt;We recommand to let this checked&lt;/qt&gt;</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Third party MSN client, such as Kopete, gives some trace to let others third party client guess they are using.
+We recommand to let this checkbox checked.</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>SendTypingNotification</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="text">
+                                    <string>Send &amp;typing notifications</string>
+                                </property>
+                                <property name="checked">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>&lt;qt&gt;Check this box to send the &lt;b&gt;Typing notification&lt;/b&gt; to your contacts : when you are composing a message, you might want your contact to know that you are typing so that he knows you are answering.&lt;/qt&gt;</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout28</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QCheckBox">
+                                        <property name="name">
+                                            <cstring>SendJabber</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Tell my Jabber account</string>
+                                        </property>
+                                        <property name="checked">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>If you have a jabber account, you may let know to Jabber users using an MSN gateway, that you are also using jabber.</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="KComboBox">
+                                        <property name="name">
+                                            <cstring>JabberAccount</cstring>
+                                        </property>
+                                        <property name="editable">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>If you have a jabber account, you may let know to Jabber users using an MSN gateway, that you are also using jabber.</string>
+                                        </property>
+                                    </widget>
+                                    <spacer>
+                                        <property name="name">
+                                            <cstring>spacer26</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Expanding</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>61</width>
+                                                <height>21</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                </hbox>
+                            </widget>
+                            <spacer>
+                                <property name="name">
+                                    <cstring>spacer25</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Vertical</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Minimum</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>21</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>textLabel1_5</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>There is also privacy options in the "Contacts" tab</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>WordBreak|AlignCenter</set>
+                                </property>
+                            </widget>
+                        </vbox>
+                    </widget>
                     <spacer>
                         <property name="name">
-                            <cstring>spacer7</cstring>
+                            <cstring>spacer20</cstring>
                         </property>
                         <property name="orientation">
                             <enum>Vertical</enum>
@@ -490,8 +494,8 @@ Only works for emoticons in the PNG format.</string>
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>21</width>
-                                <height>20</height>
+                                <width>31</width>
+                                <height>40</height>
                             </size>
                         </property>
                     </spacer>
@@ -502,7 +506,7 @@ Only works for emoticons in the PNG format.</string>
                     <cstring>tab_info</cstring>
                 </property>
                 <attribute name="title">
-                    <string>U&amp;ser Info</string>
+                    <string>User &amp;Info</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -535,7 +539,7 @@ Only works for emoticons in the PNG format.</string>
                                     </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>N&amp;ickname:</string>
+                                    <string>&amp;Nickname:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
                                     <cstring>m_displayName</cstring>
@@ -803,7 +807,7 @@ Only works for emoticons in the PNG format.</string>
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>60</height>
+                                <height>21</height>
                             </size>
                         </property>
                     </spacer>
@@ -1082,6 +1086,222 @@ Only works for emoticons in the PNG format.</string>
                     </widget>
                 </vbox>
             </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>TabPage</cstring>
+                </property>
+                <attribute name="title">
+                    <string>&amp;Connection</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>groupBox66</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Connection Preferences  (for advanced users)</string>
+                        </property>
+                        <vbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>optionOverrideServer</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;Override default server information</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout20</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLayoutWidget">
+                                        <property name="name">
+                                            <cstring>layout19</cstring>
+                                        </property>
+                                        <hbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <property name="spacing">
+                                                <number>3</number>
+                                            </property>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>labelServer</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Ser&amp;ver /</string>
+                                                </property>
+                                                <property name="buddy" stdset="0">
+                                                    <cstring>m_serverName</cstring>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>labelPort</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string>po&amp;rt:</string>
+                                                </property>
+                                                <property name="buddy" stdset="0">
+                                                    <cstring>m_serverPort</cstring>
+                                                </property>
+                                            </widget>
+                                        </hbox>
+                                    </widget>
+                                    <widget class="QLineEdit">
+                                        <property name="name">
+                                            <cstring>m_serverName</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>3</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="text">
+                                            <string>messenger.hotmail.com</string>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QSpinBox">
+                                        <property name="name">
+                                            <cstring>m_serverPort</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>65535</number>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>1</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>1863</number>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>optionUseHttpMethod</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Use &amp;HTTP method</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+H</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Connect to MSN Messenger using an HTTP-like protol on port 80.
+This may be used to connect on a network with a restrictive firewall.
+Only check this option in the normal conection doesn't work</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout22</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QCheckBox">
+                                        <property name="name">
+                                            <cstring>m_useWebcamPort</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>S&amp;pecify a port for incomming webcam connection :</string>
+                                        </property>
+                                        <property name="accel">
+                                            <string>Alt+P</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>If you are under a NAT (network address translation), or behind a firewall, you may specify a port to use for incomming connection, and configure your firewall to accept conneciton on this port.
+Incomming connection is used for webcam.
+If you don't specify yourself a port, the operating will choose the an available port.  
+It is recomanded to let the checkbox unchecked.</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QSpinBox">
+                                        <property name="name">
+                                            <cstring>m_webcamPort</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>65535</number>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>1</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>6891</number>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>If you are under a NAT (network address translation), or behind a firewall, you may specify a port to use for incomming connection, and configure your firewall to accept conneciton on this port.
+Incomming connection is used for webcam.
+If you don't specify yourself a port, the operating will choose the an available port.  
+It is recomanded to let the checkbox unchecked.</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                        </vbox>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer7</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>21</width>
+                                <height>70</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
+            </widget>
         </widget>
         <widget class="QLabel">
             <property name="name">
@@ -1117,7 +1337,7 @@ Only works for emoticons in the PNG format.</string>
 </customwidgets>
 <images>
     <image name="image0">
-        <data format="PNG" length="826">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b0000030149444154388db59531681b5718c77f0e377c070e3c810a3a70e0041eac51852e0a19e45134830a1d9a4c69a04bc8928e990a693a640e1d0c8642b08742321894c1507991b484c890902bb8701a047760c3bd21701fe4201dde49b6a41a32b8df72dcbbeffdbefffbbfefbd5b1b0c07cce266ebe667ae2006c3c1dada0cdc3be87d6e6c35b0d692a409d9c7ec8b20d65ae29398d19b1114e7e3de4ce98b3f5e10dc0053cf0951b4506496e1b964bf7ce6c585d9054c62d01d617ca48be0596553cf496d8f2c8b01c5f795fc93904e85ec4c01a152857a5d9175d0b2805c872080f18595ccc1499a10a225d4e2fbc2877786fe81253ab6c04c8d106e09db5d43ab0d146e5c64d1a23938fb98a185cea1c33eecfd9eba49eb427dcb201e245365f2b7b2fb5b4a3a31dcb927178afe07d86901df870fefa4842aed6f6b74ba42e52b4014d580e1eb9cbd9d94de7e4aad16d2f9be02d805f0b5e532f927a1ffcacea1777f122a8105b164a7c25faf323a5d9f1f1fd600e1e5bec59e2d4b5c7ef5209d0ad17b8b31864e57c0b3e0815ac3ee33253ab664a770ff5185d1a1cb8d2267d3e58aa1dc7d2508cbe597d0e74fdd269aaaf0f52d414c4ea3e9762c996869e42560d7a72e41c4799a2586e74f95e8d8151481fa86efbe7b3398ac58b1a2b8527589f15451ad303ac2293542ad6648a796278f13a27185e4c4754310facb98c53a79e19a3fdc1426ff28c3d7399d1f7cb25343eb96106cf83c790ce9c4f2eb831855c55485663327992eb6dc8a6259874ed700b0b793323cccb9ffa842b30d6133e3e75fea989ac15a8b16ca76b746b0b92278d919774c5b6d48a78697fb29bbcf52468742a32120909c24e899ce67beed5be2db01e22d1e9485bb620e47f9ee9e606a21bd3f5d3744c7e7c54d55e87443867d8b554515ac5db4620e8e4f62263170fd1cdee90aad7640141992891b0f367c9adfe4049bb07d3b7022bd8c687c0978f46684ee084150b65ac1fcca94591b7a90a496e4c095164fb016a2b192a497795cc0f84817aebe25f7bf70ccc54a575c555c03f78ffa5fc0570d1f0c076bff0232285a09643cc7ce0000000049454e44ae426082</data>
+        <data format="PNG" length="868">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b0000032b49444154388db59531681b6714c77f32373c8186ef0305eea0050932f8201d944d493bc4d0a1a21e4427bb533a74299dbc25905288a7d0b9836932d58116eac1411932388ba421a5a7a17005174e83e00e2cb80f6ab83708d2e18bec8ada26d0f4c1c1ddbbf7fdeeff3efeefbbda70346419b76fdd7ecd3b88e16858ab2dc183c3c1ebee7a97a99b521515d969f65610e71cd971c6f8d7312ccef3c152e9b39f9e11351d36164acdb819d4a9b4c4362ce5a2c48a45162588253ff5cfe5a2c406862405d9138e5eea2a18609a4fb12d212d7ea42c334089ac92e6423113cab902826d4227568a002480a942780dead16a2767e0ca55949a81668023b2c2e8952139748c270e58aa115aebc2675b86b80b6143710aa1b9049ccd336e064a5979e8e039ec7f5f78544368af1b24807ca64cff50befba6a0b765d8be2b67f00bc1562c95e6441646afe40d54b9f36948af2fb4df078722440c0e2af6f70a064f0be2568beea6c5885b01af2d6f4a2db10dc8ff128e0edc19f4f32f8576dbe1707022fcf2b4647babce175f8780f0c31307a7e0162bdc55c5e52247e742fabbc31843af2f9886c32d40d4b0fb4849278ef20476ee59c62f7ced3831848d55f0aa62816ca6de11ad37ed2fa10f1ce9c4619ac2c647824a45dc1100f2a9e2542e067b9f82155f108adf539c61f781924efc0745c0be57273240b08409e62ac508d0f085c94c112c83e778a54608434331733cbc9f331a5bf2636f85a855bfda15f9694e27565ad785e99fcae0a062fb6e4479a2f43e16eacd3a0fef433175ec7e95a1aa98a6d0e95454f355f2bff65803e8f5bddbf7f70a0687393bf72ced2e74ba253bdfb631a1c139872e948d7e487c83ab15979a2301dcba033a373c7e52f0f851c1f885d0ed080ec88f7374ae672b7f3b72249b115143389fce7f4e5e91d11398cefd986e6c099816839fbd1bd2c9b91ad3147afd16a32387534580ac58957c0e3ece485230d77c5ba6a1f4fa42ef9398719253153e1f5f8f687f9013df80f16684c1e0161969b20aae0d47437fc007d0f950882210c19fad81bf24f04e399701a04820380769a2e485e28a0b14b380e4a5927059e85be67cac5dfae63fc61af87fd4ff027ed7f0e16858fb1ba5cd86c64770b2e90000000049454e44ae426082</data>
     </image>
 </images>
 <connections>
@@ -1169,6 +1389,12 @@ Only works for emoticons in the PNG format.</string>
         <receiver>m_displayPicture</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>m_useWebcamPort</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_webcamPort</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>tabWidget3</tabstop>
@@ -1176,9 +1402,6 @@ Only works for emoticons in the PNG format.</string>
     <tabstop>m_serverName</tabstop>
     <tabstop>m_serverPort</tabstop>
     <tabstop>optionUseHttpMethod</tabstop>
-    <tabstop>NotifyNewChat</tabstop>
-    <tabstop>DownloadPicture</tabstop>
-    <tabstop>useCustomEmoticons</tabstop>
     <tabstop>m_login</tabstop>
     <tabstop>m_autologin</tabstop>
     <tabstop>buttonRegister</tabstop>
@@ -1198,5 +1421,7 @@ Only works for emoticons in the PNG format.</string>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kopete::ui::passwordwidget.h</includehint>
+    <includehint>kcombobox.h</includehint>
+    <includehint>klineedit.h</includehint>
 </includehints>
 </UI>

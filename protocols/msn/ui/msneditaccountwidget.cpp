@@ -28,6 +28,7 @@
 #include <qpushbutton.h>
 #include <qregexp.h>
 #include <qspinbox.h>
+#include <kcombobox.h>
 
 #include <kautoconfig.h>
 #include <kfiledialog.h>
@@ -45,6 +46,7 @@
 #include "kopeteglobal.h"
 
 #include "kopetepasswordwidget.h"
+#include "kopeteaccountmanager.h"
 
 #include "msnaccount.h"
 #include "msncontact.h"
@@ -76,7 +78,26 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 
 	d->autoConfig = new KAutoConfig( d->ui );
 	d->autoConfig->addWidget( d->ui->global_settings_page, "MSN" );
+	d->autoConfig->addWidget( d->ui->privacy_page, "MSN" );
+	//the JabberAccount need to be saved as text, and can't be handled by kautoconfig
+	d->autoConfig->ignoreSubWidget( d->ui->JabberAccount );
 	d->autoConfig->retrieveSettings( true );
+	
+	//Get a list of all jabber accounts
+	KGlobal::config()->setGroup("MSN");
+	QString jab_account=KGlobal::config()->readEntry("JabberAccount");
+	
+	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
+	for(Kopete::Account *a=accounts.first() ; a; a=accounts.next() )
+	{
+		if(a->protocol()->pluginId()=="JabberProtocol")
+		{
+			d->ui->JabberAccount->insertItem(a->accountId());
+			if( jab_account.isEmpty() )
+				jab_account=a->accountId();
+		}
+	}
+	d->ui->JabberAccount->setCurrentText(jab_account);
 
 	// FIXME: actually, I don't know how to set fonts for qlistboxitem - Olivier
 	d->ui->label_font->hide();
@@ -95,6 +116,11 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		if ( ( static_cast<MSNAccount*>(account)->serverName() != "messenger.hotmail.com" ) || ( static_cast<MSNAccount*>(account)->serverPort() != 1863) ) {
 			d->ui->optionOverrideServer->setChecked( true );
 		}
+		
+		d->ui->m_webcamPort->setDisabled(true);
+		uint port=config->readNumEntry("WebcamPort" ,0);
+		d->ui->m_useWebcamPort->setChecked( port != 0);
+		d->ui->m_webcamPort->setValue( port != 0 ? port : 6891 );
 
 		d->ui->optionUseHttpMethod->setChecked( static_cast<MSNAccount*>(account)->useHttpMethod() );
 		
@@ -163,6 +189,8 @@ MSNEditAccountWidget::~MSNEditAccountWidget()
 Kopete::Account * MSNEditAccountWidget::apply()
 {
 	d->autoConfig->saveSettings();
+	KGlobal::config()->setGroup("MSN");
+	KGlobal::config()->writeEntry("JabberAccount", d->ui->JabberAccount->currentText());
 
 	if ( !account() )
 		setAccount( new MSNAccount( d->protocol, d->ui->m_login->text() ) );
@@ -183,6 +211,11 @@ Kopete::Account * MSNEditAccountWidget::apply()
 	}
 
 	config->writeEntry( "useHttpMethod", d->ui->optionUseHttpMethod->isChecked() );
+	
+	if(d->ui->m_useWebcamPort->isChecked())
+		config->writeEntry( "WebcamPort" , d->ui->m_webcamPort->value() );
+	else
+		config->writeEntry( "WebcamPort" , 0 );
 
 	// Save the avatar image
 	if( d->ui->m_useDisplayPicture->isChecked() )

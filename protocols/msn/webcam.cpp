@@ -28,6 +28,7 @@
 #include <qtimer.h>
 #include <qevent.h>
 #include <qdatetime.h>
+#include <kconfig.h>
 
 #include "dispatcher.h"
 
@@ -318,14 +319,19 @@ void Webcam::processMessage(const Message& message)
 			makeSIPMessage("receivedViewerData", 0xec , 0xda , 0x03);
 		}
 
-		m_listener = new KServerSocket("7786",this);
+		if(!m_listener)
+		{
+			//it should have been creed in xml
+			sendBYEMessage();
+			return;
+		}
 		//m_listener->setResolutionEnabled(true);
 				// Create the callback that will try to accept incoming connections.
 		QObject::connect(m_listener, SIGNAL(readyAccept()), this, SLOT(slotAccept()));
 		QObject::connect(m_listener, SIGNAL(gotError(int)), this, SLOT(slotListenError(int)));
 				// Listen for incoming connections.
 		bool isListening = m_listener->listen(1);
-		kdDebug(14140) << k_funcinfo << (isListening ? QString("listening %1").arg(m_listener->localAddress().toString()) : QString("not listening")) << endl;
+		kdDebug(14140) << k_funcinfo << (isListening ? QString("listening %1").arg(m_listener->localAddress().toString()) : QString("not listening")) << endl;		
 		
 		rx=QRegExp("<tcpport>([^<]*)</tcpport>");
 		rx.search(m_content);
@@ -486,8 +492,13 @@ QString Webcam::xml(uint session , uint rid)
 		++ip_number;
 	}
 	
+	KConfig *config = KGlobal::config();
+	config->setGroup( "MSN" );
+	m_listener = new KServerSocket( config->readEntry("WebcamPort" ) ,this) ;
+	QString port=m_listener->localAddress().serviceName();
+	
 	return "<" + who + "><version>2.0</version><rid>"+QString::number(rid)+"</rid><udprid>"+QString::number(rid+1)+"</udprid><session>"+QString::number(session)+"</session><ctypes>0</ctypes><cpu>2931</cpu>" +
-			"<tcp><tcpport>7786</tcpport>\t\t\t\t\t\t\t\t  <tcplocalport>7786</tcplocalport>\t\t\t\t\t\t\t\t  <tcpexternalport>7786</tcpexternalport>"+ip+"</tcp>"+
+			"<tcp><tcpport>"+port+"</tcpport>\t\t\t\t\t\t\t\t  <tcplocalport>"+port+"</tcplocalport>\t\t\t\t\t\t\t\t  <tcpexternalport>"+port+"</tcpexternalport>"+ip+"</tcp>"+
 			"<udp><udplocalport>7786</udplocalport><udpexternalport>31863</udpexternalport><udpexternalip>"+ ip +"</udpexternalip><a1_port>31859</a1_port><b1_port>31860</b1_port><b2_port>31861</b2_port><b3_port>31862</b3_port><symmetricallocation>1</symmetricallocation><symmetricallocationincrement>1</symmetricallocationincrement><udpversion>1</udpversion><udpinternalipaddress1>127.0.0.1</udpinternalipaddress1></udp>"+
 			"<codec></codec><channelmode>1</channelmode></"+who+">\r\n\r\n";
 }

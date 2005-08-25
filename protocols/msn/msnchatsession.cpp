@@ -170,8 +170,13 @@ void MSNChatSession::createChat( const QString &handle,
 		this, SLOT( slotSwitchBoardClosed() ) );
 	connect( m_chatService, SIGNAL( receivedTypingMsg( const QString &, bool ) ),
 		this, SLOT( receivedTypingMsg( const QString &, bool ) ) );
-	connect( this, SIGNAL( myselfTyping( bool ) ),
-		m_chatService, SLOT( sendTypingMsg( bool ) ) );
+	KConfig *config = KGlobal::config();
+	config->setGroup( "MSN" );
+	if(config->readBoolEntry( "SendTypingNotification" , true) )
+	{
+		connect( this, SIGNAL( myselfTyping( bool ) ),
+			m_chatService, SLOT( sendTypingMsg( bool ) ) );
+	}
 	connect( m_chatService, SIGNAL( msgAcknowledgement(unsigned int, bool) ),
 		this, SLOT( slotAcknowledgement(unsigned int, bool) ) );
 	connect( m_chatService, SIGNAL( invitation( const QString&, const QString& ) ),
