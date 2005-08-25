@@ -15,6 +15,8 @@
     *************************************************************************
 */
 
+#define ENABLE_AV
+
 #include <assert.h>
 #include <iostream>
 #include <ostream>

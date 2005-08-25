@@ -15,6 +15,8 @@
     *************************************************************************
 */
 
+#define ENABLE_AV
+
 #ifndef KOPETE_AVVIDEOINPUT_H
 #define KOPETE_AVVIDEOINPUT_H
 

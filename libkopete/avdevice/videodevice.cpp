@@ -15,6 +15,8 @@
     *************************************************************************
 */
 
+#define ENABLE_AV
+
 #include <iostream>
 #include <ostream>
 #include <sstream>
