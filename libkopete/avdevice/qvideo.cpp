@@ -28,7 +28,7 @@
 
 #include <kdebug.h>
 #include <qpaintdevice.h>
-
+#include <QX11Info>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
@@ -40,7 +40,7 @@ unsigned int QVideo::bytesppForFormat(ImageFormat fmt)
     case FORMAT_BGR32:
     case FORMAT_BGR24:
         return 4;
-        
+
     case FORMAT_RGB15_LE:
     case FORMAT_RGB16_LE:
     case FORMAT_RGB15_BE:
@@ -50,11 +50,11 @@ unsigned int QVideo::bytesppForFormat(ImageFormat fmt)
     case FORMAT_YUV422P:
     case FORMAT_YUV420P:
         return 2;
-        
+
     case FORMAT_GREY:
     case FORMAT_HI240:
         return 1;
-        
+
     default:
         // unknown format
         return 0;
@@ -70,15 +70,15 @@ bool QVideo::findDisplayProperties(ImageFormat& fmt, int& depth, unsigned int& b
     ImageFormat p = FORMAT_NONE;
     int bpp       = 0;
     int d         = 0;
-    
+
 	vi_out.screen = QPaintDevice::x11AppScreen();
-	vi_in         = XGetVisualInfo(qt_xdisplay(), mask, &vi_out, &nvis);
+	vi_in         = XGetVisualInfo(QX11Info::display(), mask, &vi_out, &nvis);
 
 	if (vi_in) {
 		for (int i = 0; i < nvis; i++) {
             bpp = 0;
 			int n;
-			XPixmapFormatValues *pf = XListPixmapFormats(qt_xdisplay(),&n);
+			XPixmapFormatValues *pf = XListPixmapFormats(QX11Info::display(),&n);
             d = vi_in[i].depth;
 			for (int j = 0; j < n; j++) {
 				if (pf[j].depth == d) {
@@ -89,7 +89,7 @@ bool QVideo::findDisplayProperties(ImageFormat& fmt, int& depth, unsigned int& b
 			XFree(pf);
 
             // FIXME: Endianess detection
-            
+
             p = FORMAT_NONE;
 			switch (bpp) {
 			case 32:
@@ -132,9 +132,9 @@ bool QVideo::findDisplayProperties(ImageFormat& fmt, int& depth, unsigned int& b
 		}
 		XFree(vi_in);
 	}
-    
+
     if (p != FORMAT_NONE) {
-        int bytespp = bytesppForFormat(p);        
+        int bytespp = bytesppForFormat(p);
         kdDebug() << "QVideo: Display properties: depth: " << d
                   << ", bits/pixel: " << bpp
                   << ", bytes/pixel: " << bytespp << endl;

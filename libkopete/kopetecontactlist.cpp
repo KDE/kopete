@@ -139,7 +139,7 @@ MetaContact *ContactList::metaContact( const QString &metaContactId ) const
 Group * ContactList::group(unsigned int groupId) const
 {
 	Group *groupIterator;
-	for ( groupIterator = d->groups.first(); groupIterator; groupIterator = d->groups.next() ) 
+	for ( groupIterator = d->groups.first(); groupIterator; groupIterator = d->groups.next() )
 	{
 		if( groupIterator->groupId()==groupId )
 			return groupIterator;
@@ -149,7 +149,7 @@ Group * ContactList::group(unsigned int groupId) const
 
 
 Contact *ContactList::findContact( const QString &protocolId,
-	const QString &accountId, const QString &contactId ) const 
+	const QString &accountId, const QString &contactId ) const
 {
 	//Browsing metacontacts is too slow, better to uses the Dict of the account.
 	Account *i=AccountManager::self()->findAccount(protocolId,accountId);
@@ -305,7 +305,7 @@ void ContactList::loadGlobalIdentity()
 	bool useGlobalIdentity;
 
 	useGlobalIdentity = Kopete::Config::enableGlobalIdentity();
- 
+
  	// Apply the global identity
 	if(useGlobalIdentity)
  	{
@@ -336,9 +336,9 @@ void ContactList::slotDisplayNameChanged()
 void ContactList::slotPhotoChanged()
 {
 	QString photoURL;
-	
+
 	MetaContact::PropertySource photoSource = myself()->photoSource();
-	
+
 	// Save the image to ~./kde/share/apps/kopete/global-photo.png if the source is not custom.
 	if(photoSource != MetaContact::SourceCustom)
 	{
@@ -539,7 +539,7 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 						{
 							app = id;
 							key = QString::fromLatin1( "All" );
-							val = data.replace( separator, QChar( 0xE000 ) );
+							val = data.replace( separator, QString( QChar( 0xE000 ) ) );
 						}
 
 						if( !app.isEmpty() )

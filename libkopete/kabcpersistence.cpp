@@ -45,7 +45,7 @@
 
 namespace Kopete
 {
-	
+
 /**
  * utility function to merge two QStrings containing individual elements separated by 0xE000
  */
@@ -57,7 +57,7 @@ static QString unionContents( QString arg1, QString arg2 )
 	for ( QStringList::iterator it = arg2List.begin(); it != arg2List.end(); ++it )
 		if ( !outList.contains( *it ) )
 			outList.append( *it );
-	QString out = outList.join( separator );
+	QString out = outList.join( QString( separator ) );
 	return out;
 }
 
@@ -83,7 +83,7 @@ KABCPersistence *KABCPersistence::self()
 	static KStaticDeleter<KABCPersistence> deleter;
 	if(!s_self)
 		deleter.setObject( s_self, new KABCPersistence() );
-	return s_self;	
+	return s_self;
 }
 
 KABC::AddressBook* KABCPersistence::addressBook()
@@ -124,7 +124,7 @@ void KABCPersistence::write( MetaContact * mc )
 			addressMap.insert( c->protocol()->addressBookIndexField(), addresses );
 			++cIt;
 		}
-		
+
 		// insert a custom field for each protocol
 		QMap<QString, QStringList>::ConstIterator it = addressMap.begin();
 		for ( ; it != addressMap.end(); ++it )
@@ -132,7 +132,7 @@ void KABCPersistence::write( MetaContact * mc )
 			// read existing data for this key
 			QString currentCustomForProtocol = theAddressee.custom( it.key(), QString::fromLatin1( "All" ) );
 			// merge without duplicating
-			QString toWrite = unionContents( currentCustomForProtocol, it.data().join( QChar( 0xE000 ) ) );
+			QString toWrite = unionContents( currentCustomForProtocol, it.data().join( QString( QChar( 0xE000 ) ) ) );
 			// Note if nothing ends up in the KABC data, this is because insertCustom does nothing if any param is empty.
 			kdDebug( 14010 ) << k_funcinfo << "Writing: " << it.key() << ", " << "All" << ", " << toWrite << endl;
 			theAddressee.insertCustom( it.key(), QString::fromLatin1( "All" ), toWrite );
@@ -144,7 +144,7 @@ void KABCPersistence::write( MetaContact * mc )
 		writeAddressBook( theAddressee.resource() );
 		//theAddressee.dump();
 	}
-	
+
 /*			// Wipe out the existing addressBook entries
 			d->addressBook.clear();
 	// This causes each Kopete::Protocol subclass to serialise its contacts' data into the metacontact's plugin data and address book data
@@ -263,7 +263,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 	// check whether the dontShowAgain was checked
 		KABC::AddressBook* ab = addressBook();
 		KABC::Addressee addr  = ab->findByUid( mc->metaContactId() );
-		
+
 		if ( !addr.isEmpty() ) // if we are associated with KABC
 		{
 // load the set of addresses from KABC
@@ -449,6 +449,6 @@ void KABCPersistence::dumpAB()
 
 } // end namespace Kopete
 
-		// dump addressbook contents 
+		// dump addressbook contents
 
 #include "kabcpersistence.moc"

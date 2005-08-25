@@ -69,7 +69,7 @@ KNotification::KNotification(QObject *parent) :
 {
 }
 
-KNotification::~KNotification() 
+KNotification::~KNotification()
 {
 	emit closed();
 	delete d;
@@ -173,7 +173,7 @@ void KNotification::notifyByPassivePopup(const QPixmap &pix )
     //KPassivePopup::message(title, text, icon, senderWinId);
 
 	WId winId=d->widget ? d->widget->topLevelWidget()->winId()  : 0;
-	
+
 	KPassivePopup *pop = new KPassivePopup( checkWinId(appName, winId) );
 	QObject::connect(this, SIGNAL(closed()), pop, SLOT(deleteLater()));
 
@@ -256,7 +256,7 @@ void KNotification::raiseWidget()
 {
 	if(!d->widget)
 		return;
-	
+
 	raiseWidget(d->widget);
 }
 
@@ -354,21 +354,21 @@ KNotification *KNotification::userEvent( const QString& text, const QPixmap& pix
 	 *  Some code of this function fome from the old KNotify deamon
 	 */
 
-	
+
 	KNotification *notify=new KNotification(widget);
 	notify->d->widget=widget;
 	notify->d->text=text;
 	notify->d->actions=actions;
 	notify->d->level=level;
 	WId winId=widget ? widget->topLevelWidget()->winId()  : 0;
-	
-	
+
+
 	//we will catch some event that will not be fired by the old deamon
-	
+
 
 	//we remove presentation that has been already be played, and we fire the event in the old way
-	
-	
+
+
 	KNotifyClient::userEvent(winId,text,present & ~( KNotifyClient::PassivePopup|KNotifyClient::Messagebox|KNotifyClient::Execute),level,sound,file);
 
 
@@ -392,7 +392,7 @@ KNotification *KNotification::userEvent( const QString& text, const QPixmap& pix
 	}
 
 	return notify;
-	
+
 }
 
 
@@ -418,9 +418,9 @@ static KNotification *performCustomNotifications( QWidget *widget, Kopete::MetaC
 	//kdDebug( 14010 ) << k_funcinfo << endl;
 	if ( suppress )
 		return n;
-	
+
 	// Anything, including the MC itself, may set suppress and prevent further notifications
-	
+
 	/* This is a really ugly piece of logic now.  The idea is to check for notifications
 	* first on the metacontact, then on each of its groups, until something suppresses
 	* any further notifications.
@@ -434,7 +434,7 @@ static KNotification *performCustomNotifications( QWidget *widget, Kopete::MetaC
 	do {
 		QString sound;
 		QString text;
-		
+
 		if ( dataObj )
 		{
 			Kopete::NotifyEvent *evt = dataObj->notifyEvent( message );
@@ -467,7 +467,8 @@ static KNotification *performCustomNotifications( QWidget *widget, Kopete::MetaC
 					evt->firePresentation( Kopete::EventPresentation::Chat );
 				}
 				// fire the event
-				n=KNotification::userEvent( text, mc->photo(), widget, QStringList() , present, 0, sound, QString::null, QString::null , KNotification::CloseOnTimeout);
+				n=KNotification::userEvent( text, QPixmap::fromImage( mc->photo() ), widget, QStringList(),
+                                            present, 0, sound, QString::null, QString::null , KNotification::CloseOnTimeout);
 			}
 		}
 
@@ -495,10 +496,10 @@ KNotification *KNotification::event( Kopete::MetaContact *mc, const QString& mes
 			const QStringList &actions, unsigned int flags)
 {
 	if (message.isEmpty()) return 0;
-    
+
 	bool suppress = false;
 	KNotification *n=performCustomNotifications( widget, mc, message, suppress);
-		 
+
 	if ( suppress )
 	{
 		//kdDebug( 14000 ) << "suppressing common notifications" << endl;

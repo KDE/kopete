@@ -120,7 +120,7 @@ public:
 	 * @param type Type of the message, see @ref MessageType
 	 */
 	Message( const Contact *fromKC, const Q3PtrList<Contact> &toKC, const QString &body,
-		 MessageDirection direction, MessageFormat format = Qt::PlainText,
+		 MessageDirection direction, MessageFormat format = PlainText,
 		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
 	/**
@@ -134,7 +134,7 @@ public:
 	 * @param type Type of the message, see @ref MessageType
 	 */
 	Message( const Contact *fromKC, const Contact *toKC, const QString &body,
-		 MessageDirection direction, MessageFormat format = Qt::PlainText,
+		 MessageDirection direction, MessageFormat format = PlainText,
 		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
 	/**
@@ -149,7 +149,7 @@ public:
 	 * @param type Type of the message, see @ref MessageType
 	 */
 	Message( const Contact *fromKC, const Q3PtrList<Contact> &toKC, const QString &body,
-		 const QString &subject, MessageDirection direction, MessageFormat format = Qt::PlainText,
+		 const QString &subject, MessageDirection direction, MessageFormat format = PlainText,
 		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
 	/**
@@ -164,7 +164,7 @@ public:
 	 * @param type Type of the message, see @ref MessageType
 	 */
 	Message( const QDateTime &timeStamp, const Contact *fromKC, const Q3PtrList<Contact> &toKC,
-		 const QString &body, MessageDirection direction, MessageFormat format = Qt::PlainText,
+		 const QString &body, MessageDirection direction, MessageFormat format = PlainText,
 		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
 	/**
@@ -181,7 +181,7 @@ public:
 	 */
 	Message( const QDateTime &timeStamp, const Contact *fromKC, const Q3PtrList<Contact> &toKC,
 		const QString &body, const QString &subject, MessageDirection direction,
-		MessageFormat format = Qt::PlainText, const QString &requestedPlugin = QString::null,
+		MessageFormat format = PlainText, const QString &requestedPlugin = QString::null,
 		MessageType type = TypeNormal );
 
 	/**

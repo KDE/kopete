@@ -48,7 +48,7 @@ public:
 	 */
 	ContactPropertyTmpl mStickLastSeen;
 	ContactPropertyTmpl mStickFullName;
-	
+
 	Kopete::OnlineStatus accountNotConnectedStatus;
 };
 
@@ -60,7 +60,7 @@ Protocol::Protocol( KInstance *instance, QObject *parent, const char *name )
 	d->mStickFullName = Global::Properties::self()->fullName();
 	d->unloading = false;
 	d->capabilities = 0;
-	d->accountNotConnectedStatus = Kopete::OnlineStatus( Kopete::OnlineStatus::Unknown, 0, this, Kopete::OnlineStatus::AccountOffline, QString::fromLatin1( "account_offline_overlay" ), i18n( "Account Offline" ) );
+	d->accountNotConnectedStatus = Kopete::OnlineStatus( Kopete::OnlineStatus::Unknown, 0, this, Kopete::OnlineStatus::AccountOffline, QStringList(QString::fromLatin1( "account_offline_overlay" )), i18n( "Account Offline" ) );
 }
 
 Protocol::~Protocol()
@@ -127,7 +127,7 @@ void Protocol::aboutToUnload()
 
 	// Disconnect all accounts
 	Q3Dict<Account> accounts = AccountManager::self()->accounts( this );
-	
+
 	if ( accounts.isEmpty() )
 		emit readyForUnload();
 	else for ( Q3DictIterator<Account> it( accounts ); it.current() ; ++it )
@@ -319,7 +319,7 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 			}
 		}
 
-		
+
 		Contact *c = deserializeContact( metaContact, sd, ad );
 		if (c) // should never be null but I do not like crashes
 			c->deserializeProperties( sd );

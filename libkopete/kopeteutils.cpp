@@ -57,7 +57,7 @@ void notify( QPixmap pic, const QString &eventid, const QString &caption, const 
 		if ( !explanation.isEmpty() )
 			action = i18n( "More Information..." );
 		kdDebug( 14010 ) << k_funcinfo <<  endl;
-		KNotification *n = KNotification::event( eventid, message, pic , 0L , action );
+		KNotification *n = KNotification::event( eventid, message, pic , 0L , QStringList( action ) );
 		ErrorNotificationInfo info;
 		info.explanation = explanation;
 		info.debugInfo = debugInfo;
@@ -83,13 +83,13 @@ bool isHostReachable(const QString &host)
 	QByteArray params;
 	QByteArray reply;
 
-	QDataStream stream(params, QIODevice::WriteOnly);
+	QDataStream stream(&params, QIODevice::WriteOnly);
 	stream << host;
 
 	if ( KApplication::kApplication()->dcopClient()->call( "kded", "networkstatus", "status(QString)", params, replyType, reply ) && (replyType == "int") )
 	{
 		int result;
-		QDataStream stream2( reply, QIODevice::ReadOnly );
+		QDataStream stream2( &reply, QIODevice::ReadOnly );
 		stream2 >> result;
 		return (result != NetWorkStatusUnknown) && (result != NetWorkStatusOnline);
 	}

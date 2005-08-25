@@ -18,7 +18,7 @@
 #ifndef KOPETEMIMESOURCEFACTORY_H
 #define KOPETEMIMESOURCEFACTORY_H
 
-#include <qmime.h>
+#include <Q3MimeSourceFactory>
 
 #include <kopete_export.h>
 

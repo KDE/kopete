@@ -39,8 +39,9 @@
 #include <kglobal.h>
 #include <kdebug.h>
 #include <ksettings/dispatcher.h>
-
+#include <QX11Info>
 #ifdef Q_WS_X11
+
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/Xresource.h>
@@ -104,7 +105,7 @@ Kopete::Away::Away() : QObject( kapp , "Kopete::Away")
 
 	// set the XAutoLock info
 #ifdef Q_WS_X11
-	Display *dsp = qt_xdisplay();
+	Display *dsp = QX11Info::display();
 #endif
 	d->mouse_x = d->mouse_y=0;
 	d->mouse_mask = 0;
@@ -234,19 +235,10 @@ QStringList Kopete::Away::getMessages()
 
 QString Kopete::Away::getMessage( uint messageNumber )
 {
-	QStringList::iterator it = d->awayMessageList.at( messageNumber );
-	if( it != d->awayMessageList.end() )
-	{
-		QString str = *it;
-		d->awayMessageList.prepend( str );
-		d->awayMessageList.remove( it );
-		save();
-		return str;
-	}
+    if ( messageNumber > 0 && messageNumber < d->awayMessageList.size() )
+        return d->awayMessageList.takeAt( messageNumber );
 	else
-	{
 		return QString::null;
-	}
 }
 
 void Kopete::Away::addMessage(const QString &message)
@@ -274,7 +266,7 @@ void Kopete::Away::slotTimerTimeout()
 	// In fact as of KDE 2.0 this code is practically unrecognisable as xautolock.
 
 #ifdef Q_WS_X11
-	Display *dsp = qt_xdisplay();
+	Display *dsp = QX11Info::display();
 	Window           dummy_w;
 	int              dummy_c;
 	unsigned int     mask;               /* modifier mask                 */
@@ -370,7 +362,7 @@ void Kopete::Away::setActivity()
 				{
 					i->setOnlineStatus( Kopete::OnlineStatusManager::self()->onlineStatus( i->protocol() ,
 										Kopete::OnlineStatusManager::Online ) ,
-					getInstance()->d->awayMessage);	
+					getInstance()->d->awayMessage);
 				}
 
 				// remove() makes the next entry in the list the current one,

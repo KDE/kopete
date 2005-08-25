@@ -66,17 +66,17 @@ class  MetaContact::Private
 
 	Q3PtrList<Contact> contacts;
 
-	// property sources	
+	// property sources
 	PropertySource photoSource;
 	PropertySource displayNameSource;
 
 	// when source is contact
 	Contact *displayNameSourceContact;
 	Contact *photoSourceContact;
-	
+
 	// used when source is kabc
 	QString metaContactId;
-	
+
 	// used when source is custom
 	QString displayName;
 	KURL photoUrl;
@@ -84,7 +84,7 @@ class  MetaContact::Private
 	Q3PtrList<Group> groups;
 	QMap<QString, QMap<QString, QString> > addressBook;
 	bool temporary;
-	
+
 	OnlineStatus::StatusType onlineStatus;
 	bool photoSyncedWithKABC;
 
@@ -148,7 +148,7 @@ void MetaContact::addContact( Contact *c )
 		emit contactAdded(c);
 
 		updateOnlineStatus();
-		
+
 		// if this is the first contact, probbaly was created by a protocol
 		// so it has empty custom properties, then set sources to the contact
 		if ( d->contacts.count() == 1 )
@@ -251,7 +251,7 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 				// contact as source
 				setPhotoSourceContact( d->contacts.first() );
 			}
-		}		
+		}
 
 		if(!deleted)
 		{  //If this function is tell by slotContactRemoved, c is maybe just a QObject
@@ -319,7 +319,7 @@ MetaContact::PropertySource MetaContact::displayNameSource() const
 void MetaContact::setPhotoSource(PropertySource source)
 {
 	PropertySource oldSource = photoSource();
-	d->photoSource = source;	
+	d->photoSource = source;
 	if ( source != oldSource )
 		emit photoChanged();
 }
@@ -641,7 +641,7 @@ QString nameFromKABC( const QString &id ) /*const*/
 
 QString nameFromContact( Kopete::Contact *c) /*const*/
 {
-	if ( !c ) 
+	if ( !c )
 		return QString::null;
 
 	QString contactName;
@@ -698,12 +698,12 @@ QImage photoFromContact( Kopete::Contact *contact) /*const*/
 	QVariant photoProp;
 	if ( contact->hasProperty( Kopete::Global::Properties::self()->photo().key() ) )
 		photoProp = contact->property( Kopete::Global::Properties::self()->photo().key() ).value();
-	
+
 	QImage img;
-	if(photoProp.canCast( QVariant::Image ))
-		img=photoProp.toImage();
-	else if(photoProp.canCast( QVariant::Pixmap ))
-		img=photoProp.toPixmap().convertToImage();
+	if(photoProp.canConvert( QVariant::Image ))
+		img= photoProp.value<QImage>();
+	else if(photoProp.canConvert( QVariant::Pixmap ))
+		img=photoProp.value<QPixmap>().convertToImage();
 	else if(!photoProp.asString().isEmpty())
 	{
 		img=QPixmap( photoProp.toString() ).convertToImage();
@@ -764,7 +764,7 @@ void MetaContact::setDisplayNameSourceContact( Contact *contact )
 void MetaContact::setPhotoSourceContact( Contact *contact )
 {
 	d->photoSourceContact = contact;
-	
+
 	// Create a cache for the contact photo.
 	if(d->photoSourceContact != 0L)
 		d->contactPhotoCache = photoFromContact(d->photoSourceContact);
@@ -930,7 +930,7 @@ const QDomElement MetaContact::toXML(bool minimal)
 
 	// set the contact source for display name
 	_nameSource.setAttribute(QString::fromUtf8("source"), sourceToString(displayNameSource()));
-	
+
 	// set contact source metadata
 	if (displayNameSourceContact())
 	{
@@ -961,7 +961,7 @@ const QDomElement MetaContact::toXML(bool minimal)
 	// apend name and photo sources to property sources
 	propertySources.appendChild(_nameSource);
 	propertySources.appendChild(_photoSource);
-	
+
 	metaContact.documentElement().appendChild(propertySources);
 
 	// Don't store these information in minimal mode.
@@ -980,12 +980,12 @@ const QDomElement MetaContact::toXML(bool minimal)
 			}
 			metaContact.documentElement().appendChild( groups );
 		}
-	
+
 		// Store other plugin data
 		Q3ValueList<QDomElement> pluginData = Kopete::ContactListElement::toXML();
 		for( Q3ValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
 			metaContact.documentElement().appendChild( metaContact.importNode( *it, true ) );
-	
+
 		// Store custom notification data
 		QDomElement notifyData = NotifyDataObject::notifyDataToXML();
 		if ( notifyData.hasChildNodes() )
@@ -1009,10 +1009,10 @@ bool MetaContact::fromXML( const QDomElement& element )
 	QDomElement contactElement = element.firstChild().toElement();
 	while( !contactElement.isNull() )
 	{
-		
+
 		if( contactElement.tagName() == QString::fromUtf8( "display-name" ) )
 		{ // custom display name, used for the custom name source
-			
+
 			// WTF, why were we not loading the metacontact if nickname was empty.
 			//if ( contactElement.text().isEmpty() )
 			//	return false;
@@ -1170,7 +1170,7 @@ bool MetaContact::fromXML( const QDomElement& element )
 				setPhotoSource(SourceCustom);
 		}
 	}
-	
+
 	// If a plugin is loaded, load data cached
 	connect( Kopete::PluginManager::self(), SIGNAL( pluginLoaded(Kopete::Plugin*) ),
 		this, SLOT( slotPluginLoaded(Kopete::Plugin*) ) );
@@ -1180,7 +1180,7 @@ bool MetaContact::fromXML( const QDomElement& element )
 		slotAllPluginsLoaded();
 	else
 		// When all plugins are loaded, set the source contact.
-		connect( Kopete::PluginManager::self(), SIGNAL( allPluginsLoaded() ), 
+		connect( Kopete::PluginManager::self(), SIGNAL( allPluginsLoaded() ),
 			this, SLOT( slotAllPluginsLoaded() ) );
 
 	// track changes only works if ONE Contact is inside the MetaContact
@@ -1240,7 +1240,7 @@ void MetaContact::slotPluginLoaded( Plugin *p )
 void MetaContact::slotAllPluginsLoaded()
 {
 	// Now that the plugins and subcontacts are loaded, set the source contact.
-	setDisplayNameSourceContact( findContact( d->nameSourcePID, d->nameSourceAID, d->nameSourceCID) ); 
+	setDisplayNameSourceContact( findContact( d->nameSourcePID, d->nameSourceAID, d->nameSourceCID) );
 	setPhotoSourceContact( findContact( d->photoSourcePID, d->photoSourceAID, d->photoSourceCID) );
 }
 
@@ -1291,7 +1291,7 @@ void MetaContact::setMetaContactId( const QString& newMetaContactId )
 	// 4) May be called with Null to remove an invalid kabc uid by KMC::toKABC()
 	// 5) Is called when reading the saved contact list
 
-	// Don't remove IM addresses from kabc if we are changing contacts; 
+	// Don't remove IM addresses from kabc if we are changing contacts;
 	// other programs may have written that data and depend on it
 	d->metaContactId = newMetaContactId;
 	KABCPersistence::self()->write( this );
@@ -1310,7 +1310,7 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 	if(b)
 	{
 		QVariant newValue;
-		
+
 		switch( photoSource() )
 		{
 			case SourceContact:
@@ -1339,9 +1339,9 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 			{
 				QImage img;
 				if(newValue.canCast( QVariant::Image ))
-					img=newValue.toImage();
+					img=newValue.value<QImage>();
 				else if(newValue.canCast( QVariant::Pixmap ))
-					img=newValue.toPixmap().convertToImage();
+					img=newValue.value<QPixmap>();
 
 				if(img.isNull())
 				{
@@ -1362,6 +1362,7 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 				KABCPersistence::self()->addressBook()->insertAddressee(theAddressee);
 				KABCPersistence::self()->writeAddressBook( theAddressee.resource() );
 			}
+
 		}
 	}
 }
