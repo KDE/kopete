@@ -414,6 +414,10 @@ Kopete::Contact* KopeteMetaLVIProps::selectedPhotoSourceContact() const
 
 void KopeteMetaLVIProps::slotOkClicked()
 {
+	// update meta contact's UID
+	item->metaContact()->setMetaContactId( mAddressBookUid );	
+	//this has to be done first, in the case something is synced with KABC   (see bug 109494)
+	
 	// set custom display name
 	if( mainWidget->edtDisplayName->text() != item->metaContact()->customDisplayName() )
 		item->metaContact()->setDisplayName( mainWidget->edtDisplayName->text() );
@@ -450,8 +454,6 @@ void KopeteMetaLVIProps::slotOkClicked()
 		item->metaContact()->setIcon( mainWidget->icnbUnknown->icon(),
 			Kopete::ContactListElement::Unknown );
 	}
-	// update meta contact's UID
-	item->metaContact()->setMetaContactId( mAddressBookUid );	
 
 	mNotificationProps->storeCurrentCustoms();
 }
