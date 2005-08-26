@@ -118,7 +118,7 @@ void Account::disconnected( DisconnectReason reason )
 	     reason == BadPassword )
 	{
 		if(reason != BadPassword)
-			d->connectionTry++
+			d->connectionTry++;
 		//use a timer to allow the plugins to clean up after return
 		if (d->connectionTry>3)
 			QTimer::singleShot(0, this, SLOT(connect()));
