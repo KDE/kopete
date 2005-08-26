@@ -54,10 +54,10 @@ public slots:
 	virtual void messageSentSuccessfully();
 
 signals:
-	virtual void shown();
-	virtual void messageSent( Kopete::Message &message );
-	virtual void closing( KopeteView *view );
-	virtual void activated( KopeteView *view );
+	void shown();
+	void messageSent( Kopete::Message &message );
+	void closing( KopeteView *view );
+	void activated( KopeteView *view );
 
 protected:
 	virtual void closeEvent( QCloseEvent *e );
