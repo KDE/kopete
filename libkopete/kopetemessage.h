@@ -21,8 +21,6 @@
 
 #include "kopetecontact.h"
 
-#include <ksharedptr.h>
-
 #include <q3ptrlist.h>
 #include <qstring.h>
 #include <qdom.h>
@@ -30,8 +28,8 @@
 #include <qfont.h>
 #include <qdatetime.h>
 #include <q3valuelist.h>
-//Added by qt3to4:
 #include <Q3CString>
+#include <QSharedDataPointer>
 
 #include <kopete_export.h>
 
@@ -391,14 +389,8 @@ public:  /* static helpers */
 
 
 private:
-	/**
-	 * Message is implicitly shared.
-	 * Detach the instance when modifying data.
-	 */
-	void detach();
-
 	class Private;
-	KSharedPtr<Private> d;
+	QSharedDataPointer<Private> d;
 
 	static QString parseLinks( const QString &message, MessageFormat format );
 

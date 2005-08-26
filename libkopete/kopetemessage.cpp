@@ -24,9 +24,10 @@
 #include <q3stylesheet.h>
 #include <qregexp.h>
 #include <qtextcodec.h>
-//Added by qt3to4:
 #include <Q3CString>
 #include <Q3PtrList>
+#include <QSharedData>
+
 #include <kdebug.h>
 #include <klocale.h>
 #include <kiconloader.h>
@@ -45,7 +46,7 @@
 using namespace Kopete;
 
 class Message::Private
-	: public KShared
+	: public QSharedData
 {
 public:
 	Private( const QDateTime &timeStamp, const Contact *from, const ContactPtrList &to,
@@ -156,57 +157,38 @@ Message::~Message()
 {
 }
 
-void Message::detach()
-{
-	// there is no detach in KSharedPtr :(
-	if( d.count() == 1 )
-		return;
-
-	// Warning: this only works as long as the private object doesn't contain pointers to allocated objects.
-	// The from contact for example is fine, but it's a shallow copy this way.
-	d = new Private(*d);
-}
-
 void Message::setBgOverride( bool enabled )
 {
-	detach();
 	d->bgOverride = enabled;
 }
 
 void Message::setFgOverride( bool enabled )
 {
-	detach();
 	d->fgOverride = enabled;
 }
 
 void Message::setRtfOverride( bool enabled )
 {
-	detach();
 	d->rtfOverride = enabled;
 }
 
 void Message::setFg( const QColor &color )
 {
-	detach();
 	d->fgColor=color;
 }
 
 void Message::setBg( const QColor &color )
 {
-	detach();
 	d->bgColor=color;
 }
 
 void Message::setFont( const QFont &font )
 {
-	detach();
 	d->font = font;
 }
 
 void Message::setBody( const QString &body, MessageFormat f )
 {
-	detach();
-
 	QString theBody = body;
 	if( f == RichText )
 	{
@@ -233,7 +215,6 @@ void Message::setBody( const QString &body, MessageFormat f )
 
 void Message::setImportance(Message::MessageImportance i)
 {
-	detach();
 	d->importance = i;
 }
 
@@ -459,7 +440,6 @@ ChatSession *Message::manager() const
 
 void Message::setManager(ChatSession *kmm)
 {
-	detach();
 	d->manager=kmm;
 }
 
