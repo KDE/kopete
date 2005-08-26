@@ -316,10 +316,12 @@ void KopeteRichTextEditPart::writeConfig()
 
 void KopeteRichTextEditPart::setFgColor()
 {
-	QColor col;
+	QColor col = edit->color();
 
-	int s = KColorDialog::getColor( col, editor->color(), editor );
-	if ( s != QDialog::Accepted || !col.isValid() )
+	int s = KColorDialog::getColor( col, KGlobalSettings::textColor() , editor );
+	if(!col.isValid())
+		col= KGlobalSettings::textColor();
+	if ( s != QDialog::Accepted )
 		return;
 
 	setFgColor( col );
@@ -346,17 +348,35 @@ void KopeteRichTextEditPart::setFgColor( const QColor &newColor )
 	editor->setColor( mFgColor );
 }
 
+QColor KopeteRichTextEditPart::fgColor()
+{
+	if( mFgColor == KGlobalSettings::textColor())
+		return QColor();
+	return mFgColor;
+}
+
 void KopeteRichTextEditPart::setBgColor()
 {
-	QColor col;
+	QColor col=mBgColor;
 
-	int s = KColorDialog::getColor( col, mBgColor, editor );
-	if ( s != QDialog::Accepted || !col.isValid() )
+	int s = KColorDialog::getColor( col, KGlobalSettings::baseColor(), editor );
+	if (!col.isValid())
+	{
+		col=KGlobalSettings::baseColor();
+	}
+	if ( s != QDialog::Accepted  )
 		return;
-
+		
 	setBgColor( col );
 
 	writeConfig();
+}
+
+QColor KopeteRichTextEditPart::bgColor()
+{
+	if( mBgColor == KGlobalSettings::baseColor())
+		return QColor();
+	return mBgColor;
 }
 
 void KopeteRichTextEditPart::setBgColor( const QColor &newColor )
