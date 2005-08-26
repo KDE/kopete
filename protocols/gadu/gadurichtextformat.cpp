@@ -96,9 +96,9 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 				pointer += sizeof( gg_msg_richtext_format );
 				i += sizeof( gg_msg_richtext_format );
 				gg_msg_richtext_color *color = (gg_msg_richtext_color*)( pointer );
-				r = (int)color->Qt::red;
-				g = (int)color->Qt::green;
-				b = (int)color->Qt::blue;
+				r = (int)color->red;
+				g = (int)color->green;
+				b = (int)color->blue;
 			}
 			style += QString(" color: rgb( %1, %2, %3 ); ").arg( r ).arg( g ).arg( b );
 
@@ -263,16 +263,12 @@ GaduRichTextFormat::insertRtf( uint position)
 		// append font description
 		rtfs.position = position;
 		uint csize = rtf.size();
-		if ( rtf.resize( csize + sizeof( gg_msg_richtext_format ) ) == FALSE ) {
-			return false;
-		};
+		rtf.resize( csize + sizeof( gg_msg_richtext_format ) );
 		memcpy( rtf.data()  + csize, &rtfs, sizeof( rtfs ) );
 		// append color description, if color has changed
 		if ( rtfs.font & GG_FONT_COLOR ) {
 			csize = rtf.size();
-			if ( rtf.resize( csize + sizeof( gg_msg_richtext_color ) ) == FALSE ) {
-				return false;
-			};
+			rtf.resize( csize + sizeof( gg_msg_richtext_color ) );
 			memcpy( rtf.data() + csize, &rtcs, sizeof( rtcs ) );
 		}
 	}

@@ -37,7 +37,6 @@
 #include "kopeteaccount.h"
 #include "kopetemetacontact.h"
 #include "kopeteglobal.h"
-#include "kopeteonlinestatusmanager.h"
 
 typedef KGenericFactory<GaduProtocol> GaduProtocolFactory;
 

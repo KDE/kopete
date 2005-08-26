@@ -196,7 +196,7 @@ GaduRegisterAccount::displayToken( QPixmap image, QString /*tokenId */ )
 void
 GaduRegisterAccount::updateStatus( const QString status )
 {
-	ui->labelStatusMessage->setAlignment( AlignCenter );
+	ui->labelStatusMessage->setAlignment( Qt::AlignCenter );
 	ui->labelStatusMessage->setText( status );
 }
 

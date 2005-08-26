@@ -25,8 +25,9 @@
 
 #include <qmap.h>
 
-#include "kopeteprotocol.h"
 #include "kopeteonlinestatus.h"
+#include "kopeteonlinestatusmanager.h"
+#include "kopeteprotocol.h"
 #include "kopetecontactproperty.h"
 
 #include "gaducommands.h"

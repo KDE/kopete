@@ -24,6 +24,7 @@
 #define GADUDCC_H
 
 #include <qobject.h>
+#include <QMap>
 
 class QSocketNotifier;
 class QHostAddress;
