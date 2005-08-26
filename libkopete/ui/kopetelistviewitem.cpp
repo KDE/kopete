@@ -927,7 +927,9 @@ public:
 	}
 
 	int visibilityLevel;
+	
 	bool visibilityTarget;
+
 	static const int visibilityFoldSteps = 7;
 #ifdef HAVE_XRENDER
 	static const int visibilityFadeSteps = 7;
@@ -1149,7 +1151,9 @@ void Item::setHeight( int )
 	//kdDebug(14000) << k_funcinfo << "Height is " << minHeight << endl;
 	if ( Private::foldVisibility && d->visibilityTimer.isActive() )
 	{
-		int vis = QMIN( d->visibilityLevel, Private::visibilityFoldSteps );
+		int vis = d->visibilityLevel;
+		if ( vis > Private::visibilityFoldSteps )
+		    vis = Private::visibilityFoldSteps;
 		minHeight = (minHeight * vis) / Private::visibilityFoldSteps;
 	}
 	KListViewItem::setHeight( minHeight );
@@ -1258,7 +1262,10 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 	float opac = 1.0;
 	if ( d->visibilityTimer.isActive() && Private::fadeVisibility )
 	{
-		int vis = qMax( d->visibilityLevel - Private::visibilityFoldSteps, 0 );
+		int vis = d->visibilityLevel - Private::visibilityFoldSteps;
+		if ( vis < 0 )
+		    vis = 0;
+		
 		opac = float(vis) / Private::visibilityFadeSteps;
 	}
 	opac *= opacity();

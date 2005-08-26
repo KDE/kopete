@@ -3,7 +3,13 @@ DOXYGEN_REFERENCES = kio kdecore kdeui
 DOXYGEN_EXCLUDE = compat
 DOXYGEN_SET_PROJECT_NAME = libkopete
 
-SUBDIRS = private ui . avdevice
+if !enable_av
+AVDEVICEDIR =
+else
+AVDEVICEDIR = avdevice
+endif
+
+SUBDIRS = private ui . $(AVDEVICEDIR)
 
 METASOURCES = AUTO
 
