@@ -171,7 +171,8 @@ private:
 	int m_pixelWide;
 
 	Kopete::OnlineStatus m_oldStatus;
-	QString m_oldStatusIcon;
+	QPixmap m_oldStatusIcon;
+	QPixmap m_originalBlinkIcon;
 
 	QTimer *mBlinkTimer;
 
