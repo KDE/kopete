@@ -330,7 +330,7 @@ void Webcam::processMessage(const Message& message)
 		QObject::connect(m_listener, SIGNAL(readyAccept()), this, SLOT(slotAccept()));
 		QObject::connect(m_listener, SIGNAL(gotError(int)), this, SLOT(slotListenError(int)));
 				// Listen for incoming connections.
-		bool isListening = m_listener->listen();
+		bool isListening = m_listener->listen(1);
 		kdDebug(14140) << k_funcinfo << (isListening ? QString("listening %1").arg(m_listener->localAddress().toString()) : QString("not listening")) << endl;		
 		
 		rx=QRegExp("<tcpport>([^<]*)</tcpport>");
@@ -494,11 +494,8 @@ QString Webcam::xml(uint session , uint rid)
 	
 	KConfig *config = KGlobal::config();
 	config->setGroup( "MSN" );
-	QString port=config->readEntry("WebcamPort" );
-	if(port.isEmpty() || port == "0" )
-		port="6891";
-	
-	m_listener = new KServerSocket(port, this) ;
+	m_listener = new KServerSocket( config->readEntry("WebcamPort" ) ,this) ;
+	QString port=m_listener->localAddress().serviceName();
 	
 	return "<" + who + "><version>2.0</version><rid>"+QString::number(rid)+"</rid><udprid>"+QString::number(rid+1)+"</udprid><session>"+QString::number(session)+"</session><ctypes>0</ctypes><cpu>2931</cpu>" +
 			"<tcp><tcpport>"+port+"</tcpport>\t\t\t\t\t\t\t\t  <tcplocalport>"+port+"</tcplocalport>\t\t\t\t\t\t\t\t  <tcpexternalport>"+port+"</tcpexternalport>"+ip+"</tcp>"+
