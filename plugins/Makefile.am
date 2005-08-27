@@ -1,12 +1,13 @@
-if include_motionautoaway
-MOTIONAUTOAWAY_SUBDIR=motionautoaway
-endif
+#if include_motionautoaway
+#MOTIONAUTOAWAY_SUBDIR=motionautoaway
+#endif
 
-if include_smpppdcs
-SMPPPDCS_SUBDIR=smpppdcs
-endif
+#if include_smpppdcs
+#SMPPPDCS_SUBDIR=smpppdcs
+#endif
 
-SUBDIRS = latex autoreplace history contactnotes cryptography\
-	connectionstatus translator nowlistening webpresence texteffect\
-	highlight alias $(MOTIONAUTOAWAY_SUBDIR) netmeeting addbookmarks\
-	$(SMPPPDCS_SUBDIR)
+#SUBDIRS = latex autoreplace history contactnotes cryptography\
+#	connectionstatus translator nowlistening webpresence texteffect\
+#	highlight alias $(MOTIONAUTOAWAY_SUBDIR) netmeeting addbookmarks\
+#	$(SMPPPDCS_SUBDIR)
+SUBDIRS = 
