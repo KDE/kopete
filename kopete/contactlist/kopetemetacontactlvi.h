@@ -142,7 +142,7 @@ private slots:
 	void slotPhotoChanged();
 
 	void slotAddToNewGroup();
-	void slotIdleStateChanged( Kopete::Contact * );
+	void slotIdleStateChanged( Kopete::Contact * =0L);
 
 	void slotConfigChanged();
 
@@ -171,7 +171,8 @@ private:
 	int m_pixelWide;
 
 	Kopete::OnlineStatus m_oldStatus;
-	QString m_oldStatusIcon;
+	QPixmap m_oldStatusIcon;
+	QPixmap m_originalBlinkIcon;
 
 	QTimer *mBlinkTimer;
 

@@ -67,6 +67,7 @@ bool SSIListTask::take( Transfer* transfer )
 		{
 			setTransfer( transfer );
 			handleSSIListReply();
+			setTransfer( 0 );
 			return true;
 		}
 		else

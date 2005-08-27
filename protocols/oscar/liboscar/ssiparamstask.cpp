@@ -55,6 +55,7 @@ bool SSIParamsTask::take(Transfer* transfer)
 	{
 		setTransfer( transfer );
 		handleParamReply();
+		setTransfer( 0 );
 		return true;
 	}
 

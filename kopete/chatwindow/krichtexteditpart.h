@@ -38,7 +38,8 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 
 		QFont font() { return mFont; }
 
-		QColor fgColor();		
+		QColor fgColor();
+
 		QColor bgColor();
 
 		void clear();

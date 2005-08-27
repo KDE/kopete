@@ -70,7 +70,10 @@ bool UserSearchTask::take( Transfer* t )
 		Buffer* buffer = new Buffer( tlv1.data, tlv1.length );
 		
 		if ( seq == 0 )
+		{
+			setTransfer( 0 );
 			return false;
+		}
 			
 		ICQSearchResult result;
 		buffer->getLEWord(); // data chunk size
@@ -97,6 +100,7 @@ bool UserSearchTask::take( Transfer* t )
 			emit searchFinished( moreUsersCount );
 			setSuccess( 0, QString::null );
 		}
+		setTransfer( 0 );
 	}
 	return true;
 }

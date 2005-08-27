@@ -55,7 +55,6 @@ bool MessageReceiverTask::take( Transfer* transfer )
 {
 	if ( forMe( transfer ) )
 	{
-		setTransfer( transfer );
 		Buffer* b = transfer->buffer();
 		m_icbmCookie = b->getBlock( 8 );
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "icbm cookie is " << m_icbmCookie << endl;
@@ -69,15 +68,21 @@ bool MessageReceiverTask::take( Transfer* transfer )
 		switch( m_channel )
 		{
 		case 0x0001:
+			setTransfer( transfer );
 			handleType1Message();
+			setTransfer( 0 );
 			return true;
 			break;
 		case 0x0002:
+			setTransfer( transfer );
 			handleType2Message();
+			setTransfer( 0 );
 			return true;
 			break;
 		case 0x0004:
+			setTransfer( transfer );
 			handleType4Message();
+			setTransfer( 0 );
 			return true;
 			break;
 		default:

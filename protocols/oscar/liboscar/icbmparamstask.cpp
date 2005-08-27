@@ -52,6 +52,7 @@ bool ICBMParamsTask::take( Transfer* transfer )
 	{
 		setTransfer( transfer );
 		handleICBMParameters();
+		setTransfer( 0 );
 		return true;
 	}
 	return false;

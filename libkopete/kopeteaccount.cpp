@@ -80,6 +80,7 @@ public:
 	bool suppressStatusNotification;
 	Kopete::BlackLister *blackList;
 	KConfigGroup *configGroup;
+	uint connectionTry;
 };
 
 Account::Account( Protocol *parent, const QString &accountId, const char *name )
@@ -117,11 +118,11 @@ void Account::disconnected( DisconnectReason reason )
 	if ( ( KopetePrefs::prefs()->reconnectOnDisconnect() == true && reason > Manual ) ||
 	     reason == BadPassword )
 	{
-		if(reason != BadPassword)
+		if(reason != BadPassword) 
 			d->connectionTry++;
 		//use a timer to allow the plugins to clean up after return
-		if (d->connectionTry>3)
-			QTimer::singleShot(0, this, SLOT(connect()));
+		if(d->connectionTry < 3)
+			QTimer::singleShot( 0, this, SLOT(connect()));
 	}
 	if(reason== OtherClient)
 	{

@@ -66,6 +66,7 @@ bool WarningTask::take( Transfer* transfer )
 			<< " to " << m_newLevel << endl;
 		emit userWarned( m_contact, m_increase, m_newLevel );
 		setSuccess( 0, QString::null );
+		setTransfer( 0 );
 		return true;
 	}
 	else

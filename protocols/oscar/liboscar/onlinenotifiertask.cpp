@@ -67,6 +67,8 @@ bool OnlineNotifierTask::take( Transfer* transfer )
 				userOnline();
 			else
 				userOffline();
+			
+			setTransfer( 0 );
 		}
 		return true;
 	}

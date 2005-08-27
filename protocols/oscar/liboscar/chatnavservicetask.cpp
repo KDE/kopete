@@ -91,6 +91,7 @@ bool ChatNavServiceTask::take( Transfer* transfer )
         };
     }
     setSuccess( 0, QString::null );
+    setTransfer( 0 );
 	return true;
 
 }

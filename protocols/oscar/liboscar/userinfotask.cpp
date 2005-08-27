@@ -110,6 +110,7 @@ bool UserInfoTask::take( Transfer * transfer )
 			}
 			list.clear();
 		}
+		setTransfer( 0 );
 		return true;
 	}
 	return false;

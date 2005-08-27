@@ -57,6 +57,7 @@ bool RateInfoTask::take( Transfer* transfer )
 	{
 		setTransfer( transfer );
 		handleRateInfoResponse();
+		setTransfer( 0 );
 		return true;
 	}
 	return false;

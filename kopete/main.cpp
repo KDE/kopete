@@ -56,7 +56,7 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( "Duncan Mac-Vicar Prett", I18N_NOOP("Project founder and original author"), "duncan@kde.org", "http://www.mac-vicar.org/~duncan" );
 	aboutData.addAuthor ( "Andre Duffeck", I18N_NOOP("Developer, Yahoo plugin maintainer"), "andre@duffeck.de" );
 	aboutData.addAuthor ( "Till Gerken", I18N_NOOP("Developer, Jabber plugin maintainer"), "till@tantalo.net");
-	aboutData.addAuthor ( "Olivier Goffart", I18N_NOOP("Developer, MSN plugin maintainer"), "ogoffart @ kde.org");
+	aboutData.addAuthor ( "Olivier Goffart", I18N_NOOP("Lead Developer, MSN plugin maintainer"), "ogoffart @ kde.org");
 	aboutData.addAuthor ( "Andy Goossens", I18N_NOOP("Developer"), "andygoossens@telenet.be" );
 	aboutData.addAuthor ( "Michel Hermier", I18N_NOOP("IRC plugin maintainer"), "michel.hermier@wanadoo.fr" );
 	aboutData.addAuthor ( "Chris Howells", I18N_NOOP("Developer, Connection status plugin author"), "howells@kde.org", "http://chrishowells.co.uk");

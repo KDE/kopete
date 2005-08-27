@@ -93,7 +93,6 @@ bool AimLoginTask::take( Transfer* transfer )
 {
 	if ( forMe( transfer ) )
 	{
-		setTransfer( transfer );
 		SnacTransfer* st = dynamic_cast<SnacTransfer*>( transfer );
 		if (!st)
 			return false;
@@ -102,11 +101,15 @@ bool AimLoginTask::take( Transfer* transfer )
 		switch ( subtype )
 		{
 		case 0x0003:
+			setTransfer( transfer );
 			handleLoginResponse();
+			setTransfer( 0 );
 			return true;
 			break;
 		case 0x0007:
+			setTransfer( transfer );
 			processAuthStringReply();
+			setTransfer( 0 );
 			return true;
 			break;
 		default:

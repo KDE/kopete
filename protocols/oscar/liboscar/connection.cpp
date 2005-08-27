@@ -212,10 +212,9 @@ void Connection::distribute( Transfer * transfer ) const
 {
 	//d->rateClassManager->recalcRateLevels();
 	if( !rootTask()->take( transfer ) )
-	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "root task refused transfer" << endl;
-		delete transfer;
-	}
+
+	delete transfer;
 }
 
 void Connection::reset()

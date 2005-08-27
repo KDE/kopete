@@ -316,12 +316,12 @@ void KopeteRichTextEditPart::writeConfig()
 
 void KopeteRichTextEditPart::setFgColor()
 {
-	QColor col = edit->color();
+	QColor col=editor->color();
 
 	int s = KColorDialog::getColor( col, KGlobalSettings::textColor() , editor );
 	if(!col.isValid())
-		col= KGlobalSettings::textColor();
-	if ( s != QDialog::Accepted )
+		col= KGlobalSettings::textColor() ;
+	if ( s != QDialog::Accepted  )
 		return;
 
 	setFgColor( col );
@@ -360,10 +360,11 @@ void KopeteRichTextEditPart::setBgColor()
 	QColor col=mBgColor;
 
 	int s = KColorDialog::getColor( col, KGlobalSettings::baseColor(), editor );
-	if (!col.isValid())
+	if(!col.isValid())
 	{
 		col=KGlobalSettings::baseColor();
 	}
+
 	if ( s != QDialog::Accepted  )
 		return;
 		
@@ -392,6 +393,13 @@ void KopeteRichTextEditPart::setBgColor( const QColor &newColor )
 		editor->unsetPalette();
 	else
 		editor->setPalette(pal);
+}
+
+QColor KopeteRichTextEditPart::bgColor()
+{
+	if( mBgColor == KGlobalSettings::baseColor())
+		return QColor();
+	return mBgColor;
 }
 
 void KopeteRichTextEditPart::setFontSize( int size )

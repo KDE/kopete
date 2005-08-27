@@ -65,6 +65,7 @@ bool ChangeVisibilityTask::take(Transfer* transfer)
 	{
 		setTransfer( transfer );
 		setSuccess( 0, QString::null );
+		setTransfer( 0 );
 		return true;
 	}
 	else
