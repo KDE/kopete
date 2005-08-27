@@ -133,20 +133,17 @@ class KopeteMetaContactLVI::Private
 {
 public:
 	Private() : metaContactIcon( 0L ), nameText( 0L ), extraText( 0L ), contactIconBox( 0L ),
-	            metaContactPhoto( 0L ), currentMode( -1 ), currentIconMode( -1 ) {}
+	            currentMode( -1 ), currentIconMode( -1 ) {}
 	ListView::ImageComponent *metaContactIcon;
 	ListView::DisplayNameComponent *nameText;
 	ListView::DisplayNameComponent *extraText;
 	ListView::BoxComponent *contactIconBox;
-	ListView::ImageComponent *metaContactPhoto;
 	ListView::BoxComponent *spacerBox;
 	std::auto_ptr<ListView::ToolTipSource> toolTipSource;
 	// metacontact icon size
 	int iconSize;
 	// protocol icon size
 	int contactIconSize;
-	// metacontact photo size
-	int photoSize;
 	int currentMode;
 	int currentIconMode;
 
@@ -199,8 +196,7 @@ void KopeteMetaContactLVI::initLVI()
 	d->toolTipSource.reset( new ListView::MetaContactToolTipSource( m_metaContact ) );
 
 	m_oldStatus = m_metaContact->status();
-	m_oldStatusIcon = m_metaContact->statusIcon();
-
+	
 	connect( m_metaContact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
 		SLOT( slotDisplayNameChanged() ) );
 
@@ -211,7 +207,7 @@ void KopeteMetaContactLVI::initLVI()
 		SLOT( slotPhotoChanged() ) );
 
 	connect( m_metaContact, SIGNAL( onlineStatusChanged( Kopete::MetaContact *, Kopete::OnlineStatus::StatusType ) ),
-		SLOT( slotUpdateMetaContact() ) );
+		this, SLOT(slotIdleStateChanged(  ) ) );
 
 	connect( m_metaContact, SIGNAL( contactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & ) ),
 		SLOT( slotContactStatusChanged( Kopete::Contact * ) ) );
@@ -437,7 +433,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 			}
 		}
 		//blink if the metacontact icon has changed.
-		if ( !mBlinkTimer->isActive() && ( m_metaContact->statusIcon() != m_oldStatusIcon ) )
+		if ( !mBlinkTimer->isActive() && d->metaContactIcon /*&& d->metaContactIcon->pixmap()  != m_oldStatusIcon */) 
 		{
 			mIsBlinkIcon = false;
 			m_blinkLeft = 9;
@@ -450,12 +446,15 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 		//So the olfStatusIcon will not be set to the real after the blink.
 		//we set it now.
 		if( !mBlinkTimer->isActive() )
-			m_oldStatusIcon=m_metaContact->statusIcon();
+			m_oldStatusIcon=d->metaContactIcon ? d->metaContactIcon->pixmap() : QPixmap();
 	}
 
 	// make a note of the current status for the next time we get a status change
 	m_oldStatus = newStatus;
-
+	
+	if ( m_parentGroup )
+		m_parentGroup->refreshDisplayName();
+	updateVisibility();
 }
 
 void KopeteMetaContactLVI::slotUpdateMetaContact()
@@ -491,14 +490,15 @@ void KopeteMetaContactLVI::slotDisplayNameChanged()
 
 void KopeteMetaContactLVI::slotPhotoChanged()
 {
-	if ( d->metaContactPhoto )
+	if ( d->metaContactIcon && d->currentIconMode == KopetePrefs::PhotoPic ) 
 	{
+		m_oldStatusIcon= d->metaContactIcon->pixmap();
 		QPixmap photoPixmap;
 		//QPixmap defaultIcon( KGlobal::iconLoader()->loadIcon( "vcard", KIcon::Desktop ) );
 		QImage photoImg = m_metaContact->photo();
 		if ( !photoImg.isNull() && (photoImg.width() > 0) &&  (photoImg.height() > 0) )
 		{
-			int photoSize = d->photoSize;
+			int photoSize = d->iconSize;
 
 			if ( photoImg.width() > photoImg.height() )
 			{
@@ -539,9 +539,9 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 		}
 		else
 		{
-			photoPixmap=SmallIcon(m_metaContact->statusIcon(), d->photoSize);
+			photoPixmap=SmallIcon(m_metaContact->statusIcon(), d->iconSize);
 		}
-		d->metaContactPhoto->setPixmap( photoPixmap, false);
+		d->metaContactIcon->setPixmap( photoPixmap, false);
 	}
 }
 
@@ -681,16 +681,13 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 		delete component( 0 );
 
 	d->nameText = 0L;
-	d->metaContactPhoto = 0L;
 	d->extraText = 0L;
 	d->metaContactIcon = 0L;
 	d->contactIconSize = 12;
 	if (mode == KopetePrefs::Detailed) {
-		d->iconSize =  KIcon::SizeMedium;
-		d->photoSize = KIcon::SizeLarge;
+		d->iconSize =  iconmode == KopetePrefs::IconPic ?  KIcon::SizeMedium : KIcon::SizeLarge;
 	} else {
-		d->iconSize = IconSize( KIcon::Small );
-		d->photoSize = KIcon::SizeMedium;
+		d->iconSize = iconmode == KopetePrefs::IconPic ? IconSize( KIcon::Small ) :  KIcon::SizeMedium;
 	}
 	disconnect( Kopete::KABCPersistence::self()->addressBook() , 0 , this , 0);
 
@@ -702,7 +699,7 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 	if (iconmode == KopetePrefs::PhotoPic) {
 		Component *imageBox = new BoxComponent( hbox, BoxComponent::Vertical );
 		new VSpacerComponent( imageBox );
-		d->metaContactPhoto = new ImageComponent( imageBox, d->photoSize + 2 , d->photoSize + 2 );
+		d->metaContactIcon = new ImageComponent( imageBox, d->iconSize + 2 , d->iconSize + 2 );
 		new VSpacerComponent( imageBox );
 		if(!metaContact()->photoSource() && !Kopete::KABCPersistence::self()->addressBook()->findByUid( metaContact()->metaContactId() ).isEmpty()   )
 		{	//if the photo is the one of the kaddressbook,  track every change in the adressbook, it might be the photo of our contact.
@@ -739,11 +736,11 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 	setMetaContactToolTipSourceForComponent( d->metaContactIcon );
 	setMetaContactToolTipSourceForComponent( d->nameText );
 	setMetaContactToolTipSourceForComponent( d->extraText );
-	setMetaContactToolTipSourceForComponent( d->metaContactPhoto );
 
 	// update the display name
 	slotDisplayNameChanged();
 	slotPhotoChanged();
+	slotIdleStateChanged( 0 );
 
 	// finally, re-add all contacts so their icons appear. remove them first for consistency.
 	QPtrList<Kopete::Contact> contacts = m_metaContact->contacts();
@@ -752,6 +749,9 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 		slotContactRemoved( *it );
 		slotContactAdded( *it );
 	}
+	m_oldStatusIcon=d->metaContactIcon ? d->metaContactIcon->pixmap() : QPixmap();
+	if( mBlinkTimer->isActive() )
+		m_originalBlinkIcon=m_oldStatusIcon;
 }
 
 void KopeteMetaContactLVI::updateVisibility()
@@ -773,11 +773,11 @@ void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact *contact,
 			d->extraText->setText( QString::null );
 		else
 			d->extraText->setText( newVal.toString() );
-	} // FIXME wtf? KopeteMetaContact also connects this signals and emits photoChanged! why no connect photoChanged to slotPhotoChanged?
-	else if ( key == QString::fromLatin1("photo") && (m_metaContact->photoSourceContact() == contact) && (m_metaContact->photoSource() == Kopete::MetaContact::SourceContact))
+	} // wtf? KopeteMetaContact also connects this signals and emits photoChanged! why no connect photoChanged to slotPhotoChanged?
+	/*else if ( key == QString::fromLatin1("photo") && (m_metaContact->photoSourceContact() == contact) && (m_metaContact->photoSource() == Kopete::MetaContact::SourceContact))
 	{
 		slotPhotoChanged();
-	}
+	}*/
 }
 
 void KopeteMetaContactLVI::slotContactAdded( Kopete::Contact *c )
@@ -907,7 +907,7 @@ bool KopeteMetaContactLVI::isGrouped() const
 
 	if ( m_parentGroup->group() == Kopete::Group::temporary() && !KopetePrefs::prefs()->sortByGroup() )
 		return false;
-
+ 
 	return true;
 }
 
@@ -929,8 +929,11 @@ void KopeteMetaContactLVI::slotIdleStateChanged( Kopete::Contact *c )
 			d->extraText->setDefaultColor();
 	}
 
-	if(d->metaContactIcon)
-	d->metaContactIcon->setPixmap( icon );
+	if(d->metaContactIcon && d->currentIconMode==KopetePrefs::IconPic)
+	{
+		m_oldStatusIcon=d->metaContactIcon->pixmap();
+		d->metaContactIcon->setPixmap( icon );
+	}
 	// we only need to update the contact icon if one was supplied;
 	// if none was supplied, we only need to update the MC appearance
 	if ( c )
@@ -949,9 +952,9 @@ void KopeteMetaContactLVI::catchEvent( Kopete::MessageEvent *event )
 	if ( mBlinkTimer->isActive() )
 		mBlinkTimer->stop();
 
-	m_oldStatusIcon = m_metaContact->statusIcon();
+	m_oldStatusIcon= d->metaContactIcon ? d->metaContactIcon->pixmap() : QPixmap();
 
-	mBlinkTimer->start( 500, false );
+	mBlinkTimer->start( 400, false );
 
 	//show the contact if it was hidden because offline.
 	updateVisibility();
@@ -963,16 +966,19 @@ void KopeteMetaContactLVI::slotBlink()
 	if ( mIsBlinkIcon )
 	{
 		if(d->metaContactIcon)
-			d->metaContactIcon->setPixmap( SmallIcon( m_metaContact->statusIcon(), d->iconSize ) );
+			d->metaContactIcon->setPixmap( m_originalBlinkIcon );
 		if ( !haveEvent && m_blinkLeft <= 0 )
 		{
 			mBlinkTimer->stop();
-			m_oldStatusIcon = m_metaContact->statusIcon();
+			m_oldStatusIcon=d->metaContactIcon ? d->metaContactIcon->pixmap() : QPixmap();
 			updateVisibility();
+			m_originalBlinkIcon=QPixmap(); //i hope this help to reduce memory consuption
 		}
 	}
 	else
 	{
+		if(d->metaContactIcon)
+			m_originalBlinkIcon=d->metaContactIcon->pixmap();
 		if ( haveEvent )
 		{
 			if(d->metaContactIcon)
@@ -981,7 +987,7 @@ void KopeteMetaContactLVI::slotBlink()
 		else
 		{
 			if(d->metaContactIcon)
-				d->metaContactIcon->setPixmap( SmallIcon( m_oldStatusIcon, d->iconSize ) );
+				d->metaContactIcon->setPixmap( m_oldStatusIcon );
 			m_blinkLeft--;
 		}
 	}
@@ -1004,7 +1010,8 @@ void KopeteMetaContactLVI::slotEventDone( Kopete::MessageEvent *event )
 		}
 
 		if(d->metaContactIcon)
-			d->metaContactIcon->setPixmap( SmallIcon( m_metaContact->statusIcon(), d->iconSize ) );
+			d->metaContactIcon->setPixmap( m_originalBlinkIcon );
+		m_originalBlinkIcon=QPixmap(); //i hope this help to reduce memory consuption
 		mIsBlinkIcon = false;
 	}
 }

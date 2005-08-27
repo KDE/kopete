@@ -410,7 +410,7 @@ QString Emoticons::parse( const QString &message, ParseMode mode )
 	QValueList<Token> tokens = tokenize( message, mode );
 	QValueList<Token>::const_iterator token;
 	QString result;
-
+	QPixmap p;
 	for ( token = tokens.begin(); token != tokens.end(); ++token )
 	{
 		switch ( (*token).type )
@@ -421,11 +421,21 @@ QString Emoticons::parse( const QString &message, ParseMode mode )
 		case Image:
 			// Shall we do this at emoticon initialization ? But in that case tokenize() will
 			// return this (useless) information for contact lists too
+
+			// We need to include size (width, height attributes)  hints in the emoticon HTML code
+			// Unless we do so, ChatMessagePart::slotScrollView does not work properly and causing
+			// HTMLPart not to be scrolled to the very last message.
+			p.load( (*token).picPath );
 			result += QString::fromLatin1( "<img align=\"center\" src=\"" ) + 
 				  (*token).picPath + 
 				  QString::fromLatin1( "\" title=\"" ) +
 				  (*token).text + 
-				  QString::fromLatin1( "\"/>" );
+				  QString::fromLatin1( "\" width=\"" ) +
+				  QString::number( p.width() ) +
+				  QString::fromLatin1( "\" height=\"" ) +
+				  QString::number( p.height() ) +
+				  QString::fromLatin1( "\" />" );
+			kdDebug( 14010 ) << k_funcinfo << "Emoticon html code: " << result;
 		break;
 		default:
 			kdDebug( 14010 ) << k_funcinfo << "Unknown token type. Something's broken." << endl;
