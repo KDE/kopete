@@ -207,7 +207,7 @@ void KopeteMetaContactLVI::initLVI()
 		SLOT( slotPhotoChanged() ) );
 
 	connect( m_metaContact, SIGNAL( onlineStatusChanged( Kopete::MetaContact *, Kopete::OnlineStatus::StatusType ) ),
-		SLOT( slotUpdateMetaContact() ) );
+		this, SLOT(slotIdleStateChanged(  ) ) );
 
 	connect( m_metaContact, SIGNAL( contactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & ) ),
 		SLOT( slotContactStatusChanged( Kopete::Contact * ) ) );
@@ -451,7 +451,10 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 
 	// make a note of the current status for the next time we get a status change
 	m_oldStatus = newStatus;
-
+	
+	if ( m_parentGroup )
+		m_parentGroup->refreshDisplayName();
+	updateVisibility();
 }
 
 void KopeteMetaContactLVI::slotUpdateMetaContact()
@@ -904,7 +907,7 @@ bool KopeteMetaContactLVI::isGrouped() const
 
 	if ( m_parentGroup->group() == Kopete::Group::temporary() && !KopetePrefs::prefs()->sortByGroup() )
 		return false;
-
+ 
 	return true;
 }
 
