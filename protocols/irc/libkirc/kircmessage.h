@@ -20,15 +20,15 @@
 
 #include "kircentity.h"
 
-#include <qstringlist.h>
-#include <qvaluelist.h>
+//#include <QList>
+#include <QStringList>
 
 // Uncoment this if you want a really rfc compliant message handling.
 // This is due to some changes of the message encoding with 14 arguments.(not very frequent :)
 // #define _IRC_STRICTNESS_
 
 #ifndef QByteArrayList
-#define QByteArrayList QValueList<QByteArray>
+#define QByteArrayList QList<QByteArray>
 #endif
 
 class QTextCodec;
@@ -46,10 +46,30 @@ public:
 		const QStringList &args = QStringList(),
 		const QString &suffix = QString::null);
 
+	// temporary hack
+	static QString format(
+		const QString &command,
+		const QString &arg,
+		const QString &suffix = QString::null)
+	{
+		return format(command, QStringList(arg), suffix);
+	}
+
 	static QByteArray format(
 		const QByteArray &command,
 		const QByteArrayList &args = QByteArrayList(),
 		const QByteArray &suffix = QByteArray());
+
+	// temporary hack
+	static QByteArray format(
+		const QByteArray &command,
+		const QByteArray &arg,
+		const QByteArray &suffix)
+	{
+		QByteArrayList args;
+		args.append(arg);
+		return format(command, args, suffix);
+	}
 
 	static QString formatCtcp(const QString &ctcpMessage);
 	static QByteArray formatCtcp(const QByteArray &ctcpMessage);
@@ -78,7 +98,6 @@ private:
 public:
 	Message(const QByteArray &message = QByteArray());
 	Message(const KIRC::Message &obj);
-	Message(const KIRC::Message *obj);
 
 	~Message();
 
@@ -94,7 +113,7 @@ public:
 	QByteArray rawPrefix() const;
 	QByteArray rawCommand() const;
 	QByteArray rawArgs() const;
-	QValueList<QByteArray> rawArgList() const;
+	QByteArrayList rawArgList() const;
 	QByteArray rawArg(size_t i) const;
 	QByteArray rawSuffix() const;
 
@@ -137,7 +156,7 @@ private:
 	/**
 	 * Contains the raw message line.
 	 */
-	QByteArray m_raw;
+	QByteArray m_line;
 
 	/**
 	 * Contains the raw prefix.

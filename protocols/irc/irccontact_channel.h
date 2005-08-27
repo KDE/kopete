@@ -27,12 +27,15 @@ class KActionMenu;
 class KCodecAction;
 class KToggleAction;
 
-namespace Kopete { class MetaContact; }
-namespace Kopete { class ChatSession; }
-namespace Kopete { class Message; }
-class KopeteView;
-
 class IRCAccount;
+
+namespace Kopete
+{
+	class ChatSession;
+	class Message;
+	class MetaContact;
+}
+class KopeteView;
 
 /**
  * @author Jason Keirstead <jason@keirstead.org>

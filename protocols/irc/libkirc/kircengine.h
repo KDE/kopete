@@ -26,8 +26,7 @@
 #include "kircsocket.h"
 #include "kirctransfer.h"
 
-#include <qdict.h>
-#include <qintdict.h>
+#include <QMap>
 
 class QRegExp;
 
@@ -316,13 +315,13 @@ private:
 	void bindNumericReplies();
 	void bindCtcp();
 
-	bool invokeCtcpCommandOfMessage(const QDict<KIRC::MessageRedirector> &map, KIRC::Message &message);
+	bool invokeCtcpCommandOfMessage(const QMap<QString, KIRC::MessageRedirector *> &map, KIRC::Message &message);
 
 	/*
 	 * Methods that handles all the bindings creations.
 	 * This methods is used by all the bind(...) methods.
 	 */
-	bool _bind(QDict<KIRC::MessageRedirector> &dict,
+	bool _bind(QMap<QString, KIRC::MessageRedirector *> &dict,
 		QString command, QObject *object, const char *member,
 		int minArgs, int maxArgs, const QString &helpMessage);
 
@@ -341,7 +340,7 @@ private:
 	bool m_FailedNickOnLogin;
 	bool m_useSSL;
 
-	QValueList<KIRC::Entity *> m_entities;
+	KIRC::EntityPtrList m_entities;
 	KIRC::EntityPtr m_server;
 	KIRC::EntityPtr m_self;
 
@@ -350,12 +349,13 @@ private:
 	QString m_SourceString;
 	QString m_PendingNick;
 
-	QDict<KIRC::MessageRedirector> m_commands;
-//	QIntDict<KIRC::MessageRedirector> m_numericCommands;
-	QDict<KIRC::MessageRedirector> m_ctcpQueries;
-	QDict<KIRC::MessageRedirector> m_ctcpReplies;
+	QMap<QString, KIRC::MessageRedirector *> m_commands;
+//	QMap<int, KIRC::MessageRedirector *> m_numericCommands;
+	QMap<QString, KIRC::MessageRedirector *> m_ctcpQueries;
+	QMap<QString, KIRC::MessageRedirector *> m_ctcpReplies;
 };
 
 }
 
 #endif
+

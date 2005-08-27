@@ -24,8 +24,6 @@
 #include <qobject.h>
 #include <qtextstream.h>
 
-class KExtendedSocket;
-
 class QFile;
 class QTextCodec;
 
@@ -117,7 +115,7 @@ public:
 	unsigned long fileSize() const
 		{ return m_fileSize; }
 public slots:
-	bool setSocket( KExtendedSocket *socket );
+//	bool setSocket( KExtendedSocket *socket );
 	void closeSocket();
 
 	void setCodec( QTextCodec *codec );
@@ -161,7 +159,7 @@ protected:
 	QString		m_nick;
 
 	Type		m_type;
-	KExtendedSocket *m_socket;
+//	KExtendedSocket *m_socket;
 	bool		m_initiated;
 
 	// Text member data

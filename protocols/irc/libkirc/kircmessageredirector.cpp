@@ -19,8 +19,6 @@
 
 #include "kircengine.h"
 
-#include <qsignalslotimp.h> // QT-3.3: Internal stuff, remove for QT-4.0
-
 using namespace KIRC;
 
 MessageRedirector::MessageRedirector(KIRC::Engine *engine,
@@ -40,13 +38,7 @@ bool MessageRedirector::connect(QObject *object, const char *member)
 
 int MessageRedirector::connected() const
 {
-	QConnectionList *list = QObject::receivers(SIGNAL(redirect(KIRC::Message &)));
-	if (list)
-		return list->count();
-	return 0;
-
-//	QT-4.0
-//	return QObject::receivers(SIGNAL(redirect(KIRC::Message &)));
+	return receivers(SIGNAL(redirect(KIRC::Message &)));
 }
 
 QStringList MessageRedirector::operator () (Message &msg)

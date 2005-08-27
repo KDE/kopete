@@ -17,8 +17,9 @@ kopete_irc_la_SOURCES = \
 	ircguiclient.cpp \
 	ircnetwork.cpp \
 	ircprotocol.cpp \
-	irctransferhandler.cpp \
 	ksparser.cpp
+
+#	irctransferhandler.cpp
 
 kopete_irc_la_LDFLAGS     = -module $(KDE_PLUGIN) $(all_libraries)
 kopete_irc_la_LIBADD      = ../../libkopete/libkopete.la \

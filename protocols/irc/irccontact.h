@@ -83,7 +83,8 @@ public:
 	 */
 	bool isChatting( Kopete::ChatSession *avoid = 0L ) const;
 
-	Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate);
+//	Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate);
+	Kopete::ChatSession *chatSessionCreate(IRC::ChatSessionType type = IRC::SERVER);
 
 	void appendMessage(Kopete::Message &);
 
@@ -107,13 +108,12 @@ public slots:
 private slots:
 	void entityUpdated();
 
-	void slotSendMsg(Kopete::Message &message, Kopete::ChatSession *);
+	void slotSendMsg(Kopete::Message &message, Kopete::ChatSession *chatSession);
 	QString sendMessage( const QString &msg );
 
-	void chatSessionDestroyed();
+	void chatSessionDestroyed(Kopete::ChatSession *chatSession);
 
 	void deleteContact();
-	void initConversation() {};
 
 private:
 	KIRC::EntityPtr m_entity;

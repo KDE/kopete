@@ -133,13 +133,13 @@ void Socket::writeRawMessage(const QByteArray &rawMsg)
 {
 	if (!d->socket || d->socket->state() != KBufferedSocket::Open)
 	{
-		emit internalError(i18n("Appenting to send while not connected: %1").arg(rawMsg));
+//		emit internalError(i18n("Attempting to send while not connected: %1").arg(rawMsg));
 		return;
 	}
 
-	QCString buffer = rawMsg + QCString("\n\r"); // QT-4.0 make this a QByteArray
+	QByteArray buffer = rawMsg + QByteArray("\n\r");
 	int wrote = d->socket->writeBlock(buffer.data(), buffer.length());
-	kdDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg) << endl;
+//	kdDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg) << endl;
 }
 
 void Socket::writeRawMessage(const QString &msg, QTextCodec *codec)
@@ -179,8 +179,8 @@ void Socket::slotReadyRead()
 		Message msg(rawMsg);
 		if (msg.isValid())
 			emit receivedMessage(msg);
-		else
-			emit internalError(i18n("Parse error while parsing: %1").arg(msg.rawLine()));
+//		else
+//			emit internalError(i18n("Parse error while parsing: %1").arg(msg.rawLine()));
 
 		QTimer::singleShot( 0, this, SLOT( slotReadyRead() ) );
 	}
@@ -223,11 +223,11 @@ void Socket::socketGotError(int errCode)
 	// Ignore spurious error
 	if (err == KBufferedSocket::NoError)
 		return;
-
+/*
 	QString errStr = KBufferedSocket::errorString(err);
 	kdDebug(14120) << k_funcinfo << "Socket error: " << errStr << endl;
 	emit internalError(errStr);
-
+*/
 	// ignore non-fatal error
 	if (!KBufferedSocket::isFatalError(err))
 		return;

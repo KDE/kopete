@@ -10,11 +10,11 @@ libkirc_la_SOURCES = \
 	kircentity.cpp \
 	kircmessage.cpp \
 	kircmessageredirector.cpp \
-	kircsocket.cpp \
-	kirctransfer.cpp \
-	kirctransferhandler.cpp \
-	kirctransferserver.cpp \
-	ksslsocket.cpp
+	kircsocket.cpp
+#	kirctransfer.cpp \
+#	kirctransferhandler.cpp \
+#	kirctransferserver.cpp
+ 
 libkirc_la_LDFLAGS = -no-undefined $(KDE_PLUGIN) $(all_libraries)
 libkirc_la_LIBADD = $(LIB_KIO)
 

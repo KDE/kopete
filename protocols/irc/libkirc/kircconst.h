@@ -20,9 +20,9 @@
 
 #include <ksharedptr.h>
 
-#include <qregexp.h>
-#include <qstring.h>
-#include <qvaluelist.h>
+#include <QList>
+#include <QRegExp>
+#include <QString>
 
 class QTextCodec;
 
@@ -143,7 +143,7 @@ namespace KIRC
 	// Some typdefs
 	class Entity;
 	typedef KSharedPtr<KIRC::Entity> EntityPtr;
-	typedef QValueList<KIRC::EntityPtr> EntityPtrList;
+	typedef QList<KIRC::EntityPtr> EntityPtrList;
 }
 
 #endif

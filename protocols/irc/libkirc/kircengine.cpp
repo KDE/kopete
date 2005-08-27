@@ -23,7 +23,6 @@
 #include "kircengine.h"
 
 #include "kircsocket.h"
-#include "ksslsocket.h"
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -46,19 +45,11 @@ Engine::Engine(QObject *parent)
 	  m_FailedNickOnLogin(false),
 	  m_useSSL(false),
 	  m_server(new Entity(QString::null, KIRC::Server)),
-	  m_self(new Entity(QString::null, KIRC::User)),
-	  m_commands(101, false),
-//	  m_numericCommands(101),
-	  m_ctcpQueries(17, false),
-	  m_ctcpReplies(17, false)
+	  m_self(new Entity(QString::null, KIRC::User))
 {
 	setUserName(QString::null);
 
 	m_entities << m_server << m_self;
-
-	m_commands.setAutoDelete(true);
-	m_ctcpQueries.setAutoDelete(true);
-	m_ctcpReplies.setAutoDelete(true);
 
 	bindCommands();
 	bindNumericReplies();
@@ -137,7 +128,7 @@ void Engine::setRealName(const QString &newName)
 		m_realName = newName;
 }
 
-bool Engine::_bind(QDict<KIRC::MessageRedirector> &dict,
+bool Engine::_bind(QMap<QString, KIRC::MessageRedirector *> &dict,
 		QString command, QObject *object, const char *member,
 		int minArgs, int maxArgs, const QString &helpMessage)
 {
@@ -275,7 +266,7 @@ void Engine::onReceivedMessage( KIRC::Message &msg )
  * (Only missing the \n\r final characters)
  * So applying the same parsing rules to the messages.
  */
-bool Engine::invokeCtcpCommandOfMessage(const QDict<MessageRedirector> &map, Message &msg)
+bool Engine::invokeCtcpCommandOfMessage(const QMap<QString, MessageRedirector *> &map, Message &msg)
 {
 //	appendMessage( i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived) );
 

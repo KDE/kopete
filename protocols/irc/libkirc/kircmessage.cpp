@@ -59,7 +59,7 @@ QByteArray Message::format(
 		const QByteArrayList &args,
 		const QByteArray &suffix)
 {
-#warning FIXME
+	#warning implement me
 	QByteArray msg = command;
 
 	// FIXME: use a while loop instead and quote the arguments
@@ -80,14 +80,14 @@ QString Message::formatCtcp(const QString &str)
 
 QByteArray Message::formatCtcp(const QByteArray &str)
 {
-#warning FIXME
+	#warning implement me
 //	return QChar(0x01) + ctcpQuote(str) + QChar(0x01);
 	return str;
 }
 
 QByteArray Message::quote(const QByteArray &str)
 {
-#warning FIXME
+	#warning implement me
 /*
 	QString tmp = str;
 	QChar q('\020');
@@ -103,7 +103,7 @@ QByteArray Message::quote(const QByteArray &str)
 // FIXME: The unquote system is buggy.
 QByteArray Message::unquote(const QByteArray &str)
 {
-#warning FIXME
+	#warning implement me
 /*
 	QString tmp = str;
 
@@ -135,7 +135,7 @@ QString Message::ctcpQuote(const QString &str)
 
 QByteArray Message::ctcpQuote(const QByteArray &str)
 {
-#warning FIXME
+	#warning implement me
 /*
 	QString tmp = str;
 	tmp.replace( QChar('\\'), QString::fromLatin1("\\\\"));
@@ -147,7 +147,7 @@ QByteArray Message::ctcpQuote(const QByteArray &str)
 
 QByteArray Message::ctcpUnquote(const QByteArray &str)
 {
-#warning FIXME
+	#warning implement me
 /*
 	QString tmp = str;
 	tmp.replace("\\\\", "\\");
@@ -165,7 +165,7 @@ Message::Message(const QByteArray &msg)
 Message::Message(const Message &obj)
         : m_ctcpMessage(0)
 {
-	m_raw = obj.m_raw;
+	m_line = obj.m_line;
 
 	m_prefix = obj.m_prefix;
 	m_command = obj.m_command;
@@ -173,21 +173,7 @@ Message::Message(const Message &obj)
 	m_suffix = obj.m_suffix;
 
 	if (obj.m_ctcpMessage)
-		m_ctcpMessage = new Message(obj.m_ctcpMessage);
-}
-
-Message::Message(const Message *obj)
-	: m_ctcpMessage(0)
-{
-	m_raw = obj->m_raw;
-
-	m_prefix = obj->m_prefix;
-	m_command = obj->m_command;
-	m_args = obj->m_args;
-	m_suffix = obj->m_suffix;
-
-	if (obj->m_ctcpMessage)
-		m_ctcpMessage = new Message(obj->m_ctcpMessage);
+		m_ctcpMessage = new Message(*obj.m_ctcpMessage);
 }
 
 Message::~Message()
@@ -208,7 +194,7 @@ bool Message::isNumeric() const
 
 void Message::dump() const
 {
-	kdDebug(14120)	<< "Raw:" << m_raw << endl
+	kdDebug(14120)	<< "Line:" << m_line << endl
 			<< "Prefix:" << m_prefix << endl
 			<< "Command:" << m_command << endl
 			<< "Args:" << m_args << endl
@@ -236,7 +222,7 @@ EntityPtr Message::entityFromArg(KIRC::Engine *engine, size_t i) const
 */
 QByteArray Message::rawLine() const
 {
-	return m_raw;
+	return m_line;
 }
 
 QByteArray Message::rawPrefix() const
@@ -254,7 +240,7 @@ QByteArray Message::rawArgs() const
 	return m_args;
 }
 
-QValueList<QByteArray> Message::rawArgList() const
+QByteArrayList Message::rawArgList() const
 {
 	return m_argList;
 }
@@ -319,30 +305,22 @@ QTextCodec *Message::checkCodec(QTextCodec *codec) const
 	return 0;
 }
 
-bool Message::parse(const QByteArray &raw)
+bool Message::parse(const QByteArray &line)
 {
-	m_raw = raw;
+	QString match;
+
+	m_line = line;
 	m_valid = false;
 
 	// Match a regexp instead of the replace ...
-//	m_raw.replace("\r\n",""); //remove the trailling \r\n if any(there must be in fact)
-
-	if (matchForIRCRegExp(sm_IRCCommandType1))
-		m_valid = true;
-#ifdef _IRC_STRICTNESS_
-	if (matchForIRCRegExp(sm_IRCCommandType2))
-		m_valid = true;
-#endif // _IRC_STRICTNESS_
-
-	return m_valid;
-}
-
-bool Message::matchForIRCRegExp(QRegExp &regexp)
-{
+//	m_line.replace("\r\n",""); //remove the trailling \r\n if any(there must be in fact)
+ 
+	#warning implement me: parsing
+/*
 	if (regexp.exactMatch(QString::fromLatin1(m_raw)))
 	{
 		// Fixme QT4: do QByteArray = QString.latin1() directly
-//		m_raw     = QCString(regexp.cap(1).latin1());
+//		m_line    = QCString(regexp.cap(1).latin1());
 		m_prefix  = QCString(regexp.cap(1).latin1());
 		m_command = QCString(regexp.cap(2).latin1());
 		m_args    = QCString(regexp.cap(3).latin1());
@@ -353,9 +331,10 @@ bool Message::matchForIRCRegExp(QRegExp &regexp)
 		extractCtcpCommand();
 #endif // _IRC_STRICTNESS_
 
-		return true;
+		m_valid = true;
 	}
-	return false;
+*/
+	return m_valid;
 }
 
 /* Return true if the given string is a special command string
@@ -366,8 +345,7 @@ bool Message::matchForIRCRegExp(QRegExp &regexp)
 #ifndef _IRC_STRICTNESS_
 bool Message::extractCtcpCommand()
 {
-//	if (m_suffix.isEmpty()) // QT4
-	if (m_suffix.isNull() || m_suffix.size() == 0 )
+	if (m_suffix.isEmpty())
 		return false;
 /*
 	uint len = message.length();

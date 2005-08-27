@@ -35,6 +35,7 @@
 #include <qtimer.h>
 #include <qtextcodec.h>
 
+using namespace IRC;
 using namespace Kopete;
 
 class IRCContactPrivate
@@ -42,7 +43,7 @@ class IRCContactPrivate
 public:
 	KIRC::EntityPtr entity;
 
-	Kopete::ChatSession chatSession; // really necessary ?
+	QMap<ChatSessionType, ChatSession *> chatSessions;
 
 //	QList<IRContact *> members;
 };
@@ -68,12 +69,11 @@ IRCContact::IRCContact(IRCAccount *account, KIRC::EntityPtr entity, MetaContact 
 	mMyself.append( static_cast<Contact*>( this ) );
 
 	// KIRC stuff
+	connect(engine, SIGNAL(connectionStateChanged(KIRC::ConnectionState)),
+		this, SLOT(updateStatus()));
 
-	QObject::connect(engine, SIGNAL(connectionStateChanged(KIRC::ConnectionState)),
-			this, SLOT(updateStatus()));
-
-	QObject::connect(m_entity, SIGNAL(updated()),
-			this, SLOT(entityUpdated()));
+	connect(m_entity, SIGNAL(updated()),
+		this, SLOT(entityUpdated()));
 
 	entityUpdated();
 }
@@ -214,28 +214,29 @@ QTextCodec *IRCContact::codec()
 	return codec;
 }
 
-ChatSession *IRCContact::chatSessionCreate()
+ChatSession *IRCContact::chatSessionCreate(ChatSessionType type)
 {
 	IRCAccount *account = ircAccount();
 	KIRC::Engine *engine = kircEngine();
 
-	if (canCreate == Contact::CanCreate && !m_chatSession)
+	Kopete::ChatSession *chatSession = d->chatSessions.get()
+	if (!chatSession)
 	{
 //		if (engine->status() == KIRC::Engine::Idle && dynamic_cast<IRCServerContact*>(this) == 0)
 //			account->connect();
 
-		m_chatSession = ChatSessionManager::self()->create(account->myself(), mMyself, account->protocol());
-		m_chatSession->setDisplayName(caption());
+		chatSession = ChatSessionManager::self()->create(account->myself(), mMyself, account->protocol());
+		chatSession->setDisplayName(caption());
 
-		QObject::connect(m_chatSession, SIGNAL(messageSent(Message&, ChatSession *)),
+		connect(chatSession, SIGNAL(messageSent(Message&, ChatSession *)),
 			this, SLOT(slotSendMsg(Message&, ChatSession *)));
-		QObject::connect(m_chatSession, SIGNAL(closing(ChatSession *)),
-			this, SLOT(chatSessionDestroyed()));
+		connect(chatSession, SIGNAL(closing(ChatSession *)),
+			this, SLOT(chatSessionDestroyed(ChatSession *)));
 
-		initConversation();
+		d->chatSessions.add(type, chatSession);
 	}
 
-	return m_chatSession;
+	return chatSession;
 }
 
 void IRCContact::chatSessionDestroyed(ChatSession *chatSession)

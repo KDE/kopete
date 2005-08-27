@@ -20,8 +20,8 @@
 #ifndef IRCNETWORKLIST_H
 #define IRCNETWORKLIST_H
 
-#include <qobject.h>
-#include <qvaluelist.h>
+#include <QList>
+#include <QObject>
 
 struct IRCHost
 {
@@ -31,7 +31,7 @@ struct IRCHost
 	bool ssl;
 };
 
-typedef QValueList<IRCHost> IRCHostList;
+typedef QList<IRCHost> IRCHostList;
 
 struct IRCNetwork
 {
@@ -40,6 +40,8 @@ struct IRCNetwork
 	IRCHostList hosts;
 };
 
+typedef QList<IRCNetwork> IRCNetworkList;
+/*
 class IRCNetworkList
 	: public QObject
 {
@@ -51,7 +53,7 @@ private:
 public:
 	static IRCNetworkList *self();
 
-	QValueList<IRCNetwork> networks() const;
+	IRCNetworkList networks() const;
 
 public slots:
 	bool slotReadNetworks();
@@ -60,7 +62,7 @@ public slots:
 //	void addNetwork(const IRCNetwork &network);
 
 private:
-	QValueList<IRCNetwork> m_networks;
+	IRCNetworkList m_networks;
 };
-
+*/
 #endif

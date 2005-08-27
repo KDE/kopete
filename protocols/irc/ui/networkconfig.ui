@@ -1,391 +1,366 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>NetworkConfig</class>
-<widget class="QDialog">
-    <property name="name">
-        <cstring>NetworkConfig</cstring>
-    </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>670</width>
-            <height>468</height>
-        </rect>
-    </property>
-    <property name="caption">
-        <string>Network Configuration</string>
-    </property>
-    <grid>
-        <property name="name">
-            <cstring>unnamed</cstring>
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>NetworkConfig</class>
+ <widget class="QDialog" name="NetworkConfig" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>670</width>
+    <height>468</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Network Configuration</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>10</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item row="1" column="4" colspan="3" >
+    <widget class="QLineEdit" name="description" />
+   </item>
+   <item row="1" column="3" >
+    <widget class="QLabel" name="textLabel10" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>1</hsizetype>
+       <vsizetype>5</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string>&amp;Description:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>description</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3" colspan="4" >
+    <widget class="Q3GroupBox" name="groupBox2" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>3</hsizetype>
+       <vsizetype>3</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title" >
+      <string>Host Con&amp;figuration</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>10</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item rowspan="3" row="0" column="0" colspan="4" >
+       <widget class="Q3ListBox" name="hostList" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>3</hsizetype>
+          <vsizetype>3</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <widget class="QLineEdit" row="1" column="4" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>description</cstring>
-            </property>
-        </widget>
-        <widget class="QLabel" row="1" column="3">
-            <property name="name">
-                <cstring>textLabel10</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>5</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="text">
-                <string>&amp;Description:</string>
-            </property>
-            <property name="buddy" stdset="0">
-                <cstring>description</cstring>
-            </property>
-        </widget>
-        <widget class="QGroupBox" row="2" column="3" rowspan="1" colspan="4">
-            <property name="name">
-                <cstring>groupBox2</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>3</hsizetype>
-                    <vsizetype>3</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="margin">
-                <number>4</number>
-            </property>
-            <property name="title">
-                <string>Host Con&amp;figuration</string>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QListBox" row="0" column="0" rowspan="3" colspan="4">
-                    <property name="name">
-                        <cstring>hostList</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>3</hsizetype>
-                            <vsizetype>3</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>The IRC servers associated with this network</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>The IRC servers associated with this network. Use the up and down buttons to alter the order in which connections are attempted.</string>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="4" column="1" rowspan="1" colspan="4">
-                    <property name="name">
-                        <cstring>password</cstring>
-                    </property>
-                    <property name="echoMode">
-                        <enum>Password</enum>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Most IRC servers do not require a password</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="3" column="2">
-                    <property name="name">
-                        <cstring>textLabel6</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Por&amp;t:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>port</cstring>
-                    </property>
-                </widget>
-                <widget class="QSpinBox" row="3" column="3" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>port</cstring>
-                    </property>
-                    <property name="maxValue">
-                        <number>65536</number>
-                    </property>
-                    <property name="minValue">
-                        <number>1024</number>
-                    </property>
-                    <property name="value">
-                        <number>6667</number>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="4" column="0">
-                    <property name="name">
-                        <cstring>textLabel4</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Password:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>password</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="3" column="0">
-                    <property name="name">
-                        <cstring>textLabel5</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Host:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_host</cstring>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="3" column="1">
-                    <property name="name">
-                        <cstring>m_host</cstring>
-                    </property>
-                    <property name="readOnly">
-                        <bool>true</bool>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string></string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>useSSL</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Use SS&amp;L</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Check this to enable SSL for this connection</string>
-                    </property>
-                </widget>
-                <widget class="QPushButton" row="6" column="3" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>removeHost</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>1</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Remove</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+R</string>
-                    </property>
-                </widget>
-                <widget class="QPushButton" row="6" column="2">
-                    <property name="name">
-                        <cstring>newHost</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>1</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="text">
-                        <string>&amp;New...</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+N</string>
-                    </property>
-                </widget>
-                <spacer row="6" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>spacer3</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>210</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QPushButton" row="2" column="4">
-                    <property name="name">
-                        <cstring>downButton</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="text">
-                        <string>Down</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Move this server down</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Move this server down in connection attempt priority</string>
-                    </property>
-                </widget>
-                <spacer row="0" column="4">
-                    <property name="name">
-                        <cstring>spacer4</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>151</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QPushButton" row="1" column="4">
-                    <property name="name">
-                        <cstring>upButton</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="text">
-                        <string>Up</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Move this server up</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Move this server up in connection attempt priority</string>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <widget class="QPushButton" row="3" column="6">
-            <property name="name">
-                <cstring>cancelButton</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Cancel</string>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="3" column="5">
-            <property name="name">
-                <cstring>saveButton</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Save</string>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="3" column="0">
-            <property name="name">
-                <cstring>newNetwork</cstring>
-            </property>
-            <property name="text">
-                <string>Ne&amp;w</string>
-            </property>
-            <property name="accel">
-                <string>Alt+W</string>
-            </property>
-        </widget>
-        <widget class="QListBox" row="0" column="0" rowspan="3" colspan="3">
-            <property name="name">
-                <cstring>networkList</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>3</hsizetype>
-                    <vsizetype>7</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-        </widget>
-        <spacer row="3" column="3" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>spacer5</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>260</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QPushButton" row="3" column="1">
-            <property name="name">
-                <cstring>renameNetwork</cstring>
-            </property>
-            <property name="text">
-                <string>Rena&amp;me...</string>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="3" column="2">
-            <property name="name">
-                <cstring>removeNetwork</cstring>
-            </property>
-            <property name="text">
-                <string>Remo&amp;ve</string>
-            </property>
-        </widget>
-    </grid>
-</widget>
-<connections>
-    <connection>
-        <sender>cancelButton</sender>
-        <signal>clicked()</signal>
-        <receiver>NetworkConfig</receiver>
-        <slot>reject()</slot>
-    </connection>
-    <connection>
-        <sender>saveButton</sender>
-        <signal>clicked()</signal>
-        <receiver>NetworkConfig</receiver>
-        <slot>accept()</slot>
-    </connection>
-</connections>
-<tabstops>
-    <tabstop>networkList</tabstop>
-    <tabstop>newNetwork</tabstop>
-    <tabstop>renameNetwork</tabstop>
-    <tabstop>removeNetwork</tabstop>
-    <tabstop>description</tabstop>
-    <tabstop>hostList</tabstop>
-    <tabstop>upButton</tabstop>
-    <tabstop>downButton</tabstop>
-    <tabstop>m_host</tabstop>
-    <tabstop>port</tabstop>
-    <tabstop>password</tabstop>
-    <tabstop>useSSL</tabstop>
-    <tabstop>newHost</tabstop>
-    <tabstop>removeHost</tabstop>
-    <tabstop>saveButton</tabstop>
-    <tabstop>cancelButton</tabstop>
-</tabstops>
-<signals>
-    <signal>accepted()</signal>
-    <signal>rejected()</signal>
-</signals>
-<slots>
-    <slot access="protected">accept()</slot>
-    <slot access="protected">reject()</slot>
-</slots>
-<layoutdefaults spacing="6" margin="11"/>
-</UI>
+        <property name="toolTip" >
+         <string>The IRC servers associated with this network</string>
+        </property>
+        <property name="whatsThis" >
+         <string>The IRC servers associated with this network. Use the up and down buttons to alter the order in which connections are attempted.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" colspan="4" >
+       <widget class="QLineEdit" name="password" >
+        <property name="toolTip" >
+         <string>Most IRC servers do not require a password</string>
+        </property>
+        <property name="echoMode" >
+         <enum>QLineEdit::Password</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2" >
+       <widget class="QLabel" name="textLabel6" >
+        <property name="text" >
+         <string>Por&amp;t:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>port</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3" colspan="2" >
+       <widget class="QSpinBox" name="port" >
+        <property name="maximum" >
+         <number>65536</number>
+        </property>
+        <property name="minimum" >
+         <number>1024</number>
+        </property>
+        <property name="value" >
+         <number>6667</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" >
+       <widget class="QLabel" name="textLabel4" >
+        <property name="text" >
+         <string>&amp;Password:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>password</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" >
+       <widget class="QLabel" name="textLabel5" >
+        <property name="text" >
+         <string>&amp;Host:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>m_host</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" >
+       <widget class="QLineEdit" name="m_host" >
+        <property name="toolTip" >
+         <string/>
+        </property>
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="2" >
+       <widget class="QCheckBox" name="useSSL" >
+        <property name="toolTip" >
+         <string>Check this to enable SSL for this connection</string>
+        </property>
+        <property name="text" >
+         <string>Use SS&amp;L</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="3" colspan="2" >
+       <widget class="QPushButton" name="removeHost" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>1</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string>&amp;Remove</string>
+        </property>
+        <property name="shortcut" >
+         <string>Alt+R</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="2" >
+       <widget class="QPushButton" name="newHost" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>1</hsizetype>
+          <vsizetype>0</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string>&amp;New...</string>
+        </property>
+        <property name="shortcut" >
+         <string>Alt+N</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0" colspan="2" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>210</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="2" column="4" >
+       <widget class="QPushButton" name="downButton" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="toolTip" >
+         <string>Move this server down</string>
+        </property>
+        <property name="whatsThis" >
+         <string>Move this server down in connection attempt priority</string>
+        </property>
+        <property name="text" >
+         <string>Down</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>20</width>
+          <height>151</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="4" >
+       <widget class="QPushButton" name="upButton" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="toolTip" >
+         <string>Move this server up</string>
+        </property>
+        <property name="whatsThis" >
+         <string>Move this server up in connection attempt priority</string>
+        </property>
+        <property name="text" >
+         <string>Up</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="6" >
+    <widget class="QPushButton" name="cancelButton" >
+     <property name="text" >
+      <string>&amp;Cancel</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="5" >
+    <widget class="QPushButton" name="saveButton" >
+     <property name="text" >
+      <string>&amp;Save</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QPushButton" name="newNetwork" >
+     <property name="text" >
+      <string>Ne&amp;w</string>
+     </property>
+     <property name="shortcut" >
+      <string>Alt+W</string>
+     </property>
+    </widget>
+   </item>
+   <item rowspan="3" row="0" column="0" colspan="3" >
+    <widget class="Q3ListBox" name="networkList" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>3</hsizetype>
+       <vsizetype>7</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="3" colspan="2" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>260</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="3" column="1" >
+    <widget class="QPushButton" name="renameNetwork" >
+     <property name="text" >
+      <string>Rena&amp;me...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2" >
+    <widget class="QPushButton" name="removeNetwork" >
+     <property name="text" >
+      <string>Remo&amp;ve</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>Q3ListBox</class>
+   <extends></extends>
+   <header>q3listbox.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>Q3GroupBox</class>
+   <extends></extends>
+   <header>Qt3Support/Q3GroupBox</header>
+   <container>1</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>networkList</tabstop>
+  <tabstop>newNetwork</tabstop>
+  <tabstop>renameNetwork</tabstop>
+  <tabstop>removeNetwork</tabstop>
+  <tabstop>description</tabstop>
+  <tabstop>hostList</tabstop>
+  <tabstop>upButton</tabstop>
+  <tabstop>downButton</tabstop>
+  <tabstop>m_host</tabstop>
+  <tabstop>port</tabstop>
+  <tabstop>password</tabstop>
+  <tabstop>useSSL</tabstop>
+  <tabstop>newHost</tabstop>
+  <tabstop>removeHost</tabstop>
+  <tabstop>saveButton</tabstop>
+  <tabstop>cancelButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

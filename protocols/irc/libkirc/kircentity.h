@@ -20,10 +20,7 @@
 
 #include "kircconst.h"
 
-#include <ksharedptr.h>
-
-#include <qobject.h>
-#include <qvaluelist.h>
+#include <QObject>
 
 class QTextCodec;
 

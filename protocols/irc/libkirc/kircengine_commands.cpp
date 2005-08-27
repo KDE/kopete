@@ -185,22 +185,25 @@ void Engine::mode(Message &msg)
 
 void Engine::motd(const QString &server)
 {
+/*
 	writeRawMessage(
 		Message::format(
 			MOTD,
 			server)
 		);
+*/
 }
 
 void Engine::nick(const QString &newNickname)
 {
 	m_PendingNick = newNickname;
-
+/*
 	writeRawMessage(
 		Message::format(
 			NICK,
 			newNickname)
 		);
+*/
 }
 
 /* Nick name of a user changed
@@ -413,22 +416,24 @@ void Engine::user(const QString &newUserName, const QString &hostname, const QSt
 		);
 }
 
+/* RFC2812: "<user> <mode> <unused> <realname>"
+ * mode is a numeric value (from a bit mask).
+ * 0x00 normal
+ * 0x04 request +w
+ * 0x08 request +i
+ */
 void Engine::user(const QString &newUserName, Q_UINT8 mode, const QString &newRealName)
 {
-	/* RFC2812: "<user> <mode> <unused> <realname>"
-	* mode is a numeric value (from a bit mask).
-	* 0x00 normal
-	* 0x04 request +w
-	* 0x08 request +i */
 	m_Username = newUserName;
 	m_realName = newRealName;
-
+/*
 	writeRawMessage(
 		Message::format(
 			USER,
 			QStringList(m_Username) << QString::number(mode) << QChar('*'),
 			m_realName)
 		);
+*/
 }
 
 void Engine::whois(const QString &user)
