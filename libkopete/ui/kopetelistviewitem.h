@@ -355,6 +355,10 @@ public:
 	void setDefaultColor();
 	static int RTTI;
 	virtual int rtti() const { return RTTI; }
+	/**
+	 * reparse again for emoticon (call this when emoticon theme change)
+	 */
+	void redraw();
 
 private:
 	class Private;

@@ -228,8 +228,8 @@ void KopeteMetaContactLVI::initLVI()
 		SLOT( slotIdleStateChanged( Kopete::Contact * ) ) );
 
 	connect( KopetePrefs::prefs(), SIGNAL( contactListAppearanceChanged() ),
-		SLOT( slotConfigChanged() ) );
-
+			 SLOT( slotConfigChanged() ) );
+	
 	connect( kapp, SIGNAL( appearanceChanged() ),  SLOT( slotConfigChanged() ) );
 
 	mBlinkTimer = new QTimer( this, "mBlinkTimer" );
@@ -651,15 +651,29 @@ void KopeteMetaContactLVI::slotConfigChanged()
 	}
 
 	if ( KopetePrefs::prefs()->contactListUseCustomFonts() )
+	{
 		d->nameText->setFont( KopetePrefs::prefs()->contactListCustomNormalFont() );
+		if ( d->extraText )
+			d->extraText->setFont( KopetePrefs::prefs()->contactListSmallFont() );
+	}
 	else
-		d->nameText->setFont( listView()->font() );
-	if ( d->extraText )
-		d->extraText->setFont( KopetePrefs::prefs()->contactListSmallFont() );
-
+	{
+		QFont fnt=listView()->font();
+		d->nameText->setFont( fnt );
+		if(d->extraText)
+		{
+			fnt.setPointSize( fnt.pointSize()-3 );
+			d->extraText->setFont( fnt );
+		}
+	}
+	
 	updateVisibility();
 	updateContactIcons();
 	slotIdleStateChanged( 0 );
+	if(d->nameText)
+		d->nameText->redraw();
+	if(d->extraText)
+		d->extraText->redraw();
 }
 
 void KopeteMetaContactLVI::setMetaContactToolTipSourceForComponent( ListView::Component *comp )
@@ -764,7 +778,7 @@ void KopeteMetaContactLVI::updateVisibility()
 		setTargetVisibility( true );
 }
 
-void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact *contact,
+void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact */*contact*/,
 	const QString &key, const QVariant &old, const QVariant &newVal )
 {
 	if ( key == QString::fromLatin1("awayMessage") && d->extraText && old != newVal )
