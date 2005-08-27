@@ -77,11 +77,13 @@ bool ServerVersionsTask::take( Transfer* transfer )
 			case 0x03:
 				setTransfer( transfer );
 				handleFamilies();
+				setTransfer( 0 );
 				return true;
 				break;
 			case 0x18:
 				setTransfer( transfer );
 				handleServerVersions();
+				setTransfer( 0 );
 				return true;
 				break;
 			default:

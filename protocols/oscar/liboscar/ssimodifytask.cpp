@@ -52,6 +52,7 @@ bool SSIModifyTask::take( Transfer* transfer )
 	{
 		setTransfer( transfer );
 		handleSSIAck();
+		setTransfer( 0 );
 		return true;
 	}
 	else

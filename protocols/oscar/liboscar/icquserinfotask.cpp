@@ -148,7 +148,7 @@ bool ICQUserInfoRequestTask::take( Transfer* transfer )
 		if ( m_type == Short )
 			emit receivedInfoFor( contactId, Short );
 
-
+		setTransfer( 0 );
 		return true;
 	}
 	return false;

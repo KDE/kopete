@@ -80,7 +80,7 @@ bool SSIAuthTask::take( Transfer* t )
 				handleAddedMessage();
 				break;
 		}
-		
+		setTransfer( 0 );
 		return true;
 	}
 	return false;

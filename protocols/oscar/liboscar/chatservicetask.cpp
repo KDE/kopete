@@ -85,6 +85,7 @@ bool ChatServiceTask::take( Transfer* t )
     };
 
     setSuccess( 0, QString::null );
+    setTransfer( 0 );
     return true;
 }
 

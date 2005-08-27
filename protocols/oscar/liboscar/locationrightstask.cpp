@@ -56,6 +56,7 @@ bool LocationRightsTask::take( Transfer* transfer )
 	{
 		setTransfer( transfer );
 		handleLocationRightsResponse();
+		setTransfer( 0 );
 		return true;
 	}
 	else
