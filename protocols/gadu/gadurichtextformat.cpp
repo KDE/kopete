@@ -61,7 +61,7 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 		char font = format->font;
 		QString style;
 
-		if ( position < j || position > msg.length() ) {
+		if ( position < j || position > (unsigned int)msg.length() ) {
 			break;
 		}
 
