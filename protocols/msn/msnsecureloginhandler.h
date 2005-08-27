@@ -46,6 +46,7 @@ signals:
 	 * TODO: return to const QString &
 	 */
 	void loginSuccesful(QString ticket);
+	void loginBadPassword();
 	void loginFailed();
 
 private slots:
