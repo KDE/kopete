@@ -20,7 +20,6 @@
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qhbuttongroup.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
 //Added by qt3to4:

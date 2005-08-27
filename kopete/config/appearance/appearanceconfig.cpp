@@ -29,7 +29,6 @@
 #include <qcheckbox.h>
 #include <qdir.h>
 #include <qlayout.h>
-#include <qhbuttongroup.h>
 #include <qspinbox.h>
 #include <qslider.h>
 #include <qlabel.h>

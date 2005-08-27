@@ -20,7 +20,7 @@
 #include "chatmessagepart.h"
 
 #include <qclipboard.h>
-#include <qtooltip.h>
+#include <q3tooltip.h>
 #include <qrect.h>
 #include <qcursor.h>
 //Added by qt3to4:
@@ -107,10 +107,10 @@ public:
 	ToolTip *tt;
 };
 
-class ChatMessagePart::ToolTip : public QToolTip
+class ChatMessagePart::ToolTip : public Q3ToolTip
 {
 public:
-	ToolTip( ChatMessagePart *c ) : QToolTip( c->view()->viewport() )
+	ToolTip( ChatMessagePart *c ) : Q3ToolTip( c->view()->viewport() )
 	{
 		m_chat = c;
 	}

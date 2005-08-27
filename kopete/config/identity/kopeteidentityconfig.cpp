@@ -111,7 +111,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char */*name*/
 	// If the latest selected Identity is not present anymore, use a fallback identity.
 	if( !GlobalIdentitiesManager::self()->isIdentityPresent(d->selectedIdentity) )
 	{
-		QMapIterator<QString, Kopete::MetaContact*> it = GlobalIdentitiesManager::self()->getGlobalIdentitiesList().begin();
+		QMap<QString, Kopete::MetaContact*>::iterator it = GlobalIdentitiesManager::self()->getGlobalIdentitiesList().begin();
 		d->selectedIdentity = it.key();
 	}
 	else
@@ -218,8 +218,8 @@ void KopeteIdentityConfig::loadIdentities()
 	d->m_view->comboSelectIdentity->clear();
 
 	QMap<QString, Kopete::MetaContact*> identitiesList = GlobalIdentitiesManager::self()->getGlobalIdentitiesList();
-	QMapIterator<QString, Kopete::MetaContact*> it;
-	QMapIterator<QString, Kopete::MetaContact*> end = identitiesList.end();
+	QMap<QString, Kopete::MetaContact*>::iterator it;
+	QMap<QString, Kopete::MetaContact*>::iterator end = identitiesList.end();
 
 	int count=0, selectedIndex=0;
 	for(it = identitiesList.begin(); it != end; ++it)
@@ -378,7 +378,7 @@ void KopeteIdentityConfig::slotEnableAndDisableWidgets()
 	}
 
 	if(!photo.isNull())
-		d->m_view->labelPhoto->setPixmap(QPixmap(photo.smoothScale(64, 92, QImage::ScaleMin)));
+		d->m_view->labelPhoto->setPixmap(QPixmap(photo.scaled(64, 92, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
 
 	emit changed(true);
 }

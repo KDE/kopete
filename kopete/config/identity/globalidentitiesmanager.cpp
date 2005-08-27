@@ -102,8 +102,8 @@ void GlobalIdentitiesManager::updateIdentity(const QString &updatedIdentity, Kop
 
 bool GlobalIdentitiesManager::isIdentityPresent(const QString &identityName)
 {
-	QMapIterator<QString, Kopete::MetaContact*> it;
-	QMapIterator<QString, Kopete::MetaContact*> end = d->identitiesList.end();
+	QMap<QString, Kopete::MetaContact*>::iterator it;
+	QMap<QString, Kopete::MetaContact*>::iterator end = d->identitiesList.end();
 
 	for(it = d->identitiesList.begin(); it != end; ++it)
 	{
@@ -201,8 +201,8 @@ const QDomDocument GlobalIdentitiesManager::toXML()
 	
 	doc.appendChild(doc.createElement(QString::fromUtf8("kopete-global-identities-list")));
 	
-	QMapIterator<QString, Kopete::MetaContact*> it;
-	QMapIterator<QString, Kopete::MetaContact*> end = d->identitiesList.end();
+	QMap<QString, Kopete::MetaContact*>::iterator it;
+	QMap<QString, Kopete::MetaContact*>::iterator end = d->identitiesList.end();
 	for(it = d->identitiesList.begin(); it != end; ++it)
 	{
 		kdDebug(14000) << k_funcinfo << "Saving " << it.key() << endl;

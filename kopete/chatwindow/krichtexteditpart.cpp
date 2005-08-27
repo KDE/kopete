@@ -10,7 +10,7 @@
 #include <qclipboard.h>
 #include <qevent.h>
 #include <kparts/genericfactory.h>
-#include <private/qrichtext_p.h>
+#include <private/q3richtext_p.h>
 
 #include "krichtexteditpart.h"
 #include "krichtexteditpart.moc"
@@ -24,7 +24,7 @@ class KopeteTextEdit : public KTextEdit
 {
 public:
 	KopeteTextEdit( QWidget *parent ) : KTextEdit( parent ) {}
-	const QTextCursor * cursor() { return textCursor(); }
+	const Q3TextCursor * cursor() { return textCursor(); }
 	bool event(QEvent *event)
 	{
 		// don't allow QTextEdit to override accels
@@ -149,17 +149,17 @@ void KopeteRichTextEditPart::createActions( KActionCollection *ac )
 		this, SLOT( setFontSize(int) ) );
 
 	//Formatting
-	action_bold = new KToggleAction( i18n("&Bold"), "text_bold", CTRL+Key_B,
+	action_bold = new KToggleAction( i18n("&Bold"), "text_bold", Qt::CTRL + Qt::Key_B,
 			ac, "format_bold" );
 	connect( action_bold, SIGNAL( toggled(bool) ),
 		this, SLOT( setBold(bool) ) );
 
-	action_italic = new KToggleAction( i18n("&Italic"), "text_italic", CTRL+Key_I,
+	action_italic = new KToggleAction( i18n("&Italic"), "text_italic", Qt::CTRL + Qt::Key_I,
 			ac, "format_italic" );
 	connect( action_italic, SIGNAL( toggled(bool) ),
 		this, SLOT( setItalic(bool) ) );
 
-	action_underline = new KToggleAction( i18n("&Underline"), "text_under", CTRL+Key_U,
+	action_underline = new KToggleAction( i18n("&Underline"), "text_under", Qt::CTRL + Qt::Key_U,
 				ac, "format_underline" );
 	connect( action_underline, SIGNAL( toggled(bool) ),
 		this, SLOT( setUnderline(bool) ) );
@@ -265,16 +265,16 @@ void KopeteRichTextEditPart::updateAligment()
 
 	switch ( align )
 	{
-		case AlignRight:
+		case Qt::AlignRight:
 			action_align_right->setChecked( true );
 			break;
-		case AlignCenter:
+		case Qt::AlignCenter:
 			action_align_center->setChecked( true );
 			break;
-		case AlignLeft:
+		case Qt::AlignLeft:
 			action_align_left->setChecked( true );
 			break;
-		case AlignJustify:
+		case Qt::AlignJustify:
 			action_align_justify->setChecked( true );
 			break;
 		default:
@@ -395,13 +395,6 @@ void KopeteRichTextEditPart::setBgColor( const QColor &newColor )
 		editor->setPalette(pal);
 }
 
-QColor KopeteRichTextEditPart::bgColor()
-{
-	if( mBgColor == KGlobalSettings::baseColor())
-		return QColor();
-	return mBgColor;
-}
-
 void KopeteRichTextEditPart::setFontSize( int size )
 {
 	mFont.setPointSize( size );
@@ -477,25 +470,25 @@ void KopeteRichTextEditPart::setUnderline( bool b )
 void KopeteRichTextEditPart::setAlignLeft( bool yes )
 {
 	if ( yes )
-		editor->setAlignment( AlignLeft );
+		editor->setAlignment( Qt::AlignLeft );
 }
 
 void KopeteRichTextEditPart::setAlignRight( bool yes )
 {
 	if ( yes )
-		editor->setAlignment( AlignRight );
+		editor->setAlignment( Qt::AlignRight );
 }
 
 void KopeteRichTextEditPart::setAlignCenter( bool yes )
 {
 	if ( yes )
-		editor->setAlignment( AlignCenter );
+		editor->setAlignment( Qt::AlignCenter );
 }
 
 void KopeteRichTextEditPart::setAlignJustify( bool yes )
 {
 	if ( yes )
-		editor->setAlignment( AlignJustify );
+		editor->setAlignment( Qt::AlignJustify );
 }
 
 QString KopeteRichTextEditPart::text( Qt::TextFormat fmt ) const
