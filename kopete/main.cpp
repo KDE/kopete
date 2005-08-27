@@ -53,7 +53,7 @@ int main( int argc, char *argv[] )
 		KOPETE_VERSION_STRING, description, KAboutData::License_GPL,
 		I18N_NOOP("(c) 2001-2004, Duncan Mac-Vicar Prett\n(c) 2002-2005, Kopete Development Team"), "kopete-devel@kde.org", "http://kopete.kde.org");
 
-	aboutData.addAuthor ( "Duncan Mac-Vicar Prett", I18N_NOOP("Original author, Developer"), "duncan@kde.org", "http://www.mac-vicar.org/~duncan" );
+	aboutData.addAuthor ( "Duncan Mac-Vicar Prett", I18N_NOOP("Project founder and original author"), "duncan@kde.org", "http://www.mac-vicar.org/~duncan" );
 	aboutData.addAuthor ( "Andre Duffeck", I18N_NOOP("Developer, Yahoo plugin maintainer"), "andre@duffeck.de" );
 	aboutData.addAuthor ( "Till Gerken", I18N_NOOP("Developer, Jabber plugin maintainer"), "till@tantalo.net");
 	aboutData.addAuthor ( "Olivier Goffart", I18N_NOOP("Developer, MSN plugin maintainer"), "ogoffart @ kde.org");
@@ -63,7 +63,7 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( "Grzegorz Jaskiewicz", I18N_NOOP("Developer, Gadu plugin maintainer"), "gj@pointblue.com.pl" );
 	aboutData.addAuthor ( "Jason Keirstead", I18N_NOOP("Developer"), "jason@keirstead.org", "http://www.keirstead.org");
 	aboutData.addAuthor ( "Chetan Reddy", I18N_NOOP("Developer, Yahoo"), "chetan13@gmail.com" );
-	aboutData.addAuthor ( "Matt Rogers", I18N_NOOP("Developer, AIM and ICQ plugin maintainer"), "mattr@kde.org" );
+	aboutData.addAuthor ( "Matt Rogers", I18N_NOOP("Project Maintainer, Lead Developer, AIM and ICQ plugin maintainer"), "mattr@kde.org" );
 	aboutData.addAuthor ( "Richard Smith", I18N_NOOP("Developer, UI maintainer"), "kde@metafoo.co.uk" );
 	aboutData.addAuthor ( "Will Stephenson", I18N_NOOP("Developer, GroupWise maintainer"), "lists@stevello.free-online.co.uk" );
 	aboutData.addAuthor ( "Michaël Larouche", I18N_NOOP("Developer, MSN"), "michael.larouche@kdemail.net", "http://mlarouche.blogspot.com" );
