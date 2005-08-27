@@ -377,7 +377,7 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 		break;
 	}
 	if( !photo.isNull() )
-		mainWidget->photoLabel->setPixmap(QPixmap(photo.smoothScale( 64, 92, QImage::ScaleMin )));
+		mainWidget->photoLabel->setPixmap(QPixmap(photo.scaled(64, 92)));
 }
 
 Kopete::MetaContact::PropertySource KopeteMetaLVIProps::selectedNameSource() const

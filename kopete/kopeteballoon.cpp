@@ -109,7 +109,7 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 	// END Layout2
 
 	setPalette(QToolTip::palette());
-	setAutoMask(TRUE);
+	//setAutoMask(TRUE);
 
 	connect(mViewButton, SIGNAL(clicked()),
 		this, SIGNAL(signalButtonClicked()));

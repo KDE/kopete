@@ -214,8 +214,8 @@ void KopeteApplication::slotAllPluginsLoaded()
 	if ( args->isSet( "connect" )  && KopetePrefs::prefs()->autoConnect() )
 		Kopete::AccountManager::self()->connectAll();
 
-	QCStringList connectArgs = args->getOptionList( "autoconnect" );
-	for ( QCStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
+	QByteArrayList connectArgs = args->getOptionList( "autoconnect" );
+	for ( QByteArrayList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
 	{
 		QString id = QString::fromLatin1( *i );
 

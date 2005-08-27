@@ -245,9 +245,9 @@ void KopeteWindow::initActions()
 	KStdAction::configureToolbars( this, SLOT(slotConfToolbar()), actionCollection() );
 	KStdAction::configureNotifications(this, SLOT(slotConfNotifications()), actionCollection(), "settings_notifications" );
 
-	actionShowOffliners = new KToggleAction( i18n( "Show Offline &Users" ), "viewmag", CTRL + Key_U,
+	actionShowOffliners = new KToggleAction( i18n( "Show Offline &Users" ), "viewmag", Qt::CTRL + Qt::Key_U,
 			this, SLOT( slotToggleShowOffliners() ), actionCollection(), "settings_show_offliners" );
-	actionShowEmptyGroups = new KToggleAction( i18n( "Show Empty &Groups" ), "folder_green", CTRL + Key_G,
+	actionShowEmptyGroups = new KToggleAction( i18n( "Show Empty &Groups" ), "folder_green", Qt::CTRL + Qt::Key_G,
 			this, SLOT( slotToggleShowEmptyGroups() ), actionCollection(), "settings_show_empty_groups" );
 
 	actionShowOffliners->setCheckedState(i18n("Hide Offline &Users"));
@@ -279,13 +279,13 @@ void KopeteWindow::initActions()
 
 	globalAccel = new KGlobalAccel( this );
 	globalAccel->insert( QString::fromLatin1("Read Message"), i18n("Read Message"), i18n("Read the next pending message"),
-		CTRL+SHIFT+Key_I, KKey::QtWIN+CTRL+Key_I, Kopete::ChatSessionManager::self(), SLOT(slotReadMessage()) );
+		Qt::CTRL + Qt::SHIFT + Qt::Key_I, KKey::QtWIN + Qt::CTRL + Qt::Key_I, Kopete::ChatSessionManager::self(), SLOT(slotReadMessage()) );
 
 	globalAccel->insert( QString::fromLatin1("Show/Hide Contact List"), i18n("Show/Hide Contact List"), i18n("Show or hide the contact list"),
-		CTRL+SHIFT+Key_A, KKey::QtWIN+CTRL+Key_A, this, SLOT(slotShowHide()) );
+		Qt::CTRL + Qt::SHIFT + Qt::Key_A, KKey::QtWIN + Qt::CTRL + Qt::Key_A, this, SLOT(slotShowHide()) );
 	
 	globalAccel->insert( QString::fromLatin1("Set Away/Back"), i18n("Set Away/Back"), i18n("Sets away from keyboard or sets back"),
-		CTRL+SHIFT+Key_W, KKey::QtWIN+CTRL+SHIFT+Key_W, this, SLOT(slotToggleAway()) );
+		Qt::CTRL + Qt::SHIFT + Qt::Key_W, KKey::QtWIN + Qt::CTRL + Qt::SHIFT + Qt::Key_W, this, SLOT(slotToggleAway()) );
 
 	globalAccel->readSettings();
 	globalAccel->updateConnections();
@@ -702,9 +702,9 @@ void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 	// we can't use the SmallIcon() method directly
 	KIconLoader *loader = KGlobal::instance()->iconLoader();
 
-	QMovie mv = loader->loadMovie( status.overlayIcons().first(), KIcon::Small );
+	QMovie *mv = new QMovie(loader->loadMovie( status.overlayIcons().first(), KIcon::Small ));
 
-	if ( mv.isNull() )
+	if ( mv->isNull() )
 	{
 		// No movie found, fallback to pixmap
 		// Get the icon for our status

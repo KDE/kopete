@@ -42,6 +42,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kiconloader.h>
+#include <kicondialog.h>
 #include <klocale.h>
 #include <kmainwindow.h>
 #include <kmessagebox.h>
@@ -1219,7 +1220,7 @@ void KopeteContactListView::findDrop(const QPoint &pos, Q3ListViewItem *&parent,
 void KopeteContactListView::contentsMousePressEvent( QMouseEvent *e )
 {
 	KListView::contentsMousePressEvent( e );
-	if (e->button() == LeftButton )
+	if (e->button() == Qt::LeftButton )
 	{
 		QPoint p=contentsToViewport(e->pos());
 		Q3ListViewItem *i=itemAt( p );

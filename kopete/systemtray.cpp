@@ -104,8 +104,8 @@ KopeteSystemTray::~KopeteSystemTray()
 void KopeteSystemTray::mousePressEvent( QMouseEvent *me )
 {
 	if (
-		(me->button() == QEvent::MidButton ||
-			(me->button() == QEvent::LeftButton && KopetePrefs::prefs()->trayflashNotifyLeftClickOpensMessage())) &&
+		(me->button() == Qt::MidButton ||
+			(me->button() == Qt::LeftButton && KopetePrefs::prefs()->trayflashNotifyLeftClickOpensMessage())) &&
 		mIsBlinking )
 	{
 		mouseDoubleClickEvent( me );
@@ -157,18 +157,18 @@ void KopeteSystemTray::startBlink( const QPixmap &icon )
 	}
 }
 
-void KopeteSystemTray::startBlink( const QMovie &movie )
+void KopeteSystemTray::startBlink( QMovie *movie )
 {
 	//kdDebug( 14010 ) << k_funcinfo << "starting movie." << endl;
-	const_cast<QMovie &>( movie ).unpause();
+	const_cast<QMovie *>( movie )->unpause();
 	setMovie( movie );
 	mIsBlinking = true;
 }
 
 void KopeteSystemTray::startBlink()
 {
-	if ( mMovie.isNull() )
-		mMovie = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Panel );
+	if ( mMovie->isNull() )
+		mMovie = new QMovie(KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Panel ));
 
 	startBlink( mMovie );
 }
@@ -180,8 +180,8 @@ void KopeteSystemTray::stopBlink()
 	else if ( mBlinkTimer->isActive() )
 		mBlinkTimer->stop();
 
-	if ( !mMovie.isNull() )
-		mMovie.pause();
+	if ( !mMovie->isValid() )
+		mMovie->pause();
 
 	mIsBlinkIcon = false;
 	mIsBlinking = false;
