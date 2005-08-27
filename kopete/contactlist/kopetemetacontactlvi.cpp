@@ -302,7 +302,8 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 		else if ( m_metaContact->displayNameSource() == Kopete::MetaContact::SourceContact )
 		{
 			Kopete::Contact* c = m_metaContact->displayNameSourceContact();
-			u->args << c->contactId() << c->protocol()->pluginId() << c->account()->accountId();
+			if(c)
+				u->args << c->contactId() << c->protocol()->pluginId() << c->account()->accountId();
 		}
 		// source kabc requires no arguments
 

@@ -1896,7 +1896,10 @@ void KopeteContactListView::slotUndo()
 				{ // do undo
 					Kopete::Contact *c = Kopete::ContactList::self()->findContact( undoArgs[1], undoArgs[2], undoArgs[0]);
 					if (!c)
-						return;
+					{
+						success=false;
+						break;
+					}
 					// do undo
 					m->setDisplayNameSourceContact(c);
 					m->setDisplayNameSource(Kopete::MetaContact::SourceContact);
