@@ -19,6 +19,9 @@
 
 #include "task.h"
 
+#include <qvaluelist.h>
+#include <oscartypes.h>
+
 class Transfer;
 
 /**
@@ -41,13 +44,15 @@ public:
 	virtual void onGo();
     void createRoom( WORD exchange, const QString& name ); //create a room. sends the packet as well
 
+    QValueList<Oscar::ChatExchangeInfo> exchangeList() const;
+
 private:
 	void handleExchangeInfo( const TLV& t );
 	void handleBasicRoomInfo( const TLV& t );
     void handleCreateRoomInfo( const TLV& t );
 
 private:
-
+    QValueList<Oscar::ChatExchangeInfo> m_exchanges;
 	RequestType m_type;
 };
 

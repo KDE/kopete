@@ -21,8 +21,6 @@
 #include "transfer.h"
 #include "buffer.h"
 #include "connection.h"
-#include "oscartypes.h"
-
 
 
 ChatNavServiceTask::ChatNavServiceTask( Task* parent ) : Task( parent )
@@ -43,6 +41,11 @@ void ChatNavServiceTask::setRequestType( RequestType rt )
 ChatNavServiceTask::RequestType ChatNavServiceTask::requestType()
 {
 	return m_type;
+}
+
+QValueList<Oscar::ChatExchangeInfo> ChatNavServiceTask::exchangeList() const
+{
+    return m_exchanges;
 }
 
 
@@ -144,42 +147,47 @@ void ChatNavServiceTask::createRoom( WORD exchange, const QString& name )
 
 void ChatNavServiceTask::handleExchangeInfo( const TLV& t )
 {
-	kdDebug(OSCAR_RAW_DEBUG) << "Parsing exchange info TLV" << t.length << endl;
+	kdDebug(OSCAR_RAW_DEBUG) << "Parsing exchange info TLV" << endl;
 	Buffer b(t.data);
-	WORD id = b.getWord();
-	int tlvCount = b.getWord();
-	int realCount = 0;
-	kdDebug(OSCAR_RAW_DEBUG) << "Expecting " << tlvCount << " TLVs" << endl;
+    ChatExchangeInfo exchangeInfo;
+
+	exchangeInfo.number = b.getWord();
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "exchange id is: " << exchangeInfo.number << endl;
+    b.getWord();
 	while ( b.length() > 0 )
 	{
 		TLV t = b.getTLV();
+        Buffer tmp = t.data;
 		switch (t.type)
 		{
 		case 0x02:
-			kdDebug(OSCAR_RAW_DEBUG) << "user class is " << t.data << endl;
+			//kdDebug(OSCAR_RAW_DEBUG) << "user class is " << t.data << endl;
 			break;
 		case 0x03:
+            exchangeInfo.maxRooms = tmp.getWord();
 			kdDebug(OSCAR_RAW_DEBUG) << "max concurrent rooms for the exchange is " << t.data << endl;
 			break;
 		case 0x04:
-			kdDebug(OSCAR_RAW_DEBUG) << "max room name length is " << t.data << endl;
+            exchangeInfo.maxRoomNameLength = tmp.getWord();
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "max room name length is " << exchangeInfo.maxRoomNameLength << endl;
 			break;
 		case 0x05:
-			kdDebug(OSCAR_RAW_DEBUG) << "received root rooms info" << endl;
+			//kdDebug(OSCAR_RAW_DEBUG) << "received root rooms info" << endl;
 			break;
 		case 0x06:
-			kdDebug(OSCAR_RAW_DEBUG) << "received search tags" << endl;
+			//kdDebug(OSCAR_RAW_DEBUG) << "received search tags" << endl;
 			break;
 		case 0xCA:
-			kdDebug(OSCAR_RAW_DEBUG) << "have exchange creation time" << endl;
+			//kdDebug(OSCAR_RAW_DEBUG) << "have exchange creation time" << endl;
 			break;
 		case 0xC9:
-			kdDebug(OSCAR_RAW_DEBUG) << "got chat flag" << endl;
+			//kdDebug(OSCAR_RAW_DEBUG) << "got chat flag" << endl;
 			break;
 		case 0xD0:
-			kdDebug(OSCAR_RAW_DEBUG) << "got mandantory channels" << endl;
+			//kdDebug(OSCAR_RAW_DEBUG) << "got mandantory channels" << endl;
 			break;
 		case 0xD1:
+            exchangeInfo.maxMsgLength = tmp.getWord();
 			kdDebug(OSCAR_RAW_DEBUG) << "max message length" << t.data << endl;
 			break;
 		case 0xD2:
@@ -189,21 +197,23 @@ void ChatNavServiceTask::handleExchangeInfo( const TLV& t )
 		{
 			QString eName( t.data );
 			kdDebug(OSCAR_RAW_DEBUG) << "exchange name: " << eName << endl;
+            exchangeInfo.description = eName;
 			break;
 		}
 		case 0xD4:
-			kdDebug(OSCAR_RAW_DEBUG) << "got optional channels" << endl;
+			//kdDebug(OSCAR_RAW_DEBUG) << "got optional channels" << endl;
 			break;
 		case 0xD5:
-			kdDebug(OSCAR_RAW_DEBUG) << "creation permissions " << t.data << endl;
+            exchangeInfo.canCreate = tmp.getByte();
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "creation permissions " << exchangeInfo.canCreate << endl;
 			break;
 		default:
 			kdDebug(OSCAR_RAW_DEBUG) << "unknown TLV type " << t.type << endl;
 			break;
 		}
-		realCount++;
 	}
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "real tlv count is: " << realCount << endl;
+
+    m_exchanges.append( exchangeInfo );
 }
 
 void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )

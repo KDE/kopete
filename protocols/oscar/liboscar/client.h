@@ -224,6 +224,11 @@ public:
 	 */
 	ICQShortInfo getShortInfo( const QString& contact );
 
+    /**
+     * Get the list of chat room exchanges we have
+     */
+    QValueList<Oscar::ChatExchangeInfo> chatExchangeList() const;
+
 	/**
 	 * Request the aim profile
 	 * \param contact the contact to get info for

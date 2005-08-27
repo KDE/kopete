@@ -97,6 +97,9 @@ public:
 	//Our Userinfo
 	UserDetails ourDetails;
 
+    //Infos
+    QValueList<Oscar::ChatExchangeInfo> exchanges;
+
 };
 
 Client::Client( QObject* parent )
@@ -681,6 +684,11 @@ ICQInterestInfo Client::getInterestInfo( const QString& contact )
 ICQShortInfo Client::getShortInfo( const QString& contact )
 {
 	return d->icqInfoTask->shortInfoFor( contact );
+}
+
+QValueList<Oscar::ChatExchangeInfo> Client::chatExchangeList() const
+{
+    return d->exchanges;
 }
 
 void Client::requestAIMProfile( const QString& contact )
