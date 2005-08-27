@@ -15,4 +15,4 @@
 #endif
 
 #SUBDIRS = $(TESTBED) groupwise msn irc oscar yahoo sms $(JABBER) $(GADU) $(MEANWHILE)
-SUBDIRS = 
+SUBDIRS = $(GADU)
