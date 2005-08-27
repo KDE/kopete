@@ -46,11 +46,11 @@ KopeteAccountStatusBarIcon::~KopeteAccountStatusBarIcon()
 
 void KopeteAccountStatusBarIcon::mousePressEvent( QMouseEvent *me )
 {
-	if( me->button() == QEvent::RightButton )
+	if( me->button() == Qt::RightButton )
 	{
 		emit rightClicked( m_account, QPoint( me->globalX(), me->globalY() ) );
 	}
-	else if( me->button() == QEvent::LeftButton )
+	else if( me->button() == Qt::LeftButton )
 	{
 		emit leftClicked( m_account, QPoint( me->globalX(), me->globalY() ) );
 	}
