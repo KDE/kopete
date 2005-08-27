@@ -473,6 +473,9 @@ void KopeteMetaContactLVI::execute() const
 		d->events.first()->apply();
 	else
 		m_metaContact->execute();
+	
+	//The selection is removed, but the contact still hihjlihted,  remove the selection in the contactlist (see bug 106090)
+	Kopete::ContactList::self()->setSelectedItems( QPtrList<Kopete::MetaContact>() , QPtrList<Kopete::Group>() );
 }
 
 void KopeteMetaContactLVI::slotDisplayNameChanged()

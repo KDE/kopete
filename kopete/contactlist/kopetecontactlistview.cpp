@@ -646,7 +646,11 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 	}
 
 	if ( !item )
+	{
 		clearSelection();
+		//Clear selection doesn't update lists of selected contact if the item is onlt heilighted (see bug 106090)
+		Kopete::ContactList::self()->setSelectedItems( QPtrList<Kopete::MetaContact>() , QPtrList<Kopete::Group>() );
+	}
 
 	int nb = Kopete::ContactList::self()->selectedMetaContacts().count() +
 		Kopete::ContactList::self()->selectedGroups().count();
