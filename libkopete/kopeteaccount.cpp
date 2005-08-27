@@ -80,7 +80,6 @@ public:
 	bool suppressStatusNotification;
 	Kopete::BlackLister *blackList;
 	KConfigGroup *configGroup;
-	uint connectionTry;
 };
 
 Account::Account( Protocol *parent, const QString &accountId, const char *name )
