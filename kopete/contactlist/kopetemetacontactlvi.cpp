@@ -662,12 +662,15 @@ void KopeteMetaContactLVI::slotConfigChanged()
 	}
 	else
 	{
-		QFont fnt=listView()->font();
-		d->nameText->setFont( fnt );
+		QFont font=listView()->font();
+		d->nameText->setFont( font );
 		if(d->extraText)
 		{
-			fnt.setPointSize( fnt.pointSize()-3 );
-			d->extraText->setFont( fnt );
+			if ( font.pixelSize() != -1 )
+				font.setPixelSize( (font.pixelSize() * 3) / 4 );
+			else
+				font.setPointSizeFloat( font.pointSizeFloat() * 0.75 );
+			d->extraText->setFont( font );
 		}
 	}
 	
