@@ -155,6 +155,8 @@ void AddressBookSelectorWidget::slotAddAddresseeClicked()
 		slotLoadAddressees();
 		// select the addressee we just added
 		Q3ListViewItem * added = addresseeListView->findItem( addresseeName, 1 );
+		kListViewSearchLine->clear();
+		kListViewSearchLine->updateSearch();
 		addresseeListView->setSelected( added, true );
 		addresseeListView->ensureItemVisible( added );
 	}
