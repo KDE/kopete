@@ -91,7 +91,7 @@ void StatisticsContact::initialize(Kopete::Contact *c)
 	kdDebug() << k_funcinfo << " m_statisticsContactId: " << m_statisticsContactId << endl;
 	
 	commonStatsCheck("timebetweentwomessages", m_timeBetweenTwoMessages, m_timeBetweenTwoMessagesOn, 0, -1);
-	commonStatsCheck("messagelength", m_messageLength, m_messageLengthOn);
+	commonStatsCheck("messagelength", m_messageLength, m_messageLengthOn, 0, 0);
 	
 	// Check for last talk
 	QString lastTalk;
@@ -249,10 +249,7 @@ void StatisticsContact::newMessageReceived(Kopete::Message& m)
 	
 	
 	// Message lenght
-	if (m_messageLengthOn != -1)
-	{
-		m_messageLength= (m.plainBody().length() + m_messageLength * m_messageLengthOn)/(1 + m_messageLengthOn);
-	}
+	m_messageLength= (m.plainBody().length() + m_messageLength * m_messageLengthOn)/(1 + m_messageLengthOn);
 	m_messageLengthOn++;
 	
 	// Last talked
