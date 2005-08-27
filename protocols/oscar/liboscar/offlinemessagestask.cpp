@@ -82,6 +82,7 @@ bool OfflineMessagesTask::take( Transfer* t )
 		else if ( requestType() == 0x0042 ) // end-of-offline messages
 			endOfMessages();
 			
+		setTransfer( 0 );
 		return true;
 	}
 	return false;

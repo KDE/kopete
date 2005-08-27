@@ -53,6 +53,7 @@ bool TypingNotifyTask::take( Transfer* transfer )
 	{
 		setTransfer( transfer );
 		handleNotification();
+		setTransfer( 0 );
 		return true;
 	}
 	
