@@ -280,13 +280,13 @@ signals:
 
 	/** Emitted when a possible tab tooltip needs updating */
 	void updateChatTooltip( ChatView*, const QString& );
-	
+
 	/** Emitted when the state of the chat changes */
 	void updateChatState( ChatView*, int );
 
 	/** Emitted when a possible tab label needs updating */
 	void updateChatLabel( ChatView*, const QString& );
-	
+
 	/**
 	 * Our send-button-enabled flag has changed
 	 */
@@ -341,8 +341,6 @@ private slots:
 	void slotMarkMessageRead();
 
 	void slotToggleRtfToolbar( bool enabled );
-
-	void editPartTextChanged();
 
 protected:
 	virtual void dragEnterEvent ( QDragEnterEvent * );

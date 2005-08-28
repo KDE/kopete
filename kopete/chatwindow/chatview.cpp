@@ -104,7 +104,6 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent, const ch
 
 	// FIXME: is this used these days? it seems totally unnecessary
 	connect( editPart(), SIGNAL( toggleToolbar(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
-	connect( editPart()->edit(), SIGNAL( textChanged() ) , this, SLOT( editPartTextChanged() ) );
 
 	connect( editPart(), SIGNAL( messageSent( Kopete::Message & ) ),
 	         this, SIGNAL( messageSent( Kopete::Message & ) ) );
@@ -837,18 +836,6 @@ void ChatView::slotRemoteTypingTimeout()
 	// Remove the topmost timer from the list. Why does QPtrDict use void* keys and not typed keys? *sigh*
 	if ( !m_remoteTypingMap.isEmpty() )
 		remoteTyping( reinterpret_cast<const Kopete::Contact *>( QPtrDictIterator<QTimer>(m_remoteTypingMap).currentKey() ), false );
-}
-
-void ChatView::editPartTextChanged()
-{
-	QSyntaxHighlighter* qsh = m_editPart->edit()->syntaxHighlighter();
-	if ( !qsh )
-		return;
-
-	KDictSpellingHighlighter* kdsh = dynamic_cast<KDictSpellingHighlighter*>( qsh );
-	if ( !kdsh )
-		return;
-
 }
 
 void ChatView::dragEnterEvent ( QDragEnterEvent * event )
