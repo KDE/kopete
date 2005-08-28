@@ -20,7 +20,7 @@ libkopete_la_SOURCES = knotification.cpp connectionmanager.cpp kopeteonlinestatu
 	kopetecontactlist.cpp kopetemetacontact.cpp kopeteawaydialog.cpp kopetetransfermanager.cpp \
 	kopetegroup.cpp kcautoconfigmodule.cpp kopeteaccountmanager.cpp kopeteaccount.cpp \
 	kopetecontactlistelement.cpp kopetecommandhandler.cpp kopeteaway.cpp \
-	kopeteawayaction.cpp kautoconfig.cpp kopetewalletmanager.cpp kopetecontactproperty.cpp \
+	kopeteawayaction.cpp kopetewalletmanager.cpp kopetecontactproperty.cpp \
 	kopetepassword.cpp kopeteglobal.cpp kopeteuiglobal.cpp kopetepasswordedaccount.cpp \
 	kopetemimetypehandler.cpp kopetetask.cpp kopetemimesourcefactory.cpp kopetexsl.cpp \
 	kopeteeventpresentation.cpp kopetenotifyevent.cpp kopetenotifydataobject.cpp kopeteblacklister.cpp \
