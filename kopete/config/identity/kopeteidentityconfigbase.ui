@@ -256,11 +256,6 @@
                                             <string>Cus&amp;tom:</string>
                                         </property>
                                     </widget>
-                                    <widget class="KURLComboRequester">
-                                        <property name="name">
-                                            <cstring>comboPhotoURL</cstring>
-                                        </property>
-                                    </widget>
                                     <widget class="QRadioButton">
                                         <property name="name">
                                             <cstring>radioPhotoKABC</cstring>
@@ -511,9 +506,6 @@ current user contact.</string>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kcombobox.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
     <includehint>kurlrequester.h</includehint>
     <includehint>kcombobox.h</includehint>

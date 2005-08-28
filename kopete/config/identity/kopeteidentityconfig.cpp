@@ -136,7 +136,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char */*name*/
 	connect(d->m_view->buttonCopyIdentity, SIGNAL(clicked()), this, SLOT(slotCopyIdentity()));
 	connect(d->m_view->buttonRenameIdentity, SIGNAL(clicked()), this, SLOT(slotRenameIdentity()));
 	connect(d->m_view->buttonRemoveIdentity, SIGNAL(clicked()), this, SLOT(slotRemoveIdentity()));
-	connect(d->m_view->comboPhotoURL, SIGNAL(urlSelected(const QString& )), this, SLOT(slotChangePhoto(const QString& )));
+//	connect(d->m_view->comboPhotoURL, SIGNAL(urlSelected(const QString& )), this, SLOT(slotChangePhoto(const QString& )));
 
 	// Settings signal/slots
 	connect(d->m_view->radioNicknameContact, SIGNAL(toggled(bool )), this, SLOT(slotEnableAndDisableWidgets()));
@@ -201,8 +201,8 @@ void KopeteIdentityConfig::save()
 		// Photo settings
 		d->myself->setPhotoSource(selectedPhotoSource());
 		d->myself->setPhotoSourceContact(selectedPhotoSourceContact());
-		if(!d->m_view->comboPhotoURL->url().isEmpty())
-			d->myself->setPhoto(d->m_view->comboPhotoURL->url());
+//		if(!d->m_view->comboPhotoURL->url().isEmpty())
+//			d->myself->setPhoto(d->m_view->comboPhotoURL->url());
 		d->myself->setPhotoSyncedWithKABC(d->m_view->checkSyncPhotoKABC->isChecked());
 	}
 	
@@ -252,8 +252,8 @@ void KopeteIdentityConfig::saveCurrentIdentity()
 	// Photo settings
 	d->currentIdentity->setPhotoSource(selectedPhotoSource());
 	d->currentIdentity->setPhotoSourceContact(selectedPhotoSourceContact());
-	if(!d->m_view->comboPhotoURL->url().isEmpty())
-		d->currentIdentity->setPhoto(d->m_view->comboPhotoURL->url());
+//	if(!d->m_view->comboPhotoURL->url().isEmpty())
+//		d->currentIdentity->setPhoto(d->m_view->comboPhotoURL->url());
 	d->currentIdentity->setPhotoSyncedWithKABC(d->m_view->checkSyncPhotoKABC->isChecked());
 }
 
@@ -296,7 +296,7 @@ void KopeteIdentityConfig::slotLoadPhotoSources()
 	Q3PtrListIterator<Kopete::Contact> it(contactList);
 
 	d->m_view->comboPhotoContact->clear();
-	d->m_view->comboPhotoURL->clear();
+//	d->m_view->comboPhotoURL->clear();
 	d->contactPhotoSourceList.clear();
 
 	for(; it.current(); ++it)
@@ -318,7 +318,7 @@ void KopeteIdentityConfig::slotLoadPhotoSources()
 		}
 	}
 
-	d->m_view->comboPhotoURL->setURL(d->currentIdentity->customPhoto().url());
+//	d->m_view->comboPhotoURL->setURL(d->currentIdentity->customPhoto().url());
 	Kopete::MetaContact::PropertySource photoSource = d->currentIdentity->photoSource();
 
 	d->m_view->radioPhotoCustom->setChecked(photoSource == Kopete::MetaContact::SourceCustom);
@@ -354,7 +354,7 @@ void KopeteIdentityConfig::slotEnableAndDisableWidgets()
 	d->m_view->lineNickname->setEnabled(selectedNameSource() == Kopete::MetaContact::SourceCustom);
 
 	d->m_view->comboPhotoContact->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceContact);
-	d->m_view->comboPhotoURL->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceCustom);
+//	d->m_view->comboPhotoURL->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceCustom);
 
 	if(d->contactPhotoSourceList.isEmpty() )
 	{
@@ -373,7 +373,7 @@ void KopeteIdentityConfig::slotEnableAndDisableWidgets()
 			photo = Kopete::photoFromContact(selectedNameSourceContact());
 			break;
 		case Kopete::MetaContact::SourceCustom:
-			photo = QImage(d->m_view->comboPhotoURL->url());
+//			photo = QImage(d->m_view->comboPhotoURL->url());
 			break;
 	}
 
@@ -509,7 +509,7 @@ void KopeteIdentityConfig::slotChangePhoto(const QString &photoUrl)
 					i18n("An error occurred when trying to save the custom photo for %1 identity.").arg(d->selectedIdentity),
 					i18n("Identity Configuration"));
 		}
-		d->m_view->comboPhotoURL->setURL(saveLocation);
+//		d->m_view->comboPhotoURL->setURL(saveLocation);
 		slotEnableAndDisableWidgets();
 	}
 	else
