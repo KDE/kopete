@@ -301,7 +301,7 @@ void MSNSocket::slotDataReceived()
 
 			if(bytes.size() == 0) {
 				// The response headers and the content came in one packet.
-				bytes.assign(buffer, avail);
+				bytes = QByteArray( buffer, avail );
 			}
 
 			// Create the web response object from the response bytes.
@@ -1047,7 +1047,7 @@ MSNSocket::WebResponse::WebResponse(const QByteArray& bytes)
 				content[i] = bytes[offset + i];
 			// Create the web response stream from the response content bytes.
 			m_stream = new QDataStream( &content,QIODevice::ReadOnly);
-			m_stream = new .setVersion(QDataStream::Qt_3_1);
+			m_stream->setVersion(QDataStream::Qt_3_1);
 		}
 	}
 }
