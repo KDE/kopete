@@ -20,7 +20,6 @@
 #include "kopetecontact.h"
 
 #include <qapplication.h>
-//Added by qt3to4:
 #include <Q3PtrList>
 
 #include <kdebug.h>
@@ -188,24 +187,22 @@ void Contact::slotAddContact()
 
 KPopupMenu* Contact::popupMenu( ChatSession *manager )
 {
-	// Build the menu
 	KPopupMenu *menu = new KPopupMenu();
 
-	// insert title
 	QString titleText;
 	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if( nick.isEmpty() )
 		titleText = QString::fromLatin1( "%1 (%2)" ).arg( contactId(), onlineStatus().description() );
 	else
 		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( nick, contactId(), onlineStatus().description() );
-	menu->insertTitle( titleText );
+	menu->addTitle( titleText );
 
 	if( metaContact() && metaContact()->isTemporary() && contactId() != account()->myself()->contactId() )
 	{
 		KAction *actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "bookmark_add" ),
 		                                         0, this, SLOT( slotAddContact() ), menu, "actionAddContact" );
 		actionAddContact->plug( menu );
-		menu->insertSeparator();
+		menu->addSeparator();
 	}
 
 	// FIXME: After KDE 3.2 we should make isReachable do the isConnected call so it can be removed here - Martijn
@@ -231,14 +228,14 @@ KPopupMenu* Contact::popupMenu( ChatSession *manager )
 	Q3PtrList<KAction> *customActions = customContextMenuActions( manager );
 	if( customActions && !customActions->isEmpty() )
 	{
-		menu->insertSeparator();
+		menu->addSeparator();
 
 		for( KAction *a = customActions->first(); a; a = customActions->next() )
 			a->plug( menu );
 	}
 	delete customActions;
 
-	menu->insertSeparator();
+	menu->addSeparator();
 
 	if( metaContact() && !metaContact()->isTemporary() )
 		KopeteStdAction::changeMetaContact( this, SLOT( changeMetaContact() ), menu, "actionChangeMetaContact" )->plug( menu );
