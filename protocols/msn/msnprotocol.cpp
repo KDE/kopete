@@ -49,17 +49,45 @@ MSNProtocol *MSNProtocol::s_protocol = 0L;
 
 MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
 : Kopete::Protocol( MSNProtocolFactory::instance(), parent, name ),
-	NLN( Kopete::OnlineStatus::Online,    25, this, 1, QString::null,               i18n( "Online" ) ,           i18n( "O&nline" ),        Kopete::OnlineStatusManager::Online,Kopete::OnlineStatusManager::HasAwayMessage ),
-	BSY( Kopete::OnlineStatus::Away,      20, this, 2, "msn_busy",                  i18n( "Busy" ) ,             i18n( "&Busy" ),          Kopete::OnlineStatusManager::Busy,  Kopete::OnlineStatusManager::HasAwayMessage ),
-	BRB( Kopete::OnlineStatus::Away,      22, this, 3, "msn_brb",                   i18n( "Be Right Back" ),     i18n( "Be &Right Back" ) ,  0  ,                              Kopete::OnlineStatusManager::HasAwayMessage ),
-	AWY( Kopete::OnlineStatus::Away,      18, this, 4, "contact_away_overlay",      i18n( "Away From Computer" ),i18n( "&Away" ),          Kopete::OnlineStatusManager::Away,  Kopete::OnlineStatusManager::HasAwayMessage ),
-	PHN( Kopete::OnlineStatus::Away,      12, this, 5, "contact_phone_overlay",     i18n( "On the Phone" ) ,     i18n( "On The &Phone" )  ,  0  ,                              Kopete::OnlineStatusManager::HasAwayMessage ),
-	LUN( Kopete::OnlineStatus::Away,      15, this, 6, "contact_food_overlay",      i18n( "Out to Lunch" ) ,     i18n( "Out To &Lunch" )  ,  0  ,                              Kopete::OnlineStatusManager::HasAwayMessage ),
-	FLN( Kopete::OnlineStatus::Offline,    0, this, 7, QString::null,               i18n( "Offline" ) ,          i18n( "&Offline" ),       Kopete::OnlineStatusManager::Offline,Kopete::OnlineStatusManager::DisabledIfOffline ),
-	HDN( Kopete::OnlineStatus::Invisible,  3, this, 8, "contact_invisible_overlay", i18n( "Invisible" ) ,        i18n( "&Invisible" ),     Kopete::OnlineStatusManager::Invisible ), 
-	IDL( Kopete::OnlineStatus::Away,      10, this, 9, "contact_away_overlay",      i18n( "Idle" ) ,             i18n( "&Idle" ),          Kopete::OnlineStatusManager::Idle , Kopete::OnlineStatusManager::HideFromMenu ),
-	UNK( Kopete::OnlineStatus::Unknown,   25, this, 0, "status_unknown",            i18n( "Status not available" ) ),
-	CNT( Kopete::OnlineStatus::Connecting, 2, this, 10,"msn_connecting",            i18n( "Connecting" ) ),
+
+	NLN( Kopete::OnlineStatus::Online, 25, this, 1, QStringList(QString::null),
+			i18n( "Online" ), i18n( "O&nline" ), Kopete::OnlineStatusManager::Online, 
+			Kopete::OnlineStatusManager::HasAwayMessage ),
+	
+	BSY( Kopete::OnlineStatus::Away, 20, this, 2, QStringList(QString::fromLatin1("msn_busy")),
+			i18n( "Busy" ), i18n( "&Busy" ), Kopete::OnlineStatusManager::Busy,  
+			Kopete::OnlineStatusManager::HasAwayMessage ),
+	
+	BRB( Kopete::OnlineStatus::Away, 22, this, 3, QStringList(QString::fromLatin1("msn_brb")),
+			i18n( "Be Right Back" ), i18n( "Be &Right Back" ), 0,
+			Kopete::OnlineStatusManager::HasAwayMessage ),
+	
+	AWY( Kopete::OnlineStatus::Away, 18, this, 4, QStringList(QString::fromLatin1("contact_away_overlay")),
+			i18n( "Away From Computer" ), i18n( "&Away" ), Kopete::OnlineStatusManager::Away,  
+			Kopete::OnlineStatusManager::HasAwayMessage ),
+	
+	PHN( Kopete::OnlineStatus::Away, 12, this, 5, QStringList(QString::fromLatin1("contact_phone_overlay")),
+			i18n( "On the Phone" ), i18n( "On The &Phone" ), 0, Kopete::OnlineStatusManager::HasAwayMessage ),
+	
+	LUN( Kopete::OnlineStatus::Away, 15, this, 6, QStringList(QString::fromLatin1("contact_food_overlay")),   
+			i18n( "Out to Lunch" ), i18n( "Out To &Lunch" ), 0, Kopete::OnlineStatusManager::HasAwayMessage ),
+	
+	FLN( Kopete::OnlineStatus::Offline, 0, this, 7, QStringList(QString::null),
+			i18n( "Offline" ), i18n( "&Offline" ), Kopete::OnlineStatusManager::Offline,
+			Kopete::OnlineStatusManager::DisabledIfOffline ),
+	
+	HDN( Kopete::OnlineStatus::Invisible, 3, this, 8, QStringList(QString::fromLatin1("contact_invisible_overlay")), 
+			i18n( "Invisible" ), i18n( "&Invisible" ), Kopete::OnlineStatusManager::Invisible ), 
+	
+	IDL( Kopete::OnlineStatus::Away, 10, this, 9, QStringList(QString::fromLatin1("contact_away_overlay")),      
+			i18n( "Idle" ), i18n( "&Idle" ), Kopete::OnlineStatusManager::Idle , Kopete::OnlineStatusManager::HideFromMenu ),
+	
+	UNK( Kopete::OnlineStatus::Unknown, 25, this, 0, QStringList(QString::fromLatin1("status_unknown")), 
+			i18n( "Status not available" ) ),
+	
+	CNT( Kopete::OnlineStatus::Connecting, 2, this, 10, QStringList(QString::fromLatin1("msn_connecting")), 
+			i18n( "Connecting" ) ),
+	
 	propEmail(Kopete::Global::Properties::self()->emailAddress()),
 	propPhoneHome(Kopete::Global::Properties::self()->privatePhone()),
 	propPhoneWork(Kopete::Global::Properties::self()->workPhone()),
@@ -157,7 +185,7 @@ MSNProtocol* MSNProtocol::protocol()
 
 bool MSNProtocol::validContactId(const QString& userid)
 {
-	return ( userid.contains('@') ==1 && userid.contains('.') >=1 && userid.contains(' ') == 0);
+	return( userid.count(QChar('@')) ==1 && userid.count(QChar('.')) >=1 &&  userid.count(QChar(' ')) == 1 );
 }
 
 QString MSNProtocol::clientId()
