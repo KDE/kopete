@@ -29,6 +29,7 @@
 #include <qfile.h>
 #include <qtimer.h>
 #include <qdom.h>
+#include <qurl.h>
 #include <qtextstream.h>
 
 // KDE Includes
@@ -682,16 +683,28 @@ void YahooSession::slotUserInfoData( KIO::Job* /*job*/, const QByteArray &info  
 void YahooSession::saveAdressBookEntry( const YahooUserInfo &entry)
 {
 	kdDebug(14180) << k_funcinfo << endl;
-	QString url; 
-	
+	QString url;
+
+
+	// FIX for bug 107472 by Heiko Schaefer <heiko@rangun.de>
+        // The fields in the YahooUserInfo should get encoded into an valid
+        // URL. Before we turn them into latin1()
+        QString firstName = QString::fromUtf8(entry.firstName.latin1());
+	QString lastName  = QString::fromUtf8(entry.lastName.latin1());
+	QString nickName  = QString::fromUtf8(entry.nickName.latin1());
+
+	QUrl::encode(firstName);
+	QUrl::encode(lastName);
+	QUrl::encode(nickName);
+
 	if( entry.abID.toInt() > 0 )	{		// This is an Update --> append entry-ID
 		url = QString("http://insider.msg.yahoo.com/ycontent/?addab2=0&ee=1&ow=1&id=%0&fn=%1&ln=%2&yid=%3&nn=%4&e=%5&hp=%6&wp=%7")
-			.arg(entry.abID).arg(entry.firstName).arg(entry.lastName).arg(entry.userID).
-			arg(entry.nickName).arg(entry.email).arg(entry.phoneHome).arg(entry.phoneWork);
+			.arg(entry.abID).arg(firstName).arg(lastName).arg(entry.userID).
+			arg(nickName).arg(entry.email).arg(entry.phoneHome).arg(entry.phoneWork);
 		//url += QString::fromLatin1("&%1&%2&%3&%4").arg(getCookie("y")).arg(getCookie("t")).arg(getCookie("b")).arg(getCookie("q"));
 	} else {
 		url = QString("http://address.yahoo.com/yab/us?A=m&v=PG&ver=2&fn=%0&ln=%1&yid=%2&nn=%3&e=%4&hp=%5&wp=%6")
-			.arg(entry.firstName).arg(entry.lastName).arg(entry.userID).arg(entry.nickName)
+			.arg(firstName).arg(lastName).arg(entry.userID).arg(nickName)
 			.arg(entry.email).arg(entry.phoneHome).arg(entry.phoneWork);
 	/*url = QString::fromLatin1("http://insider.msg.yahoo.com/ycontent/?addab2=0&fn=%0&ln=%1&yid=%2&nn=%3&e=%4&hp=%5&wp=%6").arg(entry.firstName).arg(entry.lastName).arg(entry.userID).arg(entry.nickName).arg(entry.email).arg(entry.phoneHome).arg(entry.phoneWork);*/
 		//url += QString::fromLatin1("&%1&%2&%3&%4").arg(getCookie("y")).arg(getCookie("t")).arg(getCookie("b")).arg(getCookie("q"));

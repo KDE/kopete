@@ -212,12 +212,22 @@ void ICQContact::slotGotAuthRequest( const QString& contact, const QString& reas
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 	
-	ICQAuthReplyDialog replyDialog;
+	ICQAuthReplyDialog *replyDialog = new ICQAuthReplyDialog();
 	
-	replyDialog.setUser( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
-	replyDialog.setRequestReason( reason );
-	if ( replyDialog.exec() )
-		mAccount->engine()->sendAuth( contactId(), replyDialog.reason(), replyDialog.grantAuth() );
+	connect( replyDialog, SIGNAL( okClicked() ), this, SLOT( slotAuthReplyDialogOkClicked() ) );
+	replyDialog->setUser( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
+	replyDialog->setRequestReason( reason );
+	replyDialog->setModal( TRUE );
+	replyDialog->show();
+}
+
+void ICQContact::slotAuthReplyDialogOkClicked()
+{
+    // Do not need to delete will delete itself automatically
+    ICQAuthReplyDialog *replyDialog = (ICQAuthReplyDialog*)sender();
+    
+    if (replyDialog)
+	mAccount->engine()->sendAuth( contactId(), replyDialog->reason(), replyDialog->grantAuth() );	    
 }
 
 void ICQContact::receivedLongInfo( const QString& contact )
