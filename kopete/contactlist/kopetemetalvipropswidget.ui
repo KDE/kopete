@@ -159,7 +159,7 @@
                             </widget>
                         </vbox>
                     </widget>
-                    <widget class="QButtonGroup">
+                    <widget class="QGroupBox">
                         <property name="name">
                             <cstring>buttonGroup1</cstring>
                         </property>
@@ -271,7 +271,7 @@
                             </widget>
                         </vbox>
                     </widget>
-                    <widget class="QButtonGroup">
+                    <widget class="QGroupBox">
                         <property name="name">
                             <cstring>buttonGroup2</cstring>
                         </property>
@@ -411,11 +411,6 @@
                                                     </size>
                                                 </property>
                                             </spacer>
-                                            <widget class="KURLComboRequester">
-                                                <property name="name">
-                                                    <cstring>cmbPhotoUrl</cstring>
-                                                </property>
-                                            </widget>
                                         </hbox>
                                     </widget>
                                 </vbox>
@@ -487,7 +482,7 @@
                                     <string>Check to set custom icons for this contact</string>
                                 </property>
                             </widget>
-                            <widget class="KIconButton" row="2" column="1">
+                            <widget class="QPushButton" row="2" column="1">
                                 <property name="name">
                                     <cstring>icnbAway</cstring>
                                 </property>
@@ -495,7 +490,7 @@
                                     <string></string>
                                 </property>
                             </widget>
-                            <widget class="KIconButton" row="1" column="1">
+                            <widget class="QPushButton" row="1" column="1">
                                 <property name="name">
                                     <cstring>icnbOnline</cstring>
                                 </property>
@@ -503,7 +498,7 @@
                                     <string></string>
                                 </property>
                             </widget>
-                            <widget class="KIconButton" row="1" column="3">
+                            <widget class="QPushButton" row="1" column="3">
                                 <property name="name">
                                     <cstring>icnbOffline</cstring>
                                 </property>
@@ -511,7 +506,7 @@
                                     <string></string>
                                 </property>
                             </widget>
-                            <widget class="KIconButton" row="2" column="3">
+                            <widget class="QPushButton" row="2" column="3">
                                 <property name="name">
                                     <cstring>icnbUnknown</cstring>
                                 </property>
@@ -602,13 +597,6 @@
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klineedit.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kurlrequester.h</includehint>
-    <includehint>kcombobox.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kicondialog.h</includehint>
-    <includehint>kicondialog.h</includehint>
-    <includehint>kicondialog.h</includehint>
     <includehint>kicondialog.h</includehint>
 </includehints>
 </UI>

@@ -71,7 +71,7 @@
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="KIconButton" row="1" column="1">
+                            <widget class="QPushButton" row="1" column="1">
                                 <property name="name">
                                     <cstring>icnbOpen</cstring>
                                 </property>
@@ -101,7 +101,7 @@
                                     <cstring>icnbClosed</cstring>
                                 </property>
                             </widget>
-                            <widget class="KIconButton" row="2" column="1">
+                            <widget class="QPushButton" row="2" column="1">
                                 <property name="name">
                                     <cstring>icnbClosed</cstring>
                                 </property>
@@ -150,7 +150,6 @@
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kicondialog.h</includehint>
     <includehint>kicondialog.h</includehint>
 </includehints>
 </UI>
