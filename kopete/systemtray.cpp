@@ -279,7 +279,7 @@ void KopeteSystemTray::addBalloon()
 			cf->setGroup(gr);
 			if(codepage != "Unicode")
 			{
-				QCString locallyEncoded = msgText.ascii();
+				QByteArray locallyEncoded = msgText.ascii();
 				QTextCodec *codec = QTextCodec::codecForName(codepage.ascii());
 				if(codec)
 				msgText=codec->toUnicode( locallyEncoded );
