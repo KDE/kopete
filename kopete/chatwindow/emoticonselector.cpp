@@ -24,10 +24,9 @@
 
 #include <math.h>
 
-#include <qmovie.h>
+#include <QMovie>
 #include <qlayout.h>
 #include <qobject.h>
-#include <qtooltip.h>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QMouseEvent>
@@ -39,10 +38,11 @@
 EmoticonLabel::EmoticonLabel(const QString &emoticonText, const QString &pixmapPath, QWidget *parent, const char *name)
 	: QLabel(parent,name)
 {
+	QMovie qm(pixmapPath);
 	mText = emoticonText;
-	setMovie( QMovie(pixmapPath) );
+	setMovie( &qm );
 	setAlignment(Qt::AlignCenter);
-	QToolTip::add(this,emoticonText);
+//	QToolTip::add(this,emoticonText);
 	// Somehow QLabel doesn't tell a reasonable size when you use setMovie
 	// although it does it correctly for setPixmap. Therefore here is a little workaround
 	// to tell our minimum size.
@@ -79,13 +79,14 @@ void EmoticonSelector::prepareList(void)
 
 	if ( lay )
 	{
-		QObjectList *list = queryList( "EmoticonLabel" );
+// FIXME kde4, no clue what to do with that
+/*		QObjectList list = queryList( "EmoticonLabel" );
 //		kdDebug(14000) << k_funcinfo << "There are " << list->count() << " EmoticonLabels to delete." << endl;
 		list->setAutoDelete(true);
-		list->clear();
+		list.clear();
 		delete list;
 		delete lay;
-	}
+*/	}
 
 	lay = new QGridLayout(this, 0, 0, 4, 4, "emoticonLayout");
 	for (QMap<QString, QString>::Iterator it = list.begin(); it != list.end(); ++it )

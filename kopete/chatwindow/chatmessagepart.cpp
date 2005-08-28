@@ -25,6 +25,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 #include <QTextStream>
+#include <QByteArray>
 
 #include <dom/dom_doc.h>
 #include <dom/dom_text.h>
@@ -186,7 +187,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 			encoding() + QString::fromLatin1("\">\n<style>") + styleHTML() +
 	QString::fromLatin1("</style></head><body></body></html>") );
 	end();
-	view()->setFocusPolicy( QWidget::NoFocus );
+	view()->setFocusPolicy( Qt::NoFocus );
 
 //	d->tt=new ToolTip( this );
 
@@ -370,7 +371,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message,bool encode)
 		QString resultHTML = addNickLinks( d->xsltParser->transform( domMessage.toString() ) );
 		if(encode && (codepage != "Unicode"))
 		{
-			QCString locallyEncoded = resultHTML.ascii();
+			QByteArray locallyEncoded = resultHTML.ascii();
 			QTextCodec *codec = QTextCodec::codecForName(codepage.ascii());
 			if(codec)
 			   resultHTML = codec->toUnicode( locallyEncoded );
@@ -908,7 +909,7 @@ void ChatMessagePart::slotConvert(const QString& string)
     DOM::DOMString text=htmlDocument().body().innerHTML();
     if(codepage!="Unicode")
     {
-	QCString locallyEncoded;
+	QByteArray locallyEncoded;
 	QTextCodec *codec = QTextCodec::codecForName(codepage.ascii());
 	if(!codec)
 	{
