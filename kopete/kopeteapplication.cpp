@@ -29,6 +29,7 @@
 #include <kcmdlineargs.h>
 #include <kmessagebox.h>
 
+#include "addaccountwizard.h"
 #include "kabcpersistence.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
@@ -195,14 +196,13 @@ void KopeteApplication::slotLoadPlugins()
 		//        like a bool hasRunKopeteBefore or so to trigger the loading of the
 		//        wizard. Maybe using the last run version number is more useful even
 		//        as it also allows for other features. - Martijn
-		// FIXME: Of course this is not a too-good GUI because a first-timer would need
-		//        some kind of "welcome" dialog or wizard. But for now it's better than
-		//        nothing at all. - Martijn
 		// FIXME: Possibly we need to influence the showConfigDialog bool based on the
 		//        command line arguments processed below. But how exactly? - Martijn
-		KAction *action = KopeteStdAction::preferences( 0L );
-		action->activate();
-		delete action;
+		// NB: the command line args are completely broken atm.  
+		// I don't want to fix them for 3.5 as plugin loading will change for KDE4.	- Will
+		AddAccountWizard *m_addwizard = new AddAccountWizard( Kopete::UI::Global::mainWidget(), "addAccountWizard", true, true );
+		m_addwizard->exec();
+		Kopete::AccountManager::self()->save();
 	}
 }
 
