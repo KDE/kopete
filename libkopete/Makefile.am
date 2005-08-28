@@ -20,7 +20,7 @@ AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CA
 
 lib_LTLIBRARIES = libkopete.la
 
-libkopete_la_SOURCES = kautoconfig.cpp knotification.cpp connectionmanager.cpp kopeteonlinestatus.cpp kopeteonlinestatusmanager.cpp \
+libkopete_la_SOURCES = knotification.cpp connectionmanager.cpp kopeteonlinestatus.cpp kopeteonlinestatusmanager.cpp \
 	kopeteprotocol.cpp kopetecontact.cpp kopetepluginmanager.cpp kopeteplugin.cpp \
 	kopetemessage.cpp kopetechatsession.cpp kopetechatsessionmanager.cpp \
 	kopetecontactlist.cpp kopetemetacontact.cpp kopeteawaydialog.cpp kopetetransfermanager.cpp \
