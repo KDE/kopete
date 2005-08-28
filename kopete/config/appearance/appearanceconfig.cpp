@@ -71,7 +71,8 @@
 #include <kfilterdev.h>               // knewstuff gzipped file support
 
 #include <ktexteditor/highlightinginterface.h>
-#include <ktexteditor/editinterface.h>
+// kde4 - doesn't exists anymore
+//#include <ktexteditor/editinterface.h>
 #include <ktexteditor/document.h>
 #include <ktexteditor/view.h>
 
@@ -280,36 +281,36 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 
 	// "Colors and Fonts" TAB ===================================================
 	mPrfsColors = new AppearanceConfig_Colors(mAppearanceTabCtl);
-	connect(mPrfsColors->foregroundColor, SIGNAL(changed(const QColor &)),
+	connect(mPrfsColors->Ui::AppearanceConfig_Colors::foregroundColor, SIGNAL(changed(const QColor &)),
 		this, SLOT(slotHighlightChanged()));
-	connect(mPrfsColors->backgroundColor, SIGNAL(changed(const QColor &)),
+	connect(mPrfsColors->Ui::AppearanceConfig_Colors::backgroundColor, SIGNAL(changed(const QColor &)),
 		this, SLOT(slotHighlightChanged()));
-	connect(mPrfsColors->fontFace, SIGNAL(fontSelected(const QFont &)),
+	connect(mPrfsColors->Ui::AppearanceConfig_Colors::fontFace, SIGNAL(fontSelected(const QFont &)),
 		this, SLOT(slotChangeFont()));
-	connect(mPrfsColors->textColor, SIGNAL(changed(const QColor &)),
+	connect(mPrfsColors->Ui::AppearanceConfig_Colors::textColor, SIGNAL(changed(const QColor &)),
 		this, SLOT(slotUpdatePreview()));
-	connect(mPrfsColors->bgColor, SIGNAL(changed(const QColor &)),
+	connect(mPrfsColors->Ui::AppearanceConfig_Colors::bgColor, SIGNAL(changed(const QColor &)),
 		this, SLOT(slotUpdatePreview()));
-	connect(mPrfsColors->linkColor, SIGNAL(changed(const QColor &)),
+	connect(mPrfsColors->Ui::AppearanceConfig_Colors::linkColor, SIGNAL(changed(const QColor &)),
 		this, SLOT(slotUpdatePreview()));
-	connect(mPrfsColors->mGreyIdleMetaContacts, SIGNAL(toggled(bool)),
+	connect(mPrfsColors->Ui::AppearanceConfig_Colors::mGreyIdleMetaContacts, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
-	connect(mPrfsColors->idleContactColor, SIGNAL(changed(const QColor &)),
+	connect(mPrfsColors->Ui::AppearanceConfig_Colors::idleContactColor, SIGNAL(changed(const QColor &)),
 		this, SLOT(emitChanged()));
-	connect(mPrfsColors->mUseCustomFonts, SIGNAL(toggled(bool)),
+	connect(mPrfsColors->Ui::AppearanceConfig_Colors::mUseCustomFonts, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
-	connect(mPrfsColors->mSmallFont, SIGNAL(fontSelected(const QFont &)),
+	connect(mPrfsColors->Ui::AppearanceConfig_Colors::mSmallFont, SIGNAL(fontSelected(const QFont &)),
 		this, SLOT(emitChanged()));
-	connect(mPrfsColors->mNormalFont, SIGNAL(fontSelected(const QFont &)),
+	connect(mPrfsColors->Ui::AppearanceConfig_Colors::mNormalFont, SIGNAL(fontSelected(const QFont &)),
 		this, SLOT(emitChanged()));
-	connect(mPrfsColors->mGroupNameColor, SIGNAL(changed(const QColor &)),
+	connect(mPrfsColors->Ui::AppearanceConfig_Colors::mGroupNameColor, SIGNAL(changed(const QColor &)),
 		this, SLOT(emitChanged()));
 
-	connect(mPrfsColors->mBgOverride, SIGNAL(toggled(bool)),
+	connect(mPrfsColors->Ui::AppearanceConfig_Colors::mBgOverride, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
-	connect(mPrfsColors->mFgOverride, SIGNAL(toggled(bool)),
+	connect(mPrfsColors->Ui::AppearanceConfig_Colors::mFgOverride, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
-	connect(mPrfsColors->mRtfOverride, SIGNAL(toggled(bool)),
+	connect(mPrfsColors->Ui::AppearanceConfig_Colors::mRtfOverride, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
 
 	mAppearanceTabCtl->addTab(mPrfsColors, i18n("Colors && Fonts"));
@@ -359,9 +360,9 @@ void AppearanceConfig::save()
 	p->setContactListFolding(mPrfsContactList->mFoldVisibility->isChecked());
 
 	// "Colors & Fonts" TAB =====================================================
-	p->setHighlightBackground(mPrfsColors->backgroundColor->color());
-	p->setHighlightForeground(mPrfsColors->foregroundColor->color());
-	p->setBgColor(mPrfsColors->bgColor->color());
+	p->setHighlightBackground(mPrfsColors->Ui::AppearanceConfig_Colors::backgroundColor->color());
+	p->setHighlightForeground(mPrfsColors->Ui::AppearanceConfig_Colors::foregroundColor->color());
+	p->setBgColor(mPrfsColors->Ui::AppearanceConfig_Colors::bgColor->color());
 	p->setTextColor(mPrfsColors->textColor->color());
 	p->setLinkColor(mPrfsColors->linkColor->color());
 	p->setFontFace(mPrfsColors->fontFace->font());
@@ -431,8 +432,8 @@ void AppearanceConfig::load()
 	mPrfsContactList->mAutoHideTimeout->setValue( p->contactListAutoHideTimeout() );
 
 	// "Colors & Fonts" TAB =====================================================
-	mPrfsColors->foregroundColor->setColor(p->highlightForeground());
-	mPrfsColors->backgroundColor->setColor(p->highlightBackground());
+	mPrfsColors->Ui::AppearanceConfig_Colors::foregroundColor->setColor(p->highlightForeground());
+	mPrfsColors->Ui::AppearanceConfig_Colors::backgroundColor->setColor(p->highlightBackground());
 	mPrfsColors->textColor->setColor(p->textColor());
 	mPrfsColors->linkColor->setColor(p->linkColor());
 	mPrfsColors->bgColor->setColor(p->bgColor());
@@ -567,7 +568,8 @@ void AppearanceConfig::slotAddStyle()
 
 void AppearanceConfig::updateHighlight()
 {
-	KTextEditor::HighlightingInterface *hi = KTextEditor::highlightingInterface( editDocument );
+// FIXME: kde4 change, There is no such thing is higlighting interface...
+/*	KTextEditor::HighlightingInterface *hi = KTextEditor::highlightingInterface( editDocument );
 	int count = hi->hlModeCount();
 	for( int i=0; i < count; i++ )
 	{
@@ -578,6 +580,7 @@ void AppearanceConfig::updateHighlight()
 		}
 	}
 	emitChanged();
+*/
 }
 
 void AppearanceConfig::slotStyleSelected()
@@ -805,7 +808,8 @@ void AppearanceConfig::slotUpdatePreview()
 			"<body bgcolor=\"%7\" vlink=\"%8\" link=\"%9\">"
 		).arg( mPrfsColors->fontFace->font().family() ).arg( mPrfsColors->textColor->color().name() )
 			.arg( mPrfsColors->fontFace->font().family() ).arg( mPrfsColors->textColor->color().name() )
-			.arg( mPrfsColors->foregroundColor->color().name() ).arg( mPrfsColors->backgroundColor->color().name() )
+			.arg( mPrfsColors->Ui::AppearanceConfig_Colors::foregroundColor->color().name() )
+			.arg( mPrfsColors->Ui::AppearanceConfig_Colors::backgroundColor->color().name() )
 			.arg( mPrfsColors->bgColor->color().name() ).arg( mPrfsColors->linkColor->color().name() )
 			.arg( mPrfsColors->linkColor->color().name() ) );
 
