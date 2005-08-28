@@ -20,7 +20,6 @@
 #include "chatmessagepart.h"
 
 #include <qclipboard.h>
-#include <q3tooltip.h>
 #include <qrect.h>
 #include <qcursor.h>
 //Added by qt3to4:
@@ -105,9 +104,9 @@ public:
 	 */
 	QTimer refreshtimer;
 	bool transformAllMessages;
-	ToolTip *tt;
+//	ToolTip *tt;
 };
-
+/*
 class ChatMessagePart::ToolTip : public Q3ToolTip
 {
 public:
@@ -116,7 +115,7 @@ public:
 		m_chat = c;
 	}
 
-	void maybeTip( const QPoint &/*p*/ )
+	void maybeTip( const QPoint &p )
 	{
 		// FIXME: it's wrong to look for the node under the mouse - this makes too many
 		//        assumptions about how tooltips work. but there is no nodeAtPoint.
@@ -160,7 +159,7 @@ private:
 	ChatMessagePart *m_chat;
 };
 
-
+*/
 
 ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, const char *name )
 	: KHTMLPart( parent, name ), m_manager( mgr ), d( new Private )
@@ -189,7 +188,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	end();
 	view()->setFocusPolicy( QWidget::NoFocus );
 
-	d->tt=new ToolTip( this );
+//	d->tt=new ToolTip( this );
 
 	// It is not possible to drag and drop on our widget
 	view()->setAcceptDrops(false);
@@ -234,7 +233,7 @@ ChatMessagePart::~ChatMessagePart()
 		delete backgroundFile;
 	}
 
-	delete d->tt;
+//	delete d->tt;
 	delete d->xsltParser;
 	delete d;
 }

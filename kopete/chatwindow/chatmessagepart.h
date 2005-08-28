@@ -181,8 +181,8 @@ private:
 	 */
 	QString textUnderMouse();
 
-	class ToolTip;
-	friend class ToolTip;
+//	class ToolTip;
+//	friend class ToolTip;
 
 	class Private;
 	Private *d;
