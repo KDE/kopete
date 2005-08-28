@@ -652,7 +652,11 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 	}
 
 	if ( !item )
+	{
 		clearSelection();
+		//Clear selection doesn't update lists of selected contact if the item is onlt heilighted (see bug 106090)
+		Kopete::ContactList::self()->setSelectedItems( QPtrList<Kopete::MetaContact>() , QPtrList<Kopete::Group>() );
+	}
 
 	int nb = Kopete::ContactList::self()->selectedMetaContacts().count() +
 		Kopete::ContactList::self()->selectedGroups().count();
@@ -1902,7 +1906,10 @@ void KopeteContactListView::slotUndo()
 				{ // do undo
 					Kopete::Contact *c = Kopete::ContactList::self()->findContact( undoArgs[1], undoArgs[2], undoArgs[0]);
 					if (!c)
-						return;
+					{
+						success=false;
+						break;
+					}
 					// do undo
 					m->setDisplayNameSourceContact(c);
 					m->setDisplayNameSource(Kopete::MetaContact::SourceContact);

@@ -606,7 +606,7 @@ int TextComponent::widthForHeight( int )
 
 QColor TextComponent::color()
 {
-	return d->color;
+	return d->customColor ? d->color : QColor();
 }
 
 void TextComponent::setColor( const QColor &color )
@@ -639,7 +639,6 @@ class DisplayNameComponent::Private
 {
 public:
 	QString text;
-    QColor color;
     QFont font;
 };
 
@@ -704,12 +703,25 @@ void DisplayNameComponent::setText( const QString& text )
 	if ( d->text == text )
 		return;
 	d->text = text;
+	
+	redraw();
+}
+
+void DisplayNameComponent::redraw()
+{
+	QColor color;
+	for ( uint n = 0; n < components(); ++n )
+		if( component( n )->rtti() == Rtti_TextComponent )
+	{
+		((TextComponent*)component(n))->color();
+	}
+	
 	Q3ValueList<Kopete::Emoticons::Token> tokens;
 	Q3ValueList<Kopete::Emoticons::Token>::const_iterator token;
-
+	
 	clear(); // clear childs
 
-	tokens = Kopete::Emoticons::tokenizeEmoticons( text );
+	tokens = Kopete::Emoticons::tokenizeEmoticons( d->text );
 	ImageComponent *ic;
 	TextComponent *t;
 
@@ -721,7 +733,6 @@ void DisplayNameComponent::setText( const QString& text )
 		{
 		case Kopete::Emoticons::Text:
 			t = new TextComponent( this,  d->font, (*token).text );
-			t->setColor( d->color );
 		break;
 		case Kopete::Emoticons::Image:
 			ic = new ImageComponent( this );
@@ -732,6 +743,9 @@ void DisplayNameComponent::setText( const QString& text )
 			kdDebug( 14010 ) << k_funcinfo << "This should have not happened!" << endl;
 		}
 	}
+	
+	if(color.isValid())
+		setColor( color );
 }
 
 void DisplayNameComponent::setFont( const QFont& font )
@@ -739,7 +753,6 @@ void DisplayNameComponent::setFont( const QFont& font )
 	for ( uint n = 0; n < components(); ++n )
 		if( component( n )->rtti() == Rtti_TextComponent )
 			((TextComponent*)component(n))->setFont( font );
-
 	d->font = font;
 }
 
@@ -748,7 +761,6 @@ void DisplayNameComponent::setColor( const QColor& color )
 	for ( uint n = 0; n < components(); ++n )
 		if( component( n )->rtti() == Rtti_TextComponent )
 			((TextComponent*)component(n))->setColor( color );
-	d->color = color;
 }
 
 void DisplayNameComponent::setDefaultColor()
@@ -821,7 +833,7 @@ Kopete::Contact *ContactComponent::contact()
 }
 
 // we don't need to use a tooltip source here - this way is simpler
-std::pair<QString,QRect> ContactComponent::toolTip( const QPoint &relativePos )
+std::pair<QString,QRect> ContactComponent::toolTip( const QPoint &/*relativePos*/ )
 {
 	return std::make_pair(d->contact->toolTip(),rect());
 }

@@ -231,8 +231,8 @@ void KopeteMetaContactLVI::initLVI()
 		SLOT( slotIdleStateChanged( Kopete::Contact * ) ) );
 
 	connect( KopetePrefs::prefs(), SIGNAL( contactListAppearanceChanged() ),
-		SLOT( slotConfigChanged() ) );
-
+			 SLOT( slotConfigChanged() ) );
+	
 	connect( kapp, SIGNAL( appearanceChanged() ),  SLOT( slotConfigChanged() ) );
 
 	mBlinkTimer = new QTimer( this, "mBlinkTimer" );
@@ -305,7 +305,8 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 		else if ( m_metaContact->displayNameSource() == Kopete::MetaContact::SourceContact )
 		{
 			Kopete::Contact* c = m_metaContact->displayNameSourceContact();
-			u->args << c->contactId() << c->protocol()->pluginId() << c->account()->accountId();
+			if(c)
+				u->args << c->contactId() << c->protocol()->pluginId() << c->account()->accountId();
 		}
 		// source kabc requires no arguments
 
@@ -476,6 +477,9 @@ void KopeteMetaContactLVI::execute() const
 		d->events.first()->apply();
 	else
 		m_metaContact->execute();
+	
+	//The selection is removed, but the contact still hihjlihted,  remove the selection in the contactlist (see bug 106090)
+	Kopete::ContactList::self()->setSelectedItems( QPtrList<Kopete::MetaContact>() , QPtrList<Kopete::Group>() );
 }
 
 void KopeteMetaContactLVI::slotDisplayNameChanged()
@@ -655,15 +659,32 @@ void KopeteMetaContactLVI::slotConfigChanged()
 	}
 
 	if ( KopetePrefs::prefs()->contactListUseCustomFonts() )
+	{
 		d->nameText->setFont( KopetePrefs::prefs()->contactListCustomNormalFont() );
+		if ( d->extraText )
+			d->extraText->setFont( KopetePrefs::prefs()->contactListSmallFont() );
+	}
 	else
-		d->nameText->setFont( listView()->font() );
-	if ( d->extraText )
-		d->extraText->setFont( KopetePrefs::prefs()->contactListSmallFont() );
-
+	{
+		QFont font=listView()->font();
+		d->nameText->setFont( font );
+		if(d->extraText)
+		{
+			if ( font.pixelSize() != -1 )
+				font.setPixelSize( (font.pixelSize() * 3) / 4 );
+			else
+				font.setPointSizeFloat( font.pointSizeFloat() * 0.75 );
+			d->extraText->setFont( font );
+		}
+	}
+	
 	updateVisibility();
 	updateContactIcons();
 	slotIdleStateChanged( 0 );
+	if(d->nameText)
+		d->nameText->redraw();
+	if(d->extraText)
+		d->extraText->redraw();
 }
 
 void KopeteMetaContactLVI::setMetaContactToolTipSourceForComponent( ListView::Component *comp )
@@ -768,7 +789,7 @@ void KopeteMetaContactLVI::updateVisibility()
 		setTargetVisibility( true );
 }
 
-void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact *contact,
+void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact */*contact*/,
 	const QString &key, const QVariant &old, const QVariant &newVal )
 {
 	if ( key == QString::fromLatin1("awayMessage") && d->extraText && old != newVal )

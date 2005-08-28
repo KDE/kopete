@@ -114,6 +114,8 @@ private slots:
 	/** Authorize this contact */
 	void slotSendAuth();
 	
+	void slotAuthReplyDialogOkClicked();
+	
 	/** We have received an auth request */
 	void slotGotAuthRequest( const QString& contact, const QString& reason );
 	

@@ -29,6 +29,7 @@
 
 #include <dom/dom_doc.h>
 #include <dom/dom_text.h>
+#include <dom/dom_string.h>
 #include <dom/dom_element.h>
 #include <dom/html_base.h>
 #include <dom/html_document.h>
@@ -166,7 +167,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 {
 	d->xsltParser = new Kopete::XSLT( KopetePrefs::prefs()->styleContents() );
 	d->transformAllMessages = ( d->xsltParser->flags() & Kopete::XSLT::TransformAllMessages );
-
+        codepage="Unicode";
 	backgroundFile = 0;
 	root = 0;
 	messageId = 0;
@@ -181,12 +182,11 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	setOnlyLocalReferences( true );
 
 	begin();
-	write( QString::fromLatin1( "<html><head>\n"
-		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=") +
-		encoding() + QString::fromLatin1("\">\n<style>") + styleHTML() +
-		QString::fromLatin1("</style></head><body></body></html>") );
+        write( QString::fromLatin1( "<html><head>\n"
+			"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=") +
+			encoding() + QString::fromLatin1("\">\n<style>") + styleHTML() +
+	QString::fromLatin1("</style></head><body></body></html>") );
 	end();
-
 	view()->setFocusPolicy( QWidget::NoFocus );
 
 	d->tt=new ToolTip( this );
@@ -344,7 +344,7 @@ void ChatMessagePart::slotAppearanceChanged()
 	slotRefreshNodes();
 }
 
-void ChatMessagePart::appendMessage( Kopete::Message &message )
+void ChatMessagePart::appendMessage( Kopete::Message &message,bool encode)
 {
 	//parse emoticons and URL now.
 	message.setBody( message.parsedBody() , Kopete::Message::ParsedHTML );
@@ -354,7 +354,6 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 	message.setRtfOverride( d->rtfOverride );
 
 	messageMap.append(  message.asXML().toString() );
-
 	uint bufferLen = (uint)KopetePrefs::prefs()->chatViewBufferSize();
 
 	// transform all messages every time. needed for Adium style.
@@ -370,7 +369,13 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 		QDomDocument domMessage = message.asXML();
 		domMessage.documentElement().setAttribute( QString::fromLatin1( "id" ), QString::number( messageId ) );
 		QString resultHTML = addNickLinks( d->xsltParser->transform( domMessage.toString() ) );
-
+		if(encode && (codepage != "Unicode"))
+		{
+			QCString locallyEncoded = resultHTML.ascii();
+			QTextCodec *codec = QTextCodec::codecForName(codepage.ascii());
+			if(codec)
+			   resultHTML = codec->toUnicode( locallyEncoded );
+		}
 		QString direction = ( message.plainBody().isRightToLeft() ? QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
 		DOM::HTMLElement newNode = document().createElement( QString::fromLatin1("span") );
 		newNode.setAttribute( QString::fromLatin1("dir"), direction );
@@ -897,3 +902,52 @@ void ChatMessagePart::emitTooltipEvent(  const QString &textUnderMouse, QString 
 
 // vim: set noet ts=4 sts=4 sw=4:
 
+void ChatMessagePart::slotConvert(const QString& string)
+{
+
+    
+    DOM::DOMString text=htmlDocument().body().innerHTML();
+    if(codepage!="Unicode")
+    {
+	QCString locallyEncoded;
+	QTextCodec *codec = QTextCodec::codecForName(codepage.ascii());
+	if(!codec)
+	{
+		kdDebug()<<"codec for this name not exisit\n";
+		return;	
+	}
+	locallyEncoded=codec->fromUnicode(text.string());
+	if(string!="Unicode")
+	{
+		QTextCodec *codec = QTextCodec::codecForName(string.ascii());
+		if(!codec)
+		{
+			kdDebug()<<"codec for this name not exisit\n";
+			return;	
+		}
+		text=codec->toUnicode(locallyEncoded);
+	}
+	else 
+	    text=QString(locallyEncoded);
+    }
+    else
+    {
+	if(string!="Unicode")
+	{
+		QTextCodec *codec = QTextCodec::codecForName(string.ascii());
+		if(!codec)
+		{
+			kdDebug()<<"codec for this name not exisit\n";
+			return;	
+		}
+		text=codec->toUnicode(text.string().ascii());
+	}
+    }
+    htmlDocument().body().setInnerHTML(text);
+    setCodepage(string);    
+}
+
+void ChatMessagePart::setCodepage(const QString& page)
+{
+    codepage=page;
+}
