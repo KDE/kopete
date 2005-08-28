@@ -560,7 +560,14 @@ void MSNAccount::slotGroupAdded( const QString& groupName, const QString &groupG
 			if(c && c->hasProperty(MSNProtocol::protocol()->propGuid.key()) )
 				notifySocket()->addContact( contactId, MSNProtocol::FL, QString::null, c->guid(), groupGuid );
 			else
-				notifySocket()->addContact( contactId, MSNProtocol::FL, contactId, QString::null, QString::null );
+			{
+				// If we get to here, we're currently adding a new contact, add the groupGUID to the groupList
+				// to add when contact will be added to contactlist.
+				if( tmp_addNewContactToGroup.contains( contactId ) )
+					tmp_addNewContactToGroup[contactId].append(groupGuid);
+				else
+					tmp_addNewContactToGroup.insert(contactId, QStringList(groupGuid) );
+			}
 		}
 		tmp_addToNewGroup.remove(groupName);
 	}
@@ -865,13 +872,20 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& list, c
 				{
 					QString groupGuid = *it;
 					
-					kdDebug( 14140 ) << k_funcinfo << "Adding " << handle << "to group: " << groupGuid <<  endl;
-					notifySocket()->addContact( handle, MSNProtocol::FL, QString::null, contactGuid, groupGuid );
-					
-					c->contactAddedToGroup( groupGuid, m_groupList[ groupGuid ] );
+					// If the group didn't exist yet (yay for async operations), don't add the contact to the group
+					// Let slotGroupAdded do it.
+					if( m_groupList.contains(groupGuid) )
+					{
+						kdDebug( 14140 ) << k_funcinfo << "Adding " << handle << " to group: " << groupGuid <<  endl;
+						notifySocket()->addContact( handle, MSNProtocol::FL, QString::null, contactGuid, groupGuid );
+						
+						c->contactAddedToGroup( groupGuid, m_groupList[ groupGuid ] );
+						
+						m->addToGroup( m_groupList[ groupGuid ] );
+						
+					}
 					if ( !m_addWizard_metaContact )
 					{
-						m->addToGroup( m_groupList[ groupGuid ] );
 						Kopete::ContactList::self()->addMetaContact( m );
 					}
 				}
@@ -898,7 +912,11 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& list, c
 				if ( c->metaContact() && c->metaContact()->isTemporary() )
 					c->metaContact()->setTemporary( false, m_groupList[ groupGuid ] );
 				else
+				{
+					if( c->metaContact() )
+						c->metaContact()->addToGroup( m_groupList[groupGuid] );
 					c->contactAddedToGroup( groupGuid, m_groupList[ groupGuid ] );
+				}
 			}
 		}
 
@@ -1260,53 +1278,50 @@ bool MSNAccount::createContact( const QString &contactId, Kopete::MetaContact *m
 
 void MSNAccount::addContactServerside(const QString &contactId, QPtrList<Kopete::Group> groupList)
 {
-	bool added = false;
-	for ( Kopete::Group *group = groupList.first(); group; group = groupList.next() )
+	// First of all, fill the temporary group list. The contact will be moved to his group(s).
+	// When we receive back his contact GUID(required to move a contact between groups)
+	for( Kopete::Group *group = groupList.first(); group; group = groupList.next() )
 	{
-				// For each group, ensure it is on the MSN server
-		if ( !group->pluginData( protocol(), accountId() + " id" ).isEmpty() )
+		// TODO: It it time that libkopete generate a unique ID that contains protocols, account and contact id.
+		QString groupId  = group->pluginData( protocol(), accountId() + " id" );
+		// If the groupId is empty, that's mean the Kopete group is not on the MSN server.
+		if( !groupId.isEmpty() )
 		{
-			QString Gid = group->pluginData( protocol(), accountId() + " id" );
-			if(!m_groupList.contains(Gid))
-			{ // ohoh!   something is corrupted on the contactlist.xml
-					  // anyway, we never should add a contact to an unexisting group on the server.
-
-						//repair the problem
+			// Something got corrupted on contactlist.xml
+			if( !m_groupList.contains(groupId) )
+			{
+				// Clear the group plugin data.
 				group->setPluginData( protocol() , accountId() + " id" , QString::null);
 				group->setPluginData( protocol() , accountId() + " displayName" , QString::null);
-				kdDebug( 14140 ) << k_funcinfo << " Group " << group->displayName() << " marked with id #" <<Gid << " does not seems to be anymore on the server" << endl;
+				kdDebug( 14140 ) << k_funcinfo << " Group " << group->displayName() << " marked with id #" << groupId << " does not seems to be anymore on the server" << endl;
 
+				// Add the group on MSN server, will fix the corruption.
+				kdDebug(14140) << k_funcinfo << "Fixing group corruption, re-adding " << group->displayName() << "to the server." << endl;
+				addGroup( group->displayName(), contactId);
 			}
 			else
 			{
-				// Add the contact to the group on the server
-				kdDebug( 14140 ) << k_funcinfo << "Add the contact to the group on the server " << endl;
-				m_notifySocket->addContact( contactId, MSNProtocol::FL, contactId, QString::null, QString::null );
 				// Add the group that the contact belong to add it when we will receive the contact GUID.
 				if( tmp_addNewContactToGroup.contains( contactId ) )
-					tmp_addNewContactToGroup[contactId].append(Gid);
+					tmp_addNewContactToGroup[contactId].append(groupId);
 				else
-					tmp_addNewContactToGroup.insert(contactId, QStringList(Gid) );
-				added = true;
+					tmp_addNewContactToGroup.insert(contactId, QStringList(groupId) );
 			}
 		}
-		if(!added)
+		else
 		{
-			if ( !group->displayName().isEmpty() && group->type() == Kopete::Group::Normal )
-			{  // not the top-level
-				// Create the group and add the contact
-				// Warning: if for a reason or another the group can't be added, the contact will not be added.
+			if( !group->displayName().isEmpty() && group->type() == Kopete::Group::Normal )
+			{
+				kdDebug(14140) << k_funcinfo << "Group not on MSN server, add it" << endl;
 				addGroup( group->displayName(), contactId );
-				added = true;
 			}
 		}
+		
 	}
-	if ( !added )
-	{
-		// only on top-level, or in no groups ( add it to the default group )
-		kdDebug( 14140 ) << k_funcinfo << "Add " << contactId << " to the top-level" << endl;
-		m_notifySocket->addContact( contactId, MSNProtocol::FL, contactId, QString::null, QString::null );
-	}
+
+	// After add the contact to the top-level, it will be moved to required groups later.
+	kdDebug( 14140 ) << k_funcinfo << "Add the contact on the server " << endl;
+	m_notifySocket->addContact( contactId, MSNProtocol::FL, contactId, QString::null, QString::null );
 }
 
 MSNContact *MSNAccount::findContactByGuid(const QString &contactGuid)

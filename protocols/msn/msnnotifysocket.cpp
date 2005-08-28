@@ -294,6 +294,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			m_secureLoginHandler = new MSNSecureLoginHandler(m_account->accountId(), m_password, data.section( ' ' , 2 , 2 ));
 
 			QObject::connect(m_secureLoginHandler, SIGNAL(loginFailed()), this, SLOT(sslLoginFailed()));
+			QObject::connect(m_secureLoginHandler, SIGNAL(loginBadPassword()), this, SLOT(sslLoginIncorrect()));
 			QObject::connect(m_secureLoginHandler, SIGNAL(loginSuccesful(QString )), this, SLOT(sslLoginSucceeded(QString )));
 
 			m_secureLoginHandler->login();

@@ -102,15 +102,24 @@ void MSNSecureLoginHandler::slotTweenerReceived(KIO::Job *authJob)
 	{
 		QString httpHeaders = authJob->queryMetaData("HTTP-Headers");
 
-//		kdDebug(14140) << k_funcinfo << "HTTP headers: " << httpHeaders << endl;
+// 		kdDebug(14140) << k_funcinfo << "HTTP headers: " << httpHeaders << endl;
 
-		QRegExp rx("from-PP='(.*)'");
-		rx.search(httpHeaders);
-		QString ticket = rx.cap(1);
+		// Check if we get "401 Unauthorized", thats means it's a bad password.
+		if(httpHeaders.contains(QString::fromUtf8("401 Unauthorized")))
+		{
+// 			kdDebug(14140) << k_funcinfo << "MSN Login Bad password." << endl;
+			emit loginBadPassword();
+		}
+		else
+		{
+			QRegExp rx("from-PP='(.*)'");
+			rx.search(httpHeaders);
+			QString ticket = rx.cap(1);
+		
+	//		kdDebug(14140) << k_funcinfo << "Received ticket: " << ticket << endl;
 	
-//		kdDebug(14140) << k_funcinfo << "Received ticket: " << ticket << endl;
-
-		emit loginSuccesful(ticket);
+			emit loginSuccesful(ticket);
+		}
 	}
 	else
 	{
