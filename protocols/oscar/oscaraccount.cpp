@@ -120,6 +120,12 @@ void OscarAccount::logOff( Kopete::Account::DisconnectReason reason )
 	d->engine->close();
 	myself()->setOnlineStatus( Kopete::OnlineStatus::Offline );
 
+	QDictIterator<Kopete::Contact> it( contacts() );
+	for( ; it.current(); ++it )
+	{
+		it.current()->setOnlineStatus(Kopete::OnlineStatus::Offline);
+	}
+	
 	disconnected( reason );
 }
 
