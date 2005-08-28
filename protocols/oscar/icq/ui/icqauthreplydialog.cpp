@@ -33,6 +33,7 @@ ICQAuthReplyDialog::ICQAuthReplyDialog( QWidget *parent, const char *name, bool 
 	
 	if ( !m_wasRequested )
 	{
+		this->setWFlags( this->getWFlags() | Qt::WDestructiveClose);
 		m_ui->lblReqReason->hide();
 		m_ui->lblRequestReason->hide();
 	}
