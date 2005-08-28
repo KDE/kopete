@@ -55,6 +55,7 @@ public:
 	 * use 
 	 */
 	void keepScrolledDown();
+    void setCodepage(const QString& page);
 
 public slots:
 	/**
@@ -91,7 +92,8 @@ public slots:
 	 * Appends a message to the messave view
 	 * @param message The message to be appended
 	 */
-	void appendMessage( Kopete::Message &message );
+	void appendMessage( Kopete::Message &message,bool encode=true );
+        void slotConvert(const QString& string);
 
 signals:
 	/**
@@ -157,6 +159,7 @@ private:
 	KAction *printAction;
 	KAction *closeAction;
 	KAction *copyURLAction;
+	QString codepage;
 
 	void readOverrides();
 

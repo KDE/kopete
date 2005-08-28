@@ -681,8 +681,11 @@ void ChatView::setCaption( const QString &text, bool modified )
 void ChatView::appendMessage(Kopete::Message &message)
 {
 	remoteTyping( message.from(), false );
-
-	messagePart()->appendMessage( message );
+	
+	if ( message.direction() != Kopete::Message::Inbound )
+	   messagePart()->appendMessage( message,false);
+	else
+		messagePart()->appendMessage(message);		
 	if( !d->isActive )
 	{
 		switch ( message.importance() )

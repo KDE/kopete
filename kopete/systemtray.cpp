@@ -19,6 +19,7 @@
 
 #include "systemtray.h"
 
+#include <qtextcodec.h> 
 #include <qtimer.h>
 #include <qtooltip.h>
 #include <qregexp.h>
@@ -29,6 +30,8 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kiconloader.h>
+#include <kconfig.h>
+
 #include "kopeteuiglobal.h"
 #include "kopetechatsessionmanager.h"
 #include "kopeteballoon.h"
@@ -263,10 +266,26 @@ void KopeteSystemTray::addBalloon()
 				msgFrom = msg.from()->metaContact()->displayName();
 			else
 				msgFrom = msg.from()->contactId();
-
+			
+			KConfig* cf=KGlobal::config();
+			QString uid=msg.from()->contactId();
+			QString gr=cf->group();
+			cf->setGroup("Encodings");
+			QString codepage=cf->readEntry(uid,"Unicode");	
+			cf->setGroup(gr);
+			if(codepage != "Unicode")
+			{
+				QCString locallyEncoded = msgText.ascii();
+				QTextCodec *codec = QTextCodec::codecForName(codepage.ascii());
+				if(codec)
+				msgText=codec->toUnicode( locallyEncoded );
+			}
+				
 			m_balloon = new KopeteBalloon(
 				i18n( "<qt><nobr><b>New Message from %1:</b></nobr><br><nobr>\"%2\"</nobr></qt>" )
 					.arg( msgFrom, msgText ), QString::null );
+			kdDebug()<<"baloon from "<<msgFrom<<" with test "<<
+			msgText<<endl;
 			connect(m_balloon, SIGNAL(signalBalloonClicked()), mEventList.first() , SLOT(apply()));
 			connect(m_balloon, SIGNAL(signalButtonClicked()), mEventList.first() , SLOT(apply()));
 			connect(m_balloon, SIGNAL(signalIgnoreButtonClicked()), mEventList.first() , SLOT(ignore()));
