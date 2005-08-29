@@ -364,18 +364,6 @@ If you do not currently have an account, please click the button to create one.<
                         <property name="enabled">
                             <bool>true</bool>
                         </property>
-                        <property name="paletteForegroundColor">
-                            <color>
-                                <red>255</red>
-                                <green>0</green>
-                                <blue>0</blue>
-                            </color>
-                        </property>
-                        <property name="font">
-                            <font>
-                                <bold>1</bold>
-                            </font>
-                        </property>
                         <property name="text">
                             <string>&lt;p align="center"&gt;You must be connected to change your Personal Information.&lt;/p&gt;</string>
                         </property>
