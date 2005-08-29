@@ -252,7 +252,20 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 	Kopete::ContactPtrList m_them = manager(Kopete::Contact::CanCreate)->members();
 	Kopete::Contact *target = m_them.first();
 
-	m_account->yahooSession()->sendIm( static_cast<YahooContact*>(m_account->myself())->m_userId,
+	//TODO: move the message-length limit to chatwindow-level
+	if( messageText.length() > 800 )
+	{
+		kdDebug(14180) << "Message exceeds max. length of 800 chars. The message gets split." << endl;
+		uint i = 0;
+		while( i < messageText.length() )
+		{
+			m_account->yahooSession()->sendIm( static_cast<YahooContact*>(m_account->myself())->m_userId,
+					static_cast<YahooContact *>(target)->m_userId, messageText.mid( i, 800 ), m_account->pictureFlag());
+			i += 800;
+		}		
+	}
+	else
+		m_account->yahooSession()->sendIm( static_cast<YahooContact*>(m_account->myself())->m_userId,
 							static_cast<YahooContact *>(target)->m_userId, messageText, m_account->pictureFlag());
 
 	// append message to window
