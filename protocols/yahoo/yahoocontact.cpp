@@ -246,6 +246,7 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 	messageText.replace( QString::fromLatin1( "&quot;" ), QString::fromLatin1( "\"" ) );
 	messageText.replace( QString::fromLatin1( "&nbsp;" ), QString::fromLatin1( " " ) );
 	messageText.replace( QString::fromLatin1( "&amp;" ), QString::fromLatin1( "&" ) );
+	messageText.replace( QString::fromLatin1( "<br/>" ), QString::fromLatin1( "\r" ) );
 	
 	kdDebug(14180) << "Converted message: " << messageText << endl;
 	
