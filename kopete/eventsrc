@@ -1000,6 +1000,8 @@ Name[zh_CN]=无法连接
 Comment=Kopete can't connect to the service
 Comment[cs]=Kopete se nedokáže připojit ke službě
 Comment[de]=Kopete kann zu diesem Dienst keine Verbindung herstellen
+Comment[sr]=Kopete се не може повезати са сервисом
+Comment[sr@Latn]=Kopete се не може повезати са сервисом
 Comment[zh_CN]=Kopete 无法连接到服务
 default_presentation=16
 
