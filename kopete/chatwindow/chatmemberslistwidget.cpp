@@ -36,7 +36,7 @@
 #include <qtooltip.h>
 
 //BEGIN ChatMembersListWidget::ToolTip
-
+/*
 class ChatMembersListWidget::ToolTip : public QToolTip
 {
 public:
@@ -63,7 +63,7 @@ public:
 private:
 	KListView *m_listView;
 };
-
+*/
 //END ChatMembersListWidget::ToolTip
 
 
@@ -137,8 +137,8 @@ ChatMembersListWidget::ChatMembersListWidget( Kopete::ChatSession *session, QWid
 	 : KListView( parent, name ), m_session( session )
 {
 	// use our own custom tooltips
-	setShowToolTips( false );
-	m_toolTip = new ToolTip( this );
+//	setShowToolTips( false );
+//	m_toolTip = new ToolTip( this );
 
 	// set up display: no header
 	setAllColumnsShowFocus( true );

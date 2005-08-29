@@ -63,6 +63,7 @@
 #include <QCloseEvent>
 #include <QHBoxLayout>
 #include <Q3ValueList>
+#include <QMovie>
 
 typedef KGenericFactory<EmailWindowPlugin> EmailWindowPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_emailwindow, EmailWindowPluginFactory( "kopete_emailwindow" )  )
@@ -111,7 +112,7 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowP
 	setMinimumSize( QSize( 75, 20 ) );
 
 	d->split = new QSplitter( v );
-	d->split->setOrientation( QSplitter::Vertical );
+	d->split->setOrientation( Qt::Vertical );
 
 	d->messagePart = new ChatMessagePart( manager, d->split, "messagePart" );
 
@@ -171,7 +172,7 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowP
 	h->addWidget( d->btnReplySend, 0, Qt::AlignRight | Qt::AlignVCenter );
 
 	initActions();
-	setWFlags(Qt::WDestructiveClose);
+//	setWFlags(Qt::WDestructiveClose);
 
 	d->showingMessage = false;
 
@@ -214,7 +215,7 @@ void KopeteEmailWindow::initActions(void)
 	d->chatSend = new KAction( i18n( "&Send Message" ), QString::fromLatin1( "mail_send" ), 0,
 		this, SLOT( slotReplySend() ), coll, "chat_send" );
 	//Default to 'Return' for sending messages
-	d->chatSend->setShortcut( QKeySequence( Key_Return ) );
+	d->chatSend->setShortcut( QKeySequence( Qt::Key_Return ) );
 
 	KStdAction::quit ( this, SLOT( slotCloseView() ), coll );
 
@@ -244,7 +245,7 @@ void KopeteEmailWindow::initActions(void)
 
 	// The animated toolbarbutton
 	d->normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
-	d->animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
+//	d->animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
 	d->animIcon.pause();
 
 	d->anim = new QLabel( this, "kde toolbar widget" );
@@ -401,7 +402,7 @@ void KopeteEmailWindow::sendMessage()
 	if ( !d->editPart->canSend() )
 		return;
 	d->sendInProgress = true;
-	d->anim->setMovie( d->animIcon );
+	d->anim->setMovie( &d->animIcon );
 	d->animIcon.unpause();
 	d->editPart->widget()->setEnabled( false );
 	d->editPart->sendMessage();

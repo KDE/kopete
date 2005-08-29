@@ -20,6 +20,7 @@
 #include <qmap.h>
 #include <qtextstream.h>
 #include <qregexp.h>
+#include <QStringList>
 
 static QTextStream qcin ( stdin,  QIODevice::ReadOnly );
 static QTextStream qcout( stdout, QIODevice::WriteOnly );

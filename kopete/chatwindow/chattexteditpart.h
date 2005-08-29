@@ -19,7 +19,6 @@
 #define CHATTEXTEDITPART_H
 
 #include "krichtexteditpart.h"
-
 #include <qstringlist.h>
 
 class QTimer;

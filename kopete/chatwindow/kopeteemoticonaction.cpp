@@ -32,8 +32,6 @@
 #include <kmenubar.h>
 #include <kpopupmenu.h>
 #include <ktoolbar.h>
-#include <ktoolbarbutton.h>
-
 #include "emoticonselector.h"
 #include "kopeteemoticons.h"
 
@@ -46,7 +44,8 @@ public:
 		m_stickyMenu = true;
 		m_popup = new KPopupMenu(0L,"KopeteEmoticonActionPrivate::m_popup");
 		emoticonSelector = new EmoticonSelector( m_popup, "KopeteEmoticonActionPrivate::emoticonSelector");
-		m_popup->insertItem( emoticonSelector );
+//FIXME do it the kde4 way
+//		m_popup->insertItem( static_cast<QObject*>(emoticonSelector) );
 		// TODO: Maybe connect to kopeteprefs and redo list only on config changes
 		connect( m_popup, SIGNAL( aboutToShow() ), emoticonSelector, SLOT( prepareList() ) );
 	}
@@ -181,17 +180,18 @@ int KopeteEmoticonAction::plug( QWidget* widget, int index )
 		}
 
 		addContainer( bar, id_ );
-
+//FIXME kde4 doesn't compile, no idea why
+		/*
 		if (!whatsThis().isEmpty())
 			bar->getButton(id_)->setWhatsThis( whatsThis() );
-
+*/
 		connect( bar, SIGNAL( destroyed() ), this, SLOT( slotDestroyed() ) );
-
+/*
 		if (delayed())
 			bar->setDelayedPopup(id_, popupMenu(), stickyMenu());
 		else
 			bar->getButton(id_)->setPopup(popupMenu(), stickyMenu());
-
+*/
 		if ( m_parentCollection )
 			m_parentCollection->connectHighlight(bar, this);
 

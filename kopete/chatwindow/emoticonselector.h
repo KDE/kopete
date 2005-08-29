@@ -20,8 +20,8 @@
 #ifndef __emoticonselector_h__
 #define __emoticonselector_h__
 
-#include <qlabel.h>
-#include <qwidget.h>
+#include <QLabel>
+#include <QWidget>
 //Added by qt3to4:
 #include <QMouseEvent>
 #include <QGridLayout>

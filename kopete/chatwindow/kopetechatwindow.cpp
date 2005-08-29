@@ -220,13 +220,12 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name )
 		m_button_send = 0L;
 
 	m_status_text = new KSqueezedTextLabel( i18n("Ready."), statusBar(), "m_status_text" );
-	m_status_text->setAlignment( AlignLeft | AlignVCenter );
+	m_status_text->setAlignment( Qt::AlignLeft | Qt::AlignVCenter );
 	m_status_text->setFont( statusBar()->font() );
 	m_status_text->setFixedHeight( statusBar()->sizeHint().height() );
 	statusBar()->addWidget( m_status_text, 1 );
 
 	readOptions();
-	setWFlags( Qt::WDestructiveClose );
 
 	windows.append( this );
 	windowListChanged();
@@ -336,7 +335,7 @@ void KopeteChatWindow::initActions(void)
 	chatSend = new KAction( i18n( "&Send Message" ), QString::fromLatin1( "mail_send" ), 0,
 		this, SLOT( slotSendMessage() ), coll, "chat_send" );
 	//Default to 'Return' for sending messages
-	chatSend->setShortcut( QKeySequence(Key_Return) );
+	chatSend->setShortcut( QKeySequence(Qt::Key_Return) );
 	chatSend->setEnabled( false );
 
  	KStdAction::save ( this, SLOT(slotChatSave()), coll );
@@ -354,7 +353,7 @@ void KopeteChatWindow::initActions(void)
 	tabRight->setEnabled( false );
 
 	nickComplete = new KAction( i18n( "Nic&k Completion" ), QString::null, 0, this, SLOT( slotNickComplete() ), coll , "nick_compete");
-	nickComplete->setShortcut( QKeySequence( Key_Tab ) );
+	nickComplete->setShortcut( QKeySequence( Qt::Key_Tab ) );
 
 	tabDetach = new KAction( i18n( "&Detach Chat" ), QString::fromLatin1( "tab_breakoff" ), 0,
 		this, SLOT( slotDetachChat() ), coll, "tabs_detach" );
@@ -370,7 +369,7 @@ void KopeteChatWindow::initActions(void)
 	connect ( actionTabPlacementMenu->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPreparePlacementMenu()) );
 	connect ( actionTabPlacementMenu->popupMenu(), SIGNAL(activated(int)), this, SLOT(slotPlaceTabs(int)) );
 
-	tabDetach->setShortcut( QKeySequence(CTRL + SHIFT + Key_B) );
+	tabDetach->setShortcut( QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_B) );
 
 	KStdAction::cut( this, SLOT(slotCut()), coll);
 	KStdAction::copy( this, SLOT(slotCopy()), coll);
@@ -382,11 +381,11 @@ void KopeteChatWindow::initActions(void)
 
 	historyUp = new KAction( i18n( "Previous History" ), QString::null, 0,
 		this, SLOT( slotHistoryUp() ), coll, "history_up" );
-	historyUp->setShortcut( QKeySequence(CTRL + Key_Up) );
+	historyUp->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_Up) );
 
 	historyDown = new KAction( i18n( "Next History" ), QString::null, 0,
 		this, SLOT( slotHistoryDown() ), coll, "history_down" );
-	historyDown->setShortcut( QKeySequence(CTRL + Key_Down) );
+	historyDown->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_Down) );
 
 	KStdAction::prior( this, SLOT( slotPageUp() ), coll, "scroll_up" );
 	KStdAction::next( this, SLOT( slotPageDown() ), coll, "scroll_down" );
@@ -420,7 +419,7 @@ void KopeteChatWindow::initActions(void)
 
 	//The Sending movie
 	normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
-	animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
+//	animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
 
 	// Pause the animation because otherwise it's running even when we're not
 	// showing it. This eats resources, and also triggers a pixmap leak in
@@ -612,7 +611,7 @@ void KopeteChatWindow::createTabBar()
 		m_rightWidget->setIconSet( SmallIcon( "tab_remove" ) );
 		m_rightWidget->adjustSize();
 		QToolTip::add( m_rightWidget, i18n("Close the current tab"));
-		m_tabBar->setCornerWidget( m_rightWidget, QWidget::TopRight );
+		m_tabBar->setCornerWidget( m_rightWidget, Qt::TopRight );
 
 		mainLayout->addWidget( m_tabBar );
 		m_tabBar->show();
@@ -911,7 +910,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 
 	if ( m_activeView->sendInProgress() && !animIcon.isNull() )
 	{
-		anim->setMovie( animIcon );
+		anim->setMovie( &animIcon );
 		animIcon.unpause();
 	}
 	else
@@ -989,7 +988,7 @@ void KopeteChatWindow::slotSendMessage()
 	{
 		if( !animIcon.isNull() )
 		{
-			anim->setMovie( animIcon );
+			anim->setMovie( &animIcon );
 			animIcon.unpause();
 		}
 		m_activeView->sendMessage();
@@ -1254,20 +1253,20 @@ void KopeteChatWindow::updateChatState( ChatView* cv, int newState )
 		switch( newState )
 		{
 			case ChatView::Highlighted:
-				m_tabBar->setTabColor( cv, Qt::blue );
+			//	m_tabBar->setTabColor( cv, Qt::blue );
 				break;
 			case ChatView::Message:
-				m_tabBar->setTabColor( cv, Qt::red );
+			//	m_tabBar->setTabColor( cv, Qt::red );
 				break;
 			case ChatView::Changed:
-				m_tabBar->setTabColor( cv, Qt::darkRed );
+			//	m_tabBar->setTabColor( cv, Qt::darkRed );
 				break;
 			case ChatView::Typing:
-				m_tabBar->setTabColor( cv, Qt::darkGreen );
+			//	m_tabBar->setTabColor( cv, Qt::darkGreen );
 				break;
 			case ChatView::Normal:
 			default:
-				m_tabBar->setTabColor( cv, KGlobalSettings::textColor() );
+			//	m_tabBar->setTabColor( cv, KGlobalSettings::textColor() );
 				break;
 		}
 	}

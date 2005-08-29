@@ -341,7 +341,7 @@ void MSNChatSession::slotInviteOtherContact()
 	if( !ok )
 		return;
 
-	if( handle.contains('@') != 1 || handle.contains('.') <1)
+	if( handle.count(QChar('@')) != 1 || handle.count(QChar('.')) <1)
 	{
 			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
 					i18n("<qt>You must enter a valid email address.</qt>"), i18n("MSN Plugin"));

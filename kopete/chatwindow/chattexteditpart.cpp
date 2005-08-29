@@ -105,6 +105,7 @@ KDictSpellingHighlighter* ChatTextEditPart::spellHighlighter()
 }
 
 // NAUGHTY, BAD AND WRONG! (but needed to fix nick complete bugs)
+/*
 #include <private/qrichtext_p.h>
 class EvilTextEdit : public KTextEdit
 {
@@ -117,14 +118,15 @@ public:
 		return str.left( str.length() - 1 );
 	}
 };
-
+*/
 void ChatTextEditPart::complete()
 {
 	int para = 1, parIdx = 1;
 	edit()->getCursorPosition( &para, &parIdx);
 
 	// FIXME: strips out all formatting
-	QString txt = static_cast<EvilTextEdit*>(edit())->plainText( para );
+//QString txt = static_cast<EvilTextEdit*>(edit())->plainText( para );
+	QString txt = edit()->text(para);
 
 	if ( parIdx > 0 )
 	{
