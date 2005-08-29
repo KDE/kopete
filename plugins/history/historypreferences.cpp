@@ -82,7 +82,6 @@ void HistoryPreferences::slotModified()
 
 void HistoryPreferences::slotShowPreviousChanged(bool on)
 {
-	p->grpChatHistory->setEnabled(on);
 	emit KCModule::changed(true);
 }
 
