@@ -138,7 +138,7 @@ int VideoDevice::checkDevice()
 		m_driver=VIDEODEV_DRIVER_NONE;
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef HAVE_V4L2
-		memset(&V4L2_capabilities, 0, sizeof(V4L2_capabilities));
+		CLEAR(V4L2_capabilities);
 
 		if (-1 != xioctl (VIDIOC_QUERYCAP, &V4L2_capabilities))
 		{
@@ -205,7 +205,7 @@ int VideoDevice::checkDevice()
 			for(unsigned int loop=0; inputisok==EXIT_SUCCESS; loop++)
 			{
 				struct v4l2_input videoinput;
-				memset(&videoinput, 0, sizeof(videoinput));
+				CLEAR(videoinput);
 				videoinput.index = loop;
 				inputisok=xioctl(VIDIOC_ENUMINPUT, &videoinput);
 				if(inputisok==EXIT_SUCCESS)
@@ -237,7 +237,7 @@ int VideoDevice::checkDevice()
 		}
 #endif
 
-		memset(&V4L_capabilities, 0, sizeof(V4L_capabilities));
+		CLEAR(V4L_capabilities);
 
 		if(m_driver==VIDEODEV_DRIVER_NONE)
 		{
@@ -275,7 +275,7 @@ int VideoDevice::checkDevice()
 				for(int loop=0; loop < V4L_capabilities.channels; loop++)
 				{
 					struct video_channel videoinput;
-					memset(&videoinput, 0, sizeof(videoinput));
+					CLEAR(videoinput);
 					videoinput.channel = loop;
 					videoinput.norm    = 1;
 					inputisok=xioctl(VIDIOCGCHAN, &videoinput);
