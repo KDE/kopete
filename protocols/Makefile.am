@@ -14,5 +14,5 @@ if include_testbed
 TESTBED=testbed
 endif
 
-#SUBDIRS = $(TESTBED) groupwise msn irc oscar yahoo sms $(JABBER) $(GADU) $(MEANWHILE)
-SUBDIRS = $(GADU)
+SUBDIRS = $(TESTBED) groupwise msn irc oscar yahoo sms $(JABBER) $(GADU) $(MEANWHILE)
+
