@@ -748,6 +748,8 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 		}
 	}
 	
+	newMsgText.replace( QString::fromLatin1( "\r" ), QString::fromLatin1( "<br/>" ) );
+	
 	kdDebug(14180) << "Message after fixing font tags '" << newMsgText << "'" << endl;
 	
 	Kopete::ChatSession *mm = contact(who)->manager(Kopete::Contact::CanCreate);
