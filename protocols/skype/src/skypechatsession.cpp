@@ -138,9 +138,9 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, const QString &session
 SkypeChatSession::~SkypeChatSession() {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
-	if (d->account->leaveOnExit())
-		emit updateChatId(d->chatId, "", this);
-	emit leaveChat(d->chatId);
+	if (d->account->leaveOnExit() && (d->isMulti))
+		emit leaveChat(d->chatId);
+	emit updateChatId(d->chatId, "", this);
 	delete d;//remove the D pointer
 }
 

@@ -10,6 +10,6 @@ fi
 if test "$SKYPE_FAIL_REASON" == "NO_KOPETE" ; then
   echo ""
   echo "Kopete not found, can not compile Skype plugin"
-  echo "Please make sure Kopete is installed and its headers are present"
+  echo "Please make sure Kopete from KDE >= 3.5 is installed and its headers are present"
   echo ""
 fi

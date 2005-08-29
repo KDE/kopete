@@ -53,9 +53,9 @@ kopete_lib=NOTFOUND
 kopete=NOTFOUND
 #try to find the include files
 search_incs="$kde_includes /usr/include"
-AC_FIND_FILE(kopete/kopetemessage.h, $search_incs, kopete_incdir)
+AC_FIND_FILE(kopete/kopeteversion.h, $search_incs, kopete_incdir)
 #was it found? 
-if test -r $kopete_incdir/kopete/kopetemessage.h ; then
+if test -r $kopete_incdir/kopete/kopeteversion.h ; then
 	#set the compile flag
 	KOPETE_INCS="-I$kopete_incdir/kopete -I$kopete_incdir/kopete/ui"
 	#yeah, we found it
