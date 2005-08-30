@@ -163,14 +163,15 @@ QPixmap OnlineStatusManager::cacheLookupByObject( const OnlineStatus &statusFor,
 {
 	QString fp = fingerprint( statusFor, icon, size, color, idle );
 
+	kdDebug(14010) << "finger print:" << fp << ", icon: " << icon << endl;
 	// look it up in the cache
-	QPixmap *theIcon= d->iconCache.find( fp ).value();
-	if ( !theIcon  )
+	QPixmap *theIcon = d->iconCache.value(fp);
+	if ( !theIcon )
 	{
 		// cache miss
-//		kdDebug(14010) << k_funcinfo << "Missed " << fingerprint << " in icon cache!" << endl;
+		kdDebug(14010) << k_funcinfo << "Missed " << fp << " in icon cache!" << endl;
 		theIcon = renderIcon( statusFor, icon, size, color, idle);
-		d->iconCache.insert( fp, theIcon );
+		d->iconCache[fp] = theIcon;
 	}
 	return *theIcon;
 }
