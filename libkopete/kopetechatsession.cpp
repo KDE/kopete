@@ -6,6 +6,7 @@
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @ kde.org>
     Copyright (c) 2003      by Jason Keirstead        <jason@keirstead.org>
+    Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -29,6 +30,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <knotification.h>
 
 #include "kopeteaccount.h"
 #include "kopetecommandhandler.h"
@@ -255,6 +257,11 @@ void Kopete::ChatSession::sendMessage( Kopete::Message &message )
 void Kopete::ChatSession::messageSucceeded()
 {
 	emit messageSuccess();
+}
+
+void Kopete::ChatSession::emitNudgeNotification()
+{
+	KNotification::event( QString::fromLatin1("buzz_nudge"), i18n("A contact send you a buzz/nudge.!") );
 }
 
 void Kopete::ChatSession::appendMessage( Kopete::Message &msg )

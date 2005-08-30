@@ -1054,3 +1054,9 @@ Comment[sr@Latn]=Дошло јо до интерне грешке сервера
 Comment[tr]=Servis İç Hatası meydana geldi
 Comment[zh_CN]=发生了服务内部错误
 default_presentation=2
+
+[buzz_nudge]
+Name=Buzz/Nudge
+Comment=A contact has send you a buzz/nudge.
+default_sound=Kopete_Received.ogg
+default_presentation=17
