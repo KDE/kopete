@@ -54,9 +54,8 @@
 #include <qtextstream.h>
 #include <qhostaddress.h>
 //Added by qt3to4:
-#include <Q3ValueList>
-#include <Q3CString>
 #include <QByteArray>
+#include <QList>
 
 #include <netinet/in.h>
 
@@ -93,7 +92,7 @@ public:
 	
 	KConfigGroup*			config;
 	Kopete::OnlineStatus		status;
-	Q3ValueList<unsigned int>	servers;
+	QList<unsigned int>		servers;
 	KGaduLoginParams		loginInfo;
 };
 
