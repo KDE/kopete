@@ -1046,7 +1046,7 @@ void KopeteContactListView::addDraggedContactByInfo( const QString &protocolId, 
 	Kopete::Account *account = Kopete::AccountManager::self()->findAccount( protocolId,accountId );
 	if( account )
 	{
-		Q3Dict<Kopete::Contact> contacts = account->contacts();
+		QHash<QString, Kopete::Contact*> contacts = account->contacts();
 		Kopete::Contact *source_contact = contacts[ contactId ];
 
 		if( source_contact )
