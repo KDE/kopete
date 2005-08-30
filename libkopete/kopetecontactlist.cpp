@@ -670,7 +670,7 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 								}
 
 								uint idx = 0;
-								while( idx < strList.size() )
+								while( idx < (unsigned int)strList.size() )
 								{
 									QDomElement dataField;
 
@@ -723,7 +723,7 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 										dataField.appendChild( newList.createTextNode( strList[ idx + 3 ] ) );
 									}
 									else if( id == QString::fromLatin1( "SMSProtocol" ) &&
-										( idx + 2 < strList.size() ) && strList[ idx + 2 ] != QString::fromLatin1( "." ) )
+										( idx + 2 < (uint)strList.size() ) && strList[ idx + 2 ] != QString::fromLatin1( "." ) )
 									{
 										dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
 										pluginData[ id ].appendChild( dataField );

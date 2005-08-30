@@ -33,9 +33,9 @@
 #include <kmessagebox.h>
 #include <knotifyclient.h>
 
+#include "kopeteaccount.h"
 #include "kabcpersistence.h"
 #include "kopetecontactlist.h"
-#include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
@@ -72,7 +72,7 @@ public:
 	QString accountLabel;
 	bool excludeconnect;
 	uint priority;
-	Q3Dict<Contact> contacts;
+	QHash<QString, Contact*> contacts;
 	QColor color;
 	uint connectionTry;
 	Contact *myself;
@@ -100,8 +100,12 @@ Account::~Account()
 	d->contacts.remove( d->myself->contactId() );
 	
 	// Delete all registered child contacts first
-	while ( !d->contacts.isEmpty() )
-		delete *Q3DictIterator<Contact>( d->contacts );
+	
+	QHashIterator<QString, Contact*> it(d->contacts);
+	while ( it.hasNext() ) {
+		it.next();
+		delete it.value();
+	}
 
 	kdDebug( 14010 ) << k_funcinfo << " account '" << d->id << "' about to emit accountDestroyed " << endl;
 	emit accountDestroyed(this);
@@ -227,7 +231,7 @@ void Account::contactDestroyed( Contact *c )
 }
 
 
-const Q3Dict<Contact>& Account::contacts()
+const QHash<QString, Contact*>& Account::contacts()
 {
 	return d->contacts;
 }
@@ -427,9 +431,12 @@ void Account::setAllContactsStatus( const Kopete::OnlineStatus &status )
 	d->suppressStatusNotification = true;
 	d->suppressStatusTimer.start( 5000, true );
 
-	for ( Q3DictIterator<Contact> it( d->contacts ); it.current(); ++it )
-		if ( it.current() != d->myself )
-			it.current()->setOnlineStatus( status );
+	QHashIterator<QString, Contact*> it(d->contacts);
+	for (  ; it.hasNext(); ) {
+		it.next();
+		if ( it.value() != d->myself )
+			it.value()->setOnlineStatus( status );
+	}
 }
 
 void Account::slotStopSuppression()

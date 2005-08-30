@@ -35,6 +35,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 #include <Q3CString>
+#include <QHash>
 
 namespace Kopete {
 
@@ -53,7 +54,7 @@ class OnlineStatusManager::Private
 
 	QPixmap *nullPixmap;
 	QMap<Protocol* , ProtocolMap > registeredStatus;
-	Q3Dict< QPixmap > iconCache;
+	QHash< QString, QPixmap* > iconCache;
 };
 
 OnlineStatusManager *OnlineStatusManager::s_self=0L;
@@ -69,19 +70,28 @@ OnlineStatusManager *OnlineStatusManager::self()
 OnlineStatusManager::OnlineStatusManager()
  : d( new Private )
 {
-	d->iconCache.setAutoDelete( true );
+	// no autodelete, removing everything in destructor
+//	d->iconCache.setAutoDelete( true );
 	d->nullPixmap = new QPixmap;
 	connect( kapp, SIGNAL( iconChanged(int) ), this, SLOT( slotIconsChanged() ) );
 }
 
 OnlineStatusManager::~OnlineStatusManager()
 {
+	QHashIterator<QString, QPixmap*> it(d->iconCache);
+    while ( it.hasNext() ) 
+	{
+		it.next();
+		delete it.value();
+	}
+						
 	delete d->nullPixmap;
 	delete d;
 }
 
 void OnlineStatusManager::slotIconsChanged()
 {
+	// shall we delete all of em first ?
 	d->iconCache.clear();
 	emit iconsChanged();
 }
@@ -154,7 +164,7 @@ QPixmap OnlineStatusManager::cacheLookupByObject( const OnlineStatus &statusFor,
 	QString fp = fingerprint( statusFor, icon, size, color, idle );
 
 	// look it up in the cache
-	QPixmap *theIcon= d->iconCache.find( fp );
+	QPixmap *theIcon= d->iconCache.find( fp ).value();
 	if ( !theIcon  )
 	{
 		// cache miss
@@ -168,7 +178,7 @@ QPixmap OnlineStatusManager::cacheLookupByObject( const OnlineStatus &statusFor,
 QPixmap OnlineStatusManager::cacheLookupByMimeSource( const QString &mimeSource )
 {
 	// look it up in the cache
-	const QPixmap *theIcon= d->iconCache.find( mimeSource );
+	const QPixmap *theIcon= d->iconCache.find( mimeSource ).value();
 	if ( !theIcon )
 	{
 		// need to return an invalid pixmap
