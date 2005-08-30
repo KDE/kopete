@@ -217,7 +217,7 @@
                                             </sizepolicy>
                                         </property>
                                         <property name="text">
-                                            <string>Au&amp;tomatic bright/contrast adjustment</string>
+                                            <string>Au&amp;tomatic brightness/contrast adjustment</string>
                                         </property>
                                     </widget>
                                     <widget class="QCheckBox" row="2" column="0">
@@ -268,7 +268,7 @@
                                                             </sizepolicy>
                                                         </property>
                                                         <property name="text">
-                                                            <string>Bright:</string>
+                                                            <string>Brightness:</string>
                                                         </property>
                                                     </widget>
                                                     <widget class="QLabel">

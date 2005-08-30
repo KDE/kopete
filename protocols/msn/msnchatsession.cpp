@@ -706,7 +706,7 @@ void MSNChatSession::cleanMessageQueue( const QString & reason )
 	else
 	{
 		Kopete::Message m;
-		QString body=i18n("Theses messages has not been sent correctly (%1): <br /><ul>").arg(reason);
+		QString body=i18n("These messages have not been sent correctly (%1): <br /><ul>").arg(reason);
 		for ( QMap<unsigned int , Kopete::Message>::iterator it = m_messagesSent.begin(); it!=m_messagesSent.end(); it = m_messagesSent.begin() )
 		{
 			m=it.data();

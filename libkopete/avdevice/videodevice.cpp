@@ -95,7 +95,7 @@ int VideoDevice::open()
 		kdDebug() <<  k_funcinfo << "Device is already open" << endl;
 		return EXIT_SUCCESS;
 	}
-	descriptor = ::open (full_filename.local8Bit(), O_RDWR /* required */ | O_NONBLOCK, 0);
+	descriptor = ::open (QFile::encodeName(full_filename), O_RDWR /* required */ | O_NONBLOCK, 0);
 	if(isOpen())
 	{
 		kdDebug() <<  k_funcinfo << "File " << full_filename << " was opened successfuly" << endl;

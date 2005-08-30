@@ -1063,7 +1063,7 @@ void YahooSession::_uploadFileReceiver( int /*id*/, int fd, int error, void *dat
 	if ( !uploadData->file.open(IO_ReadOnly) )
 	{
 		kdDebug(14180) << "Could not open local file." << endl;
-		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n( "Could not open local file!" ), i18n("Error") );
+		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n( "Could not open local file." ), i18n("Error") );
 		return;
 	}
 	
@@ -1080,7 +1080,7 @@ void YahooSession::slotTransmitFile( int fd, YahooUploadData *uploadData )
 	{
 		kdDebug(14181) << k_funcinfo << "File successfully uploaded." << endl;
 		if( uploadData->reportSuccess )
-			KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Information, i18n("The File was successfully transmitted.") );
+			KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Information, i18n("The file was successfully transmitted.") );
 		uploadData->file.close();
 		delete uploadData;
 		m_connManager.remove( socket );
@@ -1104,7 +1104,7 @@ void YahooSession::slotTransmitFile( int fd, YahooUploadData *uploadData )
 	{
 		kdDebug(14181) << k_funcinfo << "An error occured while sending the file: " << socket->error() << " transmitted: " << uploadData->transmitted << endl;
 		if( uploadData->reportSuccess )
-			KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, i18n("An error occured while sending the file: ").arg( socket->error() ) );
+			KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, i18n("An error occured while sending the file: %1").arg( socket->error() ) );
 		uploadData->file.close();
 		delete uploadData;
 		m_connManager.remove( socket );
