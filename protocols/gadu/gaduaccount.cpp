@@ -791,13 +791,13 @@ GaduAccount::startNotify()
 		return;
 	}
 
-	Q3DictIterator<Kopete::Contact> kopeteContactsList( contacts() );
-
 	uin_t* userlist = 0;
 	userlist = new uin_t[ contacts().count() ];
 
-	for( i=0 ; kopeteContactsList.current() ; ++kopeteContactsList ) {
-		userlist[i++] = static_cast<GaduContact*> ((*kopeteContactsList))->uin();
+	QHashIterator<QString, Kopete::Contact*> it(contacts());	
+	for(  i=0 ; it.hasNext() ; ) {
+		it.next();
+		userlist[i++] = static_cast<GaduContact*> (it.value())->uin();
 	}
 
 	p->session_->notify( userlist, contacts().count() );
@@ -1019,16 +1019,16 @@ GaduAccount::userlist()
 {
 	GaduContact* contact;
 	GaduContactsList* contactsList = new GaduContactsList();
-	int i;
 
 	if ( !contacts().count() ) {
 		return contactsList;
 	}
 
-	Q3DictIterator<Kopete::Contact> contactsIterator( contacts() );
+	QHashIterator<QString, Kopete::Contact*> contactsIterator( contacts() );
 
-	for( i=0 ; contactsIterator.current() ; ++contactsIterator ) {
-		contact = static_cast<GaduContact*>( *contactsIterator );
+	for( ; contactsIterator.hasNext() ; ) {
+		contactsIterator.next();
+		contact = static_cast<GaduContact*>( contactsIterator.value() );
 		if ( contact->uin() != static_cast<GaduContact*>( myself() )->uin() ) {
 			contactsList->addContact( *contact->contactDetails() );
 		}
