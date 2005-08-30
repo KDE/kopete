@@ -239,7 +239,7 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 		pos = regExp.search( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			messageText.replace( regExp, QString::fromLatin1("<span\\1\\3><font face=\"\\2\">\\4</font></span>" ) );
+			messageText.replace( regExp, QString::fromLatin1("<span\\1\\3><font face=\"\\2\">\\4</span>" ) );
 		}
 	}
 	
@@ -250,7 +250,7 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 		pos = regExp.search( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			messageText.replace( regExp, QString::fromLatin1("<span\\1\\3><font size=\"\\2\">\\4</font></span>" ) );
+			messageText.replace( regExp, QString::fromLatin1("<span\\1\\3><font size=\"\\2\">\\4</span>" ) );
 		}
 	}
 	
