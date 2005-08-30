@@ -1,7 +1,7 @@
 /*
     behaviorconfig.h  -  Kopete Look Feel Config
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -22,6 +22,7 @@ class QFrame;
 class QTabWidget;
 
 class BehaviorConfig_General;
+class BehaviorConfig_Notifications;
 class BehaviorConfig_Chat;
 class KopeteAwayConfigBaseUI;
 class KPluginInfo;
@@ -37,10 +38,6 @@ class BehaviorConfig : public KCModule
 		virtual void load();
 
 	private slots:
-		void slotShowTrayChanged(bool);
-		void slotQueueUnreadMessagesChanged(bool);
-		void slotBalloonNotifyChanged(bool);
-		void slotTrayflashNotifyChanged(bool);
 		void slotSettingsChanged(bool);
 		void slotValueChanged(int);
 		void slotUpdatePluginLabel(int);
@@ -48,6 +45,7 @@ class BehaviorConfig : public KCModule
 	private:
 		QTabWidget* mBehaviorTabCtl;
 		BehaviorConfig_General *mPrfsGeneral;
+		BehaviorConfig_Notifications *mPrfsNotifications;
 		BehaviorConfig_Chat *mPrfsChat;
 		KopeteAwayConfigBaseUI *mAwayConfigUI;
 		QValueList<KPluginInfo*> viewPlugins;

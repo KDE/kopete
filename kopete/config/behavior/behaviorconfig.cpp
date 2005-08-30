@@ -15,6 +15,7 @@
 
 #include "behaviorconfig.h"
 #include "behaviorconfig_general.h"
+#include "behaviorconfig_notifications.h"
 #include "behaviorconfig_chat.h"
 
 #include <qcheckbox.h>
@@ -51,23 +52,19 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 
 	// "General" TAB ============================================================
 	mPrfsGeneral = new BehaviorConfig_General(mBehaviorTabCtl);
-	connect(mPrfsGeneral->mShowTrayChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotShowTrayChanged(bool)));
-	connect(mPrfsGeneral->mQueueUnreadMessagesChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotQueueUnreadMessagesChanged(bool)));
-	connect(mPrfsGeneral->mBalloonNotifyChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotBalloonNotifyChanged(bool)));
-	connect(mPrfsGeneral->mTrayflashNotifyChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotTrayflashNotifyChanged(bool)));
 	mBehaviorTabCtl->addTab(mPrfsGeneral, i18n("&General"));
+
+	// "Notifications" TAB ============================================================
+	mPrfsNotifications = new BehaviorConfig_Notifications(mBehaviorTabCtl);
+	mBehaviorTabCtl->addTab(mPrfsNotifications, i18n("&Notifications"));
 
 	// "Away" TAB ===============================================================
 	mAwayConfigUI = new KopeteAwayConfigBaseUI(mBehaviorTabCtl);
-	mBehaviorTabCtl->addTab(mAwayConfigUI, i18n("&Away Settings"));
+	mBehaviorTabCtl->addTab(mAwayConfigUI, i18n("A&way Settings"));
 
 	// "Chat" TAB ===============================================================
 	mPrfsChat = new BehaviorConfig_Chat(mBehaviorTabCtl);
-	mBehaviorTabCtl->addTab(mPrfsChat, i18n("&Chat"));
+	mBehaviorTabCtl->addTab(mPrfsChat, i18n("Cha&t"));
 
 	Kopete::PluginManager *pluginManager = Kopete::PluginManager::self();
 	viewPlugins = pluginManager->availablePlugins("Views");
@@ -82,35 +79,36 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsGeneral->mUseQueueChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mQueueUnreadMessagesChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mQueueOnlyHighlightedMessagesInGroupChatsChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mQueueOnlyMessagesOnAnotherDesktopChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mBalloonNotifyChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mBalloonNotifyIgnoreClosesChatViewChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mTrayflashNotifyChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mTrayflashNotifyLeftClickOpensMessageChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mTrayflashNotifySetCurrentDesktopToChatViewChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mSoundIfAwayChk, SIGNAL(toggled(bool)),
-			this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mEventIfActive, SIGNAL(toggled(bool)),
-			this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsGeneral->mAutoConnect, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsGeneral->mMouseNavigation, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
 
 
-	// "Chat" TAB ===============================================================
-	connect( mPrfsChat->cb_RaiseMsgWindowChk, SIGNAL(toggled(bool)),
+	// "Notifications" TAB ============================================================
+	connect(mPrfsNotifications->mQueueOnlyHighlightedMessagesInGroupChatsChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsNotifications->mQueueOnlyMessagesOnAnotherDesktopChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsNotifications->mBalloonNotifyChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsNotifications->mBalloonNotifyIgnoreClosesChatViewChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsNotifications->mTrayflashNotifyChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsNotifications->mTrayflashNotifyLeftClickOpensMessageChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsNotifications->mTrayflashNotifySetCurrentDesktopToChatViewChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsNotifications->mSoundIfAwayChk, SIGNAL(toggled(bool)),
+			this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsNotifications->mEventIfActive, SIGNAL(toggled(bool)),
+			this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsNotifications->mRaiseMsgWindowChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+
+
+	// "Chat" TAB ===============================================================
 	connect( mPrfsChat->cb_ShowEventsChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
 	connect( mPrfsChat->highlightEnabled, SIGNAL(toggled(bool)),
@@ -151,19 +149,21 @@ void BehaviorConfig::save()
 	p->setStartDocked(mPrfsGeneral->mStartDockedChk->isChecked());
 	p->setUseQueue(mPrfsGeneral->mUseQueueChk->isChecked());
 	p->setQueueUnreadMessages(mPrfsGeneral->mQueueUnreadMessagesChk->isChecked());
-	p->setQueueOnlyHighlightedMessagesInGroupChats(mPrfsGeneral->mQueueOnlyHighlightedMessagesInGroupChatsChk->isChecked());
-	p->setQueueOnlyMessagesOnAnotherDesktop(mPrfsGeneral->mQueueOnlyMessagesOnAnotherDesktopChk->isChecked());
-	p->setBalloonNotify(mPrfsGeneral->mBalloonNotifyChk->isChecked());
-	p->setBalloonNotifyIgnoreClosesChatView(mPrfsGeneral->mBalloonNotifyIgnoreClosesChatViewChk->isChecked());
-	p->setTrayflashNotify(mPrfsGeneral->mTrayflashNotifyChk->isChecked());
-	p->setTrayflashNotifyLeftClickOpensMessage(mPrfsGeneral->mTrayflashNotifyLeftClickOpensMessageChk->isChecked());
-	p->setTrayflashNotifySetCurrentDesktopToChatView(mPrfsGeneral->mTrayflashNotifySetCurrentDesktopToChatViewChk->isChecked());
-	p->setSoundIfAway(mPrfsGeneral->mSoundIfAwayChk->isChecked());
 	p->setAutoConnect(mPrfsGeneral->mAutoConnect->isChecked());
 	p->setContactListMouseNavigation(mPrfsGeneral->mMouseNavigation->isChecked());
-	slotShowTrayChanged( mPrfsGeneral->mShowTrayChk->isChecked() );
+
+	// "Notifications" TAB ============================================================
+	p->setQueueOnlyHighlightedMessagesInGroupChats(mPrfsNotifications->mQueueOnlyHighlightedMessagesInGroupChatsChk->isChecked());
+	p->setQueueOnlyMessagesOnAnotherDesktop(mPrfsNotifications->mQueueOnlyMessagesOnAnotherDesktopChk->isChecked());
+	p->setBalloonNotify(mPrfsNotifications->mBalloonNotifyChk->isChecked());
+	p->setBalloonNotifyIgnoreClosesChatView(mPrfsNotifications->mBalloonNotifyIgnoreClosesChatViewChk->isChecked());
+	p->setTrayflashNotify(mPrfsNotifications->mTrayflashNotifyChk->isChecked());
+	p->setTrayflashNotifyLeftClickOpensMessage(mPrfsNotifications->mTrayflashNotifyLeftClickOpensMessageChk->isChecked());
+	p->setTrayflashNotifySetCurrentDesktopToChatView(mPrfsNotifications->mTrayflashNotifySetCurrentDesktopToChatViewChk->isChecked());
+	p->setSoundIfAway(mPrfsNotifications->mSoundIfAwayChk->isChecked());
+	p->setRaiseMsgWindow(mPrfsNotifications->mRaiseMsgWindowChk->isChecked());
 	config->setGroup("General");
-	config->writeEntry("EventIfActive", mPrfsGeneral->mEventIfActive->isChecked());
+	config->writeEntry("EventIfActive", mPrfsNotifications->mEventIfActive->isChecked());
 
 	// "Away" TAB ===============================================================
 	p->setRememberedMessages( mAwayConfigUI->rememberedMessages->value() );
@@ -175,7 +175,6 @@ void BehaviorConfig::save()
 	config->sync();
 
 	// "Chat" TAB ===============================================================
-	p->setRaiseMsgWindow(mPrfsChat->cb_RaiseMsgWindowChk->isChecked());
 	p->setShowEvents(mPrfsChat->cb_ShowEventsChk->isChecked());
 	p->setHighlightEnabled(mPrfsChat->highlightEnabled->isChecked());
 	p->setSpellCheck(mPrfsChat->cb_SpellCheckChk->isChecked());
@@ -201,18 +200,21 @@ void BehaviorConfig::load()
 	mPrfsGeneral->mStartDockedChk->setChecked( p->startDocked() );
 	mPrfsGeneral->mUseQueueChk->setChecked( p->useQueue() );
 	mPrfsGeneral->mQueueUnreadMessagesChk->setChecked ( p->queueUnreadMessages() );
-	mPrfsGeneral->mQueueOnlyHighlightedMessagesInGroupChatsChk->setChecked ( p->queueOnlyHighlightedMessagesInGroupChats() );
-	mPrfsGeneral->mQueueOnlyMessagesOnAnotherDesktopChk->setChecked ( p->queueOnlyMessagesOnAnotherDesktop() );
-	mPrfsGeneral->mBalloonNotifyChk->setChecked ( p->balloonNotify() );
-	mPrfsGeneral->mBalloonNotifyIgnoreClosesChatViewChk->setChecked ( p->balloonNotifyIgnoreClosesChatView() );
-	mPrfsGeneral->mTrayflashNotifyChk->setChecked ( p->trayflashNotify() );
-	mPrfsGeneral->mTrayflashNotifyLeftClickOpensMessageChk->setChecked ( p->trayflashNotifyLeftClickOpensMessage() );
-	mPrfsGeneral->mTrayflashNotifySetCurrentDesktopToChatViewChk->setChecked ( p->trayflashNotifySetCurrentDesktopToChatView() );
-	mPrfsGeneral->mSoundIfAwayChk->setChecked( p->soundIfAway() );
 	mPrfsGeneral->mAutoConnect->setChecked( p->autoConnect() );
 	mPrfsGeneral->mMouseNavigation->setChecked( p->contactListMouseNavigation() );
+
+	// "Notifications" TAB ============================================================
+	mPrfsNotifications->mQueueOnlyHighlightedMessagesInGroupChatsChk->setChecked ( p->queueOnlyHighlightedMessagesInGroupChats() );
+	mPrfsNotifications->mQueueOnlyMessagesOnAnotherDesktopChk->setChecked ( p->queueOnlyMessagesOnAnotherDesktop() );
+	mPrfsNotifications->mBalloonNotifyChk->setChecked ( p->balloonNotify() );
+	mPrfsNotifications->mBalloonNotifyIgnoreClosesChatViewChk->setChecked ( p->balloonNotifyIgnoreClosesChatView() );
+	mPrfsNotifications->mTrayflashNotifyChk->setChecked ( p->trayflashNotify() );
+	mPrfsNotifications->mTrayflashNotifyLeftClickOpensMessageChk->setChecked ( p->trayflashNotifyLeftClickOpensMessage() );
+	mPrfsNotifications->mTrayflashNotifySetCurrentDesktopToChatViewChk->setChecked ( p->trayflashNotifySetCurrentDesktopToChatView() );
+	mPrfsNotifications->mSoundIfAwayChk->setChecked( p->soundIfAway() );
+	mPrfsNotifications->mRaiseMsgWindowChk->setChecked(p->raiseMsgWindow());
 	config->setGroup("General");
-	mPrfsGeneral->mEventIfActive->setChecked(config->readBoolEntry("EventIfActive", true));
+	mPrfsNotifications->mEventIfActive->setChecked(config->readBoolEntry("EventIfActive", true));
 
 	// "Away" TAB ===============================================================
 	config->setGroup("AutoAway");
@@ -222,7 +224,6 @@ void BehaviorConfig::load()
 	mAwayConfigUI->rememberedMessages->setValue( p->rememberedMessages() );
 
 	// "Chat" TAB ===============================================================
-	mPrfsChat->cb_RaiseMsgWindowChk->setChecked(p->raiseMsgWindow());
 	mPrfsChat->cb_ShowEventsChk->setChecked(p->showEvents());
 	mPrfsChat->highlightEnabled->setChecked(p->highlightEnabled());
 	mPrfsChat->cb_SpellCheckChk->setChecked(p->spellCheck());
@@ -249,37 +250,6 @@ void BehaviorConfig::load()
 void BehaviorConfig::slotUpdatePluginLabel(int)
 {
 	mPrfsChat->viewPluginLabel->setText( viewPlugins[ mPrfsChat->viewPlugin->currentItem() ]->comment() );
-}
-
-void BehaviorConfig::slotShowTrayChanged(bool check)
-{
-	mPrfsGeneral->mStartDockedChk->setEnabled(check);
-	mPrfsGeneral->mQueueUnreadMessagesChk->setEnabled(check);
-	slotQueueUnreadMessagesChanged( mPrfsGeneral->mQueueUnreadMessagesChk->isOn() );
-	mPrfsGeneral->mBalloonNotifyChk->setEnabled(check);
-	slotBalloonNotifyChanged( mPrfsGeneral->mBalloonNotifyChk->isOn() );
-	mPrfsGeneral->mTrayflashNotifyChk->setEnabled(check);
-	slotTrayflashNotifyChanged( mPrfsGeneral->mTrayflashNotifyChk->isOn() );
-	emit changed(true);
-}
-
-void BehaviorConfig::slotQueueUnreadMessagesChanged(bool check)
-{
-	check &= mPrfsGeneral->mShowTrayChk->isOn();
-	mPrfsGeneral->mQueueOnlyHighlightedMessagesInGroupChatsChk->setEnabled(check);
-	mPrfsGeneral->mQueueOnlyMessagesOnAnotherDesktopChk->setEnabled(check);
-}
-
-void BehaviorConfig::slotBalloonNotifyChanged(bool check)
-{
-	check &= mPrfsGeneral->mShowTrayChk->isOn();
-	mPrfsGeneral->mBalloonNotifyIgnoreClosesChatViewChk->setEnabled(check);
-}
-
-void BehaviorConfig::slotTrayflashNotifyChanged(bool check)
-{
-	check &= mPrfsGeneral->mShowTrayChk->isOn();
-	mPrfsGeneral->mTrayflashNotifyLeftClickOpensMessageChk->setEnabled(check);
 }
 
 void BehaviorConfig::slotSettingsChanged(bool)

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>493</width>
-            <height>535</height>
+            <width>348</width>
+            <height>268</height>
         </rect>
     </property>
     <property name="caption">
@@ -35,28 +35,40 @@
                         <cstring>mShowTrayChk</cstring>
                     </property>
                     <property name="text">
-                        <string>Show the s&amp;ystem tray icon</string>
+                        <string>Show system tray &amp;icon</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Show the icon in the system tray</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>By default, the system tray icon indicates new incoming messages by flashing and showing a bubble. A left or middle mouse click on the icon will open the message in a new chat window. Pressing the "View" button in the bubble has the same effect.</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
                         <cstring>mStartDockedChk</cstring>
                     </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
                     <property name="text">
-                        <string>Start with the contact list &amp;minimised to the system tray</string>
+                        <string>Start with hidden &amp;main window</string>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Start with the main window hidden, the only visible item is the system tray icon</string>
+                        <string>Start with the main window minimised to the system tray</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Start with the main window hidden. The only visible item is the system tray icon.</string>
                     </property>
                 </widget>
             </vbox>
         </widget>
-        <widget class="QButtonGroup">
+        <widget class="QGroupBox">
             <property name="name">
-                <cstring>notifyGroupBox</cstring>
+                <cstring>groupBox1</cstring>
             </property>
             <property name="title">
-                <string>Notifications</string>
+                <string>Miscellaneous</string>
             </property>
             <vbox>
                 <property name="name">
@@ -64,16 +76,16 @@
                 </property>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mQueueUnreadMessagesChk</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
+                        <cstring>mUseQueueChk</cstring>
                     </property>
                     <property name="text">
-                        <string>Queue &amp;unread messages</string>
+                        <string>Use message &amp;queue</string>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Unread messages are messages that will be displayed in an already opened but inactive chat window.</string>
+                        <string>Use a message queue instead of instantly opening a chat window on incoming messages</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Use a message for new incoming messages. New messages are messages that cannot be displayed in an already open chat window. Only queued messages triggers notification via bubble and flashing tray.</string>
                     </property>
                 </widget>
                 <widget class="QLayoutWidget">
@@ -103,200 +115,22 @@
                         </spacer>
                         <widget class="QCheckBox">
                             <property name="name">
-                                <cstring>mQueueOnlyHighlightedMessagesInGroupChatsChk</cstring>
+                                <cstring>mQueueUnreadMessagesChk</cstring>
                             </property>
                             <property name="enabled">
                                 <bool>false</bool>
                             </property>
                             <property name="text">
-                                <string>Queue only highlighted messages in group chats</string>
+                                <string>Queue &amp;unread messages</string>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Also add unread messages to queue</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Unread messages are messages that will be displayed in an already opened but inactive chat window. Only incoming queued messages triggers notification via bubble and flashing tray. With this option disabled only new incoming messages are queued, i.e. messages that cannot be displayed in an already open chat window.</string>
                             </property>
                         </widget>
                     </hbox>
-                </widget>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>layout7_2</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <spacer>
-                            <property name="name">
-                                <cstring>spacer11_2</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Fixed</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>16</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>mQueueOnlyMessagesOnAnotherDesktopChk</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="text">
-                                <string>Queue only messages in chats on another des&amp;ktop</string>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>mBalloonNotifyChk</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="text">
-                        <string>Show a &amp;bubble on queued message</string>
-                    </property>
-                </widget>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>layout11</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <spacer>
-                            <property name="name">
-                                <cstring>spacer10</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Fixed</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>16</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>mBalloonNotifyIgnoreClosesChatViewChk</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="text">
-                                <string>Button "&amp;Ignore" closes chatwindow</string>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>mTrayflashNotifyChk</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Flash the system tray on queued message</string>
-                    </property>
-                </widget>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>layout11_2</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <spacer>
-                            <property name="name">
-                                <cstring>spacer10_2</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Fixed</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>16</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>mTrayflashNotifyLeftClickOpensMessageChk</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="text">
-                                <string>&amp;Left mouse click on system tray opens message</string>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>mTrayflashNotifySetCurrentDesktopToChatViewChk</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Swi&amp;tch to desktop containing chat on opening message</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>mSoundIfAwayChk</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Enable events &amp;while away</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>mEventIfActive</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Enable events for incoming messages if the &amp;chatwindow is active</string>
-                    </property>
-                </widget>
-            </vbox>
-        </widget>
-        <widget class="QGroupBox">
-            <property name="name">
-                <cstring>groupBox1</cstring>
-            </property>
-            <property name="title">
-                <string>Miscellaneous</string>
-            </property>
-            <vbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>mUseQueueChk</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Use the message &amp;queue</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Use a queue instead of opening a chat window on incoming messages</string>
-                    </property>
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
@@ -305,8 +139,11 @@
                     <property name="text">
                         <string>Connect automatically at &amp;startup</string>
                     </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Connect all your accounts automatically when starting Kopete</string>
+                    </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Automatically connect all your accounts when Kopete starts</string>
+                        <string>When starting Kopete all your accounts will be connected automatically. Note: You can exclude accounts individually in their properties.</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -315,6 +152,9 @@
                     </property>
                     <property name="text">
                         <string>Use mouse &amp;navigation instead of scroll-bars</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Use mouse navigation instead of scroll-bars for contact list</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>This navigation scheme is designed to remove the vertical scrollbar. Instead of dragging the scrollbar you just move your mouse on the list vertically: as you move your mouse, the list will move in the opposite direction and you can reach your target contact. Every contact list item collides with the mouse cursor at one certain point.</string>
@@ -341,13 +181,26 @@
         </spacer>
     </vbox>
 </widget>
+<connections>
+    <connection>
+        <sender>mShowTrayChk</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>mStartDockedChk</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>mUseQueueChk</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>mQueueUnreadMessagesChk</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
 <tabstops>
-    <tabstop>mUseQueueChk</tabstop>
     <tabstop>mShowTrayChk</tabstop>
     <tabstop>mStartDockedChk</tabstop>
-    <tabstop>mBalloonNotifyChk</tabstop>
-    <tabstop>mTrayflashNotifyChk</tabstop>
-    <tabstop>mSoundIfAwayChk</tabstop>
+    <tabstop>mUseQueueChk</tabstop>
+    <tabstop>mAutoConnect</tabstop>
+    <tabstop>mMouseNavigation</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
