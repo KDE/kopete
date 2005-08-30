@@ -49,6 +49,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#include <Q3PtrList>
 
 KopeteApplication::KopeteApplication()
 : KUniqueApplication( true, true, true )
@@ -304,7 +305,7 @@ void KopeteApplication::quitKopete()
 	m_isShuttingDown = true;
 
 	// close all windows
-	Q3PtrListIterator<KMainWindow> it(*KMainWindow::memberList);
+	Q3PtrListIterator<KMainWindow> it(*KMainWindow::memberList());
 	for (it.toFirst(); it.current(); ++it)
 	{
 		if ( !it.current()->close() )
