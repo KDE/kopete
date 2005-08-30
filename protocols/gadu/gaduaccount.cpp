@@ -56,6 +56,7 @@
 //Added by qt3to4:
 #include <Q3ValueList>
 #include <Q3CString>
+#include <QByteArray>
 
 #include <netinet/in.h>
 
@@ -920,7 +921,7 @@ GaduAccount::slotExportContactsListToFile()
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
 
 	if ( p->saveListDialog->exec() == QDialog::Accepted ) {
-		Q3CString list = p->textcodec_->fromUnicode( userlist()->asString() );
+		QByteArray list = p->textcodec_->fromUnicode( userlist()->asString() );
 
 		if ( tempFile.status() ) {
 			// say cheese, can't create file.....
@@ -951,7 +952,7 @@ void
 GaduAccount::slotImportContactsFromFile()
 {
 	KURL url;
-	Q3CString list;
+	QByteArray list;
 	QString oname;
 
 	if ( p->loadListDialog ) {
