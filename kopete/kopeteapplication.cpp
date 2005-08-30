@@ -304,7 +304,7 @@ void KopeteApplication::quitKopete()
 	m_isShuttingDown = true;
 
 	// close all windows
-	Q3PtrListIterator<KMainWindow> it(*KMainWindow::memberList());
+	Q3PtrListIterator<KMainWindow> it(*KMainWindow::memberList);
 	for (it.toFirst(); it.current(); ++it)
 	{
 		if ( !it.current()->close() )
