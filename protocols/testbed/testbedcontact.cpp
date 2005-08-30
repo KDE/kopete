@@ -28,7 +28,7 @@
 #include "testbedfakeserver.h"
 #include "testbedprotocol.h"
 //Added by qt3to4:
-#include <Q3PtrList>
+#include <QList>
 
 TestbedContact::TestbedContact( Kopete::Account* _account, const QString &uniqueName,
 		const TestbedContactType type, const QString &displayName, Kopete::MetaContact *parent )
@@ -73,7 +73,7 @@ Kopete::ChatSession* TestbedContact::manager( CanCreateFlags )
 	}
 	else
 	{
-		Q3PtrList<Kopete::Contact> contacts;
+		QList<Kopete::Contact*> contacts;
 		contacts.append(this);
 		m_msgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), contacts, protocol());
 		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)),
