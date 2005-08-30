@@ -22,7 +22,7 @@ class QFrame;
 class QTabWidget;
 
 class BehaviorConfig_General;
-class BehaviorConfig_Notifications;
+class BehaviorConfig_Events;
 class BehaviorConfig_Chat;
 class KopeteAwayConfigBaseUI;
 class KPluginInfo;
@@ -45,7 +45,7 @@ class BehaviorConfig : public KCModule
 	private:
 		QTabWidget* mBehaviorTabCtl;
 		BehaviorConfig_General *mPrfsGeneral;
-		BehaviorConfig_Notifications *mPrfsNotifications;
+		BehaviorConfig_Events *mPrfsEvents;
 		BehaviorConfig_Chat *mPrfsChat;
 		KopeteAwayConfigBaseUI *mAwayConfigUI;
 		QValueList<KPluginInfo*> viewPlugins;

@@ -5,7 +5,7 @@ kde_module_LTLIBRARIES = kcm_kopete_behaviorconfig.la
 
 kcm_kopete_behaviorconfig_la_SOURCES = \
 	kopeteawayconfigbase.ui  \
-	behaviorconfig_chat.ui behaviorconfig_general.ui behaviorconfig_notifications.ui behaviorconfig.cpp
+	behaviorconfig_chat.ui behaviorconfig_general.ui behaviorconfig_events.ui behaviorconfig.cpp
 
 kcm_kopete_behaviorconfig_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 

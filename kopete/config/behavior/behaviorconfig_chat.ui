@@ -169,7 +169,7 @@
                 </sizepolicy>
             </property>
             <property name="text">
-                <string>&amp;Enable automatic spell checking</string>
+                <string>E&amp;nable automatic spell checking</string>
             </property>
         </widget>
         <widget class="QCheckBox" row="1" column="0">

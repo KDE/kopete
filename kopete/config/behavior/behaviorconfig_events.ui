@@ -1,8 +1,8 @@
 <!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>BehaviorConfig_Notifications</class>
+<class>BehaviorConfig_Events</class>
 <widget class="QWidget">
     <property name="name">
-        <cstring>BehaviorConfig_Notifications</cstring>
+        <cstring>BehaviorConfig_Events</cstring>
     </property>
     <property name="geometry">
         <rect>
@@ -13,7 +13,7 @@
         </rect>
     </property>
     <property name="caption">
-        <string>Notifications</string>
+        <string>Events</string>
     </property>
     <vbox>
         <property name="name">
@@ -192,7 +192,7 @@
                         <cstring>mSoundIfAwayChk</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Enable events while away</string>
+                        <string>E&amp;nable events while away</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Enable events if your account status is "Away"</string>

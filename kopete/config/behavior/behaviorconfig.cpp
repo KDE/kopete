@@ -15,7 +15,7 @@
 
 #include "behaviorconfig.h"
 #include "behaviorconfig_general.h"
-#include "behaviorconfig_notifications.h"
+#include "behaviorconfig_events.h"
 #include "behaviorconfig_chat.h"
 
 #include <qcheckbox.h>
@@ -54,9 +54,9 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 	mPrfsGeneral = new BehaviorConfig_General(mBehaviorTabCtl);
 	mBehaviorTabCtl->addTab(mPrfsGeneral, i18n("&General"));
 
-	// "Notifications" TAB ============================================================
-	mPrfsNotifications = new BehaviorConfig_Notifications(mBehaviorTabCtl);
-	mBehaviorTabCtl->addTab(mPrfsNotifications, i18n("&Notifications"));
+	// "Events" TAB ============================================================
+	mPrfsEvents = new BehaviorConfig_Events(mBehaviorTabCtl);
+	mBehaviorTabCtl->addTab(mPrfsEvents, i18n("&Events"));
 
 	// "Away" TAB ===============================================================
 	mAwayConfigUI = new KopeteAwayConfigBaseUI(mBehaviorTabCtl);
@@ -85,26 +85,26 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		this, SLOT(slotSettingsChanged(bool)));
 
 
-	// "Notifications" TAB ============================================================
-	connect(mPrfsNotifications->mQueueOnlyHighlightedMessagesInGroupChatsChk, SIGNAL(toggled(bool)),
+	// "Events" TAB ============================================================
+	connect(mPrfsEvents->mQueueOnlyHighlightedMessagesInGroupChatsChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsNotifications->mQueueOnlyMessagesOnAnotherDesktopChk, SIGNAL(toggled(bool)),
+	connect(mPrfsEvents->mQueueOnlyMessagesOnAnotherDesktopChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsNotifications->mBalloonNotifyChk, SIGNAL(toggled(bool)),
+	connect(mPrfsEvents->mBalloonNotifyChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsNotifications->mBalloonNotifyIgnoreClosesChatViewChk, SIGNAL(toggled(bool)),
+	connect(mPrfsEvents->mBalloonNotifyIgnoreClosesChatViewChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsNotifications->mTrayflashNotifyChk, SIGNAL(toggled(bool)),
+	connect(mPrfsEvents->mTrayflashNotifyChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsNotifications->mTrayflashNotifyLeftClickOpensMessageChk, SIGNAL(toggled(bool)),
+	connect(mPrfsEvents->mTrayflashNotifyLeftClickOpensMessageChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsNotifications->mTrayflashNotifySetCurrentDesktopToChatViewChk, SIGNAL(toggled(bool)),
+	connect(mPrfsEvents->mTrayflashNotifySetCurrentDesktopToChatViewChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsNotifications->mSoundIfAwayChk, SIGNAL(toggled(bool)),
+	connect(mPrfsEvents->mSoundIfAwayChk, SIGNAL(toggled(bool)),
 			this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsNotifications->mEventIfActive, SIGNAL(toggled(bool)),
+	connect(mPrfsEvents->mEventIfActive, SIGNAL(toggled(bool)),
 			this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsNotifications->mRaiseMsgWindowChk, SIGNAL(toggled(bool)),
+	connect(mPrfsEvents->mRaiseMsgWindowChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
 
 
@@ -152,18 +152,18 @@ void BehaviorConfig::save()
 	p->setAutoConnect(mPrfsGeneral->mAutoConnect->isChecked());
 	p->setContactListMouseNavigation(mPrfsGeneral->mMouseNavigation->isChecked());
 
-	// "Notifications" TAB ============================================================
-	p->setQueueOnlyHighlightedMessagesInGroupChats(mPrfsNotifications->mQueueOnlyHighlightedMessagesInGroupChatsChk->isChecked());
-	p->setQueueOnlyMessagesOnAnotherDesktop(mPrfsNotifications->mQueueOnlyMessagesOnAnotherDesktopChk->isChecked());
-	p->setBalloonNotify(mPrfsNotifications->mBalloonNotifyChk->isChecked());
-	p->setBalloonNotifyIgnoreClosesChatView(mPrfsNotifications->mBalloonNotifyIgnoreClosesChatViewChk->isChecked());
-	p->setTrayflashNotify(mPrfsNotifications->mTrayflashNotifyChk->isChecked());
-	p->setTrayflashNotifyLeftClickOpensMessage(mPrfsNotifications->mTrayflashNotifyLeftClickOpensMessageChk->isChecked());
-	p->setTrayflashNotifySetCurrentDesktopToChatView(mPrfsNotifications->mTrayflashNotifySetCurrentDesktopToChatViewChk->isChecked());
-	p->setSoundIfAway(mPrfsNotifications->mSoundIfAwayChk->isChecked());
-	p->setRaiseMsgWindow(mPrfsNotifications->mRaiseMsgWindowChk->isChecked());
+	// "Events" TAB ============================================================
+	p->setQueueOnlyHighlightedMessagesInGroupChats(mPrfsEvents->mQueueOnlyHighlightedMessagesInGroupChatsChk->isChecked());
+	p->setQueueOnlyMessagesOnAnotherDesktop(mPrfsEvents->mQueueOnlyMessagesOnAnotherDesktopChk->isChecked());
+	p->setBalloonNotify(mPrfsEvents->mBalloonNotifyChk->isChecked());
+	p->setBalloonNotifyIgnoreClosesChatView(mPrfsEvents->mBalloonNotifyIgnoreClosesChatViewChk->isChecked());
+	p->setTrayflashNotify(mPrfsEvents->mTrayflashNotifyChk->isChecked());
+	p->setTrayflashNotifyLeftClickOpensMessage(mPrfsEvents->mTrayflashNotifyLeftClickOpensMessageChk->isChecked());
+	p->setTrayflashNotifySetCurrentDesktopToChatView(mPrfsEvents->mTrayflashNotifySetCurrentDesktopToChatViewChk->isChecked());
+	p->setSoundIfAway(mPrfsEvents->mSoundIfAwayChk->isChecked());
+	p->setRaiseMsgWindow(mPrfsEvents->mRaiseMsgWindowChk->isChecked());
 	config->setGroup("General");
-	config->writeEntry("EventIfActive", mPrfsNotifications->mEventIfActive->isChecked());
+	config->writeEntry("EventIfActive", mPrfsEvents->mEventIfActive->isChecked());
 
 	// "Away" TAB ===============================================================
 	p->setRememberedMessages( mAwayConfigUI->rememberedMessages->value() );
@@ -203,18 +203,18 @@ void BehaviorConfig::load()
 	mPrfsGeneral->mAutoConnect->setChecked( p->autoConnect() );
 	mPrfsGeneral->mMouseNavigation->setChecked( p->contactListMouseNavigation() );
 
-	// "Notifications" TAB ============================================================
-	mPrfsNotifications->mQueueOnlyHighlightedMessagesInGroupChatsChk->setChecked ( p->queueOnlyHighlightedMessagesInGroupChats() );
-	mPrfsNotifications->mQueueOnlyMessagesOnAnotherDesktopChk->setChecked ( p->queueOnlyMessagesOnAnotherDesktop() );
-	mPrfsNotifications->mBalloonNotifyChk->setChecked ( p->balloonNotify() );
-	mPrfsNotifications->mBalloonNotifyIgnoreClosesChatViewChk->setChecked ( p->balloonNotifyIgnoreClosesChatView() );
-	mPrfsNotifications->mTrayflashNotifyChk->setChecked ( p->trayflashNotify() );
-	mPrfsNotifications->mTrayflashNotifyLeftClickOpensMessageChk->setChecked ( p->trayflashNotifyLeftClickOpensMessage() );
-	mPrfsNotifications->mTrayflashNotifySetCurrentDesktopToChatViewChk->setChecked ( p->trayflashNotifySetCurrentDesktopToChatView() );
-	mPrfsNotifications->mSoundIfAwayChk->setChecked( p->soundIfAway() );
-	mPrfsNotifications->mRaiseMsgWindowChk->setChecked(p->raiseMsgWindow());
+	// "Events" TAB ============================================================
+	mPrfsEvents->mQueueOnlyHighlightedMessagesInGroupChatsChk->setChecked ( p->queueOnlyHighlightedMessagesInGroupChats() );
+	mPrfsEvents->mQueueOnlyMessagesOnAnotherDesktopChk->setChecked ( p->queueOnlyMessagesOnAnotherDesktop() );
+	mPrfsEvents->mBalloonNotifyChk->setChecked ( p->balloonNotify() );
+	mPrfsEvents->mBalloonNotifyIgnoreClosesChatViewChk->setChecked ( p->balloonNotifyIgnoreClosesChatView() );
+	mPrfsEvents->mTrayflashNotifyChk->setChecked ( p->trayflashNotify() );
+	mPrfsEvents->mTrayflashNotifyLeftClickOpensMessageChk->setChecked ( p->trayflashNotifyLeftClickOpensMessage() );
+	mPrfsEvents->mTrayflashNotifySetCurrentDesktopToChatViewChk->setChecked ( p->trayflashNotifySetCurrentDesktopToChatView() );
+	mPrfsEvents->mSoundIfAwayChk->setChecked( p->soundIfAway() );
+	mPrfsEvents->mRaiseMsgWindowChk->setChecked(p->raiseMsgWindow());
 	config->setGroup("General");
-	mPrfsNotifications->mEventIfActive->setChecked(config->readBoolEntry("EventIfActive", true));
+	mPrfsEvents->mEventIfActive->setChecked(config->readBoolEntry("EventIfActive", true));
 
 	// "Away" TAB ===============================================================
 	config->setGroup("AutoAway");
