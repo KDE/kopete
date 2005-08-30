@@ -104,8 +104,7 @@ private:
 	KAction*		actionInfo_;
 	KAction*		actionRemove_;
 
-	Q3PtrList<Kopete::Contact>	thisContact_;
-
+	QList<Contact*>		thisContact_;
 
 	QHostAddress remote_ip;
 	unsigned int remote_port;

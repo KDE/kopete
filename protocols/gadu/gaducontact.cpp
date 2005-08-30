@@ -141,10 +141,11 @@ GaduContact::contactPort()
 }
 
 Kopete::ChatSession*
-GaduContact::manager( Kopete::Contact::CanCreateFlags  canCreate  )
+GaduContact::manager( Kopete::Contact::CanCreateFlags canCreate )
 {
 	if ( !msgManager_ && canCreate ) {
-		msgManager_ = Kopete::ChatSessionManager::self()->create( account_->myself(), thisContact_, GaduProtocol::protocol() );
+		msgManager_ = Kopete::ChatSessionManager::self()->create( account_->myself(), thisContact_, 
+				GaduProtocol::protocol() );
 		connect( msgManager_, SIGNAL( messageSent( Kopete::Message&, Kopete::ChatSession*) ),
 			 this, SLOT( messageSend( Kopete::Message&, Kopete::ChatSession*) ) );
 		connect( msgManager_, SIGNAL( destroyed() ),  this, SLOT( slotChatSessionDestroyed() ) );
