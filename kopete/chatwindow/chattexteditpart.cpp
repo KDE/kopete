@@ -35,6 +35,8 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 {
 	m_autoSpellCheckEnabled = true;
 	historyPos = -1;
+	unsigned int i;
+	QList<Kopete::Contact*> m;
 	
 	mComplete = new KCompletion();
 	mComplete->setIgnoreCase( true );
@@ -64,8 +66,9 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 	
 	slotContactAdded( session->myself() );
-	for ( Q3PtrListIterator<Kopete::Contact> it( session->members() ); it.current(); ++it )
-		slotContactAdded( *it );
+	m = session->members();
+	for ( i = 0; i != m.size(); i++ )
+		slotContactAdded( m[i] );
 }
 
 ChatTextEditPart::~ChatTextEditPart()
@@ -213,6 +216,8 @@ void ChatTextEditPart::slotContactRemoved( const Kopete::Contact *contact )
 
 bool ChatTextEditPart::canSend()
 {
+	unsigned int i;
+	
 	if ( !m_session ) return false;
 
 	// can't send if there's nothing *to* send...
@@ -227,10 +232,9 @@ bool ChatTextEditPart::canSend()
 		bool reachableContactFound = false;
 
 		//TODO: does this perform badly in large / busy IRC channels? - no, doesn't seem to
-		Q3PtrListIterator<Kopete::Contact> it ( members );
-		for( ; it.current(); ++it )
+		for( i = 0; i != members.size(); i++ )
 		{
-			if ( (*it)->isReachable() )
+			if ( members[i]->isReachable() )
 			{
 				reachableContactFound = true;
 				break;

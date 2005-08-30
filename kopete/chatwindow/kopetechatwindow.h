@@ -28,6 +28,7 @@
 #include <Q3Frame>
 #include <Q3PtrList>
 #include <QCloseEvent>
+#include <QList>
 #include "kopetecontact.h"
 #include "kdeversion.h"
 
@@ -56,7 +57,7 @@ class Message;
 class ChatSession;
 class Contact;
 class Protocol;
-typedef Q3PtrList<Contact>  ContactPtrList;
+typedef QList<Contact*>  ContactPtrList;
 }
 
 class KopeteChatWindow : public KParts::MainWindow

@@ -397,11 +397,15 @@ void ChatMessagePart::appendMessage( Kopete::Message &message,bool encode)
 const QString ChatMessagePart::addNickLinks( const QString &html ) const
 {
 	QString retVal = html;
-
+	unsigned int i;
+	
 	Kopete::ContactPtrList members = m_manager->members();
-	for ( Q3PtrListIterator<Kopete::Contact> it( members ); it.current(); ++it )
+	
+	Kopete::Contact* ct;
+	for ( i = 0; i != members.size(); i++ )
 	{
-		QString nick = (*it)->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
+		ct = members[i];
+		QString nick = ct->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
 		//FIXME: this is really slow in channels with lots of contacts
 		QString parsed_nick = Kopete::Emoticons::parseEmoticons( nick );
 
@@ -416,7 +420,7 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 				QRegExp( QString::fromLatin1("([\\s&;>])(%1)([\\s&;<:])")
 					.arg( QRegExp::escape( nick ) )  ),
 			QString::fromLatin1("\\1<a href=\"kopetemessage://%1/?protocolId=%2&accountId=%3\" class=\"KopeteDisplayName\">\\2</a>\\3")
-				.arg( (*it)->contactId(), m_manager->protocol()->pluginId(), m_manager->account()->accountId() )
+				.arg( ct->contactId(), m_manager->protocol()->pluginId(), m_manager->account()->accountId() )
 			);
 		}
 	}
@@ -511,6 +515,8 @@ void ChatMessagePart::clear()
 Kopete::Contact *ChatMessagePart::contactFromNode( const DOM::Node &n ) const
 {
 	DOM::Node node = n;
+        unsigned int i;
+	QList<Kopete::Contact*> m;					       
 
 	if ( node.isNull() )
 		return 0;
@@ -522,19 +528,20 @@ Kopete::Contact *ChatMessagePart::contactFromNode( const DOM::Node &n ) const
 	if ( element.className() != "KopeteDisplayName" )
 		return 0;
 
+	m = m_manager->members();
 	if ( element.hasAttribute( "contactid" ) )
 	{
 		QString contactId = element.getAttribute( "contactid" ).string();
-		for ( Q3PtrListIterator<Kopete::Contact> it ( m_manager->members() ); it.current(); ++it )
-			if ( (*it)->contactId() == contactId )
-				return *it;
+		for ( i =0; i != m.size(); i++ )
+			if ( m[i]->contactId() == contactId )
+				return m[i];
 	}
 	else
 	{
 		QString nick = element.innerText().string().stripWhiteSpace();
-		for ( Q3PtrListIterator<Kopete::Contact> it ( m_manager->members() ); it.current(); ++it )
-			if ( (*it)->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString() == nick )
-				return *it;
+		for ( i = 0; i != m.size(); i++)
+			if ( m[i]->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString() == nick )
+				return m[i];
 	}
 
 	return 0;

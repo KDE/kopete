@@ -78,6 +78,8 @@ public:
 ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent, const char *name )
 	 : KDockMainWindow( 0L, name, 0L ), KopeteView( mgr, parent )
 {
+	unsigned int i;
+
 	d = new KopeteChatViewPrivate;
 	d->isActive = false;
 	d->visibleMembers = false;
@@ -160,8 +162,8 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent, const ch
 
 	// add contacts
 	slotContactAdded( mgr->myself(), true );
-	for ( Q3PtrListIterator<Kopete::Contact> it( mgr->members() ); it.current(); ++it )
-		slotContactAdded( *it, true );
+	for ( i = 0; i != mgr->members().size(); i++ )
+		slotContactAdded( mgr->members()[i], true );
 
 	setFocusProxy( editPart()->widget() );
 	editPart()->widget()->setFocus();
@@ -862,6 +864,9 @@ void ChatView::editPartTextChanged()
 
 void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 {
+	unsigned int i;
+	QList<Kopete::Contact*> cts;
+	
 	if( event->provides( "kopete/x-contact" ) )
 	{
 		QStringList lst=QStringList::split( QChar( 0xE000 ) , QString::fromUtf8(event->encodedData ( "kopete/x-contact" )) );
@@ -870,10 +875,10 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 			QString contact=lst[2];
 
 			bool found =false;
-			Q3PtrList<Kopete::Contact> cts=m_manager->members();
-			for ( Q3PtrListIterator<Kopete::Contact> it( cts ); it.current(); ++it )
+			cts=m_manager->members();
+			for ( i = 0; i != cts.size(); i++ )
 			{
-				if(it.current()->contactId() == contact)
+				if(cts[i]->contactId() == contact)
 				{
 					found=true;
 					break;
@@ -891,13 +896,12 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 
 		if( m && m_manager->mayInvite())
 		{
-			Q3PtrList<Kopete::Contact> cts=m->contacts();
-			for ( Q3PtrListIterator<Kopete::Contact> it( cts ); it.current(); ++it )
+			cts=m->contacts();
+			for ( i = 0; i != cts.size(); i++)
 			{
-				Kopete::Contact *c=it.current();
-				if(c && c->account() == m_manager->account())
+				if(cts[i] && cts[i]->account() == m_manager->account())
 				{
-					if( c != m_manager->myself() &&  !m_manager->members().contains(c)  && c->isOnline())
+					if( cts[i] != m_manager->myself() &&  !m_manager->members().contains(cts[i])  && cts[i]->isOnline())
 						event->accept();
 				}
 			}
@@ -918,6 +922,9 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 
 void ChatView::dropEvent ( QDropEvent * event )
 {
+	QList<Kopete::Contact*> cts;
+	unsigned int i;
+
 	if( event->provides( "kopete/x-contact" ) )
 	{
 		QStringList lst=QStringList::split( QChar( 0xE000 ) , QString::fromUtf8(event->encodedData ( "kopete/x-contact" )) );
@@ -926,10 +933,10 @@ void ChatView::dropEvent ( QDropEvent * event )
 			QString contact=lst[2];
 
 			bool found =false;
-			Q3PtrList<Kopete::Contact> cts=m_manager->members();
-			for ( Q3PtrListIterator<Kopete::Contact> it( cts ); it.current(); ++it )
+			cts=m_manager->members();
+			for ( i = 0; i != cts.size(); i++ )
 			{
-				if(it.current()->contactId() == contact)
+				if(cts[i]->contactId() == contact)
 				{
 					found=true;
 					break;
@@ -945,13 +952,12 @@ void ChatView::dropEvent ( QDropEvent * event )
 		Kopete::MetaContact *m=Kopete::ContactList::self()->metaContact(metacontactID);
 		if(m && m_manager->mayInvite())
 		{
-			Q3PtrList<Kopete::Contact> cts=m->contacts();
-			for ( Q3PtrListIterator<Kopete::Contact> it( cts ); it.current(); ++it )
+			cts=m->contacts();
+			for ( i = 0; i != cts.size(); i++ )
 			{
-				Kopete::Contact *c=it.current();
-				if(c && c->account() == m_manager->account() && c->isOnline())
+				if(cts[i] && cts[i]->account() == m_manager->account() && cts[i]->isOnline())
 				{
-					if( c != m_manager->myself() &&  !m_manager->members().contains(c) )
+					if( cts[i] != m_manager->myself() &&  !m_manager->members().contains(cts[i]) )
 						m_manager->inviteContact(c->contactId());
 				}
 			}
