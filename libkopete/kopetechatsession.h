@@ -50,7 +50,7 @@ class ChatSessionManager;
 class MessageHandlerChain;
 class TemporaryKMMCallbackAppendMessageHandler;
 
-typedef Q3PtrList<Contact>   ContactPtrList;
+typedef QList<Contact*>   ContactPtrList;
 typedef Q3ValueList<Message> MessageList;
 
 

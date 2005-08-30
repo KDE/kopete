@@ -26,6 +26,7 @@
 //Added by qt3to4:
 #include <Q3ValueList>
 #include <Q3PtrList>
+#include <QList>
 
 namespace Kopete {
 
@@ -71,20 +72,21 @@ ChatSession* ChatSessionManager::findChatSession(const Contact *user,
 {
 	ChatSession *result = 0L;
 	Q3ValueList<ChatSession*>::Iterator it;
+	unsigned int i;
+
 	for ( it= d->sessions.begin(); it!=d->sessions.end() && !result ; ++it  )
 	{
 	  ChatSession* cs=(*it);
 	  if ( cs->protocol() == protocol && user == cs->myself() )
 		{
-			Q3PtrList<Contact> contactlist = cs->members();
+			QList<Contact*> contactlist = cs->members();
 
 			// set this to false if chatContacts doesn't contain current cs's contactlist
 			bool halfMatch = true;
 
-			Contact *tmpContact;
-			for (tmpContact = contactlist.first(); tmpContact && halfMatch; tmpContact = contactlist.next())
+			for ( i = 0; i != contactlist.size() && halfMatch; i++ )
 			{
-				if ( !chatContacts.containsRef( tmpContact ) )
+				if ( !chatContacts.contains( contactlist[i] ) )
 					halfMatch = false;
 			}
 
@@ -92,9 +94,9 @@ ChatSession* ChatSessionManager::findChatSession(const Contact *user,
 			if (halfMatch)
 			{
 				bool fullMatch = true;
-				for (tmpContact = chatContacts.first(); tmpContact && fullMatch; tmpContact = chatContacts.next())
+				for ( i = 0; i != chatContacts.size() && fullMatch; i++ )
 				{
-					if ( !contactlist.containsRef( tmpContact ) )
+					if ( !contactlist.contains( chatContacts[i] ) )
 						fullMatch = false;
 				}
 				// We have a winner

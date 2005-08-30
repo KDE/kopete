@@ -64,6 +64,8 @@ Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 	Kopete::ContactPtrList others, Kopete::Protocol *protocol, const char *name )
 : QObject( user->account(), name )
 {
+	unsigned int i;
+
 	d = new KMMPrivate;
 	d->mUser = user;
 	d->mProtocol = protocol;
@@ -74,8 +76,8 @@ Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 	d->customDisplayName = false;
 	d->mayInvite = false;
 
-	for ( Kopete::Contact *c = others.first(); c; c = others.next() )
-		addContact( c, true );
+	for ( i = 0; others.size() != i; i++ )
+		addContact( others[i], true );
 
 	connect( user, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ), this,
 		SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
@@ -138,18 +140,21 @@ void Kopete::ChatSession::setDisplayName( const QString &newName )
 
 void Kopete::ChatSession::slotUpdateDisplayName()
 {
+	unsigned int i;
+	
 	if( d->customDisplayName )
 		return;
 
-	Kopete::Contact *c = d->mContactList.first();
+	Kopete::Contact *c;
 
 	//If there is no member yet, don't try to update the display name
 	if ( !c )
 		return;
 
 	d->displayName=QString::null;
-	do
+	for( i = 0; i != d->mContactList.size(); i++ )
 	{
+		c = d->mContactList[i];
 		if(! d->displayName.isNull() )
 			d->displayName.append( QString::fromLatin1( ", " ) ) ;
 
@@ -160,8 +165,7 @@ void Kopete::ChatSession::slotUpdateDisplayName()
 			QString nick=c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 			d->displayName.append( nick.isEmpty() ? c->contactId() : nick );
 		}
-		c=d->mContactList.next();
-	} while (c);
+	}
 
 	//If we have only 1 contact, add the status of him
 	if ( d->mContactList.count() == 1 )
@@ -294,7 +298,7 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, const Kopete::On
 void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 {
 	//kdDebug( 14010 ) << k_funcinfo << endl;
-	if ( d->mContactList.contains( c ) )
+	if ( d->mContactList.contains( (Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)c ) )
 	{
 		kdDebug( 14010 ) << k_funcinfo << "Contact already exists" <<endl;
 		emit contactAdded( c, suppress );
@@ -308,7 +312,7 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 			   message manager was given from that contact status */
 			Kopete::Contact *old = d->mContactList.first();
 			d->mContactList.remove( old );
-			d->mContactList.append( c );
+			d->mContactList.append( (Kopete::Contact*)c );
 
 			disconnect( old, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 			this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus &) ) );
@@ -322,7 +326,7 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 		}
 		else
 		{
-			d->mContactList.append( c );
+			d->mContactList.append( (Kopete::Contact*)c );
 			emit contactAdded( c, suppress );
 		}
 
@@ -343,7 +347,7 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 void Kopete::ChatSession::removeContact( const Kopete::Contact *c, const QString& reason, Kopete::Message::MessageFormat format, bool suppressNotification )
 {
 	kdDebug( 14010 ) << k_funcinfo << endl;
-	if ( !c || !d->mContactList.contains( c ) )
+	if ( !c || !d->mContactList.contains( (Kopete::Contact*)c ) )
 		return;
 
 	if ( d->mContactList.count() == 1 )
@@ -353,7 +357,7 @@ void Kopete::ChatSession::removeContact( const Kopete::Contact *c, const QString
 	}
 	else
 	{
-		d->mContactList.remove( c );
+		d->mContactList.remove( (Kopete::Contact*)c );
 
 		disconnect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 			this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus &) ) );
@@ -379,11 +383,15 @@ void Kopete::ChatSession::receivedTypingMsg( const Kopete::Contact *c, bool t )
 
 void Kopete::ChatSession::receivedTypingMsg( const QString &contactId, bool t )
 {
-	for ( Kopete::Contact *it = d->mContactList.first(); it; it = d->mContactList.next() )
+	unsigned int i;
+	
+	// FIXME: this needs better design. We can't iterate through List to find out who got what ID
+	// hash will be better for that, right ?
+	for ( i=0; i != d->mContactList.size(); i++ )
 	{
-		if ( it->contactId() == contactId )
+		if ( (d->mContactList[i])->contactId() == contactId )
 		{
-			receivedTypingMsg( it, t );
+			receivedTypingMsg( d->mContactList[i], t );
 			return;
 		}
 	}

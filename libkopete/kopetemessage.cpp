@@ -107,7 +107,7 @@ Message::Message()
 {
 }
 
-Message::Message( const Contact *fromKC, const Q3PtrList<Contact> &toKC, const QString &body,
+Message::Message( const Contact *fromKC, const QList<Contact*> &toKC, const QString &body,
 		  MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
     : d( new Private( QDateTime::currentDateTime(), fromKC, toKC, body, QString::null, direction, f, requestedPlugin, type ) )
 {
@@ -116,25 +116,25 @@ Message::Message( const Contact *fromKC, const Q3PtrList<Contact> &toKC, const Q
 Message::Message( const Contact *fromKC, const Contact *toKC, const QString &body,
 		  MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
 {
-	Q3PtrList<Contact> to;
-	to.append(toKC);
+	QList<Contact*> to;
+	to.append((Kopete::Contact*)toKC);
 	d = new Private( QDateTime::currentDateTime(), fromKC, to, body, QString::null, direction, f, requestedPlugin, type );
 }
 
-Message::Message( const Contact *fromKC, const Q3PtrList<Contact> &toKC, const QString &body,
+Message::Message( const Contact *fromKC, const QList<Contact*> &toKC, const QString &body,
 		  const QString &subject, MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
     : d( new Private( QDateTime::currentDateTime(), fromKC, toKC, body, subject, direction, f, requestedPlugin, type ) )
 {
 }
 
-Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const Q3PtrList<Contact> &toKC,
+Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QList<Contact*> &toKC,
 		  const QString &body, MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
     : d( new Private( timeStamp, fromKC, toKC, body, QString::null, direction, f, requestedPlugin, type ) )
 {
 }
 
 
-Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const Q3PtrList<Contact> &toKC,
+Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QList<Contact*> &toKC,
 		  const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, const QString &requestedPlugin, MessageType type )
     : d( new Private( timeStamp, fromKC, toKC, body, subject, direction, f, requestedPlugin, type ) )
 {
@@ -381,7 +381,7 @@ const Contact *Message::from() const
 	return d->from;
 }
 
-Q3PtrList<Contact> Message::to() const
+QList<Contact*> Message::to() const
 {
 	return d->to;
 }
@@ -609,7 +609,7 @@ const QDomDocument Message::asXML()
 
 
 	//build the <from> and <to>  node
-	if( const Contact *mainContact = (d->direction == Inbound ? d->from : d->to.getFirst()) )
+	if( const Contact *mainContact = (d->direction == Inbound ? d->from : d->to.first()) )
 		messageNode.setAttribute( QString::fromLatin1("mainContactId"), mainContact->contactId() );
 
 	doc.appendChild( messageNode );
@@ -621,7 +621,7 @@ const QDomDocument Message::asXML()
 		messageNode.appendChild( fromNode );
 	}
 
-	if( const Contact *c = d->to.getFirst() )
+	if( const Contact *c = d->to.first() )
 	{
 		QDomElement toNode = doc.createElement( QString::fromLatin1("to") );
 		toNode.appendChild( contactNode( doc, c ) );
@@ -662,7 +662,7 @@ const QDomDocument Message::asXML()
 	return doc;
 }
 
-QString Message::decodeString( const Q3CString &message, const QTextCodec *providedCodec, bool *success )
+QString Message::decodeString( const QByteArray &message, const QTextCodec *providedCodec, bool *success )
 {
 	/*
 	Note to everyone. This function is not the most efficient, that is for sure.

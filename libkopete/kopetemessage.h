@@ -30,6 +30,8 @@
 #include <q3valuelist.h>
 #include <Q3CString>
 #include <QSharedDataPointer>
+#include <QList>
+#include <QByteArray>
 
 #include <kopete_export.h>
 
@@ -117,7 +119,7 @@ public:
 	 * @param requestedPlugin Requested view plugin for the message
 	 * @param type Type of the message, see @ref MessageType
 	 */
-	Message( const Contact *fromKC, const Q3PtrList<Contact> &toKC, const QString &body,
+	Message( const Contact *fromKC, const QList<Contact*> &toKC, const QString &body,
 		 MessageDirection direction, MessageFormat format = PlainText,
 		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
@@ -146,7 +148,7 @@ public:
 	 * @param requestedPlugin Requested view plugin for the message
 	 * @param type Type of the message, see @ref MessageType
 	 */
-	Message( const Contact *fromKC, const Q3PtrList<Contact> &toKC, const QString &body,
+	Message( const Contact *fromKC, const QList<Contact*> &toKC, const QString &body,
 		 const QString &subject, MessageDirection direction, MessageFormat format = PlainText,
 		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
@@ -161,7 +163,7 @@ public:
 	 * @param requestedPlugin Requested view plugin for the message
 	 * @param type Type of the message, see @ref MessageType
 	 */
-	Message( const QDateTime &timeStamp, const Contact *fromKC, const Q3PtrList<Contact> &toKC,
+	Message( const QDateTime &timeStamp, const Contact *fromKC, const QList<Contact*> &toKC,
 		 const QString &body, MessageDirection direction, MessageFormat format = PlainText,
 		 const QString &requestedPlugin = QString::null, MessageType type = TypeNormal );
 
@@ -177,7 +179,7 @@ public:
 	 * @param requestedPlugin Requested view plugin for the message
 	 * @param type Type of the message, see @ref MessageType
 	 */
-	Message( const QDateTime &timeStamp, const Contact *fromKC, const Q3PtrList<Contact> &toKC,
+	Message( const QDateTime &timeStamp, const Contact *fromKC, const QList<Contact*> &toKC,
 		const QString &body, const QString &subject, MessageDirection direction,
 		MessageFormat format = PlainText, const QString &requestedPlugin = QString::null,
 		MessageType type = TypeNormal );
@@ -210,7 +212,7 @@ public:
 	 * Accessor method for the Contacts that this message was sent to
 	 * @return Pointer list of the Contacts this message was sent to
 	 */
-	Q3PtrList<Contact> to() const;
+	QList<Contact*> to() const;
 
 	/**
 	 * @return the @ref MessageType of this message
@@ -384,7 +386,7 @@ public:  /* static helpers */
 	 *	is defined as a successfull decoding using either UTF8 or the codec you
 	 *	provided. If a guess has to be taken, success will be false.
 	 */
-	static QString decodeString( const Q3CString &message,
+	static QString decodeString( const QByteArray &message,
  		const QTextCodec *providedCodec = 0L, bool *success = 0L );
 
 
