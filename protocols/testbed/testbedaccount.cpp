@@ -14,6 +14,7 @@
     *************************************************************************
 */
 
+
 #include "testbedaccount.h"
 
 #include <kaction.h>
@@ -146,9 +147,11 @@ void TestbedAccount::receivedMessage( const QString &message )
 
 void TestbedAccount::updateContactStatus()
 {
-	Q3DictIterator<Kopete::Contact> itr( contacts() );
-	for ( ; itr.current(); ++itr )
-		itr.current()->setOnlineStatus( myself()->onlineStatus() );
+	QHashIterator<QString, Kopete::Contact*>itr( contacts() );
+	for ( ; itr.hasNext(); ) {
+		itr.next();
+		itr.value()->setOnlineStatus( myself()->onlineStatus() );
+	}
 }
 
 
