@@ -84,8 +84,10 @@ public slots:
 //	void bind();
 	void close();
 
-	void writeRawMessage(const QByteArray &rawMessage);
-	void writeRawMessage(const QString &message, QTextCodec *codec = 0);
+	void writeMessage(const char *message);
+	void writeMessage(const QByteArray &message);
+	void writeMessage(const QString &message, QTextCodec *codec = 0);
+//	void writeMessage(const KIRC::Message &message);
 
 	void showInfoDialog();
 

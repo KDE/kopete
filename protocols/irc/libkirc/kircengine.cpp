@@ -129,7 +129,7 @@ void Engine::setRealName(const QString &newName)
 }
 
 bool Engine::_bind(QMap<QString, KIRC::MessageRedirector *> &dict,
-		QString command, QObject *object, const char *member,
+		const char *command, QObject *object, const char *member,
 		int minArgs, int maxArgs, const QString &helpMessage)
 {
 //	FIXME: Force upper case.
@@ -146,7 +146,7 @@ bool Engine::_bind(QMap<QString, KIRC::MessageRedirector *> &dict,
 	return mr->connect(object, member);
 }
 
-bool Engine::bind(const QString &command, QObject *object, const char *member,
+bool Engine::bind(const char *command, QObject *object, const char *member,
 	int minArgs, int maxArgs, const QString &helpMessage)
 {
 	return _bind(m_commands, command, object, member,
@@ -156,36 +156,22 @@ bool Engine::bind(const QString &command, QObject *object, const char *member,
 bool Engine::bind(int id, QObject *object, const char *member,
 		int minArgs, int maxArgs, const QString &helpMessage)
 {
-	return _bind(m_commands, QString::number(id), object, member,
+	return _bind(m_commands, QByteArray::number(id), object, member,
 		     minArgs, maxArgs, helpMessage);
 }
 
-bool Engine::bindCtcpQuery(const QString &command, QObject *object, const char *member,
+bool Engine::bindCtcpQuery(const char *command, QObject *object, const char *member,
 	int minArgs, int maxArgs, const QString &helpMessage)
 {
 	return _bind(m_ctcpQueries, command, object, member,
 		minArgs, maxArgs, helpMessage);
 }
 
-bool Engine::bindCtcpReply(const QString &command, QObject *object, const char *member,
+bool Engine::bindCtcpReply(const char *command, QObject *object, const char *member,
 	int minArgs, int maxArgs, const QString &helpMessage)
 {
 	return _bind(m_ctcpReplies, command, object, member,
 		minArgs, maxArgs, helpMessage);
-}
-
-void Engine::writeMessage(const QString &rawMsg, QTextCodec *codec)
-{
-	if (!codec)
-		codec = m_defaultCodec;
-/*
-	if (!codec->canEncode(rawMsg))
-	{
-		kdDebug(14121) << k_funcinfo << "Encoding problem detected:" << str << endl;
-		return;
-	}
-*/
-	writeRawMessage(codec->fromUnicode(rawMsg));
 }
 
 void Engine::onConnectionStateChanged(KIRC::ConnectionState state)

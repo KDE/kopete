@@ -317,15 +317,21 @@ bool Message::parse(const QByteArray &line)
  
 	#warning implement me: parsing
 /*
-	if (regexp.exactMatch(QString::fromLatin1(m_raw)))
+	length = line.length();
+	i = 0;
+
+	while (line.search(' ', i) )
 	{
-		// Fixme QT4: do QByteArray = QString.latin1() directly
-//		m_line    = QCString(regexp.cap(1).latin1());
-		m_prefix  = QCString(regexp.cap(1).latin1());
-		m_command = QCString(regexp.cap(2).latin1());
-		m_args    = QCString(regexp.cap(3).latin1());
+	}
+
+	if (regexp.exactMatch(m_raw))
+	{
+//		m_line    = regexp.cap(1).latin1();
+		m_prefix  = regexp.cap(1).latin1();
+		m_command = regexp.cap(2).latin1();
+		m_args    = regexp.cap(3).latin1();
 //		m_argList = QStringList::split(' ', m_args);
-		m_suffix  = QCString(regexp.cap(4).latin1());
+		m_suffix  = regexp.cap(4).latin1();
 
 #ifndef _IRC_STRICTNESS_
 		extractCtcpCommand();

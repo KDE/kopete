@@ -36,6 +36,8 @@ class Entity
 {
 	Q_OBJECT
 
+//	Q_PROPERTY(QString modes READ modes write setModes)
+
 public:
 	static KIRC::EntityType guessType(const QString &name);
 	static bool isChannel( const QString &name );
@@ -44,7 +46,25 @@ public:
 	Entity(const QString &name = QString::null, const KIRC::EntityType type = Unknown);
 	virtual ~Entity();
 
-	bool operator == (const Entity &);
+public: // Read attributes accessors
+	QString awayMessage() const;
+	QString host() const;
+	QString modes() const;
+	QString name() const;
+//	QString nick() const;
+//	QString topic() const;
+//	QString user() const;
+
+public slots: // Write attributes accessors
+	void setAwayMessage(const QString &);
+	QString setModes(const QString &);
+	void setName(const QString &);
+//	void setNick(const QString &);
+//	void setTopic(const QString &);
+//	void setUser(const QString &);
+
+public:
+	bool operator == (const Entity &) const;
 
 	KIRC::EntityStatus status() const;
 
@@ -55,17 +75,6 @@ public:
 
 	KIRC::EntityType guessType();
 
-	QString name() const;
-	void setName(const QString &);
-
-	QString host() const;
-
-	QString awayMessage() const;
-	void setAwayMessage(const QString &);
-
-	QString modes() const;
-	QString setModes(const QString &);
-
 	QTextCodec *codec() const;
 	void setCodec(QTextCodec *);
 
@@ -75,7 +84,6 @@ signals:
 	void updated();
 
 private:
-
 	static QString userInfo(const QString &s, int num_cap);
 
 	static const QRegExp sm_userRegExp;

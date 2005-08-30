@@ -52,10 +52,10 @@ void Engine::away(bool isAway, const QString &awayMessage)
 			suffix = QString::fromLatin1("I'm away.");
 	}
 
-	writeRawMessage(
+	writeMessage(
 		Message::format(
 			AWAY,
-			QStringList(),
+			QByteArrayList(),
 			suffix)
 		);
 }
@@ -77,13 +77,13 @@ void Engine::ison(const QStringList &nickList)
 		{
 			if ((statement.length()+(*it).length())>509) // 512(max buf)-2("\r\n")-1(<space separator>)
 			{
-				writeRawMessage(statement);
+				writeMessage(statement);
 				statement = QString::fromLatin1("ISON ") +  (*it);
 			}
 			else
 				statement.append(QChar(' ') + (*it));
 		}
-		writeRawMessage(statement);
+		writeMessage(statement);
 	}
 */
 }
@@ -94,7 +94,7 @@ void Engine::join(const QString &name, const QString &key)
 	if (!key.isNull())
 		args << key;
 
-	writeRawMessage(
+	writeMessage(
 		Message::format(
 			JOIN,
 			args)
@@ -125,7 +125,7 @@ void Engine::join(Message &msg)
 
 void Engine::kick(const QString &user, const QString &channel, const QString &reason)
 {
-	writeRawMessage(
+	writeMessage(
 		Message::format(
 			KICK,
 			QStringList(channel) << user,
@@ -150,12 +150,12 @@ void Engine::kick(Message &msg)
 
 void Engine::list()
 {
-	writeRawMessage(LIST);
+	writeMessage(LIST);
 }
 
 void Engine::mode(const QString &target, const QString &mode)
 {
-	writeRawMessage(
+	writeMessage(
 		Message::format(
 			MODE,
 			QStringList(target) << mode)
@@ -186,7 +186,7 @@ void Engine::mode(Message &msg)
 void Engine::motd(const QString &server)
 {
 /*
-	writeRawMessage(
+	writeMessage(
 		Message::format(
 			MOTD,
 			server)
@@ -198,7 +198,7 @@ void Engine::nick(const QString &newNickname)
 {
 	m_PendingNick = newNickname;
 /*
-	writeRawMessage(
+	writeMessage(
 		Message::format(
 			NICK,
 			newNickname)
@@ -236,7 +236,7 @@ void Engine::nick(Message &msg)
 
 void Engine::notice(const QString &target, const QString &message)
 {
-	writeRawMessage(
+	writeMessage(
 		Message::format(
 			NOTICE,
 			target,
@@ -267,7 +267,7 @@ void Engine::notice(Message &msg)
  */
 void Engine::part(const QString &channel, const QString &reason)
 {
-	writeRawMessage(
+	writeMessage(
 		Message::format(
 			PART,
 			channel,
@@ -292,7 +292,7 @@ void Engine::part(Message &msg)
 
 void Engine::pass(const QString &password)
 {
-	writeRawMessage(
+	writeMessage(
 		Message::format(
 			PASS,
 			password)
@@ -301,7 +301,7 @@ void Engine::pass(const QString &password)
 
 void Engine::ping(Message &msg)
 {
-	writeRawMessage(
+	writeMessage(
 		Message::format(
 			PONG,
 			msg.arg(0),
@@ -316,7 +316,7 @@ void Engine::pong(Message &/*msg*/)
 
 void Engine::privmsg(const QString &contact, const QString &message)
 {
-	writeRawMessage(
+	writeMessage(
 		Message::format(
 			PRIVMSG,
 			contact,
@@ -351,7 +351,7 @@ void Engine::quit(const QString &reason, bool /*now*/)
 //	if (isDisconnected())
 //		return;
 
-	writeRawMessage(
+	writeMessage(
 		Message::format(
 			QUIT,
 			QStringList(),
@@ -374,7 +374,7 @@ void Engine::quit(Message &msg)
 
 void Engine::topic(const QString &channel, const QString &topic)
 {
-	writeRawMessage(
+	writeMessage(
 		Message::format(
 			TOPIC,
 			channel,
@@ -408,7 +408,7 @@ void Engine::user(const QString &newUserName, const QString &hostname, const QSt
 	m_Username = newUserName;
 	m_realName = newRealName;
 
-	writeRawMessage(
+	writeMessage(
 		Message::format(
 			USER,
 			QStringList(m_Username) << hostname << m_Host,
@@ -427,7 +427,7 @@ void Engine::user(const QString &newUserName, Q_UINT8 mode, const QString &newRe
 	m_Username = newUserName;
 	m_realName = newRealName;
 /*
-	writeRawMessage(
+	writeMessage(
 		Message::format(
 			USER,
 			QStringList(m_Username) << QString::number(mode) << QChar('*'),
@@ -438,7 +438,7 @@ void Engine::user(const QString &newUserName, Q_UINT8 mode, const QString &newRe
 
 void Engine::whois(const QString &user)
 {
-	writeRawMessage(
+	writeMessage(
 		Message::format(
 			WHOIS,
 			user)

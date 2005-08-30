@@ -90,7 +90,7 @@ Entity::~Entity()
 	d = 0;
 }
 
-bool Entity::operator == (const Entity &)
+bool Entity::operator == (const Entity &) const
 {
 	#warning Implement Me
 	return false;
@@ -120,7 +120,7 @@ void Entity::setType( EntityType type )
 {
 	if ( d->status.type != type )
 	{
-		d->status.type = guessType(d->name);
+		d->status.type = type;
 		emit updated();
 	}
 }

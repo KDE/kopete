@@ -129,24 +129,29 @@ void Socket::close()
 	}
 }
 
-void Socket::writeRawMessage(const QByteArray &rawMsg)
+void Socket::writeMessage(const char *msg)
 {
 	if (!d->socket || d->socket->state() != KBufferedSocket::Open)
 	{
 //		emit internalError(i18n("Attempting to send while not connected: %1").arg(rawMsg));
 		return;
 	}
-
-	QByteArray buffer = rawMsg + QByteArray("\n\r");
+/*
+	QByteArray buffer = msg + QByteArray("\n\r");
 	int wrote = d->socket->writeBlock(buffer.data(), buffer.length());
 //	kdDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg) << endl;
+*/
 }
 
-void Socket::writeRawMessage(const QString &msg, QTextCodec *codec)
+void Socket::writeMessage(const QByteArray &msg)
+{
+	#warning implement me
+}
+
+void Socket::writeMessage(const QString &msg, QTextCodec *codec)
 {
 	bool encodeSuccess = false;
-	QByteArray rawMsg = encode(msg, &encodeSuccess, codec);
-	writeRawMessage(rawMsg);
+	writeMessage(encode(msg, &encodeSuccess, codec));
 }
 
 void Socket::showInfoDialog()

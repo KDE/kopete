@@ -22,7 +22,6 @@
 
 #include <QList>
 #include <QRegExp>
-#include <QString>
 
 class QTextCodec;
 
@@ -113,29 +112,29 @@ namespace KIRC
 	extern const QRegExp sm_RemoveLinefeeds;
 
 	// Static strings
-	extern const QString AWAY;
-	extern const QString ERROR;
-	extern const QString INVITE;
-	extern const QString ISON;
-	extern const QString JOIN;
-	extern const QString KICK;
-	extern const QString LIST;
-	extern const QString MODE;
-	extern const QString MOTD;
-	extern const QString NICK;
-	extern const QString NOTICE;
-	extern const QString PART;
-	extern const QString PASS;
-	extern const QString PING;
-	extern const QString PONG;
-	extern const QString PRIVMSG;
-	extern const QString QUIT;
-	extern const QString SQUIT;
-	extern const QString TOPIC;
-	extern const QString USER;
-	extern const QString WHO;
-	extern const QString WHOIS;
-	extern const QString WHOWAS;
+	extern const char *AWAY;
+	extern const char *ERROR;
+	extern const char *INVITE;
+	extern const char *ISON;
+	extern const char *JOIN;
+	extern const char *KICK;
+	extern const char *LIST;
+	extern const char *MODE;
+	extern const char *MOTD;
+	extern const char *NICK;
+	extern const char *NOTICE;
+	extern const char *PART;
+	extern const char *PASS;
+	extern const char *PING;
+	extern const char *PONG;
+	extern const char *PRIVMSG;
+	extern const char *QUIT;
+	extern const char *SQUIT;
+	extern const char *TOPIC;
+	extern const char *USER;
+	extern const char *WHO;
+	extern const char *WHOIS;
+	extern const char *WHOWAS;
 
 	// Static codecs
 	extern QTextCodec *UTF8;

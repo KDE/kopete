@@ -20,6 +20,8 @@
 
 #include "kircentity.h"
 
+#include "kdemacros.h"
+
 //#include <QList>
 #include <QStringList>
 
@@ -41,20 +43,6 @@ class Engine;
 class Message
 {
 public:
-	static QString format(
-		const QString &command,
-		const QStringList &args = QStringList(),
-		const QString &suffix = QString::null);
-
-	// temporary hack
-	static QString format(
-		const QString &command,
-		const QString &arg,
-		const QString &suffix = QString::null)
-	{
-		return format(command, QStringList(arg), suffix);
-	}
-
 	static QByteArray format(
 		const QByteArray &command,
 		const QByteArrayList &args = QByteArrayList(),
@@ -71,19 +59,14 @@ public:
 		return format(command, args, suffix);
 	}
 
-	static QString formatCtcp(const QString &ctcpMessage);
 	static QByteArray formatCtcp(const QByteArray &ctcpMessage);
 
 	// low level quoting, message quoting
-	static QString quote(const QString &str);
 	static QByteArray quote(const QByteArray &str);
-
 	static QByteArray unquote(const QByteArray &str);
 
 	// ctcp level quoting
-	static QString ctcpQuote(const QString &str);
 	static QByteArray ctcpQuote(const QByteArray &str);
-
 	static QByteArray ctcpUnquote(const QByteArray &str);
 
 private:
@@ -184,6 +167,8 @@ private:
 	QByteArray m_suffix;
 
 	class KIRC::Message *m_ctcpMessage;
+
+//	QSharedPointer<KIRC::MessagePrivate> d;
 };
 
 }

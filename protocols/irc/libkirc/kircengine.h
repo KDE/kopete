@@ -130,8 +130,6 @@ public:
 	KIRC::EntityPtr self();
 
 public slots:
-	void writeMessage(const QString &message, QTextCodec *codec = 0);
-
 	void writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage, QTextCodec *codec = 0);
 
 	void writeCtcpQueryMessage(const QString &to, const QString &ctcpMessage, QTextCodec *codec = 0);
@@ -139,7 +137,7 @@ public slots:
 
 	void writeCtcpErrorMessage(const QString &to, const QString &ctcpLine, const QString &errorMsg, QTextCodec *codec = 0);
 
-	bool bind(const QString &command, QObject *object, const char *member,
+	bool bind(const char *command, QObject *object, const char *member,
 		  int minArgs = KIRC::MessageRedirector::Unknown,
 		  int maxArgs = KIRC::MessageRedirector::Unknown,
 		  const QString &helpMessage = QString::null);
@@ -149,12 +147,12 @@ public slots:
 		  int maxArgs = KIRC::MessageRedirector::Unknown,
 		  const QString &helpMessage = QString::null);
 
-	bool bindCtcpQuery(const QString &command, QObject *object, const char *member,
+	bool bindCtcpQuery(const char *command, QObject *object, const char *member,
 			   int minArgs = KIRC::MessageRedirector::Unknown,
 			   int maxArgs = KIRC::MessageRedirector::Unknown,
 			   const QString &helpMessage = QString::null);
 
-	bool bindCtcpReply(const QString &command, QObject *object, const char *member,
+	bool bindCtcpReply(const char *command, QObject *object, const char *member,
 			   int minArgs = KIRC::MessageRedirector::Unknown,
 			   int maxArgs = KIRC::MessageRedirector::Unknown,
 			   const QString &helpMessage = QString::null);
@@ -322,7 +320,7 @@ private:
 	 * This methods is used by all the bind(...) methods.
 	 */
 	bool _bind(QMap<QString, KIRC::MessageRedirector *> &dict,
-		QString command, QObject *object, const char *member,
+		const char *command, QObject *object, const char *member,
 		int minArgs, int maxArgs, const QString &helpMessage);
 
 	QTextCodec *m_defaultCodec;
