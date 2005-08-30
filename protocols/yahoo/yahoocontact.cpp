@@ -232,6 +232,28 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 		}
 	}
 	
+	// find and replace Font-formattings
+	regExp.setPattern( "<span([^>]*)font-family:([^;\"]*)([^>]*)>(.*)</span>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( messageText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			messageText.replace( regExp, QString::fromLatin1("<span\\1\\3><font face=\"\\2\">\\4</font></span>" ) );
+		}
+	}
+	
+	// find and replace Size-formattings
+	regExp.setPattern( "<span([^>]*)font-size:([0-9]*)pt([^>]*)>(.*)</span>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( messageText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			messageText.replace( regExp, QString::fromLatin1("<span\\1\\3><font size=\"\\2\">\\4</font></span>" ) );
+		}
+	}
+	
 	// remove span-tags
 	regExp.setPattern( "<span([^>]*)>(.*)</span>" );
 	pos = 0;
