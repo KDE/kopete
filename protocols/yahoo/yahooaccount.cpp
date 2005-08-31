@@ -87,7 +87,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
 	m_openYABAction = new KAction( i18n( "Open &Addressbook..." ), "contents", 0, this, SLOT( slotOpenYAB() ), this, "m_openYABAction" );
 
-	YahooContact* _myself=new YahooContact( this, accountId, accountId, Kopete::ContactList::self()->myself() );
+	YahooContact* _myself=new YahooContact( this, accountId.lower(), accountId, Kopete::ContactList::self()->myself() );
 	setMyself( _myself );
 	_myself->setOnlineStatus( parent->Offline );
 	myself()->setProperty( YahooProtocol::protocol()->iconRemoteUrl, configGroup()->readEntry( "iconRemoteUrl", "" ) );
