@@ -31,35 +31,40 @@
 
 /* Kopete Includes */
 #include "kopeteaccountmanager.h"
+#include "kopeteonlinestatusmanager.h"
 #include "kopeteglobal.h"
 
 typedef KGenericFactory<YahooProtocol> YahooProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_yahoo, YahooProtocolFactory( "kopete_yahoo" )  )
 
 YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringList & )
-	: KopeteProtocol( YahooProtocolFactory::instance(), parent, name ),
-	Offline( KopeteOnlineStatus::Offline, 0, this, 0x5a55aa56, QString::null, i18n( "Offline" ), i18n( "Offline" ) ),
-	Online( KopeteOnlineStatus::Online, 25, this, 0, QString::null, i18n( "Online" ), i18n( "Online" ) ),
-	BeRightBack( KopeteOnlineStatus::Away, 10, this, 1, "yahoo_away", i18n( "Be right back" ), i18n( "Be right back" ) ),
-	Busy( KopeteOnlineStatus::Away, 10, this, 2, "yahoo_busy", i18n( "Busy" ), i18n( "Busy" ) ),
-	NotAtHome( KopeteOnlineStatus::Away, 10, this, 3, "yahoo_away", i18n( "Not at home" ), i18n( "Not at home" ) ),
-	NotAtMyDesk( KopeteOnlineStatus::Away, 10, this, 4, "yahoo_away", i18n( "Not at my desk" ), i18n( "Not at my desk") ),
-	NotInTheOffice( KopeteOnlineStatus::Away, 10, this, 5, "yahoo_away", i18n( "Not in the office"), i18n( "Not in the office" ) ),
-	OnThePhone( KopeteOnlineStatus::Away, 10, this, 6, "yahoo_away", i18n( "On the phone" ), i18n( "On the phone" ) ),
-	OnVacation( KopeteOnlineStatus::Away, 10, this, 7, "yahoo_away", i18n( "On vacation" ), i18n( "On vacation" ) ),
-	OutToLunch( KopeteOnlineStatus::Away, 10, this, 8, "yahoo_away", i18n( "Out to lunch" ), i18n( "Out to lunch" ) ),
-	SteppedOut( KopeteOnlineStatus::Away, 10, this, 9, "yahoo_away", i18n( "Stepped out" ), i18n( "Stepped out" ) ),
-	Invisible( KopeteOnlineStatus::Invisible, 0, this, 12, "yahoo_invisible", i18n( "Invisible" ), i18n( "Invisible" ) ),
-	Custom( KopeteOnlineStatus::Away, 20, this, 99, "yahoo_away", i18n( "Custom" ), i18n( "Custom" ) ),
-	Idle( KopeteOnlineStatus::Away, 15, this, 999, "yahoo_idle", i18n( "Idle" ), i18n( "Idle" ) ),
-	Connecting( KopeteOnlineStatus::Connecting, 2, this, 555, "yahoo_connecting", QString::fromLatin1( "FIXME: Make connecting unselectable" ), i18n( "Connecting" ) ),
-	awayMessage(Kopete::Global::Properties::self()->awayMessage())
+	: Kopete::Protocol( YahooProtocolFactory::instance(), parent, name ),
+	Offline( Kopete::OnlineStatus::Offline,      0, this, 0x5a55aa56, QString::null,  i18n( "Offline" ),       i18n( "Offline" ),     Kopete::OnlineStatusManager::Offline ),
+	Online( Kopete::OnlineStatus::Online,       25, this, 0, QString::null,           i18n( "Online" ),        i18n( "Online" ),      Kopete::OnlineStatusManager::Online ),
+	BeRightBack( Kopete::OnlineStatus::Away,    22, this, 1, "contact_away_overlay",  i18n( "Be right back" ), i18n( "Be right back" ) ),
+	Busy( Kopete::OnlineStatus::Away,           20, this, 2, "contact_busy_overlay",  i18n( "Busy" ),          i18n( "Busy" ),        Kopete::OnlineStatusManager::Busy ),
+	NotAtHome( Kopete::OnlineStatus::Away,      17, this, 3, "contact_xa_overlay",    i18n( "Not at home" ),   i18n( "Not at home" ), Kopete::OnlineStatusManager::ExtendedAway ),
+	NotAtMyDesk( Kopete::OnlineStatus::Away,    18, this, 4, "contact_xa_overlay",    i18n( "Not at my desk"), i18n( "Not at my desk"), Kopete::OnlineStatusManager::Away ),
+	NotInTheOffice( Kopete::OnlineStatus::Away, 16, this, 5, "contact_xa_overlay",    i18n( "Not in the office" ), i18n( "Not in the office" ) ),
+	OnThePhone( Kopete::OnlineStatus::Away,     12, this, 6, "contact_phone_overlay", i18n( "On the phone" ), i18n( "On the phone" ) ),
+	OnVacation( Kopete::OnlineStatus::Away,      3, this, 7, "contact_xa_overlay",    i18n( "On vacation" ),  i18n( "On vacation" ) ),
+	OutToLunch( Kopete::OnlineStatus::Away,     10, this, 8, "contact_food_overlay",  i18n( "Out to lunch" ), i18n( "Out to lunch" ) ),
+	SteppedOut( Kopete::OnlineStatus::Away,     14, this, 9, "contact_away_overlay",  i18n( "Stepped out" ),  i18n( "Stepped out" ) ),
+	Invisible( Kopete::OnlineStatus::Invisible,  3, this, 12, "contact_invisible_overlay",  i18n( "Invisible" ), i18n( "Invisible" ), Kopete::OnlineStatusManager::Invisible ),
+	Custom( Kopete::OnlineStatus::Away,         25, this, 99, "contact_away_overlay", i18n( "Custom" ),       i18n( "Custom" ),       Kopete::OnlineStatusManager::Online ),
+	Idle( Kopete::OnlineStatus::Away,           15, this, 999, "yahoo_idle",          i18n( "Idle" ),         i18n( "Idle" ),         Kopete::OnlineStatusManager::Idle ),
+	Connecting( Kopete::OnlineStatus::Connecting,2, this, 555, "yahoo_connecting",    i18n( "Connecting" ) ),
+	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
+	iconCheckSum("iconCheckSum", i18n("Buddy Icon Checksum"), QString::null, true, false, true),
+	iconExpire("iconExpire", i18n("Buddy Icon Expire"), QString::null, true, false, true),
+	iconRemoteUrl("iconRemoteUrl", i18n("Buddy Icon Remote Url"), QString::null, true, false, true)
 
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
 	s_protocolStatic_ = this;
-	addAddressBookField( "messaging/yahoo", KopetePlugin::MakeIndexField );
+	setCapabilities( RichFgColor | RichFormatting | RichFont );
+	addAddressBookField( "messaging/yahoo", Kopete::Plugin::MakeIndexField );
 }
 
 
@@ -71,7 +76,7 @@ YahooProtocol::~YahooProtocol()
 
 YahooProtocol* YahooProtocol::s_protocolStatic_ = 0L;
 
-KopeteOnlineStatus YahooProtocol::statusFromYahoo( int status )
+Kopete::OnlineStatus YahooProtocol::statusFromYahoo( int status )
 {
 	switch ( status )
 	{
@@ -119,13 +124,13 @@ YahooProtocol *YahooProtocol::protocol()
 	return s_protocolStatic_;
 }
 
-KopeteContact *YahooProtocol::deserializeContact( KopeteMetaContact *metaContact,
+Kopete::Contact *YahooProtocol::deserializeContact( Kopete::MetaContact *metaContact,
 	const QMap<QString, QString> &serializedData, const QMap<QString, QString> & /* addressBookData */ )
 {
 	QString contactId = serializedData[ "contactId" ];
 	QString accountId = serializedData[ "accountId" ];
 
-	YahooAccount *theAccount = static_cast<YahooAccount*>(KopeteAccountManager::manager()->findAccount(protocol()->pluginId(), accountId));
+	YahooAccount *theAccount = static_cast<YahooAccount*>(Kopete::AccountManager::self()->findAccount(protocol()->pluginId(), accountId));
 
 	if(!theAccount)
 	{	kdDebug( 14180 ) << k_funcinfo << "Account " << accountId << " not found" << endl;
@@ -137,22 +142,22 @@ KopeteContact *YahooProtocol::deserializeContact( KopeteMetaContact *metaContact
 		return 0;
 	}
 
-	theAccount->addContact(contactId, serializedData["displayName"], metaContact, KopeteAccount::DontChangeKABC, serializedData["group"]);
+	theAccount->addContact(contactId,  metaContact, Kopete::Account::DontChangeKABC);
 	return theAccount->contacts()[contactId];
 }
 
-AddContactPage *YahooProtocol::createAddContactWidget( QWidget * parent , KopeteAccount* )
+AddContactPage *YahooProtocol::createAddContactWidget( QWidget * parent , Kopete::Account* )
 {
 	kdDebug(14180) << "YahooProtocol::createAddContactWidget(<parent>)" << endl;
 	return new YahooAddContact(this, parent);
 }
 
-KopeteEditAccountWidget *YahooProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
+KopeteEditAccountWidget *YahooProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
 {
 	return new YahooEditAccount(this, account, parent);
 }
 
-KopeteAccount *YahooProtocol::createNewAccount(const QString &accountId)
+Kopete::Account *YahooProtocol::createNewAccount(const QString &accountId)
 {
 	return new YahooAccount(this, accountId);
 }

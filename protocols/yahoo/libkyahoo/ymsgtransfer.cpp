@@ -148,7 +148,7 @@ QByteArray YMSGTransfer::serialize()
 	memcpy(buffer.data() + pos, "YMSG", 4);
 	pos += 4;
 	
-	yahoo_put16(buffer.data() + pos, 0x0a00);
+	yahoo_put16(buffer.data() + pos, 0x000c);
 	pos += 2;
 	
 	yahoo_put16(buffer.data() + pos, 0x0000);

@@ -18,16 +18,25 @@
 
 // QT Includes
 #include <qcheckbox.h>
-#include <qlineedit.h>
 #include <qgroupbox.h>
+#include <qimage.h>
+#include <qlabel.h>
 #include <qlayout.h>
+#include <qlineedit.h>
 #include <qpushbutton.h>
+#include <qspinbox.h>
 
 // KDE Includes
 #include <klocale.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <krun.h>
+#include <kurl.h>
+#include <kfiledialog.h>
+#include <kpassdlg.h>
+#include <kconfig.h>
+#include <kstandarddirs.h>
+#include <kpixmapregionselectordialog.h>
 
 // Kopete Includes
 #include <addcontactpage.h>
@@ -38,7 +47,7 @@
 #include "yahooeditaccount.h"
 
 // Yahoo Add Contact page
-YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAccount, QWidget *parent, const char* /*name*/): YahooEditAccountBase(parent), KopeteEditAccountWidget(theAccount)
+YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent, const char* /*name*/): YahooEditAccountBase(parent), KopeteEditAccountWidget(theAccount)
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
@@ -51,11 +60,38 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAc
 	{	mScreenName->setText(acct->accountId());
 		mScreenName->setReadOnly(true); //the accountId is Constant FIXME: remove soon!
 		mScreenName->setDisabled(true);
-		mAutoConnect->setChecked(acct->autoLogin());
+		mAutoConnect->setChecked(acct->excludeConnect());
 		mPasswordWidget->load( &acct->password() );
+
+		QString pagerServer = account()->configGroup()->readEntry("Server", "scs.msg.yahoo.com");
+		int pagerPort = account()->configGroup()->readNumEntry("Port", 5050);
+		if( pagerServer != "scs.msg.yahoo.com" || pagerPort != 5050 )
+			optionOverrideServer->setChecked( true );
+		else
+			optionOverrideServer->setChecked( false );
+		editServerAddress->setText( pagerServer );
+		sbxServerPort->setValue( pagerPort );
+
+		QString iconUrl = account()->configGroup()->readEntry("pictureUrl", "");
+		bool sendPicture = account()->configGroup()->readBoolEntry("sendPicture", false);
+		optionSendBuddyIcon->setChecked( sendPicture );
+    buttonSelectPicture->setEnabled( sendPicture );  
+    connect( optionSendBuddyIcon, SIGNAL( toggled( bool ) ), buttonSelectPicture, SLOT( setEnabled( bool ) ) ); 
+		editPictureUrl->setText( iconUrl );
+		if( !iconUrl.isEmpty() )
+			m_Picture->setPixmap( KURL( iconUrl ).path() );
+		editPictureUrl->setEnabled( sendPicture );
 	}
 
 	QObject::connect(buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
+	QObject::connect(buttonSelectPicture, SIGNAL(clicked()), this, SLOT(slotSelectPicture()));
+
+	optionSendBuddyIcon->setEnabled( account() );
+
+	/* Set tab order to password custom widget correctly */
+	QWidget::setTabOrder( mAutoConnect, mPasswordWidget->mRemembered );
+	QWidget::setTabOrder( mPasswordWidget->mRemembered, mPasswordWidget->mPassword );
+	QWidget::setTabOrder( mPasswordWidget->mPassword, buttonRegister );
 
 	show();
 }
@@ -77,25 +113,76 @@ bool YahooEditAccount::validateData()
 	return true;
 }
 
-KopeteAccount *YahooEditAccount::apply()
+Kopete::Account *YahooEditAccount::apply()
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
 	if ( !account() )
-		setAccount( new YahooAccount( theProtocol, mScreenName->text() ) );
+		setAccount( new YahooAccount( theProtocol, mScreenName->text().lower() ) );
 
 	YahooAccount *yahooAccount = static_cast<YahooAccount *>( account() );
 
-	yahooAccount->setAutoLogin( mAutoConnect->isChecked() );
+	yahooAccount->setExcludeConnect( mAutoConnect->isChecked() );
 
 	mPasswordWidget->save( &yahooAccount->password() );
 
+	if ( optionOverrideServer->isChecked() )
+	{
+		yahooAccount->setServer( editServerAddress->text() );
+		yahooAccount->setPort( sbxServerPort->value() );
+	}
+	else
+	{
+		yahooAccount->setServer( "scs.msg.yahoo.com" );
+		yahooAccount->setPort( 5050 );
+	}
+
+	account()->configGroup()->writeEntry("pictureUrl", editPictureUrl->text() );
+	account()->configGroup()->writeEntry("sendPicture", optionSendBuddyIcon->isChecked() );
+	if ( optionSendBuddyIcon->isChecked() )
+	{
+		yahooAccount->setBuddyIcon( editPictureUrl->text() );
+	}
+	else
+	{
+		yahooAccount->setBuddyIcon( KURL( QString::null ) );
+	}
+	
 	return yahooAccount;
 }
 
 void YahooEditAccount::slotOpenRegister()
 {
     KRun::runURL( "http://edit.yahoo.com/config/eval_register?new=1", "text/html" );
+}
+
+void YahooEditAccount::slotSelectPicture()
+{
+	KURL file = KFileDialog::getImageOpenURL( QString::null, this, i18n( "Yahoo Buddy Icon" ) );
+
+	if ( file.isEmpty() )
+		return;
+
+	QImage picture(file.path());
+	if( !picture.isNull() )
+	{
+		picture = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(picture), 96, 96, this );
+		QString newlocation( locateLocal( "appdata", "yahoopictures/"+ file.fileName().lower() ) ) ;
+		file = KURL(newlocation);
+		if( !picture.save( newlocation, "PNG" ))
+		{
+			KMessageBox::sorry( this, i18n( "An error occurred when trying to change the display picture." ), i18n( "Yahoo Plugin" ) );
+			return;
+		}
+	}
+	else
+	{
+		KMessageBox::sorry( this, i18n( "<qt>The selected buddy icon could not be opened. <br>Please set a new buddy icon.</qt>" ), i18n( "Yahoo Plugin" ) );
+		return;
+	}
+	editPictureUrl->setText( file.path() );
+	
+	m_Picture->setPixmap( file.path() );
 }
 
 #include "yahooeditaccount.moc"

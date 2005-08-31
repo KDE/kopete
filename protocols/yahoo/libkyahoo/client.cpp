@@ -23,6 +23,7 @@
 #include <kdebug.h>
 
 #include "yahooclientstream.h"
+#include "yahooconnector.h"
 #include "task.h"
 #include "logintask.h"
 #include "client.h"
@@ -59,19 +60,7 @@ Client::~Client()
 	delete d;
 }
 
-void Client::connectToServer( ClientStream *s, const QString& server, bool auth )
-{
-	kdDebug(14180) << k_funcinfo << endl;
-	d->stream = s;
-
-	connect(d->stream, SIGNAL(error(int)), SLOT(streamError(int)));
-	connect(d->stream, SIGNAL(readyRead()), SLOT(streamReadyRead()));
-	
-	connect(d->stream, SIGNAL(connected()), SLOT(cs_connected()));
-	d->stream->connectToServer(server, auth);
-}
-
-void Client::start( const QString &host, const uint port, const QString &userId, const QString &pass )
+void Client::connect( const QString &host, const uint port, const QString &userId, const QString &pass )
 {
 	kdDebug(14180) << k_funcinfo << endl;
 	d->host = host;
@@ -79,7 +68,12 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 	d->user = userId;
 	d->pass = pass;
 
-	//start login task here
+	m_connector = new KNetworkConnector;
+	m_connector->setOptHostPort( host, port );
+	d->stream = new ClientStream( m_connector, this );
+	QObject::connect( d->stream, SIGNAL( connected() ), this, SLOT( cs_connected() ) );
+	
+	d->stream->connectToServer( host, false );
 }
 
 void Client::cs_connected()
@@ -88,7 +82,7 @@ void Client::cs_connected()
 	emit connected();
 	kdDebug(14180) << k_funcinfo << " starting login task ... "<<  endl;
 	LoginTask * login = new LoginTask( d->root );
-	connect(login, SIGNAL(finished()), SLOT(lt_loginFinished()));
+	QObject::connect(login, SIGNAL(finished()), SLOT(lt_loginFinished()));
 	login->go(true);
 	d->active = true;
 }

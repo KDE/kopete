@@ -18,7 +18,7 @@
 #ifndef YAHOOCONFERENCEMESSAGEMANAGER_H
 #define YAHOOCONFERENCEMESSAGEMANAGER_H
 
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 
 class KActionCollection;
 class YahooContact;
@@ -28,13 +28,13 @@ class KActionMenu;
 /**
  * @author Duncan Mac-Vicar Prett
  */
-class YahooConferenceMessageManager : public KopeteMessageManager
+class YahooConferenceChatSession : public Kopete::ChatSession
 {
 	Q_OBJECT
 
 public:
-	YahooConferenceMessageManager( const QString &m_yahooRoom, KopeteProtocol *protocol, const KopeteContact *user, KopeteContactPtrList others, const char *name = 0 );
-	~YahooConferenceMessageManager();
+	YahooConferenceChatSession( const QString &m_yahooRoom, Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others, const char *name = 0 );
+	~YahooConferenceChatSession();
 private:
 	QString m_yahooRoom;
 };

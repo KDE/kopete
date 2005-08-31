@@ -29,7 +29,7 @@
 
 class YahooProtocol;
 class YahooAddContactBase;
-class KopeteMetaContact;
+namespace Kopete { class MetaContact; }
 
 class YahooAddContact: public AddContactPage
 {
@@ -46,7 +46,7 @@ public:
 	virtual bool validateData();
 
 public slots:
-	virtual bool apply(KopeteAccount *theAccount, KopeteMetaContact *theMetaContact);
+	virtual bool apply(Kopete::Account *theAccount, Kopete::MetaContact *theMetaContact);
 };
 
 #endif

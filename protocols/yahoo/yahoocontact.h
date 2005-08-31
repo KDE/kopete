@@ -24,37 +24,56 @@
 /* Kopete Includes */
 #include "kopetecontact.h"
 
-class KopeteMessageManager;
-class KopeteMetaContact;
-class KopeteOnlineStatus;
+class KAction;
+class KTempFile;
+
+namespace Kopete { class ChatSession; }
+namespace Kopete { class MetaContact; }
+namespace Kopete { class OnlineStatus; }
+namespace Kopete { class Message; }
 class YahooProtocol;
 class YahooAccount;
+class YahooWebcamDialog;
+class YahooChatSession;
+struct KURL;
 
-class YahooContact : public KopeteContact
+class YahooContact : public Kopete::Contact
 {
 	Q_OBJECT
 public:
-	YahooContact( YahooAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact );
+	YahooContact( YahooAccount *account, const QString &userId, const QString &fullName, Kopete::MetaContact *metaContact );
 	~YahooContact();
 
 	/** Base Class Reimplementations **/
 	virtual bool isOnline() const;
 	virtual bool isReachable();
 	virtual QPtrList<KAction> *customContextMenuActions();
-	virtual KopeteMessageManager *manager( bool canCreate = false );
+	virtual Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags canCreate= Kopete::Contact::CanCreate );
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
-	void setYahooStatus( const KopeteOnlineStatus& );
+	void setOnlineStatus(const Kopete::OnlineStatus &status);
+	void setYahooStatus( const Kopete::OnlineStatus& );
 
 	/** The group name getter and setter methods**/
 	QString group() const;
 	void setGroup( const QString& );
 
+	void gotWebcamInvite();
+	void receivedWebcamImage( const QPixmap& );
+	void webcamClosed( int );
 
 public slots:
 	virtual void slotUserInfo();
 	virtual void slotSendFile();
-	virtual void slotDeleteContact();
+	virtual void deleteContact();
+	virtual void sendFile( const KURL &sourceURL = KURL(), const QString &fileName = QString::null, uint fileSize = 0L );
+	void stealthContact();
+	void requestWebcam();
+	void buzzContact();
+	void setDisplayPicture(KTempFile *f, int checksum);
+	void sendBuddyIconInfo( const QString &url, int checksum );
+	void sendBuddyIconUpdate( int type );
+	void sendBuddyIconChecksum( int checksum );
 
 	/**
 	 * Must be called after the contact list has been received
@@ -62,25 +81,39 @@ public slots:
 	 */
 	void syncToServer();
 
-	void syncGroups();
+	void sync(unsigned int flags);
+
+signals:
+	void signalReceivedWebcamInvite();
+	void signalReceivedWebcamImage( const QPixmap &pic );
+	void signalWebcamClosed( int reason );
+	void signalWebcamInviteAccepted();
+	void displayPictureChanged();
 
 private slots:
-	void slotMessageManagerDestroyed();
-	void slotSendMessage( KopeteMessage& );
+	void slotChatSessionDestroyed();
+	void slotSendMessage( Kopete::Message& );
 	void slotTyping( bool );
+	void slotEmitDisplayPictureChanged();
+
+	void closeWebcamDialog();
+	//void webcamClosed( const QString& contact, int reason );
 
 private:
-	//the user id of the contact
-	QString m_userId;
-
-	//the group name of the contact
+	QString m_userId; 
 	QString m_groupName;
-
-	//The message manager
-	KopeteMessageManager *m_manager;
-
-	//the account that this contact belongs to
+	YahooChatSession *m_manager;
 	YahooAccount* m_account;
+
+	//stealth
+	KAction* m_stealthAction;
+	
+	//webcam handling
+	KAction* m_webcamAction;
+	YahooWebcamDialog* m_webcamDialog;
+	
+	//buzz
+	KAction* m_buzzAction;	
 };
 
 #endif

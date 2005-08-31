@@ -30,6 +30,7 @@ extern "C"
 
 LoginTask::LoginTask(Task* parent) : Task(parent)
 {
+	kdDebug(14180) << k_funcinfo << endl;
 	mState = InitialState;
 }
 
@@ -40,6 +41,7 @@ LoginTask::~LoginTask()
 
 bool LoginTask::take(Transfer* transfer)
 {
+	kdDebug(14180) << k_funcinfo << endl;
 	/*
 	  Yahoo login task has various stages
 	  
@@ -82,6 +84,7 @@ bool LoginTask::take(Transfer* transfer)
 
 bool LoginTask::forMe(Transfer* transfer) const
 {
+	kdDebug(14180) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)
@@ -110,6 +113,7 @@ bool LoginTask::forMe(Transfer* transfer) const
 
 void LoginTask::onGo()
 {
+	kdDebug(14180) << k_funcinfo << endl;
 	/* initial state, we have to send a ServiceVerify */
 	if (mState == InitialState)
 		sendVerify();
@@ -193,5 +197,6 @@ void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed)
 
 void LoginTask::sendAuthResp_pre_0x0b(const QString &sn, const QString &seed)
 {
+	kdDebug(14180) << k_funcinfo << endl;
 
 }

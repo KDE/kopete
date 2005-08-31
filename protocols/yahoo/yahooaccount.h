@@ -3,9 +3,7 @@
 
     Copyright (c) 2003 by Gav Wood               <gav@kde.org>
     Copyright (c) 2003 by Matt Rogers            <mattrogers@sbcglobal.net>
-    Copyright (c) 2004 by Duncan Mac-Vicar P.    <duncan@kde.org>
-    
-    Based on code by Olivier Goffart             <ogoffart@tiscalinet.be>
+    Based on code by Olivier Goffart             <ogoffart @ kde.org>
     Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -40,6 +38,13 @@ class KActionMenu;
 class YahooContact;
 class YahooAccount;
 class YahooProtocol;
+class KTempFile;
+class QTimer;
+struct KURL;
+namespace Kopete{
+class Transfer;
+}
+class Client;
 
 class YahooAwayDialog : public KopeteAwayDialog
 {
@@ -58,7 +63,7 @@ class YahooAccount : public Kopete::PasswordedAccount
 public:
 
 	enum SignalConnectionType { MakeConnections, DeleteConnections };
-	
+
 	YahooAccount(YahooProtocol *parent,const QString& accountID, const char *name = 0L);
 	~YahooAccount();
 
@@ -77,7 +82,7 @@ public:
 	/**
 	 * The session
 	 */
-	YahooSession *yahooSession();
+	Client *yahooSession();
 
 	/**
 	 * Returns true if contact @p id is on the server-side contact list
@@ -93,6 +98,26 @@ public:
 
 	void setImportContacts(bool newSetting);
 
+	/**
+	 * Set the pager server
+	 */
+	void setServer( const QString &server );
+	
+	/**
+	 * Set the port of the pager server
+	 */
+	void setPort( int port );
+
+	/**
+	 * Set Buddy Icon
+	 */
+	void setBuddyIcon( KURL url );
+
+	/**
+	 * Return flag describing wether or not we send a buddy icon
+	 * 0 = no image, 2 = buddy icon, 1 = avatar?
+	 */
+	int pictureFlag();
 public slots:
 	/**
 	 * Connect to the Yahoo service
@@ -102,7 +127,10 @@ public slots:
 	 * Disconnect from the Yahoo service
 	 */
 	virtual void disconnect();
-	
+
+	/** Reimplemented from Kopete::Account */
+	void setOnlineStatus( const Kopete::OnlineStatus&, const QString &reason = QString::null);
+
 
 signals:
 	/**
@@ -111,15 +139,15 @@ signals:
 	void receivedTypingMsg(const QString &contactId, bool isTyping);
 
 	/**
-	 * Emitted when a reconnect is needed due to a bad password
+	 * Emitted when our Buddy Icon has changed
 	 */
-	void needReconnect();
+	void signalBuddyIconChanged( int type );
 
 protected:
 	/**
 	 * Adds our Yahoo contact to a metacontact
 	 */
-	virtual bool addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact);
+	virtual bool createContact(const QString &contactId,  Kopete::MetaContact *parentContact);
 
 	/**
 	 * Gets the just-received message color
@@ -129,23 +157,14 @@ protected:
 	 * Remove color codes from a message
 	 */
 	QString stripMsgColorCodes(const QString& msg);
-	/**
-	 * init actions
-	 */
-	void initActions();
-	
-	/**
-	 * wrapper for contact nick property
-	 */
-	QString displayName();
 
 protected slots:
-	virtual void loaded();
-
 	void slotConnected();
 	void slotGoOnline();
 	void slotGoOffline();
-	
+	void slotOpenInbox();			// Open Yahoo Mailbox in browser
+	void slotOpenYAB();			// Open Yahoo Addressbook in browser
+
 	void slotGoStatus(int status, const QString &awayMessage = QString::null);
 	void slotLoginResponse(int succ, const QString &url);
 	void slotGotBuddies(const YList * buds);
@@ -154,28 +173,13 @@ protected slots:
 	void slotGotIdentities(const QStringList &);
 	void slotStatusChanged(const QString &who, int stat, const QString &msg, int away);
 	void slotGotIm(const QString &who, const QString &msg, long tm, int stat);
+	void slotGotBuzz(const QString &who, long tm);
 	void slotGotConfInvite(const QString &who, const QString &room, const QString &msg, const QStringList &members);
 	void slotConfUserDecline(const QString &who, const QString &room, const QString &msg);
-	
-	/**
-	 * an user joined a conference room
-	 */
 	void slotConfUserJoin(const QString &who, const QString &room);
-	/**
-	 * an user left a conference room
-	 */
 	void slotConfUserLeave(const QString &who, const QString &room);
-	/**
-	 * a message was sent in a conference room
-	 */
 	void slotConfMessage(const QString &who, const QString &room, const QString &msg);
-	/**
-	 * someone is trying to send a file
-	 */
 	void slotGotFile(const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize);
-	/**
-	 * a contact was added
-	 */
 	void slotContactAdded(const QString &myid, const QString &who, const QString &msg);
 	void slotRejected(const QString &, const QString &);
 	void slotTypingNotify(const QString &, int );
@@ -185,40 +189,26 @@ protected slots:
 	void slotError(const QString &, int);
 	void slotRemoveHandler(int fd);
 	//void slotHostConnect(const QString &host, int port);
+	void slotGotWebcamInvite(const QString &);
+	void slotGotWebcamImage(const QString&, const QPixmap&);
+	void slotWebcamClosed(const QString&, int);
+	void slotGotBuddyIcon(const QString&, KTempFile*, int);
+	void slotGotBuddyIconInfo(const QString&, KURL, int);
+	void slotGotBuddyIconChecksum(const QString&, int);
+	void slotGotBuddyIconRequest(const QString &);
+	void slotBuddyIconChanged(const QString&);
 
 	void slotBuddyListFetched( int numBuddies );
-	
-	/**
-	 * Joins a conference asking for the conference name
-	 */
-	void slotJoinConference();
+
+	void slotReceiveFileAccepted( Kopete::Transfer *trans, const QString& fileName );
 
 private slots:
-	// various status slots for the action menu
-	void slotGoStatus001() { slotGoStatus(1); } // Be Right Back
-	void slotGoStatus002() { slotGoStatus(2); } // Busy
-	void slotGoStatus003() { slotGoStatus(3); } // Not At Home
-	void slotGoStatus004() { slotGoStatus(4); } // Not At My Desk
-	void slotGoStatus005() { slotGoStatus(5); } // Not In The Office
-	void slotGoStatus006() { slotGoStatus(6); } // On The Phone
-	void slotGoStatus007() { slotGoStatus(7); } // On Vacation
-	void slotGoStatus008() { slotGoStatus(8); } // Out To Lunch
-	void slotGoStatus009() { slotGoStatus(9); } // Stepped Out
-	void slotGoStatus012() { slotGoStatus(12); } // Invisible
-	void slotGoStatus099() { theAwayDialog->show(99); } // Custom
-	void slotGoStatus999() { slotGoStatus(999); } // Idle
-
 	/**
-	 * Set an error flag so that the password box
-	 * is popped up again when the password is wrong
+	 * When a global identity key get changed.
 	 */
-	void slotNeedReconnect();
-
+	void slotGlobalIdentityChanged( const QString &key, const QVariant &value );
+	void slotKeepalive();
 private:
-	/**
-	 * join conference action
-	 */
-	KAction *m_joinConferenceAction;
 
 	/**
 	 * Handle the signal and slot connections and disconnects
@@ -234,10 +224,14 @@ private:
 	/**
 	 * Conferences list, maped by room name (id)
 	 */
-	QMap<QString, YahooConferenceMessageManager *> m_conferences;
+	QMap<QString, YahooConferenceChatSession *> m_conferences;
+
+	void setPictureFlag( int flag );
 
 	bool theHaveContactList;	// Do we have the full server-side contact list yet?
 	int stateOnConnection;		// The state to change to on connection
+	QTimer* m_keepaliveTimer;
+	bool m_waitingForResponse;
 
 	/**
 	 * External Settings and Descriptors
@@ -247,11 +241,16 @@ private:
 	int m_sessionId;		// The Yahoo session descriptor
 	int m_lastDisconnectCode;	// The last disconnect code.
 	int m_currentMailCount;
-	YahooSession *m_session;	// Connection Object
+	int m_pictureFlag;			// Describes if we send a buddy icon or not
 	YahooProtocol *m_protocol;	// The Protocol Object
-	
+
 
 	YahooAwayDialog *theAwayDialog;	// Our away message dialog
+
+	KAction *m_openInboxAction;	// Menu item openInbox
+	KAction *m_openYABAction;	// Menu item openYahooAddressbook
+	
+	Client *m_session;		// The Connection object
 };
 
 

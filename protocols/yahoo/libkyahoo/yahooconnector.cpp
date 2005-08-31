@@ -35,7 +35,7 @@ KNetworkConnector::KNetworkConnector( QObject *parent, const char */*name*/ )
 
 	connect( mByteStream, SIGNAL ( connected () ), this, SLOT ( slotConnected () ) );
 	connect( mByteStream, SIGNAL ( error ( int ) ), this, SLOT ( slotError ( int ) ) );
-	mPort = 0;
+	mPort = 5510;
 }
 
 KNetworkConnector::~KNetworkConnector()

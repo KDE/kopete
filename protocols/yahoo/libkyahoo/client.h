@@ -31,6 +31,7 @@
 
 class QString;
 class ClientStream;
+class KNetworkConnector;
 class Task;
 
 class Client : public QObject
@@ -55,15 +56,7 @@ Q_OBJECT
 		 * @param server the server to connect to - but this is also set on the connector used to construct the clientstream??
 		 * @param auth indicate whether we're connecting to the authorizer or the bos server
 		 */
-		void connectToServer( ClientStream *s, const QString& server, bool auth=true );
-		
-		/**
-		 * Start the login process for Oscar
-		 * @param host - probably could obtain this back from the connector - used for outgoing tasks to determine destination
-		 * @param user The user name to log in as.
-		 * @param pass The password to use when logging in
-		 */ 
-		void start( const QString &host, const uint port, const QString &userId, const QString &pass );
+		void connect( const QString &host, const uint port, const QString &userId, const QString &pass );
 		
 		/**
 		 * Logout and disconnect
@@ -151,6 +144,7 @@ Q_OBJECT
 		
 		class ClientPrivate;
 		ClientPrivate* d;
+		KNetworkConnector *m_connector;
 };
 
 #endif
