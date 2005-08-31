@@ -49,6 +49,10 @@ Buffer::~Buffer()
 {
 }
 
+Buffer::operator QByteArray() const
+{
+	return mBuffer;
+}
 
 int Buffer::addByte(const BYTE b)
 {

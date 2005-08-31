@@ -60,6 +60,9 @@ public:
 	/** Default destructor */
 	~Buffer();
 
+	/** convert to qbytearray */
+	operator QByteArray() const;
+
 	/**
 	 * returns the raw buffer
 	 */

@@ -280,7 +280,7 @@ void SSIModifyTask::sendSSIUpdate()
 		m_id = client()->snacSequence();
 		SNAC s1 = { 0x0013, 0x0008, 0x0000, m_id };
 		Buffer* ssiBuffer = new Buffer;
-		ssiBuffer->addString( m_newItem );
+		ssiBuffer->addString( (QByteArray) m_newItem );
 		Transfer* t2 = createTransfer( f1, s1, ssiBuffer );
 		send( t2 );
 
@@ -298,7 +298,7 @@ void SSIModifyTask::sendSSIUpdate()
 		m_id = client()->snacSequence();
 		SNAC s1 = { 0x0013, 0x000A, 0x0000, m_id };
 		Buffer* ssiBuffer = new Buffer;
-		ssiBuffer->addString( m_oldItem );
+		ssiBuffer->addString( (QByteArray) m_oldItem );
 		Transfer* t2 = createTransfer( f1, s1, ssiBuffer );
 		send( t2 );
 
@@ -318,7 +318,7 @@ void SSIModifyTask::sendSSIUpdate()
 		m_id = client()->snacSequence();
 		SNAC s1 = { 0x0013, 0x0009, 0x0000, m_id };
 		Buffer* ssiBuffer = new Buffer;
-		ssiBuffer->addString( m_newItem );
+		ssiBuffer->addString( (QByteArray) m_newItem );
 		Transfer* t2 = createTransfer( f1, s1, ssiBuffer );
 		send( t2 );
 

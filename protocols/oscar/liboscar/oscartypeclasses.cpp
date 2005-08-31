@@ -174,7 +174,7 @@ Oscar::SSI::SSI( const QString &name, int gid, int bid, int type, const Q3ValueL
 	m_tlvLength = tlvLength;
 
 	//deepcopy the tlvs
-	m_tlvList = QDeepCopy< Q3ValueList<TLV> >( tlvlist );
+	m_tlvList = tlvlist;
 
 	if ( m_tlvLength == 0 && !m_tlvList.isEmpty() )
 		refreshTLVLength();
@@ -193,7 +193,7 @@ Oscar::SSI::SSI( const Oscar::SSI& other )
 	m_waitingAuth = other.m_waitingAuth;
 
 	//deepcopy the tlvs
-	m_tlvList = QDeepCopy< Q3ValueList<TLV> >( other.m_tlvList );
+	m_tlvList = other.m_tlvList;
 
 	if ( m_tlvLength == 0 && !m_tlvList.isEmpty() )
 		refreshTLVLength();
@@ -246,7 +246,7 @@ Q_UINT16 Oscar::SSI::tlvListLength() const
 void Oscar::SSI::setTLVList( Q3ValueList<TLV> list )
 {
 	//deepcopy the tlvs
-	m_tlvList = QDeepCopy< Q3ValueList<TLV> >( list );
+	m_tlvList = list;
 	refreshTLVLength();
 	checkTLVs();
 }
