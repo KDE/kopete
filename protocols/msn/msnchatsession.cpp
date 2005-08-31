@@ -720,7 +720,7 @@ void MSNChatSession::cleanMessageQueue( const QString & reason )
 			m_messagesQueue.remove(it);
 		}
 		body+="</ul>";
-		Kopete::Message msg = Kopete::Message(m.to().first() , members() , body , Kopete::Message::Internal, Kopete::Message::PlainText);
+		Kopete::Message msg = Kopete::Message(m.to().first() , members() , body , Kopete::Message::Internal, Kopete::Message::RichText);
 		appendMessage(msg);
 
 	}
