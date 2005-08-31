@@ -476,6 +476,31 @@ unsigned int VideoDevicePool::inputs()
 	return m_videodevice[currentDevice()].inputs();
 }
 
+/*!
+    \fn Kopete::AV::VideoDevicePool::loadConfig()
+ */
+void VideoDevicePool::loadConfig()
+{
+    /// @todo implement me
+}
+
+/*!
+    \fn Kopete::AV::VideoDevicePool::saveConfig()
+ */
+void VideoDevicePool::saveConfig()
+{
+    /// @todo implement me
+	if(hasDevices())
+	{
+		VideoDeviceVector::iterator vditerator;
+		for( vditerator = m_videodevice.begin(); vditerator != m_videodevice.end(); ++vditerator )
+		{
+			kdDebug() "<< (*vditerator).name << endl;
+		}
+		kdDebug() << endl;
+	};
+}
+
 
 
 }

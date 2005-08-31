@@ -39,6 +39,7 @@ This class allows kopete to check for the existence, open, configure, test, set 
 
 @author Cláudio da Silveira Pinheiro
 */
+typedef QValueVector<Kopete::AV::VideoDevice> VideoDeviceVector;
 
 class VideoDevicePoolPrivate;
 
@@ -67,7 +68,7 @@ public:
 	bool hasDevices();
 	size_t size();
 	~VideoDevicePool();
-	QValueVector<Kopete::AV::VideoDevice> m_videodevice;
+	VideoDeviceVector m_videodevice;
 	int fillDeviceKComboBox(KComboBox *combobox);
 	int fillInputKComboBox(KComboBox *combobox);
 	unsigned int currentDevice();
@@ -75,6 +76,8 @@ public:
 	unsigned int inputs();
 	bool getAutoColorCorrection();
 	bool setAutoColorCorrection(bool colorcorrection);
+	void loadConfig(); // Load configuration parameters;
+	void saveConfig(); // Save configuretion parameters;
 
 protected:
 	int xioctl(int request, void *arg);
