@@ -495,10 +495,10 @@ void VideoDevicePool::saveConfig()
 		VideoDeviceVector::iterator vditerator;
 		for( vditerator = m_videodevice.begin(); vditerator != m_videodevice.end(); ++vditerator )
 		{
-			kdDebug() "<< (*vditerator).name << endl;
+			kdDebug() << (*vditerator).name << endl;
 		}
 		kdDebug() << endl;
-	};
+	}
 }
 
 
