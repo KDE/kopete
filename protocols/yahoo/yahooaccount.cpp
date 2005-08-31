@@ -934,7 +934,7 @@ void YahooAccount::slotGotBuddyIconChecksum(const QString &who, int checksum)
 		kdDebug(14180) << k_funcinfo << "Icon already exists. I will not request it again." << endl;
 		return;
 	} else
-		m_session->requestBuddyIcon( who );;	
+		m_session->requestBuddyIcon( who );
 }
 
 void YahooAccount::slotGotBuddyIconInfo(const QString &who, KURL url, int checksum)
