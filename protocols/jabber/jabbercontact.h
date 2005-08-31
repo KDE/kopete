@@ -69,6 +69,8 @@ public:
 
 	bool isContactRequestingEvent( XMPP::MsgEvent event );
 
+	QString lastReceivedMessageId () const;
+
 public slots:
 
 	/**
@@ -230,6 +232,8 @@ private:
 	bool mRequestOfflineEvent;
 	bool mRequestDisplayedEvent;
 	bool mRequestDeliveredEvent;
+
+	QString mLastReceivedMessageId;
 
 };
 

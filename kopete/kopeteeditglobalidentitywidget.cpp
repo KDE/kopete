@@ -170,7 +170,7 @@ void KopeteEditGlobalIdentityWidget::photoClicked()
 	// Only accept local file.
 	if(!photoURL.isLocalFile())
 	{
-		KMessageBox::sorry(this, i18n("Remote photo are not allowed."), i18n("Global Photo"));
+		KMessageBox::sorry(this, i18n("Remote photos are not allowed."), i18n("Global Photo"));
 		return;
 	}
 

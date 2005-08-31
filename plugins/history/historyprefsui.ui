@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>350</width>
-            <height>367</height>
+            <width>363</width>
+            <height>212</height>
         </rect>
     </property>
     <property name="caption">
@@ -20,14 +20,6 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>chkShowPrevious</cstring>
-            </property>
-            <property name="text">
-                <string>Show chat history in new chats</string>
-            </property>
-        </widget>
         <widget class="QGroupBox">
             <property name="name">
                 <cstring>grpChatHistory</cstring>
@@ -39,6 +31,48 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>lblNoLinesPerPage</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Number of messages per page:</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The number of message that are shown when borwsing history in the chat window</string>
+                    </property>
+                </widget>
+                <widget class="KIntSpinBox" row="3" column="1">
+                    <property name="name">
+                        <cstring>Number_ChatWindow</cstring>
+                    </property>
+                    <property name="maxValue">
+                        <number>32768</number>
+                    </property>
+                    <property name="minValue">
+                        <number>1</number>
+                    </property>
+                    <property name="value">
+                        <number>10</number>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The number of message that are shown when borwsing history in the chat window</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>colorLabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Color of messages:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>History_color</cstring>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Color of history messages in the chat window</string>
+                    </property>
+                </widget>
                 <widget class="KColorButton" row="2" column="1">
                     <property name="name">
                         <cstring>History_color</cstring>
@@ -53,16 +87,8 @@
                             <blue>127</blue>
                         </color>
                     </property>
-                </widget>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>colorLabel</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Color of messages:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>History_color</cstring>
+                    <property name="whatsThis" stdset="0">
+                        <string>Color of history messages in the chat window</string>
                     </property>
                 </widget>
                 <widget class="KIntSpinBox" row="1" column="1">
@@ -78,24 +104,10 @@
                     <property name="value">
                         <number>7</number>
                     </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>This is the number of messages that will be added automatically in the what window when opening a new chat</string>
+                    </property>
                 </widget>
-                <spacer row="2" column="2">
-                    <property name="name">
-                        <cstring>spacer6</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>8</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                </spacer>
                 <widget class="QLabel" row="1" column="0">
                     <property name="name">
                         <cstring>numberLabel</cstring>
@@ -106,89 +118,70 @@
                     <property name="buddy" stdset="0">
                         <cstring>Number_Auto_chatwindow</cstring>
                     </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>This is the number of messages that will be added automatically in the what window when opening a new chat</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>chkShowPrevious</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Show chat history in new chats</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>When a new chat is open, automatically add the few last message you had with that contact.</string>
+                    </property>
                 </widget>
             </grid>
         </widget>
-        <widget class="QLayoutWidget">
+        <spacer>
             <property name="name">
-                <cstring>layout1</cstring>
+                <cstring>spacer2</cstring>
             </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>lblNoLinesPerPage</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Number of messages per page:</string>
-                    </property>
-                </widget>
-                <widget class="KIntSpinBox">
-                    <property name="name">
-                        <cstring>Number_ChatWindow</cstring>
-                    </property>
-                    <property name="maxValue">
-                        <number>32768</number>
-                    </property>
-                    <property name="minValue">
-                        <number>1</number>
-                    </property>
-                    <property name="value">
-                        <number>10</number>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel1</cstring>
+            <property name="orientation">
+                <enum>Vertical</enum>
             </property>
-            <property name="text">
-                <string>Style for history browser:</string>
+            <property name="sizeType">
+                <enum>Expanding</enum>
             </property>
-        </widget>
-        <widget class="KListView">
-            <column>
-                <property name="text">
-                    <string>Style</string>
-                </property>
-                <property name="clickable">
-                    <bool>false</bool>
-                </property>
-                <property name="resizable">
-                    <bool>false</bool>
-                </property>
-            </column>
-            <property name="name">
-                <cstring>History_Style</cstring>
+            <property name="sizeHint">
+                <size>
+                    <width>31</width>
+                    <height>90</height>
+                </size>
             </property>
-            <property name="hScrollBarMode">
-                <enum>AlwaysOff</enum>
-            </property>
-            <property name="resizeMode">
-                <enum>NoColumn</enum>
-            </property>
-            <property name="fullWidth">
-                <bool>true</bool>
-            </property>
-        </widget>
+        </spacer>
     </vbox>
 </widget>
 <customwidgets>
 </customwidgets>
+<connections>
+    <connection>
+        <sender>chkShowPrevious</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>numberLabel</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>chkShowPrevious</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>Number_Auto_chatwindow</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
 <tabstops>
     <tabstop>chkShowPrevious</tabstop>
     <tabstop>Number_Auto_chatwindow</tabstop>
     <tabstop>History_color</tabstop>
-    <tabstop>Number_ChatWindow</tabstop>
-    <tabstop>History_Style</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>knuminput.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
-    <includehint>klistview.h</includehint>
 </includehints>
 </UI>

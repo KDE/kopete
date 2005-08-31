@@ -64,6 +64,8 @@ public:
 	KopeteWindow ( QWidget *parent = 0, const char *name = 0 );
 	~KopeteWindow();
 
+    virtual bool eventFilter( QObject* o, QEvent* e );
+
 protected:
 	virtual void closeEvent( QCloseEvent *ev );
 	virtual void leaveEvent( QEvent* ev );
@@ -82,20 +84,20 @@ private slots:
 	void slotConfGlobalKeys();
 	void slotShowHide();
 	void slotToggleAway();
-	
+
 	/**
 	 * Checks if the mousecursor is in the contact list.
 	 * If not, the window will be hidden.
 	 */
 	void slotAutoHide();
-	
+
 	/**
-	 * This slot will apply settings that change the 
-	 * contactlist's appearance. Only autohiding is 
+	 * This slot will apply settings that change the
+	 * contactlist's appearance. Only autohiding is
 	 * handled here at the moment
 	 */
 	void slotContactListAppearanceChanged();
-	
+
 	/**
 	 * This slot will show an away dialog and then
 	 * set all the protocols to away
@@ -105,7 +107,7 @@ private slots:
 	void slotGlobalAvailableMessageSelect( const QString & );
 	void slotSetInvisibleAll(  );
 
-	
+
 	void slotQuit();
 
 	/**
@@ -154,7 +156,7 @@ private slots:
 	 */
 	void showAddContactDialog();
 
-	/** 
+	/**
 	 * Show the Export Contacts wizards
 	 */
 	void showExportDialog();
@@ -183,7 +185,7 @@ public:
 	Kopete::AwayAction* selectBusy;
 	KAction* actionSetAvailable;
 	KAction* actionSetInvisible;
-	
+
 
 	KAction* actionPrefs;
 	KAction* actionQuit;
@@ -201,7 +203,7 @@ private:
 	void initSystray();
 	void loadOptions();
 	void saveOptions();
-	
+
 	void makeTrayToolTip();
 	void startAutoHideTimer();
 

@@ -5,7 +5,9 @@ INCLUDES = -I$(kopete_srcdir)/kopete
 
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(kopete_srcdir)/kopete/config \
+	-I$(kopete_srcdir)/kopete/addaccountwizard \
 	-I$(kopete_srcdir)/kopete/addcontactwizard \
+	-I$(kopete_srcdir)/kopete/config/accounts \
 	-I$(kopete_builddir)/kopete/addcontactwizard \
 	-I$(kopete_srcdir)/libkopete/ui \
 	-I$(kopete_srcdir)/kopete/contactlist \
@@ -20,7 +22,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 KDE_ICON = AUTO
 METASOURCES = AUTO
 
-SUBDIRS = addcontactwizard contactlist config . chatwindow kconf_update
+SUBDIRS = addaccountwizard addcontactwizard contactlist config . chatwindow kconf_update
 
 bin_PROGRAMS = kopete
 kopete_SOURCES = main.cpp 	kopeteapplication.cpp kopeteiface.cpp \
@@ -32,6 +34,7 @@ kimiface_DIR = $(kde_includes)
 kopete_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH) -lktexteditor
 kopete_LDADD = \
 	addcontactwizard/libkopeteaddcontactwizard.la \
+	addaccountwizard/libkopeteaddaccountwizard.la \
 	contactlist/libkopetecontactlist.la \
 	config/plugins/libkopetepluginconfig.la \
 	../libkopete/libkopete.la \

@@ -74,8 +74,8 @@ void Webcam::askIncommingInvitation()
 	//protect, in case this is deleted when the messagebox is active
 	QPointer<Webcam> _this = this;
 	QString message= (m_who==wProducer)  ?
-			i18n("<qt>The contact %1 want to see <b>your</b> webcam, do you want to see it?</qt>")  :
-			i18n("The contact %1 want to show you his webcam, do you want to see it?")  ;
+			i18n("<qt>The contact %1 wants to see <b>your</b> webcam, do you want to see it?</qt>")  :
+			i18n("The contact %1 wants to show you his/her webcam, do you want to see it?")  ;
 	int result=KMessageBox::questionYesNo( 0L , message.arg(m_recipient),
 										   i18n("Webcam invitation - Kopete MSN Plugin") , i18n("Accept") , i18n("Decline"));
 	if(!_this)

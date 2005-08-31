@@ -291,8 +291,8 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 		}		
 	}
 	else
-	m_account->yahooSession()->sendIm( static_cast<YahooContact*>(m_account->myself())->m_userId,
-							static_cast<YahooContact *>(target)->m_userId, messageText, m_account->pictureFlag());
+		m_account->yahooSession()->sendIm( static_cast<YahooContact*>(m_account->myself())->m_userId,
+					           static_cast<YahooContact *>(target)->m_userId, messageText, m_account->pictureFlag());
 
 	// append message to window
 	manager(Kopete::Contact::CanCreate)->appendMessage(message);

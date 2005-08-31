@@ -43,7 +43,6 @@
 #include "kopetechatsessionmanager.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
-//#include "kopeteutils.h"
 #include "kopeteview.h"
 
 #include "msncontact.h"
@@ -61,8 +60,9 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 {
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
 	m_chatService = 0l;
-//	m_msgQueued = 0L;
+	m_timeoutTimer =0L;
 	m_newSession = true;
+	m_connectionTry=0;
 
 	setInstance(protocol->instance());
 
@@ -138,7 +138,7 @@ MSNChatSession::~MSNChatSession()
 void MSNChatSession::createChat( const QString &handle,
 	const QString &address, const QString &auth, const QString &ID )
 {
-	/** disabled because i don't want to reopen a chatwindow if we just closed it
+	/* disabled because i don't want to reopen a chatwindow if we just closed it
 	 * and the contact take much time to type his message
 	 m_newSession= !(ID.isEmpty());
 	*/
@@ -177,10 +177,20 @@ void MSNChatSession::createChat( const QString &handle,
 	connect( m_chatService, SIGNAL( nudgeReceived() ),
 		this, SLOT( slotNudgeReceived() ) );
 	connect( m_chatService, SIGNAL( errorMessage(int, const QString& ) ), static_cast<MSNAccount *>(myself()->account()), SLOT( slotErrorMessageReceived(int, const QString& ) ) );
+	
+	if(!m_timeoutTimer)
+	{
+		m_timeoutTimer=new QTimer(this);
+		connect( m_timeoutTimer , SIGNAL(timeout()), this , SLOT(slotConnectionTimeout() ) );
+	}
+	m_timeoutTimer->start(20000,true);
 }
 
 void MSNChatSession::slotUserJoined( const QString &handle, const QString &publicName, bool IRO )
 {
+	delete m_timeoutTimer;
+	m_timeoutTimer=0L;
+	
 	if( !account()->contacts()[ handle ] )
 		account()->addContact( handle, QString::null, 0L, Kopete::Account::Temporary);
 
@@ -218,15 +228,7 @@ void MSNChatSession::slotSwitchBoardClosed()
 	m_chatService->deleteLater();
 	m_chatService=0l;
 
-	for ( QMap<unsigned int , Kopete::Message>::iterator it = m_messagesSent.begin(); it!=m_messagesSent.end(); it = m_messagesSent.begin() )
-	{
-		Kopete::Message m=it.data();
-		QString body=i18n("The following message has not been sent correctly: \n%1").arg(m.plainBody());
-		Kopete::Message msg = Kopete::Message(m.to().first() , members() , body , Kopete::Message::Internal, Kopete::Message::PlainText);
-		appendMessage(msg);
-
-		m_messagesSent.remove(it);
-	}
+	cleanMessageQueue( i18n("Connection closed") );
 
 	if(m_invitations.isEmpty())
 		setCanBeDeleted( true );
@@ -263,7 +265,7 @@ void MSNChatSession::slotMessageSent(Kopete::Message &message,Kopete::ChatSessio
 	}
 	else // There's no switchboard available, so we must create a new one!
 	{
-		static_cast<MSNAccount*>( myself()->account() )->slotStartChatSession( message.to().first()->contactId() );
+		startChatSession();
 		m_messagesQueue.append(message);
 //		sendMessageQueue();
 		//m_msgQueued=new Kopete::Message(message);
@@ -329,7 +331,7 @@ void MSNChatSession::inviteContact(const QString &contactId)
 	if( m_chatService )
 		m_chatService->slotInviteContact( contactId );
 	else
-		static_cast<MSNAccount*>( myself()->account() )->slotStartChatSession( contactId );
+		startChatSession();
 }
 
 void MSNChatSession::slotInviteOtherContact()
@@ -511,7 +513,7 @@ void MSNChatSession::slotRequestPicture()
 				m_chatService->requestDisplayPicture();
 		}
 		else
-			static_cast<MSNAccount*>( account() )->slotStartChatSession( mb.first()->contactId() );
+			startChatSession();
 	}
 	else
 	{ //we already have the picture, just show it.
@@ -623,12 +625,13 @@ void MSNChatSession::slotSendNudge()
 
 void MSNChatSession::slotNudgeReceived()
 {
-	// FIXME: Better display of the nudge.
-	// FIXME: WHhen nudge is the first received message, you can't see your own message you send before the others send you a message.
+	// FIXME: When nudge is the first received message, you can't see your own message you send before the others send you a message.
+	//        Ok, this is only with chat window style which use "Parse All Message" flag.
 	QString nudgeBody = i18n( "You have received a nudge!" );
 	Kopete::Message msg = Kopete::Message(myself(), members(), nudgeBody, Kopete::Message::Internal, Kopete::Message::PlainText );
 	appendMessage( msg );
-	//Kopete::Utils::notifyBuzz( myself()->account(), nudgeBody );
+	// Emit the nudge/buzz notification (configured by user).
+	emitNudgeNotification();
 }
 
 
@@ -648,6 +651,90 @@ void MSNChatSession::slotWebcamSend()
 		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().getFirst()->contactId() , false);
 	}
 }
+
+
+void MSNChatSession::startChatSession()
+{
+	QPtrList<Kopete::Contact> mb=members();
+	static_cast<MSNAccount*>( account() )->slotStartChatSession( mb.first()->contactId() );
+	
+	if(!m_timeoutTimer)
+	{
+		m_timeoutTimer=new QTimer(this);
+		connect( m_timeoutTimer , SIGNAL(timeout()), this , SLOT(slotConnectionTimeout() ) );
+	}
+	m_timeoutTimer->start(20000, true);
+}
+
+
+void MSNChatSession::cleanMessageQueue( const QString & reason )
+{
+	delete m_timeoutTimer;
+	m_timeoutTimer=0L;
+
+	uint nb=m_messagesQueue.count()+m_messagesSent.count();
+	if(nb==0)
+		return;
+	else if(nb==1)
+	{
+		Kopete::Message m;
+		if(m_messagesQueue.count() == 1)
+			m=m_messagesQueue.first();
+		else
+			m=m_messagesSent.begin().data();
+		
+		QString body=i18n("The following message has not been sent correctly  (%1): \n%2").arg(reason, m.plainBody());
+		Kopete::Message msg = Kopete::Message(m.to().first() , members() , body , Kopete::Message::Internal, Kopete::Message::PlainText);
+		appendMessage(msg);
+	}
+	else
+	{
+		Kopete::Message m;
+		QString body=i18n("These messages have not been sent correctly (%1): <br /><ul>").arg(reason);
+		for ( QMap<unsigned int , Kopete::Message>::iterator it = m_messagesSent.begin(); it!=m_messagesSent.end(); it = m_messagesSent.begin() )
+		{
+			m=it.data();
+			body+= "<li>"+m.escapedBody()+"</li>";
+			m_messagesSent.remove(it);
+		}
+		for ( QValueList<Kopete::Message>::iterator it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
+		{
+			m=(*it);
+			body+= "<li>"+m.escapedBody()+"</li>";
+			m_messagesQueue.remove(it);
+		}
+		body+="</ul>";
+		Kopete::Message msg = Kopete::Message(m.to().first() , members() , body , Kopete::Message::Internal, Kopete::Message::PlainText);
+		appendMessage(msg);
+
+	}
+	m_messagesQueue.clear();
+	m_messagesSent.clear();
+	messageSucceeded(); //stop stupid animation
+}
+
+void MSNChatSession::slotConnectionTimeout()
+{
+	m_connectionTry++;
+	if(m_chatService)
+	{
+		disconnect(m_chatService , 0 , this , 0 );
+		m_chatService->deleteLater();
+		m_chatService=0L;
+	}
+	
+	if( m_connectionTry > 3 )
+	{
+		cleanMessageQueue( i18n("Impossible to establish the connection") );
+		delete m_timeoutTimer;
+		m_timeoutTimer=0L;
+		return;
+	}
+	startChatSession();
+
+};
+
+
 
 
 #include "msnchatsession.moc"

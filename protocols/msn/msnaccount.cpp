@@ -1319,7 +1319,6 @@ void MSNAccount::addContactServerside(const QString &contactId, Q3PtrList<Kopete
 				addGroup( group->displayName(), contactId );
 			}
 		}
-		
 	}
 
 	// After add the contact to the top-level, it will be moved to required groups later.

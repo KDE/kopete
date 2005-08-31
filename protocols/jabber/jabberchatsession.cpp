@@ -155,7 +155,7 @@ void JabberChatSession::sendNotification( XMPP::MsgEvent event )
 	
 			message.setFrom ( fromJid );
 			message.setTo ( toJid );
-	
+			message.setEventId ( contact->lastReceivedMessageId () );
 			// store composing event depending on state
 			message.addEvent ( event );
 	

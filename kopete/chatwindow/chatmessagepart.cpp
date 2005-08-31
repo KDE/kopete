@@ -22,10 +22,14 @@
 #include <qclipboard.h>
 #include <qrect.h>
 #include <qcursor.h>
+<<<<<<< .working
 //Added by qt3to4:
 #include <QPixmap>
 #include <QTextStream>
 #include <QByteArray>
+=======
+#include <qtextcodec.h> 
+>>>>>>> .merge-right.r455261
 
 #include <dom/dom_doc.h>
 #include <dom/dom_text.h>
@@ -187,8 +191,6 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 			encoding() + QString::fromLatin1("\">\n<style>") + styleHTML() +
 	QString::fromLatin1("</style></head><body></body></html>") );
 	end();
-	view()->setFocusPolicy( Qt::NoFocus );
-
 //	d->tt=new ToolTip( this );
 
 	// It is not possible to drag and drop on our widget
@@ -958,3 +960,4 @@ void ChatMessagePart::setCodepage(const QString& page)
 {
     codepage=page;
 }
+

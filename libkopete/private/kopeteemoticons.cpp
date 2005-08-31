@@ -438,7 +438,7 @@ QString Emoticons::parse( const QString &message, ParseMode mode )
 				  QString::fromLatin1( "\" height=\"" ) +
 				  QString::number( p.height() ) +
 				  QString::fromLatin1( "\" />" );
-			kdDebug( 14010 ) << k_funcinfo << "Emoticon html code: " << result;
+			kdDebug( 14010 ) << k_funcinfo << "Emoticon html code: " << result << endl;
 		break;
 		default:
 			kdDebug( 14010 ) << k_funcinfo << "Unknown token type. Something's broken." << endl;

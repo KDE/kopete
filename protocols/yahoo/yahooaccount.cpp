@@ -794,9 +794,8 @@ void YahooAccount::slotGotBuzz( const QString &who, long tm )
 	
 	Kopete::ChatSession *mm = contact(who)->manager(Kopete::Contact::CanCreate);
 	mm->appendMessage(kmsg);
-	
-	/* TODO play a sound */
-	
+	// Emit the buzz notification.
+	mm->emitNudgeNotification();
 }
 
 void YahooAccount::slotGotConfInvite( const QString & /* who */, const QString & /* room */, const QString & /* msg */, const QStringList & /* members */ )

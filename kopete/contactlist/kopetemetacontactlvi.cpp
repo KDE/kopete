@@ -550,6 +550,8 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 			photoPixmap=SmallIcon(m_metaContact->statusIcon(), d->iconSize);
 		}
 		d->metaContactIcon->setPixmap( photoPixmap, false);
+		if(mBlinkTimer->isActive())
+			m_originalBlinkIcon=photoPixmap;
 	}
 }
 
@@ -938,11 +940,9 @@ bool KopeteMetaContactLVI::isGrouped() const
 
 void KopeteMetaContactLVI::slotIdleStateChanged( Kopete::Contact *c )
 {
-	QPixmap icon = SmallIcon( m_metaContact->statusIcon(), d->iconSize );
-	if ( KopetePrefs::prefs()->greyIdleMetaContacts() && ( m_metaContact->idleTime() >= 10 * 60 ) )
+	bool doWeHaveToGrayThatContact = KopetePrefs::prefs()->greyIdleMetaContacts() && ( m_metaContact->idleTime() >= 10 * 60 );
+	if ( doWeHaveToGrayThatContact )
 	{
-		// TODO: QPixmapCache this result
-		KIconEffect::semiTransparent( icon );
 		d->nameText->setColor( KopetePrefs::prefs()->idleContactColor() );
 		if ( d->extraText )
 			d->extraText->setColor( KopetePrefs::prefs()->idleContactColor() );
@@ -957,7 +957,17 @@ void KopeteMetaContactLVI::slotIdleStateChanged( Kopete::Contact *c )
 	if(d->metaContactIcon && d->currentIconMode==KopetePrefs::IconPic)
 	{
 		m_oldStatusIcon=d->metaContactIcon->pixmap();
+		
+		QPixmap icon = SmallIcon( m_metaContact->statusIcon(), d->iconSize );
+		if ( doWeHaveToGrayThatContact )
+		{
+			// TODO: QPixmapCache this result
+			KIconEffect::semiTransparent( icon );
+		}
+
 		d->metaContactIcon->setPixmap( icon );
+		if(mBlinkTimer->isActive())
+			m_originalBlinkIcon=icon;
 	}
 	// we only need to update the contact icon if one was supplied;
 	// if none was supplied, we only need to update the MC appearance
