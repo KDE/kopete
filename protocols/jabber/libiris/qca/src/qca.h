@@ -461,6 +461,6 @@ namespace QCA
 
 		void handleServerFirstStep(int r);
 	};
-};
+}
 
 #endif

@@ -39,7 +39,7 @@
 namespace XMPP
 {
 	class Resource;
-};
+}
 
 class JabberContact;
 class dlgJabberStatus;
