@@ -118,7 +118,7 @@ Kopete::Account *YahooEditAccount::apply()
 	kdDebug(14180) << k_funcinfo << endl;
 
 	if ( !account() )
-		setAccount( new YahooAccount( theProtocol, mScreenName->text() ) );
+		setAccount( new YahooAccount( theProtocol, mScreenName->text().lower() ) );
 
 	YahooAccount *yahooAccount = static_cast<YahooAccount *>( account() );
 
