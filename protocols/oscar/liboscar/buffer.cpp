@@ -17,14 +17,8 @@
     *************************************************************************
 */
 
-#include <kdebug.h>
-#include <kapplication.h>
 #include "buffer.h"
-
 #include <ctype.h>
-//Added by qt3to4:
-#include <Q3ValueList>
-#include <Q3CString>
 
 Buffer::Buffer()
 {
@@ -33,19 +27,20 @@ Buffer::Buffer()
 
 Buffer::Buffer( const Buffer& other )
 {
-	mBuffer.duplicate( other.mBuffer );
+	mBuffer = other.mBuffer;
 	mReadPos = other.mReadPos;
 }
 
-Buffer::Buffer(const char *b, Q_ULONG len)
+Buffer::Buffer(const char *b, ulong len)
 {
-	mBuffer.duplicate(b, len);
+	Q_UNUSED( len );
+	mBuffer = b;
 	mReadPos=0;
 }
 
 Buffer::Buffer( const QByteArray& data )
 {
-	mBuffer.duplicate( data );
+	mBuffer = data;
 	mReadPos = 0;
 }
 
@@ -113,36 +108,23 @@ int Buffer::addLEDWord(const DWORD dw)
 	return mBuffer.size();
 }
 
-int Buffer::addString(QByteArray s)
-{
-	unsigned int pos = mBuffer.size();
-	int len = s.size();
-	expandBuffer(len);
-	
-	for ( int i = 0; i < len; i++ )
-		mBuffer[pos + i] = s[i];
-	
-	return mBuffer.size();
-}
 
 int Buffer::addString(QByteArray s, DWORD len)
 {
-	Q_UNUSED( len );
-	return addString( s );
+	unsigned int pos = mBuffer.size();
+	expandBuffer(len);
+	
+	//concatenate the new string onto the buffer
+	for ( unsigned int i = 0; i < len; i++ )
+		mBuffer[pos + i] = s[i];
+
+	return mBuffer.size();
 }
 
 int Buffer::addString( const char* s, DWORD len )
 {
-	QByteArray qba;
-	qba.duplicate( s, len );
-	return addString( qba );
-}
-
-int Buffer::addString(const unsigned char* s, DWORD len)
-{
-	QByteArray qba;
-	qba.duplicate( (const char*) s, len );
-	return addString( qba );
+	QByteArray qba = s;
+	return addString( qba, len );
 }
 
 int Buffer::addLEString(const char *s, const DWORD len)
@@ -171,7 +153,6 @@ int Buffer::addTLV( const TLV& t )
 
 int Buffer::addTLV(WORD type, WORD len, const char *data)
 {
-
 	addWord(type);
 	addWord(len);
 	return addString(data,len);
@@ -186,8 +167,8 @@ BYTE Buffer::getByte()
 		thebyte = mBuffer[mReadPos];
 		mReadPos++;
 	}
-	else
-		kdDebug(14150) << "Buffer::getByte(): mBuffer empty" << endl;
+// 	else
+// 		kdDebug(14150) << "Buffer::getByte(): mBuffer empty" << endl;
 
 	return thebyte;
 }
@@ -243,15 +224,17 @@ DWORD Buffer::getLEDWord()
 
 void Buffer::setBuf(char *b, const WORD len)
 {
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
+	Q_UNUSED( len );
+	//kdDebug(14150) << k_funcinfo << "Called." << endl;
 	
-	mBuffer.duplicate(b, len);
+	mBuffer = b;
 	mReadPos = 0;
 }
 
 QByteArray Buffer::getBlock(WORD len)
 {
-	QByteArray ch( len );
+	QByteArray ch;
+	ch.reserve( len );
 	for ( int i = 0; i < len; i++ )
 	{
 		ch[i] = getByte();
@@ -262,8 +245,7 @@ QByteArray Buffer::getBlock(WORD len)
 
 QByteArray Buffer::getBBlock(WORD len)
 {
-	QByteArray data;
-	data.duplicate(mBuffer.data() + mReadPos, len);
+	QByteArray data = (mBuffer.data() + mReadPos);
 	mReadPos += len;
 	return data;
 }
@@ -271,7 +253,7 @@ QByteArray Buffer::getBBlock(WORD len)
 
 WORD *Buffer::getWordBlock(WORD len)
 {
-	kdDebug(14150) << k_funcinfo << "of length " << len << endl;
+	//kdDebug(14150) << k_funcinfo << "of length " << len << endl;
 	WORD *ch=new WORD[len+1];
 	for (unsigned int i=0; i<len; i++)
 	{
@@ -282,9 +264,9 @@ WORD *Buffer::getWordBlock(WORD len)
 }
 
 
-Q3CString Buffer::getLEBlock(WORD len)
+QByteArray Buffer::getLEBlock(WORD len)
 {
-	Q3CString ch;
+	QByteArray ch;
 	for (unsigned int i=0;i<len;i++)
 		ch += getLEByte();
 	
@@ -322,9 +304,9 @@ TLV Buffer::getTLV()
 	return t;
 }
 
-Q3ValueList<TLV> Buffer::getTLVList()
+QList<TLV> Buffer::getTLVList()
 {
-	Q3ValueList<TLV> ql;
+	QList<TLV> ql;
 
 	while (mReadPos < mBuffer.size())
 	{
@@ -333,7 +315,7 @@ Q3ValueList<TLV> Buffer::getTLVList()
 		t = getTLV();
 		if ( !t )
 		{
-			kdDebug(14150) << k_funcinfo << "Invalid TLV found" << endl;
+// 			kdDebug(14150) << k_funcinfo << "Invalid TLV found" << endl;
 			continue;
 		}
 
@@ -351,30 +333,26 @@ int Buffer::addChatTLV(const WORD type, const WORD exchange,
 	addWord(0x0005 + roomname.length());
 	addWord(exchange);
 	addByte(roomname.length());
-	addString(roomname.latin1(), roomname.length()); // TODO: check encoding
+	addString(roomname.toLatin1(), roomname.length()); // TODO: check encoding
 
 	return addWord(instance);
 }
 
 void Buffer::expandBuffer(unsigned int inc)
 {
-	mBuffer.resize(mBuffer.size()+inc, Q3GArray::SpeedOptim);
+	mBuffer.resize(mBuffer.size()+inc);
 }
 
-Q3CString Buffer::getLNTS()
+QByteArray Buffer::getLNTS()
 {
 	WORD len = getLEWord();
-	Q3CString qcs;
-	qcs.duplicate( getBlock(len) );
-	return qcs;
+	return getBlock(len);
 }
 
-Q3CString Buffer::getLELNTS()
+QByteArray Buffer::getLELNTS()
 {
 	WORD len = getLEWord();
-	Q3CString qcs;
-	qcs.duplicate( getBlock(len) );
-	return qcs;
+	return getLEBlock(len);
 }
 
 int Buffer::addLNTS(const char *s)
@@ -410,9 +388,7 @@ int Buffer::addBSTR(const char * s)
 QByteArray Buffer::getBSTR()
 {
 	WORD len = getWord();
-	QByteArray qba;
-	qba.duplicate( getBlock(len) );
-	return qba;
+	return getBlock(len);
 }
 
 int Buffer::addBUIN(const char * s)
@@ -426,12 +402,10 @@ int Buffer::addBUIN(const char * s)
 QByteArray Buffer::getBUIN()
 {
 	BYTE len = getByte();
-	QByteArray qba;
-	qba.duplicate( getBlock(len) );
-	return qba;
+	return getBlock(len);
 }
 
-char *Buffer::buffer() const
+const char *Buffer::buffer() const
 {
 	return mBuffer.data();
 }
@@ -473,7 +447,7 @@ QString Buffer::toString() const
 	}
 
 	if(!hex.isEmpty())
-		output += hex.leftJustify(48, ' ') + "   |" + ascii.leftJustify(16, ' ') + '|';
+		output += hex.leftJustified(48, ' ') + "   |" + ascii.leftJustified(16, ' ') + '|';
 	output.append('\n');
 
 	return output;
@@ -486,16 +460,12 @@ QString Buffer::peekBSTR()
 	mReadPos = lastPos;
 	return QString( qba );
 }
+
 QString Buffer::peekBUIN()
 {
 	int lastPos = mReadPos;
 	QByteArray qba = getBUIN();
 	mReadPos = lastPos;
 	return QString( qba );
-}
-
-Buffer::operator QByteArray() const
-{
-	return mBuffer;
 }
 //kate: tab-width 4; indent-mode csands;

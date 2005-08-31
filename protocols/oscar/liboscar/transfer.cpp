@@ -19,8 +19,6 @@
 
 #include "transfer.h"
 #include <ctype.h>
-#include <q3deepcopy.h>
-#include <kdebug.h>
 
 Transfer::Transfer()
 {
@@ -40,9 +38,7 @@ Transfer::TransferType Transfer::type() const
 
 QByteArray Transfer::toWire()
 {
-	m_wireFormat.duplicate( m_buffer->buffer(), m_buffer->length() );
-	QByteArray wire = QDeepCopy<QByteArray>( m_wireFormat );
-	return wire;
+	return m_buffer->buffer();
 }
 
 Transfer::~Transfer()
@@ -104,7 +100,7 @@ QString Transfer::toString() const
 	}
 
 	if(!hex.isEmpty())
-		output += hex.leftJustify(48, ' ') + "   |" + ascii.leftJustify(16, ' ') + '|';
+		output += hex.leftJustified(48, ' ') + "   |" + ascii.leftJustified(16, ' ') + '|';
 	output.append('\n');
 
 	return output;
@@ -113,7 +109,7 @@ QString Transfer::toString() const
 void Transfer::populateWireBuffer( int offset, const QByteArray& buffer )
 {
 	int j;
-	for ( uint i = 0; i < buffer.size(); ++i )
+	for ( int i = 0; i < buffer.size(); ++i )
 	{
 		j = i + offset;
 		m_wireFormat[j] = buffer[i];
@@ -165,8 +161,7 @@ QByteArray FlapTransfer::toWire()
 	//kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Buffer is " << m_buffer.toString() << endl;
 	
 	m_wireFormat.truncate( 0 );
-	QByteArray useBuf;
-	useBuf.duplicate( m_buffer->buffer(), m_buffer->length() );
+	QByteArray useBuf( m_buffer->buffer() );
 	m_flapLength = useBuf.size();
 	m_wireFormat.resize( 6 + m_flapLength );
 	m_wireFormat[0] = 0x2A;
@@ -178,7 +173,7 @@ QByteArray FlapTransfer::toWire()
 	
 	//deepcopy the high-level buffer to the wire format buffer
 	populateWireBuffer( 6, useBuf );
-	QByteArray wire = QDeepCopy<QByteArray>( m_wireFormat );
+	QByteArray wire = m_wireFormat;
 	return wire;
 }
 
@@ -277,8 +272,7 @@ QByteArray SnacTransfer::toWire()
 {
 	
 	m_wireFormat.truncate( 0 );	
-	QByteArray useBuf;
-	useBuf.duplicate( m_buffer->buffer(), m_buffer->length() );
+	QByteArray useBuf( m_buffer->buffer() );
 	setFlapLength( useBuf.size() + 10 );
 	m_wireFormat.resize( 16 + useBuf.size() );
 	
@@ -304,7 +298,7 @@ QByteArray SnacTransfer::toWire()
 	
 	//deepcopy the high-level buffer to the wire format buffer
 	populateWireBuffer( 16, useBuf );
-	QByteArray wire = QDeepCopy<QByteArray>( m_wireFormat );
+	QByteArray wire = m_wireFormat;
 	return wire;
 }
 

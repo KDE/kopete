@@ -18,9 +18,7 @@
  *
  */
 
-#include"bytestream.h"
-//Added by qt3to4:
-#include <Q3CString>
+#include "bytestream.h"
 
 // CS_NAMESPACE_BEGIN
 
@@ -131,15 +129,6 @@ int ByteStream::bytesToWrite() const
 }
 
 //!
-//! Writes string \a cs to the stream.
-void ByteStream::write(const Q3CString &cs)
-{
-	QByteArray block(cs.length());
-	memcpy(block.data(), cs.data(), block.size());
-	write(block);
-}
-
-//!
 //! Clears the read buffer.
 void ByteStream::clearReadBuffer()
 {
@@ -155,14 +144,14 @@ void ByteStream::clearWriteBuffer()
 
 //!
 //! Appends \a block to the end of the read buffer.
-void ByteStream::appendRead(const QByteArray &block)
+void ByteStream::appendRead(const QByteArray& block)
 {
 	appendArray(&d->readBuf, block);
 }
 
 //!
 //! Appends \a block to the end of the write buffer.
-void ByteStream::appendWrite(const QByteArray &block)
+void ByteStream::appendWrite(const QByteArray& block)
 {
 	appendArray(&d->writeBuf, block);
 }
@@ -187,14 +176,14 @@ QByteArray ByteStream::takeWrite(int size, bool del)
 
 //!
 //! Returns a reference to the read buffer.
-QByteArray & ByteStream::readBuf()
+QByteArray& ByteStream::readBuf()
 {
 	return d->readBuf;
 }
 
 //!
 //! Returns a reference to the write buffer.
-QByteArray & ByteStream::writeBuf()
+QByteArray& ByteStream::writeBuf()
 {
 	return d->writeBuf;
 }
@@ -224,7 +213,7 @@ QByteArray ByteStream::takeArray(QByteArray *from, int size, bool del)
 {
 	QByteArray a;
 	if(size == 0) {
-		a = from->copy();
+		a = *from;
 		if(del)
 			from->resize(0);
 	}
@@ -268,5 +257,3 @@ QByteArray ByteStream::takeArray(QByteArray *from, int size, bool del)
 //! error is indicated by \a code.
 */
 // CS_NAMESPACE_END
-
-#include "bytestream.moc"

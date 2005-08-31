@@ -28,8 +28,8 @@
 
 using namespace Oscar;
 
-FlapProtocol::FlapProtocol(QObject *parent, const char *name)
- : InputProtocolBase(parent, name)
+FlapProtocol::FlapProtocol(QObject *parent)
+ : InputProtocolBase(parent)
 {
 }
 
@@ -39,11 +39,12 @@ FlapProtocol::~FlapProtocol()
 
 Transfer* FlapProtocol::parse( const QByteArray & packet, uint& bytes )
 {
-	QDataStream* m_din = new QDataStream( packet, QIODevice::ReadOnly );
-	
+    //FIXME remove const_casts
+	QDataStream* m_din = new QDataStream( const_cast<QByteArray*>( &packet ), QIODevice::ReadOnly );
+
 	BYTE b;
 	WORD w;
-	
+
 	FLAP f;
 	*m_din >> b; //this should be the start byte
 	*m_din >> b;
@@ -52,15 +53,16 @@ Transfer* FlapProtocol::parse( const QByteArray & packet, uint& bytes )
 	f.sequence = w;
 	*m_din >> w;
 	f.length = w;
-	
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo  << "channel: " << f.channel  
+
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo  << "channel: " << f.channel
 			<< " sequence: " << f.sequence << " length: " << f.length << endl;
 	//use pointer arithmatic to skip the flap and snac headers
 	//so we don't have to do double parsing in the tasks
-	char* charPacket = packet.data();
+    //FIXME remove const_casts
+	char* charPacket = const_cast<char*>( packet.data() );
 	char* snacData = charPacket + 6;
 	Buffer *snacBuffer = new Buffer( snacData, f.length );
-	
+
 	FlapTransfer* ft = new FlapTransfer( f, snacBuffer );
 	bytes = snacBuffer->length() + 6;
 	delete m_din;

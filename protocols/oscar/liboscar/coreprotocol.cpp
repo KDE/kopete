@@ -81,11 +81,11 @@ using namespace Oscar;
 
 CoreProtocol::CoreProtocol() : QObject()
 {
-	m_snacProtocol = new SnacProtocol( this, "snacprotocol" );
-	m_flapProtocol = new FlapProtocol( this, "flapprotocol" );
+	m_snacProtocol = new SnacProtocol( this );
+	m_flapProtocol = new FlapProtocol( this );
 }
 
-CoreProtocol::~CoreProtocol() 
+CoreProtocol::~CoreProtocol()
 {
 }
 
@@ -102,7 +102,7 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 	m_in.resize( oldsize + incomingBytes.size() );
 	memcpy( m_in.data() + oldsize, incomingBytes.data(), incomingBytes.size() );
 	m_state = Available;
-	
+
 	// convert every event in the chunk to a Transfer, signalling it back to the clientstream
 	int parsedBytes = 0;
 	int transferCount = 0;
@@ -123,12 +123,12 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 		else
 			m_in.truncate( 0 );
 	}
-	
+
 	if ( m_state == NeedMore )
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message was incomplete, waiting for more..." << endl;
-	
+
 	if ( m_snacProtocol->state() == OutOfSync || m_flapProtocol->state() == OutOfSync )
-	{	
+	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "protocol thinks it's out of sync. "
 			<< "discarding the rest of the buffer and hoping the server regains sync soon..." << endl;
 		m_in.truncate( 0 );
@@ -137,7 +137,7 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 }
 
 Transfer* CoreProtocol::incomingTransfer()
-{	
+{
 	if ( m_state == Available )
 	{
 		m_state = NoData;
@@ -172,7 +172,7 @@ void CoreProtocol::outgoingTransfer( Transfer* outgoing )
 	// pretty leet, eh?
 	emit outgoingData( outgoing->toWire() );
 	delete outgoing;
-	
+
 	return;
 }
 
@@ -180,24 +180,25 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 {
 	// processing incoming data and reassembling it into transfers
 	// may be an event or a response
-	
+
 	BYTE flapStart, flapChannel = 0;
 	WORD flapLength = 0;
 	WORD s1, s2 = 0;
 	uint bytesParsed = 0;
-	
+
 	//kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Current packet" << toString(wire) << endl;
 	if ( wire.size() < 6 ) //check for valid flap length
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo 
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo
 				<< "packet not long enough! couldn't parse FLAP!" << endl;
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "packet size is " << wire.size() << endl;
 		m_state = NeedMore;
 		return bytesParsed;
-	}	
-	
-	m_din = new QDataStream( wire, QIODevice::ReadOnly );
-	
+	}
+
+    //FIXME remove const_casts
+	m_din = new QDataStream( const_cast<QByteArray*>( &wire ), QIODevice::ReadOnly );
+
 	// look at first four bytes and decide what to do with the chunk
 	if ( okToProceed() )
 	{
@@ -211,13 +212,13 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 			*m_din >> flapLength;
 			if ( wire.size() < flapLength )
 			{
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo 
+				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo
 					<< "Not enough bytes to make a correct transfer. Have " << wire.size()
 					<< " bytes. need " << flapLength + 6 << " bytes" << endl;
 				m_state = NeedMore;
 				return bytesParsed;
 			}
-			
+
 			if ( flapChannel != 2 )
 			{
 				Transfer *t = m_flapProtocol->parse( packet, bytesParsed );
@@ -230,12 +231,12 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 				else
 					bytesParsed = 0;
 			}
-			
+
 			if ( flapChannel == 2 )
 			{
 				*m_din >> s1;
 				*m_din >> s2;
-				
+
 				Transfer * t = m_snacProtocol->parse( packet, bytesParsed );
 				if ( t )
 				{
@@ -250,13 +251,13 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 				}
 			}
 		}
-		else 
+		else
 		{ //unknown wire format
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "unknown wire format detected!" << endl;
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "start byte is " << flapStart << endl;
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Packet is " << endl << toString( wire ) << endl;
 		}
-		
+
 	}
 	delete m_din;
 	return bytesParsed;

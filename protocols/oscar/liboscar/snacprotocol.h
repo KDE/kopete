@@ -29,12 +29,12 @@ class SnacProtocol : public InputProtocolBase
 {
 Q_OBJECT
 public:
-	SnacProtocol( QObject *parent = 0, const char *name = 0 );
+	SnacProtocol( QObject *parent = 0);
 	~SnacProtocol();
-	
-	/** 
-	 * Attempt to parse the supplied data into an @ref SnacTransfer object.  
-	 * The exact state of the parse attempt can be read using @ref state. 
+
+	/**
+	 * Attempt to parse the supplied data into an @ref SnacTransfer object.
+	 * The exact state of the parse attempt can be read using @ref state.
 	 * @param rawData The unparsed data.
 	 * @param bytes An integer used to return the number of bytes read.
 	 * @return A pointer to an EventTransfer object if successfull, otherwise 0.  The caller is responsible for deleting this object.

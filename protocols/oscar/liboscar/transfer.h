@@ -30,9 +30,9 @@ public:
         enum TransferType { RawTransfer, FlapTransfer, SnacTransfer, DIMTransfer, FileTransfer };
         Transfer();
 	Transfer( Buffer* buf );
-        virtual ~Transfer();
+	virtual ~Transfer();
 
-        virtual TransferType type() const;
+	virtual TransferType type() const;
 	
 	virtual QByteArray toWire();
 

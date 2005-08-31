@@ -172,13 +172,13 @@ Oscar::SSI::SSI( const QString &name, int gid, int bid, int type, const Q3ValueL
 	m_bid = bid;
 	m_type = type;
 	m_tlvLength = tlvLength;
-	
+
 	//deepcopy the tlvs
 	m_tlvList = QDeepCopy< Q3ValueList<TLV> >( tlvlist );
-	
+
 	if ( m_tlvLength == 0 && !m_tlvList.isEmpty() )
 		refreshTLVLength();
-	
+
 	checkTLVs();
 }
 
@@ -191,10 +191,10 @@ Oscar::SSI::SSI( const Oscar::SSI& other )
 	m_tlvLength = other.m_tlvLength;
 	m_alias = other.m_alias;
 	m_waitingAuth = other.m_waitingAuth;
-		
+
 	//deepcopy the tlvs
 	m_tlvList = QDeepCopy< Q3ValueList<TLV> >( other.m_tlvList );
-	
+
 	if ( m_tlvLength == 0 && !m_tlvList.isEmpty() )
 		refreshTLVLength();
 }
@@ -273,7 +273,7 @@ void Oscar::SSI::checkTLVs()
 	}
 	else
 		m_waitingAuth = false;
-	
+
 	//check for the alias TLV
 	TLV aliasTLV = findTLV( m_tlvList, 0x0131 );
 	if ( aliasTLV )
@@ -281,7 +281,7 @@ void Oscar::SSI::checkTLVs()
 		m_alias.insert( 0, aliasTLV.data );
 		kdDebug( 14151 ) << k_funcinfo << "Got an alias '" << m_alias << "' for contact '" << m_name << "'" << endl;
 	}
-	
+
 	TLV privacyTLV = findTLV( m_tlvList, 0x00CA );
 	if ( privacyTLV )
 		kdDebug(14151) << k_funcinfo << "Found privacy settings " << privacyTLV.data << endl;
@@ -332,7 +332,7 @@ QString Oscar::SSI::toString() const
 	ssiString += " type: ";
 	ssiString += QString::number( m_type );
 	ssiString += " tlv length: ";
-	ssiString += QString::number( m_tlvLength );	
+	ssiString += QString::number( m_tlvLength );
 	return ssiString;
 }
 
@@ -365,9 +365,9 @@ Oscar::SSI::operator QByteArray() const
 		b.addWord( (*it).length );
 		b.addString( (*it).data, (*it).data.size() );
 	}
-	
+
 	return (QByteArray) b;
 }
-	
+
 
 //kate: indent-mode csands;

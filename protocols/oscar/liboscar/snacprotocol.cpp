@@ -29,8 +29,8 @@
 
 using namespace Oscar;
 
-SnacProtocol::SnacProtocol(QObject *parent, const char *name)
- : InputProtocolBase(parent, name)
+SnacProtocol::SnacProtocol(QObject *parent)
+ : InputProtocolBase(parent)
 {
 }
 
@@ -43,11 +43,13 @@ Transfer* SnacProtocol::parse( const QByteArray & packet, uint& bytes )
 	BYTE b;
 	WORD w;
 	DWORD dw;
-		
+
 	FLAP f;
 	SNAC s;
 	SnacTransfer *st;
-	QDataStream* m_din = new QDataStream( packet, QIODevice::ReadOnly );
+
+    //FIXME remove const_cast
+    QDataStream* m_din = new QDataStream( const_cast<QByteArray*>( &packet ), QIODevice::ReadOnly );
 
 	//flap parsing
 	*m_din >> b; //this should be the start byte
@@ -58,7 +60,7 @@ Transfer* SnacProtocol::parse( const QByteArray & packet, uint& bytes )
 	f.sequence = w;
 	*m_din >> w;
 	f.length = w;
-	
+
 	if ( ( f.length + 6 ) > packet.size() )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Packet not big enough to parse!" << endl;
@@ -75,14 +77,15 @@ Transfer* SnacProtocol::parse( const QByteArray & packet, uint& bytes )
 	s.flags = w;
 	*m_din >> dw;
 	s.id = dw;
-	
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo  << "family: " << s.family 
+
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo  << "family: " << s.family
 			<< " subtype: " << s.subtype << " flags: " << s.flags
 			<< " id: " << s.id << endl;
 
 	//use pointer arithmatic to skip the flap and snac headers
 	//so we don't have to do double parsing in the tasks
-	char* charPacket = packet.data();
+    //FIXME remove const_cast
+	char* charPacket = const_cast<char*>( packet.data() );
 	char* snacData;
 	int snacOffset = 10; //default
 	if ( s.flags >= 0x8000  ) //skip the next 8 bytes, we don't care about the snac version ATM
@@ -96,7 +99,7 @@ Transfer* SnacProtocol::parse( const QByteArray & packet, uint& bytes )
 		snacOffset = 10;
 		snacData = charPacket + 16;
 	}
-	
+
 	Buffer *snacBuffer = new Buffer( snacData, f.length - snacOffset  );
 	st = new SnacTransfer( f, s, snacBuffer );
 	bytes = f.length + 6;

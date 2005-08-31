@@ -16,8 +16,8 @@
     *                                                                       *
     *************************************************************************
 */
-  
-#include <qtimer.h>
+
+#include <QTimer>
 
 #include "connection.h"
 #include "transfer.h"
@@ -31,7 +31,7 @@ class Task::TaskPrivate
 public:
 	TaskPrivate() {}
 
-	Q_UINT32 id;
+	quint32 id;
 	bool success;
 	int statusCode;
 	QString statusString;
@@ -110,7 +110,7 @@ int Task::statusCode() const
 	return d->statusCode;
 }
 
-const QString & Task::statusString() const
+QString Task::statusString() const
 {
 	return d->statusString;
 }
@@ -124,27 +124,19 @@ void Task::go(bool autoDelete)
 
 bool Task::take( Transfer * transfer)
 {
-	const QObjectList *p = children();
-	if(!p)
-		return false;
+    QList<QObject*> p = children();
 
 	// pass along the transfer to our children
-	QObjectListIt it(*p);
-	Task *t;
-	for(; it.current(); ++it) {
-		QObject *obj = it.current();
-		if(!obj->inherits("Task"))
-			continue;
+    foreach( QObject* o, p )
+    {
+        Task *t;
+        if ( !qobject_cast<Task*>( o ) )
+            continue;
 
-		t = static_cast<Task*>(obj);
-		
-		if(t->take( transfer ))
-		{
-			//qDebug( "Transfer ACCEPTED by: %s", t->className() );
-			return true;
-		}
-		//else
-			//qDebug( "Transfer refused by: %s", t->className() );
+        t = static_cast<Task*>(o);
+
+        if(t->take( transfer ))
+            return true;
 	}
 
 	return false;
@@ -242,31 +234,6 @@ Transfer* Task::createTransfer( Buffer* buffer )
 }
 
 
-// void Task::debug(const char *fmt, ...)
-// {
-// 	char *buf;
-// 	QString str;
-// 	int size = 1024;
-// 	int r;
-// 
-// 	do {
-// 		buf = new char[size];
-// 		va_list ap;
-// 		va_start(ap, fmt);
-// 		r = vsnprintf(buf, size, fmt, ap);
-// 		va_end(ap);
-// 
-// 		if(r != -1)
-// 			str = QString(buf);
-// 
-// 		delete [] buf;
-// 
-// 		size *= 2;
-// 	} while(r == -1);
-// 
-// 	debug(str);
-// }
-
 void Task::debug(const QString &str)
 {
 	//black hole
@@ -280,7 +247,7 @@ bool Task::forMe( const Transfer * transfer ) const
 	return false;
 }
 
-void Task::setId( Q_UINT32 id )
+void Task::setId( quint32 id )
 {
 	d->id = id;
 }

@@ -65,18 +65,18 @@ bool SSIModifyTask::addContact( const QString& contact, const QString& group, bo
 {
 	m_opType = Add;
 	m_opSubject = Contact;
-	
+
 	QString newContact = Oscar::normalize( contact );
-	
+
 	Oscar::SSI oldItem = m_ssiManager->findContact( newContact );
 	Oscar::SSI groupItem = m_ssiManager->findGroup( group );
-	
+
 	if ( !groupItem )
 	{
 		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "group " << group << " does not exist on SSI. Aborting" << endl;
 		return false;
 	}
-	
+
 	//create new SSI item and populate the TLV list
 	Q3ValueList<TLV> tlvList;
 	if ( requiresAuth )
@@ -85,7 +85,7 @@ bool SSIModifyTask::addContact( const QString& contact, const QString& group, bo
 		TLV t( 0x0066, 0, 0 );
 		tlvList.append( t );
 	}
-	
+
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "creating new SSI item for " << contact << " in group " << group << endl;
 	Oscar::SSI newItem( newContact, groupItem.gid(), m_ssiManager->nextContactId(), ROSTER_CONTACT, tlvList );
 	m_newItem = newItem;
@@ -111,22 +111,22 @@ bool SSIModifyTask::changeGroup( const QString& contact, const QString& newGroup
 		oldGroupItem = m_ssiManager->findGroup( newGroup );
 	else
 		return false;
-	
+
 	if ( m_oldItem.gid() == oldGroupItem.gid() )
 	{ //buddy already exists in this group
 		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "contact " << contact << " already exists in group " << oldGroupItem.name() << ". Aborting." << endl;
 		return false;
 	}
-	
+
 	m_groupItem = m_ssiManager->findGroup( newGroup );
 	if ( !m_groupItem )
 	{ //couldn't find group
 		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "new group " << newGroup << " not found in SSI. Aborting" << endl;
 		return false;
 	}
-	
+
 	//create a new SSI item for the buddy in the new group
-	Oscar::SSI newItem( m_oldItem.name(), m_groupItem.gid(), m_oldItem.bid(), ROSTER_CONTACT, m_oldItem.tlvList() ); 
+	Oscar::SSI newItem( m_oldItem.name(), m_groupItem.gid(), m_oldItem.bid(), ROSTER_CONTACT, m_oldItem.tlvList() );
 	m_newItem = newItem;
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Moving '" << m_oldItem.name() << "' to group " << m_groupItem.name() << endl;
 	return true;
@@ -159,7 +159,7 @@ bool SSIModifyTask::renameGroup( const QString& oldName, const QString & newName
 	m_opSubject = Group;
 	if ( oldName == newName )
 		return false;
-	
+
 	m_oldItem = m_ssiManager->findGroup( oldName );
 	Oscar::SSI newItem( newName, m_oldItem.gid(), m_oldItem.bid(), ROSTER_GROUP, m_oldItem.tlvList() );
 	m_newItem = newItem;
@@ -186,11 +186,11 @@ bool SSIModifyTask::modifyItem( const SSI& oldItem, const SSI& newItem )
 {
 	if ( !m_ssiManager->hasItem( oldItem ) )
 		return false;
-	
+
 	//make sure there are some common things between the two items
 	if ( oldItem.type() != newItem.type() )
 		return false;
-	
+
 	m_oldItem = oldItem;
 	m_newItem = newItem;
 	m_opType = Change;
@@ -203,7 +203,7 @@ bool SSIModifyTask::forMe( const Transfer * transfer ) const
 	const SnacTransfer* st = dynamic_cast<const SnacTransfer*>( transfer );
 	if ( !st )
 		return false;
-	
+
 	if ( st->snacService() == 0x0013 && st->snacSubtype() == 0x000E && m_id == st->snac().id )
 		return true;
 	else
@@ -259,8 +259,8 @@ void SSIModifyTask::handleSSIAck()
 			break;
 		}
 	};
-	
-	
+
+
 }
 
 void SSIModifyTask::sendSSIUpdate()
@@ -268,13 +268,13 @@ void SSIModifyTask::sendSSIUpdate()
 	//what type of update are we sending?
 	if ( m_opSubject == Group && m_opType == Change )
 		changeGroupOnServer();
-	
+
 	//add an item to the ssi list
 	if ( m_opType == Add )
 	{
 		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding an item to the SSI list" << endl;
 		sendEditStart();
-		
+
 		//add the item
 		FLAP f1 = { 0x02, client()->flapSequence(), 0 };
 		m_id = client()->snacSequence();
@@ -283,16 +283,16 @@ void SSIModifyTask::sendSSIUpdate()
 		ssiBuffer->addString( m_newItem );
 		Transfer* t2 = createTransfer( f1, s1, ssiBuffer );
 		send( t2 );
-		
+
 		sendEditEnd();
 	}
-	
+
 	//remove an item
 	if ( m_opType == Remove )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << m_oldItem.name() << " from SSI" << endl;
 		sendEditStart();
-		
+
 		//remove the item
 		FLAP f1 = { 0x02, client()->flapSequence(), 0 };
 		m_id = client()->snacSequence();
@@ -301,7 +301,7 @@ void SSIModifyTask::sendSSIUpdate()
 		ssiBuffer->addString( m_oldItem );
 		Transfer* t2 = createTransfer( f1, s1, ssiBuffer );
 		send( t2 );
-		
+
 		sendEditEnd();
 	}
 
@@ -312,7 +312,7 @@ void SSIModifyTask::sendSSIUpdate()
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Modifying the item: " << m_oldItem.toString() << endl;
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "changing it to: " << m_newItem.toString() << endl;
 		sendEditStart();
-		
+
 		//change the group name
 		FLAP f1 = { 0x02, client()->flapSequence(), 0 };
 		m_id = client()->snacSequence();
@@ -321,10 +321,10 @@ void SSIModifyTask::sendSSIUpdate()
 		ssiBuffer->addString( m_newItem );
 		Transfer* t2 = createTransfer( f1, s1, ssiBuffer );
 		send( t2 );
-		
+
 		sendEditEnd();
 	}
-	
+
 }
 
 void SSIModifyTask::changeGroupOnServer()
@@ -332,8 +332,8 @@ void SSIModifyTask::changeGroupOnServer()
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Moving a contact from one group to another" << endl;
 
 	sendEditStart();
-	
-	//remove the old buddy from the list 
+
+	//remove the old buddy from the list
 	FLAP f1 = { 0x02, client()->flapSequence(), 0 };
 	SNAC s1 = { 0x0013,  0x000A, 0x0000, client()->snacSequence() };
 	Buffer* b1 = new Buffer;
@@ -344,23 +344,23 @@ void SSIModifyTask::changeGroupOnServer()
 	b1->addWord( 0 );
 	Transfer* t2 = createTransfer( f1, s1, b1 );
 	send( t2 );
-	
+
 	//add the buddy to the list with a different group
 	FLAP f2 = { 0x02, client()->flapSequence(), 0 };
 	m_id = client()->snacSequence(); //we don't care about the first ack
 	SNAC s2 = { 0x0013, 0x0008, 0x0000, m_id };
 	Buffer* b2 = new Buffer;
 	addItemToBuffer( m_newItem, b2 );
-	
+
 	Transfer* t3 = createTransfer( f2, s2, b2 );
 	send( t3 );
-	
+
 	//find the old group so we can change it's list of buddy ids
 	//what a kludge
 	Oscar::SSI oldGroupItem = m_ssiManager->findGroup( m_oldItem.gid() );
 	/* not checking the existance of oldGroupItem because if we got here
 	   it has to exist */
-		
+
 	//Change the 0x00C8 TLV in the old group item to remove the bid we're
 	//moving to a different group
 	Q3ValueList<TLV> list = oldGroupItem.tlvList();
@@ -375,14 +375,14 @@ void SSIModifyTask::changeGroupOnServer()
 			if ( id != m_oldItem.bid() )
 				newTLVData.addWord( id );
 		}
-		
+
 		TLV newGroupTLV( 0x00C8, newTLVData.length(), newTLVData.buffer() );
-		
+
 		list.remove( oldIds );
 		list.append( newGroupTLV );
 		oldGroupItem.setTLVList( list );
 	}
-	
+
 
 	//Change the 0x00C8 TLV in the new group item to add the bid we're
 	//adding to this group
@@ -393,13 +393,13 @@ void SSIModifyTask::changeGroupOnServer()
 	{
 		Buffer tlvBuffer( oldIds2.data, oldIds2.length );
 		tlvBuffer.addWord( m_newItem.bid() );
-		
+
 		TLV newGroupTLV( 0x00C8, tlvBuffer.length(), tlvBuffer.buffer() );
 		list2.remove( oldIds );
 		list2.append( newGroupTLV );
 		m_groupItem.setTLVList( list2 );
 	}
-	
+
 	//change the group properties
 	FLAP f3 = { 0x02, client()->flapSequence(), 0 };
 	SNAC s3 = { 0x0013, 0x0009, 0x0000, client()->snacSequence() };
@@ -409,7 +409,7 @@ void SSIModifyTask::changeGroupOnServer()
 
 	Transfer* t4 = createTransfer( f3, s3, b3 ); //we get no ack from this packet
 	send( t4 );
-	
+
 	sendEditEnd();
 }
 
@@ -424,7 +424,7 @@ void SSIModifyTask::updateSSIManager()
 		setSuccess( 0, QString::null );
 		return;
 	}
-	
+
 	if ( m_oldItem.isValid() && !m_newItem )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << m_oldItem.name() << " from SSI manager" << endl;
@@ -446,7 +446,7 @@ void SSIModifyTask::updateSSIManager()
 		setSuccess( 0, QString::null );
 		return;
 	}
-	
+
 	setSuccess( 0, QString::null );
 }
 
@@ -475,7 +475,7 @@ void SSIModifyTask::addItemToBuffer( Oscar::SSI item, Buffer* buffer )
 	buffer->addWord( item.bid() );
 	buffer->addWord( item.type() );
 	buffer->addWord( item.tlvListLength() );
-	
+
 	Q3ValueList<TLV>::const_iterator it =  item.tlvList().begin();
 	Q3ValueList<TLV>::const_iterator listEnd = item.tlvList().end();
 	for( ; it != listEnd; ++it )

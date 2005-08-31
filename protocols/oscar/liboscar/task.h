@@ -46,17 +46,17 @@ public:
 	Task *parent() const;
 	Connection* client() const;
 	Transfer *transfer() const;
-	
+
 	long id() const;
 	void setId();
 
 	bool success() const;
 	int statusCode() const;
-	const QString & statusString() const;
+	QString statusString() const;
 
 	void go( bool autoDelete = false );
-	
-	/** 
+
+	/**
 	 * Allows a task to examine an incoming Transfer and decide whether to 'take' it
 	 * for further processing.
 	 */
@@ -67,41 +67,41 @@ public:
 	 * Direct setter for Tasks which don't have any fields
 	 */
 	void setTransfer( Transfer * transfer );
-	
+
 signals:
 	void finished();
 
 protected:
 	virtual void onGo();
 	virtual void onDisconnect();
-	void setId( Q_UINT32 id );
+	void setId( quint32 id );
 	void send( Transfer * request );
 	void setSuccess( int code=0, const QString &str="" );
 	void setError( int code=0, const QString &str="" );
 // 	void debug( const char *, ... );
 	void debug( const QString & );
-	
+
 	/**
 	 * Used in take() to check if the offered transfer is for this Task
 	 * @return true if this Task should take the Transfer.  Default impl always returns false.
 	 */
 	virtual bool forMe( const Transfer * transfer ) const;
-	
+
 	/**
 	 * Creates a transfer with the given flap, snac, and buffer
 	 */
 	Transfer* createTransfer( FLAP f, SNAC s, Buffer* buffer );
-	
+
 	/**
 	 * Creates a transfer with the given flap and buffer
 	 */
 	Transfer* createTransfer( FLAP f, Buffer* buffer );
-	
+
 	/**
 	 * Creates a transfer with the given buffer
 	 */
 	Transfer* createTransfer( Buffer* buffer );
-	
+
 private slots:
 	void clientDisconnected();
 	void done();
