@@ -49,7 +49,7 @@ public:
 	 */
 	enum ParseMode {  DefaultParseMode = 0x0 ,  /**  Use strict or relaxed according the config  */
 			StrictParse = 0x1,			/** Strict parsing requires a space between each emoticon */
-			RelaxedParse = 0x4,         /** Default parse mode where all possible emoticon matches are allowed */
+			RelaxedParse = 0x4,         /** Parse mode where all possible emoticon matches are allowed */
 			SkipHTML = 0x2				/** Skip emoticons within HTML */
 		 };
 
