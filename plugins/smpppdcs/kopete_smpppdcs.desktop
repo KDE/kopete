@@ -39,6 +39,7 @@ Name[sr@Latn]=Status SUSE-ove smpppd-veze (SMPPPD)
 Name[sv]=SUSE SMPPPD-aktiverad anslutningsstatus (SMPPPD)
 Name[tr]=SUSE smpppd Bağlantı Durumu (SMPPPD)
 Name[uk]=SUSE smpppd-уможливлений Стан з'єднання (SMPPPD)
+Name[xx]=xxSUSE smpppd-enabled Connection Status (SMPPPD)xx
 Name[zh_CN]=SUSE smppp 连接状态(SMPPPD)
 Comment=Connects/disconnects Kopete automatically depending on availability of Internet connection
 Comment[ar]=يقوم بوصل و فصل Kopete تلقائيا استنادا إلى وضع الاتصال بالشبكة

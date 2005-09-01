@@ -26,6 +26,7 @@ Name[sr]=Идентитет
 Name[sr@Latn]=Идентитет
 Name[sv]=Identitet
 Name[tr]=Kimlik
+Name[xx]=xxIdentityxx
 Name[zh_CN]=身份
 Comment=Here you can manage your global identity
 Comment[bg]=Настройки на идентификацията
@@ -41,6 +42,7 @@ Comment[sr]=Овде можете управљати вашим општим и�
 Comment[sr@Latn]=Овде можете управљати вашим општим идентитетом
 Comment[sv]=Här kan du hantera din generella identitet
 Comment[tr]=Bütün Kimliklerinizi Buradan Yönetilebilir
+Comment[xx]=xxHere you can manage your global identityxx
 Comment[zh_CN]=您可在此管理您的全局身份
 
 DocPath=kopete/configure-dialog.html#configuring-identity
