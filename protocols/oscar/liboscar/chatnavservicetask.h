@@ -19,6 +19,9 @@
 
 #include "task.h"
 
+#include <q3valuelist.h>
+#include <oscartypes.h>
+
 class Transfer;
 
 /**
@@ -26,6 +29,7 @@ class Transfer;
  */
 class ChatNavServiceTask : public Task
 {
+Q_OBJECT
 public:
 	ChatNavServiceTask( Task* parent );
 	~ChatNavServiceTask();
@@ -41,13 +45,18 @@ public:
 	virtual void onGo();
     void createRoom( WORD exchange, const QString& name ); //create a room. sends the packet as well
 
+    Q3ValueList<int> exchangeList() const;
+
+signals:
+    void haveChatExchanges( const Q3ValueList<int>& );
+
 private:
 	void handleExchangeInfo( const TLV& t );
 	void handleBasicRoomInfo( const TLV& t );
     void handleCreateRoomInfo( const TLV& t );
 
 private:
-
+    Q3ValueList<int> m_exchanges;
 	RequestType m_type;
 };
 

@@ -1,31 +1,29 @@
-/*
- * OSCAR Buffer
- * Copyright (c) 2002 by Tom Linksy <tw16@po.cwru.edu>
- * Copyright (c) 2003-2005 by Matt Rogers <mattr@kde.org>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- */
+/***************************************************************************
+                          buffer.h  -  description
+                             -------------------
+    begin                : Thu Jun 6 2002
+
+    Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
+    Copyright (c) 2003-2004 by Matt Rogers <mattr@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #ifndef BUFFER_H
 #define BUFFER_H
 
-#include <QByteArray>
-#include <QList>
 #include "oscartypes.h"
 
+#include <q3valuelist.h>
+#include <q3cstring.h>
 
 class QString;
 
@@ -36,218 +34,220 @@ using namespace Oscar;
  */
 class Buffer
 {
-public:
-	/** Default constructor */
-	Buffer();
-	Buffer( const Buffer& other );
+	public:
+		/** Default constructor */
+		Buffer();
+		Buffer( const Buffer& other );
 
-	/**
-	 * \brief Create a prefilled buffer
-	 *
-	 * Constructor that creates a prefilled buffer of @p len length
-	 * that contains the data from @p b.
-	 */
-	Buffer(const char *b, ulong len);
+		/**
+		 * \brief Create a prefilled buffer
+		 *
+		 * Constructor that creates a prefilled buffer of @p len length
+		 * that contains the data from @p b.
+		 */
+		Buffer(const char *b, Q_ULONG len);
 
-	/**
-	 * \brief Create a prefilled buffer
-	 *
-	 * Constructor that creates a prefilled buffer from the QByteArray \p data
-	 */
-	Buffer( const QByteArray& data );
-	
+		/**
+		 * \brief Create a prefilled buffer
+		 *
+		 * Constructor that creates a prefilled buffer from the QByteArray \p data
+		 */
+		Buffer( const QByteArray& data );
 
-	/** Default destructor */
-	~Buffer();
 
-	/** convert to qbytearray */
-	operator QByteArray() const;
+		/** Default destructor */
+		~Buffer();
 
-	/**
-	 * returns the raw buffer
-	 */
-	const char *buffer() const;
+		/**
+		 * returns the raw buffer
+		 */
+		const char *buffer() const;
 
-	/**
-	 * Returns the remaining length of the buffer past the current read
-	 * position.
-	 */
-	int length() const;
+		/**
+		 * Returns the remaining length of the buffer past the current read
+		 * position.
+		 */
+		int length() const;
 
-	/**
-	 * adds the given string to the buffer (make sure it's NULL-terminated)
-	 */
-	int addString(QByteArray, DWORD);
-	int addString(const char*, DWORD);
+		/**
+		 * adds the given string to the buffer (make sure it's NULL-terminated)
+		 */
+		int addString(QByteArray);
+		int addString(QByteArray, DWORD);
+		int addString(const char*, DWORD);
+		int addString(const unsigned char*, DWORD);
 
-	/**
-	 * Little-endian version of addString
-	 */
-	int addLEString(const char *, const DWORD);
+		/**
+		 * Little-endian version of addString
+		 */
+		int addLEString(const char *, const DWORD);
 
-	/**
-	 * adds the given string to the buffer with the length in front of it
-	 * (make sure it's NULL-terminated)
-	 */
-	int addLNTS(const char * s);
-	/**
-	 * Little-endian version of addLNTS
-	 */
-	int addLELNTS(const char * s);
+		/**
+		 * adds the given string to the buffer with the length in front of it
+		 * (make sure it's NULL-terminated)
+		 */
+		int addLNTS(const char * s);
+		/**
+		 * Little-endian version of addLNTS
+		 */
+		int addLELNTS(const char * s);
 
-	/**
-	 * adds the given DWord to the buffer
-	 */
-	int addDWord(const DWORD);
+		/**
+		 * adds the given DWord to the buffer
+		 */
+		int addDWord(const DWORD);
 
-	/**
-	 * adds the given word to the buffer
-	 */
-	int addWord(const WORD);
+		/**
+		 * adds the given word to the buffer
+		 */
+		int addWord(const WORD);
 
-	/**
-	 * adds the given word to the buffer in
-	 * little-endian format as needed by old icq server
-	 */
-	int addLEWord(const WORD w);
+		/**
+		 * adds the given word to the buffer in
+		 * little-endian format as needed by old icq server
+		 */
+		int addLEWord(const WORD w);
 
-	/**
-	 * adds the given DWord to the buffer in
-	 * little-endian format as needed by old icq server
-	 */
-	int addLEDWord(const DWORD dw);
+		/**
+		 * adds the given DWord to the buffer in
+		 * little-endian format as needed by old icq server
+		 */
+		int addLEDWord(const DWORD dw);
 
-	/**
-	 * adds the given byte to the buffer
-	 */
-	int addByte(const BYTE);
-	int addLEByte(const BYTE);
+		/**
+		 * adds the given byte to the buffer
+		 */
+		int addByte(const BYTE);
+		int addLEByte(const BYTE);
 
-	/**
-	 * empties the current buffer.
-	 */
-	void clear();
+		/**
+		 * empties the current buffer.
+		 */
+		void clear();
 
-	/**
-	 * Adds a TLV to the buffer
-	 */
-	int addTLV( const TLV& t );
-	
-	/**
-	 * Adds a TLV with the given type and data
-	 */
-	int addTLV(WORD, WORD, const char *);
+		/**
+		 * Adds a TLV to the buffer
+		 */
+		int addTLV( const TLV& t );
 
-	/**
-	 * Returns a QString representation of the buffer
-	 */
-	QString toString() const;
+		/**
+		 * Adds a TLV with the given type and data
+		 */
+		int addTLV(WORD, WORD, const char *);
 
-	/**
-	 * gets a DWord out of the buffer
-	 */
-	DWORD getDWord();
+		/**
+		 * Returns a QString representation of the buffer
+		 */
+		QString toString() const;
 
-	/**
-	 * Gets a word out of the buffer
-	 */
-	WORD getWord();
+		/**
+		 * gets a DWord out of the buffer
+		 */
+		DWORD getDWord();
 
-	/**
-	 * Gets a byte out of the buffer
-	 * It's not a constant method. It advances the buffer
-	 * to the next BYTE after returning one.
-	 */
-	BYTE getByte();
-	
-	/**
-	 * Skip \p bytesToSkip number of bytes in the buffer
-	 * Like getByte() the buffer is advanced when skipping
-	 */
-	void skipBytes( int bytesToSkip );
+		/**
+		 * Gets a word out of the buffer
+		 */
+		WORD getWord();
 
-	/**
-	 * Same as above but returns little-endian
-	 */
-	WORD getLEWord();
-	DWORD getLEDWord();
-	BYTE getLEByte();
+		/**
+		 * Gets a byte out of the buffer
+		 * It's not a constant method. It advances the buffer
+		 * to the next BYTE after returning one.
+		 */
+		BYTE getByte();
 
-	/**
-	 * Set the buffer to the given values. 
-	 */
-	void setBuf(char *, const WORD);
+		/**
+		 * Skip \p bytesToSkip number of bytes in the buffer
+		 * Like getByte() the buffer is advanced when skipping
+		 */
+		void skipBytes( int bytesToSkip );
 
-	/**
-	 * Allocates memory for and gets a block of buffer bytes
-	 */
-	QByteArray getBlock(WORD len);
-	QByteArray getBBlock(WORD len);
+		/**
+		 * Same as above but returns little-endian
+		 */
+		WORD getLEWord();
+		DWORD getLEDWord();
+		BYTE getLEByte();
 
-	/**
-	 * Allocates memory for and gets a block of buffer words
-	 */
-	WORD *getWordBlock(WORD len);
+		/**
+		 * Set the buffer to the given values.
+		 */
+		void setBuf(char *, const WORD);
 
-	/**
-	 * Same as above but returning little-endian
-	 */
-	QByteArray getLEBlock(WORD len);
+		/**
+		 * Allocates memory for and gets a block of buffer bytes
+		 */
+		QByteArray getBlock(WORD len);
+		QByteArray getBBlock(WORD len);
 
-	/**
-	 * Convenience function that gets a LNTS (long null terminated string)
-	 * from the buffer. Otherwise you'd need a getWord() + getBlock() call :)
-	 */
-	QByteArray getLNTS();
-	QByteArray getLELNTS();
+		/**
+		 * Allocates memory for and gets a block of buffer words
+		 */
+		WORD *getWordBlock(WORD len);
 
-	/**
-	 * adds a 16-bit long TLV
-	 */
-	int addTLV16(const WORD type, const WORD data);
+		/**
+		 * Same as above but returning little-endian
+		 */
+		Q3CString getLEBlock(WORD len);
 
-	/**
-	 * adds the given byte to a TLV
-	 */
-	int addTLV8(const WORD type, const BYTE data);
+		/**
+		 * Convenience function that gets a LNTS (long null terminated string)
+		 * from the buffer. Otherwise you'd need a getWord() + getBlock() call :)
+		 */
+		Q3CString getLNTS();
+		Q3CString getLELNTS();
 
-	/**
-	 * Gets a TLV, storing it in a struct and returning it
-	 */
-	TLV getTLV();
+		/**
+		 * adds a 16-bit long TLV
+		 */
+		int addTLV16(const WORD type, const WORD data);
 
-	/**
-	 * Gets a list of TLV's
-	 */
-	QList<TLV> getTLVList();
+		/**
+		 * adds the given byte to a TLV
+		 */
+		int addTLV8(const WORD type, const BYTE data);
 
-	/**
-	 * Creates a chat data segment for a tlv and calls addTLV with that data
-	 */
-	int addChatTLV(const WORD, const WORD, const QString &, const WORD);
+		/**
+		 * Gets a TLV, storing it in a struct and returning it
+		 */
+		TLV getTLV();
 
-	/**
-	 * Similar to the LNTS functions but string is NOT null-terminated
-	 */
-	int addBSTR(const char * s);
-	QByteArray getBSTR();
-	QString peekBSTR();
+		/**
+		 * Gets a list of TLV's
+		 */
+		Q3ValueList<TLV> getTLVList();
 
-	int addBUIN(const char * s);
-	QByteArray getBUIN();
-	QString peekBUIN();
+		/**
+		 * Creates a chat data segment for a tlv and calls addTLV with that data
+		 */
+		int addChatTLV(const WORD, const WORD, const QString &, const WORD);
 
-private:
-	/**
-	 * Make the buffer bigger by @p inc bytes
-	 */
-	void expandBuffer(unsigned int inc);
+		/**
+		 * Similar to the LNTS functions but string is NOT null-terminated
+		 */
+		int addBSTR(const char * s);
+		QByteArray getBSTR();
+		QString peekBSTR();
 
-private:
-	QByteArray mBuffer;
-	int mReadPos;
+		int addBUIN(const char * s);
+		QByteArray getBUIN();
+		QString peekBUIN();
+
+		operator QByteArray() const;
+
+	private:
+		/**
+		 * Make the buffer bigger by @p inc bytes
+		 */
+		void expandBuffer(unsigned int inc);
+
+	private:
+		QByteArray mBuffer;
+		unsigned int mReadPos;
 
 };
 
 #endif
 // kate: tab-width 4; indent-mode csands;
+// vim: set noet ts=4 sts=4 sw=4:

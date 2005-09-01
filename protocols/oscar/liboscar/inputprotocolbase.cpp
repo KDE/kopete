@@ -1,8 +1,7 @@
 /*
-    Kopete Oscar Protocol
-    inputprotocolbase.cpp - Ancestor of all protocols used for reading Oscar input
+    Kopete Groupwise Protocol
+    inputprotocolbase.cpp - Ancestor of all protocols used for reading GroupWise input
 
-    Copyright (c) 2004-2005 Matt Rogers <mattr@kde.org>
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -18,8 +17,8 @@
 */
 
 #include "inputprotocolbase.h"
-#include "QByteArray"
-#include "QDataStream"
+#include <QByteArray>
+#include <QDataStream>
 
 InputProtocolBase::InputProtocolBase(QObject *parent)
  : QObject(parent)
@@ -67,7 +66,7 @@ bool InputProtocolBase::okToProceed()
 bool InputProtocolBase::safeReadBytes( QByteArray& data, uint & len )
 {
 	// read the length of the bytes
-	qint32 val;
+	quint32 val;
 	if ( !okToProceed() )
 		return false;
 	*m_din >> val;
@@ -75,8 +74,7 @@ bool InputProtocolBase::safeReadBytes( QByteArray& data, uint & len )
 	if ( val > 1024 )
 		return false;
 	//qDebug( "EventProtocol::safeReadBytes() - expecting %i bytes", val );
-    QByteArray temp;
-    temp.reserve( val );
+	QByteArray temp( val );
 	if ( val != 0 )
 	{
 		if ( !okToProceed() )

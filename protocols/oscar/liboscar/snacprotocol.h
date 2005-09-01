@@ -29,7 +29,7 @@ class SnacProtocol : public InputProtocolBase
 {
 Q_OBJECT
 public:
-	SnacProtocol( QObject *parent = 0);
+	SnacProtocol( QObject *parent = 0 );
 	~SnacProtocol();
 
 	/**

@@ -39,7 +39,6 @@ FlapProtocol::~FlapProtocol()
 
 Transfer* FlapProtocol::parse( const QByteArray & packet, uint& bytes )
 {
-    //FIXME remove const_casts
 	QDataStream* m_din = new QDataStream( const_cast<QByteArray*>( &packet ), QIODevice::ReadOnly );
 
 	BYTE b;
@@ -58,7 +57,6 @@ Transfer* FlapProtocol::parse( const QByteArray & packet, uint& bytes )
 			<< " sequence: " << f.sequence << " length: " << f.length << endl;
 	//use pointer arithmatic to skip the flap and snac headers
 	//so we don't have to do double parsing in the tasks
-    //FIXME remove const_casts
 	char* charPacket = const_cast<char*>( packet.data() );
 	char* snacData = charPacket + 6;
 	Buffer *snacBuffer = new Buffer( snacData, f.length );

@@ -26,6 +26,7 @@
 #include <qobject.h>
 #include <qstring.h>
 //Added by qt3to4:
+#include <Q3ValueList>
 #include <Q3CString>
 #include <kopete_export.h>
 #include "rtf2html.h"
@@ -226,6 +227,11 @@ public:
 	 */
 	ICQShortInfo getShortInfo( const QString& contact );
 
+    /**
+     * Get the list of chat room exchanges we have
+     */
+    Q3ValueList<int> chatExchangeList() const;
+
 	/**
 	 * Request the aim profile
 	 * \param contact the contact to get info for
@@ -258,6 +264,8 @@ public:
 
 	//! Start uploading a buddy icon
 	void sendBuddyIcon( const QByteArray& imageData );
+
+    void joinChatRoom( const QString& roomName, int exchange );
 
 	/** Accessors needed for login */
 	QString host();
@@ -416,6 +424,11 @@ protected slots:
 	void checkRedirectionQueue( WORD );
 
 	void requestChatNavLimits();
+    /**
+     * Set the list of chat room exchanges we have
+     */
+    void setChatExchangeList( const Q3ValueList<int>& exchanges );
+
 
     void determineDisconnection( int, const QString& );
 

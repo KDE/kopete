@@ -210,7 +210,9 @@ struct RateInfo
 struct ChatExchangeInfo
 {
 	WORD number;
-	BYTE maxNameLength;
+    WORD maxRooms;
+    WORD maxRoomNameLength;
+	WORD maxMsgLength;
 	BYTE flags;
 	QString description;
 	BYTE canCreate;

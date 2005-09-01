@@ -196,7 +196,6 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		return bytesParsed;
 	}
 
-    //FIXME remove const_casts
 	m_din = new QDataStream( const_cast<QByteArray*>( &wire ), QIODevice::ReadOnly );
 
 	// look at first four bytes and decide what to do with the chunk

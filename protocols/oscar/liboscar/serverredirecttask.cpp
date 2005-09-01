@@ -132,5 +132,7 @@ WORD ServerRedirectTask::service() const
 {
 	return m_service;
 }
+
+#include "serverredirecttask.moc"
 //kate: indent-mode csands; tab-width 4;
 

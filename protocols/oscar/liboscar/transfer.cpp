@@ -2,7 +2,7 @@
     transfer.cpp - Kopete Groupwise Protocol
 
     Copyright (c) 2004 Matt Rogers <mattr@kde.org>
-    
+
     Based on code copyright (c) 2004 SUSE Linux AG <http://www.suse.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -19,6 +19,8 @@
 
 #include "transfer.h"
 #include <ctype.h>
+#include <q3deepcopy.h>
+#include <kdebug.h>
 
 Transfer::Transfer()
 {
@@ -38,7 +40,9 @@ Transfer::TransferType Transfer::type() const
 
 QByteArray Transfer::toWire()
 {
-	return m_buffer->buffer();
+	m_wireFormat.duplicate( m_buffer->buffer(), m_buffer->length() );
+	QByteArray wire = m_wireFormat;
+	return wire;
 }
 
 Transfer::~Transfer()
@@ -100,7 +104,7 @@ QString Transfer::toString() const
 	}
 
 	if(!hex.isEmpty())
-		output += hex.leftJustified(48, ' ') + "   |" + ascii.leftJustified(16, ' ') + '|';
+		output += hex.leftJustify(48, ' ') + "   |" + ascii.leftJustify(16, ' ') + '|';
 	output.append('\n');
 
 	return output;
@@ -109,13 +113,13 @@ QString Transfer::toString() const
 void Transfer::populateWireBuffer( int offset, const QByteArray& buffer )
 {
 	int j;
-	for ( int i = 0; i < buffer.size(); ++i )
+	for ( uint i = 0; i < buffer.size(); ++i )
 	{
 		j = i + offset;
 		m_wireFormat[j] = buffer[i];
 	}
 }
-	
+
 
 FlapTransfer::FlapTransfer()
 	: Transfer()
@@ -143,7 +147,7 @@ FlapTransfer::FlapTransfer( Buffer* buffer, BYTE chan, WORD seq, WORD len )
 	m_flapChannel = chan;
 	m_flapSequence = seq;
 	m_flapLength = len;
-	
+
 	if ( m_flapChannel == 0 || m_flapLength < 6 )
 		m_isFlapValid = false;
 	else
@@ -159,9 +163,10 @@ QByteArray FlapTransfer::toWire()
 {
 	//kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Buffer length is " << m_buffer.length() << endl;
 	//kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Buffer is " << m_buffer.toString() << endl;
-	
+
 	m_wireFormat.truncate( 0 );
-	QByteArray useBuf( m_buffer->buffer() );
+	QByteArray useBuf;
+	useBuf.duplicate( m_buffer->buffer(), m_buffer->length() );
 	m_flapLength = useBuf.size();
 	m_wireFormat.resize( 6 + m_flapLength );
 	m_wireFormat[0] = 0x2A;
@@ -170,7 +175,7 @@ QByteArray FlapTransfer::toWire()
 	m_wireFormat[3] = (m_flapSequence & 0x00FF);
 	m_wireFormat[4] = (m_flapLength & 0xFF00) >> 8;
 	m_wireFormat[5] = (m_flapLength & 0x00FF);
-	
+
 	//deepcopy the high-level buffer to the wire format buffer
 	populateWireBuffer( 6, useBuf );
 	QByteArray wire = m_wireFormat;
@@ -233,7 +238,7 @@ SnacTransfer::SnacTransfer()
 }
 
 
-SnacTransfer::SnacTransfer( Buffer* buffer, BYTE chan, WORD seq, WORD len, WORD service, 
+SnacTransfer::SnacTransfer( Buffer* buffer, BYTE chan, WORD seq, WORD len, WORD service,
 				 WORD subtype, WORD flags, DWORD reqId )
 	: FlapTransfer( buffer, chan, seq, len )
 {
@@ -241,12 +246,12 @@ SnacTransfer::SnacTransfer( Buffer* buffer, BYTE chan, WORD seq, WORD len, WORD 
 	m_snacSubtype = subtype;
 	m_snacFlags = flags;
 	m_snacReqId = reqId;
-	
+
 	if ( m_snacService == 0 || m_snacSubtype == 0 )
 		m_isSnacValid = false;
 	else
 		m_isSnacValid = true;
-	
+
 }
 
 SnacTransfer::SnacTransfer( struct FLAP f, struct SNAC s, Buffer* buffer )
@@ -256,7 +261,7 @@ SnacTransfer::SnacTransfer( struct FLAP f, struct SNAC s, Buffer* buffer )
 	m_snacSubtype = s.subtype;
 	m_snacFlags = s.flags;
 	m_snacReqId = s.id;
-	
+
 	if ( m_snacService == 0 || m_snacSubtype == 0 )
 		m_isSnacValid = false;
 	else
@@ -270,12 +275,13 @@ SnacTransfer::~SnacTransfer()
 
 QByteArray SnacTransfer::toWire()
 {
-	
-	m_wireFormat.truncate( 0 );	
-	QByteArray useBuf( m_buffer->buffer() );
+
+	m_wireFormat.truncate( 0 );
+	QByteArray useBuf;
+	useBuf.duplicate( m_buffer->buffer(), m_buffer->length() );
 	setFlapLength( useBuf.size() + 10 );
 	m_wireFormat.resize( 16 + useBuf.size() );
-	
+
 	//Transfer the flap - 6 bytes
 	m_wireFormat[0] = 0x2A;
 	m_wireFormat[1] = flapChannel();
@@ -283,7 +289,7 @@ QByteArray SnacTransfer::toWire()
 	m_wireFormat[3] = (flapSequence() & 0x00FF);
 	m_wireFormat[4] = (flapLength() & 0xFF00) >> 8;
 	m_wireFormat[5] = (flapLength() & 0x00FF);
-	
+
 	//Transfer the Snac - 10 bytes
 	m_wireFormat[6] = (m_snacService & 0xFF00) >> 8;
 	m_wireFormat[7] = (m_snacService & 0x00FF);
@@ -295,7 +301,7 @@ QByteArray SnacTransfer::toWire()
 	m_wireFormat[13] = (m_snacReqId & 0x00FF0000) >> 16;
 	m_wireFormat[14] = (m_snacReqId & 0x0000FF00) >> 8;
 	m_wireFormat[15] = (m_snacReqId & 0x000000FF);
-	
+
 	//deepcopy the high-level buffer to the wire format buffer
 	populateWireBuffer( 16, useBuf );
 	QByteArray wire = m_wireFormat;

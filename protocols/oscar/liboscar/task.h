@@ -47,12 +47,12 @@ public:
 	Connection* client() const;
 	Transfer *transfer() const;
 
-	long id() const;
+	quint32 id() const;
 	void setId();
 
 	bool success() const;
 	int statusCode() const;
-	QString statusString() const;
+	const QString & statusString() const;
 
 	void go( bool autoDelete = false );
 

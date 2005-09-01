@@ -29,7 +29,7 @@ class FlapProtocol : public InputProtocolBase
 {
 Q_OBJECT
 public:
-    FlapProtocol( QObject *parent = 0 );
+	FlapProtocol( QObject *parent = 0 );
 	~FlapProtocol();
 
 	/**

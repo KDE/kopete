@@ -1,11 +1,10 @@
 /*
-    Kopete Oscar Protocol
-    inputprotocolbase.h - Ancestor of all protocols used for reading Oscar input
+    Kopete Groupwise Protocol
+    inputprotocolbase.h - Ancestor of all protocols used for reading GroupWise input
 
-    Copyright (c) 2004-2005 Matt Rogers <mattr@kde.org>
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
 
-    Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -20,11 +19,9 @@
 #ifndef INPUTPROTOCOLBASE_H
 #define INPUTPROTOCOLBASE_H
 
-#include <QObject>
-
-class QByteArray;
+#include <qobject.h>
+#include <QByteArray>
 class QDataStream;
-
 class Transfer;
 /**
 Defines a basic interface for protocols dealing with input from the GroupWise server.
@@ -41,31 +38,25 @@ public:
 	/**
 	 * Returns a value describing the state of the object.
 	 * If the object is given data to parse that does not begin with a recognised event code,
-	 * it will become OutOfSync, to indicate that the input data probably
-	 * contains leftover data not processed during a previous parse.
+	 * it will become OutOfSync, to indicate that the input data probably contains leftover data not processed during a previous parse.
 	 */
 	uint state() const;
-
 	/**
 	 * Attempt to parse the supplied data into a Transfer object
-	 * @param bytes this will be set to the number of bytes that were successfully parsed.
-	 * It is no indication of the success of the whole procedure
-	 * @return On success, a Transfer object that the caller is responsible for deleting.
+	 * @param bytes this will be set to the number of bytes that were successfully parsed.  It is no indication of the success of the whole procedure
+	 * @return On success, a Transfer object that the caller is responsible for deleting.  It will be either an EventTransfer or a Response, delete as appropriate.  On failure, returns 0.
 	 */
 	virtual Transfer * parse( const QByteArray &, uint & bytes ) = 0 ;
-
 protected:
 	/**
 	 * Reads an arbitrary string
 	 * updates the bytes parsed counter
 	 */
 	bool readString( QString &message );
-
 	/**
 	 * Check that there is data to read, and set the protocol's state if there isn't any.
 	 */
 	bool okToProceed();
-
 	/**
 	 * read a Q_UINT32 giving the number of following bytes, then a string of that length
 	 * updates the bytes parsed counter
@@ -76,7 +67,7 @@ protected:
 protected:
 	uint m_state;
 	uint m_bytes;
-	QDataStream* m_din;
+	QDataStream * m_din;
 };
 
 #endif

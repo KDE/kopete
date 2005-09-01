@@ -17,7 +17,7 @@
     *************************************************************************
 */
 
-#include <QTimer>
+#include <qtimer.h>
 
 #include "connection.h"
 #include "transfer.h"
@@ -95,7 +95,7 @@ void Task::setTransfer( Transfer * transfer )
 	d->transfer = transfer;
 }
 
-long Task::id() const
+quint32 Task::id() const
 {
 	return d->id;
 }
@@ -110,7 +110,7 @@ int Task::statusCode() const
 	return d->statusCode;
 }
 
-QString Task::statusString() const
+const QString & Task::statusString() const
 {
 	return d->statusString;
 }
@@ -124,19 +124,23 @@ void Task::go(bool autoDelete)
 
 bool Task::take( Transfer * transfer)
 {
-    QList<QObject*> p = children();
+	const QList<QObject*> p = children();
 
 	// pass along the transfer to our children
-    foreach( QObject* o, p )
-    {
-        Task *t;
-        if ( !qobject_cast<Task*>( o ) )
-            continue;
+	Task *t;
+	foreach( QObject* o, p) {
+		if( qobject_cast<Task*>( o ) )
+			continue;
 
-        t = static_cast<Task*>(o);
+		t = static_cast<Task*>( o );
 
-        if(t->take( transfer ))
-            return true;
+		if(t->take( transfer ))
+		{
+			//qDebug( "Transfer ACCEPTED by: %s", t->className() );
+			return true;
+		}
+		//else
+			//qDebug( "Transfer refused by: %s", t->className() );
 	}
 
 	return false;
@@ -233,6 +237,31 @@ Transfer* Task::createTransfer( Buffer* buffer )
 	return new Transfer( buffer );
 }
 
+
+// void Task::debug(const char *fmt, ...)
+// {
+// 	char *buf;
+// 	QString str;
+// 	int size = 1024;
+// 	int r;
+//
+// 	do {
+// 		buf = new char[size];
+// 		va_list ap;
+// 		va_start(ap, fmt);
+// 		r = vsnprintf(buf, size, fmt, ap);
+// 		va_end(ap);
+//
+// 		if(r != -1)
+// 			str = QString(buf);
+//
+// 		delete [] buf;
+//
+// 		size *= 2;
+// 	} while(r == -1);
+//
+// 	debug(str);
+// }
 
 void Task::debug(const QString &str)
 {

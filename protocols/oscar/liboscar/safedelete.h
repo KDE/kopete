@@ -20,8 +20,8 @@
 #ifndef SAFEDELETE_H
 #define SAFEDELETE_H
 
-#include <QObject>
-
+#include<qobject.h>
+#include<qobject.h>
 
 class SafeDelete;
 class SafeDeleteLock
@@ -71,7 +71,7 @@ private:
 	SafeDeleteLater();
 	~SafeDeleteLater();
 
-	QList<QObject*> list;
+	QObjectList list;
 	friend class SafeDelete;
 	static SafeDeleteLater *self;
 };

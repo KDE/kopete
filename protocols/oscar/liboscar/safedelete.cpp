@@ -1,12 +1,12 @@
 /*
     safedelete.cpp - Kopete Groupwise Protocol
-  
+
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
 
     Based on Iris, Copyright (C) 2003  Justin Karneges
-    
+
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -18,8 +18,8 @@
 */
 
 #include "safedelete.h"
-
-#include <QTimer>
+#include <QList>
+#include <qtimer.h>
 
 //----------------------------------------------------------------------------
 // SafeDelete
@@ -55,15 +55,19 @@ void SafeDelete::deleteAll()
 		return;
 
 	foreach( QObject* o, list )
-	{
-		deleteSingle(o);
-	}
+		deleteSingle( o );
 	list.clear();
 }
 
 void SafeDelete::deleteSingle(QObject *o)
 {
+#if QT_VERSION < 0x030000
+	// roll our own QObject::deleteLater()
+	SafeDeleteLater *sdl = SafeDeleteLater::ensureExists();
+	sdl->deleteItLater(o);
+#else
 	o->deleteLater();
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -109,13 +113,13 @@ SafeDeleteLater *SafeDeleteLater::ensureExists()
 
 SafeDeleteLater::SafeDeleteLater()
 {
+
 	self = this;
 	QTimer::singleShot(0, this, SLOT(explode()));
 }
 
 SafeDeleteLater::~SafeDeleteLater()
 {
-	qDeleteAll(list);
 	list.clear();
 	self = 0;
 }
@@ -129,3 +133,6 @@ void SafeDeleteLater::explode()
 {
 	delete this;
 }
+
+#include "safedelete.moc"
+
