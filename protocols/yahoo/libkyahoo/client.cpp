@@ -72,6 +72,8 @@ void Client::connect( const QString &host, const uint port, const QString &userI
 	m_connector->setOptHostPort( host, port );
 	d->stream = new ClientStream( m_connector, this );
 	QObject::connect( d->stream, SIGNAL( connected() ), this, SLOT( cs_connected() ) );
+	QObject::connect( d->stream, SIGNAL( readyRead() ), this, SLOT( streamReadyRead() ) );
+	
 	
 	d->stream->connectToServer( host, false );
 }
@@ -146,6 +148,7 @@ QCString Client::ipAddress()
 
 void Client::distribute( Transfer * transfer )
 {
+	kdDebug(14180) << k_funcinfo << endl;
 	if( !rootTask()->take( transfer ) )
 		kdDebug(14180) << "CLIENT: root task refused transfer" << endl;
 }

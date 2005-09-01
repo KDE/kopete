@@ -209,8 +209,7 @@ void authresp_0x0b(const char *seed, const char *sn, const char *password, char 
 
 		/* Bad.  Abort.
 		 */
-		if ((magic_cnt + 1 > magic_len) ||
-		    (magic_cnt > magic_len))
+		if (magic_cnt >= magic_len)
 			break;
 
 		byte1 = magic[magic_cnt];
@@ -222,40 +221,46 @@ void authresp_0x0b(const char *seed, const char *sn, const char *password, char 
 		magic[magic_cnt+1] = byte1;
 	}
 
-	/* Magic: Phase 3.  Final phase; this gives us our
-	 * key. */
+	/* Magic: Phase 3.  This computes 20 bytes.  The first 4 bytes are used as our magic 
+	 * key (and may be changed later); the next 16 bytes are an MD5 sum of the magic key 
+	 * plus 3 bytes.  The 3 bytes are found by looping, and they represent the offsets 
+	 * into particular functions we'll later call to potentially alter the magic key. 
+	 * 
+	 * %-) 
+	 */ 
+	
+	magic_cnt = 1; 
+	x = 0; 
+	
+	do { 
+		unsigned int     bl = 0;  
+		unsigned int     cl = magic[magic_cnt++]; 
+		
+		if (magic_cnt >= magic_len) 
+			break; 
+		
+		if (cl > 0x7F) { 
+			if (cl < 0xe0)  
+				bl = cl = (cl & 0x1f) << 6;  
+			else { 
+				bl = magic[magic_cnt++];  
+                              cl = (cl & 0x0f) << 6;  
+                              bl = ((bl & 0x3f) + cl) << 6;  
+			}  
+			
+			cl = magic[magic_cnt++];  
+			bl = (cl & 0x3f) + bl;  
+		} else 
+			bl = cl;  
+		
+		comparison_src[x++] = (bl & 0xff00) >> 8;  
+		comparison_src[x++] = bl & 0xff;  
+	} while (x < 20); 
 
-	magic_cnt = 1;
-	x = 0;
-
-	do {
-		unsigned int bl = 0;
-		unsigned int cl = magic[magic_cnt++];
-
-		if (magic_cnt > magic_len)
-			break;
-
-		if (cl > 0x7f) {
-			if ( cl < 0xe0 )
-				bl = cl = (cl & 0x1f) << 6;
-			else {
-				bl = magic[magic_cnt++];
-				cl = (cl & 0x0f) << 6;
-				bl = ((bl & 0x3f) + cl) << 6;
-			}
-
-			cl = magic[magic_cnt++];
-			bl = (cl & 0x3f) + bl;
-		} else
-			bl = cl;
-
-		comparison_src[x++] = (bl & 0xff00) >> 8;
-		comparison_src[x++] = bl & 0xff;
-	} while ( x < 20 );
-
-
-	/* First four bytes are magic key */
-	for (x = 0; x < 4; x++)
+	/* Dump magic key into a char for SHA1 action. */
+	
+		
+	for(x = 0; x < 4; x++) 
 		magic_key_char[x] = comparison_src[x];
 
 	/* Compute values for recursive function table! */

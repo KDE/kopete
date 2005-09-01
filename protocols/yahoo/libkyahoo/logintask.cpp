@@ -57,29 +57,33 @@ bool LoginTask::take(Transfer* transfer)
 	  4.- SentAuthResp
 	*/
 	
-	switch (mState)
+	if ( forMe( transfer ) )
 	{
-		case (InitialState):
-			kdDebug(14180) << k_funcinfo << " - ERROR - take called while in initial state" << endl;
+		switch (mState)
+		{
+			case (InitialState):
+				kdDebug(14180) << k_funcinfo << " - ERROR - take called while in initial state" << endl;
+				return false;
+			break;
+			case (SentVerify):
+				sendAuth(transfer);
+				return true;
+			break;
+			case (SentAuth):
+				sendAuthResp(transfer);
+				return true;
+			break;
+			case (SentAuthResp):
+				kdDebug(14180) << k_funcinfo << " - ERROR - take called while in SentAuthResp state" << endl;
+				return true;
+			break;
+			default:
 			return false;
-		break;
-		case (SentVerify):
-			sendAuth(transfer);
-			return true;
-		break;
-		case (SentAuth):
-			sendAuthResp(transfer);
-			return true;
-		break;
-		case (SentAuthResp):
-			kdDebug(14180) << k_funcinfo << " - ERROR - take called while in SentAuthResp state" << endl;
-			return true;
-		break;
-		default:
-		return false;
-		break;
+			break;
+		}
 	}
-	return false;
+	else
+		return false;
 }
 
 bool LoginTask::forMe(Transfer* transfer) const
@@ -160,6 +164,7 @@ void LoginTask::sendAuthResp(Transfer* transfer)
 	QString sn = t->param("1");
 	QString seed = t->param("94");
 	QString version_s = t->param("13");
+	uint sessionID = t->id();
 	int version = version_s.toInt();
 	
 	switch (version)
@@ -169,7 +174,7 @@ void LoginTask::sendAuthResp(Transfer* transfer)
 		break;
 		case 1:
 		kdDebug(14180) << k_funcinfo << " Version 0x0b "<< version_s << endl;
-		sendAuthResp_0x0b(sn, seed);
+		sendAuthResp_0x0b(sn, seed, sessionID);
 		break;
 		default:
 		kdDebug(14180) << k_funcinfo << "Unknown quth version " << endl;
@@ -177,14 +182,15 @@ void LoginTask::sendAuthResp(Transfer* transfer)
 	mState = SentAuthResp;
 }
 
-void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed)
+void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint sessionID)
 {
 	kdDebug(14180) << k_funcinfo << " with seed " << seed << endl;
 	char *resp_6 = (char *) malloc(100);
 	char *resp_96 = (char *) malloc(100);
-	authresp_0x0b(sn.latin1(), seed.latin1(), (client()->password()).latin1(), resp_6, resp_96);
+	authresp_0x0b(seed.latin1(), sn.latin1(), (client()->password()).latin1(), resp_6, resp_96);
 	kdDebug(14180) << k_funcinfo << "resp_6: " << resp_6 << " resp_69: " << resp_96 << endl;
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceAuthResp);
+	t->setId( sessionID );
 	t->setParam("0", sn);
 	t->setParam("6", QString(resp_6));
 	t->setParam("96", QString(resp_96));
