@@ -301,6 +301,14 @@ int VideoDevice::checkDevice()
 			}
 		}
 #endif
+		kdDebug() <<  k_funcinfo << "checkDevice(): " << "Supported pixel formats:" << endl;
+		for(int pixelformat = PIXELFORMAT_GREY ; pixelformat <= PIXELFORMAT_BGR32 ; pixelformat++)
+		{
+			if(PIXELFORMAT_NONE != setPixelFormat((pixel_format)pixelformat))
+			{
+				kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(pixelformat) << endl;
+			}
+		}
 		// Now we must execute the proper initialization according to the type of the driver.
 		kdDebug() <<  k_funcinfo << "checkDevice() exited successfuly." << endl;
 		return EXIT_SUCCESS;
@@ -619,7 +627,7 @@ kdDebug() <<  k_funcinfo << "setSize(" << newwidth << ", " << newheight << ") De
 
 pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 {
-kdDebug() <<  k_funcinfo << "called." << endl;
+//kdDebug() <<  k_funcinfo << "called." << endl;
 // Change the pixel format for the video device
 	switch(m_driver)
 	{
@@ -629,14 +637,14 @@ kdDebug() <<  k_funcinfo << "called." << endl;
 //			CLEAR (fmt);
 			if (-1 == xioctl (VIDIOC_G_FMT, &fmt))
 //				return errnoReturn ("VIDIOC_S_FMT");
-				kdDebug() << k_funcinfo << "VIDIOC_G_FMT failed (" << errno << ").Returned width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height << endl;
+//				kdDebug() << k_funcinfo << "VIDIOC_G_FMT failed (" << errno << ").Returned width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height << endl;
 			fmt.fmt.pix.pixelformat = pixelFormatCode(newformat);
 			if (-1 != xioctl (VIDIOC_S_FMT, &fmt))
 			{
 				m_pixelformat=newformat;
 				return newformat;
 			}
-			kdDebug() << k_funcinfo << "VIDIOC_S_FMT failed (" << errno << ").Returned width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height << endl;
+//			kdDebug() << k_funcinfo << "VIDIOC_S_FMT failed (" << errno << ").Returned width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height << endl;
 			break;
 #endif
 		case VIDEODEV_DRIVER_V4L:
@@ -644,17 +652,17 @@ kdDebug() <<  k_funcinfo << "called." << endl;
 			struct video_picture V4L_picture;
 			if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
 				kdDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
-			kdDebug() <<  k_funcinfo << "V4L_picture.palette: " << V4L_picture.palette << " Depth: " << V4L_picture.depth << endl;
+//			kdDebug() <<  k_funcinfo << "V4L_picture.palette: " << V4L_picture.palette << " Depth: " << V4L_picture.depth << endl;
 			V4L_picture.palette = pixelFormatCode(newformat);
 			V4L_picture.depth   = pixelFormatDepth(newformat);
 			if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
 			{
-				kdDebug() <<  k_funcinfo << "Card seems to not support " << pixelFormatName(newformat) << " format. Fallback to it is not yet implemented." << endl;
+//				kdDebug() <<  k_funcinfo << "Card seems to not support " << pixelFormatName(newformat) << " format. Fallback to it is not yet implemented." << endl;
 			}
 			if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
 				kdDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
 
-			kdDebug() <<  k_funcinfo << "V4L_picture.palette: " << V4L_picture.palette << " Depth: " << V4L_picture.depth << endl;
+//			kdDebug() <<  k_funcinfo << "V4L_picture.palette: " << V4L_picture.palette << " Depth: " << V4L_picture.depth << endl;
 				m_pixelformat=newformat;
 				return newformat;
 			}
