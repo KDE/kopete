@@ -1226,9 +1226,9 @@ We recommand to let this checkbox checked.</string>
                                     <string>Alt+H</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>Connect to MSN Messenger using an HTTP-like protol on port 80.
+                                    <string>Connect to MSN Messenger using an HTTP-like protocol on port 80.
 This may be used to connect on a network with a restrictive firewall.
-Only check this option in the normal conection doesn't work</string>
+Only check this option in the normal connection doesn't work.</string>
                                 </property>
                             </widget>
                             <widget class="QLayoutWidget">
@@ -1244,16 +1244,16 @@ Only check this option in the normal conection doesn't work</string>
                                             <cstring>m_useWebcamPort</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>S&amp;pecify a port for incomming webcam connection :</string>
+                                            <string>S&amp;pecify a port for incoming webcam connection:</string>
                                         </property>
                                         <property name="accel">
                                             <string>Alt+P</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>If you are under a NAT (network address translation), or behind a firewall, you may specify a port to use for incomming connection, and configure your firewall to accept conneciton on this port.
-Incomming connection is used for webcam.
-If you don't specify yourself a port, the operating will choose the an available port.  
-It is recomanded to let the checkbox unchecked.</string>
+                                            <string>If you are behind a firewall, you may specify a port to use for incoming connection, and configure your firewall to accept connections on this port. 
+Incoming connection is used for webcam.
+If you don't specify a port, the operating system will choose an available port.  
+It is recommended to leave the checkbox unchecked.</string>
                                         </property>
                                     </widget>
                                     <widget class="QSpinBox">
@@ -1273,10 +1273,10 @@ It is recomanded to let the checkbox unchecked.</string>
                                             <number>6891</number>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>If you are under a NAT (network address translation), or behind a firewall, you may specify a port to use for incomming connection, and configure your firewall to accept conneciton on this port.
-Incomming connection is used for webcam.
-If you don't specify yourself a port, the operating will choose the an available port.  
-It is recomanded to let the checkbox unchecked.</string>
+                                            <string>If you are behind a firewall, you may specify a port to use for incoming connection, and configure your firewall to accept connection on this port.
+Incoming connection is used for webcam.
+If you don't specify a port, the operating system will choose an available port.  
+It is recommended to leave the checkbox unchecked.</string>
                                         </property>
                                     </widget>
                                 </hbox>
