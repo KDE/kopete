@@ -396,7 +396,13 @@ int VideoDevicePool::scanDevices()
 			videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
 			if(videodevice.isOpen())
 			{
+				VideoDeviceModel devicemodel;
 				kdDebug() <<  k_funcinfo << "File " << videodevice.full_filename << " was opened successfuly" << endl;
+
+				devicemodel.name=videodevice.name;
+				devicemodel.count++;
+				m_model.push_back(devicemodel);
+
 				videodevice.close();
 				m_videodevice.push_back(videodevice);
 			}
@@ -418,7 +424,13 @@ int VideoDevicePool::scanDevices()
 		videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
 		if(videodevice.isOpen())
 		{
+			VideoDeviceModel devicemodel;
 			kdDebug() <<  k_funcinfo << "File " << videodevice.full_filename << " was opened successfuly" << endl;
+
+			devicemodel.name=videodevice.name;
+			devicemodel.count++;
+			m_model.push_back(devicemodel);
+
 			videodevice.close();
 			m_videodevice.push_back(videodevice);
 		}
@@ -492,6 +504,15 @@ void VideoDevicePool::saveConfig()
     /// @todo implement me
 	if(hasDevices())
 	{
+		if(m_model.size())
+		{
+			VideoDeviceModelVector::iterator vmiterator;
+			for( vmiterator = m_model.begin(); vmiterator != m_model.end(); ++vmiterator )
+			{
+				kdDebug() << "Device Model: " << (*vmiterator).name << endl;
+				kdDebug() << "Device Count: " << (*vmiterator).count << endl;
+			}
+		}
 		VideoDeviceVector::iterator vditerator;
 		for( vditerator = m_videodevice.begin(); vditerator != m_videodevice.end(); ++vditerator )
 		{

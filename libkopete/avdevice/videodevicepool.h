@@ -39,7 +39,14 @@ This class allows kopete to check for the existence, open, configure, test, set 
 
 @author Cláudio da Silveira Pinheiro
 */
+struct VideoDeviceModel
+{
+	QString name;
+	size_t count;
+};
+
 typedef QValueVector<Kopete::AV::VideoDevice> VideoDeviceVector;
+typedef QValueVector<VideoDeviceModel> VideoDeviceModelVector;
 
 class VideoDevicePoolPrivate;
 
@@ -69,6 +76,7 @@ public:
 	size_t size();
 	~VideoDevicePool();
 	VideoDeviceVector m_videodevice;
+	VideoDeviceModelVector m_model;
 	int fillDeviceKComboBox(KComboBox *combobox);
 	int fillInputKComboBox(KComboBox *combobox);
 	unsigned int currentDevice();
