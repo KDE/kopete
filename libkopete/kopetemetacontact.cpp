@@ -642,8 +642,10 @@ QString nameFromContact( Kopete::Contact *c) /*const*/
 
 	QString contactName;
 	if ( c->hasProperty( Kopete::Global::Properties::self()->nickName().key() ) )
- 		contactName = c->property( Global::Properties::self()->nickName()).value().toString();
-	return contactName.isEmpty() ? c->contactId() : contactName;
+		contactName = c->property( Global::Properties::self()->nickName()).value().toString();
+
+				//the replace is there to workaround the Bug 95444
+	return contactName.isEmpty() ? c->contactId() : contactName.replace('\n',QString::fromUtf8(""));
 }
 
 KURL MetaContact::customPhoto() const
@@ -1012,7 +1014,9 @@ bool MetaContact::fromXML( const QDomElement& element )
 			// WTF, why were we not loading the metacontact if nickname was empty.
 			//if ( contactElement.text().isEmpty() )
 			//	return false;
-			d->displayName = contactElement.text();
+			
+			//the replace is there to workaround the Bug 95444
+			d->displayName = contactElement.text().replace('\n',QString::fromUtf8(""));
 
 			if ( contactElement.hasAttribute(NSCID_ELEM) && contactElement.hasAttribute(NSPID_ELEM) && contactElement.hasAttribute(NSAID_ELEM))
 			{
