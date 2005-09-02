@@ -227,7 +227,7 @@ public:
     /**
      * Get the list of chat room exchanges we have
      */
-    QValueList<Oscar::ChatExchangeInfo> chatExchangeList() const;
+    QValueList<int> chatExchangeList() const;
 
 	/**
 	 * Request the aim profile
@@ -261,6 +261,8 @@ public:
 
 	//! Start uploading a buddy icon
 	void sendBuddyIcon( const QByteArray& imageData );
+
+    void joinChatRoom( const QString& roomName, int exchange );
 
 	/** Accessors needed for login */
 	QString host();
@@ -419,6 +421,11 @@ protected slots:
 	void checkRedirectionQueue( WORD );
 
 	void requestChatNavLimits();
+    /**
+     * Set the list of chat room exchanges we have
+     */
+    void setChatExchangeList( const QValueList<int>& exchanges );
+
 
     void determineDisconnection( int, const QString& );
 

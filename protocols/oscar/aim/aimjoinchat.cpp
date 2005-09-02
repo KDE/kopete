@@ -19,6 +19,7 @@
 
 #include "aimjoinchat.h"
 
+#include <qspinbox.h>
 #include <klocale.h>
 
 #include "aimjoinchatbase.h"
@@ -32,7 +33,8 @@ AIMJoinChatUI::AIMJoinChatUI( AIMAccount* account,  bool modal,
     : KDialogBase( parent, name, modal, i18n( "Join an AIM chat room" ),
                    Cancel | User1, User1, true, i18n( "Join" ) )
 {
-    kdDebug(14200) << k_funcinfo << "Account " << account->accountId()
+
+    kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Account " << account->accountId()
                    << " joining a chat room" << endl;
 
     m_account = account;
@@ -43,13 +45,19 @@ AIMJoinChatUI::AIMJoinChatUI( AIMAccount* account,  bool modal,
 
     QObject::connect( this, SIGNAL( user1Clicked() ), this, SLOT( joinChat() ) );
     QObject::connect( this, SIGNAL( cancelClicked() ), this, SLOT( closeClicked() ) );
-
-
-    //add exchanges to the spin box
+    QObject::connect( m_joinUI->exchange, SIGNAL( valueChanged( int ) ),
+                      this, SLOT( checkExchangeValue( int ) ) );
 }
 
 AIMJoinChatUI::~AIMJoinChatUI()
 {
+
+}
+
+void AIMJoinChatUI::setExchangeList( const QValueList<int>& list )
+{
+    m_exchanges = list;
+    m_joinUI->setExchangeList( list );
 
 }
 
@@ -63,5 +71,11 @@ void AIMJoinChatUI::closeClicked()
     //hmm, do nothing?
     emit closing();
 }
+
+void AIMJoinChatUI::checkExchangeValue( int newValue )
+{
+    if ( m_exchanges->findIndex( newValue ) == -1 )
+    {
+
 
 #include "aimjoinchat.moc"

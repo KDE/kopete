@@ -326,6 +326,8 @@ void AIMAccount::slotJoinChat()
     if ( !m_joinChatDialog )
     {
         m_joinChatDialog = new AIMJoinChatUI( this, false, Kopete::UI::Global::mainWidget() );
+        QValueList<int> list = engine()->chatExchangeList();
+        m_joinChatDialog->setExchangeList( list );
         m_joinChatDialog->show();
     }
     else
@@ -359,6 +361,10 @@ void AIMAccount::slotGoAway(const QString &message)
 
 void AIMAccount::joinChatDialogClosed()
 {
+    if ( m_joinChatDialog->result() == QDialog::Accepted )
+    {
+        //join the chat
+    }
     m_joinChatDialog->delayedDestruct();
     m_joinChatDialog = 0L;
 }

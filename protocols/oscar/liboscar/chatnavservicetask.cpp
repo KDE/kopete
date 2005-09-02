@@ -20,6 +20,8 @@
 
 #include "transfer.h"
 #include "buffer.h"
+#include "task.h"
+#include "client.h"
 #include "connection.h"
 
 
@@ -43,11 +45,10 @@ ChatNavServiceTask::RequestType ChatNavServiceTask::requestType()
 	return m_type;
 }
 
-QValueList<Oscar::ChatExchangeInfo> ChatNavServiceTask::exchangeList() const
+QValueList<int> ChatNavServiceTask::exchangeList() const
 {
     return m_exchanges;
 }
-
 
 bool ChatNavServiceTask::forMe( const Transfer* transfer ) const
 {
@@ -91,6 +92,9 @@ bool ChatNavServiceTask::take( Transfer* transfer )
             break;
         };
     }
+
+    //set the exchanges for the client
+    emit haveChatExchanges( m_exchanges );
     setSuccess( 0, QString::null );
     setTransfer( 0 );
 	return true;
@@ -212,8 +216,17 @@ void ChatNavServiceTask::handleExchangeInfo( const TLV& t )
 			break;
 		}
 	}
+<<<<<<< .mine
+<<<<<<< .mine
+
+    m_exchanges.append( exchangeInfo.number );
+=======
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "real tlv count is: " << realCount << endl;
+=======
 
     m_exchanges.append( exchangeInfo );
+>>>>>>> .r456060
+>>>>>>> .r455943
 }
 
 void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
@@ -336,4 +349,5 @@ void ChatNavServiceTask::handleCreateRoomInfo( const TLV& t )
 	}
 }
 
+#include "chatnavservicetask.moc"
 //kate: indent-mode csands; tab-width 4;

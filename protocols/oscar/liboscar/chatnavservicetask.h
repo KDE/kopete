@@ -29,6 +29,7 @@ class Transfer;
  */
 class ChatNavServiceTask : public Task
 {
+Q_OBJECT
 public:
 	ChatNavServiceTask( Task* parent );
 	~ChatNavServiceTask();
@@ -44,7 +45,10 @@ public:
 	virtual void onGo();
     void createRoom( WORD exchange, const QString& name ); //create a room. sends the packet as well
 
-    QValueList<Oscar::ChatExchangeInfo> exchangeList() const;
+    QValueList<int> exchangeList() const;
+
+signals:
+    void haveChatExchanges( const QValueList<int>& );
 
 private:
 	void handleExchangeInfo( const TLV& t );
@@ -52,7 +56,7 @@ private:
     void handleCreateRoomInfo( const TLV& t );
 
 private:
-    QValueList<Oscar::ChatExchangeInfo> m_exchanges;
+    QValueList<int> m_exchanges;
 	RequestType m_type;
 };
 

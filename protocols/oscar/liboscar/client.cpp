@@ -98,7 +98,7 @@ public:
 	UserDetails ourDetails;
 
     //Infos
-    QValueList<Oscar::ChatExchangeInfo> exchanges;
+    QValueList<int> exchanges;
 
 };
 
@@ -686,7 +686,7 @@ ICQShortInfo Client::getShortInfo( const QString& contact )
 	return d->icqInfoTask->shortInfoFor( contact );
 }
 
-QValueList<Oscar::ChatExchangeInfo> Client::chatExchangeList() const
+QValueList<int> Client::chatExchangeList() const
 {
     return d->exchanges;
 }
@@ -880,6 +880,8 @@ void Client::requestChatNavLimits()
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting chat nav service limits" << endl;
 	ChatNavServiceTask* cnst = new ChatNavServiceTask( c->rootTask() );
     cnst->setRequestType( ChatNavServiceTask::Limits );
+    QObject::connect( cnst, SIGNAL( haveChatExchanges( const QValueList<int>& ) ),
+                      this, SLOT( setChatExchangeList( const QValueList<int>& ) ) );
 	cnst->go( true ); //autodelete
 
 }
@@ -913,6 +915,18 @@ void Client::sendBuddyIcon( const QByteArray& iconData )
 	BuddyIconTask* bit = new BuddyIconTask( c->rootTask() );
 	bit->uploadIcon( iconData.size(), iconData );
 	bit->go( true );
+}
+
+void Client::joinChatRoom( const QString& roomName, int exchange )
+{
+    Connection* c = d->connections.connectionForFamily( 0x000D );
+    if ( !c )
+        return;
+
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "joining the chat room '" << roomName << "'" << endl;
+    ChatNavServiceTask* cnst = new ChatNavServiceTask( c->rootTask() );
+    cnst->createRoom( exchange, roomName );
+
 }
 
 Connection* Client::createConnection( const QString& host, const QString& port )
