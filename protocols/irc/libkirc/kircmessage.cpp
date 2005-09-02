@@ -20,7 +20,8 @@
 
 #include <kdebug.h>
 
-#include <qtextcodec.h>
+#include <QSharedData>
+#include <QTextCodec>
 
 using namespace KIRC;
 
@@ -43,16 +44,22 @@ QRegExp Message::sm_IRCCommandType2(
 	"^(?::[[^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*){14,14})(?: (.*))?$");
 #endif // _IRC_STRICTNESS_
 
-QString Message::format(
-		const QString &command,
-		const QStringList &args,
-		const QString &suffix)
+class KIRC::MessagePrivate
+	: public QSharedData
 {
-	#warning implement me
-	QString msg = command;
+public:
+	QByteArray line;
+	QByteArray prefix;
+	QByteArray command;
+	QByteArray args;
+	QByteArrayList argList;
+	QByteArray suffix;
 
-	return msg;
-}
+	QList<KIRC::Message> ctcpMessages;
+
+	bool valid:1; // if the message was parsed successfuly
+	bool dirty:1; // if the message contents is modified, so should be rebuilded
+};
 
 QByteArray Message::format(
 		const QByteArray &command,
@@ -71,11 +78,6 @@ QByteArray Message::format(
 //		msg += QByteArray::fromLatin1(" :") + suffix;
 
 	return msg;
-}
-
-QString Message::formatCtcp(const QString &str)
-{
-	return QChar(0x01) + ctcpQuote(str) + QChar(0x01);
 }
 
 QByteArray Message::formatCtcp(const QByteArray &str)
@@ -125,14 +127,6 @@ QByteArray Message::unquote(const QByteArray &str)
 	return str;
 }
 
-QString Message::ctcpQuote(const QString &str)
-{
-	QString tmp = str;
-	tmp.replace( QChar('\\'), QString::fromLatin1("\\\\"));
-	tmp.replace( (char)1, QString::fromLatin1("\\1"));
-	return tmp;
-}
-
 QByteArray Message::ctcpQuote(const QByteArray &str)
 {
 	#warning implement me
@@ -156,144 +150,201 @@ QByteArray Message::ctcpUnquote(const QByteArray &str)
 */
 }
 
-Message::Message(const QByteArray &msg)
-	: m_ctcpMessage(0)
+Message::Message()
+	: d(new MessagePrivate())
 {
-	parse(msg);
 }
 
-Message::Message(const Message &obj)
-        : m_ctcpMessage(0)
+Message::Message(const Message &o)
+        : d(o.d)
 {
-	m_line = obj.m_line;
-
-	m_prefix = obj.m_prefix;
-	m_command = obj.m_command;
-	m_args = obj.m_args;
-	m_suffix = obj.m_suffix;
-
-	if (obj.m_ctcpMessage)
-		m_ctcpMessage = new Message(*obj.m_ctcpMessage);
 }
 
-Message::~Message()
+Message &Message::operator(const Message &o)
 {
-	if (m_ctcpMessage)
-		delete m_ctcpMessage;
+	d = o.d;
 }
 
-bool Message::isValid() const
-{
-	return m_valid;
-}
-
-bool Message::isNumeric() const
-{
-	return sm_IRCNumericCommand.exactMatch(m_command);
-}
-
-void Message::dump() const
-{
-	kdDebug(14120)	<< "Line:" << m_line << endl
-			<< "Prefix:" << m_prefix << endl
-			<< "Command:" << m_command << endl
-			<< "Args:" << m_args << endl
-			<< "ArgList:" << m_argList << endl
-			<< "Suffix:" << m_suffix << endl;
-	if (m_ctcpMessage)
-	{
-		kdDebug(14120) << "Contains CTCP Message:" << endl;
-		m_ctcpMessage->dump();
-	}
-}
-/*
-EntityPtr Message::entityFromPrefix(KIRC::Engine *engine) const
-{
-	if (m_prefix.isEmpty())
-		return engine->self();
-	else
-		return engine->getEntity(m_prefix);
-}
-
-EntityPtr Message::entityFromArg(KIRC::Engine *engine, size_t i) const
-{
-	return engine->getEntity(m_argList[i]);
-}
-*/
 QByteArray Message::rawLine() const
 {
-	return m_line;
+	return d->line;
 }
 
 QByteArray Message::rawPrefix() const
 {
-	return m_prefix;
+	return d->prefix;
+}
+
+Message &Message::setPrefix(const QByteArray &prefix)
+{
+	if (d->prefix != prefix)
+	{
+		d->dirty = true;
+		d->prefix = prefix;
+	}
 }
 
 QByteArray Message::rawCommand() const
 {
-	return m_command;
+	return d->command;
+}
+
+Message &Message::setCommand(const QByteArray &command)
+{
+	if (d->command != command)
+	{
+		d->dirty = true;
+		d->command = command;
+	}
 }
 
 QByteArray Message::rawArgs() const
 {
-	return m_args;
+	return d->args;
 }
 
 QByteArrayList Message::rawArgList() const
 {
-	return m_argList;
+	return d->argList;
+}
+
+Message &Message::setArgList(const QByteArrayList &argList)
+{
+	if (d->argList != argList)
+	{
+		d->dirty = true;
+		d->argList = argList;
+	}
 }
 
 QByteArray Message::rawArg(size_t i) const
 {
-	return m_argList[i];
+	return d->argList[i];
 }
 
 QByteArray Message::rawSuffix() const
 {
-	return m_suffix;
+	return d->suffix;
+}
+
+Message &Message::setSuffix(const QByteArray &suffix)
+{
+	if (d->suffix != suffix)
+	{
+		d->dirty = true;
+		d->suffix = suffix;
+	}
 }
 
 QString Message::prefix(QTextCodec *codec) const
 {
-	return checkCodec(codec)->toUnicode(m_prefix);
+	return checkCodec(codec)->toUnicode(d->prefix);
 }
-
+/*
+Message &Message::setPrefix(const QString &prefix, QTextCodec *codec)
+{
+	return setPrefix(checkCodec(codec)->fromUnicode(prefix));
+}
+*/
 QString Message::command(QTextCodec *codec) const
 {
-	return checkCodec(codec)->toUnicode(m_command);
+	return checkCodec(codec)->toUnicode(d->command);
 }
-
+/*
+Message &Message::setCommand(const QString &command, QTextCodec *codec)
+{
+	return setCommand(checkCodec(codec)->fromUnicode(command));
+}
+*/
 QString Message::args(QTextCodec *codec) const
 {
-	return checkCodec(codec)->toUnicode(m_args);
+	return checkCodec(codec)->toUnicode(d->args);
 }
-
+/*
+Message &Message::setArgs(const QString &args, QTextCodec *codec)
+{
+	return setArgs(checkCodec(codec)->fromUnicode(prefix));
+}
+*/
 QStringList Message::argList(QTextCodec *codec) const
 {
 	QStringList argList;
 	codec = checkCodec(codec);
 
-	for (size_t i=0; i < m_argList.size(); ++i)
-		argList.append(codec->toUnicode(m_argList[i]));
+	for (size_t i=0; i < d->argList.size(); ++i)
+		argList.append(codec->toUnicode(d->argList[i]));
 
 	return argList;
 }
-
+/*
+Message &Message::setArgList(const QStringList &argList, QTextCodec *codec)
+{
+	return setArgList(checkCodec(codec)->fromUnicode(prefix));
+}
+*/
 QString Message::arg(size_t i, QTextCodec *codec) const
 {
-	return checkCodec(codec)->toUnicode(m_argList[i]);
+	return checkCodec(codec)->toUnicode(d->argList[i]);
 }
-
+/*
+Message &Message::setArg(const QString &arg, QTextCodec *codec)
+{
+	return setArg(checkCodec(codec)->fromUnicode(arg));
+}
+*/
 QString Message::suffix(QTextCodec *codec) const
 {
-	return checkCodec(codec)->toUnicode(m_suffix);
+	return checkCodec(codec)->toUnicode(d->suffix);
+}
+/*
+Message &Message::setSuffix(const QString &suffix, QTextCodec *codec)
+{
+	return setSuffix(checkCodec(codec)->fromUnicode(prefix));
+}
+*/
+bool Message::isValid() const
+{
+	return d->valid;
 }
 
+bool Message::isNumeric() const
+{
+	return sm_IRCNumericCommand.exactMatch(d->command);
+}
+
+void Message::dump() const
+{
+	kdDebug(14120)	<< "Line:" << d->line << endl
+			<< "Prefix:" << d->prefix << endl
+			<< "Command:" << d->command << endl
+			<< "Args:" << d->args << endl
+			<< "ArgList:" << d->argList << endl
+			<< "Suffix:" << d->suffix << endl;
+/*
+	if (d->ctcpMessage)
+	{
+		kdDebug(14120) << "Contains CTCP Message:" << endl;
+		d->ctcpMessage->dump();
+	}
+*/
+}
+/*
+EntityPtr Message::entityFromPrefix(KIRC::Engine *engine) const
+{
+	if (d->prefix.isEmpty())
+		return engine->self();
+	else
+		return engine->getEntity(d->prefix);
+}
+
+EntityPtr Message::entityFromArg(KIRC::Engine *engine, size_t i) const
+{
+	return engine->getEntity(d->argList[i]);
+}
+*/
 size_t Message::argsSize() const
 {
-	return m_args.size();
+	return d->args.size();
 }
 
 QTextCodec *Message::checkCodec(QTextCodec *codec) const
@@ -309,11 +360,11 @@ bool Message::parse(const QByteArray &line)
 {
 	QString match;
 
-	m_line = line;
-	m_valid = false;
+	d->line = line;
+	d->valid = false;
 
 	// Match a regexp instead of the replace ...
-//	m_line.replace("\r\n",""); //remove the trailling \r\n if any(there must be in fact)
+//	d->line.replace("\r\n",""); //remove the trailling \r\n if any(there must be in fact)
  
 	#warning implement me: parsing
 /*
@@ -324,23 +375,23 @@ bool Message::parse(const QByteArray &line)
 	{
 	}
 
-	if (regexp.exactMatch(m_raw))
+	if (regexp.exactMatch(d->raw))
 	{
-//		m_line    = regexp.cap(1).latin1();
-		m_prefix  = regexp.cap(1).latin1();
-		m_command = regexp.cap(2).latin1();
-		m_args    = regexp.cap(3).latin1();
-//		m_argList = QStringList::split(' ', m_args);
-		m_suffix  = regexp.cap(4).latin1();
+//		d->line    = regexp.cap(1).latin1();
+		d->prefix  = regexp.cap(1).latin1();
+		d->command = regexp.cap(2).latin1();
+		d->args    = regexp.cap(3).latin1();
+//		d->argList = QStringList::split(' ', d->args);
+		d->suffix  = regexp.cap(4).latin1();
 
 #ifndef _IRC_STRICTNESS_
 		extractCtcpCommand();
 #endif // _IRC_STRICTNESS_
 
-		m_valid = true;
+		d->valid = true;
 	}
 */
-	return m_valid;
+	return d->valid;
 }
 
 /* Return true if the given string is a special command string
@@ -351,7 +402,7 @@ bool Message::parse(const QByteArray &line)
 #ifndef _IRC_STRICTNESS_
 bool Message::extractCtcpCommand()
 {
-	if (m_suffix.isEmpty())
+	if (d->suffix.isEmpty())
 		return false;
 /*
 	uint len = message.length();
@@ -361,20 +412,20 @@ bool Message::extractCtcpCommand()
 		ctcpline = ctcpUnquote(unquote(message.mid(1,len-2)));
 		message.truncate(0);
 
-				msg.m_ctcpMessage = new Message(msg.m_engine);
-				msg.m_ctcpMessage->m_raw = msg.m_ctcpRaw.latin1();
+				msg.d->ctcpMessage = new Message(msg.d->engine);
+				msg.d->ctcpMessage->d->raw = msg.d->ctcpRaw.latin1();
 
-				int space = msg.m_ctcpRaw.find(' ');
-				if (!matchForIRCRegExp(msg.m_ctcpMessage->m_raw, codec, *msg.m_ctcpMessage))
+				int space = msg.d->ctcpRaw.find(' ');
+				if (!matchForIRCRegExp(msg.d->ctcpMessage->d->raw, codec, *msg.d->ctcpMessage))
 				{
 					if (space > 0)
-						msg.m_ctcpMessage->m_command = msg.m_ctcpRaw.mid(0, space).upper();
+						msg.d->ctcpMessage->d->command = msg.d->ctcpRaw.mid(0, space).upper();
 					else
-						msg.m_ctcpMessage->m_command = msg.m_ctcpRaw.upper();
+						msg.d->ctcpMessage->d->command = msg.d->ctcpRaw.upper();
 				}
 
 				if (space > 0)
-					msg.m_ctcpMessage->m_ctcpRaw = msg.m_ctcpRaw.mid(space).latin1();
+					msg.d->ctcpMessage->d->ctcpRaw = msg.d->ctcpRaw.mid(space).latin1();
 
 		return true;
 	}
@@ -382,3 +433,5 @@ bool Message::extractCtcpCommand()
 	return false;
 }
 #endif // _IRC_STRICTNESS_
+
+#include "kircmessage.moc"

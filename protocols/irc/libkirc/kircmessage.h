@@ -23,6 +23,8 @@
 #include "kdemacros.h"
 
 //#include <QList>
+#include <QObject>
+#include <QSharedDataPointer>
 #include <QStringList>
 
 // Uncoment this if you want a really rfc compliant message handling.
@@ -39,10 +41,22 @@ namespace KIRC
 {
 
 class Engine;
+class MessagePrivate;
 
 class Message
+	: public QObject
 {
+	Q_OBJECT
+
+	Q_PROPERTY(QByteArray rawLine READ rawLine)
+	Q_PROPERTY(QByteArray rawPrefix READ rawPrefix WRITE setPrefix)
+	Q_PROPERTY(QByteArray rawCommand READ rawCommand WRITE setCommand)
+//	Q_PROPERTY(QByteArrayList rawArgList )
+	Q_PROPERTY(QByteArray rawSuffix READ rawSuffix WRITE setSuffix)
+
 public:
+	static KIRC::Message parse(const QByteArray &message);
+
 	static QByteArray format(
 		const QByteArray &command,
 		const QByteArrayList &args = QByteArrayList(),
@@ -79,11 +93,41 @@ private:
 	static QRegExp sm_IRCNumericCommand;
 
 public:
-	Message(const QByteArray &message = QByteArray());
-	Message(const KIRC::Message &obj);
+	Message();
+	Message(const KIRC::Message &o);
 
-	~Message();
+	Message &operator = (const KIRC::Message &o);
 
+public: // Properties read accessors
+	QByteArray rawLine() const;
+	QByteArray rawPrefix() const;
+	QByteArray rawCommand() const;
+	QByteArray rawArgs() const;
+	QByteArrayList rawArgList() const;
+	QByteArray rawSuffix() const;
+
+//	QString line(QTextCodec *codec = 0) const;
+	QString prefix(QTextCodec *codec = 0) const;
+	QString command(QTextCodec *codec = 0) const;
+	QString args(QTextCodec *codec = 0) const;
+	QStringList argList(QTextCodec *codec = 0) const;
+	QString suffix(QTextCodec *codec = 0) const;
+
+public slots: // Properties write accessors
+	KIRC::Message &setLine(const QByteArray &);
+	KIRC::Message &setPrefix(const QByteArray &);
+	KIRC::Message &setCommand(const QByteArray &);
+	KIRC::Message &setArgs(const QByteArray &);
+	KIRC::Message &setArgList(const QByteArrayList &);
+	KIRC::Message &setSuffix(const QByteArray &);
+
+	KIRC::Message &setLine(const QString &, QTextCodec *codec = 0);
+	KIRC::Message &setPrefix(const QString &, QTextCodec *codec = 0);
+	KIRC::Message &setCommand(const QString &, QTextCodec *codec = 0);
+	KIRC::Message &setArgs(const QString &, QTextCodec *codec = 0);
+	KIRC::Message &setArgList(const QStringList &, QTextCodec *codec = 0);
+	KIRC::Message &setSuffix(const QString &, QTextCodec *codec = 0);
+public:
 	bool isValid() const;
 
 	bool isNumeric() const;
@@ -92,28 +136,12 @@ public:
 //	KIRC::EntityPtr entityFromPrefix() const;
 //	KIRC::EntityPtr entityFromArg(size_t i) const;
 
-	QByteArray rawLine() const;
-	QByteArray rawPrefix() const;
-	QByteArray rawCommand() const;
-	QByteArray rawArgs() const;
-	QByteArrayList rawArgList() const;
-	QByteArray rawArg(size_t i) const;
-	QByteArray rawSuffix() const;
-
-//	QString line(QTextCodec *codec = 0) const;
-	QString prefix(QTextCodec *codec = 0) const;
-	QString command(QTextCodec *codec = 0) const;
-	QString args(QTextCodec *codec = 0) const;
-	QStringList argList(QTextCodec *codec = 0) const;
-	QString arg(size_t i, QTextCodec *codec = 0) const;
-	QString suffix(QTextCodec *codec = 0) const;
-
 	size_t argsSize() const;
+	QByteArray rawArg(size_t i) const;
+	QString arg(size_t i, QTextCodec *codec = 0) const;
 
-	inline bool hasCtcpMessage() const
-		{ return m_ctcpMessage!=0; }
-	inline class KIRC::Message &ctcpMessage() const
-		{ return *m_ctcpMessage; }
+	bool hasCtcpMessage() const;
+	KIRC::Message &ctcpMessage() const;
 
 private:
 	/**
@@ -131,44 +159,7 @@ private:
 	bool extractCtcpCommand();
 #endif // _IRC_STRICTNESS_
 
-	/**
-	 * Set to true if the parse was successfull.
-	 */
-	bool m_valid;
-
-	/**
-	 * Contains the raw message line.
-	 */
-	QByteArray m_line;
-
-	/**
-	 * Contains the raw prefix.
-	 */
-	QByteArray m_prefix;
-
-	/**
-	 * Contains the raw command.
-	 */
-	QByteArray m_command;
-
-	/**
-	 * Contains the raw args in a single line.
-	 */
-	QByteArray m_args;
-
-	/**
-	 * Contains the raw args plitted in a list.
-	 */
-	QByteArrayList m_argList;
-
-	/**
-	 * Contains the completely dequoted suffix.
-	 */
-	QByteArray m_suffix;
-
-	class KIRC::Message *m_ctcpMessage;
-
-//	QSharedPointer<KIRC::MessagePrivate> d;
+	QSharedDataPointer<KIRC::MessagePrivate> d;
 };
 
 }
