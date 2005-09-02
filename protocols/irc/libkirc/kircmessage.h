@@ -54,6 +54,12 @@ class Message
 //	Q_PROPERTY(QByteArrayList rawArgList )
 	Q_PROPERTY(QByteArray rawSuffix READ rawSuffix WRITE setSuffix)
 
+//	Q_PROPERTY(QString line READ rawLine)
+	Q_PROPERTY(QString prefix READ prefix WRITE setPrefix)
+	Q_PROPERTY(QString command READ command WRITE setCommand)
+//	Q_PROPERTY(QStringList argList READ argList)
+	Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
+
 public:
 	static KIRC::Message parse(const QByteArray &message);
 
@@ -114,14 +120,14 @@ public: // Properties read accessors
 	QString suffix(QTextCodec *codec = 0) const;
 
 public slots: // Properties write accessors
-	KIRC::Message &setLine(const QByteArray &);
+//	KIRC::Message &setLine(const QByteArray &);
 	KIRC::Message &setPrefix(const QByteArray &);
 	KIRC::Message &setCommand(const QByteArray &);
 	KIRC::Message &setArgs(const QByteArray &);
 	KIRC::Message &setArgList(const QByteArrayList &);
 	KIRC::Message &setSuffix(const QByteArray &);
 
-	KIRC::Message &setLine(const QString &, QTextCodec *codec = 0);
+//	KIRC::Message &setLine(const QString &, QTextCodec *codec = 0);
 	KIRC::Message &setPrefix(const QString &, QTextCodec *codec = 0);
 	KIRC::Message &setCommand(const QString &, QTextCodec *codec = 0);
 	KIRC::Message &setArgs(const QString &, QTextCodec *codec = 0);
@@ -141,7 +147,7 @@ public:
 	QString arg(size_t i, QTextCodec *codec = 0) const;
 
 	bool hasCtcpMessage() const;
-	KIRC::Message &ctcpMessage() const;
+	KIRC::Message ctcpMessage() const;
 
 private:
 	/**

@@ -160,9 +160,10 @@ Message::Message(const Message &o)
 {
 }
 
-Message &Message::operator(const Message &o)
+Message &Message::operator = (const Message &o)
 {
 	d = o.d;
+	return *this;
 }
 
 QByteArray Message::rawLine() const
@@ -182,6 +183,7 @@ Message &Message::setPrefix(const QByteArray &prefix)
 		d->dirty = true;
 		d->prefix = prefix;
 	}
+	return *this;
 }
 
 QByteArray Message::rawCommand() const
@@ -196,6 +198,7 @@ Message &Message::setCommand(const QByteArray &command)
 		d->dirty = true;
 		d->command = command;
 	}
+	return *this;
 }
 
 QByteArray Message::rawArgs() const
@@ -215,6 +218,7 @@ Message &Message::setArgList(const QByteArrayList &argList)
 		d->dirty = true;
 		d->argList = argList;
 	}
+	return *this;
 }
 
 QByteArray Message::rawArg(size_t i) const
@@ -234,6 +238,7 @@ Message &Message::setSuffix(const QByteArray &suffix)
 		d->dirty = true;
 		d->suffix = suffix;
 	}
+	return *this;
 }
 
 QString Message::prefix(QTextCodec *codec) const
@@ -368,11 +373,17 @@ bool Message::parse(const QByteArray &line)
  
 	#warning implement me: parsing
 /*
-	length = line.length();
+	QList<QByteArray> tokens = line.split(' ');
+
+	while (tokens.size() > 0)
+	{
+	}
+
 	i = 0;
 
-	while (line.search(' ', i) )
+	while (line.length() > 0)
 	{
+		token = line.mid(, i);
 	}
 
 	if (regexp.exactMatch(d->raw))
