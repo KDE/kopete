@@ -488,3 +488,44 @@ void authresp_0x0b(const char *seed, const char *sn, const char *password, char 
 	free(password_hash);
 	free(crypt_hash);
 }
+
+char * getcookie(const char *rawcookie)
+{
+	char * cookie=NULL;
+	char * tmpcookie; 
+	char * cookieend;
+
+	if (strlen(rawcookie) < 2) 
+		return NULL;
+
+	tmpcookie = strdup(rawcookie+2);
+	cookieend = strchr(tmpcookie, ';');
+
+	if(cookieend)
+		*cookieend = '\0';
+
+	cookie = strdup(tmpcookie);
+	FREE(tmpcookie);
+	/* cookieend=NULL;  not sure why this was there since the value is not preserved in the stack -dd */
+
+	return cookie;
+}
+
+char * getlcookie(const char *cookie)
+{
+	char *tmp;
+	char *tmpend;
+	char *login_cookie = NULL;
+
+	tmpend = strstr(cookie, "n=");
+	if(tmpend) {
+		tmp = strdup(tmpend+2);
+		tmpend = strchr(tmp, '&');
+		if(tmpend)
+			*tmpend='\0';
+		login_cookie = strdup(tmp);
+		FREE(tmp);
+	}
+
+	return login_cookie;
+}

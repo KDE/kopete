@@ -1,9 +1,12 @@
 /*
-    YMSG - Yahoo Protocol
+    Kopete Yahoo Protocol
+    Handles logging into to the Yahoo service
 
-    Copyright (c) 2004 Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
 
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2005 Andre Duffeck <andre.duffeck@kdemail.net>
+
+    Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -25,6 +28,7 @@
 
 class YMSGTransferPrivate;
 class QString;
+class QStringList;
 
 /**
 @author Duncan Mac-Vicar Prett
@@ -47,7 +51,8 @@ public:
 	void setStatus(Yahoo::Status status);
 	unsigned int id();
 	void setId(unsigned int id);
-	QString param(const QString &index);
+	QString firstParam(const QString &index);
+	QStringList paramList(const QString &index);
 	void setParam(const QString &index, const QString &data);
 	QByteArray serialize();
 	

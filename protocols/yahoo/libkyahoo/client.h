@@ -1,9 +1,8 @@
 /*
     Kopete Yahoo Protocol
     
+    Copyright (c) 2005 Andre Duffeck <andre.duffeck@kdemail.net>
     Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
-    
-    Based on code 
     Copyright (c) 2004 Matt Rogers <matt.rogers@kdemail.net>
     Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
     Copyright (C) 2003  Justin Karneges
@@ -108,7 +107,11 @@ Q_OBJECT
 		/**
 		 * Notifies that the login process has succeeded.
 		 */
-		void loggedIn();
+		void loggedIn( int, const QString& );
+
+		/** 
+		 * Notifies that the login process has failed 
+		 */
 		void loginFailed();
 		
 		/**
@@ -123,11 +126,15 @@ Q_OBJECT
 		 * We were disconnected because we connected elsewhere
 		 */
 		void connectedElsewhere();
-
+		/**
+		 * Notifies about our buddies and groups
+		 */
+		void gotBuddy( const QString &, const QString &, const QString & );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();
 		void cs_connected();
+		void slotGotCookies();
 		
 		/**
 		 * Used by the client stream to notify errors to upper layers.

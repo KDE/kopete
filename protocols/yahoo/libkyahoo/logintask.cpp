@@ -4,7 +4,9 @@
 
     Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
 
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2005 Andre Duffeck <andre.duffeck@kdemail.net>
+
+    Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -23,6 +25,7 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "client.h"
+#include <qstring.h>
 extern "C"
 {
 #include "libyahoo.h"
@@ -66,16 +69,17 @@ bool LoginTask::take(Transfer* transfer)
 				return false;
 			break;
 			case (SentVerify):
-				sendAuth(transfer);
+				sendAuth( transfer );
 				return true;
 			break;
 			case (SentAuth):
-				sendAuthResp(transfer);
+				sendAuthResp( transfer );
 				return true;
 			break;
 			case (SentAuthResp):
-				kdDebug(14180) << k_funcinfo << " - ERROR - take called while in SentAuthResp state" << endl;
-				return true;
+				handleAuthResp( transfer );
+				// Throw transfer to the next task as it contains further data
+				return false;
 			break;
 			default:
 			return false;
@@ -108,6 +112,10 @@ bool LoginTask::forMe(Transfer* transfer) const
 			if ( t->service() == Yahoo::ServiceAuth )
 			return true;
 		break;
+		case (SentAuthResp ):
+			if ( t->service() == Yahoo::ServiceList ||
+				t->service() == Yahoo::ServiceAuthResp )
+			return true;
 		default:
 			return false;
 		break;
@@ -161,9 +169,9 @@ void LoginTask::sendAuthResp(Transfer* transfer)
 		return;
 	}
 	
-	QString sn = t->param("1");
-	QString seed = t->param("94");
-	QString version_s = t->param("13");
+	QString sn = t->firstParam("1");
+	QString seed = t->firstParam("94");
+	QString version_s = t->firstParam("13");
 	uint sessionID = t->id();
 	int version = version_s.toInt();
 	
@@ -198,11 +206,38 @@ void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint s
 	free(resp_6);
 	free(resp_96);
 	send(t);
-	setSuccess(true);
 }
 
 void LoginTask::sendAuthResp_pre_0x0b(const QString &sn, const QString &seed)
 {
 	kdDebug(14180) << k_funcinfo << endl;
+
+}
+
+void LoginTask::handleAuthResp(Transfer *transfer)
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	YMSGTransfer *t = 0L;
+	t = dynamic_cast<YMSGTransfer*>(transfer);
+	if (!t)
+	{
+		setSuccess(false);
+		return;
+	}
+
+	switch( t->service() )
+	{
+		case( Yahoo::ServiceList ):
+			setSuccess( Yahoo::YAHOO_LOGIN_OK );
+		break;
+		case( Yahoo::ServiceAuthResp ):
+			setSuccess( t->firstParam( "66" ).toInt() );
+		break;
+		default:
+			setSuccess( false );
+		break;
+	}
+	
+	
 
 }

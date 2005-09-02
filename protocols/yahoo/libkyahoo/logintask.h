@@ -4,7 +4,9 @@
 
     Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
 
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2005 Andre Duffeck <andre.duffeck@kdemail.net>
+
+    Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -20,6 +22,8 @@
 #define LOGINTASK_H
 
 #include "task.h"
+
+class QString;
 
 /**
 @author Duncan Mac-Vicar
@@ -41,6 +45,7 @@ protected:
 	void sendAuthResp(Transfer* transfer);
 	void sendAuthResp_0x0b(const QString &sn, const QString &seed, uint sessionID);
 	void sendAuthResp_pre_0x0b(const QString &sn, const QString &seed);
+	void handleAuthResp(Transfer *transfer);
 	State mState;
 };
 

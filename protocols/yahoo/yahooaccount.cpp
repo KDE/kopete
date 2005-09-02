@@ -79,7 +79,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	stateOnConnection = 0;
 	theAwayDialog = new YahooAwayDialog( this );
 	m_protocol = parent;
-	m_session = new Client( this );;
+	m_session = new Client( this );
 	m_lastDisconnectCode = 0;
 	m_currentMailCount = 0;
 	m_pictureFlag = 0;
@@ -101,7 +101,8 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged(const QString&, const QVariant& ) ), SLOT( slotGlobalIdentityChanged(const QString&, const QVariant& ) ));
 	QObject::connect( m_keepaliveTimer, SIGNAL( timeout() ), this, SLOT( slotKeepalive() ) );
-
+	initConnectionSignals( MakeConnections );
+	
 	QString displayName = configGroup()->readEntry(QString::fromLatin1("displayName"));
 	if(!displayName.isEmpty())
 		_myself->setNickName(displayName);
@@ -213,7 +214,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 
 	if ( sct == MakeConnections )
 	{
-		QObject::connect(m_session, SIGNAL(loginResponse(int, const QString &)),
+		QObject::connect(m_session, SIGNAL(loggedIn( int, const QString &)),
 		                 this, SLOT(slotLoginResponse(int, const QString &)) );
 		
 		QObject::connect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
@@ -298,7 +299,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 
 	if ( sct == DeleteConnections )
 	{
-		QObject::disconnect(m_session, SIGNAL(loginResponse(int, const QString &)),
+		QObject::disconnect(m_session, SIGNAL(loggedIn(int, const QString &)),
 		                    this, SLOT(slotLoginResponse(int, const QString &)) );
 		
 		QObject::disconnect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),

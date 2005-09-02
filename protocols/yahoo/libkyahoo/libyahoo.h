@@ -56,5 +56,6 @@
 
 void authresp_0x0b(const char *seed, const char *sn, const char *password, char *resp_6, char *resp_96 );
 void yahooBase64(unsigned char *out, const unsigned char *in, int inlen);
-
+char * getlcookie(const char *cookie);
+char * getcookie(const char *rawcookie);
 #endif

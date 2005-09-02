@@ -1,9 +1,12 @@
 /*
-    YMSGtransfer - Kopete Yahoo Protocol
+    Kopete Yahoo Protocol
+    Handles logging into to the Yahoo service
 
-    Copyright (c) 2004 Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
 
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2005 Andre Duffeck <andre.duffeck@kdemail.net>
+
+    Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -20,9 +23,10 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "kdebug.h"
-#include <qmap.h>
 #include <qdatastream.h>
+#include <qmap.h>
 #include <qstring.h>
+#include <qstringlist.h>
 
 
 using namespace Yahoo;
@@ -36,7 +40,7 @@ public:
 	Yahoo::Service service;
 	Yahoo::Status status;
 	unsigned int id;	
-	QMap<QString, QString> data;
+	QMap<QString, QStringList> data;
 	bool valid;
 };
 
@@ -102,24 +106,31 @@ void YMSGTransfer::setId(unsigned int id)
 	d->id = id;
 }
 
-QString YMSGTransfer::param(const QString &index)
+QString YMSGTransfer::firstParam(const QString &index)
+{
+	return d->data[index].front();
+}
+
+QStringList YMSGTransfer::paramList(const QString &index)
 {
 	return d->data[index];
 }
 
 void YMSGTransfer::setParam(const QString &index, const QString &data)
 {
-	d->data[index] = data;
+	d->data[index].append( data );
 }
 
 int YMSGTransfer::length()
 {
 	int len = 0;
-	for (QMap<QString, QString>::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
+	QStringList::ConstIterator listIt = 0;
+	for (QMap<QString, QStringList>::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
 	{
 		len += it.key().length();
 		len += 2;
-		len += (*it).length();
+		for( listIt = (*it).begin(); listIt != (*it).end(); ++listIt )
+			len += (*listIt).length();
 		len += 2;
 	}
 	return len;
@@ -144,6 +155,7 @@ QByteArray YMSGTransfer::serialize()
 	int pos = 0;
 	int packetSize = 20 + length();
 	QByteArray buffer(packetSize);
+	QStringList::ConstIterator listIt = 0;
 	
 	memcpy(buffer.data() + pos, "YMSG", 4);
 	pos += 4;
@@ -167,17 +179,20 @@ QByteArray YMSGTransfer::serialize()
 	yahoo_put32(buffer.data() + pos, d->id);
 	pos += 4;
 	
-	for (QMap<QString, QString>::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
+	for (QMap<QString, QStringList>::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
 	{
-		kdDebug(14180) << k_funcinfo << " Serializing key " << it.key() << " value " << (*it) << endl;
-		memcpy( buffer.data() + pos, it.key().latin1(), it.key().length());
-		pos += it.key().length();
-		buffer[pos++] = 0xc0;
-		buffer[pos++] = 0x80;
-		memcpy( buffer.data() + pos, (*it).latin1(), (*it).length());
-		pos += (*it).length();
-		buffer[pos++] = 0xc0;
-		buffer[pos++] = 0x80;
+		for( listIt = (*it).begin(); listIt != (*it).end(); ++listIt )
+		{
+			kdDebug(14180) << k_funcinfo << " Serializing key " << it.key() << " value " << (*it) << endl;
+			memcpy( buffer.data() + pos, it.key().latin1(), it.key().length());
+			pos += it.key().length();
+			buffer[pos++] = 0xc0;
+			buffer[pos++] = 0x80;
+			memcpy( buffer.data() + pos, (*listIt).latin1(), (*listIt).length());
+			pos += (*listIt).length();
+			buffer[pos++] = 0xc0;
+			buffer[pos++] = 0x80;
+		}
 	}
 	kdDebug(14180) << k_funcinfo << " pos=" << pos << " (packet size)" << endl;
 	return buffer;

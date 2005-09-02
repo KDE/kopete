@@ -117,12 +117,25 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		// TODO add remaining status
 		case (Yahoo::StatusAvailable) :
 			status = Yahoo::StatusAvailable;
+		break;
 		case (Yahoo::StatusBRB) :
 			status = Yahoo::StatusBRB;
 		break;
+		/*StatusBusy
+		StatusNotAtHome
+		StatusNotAtDesk
+		StatusNotInOffice
+		StatusOnPhone
+		StatusOnVacation
+		StatusOutToLunch
+		StatusSteppedOut
+		StatusInvisible
+		StatusCustom
+		StatusIdle
+		StatusOffline
+		StatusNotify*/
 		default:
 			kdDebug(14180) << k_funcinfo << " - unknown status " << statusnum << endl;
-			return 0L;
 		break;
 	}
 	

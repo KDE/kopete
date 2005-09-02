@@ -1,9 +1,8 @@
 /*
     Kopete Yahoo Protocol
     
+    Copyright (c) 2005 Andre Duffeck <andre.duffeck@kdemail.net>
     Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
-    
-    Based on code 
     Copyright (c) 2004 Matt Rogers <matt.rogers@kdemail.net>
     Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
     Copyright (C) 2003  Justin Karneges
@@ -26,6 +25,7 @@
 #include "yahooconnector.h"
 #include "task.h"
 #include "logintask.h"
+#include "listtask.h"
 #include "client.h"
 
 class Client::ClientPrivate
@@ -41,6 +41,17 @@ public:
 /*	int tzoffset;*/
 	bool active;
 
+	// tasks
+	LoginTask * loginTask;
+	ListTask *listTask;
+
+	// Connection data
+	uint sessionID;
+	QString yCookie;
+	QString tCookie;
+	QString cCookie;
+	QString loginCookie;
+
 };
 
 Client::Client(QObject *par) :QObject(par, "yahooclient" )
@@ -50,6 +61,8 @@ Client::Client(QObject *par) :QObject(par, "yahooclient" )
 	d->active = false;
 
 	d->root = new Task(this, true);
+	d->loginTask = new LoginTask( d->root );
+	d->listTask = new ListTask( d->root );
 	d->stream = 0;
 }
 
@@ -83,9 +96,11 @@ void Client::cs_connected()
 	kdDebug(14180) << k_funcinfo << endl;
 	emit connected();
 	kdDebug(14180) << k_funcinfo << " starting login task ... "<<  endl;
-	LoginTask * login = new LoginTask( d->root );
-	QObject::connect(login, SIGNAL(finished()), SLOT(lt_loginFinished()));
-	login->go(true);
+	QObject::connect( d->loginTask, SIGNAL( finished() ), SLOT( lt_loginFinished() ) );
+	QObject::connect( d->listTask, SIGNAL( gotCookies() ), SLOT( slotGotCookies() ) );
+	QObject::connect( d->listTask, SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ), 
+					SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ) );
+	d->loginTask->go(true);
 	d->active = true;
 }
 
@@ -112,7 +127,6 @@ void Client::streamError( int error )
 
 void Client::streamReadyRead()
 {
-	kdDebug(14180) << k_funcinfo << endl;
 	// take the incoming transfer and distribute it to the task tree
 	Transfer * transfer = d->stream->read();
 	distribute( transfer );
@@ -121,6 +135,21 @@ void Client::streamReadyRead()
 void Client::lt_loginFinished()
 {
 	kdDebug(14180) << k_funcinfo << endl;
+
+	kdDebug(14180) << k_funcinfo << "Emitting loggedIn" << endl;
+	emit loggedIn( d->loginTask->statusCode(), d->loginTask->statusString() );
+}
+
+void Client::slotGotCookies()
+{
+	kdDebug(14180) << k_funcinfo << "Y: " << d->listTask->yCookie()
+					<< " T: " << d->listTask->tCookie()
+					<< " C: " << d->listTask->cCookie()
+					<< " login: " << d->listTask->loginCookie() << endl;
+	d->yCookie = d->listTask->yCookie();
+	d->tCookie = d->listTask->tCookie();
+	d->cCookie = d->listTask->cCookie();
+	d->loginCookie = d->listTask->loginCookie();
 }
 
 // INTERNALS //
