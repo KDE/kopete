@@ -117,6 +117,7 @@ void SendMessageTask::onGo()
 		tlv2buffer.addWord( 0x0000 );
 		tlv2buffer.addString( utfMessage, length );
 		
+		delete [] utfMessage;
 	}
 	
 	// Add the actual message TLV
