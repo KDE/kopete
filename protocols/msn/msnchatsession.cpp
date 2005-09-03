@@ -84,9 +84,9 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 	m_actionNudge=new KAction( i18n( "Send Nudge" ), 0, this, SLOT(slotSendNudge() ), actionCollection(), "msnSendNudge" ) ;
 	m_actionNudge->setEnabled(false);
 #if MSN_WEBCAM
-	m_actionWebcamReceive=new KAction( i18n( "Invite to recieve user webcam" ), 0, this, SLOT(slotWebcamReceive() ), actionCollection(), "msnWebcamReceive" ) ;
+	m_actionWebcamReceive=new KAction( i18n( "Invite to Receive User Webcam" ), 0, this, SLOT(slotWebcamReceive() ), actionCollection(), "msnWebcamReceive" ) ;
 	m_actionWebcamReceive->setEnabled(false);
-	m_actionWebcamSend=new KAction( i18n( "Send webcam" ), 0, this, SLOT(slotWebcamSend() ), actionCollection(), "msnWebcamSend" ) ;
+	m_actionWebcamSend=new KAction( i18n( "Send Webcam" ), 0, this, SLOT(slotWebcamSend() ), actionCollection(), "msnWebcamSend" ) ;
 #endif
 	
 	

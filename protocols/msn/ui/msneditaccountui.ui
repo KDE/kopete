@@ -1220,9 +1220,6 @@ Only works for emoticons in the PNG format.</string>
                                 <property name="text">
                                     <string>Use &amp;HTTP method</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+H</string>
-                                </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>Connect to MSN Messenger using an HTTP-like protocol on port 80.
 This may be used to connect on a network with a restrictive firewall.
@@ -1242,10 +1239,7 @@ Only check this option if the normal connection doesn't work.</string>
                                             <cstring>m_useWebcamPort</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>S&amp;pecify a port for incoming webcam connection :</string>
-                                        </property>
-                                        <property name="accel">
-                                            <string>Alt+P</string>
+                                            <string>S&amp;pecify a port for incoming webcam connection:</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
                                             <string>If you are behind a firewall, you may specify a port to use for the incoming connection, and configure your firewall to accept connections on this port. Incoming connections are used for the webcam. If you don't specify yourself a port, the operating system will choose an available port for you. It is recommended to leave the checkbox unchecked.</string>

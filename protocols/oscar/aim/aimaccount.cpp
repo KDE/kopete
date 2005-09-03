@@ -187,7 +187,7 @@ KActionMenu* AIMAccount::actionMenu()
 	mActionMenu->insert( mActionOffline );
 	mActionMenu->popupMenu()->insertSeparator();
 
-//    KAction* m_joinChatAction = new KAction( i18n( "Join a chat..." ), QString::null,  0,  this,
+//    KAction* m_joinChatAction = new KAction( i18n( "Join Chat..." ), QString::null,  0,  this,
 //                                             SLOT( slotJoinChat() ), mActionMenu, "join_a_chat" );
 //    mActionMenu->insert( m_joinChatAction );
 	//mActionMenu->insert( KopeteStdAction::contactInfo( this, SLOT( slotEditInfo() ), mActionMenu, "AIMAccount::mActionEditInfo" ) );
