@@ -130,6 +130,10 @@ Q_OBJECT
 		 * Notifies about our buddies and groups
 		 */
 		void gotBuddy( const QString &, const QString &, const QString & );
+		/**
+		 * Notifies about the status of online buddies
+		 */
+		void statusChanged( const QString&, int, const QString&, int );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();
@@ -149,6 +153,16 @@ Q_OBJECT
 	private:
 		void distribute( Transfer *transfer );
 		
+		/**
+		 * create static tasks and connect their signals
+		 */
+		void initTasks();
+
+		/**
+		 * remove static tasks and their singal connections
+		 */
+		void deleteTasks();
+
 		class ClientPrivate;
 		ClientPrivate* d;
 		KNetworkConnector *m_connector;

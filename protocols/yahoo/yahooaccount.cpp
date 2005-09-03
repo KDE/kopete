@@ -590,7 +590,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		 
 		setBuddyIcon( myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString() );
 		m_lastDisconnectCode = 0;
-		m_keepaliveTimer->start( 60 * 1000 );
+		//m_keepaliveTimer->start( 60 * 1000 );
 		return;
 	}
 	else if(succ == YAHOO_LOGIN_PASSWD)

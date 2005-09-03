@@ -26,7 +26,9 @@
 #include "task.h"
 #include "logintask.h"
 #include "listtask.h"
+#include "statusnotifiertask.h"
 #include "client.h"
+#include "yahootypes.h"
 
 class Client::ClientPrivate
 {
@@ -44,6 +46,7 @@ public:
 	// tasks
 	LoginTask * loginTask;
 	ListTask *listTask;
+	StatusNotifierTask *statusTask;
 
 	// Connection data
 	uint sessionID;
@@ -61,8 +64,6 @@ Client::Client(QObject *par) :QObject(par, "yahooclient" )
 	d->active = false;
 
 	d->root = new Task(this, true);
-	d->loginTask = new LoginTask( d->root );
-	d->listTask = new ListTask( d->root );
 	d->stream = 0;
 }
 
@@ -96,10 +97,14 @@ void Client::cs_connected()
 	kdDebug(14180) << k_funcinfo << endl;
 	emit connected();
 	kdDebug(14180) << k_funcinfo << " starting login task ... "<<  endl;
+
+	d->loginTask = new LoginTask( d->root );
+	d->listTask = new ListTask( d->root );
 	QObject::connect( d->loginTask, SIGNAL( finished() ), SLOT( lt_loginFinished() ) );
 	QObject::connect( d->listTask, SIGNAL( gotCookies() ), SLOT( slotGotCookies() ) );
 	QObject::connect( d->listTask, SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ), 
 					SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ) );
+	QObject::connect( d->listTask, SIGNAL(   ), SIGNAL(   ) );
 	d->loginTask->go(true);
 	d->active = true;
 }
@@ -136,6 +141,8 @@ void Client::lt_loginFinished()
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
+	if( d->loginTask->statusCode() == Yahoo::YAHOO_LOGIN_OK )
+		initTasks();
 	kdDebug(14180) << k_funcinfo << "Emitting loggedIn" << endl;
 	emit loggedIn( d->loginTask->statusCode(), d->loginTask->statusString() );
 }
@@ -202,6 +209,19 @@ void Client::debug(const QString &str)
 Task * Client::rootTask()
 {
 	return d->root;
+}
+
+void Client::initTasks()
+{
+	d->statusTask = new StatusNotifierTask( d->root );
+	QObject::connect( d->statusTask, SIGNAL( statusChanged( const QString&, int, const QString&, int ) ), 
+				SIGNAL( statusChanged( const QString&, int, const QString&, int ) ) );
+}
+
+void Client::deleteTasks()
+{
+	d->statusTask->deleteLater();
+	d->statusTask = 0L;
 }
 
 #include "client.moc"

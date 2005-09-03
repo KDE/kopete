@@ -80,7 +80,13 @@ namespace Yahoo
 		ServiceChatExit = 0x9b,
 		ServiceChatLogout = 0xa0,
 		ServiceChatPing,
-		ServiceComment = 0xa8
+		ServiceComment = 0xa8,
+		ServiceStealth = 0xb9,
+		ServicePictureChecksum = 0xbd,
+		ServicePicture = 0xbe,
+		ServicePictureUpdate = 0xc1,
+		ServicePictureUpload = 0xc2,
+		ServiceStatus = 0xc6	/* YMSG13! */
 	};
 	
 	enum Status 

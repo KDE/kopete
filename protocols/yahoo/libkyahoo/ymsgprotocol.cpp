@@ -3,7 +3,8 @@
 
     Copyright (c) 2004 Duncan Mac-Vicar Prett <duncan@kde.org>
 
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
+    Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -103,9 +104,98 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceList " << servicenum << endl;
 			service = Yahoo::ServiceList;
 		break;
+		case (Yahoo::ServiceLogon) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceLogon " << servicenum << endl;
+			service = Yahoo::ServiceLogon;
+		break;
+		case (Yahoo::ServicePing) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServicePing " << servicenum << endl;
+			service = Yahoo::ServicePing;
+		break;
+		case (Yahoo::ServiceNewMail) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceNewMail " << servicenum << endl;
+			service = Yahoo::ServiceNewMail;
+		break;
+		case (Yahoo::ServiceLogoff) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceLogoff " << servicenum << endl;
+			service = Yahoo::ServiceLogoff;
+		break;
+		case (Yahoo::ServiceIsAway) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceIsAway " << servicenum << endl;
+			service = Yahoo::ServiceIsAway;
+		break;
+		case (Yahoo::ServiceIsBack) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceIsBack " << servicenum << endl;
+			service = Yahoo::ServiceIsBack;
+		break;
+		case (Yahoo::ServiceGameLogon) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceGameLogon " << servicenum << endl;
+			service = Yahoo::ServiceGameLogon;
+		break;
+		case (Yahoo::ServiceGameLogoff) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceGameLogoff " << servicenum << endl;
+			service = Yahoo::ServiceGameLogoff;
+		break;
+		case (Yahoo::ServiceIdAct) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceIdAct " << servicenum << endl;
+			service = Yahoo::ServiceIdAct;
+		break;
+		case (Yahoo::ServiceIddeAct) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceIddeAct " << servicenum << endl;
+			service = Yahoo::ServiceIddeAct;
+		break;
+		case (Yahoo::ServiceStatus) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceStatus " << servicenum << endl;
+			service = Yahoo::ServiceStatus;
+		break;
+		/*
+		ServiceIdle, // 5 (placemarker)
+		ServiceMessage,
+		ServiceMailStat,
+		ServiceUserStat, // 0xa
+		ServiceChatInvite,
+		ServiceCalendar,
+		ServiceNewPersonalMail,
+		ServiceNewContact,
+		ServiceAddIdent, // 0x10
+		ServiceAddIgnore,
+		ServiceGotGroupRename, // < 1, 36(old), 37(new)
+		ServiceSysMessage = 0x14,
+		ServicePassThrough2 = 0x16,
+		ServiceConfInvite = 0x18,
+		ServiceConfLogon,
+		ServiceConfDecline,
+		ServiceConfLogoff,
+		ServiceConfAddInvite,
+		ServiceConfMsg,
+		ServiceChatLogon,
+		ServiceChatLogoff,
+		ServiceChatMsg = 0x20,
+		ServiceGameMsg = 0x2a,
+		ServiceFileTransfer = 0x46,
+		ServiceVoiceChat = 0x4A,
+		ServiceNotify,
+		ServiceVerify = 76,
+		ServiceP2PFileXfer,
+		ServicePeerToPeer = 0x4F,	// Checks if P2P possible 
+		ServiceWebcam,
+		ServiceAddBuddy = 0x83,
+		ServiceRemBuddy,
+		ServiceIgnoreContact,	// > 1, 7, 13 < 1, 66, 13, 0
+		ServiceRejectContact,
+		ServiceGroupRename = 0x89, // > 1, 65(new), 66(0), 67(old) 
+		ServiceChatOnline = 0x96, // > 109(id), 1, 6(abcde) < 0,1
+		ServiceChatGoto,
+		ServiceChatJoin,	// > 1 104-room 129-1600326591 62-2
+		ServiceChatleave,
+		ServiceChatExit = 0x9b,
+		ServiceChatLogout = 0xa0,
+		ServiceChatPing,
+		ServiceComment = 0xa8*/
+
+
 		default:
 			kdDebug(14180) << k_funcinfo << "  Parsed packet service -  This means an unknown service " << servicenum << endl;
-			return 0L;
 		break;
 	}
 	
@@ -195,6 +285,10 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kdDebug(14180) << k_funcinfo << " key not accepted" << endl;
 		}
 	}
+
+	// Packets consisting of several YMSG-packets sometimes contain padding chars (0x00) -> filter out
+	while( (BYTE)data[pos] == (BYTE) 0x00 )
+		pos++;
 
 	kdDebug(14180) << k_funcinfo << " Returning transfer" << endl;
 	// tell them we have parsed offset bytes
