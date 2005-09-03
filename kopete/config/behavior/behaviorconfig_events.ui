@@ -24,7 +24,7 @@
                 <cstring>notifyGroupBox</cstring>
             </property>
             <property name="title">
-                <string>Tray Flash and Bubble</string>
+                <string>Tray Flash &amp; Bubble</string>
             </property>
             <vbox>
                 <property name="name">

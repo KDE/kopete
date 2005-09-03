@@ -29,7 +29,7 @@
 
 AIMJoinChatUI::AIMJoinChatUI( AIMAccount* account,  bool modal,
                               QWidget* parent, const char* name )
-    : KDialogBase( parent, name, modal, i18n( "Join an AIM chat room" ),
+    : KDialogBase( parent, name, modal, i18n( "Join AIM Chat Room" ),
                    Cancel | User1, User1, true, i18n( "Join" ) )
 {
     kdDebug(14200) << k_funcinfo << "Account " << account->accountId()
