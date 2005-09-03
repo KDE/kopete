@@ -348,7 +348,10 @@
                                             <number>1</number>
                                         </property>
                                         <property name="text">
-                                            <string>Photo</string>
+                                            <string>&lt;center&gt;Photo&lt;/center&gt;</string>
+                                        </property>
+                                        <property name="textFormat">
+                                            <enum>RichText</enum>
                                         </property>
                                         <property name="scaledContents">
                                             <bool>true</bool>
