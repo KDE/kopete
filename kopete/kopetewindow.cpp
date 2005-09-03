@@ -360,7 +360,6 @@ bool KopeteWindow::eventFilter( QObject* target, QEvent* event )
 
         if ( event->type() == QEvent::Hide )
         {
-            kdDebug() << k_funcinfo << "clearing search label" << endl;
             resetAction->activate();
             return true;
         }
