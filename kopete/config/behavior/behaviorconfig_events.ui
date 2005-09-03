@@ -1,0 +1,292 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>BehaviorConfig_Events</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>BehaviorConfig_Events</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>421</width>
+            <height>378</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Events</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>notifyGroupBox</cstring>
+            </property>
+            <property name="title">
+                <string>Tray Flash and Bubble</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mTrayflashNotifyChk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Flash system tray</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Flash the system tray icon on an incoming message</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Flash the system tray icon whenever a message comes in.</string>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout11_2</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer10_2</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Fixed</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>16</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>mTrayflashNotifyLeftClickOpensMessageChk</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Left mouse click opens message</string>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Left mouse click on flashing system tray opens message instead of restoring/minimizing contact list</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>A left mouse click on the flashing system tray opens the incoming message instead of restoring/minimizing the contact list (e.g. to check who sent messages). A middle click always opens this message.</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mBalloonNotifyChk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Show &amp;bubble</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Show a bubble on an incoming message</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Show a bubble whenever a message comes in.</string>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout11</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer10</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Fixed</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>16</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>mBalloonNotifyIgnoreClosesChatViewChk</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="text">
+                                <string>Button "&amp;Ignore" closes chat</string>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The "Ignore" button of the bubble closes the chat window for the sender</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>If there is already a chat window opened for the sender of the message displayed in the bubble the "Ignore" button will close this chat window.</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mQueueOnlyHighlightedMessagesInGroupChatsChk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Exclude non-highlighted messages in grou&amp;p chats</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Notify only highlighted messages in group chats</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>In very active group chats important messages can be singled out by excluding non-highlighted messages from notification.</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mQueueOnlyMessagesOnAnotherDesktopChk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Exclude messages in chats on current des&amp;ktop</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Do not notify messages in chat windows on current desktop</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Notify only unread messages in chat windows that are not on the current desktop.</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>groupBox1</cstring>
+            </property>
+            <property name="title">
+                <string>Miscellaneous</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mSoundIfAwayChk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>E&amp;nable events while away</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Enable events if your account status is "Away"</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Enable notification events even if your account status is "Away" or less available, e.g. "Not Available" or "Do not Disturb". Note: This does not affect the flashing of the system tray icon.</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mEventIfActive</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Enable events for acti&amp;ve chat windows</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Enable events for incoming messages if the chat window is active</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Enable notfication events for incoming messages even if the receiving chat window is active. Note: Neither the system tray icon flashes nor the bubble is shown.</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mTrayflashNotifySetCurrentDesktopToChatViewChk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Switch to desktop containing chat on opening message</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Switch to the desktop which contains the chat window for the sender when opening his message</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>If there is already a chat window opened for the sender of the message opening his message will cause a switch to the desktop which contains this chat window.</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mRaiseMsgWindowChk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Raise window on incoming message</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Raise the chat window/tab on an incoming message</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>If there is already a chat window opened for the sender of an incoming message this window will be put on the current desktop and in front of all other windows.</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
+</widget>
+<connections>
+    <connection>
+        <sender>mTrayflashNotifyChk</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>mTrayflashNotifyLeftClickOpensMessageChk</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>mBalloonNotifyChk</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>mBalloonNotifyIgnoreClosesChatViewChk</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>mTrayflashNotifyChk</tabstop>
+    <tabstop>mBalloonNotifyChk</tabstop>
+    <tabstop>mQueueOnlyHighlightedMessagesInGroupChatsChk</tabstop>
+    <tabstop>mQueueOnlyMessagesOnAnotherDesktopChk</tabstop>
+    <tabstop>mSoundIfAwayChk</tabstop>
+    <tabstop>mEventIfActive</tabstop>
+    <tabstop>mTrayflashNotifySetCurrentDesktopToChatViewChk</tabstop>
+    <tabstop>mRaiseMsgWindowChk</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

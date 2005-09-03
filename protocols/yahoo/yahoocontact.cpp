@@ -229,6 +229,28 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 		}
 	}
 	
+	// find and replace Font-formattings
+	regExp.setPattern( "<span([^>]*)font-family:([^;\"]*)([^>]*)>(.*)</span>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( messageText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			messageText.replace( regExp, QString::fromLatin1("<span\\1\\3><font face=\"\\2\">\\4</span>" ) );
+		}
+	}
+	
+	// find and replace Size-formattings
+	regExp.setPattern( "<span([^>]*)font-size:([0-9]*)pt([^>]*)>(.*)</span>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( messageText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			messageText.replace( regExp, QString::fromLatin1("<span\\1\\3><font size=\"\\2\">\\4</span>" ) );
+		}
+	}
+	
 	// remove span-tags
 	regExp.setPattern( "<span([^>]*)>(.*)</span>" );
 	pos = 0;
@@ -246,13 +268,27 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 	messageText.replace( QString::fromLatin1( "&quot;" ), QString::fromLatin1( "\"" ) );
 	messageText.replace( QString::fromLatin1( "&nbsp;" ), QString::fromLatin1( " " ) );
 	messageText.replace( QString::fromLatin1( "&amp;" ), QString::fromLatin1( "&" ) );
+	messageText.replace( QString::fromLatin1( "<br/>" ), QString::fromLatin1( "\r" ) );
 	
 	kdDebug(14180) << "Converted message: " << messageText << endl;
 	
 	Kopete::ContactPtrList m_them = manager(Kopete::Contact::CanCreate)->members();
 	Kopete::Contact *target = m_them.first();
 
-	m_account->yahooSession()->sendIm( static_cast<YahooContact*>(m_account->myself())->m_userId,
+	//TODO: move the message-length limit to chatwindow-level
+	if( messageText.length() > 800 )
+	{
+		kdDebug(14180) << "Message exceeds max. length of 800 chars. The message gets split." << endl;
+		uint i = 0;
+		while( i < messageText.length() )
+		{
+			m_account->yahooSession()->sendIm( static_cast<YahooContact*>(m_account->myself())->m_userId,
+					static_cast<YahooContact *>(target)->m_userId, messageText.mid( i, 800 ), m_account->pictureFlag());
+			i += 800;
+		}		
+	}
+	else
+		m_account->yahooSession()->sendIm( static_cast<YahooContact*>(m_account->myself())->m_userId,
 							static_cast<YahooContact *>(target)->m_userId, messageText, m_account->pictureFlag());
 
 	// append message to window

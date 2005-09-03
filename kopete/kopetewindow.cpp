@@ -70,12 +70,12 @@
 #include "kopeteeditglobalidentitywidget.h"
 
 /* KMainWindow is very broken from our point of view - it deref()'s the app
- * when the last visible KMainWindow is destroyed. But when our main window is 
- * hidden when it's in the tray,closing the last chatwindow would cause the app 
+ * when the last visible KMainWindow is destroyed. But when our main window is
+ * hidden when it's in the tray,closing the last chatwindow would cause the app
  * to quit. - Richard
  *
- * Fortunately KMainWindow checks queryExit before deref()ing the Kapplication. 
- * KopeteWindow reimplements queryExit() and only returns true if it is shutting down 
+ * Fortunately KMainWindow checks queryExit before deref()ing the Kapplication.
+ * KopeteWindow reimplements queryExit() and only returns true if it is shutting down
  * (either because the user quit Kopete, or the session manager did).
  *
  * KopeteWindow and ChatWindows are closed by session management.
@@ -83,13 +83,13 @@
  * 1) user quit - KopeteWindow::slotQuit() was called, calls KopeteApplication::quitKopete(),
  *                which closes all chatwindows and the KopeteWindow.  The last window to close
  *                shuts down the PluginManager in queryExit().  When the PluginManager has completed its
- *                shutdown, the app is finally deref()ed, and the contactlist and accountmanager 
+ *                shutdown, the app is finally deref()ed, and the contactlist and accountmanager
  *                are saved.
  *                and calling KApplication::quit()
  * 2) session   - KopeteWindow and all chatwindows are closed by KApplication session management.
  *     quit        Then the shutdown proceeds as above.
  *
- * queryClose() is honoured so group chats and chats receiving recent messages can interrupt 
+ * queryClose() is honoured so group chats and chats receiving recent messages can interrupt
  * (session) quit.
  */
 
@@ -129,7 +129,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 		this, SLOT(slotAccountRegistered(Kopete::Account*)));
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)),
 		this, SLOT(slotAccountUnregistered(const Kopete::Account*)));
-	
+
 	connect( m_autoHideTimer, SIGNAL( timeout() ), this, SLOT( slotAutoHide() ) );
 	connect( KopetePrefs::prefs(), SIGNAL( contactListAppearanceChanged() ),
 		this, SLOT( slotContactListAppearanceChanged() ) );
@@ -149,6 +149,11 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
 	for(Kopete::Account *a=accounts.first() ; a; a=accounts.next() )
 		slotAccountRegistered(a);
+
+    //install an event filter for the quick search toolbar so we can
+    //catch the hide events
+    toolBar( "quickSearchBar" )->installEventFilter( this );
+
 }
 
 void KopeteWindow::initView()
@@ -200,15 +205,15 @@ void KopeteWindow::initActions()
 		  this, SLOT( slotSetInvisibleAll() ), actionCollection(),
 		  "SetInvisibleAll" );
 
-	
+
 
 	/*actionSetAvailable = new KAction( i18n( "&Online" ),
 		"kopeteavailable", 0 , Kopete::AccountManager::self(),
 		SLOT( setAvailableAll() ), actionCollection(),
 		"SetAvailableAll" );*/
 
-	actionSetAvailable = new Kopete::AwayAction( i18n("&Online"), 
-		SmallIcon("kopeteavailable"), 0, this, 
+	actionSetAvailable = new Kopete::AwayAction( i18n("&Online"),
+		SmallIcon("kopeteavailable"), 0, this,
 		SLOT( slotGlobalAvailableMessageSelect( const QString & ) ), actionCollection(),
 		"SetAvailableAll" );
 
@@ -264,7 +269,7 @@ void KopeteWindow::initActions()
 	editGlobalIdentityWidget = new KopeteEditGlobalIdentityWidget(this, "editglobalBar");
 	KWidgetAction *editGlobalAction = new KWidgetAction( editGlobalIdentityWidget, i18n("Edit Global Identity Widget"), 0, 0, 0, actionCollection(), "editglobal_widget");
 	editGlobalAction->setAutoSized( true );
-	
+
 
 	// sync actions, config and prefs-dialog
 	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
@@ -276,7 +281,7 @@ void KopeteWindow::initActions()
 
 	globalAccel->insert( QString::fromLatin1("Show/Hide Contact List"), i18n("Show/Hide Contact List"), i18n("Show or hide the contact list"),
 		CTRL+SHIFT+Key_A, KKey::QtWIN+CTRL+Key_A, this, SLOT(slotShowHide()) );
-	
+
 	globalAccel->insert( QString::fromLatin1("Set Away/Back"), i18n("Set Away/Back"), i18n("Sets away from keyboard or sets back"),
 		CTRL+SHIFT+Key_W, KKey::QtWIN+CTRL+SHIFT+Key_W, this, SLOT(slotToggleAway()) );
 
@@ -345,6 +350,26 @@ KopeteWindow::~KopeteWindow()
 	delete m_pluginConfig;
 }
 
+bool KopeteWindow::eventFilter( QObject* target, QEvent* event )
+{
+    KToolBar* toolBar = dynamic_cast<KToolBar*>( target );
+    KAction* resetAction = actionCollection()->action( "quicksearch_reset" );
+
+    if ( toolBar && resetAction && resetAction->isPlugged( toolBar ) )
+    {
+
+        if ( event->type() == QEvent::Hide )
+        {
+            kdDebug() << k_funcinfo << "clearing search label" << endl;
+            resetAction->activate();
+            return true;
+        }
+        return KMainWindow::eventFilter( target, event );
+    }
+
+    return KMainWindow::eventFilter( target, event );
+}
+
 void KopeteWindow::loadOptions()
 {
 	KConfig *config = KGlobal::config();
@@ -353,7 +378,7 @@ void KopeteWindow::loadOptions()
 	toolBar("quickSearchBar")->applySettings( config, "QuickSearchBar Settings" );
 	toolBar("editGlobalIdentityBar")->applySettings( config, "EditGlobalIdentityBar Settings" );
 
-	// FIXME: HACK: Is there a way to do that automatic ? 
+	// FIXME: HACK: Is there a way to do that automatic ?
 	editGlobalIdentityWidget->setIconSize(toolBar("editGlobalIdentityBar")->iconSize());
 	connect(toolBar("editGlobalIdentityBar"), SIGNAL(modechange()), editGlobalIdentityWidget, SLOT(iconSizeChanged()));
 
@@ -373,7 +398,7 @@ void KopeteWindow::loadOptions()
 	m_autoHide = p->contactListAutoHide();
 	m_autoHideTimeout = p->contactListAutoHideTimeout();
 
-	
+
 	QString tmp = config->readEntry("State", "Shown");
 	if ( tmp == "Minimized" && p->showTray())
 	{
@@ -474,7 +499,7 @@ void KopeteWindow::slotContactListAppearanceChanged()
 	KopetePrefs* p = KopetePrefs::prefs();
 	m_autoHide = p->contactListAutoHide();
 	m_autoHideTimeout = p->contactListAutoHideTimeout();
-	
+
 	startAutoHideTimer();
 }
 
@@ -568,7 +593,7 @@ bool KopeteWindow::queryExit()
 		Kopete::PluginManager::self()->shutdown();
 		return true;
 	}
-	else 
+	else
 		return false;
 }
 
@@ -582,7 +607,7 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 		// Save settings if auto-save is enabled, and settings have changed
 		if ( settingsDirty() && autoSaveSettings() )
 			saveAutoSaveSettings();
-	
+
 		if ( queryClose() ) {
 			e->accept();
 		}

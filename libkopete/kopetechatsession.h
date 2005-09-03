@@ -6,6 +6,7 @@
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @ kde.org>
     Copyright (c) 2003      by Jason Keirstead        <jason@keirstead.org>
+    Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -348,6 +349,11 @@ public slots:
 	 * This will emit @ref messageSuccess signal. and allow the email window to get closed
 	 */
 	void messageSucceeded();
+
+	/**
+	 * Protcols have to call this method if they want to emit a notification when a nudge/buzz is received.
+	 */
+	void emitNudgeNotification();
 
 private slots:
 	void slotUpdateDisplayName();

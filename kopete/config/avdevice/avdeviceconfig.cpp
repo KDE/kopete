@@ -52,15 +52,15 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 
 // "Video" TAB ============================================================
 	mPrfsVideoDevice = new AVDeviceConfig_VideoDevice(mAVDeviceTabCtl);
-	connect(mPrfsVideoDevice->mDeviceKComboBox,               SIGNAL(activated(int)),    this, SLOT(slotDeviceKComboBoxChanged(int)));
-	connect(mPrfsVideoDevice->mInputKComboBox,                SIGNAL(activated(int)),    this, SLOT(slotInputKComboBoxChanged(int)));
-	connect(mPrfsVideoDevice->mStandardKComboBox,             SIGNAL(activated(int)),    this, SLOT(slotStandardKComboBoxChanged(int)));
-	connect(mPrfsVideoDevice->mBrightSlider,                  SIGNAL(valueChanged(int)), this, SLOT(slotBrightSliderChanged(int)));
-	connect(mPrfsVideoDevice->mContrastSlider,                SIGNAL(valueChanged(int)), this, SLOT(slotContrastSliderChanged(int)));
-	connect(mPrfsVideoDevice->mSaturationSlider,              SIGNAL(valueChanged(int)), this, SLOT(slotSaturationSliderChanged(int)));
-	connect(mPrfsVideoDevice->mHueSlider,                     SIGNAL(valueChanged(int)), this, SLOT(slotHueSliderChanged(int)));
-	connect(mPrfsVideoDevice->mImageAutoAdjustBrightContrast, SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoAdjustBrightContrastChanged(bool)));
-	connect(mPrfsVideoDevice->mImageAutoColorCorrection,      SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoColorCorrectionChanged(bool)));
+	connect(mPrfsVideoDevice->mDeviceKComboBox,                   SIGNAL(activated(int)),    this, SLOT(slotDeviceKComboBoxChanged(int)));
+	connect(mPrfsVideoDevice->mInputKComboBox,                    SIGNAL(activated(int)),    this, SLOT(slotInputKComboBoxChanged(int)));
+	connect(mPrfsVideoDevice->mStandardKComboBox,                 SIGNAL(activated(int)),    this, SLOT(slotStandardKComboBoxChanged(int)));
+	connect(mPrfsVideoDevice->mBrightnessSlider,                  SIGNAL(valueChanged(int)), this, SLOT(slotBrightnessSliderChanged(int)));
+	connect(mPrfsVideoDevice->mContrastSlider,                    SIGNAL(valueChanged(int)), this, SLOT(slotContrastSliderChanged(int)));
+	connect(mPrfsVideoDevice->mSaturationSlider,                  SIGNAL(valueChanged(int)), this, SLOT(slotSaturationSliderChanged(int)));
+	connect(mPrfsVideoDevice->mHueSlider,                         SIGNAL(valueChanged(int)), this, SLOT(slotHueSliderChanged(int)));
+	connect(mPrfsVideoDevice->mImageAutoAdjustBrightnessContrast, SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoAdjustBrightnessContrastChanged(bool)));
+	connect(mPrfsVideoDevice->mImageAutoColorCorrection,          SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoColorCorrectionChanged(bool)));
 
 	mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
 	mAVDeviceTabCtl->addTab(mPrfsVideoDevice, i18n("&Video"));
@@ -97,6 +97,8 @@ AVDeviceConfig::~AVDeviceConfig()
 void AVDeviceConfig::save()
 {
     /// @todo implement me
+	kdDebug() << "kopete:config (avdevice): save() called. " << endl;
+	d->saveConfig();
 }
 
 
@@ -142,7 +144,7 @@ void AVDeviceConfig::slotStandardKComboBoxChanged(int){
   emit changed( true );
 }
 
-void AVDeviceConfig::slotBrightSliderChanged(int){
+void AVDeviceConfig::slotBrightnessSliderChanged(int){
   emit changed( true );
 }
 
@@ -158,7 +160,7 @@ void AVDeviceConfig::slotHueSliderChanged(int){
   emit changed( true );
 }
 
-void AVDeviceConfig::slotImageAutoAdjustBrightContrastChanged(bool){
+void AVDeviceConfig::slotImageAutoAdjustBrightnessContrastChanged(bool){
   emit changed( true );
 }
 

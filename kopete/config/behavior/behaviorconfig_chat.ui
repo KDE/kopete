@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>552</width>
-            <height>661</height>
+            <width>564</width>
+            <height>537</height>
         </rect>
     </property>
     <property name="caption">
@@ -87,9 +87,12 @@
                 <cstring>chatWindowGroup</cstring>
             </property>
             <property name="title">
-                <string>Chat Window Grouping Policy</string>
+                <string>Chat Window Grouping &amp;Policy</string>
             </property>
             <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
                 <widget class="QComboBox" row="7" column="0">
                     <item>
                         <property name="text">
@@ -150,7 +153,7 @@
                 </sizepolicy>
             </property>
             <property name="text">
-                <string>Highlight messages containing your &amp;nickname</string>
+                <string>High&amp;light messages containing your nickname</string>
             </property>
         </widget>
         <widget class="QCheckBox" row="3" column="0">
@@ -166,10 +169,7 @@
                 </sizepolicy>
             </property>
             <property name="text">
-                <string>Enable &amp;automatic spell checking</string>
-            </property>
-            <property name="accel">
-                <string>Alt+A</string>
+                <string>E&amp;nable automatic spell checking</string>
             </property>
         </widget>
         <widget class="QCheckBox" row="1" column="0">
@@ -177,15 +177,7 @@
                 <cstring>cb_ShowEventsChk</cstring>
             </property>
             <property name="text">
-                <string>Show e&amp;vents in chat window</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox" row="0" column="0">
-            <property name="name">
-                <cstring>cb_RaiseMsgWindowChk</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Raise window/tab on new messages</string>
+                <string>&amp;Show events in chat window</string>
             </property>
         </widget>
         <widget class="QLayoutWidget" row="6" column="0">
@@ -201,7 +193,7 @@
                         <cstring>truncateContactNameEnabled</cstring>
                     </property>
                     <property name="text">
-                        <string>Truncate contact name with more characters than:</string>
+                        <string>T&amp;runcate contact name with more characters than:</string>
                     </property>
                 </widget>
                 <spacer>
@@ -303,7 +295,6 @@
     </connection>
 </connections>
 <tabstops>
-    <tabstop>cb_RaiseMsgWindowChk</tabstop>
     <tabstop>cb_ShowEventsChk</tabstop>
     <tabstop>highlightEnabled</tabstop>
     <tabstop>cb_SpellCheckChk</tabstop>

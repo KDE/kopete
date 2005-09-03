@@ -77,13 +77,13 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent, const ch
 	d->isActive = false;
 	d->visibleMembers = false;
 	d->sendInProgress = false;
-	
+
 
 	m_mainWindow = 0L;
 	membersDock = 0L;
 	membersStatus = Smart;
 	m_tabState = Normal;
-	
+
 
 	//FIXME: don't widgets start off hidden anyway?
 	hide();
@@ -104,7 +104,6 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent, const ch
 
 	// FIXME: is this used these days? it seems totally unnecessary
 	connect( editPart(), SIGNAL( toggleToolbar(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
-	connect( editPart()->edit(), SIGNAL( textChanged() ) , this, SLOT( editPartTextChanged() ) );
 
 	connect( editPart(), SIGNAL( messageSent( Kopete::Message & ) ),
 	         this, SIGNAL( messageSent( Kopete::Message & ) ) );
@@ -291,7 +290,7 @@ void ChatView::raise( bool activate )
 	{
 		m_mainWindow->showNormal();
 	}
-	
+
 
 	m_mainWindow->raise();
 
@@ -327,7 +326,7 @@ void ChatView::makeVisible()
 		m_messagePart->keepScrolledDown();
 	}
 
-	
+
 
 	m_mainWindow->setActiveView( this );
 }
@@ -681,11 +680,11 @@ void ChatView::setCaption( const QString &text, bool modified )
 void ChatView::appendMessage(Kopete::Message &message)
 {
 	remoteTyping( message.from(), false );
-	
+
 	if ( message.direction() != Kopete::Message::Inbound )
 	   messagePart()->appendMessage( message,false);
 	else
-		messagePart()->appendMessage(message);		
+		messagePart()->appendMessage(message);
 	if( !d->isActive )
 	{
 		switch ( message.importance() )
@@ -837,22 +836,6 @@ void ChatView::slotRemoteTypingTimeout()
 	// Remove the topmost timer from the list. Why does QPtrDict use void* keys and not typed keys? *sigh*
 	if ( !m_remoteTypingMap.isEmpty() )
 		remoteTyping( reinterpret_cast<const Kopete::Contact *>( QPtrDictIterator<QTimer>(m_remoteTypingMap).currentKey() ), false );
-}
-
-void ChatView::editPartTextChanged()
-{
-	QSyntaxHighlighter* qsh = m_editPart->edit()->syntaxHighlighter();
-	if ( !qsh )
-		return;
-	
-	KDictSpellingHighlighter* kdsh = dynamic_cast<KDictSpellingHighlighter*>( qsh );
-	if ( !kdsh )
-		return;
-
-	if ( kdsh->automatic() && kdsh->isActive() )
-		setStatusText( i18n("As-you-type spell checking enabled.") );
-	else if ( kdsh->automatic() && !kdsh->isActive() )
-		setStatusText( i18n("As-you-type spell checking disabled.") );
 }
 
 void ChatView::dragEnterEvent ( QDragEnterEvent * event )

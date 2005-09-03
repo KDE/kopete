@@ -53,11 +53,11 @@ private slots:
 	void slotDeviceKComboBoxChanged(int);
 	void slotInputKComboBoxChanged(int);
 	void slotStandardKComboBoxChanged(int);
-	void slotBrightSliderChanged(int);
+	void slotBrightnessSliderChanged(int);
 	void slotContrastSliderChanged(int);
 	void slotSaturationSliderChanged(int);
 	void slotHueSliderChanged(int);
-	void slotImageAutoAdjustBrightContrastChanged(bool);
+	void slotImageAutoAdjustBrightnessContrastChanged(bool);
 	void slotImageAutoColorCorrectionChanged(bool);
 	void slotUpdateImage();
 private:

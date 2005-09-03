@@ -159,10 +159,7 @@ QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint m
 				p = c;
 				continue;
 			}
-		}
-
-		if( mode & SkipHTML )
-		{ //ok, we know we are parsing an HTML text
+		
 			if( !inHTMLEntity )
 			{ // are we
 				if( c == '&' )
@@ -199,7 +196,7 @@ QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint m
 					{
 					/* check if the character after this match is space or end of string*/
 						n = message[ pos + needle.length() ];
-						if( !n.isSpace() &&  !n.isNull() ) break;
+						if( !n.isSpace() &&  !n.isNull() && n!='&') break;
 					}
 					/* Perfect match */
 					foundEmoticons.append( EmoticonNode( (*it), pos ) );
@@ -213,16 +210,20 @@ QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint m
 			{
 				if( inHTMLEntity ){
 					// If we are in an HTML entitiy such as &gt;
-					int htmlEnd;
+					int htmlEnd = message.find( ';', pos );
 					// Search for where it ends
-					if( ( htmlEnd = message.find( ';', pos ) ) == -1 ){
+					if( htmlEnd == -1 )
+					{
 						// Apparently this HTML entity isn't ended, something is wrong, try skip the '&'
 						// and continue
 						kdDebug( 14000 ) << k_funcinfo << "Broken HTML entity, trying to recover." << endl;
 						inHTMLEntity = false;
 						pos++;
-					} else {
+					}
+					else 
+					{
 						pos = htmlEnd;
+						inHTMLEntity = false;
 					}
 				}
 			}
@@ -435,7 +436,7 @@ QString Emoticons::parse( const QString &message, ParseMode mode )
 				  QString::fromLatin1( "\" height=\"" ) +
 				  QString::number( p.height() ) +
 				  QString::fromLatin1( "\" />" );
-			kdDebug( 14010 ) << k_funcinfo << "Emoticon html code: " << result;
+			kdDebug( 14010 ) << k_funcinfo << "Emoticon html code: " << result << endl;
 		break;
 		default:
 			kdDebug( 14010 ) << k_funcinfo << "Unknown token type. Something's broken." << endl;

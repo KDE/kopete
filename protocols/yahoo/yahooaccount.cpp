@@ -85,7 +85,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
 	m_openYABAction = new KAction( i18n( "Open &Addressbook..." ), "contents", 0, this, SLOT( slotOpenYAB() ), this, "m_openYABAction" );
 
-	YahooContact* _myself=new YahooContact( this, accountId, accountId, Kopete::ContactList::self()->myself() );
+	YahooContact* _myself=new YahooContact( this, accountId.lower(), accountId, Kopete::ContactList::self()->myself() );
 	setMyself( _myself );
 	_myself->setOnlineStatus( parent->Offline );
 	myself()->setProperty( YahooProtocol::protocol()->iconRemoteUrl, configGroup()->readEntry( "iconRemoteUrl", "" ) );
@@ -746,6 +746,8 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 		}
 	}
 	
+	newMsgText.replace( QString::fromLatin1( "\r" ), QString::fromLatin1( "<br/>" ) );
+	
 	kdDebug(14180) << "Message after fixing font tags '" << newMsgText << "'" << endl;
 	
 	Kopete::ChatSession *mm = contact(who)->manager(Kopete::Contact::CanCreate);
@@ -790,9 +792,8 @@ void YahooAccount::slotGotBuzz( const QString &who, long tm )
 	
 	Kopete::ChatSession *mm = contact(who)->manager(Kopete::Contact::CanCreate);
 	mm->appendMessage(kmsg);
-	
-	/* TODO play a sound */
-	
+	// Emit the buzz notification.
+	mm->emitNudgeNotification();
 }
 
 void YahooAccount::slotGotConfInvite( const QString & /* who */, const QString & /* room */, const QString & /* msg */, const QStringList & /* members */ )
@@ -933,7 +934,7 @@ void YahooAccount::slotGotBuddyIconChecksum(const QString &who, int checksum)
 		kdDebug(14180) << k_funcinfo << "Icon already exists. I will not request it again." << endl;
 		return;
 	} else
-		m_session->requestBuddyIcon( who );;	
+		m_session->requestBuddyIcon( who );
 }
 
 void YahooAccount::slotGotBuddyIconInfo(const QString &who, KURL url, int checksum)

@@ -66,6 +66,8 @@ public slots:
 	 * the original slot is not virtual, but that's not a problem because it's a slot.
 	 */
 	virtual void receivedTypingMsg( const QString &, bool );
+	
+	void slotConnectionTimeout();
 
 private slots:
 	void slotMessageSent( Kopete::Message &message, Kopete::ChatSession *kmm );
@@ -106,12 +108,13 @@ private:
 	//Messages sent before the ending of the connection are queued
 	QValueList<Kopete::Message> m_messagesQueue;
 	void sendMessageQueue();
+	void cleanMessageQueue( const QString &reason);
+	void startChatSession();
 
 	QMap<unsigned int, Kopete::Message> m_messagesSent;
 
 	QMap<long unsigned int, MSNInvitation*> m_invitations;
 
-	QTime m_awayMessageTime;
 
 	/**
 	 * weither or not the "has opened a new chat" message need to be sent if the user is typing
@@ -119,6 +122,8 @@ private:
 	bool m_newSession;
 
 	QLabel *m_image;
+	QTimer *m_timeoutTimer;
+	uint m_connectionTry;
 
 
 signals:

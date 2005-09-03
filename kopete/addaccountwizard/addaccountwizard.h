@@ -44,7 +44,7 @@ class AddAccountWizard : public KWizard
 	Q_OBJECT
 
 public:
-	AddAccountWizard( QWidget *parent = 0, const char *name = 0 , bool modal = false );
+	AddAccountWizard( QWidget *parent = 0, const char *name = 0 , bool modal = false, bool firstRun = false );
 
 private slots:
 	void slotProtocolListClicked( QListViewItem *item );

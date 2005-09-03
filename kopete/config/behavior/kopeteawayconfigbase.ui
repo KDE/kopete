@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>444</width>
-            <height>350</height>
+            <width>471</width>
+            <height>266</height>
         </rect>
     </property>
     <property name="caption">
@@ -106,7 +106,7 @@
                         <cstring>mUseAutoAway</cstring>
                     </property>
                     <property name="text">
-                        <string>Use auto away</string>
+                        <string>&amp;Use auto away</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="1" column="0">

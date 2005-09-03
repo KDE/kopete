@@ -267,6 +267,9 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	}
 	else
 	{
+		// store message id for outgoing notifications
+		mLastReceivedMessageId = message.id ();
+
 		// retrieve and reformat body
 		QString body = message.body ();
 
@@ -1180,6 +1183,11 @@ bool JabberContact::isContactRequestingEvent( XMPP::MsgEvent event )
 		return mRequestComposingEvent;
 	else
 		return false;
+}
+
+QString JabberContact::lastReceivedMessageId () const
+{
+	return mLastReceivedMessageId;
 }
 
 
