@@ -55,7 +55,7 @@
                         <string>Start with hidden &amp;main window</string>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Start with the main window minimised to the system tray</string>
+                        <string>Start with the main window minimized to the system tray</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>Start with the main window hidden. The only visible item is the system tray icon.</string>

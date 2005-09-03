@@ -401,7 +401,7 @@ void KopeteIdentityConfig::slotUpdateCurrentIdentity(const QString &selectedIden
 	
 void KopeteIdentityConfig::slotNewIdentity()
 {
-	QString newIdentityName = KInputDialog::getText(i18n("New Identity"), i18n("Identity Name"));
+	QString newIdentityName = KInputDialog::getText(i18n("New Identity"), i18n("Identity name:"));
 
 	GlobalIdentitiesManager::self()->createNewIdentity(newIdentityName);
 
@@ -411,7 +411,7 @@ void KopeteIdentityConfig::slotNewIdentity()
 
 void KopeteIdentityConfig::slotCopyIdentity()
 {
-	QString copyName = KInputDialog::getText(i18n("Copy Identity"), i18n("Identity Name"));
+	QString copyName = KInputDialog::getText(i18n("Copy Identity"), i18n("Identity name:"));
 	if(!GlobalIdentitiesManager::self()->isIdentityPresent(copyName))
 	{
 		GlobalIdentitiesManager::self()->copyIdentity(copyName, d->selectedIdentity);
@@ -427,7 +427,7 @@ void KopeteIdentityConfig::slotCopyIdentity()
 
 void KopeteIdentityConfig::slotRenameIdentity()
 {
-	QString renamedName = KInputDialog::getText(i18n("Rename Identity"), i18n("Identity Name"));
+	QString renamedName = KInputDialog::getText(i18n("Rename Identity"), i18n("Identity name:"));
 	if(!GlobalIdentitiesManager::self()->isIdentityPresent(renamedName))
 	{
 		GlobalIdentitiesManager::self()->renameIdentity(d->selectedIdentity, renamedName);

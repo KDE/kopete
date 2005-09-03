@@ -12,17 +12,12 @@
     </keywords>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description/>
+    <description></description>
     <ignoreparts>
       <part>kdevabbrev</part>
-      <part>kdevdebugger</part>
-      <part>kdevvalgrind</part>
-      <part>kdevctags2</part>
-      <part>kdevbookmarks</part>
       <part>kdevsnippet</part>
-      <part>kdevquickopen</part>
-      <part>kdevfileselector</part>
       <part>kdevdistpart</part>
+      <part>kdevquickopen</part>
     </ignoreparts>
     <secondaryLanguages/>
     <versioncontrol>kdevsubversion</versioncontrol>
@@ -107,9 +102,9 @@
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
       <runappinappdirectory>true</runappinappdirectory>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
     </general>
     <display>
       <staticmembers>true</staticmembers>
@@ -123,14 +118,11 @@
       <envvar value="1" name="WANT_AUTOMAKE_1_6" />
     </makeenvvars>
     <make>
-      <envvars>
-        <envvar value="1" name="WANT_AUTOCONF_2_5" />
-        <envvar value="1" name="WANT_AUTOMAKE_1_6" />
-      </envvars>
+      <envvars/>
       <abortonerror>true</abortonerror>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin>make</makebin>
+      <makebin>unsermake</makebin>
       <prio>0</prio>
     </make>
     <general>
@@ -139,7 +131,7 @@
     </general>
     <run>
       <mainprogram>kopete/kopete</mainprogram>
-      <programargs/>
+      <programargs></programargs>
       <terminal>false</terminal>
       <envvars/>
       <directoryradio>build</directoryradio>
@@ -149,19 +141,19 @@
     <configurations>
       <default>
         <configargs>--enable-debug=full</configargs>
-        <builddir/>
-        <topsourcedir/>
-        <cppflags/>
-        <ldflags/>
+        <builddir>/home/kde/branches/build/KDE/3.5/kdenetwork/kopete</builddir>
+        <topsourcedir>/home/kde/branches/KDE/3.5/kdenetwork</topsourcedir>
+        <cppflags></cppflags>
+        <ldflags></ldflags>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>
-        <ccompilerbinary/>
-        <cxxcompilerbinary/>
-        <f77compilerbinary/>
-        <cflags/>
-        <cxxflags/>
-        <f77flags/>
+        <ccompilerbinary></ccompilerbinary>
+        <cxxcompilerbinary></cxxcompilerbinary>
+        <f77compilerbinary></f77compilerbinary>
+        <cflags></cflags>
+        <cxxflags></cxxflags>
+        <f77flags></f77flags>
         <envvars/>
       </default>
     </configurations>
@@ -211,13 +203,18 @@
     </codecompletion>
     <references/>
     <creategettersetter>
-      <prefixGet/>
+      <prefixGet></prefixGet>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>
       <inlineGet>true</inlineGet>
       <inlineSet>true</inlineSet>
     </creategettersetter>
+    <qt>
+      <used>true</used>
+      <version>3</version>
+      <root>/usr/qt/3</root>
+    </qt>
   </kdevcppsupport>
   <kdevcvsservice>
     <recursivewhenupdate>true</recursivewhenupdate>
@@ -228,9 +225,9 @@
   </kdevcvsservice>
   <kdevdocumentation>
     <projectdoc>
-      <docsystem/>
-      <docurl/>
-      <usermanualurl/>
+      <docsystem></docsystem>
+      <docurl></docurl>
+      <usermanualurl></usermanualurl>
     </projectdoc>
   </kdevdocumentation>
   <ctagspart>
@@ -239,7 +236,7 @@
     <showDeclaration>true</showDeclaration>
     <showLookup>true</showLookup>
     <tagfileDefault>true</tagfileDefault>
-    <customArguments/>
-    <customTagfilePath/>
+    <customArguments></customArguments>
+    <customTagfilePath></customTagfilePath>
   </ctagspart>
 </kdevelop>

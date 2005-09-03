@@ -333,8 +333,8 @@ int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 		if(m_videodevice[currentDevice()].inputs()>0)
 			for (unsigned int loop=0; loop < m_videodevice[currentDevice()].inputs(); loop++)
 			{
-				combobox->insertItem(m_videodevice[currentDevice()].input[loop].name);
-				kdDebug() <<  k_funcinfo << "InputKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].input[loop].name << " (tuner: " << m_videodevice[currentDevice()].input[loop].hastuner << ")" << endl;
+				combobox->insertItem(m_videodevice[currentDevice()].m_input[loop].name);
+				kdDebug() <<  k_funcinfo << "InputKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].m_input[loop].name << " (tuner: " << m_videodevice[currentDevice()].m_input[loop].hastuner << ")" << endl;
 			}
 		return EXIT_SUCCESS;
 	}
@@ -517,6 +517,15 @@ void VideoDevicePool::saveConfig()
 		for( vditerator = m_videodevice.begin(); vditerator != m_videodevice.end(); ++vditerator )
 		{
 			kdDebug() << (*vditerator).name << endl;
+			for (size_t input = 0 ; input < (*vditerator).m_input.size(); input++)
+			{
+				kdDebug() << "Brightness: " << (*vditerator).m_input[input].getBrightness() << endl;
+				kdDebug() << "Contrast  : " << (*vditerator).m_input[input].getContrast()   << endl;
+				kdDebug() << "Saturatin : " << (*vditerator).m_input[input].getSaturation() << endl;
+				kdDebug() << "Hue       : " << (*vditerator).m_input[input].getHue()        << endl;
+				kdDebug() << "Automatic brightness / contrast: " << (*vditerator).m_input[input].getAutoBrightnessContrast() << endl;
+				kdDebug() << "Automatic color correction     : " << (*vditerator).m_input[input].getAutoColorCorrection() << endl;
+			}
 		}
 		kdDebug() << endl;
 	}

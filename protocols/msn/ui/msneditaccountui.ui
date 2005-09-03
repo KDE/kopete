@@ -120,7 +120,7 @@
                                     <bool>false</bool>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>If you check that case, the account will not be connected when you press the "Connect All" button, or at startup even if you selected to automatically connect at startup</string>
+                                    <string>If you check this checkbox, the account will not be connected when you press the "Connect All" button, or at startup when automatic connection at startup is enabled.</string>
                                 </property>
                             </widget>
                         </vbox>
@@ -271,8 +271,8 @@
                                             <string>Download the msn picture:</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>&lt;qt&gt;&lt;p&gt;Indicate when Kopete will download the pictures of contacts&lt;/p&gt;
-&lt;dl&gt;&lt;dt&gt;Only manually&lt;/dt&gt;&lt;dd&gt;The picture is not downloaded automatically, only when the user requests it&lt;/dd&gt;
+                                            <string>&lt;qt&gt;&lt;p&gt;Indicate when Kopete will download the display pictures of contacts&lt;/p&gt;
+&lt;dl&gt;&lt;dt&gt;Only manually&lt;/dt&gt;&lt;dd&gt;The picture is not downloaded automatically. It is only downloaded when the user requests it&lt;/dd&gt;
 &lt;dt&gt;When a chat is open&lt;/dt&gt;&lt;dd&gt;The picture is downloaded when a conversation socket is opened, i.e. when you open a chat window&lt;/dd&gt;
 &lt;dt&gt;Automatically&lt;/dt&gt;&lt;dd&gt;Always try to download the picture if the contact has one.  &lt;b&gt;Note :&lt;/b&gt; this will open a socket, and let know the user you are downloading their picture.&lt;/dd&gt;&lt;/dl&gt;</string>
                                         </property>
@@ -309,7 +309,7 @@
                                         </property>
                                         <property name="whatsThis" stdset="0">
                                             <string>&lt;qt&gt;&lt;p&gt;Indicate when Kopete will download the pictures of contacts&lt;/p&gt;
-&lt;dl&gt;&lt;dt&gt;Only manually&lt;/dt&gt;&lt;dd&gt;The picture is not downloaded automatically, only when the user requests it&lt;/dd&gt;
+&lt;dl&gt;&lt;dt&gt;Only manually&lt;/dt&gt;&lt;dd&gt;The picture is not downloaded automatically. It is only downloaded when the user requests it&lt;/dd&gt;
 &lt;dt&gt;When a chat is open&lt;/dt&gt;&lt;dd&gt;The picture is downloaded when a conversation socket is opened, i.e. when you open a chat window&lt;/dd&gt;
 &lt;dt&gt;Automatically&lt;/dt&gt;&lt;dd&gt;Always try to download the picture if the contact has one.  &lt;b&gt;Note :&lt;/b&gt; this will open a socket, and let know the user you are downloading their picture.&lt;/dd&gt;&lt;/dl&gt;</string>
                                         </property>
@@ -327,8 +327,7 @@
                                     <bool>true</bool>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>MSN Messenger lets you select some custom emoticon.
-If this option is enabled, Kopete will download these emoticons and show them.</string>
+                                    <string>MSN Messenger allows users to download and use custom emoticons. If this option is enabled, Kopete will download these emoticons and show them.</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox">
@@ -376,11 +375,10 @@ Only works for emoticons in the PNG format.</string>
                                     <bool>true</bool>
                                 </property>
                                 <property name="toolTip" stdset="0">
-                                    <string>&lt;qt&gt;Make possible to your contact to detect you are using Kopete.&lt;br&gt;We recommand to let this checked&lt;/qt&gt;</string>
+                                    <string>&lt;qt&gt;Make it possible to your contacts to detect if you are using Kopete.&lt;br&gt;We recommend to leave this checked&lt;/qt&gt;</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>Third party MSN client, such as Kopete, gives some trace to let others third party client guess they are using.
-We recommand to let this checkbox checked.</string>
+                                    <string>Third party MSN clients, such as Kopete, give users the ability to let other third party clients guess which client they are using. We recommend leaving this checkbox checked.</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox">
@@ -397,7 +395,7 @@ We recommand to let this checkbox checked.</string>
                                     <bool>true</bool>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>&lt;qt&gt;Check this box to send the &lt;b&gt;Typing notification&lt;/b&gt; to your contacts : when you are composing a message, you might want your contact to know that you are typing so that he knows you are answering.&lt;/qt&gt;</string>
+                                    <string>&lt;qt&gt;Check this box to send &lt;b&gt;Typing notifications&lt;/b&gt; to your contacts. When you are composing a message, you might want your contact to know that you are typing so that he knows you are answering.&lt;/qt&gt;</string>
                                 </property>
                             </widget>
                             <widget class="QLayoutWidget">
@@ -413,13 +411,13 @@ We recommand to let this checkbox checked.</string>
                                             <cstring>SendJabber</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>Tell my Jabber account</string>
+                                            <string>Expose my Jabber account to Jabber users</string>
                                         </property>
                                         <property name="checked">
                                             <bool>true</bool>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>If you have a jabber account, you may let know to Jabber users using an MSN gateway, that you are also using jabber.</string>
+                                            <string>If you have a Jabber account, you may let Jabber users on an MSN gateway know that you are also using Jabber.</string>
                                         </property>
                                     </widget>
                                     <widget class="KComboBox">
@@ -430,7 +428,7 @@ We recommand to let this checkbox checked.</string>
                                             <bool>true</bool>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>If you have a jabber account, you may let know to Jabber users using an MSN gateway, that you are also using jabber.</string>
+                                            <string>If you have a Jabber account, you may let Jabber users on an MSN gateway know that you are also using Jabber.</string>
                                         </property>
                                     </widget>
                                     <spacer>
@@ -828,7 +826,7 @@ We recommand to let this checkbox checked.</string>
                             </font>
                         </property>
                         <property name="text">
-                            <string>WARNING: you need to be connected to modify this page</string>
+                            <string>WARNING: You need to be connected to modify this page.</string>
                         </property>
                         <property name="alignment">
                             <set>WordBreak|AlignVCenter</set>
@@ -1078,7 +1076,7 @@ We recommand to let this checkbox checked.</string>
                             </font>
                         </property>
                         <property name="text">
-                            <string>WARNING: you need to be connected to modify this page</string>
+                            <string>WARNING: You need to be connected to modify this page</string>
                         </property>
                         <property name="alignment">
                             <set>WordBreak|AlignVCenter</set>
@@ -1102,7 +1100,7 @@ We recommand to let this checkbox checked.</string>
                             <cstring>groupBox66</cstring>
                         </property>
                         <property name="title">
-                            <string>Connection Preferences  (for advanced users)</string>
+                            <string>Connection Preferences (for advanced users)</string>
                         </property>
                         <vbox>
                             <property name="name">
@@ -1222,13 +1220,10 @@ We recommand to let this checkbox checked.</string>
                                 <property name="text">
                                     <string>Use &amp;HTTP method</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+H</string>
-                                </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>Connect to MSN Messenger using an HTTP-like protocol on port 80.
 This may be used to connect on a network with a restrictive firewall.
-Only check this option in the normal connection doesn't work.</string>
+Only check this option if the normal connection doesn't work.</string>
                                 </property>
                             </widget>
                             <widget class="QLayoutWidget">
@@ -1246,14 +1241,8 @@ Only check this option in the normal connection doesn't work.</string>
                                         <property name="text">
                                             <string>S&amp;pecify a port for incoming webcam connection:</string>
                                         </property>
-                                        <property name="accel">
-                                            <string>Alt+P</string>
-                                        </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>If you are behind a firewall, you may specify a port to use for incoming connection, and configure your firewall to accept connections on this port. 
-Incoming connection is used for webcam.
-If you don't specify a port, the operating system will choose an available port.  
-It is recommended to leave the checkbox unchecked.</string>
+                                            <string>If you are behind a firewall, you may specify a port to use for the incoming connection, and configure your firewall to accept connections on this port. Incoming connections are used for the webcam. If you don't specify yourself a port, the operating system will choose an available port for you. It is recommended to leave the checkbox unchecked.</string>
                                         </property>
                                     </widget>
                                     <widget class="QSpinBox">
@@ -1273,10 +1262,8 @@ It is recommended to leave the checkbox unchecked.</string>
                                             <number>6891</number>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>If you are behind a firewall, you may specify a port to use for incoming connection, and configure your firewall to accept connection on this port.
-Incoming connection is used for webcam.
-If you don't specify a port, the operating system will choose an available port.  
-It is recommended to leave the checkbox unchecked.</string>
+                                            <string>If you are behind a firewall, you may specify a port to use for the incoming connection, and configure your firewall to
+					     accept connections on this port. Incoming connections are used for the webcam. If you don't specify yourself a port, the operating system will choose an available port for you. It is recommended to leave the checkbox unchecked.</string>
                                         </property>
                                     </widget>
                                 </hbox>

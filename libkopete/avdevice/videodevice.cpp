@@ -40,8 +40,7 @@ VideoDevice::VideoDevice()
 //	kdDebug() << "libkopete (avdevice): VideoDevice() called" << endl;
 	descriptor = -1;
 	m_streambuffers  = 0;
-	m_autobrightcontrast = false;
-	m_autocolorcorrection = false;
+	m_current_input = 0;
 //	kdDebug() << "libkopete (avdevice): VideoDevice() exited successfuly" << endl;
 }
 
@@ -201,7 +200,7 @@ int VideoDevice::checkDevice()
 				m_buffer_size=fmt.fmt.pix.sizeimage ;*/
 
 			int inputisok=EXIT_SUCCESS;
-			input.clear();
+			m_input.clear();
 			for(unsigned int loop=0; inputisok==EXIT_SUCCESS; loop++)
 			{
 				struct v4l2_input videoinput;
@@ -213,7 +212,7 @@ int VideoDevice::checkDevice()
 					VideoInput tempinput;
 					tempinput.name = QString::fromLocal8Bit((const char*)videoinput.name);
 					tempinput.hastuner=videoinput.type & V4L2_INPUT_TYPE_TUNER;
-					input.push_back(tempinput);
+					m_input.push_back(tempinput);
 					kdDebug() <<  k_funcinfo << "Input " << loop << ": " << tempinput.name << " (tuner: " << ((videoinput.type & V4L2_INPUT_TYPE_TUNER) != 0) << ")" << endl;
 					if((videoinput.type & V4L2_INPUT_TYPE_TUNER) != 0)
 					{
@@ -271,7 +270,7 @@ int VideoDevice::checkDevice()
 
 
 				int inputisok=EXIT_SUCCESS;
-				input.clear();
+				m_input.clear();
 				for(int loop=0; loop < V4L_capabilities.channels; loop++)
 				{
 					struct video_channel videoinput;
@@ -284,7 +283,7 @@ int VideoDevice::checkDevice()
 						VideoInput tempinput;
 						tempinput.name = QString::fromLocal8Bit((const char*)videoinput.name);
 						tempinput.hastuner=videoinput.flags & VIDEO_VC_TUNER;
-						input.push_back(tempinput);
+						m_input.push_back(tempinput);
 //						kdDebug() << "libkopete (avdevice): Input " << loop << ": " << tempinput.name << " (tuner: " << ((videoinput.flags & VIDEO_VC_TUNER) != 0) << ")" << endl;
 /*						if((input.type & V4L2_INPUT_TYPE_TUNER) != 0)
 						{
@@ -302,13 +301,13 @@ int VideoDevice::checkDevice()
 		}
 #endif
 		kdDebug() <<  k_funcinfo << "checkDevice(): " << "Supported pixel formats:" << endl;
-		for(int pixelformat = PIXELFORMAT_GREY ; pixelformat <= PIXELFORMAT_BGR32 ; pixelformat++)
+/*		for(int pixelformat = PIXELFORMAT_GREY ; pixelformat <= PIXELFORMAT_BGR32 ; pixelformat++)
 		{
 			if(PIXELFORMAT_NONE != setPixelFormat((pixel_format)pixelformat))
 			{
 				kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(pixelformat) << endl;
 			}
-		}
+		}*/
 		// Now we must execute the proper initialization according to the type of the driver.
 		kdDebug() <<  k_funcinfo << "checkDevice() exited successfuly." << endl;
 		return EXIT_SUCCESS;
@@ -369,7 +368,7 @@ int VideoDevice::showDeviceCapabilities()
 		kdDebug() <<  k_funcinfo << "    Min res: " << minWidth() << " x " << minHeight() << endl;
 		kdDebug() <<  k_funcinfo << "    Inputs : " << inputs() << endl;
 		for (unsigned int loop=0; loop < inputs(); loop++)
-			kdDebug() <<  k_funcinfo << "Input " << loop << ": " << input[loop].name << " (tuner: " << input[loop].hastuner << ")" << endl;
+			kdDebug() <<  k_funcinfo << "Input " << loop << ": " << m_input[loop].name << " (tuner: " << m_input[loop].hastuner << ")" << endl;
 		kdDebug() <<  k_funcinfo << "showDeviceCapabilities() exited successfuly." << endl;
 		return EXIT_SUCCESS;
 	}
@@ -463,7 +462,7 @@ int VideoDevice::initDevice()
 
 unsigned int VideoDevice::inputs()
 {
-	return input.size();
+	return m_input.size();
 }
 
 
@@ -726,7 +725,7 @@ int VideoDevice::selectInput(int newinput)
 			default:
 				break;
 		}
-		kdDebug() <<  k_funcinfo << "Selected input " << newinput << " (" << input[newinput].name << ")" << endl;
+		kdDebug() <<  k_funcinfo << "Selected input " << newinput << " (" << m_input[newinput].name << ")" << endl;
 		return EXIT_SUCCESS;
 	}
 	return EXIT_FAILURE;
@@ -825,7 +824,7 @@ int VideoDevice::getFrame()
 			case IO_METHOD_READ:
 				kdDebug() <<  k_funcinfo << "Using IO_METHOD_READ.File descriptor: " << descriptor << " Buffer address: " << &m_currentbuffer.data[0] << " Size: " << m_currentbuffer.data.size() << endl;
 				bytesread = read (descriptor, &m_currentbuffer.data[0], m_currentbuffer.data.size());
-				if (-1 == bytesread)
+				if (-1 == bytesread) // must verify this point with ov511 driver.
 				{
 					kdDebug() <<  k_funcinfo << "IO_METHOD_READ failed." << endl;
 					switch (errno)
@@ -896,9 +895,7 @@ kdDebug() << k_funcinfo << "m_rawbuffers[" << v4l2buffer.index << "].start: " <<
 }*/
 
 
-
 memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_currentbuffer.data.size());
-
 				if (-1 == xioctl (VIDIOC_QBUF, &v4l2buffer))
 					return errnoReturn ("VIDIOC_QBUF");
 #endif
@@ -937,7 +934,7 @@ memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_current
 		}
 
 // Automatic color correction. Now it just swaps R and B channels in RGB24/BGR24 modes.
-		if(m_autocolorcorrection)
+		if(m_input[m_current_input].getAutoColorCorrection())
 		{
 			switch(m_currentbuffer.pixelformat)
 			{
@@ -974,6 +971,7 @@ memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_current
 					break;
 			}
 		}
+kdDebug() <<  k_funcinfo << "10 Using IO_METHOD_READ.File descriptor: " << descriptor << " Buffer address: " << &m_currentbuffer.data[0] << " Size: " << m_currentbuffer.data.size() << endl;
 
 
 // put frame copy operation here
@@ -1111,16 +1109,94 @@ int VideoDevice::close()
 	return EXIT_SUCCESS;
 }
 
+float VideoDevice::getBrightness()
+{
+	return m_input[m_current_input].getBrightness();
+}
+
+float VideoDevice::setBrightness(float brightness)
+{
+	if ( brightness > 1 )
+		brightness = 1;
+	else
+	if ( brightness < 0 )
+		brightness = 0;
+	m_input[m_current_input].setBrightness(brightness);
+	return getBrightness();
+}
+
+float VideoDevice::getContrast()
+{
+	return m_input[m_current_input].getContrast();
+}
+
+float VideoDevice::setContrast(float contrast)
+{
+	if ( contrast > 1 )
+		contrast = 1;
+	else
+	if ( contrast < 0 )
+		contrast = 0;
+	m_input[m_current_input].setContrast(contrast);
+	return getContrast();
+}
+
+float VideoDevice::getSaturation()
+{
+	return m_input[m_current_input].getSaturation();
+}
+
+float VideoDevice::setSaturation(float saturation)
+{
+	if ( saturation > 1 )
+		saturation = 1;
+	else
+	if ( saturation < 0 )
+		saturation = 0;
+	m_input[m_current_input].setSaturation(saturation);
+	return getSaturation();
+}
+
+float VideoDevice::getHue()
+{
+	return m_input[m_current_input].getHue();
+}
+
+float VideoDevice::setHue(float hue)
+{
+	if ( hue > 1 )
+		hue = 1;
+	else
+	if ( hue < 0 )
+		hue = 0;
+	m_input[m_current_input].setHue(hue);
+	return getHue();
+}
+
+
+bool VideoDevice::getAutoBrightnessContrast()
+{
+	return m_input[m_current_input].getAutoBrightnessContrast();
+}
+
+bool VideoDevice::setAutoBrightnessContrast(bool brightnesscontrast)
+{
+	kdDebug() <<  k_funcinfo << "VideoDevice::setAutoBrightnessContrast(" << brightnesscontrast << ") called." << endl;
+	m_input[m_current_input].setAutoBrightnessContrast(brightnesscontrast);
+	return m_input[m_current_input].getAutoBrightnessContrast();
+
+}
+
 bool VideoDevice::getAutoColorCorrection()
 {
-	return m_autocolorcorrection;
+	return m_input[m_current_input].getAutoColorCorrection();
 }
 
 bool VideoDevice::setAutoColorCorrection(bool colorcorrection)
 {
 	kdDebug() <<  k_funcinfo << "VideoDevice::setAutoColorCorrection(" << colorcorrection << ") called." << endl;
-	m_autocolorcorrection = colorcorrection;
-	return m_autocolorcorrection;
+	m_input[m_current_input].setAutoColorCorrection(colorcorrection);
+	return m_input[m_current_input].getAutoColorCorrection();
 }
 
 

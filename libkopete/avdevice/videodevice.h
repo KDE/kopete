@@ -149,6 +149,16 @@ public:
 	int stopCapturing();
 	int close();
 
+	float getBrightness();
+	float setBrightness(float brightness);
+	float getContrast();
+	float setContrast(float contrast);
+	float getSaturation();
+	float setSaturation(float saturation);
+	float getHue();
+	float setHue(float Hue);
+	bool getAutoBrightnessContrast();
+	bool setAutoBrightnessContrast(bool brightnesscontrast);
 	bool getAutoColorCorrection();
 	bool setAutoColorCorrection(bool colorcorrection);
 
@@ -176,7 +186,7 @@ public:
 	struct video_capability V4L_capabilities;
 	struct video_buffer V4L_videobuffer;
 #endif	
-	QValueVector<Kopete::AV::VideoInput> input;
+	QValueVector<Kopete::AV::VideoInput> m_input;
 //	QFile file;
 protected:
 	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
@@ -197,9 +207,6 @@ protected:
 	bool m_videoread;
 	bool m_videoasyncio;
 	bool m_videostream;
-
-	bool m_autobrightcontrast;
-	bool m_autocolorcorrection;
 
 	int xioctl(int request, void *arg);
 	int errnoReturn(const char* s);

@@ -96,27 +96,27 @@
                 <widget class="QComboBox" row="7" column="0">
                     <item>
                         <property name="text">
-                            <string>Open all messages in a new chat window</string>
+                            <string>Open All Messages in New Chat Window</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>Group messages from the same account in the same chat window</string>
+                            <string>Group Messages From Same Account in Same Chat Window</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>Group all messages in the same chat window</string>
+                            <string>Group All Messages in Same Chat Window</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>Group messages from contacts in the same group in the same chat window</string>
+                            <string>Group Messages From Contacts in Same Group in Same Chat Window</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>Group messages from the same metacontact in the same chat window</string>
+                            <string>Group Messages From Same Metacontact in Same Chat Window</string>
                         </property>
                     </item>
                     <property name="name">
