@@ -931,9 +931,18 @@ void Client::joinChatRoom( const QString& roomName, int exchange )
     kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "joining the chat room '" << roomName
                              << "' on exchange " << exchange << endl;
     ChatNavServiceTask* cnst = new ChatNavServiceTask( c->rootTask() );
+    connect( cnst, SIGNAL( connectChat( WORD, QByteArray, WORD ) ),
+             this, SLOT( setupChatConnection( WORD, QByteArray, WORD ) ) );
     cnst->createRoom( exchange, roomName );
 
 }
+
+void Client::setupChatConnection( WORD exchange, QByteArray cookie, WORD instance )
+{
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "connection to chat room" << endl;
+
+}
+
 
 Connection* Client::createConnection( const QString& host, const QString& port )
 {

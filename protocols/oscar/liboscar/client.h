@@ -426,6 +426,11 @@ protected slots:
      */
     void setChatExchangeList( const QValueList<int>& exchanges );
 
+    /**
+     * set up the connection to a chat room
+     */
+    void setupChatConnection( WORD, QByteArray, WORD );
+
 
     void determineDisconnection( int, const QString& );
 

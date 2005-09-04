@@ -36,6 +36,14 @@ void ServerRedirectTask::setService( WORD family )
 	m_service = family;
 }
 
+void ServerRedirectTask::setChatParams( WORD exchange, const QString& room, WORD instance )
+{
+    m_chatExchange = exchange;
+    m_chatRoom = room;
+    m_chatInstance = instance;
+}
+
+
 void ServerRedirectTask::onGo()
 {
 	if ( m_service != 0 )
@@ -66,15 +74,30 @@ bool ServerRedirectTask::take( Transfer* transfer )
 	return value;
 }
 
+
 void ServerRedirectTask::requestNewService()
 {
 	FLAP f = { 0x02, client()->flapSequence(), 0x00 };
 	SNAC s = { 0x0001, 0x0004, 0x0000, client()->snacSequence() };
 	Buffer* b = new Buffer();
 	b->addWord( m_service );
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Requesting server for service " << m_service << endl;
-	Transfer* t = createTransfer( f, s, b );
-	send( t );
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Requesting server for service " << m_service << endl;
+    if ( m_service == 0x000E )
+    {
+        TLV chatRedirectTLV;
+        chatRedirectTLV.type = 0x0001;
+        Buffer chatBuf;
+        chatBuf.addWord( m_chatExchange );
+        chatBuf.addByte( m_chatRoom.length() );
+        chatBuf.addString( m_chatRoom.latin1(), m_chatRoom.length() );
+        chatBuf.addWord( m_chatInstance );
+        chatRedirectTLV.length = chatBuf.length();
+        chatRedirectTLV.data.duplicate( chatBuf );
+        b->addTLV( chatRedirectTLV );
+    }
+
+    Transfer* t = createTransfer( f, s, b );
+    send( t );
 }
 
 bool ServerRedirectTask::handleRedirect()

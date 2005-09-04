@@ -49,6 +49,7 @@ public:
 
 signals:
     void haveChatExchanges( const QValueList<int>& );
+    void connectChat( WORD, QByteArray, WORD );
 
 private:
 	void handleExchangeInfo( const TLV& t );

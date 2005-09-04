@@ -86,15 +86,17 @@ bool ChatNavServiceTask::take( Transfer* transfer )
         case 0x0003:
             kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "exchange info TLV found" << endl;
 			handleExchangeInfo( t );
+            //set the exchanges for the client
+            emit haveChatExchanges( m_exchanges );
             break;
         case 0x0004:
             kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "room info TLV found" << endl;
+            handleBasicRoomInfo( t );
             break;
         };
     }
 
-    //set the exchanges for the client
-    emit haveChatExchanges( m_exchanges );
+
     setSuccess( 0, QString::null );
     setTransfer( 0 );
 	return true;
@@ -221,12 +223,13 @@ void ChatNavServiceTask::handleExchangeInfo( const TLV& t )
 
 void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
 {
-	kdDebug(OSCAR_RAW_DEBUG) << "Parsing exchange info TLV" << t.length << endl;
+	kdDebug(OSCAR_RAW_DEBUG) << "Parsing room info TLV" << t.length << endl;
 	Buffer b(t.data);
-	WORD id = b.getWord();
-	int tlvCount = b.getWord();
-	int realCount = 0;
-	kdDebug(OSCAR_RAW_DEBUG) << "Expecting " << tlvCount << " TLVs" << endl;
+    WORD exchange = b.getWord();
+    QByteArray cookie( b.getBlock( b.getByte() ) );
+    WORD instance = b.getWord();
+    b.getWord(); //detail level, which i'm not sure we need
+    WORD tlvCount = b.getWord();
 	while ( b.length() > 0 )
 	{
 		TLV t = b.getTLV();
@@ -284,8 +287,8 @@ void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
 			kdDebug(OSCAR_RAW_DEBUG) << "unknown TLV type " << t.type << endl;
 			break;
 		}
-		realCount++;
 	}
+    emit connectChat( exchange, cookie, instance );
 }
 
 void ChatNavServiceTask::handleCreateRoomInfo( const TLV& t )
