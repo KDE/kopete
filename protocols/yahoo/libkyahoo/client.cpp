@@ -181,6 +181,15 @@ void Client::sendMessage( const QString &to, const QString &msg )
 	smt->go( true );
 }
 
+void Client::sendBuzz( const QString &to )
+{
+	SendMessageTask *smt = new SendMessageTask( d->root );
+	smt->setTarget( to );
+	smt->setText( QString::fromLatin1( "<ding>" ) );
+	smt->setPicureFlag( pictureFlag() );
+	smt->go( true );
+}
+
 QString Client::userId()
 {
 	return d->user;

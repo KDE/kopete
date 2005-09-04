@@ -73,7 +73,15 @@ Q_OBJECT
 		 */
 		void sendTyping( const QString &to, int typ);
 		
+		/**
+		 * Send a Message
+		 */
 		void sendMessage( const QString &to, const QString &msg );
+
+		/**
+		 * Send a Buzz
+		 */
+		void sendBuzz( const QString &to );
 
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
