@@ -27,6 +27,10 @@
 #include "logintask.h"
 #include "listtask.h"
 #include "statusnotifiertask.h"
+#include "mailnotifiertask.h"
+#include "messagereceivertask.h"
+#include "sendnotifytask.h"
+#include "sendmessagetask.h"
 #include "client.h"
 #include "yahootypes.h"
 
@@ -47,6 +51,8 @@ public:
 	LoginTask * loginTask;
 	ListTask *listTask;
 	StatusNotifierTask *statusTask;
+	MailNotifierTask *mailTask;
+	MessageReceiverTask *messageReceiverTask;
 
 	// Connection data
 	uint sessionID;
@@ -101,10 +107,10 @@ void Client::cs_connected()
 	d->loginTask = new LoginTask( d->root );
 	d->listTask = new ListTask( d->root );
 	QObject::connect( d->loginTask, SIGNAL( finished() ), SLOT( lt_loginFinished() ) );
+	QObject::connect( d->loginTask, SIGNAL(   ), SLOT( lt_gotSessionID( uint ) ) );
 	QObject::connect( d->listTask, SIGNAL( gotCookies() ), SLOT( slotGotCookies() ) );
 	QObject::connect( d->listTask, SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ), 
 					SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ) );
-	QObject::connect( d->listTask, SIGNAL(   ), SIGNAL(   ) );
 	d->loginTask->go(true);
 	d->active = true;
 }
@@ -112,16 +118,6 @@ void Client::cs_connected()
 void Client::close()
 {
 	kdDebug(14180) << k_funcinfo << endl;
-}
-
-QString Client::host()
-{
-	return d->host;
-}
-
-int Client::port()
-{
-	return d->port;
 }
 
 // SLOTS //
@@ -147,6 +143,12 @@ void Client::lt_loginFinished()
 	emit loggedIn( d->loginTask->statusCode(), d->loginTask->statusString() );
 }
 
+void Client::lt_gotSessionID( uint id )
+{
+	kdDebug(14180) << k_funcinfo << "Got SessionID: " << id << endl;	
+	d->sessionID = id;
+}
+
 void Client::slotGotCookies()
 {
 	kdDebug(14180) << k_funcinfo << "Y: " << d->listTask->yCookie()
@@ -160,6 +162,24 @@ void Client::slotGotCookies()
 }
 
 // INTERNALS //
+
+void Client::sendTyping( const QString &who, int typ)
+{
+	SendNotifyTask *snt = new SendNotifyTask( d->root );
+	snt->setTarget( who );
+	snt->setState( SendNotifyTask::Active );
+	snt->setType( SendNotifyTask::NotifyTyping );
+	snt->go( true );
+}
+
+void Client::sendMessage( const QString &to, const QString &msg )
+{
+	SendMessageTask *smt = new SendMessageTask( d->root );
+	smt->setTarget( to );
+	smt->setText( msg );
+	smt->setPicureFlag( pictureFlag() );
+	smt->go( true );
+}
 
 QString Client::userId()
 {
@@ -180,6 +200,26 @@ QCString Client::ipAddress()
 {
 	//TODO determine ip address
 	return "127.0.0.1";
+}
+
+QString Client::host()
+{
+	return d->host;
+}
+
+int Client::port()
+{
+	return d->port;
+}
+
+uint Client::sessionID()
+{
+	return d->sessionID;
+}
+
+int Client::pictureFlag()
+{
+	return 0;
 }
 
 void Client::distribute( Transfer * transfer )
@@ -216,12 +256,30 @@ void Client::initTasks()
 	d->statusTask = new StatusNotifierTask( d->root );
 	QObject::connect( d->statusTask, SIGNAL( statusChanged( const QString&, int, const QString&, int ) ), 
 				SIGNAL( statusChanged( const QString&, int, const QString&, int ) ) );
+
+	d->mailTask = new MailNotifierTask( d->root );
+	QObject::connect( d->mailTask, SIGNAL( mailNotify(const QString&, const QString&, int) ), 
+				SIGNAL( mailNotify(const QString&, const QString&, int) ) );
+
+	d->messageReceiverTask = new MessageReceiverTask( d->root );
+	QObject::connect( d->messageReceiverTask, SIGNAL( gotIm(const QString&, const QString&, long, int) ),
+				SIGNAL( gotIm(const QString&, const QString&, long, int) ) );
+	QObject::connect( d->messageReceiverTask, SIGNAL( systemMessage(const QString&) ),
+				SIGNAL( systemMessage(const QString&) ) );
+	QObject::connect( d->messageReceiverTask, SIGNAL( typingNotify(const QString &, int) ),
+				SIGNAL( typingNotify(const QString &, int) ) );
+	QObject::connect( d->messageReceiverTask, SIGNAL( gotBuzz( const QString &, long ) ),
+				SIGNAL( gotBuzz( const QString &, long ) ) );
 }
 
 void Client::deleteTasks()
 {
 	d->statusTask->deleteLater();
 	d->statusTask = 0L;
+	d->mailTask->deleteLater();
+	d->mailTask = 0L;
+	d->messageReceiverTask->deleteLater();
+	d->messageReceiverTask = 0L;
 }
 
 #include "client.moc"

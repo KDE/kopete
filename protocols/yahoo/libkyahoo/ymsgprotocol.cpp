@@ -148,9 +148,16 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceStatus " << servicenum << endl;
 			service = Yahoo::ServiceStatus;
 		break;
+		case (Yahoo::ServiceMessage) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceMessage " << servicenum << endl;
+			service = Yahoo::ServiceMessage;
+		break;
+		case (Yahoo::ServiceNotify) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceNotify " << servicenum << endl;
+			service = Yahoo::ServiceNotify;
+		break;
 		/*
 		ServiceIdle, // 5 (placemarker)
-		ServiceMessage,
 		ServiceMailStat,
 		ServiceUserStat, // 0xa
 		ServiceChatInvite,
@@ -174,7 +181,6 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		ServiceGameMsg = 0x2a,
 		ServiceFileTransfer = 0x46,
 		ServiceVoiceChat = 0x4A,
-		ServiceNotify,
 		ServiceVerify = 76,
 		ServiceP2PFileXfer,
 		ServicePeerToPeer = 0x4F,	// Checks if P2P possible 

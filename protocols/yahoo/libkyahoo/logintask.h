@@ -30,6 +30,7 @@ class QString;
 */
 class LoginTask : public Task
 {
+Q_OBJECT
 public:
 	LoginTask(Task *parent);
 	~LoginTask();
@@ -47,6 +48,8 @@ protected:
 	void sendAuthResp_pre_0x0b(const QString &sn, const QString &seed);
 	void handleAuthResp(Transfer *transfer);
 	State mState;
+signals:
+	void haveSessionID( uint );
 };
 
 #endif

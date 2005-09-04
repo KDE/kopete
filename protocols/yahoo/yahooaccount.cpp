@@ -143,8 +143,7 @@ void YahooAccount::slotGoStatus( int status, const QString &awayMessage)
 
 Client *YahooAccount::yahooSession()
 {
-	//return m_session ? m_session : 0L;
-	return 0L;
+	return m_session ? m_session : 0L;
 }
 
 QString YahooAccount::stripMsgColorCodes(const QString& msg)

@@ -121,6 +121,11 @@ void YMSGTransfer::setParam(const QString &index, const QString &data)
 	d->data[index].append( data );
 }
 
+void YMSGTransfer::setParam( const QString &index, int data )
+{
+	d->data[index].append( QString::number( data ) );
+}
+
 int YMSGTransfer::length()
 {
 	int len = 0;

@@ -54,6 +54,7 @@ public:
 	QString firstParam(const QString &index);
 	QStringList paramList(const QString &index);
 	void setParam(const QString &index, const QString &data);
+	void setParam(const QString &index, int data);
 	QByteArray serialize();
 	
 	int length();

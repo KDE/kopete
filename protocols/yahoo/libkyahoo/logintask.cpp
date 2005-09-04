@@ -188,6 +188,8 @@ void LoginTask::sendAuthResp(Transfer* transfer)
 		kdDebug(14180) << k_funcinfo << "Unknown quth version " << endl;
 	}	
 	mState = SentAuthResp;
+
+	emit haveSessionID( sessionID );
 }
 
 void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint sessionID)
@@ -237,7 +239,6 @@ void LoginTask::handleAuthResp(Transfer *transfer)
 			setSuccess( false );
 		break;
 	}
-	
-	
-
 }
+
+#include "logintask.moc"

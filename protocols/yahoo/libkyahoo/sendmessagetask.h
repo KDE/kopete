@@ -1,6 +1,6 @@
 /*
     Kopete Yahoo Protocol
-    Notifies about status changes of buddies
+    Send a message
 
     Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
 
@@ -14,8 +14,8 @@
     *************************************************************************
 */
 
-#ifndef STATUSNOTIFIERTASK_H
-#define STATUSNOTIFIERTASK_H
+#ifndef SENDMESSAGETASK_H
+#define SENDMESSAGETASK_H
 
 #include "task.h"
 
@@ -24,21 +24,21 @@ class QString;
 /**
 @author André Duffeck
 */
-class StatusNotifierTask : public Task
+class SendMessageTask : public Task
 {
-Q_OBJECT
 public:
-	StatusNotifierTask(Task *parent);
-	~StatusNotifierTask();
+	SendMessageTask(Task *parent);
+	~SendMessageTask();
 	
-	bool take(Transfer *transfer);
-
-protected:
-	bool forMe( Transfer *transfer ) const;
-	void parseStatus( Transfer *transfer );
-signals:
-	void statusChanged( const QString&, int, const QString&, int );
-	void error( const QString& );
+	virtual void onGo();
+	
+	void setText( const QString &text );
+	void setTarget( const QString &to );
+	void setPicureFlag( int flag );
+private:
+	QString m_text;
+	QString m_target;
+	int m_pictureFlag;
 };
 
 #endif

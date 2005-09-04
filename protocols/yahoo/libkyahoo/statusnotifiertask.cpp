@@ -1,6 +1,6 @@
 /*
     Kopete Yahoo Protocol
-    Handles several lists such as buddylist, ignorelist and so on
+    Notifies about status changes of buddies
 
     Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
 
@@ -13,8 +13,6 @@
     *                                                                       *
     *************************************************************************
 */
-
-#include <qstring.h>
 
 #include "statusnotifiertask.h"
 #include "transfer.h"

@@ -58,6 +58,9 @@ public:
 	QString group() const;
 	void setGroup( const QString& );
 
+	/** The userId getter method**/
+	QString userId() const;
+
 	void gotWebcamInvite();
 	void receivedWebcamImage( const QPixmap& );
 	void webcamClosed( int );

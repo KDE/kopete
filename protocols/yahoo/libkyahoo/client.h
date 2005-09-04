@@ -67,7 +67,14 @@ Q_OBJECT
 		 */
 		QString host();
 		int port();
+
+		/**
+		 * Send a Typing notification
+		 */
+		void sendTyping( const QString &to, int typ);
 		
+		void sendMessage( const QString &to, const QString &msg );
+
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -96,6 +103,16 @@ Q_OBJECT
 		 */
 		QCString ipAddress();
 		
+		/**
+		 * current Session ID
+		 */
+		uint sessionID();
+		
+		/**
+		 * return the pictureFlag describing the status of our buddy icon
+		 * 0 = no icon, 2 = icon, 1 = avatar (?)
+		 */
+		int pictureFlag();
 		/**
 		 * Access the root Task for this client, so tasks may be added to it.
 		 */
@@ -134,9 +151,30 @@ Q_OBJECT
 		 * Notifies about the status of online buddies
 		 */
 		void statusChanged( const QString&, int, const QString&, int );
+		/**
+		 * Notifies about mails
+		 */
+		void mailNotify( const QString&, const QString&, int );
+		/**
+		 * We got a new message
+		 */
+		void gotIm( const QString&, const QString&, long, int );
+		/**
+		 * We got a new system message
+		 */
+		void systemMessage( const QString& );
+		/**
+		 * The buddy is typing a message
+		 */
+		void typingNotify( const QString &, int );
+		/**
+		 * Notifies about a BUZZ notification
+		 */
+		void gotBuzz( const QString &, long );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();
+		void lt_gotSessionID( uint );
 		void cs_connected();
 		void slotGotCookies();
 		
