@@ -157,7 +157,7 @@
                         <string>Use mouse navigation instead of scroll-bars for contact list</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>This navigation scheme is designed to remove the vertical scrollbar. Instead of dragging the scrollbar you just move your mouse on the list vertically: as you move your mouse, the list will move in the opposite direction and you can reach your target contact. Every contact list item collides with the mouse cursor at one certain point.</string>
+                        <string>This navigation scheme is designed to remove the vertical scrollbar. Instead of dragging the scrollbar you just move your mouse on the list vertically: as you move your mouse, the list will move in the opposite direction and you can reach your target contact. Each contact will be under the mouse cursor at a certain point.</string>
                     </property>
                 </widget>
             </vbox>
