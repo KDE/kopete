@@ -37,6 +37,7 @@ class YMSGTransfer : public Transfer
 {
 public:
 	YMSGTransfer(Yahoo::Service service);
+	YMSGTransfer(Yahoo::Service service, Yahoo::Status status);
 	YMSGTransfer();
 	~YMSGTransfer();
 

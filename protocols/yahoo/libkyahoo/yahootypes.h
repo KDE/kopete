@@ -91,6 +91,7 @@ namespace Yahoo
 	
 	enum Status 
 	{
+		StatusDisconnected = -1,
 		StatusAvailable = 0,
 		StatusBRB = 1,
 		StatusBusy,

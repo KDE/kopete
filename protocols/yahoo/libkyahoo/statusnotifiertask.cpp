@@ -75,6 +75,12 @@ void StatusNotifierTask::parseStatus( Transfer* transfer )
 	if (!t)
 		return;
 
+	if( t->status() == Yahoo::StatusDisconnected && 
+		t->service() == Yahoo::ServiceLogoff )
+	{
+		emit loggedOff( Yahoo::YAHOO_LOGIN_DUPL, QString::null );
+	}
+
 	QStringList nicks;	/* key = 7  */
 	QStringList states;	/* key = 10  */
 	QStringList session;	/* key = 11  */

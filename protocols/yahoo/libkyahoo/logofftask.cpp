@@ -1,6 +1,6 @@
 /*
     Kopete Yahoo Protocol
-    Notifies about status changes of buddies
+    Log off the Yahoo server
 
     Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
 
@@ -14,32 +14,29 @@
     *************************************************************************
 */
 
-#ifndef STATUSNOTIFIERTASK_H
-#define STATUSNOTIFIERTASK_H
+#include "logofftask.h"
+#include "transfer.h"
+#include "ymsgtransfer.h"
+#include "yahootypes.h"
+#include "client.h"
+#include <qstring.h>
 
-#include "task.h"
-
-class QString;
-
-/**
-@author André Duffeck
-*/
-class StatusNotifierTask : public Task
+LogoffTask::LogoffTask(Task* parent) : Task(parent)
 {
-Q_OBJECT
-public:
-	StatusNotifierTask(Task *parent);
-	~StatusNotifierTask();
+	kdDebug(14180) << k_funcinfo << endl;
+}
+
+LogoffTask::~LogoffTask()
+{
+}
+
+void LogoffTask::onGo()
+{
+	kdDebug(14180) << k_funcinfo << endl;
+
+	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceLogoff);
+	t->setId( client()->sessionID() );
+	send( t );
 	
-	bool take(Transfer *transfer);
-
-protected:
-	bool forMe( Transfer *transfer ) const;
-	void parseStatus( Transfer *transfer );
-signals:
-	void statusChanged( const QString&, int, const QString&, int );
-	void error( const QString& );
-	void loggedOff( int, const QString& );
-};
-
-#endif
+	setSuccess( true );
+}

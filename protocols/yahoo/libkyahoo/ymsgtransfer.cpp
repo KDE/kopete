@@ -61,6 +61,15 @@ YMSGTransfer::YMSGTransfer(Yahoo::Service service)
 	d->status = Yahoo::StatusAvailable;
 }
 
+YMSGTransfer::YMSGTransfer(Yahoo::Service service, Yahoo::Status status)
+{
+	d = new YMSGTransferPrivate;
+	d->valid = true;
+	d->service = service;
+	d->id = 0;
+	d->status = status;
+}
+
 YMSGTransfer::~YMSGTransfer()
 {
 	delete d;

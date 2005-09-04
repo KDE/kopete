@@ -26,6 +26,7 @@
 
 #include "rtf2html.h"
 #include "transfer.h"
+#include "yahootypes.h"
 
 
 class QString;
@@ -56,7 +57,7 @@ Q_OBJECT
 		 * @param auth indicate whether we're connecting to the authorizer or the bos server
 		 */
 		void connect( const QString &host, const uint port, const QString &userId, const QString &pass );
-		
+
 		/**
 		 * Logout and disconnect
 		 */
@@ -121,6 +122,17 @@ Q_OBJECT
 		 * 0 = no icon, 2 = icon, 1 = avatar (?)
 		 */
 		int pictureFlag();
+
+		/**
+		 * Get our status
+		 */
+		Yahoo::Status status();
+
+		/**
+		 * Set our status
+		 */
+		void setStatus( Yahoo::Status );
+
 		/**
 		 * Access the root Task for this client, so tasks may be added to it.
 		 */

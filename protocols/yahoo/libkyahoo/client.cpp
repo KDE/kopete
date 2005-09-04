@@ -31,6 +31,7 @@
 #include "messagereceivertask.h"
 #include "sendnotifytask.h"
 #include "sendmessagetask.h"
+#include "logofftask.h"
 #include "client.h"
 #include "yahootypes.h"
 
@@ -44,7 +45,6 @@ public:
 	Task *root;
 	QString host, user, pass;
 	uint port;
-/*	int tzoffset;*/
 	bool active;
 
 	// tasks
@@ -60,6 +60,7 @@ public:
 	QString tCookie;
 	QString cCookie;
 	QString loginCookie;
+	Yahoo::Status status;
 
 };
 
@@ -107,7 +108,7 @@ void Client::cs_connected()
 	d->loginTask = new LoginTask( d->root );
 	d->listTask = new ListTask( d->root );
 	QObject::connect( d->loginTask, SIGNAL( finished() ), SLOT( lt_loginFinished() ) );
-	QObject::connect( d->loginTask, SIGNAL(   ), SLOT( lt_gotSessionID( uint ) ) );
+	QObject::connect( d->loginTask, SIGNAL(  ), SLOT( lt_gotSessionID( uint ) ) );
 	QObject::connect( d->listTask, SIGNAL( gotCookies() ), SLOT( slotGotCookies() ) );
 	QObject::connect( d->listTask, SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ), 
 					SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ) );
@@ -118,6 +119,9 @@ void Client::cs_connected()
 void Client::close()
 {
 	kdDebug(14180) << k_funcinfo << endl;
+	LogoffTask *lt = new LogoffTask( d->root );
+	lt->go( true );
+	deleteTasks();
 }
 
 // SLOTS //
@@ -200,6 +204,16 @@ void Client::setUserId( const QString & userId )
 	d->user = userId;
 }
 
+Yahoo::Status Client::status()
+{
+	return d->status;
+}
+
+void Client::setStatus( Yahoo::Status status )
+{
+	d->status = status;
+}
+
 QString Client::password()
 {
 	return d->pass;
@@ -265,6 +279,8 @@ void Client::initTasks()
 	d->statusTask = new StatusNotifierTask( d->root );
 	QObject::connect( d->statusTask, SIGNAL( statusChanged( const QString&, int, const QString&, int ) ), 
 				SIGNAL( statusChanged( const QString&, int, const QString&, int ) ) );
+	QObject::connect( d->statusTask, SIGNAL( loggedOff( int, const QString& ) ), 
+				SIGNAL( loggedIn( int, const QString& ) ) );
 
 	d->mailTask = new MailNotifierTask( d->root );
 	QObject::connect( d->mailTask, SIGNAL( mailNotify(const QString&, const QString&, int) ), 

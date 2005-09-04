@@ -217,6 +217,9 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		case (Yahoo::StatusBRB) :
 			status = Yahoo::StatusBRB;
 		break;
+		case (Yahoo::StatusDisconnected) :
+			status = Yahoo::StatusDisconnected;
+		break;
 		/*StatusBusy
 		StatusNotAtHome
 		StatusNotAtDesk

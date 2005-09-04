@@ -430,7 +430,7 @@ void YahooAccount::disconnect()
 	{
 		kdDebug(14180) <<  "Attempting to disconnect from Yahoo server " << endl;
 
-		//m_session->logOff();
+		m_session->close();
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 
 		for ( QDictIterator<Kopete::Contact> i( contacts() ); i.current(); ++i )
