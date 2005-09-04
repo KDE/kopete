@@ -691,6 +691,11 @@ QValueList<int> Client::chatExchangeList() const
     return d->exchanges;
 }
 
+void Client::setChatExchangeList( const QValueList<int>& exchanges )
+{
+	d->exchanges = exchanges;
+}
+
 void Client::requestAIMProfile( const QString& contact )
 {
 	d->userInfoTask->requestInfoFor( contact, UserInfoTask::Profile );
@@ -923,7 +928,8 @@ void Client::joinChatRoom( const QString& roomName, int exchange )
     if ( !c )
         return;
 
-    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "joining the chat room '" << roomName << "'" << endl;
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "joining the chat room '" << roomName
+                             << "' on exchange " << exchange << endl;
     ChatNavServiceTask* cnst = new ChatNavServiceTask( c->rootTask() );
     cnst->createRoom( exchange, roomName );
 

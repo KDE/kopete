@@ -216,17 +216,7 @@ void ChatNavServiceTask::handleExchangeInfo( const TLV& t )
 			break;
 		}
 	}
-<<<<<<< .mine
-<<<<<<< .mine
-
     m_exchanges.append( exchangeInfo.number );
-=======
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "real tlv count is: " << realCount << endl;
-=======
-
-    m_exchanges.append( exchangeInfo );
->>>>>>> .r456060
->>>>>>> .r455943
 }
 
 void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )

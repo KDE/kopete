@@ -91,7 +91,7 @@ public slots:
 	
 protected slots:
 	void slotGoAway(const QString&);
-    void joinChatDialogClosed();
+    void joinChatDialogClosed( int );
 	
 	virtual void disconnected( Kopete::Account::DisconnectReason reason );
 	

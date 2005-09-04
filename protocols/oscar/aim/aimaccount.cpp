@@ -320,12 +320,23 @@ void AIMAccount::sendBuddyIcon()
 
 void AIMAccount::slotJoinChat()
 {
+	if ( !isConnected() )
+	{
+		KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
+		                    i18n( "Joining an AIM chat room is not possible because "
+		                          "you are not connected." ),
+		                    i18n( "Unable to Join AIM Chat Room" ) );
+		return;
+	}
+
     //get the exchange info
     //create the dialog
     //join the chat room
     if ( !m_joinChatDialog )
     {
         m_joinChatDialog = new AIMJoinChatUI( this, false, Kopete::UI::Global::mainWidget() );
+	    QObject::connect( m_joinChatDialog, SIGNAL( closing( int ) ),
+	                      this, SLOT( joinChatDialogClosed( int ) ) );
         QValueList<int> list = engine()->chatExchangeList();
         m_joinChatDialog->setExchangeList( list );
         m_joinChatDialog->show();
@@ -359,12 +370,16 @@ void AIMAccount::slotGoAway(const QString &message)
 	setAway(true, message);
 }
 
-void AIMAccount::joinChatDialogClosed()
+void AIMAccount::joinChatDialogClosed( int code )
 {
-    if ( m_joinChatDialog->result() == QDialog::Accepted )
+    if ( code == QDialog::Accepted )
     {
         //join the chat
+	    kdDebug(14152) << k_funcinfo << "chat accepted." << endl;
+	    engine()->joinChatRoom( m_joinChatDialog->roomName(),
+	                            m_joinChatDialog->exchange().toInt() );
     }
+
     m_joinChatDialog->delayedDestruct();
     m_joinChatDialog = 0L;
 }

@@ -8,9 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>326</width>
-            <height>119</height>
+            <width>343</width>
+            <height>99</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>AIMJoinChatBase</string>
     </property>
     <grid>
         <property name="name">
@@ -83,19 +86,6 @@
                 <cstring>exchange</cstring>
             </property>
         </widget>
-        <widget class="QSpinBox" row="3" column="2">
-            <property name="name">
-                <cstring>exchange</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>4</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-        </widget>
         <widget class="QLineEdit" row="2" column="2">
             <property name="name">
                 <cstring>roomName</cstring>
@@ -107,6 +97,11 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                 </sizepolicy>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="3" column="2">
+            <property name="name">
+                <cstring>exchange</cstring>
             </property>
         </widget>
         <spacer row="4" column="2">
