@@ -223,10 +223,10 @@
                         <string>&amp;Switch to desktop containing chat on opening message</string>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Switch to the desktop which contains the chat window for the sender when opening his message</string>
+                        <string>Switch to the desktop which contains the chat window for the sender when opening his/her message</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>If there is already a chat window opened for the sender of the message opening his message will cause a switch to the desktop which contains this chat window.</string>
+                        <string>If there is already a chat window opened for the sender of the message opening his/her message will cause a switch to the desktop which contains this chat window.</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
