@@ -295,7 +295,7 @@ public slots:
 	 *   a QStringinfo would be more interesting, but it is also used to don't show the notification when entering in a channel)
 	 * @see contactOnlineStatus
 	 */
-	void addContact( const Kopete::Contact *c, const Kopete::OnlineStatus &initalStatus, bool suppress = false );
+	void addContact( const Kopete::Contact *c, const Kopete::OnlineStatus &initialStatus, bool suppress = false );
 
 	/**
 	 * Remove a contact from the session
