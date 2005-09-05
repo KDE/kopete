@@ -52,6 +52,11 @@ void SendMessageTask::onGo()
 		return;
 	}
 	
+	const uint CHUNK_LENGTH = 450;
+	uint msgPostion = 0;
+	
+	do
+	{
 	//FIXME Right now we only send channel 1. We also need to
 	//support channel 4 and 2
 	FLAP f = { 0x02, client()->flapSequence(), 0 };
@@ -88,28 +93,45 @@ void SendMessageTask::onGo()
 	//them and it's quite old and infrequently used
 	tlv2buffer.addWord( 0x0101 ); //add TLV(0x0101) also known as TLV(257)
 	
+		QString msgChunk = m_message.text().mid( msgPostion, CHUNK_LENGTH );
+		
+		// Try to split on space if needed
+		if ( msgChunk.length() == CHUNK_LENGTH )
+		{
+			for ( int i = 0; i < 100; i++ )
+			{
+				if ( msgChunk[CHUNK_LENGTH - i].isSpace() )
+				{
+					msgChunk = msgChunk.left(CHUNK_LENGTH - i);
+					msgPostion++;
+					break;
+				}
+			}
+		}
+		msgPostion += msgChunk.length();
+		
 	/* If we can encode in Latin1, do that, otherwise send Unicode */
 	QTextCodec* codec = QTextCodec::codecForMib( 4 ); //4 is the MIBEnum for ISO-8859-1
-	if ( codec->canEncode( m_message.text() ) )
+		if ( codec->canEncode( msgChunk ) )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Latin-1 encoding successful. Sending outgoing message as "
 			<< "ISO-8859-1" << endl;
-		tlv2buffer.addWord( m_message.text().length() + 4 ); // add TLV length
+			tlv2buffer.addWord( msgChunk.length() + 4 ); // add TLV length
 		tlv2buffer.addWord( 0x0000 );
 		tlv2buffer.addWord( 0x0000 );
-		tlv2buffer.addString( m_message.text().latin1(), m_message.text().length() );
+			tlv2buffer.addString( msgChunk.latin1(), msgChunk.length() );
 	}
 	else
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Latin-1 encoding not successful. Sending outgoing message as "
 			<< "UCS-2" << endl;
 		
-		int length = m_message.text().length() * 2;
+			int length = msgChunk.length() * 2;
 		unsigned char* utfMessage = new unsigned char[length];
-		for ( unsigned int l = 0; l < m_message.text().length(); l++ )
+			for ( unsigned int l = 0; l < msgChunk.length(); l++ )
 		{
-			utfMessage[l * 2] = m_message.text().unicode()[l].row();
-			utfMessage[( l * 2 ) + 1] = m_message.text().unicode()[l].cell();
+				utfMessage[l * 2] = msgChunk.unicode()[l].row();
+				utfMessage[( l * 2 ) + 1] = msgChunk.unicode()[l].cell();
 		}
 		
 		tlv2buffer.addWord( length + 4 ); // add TLV length
@@ -144,6 +166,9 @@ void SendMessageTask::onGo()
 	Transfer* t = createTransfer( f, s, b );
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SENDING: " << t->toString() << endl;
 	send( t );
+		
+	} while ( msgPostion < m_message.text().length() );
+	
 	setSuccess(true);
 }
 
