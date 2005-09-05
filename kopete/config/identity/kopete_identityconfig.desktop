@@ -29,5 +29,7 @@ Name[tr]=Kimlik
 Name[xx]=xxIdentityxx
 Name[zh_CN]=身份
 Comment=Here You Can Manage Your Global Identity
+Comment[ga]=Tig Leat d'Aitheantas a Láimhseáil Anseo
+Comment[sv]=Här kan du hantera din generella identitet
 
 DocPath=kopete/configure-dialog.html#configuring-identity
