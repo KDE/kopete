@@ -30,7 +30,7 @@ YahooWebcamDialog::YahooWebcamDialog( YahooContact* contact, QWidget * parent, c
                    KDialogBase::Close, KDialogBase::Close, parent, name, false, true /*seperator*/ ),
 	m_imageContainer( this )
 {
-	setInitialSize( QSize(320,290), true );
+	setInitialSize( QSize(320,290), false );
 	
 	setEscapeButton( KDialogBase::Close );
 	/*
@@ -41,6 +41,8 @@ YahooWebcamDialog::YahooWebcamDialog( YahooContact* contact, QWidget * parent, c
 	/*
 	QObject::connect( contact, SIGNAL( webcamClosed( int ) ), this, SLOT( webcamClosed( int ) ) );
 	*/
+	contactName = contact->contactId();
+	
 	QFrame* page = plainPage();
 	if ( page )
 	{
@@ -69,9 +71,26 @@ void YahooWebcamDialog::newImage( const QPixmap & image )
 void YahooWebcamDialog::webcamClosed( int reason  )
 {
 	kdDebug(14180) << k_funcinfo << "webcam closed with reason?? " <<  reason <<endl;
+	QString closeReason;
+	switch ( reason )
+	{
+	case 1:
+		closeReason = i18n( "%1 has stopped broadcasting" ).arg( contactName ); break;
+	case 2:
+		closeReason = i18n( "%1 has cancelled viewing permission" ).arg( contactName ); break;
+	case 3:
+		closeReason = i18n( "%1 has declined permission to view webcam" ).arg( contactName ); break;
+	case 4:
+		closeReason = i18n( "%1 does not have his/her webcam online" ).arg( contactName ); break;
+	default:
+		closeReason = i18n( "Unable to view the webcam of %1 for an unknown reason" ).arg( contactName);
+	}
 	m_imageContainer.clear();
-	m_imageContainer.setText( i18n( "Webcam closed with reason %1" ).arg( QString::number( reason ) ) );
+
+	m_imageContainer.setText( closeReason );
+	m_imageContainer.adjustSize();
 	m_imageContainer.setAlignment( Qt::AlignCenter );
+	adjustSize();
 	show();
 }
 
