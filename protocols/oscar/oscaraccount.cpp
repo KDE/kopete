@@ -51,6 +51,7 @@
 #include "oscarclientstream.h"
 #include "oscarconnector.h"
 #include "ssimanager.h"
+#include <qtextcodec.h>
 
 class OscarAccountPrivate
 {
@@ -125,7 +126,7 @@ void OscarAccount::logOff( Kopete::Account::DisconnectReason reason )
 	{
 		it.current()->setOnlineStatus(Kopete::OnlineStatus::Offline);
 	}
-	
+
 	disconnected( reason );
 }
 
@@ -311,7 +312,21 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	Kopete::ChatSession* chatSession = ocSender->manager( Kopete::Contact::CanCreate );
 	chatSession->receivedTypingMsg( ocSender, false ); //person is done typing
 
-	QString sanitizedMsg = sanitizedMessage( message );
+
+    //decode message
+    //HACK HACK HACK! Until AIM supports per contact encoding, just decode as ISO-8559-1
+    QTextCodec* codec = 0L;
+    if ( ocSender->hasProperty( "contactEncoding" ) )
+        codec = QTextCodec::codecForMib( ocSender->property( "contactEncoding" ).value().toInt() );
+    else
+        codec = QTextCodec::codecForMib( 4 );
+
+    QString realText = message.text();
+    if ( message.properties() & Oscar::Message::NotDecoded )
+        realText = codec->toUnicode( message.textArray() );
+
+    //sanitize;
+    QString sanitizedMsg = sanitizedMessage( realText );
 
 	Kopete::ContactPtrList me;
 	me.append( myself() );

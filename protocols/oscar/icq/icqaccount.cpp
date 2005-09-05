@@ -51,7 +51,7 @@ void ICQMyselfContact::receivedShortInfo( const QString& contact )
 {
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
-	
+
 	ICQShortInfo shortInfo = static_cast<ICQAccount*>( account() )->engine()->getShortInfo( contact );
 	if ( !shortInfo.nickname.isEmpty() )
 		setProperty( Kopete::Global::Properties::self()->nickName(), shortInfo.nickname );
@@ -68,12 +68,12 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID, const char *
 	kdDebug(14152) << k_funcinfo << accountID << ": Called."<< endl;
 	setMyself( new ICQMyselfContact( this ) );
 	myself()->setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::Visible ).toOnlineStatus() );
-	
+
 	QString nickName = configGroup()->readEntry("NickName", QString::null);
 	mWebAware = configGroup()->readBoolEntry( "WebAware", false );
 	mHideIP = configGroup()->readBoolEntry( "HideIP", true );
 
-	
+
 	//setIgnoreUnknownContacts(pluginData(protocol(), "IgnoreUnknownContacts").toUInt() == 1);
 
 	/* FIXME: need to do this when web aware or hide ip change
@@ -104,19 +104,19 @@ ICQ::Presence ICQAccount::presence()
 KActionMenu* ICQAccount::actionMenu()
 {
 	KActionMenu* actionMenu = Kopete::Account::actionMenu();
-	
+
 	actionMenu->popupMenu()->insertSeparator();
-	
-	KToggleAction* actionInvisible = 
+
+	KToggleAction* actionInvisible =
 	    new KToggleAction( i18n( "In&visible" ),
 	                       ICQ::Presence( presence().type(), ICQ::Presence::Invisible ).toOnlineStatus().iconFor( this ),
 	                       0, this, SLOT( slotToggleInvisible() ), this );
 	actionInvisible->setChecked( presence().visibility() == ICQ::Presence::Invisible );
 	actionMenu->insert( actionInvisible );
-	
+
 	//actionMenu->popupMenu()->insertSeparator();
 	//actionMenu->insert( new KToggleAction( i18n( "Send &SMS..." ), 0, 0, this, SLOT( slotSendSMS() ), this, "ICQAccount::mActionSendSMS") );
-	
+
 	return actionMenu;
 }
 
@@ -125,18 +125,18 @@ void ICQAccount::connectWithPassword( const QString &password )
 {
 	if ( password.isNull() )
 		return;
-	
+
 	kdDebug(14153) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
-	
+
 	Kopete::OnlineStatus status = initialStatus();
 	if ( status == Kopete::OnlineStatus() &&
 	     status.status() == Kopete::OnlineStatus::Unknown )
-		//use default online in case of invalid online status for connecting 
+		//use default online in case of invalid online status for connecting
 		status = Kopete::OnlineStatus( Kopete::OnlineStatus::Online );
 	ICQ::Presence pres = ICQ::Presence::fromOnlineStatus( status );
 	bool accountIsOffline = ( presence().type() == ICQ::Presence::Offline ||
 	                          myself()->onlineStatus() == protocol()->statusManager()->connectingStatus() );
-	
+
 	if ( accountIsOffline )
 	{
 		myself()->setOnlineStatus( protocol()->statusManager()->connectingStatus() );
@@ -145,7 +145,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 		QString server = configGroup()->readEntry( "Server", QString::fromLatin1( "login.oscar.aol.com" ) );
 		uint port = configGroup()->readNumEntry( "Port", 5190 );
 		Connection* c = setupConnection( server, port );
-		
+
 		//set up the settings for the account
 		Oscar::Settings* oscarSettings = engine()->clientSettings();
 		oscarSettings->setWebAware( configGroup()->readBoolEntry( "WebAware", false ) );
@@ -154,17 +154,17 @@ void ICQAccount::connectWithPassword( const QString &password )
 		oscarSettings->setRespectRequireAuth( configGroup()->readBoolEntry( "RespectRequireAuth", true ) );
 		//FIXME: also needed for the other call to setStatus (in setPresenceTarget)
 		DWORD status = pres.toOscarStatus();
-		
+
 		if ( !mHideIP )
 			status |= ICQ::StatusCode::SHOWIP;
 		if ( mWebAware )
 			status |= ICQ::StatusCode::WEBAWARE;
-		
+
 		engine()->setIsIcq( true );
 		engine()->setStatus( status );
 		engine()->start( server, port, accountId(), password );
 		engine()->connectToServer( c, server, true /* doAuth */ );
-		
+
 	}
 }
 
@@ -198,7 +198,7 @@ void ICQAccount::setInvisible( ICQ::Presence::Visibility vis )
 	ICQ::Presence pres = presence();
 	if ( vis == pres.visibility() )
 		return;
-	
+
 	kdDebug(14153) << k_funcinfo << "changing invisible setting to " << (int)vis << endl;
 	setPresenceTarget( ICQ::Presence( pres.type(), vis ) );
 }
@@ -218,7 +218,7 @@ void ICQAccount::setPresenceTarget( const ICQ::Presence &newPres )
 	bool targetIsOffline = (newPres.type() == ICQ::Presence::Offline);
 	bool accountIsOffline = ( presence().type() == ICQ::Presence::Offline ||
 	                          myself()->onlineStatus() == protocol()->statusManager()->connectingStatus() );
-	
+
 	if ( targetIsOffline )
 	{
 		OscarAccount::disconnect();
@@ -241,7 +241,7 @@ void ICQAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const QStr
 	if ( status.status() == Kopete::OnlineStatus::Invisible )
 	{
 		// called from outside, i.e. not by our custom action menu entry...
-		
+
 		if ( presence().type() == ICQ::Presence::Offline )
 		{
 			// ...when we are offline go online invisible.
@@ -265,23 +265,16 @@ OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::Me
 	ICQContact* contact = new ICQContact( this, contactId, parentContact, QString::null, ssiItem );
 	if ( !ssiItem.alias().isEmpty() )
 		contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
-	
+
 	if ( isConnected() )
 		contact->loggedIn();
-	
+
 	return contact;
 }
 
-QString ICQAccount::sanitizedMessage( const Oscar::Message& message )
+QString ICQAccount::sanitizedMessage( const QString& message )
 {
-	if ( message.type() == 1 || message.type() == 4 )
-	{
-		return Kopete::Message::escape( message.text() );
-	}
-	else 
-		kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "ICQ type 2 messages not supported yet. Message text:" << message.text() << endl;
-	
-	return QString::null;
+	return Kopete::Message::escape( message );
 }
 
 

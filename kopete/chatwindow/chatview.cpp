@@ -681,10 +681,7 @@ void ChatView::appendMessage(Kopete::Message &message)
 {
 	remoteTyping( message.from(), false );
 
-	if ( message.direction() != Kopete::Message::Inbound )
-	   messagePart()->appendMessage( message,false);
-	else
-		messagePart()->appendMessage(message);
+	messagePart()->appendMessage(message);
 	if( !d->isActive )
 	{
 		switch ( message.importance() )

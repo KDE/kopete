@@ -85,13 +85,13 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID, const char *
 	QString profile = configGroup()->readEntry( "Profile",
 		i18n( "Visit the Kopete website at <a href=\"http://kopete.kde.org\">http://kopete.kde.org</a>") );
 	mc->setOwnProfile( profile );
-	
+
     m_joinChatDialog = 0;
-	QObject::connect( Kopete::ContactList::self(), 
+	QObject::connect( Kopete::ContactList::self(),
 	                  SIGNAL( globalIdentityChanged( const QString&, const QVariant& ) ),
 	                  this,
 	                  SLOT( globalIdentityChanged( const QString&, const QVariant& ) ) );
-	
+
 	QObject::connect( engine(), SIGNAL( iconNeedsUploading() ), this,
 	                  SLOT( sendBuddyIcon() ) );
 }
@@ -109,17 +109,17 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::Me
 	return contact;
 }
 
-QString AIMAccount::sanitizedMessage( const Oscar::Message& message )
+QString AIMAccount::sanitizedMessage( const QString& message )
 {
 	QDomDocument doc;
 	QString domError;
 	int errLine = 0, errCol = 0;
-	doc.setContent( message.text(), false, &domError, &errLine, &errCol );
+	doc.setContent( message, false, &domError, &errLine, &errCol );
 	if ( !domError.isEmpty() ) //error parsing, do nothing
 	{
 		kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "error from dom document conversion: "
 			<< domError << endl;
-		return message.text();
+		return message;
 	}
 	else
 	{
@@ -129,7 +129,7 @@ QString AIMAccount::sanitizedMessage( const Oscar::Message& message )
 		if ( fontTagList.count() == 0 )
 		{
 			kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "No font tags found. Returning normal message" << endl;
-			return message.text();
+			return message;
 		}
 		else
 		{
@@ -141,11 +141,11 @@ QString AIMAccount::sanitizedMessage( const Oscar::Message& message )
 				QDomElement fontEl;
 				if ( !fontNode.isNull() && fontNode.isElement() )
 					fontEl = fontTagList.item(i).toElement();
-				else 
+				else
 					continue;
 				if ( fontEl.hasAttribute( "back" ) )
 				{
-					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found attribute to replace. Doing replacement" << endl;
+					kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Found attribute to replace. Doing replacement" << endl;
 					QString backgroundColor = fontEl.attribute( "back" );
 					backgroundColor.insert( 0, "background-color: " );
 					backgroundColor.append( ';' );
@@ -180,7 +180,7 @@ KActionMenu* AIMAccount::actionMenu()
 	             SLOT(slotGoAway( const QString & )), this, "AIMAccount::mActionNA" );
 	mActionAway->setEnabled( isConnected() );
 	mActionMenu->insert( mActionAway );
-	
+
 	KAction* mActionOffline = new KAction( i18n("Offline"), p->statusOffline.iconFor(this), 0, this,
 	             SLOT( slotGoOffline() ), mActionMenu, "AIMAccount::mActionOffline");
 
@@ -239,7 +239,7 @@ void AIMAccount::globalIdentityChanged( const QString& key, const QVariant& valu
 	{
 		//edit ssi item to change alias (if possible)
 	}
-	
+
 	if ( key == Kopete::Global::Properties::self()->photo().key() )
 	{
 		//yay for brain damage. since i have no way to access the global
@@ -260,7 +260,7 @@ void AIMAccount::globalIdentityChanged( const QString& key, const QVariant& valu
 		{
 			SSIManager* ssi = engine()->ssiManager();
 			Oscar::SSI item = ssi->findItemForIconByRef( 1 );
-			
+
 			if ( !item )
 			{
 				kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "no existing icon hash item in ssi. creating new"
@@ -272,15 +272,15 @@ void AIMAccount::globalIdentityChanged( const QString& key, const QVariant& valu
 				t.data[1] = 0x10;
 				memcpy(t.data.data() + 2, iconHash.rawDigest(), 16);
 				t.length = t.data.size();
-				
+
 				QValueList<Oscar::TLV> list;
 				list.append( t );
-				
+
 				Oscar::SSI s( "1", 0, ssi->nextContactId(), ROSTER_BUDDYICONS, list );
-				
+
 				//item is a non-valid ssi item, so the function will add an item
 				kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "setting new icon item" << endl;
-				engine()->modifySSIItem( item, s ); 
+				engine()->modifySSIItem( item, s );
 			}
 			else
 			{ //found an item
@@ -375,7 +375,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 	kdDebug(14152) << k_funcinfo << " Got a message, calling OscarAccount::messageReceived" << endl;
 	// Want to call the parent to do everything else
 	OscarAccount::messageReceived(message);
-	
+
 	// Check to see if our status is away, and send an away message
 	// Might be duplicate code from the parent class to get some needed information
 	// Perhaps a refactoring is needed.
@@ -392,7 +392,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 		}
 		// Create, or get, a chat session with the contact
 		Kopete::ChatSession* chatSession = aimSender->manager( Kopete::Contact::CanCreate );
-		
+
 		// get the away message we have set
 		AIMMyselfContact* myContact = static_cast<AIMMyselfContact *> ( myself() );
 		QString msg = myContact->lastAwayMessage();
@@ -409,14 +409,14 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 void AIMAccount::connectWithPassword( const QString & )
 {
 	kdDebug(14152) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
-	
+
 	// Get the screen name for this account
 	QString screenName = accountId();
 	QString server = configGroup()->readEntry( "Server", QString::fromLatin1( "login.oscar.aol.com" ) );
 	uint port = configGroup()->readNumEntry( "Port", 5190 );
 
 	Connection* c = setupConnection( server, port );
-	
+
 	QString _password = password().cachedValue();
 	if ( _password.isEmpty() )
 	{

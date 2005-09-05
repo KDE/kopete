@@ -28,7 +28,6 @@ class KAction;
 class KToggleAction;
 class KActionMenu;
 class KTempFile;
-class KComboBox;
 class QPixmap;
 class QTabWidget;
 class KSqueezedTextLabel;
@@ -124,7 +123,6 @@ private:
 	void addTab( ChatView* );
 	void setPrimaryChatView( ChatView* );
 	const QString fileContents( const QString &file ) const;
-    void initEncodings();
 
 	ChatView *m_activeView;
 	ChatView *m_popupView;
@@ -138,7 +136,6 @@ private:
 	QLabel *anim;
 	QMovie animIcon;
 	QPixmap normalIcon;
-	KComboBox* m_encoding;
 
 	KAction *chatSend;
 	KAction *historyUp;
@@ -222,7 +219,6 @@ private slots:
 	void slotStopAnimation( ChatView* );
 	void slotNickComplete();
 	void slotCloseChat( QWidget* );
-    void slotEncodingSelected(const QString& string);
 
 	//slots for tabs from the chatview widget
 	void updateChatState( ChatView* cv, int state );

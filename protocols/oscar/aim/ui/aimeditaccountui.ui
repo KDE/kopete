@@ -23,7 +23,7 @@
     <property name="caption">
         <string>Account Preferences - AIM</string>
     </property>
-    <vbox>
+    <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
@@ -33,7 +33,18 @@
         <property name="spacing">
             <number>0</number>
         </property>
-        <widget class="QTabWidget">
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>labelStatusMessage</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
+        <widget class="QTabWidget" row="0" column="0">
             <property name="name">
                 <cstring>tabWidget6</cstring>
             </property>
@@ -195,11 +206,11 @@
                 <attribute name="title">
                     <string>A&amp;ccount Preferences</string>
                 </attribute>
-                <vbox>
+                <grid>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QGroupBox">
+                    <widget class="QGroupBox" row="0" column="0" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>groupBox73</cstring>
                         </property>
@@ -313,7 +324,7 @@
                             </widget>
                         </vbox>
                     </widget>
-                    <spacer>
+                    <spacer row="2" column="0">
                         <property name="name">
                             <cstring>spacer21</cstring>
                         </property>
@@ -326,25 +337,36 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>41</height>
+                                <height>200</height>
                             </size>
                         </property>
                     </spacer>
-                </vbox>
+                    <widget class="QComboBox" row="1" column="1">
+                        <property name="name">
+                            <cstring>encodingCombo</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel1</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Default to the following &amp;encoding for messages:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>encodingCombo</cstring>
+                        </property>
+                    </widget>
+                </grid>
             </widget>
         </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>labelStatusMessage</cstring>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-            <property name="alignment">
-                <set>AlignCenter</set>
-            </property>
-        </widget>
-    </vbox>
+    </grid>
 </widget>
 <customwidgets>
     <customwidget>
