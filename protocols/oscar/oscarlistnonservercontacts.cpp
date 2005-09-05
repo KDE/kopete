@@ -31,7 +31,6 @@ OscarListNonServerContacts::OscarListNonServerContacts(QWidget* parent)
     setMainWidget( m_contactsList );
     setButtonText( Ok, i18n( "&Add" ) );
     setButtonText( Cancel, i18n( "Do &not add" ) );
-
 }
 
 OscarListNonServerContacts::~OscarListNonServerContacts()
@@ -48,6 +47,20 @@ void OscarListNonServerContacts::addContacts( const QStringList& contactList )
 QStringList OscarListNonServerContacts::nonServerContactList() const
 {
     return m_nonServerContacts;
+}
+
+
+
+void OscarListNonServerContacts::slotCancel()
+{
+    KDialogBase::slotCancel();
+    emit closing();
+}
+
+void OscarListNonServerContacts::slotOk()
+{
+    KDialogBase::slotOk();
+    emit closing();
 }
 
 #include "oscarlistnonservercontacts.moc"

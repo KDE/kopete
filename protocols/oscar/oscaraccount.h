@@ -131,6 +131,8 @@ protected slots:
 	void userStartedTyping( const QString & contact );
 	void userStoppedTyping( const QString & contact );
 
+    void nonServerAddContactDialogClosed();
+
 signals:
 
 	void accountDisconnected( Kopete::Account::DisconnectReason reason );

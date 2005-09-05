@@ -51,6 +51,7 @@
 #include "oscarclientstream.h"
 #include "oscarconnector.h"
 #include "ssimanager.h"
+#include "oscarlistnonservercontacts.h"
 #include <qtextcodec.h>
 
 class OscarAccountPrivate
@@ -68,6 +69,7 @@ public:
 	//contacts waiting on their group to be added
 	QMap<QString, QString> contactAddQueue;
 
+    OscarListNonServerContacts* olnscDialog;
 
 };
 
@@ -79,7 +81,7 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, c
 
 	d = new OscarAccountPrivate;
 	d->engine = new Client( this );
-
+    d->olnscDialog = 0L;
     QObject::connect( d->engine, SIGNAL( loggedIn() ), this, SLOT( loginActions() ) );
 	QObject::connect( d->engine, SIGNAL( messageReceived( const Oscar::Message& ) ),
 	                  this, SLOT( messageReceived(const Oscar::Message& ) ) );
@@ -238,8 +240,94 @@ void OscarAccount::processSSIList()
 	                  this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
 
     //TODO: check the kopete contact list and handle non server side contacts appropriately.
+    QDict<Kopete::Contact> nonServerContacts = contacts();
+    QDictIterator<Kopete::Contact> it( nonServerContacts );
+    QStringList nonServerContactList;
+    for ( ; it.current(); ++it )
+    {
+        OscarContact* oc = dynamic_cast<OscarContact*>( ( *it ) );
+        if ( !oc )
+            continue;
+        kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << oc->contactId() << " contact ssi type: " << oc->ssiItem().type() << endl;
+        if ( !oc->isOnServer() )
+            nonServerContactList.append( ( *it )->contactId() );
+    }
+    kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "the following contacts are not on the server side list"
+                             << nonServerContactList << endl;
+    if ( !nonServerContactList.isEmpty() )
+    {
+        d->olnscDialog = new OscarListNonServerContacts( Kopete::UI::Global::mainWidget() );
+        QObject::connect( d->olnscDialog, SIGNAL( closing() ),
+                          this, SLOT( nonServerAddContactDialogClosed() ) );
+        d->olnscDialog->addContacts( nonServerContactList );
+        d->olnscDialog->show();
+    }
 }
 
+void OscarAccount::nonServerAddContactDialogClosed()
+{
+    //use sender() because i'm lazy
+    if ( !d->olnscDialog )
+        return;
+
+    kdDebug(OSCAR_GEN_DEBUG) << "non server contacts notification dialog closed" << endl;
+    if ( d->olnscDialog->result() == QDialog::Accepted )
+    {
+        //start adding contacts
+        kdDebug(OSCAR_GEN_DEBUG) << "adding non server contacts to the contact list" << endl;
+        //get the contact list. get the OscarContact object, then the group
+        //check if the group is on ssi, if not, add it
+        //if so, add the contact.
+        QStringList offliners = d->olnscDialog->nonServerContactList();
+        QStringList::iterator it, itEnd = offliners.end();
+        for ( it = offliners.begin(); it != itEnd; ++it )
+        {
+            OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[( *it )] );
+            if ( !oc )
+            {
+                kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "no OscarContact object available for"
+                                         << ( *it ) << endl;
+                continue;
+            }
+
+            Kopete::MetaContact* mc = oc->metaContact();
+            if ( !mc )
+            {
+                kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "no metacontact object available for"
+                                         << ( oc->contactId() ) << endl;
+                continue;
+            }
+
+            Kopete::Group* group = mc->groups().first();
+            if ( !group )
+            {
+                kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "no metacontact object available for"
+                                         << ( oc->contactId() ) << endl;
+                continue;
+            }
+
+            SSIManager* listManager = d->engine->ssiManager();
+            if ( !listManager->findGroup( group->displayName() ) )
+            {
+                kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "adding non-existant group "
+                                         << group->displayName() << endl;
+                d->contactAddQueue[Oscar::normalize( ( *it ) )] = group->displayName();
+                d->engine->addGroup( group->displayName() );
+            }
+            else
+            {
+                d->engine->addContact( ( *it ), group->displayName() );
+            }
+        }
+
+
+    }
+    else
+        kdDebug(OSCAR_GEN_DEBUG) << "NOT adding non server contacts to the contact list" << endl;
+
+    d->olnscDialog->delayedDestruct();
+    d->olnscDialog = 0L;
+}
 
 void OscarAccount::slotGoOffline()
 {

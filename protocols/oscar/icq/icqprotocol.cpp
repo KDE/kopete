@@ -760,12 +760,21 @@ Kopete::Contact *ICQProtocol::deserializeContact( Kopete::MetaContact *metaConta
 	uint ssiGid = 0, ssiBid = 0, ssiType = 0xFFFF;
 	QString ssiName;
 	bool ssiWaitingAuth = false;
+    if ( serializedData.contains( "ssi_name" ) )
 	ssiName = serializedData["ssi_name"];
+
+    if ( serializedData.contains( "ssi_waitingAuth" ) )
+    {
 	QString authStatus = serializedData["ssi_waitingAuth"];
 	if ( authStatus == "true" )
 		ssiWaitingAuth = true;
+    }
+
+    if ( serializedData.contains( "ssi_gid" ) )
 	ssiGid = serializedData["ssi_gid"].toUInt();
+    if ( serializedData.contains( "ssi_bid" ) )
 	ssiBid = serializedData["ssi_bid"].toUInt();
+    if ( serializedData.contains( "ssi_type" ) )
 	ssiType = serializedData["ssi_type"].toUInt();
 
 	Oscar::SSI item( ssiName, ssiGid, ssiBid, ssiType, QValueList<TLV>(), 0 );

@@ -34,6 +34,13 @@ public:
     void addContacts( const QStringList& contactList );
     QStringList nonServerContactList() const;
 
+protected:
+    virtual void slotOk();
+    virtual void slotCancel();
+
+signals:
+    void closing();
+
 private:
     OscarListContactsBase* m_contactsList;
     QStringList m_nonServerContacts;

@@ -70,7 +70,10 @@ void OscarContact::serialize(QMap<QString, QString> &serializedData,
 
 bool OscarContact::isOnServer() const
 {
-	return ( m_ssiItem.type() != 0xFFFF );
+    SSIManager* serverList = mAccount->engine()->ssiManager();
+    SSI ssi = serverList->findContact( Oscar::normalize( contactId() ) );
+
+	return ( ssi && ssi.type() != 0xFFFF );
 }
 
 void OscarContact::setSSIItem( const Oscar::SSI& ssiItem )
