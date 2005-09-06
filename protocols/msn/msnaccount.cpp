@@ -698,7 +698,8 @@ void MSNAccount::slotNewContactList()
 		m_oldGroupList=m_groupList;
 		for(QMap<QString, Kopete::Group*>::Iterator it=m_oldGroupList.begin() ; it != m_oldGroupList.end() ; ++it )
 		{	//they are about to be changed
-			it.data()->setPluginData( protocol(), accountId() + " id", QString::null );
+			if(it.data())
+				it.data()->setPluginData( protocol(), accountId() + " id", QString::null );
 		}
 
 		m_allowList.clear();
@@ -765,12 +766,15 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 			for ( QStringList::ConstIterator it = contactGroups.begin(); it != contactGroups.end(); ++it )
 			{
 				QString newServerGroupID =  *it;
-				Kopete::Group *newServerGroup=m_groupList[ newServerGroupID ];
-				c->contactAddedToGroup( newServerGroupID, newServerGroup );
-				if( !c->metaContact()->groups().contains(newServerGroup) )
+				if(m_groupList.contains(newServerGroupID))
 				{
-					// The contact has been added in a group by another client
-					c->metaContact()->addToGroup( newServerGroup );
+					Kopete::Group *newServerGroup=m_groupList[ newServerGroupID ] ;
+					c->contactAddedToGroup( newServerGroupID, newServerGroup );
+					if( !c->metaContact()->groups().contains(newServerGroup) )
+					{
+						// The contact has been added in a group by another client
+						c->metaContact()->addToGroup( newServerGroup );
+					}
 				}
 			}
 
@@ -809,8 +813,11 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 				it != contactGroups.end(); ++it )
 			{
 				QString groupGuid = *it;
-				c->contactAddedToGroup( groupGuid, m_groupList[ groupGuid ] );
-				metaContact->addToGroup( m_groupList[ groupGuid ] );
+				if(m_groupList.contains(groupGuid))
+				{
+					c->contactAddedToGroup( groupGuid, m_groupList[ groupGuid ] );
+					metaContact->addToGroup( m_groupList[ groupGuid ] );
+				}
 			}
 			Kopete::ContactList::self()->addMetaContact( metaContact );
 			
@@ -910,12 +917,15 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& list, c
 					c->setOnlineStatus( MSNProtocol::protocol()->FLN );
 	
 				if ( c->metaContact() && c->metaContact()->isTemporary() )
-					c->metaContact()->setTemporary( false, m_groupList[ groupGuid ] );
+					c->metaContact()->setTemporary( false,  m_groupList.contains( groupGuid ) ?  m_groupList[ groupGuid ] : 0L );
 				else
 				{
-					if( c->metaContact() )
-						c->metaContact()->addToGroup( m_groupList[groupGuid] );
-					c->contactAddedToGroup( groupGuid, m_groupList[ groupGuid ] );
+					if(m_groupList.contains(groupGuid))
+					{
+						if( c->metaContact() )
+							c->metaContact()->addToGroup( m_groupList[groupGuid] );
+						c->contactAddedToGroup( groupGuid, m_groupList[ groupGuid ] );
+					}
 				}
 			}
 		}
