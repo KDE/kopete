@@ -218,7 +218,7 @@ Kopete::Account * MSNEditAccountWidget::apply()
 		config->writeEntry( "WebcamPort" , 0 );
 
 	// Save the avatar image
-	if( d->ui->m_useDisplayPicture->isChecked() )
+	if( d->ui->m_useDisplayPicture->isChecked() && !d->pictureData.isNull() )
 	{
 		d->pictureUrl = locateLocal( "appdata", "msnpicture-" +
 				account()->accountId().lower().replace( QRegExp("[./~]" ), "-" ) + ".png" );
