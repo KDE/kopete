@@ -237,7 +237,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 				KNotification *notify=KNotification::event(msg.from()->metaContact() , event, body.arg( QStyleSheet::escape(msgFrom), QStyleSheet::escape(msgText) ), 0, /*msg.from()->metaContact(),*/
 							w , i18n("View") );
 
-				connect(notify,SIGNAL(activated(unsigned int )), const_cast<Kopete::Contact*>(msg.from()) , SLOT(execute()) );
+				connect(notify,SIGNAL(activated(unsigned int )), manager , SLOT(raiseView()) );
 			}
 		}
 	}

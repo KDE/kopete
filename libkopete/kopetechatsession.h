@@ -354,6 +354,12 @@ public slots:
 	 * Protcols have to call this method if they want to emit a notification when a nudge/buzz is received.
 	 */
 	void emitNudgeNotification();
+	
+	/**
+	 * Raise the chat window and give him the focus
+	 * It's used when the user wanted to activated  (by clicking on the "view" button of a popup)
+	 */
+	void raiseView();
 
 private slots:
 	void slotUpdateDisplayName();
