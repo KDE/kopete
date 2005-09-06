@@ -38,7 +38,7 @@ class ListView : public KListView
 	Q_OBJECT
 
 public:
-	ListView( QWidget *parent = 0, const char *name = 0 );
+	ListView( QWidget *parent = 0 );
 	~ListView();
 
 	/**

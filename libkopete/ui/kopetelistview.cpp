@@ -206,8 +206,8 @@ struct ListView::Private
 	  mouseNavigation(false) {}
 };
 
-ListView::ListView( QWidget *parent, const char *name )
- : KListView( parent, name ), d( new Private )
+ListView::ListView( QWidget *parent )
+ : KListView( parent ), d( new Private )
 {
 	connect( &d->sortTimer, SIGNAL( timeout() ), this, SLOT( slotSort() ) );
 
