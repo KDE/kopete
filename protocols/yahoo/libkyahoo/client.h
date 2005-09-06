@@ -63,6 +63,8 @@ Q_OBJECT
 		 */
 		void close();
 
+		void setStatusOnConnect( Yahoo::Status status );
+
 		/**
 		 * Accessors needed for login
 		 */
@@ -198,6 +200,11 @@ Q_OBJECT
 		void cs_connected();
 		void slotGotCookies();
 		
+		/**
+		 * Used by tasks to identify a response to a login attempt
+		 */
+		void slotLoginResponse( int, const QString& );
+
 		/**
 		 * Used by the client stream to notify errors to upper layers.
 		 */

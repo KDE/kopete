@@ -125,6 +125,7 @@ void YahooAccount::setPort( int port )
 
 void YahooAccount::slotGoStatus( int status, const QString &awayMessage)
 {
+	kdDebug(14180) << k_funcinfo << "GoStatus: " << status << " msg: " << awayMessage <<endl;
 	if( !isConnected() )
 	{
 		connect( m_protocol->statusFromYahoo( status ) );
@@ -390,6 +391,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 
 void YahooAccount::connectWithPassword( const QString &passwd )
 {
+	kdDebug(14180) << k_funcinfo << endl;
 	if ( isAway() )
 	{
 		slotGoOnline();
@@ -412,12 +414,14 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 	
 	QString server = configGroup()->readEntry( "Server", "scs.msg.yahoo.com" );
 	int port = configGroup()->readNumEntry( "Port", 5050 );
+	
+	initConnectionSignals( MakeConnections );
 
 	//YahooSessionManager::manager()->setPager( server, port );
 	//m_session = YahooSessionManager::manager()->createSession( accountId(), passwd );
 	kdDebug(14180) << "Attempting to connect to Yahoo on <" << server << ":" 
-		<< port << ">. user <" << accountId() << ">" << endl;
-		
+		<< port << ">. user <" << accountId() << ">"  << endl;
+	m_session->setStatusOnConnect( Yahoo::Status( initialStatus().internalStatus() ) );
 	m_session->connect( server, port, accountId().lower(), passwd );
 }
 
@@ -484,6 +488,7 @@ void YahooAccount::slotConnected()
 
 void YahooAccount::slotGoOnline()
 {
+	kdDebug(14180) << k_funcinfo << endl;
 	if( !isConnected() )
 		connect( m_protocol->Online );
 	else
@@ -1085,12 +1090,16 @@ void YahooAccount::slotWebcamClosed( const QString& who, int reason )
 
 void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason)
 {
+	kdDebug(14180) << k_funcinfo << endl;
 	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline &&
-	     status.status() == Kopete::OnlineStatus::Online )
+	     ( status.status() == Kopete::OnlineStatus::Online ||
+	       status.status() == Kopete::OnlineStatus::Invisible) )
 	{
 		connect( status );
 	}
-	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline &&
+	else 
+		
+	if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline &&
 	          status.status() == Kopete::OnlineStatus::Offline )
 	{
 		disconnect();

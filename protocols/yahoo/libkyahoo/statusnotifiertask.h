@@ -39,7 +39,7 @@ protected:
 signals:
 	void statusChanged( const QString&, int, const QString&, int );
 	void error( const QString& );
-	void loggedOff( int, const QString& );
+	void loginResponse( int, const QString& );
 };
 
 #endif

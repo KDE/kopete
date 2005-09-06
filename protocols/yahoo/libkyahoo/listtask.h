@@ -33,25 +33,12 @@ public:
 	
 	bool take(Transfer *transfer);
 
-	const QString &yCookie() const;
-	const QString &cCookie() const;
-	const QString &tCookie() const;
-	const QString &loginCookie() const;
-
 protected:
 	bool forMe( Transfer *transfer ) const;
-	void parseCookies( Transfer *transfer );
 	void parseBuddyList( Transfer *transfer );
 
 signals:
-	void gotCookies();
 	void gotBuddy(const QString&, const QString&, const QString&);
-
-private:
-	QString m_yCookie;
-	QString m_tCookie;
-	QString m_cCookie;
-	QString m_loginCookie;
 };
 
 #endif

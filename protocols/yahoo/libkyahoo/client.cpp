@@ -61,6 +61,7 @@ public:
 	QString cCookie;
 	QString loginCookie;
 	Yahoo::Status status;
+	Yahoo::Status statusOnConnect;
 
 };
 
@@ -71,6 +72,8 @@ Client::Client(QObject *par) :QObject(par, "yahooclient" )
 	d->active = false;
 
 	d->root = new Task(this, true);
+	d->statusOnConnect = Yahoo::StatusAvailable;
+	d->status = Yahoo::StatusDisconnected;
 	d->stream = 0;
 }
 
@@ -107,11 +110,15 @@ void Client::cs_connected()
 
 	d->loginTask = new LoginTask( d->root );
 	d->listTask = new ListTask( d->root );
-	QObject::connect( d->loginTask, SIGNAL( finished() ), SLOT( lt_loginFinished() ) );
-	QObject::connect( d->loginTask, SIGNAL(  ), SLOT( lt_gotSessionID( uint ) ) );
-	QObject::connect( d->listTask, SIGNAL( gotCookies() ), SLOT( slotGotCookies() ) );
+	//QObject::connect( d->loginTask, SIGNAL( finished() ), SLOT( lt_loginFinished() ) );
+	QObject::connect( d->loginTask, SIGNAL( haveSessionID( uint ) ), SLOT( lt_gotSessionID( uint ) ) );
+	QObject::connect( d->loginTask, SIGNAL( loginResponse( int, const QString& ) ), 
+				SLOT( slotLoginResponse( int, const QString& ) ) );
+	QObject::connect( d->loginTask, SIGNAL( haveCookies() ), SLOT( slotGotCookies() ) );
 	QObject::connect( d->listTask, SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ), 
 					SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ) );
+
+	d->loginTask->setStateOnConnect( d->statusOnConnect );
 	d->loginTask->go(true);
 	d->active = true;
 }
@@ -147,6 +154,14 @@ void Client::lt_loginFinished()
 	emit loggedIn( d->loginTask->statusCode(), d->loginTask->statusString() );
 }
 
+void Client::slotLoginResponse( int response, const QString &msg )
+{
+	if( response == Yahoo::YAHOO_LOGIN_OK )
+		initTasks();
+
+	emit loggedIn( response, msg );
+}
+
 void Client::lt_gotSessionID( uint id )
 {
 	kdDebug(14180) << k_funcinfo << "Got SessionID: " << id << endl;	
@@ -155,14 +170,14 @@ void Client::lt_gotSessionID( uint id )
 
 void Client::slotGotCookies()
 {
-	kdDebug(14180) << k_funcinfo << "Y: " << d->listTask->yCookie()
-					<< " T: " << d->listTask->tCookie()
-					<< " C: " << d->listTask->cCookie()
-					<< " login: " << d->listTask->loginCookie() << endl;
-	d->yCookie = d->listTask->yCookie();
-	d->tCookie = d->listTask->tCookie();
-	d->cCookie = d->listTask->cCookie();
-	d->loginCookie = d->listTask->loginCookie();
+	kdDebug(14180) << k_funcinfo << "Y: " << d->loginTask->yCookie()
+					<< " T: " << d->loginTask->tCookie()
+					<< " C: " << d->loginTask->cCookie()
+					<< " login: " << d->loginTask->loginCookie() << endl;
+	d->yCookie = d->loginTask->yCookie();
+	d->tCookie = d->loginTask->tCookie();
+	d->cCookie = d->loginTask->cCookie();
+	d->loginCookie = d->loginTask->loginCookie();
 }
 
 // INTERNALS //
@@ -212,6 +227,11 @@ Yahoo::Status Client::status()
 void Client::setStatus( Yahoo::Status status )
 {
 	d->status = status;
+}
+
+void Client::setStatusOnConnect( Yahoo::Status status )
+{
+	d->statusOnConnect = status;
 }
 
 QString Client::password()
@@ -279,7 +299,7 @@ void Client::initTasks()
 	d->statusTask = new StatusNotifierTask( d->root );
 	QObject::connect( d->statusTask, SIGNAL( statusChanged( const QString&, int, const QString&, int ) ), 
 				SIGNAL( statusChanged( const QString&, int, const QString&, int ) ) );
-	QObject::connect( d->statusTask, SIGNAL( loggedOff( int, const QString& ) ), 
+	QObject::connect( d->statusTask, SIGNAL( loginResponse( int, const QString& ) ), 
 				SIGNAL( loggedIn( int, const QString& ) ) );
 
 	d->mailTask = new MailNotifierTask( d->root );

@@ -22,6 +22,7 @@
 #define LOGINTASK_H
 
 #include "task.h"
+#include "yahootypes.h"
 
 class QString;
 
@@ -38,6 +39,12 @@ public:
 	bool take(Transfer* transfer);
 	virtual void onGo();
 
+	void setStateOnConnect( Yahoo::Status status );
+
+	const QString &yCookie();
+	const QString &cCookie();
+	const QString &tCookie();
+	const QString &loginCookie();
 protected:
 	bool forMe( Transfer* transfer ) const;
 	enum State { InitialState, SentVerify, GotVerifyACK, SentAuth, GotAuthACK, SentAuthResp };
@@ -47,9 +54,18 @@ protected:
 	void sendAuthResp_0x0b(const QString &sn, const QString &seed, uint sessionID);
 	void sendAuthResp_pre_0x0b(const QString &sn, const QString &seed);
 	void handleAuthResp(Transfer *transfer);
-	State mState;
+	void parseCookies( Transfer *transfer );
 signals:
 	void haveSessionID( uint );
+	void haveCookies();
+	void loginResponse( int, const QString& );
+private:
+	State mState;
+	Yahoo::Status m_stateOnConnect;
+	QString m_yCookie;
+	QString m_tCookie;
+	QString m_cCookie;
+	QString m_loginCookie;
 };
 
 #endif

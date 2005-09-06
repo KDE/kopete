@@ -23,10 +23,6 @@
 #include "client.h"
 #include <qstring.h>
 #include <qstringlist.h>
-extern "C"
-{
-#include "libyahoo.h"
-}
 
 ListTask::ListTask(Task* parent) : Task(parent)
 {
@@ -45,7 +41,6 @@ bool ListTask::take( Transfer* transfer )
 	if ( !forMe( transfer ) )
 		return false;
 	
-	parseCookies( transfer );
 	parseBuddyList( transfer );	
 
 	return true;
@@ -94,54 +89,5 @@ void ListTask::parseBuddyList( Transfer *transfer )
 	}
 }
 
-void ListTask::parseCookies( Transfer *transfer )
-{
-	kdDebug(14180) << k_funcinfo << endl;
-	YMSGTransfer *t = 0L;
-	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return;
-
-	QStringList params;
-	params = t->paramList( "59" );
-	for ( QStringList::Iterator it = params.begin(); it != params.end(); ++it ) {
-        	if( (*it).startsWith( "Y" ) )
-		{
-			m_yCookie = getcookie( (*it).latin1() );
-			m_loginCookie = getlcookie( (*it).latin1() );
-		}
-		else if( (*it).startsWith( "T" ) )
-		{
-			m_tCookie = getcookie( (*it).latin1() );
-		}
-		else if( (*it).startsWith( "C" ) )
-		{
-			m_cCookie = getcookie( (*it).latin1() );
-		}
-    	}
-	if( !m_yCookie.isEmpty() && !m_tCookie.isEmpty() &&
-		!m_cCookie.isEmpty() )
-		emit gotCookies();
-}
-
-const QString& ListTask::yCookie() const
-{
-	return m_yCookie;
-}
-
-const QString& ListTask::tCookie() const
-{
-	return m_tCookie;
-}
-
-const QString& ListTask::cCookie() const
-{
-	return m_cCookie;
-}
-
-const QString& ListTask::loginCookie() const
-{
-	return m_loginCookie;
-}
 
 #include "listtask.moc"

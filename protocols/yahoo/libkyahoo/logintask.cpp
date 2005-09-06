@@ -78,6 +78,7 @@ bool LoginTask::take(Transfer* transfer)
 			break;
 			case (SentAuthResp):
 				handleAuthResp( transfer );
+				parseCookies( transfer );
 				// Throw transfer to the next task as it contains further data
 				return false;
 			break;
@@ -152,7 +153,7 @@ void LoginTask::sendAuth(Transfer* transfer)
 	
 	/* got ServiceVerify ACK, send a ServiceAuth with username */
 	kdDebug(14180) << k_funcinfo << endl;
-	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceAuth);
+	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceAuth, m_stateOnConnect );
 	t->setParam("1", client()->userId());
 	send(t);
 	mState = SentAuth;
@@ -199,7 +200,7 @@ void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint s
 	char *resp_96 = (char *) malloc(100);
 	authresp_0x0b(seed.latin1(), sn.latin1(), (client()->password()).latin1(), resp_6, resp_96);
 	kdDebug(14180) << k_funcinfo << "resp_6: " << resp_6 << " resp_69: " << resp_96 << endl;
-	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceAuthResp);
+	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceAuthResp, m_stateOnConnect);
 	t->setId( sessionID );
 	t->setParam("0", sn);
 	t->setParam("6", QString(resp_6));
@@ -230,15 +231,68 @@ void LoginTask::handleAuthResp(Transfer *transfer)
 	switch( t->service() )
 	{
 		case( Yahoo::ServiceList ):
-			setSuccess( Yahoo::YAHOO_LOGIN_OK );
+			emit loginResponse( Yahoo::YAHOO_LOGIN_OK, QString::null );
 		break;
 		case( Yahoo::ServiceAuthResp ):
-			setSuccess( t->firstParam( "66" ).toInt() );
+			emit loginResponse( t->firstParam( "66" ).toInt(), QString::null );
 		break;
 		default:
-			setSuccess( false );
 		break;
 	}
 }
 
+void LoginTask::setStateOnConnect( Yahoo::Status status )
+{
+	m_stateOnConnect = status;
+}
+
+void LoginTask::parseCookies( Transfer *transfer )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	YMSGTransfer *t = 0L;
+	t = dynamic_cast<YMSGTransfer*>(transfer);
+	if (!t)
+		return;
+
+	QStringList params;
+	params = t->paramList( "59" );
+	for ( QStringList::Iterator it = params.begin(); it != params.end(); ++it ) {
+        	if( (*it).startsWith( "Y" ) )
+		{
+			m_yCookie = getcookie( (*it).latin1() );
+			m_loginCookie = getlcookie( (*it).latin1() );
+		}
+		else if( (*it).startsWith( "T" ) )
+		{
+			m_tCookie = getcookie( (*it).latin1() );
+		}
+		else if( (*it).startsWith( "C" ) )
+		{
+			m_cCookie = getcookie( (*it).latin1() );
+		}
+    	}
+	if( !m_yCookie.isEmpty() && !m_tCookie.isEmpty() &&
+		!m_cCookie.isEmpty() )
+		emit haveCookies();
+}
+
+const QString& LoginTask::yCookie()
+{
+	return m_yCookie;
+}
+
+const QString& LoginTask::tCookie()
+{
+	return m_tCookie;
+}
+
+const QString& LoginTask::cCookie()
+{
+	return m_cCookie;
+}
+
+const QString& LoginTask::loginCookie()
+{
+	return m_loginCookie;
+}
 #include "logintask.moc"
