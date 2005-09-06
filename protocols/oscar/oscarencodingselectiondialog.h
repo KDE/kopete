@@ -20,10 +20,11 @@
 #define OSCARENCODINGSELECTIONDIALOG_H
 
 #include <kdialogbase.h>
+#include <kopete_export.h>
 
 class OscarEncodingBaseUI;
 
-class OscarEncodingSelectionDialog : public KDialogBase
+class KOPETE_EXPORT OscarEncodingSelectionDialog : public KDialogBase
 {
 Q_OBJECT
 public:
