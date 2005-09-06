@@ -59,7 +59,7 @@ void SendMessageTask::onGo()
 	{
 	//FIXME Right now we only send channel 1. We also need to
 	//support channel 4 and 2
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0004, 0x0006, 0x0000, client()->snacSequence() };
 	Buffer* b = new Buffer();
 	

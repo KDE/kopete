@@ -72,7 +72,7 @@ bool StageOneLoginTask::take( Transfer* transfer )
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending the FLAP version back" << endl;
 			
 			//send the flap version response
-			FLAP f = { 0x01, client()->flapSequence() , 0 };
+			FLAP f = { 0x01, 0 , 0 };
 			Buffer *outbuf = new Buffer;
 			outbuf->addDWord(0x00000001); //flap version
 			f.length = outbuf->length();
@@ -179,7 +179,7 @@ void StageTwoLoginTask::onGo()
 	if ( !m_cookie.isEmpty() )
 	{
 		//send the flap back
-		FLAP f = { 0x01, client()->flapSequence(), 0 };
+		FLAP f = { 0x01, 0, 0 };
 		Buffer* outbuf = new Buffer();
 		outbuf->addDWord( 0x00000001 );
 		outbuf->addTLV( 0x06, m_cookie.size(), m_cookie.data() );

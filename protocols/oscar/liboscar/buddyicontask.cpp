@@ -132,7 +132,7 @@ bool BuddyIconTask::take( Transfer* transfer )
 void BuddyIconTask::sendIcon()
 {
 	kdDebug(OSCAR_RAW_DEBUG) << "icon length: " << m_iconLength << endl;
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	m_seq = client()->snacSequence();
 	SNAC s = { 0x0010, 0x0002, 0x0000, m_seq };
 	Buffer* b = new Buffer;
@@ -159,7 +159,7 @@ void BuddyIconTask::handleUploadResponse()
 void BuddyIconTask::sendAIMBuddyIconRequest()
 {
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting buddy icon for " << m_user << endl;
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	m_seq = client()->snacSequence();
 	SNAC s = { 0x0010, 0x0004, 0x0000, m_seq };
 	Buffer* b = new Buffer;

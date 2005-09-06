@@ -37,7 +37,7 @@ SendDCInfoTask::~SendDCInfoTask()
 
 void SendDCInfoTask::onGo()
 {
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0001, 0x001E, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
 	

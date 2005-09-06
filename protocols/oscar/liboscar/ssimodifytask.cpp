@@ -274,7 +274,7 @@ void SSIModifyTask::sendSSIUpdate()
 		sendEditStart();
 		
 		//add the item
-		FLAP f1 = { 0x02, client()->flapSequence(), 0 };
+		FLAP f1 = { 0x02, 0, 0 };
 		m_id = client()->snacSequence();
 		SNAC s1 = { 0x0013, 0x0008, 0x0000, m_id };
 		Buffer* ssiBuffer = new Buffer;
@@ -292,7 +292,7 @@ void SSIModifyTask::sendSSIUpdate()
 		sendEditStart();
 		
 		//remove the item
-		FLAP f1 = { 0x02, client()->flapSequence(), 0 };
+		FLAP f1 = { 0x02, 0, 0 };
 		m_id = client()->snacSequence();
 		SNAC s1 = { 0x0013, 0x000A, 0x0000, m_id };
 		Buffer* ssiBuffer = new Buffer;
@@ -312,7 +312,7 @@ void SSIModifyTask::sendSSIUpdate()
 		sendEditStart();
 		
 		//change the group name
-		FLAP f1 = { 0x02, client()->flapSequence(), 0 };
+		FLAP f1 = { 0x02, 0, 0 };
 		m_id = client()->snacSequence();
 		SNAC s1 = { 0x0013, 0x0009, 0x0000, m_id };
 		Buffer* ssiBuffer = new Buffer;
@@ -332,7 +332,7 @@ void SSIModifyTask::changeGroupOnServer()
 	sendEditStart();
 	
 	//remove the old buddy from the list 
-	FLAP f1 = { 0x02, client()->flapSequence(), 0 };
+	FLAP f1 = { 0x02, 0, 0 };
 	SNAC s1 = { 0x0013,  0x000A, 0x0000, client()->snacSequence() };
 	Buffer* b1 = new Buffer;
 	b1->addBSTR( m_oldItem.name().latin1() );
@@ -344,7 +344,7 @@ void SSIModifyTask::changeGroupOnServer()
 	send( t2 );
 	
 	//add the buddy to the list with a different group
-	FLAP f2 = { 0x02, client()->flapSequence(), 0 };
+	FLAP f2 = { 0x02, 0, 0 };
 	m_id = client()->snacSequence(); //we don't care about the first ack
 	SNAC s2 = { 0x0013, 0x0008, 0x0000, m_id };
 	Buffer* b2 = new Buffer;
@@ -399,7 +399,7 @@ void SSIModifyTask::changeGroupOnServer()
 	}
 	
 	//change the group properties
-	FLAP f3 = { 0x02, client()->flapSequence(), 0 };
+	FLAP f3 = { 0x02, 0, 0 };
 	SNAC s3 = { 0x0013, 0x0009, 0x0000, client()->snacSequence() };
 	Buffer* b3 = new Buffer;
 	addItemToBuffer( oldGroupItem, b3 );
@@ -451,7 +451,7 @@ void SSIModifyTask::updateSSIManager()
 void SSIModifyTask::sendEditStart()
 {
 	SNAC editStartSnac = { 0x0013, 0x0011, 0x0000, client()->snacSequence() };
-	FLAP editStart = { 0x02, client()->flapSequence(), 10 };
+	FLAP editStart = { 0x02, 0, 10 };
 	Buffer* emptyBuffer = new Buffer;
 	Transfer* t1 = createTransfer( editStart, editStartSnac, emptyBuffer );
 	send( t1 );
@@ -460,7 +460,7 @@ void SSIModifyTask::sendEditStart()
 void SSIModifyTask::sendEditEnd()
 {
 	SNAC editEndSnac = { 0x0013, 0x0012, 0x0000, client()->snacSequence() };
-	FLAP editEnd = { 0x02, client()->flapSequence(), 10 } ;
+	FLAP editEnd = { 0x02, 0, 10 } ;
 	Buffer* emptyBuffer = new Buffer;
 	Transfer *t5 = createTransfer( editEnd, editEndSnac, emptyBuffer );
 	send( t5 );

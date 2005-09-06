@@ -43,7 +43,7 @@ void LocalContactListTask::onGo()
 {
 	if( !client()->settings()->respectRequireAuth() )
 	{
-		FLAP f = { 0x02, client()->flapSequence(), 0 };
+		FLAP f = { 0x02, 0, 0 };
 		SNAC s = { 0x0003, 0x0004, 0x0000, client()->snacSequence() };
 		Buffer* buffer = new Buffer();
 		

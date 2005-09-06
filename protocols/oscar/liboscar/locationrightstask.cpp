@@ -70,7 +70,7 @@ void LocationRightsTask::onGo()
 
 void LocationRightsTask::sendLocationRightsRequest()
 {
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0002, 0x0002, 0x0000, client()->snacSequence() };
 	Buffer* b = new Buffer();
 	Transfer* st = createTransfer( f, s, b );

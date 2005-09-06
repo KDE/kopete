@@ -120,7 +120,7 @@ bool OwnUserInfoTask::take( Transfer* transfer )
 void OwnUserInfoTask::onGo()
 {
 	//Send SNAC( 0x01, 0x0E )
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0001, 0x000E, 0x0000, client()->snacSequence() };
 	Buffer *b = new Buffer(); //empty snac data
 	Transfer* t = createTransfer( f, s, b );
