@@ -13,17 +13,19 @@
     *************************************************************************
 */
 
-#include <qstringlist.h>
-#include <kapplication.h>
+#include "kopetecommand.h"
+
+#include "kopetechatsessionmanager.h"
+#include "kopeteview.h"
+#include "kopeteuiglobal.h"
+
+#include <kauthorized.h>
 #include <kdebug.h>
 #include <kinputdialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 
-#include "kopetechatsessionmanager.h"
-#include "kopeteview.h"
-#include "kopetecommand.h"
-#include "kopeteuiglobal.h"
+#include <qstringlist.h>
 
 Kopete::Command::Command( QObject *parent, const QString &command, const char* handlerSlot,
 	const QString &help, Kopete::CommandHandler::CommandType type, const QString &formatString,
@@ -88,7 +90,7 @@ void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *
 			"\"%1\" has a maximum of %n arguments.", m_minArgs)
 			.arg( text() ), manager, gui );
 	}
-	else if( !KApplication::kApplication()->authorizeKAction( name() ) )
+	else if( !KAuthorized::self()->authorizeKAction( name() ) )
 	{
 		printError( i18n("You are not authorized to perform the command \"%1\".").arg(text()), manager, gui );
 	}
