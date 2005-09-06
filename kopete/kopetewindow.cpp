@@ -284,13 +284,13 @@ void KopeteWindow::initActions()
 
 	globalAccel = new KGlobalAccel( this );
 	globalAccel->insert( QString::fromLatin1("Read Message"), i18n("Read Message"), i18n("Read the next pending message"),
-		Qt::CTRL + Qt::SHIFT + Qt::Key_I, KKey::QtWIN + Qt::CTRL + Qt::Key_I, Kopete::ChatSessionManager::self(), SLOT(slotReadMessage()) );
+		Qt::CTRL + Qt::SHIFT + Qt::Key_I, Qt::META + Qt::CTRL + Qt::Key_I, Kopete::ChatSessionManager::self(), SLOT(slotReadMessage()) );
 
 	globalAccel->insert( QString::fromLatin1("Show/Hide Contact List"), i18n("Show/Hide Contact List"), i18n("Show or hide the contact list"),
-		Qt::CTRL + Qt::SHIFT + Qt::Key_A, KKey::QtWIN + Qt::CTRL + Qt::Key_A, this, SLOT(slotShowHide()) );
+		Qt::CTRL + Qt::SHIFT + Qt::Key_A, Qt::META + Qt::CTRL + Qt::Key_A, this, SLOT(slotShowHide()) );
 
 	globalAccel->insert( QString::fromLatin1("Set Away/Back"), i18n("Set Away/Back"), i18n("Sets away from keyboard or sets back"),
-		Qt::CTRL + Qt::SHIFT + Qt::Key_W, KKey::QtWIN + Qt::CTRL + Qt::SHIFT + Qt::Key_W, this, SLOT(slotToggleAway()) );
+		Qt::CTRL + Qt::SHIFT + Qt::Key_W, Qt::META + Qt::CTRL + Qt::SHIFT + Qt::Key_W, this, SLOT(slotToggleAway()) );
 
 	globalAccel->readSettings();
 	globalAccel->updateConnections();
