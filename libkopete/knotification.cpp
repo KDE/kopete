@@ -33,7 +33,7 @@
 
 
 #include <q3vbox.h>
-//Added by qt3to4:
+#include <QHash>
 #include <QPixmap>
 #include <dcopclient.h>
 #include <q3cstring.h>
@@ -83,7 +83,7 @@ void KNotification::notifyByExecute(const QString &command, const QString& event
 	if (!command.isEmpty())
 	{
 	// kdDebug() << "executing command '" << command << "'" << endl;
-		QMap<QChar,QString> subst;
+		QHash<QChar,QString> subst;
 		subst.insert( 'e', event );
 		subst.insert( 'a', fromApp );
 		subst.insert( 's', text );
