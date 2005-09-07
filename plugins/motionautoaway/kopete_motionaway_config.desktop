@@ -73,6 +73,7 @@ Comment[hu]=A távolléti állapot automatikus beállítása, ha nincs mozgás a
 Comment[is]=Breytir stöðu þinni ef tölvan er ekki notkun
 Comment[it]=Imposta lo stato ad assente quando non viene rilevato nessun movimento 
 Comment[ja]=コンピュータの近くにいない場合、不在状態にセットします。
+Comment[lt]=Būklė nustatoma „Pasitraukęs“, jei šalia kompiuterio nėra jokio judėjimo
 Comment[mk]=Го поставува статусот отсутен кога нема движење на компјутерот
 Comment[nb]=Sett som borte når det ikke er noen bevegelse på mus eller tastatur
 Comment[nl]=Stelt automatisch afwezigheid in als er geen beweging wordt gedetecteerd
