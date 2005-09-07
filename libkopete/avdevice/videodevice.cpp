@@ -1083,6 +1083,89 @@ kdDebug() <<  k_funcinfo << "Capturing in " << pixelFormatName(m_currentbuffer.p
 		case PIXELFORMAT_RGB32	: memcpy(bits,&m_currentbuffer.data[0], m_currentbuffer.data.size());
 			break;
 		case PIXELFORMAT_BGR32	: break;
+	
+		case PIXELFORMAT_YUYV:
+		case PIXELFORMAT_UYVY:
+		case PIXELFORMAT_YUV422P:
+		case PIXELFORMAT_YUV420P:
+		{
+		uchar *yptr, *cbptr, *crptr;
+		bool halfheight=false;
+		bool packed=false;
+		if (m_currentbuffer.pixelformat == PIXELFORMAT_YUV420P)
+			halfheight=true;
+	
+		if (m_currentbuffer.pixelformat == PIXELFORMAT_YUYV)
+		{
+			yptr = &m_currentbuffer.data[0];
+			cbptr = yptr + 1;
+			crptr = yptr + 3;
+			packed=true;
+		}
+		else if (m_currentbuffer.pixelformat == PIXELFORMAT_UYVY)
+		{
+			cbptr = &m_currentbuffer.data[0];
+			yptr = cbptr + 1;
+			crptr = cbptr + 3;
+			packed=true;
+		}
+		else
+		{
+			yptr = &m_currentbuffer.data[0];
+			cbptr = yptr + (width()*height());
+			crptr = cbptr + (width()*height()/(halfheight ? 4:2));
+		}
+	
+		for(int y=0; y<height(); y++)
+		{
+			for(int x=0; x<width(); x++)
+			{
+			int c,d,e;
+	
+			if (packed)
+			{
+				c = (yptr[x<<1])-16;
+				d = (cbptr[x&!1])-128;
+				e = (crptr[x&!1])-128;
+			}
+			else
+			{
+				c = (yptr[x])-16;
+				d = (cbptr[x>>1])-128;
+				e = (crptr[x>>1])-128;
+			}
+	
+			int r = (298 * c           + 409 * e + 128)>>8;
+			int g = (298 * c - 100 * d - 208 * e + 128)>>8;
+			int b = (298 * c + 516 * d           + 128)>>8;
+	
+			if (r<0) r=0;   if (r>255) r=255;
+			if (g<0) g=0;   if (g>255) g=255;
+			if (b<0) b=0;   if (b>255) b=255;
+	
+			uint *p = (uint*)qimage->scanLine(y)+x;
+			*p = qRgba(r,g,b,255);
+	
+			}
+	
+			if (packed)
+			{
+			yptr+=width()*2;
+			cbptr+=width()*2;
+			crptr+=width()*2;
+			}
+			else
+			{
+			yptr+=width();
+			if (!halfheight || y&1)
+			{
+				cbptr+=width()/2;
+				crptr+=width()/2;
+			}
+			}
+		}
+		}
+		break;
 	}
 
 	return EXIT_SUCCESS;
