@@ -266,11 +266,9 @@ void OscarAccount::processSSIList()
 
 void OscarAccount::nonServerAddContactDialogClosed()
 {
-    //use sender() because i'm lazy
     if ( !d->olnscDialog )
         return;
 
-    kdDebug(OSCAR_GEN_DEBUG) << "non server contacts notification dialog closed" << endl;
     if ( d->olnscDialog->result() == QDialog::Accepted )
     {
         //start adding contacts
@@ -322,8 +320,6 @@ void OscarAccount::nonServerAddContactDialogClosed()
 
 
     }
-    else
-        kdDebug(OSCAR_GEN_DEBUG) << "NOT adding non server contacts to the contact list" << endl;
 
     d->olnscDialog->delayedDestruct();
     d->olnscDialog = 0L;
@@ -332,7 +328,6 @@ void OscarAccount::nonServerAddContactDialogClosed()
 void OscarAccount::slotGoOffline()
 {
 	OscarAccount::disconnect();
-	//setAllContactsStatus( Kopete::OnlineStatus::AccountOffline );
 }
 
 void OscarAccount::slotGoOnline()
