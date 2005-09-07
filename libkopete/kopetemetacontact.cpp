@@ -805,9 +805,6 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 				if (photo().isNull())
 					setPhotoSourceContact(subcontact);
 					
-				// Update the contact photo cache.
-				d->contactPhotoCache = photoFromContact(subcontact);
-		
 			}
 			else if(photoSourceContact() == subcontact)
 			{
