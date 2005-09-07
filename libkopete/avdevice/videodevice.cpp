@@ -657,8 +657,10 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 		case VIDEODEV_DRIVER_V4L2:
 //			CLEAR (fmt);
 			if (-1 == xioctl (VIDIOC_G_FMT, &fmt))
+                        {
 //				return errnoReturn ("VIDIOC_S_FMT");
 //				kdDebug() << k_funcinfo << "VIDIOC_G_FMT failed (" << errno << ").Returned width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height << endl;
+			}
 			fmt.fmt.pix.pixelformat = pixelFormatCode(newformat);
 			if (-1 != xioctl (VIDIOC_S_FMT, &fmt))
 			{
