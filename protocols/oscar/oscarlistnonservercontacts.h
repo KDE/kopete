@@ -20,11 +20,12 @@
 #define OSCARLISTNONSERVERCONTACTS_H
 
 #include <kdialogbase.h>
+#include "kopete_export.h"
 
 class OscarListContactsBase;
 class QStringList;
 
-class OscarListNonServerContacts : public KDialogBase
+class KOPETE_EXPORT OscarListNonServerContacts : public KDialogBase
 {
 Q_OBJECT
 public:
