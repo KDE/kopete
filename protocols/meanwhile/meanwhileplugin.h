@@ -25,6 +25,7 @@ class QLineEdit;
 class MeanwhilePlugin
 {
 public:
+	virtual ~MeanwhilePlugin(){}
     /* do something when the find button on add contact is hit
      *  - like do lookups in company databases
      *   when done fill 'fillThis' with the id of the contact

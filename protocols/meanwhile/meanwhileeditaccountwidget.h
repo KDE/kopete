@@ -36,7 +36,7 @@ public:
                                 Kopete::Account* account,
                                 MeanwhileProtocol *protocol);
 
-    ~MeanwhileEditAccountWidget();
+    virtual ~MeanwhileEditAccountWidget();
 
     virtual Kopete::Account* apply();
 
