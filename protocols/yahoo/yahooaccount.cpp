@@ -133,7 +133,8 @@ void YahooAccount::slotGoStatus( int status, const QString &awayMessage)
 	}
 	else
 	{
-		//m_session->setAway( yahoo_status( status ), awayMessage, status? 1 : 0 );
+		m_session->changeStatus( Yahoo::Status( status ), awayMessage, 
+			(status == Yahoo::StatusAvailable)? Yahoo::StatusTypeAvailable : Yahoo::StatusTypeAway );
 		
 		//sets the awayMessage property for the owner of the account. shows up in the statusbar icon's tooltip. the property is unset when awayMessage is null
 		myself()->setProperty( m_protocol->awayMessage, awayMessage );
@@ -581,7 +582,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 {
 	kdDebug(14180) << k_funcinfo << succ << ", " << url << ")]" << endl;
 	QString errorMsg;
-	if ( succ == YAHOO_LOGIN_OK || (succ == YAHOO_LOGIN_DUPL && m_lastDisconnectCode == 2) )
+	if ( succ == Yahoo::LoginOk || (succ == Yahoo::LoginDupl && m_lastDisconnectCode == 2) )
 	{
 		//slotGotBuddies(yahooSession()->getLegacyBuddyList());
 
@@ -597,14 +598,14 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		//m_keepaliveTimer->start( 60 * 1000 );
 		return;
 	}
-	else if(succ == YAHOO_LOGIN_PASSWD)
+	else if(succ == Yahoo::LoginPasswd)
 	{
 		password().setWrong();
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 		disconnected( BadPassword );
 		return;
 	}
-	else if(succ == YAHOO_LOGIN_LOCK)
+	else if(succ == Yahoo::LoginLock)
 	{
 		errorMsg = i18n("Could not log into Yahoo service: your account has been locked.\nVisit %1 to reactivate it.").arg(url);
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
@@ -612,14 +613,14 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		disconnected( BadUserName ); // FIXME: add a more appropriate disconnect reason
 		return;
 	}
-	else if ( succ == YAHOO_LOGIN_UNAME )
+	else if ( succ == Yahoo::LoginUname )
 	{
 		errorMsg = i18n("Could not log into the Yahoo service: the username specified was invalid.");
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 		disconnected( BadUserName );
 	}
-	else if ( succ == YAHOO_LOGIN_DUPL && m_lastDisconnectCode != 2 )
+	else if ( succ == Yahoo::LoginDupl && m_lastDisconnectCode != 2 )
 	{
 		errorMsg = i18n("You have been logged out of the Yahoo service, possibly due to a duplicate login.");
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);

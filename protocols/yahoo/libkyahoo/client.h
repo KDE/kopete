@@ -86,6 +86,11 @@ Q_OBJECT
 		 */
 		void sendBuzz( const QString &to );
 
+		/**
+		 * Change our status
+		 */	
+		void changeStatus(Yahoo::Status status, const QString &message, Yahoo::StatusType type);
+
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/

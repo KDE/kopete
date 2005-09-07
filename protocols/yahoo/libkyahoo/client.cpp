@@ -32,6 +32,7 @@
 #include "sendnotifytask.h"
 #include "sendmessagetask.h"
 #include "logofftask.h"
+#include "changestatustask.h"
 #include "client.h"
 #include "yahootypes.h"
 
@@ -59,7 +60,6 @@ public:
 	QString yCookie;
 	QString tCookie;
 	QString cCookie;
-	QString loginCookie;
 	Yahoo::Status status;
 	Yahoo::Status statusOnConnect;
 
@@ -148,7 +148,7 @@ void Client::lt_loginFinished()
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
-	if( d->loginTask->statusCode() == Yahoo::YAHOO_LOGIN_OK )
+	if( d->loginTask->statusCode() == Yahoo::LoginOk )
 		initTasks();
 	kdDebug(14180) << k_funcinfo << "Emitting loggedIn" << endl;
 	emit loggedIn( d->loginTask->statusCode(), d->loginTask->statusString() );
@@ -156,7 +156,7 @@ void Client::lt_loginFinished()
 
 void Client::slotLoginResponse( int response, const QString &msg )
 {
-	if( response == Yahoo::YAHOO_LOGIN_OK )
+	if( response == Yahoo::LoginOk )
 		initTasks();
 
 	emit loggedIn( response, msg );
@@ -172,12 +172,10 @@ void Client::slotGotCookies()
 {
 	kdDebug(14180) << k_funcinfo << "Y: " << d->loginTask->yCookie()
 					<< " T: " << d->loginTask->tCookie()
-					<< " C: " << d->loginTask->cCookie()
-					<< " login: " << d->loginTask->loginCookie() << endl;
+					<< " C: " << d->loginTask->cCookie() << endl;
 	d->yCookie = d->loginTask->yCookie();
 	d->tCookie = d->loginTask->tCookie();
 	d->cCookie = d->loginTask->cCookie();
-	d->loginCookie = d->loginTask->loginCookie();
 }
 
 // INTERNALS //
@@ -209,6 +207,20 @@ void Client::sendBuzz( const QString &to )
 	smt->go( true );
 }
 
+void Client::changeStatus( Yahoo::Status status, const QString &message, Yahoo::StatusType type )
+{
+	kdDebug(14181) << k_funcinfo << "status: " << status
+					<< " message: " << message
+					<< " type: " << type << endl;	
+	ChangeStatusTask *cst = new ChangeStatusTask( d->root );
+	cst->setStatus( status );
+	cst->setMessage( message );
+	cst->setType( type );
+	cst->go( true );
+	
+	setStatus( status );
+}
+
 QString Client::userId()
 {
 	return d->user;
@@ -228,6 +240,7 @@ void Client::setStatus( Yahoo::Status status )
 {
 	d->status = status;
 }
+
 
 void Client::setStatusOnConnect( Yahoo::Status status )
 {

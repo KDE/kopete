@@ -105,17 +105,25 @@ namespace Yahoo
 		StatusInvisible = 12,
 		StatusCustom = 99,
 		StatusIdle = 999,
+		StatusWebLogin = 0x5a55aa55,
 		StatusOffline = 0x5a55aa56, /* don't ask */
 		StatusNotify = 0x16
 	};
 
+	enum StatusType
+	{
+		StatusTypeAvailable = 0,
+		StatusTypeAway
+	};
+
 	enum Login_Status {
-	YAHOO_LOGIN_OK = 0,
-	YAHOO_LOGIN_UNAME = 3,
-	YAHOO_LOGIN_PASSWD = 13,
-	YAHOO_LOGIN_LOCK = 14,
-	YAHOO_LOGIN_DUPL = 99,
-	YAHOO_LOGIN_SOCK = -1
+	LoginOk = 0,
+	LoginUname = 3,
+	LoginPasswd = 13,
+	LoginLock = 14,
+	LoginVerify = 29,	// FIXME: Find the reason for this response
+	LoginDupl = 99,
+	LoginSock = -1
 	};
 
 	typedef Q_UINT8 BYTE;

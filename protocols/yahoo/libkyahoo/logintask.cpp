@@ -209,6 +209,7 @@ void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint s
 	free(resp_6);
 	free(resp_96);
 	send(t);
+
 }
 
 void LoginTask::sendAuthResp_pre_0x0b(const QString &sn, const QString &seed)
@@ -231,7 +232,7 @@ void LoginTask::handleAuthResp(Transfer *transfer)
 	switch( t->service() )
 	{
 		case( Yahoo::ServiceList ):
-			emit loginResponse( Yahoo::YAHOO_LOGIN_OK, QString::null );
+			emit loginResponse( Yahoo::LoginOk, QString::null );
 		break;
 		case( Yahoo::ServiceAuthResp ):
 			emit loginResponse( t->firstParam( "66" ).toInt(), QString::null );

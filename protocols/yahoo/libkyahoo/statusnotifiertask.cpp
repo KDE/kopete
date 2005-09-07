@@ -78,7 +78,7 @@ void StatusNotifierTask::parseStatus( Transfer* transfer )
 	if( t->status() == Yahoo::StatusDisconnected && 
 		t->service() == Yahoo::ServiceLogoff )
 	{
-		emit loginResponse( Yahoo::YAHOO_LOGIN_DUPL, QString::null );
+		emit loginResponse( Yahoo::LoginDupl, QString::null );
 	}
 
 	QString	myNick;		/* key = 1 */
@@ -98,7 +98,7 @@ void StatusNotifierTask::parseStatus( Transfer* transfer )
 
 	myNick = t->firstParam( "1" );
 	if( myNick.startsWith( client()->userId() ) )
-		emit loginResponse( Yahoo::YAHOO_LOGIN_OK, QString::null );
+		emit loginResponse( Yahoo::LoginOk, QString::null );
 	
 	nicks = t->paramList( "7" );
 	states = t->paramList( "10" );
