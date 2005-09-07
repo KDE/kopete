@@ -105,6 +105,12 @@ int VideoDevice::open()
 			return EXIT_FAILURE;
 		}
 	}
+    else
+    {
+        kdDebug() << k_funcinfo << "Unable to open file " << full_filename << "Err: "<< errno << endl;
+        return EXIT_FAILURE;
+    }
+
 	initDevice();
 	kdDebug() <<  k_funcinfo << "exited successfuly" << endl;
 	return EXIT_SUCCESS;
@@ -1196,6 +1202,18 @@ int VideoDevice::stopCapturing()
 					enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 					if (-1 == xioctl (VIDIOC_STREAMOFF, &type))
 						return errnoReturn ("VIDIOC_STREAMOFF");
+
+                    if (m_io_method == IO_METHOD_MMAP)
+                    {
+                        unsigned int loop;
+                        for (loop = 0; loop < m_streambuffers; ++loop)
+                        {
+                            if (munmap(m_rawbuffers[loop].start,m_rawbuffers[loop].length) != 0)
+                            {
+                                kdDebug() <<  k_funcinfo << "unable to munmap." << endl;
+                            }
+                        }
+                    }
 				}
 #endif
 				break;
