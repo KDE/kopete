@@ -748,6 +748,11 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	}
 	
 	newMsgText.replace( QString::fromLatin1( "\r" ), QString::fromLatin1( "<br/>" ) );
+	newMsgText.replace( QString::fromLatin1( "&" ), QString::fromLatin1( "&amp;" ) );
+	newMsgText.replace( QString::fromLatin1( ">" ), QString::fromLatin1( "&gt;" ) );
+	newMsgText.replace( QString::fromLatin1( "<" ), QString::fromLatin1( "&lt;" ) );
+	newMsgText.replace( QString::fromLatin1( "\"" ), QString::fromLatin1( "&quot;" ) );
+	newMsgText.replace( QString::fromLatin1( " " ), QString::fromLatin1( "&nbsp;" ) );
 	
 	kdDebug(14180) << "Message after fixing font tags '" << newMsgText << "'" << endl;
 	
