@@ -48,6 +48,8 @@ class Message
 {
 	Q_OBJECT
 
+//	Q_PROPERTY(Direction direction READ direction WRITE setDirection)
+
 	Q_PROPERTY(QByteArray rawLine READ rawLine)
 	Q_PROPERTY(QByteArray rawPrefix READ rawPrefix WRITE setPrefix)
 	Q_PROPERTY(QByteArray rawCommand READ rawCommand WRITE setCommand)
@@ -60,8 +62,17 @@ class Message
 //	Q_PROPERTY(QStringList argList READ argList)
 	Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
 
+//	Q_ENUMS(Direction)
+
 public:
-	static KIRC::Message parse(const QByteArray &message);
+	typedef enum
+	{
+		Unknown = 0,
+		OutGoing, // From the client to the network
+		InGoing	  // From the network to the client
+	} Direction;
+
+	static KIRC::Message parse(const QByteArray &message/*, Direction direction*/);
 
 	static QByteArray format(
 		const QByteArray &command,
@@ -105,6 +116,8 @@ public:
 	Message &operator = (const KIRC::Message &o);
 
 public: // Properties read accessors
+//	Direction direction() const;
+
 	QByteArray rawLine() const;
 	QByteArray rawPrefix() const;
 	QByteArray rawCommand() const;
@@ -120,6 +133,8 @@ public: // Properties read accessors
 	QString suffix(QTextCodec *codec = 0) const;
 
 public slots: // Properties write accessors
+//	void setDirection(Direction direction);
+
 //	KIRC::Message &setLine(const QByteArray &);
 	KIRC::Message &setPrefix(const QByteArray &);
 	KIRC::Message &setCommand(const QByteArray &);
@@ -133,6 +148,7 @@ public slots: // Properties write accessors
 	KIRC::Message &setArgs(const QString &, QTextCodec *codec = 0);
 	KIRC::Message &setArgList(const QStringList &, QTextCodec *codec = 0);
 	KIRC::Message &setSuffix(const QString &, QTextCodec *codec = 0);
+
 public:
 	bool isValid() const;
 

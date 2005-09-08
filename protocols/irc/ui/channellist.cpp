@@ -26,11 +26,9 @@
 #include <qlabel.h>
 #include <qpainter.h>
 #include <qapplication.h>
-#include <qsimplerichtext.h>
 #include <qstyle.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
-#include <qheader.h>
 #include <klistview.h>
 #include <qlayout.h>
 #include <qtooltip.h>

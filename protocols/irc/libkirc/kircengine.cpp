@@ -41,23 +41,23 @@ using namespace KIRC;
 
 Engine::Engine(QObject *parent)
 	: KIRC::Socket(parent),
-	  m_defaultCodec(UTF8),
-	  m_FailedNickOnLogin(false),
-	  m_useSSL(false),
-	  m_server(new Entity(QString::null, KIRC::Server)),
-	  m_self(new Entity(QString::null, KIRC::User))
+	  d->defaultCodec(UTF8),
+	  d->FailedNickOnLogin(false),
+	  d->useSSL(false),
+	  d->server(new Entity(QString::null, KIRC::Server)),
+	  d->self(new Entity(QString::null, KIRC::User))
 {
 	setUserName(QString::null);
 
-	m_entities << m_server << m_self;
+	d->entities << d->server << d->self;
 
 	bindCommands();
 	bindNumericReplies();
 	bindCtcp();
 
-	m_VersionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
-	m_UserString = QString::fromLatin1("Response not supplied by user.");
-	m_SourceString = QString::fromLatin1("Unknown client, known source.");
+	d->VersionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
+	d->UserString = QString::fromLatin1("Response not supplied by user.");
+	d->SourceString = QString::fromLatin1("Unknown client, known source.");
 
 //	kdDebug(14120) << "Setting default engine codec, " << defaultCodec->name() << endl;
 /*
@@ -73,18 +73,8 @@ Engine::Engine(QObject *parent)
 
 Engine::~Engine()
 {
-	kdDebug(14120) << k_funcinfo << m_Host << endl;
+	kdDebug(14120) << k_funcinfo << d->Host << endl;
 	quit("KIRC Deleted", true);
-}
-
-QTextCodec *Engine::defaultCodec() const
-{
-	return m_defaultCodec;
-}
-
-void Engine::setDefaultCodec(QTextCodec* codec)
-{
-	m_defaultCodec = codec;
 }
 
 bool Engine::isDisconnected() const
@@ -99,33 +89,33 @@ bool Engine::isConnected() const
 
 void Engine::setVersionString(const QString &newString)
 {
-	m_VersionString = newString;
+	d->VersionString = newString;
 }
 
 void Engine::setUserString(const QString &newString)
 {
-	m_UserString = newString;
+	d->UserString = newString;
 }
 
 void Engine::setSourceString(const QString &newString)
 {
-	m_SourceString = newString;
+	d->SourceString = newString;
 }
 
 void Engine::setUserName(const QString &newName)
 {
 	if(newName.isEmpty())
-		m_Username = QString::fromLatin1(getpwuid(getuid())->pw_name);
+		d->Username = QString::fromLatin1(getpwuid(getuid())->pw_name);
 	else
-		m_Username = newName;
+		d->Username = newName;
 }
 
 void Engine::setRealName(const QString &newName)
 {
 	if(newName.isEmpty())
-		m_realName = QString::fromLatin1(getpwuid(getuid())->pw_gecos);
+		d->realName = QString::fromLatin1(getpwuid(getuid())->pw_gecos);
 	else
-		m_realName = newName;
+		d->realName = newName;
 }
 
 bool Engine::_bind(QMap<QString, KIRC::MessageRedirector *> &dict,
@@ -149,28 +139,28 @@ bool Engine::_bind(QMap<QString, KIRC::MessageRedirector *> &dict,
 bool Engine::bind(const char *command, QObject *object, const char *member,
 	int minArgs, int maxArgs, const QString &helpMessage)
 {
-	return _bind(m_commands, command, object, member,
+	return _bind(d->commands, command, object, member,
 		minArgs, maxArgs, helpMessage);
 }
 
 bool Engine::bind(int id, QObject *object, const char *member,
 		int minArgs, int maxArgs, const QString &helpMessage)
 {
-	return _bind(m_commands, QByteArray::number(id), object, member,
+	return _bind(d->commands, QByteArray::number(id), object, member,
 		     minArgs, maxArgs, helpMessage);
 }
 
 bool Engine::bindCtcpQuery(const char *command, QObject *object, const char *member,
 	int minArgs, int maxArgs, const QString &helpMessage)
 {
-	return _bind(m_ctcpQueries, command, object, member,
+	return _bind(d->ctcpQueries, command, object, member,
 		minArgs, maxArgs, helpMessage);
 }
 
 bool Engine::bindCtcpReply(const char *command, QObject *object, const char *member,
 	int minArgs, int maxArgs, const QString &helpMessage)
 {
-	return _bind(m_ctcpReplies, command, object, member,
+	return _bind(d->ctcpReplies, command, object, member,
 		minArgs, maxArgs, helpMessage);
 }
 
@@ -178,26 +168,17 @@ void Engine::onConnectionStateChanged(KIRC::ConnectionState state)
 {
 	switch (state)
 	{
-	case Idle:
-		// Do nothing.
-		break;
-	case Connecting:
-		// Do nothing.
-		break;
 	case Authentifying:
 		// If password is given for this server, send it now, and don't expect a reply
 		if (!(password()).isEmpty())
 			pass(password());
 
-		user(m_Username, 0, m_realName);
-		nick(m_Nickname);
+		user(d->Username, 0, d->realName);
+		nick(d->Nickname);
 
 		break;
-	case Connected:
-		// Do nothing.
-		break;
-	case Closing:
-		// Do nothing.
+	default:
+		// Do nothing for state
 		break;
 	}
 }
@@ -209,21 +190,21 @@ void Engine::onReceivedMessage( KIRC::Message &msg )
 
 	if (msg.isNumeric())
 	{
-		if (m_FailedNickOnLogin)
+		if (d->FailedNickOnLogin)
 		{
 			// this is if we had a "Nickname in use" message when connecting and we set another nick.
 			// This signal emits that the nick was accepted and we are now logged in
-//			emit successfullyChangedNick(m_Nickname, m_PendingNick);
-			m_Nickname = m_PendingNick;
-			m_FailedNickOnLogin = false;
+//			emit successfullyChangedNick(d->Nickname, d->PendingNick);
+			d->Nickname = d->PendingNick;
+			d->FailedNickOnLogin = false;
 		}
-//		mr = m_numericCommands[ msg.command().toInt() ];
+//		mr = d->numericCommands[ msg.command().toInt() ];
 		// we do this conversion because some dummy servers sends 1 instead of 001
 		// numbers are stored as "1" instead of "001" to make convertion faster (no 0 pading).
-		mr = m_commands[ QString::number(msg.command().toInt()) ];
+		mr = d->commands[ QString::number(msg.command().toInt()) ];
 	}
 	else
-		mr = m_commands[ msg.command() ];
+		mr = d->commands[ msg.command() ];
 
 	if (mr)
 	{
@@ -296,7 +277,7 @@ EntityPtr Engine::getEntity(const QString &name)
 	if (!entity)
 	{
 		entity = new Entity(name);
-		m_entities.append(entity);
+		d->entities.append(entity);
 	}
 
 	connect(entity, SIGNAL(destroyed(KIRC::Entity *)),
@@ -306,17 +287,17 @@ EntityPtr Engine::getEntity(const QString &name)
 
 EntityPtr Engine::server()
 {
-	return m_server;
+	return d->server;
 }
 
 EntityPtr Engine::self()
 {
-	return m_self;
+	return d->self;
 }
 
 void Engine::destroyed(KIRC::Entity *entity)
 {
-	m_entities.remove(entity);
+	d->entities.remove(entity);
 }
 
 void Engine::ignoreMessage(KIRC::Message &/*msg*/)

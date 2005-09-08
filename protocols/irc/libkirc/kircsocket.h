@@ -1,8 +1,6 @@
 /*
     kircsocket.h - IRC socket.
 
-    Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
-    Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
     Copyright (c) 2003-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
 
     Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
@@ -34,44 +32,43 @@ namespace KIRC
 class SocketPrivate;
 
 /**
- * @author Nick Betcher <nbetcher@kde.org>
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
- * @author Jason Keirstead <jason@keirstead.org>
  */
 class Socket
 	: public QObject
 {
 	Q_OBJECT
 
+	Q_PROPERTY(ConnectionState connectionState READ connectionState)
+	Q_ENUMS(ConnectionState)
+
 public:
+	enum ConnectionState
+	{
+		Idle,
+		HostLookup,
+		HostFound,
+//		Bound,
+		Connecting,
+		Authentifying,
+		Open,
+		Closing
+	};
+
 	Socket(QObject *parent = 0);
 	~Socket();
+
+public: // READ properties accessors.
+	ConnectionState connectionState() const;
+
+//public slots: // WRITE properties accessors.
+
+public:
+	KNetworkSocket *socket();
 
 	QByteArray encode(const QString &str, bool *success, QTextCodec *codec = 0) const;
 
 	QTextCodec *defaultCodec() const;
-
-//	QString getHost() const;
-//	Q_UINT16 getPort() const;
-
-//	bool useSSL() const;
-
-	KIRC::ConnectionState connectionState() const;
-
-signals:
-	/**
-	 * This message is emitted each time an internal error is detected.
-	 *
-	 * @param errStr the string describing the error.
-	 *
-	 * @note The signal can be fired on non fatal error also.
-	 *       It's the emiter responsability to change the state accordingly.
-	 */
-	void internalError(const QString &errStr);
-
-	void connectionStateChanged(KIRC::ConnectionState newstate);
-
-	void receivedMessage(KIRC::Message &message);
 
 public slots:
 	void setDefaultCodec(QTextCodec *codec);
@@ -91,11 +88,26 @@ public slots:
 
 	void showInfoDialog();
 
+signals:
+	/**
+	 * This message is emitted each time an internal error is detected.
+	 *
+	 * @param errStr the string describing the error.
+	 *
+	 * @note The signal can be fired on non fatal error also.
+	 *       It's the emiter responsability to change the state accordingly.
+	 */
+	void internalError(const QString &errStr);
+
+	void connectionStateChanged(KIRC::ConnectionState newstate);
+
+	void receivedMessage(KIRC::Message &message);
+
 protected:
 	void setConnectionState(KIRC::ConnectionState newstate);
 
 private slots:
-	void slotReadyRead();
+	void onReadyRead();
 
 	void socketStateChanged(int newstate);
 

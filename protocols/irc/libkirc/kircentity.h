@@ -66,8 +66,6 @@ public slots: // Write attributes accessors
 public:
 	bool operator == (const Entity &) const;
 
-	KIRC::EntityStatus status() const;
-
 	KIRC::EntityType type() const;
 	bool isChannel() const;
 	bool isUser() const;

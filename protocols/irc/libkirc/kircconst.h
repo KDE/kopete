@@ -63,7 +63,7 @@ namespace KIRC
 		Channel,
 		Server
 	};
-
+/*
 	typedef struct EntityStatus
 	{
 		KIRC::EntityType type	: 4;
@@ -107,7 +107,7 @@ namespace KIRC
 				(mode_O < o.mode_O);
 		}
 	};
-
+*/
 	// Static regular expressions
 	extern const QRegExp sm_RemoveLinefeeds;
 

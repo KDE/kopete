@@ -20,14 +20,15 @@
 #ifndef IRCCONTACT_H
 #define IRCCONTACT_H
 
+#include "ircconst.h"
+
 #include "kircengine.h"
 #include "kircentity.h"
 
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
-#include <qptrlist.h>
-#include <qmap.h>
+#include <QMap>
 
 class IRCAccount;
 class IRCContactPrivate;
@@ -120,13 +121,13 @@ private:
 
 	Kopete::ChatSession *m_chatSession;
 
-	QPtrList<Kopete::Contact> mMyself;
+	QList<Kopete::Contact *> mMyself;
 	Kopete::Message::MessageDirection execDir;
 
-	QValueList<KAction *> m_actions;
-	QValueList<KAction *> m_serverActions;
-	QValueList<KAction *> m_channelActions;
-	QValueList<KAction *> m_userActions;
+	QList<KAction *> m_actions;
+	QList<KAction *> m_serverActions;
+	QList<KAction *> m_channelActions;
+	QList<KAction *> m_userActions;
 
 	IRCContactPrivate *d;
 };

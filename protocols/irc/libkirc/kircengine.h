@@ -26,12 +26,10 @@
 #include "kircsocket.h"
 #include "kirctransfer.h"
 
-#include <QMap>
-
-class QRegExp;
-
 namespace KIRC
 {
+
+class EnginePrivate;
 
 /**
  * @author Nick Betcher <nbetcher@kde.org>
@@ -43,33 +41,7 @@ class Engine
 {
 	Q_OBJECT
 
-//	Q_PROPERTY(QUrl serverURL READ serverURL WRITE setServerURL)
-
-//	Extracted from the base of the serverURL.
-//	Q_PROPERTY(bool useSSL);
-//	Q_PROPERTY(QString user READ user);
-//	Q_PROPERTY(QString password);
-//	Q_PROPERTY(QString host READ host);
-//	Q_PROPERTY(int port READ host);
-
-//	Extracted from the query of the serverURL.
-//	Q_PROPERTY(bool reqsPasswd);
-//	Q_PROPERTY(QString name); // real name
-//	Q_PROPERTY(QStringList nickList READ nickList WRITE setNickList)
-//	Q_PROPERTY(QString nick READ nick)
-//	Q_PROPERTY(QStringList portList)
-
 public:
-/*
-	enum Error
-	{
-		ParsingFailed,
-		UnknownCommand,
-		UnknownNumericReply,
-		InvalidNumberOfArguments,
-		MethodFailed
-	};
-*/
 	Engine(QObject *parent = 0);
 	~Engine();
 
@@ -78,9 +50,6 @@ public: // READ properties accessors.
 public slots: // WRITE properties accessors.
 
 public:
-	void setDefaultCodec(QTextCodec *codec);
-	QTextCodec *defaultCodec() const;
-
 	bool isDisconnected() const;
 	bool isConnected() const;
 
@@ -90,12 +59,6 @@ public:
 
 //	QUrl serverURL() const;
 //	bool setServerURL(const QUrl &url);
-
-	inline const QString &currentHost() const
-		{ return m_Host; };
-
-	inline Q_UINT16 currentPort()
-		{ return m_Port; }
 
 	inline const QString &nickName() const
 		{ return m_Nickname; };
@@ -193,8 +156,6 @@ public slots:
 	void CtcpRequest_version(const QString &target);
 
 signals:
-//	void internalError(KIRC::Engine::Error, KIRC::Message &);
-
 	/**
 	 * Emit a received message.
 	 * The received message could have been translated to your locale.
@@ -323,34 +284,7 @@ private:
 		const char *command, QObject *object, const char *member,
 		int minArgs, int maxArgs, const QString &helpMessage);
 
-	QTextCodec *m_defaultCodec;
-
-	QString m_Host;
-	Q_UINT16 m_Port;
-
-//	QUrl serverURL;
-//	QUrl currentServerURL;
-	QString m_Nickname;
-	QString m_Username;
-	QString m_realName;
-	QString m_Passwd;
-	bool m_ReqsPasswd;
-	bool m_FailedNickOnLogin;
-	bool m_useSSL;
-
-	KIRC::EntityPtrList m_entities;
-	KIRC::EntityPtr m_server;
-	KIRC::EntityPtr m_self;
-
-	QString m_VersionString;
-	QString m_UserString;
-	QString m_SourceString;
-	QString m_PendingNick;
-
-	QMap<QString, KIRC::MessageRedirector *> m_commands;
-//	QMap<int, KIRC::MessageRedirector *> m_numericCommands;
-	QMap<QString, KIRC::MessageRedirector *> m_ctcpQueries;
-	QMap<QString, KIRC::MessageRedirector *> m_ctcpReplies;
+	EnginePrivate *d;
 };
 
 }

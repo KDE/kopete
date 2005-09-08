@@ -42,42 +42,42 @@ class ChannelList
 {
 	Q_OBJECT
 
-	public:
-		ChannelList( QWidget *parent, KIRC::Engine *engine );
+public:
+	ChannelList( QWidget *parent, KIRC::Engine *engine );
 
-	public slots:
-		void search();
-		void reset();
-		void clear();
+public slots:
+	void search();
+	void reset();
+	void clear();
 
-	signals:
-		void channelDoubleClicked( const QString &channel );
-		void channelSelected( const QString &channel );
+signals:
+	void channelDoubleClicked( const QString &channel );
+	void channelSelected( const QString &channel );
 
-	private slots:
-		void slotItemDoubleClicked( QListViewItem * i );
-		void slotItemSelected( QListViewItem * i );
-		void slotChannelListed( const QString & channel, uint users, const QString & topic );
-		void slotListEnd();
-		void slotDisconnected();
-		void slotSearchCache();
+private slots:
+	void slotItemDoubleClicked( QListViewItem * i );
+	void slotItemSelected( QListViewItem * i );
+	void slotChannelListed( const QString & channel, uint users, const QString & topic );
+	void slotListEnd();
+	void slotDisconnected();
+	void slotSearchCache();
 
-	private:
-		void checkSearchResult( const QString & channel, uint users, const QString & topic );
+private:
+	void checkSearchResult( const QString & channel, uint users, const QString & topic );
 
-		QLabel* textLabel1_2;
-		QLineEdit* channelSearch;
-		QSpinBox* numUsers;
-		QPushButton* mSearchButton;
-		KListView* mChannelList;
-		QVBoxLayout* ChannelListLayout;
-		QHBoxLayout* layout72_2;
-		KIRC::Engine *m_engine;
-		bool mSearching;
-		QString mSearch;
-		uint mUsers;
-		QMap< QString, QPair< uint, QString > > channelCache;
-		QMap< QString, QPair< uint, QString > >::const_iterator cacheIterator;
+	QLabel* textLabel1_2;
+	QLineEdit* channelSearch;
+	QSpinBox* numUsers;
+	QPushButton* mSearchButton;
+	KListView* mChannelList;
+	QVBoxLayout* ChannelListLayout;
+	QHBoxLayout* layout72_2;
+	KIRC::Engine *m_engine;
+	bool mSearching;
+	QString mSearch;
+	uint mUsers;
+	QMap< QString, QPair< uint, QString > > channelCache;
+	QMap< QString, QPair< uint, QString > >::const_iterator cacheIterator;
 };
 
 #endif

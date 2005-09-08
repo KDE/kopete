@@ -4,36 +4,14 @@
  <exportmacro></exportmacro>
  <class>IRCEditAccountBase</class>
  <widget class="QWidget" name="IRCEditAccountBase" >
-  <property name="geometry" >
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>689</width>
-    <height>528</height>
-   </rect>
-  </property>
-  <property name="sizePolicy" >
-   <sizepolicy>
-    <hsizetype>3</hsizetype>
-    <vsizetype>3</vsizetype>
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
-  <property name="baseSize" >
-   <size>
-    <width>440</width>
-    <height>575</height>
-   </size>
-  </property>
-  <layout class="QHBoxLayout" >
+  <layout class="QGridLayout" >
    <property name="margin" >
     <number>10</number>
    </property>
    <property name="spacing" >
     <number>6</number>
    </property>
-   <item>
+   <item row="0" column="0" >
     <widget class="QTabWidget" name="tabWidget2" >
      <property name="sizePolicy" >
       <sizepolicy>
@@ -49,26 +27,169 @@
       </attribute>
       <layout class="QGridLayout" >
        <property name="margin" >
-        <number>0</number>
+        <number>8</number>
        </property>
        <property name="spacing" >
         <number>6</number>
        </property>
-       <item row="2" column="0" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
+       <item row="0" column="0" >
+        <widget class="Q3GroupBox" name="groupBox59" >
+         <property name="title" >
+          <string>Account Information</string>
          </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>150</height>
-          </size>
-         </property>
-        </spacer>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>-1</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="3" column="3" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>392</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="3" column="1" >
+           <widget class="QComboBox" name="network_2" />
+          </item>
+          <item row="0" column="0" >
+           <widget class="QLabel" name="m_nickNamesLabel" >
+            <property name="whatsThis" >
+             <string>This is the name that everyone will see everytime you say something</string>
+            </property>
+            <property name="text" >
+             <string>N&amp;icknames:</string>
+            </property>
+            <property name="buddy" >
+             <cstring>mNickName</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" >
+           <widget class="QLabel" name="m_realNameLabel" >
+            <property name="text" >
+             <string>&amp;Real name:</string>
+            </property>
+            <property name="buddy" >
+             <cstring>m_realNameLineEdit</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="textLabel5" >
+            <property name="whatsThis" >
+             <string>The username you would prefer to use on IRC, if your system does not have identd support.  Leave blank to use your system account name.</string>
+            </property>
+            <property name="text" >
+             <string>&amp;Username:</string>
+            </property>
+            <property name="buddy" >
+             <cstring>mUserName</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" colspan="3" >
+           <widget class="QLineEdit" name="mUserName" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>7</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip" >
+             <string>The username you would prefer to use on IRC, if your system does not have identd support.  Leave blank to use your system account name.</string>
+            </property>
+            <property name="whatsThis" >
+             <string>The username you would prefer to use on IRC, if your system does not have identd support.  Leave blank to use your system account name.</string>
+            </property>
+            <property name="echoMode" >
+             <enum>QLineEdit::Normal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" colspan="3" >
+           <widget class="QLineEdit" name="m_realNameLineEdit" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>7</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip" >
+             <string>The username you would prefer to use on IRC, if your system does not have identd support.</string>
+            </property>
+            <property name="whatsThis" >
+             <string>The username you would prefer to use on IRC, if your system does not have identd support.  Leave blank to use your system account name.</string>
+            </property>
+            <property name="echoMode" >
+             <enum>QLineEdit::Normal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" colspan="3" >
+           <widget class="QLineEdit" name="mNickName" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>7</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip" >
+             <string>This is the name that everyone will see everytime you say something</string>
+            </property>
+            <property name="whatsThis" >
+             <string>The alias you would like to use on IRC.  You may change this once online with the /nick command.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" >
+           <widget class="QLabel" name="textLabel1_3_2" >
+            <property name="text" >
+             <string>&amp;Network:</string>
+            </property>
+            <property name="buddy" >
+             <cstring>network</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2" >
+           <widget class="QPushButton" name="editButton_2" >
+            <property name="text" >
+             <string>&amp;Edit...</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+         <widget class="QWidget" name="layoutWidget" >
+          <property name="geometry" >
+           <rect>
+            <x>11</x>
+            <y>94</y>
+            <width>627</width>
+            <height>176</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QWidget" name="" />
+         <widget class="QWidget" name="" />
+        </widget>
        </item>
        <item row="1" column="0" >
         <widget class="QLabel" name="textLabel3" >
@@ -94,246 +215,36 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0" >
-        <widget class="Q3GroupBox" name="groupBox59" >
-         <property name="title" >
-          <string>Account Information</string>
+       <item row="2" column="0" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
          </property>
-         <layout class="QGridLayout" >
-          <property name="margin" >
-           <number>10</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item row="0" column="0" >
-           <widget class="QLabel" name="textLabel4" >
-            <property name="whatsThis" >
-             <string>This is the name that everyone will see everytime you say something</string>
-            </property>
-            <property name="text" >
-             <string>N&amp;ickname:</string>
-            </property>
-            <property name="buddy" >
-             <cstring>mNickName</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" >
-           <widget class="QLabel" name="textLabel1_2" >
-            <property name="whatsThis" >
-             <string>When the nickname is already in use when connecting, this name will be used instead</string>
-            </property>
-            <property name="text" >
-             <string>Alternate ni&amp;ckname:</string>
-            </property>
-            <property name="buddy" >
-             <cstring>mAltNickname</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1" >
-           <widget class="QLineEdit" name="mNickName" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>0</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip" >
-             <string>This is the name that everyone will see everytime you say something</string>
-            </property>
-            <property name="whatsThis" >
-             <string>The alias you would like to use on IRC.  You may change this once online with the /nick command.</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" >
-           <widget class="QLineEdit" name="mAltNickname" >
-            <property name="toolTip" >
-             <string>When the nickname is already in use when connecting, this name will be used instead</string>
-            </property>
-            <property name="whatsThis" >
-             <string>When the nickname is already in use when connecting, this name will be used instead</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0" colspan="2" >
-           <widget class="Kopete::UI::PasswordWidget" name="mPasswordWidget" />
-          </item>
-          <item row="3" column="0" >
-           <widget class="QLabel" name="m_realNameLabel" >
-            <property name="text" >
-             <string>&amp;Real name:</string>
-            </property>
-            <property name="buddy" >
-             <cstring>m_realNameLineEdit</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" >
-           <widget class="QLabel" name="textLabel5" >
-            <property name="whatsThis" >
-             <string>The username you would prefer to use on IRC, if your system does not have identd support.  Leave blank to use your system account name.</string>
-            </property>
-            <property name="text" >
-             <string>&amp;Username:</string>
-            </property>
-            <property name="buddy" >
-             <cstring>mUserName</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1" >
-           <widget class="QLineEdit" name="mUserName" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>0</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip" >
-             <string>The username you would prefer to use on IRC, if your system does not have identd support.  Leave blank to use your system account name.</string>
-            </property>
-            <property name="whatsThis" >
-             <string>The username you would prefer to use on IRC, if your system does not have identd support.  Leave blank to use your system account name.</string>
-            </property>
-            <property name="echoMode" >
-             <enum>QLineEdit::Normal</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1" >
-           <widget class="QLineEdit" name="m_realNameLineEdit" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>0</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip" >
-             <string>The username you would prefer to use on IRC, if your system does not have identd support.</string>
-            </property>
-            <property name="whatsThis" >
-             <string>The username you would prefer to use on IRC, if your system does not have identd support.  Leave blank to use your system account name.</string>
-            </property>
-            <property name="echoMode" >
-             <enum>QLineEdit::Normal</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>150</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
      <widget class="QWidget" name="TabPage" >
       <attribute name="title" >
-       <string>Connection</string>
+       <string>C&amp;onnection</string>
       </attribute>
-      <layout class="QVBoxLayout" >
+      <layout class="QGridLayout" >
        <property name="margin" >
-        <number>0</number>
+        <number>8</number>
        </property>
        <property name="spacing" >
         <number>6</number>
        </property>
-       <item>
-        <layout class="QGridLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>6</number>
-         </property>
-         <item row="1" column="1" >
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>6</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="description" >
-             <property name="text" >
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>161</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item row="0" column="1" >
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>6</number>
-           </property>
-           <item>
-            <widget class="QComboBox" name="network" />
-           </item>
-           <item>
-            <widget class="QPushButton" name="editButton" >
-             <property name="text" >
-              <string>&amp;Edit...</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>392</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item row="0" column="0" >
-          <widget class="QLabel" name="textLabel1_3" >
-           <property name="text" >
-            <string>&amp;Network:</string>
-           </property>
-           <property name="buddy" >
-            <cstring>network</cstring>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
+       <item row="0" column="0" >
         <widget class="Q3GroupBox" name="groupBox1" >
          <property name="sizePolicy" >
           <sizepolicy>
@@ -346,31 +257,14 @@
          <property name="title" >
           <string>Connection Preferences</string>
          </property>
-         <layout class="QVBoxLayout" >
+         <layout class="QGridLayout" >
           <property name="margin" >
-           <number>10</number>
+           <number>-1</number>
           </property>
           <property name="spacing" >
            <number>6</number>
           </property>
-          <item>
-           <widget class="QCheckBox" name="preferSSL" >
-            <property name="text" >
-             <string>&amp;Prefer SSL-based connections</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="autoConnect" >
-            <property name="whatsThis" >
-             <string>If you check that case, the account will not be connected when you press the &quot;Connect All&quot; button, or at startup even if you selected to automatically connect at startup</string>
-            </property>
-            <property name="text" >
-             <string>E&amp;xclude from connect all</string>
-            </property>
-           </widget>
-          </item>
-          <item>
+          <item row="2" column="0" >
            <layout class="QHBoxLayout" >
             <property name="margin" >
              <number>0</number>
@@ -409,79 +303,107 @@
             </item>
            </layout>
           </item>
+          <item row="1" column="0" >
+           <widget class="QCheckBox" name="autoConnect" >
+            <property name="whatsThis" >
+             <string>If you check that case, the account will not be connected when you press the &quot;Connect All&quot; button, or at startup even if you selected to automatically connect at startup</string>
+            </property>
+            <property name="text" >
+             <string>E&amp;xclude from connect all</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" >
+           <widget class="QCheckBox" name="preferSSL" >
+            <property name="text" >
+             <string>&amp;Prefer SSL-based connections</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
-       <item>
-        <widget class="Q3GroupBox" name="groupBox5" >
+       <item row="2" column="0" >
+        <widget class="Q3GroupBox" name="groupBox60" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>3</hsizetype>
+           <vsizetype>3</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>130</height>
+          </size>
+         </property>
          <property name="title" >
-          <string>Default Messages</string>
+          <string>Run Following Commands on Connect</string>
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
-           <number>10</number>
+           <number>-1</number>
           </property>
           <property name="spacing" >
-           <number>6</number>
+           <number>0</number>
           </property>
           <item row="0" column="0" >
-           <widget class="QLabel" name="textLabel1" >
-            <property name="text" >
-             <string>&amp;Part message:</string>
+           <widget class="KListView" name="commandList_2_2" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>7</hsizetype>
+              <vsizetype>2</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="buddy" >
-             <cstring>partMessage</cstring>
+            <property name="toolTip" >
+             <string>Any commands added here will be run as soon as you are connected to the IRC server.</string>
+            </property>
+            <property name="whatsThis" >
+             <string>Any commands added here will be run as soon as you are connected to the IRC server.</string>
+            </property>
+            <property name="allColumnsShowFocus" >
+             <bool>true</bool>
+            </property>
+            <property name="defaultRenameAction" >
+             <enum>Q3ListView::Reject</enum>
             </property>
            </widget>
           </item>
           <item row="1" column="0" >
-           <widget class="QLabel" name="textLabel2" >
-            <property name="text" >
-             <string>&amp;Quit message:</string>
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
             </property>
-            <property name="buddy" >
-             <cstring>quitMessage</cstring>
+            <property name="spacing" >
+             <number>6</number>
             </property>
-           </widget>
-          </item>
-          <item row="0" column="1" >
-           <widget class="QLineEdit" name="partMessage" >
-            <property name="toolTip" >
-             <string>The message you want people to see when you part a channel without giving a reason. Leave this field blank to use the Kopete default message.</string>
-            </property>
-            <property name="whatsThis" >
-             <string>The message you want people to see when you part a channel without giving a reason. Leave this field blank to use the Kopete default message.</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" >
-           <widget class="QLineEdit" name="quitMessage" >
-            <property name="toolTip" >
-             <string>The message you want people to see when you disconnect from IRC without giving a reason. Leave this field blank to use the Kopete default message.</string>
-            </property>
-            <property name="whatsThis" >
-             <string>The message you want people to see when you disconnect from IRC without giving a reason. Leave this field blank to use the Kopete default message.</string>
-            </property>
-           </widget>
+            <item>
+             <widget class="QLineEdit" name="commandEdit_2_2" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>3</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="addButton_2_2" >
+              <property name="text" >
+               <string>Add Co&amp;mmand</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>150</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>
@@ -489,213 +411,14 @@
       <attribute name="title" >
        <string>A&amp;dvanced Configuration</string>
       </attribute>
-      <layout class="QVBoxLayout" >
+      <layout class="QGridLayout" >
        <property name="margin" >
-        <number>0</number>
+        <number>8</number>
        </property>
        <property name="spacing" >
         <number>6</number>
        </property>
-       <item>
-        <widget class="Q3GroupBox" name="groupBox7" >
-         <property name="title" >
-          <string>Message Destinations</string>
-         </property>
-         <layout class="QGridLayout" >
-          <property name="margin" >
-           <number>10</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item row="1" column="1" >
-           <widget class="QCheckBox" name="autoShowAnonWindows" >
-            <property name="text" >
-             <string>Auto-show anonymous windows</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" >
-           <widget class="QCheckBox" name="autoShowServerWindow" >
-            <property name="text" >
-             <string>Auto-show the server window</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" >
-           <layout class="QGridLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
-            <property name="spacing" >
-             <number>6</number>
-            </property>
-            <item row="0" column="0" >
-             <widget class="QLabel" name="textLabel1_4" >
-              <property name="text" >
-               <string>Server messages:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" >
-             <widget class="QLabel" name="textLabel4_3" >
-              <property name="text" >
-               <string>Server notices:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" >
-             <widget class="QComboBox" name="serverNotices" >
-              <property name="currentIndex" >
-               <number>0</number>
-              </property>
-              <item>
-               <property name="text" >
-                <string>Active Window</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>Server Window</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>Anonymous Window</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>KNotify</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>Ignore</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="0" column="1" >
-             <widget class="QComboBox" name="serverMessages" >
-              <property name="currentIndex" >
-               <number>0</number>
-              </property>
-              <item>
-               <property name="text" >
-                <string>Active Window</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>Server Window</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>Anonymous Window</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>KNotify</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>Ignore</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="0" column="1" >
-           <layout class="QGridLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
-            <property name="spacing" >
-             <number>6</number>
-            </property>
-            <item row="1" column="0" >
-             <widget class="QLabel" name="textLabel3_3" >
-              <property name="text" >
-               <string>Error messages:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1" >
-             <widget class="QComboBox" name="informationReplies" >
-              <item>
-               <property name="text" >
-                <string>Active Window</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>Server Window</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>Anonymous Window</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>KNotify</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>Ignore</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="0" column="0" >
-             <widget class="QLabel" name="textLabel2_2" >
-              <property name="text" >
-               <string>Information replies:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" >
-             <widget class="QComboBox" name="errorMessages" >
-              <item>
-               <property name="text" >
-                <string>Active Window</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>Server Window</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>Anonymous Window</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>KNotify</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>Ignore</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
+       <item row="1" column="0" >
         <widget class="Q3GroupBox" name="groupBox6" >
          <property name="sizePolicy" >
           <sizepolicy>
@@ -714,14 +437,14 @@
          <property name="title" >
           <string>Custom CTCP Replies</string>
          </property>
-         <layout class="QVBoxLayout" >
+         <layout class="QGridLayout" >
           <property name="margin" >
-           <number>10</number>
+           <number>-1</number>
           </property>
           <property name="spacing" >
-           <number>6</number>
+           <number>0</number>
           </property>
-          <item>
+          <item row="0" column="0" >
            <widget class="KListView" name="ctcpList" >
             <property name="sizePolicy" >
              <sizepolicy>
@@ -742,7 +465,7 @@
             </property>
            </widget>
           </item>
-          <item>
+          <item row="1" column="0" >
            <layout class="QHBoxLayout" >
             <property name="margin" >
              <number>0</number>
@@ -788,24 +511,91 @@
          </layout>
         </widget>
        </item>
-       <item>
-        <widget class="Q3GroupBox" name="groupBox60" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>3</hsizetype>
-           <vsizetype>3</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+       <item row="0" column="0" >
+        <widget class="Q3GroupBox" name="groupBox5" >
+         <property name="title" >
+          <string>Default Messages</string>
          </property>
-         <property name="minimumSize" >
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>-1</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="1" column="1" >
+           <widget class="QLineEdit" name="quitMessage_2" >
+            <property name="toolTip" >
+             <string>The message you want people to see when you disconnect from IRC without giving a reason. Leave this field blank to use the Kopete default message.</string>
+            </property>
+            <property name="whatsThis" >
+             <string>The message you want people to see when you disconnect from IRC without giving a reason. Leave this field blank to use the Kopete default message.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QLineEdit" name="partMessage_2" >
+            <property name="toolTip" >
+             <string>The message you want people to see when you part a channel without giving a reason. Leave this field blank to use the Kopete default message.</string>
+            </property>
+            <property name="whatsThis" >
+             <string>The message you want people to see when you part a channel without giving a reason. Leave this field blank to use the Kopete default message.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="textLabel2_3" >
+            <property name="text" >
+             <string>&amp;Quit message:</string>
+            </property>
+            <property name="buddy" >
+             <cstring>quitMessage</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" >
+           <widget class="QLabel" name="textLabel1_2" >
+            <property name="text" >
+             <string>&amp;Part message:</string>
+            </property>
+            <property name="buddy" >
+             <cstring>partMessage</cstring>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>Windowing</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>8</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item row="1" column="0" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
           <size>
-           <width>0</width>
-           <height>130</height>
+           <width>20</width>
+           <height>40</height>
           </size>
          </property>
+        </spacer>
+       </item>
+       <item row="0" column="0" >
+        <widget class="Q3GroupBox" name="groupBox7" >
          <property name="title" >
-          <string>Run Following Commands on Connect</string>
+          <string>Message Destinations</string>
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
@@ -814,58 +604,201 @@
           <property name="spacing" >
            <number>6</number>
           </property>
+          <item row="1" column="1" >
+           <widget class="QCheckBox" name="autoShowAnonWindows_2" >
+            <property name="text" >
+             <string>Auto-show anonymous windows</string>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="0" >
-           <layout class="QHBoxLayout" >
+           <widget class="QCheckBox" name="autoShowServerWindow_2" >
+            <property name="text" >
+             <string>Auto-show the server window</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" >
+           <layout class="QGridLayout" >
             <property name="margin" >
              <number>0</number>
             </property>
             <property name="spacing" >
              <number>6</number>
             </property>
-            <item>
-             <widget class="QLineEdit" name="commandEdit" >
-              <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>3</hsizetype>
-                <vsizetype>0</vsizetype>
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+            <item row="0" column="0" >
+             <widget class="QLabel" name="textLabel1_4_2" >
+              <property name="text" >
+               <string>Server messages:</string>
+              </property>
+              <property name="buddy" >
+               <cstring>serverMessages_2</cstring>
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QPushButton" name="addButton" >
+            <item row="1" column="0" >
+             <widget class="QLabel" name="textLabel4_3_2" >
               <property name="text" >
-               <string>Add Co&amp;mmand</string>
+               <string>Server notices:</string>
               </property>
+              <property name="buddy" >
+               <cstring>serverNotices_2</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="QComboBox" name="serverNotices_2" >
+              <property name="currentIndex" >
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text" >
+                <string>Active Window</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Server Window</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Anonymous Window</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>KNotify</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Ignore</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <widget class="QComboBox" name="serverMessages_2" >
+              <property name="currentIndex" >
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text" >
+                <string>Active Window</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Server Window</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Anonymous Window</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>KNotify</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Ignore</string>
+               </property>
+              </item>
              </widget>
             </item>
            </layout>
           </item>
-          <item row="0" column="0" >
-           <widget class="KListView" name="commandList" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>2</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+          <item row="0" column="1" >
+           <layout class="QGridLayout" >
+            <property name="margin" >
+             <number>0</number>
             </property>
-            <property name="toolTip" >
-             <string>Any commands added here will be run as soon as you are connected to the IRC server.</string>
+            <property name="spacing" >
+             <number>6</number>
             </property>
-            <property name="whatsThis" >
-             <string>Any commands added here will be run as soon as you are connected to the IRC server.</string>
-            </property>
-            <property name="allColumnsShowFocus" >
-             <bool>true</bool>
-            </property>
-            <property name="defaultRenameAction" >
-             <enum>Q3ListView::Reject</enum>
-            </property>
-           </widget>
+            <item row="1" column="0" >
+             <widget class="QLabel" name="textLabel3_3_2" >
+              <property name="text" >
+               <string>Error messages:</string>
+              </property>
+              <property name="buddy" >
+               <cstring>errorMessages_2</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <widget class="QComboBox" name="informationReplies_2" >
+              <item>
+               <property name="text" >
+                <string>Active Window</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Server Window</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Anonymous Window</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>KNotify</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Ignore</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="0" column="0" >
+             <widget class="QLabel" name="textLabel2_2_2" >
+              <property name="text" >
+               <string>Information replies:</string>
+              </property>
+              <property name="buddy" >
+               <cstring>informationReplies_2</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="QComboBox" name="errorMessages_2" >
+              <item>
+               <property name="text" >
+                <string>Active Window</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Server Window</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Anonymous Window</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>KNotify</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Ignore</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -887,13 +820,6 @@
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>Kopete::UI::PasswordWidget</class>
-   <extends></extends>
-   <header>kopetepasswordwidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
    <class>KListView</class>
    <extends>Q3ListView</extends>
    <header>klistview.h</header>
@@ -904,29 +830,15 @@
  <tabstops>
   <tabstop>tabWidget2</tabstop>
   <tabstop>mNickName</tabstop>
-  <tabstop>mAltNickname</tabstop>
   <tabstop>mUserName</tabstop>
   <tabstop>m_realNameLineEdit</tabstop>
-  <tabstop>network</tabstop>
-  <tabstop>editButton</tabstop>
   <tabstop>preferSSL</tabstop>
   <tabstop>autoConnect</tabstop>
   <tabstop>charset</tabstop>
-  <tabstop>partMessage</tabstop>
-  <tabstop>quitMessage</tabstop>
-  <tabstop>serverMessages</tabstop>
-  <tabstop>serverNotices</tabstop>
-  <tabstop>informationReplies</tabstop>
-  <tabstop>errorMessages</tabstop>
-  <tabstop>autoShowServerWindow</tabstop>
-  <tabstop>autoShowAnonWindows</tabstop>
   <tabstop>ctcpList</tabstop>
   <tabstop>newCTCP</tabstop>
   <tabstop>newReply</tabstop>
   <tabstop>addReply</tabstop>
-  <tabstop>commandList</tabstop>
-  <tabstop>commandEdit</tabstop>
-  <tabstop>addButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>

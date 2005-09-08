@@ -31,17 +31,25 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 
+class IRCAddContactPagePrivate
+{
+public:
+//	ircdata
+	ChannelList *search;
+	IRCAccount *account;
+};
+
 IRCAddContactPage::IRCAddContactPage( QWidget *parent, IRCAccount *a ) : AddContactPage(parent, 0)
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);
-	ircdata = new ircAddUI(this);
-	mSearch = new ChannelList( (QWidget*)ircdata->hbox, a->engine() );
-	mAccount = a;
+//	ircdata = new Ui::ircAddUI(this);
+//	d->search = new ChannelList( (QWidget*)ircdata->hbox, a->engine() );
+	d->account = a;
 
-	connect( mSearch, SIGNAL( channelSelected( const QString & ) ),
+	connect( d->search, SIGNAL( channelSelected( const QString & ) ),
 		this, SLOT( slotChannelSelected( const QString & ) ) );
 
-	connect( mSearch, SIGNAL( channelDoubleClicked( const QString & ) ),
+	connect( d->search, SIGNAL( channelDoubleClicked( const QString & ) ),
 		this, SLOT( slotChannelDoubleClicked( const QString & ) ) );
 }
 
@@ -51,23 +59,25 @@ IRCAddContactPage::~IRCAddContactPage()
 
 void IRCAddContactPage::slotChannelSelected( const QString &channel )
 {
-	ircdata->addID->setText( channel );
+//	ircdata->addID->setText( channel );
 }
 
 void IRCAddContactPage::slotChannelDoubleClicked( const QString &channel )
 {
-	ircdata->addID->setText( channel );
-	ircdata->tabWidget3->setCurrentPage(0);
+//	ircdata->addID->setText( channel );
+//	ircdata->tabWidget3->setCurrentPage(0);
 }
 
 bool IRCAddContactPage::apply(Kopete::Account *account , Kopete::MetaContact *m)
 {
-	QString name = ircdata->addID->text();
-	return account->addContact(name, m, Kopete::Account::ChangeKABC );
+//	QString name = ircdata->addID->text();
+//	return account->addContact(name, m, Kopete::Account::ChangeKABC );
+	return false;
 }
 
 bool IRCAddContactPage::validateData()
 {
+/*
 	QString name = ircdata->addID->text();
 	if (name.isEmpty() == true)
 	{
@@ -75,9 +85,9 @@ bool IRCAddContactPage::validateData()
 		return false;
 	}
 	return true;
+*/
+	return false;
 }
 
 #include "ircaddcontactpage.moc"
-
-// vim: set noet ts=4 sts=4 sw=4:
 

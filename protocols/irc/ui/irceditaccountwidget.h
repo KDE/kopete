@@ -25,33 +25,31 @@ class IRCAccount;
 class KListView;
 class QListViewItem;
 
-class IRCEditAccountWidget : public IRCEditAccountBase, public KopeteEditAccountWidget
+class IRCEditAccountWidget : public Ui::IRCEditAccountBase, public KopeteEditAccountWidget
 {
 	Q_OBJECT
 
-	public:
-		IRCEditAccountWidget(IRCAccount *, QWidget *parent=0, const char *name=0);
-		~IRCEditAccountWidget();
+public:
+	IRCEditAccountWidget(IRCAccount *, QWidget *parent=0, const char *name=0);
+	~IRCEditAccountWidget();
 
-		IRCAccount *account();
-		virtual bool validateData();
-		virtual Kopete::Account *apply();
+	IRCAccount *account();
+	virtual bool validateData();
+	virtual Kopete::Account *apply();
 
-	private slots:
-		void slotCommandContextMenu( KListView*, QListViewItem*, const QPoint & );
-		void slotCtcpContextMenu( KListView*, QListViewItem*, const QPoint & );
-		void slotAddCommand();
-		void slotAddCtcp();
-		void slotEditNetworks();
-		void slotUpdateNetworks( const QString & );
-		void slotUpdateNetworkDescription( const QString & );
+private slots:
+	void slotCommandContextMenu( KListView*, QListViewItem*, const QPoint & );
+	void slotCtcpContextMenu( KListView*, QListViewItem*, const QPoint & );
+	void slotAddCommand();
+	void slotAddCtcp();
+	void slotEditNetworks();
+	void slotUpdateNetworks( const QString & );
+	void slotUpdateNetworkDescription( const QString & );
 
-	private:
-		void readNetworks();
-		QString generateAccountId( const QString &network );
+private:
+	void readNetworks();
+	QString generateAccountId( const QString &network );
 };
 
 #endif
-
-// vim: set noet ts=4 sts=4 sw=4:
 

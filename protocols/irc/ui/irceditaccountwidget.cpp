@@ -30,19 +30,15 @@
 #include <klocale.h>
 #include <klistview.h>
 #include <kdebug.h>
-#include <kextsock.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kcharsets.h>
 
 #include <qlabel.h>
-#include <qpopupmenu.h>
 #include <qpushbutton.h>
 #include <qcheckbox.h>
-#include <qconnection.h>
 #include <qvalidator.h>
 #include <qcombobox.h>
-#include <qlistbox.h>
 #include <qlineedit.h>
 #include <qtextcodec.h>
 
@@ -73,7 +69,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent, c
 		autoConnect->setChecked( static_cast<Kopete::Account*>(account())->excludeConnect() );
 
 		KConfigGroup *config = account()->configGroup();
-
+/*
 		QStringList cmds = account()->connectCommands();
 		for( QStringList::Iterator i = cmds.begin(); i != cmds.end(); ++i )
 			new QListViewItem( commandList, *i );
@@ -81,11 +77,12 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent, c
 		const QMap< QString, QString > replies = account()->customCtcpReplies();
 		for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
 			new QListViewItem( ctcpList, it.key(), it.data() );
+*/
 	}
 
-	mUserName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^\\s]*$"), mUserName ) );
-	mNickName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mNickName ) );
-	mAltNickname->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mAltNickname ) );
+//	mUserName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^\\s]*$"), mUserName ) );
+//	mNickName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mNickName ) );
+//	mAltNickname->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mAltNickname ) );
 
 	KCharsets *c = KGlobal::charsets();
 	charset->insertStringList( c->availableEncodingNames() );
@@ -98,7 +95,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent, c
 			break;
 		}
 	}
-
+/*
 	connect( commandList, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
 		this, SLOT( slotCommandContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
 
@@ -114,7 +111,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent, c
 
 	connect( IRCProtocol::self(), SIGNAL( networkConfigUpdated( const QString & ) ),
 		this, SLOT( slotUpdateNetworks( const QString & ) ) );
-
+*/
 	slotUpdateNetworks( QString::null );
 }
 
@@ -133,13 +130,14 @@ void IRCEditAccountWidget::slotUpdateNetworks( const QString & selectedNetwork )
 
 	uint i = 0;
 	QStringList keys;
-	QValueList<IRCNetwork> networks = IRCNetworkList::self()->networks();
+/*
+	IRCNetworkList networks = IRCNetworkList::self()->networks();
 
 	for(QValueList<IRCNetwork>::Iterator it = networks.begin(); it != networks.end(); ++it )
 		keys.append((*it).name);
 
 	keys.sort();
-/*
+
 	QStringList::Iterator end = keys.end();
 	for( QStringList::Iterator it = keys.begin(); it != end; ++it )
 	{
@@ -169,37 +167,45 @@ void IRCEditAccountWidget::slotUpdateNetworkDescription( const QString &network 
 
 void IRCEditAccountWidget::slotCommandContextMenu( KListView *, QListViewItem *item, const QPoint &p )
 {
+/*
 	QPopupMenu popup;
 	popup.insertItem( i18n("Remove Command"), 1 );
 	if( popup.exec( p ) == 1 )
 		delete item;
+*/
 }
 
 void IRCEditAccountWidget::slotCtcpContextMenu( KListView *, QListViewItem *item, const QPoint &p )
 {
+/*
 	QPopupMenu popup;
 	popup.insertItem( i18n("Remove CTCP Reply"), 1 );
 	if( popup.exec( p ) == 1 )
 		delete item;
+*/
 }
 
 void IRCEditAccountWidget::slotAddCommand()
 {
-    if ( !commandEdit->text().isEmpty() )
-    {
-	new QListViewItem( commandList, commandEdit->text() );
-	commandEdit->clear();
-    }
+/*
+	if ( !commandEdit->text().isEmpty() )
+	{
+		new QListViewItem( commandList, commandEdit->text() );
+		commandEdit->clear();
+	}
+*/
 }
 
 void IRCEditAccountWidget::slotAddCtcp()
 {
-    if (  !newCTCP->text().isEmpty() && !newReply->text().isEmpty() )
-    {
-	new QListViewItem( ctcpList, newCTCP->text(), newReply->text() );
-	newCTCP->clear();
-	newReply->clear();
-    }
+/*
+	if (  !newCTCP->text().isEmpty() && !newReply->text().isEmpty() )
+	{
+		new QListViewItem( ctcpList, newCTCP->text(), newReply->text() );
+		newCTCP->clear();
+		newReply->clear();
+	}
+*/
 }
 
 QString IRCEditAccountWidget::generateAccountId( const QString &network )
@@ -243,7 +249,7 @@ Kopete::Account *IRCEditAccountWidget::apply()
 	account()->setExcludeConnect( autoConnect->isChecked() );
 
 	account()->configGroup()->writeEntry("PreferSSL", preferSSL->isChecked());
-
+/*
 	QStringList cmds;
 	for( QListViewItem *i = commandList->firstChild(); i; i = i->nextSibling() )
 		cmds.append( i->text(0) );
@@ -254,7 +260,7 @@ Kopete::Account *IRCEditAccountWidget::apply()
 
 	account()->setCustomCtcpReplies( replies );
 	account()->setConnectCommands( cmds );
-
+*/
 	KCharsets *c = KGlobal::charsets();
 	account()->setCodec( c->codecForName( c->encodingForName( charset->currentText() ) ) );
 
@@ -273,3 +279,4 @@ bool IRCEditAccountWidget::validateData()
 }
 
 #include "irceditaccountwidget.moc"
+

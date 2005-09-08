@@ -63,6 +63,16 @@ Socket::~Socket()
 	delete d;
 }
 
+Socket::ConnectionState Socket::connectionState() const
+{
+	return d->state;
+}
+
+KNetwork::KStreamSocket *socket()
+{
+	return d->socket;
+}
+
 QByteArray Socket::encode(const QString &str, bool *success, QTextCodec *codec) const
 {
 	*success = false;
@@ -99,11 +109,6 @@ QTextCodec *Socket::defaultCodec() const
 void Socket::setDefaultCodec(QTextCodec *codec)
 {
 	codec = d->defaultCodec;
-}
-
-KIRC::ConnectionState Socket::connectionState() const
-{
-	return d->state;
 }
 
 void Socket::connectToServer(const QString &host, Q_UINT16 port, bool useSSL)
@@ -156,10 +161,12 @@ void Socket::writeMessage(const QString &msg, QTextCodec *codec)
 
 void Socket::showInfoDialog()
 {
-/*	if( d->useSSL )
+/*
+	if( d->useSSL )
 	{
 		static_cast<KSSLSocket*>( d->socket )->showInfoDialog();
-	}*/
+	}
+*/
 }
 
 void Socket::setConnectionState(KIRC::ConnectionState newstate)
@@ -172,7 +179,7 @@ void Socket::setConnectionState(KIRC::ConnectionState newstate)
 	}
 }
 
-void Socket::slotReadyRead()
+void Socket::onReadyRead()
 {
 	// The caller can also be self so lets check the socket still exist
 
@@ -187,7 +194,7 @@ void Socket::slotReadyRead()
 //		else
 //			emit internalError(i18n("Parse error while parsing: %1").arg(msg.rawLine()));
 
-		QTimer::singleShot( 0, this, SLOT( slotReadyRead() ) );
+		QTimer::singleShot( 0, this, SLOT( onReadyRead() ) );
 	}
 
 //	if(d->socket->socketStatus() != KExtendedSocket::connected)
@@ -202,8 +209,14 @@ void Socket::socketStateChanged(int newstate)
 		setConnectionState(Idle);
 		break;
 	case KBufferedSocket::HostLookup:
+		setConnectionState(HostLookup);
+		break;
 	case KBufferedSocket::HostFound:
+		setConnectionState(HostFound);
+		break;
 //	case KBufferedSocket::Bound: // Should never be Bound, unless writing a server
+//		setConnectionState(Bound)
+//		break;
 	case KBufferedSocket::Connecting:
 		setConnectionState(Connecting);
 		break;
@@ -266,7 +279,7 @@ bool Socket::setupSocket(bool useSSL)
 	connect(d->socket, SIGNAL(closed(int)),
 		this, SLOT(slotConnectionClosed()));
 	connect(d->socket, SIGNAL(readyRead()),
-		this, SLOT(slotReadyRead()));
+		this, SLOT(onReadyRead()));
 	connect(d->socket, SIGNAL(connectionSuccess()),
 		this, SLOT(slotConnected()));
 	connect(d->socket, SIGNAL(connectionFailed(int)),

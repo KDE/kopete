@@ -61,10 +61,10 @@ public:
 		: codec(0)
 	{ }
 
+	EntityType type;
+
 	QString name;
 	QString host;
-
-	KIRC::EntityStatus status;
 
 	QString awayMessage;
 	QString modes;
@@ -78,7 +78,7 @@ Entity::Entity(const QString &name, const EntityType type)
 	setName(name);
 	setType(type);
 
-	if (d->status.type == Unknown)
+	if (d->type == Unknown)
 		guessType();
 }
 
@@ -96,14 +96,9 @@ bool Entity::operator == (const Entity &) const
 	return false;
 }
 
-EntityStatus Entity::status() const
-{
-	return d->status;
-}
-
 EntityType Entity::type() const
 {
-	return d->status.type;
+	return d->type;
 }
 
 bool Entity::isChannel() const
@@ -118,7 +113,7 @@ bool Entity::isUser() const
 
 void Entity::setType( EntityType type )
 {
-	if ( d->status.type != type )
+	if ( d->type != type )
 	{
 		d->status.type = type;
 		emit updated();

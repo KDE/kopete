@@ -25,8 +25,8 @@
 #include "kircentity.h"
 
 #include <dom/dom_node.h>
-#include <qdict.h>
-#include <qmap.h>
+
+#include <QMap>
 
 namespace Kopete
 {
@@ -83,9 +83,9 @@ public:
 
 	virtual Kopete::Account* createNewAccount(const QString &accountId);
 
-	virtual QPtrList<KAction> *customChatWindowPopupActions(const Kopete::Message &, DOM::Node &);
+	virtual QList<KAction *> *customChatWindowPopupActions(const Kopete::Message &, DOM::Node &);
 
-	Kopete::OnlineStatus onlineStatusFor(const KIRC::EntityStatus &status);
+	Kopete::OnlineStatus onlineStatusFor(const KIRC::Entity *entity);
 
 	bool commandInProgress(){ return m_commandInProgress; }
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }
@@ -99,36 +99,14 @@ private slots:
 	void slotRawCommand(const QString &args, Kopete::ChatSession *manager );
 	void slotQuoteCommand(const QString &args, Kopete::ChatSession *manager );
 	void slotCtcpCommand(const QString &args, Kopete::ChatSession *manager );
-	void slotPingCommand(const QString &args, Kopete::ChatSession *manager );
 
-	void slotMotdCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotListCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotTopicCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotJoinCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotNickCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotWhoisCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotWhoWasCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotWhoCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotMeCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotAllMeCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotModeCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotQueryCommand(const QString &args, Kopete::ChatSession *manager);
-
-	void slotKickCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotBanCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotOpCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotDeopCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotVoiceCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotDevoiceCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotQuitCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotPartCommand(const QString &args, Kopete::ChatSession *manager);
-	void slotInviteCommand(const QString &args, Kopete::ChatSession *manager);
+	void slotAllCommand(const QString &args, Kopete::ChatSession *manager );
 
 	void slotViewCreated(KopeteView *);
 
 private:
 	void initOnlineStatus();
-	Kopete::OnlineStatus onlineStatusFor(const KIRC::EntityStatus &status, unsigned categories);
+//	Kopete::OnlineStatus onlineStatusFor(const KIRC::EntityStatus &status, unsigned categories);
 	void simpleModeChange(const QString &, Kopete::ChatSession *, const QString &mode);
 
 	static IRCProtocol *s_protocol;
