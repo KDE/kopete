@@ -19,7 +19,7 @@
 #include "kopeteview.h"
 #include "kopeteuiglobal.h"
 
-#include <kauthorized.h>
+#include <kapplication.h>
 #include <kdebug.h>
 #include <kinputdialog.h>
 #include <klocale.h>
@@ -90,7 +90,7 @@ void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *
 			"\"%1\" has a maximum of %n arguments.", m_minArgs)
 			.arg( text() ), manager, gui );
 	}
-	else if( !KAuthorized::self()->authorizeKAction( name() ) )
+    else if( !KApplication::kApplication()->authorizeKAction( name() ) )
 	{
 		printError( i18n("You are not authorized to perform the command \"%1\".").arg(text()), manager, gui );
 	}

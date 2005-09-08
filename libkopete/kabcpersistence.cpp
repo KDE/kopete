@@ -61,20 +61,28 @@ static QString unionContents( QString arg1, QString arg2 )
 	return out;
 }
 
+class KABCPersistence::Private
+{
+public:
+	Private() 
+	 : addrBookWritePending(false)
+	{}
+	Q3PtrList<KABC::Resource> pendingResources;
+	bool addrBookWritePending;
+};
+
 KABCPersistence::KABCPersistence( QObject * parent, const char * name ) : QObject( parent, name )
 {
-	s_pendingResources.setAutoDelete( false );
+	d = new Private;
+	d->pendingResources.setAutoDelete( false );
 }
 
 KABCPersistence::~KABCPersistence()
 {
+	delete d;
 }
 
 KABCPersistence *KABCPersistence::s_self = 0L;
-
-bool KABCPersistence::s_addrBookWritePending = false;
-
-Q3PtrList<KABC::Resource> KABCPersistence::s_pendingResources;
 
 KABC::AddressBook* KABCPersistence::s_addressBook = 0;
 
@@ -175,11 +183,11 @@ void KABCPersistence::write( MetaContact * mc )
 
 void KABCPersistence::writeAddressBook( const KABC::Resource * res)
 {
-	if ( !s_pendingResources.containsRef( res ) )
-		s_pendingResources.append( res );
-	if ( !s_addrBookWritePending )
+	if ( !d->pendingResources.containsRef( res ) )
+		d->pendingResources.append( res );
+	if ( !d->addrBookWritePending )
 	{
-		s_addrBookWritePending = true;
+		d->addrBookWritePending = true;
 		QTimer::singleShot( 2000, this, SLOT( slotWriteAddressBook() ) );
 	}
 }
@@ -188,7 +196,7 @@ void KABCPersistence::slotWriteAddressBook()
 {
 	//kdDebug(  14010 ) << k_funcinfo << endl;
 	KABC::AddressBook* ab = addressBook();
-	Q3PtrListIterator<KABC::Resource> it( s_pendingResources );
+	Q3PtrListIterator<KABC::Resource> it( d->pendingResources );
 	for ( ; it.current(); ++it )
 	{
 		//kdDebug(  14010 )  << "Writing resource " << it.current()->resourceName() << endl;
@@ -205,8 +213,8 @@ void KABCPersistence::slotWriteAddressBook()
 		}
 		//kdDebug( 14010 ) << "Finished writing KABC" << endl;
 	}
-	s_pendingResources.clear();
-	s_addrBookWritePending = false;
+	d->pendingResources.clear();
+	d->addrBookWritePending = false;
 }
 
 void KABCPersistence::removeKABC( MetaContact *)

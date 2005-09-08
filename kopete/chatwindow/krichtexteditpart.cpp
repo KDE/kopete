@@ -10,7 +10,8 @@
 #include <qclipboard.h>
 #include <qevent.h>
 #include <kparts/genericfactory.h>
-#include <private/q3richtext_p.h>
+//#include <private/q3richtext_p.h>
+#include <Q3RichText>
 
 #include "krichtexteditpart.h"
 #include "krichtexteditpart.moc"

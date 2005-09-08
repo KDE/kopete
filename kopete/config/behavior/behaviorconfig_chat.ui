@@ -167,7 +167,7 @@
                         <string>Group messages from the same metacontact in the same chat window</string>
                     </property>
                 </widget>
-            </vbox>
+            </grid>
         </widget>
         <widget class="QCheckBox" row="2" column="0">
             <property name="name">
