@@ -34,20 +34,37 @@ void ChangeStatusTask::onGo()
 {
 	kdDebug(14181) << k_funcinfo << endl;
 
-	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceStatus);
+	YMSGTransfer *t = new YMSGTransfer( Yahoo::ServiceStatus );
 	t->setId( client()->sessionID() );
 
-	if( !m_message.isEmpty() )
-		m_status = Yahoo::StatusCustom;
-
-	if( m_status == Yahoo::StatusCustom )
-		t->setParam( "19", m_message.utf8() );
-	t->setParam( "10", m_status );
-	t->setParam( "47", m_type );
-		
-	send( t );
+	if( m_status == Yahoo::StatusInvisible )			// status --> Invisible
+	{
+		sendVisibility( Invisible );
+	}
+	else
+	{
+		if( !m_message.isEmpty() )
+			m_status = Yahoo::StatusCustom;
 	
+		if( m_status == Yahoo::StatusCustom )
+			t->setParam( "19", m_message.utf8() );
+		t->setParam( "10", m_status );
+		t->setParam( "47", m_type );
+			
+		send( t );
+
+		if( client()->status() == Yahoo::StatusInvisible )	// Invisible --> Status
+			sendVisibility( Visible );
+	}
 	setSuccess( true );
+}
+
+void ChangeStatusTask::sendVisibility( Visibility visible )
+{
+	YMSGTransfer *t = new YMSGTransfer( Yahoo::ServiceVisibility );
+	t->setId( client()->sessionID() );
+	t->setParam( "13", visible );
+	send( t );
 }
 
 void ChangeStatusTask::setMessage( const QString &msg )

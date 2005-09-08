@@ -39,9 +39,12 @@ public:
 	void setStatus( Yahoo::Status status );
 	void setType( Yahoo::StatusType type );
 private:
+	enum Visibility { Visible = 1, Invisible = 2 };
 	QString m_message;
 	Yahoo::Status m_status;
 	Yahoo::StatusType m_type;
+
+	void sendVisibility( Visibility visible );
 };
 
 #endif

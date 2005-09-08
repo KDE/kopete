@@ -121,6 +121,7 @@ void Client::cs_connected()
 	d->loginTask->setStateOnConnect( d->statusOnConnect );
 	d->loginTask->go(true);
 	d->active = true;
+	setStatus( d->statusOnConnect );
 }
 
 void Client::close()

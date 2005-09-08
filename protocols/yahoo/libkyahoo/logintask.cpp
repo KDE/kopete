@@ -153,7 +153,7 @@ void LoginTask::sendAuth(Transfer* transfer)
 	
 	/* got ServiceVerify ACK, send a ServiceAuth with username */
 	kdDebug(14180) << k_funcinfo << endl;
-	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceAuth, m_stateOnConnect );
+	YMSGTransfer *t = new YMSGTransfer( Yahoo::ServiceAuth );
 	t->setParam("1", client()->userId());
 	send(t);
 	mState = SentAuth;
