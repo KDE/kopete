@@ -111,6 +111,15 @@ int VideoDevice::open()
         return EXIT_FAILURE;
     }
 
+    /* Re-open without NONBLOCK if we're using read method, without doing this the ov511
+       never captures a frame with a read call. Xawtv always opens the file without nonblock.
+     */
+    if (m_io_method == IO_METHOD_READ)
+    {
+        close();
+        descriptor = ::open (QFile::encodeName(full_filename), O_RDWR, 0);
+    }
+
 	initDevice();
 	kdDebug() <<  k_funcinfo << "exited successfuly" << endl;
 	return EXIT_SUCCESS;
@@ -687,6 +696,7 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 			if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
 			{
 //				kdDebug() <<  k_funcinfo << "Card seems to not support " << pixelFormatName(newformat) << " format. Fallback to it is not yet implemented." << endl;
+                return PIXELFORMAT_NONE;
 			}
 			if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
 				kdDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
