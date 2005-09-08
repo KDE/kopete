@@ -392,8 +392,8 @@ void Dispatcher::dispatch(const P2P::Message& message)
 			regex.search(body);
 			Q_UINT32 applicationId = regex.cap(1).toUInt();
 
-			if(applicationId == 1)
-			{
+			if(applicationId == 1  || applicationId == 12)
+			{                         //the AppID is 12 since Messenger 7.5
 				// A contact has requested a session to download
 				// a display icon (User Display Icon or CustomEmotion).
 
