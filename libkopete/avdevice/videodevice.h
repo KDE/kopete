@@ -145,7 +145,7 @@ public:
 	int pixelFormatDepth(pixel_format pixelformat);
 	QString pixelFormatName(pixel_format pixelformat);
 	QString pixelFormatName(int pixelformat);
-	unsigned int currentInput();
+	int currentInput();
 	int selectInput(int input);
 	int startCapturing();
 	int getFrame();
@@ -175,7 +175,9 @@ public:
 	bool canAsyncIO();
 	bool canStream();
 
-	QString name;
+	QString m_name;
+	QString m_model;
+	size_t m_modelindex;
 	QString full_filename;
 	videodev_driver m_driver;
 	int descriptor;

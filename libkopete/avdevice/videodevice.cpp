@@ -156,7 +156,8 @@ int VideoDevice::checkDevice()
 			m_videocapture=true;
 			kdDebug() <<  k_funcinfo << "checkDevice(): " << full_filename << " is a V4L2 device." << endl;
 			m_driver = VIDEODEV_DRIVER_V4L2;
-			name=QString::fromLocal8Bit((const char*)V4L2_capabilities.card);
+			m_model=QString::fromLocal8Bit((const char*)V4L2_capabilities.card);
+			m_name=m_model; // The name must be set in a way to distinguish between two or more cards of the same model. Watch out.
 
 
 
@@ -257,7 +258,7 @@ int VideoDevice::checkDevice()
 			{
 				kdDebug() <<  k_funcinfo << full_filename << " is a V4L device." << endl;
 				m_driver = VIDEODEV_DRIVER_V4L;
-				name=QString::fromLocal8Bit((const char*)V4L_capabilities.name);
+				m_name=QString::fromLocal8Bit((const char*)V4L_capabilities.name);
 
 				if(V4L_capabilities.type & VID_TYPE_CAPTURE)
 					m_videocapture=true;
@@ -375,7 +376,7 @@ int VideoDevice::showDeviceCapabilities()
 		if(V4L2_capabilities.capabilities & V4L2_CAP_AUDIO)
 			kdDebug() << "libkopete (avdevice):     Audio IO" << endl;
 ;*/
-		kdDebug() <<  k_funcinfo << "Card: " << name << endl;
+		kdDebug() <<  k_funcinfo << "Card: " << m_name << endl;
 		kdDebug() <<  k_funcinfo << "Capabilities:" << endl;
 		if(canCapture())
 			kdDebug() <<  k_funcinfo << "    Video capture" << endl;
@@ -709,7 +710,18 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 
 
 
-
+/*!
+    \fn Kopete::AV::VideoDevice::currentInput()
+ */
+int VideoDevice::currentInput()
+{
+    /// @todo implement me
+	if(isOpen())
+	{
+		return m_current_input;
+	}
+	return 0;
+}
 
 
 
@@ -1236,7 +1248,6 @@ int VideoDevice::close()
 	{
 		kdDebug() << k_funcinfo << " Device is open. Trying to properly shutdown the device." << endl;
 		stopCapturing();
-		kdDebug() << k_funcinfo << "::close() returns " << ::close(descriptor) << endl;
 		kdDebug() << k_funcinfo << "::close() returns " << ::close(descriptor) << endl;
 	}
 	descriptor = -1;
