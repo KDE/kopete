@@ -21,8 +21,7 @@
 #endif
 
 #include "kircengine.h"
-
-#include "kircsocket.h"
+#include "kircengine_p.h"
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -173,8 +172,8 @@ void Engine::onConnectionStateChanged(KIRC::ConnectionState state)
 		if (!(password()).isEmpty())
 			pass(password());
 
-		user(d->Username, 0, d->realName);
-		nick(d->Nickname);
+		user(d->username, 0, d->realName);
+		nick(d->nickname);
 
 		break;
 	default:

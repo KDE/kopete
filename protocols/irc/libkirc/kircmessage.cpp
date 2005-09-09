@@ -170,7 +170,49 @@ QByteArray Message::rawLine() const
 {
 	return d->line;
 }
+/*
+Message &Message::setLine(const QByteArray &line)
+{
+	d->line = line;
+	d->valid = false;
 
+	// Match a regexp instead of the replace ...
+//	d->line.replace("\r\n",""); //remove the trailling \r\n if any(there must be in fact)
+ 
+	#warning implement me: parsing
+/*
+	QList<QByteArray> tokens = line.split(' ');
+
+	while (tokens.size() > 0)
+	{
+	}
+
+	i = 0;
+
+	while (line.length() > 0)
+	{
+		token = line.mid(, i);
+	}
+
+	if (regexp.exactMatch(d->raw))
+	{
+//		d->line    = regexp.cap(1).latin1();
+		d->prefix  = regexp.cap(1).latin1();
+		d->command = regexp.cap(2).latin1();
+		d->args    = regexp.cap(3).latin1();
+//		d->argList = QStringList::split(' ', d->args);
+		d->suffix  = regexp.cap(4).latin1();
+
+#ifndef _IRC_STRICTNESS_
+		extractCtcpCommand();
+#endif // _IRC_STRICTNESS_
+
+		d->valid = true;
+	}
+*/
+	return *this;
+}
+*/
 QByteArray Message::rawPrefix() const
 {
 	return d->prefix;
@@ -359,50 +401,6 @@ QTextCodec *Message::checkCodec(QTextCodec *codec) const
 
 //	return entityFromPrefix()->codec();
 	return 0;
-}
-
-bool Message::parse(const QByteArray &line)
-{
-	QString match;
-
-	d->line = line;
-	d->valid = false;
-
-	// Match a regexp instead of the replace ...
-//	d->line.replace("\r\n",""); //remove the trailling \r\n if any(there must be in fact)
- 
-	#warning implement me: parsing
-/*
-	QList<QByteArray> tokens = line.split(' ');
-
-	while (tokens.size() > 0)
-	{
-	}
-
-	i = 0;
-
-	while (line.length() > 0)
-	{
-		token = line.mid(, i);
-	}
-
-	if (regexp.exactMatch(d->raw))
-	{
-//		d->line    = regexp.cap(1).latin1();
-		d->prefix  = regexp.cap(1).latin1();
-		d->command = regexp.cap(2).latin1();
-		d->args    = regexp.cap(3).latin1();
-//		d->argList = QStringList::split(' ', d->args);
-		d->suffix  = regexp.cap(4).latin1();
-
-#ifndef _IRC_STRICTNESS_
-		extractCtcpCommand();
-#endif // _IRC_STRICTNESS_
-
-		d->valid = true;
-	}
-*/
-	return d->valid;
 }
 
 /* Return true if the given string is a special command string

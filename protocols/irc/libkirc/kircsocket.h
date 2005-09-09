@@ -56,6 +56,7 @@ public:
 	};
 
 	Socket(QObject *parent = 0);
+//	Socket(KIRC::Entity *owner, QObject *parent = 0);
 	~Socket();
 
 public: // READ properties accessors.
@@ -66,12 +67,12 @@ public: // READ properties accessors.
 public:
 	KNetworkSocket *socket();
 
-	QByteArray encode(const QString &str, bool *success, QTextCodec *codec = 0) const;
-
 	QTextCodec *defaultCodec() const;
+	KIRC::Entity *owner() const;
 
 public slots:
 	void setDefaultCodec(QTextCodec *codec);
+	void setOwner(KIRC::Entity *newOwner);
 
 	/**
 	 * @return true if the socket is got no error trying to establish the connection.
@@ -114,6 +115,7 @@ private slots:
 	void socketGotError(int code);
 
 private:
+	QByteArray encode(const QString &str, bool *success, QTextCodec *codec = 0) const;
 	bool setupSocket(bool useSSL);
 
 	SocketPrivate *d;

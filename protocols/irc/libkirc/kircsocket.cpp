@@ -45,9 +45,10 @@ public:
 
 	KNetwork::KBufferedSocket *socket;
 	bool useSSL;
-	KIRC::ConnectionState state;
+	KIRC::Socket::ConnectionState state;
 
 	QTextCodec *defaultCodec;
+	KIRC::EntityPtr owner;
 };
 
 Socket::Socket(QObject *parent)
@@ -73,34 +74,6 @@ KNetwork::KStreamSocket *socket()
 	return d->socket;
 }
 
-QByteArray Socket::encode(const QString &str, bool *success, QTextCodec *codec) const
-{
-	*success = false;
-
-	if (!codec || !codec->canEncode(str))
-	{
-		if (!d->defaultCodec || !d->defaultCodec->canEncode(str))
-		{
-			if (!UTF8 || !UTF8->canEncode(str))
-			{
-//				emit internalError(i18n("Codec Error: .").arg(codec->name()));
-				return QByteArray();
-			}
-			else
-			{
-//				emit internalError(i18n("Codec Warning: Using codec %1 for:\n%2")
-//					.arg(UTF8->name(), str));
-				codec = UTF8;
-			}
-		}
-		else
-			codec = d->defaultCodec;
-	}
-
-	*success = true;
-	return codec->fromUnicode(str);
-}
-
 QTextCodec *Socket::defaultCodec() const
 {
 	return d->defaultCodec;
@@ -109,6 +82,16 @@ QTextCodec *Socket::defaultCodec() const
 void Socket::setDefaultCodec(QTextCodec *codec)
 {
 	codec = d->defaultCodec;
+}
+
+Entity *Socket::owner()
+{
+	return d->owner;
+}
+
+void Socket::setOwner(Entity *newOwner)
+{
+	d->owner = newOwner;
 }
 
 void Socket::connectToServer(const QString &host, Q_UINT16 port, bool useSSL)
@@ -251,6 +234,34 @@ void Socket::socketGotError(int errCode)
 		return;
 
 	close();
+}
+
+QByteArray Socket::encode(const QString &str, bool *success, QTextCodec *codec) const
+{
+	*success = false;
+
+	if (!codec || !codec->canEncode(str))
+	{
+		if (!d->defaultCodec || !d->defaultCodec->canEncode(str))
+		{
+			if (!UTF8 || !UTF8->canEncode(str))
+			{
+//				emit internalError(i18n("Codec Error: .").arg(codec->name()));
+				return QByteArray();
+			}
+			else
+			{
+//				emit internalError(i18n("Codec Warning: Using codec %1 for:\n%2")
+//					.arg(UTF8->name(), str));
+				codec = UTF8;
+			}
+		}
+		else
+			codec = d->defaultCodec;
+	}
+
+	*success = true;
+	return codec->fromUnicode(str);
 }
 
 bool Socket::setupSocket(bool useSSL)

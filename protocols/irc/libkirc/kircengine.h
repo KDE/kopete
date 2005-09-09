@@ -21,13 +21,13 @@
 #define KIRCENGINE_H
 
 #include "kircentity.h"
-#include "kircmessage.h"
-#include "kircmessageredirector.h"
 #include "kircsocket.h"
 #include "kirctransfer.h"
 
 namespace KIRC
 {
+
+class Message;
 
 class EnginePrivate;
 
@@ -60,22 +60,22 @@ public:
 //	QUrl serverURL() const;
 //	bool setServerURL(const QUrl &url);
 
-	inline const QString &nickName() const
+	const QString &nickName() const
 		{ return m_Nickname; };
 
-	inline const QString &password() const
+	const QString &password() const
 		{ return m_Passwd; }
 
-	inline void setPassword(const QString &passwd)
+	void setPassword(const QString &passwd)
 		{ m_Passwd = passwd; };
 
-	inline const QString &userName() const
+	const QString &userName() const
 		{ return m_Username; }
 
 	void setUserName(const QString &newName);
 
 	void setRealName(const QString &newName);
-	inline const QString &realName() const
+	const QString &realName() const
 		{ return m_realName; }
 
 	inline const bool reqsPassword() const
@@ -88,9 +88,7 @@ public:
 	void setUserString(const QString &userString);
 	void setSourceString(const QString &sourceString);
 
-	KIRC::EntityPtr getEntity(const QString &name);
-	KIRC::EntityPtr server();
-	KIRC::EntityPtr self();
+	KIRC::Entity *server();
 
 public slots:
 	void writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage, QTextCodec *codec = 0);

@@ -8,6 +8,7 @@ libkirc_la_SOURCES = \
 	kircengine_ctcp.cpp \
 	kircengine_numericreplies.cpp \
 	kircentity.cpp \
+	kircentitymanager.cpp \
 	kircmessage.cpp \
 	kircmessageredirector.cpp \
 	kircsocket.cpp

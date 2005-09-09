@@ -52,8 +52,8 @@ void Engine::bindNumericReplies()
 
 	bind(301, this, SLOT(numericReply_301(KIRC::Message &)), 2, 2);
 	bind(303, this, SLOT(numericReply_303(KIRC::Message &)), 1, 1);
-	bind(305, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0 );
-	bind(306, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0 );
+//	bind(305, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0 );
+//	bind(306, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0 );
 	bind(307, this, SLOT(numericReply_307(KIRC::Message &)), 1, 1);
 	bind(311, this, SLOT(numericReply_311(KIRC::Message &)), 5, 5);
 	bind(312, this, SLOT(numericReply_312(KIRC::Message &)), 3, 3);
@@ -64,13 +64,13 @@ void Engine::bindNumericReplies()
 	bind(318, this, SLOT(numericReply_318(KIRC::Message &)), 2, 2);
 	bind(319, this, SLOT(numericReply_319(KIRC::Message &)), 2, 2);
 	bind(320, this, SLOT(numericReply_320(KIRC::Message &)), 2, 2);
-	bind(321, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0 );
+//	bind(321, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0 );
 	bind(322, this, SLOT(numericReply_322(KIRC::Message &)), 3, 3);
 	bind(323, this, SLOT(numericReply_323(KIRC::Message &)), 1, 1);
 	bind(324, this, SLOT(numericReply_324(KIRC::Message &)), 2, 4);
 	bind(328, this, SLOT(numericReply_328(KIRC::Message &)), 2, 2);
 	bind(329, this, SLOT(numericReply_329(KIRC::Message &)), 3, 3);
-	bind(330, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0); // ???
+//	bind(330, this, SLOT(ignoreMessage(KIRC::Message &)), 3, 3); // ???
 	bind(331, this, SLOT(numericReply_331(KIRC::Message &)), 2, 2);
 	bind(332, this, SLOT(numericReply_332(KIRC::Message &)), 2, 2);
 	bind(333, this, SLOT(numericReply_333(KIRC::Message &)), 4, 4);
