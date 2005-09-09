@@ -611,9 +611,9 @@ void Webcam::slotSocketRead()
 				m_webcamStates[m_webcamSocket]=wsConnecting;
 				
 				//SHOULD NOT BE THERE
+				m_mimic=new MimicWrapper();
 				if(m_who==wProducer)
 				{
-					m_mimic=new MimicWrapper();
 					Kopete::AV::VideoDevicePool *videoDevice = Kopete::AV::VideoDevicePool::self();
 					videoDevice->scanDevices();
 					videoDevice->open(0);
@@ -624,12 +624,9 @@ void Webcam::slotSocketRead()
 					m_timerId=startTimer(1000);
 					kdDebug(14140) << k_funcinfo <<  "new timer" << m_timerId << endl;
 				}
-				else
-				{
-					m_mimic=new MimicWrapper();
-					m_widget=new MSNWebcamDialog(m_recipient);
-					connect(m_widget, SIGNAL( closingWebcamDialog() ) , this , SLOT(sendBYEMessage()));
-				}
+				m_widget=new MSNWebcamDialog(m_recipient);
+				connect(m_widget, SIGNAL( closingWebcamDialog() ) , this , SLOT(sendBYEMessage()));
+
 			}
 			else
 			{
@@ -679,12 +676,8 @@ void Webcam::slotSocketRead()
 					m_timerId=startTimer(1000);
 					kdDebug(14140) << k_funcinfo <<  "new timer" << m_timerId << endl;
 				}
-				else
-				{
-					m_widget=new MSNWebcamDialog(m_recipient);
-					connect(m_widget, SIGNAL( closingWebcamDialog() ) , this , SLOT(sendBYEMessage()));
-				}
-				
+				m_widget=new MSNWebcamDialog(m_recipient);
+				connect(m_widget, SIGNAL( closingWebcamDialog() ) , this , SLOT(sendBYEMessage()));
 				
 				}
 				m_webcamStates[m_webcamSocket]=wsTransfer;
@@ -803,6 +796,9 @@ void Webcam::timerEvent( QTimerEvent *e )
 	videoDevice->getFrame();
 	QImage img;
 	videoDevice->getImage(&img);
+	
+	if(m_widget)
+		m_widget->newImage(img);
 	
 	if(img.width()!=320 || img.height()!=240)
 	{
