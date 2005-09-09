@@ -894,11 +894,13 @@ void YahooAccount::slotError( const QString &err, int fatal )
 	kdDebug(14180) << k_funcinfo << fatal << ": " << err << endl;
 	m_lastDisconnectCode = fatal;
 	m_keepaliveTimer->stop();
-	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, i18n( "<qt>The connection with the Yahoo server was lost.</qt>" ), 
-						i18n( "Connection Lost - Yahoo Plugin" ) );
+	if(isConnected()) { // If we are already disconnected we don't need this MessageBox (<heiko@rangun.de>)
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, i18n( "<qt>The connection with the Yahoo server was lost.</qt>" ), 
+							i18n( "Connection Lost - Yahoo Plugin" ) );
 	
-	if ( fatal == 1 || fatal == 2 || fatal == -1 )
-		disconnect();
+		if ( fatal == 1 || fatal == 2 || fatal == -1 )
+			disconnect();
+	}
 }
 
 void YahooAccount::slotRemoveHandler( int /* fd */ )
