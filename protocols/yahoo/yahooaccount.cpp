@@ -56,6 +56,7 @@
 #include "yahooconnector.h"
 #include "yahooclientstream.h"
 #include "client.h"
+#include "yahooverifyaccount.h"
 
 YahooAwayDialog::YahooAwayDialog(YahooAccount* account, QWidget *parent, const char *name) :
 	KopeteAwayDialog(parent, name)
@@ -101,7 +102,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged(const QString&, const QVariant& ) ), SLOT( slotGlobalIdentityChanged(const QString&, const QVariant& ) ));
 	QObject::connect( m_keepaliveTimer, SIGNAL( timeout() ), this, SLOT( slotKeepalive() ) );
-	initConnectionSignals( MakeConnections );
+// 	initConnectionSignals( MakeConnections );
 	
 	QString displayName = configGroup()->readEntry(QString::fromLatin1("displayName"));
 	if(!displayName.isEmpty())
@@ -455,6 +456,13 @@ void YahooAccount::disconnect()
 	theHaveContactList = false;
 }
 
+void YahooAccount::verifyAccount( const QString &word )
+{
+	kdDebug(14180) << k_funcinfo << "Word: s" << word << endl;
+	m_session->setVerificationWord( word );
+	disconnected( BadPassword );
+}
+
 void YahooAccount::slotKeepalive()
 {
 	if( m_waitingForResponse )
@@ -600,6 +608,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	}
 	else if(succ == Yahoo::LoginPasswd)
 	{
+		initConnectionSignals( DeleteConnections );
 		password().setWrong();
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 		disconnected( BadPassword );
@@ -607,6 +616,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	}
 	else if(succ == Yahoo::LoginLock)
 	{
+		initConnectionSignals( DeleteConnections );
 		errorMsg = i18n("Could not log into Yahoo service: your account has been locked.\nVisit %1 to reactivate it.").arg(url);
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
@@ -615,17 +625,29 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	}
 	else if ( succ == Yahoo::LoginUname )
 	{
+		initConnectionSignals( DeleteConnections );
 		errorMsg = i18n("Could not log into the Yahoo service: the username specified was invalid.");
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 		disconnected( BadUserName );
+		return;
 	}
 	else if ( succ == Yahoo::LoginDupl && m_lastDisconnectCode != 2 )
 	{
+		initConnectionSignals( DeleteConnections );
 		errorMsg = i18n("You have been logged out of the Yahoo service, possibly due to a duplicate login.");
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 		disconnected( Manual ); // cannot use ConnectionReset since that will auto-reconnect
+		return;
+	}
+	else if ( succ == Yahoo::LoginVerify )
+	{
+		initConnectionSignals( DeleteConnections );
+		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
+		YahooVerifyAccount *verifyDialog = new YahooVerifyAccount( this );
+		verifyDialog->setUrl( KURL(url) );
+		verifyDialog->show();
 		return;
 	}
 

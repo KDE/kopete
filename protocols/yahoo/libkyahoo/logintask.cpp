@@ -206,6 +206,13 @@ void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint s
 	t->setParam("6", QString(resp_6));
 	t->setParam("96", QString(resp_96));
 	t->setParam("1", sn);
+
+	if( !m_verificationWord.isEmpty() )
+	{
+		t->setParam("227", m_verificationWord );
+		m_verificationWord = QString::null;
+	}
+
 	free(resp_6);
 	free(resp_96);
 	send(t);
@@ -232,12 +239,13 @@ void LoginTask::handleAuthResp(Transfer *transfer)
 	switch( t->service() )
 	{
 		case( Yahoo::ServiceList ):
+			kdDebug(14180) << k_funcinfo << "Emitting Signal" << endl;
 			emit loginResponse( Yahoo::LoginOk, QString::null );
 		break;
 		case( Yahoo::ServiceAuthResp ):
-			emit loginResponse( t->firstParam( "66" ).toInt(), QString::null );
-		break;
-		default:
+			kdDebug(14180) << k_funcinfo << "Emitting Signal" << endl;
+			emit loginResponse( t->firstParam( "66" ).toInt(), t->firstParam( "20" ) );
+			mState = InitialState;
 		break;
 	}
 }
@@ -275,6 +283,11 @@ void LoginTask::parseCookies( Transfer *transfer )
 	if( !m_yCookie.isEmpty() && !m_tCookie.isEmpty() &&
 		!m_cCookie.isEmpty() )
 		emit haveCookies();
+}
+
+void LoginTask::setVerificationWord( const QString &word )
+{
+	m_verificationWord = word;
 }
 
 const QString& LoginTask::yCookie()

@@ -183,7 +183,6 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		else 
 		{ 
 			kdDebug(14180) << k_funcinfo << " - not a valid YMSG packet" << endl;
-			kdDebug(14180) << k_funcinfo << wire[0] << wire[1] << wire[2] << wire[3] << endl;
 		}
 	}
 	delete m_din;

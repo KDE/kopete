@@ -118,6 +118,8 @@ public:
 	 * 0 = no image, 2 = buddy icon, 1 = avatar?
 	 */
 	int pictureFlag();
+
+	void verifyAccount( const QString &word );
 public slots:
 	/**
 	 * Connect to the Yahoo service

@@ -63,6 +63,10 @@ Q_OBJECT
 		 */
 		void close();
 
+		/**
+		 * Specifies the status we connect with.
+		 * May be Online or Invisible.
+		 */
 		void setStatusOnConnect( Yahoo::Status status );
 
 		/**
@@ -90,6 +94,12 @@ Q_OBJECT
 		 * Change our status
 		 */	
 		void changeStatus(Yahoo::Status status, const QString &message, Yahoo::StatusType type);
+
+		/**
+		 * Set the verification word that is needed for a account verification after
+		 * too many wrong login attempts.
+		 */
+		void setVerificationWord( const QString &word );
 
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 

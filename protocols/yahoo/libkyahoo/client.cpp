@@ -49,6 +49,7 @@ public:
 	bool active;
 
 	// tasks
+	bool tasksInitialized;
 	LoginTask * loginTask;
 	ListTask *listTask;
 	StatusNotifierTask *statusTask;
@@ -62,7 +63,6 @@ public:
 	QString cCookie;
 	Yahoo::Status status;
 	Yahoo::Status statusOnConnect;
-
 };
 
 Client::Client(QObject *par) :QObject(par, "yahooclient" )
@@ -74,7 +74,17 @@ Client::Client(QObject *par) :QObject(par, "yahooclient" )
 	d->root = new Task(this, true);
 	d->statusOnConnect = Yahoo::StatusAvailable;
 	d->status = Yahoo::StatusDisconnected;
+	d->tasksInitialized = false;
 	d->stream = 0;
+	d->loginTask = new LoginTask( d->root );
+	d->listTask = new ListTask( d->root );
+
+	QObject::connect( d->loginTask, SIGNAL( haveSessionID( uint ) ), SLOT( lt_gotSessionID( uint ) ) );
+	QObject::connect( d->loginTask, SIGNAL( loginResponse( int, const QString& ) ), 
+				SLOT( slotLoginResponse( int, const QString& ) ) );
+	QObject::connect( d->loginTask, SIGNAL( haveCookies() ), SLOT( slotGotCookies() ) );
+	QObject::connect( d->listTask, SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ), 
+					SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ) );
 }
 
 Client::~Client()
@@ -107,16 +117,6 @@ void Client::cs_connected()
 	kdDebug(14180) << k_funcinfo << endl;
 	emit connected();
 	kdDebug(14180) << k_funcinfo << " starting login task ... "<<  endl;
-
-	d->loginTask = new LoginTask( d->root );
-	d->listTask = new ListTask( d->root );
-	//QObject::connect( d->loginTask, SIGNAL( finished() ), SLOT( lt_loginFinished() ) );
-	QObject::connect( d->loginTask, SIGNAL( haveSessionID( uint ) ), SLOT( lt_gotSessionID( uint ) ) );
-	QObject::connect( d->loginTask, SIGNAL( loginResponse( int, const QString& ) ), 
-				SLOT( slotLoginResponse( int, const QString& ) ) );
-	QObject::connect( d->loginTask, SIGNAL( haveCookies() ), SLOT( slotGotCookies() ) );
-	QObject::connect( d->listTask, SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ), 
-					SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ) );
 
 	d->loginTask->setStateOnConnect( d->statusOnConnect );
 	d->loginTask->go(true);
@@ -248,6 +248,11 @@ void Client::setStatusOnConnect( Yahoo::Status status )
 	d->statusOnConnect = status;
 }
 
+void Client::setVerificationWord( const QString &word )
+{
+	d->loginTask->setVerificationWord( word );
+}
+
 QString Client::password()
 {
 	return d->pass;
@@ -310,6 +315,9 @@ Task * Client::rootTask()
 
 void Client::initTasks()
 {
+	if( d->tasksInitialized )
+		return;
+
 	d->statusTask = new StatusNotifierTask( d->root );
 	QObject::connect( d->statusTask, SIGNAL( statusChanged( const QString&, int, const QString&, int ) ), 
 				SIGNAL( statusChanged( const QString&, int, const QString&, int ) ) );
@@ -333,6 +341,7 @@ void Client::initTasks()
 
 void Client::deleteTasks()
 {
+	d->tasksInitialized = false;
 	d->statusTask->deleteLater();
 	d->statusTask = 0L;
 	d->mailTask->deleteLater();

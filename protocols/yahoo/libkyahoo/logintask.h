@@ -40,6 +40,7 @@ public:
 	virtual void onGo();
 
 	void setStateOnConnect( Yahoo::Status status );
+	void setVerificationWord( const QString &word );
 
 	const QString &yCookie();
 	const QString &cCookie();
@@ -66,6 +67,7 @@ private:
 	QString m_tCookie;
 	QString m_cCookie;
 	QString m_loginCookie;
+	QString m_verificationWord;
 };
 
 #endif
