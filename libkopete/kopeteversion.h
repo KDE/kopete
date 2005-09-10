@@ -14,10 +14,10 @@
 #ifndef _KOPETE_VERSION_H_
 #define _KOPETE_VERSION_H_
 
-#define KOPETE_VERSION_STRING "0.10.91  (svn, >= 20050822)"
+#define KOPETE_VERSION_STRING "0.10.92 (0.11 Beta 1)"
 #define KOPETE_VERSION_MAJOR 0
 #define KOPETE_VERSION_MINOR 10
-#define KOPETE_VERSION_RELEASE 91
+#define KOPETE_VERSION_RELEASE 92
 #define KOPETE_MAKE_VERSION( a,b,c ) (((a) << 16) | ((b) << 8) | (c))
 
 #define KOPETE_VERSION \
