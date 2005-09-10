@@ -26,7 +26,7 @@
 #include <qstring.h>
 
 #include <kdemacros.h>
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 #include "kopetenotifydataobject.h"
 #include "kopetecontactlistelement.h"
@@ -69,8 +69,15 @@ class KOPETE_EXPORT MetaContact : public ContactListElement, public NotifyDataOb
 	Q_PROPERTY( bool photoSyncedWithKABC READ isPhotoSyncedWithKABC WRITE setPhotoSyncedWithKABC )
 
 public:
-
-	enum PropertySource { SourceContact, SourceKABC, SourceCustom };
+	/** 
+	 * Enumeration of possible sources for a property (which may be
+	 * photos, see setPhotoSource() for instance).
+	 */
+	enum PropertySource { 
+		SourceContact /**< Data comes from the contact itself. */, 
+		SourceKABC /**< Data comes from KABC (addressbook). */, 
+		SourceCustom /**< Data comes from somewhere else. */
+	};
 
 	/**
 	 * constructor

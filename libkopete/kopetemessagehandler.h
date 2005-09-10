@@ -19,7 +19,7 @@
 
 #include <qobject.h>
 //#include <kdemacros.h>
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 //FIXME: Message::MessageDirection could be moved into namespace Kopete
 // to avoid this being included everywhere

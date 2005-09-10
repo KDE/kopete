@@ -24,7 +24,7 @@
 #include <qpixmap.h>
 #include <qobject.h>
 #include <qstringlist.h>
-#include <kdemacros.h>
+#include "kopete_export.h"
 
 class QWidget;
 namespace Kopete { class MetaContact; }
@@ -51,7 +51,7 @@ namespace Kopete { class MetaContact; }
  *
  * @author Olivier Goffart  <ogoffart @ kde.org>
  */
-class KDE_EXPORT KNotification : public QObject
+class KOPETE_EXPORT KNotification : public QObject
 {
         Q_OBJECT
 public:

@@ -82,17 +82,22 @@ typedef enum
 
 typedef enum
 {
-	PIXELFORMAT_NONE,
-	PIXELFORMAT_GREY,
-	PIXELFORMAT_RGB332,
-	PIXELFORMAT_RGB555,
-	PIXELFORMAT_RGB555X,
-	PIXELFORMAT_RGB565,
-	PIXELFORMAT_RGB565X,
-	PIXELFORMAT_RGB24,
-	PIXELFORMAT_BGR24,
-	PIXELFORMAT_RGB32,
-	PIXELFORMAT_BGR32
+	PIXELFORMAT_NONE	= 0,
+	PIXELFORMAT_GREY	= (1 << 0),
+	PIXELFORMAT_RGB332	= (1 << 1),
+	PIXELFORMAT_RGB555	= (1 << 2),
+	PIXELFORMAT_RGB555X	= (1 << 3),
+	PIXELFORMAT_RGB565	= (1 << 4),
+	PIXELFORMAT_RGB565X	= (1 << 5),
+	PIXELFORMAT_RGB24	= (1 << 6),
+	PIXELFORMAT_BGR24	= (1 << 7),
+	PIXELFORMAT_RGB32	= (1 << 8),
+	PIXELFORMAT_BGR32	= (1 << 9),
+	PIXELFORMAT_YUYV	= (1 << 10),
+	PIXELFORMAT_UYVY	= (1 << 11),
+	PIXELFORMAT_YUV420P	= (1 << 12),
+	PIXELFORMAT_YUV422P	= (1 << 13),
+//	PIXELFORMAT_ALL		= 0x00003FFF
 } pixel_format;
 
 typedef enum
@@ -140,7 +145,7 @@ public:
 	int pixelFormatDepth(pixel_format pixelformat);
 	QString pixelFormatName(pixel_format pixelformat);
 	QString pixelFormatName(int pixelformat);
-	unsigned int currentInput();
+	int currentInput();
 	int selectInput(int input);
 	int startCapturing();
 	int getFrame();
@@ -170,7 +175,9 @@ public:
 	bool canAsyncIO();
 	bool canStream();
 
-	QString name;
+	QString m_name;
+	QString m_model;
+	size_t m_modelindex;
 	QString full_filename;
 	videodev_driver m_driver;
 	int descriptor;

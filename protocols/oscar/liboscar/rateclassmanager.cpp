@@ -119,6 +119,11 @@ void RateClassManager::transferReady( Transfer* t )
 {
 	//tell the client to send it again. We should be
 	//able to send it now
+	FlapTransfer* ft = dynamic_cast<FlapTransfer*>( t );
+	
+	if ( ft )
+		ft->setFlapSequence( d->client->flapSequence() );
+	
 	d->client->forcedSend( t );
 }
 

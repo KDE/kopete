@@ -18,7 +18,7 @@
 #ifndef OSCARSETTINGS_H
 #define OSCARSETTINGS_H
 
-#include <kdemacros.h>
+#include "kopete_export.h"
 
 namespace Oscar
 {
@@ -29,7 +29,7 @@ namespace Oscar
 * settings.
 * @author Matt Rogers
 */
-class KDE_EXPORT Settings
+class KOPETE_EXPORT Settings
 {
 public:
 	Settings();

@@ -804,16 +804,18 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 				// as the current one is null, lets use this new one
 				if (photo().isNull())
 					setPhotoSourceContact(subcontact);
+					
 			}
 			else if(photoSourceContact() == subcontact)
 			{
 				if(d->photoSyncedWithKABC)
 					setPhotoSyncedWithKABC(true);
+					
+				// Update the contact photo cache.
+				d->contactPhotoCache = photoFromContact(subcontact);
+
 				emit photoChanged();
 			}
-
-			// Update the contact photo cache.
-			d->contactPhotoCache = photoFromContact(subcontact);
 		}
 	}
 }
@@ -1138,7 +1140,8 @@ bool MetaContact::fromXML( const QDomElement& element )
 
 	if( oldNameTracking )
 	{
-		if ( displayNameSourceContact() )
+		/* if (displayNameSourceContact() )  <- doesn't work because the contact is only set up when all plugin are loaded (BUG 111956) */
+		if ( !d->nameSourceCID.isEmpty() )
 		{
 // 			kdDebug(14010) << k_funcinfo << "Converting old name source" << endl;
 			// even if the old tracking attributes exists, they could have been null, that means custom
@@ -1158,7 +1161,7 @@ bool MetaContact::fromXML( const QDomElement& element )
 	if ( oldPhotoTracking )
 	{
 // 		kdDebug(14010) << k_funcinfo << "Converting old photo source" << endl;
-		if ( photoSourceContact() )
+		if ( !d->photoSourceCID.isEmpty() )   
 		{
 			setPhotoSource(SourceContact);
 		}

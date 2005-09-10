@@ -12,7 +12,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes)
 
 kde_module_LTLIBRARIES = kopete_smpppdcs.la
 
-kopete_smpppdcs_la_SOURCES = smpppdcsplugin.cpp
+kopete_smpppdcs_la_SOURCES = smpppdcsplugin.cpp detector.cpp onlineinquiry.cpp
 kopete_smpppdcs_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
 kopete_smpppdcs_la_LIBADD  = ../../libkopete/libkopete.la -lcrypto
 

@@ -77,7 +77,7 @@ bool ServerRedirectTask::take( Transfer* transfer )
 
 void ServerRedirectTask::requestNewService()
 {
-	FLAP f = { 0x02, client()->flapSequence(), 0x00 };
+	FLAP f = { 0x02, 0, 0x00 };
 	SNAC s = { 0x0001, 0x0004, 0x0000, client()->snacSequence() };
 	Buffer* b = new Buffer();
 	b->addWord( m_service );

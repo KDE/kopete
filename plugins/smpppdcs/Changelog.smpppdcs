@@ -15,6 +15,9 @@ activates all Kopete accounts, too.
 Changelog
 =========
 
+0.72 (2005/09/07)
+* internal refactoring to provide online status
+
 0.7 (2004/11/20)
 
 * list to ignore accounts integrated.

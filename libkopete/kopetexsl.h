@@ -20,7 +20,7 @@
 #define _KOPETE_XSLT_H
 
 #include <qobject.h>
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 class KopeteXSLTPrivate;
 

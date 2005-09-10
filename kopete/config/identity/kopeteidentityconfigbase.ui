@@ -38,7 +38,7 @@
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>Identity :</string>
+                        <string>Identity:</string>
                     </property>
                 </widget>
                 <widget class="KComboBox">

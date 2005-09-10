@@ -435,6 +435,7 @@ void YahooAccount::disconnect()
 	{
 		kdDebug(14180) <<  "Attempting to disconnect from Yahoo server " << endl;
 
+		m_keepaliveTimer->stop();
 		m_session->logOff();
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 
@@ -747,6 +748,11 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	}
 	
 	newMsgText.replace( QString::fromLatin1( "\r" ), QString::fromLatin1( "<br/>" ) );
+	newMsgText.replace( QString::fromLatin1( "&" ), QString::fromLatin1( "&amp;" ) );
+	newMsgText.replace( QString::fromLatin1( ">" ), QString::fromLatin1( "&gt;" ) );
+	newMsgText.replace( QString::fromLatin1( "<" ), QString::fromLatin1( "&lt;" ) );
+	newMsgText.replace( QString::fromLatin1( "\"" ), QString::fromLatin1( "&quot;" ) );
+	newMsgText.replace( QString::fromLatin1( " " ), QString::fromLatin1( "&nbsp;" ) );
 	
 	kdDebug(14180) << "Message after fixing font tags '" << newMsgText << "'" << endl;
 	
@@ -888,11 +894,13 @@ void YahooAccount::slotError( const QString &err, int fatal )
 	kdDebug(14180) << k_funcinfo << fatal << ": " << err << endl;
 	m_lastDisconnectCode = fatal;
 	m_keepaliveTimer->stop();
-	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, i18n( "<qt>The connection with the Yahoo server was lost.</qt>" ), 
-						i18n( "Connection Lost - Yahoo Plugin" ) );
+	if(isConnected()) { // If we are already disconnected we don't need this MessageBox (<heiko@rangun.de>)
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, i18n( "<qt>The connection with the Yahoo server was lost.</qt>" ), 
+							i18n( "Connection Lost - Yahoo Plugin" ) );
 	
-	if ( fatal == 1 || fatal == 2 || fatal == -1 )
-		disconnect();
+		if ( fatal == 1 || fatal == 2 || fatal == -1 )
+			disconnect();
+	}
 }
 
 void YahooAccount::slotRemoveHandler( int /* fd */ )

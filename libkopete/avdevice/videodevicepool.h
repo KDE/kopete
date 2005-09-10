@@ -22,13 +22,13 @@
 #include <iostream>
 
 
-#include "kopete_export.h"
 #include "videoinput.h"
 #include <qstring.h>
 #include <qimage.h>
 #include <qvaluevector.h>
 #include <kcombobox.h>
 #include "videodevice.h"
+#include "kopete_export.h"
 
 namespace Kopete {
 

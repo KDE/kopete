@@ -83,7 +83,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 
 AVDeviceConfig::~AVDeviceConfig()
 {
-	d->stopCapturing();
+//	d->stopCapturing();
 	d->close();
 //	delete d;
 }

@@ -88,7 +88,7 @@ bool SSIAuthTask::take( Transfer* t )
 
 void SSIAuthTask::grantFutureAuth( const QString& uin, const QString& reason )
 {
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0013, 0x0014, 0x0000, client()->snacSequence() };
 	
 	Buffer* buf = new Buffer();
@@ -102,7 +102,7 @@ void SSIAuthTask::grantFutureAuth( const QString& uin, const QString& reason )
 
 void SSIAuthTask::sendAuthRequest( const QString& uin, const QString& reason )
 {
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0013, 0x0018, 0x0000, client()->snacSequence() };
 	
 	Buffer* buf = new Buffer();
@@ -120,7 +120,7 @@ void SSIAuthTask::sendAuthRequest( const QString& uin, const QString& reason )
 
 void SSIAuthTask::sendAuthReply( const QString& uin, const QString& reason, bool auth )
 {
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0013, 0x001A, 0x0000, client()->snacSequence() };
 	
 	Buffer* buf = new Buffer();

@@ -78,7 +78,7 @@ bool WarningTask::take( Transfer* transfer )
 
 void WarningTask::onGo()
 {
-	FLAP f = { 0x0002, client()->flapSequence(), 0 };
+	FLAP f = { 0x0002, 0, 0 };
 	SNAC s = { 0x0004, 0x0008, 0x0000, client()->snacSequence() };
 	Buffer* b = new Buffer;
 	if ( m_sendAnon )

@@ -485,6 +485,13 @@ void Kopete::ChatSession::setMayInvite( bool b )
 	d->mayInvite=b;
 }
 
+void Kopete::ChatSession::raiseView()
+{
+	KopeteView *v=view(true, KopetePrefs::prefs()->interfacePreference() );
+	if(v)
+		v->raise(true);
+}
+
 #include "kopetechatsession.moc"
 
 

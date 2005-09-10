@@ -26,7 +26,7 @@
 #include "kopetechatsession.h"
 #include "kopetemessage.h"
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 class KopeteView;
 

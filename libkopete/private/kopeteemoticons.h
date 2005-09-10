@@ -21,7 +21,7 @@
 #include <qvaluelist.h>
 #include <qregexp.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 namespace Kopete {
 

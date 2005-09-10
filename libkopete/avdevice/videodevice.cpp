@@ -94,7 +94,7 @@ int VideoDevice::open()
 		kdDebug() <<  k_funcinfo << "Device is already open" << endl;
 		return EXIT_SUCCESS;
 	}
-	descriptor = ::open (QFile::encodeName(full_filename), O_RDWR /* required */ | O_NONBLOCK, 0);
+	descriptor = ::open (QFile::encodeName(full_filename), O_RDWR, 0);
 	if(isOpen())
 	{
 		kdDebug() <<  k_funcinfo << "File " << full_filename << " was opened successfuly" << endl;
@@ -105,6 +105,12 @@ int VideoDevice::open()
 			return EXIT_FAILURE;
 		}
 	}
+	else
+	{
+		kdDebug() << k_funcinfo << "Unable to open file " << full_filename << "Err: "<< errno << endl;
+		return EXIT_FAILURE;
+	}
+
 	initDevice();
 	kdDebug() <<  k_funcinfo << "exited successfuly" << endl;
 	return EXIT_SUCCESS;
@@ -150,7 +156,8 @@ int VideoDevice::checkDevice()
 			m_videocapture=true;
 			kdDebug() <<  k_funcinfo << "checkDevice(): " << full_filename << " is a V4L2 device." << endl;
 			m_driver = VIDEODEV_DRIVER_V4L2;
-			name=QString::fromLocal8Bit((const char*)V4L2_capabilities.card);
+			m_model=QString::fromLocal8Bit((const char*)V4L2_capabilities.card);
+			m_name=m_model; // The name must be set in a way to distinguish between two or more cards of the same model. Watch out.
 
 
 
@@ -251,7 +258,7 @@ int VideoDevice::checkDevice()
 			{
 				kdDebug() <<  k_funcinfo << full_filename << " is a V4L device." << endl;
 				m_driver = VIDEODEV_DRIVER_V4L;
-				name=QString::fromLocal8Bit((const char*)V4L_capabilities.name);
+				m_name=QString::fromLocal8Bit((const char*)V4L_capabilities.name);
 
 				if(V4L_capabilities.type & VID_TYPE_CAPTURE)
 					m_videocapture=true;
@@ -301,13 +308,35 @@ int VideoDevice::checkDevice()
 		}
 #endif
 		kdDebug() <<  k_funcinfo << "checkDevice(): " << "Supported pixel formats:" << endl;
-/*		for(int pixelformat = PIXELFORMAT_GREY ; pixelformat <= PIXELFORMAT_BGR32 ; pixelformat++)
-		{
-			if(PIXELFORMAT_NONE != setPixelFormat((pixel_format)pixelformat))
-			{
-				kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(pixelformat) << endl;
-			}
-		}*/
+		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_GREY))
+			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_GREY) << endl;
+		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB332))
+			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB332) << endl;
+		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB555))
+			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB555) << endl;
+		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB555X))
+			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB555X) << endl;
+		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB565))
+			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB565) << endl;
+		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB565X))
+			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB565X) << endl;
+		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB24))
+			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB24) << endl;
+		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_BGR24))
+			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_BGR24) << endl;
+		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB32))
+			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB32) << endl;
+		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_BGR32))
+			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_BGR32) << endl;
+		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUYV))
+			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_YUYV) << endl;
+		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_UYVY))
+			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_UYVY) << endl;
+		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUV422P))
+			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_YUV422P) << endl;
+		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUV420P))
+			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_YUV420P) << endl;
+
 		// Now we must execute the proper initialization according to the type of the driver.
 		kdDebug() <<  k_funcinfo << "checkDevice() exited successfuly." << endl;
 		return EXIT_SUCCESS;
@@ -347,7 +376,7 @@ int VideoDevice::showDeviceCapabilities()
 		if(V4L2_capabilities.capabilities & V4L2_CAP_AUDIO)
 			kdDebug() << "libkopete (avdevice):     Audio IO" << endl;
 ;*/
-		kdDebug() <<  k_funcinfo << "Card: " << name << endl;
+		kdDebug() <<  k_funcinfo << "Card: " << m_name << endl;
 		kdDebug() <<  k_funcinfo << "Capabilities:" << endl;
 		if(canCapture())
 			kdDebug() <<  k_funcinfo << "    Video capture" << endl;
@@ -635,8 +664,10 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 		case VIDEODEV_DRIVER_V4L2:
 //			CLEAR (fmt);
 			if (-1 == xioctl (VIDIOC_G_FMT, &fmt))
+                        {
 //				return errnoReturn ("VIDIOC_S_FMT");
 //				kdDebug() << k_funcinfo << "VIDIOC_G_FMT failed (" << errno << ").Returned width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height << endl;
+			}
 			fmt.fmt.pix.pixelformat = pixelFormatCode(newformat);
 			if (-1 != xioctl (VIDIOC_S_FMT, &fmt))
 			{
@@ -679,7 +710,18 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 
 
 
-
+/*!
+    \fn Kopete::AV::VideoDevice::currentInput()
+ */
+int VideoDevice::currentInput()
+{
+    /// @todo implement me
+	if(isOpen())
+	{
+		return m_current_input;
+	}
+	return 0;
+}
 
 
 
@@ -969,6 +1011,10 @@ memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_current
 						}
 					}
 					break;
+				case PIXELFORMAT_YUYV	: break;
+				case PIXELFORMAT_UYVY	: break;
+				case PIXELFORMAT_YUV420P: break;
+				case PIXELFORMAT_YUV422P: break;
 			}
 		}
 kdDebug() <<  k_funcinfo << "10 Using IO_METHOD_READ.File descriptor: " << descriptor << " Buffer address: " << &m_currentbuffer.data[0] << " Size: " << m_currentbuffer.data.size() << endl;
@@ -993,7 +1039,9 @@ int VideoDevice::getFrame(imagebuffer *imgbuffer)
 		imgbuffer->width       = m_currentbuffer.width;
 		imgbuffer->pixelformat = m_currentbuffer.pixelformat;
 		imgbuffer->data        = m_currentbuffer.data;
+		return EXIT_SUCCESS;
 	}
+	return EXIT_FAILURE;
 }
 
 /*!
@@ -1055,6 +1103,89 @@ kdDebug() <<  k_funcinfo << "Capturing in " << pixelFormatName(m_currentbuffer.p
 		case PIXELFORMAT_RGB32	: memcpy(bits,&m_currentbuffer.data[0], m_currentbuffer.data.size());
 			break;
 		case PIXELFORMAT_BGR32	: break;
+	
+		case PIXELFORMAT_YUYV:
+		case PIXELFORMAT_UYVY:
+		case PIXELFORMAT_YUV422P:
+		case PIXELFORMAT_YUV420P:
+		{
+		uchar *yptr, *cbptr, *crptr;
+		bool halfheight=false;
+		bool packed=false;
+		if (m_currentbuffer.pixelformat == PIXELFORMAT_YUV420P)
+			halfheight=true;
+	
+		if (m_currentbuffer.pixelformat == PIXELFORMAT_YUYV)
+		{
+			yptr = &m_currentbuffer.data[0];
+			cbptr = yptr + 1;
+			crptr = yptr + 3;
+			packed=true;
+		}
+		else if (m_currentbuffer.pixelformat == PIXELFORMAT_UYVY)
+		{
+			cbptr = &m_currentbuffer.data[0];
+			yptr = cbptr + 1;
+			crptr = cbptr + 3;
+			packed=true;
+		}
+		else
+		{
+			yptr = &m_currentbuffer.data[0];
+			cbptr = yptr + (width()*height());
+			crptr = cbptr + (width()*height()/(halfheight ? 4:2));
+		}
+	
+		for(int y=0; y<height(); y++)
+		{
+			for(int x=0; x<width(); x++)
+			{
+			int c,d,e;
+	
+			if (packed)
+			{
+				c = (yptr[x<<1])-16;
+				d = (cbptr[x&!1])-128;
+				e = (crptr[x&!1])-128;
+			}
+			else
+			{
+				c = (yptr[x])-16;
+				d = (cbptr[x>>1])-128;
+				e = (crptr[x>>1])-128;
+			}
+	
+			int r = (298 * c           + 409 * e + 128)>>8;
+			int g = (298 * c - 100 * d - 208 * e + 128)>>8;
+			int b = (298 * c + 516 * d           + 128)>>8;
+	
+			if (r<0) r=0;   if (r>255) r=255;
+			if (g<0) g=0;   if (g>255) g=255;
+			if (b<0) b=0;   if (b>255) b=255;
+	
+			uint *p = (uint*)qimage->scanLine(y)+x;
+			*p = qRgba(r,g,b,255);
+	
+			}
+	
+			if (packed)
+			{
+			yptr+=width()*2;
+			cbptr+=width()*2;
+			crptr+=width()*2;
+			}
+			else
+			{
+			yptr+=width();
+			if (!halfheight || y&1)
+			{
+				cbptr+=width()/2;
+				crptr+=width()/2;
+			}
+			}
+		}
+		}
+		break;
 	}
 
 	return EXIT_SUCCESS;
@@ -1083,6 +1214,18 @@ int VideoDevice::stopCapturing()
 					enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 					if (-1 == xioctl (VIDIOC_STREAMOFF, &type))
 						return errnoReturn ("VIDIOC_STREAMOFF");
+
+                    if (m_io_method == IO_METHOD_MMAP)
+                    {
+                        unsigned int loop;
+                        for (loop = 0; loop < m_streambuffers; ++loop)
+                        {
+                            if (munmap(m_rawbuffers[loop].start,m_rawbuffers[loop].length) != 0)
+                            {
+                                kdDebug() <<  k_funcinfo << "unable to munmap." << endl;
+                            }
+                        }
+                    }
 				}
 #endif
 				break;
@@ -1100,10 +1243,12 @@ int VideoDevice::stopCapturing()
 int VideoDevice::close()
 {
     /// @todo implement me
+	kdDebug() <<  k_funcinfo << " called." << endl;
 	if(isOpen())
 	{
+		kdDebug() << k_funcinfo << " Device is open. Trying to properly shutdown the device." << endl;
 		stopCapturing();
-		::close(descriptor);
+		kdDebug() << k_funcinfo << "::close() returns " << ::close(descriptor) << endl;
 	}
 	descriptor = -1;
 	return EXIT_SUCCESS;
@@ -1220,6 +1365,10 @@ int VideoDevice::pixelFormatCode(pixel_format pixelformat)
 				case PIXELFORMAT_BGR24	: return V4L2_PIX_FMT_BGR24;	break;
 				case PIXELFORMAT_RGB32	: return V4L2_PIX_FMT_RGB32;	break;
 				case PIXELFORMAT_BGR32	: return V4L2_PIX_FMT_BGR32;	break;
+				case PIXELFORMAT_YUYV	: return V4L2_PIX_FMT_YUYV;	break;
+				case PIXELFORMAT_UYVY	: return V4L2_PIX_FMT_UYVY;	break;
+				case PIXELFORMAT_YUV420P: return V4L2_PIX_FMT_YUV420;	break;
+				case PIXELFORMAT_YUV422P: return V4L2_PIX_FMT_YUV422P;	break;
 			}
 			break;
 #endif
@@ -1237,6 +1386,10 @@ int VideoDevice::pixelFormatCode(pixel_format pixelformat)
 				case PIXELFORMAT_BGR24	: return PIXELFORMAT_NONE;	break;
 				case PIXELFORMAT_RGB32	: return VIDEO_PALETTE_RGB32;	break;
 				case PIXELFORMAT_BGR32	: return PIXELFORMAT_NONE;	break;
+				case PIXELFORMAT_YUYV	: return VIDEO_PALETTE_YUYV;	break;
+				case PIXELFORMAT_UYVY	: return VIDEO_PALETTE_UYVY;	break;
+				case PIXELFORMAT_YUV420P: return VIDEO_PALETTE_YUV420;	break;
+				case PIXELFORMAT_YUV422P: return VIDEO_PALETTE_YUV422P;	break;
 			}
 			break;
 #endif
@@ -1262,6 +1415,10 @@ int VideoDevice::pixelFormatDepth(pixel_format pixelformat)
 		case PIXELFORMAT_BGR24	: return 24;	break;
 		case PIXELFORMAT_RGB32	: return 32;	break;
 		case PIXELFORMAT_BGR32	: return 32;	break;
+		case PIXELFORMAT_YUYV	: return 16;	break;
+		case PIXELFORMAT_UYVY	: return 16;	break;
+		case PIXELFORMAT_YUV420P: return 16;	break;
+		case PIXELFORMAT_YUV422P: return 16;	break;
 	}
 	return 0;
 }
@@ -1282,6 +1439,10 @@ QString VideoDevice::pixelFormatName(pixel_format pixelformat)
 		case PIXELFORMAT_BGR24	: returnvalue = "24-bit BGR24";		break;
 		case PIXELFORMAT_RGB32	: returnvalue = "32-bit RGB32";		break;
 		case PIXELFORMAT_BGR32	: returnvalue = "32-bit BGR32";		break;
+		case PIXELFORMAT_YUYV	: returnvalue = "Packed YUV 4:2:2";	break;
+		case PIXELFORMAT_UYVY	: returnvalue = "Packed YVU 4:2:2";	break;
+		case PIXELFORMAT_YUV420P: returnvalue = "Planar YUV 4:2:0";	break;
+		case PIXELFORMAT_YUV422P: returnvalue = "Planar YUV 4:2:2";	break;
 	}
 	return returnvalue;
 }
@@ -1307,6 +1468,10 @@ QString VideoDevice::pixelFormatName(int pixelformat)
 				case V4L2_PIX_FMT_BGR24		: returnvalue = "24-bit BGR24";		break;
 				case V4L2_PIX_FMT_RGB32		: returnvalue = "32-bit RGB32";		break;
 				case V4L2_PIX_FMT_BGR32		: returnvalue = "32-bit BGR32";		break;
+				case V4L2_PIX_FMT_YUYV		: returnvalue = "Packed YUV 4:2:2";	break;
+				case V4L2_PIX_FMT_UYVY		: returnvalue = "Packed YVU 4:2:2";	break;
+				case V4L2_PIX_FMT_YUV420	: returnvalue = "Planar YUV 4:2:0";	break;
+				case V4L2_PIX_FMT_YUV422P	: returnvalue = "Planar YUV 4:2:2";	break;
 			}
 			break;
 #endif
@@ -1319,6 +1484,10 @@ QString VideoDevice::pixelFormatName(int pixelformat)
 				case VIDEO_PALETTE_RGB565	: returnvalue = "16-bit RGB565";	break;
 				case VIDEO_PALETTE_RGB24	: returnvalue = "24-bit RGB24";		break;
 				case VIDEO_PALETTE_RGB32	: returnvalue = "32-bit RGB32";		break;
+				case VIDEO_PALETTE_YUYV		: returnvalue = "Packed YUV 4:2:2";	break;
+				case VIDEO_PALETTE_UYVY		: returnvalue = "Packed YVU 4:2:2";	break;
+				case VIDEO_PALETTE_YUV420	: returnvalue = "Planar YUV 4:2:0";	break;
+				case VIDEO_PALETTE_YUV422P	: returnvalue = "Planar YUV 4:2:2";	break;
 			}
 			break;
 #endif

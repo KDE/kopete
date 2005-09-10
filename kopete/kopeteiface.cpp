@@ -85,6 +85,7 @@ QStringList KopeteIface::contactFileProtocols(const QString &displayName)
 {
 	return Kopete::ContactList::self()->contactFileProtocols(displayName);
 }
+
 QString KopeteIface::messageContact( const QString &contactId, const QString &messageText )
 {
 	Kopete::MetaContact *mc = Kopete::ContactList::self()->findMetaContactByContactId( contactId );

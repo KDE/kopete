@@ -21,7 +21,7 @@
 #include <qobject.h>
 #include "messageformatter.h"
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 #include "config.h"
 

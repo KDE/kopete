@@ -22,7 +22,7 @@
 #include <kactionclasses.h>
 #include <kaction.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 namespace Kopete
 {

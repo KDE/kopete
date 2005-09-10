@@ -20,7 +20,7 @@
 
 #include <ksocketaddress.h>
 #include "oscartypes.h"
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 class Buffer;
 using namespace Oscar;

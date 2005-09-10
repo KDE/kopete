@@ -25,7 +25,7 @@
 
 #include <qobject.h>
 #include <qstring.h>
-#include <kopete_export.h>
+#include "kopete_export.h"
 #include "rtf2html.h"
 #include "transfer.h"
 #include "icquserinfo.h"

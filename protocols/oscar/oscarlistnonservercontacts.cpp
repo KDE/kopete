@@ -24,14 +24,13 @@
 #include <klocale.h>
 
 OscarListNonServerContacts::OscarListNonServerContacts(QWidget* parent)
-    : KDialogBase( parent, 0, false, i18n( "Add contacts to server list" ),
+    : KDialogBase( parent, 0, false, i18n( "Add Contacts to Server List" ),
                    Ok | Cancel )
 {
     m_contactsList = new OscarListContactsBase( this );
     setMainWidget( m_contactsList );
     setButtonText( Ok, i18n( "&Add" ) );
-    setButtonText( Cancel, i18n( "Do &not add" ) );
-
+    setButtonText( Cancel, i18n( "Do &Not Add" ) );
 }
 
 OscarListNonServerContacts::~OscarListNonServerContacts()
@@ -48,6 +47,20 @@ void OscarListNonServerContacts::addContacts( const QStringList& contactList )
 QStringList OscarListNonServerContacts::nonServerContactList() const
 {
     return m_nonServerContacts;
+}
+
+
+
+void OscarListNonServerContacts::slotCancel()
+{
+    KDialogBase::slotCancel();
+    emit closing();
+}
+
+void OscarListNonServerContacts::slotOk()
+{
+    KDialogBase::slotOk();
+    emit closing();
 }
 
 #include "oscarlistnonservercontacts.moc"

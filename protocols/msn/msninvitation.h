@@ -19,7 +19,7 @@
 
 #include <qstring.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 class QObject;
 

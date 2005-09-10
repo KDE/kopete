@@ -28,7 +28,7 @@
 #include <qtimer.h>
 #include <qvaluelist.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 namespace KNetwork {
   class KBufferedSocket;

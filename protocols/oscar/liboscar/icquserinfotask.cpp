@@ -180,7 +180,7 @@ void ICQUserInfoRequestTask::onGo()
 	m_contactSequenceMap[sequence()] = m_userToRequestFor;
 	m_reverseContactMap[m_userToRequestFor] = sequence();
 	
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0015, 0x0002, 0, client()->snacSequence() };
 	Transfer* t = createTransfer( f, s, sendBuf );
 	send( t );

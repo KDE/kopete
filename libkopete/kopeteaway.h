@@ -24,7 +24,7 @@
 #include <qvaluelist.h>
 
 #include "kopeteawaydialog.h"
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 class QStringList;
 

@@ -69,7 +69,7 @@ void ProfileTask::setAwayMessage( const QString& text )
 void ProfileTask::sendProfileUpdate()
 {
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SEND (CLI_SETUSERINFO/CLI_SET_LOCATION_INFO)" << endl;
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0002, 0x0004, 0x0000, client()->snacSequence() };
 	Buffer *buffer = new Buffer();
 	Buffer capBuf;

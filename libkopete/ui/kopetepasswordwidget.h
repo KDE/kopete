@@ -19,7 +19,7 @@
 #define KOPETEPASSWORDWIDGET_H
 
 #include "kopetepasswordwidgetbase.h"
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 namespace Kopete
 {

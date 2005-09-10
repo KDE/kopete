@@ -105,7 +105,7 @@ protected:
 	 */
 	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const SSI& ssiItem ) = 0;
 
-	virtual QString sanitizedMessage( const Oscar::Message& message ) = 0;
+	virtual QString sanitizedMessage( const QString& message ) = 0;
 
 protected slots:
 
@@ -130,6 +130,8 @@ protected slots:
 	/* slots for receiving typing notifications, and notify the appropriate OscarContact */
 	void userStartedTyping( const QString & contact );
 	void userStoppedTyping( const QString & contact );
+
+    void nonServerAddContactDialogClosed();
 
 signals:
 

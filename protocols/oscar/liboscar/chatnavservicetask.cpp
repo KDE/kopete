@@ -105,7 +105,7 @@ bool ChatNavServiceTask::take( Transfer* transfer )
 
 void ChatNavServiceTask::onGo()
 {
-    FLAP f =  { 0x02, client()->flapSequence(), 0x00 };
+    FLAP f =  { 0x02, 0, 0x00 };
     SNAC s = { 0x000D, m_type, 0x0000, client()->snacSequence() };
     Buffer* b = new Buffer();
 
@@ -120,7 +120,7 @@ void ChatNavServiceTask::createRoom( WORD exchange, const QString& name )
 	QString lang = "en";
 	QString charset = "us-ascii";
 
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x000D, 0x0008, 0x0000, client()->snacSequence() };
 	Buffer *b = new Buffer;
 

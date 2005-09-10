@@ -51,6 +51,8 @@
 #include "oscarclientstream.h"
 #include "oscarconnector.h"
 #include "ssimanager.h"
+#include "oscarlistnonservercontacts.h"
+#include <qtextcodec.h>
 
 class OscarAccountPrivate
 {
@@ -67,6 +69,7 @@ public:
 	//contacts waiting on their group to be added
 	QMap<QString, QString> contactAddQueue;
 
+    OscarListNonServerContacts* olnscDialog;
 
 };
 
@@ -78,7 +81,7 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, c
 
 	d = new OscarAccountPrivate;
 	d->engine = new Client( this );
-
+    d->olnscDialog = 0L;
     QObject::connect( d->engine, SIGNAL( loggedIn() ), this, SLOT( loginActions() ) );
 	QObject::connect( d->engine, SIGNAL( messageReceived( const Oscar::Message& ) ),
 	                  this, SLOT( messageReceived(const Oscar::Message& ) ) );
@@ -125,7 +128,7 @@ void OscarAccount::logOff( Kopete::Account::DisconnectReason reason )
 	{
 		it.current()->setOnlineStatus(Kopete::OnlineStatus::Offline);
 	}
-	
+
 	disconnected( reason );
 }
 
@@ -237,13 +240,94 @@ void OscarAccount::processSSIList()
 	                  this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
 
     //TODO: check the kopete contact list and handle non server side contacts appropriately.
+    QDict<Kopete::Contact> nonServerContacts = contacts();
+    QDictIterator<Kopete::Contact> it( nonServerContacts );
+    QStringList nonServerContactList;
+    for ( ; it.current(); ++it )
+    {
+        OscarContact* oc = dynamic_cast<OscarContact*>( ( *it ) );
+        if ( !oc )
+            continue;
+        kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << oc->contactId() << " contact ssi type: " << oc->ssiItem().type() << endl;
+        if ( !oc->isOnServer() )
+            nonServerContactList.append( ( *it )->contactId() );
+    }
+    kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "the following contacts are not on the server side list"
+                             << nonServerContactList << endl;
+    if ( !nonServerContactList.isEmpty() )
+    {
+        d->olnscDialog = new OscarListNonServerContacts( Kopete::UI::Global::mainWidget() );
+        QObject::connect( d->olnscDialog, SIGNAL( closing() ),
+                          this, SLOT( nonServerAddContactDialogClosed() ) );
+        d->olnscDialog->addContacts( nonServerContactList );
+        d->olnscDialog->show();
+    }
 }
 
+void OscarAccount::nonServerAddContactDialogClosed()
+{
+    if ( !d->olnscDialog )
+        return;
+
+    if ( d->olnscDialog->result() == QDialog::Accepted )
+    {
+        //start adding contacts
+        kdDebug(OSCAR_GEN_DEBUG) << "adding non server contacts to the contact list" << endl;
+        //get the contact list. get the OscarContact object, then the group
+        //check if the group is on ssi, if not, add it
+        //if so, add the contact.
+        QStringList offliners = d->olnscDialog->nonServerContactList();
+        QStringList::iterator it, itEnd = offliners.end();
+        for ( it = offliners.begin(); it != itEnd; ++it )
+        {
+            OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[( *it )] );
+            if ( !oc )
+            {
+                kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "no OscarContact object available for"
+                                         << ( *it ) << endl;
+                continue;
+            }
+
+            Kopete::MetaContact* mc = oc->metaContact();
+            if ( !mc )
+            {
+                kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "no metacontact object available for"
+                                         << ( oc->contactId() ) << endl;
+                continue;
+            }
+
+            Kopete::Group* group = mc->groups().first();
+            if ( !group )
+            {
+                kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "no metacontact object available for"
+                                         << ( oc->contactId() ) << endl;
+                continue;
+            }
+
+            SSIManager* listManager = d->engine->ssiManager();
+            if ( !listManager->findGroup( group->displayName() ) )
+            {
+                kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "adding non-existant group "
+                                         << group->displayName() << endl;
+                d->contactAddQueue[Oscar::normalize( ( *it ) )] = group->displayName();
+                d->engine->addGroup( group->displayName() );
+            }
+            else
+            {
+                d->engine->addContact( ( *it ), group->displayName() );
+            }
+        }
+
+
+    }
+
+    d->olnscDialog->delayedDestruct();
+    d->olnscDialog = 0L;
+}
 
 void OscarAccount::slotGoOffline()
 {
 	OscarAccount::disconnect();
-	//setAllContactsStatus( Kopete::OnlineStatus::AccountOffline );
 }
 
 void OscarAccount::slotGoOnline()
@@ -311,7 +395,21 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	Kopete::ChatSession* chatSession = ocSender->manager( Kopete::Contact::CanCreate );
 	chatSession->receivedTypingMsg( ocSender, false ); //person is done typing
 
-	QString sanitizedMsg = sanitizedMessage( message );
+
+    //decode message
+    //HACK HACK HACK! Until AIM supports per contact encoding, just decode as ISO-8559-1
+    QTextCodec* codec = 0L;
+    if ( ocSender->hasProperty( "contactEncoding" ) )
+        codec = QTextCodec::codecForMib( ocSender->property( "contactEncoding" ).value().toInt() );
+    else
+        codec = QTextCodec::codecForMib( 4 );
+
+    QString realText = message.text();
+    if ( message.properties() & Oscar::Message::NotDecoded )
+        realText = codec->toUnicode( message.textArray() );
+
+    //sanitize;
+    QString sanitizedMsg = sanitizedMessage( realText );
 
 	Kopete::ContactPtrList me;
 	me.append( myself() );

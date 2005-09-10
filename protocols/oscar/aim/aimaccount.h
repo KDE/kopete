@@ -49,7 +49,7 @@ public:
 	QString userProfile();
 	void setLastAwayMessage( const QString& msg) {m_lastAwayMessage = msg;}
 	QString lastAwayMessage() { return m_lastAwayMessage; };
-	
+
 private:
 	QString m_profileString;
 	AIMAccount* m_acct;
@@ -63,50 +63,50 @@ private:
 class AIMAccount : public OscarAccount
 {
 Q_OBJECT
-	
+
 public:
 	AIMAccount(Kopete::Protocol *parent, QString accountID, const char *name=0L);
 	virtual ~AIMAccount();
-	
+
 	// Accessor method for the action menu
 	virtual KActionMenu* actionMenu();
-	
+
 	/** Reimplementation from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus&, const QString& ) {}
-	
+
 	void setAway(bool away, const QString &awayReason);
-	
+
 	virtual void connectWithPassword( const QString &password );
-	
+
 	void setUserProfile(const QString &profile);
-	
+
 public slots:
 	void slotEditInfo();
 	void slotGoOnline();
-	
+
 	void globalIdentityChanged( const QString&, const QVariant& );
 	void sendBuddyIcon();
     void slotJoinChat();
 
-	
+
 protected slots:
 	void slotGoAway(const QString&);
     void joinChatDialogClosed( int );
-	
+
 	virtual void disconnected( Kopete::Account::DisconnectReason reason );
-	
+
 	virtual void messageReceived( const Oscar::Message& message );
-	
+
 protected:
-	
+
 	/**
 	* Implement virtual method from OscarAccount
 	* This allows OscarAccount to take care of adding new contacts
 	*/
 	OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const SSI& ssiItem );
 
-	QString sanitizedMessage( const Oscar::Message& message );
-	
+	QString sanitizedMessage( const QString& message );
+
 private:
     AIMJoinChatUI* m_joinChatDialog;
 };

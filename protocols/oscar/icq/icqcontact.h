@@ -22,6 +22,7 @@
 #include "oscarcontact.h"
 #include "userdetails.h"
 
+class OscarEncodingSelectionDialog;
 class KAction;
 class KToggleAction;
 namespace Kopete { class ChatSession; }
@@ -53,31 +54,31 @@ public:
 	ICQContact( ICQAccount *account, const QString &name, Kopete::MetaContact *parent,
 	            const QString& icon = QString::null, const Oscar::SSI& ssiItem = Oscar::SSI()  );
 	virtual ~ICQContact();
-	
+
 	/**
 	 * Returns a set of custom menu items for
 	 * the context menu
 	 */
 	virtual QPtrList<KAction> *customContextMenuActions();
-	
+
 	/** Return whether or not this contact is reachable. */
 	virtual bool isReachable();
-	
+
 
 	//virtual const QString awayMessage();
 	//virtual void setAwayMessage(const QString &message);
-	
+
 public slots:
 	virtual void slotUserInfo();
 	virtual void updateSSIItem();
 	void userInfoUpdated( const QString& contact, const UserDetails& details );
-	
+
 	void userOnline( const QString& userId );
 	void userOffline( const QString& userID );
 	void loggedIn();
-	
+
 	void requestShortInfo();
-	
+
 signals:
 	void haveBasicInfo( const ICQGeneralUserInfo& );
 	void haveWorkInfo( const ICQWorkUserInfo& );
@@ -95,39 +96,46 @@ private:
 	*/
 	KAction *actionRequestAuth;
 	KAction *actionSendAuth;
+    KAction *m_selectEncoding;
 	/*
 	KToggleAction *actionIgnore;
 	KToggleAction *actionVisibleTo;
 
 	bool mInvisible;
 	*/
+
+    OscarEncodingSelectionDialog* m_oesd;
+
 protected slots:
 	virtual void slotSendMsg(Kopete::Message& message, Kopete::ChatSession *);
 	virtual void updateFeatures();
-	
+
 private slots:
 	/** Request authorization from this contact */
 	void slotRequestAuth();
-	
+
 	/** Authorize this contact */
 	void slotSendAuth();
-	
+
 	void slotAuthReplyDialogOkClicked();
-	
+
 	/** We have received an auth request */
 	void slotGotAuthRequest( const QString& contact, const QString& reason );
-	
+
 	/** We have received an auth reply */
 	void slotGotAuthReply( const QString& contact, const QString& reason, bool granted );
-	
+
 	void closeUserInfoDialog();
-	
+
 	void receivedLongInfo( const QString& contact );
 	void receivedShortInfo( const QString& contact );
-	
+
+    void changeContactEncoding();
+    void changeEncodingDialogClosed( int );
+
 //void slotCloseAwayMessageDialog();
 	//void slotReadAwayMessage();
-	
+
 	//void slotIgnore();
 	//void slotVisibleTo();
 };

@@ -21,7 +21,7 @@
 
 #include "kopetemessage.h"
 #include <qvaluelist.h>
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 namespace Kopete
 {

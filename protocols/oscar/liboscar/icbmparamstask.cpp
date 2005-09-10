@@ -61,7 +61,7 @@ bool ICBMParamsTask::take( Transfer* transfer )
 void ICBMParamsTask::onGo()
 {
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending ICBM Parameters request" << endl;
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0004, 0x0004, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
 	Transfer* st = createTransfer( f, s, buffer );
@@ -101,7 +101,7 @@ void ICBMParamsTask::sendMessageParams()
 {
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending ICBM parameters we want" << endl;
 	
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0004, 0x0002, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
 		

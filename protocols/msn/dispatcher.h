@@ -20,7 +20,7 @@
 #include <qobject.h>
 #include <qstringlist.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 #include "p2p.h"
 #include "messageformatter.h"

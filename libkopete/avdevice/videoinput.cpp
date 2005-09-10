@@ -39,13 +39,13 @@ VideoInput::~VideoInput()
 
 float VideoInput::getBrightness()
 {
-	kdDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_brightness;
 }
 
 float VideoInput::setBrightness(float brightness)
 {
-	kdDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	if ( brightness > 1 )
 		brightness = 1;
 	else
@@ -57,13 +57,13 @@ float VideoInput::setBrightness(float brightness)
 
 float VideoInput::getContrast()
 {
-	kdDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_contrast;
 }
 
 float VideoInput::setContrast(float contrast)
 {
-	kdDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	if ( contrast > 1 )
 		contrast = 1;
 	else
@@ -75,13 +75,13 @@ float VideoInput::setContrast(float contrast)
 
 float VideoInput::getSaturation()
 {
-	kdDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_saturation;
 }
 
 float VideoInput::setSaturation(float saturation)
 {
-	kdDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	if ( saturation > 1 )
 		saturation = 1;
 	else
@@ -93,13 +93,13 @@ float VideoInput::setSaturation(float saturation)
 
 float VideoInput::getHue()
 {
-	kdDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_hue;
 }
 
 float VideoInput::setHue(float hue)
 {
-	kdDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	if ( hue > 1 )
 		hue = 1;
 	else
@@ -112,26 +112,26 @@ float VideoInput::setHue(float hue)
 
 bool VideoInput::getAutoBrightnessContrast()
 {
-	kdDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_autobrightnesscontrast;
 }
 
 bool VideoInput::setAutoBrightnessContrast(bool brightnesscontrast)
 {
-	kdDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	m_autobrightnesscontrast = brightnesscontrast;
 	return getAutoBrightnessContrast();
 }
 
 bool VideoInput::getAutoColorCorrection()
 {
-	kdDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	return m_autocolorcorrection;
 }
 
 bool VideoInput::setAutoColorCorrection(bool colorcorrection)
 {
-	kdDebug() <<  k_funcinfo << " called." << endl;
+//	kdDebug() <<  k_funcinfo << " called." << endl;
 	m_autocolorcorrection = colorcorrection;
 	return getAutoColorCorrection();
 }

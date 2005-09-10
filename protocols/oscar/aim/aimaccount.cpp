@@ -109,17 +109,17 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::Me
 	return contact;
 }
 
-QString AIMAccount::sanitizedMessage( const Oscar::Message& message )
+QString AIMAccount::sanitizedMessage( const QString& message )
 {
 	QDomDocument doc;
 	QString domError;
 	int errLine = 0, errCol = 0;
-	doc.setContent( message.text(), false, &domError, &errLine, &errCol );
+	doc.setContent( message, false, &domError, &errLine, &errCol );
 	if ( !domError.isEmpty() ) //error parsing, do nothing
 	{
 		kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "error from dom document conversion: "
 			<< domError << endl;
-		return message.text();
+		return message;
 	}
 	else
 	{
@@ -129,7 +129,7 @@ QString AIMAccount::sanitizedMessage( const Oscar::Message& message )
 		if ( fontTagList.count() == 0 )
 		{
 			kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "No font tags found. Returning normal message" << endl;
-			return message.text();
+			return message;
 		}
 		else
 		{
@@ -145,7 +145,7 @@ QString AIMAccount::sanitizedMessage( const Oscar::Message& message )
 					continue;
 				if ( fontEl.hasAttribute( "back" ) )
 				{
-					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found attribute to replace. Doing replacement" << endl;
+					kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Found attribute to replace. Doing replacement" << endl;
 					QString backgroundColor = fontEl.attribute( "back" );
 					backgroundColor.insert( 0, "background-color: " );
 					backgroundColor.append( ';' );

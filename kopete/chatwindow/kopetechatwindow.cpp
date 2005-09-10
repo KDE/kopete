@@ -31,7 +31,6 @@
 #include <klocale.h>
 #include <kmenubar.h>
 #include <kconfig.h>
-#include <kcombobox.h>
 #include <kpopupmenu.h>
 #include <kiconloader.h>
 #include <kdebug.h>
@@ -50,7 +49,6 @@
 #include <kglobalsettings.h>
 
 #include "chatmessagepart.h"
-#include "chatmemberslistwidget.h"
 #include "chattexteditpart.h"
 #include "chatview.h"
 #include "kopeteapplication.h"
@@ -166,12 +164,6 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 	return myWindow;
 }
 
-/**
- * 
- * @param parent 
- * @param name 
- * @return 
- */
 KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name )
 	: KParts::MainWindow( parent, name )
 {
@@ -224,11 +216,6 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name )
 
 	KGlobal::config()->setGroup( QString::fromLatin1("ChatWindowSettings") );
 	m_alwaysShowTabs = KGlobal::config()->readBoolEntry( QString::fromLatin1("AlwaysShowTabs"), false );
-	kdDebug(14010)<<"creating toolbar"<<endl;
-	m_encoding=new KComboBox(toolBar("convert"));
-	initEncodings();
-	
-
 //	kdDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
 	kapp->ref();
 }
@@ -839,11 +826,6 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	{
 		disconnect( m_activeView, SIGNAL( canSendChanged(bool) ), this, SLOT( slotUpdateSendEnabled() ) );
 		guiFactory()->removeClient(m_activeView->msgManager());
-		disconnect(m_encoding,SIGNAL(activated( const QString&)),
-		m_activeView->messagePart(),SLOT(slotConvert( const QString&)));
-		disconnect(m_encoding,SIGNAL(activated( const QString&)),
-		this,SLOT(slotEncodingSelected( const QString&)));
-
 	}
 
 	guiFactory()->addClient(view->msgManager());
@@ -854,43 +836,11 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 
 	m_activeView = view;
 
-
-	
 	if( !chatViewList.contains( view ) )
 		attachChatView( view );
 
 	connect( m_activeView, SIGNAL( canSendChanged(bool) ), this, SLOT( slotUpdateSendEnabled() ) );
 
-	Kopete::ContactPtrList cList;
-	cList=m_activeView->membersList()->session()->members();
-	Kopete::Contact* ct;	
-	ct=cList.first();
-	QString uid;
-	if(ct)
-	{
-	        KConfig* cf=KGlobal::config();
-		uid=ct->contactId();
-		QString gr=cf->group();
-		cf->setGroup("Encodings");
-		QString enc=cf->readEntry(uid,"Unicode");	
-		cf->setGroup(gr);
-		m_activeView->messagePart()->slotConvert(enc);
-		int i;
-		for(i=0;i<m_encoding->maxCount();i++)
-		{
-		    if(m_encoding->text(i)==enc)
-		    {
-		         m_encoding->setCurrentItem(i);
-		         break;
-		    }
-		}	
-	}
-
-	connect(m_encoding,SIGNAL(activated( const QString&)),
-	m_activeView->messagePart(),SLOT(slotConvert( const QString&)));
-	connect(m_encoding,SIGNAL(activated( const QString&)),
-	this,SLOT(slotEncodingSelected( const QString&)));
-		
 	//Tell it it is active
 	m_activeView->setActive( true );
 
@@ -1217,9 +1167,6 @@ void KopeteChatWindow::slotConfKeys()
 	dlg.configure();
 }
 
-/**
- * 
- */
 void KopeteChatWindow::slotConfToolbar()
 {
 	saveMainWindowSettings(KGlobal::config(), QString::fromLatin1( "KopeteChatWindow" ));
@@ -1289,72 +1236,3 @@ void KopeteChatWindow::updateChatLabel()
 
 // vim: set noet ts=4 sts=4 sw=4:
 
-
-
-void KopeteChatWindow::initEncodings()
-{
-	QStringList lst=QStringList::split('\n',
-"Unicode\n\
-Big5\n\
-Big5-HKSCS\n\
-eucJP\n\
-eucKR\n\
-GB2312\n\
-GBK\n\
-GB18030\n\
-JIS7\n\
-Shift-JIS\n\
-TSCII\n\
-KOI8-R\n\
-KOI8-U\n\
-ISO8859-1\n\
-ISO8859-2\n\
-ISO8859-3\n\
-ISO8859-4\n\
-ISO8859-5\n\
-ISO8859-6\n\
-ISO8859-7\n\
-ISO8859-8\n\
-ISO8859-8-i\n\
-ISO8859-9\n\
-ISO8859-10\n\
-ISO8859-13\n\
-ISO8859-14\n\
-ISO8859-15\n\
-IBM 850\n\
-IBM 866\n\
-CP874\n\
-CP1250\n\
-CP1251\n\
-CP1252\n\
-CP1253\n\
-CP1254\n\
-CP1255\n\
-CP1256\n\
-CP1257\n\
-CP1258\n\
-Apple Roman\n\
-TIS-620");
-	m_encoding->insertStringList(lst);
-}
-
-
-void KopeteChatWindow::slotEncodingSelected(const QString& string)
-{
-        if(!m_activeView)
-		return;
-	Kopete::ContactPtrList cList;
-	cList=m_activeView->membersList()->session()->members();
-	Kopete::Contact* ct;	
-	ct=cList.first();
-	QString uid;
-	if(ct)
-	{
-	        KConfig* cf=KGlobal::config();
-		uid=ct->contactId();
-		QString gr=cf->group();
-		cf->setGroup("Encodings");
-		cf->writeEntry(uid,string);	
-		cf->setGroup(gr);
-	}
-}

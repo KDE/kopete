@@ -16,7 +16,7 @@
 
 #include <qpixmap.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 typedef struct _MimCtx MimCtx;
 

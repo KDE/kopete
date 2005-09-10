@@ -312,8 +312,8 @@ int VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
 	{
 		for (unsigned int loop=0; loop < m_videodevice.size(); loop++)
 		{
-			combobox->insertItem(m_videodevice[loop].name);
-			kdDebug() <<  k_funcinfo << "DeviceKCombobox: Added device " << loop << ": " << m_videodevice[loop].name << endl;
+			combobox->insertItem(m_videodevice[loop].m_name);
+			kdDebug() <<  k_funcinfo << "DeviceKCombobox: Added device " << loop << ": " << m_videodevice[loop].m_name << endl;
 		}
 		combobox->setCurrentItem(currentDevice());
 	}
@@ -399,7 +399,7 @@ int VideoDevicePool::scanDevices()
 				VideoDeviceModel devicemodel;
 				kdDebug() <<  k_funcinfo << "File " << videodevice.full_filename << " was opened successfuly" << endl;
 
-				devicemodel.name=videodevice.name;
+				devicemodel.name=videodevice.m_name;
 				devicemodel.count++;
 				m_model.push_back(devicemodel);
 
@@ -427,7 +427,7 @@ int VideoDevicePool::scanDevices()
 			VideoDeviceModel devicemodel;
 			kdDebug() <<  k_funcinfo << "File " << videodevice.full_filename << " was opened successfuly" << endl;
 
-			devicemodel.name=videodevice.name;
+			devicemodel.name=videodevice.m_name;
 			devicemodel.count++;
 			m_model.push_back(devicemodel);
 
@@ -516,15 +516,16 @@ void VideoDevicePool::saveConfig()
 		VideoDeviceVector::iterator vditerator;
 		for( vditerator = m_videodevice.begin(); vditerator != m_videodevice.end(); ++vditerator )
 		{
-			kdDebug() << (*vditerator).name << endl;
+			kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Name:" << (*vditerator).m_name << endl;
+			kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Current input:" << (*vditerator).currentInput() << endl;
 			for (size_t input = 0 ; input < (*vditerator).m_input.size(); input++)
 			{
-				kdDebug() << "Brightness: " << (*vditerator).m_input[input].getBrightness() << endl;
-				kdDebug() << "Contrast  : " << (*vditerator).m_input[input].getContrast()   << endl;
-				kdDebug() << "Saturatin : " << (*vditerator).m_input[input].getSaturation() << endl;
-				kdDebug() << "Hue       : " << (*vditerator).m_input[input].getHue()        << endl;
-				kdDebug() << "Automatic brightness / contrast: " << (*vditerator).m_input[input].getAutoBrightnessContrast() << endl;
-				kdDebug() << "Automatic color correction     : " << (*vditerator).m_input[input].getAutoColorCorrection() << endl;
+				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Brightness: " << (*vditerator).m_input[input].getBrightness() << endl;
+				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Contrast  : " << (*vditerator).m_input[input].getContrast()   << endl;
+				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Saturation: " << (*vditerator).m_input[input].getSaturation() << endl;
+				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Hue       : " << (*vditerator).m_input[input].getHue()        << endl;
+				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Automatic brightness / contrast: " << (*vditerator).m_input[input].getAutoBrightnessContrast() << endl;
+				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Automatic color correction     : " << (*vditerator).m_input[input].getAutoColorCorrection() << endl;
 			}
 		}
 		kdDebug() << endl;
