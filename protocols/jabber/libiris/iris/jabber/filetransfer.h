@@ -23,9 +23,6 @@
 
 #include"im.h"
 
-#if QT_VERSION < 0x030200
-typedef long int qlonglong;
-#endif
 
 namespace XMPP
 {

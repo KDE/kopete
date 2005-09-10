@@ -61,13 +61,7 @@ void SafeDelete::deleteAll()
 
 void SafeDelete::deleteSingle(QObject *o)
 {
-#if QT_VERSION < 0x030000
-	// roll our own QObject::deleteLater()
-	SafeDeleteLater *sdl = SafeDeleteLater::ensureExists();
-	sdl->deleteItLater(o);
-#else
 	o->deleteLater();
-#endif
 }
 
 //----------------------------------------------------------------------------

@@ -109,9 +109,7 @@ void BSocket::ensureSocket()
 {
 	if(!d->qsock) {
 		d->qsock = new Q3Socket;
-#if QT_VERSION >= 0x030200
 		d->qsock->setReadBufferSize(READBUFSIZE);
-#endif
 		connect(d->qsock, SIGNAL(hostFound()), SLOT(qs_hostFound()));
 		connect(d->qsock, SIGNAL(connected()), SLOT(qs_connected()));
 		connect(d->qsock, SIGNAL(connectionClosed()), SLOT(qs_connectionClosed()));

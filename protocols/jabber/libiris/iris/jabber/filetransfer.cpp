@@ -556,11 +556,7 @@ bool JT_FT::take(const QDomElement &x)
 				int x;
 				bool ok;
 				if(range.hasAttribute("offset")) {
-#if QT_VERSION >= 0x030200
 					x = range.attribute("offset").toLongLong(&ok);
-#else
-					x = range.attribute("offset").toLong(&ok);
-#endif
 					if(!ok || x < 0) {
 						setError(900, "");
 						return true;
@@ -568,11 +564,7 @@ bool JT_FT::take(const QDomElement &x)
 					range_offset = x;
 				}
 				if(range.hasAttribute("length")) {
-#if QT_VERSION >= 0x030200
 					x = range.attribute("length").toLongLong(&ok);
-#else
-					x = range.attribute("length").toLong(&ok);
-#endif
 					if(!ok || x < 0) {
 						setError(900, "");
 						return true;
@@ -717,11 +709,7 @@ bool JT_PushFT::take(const QDomElement &e)
 	}
 
 	bool ok;
-#if QT_VERSION >= 0x030200
 	qlonglong size = file.attribute("size").toLongLong(&ok);
-#else
-	qlonglong size = file.attribute("size").toLong(&ok);
-#endif
 	if(!ok || size < 0) {
 		respondError(from, id, 400, "Bad file size");
 		return true;

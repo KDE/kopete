@@ -154,11 +154,7 @@ void parseKey( const QString &group, const QString &key, const QString &value, c
 			 !ircNick.isEmpty( ) && !ircServer.isEmpty() &&
 			 !ircPort.isEmpty() )
 		{
-#if QT_VERSION < 0x030200
-			accountId = QString::fromLatin1( "%1@%2:%3" ).arg( ircNick ).arg( ircServer ).arg( ircPort );
-#else
 			accountId = QString::fromLatin1( "%1@%2:%3" ).arg( ircNick, ircServer, ircPort );
-#endif
 		}
 	}
 	/*
