@@ -24,7 +24,7 @@
 #include <qlabel.h>
 #include <kdialogbase.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 
 class QPixmap;

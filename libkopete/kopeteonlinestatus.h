@@ -21,7 +21,7 @@
 #ifndef kopeteonlinestatus_h
 #define kopeteonlinestatus_h
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 #include <kdemacros.h>
 #include <ksharedptr.h>

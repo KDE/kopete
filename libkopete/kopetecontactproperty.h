@@ -21,7 +21,7 @@
 
 #include <qvariant.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 namespace Kopete
 {

@@ -29,7 +29,7 @@
 
 #include <kxmlguiclient.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 // FIXME: get rid of these includes
 #include "kopetemessage.h"

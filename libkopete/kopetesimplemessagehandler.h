@@ -17,7 +17,7 @@
 #ifndef KOPETESIMPLEMESSAGEHANDLER_H
 #define KOPETESIMPLEMESSAGEHANDLER_H
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 #include "kopetemessagehandler.h"
 
 namespace Kopete

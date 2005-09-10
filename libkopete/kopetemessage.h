@@ -31,7 +31,7 @@
 #include <qdatetime.h>
 #include <qvaluelist.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 
 class QDateTime;

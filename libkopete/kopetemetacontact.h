@@ -26,7 +26,7 @@
 #include <qstring.h>
 
 #include <kdemacros.h>
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 #include "kopetenotifydataobject.h"
 #include "kopetecontactlistelement.h"

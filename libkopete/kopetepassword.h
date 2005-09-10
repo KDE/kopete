@@ -18,7 +18,7 @@
 #define KOPETEPASSWORD_H
 
 #include <qobject.h>
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 namespace KWallet { class Wallet; }
 

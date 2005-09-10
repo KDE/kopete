@@ -23,7 +23,7 @@
 #include <qobject.h>
 #include <qptrlist.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 class KConfig;
 class QWidget;

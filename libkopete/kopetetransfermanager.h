@@ -22,7 +22,7 @@
 #include <qobject.h>
 #include <qstring.h>
 #include <qmap.h>
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 #include <kio/job.h>
 

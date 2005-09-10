@@ -21,7 +21,7 @@
 #include <qstring.h>
 #include <qvaluelist.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 class QDomElement;
 

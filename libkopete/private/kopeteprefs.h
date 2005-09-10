@@ -22,7 +22,7 @@
 #include <qcolor.h>
 #include <qfont.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 class KConfig;
 

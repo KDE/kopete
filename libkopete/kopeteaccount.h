@@ -21,7 +21,7 @@
 
 #include "kopeteonlinestatus.h"
 
-#include <kdemacros.h>
+#include "kopete_export.h"
 
 #include <qobject.h>
 #include <qdict.h>

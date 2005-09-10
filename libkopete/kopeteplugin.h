@@ -24,7 +24,7 @@
 #include <qobject.h>
 #include <kdemacros.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 #include <kopetemessage.h> //TODO: remove
 namespace DOM  { class Node; }  //TODO: remove
