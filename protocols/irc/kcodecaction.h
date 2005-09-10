@@ -20,11 +20,7 @@
 #include <kdeversion.h>
 #include <q3intdict.h>
 
-#if KDE_IS_VERSION( 3, 1, 90 )
 	#include <kactionclasses.h>
-#else
-	#include <kaction.h>
-#endif
 
 class KCodecAction : public KSelectAction
 {

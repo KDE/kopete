@@ -17,9 +17,7 @@
 #include <klocale.h>
 
 #include <kdeversion.h>
-#if KDE_IS_VERSION( 3, 1, 90 )
 	#include <kactioncollection.h>
-#else
 // ------------------------------------------------------------
 // TODO: UGLY HACK, remove when we drop KDE 3.1 compatibility
 #ifdef KDE_NO_COMPAT

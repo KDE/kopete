@@ -45,12 +45,8 @@
 #include "translatorlanguages.h"
 
 typedef KGenericFactory<TranslatorPlugin> TranslatorPluginFactory;
-#if KDE_IS_VERSION(3,2,90)
 static const KAboutData aboutdata("kopete_translator", I18N_NOOP("Translator") , "1.0" );
 K_EXPORT_COMPONENT_FACTORY( kopete_translator, TranslatorPluginFactory( &aboutdata )  )
-#else
-K_EXPORT_COMPONENT_FACTORY( kopete_translator, TranslatorPluginFactory( "kopete_translator" )  )
-#endif
 
 TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
 : Kopete::Plugin( TranslatorPluginFactory::instance(), parent, name )

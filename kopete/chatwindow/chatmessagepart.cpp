@@ -67,33 +67,6 @@
 #include "kopeteemoticons.h"
 
 
-#if !(KDE_IS_VERSION(3,3,90))
-//From  kdelibs/khtml/misc/htmltags.h
-//  used in ChatMessagePart::copy()
-#define ID_BLOCKQUOTE 12
-#define ID_BR 14
-#define ID_DD 22
-#define ID_DIV 26
-#define ID_DL 27
-#define ID_DT 28
-#define ID_H1 36
-#define ID_H2 37
-#define ID_H3 38
-#define ID_H4 39
-#define ID_H5 40
-#define ID_H6 41
-#define ID_HR 43
-#define ID_IMG 48
-#define ID_LI 57
-#define ID_OL 69
-#define ID_P 72
-#define ID_PRE 75
-#define ID_TD 90
-#define ID_TH 93
-#define ID_TR 96
-#define ID_TT 97
-#define ID_UL 99
-#endif
 
 
 class ChatMessagePart::Private
@@ -672,123 +645,12 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 	QString text;
 	QString htmltext;
 
-#if KDE_IS_VERSION(3,3,90)
 	htmltext = selectedTextAsHTML();
 	text = selectedText();
 	//selectedText is now sufficent
 //	text=Kopete::Message::unescape( htmltext ).stripWhiteSpace();
 	// Message::unsescape will replace image by his title attribute
 	// stripWhiteSpace is for removing the newline added by the <!DOCTYPE> and other xml things of RangeImpl::toHTML
-#else
-
-	DOM::Node startNode, endNode;
-	long startOffset, endOffset;
-	selection( startNode, startOffset, endNode, endOffset );
-
-	//BEGIN: copied from KHTMLPart::selectedText
-
-	bool hasNewLine = true;
-	DOM::Node n = startNode;
-	while(!n.isNull())
-	{
-		if(n.nodeType() == DOM::Node::TEXT_NODE /*&& n.handle()->renderer()*/)
-		{
-			QString str = n.nodeValue().string();
-			hasNewLine = false;
-			if(n == startNode && n == endNode)
-				text = str.mid(startOffset, endOffset - startOffset);
-			else if(n == startNode)
-				text = str.mid(startOffset);
-			else if(n == endNode)
-				text += str.left(endOffset);
-			else
-				text += str;
-		}
-		else
-		{ // This is our simple HTML -> ASCII transformation:
-			unsigned short id = n.elementId();
-			switch(id)
-			{
-			case ID_IMG: //here is the main difference with KHTMLView::selectedText
-			{
-				DOM::HTMLElement e = n;
-				if( !e.isNull() && e.hasAttribute( "title" ) )
-					text+=e.getAttribute( "title" ).string();
-				break;
-			}
-			case ID_BR:
-				text += "\n";
-				hasNewLine = true;
-				break;
-			case ID_TD:  case ID_TH:  case ID_HR:
-			case ID_OL:  case ID_UL:  case ID_LI:
-			case ID_DD:  case ID_DL:  case ID_DT:
-			case ID_PRE: case ID_BLOCKQUOTE: case ID_DIV:
-				if (!hasNewLine)
-					text += "\n";
-				hasNewLine = true;
-				break;
-			case ID_P:   case ID_TR:
-			case ID_H1:  case ID_H2:  case ID_H3:
-			case ID_H4:  case ID_H5:  case ID_H6:
-				if (!hasNewLine)
-					text += "\n";
-				text += "\n";
-				hasNewLine = true;
-				break;
-			}
-		}
-		if(n == endNode)
-			break;
-		DOM::Node next = n.firstChild();
-		if(next.isNull())
-			next = n.nextSibling();
-		while( next.isNull() && !n.parentNode().isNull() )
-		{
-			n = n.parentNode();
-			next = n.nextSibling();
-			unsigned short id = n.elementId();
-			switch(id)
-			{
-			case ID_TD:  case ID_TH:  case ID_HR:
-			case ID_OL:  case ID_UL:  case ID_LI:
-			case ID_DD:  case ID_DL:  case ID_DT:
-			case ID_PRE: case ID_BLOCKQUOTE:  case ID_DIV:
-				if (!hasNewLine)
-					text += "\n";
-				hasNewLine = true;
-				break;
-			case ID_P:   case ID_TR:
-			case ID_H1:  case ID_H2:  case ID_H3:
-			case ID_H4:  case ID_H5:  case ID_H6:
-				if (!hasNewLine)
-					text += "\n";
-				text += "\n";
-				hasNewLine = true;
-				break;
-			}
-		}
-		n = next;
-	}
-
-	if(text.isEmpty())
-		return;
-
-	int start = 0;
-	int end = text.length();
-
-	// Strip leading LFs
-	while ((start < end) && (text[start] == '\n'))
-		start++;
-
-	// Strip excessive trailing LFs
-	while ((start < (end-1)) && (text[end-1] == '\n') && (text[end-2] == '\n'))
-		end--;
-
-	text=text.mid(start, end-start);
-
-	//END: copied from KHTMLPart::selectedText
-#endif
 	if(text.isEmpty()) return;
 
 	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), this, SLOT( slotClearSelection()));

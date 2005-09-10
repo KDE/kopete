@@ -37,12 +37,7 @@
 KSettings::Dialog *KopetePreferencesAction::s_settingsDialog = 0L;
 
 KopetePreferencesAction::KopetePreferencesAction( KActionCollection *parent, const char *name )
-#if KDE_IS_VERSION( 3, 3, 90 )
 : KAction( KStdGuiItem::configure(), 0, 0, 0, parent, name )
-#else
-: KAction( KGuiItem( i18n( "&Configure Kopete..." ),
-	QString::fromLatin1( "configure" ) ), 0, 0, 0, parent, name )
-#endif
 {
 	connect( this, SIGNAL( activated() ), this, SLOT( slotShowPreferences() ) );
 }
