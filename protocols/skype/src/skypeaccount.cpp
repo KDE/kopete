@@ -493,7 +493,7 @@ QString SkypeAccount::getUserLabel(const QString &userId) {
 
 	if (userId.find(' ') != -1) {//there are more people than just one
 		QStringList users = QStringList::split(' ', userId);
-		for (QStringList::iterator it = users.begin(); it != users.end(); it++) {
+		for (QStringList::iterator it = users.begin(); it != users.end(); ++it) {
 			(*it) = getUserLabel((*it).stripWhiteSpace());
 		}
 		return users.join("\n");
