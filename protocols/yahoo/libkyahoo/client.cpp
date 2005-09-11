@@ -20,6 +20,7 @@
 */
 
 #include <kdebug.h>
+#include <kurl.h>
 
 #include "yahooclientstream.h"
 #include "yahooconnector.h"
@@ -34,8 +35,11 @@
 #include "logofftask.h"
 #include "changestatustask.h"
 #include "modifybuddytask.h"
+#include "picturenotifiertask.h"
+#include "requestpicturetask.h"
 #include "client.h"
 #include "yahootypes.h"
+#include "yahoobuddyiconloader.h"
 
 class Client::ClientPrivate
 {
@@ -48,7 +52,8 @@ public:
 	QString host, user, pass;
 	uint port;
 	bool active;
-
+	YahooBuddyIconLoader *iconLoader;
+	
 	// tasks
 	bool tasksInitialized;
 	LoginTask * loginTask;
@@ -56,6 +61,7 @@ public:
 	StatusNotifierTask *statusTask;
 	MailNotifierTask *mailTask;
 	MessageReceiverTask *messageReceiverTask;
+	PictureNotifierTask *pictureNotifierTask;
 
 	// Connection data
 	uint sessionID;
@@ -76,7 +82,8 @@ Client::Client(QObject *par) :QObject(par, "yahooclient" )
 	d->statusOnConnect = Yahoo::StatusAvailable;
 	d->status = Yahoo::StatusDisconnected;
 	d->tasksInitialized = false;
-	d->stream = 0;
+	d->stream = 0L;
+	d->iconLoader = 0L;
 	d->loginTask = new LoginTask( d->root );
 	d->listTask = new ListTask( d->root );
 
@@ -91,6 +98,8 @@ Client::Client(QObject *par) :QObject(par, "yahooclient" )
 Client::~Client()
 {
 	close();
+	if( d->iconLoader )
+		delete d->iconLoader;
 	delete d->root;
 	delete d;
 }
@@ -180,6 +189,11 @@ void Client::slotGotCookies()
 	d->cCookie = d->loginTask->cCookie();
 }
 
+void slotPictureFetched(const QString &who, KTempFile *file,  int checksum )
+{
+
+}
+
 // INTERNALS //
 
 void Client::sendTyping( const QString &who, int typ)
@@ -250,6 +264,25 @@ void Client::moveBuddy( const QString &userId, const QString &oldGroup, const QS
 	mbt->setOldGroup( oldGroup );
 	mbt->setGroup( newGroup );
 	mbt->go( true );
+}
+
+void Client::requestPicture( const QString &userId )
+{
+	RequestPictureTask *rpt = new RequestPictureTask( d->root );
+	rpt->setTarget( userId );
+	rpt->go( true );
+}
+
+void Client::downloadBuddyIcon(  const QString &userId, KURL url, int checksum )
+{
+	if( !d->iconLoader )
+	{
+		d->iconLoader = new YahooBuddyIconLoader();
+		QObject::connect( d->iconLoader, SIGNAL(fetchedBuddyIcon(const QString&, KTempFile*, int )),
+				SIGNAL(pictureDownloaded(const QString&, KTempFile*,  int ) ) );
+	}
+
+	d->iconLoader->fetchBuddyIcon( QString(userId), KURL(url), checksum );
 }
 
 QString Client::userId()
@@ -367,6 +400,14 @@ void Client::initTasks()
 				SIGNAL( typingNotify(const QString &, int) ) );
 	QObject::connect( d->messageReceiverTask, SIGNAL( gotBuzz( const QString &, long ) ),
 				SIGNAL( gotBuzz( const QString &, long ) ) );
+
+	d->pictureNotifierTask = new PictureNotifierTask( d->root );
+	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureStatusNotify( const QString &, int ) ),
+				SIGNAL( pictureStatusNotify( const QString &, int ) ) );
+	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureChecksumNotify( const QString &, int ) ),
+				SIGNAL( pictureChecksumNotify( const QString &, int ) ) );
+	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureInfoNotify( const QString &, KURL, int ) ),
+				SIGNAL( pictureInfoNotify( const QString &, KURL, int ) ) );
 }
 
 void Client::deleteTasks()
@@ -378,6 +419,8 @@ void Client::deleteTasks()
 	d->mailTask = 0L;
 	d->messageReceiverTask->deleteLater();
 	d->messageReceiverTask = 0L;
+	d->pictureNotifierTask->deleteLater();
+	d->pictureNotifierTask = 0L;
 }
 
 #include "client.moc"

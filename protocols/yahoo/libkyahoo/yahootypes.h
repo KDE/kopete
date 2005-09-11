@@ -87,7 +87,8 @@ namespace Yahoo
 		ServicePictureUpdate = 0xc1,
 		ServicePictureUpload = 0xc2,
 		ServiceVisibility = 0xc5,	/* YMSG13, key 13: 2 = invisible, 1 = visible */
-		ServiceStatus = 0xc6		/* YMSG13 */
+		ServiceStatus = 0xc6,		/* YMSG13 */
+		ServicePictureStatus = 0xc7	/* YMSG13, key 213: 0 = none, 1 = avatar, 2 = picture */
 	};
 	
 	enum Status 

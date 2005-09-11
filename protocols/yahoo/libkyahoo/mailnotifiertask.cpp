@@ -1,6 +1,6 @@
 /*
     Kopete Yahoo Protocol
-    Handles several lists such as buddylist, ignorelist and so on
+    Notifies about new mails
 
     Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
 

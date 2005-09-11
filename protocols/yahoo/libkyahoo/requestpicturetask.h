@@ -1,6 +1,6 @@
 /*
     Kopete Yahoo Protocol
-    Notifies about status changes of buddies
+    Request a Picture of a Buddy
 
     Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
 
@@ -14,8 +14,8 @@
     *************************************************************************
 */
 
-#ifndef STATUSNOTIFIERTASK_H
-#define STATUSNOTIFIERTASK_H
+#ifndef REQUESTPICTURETASK_H
+#define REQUESTPICTURETASK_H
 
 #include "task.h"
 
@@ -24,22 +24,18 @@ class QString;
 /**
 @author André Duffeck
 */
-class StatusNotifierTask : public Task
+class RequestPictureTask : public Task
 {
 Q_OBJECT
 public:
-	StatusNotifierTask(Task *parent);
-	~StatusNotifierTask();
+	RequestPictureTask(Task *parent);
+	~RequestPictureTask();
 	
-	bool take(Transfer *transfer);
-
-protected:
-	bool forMe( Transfer *transfer ) const;
-	void parseStatus( Transfer *transfer );
-signals:
-	void statusChanged( const QString&, int, const QString&, int );
-	void error( const QString& );
-	void loginResponse( int, const QString& );
+	virtual void onGo();
+	
+	void setTarget( const QString &target );
+private:
+	QString m_target;
 };
 
 #endif

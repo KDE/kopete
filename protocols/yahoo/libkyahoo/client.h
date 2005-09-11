@@ -33,6 +33,8 @@ class QString;
 class ClientStream;
 class KNetworkConnector;
 class Task;
+class KURL;
+class KTempFile;
 
 class Client : public QObject
 {
@@ -115,6 +117,16 @@ Q_OBJECT
 		 * Move a buddy into another group
 		 */
 		void moveBuddy( const QString &userId, const QString &oldGroup, const QString &newGroup );
+
+		/**
+		 * Request the buddy's picture
+		 */
+		void requestPicture( const QString &userId );
+
+		/**
+		 * Request the buddy's picture
+		 */
+		void downloadBuddyIcon(  const QString &userId, KURL url, int checksum );
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -222,6 +234,22 @@ Q_OBJECT
 		 * Notifies about a BUZZ notification
 		 */
 		void gotBuzz( const QString &, long );
+		/**
+		 * Notifies about a changed picture status
+		 */
+		void pictureStatusNotify( const QString &, int );
+		/**
+		 * Notifies about a picture checksum
+		 */
+		void pictureChecksumNotify( const QString &, int );
+		/**
+		 * Notifies about a picture
+		 */
+		void pictureInfoNotify( const QString &, KURL, int );
+		/**
+		 * The iconLoader has successfully downloaded a picutre
+		 */
+		void pictureDownloaded( const QString &, KTempFile *, int );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();
@@ -243,7 +271,6 @@ Q_OBJECT
 		 * The client stream has data ready to read.
 		 */
 		void streamReadyRead();
-
 	private:
 		void distribute( Transfer *transfer );
 		

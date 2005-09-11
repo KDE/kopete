@@ -80,7 +80,7 @@ void ModifyBuddyTask::moveBuddy()
 	add->setId( client()->sessionID() );
 	add->setParam( 1, client()->userId() );
 	add->setParam( 7, m_target );
-	add->setParam( 65, m_group );	
+	add->setParam( 65, m_oldGroup );	
 	add->setParam( 14, QString::fromLatin1( " " ) );	// UTF-8
 	send( add );
 
@@ -88,7 +88,7 @@ void ModifyBuddyTask::moveBuddy()
 	rem->setId( client()->sessionID() );
 	rem->setParam( 1, client()->userId() );
 	rem->setParam( 7, m_target );
-	rem->setParam( 65, m_oldGroup );	
+	rem->setParam( 65, m_group );	
 	send( rem );
 }
 

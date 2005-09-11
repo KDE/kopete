@@ -194,6 +194,7 @@ protected slots:
 	void slotGotWebcamInvite(const QString &);
 	void slotGotWebcamImage(const QString&, const QPixmap&);
 	void slotWebcamClosed(const QString&, int);
+	void slotPictureStatusNotiy( const QString&, int);
 	void slotGotBuddyIcon(const QString&, KTempFile*, int);
 	void slotGotBuddyIconInfo(const QString&, KURL, int);
 	void slotGotBuddyIconChecksum(const QString&, int);

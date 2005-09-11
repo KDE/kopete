@@ -160,6 +160,18 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceAddBuddy " << servicenum << endl;
 			service = Yahoo::ServiceAddBuddy;
 		break;
+		case (Yahoo::ServicePictureChecksum) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServicePictureChecksum " << servicenum << endl;
+			service = Yahoo::ServicePictureChecksum;
+		break;
+		case (Yahoo::ServicePictureStatus) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServicePictureStatus " << servicenum << endl;
+			service = Yahoo::ServicePictureStatus;
+		break;
+		case (Yahoo::ServicePicture) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServicePicture " << servicenum << endl;
+			service = Yahoo::ServicePicture;
+		break;
 		/*
 		ServiceIdle, // 5 (placemarker)
 		ServiceMailStat,
@@ -200,8 +212,12 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		ServiceChatExit = 0x9b,
 		ServiceChatLogout = 0xa0,
 		ServiceChatPing,
-		ServiceComment = 0xa8*/
-
+		ServiceComment = 0xa8
+		ServicePictureUpdate = 0xc1,
+		ServicePictureUpload = 0xc2,
+		ServiceVisibility = 0xc5,	// YMSG13, key 13: 2 = invisible, 1 = visible 
+		ServiceStatus = 0xc6,		// YMSG13 
+		*/
 
 		default:
 			kdDebug(14180) << k_funcinfo << "  Parsed packet service -  This means an unknown service " << servicenum << endl;

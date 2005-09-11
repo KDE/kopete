@@ -284,11 +284,13 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::connect(m_session, SIGNAL(remoteWebcamClosed(const QString&, int )), this, SLOT(slotWebcamClosed(const QString&, int )));
 
-		QObject::connect(m_session, SIGNAL(gotBuddyIcon(const QString&, KTempFile*, int)), this, SLOT(slotGotBuddyIcon(const QString&, KTempFile*, int)) );
+		QObject::connect(m_session, SIGNAL(pictureStatusNotify( const QString&, int )), SLOT(slotPictureStatusNotiy( const QString&, int)));
+		
+		QObject::connect(m_session, SIGNAL(pictureDownloaded(const QString&, KTempFile*, int)), this, SLOT(slotGotBuddyIcon(const QString&, KTempFile*, int)) );
 
-		QObject::connect(m_session, SIGNAL(gotBuddyIconInfo(const QString&, KURL, int)), this, SLOT(slotGotBuddyIconInfo(const QString&, KURL, int )));
+		QObject::connect(m_session, SIGNAL(pictureInfoNotify(const QString&, KURL, int)), this, SLOT(slotGotBuddyIconInfo(const QString&, KURL, int )));
 
-		QObject::connect(m_session, SIGNAL(gotBuddyIconChecksum(const QString&, int)), this, SLOT(slotGotBuddyIconChecksum(const QString&, int )));
+		QObject::connect(m_session, SIGNAL(pictureChecksumNotify(const QString&, int)), this, SLOT(slotGotBuddyIconChecksum(const QString&, int )));
 		QObject::connect(m_session, SIGNAL(gotBuddyIconRequest(const QString&)), this, SLOT(slotGotBuddyIconRequest(const QString&)) );
 
 		QObject::connect(m_session, SIGNAL(buddyIconUploaded( const QString &)), this, SLOT(slotBuddyIconChanged(const QString&)));
@@ -370,17 +372,17 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::disconnect(m_session, SIGNAL(remoteWebcamClosed(const QString&, int )), this, SLOT(slotWebcamClosed(const QString&, int )));
 		
-		QObject::disconnect(m_session, SIGNAL(gotBuddyIcon(const QString&, KTempFile*, int )), this, SLOT(slotGotBuddyIcon(const QString&, KTempFile*,int )));
+		QObject::disconnect(m_session, SIGNAL(pictureDownloaded(const QString&, KTempFile*, int )), this, SLOT(slotGotBuddyIcon(const QString&, KTempFile*,int )));
 
-		QObject::disconnect(m_session, SIGNAL(gotBuddyIconInfo(const QString&, KURL, int)), this, SLOT(slotGotBuddyIconInfo(const QString&, KURL, int )));
-		
-		
+		QObject::disconnect(m_session, SIGNAL(pictureInfoNotify(const QString&, KURL, int)), this, SLOT(slotGotBuddyIconInfo(const QString&, KURL, int )));
+	
 		QObject::disconnect(m_session, SIGNAL(gotBuddyIconRequest(const QString&)), this, SLOT(slotGotBuddyIconRequest(const QString&)) );
 		
 		QObject::disconnect(m_session, SIGNAL(buddyIconUploaded( const QString & )), this, SLOT(slotBuddyIconChanged(const QString&)));
-
+	
+		QObject::disconnect(m_session, SIGNAL(pictureStatusNotify( const QString&, int )), this, SLOT(slotPictureStatusNotiy( const QString&, int)));
 		
-		QObject::disconnect(m_session, SIGNAL(gotBuddyIconChecksum(const QString&, int)), this, SLOT(slotGotBuddyIconChecksum(const QString&, int )));
+		QObject::disconnect(m_session, SIGNAL(pictureChecksumNotify(const QString&, int)), this, SLOT(slotGotBuddyIconChecksum(const QString&, int )));
 	}
 }
 
@@ -930,9 +932,20 @@ void YahooAccount::slotGotWebcamImage( const QString& who, const QPixmap& image 
 	kc->receivedWebcamImage( image );
 }
 
+void YahooAccount::slotPictureStatusNotiy( const QString &who, int status)
+{
+	YahooContact *kc = contact( who );
+	if ( kc == NULL ) {
+		kdDebug(14180) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		return;
+	}
+	
+	kdDebug(14180) << k_funcinfo << "contact " << who << " changed picture status to" << status << endl;
+}
+
 void YahooAccount::slotGotBuddyIconChecksum(const QString &who, int checksum)
 {
-	/*YahooContact *kc = contact( who );
+	YahooContact *kc = contact( who );
 	if ( kc == NULL ) {
 		kdDebug(14180) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
 		return;
@@ -944,12 +957,12 @@ void YahooAccount::slotGotBuddyIconChecksum(const QString &who, int checksum)
 		kdDebug(14180) << k_funcinfo << "Icon already exists. I will not request it again." << endl;
 		return;
 	} else
-		m_session->requestBuddyIcon( who );*/
+		m_session->requestPicture( who );
 }
 
 void YahooAccount::slotGotBuddyIconInfo(const QString &who, KURL url, int checksum)
 {
-	/*kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(14180) << k_funcinfo << endl;
 	YahooContact *kc = contact( who );
 	if ( kc == NULL ) {
 		kdDebug(14180) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
@@ -962,7 +975,7 @@ void YahooAccount::slotGotBuddyIconInfo(const QString &who, KURL url, int checks
 		kdDebug(14180) << k_funcinfo << "Icon already exists. I will not download it again." << endl;
 		return;
 	} else
-		m_session->downloadBuddyIcon( who, url, checksum );*/
+		m_session->downloadBuddyIcon( who, url, checksum );
 }
 
 void YahooAccount::slotGotBuddyIcon( const QString &who, KTempFile *file, int checksum )

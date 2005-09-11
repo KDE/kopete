@@ -1,6 +1,6 @@
 /*
     Kopete Yahoo Protocol
-    Notifies about status changes of buddies
+    Request a Picture of a Buddy
 
     Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
 
@@ -14,32 +14,35 @@
     *************************************************************************
 */
 
-#ifndef STATUSNOTIFIERTASK_H
-#define STATUSNOTIFIERTASK_H
+#include "requestpicturetask.h"
+#include "transfer.h"
+#include "ymsgtransfer.h"
+#include "yahootypes.h"
+#include "client.h"
+#include <qstring.h>
 
-#include "task.h"
-
-class QString;
-
-/**
-@author André Duffeck
-*/
-class StatusNotifierTask : public Task
+RequestPictureTask::RequestPictureTask(Task* parent) : Task(parent)
 {
-Q_OBJECT
-public:
-	StatusNotifierTask(Task *parent);
-	~StatusNotifierTask();
+	kdDebug(14180) << k_funcinfo << endl;
+}
+
+RequestPictureTask::~RequestPictureTask()
+{
+}
+
+void RequestPictureTask::onGo()
+{
+	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePicture);
+	t->setId( client()->sessionID() );
+	t->setParam( 4, client()->userId());
+	t->setParam( 5, m_target );
+	t->setParam( 13, QString::fromLatin1("1") );
+	send( t );
 	
-	bool take(Transfer *transfer);
+	setSuccess( true );
+}
 
-protected:
-	bool forMe( Transfer *transfer ) const;
-	void parseStatus( Transfer *transfer );
-signals:
-	void statusChanged( const QString&, int, const QString&, int );
-	void error( const QString& );
-	void loginResponse( int, const QString& );
-};
-
-#endif
+void RequestPictureTask::setTarget( const QString &target )
+{
+	m_target = target;
+}
