@@ -119,6 +119,11 @@ Q_OBJECT
 		void moveBuddy( const QString &userId, const QString &oldGroup, const QString &newGroup );
 
 		/**
+		 * Change the stealth status of a buddy
+		 */
+		void stealthContact( const QString &userId, Yahoo::StealthStatus status );
+
+		/**
 		 * Request the buddy's picture
 		 */
 		void requestPicture( const QString &userId );
@@ -214,6 +219,10 @@ Q_OBJECT
 		 * Notifies about the status of online buddies
 		 */
 		void statusChanged( const QString&, int, const QString&, int );
+		/**
+		 * Notifies about the stealth status of buddies
+		 */
+		void stealthStatusChanged( const QString &, Yahoo::StealthStatus );
 		/**
 		 * Notifies about mails
 		 */

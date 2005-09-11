@@ -18,6 +18,7 @@
 #define STATUSNOTIFIERTASK_H
 
 #include "task.h"
+#include "yahootypes.h"
 
 class QString;
 
@@ -36,8 +37,10 @@ public:
 protected:
 	bool forMe( Transfer *transfer ) const;
 	void parseStatus( Transfer *transfer );
+	void parseStealthStatus( Transfer *transfer );
 signals:
 	void statusChanged( const QString&, int, const QString&, int );
+	void stealthStatusChanged( const QString&, Yahoo::StealthStatus );
 	void error( const QString& );
 	void loginResponse( int, const QString& );
 };

@@ -172,6 +172,10 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServicePicture " << servicenum << endl;
 			service = Yahoo::ServicePicture;
 		break;
+		case (Yahoo::ServiceStealth) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceStealth " << servicenum << endl;
+			service = Yahoo::ServiceStealth;
+		break;
 		/*
 		ServiceIdle, // 5 (placemarker)
 		ServiceMailStat,

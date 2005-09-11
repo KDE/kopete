@@ -1,6 +1,6 @@
 /*
     Kopete Yahoo Protocol
-    Handles several lists such as buddylist, ignorelist and so on
+    Stealth/Unstealth a buddy
 
     Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
 
@@ -14,8 +14,8 @@
     *************************************************************************
 */
 
-#ifndef LISTTASK_H
-#define LISTTASK_H
+#ifndef STEALTHTASK_H
+#define STEALTHTASK_H
 
 #include "task.h"
 #include "yahootypes.h"
@@ -25,22 +25,19 @@ class QString;
 /**
 @author André Duffeck
 */
-class ListTask : public Task
+class StealthTask : public Task
 {
-Q_OBJECT
 public:
-	ListTask(Task *parent);
-	~ListTask();
+	StealthTask(Task *parent);
+	~StealthTask();
 	
-	bool take(Transfer *transfer);
+	virtual void onGo();
 
-protected:
-	bool forMe( Transfer *transfer ) const;
-	void parseBuddyList( Transfer *transfer );
-	void parseStealthList( Transfer *transfer );	
-signals:
-	void gotBuddy(const QString&, const QString&, const QString&);
-	void stealthStatusChanged( const QString&, Yahoo::StealthStatus );
+	void setTarget( const QString &to );
+	void setState( Yahoo::StealthStatus state );
+private:
+	QString m_target;
+	Yahoo::StealthStatus m_state;
 };
 
 #endif

@@ -19,7 +19,6 @@
 #include "listtask.h"
 #include "transfer.h"
 #include "ymsgtransfer.h"
-#include "yahootypes.h"
 #include "client.h"
 #include <qstring.h>
 #include <qstringlist.h>
@@ -41,7 +40,8 @@ bool ListTask::take( Transfer* transfer )
 	if ( !forMe( transfer ) )
 		return false;
 	
-	parseBuddyList( transfer );	
+	parseBuddyList( transfer );
+	parseStealthList( transfer );
 
 	return true;
 }
@@ -78,16 +78,35 @@ void ListTask::parseBuddyList( Transfer *transfer )
 	QStringList groups;
 	groups = QStringList::split( "\n", raw );
 
-	for ( QStringList::Iterator groupIt = groups.begin(); groupIt != groups.end(); ++groupIt ) {
+	for ( QStringList::Iterator groupIt = groups.begin(); groupIt != groups.end(); ++groupIt ) 
+	{
 		QString group = (*groupIt).section(":", 0, 0);
 		QStringList buddies;
 		buddies = QStringList::split( ",", (*groupIt).section(":", 1,1) );
-		for ( QStringList::Iterator buddyIt = buddies.begin(); buddyIt != buddies.end(); ++buddyIt ) {
+		for ( QStringList::Iterator buddyIt = buddies.begin(); buddyIt != buddies.end(); ++buddyIt ) 
+		{
 			kdDebug(14180) << k_funcinfo << "Parsed buddy: " << *buddyIt << " in group " << group << endl;
 			emit gotBuddy( *buddyIt, QString::null, group );
 		}
 	}
 }
 
+void ListTask::parseStealthList( Transfer *transfer )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	YMSGTransfer *t = 0L;
+	t = dynamic_cast<YMSGTransfer*>(transfer);
+	if (!t)
+		return;
+
+	QString raw;
+	raw = t->firstParam( 185 );
+
+	QStringList buddies = QStringList::split( ",", raw );
+	for ( QStringList::Iterator it = buddies.begin(); it != buddies.end(); ++it ) 
+	{
+		emit stealthStatusChanged( *it, Yahoo::Stealthed );
+	}
+}
 
 #include "listtask.moc"

@@ -37,6 +37,7 @@
 #include "modifybuddytask.h"
 #include "picturenotifiertask.h"
 #include "requestpicturetask.h"
+#include "stealthtask.h"
 #include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
@@ -93,6 +94,8 @@ Client::Client(QObject *par) :QObject(par, "yahooclient" )
 	QObject::connect( d->loginTask, SIGNAL( haveCookies() ), SLOT( slotGotCookies() ) );
 	QObject::connect( d->listTask, SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ), 
 					SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ) );
+	QObject::connect( d->listTask, SIGNAL( stealthStatusChanged( const QString&, Yahoo::StealthStatus ) ), 
+					SIGNAL( stealthStatusChanged( const QString&, Yahoo::StealthStatus ) ) );
 }
 
 Client::~Client()
@@ -235,6 +238,13 @@ void Client::changeStatus( Yahoo::Status status, const QString &message, Yahoo::
 	cst->go( true );
 	
 	setStatus( status );
+}
+void Client::stealthContact(QString const &userId, Yahoo::StealthStatus state)
+{
+	StealthTask *st = new StealthTask( d->root );
+	st->setTarget( userId );
+	st->setState( state );
+	st->go( true );
 }
 
 void Client::addBuddy( const QString &userId, const QString &group, const QString &message )
@@ -384,6 +394,8 @@ void Client::initTasks()
 	d->statusTask = new StatusNotifierTask( d->root );
 	QObject::connect( d->statusTask, SIGNAL( statusChanged( const QString&, int, const QString&, int ) ), 
 				SIGNAL( statusChanged( const QString&, int, const QString&, int ) ) );
+	QObject::connect( d->statusTask, SIGNAL( stealthStatusChanged( const QString&, Yahoo::StealthStatus ) ), 
+				SIGNAL( stealthStatusChanged( const QString&, Yahoo::StealthStatus ) ) );
 	QObject::connect( d->statusTask, SIGNAL( loginResponse( int, const QString& ) ), 
 				SIGNAL( loggedIn( int, const QString& ) ) );
 

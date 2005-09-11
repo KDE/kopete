@@ -1,6 +1,6 @@
 /*
     Kopete Yahoo Protocol
-    Handles several lists such as buddylist, ignorelist and so on
+    Stealth/Unstealth a buddy
 
     Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
 
@@ -14,33 +14,41 @@
     *************************************************************************
 */
 
-#ifndef LISTTASK_H
-#define LISTTASK_H
-
-#include "task.h"
+#include "stealthtask.h"
+#include "transfer.h"
+#include "ymsgtransfer.h"
 #include "yahootypes.h"
+#include "client.h"
+#include <qstring.h>
 
-class QString;
-
-/**
-@author André Duffeck
-*/
-class ListTask : public Task
+StealthTask::StealthTask(Task* parent) : Task(parent)
 {
-Q_OBJECT
-public:
-	ListTask(Task *parent);
-	~ListTask();
+	kdDebug(14180) << k_funcinfo << endl;
+}
+
+StealthTask::~StealthTask()
+{
+}
+
+void StealthTask::onGo()
+{
+	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceStealth);
+	t->setId( client()->sessionID() );
+	t->setParam( 1, client()->userId());
+	t->setParam( 7, m_target );
+	t->setParam( 13, QString::fromLatin1("2") );
+	t->setParam( 31, m_state );	
+	send( t );
 	
-	bool take(Transfer *transfer);
+	setSuccess( true );
+}
 
-protected:
-	bool forMe( Transfer *transfer ) const;
-	void parseBuddyList( Transfer *transfer );
-	void parseStealthList( Transfer *transfer );	
-signals:
-	void gotBuddy(const QString&, const QString&, const QString&);
-	void stealthStatusChanged( const QString&, Yahoo::StealthStatus );
-};
+void StealthTask::setTarget( const QString &to )
+{
+	m_target = to;
+}
 
-#endif
+void StealthTask::setState( Yahoo::StealthStatus state)
+{
+	m_state = state;
+}

@@ -31,7 +31,7 @@
 #include "yahooaccount.h"
 #include "client.h"
 //#include "yahoowebcamdialog.h"
-//#include "yahoostealthsetting.h"
+#include "yahoostealthsetting.h"
 #include "yahoochatsession.h"
 
 // QT Includes
@@ -378,7 +378,7 @@ void YahooContact::slotSendFile()
 
 void YahooContact::stealthContact()
 {
-	/*kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(14180) << k_funcinfo << endl;
 
 	KDialogBase *stealthSettingDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "stealthSettingDialog", "true",
 				i18n("Stealth Setting"), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
@@ -389,11 +389,11 @@ void YahooContact::stealthContact()
 		return;
 	
 	if ( stealthWidget->radioOnline->isChecked() )
-		m_account->yahooSession()->stealthContact( m_userId, 1 );
+		m_account->yahooSession()->stealthContact( m_userId, Yahoo::NotStealthed );
 	else
-		m_account->yahooSession()->stealthContact( m_userId, 0 );
+		m_account->yahooSession()->stealthContact( m_userId, Yahoo::Stealthed );
 
-	stealthSettingDialog->delayedDestruct();*/
+	stealthSettingDialog->delayedDestruct();
 }
 
 void YahooContact::buzzContact()

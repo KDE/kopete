@@ -712,6 +712,11 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 	}
 }
 
+void YahooAccount::slotStealthStatusChanged( const QString &who, Yahoo::StealthStatus state )
+{
+kdDebug(14180) << k_funcinfo << "Stealth Status of " << who << "changed to " << state << endl;
+}
+
 void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, int /*stat*/)
 {
 	QFont msgFont;
