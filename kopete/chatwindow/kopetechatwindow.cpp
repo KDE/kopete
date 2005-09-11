@@ -1227,7 +1227,7 @@ void KopeteChatWindow::updateChatLabel()
 	if ( m_tabBar )
 	{
 		m_tabBar->setTabLabel( chat, chat->caption() );
-		if ( m_tabBar->count() < 2 || m_tabBar->currentPage() == cv )
+		if ( m_tabBar->count() < 2 || m_tabBar->currentPage() == static_cast<const QWidget *>(cv) )
 			setCaption( chat->caption() );
 	}
 }
