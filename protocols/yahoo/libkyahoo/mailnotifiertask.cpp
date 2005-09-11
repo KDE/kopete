@@ -67,10 +67,10 @@ void MailNotifierTask::parseMail( Transfer *transfer )
 	if (!t)
 		return;
 
-	QString count = t->firstParam( "9" );
-	QString mail = t->firstParam( "42" );
-	QString from = t->firstParam( "43" );
-	QString subject = t->firstParam( "18" );
+	QString count = t->firstParam( 9 );
+	QString mail = t->firstParam( 42 );
+	QString from = t->firstParam( 43 );
+	QString subject = t->firstParam( 18 );
 
 	if( !mail.isEmpty() && !from.isEmpty() && !subject.isEmpty() )
 		emit mailNotify( QString::fromLatin1( "%1 <%2>").arg( from, mail ), subject, count.toInt() );

@@ -70,7 +70,7 @@ void ListTask::parseBuddyList( Transfer *transfer )
 		return;
 
 	QString raw;
-	raw = t->firstParam( "87" );
+	raw = t->firstParam( 87 );
 	
 	if( raw.isEmpty() )
 		return;

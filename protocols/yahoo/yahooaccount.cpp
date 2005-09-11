@@ -76,7 +76,6 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 {
 
 	// first things first - initialise internals
-	theHaveContactList = false;
 	stateOnConnection = 0;
 	theAwayDialog = new YahooAwayDialog( this );
 	m_protocol = parent;
@@ -222,9 +221,6 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
 		                 this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
 		
-		QObject::connect(m_session, SIGNAL( buddyListFetched( int ) ),
-		                 this, SLOT(slotBuddyListFetched( int ) ) );
-		
 		QObject::connect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int)),
 		                 this, SLOT(slotStatusChanged(const QString&, int, const QString&, int)));
 		
@@ -306,9 +302,6 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::disconnect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
 		                    this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
-		
-		QObject::disconnect(m_session, SIGNAL( buddyListFetched( int ) ),
-		                    this, SLOT(slotBuddyListFetched( int ) ) );
 		
 		QObject::disconnect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int)),
 		                    this, SLOT(slotStatusChanged(const QString&, int, const QString&, int)));
@@ -510,12 +503,6 @@ void YahooAccount::slotGoOffline()
 		disconnect();
 	else
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
-}
-
-void YahooAccount::slotBuddyListFetched( int numBuddies )
-{
-	kdDebug(14180) << "Number of buddies: " << numBuddies << endl;
-	theHaveContactList = true;
 }
 
 KActionMenu *YahooAccount::actionMenu()

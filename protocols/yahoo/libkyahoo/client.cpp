@@ -33,6 +33,7 @@
 #include "sendmessagetask.h"
 #include "logofftask.h"
 #include "changestatustask.h"
+#include "modifybuddytask.h"
 #include "client.h"
 #include "yahootypes.h"
 
@@ -220,6 +221,35 @@ void Client::changeStatus( Yahoo::Status status, const QString &message, Yahoo::
 	cst->go( true );
 	
 	setStatus( status );
+}
+
+void Client::addBuddy( const QString &userId, const QString &group, const QString &message )
+{
+	ModifyBuddyTask *mbt = new ModifyBuddyTask( d->root );
+	mbt->setType( ModifyBuddyTask::AddBuddy );
+	mbt->setTarget( userId );
+	mbt->setGroup( group );
+	mbt->setMessage( message );
+	mbt->go( true );
+}
+
+void Client::removeBuddy( const QString &userId, const QString &group )
+{
+	ModifyBuddyTask *mbt = new ModifyBuddyTask( d->root );
+	mbt->setType( ModifyBuddyTask::RemoveBuddy );
+	mbt->setTarget( userId );
+	mbt->setGroup( group );
+	mbt->go( true );
+}
+
+void Client::moveBuddy( const QString &userId, const QString &oldGroup, const QString &newGroup )
+{
+	ModifyBuddyTask *mbt = new ModifyBuddyTask( d->root );
+	mbt->setType( ModifyBuddyTask::MoveBuddy );
+	mbt->setTarget( userId );
+	mbt->setOldGroup( oldGroup );
+	mbt->setGroup( newGroup );
+	mbt->go( true );
 }
 
 QString Client::userId()

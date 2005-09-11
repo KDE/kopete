@@ -36,6 +36,8 @@ public:
 protected:
 	bool forMe( Transfer *transfer ) const;
 	void parseBuddyList( Transfer *transfer );
+	void parseBuddyAddResponse( Transfer *transfer );
+	void parseBuddyRemoveResponse( Transfer *transfer );
 
 signals:
 	void gotBuddy(const QString&, const QString&, const QString&);

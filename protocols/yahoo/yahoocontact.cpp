@@ -114,13 +114,14 @@ void YahooContact::syncToServer()
 	{	kdDebug(14180) << "Contact " << m_userId << " doesn't exist on server-side. Adding..." << endl;
 
 		Kopete::GroupList groupList = metaContact()->groups();
-		//for( Kopete::Group *g = groupList.first(); g; g = groupList.next() )
-		//	m_account->yahooSession()->addBuddy(m_userId, g->displayName() );
+		for( Kopete::Group *g = groupList.first(); g; g = groupList.next() )
+			m_account->yahooSession()->addBuddy(m_userId, g->displayName() );
 	}
 }
 
 void YahooContact::sync(unsigned int flags)
 {
+	kdDebug(14180) << k_funcinfo  << endl;
 	if ( !m_account->isConnected() )
 		return;
 
@@ -129,8 +130,8 @@ void YahooContact::sync(unsigned int flags)
 		//TODO: Share this code with the above function
 		kdDebug(14180) << k_funcinfo << "Contact isn't on the server. Adding..." << endl;
 		Kopete::GroupList groupList = metaContact()->groups();
-		//for ( Kopete::Group *g = groupList.first(); g; g = groupList.next() )
-		//	m_account->yahooSession()->addBuddy(m_userId, g->displayName() );
+		for ( Kopete::Group *g = groupList.first(); g; g = groupList.next() )
+			m_account->yahooSession()->addBuddy(m_userId, g->displayName() );
 	}
 	else
 	{
@@ -138,7 +139,7 @@ void YahooContact::sync(unsigned int flags)
 		if ( flags & Kopete::Contact::MovedBetweenGroup )
 		{
 			kdDebug(14180) << k_funcinfo << "contact changed groups. moving on server" << endl;
-			//m_account->yahooSession()->changeBuddyGroup( contactId(), m_groupName, newGroup );
+			m_account->yahooSession()->moveBuddy( contactId(), m_groupName, newGroup );
 			m_groupName = newGroup;
 		}
 	}
@@ -535,10 +536,16 @@ void YahooContact::closeWebcamDialog()
 void YahooContact::deleteContact()
 {
 	kdDebug(14180) << k_funcinfo << endl;
-	//my ugliest hack yet. how many levels of indirection do I want? ;)
-	//if ( m_account->isConnected() )
-	//	m_account->yahooSession()->removeBuddy(m_userId, m_groupName);
-
+	
+	if( !m_account->isOnServer( contactId() ) )
+	{
+		kdDebug(14180) << k_funcinfo << "Contact does not exist on server-side. Not removing..." << endl;		
+	}
+	else
+	{
+		kdDebug(14180) << k_funcinfo << "Contact is getting remove from server side contactlist...." << endl;
+		m_account->yahooSession()->removeBuddy( contactId(), m_groupName );
+	}
 	Kopete::Contact::deleteContact();
 }
 #include "yahoocontact.moc"

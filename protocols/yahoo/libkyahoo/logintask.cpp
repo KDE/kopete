@@ -154,7 +154,7 @@ void LoginTask::sendAuth(Transfer* transfer)
 	/* got ServiceVerify ACK, send a ServiceAuth with username */
 	kdDebug(14180) << k_funcinfo << endl;
 	YMSGTransfer *t = new YMSGTransfer( Yahoo::ServiceAuth );
-	t->setParam("1", client()->userId());
+	t->setParam( 1 , client()->userId());
 	send(t);
 	mState = SentAuth;
 }
@@ -170,9 +170,9 @@ void LoginTask::sendAuthResp(Transfer* transfer)
 		return;
 	}
 	
-	QString sn = t->firstParam("1");
-	QString seed = t->firstParam("94");
-	QString version_s = t->firstParam("13");
+	QString sn = t->firstParam( 1 );
+	QString seed = t->firstParam( 94 );
+	QString version_s = t->firstParam( 13 );
 	uint sessionID = t->id();
 	int version = version_s.toInt();
 	
@@ -202,14 +202,15 @@ void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint s
 	kdDebug(14180) << k_funcinfo << "resp_6: " << resp_6 << " resp_69: " << resp_96 << endl;
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceAuthResp, m_stateOnConnect);
 	t->setId( sessionID );
-	t->setParam("0", sn);
-	t->setParam("6", QString(resp_6));
-	t->setParam("96", QString(resp_96));
-	t->setParam("1", sn);
+	t->setParam( 0 , sn);
+	t->setParam( 6 , QString(resp_6));
+	t->setParam( 96 , QString(resp_96));
+	t->setParam( 135 , QString::fromLatin1( "7,0,0,437" ) );	// Client version
+	t->setParam( 1 , sn);
 
 	if( !m_verificationWord.isEmpty() )
 	{
-		t->setParam("227", m_verificationWord );
+		t->setParam( 227 , m_verificationWord );
 		m_verificationWord = QString::null;
 	}
 
@@ -244,10 +245,10 @@ void LoginTask::handleAuthResp(Transfer *transfer)
 		break;
 		case( Yahoo::ServiceAuthResp ):
 			kdDebug(14180) << k_funcinfo << "Emitting Signal" << endl;
-			emit loginResponse( t->firstParam( "66" ).toInt(), t->firstParam( "20" ) );
-			mState = InitialState;
+			emit loginResponse( t->firstParam( 66 ).toInt(), t->firstParam( 20 ) );
 		break;
 	}
+	mState = InitialState;
 }
 
 void LoginTask::setStateOnConnect( Yahoo::Status status )
@@ -263,21 +264,22 @@ void LoginTask::parseCookies( Transfer *transfer )
 	if (!t)
 		return;
 
-	QStringList params;
-	params = t->paramList( "59" );
-	for ( QStringList::Iterator it = params.begin(); it != params.end(); ++it ) {
-        	if( (*it).startsWith( "Y" ) )
+	for( int i = 0; i < t->paramCount( 59 ); ++i)
+	{	
+		QString cookie;
+		cookie = t->nthParam( 59, i );
+        	if( cookie.startsWith( "Y" ) )
 		{
-			m_yCookie = getcookie( (*it).latin1() );
-			m_loginCookie = getlcookie( (*it).latin1() );
+			m_yCookie = getcookie( cookie.latin1() );
+			m_loginCookie = getlcookie( cookie.latin1() );
 		}
-		else if( (*it).startsWith( "T" ) )
+		else if( cookie.startsWith( "T" ) )
 		{
-			m_tCookie = getcookie( (*it).latin1() );
+			m_tCookie = getcookie( cookie.latin1() );
 		}
-		else if( (*it).startsWith( "C" ) )
+		else if( cookie.startsWith( "C" ) )
 		{
-			m_cCookie = getcookie( (*it).latin1() );
+			m_cCookie = getcookie( cookie.latin1() );
 		}
     	}
 	if( !m_yCookie.isEmpty() && !m_tCookie.isEmpty() &&

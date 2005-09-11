@@ -82,39 +82,33 @@ void StatusNotifierTask::parseStatus( Transfer* transfer )
 	}
 
 	QString	myNick;		/* key = 1 */
-	QStringList nicks;	/* key = 7  */
-	QStringList states;	/* key = 10  */
-	QStringList session;	/* key = 11  */
-	QStringList flags;	/* key = 13  */
-	QStringList msgs;	/* key = 19  */
-	QStringList aways;	/* key = 47  */
-	QStringList mobile;	/* key = 60  */
-	QStringList idles;	/* key = 137  */
 	QString customError;	/* key = 16  */
+	QString nick;		/* key = 7  */
+	int state;		/* key = 10  */
+	QString message;	/* key = 19  */
+	int flags;		/* key = 13  */
+	int away;		/* key = 47  */
 
-	customError = t->firstParam( "16" );
+	customError = t->firstParam( 16 );
 	if( !customError.isEmpty() )
 		emit error( customError );
 
-	myNick = t->firstParam( "1" );
+	myNick = t->firstParam( 1 );
 	if( myNick.startsWith( client()->userId() ) )
 		emit loginResponse( Yahoo::LoginOk, QString::null );
 	
-	nicks = t->paramList( "7" );
-	states = t->paramList( "10" );
-	flags = t->paramList( "13" );
-	msgs = t->paramList( "19" );
-	aways = t->paramList( "47" );
-	idles = t->paramList( "137" );
-
-	for( uint i = 0; i < nicks.size(); ++i )
+	for( int i = 0; i < t->paramCount( 7 ); ++i)
 	{
-		kdDebug(14180) << k_funcinfo << QString("Setting status of %1 to %2 away: %3 msg: %4").arg(nicks[i]).arg(states[i].toInt())
-			.arg(aways[i].toInt()).arg( msgs[i] ) << endl; 
-		if( t->service() == Yahoo::ServiceLogoff || flags[i] == 0 )
-			emit statusChanged( nicks[i], Yahoo::StatusOffline, QString::null, 0 );
+		nick = t->nthParam( 7, i );
+		state = t->nthParamSeparated( 10, i, 7 ).toInt();
+		flags = t->nthParamSeparated( 13, i, 7 ).toInt();
+		message = t->nthParamSeparated( 19, i, 7 );
+		away = t->nthParamSeparated( 47, i, 7 ).toInt();
+
+		if( t->service() == Yahoo::ServiceLogoff || flags == 0 )
+			emit statusChanged( nick, Yahoo::StatusOffline, QString::null, 0 );
 		else
-			emit statusChanged( nicks[i], states[i].toInt(), msgs[i], aways[i].toInt() );
+			emit statusChanged( nick, state, message, away );
 	}
 }
 

@@ -101,6 +101,20 @@ Q_OBJECT
 		 */
 		void setVerificationWord( const QString &word );
 
+		/**
+		 * Add a buddy to the contact list
+		 */
+		void addBuddy( const QString &userId, const QString &group, const QString &message = QString::fromLatin1("Please add me")  );
+
+		/**
+		 * Remove a buddy from the contact list
+		 */
+		void removeBuddy( const QString &userId, const QString &group );
+
+		/**
+		 * Move a buddy into another group
+		 */
+		void moveBuddy( const QString &userId, const QString &oldGroup, const QString &newGroup );
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/

@@ -25,10 +25,14 @@
 
 #include "yahootypes.h"
 #include <qcstring.h>
+#include <qpair.h>
+#include <qvaluelist.h>
 
 class YMSGTransferPrivate;
 class QString;
-class QStringList;
+
+typedef QPair< int, QString > Param;
+typedef QValueList< Param > ParamList;
 
 /**
 @author Duncan Mac-Vicar Prett
@@ -52,10 +56,16 @@ public:
 	void setStatus(Yahoo::Status status);
 	unsigned int id();
 	void setId(unsigned int id);
-	QString firstParam(const QString &index);
-	QStringList paramList(const QString &index);
-	void setParam(const QString &index, const QString &data);
-	void setParam(const QString &index, int data);
+
+	ParamList paramList();
+	const QString &firstParam( int index );
+	const QString &nthParam( int index, int occurence );
+	const QString &nthParamSeparated( int index, int occurence, int separator );
+	int paramCount( int index );
+	
+
+	void setParam(int index, const QString &data);
+	void setParam(int index, int data);
 	QByteArray serialize();
 	
 	int length();

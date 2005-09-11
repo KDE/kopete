@@ -156,6 +156,10 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceNotify " << servicenum << endl;
 			service = Yahoo::ServiceNotify;
 		break;
+		case (Yahoo::ServiceAddBuddy) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceAddBuddy " << servicenum << endl;
+			service = Yahoo::ServiceAddBuddy;
+		break;
 		/*
 		ServiceIdle, // 5 (placemarker)
 		ServiceMailStat,
@@ -184,8 +188,7 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		ServiceVerify = 76,
 		ServiceP2PFileXfer,
 		ServicePeerToPeer = 0x4F,	// Checks if P2P possible 
-		ServiceWebcam,
-		ServiceAddBuddy = 0x83,
+		ServiceWebcam,x
 		ServiceRemBuddy,
 		ServiceIgnoreContact,	// > 1, 7, 13 < 1, 66, 13, 0
 		ServiceRejectContact,
@@ -253,13 +256,16 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 	char *data = packet.data();
 	while (pos + 1 < len + 20 /*header*/)
 	{
+		if( (BYTE) data[pos] == (BYTE)0x00  )
+			break;
+	
 		char *key = 0L, *value = 0L;
 		int accept;
 		int x;
 		key = (char *) malloc(len + 1);
 		x = 0;
 		while (pos + 1 < len +20) {
-			if ((BYTE) data[pos] == (BYTE)0xc0 && (BYTE) data[pos + 1] == (BYTE)0x80)
+			if ( ((BYTE) data[pos] == (BYTE)0xc0 && (BYTE) data[pos + 1] == (BYTE)0x80) )
 				break;
 			key[x++] = data[pos++];
 		}
@@ -267,6 +273,7 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		pos += 2;
 
 		accept = x;
+		
 		/* if x is 0 there was no key, so don't accept it */
 		if (accept)
 			value = (char *) malloc(len - pos + 20 + 1);
@@ -282,10 +289,11 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		if (accept)
 			value[x] = 0;
 		pos += 2;
+
 		if (accept) 
 		{
 			kdDebug(14180) << k_funcinfo << " setting packet key [" << QString(key) << "] to " << QString(value) << endl;
-			t->setParam(QString(key), QString(value));
+			t->setParam(QString(key).toInt(), QString(value));
 			free(value);
 			free(key);
 		}
@@ -296,8 +304,8 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 	}
 
 	// Packets consisting of several YMSG-packets sometimes contain padding chars (0x00) -> filter out
-	while( (BYTE)data[pos] == (BYTE) 0x00 )
-		pos++;
+ 	while( (BYTE)data[pos] == (BYTE) 0x00 && pos <= len + 20)
+ 		pos++;
 
 	kdDebug(14180) << k_funcinfo << " Returning transfer" << endl;
 	// tell them we have parsed offset bytes

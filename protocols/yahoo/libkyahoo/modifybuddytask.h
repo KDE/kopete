@@ -1,6 +1,6 @@
 /*
     Kopete Yahoo Protocol
-    Notifies about status changes of buddies
+    Add, remove or move a buddy to the Contactlist
 
     Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
 
@@ -14,41 +14,40 @@
     *************************************************************************
 */
 
-#ifndef STATUSNOTIFIERTASK_H
-#define STATUSNOTIFIERTASK_H
+#ifndef MODIFYBUDDYTASK_H
+#define MODIFYBUDDYTASK_H
 
 #include "task.h"
 
 class QString;
 
-struct StatusChangeInfo
-{
-	QString buddy;
-	int flags;
-	int status;
-	QString message;
-	int away; 
-};
-
 /**
 @author André Duffeck
 */
-class StatusNotifierTask : public Task
+class ModifyBuddyTask : public Task
 {
-Q_OBJECT
 public:
-	StatusNotifierTask(Task *parent);
-	~StatusNotifierTask();
+	enum Type { AddBuddy, RemoveBuddy, MoveBuddy };
+	ModifyBuddyTask(Task *parent);
+	~ModifyBuddyTask();
 	
-	bool take(Transfer *transfer);
+	virtual void onGo();
+	
+	void setType( Type type );
+	void setMessage( const QString &text );
+	void setTarget( const QString &target );
+	void setGroup( const QString &group );
+	void setOldGroup( const QString &group );
+private:
+	void addBuddy();
+	void removeBuddy();
+	void moveBuddy();
 
-protected:
-	bool forMe( Transfer *transfer ) const;
-	void parseStatus( Transfer *transfer );
-signals:
-	void statusChanged( const QString&, int, const QString&, int );
-	void error( const QString& );
-	void loginResponse( int, const QString& );
+	QString m_message;
+	QString m_target;
+	QString m_group;
+	QString m_oldGroup;
+	Type m_type;
 };
 
 #endif

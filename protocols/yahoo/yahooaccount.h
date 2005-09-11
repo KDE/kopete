@@ -200,8 +200,6 @@ protected slots:
 	void slotGotBuddyIconRequest(const QString &);
 	void slotBuddyIconChanged(const QString&);
 
-	void slotBuddyListFetched( int numBuddies );
-
 	void slotReceiveFileAccepted( Kopete::Transfer *trans, const QString& fileName );
 
 private slots:

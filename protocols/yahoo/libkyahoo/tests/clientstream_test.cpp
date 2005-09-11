@@ -41,7 +41,7 @@ void ClientStreamTest::slotConnected()
 	kdDebug(14180) << k_funcinfo << " connection is up" << endl;
 	connected = true;
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceLogon);
-	t->setParam("1", "kopetetest");
+	t->setParam( 1, "kopetetest");
 	
 	myTestObject->write(t);
 	while(1);

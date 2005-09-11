@@ -35,14 +35,14 @@ void SendNotifyTask::onGo()
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceNotify);
 	t->setId( client()->sessionID() );
 	t->setStatus( Yahoo::StatusNotify );
-	t->setParam("4", client()->userId());
-	t->setParam("5", m_target );
-	t->setParam("13", m_state );
-	t->setParam("14", QString::fromLatin1(" ") );	
+	t->setParam( 4, client()->userId());
+	t->setParam( 5, m_target );
+	t->setParam( 13, m_state );
+	t->setParam( 14, QString::fromLatin1(" ") );	
 	switch( m_type )
 	{
 	case NotifyTyping:
-		t->setParam( "49", QString::fromLatin1("TYPING") );
+		t->setParam( 49, QString::fromLatin1("TYPING") );
 	break;
 	case NotifyWebcamInvite:
 	case NotifyGame:

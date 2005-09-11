@@ -78,12 +78,12 @@ void MessageReceiverTask::parseMessage( Transfer *transfer )
 	if (!t)
 		return;
 
-	QString to = t->firstParam( "5" );
-	QString timestamp = t->firstParam( "15" );
-	QString utf8 = t->firstParam( "97" );
-	QString from = t->firstParam( "1" ).isEmpty() ? t->firstParam( "4" ) : t->firstParam( "1" );
-	QString msg = t->firstParam( "14" );
-	QString sysmsg = t->firstParam( "16" );
+	QString to = t->firstParam( 5 );
+	QString timestamp = t->firstParam( 15 );
+	QString utf8 = t->firstParam( 97 );
+	QString from = t->firstParam( 1 ).isEmpty() ? t->firstParam( 4 ) : t->firstParam( 1 );
+	QString msg = t->firstParam( 14 );
+	QString sysmsg = t->firstParam( 16 );
 
 	if( msg.isEmpty() )
 	{
@@ -112,11 +112,11 @@ void MessageReceiverTask::parseIsTyping( Transfer *transfer )
 	if (!t)
 		return;
 
-	QString from = t->firstParam( "4" );
-	//QString to = t->firstParam( "5" );
-	QString type = t->firstParam( "49" );
-	QString stat = t->firstParam( "13" );
-	QString ind = t->firstParam( "14" );
+	QString from = t->firstParam( 4 );
+	//QString to = t->firstParam( 5 );
+	QString type = t->firstParam( 49 );
+	QString stat = t->firstParam( 13 );
+	QString ind = t->firstParam( 14 );
 
 	if( type.startsWith( "TYPING" ) )
 		emit typingNotify( from, stat.toInt() );
