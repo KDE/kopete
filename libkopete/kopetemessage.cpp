@@ -68,7 +68,14 @@ public:
 	QColor bgColor;
 	QString body;
 	QString subject;
+	
+	//the cache is used to keep the base64 if images
+	//Note: in QT4 this should be probably a QHash
+	static QMap <QString , QString> imageCache;
+
 };
+
+QMap <QString , QString> Message::Private::imageCache;
 
 Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
              const ContactPtrList &to, const QString &body, const QString &subject,
@@ -477,7 +484,7 @@ QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
 	};
 
 	static const int nameColorsLen = sizeof(nameColors) / sizeof(nameColors[0]) - 1;
-
+	
 	QString contactName = contact->property(Global::Properties::self()->nickName()).value().toString();
 	if( p->truncateContactNames() )
 	{
@@ -503,16 +510,32 @@ QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
 	                                  QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
 	metacontactNameNode.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( metacontactName ) );
 
-	if( contact->metaContact() )
+	
+	if( contact->metaContact() && !contact->metaContact()->metaContactId().isEmpty())
 	{
-		QImage photo = contact->metaContact()->photo();
-		if( !photo.isNull() )
+		if(d->imageCache.contains(contact->metaContact()->metaContactId()))
 		{
-			QByteArray ba;
-			QBuffer buffer( ba );
-			buffer.open( IO_WriteOnly );
-			photo.save ( &buffer, "PNG" );
-			contactNode.setAttribute( QString::fromLatin1("userPhoto"), KCodecs::base64Encode(ba) );
+			contactNode.setAttribute( QString::fromLatin1("userPhoto"), d->imageCache[contact->metaContact()->metaContactId()]);
+		}
+		else
+		{
+			QImage photo = contact->metaContact()->photo();
+			if( !photo.isNull() )
+			{
+				QByteArray ba;
+				QBuffer buffer( ba );
+				buffer.open( IO_WriteOnly );
+				photo.save ( &buffer, "PNG" );
+				QString photo64=KCodecs::base64Encode(ba);
+			
+				if(d->imageCache.count() > 14)
+				{
+					d->imageCache.clear();
+				}
+				d->imageCache.insert(contact->metaContact()->metaContactId(), photo64);
+				
+				contactNode.setAttribute( QString::fromLatin1("userPhoto"), photo64 );
+			}
 		}
 	}
 
@@ -751,5 +774,10 @@ QString Message::decodeString( const QCString &message, const QTextCodec *provid
 	}
 
 	return result;
+}
+
+void Kopete::Message::clearImageCache()  //[static]
+{
+	Private::imageCache.clear();
 }
 

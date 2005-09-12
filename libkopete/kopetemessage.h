@@ -387,6 +387,13 @@ public:  /* static helpers */
 	static QString decodeString( const QCString &message,
  		const QTextCodec *providedCodec = 0L, bool *success = 0L );
 
+	
+	/**
+	 * @internal
+	 * this function will clear the cache of metacontact photo.
+	 * it is called when the photo of a contact change.
+	 */
+	static void clearImageCache();
 
 private:
 	/**

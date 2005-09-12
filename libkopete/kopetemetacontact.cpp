@@ -317,7 +317,10 @@ void MetaContact::setPhotoSource(PropertySource source)
 	PropertySource oldSource = photoSource();
 	d->photoSource = source;	
 	if ( source != oldSource )
+	{
+		Message::clearImageCache();
 		emit photoChanged();
+	}
 }
 
 MetaContact::PropertySource MetaContact::photoSource() const
@@ -660,7 +663,10 @@ void MetaContact::setPhoto( const KURL &url )
 	d->customPhotoCache = photoFromCustom();
 
 	if ( photoSource() == SourceCustom )
+	{
+		Message::clearImageCache();
 		emit photoChanged();
+	}
 }
 
 QImage MetaContact::photo() const
@@ -769,6 +775,7 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 
 	if ( photoSource() == SourceContact )
 	{
+		Message::clearImageCache();
 		emit photoChanged();
 	}
 }
@@ -814,6 +821,7 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 				// Update the contact photo cache.
 				d->contactPhotoCache = photoFromContact(subcontact);
 
+				Message::clearImageCache();
 				emit photoChanged();
 			}
 		}
