@@ -277,6 +277,8 @@ void JabberGroupContact::slotChatSessionDeleted ()
 	{
 		account()->client()->leaveGroupChat ( mRosterItem.jid().host (), mRosterItem.jid().user () );
 	}
+	
+	deleteLater();
 
 }
 
