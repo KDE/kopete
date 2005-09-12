@@ -36,7 +36,7 @@
  * JabberBaseContact constructor
  */
 JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, Kopete::MetaContact * mc)
-				: Kopete::Contact (account, rosterItem.jid().full().lower (), mc)
+				: Kopete::Contact (account, rosterItem.jid().full(), mc)
 {
 
 	setDontSync ( false );
@@ -83,7 +83,7 @@ bool JabberBaseContact::isReachable ()
 
 void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 {
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Synchronizing local copy of " << contactId() << " with information received from server." << endl;
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Synchronizing local copy of " << contactId() << " with information received from server.  (name='" << item.name() << "' groups='" << item.groups() << "')"<< endl;
 
 	mRosterItem = item;
 
@@ -103,14 +103,10 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 	if( metaContact() != Kopete::ContactList::self()->myself() )
 	{
 		// only update the alias if its not empty
-		if ( !item.name().isEmpty () )
+		if ( !item.name().isEmpty () && item.name() != item.jid().bare() )
 		{
+			kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "setting display name of " << contactId () << " to " << item.name() << endl;
 			metaContact()->setDisplayName ( item.name () );
-		}
-		else
-		{
-			// no alias has been set, set it to the contact id
-			metaContact()->setDisplayName ( item.jid().bare () );
 		}
 	}
 
