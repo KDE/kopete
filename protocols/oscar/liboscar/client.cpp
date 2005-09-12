@@ -781,7 +781,8 @@ void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE
 	bit->go( true );
 }
 
-void Client::requestServerRedirect( WORD family )
+void Client::requestServerRedirect( WORD family, WORD exchange,
+                                    const QByteArray& cookie, WORD instance )
 {
 	//making the assumption that family 2 will always be the BOS connection
 	//use it instead since we can't query for family 1
@@ -801,7 +802,14 @@ void Client::requestServerRedirect( WORD family )
 
 	d->currentRedirect = family;
 
+    //FIXME. this won't work if we have to defer the connection because we're
+    //already connecting to something
+
+
 	ServerRedirectTask* srt = new ServerRedirectTask( c->rootTask() );
+    if ( family == 0x0013 )
+        srt->setChatParams( exchange, cookie, instance );
+
 	connect( srt, SIGNAL( haveServer( const QString&, const QByteArray&, WORD ) ),
 	         this, SLOT( haveServerForRedirect( const QString&, const QByteArray&, WORD ) ) );
 	srt->setService( family );
@@ -940,7 +948,7 @@ void Client::joinChatRoom( const QString& roomName, int exchange )
 void Client::setupChatConnection( WORD exchange, QByteArray cookie, WORD instance )
 {
     kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "connection to chat room" << endl;
-
+    requestServerRedirect( 0x000E, exchange, cookie, instance );
 }
 
 

@@ -36,10 +36,10 @@ void ServerRedirectTask::setService( WORD family )
 	m_service = family;
 }
 
-void ServerRedirectTask::setChatParams( WORD exchange, const QString& room, WORD instance )
+void ServerRedirectTask::setChatParams( WORD exchange, const QByteArray& cookie, WORD instance )
 {
     m_chatExchange = exchange;
-    m_chatRoom = room;
+    m_chatCookie = cookie;
     m_chatInstance = instance;
 }
 
@@ -88,8 +88,8 @@ void ServerRedirectTask::requestNewService()
         chatRedirectTLV.type = 0x0001;
         Buffer chatBuf;
         chatBuf.addWord( m_chatExchange );
-        chatBuf.addByte( m_chatRoom.length() );
-        chatBuf.addString( m_chatRoom.latin1(), m_chatRoom.length() );
+        chatBuf.addByte( m_chatCookie.size() );
+        chatBuf.addString( m_chatCookie );
         chatBuf.addWord( m_chatInstance );
         chatRedirectTLV.length = chatBuf.length();
         chatRedirectTLV.data.duplicate( chatBuf );

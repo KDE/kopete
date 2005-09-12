@@ -36,7 +36,7 @@ public:
 	ServerRedirectTask( Task* parent );
 
 	void setService( WORD family );
-    void setChatParams( WORD exchange, const QString& chatRoom, WORD instance );
+    void setChatParams( WORD exchange, const QByteArray& cookie, WORD instance );
 
 	//Task implementation
 	void onGo();
@@ -59,7 +59,7 @@ private:
 	QByteArray m_cookie;
 
     WORD m_chatExchange;
-    QString m_chatRoom;
+    QByteArray m_chatCookie;
     WORD m_chatInstance;
 };
 

@@ -146,6 +146,7 @@ void ChatNavServiceTask::createRoom( WORD exchange, const QString& name )
 	b->addWord( lang.length() );
 	b->addString( lang.latin1(), lang.length() );
 
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending join room packet" << endl;
 	Transfer* t = createTransfer( f, s, b );
 	send( t );
 }
@@ -228,11 +229,16 @@ void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
     WORD exchange = b.getWord();
     QByteArray cookie( b.getBlock( b.getByte() ) );
     WORD instance = b.getWord();
-    b.getWord(); //detail level, which i'm not sure we need
+    b.getByte(); //detail level, which i'm not sure we need
     WORD tlvCount = b.getWord();
-	while ( b.length() > 0 )
-	{
-		TLV t = b.getTLV();
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "e: " << exchange
+                             << " c: " << cookie << " i: " << instance << endl;
+
+    QValueList<Oscar::TLV> tlvList = b.getTLVList();
+    QValueList<Oscar::TLV>::iterator it, itEnd = tlvList.end();
+    for ( it = tlvList.begin(); it != itEnd; ++it )
+    {
+        TLV t = ( *it );
 		switch (t.type)
 		{
 		case 0x66:
@@ -288,6 +294,7 @@ void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
 			break;
 		}
 	}
+
     emit connectChat( exchange, cookie, instance );
 }
 
