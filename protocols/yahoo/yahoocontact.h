@@ -53,7 +53,7 @@ public:
 
 	void setOnlineStatus(const Kopete::OnlineStatus &status);
 	void setYahooStatus( const Kopete::OnlineStatus& );
-
+	void setStealthed( bool );
 	/** The group name getter and setter methods**/
 	QString group() const;
 	void setGroup( const QString& );
@@ -107,7 +107,8 @@ private:
 	QString m_groupName;
 	YahooChatSession *m_manager;
 	YahooAccount* m_account;
-
+	bool m_stealthed;
+	
 	//stealth
 	KAction* m_stealthAction;
 	

@@ -224,6 +224,9 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int)),
 		                 this, SLOT(slotStatusChanged(const QString&, int, const QString&, int)));
 		
+		QObject::connect(m_session, SIGNAL(stealthStatusChanged(const QString &, Yahoo::StealthStatus)), 
+		                 this, SLOT(slotStealthStatusChanged( const QString &, Yahoo::StealthStatus)) );
+		
 		QObject::connect(m_session, SIGNAL(gotIm(const QString&, const QString&, long, int)),
 		                 this, SLOT(slotGotIm(const QString &, const QString&, long, int)));
 		
@@ -307,6 +310,9 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::disconnect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int)),
 		                    this, SLOT(slotStatusChanged(const QString&, int, const QString&, int)));
+		
+		QObject::disconnect(m_session, SIGNAL(stealthStatusChanged(const QString &, Yahoo::StealthStatus)), 
+		                 this, SLOT(slotStealthStatusChanged( const QString &, Yahoo::StealthStatus)) );
 		
 		QObject::disconnect(m_session, SIGNAL(gotIm(const QString&, const QString&, long, int)),
 		                    this, SLOT(slotGotIm(const QString &, const QString&, long, int)));
@@ -673,7 +679,7 @@ void YahooAccount::slotGotIdentities( const QStringList & /* ids */ )
 void YahooAccount::slotStatusChanged( const QString &who, int stat, const QString &msg, int  away )
 {
 	//kdDebug(14180) << k_funcinfo << endl;
-	Kopete::Contact *kc = contact( who );
+	YahooContact *kc = contact( who );
 	
 	if( contact( who ) == myself() )
 		return;
@@ -714,7 +720,14 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 
 void YahooAccount::slotStealthStatusChanged( const QString &who, Yahoo::StealthStatus state )
 {
-kdDebug(14180) << k_funcinfo << "Stealth Status of " << who << "changed to " << state << endl;
+	//kdDebug(14180) << k_funcinfo << "Stealth Status of " << who << "changed to " << state << endl;
+	
+	YahooContact* kc = contact( who );
+	if ( kc == NULL ) {
+		kdDebug(14180) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		return;
+	}
+	kc->setStealthed( state == Yahoo::Stealthed );
 }
 
 void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, int /*stat*/)

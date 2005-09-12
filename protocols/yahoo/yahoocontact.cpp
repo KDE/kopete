@@ -66,6 +66,7 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 		m_groupName = metaContact->groups().getFirst()->displayName();
 	m_manager = 0L;
 	m_account = account;
+	m_stealthed = false;
 
 	// Update ContactList
 	setNickName( fullName );
@@ -93,9 +94,29 @@ QString YahooContact::userId() const
 
 void YahooContact::setOnlineStatus(const Kopete::OnlineStatus &status)
 {
-	Contact::setOnlineStatus( status );
+	if( m_stealthed && status.internalStatus() <= 999)	// Not Stealted -> Stealthed
+	{
+		Contact::setOnlineStatus( 
+			Kopete::OnlineStatus(status.status() ,
+			(status.weight()==0) ? 0 : (status.weight() -1)  ,
+			protocol() ,
+			status.internalStatus()+1000 ,
+			status.overlayIcons() + QStringList("yahoo_stealthed") ,
+			i18n("%1|Stealthed").arg( status.description() ) ) );
+	}
+	else if( !m_stealthed && status.internalStatus() > 999 )// Stealthed -> Not Stealthed
+		Contact::setOnlineStatus( static_cast< YahooProtocol *>( protocol() )->statusFromYahoo( status.internalStatus() - 1000 ) );
+	else
+		Contact::setOnlineStatus( status );
+	
 	if( status.status() == Kopete::OnlineStatus::Offline ) 
 		removeProperty( ((YahooProtocol*)(m_account->protocol()))->awayMessage);
+}
+
+void YahooContact::setStealthed( bool stealthed )
+{
+	m_stealthed = stealthed;
+	setOnlineStatus( onlineStatus() );
 }
 
 void YahooContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)
