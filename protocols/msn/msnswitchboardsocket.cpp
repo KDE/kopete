@@ -540,7 +540,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		//It's possible to made the opposite client join them, as explained in this MS Word document
 		//http://www.bot-depot.com/forums/index.php?act=Attach&type=post&id=35110
 
-		head+="Message-ID: {7B7B34E6-7A8D-44FF-926C-1799156B58"+QString::number( rand()%10)+QString::number( rand()%10)+"}\r\n";
+		head+="Message-ID: {7B7B34E6-7A8D-44FF-926C-1799156B58"+QString::number( KApplication::random()%10)+QString::number( KApplication::random()%10)+"}\r\n";
 		int len_H=head.utf8().length()+ 14;   //14 is the size of "Chunks: x"
 		//this is the size of each part of the message (excluding the header)
 		int futurmessages_size=1400;  //1400 is a common good size

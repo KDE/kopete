@@ -27,6 +27,7 @@
 #include <kserversocket.h>
 #include <kbufferedsocket.h>
 #include <kfiledialog.h>
+#include <kapplication.h>
 #include <klocale.h>
 
 #include "kopetetransfermanager.h"
@@ -375,7 +376,7 @@ void MSNFileTransferSocket::parseInvitation(const QString& msg)
 		}
 		else
 		{
-			unsigned long int auth = (rand()%(999999))+1;
+			unsigned long int auth = (KApplication::random()%(999999))+1;
 			setAuthCookie(QString::number(auth));
 
 			setKopeteTransfer(Kopete::TransferManager::transferManager()->addTransfer(m_contact, fileName(), size(),  m_contact->metaContact() ? m_contact->metaContact()->displayName() : m_contact->contactId() , Kopete::FileTransferInfo::Outgoing));
