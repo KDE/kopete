@@ -52,7 +52,7 @@
                         <cstring>spacer18</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Vertical</enum>
+                        <enum>Qt::Vertical</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>
@@ -122,7 +122,7 @@
 &lt;p&gt;Select the messaging service from the list below.&lt;/p&gt;</string>
             </property>
             <property name="alignment">
-                <set>WordBreak|AlignTop|AlignLeft</set>
+                <set>Qt::TextWordWrap|Qt::AlignTop|Qt::AlignLeft</set>
             </property>
         </widget>
     </grid>

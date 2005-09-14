@@ -39,7 +39,7 @@
 &lt;p&gt;You have finished configuring the account. Please click the "Finish" button.&lt;/p&gt;</string>
             </property>
             <property name="alignment">
-                <set>WordBreak|AlignTop</set>
+                <set>Qt::TextWordWrap|Qt::AlignTop</set>
             </property>
         </widget>
         <widget class="QLayoutWidget" row="1" column="1">
@@ -81,7 +81,7 @@ for account:</string>
                         <cstring>spacer5</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Horizontal</enum>
+                        <enum>Qt::Horizontal</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>
@@ -111,7 +111,7 @@ for account:</string>
                 <cstring>Spacer8</cstring>
             </property>
             <property name="orientation">
-                <enum>Vertical</enum>
+                <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>

@@ -20,6 +20,8 @@
 
 #include <qcheckbox.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include <kcolorbutton.h>
 #include <kdebug.h>
@@ -39,7 +41,7 @@
 
 AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool modal, bool firstRun )
 	: 
-	KWizard(parent, name, modal, WDestructiveClose),
+	KWizard(parent, name, modal, Qt::WDestructiveClose),
 	m_accountPage(0),
 	m_proto(0)
 {
@@ -58,10 +60,10 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 	setFinishEnabled(m_finish, true);
 
 	// add the available messanger services to the dialogs list
-	QValueList<KPluginInfo *> protocols = Kopete::PluginManager::self()->availablePlugins("Protocols");
-	for (QValueList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it)
+	Q3ValueList<KPluginInfo *> protocols = Kopete::PluginManager::self()->availablePlugins("Protocols");
+	for (Q3ValueList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it)
 	{
-		QListViewItem *pluginItem = new QListViewItem(m_selectService->protocolListView);
+		Q3ListViewItem *pluginItem = new Q3ListViewItem(m_selectService->protocolListView);
 		pluginItem->setPixmap(0, SmallIcon((*it)->icon()));
 		pluginItem->setText(0, (*it)->name());
 		pluginItem->setText(1, (*it)->comment());
@@ -70,7 +72,7 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 	}
 
 	// focus the ListView and select the first item
-	QListView &protocol_list = *m_selectService->protocolListView;
+	Q3ListView &protocol_list = *m_selectService->protocolListView;
 	protocol_list.setFocus();
 	if (protocol_list.childCount() > 0)
 	{
@@ -78,21 +80,21 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 	}
  
 	// hook up the user input
-	connect(m_selectService->protocolListView, SIGNAL(clicked(QListViewItem *)),
-		this, SLOT(slotProtocolListClicked(QListViewItem *)));
-	connect(m_selectService->protocolListView, SIGNAL(selectionChanged(QListViewItem *)),
-		this, SLOT( slotProtocolListClicked(QListViewItem *)));
-	connect(m_selectService->protocolListView, SIGNAL(doubleClicked(QListViewItem *)),
-		this, SLOT(slotProtocolListDoubleClicked(QListViewItem *)));
+	connect(m_selectService->protocolListView, SIGNAL(clicked(Q3ListViewItem *)),
+		this, SLOT(slotProtocolListClicked(Q3ListViewItem *)));
+	connect(m_selectService->protocolListView, SIGNAL(selectionChanged(Q3ListViewItem *)),
+		this, SLOT( slotProtocolListClicked(Q3ListViewItem *)));
+	connect(m_selectService->protocolListView, SIGNAL(doubleClicked(Q3ListViewItem *)),
+		this, SLOT(slotProtocolListDoubleClicked(Q3ListViewItem *)));
 }
 
-void AddAccountWizard::slotProtocolListClicked( QListViewItem * )
+void AddAccountWizard::slotProtocolListClicked( Q3ListViewItem * )
 {
 	// Make sure a protocol is selected before allowing the user to continue
 	setNextEnabled(m_selectService, m_selectService->protocolListView->selectedItem() != 0);
 }
 
-void AddAccountWizard::slotProtocolListDoubleClicked( QListViewItem *lvi )
+void AddAccountWizard::slotProtocolListDoubleClicked( Q3ListViewItem *lvi )
 {
 	// proceed to the next wizard page if we double click a protocol
 	next();
@@ -121,7 +123,7 @@ void AddAccountWizard::next()
 {
 	if (currentPage() == m_selectService)
 	{
-		QListViewItem *lvi = m_selectService->protocolListView->selectedItem();
+		Q3ListViewItem *lvi = m_selectService->protocolListView->selectedItem();
         
 		m_proto = dynamic_cast<Kopete::Protocol *>(Kopete::PluginManager::self()->loadPlugin(m_protocolItems[lvi]->pluginName()));
 		if (!m_proto)
