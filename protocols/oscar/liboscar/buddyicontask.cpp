@@ -74,7 +74,12 @@ void BuddyIconTask::onGo()
 		else
 			sendIcon();
 	}
-	
+	else
+	{
+		if ( m_action == Receive )
+			sendICQBuddyIconRequest();
+			
+	}
 }
 
 bool BuddyIconTask::forMe( const Transfer* transfer )
@@ -121,8 +126,8 @@ bool BuddyIconTask::take( Transfer* transfer )
 		handleUploadResponse();
 	if ( st->snacSubtype() == 0x0005 )
 		handleAIMBuddyIconResponse();
-// else
-// 		handleICQBuddyIconResponse();
+	else
+		handleICQBuddyIconResponse();
 
 	setSuccess( 0, QString::null );
 	setTransfer( 0 );
@@ -188,6 +193,54 @@ void BuddyIconTask::handleAIMBuddyIconResponse()
 	WORD iconSize = b->getWord();
 	QByteArray icon;
 	icon.duplicate( b->getBlock(iconSize) );
+	emit haveIcon( user, icon );
+}
+
+void BuddyIconTask::sendICQBuddyIconRequest()
+{
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting buddy icon for " << m_user << endl;
+	FLAP f = { 0x02, 0, 0 };
+	m_seq = client()->snacSequence();
+	SNAC s = { 0x0010, 0x0006, 0x0000, m_seq };
+	Buffer* b = new Buffer;
+
+	b->addBUIN( m_user.latin1() ); //TODO: check encoding
+	b->addByte( 0x01 );
+	b->addWord( 0x0001 );
+	b->addByte( m_hashType );
+	b->addByte( m_hash.size() ); //MD5 Hash Size
+	b->addString( m_hash, m_hash.size() ); //MD5 Hash
+	Transfer* t = createTransfer( f, s, b );
+	send( t );
+}
+
+void BuddyIconTask::handleICQBuddyIconResponse()
+{
+	Buffer* b = transfer()->buffer();
+	QString user = b->getBUIN();
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Receiving buddy icon for " << user << endl;
+	
+	b->skipBytes(2); //not used
+	BYTE iconType = b->getByte();
+	Q_UNUSED( iconType );
+	
+	BYTE hashSize = b->getByte();
+	QByteArray iconHash;
+	iconHash.duplicate( b->getBlock(hashSize) );
+	
+	b->skipBytes(1); //not used
+	b->skipBytes(2); //not used
+	BYTE iconType2 = b->getByte();
+	Q_UNUSED( iconType2 );
+	
+	BYTE hashSize2 = b->getByte();
+	QByteArray iconHash2;
+	iconHash2.duplicate( b->getBlock(hashSize2) );
+	
+	WORD iconSize = b->getWord();
+	QByteArray icon;
+	icon.duplicate( b->getBlock(iconSize) );
+	
 	emit haveIcon( user, icon );
 }
 

@@ -133,6 +133,9 @@ private slots:
     void changeContactEncoding();
     void changeEncodingDialogClosed( int );
 
+	void requestBuddyIcon();
+	void haveIcon( const QString&, QByteArray );
+	
 //void slotCloseAwayMessageDialog();
 	//void slotReadAwayMessage();
 

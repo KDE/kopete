@@ -18,6 +18,7 @@
 #include "icqcontact.h"
 
 #include <qtimer.h>
+#include <qimage.h>
 
 #include <kaction.h>
 #include <kactionclasses.h>
@@ -73,6 +74,10 @@ ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaCo
 	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
 	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
 	QObject::connect( this, SIGNAL( featuresUpdated() ), this, SLOT( updateFeatures() ) );
+	QObject::connect( mAccount->engine(), SIGNAL( iconServerConnected() ),
+	                  this, SLOT( requestBuddyIcon() ) );
+	QObject::connect( mAccount->engine(), SIGNAL( haveIconForContact( const QString&, QByteArray ) ),
+	                  this, SLOT( haveIcon( const QString&, QByteArray ) ) );
 
 }
 
@@ -115,6 +120,16 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 		removeProperty( mProtocol->clientFeatures );
 	else
 		setProperty( mProtocol->clientFeatures, details.clientName() );
+
+	if ( details.buddyIconHash().size() > 0 && details.buddyIconHash() != m_details.buddyIconHash() )
+	{
+		if ( !mAccount->engine()->hasIconConnection() )
+			mAccount->engine()->requestServerRedirect( 0x0010 );
+		
+		int time = ( KApplication::random() % 10 ) * 1000;
+		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating buddy icon in " << time/1000 << " seconds" << endl;
+		QTimer::singleShot( time, this, SLOT( requestBuddyIcon() ) );
+	}
 
 	OscarContact::userInfoUpdated( contact, details );
 }
@@ -314,6 +329,31 @@ void ICQContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session
 void ICQContact::updateFeatures()
 {
 	setProperty( static_cast<ICQProtocol*>(protocol())->clientFeatures, m_clientFeatures );
+}
+
+void ICQContact::requestBuddyIcon()
+{
+	if ( m_details.buddyIconHash().size() > 0 )
+	{
+		account()->engine()->requestBuddyIcon( contactId(), m_details.buddyIconHash(),
+		                                       m_details.iconCheckSumType() );
+	}
+}
+
+void ICQContact::haveIcon( const QString& user, QByteArray icon )
+{
+	if ( Oscar::normalize( user ) != Oscar::normalize( contactId() ) )
+		return;
+	
+	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Updating icon for " << contactId() << endl;
+	QImage buddyIcon( icon );
+	if ( buddyIcon.isNull() )
+	{
+		kdWarning(OSCAR_ICQ_DEBUG) << k_funcinfo << "Failed to convert buddy icon to QImage" << endl;
+		return;
+	}
+	
+	setProperty( Kopete::Global::Properties::self()->photo(), buddyIcon );
 }
 
 #if 0

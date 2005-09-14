@@ -98,6 +98,7 @@ void ProfileTask::sendProfileUpdate()
 		capBuf.addString( oscar_caps[CAP_KOPETE], 16 ); // we are the borg, resistance is futile
 		//capBuf.addString( oscar_caps[CAP_RTFMSGS], 16 ); // we do incoming RTF messages
 		capBuf.addString( oscar_caps[CAP_TYPING], 16 ); // we know you're typing something to us!
+		capBuf.addString( oscar_caps[CAP_BUDDYICON], 16 ); //can you take my picture?
 	}
 	else
 	{
