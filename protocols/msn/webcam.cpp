@@ -62,6 +62,14 @@ Webcam::~Webcam()
 	delete m_mimic;
 	delete m_webcamSocket;
 	delete m_widget;
+	
+	if(m_timerId != 0) //if we were sending
+	{
+		Kopete::AV::VideoDevicePool *videoDevice = Kopete::AV::VideoDevicePool::self(); 
+		videoDevice->stopCapturing(); 
+		videoDevice->close();
+	}
+
 }
 
 void Webcam::askIncommingInvitation()
