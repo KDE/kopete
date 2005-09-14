@@ -100,7 +100,7 @@ void MSNSocket::connect( const QString &server, uint port )
 	m_server = server;
 	m_port = port;
 
-	if(!m_useHttp)	
+	if(!m_useHttp)
 		m_socket = new KBufferedSocket( server, QString::number(port) );
 	else {
 		m_socket = new KBufferedSocket( m_gateway, "80" );
@@ -489,14 +489,12 @@ bool MSNSocket::pollReadBlock()
 		return true;
 	}
 
-	QByteArray baBlock = m_buffer.take( m_waitBlockSize );
-	QString block = QString::fromUtf8( baBlock, m_waitBlockSize );
+	QByteArray block = m_buffer.take( m_waitBlockSize );
 
 	//kdDebug( 14140 ) << k_funcinfo << "Successfully read block of size " << m_waitBlockSize << endl;
 
 	m_waitBlockSize = 0;
-	emit blockRead( block );
-	emit blockRead( baBlock );
+	emit blockRead( block);
 
 	return false;
 }
@@ -878,15 +876,15 @@ bool MSNSocket::setUseHttpMethod( bool useHttp )
 		m_bIsFirstInTransaction = true;
 		m_pending = false;
 		m_remaining = 0;
-		m_gateway = "gateway.messenger.hotmail.com";		
+		m_gateway = "gateway.messenger.hotmail.com";
 	}
-	
+
 	if ( m_onlineStatus != Disconnected )
 		disconnect();
 
 	m_useHttp = useHttp;
 
-	return true;	
+	return true;
 }
 
 bool MSNSocket::useHttpMethod() const

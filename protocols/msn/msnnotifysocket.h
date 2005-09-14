@@ -74,7 +74,7 @@ public:
 	QString localIP() { return m_localIP; }
 
 	bool setUseHttpMethod( bool useHttpMethod );
-	
+
 public slots:
 	void slotOpenInbox();
 
@@ -132,7 +132,7 @@ private slots:
 	 * We received a message from the server, which is sent as raw data,
 	 * instead of cr/lf line-based text.
 	 */
-	void slotReadMessage( const QString &msg );
+	void slotReadMessage( const QByteArray &bytes );
 
 	/**
 	 * Send a keepalive to the server to avoid idle connections to cause
@@ -164,7 +164,7 @@ private:
 	QString statusToString( const Kopete::OnlineStatus &status ) const;
 
 	/**
-	 * Process the CurrentMedia XML element. 
+	 * Process the CurrentMedia XML element.
 	 * @param mediaXmlElement the source XML element as text.
 	 */
 	QString processCurrentMedia( const QString &mediaXmlElement );
@@ -185,7 +185,7 @@ private:
 
 	MSNChallengeHandler *m_challengeHandler;
 	QTimer *m_keepaliveTimer;
-	
+
 	bool m_ping;
 
 	int m_disconnectReason;

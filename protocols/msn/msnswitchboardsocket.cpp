@@ -77,7 +77,7 @@ MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account , QObject *paren
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
 {
 	kdDebug(14140) << k_funcinfo << endl;
-	
+
 	QMap<QString , QPair<QString , KTempFile*> >::Iterator it;
 	for ( it = m_emoticons.begin(); it != m_emoticons.end(); ++it )
 	{
@@ -94,8 +94,8 @@ void MSNSwitchBoardSocket::connectToSwitchBoard(QString ID, QString address, QSt
 	QString server = address.left( address.find( ":" ) );
 	uint port = address.right( address.length() - address.findRev( ":" ) - 1 ).toUInt();
 
-	QObject::connect( this, SIGNAL( blockRead( const QString & ) ),
-		this, SLOT(slotReadMessage( const QString & ) ) );
+	QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),
+		this, SLOT(slotReadMessage( const QByteArray & ) ) );
 
 	QObject::connect( this, SIGNAL( onlineStatusChanged( MSNSocket::OnlineStatus ) ),
 		this, SLOT( slotOnlineStatusChanged( MSNSocket::OnlineStatus ) ) );
@@ -222,8 +222,10 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint  id ,
 	}
 }
 
-void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
+void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 {
+	QString msg = QString::fromUtf8(bytes, bytes.size());
+
 	QRegExp rx("Content-Type: ([A-Za-z0-9/\\-]*)");
 	rx.search(msg);
 	QString type=rx.cap(1);
@@ -238,7 +240,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		if(c)
 			c->setProperty(  MSNProtocol::protocol()->propClient , clientStr );
 	}
-    
+
 	// incoming message for File-transfer
 	if( type== "text/x-msmsgsinvite"  )
 	{
@@ -286,7 +288,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			fontInfo =rx.cap(1);
 
 			color = parseFontAttr(fontInfo, "CO");
-			
+
 			// FIXME: this is so BAAAAAAAAAAAAD :(
 			if (!color.isEmpty() && color.toInt(0,16)!=0)
 			{
@@ -373,10 +375,10 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		if(chunk != 0 && !m_msgQueue.isEmpty())
 		{
 			QString msg=m_msgQueue.last().plainBody();
-    		m_msgQueue.pop_back(); //removes the last item 	 
-    		kmsg.setBody( msg+ message, Kopete::Message::PlainText ); 	 
-		} 	 
-    	
+    		m_msgQueue.pop_back(); //removes the last item
+    		kmsg.setBody( msg+ message, Kopete::Message::PlainText );
+		}
+
     	if(chunk == 0 )
 			m_chunks=chunks;
 		else if(chunk+1 >=  m_chunks)
@@ -431,7 +433,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	}
 	else if( type== "application/x-msnmsgrp2p" )
 	{
-		PeerDispatcher();
+		PeerDispatcher()->slotReadMessage(m_msgHandle, bytes);
 	}
 	else if( type == "text/x-clientcaps" )
 	{
@@ -454,20 +456,20 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			QString JabberID;
 			if(config->readBoolEntry("SendJabber", true))
 				JabberID=config->readEntry("JabberAccount");
-			
+
 			if(!JabberID.isEmpty())
 				JabberID="JabberID: "+JabberID +"\r\n";
-			
+
 			if( config->readBoolEntry("SendClientInfo", true)   ||  !JabberID.isEmpty())
 			{
-				
+
 				QCString message = QString( "MIME-Version: 1.0\r\n"
 						"Content-Type: text/x-clientcaps\r\n"
 						"\r\n"
 						"Client-Name: Kopete/"+escape(kapp->aboutData()->version())+"\r\n"
 						+JabberID+
 						"\r\n\r\n" ).utf8();
-	
+
 				QString args = "U";
 				sendCommand( "MSG", args, true, message );
 			}
@@ -489,86 +491,48 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		regex.search(msg);
 		QString chunk = regex.cap(1);
 
-		if(chunks.isNull() && chunk.isNull())
+		if(!messageId.isNull())
 		{
-			// The informatgif only has one chunk and it
-			// is included in the received message.
+			bool valid = true;
+			// Retrieve the nmber of data chunks.
+			Q_UINT32 numberOfChunks = chunks.toUInt(&valid);
+			if(valid && (numberOfChunks > 1))
+			{
+				regex = QRegExp("base64:([0-9a-zA-Z+/=]+)");
+				regex.search(msg);
+				// Retrieve the first chunk of the ink format gif.
+				QString base64 = regex.cap(1);
+				// More chunks are expected, buffer the chunk received.
+				InkMessage inkMessage;
+				inkMessage.chunks = numberOfChunks;
+				inkMessage.data += base64;
+				m_inkMessageBuffer.insert(messageId, inkMessage);
+			}
+		}
+		else
+		{
+			// There is only one chunk of data.
 			regex = QRegExp("base64:([0-9a-zA-Z+/=]*)");
 			regex.search(msg);
-			// Retrieve the first chunk of the ink format gif.
-			QString base64 = regex.cap(1);
-			QByteArray image;
-			// Convert from base64 encoded string to byte array.
-			KCodecs::base64Decode(base64.utf8() , image);
-			KTempFile *imageFile = new KTempFile(locateLocal( "tmp", "inkformatgif-" ), ".gif");
-			imageFile->setAutoDelete(true);
-			imageFile->file()->writeBlock(image.data(), image.size());
-			imageFile->file()->close();
+			// Retrieve the base64 encoded ink data.
+			QString data = regex.cap(1);
+			DispatchInkMessage(data);
+		}
 
-			slotEmoticonReceived(imageFile , "inkformatgif");
-			imageFile = 0l;
-		}
-		else if(!chunks.isNull())
+		if(!messageId.isNull())
 		{
-			regex = QRegExp("base64:([0-9a-zA-Z+/=]+)");
-			regex.search(msg);
-			// Retrieve the first chunk of the ink format gif.
-			QString base64 = regex.cap(1);
-			kdDebug(14140) << k_funcinfo << chunks.toUInt() << ", chunks" << endl;
-			// If more chunks are expected, buffer the chunk received.
-			QValueVector<QString> typewrite(chunks.toUInt());
-			typewrite[0] = base64;
-			m_typewriteDictionary.insert(messageId, typewrite);
-		}
-		else if(!chunk.isNull())
-		{
-			// Retrieve the inkformatgif chunk index.
-			Q_UINT32 index = chunk.toUInt();
-			kdDebug(14140) << k_funcinfo << "chunk, " << index << endl;
-			if(m_typewriteDictionary.contains(messageId))
+			if(m_inkMessageBuffer.contains(messageId))
 			{
-				QValueVector<QString> typewrite = m_typewriteDictionary[messageId];
-				// Copy the chunk into it's corresponding index.
-				typewrite[index] = msg.section("\r\n\r\n", -1);
-
-				bool done = false;
-				// Determine if all chunks have been received.
-				if(index == (typewrite.count() - 1)) done = true;
-
-				if(done)
+				if(chunks.isNull())
 				{
-					m_typewriteDictionary.remove(messageId);
-					
-					QString base64;
-					QValueVector<QString>::Iterator current = typewrite.begin();
-					while(current != typewrite.end()){
-						base64 += *current;
-						current++;
+					InkMessage inkMessage = m_inkMessageBuffer[messageId];
+					inkMessage.data += msg.section("\r\n\r\n", -1);
+					if(inkMessage.chunks == chunk.toUInt() + 1)
+					{
+						DispatchInkMessage(inkMessage.data);
+						// Remove the ink message from the buffer.
+						m_inkMessageBuffer.remove(messageId);
 					}
-
-					QByteArray image;
-					// Convert from base64 encoded string to byte array.
-					KCodecs::base64Decode(base64.utf8() , image);
-					// Create a temporary file to store the image data.
-					KTempFile *imageFile = new KTempFile( locateLocal( "tmp", "inkformatgif-" ), ".gif");
-					imageFile->setAutoDelete(true);
-	
-					Q_INT32 offset = 0, size = image.size(), chunkLength = 1202;
-					while(offset + chunkLength < size){
-						imageFile->file()->writeBlock(image.data() + offset, chunkLength);
-						offset += chunkLength;
-					}
-	
-					if(offset < size){
-						// Write last chunk to the file.
-						imageFile->file()->writeBlock(image.data() + offset, size - offset);
-					}
-	
-					// Close the ink formatted gif file.
-					imageFile->file()->close();
-	
-					slotEmoticonReceived(imageFile , "inkformatgif");
-					imageFile = 0l;
 				}
 			}
 		}
@@ -579,6 +543,19 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	}
 }
 
+void MSNSwitchBoardSocket::DispatchInkMessage(const QString& base64String)
+{
+	QByteArray image;
+	// Convert from base64 encoded string to byte array.
+	KCodecs::base64Decode(base64String.utf8() , image);
+	KTempFile *inkImage = new KTempFile(locateLocal( "tmp", "inkformatgif-" ), ".gif");
+	inkImage->setAutoDelete(true);
+	inkImage->file()->writeBlock(image.data(), image.size());
+	inkImage->file()->close();
+
+	slotEmoticonReceived(inkImage , "inkformatgif");
+	inkImage = 0l;
+}
 
 void MSNSwitchBoardSocket::sendTypingMsg( bool isTyping )
 {
@@ -633,10 +610,10 @@ int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString 
 		// open the icon file
 		QFile pictFile(fi.filePath());
 		if (pictFile.open(IO_ReadOnly)) {
-		
+
 			QByteArray ar = pictFile.readAll();
 			pictFile.close();
-			
+
 			QString sha1d = QString(KCodecs::base64Encode(SHA1::hash(ar)));
 			QString size = QString::number( pictFile.size() );
 			QString all = "Creator" + m_account->accountId() +	"Size" + size + "Type3Location" + fi.fileName() + "FriendlyAAA=SHA1D" + sha1d;
@@ -653,7 +630,7 @@ int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString 
 				"Content-Type: text/x-mms-emoticon\r\n"
 				"\r\n" +
 				name + "\t" + picObj + "\t\r\n";
-        
+
 	return sendCommand("MSG", "A", true, msg.utf8());
 
 }
@@ -680,7 +657,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	if ( config->readBoolEntry( "exportEmoticons", false ) )
 	{
 		QMap<QString, QString> emap = Kopete::Emoticons::self()->emoticonAndPicList();
-			
+
 		// Check the list for any custom emoticons
 		for (QMap<QString, QString>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
 		{
@@ -701,14 +678,14 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 			return -3;
 		}
 	}
-	
+
 	// User-Agent is not a official flag, but GAIM has it
 	QString UA;
 	if( config->readBoolEntry("SendClientInfo", true) )
 	{
 		UA="User-Agent: Kopete/"+escape(kapp->aboutData()->version())+"\r\n";
 	}
-	
+
 	QString head =
 		"MIME-Version: 1.0\r\n"
 		"Content-Type: text/plain; charset=UTF-8\r\n"
@@ -1079,7 +1056,7 @@ Dispatcher* MSNSwitchBoardSocket::PeerDispatcher()
 		}
 		m_dispatcher = new Dispatcher(this, m_account->accountId(),ip );
 
-		QObject::connect(this, SIGNAL(blockRead(const QByteArray&)), m_dispatcher, SLOT(slotReadMessage(const QByteArray&)));
+// 		QObject::connect(this, SIGNAL(blockRead(const QByteArray&)), m_dispatcher, SLOT(slotReadMessage(const QByteArray&)));
 // 		QObject::connect(m_dispatcher, SIGNAL(sendCommand(const QString&, const QString&, bool, const QByteArray&, bool)), this, SLOT(sendCommand(const QString&, const QString&, bool, const QByteArray&, bool)));
 		QObject::connect(m_dispatcher, SIGNAL(incomingTransfer(const QString&, const QString&, Q_INT64)), this, SLOT(slotIncomingFileTransfer(const QString&, const QString&, Q_INT64)));
 		QObject::connect(m_dispatcher, SIGNAL(displayIconReceived(KTempFile *, const QString&)), this, SLOT(slotEmoticonReceived( KTempFile *, const QString&)));
