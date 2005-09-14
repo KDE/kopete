@@ -1007,7 +1007,4 @@ If two resources have the same priority, the messages will be sent to the one co
     <tabstop>btnChangePassword</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kopete::ui::passwordwidget.h</includehint>
-</includehints>
 </UI>
