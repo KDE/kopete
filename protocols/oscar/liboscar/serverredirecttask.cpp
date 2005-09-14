@@ -36,7 +36,7 @@ void ServerRedirectTask::setService( WORD family )
 	m_service = family;
 }
 
-void ServerRedirectTask::setChatParams( WORD exchange, const QByteArray& cookie, WORD instance )
+void ServerRedirectTask::setChatParams( WORD exchange, QByteArray cookie, WORD instance )
 {
     m_chatExchange = exchange;
     m_chatCookie = cookie;
@@ -84,16 +84,12 @@ void ServerRedirectTask::requestNewService()
     kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Requesting server for service " << m_service << endl;
     if ( m_service == 0x000E )
     {
-        TLV chatRedirectTLV;
-        chatRedirectTLV.type = 0x0001;
-        Buffer chatBuf;
-        chatBuf.addWord( m_chatExchange );
-        chatBuf.addByte( m_chatCookie.size() );
-        chatBuf.addString( m_chatCookie );
-        chatBuf.addWord( m_chatInstance );
-        chatRedirectTLV.length = chatBuf.length();
-        chatRedirectTLV.data.duplicate( chatBuf );
-        b->addTLV( chatRedirectTLV );
+        b->addWord( 0x0001 );
+        b->addWord( m_chatCookie.size() + 5 );
+        b->addWord( m_chatExchange );
+        b->addByte( m_chatCookie.size() );
+        b->addString( m_chatCookie );
+        b->addWord( m_chatInstance );
     }
 
     Transfer* t = createTransfer( f, s, b );

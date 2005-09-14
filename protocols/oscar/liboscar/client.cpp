@@ -139,6 +139,7 @@ Client::~Client()
 	//delete the connections differently than in deleteConnections()
 	//deleteLater() seems to cause destruction order issues
 	deleteStaticTasks();
+    delete d->settings;
 	delete d->ssiManager;
 	delete d;
 }
@@ -184,6 +185,10 @@ void Client::close()
 		d->connectWithMessage = QString::null;
 	}
 
+    d->exchanges.clear();
+    d->redirectRequested = false;
+    d->currentRedirect = 0;
+    d->redirectionServices.clear();
     d->ssiManager->clear();
 }
 
@@ -782,7 +787,7 @@ void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE
 }
 
 void Client::requestServerRedirect( WORD family, WORD exchange,
-                                    const QByteArray& cookie, WORD instance )
+                                    QByteArray cookie, WORD instance )
 {
 	//making the assumption that family 2 will always be the BOS connection
 	//use it instead since we can't query for family 1
@@ -804,8 +809,6 @@ void Client::requestServerRedirect( WORD family, WORD exchange,
 
     //FIXME. this won't work if we have to defer the connection because we're
     //already connecting to something
-
-
 	ServerRedirectTask* srt = new ServerRedirectTask( c->rootTask() );
     if ( family == 0x0013 )
         srt->setChatParams( exchange, cookie, instance );

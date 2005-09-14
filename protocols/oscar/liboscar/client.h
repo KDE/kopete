@@ -257,7 +257,7 @@ public:
 	void requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE hashType );
 
 	//! Start a server redirect for a different service
-	void requestServerRedirect( WORD family, WORD e = 0, const QByteArray& c = QByteArray(),
+	void requestServerRedirect( WORD family, WORD e = 0, QByteArray c = QByteArray(),
                                 WORD instance = 0 );
 
 	//! Start uploading a buddy icon
