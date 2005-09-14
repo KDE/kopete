@@ -22,15 +22,12 @@
 #include <qclipboard.h>
 #include <qrect.h>
 #include <qcursor.h>
-<<<<<<< .working
+
 //Added by qt3to4:
 #include <QPixmap>
 #include <QTextStream>
 #include <QByteArray>
-=======
 #include <qtextcodec.h> 
->>>>>>> .merge-right.r455261
-
 #include <dom/dom_doc.h>
 #include <dom/dom_text.h>
 #include <dom/dom_string.h>

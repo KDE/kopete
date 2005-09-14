@@ -11,7 +11,8 @@
 #include <qevent.h>
 #include <kparts/genericfactory.h>
 //#include <private/q3richtext_p.h>
-#include <Q3RichText>
+//#include <Q3RichText>
+#include <QTextCursor>
 
 #include "krichtexteditpart.h"
 #include "krichtexteditpart.moc"
@@ -20,6 +21,7 @@
 
 typedef KParts::GenericFactory<KopeteRichTextEditPart> KopeteRichTextEditPartFactory;
 K_EXPORT_COMPONENT_FACTORY( libkopeterichtexteditpart, KopeteRichTextEditPartFactory )
+			
 
 class KopeteTextEdit : public KTextEdit
 {
@@ -35,6 +37,8 @@ public:
 			return KTextEdit::event(event);
 	}
 };
+
+
 
 KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *wparent, const char *wname, QObject*, const char*, const QStringList& )
 	: KParts::ReadOnlyPart( wparent, wname ? wname : "rich_text_part" )
@@ -494,9 +498,10 @@ void KopeteRichTextEditPart::setAlignJustify( bool yes )
 
 QString KopeteRichTextEditPart::text( Qt::TextFormat fmt ) const
 {
-	if( fmt == editor->textFormat() || fmt != Qt::PlainText )
+#warning  Commented to make it compile with qt4
+//	if( fmt == editor->textFormat() || fmt != Qt::PlainText )
 		return editor->text();
-	else
-		return editor->cursor()->document()->plainText();
+//	else
+//		return editor->cursor()->document()->plainText();
 }
 

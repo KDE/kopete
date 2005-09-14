@@ -874,6 +874,8 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 	}
 	else if( event->provides( "kopete/x-metacontact" ) )
 	{
+#warning commented to make it compile
+#if 0
 		QString metacontactID=QString::fromUtf8(event->encodedData ( "kopete/x-metacontact" ));
 		Kopete::MetaContact *m=Kopete::ContactList::self()->metaContact(metacontactID);
 
@@ -889,6 +891,7 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 				}
 			}
 		}
+#endif
 	}
 	// make sure it doesn't come from the current chat view - then it's an emoticon
 	else if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 &&
@@ -931,6 +934,9 @@ void ChatView::dropEvent ( QDropEvent * event )
 	}
 	else if( event->provides( "kopete/x-metacontact" ) )
 	{
+		
+#warning commented to make it compile
+#if 0
 		QString metacontactID=QString::fromUtf8(event->encodedData ( "kopete/x-metacontact" ));
 		Kopete::MetaContact *m=Kopete::ContactList::self()->metaContact(metacontactID);
 		if(m && m_manager->mayInvite())
@@ -945,6 +951,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 				}
 			}
 		}
+#endif
 	}
 	else if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 )
 	{

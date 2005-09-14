@@ -636,9 +636,9 @@ void KopeteChatWindow::slotCloseChat( QWidget *chatView )
 
 void KopeteChatWindow::addTab( ChatView *view )
 {
-	Q3PtrList<Kopete::Contact> chatMembers=view->msgManager()->members();
+	QList<Kopete::Contact*> chatMembers=view->msgManager()->members();
 	Kopete::Contact *c=0L;
-	for ( Kopete::Contact *contact = chatMembers.first(); contact; contact = chatMembers.next() )
+	foreach( Kopete::Contact *contact , chatMembers )
 	{
 		if(!c || c->onlineStatus() < contact->onlineStatus())
 			c=contact;
@@ -938,9 +938,9 @@ void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
 	if ( !view )
 		return; //(pas de charité)
 
-	Q3PtrList<Kopete::Contact> chatMembers=view->msgManager()->members();
+	QList<Kopete::Contact*> chatMembers=view->msgManager()->members();
 	Kopete::Contact *c=0L;
-	for ( Kopete::Contact *contact = chatMembers.first(); contact; contact = chatMembers.next() )
+	foreach ( Kopete::Contact *contact , chatMembers )
 	{
 		if(!c || c->onlineStatus() < contact->onlineStatus())
 			c=contact;
@@ -995,6 +995,8 @@ void KopeteChatWindow::slotSendMessage()
 
 void KopeteChatWindow::slotPrepareContactMenu(void)
 {
+#warning commented to make it compile
+#if 0
 	Q3PopupMenu *contactsMenu = actionContactMenu->popupMenu();
 	contactsMenu->clear();
 
@@ -1034,6 +1036,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 			contactCount = 0;
 		}
 	}
+#endif
 }
 
 void KopeteChatWindow::slotPreparePlacementMenu()

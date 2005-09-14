@@ -151,8 +151,8 @@ ChatMembersListWidget::ChatMembersListWidget( Kopete::ChatSession *session, QWid
 
 	// add chat members
 	slotContactAdded( session->myself() );
-	for ( Q3PtrListIterator<Kopete::Contact> it( session->members() ); it.current(); ++it )
-		slotContactAdded( *it );
+	foreach ( Kopete::Contact* it ,  session->members() ) 
+		slotContactAdded( it );
 
 	connect( this, SIGNAL( contextMenu( KListView*, Q3ListViewItem *, const QPoint &) ),
 	         SLOT( slotContextMenu(KListView*, Q3ListViewItem *, const QPoint & ) ) );
