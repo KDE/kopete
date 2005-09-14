@@ -58,7 +58,7 @@ namespace ListView {
 class ComponentBase::Private
 {
 public:
-	Q3PtrList<Component> components;
+	QList<Component*> components;
 };
 
 ComponentBase::ComponentBase()
@@ -68,7 +68,8 @@ ComponentBase::ComponentBase()
 
 ComponentBase::~ComponentBase()
 {
-	d->components.setAutoDelete( true );
+	foreach( Component *c , d->components )
+		delete c;
 	delete d;
 }
 
@@ -77,13 +78,13 @@ Component *ComponentBase::component( uint n ) { return d->components.at( n ); }
 
 Component *ComponentBase::componentAt( const QPoint &pt )
 {
-	for ( uint n = 0; n < components(); ++n )
+	foreach( Component* n , d->components )
 	{
-		if ( component( n )->rect().contains( pt ) )
+		if ( n->rect().contains( pt ) )
 		{
-			if ( Component *comp = component( n )->componentAt( pt ) )
+			if ( Component *comp = n->componentAt( pt ) )
 				return comp;
-			return component( n );
+			return n;
 		}
 	}
 	return 0;
@@ -98,19 +99,14 @@ void ComponentBase::componentRemoved( Component *component )
 {
 	//TODO: make sure the component is in d->components once and only once.
 	// if not, the situation is best referred to as 'very very broken indeed'.
-	d->components.remove( component );
+	d->components.removeAll( component );
 }
 
 void ComponentBase::clear()
 {
-	/* I'm switching setAutoDelete back and forth instead of turning it
-	 * on permenantly, because original author of this class set it to
-	 * auto delete in the dtor, that might have a reason that I can't
-	 * imagine right now */
-	bool tmp = d->components.autoDelete();
-	d->components.setAutoDelete( true );
+	foreach( Component *c , d->components )
+		delete c;
 	d->components.clear();
-	d->components.setAutoDelete( tmp );
 }
 
 void ComponentBase::componentResized( Component * )
@@ -119,18 +115,17 @@ void ComponentBase::componentResized( Component * )
 
 std::pair<QString,QRect> ComponentBase::toolTip( const QPoint &relativePos )
 {
-	for ( uint n = 0; n < components(); ++n )
-		if ( component( n )->rect().contains( relativePos ) )
-			return component( n )->toolTip( relativePos );
+	foreach( Component* n , d->components )
+		if ( n->rect().contains( relativePos ) )
+			return n->toolTip( relativePos );
 
 	return std::make_pair( QString::null, QRect() );
 }
 
 void ComponentBase::updateAnimationPosition( int p, int s )
 {
-	for ( uint n = 0; n < components(); ++n )
+	foreach( Component* comp , d->components )
 	{
-		Component *comp = component( n );
 		QRect start = comp->startRect();
 		QRect target = comp->targetRect();
 		QRect rc( start.left() + ((target.left() - start.left()) * p) / s,
