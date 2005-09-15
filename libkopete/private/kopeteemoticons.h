@@ -96,7 +96,7 @@ public:
 	 * Static function which will call tokenize
 	 * @see tokenize( const QString& )
 	 */
-	static Q3ValueList<Token> tokenizeEmoticons( const QString &message, ParseMode mode = DefaultParseMode );
+	static QList<Token> tokenizeEmoticons( const QString &message, ParseMode mode = DefaultParseMode );
 
 	/**
 	 * Tokenizes an message.
@@ -122,7 +122,7 @@ public:
 	 * @author Engin AYDOGAN < engin@bzzzt.biz >
 	 * @since 23-03-05
 	 */
-	Q3ValueList<Token> tokenize( const QString &message, uint mode = DefaultParseMode );
+	QList<Token> tokenize( const QString &message, uint mode = DefaultParseMode );
 	
 	/**
 	 * Return all emoticons and the corresponding icon.

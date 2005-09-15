@@ -94,14 +94,14 @@ QString Emoticons::parseEmoticons(const QString& message, ParseMode mode )  //st
 	 return self()->parse( message, mode );
 }
 
-Q3ValueList<Emoticons::Token> Emoticons::tokenizeEmoticons( const QString& message, ParseMode mode ) // static
+QList<Emoticons::Token> Emoticons::tokenizeEmoticons( const QString& message, ParseMode mode ) // static
 {
 	return self()->tokenize( message, mode );
 }
 
-Q3ValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint mode )
+QList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint mode )
 {
-	Q3ValueList<Token> result;
+	QList<Token> result;
 	if ( !KopetePrefs::prefs()->useEmoticons() )
 	{
 		result.append( Token( Text, message ) );
@@ -201,8 +201,12 @@ Q3ValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint 
 					if( mode & StrictParse )
 					{
 					/* check if the character after this match is space or end of string*/
-						n = message[ pos + needle.length() ];
-						if( !n.isSpace() &&  !n.isNull() ) break;
+						if(pos +  needle.length() < message.length() )
+						{
+							n = message[ pos + needle.length() ];
+							if( !n.isSpace() &&  !n.isNull() ) 
+								continue;
+						}
 					}
 					/* Perfect match */
 					foundEmoticons.append( EmoticonNode( (*it), pos ) );
@@ -410,16 +414,15 @@ QString Emoticons::parse( const QString &message, ParseMode mode )
 	if ( !KopetePrefs::prefs()->useEmoticons() )
                 return message;
 
-	Q3ValueList<Token> tokens = tokenize( message, mode );
-	Q3ValueList<Token>::const_iterator token;
+	QList<Token> tokens = tokenize( message, mode );
 	QString result;
 	QPixmap p;
-	for ( token = tokens.begin(); token != tokens.end(); ++token )
+	foreach (Token token , tokens )
 	{
-		switch ( (*token).type )
+		switch ( token.type )
 		{
 		case Text:
-			result += (*token).text;
+			result += token.text;
 		break;
 		case Image:
 			// Shall we do this at emoticon initialization ? But in that case tokenize() will
@@ -428,11 +431,11 @@ QString Emoticons::parse( const QString &message, ParseMode mode )
 			// We need to include size (width, height attributes)  hints in the emoticon HTML code
 			// Unless we do so, ChatMessagePart::slotScrollView does not work properly and causing
 			// HTMLPart not to be scrolled to the very last message.
-			p.load( (*token).picPath );
+			p.load( token.picPath );
 			result += QString::fromLatin1( "<img align=\"center\" src=\"" ) + 
-				  (*token).picPath + 
+				  token.picPath + 
 				  QString::fromLatin1( "\" title=\"" ) +
-				  (*token).text +
+				  token.text +
 				  QString::fromLatin1( "\" width=\"" ) +
 				  QString::number( p.width() ) +
 				  QString::fromLatin1( "\" height=\"" ) +
