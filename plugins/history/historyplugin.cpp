@@ -23,7 +23,7 @@
 #include <kplugininfo.h>
 #include <kdeversion.h>
 
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
 #include "kopeteview.h"
 #include "kopetecontactlist.h"

@@ -34,7 +34,7 @@
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopetemetacontact.h"
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 
 // -----------------------------------------------------------------------------
 HistoryLogger::HistoryLogger( Kopete::MetaContact *m,  QObject *parent, const char *name )
