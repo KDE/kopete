@@ -29,6 +29,7 @@ class EntityManagerPrivate;
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
  */
 class EntityManager
+	: public QObject
 {
 	Q_OBJECT
 

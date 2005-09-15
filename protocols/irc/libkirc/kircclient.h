@@ -60,29 +60,29 @@ public:
 //	QUrl serverURL() const;
 //	bool setServerURL(const QUrl &url);
 
-	const QString &nickName() const
-		{ return m_Nickname; };
+	const QString &nickName() const;
+//		{ return m_Nickname; };
 
-	const QString &password() const
-		{ return m_Passwd; }
+	const QString &password() const;
+//		{ return m_Passwd; }
 
-	void setPassword(const QString &passwd)
-		{ m_Passwd = passwd; };
+	void setPassword(const QString &passwd);
+//		{ m_Passwd = passwd; };
 
-	const QString &userName() const
-		{ return m_Username; }
+	const QString &userName() const;
+//		{ return m_Username; }
 
 	void setUserName(const QString &newName);
 
 	void setRealName(const QString &newName);
-	const QString &realName() const
-		{ return m_realName; }
+	const QString &realName() const;
+//		{ return m_realName; }
 
-	inline const bool reqsPassword() const
-		{ return m_ReqsPasswd; };
+	const bool reqsPassword() const;
+//		{ return m_ReqsPasswd; }
 
-	inline void setReqsPassword(bool b)
-		{ m_ReqsPasswd = b; };
+	void setReqsPassword(bool b);
+//		{ m_ReqsPasswd = b; }
 
 	void setVersionString(const QString &versionString);
 	void setUserString(const QString &userString);
@@ -97,27 +97,6 @@ public slots:
 	void writeCtcpReplyMessage(const QString &to, const QString &ctcpMessage, QTextCodec *codec = 0);
 
 	void writeCtcpErrorMessage(const QString &to, const QString &ctcpLine, const QString &errorMsg, QTextCodec *codec = 0);
-
-	bool bind(const char *command, QObject *object, const char *member,
-		  int minArgs = KIRC::MessageRedirector::Unknown,
-		  int maxArgs = KIRC::MessageRedirector::Unknown,
-		  const QString &helpMessage = QString::null);
-
-	bool bind(int id, QObject *object, const char *member,
-		  int minArgs = KIRC::MessageRedirector::Unknown,
-		  int maxArgs = KIRC::MessageRedirector::Unknown,
-		  const QString &helpMessage = QString::null);
-
-	bool bindCtcpQuery(const char *command, QObject *object, const char *member,
-			   int minArgs = KIRC::MessageRedirector::Unknown,
-			   int maxArgs = KIRC::MessageRedirector::Unknown,
-			   const QString &helpMessage = QString::null);
-
-	bool bindCtcpReply(const char *command, QObject *object, const char *member,
-			   int minArgs = KIRC::MessageRedirector::Unknown,
-			   int maxArgs = KIRC::MessageRedirector::Unknown,
-			   const QString &helpMessage = QString::null);
-
 
 	void away(bool isAway, const QString &awayMessage = QString::null);
 //	void invite();
@@ -271,16 +250,6 @@ private:
 	void bindCommands();
 	void bindNumericReplies();
 	void bindCtcp();
-
-	bool invokeCtcpCommandOfMessage(const QMap<QString, KIRC::MessageRedirector *> &map, KIRC::Message &message);
-
-	/*
-	 * Methods that handles all the bindings creations.
-	 * This methods is used by all the bind(...) methods.
-	 */
-	bool _bind(QMap<QString, KIRC::MessageRedirector *> &dict,
-		const char *command, QObject *object, const char *member,
-		int minArgs, int maxArgs, const QString &helpMessage);
 
 	EnginePrivate *d;
 };

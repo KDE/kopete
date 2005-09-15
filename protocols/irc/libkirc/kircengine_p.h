@@ -58,10 +58,10 @@ public:
 	QString sourceString;
 	QString pendingNick;
 
-	QMap<QString, KIRC::MessageRedirector *> commands;
+//	QMap<QString, KIRC::MessageRedirector *> commands;
 //	QMap<int, KIRC::MessageRedirector *> numericCommands;
-	QMap<QString, KIRC::MessageRedirector *> ctcpQueries;
-	QMap<QString, KIRC::MessageRedirector *> ctcpReplies;
+//	QMap<QString, KIRC::MessageRedirector *> ctcpQueries;
+//	QMap<QString, KIRC::MessageRedirector *> ctcpReplies;
 };
 
 }

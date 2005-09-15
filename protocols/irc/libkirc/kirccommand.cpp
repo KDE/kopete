@@ -15,33 +15,23 @@
     *************************************************************************
 */
 
-#include "kircmessageredirector.h"
+#include "kirccommand.h"
 
 #include "kircengine.h"
 
 using namespace KIRC;
 
-MessageRedirector::MessageRedirector(KIRC::Engine *engine,
-	int argsSize_min, int argsSize_max, const QString &helpMessage)
-	: QObject(engine, "KIRC::MessageRedirector"),
-	  m_argsSize_min(argsSize_min),
-	  m_argsSize_max(argsSize_max),
-	  m_helpMessage(helpMessage)
+Command::Command(QObject *parent)
+	: QObject(parent)
 {
 }
 
-bool MessageRedirector::connect(QObject *object, const char *member)
-{
-	return QObject::connect(this, SIGNAL(redirect(KIRC::Message &)),
-					object, member);
-}
-
-int MessageRedirector::connected() const
+int Command::connected() const
 {
 	return receivers(SIGNAL(redirect(KIRC::Message &)));
 }
 
-QStringList MessageRedirector::operator () (Message &msg)
+QStringList Command::operator () (Message &msg)
 {
 	m_errors.clear();
 
@@ -54,17 +44,17 @@ QStringList MessageRedirector::operator () (Message &msg)
 	return m_errors;
 }
 
-QString MessageRedirector::helpMessage()
+QString Command::helpMessage()
 {
 	return m_helpMessage;
 }
 
-void MessageRedirector::error(QString &message)
+void Command::error(QString &message)
 {
 	m_errors.append(message);
 }
 
-bool MessageRedirector::checkValidity(const Message &msg)
+bool Command::checkValidity(const Message &msg)
 {
 	bool success = true;
 	int argsSize = msg.argsSize();
@@ -99,4 +89,5 @@ bool MessageRedirector::checkValidity(const Message &msg)
 	return success;
 }
 
-#include "kircmessageredirector.moc"
+#include "kirccommand.moc"
+

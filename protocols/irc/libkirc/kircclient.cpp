@@ -20,7 +20,7 @@
 #include <config.h>
 #endif
 
-#include "kircengine.h"
+#include "kircclient.h"
 #include "kircengine_p.h"
 
 #include <kconfig.h>

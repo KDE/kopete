@@ -173,8 +173,6 @@ private:
 	 */
 	QTextCodec *checkCodec(QTextCodec *codec) const;
 
-	bool parse(const QByteArray &message);
-
 	bool matchForIRCRegExp(QRegExp &regexp);
 
 #ifndef _IRC_STRICTNESS_

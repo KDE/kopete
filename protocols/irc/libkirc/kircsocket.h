@@ -65,7 +65,7 @@ public: // READ properties accessors.
 //public slots: // WRITE properties accessors.
 
 public:
-	KNetworkSocket *socket();
+	KNetwork::KStreamSocket *socket();
 
 	QTextCodec *defaultCodec() const;
 	KIRC::Entity *owner() const;
