@@ -182,7 +182,7 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
  * @return 
  */
 KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name )
-	: KParts::MainWindow( parent, name )
+	: KMainWindow( parent, name )
 {
 	m_activeView = 0L;
 	m_popupView = 0L;
@@ -440,7 +440,7 @@ void KopeteChatWindow::initActions(void)
 	setStandardToolBarMenuEnabled( true );
 
 	setXMLFile( QString::fromLatin1( "kopetechatwindow.rc" ) );
-	createGUI( 0L );
+	createGUI(  );
 }
 
 const QString KopeteChatWindow::fileContents( const QString &path ) const
@@ -776,7 +776,7 @@ void KopeteChatWindow::slotDetachChat( int newWindowIndex )
 		return;
 
 	//if we don't do this, we might crash
-	createGUI(0L);
+// 	createGUI(0L);
 	guiFactory()->removeClient(detachedView->msgManager());
 
 	if( newWindowIndex == -1 )
@@ -853,7 +853,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	}
 
 	guiFactory()->addClient(view->msgManager());
-	createGUI( view->part() );
+// 	createGUI( view->part() );
 
 	if( m_activeView )
 		m_activeView->setActive( false );
@@ -1237,11 +1237,11 @@ void KopeteChatWindow::slotConfToolbar()
 	{
 		if( m_activeView )
 		{
-			createGUI( m_activeView->part() );
+// 			createGUI( m_activeView->part() );
 			//guiFactory()->addClient(m_activeView->msgManager());
 		}
 		else
-			createGUI( 0L );
+// 			createGUI( 0L );
 		applyMainWindowSettings(KGlobal::config(), QString::fromLatin1( "KopeteChatWindow" ));
 	}
 	delete dlg;

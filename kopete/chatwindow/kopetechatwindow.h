@@ -60,7 +60,7 @@ class Protocol;
 typedef QList<Contact*>  ContactPtrList;
 }
 
-class KopeteChatWindow : public KParts::MainWindow
+class KopeteChatWindow : public KMainWindow
 {
 	Q_OBJECT
 
