@@ -17,7 +17,7 @@
 #include "historylogger.h"
 #include "historyconfig.h"
 
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 #include "kopetecontact.h"
 #include "kopeteview.h"
 
