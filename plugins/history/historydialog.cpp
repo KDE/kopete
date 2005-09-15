@@ -158,6 +158,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 	connect(mMainWidget->searchLine, SIGNAL(textChanged(const QString&)), this, SLOT(slotSearchTextChanged(const QString&)));
 	connect(mMainWidget->searchErase, SIGNAL(clicked()), this, SLOT(slotSearchErase()));
 	connect(mMainWidget->contactComboBox, SIGNAL(activated(int)), this, SLOT(slotContactChanged(int)));
+	connect(mMainWidget->messageFilterBox, SIGNAL(activated(int)), this, SLOT(slotFilterChanged(int )));
 
 	resize(650, 700);
 	centerOnScreen(this);
@@ -339,37 +340,47 @@ void HistoryDialog::setMessages(QValueList<Kopete::Message> msgs)
 	// Populating HTML Part with messages
 	for ( it = msgs.begin(); it != msgs.end(); ++it )
 	{
-		resultHTML = "";
-
-		if (accountLabel.isEmpty() || accountLabel != (*it).from()->account()->accountLabel())
-		// If the message's account is new, just specify it to the user
+		if ( mMainWidget->messageFilterBox->currentItem() == 0
+			|| ( mMainWidget->messageFilterBox->currentItem() == 1 && (*it).direction() == Kopete::Message::Inbound )
+			|| ( mMainWidget->messageFilterBox->currentItem() == 2 && (*it).direction() == Kopete::Message::Outbound ) )
 		{
-			if (!accountLabel.isEmpty())
-				resultHTML += "<br/><br/><br/>";
-			resultHTML += "<b><font color=\"blue\">" + (*it).from()->account()->accountLabel() + "</font></b><br/>";
-		}
-		accountLabel = (*it).from()->account()->accountLabel();
-
-		QString body = (*it).parsedBody();
-
-		if (!mMainWidget->searchLine->text().isEmpty())
-		// If there is a search, then we hightlight the keywords
-		{
-			body = body.replace(mMainWidget->searchLine->text(), "<span style=\"background-color:yellow\">" + mMainWidget->searchLine->text() + "</span>", false);
-		}
+			resultHTML = "";
 	
-		resultHTML += "(<b>" + (*it).timestamp().time().toString() + "</b>) "
-				   + ((*it).direction() == Kopete::Message::Outbound ?
-								"<font color=\"navy\"><b>&gt;</b></font> "
-								: "<font color=\"orange\"><b>&lt;</b></font> ")
-				   + body + "<br/>";
-
-		newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
-		newNode.setAttribute(QString::fromLatin1("dir"), dir);
-		newNode.setInnerHTML(resultHTML);
-
-		mHtmlPart->htmlDocument().body().appendChild(newNode);
+			if (accountLabel.isEmpty() || accountLabel != (*it).from()->account()->accountLabel())
+			// If the message's account is new, just specify it to the user
+			{
+				if (!accountLabel.isEmpty())
+					resultHTML += "<br/><br/><br/>";
+				resultHTML += "<b><font color=\"blue\">" + (*it).from()->account()->accountLabel() + "</font></b><br/>";
+			}
+			accountLabel = (*it).from()->account()->accountLabel();
+	
+			QString body = (*it).parsedBody();
+	
+			if (!mMainWidget->searchLine->text().isEmpty())
+			// If there is a search, then we hightlight the keywords
+			{
+				body = body.replace(mMainWidget->searchLine->text(), "<span style=\"background-color:yellow\">" + mMainWidget->searchLine->text() + "</span>", false);
+			}
+		
+			resultHTML += "(<b>" + (*it).timestamp().time().toString() + "</b>) "
+					+ ((*it).direction() == Kopete::Message::Outbound ?
+									"<font color=\"navy\"><b>&gt;</b></font> "
+									: "<font color=\"orange\"><b>&lt;</b></font> ")
+					+ body + "<br/>";
+	
+			newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
+			newNode.setAttribute(QString::fromLatin1("dir"), dir);
+			newNode.setInnerHTML(resultHTML);
+	
+			mHtmlPart->htmlDocument().body().appendChild(newNode);
+		}
 	}
+}
+
+void HistoryDialog::slotFilterChanged(int index)
+{
+	dateSelected(mMainWidget->dateListView->currentItem());
 }
 
 void HistoryDialog::slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args*/)
