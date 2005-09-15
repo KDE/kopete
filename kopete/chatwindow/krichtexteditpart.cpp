@@ -93,9 +93,11 @@ void KopeteRichTextEditPart::slotSetRichTextEnabled( bool enable )
 
 	// Spellchecking disabled when using rich text because the
 	// text we were getting from widget was coloured HTML!
+#warning spellchecker crash in kde4
+#if 0	
 	editor->setCheckSpellingEnabled( !richTextEnabled() );
 	checkSpelling->setEnabled( !richTextEnabled() );
-
+#endif
 	//Enable / disable buttons
 	updateActions();
 }
