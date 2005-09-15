@@ -242,7 +242,7 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 {
 	/*kdDebug( 14010 ) << "Protocol::deserialize: protocol " <<
 		pluginId() << ": deserializing " << metaContact->displayName() << endl;*/
-
+	
 	QMap<QString, QStringList> serializedData;
 	QMap<QString, QStringList::Iterator> serializedDataIterators;
 	QMap<QString, QString>::ConstIterator it;
@@ -258,12 +258,26 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 	for( uint i = 0; i < count ; i++ )
 	{
 		QMap<QString, QString> sd;
+#warning  write this properly
+#if 0	
 		QMap<QString, QStringList::Iterator>::Iterator serializedDataIt;
 		for( serializedDataIt = serializedDataIterators.begin(); serializedDataIt != serializedDataIterators.end(); ++serializedDataIt )
 		{
 			sd[ serializedDataIt.key() ] = *( serializedDataIt.data() );
 			++( serializedDataIt.data() );
 		}
+		
+#else
+		QMap<QString, QStringList>::Iterator serializedDataIt;
+		for( serializedDataIt = serializedData.begin(); serializedDataIt != serializedData.end(); ++serializedDataIt )
+		{
+			QStringList sl=serializedDataIt.data();
+			if(sl.count()>i)
+				sd[ serializedDataIt.key() ] = sl[i];
+		}
+	
+	
+#endif
 
 		const QString& accountId=sd[ QString::fromLatin1( "accountId" ) ];
 		// myself was allowed in the contactlist in old version of kopete.
@@ -285,6 +299,9 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 		//        book data in the deserializer yet, only when serializing.
 		//        - Martijn
 		QMap<QString, QString> ad;
+		
+
+#if 0
 		QStringList kabcFields = addressBookFields();
 		for( QStringList::Iterator fieldIt = kabcFields.begin(); fieldIt != kabcFields.end(); ++fieldIt )
 		{
@@ -297,7 +314,6 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 			else
 				ad[ *fieldIt ] = metaContact->addressBookField( this, QString::fromLatin1( "kopete" ), *fieldIt );
 		}
-
 		// Check if we have an account id. If not we're deserializing a Kopete 0.6 contact
 		// (our our config is corrupted). Pick the first available account there. This
 		// might not be what you want for corrupted accounts, but it's correct for people
@@ -318,6 +334,7 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 				return;
 			}
 		}
+#endif
 
 
 		Contact *c = deserializeContact( metaContact, sd, ad );
