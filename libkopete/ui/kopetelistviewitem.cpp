@@ -74,7 +74,14 @@ ComponentBase::~ComponentBase()
 }
 
 uint ComponentBase::components() { return d->components.count(); }
-Component *ComponentBase::component( uint n ) { return d->components.at( n ); }
+
+Component *ComponentBase::component( uint n ) 
+{
+	if( n < components() )
+		return d->components.at( n );
+	return 0l;
+
+}
 
 Component *ComponentBase::componentAt( const QPoint &pt )
 {
