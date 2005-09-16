@@ -119,10 +119,11 @@ void AddAccountWizard::back()
 
 void AddAccountWizard::next()
 {
-	if (currentPage() == m_selectService)
+	if ( currentPage() == m_selectService &&
+		   ( m_selectService->protocolListView->selectedItem() ) )
 	{
 		QListViewItem *lvi = m_selectService->protocolListView->selectedItem();
-        
+
 		m_proto = dynamic_cast<Kopete::Protocol *>(Kopete::PluginManager::self()->loadPlugin(m_protocolItems[lvi]->pluginName()));
 		if (!m_proto)
 		{
