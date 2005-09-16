@@ -37,6 +37,7 @@
 #include "kopetemessageevent.h"
 #include "kopeteview.h"
 //#include "systemtray.h"
+#include "kopetegroup.h"
 
 #include "kopeteviewmanager.h"
 
@@ -247,9 +248,19 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
                     default:
                         event = QString::fromLatin1( "kopete_contact_incoming" );
                 }
-                KNotification *notify=KNotification::event(msg.from()->metaContact() , event,
+				KNotification::ContextList contexts;
+				Kopete::MetaContact *mc= msg.from()->metaContact();
+				if(mc)
+				{
+					contexts.append( qMakePair( QString::fromLatin1("metacontact") , mc->metaContactId()) );
+					foreach( Kopete::Group *g , mc->groups() )
+					{
+						contexts.append( qMakePair( QString::fromLatin1("group") , QString::number(g->groupId())) );
+					}
+				} 
+                KNotification *notify=KNotification::event( event,
                                         body.arg( Q3StyleSheet::escape(msgFrom), Q3StyleSheet::escape(msgText) ),
-                                        QPixmap(), w, QStringList( i18n( "View" ) ) );
+                                        QPixmap(), w, QStringList( i18n( "View" ) ) , contexts );
 
                 connect(notify,SIGNAL(activated(unsigned int )), const_cast<Kopete::Contact*>(msg.from()) , SLOT(execute()) );
             }

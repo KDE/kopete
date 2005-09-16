@@ -19,7 +19,6 @@
 #include "knotification.h"
 
 #include <kapplication.h>
-#include <knotifyclient.h>
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kiconloader.h>
@@ -44,6 +43,7 @@
 #include <qtabwidget.h>
 
 
+#include <knotifyclient.h> //TODO
 
 //TODO,  make the KNotification aware of the systemtray.
 #include "kopeteuiglobal.h"
@@ -286,8 +286,8 @@ void KNotification::raiseWidget(QWidget *w)
 
 
 KNotification *KNotification::event( const QString& message , const QString& text,
-			const QPixmap& pixmap, QWidget *widget,
-			const QStringList &actions, unsigned int flags)
+			const QPixmap& pixmap, QWidget *widget, const QStringList &actions,
+			ContextList contexts, unsigned int flags)
 {
 	/* NOTE:  this function still use the KNotifyClient,
 	 *        in the future (KDE4) all the function of the knotifyclient will be moved there.
@@ -353,7 +353,8 @@ KNotification *KNotification::userEvent( const QString& text, const QPixmap& pix
 	 *        in the futur (KDE4) all the function of the knotifyclient will be moved there.
 	 *  Some code of this function fome from the old KNotify deamon
 	 */
-
+	
+	//TODO: handle contexts
 
 	KNotification *notify=new KNotification(widget);
 	notify->d->widget=widget;
@@ -397,10 +398,13 @@ KNotification *KNotification::userEvent( const QString& text, const QPixmap& pix
 
 
 
+#if 0
+
 /* This code is there before i find a great way to perform context-dependent notifications
  * in a way independent of kopete.
  *   i'm in fact still using the Will's old code.
  */
+
 
 
 #include "kopeteeventpresentation.h"
@@ -488,33 +492,7 @@ static KNotification *performCustomNotifications( QWidget *widget, Kopete::MetaC
 	return n;
 }
 
-
-
-
-KNotification *KNotification::event( Kopete::MetaContact *mc, const QString& message ,
-			const QString& text, const QPixmap& pixmap, QWidget *widget,
-			const QStringList &actions, unsigned int flags)
-{
-	if (message.isEmpty()) return 0;
-
-	bool suppress = false;
-	KNotification *n=performCustomNotifications( widget, mc, message, suppress);
-
-	if ( suppress )
-	{
-		//kdDebug( 14000 ) << "suppressing common notifications" << endl;
-		return n; // custom notifications don't create a single unique id
-	}
-	else
-	{
-		//kdDebug( 14000 ) << "carrying out common notifications" << endl;
-		return event(  message, text, pixmap, widget , actions, flags);
-	}
-}
-
-
-
-
+#endif
 
 #include "knotification.moc"
 

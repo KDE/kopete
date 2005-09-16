@@ -66,6 +66,7 @@
 #include "kopetecontact.h"
 #include "kabcpersistence.h"
 
+
 #include <memory>
 
 using namespace Kopete::UI;
@@ -136,7 +137,7 @@ class KopeteMetaContactLVI::Private
 {
 public:
 	Private() : metaContactIcon( 0L ), nameText( 0L ), extraText( 0L ), contactIconBox( 0L ),
-	            currentMode( -1 ), currentIconMode( -1 ) {}
+	            currentMode( -10 ), currentIconMode( -10 ) {}
 	ListView::ImageComponent *metaContactIcon;
 	ListView::DisplayNameComponent *nameText;
 	ListView::DisplayNameComponent *extraText;
@@ -416,7 +417,16 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 				}
 				// if none of the above were true, t will still be noChange
 			}
-
+			
+			KNotification::ContextList contexts;
+			if(t!=noEvent && t!=noChange)
+			{
+				contexts.append( qMakePair( QString::fromLatin1("metacontact") , m_metaContact->metaContactId()) );
+				foreach( Kopete::Group *g , m_metaContact->groups() )
+				{
+					contexts.append( qMakePair( QString::fromLatin1("group") , QString::number(g->groupId())) );
+				} 
+			}
 			// now issue the appropriate notification
 			switch ( t )
 			{
@@ -424,16 +434,15 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 			case noChange:
 				break;
 			case signedIn:
-				// fixme: do the events correctly
-				connect(KNotification::event(m_metaContact, QString("kopete_contact_online"), text)/*, m_metaContact->photo(), KopeteSystemTray::systemTray(), i18n( "Chat" )) */,
+				connect(KNotification::event( QString("kopete_contact_online"), text, QPixmap(m_metaContact->photo()), 0l /*KopeteSystemTray::systemTray()*/, QStringList(i18n( "Chat" )), contexts ) ,
 						SIGNAL(activated(unsigned int )) , this, SLOT( execute() ) );
 				break;
 			case changedStatus:
-				connect(KNotification::event(m_metaContact, QString("kopete_contact_status_change"), text)/*, m_metaContact->photo(), KopeteSystemTray::systemTray(), i18n( "Chat" )) */ ,
+				connect(KNotification::event( QString("kopete_contact_status_change"), text, QPixmap(m_metaContact->photo()), 0l  /*KopeteSystemTray::systemTray() */, QStringList(i18n( "Chat" )), contexts)  ,
 						SIGNAL(activated(unsigned int )) , this, SLOT( execute() ));
 				break;
 			case signedOut:
-				KNotification::event(m_metaContact, QString("kopete_contact_offline"), text);//, m_metaContact->photo(), KopeteSystemTray::systemTray());
+				KNotification::event( QString("kopete_contact_offline"), text, QPixmap(m_metaContact->photo()), KopeteSystemTray::systemTray() , QStringList(), contexts);
 				break;
 			}
 		}

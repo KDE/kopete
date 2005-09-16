@@ -25,9 +25,9 @@
 #include <qobject.h>
 #include <qstringlist.h>
 #include <kdemacros.h>
+#include <qpair.h>
 
 class QWidget;
-namespace Kopete { class MetaContact; }
 
 /**
  * KNotification is used to notify some event to the user.
@@ -48,13 +48,34 @@ namespace Kopete { class MetaContact; }
  * use the static function event() to fire an event
  *
  * the returned KNotification pointer may be used to connect signals or slots
- *
+ * 
  * @author Olivier Goffart  <ogoffart @ kde.org>
  */
 class KDE_EXPORT KNotification : public QObject
 {
         Q_OBJECT
 public:
+	/**
+	 * Sometimes, the user may want different notification for the same event, 
+	 * depending the source of the event.  Example, you wan to be notified for mails
+	 * that arrives in your folder "personal inbox" but not for those in "spam" folder
+	 * 
+	 * A notification context is a pair of two strings. 
+	 * The first string is a key from what the context is.  example "group" or 
+	 * "filter" (not translated).
+	 * The second is the id of the context. In our example, the group id or the 
+	 * filter id in the applications.
+	 * Theses string are the one present in the config file, and are in theory not 
+	 * shown in the user interface
+	 * 
+	 * the order of contexts in the list is is importent, most importent context 
+	 * should be placed first
+	 * 
+	 * @todo  contexts doesn't works yet
+	 * 
+	 * @see event
+	 */
+	typedef QList< QPair<QString,QString> > ContextList;
 
 	enum NotificationFlags
 	{
@@ -62,6 +83,7 @@ public:
 		 * When the notification is activated, raise the notification's widget.
 		 *
 		 * This will change the desktop, raise the window, and switch to the tab.
+		 * @todo  doesn't works yet
 		 */
 		RaiseWidgetOnActivation=0x01,
 
@@ -75,6 +97,7 @@ public:
 		 * 
 		 * If the widget is already activated when the notification occurs, the
 		 * notification will be closed after a small timeout.
+		 * @todo doesn't works yet
 		 */
 		CloseWhenWidgetActivated=0x03
 	};
@@ -174,11 +197,13 @@ public:
 	 * @param pixmap is a picture which may be shown in the popup.  
 	 * @param widget is a widget where the notification reports to
 	 * @param actions is a list of action texts.
+	 * @param contexts is the lists of contexts
 	 * @param flags is a bitmask of NotificationsFlags  
 	 */
 	static KNotification *event( const QString& eventId , const QString& text=QString::null,
 			const QPixmap& pixmap=QPixmap(), QWidget *widget=0L,
-			const QStringList &actions=QStringList(), unsigned int flags=CloseOnTimeout);
+			const QStringList &actions=QStringList(), ContextList contexts=ContextList() ,
+			unsigned int flags=CloseOnTimeout);
 
 
 	/**
@@ -194,15 +219,6 @@ public:
 				QWidget *widget, QStringList actions,int present, int level,
 				const QString &sound, const QString &file,
 				const QString &commandline, unsigned int flags);
-
-
-
-	/**
-	* @todo find a proper way to do context-dependent notifications
-	*/
-	static KNotification *event( Kopete::MetaContact *mc, const QString& eventId , const QString& text=QString::null,
-								 const QPixmap& pixmap=QPixmap(), QWidget *widget=0L,
-								 const QStringList &actions=QStringList(),unsigned int flags=CloseOnTimeout);
 
 };
 

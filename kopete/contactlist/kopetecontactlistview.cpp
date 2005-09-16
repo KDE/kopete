@@ -757,6 +757,8 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 			window->factory()->container( "contactlist_popup", window ) );
 		if ( popup )
 		{
+			
+			kdDebug() << k_funcinfo << "???????" << popup << endl;
 			if ( popup->title( 0 ).isNull() )
 				popup->insertTitle( i18n( "Kopete" ), 0, 0 );
 
