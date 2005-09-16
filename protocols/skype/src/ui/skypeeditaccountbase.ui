@@ -20,6 +20,9 @@
             <verstretch>0</verstretch>
         </sizepolicy>
     </property>
+    <property name="caption">
+        <string>SkypeEditAccountBase</string>
+    </property>
     <property name="toolTip" stdset="0">
         <string>If you have problems with arts and sound, you can use this to turn off arts for the call only. There are scripts duing this bundled with the kopete plugin (somewhere in you kde_folder/share/apps/kopete_skype) you can use.</string>
     </property>
@@ -422,7 +425,7 @@
                             <string>Authorization</string>
                         </property>
                         <property name="whatsThis" stdset="0">
-                            <string>Each application that wants to use skype must tell a name to it and user is asked weather to allow such application to access it.&lt;br/&gt;
+                            <string>Each application that wants to use skype must tell a name to it and user is asked weather to allow such application to access it.&lt;br&gt;
 By default, kopete provides kopete as its name, but if you suspect another application that it access skype with this name, you can set another and disallow applications that tries to log in as kopete.</string>
                         </property>
                         <vbox>
@@ -435,6 +438,9 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                                 </property>
                                 <property name="text">
                                     <string>&amp;Non-standard authorization</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+N</string>
                                 </property>
                             </widget>
                             <widget class="QLineEdit">
@@ -461,7 +467,7 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                             <string>What bus do you want to use</string>
                         </property>
                         <property name="whatsThis" stdset="0">
-                            <string>What bus do you want to use to connect to Skyoe?&lt;br/&gt;Session: Your own, other people can not get to that. (use --use-session-dbus to start skype on that bus)&lt;br/&gt;System: This one is shared by all people on the same computer. Oddly, this one is used by default by Skype.&lt;br/&gt;ou have to use the same as uses Skype</string>
+				<string>What bus do you want to use to connect to Skype.&lt;br&gt;Session: Your own, other people can not get to that. (use --use-session-dbus to start skype on that bus).&lt;br&gt;System: This one is shared by all people on the same computer. Oddly, this one is used by default by Skype.it.&lt;br&gt;You have to use the same as uses Skype</string>
                         </property>
                         <hbox>
                             <property name="name">
