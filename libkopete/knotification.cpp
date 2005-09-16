@@ -1,6 +1,15 @@
 /* This file is part of the KDE libraries
    Copyright (C) 2005 Olivier Goffart <ogoffart @ kde.org>
 
+   code from KNotify/KNotifyClient
+   Copyright (c) 1997 Christian Esken (esken@kde.org)
+                 2000 Charles Samuels (charles@kde.org)
+                 2000 Stefan Schimanski (1Stein@gmx.de)
+                 2000 Matthias Ettrich (ettrich@kde.org)
+                 2000 Waldo Bastian <bastian@kde.org>
+                 2000-2003 Carsten Pfeiffer <pfeiffer@kde.org>
+                 2005 Allan Sandfeld Jensen <kde@carewolf.com>
+
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
    License version 2 as published by the Free Software Foundation.
@@ -18,7 +27,6 @@
 
 #include "knotification.h"
 
-#include <kapplication.h>
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kiconloader.h>
@@ -41,9 +49,9 @@
 #include <qlabel.h>
 #include <qtimer.h>
 #include <qtabwidget.h>
-
-
-#include <knotifyclient.h> //TODO
+#include <kapplication.h>
+#include <qfile.h>
+#include <qtextstream.h>
 
 //TODO,  make the KNotification aware of the systemtray.
 #include "kopeteuiglobal.h"
@@ -80,10 +88,13 @@ void KNotification::notifyByExecute(const QString &command, const QString& event
 							  const QString& fromApp, const QString& text,
 							  int winId, int eventId)
 {
-	if (!command.isEmpty())
-	{
-	// kdDebug() << "executing command '" << command << "'" << endl;
+	if (!command.isEmpty()) {
+// 	kdDebug() << "executing command '" << command << "'" << endl;
+#if 0
+		QHash<QChar,QString> subst;
+#else
 		QMap<QChar,QString> subst;
+#endif
 		subst.insert( 'e', event );
 		subst.insert( 'a', fromApp );
 		subst.insert( 's', text );
@@ -97,9 +108,9 @@ void KNotification::notifyByExecute(const QString &command, const QString& event
 		p.setUseShell(true);
 		p << execLine;
 		p.start(KProcess::DontCare);
-//		return true;
+// 		return true;
 	}
-	//return false;
+// 	return false;
 }
 
 
@@ -118,17 +129,17 @@ void KNotification::notifyByMessagebox()
 		switch( d->level )
 		{
 			default:
-			case KNotifyClient::Notification:
-				KMessageBox::informationWId( winId, d->text, i18n( "Notification" ) );
+			case Notification:
+				KMessageBox::informationWId( winId, d->text, i18n( "Notification" ) , 0 , false );
 				break;
-			case KNotifyClient::Warning:
-				KMessageBox::sorryWId( winId, d->text, i18n( "Warning" ) );
+			case Warning:
+				KMessageBox::sorryWId( winId, d->text, i18n( "Warning" ) , false );
 				break;
-			case KNotifyClient::Error:
-				KMessageBox::errorWId( winId, d->text, i18n( "Error" ) );
+			case Error:
+				KMessageBox::errorWId( winId, d->text, i18n( "Error" ) , false );
 				break;
-			case KNotifyClient::Catastrophe:
-				KMessageBox::errorWId( winId, d->text, i18n( "Fatal" ) );
+			case Catastrophe:
+				KMessageBox::errorWId( winId, d->text, i18n( "Catastrophe!" ) , false );
 				break;
 		}
 	}
@@ -139,17 +150,17 @@ void KNotification::notifyByMessagebox()
 		switch( d->level )
 		{
 			default:
-			case KNotifyClient::Notification:
+			case Notification:
 				result = KMessageBox::questionYesNo(d->widget, d->text, i18n( "Notification" ), action, KStdGuiItem::cancel(), QString::null, false );
 				break;
-			case KNotifyClient::Warning:
+			case Warning:
 				result = KMessageBox::warningYesNo( d->widget, d->text, i18n( "Warning" ), action, KStdGuiItem::cancel(), QString::null, false );
 				break;
-			case KNotifyClient::Error:
+			case Error:
 				result = KMessageBox::warningYesNo( d->widget, d->text, i18n( "Error" ), action, KStdGuiItem::cancel(), QString::null, false );
 				break;
-			case KNotifyClient::Catastrophe:
-				result = KMessageBox::warningYesNo( d->widget, d->text, i18n( "Fatal" ), action, KStdGuiItem::cancel(), QString::null, false );
+			case Catastrophe:
+				result = KMessageBox::warningYesNo( d->widget, d->text, i18n( "Catastrophe!" ), action, KStdGuiItem::cancel(), QString::null, false );
 				break;
 		}
 		if(result==KMessageBox::Yes && _this)
@@ -163,9 +174,9 @@ void KNotification::notifyByMessagebox()
 
 void KNotification::notifyByPassivePopup(const QPixmap &pix )
 {
-	QString appName = QString::fromAscii( KNotifyClient::instance()->instanceName() );
+	QString appName = QString::fromAscii( kapp->instanceName() );
 	KIconLoader iconLoader( appName );
-	KConfig eventsFile( QString::fromAscii( KNotifyClient::instance()->instanceName()+"/eventsrc" ), true, false, "data");
+	KConfig eventsFile( QString::fromAscii( kapp->instanceName()+"/eventsrc" ), true, false, "data");
 	KConfigGroup config( &eventsFile, "!Global!" );
 	QString iconName = config.readEntry( "IconName", appName );
 	QPixmap icon = iconLoader.loadIcon( iconName, KIcon::Small );
@@ -228,6 +239,137 @@ void KNotification::notifyByPassivePopup(const QPixmap &pix )
 
 }
 
+
+
+bool KNotification::notifyByLogfile(const QString &text, const QString &file)
+{
+    // ignore empty messages
+	if ( text.isEmpty() )
+		return true;
+
+    // open file in append mode
+	QFile logFile(file);
+	if ( !logFile.open(IO_WriteOnly | IO_Append) )
+		return false;
+
+    // append msg
+	QTextStream strm( &logFile );
+	strm << "- KNotify " << QDateTime::currentDateTime().toString() << ": ";
+	strm << text << endl;
+
+    // close file
+	logFile.close();
+	return true;
+}
+
+bool KNotification::notifyByStderr(const QString &text)
+{
+    // ignore empty messages
+	if ( text.isEmpty() )
+		return true;
+
+    // open stderr for output
+	QTextStream strm( stderr, IO_WriteOnly );
+
+    // output msg
+	strm << "KNotify " << QDateTime::currentDateTime().toString() << ": ";
+	strm << text << endl;
+
+	return true;
+}
+
+bool KNotification::notifyByTaskbar( WId win )
+{
+	if( win == 0 )
+		return false;
+	KWin::demandAttention( win );
+	return true;
+}
+
+
+
+bool KNotification::notifyBySound( const QString &sound, const QString &appname, int eventId )
+{
+#if 0 //TODO
+	if (sound.isEmpty()) {
+		soundFinished( eventId, NoSoundFile );
+		return false;
+	}
+
+	bool external = d->useExternal && !d->externalPlayer.isEmpty();
+    // get file name
+	QString soundFile(sound);
+	if ( QFileInfo(sound).isRelative() )
+	{
+		QString search = QString("%1/sounds/%2").arg(appname).arg(sound);
+		soundFile = KGlobal::instance()->dirs()->findResource("data", search);
+		if ( soundFile.isEmpty() )
+			soundFile = locate( "sound", sound );
+	}
+	if ( soundFile.isEmpty() )
+	{
+		soundFinished( eventId, NoSoundFile );
+		return false;
+	}
+
+
+//     kdDebug() << "KNotify::notifyBySound - trying to play file " << soundFile << endl;
+
+	if (!external) {
+        //If we disabled audio, just return,
+		if (!d->useKDEMM)
+		{
+			soundFinished( eventId, NoSoundSupport );
+			return false;
+		}
+
+		KURL soundURL;
+		soundURL.setPath(soundFile);
+#if defined(HAVE_AKODE)
+        if (d->player.state() != aKode::Player::Open) {
+	soundFinished( eventId, PlayerBusy );
+	return false;
+		}
+
+		if (d->player.load(soundFile.toLocal8Bit())) {
+			d->player.play();
+			d->akodePlayerEventId = eventId;
+			return true;
+		}
+#endif
+        soundFinished( eventId, NoSoundSupport );
+        return false;
+//	return KDE::Multimedia::Factory::self()->playSoundEvent(soundFile);
+
+	} else if(!d->externalPlayer.isEmpty()) {
+        // use an external player to play the sound
+		KProcess *proc = d->externalPlayerProc;
+		if (!proc)
+		{
+			proc = d->externalPlayerProc = new KProcess;
+			connect( proc, SIGNAL( processExited( KProcess * )),
+					 SLOT( slotPlayerProcessExited( KProcess * )));
+		}
+		if (proc->isRunning())
+		{
+			soundFinished( eventId, PlayerBusy );
+			return false; // Skip
+		}
+		proc->clearArguments();
+		(*proc) << d->externalPlayer << QFile::encodeName( soundFile );
+		d->externalPlayerEventId = eventId;
+		proc->start(KProcess::NotifyOnExit);
+		return true;
+	}
+
+	soundFinished( eventId, Unknown );
+#endif
+	return false;
+}
+
+
+
+
 void KNotification::slotPopupLinkClicked(const QString &adr)
 {
 	unsigned int action=adr.toUInt();
@@ -236,6 +378,8 @@ void KNotification::slotPopupLinkClicked(const QString &adr)
 
 	activate(action);
 }
+
+
 
 void KNotification::activate(unsigned int action)
 {
@@ -284,7 +428,6 @@ void KNotification::raiseWidget(QWidget *w)
 
 
 
-
 KNotification *KNotification::event( const QString& message , const QString& text,
 			const QPixmap& pixmap, QWidget *widget, const QStringList &actions,
 			ContextList contexts, unsigned int flags)
@@ -293,27 +436,29 @@ KNotification *KNotification::event( const QString& message , const QString& tex
 	 *        in the future (KDE4) all the function of the knotifyclient will be moved there.
 	 *  Some code here is derived from the old KNotify deamon
 	 */
+	
+	//todo: handle context
 
-	int level=KNotifyClient::Default;
+	int level=Default;
 	QString sound;
 	QString file;
 	QString commandline;
 
 	// get config file
-	KConfig eventsFile( QString::fromAscii( KNotifyClient::instance()->instanceName()+"/eventsrc" ), true, false, "data");
+	KConfig eventsFile( QString::fromAscii( kapp->instanceName()+"/eventsrc" ), true, false, "data");
 	eventsFile.setGroup(message);
 
-	KConfig configFile( QString::fromAscii( KNotifyClient::instance()->instanceName()+".eventsrc" ), true, false);
+	KConfig configFile( QString::fromAscii( kapp->instanceName()+".eventsrc" ), true, false);
 	configFile.setGroup(message);
 
-	int present=KNotifyClient::getPresentation(message);
+	int present=getPresentation(message);
 	if(present==-1)
-		present=KNotifyClient::getDefaultPresentation(message);
+		present=getDefaultPresentation(message);
 	if(present==-1)
 		present=0;
 
 	// get sound file name
-	if( present & KNotifyClient::Sound ) {
+	if( present & Sound ) {
 		QString theSound = configFile.readPathEntry( "soundfile" );
 		if ( theSound.isEmpty() )
 			theSound = eventsFile.readPathEntry( "default_sound" );
@@ -322,7 +467,7 @@ KNotification *KNotification::event( const QString& message , const QString& tex
 	}
 
 	// get log file name
-	if( present & KNotifyClient::Logfile ) {
+	if( present & Logfile ) {
 		QString theFile = configFile.readPathEntry( "logfile" );
 		if ( theFile.isEmpty() )
 			theFile = eventsFile.readPathEntry( "default_logfile" );
@@ -331,30 +476,15 @@ KNotification *KNotification::event( const QString& message , const QString& tex
 	}
 
 	// get default event level
-	if( present & KNotifyClient::Messagebox )
+	if( present & Messagebox )
 		level = eventsFile.readNumEntry( "level", 0 );
 
 	// get command line
-	if (present & KNotifyClient::Execute ) {
+	if (present & Execute ) {
 		commandline = configFile.readPathEntry( "commandline" );
 		if ( commandline.isEmpty() )
 			commandline = eventsFile.readPathEntry( "default_commandline" );
 	}
-
-	return userEvent( text, pixmap, widget, actions,  present , level, sound, file, commandline, flags );
-}
-
-KNotification *KNotification::userEvent( const QString& text, const QPixmap& pixmap, QWidget *widget,
-				QStringList actions,int present, int level, const QString &sound, const QString &file,
-				const QString &commandline, unsigned int flags)
-{
-
-	/* NOTE:  this function still use the KNotifyClient,
-	 *        in the futur (KDE4) all the function of the knotifyclient will be moved there.
-	 *  Some code of this function fome from the old KNotify deamon
-	 */
-	
-	//TODO: handle contexts
 
 	KNotification *notify=new KNotification(widget);
 	notify->d->widget=widget;
@@ -363,21 +493,11 @@ KNotification *KNotification::userEvent( const QString& text, const QPixmap& pix
 	notify->d->level=level;
 	WId winId=widget ? widget->topLevelWidget()->winId()  : 0;
 
-
-	//we will catch some event that will not be fired by the old deamon
-
-
-	//we remove presentation that has been already be played, and we fire the event in the old way
-
-
-	KNotifyClient::userEvent(winId,text,present & ~( KNotifyClient::PassivePopup|KNotifyClient::Messagebox|KNotifyClient::Execute),level,sound,file);
-
-
-	if ( present & KNotifyClient::PassivePopup )
+	if ( present & PassivePopup )
 	{
 		notify->notifyByPassivePopup( pixmap );
 	}
-	if ( present & KNotifyClient::Messagebox )
+	if ( present & Messagebox )
 	{
 		QTimer::singleShot(0,notify,SLOT(notifyByMessagebox()));
 	}
@@ -386,14 +506,34 @@ KNotification *KNotification::userEvent( const QString& text, const QPixmap& pix
 	{
 		QTimer::singleShot(6*1000, notify, SLOT(close()));
 	}
-	if ( present & KNotifyClient::Execute )
+	if ( present & Execute )
 	{
-		QString appname = QString::fromAscii( KNotifyClient::instance()->instanceName() );
+		QString appname = QString::fromAscii( kapp->instanceName() );
 		notify->notifyByExecute(commandline, QString::null,appname,text, winId, 0 );
 	}
+	
+	if ( present & Sound ) // && QFile(sound).isReadable()
+		notify->notifyBySound( sound, kapp->instanceName(), 0 );
+
+	if ( present & Logfile ) // && QFile(file).isWritable()
+		notify->notifyByLogfile( text, file );
+	
+	if ( present & Stderr )
+		notify->notifyByStderr( text );
+
+	if ( present & Taskbar )
+		notify->notifyByTaskbar( checkWinId( kapp->instanceName(), winId ));
+	
+	
+#if 0  //TODO
+	QByteArray qbd;
+	QDataStream ds(&qbd, IO_WriteOnly);
+	ds << event << fromApp << text << sound << file << present << level
+			<< winId << eventId;
+	emitDCOPSignal("notifySignal(QString,QString,QString,QString,QString,int,int,int,int)", qbd);
+#endif
 
 	return notify;
-
 }
 
 
@@ -492,7 +632,74 @@ static KNotification *performCustomNotifications( QWidget *widget, Kopete::MetaC
 	return n;
 }
 
+
 #endif
+
+
+
+int KNotification::getPresentation(const QString &eventname)
+{
+	int present;
+	if (eventname.isEmpty()) return Default;
+
+	KConfig eventsfile( kapp->instanceName()+".eventsrc", true, false);
+	eventsfile.setGroup(eventname);
+
+	present=eventsfile.readNumEntry("presentation", -1);
+
+	return present;
+}
+
+QString KNotification::getFile(const QString &eventname, int present)
+{
+	if (eventname.isEmpty()) return QString::null;
+
+	KConfig eventsfile( kapp->instanceName()+".eventsrc", true, false);
+	eventsfile.setGroup(eventname);
+
+	switch (present)
+	{
+		case (Sound):
+			return eventsfile.readPathEntry("soundfile");
+		case (Logfile):
+			return eventsfile.readPathEntry("logfile");
+	}
+
+	return QString::null;
+}
+
+int KNotification::getDefaultPresentation(const QString &eventname)
+{
+	int present;
+	if (eventname.isEmpty()) return Default;
+
+	KConfig eventsfile( kapp->instanceName()+"/eventsrc", true, false, "data");
+	eventsfile.setGroup(eventname);
+
+	present=eventsfile.readNumEntry("default_presentation", -1);
+
+	return present;
+}
+
+QString KNotification::getDefaultFile(const QString &eventname, int present)
+{
+	if (eventname.isEmpty()) return QString::null;
+
+	KConfig eventsfile( kapp->instanceName()+"/eventsrc", true, false, "data");
+	eventsfile.setGroup(eventname);
+
+	switch (present)
+	{
+		case (Sound):
+			return eventsfile.readPathEntry("default_sound");
+		case (Logfile):
+			return eventsfile.readPathEntry("default_logfile");
+	}
+
+	return QString::null;
+}
+
+
 
 #include "knotification.moc"
 

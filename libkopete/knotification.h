@@ -176,7 +176,10 @@ private slots:
 	void notifyByPassivePopup(const QPixmap &pix);
 	void notifyByExecute(const QString &command, const QString& event,const QString& fromApp, const QString& text,	int winId, int eventId);
 	void slotPopupLinkClicked(const QString &);
-
+	bool notifyBySound(const QString &sound, const QString &appname, int eventId);
+	bool notifyByLogfile(const QString &text, const QString &file);
+	bool notifyByStderr(const QString &text);
+	bool notifyByTaskbar( WId winId );
 
 public:
 	/**
@@ -205,21 +208,74 @@ public:
 			const QStringList &actions=QStringList(), ContextList contexts=ContextList() ,
 			unsigned int flags=CloseOnTimeout);
 
+public:	//from KNotifyClient
+    /**
+     * Describes the notification method.
+     */
+	enum {
+		Default = -1,
+		None = 0,
+		Sound = 1,
+		Messagebox = 2,
+		Logfile = 4,
+		Stderr = 8,
+		PassivePopup = 16, ///< @since 3.1
+		Execute = 32,      ///< @since 3.1
+		Taskbar = 64       ///< @since 3.2
+	};
 
 	/**
-	 * @brief emit a custom event
-	 *
-	 * @param text is the text of the notification to show in the popup.
-	 * @param pixmap is a picture which may be shown in the popup
-	 * @param widget is a widget where the notification raports to
-	 * @param actions is a list of actions text.
-	 * ...
+	 * Describes the level of the error.
 	 */
-	static KNotification *userEvent( const QString& text, const QPixmap& pixmap,
-				QWidget *widget, QStringList actions,int present, int level,
-				const QString &sound, const QString &file,
-				const QString &commandline, unsigned int flags);
+	enum {
+		Notification=1,
+		Warning=2,
+		Error=4,
+		Catastrophe=8
+	};
+	
+	/**
+	 * Gets the presentation associated with a certain event name
+	 * Remeber that they may be ORed:
+	 * \code
+	 * if (present & KNotification::Sound) { [Yes, sound is a default] }	
+	 * \endcode
+	 * @param eventname the event name to check
+	 * @return the presentation methods
+	 */
+	static int getPresentation(const QString &eventname);
+	/**
+	 * Gets the default file associated with a certain event name
+	 * The control panel module will list all the event names
+	 * This has the potential for being slow.
+	 * @param eventname the name of the event
+	 * @param present the presentation method
+	 * @return the associated file. Can be QString::null if not found.
+	 */
+	static QString getFile(const QString &eventname, int present);
+	
+	/**
+	 * Gets the default presentation for the event of this program.
+	 * Remember that the Presentation may be ORed.  Try this:
+	 * \code
+	 * if (present & KNotifyClient::Sound) { [Yes, sound is a default] }
+	 * \endcode
+	 * @return the presentation methods
+	 */
+	static int getDefaultPresentation(const QString &eventname);
+	
+	/**
+	 * Gets the default File for the event of this program.
+	 * It gets it in relation to present.
+	 * Some events don't apply to this function ("Message Box")
+	 * Some do (Sound)
+	 * @param eventname the name of the event
+	 * @param present the presentation method
+	 * @return the default file. Can be QString::null if not found.
+	 */
+	static QString getDefaultFile(const QString &eventname, int present);
 
+			  
 };
 
 
