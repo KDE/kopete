@@ -1,0 +1,13 @@
+
+Kopete Skype
+This adds Skype protocol support to Kopete.
+
+To install it, run theese commands:
+
+./configure
+make
+su
+<enter root password>
+make install
+
+For more information, visit "http://extragear.kde.org/apps/kopete skype/"
