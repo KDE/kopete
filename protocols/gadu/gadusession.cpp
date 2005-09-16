@@ -705,7 +705,7 @@ GaduSession::checkDescriptor()
 	switch( event->type ) {
 		case GG_EVENT_MSG:
 			kdDebug(14100) << "incoming message:class:" << event->event.msg.msgclass << endl;
-			if ( event->event.msg.msgclass == GG_CLASS_CTCP ) {
+			if ( event->event.msg.msgclass & GG_CLASS_CTCP ) {
 				kdDebug( 14100 ) << "incomming ctcp " << endl;
 				// TODO: DCC CONNECTION
 				emit incomingCtcp( event->event.msg.sender );
