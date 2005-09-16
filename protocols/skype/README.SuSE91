@@ -1,0 +1,98 @@
+How to setup Skype suport for SuSE-Linux 9.1
+============================================
+
+Author: Heiko Schaefer <heiko@rangun.de>
+----------------------------------------
+
+SuSE Linux 9.1 is not officially supported for the use of the Skype-Kopete-Plugin.
+But with this small guide you can setup Kopete and Skype with a minimum effort.
+
+REQUIREMENTS
+============
+
+You need to download a bundle of packages in order to set up Skype support in
+Kopete:
+
+DBus:
+-----
+
+Download and install the following packages:
+ftp://ftp4.gwdg.de/linux/misc/suser-guru/rpm/packages/Libraries/dbus/dbus-0.22-1suse91.i686.rpm
+ftp://ftp4.gwdg.de/linux/misc/suser-guru/rpm/packages/Libraries/dbus/dbus-devel-0.22-1suse91.i686.rpm
+ftp://ftp4.gwdg.de/linux/misc/suser-guru/rpm/packages/Libraries/dbus/dbus-gtk-0.22-1suse91.i686.rpm
+ftp://ftp4.gwdg.de/linux/misc/suser-guru/rpm/packages/Libraries/dbus/dbus-qt-0.22-1suse91.i686.rpm
+
+Best way to do this is to get root and issue following command in the download directory:
+
+# rpm -i dbus-*.rpm --nodeps --force
+
+Skype:
+------
+
+Now download Skype. Go to 
+  http://www.skype.com/go/getskype-linux-qt32
+and
+  http://www.skype.com/go/getskype-linux-dynamic
+
+It sounds strange to download both, the rpm and tarball, but the RPM version has an error and later
+we want to replace the corrupt file with the one from the tarball. This way it is easier to keep
+Skype under control of RPM.
+
+First install the RPM as root:
+
+# rpm -i skype-1.2.0.11-suse.i586.rpm
+
+Afterwards unpack the tarball:
+
+# tar jxfv skype-1.2.0.11.tar.bz2
+
+Go into the 'skype-1.2.0.11' folder with
+
+# cd skype-1.2.0.11
+
+and copy the skype application to /usr/bin
+
+# cp ./skype /usr/bin
+
+Setting up DBus
+===============
+
+DBus can work in two modes. The 'session'- and the 'system'-mode. We use the 'session'-mode.
+After DBus is installed you must create a file in the '/opt/kde3/env' folder. Get root and 
+execute following commands:
+
+# cd /opt/kde3/env
+# touch dbus.sh
+# chmod 0755 dbus.sh
+
+then open the file dbus.sh with your favorite editor and paste following text into the file:
+
+## test for an existing bus daemon, just to be safe
+if test -z "$DBUS_SESSION_BUS_ADDRESS" ; then
+## if not found, launch a new one
+  eval `dbus-launch --sh-syntax --exit-with-session`
+fi
+
+Be sure not to have the DBus daemon startet in one of your shell startup files like
+
+.bash_profile
+.tcshrc
+.profile
+
+Save the file and restart your KDE-session. 
+You can test if the dbus-daemon is running by executing following command:
+
+# echo $DBUS_SESSION_BUS_ADDRESS
+
+This should print out something like: unix:abstract=/tmp/dbus-xxxxxxxxxx
+
+Compile and install the Skype-Kopete-Plugin
+===========================================
+
+Do this the usual way, i.e. in the 'kopete_skype' folder:
+
+# ./configure --prefix=`kde-config`
+# make
+# make install
+
+That's it. The Skype-Kopete-Plugin should work now properly.
