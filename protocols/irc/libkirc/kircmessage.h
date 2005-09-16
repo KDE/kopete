@@ -22,7 +22,7 @@
 
 #include "kdemacros.h"
 
-//#include <QList>
+//#include <QList> // From QStringList
 #include <QObject>
 #include <QSharedDataPointer>
 #include <QStringList>
@@ -40,8 +40,8 @@ class QTextCodec;
 namespace KIRC
 {
 
-class Engine;
 class MessagePrivate;
+class Socket;
 
 class Message
 	: public QObject
@@ -74,24 +74,6 @@ public:
 
 	static KIRC::Message parse(const QByteArray &message/*, Direction direction*/);
 
-	static QByteArray format(
-		const QByteArray &command,
-		const QByteArrayList &args = QByteArrayList(),
-		const QByteArray &suffix = QByteArray());
-
-	// temporary hack
-	static QByteArray format(
-		const QByteArray &command,
-		const QByteArray &arg,
-		const QByteArray &suffix)
-	{
-		QByteArrayList args;
-		args.append(arg);
-		return format(command, args, suffix);
-	}
-
-	static QByteArray formatCtcp(const QByteArray &ctcpMessage);
-
 	// low level quoting, message quoting
 	static QByteArray quote(const QByteArray &str);
 	static QByteArray unquote(const QByteArray &str);
@@ -112,6 +94,7 @@ private:
 public:
 	Message();
 	Message(const KIRC::Message &o);
+	~Message();
 
 	Message &operator = (const KIRC::Message &o);
 

@@ -18,7 +18,7 @@
 #ifndef KIRC_COMMAND_H
 #define KIRC_COMMAND_H
 
-#include <QObject>
+#include "kircmessage.h"
 
 namespace KIRC
 {
@@ -39,47 +39,50 @@ public:
 		Unknown = -1,
 		Unlimited = -2
 	};
+/*
+	typedef enum {
+		CHECK_CONNECTED = 0x01
+	} CheckFlag;
 
+	typdef QFlags<CheckFlag> CheckFlags;
+*/
 	Command(QObject *parent = 0);
+	~Command();
 
 public: // READ properties accessors.
-//	int min()
-//	int max()
-	QString help();
+//	int min() const;
+//	int max() const;
+	QString help() const;
 
 public slots: // WRITE properties accessors.
 //	Command &setMin();
 //	Command &setMax();
 	Command &setHelp(const QString &help);
 
-public:
-
-//	Command &setMinMax();
+public slots:
+//	Command &setMinMax(int minMax);
+//	Command &setMinMax(int min, int max);
 
 	/**
 	 * Attempt to send the message.
-	 * @return a not empty QStringList on errors or no slots connected.
-	 * 	The returned string list contains all the errors.
 	 */
-	virtual QStringList invoke(KIRC::Message &msg);
-
-	void error(QString &errorMessage);
+	virtual void invoke(KIRC::Message msg);
 
 signals:
-	void redirect(KIRC::Message &);
+	void redirect(KIRC::Message);
 
-private:
+protected:
 	/**
-	 * Check that the given message as the correct number of args
-	 * and do some message format checks.
+	 * Check that the given message can be send.
+	 * @return true if the message can be send.
 	 */
 	bool checkValidity(const KIRC::Message &msg);
 
-	QStringList m_errors;
+private:
+	Q_DISABLE_COPY(Command);
 
-	int m_argsSize_min;
-	int m_argsSize_max;
-	QString m_helpMessage;
+	class Private;
+	Private * const d;
 };
 
 }

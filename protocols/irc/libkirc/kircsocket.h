@@ -29,6 +29,10 @@ class QTextCodec;
 namespace KIRC
 {
 
+class CommandHandler;
+class Entity;
+class EntityManager;
+
 class SocketPrivate;
 
 /**
@@ -68,10 +72,16 @@ public:
 	KNetwork::KStreamSocket *socket();
 
 	QTextCodec *defaultCodec() const;
-	KIRC::Entity *owner() const;
+
+	KIRC::CommandHandler *commandHandler();
+	KIRC::EntityManager *entityManager();
+	KIRC::Entity *owner();
 
 public slots:
 	void setDefaultCodec(QTextCodec *codec);
+
+	void setCommandHandler(KIRC::CommandHandler *newCommandHandler);
+	void setEntityManager(KIRC::EntityManager *newEntityManager);
 	void setOwner(KIRC::Entity *newOwner);
 
 	/**
@@ -85,7 +95,7 @@ public slots:
 	void writeMessage(const char *message);
 	void writeMessage(const QByteArray &message);
 	void writeMessage(const QString &message, QTextCodec *codec = 0);
-//	void writeMessage(const KIRC::Message &message);
+	void writeMessage(const KIRC::Message &message);
 
 	void showInfoDialog();
 

@@ -29,21 +29,21 @@ namespace KIRC
 
 class Message;
 
-class EnginePrivate;
+class ClientPrivate;
 
 /**
  * @author Nick Betcher <nbetcher@kde.org>
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
  * @author Jason Keirstead <jason@keirstead.org>
  */
-class Engine
+class Client
 	: public KIRC::Socket
 {
 	Q_OBJECT
 
 public:
-	Engine(QObject *parent = 0);
-	~Engine();
+	Client(QObject *parent = 0);
+	~Client();
 
 public: // READ properties accessors.
 
@@ -91,13 +91,6 @@ public:
 	KIRC::Entity *server();
 
 public slots:
-	void writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage, QTextCodec *codec = 0);
-
-	void writeCtcpQueryMessage(const QString &to, const QString &ctcpMessage, QTextCodec *codec = 0);
-	void writeCtcpReplyMessage(const QString &to, const QString &ctcpMessage, QTextCodec *codec = 0);
-
-	void writeCtcpErrorMessage(const QString &to, const QString &ctcpLine, const QString &errorMsg, QTextCodec *codec = 0);
-
 	void away(bool isAway, const QString &awayMessage = QString::null);
 //	void invite();
 	void ison(const QStringList &nickList);
@@ -247,11 +240,7 @@ private slots:
 	void CtcpReply_version(KIRC::Message &msg);
 
 private:
-	void bindCommands();
-	void bindNumericReplies();
-	void bindCtcp();
-
-	EnginePrivate *d;
+	ClientPrivate * const d;
 };
 
 }

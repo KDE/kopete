@@ -20,8 +20,7 @@
 #include <config.h>
 #endif
 
-#include "kircclient.h"
-#include "kircengine_p.h"
+#include "kircclient.moc"
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -38,25 +37,61 @@
 
 using namespace KIRC;
 
-Engine::Engine(QObject *parent)
+class KIRC::ClientPrivate
+{
+public:
+	QTextCodec *defaultCodec;
+
+	QString host;
+	Q_UINT16 port;
+
+//	QUrl serverURL;
+//	QUrl currentServerURL;
+	QString nickname;
+	QString username;
+	QString realName;
+	QString password;
+	bool reqsPassword;
+	bool failedNickOnLogin;
+	bool useSSL;
+
+//	KIRC::EntityPtrList entities;
+	KIRC::EntityPtr server;
+//	KIRC::EntityPtr self; => owner
+
+	QString versionString;
+	QString userString;
+	QString sourceString;
+	QString pendingNick;
+
+//	QMap<QString, KIRC::MessageRedirector *> commands;
+//	QMap<int, KIRC::MessageRedirector *> numericCommands;
+//	QMap<QString, KIRC::MessageRedirector *> ctcpQueries;
+//	QMap<QString, KIRC::MessageRedirector *> ctcpReplies;
+};
+
+Client::Client(QObject *parent)
 	: KIRC::Socket(parent),
+	  d( new ClientPrivate )
+{
+/*
 	  d->defaultCodec(UTF8),
 	  d->FailedNickOnLogin(false),
 	  d->useSSL(false),
 	  d->server(new Entity(QString::null, KIRC::Server)),
 	  d->self(new Entity(QString::null, KIRC::User))
-{
+*/
 	setUserName(QString::null);
 
-	d->entities << d->server << d->self;
+//	d->entities << d->server << d->self;
 
-	bindCommands();
-	bindNumericReplies();
-	bindCtcp();
+//	bindCommands();
+//	bindNumericReplies();
+//	bindCtcp();
 
-	d->VersionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
-	d->UserString = QString::fromLatin1("Response not supplied by user.");
-	d->SourceString = QString::fromLatin1("Unknown client, known source.");
+	d->versionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
+	d->userString = QString::fromLatin1("Response not supplied by user.");
+	d->sourceString = QString::fromLatin1("Unknown client, known source.");
 
 //	kdDebug(14120) << "Setting default engine codec, " << defaultCodec->name() << endl;
 /*
@@ -70,53 +105,53 @@ Engine::Engine(QObject *parent)
 		this, SLOT(onReceivedMessage(KIRC::Message &)));
 }
 
-Engine::~Engine()
+Client::~Client()
 {
-	kdDebug(14120) << k_funcinfo << d->Host << endl;
+//	kdDebug(14120) << k_funcinfo << d->Host << endl;
 	quit("KIRC Deleted", true);
 }
 
-bool Engine::isDisconnected() const
+bool Client::isDisconnected() const
 {
 	return connectionState() == Idle;
 }
 
-bool Engine::isConnected() const
+bool Client::isConnected() const
 {
 	return connectionState() == Connected;
 }
 
-void Engine::setVersionString(const QString &newString)
+void Client::setVersionString(const QString &newString)
 {
-	d->VersionString = newString;
+	d->versionString = newString;
 }
 
-void Engine::setUserString(const QString &newString)
+void Client::setUserString(const QString &newString)
 {
-	d->UserString = newString;
+	d->userString = newString;
 }
 
-void Engine::setSourceString(const QString &newString)
+void Client::setSourceString(const QString &newString)
 {
-	d->SourceString = newString;
+	d->sourceString = newString;
 }
 
-void Engine::setUserName(const QString &newName)
+void Client::setUserName(const QString &newName)
 {
 	if(newName.isEmpty())
-		d->Username = QString::fromLatin1(getpwuid(getuid())->pw_name);
+		d->username = QString::fromLatin1(getpwuid(getuid())->pw_name);
 	else
-		d->Username = newName;
+		d->username = newName;
 }
 
-void Engine::setRealName(const QString &newName)
+void Client::setRealName(const QString &newName)
 {
 	if(newName.isEmpty())
 		d->realName = QString::fromLatin1(getpwuid(getuid())->pw_gecos);
 	else
 		d->realName = newName;
 }
-
+/*
 bool Engine::_bind(QMap<QString, KIRC::MessageRedirector *> &dict,
 		const char *command, QObject *object, const char *member,
 		int minArgs, int maxArgs, const QString &helpMessage)
@@ -162,8 +197,8 @@ bool Engine::bindCtcpReply(const char *command, QObject *object, const char *mem
 	return _bind(d->ctcpReplies, command, object, member,
 		minArgs, maxArgs, helpMessage);
 }
-
-void Engine::onConnectionStateChanged(KIRC::ConnectionState state)
+*/
+void Client::onConnectionStateChanged(KIRC::ConnectionState state)
 {
 	switch (state)
 	{
@@ -182,8 +217,9 @@ void Engine::onConnectionStateChanged(KIRC::ConnectionState state)
 	}
 }
 
-void Engine::onReceivedMessage( KIRC::Message &msg )
+void Client::onReceivedMessage( KIRC::Message &msg )
 {
+/*
 	KIRC::MessageRedirector *mr;
 	QStringList errors;
 
@@ -225,6 +261,7 @@ void Engine::onReceivedMessage( KIRC::Message &msg )
 //		kdDebug(14120) << "Method error for line:" << msg.raw() << endl;
 //		emit internalError(MethodFailed, msg);
 	}
+*/
 }
 
 /*
@@ -232,7 +269,8 @@ void Engine::onReceivedMessage( KIRC::Message &msg )
  * (Only missing the \n\r final characters)
  * So applying the same parsing rules to the messages.
  */
-bool Engine::invokeCtcpCommandOfMessage(const QMap<QString, MessageRedirector *> &map, Message &msg)
+/*
+bool Client::invokeCtcpCommandOfMessage(const QMap<QString, MessageRedirector *> &map, Message &msg)
 {
 //	appendMessage( i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived) );
 
@@ -266,51 +304,23 @@ bool Engine::invokeCtcpCommandOfMessage(const QMap<QString, MessageRedirector *>
 	}
 	return false;
 }
-
-EntityPtr Engine::getEntity(const QString &name)
-{
-	Entity *entity = 0;
-
-	#warning Do the searching code here.
-
-	if (!entity)
-	{
-		entity = new Entity(name);
-		d->entities.append(entity);
-	}
-
-	connect(entity, SIGNAL(destroyed(KIRC::Entity *)),
-		this, SLOT(destroyed(KIRC::Entity *)));
-	return EntityPtr(entity);
-}
-
-EntityPtr Engine::server()
+*/
+Entity *Client::server()
 {
 	return d->server;
 }
 
-EntityPtr Engine::self()
-{
-	return d->self;
-}
-
-void Engine::destroyed(KIRC::Entity *entity)
-{
-	d->entities.remove(entity);
-}
-
-void Engine::ignoreMessage(KIRC::Message &/*msg*/)
+void Client::ignoreMessage(KIRC::Message &/*msg*/)
 {
 }
 
-void Engine::receivedServerMessage(KIRC::Message &msg)
+void Client::receivedServerMessage(KIRC::Message &msg)
 {
 	receivedServerMessage(msg, msg.suffix());
 }
 
-void Engine::receivedServerMessage(KIRC::Message &msg, const QString &message)
+void Client::receivedServerMessage(KIRC::Message &msg, const QString &message)
 {
 //	emit receivedMessage(InfoMessage, msg.prefix(), EntityPtrList(), message);
 }
 
-#include "kircengine.moc"

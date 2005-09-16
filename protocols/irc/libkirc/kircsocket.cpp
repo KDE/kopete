@@ -142,6 +142,12 @@ void Socket::writeMessage(const QString &msg, QTextCodec *codec)
 	writeMessage(encode(msg, &encodeSuccess, codec));
 }
 
+void Socket::writeMessage(const Message &msg)
+{
+	#warning Check message validity before sending it
+	writeMessage(msg.rawLine());
+}
+
 void Socket::showInfoDialog()
 {
 /*

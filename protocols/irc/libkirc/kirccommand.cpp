@@ -15,64 +15,62 @@
     *************************************************************************
 */
 
-#include "kirccommand.h"
+#include "kirccommand.moc"
 
-#include "kircengine.h"
+#include <QStringList>
 
 using namespace KIRC;
 
+class KIRC::Command::Private
+{
+public:
+	int argsSize_min;
+	int argsSize_max;
+	QString helpMessage;
+};
+
 Command::Command(QObject *parent)
-	: QObject(parent)
+	: QObject(parent),
+	  d(new Private)
 {
 }
 
-int Command::connected() const
+Command::~Command()
 {
-	return receivers(SIGNAL(redirect(KIRC::Message &)));
 }
 
-QStringList Command::operator () (Message &msg)
+QString Command::help() const
 {
-	m_errors.clear();
+        return d->helpMessage;
+}
 
-//	if (m_connectedObjects == 0)
-//		m_errors.append(i18n("Internal error: no more connected object, triggered by:")+msg);
-
+void Command::invoke(Message msg)
+{
 	if (checkValidity(msg))
 		emit redirect(msg);
-
-	return m_errors;
-}
-
-QString Command::helpMessage()
-{
-	return m_helpMessage;
-}
-
-void Command::error(QString &message)
-{
-	m_errors.append(message);
 }
 
 bool Command::checkValidity(const Message &msg)
 {
-	bool success = true;
 	int argsSize = msg.argsSize();
+/*
+//	if (m_connectedObjects == 0)
+//		m_errors.append(i18n("Internal error: no more connected object, triggered by:")+msg);
 
 	if (m_argsSize_min >= 0 && argsSize < m_argsSize_min)
 	{
 //		m_errors.append(i18n("Not enougth arguments in message:")+msg);
-		success = false;
+		return false;
 	}
 
 #ifdef _IRC_STRICTNESS_
 	if (m_argsSize_max >= 0 && argsSize > m_argsSize_max)
 	{
 //		m_errors.append(i18n("Too many arguments in message:")+msg);
-		success = false;
+		return false;
 	}
 #endif
-/*
+
 	if ( msg.isNumeric() &&
 		( msg.argsSize() > 0 && (
 			msg.arg(0) == m_Nickname ||
@@ -83,11 +81,9 @@ bool Command::checkValidity(const Message &msg)
 	)
 	{
 //		m_errors.append(i18n("Too many arguments in message:")+msg);
-		success = false;
+		return false;
 	}
 */
-	return success;
+	return true;
 }
-
-#include "kirccommand.moc"
 

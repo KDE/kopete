@@ -1,5 +1,5 @@
 /*
-    kirc_commands.h - IRC Client
+    kircclient_commands.cpp - IRC Client
 
     Copyright (c) 2003-2004 by Michel Hermier <michel.hermier@wanadoo.fr>
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
@@ -17,16 +17,16 @@
     *************************************************************************
 */
 
-#include "kircengine.h"
+#include "kircclient.h"
 
 #include <kdebug.h>
 
 using namespace KIRC;
-
-void Engine::registerStandardCommands(CommandManager *cm)
+/*
+void Client::registerStandardCommands(CommandManager *cm)
 {
-	cm->registerCommand(ERROR,	this, SLOT(error(KIRC::Message &))
-		, 0, 0);
+	cm->registerCommand(ERROR,	this, SLOT(error(KIRC::Message &));
+//		setMinMax(0, 0);
 
 	bind(JOIN,	this, SLOT(join(KIRC::Message &)),	0, 1);
 
@@ -52,29 +52,25 @@ void Engine::registerStandardCommands(CommandManager *cm)
 
 	bind(TOPIC,	this, SLOT(topic(KIRC::Message &)),	1, 1);
 }
-
-void Engine::away(bool isAway, const QString &awayMessage)
+*/
+void Client::away(bool isAway, const QString &awayMessage)
 {
-	QString suffix;
+	Message msg();
+	msg.setCommand(AWAY);
 
 	if (isAway)
 	{
 		if (!awayMessage.isEmpty())
-			suffix = awayMessage;
+			msg.setSuffix(awayMessage);
 		else
-			suffix = QString::fromLatin1("I'm away.");
+			msg.setSuffix(QString::fromLatin1("I'm away."));
 	}
 
-	writeMessage(
-		Message::format(
-			AWAY,
-			QByteArrayList(),
-			suffix)
-		);
+	writeMessage(msg);
 }
 
 // FIXME: Really handle this message
-void Engine::error(Message &)
+void Client::error(Message &)
 {
 	close();
 }
