@@ -748,7 +748,7 @@ void MSNChatSession::slotConnectionTimeout()
 	}
 	startChatSession();
 
-};
+}
 
 
 
