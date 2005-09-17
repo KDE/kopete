@@ -25,6 +25,7 @@
 
 #include "detector.h"
 #include "iconnector.h"
+#include "smpppdcsiface.h"
 
 #include "kopeteplugin.h"
 #include "kopeteaccount.h"
@@ -45,7 +46,7 @@ class OnlineInquiry;
  *
  * @author Chris Howells <howells@kde.org>, Heiko Sch&auml;fer <heiko@rangun.de>
  */
-class SMPPPDCSPlugin : public Kopete::Plugin, public IConnector {
+class SMPPPDCSPlugin : public Kopete::Plugin, public IConnector, virtual public SMPPPDCSIFace {
     Q_OBJECT
     SMPPPDCSPlugin(const SMPPPDCSPlugin&);
     SMPPPDCSPlugin& operator=(const SMPPPDCSPlugin&);
@@ -69,12 +70,16 @@ public:
      */
     virtual void setConnectedStatus( bool newStatus );
 
+    // Implementation of DCOP iface
+
     /**
      * @brief Checks if we are online.
      * @note This method is reserved for future use. Do not use at the moment!
      * @return <code>TRUE</code> if online, otherwise <code>FALSE</code>
      */
     virtual bool isOnline();
+
+    virtual QString detectionMethod() const;
 
 protected:
     /**

@@ -33,8 +33,8 @@ typedef KGenericFactory<SMPPPDCSPlugin> SMPPPDCSPluginFactory;
 K_EXPORT_COMPONENT_FACTORY(kopete_smpppdcs, SMPPPDCSPluginFactory("kopete_smpppdcs"))
 
 SMPPPDCSPlugin::SMPPPDCSPlugin(QObject *parent, const char * name, const QStringList& /* args */)
- : Kopete::Plugin(SMPPPDCSPluginFactory::instance(), parent, name), m_detector(NULL), 
-   m_timer(NULL), m_onlineInquiry(NULL)
+ : DCOPObject("SMPPPDCSIface"), Kopete::Plugin(SMPPPDCSPluginFactory::instance(), parent, name),
+   m_detector(NULL), m_timer(NULL), m_onlineInquiry(NULL)
     {
    
     /*if(useSmpppd()) {
@@ -152,6 +152,14 @@ bool SMPPPDCSPlugin::useSmpppd() const {
     static KConfig *config = KGlobal::config();
     config->setGroup(SMPPPDCS_CONFIG_GROUP);
     return config->readBoolEntry("useSmpppd", false);
+}
+
+QString SMPPPDCSPlugin::detectionMethod() const {
+    if(useSmpppd()) {
+        return "smpppd";
+    } else {
+        return "netstat";
+    }
 }
 
 #include "smpppdcsplugin.moc"
