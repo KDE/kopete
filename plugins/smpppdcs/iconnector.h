@@ -17,6 +17,11 @@
 #ifndef ICONNECTOR_H
 #define ICONNECTOR_H
 
+/**
+ * @brief Interface to an object setting a connection status.
+ *
+ * @author Heiko Sch&auml;fer <heiko@rangun.de>
+ */
 class IConnector {
 	IConnector(const IConnector&);
 	IConnector& operator=(const IConnector&);
@@ -24,6 +29,15 @@ class IConnector {
 public:
 	IConnector() {};
 	virtual ~IConnector() {}
+
+	/**
+	 * @brief Set the connection status.
+	 *
+	 * This method needs to get reimplemented at classes which implement
+	 * this interface.
+	 *
+	 * @param newStatus the status of the internet connection, <code>TRUE</code> if there is a connection, otherwise <code>FALSE</code>
+	 */
 	virtual void setConnectedStatus(bool newStatus) = 0;
 };
 

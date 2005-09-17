@@ -43,7 +43,7 @@ class OnlineInquiry;
  * Therefore it should be enabled on dial up network
  * connections.
  *
- * @author Chris Howells <howells@kde.org>, Heiko Schaefer <heiko@rangun.de>
+ * @author Chris Howells <howells@kde.org>, Heiko Sch&auml;fer <heiko@rangun.de>
  */
 class SMPPPDCSPlugin : public Kopete::Plugin, public IConnector {
     Q_OBJECT
@@ -61,8 +61,19 @@ public:
      */
     virtual ~SMPPPDCSPlugin();
 
+    /**
+     * @brief Sets the status in all allowed accounts.
+     * Allowed accounts are set in the config dialog of the plugin.
+     *
+     * @see SMPPPDCSPrefs
+     */
     virtual void setConnectedStatus( bool newStatus );
 
+    /**
+     * @brief Checks if we are online.
+     * @note This method is reserved for future use. Do not use at the moment!
+     * @return <code>TRUE</code> if online, otherwise <code>FALSE</code>
+     */
     virtual bool isOnline();
 
 protected:
