@@ -39,7 +39,8 @@ void ServerRedirectTask::setService( WORD family )
 void ServerRedirectTask::setChatParams( WORD exchange, QByteArray cookie, WORD instance )
 {
     m_chatExchange = exchange;
-    m_chatCookie = cookie;
+    m_chatCookie.duplicate( cookie );
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "cookie is" << m_chatCookie << endl;
     m_chatInstance = instance;
 }
 

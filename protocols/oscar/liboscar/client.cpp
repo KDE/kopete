@@ -810,7 +810,7 @@ void Client::requestServerRedirect( WORD family, WORD exchange,
     //FIXME. this won't work if we have to defer the connection because we're
     //already connecting to something
 	ServerRedirectTask* srt = new ServerRedirectTask( c->rootTask() );
-    if ( family == 0x0013 )
+    if ( family == 0x000E )
         srt->setChatParams( exchange, cookie, instance );
 
 	connect( srt, SIGNAL( haveServer( const QString&, const QByteArray&, WORD ) ),
@@ -950,8 +950,10 @@ void Client::joinChatRoom( const QString& roomName, int exchange )
 
 void Client::setupChatConnection( WORD exchange, QByteArray cookie, WORD instance )
 {
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "cookie is:" << cookie << endl;
+    QByteArray realCookie( cookie );
     kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "connection to chat room" << endl;
-    requestServerRedirect( 0x000E, exchange, cookie, instance );
+    requestServerRedirect( 0x000E, exchange, realCookie, instance );
 }
 
 
