@@ -142,6 +142,7 @@ public:
 	int setSize( int newwidth, int newheight);
 	pixel_format setPixelFormat(pixel_format newformat);
 	int pixelFormatCode(pixel_format pixelformat);
+	pixel_format pixelFormatForPalette( int palette );
 	int pixelFormatDepth(pixel_format pixelformat);
 	QString pixelFormatName(pixel_format pixelformat);
 	QString pixelFormatName(int pixelformat);
