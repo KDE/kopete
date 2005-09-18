@@ -168,12 +168,9 @@ void OscarAccount::loginActions()
 		d->engine->requestServerRedirect( 0x000D );
 	}
 
-	//ICQ handles icons but we don't support those right now
-	if ( !engine()->isIcq() )
-	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending request for icon service" << endl;
-		d->engine->requestServerRedirect( 0x0010 );
-	}
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending request for icon service" << endl;
+	d->engine->requestServerRedirect( 0x0010 );
+
 }
 
 void OscarAccount::processSSIList()

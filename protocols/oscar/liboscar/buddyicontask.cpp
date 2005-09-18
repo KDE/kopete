@@ -67,19 +67,15 @@ void BuddyIconTask::onGo()
 	if ( m_action == Receive && ( m_user.isEmpty() || m_hash.count() == 0 ) )
 		return;
 
-	if ( !client()->isIcq() )
+	if ( m_action == Receive )
 	{
-		if ( m_action == Receive )
-			sendAIMBuddyIconRequest();
+		if ( client()->isIcq() )
+			sendICQBuddyIconRequest();
 		else
-			sendIcon();
+			sendAIMBuddyIconRequest();
 	}
 	else
-	{
-		if ( m_action == Receive )
-			sendICQBuddyIconRequest();
-			
-	}
+		sendIcon();
 }
 
 bool BuddyIconTask::forMe( const Transfer* transfer )
@@ -124,7 +120,7 @@ bool BuddyIconTask::take( Transfer* transfer )
 	setTransfer( transfer );
 	if ( st->snacSubtype() == 0x0003 )
 		handleUploadResponse();
-	if ( st->snacSubtype() == 0x0005 )
+	else if ( st->snacSubtype() == 0x0005 )
 		handleAIMBuddyIconResponse();
 	else
 		handleICQBuddyIconResponse();

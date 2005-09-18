@@ -64,6 +64,8 @@ public:
 
 	void setUserProfile( const QString &profile );
 
+	void setBuddyIcon( KURL url );
+
 protected:
 	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const SSI& ssiItem );
 
@@ -84,6 +86,12 @@ private:
 
 private slots:
 	void slotToggleInvisible();
+
+	void slotGlobalIdentityChanged( const QString& key, const QVariant& value );
+
+	void slotBuddyIconChanged();
+
+	void slotSendBuddyIcon();
 
 private:
 	bool mWebAware;

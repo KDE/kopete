@@ -15,18 +15,25 @@
   *************************************************************************
 */
 
+#include <qfile.h>
+#include <qimage.h>
+
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
+#include <kmdcodec.h>
+#include <kstandarddirs.h>
 
 #include "kopeteawayaction.h"
 #include "kopetemessage.h"
+#include "kopetecontactlist.h"
 
 #include "client.h"
 #include "icquserinfo.h"
 #include "oscarsettings.h"
 #include "oscarutils.h"
+#include "ssimanager.h"
 
 #include "icqcontact.h"
 #include "icqprotocol.h"
@@ -73,6 +80,10 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID, const char *
 	mWebAware = configGroup()->readBoolEntry( "WebAware", false );
 	mHideIP = configGroup()->readBoolEntry( "HideIP", true );
 
+	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged( const QString&, const QVariant& ) ),
+	                  this, SLOT( slotGlobalIdentityChanged( const QString&, const QVariant& ) ) );
+	
+	QObject::connect( engine(), SIGNAL( iconNeedsUploading() ), this, SLOT( slotSendBuddyIcon() ) );
 
 	//setIgnoreUnknownContacts(pluginData(protocol(), "IgnoreUnknownContacts").toUInt() == 1);
 
@@ -275,6 +286,185 @@ OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::Me
 QString ICQAccount::sanitizedMessage( const QString& message )
 {
 	return Kopete::Message::escape( message );
+}
+
+
+void ICQAccount::slotGlobalIdentityChanged( const QString& key, const QVariant& value )
+{
+	//do something with the photo
+	kdDebug(14153) << k_funcinfo << "Global identity changed" << endl;
+	kdDebug(14153) << k_funcinfo << "key: " << key << endl;
+	kdDebug(14153) << k_funcinfo << "value: " << value << endl;
+	if ( key == Kopete::Global::Properties::self()->nickName().key() )
+	{
+		//edit ssi item to change alias (if possible)
+	}
+	
+	if ( key == Kopete::Global::Properties::self()->photo().key() )
+	{
+		setBuddyIcon( value.toString() );
+	}
+}
+
+void ICQAccount::setBuddyIcon( KURL url )
+{	
+	if ( url.path().isEmpty() )
+	{
+		myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
+	}
+	else
+	{
+		QImage image( url.path() );
+		if ( image.isNull() )
+			return;
+		
+		image = image.smoothScale( 52, 64, QImage::ScaleMin );	
+		
+		QString newlocation( locateLocal( "appdata", "oscarpictures/"+ accountId() + ".jpg" ) );
+		
+		kdDebug(14153) << k_funcinfo << "Saving buddy icon: " << newlocation << endl;
+		if ( !image.save( newlocation, "JPEG" ) )
+			return;
+		
+		myself()->setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
+	}
+	
+	slotBuddyIconChanged();
+}
+
+void ICQAccount::slotBuddyIconChanged()
+{
+	// need to disconnect because we could end up with many connections
+	QObject::disconnect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotBuddyIconChanged() ) );
+	if ( !engine()->isActive() )
+	{
+		QObject::connect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotBuddyIconChanged() ) );
+		return;
+	}
+	
+	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
+	
+	SSIManager* ssi = engine()->ssiManager();
+	Oscar::SSI item = ssi->findItemForIconByRef( 1 );
+	
+	if ( photoPath.isEmpty() )
+	{
+		if ( item )
+		{
+			kdDebug(14153) << k_funcinfo << "Removing icon hash item from ssi" << endl;
+			Oscar::SSI s(item);
+			
+			//remove hash and alias
+			QValueList<TLV> tList( item.tlvList() );
+			TLV t = Oscar::findTLV( tList, 0x00D5 );
+			if ( t )
+				tList.remove( t );
+			
+			t = Oscar::findTLV( tList, 0x0131 );
+			if ( t )
+				tList.remove( t );
+			
+			item.setTLVList( tList );
+			//s is old, item is new. modification will occur
+			engine()->modifySSIItem( s, item );
+		}
+	}
+	else
+	{
+		QFile iconFile( photoPath );
+		iconFile.open( IO_ReadOnly );
+		
+		KMD5 iconHash;
+		iconHash.update( iconFile );
+		kdDebug(14153) << k_funcinfo  << "hash is :" << iconHash.hexDigest() << endl;
+	
+		//find old item, create updated item
+		if ( !item )
+		{
+			kdDebug(14153) << k_funcinfo << "no existing icon hash item in ssi. creating new" << endl;
+			
+			TLV t;
+			t.type = 0x00D5;
+			t.data.resize( 18 );
+			t.data[0] = 0x01;
+			t.data[1] = 0x10;
+			memcpy(t.data.data() + 2, iconHash.rawDigest(), 16);
+			t.length = t.data.size();
+			
+			//alias, it's always empty
+			TLV t2;
+			t2.type = 0x0131;
+			t2.length = 0;
+			
+			QValueList<Oscar::TLV> list;
+			list.append( t );
+			list.append( t2 );
+			
+			Oscar::SSI s( "1", 0, ssi->nextContactId(), ROSTER_BUDDYICONS, list );
+			
+			//item is a non-valid ssi item, so the function will add an item
+			kdDebug(14153) << k_funcinfo << "setting new icon item" << endl;
+			engine()->modifySSIItem( item, s );
+		}
+		else
+		{ //found an item
+			Oscar::SSI s(item);
+			kdDebug(14153) << k_funcinfo << "modifying old item in ssi." << endl;
+			QValueList<TLV> tList( item.tlvList() );
+			
+			TLV t = Oscar::findTLV( tList, 0x00D5 );
+			if ( t )
+				tList.remove( t );
+			else
+				t.type = 0x00D5;
+			
+			t.data.resize( 18 );
+			t.data[0] = 0x01;
+			t.data[1] = 0x10;
+			memcpy(t.data.data() + 2, iconHash.rawDigest(), 16);
+			t.length = t.data.size();
+			tList.append( t );
+			
+			//add empty alias
+			t = Oscar::findTLV( tList, 0x0131 );
+			if ( !t )
+			{
+				t.type = 0x0131;
+				t.length = 0;
+				tList.append( t );
+			}
+			
+			item.setTLVList( tList );
+			//s is old, item is new. modification will occur
+			engine()->modifySSIItem( s, item );
+		}
+		iconFile.close();
+	}
+}
+
+void ICQAccount::slotSendBuddyIcon()
+{
+	//need to disconnect because we could end up with many connections
+	QObject::disconnect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotSendBuddyIcon() ) );
+	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
+	if ( photoPath.isEmpty() )
+		return;
+	
+	kdDebug(14153) << k_funcinfo << photoPath << endl;
+	QFile iconFile( photoPath );
+	
+	if ( iconFile.open( IO_ReadOnly ) )
+	{
+		if ( !engine()->hasIconConnection() )
+		{
+			//will send icon when we connect to icon server
+			QObject::connect( engine(), SIGNAL( iconServerConnected() ),
+			                  this, SLOT( slotSendBuddyIcon() ) );
+			return;
+		}
+		QByteArray imageData = iconFile.readAll();
+		engine()->sendBuddyIcon( imageData );
+	}
 }
 
 
