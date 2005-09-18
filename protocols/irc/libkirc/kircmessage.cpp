@@ -15,8 +15,9 @@
     *************************************************************************
 */
 
-#include "kircengine.h"
 #include "kircmessage.h"
+
+//#include "kircclient.h"
 
 #include <kdebug.h>
 
@@ -44,10 +45,15 @@ QRegExp Message::sm_IRCCommandType2(
 	"^(?::[[^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*){14,14})(?: (.*))?$");
 #endif // _IRC_STRICTNESS_
 
-class KIRC::MessagePrivate
+class KIRC::Message::Private
 	: public QSharedData
 {
 public:
+	Private()
+		: valid(false),
+		  dirty(false)
+	{ }
+
 	QByteArray line;
 	QByteArray prefix;
 	QByteArray command;
@@ -60,7 +66,7 @@ public:
 	bool valid:1; // if the message was parsed successfuly
 	bool dirty:1; // if the message contents is modified, so should be rebuilded
 };
-
+/*
 QByteArray Message::format(
 		const QByteArray &command,
 		const QByteArrayList &args,
@@ -86,7 +92,7 @@ QByteArray Message::formatCtcp(const QByteArray &str)
 //	return QChar(0x01) + ctcpQuote(str) + QChar(0x01);
 	return str;
 }
-
+*/
 QByteArray Message::quote(const QByteArray &str)
 {
 	#warning implement me
@@ -151,12 +157,23 @@ QByteArray Message::ctcpUnquote(const QByteArray &str)
 }
 
 Message::Message()
-	: d(new MessagePrivate())
+	: d(new Private())
 {
+}
+
+Message::Message(const QByteArray &rawLine, Direction direction)
+	: d(new Private())
+{
+	setLine(rawLine);
+	setDirection(direction);
 }
 
 Message::Message(const Message &o)
         : d(o.d)
+{
+}
+
+Message::~Message()
 {
 }
 
@@ -170,17 +187,17 @@ QByteArray Message::rawLine() const
 {
 	return d->line;
 }
-/*
+
 Message &Message::setLine(const QByteArray &line)
 {
 	d->line = line;
 	d->valid = false;
-
+/*
 	// Match a regexp instead of the replace ...
 //	d->line.replace("\r\n",""); //remove the trailling \r\n if any(there must be in fact)
  
 	#warning implement me: parsing
-/*
+
 	QList<QByteArray> tokens = line.split(' ');
 
 	while (tokens.size() > 0)
@@ -212,7 +229,7 @@ Message &Message::setLine(const QByteArray &line)
 */
 	return *this;
 }
-*/
+
 QByteArray Message::rawPrefix() const
 {
 	return d->prefix;

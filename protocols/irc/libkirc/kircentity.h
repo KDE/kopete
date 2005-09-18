@@ -28,7 +28,6 @@ namespace KIRC
 {
 
 class Engine;
-class EntityPrivate;
 
 class Entity
 	: public QObject,
@@ -88,7 +87,8 @@ private:
 	static const QRegExp sm_userStrictRegExp;
 	static const QRegExp sm_channelRegExp;
 
-	EntityPrivate *d;
+	class Private;
+	Private * const d;
 };
 
 }

@@ -15,13 +15,13 @@
     *************************************************************************
 */
 
-#include "kircentitymanager.h"
+#include "kircentitymanager.moc"
 
 #include "kircentity.h"
 
 using namespace KIRC;
 
-class EntityManagerPrivate
+class EntityManager::Private
 {
 public:
 	QList<Entity *> entities;
@@ -29,11 +29,11 @@ public:
 
 EntityManager::EntityManager(QObject *parent)
 	: QObject(parent),
-	  d(new EntityManagerPrivate)
+	  d(new Private)
 {
 }
 
-EnitytManager::~EntityManager()
+EntityManager::~EntityManager()
 {
 	delete d;
 }
@@ -43,18 +43,21 @@ QList<Entity *> EntityManager::entities() const
 	return d->entities;
 }
 
-Entity *Engine::entityByName(const QString &name) const
+Entity *EntityManager::entityByName(const QByteArray &name) const
 {
+	if (name.isEmpty())
+		return 0;
+
 	Entity *entity = 0;
 
 	#warning Do the searching code here.
 
 	return entity;
 }
-
-Entity *Engine::entityByName(const QString &name, bool createIfNotFound)
+/*
+Entity *EntityManager::entityByName(const QByteArray &name, bool createIfNotFound)
 {
-	Entity *entity = (const) entityByName(name);
+	Entity *entity = entityByName(name);
 
 	if (!entity)
 	{
@@ -64,15 +67,15 @@ Entity *Engine::entityByName(const QString &name, bool createIfNotFound)
 
 	return entity;
 }
-
+*/
 EntityManager &EntityManager::add(Entity *entity)
 {
-	if (d->entities.contains(entity))
-		return;
-
-	d->entities.append(entity);
-	connect(entity, SIGNAL(destroyed(KIRC::Entity *)),
-		this, SLOT(remove(KIRC::Entity *)));
+	if (!d->entities.contains(entity))
+	{
+		d->entities.append(entity);
+		connect(entity, SIGNAL(destroyed(KIRC::Entity *)),
+			this, SLOT(remove(KIRC::Entity *)));
+	}
 
 	return *this;
 }
@@ -84,6 +87,4 @@ EntityManager &EntityManager::remove(Entity *entity)
 
 	return *this;
 }
-
-#include "kircentitymanager.moc"
 

@@ -37,7 +37,7 @@
 
 using namespace KIRC;
 
-class KIRC::ClientPrivate
+class KIRC::Client::Private
 {
 public:
 	QTextCodec *defaultCodec;
@@ -72,7 +72,7 @@ public:
 
 Client::Client(QObject *parent)
 	: KIRC::Socket(parent),
-	  d( new ClientPrivate )
+	  d( new Private )
 {
 /*
 	  d->defaultCodec(UTF8),
@@ -98,8 +98,8 @@ Client::Client(QObject *parent)
 	connect(this, SIGNAL(internalError(const QString &)),
 		this, SLOT());
 */
-	connect(this, SIGNAL(connectionStateChanged(KIRC::ConnectionState)),
-		this, SLOT(onConnectionStateChanged(KIRC::ConnectionState)));
+	connect(this, SIGNAL(connectionStateChanged(KIRC::Socket::ConnectionState)),
+		this, SLOT(onConnectionStateChanged(KIRC::Socket::ConnectionState)));
 
 	connect(this, SIGNAL(receivedMessage(KIRC::Message &)),
 		this, SLOT(onReceivedMessage(KIRC::Message &)));
@@ -109,6 +109,8 @@ Client::~Client()
 {
 //	kdDebug(14120) << k_funcinfo << d->Host << endl;
 	quit("KIRC Deleted", true);
+
+	delete d;
 }
 
 bool Client::isDisconnected() const
@@ -118,7 +120,7 @@ bool Client::isDisconnected() const
 
 bool Client::isConnected() const
 {
-	return connectionState() == Connected;
+	return connectionState() == Open;
 }
 
 void Client::setVersionString(const QString &newString)
@@ -198,7 +200,7 @@ bool Engine::bindCtcpReply(const char *command, QObject *object, const char *mem
 		minArgs, maxArgs, helpMessage);
 }
 */
-void Client::onConnectionStateChanged(KIRC::ConnectionState state)
+void Client::onConnectionStateChanged(ConnectionState state)
 {
 	switch (state)
 	{

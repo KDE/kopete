@@ -18,12 +18,14 @@
 #ifndef KIRC_ENTITYMANAGER_H
 #define KIRC_ENTITYMANAGER_H
 
-#include "kircentity.h"
+#include <QObject>
+
+class QByteArray;
 
 namespace KIRC
 {
 
-class EntityManagerPrivate;
+class Entity;
 
 /**
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
@@ -35,6 +37,7 @@ class EntityManager
 
 public:
 	EntityManager(QObject *parent = 0);
+	~EntityManager();
 
 public:
 	QList<KIRC::Entity *> entities() const;
@@ -43,14 +46,19 @@ public:
 //	QList<KIRC::Entity *> entitiesByType(...) const;
 
 	KIRC::Entity *entityByName(const QByteArray &name) const;
-	KIRC::Entity *entityByName(const QByteArray &name, bool createIfNotFound = false);
 
 public slots:
 	EntityManager &add(KIRC::Entity *entity);
+//	EntityManager &add(const QList<KIRC::Entity *> &entities);
+
 	EntityManager &remove(KIRC::Entity *entity);
+//	EntityManager &remove(const QList<KIRC::Entity *> &entities);
 
 private:
-	EntityManagerPrivate *d;
+	Q_DISABLE_COPY(EntityManager);
+
+	class Private;
+	Private * const d;
 };
 
 }

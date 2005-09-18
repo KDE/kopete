@@ -30,6 +30,7 @@ class QTextCodec;
  */
 namespace KIRC
 {
+/*
 	enum ConnectionState
 	{
 		Idle,
@@ -38,7 +39,7 @@ namespace KIRC
 		Connected,
 		Closing
 	};
-
+*/
 	enum MessageType
 	{
 		ErrorMessage = -1,

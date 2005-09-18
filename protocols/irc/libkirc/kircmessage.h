@@ -40,7 +40,6 @@ class QTextCodec;
 namespace KIRC
 {
 
-class MessagePrivate;
 class Socket;
 
 class Message
@@ -72,8 +71,6 @@ public:
 		InGoing	  // From the network to the client
 	} Direction;
 
-	static KIRC::Message parse(const QByteArray &message/*, Direction direction*/);
-
 	// low level quoting, message quoting
 	static QByteArray quote(const QByteArray &str);
 	static QByteArray unquote(const QByteArray &str);
@@ -93,13 +90,14 @@ private:
 
 public:
 	Message();
+	Message(const QByteArray &rawLine, Direction direction);
 	Message(const KIRC::Message &o);
 	~Message();
 
 	Message &operator = (const KIRC::Message &o);
 
 public: // Properties read accessors
-//	Direction direction() const;
+	Direction direction() const;
 
 	QByteArray rawLine() const;
 	QByteArray rawPrefix() const;
@@ -116,9 +114,9 @@ public: // Properties read accessors
 	QString suffix(QTextCodec *codec = 0) const;
 
 public slots: // Properties write accessors
-//	void setDirection(Direction direction);
+	void setDirection(Direction direction);
 
-//	KIRC::Message &setLine(const QByteArray &);
+	KIRC::Message &setLine(const QByteArray &);
 	KIRC::Message &setPrefix(const QByteArray &);
 	KIRC::Message &setCommand(const QByteArray &);
 	KIRC::Message &setArgs(const QByteArray &);
@@ -162,7 +160,8 @@ private:
 	bool extractCtcpCommand();
 #endif // _IRC_STRICTNESS_
 
-	QSharedDataPointer<KIRC::MessagePrivate> d;
+	class Private;
+	QSharedDataPointer<Private> d;
 };
 
 }

@@ -33,8 +33,6 @@ class CommandHandler;
 class Entity;
 class EntityManager;
 
-class SocketPrivate;
-
 /**
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
  */
@@ -110,12 +108,12 @@ signals:
 	 */
 	void internalError(const QString &errStr);
 
-	void connectionStateChanged(KIRC::ConnectionState newstate);
+	void connectionStateChanged(KIRC::Socket::ConnectionState newstate);
 
 	void receivedMessage(KIRC::Message &message);
 
 protected:
-	void setConnectionState(KIRC::ConnectionState newstate);
+	void setConnectionState(KIRC::Socket::ConnectionState newstate);
 
 private slots:
 	void onReadyRead();
@@ -128,7 +126,8 @@ private:
 	QByteArray encode(const QString &str, bool *success, QTextCodec *codec = 0) const;
 	bool setupSocket(bool useSSL);
 
-	SocketPrivate *d;
+	class Private;
+	Private * const d;
 };
 
 }

@@ -29,8 +29,6 @@ namespace KIRC
 
 class Message;
 
-class ClientPrivate;
-
 /**
  * @author Nick Betcher <nbetcher@kde.org>
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
@@ -147,7 +145,7 @@ signals:
 
 private slots:
 
-	void onConnectionStateChanged(KIRC::ConnectionState state);
+	void onConnectionStateChanged(KIRC::Socket::ConnectionState state);
 	void onReceivedMessage( KIRC::Message &msg );
 
 	void destroyed(KIRC::Entity *entity);
@@ -240,7 +238,8 @@ private slots:
 	void CtcpReply_version(KIRC::Message &msg);
 
 private:
-	ClientPrivate * const d;
+	class Private;
+	Private * const d;
 };
 
 }

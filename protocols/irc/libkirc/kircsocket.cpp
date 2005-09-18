@@ -33,10 +33,10 @@
 using namespace KIRC;
 using namespace KNetwork;
 
-class KIRC::SocketPrivate
+class KIRC::Socket::Private
 {
 public:
-	SocketPrivate()
+	Private()
 		: socket(0),
 		  useSSL(false),
 		  state(Idle),
@@ -53,7 +53,7 @@ public:
 
 Socket::Socket(QObject *parent)
 	: QObject(parent),
-	  d( new SocketPrivate )
+	  d( new Private )
 {
 	kdDebug(14120) << k_funcinfo << endl;
 }
@@ -69,7 +69,7 @@ Socket::ConnectionState Socket::connectionState() const
 	return d->state;
 }
 
-KNetwork::KStreamSocket *socket()
+KNetwork::KStreamSocket *Socket::socket()
 {
 	return d->socket;
 }
@@ -158,7 +158,7 @@ void Socket::showInfoDialog()
 */
 }
 
-void Socket::setConnectionState(KIRC::ConnectionState newstate)
+void Socket::setConnectionState(ConnectionState newstate)
 {
 	if (d->state != newstate)
 	{
@@ -177,7 +177,8 @@ void Socket::onReadyRead()
 		QByteArray rawMsg = d->socket->readLine();
 //		kdDebug(14121) << QString::fromLatin1("(%1 bytes) << %2").arg(wrote).arg(rawMsg) << endl;
 
-		Message msg(rawMsg);
+		Message msg(rawMsg, Message::InGoing);
+
 		if (msg.isValid())
 			emit receivedMessage(msg);
 //		else
@@ -211,7 +212,7 @@ void Socket::socketStateChanged(int newstate)
 		break;
 	case KBufferedSocket::Open:
 //		d->socket->enableRead(true);
-//		d->socket->enableWrite(true); // Should no be needed
+//		d->socket->enableWrite(true); // Should not be needed
 		setConnectionState(Authentifying);
 		break;
 	case KBufferedSocket::Closing:

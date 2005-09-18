@@ -15,7 +15,7 @@
     *************************************************************************
 */
 
-#include "kircentity.h"
+#include "kircentity.moc"
 
 #include <kdebug.h>
 
@@ -54,10 +54,10 @@ bool Entity::isChannel( const QString &name )
 	return sm_channelRegExp.exactMatch(name);
 }
 
-class KIRC::EntityPrivate
+class KIRC::Entity::Private
 {
 public:
-	EntityPrivate()
+	Private()
 		: codec(0)
 	{ }
 
@@ -73,7 +73,7 @@ public:
 };
 
 Entity::Entity(const QString &name, const EntityType type)
-	: d( new EntityPrivate )
+	: d( new Private )
 {
 	setName(name);
 	setType(type);
@@ -87,7 +87,6 @@ Entity::~Entity()
 	emit destroyed(this);
 
 	delete d;
-	d = 0;
 }
 
 bool Entity::operator == (const Entity &) const
@@ -115,7 +114,7 @@ void Entity::setType( EntityType type )
 {
 	if ( d->type != type )
 	{
-		d->status.type = type;
+//		d->status.type = type;
 		emit updated();
 	}
 }
@@ -184,4 +183,3 @@ void Entity::setCodec(QTextCodec *codec)
 	}
 }
 
-#include "kircentity.moc"
