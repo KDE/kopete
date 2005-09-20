@@ -55,9 +55,9 @@ void Detector::slotProcessExited( KProcess *process ) {
 
 void Detector::slotProcessStdout( KProcess *, char *buffer, int buflen ) {
     // Look for a default gateway
-    kdDebug( 0 ) << k_funcinfo << endl;
+    kdDebug(14312) << k_funcinfo << endl;
     QString qsBuffer = QString::fromLatin1( buffer, buflen );
-    kdDebug( 0 ) << qsBuffer << endl;
+    kdDebug(14312) << qsBuffer << endl;
     m_connector->setConnectedStatus( qsBuffer.contains( "default" ) );
 }
 
@@ -65,7 +65,7 @@ void Detector::slotProcessStdout( KProcess *, char *buffer, int buflen ) {
     \fn Detector::netstatCheckStatus()
  */
 void Detector::netstatCheckStatus() {
-    kdDebug( 0 ) << k_funcinfo << endl;
+    kdDebug(14312) << k_funcinfo << endl;
 
     if ( m_process ) {
         kdWarning( 0 ) << k_funcinfo << "Previous netstat process is still running!" << endl
@@ -116,10 +116,10 @@ void Detector::smpppdCheckStatus() {
 		QCString replyType;
 		QDataStream arg(data, IO_WriteOnly);
 		
-		kdDebug( 0 ) << k_funcinfo << "Start inquiring " << m_kinternetApp << " via DCOP" << endl;
+		kdDebug(14312) << k_funcinfo << "Start inquiring " << m_kinternetApp << " via DCOP" << endl;
 		
 		if(!m_client->call(m_kinternetApp, "KInternetIface", "isOnline()", data, replyType, replyData)) {
-			kdDebug( 0 ) << k_funcinfo << "there was some error using DCOP." << endl;
+			kdDebug(14312) << k_funcinfo << "there was some error using DCOP." << endl;
 		} else {
   			QDataStream reply(replyData, IO_ReadOnly);
   			if(replyType == "bool") {
@@ -128,7 +128,7 @@ void Detector::smpppdCheckStatus() {
     			m_connector->setConnectedStatus(result);
 				return;
   			} else {
-    			kdDebug( 0 ) << k_funcinfo << "isOnline() returned an unexpected type of reply!" << endl;
+    			kdDebug(14312) << k_funcinfo << "isOnline() returned an unexpected type of reply!" << endl;
 			}
 		}
 	}
@@ -154,14 +154,14 @@ void Detector::smpppdCheckStatus() {
                     QRegExp clg("^challenge = (.*)$");
                     if(ver.exactMatch(stream[0])) {
                         m_comState = SMPPPDSETTLED;
-                        kdDebug( 0 ) << k_funcinfo << "Found smpppd Version " << ver.cap(1) << endl;
+                        kdDebug(14312) << k_funcinfo << "Found smpppd Version " << ver.cap(1) << endl;
                     } else if(clg.exactMatch(stream[0])) {
-                        kdDebug( 0 ) << k_funcinfo << "Authentication required: " << stream[0] << endl;
+                        kdDebug(14312) << k_funcinfo << "Authentication required: " << stream[0] << endl;
                         challenge  = clg.cap(1).stripWhiteSpace();
                         m_comState = CHALLENGED;
                     } else {
                         m_comState = UNSETTLED;
-                        kdDebug( 0 ) << k_funcinfo << "anything but no smpppd answered" << endl;
+                        kdDebug(14312) << k_funcinfo << "anything but no smpppd answered" << endl;
                     }
                 }
                 break;
@@ -170,7 +170,7 @@ void Detector::smpppdCheckStatus() {
                     writeSMPPPD(QString("response = %1\n").arg(make_response(challenge, pass)).latin1());
                     // and then read the answer
                     QStringList stream = readSMPPPD();
-                    kdDebug( 0 ) << k_funcinfo << "smpppd challenge ack: " << stream[0] << endl;
+                    kdDebug(14312) << k_funcinfo << "smpppd challenge ack: " << stream[0] << endl;
                     if(ver.exactMatch(stream[0])) {
                         m_comState = SMPPPDSETTLED;
                     } else  {
@@ -180,11 +180,11 @@ void Detector::smpppdCheckStatus() {
                 break;
             case SMPPPDSETTLED: {
                     // we want all ifcfgs
-                    kdDebug( 0 ) << k_funcinfo << "smpppd req: list-ifcfgs" << endl;
+                    kdDebug(14312) << k_funcinfo << "smpppd req: list-ifcfgs" << endl;
                     writeSMPPPD("list-ifcfgs");
                     // and then the answer
                     QStringList stream = readSMPPPD();
-                    kdDebug( 0 ) << k_funcinfo << "smpppd ack: " << stream[0] << endl;
+                    kdDebug(14312) << k_funcinfo << "smpppd ack: " << stream[0] << endl;
                     if(stream[0].startsWith("ok")) {
                         // we have now a QStringList with all ifcfgs
                         // we extract them and put them in the global ifcfgs-list
@@ -192,7 +192,7 @@ void Detector::smpppdCheckStatus() {
                         QRegExp numIfcfgsRex("^BEGIN IFCFGS ([0-9]+).*");
                         if(numIfcfgsRex.exactMatch(stream[1])) {
                             int count_ifcfgs = numIfcfgsRex.cap(1).toInt();
-                            kdDebug( 0 ) << k_funcinfo << "ifcfgs: " << count_ifcfgs << endl;
+                            kdDebug(14312) << k_funcinfo << "ifcfgs: " << count_ifcfgs << endl;
 
                             m_ifcfgs.clear();
                             for(int i = 0; i < count_ifcfgs; i++) {
@@ -203,10 +203,10 @@ void Detector::smpppdCheckStatus() {
                             }
 
                         } else {
-                            kdDebug( 0 ) << k_funcinfo << "unexpected reply from smpppd" << endl;
+                            kdDebug(14312) << k_funcinfo << "unexpected reply from smpppd" << endl;
                         }
                     } else {
-                        kdDebug( 0 ) << k_funcinfo << "smpppd doesn't seem to understand me" << endl;
+                        kdDebug(14312) << k_funcinfo << "smpppd doesn't seem to understand me" << endl;
                     }
                     m_comState = LISTIFCFG;
                 }
@@ -226,9 +226,9 @@ void Detector::smpppdCheckStatus() {
                     }
 
                     if(isConnected) {
-                        kdDebug( 0 ) << k_funcinfo << "we are CONNECTED to the internet" << endl;
+                        kdDebug(14312) << k_funcinfo << "we are CONNECTED to the internet" << endl;
                     } else {
-                        kdDebug( 0 ) << k_funcinfo << "we are DISCONNECTED from the internet" << endl;
+                        kdDebug(14312) << k_funcinfo << "we are DISCONNECTED from the internet" << endl;
                     }
 
                     m_comState = STATUSIFCFG;
@@ -247,7 +247,7 @@ void Detector::smpppdCheckStatus() {
         }
 
     } else {
-        kdDebug( 0 ) << k_funcinfo << "not connected to smpppd => I try again" << endl;
+        kdDebug(14312) << k_funcinfo << "not connected to smpppd => I try again" << endl;
         m_connector->setConnectedStatus(false);
 	connectToSMPPPD();
 	emit retryRequested();
@@ -273,23 +273,23 @@ void Detector::connectToSMPPPD() {
         m_comState = READY;
         m_sock = new KExtendedSocket(server, port, KExtendedSocket::inetSocket);
 
-        kdDebug( 0 ) << k_funcinfo << "connect to smpppd \"" << server << ":" << port << "\"" << endl;
+        kdDebug(14312) << k_funcinfo << "connect to smpppd \"" << server << ":" << port << "\"" << endl;
 
         switch(m_sock->connect()) {
         case  0:
-            kdDebug( 0 ) << k_funcinfo << "connected to smpppd \"" << server << ":" << port << "\"" << endl;
+            kdDebug(14312) << k_funcinfo << "connected to smpppd \"" << server << ":" << port << "\"" << endl;
             break;
         case -1:
-            kdDebug( 0 ) << k_funcinfo << "system error" << endl;
+            kdDebug(14312) << k_funcinfo << "system error" << endl;
             break;
         case -2:
-            kdDebug( 0 ) << k_funcinfo << "this socket cannot connect(); this is a passiveSocket" << endl;
+            kdDebug(14312) << k_funcinfo << "this socket cannot connect(); this is a passiveSocket" << endl;
             break;
         case -3:
-            kdDebug( 0 ) << k_funcinfo << "connection timed out" << endl;
+            kdDebug(14312) << k_funcinfo << "connection timed out" << endl;
             break;
         default:
-            kdDebug( 0 ) << k_funcinfo << "unknown error" << endl;
+            kdDebug(14312) << k_funcinfo << "unknown error" << endl;
             break;
         }
     }
