@@ -6,6 +6,7 @@ Author: Heiko Schaefer <heiko@rangun.de>
 
 SuSE Linux 9.1 is not officially supported for the use of the Skype-Kopete-Plugin.
 But with this small guide you can setup Kopete and Skype with a minimum effort.
+(It has broken package of Skype)
 
 REQUIREMENTS
 ============
@@ -91,7 +92,7 @@ Compile and install the Skype-Kopete-Plugin
 
 Do this the usual way, i.e. in the 'kopete_skype' folder:
 
-# ./configure --prefix=`kde-config`
+# ./configure --prefix=`kde-config --prefix`
 # make
 # make install
 

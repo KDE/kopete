@@ -11,3 +11,5 @@ su
 make install
 
 For more information, visit "http://extragear.kde.org/apps/kopete skype/"
+
+SuSE Skype package is broken, please see README.SuSE91 for info.
