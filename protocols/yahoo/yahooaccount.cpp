@@ -468,7 +468,7 @@ void YahooAccount::slotKeepalive()
 	{	
 		m_session->keepalive();
 		m_session->sendIm( accountId(), accountId(), QString("<ping>"), pictureFlag() );
-		kdDebug(14180) << "Ping paket sent." << endl;
+		kdDebug(14180) << "Ping packet sent." << endl;
 	}
 	m_waitingForResponse = true;
 }
@@ -712,7 +712,7 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	// Check for ping-messages
 	if( contact( who ) == myself() && msg.startsWith("<ping>") )
 	{
-		kdDebug(14180) << "Ping paket received." << endl;
+		kdDebug(14180) << "Ping packet received." << endl;
 		m_waitingForResponse = false;
 		return;
 	}
