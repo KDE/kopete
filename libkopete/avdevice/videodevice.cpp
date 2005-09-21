@@ -528,17 +528,21 @@ kdDebug() <<  k_funcinfo << "setSize(" << newwidth << ", " << newheight << ") ca
 	if(isOpen())
 	{
 // It should not be there. It must remain in a completely distict place, cause this method should not change the pixelformat.
-		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
+		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV420P))
 		{
-			kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying BGR24." << endl;
-			if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR24))
+			kdDebug() <<  k_funcinfo << "Card doesn't seem to support YUV420P format. Trying RGB24." << endl;
+			if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
 			{
-				kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying RGB32." << endl;
-				if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB32))
+				kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying BGR24." << endl;
+				if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR24))
 				{
-					kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB32 format. Trying BGR32." << endl;
-					if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR32))
-						kdDebug() <<  k_funcinfo << "Card doesn't seem to support BGR32 format. Fallback to it is not yet implemented." << endl;
+					kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying RGB32." << endl;
+					if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB32))
+					{
+						kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB32 format. Trying BGR32." << endl;
+						if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR32))
+							kdDebug() <<  k_funcinfo << "Card doesn't seem to support BGR32 format. Fallback to it is not yet implemented." << endl;
+					}
 				}
 			}
 		}
