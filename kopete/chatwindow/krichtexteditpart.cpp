@@ -303,7 +303,39 @@ void KopeteRichTextEditPart::readConfig()
 	QFont tmpFont = KopetePrefs::prefs()->fontFace();
 	setFont( config->readFontEntry("Font", &tmpFont ) );
 
-	setFontSize( config->readNumEntry( "FontSize" ) );
+	int tmp = KGlobalSettings::generalFont().pixelSize();
+	setFontSize( config->readNumEntry( "FontSize", tmp ) );
+
+	if( config->readBoolEntry( "FontBold" ) )
+	{
+		action_bold->activate();
+	}
+
+	if( config->readBoolEntry( "FontItalic" ) )
+	{
+		action_italic->activate();
+	}
+
+	if( config->readBoolEntry( "FontUnderline" ) )
+	{
+		action_underline->activate();
+	}
+
+	switch( config->readNumEntry( "EditAlignment", AlignLeft ) )
+	{
+		case AlignLeft:
+			action_align_left->activate();
+		break;
+		case AlignCenter:
+			action_align_center->activate();
+		break;
+		case AlignRight:
+			action_align_right->activate();
+		break;
+		case AlignJustify:
+			action_align_justify->activate();
+		break;
+	}
 }
 
 void KopeteRichTextEditPart::writeConfig()
@@ -312,8 +344,12 @@ void KopeteRichTextEditPart::writeConfig()
 	config->setGroup("RichTextEditor");
 	config->writeEntry("Font", mFont );
 	config->writeEntry("FontSize", mFont.pointSize() );
+	config->writeEntry("FontBold", mFont.bold() );
+	config->writeEntry("FontItalic", mFont.italic() );
+	config->writeEntry("FontUnderline", mFont.underline() );
 	config->writeEntry("BgColor", mBgColor );
 	config->writeEntry("FgColor", mFgColor );
+	config->writeEntry("EditAlignment", editor->alignment() );
 	config->sync();
 }
 
@@ -444,6 +480,7 @@ void KopeteRichTextEditPart::setBold( bool b )
 		else 
 			editor->setFont(mFont);  
 	}
+	writeConfig();
 }
 
 void KopeteRichTextEditPart::setItalic( bool b )
@@ -456,6 +493,7 @@ void KopeteRichTextEditPart::setItalic( bool b )
 		else 
 			editor->setFont(mFont);  
 	}
+	writeConfig();
 }
 
 void KopeteRichTextEditPart::setUnderline( bool b )
@@ -468,6 +506,7 @@ void KopeteRichTextEditPart::setUnderline( bool b )
 		else 
 			editor->setFont(mFont);  
 	}
+	writeConfig();
 }
 
 
@@ -475,24 +514,28 @@ void KopeteRichTextEditPart::setAlignLeft( bool yes )
 {
 	if ( yes )
 		editor->setAlignment( AlignLeft );
+	writeConfig();
 }
 
 void KopeteRichTextEditPart::setAlignRight( bool yes )
 {
 	if ( yes )
 		editor->setAlignment( AlignRight );
+	writeConfig();
 }
 
 void KopeteRichTextEditPart::setAlignCenter( bool yes )
 {
 	if ( yes )
 		editor->setAlignment( AlignCenter );
+	writeConfig();
 }
 
 void KopeteRichTextEditPart::setAlignJustify( bool yes )
 {
 	if ( yes )
 		editor->setAlignment( AlignJustify );
+	writeConfig();
 }
 
 QString KopeteRichTextEditPart::text( Qt::TextFormat fmt ) const
