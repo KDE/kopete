@@ -302,6 +302,8 @@ void KopeteRichTextEditPart::readConfig()
 
 	QFont tmpFont = KopetePrefs::prefs()->fontFace();
 	setFont( config->readFontEntry("Font", &tmpFont ) );
+
+	setFontSize( config->readNumEntry( "FontSize" ) );
 }
 
 void KopeteRichTextEditPart::writeConfig()
@@ -309,6 +311,7 @@ void KopeteRichTextEditPart::writeConfig()
 	KConfig *config = KGlobal::config();
 	config->setGroup("RichTextEditor");
 	config->writeEntry("Font", mFont );
+	config->writeEntry("FontSize", mFont.pointSize() );
 	config->writeEntry("BgColor", mBgColor );
 	config->writeEntry("FgColor", mFgColor );
 	config->sync();
@@ -402,6 +405,7 @@ void KopeteRichTextEditPart::setFontSize( int size )
 		editor->setPointSize( size );
 	else if( m_capabilities & Kopete::Protocol::BaseFont)
 		editor->setFont( mFont );
+	writeConfig();
 }
 
 void KopeteRichTextEditPart::setFont()
