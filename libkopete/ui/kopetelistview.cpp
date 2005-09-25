@@ -23,6 +23,8 @@
 #include "kopeteprefs.h"
 
 #include <qapplication.h>
+#include <kglobal.h>
+#include <kconfig.h>
 #include <kdebug.h>
 
 #include <qtimer.h>
@@ -229,7 +231,10 @@ ListView::ListView( QWidget *parent, const char *name )
 	static_cast<ListView*>(viewport())->setWFlags( WNoAutoErase );
 
 	// init smooth scrolling
- 	setSmoothScrolling( true );
+
+	KConfig *config = KGlobal::config();
+	config->setGroup( "ContactList" );
+ 	setSmoothScrolling( config->readBoolEntry( "SmoothScrolling", true ) );
 }
 
 ListView::~ListView()
