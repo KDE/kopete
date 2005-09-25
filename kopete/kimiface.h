@@ -24,7 +24,7 @@
 
 #include <qpixmap.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 #include <dcopobject.h>
 #include <qstringlist.h>
 #include <kurl.h>
@@ -181,7 +181,7 @@ k_dcop_signals:
 	 * @param appId the dcop application id of the program the signal originates from.
 	 * @param presence the new numeric presence @ref presenceStatus
 	 */
-	void contactPresenceChanged( QString uid, Q3CString appId, int presence );
+	void contactPresenceChanged( QString uid, QByteArray appId, int presence );
 };
 
 #endif

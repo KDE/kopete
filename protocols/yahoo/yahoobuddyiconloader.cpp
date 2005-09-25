@@ -40,9 +40,9 @@ void YahooBuddyIconLoader::fetchBuddyIcon( const QString &who, KURL url, int che
 	kdDebug(14180) << k_funcinfo << endl;
 	KIO::TransferJob *transfer;
 	QString Url = url.url();
-	QString ext = Url.left( Url.findRev( "?" ) );
-	ext = ext.right( ext.length() - ext.findRev( "." ) );
-	//Url.mid( Url.findRev( "."), Url.findRev( "?") - Url.findRev( ".") - 1);
+	QString ext = Url.left( Url.lastIndexOf( "?" ) );
+	ext = ext.right( ext.length() - ext.lastIndexOf( "." ) );
+	//Url.mid( Url.lastIndexOf( "."), Url.findRev( "?") - Url.findRev( ".") - 1);
 	
 	transfer = KIO::get( url, false, false );
 	connect( transfer, SIGNAL( result( KIO::Job* ) ), this, SLOT( slotComplete( KIO::Job* ) ) );

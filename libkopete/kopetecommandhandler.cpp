@@ -161,7 +161,7 @@ Kopete::CommandHandler *Kopete::CommandHandler::commandHandler()
 void Kopete::CommandHandler::registerCommand( QObject *parent, const QString &command, const char* handlerSlot,
 	const QString &help, uint minArgs, int maxArgs, const KShortcut &cut, const QString &pix )
 {
-	QString lowerCommand = command.lower();
+	QString lowerCommand = command.toLower();
 
 	Kopete::Command *mCommand = new Kopete::Command( parent, lowerCommand, handlerSlot, help,
 		Normal, QString::null, minArgs, maxArgs, cut, pix);
@@ -177,7 +177,7 @@ void Kopete::CommandHandler::unregisterCommand( QObject *parent, const QString &
 void Kopete::CommandHandler::registerAlias( QObject *parent, const QString &alias, const QString &formatString,
 	const QString &help, CommandType type, uint minArgs, int maxArgs, const KShortcut &cut, const QString &pix )
 {
-	QString lowerAlias = alias.lower();
+	QString lowerAlias = alias.toLower();
 
 	Kopete::Command *mCommand = new Kopete::Command( parent, lowerAlias, 0L, help, type,
 		formatString, minArgs, maxArgs, cut, pix );
@@ -196,7 +196,7 @@ bool Kopete::CommandHandler::processMessage( const QString &msg, Kopete::ChatSes
 		return false;
 
 	QRegExp spaces( QString::fromLatin1("\\s+") );
-	QString command = msg.section(spaces, 0, 0).section('/',1).lower();
+	QString command = msg.section(spaces, 0, 0).section('/',1).toLower();
 
 	if(command.isEmpty())
 		return false;
@@ -239,7 +239,7 @@ void Kopete::CommandHandler::slotHelpCommand( const QString &args, Kopete::ChatS
 		Q3DictIterator<Kopete::Command> it( mCommands );
 		for( ; it.current(); ++it )
 		{
-			output.append( it.current()->command().upper() + '\t' );
+			output.append( it.current()->command().toUpper() + '\t' );
 			if( commandCount++ == 5 )
 			{
 				commandCount = 0;
@@ -250,7 +250,7 @@ void Kopete::CommandHandler::slotHelpCommand( const QString &args, Kopete::ChatS
 	}
 	else
 	{
-		QString command = parseArguments( args ).front().lower();
+		QString command = parseArguments( args ).front().toLower();
 		Kopete::Command *c = commands( manager->myself()->protocol() )[ command ];
 		if( c && !c->help().isNull() )
 			output = c->help();
@@ -408,7 +408,7 @@ bool Kopete::CommandHandler::commandHandledByProtocol( const QString &command, K
 	// Loop through commands and check if they match the supplied command
 	for( ; it.current(); ++it )
 	{
-		if( it.current()->command().lower() == command )
+		if( it.current()->command().toLower() == command )
 			return true;
 	}
 

@@ -375,7 +375,7 @@ void MSNChatSession::sendMessageQueue()
 	{
 		if(! (*it)->incoming() && (*it)->state()<MSNInvitation::Invited)
 		{
-			m_chatService->sendCommand( "MSG" , "N", true, (*it)->invitationHead().utf8() );
+			m_chatService->sendCommand( "MSG" , "N", true, (*it)->invitationHead().toUtf8() );
 			(*it)->setState(MSNInvitation::Invited);
 		}
 	}
@@ -488,7 +488,7 @@ void MSNChatSession::initInvitation(MSNInvitation* invitation)
 
 	if(m_chatService)
 	{
-		m_chatService->sendCommand( "MSG" , "N", true, invitation->invitationHead().utf8() );
+		m_chatService->sendCommand( "MSG" , "N", true, invitation->invitationHead().toUtf8() );
 		invitation->setState(MSNInvitation::Invited);
 	}
 	else
@@ -588,7 +588,7 @@ void MSNChatSession::slotDebugRawCommand()
 	if( result == QDialog::Accepted && m_chatService )
 	{
 		m_chatService->sendCommand( dlg->command(), dlg->params(),
-					dlg->addId(), dlg->msg().replace("\n","\r\n").utf8() );
+					dlg->addId(), dlg->msg().replace("\n","\r\n").toUtf8() );
 	}
 	delete dlg;
 #endif

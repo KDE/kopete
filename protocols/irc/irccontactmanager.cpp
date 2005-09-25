@@ -262,7 +262,7 @@ void IRCContactManager::slotContactAdded( Kopete::MetaContact *contact )
 
 void IRCContactManager::addToNotifyList(const QString &nick)
 {
- 	if (!m_NotifyList.contains(nick.lower()))
+ 	if (!m_NotifyList.contains(nick.toLower()))
 	{
 		m_NotifyList.append(nick);
 		checkOnlineNotifyList();
@@ -271,8 +271,8 @@ void IRCContactManager::addToNotifyList(const QString &nick)
 
 void IRCContactManager::removeFromNotifyList(const QString &nick)
 {
-	if (m_NotifyList.contains(nick.lower()))
-		m_NotifyList.remove(nick.lower());
+	if (m_NotifyList.contains(nick.toLower()))
+		m_NotifyList.remove(nick.toLower());
 }
 
 void IRCContactManager::checkOnlineNotifyList()

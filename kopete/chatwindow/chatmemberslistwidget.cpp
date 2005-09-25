@@ -232,7 +232,7 @@ Q3DragObject *ChatMembersListWidget::dragObject()
 	drag->addDragObject( new Q3StoredDrag("application/x-qlistviewitem", 0L ) );
 
 	Q3StoredDrag *d = new Q3StoredDrag("kopete/x-contact", 0L );
-	d->setEncodedData( QString( c->protocol()->pluginId()+QChar( 0xE000 )+c->account()->accountId()+QChar( 0xE000 )+ c->contactId() ).utf8() );
+	d->setEncodedData( QString( c->protocol()->pluginId()+QChar( 0xE000 )+c->account()->accountId()+QChar( 0xE000 )+ c->contactId() ).toUtf8() );
 	drag->addDragObject( d );
 
 	KABC::Addressee address = KABC::StdAddressBook::self()->findByUid(c->metaContact()->metaContactId());
@@ -245,7 +245,7 @@ Q3DragObject *ChatMembersListWidget::dragObject()
 		if( !vcard.isNull() )
 		{
 			Q3StoredDrag *vcardDrag = new Q3StoredDrag("text/x-vcard", 0L );
-			vcardDrag->setEncodedData( vcard.utf8() );
+			vcardDrag->setEncodedData( vcard.toUtf8() );
 			drag->addDragObject( vcardDrag );
 		}
 	}

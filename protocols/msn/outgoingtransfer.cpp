@@ -16,7 +16,7 @@
 
 #include "outgoingtransfer.h"
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 using P2P::TransferContext;
 using P2P::Dispatcher;
 using P2P::OutgoingTransfer;
@@ -188,7 +188,7 @@ void OutgoingTransfer::acknowledged()
 void OutgoingTransfer::processMessage(const Message& message)
 {
 	QString body =
-		Q3CString(message.body.data(), message.header.dataSize);
+		QByteArray(message.body.data(), message.header.dataSize);
 	kdDebug(14140) << k_funcinfo << "received, " << body << endl;
 
 	if(body.startsWith("BYE"))
@@ -351,7 +351,7 @@ void OutgoingTransfer::slotConnected()
 {
 	kdDebug(14140) << k_funcinfo << endl;
 	// Check if connection is ok.
-	Q_UINT32 bytesWritten = m_socket->writeBlock(Q3CString("foo").data(), 4);
+	Q_UINT32 bytesWritten = m_socket->writeBlock(QByteArray("foo").data(), 4);
 	if(bytesWritten != 4)
 	{
 		// Not all data was written, close the socket.

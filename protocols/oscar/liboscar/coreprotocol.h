@@ -81,7 +81,7 @@ protected slots:
 	/**
 	 * Just a debug method to test emitting to the socket, atm - should go to the ClientStream
 	 */
-	void slotOutgoingData( const Q3CString & );
+	void slotOutgoingData( const QByteArray & );
 
 protected:
 	/**

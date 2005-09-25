@@ -21,7 +21,7 @@
 #include <qregexp.h>
 //Added by qt3to4:
 #include <QPixmap>
-#include <Q3CString>
+#include <QByteArray>
 #include <Q3ValueList>
 #include <QTimerEvent>
 #include <kbufferedsocket.h>
@@ -192,7 +192,7 @@ void Webcam::processMessage(const Message& message)
 	
 	if(message.applicationIdentifier != 4l)
 	{
-		QString body = Q3CString(message.body.data(), message.header.dataSize);
+		QString body = QByteArray(message.body.data(), message.header.dataSize);
 		kdDebug(14141) << k_funcinfo << "received, " << body << endl;
 
 		if(body.startsWith("MSNSLP/1.0 200 OK"))
@@ -542,7 +542,7 @@ void Webcam::slotSocketConnected()
 //	QObject::connect(m_webcamSocket, SIGNAL(gotError(int)), this, SLOT(slotSocketError(int)));
 
 	m_webcamState=wsConnected;
-	Q3CString to_send=m_peerAuth.utf8();
+	QByteArray to_send=m_peerAuth.toUtf8();
 	m_webcamSocket->writeBlock(to_send.data(), to_send.length());
 	kdDebug(14140) << k_funcinfo << "sending "<< m_peerAuth << endl;
 
@@ -609,7 +609,7 @@ void Webcam::slotSocketRead()
 			{
 				closeAllOtherSockets();
 				kdDebug(14140) << k_funcinfo << "Sending " << connected_str << endl;
-				Q3CString conne=connected_str.utf8();
+				QByteArray conne=connected_str.toUtf8();
 				m_webcamSocket->writeBlock(conne.data(), conne.length());
 				m_webcamState=wsConnecting;
 				
@@ -665,7 +665,7 @@ void Webcam::slotSocketRead()
 				{
 					closeAllOtherSockets();
 					kdDebug(14140) << k_funcinfo << "Sending " << connected_str << endl;
-					Q3CString conne=connected_str.utf8();
+					QByteArray conne=connected_str.toUtf8();
 					m_webcamSocket->writeBlock(conne.data(), conne.length());
 												
 					//SHOULD BE DONE IN ALL CASE

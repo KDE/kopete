@@ -536,7 +536,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		m_challengeHandler = new MSNChallengeHandler("CFHUR$52U_{VIX5T", "PROD0101{0RM?UBW");
 		// Compute the challenge response hash, and send the response.
 		QString chlResponse = m_challengeHandler->computeHash(data.section(' ', 0, 0));
-		sendCommand("QRY", m_challengeHandler->productId(), true, chlResponse.utf8());
+		sendCommand("QRY", m_challengeHandler->productId(), true, chlResponse.toUtf8());
 		// Dispose of the challenge handler.
 		m_challengeHandler->deleteLater();
 		m_challengeHandler = 0L;
@@ -617,7 +617,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		QString sl = QString::number( ( unsigned long ) actualTime - m_loginTime.toULong() );
 
 		QString md5this( m_MSPAuth + sl + m_password );
-		KMD5 md5( md5this.utf8() );
+		KMD5 md5( md5this.toUtf8() );
 
 		QString hotmailRequest = "<html>\n"
 			"<head>\n"
@@ -685,7 +685,7 @@ void MSNNotifySocket::slotOpenInbox()
 
 void MSNNotifySocket::sendMail(const QString &email)
 {
-	sendCommand("URL", QString("COMPOSE " + email).utf8() );
+	sendCommand("URL", QString("COMPOSE " + email).toUtf8() );
 }
 
 bool MSNNotifySocket::setUseHttpMethod(bool useHttp)
@@ -1095,7 +1095,7 @@ void MSNNotifySocket::changePersonalMessage( MSNProtocol::PersonalMessageType ty
 	
 	xmlMessage.documentElement().appendChild( currentMedia );
 
-	unsigned int id = sendCommand("UUX","",true, xmlMessage.toString().utf8(), false);
+	unsigned int id = sendCommand("UUX","",true, xmlMessage.toString().toUtf8(), false);
 	m_tmpHandles[id] = m_account->accountId();
 
 }

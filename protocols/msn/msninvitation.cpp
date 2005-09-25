@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <qregexp.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 MSNInvitation::MSNInvitation(bool incoming, const QString &applicationID , const QString &applicationName)
 {
@@ -34,7 +34,7 @@ MSNInvitation::~MSNInvitation()
 {
 }
 
-Q3CString MSNInvitation::unimplemented(long unsigned int cookie)
+QByteArray MSNInvitation::unimplemented(long unsigned int cookie)
 {
 	return QString( "MIME-Version: 1.0\r\n"
 					"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
@@ -42,7 +42,7 @@ Q3CString MSNInvitation::unimplemented(long unsigned int cookie)
 					"Invitation-Command: CANCEL\r\n"
 					"Cancel-Code: REJECT_NOT_INSTALLED\r\n"
 					"Invitation-Cookie: " + QString::number(cookie) + "\r\n"
-					"Session-ID: {120019D9-C3F5-4F94-978D-CB33534C3309}\r\n\r\n").utf8();
+					"Session-ID: {120019D9-C3F5-4F94-978D-CB33534C3309}\r\n\r\n").toUtf8();
 		//FIXME: i don't know at all what Seession-ID is
 }
 
@@ -58,14 +58,14 @@ QString MSNInvitation::invitationHead()
 					"Invitation-Cookie: " +QString::number(m_cookie) +"\r\n");
 }
 
-Q3CString MSNInvitation::rejectMessage(const QString & rejectcode)
+QByteArray MSNInvitation::rejectMessage(const QString & rejectcode)
 {
 	return QString( "MIME-Version: 1.0\r\n"
 					"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
 					"\r\n"
 					"Invitation-Command: CANCEL\r\n"
 					"Invitation-Cookie: " + QString::number(cookie()) + "\r\n"
-					"Cancel-Code: "+ rejectcode +"\r\n").utf8();
+					"Cancel-Code: "+ rejectcode +"\r\n").toUtf8();
 }
 
 void MSNInvitation::parseInvitation(const QString& msg)

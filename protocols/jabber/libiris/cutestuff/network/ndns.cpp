@@ -57,7 +57,7 @@
 //Added by qt3to4:
 #include <QCustomEvent>
 #include <QEvent>
-#include <Q3CString>
+#include <QByteArray>
 
 #ifdef Q_OS_UNIX
 #include<netdb.h>
@@ -85,7 +85,7 @@ public:
 class NDnsWorker : public QThread
 {
 public:
-	NDnsWorker(QObject *, const Q3CString &);
+	NDnsWorker(QObject *, const QByteArray &);
 
 	bool success;
 	bool cancelled;
@@ -95,7 +95,7 @@ protected:
 	void run();
 
 private:
-	Q3CString host;
+	QByteArray host;
 	QObject *par;
 };
 //! \endif
@@ -180,7 +180,7 @@ void NDnsManager::resolve(NDns *self, const QString &name)
 {
 	Item *i = new Item;
 	i->ndns = self;
-	i->worker = new NDnsWorker(this, name.utf8());
+	i->worker = new NDnsWorker(this, name.toUtf8());
 	d->list.append(i);
 
 	i->worker->start();
@@ -335,7 +335,7 @@ NDnsWorkerEvent::NDnsWorkerEvent(NDnsWorker *p)
 //----------------------------------------------------------------------------
 // NDnsWorker
 //----------------------------------------------------------------------------
-NDnsWorker::NDnsWorker(QObject *_par, const Q3CString &_host)
+NDnsWorker::NDnsWorker(QObject *_par, const QByteArray &_host)
 {
 	success = cancelled = false;
 	par = _par;

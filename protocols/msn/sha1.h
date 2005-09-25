@@ -23,13 +23,13 @@
 
 #include<qstring.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 class SHA1
 {
 public:
 	static QByteArray hash(const QByteArray &);
-	static QByteArray hashString(const Q3CString &);
+	static QByteArray hashString(const QByteArray &);
 	static QString digest(const QString &);
 
 private:

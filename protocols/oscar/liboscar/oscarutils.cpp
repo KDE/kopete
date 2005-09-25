@@ -28,7 +28,7 @@ using namespace Oscar;
 
 QString Oscar::normalize( const QString& contact )
 {
-	QString normal = contact.lower();
+	QString normal = contact.toLower();
 	normal.remove( ' ' );
 	return normal;
 }

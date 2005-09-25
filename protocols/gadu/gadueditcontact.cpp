@@ -150,11 +150,11 @@ GaduEditContact::slotApply()
 	Q3PtrList<Kopete::Group> gl;
 	Kopete::Group* group;
 
-	cl_->firstname = ui_->fornameEdit_->text().stripWhiteSpace();
-	cl_->surname = ui_->snameEdit_->text().stripWhiteSpace();
-	cl_->nickname = ui_->nickEdit_->text().stripWhiteSpace();
-	cl_->email = ui_->emailEdit_->text().stripWhiteSpace();
-	cl_->phonenr = ui_->telephoneEdit_->text().stripWhiteSpace();
+	cl_->firstname = ui_->fornameEdit_->text().trimmed();
+	cl_->surname = ui_->snameEdit_->text().trimmed();
+	cl_->nickname = ui_->nickEdit_->text().trimmed();
+	cl_->email = ui_->emailEdit_->text().trimmed();
+	cl_->phonenr = ui_->telephoneEdit_->text().trimmed();
 
 	if ( contact_ == NULL ) {
 		// contact doesn't exists yet, create it and set all the details

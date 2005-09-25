@@ -20,7 +20,7 @@
 #include <qdatastream.h>
 #include <qregexp.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 // Kde includes
 #include <kdebug.h>
@@ -51,7 +51,7 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 		}
 
 		// Retrieve the message header.
-		QString messageHeader = Q3CString(stream.data(), index);
+		QString messageHeader = QByteArray(stream.data(), index);
 
 		// Retrieve the message mime version, content type,
 		// and p2p destination.
@@ -133,10 +133,10 @@ void MessageFormatter::writeMessage(const Message& message, QByteArray& stream, 
 
 	if(compact == false)
 	{
-		const Q3CString messageHeader = QString("MIME-Version: 1.0\r\n"
+		const QByteArray messageHeader = QString("MIME-Version: 1.0\r\n"
 			"Content-Type: application/x-msnmsgrp2p\r\n"
 			"P2P-Dest: " + message.destination + "\r\n"
-			"\r\n").utf8();
+			"\r\n").toUtf8();
 		// Set the capacity of the message buffer.
 		stream.resize(messageHeader.length() + 48 + message.body.size() + 4);
 		// Write the message header to the stream

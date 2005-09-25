@@ -183,7 +183,7 @@ public:
 	{ return customCtcpMap[s];  }
 
 	inline void addCustomCtcp( const QString &ctcp, const QString &reply )
-	{ customCtcpMap[ ctcp.lower() ] = reply; }
+	{ customCtcpMap[ ctcp.toLower() ] = reply; }
 
 	KIRC::EntityPtr getEntity(const QString &name);
 

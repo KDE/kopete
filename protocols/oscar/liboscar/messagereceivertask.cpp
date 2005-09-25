@@ -19,7 +19,7 @@
 #include <qtextcodec.h>
 //Added by qt3to4:
 #include <Q3ValueList>
-#include <Q3CString>
+#include <QByteArray>
 #include <kdebug.h>
 #include "transfer.h"
 #include "buffer.h"
@@ -134,7 +134,7 @@ void MessageReceiverTask::handleType1Message()
 				msg.addProperty( Oscar::Message::UCS2 );
 				int messageLength = ( ( *it ).length - 4 ) / 2;
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message length: " << messageLength << endl;
-				msg.setText( QString::fromUcs2( message.getWordBlock( messageLength ) ) );
+				msg.setText( QString::fromUtf16( message.getWordBlock( messageLength ) ) );
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message is: " << msg.text() << endl;
 			}
 			else
@@ -356,7 +356,7 @@ void MessageReceiverTask::handleType4Message()
 	emit receivedMessage( msg );
 }
 
-QTextCodec* MessageReceiverTask::guessCodec( const Q3CString& string )
+QTextCodec* MessageReceiverTask::guessCodec( const QByteArray& string )
 {
 	Q_UNUSED( string );
 	return 0;

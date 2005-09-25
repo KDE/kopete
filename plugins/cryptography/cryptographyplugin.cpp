@@ -20,7 +20,7 @@
 #include <qregexp.h>
 //Added by qt3to4:
 #include <Q3ValueList>
-#include <Q3CString>
+#include <QByteArray>
 #include <Q3PtrList>
 
 #include <kdebug.h>
@@ -121,12 +121,12 @@ CryptographyPlugin* CryptographyPlugin::plugin()
 
 CryptographyPlugin* CryptographyPlugin::pluginStatic_ = 0L;
 
-Q3CString CryptographyPlugin::cachedPass()
+QByteArray CryptographyPlugin::cachedPass()
 {
 	return pluginStatic_->m_cachedPass;
 }
 
-void CryptographyPlugin::setCachedPass(const Q3CString& p)
+void CryptographyPlugin::setCachedPass(const QByteArray& p)
 {
 	if(pluginStatic_->mCacheMode==Never)
 		return;
@@ -312,7 +312,7 @@ void CryptographyPlugin::slotSelectContactKey()
 
 void CryptographyPlugin::slotForgetCachedPass()
 {
-	m_cachedPass=Q3CString();
+	m_cachedPass=QByteArray();
 	m_cachedPass_timer->stop();
 }
 

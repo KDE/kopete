@@ -925,7 +925,7 @@ QString KopeteMetaContactLVI::key( int, bool ) const
 		importanceChar = 'D';
 	}
 
-	return importanceChar + d->nameText->text().lower();
+	return importanceChar + d->nameText->text().toLower();
 }
 
 bool KopeteMetaContactLVI::isTopLevel() const

@@ -23,7 +23,7 @@
 
 #include <qstring.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include "gwclientstream.h"
 #include "gwerror.h"
@@ -206,7 +206,7 @@ fd		 * @param password
 		/**
 		 * Host's IP address
 		 */
-		Q3CString ipAddress();
+		QByteArray ipAddress();
 		
 		/**
 		 * Get a reference to the RequestFactory for this Client. 

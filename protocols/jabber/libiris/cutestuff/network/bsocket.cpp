@@ -191,7 +191,7 @@ void BSocket::write(const QByteArray &a)
 	if(d->state != Connected)
 		return;
 #ifdef BS_DEBUG
-	Q3CString cs;
+	QByteArray cs;
 	cs.resize(a.size()+1);
 	memcpy(cs.data(), a.data(), a.size());
 	QString s = QString::fromUtf8(cs);
@@ -214,7 +214,7 @@ QByteArray BSocket::read(int bytes)
 		block = ByteStream::read(bytes);
 
 #ifdef BS_DEBUG
-	Q3CString cs;
+	QByteArray cs;
 	cs.resize(block.size()+1);
 	memcpy(cs.data(), block.data(), block.size());
 	QString s = QString::fromUtf8(cs);

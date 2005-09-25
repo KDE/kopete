@@ -20,7 +20,7 @@
 
 #include <qapplication.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include "gwclientstream.h"
 #include "privacymanager.h"
@@ -401,7 +401,7 @@ QString Client::userAgent()
 	return QString::fromLatin1( "%1/%2 (%3)" ).arg( d->clientName, d->clientVersion, d->osname );
 }
 
-Q3CString Client::ipAddress()
+QByteArray Client::ipAddress()
 {
 	// TODO: remove hardcoding
 	return "10.10.11.103";

@@ -310,7 +310,7 @@ void AccountManager::removeAccount( Account *account )
 	{
 		// FIXME: pluginId() should return the internal name and not the class name, so
 		//        we can get rid of this hack - Olivier/Martijn
-		QString protocolName = protocol->pluginId().remove( QString::fromLatin1( "Protocol" ) ).lower();
+		QString protocolName = protocol->pluginId().remove( QString::fromLatin1( "Protocol" ) ).toLower();
 
 		PluginManager::self()->setPluginEnabled( protocolName, false );
 		PluginManager::self()->unloadPlugin( protocolName );
@@ -350,7 +350,7 @@ void AccountManager::load()
 
 		QString protocol = config->readEntry( "Protocol" );
 		if ( protocol.endsWith( QString::fromLatin1( "Protocol" ) ) )
-			protocol = QString::fromLatin1( "kopete_" ) + protocol.lower().remove( QString::fromLatin1( "protocol" ) );
+			protocol = QString::fromLatin1( "kopete_" ) + protocol.toLower().remove( QString::fromLatin1( "protocol" ) );
 
 		if ( config->readBoolEntry( "Enabled", true ) )
 			PluginManager::self()->loadPlugin( protocol, PluginManager::LoadAsync );

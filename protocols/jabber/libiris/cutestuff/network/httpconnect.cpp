@@ -22,7 +22,7 @@
 
 #include<qstringlist.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 #include"bsocket.h"
 #include"base64.h"
 
@@ -38,7 +38,7 @@ static QString extractLine(QByteArray *buf, bool *found)
 	int n;
 	for(n = 0; n < (int)buf->size()-1; ++n) {
 		if(buf->at(n) == '\r' && buf->at(n+1) == '\n') {
-			Q3CString cstr;
+			QByteArray cstr;
 			cstr.resize(n+1);
 			memcpy(cstr.data(), buf->data(), n);
 			n += 2; // hack off CR/LF
@@ -209,7 +209,7 @@ void HttpConnect::sock_connected()
 	s += "Pragma: no-cache\r\n";
 	s += "\r\n";
 
-	Q3CString cs = s.utf8();
+	QByteArray cs = s.toUtf8();
 	QByteArray block(cs.length());
 	memcpy(block.data(), cs.data(), block.size());
 	d->toWrite = block.size();

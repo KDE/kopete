@@ -36,7 +36,7 @@
 #include <q3ptrqueue.h>
 #include <qtimer.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include "bytestream.h"
 #include "connector.h"
@@ -520,7 +520,7 @@ void ClientStream::ss_readyRead()
 	a = d->ss->read();
 
 #ifdef LIBGW_DEBUG
-	Q3CString cs(a.data(), a.size()+1);
+	QByteArray cs(a.data(), a.size()+1);
 	CoreProtocol::debug( QString( "ClientStream: ss_readyRead() recv: %1 bytes" ).arg( a.size() ) );
 	cs_dump( a );
 #endif

@@ -71,7 +71,7 @@ Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 	
 	// now create an event object
 	//HACK: lowercased DN
-	EventTransfer * tentative = new EventTransfer( type, source.lower(), QDateTime::currentDateTime() );
+	EventTransfer * tentative = new EventTransfer( type, source.toLower(), QDateTime::currentDateTime() );
 
 	// add any additional data depending on the type of event
 	// Note: if there are any errors in the way the data is read below, we will soon be OutOfSync

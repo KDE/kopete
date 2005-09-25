@@ -87,7 +87,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
 	m_openYABAction = new KAction( i18n( "Open &Addressbook..." ), "contents", 0, this, SLOT( slotOpenYAB() ), this, "m_openYABAction" );
 
-	YahooContact* _myself=new YahooContact( this, accountId.lower(), accountId, Kopete::ContactList::self()->myself() );
+	YahooContact* _myself=new YahooContact( this, accountId.toLower(), accountId, Kopete::ContactList::self()->myself() );
 	setMyself( _myself );
 	_myself->setOnlineStatus( parent->Offline );
 	myself()->setProperty( YahooProtocol::protocol()->iconRemoteUrl, configGroup()->readEntry( "iconRemoteUrl", "" ) );
@@ -931,7 +931,7 @@ void YahooAccount::slotGotBuddyIconChecksum(const QString &who, int checksum)
 	}
 
 	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() &&
-	     QFile::exists( locateLocal( "appdata", "yahoopictures/"+ who.lower().replace(QRegExp("[./~]"),"-")  +".png" ) ) )
+	     QFile::exists( locateLocal( "appdata", "yahoopictures/"+ who.toLower().replace(QRegExp("[./~]"),"-")  +".png" ) ) )
 	{
 		kdDebug(14180) << k_funcinfo << "Icon already exists. I will not request it again." << endl;
 		return;
@@ -949,7 +949,7 @@ void YahooAccount::slotGotBuddyIconInfo(const QString &who, KURL url, int checks
 	}
 
 	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt()  &&
-	     QFile::exists( locateLocal( "appdata", "yahoopictures/"+ who.lower().replace(QRegExp("[./~]"),"-")  +".png" ) ))
+	     QFile::exists( locateLocal( "appdata", "yahoopictures/"+ who.toLower().replace(QRegExp("[./~]"),"-")  +".png" ) ))
 	{
 		kdDebug(14180) << k_funcinfo << "Icon already exists. I will not download it again." << endl;
 		return;
@@ -996,7 +996,7 @@ void YahooAccount::setBuddyIcon( KURL url )
 	else
 	{
 		QImage image( url.path() );
-		QString newlocation( locateLocal( "appdata", "yahoopictures/"+ url.fileName().lower() ) ) ;
+		QString newlocation( locateLocal( "appdata", "yahoopictures/"+ url.fileName().toLower() ) ) ;
 		QFile iconFile( newlocation );
 		QByteArray data;
 		uint expire = myself()->property( YahooProtocol::protocol()->iconExpire ).value().toInt();

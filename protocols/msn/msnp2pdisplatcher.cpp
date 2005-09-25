@@ -27,7 +27,7 @@
 #include <qtextcodec.h>
 #include <qapplication.h> //to be removed
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 // kde
 #include <kdebug.h>
@@ -55,7 +55,7 @@ static QString randomid()
 			+ QString::number(rand()%0xAAFF+0x1111, 16) + "-"
 			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
 			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)).upper();
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)).toUpper();
 }
 
 
@@ -81,7 +81,7 @@ void MSNP2PDisplatcher::setPictureUrl( const QString &url )
 void MSNP2PDisplatcher::slotReadMessage( const QByteArray &msg )
 {
 	//parse the message
-	QString messageHeader=Q3CString(msg.data() , (msg.find('\0')==-1) ? msg.size() : msg.find('\0') );
+	QString messageHeader=QByteArray(msg.data() , (msg.find('\0')==-1) ? msg.size() : msg.find('\0') );
 
 	QRegExp rx("Content-Type: ([A-Za-z0-9$!*/\\-]*)");
 	rx.search( messageHeader );
@@ -167,7 +167,7 @@ void MSNP2PDisplatcher::slotReadMessage( const QByteArray &msg )
 		}
 		else
 		{
-			QString dataMessage=Q3CString((msg.data()+startBinHeader+48) , msgStr.dataMessageSize);
+			QString dataMessage=QByteArray((msg.data()+startBinHeader+48) , msgStr.dataMessageSize);
 			rx=QRegExp("SessionID: ([0-9]*)\r\n");
 			rx.search( dataMessage );
 			sessionID=rx.cap(1).toUInt();
@@ -213,7 +213,7 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 {
 	MSNP2P::parseMessage(msgStr);
 
-	QString dataMessage=Q3CString((msgStr.message.data()+48) , msgStr.dataMessageSize);
+	QString dataMessage=QByteArray((msgStr.message.data()+48) , msgStr.dataMessageSize);
 
 	if (dataMessage.contains("INVITE"))
 	{
@@ -251,8 +251,8 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
     		// the context is a Base64 version of the msnobj
 		    rx=QRegExp("Context: ([0-9a-zA-Z+/=]*)");
     		rx.search( dataMessage );
-    		Q3CString msnobj;
-    		KCodecs::base64Decode( rx.cap(1).utf8() , msnobj);
+    		QByteArray msnobj;
+    		KCodecs::base64Decode( rx.cap(1).toUtf8() , msnobj);
     		//rx=QRegExp("<msnobj\\s+Creator=\"(\\S+)\"\\s+Size=\"(\\S+)\"\\s+Type=\"(\\S+)\"\\s+Location=\"(\\S+)\"\\s+Friendly=\"(\\S+)\"\\s+SHA1D=\"(\\S+)\"\\s+SHA1C=\"(\\S+)\"/>");
     		kdDebug(14140) << "Requesting pic" << msnobj << endl;
 
@@ -309,7 +309,7 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 			// I don't know what other fields are.
 
 			QByteArray binaryContext;
-			KCodecs::base64Decode( context.utf8() , binaryContext );
+			KCodecs::base64Decode( context.toUtf8() , binaryContext );
 			if(binaryContext.size() < 21 )   //security,  (don't crash)
 			{
 				p2p->error();
@@ -428,7 +428,7 @@ void MSNP2PDisplatcher::requestDisplayPicture( const QString &myHandle, const QS
 	p2p->m_branch=randomid();
 	p2p->m_CallID=randomid();
 
-	msnObject=QString::fromUtf8(KCodecs::base64Encode( msnObject.utf8() ));
+	msnObject=QString::fromUtf8(KCodecs::base64Encode( msnObject.toUtf8() ));
 	msnObject.replace("=" , QString::null ) ;
 
 
@@ -609,12 +609,12 @@ void MSNP2PDisplatcher::sendFile(const QString& fileN ,unsigned int fileSize, co
 	if(!codec)
 		return; //abort();
 	int taille;
-	QCString utf16FileName=codec->fromUnicode(fileN.right( fileN.length() - fileN.findRev( '/' ) - 1 ) , taille );*/
+	QCString utf16FileName=codec->fromUnicode(fileN.right( fileN.length() - fileN.lastIndexOf( '/' ) - 1 ) , taille );*/
 	QByteArray utf16FileName;
 	QDataStream stream( &utf16FileName,QIODevice::WriteOnly);
 	stream.setVersion(QDataStream::Qt_3_1);
 	stream.setByteOrder(QDataStream::LittleEndian);
-	stream << fileN.right( fileN.length() - fileN.findRev( '/' ) - 1 );
+	stream << fileN.right( fileN.length() - fileN.lastIndexOf( '/' ) - 1 );
 
 	unsigned int taille = utf16FileName.size();
 	if(taille > 574-19-16)

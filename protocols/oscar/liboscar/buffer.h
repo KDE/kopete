@@ -189,14 +189,14 @@ class Buffer
 		/**
 		 * Same as above but returning little-endian
 		 */
-		Q3CString getLEBlock(WORD len);
+		QByteArray getLEBlock(WORD len);
 
 		/**
 		 * Convenience function that gets a LNTS (long null terminated string)
 		 * from the buffer. Otherwise you'd need a getWord() + getBlock() call :)
 		 */
-		Q3CString getLNTS();
-		Q3CString getLELNTS();
+		QByteArray getLNTS();
+		QByteArray getLELNTS();
 
 		/**
 		 * adds a 16-bit long TLV

@@ -67,7 +67,7 @@ bool JoinConferenceTask::take( Transfer * transfer )
 					if ( contact )
 					{
 						// HACK: lowercased DN 
-					 	QString dn = contact->value().toString().lower();
+					 	QString dn = contact->value().toString().toLower();
 						m_participants.append( dn );
 						// need to ask for details for these contacts
 						if ( !client()->userDetailsManager()->known( dn )  )
@@ -93,7 +93,7 @@ bool JoinConferenceTask::take( Transfer * transfer )
 					if ( contact )
 					{
 						// HACK: lowercased DN 
-					 	QString dn = contact->value().toString().lower();
+					 	QString dn = contact->value().toString().toLower();
 						m_invitees.append( dn );
 						// need to ask for details for these contacts
 						if ( !client()->userDetailsManager()->known( dn )  )

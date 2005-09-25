@@ -158,7 +158,7 @@ void TextEffectPlugin::slotOutgoingMessage( Kopete::Message& msg )
 				default:
 					if(m_config->waves())
 					{
-						resultat+= wavein ? x.lower() : x.upper();
+						resultat+= wavein ? x.toLower() : x.toUpper();
 						wavein=!wavein;
 					}
 					else

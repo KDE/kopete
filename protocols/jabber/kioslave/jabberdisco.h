@@ -39,7 +39,7 @@ class JabberDiscoProtocol : public QObject, public KIO::SlaveBase
 Q_OBJECT
 
 public:
-	JabberDiscoProtocol ( const Q3CString &pool_socket, const Q3CString &app_socket );
+	JabberDiscoProtocol ( const QByteArray &pool_socket, const QByteArray &app_socket );
 	virtual ~JabberDiscoProtocol ();
 
 	void setHost ( const QString &host, int port, const QString &user, const QString &pass );

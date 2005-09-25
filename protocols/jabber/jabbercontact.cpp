@@ -516,7 +516,7 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	if ( !vCard.fullName().isEmpty () && vCard.givenName().isEmpty () && vCard.familyName().isEmpty () )
 	{
 		QString lastName = vCard.fullName().section ( ' ', 0, -1 );
-		QString firstName = vCard.fullName().left(vCard.fullName().length () - lastName.length ()).stripWhiteSpace ();
+		QString firstName = vCard.fullName().left(vCard.fullName().length () - lastName.length ()).trimmed ();
 
 		setProperty ( protocol()->propFirstName, firstName );
 		setProperty ( protocol()->propLastName, lastName );

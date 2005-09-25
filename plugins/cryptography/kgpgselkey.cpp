@@ -179,7 +179,7 @@ QString KgpgSelKey::extractKeyName(QString fullName)
   }
   QString kName=fullName.section('<',0,0);
   if (kName.find("(")!=-1) kName=kName.section('(',0,0);
-  return QString(kMail+" ("+kName+")").stripWhiteSpace();
+  return QString(kMail+" ("+kName+")").trimmed();
 }
 
 void KgpgSelKey::slotpreOk()
@@ -219,7 +219,7 @@ QString KgpgSelKey::getkeyID()
     userid=keysListpr->currentItem()->firstChild()->text(0);
     userid=userid.section(',',0,0);
     userid=userid.section(':',1,1);
-    userid=userid.stripWhiteSpace();
+    userid=userid.trimmed();
     return(userid);
   }
 }
@@ -233,7 +233,7 @@ QString KgpgSelKey::getkeyMail()
   {
     username=keysListpr->currentItem()->text(0);
     //username=username.section(' ',0,0);
-    username=username.stripWhiteSpace();
+    username=username.trimmed();
     return(username);
   }
 }

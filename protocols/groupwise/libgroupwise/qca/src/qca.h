@@ -126,7 +126,7 @@ namespace QCA
 			return obj.final();
 		}
 
-		static QByteArray hash(const Q3CString &cs)
+		static QByteArray hash(const QByteArray &cs)
 		{
 			QByteArray a(cs.length());
 			memcpy(a.data(), cs.data(), a.size());
@@ -138,7 +138,7 @@ namespace QCA
 			return arrayToHex(hash(a));
 		}
 
-		static QString hashToString(const Q3CString &cs)
+		static QString hashToString(const QByteArray &cs)
 		{
 			return arrayToHex(hash(cs));
 		}

@@ -28,7 +28,7 @@
 #include <qdatetime.h>
 #include <qtextstream.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 
 #include <kdebug.h>
@@ -52,7 +52,7 @@
 
 //#define GW_COREPROTOCOL_DEBUG
 
-Q3CString
+QByteArray
 url_escape_string( const char *src)
 {
 	uint escape = 0;
@@ -64,7 +64,7 @@ url_escape_string( const char *src)
 	static const char hex_table[17] = "0123456789abcdef";
 
 	if (src == NULL) {
-		return Q3CString();
+		return QByteArray();
 	}
 
 	/* Find number of chars to escape */
@@ -75,7 +75,7 @@ url_escape_string( const char *src)
 		}
 	}
 
-	Q3CString encoded((p - src) + (escape * 2) + 1);
+	QByteArray encoded((p - src) + (escape * 2) + 1);
 
 	/* Escape the string */
 	for (p = src, q = 0; *p != '\0'; p++) {
@@ -222,7 +222,7 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 	//dout.setByteOrder( QDataStream::LittleEndian );
 
 	// strip out any embedded host and port in the command string 
-	Q3CString command, host, port;
+	QByteArray command, host, port;
 	if ( request->command().section( ':', 0, 0 ) == "login" )
 	{
 		command = "login";
@@ -306,7 +306,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 // 				encoded.replace( "%20", "+" );
 // 				dout <<  encoded.ascii();
 
-				snprintf( valString, NMFIELD_MAX_STR_LENGTH, "%s", url_escape_string( sField->value().toString().utf8() ).data() );
+				snprintf( valString, NMFIELD_MAX_STR_LENGTH, "%s", url_escape_string( sField->value().toString().toUtf8() ).data() );
 				//dout <<  sField->value().toString().ascii();
 				break;
 			}
@@ -333,9 +333,9 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		//dout.writeRawBytes( GW_URLVAR_TYPE, sizeof( GW_URLVAR_TYPE ) );
 
 		//dout << QString::number( field->type() ).ascii();
-		Q3CString typeString;
+		QByteArray typeString;
 		typeString.setNum( field->type() );
-		Q3CString outgoing = GW_URLVAR_TAG + field->tag() 
+		QByteArray outgoing = GW_URLVAR_TAG + field->tag() 
 								+ GW_URLVAR_METHOD + (char)encode_method( field->method() ) 
 								+ GW_URLVAR_VAL + (const char *)valString 
 								+ GW_URLVAR_TYPE + typeString;
@@ -488,7 +488,7 @@ QChar CoreProtocol::encode_method( Q_UINT8 method )
 	return str;
 }
 
-void CoreProtocol::slotOutgoingData( const Q3CString &out )
+void CoreProtocol::slotOutgoingData( const QByteArray &out )
 {
 	debug( QString( "CoreProtocol::slotOutgoingData() %1" ).arg( out ) );
 }

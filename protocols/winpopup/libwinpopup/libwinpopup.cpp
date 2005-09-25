@@ -85,7 +85,7 @@ bool WinPopupLib::checkHost(const QString &Name)
 	groupMutex.lock();
 	QMap<QString, WorkGroup>::Iterator end = theGroups.end();
 	for(QMap<QString, WorkGroup>::Iterator i = theGroups.begin(); i != end && !ret; i++) {
-		if ((*i).Hosts().contains(Name.upper())) {
+		if ((*i).Hosts().contains(Name.toUpper())) {
 			ret = true;
 			break; //keep the mutex locked as short as possible
 		}
@@ -250,7 +250,7 @@ void WinPopupLib::slotCheckForNewMessages()
 
 					// first line is sender, can this really be empty? GF
 					sender = stream.readLine();
-					sender = sender.upper();
+					sender = sender.toUpper();
 
 					// second line is time
 					QString tmpTime = stream.readLine();
@@ -262,7 +262,7 @@ void WinPopupLib::slotCheckForNewMessages()
 					}
 
 					// remove trailing CR
-					text = text.stripWhiteSpace();
+					text = text.trimmed();
 
 					messageFile.close();
 
@@ -306,7 +306,7 @@ void WinPopupLib::sendMessage(const QString &Body, const QString &Destination)
 	connect(sender, SIGNAL(processExited(KProcess *)), this, SLOT(slotSendProcessExited(KProcess *)));
 
 	if (sender->start(KProcess::NotifyOnExit, KProcess::Stdin)) {
-		sender->writeStdin(Body.local8Bit(), Body.local8Bit().length());
+		sender->writeStdin(Body.toLocal8Bit(), Body.toLocal8Bit().length());
 		if (!sender->closeStdin()) {
 			delete sender;
 		}
@@ -327,8 +327,8 @@ void WinPopupLib::settingsChanged(const QString &smbClient, int groupFreq, int m
 	groupCheckFreq = groupFreq;
 	messageCheckFreq = messageCheck;
 
-	if (updateGroupDataTimer.isActive()) updateGroupDataTimer.changeInterval(groupCheckFreq * 1000);
-	if (messageCheckTimer.isActive()) messageCheckTimer.changeInterval(messageCheckFreq * 1000);
+	if (updateGroupDataTimer.isActive()) updateGroupDataTimer.start(groupCheckFreq * 1000);
+	if (messageCheckTimer.isActive()) messageCheckTimer.start(messageCheckFreq * 1000);
 }
 
 #include "libwinpopup.moc"

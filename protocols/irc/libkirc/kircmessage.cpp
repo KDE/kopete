@@ -27,7 +27,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 using namespace KIRC;
 
@@ -103,7 +103,7 @@ void Message::writeRawMessage(Engine *engine, const QTextCodec *codec, const QSt
 
 	QString txt = str + QString::fromLatin1("\r\n");
 
-	Q3CString s(codec->fromUnicode(txt));
+	QByteArray s(codec->fromUnicode(txt));
         kdDebug(14120) << "Message is " << s.length() << " chars" << endl;
 	// FIXME: Should check the amount of data really writen.
 	int wrote = engine->socket()->writeBlock(s.data(), s.length());
@@ -122,7 +122,7 @@ void Message::writeMessage(Engine *engine, const QTextCodec *codec,
 	QString msg = command;
 
 	if (!args.isEmpty())
-		msg += QChar(' ') + args.join(QChar(' ')).stripWhiteSpace(); // some extra check should be done here
+		msg += QChar(' ') + args.join(QChar(' ')).trimmed(); // some extra check should be done here
 
 	if (!suffix.isNull())
 		msg += QString::fromLatin1(" :") + suffix;
@@ -144,7 +144,7 @@ void Message::writeCtcpMessage(Engine *engine, const QTextCodec *codec,
 	QString ctcpMsg = ctcpCommand;
 
 	if (!ctcpArgs.isEmpty())
-		ctcpMsg += QChar(' ') + ctcpArgs.join(QChar(' ')).stripWhiteSpace(); // some extra check should be done here
+		ctcpMsg += QChar(' ') + ctcpArgs.join(QChar(' ')).trimmed(); // some extra check should be done here
 
 	if (!ctcpSuffix.isNull())
 		ctcpMsg += QString::fromLatin1(" :") + ctcpSuffix;
@@ -159,7 +159,7 @@ Message Message::parse(Engine *engine, const QTextCodec *codec, bool *parseSucce
 
 	if (engine->socket()->canReadLine())
 	{
-		Q3CString raw(engine->socket()->bytesAvailable()+1);
+		QByteArray raw(engine->socket()->bytesAvailable()+1);
 		Q_LONG length = engine->socket()->readLine(raw.data(), raw.count());
 
 		if( length > -1 )
@@ -237,7 +237,7 @@ QString Message::ctcpUnquote(const QString &str)
 	return tmp;
 }
 
-bool Message::matchForIRCRegExp(const Q3CString &line, const QTextCodec *codec, Message &message)
+bool Message::matchForIRCRegExp(const QByteArray &line, const QTextCodec *codec, Message &message)
 {
 	if(matchForIRCRegExp(m_IRCCommandType1, codec, line, message))
 		return true;
@@ -250,7 +250,7 @@ bool Message::matchForIRCRegExp(const Q3CString &line, const QTextCodec *codec, 
 
 // FIXME: remove the decodeStrings calls or update them.
 // FIXME: avoid the recursive call, it make the ctcp command unquoted twice (wich is wrong, but valid in most of the cases)
-bool Message::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const Q3CString &line, Message &msg )
+bool Message::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const QByteArray &line, Message &msg )
 {
 	if( regexp.exactMatch( codec->toUnicode(line) ) )
 	{
@@ -259,10 +259,10 @@ bool Message::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const 
 		msg.m_command = unquote(regexp.cap(2));
 		msg.m_args = QStringList::split(' ', regexp.cap(3));
 
-		Q3CString suffix = codec->fromUnicode(unquote(regexp.cap(4)));
+		QByteArray suffix = codec->fromUnicode(unquote(regexp.cap(4)));
 		if (!suffix.isNull() && suffix.length() > 0)
 		{
-			Q3CString ctcpRaw;
+			QByteArray ctcpRaw;
 			if (extractCtcpCommand(suffix, ctcpRaw))
 			{
 				msg.m_ctcpRaw = codec->toUnicode(ctcpRaw); 
@@ -273,11 +273,11 @@ bool Message::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const 
 				int space = ctcpRaw.find(' ');
 				if (!matchForIRCRegExp(msg.m_ctcpMessage->m_raw, codec, *msg.m_ctcpMessage))
 				{
-					Q3CString command;
+					QByteArray command;
 					if (space > 0)
-						command = ctcpRaw.mid(0, space).upper();
+						command = ctcpRaw.mid(0, space).toUpper();
 					else
-						command = ctcpRaw.upper();
+						command = ctcpRaw.toUpper();
 					msg.m_ctcpMessage->m_command =
 						Kopete::Message::decodeString( KSParser::parse(command), codec );
 				}
@@ -333,7 +333,7 @@ bool Message::isValid() const
  * string is splited to get the first part of the message and fill the ctcp command.
  * FIXME: The code currently only match for a textual message or a ctcp message not both mixed as it can be (even if very rare).
  */
-bool Message::extractCtcpCommand(Q3CString &message, Q3CString &ctcpline)
+bool Message::extractCtcpCommand(QByteArray &message, QByteArray &ctcpline)
 {
 	uint len = message.length();
 

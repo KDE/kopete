@@ -30,8 +30,8 @@
 Kopete::Command::Command( QObject *parent, const QString &command, const char* handlerSlot,
 	const QString &help, Kopete::CommandHandler::CommandType type, const QString &formatString,
 	uint minArgs, int maxArgs, const KShortcut &cut, const QString &pix )
-	: KAction( command[0].upper() + command.right( command.length() - 1).lower(), pix, cut, parent,
-	( command.lower() + QString::fromLatin1("_command") ).latin1() )
+	: KAction( command[0].toUpper() + command.right( command.length() - 1).toLower(), pix, cut, parent,
+	( command.toLower() + QString::fromLatin1("_command") ).latin1() )
 {
 	init( command, handlerSlot, help, type, formatString, minArgs, maxArgs );
 }

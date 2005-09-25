@@ -69,7 +69,7 @@ QStringList KCodecAction::supportedEncodings(bool usAscii)
 			it != encodingNames.end(); ++it)
 	{
 		QTextCodec *codec = KGlobal::charsets()->codecForName(*it);
-		QString mimeName = (codec) ? QString(codec->mimeName()).lower() : (*it);
+		QString mimeName = (codec) ? QString(codec->mimeName()).toLower() : (*it);
 		if (mimeNames.find(mimeName) == mimeNames.end())
 		{
 			encodings.append(KGlobal::charsets()->languageForEncoding(*it)

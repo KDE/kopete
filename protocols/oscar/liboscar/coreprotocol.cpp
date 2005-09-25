@@ -28,7 +28,7 @@
 #include <qdatetime.h>
 #include <qtextstream.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include <kdebug.h>
 #include <ctype.h>
@@ -70,7 +70,7 @@ static QString toString( const QByteArray& buffer )
 	}
 
 	if(!hex.isEmpty())
-		output += hex.leftJustify(48, ' ') + "   |" + ascii.leftJustify(16, ' ') + '|';
+		output += hex.leftJustified(48, ' ') + "   |" + ascii.leftJustified(16, ' ') + '|';
 	output.append('\n');
 
 	return output;
@@ -267,7 +267,7 @@ void CoreProtocol::reset()
 	m_in.resize( 0 );
 }
 
-void CoreProtocol::slotOutgoingData( const Q3CString &out )
+void CoreProtocol::slotOutgoingData( const QByteArray &out )
 {
 	kdDebug(OSCAR_RAW_DEBUG) << out.data() << endl;
 }

@@ -120,7 +120,7 @@ Kopete::Account *YahooEditAccount::apply()
 	kdDebug(14180) << k_funcinfo << endl;
 
 	if ( !account() )
-		setAccount( new YahooAccount( theProtocol, mScreenName->text().lower() ) );
+		setAccount( new YahooAccount( theProtocol, mScreenName->text().toLower() ) );
 
 	YahooAccount *yahooAccount = static_cast<YahooAccount *>( account() );
 
@@ -169,7 +169,7 @@ void YahooEditAccount::slotSelectPicture()
 	if( !picture.isNull() )
 	{
 		picture = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(picture), 96, 96, this );
-		QString newlocation( locateLocal( "appdata", "yahoopictures/"+ file.fileName().lower() ) ) ;
+		QString newlocation( locateLocal( "appdata", "yahoopictures/"+ file.fileName().toLower() ) ) ;
 		file = KURL(newlocation);
 		if( !picture.save( newlocation, "PNG" ))
 		{

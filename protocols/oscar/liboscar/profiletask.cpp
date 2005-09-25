@@ -78,7 +78,7 @@ void ProfileTask::sendProfileUpdate()
 	{
 		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
 		buffer->addTLV(0x0001, defencoding.length(), defencoding.latin1());
-		buffer->addTLV(0x0002, m_profileText.length(), m_profileText.local8Bit());
+		buffer->addTLV(0x0002, m_profileText.length(), m_profileText.toLocal8Bit());
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting profile = " << m_profileText << endl;
 	}
 
@@ -86,7 +86,7 @@ void ProfileTask::sendProfileUpdate()
 	{
 		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
 		buffer->addTLV(0x0003, defencoding.length(), defencoding.latin1());
-		buffer->addTLV(0x0004, m_awayMessage.length(), m_awayMessage.local8Bit());
+		buffer->addTLV(0x0004, m_awayMessage.length(), m_awayMessage.toLocal8Bit());
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting away message = " << m_awayMessage << endl;
 	}
 

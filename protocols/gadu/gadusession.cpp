@@ -33,7 +33,7 @@
 #include <qtextcodec.h>
 #include <qdatetime.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 #include "gadurichtextformat.h"
 
 #include <errno.h>
@@ -161,7 +161,7 @@ GaduSession::dccRequest( const unsigned int uin )
 void
 GaduSession::login( KGaduLoginParams* loginp )
 {
-	Q3CString desc = textcodec->fromUnicode( loginp->statusDescr );
+	QByteArray desc = textcodec->fromUnicode( loginp->statusDescr );
 
 	memset( &params_, 0, sizeof(params_) );
 
@@ -251,7 +251,7 @@ int
 GaduSession::sendMessage( uin_t recipient, const Kopete::Message& msg, int msgClass )
 {
 	QString sendMsg;
-	Q3CString cpMsg;
+	QByteArray cpMsg;
 	KGaduMessage* gadumessage;
 
 	if ( isConnected() ) {
@@ -297,7 +297,7 @@ GaduSession::changeStatus( int status, bool forFriends )
 int
 GaduSession::changeStatusDescription( int status, const QString& descr, bool forFriends )
 {
-	Q3CString ndescr;
+	QByteArray ndescr;
 
 	ndescr= textcodec->fromUnicode(descr);
 
@@ -524,7 +524,7 @@ GaduSession::requestContacts()
 void
 GaduSession::exportContactsOnServer( GaduContactsList* contactsList )
 {
-	Q3CString plist;
+	QByteArray plist;
 
 	if ( !session_ || session_->state != GG_STATE_CONNECTED ) {
 		kdDebug( 14100 ) << "you need to connect to export Contacts list " << endl;

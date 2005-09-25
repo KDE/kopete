@@ -104,7 +104,7 @@ QString Transfer::toString() const
 	}
 
 	if(!hex.isEmpty())
-		output += hex.leftJustify(48, ' ') + "   |" + ascii.leftJustify(16, ' ') + '|';
+		output += hex.leftJustified(48, ' ') + "   |" + ascii.leftJustified(16, ' ') + '|';
 	output.append('\n');
 
 	return output;

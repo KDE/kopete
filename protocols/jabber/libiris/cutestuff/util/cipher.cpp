@@ -25,7 +25,7 @@
 #include"bytestream.h"
 #include"qrandom.h"
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 static bool lib_encryptArray(const EVP_CIPHER *type, const QByteArray &buf, const QByteArray &key, const QByteArray &iv, bool pad, QByteArray *out)
 {
@@ -145,7 +145,7 @@ QByteArray Cipher::generateIV(Type t)
 	if(!type)
 		return QByteArray();
 	QByteArray out;
-	if(!lib_generateKeyIV(type, Q3CString("Get this man an iv!"), QByteArray(), 0, &out))
+	if(!lib_generateKeyIV(type, QByteArray("Get this man an iv!"), QByteArray(), 0, &out))
 		return QByteArray();
 	return out;
 }

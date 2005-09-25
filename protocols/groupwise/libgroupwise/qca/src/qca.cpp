@@ -30,7 +30,7 @@
 #include<qapplication.h>
 #include<qpointer.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 #include <Q3ValueList>
 #include<stdlib.h>
 #include"qcaprovider.h"
@@ -586,7 +586,7 @@ QString RSAKey::toPEM(bool publicOnly) const
 	if(!d->c->toPEM(&out, publicOnly))
 		return QByteArray();
 
-	Q3CString cs;
+	QByteArray cs;
 	cs.resize(out.size()+1);
 	memcpy(cs.data(), out.data(), out.size());
 	return QString::fromLatin1(cs);
@@ -594,7 +594,7 @@ QString RSAKey::toPEM(bool publicOnly) const
 
 bool RSAKey::fromPEM(const QString &str)
 {
-	Q3CString cs = str.latin1();
+	QByteArray cs = str.latin1();
 	QByteArray a(cs.length());
 	memcpy(a.data(), cs.data(), a.size());
 	return d->c->createFromPEM(a.data(), a.size());
@@ -798,7 +798,7 @@ QString Cert::toPEM() const
 	if(!d->c->toPEM(&out))
 		return QByteArray();
 
-	Q3CString cs;
+	QByteArray cs;
 	cs.resize(out.size()+1);
 	memcpy(cs.data(), out.data(), out.size());
 	return QString::fromLatin1(cs);
@@ -806,7 +806,7 @@ QString Cert::toPEM() const
 
 bool Cert::fromPEM(const QString &str)
 {
-	Q3CString cs = str.latin1();
+	QByteArray cs = str.latin1();
 	QByteArray a(cs.length());
 	memcpy(a.data(), cs.data(), a.size());
 	return d->c->createFromPEM(a.data(), a.size());

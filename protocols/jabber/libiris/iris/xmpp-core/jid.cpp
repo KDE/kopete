@@ -22,7 +22,7 @@
 
 #include<q3dict.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 #include<stringprep.h>
 
 using namespace XMPP;
@@ -54,7 +54,7 @@ public:
 			return true;
 		}
 
-		Q3CString cs = in.utf8();
+		QByteArray cs = in.toUtf8();
 		cs.resize(maxbytes);
 		if(stringprep(cs.data(), maxbytes, (Stringprep_profile_flags)0, stringprep_nameprep) != 0)
 		{
@@ -90,7 +90,7 @@ public:
 			return true;
 		}
 
-		Q3CString cs = in.utf8();
+		QByteArray cs = in.toUtf8();
 		cs.resize(maxbytes);
 		if(stringprep(cs.data(), maxbytes, (Stringprep_profile_flags)0, stringprep_xmpp_nodeprep) != 0)
 		{
@@ -126,7 +126,7 @@ public:
 			return true;
 		}
 
-		Q3CString cs = in.utf8();
+		QByteArray cs = in.toUtf8();
 		cs.resize(maxbytes);
 		if(stringprep(cs.data(), maxbytes, (Stringprep_profile_flags)0, stringprep_xmpp_resourceprep) != 0)
 		{
@@ -373,7 +373,7 @@ bool Jid::compare(const Jid &a, bool compareRes) const
 
 bool Jid::validDomain(const QString &s, QString *norm)
 {
-	/*QCString cs = s.utf8();
+	/*QCString cs = s.toUtf8();
 	cs.resize(1024);
 	if(stringprep(cs.data(), 1024, (Stringprep_profile_flags)0, stringprep_nameprep) != 0)
 		return false;
@@ -385,7 +385,7 @@ bool Jid::validDomain(const QString &s, QString *norm)
 
 bool Jid::validNode(const QString &s, QString *norm)
 {
-	/*QCString cs = s.utf8();
+	/*QCString cs = s.toUtf8();
 	cs.resize(1024);
 	if(stringprep(cs.data(), 1024, (Stringprep_profile_flags)0, stringprep_xmpp_nodeprep) != 0)
 		return false;
@@ -397,7 +397,7 @@ bool Jid::validNode(const QString &s, QString *norm)
 
 bool Jid::validResource(const QString &s, QString *norm)
 {
-	/*QCString cs = s.utf8();
+	/*QCString cs = s.toUtf8();
 	cs.resize(1024);
 	if(stringprep(cs.data(), 1024, (Stringprep_profile_flags)0, stringprep_xmpp_resourceprep) != 0)
 		return false;

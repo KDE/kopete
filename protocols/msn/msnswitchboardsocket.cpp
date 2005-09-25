@@ -33,7 +33,7 @@
 #include <qfile.h>
 #include <qfileinfo.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 #include <Q3PtrList>
 #include <Q3ValueList>
 
@@ -96,7 +96,7 @@ void MSNSwitchBoardSocket::connectToSwitchBoard(QString ID, QString address, QSt
 	m_auth = auth;
 
 	QString server = address.left( address.find( ":" ) );
-	uint port = address.right( address.length() - address.findRev( ":" ) - 1 ).toUInt();
+	uint port = address.right( address.length() - address.lastIndexOf( ":" ) - 1 ).toUInt();
 
 	QObject::connect( this, SIGNAL( blockRead( const QString & ) ),
 		this, SLOT(slotReadMessage( const QString & ) ) );
@@ -251,9 +251,9 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	else if( type== "text/x-msmsgscontrol" )
 	{
 		QString message;
-		message = msg.right( msg.length() - msg.findRev( " " ) - 1 );
+		message = msg.right( msg.length() - msg.lastIndexOf( " " ) - 1 );
 		message = message.replace(  "\r\n" ,"" );
-		emit receivedTypingMsg( message.lower(), true );
+		emit receivedTypingMsg( message.toLower(), true );
 	}
 	else if(type == "text/x-msnmsgr-datacast")
 	{
@@ -470,12 +470,12 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			}
 #endif
 
-			Q3CString message = QString( "MIME-Version: 1.0\r\n"
+			QByteArray message = QString( "MIME-Version: 1.0\r\n"
 					"Content-Type: text/x-clientcaps\r\n"
 					"\r\n"
 					"Client-Name: Kopete/"+escape(kapp->aboutData()->version())+"\r\n"
 					+JabberID+
-					"\r\n\r\n" ).utf8();
+					"\r\n\r\n" ).toUtf8();
 
 			QString args = "U";
 			sendCommand( "MSG", args, true, message );
@@ -508,7 +508,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			QString base64 = regex.cap(1);
 			QByteArray image;
 			// Convert from base64 encoded string to byte array.
-			KCodecs::base64Decode(base64.utf8() , image);
+			KCodecs::base64Decode(base64.toUtf8() , image);
 			KTempFile *imageFile = new KTempFile(locateLocal( "tmp", "inkformatgif-" ), ".gif");
 			imageFile->setAutoDelete(true);
 			imageFile->file()->writeBlock(image.data(), image.size());
@@ -557,7 +557,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 
 					QByteArray image;
 					// Convert from base64 encoded string to byte array.
-					KCodecs::base64Decode(base64.utf8() , image);
+					KCodecs::base64Decode(base64.toUtf8() , image);
 					// Create a temporary file to store the image data.
 					KTempFile *imageFile = new KTempFile( locateLocal( "tmp", "inkformatgif-" ), ".gif");
 					imageFile->setAutoDelete(true);
@@ -602,10 +602,10 @@ void MSNSwitchBoardSocket::sendTypingMsg( bool isTyping )
 	}
 
 
-	Q3CString message = QString( "MIME-Version: 1.0\r\n"
+	QByteArray message = QString( "MIME-Version: 1.0\r\n"
 		"Content-Type: text/x-msmsgscontrol\r\n"
 		"TypingUser: " + m_myHandle + "\r\n"
-		"\r\n" ).utf8();
+		"\r\n" ).toUtf8();
 
 	// Length is appended by sendCommand()
 	QString args = "U";
@@ -649,7 +649,7 @@ int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString 
 			QString sha1d = QString(KCodecs::base64Encode(SHA1::hash(ar)));
 			QString size = QString::number( pictFile.size() );
 			QString all = "Creator" + m_account->accountId() +	"Size" + size + "Type3Location" + fi.fileName() + "FriendlyAAA=SHA1D" + sha1d;
-			QString sha1c = QString(KCodecs::base64Encode(SHA1::hashString(all.utf8())));
+			QString sha1c = QString(KCodecs::base64Encode(SHA1::hashString(all.toUtf8())));
 			picObj = "<msnobj Creator=\"" + m_account->accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\""+ fi.fileName() + "\" Friendly=\"AAA=\" SHA1D=\""+sha1d+ "\" SHA1C=\""+sha1c+"\"/>";
 
 			PeerDispatcher()->objectList.insert(picObj, filename);
@@ -663,7 +663,7 @@ int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString 
 				"\r\n" +
 				name + "\t" + picObj + "\t\r\n";
         
-	return sendCommand("MSG", "A", true, msg.utf8());
+	return sendCommand("MSG", "A", true, msg.toUtf8());
 
 }
 
@@ -760,8 +760,8 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	QString message= msg.plainBody().replace(  "\n" , "\r\n" );
 
 	//-- Check if the message isn't too big,  TODO: do that at the libkopete level.
-	int len_H=head.utf8().length();	// != head.length()  because i need the size in butes and
-	int len_M=message.utf8().length();	//    some utf8 char may be longer than one byte
+	int len_H=head.toUtf8().length();	// != head.length()  because i need the size in butes and
+	int len_M=message.toUtf8().length();	//    some utf8 char may be longer than one byte
 	if( len_H+len_M >= 1660 ) //1664 is the maximum size of messages allowed by the server
 	{
 		//We will certenly split the message in several ones.
@@ -769,7 +769,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		//http://www.bot-depot.com/forums/index.php?act=Attach&type=post&id=35110
 
 		head+="Message-ID: {7B7B34E6-7A8D-44FF-926C-1799156B58"+QString::number( rand()%10)+QString::number( rand()%10)+"}\r\n";
-		int len_H=head.utf8().length()+ 14;   //14 is the size of "Chunks: x"
+		int len_H=head.toUtf8().length()+ 14;   //14 is the size of "Chunks: x"
 		//this is the size of each part of the message (excluding the header)
 		int futurmessages_size=1400;  //1400 is a common good size
 		//int futurmessages_size=1664-len_H;
@@ -790,7 +790,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 				place += futurmessages_size;
 
 				//make sure the size is not too big because of utf8
-				int d=m.utf8().length() + len_H -1664;
+				int d=m.toUtf8().length() + len_H -1664;
 				if( d > 0 )
 				{//it contains some utf8 chars, so we strip the string a bit.
 					m=m.left( futurmessages_size - d );
@@ -816,7 +816,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 				{
 					kdDebug(14140) << k_funcinfo <<"The message is slit in more than initially estimated" <<endl;
 				}
-				result=sendCommand( "MSG", "A", true, (head+chunk_str+"\r\n"+m).utf8() );
+				result=sendCommand( "MSG", "A", true, (head+chunk_str+"\r\n"+m).toUtf8() );
 				chunk++;
 			}
 			while(place < len_M) ;
@@ -825,14 +825,14 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 			{
 				kdDebug(14140) << k_funcinfo <<"The message is plit in less than initially estimated.  Sending empty message to complete" <<endl;
 				QString chunk_str="Chunk: "+QString::number(chunk);
-				sendCommand( "MSG", "A", true, (head+chunk_str+"\r\n").utf8() );
+				sendCommand( "MSG", "A", true, (head+chunk_str+"\r\n").toUtf8() );
 				chunk++;
 			}
 			return result;
 		}
 		return -2;  //the message hasn't been sent.
 	}
-	return sendCommand( "MSG", "A", true, (head+"\r\n"+message).utf8() );
+	return sendCommand( "MSG", "A", true, (head+"\r\n"+message).toUtf8() );
 }
 
 void MSNSwitchBoardSocket::slotSocketClosed( )
@@ -858,7 +858,7 @@ void MSNSwitchBoardSocket::slotOnlineStatusChanged( MSNSocket::OnlineStatus stat
 {
 	if (status == Connected)
 	{
-		Q3CString command;
+		QByteArray command;
 		QString args;
 
 		if( !m_ID ) // we're inviting
@@ -1033,11 +1033,11 @@ Kopete::Message &MSNSwitchBoardSocket::parseCustomEmoticons(Kopete::Message &kms
 
 int MSNSwitchBoardSocket::sendNudge()
 {
-	Q3CString message = QString( "MIME-Version: 1.0\r\n"
+	QByteArray message = QString( "MIME-Version: 1.0\r\n"
 			"Content-Type: text/x-msnmsgr-datacast\r\n"
 			"\r\n"
 			"ID: 1\r\n"
-			"\r\n\r\n" ).utf8();
+			"\r\n\r\n" ).toUtf8();
 
 	QString args = "U";
 	return sendCommand( "MSG", args, true, message );

@@ -240,7 +240,7 @@ void Engine::numericReply_303(Message &msg)
 	QStringList nicks = QStringList::split(QRegExp(QChar(' ')), msg.suffix());
 	for(QStringList::Iterator it = nicks.begin(); it != nicks.end(); ++it)
 	{
-		if (!(*it).stripWhiteSpace().isEmpty())
+		if (!(*it).trimmed().isEmpty())
 			emit incomingUserOnline(Kopete::Message::unescape(*it));
 	}
 }

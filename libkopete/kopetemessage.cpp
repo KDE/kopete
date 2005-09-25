@@ -24,7 +24,7 @@
 #include <q3stylesheet.h>
 #include <qregexp.h>
 #include <qtextcodec.h>
-#include <Q3CString>
+#include <QByteArray>
 #include <Q3PtrList>
 #include <QSharedData>
 

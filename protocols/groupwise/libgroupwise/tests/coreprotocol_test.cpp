@@ -16,13 +16,13 @@
 
 #include "coreprotocol.h"
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 int main()
 {
 	CoreProtocol testObject;
 	RequestFactory testFactory;
-	Q3CString command("login");
+	QByteArray command("login");
 	Request * firstRequest = testFactory.request( command );
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( NM_A_SZ_USERID, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_UTF8, "blah@fasel.org" ) );

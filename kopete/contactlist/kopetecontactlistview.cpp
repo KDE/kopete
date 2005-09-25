@@ -1284,13 +1284,13 @@ Q3DragObject *KopeteContactListView::dragObject()
 	drag->addDragObject( new Q3StoredDrag("application/x-qlistviewitem", 0L ) );
 
 	Q3StoredDrag *d = new Q3StoredDrag("kopete/x-metacontact", 0L );
-	d->setEncodedData( metaLVI->metaContact()->metaContactId().utf8() );
+	d->setEncodedData( metaLVI->metaContact()->metaContactId().toUtf8() );
 	drag->addDragObject( d );
 
 	if ( c ) 	// dragging a contact
 	{
 		Q3StoredDrag *d = new Q3StoredDrag("kopete/x-contact", 0L );
-		d->setEncodedData( QString( c->protocol()->pluginId() +QChar( 0xE000 )+ c->account()->accountId() +QChar( 0xE000 )+ c->contactId() ).utf8() );
+		d->setEncodedData( QString( c->protocol()->pluginId() +QChar( 0xE000 )+ c->account()->accountId() +QChar( 0xE000 )+ c->contactId() ).toUtf8() );
 		drag->addDragObject( d );
 
 		pm = c->onlineStatus().iconFor( c, 12 ); // FIXME: fixed icon scaling
@@ -1316,7 +1316,7 @@ Q3DragObject *KopeteContactListView::dragObject()
 		if( !vcard.isNull() )
 		{
 			Q3StoredDrag *vcardDrag = new Q3StoredDrag("text/x-vcard", 0L );
-			vcardDrag->setEncodedData( vcard.utf8() );
+			vcardDrag->setEncodedData( vcard.toUtf8() );
 			drag->addDragObject( vcardDrag );
 		}
 	}

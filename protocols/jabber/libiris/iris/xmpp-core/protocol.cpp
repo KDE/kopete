@@ -28,7 +28,7 @@
 #include<qca.h>
 //Added by qt3to4:
 #include <Q3ValueList>
-#include <Q3CString>
+#include <QByteArray>
 #include"base64.h"
 #include"hash.h"
 
@@ -1196,7 +1196,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 				QCA::insertProvider(createProviderHash());
 
 			p = doc.createElement("digest");
-			Q3CString cs = id.utf8() + password.utf8();
+			QByteArray cs = id.toUtf8() + password.toUtf8();
 			p.appendChild(doc.createTextNode(QCA::SHA1::hashToString(cs)));
 		}
 		else {

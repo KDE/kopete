@@ -387,7 +387,7 @@ int VideoDevicePool::scanDevices()
 		kdDebug() <<  k_funcinfo << "scanning devices in " << videodevice_dir_path << "..." << endl;
 		while ( (fileinfo = fileiterator.current()) != 0 )
 		{
-			videodevice.setFileName(fileinfo->absFilePath());
+			videodevice.setFileName(fileinfo->absoluteFilePath());
 			kdDebug() <<  k_funcinfo << "Found device " << videodevice.full_filename << endl;
 			videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
 			if(videodevice.isOpen())
@@ -409,7 +409,7 @@ int VideoDevicePool::scanDevices()
 	kdDebug() <<  k_funcinfo << "scanning devices in " << videodevice_dir_path << "..." << endl;
 	while ( (fileinfo = fileiterator.current()) != 0 )
 	{
-		videodevice.setFileName(fileinfo->absFilePath());
+		videodevice.setFileName(fileinfo->absoluteFilePath());
 		kdDebug() <<  k_funcinfo << "Found device " << videodevice.full_filename << endl;
 		videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
 		if(videodevice.isOpen())

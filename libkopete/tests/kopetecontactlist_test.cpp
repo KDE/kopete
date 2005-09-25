@@ -34,7 +34,7 @@ void KopeteContactList_Test::allTests()
 void KopeteContactList_Test::testSomething()
 {
 	// change user data dir to avoid messing with user's .kde dir
-	setenv( "KDEHOME", QFile::encodeName( QDir::homeDirPath() + "/.kopete-unittest" ), true );
+	setenv( "KDEHOME", QFile::encodeName( QDir::homePath() + "/.kopete-unittest" ), true );
 
 	QString filename = locateLocal( "appdata", QString::fromLatin1( "contactlist.xml" ) );
 	if( ! filename.isEmpty() )

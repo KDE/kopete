@@ -160,7 +160,7 @@ void MotionAwayPlugin::loadSettings(){
 	awayTimeout = kconfig->readNumEntry("AwayTimeout", 1);
 	becomeAvailableWithActivity = kconfig->readBoolEntry("BecomeAvailableWithActivity", true);
 	videoDevice = kconfig->readEntry("VideoDevice", "/dev/video0");
-	m_awayTimer->changeInterval(awayTimeout * 60 * 1000);
+	m_awayTimer->start(awayTimeout * 60 * 1000);
 }
 
 int MotionAwayPlugin::getImage(int _dev, QByteArray &_image, int _width, int _height, int _input, int _norm,  int _fmt)

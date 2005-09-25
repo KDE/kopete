@@ -133,7 +133,7 @@ void ChatTextEditPart::complete()
 
 	if ( parIdx > 0 )
 	{
-		int firstSpace = txt.findRev( QRegExp( QString::fromLatin1("\\s\\S+") ), parIdx - 1 ) + 1;
+		int firstSpace = txt.lastIndexOf( QRegExp( QString::fromLatin1("\\s\\S+") ), parIdx - 1 ) + 1;
 		int lastSpace = txt.find( QRegExp( QString::fromLatin1("[\\s\\:]") ), firstSpace );
 		if( lastSpace == -1 )
 			lastSpace = txt.length();
@@ -300,7 +300,7 @@ bool ChatTextEditPart::isTyping()
 	//Make sure the message is empty. QString::isEmpty()
 	//returns false if a message contains just whitespace
 	//which is the reason why we strip the whitespace	
-	return !txt.stripWhiteSpace().isEmpty();
+	return !txt.trimmed().isEmpty();
 }
 
 void ChatTextEditPart::slotTextChanged()
@@ -327,7 +327,7 @@ void ChatTextEditPart::historyUp()
 		return;
 	
 	QString text = edit()->text();
-	bool empty = text.stripWhiteSpace().isEmpty();
+	bool empty = text.trimmed().isEmpty();
 	
 	// got text? save it
 	if ( !empty )
@@ -356,7 +356,7 @@ void ChatTextEditPart::historyDown()
 		return;
 	
 	QString text = edit()->text();
-	bool empty = text.stripWhiteSpace().isEmpty();
+	bool empty = text.trimmed().isEmpty();
 	
 	// got text? save it
 	if ( !empty )

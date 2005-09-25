@@ -129,7 +129,7 @@ void UserInfoTask::onGo()
 	Buffer* buffer = new Buffer();
 	
 	buffer->addWord( m_typesSequenceMap[m_seq] );
-	buffer->addBUIN( m_contactSequenceMap[m_seq].local8Bit() );
+	buffer->addBUIN( m_contactSequenceMap[m_seq].toLocal8Bit() );
 	
 	Transfer* t = createTransfer( f, s, buffer );
 	send( t );

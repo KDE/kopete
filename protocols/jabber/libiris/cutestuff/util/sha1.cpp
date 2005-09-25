@@ -20,7 +20,7 @@
 
 #include"sha1.h"
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 // CS_NAMESPACE_BEGIN
 
@@ -175,7 +175,7 @@ QByteArray SHA1::hash(const QByteArray &a)
 	return b;
 }
 
-QByteArray SHA1::hashString(const Q3CString &cs)
+QByteArray SHA1::hashString(const QByteArray &cs)
 {
 	QByteArray a(cs.length());
 	memcpy(a.data(), cs.data(), a.size());
@@ -184,7 +184,7 @@ QByteArray SHA1::hashString(const Q3CString &cs)
 
 QString SHA1::digest(const QString &in)
 {
-	QByteArray a = SHA1::hashString(in.utf8());
+	QByteArray a = SHA1::hashString(in.toUtf8());
 	QString out;
 	for(int n = 0; n < (int)a.size(); ++n) {
 		QString str;

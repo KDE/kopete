@@ -25,7 +25,7 @@
 #include <q3ptrqueue.h>
 #include <qtimer.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include <kdebug.h>
 
@@ -379,7 +379,7 @@ void ClientStream::bs_readyRead()
 	a = d->bs->read();
 
 #if LIBOSCAR_DEBUG
-	Q3CString cs(a.data(), a.size()+1);
+	QByteArray cs(a.data(), a.size()+1);
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "recv: " << a.size() << "bytes" << endl;
 	cs_dump( a );
 #endif

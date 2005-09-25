@@ -53,7 +53,7 @@ KUNITTEST_MODULE_REGISTER_TESTER( KopeteEmoticonTest );
 void KopeteEmoticonTest::allTests()
 {
 	// change user data dir to avoid messing with user's .kde dir
-	setenv( "KDEHOME", QFile::encodeName( QDir::homeDirPath() + "/.kopete-unittest" ), true );
+	setenv( "KDEHOME", QFile::encodeName( QDir::homePath() + "/.kopete-unittest" ), true );
 
 	//KApplication::disableAutoDcopRegistration();
 	//KApplication app;

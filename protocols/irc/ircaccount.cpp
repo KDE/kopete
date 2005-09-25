@@ -574,7 +574,7 @@ void IRCAccount::slotPerformOnConnectCommands()
 
 void IRCAccount::slotJoinedUnknownChannel(const QString &channel, const QString &nick)
 {
-	if ( nick.lower() == m_contactManager->mySelf()->nickName().lower() )
+	if ( nick.toLower() == m_contactManager->mySelf()->nickName().toLower() )
 	{
 		m_contactManager->findChannel(channel)->join();
 	}

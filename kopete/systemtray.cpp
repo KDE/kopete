@@ -409,7 +409,7 @@ QString KopeteSystemTray::squashMessage( const Kopete::Message& msg )
 					rx.cap( 1 ) +
 					QString::fromLatin1( " ..." );
 			// find last occurrence of URL (the one inside the <a> tag)
-			int revUrlOffset = msgText.findRev( fullUrl );
+			int revUrlOffset = msgText.lastIndexOf( fullUrl );
 			msgText.replace( revUrlOffset,
 						fullUrl.length(), shorterUrl );
 		}

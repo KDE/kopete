@@ -31,7 +31,7 @@
 
 #include <qtimer.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 #include <kprocess.h>
 
 NetMeetingInvitation::NetMeetingInvitation(bool incoming, MSNContact *c, QObject *parent)
@@ -53,7 +53,7 @@ QString NetMeetingInvitation::invitationHead()
 	return QString( MSNInvitation::invitationHead()+
 				"Session-Protocol: SM1\r\n"
   				"Session-ID: {6672F94C-45BF-11D7-B4AE-00010A1008DF}\r\n" //FIXME i don't know what is the session id
-				"\r\n").utf8();
+				"\r\n").toUtf8();
 }
 
 void NetMeetingInvitation::parseInvitation(const QString& msg)
@@ -75,7 +75,7 @@ void NetMeetingInvitation::parseInvitation(const QString& msg)
 		{
 			if(result==3) // Yes == 3
 			{
-				Q3CString message=QString(
+				QByteArray message=QString(
 					"MIME-Version: 1.0\r\n"
 					"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
 					"\r\n"
@@ -86,7 +86,7 @@ void NetMeetingInvitation::parseInvitation(const QString& msg)
 					"Launch-Application: TRUE\r\n"
 					"Request-Data: IP-Address:\r\n"
 					"IP-Address: " + manager->service()->getLocalIP()+ "\r\n"
-					"\r\n" ).utf8();
+					"\r\n" ).toUtf8();
 
 
 				manager->service()->sendCommand( "MSG" , "N", true, message );
@@ -107,7 +107,7 @@ void NetMeetingInvitation::parseInvitation(const QString& msg)
 			MSNChatSession* manager=dynamic_cast<MSNChatSession*>(m_contact->manager());
 			if(manager && manager->service())
 			{
-				Q3CString message=QString(
+				QByteArray message=QString(
 					"MIME-Version: 1.0\r\n"
 					"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
 					"\r\n"
@@ -118,7 +118,7 @@ void NetMeetingInvitation::parseInvitation(const QString& msg)
 					"Launch-Application: TRUE\r\n"
 					"Request-Data: IP-Address:\r\n"
 					"IP-Address: " + manager->service()->getLocalIP() + "\r\n"
-					"\r\n" ).utf8();
+					"\r\n" ).toUtf8();
 				manager->service()->sendCommand( "MSG" , "N", true, message );
 			}
 			rx=QRegExp("IP-Address: ([0-9\\:\\.]*)");

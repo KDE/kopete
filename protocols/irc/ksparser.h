@@ -13,7 +13,7 @@
 #include <qstring.h>
 #include <q3valuestack.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 /*
  * Helper class to parse IRC color/style codes and convert them to
@@ -27,7 +27,7 @@
 class KSParser
 {
 public:
-	static Q3CString parse(const Q3CString &);
+	static QByteArray parse(const QByteArray &);
 	static int colorForHTML( const QString &html );
 
 	static QColor ircColor(const QString &color);
@@ -37,7 +37,7 @@ public:
 private:
 	KSParser();
 
-	Q3CString _parse(const Q3CString &);
+	QByteArray _parse(const QByteArray &);
 	QString pushTag(const QString &, const QString & = QString::null);
 	QString pushColorTag(const QColor &fgColor, const QColor &bgColor);
 	QString popTag(const QString &);

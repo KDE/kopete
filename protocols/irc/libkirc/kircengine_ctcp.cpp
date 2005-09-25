@@ -171,7 +171,7 @@ void Engine::CtcpRequest_dcc(const QString &nickname, const QString &fileName, u
 void Engine::CtcpQuery_dcc(Message &msg)
 {
 	Message &ctcpMsg = msg.ctcpMessage();
-	QString dccCommand = ctcpMsg.arg(0).upper();
+	QString dccCommand = ctcpMsg.arg(0).toUpper();
 
 	if (dccCommand == QString::fromLatin1("CHAT"))
 	{

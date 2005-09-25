@@ -27,7 +27,7 @@ Modified by Jason Keirstead <jason@keirstead.org>
 #include <qdatastream.h>
 #include <q3stylesheet.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 #include "ksparser.h"
 #include <stdlib.h>
 
@@ -75,14 +75,14 @@ KSParser::~KSParser()
 }
 
 /* NOTE: If thread corruption are seen simply ad a qlock here */
-Q3CString KSParser::parse(const Q3CString &message)
+QByteArray KSParser::parse(const QByteArray &message)
 {
 	return m_parser._parse(message);
 }
 
-Q3CString KSParser::_parse(const Q3CString &message)
+QByteArray KSParser::_parse(const QByteArray &message)
 {
-	Q3CString data( message.size() * 2 );
+	QByteArray data( message.size() * 2 );
 	QBuffer buff( data );
 	buff.open( QIODevice::WriteOnly );
 
@@ -154,7 +154,7 @@ Q3CString KSParser::_parse(const Q3CString &message)
 				break;
 			default:
 				if (cur < QChar(' ')) // search for control characters
-					toAppend = QString::fromLatin1("&lt;%1&gt;").arg(cur, 2, 16).upper();
+					toAppend = QString::fromLatin1("&lt;%1&gt;").arg(cur, 2, 16).toUpper();
 				else
 					toAppend = Q3StyleSheet::escape(cur);
 		}

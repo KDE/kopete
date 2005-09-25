@@ -463,7 +463,7 @@ Plugin* PluginManager::plugin( const QString &_pluginId ) const
 	//        the handling - Martijn
 	QString pluginId = _pluginId;
 	if ( pluginId.endsWith( QString::fromLatin1( "Protocol" ) ) )
-		pluginId = QString::fromLatin1( "kopete_" ) + _pluginId.lower().remove( QString::fromLatin1( "protocol" ) );
+		pluginId = QString::fromLatin1( "kopete_" ) + _pluginId.toLower().remove( QString::fromLatin1( "protocol" ) );
 	// End hack
 
 	KPluginInfo *info = infoForPluginId( pluginId );

@@ -21,7 +21,7 @@
 #include <qtimer.h>
 //Added by qt3to4:
 #include <QVBoxLayout>
-#include <Q3CString>
+#include <QByteArray>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -59,8 +59,8 @@ KopetePluginConfig::KopetePluginConfig( QWidget *parent, const char *name )
 	d->pluginSelector = new KPluginSelector( plainPage() );
 	setMainWidget( d->pluginSelector );
 	connect( d->pluginSelector, SIGNAL( changed( bool ) ), this, SLOT( setChanged( bool ) ) );
-	connect( d->pluginSelector, SIGNAL( configCommitted( const Q3CString & ) ),
-		KSettings::Dispatcher::self(), SLOT( reparseConfiguration( const Q3CString & ) ) );
+	connect( d->pluginSelector, SIGNAL( configCommitted( const QByteArray & ) ),
+		KSettings::Dispatcher::self(), SLOT( reparseConfiguration( const QByteArray & ) ) );
 
 	d->pluginSelector->addPlugins( Kopete::PluginManager::self()->availablePlugins( "Plugins" ), i18n( "General Plugins" ), "Plugins" );
 }

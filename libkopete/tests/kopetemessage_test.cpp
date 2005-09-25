@@ -22,7 +22,7 @@
 #include <qfile.h>
 //Added by qt3to4:
 #include <QTextStream>
-#include <Q3CString>
+#include <QByteArray>
 #include <kapplication.h>
 #include <kstandarddirs.h>
 #include <kinstance.h>
@@ -57,14 +57,14 @@ KopeteMessage_Test::KopeteMessage_Test()
 void KopeteMessage_Test::allTests()
 {
 	// change user data dir to avoid messing with user's .kde dir
-	setenv( "KDEHOME", QFile::encodeName( QDir::homeDirPath() + "/.kopete-unittest" ), true );
+	setenv( "KDEHOME", QFile::encodeName( QDir::homePath() + "/.kopete-unittest" ), true );
 
 	KApplication::disableAutoDcopRegistration();
 	//KCmdLineArgs::init(argc,argv,"testkopetemessage", 0, 0, 0, 0);
 	KApplication app;
 	
 	// create fake objects needed to build a reasonable testeable message
-	m_protocol = new Kopete::Test::Mock::Protocol( new KInstance(Q3CString("test-kopete-message")), 0L, "test-kopete-message");
+	m_protocol = new Kopete::Test::Mock::Protocol( new KInstance(QByteArray("test-kopete-message")), 0L, "test-kopete-message");
 	m_account = new Kopete::Test::Mock::Account(m_protocol, "testaccount");
 	m_metaContactMyself = new Kopete::Test::Mock::MetaContact();
 	m_metaContactOther = new Kopete::Test::Mock::MetaContact();

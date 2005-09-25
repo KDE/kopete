@@ -183,7 +183,7 @@ void Level::resetTag(TagEnum tag)
            Thus, for each tag we remove from the actual tag stack, we also
            try to remove a yet-to-be-printed tag, and only if there are no
            yet-to-be-printed tags left, we start closing the tags we pop.
-           The tags have one space - needed for umlaute (�) and .utf8()
+           The tags have one space - needed for umlaute (�) and .toUtf8()
         */
         if (p->oTags.empty()){
             switch (nTag){

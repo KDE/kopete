@@ -28,7 +28,7 @@
 #include <qtextcodec.h>
 #include <qregexp.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include <kopetemessage.h>
 
@@ -78,7 +78,7 @@ public:
 	void dump() const;
 	void decodeAgain( const QTextCodec *codec );
 
-	inline const Q3CString &raw() const
+	inline const QByteArray &raw() const
 		{ return m_raw; }
 	inline const QString &prefix() const
 		{ return m_prefix; }
@@ -106,7 +106,7 @@ private:
 	/**
 	 * Contains the low level dequoted message.
 	 */
-	Q3CString m_raw;
+	QByteArray m_raw;
 
 	/**
 	 * Contains the completely dequoted prefix.
@@ -139,10 +139,10 @@ private:
 	static QString ctcpQuote(const QString &str);
 	static QString ctcpUnquote(const QString &str);
 
-	static bool extractCtcpCommand(Q3CString &str, Q3CString &ctcpline);
+	static bool extractCtcpCommand(QByteArray &str, QByteArray &ctcpline);
 
-	static bool matchForIRCRegExp(const Q3CString &line, const QTextCodec *codec, KIRC::Message &message);
-	static bool matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const Q3CString &line, KIRC::Message &message);
+	static bool matchForIRCRegExp(const QByteArray &line, const QTextCodec *codec, KIRC::Message &message);
+	static bool matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const QByteArray &line, KIRC::Message &message);
 
 	class KIRC::Message *m_ctcpMessage;
 

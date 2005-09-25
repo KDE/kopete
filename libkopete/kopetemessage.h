@@ -28,7 +28,7 @@
 #include <qfont.h>
 #include <qdatetime.h>
 #include <q3valuelist.h>
-#include <Q3CString>
+#include <QByteArray>
 #include <QSharedDataPointer>
 #include <QList>
 #include <QByteArray>

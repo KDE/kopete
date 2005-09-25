@@ -187,7 +187,7 @@ void AddAccountWizard::accept()
 	}
 
 	// Make sure the protocol is correctly enabled.  This is not really needed, but still good
-	const QString PROTO_NAME = m_proto->pluginId().remove("Protocol").lower();
+	const QString PROTO_NAME = m_proto->pluginId().remove("Protocol").toLower();
 	Kopete::PluginManager::self()->setPluginEnabled(PROTO_NAME , true);
 
 	// setup the custom colour
@@ -210,7 +210,7 @@ void AddAccountWizard::reject()
     // if we have a protocol plugin loaded and its not being used, unload it
 	if (m_proto && Kopete::AccountManager::self()->accounts(m_proto).isEmpty())
 	{
-		const QString PROTO_NAME = m_proto->pluginId().remove("Protocol").lower();
+		const QString PROTO_NAME = m_proto->pluginId().remove("Protocol").toLower();
 		Kopete::PluginManager::self()->unloadPlugin(PROTO_NAME);
 	}
 

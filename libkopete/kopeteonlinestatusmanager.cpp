@@ -34,7 +34,7 @@
 #include <algorithm> // for min
 //Added by qt3to4:
 #include <QPixmap>
-#include <Q3CString>
+#include <QByteArray>
 #include <QHash>
 
 namespace Kopete {
@@ -400,7 +400,7 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 		// from the parent's child list.
 		// The description of the onlinestatus is used as the qobject name
 		// This is safe as long as OnlineStatus are immutable
-		Q3CString actionName = status.description().ascii();
+		QByteArray actionName = status.description().ascii();
 		if ( !( action = static_cast<KAction*>( account->child( actionName ) ) ) )
 		{
 			if(options & OnlineStatusManager::HasAwayMessage)

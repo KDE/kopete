@@ -21,7 +21,7 @@
 #if MSN_WEBCAM
 #include "webcam.h"
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 #endif
 
 using P2P::Dispatcher;
@@ -100,7 +100,7 @@ void Dispatcher::requestDisplayIcon(const QString& from, const QString& msnObjec
 
 	kdDebug(14140) << k_funcinfo << "Requesting, " << msnObject << endl;
 
-	QString context = QString::fromUtf8(KCodecs::base64Encode(msnObject.utf8()));
+	QString context = QString::fromUtf8(KCodecs::base64Encode(msnObject.toUtf8()));
 	// NOTE remove the \0 character automatically
 	// appended to a QCString.
 	context.replace("=", QString::null);
@@ -302,7 +302,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 	else
 	{
 		QString body =
-			Q3CString(message.body.data(), message.header.dataSize);
+			QByteArray(message.body.data(), message.header.dataSize);
 		QRegExp regex("SessionID: ([0-9]*)\r\n");
 		if(regex.search(body) > 0)
 		{
@@ -367,7 +367,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 		}
 
 		QString body =
-			Q3CString(message.body.data(), message.header.dataSize);
+			QByteArray(message.body.data(), message.header.dataSize);
 		kdDebug(14140) << k_funcinfo << "received, " << body << endl;
 
 		if(body.startsWith("INVITE"))
@@ -402,10 +402,10 @@ void Dispatcher::dispatch(const P2P::Message& message)
 
 				regex = QRegExp("Context: ([0-9a-zA-Z+/=]*)");
 				regex.search(body);
-				Q3CString msnobj;
+				QByteArray msnobj;
 
 				// Decode the msn object from base64 encoding.
-				KCodecs::base64Decode(regex.cap(1).utf8() , msnobj);
+				KCodecs::base64Decode(regex.cap(1).toUtf8() , msnobj);
 				kdDebug(14140) << k_funcinfo << "Contact requested, "
 					<< msnobj << endl;
 
@@ -465,7 +465,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				QByteArray context;
 
 				// Decode the file context from base64 encoding.
-				KCodecs::base64Decode(regex.cap(1).utf8(), context);
+				KCodecs::base64Decode(regex.cap(1).toUtf8(), context);
 				QDataStream reader( &context,QIODevice::ReadOnly);
 				reader.setVersion(QDataStream::Qt_3_1);
 				reader.setByteOrder(QDataStream::LittleEndian);
@@ -487,7 +487,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				QTextStream ts(bytes, QIODevice::ReadOnly);
 				ts.setEncoding(QTextStream::Unicode);
 				QString fileName;
-				fileName = ts.readLine().utf8();
+				fileName = ts.readLine().toUtf8();
 
 				emit incomingTransfer(from, fileName, fileSize);
 				
@@ -576,7 +576,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 					kdDebug(14140) << k_funcinfo << "received inkformatgif, " << base64 << endl;
 					QByteArray image;
 					// Convert from base64 encoded string to byte array.
-					KCodecs::base64Decode( base64.utf8() , image );
+					KCodecs::base64Decode( base64.toUtf8() , image );
 					// Create a temporary file to store the image data.
 					KTempFile *imageFile = new KTempFile( locateLocal( "tmp", "inkformatgif-" ), ".gif");
 					imageFile->setAutoDelete(true);

@@ -148,7 +148,7 @@ void SMSSend::loadProviders(const QString &prefix)
 
 	p = d.entryList("*.sms");
 
-	d = QDir::homeDirPath()+"/.smssend/";
+	d = QDir::homePath()+"/.smssend/";
 
 	QStringList tmp(d.entryList("*.sms"));
 

@@ -38,7 +38,7 @@ bool StatusTask::take( Transfer * transfer )
 	{
 		client()->debug( "Got a status change!" );
 		client()->debug( QString( "%1 changed status to %2, message: %3" ).arg( event->source() ).arg( event->status() ).arg( event->statusText() ) );
-		emit gotStatus( event->source().lower(), event->status(), event->statusText() );
+		emit gotStatus( event->source().toLower(), event->status(), event->statusText() );
 		return true;
 	}
 	else

@@ -85,7 +85,7 @@ void JabberResourcePool::addResource ( const XMPP::Jid &jid, const XMPP::Resourc
 	// see if the resource already exists
 	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
 	{
-		if ( (mResource->jid().userHost().lower() == jid.userHost().lower()) && (mResource->resource().name().lower() == resource.name().lower()) )
+		if ( (mResource->jid().userHost().toLower() == jid.userHost().toLower()) && (mResource->resource().name().toLower() == resource.name().toLower()) )
 		{
 			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating existing resource " << resource.name() << " for " << jid.userHost() << endl;
 
@@ -122,7 +122,7 @@ void JabberResourcePool::removeResource ( const XMPP::Jid &jid, const XMPP::Reso
 
 	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
 	{
-		if ( (mResource->jid().userHost().lower() == jid.userHost().lower()) && (mResource->resource().name().lower() == resource.name().lower()) )
+		if ( (mResource->jid().userHost().toLower() == jid.userHost().toLower()) && (mResource->resource().name().toLower() == resource.name().toLower()) )
 		{
 			mPool.remove ();
 			notifyRelevantContacts ( jid );
@@ -140,10 +140,10 @@ void JabberResourcePool::removeAllResources ( const XMPP::Jid &jid )
 
 	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
 	{
-		if ( mResource->jid().userHost().lower() == jid.userHost().lower() )
+		if ( mResource->jid().userHost().toLower() == jid.userHost().toLower() )
 		{
 			// only remove preselected resource in case there is one
-			if ( jid.resource().isEmpty () || ( jid.resource().lower () == mResource->resource().name().lower () ) )
+			if ( jid.resource().isEmpty () || ( jid.resource().toLower () == mResource->resource().name().toLower () ) )
 			{
 				kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing resource " << jid.userHost() << "/" << mResource->resource().name () << endl;
 				mPool.remove ();
@@ -200,7 +200,7 @@ void JabberResourcePool::lockToResource ( const XMPP::Jid &jid, const XMPP::Reso
 	// find the resource in our dictionary that matches
 	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
 	{
-		if ( (mResource->jid().userHost().lower() == jid.full().lower()) && (mResource->resource().name().lower() == resource.name().lower()) )
+		if ( (mResource->jid().userHost().toLower() == jid.full().toLower()) && (mResource->resource().name().toLower() == resource.name().toLower()) )
 		{
 			mLockList.append ( mResource );
 			return;
@@ -218,7 +218,7 @@ void JabberResourcePool::removeLock ( const XMPP::Jid &jid )
 	// find the resource in our dictionary that matches
 	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
 	{
-		if ( (mResource->jid().userHost().lower() == jid.userHost().lower()) )
+		if ( (mResource->jid().userHost().toLower() == jid.userHost().toLower()) )
 		{
 			mLockList.remove (mResource);
 		}
@@ -237,7 +237,7 @@ const XMPP::Resource &JabberResourcePool::lockedResource ( const XMPP::Jid &jid 
 		// we are subscribed to a JID, find the according resource in the pool
 		for ( JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next () )
 		{
-			if ( ( mResource->jid().userHost().lower () == jid.userHost().lower () ) && ( mResource->resource().name () == jid.resource () ) )
+			if ( ( mResource->jid().userHost().toLower () == jid.userHost().toLower () ) && ( mResource->resource().name () == jid.resource () ) )
 			{
 				return mResource->resource ();
 			}
@@ -251,7 +251,7 @@ const XMPP::Resource &JabberResourcePool::lockedResource ( const XMPP::Jid &jid 
 	// see if we have a locked resource
 	for(JabberResource *mResource = mLockList.first (); mResource; mResource = mLockList.next ())
 	{
-		if ( mResource->jid().userHost().lower() == jid.userHost().lower() )
+		if ( mResource->jid().userHost().toLower() == jid.userHost().toLower() )
 		{
 			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Current lock for " << jid.userHost () << " is '" << mResource->resource().name () << "'" << endl;
 			return mResource->resource ();
@@ -288,7 +288,7 @@ const XMPP::Resource &JabberResourcePool::bestResource ( const XMPP::Jid &jid, b
 	for(currentResource = mPool.first (); currentResource; currentResource = mPool.next ())
 	{
 		// make sure we are only looking up resources for the specified JID
-		if ( currentResource->jid().userHost().lower() != jid.userHost().lower() )
+		if ( currentResource->jid().userHost().toLower() != jid.userHost().toLower() )
 		{
 			continue;
 		}
@@ -333,10 +333,10 @@ void JabberResourcePool::findResources ( const XMPP::Jid &jid, JabberResourcePoo
 
 	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
 	{
-		if ( mResource->jid().userHost().lower() == jid.userHost().lower() )
+		if ( mResource->jid().userHost().toLower() == jid.userHost().toLower() )
 		{
 			// we found a resource for the JID, let's see if the JID already contains a resource
-			if ( !jid.resource().isEmpty() && ( jid.resource().lower() != mResource->resource().name().lower() ) )
+			if ( !jid.resource().isEmpty() && ( jid.resource().toLower() != mResource->resource().name().toLower() ) )
 				// the JID contains a resource but it's not the one we have in the dictionary,
 				// thus we have to ignore this resource
 				continue;
@@ -352,10 +352,10 @@ void JabberResourcePool::findResources ( const XMPP::Jid &jid, XMPP::ResourceLis
 
 	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
 	{
-		if ( mResource->jid().userHost().lower() == jid.userHost().lower() )
+		if ( mResource->jid().userHost().toLower() == jid.userHost().toLower() )
 		{
 			// we found a resource for the JID, let's see if the JID already contains a resource
-			if ( !jid.resource().isEmpty() && ( jid.resource().lower() != mResource->resource().name().lower() ) )
+			if ( !jid.resource().isEmpty() && ( jid.resource().toLower() != mResource->resource().name().toLower() ) )
 				// the JID contains a resource but it's not the one we have in the dictionary,
 				// thus we have to ignore this resource
 				continue;

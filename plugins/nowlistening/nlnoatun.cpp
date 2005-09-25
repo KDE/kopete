@@ -25,7 +25,7 @@
 #include "nlmediaplayer.h"
 #include "nlnoatun.h"
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 NLNoatun::NLNoatun( DCOPClient *client ) : NLMediaPlayer()
 {
@@ -41,12 +41,12 @@ void NLNoatun::update()
 	m_playing = false;
 	QString newTrack;
 	// see if it's registered with DCOP
-	Q3CString appname = find();
+	QByteArray appname = find();
 	if ( !appname.isEmpty() )
 	{
 		// see if it's playing
 		QByteArray data, replyData;
-		Q3CString replyType;
+		QByteArray replyType;
 		if ( !m_client->call( appname, "Noatun", "state()", data,
 					replyType, replyData ) )
 		{
@@ -101,9 +101,9 @@ void NLNoatun::update()
 		kdDebug( 14307 ) << "NLNoatun::update() - noatun not found" << endl;
 }
 
-Q3CString NLNoatun::find() const
+QByteArray NLNoatun::find() const
 {
-	Q3CString app = "noatun";
+	QByteArray app = "noatun";
 	if ( !m_client->isApplicationRegistered( app ) )
 	{
 		// looking for a registered app prefixed with 'app'
@@ -125,10 +125,10 @@ Q3CString NLNoatun::find() const
 	return app;
 }
 		
-QString NLNoatun::currentProperty( Q3CString appname, QString property ) const
+QString NLNoatun::currentProperty( QByteArray appname, QString property ) const
 {
 	QByteArray data, replyData;
-	Q3CString replyType;
+	QByteArray replyType;
 	QDataStream arg( &data,QIODevice::WriteOnly );
 	arg.setVersion(QDataStream::Qt_3_1);
 	QString result = "";

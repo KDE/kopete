@@ -152,7 +152,7 @@ void Engine::nick(Message &msg)
 		codecs.insert( newNick, c );
 	}
 
-	if (oldNick.lower() == m_Nickname.lower())
+	if (oldNick.toLower() == m_Nickname.toLower())
 	{
 		emit successfullyChangedNick(oldNick, msg.suffix());
 		m_Nickname = msg.suffix();

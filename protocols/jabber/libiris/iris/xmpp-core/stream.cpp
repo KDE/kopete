@@ -50,7 +50,7 @@
 #include<qca.h>
 //Added by qt3to4:
 #include <Q3ValueList>
-#include <Q3CString>
+#include <QByteArray>
 #include <Q3PtrList>
 #include<stdlib.h>
 #include"bytestream.h"
@@ -985,7 +985,7 @@ void ClientStream::ss_readyRead()
 	QByteArray a = d->ss->read();
 
 #ifdef XMPP_DEBUG
-	Q3CString cs(a.data(), a.size()+1);
+	QByteArray cs(a.data(), a.size()+1);
 	fprintf(stderr, "ClientStream: recv: %d [%s]\n", a.size(), cs.data());
 #endif
 
@@ -1178,7 +1178,7 @@ void ClientStream::srvProcessNext()
 			else if(need == CoreProtocol::NSASLNext) {
 				printf("Need SASL Next Step\n");
 				QByteArray a = d->srv.saslStep();
-				Q3CString cs(a.data(), a.size()+1);
+				QByteArray cs(a.data(), a.size()+1);
 				printf("[%s]\n", cs.data());
 				d->sasl->putStep(a);
 			}
@@ -1205,7 +1205,7 @@ void ClientStream::srvProcessNext()
 			}
 			case CoreProtocol::ESend: {
 				QByteArray a = d->srv.takeOutgoingData();
-				Q3CString cs(a.size()+1);
+				QByteArray cs(a.size()+1);
 				memcpy(cs.data(), a.data(), a.size());
 				printf("Need Send: {%s}\n", cs.data());
 				d->ss->write(a);
@@ -1215,9 +1215,9 @@ void ClientStream::srvProcessNext()
 				printf("Break (RecvOpen)\n");
 
 				// calculate key
-				Q3CString str = QCA::SHA1::hashToString("secret").utf8();
-				str = QCA::SHA1::hashToString(str + "im.pyxa.org").utf8();
-				str = QCA::SHA1::hashToString(str + d->srv.id.utf8()).utf8();
+				QByteArray str = QCA::SHA1::hashToString("secret").toUtf8();
+				str = QCA::SHA1::hashToString(str + "im.pyxa.org").toUtf8();
+				str = QCA::SHA1::hashToString(str + d->srv.id.toUtf8()).toUtf8();
 				d->srv.setDialbackKey(str);
 
 				//d->srv.setDialbackKey("3c5d721ea2fcc45b163a11420e4e358f87e3142a");
@@ -1279,7 +1279,7 @@ void ClientStream::processNext()
 			QString str;
 			if(i.isString) {
 				// skip whitespace pings
-				if(i.str.stripWhiteSpace().isEmpty())
+				if(i.str.trimmed().isEmpty())
 					continue;
 				str = i.str;
 			}
@@ -1319,7 +1319,7 @@ void ClientStream::processNext()
 			case CoreProtocol::ESend: {
 				QByteArray a = d->client.takeOutgoingData();
 #ifdef XMPP_DEBUG
-				Q3CString cs(a.size()+1);
+				QByteArray cs(a.size()+1);
 				memcpy(cs.data(), a.data(), a.size());
 				printf("Need Send: {%s}\n", cs.data());
 #endif

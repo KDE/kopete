@@ -28,7 +28,7 @@
 #include<q3socketdevice.h>
 #include<qsocketnotifier.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #ifdef Q_OS_UNIX
 #include<sys/types.h>
@@ -58,9 +58,9 @@ static QByteArray sp_create_udp(const QString &host, Q_UINT16 port, const QByteA
 	//if(addr.setAddress(host))
 	//	return sp_set_request(addr, port, cmd1);
 
-	Q3CString h = host.utf8();
+	QByteArray h = host.toUtf8();
 	h.truncate(255);
-	h = QString::fromUtf8(h).utf8(); // delete any partial characters?
+	h = QString::fromUtf8(h).toUtf8(); // delete any partial characters?
 	int hlen = h.length();
 
 	int at = 0;
@@ -122,7 +122,7 @@ static int sp_read_udp(QByteArray *from, SPS_UDP *s)
 		full_len += host_len;
 		if((int)from->size() < full_len)
 			return 0;
-		Q3CString cs(host_len+1);
+		QByteArray cs(host_len+1);
 		memcpy(cs.data(), from->data() + 5, host_len);
 		host = QString::fromLatin1(cs);
 	}
@@ -285,7 +285,7 @@ static int sps_get_version(QByteArray *from, SPSS_VERSION *s)
 }
 
 // authUsername
-static QByteArray spc_set_authUsername(const Q3CString &user, const Q3CString &pass)
+static QByteArray spc_set_authUsername(const QByteArray &user, const QByteArray &pass)
 {
 	int len1 = user.length();
 	int len2 = pass.length();
@@ -332,7 +332,7 @@ static int spc_get_authUsername(QByteArray *from, SPCS_AUTHUSERNAME *s)
 		return 0;
 	QByteArray a = ByteStream::takeArray(from, ulen + plen + 3);
 
-	Q3CString user, pass;
+	QByteArray user, pass;
 	user.resize(ulen+1);
 	pass.resize(plen+1);
 	memcpy(user.data(), a.data()+2, ulen);
@@ -405,9 +405,9 @@ static QByteArray sp_set_request(const QString &host, Q_UINT16 port, unsigned ch
 	if(addr.setAddress(host))
 		return sp_set_request(addr, port, cmd1);
 
-	Q3CString h = host.utf8();
+	QByteArray h = host.toUtf8();
 	h.truncate(255);
-	h = QString::fromUtf8(h).utf8(); // delete any partial characters?
+	h = QString::fromUtf8(h).toUtf8(); // delete any partial characters?
 	int hlen = h.length();
 
 	int at = 0;
@@ -467,7 +467,7 @@ static int sp_get_request(QByteArray *from, SPS_CONNREQ *s)
 		full_len += host_len;
 		if((int)from->size() < full_len)
 			return 0;
-		Q3CString cs(host_len+1);
+		QByteArray cs(host_len+1);
 		memcpy(cs.data(), from->data() + 5, host_len);
 		host = QString::fromLatin1(cs);
 	}

@@ -24,7 +24,7 @@
 #include <kdebug.h>
 #include <qstring.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include "nlmediaplayer.h"
 #include "nlamarok.h"
@@ -42,7 +42,7 @@ void NLamaroK::update()
 	m_newTrack = false;
 	QString newTrack;
 	QByteArray data, replyData;
-	Q3CString replyType;
+	QByteArray replyType;
 	QString result;
 
 	// see if amaroK is  registered with DCOP

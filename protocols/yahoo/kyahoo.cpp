@@ -34,7 +34,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 #include <Q3ValueList>
-#include <Q3CString>
+#include <QByteArray>
 
 // KDE Includes
 #include <klocale.h>
@@ -164,13 +164,13 @@ YahooSessionManager::~YahooSessionManager()
 
 void YahooSessionManager::setPager( QString host, int port )
 {
-	strcpy( pager_host, host.utf8() );
+	strcpy( pager_host, host.toUtf8() );
 	strcpy( pager_port, QString::number( port ).latin1() );
 }
 
 void YahooSessionManager::setFileTransfer( QString host, int port )
 {
-	strcpy( filetransfer_host, host.utf8() );
+	strcpy( filetransfer_host, host.toUtf8() );
 	strcpy( filetransfer_port, QString::number( port ).latin1() );
 }
 
@@ -180,7 +180,7 @@ YahooSession* YahooSessionManager::createSession( const QString username, const 
 	YahooSession *session;
 
 	kdDebug(14181) << k_funcinfo << " Initializing" << endl;
-	id = yahoo_init_with_attributes( username.local8Bit(), password.local8Bit(), "pager_host", pager_host, "pager_port", QString(pager_port).toInt(), 0L );
+	id = yahoo_init_with_attributes( username.toLocal8Bit(), password.toLocal8Bit(), "pager_host", pager_host, "pager_port", QString(pager_port).toInt(), 0L );
 
 	session = new YahooSession(id, username, password);
 
@@ -285,7 +285,7 @@ void YahooSession::refresh()
 void YahooSession::setIdentityStatus( const QString &identity, int active)
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	yahoo_set_identity_status( m_connId, identity.local8Bit(), active );
+	yahoo_set_identity_status( m_connId, identity.toLocal8Bit(), active );
 }
 
 void YahooSession::getList()
@@ -303,55 +303,55 @@ void YahooSession::keepalive()
 void YahooSession::sendIm( const QString &from, const QString &who, const QString &msg, int picture )
 {
 	kdDebug(14181) << k_funcinfo << " Picture: " << picture <<  endl;
-	yahoo_send_im( m_connId, from.local8Bit(), who.local8Bit(), (const char *)msg.utf8(), 1, picture );
+	yahoo_send_im( m_connId, from.toLocal8Bit(), who.toLocal8Bit(), (const char *)msg.toUtf8(), 1, picture );
 }
 
 void YahooSession::sendTyping( const QString &from, const QString &who, int typ)
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	yahoo_send_typing( m_connId, from.local8Bit(), who.local8Bit(), typ );
+	yahoo_send_typing( m_connId, from.toLocal8Bit(), who.toLocal8Bit(), typ );
 }
 
 void YahooSession::buzzContact( const QString &from, const QString &who, int pictureFlag )
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	yahoo_send_im( m_connId, from.local8Bit(), who.local8Bit(), "<ding>", 1, pictureFlag );
+	yahoo_send_im( m_connId, from.toLocal8Bit(), who.toLocal8Bit(), "<ding>", 1, pictureFlag );
 }
 
 void YahooSession::setAway( enum yahoo_status state, const QString &msg, int away)
 {
 	kdDebug(14181)<< k_funcinfo << state << ", " << msg << ", " << away << "]" << m_connId << endl;
 
-	yahoo_set_away( m_connId, state, msg.isNull() ? Q3CString() : msg.local8Bit(), away );
+	yahoo_set_away( m_connId, state, msg.isNull() ? QByteArray() : msg.toLocal8Bit(), away );
 }
 
 void YahooSession::addBuddy( const QString &who, const QString &group)
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	yahoo_add_buddy( m_connId, who.local8Bit(), group.local8Bit(), "Please add me" );
+	yahoo_add_buddy( m_connId, who.toLocal8Bit(), group.toLocal8Bit(), "Please add me" );
 }
 
 void YahooSession::removeBuddy( const QString &who, const QString &group)
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	yahoo_remove_buddy( m_connId, who.local8Bit(), group.local8Bit() );
+	yahoo_remove_buddy( m_connId, who.toLocal8Bit(), group.toLocal8Bit() );
 }
 
 void YahooSession::rejectBuddy( const QString &who, const QString &msg)
 {
-	yahoo_reject_buddy( m_connId, who.local8Bit(), msg.local8Bit() );
+	yahoo_reject_buddy( m_connId, who.toLocal8Bit(), msg.toLocal8Bit() );
 }
 
 void YahooSession::ignoreBuddy( const QString &who, int unignore)
 {
-	yahoo_ignore_buddy( m_connId, who.local8Bit(), unignore );
+	yahoo_ignore_buddy( m_connId, who.toLocal8Bit(), unignore );
 
 }
 
 void YahooSession::requestBuddyIcon( const QString &who )
 {
 	kdDebug(14181) << k_funcinfo << "Requesting avatar for: " << who << endl;
-	yahoo_buddyicon_request( m_connId, who.local8Bit() );
+	yahoo_buddyicon_request( m_connId, who.toLocal8Bit() );
 }
 
 void YahooSession::downloadBuddyIcon( const QString &who, KURL url, int checksum )
@@ -365,19 +365,19 @@ void YahooSession::sendBuddyIconChecksum( int checksum, const QString &who )
 	if ( who.isEmpty() )
 		yahoo_send_picture_checksum( m_connId, 0, checksum );
 	else
-		yahoo_send_picture_checksum( m_connId, who.local8Bit(), checksum );
+		yahoo_send_picture_checksum( m_connId, who.toLocal8Bit(), checksum );
 }
 
 void YahooSession::sendBuddyIconInfo( const QString &who, const QString &url, int checksum )
 {
 	kdDebug(14180) << k_funcinfo << "Url: " << url << " checksum: " << checksum << endl;
-	yahoo_send_picture_info( m_connId, who.local8Bit(), url.local8Bit(), checksum );
+	yahoo_send_picture_info( m_connId, who.toLocal8Bit(), url.toLocal8Bit(), checksum );
 }
 
 void YahooSession::sendBuddyIconUpdate( const QString &who, int type )
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	yahoo_send_picture_update( m_connId, who.local8Bit(), type );
+	yahoo_send_picture_update( m_connId, who.toLocal8Bit(), type );
 }
 
 void YahooSession::uploadBuddyIcon( const QString &url, int size )
@@ -389,12 +389,12 @@ void YahooSession::uploadBuddyIcon( const QString &url, int size )
 	uploadData->file.setName( url );
 	uploadData->reportSuccess = false;
 	
-	yahoo_send_picture( m_connId, url.local8Bit(), size, upload_file_callback, reinterpret_cast< void*>( uploadData ) );
+	yahoo_send_picture( m_connId, url.toLocal8Bit(), size, upload_file_callback, reinterpret_cast< void*>( uploadData ) );
 }
 
 void YahooSession::changeBuddyGroup( const QString &who, const QString &old_group, const QString &new_group)
 {
-	yahoo_change_buddy_group( m_connId, who.local8Bit(), old_group.local8Bit(), new_group.local8Bit() );
+	yahoo_change_buddy_group( m_connId, who.toLocal8Bit(), old_group.toLocal8Bit(), new_group.toLocal8Bit() );
 }
 
 void YahooSession::conferenceInvite( const QString & from, const QStringList &who,
@@ -406,11 +406,11 @@ void YahooSession::conferenceInvite( const QString & from, const QStringList &wh
 	for ( QStringList::ConstIterator it = who.begin(); it != who.end(); ++it )
 	{
 		char *member;
-		member = strdup( (*it).local8Bit() );
+		member = strdup( (*it).toLocal8Bit() );
 		y_list_append( tmplist, member );
 	}
 
-	yahoo_conference_invite( m_connId, from.local8Bit(), tmplist, room.local8Bit(), msg.local8Bit() );
+	yahoo_conference_invite( m_connId, from.toLocal8Bit(), tmplist, room.toLocal8Bit(), msg.toLocal8Bit() );
 
 	y_list_free_1( tmplist );
 	y_list_free( tmplist );
@@ -427,11 +427,11 @@ void YahooSession::conferenceAddinvite( const QString & from, const QString &who
 	{
 
 		char *member;
-		member = strdup( (*it).local8Bit() );
+		member = strdup( (*it).toLocal8Bit() );
 		y_list_append( tmplist, member );
 	}
 
-	yahoo_conference_addinvite( m_connId, from.local8Bit(), who.local8Bit(), room.local8Bit(), tmplist, msg.local8Bit() );
+	yahoo_conference_addinvite( m_connId, from.toLocal8Bit(), who.toLocal8Bit(), room.toLocal8Bit(), tmplist, msg.toLocal8Bit() );
 
 	y_list_free_1( tmplist );
 	y_list_free( tmplist );
@@ -446,11 +446,11 @@ void YahooSession::conferenceDecline( const QString & from, const QStringList &w
 	for ( QStringList::ConstIterator it = who.begin(); it != who.end(); ++it )
 	{
 		char *member;
-		member = strdup( (*it).local8Bit() );
+		member = strdup( (*it).toLocal8Bit() );
 		y_list_append( tmplist, member );
 	}
 
-	yahoo_conference_decline( m_connId, from.local8Bit(), tmplist, room.local8Bit(), msg.local8Bit() );
+	yahoo_conference_decline( m_connId, from.toLocal8Bit(), tmplist, room.toLocal8Bit(), msg.toLocal8Bit() );
 
 	y_list_free_1( tmplist );
 	y_list_free( tmplist );
@@ -465,12 +465,12 @@ void YahooSession::conferenceMessage( const QString & from, const QStringList &w
 	for ( QStringList::ConstIterator it = who.begin(); it != who.end(); ++it )
 	{
 		char *member;
-		member = strdup( (*it).local8Bit() );
+		member = strdup( (*it).toLocal8Bit() );
 		y_list_append( tmplist, member );
 	}
 
-	yahoo_conference_message( m_connId, from.local8Bit(), tmplist,
-		room.local8Bit(), (const char *) msg.utf8(), 1 );
+	yahoo_conference_message( m_connId, from.toLocal8Bit(), tmplist,
+		room.toLocal8Bit(), (const char *) msg.toUtf8(), 1 );
 
 	y_list_free_1( tmplist );
 	y_list_free( tmplist );
@@ -485,11 +485,11 @@ void YahooSession::YahooSession::conferenceLogon( const QString & from, const QS
 	for ( QStringList::ConstIterator it = who.begin(); it != who.end(); ++it )
 	{
 		char *member;
-		member = strdup( (*it).local8Bit() );
+		member = strdup( (*it).toLocal8Bit() );
 		y_list_append( tmplist, member );
 	}
 
-	yahoo_conference_logon( m_connId, from.local8Bit(), tmplist, room.local8Bit() );
+	yahoo_conference_logon( m_connId, from.toLocal8Bit(), tmplist, room.toLocal8Bit() );
 
 	y_list_free_1( tmplist );
 	y_list_free( tmplist );
@@ -504,11 +504,11 @@ void YahooSession::conferenceLogoff( const QString &from, const QStringList &who
 	for ( QStringList::ConstIterator it = who.begin(); it != who.end(); ++it )
 	{
 		char *member;
-		member = strdup( (*it).local8Bit() );
+		member = strdup( (*it).toLocal8Bit() );
 		y_list_append( tmplist, member );
 	}
 
-	yahoo_conference_logoff( m_connId, from.local8Bit(), tmplist, room.local8Bit() );
+	yahoo_conference_logoff( m_connId, from.toLocal8Bit(), tmplist, room.toLocal8Bit() );
 
 	y_list_free_1( tmplist );
 	y_list_free( tmplist );
@@ -524,7 +524,7 @@ int YahooSession::sendFile( const QString& who, const QString& msg,
 	upload->file.setName( name );
 	upload->reportSuccess = true;
 	
-	yahoo_send_file( m_connId, who.local8Bit(), msg.local8Bit(), name.local8Bit(), size, upload_file_callback, upload );
+	yahoo_send_file( m_connId, who.toLocal8Bit(), msg.toLocal8Bit(), name.toLocal8Bit(), size, upload_file_callback, upload );
 	
 	return 0;
 }
@@ -535,7 +535,7 @@ int YahooSession::getUrlHandle( Kopete::Transfer *trans )
 	char *_url;
 
 	m_kopeteTransfer = trans;
-	_url = strdup( trans->info().internalId().local8Bit() );
+	_url = strdup( trans->info().internalId().toLocal8Bit() );
 	m_Filename = strdup( QFile::encodeName(trans->destinationURL().path()) );
 
 	yahoo_get_url_handle(m_connId, _url, receive_file_callback, 0);
@@ -600,7 +600,7 @@ void YahooSession::slotLoginResponseReceiver( int /* succ */, char * /* url */ )
 void YahooSession::stealthContact( const QString &who, int unstealth )
 {
 	kdDebug(14181)<< k_funcinfo << "Unstealth: " << unstealth << endl;
-	yahoo_stealth_buddy( m_connId, who.local8Bit(), unstealth );
+	yahoo_stealth_buddy( m_connId, who.toLocal8Bit(), unstealth );
 }
 
 void YahooSession::getUserInfo( const QString &who )

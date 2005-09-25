@@ -49,7 +49,7 @@ JabberContactPoolItem *JabberContactPool::findPoolItem ( const XMPP::RosterItem 
 	// see if the contact already exists
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
-		if ( mContactItem->contact()->contactId().lower() == contact.jid().full().lower() )
+		if ( mContactItem->contact()->contactId().toLower() == contact.jid().full().toLower() )
 		{
 			return mContactItem;
 		}
@@ -143,7 +143,7 @@ void JabberContactPool::removeContact ( const XMPP::Jid &jid )
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
-		if ( mContactItem->contact()->contactId().lower() == jid.full().lower() )
+		if ( mContactItem->contact()->contactId().toLower() == jid.full().toLower() )
 		{
 			/*
 			 * The following deletion will cause slotContactDestroyed()
@@ -201,7 +201,7 @@ void JabberContactPool::setDirty ( const XMPP::Jid &jid, bool dirty )
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
-		if ( mContactItem->contact()->contactId().lower() == jid.full().lower() )
+		if ( mContactItem->contact()->contactId().toLower() == jid.full().toLower() )
 		{
 			mContactItem->setDirty ( dirty );
 			return;
@@ -237,7 +237,7 @@ JabberBaseContact *JabberContactPool::findExactMatch ( const XMPP::Jid &jid )
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
-		if ( mContactItem->contact()->contactId().lower () == jid.full().lower () )
+		if ( mContactItem->contact()->contactId().toLower () == jid.full().toLower () )
 		{
 			return mContactItem->contact ();
 		}
@@ -252,7 +252,7 @@ JabberBaseContact *JabberContactPool::findRelevantRecipient ( const XMPP::Jid &j
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
-		if ( mContactItem->contact()->contactId().lower () == jid.userHost().lower () )
+		if ( mContactItem->contact()->contactId().toLower () == jid.userHost().toLower () )
 		{
 			return mContactItem->contact ();
 		}
@@ -268,7 +268,7 @@ Q3PtrList<JabberBaseContact> JabberContactPool::findRelevantSources ( const XMPP
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
-		if ( XMPP::Jid ( mContactItem->contact()->contactId() ).userHost().lower () == jid.userHost().lower () )
+		if ( XMPP::Jid ( mContactItem->contact()->contactId() ).userHost().toLower () == jid.userHost().toLower () )
 		{
 			list.append ( mContactItem->contact () );
 		}

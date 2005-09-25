@@ -94,7 +94,7 @@ bool WPAddContact::validateData()
 
 	// If our own host is not allowed as contact localhost should be forbidden as well,
 	// additionally somehow localhost as contact crashes when receiving a message from it?? GF
-	if (tmpHostName.upper() == "LOCALHOST") {
+	if (tmpHostName.toUpper() == "LOCALHOST") {
 		KMessageBox::sorry(this, i18n("<qt>LOCALHOST is not allowed as contact.</qt>"), i18n("WinPopup"));
 		return false;
 	}

@@ -131,7 +131,7 @@
 #include <qvariant.h>
 #include <q3valuelist.h>	
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 /**
  * Fields are typed units of information interchanged between the groupwise server and its clients.
@@ -149,15 +149,15 @@ namespace Field
 	{
 	public:
 		FieldBase() {}
-		FieldBase( Q3CString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type );
+		FieldBase( QByteArray tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type );
 		virtual ~FieldBase() {}
-		Q3CString tag() const;
+		QByteArray tag() const;
 		Q_UINT8 method() const;
 		Q_UINT8 flags() const;
 		Q_UINT8 type() const;
 		void setFlags( const Q_UINT8 flags );
 	protected:
-		Q3CString m_tag;
+		QByteArray m_tag;
 		Q_UINT8 m_method;
 		Q_UINT8 m_flags;
 		Q_UINT8 m_type;  // doch needed
@@ -180,18 +180,18 @@ namespace Field
 			 * @param tag The tag name of the field to search for.
 			 * @return An iterator pointing to the first occurrence found, or end() if none was found.
 			 */
-			FieldListIterator find( Q3CString tag );
+			FieldListIterator find( QByteArray tag );
 			/** 
 			 * Locate the first occurrence of a given field in the list, starting at the supplied iterator
 			 * @param tag The tag name of the field to search for.
 			 * @param it An iterator within the list, to start searching from.
 			 * @return An iterator pointing to the first occurrence found, or end() if none was found.
 			 */
-			FieldListIterator find( FieldListIterator &it, Q3CString tag );
+			FieldListIterator find( FieldListIterator &it, QByteArray tag );
 			/**
 			 * Get the index of the first occurrence of tag, or -1 if not found
 			 */
-			int findIndex( Q3CString tag );
+			int findIndex( QByteArray tag );
 			/** 
 			 * Debug function, dumps to stdout
 			 */
@@ -204,11 +204,11 @@ namespace Field
 			 * Utility functions for finding the first instance of a tag
 			 * @return 0 if no field of the right tag and type was found.
 			 */
-			SingleField * findSingleField( Q3CString tag );
-			MultiField * findMultiField( Q3CString tag );
+			SingleField * findSingleField( QByteArray tag );
+			MultiField * findMultiField( QByteArray tag );
 		protected:
-			SingleField * findSingleField( FieldListIterator &it, Q3CString tag );
-			MultiField * findMultiField( FieldListIterator &it, Q3CString tag );
+			SingleField * findSingleField( FieldListIterator &it, QByteArray tag );
+			MultiField * findMultiField( FieldListIterator &it, QByteArray tag );
 
 	};
 
@@ -224,11 +224,11 @@ namespace Field
 		/** 
 		 * Single field constructor
 		 */
-		SingleField( Q3CString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, QVariant value );
+		SingleField( QByteArray tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, QVariant value );
 		/** 
 		 * Convenience constructor for NMFIELD_METHOD_VALID fields
 		 */
-		SingleField( Q3CString tag, Q_UINT8 flags, Q_UINT8 type, QVariant value );
+		SingleField( QByteArray tag, Q_UINT8 flags, Q_UINT8 type, QVariant value );
 		~SingleField();
 		void setValue( const QVariant v );
 		QVariant value() const;
@@ -243,8 +243,8 @@ namespace Field
 	class MultiField : public FieldBase
 	{
 	public:  
-		MultiField( Q3CString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type );
-		MultiField( Q3CString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, FieldList fields );
+		MultiField( QByteArray tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type );
+		MultiField( QByteArray tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, FieldList fields );
 		~MultiField();
 		FieldList fields() const;
 		void setFields( FieldList );

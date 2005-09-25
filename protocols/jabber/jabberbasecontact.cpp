@@ -36,7 +36,7 @@
  * JabberBaseContact constructor
  */
 JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, Kopete::MetaContact * mc)
-				: Kopete::Contact (account, rosterItem.jid().full().lower (), mc)
+				: Kopete::Contact (account, rosterItem.jid().full().toLower (), mc)
 {
 
 	setDontSync ( false );
@@ -246,7 +246,7 @@ void JabberBaseContact::updateResourceList ()
 						   arg ( i18n ( "Timestamp" ), KGlobal::locale()->formatDateTime ( (*it)->resource().status().timeStamp(), true, true ) );
 
 		// message, if any
-		if ( !(*it)->resource().status().status().stripWhiteSpace().isEmpty () )
+		if ( !(*it)->resource().status().status().trimmed().isEmpty () )
 		{
 			resourceListStr += QString ( "<tr><td>%1: %2</td></tr>" ).
 							   arg ( i18n ( "Message" ), (*it)->resource().status().status () );

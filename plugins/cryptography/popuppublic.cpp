@@ -88,7 +88,7 @@ void UpdateViewItem2::paintCell(QPainter *p, const QColorGroup &cg,int column, i
 
 QString UpdateViewItem2 :: key(int c,bool ) const
 {
-        return text(c).lower();
+        return text(c).toLower();
 }
 
 ///////////////  main view
@@ -502,8 +502,8 @@ kdDebug(2100)<<"Selected Key:"<<selectedKeys<<endl;
                 returnOptions<<"--armor";
         if (CBhideid->isChecked())
                 returnOptions<<"--throw-keyid";
-        /*if ((KGpgSettings::allowCustomEncryptionOptions()) && (!customOptions.stripWhiteSpace().isEmpty()))
-                returnOptions.operator+ (QStringList::split(QString(" "),customOptions.simplifyWhiteSpace()));*/
+        /*if ((KGpgSettings::allowCustomEncryptionOptions()) && (!customOptions.trimmed().isEmpty()))
+                returnOptions.operator+ (QStringList::split(QString(" "),customOptions.simplified()));*/
 	//hide();
 	
 //MODIFIED for kopete

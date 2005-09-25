@@ -77,7 +77,7 @@ void BookmarksPlugin::slotAddKopeteBookmark( KIO::Job *transfer, const QByteArra
 		group.addBookmark( mgr, m_map[(KIO::TransferJob*)transfer].url.prettyURL(), m_map[(KIO::TransferJob*)transfer].url.url() );
 		kdDebug( 14501 ) << "failed to extract title from first data chunk" << endl;
 	}else {
-		group.addBookmark( mgr, rx.cap( 1 ).simplifyWhiteSpace(),
+		group.addBookmark( mgr, rx.cap( 1 ).simplified(),
 						   m_map[(KIO::TransferJob*)transfer].url.url() );
 	}
 	mgr->save();
@@ -170,7 +170,7 @@ QTextCodec* BookmarksPlugin::getPageEncoding( QByteArray data )
 	//kdDebug(14501) << temp.mid(pos, rx.matchedLength()) << endl;
 	temp = temp.mid(pos, rx.matchedLength()-1);
 	temp = temp.mid( temp.find("charset", 0, false)+7);
-	temp = temp.remove('=').simplifyWhiteSpace();
+	temp = temp.remove('=').simplified();
 	for( pos = 0 ; temp[pos].isLetterOrNumber() || temp[pos] == '-' ; pos++ );
 	temp = temp.left( pos );
 	//kdDebug(14501) << "encoding: " << temp << endl;

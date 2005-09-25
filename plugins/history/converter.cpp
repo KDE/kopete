@@ -105,7 +105,7 @@ void HistoryPlugin::convertOldHistory()
 
 		if(!protocolId.isEmpty() || !accountId.isEmpty())
 		{
-			QDir d2( fi->absFilePath() );
+			QDir d2( fi->absoluteFilePath() );
 			d2.setFilter( QDir::Files  );
 			d2.setNameFilter("*.log");
 			const QFileInfoList *list = d2.entryInfoList();
@@ -140,7 +140,7 @@ void HistoryPlugin::convertOldHistory()
 					QString buffer, msgBlock;
 					char cbuf[CBUFLENGTH]; // buffer for the log file
 
-					QString logFileName = fi2->absFilePath();
+					QString logFileName = fi2->absoluteFilePath();
 
 					// open the file
 					FILE *f = fopen(QFile::encodeName(logFileName), "r");
@@ -202,7 +202,7 @@ void HistoryPlugin::convertOldHistory()
 									else if( tagname == QString::fromLatin1( "date" ) )
 										date = element.text();
 									else if( tagname == QString::fromLatin1( "body" ) )
-										body = element.text().stripWhiteSpace();
+										body = element.text().trimmed();
 								}
 
 								node = node.nextSibling();
@@ -264,7 +264,7 @@ void HistoryPlugin::convertOldHistory()
 							msgElem.setAttribute( "from", dir==Kopete::Message::Outbound ? accountId : contactId  );
 							msgElem.setAttribute( "nick",  nick ); //do we have to set this?
 							msgElem.setAttribute( "time",  QString::number(dt.date().day()) + " " +  QString::number(dt.time().hour()) + ":" + QString::number(dt.time().minute())  );
-							QDomText msgNode = doc.createTextNode( body.stripWhiteSpace() );
+							QDomText msgNode = doc.createTextNode( body.trimmed() );
 							docElem.appendChild( msgElem );
 							msgElem.appendChild( msgNode );
 						}

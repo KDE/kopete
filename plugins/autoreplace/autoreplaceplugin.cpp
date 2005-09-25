@@ -107,7 +107,7 @@ void AutoReplacePlugin::slotAboutToSend( Kopete::Message &msg )
 			QString replaced_message = msg.plainBody();
 			// eventually start each sent line with capital letter
 			// TODO 	". "	 "? "	 "! " 
-			replaced_message[ 0 ] = replaced_message.at( 0 ).upper();
+			replaced_message[ 0 ] = replaced_message.at( 0 ).toUpper();
 			
 			// the message is now the one with replaced words
 			msg.setBody( replaced_message, Kopete::Message::PlainText );

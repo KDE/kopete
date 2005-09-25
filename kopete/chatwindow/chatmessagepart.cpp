@@ -510,7 +510,7 @@ Kopete::Contact *ChatMessagePart::contactFromNode( const DOM::Node &n ) const
 	}
 	else
 	{
-		QString nick = element.innerText().string().stripWhiteSpace();
+		QString nick = element.innerText().string().trimmed();
 		for ( i = 0; i != m.size(); i++)
 			if ( m[i]->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString() == nick )
 				return m[i];
@@ -645,9 +645,9 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 	htmltext = selectedTextAsHTML();
 	text = selectedText();
 	//selectedText is now sufficent
-//	text=Kopete::Message::unescape( htmltext ).stripWhiteSpace();
+//	text=Kopete::Message::unescape( htmltext ).trimmed();
 	// Message::unsescape will replace image by his title attribute
-	// stripWhiteSpace is for removing the newline added by the <!DOCTYPE> and other xml things of RangeImpl::toHTML
+	// trimmed is for removing the newline added by the <!DOCTYPE> and other xml things of RangeImpl::toHTML
 	if(text.isEmpty()) return;
 
 	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), this, SLOT( slotClearSelection()));

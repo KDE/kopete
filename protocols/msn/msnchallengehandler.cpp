@@ -21,7 +21,7 @@
 
 #include <qdatastream.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include <kdebug.h>
 #include <kcodecs.h>
@@ -43,8 +43,8 @@ QString MSNChallengeHandler::computeHash(const QString& challengeString)
   	// Step One: THe MD5 Hash.
 
   	// Combine the received challenge string with the product key.
- 	KMD5 md5((challengeString + m_productKey).utf8());
- 	Q3CString digest = md5.hexDigest();
+ 	KMD5 md5((challengeString + m_productKey).toUtf8());
+ 	QByteArray digest = md5.hexDigest();
 
  	kdDebug(14140) << k_funcinfo << "md5: " << digest << endl;
 
@@ -59,7 +59,7 @@ QString MSNChallengeHandler::computeHash(const QString& challengeString)
 
 	QString challengeKey = challengeString + m_productId;
 	// Pad to multiple of 8.
-	challengeKey = challengeKey.leftJustify(challengeKey.length() + (8 - challengeKey.length() % 8), '0');
+	challengeKey = challengeKey.leftJustified(challengeKey.length() + (8 - challengeKey.length() % 8), '0');
 
 	kdDebug(14140) << k_funcinfo << "challenge key: " << challengeKey << endl;
 
@@ -91,11 +91,11 @@ QString MSNChallengeHandler::computeHash(const QString& challengeString)
 
 	QString upper = QString::number(QString(digest.mid(0, 16)).toULongLong(0, 16)^key, 16);
 	if(upper.length() % 16 != 0)
-		upper = upper.rightJustify(upper.length() + (16 - upper.length() % 16), '0');
+		upper = upper.rightJustified(upper.length() + (16 - upper.length() % 16), '0');
 
 	QString lower = QString::number(QString(digest.mid(16, 16)).toULongLong(0, 16)^key, 16);
 	if(lower.length() % 16 != 0)
-		lower = lower.rightJustify(lower.length() + (16 - lower.length() % 16), '0');
+		lower = lower.rightJustified(lower.length() + (16 - lower.length() % 16), '0');
 
 	return (upper + lower);
 }

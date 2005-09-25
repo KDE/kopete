@@ -39,8 +39,8 @@ WPContact::WPContact(Kopete::Account *account, const QString &newHostName, const
 
 	if (theNickName.isEmpty()) {
 		// Construct nickname from hostname with first letter to upper. GF
-		theNickName = newHostName.lower();
-		theNickName = theNickName.replace(0, 1, theNickName[0].upper());
+		theNickName = newHostName.toLower();
+		theNickName = theNickName.replace(0, 1, theNickName[0].toUpper());
 	}
 
 	setNickName(theNickName);

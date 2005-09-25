@@ -66,7 +66,7 @@ WPEditAccount::WPEditAccount(WPProtocol *protocol, Kopete::Account *theAccount, 
 			gethostname(tmp, 255);
 			theHostName = tmp;
 			if (theHostName.contains('.') != 0) theHostName.remove(theHostName.find('.'), theHostName.length());
-			theHostName = theHostName.upper();
+			theHostName = theHostName.toUpper();
 		}
 
 		if (!theHostName.isEmpty())

@@ -24,7 +24,7 @@
 #include <qstring.h>
 //Added by qt3to4:
 #include <Q3ValueList>
-#include <Q3CString>
+#include <QByteArray>
 
 #include <kdebug.h>
 #include <kaction.h>
@@ -260,7 +260,7 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QStr
 	QString body = KURL::encode_string( msg );
 	QString lp = from + "|" + to;
 
-	Q3CString postData = QString( "text=" + body + "&langpair=" + lp ).utf8();
+	QByteArray postData = QString( "text=" + body + "&langpair=" + lp ).toUtf8();
 
 	QString gurl = "http://translate.google.com/translate_t?text=" + body +"&langpair=" + lp;
 	kdDebug(14308) << k_funcinfo << " URL: " << gurl << endl;
@@ -378,7 +378,7 @@ void TranslatorPlugin::sendTranslation( Kopete::Message &msg, const QString &tra
 
 void TranslatorPlugin::slotDataReceived ( KIO::Job *job, const QByteArray &data )
 {
-	m_data[ job ] += Q3CString( data, data.size() + 1 );
+	m_data[ job ] += QByteArray( data, data.size() + 1 );
 }
 
 void TranslatorPlugin::slotJobDone ( KIO::Job *job )

@@ -20,7 +20,7 @@
 #include <qmap.h>
 //Added by qt3to4:
 #include <QPixmap>
-#include <Q3CString>
+#include <QByteArray>
 
 #include <kmessagebox.h>
 #include <knotifyclient.h>

@@ -73,7 +73,7 @@ void WPAccount::slotSettingsChanged()
 bool WPAccount::checkHost(const QString &Name)
 {
 //	kdDebug() << "WPAccount::checkHost: " << Name << endl;
-	if (Name.upper() == "LOCALHOST") {
+	if (Name.toUpper() == "LOCALHOST") {
 		// Assume localhost is always there, but it will not appear in the samba output.
 		// Should never happen as localhost is now forbidden as contact, just for safety. GF
 		return true;

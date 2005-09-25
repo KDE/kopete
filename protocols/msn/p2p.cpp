@@ -17,7 +17,7 @@
 #include "p2p.h"
 #include "dispatcher.h"
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 using P2P::TransferContext;
 using P2P::Message;
 using P2P::MessageType;
@@ -43,7 +43,7 @@ QString P2P::Uid::createUid()
 			+ QString::number(rand()%0xAAFF+0x1111, 16) + "-"
 			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
 			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)).upper();
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)).toUpper();
 }
 
 TransferContext::TransferContext(const QString &contact, P2P::Dispatcher *dispatcher, Q_UINT32 sessionId) 
@@ -297,17 +297,17 @@ void TransferContext::sendMessage(MessageType type, const QString& content, Q_IN
 			break;
 	}
 
-	Q3CString body = QString(method + "\r\n"
+	QByteArray body = QString(method + "\r\n"
 		"To: <msnmsgr:" + m_recipient + ">\r\n"
 		"From: <msnmsgr:" + m_sender  + ">\r\n"
-		"Via: MSNSLP/1.0/TLP ;branch={" + m_branch.upper() + "}\r\n"
+		"Via: MSNSLP/1.0/TLP ;branch={" + m_branch.toUpper() + "}\r\n"
 		"CSeq: "+ cSeq +"\r\n"
-		"Call-ID: {" + m_callId.upper() + "}\r\n"
+		"Call-ID: {" + m_callId.toUpper() + "}\r\n"
 		"Max-Forwards: 0\r\n"
 		"Content-Type: " + contentType + "\r\n"
 		"Content-Length: "+ QString::number(content.length() + 1) + "\r\n"
 		"\r\n" +
-		content).utf8();
+		content).toUtf8();
 
 	// NOTE The body must have a null character at the end.
 	// QCString by chance automatically adds a \0 to the
@@ -345,7 +345,7 @@ void TransferContext::sendMessage(Message& outbound, const QByteArray& body)
 		}
 
 		kdDebug(14140) << k_funcinfo <<
-			Q3CString(outbound.body.data(), outbound.body.size())
+			QByteArray(outbound.body.data(), outbound.body.size())
 			<< endl;
 
 		QByteArray stream;

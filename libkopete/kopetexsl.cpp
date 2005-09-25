@@ -39,7 +39,7 @@
 #include <qevent.h>
 #include <qmutex.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -132,7 +132,7 @@ bool KopeteXSLThread::event( QEvent *event )
 QString KopeteXSLThread::xsltTransform( const QString &xmlString, xsltStylesheetPtr styleSheet )
 {
 	// Convert QString into a C string
-	Q3CString xmlCString = xmlString.utf8();
+	QByteArray xmlCString = xmlString.toUtf8();
 
 	QString resultString;
 	QString errorMsg;
@@ -142,7 +142,7 @@ QString KopeteXSLThread::xsltTransform( const QString &xmlString, xsltStylesheet
 	{
 		if ( styleSheet )
 		{
-			static Q3CString appPath( QString::fromLatin1("\"%1\"").arg( KApplication::kApplication()->dirs()->findDirs("appdata", QString::fromLatin1("styles/data") ).front() ).utf8() );
+			static QByteArray appPath( QString::fromLatin1("\"%1\"").arg( KApplication::kApplication()->dirs()->findDirs("appdata", QString::fromLatin1("styles/data") ).front() ).toUtf8() );
 
 			static const char* params[3] = {
 				"appdata",
@@ -157,7 +157,7 @@ QString KopeteXSLThread::xsltTransform( const QString &xmlString, xsltStylesheet
 				xmlChar *mem;
 				int size;
 				xmlDocDumpMemory( resultDoc, &mem, &size );
-				resultString = QString::fromUtf8( Q3CString( ( char * )( mem ), size + 1 ) );
+				resultString = QString::fromUtf8( QByteArray( ( char * )( mem ), size + 1 ) );
 				xmlFree( mem );
 				xmlFreeDoc( resultDoc );
 			}
@@ -252,7 +252,7 @@ void Kopete::XSLT::setXSLT( const QString &_document )
 		//          identical!
 		QStringList parts = QStringList::split( '%', i18n(
 			"Translators: The %FOO% placeholders are variables that are substituted "
-			"in the code, please leave them untranslated", orig.utf8() ), true );
+			"in the code, please leave them untranslated", orig.toUtf8() ), true );
 
 		// The first part is always text, as our variables are written like %FOO%
 		QStringList::Iterator it = parts.begin();
@@ -355,7 +355,7 @@ void Kopete::XSLT::setXSLT( const QString &_document )
 	}
 
 	#ifdef RAWXSL
-		kdDebug(14000) << k_funcinfo << document.utf8() << endl;
+		kdDebug(14000) << k_funcinfo << document.toUtf8() << endl;
 	#endif
 
 	//Freeing the stylesheet also frees the doc pointer;
@@ -364,7 +364,7 @@ void Kopete::XSLT::setXSLT( const QString &_document )
 	d->xslDoc = 0;
 	d->flags = 0;
 
-	Q3CString rawDocument = document.utf8();
+	QByteArray rawDocument = document.toUtf8();
 	d->xslDoc = xmlParseMemory( rawDocument, rawDocument.length() );
 
 	if( d->xslDoc )
@@ -379,7 +379,7 @@ void Kopete::XSLT::setXSLT( const QString &_document )
 				if( child->type == XML_PI_NODE )
 				{
 					//We have a flag. Enable it;
-					Q3CString flagData( (const char*)child->content );
+					QByteArray flagData( (const char*)child->content );
 
 					if( flagData.contains( "Flag:" ) )
 					{

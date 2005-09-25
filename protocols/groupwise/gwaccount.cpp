@@ -942,7 +942,7 @@ void GroupWiseAccount::receiveAccountDetails( const ContactDetails & details )
 		<< ", givenname" << details.givenName
 		<< ", status" << details.status
 		<< endl;
-	if ( details.cn.lower() == accountId().lower() )
+	if ( details.cn.toLower() == accountId().toLower() )
 	{
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " - got our details in contact list, updating them" << endl;
 		GroupWiseContact * detailsOwner= static_cast<GroupWiseContact *>( myself() );
@@ -993,7 +993,7 @@ void GroupWiseAccount::receiveContactUserDetails( const ContactDetails & details
 GroupWiseContact * GroupWiseAccount::createTemporaryContact( const QString & dn )
 {
 	ContactDetails details = client()->userDetailsManager()->details( dn );
-	GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts()[ details.dn.lower() ] );
+	GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts()[ details.dn.toLower() ] );
 	if ( !c && details.dn != accountId() )
 	{
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Got a temporary contact DN: " << details.dn << endl;

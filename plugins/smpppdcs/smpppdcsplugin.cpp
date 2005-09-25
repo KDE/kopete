@@ -21,7 +21,7 @@
 #include <qtimer.h>
 #include <qregexp.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include <kdebug.h>
 #include <kconfig.h>
@@ -37,7 +37,7 @@
 #include "kopetepluginmanager.h"
 #include "kopeteaccountmanager.h"
 
-Q3CString SMPPPDCSPlugin::m_kinternetApp = "";
+QByteArray SMPPPDCSPlugin::m_kinternetApp = "";
 
 typedef KGenericFactory<SMPPPDCSPlugin> SMPPPDCSPluginFactory;
 K_EXPORT_COMPONENT_FACTORY(kopete_smpppdcs, SMPPPDCSPluginFactory("kopete_smpppdcs"))
@@ -193,7 +193,7 @@ void SMPPPDCSPlugin::connectToSMPPPD() {
         static KConfig *config = KGlobal::config();
         config->setGroup(SMPPPDCS_CONFIG_GROUP);
         unsigned int port = config->readUnsignedNumEntry("port", 3185);
-        QString    server = config->readEntry("server", "localhost").utf8();
+        QString    server = config->readEntry("server", "localhost").toUtf8();
 
         delete m_sock;
         m_sock = NULL;
@@ -259,7 +259,7 @@ void SMPPPDCSPlugin::smpppdCheckStatus() {
     // we try to inquire an running kinternet
 	if(m_kinternetApp != "" && m_client) {
 		QByteArray data, replyData;
-		Q3CString replyType;
+		QByteArray replyType;
 		QDataStream arg( &data,QIODevice::WriteOnly);
 		arg.setVersion(QDataStream::Qt_3_1);
 		
@@ -283,7 +283,7 @@ void SMPPPDCSPlugin::smpppdCheckStatus() {
 
     static KConfig *config = KGlobal::config();
     config->setGroup(SMPPPDCS_CONFIG_GROUP);
-    QString pass = config->readEntry("Password", "").utf8();
+    QString pass = config->readEntry("Password", "").toUtf8();
 
     if(m_sock && 
 	   m_sock->socketStatus() == KExtendedSocket::connected) {
@@ -305,7 +305,7 @@ void SMPPPDCSPlugin::smpppdCheckStatus() {
                         kdDebug( 0 ) << k_funcinfo << "Found smpppd Version " << ver.cap(1) << endl;
                     } else if(clg.exactMatch(stream[0])) {
                         kdDebug( 0 ) << k_funcinfo << "Authentication required: " << stream[0] << endl;
-                        challenge  = clg.cap(1).stripWhiteSpace();
+                        challenge  = clg.cap(1).trimmed();
                         m_comState = CHALLENGED;
                     } else {
                         m_comState = UNSETTLED;

@@ -16,7 +16,7 @@
 
 #include <qfile.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include "sqlite/sqlite3.h"
 
@@ -35,7 +35,7 @@
 
 StatisticsDB::StatisticsDB()
 {
-	Q3CString path = (::locateLocal("appdata", "kopete_statistics-0.1.db")).latin1();
+	QByteArray path = (::locateLocal("appdata", "kopete_statistics-0.1.db")).latin1();
 	kdDebug() << "statistics: DB path:" << path << endl;
 
 	// Open database file and check for correctness
@@ -137,7 +137,7 @@ StatisticsDB::~StatisticsDB()
      sqlite3_stmt* stmt;
  
      //compile SQL program to virtual machine
-     error = sqlite3_prepare( m_db, statement.utf8(), statement.length(), &stmt, &tail );
+     error = sqlite3_prepare( m_db, statement.toUtf8(), statement.length(), &stmt, &tail );
  
      if ( error != SQLITE_OK )
      {

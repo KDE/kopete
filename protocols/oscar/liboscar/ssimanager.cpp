@@ -150,7 +150,7 @@ Oscar::SSI SSIManager::findGroup( const QString &group ) const
 	Q3ValueList<Oscar::SSI>::const_iterator it, listEnd = d->SSIList.end();
 	
 	for ( it = d->SSIList.begin(); it != listEnd; ++it )
-		if ( ( *it ).type() == ROSTER_GROUP && (*it ).name().lower() == group.lower() )
+		if ( ( *it ).type() == ROSTER_GROUP && (*it ).name().toLower() == group.toLower() )
 			return ( *it );
 	
 	

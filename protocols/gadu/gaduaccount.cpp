@@ -367,7 +367,7 @@ void
 GaduAccount::userlistChanged()
 {
 	p->exportUserlist = true;
-	p->exportTimer_->changeInterval( USERLISTEXPORT_TIMEOUT );
+	p->exportTimer_->start( USERLISTEXPORT_TIMEOUT );
 }
 
 bool

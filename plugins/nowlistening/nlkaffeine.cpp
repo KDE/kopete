@@ -24,7 +24,7 @@
 #include <kdebug.h>
 #include <qstring.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include "nlmediaplayer.h"
 #include "nlkaffeine.h"
@@ -42,14 +42,14 @@ void NLKaffeine::update()
 	m_newTrack = false;
 	QString newTrack;
 	bool error = true; // Asume we have a error first. 
-	Q3CString kaffeineIface("Kaffeine"), kaffeineGetTrack("getTitle()");
+	QByteArray kaffeineIface("Kaffeine"), kaffeineGetTrack("getTitle()");
 
 	// see if kaffeine is  registered with DCOP
 	if ( m_client->isApplicationRegistered( "kaffeine" ) )
 	{
 		// see if it's playing
 		QByteArray data, replyData;
-		Q3CString replyType;
+		QByteArray replyType;
 		QString result;
 		if ( !m_client->call( "kaffeine", kaffeineIface, "isPlaying()", data,
 					replyType, replyData ) )

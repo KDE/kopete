@@ -23,7 +23,7 @@
 
 #include <kurl.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 /**
  * Encrypt a file using gpg.
@@ -72,7 +72,7 @@ signals:
 	 * @internal structure for communication
 	 */
         QString message,tempKeyFile,userIDs,txtprocess,output;
-		Q3CString passphrase;
+		QByteArray passphrase;
 		bool deleteSuccess,konsLocal,anonymous,txtsent,decfinished,decok,badmdc;
 		int signSuccess;
 		int step,signb,sigsearch;

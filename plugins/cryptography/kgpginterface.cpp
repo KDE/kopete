@@ -28,7 +28,7 @@
 #include <unistd.h>
 #include <qfile.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include <kprocio.h>
 
@@ -48,9 +48,9 @@ QString KgpgInterface::KgpgEncryptText(QString text,QString userIDs, QString Opt
 	QString dests,encResult;
 	char buffer[200];
 	
-	userIDs=userIDs.stripWhiteSpace();
-	userIDs=userIDs.simplifyWhiteSpace();
-	Options=Options.stripWhiteSpace();
+	userIDs=userIDs.trimmed();
+	userIDs=userIDs.simplified();
+	Options=Options.trimmed();
 	
 	int ct=userIDs.find(" ");
 	while (ct!=-1)  // if multiple keys...
@@ -61,12 +61,12 @@ QString KgpgInterface::KgpgEncryptText(QString text,QString userIDs, QString Opt
 	}
 	dests+=" --recipient "+userIDs;
 	
-	Q3CString gpgcmd = "echo -n ";
-	gpgcmd += KShellProcess::quote( text ).utf8();
+	QByteArray gpgcmd = "echo -n ";
+	gpgcmd += KShellProcess::quote( text ).toUtf8();
 	gpgcmd += " | gpg --no-secmem-warning --no-tty ";
-	gpgcmd += Options.local8Bit();
+	gpgcmd += Options.toLocal8Bit();
 	gpgcmd += " -e ";
-	gpgcmd += dests.local8Bit();
+	gpgcmd += dests.toLocal8Bit();
 	
 	//////////   encode with untrusted keys or armor if checked by user
 	fp = popen( gpgcmd, "r");
@@ -87,7 +87,7 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
 	
 	char buffer[200];
 	int counter=0,ppass[2];
-	Q3CString password = CryptographyPlugin::cachedPass();
+	QByteArray password = CryptographyPlugin::cachedPass();
 	bool passphraseHandling=CryptographyPlugin::passphraseHandling();
 	
 	while ((counter<3) && (encResult.isEmpty()))
@@ -118,11 +118,11 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
 			fclose(pass);
 		}
 	
-		Q3CString gpgcmd="echo ";
-		gpgcmd += KShellProcess::quote(text).utf8();
+		QByteArray gpgcmd="echo ";
+		gpgcmd += KShellProcess::quote(text).toUtf8();
 		gpgcmd += " | gpg --no-secmem-warning --no-tty ";
 		if(passphraseHandling)
-			gpgcmd += "--passphrase-fd " + QString::number(ppass[0]).local8Bit();
+			gpgcmd += "--passphrase-fd " + QString::number(ppass[0]).toLocal8Bit();
 		gpgcmd += " -d ";
 		
 		//////////   encode with untrusted keys or armor if checked by user
@@ -131,7 +131,7 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
 			encResult += QString::fromUtf8(buffer);
 		
 		pclose(fp);
-		password = Q3CString();
+		password = QByteArray();
 	}
 	
 	if( !encResult.isEmpty() )

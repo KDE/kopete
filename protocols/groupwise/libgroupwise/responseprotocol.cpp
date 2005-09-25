@@ -18,7 +18,7 @@
 
 #include <qbuffer.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include "response.h"
 
@@ -51,7 +51,7 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 	Q_ASSERT( qstrncmp( (const char *)&val, "HTTP", strlen( "HTTP" ) ) == 0 );
 	
 	// read rest of HTTP header and look for a 301 redirect. 
-	Q3CString headerFirst;
+	QByteArray headerFirst;
 	if ( !readGroupWiseLine( headerFirst ) )
 		return 0;
 	// pull out the HTTP return code
@@ -64,7 +64,7 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 	debug( "CoreProtocol::readResponse() got HTTP return code " );
 	// read rest of header
 	QStringList headerRest;
-	Q3CString line;
+	QByteArray line;
 	while ( line != "\r\n" )
 	{
 		if ( !readGroupWiseLine( line ) )
@@ -179,7 +179,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 		// read field
 		Q_UINT8 type, method;
 		Q_UINT32 val;
-		Q3CString tag;
+		QByteArray tag;
 		// read uint8 type
 		if ( !okToProceed() )
 		{
@@ -239,7 +239,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 		
 			if ( type == NMFIELD_TYPE_UTF8 || type == NMFIELD_TYPE_DN )
 			{
-				Q3CString rawData;
+				QByteArray rawData;
 				if( !safeReadBytes( rawData, val ) )
 				{
 					currentList.purge();
@@ -295,9 +295,9 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 	return true;
 }
 
-bool ResponseProtocol::readGroupWiseLine( Q3CString & line )
+bool ResponseProtocol::readGroupWiseLine( QByteArray & line )
 {
-	line = Q3CString();
+	line = QByteArray();
 	while ( true )
 	{
 		Q_UINT8 c;

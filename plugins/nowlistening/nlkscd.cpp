@@ -24,7 +24,7 @@
 #include <kdebug.h>
 #include <qstringlist.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include "nlmediaplayer.h"
 
@@ -46,7 +46,7 @@ void NLKscd::update()
 	{
 		// see if it's playing
 		QByteArray data, replyData;
-		Q3CString replyType;
+		QByteArray replyType;
 		if ( !m_client->call( "kscd", "CDPlayer", "playing()", data,
 					replyType, replyData ) )
 		{

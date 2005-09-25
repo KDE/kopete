@@ -21,7 +21,7 @@
 
 #include <qobject.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 class Transfer;
 /**
@@ -69,7 +69,7 @@ protected:
 	 * updates the bytes parsed counter
 	 * @return false if the string was broken or there was no data available at all
 	 */
-	bool safeReadBytes( Q3CString & data, uint & len );
+	bool safeReadBytes( QByteArray & data, uint & len );
 	
 protected:
 	uint m_state;

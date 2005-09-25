@@ -136,7 +136,7 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		d->ui->m_blp->setChecked( config->readEntry( "BLP" ) == "BL" );
 
 		d->pictureUrl = locateLocal( "appdata", "msnpicture-" +
-			account->accountId().lower().replace( QRegExp("[./~]" ), "-" ) + ".png" );
+			account->accountId().toLower().replace( QRegExp("[./~]" ), "-" ) + ".png" );
 		d->ui->m_displayPicture->setPixmap( d->pictureUrl );
 
 		d->ui->m_useDisplayPicture->setChecked( config->readBoolEntry( "exportCustomPicture" ));
@@ -191,7 +191,7 @@ Kopete::Account * MSNEditAccountWidget::apply()
 	if( d->ui->m_useDisplayPicture->isChecked() )
 	{
 		d->pictureUrl = locateLocal( "appdata", "msnpicture-" +
-				account()->accountId().lower().replace( QRegExp("[./~]" ), "-" ) + ".png" );
+				account()->accountId().toLower().replace( QRegExp("[./~]" ), "-" ) + ".png" );
 		if ( d->pictureData.save( d->pictureUrl, "PNG" ) )
 		{
 			static_cast<MSNAccount *>( account() )->setPictureUrl( d->pictureUrl );

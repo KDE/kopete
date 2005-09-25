@@ -25,7 +25,7 @@
 
 #include "logintask.h"
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 LoginTask::LoginTask( Task * parent )
  : RequestTask( parent )
@@ -145,7 +145,7 @@ void LoginTask::extractContact( Field::MultiField * contactContainer )
 	current = fl.findSingleField( NM_A_SZ_DISPLAY_NAME );
 	contact.displayName = current->value().toString();
 	current = fl.findSingleField( NM_A_SZ_DN );
-	contact.dn = current->value().toString().lower();
+	contact.dn = current->value().toString().toLower();
 	emit gotContact( contact );
 	Field::MultiField * details = fl.findMultiField( NM_A_FA_USER_DETAILS );
 	if ( details ) // not all contact list contacts have these
@@ -170,7 +170,7 @@ ContactDetails LoginTask::extractUserDetails( Field::FieldList & fields )
 	if ( ( sf = fields.findSingleField ( NM_A_SZ_AUTH_ATTRIBUTE ) ) )
 		cd.authAttribute = sf->value().toString();
 	if ( ( sf = fields.findSingleField ( NM_A_SZ_DN ) ) )
-		cd.dn =sf->value().toString().lower(); // HACK: lowercased DN
+		cd.dn =sf->value().toString().toLower(); // HACK: lowercased DN
 	if ( ( sf = fields.findSingleField ( "CN" ) ) )
 		cd.cn = sf->value().toString();
 	if ( ( sf = fields.findSingleField ( "Given Name" ) ) )
@@ -253,7 +253,7 @@ void LoginTask::extractPrivacy( Field::FieldList & fields )
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "locked is " << privacyLocked << ", default is " << defaultDeny << "\nallow list is: " << allowList << "\ndeny list is: " << denyList << endl;
 }
 
-QStringList LoginTask::readPrivacyItems( const Q3CString & tag, Field::FieldList & fields )
+QStringList LoginTask::readPrivacyItems( const QByteArray & tag, Field::FieldList & fields )
 {
 	QStringList items;
 	
@@ -262,7 +262,7 @@ QStringList LoginTask::readPrivacyItems( const Q3CString & tag, Field::FieldList
 	{
 		if ( Field::SingleField * sf = dynamic_cast<Field::SingleField *>( *it ) )
 		{
-			items.append( sf->value().toString().lower() );
+			items.append( sf->value().toString().toLower() );
 		}
 		else if ( Field::MultiField * mf = dynamic_cast<Field::MultiField *>( *it ) )
 		{
@@ -271,7 +271,7 @@ QStringList LoginTask::readPrivacyItems( const Q3CString & tag, Field::FieldList
 			{
 				if ( Field::SingleField * sf = dynamic_cast<Field::SingleField *>( *it ) )
 				{
-					items.append( sf->value().toString().lower() );
+					items.append( sf->value().toString().toLower() );
 				}
 			}
 		}

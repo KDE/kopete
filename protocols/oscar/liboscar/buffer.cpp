@@ -24,7 +24,7 @@
 #include <ctype.h>
 //Added by qt3to4:
 #include <Q3ValueList>
-#include <Q3CString>
+#include <QByteArray>
 
 Buffer::Buffer()
 {
@@ -282,9 +282,9 @@ WORD *Buffer::getWordBlock(WORD len)
 }
 
 
-Q3CString Buffer::getLEBlock(WORD len)
+QByteArray Buffer::getLEBlock(WORD len)
 {
-	Q3CString ch;
+	QByteArray ch;
 	for (unsigned int i=0;i<len;i++)
 		ch += getLEByte();
 
@@ -361,18 +361,18 @@ void Buffer::expandBuffer(unsigned int inc)
 	mBuffer.resize(mBuffer.size()+inc);
 }
 
-Q3CString Buffer::getLNTS()
+QByteArray Buffer::getLNTS()
 {
 	WORD len = getLEWord();
-	Q3CString qcs;
+	QByteArray qcs;
 	qcs.duplicate( getBlock(len) );
 	return qcs;
 }
 
-Q3CString Buffer::getLELNTS()
+QByteArray Buffer::getLELNTS()
 {
 	WORD len = getLEWord();
-	Q3CString qcs;
+	QByteArray qcs;
 	qcs.duplicate( getBlock(len) );
 	return qcs;
 }
@@ -473,7 +473,7 @@ QString Buffer::toString() const
 	}
 
 	if(!hex.isEmpty())
-		output += hex.leftJustify(48, ' ') + "   |" + ascii.leftJustify(16, ' ') + '|';
+		output += hex.leftJustified(48, ' ') + "   |" + ascii.leftJustified(16, ' ') + '|';
 	output.append('\n');
 
 	return output;

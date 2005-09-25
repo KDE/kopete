@@ -24,7 +24,7 @@
 //Added by qt3to4:
 #include <Q3ValueList>
 #include <QTextStream>
-#include <Q3CString>
+#include <QByteArray>
 
 using namespace XMPP;
 
@@ -102,7 +102,7 @@ static QString xmlToString(const QDomElement &e, const QString &fakeNS, const QS
 	}
 	// 'clip' means to remove any unwanted (and unneeded) characters, such as a trailing newline
 	if(clip) {
-		int n = out.findRev('>');
+		int n = out.lastIndexOf('>');
 		out.truncate(n+1);
 	}
 	return out;
@@ -136,8 +136,8 @@ static void createRootXmlTags(const QDomElement &root, QString *xmlHeader, QStri
 	int n2 = str.find('>', n);
 	++n2;
 	*tagOpen = str.mid(n, n2-n);
-	n2 = str.findRev('>');
-	n = str.findRev('<');
+	n2 = str.lastIndexOf('>');
+	n = str.lastIndexOf('<');
 	++n2;
 	*tagClose = str.mid(n, n2-n);
 
@@ -455,7 +455,7 @@ int XmlProtocol::internalWriteData(const QByteArray &a, TrackItem::Type t, int i
 
 int XmlProtocol::internalWriteString(const QString &s, TrackItem::Type t, int id)
 {
-	Q3CString cs = s.utf8();
+	QByteArray cs = s.toUtf8();
 	QByteArray a(cs.length());
 	memcpy(a.data(), cs.data(), a.size());
 	return internalWriteData(a, t, id);

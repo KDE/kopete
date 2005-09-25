@@ -86,7 +86,7 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 
 				// Strip trailing whitespace in the end
 				// and '%' in the beginning
-				args[0] = args[0].simplifyWhiteSpace().mid(1);
+				args[0] = args[0].simplified().mid(1);
 
 				descriptions.append(args[1]);
 				if (m_account)

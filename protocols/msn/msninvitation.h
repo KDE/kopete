@@ -19,7 +19,7 @@
 
 #include <qstring.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include <kopete_export.h>
 
@@ -50,7 +50,7 @@ public:
 	 * @internal
 	 * it is a reject invitation because the invitation is not implemented
 	 */
-	static Q3CString unimplemented(long unsigned int cookie);
+	static QByteArray unimplemented(long unsigned int cookie);
 
 	/**
 	 * you can set manualy the cookie. note that a cookie is automatically generated when a new
@@ -79,7 +79,7 @@ public:
 	 * This is the reject invitation string
 	 * @param rejectcode is the code, it can be "REJECT" or "TIMEOUT"
 	 */
-	Q3CString rejectMessage(const QString & rejectcode = "REJECT");
+	QByteArray rejectMessage(const QString & rejectcode = "REJECT");
 
 	/**
 	 * reimplement this method. it is called when an invitation message with the invitation's cookie is received

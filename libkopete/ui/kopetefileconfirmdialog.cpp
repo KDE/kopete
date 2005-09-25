@@ -49,7 +49,7 @@ KopeteFileConfirmDialog::KopeteFileConfirmDialog(const Kopete::FileTransferInfo 
 	m_view->m_filename->setText( info.file() );
 
 	KGlobal::config()->setGroup("File Transfer");
-	const QString defaultPath=KGlobal::config()->readEntry("defaultPath" , QDir::homeDirPath() );
+	const QString defaultPath=KGlobal::config()->readEntry("defaultPath" , QDir::homePath() );
 	m_view->m_saveto->setText(defaultPath  + QString::fromLatin1( "/" ) + info.file() );
 
 	setMainWidget(m_view);

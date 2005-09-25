@@ -23,7 +23,7 @@
 //qt
 #include <qtimer.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 // kde
 #include <kdebug.h>
@@ -333,8 +333,8 @@ QString MSNFileTransferSocket::invitationHead()
 	QTimer::singleShot( 10 * 60000, this, SLOT(slotTimer()) );  //the user has 10 mins to accept or refuse or initiate the transfer
 
 	return QString( MSNInvitation::invitationHead()+
-					"Application-File: "+ m_fileName.right( m_fileName.length() - m_fileName.findRev( '/' ) - 1 ) +"\r\n"
-					"Application-FileSize: "+ QString::number(size()) +"\r\n\r\n").utf8();
+					"Application-File: "+ m_fileName.right( m_fileName.length() - m_fileName.lastIndexOf( '/' ) - 1 ) +"\r\n"
+					"Application-FileSize: "+ QString::number(size()) +"\r\n\r\n").toUtf8();
 }
 
 void MSNFileTransferSocket::parseInvitation(const QString& msg)
@@ -389,7 +389,7 @@ void MSNFileTransferSocket::parseInvitation(const QString& msg)
 				MSNNotifySocket *notify=static_cast<MSNAccount*>(manager->account())->notifySocket();
 				if(notify){
 				
-				Q3CString message=QString(
+				QByteArray message=QString(
 					"MIME-Version: 1.0\r\n"
 					"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
 					"\r\n"
@@ -399,7 +399,7 @@ void MSNFileTransferSocket::parseInvitation(const QString& msg)
 					"Port: 6891\r\n"
 					"AuthCookie: "+QString::number(auth)+"\r\n"
 					"Launch-Application: FALSE\r\n"
-					"Request-Data: IP-Address:\r\n\r\n").utf8();
+					"Request-Data: IP-Address:\r\n\r\n").toUtf8();
 
 				manager->service()->sendCommand( "MSG" , "N", true, message );
 				}
@@ -434,14 +434,14 @@ void MSNFileTransferSocket::slotFileTransferAccepted(Kopete::Transfer *trans, co
 	{
 		setFile(fileName);
 
-		Q3CString message=QString(
+		QByteArray message=QString(
 			"MIME-Version: 1.0\r\n"
 			"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
 			"\r\n"
 			"Invitation-Command: ACCEPT\r\n"
 			"Invitation-Cookie: " + QString::number(cookie()) + "\r\n"
 			"Launch-Application: FALSE\r\n"
-			"Request-Data: IP-Address:\r\n"  ).utf8();
+			"Request-Data: IP-Address:\r\n"  ).toUtf8();
 		manager->service()->sendCommand( "MSG" , "N", true, message );
 
 		QTimer::singleShot( 3 * 60000, this, SLOT(slotTimer()) ); //if after 3 minutes the transfer has not begin, delete this

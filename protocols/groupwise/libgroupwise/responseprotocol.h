@@ -24,7 +24,7 @@
 
 #include "inputprotocolbase.h"
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 /**
 Handles the parsing of incoming Response messages
@@ -59,7 +59,7 @@ protected:
 	/**
 	 * read a line ending in \r\n, including the \r\n
 	 */
-	bool readGroupWiseLine( Q3CString & );
+	bool readGroupWiseLine( QByteArray & );
 	/**
 	 * Read in a response
 	 */

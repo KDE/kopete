@@ -18,7 +18,7 @@
 
 #include <qsocketnotifier.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 #include <Q3PtrList>
 
 #include <dcopclient.h>
@@ -189,7 +189,7 @@ void KSSLSocket::showInfoDialog()
 		}
 
 		QByteArray data, ignore;
-		Q3CString ignoretype;
+		QByteArray ignoretype;
 		QDataStream arg( &data,QIODevice::WriteOnly);
 		arg.setVersion(QDataStream::Qt_3_1);
 		arg << "irc://" + peerAddress()->pretty() + ":" + port() << d->metaData;
@@ -229,7 +229,7 @@ int KSSLSocket::messageBox( KIO::SlaveBase::MessageBoxType type, const QString &
 {
 	kdDebug(14120) << "messageBox " << type << " " << text << " - " << caption << buttonYes << buttonNo << endl;
 	QByteArray data, result;
-	Q3CString returnType;
+	QByteArray returnType;
 	QDataStream arg( &data,QIODevice::WriteOnly);
 	arg.setVersion(QDataStream::Qt_3_1);
 	arg << (int)1 << (int)type << text << caption << buttonYes << buttonNo;

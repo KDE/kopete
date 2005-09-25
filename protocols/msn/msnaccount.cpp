@@ -58,7 +58,7 @@
 #endif
 
 MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const char *name )
-	: Kopete::PasswordedAccount ( parent, AccountID.lower(), 0, name )
+	: Kopete::PasswordedAccount ( parent, AccountID.toLower(), 0, name )
 {
 	m_notifySocket = 0L;
 	m_connectstatus = MSNProtocol::protocol()->NLN;
@@ -88,7 +88,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 	m_reverseList = config->readListEntry(  "reverseList"  ) ;
 
 	// Load the avatar
-	m_pictureFilename = locateLocal( "appdata", "msnpicture-"+ accountId().lower().replace(QRegExp("[./~]"),"-")  +".png"  );
+	m_pictureFilename = locateLocal( "appdata", "msnpicture-"+ accountId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  );
 	resetPictureObject(true);
 
 	static_cast<MSNContact *>( myself() )->setInfo( "PHH", config->readEntry("PHH") );
@@ -294,7 +294,7 @@ void MSNAccount::slotStartChat()
 
 	bool ok;
 	QString handle = KInputDialog::getText( i18n( "Start Chat - MSN Plugin" ),
-		i18n( "Please enter the email address of the person with whom you want to chat:" ), QString::null, &ok ).lower();
+		i18n( "Please enter the email address of the person with whom you want to chat:" ), QString::null, &ok ).toLower();
 	if ( ok )
 	{
 		if ( MSNProtocol::validContactId( handle ) )
@@ -323,7 +323,7 @@ void MSNAccount::slotDebugRawCommand()
 	if ( result == QDialog::Accepted && m_notifySocket )
 	{
 		m_notifySocket->sendCommand( dlg->command(), dlg->params(),
-					dlg->addId(), dlg->msg().replace( "\n", "\r\n" ).utf8() );
+					dlg->addId(), dlg->msg().replace( "\n", "\r\n" ).toUtf8() );
 	}
 	delete dlg;
 #endif
@@ -1093,7 +1093,7 @@ void MSNAccount::slotCreateChat( const QString& address, const QString& auth )
 void MSNAccount::slotCreateChat( const QString& ID, const QString& address, const QString& auth,
 	const QString& handle_, const QString&  publicName )
 {
-	QString handle = handle_.lower();
+	QString handle = handle_.toLower();
 
 	if ( handle.isEmpty() )
 	{
@@ -1392,7 +1392,7 @@ void MSNAccount::resetPictureObject(bool silent)
 			if(picture.width() != 96 || picture.height() != 96)
 			{
 				// Save to a new location in msnpictures.
-				QString newLocation( locateLocal( "appdata", "msnpictures/"+ KURL(m_pictureFilename).fileName().lower() ) );
+				QString newLocation( locateLocal( "appdata", "msnpictures/"+ KURL(m_pictureFilename).fileName().toLower() ) );
 	
 				// Scale and crop the picture.
 				picture = MSNProtocol::protocol()->scalePicture(picture);
@@ -1420,7 +1420,7 @@ void MSNAccount::resetPictureObject(bool silent)
 
 			QString size=QString::number( pictFile.size() );
 			QString all= "Creator"+accountId()+"Size"+size+"Type3Locationkopete.tmpFriendlyAAA=SHA1D"+ sha1d;
-			m_pictureObj="<msnobj Creator=\"" + accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\"kopete.tmp\" Friendly=\"AAA=\" SHA1D=\""+sha1d+"\" SHA1C=\""+ QString(KCodecs::base64Encode(SHA1::hashString(all.utf8())))  +"\"/>";
+			m_pictureObj="<msnobj Creator=\"" + accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\"kopete.tmp\" Friendly=\"AAA=\" SHA1D=\""+sha1d+"\" SHA1C=\""+ QString(KCodecs::base64Encode(SHA1::hashString(all.toUtf8())))  +"\"/>";
 			myself()->setProperty( Kopete::Global::Properties::self()->photo() , m_pictureFilename );
 		}
 	}

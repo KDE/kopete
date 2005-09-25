@@ -24,7 +24,7 @@
 #include <qfile.h>
 #include <qtextcodec.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 // kde
 #include <kdebug.h>
@@ -109,7 +109,7 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 	}
 	else
 	{
-		QString dataMessage=Q3CString((msgStr.message.data()+48) , msgStr.dataMessageSize);
+		QString dataMessage=QByteArray((msgStr.message.data()+48) , msgStr.dataMessageSize);
 		kdDebug(14141) << k_funcinfo <<" dataMessage: "  << dataMessage << endl;
 
 		if (dataMessage.contains("INVITE") )
@@ -223,7 +223,7 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 					QString base64=rx.cap(1);
 
 					QByteArray image;
-					KCodecs::base64Decode( base64.utf8() , image );
+					KCodecs::base64Decode( base64.toUtf8() , image );
 
 					KTempFile *imageFile=new KTempFile( locateLocal( "tmp", "msntypewrite-" ), ext );
 					imageFile->setAutoDelete(true);

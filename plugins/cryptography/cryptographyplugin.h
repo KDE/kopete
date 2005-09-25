@@ -21,7 +21,7 @@
 
 #include "kopeteplugin.h"
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 class QStringList;
 class QString;
@@ -52,8 +52,8 @@ public:
 	};
 
 	static CryptographyPlugin  *plugin();
-	static Q3CString cachedPass();
-	static void setCachedPass(const Q3CString &pass);
+	static QByteArray cachedPass();
+	static void setCachedPass(const QByteArray &pass);
 	static bool passphraseHandling();
 	static const QRegExp isHTML;
 
@@ -76,7 +76,7 @@ private slots:
 private:
 	static CryptographyPlugin* pluginStatic_;
 	Kopete::SimpleMessageHandlerFactory *m_inboundHandler;
-	Q3CString m_cachedPass;
+	QByteArray m_cachedPass;
 	QTimer *m_cachedPass_timer;
 
 	//cache messages for showing

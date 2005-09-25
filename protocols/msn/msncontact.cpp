@@ -668,7 +668,7 @@ void MSNContact::setDisplayPicture(KTempFile *f)
 	//copy the temp file somewere else.
 	// in a better world, the file could be dirrectly wrote at the correct location.
 	// but the custom emoticon code is to deeply merged in the display picture code while it could be separated.
-	QString newlocation=locateLocal( "appdata", "msnpictures/"+ contactId().lower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+	QString newlocation=locateLocal( "appdata", "msnpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 
 	KIO::Job *j=KIO::file_move( KURL::fromPathOrURL( f->name() ) , KURL::fromPathOrURL( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
 	
@@ -681,7 +681,7 @@ void MSNContact::setDisplayPicture(KTempFile *f)
 
 void MSNContact::slotEmitDisplayPictureChanged()
 {
-	QString newlocation=locateLocal( "appdata", "msnpictures/"+ contactId().lower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+	QString newlocation=locateLocal( "appdata", "msnpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
 	emit displayPictureChanged();
 }

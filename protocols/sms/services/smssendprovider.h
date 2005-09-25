@@ -23,7 +23,7 @@
 #include <qlabel.h>
 #include <q3valuelist.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include <klineedit.h>
 
@@ -69,7 +69,7 @@ private:
 
 	QString provider;
 	QString prefix;
-	Q3CString output;
+	QByteArray output;
 
 	Kopete::Account* m_account;
 

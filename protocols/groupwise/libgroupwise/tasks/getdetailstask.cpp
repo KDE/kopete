@@ -81,7 +81,7 @@ ContactDetails GetDetailsTask::extractUserDetails(Field::MultiField * details )
 	if ( ( sf = fields.findSingleField ( NM_A_SZ_AUTH_ATTRIBUTE ) ) )
 		cd.authAttribute = sf->value().toString();
 	if ( ( sf = fields.findSingleField ( NM_A_SZ_DN ) ) )
-		cd.dn =sf->value().toString().lower(); // HACK: lowercased DN
+		cd.dn =sf->value().toString().toLower(); // HACK: lowercased DN
 	if ( ( sf = fields.findSingleField ( "CN" ) ) )
 		cd.cn = sf->value().toString();
 	if ( ( sf = fields.findSingleField ( "Given Name" ) ) )

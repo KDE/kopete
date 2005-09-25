@@ -16,7 +16,7 @@
 
 #include "incomingtransfer.h"
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 using P2P::TransferContext;
 using P2P::IncomingTransfer;
 using P2P::Message;
@@ -174,7 +174,7 @@ void IncomingTransfer::processMessage(const Message& message)
 	else
 	{
 		QString body =
-			Q3CString(message.body.data(), message.header.dataSize);
+			QByteArray(message.body.data(), message.header.dataSize);
 		kdDebug(14140) << k_funcinfo << "received, " << body << endl;
 
 		if(body.startsWith("INVITE"))

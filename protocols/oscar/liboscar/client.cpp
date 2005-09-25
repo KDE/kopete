@@ -23,7 +23,7 @@
 #include <qtimer.h>
 //Added by qt3to4:
 #include <Q3ValueList>
-#include <Q3CString>
+#include <QByteArray>
 
 #include <kdebug.h> //for kdDebug()
 #include <klocale.h>
@@ -411,7 +411,7 @@ QString Client::password() const
 	return d->pass;
 }
 
-Q3CString Client::ipAddress() const
+QByteArray Client::ipAddress() const
 {
 	//!TODO determine ip address
 	return "127.0.0.1";

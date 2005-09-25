@@ -89,7 +89,7 @@ protected:
 
 private:
 
-	QMap< KIO::Job *, Q3CString> m_data;
+	QMap< KIO::Job *, QByteArray> m_data;
 	QMap< KIO::Job *, bool> m_completed;
 
 	KSelectAction* m_actionLanguage;
