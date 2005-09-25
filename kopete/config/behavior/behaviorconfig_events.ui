@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>421</width>
-            <height>378</height>
+            <width>427</width>
+            <height>386</height>
         </rect>
     </property>
     <property name="caption">
@@ -35,7 +35,7 @@
                         <cstring>mTrayflashNotifyChk</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Flash system tray</string>
+                        <string>Flash s&amp;ystem tray</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Flash the system tray icon on an incoming message</string>
@@ -93,7 +93,7 @@
                         <cstring>mBalloonNotifyChk</cstring>
                     </property>
                     <property name="text">
-                        <string>Show &amp;bubble</string>
+                        <string>Sho&amp;w bubble</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Show a bubble on an incoming message</string>
@@ -144,6 +144,90 @@
                                 <string>If there is already a chat window opened for the sender of the message displayed in the bubble the "Ignore" button will close this chat window.</string>
                             </property>
                         </widget>
+                    </hbox>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout7</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer7</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Fixed</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>16</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>mCloseBalloonChk</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Close bubble automatically after</string>
+                            </property>
+                            <property name="checked">
+                                <bool>false</bool>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Automatically close bubble after fixed amount of time</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Bubbles will automatically be closed after a fixed amount of time. A closed one will be replaced by a new one if another message is waiting.</string>
+                            </property>
+                        </widget>
+                        <widget class="QSpinBox">
+                            <property name="name">
+                                <cstring>mBalloonCloseDelay</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="suffix">
+                                <string> Sec</string>
+                            </property>
+                            <property name="maxValue">
+                                <number>120</number>
+                            </property>
+                            <property name="minValue">
+                                <number>10</number>
+                            </property>
+                            <property name="value">
+                                <number>30</number>
+                            </property>
+                        </widget>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer6</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>70</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
                     </hbox>
                 </widget>
                 <widget class="QCheckBox">
@@ -220,7 +304,7 @@
                         <cstring>mTrayflashNotifySetCurrentDesktopToChatViewChk</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Switch to desktop containing chat on opening message</string>
+                        <string>Switch &amp;to desktop containing chat on opening message</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Switch to the desktop which contains the chat window for the sender when opening his/her message</string>
@@ -275,6 +359,18 @@
         <sender>mBalloonNotifyChk</sender>
         <signal>toggled(bool)</signal>
         <receiver>mBalloonNotifyIgnoreClosesChatViewChk</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>mBalloonNotifyChk</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>mCloseBalloonChk</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>mBalloonNotifyChk</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>mBalloonCloseDelay</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>

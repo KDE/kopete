@@ -19,6 +19,7 @@
 #include "behaviorconfig_chat.h"
 
 #include <qcheckbox.h>
+#include <qradiobutton.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qhbuttongroup.h>
@@ -94,6 +95,10 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsEvents->mBalloonNotifyIgnoreClosesChatViewChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsEvents->mCloseBalloonChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsEvents->mBalloonCloseDelay, SIGNAL(valueChanged(int)),
+		this, SLOT(slotValueChanged(int)));
 	connect(mPrfsEvents->mTrayflashNotifyChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsEvents->mTrayflashNotifyLeftClickOpensMessageChk, SIGNAL(toggled(bool)),
@@ -157,6 +162,8 @@ void BehaviorConfig::save()
 	p->setQueueOnlyMessagesOnAnotherDesktop(mPrfsEvents->mQueueOnlyMessagesOnAnotherDesktopChk->isChecked());
 	p->setBalloonNotify(mPrfsEvents->mBalloonNotifyChk->isChecked());
 	p->setBalloonNotifyIgnoreClosesChatView(mPrfsEvents->mBalloonNotifyIgnoreClosesChatViewChk->isChecked());
+	p->setBalloonClose(mPrfsEvents->mCloseBalloonChk->isChecked());
+	p->setBalloonDelay(mPrfsEvents->mBalloonCloseDelay->value());
 	p->setTrayflashNotify(mPrfsEvents->mTrayflashNotifyChk->isChecked());
 	p->setTrayflashNotifyLeftClickOpensMessage(mPrfsEvents->mTrayflashNotifyLeftClickOpensMessageChk->isChecked());
 	p->setTrayflashNotifySetCurrentDesktopToChatView(mPrfsEvents->mTrayflashNotifySetCurrentDesktopToChatViewChk->isChecked());
@@ -208,6 +215,8 @@ void BehaviorConfig::load()
 	mPrfsEvents->mQueueOnlyMessagesOnAnotherDesktopChk->setChecked ( p->queueOnlyMessagesOnAnotherDesktop() );
 	mPrfsEvents->mBalloonNotifyChk->setChecked ( p->balloonNotify() );
 	mPrfsEvents->mBalloonNotifyIgnoreClosesChatViewChk->setChecked ( p->balloonNotifyIgnoreClosesChatView() );
+	mPrfsEvents->mCloseBalloonChk->setChecked( p->balloonClose() );
+	mPrfsEvents->mBalloonCloseDelay->setValue( p->balloonCloseDelay() );
 	mPrfsEvents->mTrayflashNotifyChk->setChecked ( p->trayflashNotify() );
 	mPrfsEvents->mTrayflashNotifyLeftClickOpensMessageChk->setChecked ( p->trayflashNotifyLeftClickOpensMessage() );
 	mPrfsEvents->mTrayflashNotifySetCurrentDesktopToChatViewChk->setChecked ( p->trayflashNotifySetCurrentDesktopToChatView() );

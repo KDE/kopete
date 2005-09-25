@@ -2,7 +2,7 @@
     kopeteprefs.cpp - Kopete Preferences Container-Class
 
     Copyright (c) 2002      by Stefan Gehn            <metz AT gehn.net>
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -66,6 +66,8 @@ void KopetePrefs::load()
 	mQueueOnlyMessagesOnAnotherDesktop = config->readBoolEntry("Queue Only Messages On Another Desktop", false);
 	mBalloonNotify = config->readBoolEntry("Balloon Notification", true);
 	mBalloonNotifyIgnoreClosesChatView = config->readBoolEntry("Balloon Notification Ignore Closes Chat View", false);
+	mBalloonCloseDelay = config->readNumEntry("Balloon Autoclose Delay", 30);
+	mBalloonClose = config->readBoolEntry("Balloon Autoclose", true);
 	mTrayflashNotify = config->readBoolEntry("Trayflash Notification", true);
 	mTrayflashNotifyLeftClickOpensMessage = config->readBoolEntry("Trayflash Notification Left Click Opens Message", true);
 	mTrayflashNotifySetCurrentDesktopToChatView = config->readBoolEntry("Trayflash Notification Set Current Desktop To Chat View", false);
@@ -190,6 +192,8 @@ void KopetePrefs::save()
 	config->writeEntry("Queue Only Messages On Another Desktop", mQueueOnlyMessagesOnAnotherDesktop);
 	config->writeEntry("Balloon Notification", mBalloonNotify);
 	config->writeEntry("Balloon Notification Ignore Closes Chat View", mBalloonNotifyIgnoreClosesChatView);
+	config->writeEntry("Balloon Autoclose Delay", mBalloonCloseDelay);
+	config->writeEntry("Balloon Autoclose", mBalloonClose);
 	config->writeEntry("Trayflash Notification", mTrayflashNotify);
 	config->writeEntry("Trayflash Notification Left Click Opens Message", mTrayflashNotifyLeftClickOpensMessage);
 	config->writeEntry("Trayflash Notification Set Current Desktop To Chat View", mTrayflashNotifySetCurrentDesktopToChatView);
@@ -389,6 +393,16 @@ void KopetePrefs::setBalloonNotify(bool value)
 void KopetePrefs::setBalloonNotifyIgnoreClosesChatView(bool value)
 {
 	mBalloonNotifyIgnoreClosesChatView = value;
+}
+
+void KopetePrefs::setBalloonClose( bool value ) 
+{
+	mBalloonClose = value;
+}
+
+void KopetePrefs::setBalloonDelay( int value )
+{
+	mBalloonCloseDelay = value;
 }
 
 void KopetePrefs::setSoundIfAway(bool value)

@@ -5,7 +5,7 @@
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2003-2004 by Olivier Goffart        <ogoffart @ kde.org>
 
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -195,6 +195,8 @@ void KopeteSystemTray::slotBlink()
 void KopeteSystemTray::slotNewEvent( Kopete::MessageEvent *event )
 {
 	mEventList.append( event );
+	mBalloonEventList.append( event );
+
 	connect(event, SIGNAL(done(Kopete::MessageEvent*)),
 		this, SLOT(slotEventDone(Kopete::MessageEvent*)));
 
@@ -218,28 +220,48 @@ void KopeteSystemTray::slotNewEvent( Kopete::MessageEvent *event )
 
 	// tray animation
 	if ( KopetePrefs::prefs()->trayflashNotify() )
-		startBlink();
+		if( mBalloonEventList.count() == mEventList.count() )
+			startBlink();
+		else
+			stopBlink();
 }
 
 void KopeteSystemTray::slotEventDone(Kopete::MessageEvent *event)
 {
-	bool current= event==mEventList.first();
 	mEventList.remove(event);
+
+	removeBalloonEvent(event);
+
+	if(mEventList.isEmpty())
+		stopBlink();
+}
+
+void KopeteSystemTray::slotRemoveBalloon()
+{
+	removeBalloonEvent(mBalloonEventList.first());
+}
+
+void KopeteSystemTray::removeBalloonEvent(Kopete::MessageEvent *event)
+{
+	bool current= event==mBalloonEventList.first();
+	mBalloonEventList.remove(event);
 
 	if(current && m_balloon)
 	{
 		m_balloon->deleteLater();
 		m_balloon=0l;
-		if(!mEventList.isEmpty())
+		if(!mBalloonEventList.isEmpty())
 		{
 			//delay the addBalloon to let the time to event be deleted
 			//in case a contact has been deleted   cf Bug 100196
 			QTimer::singleShot(0, this, SLOT(addBalloon()));
 		}
+		else
+		{
+			if(KopetePrefs::prefs()->trayflashNotify() && !mEventList.isEmpty())
+				startBlink();
+		}
 	}
-
-	if(mEventList.isEmpty())
-		stopBlink();
 }
 
 void KopeteSystemTray::addBalloon()
@@ -247,11 +269,11 @@ void KopeteSystemTray::addBalloon()
 	/*kdDebug(14010) << k_funcinfo <<
 		m_balloon << ":" << KopetePrefs::prefs()->showTray() <<
 		":" << KopetePrefs::prefs()->balloonNotify()
-		<< ":" << !mEventList.isEmpty() << endl;*/
+		<< ":" << !mBalloonEventList.isEmpty() << endl;*/
 
-	if( !m_balloon && KopetePrefs::prefs()->showTray() && KopetePrefs::prefs()->balloonNotify() && !mEventList.isEmpty() )
+	if( !m_balloon && KopetePrefs::prefs()->showTray() && KopetePrefs::prefs()->balloonNotify() && !mBalloonEventList.isEmpty() )
 	{
-		Kopete::Message msg = mEventList.first()->message();
+		Kopete::Message msg = mBalloonEventList.first()->message();
 
 		if ( msg.from() )
 		{
@@ -267,9 +289,10 @@ void KopeteSystemTray::addBalloon()
 			m_balloon = new KopeteBalloon(
 				i18n( "<qt><nobr><b>New Message from %1:</b></nobr><br><nobr>\"%2\"</nobr></qt>" )
 					.arg( msgFrom, msgText ), QString::null );
-			connect(m_balloon, SIGNAL(signalBalloonClicked()), mEventList.first() , SLOT(apply()));
-			connect(m_balloon, SIGNAL(signalButtonClicked()), mEventList.first() , SLOT(apply()));
-			connect(m_balloon, SIGNAL(signalIgnoreButtonClicked()), mEventList.first() , SLOT(ignore()));
+			connect(m_balloon, SIGNAL(signalBalloonClicked()), mBalloonEventList.first() , SLOT(apply()));
+			connect(m_balloon, SIGNAL(signalButtonClicked()), mBalloonEventList.first() , SLOT(apply()));
+			connect(m_balloon, SIGNAL(signalIgnoreButtonClicked()), mBalloonEventList.first() , SLOT(ignore()));
+			connect(m_balloon, SIGNAL(signalTimeout()), this , SLOT(slotRemoveBalloon()));
 			m_balloon->setAnchor(mapToGlobal(pos()));
 			m_balloon->show();
 			KWin::setOnAllDesktops(m_balloon->winId(), true);

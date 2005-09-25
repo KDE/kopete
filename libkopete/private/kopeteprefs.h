@@ -2,7 +2,7 @@
     kopeteprefs.cpp - Kopete Preferences Container-Class
 
     Copyright (c) 2002      by Stefan Gehn            <metz AT gehn.net>
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -73,6 +73,8 @@ public:
 	bool trayflashNotifySetCurrentDesktopToChatView() const { return mTrayflashNotifySetCurrentDesktopToChatView; }
 	bool balloonNotify() const { return mBalloonNotify; }
 	bool balloonNotifyIgnoreClosesChatView() const { return mBalloonNotifyIgnoreClosesChatView; }
+	bool balloonClose() const { return mBalloonClose; }
+	int balloonCloseDelay() const { return mBalloonCloseDelay; }
 	bool soundIfAway() const { return mSoundIfAway; }
 	bool transparencyEnabled() const { return mTransparencyEnabled; }
 	int transparencyValue() const { return mTransparencyValue; }
@@ -195,6 +197,8 @@ public:
 	void setMaxContactNameLength( int );
 	void setAutoConnect( bool );
 	void setEmoticonsRequireSpaces( bool );
+	void setBalloonClose( bool );
+	void setBalloonDelay( int );
 
 signals:
 	/**
@@ -244,6 +248,8 @@ private:
 	bool mTrayflashNotifySetCurrentDesktopToChatView;
 	bool mBalloonNotify;
 	bool mBalloonNotifyIgnoreClosesChatView;
+	bool mBalloonClose;
+	int mBalloonCloseDelay;
 	bool mSoundIfAway;
 	bool mTransparencyEnabled;
 	int mTransparencyValue;
