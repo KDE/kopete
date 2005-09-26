@@ -49,11 +49,19 @@ bool ChatServiceTask::forMe( const Transfer* t ) const
 	if ( !st )
 		return false;
 
-	if ( !st->snacService() != 0x000E )
+	if ( st->snacService() != 0x000E )
 		return false;
 
-	if ( st->snacSubtype() == 0x0001 )
+	switch ( st->snacSubtype() )
+    {
+    case 0x0003:
+    case 0x0002:
+        return true;
+        break;
+    default:
 		return false;
+        break;
+    }
 
 	return true;
 }
@@ -63,8 +71,12 @@ bool ChatServiceTask::take( Transfer* t )
 	if ( !forMe( t ) )
 		return false;
 
-	setTransfer( t );
 	SnacTransfer* st = dynamic_cast<SnacTransfer*>( t );
+    if ( !st )
+        return false;
+
+    setTransfer( t );
+
 	switch ( st->snacSubtype() )
 	{
 	case 0x0002:

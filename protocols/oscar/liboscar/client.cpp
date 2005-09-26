@@ -55,6 +55,7 @@
 #include "userinfotask.h"
 #include "usersearchtask.h"
 #include "warningtask.h"
+#include "chatservicetask.h"
 
 
 class Client::ClientPrivate
@@ -871,7 +872,20 @@ void Client::serverRedirectFinished()
 		emit chatNavigationConnected();
 	}
 
+    if ( d->currentRedirect == 0x000E )
+    {
+        Connection* c = d->connections.connectionForFamily( d->currentRedirect );
+        if ( c )
+        {
+            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting up chat connection" << endl;
+            ChatServiceTask* cst = new ChatServiceTask( c->rootTask() );
+            cst->go();
+        }
+        //emit chatRoomConnected();
+    }
+
 	emit redirectionFinished( d->currentRedirect );
+
 }
 
 void Client::checkRedirectionQueue( WORD family )
