@@ -179,7 +179,7 @@
                                 <bool>false</bool>
                             </property>
                             <property name="text">
-                                <string>&amp;Close bubble automatically after</string>
+                                <string>Close &amp;bubble automatically after</string>
                             </property>
                             <property name="checked">
                                 <bool>false</bool>
