@@ -100,6 +100,11 @@ void KopeteRichTextEditPart::checkToolbarEnabled()
 	emit toggleToolbar( buttonsEnabled() );
 }
 
+void KopeteRichTextEditPart::reloadConfig()
+{
+	readConfig();
+}
+
 void KopeteRichTextEditPart::createActions()
 {
 	createActions( actionCollection() );
@@ -291,6 +296,8 @@ void KopeteRichTextEditPart::updateFont()
 
 void KopeteRichTextEditPart::readConfig()
 {
+	// Don't update config untill we read whole config first
+	m_configWriteLock = true;
 	KConfig *config = KGlobal::config();
 	config->setGroup("RichTextEditor");
 
@@ -306,20 +313,9 @@ void KopeteRichTextEditPart::readConfig()
 	int tmp = KGlobalSettings::generalFont().pixelSize();
 	setFontSize( config->readNumEntry( "FontSize", tmp ) );
 
-	if( config->readBoolEntry( "FontBold" ) )
-	{
-		action_bold->activate();
-	}
-
-	if( config->readBoolEntry( "FontItalic" ) )
-	{
-		action_italic->activate();
-	}
-
-	if( config->readBoolEntry( "FontUnderline" ) )
-	{
-		action_underline->activate();
-	}
+	action_bold->setChecked( config->readBoolEntry( "FontBold" ) );
+	action_italic->setChecked( config->readBoolEntry( "FontItalic" ) );
+	action_underline->setChecked( config->readBoolEntry( "FontUnderline" ) );
 
 	switch( config->readNumEntry( "EditAlignment", AlignLeft ) )
 	{
@@ -336,10 +332,14 @@ void KopeteRichTextEditPart::readConfig()
 			action_align_justify->activate();
 		break;
 	}
+	m_configWriteLock = false;
 }
 
 void KopeteRichTextEditPart::writeConfig()
 {
+	// If true we're still reading the conf write now, so don't write.
+	if( m_configWriteLock ) return;
+
 	KConfig *config = KGlobal::config();
 	config->setGroup("RichTextEditor");
 	config->writeEntry("Font", mFont );

@@ -875,6 +875,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	m_activeView->setFocus();
 	updateSpellCheckAction();
 	slotUpdateSendEnabled();
+	m_activeView->editPart()->reloadConfig();
 }
 
 void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
