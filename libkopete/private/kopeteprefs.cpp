@@ -67,7 +67,7 @@ void KopetePrefs::load()
 	mBalloonNotify = config->readBoolEntry("Balloon Notification", true);
 	mBalloonNotifyIgnoreClosesChatView = config->readBoolEntry("Balloon Notification Ignore Closes Chat View", false);
 	mBalloonCloseDelay = config->readNumEntry("Balloon Autoclose Delay", 30);
-	mBalloonClose = config->readBoolEntry("Balloon Autoclose", true);
+	mBalloonClose = config->readBoolEntry("Balloon Autoclose", false);
 	mTrayflashNotify = config->readBoolEntry("Trayflash Notification", true);
 	mTrayflashNotifyLeftClickOpensMessage = config->readBoolEntry("Trayflash Notification Left Click Opens Message", true);
 	mTrayflashNotifySetCurrentDesktopToChatView = config->readBoolEntry("Trayflash Notification Set Current Desktop To Chat View", false);
