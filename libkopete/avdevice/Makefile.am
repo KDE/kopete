@@ -3,7 +3,8 @@ AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CA
         $(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private \
         -I$(top_srcdir)/kopete/libkopete/ui $(all_includes)
 METASOURCES = AUTO
-lib_LTLIBRARIES = libkopete_videodevice.la libkvideoio.la
+lib_LTLIBRARIES = libkopete_videodevice.la
+noinst_LTLIBRARIES = libkvideoio.la
 libkopete_videodevice_la_LDFLAGS = $(KDE_RPATH) $(all_libraries)
 
 noinst_HEADERS = videodevice.h videoinput.h kxv.h qvideo.h qvideostream.h \
