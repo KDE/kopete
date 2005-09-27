@@ -112,6 +112,7 @@ class KopeteStyleNewStuff : public KNewStuff
 			if ( Kopete::XSLT( styleSheet ).isValid() )
 				mAppearanceConfig->addStyle( origFileName.section( '.', 0, 0 ), styleSheet );
 			QFile::remove( fileName );
+			mAppearanceConfig->loadStyles();
 			return true;
 		}
 		else if ( origFileName.endsWith( ".tar.gz" ) )
@@ -139,6 +140,7 @@ class KopeteStyleNewStuff : public KNewStuff
 			if ( Kopete::XSLT( styleSheet ).isValid() )
 				mAppearanceConfig->addStyle( origFileName.section( '.', 0, 0 ), styleSheet );
 			QFile::remove( fileName );
+			mAppearanceConfig->loadStyles();
 			return true;
 
 		}
@@ -669,6 +671,11 @@ void AppearanceConfig::slotDeleteStyle()
 		QFileInfo fi( filePath );
 		if( fi.isWritable() )
 			QFile::remove( filePath );
+
+		KConfig *config = KGlobal::config();
+		config->setGroup("KNewStuffStatus");
+		config->deleteEntry( style->text() );
+		config->sync();
 
 		if( style->next() )
 			mPrfsChatWindow->styleList->setSelected( style->next(), true );
