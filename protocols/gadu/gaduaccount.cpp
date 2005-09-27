@@ -157,8 +157,8 @@ static const char* const servers_ip[] = {
 
 	p->config = configGroup();
 
-	initActions();
 	initConnections();
+	initActions();
 
 	QString nick = p->config->readEntry( QString::fromAscii( "nickName" ) );
 	if ( !nick.isNull() ) {

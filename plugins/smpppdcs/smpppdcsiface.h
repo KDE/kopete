@@ -1,5 +1,5 @@
 /*
-    iconnector.h
+    smpppdcsiface.h
  
     Copyright (c) 2005      by Heiko Schaefer        <heiko@rangun.de>
  
@@ -14,31 +14,19 @@
     *************************************************************************
 */
 
-#ifndef ICONNECTOR_H
-#define ICONNECTOR_H
+#ifndef SMPPPDCSIFACE_H
+#define SMPPPDCSIFACE_H
 
-/**
- * @brief Interface to an object setting a connection status.
- *
- * @author Heiko Sch&auml;fer <heiko@rangun.de>
- */
-class IConnector {
-	IConnector(const IConnector&);
-	IConnector& operator=(const IConnector&);
+#include <dcopobject.h>
 
-public:
-	IConnector() {};
-	virtual ~IConnector() {}
+class SMPPPDCSIFace : virtual public DCOPObject
+{
+  K_DCOP
 
-	/**
-	 * @brief Set the connection status.
-	 *
-	 * This method needs to get reimplemented at classes which implement
-	 * this interface.
-	 *
-	 * @param newStatus the status of the internet connection, <code>TRUE</code> if there is a connection, otherwise <code>FALSE</code>
-	 */
-	virtual void setConnectedStatus(bool newStatus) = 0;
+  k_dcop:
+
+    virtual QString detectionMethod() const = 0;
+    virtual bool isOnline() = 0;
 };
 
 #endif

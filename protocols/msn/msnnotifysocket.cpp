@@ -63,8 +63,8 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 
 	m_account = account;
 	m_password=password;
-	QObject::connect( this, SIGNAL( blockRead( const QString & ) ),
-		this, SLOT( slotReadMessage( const QString & ) ) );
+	QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),
+		this, SLOT( slotReadMessage( const QByteArray & ) ) );
 	m_keepaliveTimer = 0L;
 }
 
@@ -273,7 +273,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 
 	if ( cmd == "VER" )
 	{
-		sendCommand( "CVR", "0x0409 winnt 5.1 i386 MSNMSGR 7.0.0813 MSMSGS " + m_account->accountId() );
+		sendCommand( "CVR", "0x0409 winnt 5.1 i386 MSNMSGR 7.0.0816 MSMSGS " + m_account->accountId() );
 /*
 		struct utsname utsBuf;
 		uname ( &utsBuf );
@@ -691,14 +691,14 @@ void MSNNotifySocket::sendMail(const QString &email)
 bool MSNNotifySocket::setUseHttpMethod(bool useHttp)
 {
 	bool ret = MSNSocket::setUseHttpMethod( useHttp );
-	
+
 	if( useHttpMethod() ) {
 		if( m_keepaliveTimer ) {
 			delete m_keepaliveTimer;
 			m_keepaliveTimer = 0L;
 		}
 	}
-	else {	
+	else {
 		if( !m_keepaliveTimer ) {
 			m_keepaliveTimer = new QTimer( this, "m_keepaliveTimer" );
 			QObject::connect( m_keepaliveTimer, SIGNAL( timeout() ), SLOT( slotSendKeepAlive() ) );
@@ -708,8 +708,10 @@ bool MSNNotifySocket::setUseHttpMethod(bool useHttp)
 	return ret;
 }
 
-void MSNNotifySocket::slotReadMessage( const QString &msg )
+void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 {
+	QString msg = QString::fromUtf8(bytes, bytes.size());
+
 	if(msg.contains("text/x-msmsgsinitialmdatanotification"))
 	{
 		//Mail-Data: <MD><E><I>301</I><IU>1</IU><O>4</O><OU>2</OU></E><Q><QTM>409600</QTM><QNM>204800</QNM></Q></MD>
@@ -847,9 +849,9 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 QString MSNNotifySocket::processCurrentMedia( const QString &mediaXmlElement )
 {
 	/*
-		The value of the CurrentMedia tag you can think of like an array 
-		seperated by "\0" characters (literal backslash followed by zero, not NULL). 
-		
+		The value of the CurrentMedia tag you can think of like an array
+		seperated by "\0" characters (literal backslash followed by zero, not NULL).
+
 		The elements of this "array" are as follows:
 
 		* Application - This is the app you are using. Usually empty
@@ -858,10 +860,10 @@ QString MSNNotifySocket::processCurrentMedia( const QString &mediaXmlElement )
 		* Format - A formatter string ala .Net; For example, “{0} - {1}”
 		* First line - The first line (Matches {0} in the Format)
 		* Second line - The second line (Matches {1} in the Format)
-		* Third line - The third line (Matches {2} in the Format) 
+		* Third line - The third line (Matches {2} in the Format)
 
-		There is probably no limit to the number of lines unless you go over the maximum length of the tag. 
-	
+		There is probably no limit to the number of lines unless you go over the maximum length of the tag.
+
 		Example of currentMedia xml tag:
 		<CurrentMedia>\0Music\01\0{0} - {1}\0 Song Title\0Song Artist\0Song Album\0\0</CurrentMedia>
 		<CurrentMedia>\0Games\01\0Playing {0}\0Game Name\0</CurrentMedia>
@@ -873,13 +875,13 @@ QString MSNNotifySocket::processCurrentMedia( const QString &mediaXmlElement )
 	bool enabled=false, test;
 	// \0 is textual, it's the "array" separator.
 	QStringList argumentLists = QStringList::split(QString::fromUtf8("\\0"), mediaXmlElement, true);
-	
+
 	// Retrive the "stable" array elements.
 	application = argumentLists[0];
 	type = argumentLists[1];
 	enabled = argumentLists[2].toInt(&test);
 	format = argumentLists[3];
-	
+
 	// Get the formatter strings
 	QStringList formatterStrings;
 	QStringList::ConstIterator it;
@@ -887,14 +889,14 @@ QString MSNNotifySocket::processCurrentMedia( const QString &mediaXmlElement )
 	{
 		formatterStrings.append( *it );
 	}
-	
+
 	// Replace the formatter in the format string.
 	currentMedia = format;
 	for(uint i=0; i<formatterStrings.size(); i++)
 	{
 		currentMedia = currentMedia.replace(QString("{%1}").arg(i), formatterStrings[i]);
 	}
-	
+
 	if( type == QString::fromUtf8("Music") )
 	{
 		// the  "♫" is encoded in utf8 (and should be in utf8)
@@ -1087,12 +1089,12 @@ void MSNNotifySocket::changePersonalMessage( MSNProtocol::PersonalMessageType ty
 		default:
 			break;
 	}
-	
+
 	currentMedia.appendChild( xmlMessage.createTextNode( xmlCurrentMedia ) );
 
 	// Set the status message for myself, check if currentMedia is empty, for either using the normal or Music personal
 	m_propertyPersonalMessage = xmlCurrentMedia.isEmpty() ? tempPersonalMessage : processCurrentMedia( currentMedia.text() );
-	
+
 	xmlMessage.documentElement().appendChild( currentMedia );
 
 	unsigned int id = sendCommand("UUX","",true, xmlMessage.toString().utf8(), false);

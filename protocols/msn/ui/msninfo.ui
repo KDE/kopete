@@ -116,6 +116,9 @@
                     <property name="name">
                         <cstring>m_personalMessage</cstring>
                     </property>
+                    <property name="readOnly">
+                        <bool>true</bool>
+                    </property>
                 </widget>
             </hbox>
         </widget>

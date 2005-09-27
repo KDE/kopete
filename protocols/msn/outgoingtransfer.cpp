@@ -15,10 +15,6 @@
 */
 
 #include "outgoingtransfer.h"
-using P2P::TransferContext;
-using P2P::Dispatcher;
-using P2P::OutgoingTransfer;
-using P2P::Message;
 
 #include <stdlib.h>
 
@@ -38,6 +34,10 @@ using namespace KNetwork;
 #include <kopetetransfermanager.h>
 
 #include <netinet/in.h> // For htonl
+using P2P::TransferContext;
+using P2P::Dispatcher;
+using P2P::OutgoingTransfer;
+using P2P::Message;
 
 OutgoingTransfer::OutgoingTransfer(const QString& to, P2P::Dispatcher *dispatcher, Q_UINT32 sessionId)
 : TransferContext(to,dispatcher,sessionId)
@@ -373,8 +373,10 @@ void OutgoingTransfer::slotConnected()
 	handshake.header.ackSessionIdentifier = nonce.mid(0, 8).toUInt(0, 16);
 	handshake.header.ackUniqueIdentifier  =
 		nonce.mid(8, 4).toUInt(0, 16) | (nonce.mid(12, 4).toUInt(0, 16) << 16);
+	const Q_UINT32 lo = nonce.mid(16, 8).toUInt(0, 16);
+	const Q_UINT32 hi = nonce.mid(24, 8).toUInt(0, 16);
 	handshake.header.ackDataSize =
-		((Q_INT64)htonl(nonce.mid(16, 8).toUInt(0, 16))) | (((Q_INT64)htonl(nonce.mid(24, 8).toUInt(0, 16))) << 32);
+		((Q_INT64)htonl(lo)) | (((Q_INT64)htonl(hi)) << 32);
 
 	QByteArray stream;
 	// Write the message to the memory stream.

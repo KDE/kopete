@@ -44,7 +44,6 @@
 #endif
 
 #include <limits.h>
-#include <limits> // for std::numeric_limits
 
 namespace Kopete {
 namespace UI {
@@ -734,7 +733,7 @@ void DisplayNameComponent::redraw()
 		case Kopete::Emoticons::Image:
 			ic = new ImageComponent( this );
 			ic->setPixmap( QPixmap( (*token).picPath ) );
-			ic->scale( std::numeric_limits<int>::max(), fontHeight, QImage::ScaleMin );
+			ic->scale( INT_MAX, fontHeight, QImage::ScaleMin );
 		break;
 		default:
 			kdDebug( 14010 ) << k_funcinfo << "This should have not happened!" << endl;

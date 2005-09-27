@@ -31,6 +31,18 @@ class DCOPClient;
 class IConnector;
 class KExtendedSocket;
 
+/**
+ * @brief Detector to find out if there is a connection to the internet.
+ *
+ * Uses either the SuSE Meta PPP Daemon or netstat to inquire an existing
+ * internet connection.
+ *
+ * This is useful on dial up connections on SuSE systems.
+ *
+ * @author Heiko Sch&auml;fer <heiko@rangun.de>
+ *
+ */
+
 class Detector : protected QObject {
 	Q_OBJECT
 
@@ -56,12 +68,40 @@ class Detector : protected QObject {
     };
 
 public:
+	/**
+	 * @brief Creates an <code>Detector</code> instance.
+	 *
+	 * @param connector A connector to send feedback to the calling object
+	 */
 	Detector(IConnector * connector);
+
+	/**
+	 * @brief Destroys an <code>Detector</code> instance.
+	 *
+	 */
 	virtual ~Detector();
 
+	/**
+	 * @brief Use netstat to get the status of an internet connection.
+	 *
+	 * Calls IConnector::setConnectedStatus of the IConnector given in
+	 * the constructor.
+	 *
+	 * @see IConnector
+	 *
+	 */
 	virtual void netstatCheckStatus();
 
 #ifdef USE_SMPPPD
+	/**
+	 * @brief Use the smpppd to get the status of an internet connection.
+	 *
+	 * Calls IConnector::setConnectedStatus of the IConnector given in
+	 * the constructor.
+	 *
+	 * @see IConnector
+	 *
+	 */
     	virtual void smpppdCheckStatus();
 #endif
 

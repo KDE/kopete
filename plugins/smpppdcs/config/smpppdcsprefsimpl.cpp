@@ -62,14 +62,14 @@ void SMPPPDCSPrefs::determineCSType() {
 }
 
 void SMPPPDCSPrefs::smpppdFound(const QString& host) {
-	kdDebug( 0 ) << k_funcinfo << endl;
+	kdDebug(14312) << k_funcinfo << endl;
 	server->setText(host);
 	useSmpppd->setChecked(true);
 	autoCSTest->setEnabled(true);
 }
 
 void SMPPPDCSPrefs::smpppdNotFound() {
-	kdDebug( 0 ) << k_funcinfo << endl;
+	kdDebug(14312) << k_funcinfo << endl;
 	useNetstat->setChecked(true);
 	autoCSTest->setEnabled(true);
 }

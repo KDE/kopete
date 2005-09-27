@@ -224,11 +224,14 @@ AM_CONDITIONAL(include_testbed, test "$with_testbed" = "yes")
 
 if test "x$have_glib" != "xyes"; then
     compile_msn_webcam=no
+    msn_webcam_val=0
 else
     compile_msn_webcam=yes
+    msn_webcam_val=1
 fi
 
 AC_MSG_CHECKING([if MSN webcam support should be enabled])
 AC_MSG_RESULT($compile_msn_webcam)
-AC_DEFINE(MSN_WEBCAM, 1, [Define if MSN webcam support can be enabled])
+AC_DEFINE_UNQUOTED(MSN_WEBCAM, $msn_webcam_val, [Define if MSN webcam support can be enabled])
 
+AM_CONDITIONAL(include_msn_webcam, test "x$compile_msn_webcam" = "xyes")

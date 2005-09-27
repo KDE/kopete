@@ -121,7 +121,6 @@ signals:
 	 * A block read is ready.
 	 * After this the normal line-based reads go on again
 	 */
-	void blockRead( const QString &block );
 	void blockRead( const QByteArray &block );
 
 	/**

@@ -96,7 +96,7 @@ typedef enum
 	PIXELFORMAT_YUYV	= (1 << 10),
 	PIXELFORMAT_UYVY	= (1 << 11),
 	PIXELFORMAT_YUV420P	= (1 << 12),
-	PIXELFORMAT_YUV422P	= (1 << 13),
+	PIXELFORMAT_YUV422P	= (1 << 13)
 //	PIXELFORMAT_ALL		= 0x00003FFF
 } pixel_format;
 
@@ -142,6 +142,7 @@ public:
 	int setSize( int newwidth, int newheight);
 	pixel_format setPixelFormat(pixel_format newformat);
 	int pixelFormatCode(pixel_format pixelformat);
+	pixel_format pixelFormatForPalette( int palette );
 	int pixelFormatDepth(pixel_format pixelformat);
 	QString pixelFormatName(pixel_format pixelformat);
 	QString pixelFormatName(int pixelformat);

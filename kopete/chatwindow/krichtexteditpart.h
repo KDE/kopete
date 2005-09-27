@@ -78,6 +78,7 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 		void setAlignJustify( bool yes );
 
 		void checkToolbarEnabled();
+		void reloadConfig();
 
 	signals:
 		void toggleToolbar( bool enabled );
@@ -128,6 +129,8 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 		int m_capabilities;
 		bool m_richTextAvailable;
 		bool m_richTextEnabled;
+
+		bool m_configWriteLock;
 
 		QFont mFont;
 		QColor mBgColor;

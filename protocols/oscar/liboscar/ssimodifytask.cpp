@@ -164,7 +164,7 @@ bool SSIModifyTask::renameGroup( const QString& oldName, const QString & newName
 	return true;
 }
 
-bool SSIModifyTask::addItem( const SSI& item )
+bool SSIModifyTask::addItem( const Oscar::SSI& item )
 {
 	m_opType = Add;
 	m_opSubject = NoSubject;
@@ -172,7 +172,7 @@ bool SSIModifyTask::addItem( const SSI& item )
 	return true;
 }
 
-bool SSIModifyTask::removeItem( const SSI& item )
+bool SSIModifyTask::removeItem( const Oscar::SSI& item )
 {
 	m_opType = Remove;
 	m_opSubject = NoSubject;
@@ -180,7 +180,7 @@ bool SSIModifyTask::removeItem( const SSI& item )
 	return false;
 }
 
-bool SSIModifyTask::modifyItem( const SSI& oldItem, const SSI& newItem )
+bool SSIModifyTask::modifyItem( const Oscar::SSI& oldItem, const Oscar::SSI& newItem )
 {
 	if ( !m_ssiManager->hasItem( oldItem ) )
 		return false;

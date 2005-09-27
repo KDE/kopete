@@ -50,13 +50,6 @@ using P2P::OutgoingTransfer;
 
 #include <stdlib.h>
 
-#define MKDWORD(VAR, START, VAL) {\
-	(VAR)[(START)]=  (char)( ((VAL)&0x000000FF) ) ;  \
-	(VAR)[(START)+1]=(char)( ((VAL)&0x0000FF00)  >> 8 ) ; \
-	(VAR)[(START)+2]=(char)( ((VAL)&0x00FF0000)  >> 16 ) ; \
-	(VAR)[(START)+3]=(char)( ((VAL)&0xFF000000)  >> 24 ) ; \
-}
-
 Dispatcher::Dispatcher(QObject *parent, const QString& contact, const QStringList &ip)
 	: QObject(parent) ,  m_contact(contact) , m_callbackChannel(0l) , m_ip(ip)
 {}
@@ -179,10 +172,10 @@ void Dispatcher::sendImage(const QString& /*fileName*/, const QString& /*to*/)
 // 			<< endl;
 // 		return;
 // 	}
-// 
+//
 // 	OutgoingTransfer *outbound =
 // 		new OutgoingTransfer(to, this, 64);
-// 
+//
 // 	outbound->sendImage(imageFile.readAll());
 }
 
@@ -203,7 +196,7 @@ void Dispatcher::startWebcam(const QString &/*myHandle*/, const QString &msgHand
 	//  {4BD96FC0-AB17-4425-A14A-439185962DC8}  <- i want to show you my webcam
 	//  {1C9AA97E-9C05-4583-A3BD-908A196F1E92}  <- i want to see your webcam
 	QString GUID= (who==Webcam::wProducer) ? "4BD96FC0-AB17-4425-A14A-439185962DC8" : "1C9AA97E-9C05-4583-A3BD-908A196F1E92"  ;
-        
+
 	QString content="EUF-GUID: {"+GUID+"}\r\n"
 			"SessionID: "+ QString::number(sessionId)+"\r\n"
 			"AppID: 4\r\n"
@@ -217,11 +210,13 @@ void Dispatcher::startWebcam(const QString &/*myHandle*/, const QString &msgHand
 
 
 
-void Dispatcher::slotReadMessage(const QByteArray& stream)
+void Dispatcher::slotReadMessage(const QString &from, const QByteArray& stream)
 {
 	P2P::Message receivedMessage =
 		m_messageFormatter.readMessage(stream);
-	
+
+	receivedMessage.source = from;
+
 	if(receivedMessage.contentType == "application/x-msnmsgrp2p")
 	{
 		if((receivedMessage.header.dataSize == 0)/* && ((receivedMessage.header.flag & 0x02) == 0x02)*/)
@@ -235,7 +230,7 @@ void Dispatcher::slotReadMessage(const QByteArray& stream)
 					break;
 				}
 			}
-			
+
 			if(current){
     			// Inform the transfer object of the acknowledge.
     			current->m_ackSessionIdentifier = receivedMessage.header.identifier;
@@ -247,23 +242,23 @@ void Dispatcher::slotReadMessage(const QByteArray& stream)
 				kdDebug(14140) << k_funcinfo
 					<< "no transfer context with identifier, "
 					<< receivedMessage.header.ackSessionIdentifier
-						<< " (found.  for delivering ack)" << endl;
+					<< endl;
 			}
 			return;
 		}
-		
+
 		if(m_messageBuffer.contains(receivedMessage.header.identifier))
 		{
 			kdDebug(14140) << k_funcinfo
 				<< QString("retrieving buffered messsage, %1").arg(receivedMessage.header.identifier)
 				<< endl;
-				
+
 			// The message was split, try to reconstruct the message
 			// with this received piece.
 			Message bufferedMessage = m_messageBuffer[receivedMessage.header.identifier];
 			// Remove the buffered message.
 			m_messageBuffer.remove(receivedMessage.header.identifier);
-	
+
 			bufferedMessage.body.resize(bufferedMessage.body.size() + receivedMessage.header.dataSize);
 			for(Q_UINT32 i=0; i < receivedMessage.header.dataSize; i++){
 				// Add the remaining message data to the buffered message.
@@ -274,7 +269,7 @@ void Dispatcher::slotReadMessage(const QByteArray& stream)
 
 			receivedMessage = bufferedMessage;
 		}
-		
+
 		// Dispatch the received message.
 		dispatch(receivedMessage);
 	}
@@ -284,16 +279,11 @@ void Dispatcher::dispatch(const P2P::Message& message)
 
 {
 	TransferContext *messageHandler = 0l;
-		
+
 	if(message.header.sessionId > 0)
 	{
 		if(m_sessions.contains(message.header.sessionId)){
 			messageHandler = m_sessions[message.header.sessionId];
-			kdDebug(14140) << k_funcinfo << "oki " << messageHandler << endl;
-		}
-		else
-		{
-			kdDebug(14140) << k_funcinfo << "what ?!?   no session id  "<< message.header.sessionId <<endl;
 		}
 	}
 	else
@@ -433,7 +423,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				current->m_file = source;
 				// Acknowledge the session request.
 				current->acknowledge(message);
-				
+
 				current->m_ackSessionIdentifier = message.header.identifier;
     			current->m_ackUniqueIdentifier = message.header.ackSessionIdentifier;
 				// Send a 200 OK message to the recipient.
@@ -486,22 +476,23 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				fileName = ts.readLine().utf8();
 
 				emit incomingTransfer(from, fileName, fileSize);
-				
+
    				kdDebug(14140) <<
    					QString("%1, %2 bytes.").arg(fileName, QString::number(fileSize))
    					<< endl
    					<< endl;
-				
+
 				// Get the contact that is sending the file.
 				Kopete::Contact *contact = getContactByAccountId(from);
 
 				if(contact)
 				{
+					// Acknowledge the file invitation message.
 					transfer->acknowledge(message);
-					
+
 					transfer->m_ackSessionIdentifier = message.header.identifier;
     				transfer->m_ackUniqueIdentifier = message.header.ackSessionIdentifier;
-					
+
 					QObject::connect(Kopete::TransferManager::transferManager(), SIGNAL(accepted(Kopete::Transfer*, const QString&)), transfer, SLOT(slotTransferAccepted(Kopete::Transfer*, const QString&)));
 					QObject::connect(Kopete::TransferManager::transferManager(), SIGNAL(refused(const Kopete::FileTransferInfo&)), transfer, SLOT(slotTransferRefused(const Kopete::FileTransferInfo&)));
 
@@ -524,9 +515,9 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				regex = QRegExp("EUF-GUID: \\{([0-9a-zA-Z\\-]*)\\}");
 				regex.search(body);
 				QString GUID=regex.cap(1);
-				
+
 				kdDebug(14140) << k_funcinfo << "webcam " << GUID << endl;
-				
+
 				Webcam::Who who;
 				if(GUID=="4BD96FC0-AB17-4425-A14A-439185962DC8")
 				{  //that mean "I want to send MY webcam"
@@ -542,11 +533,11 @@ void Dispatcher::dispatch(const P2P::Message& message)
 					kdWarning(14140) << k_funcinfo << "Unknown GUID " << GUID << endl;
 					return;
 				}
-					
+
 				TransferContext *current = new P2P::Webcam(who, from, this, sessionId.toUInt());
 				current->m_branch = branch;
 				current->m_callId = callId;
-								
+
 					// Add the transfer to the list.
 				m_sessions.insert(sessionId.toUInt(), current);
 					// Acknowledge the session request.
@@ -555,45 +546,40 @@ void Dispatcher::dispatch(const P2P::Message& message)
 #endif
 			}
 		}
-		else
+		else if(message.header.sessionId == 64)
 		{
-			// Check for inkformatgif over msnslp.
+			// A contact has sent an inkformat (handwriting) gif.
+			// NOTE The entire message body is UTF16 encoded.
+			QString body = "";
+			for (Q_UINT32 i=0; i < message.header.totalDataSize; i++){
+				if (message.body[i] != QChar('\0')){
+					body += QChar(message.body[i]);
+				}
+			}
+
 			QRegExp regex("Content-Type: ([A-Za-z0-9$!*/\\-]*)");
 			regex.search(body);
 			QString contentType = regex.cap(1);
 
-			if(contentType == "image/gif" || message.header.sessionId == 64)
+			if(contentType == "image/gif")
 			{
-				// Received an inkformatgif message.
+				IncomingTransfer transfer(message.source, this, message.header.sessionId);
+				transfer.acknowledge(message);
+
 				regex = QRegExp("base64:([0-9a-zA-Z+/=]*)");
-				if(regex.search(body) > 0)
-				{
-					QString base64 = regex.cap(1);
-					kdDebug(14140) << k_funcinfo << "received inkformatgif, " << base64 << endl;
-					QByteArray image;
-					// Convert from base64 encoded string to byte array.
-					KCodecs::base64Decode( base64.utf8() , image );
-					// Create a temporary file to store the image data.
-					KTempFile *imageFile = new KTempFile( locateLocal( "tmp", "inkformatgif-" ), ".gif");
-					imageFile->setAutoDelete(true);
-					
-					Q_INT32 offset = 0, size = image.size(), chunkLength = 1202;
-					while(offset + chunkLength < size){
-						imageFile->file()->writeBlock(image.data() + offset, chunkLength);
-						offset += chunkLength;
-					}
-
-					if(offset < size){
-						// Write last chunk to the file.
-						imageFile->file()->writeBlock(image.data() + offset, size - offset);
-					}
-
-					// Close the ink formatted gif file.
-					imageFile->file()->close();
-					
-					displayIconReceived(imageFile , "inkformatgif");
-					imageFile = 0l;
-				}
+				regex.search(body);
+				QString base64 = regex.cap(1);
+				QByteArray image;
+// 				Convert from base64 encoding to byte array.
+				KCodecs::base64Decode(base64.utf8(), image);
+// 				Create a temporary file to store the image data.
+				KTempFile *ink = new KTempFile(locateLocal("tmp", "inkformatgif-" ), ".gif");
+				ink->setAutoDelete(true);
+// 				Save the image data to disk.
+				ink->file()->writeBlock(image);
+				ink->file()->close();
+				displayIconReceived(ink, "inkformatgif");
+				ink = 0l;
 			}
 		}
 	}
@@ -606,7 +592,7 @@ void Dispatcher::messageAcknowledged(unsigned int correlationId, bool fullReceiv
 		TransferContext *current = 0l;
 		QMap<Q_UINT32, TransferContext*>::Iterator it = m_sessions.begin();
 		for(; it != m_sessions.end(); it++)
-		{	
+		{
 			current = it.data();
 			if(current->m_transactionId == correlationId)
 			{

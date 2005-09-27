@@ -94,7 +94,23 @@ public:
         }
 
 		toolTip += QString::fromLatin1("</td><td>");
-		toolTip += QString::fromLatin1("<b><font size=\"+1\">%1</font></b><br><br>").arg(Kopete::Emoticons::parseEmoticons( metaContact->displayName()) );
+
+		QString displayName;
+		Kopete::Emoticons *e = Kopete::Emoticons::self();
+		QValueList<Emoticons::Token> t = e->tokenize( metaContact->displayName());
+		QValueList<Emoticons::Token>::iterator it;
+		for( it = t.begin(); it != t.end(); ++it )
+		{
+			if( (*it).type == Kopete::Emoticons::Image )
+			{
+				displayName += (*it).picHTMLCode;
+			} else if( (*it).type == Kopete::Emoticons::Text )
+			{
+				displayName += QStyleSheet::escape( (*it).text );
+			}
+		}
+
+		toolTip += QString::fromLatin1("<b><font size=\"+1\">%1</font></b><br><br>").arg( displayName );
 
 		QPtrList<Contact> contacts = metaContact->contacts();
 		if ( contacts.count() == 1 )

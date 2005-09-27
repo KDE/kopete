@@ -704,20 +704,20 @@ GaduSession::checkDescriptor()
 
 	switch( event->type ) {
 		case GG_EVENT_MSG:
-			if ( event->event.msg.msgclass == GG_CLASS_CTCP ) {
+			kdDebug(14100) << "incoming message:class:" << event->event.msg.msgclass << endl;
+			if ( event->event.msg.msgclass & GG_CLASS_CTCP ) {
 				kdDebug( 14100 ) << "incomming ctcp " << endl;
 				// TODO: DCC CONNECTION
 				emit incomingCtcp( event->event.msg.sender );
-				break;
 			}
-			if ( event->event.msg.msgclass == GG_CLASS_MSG || event->event.msg.msgclass == GG_CLASS_CHAT ) {
+
+			if ( (event->event.msg.msgclass & GG_CLASS_MSG) || (event->event.msg.msgclass & GG_CLASS_CHAT) ) {
 				gaduMessage.message =
 					textcodec->toUnicode((const char*)event->event.msg.message);
 				gaduMessage.sender_id = event->event.msg.sender;
 				gaduMessage.sendTime.setTime_t( event->event.msg.time, Qt::LocalTime );
 				gaduMessage.message = rtf->convertToHtml( gaduMessage.message, event->event.msg.formats_length, event->event.msg.formats );
 				emit messageReceived( &gaduMessage );
-				break;
 			}
 		break;
 		case GG_EVENT_ACK:

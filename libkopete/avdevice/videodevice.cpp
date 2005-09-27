@@ -17,9 +17,6 @@
 
 #define ENABLE_AV
 
-#include <iostream>
-#include <ostream>
-#include <sstream>
 #include <cstdlib>
 #include <cerrno>
 #include <cstring>
@@ -531,17 +528,21 @@ kdDebug() <<  k_funcinfo << "setSize(" << newwidth << ", " << newheight << ") ca
 	if(isOpen())
 	{
 // It should not be there. It must remain in a completely distict place, cause this method should not change the pixelformat.
-		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
+		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV420P))
 		{
-			kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying BGR24." << endl;
-			if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR24))
+			kdDebug() <<  k_funcinfo << "Card doesn't seem to support YUV420P format. Trying RGB24." << endl;
+			if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
 			{
-				kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying RGB32." << endl;
-				if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB32))
+				kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying BGR24." << endl;
+				if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR24))
 				{
-					kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB32 format. Trying BGR32." << endl;
-					if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR32))
-						kdDebug() <<  k_funcinfo << "Card doesn't seem to support BGR32 format. Fallback to it is not yet implemented." << endl;
+					kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying RGB32." << endl;
+					if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB32))
+					{
+						kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB32 format. Trying BGR32." << endl;
+						if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR32))
+							kdDebug() <<  k_funcinfo << "Card doesn't seem to support BGR32 format. Fallback to it is not yet implemented." << endl;
+					}
 				}
 			}
 		}
@@ -655,6 +656,7 @@ kdDebug() <<  k_funcinfo << "setSize(" << newwidth << ", " << newheight << ") De
 
 pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 {
+	pixel_format ret = PIXELFORMAT_NONE;
 //kdDebug() <<  k_funcinfo << "called." << endl;
 // Change the pixel format for the video device
 	switch(m_driver)
@@ -668,13 +670,19 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 //				return errnoReturn ("VIDIOC_S_FMT");
 //				kdDebug() << k_funcinfo << "VIDIOC_G_FMT failed (" << errno << ").Returned width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height << endl;
 			}
+			else
+				m_pixelformat = pixelFormatForPalette(fmt.fmt.pix.pixelformat);
+		
 			fmt.fmt.pix.pixelformat = pixelFormatCode(newformat);
-			if (-1 != xioctl (VIDIOC_S_FMT, &fmt))
+			if (-1 == xioctl (VIDIOC_S_FMT, &fmt))
 			{
-				m_pixelformat=newformat;
-				return newformat;
+//				kdDebug() << k_funcinfo << "VIDIOC_S_FMT failed (" << errno << ").Returned width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height << endl;
 			}
-//			kdDebug() << k_funcinfo << "VIDIOC_S_FMT failed (" << errno << ").Returned width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height << endl;
+			else
+			{
+				m_pixelformat = newformat;
+				ret = m_pixelformat;
+			}
 			break;
 #endif
 		case VIDEODEV_DRIVER_V4L:
@@ -689,12 +697,15 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 			{
 //				kdDebug() <<  k_funcinfo << "Card seems to not support " << pixelFormatName(newformat) << " format. Fallback to it is not yet implemented." << endl;
 			}
+
 			if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
 				kdDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
 
 //			kdDebug() <<  k_funcinfo << "V4L_picture.palette: " << V4L_picture.palette << " Depth: " << V4L_picture.depth << endl;
-				m_pixelformat=newformat;
-				return newformat;
+			m_pixelformat=pixelFormatForPalette(V4L_picture.palette);
+			if (m_pixelformat == newformat)
+				ret = newformat;
+
 			}
 			break;
 #endif
@@ -702,7 +713,7 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 		default:
 			break;
 	}
-	return PIXELFORMAT_NONE;
+	return ret;
 }
 
 
@@ -1344,6 +1355,56 @@ bool VideoDevice::setAutoColorCorrection(bool colorcorrection)
 	return m_input[m_current_input].getAutoColorCorrection();
 }
 
+pixel_format VideoDevice::pixelFormatForPalette( int palette )
+{
+	switch(m_driver)
+	{
+#if defined(__linux__) && defined(ENABLE_AV)
+#ifdef HAVE_V4L2
+		case VIDEODEV_DRIVER_V4L2:
+			switch(palette)
+			{
+				case 0 				: return PIXELFORMAT_NONE;	break;
+				case V4L2_PIX_FMT_GREY		: return PIXELFORMAT_GREY;	break;
+				case V4L2_PIX_FMT_RGB332	: return PIXELFORMAT_RGB332;	break;
+				case V4L2_PIX_FMT_RGB555	: return PIXELFORMAT_RGB555;	break;
+				case V4L2_PIX_FMT_RGB555X	: return PIXELFORMAT_RGB555X;	break;
+				case V4L2_PIX_FMT_RGB565	: return PIXELFORMAT_RGB565;	break;
+				case V4L2_PIX_FMT_RGB565X	: return PIXELFORMAT_RGB565X;	break;
+				case V4L2_PIX_FMT_RGB24		: return PIXELFORMAT_RGB24;	break;
+				case V4L2_PIX_FMT_BGR24		: return PIXELFORMAT_BGR24;	break;
+				case V4L2_PIX_FMT_RGB32		: return PIXELFORMAT_RGB32;	break;
+				case V4L2_PIX_FMT_BGR32		: return PIXELFORMAT_BGR32;	break;
+				case V4L2_PIX_FMT_YUYV		: return PIXELFORMAT_YUYV;	break;
+				case V4L2_PIX_FMT_UYVY		: return PIXELFORMAT_UYVY;	break;
+				case V4L2_PIX_FMT_YUV420	: return PIXELFORMAT_YUV420P;	break;
+				case V4L2_PIX_FMT_YUV422P	: return PIXELFORMAT_YUV422P;	break;
+			}
+			break;
+#endif
+		case VIDEODEV_DRIVER_V4L:
+			switch(palette)
+			{
+				case 0				: return PIXELFORMAT_NONE;	break;
+				case VIDEO_PALETTE_GREY		: return PIXELFORMAT_GREY;	break;
+				case VIDEO_PALETTE_HI240	: return PIXELFORMAT_RGB332;	break;
+				case VIDEO_PALETTE_RGB555	: return PIXELFORMAT_RGB555;	break;
+				case VIDEO_PALETTE_RGB565	: return PIXELFORMAT_RGB565;	break;
+				case VIDEO_PALETTE_RGB24	: return PIXELFORMAT_RGB24;	break;
+				case VIDEO_PALETTE_RGB32	: return PIXELFORMAT_RGB32;	break;
+				case VIDEO_PALETTE_YUYV		: return PIXELFORMAT_YUYV;	break;
+				case VIDEO_PALETTE_UYVY		: return PIXELFORMAT_UYVY;	break;
+				case VIDEO_PALETTE_YUV420	: return PIXELFORMAT_YUV420P;	break;
+				case VIDEO_PALETTE_YUV422P	: return PIXELFORMAT_YUV422P;	break;
+			}
+			break;
+#endif
+		case VIDEODEV_DRIVER_NONE:
+		default:
+			return PIXELFORMAT_NONE;	break;
+	}
+	return PIXELFORMAT_NONE;
+}
 
 int VideoDevice::pixelFormatCode(pixel_format pixelformat)
 {

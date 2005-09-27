@@ -37,7 +37,7 @@ class MSNSwitchBoardSocket;
 namespace P2P{
 	class IncomingTransfer;
 	class OutgoingTransfer;
-	
+
 	class KOPETE_EXPORT Dispatcher : public QObject
 	{	Q_OBJECT
 		public:
@@ -51,16 +51,16 @@ namespace P2P{
 			void sendImage(const QString& fileName, const QString& to);
 			QString m_pictureUrl;
 			QMap<QString, QString> objectList;
-			
+
 #if MSN_WEBCAM
 			void startWebcam(const QString &myHandle, const QString &msgHandle, bool wantToReceive);
 #endif
 
-			
+
 		public slots:
-			void slotReadMessage(const QByteArray& stream);
+			void slotReadMessage(const QString &from, const QByteArray& stream);
 			void messageAcknowledged(unsigned int correlationId, bool fullReceive);
-			
+
 		signals:
 			void sendCommand(const QString &cmd, const QString &args = QString::null, bool addId = true, const QByteArray &body = QByteArray(), bool binary=false);
 			void displayIconReceived(KTempFile* file, const QString& msnObject);
@@ -85,19 +85,19 @@ namespace P2P{
 			 * IP's of this compiter,  the first one is the one seen by the server.
 			 */
 			QStringList localIp() { return m_ip; }
-			
-			
+
+
 		private:
 			void dispatch(const P2P::Message& message);
 			Kopete::Contact* getContactByAccountId(const QString& accountId);
-			
+
 			P2P::MessageFormatter m_messageFormatter;
 			QMap<Q_UINT32, P2P::TransferContext*> m_sessions;
 			QMap<Q_UINT32, P2P::Message> m_messageBuffer;
 			QString m_contact;
 			CallbackChannel *m_callbackChannel;
 			QStringList m_ip;
-			
+
 			friend class P2P::TransferContext;
 			friend class P2P::IncomingTransfer;
 			friend class P2P::OutgoingTransfer;

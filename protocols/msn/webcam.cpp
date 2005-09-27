@@ -62,6 +62,14 @@ Webcam::~Webcam()
 	delete m_mimic;
 	delete m_webcamSocket;
 	delete m_widget;
+	
+	if(m_timerId != 0) //if we were sending
+	{
+		Kopete::AV::VideoDevicePool *videoDevice = Kopete::AV::VideoDevicePool::self(); 
+		videoDevice->stopCapturing(); 
+		videoDevice->close();
+	}
+
 }
 
 void Webcam::askIncommingInvitation()
@@ -70,7 +78,7 @@ void Webcam::askIncommingInvitation()
 	//protect, in case this is deleted when the messagebox is active
 	QGuardedPtr<Webcam> _this = this;
 	QString message= (m_who==wProducer)  ?
-			i18n("<qt>The contact %1 wants to see <b>your</b> webcam, do you want to see it?</qt>")  :
+			i18n("<qt>The contact %1 wants to see <b>your</b> webcam, do you want them to see it?</qt>")  :
 			i18n("The contact %1 wants to show you his/her webcam, do you want to see it?")  ;
 	int result=KMessageBox::questionYesNo( 0L , message.arg(m_recipient),
 										   i18n("Webcam invitation - Kopete MSN Plugin") , i18n("Accept") , i18n("Decline"));

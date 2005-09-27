@@ -64,7 +64,7 @@ public:
 		WWP = 0x0002,
 		EMail = 0x0004,
 		UCS2 = 0x0010,
-		NotDecoded = 0x0020,
+		NotDecoded = 0x0020
 	};
 
 	Message();

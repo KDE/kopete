@@ -736,6 +736,9 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	
 	kdDebug(14180) << "Message after stripping color codes '" << newMsgText << "'" << endl;
 
+	newMsgText.replace( QString::fromLatin1( "&" ), QString::fromLatin1( "&amp;" ) );
+	
+	// Replace Font tags
 	regExp.setMinimal( true );
 	regExp.setPattern( "<font([^>]*)size=\"([^>]*)\"([^>]*)>" );
 	pos = 0;
@@ -747,12 +750,38 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 		}
 	}
 	
+	// Replace < and > in text
+	regExp.setPattern( "<(?![\"/fbui])" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( newMsgText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			newMsgText.replace( regExp, QString::fromLatin1("&lt;" ) );
+		}
+	}
+	regExp.setPattern( "([^\"bui])>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( newMsgText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			newMsgText.replace( regExp, QString::fromLatin1("\\1&gt;" ) );
+		}
+	}
+	
+	// add closing tags when needed
+	regExp.setMinimal( false );
+	regExp.setPattern( "(<b>.*)(?!</b>)" );
+	newMsgText.replace( regExp, QString::fromLatin1("\\1</b>" ) );
+	regExp.setPattern( "(<i>.*)(?!</i>)" );
+	newMsgText.replace( regExp, QString::fromLatin1("\\1</i>" ) );
+	regExp.setPattern( "(<u>.*)(?!</u>)" );
+	newMsgText.replace( regExp, QString::fromLatin1("\\1</u>" ) );
+	regExp.setPattern( "(<font.*)(?!</font>)" );
+	newMsgText.replace( regExp, QString::fromLatin1("\\1</font>" ) );
+	
 	newMsgText.replace( QString::fromLatin1( "\r" ), QString::fromLatin1( "<br/>" ) );
-	newMsgText.replace( QString::fromLatin1( "&" ), QString::fromLatin1( "&amp;" ) );
-	newMsgText.replace( QString::fromLatin1( ">" ), QString::fromLatin1( "&gt;" ) );
-	newMsgText.replace( QString::fromLatin1( "<" ), QString::fromLatin1( "&lt;" ) );
-	newMsgText.replace( QString::fromLatin1( "\"" ), QString::fromLatin1( "&quot;" ) );
-	newMsgText.replace( QString::fromLatin1( " " ), QString::fromLatin1( "&nbsp;" ) );
 	
 	kdDebug(14180) << "Message after fixing font tags '" << newMsgText << "'" << endl;
 	

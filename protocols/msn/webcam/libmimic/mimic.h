@@ -69,5 +69,5 @@ gboolean mimic_decode_frame(MimCtx *ctx,
 }
 #endif
 
-#endif // MIMIC_H
+#endif
 

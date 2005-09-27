@@ -33,8 +33,8 @@ typedef KGenericFactory<SMPPPDCSPlugin> SMPPPDCSPluginFactory;
 K_EXPORT_COMPONENT_FACTORY(kopete_smpppdcs, SMPPPDCSPluginFactory("kopete_smpppdcs"))
 
 SMPPPDCSPlugin::SMPPPDCSPlugin(QObject *parent, const char * name, const QStringList& /* args */)
- : Kopete::Plugin(SMPPPDCSPluginFactory::instance(), parent, name), m_detector(NULL), 
-   m_timer(NULL), m_onlineInquiry(NULL)
+ : DCOPObject("SMPPPDCSIface"), Kopete::Plugin(SMPPPDCSPluginFactory::instance(), parent, name),
+   m_detector(NULL), m_timer(NULL), m_onlineInquiry(NULL)
     {
    
     /*if(useSmpppd()) {
@@ -54,7 +54,7 @@ SMPPPDCSPlugin::SMPPPDCSPlugin(QObject *parent, const char * name, const QString
 
 SMPPPDCSPlugin::~SMPPPDCSPlugin() {
 
-    kdDebug( 0 ) << k_funcinfo << endl;
+    kdDebug(14312) << k_funcinfo << endl;
 
     disconnect(m_detector, SIGNAL(retryRequested()), this, SLOT(slotCheckStatus()));
 
@@ -91,7 +91,7 @@ void SMPPPDCSPlugin::slotCheckStatus() {
 }
 
 void SMPPPDCSPlugin::setConnectedStatus( bool connected ) {
-    kdDebug( 0 ) << k_funcinfo << endl;
+    kdDebug(14312) << k_funcinfo << endl;
 
     // We have to handle a few cases here. First is the machine is connected, and the plugin thinks
     // we're connected. Then we don't do anything. Next, we can have machine connected, but plugin thinks
@@ -102,18 +102,18 @@ void SMPPPDCSPlugin::setConnectedStatus( bool connected ) {
 
     if ( connected && !m_pluginConnected ) {
         // The machine is connected and plugin thinks we're disconnected
-        kdDebug( 0 ) << k_funcinfo << "Setting m_pluginConnected to true" << endl;
+        kdDebug(14312) << k_funcinfo << "Setting m_pluginConnected to true" << endl;
         m_pluginConnected = true;
         //Kopete::AccountManager::self()->connectAll(true);
 		connectAllowed();
-        kdDebug( 0 ) << k_funcinfo << "We're connected" << endl;
+        kdDebug(14312) << k_funcinfo << "We're connected" << endl;
     } else if ( !connected && m_pluginConnected ) {
         // The machine isn't connected and plugin thinks we're connected
-        kdDebug( 0 ) << k_funcinfo << "Setting m_pluginConnected to false" << endl;
+        kdDebug(14312) << k_funcinfo << "Setting m_pluginConnected to false" << endl;
         m_pluginConnected = false;
         //Kopete::AccountManager::self()->disconnectAll();
 	disconnectAllowed();
-        kdDebug( 0 ) << k_funcinfo << "We're offline" << endl;
+        kdDebug(14312) << k_funcinfo << "We're offline" << endl;
     }
 }
 
@@ -152,6 +152,14 @@ bool SMPPPDCSPlugin::useSmpppd() const {
     static KConfig *config = KGlobal::config();
     config->setGroup(SMPPPDCS_CONFIG_GROUP);
     return config->readBoolEntry("useSmpppd", false);
+}
+
+QString SMPPPDCSPlugin::detectionMethod() const {
+    if(useSmpppd()) {
+        return "smpppd";
+    } else {
+        return "netstat";
+    }
 }
 
 #include "smpppdcsplugin.moc"

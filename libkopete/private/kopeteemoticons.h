@@ -3,6 +3,7 @@
 
     Copyright (c) 2002-2003 by Stefan Gehn            <metz AT gehn.net>
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2005      by Engin AYDOGAN	      <engin @ bzzzt.biz>
 
     *************************************************************************
     *                                                                       *
@@ -84,11 +85,12 @@ public:
 	struct Token {
 		Token() : type( Undefined ) {}
 		Token( TokenType t, const QString &m ) : type( t ), text(m) {}
-		Token( TokenType t, const QString &m, const QString &p )
-		 : type( t ), text( m ), picPath( p ) {}
+		Token( TokenType t, const QString &m, const QString &p, const QString &html )
+		 : type( t ), text( m ), picPath( p ), picHTMLCode( html ) {}
 		TokenType	type;
 		QString		text;
 		QString		picPath;
+		QString		picHTMLCode;
 	};
 	
 

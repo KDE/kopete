@@ -1407,7 +1407,6 @@ Only check this option if the normal connection doesn't work.</string>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kopete::ui::passwordwidget.h</includehint>
     <includehint>kcombobox.h</includehint>
     <includehint>klineedit.h</includehint>
 </includehints>
