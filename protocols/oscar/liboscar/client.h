@@ -258,7 +258,7 @@ public:
 
 	//! Start a server redirect for a different service
 	void requestServerRedirect( WORD family, WORD e = 0, QByteArray c = QByteArray(),
-                                WORD instance = 0 );
+                                WORD instance = 0, const QString& room = QString::null );
 
 	//! Start uploading a buddy icon
 	void sendBuddyIcon( const QByteArray& imageData );
@@ -430,7 +430,7 @@ protected slots:
     /**
      * set up the connection to a chat room
      */
-    void setupChatConnection( WORD, QByteArray, WORD );
+    void setupChatConnection( WORD, QByteArray, WORD, const QString& );
 
 
     void determineDisconnection( int, const QString& );

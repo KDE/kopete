@@ -49,7 +49,7 @@ public:
 
 signals:
     void haveChatExchanges( const QValueList<int>& );
-    void connectChat( WORD, QByteArray, WORD );
+    void connectChat( WORD, QByteArray, WORD, const QString& );
 
 private:
 	void handleExchangeInfo( const TLV& t );

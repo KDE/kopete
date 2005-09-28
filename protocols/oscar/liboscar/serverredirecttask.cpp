@@ -44,6 +44,11 @@ void ServerRedirectTask::setChatParams( WORD exchange, QByteArray cookie, WORD i
     m_chatInstance = instance;
 }
 
+void ServerRedirectTask::setChatRoom( const QString& roomName )
+{
+    m_chatRoom = roomName;
+}
+
 
 void ServerRedirectTask::onGo()
 {
@@ -151,6 +156,16 @@ QString ServerRedirectTask::newHost() const
 WORD ServerRedirectTask::service() const
 {
 	return m_service;
+}
+
+WORD ServerRedirectTask::chatExchange() const
+{
+    return m_chatExchange;
+}
+
+QString ServerRedirectTask::chatRoomName() const
+{
+    return m_chatRoom;
 }
 
 #include "serverredirecttask.moc"

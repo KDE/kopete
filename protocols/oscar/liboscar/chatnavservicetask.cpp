@@ -236,6 +236,7 @@ void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
 
     QValueList<Oscar::TLV> tlvList = b.getTLVList();
     QValueList<Oscar::TLV>::iterator it, itEnd = tlvList.end();
+    QString roomName;
     for ( it = tlvList.begin(); it != itEnd; ++it )
     {
         TLV t = ( *it );
@@ -254,7 +255,8 @@ void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
 			kdDebug(OSCAR_RAW_DEBUG) << "evil generated array" << endl;
 			break;
 		case 0x6A:
-			kdDebug(OSCAR_RAW_DEBUG) << "fully qualified name" << endl;
+            roomName = QString( t.data );
+			kdDebug(OSCAR_RAW_DEBUG) << "fully qualified name" << roomName << endl;
 			break;
 		case 0x6B:
 			kdDebug(OSCAR_RAW_DEBUG) << "moderator" << endl;
@@ -295,7 +297,7 @@ void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
 		}
 	}
 
-    emit connectChat( exchange, cookie, instance );
+    emit connectChat( exchange, cookie, instance, roomName );
 }
 
 void ChatNavServiceTask::handleCreateRoomInfo( const TLV& t )

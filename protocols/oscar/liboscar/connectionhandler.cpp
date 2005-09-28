@@ -26,6 +26,7 @@ class ConnectionHandler::Private
 {
 public:
 	QValueList<Connection*> connections;
+    QMap<Connection*, ConnectionRoomInfo> chatRoomConnections;
 };
 
 ConnectionHandler::ConnectionHandler()
@@ -110,5 +111,30 @@ Connection* ConnectionHandler::defaultConnection() const
 		return 0;
 
 	return d->connections.first();
+}
+
+void ConnectionHandler::addChatInfoForConnection( Connection* c, int exchange, const QString& room )
+{
+    if ( d->connections.findIndex( c ) == -1 )
+        d->connections.append( c );
+
+    ConnectionRoomInfo info = qMakePair( exchange, room );
+    d->chatRoomConnections[c] = info;
+}
+
+Connection* ConnectionHandler::connectionForChatRoom( int exchange, const QString& room )
+{
+    ConnectionRoomInfo infoToFind = qMakePair( exchange, room );
+    QMap<Connection*, ConnectionRoomInfo>::iterator it,  itEnd = d->chatRoomConnections.end();
+    for ( it = d->chatRoomConnections.begin(); it != itEnd; ++it )
+    {
+        if ( it.data() == infoToFind )
+        {
+            Connection* c = it.key();
+            return c;
+        }
+    }
+
+    return 0;
 }
 

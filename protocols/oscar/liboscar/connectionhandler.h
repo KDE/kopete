@@ -19,8 +19,11 @@
 #ifndef CONNECTIONHANDLER_H
 #define CONNECTIONHANDLER_H
 
+#include <qpair.h>
 
 class Connection;
+
+typedef QPair<int, QString> ConnectionRoomInfo;
 
 /**
 @author Kopete Developers
@@ -70,6 +73,23 @@ public:
 	 * more than one.
 	 */
 	Connection* defaultConnection() const;
+
+	/**
+	 * Add chat room information to a connection so that we can track
+	 * connections by chat room
+	 * @param c The connection to add information to
+	 * @param exchange the exchange the chat room is in
+	 * @param room the name of the chat room
+	 */
+	void addChatInfoForConnection( Connection* c, int exchange, const QString& room );
+
+	/**
+	 * Get the connection for a particular room name and exchange number.
+	 * @param exchange the chat room exchange the room is on
+	 * @param room the name of the chat room to find a connection for
+	 * @return a Connection for the chat room or 0L if no connection for that room
+	 */
+	Connection* connectionForChatRoom( int exchange, const QString& room );
 
 private:
 	class Private;

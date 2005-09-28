@@ -788,7 +788,8 @@ void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE
 }
 
 void Client::requestServerRedirect( WORD family, WORD exchange,
-                                    QByteArray cookie, WORD instance )
+                                    QByteArray cookie, WORD instance,
+                                    const QString& room )
 {
 	//making the assumption that family 2 will always be the BOS connection
 	//use it instead since we can't query for family 1
@@ -812,7 +813,10 @@ void Client::requestServerRedirect( WORD family, WORD exchange,
     //already connecting to something
 	ServerRedirectTask* srt = new ServerRedirectTask( c->rootTask() );
     if ( family == 0x000E )
+    {
         srt->setChatParams( exchange, cookie, instance );
+        srt->setChatRoom( room );
+    }
 
 	connect( srt, SIGNAL( haveServer( const QString&, const QByteArray&, WORD ) ),
 	         this, SLOT( haveServerForRedirect( const QString&, const QByteArray&, WORD ) ) );
@@ -822,6 +826,10 @@ void Client::requestServerRedirect( WORD family, WORD exchange,
 
 void Client::haveServerForRedirect( const QString& host, const QByteArray& cookie, WORD )
 {
+    //nasty sender() usage to get the task with chat room info
+	QObject* o = const_cast<QObject*>( sender() );
+    ServerRedirectTask* srt = dynamic_cast<ServerRedirectTask*>( o );
+
 	//create a new connection and set it up
 	int colonPos = host.find(':');
 	QString realHost, realPort;
@@ -844,7 +852,10 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 
 	//connect
 	connectToServer( c, d->host, false );
-	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
+  	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
+
+    if ( srt )
+        d->connections.addChatInfoForConnection( c, srt->chatExchange(), srt->chatRoomName() );
 }
 
 void Client::serverRedirectFinished()
@@ -956,18 +967,18 @@ void Client::joinChatRoom( const QString& roomName, int exchange )
     kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "joining the chat room '" << roomName
                              << "' on exchange " << exchange << endl;
     ChatNavServiceTask* cnst = new ChatNavServiceTask( c->rootTask() );
-    connect( cnst, SIGNAL( connectChat( WORD, QByteArray, WORD ) ),
-             this, SLOT( setupChatConnection( WORD, QByteArray, WORD ) ) );
+    connect( cnst, SIGNAL( connectChat( WORD, QByteArray, WORD, const QString& ) ),
+             this, SLOT( setupChatConnection( WORD, QByteArray, WORD, const QString& ) ) );
     cnst->createRoom( exchange, roomName );
 
 }
 
-void Client::setupChatConnection( WORD exchange, QByteArray cookie, WORD instance )
+void Client::setupChatConnection( WORD exchange, QByteArray cookie, WORD instance, const QString& room )
 {
     kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "cookie is:" << cookie << endl;
     QByteArray realCookie( cookie );
     kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "connection to chat room" << endl;
-    requestServerRedirect( 0x000E, exchange, realCookie, instance );
+    requestServerRedirect( 0x000E, exchange, realCookie, instance, room );
 }
 
 

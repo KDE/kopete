@@ -37,6 +37,10 @@ public:
 
 	void setService( WORD family );
     void setChatParams( WORD exchange, QByteArray cookie, WORD instance );
+    void setChatRoom( const QString& roomName );
+
+    WORD chatExchange() const;
+    QString chatRoomName() const;
 
 	//Task implementation
 	void onGo();
@@ -61,6 +65,7 @@ private:
     WORD m_chatExchange;
     QByteArray m_chatCookie;
     WORD m_chatInstance;
+    QString m_chatRoom;
 };
 
 
