@@ -382,6 +382,9 @@ signals:
 
 	/* Chat rooms */
 	void chatNavigationConnected();
+    void chatRoomConnected( WORD, const QString& );
+    void chatUserJoined( WORD, const QString&, const QString& );
+    void chatUserLeft( WORD, const QString&, const QString& );
 
 	/* service redirection */
 	void redirectionFinished( WORD );
