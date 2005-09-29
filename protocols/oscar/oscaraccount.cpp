@@ -47,6 +47,7 @@
 #include "client.h"
 #include "connection.h"
 #include "oscartypeclasses.h"
+#include "oscarmessage.h"
 #include "oscarutils.h"
 #include "oscarclientstream.h"
 #include "oscarconnector.h"

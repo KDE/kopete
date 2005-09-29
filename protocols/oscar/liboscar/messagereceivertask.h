@@ -31,8 +31,8 @@ class MessageReceiverTask : public Task
 {
 Q_OBJECT
 public:
+		
 	MessageReceiverTask( Task* parent );
-	
 	~MessageReceiverTask();
 	
 	virtual bool forMe( const Transfer* transfer ) const;
@@ -52,14 +52,21 @@ private:
 	
 	//!Handles messages from channel 4 (type 4 messages)
 	void handleType4Message();
+
+	//!Handles client auto responses (SNAC 0x04/0x0B)
+	void handleAutoResponse();
+
+	//!Parses Rendezvous data in Buffer and puts the information into Message
+	void parseRendezvousData( Buffer* b, Oscar::Message* msg );
 	
 	QTextCodec* guessCodec( const QCString& string );
+
 private:
 	
 	QByteArray m_icbmCookie;
 	int m_channel;
 	QString m_fromUser;
-	QString m_messageText;
+	int m_currentSnacSubtype;
 	int m_charSet;
 	int m_subCharSet;
 	
