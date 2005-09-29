@@ -19,6 +19,7 @@
 #include "task.h"
 #include <qstring.h>
 #include <qcstring.h>
+#include "oscarmessage.h"
 #include "oscartypeclasses.h"
 
 class QTextCodec;

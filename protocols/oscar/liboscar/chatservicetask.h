@@ -21,6 +21,7 @@
 #define CHATSERVICETASK_H
 
 #include "task.h"
+#include "oscarmessage.h"
 
 class Transfer;
 

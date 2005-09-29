@@ -21,7 +21,6 @@
 #include "transfer.h"
 #include "buffer.h"
 #include "connection.h"
-
 #include "oscarutils.h"
 #include "userdetails.h"
 

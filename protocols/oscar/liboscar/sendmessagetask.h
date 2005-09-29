@@ -19,6 +19,7 @@
 
 #include "task.h"
 #include "qstring.h"
+#include "oscarmessage.h"
 
 /**
 @author Kopete Developers
