@@ -81,12 +81,15 @@ bool ChatServiceTask::take( Transfer* t )
 	{
 	case 0x0002:
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Parse room info" << endl;
+        parseRoomInfo();
 		break;
 	case 0x0003:
         kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user joined notification" << endl;
+        parseJoinNotification();
         break;
     case 0x0004:
         kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user left notification" << endl;
+        parseLeftNotification();
         break;
     case 0x0006:
         kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message from room to client" << endl;
@@ -108,8 +111,8 @@ void ChatServiceTask::parseRoomInfo()
     Buffer* b = transfer()->buffer();
 
     exchange = b->getWord();
-    QString name( b->getBUIN() );
-    instance = b->getByte();
+    QByteArray cookie( b->getBlock( b->getByte() ) );
+    instance = b->getWord();
 
     detailLevel = b->getByte();
 
