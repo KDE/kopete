@@ -21,12 +21,15 @@
 #include "aimchatsession.h"
 #include "kopetecontact.h"
 #include "kopetechatsessionmanager.h"
+#include "kopeteprotocol.h"
 
 AIMChatSession::AIMChatSession( const Kopete::Contact* user,  Kopete::ContactPtrList others,
                                   Kopete::Protocol* protocol )
     : Kopete::ChatSession( user, others, protocol, "AIMChatSession" )
 {
     Kopete::ChatSessionManager::self()->registerChatSession( this );
+    setInstance( protocol->instance() );
+    setMayInvite( false );
 }
 
 QString AIMChatSession::roomName() const

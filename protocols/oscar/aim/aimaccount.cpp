@@ -31,6 +31,7 @@
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
 #include "kopetechatsessionmanager.h"
+#include "kopeteview.h"
 #include <kopeteuiglobal.h>
 
 #include "aimprotocol.h"
@@ -75,6 +76,20 @@ void AIMMyselfContact::setOwnProfile( const QString& newProfile )
 QString AIMMyselfContact::userProfile()
 {
 	return m_profileString;
+}
+
+Kopete::ChatSession* AIMMyselfContact::manager( Kopete::Contact::CanCreateFlags canCreate )
+{
+    Kopete::ContactPtrList chatMembers;
+    chatMembers.append( this );
+    Kopete::ChatSession* genericManager = 0L;
+    genericManager = Kopete::ChatSessionManager::self()->findChatSession( account()->myself(), chatMembers, protocol() );
+    AIMChatSession* session = dynamic_cast<AIMChatSession*>( genericManager );
+
+    if ( !session && canCreate == Contact::CanCreate )
+        session = new AIMChatSession( this, chatMembers, account()->protocol() );
+
+    return session;
 }
 
 
@@ -437,9 +452,14 @@ void AIMAccount::connectedToChatRoom( WORD exchange, const QString& room )
 {
     kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Creating chat room session" << endl;
     Kopete::ContactPtrList emptyList;
-    AIMChatSession* session = new AIMChatSession( myself(), emptyList, protocol() );
+    AIMChatSession* session =  dynamic_cast<AIMChatSession*>( myself()->manager( Kopete::Contact::CannotCreate ) );
+    if ( !session )
+        session = dynamic_cast<AIMChatSession*>( myself()->manager( Kopete::Contact::CanCreate ) );
+
     session->setExchange( exchange );
     session->setRoomName( room );
+    if ( session->view( true ) )
+        session->raiseView();
 }
 
 void AIMAccount::userJoinedChat( WORD exchange, const QString& room, const QString& contact )

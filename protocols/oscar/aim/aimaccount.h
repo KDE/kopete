@@ -50,6 +50,7 @@ public:
 	void setLastAwayMessage( const QString& msg) {m_lastAwayMessage = msg;}
 	QString lastAwayMessage() { return m_lastAwayMessage; };
 
+    virtual Kopete::ChatSession* manager( Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate );
 private:
 	QString m_profileString;
 	AIMAccount* m_acct;
