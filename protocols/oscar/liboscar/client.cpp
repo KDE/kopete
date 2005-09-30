@@ -468,7 +468,7 @@ void Client::receivedMessage( const Oscar::Message& msg )
 			Connection* c = d->connections.connectionForFamily( 0x0004 );
 			if ( !c )
 				return;
-			
+
 			Oscar::Message response = Oscar::Message( msg );
 			response.setText( statusMessage() );
 			response.setReceiver( msg.sender() );
@@ -962,13 +962,14 @@ void Client::serverRedirectFinished()
     if ( d->currentRedirect == 0x000E )
     {
         Connection* c = d->connections.connectionForFamily( d->currentRedirect );
+        QString roomName = d->connections.chatRoomForConnection( c );
+        WORD exchange = d->connections.exchangeForConnection( c );
         if ( c )
         {
             kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting up chat connection" << endl;
             ChatServiceTask* cst = new ChatServiceTask( c->rootTask() );
-            cst->go();
         }
-        //emit chatRoomConnected();
+        emit chatRoomConnected( exchange, roomName );
     }
 
 	emit redirectionFinished( d->currentRedirect );

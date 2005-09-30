@@ -93,7 +93,7 @@ public:
 
 	/** Logout and disconnect */
 	void close();
-	
+
 	/** Set our status for AIM */
 	void setStatus( AIMStatus status, const QString &message = QString::null );
 	/** Set our status for ICQ */
@@ -396,8 +396,8 @@ signals:
 	/* Chat rooms */
 	void chatNavigationConnected();
     void chatRoomConnected( WORD, const QString& );
-    void chatUserJoined( WORD, const QString&, const QString& );
-    void chatUserLeft( WORD, const QString&, const QString& );
+    void chatUserJoined( WORD, const QString& room, const QString& contact );
+    void chatUserLeft( WORD, const QString& room, const QString& contact );
 
 	/* service redirection */
 	void redirectionFinished( WORD );

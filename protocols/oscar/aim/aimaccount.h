@@ -94,8 +94,11 @@ protected slots:
     void joinChatDialogClosed( int );
 
 	virtual void disconnected( Kopete::Account::DisconnectReason reason );
-
 	virtual void messageReceived( const Oscar::Message& message );
+
+    void connectedToChatRoom( WORD exchange, const QString& roomName );
+    void userJoinedChat( WORD exchange, const QString& room, const QString& contact );
+    void userLeftChat( WORD exchange, const QString& room, const QString& contact );
 
 protected:
 

@@ -29,10 +29,13 @@
 #include "kopeteuiglobal.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
+#include "kopeteprotocol.h"
+#include "kopetechatsessionmanager.h"
 #include <kopeteuiglobal.h>
 
 #include "aimprotocol.h"
 #include "aimaccount.h"
+#include "aimchatsession.h"
 #include "aimcontact.h"
 #include "aimuserinfo.h"
 #include "aimjoinchat.h"
@@ -94,6 +97,9 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID, const char *
 
 	QObject::connect( engine(), SIGNAL( iconNeedsUploading() ), this,
 	                  SLOT( sendBuddyIcon() ) );
+
+    QObject::connect( engine(), SIGNAL( chatRoomConnected( WORD, const QString& ) ),
+                      this, SLOT( connectedToChatRoom( WORD, const QString& ) ) );
 }
 
 AIMAccount::~AIMAccount()
@@ -426,6 +432,68 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 		aimSender->sendAutoResponse( chatMessage );
 	}
 }
+
+void AIMAccount::connectedToChatRoom( WORD exchange, const QString& room )
+{
+    kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Creating chat room session" << endl;
+    Kopete::ContactPtrList emptyList;
+    AIMChatSession* session = new AIMChatSession( myself(), emptyList, protocol() );
+    session->setExchange( exchange );
+    session->setRoomName( room );
+}
+
+void AIMAccount::userJoinedChat( WORD exchange, const QString& room, const QString& contact )
+{
+    if ( Oscar::normalize( contact ) == Oscar::normalize( myself()->contactId() ) )
+        return;
+
+    QValueList<Kopete::ChatSession*> chats = Kopete::ChatSessionManager::self()->sessions();
+    QValueList<Kopete::ChatSession*>::iterator it, itEnd = chats.end();
+    for ( it = chats.begin(); it != itEnd; ++it )
+    {
+        AIMChatSession* session = dynamic_cast<AIMChatSession*>( ( *it ) );
+        if ( !session )
+            continue;
+
+        if ( session->exchange() == exchange && session->roomName() == room )
+        {
+            //create temp contact
+            AIMContact* c = new AIMContact( this, contact, new Kopete::MetaContact() );
+            session->addContact( c, static_cast<AIMProtocol*>( protocol() )->statusOnline, true );
+        }
+    }
+}
+
+void AIMAccount::userLeftChat( WORD exchange, const QString& room, const QString& contact )
+{
+    if ( Oscar::normalize( contact ) == Oscar::normalize( myself()->contactId() ) )
+        return;
+
+    QValueList<Kopete::ChatSession*> chats = Kopete::ChatSessionManager::self()->sessions();
+    QValueList<Kopete::ChatSession*>::iterator it, itEnd = chats.end();
+    for ( it = chats.begin(); it != itEnd; ++it )
+    {
+        AIMChatSession* session = dynamic_cast<AIMChatSession*>( ( *it ) );
+        if ( !session )
+            continue;
+
+        if ( session->exchange() == exchange && session->roomName() == room )
+        {
+            //delete temp contact
+            AIMContact* c = static_cast<AIMContact*>( contacts()[contact] );
+            if ( !c )
+            {
+                kdWarning(OSCAR_AIM_DEBUG) << k_funcinfo << "couldn't find the contact that's left the chat!" << endl;
+                continue;
+            }
+            session->removeContact( c );
+            Kopete::MetaContact* mc = c->metaContact();
+            delete mc;
+            delete c;
+        }
+    }
+}
+
 
 void AIMAccount::connectWithPassword( const QString & )
 {

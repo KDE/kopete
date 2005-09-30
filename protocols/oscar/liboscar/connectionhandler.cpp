@@ -113,7 +113,7 @@ Connection* ConnectionHandler::defaultConnection() const
 	return d->connections.first();
 }
 
-void ConnectionHandler::addChatInfoForConnection( Connection* c, int exchange, const QString& room )
+void ConnectionHandler::addChatInfoForConnection( Connection* c, Oscar::WORD exchange, const QString& room )
 {
     if ( d->connections.findIndex( c ) == -1 )
         d->connections.append( c );
@@ -122,7 +122,7 @@ void ConnectionHandler::addChatInfoForConnection( Connection* c, int exchange, c
     d->chatRoomConnections[c] = info;
 }
 
-Connection* ConnectionHandler::connectionForChatRoom( int exchange, const QString& room )
+Connection* ConnectionHandler::connectionForChatRoom( Oscar::WORD exchange, const QString& room )
 {
     ConnectionRoomInfo infoToFind = qMakePair( exchange, room );
     QMap<Connection*, ConnectionRoomInfo>::iterator it,  itEnd = d->chatRoomConnections.end();
@@ -136,5 +136,42 @@ Connection* ConnectionHandler::connectionForChatRoom( int exchange, const QStrin
     }
 
     return 0;
+}
+
+QString ConnectionHandler::chatRoomForConnection( Connection* c )
+{
+    if ( d->connections.findIndex( c ) == -1 )
+        return QString::null;
+
+    QMap<Connection*, ConnectionRoomInfo>::iterator it, itEnd = d->chatRoomConnections.end();
+    for ( it = d->chatRoomConnections.begin(); it != itEnd; ++it )
+    {
+        if ( it.key() == c )
+        {
+            QString room = it.data().second;
+            return room;
+        }
+    }
+
+    return QString::null;
+}
+
+Oscar::WORD ConnectionHandler::exchangeForConnection( Connection* c )
+{
+
+    if ( d->connections.findIndex( c ) == -1 )
+        return 0xFFFF;
+
+    QMap<Connection*, ConnectionRoomInfo>::iterator it, itEnd = d->chatRoomConnections.end();
+    for ( it = d->chatRoomConnections.begin(); it != itEnd; ++it )
+    {
+        if ( it.key() == c )
+        {
+            Oscar::WORD exchange = it.data().first;
+            return exchange;
+        }
+    }
+
+    return 0xFFFF;
 }
 
