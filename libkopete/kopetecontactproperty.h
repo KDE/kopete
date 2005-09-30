@@ -51,7 +51,8 @@ class KOPETE_EXPORT ContactPropertyTmpl
 		 * @param label a label to show for properties based on this template
 		 * @param icon name of the icon to show for properties based on this template
 		 * @param persistent if true, properties based on this template will be
-		 *  saved to the contactlist
+		 *  saved to the contactlist.
+		 * @param richText Indicate that this property should be able to handle rich text
 		 * @param privateProp if true, properties based on this template won't be
 		 *  visible to the user
 		 **/
@@ -145,6 +146,7 @@ class KOPETE_EXPORT ContactProperty
 		ContactProperty();
 
 		/**
+		 * @param tmpl The contact property template this property is based on
 		 * @param value The value this Property holds
 		 **/
 		ContactProperty(const ContactPropertyTmpl &tmpl, const QVariant &value);

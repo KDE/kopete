@@ -98,13 +98,13 @@ public:
 	 * \return the color guessed for the account
 	 */
 	QColor guessColor( Protocol *protocol ) const ;
-	
+
 	/**
 	 * @brief Register the account.
 	 *
-	 * This adds the account in the manager's account list. 
+	 * This adds the account in the manager's account list.
 	 * It will check no accounts already exist with the same ID, if any, the account is deleted. and not added
-	 * 
+	 *
 	 * @return @p account, or 0L if the account was deleted because id collision
 	 */
 	Account *registerAccount( Account *account );
@@ -116,7 +116,7 @@ public:
 	 * @c ConnectIfOffline : if set, this will connect offlines account with the status.
 	 */
 	enum SetOnlineStatusFlag { ConnectIfOffline=0x01 };
-			
+
 
 public slots:
 	/**
@@ -136,7 +136,7 @@ public slots:
 	 * @brief Set all accounts a status in the specified category
 	 *
 	 * Account that are offline will not be connected, unless the ConnectIfOffline flag is set.
-	 * 
+	 *
 	 * @param category is one of the Kopete::OnlineStatusManager::Categories
 	 * @param awayMessage is the new away message
 	 * @param flags is a bitmask of SetOnlineStatusFlag
@@ -155,15 +155,15 @@ public slots:
 	void setAwayAll( const QString &awayReason = QString::null, bool away=true );
 
 	/**
-	 * \brief Connect or make available every account.  
+	 * \brief Connect or make available every account.
 	 * Make all accounts Available, by setting status, and connecting if necessary.
-	 * Accounts which are @ref excludeConnect() are excepted from connection.
+	 * Accounts are connected based on their excludeConnect() setting.
 	 * Accounts which are already connected are controlled regardless of their excludeConnect() setting.
 	 * This is a slot, so you can connect directly to it from e.g. a KAction.
 	 * @param awayReason is the away(status) message that will be set.
 	 */
 	void setAvailableAll( const QString &awayReason = QString::null );
-	
+
 	/**
 	 * \internal
 	 * Save the account data to KConfig
@@ -175,7 +175,7 @@ public slots:
 	 * Load the account data from KConfig
 	 */
 	void load();
-	
+
 
 
 signals:
@@ -187,7 +187,7 @@ signals:
 	/**
 	 * \brief Signals when an account has been unregistered
 	 *
-	 * At this state, we are already in the Account destructor. 
+	 * At this state, we are already in the Account destructor.
 	 */
 	void accountUnregistered( const Kopete::Account *account );
 
@@ -206,7 +206,7 @@ private:
 	 * Private constructor, because we're a singleton
 	 */
 	AccountManager();
-	
+
 private slots:
 	void slotPluginLoaded( Kopete::Plugin *plugin );
 	void slotAccountOnlineStatusChanged(Kopete::Contact *c,

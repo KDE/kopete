@@ -72,14 +72,14 @@ public:
 		/**
 		 * The notification will be automatically closed if the widget() becomes
 		 * activated.
-		 * 
+		 *
 		 * If the widget is already activated when the notification occurs, the
 		 * notification will be closed after a small timeout.
 		 */
 		CloseWhenWidgetActivated=0x03
 	};
 
-	
+
 	~KNotification();
 
     /**
@@ -163,18 +163,18 @@ public:
 	 *
 	 * return a KNotification .  You may use that pointer to connect some signals or slot.
 	 * the pointer is automatically deleted when the event is closed.
-	 * 
+	 *
 	 * Make sure you use one of the CloseOnTimeOut or CloseWhenWidgetActivated, if not,
 	 * you have to close yourself the notification.
-	 * 
+	 *
 	 * @note the text is shown in a QLabel, you should make sure to escape the html is needed.
 	 *
 	 * @param eventId is the name of the event
 	 * @param text is the text of the notification to show in the popup.
-	 * @param pixmap is a picture which may be shown in the popup.  
+	 * @param pixmap is a picture which may be shown in the popup.
 	 * @param widget is a widget where the notification reports to
 	 * @param actions is a list of action texts.
-	 * @param flags is a bitmask of NotificationsFlags  
+	 * @param flags is a bitmask of NotificationsFlags
 	 */
 	static KNotification *event( const QString& eventId , const QString& text=QString::null,
 			const QPixmap& pixmap=QPixmap(), QWidget *widget=0L,
@@ -188,7 +188,12 @@ public:
 	 * @param pixmap is a picture which may be shown in the popup
 	 * @param widget is a widget where the notification raports to
 	 * @param actions is a list of actions text.
-	 * ...
+	 * @param present The presentation method of the event
+	 * @param level The error message level
+	 * @param sound The sound to play if selected with @p present
+	 * @param file The log file to append the message to if selected with @p parent
+	 * @param commandLine the command line to run if selected with @p parent
+	 * @param flags Indicates the way in which the notification should be handled
 	 */
 	static KNotification *userEvent( const QString& text, const QPixmap& pixmap,
 				QWidget *widget, QStringList actions,int present, int level,
