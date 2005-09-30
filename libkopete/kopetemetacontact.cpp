@@ -449,7 +449,7 @@ unsigned long int MetaContact::idleTime() const
 	for( ; it.current(); ++it )
 	{
 		unsigned long int i = it.current()->idleTime();
-		if( i < time || time == 0 )
+		if( i != 0 && i < time || time == 0 )
 		{
 			time = i;
 		}
