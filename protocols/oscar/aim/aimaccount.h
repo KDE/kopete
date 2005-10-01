@@ -39,9 +39,11 @@ class OscarContact;
 class AIMContact;
 class AIMAccount;
 class AIMJoinChatUI;
+class AIMChatSession;
 
 class AIMMyselfContact : public OscarMyselfContact
 {
+Q_OBJECT
 public:
 	AIMMyselfContact( AIMAccount *acct );
 	void userInfoUpdated();
@@ -50,7 +52,13 @@ public:
 	void setLastAwayMessage( const QString& msg) {m_lastAwayMessage = msg;}
 	QString lastAwayMessage() { return m_lastAwayMessage; };
 
-    virtual Kopete::ChatSession* manager( Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate );
+    virtual Kopete::ChatSession* manager( Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate,
+                                          WORD exchange = 0, const QString& room = QString::null);
+
+public slots:
+    void sendMessage( Kopete::Message&, Kopete::ChatSession* session );
+    void chatSessionDestroyed( Kopete::ChatSession* );
+
 private:
 	QString m_profileString;
 	AIMAccount* m_acct;
@@ -58,6 +66,8 @@ private:
 	 * There has GOT to be a better way to get this away message
 	 */
 	QString m_lastAwayMessage;
+    QValueList<AIMChatSession*> m_chatRoomSessions;
+
 
 };
 

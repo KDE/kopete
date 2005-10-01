@@ -287,6 +287,9 @@ public:
 
 	bool hasIconConnection() const;
 
+    /** We've finished chatting in a chat room, disconnect from it */
+    void disconnectChatRoom( WORD exchange, const QString& room );
+
 
 	/*************
 	  INTERNAL (FOR USE BY TASKS OR CONNECTIONS) METHODS

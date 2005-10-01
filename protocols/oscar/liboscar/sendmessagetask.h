@@ -32,10 +32,10 @@ public:
 
 	//! Set the message to be sent
 	void setMessage( const Oscar::Message& msg );
-	
+
 	//! Are we sending an auto response
 	void setAutoResponse( bool autoResponse );
-	
+
 	virtual void onGo();
 
 private:

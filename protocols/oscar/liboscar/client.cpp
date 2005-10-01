@@ -442,14 +442,29 @@ void Client::notifySocketError( int errCode, const QString& msg )
 
 void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
 {
-	Connection* c = d->connections.connectionForFamily( 0x0004 );
-	if ( !c )
-		return;
-	SendMessageTask *sendMsgTask = new SendMessageTask( c->rootTask() );
-	// Set whether or not the message is an automated response
-	sendMsgTask->setAutoResponse( isAuto );
-	sendMsgTask->setMessage( msg );
-	sendMsgTask->go( true );
+    Connection* c = 0L;
+    if ( msg.type() == 0x0003 )
+    {
+        c = d->connections.connectionForChatRoom( msg.exchange(), msg.chatRoom() );
+        if ( !c )
+            return;
+
+        kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending message to chat room" << endl;
+        ChatServiceTask* cst = new ChatServiceTask( c->rootTask(), msg.exchange(), msg.chatRoom() );
+        cst->setMessage( msg );
+        cst->go( true );
+    }
+    else
+    {
+        c = d->connections.connectionForFamily( 0x0004 );
+        if ( !c )
+            return;
+        SendMessageTask *sendMsgTask = new SendMessageTask( c->rootTask() );
+        // Set whether or not the message is an automated response
+        sendMsgTask->setAutoResponse( isAuto );
+        sendMsgTask->setMessage( msg );
+        sendMsgTask->go( true );
+    }
 }
 
 void Client::receivedMessage( const Oscar::Message& msg )
@@ -961,7 +976,15 @@ void Client::serverRedirectFinished()
 
     if ( d->currentRedirect == 0x000E )
     {
-        Connection* c = d->connections.connectionForFamily( d->currentRedirect );
+        //HACK! such abuse! think of a better way
+        if ( !m_loginTaskTwo )
+        {
+            kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "no login task to get connection from!" << endl;
+            emit redirectionFinished( d->currentRedirect );
+            return;
+        }
+
+        Connection* c = m_loginTaskTwo->client();
         QString roomName = d->connections.chatRoomForConnection( c );
         WORD exchange = d->connections.exchangeForConnection( c );
         if ( c )
@@ -1062,6 +1085,16 @@ void Client::setupChatConnection( WORD exchange, QByteArray cookie, WORD instanc
     QByteArray realCookie( cookie );
     kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "connection to chat room" << endl;
     requestServerRedirect( 0x000E, exchange, realCookie, instance, room );
+}
+
+void Client::disconnectChatRoom( WORD exchange, const QString& room )
+{
+    Connection* c = d->connections.connectionForChatRoom( exchange, room );
+    if ( !c )
+        return;
+
+    d->connections.remove( c );
+    c = 0;
 }
 
 

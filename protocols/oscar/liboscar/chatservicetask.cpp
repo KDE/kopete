@@ -21,6 +21,7 @@
 #include "chatservicetask.h"
 
 #include <qstring.h>
+#include <kapplication.h>
 #include <kdebug.h>
 
 #include "connection.h"
@@ -40,9 +41,55 @@ ChatServiceTask::~ChatServiceTask()
 
 }
 
+void ChatServiceTask::setMessage( const Oscar::Message& msg )
+{
+    m_message = msg;
+}
+
 void ChatServiceTask::onGo()
 {
+    if ( !m_message )
+    {
+        setSuccess( true, QString::null );
+        return;
+    }
 
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending '" << m_message.text() << "' to the "
+                             << m_room << " room" << endl;
+    Buffer* b = new Buffer();
+    b->addDWord( KApplication::random() ); //use kapp since it's convenient
+    b->addDWord( KApplication::random() );
+    b->addWord( 0x0003 ); //this be message channel 3 mateys! arrr!!
+    b->addDWord( 0x00010000 ); //TLV 1 - this means it's a public message
+    b->addDWord( 0x00060000 ); //TLV 6 - enables the server sending you your message back
+
+    Buffer tlv5;
+    TLV type2, type3, type1;
+
+    type2.type = 0x0002;
+    type2.length = 0x0008;
+    type2.data = QCString( "us-ascii" ); //hardcode for right now. don't know that we can do others
+
+    type3.type = 0x0003;
+    type3.length = 0x0002;
+    type3.data = QCString( "en" ); //hardcode for right now. don't know that we can do others
+
+    type1.type = 0x0001;
+    type1.length = strlen( m_message.text().latin1() );
+    type1.data = QCString( m_message.text().latin1() );
+    tlv5.addWord( 0x0005 );
+    tlv5.addWord( 12 + type1.length + type2.length + type3.length );
+    tlv5.addTLV( type1 );
+    tlv5.addTLV( type2 );
+    tlv5.addTLV( type3 );
+
+    b->addString( tlv5.buffer(), tlv5.length() );
+
+    FLAP f = { 0x02, 0, 0 };
+    SNAC s = { 0x000E, 0x0005, 0x0000, client()->snacSequence() };
+    Transfer* t = createTransfer( f, s, b );
+    send( t );
+    setSuccess( true );
 }
 
 bool ChatServiceTask::forMe( const Transfer* t ) const

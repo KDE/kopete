@@ -43,7 +43,7 @@ public:
     void parseChatMessage();
     void parseChatError();
 
-    void sendChatMessage();
+    void setMessage( const Oscar::Message& msg );
 
 signals:
     void userJoinedChat( Oscar::WORD, const QString& r, const QString& u );
@@ -56,6 +56,7 @@ protected:
 private:
     WORD m_exchange;
     QString m_room;
+    Oscar::Message m_message;
 };
 
 #endif

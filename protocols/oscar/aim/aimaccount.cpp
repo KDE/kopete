@@ -78,8 +78,10 @@ QString AIMMyselfContact::userProfile()
 	return m_profileString;
 }
 
-Kopete::ChatSession* AIMMyselfContact::manager( Kopete::Contact::CanCreateFlags canCreate )
+Kopete::ChatSession* AIMMyselfContact::manager( Kopete::Contact::CanCreateFlags canCreate,
+                                                Oscar::WORD exchange, const QString& room )
 {
+    kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << endl;
     Kopete::ContactPtrList chatMembers;
     chatMembers.append( this );
     Kopete::ChatSession* genericManager = 0L;
@@ -87,9 +89,113 @@ Kopete::ChatSession* AIMMyselfContact::manager( Kopete::Contact::CanCreateFlags 
     AIMChatSession* session = dynamic_cast<AIMChatSession*>( genericManager );
 
     if ( !session && canCreate == Contact::CanCreate )
-        session = new AIMChatSession( this, chatMembers, account()->protocol() );
+        session = new AIMChatSession( this, chatMembers, account()->protocol(), exchange, room );
 
+    connect( session, SIGNAL( messageSent( Kopete::Message&, Kopete::ChatSession* ) ),
+             this, SLOT( sendMessage( Kopete::Message&, Kopete::ChatSession* ) ) );
+    connect( session, SIGNAL( closing( Kopete::ChatSession* ) ),
+             this, SLOT( chatSessionDestroyed( Kopete::ChatSession* ) ) );
+    m_chatRoomSessions.append( session );
     return session;
+}
+
+void AIMMyselfContact::chatSessionDestroyed( Kopete::ChatSession* session )
+{
+    //use sender, which is a bad idea, but oh well
+    AIMChatSession* s = dynamic_cast<AIMChatSession*>( session );
+    kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "removing " << s << endl;
+    m_chatRoomSessions.remove( s );
+    m_acct->engine()->disconnectChatRoom( s->exchange(), s->roomName() );
+}
+
+void AIMMyselfContact::sendMessage( Kopete::Message& message, Kopete::ChatSession* session )
+{
+    kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "sending a message" << endl;
+    //TODO: remove duplication - factor into a message utils class or something
+    Oscar::Message msg;
+    QString s;
+
+    if (message.plainBody().isEmpty()) // no text, do nothing
+        return;
+    //okay, now we need to change the message.escapedBody from real HTML to aimhtml.
+    //looking right now for docs on that "format".
+    //looks like everything except for alignment codes comes in the format of spans
+
+    //font-style:italic -> <i>
+    //font-weight:600 -> <b> (anything > 400 should be <b>, 400 is not bold)
+    //text-decoration:underline -> <u>
+    //font-family: -> <font face="">
+    //font-size:xxpt -> <font ptsize=xx>
+
+    s=message.escapedBody();
+    s.replace ( QRegExp( QString::fromLatin1("<span style=\"([^\"]*)\">([^<]*)</span>")),
+            QString::fromLatin1("<style>\\1;\"\\2</style>"));
+
+    s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)font-style:italic;([^\"]*)\"([^<]*)</style>")),
+                QString::fromLatin1("<i><style>\\1\\2\"\\3</style></i>"));
+
+    s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)font-weight:600;([^\"]*)\"([^<]*)</style>")),
+                QString::fromLatin1("<b><style>\\1\\2\"\\3</style></b>"));
+
+    s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)text-decoration:underline;([^\"]*)\"([^<]*)</style>")),
+                QString::fromLatin1("<u><style>\\1\\2\"\\3</style></u>"));
+
+    s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)font-family:([^;]*);([^\"]*)\"([^<]*)</style>")),
+                QString::fromLatin1("<font face=\"\\2\"><style>\\1\\3\"\\4</style></font>"));
+
+    s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)font-size:([^p]*)pt;([^\"]*)\"([^<]*)</style>")),
+                QString::fromLatin1("<font ptsize=\"\\2\"><style>\\1\\3\"\\4</style></font>"));
+
+    s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)color:([^;]*);([^\"]*)\"([^<]*)</style>")),
+                QString::fromLatin1("<font color=\"\\2\"><style>\\1\\3\"\\4</style></font>"));
+
+    s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)\"([^<]*)</style>")),
+                QString::fromLatin1("\\2"));
+
+    //okay now change the <font ptsize="xx"> to <font size="xx">
+
+    //0-9 are size 1
+    s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"\\d\">")),
+                QString::fromLatin1("<font size=\"1\">"));
+    //10-11 are size 2
+    s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"1[01]\">")),
+                QString::fromLatin1("<font size=\"2\">"));
+    //12-13 are size 3
+    s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"1[23]\">")),
+                QString::fromLatin1("<font size=\"3\">"));
+    //14-16 are size 4
+    s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"1[456]\">")),
+                QString::fromLatin1("<font size=\"4\">"));
+    //17-22 are size 5
+    s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"(?:1[789]|2[012])\">")),
+                QString::fromLatin1("<font size=\"5\">"));
+    //23-29 are size 6
+    s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"2[3456789]\">")),QString::fromLatin1("<font size=\"6\">"));
+    //30- (and any I missed) are size 7
+    s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"[^\"]*\">")),QString::fromLatin1("<font size=\"7\">"));
+
+    kdDebug(14190) << k_funcinfo << "sending "
+        << s << endl;
+
+    msg.setSender( contactId() );
+    msg.setText(s);
+    msg.setTimestamp(message.timestamp());
+    msg.setType(0x03);
+    msg.addProperty( Oscar::Message::ChatRoom );
+
+    AIMChatSession* aimSession = dynamic_cast<AIMChatSession*>( session );
+    if ( !aimSession )
+    {
+        kdWarning(OSCAR_AIM_DEBUG) << "couldn't convert to AIM chat room session!" << endl;
+        session->messageSucceeded();
+        return;
+    }
+    msg.setExchange( aimSession->exchange() );
+    msg.setChatRoom( aimSession->roomName() );
+
+    m_acct->engine()->sendMessage( msg );
+    //session->appendMessage( message );
+    session->messageSucceeded();
 }
 
 
@@ -218,7 +324,7 @@ KActionMenu* AIMAccount::actionMenu()
     KAction* m_joinChatAction = new KAction( i18n( "Join Chat..." ), QString::null,  0,  this,
                                              SLOT( slotJoinChat() ), mActionMenu, "join_a_chat" );
     mActionMenu->insert( m_joinChatAction );
-    mActionMenu->insert( KopeteStdAction::contactInfo( this, SLOT( slotEditInfo() ), mActionMenu, "AIMAccount::mActionEditInfo" ) );
+    //mActionMenu->insert( KopeteStdAction::contactInfo( this, SLOT( slotEditInfo() ), mActionMenu, "AIMAccount::mActionEditInfo" ) );
 
 	return mActionMenu;
 }
@@ -493,12 +599,10 @@ void AIMAccount::connectedToChatRoom( WORD exchange, const QString& room )
 {
     kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Creating chat room session" << endl;
     Kopete::ContactPtrList emptyList;
-    AIMChatSession* session =  dynamic_cast<AIMChatSession*>( myself()->manager( Kopete::Contact::CannotCreate ) );
-    if ( !session )
-        session = dynamic_cast<AIMChatSession*>( myself()->manager( Kopete::Contact::CanCreate ) );
-
-    session->setExchange( exchange );
-    session->setRoomName( room );
+    AIMMyselfContact* me = static_cast<AIMMyselfContact*>( myself() );
+    AIMChatSession* session = dynamic_cast<AIMChatSession*>( me->manager( Kopete::Contact::CanCreate,
+                                                                          exchange, room ) );
+    session->setDisplayName( room );
     if ( session->view( true ) )
         session->raiseView();
 }
