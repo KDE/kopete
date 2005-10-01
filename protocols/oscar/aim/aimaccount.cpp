@@ -115,6 +115,13 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID, const char *
 
     QObject::connect( engine(), SIGNAL( chatRoomConnected( WORD, const QString& ) ),
                       this, SLOT( connectedToChatRoom( WORD, const QString& ) ) );
+
+    QObject::connect( engine(), SIGNAL( userJoinedChat( Oscar::WORD, const QString&, const QString& ) ),
+                      this, SLOT( userJoinedChat( Oscar::WORD, const QString&, const QString& ) ) );
+
+    QObject::connect( engine(), SIGNAL( userLeftChat( Oscar::WORD, const QString&, const QString& ) ),
+                      this, SLOT( userLeftChat( Oscar::WORD, const QString&, const QString& ) ) );
+
 }
 
 AIMAccount::~AIMAccount()
@@ -416,36 +423,70 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 {
 	kdDebug(14152) << k_funcinfo << " Got a message, calling OscarAccount::messageReceived" << endl;
 	// Want to call the parent to do everything else
-	OscarAccount::messageReceived(message);
+    if ( message.type() != 0x0003 )
+    {
+        OscarAccount::messageReceived(message);
 
-	// Check to see if our status is away, and send an away message
-	// Might be duplicate code from the parent class to get some needed information
-	// Perhaps a refactoring is needed.
-	kdDebug(14152) << k_funcinfo << "Checking to see if I'm online.." << endl;
-	if( myself()->onlineStatus().status() == Kopete::OnlineStatus::Away )
-	{
-		QString sender = Oscar::normalize( message.sender() );
-		AIMContact* aimSender = static_cast<AIMContact *> ( contacts()[sender] ); //should exist now
-		if ( !aimSender )
-		{
-			kdWarning(OSCAR_RAW_DEBUG) << "For some reason, could not get the contact "
-				<< "That this message is from: " << message.sender() << ", Discarding message" << endl;
-			return;
-		}
-		// Create, or get, a chat session with the contact
-		Kopete::ChatSession* chatSession = aimSender->manager( Kopete::Contact::CanCreate );
+        // Check to see if our status is away, and send an away message
+        // Might be duplicate code from the parent class to get some needed information
+        // Perhaps a refactoring is needed.
+        kdDebug(14152) << k_funcinfo << "Checking to see if I'm online.." << endl;
+        if( myself()->onlineStatus().status() == Kopete::OnlineStatus::Away )
+        {
+            QString sender = Oscar::normalize( message.sender() );
+            AIMContact* aimSender = static_cast<AIMContact *> ( contacts()[sender] ); //should exist now
+            if ( !aimSender )
+            {
+                kdWarning(OSCAR_RAW_DEBUG) << "For some reason, could not get the contact "
+                                           << "That this message is from: " << message.sender() << ", Discarding message" << endl;
+                return;
+            }
+            // Create, or get, a chat session with the contact
+            Kopete::ChatSession* chatSession = aimSender->manager( Kopete::Contact::CanCreate );
 
-		// get the away message we have set
-		AIMMyselfContact* myContact = static_cast<AIMMyselfContact *> ( myself() );
-		QString msg = myContact->lastAwayMessage();
-		kdDebug(14152) << k_funcinfo << "Got away message: " << msg << endl;
-		// Create the message
-		Kopete::Message chatMessage( myself(), aimSender, msg, Kopete::Message::Outbound,
-		                             Kopete::Message::RichText );
-		kdDebug(14152) << k_funcinfo << "Sending autoresponse" << endl;
-		// Send the message
-		aimSender->sendAutoResponse( chatMessage );
-	}
+            // get the away message we have set
+            AIMMyselfContact* myContact = static_cast<AIMMyselfContact *> ( myself() );
+            QString msg = myContact->lastAwayMessage();
+            kdDebug(14152) << k_funcinfo << "Got away message: " << msg << endl;
+            // Create the message
+            Kopete::Message chatMessage( myself(), aimSender, msg, Kopete::Message::Outbound,
+                                         Kopete::Message::RichText );
+            kdDebug(14152) << k_funcinfo << "Sending autoresponse" << endl;
+            // Send the message
+            aimSender->sendAutoResponse( chatMessage );
+        }
+    }
+
+    if ( message.type() == 0x0003 )
+    {
+        kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "have chat message" << endl;
+        //handle chat room messages seperately
+        QValueList<Kopete::ChatSession*> chats = Kopete::ChatSessionManager::self()->sessions();
+        QValueList<Kopete::ChatSession*>::iterator it,  itEnd = chats.end();
+        for ( it = chats.begin(); it != itEnd; ++it )
+        {
+            Kopete::ChatSession* kcs = ( *it );
+            AIMChatSession* session = dynamic_cast<AIMChatSession*>( kcs );
+            if ( !session )
+                continue;
+
+            if ( session->exchange() == message.exchange() &&
+                 session->roomName() == message.chatRoom() )
+            {
+                kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "found chat session for chat room" << endl;
+                Kopete::Contact* ocSender = contacts()[Oscar::normalize( message.sender() )];
+                //sanitize;
+                QString sanitizedMsg = sanitizedMessage( message.text() );
+
+                Kopete::ContactPtrList me;
+                me.append( myself() );
+                Kopete::Message chatMessage( message.timestamp(), ocSender, me, sanitizedMsg,
+                                             Kopete::Message::Inbound, Kopete::Message::RichText );
+
+                session->appendMessage( chatMessage );
+            }
+        }
+    }
 }
 
 void AIMAccount::connectedToChatRoom( WORD exchange, const QString& room )
@@ -467,19 +508,37 @@ void AIMAccount::userJoinedChat( WORD exchange, const QString& room, const QStri
     if ( Oscar::normalize( contact ) == Oscar::normalize( myself()->contactId() ) )
         return;
 
+    kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "user " << contact << " has joined the chat" << endl;
     QValueList<Kopete::ChatSession*> chats = Kopete::ChatSessionManager::self()->sessions();
     QValueList<Kopete::ChatSession*>::iterator it, itEnd = chats.end();
     for ( it = chats.begin(); it != itEnd; ++it )
     {
-        AIMChatSession* session = dynamic_cast<AIMChatSession*>( ( *it ) );
+        Kopete::ChatSession* kcs = ( *it );
+        AIMChatSession* session = dynamic_cast<AIMChatSession*>( kcs );
         if ( !session )
             continue;
 
+        kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << session->exchange() << " " << exchange << endl;
+        kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << session->roomName() << " " << room << endl;
         if ( session->exchange() == exchange && session->roomName() == room )
         {
-            //create temp contact
-            AIMContact* c = new AIMContact( this, contact, new Kopete::MetaContact() );
-            session->addContact( c, static_cast<AIMProtocol*>( protocol() )->statusOnline, true );
+            kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "found correct chat session" << endl;
+            Kopete::Contact* c;
+            if ( contacts()[Oscar::normalize( contact )] )
+                c = contacts()[Oscar::normalize( contact )];
+            else
+            {
+                Kopete::MetaContact* mc = addContact( Oscar::normalize( contact ),
+                                                      contact, 0, Kopete::Account::Temporary );
+                if ( !mc )
+                    kdWarning(OSCAR_AIM_DEBUG) << "Unable to add contact for chat room" << endl;
+
+                c = mc->contacts().first();
+                c->setNickName( contact );
+            }
+
+            kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "adding contact" << endl;
+            session->addContact( c, static_cast<AIMProtocol*>( protocol() )->statusOnline, true /* suppress */ );
         }
     }
 }
@@ -493,14 +552,15 @@ void AIMAccount::userLeftChat( WORD exchange, const QString& room, const QString
     QValueList<Kopete::ChatSession*>::iterator it, itEnd = chats.end();
     for ( it = chats.begin(); it != itEnd; ++it )
     {
-        AIMChatSession* session = dynamic_cast<AIMChatSession*>( ( *it ) );
+        Kopete::ChatSession* kcs = ( *it );
+        AIMChatSession* session = dynamic_cast<AIMChatSession*>( kcs );
         if ( !session )
             continue;
 
         if ( session->exchange() == exchange && session->roomName() == room )
         {
             //delete temp contact
-            AIMContact* c = static_cast<AIMContact*>( contacts()[contact] );
+            Kopete::Contact* c = contacts()[Oscar::normalize( contact )];
             if ( !c )
             {
                 kdWarning(OSCAR_AIM_DEBUG) << k_funcinfo << "couldn't find the contact that's left the chat!" << endl;
@@ -508,8 +568,12 @@ void AIMAccount::userLeftChat( WORD exchange, const QString& room, const QString
             }
             session->removeContact( c );
             Kopete::MetaContact* mc = c->metaContact();
-            delete mc;
-            delete c;
+            if ( mc->isTemporary() )
+            {
+                mc->removeContact( c );
+                delete c;
+                delete mc;
+            }
         }
     }
 }

@@ -172,6 +172,26 @@ void Oscar::Message::setMessageType( int type )
 	m_messageType = type;
 }
 
+Oscar::WORD Oscar::Message::exchange() const
+{
+    return m_exchange;
+}
+
+void Oscar::Message::setExchange( Oscar::WORD exchange )
+{
+    m_exchange = exchange;
+}
+
+QString Oscar::Message::chatRoom() const
+{
+    return m_chatRoom;
+}
+
+void Oscar::Message::setChatRoom( const QString& room )
+{
+    m_chatRoom = room;
+}
+
 Oscar::Message::operator bool() const
 {
 	return m_channel != -1 && m_properties != -1;

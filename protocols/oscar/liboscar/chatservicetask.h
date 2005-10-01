@@ -29,7 +29,7 @@ class ChatServiceTask : public Task
 {
 Q_OBJECT
 public:
-    ChatServiceTask( Task* parent );
+    ChatServiceTask( Task* parent, Oscar::WORD exchange, const QString& room );
     ~ChatServiceTask();
 
     void onGo();
@@ -46,10 +46,16 @@ public:
     void sendChatMessage();
 
 signals:
-    void newChatMessage( Oscar::Message msg );
+    void userJoinedChat( Oscar::WORD, const QString& r, const QString& u );
+    void userLeftChat( Oscar::WORD, const QString& r, const QString& u );
+    void newChatMessage( const Oscar::Message& msg );
 
 protected:
     bool forMe( const Transfer* t ) const;
+
+private:
+    WORD m_exchange;
+    QString m_room;
 };
 
 #endif

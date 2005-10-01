@@ -396,8 +396,8 @@ signals:
 	/* Chat rooms */
 	void chatNavigationConnected();
     void chatRoomConnected( WORD, const QString& );
-    void chatUserJoined( WORD, const QString& room, const QString& contact );
-    void chatUserLeft( WORD, const QString& room, const QString& contact );
+    void userJoinedChat( Oscar::WORD, const QString& room, const QString& contact );
+    void userLeftChat( Oscar::WORD, const QString& room, const QString& contact );
 
 	/* service redirection */
 	void redirectionFinished( WORD );

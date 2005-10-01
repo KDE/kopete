@@ -26,6 +26,7 @@
 #include <qcstring.h>
 #include <qdatetime.h>
 #include "kopete_export.h"
+#include "oscartypes.h"
 
 namespace Oscar
 {
@@ -46,6 +47,7 @@ public:
 		AutoResponse = 0x0001,
 		WWP = 0x0002,
 		EMail = 0x0004,
+        ChatRoom = 0x0008,
 		UCS2 = 0x0010,
 		NotDecoded = 0x0020,
 		Request = 0x0100,
@@ -76,8 +78,8 @@ public:
 
 	/** get the message text as a bytearray for decoding */
 	QByteArray textArray() const;
-	
-	/** set the mesasge text as a bytearray for decoding */
+
+	/** set the message text as a bytearray for decoding */
 	void setTextArray( const QByteArray& newTextArray );
 
 	/** get the message properties */
@@ -125,9 +127,22 @@ public:
 	/** set the message (content) type */
 	void setMessageType( int type );
 
+    /** get the exchange for the chat room this message is for */
+    Oscar::WORD exchange() const;
+
+    /** set the exchange for the chat room this message is for */
+    void setExchange( Oscar::WORD );
+
+    /** get the chat room that this message is for */
+    QString chatRoom() const;
+
+    /** set the chat room that this message is for */
+    void setChatRoom( const QString& );
+
 	operator bool() const;
 
 private:
+    //TODO d-pointer
 	QString m_sender;
 	QString m_receiver;
 	int m_channel;
@@ -139,6 +154,8 @@ private:
 	QByteArray m_icbmCookie;
     QByteArray m_textArray;
 	QDateTime m_timestamp;
+    Oscar::WORD m_exchange;
+    QString m_chatRoom;
 };
 
 }

@@ -870,7 +870,7 @@ void Client::requestServerRedirect( WORD family, WORD exchange,
 	//making the assumption that family 2 will always be the BOS connection
 	//use it instead since we can't query for family 1
 	Connection* c = d->connections.connectionForFamily( family );
-	if ( c )
+	if ( c && family != 0x000E )
 		return; //we already have the connection
 
 	c = d->connections.connectionForFamily( 0x0002 );
@@ -967,7 +967,13 @@ void Client::serverRedirectFinished()
         if ( c )
         {
             kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting up chat connection" << endl;
-            ChatServiceTask* cst = new ChatServiceTask( c->rootTask() );
+            ChatServiceTask* cst = new ChatServiceTask( c->rootTask(), exchange, roomName );
+            connect( cst, SIGNAL( userJoinedChat( Oscar::WORD, const QString&, const QString& ) ),
+                     this, SIGNAL( userJoinedChat( Oscar::WORD, const QString&, const QString& ) ) );
+            connect( cst, SIGNAL( userLeftChat( Oscar::WORD, const QString&, const QString& ) ),
+                     this, SIGNAL( userLeftChat( Oscar::WORD, const QString&, const QString& ) ) );
+            connect( cst, SIGNAL( newChatMessage( const Oscar::Message& ) ),
+                     this, SIGNAL( messageReceived( const Oscar::Message& ) ) );
         }
         emit chatRoomConnected( exchange, roomName );
     }

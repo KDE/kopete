@@ -20,6 +20,7 @@
 
 #include "chatservicetask.h"
 
+#include <qstring.h>
 #include <kdebug.h>
 
 #include "connection.h"
@@ -27,10 +28,11 @@
 #include "buffer.h"
 #include "oscartypes.h"
 
-ChatServiceTask::ChatServiceTask( Task* parent )
+ChatServiceTask::ChatServiceTask( Task* parent, Oscar::WORD exchange, const QString& room )
 	: Task( parent )
 {
-
+    m_exchange = exchange;
+    m_room = room;
 }
 
 ChatServiceTask::~ChatServiceTask()
@@ -56,6 +58,9 @@ bool ChatServiceTask::forMe( const Transfer* t ) const
     {
     case 0x0003:
     case 0x0002:
+    case 0x0006:
+    case 0x0009:
+    case 0x0004:
         return true;
         break;
     default:
@@ -93,6 +98,7 @@ bool ChatServiceTask::take( Transfer* t )
         break;
     case 0x0006:
         kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message from room to client" << endl;
+        parseChatMessage();
         break;
     case 0x0009:
         kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "chat error or data" << endl;
@@ -106,11 +112,11 @@ bool ChatServiceTask::take( Transfer* t )
 
 void ChatServiceTask::parseRoomInfo()
 {
-    WORD exchange, instance;
+    WORD instance;
     BYTE detailLevel;
     Buffer* b = transfer()->buffer();
 
-    exchange = b->getWord();
+    m_exchange = b->getWord();
     QByteArray cookie( b->getBlock( b->getByte() ) );
     instance = b->getWord();
 
@@ -128,7 +134,8 @@ void ChatServiceTask::parseRoomInfo()
         switch ( ( *it ).type )
         {
         case 0x006A:
-            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "room name: " << QString( ( *it ).data ) << endl;
+            m_room = QString( ( *it ).data );
+            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "room name: " << m_room << endl;
             break;
         case 0x006F:
             kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "num occupants: " << ( *it ).data << endl;
@@ -181,7 +188,10 @@ void ChatServiceTask::parseJoinNotification()
                 break;
             }
         }
+        kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "emitted userJoinedChat" << endl;
+        emit userJoinedChat( m_exchange, m_room, sender );
     }
+
 }
 
 void ChatServiceTask::parseLeftNotification()
@@ -209,14 +219,16 @@ void ChatServiceTask::parseLeftNotification()
                 break;
             }
         }
+        emit userLeftChat( m_exchange, m_room, sender );
     }
 }
 
 void ChatServiceTask::parseChatMessage()
 {
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "have new chat room message" << endl;
     Buffer* b = transfer()->buffer();
     bool whisper = true, reflection = false;
-    QString language, encoding, message;
+    QString language, encoding, message, sender;
     QByteArray icbmCookie( b->getBlock( 8 ) );
     b->skipBytes( 2 ); //message channel always 0x03
     QValueList<Oscar::TLV> chatTLVs = b->getTLVList();
@@ -233,24 +245,24 @@ void ChatServiceTask::parseChatMessage()
             break;
         case 0x0005: //the good stuff - the actual message
         {
+            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "parsing the message" << endl;
             //oooh! look! more TLVS! i love those!
             Buffer b( ( *it ).data );
-            QValueList<Oscar::TLV> messageTLVs = b.getTLVList();
-            QValueList<Oscar::TLV>::iterator mit,  mitEnd = messageTLVs.end();
-            for ( mit = messageTLVs.begin(); mit != mitEnd; ++mit )
+            while ( b.length() >= 4 )
             {
-                switch( ( *it ).type )
+                TLV t = b.getTLV();
+                switch( t.type )
                 {
                 case 0x0003:
-                    language = QString( ( *it ).data );
+                    language = QString( t.data );
                     kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "language: " << language << endl;
                     break;
                 case 0x0002:
-                    encoding = QString( ( *it ).data );
+                    encoding = QString( t.data );
                     kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "encoding: " << encoding << endl;
                     break;
                 case 0x0001:
-                    message = QString( ( *it ).data );
+                    message = QString( t.data );
                     kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message: " << message << endl;
                     break;
                 }
@@ -258,16 +270,25 @@ void ChatServiceTask::parseChatMessage()
         }
         break;
         case 0x0003: //user info
-            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got user info" << endl;
-            break;
+        {
+            Buffer b( ( *it ).data );
+            sender = QString( b.getBUIN() );
+            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got user info. sender is " << sender << endl;
+        }
+        break;
+
         }
     }
 
     Oscar::Message omessage;
     omessage.setReceiver( client()->userId() );
+    omessage.setSender( sender );
     omessage.setTimestamp( QDateTime::currentDateTime() );
     omessage.setText( message );
     omessage.setType( 0x03 );
+    omessage.setExchange( m_exchange );
+    omessage.setChatRoom( m_room );
+    emit newChatMessage( omessage );
 }
 
 void ChatServiceTask::parseChatError()

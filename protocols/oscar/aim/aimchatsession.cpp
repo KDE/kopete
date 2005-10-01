@@ -24,12 +24,16 @@
 #include "kopeteprotocol.h"
 
 AIMChatSession::AIMChatSession( const Kopete::Contact* user,  Kopete::ContactPtrList others,
-                                  Kopete::Protocol* protocol )
+                                Kopete::Protocol* protocol, Oscar::WORD exchange,
+                                const QString& room )
+
     : Kopete::ChatSession( user, others, protocol, "AIMChatSession" )
 {
     Kopete::ChatSessionManager::self()->registerChatSession( this );
     setInstance( protocol->instance() );
     setMayInvite( false );
+    m_exchange = exchange;
+    m_roomName = room;
 }
 
 QString AIMChatSession::roomName() const
@@ -53,8 +57,5 @@ void AIMChatSession::setExchange( Oscar::WORD exchange )
     m_exchange = exchange;
 }
 
-const QString AIMChatSession::displayName()
-{
-    return m_roomName;
-}
 
+#include "aimchatsession.moc"

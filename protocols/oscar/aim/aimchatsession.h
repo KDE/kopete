@@ -24,9 +24,11 @@
 
 class AIMChatSession : public Kopete::ChatSession
 {
+Q_OBJECT
 public:
     AIMChatSession( const Kopete::Contact* contact, Kopete::ContactPtrList others,
-                    Kopete::Protocol* protocol );
+                    Kopete::Protocol* protocol, Oscar::WORD exchange = 0,
+                    const QString& room = QString::null );
 
     /**
      * Get the name of the AIM chat room represented by
@@ -55,13 +57,6 @@ public:
      * @param exchange the exchange of the AIM chat room
      */
     void setExchange( Oscar::WORD exchange );
-
-    /**
-     * Get the display name of the chat session
-     * Shadows the base class implementation so that
-     * we can return the room name rather than the list of contacts
-     */
-    const QString displayName();
 
 private:
     QString m_roomName;
