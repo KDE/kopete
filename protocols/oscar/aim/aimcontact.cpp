@@ -162,8 +162,8 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	//if they don't have an SSI alias, make sure we use the capitalization from the
 	//server so their contact id looks all pretty.
 	QString nickname = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-	if ( Oscar::normalize( nickname ) == Oscar::normalize( details.userId() ) )
-		setProperty( Kopete::Global::Properties::self()->nickName(), details.userId() );
+	if ( nickname.isEmpty() || Oscar::normalize( nickname ) == Oscar::normalize( contact ) )
+		setNickName( contact );
 
 	if ( ( details.userClass() & 32 ) == 0 )
 	{
