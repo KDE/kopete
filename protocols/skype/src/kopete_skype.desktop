@@ -18,6 +18,7 @@ X-KDE-PluginInfo-EnabledByDefault=false
 Name=Skype
 Name[xx]=xxSkypexx
 Comment=Skype protocol plugin (only wrapper!)
+Comment[el]=Πρόσθετο πρωτοκόλλου Skype (μόνο ενσωμάτωση!)
 Comment[es]=Extensión del protocolo skype (¡Solo la capa externa!)
 Comment[it]=Plugin per il protocollo Skype (solo un impacchettatore!)
 Comment[pt]='Plugin' para o protocolo do Skype (apenas interface!)
