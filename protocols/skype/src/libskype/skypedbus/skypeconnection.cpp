@@ -247,8 +247,8 @@ void SkypeConnection::disconnectSkype(skypeCloseReason reason) {
 	}
 
 	d->fase = cfNotConnected;//No longer connected
-	emit connectionClosed(reason);//we disconnect
 	emit connectionDone(seCanceled, 0);
+	emit connectionClosed(reason);//we disconnect
 }
 
 void SkypeConnection::send(const QString &message) {

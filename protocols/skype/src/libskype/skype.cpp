@@ -149,6 +149,7 @@ void Skype::setOffline() {
 	d->showDeadMessage = false;
 
 	d->connection << QString("SET USERSTATUS OFFLINE");//this one special, do not connect to skype because of that
+	d->connection.disconnectSkype();
 }
 
 void Skype::setAway() {
