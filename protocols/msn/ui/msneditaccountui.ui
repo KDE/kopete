@@ -1242,8 +1242,6 @@ If this option is enabled, Kopete will send the away message automatically.</str
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kopete::ui::passwordwidget.h</includehint>
-    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
 </includehints>
 </UI>

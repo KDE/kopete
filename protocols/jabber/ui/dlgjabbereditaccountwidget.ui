@@ -717,7 +717,4 @@
     <tabstop>leProxyJID</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kopete::ui::passwordwidget.h</includehint>
-</includehints>
 </UI>

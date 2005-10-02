@@ -450,7 +450,4 @@ If you do not currently have an ICQ account, please click the button to create o
     <tabstop>chkWebAware</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kopete::ui::passwordwidget.h</includehint>
-</includehints>
 </UI>

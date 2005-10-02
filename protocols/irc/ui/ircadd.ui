@@ -160,7 +160,4 @@
     <tabstop>tabWidget3</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>mycustomwidget.h</includehint>
-</includehints>
 </UI>
