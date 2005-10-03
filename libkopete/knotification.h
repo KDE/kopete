@@ -198,7 +198,7 @@ public:
 	static KNotification *userEvent( const QString& text, const QPixmap& pixmap,
 				QWidget *widget, QStringList actions,int present, int level,
 				const QString &sound, const QString &file,
-				const QString &commandline, unsigned int flags);
+				const QString &commandLine, unsigned int flags);
 
 
 
