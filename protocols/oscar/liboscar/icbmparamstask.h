@@ -42,8 +42,9 @@ public:
 	/**
 	 * Send the message parameters we want back to the server. Only
 	 * appears to occur during login
+	 * @param channel the channel to set up
 	 */
-	void sendMessageParams();
+	void sendMessageParams( int channel );
 
 protected:
 	void onGo();
