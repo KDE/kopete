@@ -95,7 +95,8 @@ public:
 class KopeteStyleNewStuff : public KNewStuff
 {
 	public:
-	KopeteStyleNewStuff(const QString &type, AppearanceConfig * ac, QWidget *parentWidget=0) : KNewStuff( type, parentWidget ), mAppearanceConfig( ac )
+	KopeteStyleNewStuff(const QString &type, AppearanceConfig * ac, QWidget *parentWidget=0) 
+         : KNewStuff( type, parentWidget ), mAppearanceConfig( ac ), m_integrity( false )
 	{ }
 
 	bool createUploadFile(const QString&)
@@ -108,14 +109,34 @@ class KopeteStyleNewStuff : public KNewStuff
 		{
 			// copy to apps/kopete/styles
 			kdDebug(14000) << k_funcinfo << " installing simple style file: " << origFileName << endl;
+			/*
+			if( !m_integrity )
+			{
+				KMessageBox::queuedMessageBox( parentWidget(), KMessageBox::Error,
+					i18n( "Package could not be verified. Please contact to author of the package. [Error: 7]" ),
+					i18n( "Package Verification Failed" ) );
+				return false;
+			}
+			*/
 			QString styleSheet = mAppearanceConfig->fileContents(fileName);
 			if ( Kopete::XSLT( styleSheet ).isValid() )
 				mAppearanceConfig->addStyle( origFileName.section( '.', 0, 0 ), styleSheet );
 			QFile::remove( fileName );
+			mAppearanceConfig->loadStyles();
 			return true;
 		}
 		else if ( origFileName.endsWith( ".tar.gz" ) )
 		{
+			/* If KNewStuff is forced to be enabled from config file, then no verification is necessary.
+			int r;
+			if( ( r = verify( fileName ) ) != 0 )
+			{
+				KMessageBox::queuedMessageBox( parentWidget(), KMessageBox::Error,
+					i18n( "Package could not be verified. Please contact to author of the package. [Error: %1]" ).arg( r ),
+					i18n( "Package Verification Failed" ) );
+				return false;
+			}
+			*/
 			// install a tar.gz
 			kdDebug(14000) << k_funcinfo << " extracting gzipped tarball: " << origFileName << endl;
 			QString uncompress = "application/x-gzip";
@@ -131,6 +152,15 @@ class KopeteStyleNewStuff : public KNewStuff
 		else if ( origFileName.endsWith( ".xsl.gz" ) )
 		{
 			kdDebug(14000) << k_funcinfo << " installing gzipped single style file: " << origFileName << endl;
+			/*
+			if( !m_integrity )
+			{
+				KMessageBox::queuedMessageBox( parentWidget(), KMessageBox::Error,
+					i18n( "Package could not be verified. Please contact to author of the package. [Error: 7]" ),
+					i18n( "Package Verification Failed" ) );
+				return false;
+			}
+			*/
 			QIODevice * iod = KFilterDev::deviceForFile( fileName, "application/x-gzip" );
 			iod->open( IO_ReadOnly );
 			QTextStream stream( iod );
@@ -139,19 +169,120 @@ class KopeteStyleNewStuff : public KNewStuff
 			if ( Kopete::XSLT( styleSheet ).isValid() )
 				mAppearanceConfig->addStyle( origFileName.section( '.', 0, 0 ), styleSheet );
 			QFile::remove( fileName );
+			mAppearanceConfig->loadStyles();
 			return true;
 
 		}
 		else
 		{
-			kdDebug( 14000 ) << k_funcinfo << "unsupported file type" << endl;
+			/* Commented out due to string freeze.
+			KMessageBox::queuedMessageBox( parentWidget(), KMessageBox::Error,
+				i18n( "Only allowed package extensions are .xsl, .tar.gz and .xsl.gz" ),
+				i18n( "Extension not supported" ) );
+			*/
 			return false;
 		}
+	}
+
+	/**
+	 * A package named Foo must be packaged as Foo.tar.gz use alphanumeric package
+	 * names (i.e. do not use a . in the file name ).
+	 * content should be like as follows:
+	 * /Foo.xsl
+	 * /data/Foo/file1.png
+	 * /data/Foo/file2.png
+	 * /data/Foo/bar/zoo/boo.png ...
+	 *
+	 * @param file file name to be verified
+	 * @return 0 on success<br>
+	 *         1 if root directory contains garbage<br>
+	 *         2 data directory does not exists<br>
+	 *         3 data directory contains garbage files/dirs<br>
+	 *         4 the directory under data/ is not the same name as package<br>
+	 *         5 Style file does not exist.<br>
+	 *         6 data directory does not contain any files<br>
+	 *         7 file does not even exists!
+	 *         8 package name must be same with basename of the file
+	 */
+	int verify( const QString& file )
+	{
+		QFileInfo i( file );
+		if( !i.exists() )
+		{
+			kdDebug( 14000 ) << k_funcinfo << "ERROR: Could not open file [" << file << "] This should never have happened." << endl;
+			return 7; // actually it's pointless to return this, since this is a sign of internal error.
+		}
+
+		if( !m_integrity )
+		{
+			kdDebug( 14000 ) << k_funcinfo << "ERROR: Package name is not the same with basename of the filename." << endl;
+			return 8;
+		}
+
+		QString base = i.baseName();
+
+		KTar tar( file, "application/x-gzip" );
+		tar.open( IO_ReadOnly );
+		const KArchiveDirectory *dir = tar.directory();
+		QStringList list = dir->entries();
+
+		if( list.count() != 2 )
+		{
+			kdDebug( 14000 ) << k_funcinfo << "ERROR: Garbage file or directory in root directory of the package" << endl;
+			return 1;
+		}
+
+		const KArchiveEntry *data = dir->entry( "data" );
+		if( !data || !data->isDirectory()  )
+		{
+			kdDebug( 14000 ) << k_funcinfo << "ERROR: data directory does not exist" << endl;
+			return 2;
+		}
+		else
+		{
+			list = ((KArchiveDirectory*)data)->entries();
+			if( list.count() == 0 )
+			{
+				kdDebug( 14000 ) << k_funcinfo << "ERROR: There is no file in the data directory. So why use a tarball?" << endl;
+				return 6;
+			}
+			else if( list.count() != 1 )
+			{
+				kdDebug( 14000 ) << k_funcinfo << "ERROR: data directory contains garbage entries" << endl;
+				return 3;
+			}
+			data = ((KArchiveDirectory*)data)->entry( base );
+			if( !data || !data->isDirectory() )
+			{
+				kdDebug( 14000 ) << k_funcinfo << "ERROR: directory under data dir should have the same name as package" << endl;
+				return 4;
+			}
+		}
+
+		const KArchiveEntry *xsl = dir->entry( base + ".xsl" );
+		if( !xsl || !xsl->isFile() )
+		{
+			kdDebug( 14000 ) << k_funcinfo << "ERROR: Style file does not exist." << endl;
+			return 5;
+		}
+
+		return 0;
+
 	}
 
 	QString downloadDestination( KNS::Entry * e )
 	{
 		QString filename = e->payload().fileName();
+		QFileInfo i( filename );
+		if( e->name() != i.baseName() )
+		{
+			kdDebug( 14000 ) << k_funcinfo << "ERROR: Package name is not the basename of the file." << endl;
+			m_integrity = false;
+		}
+		else
+		{
+			m_integrity = true;
+		}
 		QString tempDestination = KNewStuff::downloadDestination( e );
 		mFilenameMap.insert( tempDestination, filename );
 		return tempDestination;
@@ -159,6 +290,8 @@ class KopeteStyleNewStuff : public KNewStuff
 
 	QMap<QString, QString > mFilenameMap;
 	AppearanceConfig * mAppearanceConfig;
+private:
+	bool m_integrity;
 };
 
 AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const QStringList &args )
@@ -174,6 +307,9 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	mAppearanceTabCtl = new QTabWidget(this, "mAppearanceTabCtl");
 
 
+	KConfig *config = KGlobal::config();
+	config->setGroup( "ChatWindowSettings" );
+
 	// "Emoticons" TAB ==========================================================
 	mPrfsEmoticons = new AppearanceConfig_Emoticons(mAppearanceTabCtl);
 	connect(mPrfsEmoticons->chkUseEmoticons, SIGNAL(toggled(bool)),
@@ -184,6 +320,9 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(slotSelectedEmoticonsThemeChanged()));
 	connect(mPrfsEmoticons->btnInstallTheme, SIGNAL(clicked()),
 		this, SLOT(installNewTheme()));
+
+	// Since KNewStuff is incomplete and buggy we'll disable it by default.
+	mPrfsEmoticons->btnGetThemes->setEnabled( config->readBoolEntry( "ForceNewStuff", false ) );
 	connect(mPrfsEmoticons->btnGetThemes, SIGNAL(clicked()),
 		this, SLOT(slotGetThemes()));
 	connect(mPrfsEmoticons->btnRemoveTheme, SIGNAL(clicked()),
@@ -209,6 +348,9 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(slotCopyStyle()));
 	connect(mPrfsChatWindow->btnGetStyles, SIGNAL(clicked()),
 		this, SLOT(slotGetStyles()));
+
+	// Since KNewStuff is incomplete and buggy we'll disable it by default.
+	mPrfsChatWindow->btnGetStyles->setEnabled( config->readBoolEntry( "ForceNewStuff", false ) );
 
 	connect(mPrfsChatWindow->mTransparencyTintColor, SIGNAL(activated (const QColor &)),
 		this, SLOT(emitChanged()));
@@ -669,6 +811,11 @@ void AppearanceConfig::slotDeleteStyle()
 		QFileInfo fi( filePath );
 		if( fi.isWritable() )
 			QFile::remove( filePath );
+
+		KConfig *config = KGlobal::config();
+		config->setGroup("KNewStuffStatus");
+		config->deleteEntry( style->text() );
+		config->sync();
 
 		if( style->next() )
 			mPrfsChatWindow->styleList->setSelected( style->next(), true );

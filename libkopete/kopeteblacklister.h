@@ -45,26 +45,28 @@ class Contact;
 class BlackLister : public QObject
 {
 	Q_OBJECT
-	
+
 public:
 	/**
 	 * Create an instance, and read the blacklist from disk if it exists.
 	 * @param protocolId is the ID of the protocol owning accountId
 	 * @param accountId is the ID of the owning Account.
+	 * @param parent The QObject parent for this class.
+	 * @param name The QObject name for this class.
 	 */
 	BlackLister( const QString &protocolId, const QString &accountId, QObject *parent = 0, const char *name = 0 );
 	~BlackLister();
-	
+
 	/**
 	 * \return @c true if @p contact is blocked, @c false otherwise.
 	 */
 	bool isBlocked( Contact *contact );
-	
+
 	/**
 	 * \return @c true if the contact with ID @p contactId is blocked, @c false otherwise.
 	 */
 	bool isBlocked( const QString &contactId );
-	
+
 public slots:
 	/**
 	 * Add a contact to the blacklist.
@@ -73,12 +75,12 @@ public slots:
 	 * @param contactId is the ID of the contact to be added to the list.
 	 */
 	void addContact( const QString &contactId );
-	
+
 	/**
 	 * @overload
 	 */
 	void addContact( Contact *contact );
-	
+
 	/**
 	 * \brief Remove a contact from the blacklist.
 	 *
@@ -87,12 +89,12 @@ public slots:
 	 * @param contact is the contact to be removed from the list.
 	 */
 	void removeContact( Contact *contact );
-	
+
 	/**
 	 * @overload
 	 */
 	void removeContact( const QString &contactId );
-	
+
 signals:
 	/**
 	 * \brief A new contact has been added to the list
@@ -101,7 +103,7 @@ signals:
 	 * and you prefer not to derive from this class.
 	 */
 	void contactAdded( const QString &contactId );
-	
+
 	/**
 	 * \brief A contact has been removed from the list
 	 *
@@ -109,10 +111,10 @@ signals:
 	 * and you prefer not to derive from this class.
 	 */
 	void contactRemoved( const QString &contactId );
-	
+
 private:
 	void saveToDisk();
-	
+
 	class Private;
 	Private *d;
 };
