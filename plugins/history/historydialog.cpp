@@ -254,21 +254,23 @@ void HistoryDialog::init(Kopete::Contact *c)
 	d1.setSorting( QDir::Name );
 
 	const QFileInfoList *list1 = d1.entryInfoList();
-	QFileInfoListIterator it1( *list1 );
-
-	while ( (fi = it1.current()) != 0 )
+	if ( list1 != 0 )
 	{
-		if(fi->fileName().contains(contact_in_filename))
+		QFileInfoListIterator it1( *list1 );
+		while ( (fi = it1.current()) != 0 )
 		{
-			rx.search(fi->fileName());
-			
-			QDate cDate = QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), 1);
+			if(fi->fileName().contains(contact_in_filename))
+			{
+				rx.search(fi->fileName());
+				
+				QDate cDate = QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), 1);
 
-			DMPair pair(cDate, c->metaContact());
-			mInit.dateMCList.append(pair);
-
+				DMPair pair(cDate, c->metaContact());
+				mInit.dateMCList.append(pair);
+	
+			}
+			++it1;
 		}
-		++it1;
 	}
 	// END of kopete 0.7.x check
 
@@ -281,21 +283,24 @@ void HistoryDialog::init(Kopete::Contact *c)
 	d.setFilter( QDir::Files | QDir::NoSymLinks );
 	d.setSorting( QDir::Name );
 	const QFileInfoList *list = d.entryInfoList();
-	QFileInfoListIterator it( *list );
-	while ( (fi = it.current()) != 0 )
+	if ( list != 0 )
 	{
-		if(fi->fileName().contains(contact_in_filename))
+		QFileInfoListIterator it( *list );
+		while ( (fi = it.current()) != 0 )
 		{
-			
-			rx.search(fi->fileName());
-			
-			// We search for an item in the list view with the same year. If then we add the month
-			QDate cDate = QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), 1);
+			if(fi->fileName().contains(contact_in_filename))
+			{
+				
+				rx.search(fi->fileName());
+				
+				// We search for an item in the list view with the same year. If then we add the month
+				QDate cDate = QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), 1);
 
-			DMPair pair(cDate, c->metaContact());
-			mInit.dateMCList.append(pair);
+				DMPair pair(cDate, c->metaContact());
+				mInit.dateMCList.append(pair);
+			}
+			++it;
 		}
-		++it;
 	}
 }
 
@@ -395,12 +400,11 @@ void HistoryDialog::slotSearchTextChanged(const QString& searchText)
 void HistoryDialog::listViewShowElements(bool s)
 {
 	KListViewDateItem* item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
-	do
+	while (item != 0)
 	{
 			item->setVisible(s);
 			item = static_cast<KListViewDateItem*>(item->nextSibling());
 	}
-	while(item != 0);
 }
 
 // Erase the search line, show all date/metacontacts items in the list (accordint to the
@@ -437,6 +441,8 @@ void HistoryDialog::slotSearch()
 		mSearch = 0L;
 		return;
 	}
+
+	if (mMainWidget->dateListView->childCount() == 0) return;
 
 	listViewShowElements(false);
 
