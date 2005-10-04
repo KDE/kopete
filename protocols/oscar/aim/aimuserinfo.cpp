@@ -25,6 +25,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
+#include <qtimer.h>
 
 #include <klocale.h>
 #include <kstandarddirs.h>
@@ -114,6 +115,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, bool 
 			// Update the user view to indicate that we're requesting the user's profile
 			userInfoView->setText(i18n("Requesting User Profile, please wait..."));
 		}
+		QTimer::singleShot(0, this, SLOT(slotUpdateProfile()));
 	}
 }
 
