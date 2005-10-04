@@ -202,7 +202,7 @@
                     <cstring>mDisplayName</cstring>
                 </property>
                 <property name="toolTip" stdset="0">
-                    <string>Leave this blank to use any display name set by the contact themself</string>
+                    <string>Leave this blank to use any display name set by the contact</string>
                 </property>
             </widget>
             <spacer row="3" column="1">

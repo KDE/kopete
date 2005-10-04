@@ -41,7 +41,7 @@
                 <bool>true</bool>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>If this is checked, only emoticon that are separated from the text with spaces will be shown as image</string>
+                <string>If this is checked, only emoticons that are separated from the text with spaces will be shown as images</string>
             </property>
         </widget>
         <widget class="QLabel">
@@ -106,7 +106,7 @@
                         <string>&amp;Get New Themes...</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Download emoticon theme on internet</string>
+                        <string>Download emoticon theme from the Internet</string>
                     </property>
                 </widget>
                 <widget class="QPushButton">

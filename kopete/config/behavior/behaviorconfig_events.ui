@@ -252,10 +252,10 @@
                         <string>Exclude messages in chats on current des&amp;ktop</string>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Do not notify messages in chat windows on current desktop</string>
+                        <string>Do not display notification for messages in chat windows on current desktop</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Notify only unread messages in chat windows that are not on the current desktop.</string>
+                        <string>This option allows you to turn off the notification of events for chat windows that are on the current desktop. If this option is turned on, then only chat windows on different desktops than the current one will notify you that an event has occured. Otherwise, all chat windows will notify you that an event has occured.</string>
                     </property>
                 </widget>
             </vbox>

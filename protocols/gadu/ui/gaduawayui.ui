@@ -111,7 +111,7 @@ Choosing Offline status will disconnect you, with given description.</string>
                                         <string>Set status to invisible, which will hide your presence from other users.</string>
                                     </property>
                                     <property name="whatsThis" stdset="0">
-                                        <string>Set status to invisible, which will hide your presence from other users (who will see you as offline).  However you may still chat, and see the online presence others.</string>
+                                        <string>Set status to invisible, which will hide your presence from other users (who will see you as offline).  However you may still chat, and see the online presence of others.</string>
                                     </property>
                                 </widget>
                                 <widget class="QRadioButton">
