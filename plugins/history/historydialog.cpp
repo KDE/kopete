@@ -108,7 +108,8 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 
 	// Widgets initializations
 	mMainWidget = new HistoryViewer(this, "HistoryDialog::mMainWidget");
-	mMainWidget->searchLine->setFocus();
+	mMainWidget->searchLine->setFocus(); 
+	mMainWidget->searchLine->setTrapReturnKey (true);
 	mMainWidget->searchErase->setPixmap(BarIcon("locationbar_erase"));
 
 	mMainWidget->contactComboBox->insertItem(i18n("All"));
@@ -446,6 +447,7 @@ void HistoryDialog::slotSearch()
 		mMainWidget->searchButton->setText(i18n("&Search"));
 		delete mSearch;
 		mSearch = 0L;
+		doneProgressBar();
 		return;
 	}
 
