@@ -19,6 +19,8 @@
 
 #include "kopeteplugin.h"
 
+class QImage;
+
 /**
 @author Heiko Sch&auml;fer <heiko@rangun.de>
 */
@@ -40,6 +42,7 @@ protected slots:
 
 private:
     QStringList m_tmpFileRegistry;
+    QImage *    m_pic;
 };
 
 #endif /* URLPICPREVIEWPLUGIN_H */

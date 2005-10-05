@@ -36,7 +36,7 @@ typedef KGenericFactory<URLPicPreviewPlugin> URLPicPreviewPluginFactory;
 K_EXPORT_COMPONENT_FACTORY(kopete_urlpicpreview, URLPicPreviewPluginFactory("kopete_urlpicpreview"))
 
 URLPicPreviewPlugin::URLPicPreviewPlugin(QObject* parent, const char* name, const QStringList& /* args */)
-        : Kopete::Plugin(URLPicPreviewPluginFactory::instance(), parent, name) {
+        : Kopete::Plugin(URLPicPreviewPluginFactory::instance(), parent, name), m_pic(NULL) {
 
     kdDebug(0) << k_funcinfo << endl;
 
@@ -46,6 +46,8 @@ URLPicPreviewPlugin::URLPicPreviewPlugin(QObject* parent, const char* name, cons
 
     // register file formats
     KImageIO::registerFormats();
+
+    m_pic = new QImage;
 }
 
 URLPicPreviewPlugin::~URLPicPreviewPlugin() {
@@ -56,6 +58,9 @@ URLPicPreviewPlugin::~URLPicPreviewPlugin() {
     }
 
     disconnect(this, SLOT(aboutToDisplay(Kopete::Message&)));
+
+    delete m_pic;
+
     kdDebug(0) << k_funcinfo << endl;
 }
 
@@ -80,13 +85,16 @@ QString URLPicPreviewPlugin::prepareBody(const QString& parsedBody) {
 
     kdDebug(0) << k_funcinfo << "Searching for URLs to pictures" << endl;
 
-    static QString rex = "(<a href=\")([^\"]*)(\" )?([^<]*)(</a>)(.*)$";
-    //       Caps:          1           2        3     4      5    6
-    static QRegExp ex(rex);
+    static const QString rex = "(<a href=\")([^\"]*)(\" )?([^<]*)(</a>)(.*)$";
+    //             Caps:          1           2        3     4      5    6
+    QRegExp ex(rex);
 
     QString myParsedBody = parsedBody;
 
+    kdDebug(0) << k_funcinfo << "Analyzing message: \"" << myParsedBody << "\"" << endl;
+
     if(ex.search(myParsedBody) == -1) {
+        kdDebug(0) << k_funcinfo << "No more URLs found in message." << endl;
         return myParsedBody;
     }
 
@@ -99,15 +107,16 @@ QString URLPicPreviewPlugin::prepareBody(const QString& parsedBody) {
     if(url.isValid()) {
         kdDebug(0) << k_funcinfo << "URL \"" << foundURL << "\" is valid." << endl;
 
+
         if(KIO::NetAccess::mimetype(url, Kopete::UI::Global::mainWidget()).startsWith("image/")) {
             if(KIO::NetAccess::download(url, tmpFile, Kopete::UI::Global::mainWidget())) {
 
-                kdDebug(0) << "Try to scale the image." << endl;
-                QImage pic;
-                if(pic.load(tmpFile)) {
+                kdDebug(0) << k_funcinfo << "Try to scale the image." << endl;
+                QImage m_pic;
+                if(m_pic.load(tmpFile)) {
                     // resize but keep aspect ratio
-                    if(pic.width() > 256) {
-                        if(!pic.scaleWidth(256).save(tmpFile, pic.imageFormat(tmpFile))) {
+                    if(m_pic.width() > 256) {
+                        if(!m_pic.scaleWidth(256).save(tmpFile, m_pic.imageFormat(tmpFile))) {
                             kdDebug(0) << k_funcinfo << "Couldn't save scaled image " << tmpFile << endl;
                         }
                     }
