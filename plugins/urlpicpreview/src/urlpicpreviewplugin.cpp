@@ -112,12 +112,11 @@ QString URLPicPreviewPlugin::prepareBody(const QString& parsedBody) {
             if(KIO::NetAccess::download(url, tmpFile, Kopete::UI::Global::mainWidget())) {
 
                 kdDebug(0) << k_funcinfo << "Try to scale the image." << endl;
-                QImage m_pic;
-                if(m_pic.load(tmpFile)) {
+                if(m_pic->load(tmpFile)) {
                     // resize but keep aspect ratio
-                    if(m_pic.width() > 256) {
-                        if(!m_pic.scaleWidth(256).save(tmpFile, m_pic.imageFormat(tmpFile))) {
-                            kdDebug(0) << k_funcinfo << "Couldn't save scaled image " << tmpFile << endl;
+                    if(m_pic->width() > 256) {
+                        if(!(m_pic->scaleWidth(256)).save(tmpFile, "PNG")) {
+                            kdDebug(0) << k_funcinfo << "Couldn't save scaled image (Format: " << QImage::imageFormat(tmpFile) << ") " << tmpFile << endl;
                         }
                     }
                 } else {
