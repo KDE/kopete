@@ -1,0 +1,20 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Icon=urlpicpreview
+X-Kopete-Version=1000900
+ServiceTypes=Kopete/Plugin
+X-KDE-Library=kopete_urlpicpreview
+X-KDE-PluginInfo-Author=Heiko Schäfer
+X-KDE-PluginInfo-Email=heiko@rangun.de
+X-KDE-PluginInfo-Name=kopete_urlpicpreview
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://www.rangun.de
+X-KDE-PluginInfo-Category=Plugins
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=false
+Name=Preview of pictures in chats
+Name[de]=Vorschau für Bilder in Chats
+Comment=Displays a preview of pictures in chats
+Comment[de]=Zeigt Vorschaubilder in Chats
