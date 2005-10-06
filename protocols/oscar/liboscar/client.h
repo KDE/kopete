@@ -31,6 +31,7 @@
 #include "icquserinfo.h"
 #include "userdetails.h"
 #include "oscartypeclasses.h"
+#include "oscarmessage.h"
 
 class Connection;
 class StageOneLoginTask;
@@ -57,6 +58,9 @@ public:
 		NonFatalProtocolError = 2,
 		FatalProtocolError = 3
 	};
+
+	enum AIMStatus { Online = 0, Away };
+	enum ICQStatus { ICQOnline = 0, ICQAway, ICQNotAvailable, ICQOccupied, ICQDoNotDisturb, ICQFreeForChat };
 
 	/*************
 	  EXTERNAL API
@@ -89,8 +93,7 @@ public:
 
 	/** Logout and disconnect */
 	void close();
-
-	enum AIMStatus { Online = 0, Away };
+	
 	/** Set our status for AIM */
 	void setStatus( AIMStatus status, const QString &message = QString::null );
 	/** Set our status for ICQ */
@@ -236,6 +239,13 @@ public:
 	 */
 	void requestAIMAwayMessage( const QString& contact );
 
+	/**
+	 * Request the icq away message
+	 * \param contact the contact to get info for
+	 */
+	//TODO only made a default for testing w/o frontend
+	void requestICQAwayMessage( const QString& contact, ICQStatus contactStatus = ICQAway );
+
 	/** Request the extended status info */
 	void requestStatusInfo( const QString& contact );
 
@@ -289,6 +299,12 @@ public:
 
 	/** The current user's password */
 	QString password() const;
+
+	/** The current status message (a.k.a. away message) */
+	QString statusMessage() const;
+
+	/** Change the current status message w/o changing status */
+	void setStatusMessage( const QString &message );
 
 	/** ICQ Settings */
 	bool isIcq() const;
@@ -406,6 +422,9 @@ protected slots:
 
 	/** we have normal user info for a contact */
 	void receivedInfo( Q_UINT16 sequence );
+
+	/** received a message of some kind */
+	void receivedMessage( const Oscar::Message& msg );
 
 	void offlineUser( const QString&, const UserDetails& );
 

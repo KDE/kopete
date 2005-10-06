@@ -23,7 +23,6 @@
 #include <qglobal.h>
 #include <qstring.h>
 #include <qcstring.h>
-#include <qdatetime.h>
 #include <qvaluelist.h>
 #include "kopete_export.h"
 
@@ -37,7 +36,6 @@ public:
 	TLV( Q_UINT16, Q_UINT16, char* data );
 	TLV( Q_UINT16, Q_UINT16, const QByteArray& );
 	TLV( const TLV& t );
-	~TLV();
 
 	operator bool() const;
 
@@ -47,91 +45,12 @@ public:
 
 };
 
-/**
- * This class is responsible for holding all the details
- * of a message and includes the following:
- * \li channel ( type )
- * \li encoding
- */
-
-class KOPETE_EXPORT Message
-{
-public:
-
-	enum {
-		Normal = 0x0000,
-		AutoResponse = 0x0001,
-		WWP = 0x0002,
-		EMail = 0x0004,
-		UCS2 = 0x0010,
-		NotDecoded = 0x0020
-	};
-
-	Message();
-	Message( const QString& messageText, int channel, int properties = 0, QDateTime timestamp = QDateTime() );
-	Message( const Oscar::Message& m );
-
-	/** Get the sender of the message */
-	QString sender() const;
-
-	/** Set the sender of the message */
-	void setSender( const QString& sender );
-
-	/** Get the receiver of the message */
-	QString receiver() const;
-
-	/** Set the receiver of the message */
-	void setReceiver( const QString& receiver);
-
-	/** get the message text */
-	QString text() const;
-
-	/** set the message text */
-	void setText( const QString& newText );
-
-    /** get the message text as a bytearray for decoding */
-    QByteArray textArray() const;
-
-    /** set the mesasge text as a bytearray for decoding */
-    void setTextArray( const QByteArray& newTextArray );
-
-	/** get the message properties */
-	int properties() const;
-
-	/** add a property to the message */
-	void addProperty( int prop );
-
-	/** get the channel ( type ) of the message */
-	int type() const;
-
-	/** set the channel ( type ) of the message */
-	void setType( int newType );
-
-	/** get the timestamp of the message */
-	QDateTime timestamp() const;
-
-	/** set the timestamp of the message */
-	void setTimestamp(QDateTime ts);
-
-	operator bool() const;
-
-private:
-	QString m_sender;
-	QString m_receiver;
-	int m_channel;
-	int m_properties;
-	QString m_text;
-    QByteArray m_textArray;
-	QDateTime m_timestamp;
-};
-
 class KOPETE_EXPORT SSI
 {
 public:
 	SSI();
 	SSI( const QString &name, int gid, int bid, int type, const QValueList<TLV>& tlvlist, int tlvLength = 0 );
 	SSI( const SSI& other );
-	~SSI();
 
 	/** Get the validity of this item */
 	bool isValid() const;

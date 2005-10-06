@@ -15,7 +15,7 @@ liboscar_la_SOURCES = oscarutils.cpp client.cpp task.cpp connector.cpp \
 	prmparamstask.cpp ssiparamstask.cpp ssilisttask.cpp ssiactivatetask.cpp \
 	clientreadytask.cpp senddcinfotask.cpp sendidletimetask.cpp ownuserinfotask.cpp \
 	connection.cpp onlinenotifiertask.cpp userdetails.cpp ssimodifytask.cpp \
-	oscartypeclasses.cpp messagereceivertask.cpp sendmessagetask.cpp icqtask.cpp \
+	oscartypeclasses.cpp oscarmessage.cpp messagereceivertask.cpp sendmessagetask.cpp icqtask.cpp \
 	offlinemessagestask.cpp ssiauthtask.cpp userinfotask.cpp icquserinfo.cpp icquserinfotask.cpp \
 	usersearchtask.cpp warningtask.cpp changevisibilitytask.cpp typingnotifytask.cpp \
 	buddyicontask.cpp serverredirecttask.cpp oscarsettings.cpp \

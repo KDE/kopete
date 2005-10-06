@@ -97,6 +97,8 @@ public:
 	//Our Userinfo
 	UserDetails ourDetails;
 
+	QString statusMessage; // for away-,DND-message etc...
+
 };
 
 Client::Client( QObject* parent )
@@ -210,6 +212,9 @@ void Client::setStatus( AIMStatus status, const QString &_message )
 
 void Client::setStatus( DWORD status, const QString &message )
 {
+	// remember the message to reply with, when requested
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting status message to "<< message << endl;
+	d->statusMessage = message;
 	// ICQ: if we're active, set status. otherwise, just store the status for later.
 	if ( d->active )
 	{
@@ -405,6 +410,16 @@ QString Client::password() const
 	return d->pass;
 }
 
+QString Client::statusMessage() const
+{
+	return d->statusMessage;
+}
+
+void Client::setStatusMessage( const QString &message )
+{
+	d->statusMessage = message;
+}
+
 QCString Client::ipAddress() const
 {
 	//!TODO determine ip address
@@ -431,6 +446,40 @@ void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
 	sendMsgTask->setAutoResponse( isAuto );
 	sendMsgTask->setMessage( msg );
 	sendMsgTask->go( true );
+}
+
+void Client::receivedMessage( const Oscar::Message& msg )
+{
+	if ( msg.hasProperty( Oscar::Message::StatusMessageRequest ) )
+	{
+		if ( msg.hasProperty( Oscar::Message::AutoResponse ) )
+		{
+			// we got a response to a status message request.
+			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received an away message: " << msg.text() << endl;
+			emit receivedAwayMessage( msg.sender(), msg.text() );
+		}
+		else
+		{
+			// we got status message request ourselves. respond.
+			Connection* c = d->connections.connectionForFamily( 0x0004 );
+			if ( !c )
+				return;
+			
+			Oscar::Message response = Oscar::Message( msg );
+			response.setText( statusMessage() );
+			response.setReceiver( msg.sender() );
+			response.addProperty( Oscar::Message::AutoResponse );
+			SendMessageTask *sendMsgTask = new SendMessageTask( c->rootTask() );
+			sendMsgTask->setMessage( response );
+			sendMsgTask->go( true );
+		}
+	}
+	else
+	{
+		// let application handle it
+		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Emitting receivedMessage" << endl;
+		emit messageReceived( msg );
+	}
 }
 
 void Client::requestAuth( const QString& contactid, const QString& reason )
@@ -495,7 +544,7 @@ void Client::initializeStaticTasks()
 	         SIGNAL( iconNeedsUploading() ) );
 
 	connect( d->messageReceiverTask, SIGNAL( receivedMessage( const Oscar::Message& ) ),
-	         this, SIGNAL( messageReceived( const Oscar::Message& ) ) );
+	         this, SLOT( receivedMessage( const Oscar::Message& ) ) );
 
 	connect( d->ssiAuthTask, SIGNAL( authRequested( const QString&, const QString& ) ),
 	         this, SIGNAL( authRequestReceived( const QString&, const QString& ) ) );
@@ -691,6 +740,38 @@ void Client::requestAIMProfile( const QString& contact )
 void Client::requestAIMAwayMessage( const QString& contact )
 {
 	d->userInfoTask->requestInfoFor( contact, UserInfoTask::AwayMessage );
+}
+
+void Client::requestICQAwayMessage( const QString& contact, ICQStatus contactStatus )
+{
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting away message for " << contact << endl;
+	Oscar::Message msg;
+	msg.setType( 2 );
+	msg.setReceiver( contact );
+	msg.addProperty( Oscar::Message::StatusMessageRequest );
+	switch ( contactStatus )
+	{
+	case ICQAway:
+		msg.setMessageType( 0xE8 ); // away
+		break;
+	case ICQOccupied:
+		msg.setMessageType( 0xE9 ); // occupied
+		break;
+	case ICQNotAvailable:
+		msg.setMessageType( 0xEA ); // not awailable
+		break;
+	case ICQDoNotDisturb:
+		msg.setMessageType( 0xEB ); // do not disturb
+		break;
+	case ICQFreeForChat:
+		msg.setMessageType( 0xEC ); // free for chat
+		break;
+	default:
+		// may be a good way to deal with possible error and lack of online status message?
+		emit receivedAwayMessage( contact, "Sorry, this protocol does not support this type of status message" );
+		return;
+	}
+	sendMessage( msg );
 }
 
 void Client::requestStatusInfo( const QString& contact )

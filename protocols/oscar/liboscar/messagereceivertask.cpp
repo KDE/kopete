@@ -42,8 +42,20 @@ bool MessageReceiverTask::forMe( const Transfer* transfer ) const
 	if ( !st )
 		return false;
 
-	if ( st->snacService() == 0x0004 && st->snacSubtype() == 0x0007 )
-		return true;
+	if ( st->snacService() == 0x0004 )
+	{
+		WORD subtype = st->snacSubtype();
+		switch ( subtype )
+		{
+		case 0x0007:
+		case 0x000B:
+			return true;
+			break;
+		default:
+			return false;
+			break;
+		}
+	}
 	else
 		return false;
 }
@@ -52,41 +64,58 @@ bool MessageReceiverTask::take( Transfer* transfer )
 {
 	if ( forMe( transfer ) )
 	{
+		const SnacTransfer* st = dynamic_cast<const SnacTransfer*>( transfer );
+		if ( !st )
+			return false;
+		m_currentSnacSubtype = st->snacSubtype();
+		
 		Buffer* b = transfer->buffer();
 		m_icbmCookie = b->getBlock( 8 );
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "icbm cookie is " << m_icbmCookie << endl;
 		m_channel = b->getWord();
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "channel is " << m_channel << endl;
 
-		UserDetails ud;
-		ud.fill( b );
-		m_fromUser = ud.userId();
-
-		switch( m_channel )
+		if ( m_currentSnacSubtype == 0x0007 )
 		{
-		case 0x0001:
+			UserDetails ud;
+			ud.fill( b );
+			m_fromUser = ud.userId();
+			
+			switch( m_channel )
+			{
+			case 0x0001:
+				setTransfer( transfer );
+				handleType1Message();
+				setTransfer( 0 );
+				return true;
+				break;
+			case 0x0002:
+				setTransfer( transfer );
+				handleType2Message();
+				setTransfer( 0 );
+				return true;
+				break;
+			case 0x0004:
+				setTransfer( transfer );
+				handleType4Message();
+				setTransfer( 0 );
+				return true;
+				break;
+			default:
+				kdWarning(OSCAR_RAW_DEBUG) << "A message was received on an unknown channel. Channel is " << m_channel << endl;
+				return false;
+				break;
+			}
+		}
+		else
+		{
+			int screenNameLength = b->getByte();
+			m_fromUser = QString( b->getBlock( screenNameLength ) );
 			setTransfer( transfer );
-			handleType1Message();
+			handleAutoResponse();
 			setTransfer( 0 );
 			return true;
-			break;
-		case 0x0002:
-			setTransfer( transfer );
-			handleType2Message();
-			setTransfer( 0 );
-			return true;
-			break;
-		case 0x0004:
-			setTransfer( transfer );
-			handleType4Message();
-			setTransfer( 0 );
-			return true;
-			break;
-		default:
-			kdWarning(OSCAR_RAW_DEBUG) << "A message was received on an unknown channel. channel is " << m_channel << endl;
-			return false;
-			break;
-		};
+		}
 	}
 	else
 		return false;
@@ -164,7 +193,7 @@ void MessageReceiverTask::handleType1Message()
 
 void MessageReceiverTask::handleType2Message()
 {
-	kdDebug(14151) << k_funcinfo << "We don't _really_ support type2 messages yet..." << endl;
+	kdDebug(14151) << k_funcinfo << "Received Type 2 message. Trying to handle it..." << endl;
 
 	Oscar::Message msg;
 	QValueList<TLV> messageTLVList = transfer()->buffer()->getTLVList();
@@ -175,98 +204,70 @@ void MessageReceiverTask::handleType2Message()
 		return;
 	}
 	Buffer messageBuffer( t.data );
-	QValueList<TLV> innerTLVList = messageBuffer.getTLVList();
-	QValueList<TLV>::iterator it = innerTLVList.begin(), listEnd = innerTLVList.end();
-	for ( ; (*it); ++it )
+	kdDebug(14151) << k_funcinfo << "Buffer length is " << messageBuffer.length() << endl;
+
+	// request type
+	int requestType = messageBuffer.getWord();
+	kdDebug(14151) << k_funcinfo << "Request type (0 - request, 1 - cancel, 2 - accept): " << requestType << endl;
+
+	// skip the message id cookie, already handled above
+	messageBuffer.skipBytes( 8 );
+
+	// next is capability identifier (GUID). skip for now
+	messageBuffer.skipBytes( 16 );
+
+	while( messageBuffer.length() > 0 )
 	{
-		switch ( ( *it ).type )
+		TLV tlv = messageBuffer.getTLV();
+		switch ( tlv.type )
 		{
 		case 0x0004:
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got external ip: "
-				<< ( *it ).length << " data: " << ( *it ).data << endl;
+				<< tlv.length << " data: " << tlv.data << endl;
 			break;
 		case 0x0005:
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got listening port: "
-				<< ( *it ).length << " data: " << ( *it ).data << endl;
+				<< tlv.length << " data: " << tlv.data << endl;
 			break;
 		case 0x000A:
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got Acktype: " // 0x0001 normal message, 2 Abort Request, 3 Acknowledge request
-				<< ( *it ).length << " data: " << ( *it ).data << endl;
+				<< tlv.length << " data: " << tlv.data << endl;
 			break;
 		case 0x000B:
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got unknown TLV 0x000B: "
-				<< ( *it ).length << " data: " << ( *it ).data << endl;
+				<< tlv.length << " data: " << tlv.data << endl;
 			break;
 		case 0x000F:
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got unknown empty TLV 0x000F" << endl;
 			break;
 		case 0x2711:
 		{
-			Buffer tlv2711Buffer( ( *it ).data );
-
-			int length1 =  tlv2711Buffer.getLEWord();
-			if ( length1 != 0x001B )
-			{	// all real messages (actually their header) have length 0x1B
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Weired Message length. Bailing out!" << endl;
-				return;
-			}
-
-			int protocolVersion = tlv2711Buffer.getLEWord(); // dunno what to do with it...
-
-			for ( int i = 0; i < 25; i++ )
-			{	// 25 bytes of unneeded stuff
-				tlv2711Buffer.getByte();
-			}
-
-			// the next one is length (of a counter + following all-zero field), but also indicates what type of message this is
-			int length2 = tlv2711Buffer.getLEWord();
-
-			// the only length usable ATM is 0x000E, which is a message
-			switch( length2 )
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got a TLV 2711" << endl;
+			Buffer tlv2711Buffer( tlv.data );
+			parseRendezvousData( &tlv2711Buffer, &msg );
+			switch ( requestType )
 			{
-			case 0x000E:
-			{
-				int cookie = tlv2711Buffer.getLEWord();
-				for ( int i = 0; i < 12; i++ )
-				{	// 12 bytes all zeros
-					tlv2711Buffer.getByte();
-				}
-
-				// now starts the real message
-				msg.setType( tlv2711Buffer.getByte() );
-				// TODO if type is PLAIN, there is an additional TLV with color and font information at the end...
-
-				int flag = tlv2711Buffer.getByte();
-				if ( flag == 0x03 ) // 0x03 = FLAG_AUTORESPONSE
-				{
-					msg.addProperty( Oscar::Message::AutoResponse );
-				}
-				else
-				{
-					msg.addProperty( Oscar::Message::Normal ); // copied from above, but: is this necessary?? Normal = 0
-				}
-
-				int status = tlv2711Buffer.getLEWord(); // don't know what status this is or what to use it for
-				int priority = tlv2711Buffer.getLEWord(); // don't know what that's good for either
-				QString messageText = tlv2711Buffer.getLELNTS();
-				msg.setText( messageText );
-				msg.setSender( m_fromUser );
-				msg.setReceiver( client()->userId() );
-				msg.setTimestamp( QDateTime::currentDateTime() );
+			case 0x00: // some request
 				emit receivedMessage( msg );
-			}
+				break;
+			case 0x01:
+				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received Abort Mesage" << endl;
+				break;
+			case 0x02:
+				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received OK Message" << endl;
+				break;
 			default:
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got unknown message with length2 " << length2 << endl;
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received unknown request type: " << requestType << endl;
+				break;
 			}
-
-
+			
 			break;
 		} //end case
 		default:
-			kdDebug(OSCAR_RAW_DEBUG) << "Ignoring TLV of type " << ( *it ).type << endl;
+			kdDebug(OSCAR_RAW_DEBUG) << "Ignoring TLV of type " << tlv.type << endl;
 			break;
 		} //end switch
-	}
+	}//end while
 }
 
 void MessageReceiverTask::handleType4Message()
@@ -340,6 +341,93 @@ void MessageReceiverTask::handleType4Message()
 	msg.setReceiver( client()->userId() );
 	msg.setText( QString(msgText) );
 	emit receivedMessage( msg );
+}
+
+void MessageReceiverTask::handleAutoResponse()
+{
+	kdDebug(14151) << k_funcinfo << "Received auto response. Trying to handle it..." << endl;
+	
+	Oscar::Message msg;
+	msg.addProperty( Oscar::Message::AutoResponse );
+	Buffer* b = transfer()->buffer();
+
+	// reason code
+	int reasonCode = b->getWord();
+	kdDebug(14151) << k_funcinfo << "Reason code (1 - channel not supported, 2 - busted payload, 3 - channel specific data): " << reasonCode << endl;
+	
+	parseRendezvousData( b, &msg );
+	emit receivedMessage( msg );
+}
+
+void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
+{
+	int length1 =  b->getLEWord();
+	if ( length1 != 0x001B )
+	{	// all real messages (actually their header) seem to have length 0x1B
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Weired Message length. Bailing out!" << endl;
+		return;
+	}
+	
+	int protocolVersion = b->getLEWord(); // the extended data protocol version, there are quite a few...
+	
+	// plugin (for file transfer & stuff, all zeros for regular message
+	b->skipBytes( 16 );
+	// unknown
+	b->skipBytes( 2 );
+	// client capablities
+	b->skipBytes( 4 );
+	// unknown
+	b->skipBytes( 1 );
+	
+	// (down)counter: basically just some number, ICQ counts down, miranda up, doesnt matter.
+	// BUT: when sending auto response on channel 2, like with the icbm cookie, we need to send the same value!
+	int channel2Counter = b->getLEWord();
+	
+	// the next one is length (of a counter + following all-zero field), but also seems to indicate what type of message this is
+	int length2 = b->getLEWord();
+	
+	// the only length usable ATM is 0x000E, which is a message
+	switch( length2 )
+	{
+	case 0x000E:
+	{
+		int cookie = b->getLEWord();
+		for ( int i = 0; i < 12; i++ )
+		{	// 12 bytes all zeros
+			b->getByte();
+		}
+
+		// now starts the real message
+		// TODO if type is PLAIN, there is (might be?) an additional TLV with color and font information at the end...
+
+		uint messageType = b->getByte();
+		int flags = b->getByte();
+		int status = b->getLEWord(); 	// don't know what status this is or what to use it for
+		int priority = b->getLEWord(); 	// don't know what that's good for either
+
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Message type is: " << messageType << endl;
+		
+		msg->setText( b->getLELNTS() );
+		
+		if ( ( messageType & 0xF0 ) == 0xE0 ) // check higher byte for value E -> status message request
+			msg->addProperty( Oscar::Message::StatusMessageRequest );
+		else
+			msg->addProperty( Oscar::Message::Request );
+		
+		msg->setSender( m_fromUser );
+		msg->setReceiver( client()->userId() );
+		msg->setTimestamp( QDateTime::currentDateTime() );
+		msg->setType( 0x02 );
+		msg->setIcbmCookie( m_icbmCookie );
+		msg->setProtocolVersion( protocolVersion );
+		msg->setChannel2Counter( channel2Counter );
+		msg->setMessageType( messageType );
+		
+		break;
+	}
+	default:
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got unknown message with length2 " << length2 << endl;
+	}
 }
 
 QTextCodec* MessageReceiverTask::guessCodec( const QCString& string )
