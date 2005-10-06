@@ -681,7 +681,8 @@ void IRCProtocol::slotPartCommand( const QString &args, Kopete::ChatSession *man
 			static_cast<IRCAccount*>(manager->account())->engine()->part(chan->nickName(), args);
 		else
 			chan->part();
-		manager->view()->closeView();
+		if( manager->view() )
+			manager->view()->closeView();
 	}
 	else
 	{
