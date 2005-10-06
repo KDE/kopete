@@ -1,7 +1,7 @@
 /*
     videodevice.cpp  -  Kopete Video Device Low-level Support
 
-    Copyright (c) 2005 by Cl·udio da Silveira Pinheiro   <taupter@gmail.com>
+    Copyright (c) 2005 by Cl√°udio da Silveira Pinheiro   <taupter@gmail.com>
 
     Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
 
