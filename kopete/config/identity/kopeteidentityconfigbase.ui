@@ -354,7 +354,7 @@
                                             <enum>RichText</enum>
                                         </property>
                                         <property name="scaledContents">
-                                            <bool>true</bool>
+                                            <bool>false</bool>
                                         </property>
                                     </widget>
                                     <spacer>

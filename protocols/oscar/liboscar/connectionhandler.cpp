@@ -51,7 +51,6 @@ void ConnectionHandler::remove( Connection* c )
 		<< c << endl;
 	d->connections.remove( c );
 	c->deleteLater();
-    c = 0;
 }
 
 void ConnectionHandler::remove( int family )
@@ -67,7 +66,6 @@ void ConnectionHandler::remove( int family )
 			Connection* c = ( *it );
 			it = d->connections.remove( it );
 			c->deleteLater();
-			c = 0;
 		}
 	}
 }
@@ -81,7 +79,6 @@ void ConnectionHandler::clear()
 		Connection *c = d->connections.front();
 		d->connections.pop_front();
 		c->deleteLater();
-		c = 0;
 	}
 }
 

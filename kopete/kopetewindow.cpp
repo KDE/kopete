@@ -280,7 +280,7 @@ void KopeteWindow::initActions()
 		CTRL+SHIFT+Key_I, KKey::QtWIN+CTRL+Key_I, Kopete::ChatSessionManager::self(), SLOT(slotReadMessage()) );
 
 	globalAccel->insert( QString::fromLatin1("Show/Hide Contact List"), i18n("Show/Hide Contact List"), i18n("Show or hide the contact list"),
-		CTRL+SHIFT+Key_A, KKey::QtWIN+CTRL+Key_A, this, SLOT(slotShowHide()) );
+		CTRL+SHIFT+Key_S, KKey::QtWIN+CTRL+Key_S, this, SLOT(slotShowHide()) );
 
 	globalAccel->insert( QString::fromLatin1("Set Away/Back"), i18n("Set Away/Back"), i18n("Sets away from keyboard or sets back"),
 		CTRL+SHIFT+Key_W, KKey::QtWIN+CTRL+SHIFT+Key_W, this, SLOT(slotToggleAway()) );

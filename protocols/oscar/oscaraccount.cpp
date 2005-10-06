@@ -438,7 +438,7 @@ Connection* OscarAccount::setupConnection( const QString& server, uint port )
 	knc->setOptHostPort( server, port );
 
 	//set up the clientstream
-	ClientStream* cs = new ClientStream( knc, knc );
+	ClientStream* cs = new ClientStream( knc, 0 );
 
 	Connection* c = new Connection( knc, cs, "AUTHORIZER" );
 	c->setClient( d->engine );

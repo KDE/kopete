@@ -308,7 +308,7 @@
                                     <string>Photo</string>
                                 </property>
                                 <property name="scaledContents">
-                                    <bool>true</bool>
+                                    <bool>false</bool>
                                 </property>
                             </widget>
                             <widget class="QLayoutWidget" row="0" column="0">

@@ -168,7 +168,6 @@ void AIMUserInfoDialog::slotCloseClicked()
 void AIMUserInfoDialog::slotUpdateProfile()
 {
 	kdDebug(14152) << k_funcinfo << "Got User Profile." << endl;
-
 	AIMProtocol* p = static_cast<AIMProtocol*>( mAccount->protocol() );
 	QString awayMessage = m_contact->property( p->awayMessage ).value().toString();
 	mMainWidget->txtAwayMessage->setText( awayMessage );
@@ -198,7 +197,7 @@ void AIMUserInfoDialog::slotUpdateProfile()
 		contactProfile =
 			i18n("<html><body><I>No user information provided</I></body></html>");
 	}
-
+	
 	if(userInfoEdit)
 	{
 		userInfoEdit->setText(contactProfile);
@@ -207,6 +206,7 @@ void AIMUserInfoDialog::slotUpdateProfile()
 	{
 		userInfoView->setText(contactProfile);
 	}
+	
 }
 
 void AIMUserInfoDialog::slotUrlClicked(const QString &url)

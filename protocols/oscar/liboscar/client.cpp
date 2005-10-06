@@ -1100,9 +1100,9 @@ void Client::disconnectChatRoom( WORD exchange, const QString& room )
 
 Connection* Client::createConnection( const QString& host, const QString& port )
 {
-	KNetworkConnector* knc = new KNetworkConnector( this );
+	KNetworkConnector* knc = new KNetworkConnector( 0 );
 	knc->setOptHostPort( host, port.toUInt() );
-	ClientStream* cs = new ClientStream( knc, knc );
+	ClientStream* cs = new ClientStream( knc, 0 );
 	cs->setNoopTime( 60000 );
 	Connection* c = new Connection( knc, cs, "BOS" );
 	cs->setConnection( c );

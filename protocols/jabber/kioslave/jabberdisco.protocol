@@ -16,6 +16,7 @@ Description[es]=A esclavo KIO para el servicio de descubrimiento jabber
 Description[et]=Jabberi teenuste tuvastamise KIO-moodul
 Description[fr]=Un module d'entrée / sortie pour la recherche de service Jabber
 Description[gl]=Un KIO slave para Jabber Service Discovery
+Description[nl]=Een kioslave voor Jabber Service Discovery
 Description[pl]=Wtyczka protokołu KIO dla usługi odkrywania usług Jabbera (Jabber Service Discovery)
 Description[pt]=Um 'kioslave' para a Descoberta de Serviços do Jabber
 Description[pt_BR]=Um KIO-Slave para a descoberta de serviço do Jabber
