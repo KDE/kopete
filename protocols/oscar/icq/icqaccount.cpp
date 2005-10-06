@@ -318,7 +318,13 @@ void ICQAccount::setBuddyIcon( KURL url )
 		if ( image.isNull() )
 			return;
 		
-		image = image.smoothScale( 52, 64, QImage::ScaleMin );	
+		image = image.smoothScale( 52, 64, QImage::ScaleMax );
+		if(image.width() > image.height()) {
+			image = image.copy((image.width()-image.height())/2, 0, image.height(), image.height());
+		}
+		else if(image.height() > image.width()) {
+			image = image.copy(0, (image.height()-image.width())/2, image.width(), image.width());
+		}
 		
 		QString newlocation( locateLocal( "appdata", "oscarpictures/"+ accountId() + ".jpg" ) );
 		
