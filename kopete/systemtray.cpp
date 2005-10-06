@@ -194,8 +194,16 @@ void KopeteSystemTray::slotBlink()
 
 void KopeteSystemTray::slotNewEvent( Kopete::MessageEvent *event )
 {
-	mEventList.append( event );
-	mBalloonEventList.append( event );
+	if( KopetePrefs::prefs()->useStack() )
+	{
+		mEventList.prepend( event );
+		mBalloonEventList.prepend( event );
+	}
+	else
+	{
+		mEventList.append( event );
+		mBalloonEventList.append( event );
+	}
 
 	connect(event, SIGNAL(done(Kopete::MessageEvent*)),
 		this, SLOT(slotEventDone(Kopete::MessageEvent*)));
@@ -270,6 +278,12 @@ void KopeteSystemTray::addBalloon()
 		m_balloon << ":" << KopetePrefs::prefs()->showTray() <<
 		":" << KopetePrefs::prefs()->balloonNotify()
 		<< ":" << !mBalloonEventList.isEmpty() << endl;*/
+
+	if( m_balloon && KopetePrefs::prefs()->useStack() )
+	{
+		m_balloon->deleteLater();
+		m_balloon=0l;
+	}
 
 	if( !m_balloon && KopetePrefs::prefs()->showTray() && KopetePrefs::prefs()->balloonNotify() && !mBalloonEventList.isEmpty() )
 	{

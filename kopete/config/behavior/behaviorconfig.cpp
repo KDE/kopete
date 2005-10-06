@@ -80,6 +80,8 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsGeneral->mUseQueueChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsGeneral->mUseStackChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsGeneral->mAutoConnect, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsGeneral->mMouseNavigation, SIGNAL(toggled(bool)),
@@ -153,6 +155,7 @@ void BehaviorConfig::save()
 	p->setShowTray(mPrfsGeneral->mShowTrayChk->isChecked());
 	p->setStartDocked(mPrfsGeneral->mStartDockedChk->isChecked());
 	p->setUseQueue(mPrfsGeneral->mUseQueueChk->isChecked());
+	p->setUseStack(mPrfsGeneral->mUseStackChk->isChecked());
 	p->setQueueUnreadMessages(mPrfsGeneral->mQueueUnreadMessagesChk->isChecked());
 	p->setAutoConnect(mPrfsGeneral->mAutoConnect->isChecked());
 	p->setContactListMouseNavigation(mPrfsGeneral->mMouseNavigation->isChecked());
@@ -206,6 +209,7 @@ void BehaviorConfig::load()
 	mPrfsGeneral->mShowTrayChk->setChecked( p->showTray() );
 	mPrfsGeneral->mStartDockedChk->setChecked( p->startDocked() );
 	mPrfsGeneral->mUseQueueChk->setChecked( p->useQueue() );
+	mPrfsGeneral->mUseStackChk->setChecked( p->useStack() );
 	mPrfsGeneral->mQueueUnreadMessagesChk->setChecked ( p->queueUnreadMessages() );
 	mPrfsGeneral->mAutoConnect->setChecked( p->autoConnect() );
 	mPrfsGeneral->mMouseNavigation->setChecked( p->contactListMouseNavigation() );

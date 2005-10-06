@@ -58,6 +58,7 @@ void KopetePrefs::load()
 	mTreeView = config->readBoolEntry("TreeView", true);
 	mStartDocked = config->readBoolEntry("StartDocked", false);
 	mUseQueue = config->readBoolEntry("Use Queue", true);
+	mUseStack = config->readBoolEntry("Use Stack", false);
 	mRaiseMsgWindow = config->readBoolEntry("Raise Msg Window", false);
 	mShowEvents = config->readBoolEntry("Show Events in Chat Window", true);
 	mSpellCheck = config->readBoolEntry("SpellCheck", true);
@@ -184,6 +185,7 @@ void KopetePrefs::save()
 	config->writeEntry("SortByGroup", mSortByGroup);
 	config->writeEntry("StartDocked", mStartDocked);
 	config->writeEntry("Use Queue", mUseQueue);
+	config->writeEntry("Use Stack", mUseStack);
 	config->writeEntry("Raise Msg Window", mRaiseMsgWindow);
 	config->writeEntry("Show Events in Chat Window", mShowEvents);
 	config->writeEntry("SpellCheck", mSpellCheck);
@@ -332,6 +334,11 @@ void KopetePrefs::setStartDocked(bool value)
 void KopetePrefs::setUseQueue(bool value)
 {
 	mUseQueue = value;
+}
+
+void KopetePrefs::setUseStack(bool value)
+{
+	mUseStack = value;
 }
 
 
