@@ -1,7 +1,7 @@
 /*
     avdeviceconfig.cpp  -  Kopete Video Device Configuration Panel
 
-    Copyright (c) 2005 by Cláudio da Silveira Pinheiro   <taupter@gmail.com>
+    Copyright (c) 2005 by Clï¿½dio da Silveira Pinheiro   <taupter@gmail.com>
 
     Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
 
@@ -62,7 +62,8 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	connect(mPrfsVideoDevice->mImageAutoAdjustBrightnessContrast, SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoAdjustBrightnessContrastChanged(bool)));
 	connect(mPrfsVideoDevice->mImageAutoColorCorrection,          SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoColorCorrectionChanged(bool)));
 
-	mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
+	// why is this here?
+	// mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
 	mAVDeviceTabCtl->addTab(mPrfsVideoDevice, i18n("&Video"));
 	d = Kopete::AV::VideoDevicePool::self();
 	d->scanDevices();
@@ -74,8 +75,8 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	d->startCapturing();
 	d->getFrame();
 	d->getImage(&qimage);
-	qpixmap.convertFromImage(qimage,0);
-	mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
+	if (qpixmap.convertFromImage(qimage,0) == true)
+		mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
 	qtimer.start(500,FALSE);
 }
