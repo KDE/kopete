@@ -20,6 +20,7 @@
 #include <qstring.h>
 #include <qcstring.h>
 #include "oscartypeclasses.h"
+#include "oscarmessage.h"
 
 class QTextCodec;
 
