@@ -1,5 +1,5 @@
 /*
-    urlpicpreviewplugin.h
+    urlpicpreviewpreferences.h
  
     Copyright (c) 2005      by Heiko Schaefer        <heiko@rangun.de>
  
@@ -14,35 +14,33 @@
     *************************************************************************
 */
 
-#ifndef URLPICPREVIEWPLUGIN_H
-#define URLPICPREVIEWPLUGIN_H
+#ifndef URLPICPREVIEWPREFERENCES_H
+#define URLPICPREVIEWPREFERENCES_H
 
-#include "kopeteplugin.h"
+#include <kcmodule.h>
 
-class QImage;
+class QLayout;
+class KConfig;
+class URLPicPreviewPrefsBase;
 
-/**
-@author Heiko Sch&auml;fer <heiko@rangun.de>
-*/
-class URLPicPreviewPlugin : public Kopete::Plugin {
+class URLPicPreviewPreferences : public KCModule {
     Q_OBJECT
 
-    URLPicPreviewPlugin(const URLPicPreviewPlugin&);
-    URLPicPreviewPlugin& operator=(const URLPicPreviewPlugin&);
+    URLPicPreviewPreferences(const URLPicPreviewPreferences&);
+    URLPicPreviewPreferences& operator=(const URLPicPreviewPreferences&);
 
 public:
-    URLPicPreviewPlugin(QObject* parent, const char* name, const QStringList& args);
-    virtual ~URLPicPreviewPlugin();
+    URLPicPreviewPreferences(QWidget* parent, const char* name, const QStringList& args);
+
+    virtual ~URLPicPreviewPreferences();
+    virtual void load();
+    virtual void save();
 
 private:
-    QString prepareBody(const QString& parsedBody, int previewCount = 0);
-
-protected slots:
-    void aboutToDisplay(Kopete::Message& message);
-
-private:
-    QStringList m_tmpFileRegistry;
-    QImage *    m_pic;
+    QLayout * m_layout;
+    URLPicPreviewPrefsBase * m_ui;
+    KConfig * m_config;
 };
 
-#endif /* URLPICPREVIEWPLUGIN_H */
+#endif /* URLPICPREVIEWPREFERENCES_H */
+
