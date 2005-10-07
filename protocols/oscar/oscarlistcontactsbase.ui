@@ -1,0 +1,35 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>OscarListContactsBase</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>OscarListContactsBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>459</width>
+            <height>266</height>
+        </rect>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>The following contacts are not on your contact list. Would you like to add them?</string>
+            </property>
+        </widget>
+        <widget class="QListBox" row="1" column="0">
+            <property name="name">
+                <cstring>notServerContacts</cstring>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

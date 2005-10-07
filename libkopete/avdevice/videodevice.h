@@ -74,17 +74,22 @@ typedef enum
 
 typedef enum
 {
-	PIXELFORMAT_NONE,
-	PIXELFORMAT_GREY,
-	PIXELFORMAT_RGB332,
-	PIXELFORMAT_RGB555,
-	PIXELFORMAT_RGB555X,
-	PIXELFORMAT_RGB565,
-	PIXELFORMAT_RGB565X,
-	PIXELFORMAT_RGB24,
-	PIXELFORMAT_BGR24,
-	PIXELFORMAT_RGB32,
-	PIXELFORMAT_BGR32
+	PIXELFORMAT_NONE	= 0,
+	PIXELFORMAT_GREY	= (1 << 0),
+	PIXELFORMAT_RGB332	= (1 << 1),
+	PIXELFORMAT_RGB555	= (1 << 2),
+	PIXELFORMAT_RGB555X	= (1 << 3),
+	PIXELFORMAT_RGB565	= (1 << 4),
+	PIXELFORMAT_RGB565X	= (1 << 5),
+	PIXELFORMAT_RGB24	= (1 << 6),
+	PIXELFORMAT_BGR24	= (1 << 7),
+	PIXELFORMAT_RGB32	= (1 << 8),
+	PIXELFORMAT_BGR32	= (1 << 9),
+	PIXELFORMAT_YUYV	= (1 << 10),
+	PIXELFORMAT_UYVY	= (1 << 11),
+	PIXELFORMAT_YUV420P	= (1 << 12),
+	PIXELFORMAT_YUV422P	= (1 << 13)
+//	PIXELFORMAT_ALL		= 0x00003FFF
 } pixel_format;
 
 typedef enum
@@ -129,10 +134,11 @@ public:
 	int setSize( int newwidth, int newheight);
 	pixel_format setPixelFormat(pixel_format newformat);
 	int pixelFormatCode(pixel_format pixelformat);
+	pixel_format pixelFormatForPalette( int palette );
 	int pixelFormatDepth(pixel_format pixelformat);
 	QString pixelFormatName(pixel_format pixelformat);
 	QString pixelFormatName(int pixelformat);
-	unsigned int currentInput();
+	int currentInput();
 	int selectInput(int input);
 	int startCapturing();
 	int getFrame();
@@ -141,6 +147,16 @@ public:
 	int stopCapturing();
 	int close();
 
+	float getBrightness();
+	float setBrightness(float brightness);
+	float getContrast();
+	float setContrast(float contrast);
+	float getSaturation();
+	float setSaturation(float saturation);
+	float getHue();
+	float setHue(float Hue);
+	bool getAutoBrightnessContrast();
+	bool setAutoBrightnessContrast(bool brightnesscontrast);
 	bool getAutoColorCorrection();
 	bool setAutoColorCorrection(bool colorcorrection);
 
@@ -152,7 +168,9 @@ public:
 	bool canAsyncIO();
 	bool canStream();
 
-	QString name;
+	QString m_name;
+	QString m_model;
+	size_t m_modelindex;
 	QString full_filename;
 	videodev_driver m_driver;
 	int descriptor;
@@ -168,7 +186,7 @@ public:
 	struct video_capability V4L_capabilities;
 	struct video_buffer V4L_videobuffer;
 #endif	
-	Q3ValueVector<Kopete::AV::VideoInput> input;
+	Q3ValueVector<Kopete::AV::VideoInput> m_input;
 //	QFile file;
 protected:
 	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
@@ -189,9 +207,6 @@ protected:
 	bool m_videoread;
 	bool m_videoasyncio;
 	bool m_videostream;
-
-	bool m_autobrightcontrast;
-	bool m_autocolorcorrection;
 
 	int xioctl(int request, void *arg);
 	int errnoReturn(const char* s);

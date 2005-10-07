@@ -159,7 +159,8 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 
 		// convert XMPP::Message into Kopete::Message
 		newMessage = new Kopete::Message ( message.timeStamp (), subContact, contactList, body,
-										 message.subject (), Kopete::Message::Inbound,
+										 message.subject (),
+										 subContact != mManager->myself() ? Kopete::Message::Inbound : Kopete::Message::Outbound,
 										 Kopete::Message::PlainText, viewType );
 	}
 
@@ -278,6 +279,8 @@ void JabberGroupContact::slotChatSessionDeleted ()
 	{
 		account()->client()->leaveGroupChat ( mRosterItem.jid().host (), mRosterItem.jid().user () );
 	}
+	
+	deleteLater();
 
 }
 

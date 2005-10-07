@@ -116,15 +116,8 @@ void MetaContactSelectorWidgetLVI::slotPhotoChanged()
 	{
 		int photoSize = d->photoSize;
 		
-		if ( photoImg.width() > photoImg.height() )
-		{
-			photoImg = photoImg.smoothScale( photoSize, photoSize * photoImg.height() / photoImg.width() ) ;
-		}
-		else
-		{
-			photoImg = photoImg.smoothScale( photoSize *  photoImg.width() / photoImg.height() , photoSize );
-		}
-
+		photoImg = photoImg.smoothScale( photoSize, photoSize, QImage::ScaleMin ) ;
+		
 		// draw a 1 pixel black border
 		photoPixmap = photoImg;
 		QPainter p(&photoPixmap);

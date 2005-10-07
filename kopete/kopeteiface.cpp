@@ -87,13 +87,19 @@ QStringList KopeteIface::contactFileProtocols(const QString &displayName)
 {
 	return Kopete::ContactList::self()->contactFileProtocols(displayName);
 }
+
 QString KopeteIface::messageContact( const QString &contactId, const QString &messageText )
 {
 	Kopete::MetaContact *mc = Kopete::ContactList::self()->findMetaContactByContactId( contactId );
-	if ( mc && mc->isReachable() )
+	if ( !mc )
+	{
+		return "No such contact.";
+	}
+
+	if ( mc->isReachable() )
 		Kopete::ContactList::self()->messageContact( contactId, messageText );
 	else
-		return "Unable to send message. The contact is not reachable";
+		return "The contact is not reachable";
 	
 	//Default return value
 	return QString::null;

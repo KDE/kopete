@@ -76,13 +76,21 @@ private:
 	Kopete::Message &parseCustomEmoticons(Kopete::Message &msg);
 	QTimer *m_emoticonTimer;
 	Q3PtrList<KTempFile> m_typewrited;
-	QMap<QString, Q3ValueVector<QString> > m_typewriteDictionary;
+
+	struct InkMessage{
+		Q_UINT32 chunks;
+		QString data;
+	};
+	QMap<QString, InkMessage> m_inkMessageBuffer;
 
 	/** the number of chunk for currents messages */
 	unsigned int m_chunks;
 
 	/** true is we already sent the x-clientcaps message */
 	bool m_clientcapsSent;
+
+private:
+	void DispatchInkMessage(const QString &base64String);
 
 protected:
 	/**
@@ -128,7 +136,7 @@ public slots:
 private slots:
 	void slotOnlineStatusChanged( MSNSocket::OnlineStatus status );
 	void slotSocketClosed(  );
-	void slotReadMessage( const QString &msg );
+	void slotReadMessage( const QByteArray &bytes );
 	void slotEmoticonReceived( KTempFile *, const QString& );
 	void slotIncomingFileTransfer(const QString& from, const QString& fileName, Q_INT64 fileSize);
 	void cleanQueue();

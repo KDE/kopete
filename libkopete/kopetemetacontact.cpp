@@ -321,7 +321,10 @@ void MetaContact::setPhotoSource(PropertySource source)
 	PropertySource oldSource = photoSource();
 	d->photoSource = source;
 	if ( source != oldSource )
+	{
+		Message::clearImageCache();
 		emit photoChanged();
+	}
 }
 
 MetaContact::PropertySource MetaContact::photoSource() const
@@ -450,7 +453,7 @@ unsigned long int MetaContact::idleTime() const
 	for( ; it.current(); ++it )
 	{
 		unsigned long int i = it.current()->idleTime();
-		if( i < time || time == 0 )
+		if( i != 0 && i < time || time == 0 )
 		{
 			time = i;
 		}
@@ -646,8 +649,10 @@ QString nameFromContact( Kopete::Contact *c) /*const*/
 
 	QString contactName;
 	if ( c->hasProperty( Kopete::Global::Properties::self()->nickName().key() ) )
- 		contactName = c->property( Global::Properties::self()->nickName()).value().toString();
-	return contactName.isEmpty() ? c->contactId() : contactName;
+		contactName = c->property( Global::Properties::self()->nickName()).value().toString();
+
+				//the replace is there to workaround the Bug 95444
+	return contactName.isEmpty() ? c->contactId() : contactName.replace('\n',QString::fromUtf8(""));
 }
 
 KURL MetaContact::customPhoto() const
@@ -662,7 +667,10 @@ void MetaContact::setPhoto( const KURL &url )
 	d->customPhotoCache = photoFromCustom();
 
 	if ( photoSource() == SourceCustom )
+	{
+		Message::clearImageCache();
 		emit photoChanged();
+	}
 }
 
 QImage MetaContact::photo() const
@@ -777,6 +785,7 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 
 	if ( photoSource() == SourceContact )
 	{
+		Message::clearImageCache();
 		emit photoChanged();
 	}
 }
@@ -812,16 +821,19 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 				// as the current one is null, lets use this new one
 				if (photo().isNull())
 					setPhotoSourceContact(subcontact);
+					
 			}
 			else if(photoSourceContact() == subcontact)
 			{
 				if(d->photoSyncedWithKABC)
 					setPhotoSyncedWithKABC(true);
+					
+				// Update the contact photo cache.
+				d->contactPhotoCache = photoFromContact(subcontact);
+
+				Message::clearImageCache();
 				emit photoChanged();
 			}
-
-			// Update the contact photo cache.
-			d->contactPhotoCache = photoFromContact(subcontact);
 		}
 	}
 }
@@ -1022,7 +1034,9 @@ bool MetaContact::fromXML( const QDomElement& element )
 			// WTF, why were we not loading the metacontact if nickname was empty.
 			//if ( contactElement.text().isEmpty() )
 			//	return false;
-			d->displayName = contactElement.text();
+			
+			//the replace is there to workaround the Bug 95444
+			d->displayName = contactElement.text().replace('\n',QString::fromUtf8(""));
 
 			if ( contactElement.hasAttribute(NSCID_ELEM) && contactElement.hasAttribute(NSPID_ELEM) && contactElement.hasAttribute(NSAID_ELEM))
 			{
@@ -1144,7 +1158,8 @@ bool MetaContact::fromXML( const QDomElement& element )
 
 	if( oldNameTracking )
 	{
-		if ( displayNameSourceContact() )
+		/* if (displayNameSourceContact() )  <- doesn't work because the contact is only set up when all plugin are loaded (BUG 111956) */
+		if ( !d->nameSourceCID.isEmpty() )
 		{
 // 			kdDebug(14010) << k_funcinfo << "Converting old name source" << endl;
 			// even if the old tracking attributes exists, they could have been null, that means custom
@@ -1164,7 +1179,7 @@ bool MetaContact::fromXML( const QDomElement& element )
 	if ( oldPhotoTracking )
 	{
 // 		kdDebug(14010) << k_funcinfo << "Converting old photo source" << endl;
-		if ( photoSourceContact() )
+		if ( !d->photoSourceCID.isEmpty() )   
 		{
 			setPhotoSource(SourceContact);
 		}

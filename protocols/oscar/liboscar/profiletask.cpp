@@ -69,7 +69,7 @@ void ProfileTask::setAwayMessage( const QString& text )
 void ProfileTask::sendProfileUpdate()
 {
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SEND (CLI_SETUSERINFO/CLI_SET_LOCATION_INFO)" << endl;
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0002, 0x0004, 0x0000, client()->snacSequence() };
 	Buffer *buffer = new Buffer();
 	Buffer capBuf;
@@ -98,6 +98,7 @@ void ProfileTask::sendProfileUpdate()
 		capBuf.addString( oscar_caps[CAP_KOPETE], 16 ); // we are the borg, resistance is futile
 		//capBuf.addString( oscar_caps[CAP_RTFMSGS], 16 ); // we do incoming RTF messages
 		capBuf.addString( oscar_caps[CAP_TYPING], 16 ); // we know you're typing something to us!
+		capBuf.addString( oscar_caps[CAP_BUDDYICON], 16 ); //can you take my picture?
 	}
 	else
 	{

@@ -265,7 +265,7 @@ void Kopete::ChatSession::messageSucceeded()
 
 void Kopete::ChatSession::emitNudgeNotification()
 {
-	KNotification::event( QString::fromLatin1("buzz_nudge"), i18n("A contact send you a buzz/nudge.!") );
+	KNotification::event( QString::fromLatin1("buzz_nudge"), i18n("A contact sent you a buzz/nudge.") );
 }
 
 void Kopete::ChatSession::appendMessage( Kopete::Message &msg )
@@ -491,6 +491,13 @@ void Kopete::ChatSession::inviteContact(const QString& )
 void Kopete::ChatSession::setMayInvite( bool b )
 {
 	d->mayInvite=b;
+}
+
+void Kopete::ChatSession::raiseView()
+{
+	KopeteView *v=view(true, KopetePrefs::prefs()->interfacePreference() );
+	if(v)
+		v->raise(true);
 }
 
 #include "kopetechatsession.moc"

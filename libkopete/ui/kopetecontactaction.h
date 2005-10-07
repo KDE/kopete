@@ -19,7 +19,7 @@
 #define __kopetecontactaction_h__
 
 #include <kaction.h>
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 namespace Kopete
 {

@@ -22,7 +22,7 @@
 #include <qstring.h>
 #include <q3valuelist.h>
 #include <qdatetime.h>
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 class Buffer;
 

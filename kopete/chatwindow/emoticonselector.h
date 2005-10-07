@@ -26,6 +26,8 @@
 #include <QMouseEvent>
 #include <QGridLayout>
 class QGridLayout;
+class QHideEvent;
+class QShowEvent;
 
 class EmoticonLabel : public QLabel
 {
@@ -43,7 +45,6 @@ protected:
 	QString mText;
 };
 
-
 class EmoticonSelector : public QWidget
 {
 	Q_OBJECT
@@ -53,6 +54,7 @@ public:
 	EmoticonSelector ( QWidget *parent = 0, const char *name = 0 );
 //	~EmoticonSelector();
 
+	typedef QValueList<QMovie*> MovieList;
 signals:
 	/**
 	* gets emitted when an emoticon has been selected from the list
@@ -64,6 +66,9 @@ public slots:
 	void prepareList();
 
 protected:
+	virtual void hideEvent( QHideEvent* );
+	virtual void showEvent( QShowEvent* );
+	MovieList movieList;
 	QGridLayout *lay;
 
 protected slots:

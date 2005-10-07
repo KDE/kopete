@@ -19,7 +19,7 @@
 #ifndef EDITACCOUNTWIDGET_H
 #define EDITACCOUNTWIDGET_H
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 namespace Kopete
 {

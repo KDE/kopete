@@ -19,6 +19,7 @@
 
 #include "task.h"
 #include "qstring.h"
+#include "oscarmessage.h"
 
 /**
 @author Kopete Developers
@@ -31,11 +32,18 @@ public:
 
 	//! Set the message to be sent
 	void setMessage( const Oscar::Message& msg );
-	
+
 	//! Are we sending an auto response
 	void setAutoResponse( bool autoResponse );
-	
+
 	virtual void onGo();
+
+private:
+	void addBasicTLVs( Buffer* b );
+	void addChannel1Data( Buffer* b, const QString& message );
+	void addChannel2Data( Buffer* b, const QString& message );
+	void addChannel4Data( Buffer* b, const QString& message );
+	void addRendezvousMessageData( Buffer* b, const QString& message );
 
 private:
 	Oscar::Message m_message;

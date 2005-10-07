@@ -5,7 +5,7 @@
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2003      by Olivier Goffart        <ogoffart @ kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -78,11 +78,13 @@ private slots:
 	void slotEventDone(Kopete::MessageEvent *);
 	void slotConfigChanged();
 	void slotReevaluateAccountStates();
+	void slotRemoveBalloon();
 	void addBalloon();
 
 private:
 	KopeteSystemTray( QWidget* parent, const char* name );
 	QString squashMessage( const Kopete::Message& msgText );
+	void removeBalloonEvent(Kopete::MessageEvent *);
 
 	QTimer *mBlinkTimer;
 	QPixmap mKopeteIcon;
@@ -95,6 +97,7 @@ private:
 	static KopeteSystemTray* s_systemTray;
 
 	Q3PtrList<Kopete::MessageEvent> mEventList;
+	QPtrList<Kopete::MessageEvent> mBalloonEventList;
 	KopeteBalloon *m_balloon;
 };
 

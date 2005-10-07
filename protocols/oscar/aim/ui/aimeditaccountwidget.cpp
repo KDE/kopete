@@ -50,7 +50,8 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 
 		mGui->edtServerAddress->setText( serverEntry );
 		mGui->sbxServerPort->setValue( portEntry );
-	}
+
+    }
 	QObject::connect( mGui->buttonRegister, SIGNAL( clicked() ), this, SLOT( slotOpenRegister() ) );
 
 	/* Set tab order to password custom widget correctly */
@@ -118,5 +119,5 @@ void AIMEditAccountWidget::slotOpenRegister()
 	KRun::runURL( "http://my.screenname.aol.com/_cqr/login/login.psp?siteId=snshomepage&mcState=initialized&createSn=1", "text/html" );
 }
 
-#include "aimeditaccountwidget.moc" 
+#include "aimeditaccountwidget.moc"
 // vim: set noet ts=4 sts=4 sw=4:

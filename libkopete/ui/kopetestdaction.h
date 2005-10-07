@@ -23,7 +23,7 @@
 #include <kaction.h>
 #include <qobject.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 /**
  * @author Ryan Cumming <bodnar42@phalynx.dhs.org>

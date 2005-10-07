@@ -71,7 +71,7 @@ void RateInfoTask::onGo()
 void RateInfoTask::sendRateInfoRequest()
 {
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending rate info request (SNAC 0x01, 0x06)" << endl;
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0001, 0x0006, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
 	Transfer* st = createTransfer( f, s, buffer );
@@ -150,7 +150,7 @@ void RateInfoTask::handleRateInfoResponse()
 void RateInfoTask::sendRateInfoAck()
 {
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending rate info acknowledgement" << endl;
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0001, 0x0008, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
 

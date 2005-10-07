@@ -58,7 +58,7 @@ struct ContactAddedNotifyDialog::Private
 ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 		const QString& contactNick, Kopete::Account *account, uint hide)
 	: KDialogBase( Global::mainWidget(), "ContactAddedNotify", /*modal=*/false,
-				   i18n("Somone Has Added You"), Ok|Cancel    )
+				   i18n("Someone Has Added You"), Ok|Cancel    )
 {
     setAttribute( Qt::WA_DeleteOnClose );
 

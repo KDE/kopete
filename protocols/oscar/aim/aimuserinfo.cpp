@@ -25,9 +25,9 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
-//Added by qt3to4:
 #include <QVBoxLayout>
 #include <Q3Frame>
+#include <qtimer.h>
 
 #include <klocale.h>
 #include <kstandarddirs.h>
@@ -117,6 +117,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, bool 
 			// Update the user view to indicate that we're requesting the user's profile
 			userInfoView->setText(i18n("Requesting User Profile, please wait..."));
 		}
+		QTimer::singleShot(0, this, SLOT(slotUpdateProfile()));
 	}
 }
 
@@ -169,14 +170,10 @@ void AIMUserInfoDialog::slotCloseClicked()
 void AIMUserInfoDialog::slotUpdateProfile()
 {
 	kdDebug(14152) << k_funcinfo << "Got User Profile." << endl;
-
-/*	mMainWidget->txtOnlineSince->setText(m_contact->userInfo().onlinesince.toString());
-	mMainWidget->txtIdleTime->setText(QString::number(m_contact->userInfo().idletime));
-	mMainWidget->txtAwayMessage->setText(m_contact->awayMessage());
-	mMainWidget->txtWarnLevel->setText(QString::number(m_contact->userInfo().evil)); */
-
 	AIMProtocol* p = static_cast<AIMProtocol*>( mAccount->protocol() );
 	QString awayMessage = m_contact->property( p->awayMessage ).value().toString();
+	mMainWidget->txtAwayMessage->setText( awayMessage );
+	
 	if ( awayMessage.isNull() )
 	{
 		mMainWidget->txtAwayMessage->hide();
@@ -187,14 +184,22 @@ void AIMUserInfoDialog::slotUpdateProfile()
 		mMainWidget->txtAwayMessage->show();
 		mMainWidget->lblAwayMessage->show();
 	}
-
+	
+	QString onlineSince =  m_contact->property("onlineSince").value().toString();
+	//QString onlineSince = m_details.onlineSinceTime().toString();
+	mMainWidget->txtOnlineSince->setText( onlineSince );
+	
+	AIMContact* c = static_cast<AIMContact*>( m_contact );
+	mMainWidget->txtIdleTime->setText(c->formattedIdleTime());
+	mMainWidget->txtWarnLevel->setText(QString::number(c->warningLevel())); 
+	
 	QString contactProfile = m_contact->property( p->clientProfile ).value().toString();
 	if ( contactProfile.isNull() )
 	{
 		contactProfile =
 			i18n("<html><body><I>No user information provided</I></body></html>");
 	}
-
+	
 	if(userInfoEdit)
 	{
 		userInfoEdit->setText(contactProfile);
@@ -203,6 +208,7 @@ void AIMUserInfoDialog::slotUpdateProfile()
 	{
 		userInfoView->setText(contactProfile);
 	}
+	
 }
 
 void AIMUserInfoDialog::slotUrlClicked(const QString &url)

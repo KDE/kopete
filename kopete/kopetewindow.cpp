@@ -287,7 +287,7 @@ void KopeteWindow::initActions()
 		Qt::CTRL + Qt::SHIFT + Qt::Key_I, Qt::META + Qt::CTRL + Qt::Key_I, Kopete::ChatSessionManager::self(), SLOT(slotReadMessage()) );
 
 	globalAccel->insert( QString::fromLatin1("Show/Hide Contact List"), i18n("Show/Hide Contact List"), i18n("Show or hide the contact list"),
-		Qt::CTRL + Qt::SHIFT + Qt::Key_A, Qt::META + Qt::CTRL + Qt::Key_A, this, SLOT(slotShowHide()) );
+		CTRL+SHIFT+Key_S, KKey::QtWIN+CTRL+Key_S, this, SLOT(slotShowHide()) );
 
 	globalAccel->insert( QString::fromLatin1("Set Away/Back"), i18n("Set Away/Back"), i18n("Sets away from keyboard or sets back"),
 		Qt::CTRL + Qt::SHIFT + Qt::Key_W, Qt::META + Qt::CTRL + Qt::SHIFT + Qt::Key_W, this, SLOT(slotToggleAway()) );
@@ -367,7 +367,6 @@ bool KopeteWindow::eventFilter( QObject* target, QEvent* event )
 
         if ( event->type() == QEvent::Hide )
         {
-            kdDebug() << k_funcinfo << "clearing search label" << endl;
             resetAction->activate();
             return true;
         }

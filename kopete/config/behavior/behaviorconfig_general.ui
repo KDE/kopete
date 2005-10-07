@@ -55,7 +55,7 @@
                         <string>Start with hidden &amp;main window</string>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Start with the main window minimised to the system tray</string>
+                        <string>Start with the main window minimized to the system tray</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>Start with the main window hidden. The only visible item is the system tray icon.</string>
@@ -85,7 +85,7 @@
                         <string>Use a message queue instead of instantly opening a chat window on incoming messages</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Use a message for new incoming messages. New messages are messages that cannot be displayed in an already open chat window. Only queued messages triggers notification via bubble and flashing tray.</string>
+                        <string>Use a message queue for new incoming messages. New messages are messages that cannot be displayed in an already open chat window. Only queued messages trigger notification via the bubble, a flashing tray icon, or both.</string>
                     </property>
                 </widget>
                 <widget class="QLayoutWidget">
@@ -127,7 +127,7 @@
                                 <string>Also add unread messages to queue</string>
                             </property>
                             <property name="whatsThis" stdset="0">
-                                <string>Unread messages are messages that will be displayed in an already opened but inactive chat window. Only incoming queued messages triggers notification via bubble and flashing tray. With this option disabled only new incoming messages are queued, i.e. messages that cannot be displayed in an already open chat window.</string>
+                                <string>Unread messages are messages that will be displayed in an already opened but inactive chat window. Only incoming queued messages trigger notification via the bubble, the flashing tray icon, or both. With this option disabled only new incoming messages are queued, i.e. messages that cannot be displayed in an already open chat window.</string>
                             </property>
                         </widget>
                     </hbox>
@@ -157,7 +157,7 @@
                         <string>Use mouse navigation instead of scroll-bars for contact list</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>This navigation scheme is designed to remove the vertical scrollbar. Instead of dragging the scrollbar you just move your mouse on the list vertically: as you move your mouse, the list will move in the opposite direction and you can reach your target contact. Every contact list item collides with the mouse cursor at one certain point.</string>
+                        <string>This navigation scheme is designed to remove the vertical scrollbar. Instead of dragging the scrollbar you just move your mouse on the list vertically: as you move your mouse, the list will move in the opposite direction and you can reach your target contact. Each contact will be under the mouse cursor at a certain point.</string>
                     </property>
                 </widget>
             </vbox>

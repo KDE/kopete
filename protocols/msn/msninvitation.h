@@ -21,7 +21,7 @@
 //Added by qt3to4:
 #include <QByteArray>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 class QObject;
 

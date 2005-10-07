@@ -22,13 +22,13 @@
 #include <iostream>
 
 
-#include "kopete_export.h"
 #include "videoinput.h"
 #include <qstring.h>
 #include <qimage.h>
 #include <q3valuevector.h>
 #include <kcombobox.h>
 #include "videodevice.h"
+#include "kopete_export.h"
 
 namespace Kopete {
 
@@ -39,6 +39,14 @@ This class allows kopete to check for the existence, open, configure, test, set 
 
 @author Cláudio da Silveira Pinheiro
 */
+struct VideoDeviceModel
+{
+	QString name;
+	size_t count;
+};
+
+typedef Q3ValueVector<Kopete::AV::VideoDevice> VideoDeviceVector;
+typedef Q3ValueVector<VideoDeviceModel> VideoDeviceModelVector;
 
 class VideoDevicePoolPrivate;
 
@@ -65,7 +73,8 @@ public:
 	int selectInput(int newinput);
 	int scanDevices();
 	~VideoDevicePool();
-	Q3ValueVector<Kopete::AV::VideoDevice> m_videodevice;
+	VideoDeviceVector m_videodevice;
+	VideoDeviceModelVector m_model;
 	int fillDeviceKComboBox(KComboBox *combobox);
 	int fillInputKComboBox(KComboBox *combobox);
 	unsigned int currentDevice();
@@ -73,6 +82,8 @@ public:
 	unsigned int inputs();
 	bool getAutoColorCorrection();
 	bool setAutoColorCorrection(bool colorcorrection);
+	void loadConfig(); // Load configuration parameters;
+	void saveConfig(); // Save configuretion parameters;
 
 protected:
 	int xioctl(int request, void *arg);

@@ -77,7 +77,7 @@ GroupWiseAddContactPage::~GroupWiseAddContactPage()
 
 bool GroupWiseAddContactPage::apply( Kopete::Account* account, Kopete::MetaContact* parentContact )
 {
-	if ( m_canadd && validateData() )
+	if ( validateData() )
 	{
 		QString contactId;
 		QString displayName;
@@ -101,7 +101,10 @@ bool GroupWiseAddContactPage::apply( Kopete::Account* account, Kopete::MetaConta
 
 bool GroupWiseAddContactPage::validateData()
 {
-	return ( m_searchUI->m_results->selectedItem() );
+	if ( m_canadd )
+		return ( m_searchUI->m_results->selectedItem() );
+	else
+		return false;
 }
 
 #include "gwaddcontactpage.moc"

@@ -159,7 +159,7 @@ void UserDetails::fill( Buffer * buffer )
 #endif
 				break;
 			case 0x0004: //idle time
-				m_idleTime = b.getWord();
+				m_idleTime = b.getWord() * 60;
 #ifdef OSCAR_USERINFO_DEBUG
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Idle time is " << m_idleTime << endl;
 #endif
@@ -179,7 +179,11 @@ void UserDetails::fill( Buffer * buffer )
 			case 0x000C: //DC info
 				m_dcInsideIp = KNetwork::KIpAddress( ntohl( b.getDWord() ) );
 				m_dcPort = b.getDWord();
-				m_dcType = b.getByte();
+#ifdef OSCAR_USERINFO_DEBUG
+    			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Internal IP address is " << m_dcInsideIp.toString() << endl;
+    			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Port number is " << m_dcPort << endl;
+#endif
+    			m_dcType = b.getByte();
 				m_dcProtoVersion = b.getWord();
 				m_dcAuthCookie = b.getDWord();
 				m_dcWebFrontPort = b.getDWord();

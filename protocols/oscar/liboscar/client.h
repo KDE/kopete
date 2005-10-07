@@ -28,12 +28,13 @@
 //Added by qt3to4:
 #include <Q3ValueList>
 #include <QByteArray>
-#include <kopete_export.h>
+#include "kopete_export.h"
 #include "rtf2html.h"
 #include "transfer.h"
 #include "icquserinfo.h"
 #include "userdetails.h"
 #include "oscartypeclasses.h"
+#include "oscarmessage.h"
 
 class Connection;
 class StageOneLoginTask;
@@ -60,6 +61,9 @@ public:
 		NonFatalProtocolError = 2,
 		FatalProtocolError = 3
 	};
+
+	enum AIMStatus { Online = 0, Away };
+	enum ICQStatus { ICQOnline = 0, ICQAway, ICQNotAvailable, ICQOccupied, ICQDoNotDisturb, ICQFreeForChat };
 
 	/*************
 	  EXTERNAL API
@@ -93,7 +97,6 @@ public:
 	/** Logout and disconnect */
 	void close();
 
-	enum AIMStatus { Online = 0, Away };
 	/** Set our status for AIM */
 	void setStatus( AIMStatus status, const QString &message = QString::null );
 	/** Set our status for ICQ */
@@ -244,6 +247,13 @@ public:
 	 */
 	void requestAIMAwayMessage( const QString& contact );
 
+	/**
+	 * Request the icq away message
+	 * \param contact the contact to get info for
+	 */
+	//TODO only made a default for testing w/o frontend
+	void requestICQAwayMessage( const QString& contact, ICQStatus contactStatus = ICQAway );
+
 	/** Request the extended status info */
 	void requestStatusInfo( const QString& contact );
 
@@ -260,7 +270,8 @@ public:
 	void requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE hashType );
 
 	//! Start a server redirect for a different service
-	void requestServerRedirect( WORD family );
+	void requestServerRedirect( WORD family, WORD e = 0, QByteArray c = QByteArray(),
+                                WORD instance = 0, const QString& room = QString::null );
 
 	//! Start uploading a buddy icon
 	void sendBuddyIcon( const QByteArray& imageData );
@@ -278,6 +289,9 @@ public:
 	void connectToIconServer();
 
 	bool hasIconConnection() const;
+
+    /** We've finished chatting in a chat room, disconnect from it */
+    void disconnectChatRoom( WORD exchange, const QString& room );
 
 
 	/*************
@@ -299,6 +313,9 @@ public:
 
 	/** The current user's password */
 	QString password() const;
+
+	/** The current status message (a.k.a. away message) */
+	QString statusMessage() const;
 
 	/** ICQ Settings */
 	bool isIcq() const;
@@ -384,6 +401,9 @@ signals:
 
 	/* Chat rooms */
 	void chatNavigationConnected();
+    void chatRoomConnected( WORD, const QString& );
+    void userJoinedChat( Oscar::WORD, const QString& room, const QString& contact );
+    void userLeftChat( Oscar::WORD, const QString& room, const QString& contact );
 
 	/* service redirection */
 	void redirectionFinished( WORD );
@@ -417,6 +437,9 @@ protected slots:
 	/** we have normal user info for a contact */
 	void receivedInfo( Q_UINT16 sequence );
 
+	/** received a message of some kind */
+	void receivedMessage( const Oscar::Message& msg );
+
 	void offlineUser( const QString&, const UserDetails& );
 
 	void haveServerForRedirect( const QString& host, const QByteArray& cookie, WORD family );
@@ -428,8 +451,12 @@ protected slots:
      * Set the list of chat room exchanges we have
      */
     void setChatExchangeList( const Q3ValueList<int>& exchanges );
-
-
+    
+    /**
+     * set up the connection to a chat room
+     */
+    void setupChatConnection( WORD, QByteArray, WORD, const QString& );
+    
     void determineDisconnection( int, const QString& );
 
 private:

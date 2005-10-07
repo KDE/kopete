@@ -117,6 +117,8 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent, const char* name)
 	connect(mMainWidget->tbRemove, SIGNAL(clicked()), SLOT(slotRemoveButton()));
 
 	connect(this, SIGNAL(okClicked()), this, SLOT(slotOkClicked()));
+
+	resize(QSize(450, 450));
 }
 
 void TooltipEditDialog::slotOkClicked()

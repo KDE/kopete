@@ -1,6 +1,11 @@
+if include_msn_webcam
+WEBCAM = webcam
+WEBCAM_LIBMINICWRAPPER = webcam/libmimicwrapper.la
+endif
+
 KDE_OPTIONS = nofinal
 METASOURCES = AUTO
-SUBDIRS = ui webcam . icons config
+SUBDIRS = ui $(WEBCAM) . icons config
 AM_CPPFLAGS = -Iui \
 	-I$(srcdir)/webcam \
 	-I$(srcdir)/ui \
@@ -19,7 +24,7 @@ libkopete_msn_shared_la_SOURCES = msnprotocol.cpp msnaccount.cpp \
 	p2p.cpp messageformatter.cpp incomingtransfer.cpp outgoingtransfer.cpp \
 	webcam.cpp
 
-libkopete_msn_shared_la_LIBADD  = ./ui/libkopetemsnui.la ../../libkopete/libkopete.la ./webcam/libmimicwrapper.la ../../libkopete/avdevice/libkopete_videodevice.la   $(LIB_KIO)
+libkopete_msn_shared_la_LIBADD  = ./ui/libkopetemsnui.la ../../libkopete/libkopete.la $(WEBCAM_LIBMINICWRAPPER) ../../libkopete/avdevice/libkopete_videodevice.la   $(LIB_KIO)
 libkopete_msn_shared_la_LDFLAGS = -version-info 0:0:0 -no-undefined $(all_libraries)
 
 kopete_msn_la_SOURCES = dummy.cpp webcam.cpp

@@ -23,7 +23,7 @@
 #include <q3ptrlist.h>
 #include <q3dict.h>
 #include <QColor>
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 
 namespace Kopete {
@@ -157,7 +157,7 @@ public slots:
 	/**
 	 * \brief Connect or make available every account.
 	 * Make all accounts Available, by setting status, and connecting if necessary.
-	 * Accounts which are @ref excludeConnect() are excepted from connection.
+	 * Accounts are connected based on their excludeConnect() setting.
 	 * Accounts which are already connected are controlled regardless of their excludeConnect() setting.
 	 * This is a slot, so you can connect directly to it from e.g. a KAction.
 	 * @param awayReason is the away(status) message that will be set.

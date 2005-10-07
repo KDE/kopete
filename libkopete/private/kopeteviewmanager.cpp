@@ -262,10 +262,10 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
                                         body.arg( Q3StyleSheet::escape(msgFrom), Q3StyleSheet::escape(msgText) ),
                                         QPixmap(), w, QStringList( i18n( "View" ) ) , contexts );
 
-                connect(notify,SIGNAL(activated(unsigned int )), const_cast<Kopete::Contact*>(msg.from()) , SLOT(execute()) );
-            }
-        }
-    }
+				connect(notify,SIGNAL(activated(unsigned int )), manager , SLOT(raiseView()) );
+			}
+		}
+	}
 }
 
 void KopeteViewManager::readMessages( Kopete::ChatSession *manager, bool outgoingMessage, bool activate )

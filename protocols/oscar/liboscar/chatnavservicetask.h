@@ -48,7 +48,8 @@ public:
     Q3ValueList<int> exchangeList() const;
 
 signals:
-    void haveChatExchanges( const Q3ValueList<int>& );
+    void haveChatExchanges( const QValueList<int>& );
+    void connectChat( WORD, QByteArray, WORD, const QString& );
 
 private:
 	void handleExchangeInfo( const TLV& t );
@@ -56,7 +57,11 @@ private:
     void handleCreateRoomInfo( const TLV& t );
 
 private:
+<<<<<<< .working
     Q3ValueList<int> m_exchanges;
+=======
+    QValueList<int> m_exchanges;
+>>>>>>> .merge-right.r467724
 	RequestType m_type;
 };
 

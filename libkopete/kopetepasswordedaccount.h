@@ -19,7 +19,7 @@
 
 #include "kopeteaccount.h"
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 class Kopete::OnlineStatus;
 

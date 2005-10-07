@@ -437,6 +437,7 @@ void YahooAccount::disconnect()
 	{
 		kdDebug(14180) <<  "Attempting to disconnect from Yahoo server " << endl;
 
+		m_keepaliveTimer->stop();
 		m_session->logOff();
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 
@@ -469,7 +470,7 @@ void YahooAccount::slotKeepalive()
 	{	
 		m_session->keepalive();
 		m_session->sendIm( accountId(), accountId(), QString("<ping>"), pictureFlag() );
-		kdDebug(14180) << "Ping paket sent." << endl;
+		kdDebug(14180) << "Ping packet sent." << endl;
 	}
 	m_waitingForResponse = true;
 }
@@ -713,7 +714,7 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	// Check for ping-messages
 	if( contact( who ) == myself() && msg.startsWith("<ping>") )
 	{
-		kdDebug(14180) << "Ping paket received." << endl;
+		kdDebug(14180) << "Ping packet received." << endl;
 		m_waitingForResponse = false;
 		return;
 	}
@@ -737,6 +738,9 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	
 	kdDebug(14180) << "Message after stripping color codes '" << newMsgText << "'" << endl;
 
+	newMsgText.replace( QString::fromLatin1( "&" ), QString::fromLatin1( "&amp;" ) );
+	
+	// Replace Font tags
 	regExp.setMinimal( true );
 	regExp.setPattern( "<font([^>]*)size=\"([^>]*)\"([^>]*)>" );
 	pos = 0;
@@ -747,6 +751,37 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 			newMsgText.replace( regExp, QString::fromLatin1("<font\\1style=\"font-size:\\2pt\">" ) );
 		}
 	}
+	
+	// Replace < and > in text
+	regExp.setPattern( "<(?![\"/fbui])" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( newMsgText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			newMsgText.replace( regExp, QString::fromLatin1("&lt;" ) );
+		}
+	}
+	regExp.setPattern( "([^\"bui])>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( newMsgText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			newMsgText.replace( regExp, QString::fromLatin1("\\1&gt;" ) );
+		}
+	}
+	
+	// add closing tags when needed
+	regExp.setMinimal( false );
+	regExp.setPattern( "(<b>.*)(?!</b>)" );
+	newMsgText.replace( regExp, QString::fromLatin1("\\1</b>" ) );
+	regExp.setPattern( "(<i>.*)(?!</i>)" );
+	newMsgText.replace( regExp, QString::fromLatin1("\\1</i>" ) );
+	regExp.setPattern( "(<u>.*)(?!</u>)" );
+	newMsgText.replace( regExp, QString::fromLatin1("\\1</u>" ) );
+	regExp.setPattern( "(<font.*)(?!</font>)" );
+	newMsgText.replace( regExp, QString::fromLatin1("\\1</font>" ) );
 	
 	newMsgText.replace( QString::fromLatin1( "\r" ), QString::fromLatin1( "<br/>" ) );
 	
@@ -890,11 +925,13 @@ void YahooAccount::slotError( const QString &err, int fatal )
 	kdDebug(14180) << k_funcinfo << fatal << ": " << err << endl;
 	m_lastDisconnectCode = fatal;
 	m_keepaliveTimer->stop();
-	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, i18n( "<qt>The connection with the Yahoo server was lost.</qt>" ), 
-						i18n( "Connection Lost - Yahoo Plugin" ) );
+	if(isConnected()) { // If we are already disconnected we don't need this MessageBox (<heiko@rangun.de>)
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, i18n( "<qt>The connection with the Yahoo server was lost.</qt>" ), 
+							i18n( "Connection Lost - Yahoo Plugin" ) );
 	
-	if ( fatal == 1 || fatal == 2 || fatal == -1 )
-		disconnect();
+		if ( fatal == 1 || fatal == 2 || fatal == -1 )
+			disconnect();
+	}
 }
 
 void YahooAccount::slotRemoveHandler( int /* fd */ )
@@ -936,7 +973,7 @@ void YahooAccount::slotGotBuddyIconChecksum(const QString &who, int checksum)
 		kdDebug(14180) << k_funcinfo << "Icon already exists. I will not request it again." << endl;
 		return;
 	} else
-		m_session->requestBuddyIcon( who );;	
+		m_session->requestBuddyIcon( who );
 }
 
 void YahooAccount::slotGotBuddyIconInfo(const QString &who, KURL url, int checksum)

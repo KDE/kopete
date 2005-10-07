@@ -174,16 +174,18 @@ ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 	emailAddress(Kopete::Global::Properties::self()->emailAddress()),
 	ipAddress("ipAddress", i18n("IP Address") ),
 	clientFeatures("clientFeatures", i18n("Client Features"), 0, false),
-	buddyIconHash("iconHash", i18n("Buddy Icon MD5 Hash"), QString::null, true, false, true)
+	buddyIconHash("iconHash", i18n("Buddy Icon MD5 Hash"), QString::null, true, false, true),
+    contactEncoding( "contactEncoding", i18n( "Contact Encoding" ), QString::null, true, false, true )
+
 {
 	if (protocolStatic_)
 		kdWarning(14153) << k_funcinfo << "ICQ plugin already initialized" << endl;
 	else
 		protocolStatic_ = this;
-	
+
 	// must be done after protocolStatic_ is set...
 	statusManager_ = new ICQ::OnlineStatusManager;
-	
+
 	addAddressBookField("messaging/icq", Kopete::Plugin::MakeIndexField);
 
 	initGenders();
@@ -525,8 +527,6 @@ void ICQProtocol::initLang()
 
 void ICQProtocol::initEncodings()
 {
-	mEncodings.insert(0 , i18n("Automatic")); // guess encoding instead of hardcoding
-
 	mEncodings.insert(2026, i18n("Big5"));
 	mEncodings.insert(2101, i18n("Big5-HKSCS"));
 	mEncodings.insert(18, i18n("euc-JP Japanese"));
@@ -760,14 +760,23 @@ Kopete::Contact *ICQProtocol::deserializeContact( Kopete::MetaContact *metaConta
 	uint ssiGid = 0, ssiBid = 0, ssiType = 0xFFFF;
 	QString ssiName;
 	bool ssiWaitingAuth = false;
+    if ( serializedData.contains( "ssi_name" ) )
 	ssiName = serializedData["ssi_name"];
+
+    if ( serializedData.contains( "ssi_waitingAuth" ) )
+    {
 	QString authStatus = serializedData["ssi_waitingAuth"];
 	if ( authStatus == "true" )
 		ssiWaitingAuth = true;
+    }
+
+    if ( serializedData.contains( "ssi_gid" ) )
 	ssiGid = serializedData["ssi_gid"].toUInt();
+    if ( serializedData.contains( "ssi_bid" ) )
 	ssiBid = serializedData["ssi_bid"].toUInt();
+    if ( serializedData.contains( "ssi_type" ) )
 	ssiType = serializedData["ssi_type"].toUInt();
-	
+
 	Oscar::SSI item( ssiName, ssiGid, ssiBid, ssiType, Q3ValueList<TLV>(), 0 );
 	item.setWaitingAuth( ssiWaitingAuth );
 	ICQContact *c = new ICQContact( account, contactId, metaContact, QString::null, item );
@@ -780,7 +789,7 @@ AddContactPage *ICQProtocol::createAddContactWidget(QWidget *parent, Kopete::Acc
 }
 
 KopeteEditAccountWidget *ICQProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
-{	
+{
 	return new ICQEditAccountWidget(this, account, parent);
 }
 

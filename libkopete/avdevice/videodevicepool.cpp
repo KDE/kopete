@@ -16,9 +16,6 @@
 */
 
 #include <assert.h>
-#include <iostream>
-#include <ostream>
-#include <sstream>
 #include <cstdlib>
 #include <cerrno>
 #include <cstring>
@@ -310,8 +307,8 @@ int VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
 	{
 		for (unsigned int loop=0; loop < m_videodevice.size(); loop++)
 		{
-			combobox->insertItem(m_videodevice[loop].name);
-			kdDebug() <<  k_funcinfo << "DeviceKCombobox: Added device " << loop << ": " << m_videodevice[loop].name << endl;
+			combobox->insertItem(m_videodevice[loop].m_name);
+			kdDebug() <<  k_funcinfo << "DeviceKCombobox: Added device " << loop << ": " << m_videodevice[loop].m_name << endl;
 		}
 		combobox->setCurrentItem(currentDevice());
 	}
@@ -331,8 +328,8 @@ int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 		if(m_videodevice[currentDevice()].inputs()>0)
 			for (unsigned int loop=0; loop < m_videodevice[currentDevice()].inputs(); loop++)
 			{
-				combobox->insertItem(m_videodevice[currentDevice()].input[loop].name);
-				kdDebug() <<  k_funcinfo << "InputKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].input[loop].name << " (tuner: " << m_videodevice[currentDevice()].input[loop].hastuner << ")" << endl;
+				combobox->insertItem(m_videodevice[currentDevice()].m_input[loop].name);
+				kdDebug() <<  k_funcinfo << "InputKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].m_input[loop].name << " (tuner: " << m_videodevice[currentDevice()].m_input[loop].hastuner << ")" << endl;
 			}
 		return EXIT_SUCCESS;
 	}
@@ -392,7 +389,13 @@ int VideoDevicePool::scanDevices()
 			videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
 			if(videodevice.isOpen())
 			{
+				VideoDeviceModel devicemodel;
 				kdDebug() <<  k_funcinfo << "File " << videodevice.full_filename << " was opened successfuly" << endl;
+
+				devicemodel.name=videodevice.m_name;
+				devicemodel.count++;
+				m_model.push_back(devicemodel);
+
 				videodevice.close();
 				m_videodevice.push_back(videodevice);
 			}
@@ -414,7 +417,13 @@ int VideoDevicePool::scanDevices()
 		videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
 		if(videodevice.isOpen())
 		{
+			VideoDeviceModel devicemodel;
 			kdDebug() <<  k_funcinfo << "File " << videodevice.full_filename << " was opened successfuly" << endl;
+
+			devicemodel.name=videodevice.m_name;
+			devicemodel.count++;
+			m_model.push_back(devicemodel);
+
 			videodevice.close();
 			m_videodevice.push_back(videodevice);
 		}
@@ -450,6 +459,50 @@ unsigned int VideoDevicePool::inputs()
 {
     /// @todo implement me
 	return m_videodevice[currentDevice()].inputs();
+}
+
+/*!
+    \fn Kopete::AV::VideoDevicePool::loadConfig()
+ */
+void VideoDevicePool::loadConfig()
+{
+    /// @todo implement me
+}
+
+/*!
+    \fn Kopete::AV::VideoDevicePool::saveConfig()
+ */
+void VideoDevicePool::saveConfig()
+{
+    /// @todo implement me
+	if(hasDevices())
+	{
+		if(m_model.size())
+		{
+			VideoDeviceModelVector::iterator vmiterator;
+			for( vmiterator = m_model.begin(); vmiterator != m_model.end(); ++vmiterator )
+			{
+				kdDebug() << "Device Model: " << (*vmiterator).name << endl;
+				kdDebug() << "Device Count: " << (*vmiterator).count << endl;
+			}
+		}
+		VideoDeviceVector::iterator vditerator;
+		for( vditerator = m_videodevice.begin(); vditerator != m_videodevice.end(); ++vditerator )
+		{
+			kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Name:" << (*vditerator).m_name << endl;
+			kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Current input:" << (*vditerator).currentInput() << endl;
+			for (size_t input = 0 ; input < (*vditerator).m_input.size(); input++)
+			{
+				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Brightness: " << (*vditerator).m_input[input].getBrightness() << endl;
+				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Contrast  : " << (*vditerator).m_input[input].getContrast()   << endl;
+				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Saturation: " << (*vditerator).m_input[input].getSaturation() << endl;
+				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Hue       : " << (*vditerator).m_input[input].getHue()        << endl;
+				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Automatic brightness / contrast: " << (*vditerator).m_input[input].getAutoBrightnessContrast() << endl;
+				kdDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Automatic color correction     : " << (*vditerator).m_input[input].getAutoColorCorrection() << endl;
+			}
+		}
+		kdDebug() << endl;
+	}
 }
 
 

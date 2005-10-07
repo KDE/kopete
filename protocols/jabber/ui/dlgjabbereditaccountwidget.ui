@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>525</width>
-            <height>432</height>
+            <width>637</width>
+            <height>456</height>
         </rect>
     </property>
     <property name="caption">
@@ -667,7 +667,7 @@ If two resources have the same priority, the messages will be sent to the one co
                                             <cstring>textLabel2</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>Local &amp;IP address:</string>
+                                            <string>Public &amp;IP address:</string>
                                         </property>
                                         <property name="buddy" stdset="0">
                                             <cstring>leLocalIP</cstring>
@@ -680,10 +680,11 @@ If two resources have the same priority, the messages will be sent to the one co
                                     <cstring>textLabel3</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&lt;i&gt;&lt;ul&gt;&lt;li&gt;The information in the local IP and port fields apply to all Jabber accounts.&lt;/li&gt;
-&lt;li&gt;You can leave the local IP address empty if you do not use NAT.&lt;/li&gt;
+                                    <string>&lt;i&gt;&lt;ul&gt;&lt;li&gt;The information in the "public IP address" and "port" fields apply to all Jabber accounts.&lt;/li&gt;
+&lt;li&gt;You can leave the "public IP address" empty if you do not use NAT.&lt;/li&gt;
 &lt;li&gt;A hostname is also valid.&lt;/li&gt;
-&lt;li&gt;Changes to these fields will only take effect the next time you start Kopete.&lt;/li&gt;&lt;li&gt;The Proxy JID can be configured per account.&lt;/li&gt;&lt;/ul&gt;&lt;/i&gt;</string>
+&lt;li&gt;Changes to these fields will only take effect the next time you start Kopete.&lt;/li&gt;
+&lt;li&gt;The "Proxy JID" can be configured per account.&lt;/li&gt;&lt;/ul&gt;&lt;/i&gt;</string>
                                 </property>
                                 <property name="alignment">
                                     <set>WordBreak|AlignVCenter</set>
@@ -960,7 +961,7 @@ If two resources have the same priority, the messages will be sent to the one co
 </customwidgets>
 <images>
     <image name="image0">
-        <data format="PNG" length="866">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b0000032949444154388db59531681b6714c77f32373c8186ef0305eea005093258900eca26d30e3174a8a807d1c9ee940e5d4a276f09a414e22974ee609a4c75a0857a70a20c199ce93424e43414aee0c26910dc8105f7410df706413a7c915551db049a3e38b87bf7bedffddfc7ff7d578be398456c6c6cbce13d441cc7b5da02fcf4e8e99bde7a8f899b501515d959f64e10e71cd949c6e8d508e6cb7cb050fae49727444d87ed08a566dc0cea545a621b96725e62c522f312c4929ff9e7725e6203439282ec0bc72f74150c30c927d89690163f539619a044564973a1980ae54c01c136a1db518a0024808942780dead16a27e7e0ca55949a81668023b242fcd2901c394663072cd408ad75e18b6d43a7076143710aa1b9049ccd326e064a5979e8f0191cfc5878544368af1b24807caa4cfe507ef8aea0bf6dd8b92de7f00bc1562c95e64416e297f216aadcfa3ca43f10da1f8243112286871507fb05c3c7059d568bde96c5885b01af2d6e4a2db10dc8ff128e0fdd39f4cbaf8576dbe170702afcf6b86467bbce57df8680f0d3230767e0e62bdc55c5e53c476742fabbc318437f209886c3cd41d4b0f74049c78ef21476ef5846cf7ded2831848d55f0aa62816caade11adb7ed2fa0f71ce9d8619ac2e627824a45a72b00e413c5a95c0cf63e052bbe2014bfa738c3de3d251dfb0f8a80fda04e6480600113cc558a11a0e10b93a9225886cff04a8d10868662eab87f37271e59f2136f85a855bfda15f9594eb7a3b4ae0b933f95e161c5ceed88f254e97f2ad49b75eedf8562e2d8fb264355314da1dbada866abe47fedb106d01f78b71fec170c8f7276ef58da3de8f64a76bf6f634283730e9d2b9b8390ce0dae565c6a8e04b0710b746678f8a8e0e18382d173a1d7151c909fe4e84ccf57be3e76245b115143584ee73f27afc8e80b4c667e4c37b7054c8be1afde0de978a9c63485fea0457cec70aa089015ab9297e0938c240573cdb7651a4a7f20f43feb304a72aac2e73bd723da1fe5746ec0682bc26070f38c345905d7e238f6077c00dd8f85280211fcd91af84b02ef94a50c004502c1394813252f14575ca09839242f9484cb42df31e763edd237ff31d6c0ffa3fe17f0fb86c7715cfb1ba8bd86cc8d2decd30000000049454e44ae426082</data>
+        <data format="PNG" length="868">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b0000032b49444154388db59531681b6714c77f32373c8186ef0305eea0050932f8201d944d493bc4d0a1a21e4427bb533a74299dbc25905288a7d0b9836932d58116eac1411932388ba421a5a7a17005174e83e00e2cb80f6ab83708d2e18bec8ada26d0f4c1c1ddbbf7fdeeff3efeefbbda70346419b76fdd7ecd3b88e16858ab2dc183c3c1ebee7a97a99b521515d969f65610e71cd971c6f8d7312ccef3c152e9b39f9e11351d36164acdb819d4a9b4c4362ce5a2c48a45162588253ff5cfe5a2c406862405d9138e5eea2a18609a4fb12d212d7ea42c334089ac92e6423113cab902826d4227568a002480a942780dead16a2767e0ca55949a81668023b2c2e8952139748c270e58aa115aebc2675b86b80b6143710aa1b9049ccd336e064a5979e8e039ec7f5f78544368af1b24807ca64cff50befba6a0b765d8be2b67f00bc1562c95e6441646afe40d54b9f36948af2fb4df078722440c0e2af6f70a064f0be2568beea6c5885b01af2d6f4a2db10dc8ff128e0edc19f4f32f8576dbe1707022fcf2b4647babce175f8780f0c31307a7e0162bdc55c5e52247e742fabbc31843af2f9886c32d40d4b0fb4849278ef20476ee59c62f7ced3831848d55f0aa62816ca6de11ad37ed2fa10f1ce9c4619ac2c647824a45dc1100f2a9e2542e067b9f82155f108adf539c61f781924efc0745c0be57273240b08409e62ac508d0f085c94c112c83e778a54608434331733cbc9f331a5bf2636f85a855bfda15f9694e27565ad785e99fcae0a062fb6e4479a2f43e16eacd3a0fef433175ec7e95a1aa98a6d0e95454f355f2bff65803e8f5bddbf7f70a0687393bf72ced2e74ba253bdfb631a1c139872e948d7e487c83ab15979a2301dcba033a373c7e52f0f851c1f885d0ed080ec88f7374ae672b7f3b72249b115143389fce7f4e5e91d11398cefd986e6c099816839fbd1bd2c9b91ad3147afd16a32387534580ac58957c0e3ece485230d77c5ba6a1f4fa42ef9398719253153e1f5f8f687f9013df80f16684c1e0161969b20aae0d47437fc007d0f950882210c19fad81bf24f04e399701a04820380769a2e485e28a0b14b380e4a5927059e85be67cac5dfae63fc61af87fd4ff027ed7f0e16858fb1ba5cd86c64770b2e90000000049454e44ae426082</data>
     </image>
 </images>
 <connections>
@@ -1006,7 +1007,4 @@ If two resources have the same priority, the messages will be sent to the one co
     <tabstop>btnChangePassword</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kopete::ui::passwordwidget.h</includehint>
-</includehints>
 </UI>

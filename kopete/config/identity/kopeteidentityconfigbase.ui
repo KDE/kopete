@@ -38,7 +38,7 @@
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>Identity :</string>
+                        <string>Identity:</string>
                     </property>
                 </widget>
                 <widget class="KComboBox">
@@ -343,10 +343,13 @@
                                             <number>1</number>
                                         </property>
                                         <property name="text">
-                                            <string>Photo</string>
+                                            <string>&lt;center&gt;Photo&lt;/center&gt;</string>
+                                        </property>
+                                        <property name="textFormat">
+                                            <enum>RichText</enum>
                                         </property>
                                         <property name="scaledContents">
-                                            <bool>true</bool>
+                                            <bool>false</bool>
                                         </property>
                                     </widget>
                                     <spacer>

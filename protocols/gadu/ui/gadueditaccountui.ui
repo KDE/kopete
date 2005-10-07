@@ -839,7 +839,6 @@ If you do not currently have an account, please click the button to create one.<
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klineedit.h</includehint>
-    <includehint>kopete::ui::passwordwidget.h</includehint>
     <includehint>krestrictedline.h</includehint>
 </includehints>
 </UI>

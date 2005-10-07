@@ -64,7 +64,7 @@ bool SSIParamsTask::take(Transfer* transfer)
 
 void SSIParamsTask::onGo()
 {
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0013, 0x0002, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
 	

@@ -148,7 +148,7 @@ void SSIListTask::handleSSIListReply()
 void SSIListTask::checkSSITimestamp()
 {
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Checking the timestamp of the SSI list" << endl;
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0013, 0x0005, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
 	buffer->addDWord( client()->ssiManager()->lastModificationTime() );

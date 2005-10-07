@@ -32,6 +32,7 @@
 #include <QMouseEvent>
 #include <QLabel>
 #include <QGridLayout>
+#include <qobjectlist.h>
 
 #include <kdebug.h>
 
@@ -89,9 +90,11 @@ void EmoticonSelector::prepareList(void)
 */	}
 
 	lay = new QGridLayout(this, 0, 0, 4, 4, "emoticonLayout");
+	movieList.clear();
 	for (QMap<QString, QString>::Iterator it = list.begin(); it != list.end(); ++it )
 	{
 		QWidget *w = new EmoticonLabel(it.key(), it.data(), this);
+		movieList.push_back( ((QLabel*)w)->movie() );
 		connect(w, SIGNAL(clicked(const QString&)), this, SLOT(emoticonClicked(const QString&)));
 //		kdDebug(14000) << "adding Emoticon to row=" << row << ", col=" << col << "." << endl;
 		lay->addWidget(w, row, col);
@@ -115,6 +118,26 @@ void EmoticonSelector::emoticonClicked(const QString &str)
 		parentWidget()->inherits("QPopupMenu") )
 	{
 		parentWidget()->close();
+	}
+}
+
+void EmoticonSelector::hideEvent( QHideEvent* )
+{
+	kdDebug( 14000 ) << k_funcinfo << endl;
+	MovieList::iterator it;
+	for( it = movieList.begin(); it != movieList.end(); ++it )
+	{
+		(*it)->pause();
+	}
+}
+
+void EmoticonSelector::showEvent( QShowEvent* )
+{
+	kdDebug( 14000 ) << k_funcinfo << endl;
+	MovieList::iterator it;
+	for( it = movieList.begin(); it != movieList.end(); ++it )
+	{
+		(*it)->unpause();
 	}
 }
 

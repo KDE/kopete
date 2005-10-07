@@ -110,7 +110,7 @@ void UserSearchTask::searchUserByUIN( const QString& uin )
 	//create a new result list
 	m_type = UINSearch;
 	
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0015, 0x0002, 0x0000, client()->snacSequence() };
 	
 	setRequestType( 0x07D0 ); //meta-information request
@@ -131,7 +131,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 {
 	m_type = WhitepageSearch;
 	
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0015, 0x0002, 0x0000, client()->snacSequence() };
 	
 	setRequestType( 0x07D0 );

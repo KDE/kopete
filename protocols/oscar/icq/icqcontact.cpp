@@ -18,8 +18,8 @@
 #include "icqcontact.h"
 
 #include <qtimer.h>
-//Added by qt3to4:
 #include <Q3PtrList>
+#include <qimage.h>
 
 #include <kaction.h>
 #include <kactionclasses.h>
@@ -45,6 +45,7 @@
 #include "icqauthreplydialog.h"
 
 #include "oscarutils.h"
+#include "oscarencodingselectiondialog.h"
 
 ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaContact *parent,
 						const QString& icon, const Oscar::SSI& ssiItem )
@@ -53,12 +54,13 @@ ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaCo
 	mProtocol = static_cast<ICQProtocol *>(protocol());
 	m_infoWidget = 0L;
 	m_requestingNickname = false;
-	
+    m_oesd = 0;
+
 	if ( ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
-	else 
+	else
 		setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::Visible ).toOnlineStatus() );
-	
+
 	QObject::connect( mAccount->engine(), SIGNAL( loggedIn() ), this, SLOT( loggedIn() ) );
 	//QObject::connect( mAccount->engine(), SIGNAL( userIsOnline( const QString& ) ), this, SLOT( userOnline( const QString&, UserDetails ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( userIsOffline( const QString& ) ), this, SLOT( userOffline( const QString& ) ) );
@@ -73,6 +75,10 @@ ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaCo
 	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
 	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
 	QObject::connect( this, SIGNAL( featuresUpdated() ), this, SLOT( updateFeatures() ) );
+	QObject::connect( mAccount->engine(), SIGNAL( iconServerConnected() ),
+	                  this, SLOT( requestBuddyIcon() ) );
+	QObject::connect( mAccount->engine(), SIGNAL( haveIconForContact( const QString&, QByteArray ) ),
+	                  this, SLOT( haveIcon( const QString&, QByteArray ) ) );
 
 }
 
@@ -86,7 +92,7 @@ void ICQContact::updateSSIItem()
 	//kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << endl;
 	if ( m_ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
-	
+
 	if ( m_ssiItem.type() != 0xFFFF && m_ssiItem.waitingAuth() == false &&
 	     onlineStatus() == Kopete::OnlineStatus::Unknown )
 	{
@@ -105,17 +111,27 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	kdDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
 	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( details.extendedStatus() & 0xffff );
 	setOnlineStatus( presence.toOnlineStatus() );
-	
+
 	if ( details.dcExternalIp().isUnspecified() )
 		removeProperty( mProtocol->ipAddress );
 	else
 		setProperty( mProtocol->ipAddress, details.dcExternalIp().toString() );
-	
+
 	if ( details.clientName().isEmpty() )
 		removeProperty( mProtocol->clientFeatures );
 	else
 		setProperty( mProtocol->clientFeatures, details.clientName() );
-	
+
+	if ( details.buddyIconHash().size() > 0 && details.buddyIconHash() != m_details.buddyIconHash() )
+	{
+		if ( !mAccount->engine()->hasIconConnection() )
+			mAccount->engine()->requestServerRedirect( 0x0010 );
+		
+		int time = ( KApplication::random() % 10 ) * 1000;
+		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating buddy icon in " << time/1000 << " seconds" << endl;
+		QTimer::singleShot( time, this, SLOT( requestBuddyIcon() ) );
+	}
+
 	OscarContact::userInfoUpdated( contact, details );
 }
 
@@ -143,7 +159,7 @@ void ICQContact::loggedIn()
 {
 	if ( metaContact()->isTemporary() )
 		return;
-	
+
 	if ( m_ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 
@@ -178,7 +194,7 @@ void ICQContact::slotSendAuth()
 {
 	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Sending auth reply" << endl;
 	ICQAuthReplyDialog replyDialog( 0, "replyDialog", false );
-	
+
 	replyDialog.setUser( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
 	if ( replyDialog.exec() )
 		mAccount->engine()->sendAuth( contactId(), replyDialog.reason(), replyDialog.grantAuth() );
@@ -188,7 +204,7 @@ void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason
 {
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
-	
+
 	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << endl;
 	QString message;
 	if( granted )
@@ -196,7 +212,7 @@ void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason
 		message = i18n( "User %1 has granted your authorization request.\nReason: %2" )
 			.arg( property( Kopete::Global::Properties::self()->nickName() ).value().toString() )
 			.arg( reason );
-		
+
 		// remove the unknown status
 		setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::Visible ).toOnlineStatus() );
 	}
@@ -213,9 +229,9 @@ void ICQContact::slotGotAuthRequest( const QString& contact, const QString& reas
 {
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
-	
+
 	ICQAuthReplyDialog *replyDialog = new ICQAuthReplyDialog();
-	
+
 	connect( replyDialog, SIGNAL( okClicked() ), this, SLOT( slotAuthReplyDialogOkClicked() ) );
 	replyDialog->setUser( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
 	replyDialog->setRequestReason( reason );
@@ -227,9 +243,9 @@ void ICQContact::slotAuthReplyDialogOkClicked()
 {
     // Do not need to delete will delete itself automatically
     ICQAuthReplyDialog *replyDialog = (ICQAuthReplyDialog*)sender();
-    
+
     if (replyDialog)
-	mAccount->engine()->sendAuth( contactId(), replyDialog->reason(), replyDialog->grantAuth() );	    
+	mAccount->engine()->sendAuth( contactId(), replyDialog->reason(), replyDialog->grantAuth() );
 }
 
 void ICQContact::receivedLongInfo( const QString& contact )
@@ -240,30 +256,30 @@ void ICQContact::receivedLongInfo( const QString& contact )
 			m_infoWidget->delayedDestruct();
 		return;
 	}
-	
+
 	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "received long info from engine" << endl;
-	
+
 	ICQGeneralUserInfo genInfo = mAccount->engine()->getGeneralInfo( contact );
 	if ( !genInfo.nickname.isEmpty() )
 		setNickName( genInfo.nickname );
 	emit haveBasicInfo( genInfo );
-	
+
 	ICQWorkUserInfo workInfo = mAccount->engine()->getWorkInfo( contact );
 	emit haveWorkInfo( workInfo );
-	
+
 	ICQMoreUserInfo moreInfo = mAccount->engine()->getMoreInfo( contact );
 	emit haveMoreInfo( moreInfo );
-	
+
 	ICQInterestInfo interestInfo = mAccount->engine()->getInterestInfo( contact );
 	emit haveInterestInfo( interestInfo );
-	
+
 }
 
 void ICQContact::receivedShortInfo( const QString& contact )
 {
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
-	
+
 	m_requestingNickname = false; //done requesting nickname
 	ICQShortInfo shortInfo = mAccount->engine()->getShortInfo( contact );
 	/*
@@ -271,7 +287,7 @@ void ICQContact::receivedShortInfo( const QString& contact )
 		setProperty(mProtocol->firstName, shortInfo.firstName);
 	else
 		removeProperty(mProtocol->firstName);
-	
+
 	if(!shortInfo.lastName.isEmpty())
 		setProperty(mProtocol->lastName, shortInfo.lastName);
 	else
@@ -283,7 +299,7 @@ void ICQContact::receivedShortInfo( const QString& contact )
 			"setting new displayname for former UIN-only Contact" << endl;
 		setProperty( Kopete::Global::Properties::self()->nickName(), shortInfo.nickname );
 	}
-	
+
 }
 
 void ICQContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session )
@@ -291,21 +307,21 @@ void ICQContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session
 	//Why is this unused?
 	Q_UNUSED( session );
 	Oscar::Message message;
-	
+
 	message.setText( msg.plainBody() );
-	
+
 	message.setTimestamp( msg.timestamp() );
 	message.setSender( mAccount->accountId() );
 	message.setReceiver( mName );
 	message.setType( 0x01 );
-	
+
 	//TODO add support for type 2 messages
 	/*if ( msg.type() == Kopete::Message::PlainText )
 		message.setType( 0x01 );
 	else
 		message.setType( 0x02 );*/
 	//TODO: we need to check for channel 0x04 messages too;
-	
+
 	mAccount->engine()->sendMessage( message );
 	manager(Kopete::Contact::CanCreate)->appendMessage(msg);
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();
@@ -314,6 +330,31 @@ void ICQContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session
 void ICQContact::updateFeatures()
 {
 	setProperty( static_cast<ICQProtocol*>(protocol())->clientFeatures, m_clientFeatures );
+}
+
+void ICQContact::requestBuddyIcon()
+{
+	if ( m_details.buddyIconHash().size() > 0 )
+	{
+		account()->engine()->requestBuddyIcon( contactId(), m_details.buddyIconHash(),
+		                                       m_details.iconCheckSumType() );
+	}
+}
+
+void ICQContact::haveIcon( const QString& user, QByteArray icon )
+{
+	if ( Oscar::normalize( user ) != Oscar::normalize( contactId() ) )
+		return;
+	
+	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Updating icon for " << contactId() << endl;
+	QImage buddyIcon( icon );
+	if ( buddyIcon.isNull() )
+	{
+		kdWarning(OSCAR_ICQ_DEBUG) << k_funcinfo << "Failed to convert buddy icon to QImage" << endl;
+		return;
+	}
+	
+	setProperty( Kopete::Global::Properties::self()->photo(), buddyIcon );
 }
 
 #if 0
@@ -501,6 +542,7 @@ Q3PtrList<KAction> *ICQContact::customContextMenuActions()
 	}
 
 */
+
 	QString i1 = i18n("&Ignore");
 	QString i2 = i18n("Always &Visible To");
 	QString i3 = i18n("Always &Invisible To");
@@ -508,15 +550,20 @@ Q3PtrList<KAction> *ICQContact::customContextMenuActions()
 	Q_UNUSED( i1 );
 	Q_UNUSED( i2 );
 	Q_UNUSED( i3 );
-		
-	
+
+
 	bool on = account()->isConnected();
 	if ( m_ssiItem.waitingAuth() )
 		actionRequestAuth->setEnabled(on);
 	else
 		actionRequestAuth->setEnabled(false);
-	
+
 	actionSendAuth->setEnabled(on);
+
+
+    m_selectEncoding = new KAction( i18n( "Select Encoding..." ), "charset", 0,
+                                    this, SLOT( changeContactEncoding() ), this, "changeEncoding" );
+
 /*
 	actionReadAwayMessage->setEnabled(status != OSCAR_OFFLINE && status != OSCAR_ONLINE);
 	actionIgnore->setEnabled(on);
@@ -530,6 +577,7 @@ Q3PtrList<KAction> *ICQContact::customContextMenuActions()
 */
 	actionCollection->append(actionRequestAuth);
 	actionCollection->append(actionSendAuth);
+    actionCollection->append( m_selectEncoding );
 /*
 	actionCollection->append(actionIgnore);
 	actionCollection->append(actionVisibleTo);
@@ -555,6 +603,33 @@ void ICQContact::closeUserInfoDialog()
 	QObject::disconnect( this, 0, m_infoWidget, 0 );
 	m_infoWidget->delayedDestruct();
 	m_infoWidget = 0L;
+}
+
+void ICQContact::changeContactEncoding()
+{
+    if ( m_oesd )
+        return;
+
+    m_oesd = new OscarEncodingSelectionDialog( Kopete::UI::Global::mainWidget() );
+    connect( m_oesd, SIGNAL( closing( int ) ),
+             this, SLOT( changeEncodingDialogClosed( int ) ) );
+    m_oesd->show();
+}
+
+void ICQContact::changeEncodingDialogClosed( int result )
+{
+    if ( result == QDialog::Accepted )
+    {
+        kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "setting encoding mib to "
+                                 << m_oesd->selectedEncoding() << endl;
+        setProperty( mProtocol->contactEncoding, m_oesd->selectedEncoding() );
+    }
+
+    if ( m_oesd )
+    {
+        m_oesd->delayedDestruct();
+        m_oesd = 0L;
+    }
 }
 
 #if 0

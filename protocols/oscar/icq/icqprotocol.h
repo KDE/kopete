@@ -38,11 +38,11 @@ public:
 class ICQProtocol : public Kopete::Protocol
 {
 Q_OBJECT
-	
+
 public:
 	ICQProtocol(QObject *parent, const char *name, const QStringList &args);
 	virtual ~ICQProtocol();
-	
+
 	/**
 	 * Return the active instance of the protocol
 	 */
@@ -56,7 +56,7 @@ public:
 	AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account);
 	KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
 	Kopete::Account *createNewAccount(const QString &accountId);
-	
+
 	ICQ::OnlineStatusManager *statusManager();
 
 
@@ -67,6 +67,7 @@ public:
 	const Kopete::ContactPropertyTmpl ipAddress;
 	const Kopete::ContactPropertyTmpl clientFeatures;
 	const Kopete::ContactPropertyTmpl buddyIconHash;
+    const Kopete::ContactPropertyTmpl contactEncoding;
 
 	const QMap<int, QString> &genders() { return mGenders; }
 	const QMap<int, QString> &countries() { return mCountries; }

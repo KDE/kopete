@@ -1,9 +1,9 @@
 /*
     smpppdcsprefsimpl.h
  
-    Copyright (c) 2004      by Heiko Schaefer        <heiko@rangun.de>
+    Copyright (c) 2004-2005 by Heiko Schaefer        <heiko@rangun.de>
  
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *

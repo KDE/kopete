@@ -234,12 +234,15 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 		// "kopete_emailwindow" is the default email Kopete::ViewPlugin.  If other email plugins
 		// become available, either jabber will have to provide its own selector or libkopete will need
 		// a better way of categorising view plugins.
-		if ( view()->plugin()->pluginId() == "kopete_emailwindow" )
-		{
+
+		// FIXME: the view() is a speedy way to solve BUG:108389. A better solution is to be found
+		// but I don't want to introduce a new bug during the bug hunt ;-).
+		if (view() && view()->plugin()->pluginId() == "kopete_emailwindow" )
+		{	
 			jabberMessage.setType ( "normal" );
 		}
 		else
-		{
+		{	
 			jabberMessage.setType ( "chat" );
 		}
 

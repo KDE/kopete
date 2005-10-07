@@ -55,34 +55,46 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	mProtocol=protocol;
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
-	mAccountSettings = new ICQEditAccountUI(this /*acc*/,
-		"ICQEditAccountWidget::mAccountSettings");
+	mAccountSettings = new ICQEditAccountUI( this );
+
+    mProtocol->fillComboFromTable( mAccountSettings->encodingCombo, mProtocol->encodings() );
+
 	// Read in the settings from the account if it exists
 	if(mAccount)
 	{
 		mAccountSettings->edtAccountId->setText(mAccount->accountId());
-		
+
 		// TODO: Remove me after we can change Account IDs (Matt)
 		mAccountSettings->edtAccountId->setDisabled(true);
 		mAccountSettings->mPasswordWidget->load(&mAccount->password());
 		mAccountSettings->chkAutoLogin->setChecked(mAccount->excludeConnect());
-		
+
 		QString serverEntry = mAccount->configGroup()->readEntry("Server", "login.oscar.aol.com");
 		int portEntry = mAccount->configGroup()->readNumEntry("Port", 5190);
 		if ( serverEntry != "login.oscar.aol.com" || ( portEntry != 5190) )
 			mAccountSettings->optionOverrideServer->setChecked( true );
-		
+
 		mAccountSettings->edtServerAddress->setText( serverEntry );
 		mAccountSettings->edtServerPort->setValue( portEntry );
-		bool configValue = mAccount->configGroup()->readBoolEntry( "RequireAuth", false );
+
+        bool configValue = mAccount->configGroup()->readBoolEntry( "RequireAuth", false );
 		mAccountSettings->chkRequireAuth->setChecked( configValue );
-		configValue = mAccount->configGroup()->readBoolEntry( "RespectRequireAuth", true );
+
+        configValue = mAccount->configGroup()->readBoolEntry( "RespectRequireAuth", true );
 		mAccountSettings->chkRespectRequireAuth->setChecked( configValue );
-		configValue = mAccount->configGroup()->readBoolEntry( "HideIP", true );
+
+        configValue = mAccount->configGroup()->readBoolEntry( "HideIP", true );
 		mAccountSettings->chkHideIP->setChecked( configValue );
-		configValue = mAccount->configGroup()->readBoolEntry( "WebAware", false );
+
+        configValue = mAccount->configGroup()->readBoolEntry( "WebAware", false );
 		mAccountSettings->chkWebAware->setChecked( configValue );
-		
+
+        int encodingValue = mAccount->configGroup()->readNumEntry( "DefaultEncoding", 4 );
+        mProtocol->setComboFromTable( mAccountSettings->encodingCombo,
+                                      mProtocol->encodings(),
+                                      encodingValue );
+
+
 	}
 
 	QObject::connect(mAccountSettings->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
@@ -109,14 +121,22 @@ Kopete::Account *ICQEditAccountWidget::apply()
 
 	mAccountSettings->mPasswordWidget->save(&mAccount->password());
 	mAccount->setExcludeConnect(mAccountSettings->chkAutoLogin->isChecked());
-	bool configValue = mAccountSettings->chkRequireAuth->isChecked();
+
+    bool configValue = mAccountSettings->chkRequireAuth->isChecked();
 	mAccount->configGroup()->writeEntry( "RequireAuth", configValue );
-	configValue = mAccountSettings->chkRespectRequireAuth->isChecked();
+
+    configValue = mAccountSettings->chkRespectRequireAuth->isChecked();
 	mAccount->configGroup()->writeEntry( "RespectRequireAuth", configValue );
-	configValue = mAccountSettings->chkHideIP->isChecked();
+
+    configValue = mAccountSettings->chkHideIP->isChecked();
 	mAccount->configGroup()->writeEntry( "HideIP", configValue );
-	configValue = mAccountSettings->chkWebAware->isChecked();
+
+    configValue = mAccountSettings->chkWebAware->isChecked();
 	mAccount->configGroup()->writeEntry( "WebAware", configValue );
+
+    int encodingMib = mProtocol->getCodeForCombo( mAccountSettings->encodingCombo,
+                                                  mProtocol->encodings() );
+    mAccount->configGroup()->writeEntry( "DefaultEncoding", encodingMib );
 
 	if ( mAccountSettings->optionOverrideServer->isChecked() )
 	{
@@ -128,7 +148,7 @@ Kopete::Account *ICQEditAccountWidget::apply()
 		mAccount->setServerAddress("login.oscar.aol.com");
 		mAccount->setServerPort(5190);
 	}
-	
+
 	return mAccount;
 }
 
@@ -140,7 +160,7 @@ bool ICQEditAccountWidget::validateData()
 
 	if (userName.contains(" ") || (userName.length() < 4))
 		return false;
-	
+
 	for (unsigned int i=0; i<userName.length(); i++)
 	{
 		if(!(userName[i]).isNumber())

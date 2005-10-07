@@ -3,6 +3,7 @@
 
     Copyright (c) 2002-2003 by Stefan Gehn            <metz AT gehn.net>
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2005      by Engin AYDOGAN	      <engin @ bzzzt.biz>
 
     *************************************************************************
     *                                                                       *
@@ -21,7 +22,7 @@
 #include <q3valuelist.h>
 #include <qregexp.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 namespace Kopete {
 
@@ -49,7 +50,7 @@ public:
 	 */
 	enum ParseMode {  DefaultParseMode = 0x0 ,  /**  Use strict or relaxed according the config  */
 			StrictParse = 0x1,			/** Strict parsing requires a space between each emoticon */
-			RelaxedParse = 0x4,         /** Default parse mode where all possible emoticon matches are allowed */
+			RelaxedParse = 0x4,         /** Parse mode where all possible emoticon matches are allowed */
 			SkipHTML = 0x2				/** Skip emoticons within HTML */
 		 };
 
@@ -84,11 +85,12 @@ public:
 	struct Token {
 		Token() : type( Undefined ) {}
 		Token( TokenType t, const QString &m ) : type( t ), text(m) {}
-		Token( TokenType t, const QString &m, const QString &p )
-		 : type( t ), text( m ), picPath( p ) {}
+		Token( TokenType t, const QString &m, const QString &p, const QString &html )
+		 : type( t ), text( m ), picPath( p ), picHTMLCode( html ) {}
 		TokenType	type;
 		QString		text;
 		QString		picPath;
+		QString		picHTMLCode;
 	};
 	
 

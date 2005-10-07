@@ -28,7 +28,7 @@
 #include <qtimer.h>
 #include <q3valuelist.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 namespace KNetwork {
   class KBufferedSocket;
@@ -121,7 +121,6 @@ signals:
 	 * A block read is ready.
 	 * After this the normal line-based reads go on again
 	 */
-	void blockRead( const QString &block );
 	void blockRead( const QByteArray &block );
 
 	/**

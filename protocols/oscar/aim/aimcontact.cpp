@@ -114,9 +114,10 @@ void AIMContact::setAwayMessage(const QString &message)
 	filteredMessage.replace(
 		QRegExp(QString::fromLatin1("<[bB][oO][dD][yY].*>(.*)</[bB][oO][dD][yY]>")),
 		QString::fromLatin1("\\1") );
-	filteredMessage.replace(
-		QRegExp(QString::fromLatin1("<[fF][oO][nN][tT].*>(.*)</[fF][oO][nN][tT]>")),
-		QString::fromLatin1("\\1") );
+	QRegExp fontRemover( QString::fromLatin1("<[fF][oO][nN][tT].*>(.*)</[fF][oO][nN][tT]>") );
+	fontRemover.setMinimal(true);
+	while ( filteredMessage.find( fontRemover ) != -1 )
+		filteredMessage.replace( fontRemover, QString::fromLatin1("\\1") );
 	setProperty(mProtocol->awayMessage, filteredMessage);
 }
 
@@ -164,8 +165,8 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	//if they don't have an SSI alias, make sure we use the capitalization from the
 	//server so their contact id looks all pretty.
 	QString nickname = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-	if ( Oscar::normalize( nickname ) == Oscar::normalize( details.userId() ) )
-		setProperty( Kopete::Global::Properties::self()->nickName(), details.userId() );
+	if ( nickname.isEmpty() || Oscar::normalize( nickname ) == Oscar::normalize( contact ) )
+		setNickName( contact );
 
 	if ( ( details.userClass() & 32 ) == 0 )
 	{

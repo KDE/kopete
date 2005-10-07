@@ -58,6 +58,7 @@
 #include "userinfotask.h"
 #include "usersearchtask.h"
 #include "warningtask.h"
+#include "chatservicetask.h"
 
 
 class Client::ClientPrivate
@@ -99,6 +100,8 @@ public:
 
 	//Our Userinfo
 	UserDetails ourDetails;
+
+	QString statusMessage; // for away-,DND-message etc...
 
     //Infos
     Q3ValueList<int> exchanges;
@@ -142,6 +145,7 @@ Client::~Client()
 	//delete the connections differently than in deleteConnections()
 	//deleteLater() seems to cause destruction order issues
 	deleteStaticTasks();
+    delete d->settings;
 	delete d->ssiManager;
 	delete d;
 }
@@ -187,6 +191,10 @@ void Client::close()
 		d->connectWithMessage = QString::null;
 	}
 
+    d->exchanges.clear();
+    d->redirectRequested = false;
+    d->currentRedirect = 0;
+    d->redirectionServices.clear();
     d->ssiManager->clear();
 }
 
@@ -216,6 +224,9 @@ void Client::setStatus( AIMStatus status, const QString &_message )
 
 void Client::setStatus( DWORD status, const QString &message )
 {
+	// remember the message to reply with, when requested
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting status message to "<< message << endl;
+	d->statusMessage = message;
 	// ICQ: if we're active, set status. otherwise, just store the status for later.
 	if ( d->active )
 	{
@@ -411,6 +422,11 @@ QString Client::password() const
 	return d->pass;
 }
 
+QString Client::statusMessage() const
+{
+	return d->statusMessage;
+}
+
 QByteArray Client::ipAddress() const
 {
 	//!TODO determine ip address
@@ -429,14 +445,63 @@ void Client::notifySocketError( int errCode, const QString& msg )
 
 void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
 {
-	Connection* c = d->connections.connectionForFamily( 0x0004 );
-	if ( !c )
-		return;
-	SendMessageTask *sendMsgTask = new SendMessageTask( c->rootTask() );
-	// Set whether or not the message is an automated response
-	sendMsgTask->setAutoResponse( isAuto );
-	sendMsgTask->setMessage( msg );
-	sendMsgTask->go( true );
+    Connection* c = 0L;
+    if ( msg.type() == 0x0003 )
+    {
+        c = d->connections.connectionForChatRoom( msg.exchange(), msg.chatRoom() );
+        if ( !c )
+            return;
+
+        kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending message to chat room" << endl;
+        ChatServiceTask* cst = new ChatServiceTask( c->rootTask(), msg.exchange(), msg.chatRoom() );
+        cst->setMessage( msg );
+        cst->go( true );
+    }
+    else
+    {
+        c = d->connections.connectionForFamily( 0x0004 );
+        if ( !c )
+            return;
+        SendMessageTask *sendMsgTask = new SendMessageTask( c->rootTask() );
+        // Set whether or not the message is an automated response
+        sendMsgTask->setAutoResponse( isAuto );
+        sendMsgTask->setMessage( msg );
+        sendMsgTask->go( true );
+    }
+}
+
+void Client::receivedMessage( const Oscar::Message& msg )
+{
+	if ( msg.hasProperty( Oscar::Message::StatusMessageRequest ) )
+	{
+		if ( msg.hasProperty( Oscar::Message::AutoResponse ) )
+		{
+			// we got a response to a status message request.
+			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received an away message: " << msg.text() << endl;
+			emit receivedAwayMessage( msg.sender(), msg.text() );
+		}
+		else
+		{
+			// we got status message request ourselves. respond.
+			Connection* c = d->connections.connectionForFamily( 0x0004 );
+			if ( !c )
+				return;
+
+			Oscar::Message response = Oscar::Message( msg );
+			response.setText( statusMessage() );
+			response.setReceiver( msg.sender() );
+			response.addProperty( Oscar::Message::AutoResponse );
+			SendMessageTask *sendMsgTask = new SendMessageTask( c->rootTask() );
+			sendMsgTask->setMessage( response );
+			sendMsgTask->go( true );
+		}
+	}
+	else
+	{
+		// let application handle it
+		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Emitting receivedMessage" << endl;
+		emit messageReceived( msg );
+	}
 }
 
 void Client::requestAuth( const QString& contactid, const QString& reason )
@@ -501,7 +566,7 @@ void Client::initializeStaticTasks()
 	         SIGNAL( iconNeedsUploading() ) );
 
 	connect( d->messageReceiverTask, SIGNAL( receivedMessage( const Oscar::Message& ) ),
-	         this, SIGNAL( messageReceived( const Oscar::Message& ) ) );
+	         this, SLOT( receivedMessage( const Oscar::Message& ) ) );
 
 	connect( d->ssiAuthTask, SIGNAL( authRequested( const QString&, const QString& ) ),
 	         this, SIGNAL( authRequestReceived( const QString&, const QString& ) ) );
@@ -696,7 +761,6 @@ Q3ValueList<int> Client::chatExchangeList() const
 
 void Client::setChatExchangeList( const Q3ValueList<int>& exchanges )
 {
-    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "empty list? " << exchanges.isEmpty() << endl;
     d->exchanges = exchanges;
 }
 
@@ -708,6 +772,38 @@ void Client::requestAIMProfile( const QString& contact )
 void Client::requestAIMAwayMessage( const QString& contact )
 {
 	d->userInfoTask->requestInfoFor( contact, UserInfoTask::AwayMessage );
+}
+
+void Client::requestICQAwayMessage( const QString& contact, ICQStatus contactStatus )
+{
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting away message for " << contact << endl;
+	Oscar::Message msg;
+	msg.setType( 2 );
+	msg.setReceiver( contact );
+	msg.addProperty( Oscar::Message::StatusMessageRequest );
+	switch ( contactStatus )
+	{
+	case ICQAway:
+		msg.setMessageType( 0xE8 ); // away
+		break;
+	case ICQOccupied:
+		msg.setMessageType( 0xE9 ); // occupied
+		break;
+	case ICQNotAvailable:
+		msg.setMessageType( 0xEA ); // not awailable
+		break;
+	case ICQDoNotDisturb:
+		msg.setMessageType( 0xEB ); // do not disturb
+		break;
+	case ICQFreeForChat:
+		msg.setMessageType( 0xEC ); // free for chat
+		break;
+	default:
+		// may be a good way to deal with possible error and lack of online status message?
+		emit receivedAwayMessage( contact, "Sorry, this protocol does not support this type of status message" );
+		return;
+	}
+	sendMessage( msg );
 }
 
 void Client::requestStatusInfo( const QString& contact )
@@ -785,12 +881,14 @@ void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE
 	bit->go( true );
 }
 
-void Client::requestServerRedirect( WORD family )
+void Client::requestServerRedirect( WORD family, WORD exchange,
+                                    QByteArray cookie, WORD instance,
+                                    const QString& room )
 {
 	//making the assumption that family 2 will always be the BOS connection
 	//use it instead since we can't query for family 1
 	Connection* c = d->connections.connectionForFamily( family );
-	if ( c )
+	if ( c && family != 0x000E )
 		return; //we already have the connection
 
 	c = d->connections.connectionForFamily( 0x0002 );
@@ -805,7 +903,15 @@ void Client::requestServerRedirect( WORD family )
 
 	d->currentRedirect = family;
 
+    //FIXME. this won't work if we have to defer the connection because we're
+    //already connecting to something
 	ServerRedirectTask* srt = new ServerRedirectTask( c->rootTask() );
+    if ( family == 0x000E )
+    {
+        srt->setChatParams( exchange, cookie, instance );
+        srt->setChatRoom( room );
+    }
+
 	connect( srt, SIGNAL( haveServer( const QString&, const QByteArray&, WORD ) ),
 	         this, SLOT( haveServerForRedirect( const QString&, const QByteArray&, WORD ) ) );
 	srt->setService( family );
@@ -814,6 +920,10 @@ void Client::requestServerRedirect( WORD family )
 
 void Client::haveServerForRedirect( const QString& host, const QByteArray& cookie, WORD )
 {
+    //nasty sender() usage to get the task with chat room info
+	QObject* o = const_cast<QObject*>( sender() );
+    ServerRedirectTask* srt = dynamic_cast<ServerRedirectTask*>( o );
+
 	//create a new connection and set it up
 	int colonPos = host.find(':');
 	QString realHost, realPort;
@@ -836,7 +946,10 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 
 	//connect
 	connectToServer( c, d->host, false );
-	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
+  	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
+
+    if ( srt )
+        d->connections.addChatInfoForConnection( c, srt->chatExchange(), srt->chatRoomName() );
 }
 
 void Client::serverRedirectFinished()
@@ -864,7 +977,35 @@ void Client::serverRedirectFinished()
 		emit chatNavigationConnected();
 	}
 
+    if ( d->currentRedirect == 0x000E )
+    {
+        //HACK! such abuse! think of a better way
+        if ( !m_loginTaskTwo )
+        {
+            kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "no login task to get connection from!" << endl;
+            emit redirectionFinished( d->currentRedirect );
+            return;
+        }
+
+        Connection* c = m_loginTaskTwo->client();
+        QString roomName = d->connections.chatRoomForConnection( c );
+        WORD exchange = d->connections.exchangeForConnection( c );
+        if ( c )
+        {
+            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting up chat connection" << endl;
+            ChatServiceTask* cst = new ChatServiceTask( c->rootTask(), exchange, roomName );
+            connect( cst, SIGNAL( userJoinedChat( Oscar::WORD, const QString&, const QString& ) ),
+                     this, SIGNAL( userJoinedChat( Oscar::WORD, const QString&, const QString& ) ) );
+            connect( cst, SIGNAL( userLeftChat( Oscar::WORD, const QString&, const QString& ) ),
+                     this, SIGNAL( userLeftChat( Oscar::WORD, const QString&, const QString& ) ) );
+            connect( cst, SIGNAL( newChatMessage( const Oscar::Message& ) ),
+                     this, SIGNAL( messageReceived( const Oscar::Message& ) ) );
+        }
+        emit chatRoomConnected( exchange, roomName );
+    }
+
 	emit redirectionFinished( d->currentRedirect );
+
 }
 
 void Client::checkRedirectionQueue( WORD family )
@@ -932,17 +1073,38 @@ void Client::joinChatRoom( const QString& roomName, int exchange )
     if ( !c )
         return;
 
-    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "joining the chat room '" << roomName << "'" << endl;
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "joining the chat room '" << roomName
+                             << "' on exchange " << exchange << endl;
     ChatNavServiceTask* cnst = new ChatNavServiceTask( c->rootTask() );
+    connect( cnst, SIGNAL( connectChat( WORD, QByteArray, WORD, const QString& ) ),
+             this, SLOT( setupChatConnection( WORD, QByteArray, WORD, const QString& ) ) );
     cnst->createRoom( exchange, roomName );
 
 }
 
+void Client::setupChatConnection( WORD exchange, QByteArray cookie, WORD instance, const QString& room )
+{
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "cookie is:" << cookie << endl;
+    QByteArray realCookie( cookie );
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "connection to chat room" << endl;
+    requestServerRedirect( 0x000E, exchange, realCookie, instance, room );
+}
+
+void Client::disconnectChatRoom( WORD exchange, const QString& room )
+{
+    Connection* c = d->connections.connectionForChatRoom( exchange, room );
+    if ( !c )
+        return;
+
+    d->connections.remove( c );
+    c = 0;
+}
+
 Connection* Client::createConnection( const QString& host, const QString& port )
 {
-	KNetworkConnector* knc = new KNetworkConnector( this );
+	KNetworkConnector* knc = new KNetworkConnector( 0 );
 	knc->setOptHostPort( host, port.toUInt() );
-	ClientStream* cs = new ClientStream( knc, knc );
+	ClientStream* cs = new ClientStream( knc, 0 );
 	cs->setNoopTime( 60000 );
 	Connection* c = new Connection( knc, cs, "BOS" );
 	cs->setConnection( c );

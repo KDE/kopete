@@ -22,7 +22,7 @@ class KURL;
 class QString;
 class QStringList;
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 namespace Kopete
 {

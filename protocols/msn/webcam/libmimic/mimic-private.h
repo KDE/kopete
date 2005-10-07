@@ -113,5 +113,5 @@ void _yuv_to_rgb(const guchar *input_y,
 
 void _deblock(guchar *blocks, guint stride, guint row_count);
 
-#endif // MIMIC_PRIVATE_H
+#endif
 

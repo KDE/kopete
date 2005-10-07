@@ -21,7 +21,7 @@
 #include <qobject.h>
 #include "messageformatter.h"
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 #include <config.h>
 
@@ -35,6 +35,19 @@ class KTempFile;
 /**
 @author Kopete Developers
 */
+namespace System{
+	class Guid
+	{
+		public:
+			~Guid(){}
+			static Guid newGuid();
+			QString toString();
+
+		private:
+			Guid(){}
+	};
+}
+
 namespace P2P{
 
 	enum TransferType { UserDisplayIcon = 1, File = 2, WebcamType=4};
@@ -61,13 +74,14 @@ namespace P2P{
 		Q_UINT32 ackUniqueIdentifier;
 		Q_INT64  ackDataSize;
 	};
-	
+
 	struct Message
 	{
 		public:
 			QString mimeVersion;
 			QString contentType;
 			QString destination;
+			QString source;
 			TransportHeader header;
 			QByteArray body;
 			Q_INT32 applicationIdentifier;
@@ -78,7 +92,7 @@ namespace P2P{
 	{
 		public: static QString createUid();
 	};
-	
+
 	class KOPETE_EXPORT TransferContext : public QObject
 	{	Q_OBJECT
 		public:
@@ -91,7 +105,7 @@ namespace P2P{
 			void sendDataPreparation();
 			void sendMessage(MessageType type, const QString& content=QString::null, Q_INT32 flag=0, Q_INT32 appId=0);
 			void setType(TransferType type);
-			
+
 		public:
 			Q_UINT32 m_sessionId;
 			Q_UINT32 m_identifier;
@@ -108,13 +122,13 @@ namespace P2P{
 		public slots:
 			void abort();
 			void readyWrite();
-			
+
 		protected:
 			TransferContext(const QString& contact, P2P::Dispatcher *dispatcher,Q_UINT32 sessionId);
 			void sendData(const QByteArray& bytes);
 			void sendMessage(P2P::Message& outbound, const QByteArray& body);
 			virtual void readyToSend();
-			
+
 			Q_UINT32 m_baseIdentifier;
 			TransferDirection m_direction;
 			P2P::Dispatcher *m_dispatcher;

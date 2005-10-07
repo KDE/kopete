@@ -712,7 +712,8 @@ GaduSession::checkDescriptor()
 				// TODO: DCC CONNECTION
 				emit incomingCtcp( event->event.msg.sender );
 			}
-			if ( event->event.msg.msgclass & GG_CLASS_MSG || event->event.msg.msgclass & GG_CLASS_CHAT ) {
+
+			if ( (event->event.msg.msgclass & GG_CLASS_MSG) || (event->event.msg.msgclass & GG_CLASS_CHAT) ) {
 				gaduMessage.message =
 					textcodec->toUnicode((const char*)event->event.msg.message);
 				gaduMessage.sender_id = event->event.msg.sender;

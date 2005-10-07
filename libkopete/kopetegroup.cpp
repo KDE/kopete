@@ -295,6 +295,8 @@ void Group::sendMessage( Message& msg )
 	{
 		disconnect( cs, SIGNAL( messageSent( Kopete::Message&, Kopete::ChatSession* ) ), this, SLOT( sendMessage( Kopete::Message& ) ) );
 	}
+	else
+		return;
 	
 	if(!mc)
 		return;
@@ -304,9 +306,12 @@ void Group::sendMessage( Message& msg )
 		if(mc->isReachable())
 		{
 			Contact *kcontact=mc->preferredContact();
-			if( kcontact->manager( Contact::CanCreate ) )
+			if( kcontact->manager( Contact::CanCreate )  )
 			{
-				kcontact->manager( Contact::CanCreate )->sendMessage( msg );
+				//This is hack and stupid.    send message to group should never exist anyway - Olivier 2005-09-11
+				// changing the "to" is require, because jabber use it to send the messgae.  Cf BUG 111514
+				Message msg2(cs->myself() , kcontact , msg.plainBody() , msg.direction() , Message::PlainText , msg.requestedPlugin() );
+				kcontact->manager( Contact::CanCreate )->sendMessage( msg2 );
 			}
 		}
 	}
@@ -317,7 +322,7 @@ Q3PtrList<MetaContact> Group::onlineMembers() const
 	Q3PtrList<MetaContact> list = members();
 	
 	for( list.first(); list.current(); )
-		if( list.current()->isReachable() )
+		if( list.current()->isReachable() && list.current()->isOnline() )
 			list.next();
 		else
 			list.remove();

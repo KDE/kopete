@@ -52,7 +52,6 @@ Q3ValueList<int> ChatNavServiceTask::exchangeList() const
     return m_exchanges;
 }
 
-
 bool ChatNavServiceTask::forMe( const Transfer* transfer ) const
 {
 	const SnacTransfer* st = dynamic_cast<const SnacTransfer*>( transfer );
@@ -89,15 +88,15 @@ bool ChatNavServiceTask::take( Transfer* transfer )
         case 0x0003:
             kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "exchange info TLV found" << endl;
 			handleExchangeInfo( t );
+            //set the exchanges for the client
+            emit haveChatExchanges( m_exchanges );
             break;
         case 0x0004:
             kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "room info TLV found" << endl;
+            handleBasicRoomInfo( t );
             break;
         };
     }
-
-    //set the exchanges for the client
-    emit haveChatExchanges( m_exchanges );
     setSuccess( 0, QString::null );
     setTransfer( 0 );
 	return true;
@@ -106,7 +105,7 @@ bool ChatNavServiceTask::take( Transfer* transfer )
 
 void ChatNavServiceTask::onGo()
 {
-    FLAP f =  { 0x02, client()->flapSequence(), 0x00 };
+    FLAP f =  { 0x02, 0, 0x00 };
     SNAC s = { 0x000D, m_type, 0x0000, client()->snacSequence() };
     Buffer* b = new Buffer();
 
@@ -121,7 +120,7 @@ void ChatNavServiceTask::createRoom( WORD exchange, const QString& name )
 	QString lang = "en";
 	QString charset = "us-ascii";
 
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x000D, 0x0008, 0x0000, client()->snacSequence() };
 	Buffer *b = new Buffer;
 
@@ -147,6 +146,7 @@ void ChatNavServiceTask::createRoom( WORD exchange, const QString& name )
 	b->addWord( lang.length() );
 	b->addString( lang.latin1(), lang.length() );
 
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending join room packet" << endl;
 	Transfer* t = createTransfer( f, s, b );
 	send( t );
 }
@@ -225,15 +225,22 @@ void ChatNavServiceTask::handleExchangeInfo( const TLV& t )
 
 void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
 {
-	kdDebug(OSCAR_RAW_DEBUG) << "Parsing exchange info TLV" << t.length << endl;
+	kdDebug(OSCAR_RAW_DEBUG) << "Parsing room info TLV" << t.length << endl;
 	Buffer b(t.data);
-	WORD id = b.getWord();
-	int tlvCount = b.getWord();
-	int realCount = 0;
-	kdDebug(OSCAR_RAW_DEBUG) << "Expecting " << tlvCount << " TLVs" << endl;
-	while ( b.length() > 0 )
-	{
-		TLV t = b.getTLV();
+    WORD exchange = b.getWord();
+    QByteArray cookie( b.getBlock( b.getByte() ) );
+    WORD instance = b.getWord();
+    b.getByte(); //detail level, which i'm not sure we need
+    WORD tlvCount = b.getWord();
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "e: " << exchange
+                             << " c: " << cookie << " i: " << instance << endl;
+
+    QValueList<Oscar::TLV> tlvList = b.getTLVList();
+    QValueList<Oscar::TLV>::iterator it, itEnd = tlvList.end();
+    QString roomName;
+    for ( it = tlvList.begin(); it != itEnd; ++it )
+    {
+        TLV t = ( *it );
 		switch (t.type)
 		{
 		case 0x66:
@@ -249,7 +256,8 @@ void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
 			kdDebug(OSCAR_RAW_DEBUG) << "evil generated array" << endl;
 			break;
 		case 0x6A:
-			kdDebug(OSCAR_RAW_DEBUG) << "fully qualified name" << endl;
+            roomName = QString( t.data );
+			kdDebug(OSCAR_RAW_DEBUG) << "fully qualified name" << roomName << endl;
 			break;
 		case 0x6B:
 			kdDebug(OSCAR_RAW_DEBUG) << "moderator" << endl;
@@ -288,8 +296,9 @@ void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
 			kdDebug(OSCAR_RAW_DEBUG) << "unknown TLV type " << t.type << endl;
 			break;
 		}
-		realCount++;
 	}
+
+    emit connectChat( exchange, cookie, instance, roomName );
 }
 
 void ChatNavServiceTask::handleCreateRoomInfo( const TLV& t )

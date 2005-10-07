@@ -61,7 +61,7 @@ bool ICBMParamsTask::take( Transfer* transfer )
 void ICBMParamsTask::onGo()
 {
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending ICBM Parameters request" << endl;
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0004, 0x0004, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
 	Transfer* st = createTransfer( f, s, buffer );
@@ -94,27 +94,35 @@ void ICBMParamsTask::handleICBMParameters()
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "minMsgInterval     = " << minMsgInterval << endl;
 	
 	/*WORD unknown = */buffer->getWord();
-	sendMessageParams();
+
+	// Now we set our own parameters.
+	// The ICBM parameters have to be set up seperately for each channel.
+	// Some clients (namely Trillian) might refuse sending on channels that were not set up.
+	sendMessageParams( 0x01 );
+	sendMessageParams( 0x02 );
+	sendMessageParams( 0x04 );
 }
 
-void ICBMParamsTask::sendMessageParams()
+void ICBMParamsTask::sendMessageParams( int channel )
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending ICBM parameters we want" << endl;
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending ICBM parameters for channel " << channel << endl;
 	
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0004, 0x0002, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
 		
-	// max channels
-	//this is read-only, and must be set to 0 here
-	buffer->addWord(0x0000);
+	// the channel for which to set up the parameters
+	buffer->addWord( channel );
 	
 	//these are all read-write
 	// channel-flags
 	// bit 1 : messages allowed (always 1 or you cannot send IMs)
 	// bit 2 : missed call notifications enabled
 	// bit 4 : typing notifications enabled
-	buffer->addDWord(0xb);
+	if ( channel == 1 )
+		buffer->addDWord(0x0000000B);
+	else
+		buffer->addDWord(0x00000003);
 	
 	//max message length (8000 bytes)
 	buffer->addWord(0x1f40);

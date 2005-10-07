@@ -84,8 +84,8 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 
 	m_actionNudge=new KAction( i18n( "Send Nudge" ), 0, this, SLOT(slotSendNudge() ), actionCollection(), "msnSendNudge" ) ;
 	m_actionNudge->setEnabled(false);
-	m_actionWebcamReceive=new KAction( i18n( "Invite to recieve user webcam" ), 0, this, SLOT(slotWebcamReceive() ), actionCollection(), "msnWebcamReceive" ) ;
-	m_actionWebcamSend=new KAction( i18n( "Send webcam" ), 0, this, SLOT(slotWebcamSend() ), actionCollection(), "msnWebcamSend" ) ;
+	m_actionWebcamReceive=new KAction( i18n( "Invite to Receive User Webcam" ), 0, this, SLOT(slotWebcamReceive() ), actionCollection(), "msnWebcamReceive" ) ;
+	m_actionWebcamSend=new KAction( i18n( "Send Webcam" ), 0, this, SLOT(slotWebcamSend() ), actionCollection(), "msnWebcamSend" ) ;
 	
 	
 
@@ -493,8 +493,7 @@ void MSNChatSession::initInvitation(MSNInvitation* invitation)
 	}
 	else
 	{
-		Q3PtrList<Kopete::Contact> mb=members();
-		static_cast<MSNAccount*>( account() )->slotStartChatSession( mb.first()->contactId() );
+		startChatSession();
 	}
 }
 
@@ -704,7 +703,7 @@ void MSNChatSession::cleanMessageQueue( const QString & reason )
 			m_messagesQueue.remove(it);
 		}
 		body+="</ul>";
-		Kopete::Message msg = Kopete::Message(m.to().first() , members() , body , Kopete::Message::Internal, Kopete::Message::PlainText);
+		Kopete::Message msg = Kopete::Message(m.to().first() , members() , body , Kopete::Message::Internal, Kopete::Message::RichText);
 		appendMessage(msg);
 
 	}
@@ -732,10 +731,7 @@ void MSNChatSession::slotConnectionTimeout()
 	}
 	startChatSession();
 
-};
-
-
-
+}
 
 #include "msnchatsession.moc"
 

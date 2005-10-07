@@ -292,7 +292,7 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 	}
 	else
 		m_account->yahooSession()->sendIm( static_cast<YahooContact*>(m_account->myself())->m_userId,
-					           static_cast<YahooContact *>(target)->m_userId, messageText, m_account->pictureFlag());
+							static_cast<YahooContact *>(target)->m_userId, messageText, m_account->pictureFlag());
 
 	// append message to window
 	manager(Kopete::Contact::CanCreate)->appendMessage(message);
@@ -500,8 +500,9 @@ void YahooContact::requestWebcam()
 {
 	if ( !KStandardDirs::findExe("jasper") )
 	{
-		KMessageBox::queuedMessageBox(                            		Kopete::UI::Global::mainWidget(),
-			KMessageBox::Error, i18n("I cannot find the jasper image convert program.\njasper is required to render the yahoo webcam images.\nPlease go to http://kopete.kde.org/yahoo/jasper.html for instructions.")
+		KMessageBox::queuedMessageBox(
+			Kopete::UI::Global::mainWidget(), KMessageBox::Error,
+			i18n("I cannot find the jasper image convert program.\njasper is required to render the yahoo webcam images.\nPlease go to %1").arg( "http://www.ece.uvic.ca/~mdadams/jasper/")
                 );
 		return;
 	}

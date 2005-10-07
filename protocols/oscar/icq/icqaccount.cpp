@@ -15,18 +15,25 @@
   *************************************************************************
 */
 
+#include <qfile.h>
+#include <qimage.h>
+
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
+#include <kmdcodec.h>
+#include <kstandarddirs.h>
 
 #include "kopeteawayaction.h"
 #include "kopetemessage.h"
+#include "kopetecontactlist.h"
 
 #include "client.h"
 #include "icquserinfo.h"
 #include "oscarsettings.h"
 #include "oscarutils.h"
+#include "ssimanager.h"
 
 #include "icqcontact.h"
 #include "icqprotocol.h"
@@ -51,7 +58,7 @@ void ICQMyselfContact::receivedShortInfo( const QString& contact )
 {
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
-	
+
 	ICQShortInfo shortInfo = static_cast<ICQAccount*>( account() )->engine()->getShortInfo( contact );
 	if ( !shortInfo.nickname.isEmpty() )
 		setProperty( Kopete::Global::Properties::self()->nickName(), shortInfo.nickname );
@@ -68,12 +75,16 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID, const char *
 	kdDebug(14152) << k_funcinfo << accountID << ": Called."<< endl;
 	setMyself( new ICQMyselfContact( this ) );
 	myself()->setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::Visible ).toOnlineStatus() );
-	
+
 	QString nickName = configGroup()->readEntry("NickName", QString::null);
 	mWebAware = configGroup()->readBoolEntry( "WebAware", false );
 	mHideIP = configGroup()->readBoolEntry( "HideIP", true );
 
+	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged( const QString&, const QVariant& ) ),
+	                  this, SLOT( slotGlobalIdentityChanged( const QString&, const QVariant& ) ) );
 	
+	QObject::connect( engine(), SIGNAL( iconNeedsUploading() ), this, SLOT( slotSendBuddyIcon() ) );
+
 	//setIgnoreUnknownContacts(pluginData(protocol(), "IgnoreUnknownContacts").toUInt() == 1);
 
 	/* FIXME: need to do this when web aware or hide ip change
@@ -104,19 +115,19 @@ ICQ::Presence ICQAccount::presence()
 KActionMenu* ICQAccount::actionMenu()
 {
 	KActionMenu* actionMenu = Kopete::Account::actionMenu();
-	
+
 	actionMenu->popupMenu()->insertSeparator();
-	
-	KToggleAction* actionInvisible = 
+
+	KToggleAction* actionInvisible =
 	    new KToggleAction( i18n( "In&visible" ),
 	                       ICQ::Presence( presence().type(), ICQ::Presence::Invisible ).toOnlineStatus().iconFor( this ),
 	                       0, this, SLOT( slotToggleInvisible() ), this );
 	actionInvisible->setChecked( presence().visibility() == ICQ::Presence::Invisible );
 	actionMenu->insert( actionInvisible );
-	
+
 	//actionMenu->popupMenu()->insertSeparator();
 	//actionMenu->insert( new KToggleAction( i18n( "Send &SMS..." ), 0, 0, this, SLOT( slotSendSMS() ), this, "ICQAccount::mActionSendSMS") );
-	
+
 	return actionMenu;
 }
 
@@ -125,18 +136,18 @@ void ICQAccount::connectWithPassword( const QString &password )
 {
 	if ( password.isNull() )
 		return;
-	
+
 	kdDebug(14153) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
-	
+
 	Kopete::OnlineStatus status = initialStatus();
 	if ( status == Kopete::OnlineStatus() &&
 	     status.status() == Kopete::OnlineStatus::Unknown )
-		//use default online in case of invalid online status for connecting 
+		//use default online in case of invalid online status for connecting
 		status = Kopete::OnlineStatus( Kopete::OnlineStatus::Online );
 	ICQ::Presence pres = ICQ::Presence::fromOnlineStatus( status );
 	bool accountIsOffline = ( presence().type() == ICQ::Presence::Offline ||
 	                          myself()->onlineStatus() == protocol()->statusManager()->connectingStatus() );
-	
+
 	if ( accountIsOffline )
 	{
 		myself()->setOnlineStatus( protocol()->statusManager()->connectingStatus() );
@@ -145,7 +156,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 		QString server = configGroup()->readEntry( "Server", QString::fromLatin1( "login.oscar.aol.com" ) );
 		uint port = configGroup()->readNumEntry( "Port", 5190 );
 		Connection* c = setupConnection( server, port );
-		
+
 		//set up the settings for the account
 		Oscar::Settings* oscarSettings = engine()->clientSettings();
 		oscarSettings->setWebAware( configGroup()->readBoolEntry( "WebAware", false ) );
@@ -154,17 +165,17 @@ void ICQAccount::connectWithPassword( const QString &password )
 		oscarSettings->setRespectRequireAuth( configGroup()->readBoolEntry( "RespectRequireAuth", true ) );
 		//FIXME: also needed for the other call to setStatus (in setPresenceTarget)
 		DWORD status = pres.toOscarStatus();
-		
+
 		if ( !mHideIP )
 			status |= ICQ::StatusCode::SHOWIP;
 		if ( mWebAware )
 			status |= ICQ::StatusCode::WEBAWARE;
-		
+
 		engine()->setIsIcq( true );
 		engine()->setStatus( status );
 		engine()->start( server, port, accountId(), password );
 		engine()->connectToServer( c, server, true /* doAuth */ );
-		
+
 	}
 }
 
@@ -198,7 +209,7 @@ void ICQAccount::setInvisible( ICQ::Presence::Visibility vis )
 	ICQ::Presence pres = presence();
 	if ( vis == pres.visibility() )
 		return;
-	
+
 	kdDebug(14153) << k_funcinfo << "changing invisible setting to " << (int)vis << endl;
 	setPresenceTarget( ICQ::Presence( pres.type(), vis ) );
 }
@@ -218,7 +229,7 @@ void ICQAccount::setPresenceTarget( const ICQ::Presence &newPres )
 	bool targetIsOffline = (newPres.type() == ICQ::Presence::Offline);
 	bool accountIsOffline = ( presence().type() == ICQ::Presence::Offline ||
 	                          myself()->onlineStatus() == protocol()->statusManager()->connectingStatus() );
-	
+
 	if ( targetIsOffline )
 	{
 		OscarAccount::disconnect();
@@ -241,7 +252,7 @@ void ICQAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const QStr
 	if ( status.status() == Kopete::OnlineStatus::Invisible )
 	{
 		// called from outside, i.e. not by our custom action menu entry...
-		
+
 		if ( presence().type() == ICQ::Presence::Offline )
 		{
 			// ...when we are offline go online invisible.
@@ -265,23 +276,195 @@ OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::Me
 	ICQContact* contact = new ICQContact( this, contactId, parentContact, QString::null, ssiItem );
 	if ( !ssiItem.alias().isEmpty() )
 		contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
-	
+
 	if ( isConnected() )
 		contact->loggedIn();
-	
+
 	return contact;
 }
 
-QString ICQAccount::sanitizedMessage( const Oscar::Message& message )
+QString ICQAccount::sanitizedMessage( const QString& message )
 {
-	if ( message.type() == 1 || message.type() == 4 )
+	return Kopete::Message::escape( message );
+}
+
+
+void ICQAccount::slotGlobalIdentityChanged( const QString& key, const QVariant& value )
+{
+	//do something with the photo
+	kdDebug(14153) << k_funcinfo << "Global identity changed" << endl;
+	kdDebug(14153) << k_funcinfo << "key: " << key << endl;
+	kdDebug(14153) << k_funcinfo << "value: " << value << endl;
+	if ( key == Kopete::Global::Properties::self()->nickName().key() )
 	{
-		return Kopete::Message::escape( message.text() );
+		//edit ssi item to change alias (if possible)
 	}
-	else 
-		kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "ICQ type 2 messages not supported yet. Message text:" << message.text() << endl;
 	
-	return QString::null;
+	if ( key == Kopete::Global::Properties::self()->photo().key() )
+	{
+		setBuddyIcon( value.toString() );
+	}
+}
+
+void ICQAccount::setBuddyIcon( KURL url )
+{	
+	if ( url.path().isEmpty() )
+	{
+		myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
+	}
+	else
+	{
+		QImage image( url.path() );
+		if ( image.isNull() )
+			return;
+		
+		image = image.smoothScale( 52, 64, QImage::ScaleMin );	
+		
+		QString newlocation( locateLocal( "appdata", "oscarpictures/"+ accountId() + ".jpg" ) );
+		
+		kdDebug(14153) << k_funcinfo << "Saving buddy icon: " << newlocation << endl;
+		if ( !image.save( newlocation, "JPEG" ) )
+			return;
+		
+		myself()->setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
+	}
+	
+	slotBuddyIconChanged();
+}
+
+void ICQAccount::slotBuddyIconChanged()
+{
+	// need to disconnect because we could end up with many connections
+	QObject::disconnect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotBuddyIconChanged() ) );
+	if ( !engine()->isActive() )
+	{
+		QObject::connect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotBuddyIconChanged() ) );
+		return;
+	}
+	
+	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
+	
+	SSIManager* ssi = engine()->ssiManager();
+	Oscar::SSI item = ssi->findItemForIconByRef( 1 );
+	
+	if ( photoPath.isEmpty() )
+	{
+		if ( item )
+		{
+			kdDebug(14153) << k_funcinfo << "Removing icon hash item from ssi" << endl;
+			Oscar::SSI s(item);
+			
+			//remove hash and alias
+			QValueList<TLV> tList( item.tlvList() );
+			TLV t = Oscar::findTLV( tList, 0x00D5 );
+			if ( t )
+				tList.remove( t );
+			
+			t = Oscar::findTLV( tList, 0x0131 );
+			if ( t )
+				tList.remove( t );
+			
+			item.setTLVList( tList );
+			//s is old, item is new. modification will occur
+			engine()->modifySSIItem( s, item );
+		}
+	}
+	else
+	{
+		QFile iconFile( photoPath );
+		iconFile.open( IO_ReadOnly );
+		
+		KMD5 iconHash;
+		iconHash.update( iconFile );
+		kdDebug(14153) << k_funcinfo  << "hash is :" << iconHash.hexDigest() << endl;
+	
+		//find old item, create updated item
+		if ( !item )
+		{
+			kdDebug(14153) << k_funcinfo << "no existing icon hash item in ssi. creating new" << endl;
+			
+			TLV t;
+			t.type = 0x00D5;
+			t.data.resize( 18 );
+			t.data[0] = 0x01;
+			t.data[1] = 0x10;
+			memcpy(t.data.data() + 2, iconHash.rawDigest(), 16);
+			t.length = t.data.size();
+			
+			//alias, it's always empty
+			TLV t2;
+			t2.type = 0x0131;
+			t2.length = 0;
+			
+			QValueList<Oscar::TLV> list;
+			list.append( t );
+			list.append( t2 );
+			
+			Oscar::SSI s( "1", 0, ssi->nextContactId(), ROSTER_BUDDYICONS, list );
+			
+			//item is a non-valid ssi item, so the function will add an item
+			kdDebug(14153) << k_funcinfo << "setting new icon item" << endl;
+			engine()->modifySSIItem( item, s );
+		}
+		else
+		{ //found an item
+			Oscar::SSI s(item);
+			kdDebug(14153) << k_funcinfo << "modifying old item in ssi." << endl;
+			QValueList<TLV> tList( item.tlvList() );
+			
+			TLV t = Oscar::findTLV( tList, 0x00D5 );
+			if ( t )
+				tList.remove( t );
+			else
+				t.type = 0x00D5;
+			
+			t.data.resize( 18 );
+			t.data[0] = 0x01;
+			t.data[1] = 0x10;
+			memcpy(t.data.data() + 2, iconHash.rawDigest(), 16);
+			t.length = t.data.size();
+			tList.append( t );
+			
+			//add empty alias
+			t = Oscar::findTLV( tList, 0x0131 );
+			if ( !t )
+			{
+				t.type = 0x0131;
+				t.length = 0;
+				tList.append( t );
+			}
+			
+			item.setTLVList( tList );
+			//s is old, item is new. modification will occur
+			engine()->modifySSIItem( s, item );
+		}
+		iconFile.close();
+	}
+}
+
+void ICQAccount::slotSendBuddyIcon()
+{
+	//need to disconnect because we could end up with many connections
+	QObject::disconnect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotSendBuddyIcon() ) );
+	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
+	if ( photoPath.isEmpty() )
+		return;
+	
+	kdDebug(14153) << k_funcinfo << photoPath << endl;
+	QFile iconFile( photoPath );
+	
+	if ( iconFile.open( IO_ReadOnly ) )
+	{
+		if ( !engine()->hasIconConnection() )
+		{
+			//will send icon when we connect to icon server
+			QObject::connect( engine(), SIGNAL( iconServerConnected() ),
+			                  this, SLOT( slotSendBuddyIcon() ) );
+			return;
+		}
+		QByteArray imageData = iconFile.readAll();
+		engine()->sendBuddyIcon( imageData );
+	}
 }
 
 

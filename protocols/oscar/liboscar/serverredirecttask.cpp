@@ -36,6 +36,20 @@ void ServerRedirectTask::setService( WORD family )
 	m_service = family;
 }
 
+void ServerRedirectTask::setChatParams( WORD exchange, QByteArray cookie, WORD instance )
+{
+    m_chatExchange = exchange;
+    m_chatCookie.duplicate( cookie );
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "cookie is" << m_chatCookie << endl;
+    m_chatInstance = instance;
+}
+
+void ServerRedirectTask::setChatRoom( const QString& roomName )
+{
+    m_chatRoom = roomName;
+}
+
+
 void ServerRedirectTask::onGo()
 {
 	if ( m_service != 0 )
@@ -66,15 +80,26 @@ bool ServerRedirectTask::take( Transfer* transfer )
 	return value;
 }
 
+
 void ServerRedirectTask::requestNewService()
 {
-	FLAP f = { 0x02, client()->flapSequence(), 0x00 };
+	FLAP f = { 0x02, 0, 0x00 };
 	SNAC s = { 0x0001, 0x0004, 0x0000, client()->snacSequence() };
 	Buffer* b = new Buffer();
 	b->addWord( m_service );
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Requesting server for service " << m_service << endl;
-	Transfer* t = createTransfer( f, s, b );
-	send( t );
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Requesting server for service " << m_service << endl;
+    if ( m_service == 0x000E )
+    {
+        b->addWord( 0x0001 );
+        b->addWord( m_chatCookie.size() + 5 );
+        b->addWord( m_chatExchange );
+        b->addByte( m_chatCookie.size() );
+        b->addString( m_chatCookie );
+        b->addWord( m_chatInstance );
+    }
+
+    Transfer* t = createTransfer( f, s, b );
+    send( t );
 }
 
 bool ServerRedirectTask::handleRedirect()
@@ -131,6 +156,16 @@ QString ServerRedirectTask::newHost() const
 WORD ServerRedirectTask::service() const
 {
 	return m_service;
+}
+
+WORD ServerRedirectTask::chatExchange() const
+{
+    return m_chatExchange;
+}
+
+QString ServerRedirectTask::chatRoomName() const
+{
+    return m_chatRoom;
 }
 
 #include "serverredirecttask.moc"

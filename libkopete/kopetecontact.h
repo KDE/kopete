@@ -27,7 +27,7 @@
 #include <kdemacros.h>
 #include "kopeteglobal.h"
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 class QImage;
 class KPopupMenu;

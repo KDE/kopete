@@ -127,7 +127,7 @@ void AimLoginTask::sendAuthStringRequest()
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo 
 		<< "SEND CLI_AUTH_REQUEST, sending login request" << endl;
 
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0017, 0x0006, 0x0000, client()->snacSequence() };
 		
 	Buffer* outbuf = new Buffer;
@@ -153,7 +153,7 @@ void AimLoginTask::sendLoginRequest()
 {
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo <<  "SEND (CLI_MD5_LOGIN) sending AIM login" << endl;
 
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0017, 0x0002, 0x0000, client()->snacSequence() };
 	Buffer *outbuf = new Buffer;
 	outbuf->addTLV(0x0001, client()->userId().length(), client()->userId().latin1());

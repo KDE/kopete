@@ -114,7 +114,9 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 
 	// Widgets initializations
 	mMainWidget = new HistoryViewer(this, "HistoryDialog::mMainWidget");
-	mMainWidget->searchLine->setFocus();
+	mMainWidget->searchLine->setFocus(); 
+	mMainWidget->searchLine->setTrapReturnKey (true);
+	mMainWidget->searchLine->setTrapReturnKey(true);
 	mMainWidget->searchErase->setPixmap(BarIcon("locationbar_erase"));
 
 	mMainWidget->contactComboBox->insertItem(i18n("All"));
@@ -164,6 +166,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 	connect(mMainWidget->searchLine, SIGNAL(textChanged(const QString&)), this, SLOT(slotSearchTextChanged(const QString&)));
 	connect(mMainWidget->searchErase, SIGNAL(clicked()), this, SLOT(slotSearchErase()));
 	connect(mMainWidget->contactComboBox, SIGNAL(activated(int)), this, SLOT(slotContactChanged(int)));
+	connect(mMainWidget->messageFilterBox, SIGNAL(activated(int)), this, SLOT(slotFilterChanged(int )));
 
 	resize(650, 700);
 	centerOnScreen(this);
@@ -260,21 +263,23 @@ void HistoryDialog::init(Kopete::Contact *c)
 	d1.setSorting( QDir::Name );
 
 	const QFileInfoList *list1 = d1.entryInfoList();
-	QFileInfoListIterator it1( *list1 );
-
-	while ( (fi = it1.current()) != 0 )
+	if ( list1 != 0 )
 	{
-		if(fi->fileName().contains(contact_in_filename))
+		QFileInfoListIterator it1( *list1 );
+		while ( (fi = it1.current()) != 0 )
 		{
-			rx.search(fi->fileName());
-			
-			QDate cDate = QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), 1);
+			if(fi->fileName().contains(contact_in_filename))
+			{
+				rx.search(fi->fileName());
+				
+				QDate cDate = QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), 1);
 
-			DMPair pair(cDate, c->metaContact());
-			mInit.dateMCList.append(pair);
-
+				DMPair pair(cDate, c->metaContact());
+				mInit.dateMCList.append(pair);
+	
+			}
+			++it1;
 		}
-		++it1;
 	}
 	// END of kopete 0.7.x check
 
@@ -287,21 +292,24 @@ void HistoryDialog::init(Kopete::Contact *c)
 	d.setFilter( QDir::Files | QDir::NoSymLinks );
 	d.setSorting( QDir::Name );
 	const QFileInfoList *list = d.entryInfoList();
-	QFileInfoListIterator it( *list );
-	while ( (fi = it.current()) != 0 )
+	if ( list != 0 )
 	{
-		if(fi->fileName().contains(contact_in_filename))
+		QFileInfoListIterator it( *list );
+		while ( (fi = it.current()) != 0 )
 		{
-			
-			rx.search(fi->fileName());
-			
-			// We search for an item in the list view with the same year. If then we add the month
-			QDate cDate = QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), 1);
+			if(fi->fileName().contains(contact_in_filename))
+			{
+				
+				rx.search(fi->fileName());
+				
+				// We search for an item in the list view with the same year. If then we add the month
+				QDate cDate = QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), 1);
 
-			DMPair pair(cDate, c->metaContact());
-			mInit.dateMCList.append(pair);
+				DMPair pair(cDate, c->metaContact());
+				mInit.dateMCList.append(pair);
+			}
+			++it;
 		}
-		++it;
 	}
 }
 
@@ -345,37 +353,47 @@ void HistoryDialog::setMessages(Q3ValueList<Kopete::Message> msgs)
 	// Populating HTML Part with messages
 	for ( it = msgs.begin(); it != msgs.end(); ++it )
 	{
-		resultHTML = "";
-
-		if (accountLabel.isEmpty() || accountLabel != (*it).from()->account()->accountLabel())
-		// If the message's account is new, just specify it to the user
+		if ( mMainWidget->messageFilterBox->currentItem() == 0
+			|| ( mMainWidget->messageFilterBox->currentItem() == 1 && (*it).direction() == Kopete::Message::Inbound )
+			|| ( mMainWidget->messageFilterBox->currentItem() == 2 && (*it).direction() == Kopete::Message::Outbound ) )
 		{
-			if (!accountLabel.isEmpty())
-				resultHTML += "<br/><br/><br/>";
-			resultHTML += "<b><font color=\"blue\">" + (*it).from()->account()->accountLabel() + "</font></b><br/>";
-		}
-		accountLabel = (*it).from()->account()->accountLabel();
-
-		QString body = (*it).parsedBody();
-
-		if (!mMainWidget->searchLine->text().isEmpty())
-		// If there is a search, then we hightlight the keywords
-		{
-			body = body.replace(mMainWidget->searchLine->text(), "<span style=\"background-color:yellow\">" + mMainWidget->searchLine->text() + "</span>", false);
-		}
+			resultHTML = "";
 	
-		resultHTML += "(<b>" + (*it).timestamp().time().toString() + "</b>) "
-				   + ((*it).direction() == Kopete::Message::Outbound ?
-								"<font color=\"navy\"><b>&gt;</b></font> "
-								: "<font color=\"orange\"><b>&lt;</b></font> ")
-				   + body + "<br/>";
-
-		newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
-		newNode.setAttribute(QString::fromLatin1("dir"), dir);
-		newNode.setInnerHTML(resultHTML);
-
-		mHtmlPart->htmlDocument().body().appendChild(newNode);
+			if (accountLabel.isEmpty() || accountLabel != (*it).from()->account()->accountLabel())
+			// If the message's account is new, just specify it to the user
+			{
+				if (!accountLabel.isEmpty())
+					resultHTML += "<br/><br/><br/>";
+				resultHTML += "<b><font color=\"blue\">" + (*it).from()->account()->accountLabel() + "</font></b><br/>";
+			}
+			accountLabel = (*it).from()->account()->accountLabel();
+	
+			QString body = (*it).parsedBody();
+	
+			if (!mMainWidget->searchLine->text().isEmpty())
+			// If there is a search, then we hightlight the keywords
+			{
+				body = body.replace(mMainWidget->searchLine->text(), "<span style=\"background-color:yellow\">" + mMainWidget->searchLine->text() + "</span>", false);
+			}
+		
+			resultHTML += "(<b>" + (*it).timestamp().time().toString() + "</b>) "
+					+ ((*it).direction() == Kopete::Message::Outbound ?
+									"<font color=\"navy\"><b>&gt;</b></font> "
+									: "<font color=\"orange\"><b>&lt;</b></font> ")
+					+ body + "<br/>";
+	
+			newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
+			newNode.setAttribute(QString::fromLatin1("dir"), dir);
+			newNode.setInnerHTML(resultHTML);
+	
+			mHtmlPart->htmlDocument().body().appendChild(newNode);
+		}
 	}
+}
+
+void HistoryDialog::slotFilterChanged(int index)
+{
+	dateSelected(mMainWidget->dateListView->currentItem());
 }
 
 void HistoryDialog::slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args*/)
@@ -401,12 +419,11 @@ void HistoryDialog::slotSearchTextChanged(const QString& searchText)
 void HistoryDialog::listViewShowElements(bool s)
 {
 	KListViewDateItem* item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
-	do
+	while (item != 0)
 	{
 			item->setVisible(s);
 			item = static_cast<KListViewDateItem*>(item->nextSibling());
 	}
-	while(item != 0);
 }
 
 // Erase the search line, show all date/metacontacts items in the list (accordint to the
@@ -441,8 +458,11 @@ void HistoryDialog::slotSearch()
 		mMainWidget->searchButton->setText(i18n("&Search"));
 		delete mSearch;
 		mSearch = 0L;
+		doneProgressBar();
 		return;
 	}
+
+	if (mMainWidget->dateListView->childCount() == 0) return;
 
 	listViewShowElements(false);
 

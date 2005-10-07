@@ -53,6 +53,7 @@
 #include <q3vbox.h>
 #include <klistview.h>
 #include <qcheckbox.h>
+#include <qstylesheet.h>
 
 
 namespace Kopete {
@@ -668,7 +669,7 @@ QString Contact::toolTip() const
 			if(!name.isEmpty())
 			{
 				tip += i18n("<br><b>Full Name:</b>&nbsp;FORMATTED NAME",
-					"<br><b>Full Name:</b>&nbsp;<nobr>%1</nobr>").arg(name);
+							"<br><b>Full Name:</b>&nbsp;<nobr>%1</nobr>").arg(QStyleSheet::escape(name));
 			}
 		}
 		else if ((*it) == QString::fromLatin1("FormattedIdleTime"))
@@ -687,7 +688,7 @@ QString Contact::toolTip() const
 			{
 				tip += i18n("<br><b>Home Page:</b>&nbsp;FORMATTED URL",
 					"<br><b>Home Page:</b>&nbsp;<a href=\"%1\"><nobr>%2</nobr></a>").
-					arg( KURL::encode_string( url ), Kopete::Message::escape( url ) );
+						arg( KURL::encode_string( url ), Kopete::Message::escape( QStyleSheet::escape(url) ) );
 			}
 		}
 		else if ((*it) == QString::fromLatin1("awayMessage"))
@@ -696,7 +697,7 @@ QString Contact::toolTip() const
 			if(!awaymsg.isEmpty())
 			{
 				tip += i18n("<br><b>Away Message:</b>&nbsp;FORMATTED AWAY MESSAGE",
-					"<br><b>Away&nbsp;Message:</b>&nbsp;%1").arg ( awaymsg );
+							"<br><b>Away&nbsp;Message:</b>&nbsp;%1").arg ( Kopete::Message::escape(awaymsg) );
 			}
 		}
 		else
@@ -727,7 +728,7 @@ QString Contact::toolTip() const
 
 				tip += i18n("<br><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE",
 					"<br><nobr><b>%2:</b></nobr>&nbsp;%1").
-					arg( valueText, p.tmpl().label() );
+						arg( QStyleSheet::escape(valueText), QStyleSheet::escape(p.tmpl().label()) );
 			}
 		}
 	}

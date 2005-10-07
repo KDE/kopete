@@ -688,10 +688,7 @@ void ChatView::appendMessage(Kopete::Message &message)
 {
 	remoteTyping( message.from(), false );
 
-	if ( message.direction() != Kopete::Message::Inbound )
-	   messagePart()->appendMessage( message,false);
-	else
-		messagePart()->appendMessage(message);
+	messagePart()->appendMessage(message);
 	if( !d->isActive )
 	{
 		switch ( message.importance() )
@@ -847,9 +844,6 @@ void ChatView::slotRemoteTypingTimeout()
 
 void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 {
-	unsigned int i;
-	QList<Kopete::Contact*> cts;
-	
 	if( event->provides( "kopete/x-contact" ) )
 	{
 		QStringList lst=QStringList::split( QChar( 0xE000 ) , QString::fromUtf8(event->encodedData ( "kopete/x-contact" )) );

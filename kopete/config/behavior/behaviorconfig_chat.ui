@@ -209,7 +209,7 @@
                 <string>&amp;Show events in chat window</string>
             </property>
         </widget>
-        <widget class="QLayoutWidget" row="5" column="0">
+        <widget class="QLayoutWidget" row="6" column="0">
             <property name="name">
                 <cstring>layout3</cstring>
             </property>

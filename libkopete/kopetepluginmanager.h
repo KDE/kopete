@@ -25,7 +25,7 @@
 #include <qstringlist.h>
 #include <q3valuelist.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 class KPluginInfo;
 

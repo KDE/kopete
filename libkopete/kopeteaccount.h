@@ -21,7 +21,7 @@
 
 #include "kopeteonlinestatus.h"
 
-#include <kdemacros.h>
+#include "kopete_export.h"
 
 #include <qobject.h>
 //Added by qt3to4:
@@ -63,7 +63,7 @@ class BlackLister;
  * When you create a new account, you have to register it with the account manager by calling
  * @ref AccountManager::registerAccount.
  *
- * @author Olivier Goffart  <ogoffart @tiscalinet.be>
+ * @author Olivier Goffart  <ogoffart@tiscalinet.be>
  */
 class KOPETE_EXPORT Account : public QObject
 {
@@ -333,7 +333,7 @@ protected:
 	 * contactId should be the accountID. The online status of the myself contact represents
 	 * the account's status.
 	 * 
-	 * The myself should have the @ref KopeteContactList::myself() as parent metacontact
+	 * The myself should have the @ref ContactList::myself() as parent metacontact
 	 * 
 	 */
 	void setMyself( Contact *myself );
@@ -437,7 +437,7 @@ public slots:
 	 *
 	 * If the service is connecting, you should abort the connection.
 	 *
-	 * You should call the @ref diconnected function from this function.
+	 * You should call the @ref disconnected function from this function.
 	 */
 	virtual void disconnect( ) = 0 ;
 

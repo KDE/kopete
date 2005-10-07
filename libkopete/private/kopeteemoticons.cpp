@@ -54,6 +54,7 @@ struct Emoticons::Emoticon
 	QString matchText;
 	QString matchTextEscaped;
 	QString	picPath;
+	QString picHTMLCode;
 };
 
 /* This is the object we will store each emoticon match in */
@@ -162,10 +163,7 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint mode )
 				p = c;
 				continue;
 			}
-		}
-
-		if( mode & SkipHTML )
-		{ //ok, we know we are parsing an HTML text
+		
 			if( !inHTMLEntity )
 			{ // are we
 				if( c == '&' )
@@ -201,12 +199,8 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint mode )
 					if( mode & StrictParse )
 					{
 					/* check if the character after this match is space or end of string*/
-						if(pos +  needle.length() < message.length() )
-						{
-							n = message[ pos + needle.length() ];
-							if( !n.isSpace() &&  !n.isNull() ) 
-								continue;
-						}
+						n = message[ pos + needle.length() ];
+						if( !n.isSpace() &&  !n.isNull() && n!='&') break;
 					}
 					/* Perfect match */
 					foundEmoticons.append( EmoticonNode( (*it), pos ) );
@@ -220,16 +214,20 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint mode )
 			{
 				if( inHTMLEntity ){
 					// If we are in an HTML entitiy such as &gt;
-					int htmlEnd;
+					int htmlEnd = message.find( ';', pos );
 					// Search for where it ends
-					if( ( htmlEnd = message.find( ';', pos ) ) == -1 ){
+					if( htmlEnd == -1 )
+					{
 						// Apparently this HTML entity isn't ended, something is wrong, try skip the '&'
 						// and continue
 						kdDebug( 14000 ) << k_funcinfo << "Broken HTML entity, trying to recover." << endl;
 						inHTMLEntity = false;
 						pos++;
-					} else {
+					}
+					else 
+					{
 						pos = htmlEnd;
+						inHTMLEntity = false;
 					}
 				}
 			}
@@ -255,12 +253,12 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint mode )
 		if ( ( length = ( (*found).pos - pos ) ) )
 		{
 			result.append( Token( Text,  message.mid( pos, length ) ) );
-			result.append( Token( Image, (*found).emoticon.matchTextEscaped, (*found).emoticon.picPath ) );
+			result.append( Token( Image, (*found).emoticon.matchTextEscaped, (*found).emoticon.picPath, (*found).emoticon.picHTMLCode ) );
 			pos += length + needle.length();
 		}
 		else
 		{
-			result.append( Token( Image, (*found).emoticon.matchTextEscaped, (*found).emoticon.picPath ) );
+			result.append( Token( Image, (*found).emoticon.matchTextEscaped, (*found).emoticon.picPath, (*found).emoticon.picHTMLCode ) );
 			pos += needle.length();
 		}
 	}
@@ -315,6 +313,9 @@ void Emoticons::addIfPossible( const QString& filenameNoExt, const QStringList &
 	{
 		d->emoticonAndPicList.insert( emoticons.first() , pic);
 
+		QPixmap p;
+		QString result;
+
 		for ( QStringList::const_iterator it = emoticons.constBegin(), end = emoticons.constEnd();
 		      it != end; ++it )
 		{
@@ -322,6 +323,22 @@ void Emoticons::addIfPossible( const QString& filenameNoExt, const QStringList &
 
 			Emoticon e;
 			e.picPath = pic;
+
+			// We need to include size (width, height attributes)  hints in the emoticon HTML code
+			// Unless we do so, ChatMessagePart::slotScrollView does not work properly and causing
+			// HTMLPart not to be scrolled to the very last message.
+			p.load( e.picPath );
+			result = QString::fromLatin1( "<img align=\"center\" src=\"" ) + 
+				  e.picPath + 
+				  QString::fromLatin1( "\" title=\"" ) +
+				  matchEscaped + 
+				  QString::fromLatin1( "\" width=\"" ) +
+				  QString::number( p.width() ) +
+				  QString::fromLatin1( "\" height=\"" ) +
+				  QString::number( p.height() ) +
+				  QString::fromLatin1( "\" />" );
+
+			e.picHTMLCode = result;
 			e.matchTextEscaped = matchEscaped;
 			e.matchText = *it;
 			d->emoticonMap[ matchEscaped[0] ].append( e );
@@ -425,22 +442,7 @@ QString Emoticons::parse( const QString &message, ParseMode mode )
 			result += token.text;
 		break;
 		case Image:
-			// Shall we do this at emoticon initialization ? But in that case tokenize() will
-			// return this (useless) information for contact lists too
-
-			// We need to include size (width, height attributes)  hints in the emoticon HTML code
-			// Unless we do so, ChatMessagePart::slotScrollView does not work properly and causing
-			// HTMLPart not to be scrolled to the very last message.
-			p.load( token.picPath );
-			result += QString::fromLatin1( "<img align=\"center\" src=\"" ) + 
-				  token.picPath + 
-				  QString::fromLatin1( "\" title=\"" ) +
-				  token.text +
-				  QString::fromLatin1( "\" width=\"" ) +
-				  QString::number( p.width() ) +
-				  QString::fromLatin1( "\" height=\"" ) +
-				  QString::number( p.height() ) +
-				  QString::fromLatin1( "\" />" );
+			result += (*token).picHTMLCode;
 			kdDebug( 14010 ) << k_funcinfo << "Emoticon html code: " << result << endl;
 		break;
 		default:

@@ -35,7 +35,7 @@ Q_OBJECT
 public:
 	ICQMyselfContact( ICQAccount *acct );
 	void userInfoUpdated();
-	
+
 public slots:
 	void receivedShortInfo( const QString& );
 	void fetchShortInfo();
@@ -45,46 +45,54 @@ public slots:
 class ICQAccount : public OscarAccount
 {
 Q_OBJECT
-	
+
 public:
 	ICQAccount( Kopete::Protocol *parent, QString accountID, const char *name = 0L );
 	virtual ~ICQAccount();
-	
+
 	ICQProtocol *protocol();
-	
+
 	// Accessor method for the action menu
 	virtual KActionMenu* actionMenu();
-	
+
 	/** Reimplementation from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus&, const QString& );
-	
+
 	virtual void setAway( bool away, const QString &awayReason );
-	
+
 	void connectWithPassword( const QString &password );
 
 	void setUserProfile( const QString &profile );
-	
+
+	void setBuddyIcon( KURL url );
+
 protected:
 	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const SSI& ssiItem );
 
-	virtual QString sanitizedMessage( const Oscar::Message& message );
+	virtual QString sanitizedMessage( const QString& message );
 
-protected slots:	
+protected slots:
 	virtual void disconnected( DisconnectReason reason );
-	
+
 
 private:
 	ICQ::Presence presence();
-	
+
 	void setInvisible( ICQ::Presence::Visibility );
 	void setPresenceType( ICQ::Presence::Type, const QString &awayMessage = QString::null );
 	void setPresenceTarget( const ICQ::Presence &presence );
-	
+
 	//const unsigned long fullStatus( const unsigned long plainStatus );
-	
+
 private slots:
 	void slotToggleInvisible();
-	
+
+	void slotGlobalIdentityChanged( const QString& key, const QVariant& value );
+
+	void slotBuddyIconChanged();
+
+	void slotSendBuddyIcon();
+
 private:
 	bool mWebAware;
 	bool mHideIP;

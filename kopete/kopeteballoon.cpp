@@ -3,7 +3,7 @@
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
 
-    Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005      by the Kopete developers  <kopete-devel@kde.org>
 
     Portions of this code based on Kim Applet code
     Copyright (c) 2000-2002 by Malte Starostik        <malte@kde.org>
@@ -22,10 +22,10 @@
 #include <qpushbutton.h>
 #include <qtooltip.h>
 #include <qlayout.h>
-//Added by qt3to4:
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <qtimer.h>
 
 #include <kdeversion.h>
 #include <kglobalsettings.h>
@@ -40,6 +40,7 @@
 
 #include "kopeteballoon.h"
 #include "systemtray.h"
+#include "kopeteprefs.h"
 
 KopeteActiveLabel::KopeteActiveLabel( QWidget *parent, const char *name )
 	: KActiveLabel( parent, name ) 
@@ -123,6 +124,11 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 		this, SIGNAL(signalIgnoreButtonClicked()));
 	connect(mCaption, SIGNAL(linkClicked(const QString &)),
 		this, SLOT(deleteLater()));
+	
+	KopetePrefs *p = KopetePrefs::prefs();
+	// Autoclose balloon 
+	if (p->balloonClose())
+		QTimer::singleShot( p->balloonCloseDelay() * 1000, this, SIGNAL( signalTimeout( ) ) );
 }
 
 void KopeteBalloon::setAnchor(const QPoint &anchor)

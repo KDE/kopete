@@ -115,7 +115,7 @@ void ChangeVisibilityTask::onGo()
 	sendEditStart();
 	
 	Buffer* b = new Buffer();
-	FLAP f = { 0x02, client()->flapSequence(), 0 };
+	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0013, 0x0009, 0x0000, client()->snacSequence() };
 	m_sequence = s.id;
 	b->addWord( 0 );
@@ -138,7 +138,7 @@ void ChangeVisibilityTask::onGo()
 void ChangeVisibilityTask::sendEditStart()
 {
 	SNAC editStartSnac = { 0x0013, 0x0011, 0x0000, client()->snacSequence() };
-	FLAP editStart = { 0x02, client()->flapSequence(), 0 };
+	FLAP editStart = { 0x02, 0, 0 };
 	Buffer* emptyBuffer = new Buffer;
 	Transfer* t1 = createTransfer( editStart, editStartSnac, emptyBuffer );
 	send( t1 );
@@ -147,7 +147,7 @@ void ChangeVisibilityTask::sendEditStart()
 void ChangeVisibilityTask::sendEditEnd()
 {
 	SNAC editEndSnac = { 0x0013, 0x0012, 0x0000, client()->snacSequence() };
-	FLAP editEnd = { 0x02, client()->flapSequence(), 0 };
+	FLAP editEnd = { 0x02, 0, 0 };
 	Buffer* emptyBuffer = new Buffer;
 	Transfer *t5 = createTransfer( editEnd, editEndSnac, emptyBuffer );
 	send( t5 );

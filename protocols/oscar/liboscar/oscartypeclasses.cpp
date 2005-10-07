@@ -24,15 +24,15 @@
 #include "buffer.h"
 
 
-using namespace Oscar;
+// using namespace Oscar;
 
-TLV::TLV()
+Oscar::TLV::TLV()
 {
 	type = 0;
 	length = 0;
 }
 
-TLV::TLV( Q_UINT16 newType, Q_UINT16 newLength, char* newData )
+Oscar::TLV::TLV( Q_UINT16 newType, Q_UINT16 newLength, char* newData )
 {
 	type = newType;
 	length = newLength;
@@ -40,14 +40,14 @@ TLV::TLV( Q_UINT16 newType, Q_UINT16 newLength, char* newData )
 	data.duplicate( newData, length );
 }
 
-TLV::TLV( Q_UINT16 newType, Q_UINT16 newLength, const QByteArray& newData )
+Oscar::TLV::TLV( Q_UINT16 newType, Q_UINT16 newLength, const QByteArray& newData )
 {
 	type = newType;
 	length = newLength;
 	data.duplicate( newData );
 }
 
-TLV::TLV( const TLV& t )
+Oscar::TLV::TLV( const TLV& t )
 {
 	type = t.type;
 	length = t.length;
@@ -55,106 +55,11 @@ TLV::TLV( const TLV& t )
 	data.duplicate( t.data );
 }
 
-TLV::~TLV()
-{
-}
-
-TLV::operator bool() const
+Oscar::TLV::operator bool() const
 {
 	return type != 0;
 }
 
-
-Oscar::Message::Message()
-{
-	m_channel = -1;
-	m_properties = -1;
-}
-
-Oscar::Message::Message( const QString& text, int channel, int properties, QDateTime timestamp )
-{
-	m_text = text;
-	m_channel = channel;
-	m_properties = properties;
-	m_timestamp = timestamp;
-}
-
-Oscar::Message::Message( const Oscar::Message& m )
-{
-	m_text = m.m_text;
-	m_channel = m.m_channel;
-	m_properties = m.m_properties;
-	m_timestamp = m.m_timestamp;
-}
-
-QString Oscar::Message::sender() const
-{
-	return m_sender;
-}
-
-void Oscar::Message::setSender( const QString& sender  )
-{
-	m_sender = sender;
-}
-
-QString Oscar::Message::receiver() const
-{
-	return m_receiver;
-}
-
-void Oscar::Message::setReceiver( const QString& receiver )
-{
-	m_receiver = receiver;
-}
-
-
-QString Oscar::Message::text() const
-{
-	return m_text;
-}
-
-void Oscar::Message::setText( const QString& newText )
-{
-	m_text = newText;
-}
-
-int Oscar::Message::properties() const
-{
-	return m_properties;
-}
-
-void Oscar::Message::addProperty( int prop )
-{
-	if ( m_properties == -1  )
-		m_properties = 0;
-
-	m_properties = m_properties | prop;
-}
-
-int Oscar::Message::type() const
-{
-	return m_channel;
-}
-
-void Oscar::Message::setType( int newType )
-{
-	m_channel = newType;
-}
-
-QDateTime Oscar::Message::timestamp() const
-{
-	return m_timestamp;
-}
-
-void Oscar::Message::setTimestamp( QDateTime ts )
-{
-	m_timestamp = ts;
-}
-
-Oscar::Message::operator bool() const
-{
-	return m_channel != -1 && m_properties != -1;
-}
 
 Oscar::SSI::SSI()
 {
@@ -175,7 +80,6 @@ Oscar::SSI::SSI( const QString &name, int gid, int bid, int type, const Q3ValueL
 
 	//deepcopy the tlvs
 	m_tlvList = tlvlist;
-
 	if ( m_tlvLength == 0 && !m_tlvList.isEmpty() )
 		refreshTLVLength();
 
@@ -194,13 +98,8 @@ Oscar::SSI::SSI( const Oscar::SSI& other )
 
 	//deepcopy the tlvs
 	m_tlvList = other.m_tlvList;
-
 	if ( m_tlvLength == 0 && !m_tlvList.isEmpty() )
 		refreshTLVLength();
-}
-
-Oscar::SSI::~SSI()
-{
 }
 
 bool Oscar::SSI::isValid() const

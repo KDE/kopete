@@ -26,6 +26,7 @@
 #include <QPixmap>
 #include <kdialogbase.h>
 
+#include "kopete_export.h"
 
 class QPixmap;
 class QWidget;

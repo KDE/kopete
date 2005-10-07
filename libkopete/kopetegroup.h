@@ -22,7 +22,7 @@
 #include "kopetenotifydataobject.h"
 #include "kopetecontactlistelement.h"
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 #include <q3ptrlist.h>
 

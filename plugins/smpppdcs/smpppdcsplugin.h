@@ -3,9 +3,9 @@
  
     Copyright (c) 2002-2003 by Chris Howells         <howells@kde.org>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
-    Copyright (c) 2004      by Heiko Schaefer        <heiko@rangun.de>
+    Copyright (c) 2004-2005 by Heiko Schaefer        <heiko@rangun.de>
  
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -23,17 +23,18 @@
 #include "config.h"
 #endif
 
+#include "detector.h"
+#include "iconnector.h"
+#include "smpppdcsiface.h"
+
 #include "kopeteplugin.h"
 #include "kopeteaccount.h"
 //Added by qt3to4:
 #include <QByteArray>
 
-#define SMPPPDCS_CONFIG_GROUP "SMPPPDCS Plugin"
-
 class QTimer;
-class KProcess;
-class DCOPClient;
-class KExtendedSocket;
+class Detector;
+class OnlineInquiry;
 
 /**
  * @brief Plugin for the detection of an internet connection
@@ -45,9 +46,9 @@ class KExtendedSocket;
  * Therefore it should be enabled on dial up network
  * connections.
  *
- * @author Chris Howells <howells@kde.org>, Heiko Schaefer <heiko@rangun.de>
+ * @author Chris Howells <howells@kde.org>, Heiko Sch&auml;fer <heiko@rangun.de>
  */
-class SMPPPDCSPlugin : public Kopete::Plugin {
+class SMPPPDCSPlugin : public Kopete::Plugin, public IConnector, virtual public SMPPPDCSIFace {
     Q_OBJECT
     SMPPPDCSPlugin(const SMPPPDCSPlugin&);
     SMPPPDCSPlugin& operator=(const SMPPPDCSPlugin&);
@@ -64,22 +65,23 @@ public:
     virtual ~SMPPPDCSPlugin();
 
     /**
-     * @brief Enumerates the different states of communication with the smpppd
+     * @brief Sets the status in all allowed accounts.
+     * Allowed accounts are set in the config dialog of the plugin.
+     *
+     * @see SMPPPDCSPrefs
      */
-    enum CommunicationState {
-        /// No connection to the smpppd is negotiated
-        UNSETTLED,
-        /// A connection to the smpppd is negotiated
-        SMPPPDSETTLED,
-        /// A challenge for the authentication is outspoken
-        CHALLENGED,
-        /// Ready for settling an smpppd connection
-        READY,
-        /// Listing of all interfaces requested
-        LISTIFCFG,
-        /// Status of all interfaces requested
-        STATUSIFCFG
-    };
+    virtual void setConnectedStatus( bool newStatus );
+
+    // Implementation of DCOP iface
+
+    /**
+     * @brief Checks if we are online.
+     * @note This method is reserved for future use. Do not use at the moment!
+     * @return <code>TRUE</code> if online, otherwise <code>FALSE</code>
+     */
+    virtual bool isOnline();
+
+    virtual QString detectionMethod() const;
 
 protected:
     /**
@@ -88,58 +90,20 @@ protected:
      */
     bool useSmpppd() const;
 
-    /**
-     * @brief Makes an response for an challenge
-     *
-     * If the smpppd requests an authorization, it sends an challenge.
-     * The password has to be appended to this challenge and the m5sum
-     * in hex-display has to get responded to the smpppd.
-     *
-     * @param chex the challenge in hex display
-     * @param password the passwort to authenticate
-     * @return the reponse for the smpppd
-     */
-    QString make_response(const QString& chex, const QString& password) const;
-
 private slots:
     void slotCheckStatus();
-	void allPluginsLoaded();
-
-    // Original cs-plugin code
-    void slotProcessStdout( KProcess *process, char *buffer, int len );
-
-    /**
-     * Notify when the netstat process has exited
-     */
-    void slotProcessExited( KProcess *process );
+    void allPluginsLoaded();
 
 private:
-    void setConnectedStatus( bool newStatus );
-	void netstatCheckStatus();
-	
-	void connectAllowed();
-	void disconnectAllowed();
-	
-#ifdef USE_SMPPPD
-    void smpppdCheckStatus();
-    QStringList readSMPPPD();
-    void writeSMPPPD(const char * cmd);
-    void connectToSMPPPD();
-#endif
+    void connectAllowed();
+    void disconnectAllowed();
 
 private:
 
-#ifdef USE_SMPPPD
-	CommunicationState m_comState;
-	KExtendedSocket   *m_sock;
-    QStringList        m_ifcfgs;
-	DCOPClient        *m_client;
-    static QByteArray    m_kinternetApp;
-#endif
-
+    Detector          *m_detector;
     bool               m_pluginConnected;
-	QTimer            *m_timer;
-    KProcess          *m_process;
+    QTimer            *m_timer;
+    OnlineInquiry     *m_onlineInquiry;
 };
 
 #endif /* SMPPPDCSPLUGIN_H */

@@ -20,7 +20,7 @@
 
 #include "kopetecontactproperty.h"
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 /**
  * This namespace contains all of Kopete's core classes and functions.

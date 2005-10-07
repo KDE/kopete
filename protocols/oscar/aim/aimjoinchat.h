@@ -22,6 +22,8 @@
 
 #include <kdialogbase.h>
 
+#include "oscartypes.h"
+
 class AIMAccount;
 class AIMJoinChatBase;
 
@@ -33,17 +35,28 @@ public:
 	               const char* name = 0 );
 	~AIMJoinChatUI();
 
+    void setExchangeList( const QValueList<int>& );
+    QValueList<int> exchangeList() const;
+
+    QString roomName() const;
+    QString exchange() const;
+
+
 protected slots:
 	void joinChat();
 	void closeClicked();
 
 signals:
-	void closing();
+	void closing( int );
 
 private:
 	AIMJoinChatBase* m_joinUI;
 	AIMAccount* m_account;
+    QValueList<int> m_exchanges;
+    QString m_roomName;
+    QString m_exchange;
 
 };
 
 #endif
+//kate: space-indent on; indent-width 4;

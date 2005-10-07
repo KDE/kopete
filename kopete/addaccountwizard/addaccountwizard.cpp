@@ -1,3 +1,4 @@
+<<<<<<< .working
 /*
     addaccountwizard.cpp - Kopete Add Account Wizard
 

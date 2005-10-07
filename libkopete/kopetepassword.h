@@ -20,7 +20,7 @@
 #include <qobject.h>
 //Added by qt3to4:
 #include <QPixmap>
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 namespace KWallet { class Wallet; }
 

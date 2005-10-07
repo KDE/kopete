@@ -87,6 +87,16 @@ private slots:
     void slotViewDestroyed( KopeteView *);
     void slotChatSessionDestroyed( Kopete::ChatSession * );
 
+public slots:
+    /**
+     * Make a view visible and on top.
+     * @param manager The originating Kopete::ChatSession.
+     * @param outgoingMessage Whether the message is inbound or outbound.
+     * @param activate Indicate whether the view should be activated
+     * @todo Document @p activate
+     */
+    void readMessages( Kopete::ChatSession* manager, bool outgoingMessage, bool activate = false );
+
     /**
     * An event has been deleted.
     */

@@ -129,7 +129,7 @@ void Account::disconnected( DisconnectReason reason )
 	}
 	if(reason== OtherClient)
 	{
-		Kopete::Utils::notifyConnectionLost(this, i18n("You have been disconnected"), i18n( "You have connected from another client or computer to the account '%1'" ).arg(d->id), i18n("Most proprietary Instant Messaging services does not allow you to connect from more than one location. Check that nobody is using you account without your permission. If you need a service that supports connection from various locations at the same time, use the Jabber protocol."));
+		Kopete::Utils::notifyConnectionLost(this, i18n("You have been disconnected"), i18n( "You have connected from another client or computer to the account '%1'" ).arg(d->id), i18n("Most proprietary Instant Messaging services do not allow you to connect from more than one location at the same time. Check that nobody else is using you account without your permission. If you need a service that supports connection from various locations at the same time, use the Jabber protocol."));
 	}
 }
 

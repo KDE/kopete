@@ -24,7 +24,7 @@
 //Added by qt3to4:
 #include <Q3ValueList>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 namespace Kopete {
 

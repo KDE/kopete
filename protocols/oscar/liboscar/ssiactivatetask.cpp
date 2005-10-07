@@ -39,7 +39,7 @@ SSIActivateTask::~SSIActivateTask()
 void SSIActivateTask::onGo()
 {
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending SSI activate" << endl;
-	FLAP f = { 0x02, client()->flapSequence(), 0 } ;
+	FLAP f = { 0x02, 0, 0 } ;
 	SNAC s = { 0x0013, 0x0007, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
 	Transfer* t = createTransfer( f, s, buffer );

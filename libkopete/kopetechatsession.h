@@ -29,7 +29,7 @@
 
 #include <kxmlguiclient.h>
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 
 // FIXME: get rid of these includes
 #include "kopetemessage.h"
@@ -295,7 +295,7 @@ public slots:
 	 *   a QStringinfo would be more interesting, but it is also used to don't show the notification when entering in a channel)
 	 * @see contactOnlineStatus
 	 */
-	void addContact( const Kopete::Contact *c, const Kopete::OnlineStatus &initalStatus, bool suppress = false );
+	void addContact( const Kopete::Contact *c, const Kopete::OnlineStatus &initialStatus, bool suppress = false );
 
 	/**
 	 * Remove a contact from the session
@@ -351,9 +351,15 @@ public slots:
 	void messageSucceeded();
 
 	/**
-	 * Protcols have to call this method if they want to emit a notification when a nudge/buzz is received.
+	 * Protocols have to call this method if they want to emit a notification when a nudge/buzz is received.
 	 */
 	void emitNudgeNotification();
+	
+	/**
+	 * Raise the chat window and give him the focus
+	 * It's used when the user wanted to activated  (by clicking on the "view" button of a popup)
+	 */
+	void raiseView();
 
 private slots:
 	void slotUpdateDisplayName();

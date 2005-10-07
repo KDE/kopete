@@ -43,6 +43,7 @@ signals:
 	
 private:
 	QLabel m_imageContainer;
+	QString contactName;
 	
 };
 

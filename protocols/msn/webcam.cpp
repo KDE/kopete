@@ -66,6 +66,14 @@ Webcam::~Webcam()
 	delete m_mimic;
 	delete m_webcamSocket;
 	delete m_widget;
+	
+	if(m_timerId != 0) //if we were sending
+	{
+		Kopete::AV::VideoDevicePool *videoDevice = Kopete::AV::VideoDevicePool::self(); 
+		videoDevice->stopCapturing(); 
+		videoDevice->close();
+	}
+
 }
 
 void Webcam::askIncommingInvitation()
@@ -74,7 +82,7 @@ void Webcam::askIncommingInvitation()
 	//protect, in case this is deleted when the messagebox is active
 	QPointer<Webcam> _this = this;
 	QString message= (m_who==wProducer)  ?
-			i18n("<qt>The contact %1 wants to see <b>your</b> webcam, do you want to see it?</qt>")  :
+			i18n("<qt>The contact %1 wants to see <b>your</b> webcam, do you want them to see it?</qt>")  :
 			i18n("The contact %1 wants to show you his/her webcam, do you want to see it?")  ;
 	int result=KMessageBox::questionYesNo( 0L , message.arg(m_recipient),
 										   i18n("Webcam invitation - Kopete MSN Plugin") , i18n("Accept") , i18n("Decline"));
@@ -614,9 +622,9 @@ void Webcam::slotSocketRead()
 				m_webcamState=wsConnecting;
 				
 				//SHOULD NOT BE THERE
+				m_mimic=new MimicWrapper();
 				if(m_who==wProducer)
 				{
-					m_mimic=new MimicWrapper();
 					Kopete::AV::VideoDevicePool *videoDevice = Kopete::AV::VideoDevicePool::self();
 					videoDevice->scanDevices();
 					videoDevice->open(0);
@@ -627,12 +635,9 @@ void Webcam::slotSocketRead()
 					m_timerId=startTimer(1000);
 					kdDebug(14140) << k_funcinfo <<  "new timer" << m_timerId << endl;
 				}
-				else
-				{
-					m_mimic=new MimicWrapper();
-					m_widget=new MSNWebcamDialog(m_recipient);
-					connect(m_widget, SIGNAL( closingWebcamDialog() ) , this , SLOT(sendBYEMessage()));
-				}
+				m_widget=new MSNWebcamDialog(m_recipient);
+				connect(m_widget, SIGNAL( closingWebcamDialog() ) , this , SLOT(sendBYEMessage()));
+
 			}
 			else
 			{
@@ -682,12 +687,8 @@ void Webcam::slotSocketRead()
 					m_timerId=startTimer(1000);
 					kdDebug(14140) << k_funcinfo <<  "new timer" << m_timerId << endl;
 				}
-				else
-				{
-					m_widget=new MSNWebcamDialog(m_recipient);
-					connect(m_widget, SIGNAL( closingWebcamDialog() ) , this , SLOT(sendBYEMessage()));
-				}
-				
+				m_widget=new MSNWebcamDialog(m_recipient);
+				connect(m_widget, SIGNAL( closingWebcamDialog() ) , this , SLOT(sendBYEMessage()));
 				
 				}
 				m_webcamState=wsTransfer;
@@ -791,6 +792,9 @@ void Webcam::timerEvent( QTimerEvent *e )
 	videoDevice->getFrame();
 	QImage img;
 	videoDevice->getImage(&img);
+	
+	if(m_widget)
+		m_widget->newImage(img);
 	
 	if(img.width()!=320 || img.height()!=240)
 	{
