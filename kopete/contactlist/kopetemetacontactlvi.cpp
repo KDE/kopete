@@ -101,8 +101,8 @@ public:
 
 		QString displayName;
 		Kopete::Emoticons *e = Kopete::Emoticons::self();
-		QValueList<Emoticons::Token> t = e->tokenize( metaContact->displayName());
-		QValueList<Emoticons::Token>::iterator it;
+		Q3ValueList<Emoticons::Token> t = e->tokenize( metaContact->displayName());
+		Q3ValueList<Emoticons::Token>::iterator it;
 		for( it = t.begin(); it != t.end(); ++it )
 		{
 			if( (*it).type == Kopete::Emoticons::Image )
@@ -110,7 +110,7 @@ public:
 				displayName += (*it).picHTMLCode;
 			} else if( (*it).type == Kopete::Emoticons::Text )
 			{
-				displayName += QStyleSheet::escape( (*it).text );
+				displayName += Q3StyleSheet::escape( (*it).text );
 			}
 		}
 
@@ -533,7 +533,7 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 		{
 			int photoSize = d->iconSize;
 
-			photoImg = photoImg.smoothScale( photoSize, photoSize, QImage::ScaleMin );
+			photoImg = photoImg.smoothScale( photoSize, photoSize, Qt::KeepAspectRatio );
 			
 			KImageEffect *effect = 0L;
 			switch ( m_metaContact->status() )

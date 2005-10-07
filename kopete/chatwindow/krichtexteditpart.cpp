@@ -324,18 +324,18 @@ void KopeteRichTextEditPart::readConfig()
 	action_italic->setChecked( config->readBoolEntry( "FontItalic" ) );
 	action_underline->setChecked( config->readBoolEntry( "FontUnderline" ) );
 
-	switch( config->readNumEntry( "EditAlignment", AlignLeft ) )
+	switch( config->readNumEntry( "EditAlignment", Qt::AlignLeft ) )
 	{
-		case AlignLeft:
+		case Qt::AlignLeft:
 			action_align_left->activate();
 		break;
-		case AlignCenter:
+		case Qt::AlignCenter:
 			action_align_center->activate();
 		break;
-		case AlignRight:
+		case Qt::AlignRight:
 			action_align_right->activate();
 		break;
-		case AlignJustify:
+		case Qt::AlignJustify:
 			action_align_justify->activate();
 		break;
 	}

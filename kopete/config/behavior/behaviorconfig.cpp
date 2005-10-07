@@ -226,7 +226,6 @@ void BehaviorConfig::load()
 	mPrfsEvents->mTrayflashNotifySetCurrentDesktopToChatViewChk->setChecked ( p->trayflashNotifySetCurrentDesktopToChatView() );
 	mPrfsEvents->mSoundIfAwayChk->setChecked( p->soundIfAway() );
 	mPrfsEvents->mRaiseMsgWindowChk->setChecked(p->raiseMsgWindow());
->>>>>>> .merge-right.r467724
 	config->setGroup("General");
 	mPrfsEvents->mEventIfActive->setChecked(config->readBoolEntry("EventIfActive", true));
 

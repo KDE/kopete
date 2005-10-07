@@ -161,7 +161,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 		QString::fromLatin1("</style></head><body></body></html>") );
 	end();
 //	d->tt=new ToolTip( this );
-	view()->setFocusPolicy( QWidget::NoFocus );
+	view()->setFocusPolicy( Qt::NoFocus );
 
 	// It is not possible to drag and drop on our widget
 	view()->setAcceptDrops(false);

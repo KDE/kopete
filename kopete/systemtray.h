@@ -97,7 +97,7 @@ private:
 	static KopeteSystemTray* s_systemTray;
 
 	Q3PtrList<Kopete::MessageEvent> mEventList;
-	QPtrList<Kopete::MessageEvent> mBalloonEventList;
+	Q3PtrList<Kopete::MessageEvent> mBalloonEventList;
 	KopeteBalloon *m_balloon;
 };
 

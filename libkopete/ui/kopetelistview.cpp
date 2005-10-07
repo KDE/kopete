@@ -540,6 +540,7 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 		}
 		else if( e->type() == QEvent::MouseButtonPress || e->type() == QEvent::MouseButtonDblClick )
 		{
+			QMouseEvent* event = static_cast<QMouseEvent*>(e);
 			// We are intercepting all clicks and double clicks on the scrollbar. Unless we do so
 			// scroll bar immediatly goes to the point wherever user's click requests it to.
 			// Then smooth scroll begins, and animates the scrolling, but since the scrollbar

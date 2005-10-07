@@ -1,4 +1,3 @@
-<<<<<<< .working
 /*
     addaccountwizard.h - Kopete Add Account Wizard
 

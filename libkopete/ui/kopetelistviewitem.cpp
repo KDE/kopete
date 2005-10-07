@@ -738,7 +738,7 @@ void DisplayNameComponent::redraw()
 		case Kopete::Emoticons::Image:
 			ic = new ImageComponent( this );
 			ic->setPixmap( QPixmap( (*token).picPath ) );
-			ic->scale( INT_MAX, fontHeight, QImage::KeepAspectRatio );
+			ic->scale( INT_MAX, fontHeight, Qt::KeepAspectRatio );
 		break;
 		default:
 			kdDebug( 14010 ) << k_funcinfo << "This should have not happened!" << endl;

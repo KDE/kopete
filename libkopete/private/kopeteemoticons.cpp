@@ -442,7 +442,7 @@ QString Emoticons::parse( const QString &message, ParseMode mode )
 			result += token.text;
 		break;
 		case Image:
-			result += (*token).picHTMLCode;
+			result += token.picHTMLCode;
 			kdDebug( 14010 ) << k_funcinfo << "Emoticon html code: " << result << endl;
 		break;
 		default:

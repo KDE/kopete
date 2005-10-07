@@ -507,7 +507,7 @@ QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
 			if( !photo.isNull() )
 			{
 				QByteArray ba;
-				QBuffer buffer( ba );
+				QBuffer buffer( &ba );
 				buffer.open( IO_WriteOnly );
 				photo.save ( &buffer, "PNG" );
 				QString photo64=KCodecs::base64Encode(ba);
