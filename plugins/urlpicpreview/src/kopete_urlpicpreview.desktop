@@ -16,5 +16,7 @@ X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=Preview of pictures in chats
 Name[pt]=Antevisão das imagens nas conversas
+Name[sv]=Förhandsgranskning av bilder i chatter
 Comment=Displays a preview of pictures in chats
 Comment[pt]=Mostra uma antevisão das imagens nas conversas
+Comment[sv]=Visar en förhandsgranskning av bilder i chatter
