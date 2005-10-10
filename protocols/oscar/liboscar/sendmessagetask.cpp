@@ -59,7 +59,7 @@ void SendMessageTask::onGo()
 	{
 		// Check Message to see what SNAC to use
 		int snacSubfamily = 0x0006;
-		if ( m_message.hasProperty( Oscar::Message::StatusMessageRequest ) && m_message.hasProperty( Oscar::Message::AutoResponse ) )
+		if ( ( m_message.type() == 2 ) && m_message.hasProperty( Oscar::Message::AutoResponse ) )
 		{ // read: automated response to a status message request
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending SNAC 0x0B instead of 0x06 " << endl;
 			snacSubfamily = 0x000B;
@@ -324,7 +324,7 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b, const QString& messag
 
 	// channel 2 counter: in auto response, use original message value. s/t else otherwise (most anythig will work)
 	int channel2Counter = 0xBEEF; // just some number for now
-	if ( m_message.hasProperty( Oscar::Message::StatusMessageRequest ) && m_message.hasProperty( Oscar::Message::AutoResponse ) )
+	if ( m_message.hasProperty( Oscar::Message::AutoResponse ) )
 		channel2Counter = m_message.channel2Counter();
 	
 	b->addLEWord( channel2Counter ); // channel 2 counter
@@ -339,10 +339,21 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b, const QString& messag
 	}
 	
 	// actual message data segment
-	b->addByte( m_message.messageType() ); // Message type
+
+	// Message type
+	if ( m_message.messageType() == 0x00 )
+		b->addByte( 0x01 );
+	else
+		b->addByte( m_message.messageType() );
+	
 	int messageFlags = 0x01; // Normal
-	if ( m_message.hasProperty( Oscar::Message::StatusMessageRequest ) || m_message.hasProperty( Oscar::Message::AutoResponse ) )
-		messageFlags = 0x03; // Auto message
+	if ( m_message.hasProperty( Oscar::Message::AutoResponse ) )
+	{
+		if ( m_message.hasProperty( Oscar::Message::StatusMessageRequest ) )
+			messageFlags = 0x03; // Auto message
+		else
+			messageFlags = 0x00; // nothing?
+	}
 	b->addByte( messageFlags );
 	
 	// status code, priority:

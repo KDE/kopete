@@ -450,6 +450,24 @@ void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
 
 void Client::receivedMessage( const Oscar::Message& msg )
 {
+	if ( ( msg.type() == 2 ) && ( ! msg.hasProperty( Oscar::Message::AutoResponse ) ) )
+	{
+		// type 2 message needs an autoresponse, regardless of type
+		Connection* c = d->connections.connectionForFamily( 0x0004 );
+		if ( !c )
+			return;
+		
+		Oscar::Message response = Oscar::Message( msg );
+		if ( msg.hasProperty( Oscar::Message::StatusMessageRequest ) )
+			response.setText( statusMessage() );
+		else
+			response.setText( "" );
+		response.setReceiver( msg.sender() );
+		response.addProperty( Oscar::Message::AutoResponse );
+		SendMessageTask *sendMsgTask = new SendMessageTask( c->rootTask() );
+		sendMsgTask->setMessage( response );
+		sendMsgTask->go( true );
+	}
 	if ( msg.hasProperty( Oscar::Message::StatusMessageRequest ) )
 	{
 		if ( msg.hasProperty( Oscar::Message::AutoResponse ) )
@@ -457,21 +475,6 @@ void Client::receivedMessage( const Oscar::Message& msg )
 			// we got a response to a status message request.
 			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received an away message: " << msg.text() << endl;
 			emit receivedAwayMessage( msg.sender(), msg.text() );
-		}
-		else
-		{
-			// we got status message request ourselves. respond.
-			Connection* c = d->connections.connectionForFamily( 0x0004 );
-			if ( !c )
-				return;
-			
-			Oscar::Message response = Oscar::Message( msg );
-			response.setText( statusMessage() );
-			response.setReceiver( msg.sender() );
-			response.addProperty( Oscar::Message::AutoResponse );
-			SendMessageTask *sendMsgTask = new SendMessageTask( c->rootTask() );
-			sendMsgTask->setMessage( response );
-			sendMsgTask->go( true );
 		}
 	}
 	else
