@@ -1008,6 +1008,7 @@ void KopeteContactListView::addDraggedContactToGroup( Kopete::MetaContact *conta
 	if( r == KMessageBox::Yes )
 	{
 		contact->setTemporary( false, group );
+		Kopete::ContactList::self()->addMetaContact( contact );
 		insertUndoItem( new UndoItem( UndoItem::MetaContactAdd, contact, group ) );
 	}
 }
