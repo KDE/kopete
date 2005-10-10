@@ -1138,10 +1138,14 @@ void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const Q
 		disconnect();
 	}
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline &&
+	          status.internalStatus() == 2 && !reason.isEmpty())
+	{
+		slotGoStatus( 99, reason );
+	}
+	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline &&
 	          status.internalStatus() == 99 && reason.isEmpty())
 	{
-		// Get custom away message from User
-		theAwayDialog->show( 99 );
+		slotGoStatus( 2, reason );
 	}
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline )
 	{
