@@ -1128,7 +1128,7 @@ void YahooAccount::slotWebcamClosed( const QString& who, int reason )
 void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason)
 {
 	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline &&
-	     status.status() == Kopete::OnlineStatus::Online )
+	     ( status.status() == Kopete::OnlineStatus::Online || status.status() == Kopete::OnlineStatus::Invisible ) )
 	{
 		connect( status );
 	}
