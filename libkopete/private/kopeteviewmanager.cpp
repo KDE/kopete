@@ -206,8 +206,9 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			QWidget *w=dynamic_cast<QWidget*>(manager->view(false));
 			KConfig *config = KGlobal::config();
 			config->setGroup("General");
-			if( !manager->view(false) || !w || manager->view() != d->activeView ||
-						  config->readBoolEntry("EventIfActive", true) || !w->isActiveWindow() )
+			if( (!manager->view(false) || !w || manager->view() != d->activeView ||
+						   config->readBoolEntry("EventIfActive", true) || !w->isActiveWindow())
+						   && msg.from())
 			{
 				QString msgFrom = QString::null;
 				if( msg.from()->metaContact() )

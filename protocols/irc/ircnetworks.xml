@@ -16,11 +16,6 @@
         <description>IRCNet</description>
         <servers>
             <server>
-                <host>irc.slashnet.org</host>
-                <port>6667</port>
-                <useSSL>false</useSSL>
-            </server>
-            <server>
                 <host>eu.ircnet.org</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>

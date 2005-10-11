@@ -20,6 +20,7 @@ Description[nl]=Een kioslave voor Jabber Service Discovery
 Description[pl]=Wtyczka protokołu KIO dla usługi odkrywania usług Jabbera (Jabber Service Discovery)
 Description[pt]=Um 'kioslave' para a Descoberta de Serviços do Jabber
 Description[pt_BR]=Um KIO-Slave para a descoberta de serviço do Jabber
+Description[ru]=Обработчик KIO для обнаружения служб Jabber
 Description[sr]=KIO слуга за Jabber Service Discovery
 Description[sr@Latn]=KIO sluga za Jabber Service Discovery
 Description[sv]=En I/O-slav för Jabber tjänstupptäckt

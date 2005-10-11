@@ -337,8 +337,15 @@ void Client::ct_messageReceived( const ConferenceEvent & messageEvent )
 	QString rtf = messageEvent.message;
 	if ( !rtf.isEmpty() )
 		transformedEvent.message = parser.Parse( rtf.latin1(), "" );
+
+	// fixes for RTF to HTML conversion problems
+	// we can drop these once the server reenables the sending of unformatted text
+	// redundant linebreak at the end of the message
 	QRegExp rx(" </span> </span> </span><br>$");
 	transformedEvent.message.replace( rx, "</span></span></span>" );
+	// missing linebreak after first line of an encrypted message
+	QRegExp ry("-----BEGIN PGP MESSAGE----- </span> </span> </span>");
+	transformedEvent.message.replace( ry, "-----BEGIN PGP MESSAGE-----</span></span></span><br/>" );
 
 	emit messageReceived( transformedEvent );
 }

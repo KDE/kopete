@@ -1,7 +1,7 @@
 /*
     videodevicepool.h  -  Kopete Multiple Video Device handler Class
 
-    Copyright (c) 2005 by Cl·udio da Silveira Pinheiro   <taupter@gmail.com>
+    Copyright (c) 2005 by Cl√°udio da Silveira Pinheiro   <taupter@gmail.com>
 
     Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
 
@@ -37,7 +37,7 @@ namespace AV {
 /**
 This class allows kopete to check for the existence, open, configure, test, set parameters, grab frames from and close a given video capture card using the Video4Linux API.
 
-@author Cl·udio da Silveira Pinheiro
+@author Cl√°udio da Silveira Pinheiro
 */
 struct VideoDeviceModel
 {
