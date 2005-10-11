@@ -39,7 +39,8 @@ signals:
 	void informationChanged();
 
 private slots:
-	void slotSaveNickname();
+	void slotSelectPhoto();
+	void slotClearPhoto();
 	void slotSaveVCard();
 	void slotClose();
 	void slotOpenURL(const QString &url);
@@ -48,6 +49,7 @@ private:
 	JabberAccount *m_account;
 	JabberContact *m_contact;
 	dlgVCard *m_mainWidget;
+	QString m_photoPath;
 
 	void assignContactProperties();
 	void setReadOnly(bool state);

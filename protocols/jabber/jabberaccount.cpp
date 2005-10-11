@@ -1426,6 +1426,14 @@ void JabberAccount::slotGlobalIdentityChanged (const QString &key, const QVarian
 			jabberMyself->slotSendVCard();
 		}
 	}
+	if( key == Kopete::Global::Properties::self()->photo().key() )
+	{
+		if( isConnected() )
+		{
+			jabberMyself->setPhoto( value.toString() );
+			jabberMyself->slotSendVCard();
+		}
+	}
 }
 
 const QString JabberAccount::resource () const

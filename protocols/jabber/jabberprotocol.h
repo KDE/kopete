@@ -97,6 +97,7 @@ public:
 	const Kopete::ContactPropertyTmpl propAuthorizationStatus;
 	const Kopete::ContactPropertyTmpl propAvailableResources;
 	const Kopete::ContactPropertyTmpl propVCardCacheTimeStamp;
+	const Kopete::ContactPropertyTmpl propPhoto;
 	// extra properties to match with vCard
 	const Kopete::ContactPropertyTmpl propJid;
 	const Kopete::ContactPropertyTmpl propBirthday;

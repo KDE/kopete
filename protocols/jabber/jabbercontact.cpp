@@ -23,6 +23,9 @@
 #include <qtimer.h>
 #include <qdatetime.h>
 #include <qstylesheet.h>
+#include <qimage.h>
+#include <qregexp.h>
+#include <qbuffer.h>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -30,6 +33,8 @@
 #include <kfiledialog.h>
 #include <kaction.h>
 #include <kapplication.h>
+#include <kstandarddirs.h>
+#include <kio/netaccess.h>
 
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
@@ -72,14 +77,14 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 
 	if ( !account->myself () )
 	{
-		// this contact is the myself instance
+		// this contact is a regular contact
 		connect ( this,
 				  SIGNAL ( onlineStatusChanged ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 				  this, SLOT ( slotCheckVCard () ) );
 	}
 	else
 	{
-		// this contact is a regular contact
+		// this contact is the myself instance
 		connect ( account->myself (),
 				  SIGNAL ( onlineStatusChanged ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 				  this, SLOT ( slotCheckVCard () ) );
@@ -685,6 +690,49 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 
 	}
 
+	/*
+	 * Set photo/avatar property.
+	 */
+	removeProperty( protocol()->propPhoto );
+
+	QImage contactPhoto;
+	QString fullJid =  mRosterItem.jid().full();
+	QString finalPhotoPath = locateLocal("appdata", "jabberphotos/" + fullJid.replace(QRegExp("[./~]"),"-")  +".png");
+	
+	// photo() is a QByteArray
+	if ( !vCard.photo().isEmpty() )
+	{
+		kdDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact has a photo embedded into his vCard." << endl;
+
+		// QImage is used to save to disk in PNG later.
+		contactPhoto = QImage( vCard.photo() );
+	}
+	// Contact photo is a URI.
+	else if( !vCard.photoURI().isEmpty() )
+	{
+		QString tempPhotoPath = 0;
+		
+		// Downalod photo from URI.
+		if( !KIO::NetAccess::download( vCard.photoURI(), tempPhotoPath, 0) ) 
+		{
+			KMessageBox::sorry( Kopete::UI::Global::mainWidget (), i18n( "Downloading of Jabber contact photo failed !" ) );
+			return;
+		}
+
+		kdDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact photo is a URI." << endl;
+
+		contactPhoto = QImage( tempPhotoPath );
+		
+		KIO::NetAccess::removeTempFile(  tempPhotoPath );
+	}
+
+	// Save the image to the disk, then set the property.
+	if( !contactPhoto.isNull() && contactPhoto.save(finalPhotoPath, "PNG") )
+	{
+			kdDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Setting photo for contact: " << fullJid << endl;
+			setProperty( protocol()->propPhoto, finalPhotoPath );
+	}
+
 }
 
 void JabberContact::slotSendVCard()
@@ -744,7 +792,7 @@ void JabberContact::slotSendVCard()
 	// work email
 	XMPP::VCard::Email workEmail;
 
-	workEmail.home = true;
+	workEmail.home = false;
 	workEmail.userid = property(protocol()->propWorkEmailAddress).value().toString();
 
 	emailList.append(homeEmail);
@@ -787,6 +835,18 @@ void JabberContact::slotSendVCard()
 	// about tab
 	vCard.setDesc(property(protocol()->propAbout).value().toString());
 
+	// Set contact photo as a binary value (if he has set a photo)
+	if( hasProperty( protocol()->propPhoto.key() ) )
+	{
+		QString photoPath = property( protocol()->propPhoto ).value().toString();
+		QImage image( photoPath );
+		QByteArray ba;
+		QBuffer buffer( ba );
+		buffer.open( IO_WriteOnly );
+		image.save( &buffer, "PNG" );
+		vCard.setPhoto( ba );
+	}
+
 	vCard.setVersion("3.0");
 	vCard.setProdId("Kopete");
 
@@ -795,6 +855,36 @@ void JabberContact::slotSendVCard()
 	QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotSentVCard ()));
 	task->set (vCard);
 	task->go (true);
+}
+
+void JabberContact::setPhoto( const QString &photoPath )
+{
+	QImage contactPhoto(photoPath);
+	QString newPhotoPath = photoPath;
+	if(contactPhoto.width() != 96 || contactPhoto.height() != 96)
+	{
+		// Save image to a new location if the image isn't the correct format.
+		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KURL(photoPath).fileName().lower() ) );
+	
+		// Scale and crop the picture.
+		contactPhoto = contactPhoto.smoothScale( 96, 96, QImage::ScaleMax );
+		// crop image if not square
+		if(contactPhoto.width() > contactPhoto.height()) 
+		{
+			contactPhoto = contactPhoto.copy((contactPhoto.width()-contactPhoto.height())/2, 0, contactPhoto.height(), contactPhoto.height());
+		}
+		else 
+		{
+			contactPhoto = contactPhoto.copy(0, (contactPhoto.height()-contactPhoto.width())/2, contactPhoto.width(), contactPhoto.width());
+		}
+	
+		// Use the cropped/scaled image now.
+		if(!contactPhoto.save(newLocation, "PNG"))
+			newPhotoPath = QString::null;
+		else
+			newPhotoPath = newLocation;
+	}
+	setProperty( protocol()->propPhoto, newPhotoPath );
 }
 
 void JabberContact::slotSentVCard ()
