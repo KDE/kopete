@@ -792,7 +792,7 @@ void JabberContact::slotSendVCard()
 	// work email
 	XMPP::VCard::Email workEmail;
 
-	workEmail.home = false;
+	workEmail.work = true;
 	workEmail.userid = property(protocol()->propWorkEmailAddress).value().toString();
 
 	emailList.append(homeEmail);
