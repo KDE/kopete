@@ -30,13 +30,13 @@ This Task performs user searching on the server
 
 @author SUSE AG
 */
-class SearchTask : public RequestTask
+class ContactSearchTask : public RequestTask
 {
 Q_OBJECT
 public:
-    SearchTask(Task* parent);
+    ContactSearchTask(Task* parent);
 
-    ~SearchTask();
+    ~ContactSearchTask();
 	/**
 	 * Create the search query
 	 * @param query a list of search terms

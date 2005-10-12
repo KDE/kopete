@@ -28,7 +28,7 @@
 #include "requesttask.h"
 
 /**
-Search results are polled on the server, using the search handle supplied by the client with the original query.  This is a single poll request, which if successful, will retrieve the results.  Otherwise, it will set a status code, so the SearchTask can decide whether to poll again.
+Search results are polled on the server, using the search handle supplied by the client with the original query.  This is a single poll request, which if successful, will retrieve the results.  Otherwise, it will set a status code, so the ContactSearchTask can decide whether to poll again.
 
 @author SUSE AG
 */
