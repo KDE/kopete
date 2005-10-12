@@ -113,7 +113,8 @@ QString URLPicPreviewPlugin::prepareBody(const QString& parsedBody, int previewC
     if(url.isValid()) {
         kdDebug(0) << k_funcinfo << "URL \"" << foundURL << "\" is valid." << endl;
 
-        if(KIO::NetAccess::mimetype(url, Kopete::UI::Global::mainWidget()).startsWith("image/")) {
+        if(url.fileName(false) != QString::null && // no file no pic!
+                KIO::NetAccess::mimetype(url, Kopete::UI::Global::mainWidget()).startsWith("image/")) {
             if(KIO::NetAccess::download(url, tmpFile, Kopete::UI::Global::mainWidget())) {
                 if(config->readBoolEntry("Scaling", true)) {
                     int width = config->readNumEntry("PreviewScaleWidth", 256);
