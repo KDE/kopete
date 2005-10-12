@@ -887,7 +887,7 @@ void IRCProtocol::slotDeleteNetwork()
 		KGuiItem(i18n("&Delete Network"),"editdelete"), QString::fromLatin1("AskIRCDeleteNetwork") ) == KMessageBox::Continue )
 	{
 		disconnect( netConf->networkList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkConfig() ) );
-		disconnect( netConf->networkHostList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkHostConfig() ) );
+		disconnect( netConf->hostList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkHostConfig() ) );
 		IRCNetwork *net = m_networks[ network ];
 		for( QValueList<IRCHost*>::iterator it = net->hosts.begin(); it != net->hosts.end(); ++it )
 		{
@@ -898,7 +898,7 @@ void IRCProtocol::slotDeleteNetwork()
 		delete net;
 		netConf->networkList->removeItem( netConf->networkList->currentItem() );
  		connect( netConf->networkList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkConfig() ) );
-		connect( netConf->networkHostList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkHostConfig() ) );
+		connect( netConf->hostList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkHostConfig() ) );
 		slotUpdateNetworkHostConfig();
 
 	}
