@@ -89,8 +89,8 @@ void GroupWiseContact::updateDetails( const ContactDetails & details )
 	if ( !details.fullName.isNull() )
 		setProperty( protocol()->propFullName, details.fullName );
 	m_archiving = details.archive;
-	//if ( !details.awayMessage.isNull() )
-		//setProperty( protocol()->propAwayMessage, details.awayMessage );
+	if ( !details.awayMessage.isNull() )
+		setProperty( protocol()->propAwayMessage, details.awayMessage );
 	
 	m_serverProperties = details.properties;
 	
@@ -113,11 +113,8 @@ void GroupWiseContact::updateDetails( const ContactDetails & details )
 	if ( details.status != GroupWise::Invalid )
 	{	
 		Kopete::OnlineStatus status = protocol()->gwStatusToKOS( details.status );
-		//kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "setting initial status to " << status.description() << endl;
 		setOnlineStatus( status );
 	}
-	//else 
-		//kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "initial status is, not setting " << details.status << endl; 
 }
 
 GroupWiseProtocol *GroupWiseContact::protocol()

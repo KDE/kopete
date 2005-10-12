@@ -119,6 +119,10 @@
 #define NM_A_SZ_DEPARTMENT				"OU"
 #define NM_A_SZ_TITLE					"Title"
 
+// GW7
+#define NM_A_FA_CUSTOM_STATUSES			"NM_A_FA_CUSTOM_STATUSES"
+#define NM_A_FA_STATUS					"NM_A_FA_STATUS"
+
 #define NM_PROTOCOL_VERSION		 		2
 
 #define	NM_FIELD_TRUE					"1"

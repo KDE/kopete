@@ -19,24 +19,24 @@
 #ifndef GWSEARCH_H
 #define GWSEARCH_H
 #include <qlistview.h>
-#include "gwsearchwidget.h"
+#include "gwcontactsearch.h"
 
 class GroupWiseAccount;
 class GroupWiseContactProperties;
-class GroupWiseSearchWidget;
+class GroupWiseContactSearchWidget;
 
 /**
-Logic for searching and displaying results using a GroupWiseSearchWidget
+Logic for searching for and displaying users and chat rooms using a GroupWiseContactSearchWidget
 
-@author Kopete Developers
+@author SUSE Linux Products GmbH
 */
-class GroupWiseSearch : public GroupWiseSearchWidget
+class GroupWiseContactSearch : public GroupWiseContactSearchWidget
 {
 Q_OBJECT
 public:
-	GroupWiseSearch( GroupWiseAccount * account, QListView::SelectionMode mode, bool onlineOnly, 
+	GroupWiseContactSearch( GroupWiseAccount * account, QListView::SelectionMode mode, bool onlineOnly, 
 			QWidget *parent = 0, const char *name = 0);
-	~GroupWiseSearch();
+	~GroupWiseContactSearch();
 	QValueList< GroupWise::ContactDetails > selectedResults();
 signals:
 	void selectionValidates( bool );

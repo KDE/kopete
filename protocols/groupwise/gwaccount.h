@@ -21,6 +21,8 @@
 #ifndef GW_ACCOUNT_H
 #define GW_ACCOUNT_H
 
+#include <kaction.h>
+
 #include <kopetechatsessionmanager.h>
 
 #include "gwerror.h"
@@ -169,7 +171,19 @@ protected slots:
 	 * Manage the user's privacy settings
 	 */
 	void slotPrivacy();
+	
+	/**
+	 * Show a dialog to join a chatroom without first adding it to the contact list
+	 */
+	void slotJoinChatRoom();
+
+	/**
+	 * Slot informing GroupWise when a group is renamed
+	 */
  	void slotKopeteGroupRenamed( Kopete::Group * );
+	/**
+	 * Slot informing GroupWise when a group is removed
+	 */
 	void slotKopeteGroupRemoved( Kopete::Group * );
 
 	// SERVER SIDE CONTACT LIST PROCESSING
@@ -308,6 +322,7 @@ private:
 	KActionMenu * m_actionMenu;
 	KAction * m_actionAutoReply;
 	KAction * m_actionManagePrivacy;
+	KAction * m_actionJoinChatRoom;
 	// Network code
 	KNetworkConnector * m_connector;
 	QCA::TLS * m_QCATLS;
@@ -322,4 +337,22 @@ private:
 	GWContactList * m_serverListModel;
 };
 
+/**
+ * @internal
+ * An action that selects an OnlineStatus and provides a status message, but not using Kopete::Away, because the status message relates only to this status.
+ */
+/*class OnlineStatusMessageAction : public KAction
+{
+	Q_OBJECT
+  public:
+	OnlineStatusMessageAction ( const Kopete::OnlineStatus& status, const QString &text, const QString &message, const QIconSet &pix, QObject *parent=0, const char *name=0);
+  signals:
+	void activated( const Kopete::OnlineStatus& status, const QString & );
+  private slots:
+	void slotActivated();
+  private:
+	Kopete::OnlineStatus m_status;
+	QString m_message;
+};
+*/
 #endif

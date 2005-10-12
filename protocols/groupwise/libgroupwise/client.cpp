@@ -58,6 +58,7 @@ public:
 	UserDetailsManager * userDetailsMgr;
 	PrivacyManager * privacyMgr;
 	uint protocolVersion;
+	QValueList<GroupWise::CustomStatus> customStatuses;
 };
 
 Client::Client(QObject *par, uint protocolVersion )
@@ -139,7 +140,10 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 
 	connect( login, SIGNAL( gotPrivacySettings( bool, bool, const QStringList &, const QStringList & ) ),
 			privacyManager(), SLOT( slotGotPrivacySettings( bool, bool, const QStringList &, const QStringList & ) ) );
-			
+
+	connect( login, SIGNAL( gotCustomStatus( const GroupWise::CustomStatus & ) ), 
+			SLOT( lt_gotCustomStatus( const GroupWise::CustomStatus & ) ) );
+
 	connect( login, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 	
 	login->initialise();
@@ -166,6 +170,11 @@ QString Client::host()
 int Client::port()
 {
 	return d->port;
+}
+
+QValueList<GroupWise::CustomStatus> Client::customStatuses()
+{
+	return d->customStatuses;
 }
 
 void Client::initialiseEventTasks()
@@ -377,6 +386,11 @@ void Client::jct_joinConfCompleted()
 		debug( QString( " - %1" ).arg(*it) );
 #endif
 	emit conferenceJoined( jct->guid(), jct->participants(), jct->invitees() );
+}
+
+void Client::lt_gotCustomStatus( const GroupWise::CustomStatus & custom )
+{
+	d->customStatuses.append( custom );
 }
 
 // INTERNALS //

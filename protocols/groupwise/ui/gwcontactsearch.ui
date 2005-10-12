@@ -1,8 +1,8 @@
 <!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>GroupWiseSearchWidget</class>
+<class>GroupWiseContactSearchWidget</class>
 <widget class="QWidget">
     <property name="name">
-        <cstring>GroupWiseSearchWidget</cstring>
+        <cstring>GroupWiseContactSearchWidget</cstring>
     </property>
     <property name="geometry">
         <rect>

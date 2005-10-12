@@ -376,6 +376,7 @@ void ClientStream::write( Request *request )
 	
 void cs_dump( const QByteArray &bytes )
 {
+#define GW_CLIENTSTREAM_DEBUG
 #ifdef GW_CLIENTSTREAM_DEBUG
 	CoreProtocol::debug( QString( "contains: %1 bytes " ).arg( bytes.count() ) );
 	uint count = 0;

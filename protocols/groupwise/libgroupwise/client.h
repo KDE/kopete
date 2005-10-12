@@ -205,7 +205,12 @@ fd		 * @param password
 		 * Host's IP address
 		 */
 		QCString ipAddress();
-		
+
+		/**
+		 * Obtain the list of custom statuses stored on the server 
+		 */
+		QValueList<GroupWise::CustomStatus> customStatuses();
+
 		/**
 		 * Get a reference to the RequestFactory for this Client. 
 		 * Used by Tasks to generate Requests with an ascending sequence of transaction IDs 
@@ -353,6 +358,10 @@ fd		 * @param password
 		 */ 
 		void ct_messageReceived( const ConferenceEvent & );
 		void jct_joinConfCompleted();
+		/**
+		 * Receive a custom status during login and record it
+		 */
+		void lt_gotCustomStatus( const GroupWise::CustomStatus & );
 
 		/**
 		 * Used by the client stream to notify errors to upper layers.
