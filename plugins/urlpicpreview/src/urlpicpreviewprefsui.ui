@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>314</width>
-            <height>143</height>
+            <width>370</width>
+            <height>236</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -141,6 +141,9 @@ If not checked, the images get not scaled at all and appear in their original si
                     <property name="name">
                         <cstring>previewScaleWidth</cstring>
                     </property>
+                    <property name="suffix">
+                        <string> pixel</string>
+                    </property>
                     <property name="maxValue">
                         <number>1024</number>
                     </property>
@@ -155,14 +158,6 @@ If not checked, the images get not scaled at all and appear in their original si
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>The width to which images should get scaled down. Smaller images will not get scaled and appear in the original size.</string>
-                    </property>
-                </widget>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>textLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>pixel</string>
                     </property>
                 </widget>
                 <spacer>
@@ -184,6 +179,122 @@ If not checked, the images get not scaled at all and appear in their original si
                 </spacer>
             </hbox>
         </widget>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>linkPreviewGroup</cstring>
+            </property>
+            <property name="title">
+                <string>Link Preview</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout1</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>enableLinkPreview</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Enable Lin&amp;k Preview</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+K</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Creates an preview picture of the link.</string>
+                            </property>
+                        </widget>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer4_2</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>40</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                    </hbox>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout2</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel1</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Abort creating previe&amp;w after</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>timeoutLinkPreview</cstring>
+                            </property>
+                        </widget>
+                        <widget class="KIntNumInput">
+                            <property name="name">
+                                <cstring>timeoutLinkPreview</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="value">
+                                <number>10</number>
+                            </property>
+                            <property name="minValue">
+                                <number>0</number>
+                            </property>
+                            <property name="maxValue">
+                                <number>3600</number>
+                            </property>
+                            <property name="suffix">
+                                <string> seconds</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>After the specified amount of seconds the creation of the preview is aborted automatically.
+Use 0 seconds to never abort the creation.</string>
+                            </property>
+                        </widget>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer5</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>40</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                    </hbox>
+                </widget>
+            </vbox>
+        </widget>
         <spacer>
             <property name="name">
                 <cstring>spacer4</cstring>
@@ -197,7 +308,7 @@ If not checked, the images get not scaled at all and appear in their original si
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>0</height>
+                    <height>1</height>
                 </size>
             </property>
         </spacer>
@@ -218,9 +329,25 @@ If not checked, the images get not scaled at all and appear in their original si
         <receiver>previewAmount</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>enableLinkPreview</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>timeoutLinkPreview</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
 </connections>
+<tabstops>
+    <tabstop>restrictPreviews</tabstop>
+    <tabstop>previewAmount</tabstop>
+    <tabstop>enableScaling</tabstop>
+    <tabstop>previewScaleWidth</tabstop>
+    <tabstop>enableLinkPreview</tabstop>
+    <tabstop>timeoutLinkPreview</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
 </includehints>

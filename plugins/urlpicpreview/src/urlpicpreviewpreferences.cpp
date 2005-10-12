@@ -17,6 +17,7 @@
 // Qt
 #include <qlayout.h>
 #include <qcheckbox.h>
+#include <qgroupbox.h>
 
 // KDE
 #include <kdebug.h>
@@ -41,6 +42,9 @@ URLPicPreviewPreferences::URLPicPreviewPreferences(QWidget* parent, const char* 
     m_ui = new URLPicPreviewPrefsBase(this);
     m_layout = new QHBoxLayout(this);
     m_layout->add(m_ui);
+
+    // don't display link preview features yet
+    m_ui->linkPreviewGroup->hide();
 
     connect(m_ui->enableScaling, SIGNAL(toggled(bool)), this, SLOT(changed()));
     connect(m_ui->previewScaleWidth, SIGNAL(valueChanged(int)), this, SLOT(changed()));
