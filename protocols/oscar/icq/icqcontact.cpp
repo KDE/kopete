@@ -43,6 +43,7 @@
 #include "icquserinfowidget.h"
 #include "icqauthreplydialog.h"
 
+#include "client.h"
 #include "oscarutils.h"
 #include "oscarencodingselectiondialog.h"
 
@@ -73,6 +74,8 @@ ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaCo
 	                  this, SLOT( receivedLongInfo( const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
 	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL( receivedAwayMessage( const QString&, const QString& ) ),
+	                  this, SLOT( receivedStatusMessage( const QString&, const QString& ) ) );
 	QObject::connect( this, SIGNAL( featuresUpdated() ), this, SLOT( updateFeatures() ) );
 	QObject::connect( mAccount->engine(), SIGNAL( iconServerConnected() ),
 	                  this, SLOT( requestBuddyIcon() ) );
@@ -110,6 +113,37 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	kdDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
 	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( details.extendedStatus() & 0xffff );
 	setOnlineStatus( presence.toOnlineStatus() );
+
+	// ICQ does not support status messages for state Online
+	if ( presence.type() == ICQ::Presence::Online )
+		removeProperty( mProtocol->awayMessage );
+	else
+	{
+		if ( ICQ::Presence::fromOnlineStatus( account()->myself()->onlineStatus() ).visibility() == ICQ::Presence::Visible )
+		{
+			switch ( presence.type() )
+			{
+			case ICQ::Presence::Away:
+				mAccount->engine()->requestICQAwayMessage( contactId(), Client::ICQAway );
+				break;
+			case ICQ::Presence::NotAvailable:
+				mAccount->engine()->requestICQAwayMessage( contactId(), Client::ICQNotAvailable );
+				break;
+			case ICQ::Presence::Occupied:
+				mAccount->engine()->requestICQAwayMessage( contactId(), Client::ICQOccupied );
+				break;
+			case ICQ::Presence::DoNotDisturb:
+				mAccount->engine()->requestICQAwayMessage( contactId(), Client::ICQDoNotDisturb );
+				break;
+			case ICQ::Presence::FreeForChat:
+				mAccount->engine()->requestICQAwayMessage( contactId(), Client::ICQFreeForChat );
+				break;
+			default:
+				break;
+			}
+		}
+	}
+		
 
 	if ( details.dcExternalIp().isUnspecified() )
 		removeProperty( mProtocol->ipAddress );
@@ -299,6 +333,17 @@ void ICQContact::receivedShortInfo( const QString& contact )
 		setProperty( Kopete::Global::Properties::self()->nickName(), shortInfo.nickname );
 	}
 
+}
+
+void ICQContact::receivedStatusMessage( const QString &contact, const QString &message )
+{
+	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
+		return;
+
+	if ( ! message.isEmpty() )
+		setProperty( mProtocol->awayMessage, message );
+	else
+		removeProperty( mProtocol->awayMessage );
 }
 
 void ICQContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session )

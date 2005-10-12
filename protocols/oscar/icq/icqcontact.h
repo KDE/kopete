@@ -135,7 +135,8 @@ private slots:
 
 	void requestBuddyIcon();
 	void haveIcon( const QString&, QByteArray );
-	
+	void receivedStatusMessage( const QString &contact, const QString &message );
+
 //void slotCloseAwayMessageDialog();
 	//void slotReadAwayMessage();
 

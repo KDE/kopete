@@ -80,7 +80,7 @@ private:
 
 	void setInvisible( ICQ::Presence::Visibility );
 	void setPresenceType( ICQ::Presence::Type, const QString &awayMessage = QString::null );
-	void setPresenceTarget( const ICQ::Presence &presence );
+	void setPresenceTarget( const ICQ::Presence &presence, const QString &message = QString::null );
 
 	//const unsigned long fullStatus( const unsigned long plainStatus );
 

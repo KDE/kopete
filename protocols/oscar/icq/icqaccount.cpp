@@ -220,11 +220,11 @@ void ICQAccount::setPresenceType( ICQ::Presence::Type type, const QString &messa
 	ICQ::Presence pres = presence();
 	kdDebug(14153) << k_funcinfo << "new type=" << (int)type << ", old type=" << (int)pres.type() << endl;
 	//setAwayMessage(awayMessage);
-	setPresenceTarget( ICQ::Presence( type, pres.visibility() ) );
+	setPresenceTarget( ICQ::Presence( type, pres.visibility() ), message );
 	myself()->setProperty( Kopete::Global::Properties::self()->awayMessage(), message );
 }
 
-void ICQAccount::setPresenceTarget( const ICQ::Presence &newPres )
+void ICQAccount::setPresenceTarget( const ICQ::Presence &newPres, const QString &message )
 {
 	bool targetIsOffline = (newPres.type() == ICQ::Presence::Offline);
 	bool accountIsOffline = ( presence().type() == ICQ::Presence::Offline ||
@@ -238,11 +238,14 @@ void ICQAccount::setPresenceTarget( const ICQ::Presence &newPres )
 	}
 	else if ( accountIsOffline )
 	{
+		// set status message if given
+		if ( ! message.isEmpty() )
+			engine()->setStatusMessage( message );
 		OscarAccount::connect( newPres.toOnlineStatus() );
 	}
 	else
 	{
-		engine()->setStatus( newPres.toOscarStatus() );
+		engine()->setStatus( newPres.toOscarStatus(), message );
 	}
 }
 

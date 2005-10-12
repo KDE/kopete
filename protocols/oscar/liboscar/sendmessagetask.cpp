@@ -59,7 +59,7 @@ void SendMessageTask::onGo()
 	{
 		// Check Message to see what SNAC to use
 		int snacSubfamily = 0x0006;
-		if ( m_message.hasProperty( Oscar::Message::StatusMessageRequest ) && m_message.hasProperty( Oscar::Message::AutoResponse ) )
+		if ( ( m_message.type() == 2 ) && m_message.hasProperty( Oscar::Message::AutoResponse ) )
 		{ // read: automated response to a status message request
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending SNAC 0x0B instead of 0x06 " << endl;
 			snacSubfamily = 0x000B;
@@ -72,7 +72,7 @@ void SendMessageTask::onGo()
 		{
 			DWORD cookie1 = KApplication::random();
 			DWORD cookie2 = KApplication::random();
-
+			
 			b->addDWord( cookie1 );
 			b->addDWord( cookie2 );
 		}
@@ -80,12 +80,12 @@ void SendMessageTask::onGo()
 		{
 			b->addString( m_message.icbmCookie() ); // in automated response, we need the same cookie as in the request
 		}
-
+		
 		b->addWord( m_message.type() );
-
+		
 		b->addByte( m_message.receiver().length() );
 		b->addString( m_message.receiver().latin1(), m_message.receiver().length() );
-
+		
 		QString msgChunk = m_message.text().mid( msgPostion, CHUNK_LENGTH );
 		// Try to split on space if needed
 		if ( msgChunk.length() == CHUNK_LENGTH )
@@ -114,7 +114,7 @@ void SendMessageTask::onGo()
 			case 2:
 				addChannel2Data( b, msgChunk );
 				break;
-            case 4:
+			case 4:
 				addChannel4Data( b, msgChunk );
 				break;
 			}
@@ -132,7 +132,7 @@ void SendMessageTask::onGo()
 			{
 				b->addDWord( 0x00030000 ); //empty TLV 3 to get an ack from the server
 			}
-
+			
 			if ( client()->isIcq() && ( ! m_message.hasProperty( Oscar::Message::StatusMessageRequest ) ) )
 				b->addDWord( 0x00060000 ); //empty TLV 6 to store message on the server if not online
 		}
@@ -143,15 +143,15 @@ void SendMessageTask::onGo()
 			//TODO: i hardcoded it for now, since we don't suppoert error messages atm anyway
 			addRendezvousMessageData( b, msgChunk );
 		}
+		
 
-
-
+	
 		Transfer* t = createTransfer( f, s, b );
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SENDING: " << t->toString() << endl;
 		send( t );
-
+		
 	} while ( msgPostion < m_message.text().length() );
-
+	
 	setSuccess(true);
 }
 
@@ -181,7 +181,6 @@ void SendMessageTask::addChannel1Data( Buffer* b, const QString& message )
 	//we only send one message part. There's only one client that actually uses
 	//them and it's quite old and infrequently used
 	tlv2buffer.addWord( 0x0101 ); //add TLV(0x0101) also known as TLV(257)
-
 	/* If we can encode in Latin1, do that, otherwise send Unicode */
 	QTextCodec* codec = QTextCodec::codecForMib( 4 ); //4 is the MIBEnum for ISO-8859-1
 	if ( codec->canEncode( message ) )
@@ -197,7 +196,6 @@ void SendMessageTask::addChannel1Data( Buffer* b, const QString& message )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Latin-1 encoding not successful. Sending outgoing message as "
 			<< "UCS-2" << endl;
-
 		int length = message.length() * 2;
 		unsigned char* utfMessage = new unsigned char[length];
 		for ( unsigned int l = 0; l < message.length(); l++ )
@@ -214,7 +212,6 @@ void SendMessageTask::addChannel1Data( Buffer* b, const QString& message )
 		delete [] utfMessage;
 	}
 
-		// Add the actual message TLV
 	TLV tlv2( 0x0002, tlv2buffer.length(), tlv2buffer.buffer() );
 	b->addTLV( tlv2 );
 }
@@ -224,7 +221,7 @@ void SendMessageTask::addChannel2Data( Buffer* b, const QString& message )
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Trying to send type 2 message!" << endl;
 
 	Buffer tlv5buffer;
-
+	
 	tlv5buffer.addWord( 0 ); // 0 = request; other possibilities: 1 = cancel; 2 = accept;
 	//TODO: i hardcoded it for now, don't yet what to use the other stuff for
 
@@ -232,7 +229,7 @@ void SendMessageTask::addChannel2Data( Buffer* b, const QString& message )
 	Buffer* tmp = new Buffer(b->buffer(), 8);
 	tlv5buffer.addString( tmp->buffer(), 8 );
 	delete tmp;
-
+	
 	/* send our client capability. oscardocs say this one means we support type 2 messages,
 	   ethereal say it means we support server relay. however, it's what most clients send,
 	   even official ones...
@@ -255,7 +252,7 @@ void SendMessageTask::addChannel2Data( Buffer* b, const QString& message )
 	tlv5buffer.addByte( 0x54 );
 	tlv5buffer.addByte( 0x00 );
 	tlv5buffer.addByte( 0x00 );
-
+	
 	// These are optional, would probably be a god ide to start using them, though
 
 	// add TLV 03: internal ip
@@ -282,17 +279,17 @@ void SendMessageTask::addChannel2Data( Buffer* b, const QString& message )
 	tlv5buffer.addWord( 0x000F ); // TLV Type
 	tlv5buffer.addWord( 0x0000 ); // TLV Length
 	// TLV Data: empty
-
-
-
+	
+		
+	
 	/* now comes the important TLV 0x271 */
-
+	
 	int tlv2711DataLength = 2+2+16+2+4+1+2 + 2+2+4+4+4 + 2+4+2+message.length()+1 /*+ 4+4+4+16+1*/;
-
+	
 	tlv5buffer.addWord( 0x2711 ); // start extended data TLV
 	tlv5buffer.addWord( tlv2711DataLength ); // the calculated length
 	//TODO: might change when changing message encoding to utf?
-
+	
 	addRendezvousMessageData( &tlv5buffer, message );
 	TLV tlv5( 0x0005, tlv5buffer.length(), tlv5buffer.buffer() );
 	b->addTLV( tlv5 );
@@ -312,23 +309,23 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b, const QString& messag
 	// miranda,licq use 8, gaim,icq5 use 9, icq2003b uses 10.
 	// 9 seems to make things a litle difficult, 10 seems a little more like 8, but still more difficult
 	b->addLEWord( 0x0008 ); // so stick with 8 for now :)
-
+	
 	for ( int i = 0; i < 16; i++)
 	{
 		b->addByte( 0x00 ); // pluginID or all zeros (see oscar docs)
 	}
-
+	
 	b->addWord( 0x0000 ); // unknown
 	b->addLEDWord( 0x00000003 ); // FIXME client capabilities: not sure, but should be ICQ Server Relay
 	b->addByte( 0x0000 ); // unknown
 
 	// channel 2 counter: in auto response, use original message value. s/t else otherwise (most anythig will work)
 	int channel2Counter = 0xBEEF; // just some number for now
-	if ( m_message.hasProperty( Oscar::Message::StatusMessageRequest ) && m_message.hasProperty( Oscar::Message::AutoResponse ) )
+	if ( m_message.hasProperty( Oscar::Message::AutoResponse ) )
 		channel2Counter = m_message.channel2Counter();
-
+	
 	b->addLEWord( channel2Counter ); // channel 2 counter
-
+	
 	// second data segment
 	b->addLEWord( 0x000E ); // length of this data segment, always 14
 	b->addLEWord( channel2Counter ); // channel 2 counter
@@ -337,14 +334,25 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b, const QString& messag
 	{
 		b->addByte( 0x00 ); // unknown, usually all zeros
 	}
-
+	
 	// actual message data segment
-	b->addByte( m_message.messageType() ); // Message type
-	int messageFlags = 0x01; // Normal
-	if ( m_message.hasProperty( Oscar::Message::StatusMessageRequest ) || m_message.hasProperty( Oscar::Message::AutoResponse ) )
-		messageFlags = 0x03; // Auto message
-	b->addByte( messageFlags );
 
+	// Message type
+	if ( m_message.messageType() == 0x00 )
+		b->addByte( 0x01 );
+	else
+		b->addByte( m_message.messageType() );
+	
+	int messageFlags = 0x01; // Normal
+	if ( m_message.hasProperty( Oscar::Message::AutoResponse ) )
+	{
+		if ( m_message.hasProperty( Oscar::Message::StatusMessageRequest ) )
+			messageFlags = 0x03; // Auto message
+		else
+			messageFlags = 0x00; // nothing?
+	}
+	b->addByte( messageFlags );
+	
 	// status code, priority:
 	// common (ICQ) practice seems to be: both 1 when requesting away message, both 0 otherwise
 	// miranda sends 256/0 in away message request. it works, but i don't see the point...
@@ -359,7 +367,7 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b, const QString& messag
 		b->addLEWord( 0x0000 ); // status (?)
 		b->addLEWord( 0x0000 ); // priority (?)
 	}
-
+	
 
 	//! UTF in away messages doesnt work. using latin1 for now
 	// need to append message itself now. i am not sure about how encoding is handled, so i use utf for now
@@ -372,7 +380,7 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b, const QString& messag
 // 	}
 // 	b->addLEWord( length + 1 ); // length of string + zero termination
 // 	b->addString( utfMessage, length ); // string itself
-
+	
 	b->addLEWord( message.length() + 1 ); // length of string + zero termination
 	b->addString( message.latin1(), message.length() ); // string itself
 	b->addByte( 0x00 ); // zero termination
