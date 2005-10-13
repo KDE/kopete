@@ -129,6 +129,7 @@ JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStrin
 	protocolInstance = this;
 
 	addAddressBookField ("messaging/xmpp", Kopete::Plugin::MakeIndexField);
+	setCapabilities(Kopete::Protocol::FullRTF|Kopete::Protocol::CanSendOffline);
 }
 
 JabberProtocol::~JabberProtocol ()

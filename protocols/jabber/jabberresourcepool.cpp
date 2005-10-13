@@ -22,6 +22,7 @@
 #include "jabbercontactpool.h"
 #include "jabberbasecontact.h"
 #include "jabberaccount.h"
+#include "jabberprotocol.h"
 
 /**
  * This resource will be returned if no other resource
@@ -325,7 +326,6 @@ const XMPP::Resource &JabberResourcePool::bestResource ( const XMPP::Jid &jid, b
 	}
 
 	return (bestResource == 0L) ? EmptyResource : bestResource->resource();
-
 }
 
 void JabberResourcePool::findResources ( const XMPP::Jid &jid, JabberResourcePool::ResourceList &resourceList )

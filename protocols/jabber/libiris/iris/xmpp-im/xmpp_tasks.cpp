@@ -1348,6 +1348,10 @@ bool JT_ServInfo::take(const QDomElement &e)
 		query.appendChild(feature);
 
 		feature = doc()->createElement("feature");
+		feature.setAttribute("var", "http://jabber.org/protocol/xhtml-im");
+		query.appendChild(feature);
+
+		feature = doc()->createElement("feature");
 		feature.setAttribute("var", "http://jabber.org/protocol/si/profile/file-transfer");
 		query.appendChild(feature);
 

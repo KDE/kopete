@@ -277,15 +277,22 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 
 		// retrieve and reformat body
 		QString body = message.body ();
-
+		QString xHTMLBody = message.xHTMLBody ();
 		if( !message.xencrypted().isEmpty () )
 		{
 			body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
 		}
 
 		// convert XMPP::Message into Kopete::Message
-		if ( !message.body().isEmpty () )
+		if (!xHTMLBody.isEmpty()) {
+			kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Received a xHTML message" << endl;
+			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList, xHTMLBody,
+											 message.subject (), Kopete::Message::Inbound,
+											 Kopete::Message::RichText, viewPlugin );
+		}
+		else if ( !body.isEmpty () )
 		{
+			kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Received a plain text message" << endl;
 			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList, body,
 											 message.subject (), Kopete::Message::Inbound,
 											 Kopete::Message::PlainText, viewPlugin );

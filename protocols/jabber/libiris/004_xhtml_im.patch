@@ -1,0 +1,266 @@
+Index: iris/include/xmpp.h
+===================================================================
+--- iris/include/xmpp.h	(revision 470311)
++++ iris/include/xmpp.h	(working copy)
+@@ -318,8 +318,11 @@
+ 
+ 		QDomDocument & doc() const;
+ 		QString baseNS() const;
++		QString xhtmlImNS() const;
++		QString xhtmlNS() const;
+ 		QDomElement createElement(const QString &ns, const QString &tagName);
+ 		QDomElement createTextElement(const QString &ns, const QString &tagName, const QString &text);
++		QDomElement createXHTMLElement(const QString &xHTML);
+ 		void appendChild(const QDomElement &e);
+ 
+ 		Kind kind() const;
+@@ -372,6 +375,8 @@
+ 
+ 		virtual QDomDocument & doc() const=0;
+ 		virtual QString baseNS() const=0;
++		virtual QString xhtmlImNS() const=0;
++		virtual QString xhtmlNS() const=0;
+ 		virtual bool old() const=0;
+ 
+ 		virtual void close()=0;
+@@ -479,6 +484,8 @@
+ 		// reimplemented
+ 		QDomDocument & doc() const;
+ 		QString baseNS() const;
++		QString xhtmlImNS() const;
++		QString xhtmlNS() const;
+ 		bool old() const;
+ 
+ 		void close();
+Index: iris/include/im.h
+===================================================================
+--- iris/include/im.h	(revision 470311)
++++ iris/include/im.h	(working copy)
+@@ -65,6 +65,7 @@
+ 		QString lang() const;
+ 		QString subject(const QString &lang="") const;
+ 		QString body(const QString &lang="") const;
++		QString xHTMLBody(const QString &lang="") const;
+ 		QString thread() const;
+ 		Stanza::Error error() const;
+ 
+@@ -75,6 +76,7 @@
+ 		void setLang(const QString &s);
+ 		void setSubject(const QString &s, const QString &lang="");
+ 		void setBody(const QString &s, const QString &lang="");
++		void setXHTMLBody(const QString &s, const QString &lang="", const QString &attr = "");
+ 		void setThread(const QString &s);
+ 		void setError(const Stanza::Error &err);
+ 
+@@ -286,6 +288,7 @@
+ 		bool canSearch() const;
+ 		bool canGroupchat() const;
+ 		bool canDisco() const;
++		bool canXHTML() const;
+ 		bool isGateway() const;
+ 		bool haveVCard() const;
+ 
+@@ -298,6 +301,7 @@
+ 			FID_Disco,
+ 			FID_Gateway,
+ 			FID_VCard,
++			FID_Xhtml,
+ 
+ 			// private Psi actions
+ 			FID_Add
+Index: iris/xmpp-im/types.cpp
+===================================================================
+--- iris/xmpp-im/types.cpp	(revision 470311)
++++ iris/xmpp-im/types.cpp	(working copy)
+@@ -19,7 +19,7 @@
+  */
+ 
+ #include"im.h"
+-
++#include "protocol.h"
+ #include<qmap.h>
+ #include<qapplication.h>
+ 
+@@ -180,7 +180,8 @@
+ 	Jid to, from;
+ 	QString id, type, lang;
+ 
+-	StringMap subject, body;
++	StringMap subject, body, xHTMLBody;
++
+ 	QString thread;
+ 	Stanza::Error error;
+ 
+@@ -279,6 +280,11 @@
+ 	return d->body[lang];
+ }
+ 
++QString Message::xHTMLBody(const QString &lang) const
++{
++	return d->xHTMLBody[lang];
++}
++
+ QString Message::thread() const
+ {
+ 	return d->thread;
+@@ -340,9 +346,16 @@
+ void Message::setBody(const QString &s, const QString &lang)
+ {
+ 	d->body[lang] = s;
+-	//d->flag = false;
+ }
+ 
++void Message::setXHTMLBody(const QString &s, const QString &lang, const QString &attr)
++{
++	//ugly but needed if s is not a node but a list of leaf
++
++	QString content = "<body xmlns='" + QString(NS_XHTML) + "' "+attr+" >\n" + s +"\n</body>";
++	d->xHTMLBody[lang] = content;
++}
++
+ void Message::setThread(const QString &s)
+ {
+ 	d->thread = s;
+@@ -489,7 +502,19 @@
+ 			s.appendChild(e);
+ 		}
+ 	}
+-
++	if ( !d->xHTMLBody.isEmpty()) {
++		QDomElement parent = s.createElement(s.xhtmlImNS(), "html");
++		for(it = d->xHTMLBody.begin(); it != d->xHTMLBody.end(); ++it) {
++			const QString &str = it.data();
++			if(!str.isEmpty()) {
++				QDomElement child = s.createXHTMLElement(str);
++				if(!it.key().isEmpty())
++					child.setAttributeNS(NS_XML, "xml:lang", it.key());
++				parent.appendChild(child);
++			}
++		}
++		s.appendChild(parent);
++	}
+ 	if(d->type == "error")
+ 		s.setError(d->error);
+ 
+@@ -591,6 +616,21 @@
+ 				else if(e.tagName() == "thread")
+ 					d->thread = e.text();
+ 			}
++			else if (e.namespaceURI() == s.xhtmlImNS()) {
++				 if (e.tagName() == "html") {
++					QDomNodeList htmlNL= e.childNodes();
++					for (unsigned int x = 0; x < htmlNL.count(); x++) {
++						QDomElement i = htmlNL.item(x).toElement();
++
++						if (i.tagName() == "body") {
++							QDomDocument RichText;
++							QString lang = i.attributeNS(NS_XML, "lang", "");
++							RichText.appendChild(i);
++							d-> xHTMLBody[lang] = RichText.toString();
++						}
++					}
++				}
++			}
+ 			else {
+ 				//printf("extension element: [%s]\n", e.tagName().latin1());
+ 			}
+@@ -1418,6 +1458,16 @@
+ 	return test(ns);
+ }
+ 
++#define FID_XHTML  "http://jabber.org/protocol/xhtml-im"
++bool Features::canXHTML() const
++{
++	QStringList ns;
++
++	ns << FID_XHTML;
++
++	return test(ns);
++}
++
+ #define FID_GROUPCHAT "jabber:iq:conference"
+ bool Features::canGroupchat() const
+ {
+Index: iris/xmpp-im/xmpp_tasks.cpp
+===================================================================
+--- iris/xmpp-im/xmpp_tasks.cpp	(revision 470311)
++++ iris/xmpp-im/xmpp_tasks.cpp	(working copy)
+@@ -1348,6 +1348,10 @@
+ 		query.appendChild(feature);
+ 
+ 		feature = doc()->createElement("feature");
++		feature.setAttribute("var", "http://jabber.org/protocol/xhtml-im");
++		query.appendChild(feature);
++
++		feature = doc()->createElement("feature");
+ 		feature.setAttribute("var", "http://jabber.org/protocol/si/profile/file-transfer");
+ 		query.appendChild(feature);
+ 
+Index: iris/xmpp-core/protocol.h
+===================================================================
+--- iris/xmpp-core/protocol.h	(revision 470311)
++++ iris/xmpp-core/protocol.h	(working copy)
+@@ -35,6 +35,8 @@
+ #define NS_SESSION  "urn:ietf:params:xml:ns:xmpp-session"
+ #define NS_STANZAS  "urn:ietf:params:xml:ns:xmpp-stanzas"
+ #define NS_BIND     "urn:ietf:params:xml:ns:xmpp-bind"
++#define NS_XHTML_IM "http://jabber.org/protocol/xhtml-im"
++#define NS_XHTML "http://www.w3.org/1999/xhtml"
+ 
+ namespace XMPP
+ {
+Index: iris/xmpp-core/stream.cpp
+===================================================================
+--- iris/xmpp-core/stream.cpp	(revision 470311)
++++ iris/xmpp-core/stream.cpp	(working copy)
+@@ -293,6 +293,16 @@
+ 	return d->s->baseNS();
+ }
+ 
++QString Stanza::xhtmlImNS() const
++{
++	return d->s->xhtmlImNS();
++}
++
++QString Stanza::xhtmlNS() const
++{
++	return d->s->xhtmlNS();
++}
++
+ QDomElement Stanza::createElement(const QString &ns, const QString &tagName)
+ {
+ 	return d->s->doc().createElementNS(ns, tagName);
+@@ -305,6 +315,16 @@
+ 	return e;
+ }
+ 
++QDomElement Stanza::createXHTMLElement(const QString &xHTML)
++{
++	QDomDocument doc;
++
++  	doc.setContent(xHTML, true);
++	QDomElement root = doc.documentElement();
++	//QDomElement e;
++	return (root);
++}
++
+ void Stanza::appendChild(const QDomElement &e)
+ {
+ 	d->e.appendChild(e);
+@@ -861,6 +881,16 @@
+ 	return NS_CLIENT;
+ }
+ 
++QString ClientStream::xhtmlImNS() const
++{
++	return NS_XHTML_IM;
++}
++
++QString ClientStream::xhtmlNS() const
++{
++	return NS_XHTML;
++}
++
+ void ClientStream::setAllowPlain(bool b)
+ {
+ 	d->allowPlain = b;
