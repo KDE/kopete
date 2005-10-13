@@ -33,7 +33,7 @@
 #include "gwcontact.h"
 #include "gwcontactproperties.h"
 #include "gwprotocol.h"
-#include "tasks/searchtask.h"
+#include "tasks/searchusertask.h"
 
 #include "gwsearch.h"
 
@@ -128,7 +128,7 @@ void GroupWiseContactSearch::slotDoSearch()
 	if ( !searchTerms.isEmpty() )
 	{
 		// start a search task
-		SearchTask * st = new SearchTask( m_account->client()->rootTask() );
+		SearchUserTask * st = new SearchUserTask( m_account->client()->rootTask() );
 		st->search( searchTerms );
 		connect( st, SIGNAL( finished() ), SLOT( slotGotSearchResults() ) );
 		st->go( true );
@@ -161,7 +161,7 @@ void GroupWiseContactSearch::slotShowDetails()
 void GroupWiseContactSearch::slotGotSearchResults()
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	SearchTask * st = ( SearchTask * )sender();
+	SearchUserTask * st = ( SearchUserTask * ) sender();
 	m_searchResults = st->results();
 	
 	m_matchCount->setText( i18n( "1 matching user found", "%n matching users found", m_searchResults.count() ) );

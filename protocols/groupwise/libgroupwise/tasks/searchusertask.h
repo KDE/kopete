@@ -1,12 +1,12 @@
 /*
     Kopete Groupwise Protocol
-    searchtask.h - high level search for users on the server - spawns PollSearchResultsTasks
+    searchusertask.h - high level search for users on the server - spawns PollSearchResultsTasks
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+    Copyright (c) 2005      SUSE Linux Products GmbH	 	 http://www.suse.com
     
     Based on Iris, Copyright (C) 2003  Justin Karneges
 
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -18,8 +18,8 @@
     *************************************************************************
 */
 
-#ifndef SEARCHTASK_H
-#define SEARCHTASK_H
+#ifndef SEARCHUSERTASK_H
+#define SEARCHUSERTASK_H
 
 #include "requesttask.h"
 
@@ -30,13 +30,13 @@ This Task performs user searching on the server
 
 @author SUSE AG
 */
-class ContactSearchTask : public RequestTask
+class SearchUserTask : public RequestTask
 {
 Q_OBJECT
 public:
-    ContactSearchTask(Task* parent);
+    SearchUserTask(Task* parent);
 
-    ~ContactSearchTask();
+    ~SearchUserTask();
 	/**
 	 * Create the search query
 	 * @param query a list of search terms

@@ -1,12 +1,12 @@
 /*
     Kopete Groupwise Protocol
-    contactsearchtask.cpp - high level search for users on the server - spawns PollSearchResultsTasks
+    searchusertask.cpp - high level search for users on the server - spawns PollSearchResultsTasks
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+    Copyright (c) 2005      SUSE Linux Products GmbH	 	 http://www.suse.com
     
     Based on Iris, Copyright (C) 2003  Justin Karneges
 
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -28,7 +28,7 @@
 
 #include "pollsearchresultstask.h"
 
-#include "contactsearchtask.h"
+#include "searchusertask.h"
 
 // the delay we allow the server to initially do the search
 #define GW_POLL_INITIAL_DELAY 1000
@@ -39,16 +39,16 @@
 
 using namespace GroupWise;
 
-ContactSearchTask::ContactSearchTask(Task* parent): RequestTask(parent), m_polls( 0 )
+SearchUserTask::SearchUserTask(Task* parent): RequestTask(parent), m_polls( 0 )
 {
 }
 
 
-ContactSearchTask::~ContactSearchTask()
+SearchUserTask::~SearchUserTask()
 {
 }
 
-void ContactSearchTask::search( const QValueList<UserSearchQueryTerm> & query )
+void SearchUserTask::search( const QValueList<UserSearchQueryTerm> & query )
 {
 	m_queryHandle = QString::number( QDateTime::currentDateTime().toTime_t () );
 	Field::FieldList lst;
@@ -72,7 +72,7 @@ void ContactSearchTask::search( const QValueList<UserSearchQueryTerm> & query )
 	createTransfer( "createsearch", lst );
 }
 
-bool ContactSearchTask::take( Transfer * transfer )
+bool SearchUserTask::take( Transfer * transfer )
 {
 	if ( !forMe( transfer ) )
 		return false;
@@ -90,7 +90,7 @@ bool ContactSearchTask::take( Transfer * transfer )
 	return true;
 }
 
-void ContactSearchTask::slotPollForResults()
+void SearchUserTask::slotPollForResults()
 {
 	//create a PollSearchResultsTask
 	PollSearchResultsTask * psrt = new PollSearchResultsTask( client()->rootTask() );
@@ -99,7 +99,7 @@ void ContactSearchTask::slotPollForResults()
 	psrt->go( true );
 }
 
-void ContactSearchTask::slotGotPollResults()
+void SearchUserTask::slotGotPollResults()
 {
 	PollSearchResultsTask * psrt = (PollSearchResultsTask *)sender();
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "status code is " << psrt->queryStatus() << endl;
@@ -129,9 +129,9 @@ void ContactSearchTask::slotGotPollResults()
 	}
 }
 
-QValueList< GroupWise::ContactDetails > ContactSearchTask::results()
+QValueList< GroupWise::ContactDetails > SearchUserTask::results()
 {
 	return m_results;
 }
 
-#include "contactsearchtask.moc"
+#include "searchusertask.moc"
