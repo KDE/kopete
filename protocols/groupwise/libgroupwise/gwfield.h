@@ -102,6 +102,7 @@
 #define	NM_A_B_NO_CONTACTS				"NM_A_B_NO_CONTACTS"
 #define	NM_A_B_NO_CUSTOMS				"NM_A_B_NO_CUSTOMS"
 #define	NM_A_B_NO_PRIVACY				"NM_A_B_NO_PRIVACY"
+#define	NM_A_B_ONLY_MODIFIED			"NM_A_B_ONLY_MODIFIED"
 #define	NM_A_UW_STATUS					"NM_A_UW_STATUS"
 #define	NM_A_UD_OBJECT_ID				"NM_A_UD_OBJECT_ID"
 #define	NM_A_SZ_TRANSACTION_ID			"NM_A_SZ_TRANSACTION_ID"
@@ -118,13 +119,16 @@
 #define NM_A_LOCKED_ATTR_LIST			"nnmLockedAttrList"
 #define NM_A_SZ_DEPARTMENT				"OU"
 #define NM_A_SZ_TITLE					"Title"
-
 // GW7
 #define NM_A_FA_CUSTOM_STATUSES			"NM_A_FA_CUSTOM_STATUSES"
 #define NM_A_FA_STATUS					"NM_A_FA_STATUS"
+#define NM_A_UD_QUERY_COUNT				"NM_A_UD_QUERY_COUNT"
+#define NM_A_FA_CHAT					"NM_A_FA_CHAT"
+#define NM_A_DISPLAY_NAME				"nnmDisplayName"
+#define NM_A_CHAT_OWNER_DN				"nnmChatOwnerDN"
+#define NM_A_UD_PARTICIPANTS			"NM_A_UD_PARTICIPANTS"
 
 #define NM_PROTOCOL_VERSION		 		2
-
 #define	NM_FIELD_TRUE					"1"
 #define	NM_FIELD_FALSE					"0"
 
