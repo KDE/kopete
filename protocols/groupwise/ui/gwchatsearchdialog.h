@@ -35,6 +35,7 @@ class GroupWiseChatSearchDialog : public KDialogBase
 	protected slots:
 		void slotUpdate();
 		void slotGotSearchResults();
+		void slotGotChatCounts();
 	private:
 		GroupWiseAccount * m_account;
 		GroupWiseChatSearchWidget * m_widget;
