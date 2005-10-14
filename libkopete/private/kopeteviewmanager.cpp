@@ -48,7 +48,7 @@ struct KopeteViewManagerPrivate
 	EventList eventList;
 	KopeteView *activeView;
 
-	bool useQueue;
+	bool useQueueOrStack;
 	bool raiseWindow;
 	bool queueUnreadMessages;
 	bool queueOnlyHighlightedMessagesInGroupChats;
@@ -98,7 +98,7 @@ KopeteViewManager::~KopeteViewManager()
 
 void KopeteViewManager::slotPrefsChanged()
 {
-	d->useQueue = KopetePrefs::prefs()->useQueue();
+	d->useQueueOrStack = KopetePrefs::prefs()->useQueue() || KopetePrefs::prefs()->useStack();
 	d->raiseWindow = KopetePrefs::prefs()->raiseMsgWindow();
 	d->queueUnreadMessages = KopetePrefs::prefs()->queueUnreadMessages();
 	d->queueOnlyHighlightedMessagesInGroupChats = KopetePrefs::prefs()->queueOnlyHighlightedMessagesInGroupChats();
@@ -167,7 +167,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		manager->view(true,msg.requestedPlugin())->appendMessage( msg );
 		d->foreignMessage=false; //the view is created, reset the flag
 
-		bool appendMessageEvent = d->useQueue;
+		bool appendMessageEvent = d->useQueueOrStack;
 
 		QWidget *w;
 		if( d->queueUnreadMessages && ( w = dynamic_cast<QWidget*>(view( manager )) ) )
