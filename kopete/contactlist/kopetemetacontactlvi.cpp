@@ -35,7 +35,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpassivepopup.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kglobal.h>
 #include <kconfig.h>
 #include <kapplication.h>

@@ -48,7 +48,7 @@
 #include <klocale.h>
 #include <kmenubar.h>
 #include <kmessagebox.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kpushbutton.h>
 #include <ktextedit.h>
 #include <kwin.h>

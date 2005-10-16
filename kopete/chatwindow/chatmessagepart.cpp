@@ -42,7 +42,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kmultipledrag.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <krootpixmap.h>
 #include <krun.h>
 #include <kstringhandler.h>

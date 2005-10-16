@@ -37,6 +37,7 @@
 #include <kprotocolinfo.h>
 #include <kurl.h>
 #include <krun.h>
+#include <ktoolinvocation.h>
 
 #include "kopeteballoon.h"
 #include "systemtray.h"
@@ -58,7 +59,7 @@ void KopeteActiveLabel::openLink( const QString& link )
 	QString protocol = url.protocol();
 	
 	if ( protocol == "mailto" )
-		kapp->invokeMailer(url);
+		KToolInvocation::invokeMailer(url);
 	else 
 	{
 		if ( KProtocolInfo::protocolClass( protocol ) == ":internet" ) // http, ftp, etc.

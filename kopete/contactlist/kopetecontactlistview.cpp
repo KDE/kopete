@@ -79,6 +79,7 @@
 #include "kopetegrouplistaction.h"
 
 #include <memory>
+#include <ktoolinvocation.h>
 
 class ContactListViewStrategy;
 
@@ -1461,7 +1462,7 @@ void KopeteContactListView::slotSendFile()
 
 			kdDebug( 14000 ) << "Email: " << emailAddr << "!" << endl;
 			if ( !emailAddr.isEmpty() )
-				kapp->invokeMailer( emailAddr, QString::null );
+				KToolInvocation::invokeMailer( emailAddr, QString::null );
 			else
 				KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "There is no email address set for this contact in the KDE address book." ), i18n( "No Email Address in Address Book" ) );
 		}

@@ -41,7 +41,7 @@
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <knotifydialog.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kaccel.h>
 #include <kkeydialog.h>
 #include <kedittoolbar.h>

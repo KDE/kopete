@@ -30,8 +30,9 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmenubar.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <ktoolbar.h>
+#include <kauthorized.h>
 #include "emoticonselector.h"
 #include "kopeteemoticons.h"
 
@@ -125,7 +126,7 @@ void KopeteEmoticonAction::setStickyMenu(bool sticky)
 
 int KopeteEmoticonAction::plug( QWidget* widget, int index )
 {
-	if (kapp && !kapp->authorizeKAction(name()))
+	if (kapp && !KAuthorized::authorizeKAction(name()))
 		return -1;
 
 //	kdDebug(14010) << "KopeteEmoticonAction::plug( " << widget << ", " << index << " )" << endl;

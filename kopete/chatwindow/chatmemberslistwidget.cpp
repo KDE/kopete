@@ -30,7 +30,7 @@
 #include <kabc/vcardconverter.h>
 #include <kdebug.h>
 #include <kmultipledrag.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 
 #include <q3header.h>
 #include <qtooltip.h>

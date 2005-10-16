@@ -20,7 +20,7 @@
 
 #include "kopeteview.h"
 #include "kopeteviewplugin.h"
-#include <kdockwidget.h>
+#include <k3dockwidget.h>
 #include <ktextedit.h> // for covariant return type of editWidget
 #include <q3ptrdict.h>
 //Added by qt3to4:
