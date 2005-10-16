@@ -36,7 +36,7 @@ class ChatMembersListWidget : public KListView
 {
 	Q_OBJECT
 public:
-	ChatMembersListWidget( Kopete::ChatSession *session, QWidget *parent, const char *name = 0 );
+	ChatMembersListWidget( Kopete::ChatSession *session, QWidget *parent);
 	virtual ~ChatMembersListWidget();
 
 	Kopete::ChatSession *session() { return m_session; }

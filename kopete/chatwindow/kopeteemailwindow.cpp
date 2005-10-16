@@ -53,6 +53,7 @@
 #include <ktextedit.h>
 #include <kwin.h>
 #include <kgenericfactory.h>
+#include <kxmlguifactory.h>
 
 #include <qlabel.h>
 #include <qlayout.h>
@@ -64,6 +65,7 @@
 #include <QHBoxLayout>
 #include <Q3ValueList>
 #include <QMovie>
+#include <QSplitter>
 
 typedef KGenericFactory<EmailWindowPlugin> EmailWindowPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_emailwindow, EmailWindowPluginFactory( "kopete_emailwindow" )  )
@@ -114,14 +116,14 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowP
 	d->split = new QSplitter( v );
 	d->split->setOrientation( Qt::Vertical );
 
-	d->messagePart = new ChatMessagePart( manager, d->split, "messagePart" );
+	d->messagePart = new ChatMessagePart( manager, d->split);
 
 	// FIXME: should this be in ChatView too? maybe move to ChatMessagePart?
 	d->messagePart->view()->setMarginWidth( 4 );
 	d->messagePart->view()->setMarginHeight( 4 );
 	d->messagePart->view()->setMinimumSize( QSize( 75, 20 ) );
 
-	d->editPart = new ChatTextEditPart( manager, d->split, "editPart" );
+	d->editPart = new ChatTextEditPart( manager, d->split );
 
 	/*
 	FIXME: dude, wtf?

@@ -133,8 +133,8 @@ void ChatMembersListWidget::ContactItem::reposition()
 
 //BEGIN ChatMembersListWidget
 
-ChatMembersListWidget::ChatMembersListWidget( Kopete::ChatSession *session, QWidget *parent, const char *name )
-	 : KListView( parent, name ), m_session( session )
+ChatMembersListWidget::ChatMembersListWidget( Kopete::ChatSession *session, QWidget *parent )
+	 : KListView( parent ), m_session( session )
 {
 	// use our own custom tooltips
 //	setShowToolTips( false );
