@@ -12,7 +12,7 @@ kde_module_LTLIBRARIES = kopete_skype.la
 kopete_skype_la_SOURCES = skypeprotocol.cpp skypeeditaccount.cpp \
 					skypeaccount.cpp skypecontact.cpp skypeaddcontact.cpp skypechatsession.cpp \
 					skypecalldialog.cpp skypeconference.cpp skypedetails.cpp
-kopete_skype_la_LDFLAGS     = -module $(KDE_PLUGIN) $(DBUS_LIBS) $(KOPETE_LIBS)
+kopete_skype_la_LDFLAGS     = -module $(KDE_PLUGIN) $(KOPETE_LIBS) $(DBUS_LIBS) 
 kopete_skype_la_LIBADD = libskype/libskype.la \
 			ui/libkopeteskypeui.la 
 
