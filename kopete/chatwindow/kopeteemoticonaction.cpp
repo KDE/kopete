@@ -43,7 +43,7 @@ public:
 	{
 		m_delayed = true;
 		m_stickyMenu = true;
-		m_popup = new KMenu(0L,"KopeteEmoticonActionPrivate::m_popup");
+		m_popup = new KMenu(0L);
 		emoticonSelector = new EmoticonSelector( m_popup, "KopeteEmoticonActionPrivate::emoticonSelector");
 //FIXME do it the kde4 way
 //		m_popup->insertItem( static_cast<QObject*>(emoticonSelector) );

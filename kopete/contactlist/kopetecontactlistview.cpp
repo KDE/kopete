@@ -949,6 +949,9 @@ void KopeteContactListView::slotDropped(QDropEvent *e, Q3ListViewItem *, Q3ListV
 	}
 	else if( e->provides("text/uri-list") )
 	{
+#warning commented to make it compile
+#if 0
+
 		if ( !Q3UriDrag::canDecode( e ) )
 		{
 			e->ignore();
@@ -1004,6 +1007,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, Q3ListViewItem *, Q3ListV
 			}
 		}
 		e->acceptAction();
+#endif
 	}
 }
 
@@ -1171,6 +1175,9 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 	}
 	else
 	{
+#warning commented to make it compile
+#if 0
+
 		if( e->provides( "text/uri-list" ) )
 		{
 			//we are sending a file (or dragging from the chat view)
@@ -1218,7 +1225,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 			Q3TextDrag::decode(e, text);
 			kdDebug(14000) << k_funcinfo << "drop with mimetype:" << e->format() << " data as text:" << text << endl;
 		}
-
+#endif
 	}
 
 	return false;

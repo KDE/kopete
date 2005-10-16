@@ -938,6 +938,9 @@ void ChatView::dropEvent ( QDropEvent * event )
 	}
 	else if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 )
 	{
+#warning commented to make it compile
+#if 0
+
 		Kopete::ContactPtrList members = m_manager->members();
 		Kopete::Contact *contact = members.first();
 
@@ -963,6 +966,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 		}
 		event->acceptAction();
 		return;
+#endif
 	}
 	else
 		QWidget::dropEvent(event);
