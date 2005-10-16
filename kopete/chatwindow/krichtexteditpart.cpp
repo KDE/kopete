@@ -443,6 +443,8 @@ void KopeteRichTextEditPart::setBgColor( const QColor &newColor )
 
 void KopeteRichTextEditPart::setFontSize( int size )
 {
+	if( size < 1 )
+		return;
 	mFont.setPointSize( size );
 	if( m_capabilities & Kopete::Protocol::RichFont )
 		editor->setPointSize( size );
