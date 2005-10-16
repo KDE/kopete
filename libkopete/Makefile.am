@@ -9,7 +9,8 @@ else
 AVDEVICEDIR = avdevice
 endif
 
-SUBDIRS = private ui . $(AVDEVICEDIR)
+SUBDIRS = private ui . 
+#$(AVDEVICEDIR)
 
 METASOURCES = AUTO
 

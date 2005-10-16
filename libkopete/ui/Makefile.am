@@ -6,7 +6,7 @@ noinst_LTLIBRARIES = libkopeteui.la
 
 libkopeteui_la_SOURCES = kopetecontactaction.cpp addcontactpage.cpp \
 		editaccountwidget.cpp kopetepassworddialog.ui kopetestdaction.cpp 	kopeteawaydialogbase.ui \
-	kopetefileconfirmdialog.cpp 	fileconfirmbase.ui userinfodialog.cpp kopeteview.cpp \
+	kopetefileconfirmdialog.cpp 	fileconfirmbase.ui kopeteview.cpp \
 	kopetepasswordwidgetbase.ui 	kopetepasswordwidget.cpp accountselector.cpp kopeteviewplugin.cpp \
 	addresseeitem.cpp addressbookselectorwidget_base.ui addressbookselectordialog.cpp \
 		addressbookselectorwidget.cpp metacontactselectorwidget_base.ui 	metacontactselectorwidget.cpp \
@@ -21,7 +21,7 @@ kopeteinclude_HEADERS = accountselector.h fileconfirmbase.h kopetefileconfirmdia
 	kopetepasswordwidget.h kopeteview.h addcontactpage.h kopeteawaydialogbase.h  \
 	kopetepasswordwidgetbase.h kopeteviewplugin.h \
 	editaccountwidget.h kopetecontactaction.h kopetepassworddialog.h kopetestdaction.h \
-	userinfodialog.h addressbookselectordialog.h addressbookselectorwidget.h kopetelistview.h kopetelistviewitem.h kopetelistviewsearchline.h
+	addressbookselectordialog.h addressbookselectorwidget.h kopetelistview.h kopetelistviewitem.h kopetelistviewsearchline.h
 
 noinst_HEADERS = addresseeitem.h contactaddednotifywidget.h
 

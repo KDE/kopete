@@ -403,17 +403,18 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 		QByteArray actionName = status.description().ascii();
 		if ( !( action = static_cast<KAction*>( account->child( actionName ) ) ) )
 		{
+#warning  give a parent to actions
 			if(options & OnlineStatusManager::HasAwayMessage)
 			{
 				action = new AwayAction( status, caption, status.iconFor(account), 0, account,
 						SLOT( setOnlineStatus( const Kopete::OnlineStatus&, const QString& ) ),
-						account, actionName );
+						0l, actionName );
 			}
 			else
 			{
 				action=new OnlineStatusAction( status, caption, status.iconFor(account) , account, actionName );
 				connect(action,SIGNAL(activated(const Kopete::OnlineStatus&)) ,
-						account, SLOT(setOnlineStatus(const Kopete::OnlineStatus&)));
+						0l, SLOT(setOnlineStatus(const Kopete::OnlineStatus&)));
 			}
 		}
 
@@ -431,9 +432,9 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 
 
 OnlineStatusAction::OnlineStatusAction( const OnlineStatus& status, const QString &text, const QIcon &pix, QObject *parent, const char *name)
-		: KAction( text, pix, KShortcut() , parent, name) , m_status(status)
+	: KAction( text, pix, KShortcut() ,this, SLOT(slotActivated()), 0l, name) , m_status(status)
 {
-	connect(this,SIGNAL(activated()),this,SLOT(slotActivated()));
+	connect(parent,SIGNAL(destroyed()),this,SLOT(deleteLater()));
 }
 
 void OnlineStatusAction::slotActivated()

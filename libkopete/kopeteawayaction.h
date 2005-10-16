@@ -48,7 +48,7 @@ class KOPETE_EXPORT AwayAction : public KSelectAction
 		 **/
 		AwayAction(const QString &text, const QIcon &pix,
 				   const KShortcut &cut, const QObject *receiver, const char *slot,
-				   QObject *parent, const char *name = 0);
+				   KActionCollection *parent, const char *name = 0);
 
 		/**
 		 * Constructor
@@ -59,7 +59,7 @@ class KOPETE_EXPORT AwayAction : public KSelectAction
 		 **/
 		AwayAction(const OnlineStatus &status, const QString &text, const QIcon &pix,
 				   const KShortcut &cut, const QObject *receiver, const char *slot,
-				   QObject *parent, const char *name = 0);
+				   KActionCollection *parent, const char *name = 0);
 
 	signals:
 		/**

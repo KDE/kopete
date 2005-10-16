@@ -24,7 +24,7 @@
 #include <qdom.h>
 #include <qfile.h>
 #include <q3stylesheet.h>
-#include <qimage.h>
+#include <qpixmap.h>
 #include <qdatetime.h>
 //Added by qt3to4:
 #include <Q3ValueList>
@@ -433,7 +433,6 @@ QString Emoticons::parse( const QString &message, ParseMode mode )
 
 	QList<Token> tokens = tokenize( message, mode );
 	QString result;
-	QPixmap p;
 	foreach (Token token , tokens )
 	{
 		switch ( token.type )

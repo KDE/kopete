@@ -15,7 +15,8 @@
     *************************************************************************
 */
 
-#ifndef __kopetecontactaction_h__
+#if 0
+//#ifndef __kopetecontactaction_h__
 #define __kopetecontactaction_h__
 
 #include <kaction.h>

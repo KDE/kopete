@@ -32,6 +32,8 @@
 #include <kpopupmenu.h>
 #include <kmessagebox.h>
 #include <knotifyclient.h>
+#include <kinstance.h>
+#include <kmenu.h>
 
 #include "kopeteaccount.h"
 #include "kabcpersistence.h"
@@ -349,16 +351,17 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 KActionMenu * Account::actionMenu()
 {
 	//default implementation
-	KActionMenu *menu = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ),  this );
+#warning give a parent to the menu and the "properties" action
+	KActionMenu *menu = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ),  0l );
 	QString nick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
 
-	menu->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ),
+	menu->popupMenu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
 		nick.isNull() ? accountLabel() : i18n( "%2 <%1>" ).arg( accountLabel(), nick )
 	);
 
 	OnlineStatusManager::self()->createAccountStatusActions(this, menu);
 	menu->popupMenu()->insertSeparator();
-	menu->insert( new KAction ( i18n( "Properties" ),  0, this, SLOT( editAccount() ), menu, "actionAccountProperties" ) );
+	menu->insert( new KAction ( i18n( "Properties" ),  0, this, SLOT( editAccount() ), 0l, "actionAccountProperties" ) );
 
 	return menu;
 }

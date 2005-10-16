@@ -275,9 +275,11 @@ void Kopete::CommandHandler::slotExecCommand( const QString &args, Kopete::ChatS
 	if( !args.isEmpty() )
 	{
 		KProcess *proc = 0L;
+#warning commented to make it compile
+#if 0
 		if ( kapp->authorize( QString::fromLatin1( "shell_access" ) ) )
 				proc = new KProcess(manager);
-		
+#endif		
 		if( proc )
 		{
 			*proc << QString::fromLatin1("sh") << QString::fromLatin1("-c");

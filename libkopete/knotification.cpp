@@ -39,7 +39,7 @@
 #include <kwin.h>
 
 
-#include <q3vbox.h>
+#include <kvbox.h>
 #include <QMap>
 #include <QPixmap>
 #include <dcopclient.h>
@@ -52,6 +52,7 @@
 #include <kapplication.h>
 #include <qfile.h>
 #include <qtextstream.h>
+#include <QDateTime>
 
 //TODO,  make the KNotification aware of the systemtray.
 #include "kopeteuiglobal.h"
@@ -90,11 +91,7 @@ void KNotification::notifyByExecute(const QString &command, const QString& event
 {
 	if (!command.isEmpty()) {
 // 	kdDebug() << "executing command '" << command << "'" << endl;
-#if 0
 		QHash<QChar,QString> subst;
-#else
-		QMap<QChar,QString> subst;
-#endif
 		subst.insert( 'e', event );
 		subst.insert( 'a', fromApp );
 		subst.insert( 's', text );
@@ -188,12 +185,12 @@ void KNotification::notifyByPassivePopup(const QPixmap &pix )
 	KPassivePopup *pop = new KPassivePopup( checkWinId(appName, winId) );
 	QObject::connect(this, SIGNAL(closed()), pop, SLOT(deleteLater()));
 
-	Q3VBox *vb = pop->standardView( title, pix.isNull() ? d->text: QString::null , icon );
-	Q3VBox *vb2=vb;
+	KVBox *vb = pop->standardView( title, pix.isNull() ? d->text: QString::null , icon );
+	KVBox *vb2=vb;
 
 	if(!pix.isNull())
 	{
-		Q3HBox *hb = new Q3HBox(vb);
+		KHBox *hb = new KHBox(vb);
 		hb->setSpacing(KDialog::spacingHint());
 		QLabel *pil=new QLabel(hb);
 		pil->setPixmap(pix);
@@ -208,7 +205,7 @@ void KNotification::notifyByPassivePopup(const QPixmap &pix )
 			pil->setMaximumWidth(80);
 			pil->setMaximumHeight(80*pix.height()/pix.width());
 		}
-		vb=new Q3VBox(hb);
+		vb=new KVBox(hb);
 		QLabel *msg = new QLabel( d->text, vb, "msg_label" );
 		msg->setAlignment( Qt::AlignLeft );
 	}

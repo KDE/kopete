@@ -25,12 +25,12 @@ namespace UI {
 namespace ListView {
 
 SearchLine::SearchLine( QWidget *parent, ListView *listView, const char *name )
-	: KListViewSearchLine( parent, listView, name )
+	: KListViewSearchLine( parent, listView )
 {
 }
 
 SearchLine::SearchLine(QWidget *parent, const char *name)
-	: KListViewSearchLine( parent, 0, name )
+	: KListViewSearchLine( parent, 0)
 {
 }
 

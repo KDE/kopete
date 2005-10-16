@@ -198,6 +198,9 @@ KPopupMenu* Contact::popupMenu( ChatSession *manager )
 		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( nick, contactId(), onlineStatus().description() );
 	menu->addTitle( titleText );
 
+#warning TODO
+#if 0	
+	
 	if( metaContact() && metaContact()->isTemporary() && contactId() != account()->myself()->contactId() )
 	{
 		KAction *actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "bookmark_add" ),
@@ -252,7 +255,7 @@ KPopupMenu* Contact::popupMenu( ChatSession *manager )
 
 	if( metaContact() && !metaContact()->isTemporary() )
 		KopeteStdAction::deleteContact( this, SLOT( slotDelete() ), menu, "actionDeleteContact" )->plug( menu );
-
+#endif
 	return menu;
 }
 
