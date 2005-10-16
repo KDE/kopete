@@ -32,7 +32,10 @@
 #include <QMouseEvent>
 #include <QLabel>
 #include <QGridLayout>
-#include <qobjectlist.h>
+#include <qobject.h>
+//Added by qt3to4:
+#include <QHideEvent>
+#include <QShowEvent>
 
 #include <kdebug.h>
 

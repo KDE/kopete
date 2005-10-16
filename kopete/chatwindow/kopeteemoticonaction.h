@@ -31,7 +31,7 @@ class KopeteEmoticonAction : public KAction
 	Q_PROPERTY( bool stickyMenu READ stickyMenu WRITE setStickyMenu )
 
 public:
-	KopeteEmoticonAction( QObject *parent = 0, const char *name = 0 );
+	KopeteEmoticonAction( KActionCollection *parent = 0, const char *name = 0 );
 	virtual ~KopeteEmoticonAction();
 
 	KMenu * popupMenu() const;

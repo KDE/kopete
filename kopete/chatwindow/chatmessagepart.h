@@ -42,7 +42,7 @@ class ChatMessagePart : public KHTMLPart
 {
 	Q_OBJECT
 public:
-	ChatMessagePart( Kopete::ChatSession *manager, QWidget *parent, const char *name = 0 );
+	ChatMessagePart( Kopete::ChatSession *manager, QWidget *parent);
 	~ChatMessagePart();
 
 	/**

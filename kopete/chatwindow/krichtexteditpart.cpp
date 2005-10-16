@@ -27,7 +27,7 @@ class KopeteTextEdit : public KTextEdit
 {
 public:
 	KopeteTextEdit( QWidget *parent ) : KTextEdit( parent ) {}
-	const Q3TextCursor * cursor() { return textCursor(); }
+//	const Q3TextCursor * cursor() { return textCursor(); }
 	bool event(QEvent *event)
 	{
 		// don't allow QTextEdit to override accels
@@ -41,13 +41,13 @@ public:
 
 
 KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *wparent, const char *wname, QObject*, const char*, const QStringList& )
-	: KParts::ReadOnlyPart( wparent, wname ? wname : "rich_text_part" )
+	: KParts::ReadOnlyPart( wparent )
 {
 	KopeteRichTextEditPart::KopeteRichTextEditPart( wparent, wname, false );
 }
 
 KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *parent, const char *name, int capabilities )
-  : KParts::ReadOnlyPart( parent, name ? name : "rich_text_part" ),
+  : KParts::ReadOnlyPart( parent),
 	m_capabilities( capabilities ),
 	m_richTextEnabled( true )
 {

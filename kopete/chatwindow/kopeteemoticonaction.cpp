@@ -63,8 +63,8 @@ public:
 	bool m_stickyMenu;
 };
 
-KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent, const char* name )
-  : KAction( i18n( "Add Smiley" ), 0, parent, name )
+KopeteEmoticonAction::KopeteEmoticonAction(  KActionCollection* parent, const char* name )
+  : KAction( i18n( "Add Smiley" ), 0,  0 , 0 , parent, name )
 {
 	d = new KopeteEmoticonActionPrivate;
 
@@ -76,10 +76,12 @@ KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent, const char* name )
 		icon=emoticonsMap[":)"];
 	else
 		icon=emoticonsMap[":-)"];
+	
+	
 	if ( icon.isNull() )
 		setIcon( "emoticon" );
 	else
-		setIconSet( QIcon( icon ) );
+		setIcon( QIcon( icon ) );
 
 	setShortcutConfigurable( false );
 	connect( d->emoticonSelector, SIGNAL( ItemSelected( const QString & ) ),

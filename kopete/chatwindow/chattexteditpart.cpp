@@ -30,8 +30,8 @@
 #include <qtimer.h>
 #include <qregexp.h>
 
-ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *parent, const char *name )
-	: KopeteRichTextEditPart( parent, name, session->protocol()->capabilities() ), m_session(session)
+ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *parent )
+	: KopeteRichTextEditPart( parent, 0, session->protocol()->capabilities() ), m_session(session)
 {
 	m_autoSpellCheckEnabled = true;
 	historyPos = -1;
@@ -44,9 +44,9 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 	
 	// set params on the edit widget
 	edit()->setMinimumSize( QSize( 75, 20 ) );
-	edit()->setWordWrap( Q3TextEdit::WidgetWidth );
-	edit()->setWrapPolicy( Q3TextEdit::AtWhiteSpace );
-	edit()->setAutoFormatting( Q3TextEdit::AutoNone );
+//	edit()->setWordWrap( Q3TextEdit::WidgetWidth );
+//	edit()->setWrapPolicy( Q3TextEdit::AtWhiteSpace );
+//	edit()->setAutoFormatting( Q3TextEdit::AutoNone );
 
 	// some signals and slots connections
 	connect( edit(), SIGNAL( textChanged()), this, SLOT( slotTextChanged() ) );
@@ -102,9 +102,14 @@ bool ChatTextEditPart::autoSpellCheckEnabled() const
 
 KDictSpellingHighlighter* ChatTextEditPart::spellHighlighter()
 {
+#warning disabled to make it compile
+#if 0
 	Q3SyntaxHighlighter *qsh = edit()->syntaxHighlighter();
 	KDictSpellingHighlighter* kdsh = dynamic_cast<KDictSpellingHighlighter*>( qsh );
 	return kdsh;
+#else 
+	return 0l;
+#endif;
 }
 
 // NAUGHTY, BAD AND WRONG! (but needed to fix nick complete bugs)
@@ -124,6 +129,8 @@ public:
 */
 void ChatTextEditPart::complete()
 {
+#warning disabled to make it compile
+#if 0
 	int para = 1, parIdx = 1;
 	edit()->getCursorPosition( &para, &parIdx);
 
@@ -184,6 +191,7 @@ void ChatTextEditPart::complete()
 			kdDebug(14000) << k_funcinfo << "No completions! Tried " << mComplete->items() << endl;
 		}
 	}
+#endif
 }
 
 void ChatTextEditPart::slotPropertyChanged( Kopete::Contact*, const QString &key,
@@ -347,7 +355,7 @@ void ChatTextEditPart::historyUp()
 	
 	QString newText = historyList[historyPos];
 	edit()->setText( historyList[historyPos] );
-	edit()->moveCursor( Q3TextEdit::MoveEnd, false );
+	edit()->moveCursor( QTextEdit::MoveEnd );
 }
 
 void ChatTextEditPart::historyDown()
@@ -368,7 +376,7 @@ void ChatTextEditPart::historyDown()
 	
 	QString newText = ( historyPos >= 0 ? historyList[historyPos] : QString::null );
 	edit()->setText( newText );
-	edit()->moveCursor( Q3TextEdit::MoveEnd, false );
+	edit()->moveCursor( QTextEdit::MoveEnd );
 }
 
 void ChatTextEditPart::addText( const QString &text )

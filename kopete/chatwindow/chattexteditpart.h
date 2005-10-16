@@ -47,7 +47,7 @@ class ChatTextEditPart : public KopeteRichTextEditPart
 {
 	Q_OBJECT
 public:
-	ChatTextEditPart( Kopete::ChatSession *session, QWidget *parent, const char *name = 0 );
+	ChatTextEditPart( Kopete::ChatSession *session, QWidget *parent);
 	~ChatTextEditPart();
 	
 	/**

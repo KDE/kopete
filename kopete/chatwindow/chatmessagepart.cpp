@@ -135,8 +135,8 @@ private:
 
 */
 
-ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, const char *name )
-	: KHTMLPart( parent, name ), m_manager( mgr ), d( new Private )
+ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
+	: KHTMLPart( parent ), m_manager( mgr ), d( new Private )
 {
 	d->xsltParser = new Kopete::XSLT( KopetePrefs::prefs()->styleContents() );
 	d->transformAllMessages = ( d->xsltParser->flags() & Kopete::XSLT::TransformAllMessages );
@@ -189,7 +189,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	saveAction = KStdAction::saveAs( this, SLOT(save()), actionCollection() );
 	printAction = KStdAction::print( this, SLOT(print()),actionCollection() );
 	closeAction = KStdAction::close( this, SLOT(slotCloseView()),actionCollection() );
-	copyURLAction = new KAction( i18n( "Copy Link Address" ), QString::fromLatin1( "editcopy" ), 0, this, SLOT( slotCopyURL() ), actionCollection() );
+	copyURLAction = new KAction( i18n( "Copy Link Address" ), QString::fromLatin1( "editcopy" ), KShortcut(), this, SLOT( slotCopyURL() ), actionCollection(), "editcopy" );
 
 	// read formatting override flags
 	readOverrides();
