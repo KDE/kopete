@@ -713,23 +713,30 @@ QString Contact::toolTip() const
 				{
 					case QVariant::DateTime:
 						valueText = KGlobal::locale()->formatDateTime(val.toDateTime());
+						valueText = Kopete::Message::escape( valueText );
 						break;
 					case QVariant::Date:
 						valueText = KGlobal::locale()->formatDate(val.toDate());
+						valueText = Kopete::Message::escape( valueText );
 						break;
 					case QVariant::Time:
 						valueText = KGlobal::locale()->formatTime(val.toTime());
+						valueText = Kopete::Message::escape( valueText );
 						break;
 					default:
 						if( p.isRichText() )
+						{
 							valueText = val.toString();
+						}
 						else
+						{
 							valueText = Kopete::Message::escape( val.toString() );
+						}
 				}
 
 				tip += i18n("<br><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE",
 					"<br><nobr><b>%2:</b></nobr>&nbsp;%1").
-						arg( QStyleSheet::escape(valueText), QStyleSheet::escape(p.tmpl().label()) );
+						arg( valueText, QStyleSheet::escape(p.tmpl().label()) );
 			}
 		}
 	}
