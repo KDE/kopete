@@ -136,7 +136,7 @@ class KOPETE_EXPORT KopeteView
 		 * menus that can be extended
 		 *
 		 * @param target A target QObject for the contextMenuEvent signal of the view
-		 * @param slot A slot that matches the signature ( QString&, KPopupMenu *)
+		 * @param slot A slot that matches the signature ( QString&, KMenu *)
 		 */
 		virtual void registerContextMenuHandler( QObject *target, const char*slot ){ Q_UNUSED(target); Q_UNUSED(slot); };
 
@@ -152,7 +152,7 @@ class KOPETE_EXPORT KopeteView
 		* to show tooltips
 		*
 		* @param target A target QObject for the contextMenuEvent signal of the view
-		* @param slot A slot that matches the signature ( QString&, KPopupMenu *)
+		* @param slot A slot that matches the signature ( QString&, KMenu *)
 		*/
 		virtual void registerTooltipHandler( QObject *target, const char*slot ){ Q_UNUSED(target); Q_UNUSED(slot); };
 

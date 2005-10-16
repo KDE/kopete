@@ -29,7 +29,7 @@
 #include <kiconloader.h>
 #include <kiconeffect.h>
 #include <kaction.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kmessagebox.h>
 #include <knotifyclient.h>
 #include <kinstance.h>

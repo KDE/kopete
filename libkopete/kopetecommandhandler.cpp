@@ -25,6 +25,7 @@
 #include <kxmlguiclient.h>
 #include <kaction.h>
 #include <qdom.h>
+#include <kauthorized.h>
 
 #include "kopetechatsessionmanager.h"
 #include "kopeteprotocol.h"
@@ -277,7 +278,7 @@ void Kopete::CommandHandler::slotExecCommand( const QString &args, Kopete::ChatS
 		KProcess *proc = 0L;
 #warning commented to make it compile
 #if 0
-		if ( kapp->authorize( QString::fromLatin1( "shell_access" ) ) )
+		if ( KAuthorized::authorizeKAction( QString::fromLatin1( "shell_access" ) ) )
 				proc = new KProcess(manager);
 #endif		
 		if( proc )
