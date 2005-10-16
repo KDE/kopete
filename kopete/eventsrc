@@ -750,6 +750,11 @@ Comment[xx]=xxNew email has arrived in your Yahoo inboxxx
 Comment[zh_CN]=您的 Yahoo 收件箱中有新邮件到达
 default_presentation=16
 
+[msn_alert]
+Name=MSN Alert
+Comment=A new alert has been sent to you
+default_presentation=16
+
 [msn_mail]
 Name=MSN Mail
 Name[ar]=بريد MSN

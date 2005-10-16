@@ -30,6 +30,7 @@
 
 #include <qdatetime.h>
 #include <qregexp.h>
+#include <qdom.h>
 
 #include <kdebug.h>
 #include <kdeversion.h>
@@ -648,6 +649,11 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		KRun::runURL( KURL::fromPathOrURL( tmpMailFile.name() ), "text/html" , true );
 
 	}
+	else if ( cmd == "NOT" )
+	{
+		kdDebug( 14140 ) << k_funcinfo << "Received NOT command, issueing read block for '" << id << " more bytes" << endl;
+		readBlock( id );		
+	}	
 	else
 	{
 		// Let the base class handle the rest
@@ -676,7 +682,6 @@ void MSNNotifySocket::sslLoginSucceeded(QString ticket)
 	m_secureLoginHandler->deleteLater();
 	m_secureLoginHandler = 0L;
 }
-
 
 void MSNNotifySocket::slotOpenInbox()
 {
@@ -802,6 +807,83 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 			rx.search(msg);
 			m_localIP = rx.cap(1);
 		}
+	}
+	else if (msg.contains("NOTIFICATION"))
+	{
+		// MSN alert (i.e. NOTIFICATION) [for docs see http://www.hypothetic.org/docs/msn/client/notification.php]
+		// format of msg is as follows:
+		//
+		// <NOTIFICATION ver="2" id="1342902633" siteid="199999999" siteurl="http://alerts.msn.com">
+		// <TO pid="0x0006BFFD:0x8582C0FB" name="example@passport.com"/>
+		// <MSG pri="1" id="1342902633">
+		// 	<SUBSCR url="http://g.msn.com/3ALMSNTRACKING/199999999ToastChange?http://alerts.msn.com/Alerts/MyAlerts.aspx?strela=1"/>
+		// 	<ACTION url="http://g.msn.com/3ALMSNTRACKING/199999999ToastAction?http://alerts.msn.com/Alerts/MyAlerts.aspx?strela=1"/>
+		// 	<BODY lang="3076" icon="">
+		// 		<TEXT>utf8-encoded text</TEXT>
+		//	</BODY>
+		// </MSG>
+		// </NOTIFICATION>
+
+		// MSN sends out badly formed XML .. fix it for them (thanks MS!)
+		QString notificationDOMAsString(msg);
+
+		QRegExp rx( "&(?!amp;)" );      // match ampersands but not &amp;
+		notificationDOMAsString.replace(rx, "&amp;");
+		QDomDocument alertDOM;
+		alertDOM.setContent(notificationDOMAsString);
+
+		QDomNodeList msgElements = alertDOM.elementsByTagName("MSG");
+		for (uint i = 0 ; i < msgElements.count() ; i++)
+		{
+			QString subscString;
+			QString actionString;
+			QString textString;
+
+			QDomNode msgDOM = msgElements.item(i);
+
+			QDomNodeList msgChildren = msgDOM.childNodes();
+			kdDebug ( 14140 ) << "children " << msgChildren.length() << endl;
+			for (uint i = 0 ; i < msgChildren.length() ; i++) {
+				QDomNode child = msgChildren.item(i);
+				QDomElement element = child.toElement();
+				if (element.tagName() == "SUBSCR")
+				{
+					QDomAttr subscElementURLAttribute;
+					if (element.hasAttribute("url"))
+					{
+						subscElementURLAttribute = element.attributeNode("url");
+						subscString = subscElementURLAttribute.value();
+					}
+				}
+				else if (element.tagName() == "ACTION")
+				{
+					// process ACTION node to pull out URL the alert is tied to
+					QDomAttr actionElementURLAttribute;
+					if (element.hasAttribute("url"))
+					{
+						actionElementURLAttribute = element.attributeNode("url");
+						actionString = actionElementURLAttribute.value();
+					}
+				}
+				else if (element.tagName() == "BODY")
+				{
+					// process BODY node to get the text of the alert
+					QDomNodeList textElements = element.elementsByTagName("TEXT");
+					if (textElements.count() >= 1)
+					{
+						QDomElement textElement = textElements.item(0).toElement();
+						textString = textElement.text();
+					}
+				}
+
+
+			}
+
+			kdDebug( 14140 ) << "subscString " << subscString << " actionString " << actionString << " textString " << textString << endl;
+
+			KNotification::event("msn_alert", textString);
+			
+		} // end for each MSG tag
 	}
 
 	if(!m_configFile.isNull())
