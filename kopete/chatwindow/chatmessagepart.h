@@ -99,7 +99,7 @@ signals:
 	/**
 	 * Emits before the context menu is about to show
 	 */
-	void contextMenuEvent(  const QString &textUnderMouse, KPopupMenu *popupMenu );
+	void contextMenuEvent(  const QString &textUnderMouse, KMenu *popupMenu );
 
 	/**
 	 * Emits before the tooltip is about to show

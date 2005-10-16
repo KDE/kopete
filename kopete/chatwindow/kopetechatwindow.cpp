@@ -293,8 +293,8 @@ void KopeteChatWindow::slotTabContextMenu( QWidget *tab, const QPoint &pos )
 {
 	m_popupView = static_cast<ChatView*>( tab );
 
-	KPopupMenu *popup = new KPopupMenu;
-	popup->insertTitle( KStringHandler::rsqueeze( m_popupView->caption() ) );
+	KMenu *popup = new KMenu;
+	popup->addTitle( KStringHandler::rsqueeze( m_popupView->caption() ) );
 
 	actionContactMenu->plug( popup );
 	popup->insertSeparator();
@@ -970,7 +970,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 
 	for ( contact = m_them.first(); contact; contact = m_them.next() )
 	{
-		KPopupMenu *p = contact->popupMenu();
+		KMenu *p = contact->popupMenu();
 		connect ( actionContactMenu->popupMenu(), SIGNAL(aboutToHide()),
 			p, SLOT(deleteLater() ) );
 

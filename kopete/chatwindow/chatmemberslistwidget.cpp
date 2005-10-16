@@ -176,7 +176,7 @@ void ChatMembersListWidget::slotContextMenu( KListView*, Q3ListViewItem *item, c
 {
 	if ( ContactItem *contactItem = dynamic_cast<ContactItem*>(item) )
 	{
-		KPopupMenu *p = contactItem->contact()->popupMenu( session() );
+		KMenu *p = contactItem->contact()->popupMenu( session() );
 		connect( p, SIGNAL( aboutToHide() ), p, SLOT( deleteLater() ) );
 		p->popup( point );
 	}

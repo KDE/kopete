@@ -149,7 +149,7 @@ private slots:
 	void slotAccountStatusIconRightClicked( Kopete::Account *a,
 		const QPoint &p );
 
-	void slotTrayAboutToShowMenu(KPopupMenu *);
+	void slotTrayAboutToShowMenu(KMenu *);
 
 	/**
 	 * Show the Add Contact wizard

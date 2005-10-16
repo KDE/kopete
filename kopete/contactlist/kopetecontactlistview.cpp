@@ -46,7 +46,7 @@
 #include <klocale.h>
 #include <kmainwindow.h>
 #include <kmessagebox.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kurldrag.h>
 #include <kmultipledrag.h>
 #include <kabc/stdaddressbook.h>
@@ -494,7 +494,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 
 	actionAddContact = new KActionMenu( i18n( "&Add Contact" ),
 		QString::fromLatin1( "bookmark_add" ), ac , "contactAddContact" );
-	actionAddContact->popupMenu()->insertTitle( i18n("Select Account") );
+	actionAddContact->popupMenu()->addTitle( i18n("Select Account") );
 
 	actionAddTemporaryContact = new KAction( i18n( "Add to Your Contact List" ), "bookmark_add", 0,
 		this, SLOT( slotAddTemporaryContact() ), ac, "contactAddTemporaryContact" );
@@ -679,13 +679,13 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 		Kopete::Contact *c = metaLVI->contactForPoint( QPoint( px, py ) ) ;
 		if ( c )
 		{
-			KPopupMenu *p = c->popupMenu();
+			KMenu *p = c->popupMenu();
 			connect( p, SIGNAL( aboutToHide() ), p, SLOT( deleteLater() ) );
 			p->popup( point );
 		}
 		else
 		{
-			KPopupMenu *popup = dynamic_cast<KPopupMenu *>(
+			KMenu *popup = dynamic_cast<KMenu *>(
 				window->factory()->container( "contact_popup", window ) );
 			if ( popup )
 			{
@@ -696,7 +696,7 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 					title = title.left( 40 ) + QString::fromLatin1( "..." );
 
 				if ( popup->title( 0 ).isNull() )
-					popup->insertTitle ( title, 0, 0 );
+					popup->addTitle ( title, 0, 0 );
 				else
 					popup->changeTitle ( 0, title );
 
@@ -711,7 +711,7 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 						sep = false;
 					}
 
-					KPopupMenu *contactMenu = it.current()->popupMenu();
+					KMenu *contactMenu = it.current()->popupMenu();
 					connect( popup, SIGNAL( aboutToHide() ), contactMenu, SLOT( deleteLater() ) );
 					QString nick=c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 					QString text= nick.isEmpty() ?  c->contactId() : i18n( "Translators: format: '<displayName> (<id>)'", "%2 <%1>" ). arg( c->contactId(), nick );
@@ -728,7 +728,7 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 	}
 	else if ( groupvi && nb == 1 )
 	{
-		KPopupMenu *popup = dynamic_cast<KPopupMenu *>(
+		KMenu *popup = dynamic_cast<KMenu *>(
 			window->factory()->container( "group_popup", window ) );
 		if ( popup )
 		{
@@ -737,7 +737,7 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 				title = title.left( 30 ) + QString::fromLatin1( "..." );
 
 			if( popup->title( 0 ).isNull() )
-				popup->insertTitle( title, 0, 0 );
+				popup->addTitle( title, 0, 0 );
 			else
 				popup->changeTitle( 0, title );
 
@@ -746,21 +746,21 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 	}
 	else if ( nb >= 1 )
 	{
-		KPopupMenu *popup = dynamic_cast<KPopupMenu *>(
+		KMenu *popup = dynamic_cast<KMenu *>(
 			window->factory()->container( "contactlistitems_popup", window ) );
 		if ( popup )
 			popup->popup( point );
 	}
 	else
 	{
-		KPopupMenu *popup = dynamic_cast<KPopupMenu *>(
+		KMenu *popup = dynamic_cast<KMenu *>(
 			window->factory()->container( "contactlist_popup", window ) );
 		if ( popup )
 		{
 			
 			kdDebug() << k_funcinfo << "???????" << popup << endl;
 			if ( popup->title( 0 ).isNull() )
-				popup->insertTitle( i18n( "Kopete" ), 0, 0 );
+				popup->addTitle( i18n( "Kopete" ), 0, 0 );
 
 			popup->popup( point );
 		}

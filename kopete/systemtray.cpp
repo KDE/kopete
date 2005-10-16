@@ -128,7 +128,7 @@ void KopeteSystemTray::mouseDoubleClickEvent( QMouseEvent *me )
 	}
 }
 
-void KopeteSystemTray::contextMenuAboutToShow( KPopupMenu *me )
+void KopeteSystemTray::contextMenuAboutToShow( KMenu *me )
 {
 	//kdDebug(14010) << k_funcinfo << "Called." << endl;
 	emit aboutToShowMenu( me );

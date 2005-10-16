@@ -336,7 +336,7 @@ void KopeteWindow::initSystray()
 {
 	m_tray = KopeteSystemTray::systemTray( this, "KopeteSystemTray" );
 	Kopete::UI::Global::setSysTrayWId( m_tray->winId() );
-	KPopupMenu *tm = m_tray->contextMenu();
+	KMenu *tm = m_tray->contextMenu();
 
 	// NOTE: This is in reverse order because we insert
 	// at the top of the menu, not at bottom!
@@ -347,8 +347,8 @@ void KopeteWindow::initSystray()
 	//actionConnectionMenu->plug ( tm, 1 );
 	tm->insertSeparator( 1 );
 
-	QObject::connect( m_tray, SIGNAL( aboutToShowMenu( KPopupMenu * ) ),
-		this, SLOT( slotTrayAboutToShowMenu( KPopupMenu * ) ) );
+	QObject::connect( m_tray, SIGNAL( aboutToShowMenu( KMenu * ) ),
+		this, SLOT( slotTrayAboutToShowMenu( KMenu * ) ) );
 	QObject::connect( m_tray, SIGNAL( quitSelected() ), this, SLOT( slotQuit() ) );
 }
 
@@ -782,7 +782,7 @@ void KopeteWindow::slotAccountStatusIconRightClicked( Kopete::Account *account, 
 	actionMenu->popupMenu()->popup( p );
 }
 
-void KopeteWindow::slotTrayAboutToShowMenu( KPopupMenu * popup )
+void KopeteWindow::slotTrayAboutToShowMenu( KMenu * popup )
 {
 	Q3PtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
 	for(Kopete::Account *a=accounts.first() ; a; a=accounts.next() )

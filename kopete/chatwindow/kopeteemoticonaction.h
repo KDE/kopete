@@ -34,7 +34,7 @@ public:
 	KopeteEmoticonAction( QObject *parent = 0, const char *name = 0 );
 	virtual ~KopeteEmoticonAction();
 
-	KPopupMenu * popupMenu() const;
+	KMenu * popupMenu() const;
 	void popup( const QPoint &global );
 
 	/**

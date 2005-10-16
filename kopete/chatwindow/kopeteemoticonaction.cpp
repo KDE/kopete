@@ -42,7 +42,7 @@ public:
 	{
 		m_delayed = true;
 		m_stickyMenu = true;
-		m_popup = new KPopupMenu(0L,"KopeteEmoticonActionPrivate::m_popup");
+		m_popup = new KMenu(0L,"KopeteEmoticonActionPrivate::m_popup");
 		emoticonSelector = new EmoticonSelector( m_popup, "KopeteEmoticonActionPrivate::emoticonSelector");
 //FIXME do it the kde4 way
 //		m_popup->insertItem( static_cast<QObject*>(emoticonSelector) );
@@ -56,7 +56,7 @@ public:
 		m_popup = 0;
 	}
 
-	KPopupMenu *m_popup;
+	KMenu *m_popup;
 	EmoticonSelector *emoticonSelector;
 	bool m_delayed;
 	bool m_stickyMenu;
@@ -98,7 +98,7 @@ void KopeteEmoticonAction::popup( const QPoint& global )
 	popupMenu()->popup( global );
 }
 
-KPopupMenu* KopeteEmoticonAction::popupMenu() const
+KMenu* KopeteEmoticonAction::popupMenu() const
 {
 	return d->m_popup;
 }

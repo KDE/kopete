@@ -525,7 +525,7 @@ void ChatMessagePart::slotRightClick( const QString &, const QPoint &point )
 	if ( activeElement.isNull() )
 		return;
 
-	KPopupMenu *chatWindowPopup = 0L;
+	KMenu *chatWindowPopup = 0L;
 
 	if ( Kopete::Contact *contact = contactFromNode( activeElement ) )
 	{
@@ -534,7 +534,7 @@ void ChatMessagePart::slotRightClick( const QString &, const QPoint &point )
 	}
 	else
 	{
-		chatWindowPopup = new KPopupMenu();
+		chatWindowPopup = new KMenu();
 
 		if ( activeElement.className() == "KopeteDisplayName" )
 		{

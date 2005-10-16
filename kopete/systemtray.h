@@ -32,7 +32,7 @@
 
 class QTimer;
 class QPoint;
-class KPopupMenu;
+class KMenu;
 class KActionMenu;
 class KopeteBalloon;
 
@@ -62,15 +62,15 @@ public:
 
 	void stopBlink();
 	bool isBlinking() const { return mIsBlinking; };
-	KPopupMenu *contextMenu() const { return KSystemTray::contextMenu(); };
+	KMenu *contextMenu() const { return KSystemTray::contextMenu(); };
 
 protected:
 	virtual void mousePressEvent( QMouseEvent *e );
 	virtual void mouseDoubleClickEvent( QMouseEvent *me );
-	virtual void contextMenuAboutToShow( KPopupMenu * );
+	virtual void contextMenuAboutToShow( KMenu * );
 
 signals:
-	void aboutToShowMenu(KPopupMenu *am);
+	void aboutToShowMenu(KMenu *am);
 
 private slots:
 	void slotBlink();
