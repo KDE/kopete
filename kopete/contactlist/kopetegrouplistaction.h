@@ -32,7 +32,7 @@ class KopeteGroupListAction : public KListAction
 
 public:
 	KopeteGroupListAction( const QString &, const QString &, const KShortcut &,
-		const QObject *, const char *, QObject *, const char * );
+		const QObject *, const char *, KActionCollection *, const char * );
 	~KopeteGroupListAction();
 
 protected slots:

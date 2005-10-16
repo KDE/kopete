@@ -51,6 +51,7 @@
 #include <kmultipledrag.h>
 #include <kabc/stdaddressbook.h>
 #include <kabc/vcardconverter.h>
+#include <kxmlguifactory.h>
 
 #include <kdeversion.h>
 #include <kinputdialog.h>
@@ -519,9 +520,12 @@ KopeteContactListView::~KopeteContactListView()
 
 void KopeteContactListView::slotAddSubContactActionNewAccount(Kopete::Account* account)
 {
+#warning commented to make it compile
+#if 0
 	KAction *action = new KAction( account->accountLabel(), account->accountIcon(), 0 , this, SLOT(slotAddContact()), account);
 	m_accountAddContactMap.insert( account, action);
 	actionAddContact->insert( action );
+#endif
 }
 
 void KopeteContactListView::slotAddSubContactActionAccountDeleted(const Kopete::Account *account)
@@ -696,10 +700,13 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 				if ( title.length() > 43 )
 					title = title.left( 40 ) + QString::fromLatin1( "..." );
 
+#warning commented to make it compile
+#if 0
 				if ( popup->title( 0 ).isNull() )
 					popup->addTitle ( title, 0, 0 );
 				else
 					popup->changeTitle ( 0, title );
+#endif
 
 				// Submenus for separate contact actions
 				bool sep = false;  //FIXME: find if there is already a separator in the end - Olivier
@@ -737,10 +744,13 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 			if ( title.length() > 32 )
 				title = title.left( 30 ) + QString::fromLatin1( "..." );
 
+#warning commented to make it compile
+#if 0
 			if( popup->title( 0 ).isNull() )
 				popup->addTitle( title, 0, 0 );
 			else
 				popup->changeTitle( 0, title );
+#endif
 
 			popup->popup( point );
 		}
@@ -758,11 +768,12 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 			window->factory()->container( "contactlist_popup", window ) );
 		if ( popup )
 		{
-			
+#warning commented to make it compile
+#if 0
 			kdDebug() << k_funcinfo << "???????" << popup << endl;
 			if ( popup->title( 0 ).isNull() )
 				popup->addTitle( i18n( "Kopete" ), 0, 0 );
-
+#endif
 			popup->popup( point );
 		}
 	}

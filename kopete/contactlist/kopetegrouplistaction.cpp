@@ -32,11 +32,9 @@
 #include <Q3PtrList>
 
 KopeteGroupListAction::KopeteGroupListAction( const QString &text, const QString &pix, const KShortcut &cut, const QObject *receiver,
-	const char *slot, QObject *parent, const char *name )
-: KListAction( text, pix, cut, parent, name )
+	const char *slot, KActionCollection *parent, const char *name )
+: KListAction( text, pix, cut, receiver, slot, parent, name )
 {
-	connect( this, SIGNAL( activated() ), receiver, slot );
-
 	connect( Kopete::ContactList::self(), SIGNAL( groupAdded( Kopete::Group * ) ), this, SLOT( slotUpdateList() ) );
 	connect( Kopete::ContactList::self(), SIGNAL( groupRemoved( Kopete::Group * ) ), this, SLOT( slotUpdateList() ) );
 	connect( Kopete::ContactList::self(), SIGNAL( groupRenamed(Kopete::Group*, const QString& ) ), this, SLOT( slotUpdateList() ) );

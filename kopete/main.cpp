@@ -20,7 +20,7 @@
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
 #include "kopeteapplication.h"
-
+#include <klocale.h>
 #include <dcopclient.h>
 #include "kopeteiface.h"
 #include "kimifaceimpl.h"

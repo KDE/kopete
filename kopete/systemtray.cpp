@@ -30,6 +30,8 @@
 #include <kwin.h>
 #include <kaboutdata.h>
 #include <kactioncollection.h>
+#include <kaction.h>
+#include <klocale.h>	
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kiconloader.h>
