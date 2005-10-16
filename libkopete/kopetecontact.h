@@ -30,7 +30,7 @@
 #include "kopete_export.h"
 
 class QImage;
-class KPopupMenu;
+class KMenu;
 class KAction;
 
 namespace Kopete
@@ -237,7 +237,7 @@ public:
 	 * This menu includes generic actions common to each protocol, and action defined in
 	 * @ref customContextMenuActions()
 	 */
-	KPopupMenu *popupMenu( ChatSession *manager = 0L );
+	KMenu *popupMenu( ChatSession *manager = 0L );
 
 	/**
 	 * \brief Get whether or not this contact is capable of file transfers

@@ -31,7 +31,7 @@
 #include <kabcpersistence.h>
 #include <kdialogbase.h>
 #include <klocale.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kmessagebox.h>
 #include <klistviewsearchline.h>
 
@@ -186,9 +186,9 @@ void Contact::slotAddContact()
 	}
 }
 
-KPopupMenu* Contact::popupMenu( ChatSession *manager )
+KMenu* Contact::popupMenu( ChatSession *manager )
 {
-	KPopupMenu *menu = new KPopupMenu();
+	KMenu *menu = new KMenu();
 
 	QString titleText;
 	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
