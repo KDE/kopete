@@ -26,6 +26,7 @@
 //Added by qt3to4:
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <kvbox.h>
 
 class QTimer;
 
@@ -36,7 +37,7 @@ class ChatMessagePart;
 class KopeteChatWindow;
 
 class KTabWidget;
-
+class KHBox;
 class KopeteChatViewPrivate;
 class ChatWindowPlugin;
 
@@ -54,11 +55,11 @@ namespace Kopete
 /**
  * @author Olivier Goffart
  */
-class ChatView : public KDockMainWindow, public KopeteView
+class ChatView : public KVBox, public KopeteView
 {
 	Q_OBJECT
 public:
-	ChatView( Kopete::ChatSession *manager, ChatWindowPlugin *parent, const char *name = 0 );
+	ChatView( Kopete::ChatSession *manager, ChatWindowPlugin *parent );
 	~ChatView();
 
 	/** the state of our chat */
@@ -124,7 +125,7 @@ public:
 	 * DockLeft, DockRight, or DockNone.
 	 * @param dp The dock position of the list
 	 */
-	void placeMembersList( KDockWidget::DockPosition dp = KDockWidget::DockRight );
+	void placeMembersList( K3DockWidget::DockPosition dp = K3DockWidget::DockRight );
 
 	/**
 	 * Shows or hides the chat members list
@@ -141,7 +142,7 @@ public:
 	 * Returns the current position of the chat member slist
 	 * @return The position of the chat members list
 	 */
-	const KDockWidget::DockPosition membersListPosition()  { return membersDockPosition; }
+	const K3DockWidget::DockPosition membersListPosition()  { return membersDockPosition; }
 
 	/**
 	 * Returns whether or not the chat member list is visible
@@ -353,19 +354,19 @@ private:
 	// widget stuff
 	KopeteChatWindow *m_mainWindow;
 
-	KDockWidget *viewDock;
+//	K3DockWidget *viewDock;
 	ChatMessagePart *m_messagePart;
 
-	KDockWidget *membersDock;
+	KHBox *membersDock;
 	ChatMembersListWidget *m_membersList;
 
-	KDockWidget *editDock;
+//	K3DockWidget *editDock;
 	ChatTextEditPart *m_editPart;
 
 	KopeteTabState m_tabState;
 
 	// position and visibility of the chat member list
-	KDockWidget::DockPosition membersDockPosition;
+	K3DockWidget::DockPosition membersDockPosition;
 	enum MembersListPolicy { Smart = 0, Visible = 1, Hidden = 2 };
 	MembersListPolicy membersStatus;
 

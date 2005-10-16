@@ -74,6 +74,7 @@
 
 #include <qtoolbutton.h>
 #include <kactionclasses.h>
+#include <kxmlguifactory.h>
 
 typedef QMap<Kopete::Account*,KopeteChatWindow*> AccountMap;
 typedef QMap<Kopete::Group*,KopeteChatWindow*> GroupMap;
@@ -465,11 +466,11 @@ void KopeteChatWindow::updateMembersActions()
 {
 	if( m_activeView )
 	{
-		const KDockWidget::DockPosition pos = m_activeView->membersListPosition();
+		const K3DockWidget::DockPosition pos = m_activeView->membersListPosition();
 		bool visibleMembers = m_activeView->visibleMembersList();
-		membersLeft->setChecked( pos == KDockWidget::DockLeft  );
+		membersLeft->setChecked( pos == K3DockWidget::DockLeft  );
 		membersLeft->setEnabled( visibleMembers );
-		membersRight->setChecked( pos == KDockWidget::DockRight );
+		membersRight->setChecked( pos == K3DockWidget::DockRight );
 		membersRight->setEnabled( visibleMembers );
 		toggleMembers->setChecked( visibleMembers );
 	}
@@ -477,13 +478,13 @@ void KopeteChatWindow::updateMembersActions()
 
 void KopeteChatWindow::slotViewMembersLeft()
 {
-	m_activeView->placeMembersList( KDockWidget::DockLeft );
+	m_activeView->placeMembersList( K3DockWidget::DockLeft );
 	updateMembersActions();
 }
 
 void KopeteChatWindow::slotViewMembersRight()
 {
-	m_activeView->placeMembersList( KDockWidget::DockRight );
+	m_activeView->placeMembersList( K3DockWidget::DockRight );
 	updateMembersActions();
 }
 
@@ -922,6 +923,8 @@ void KopeteChatWindow::slotChatClosed()
 
 void KopeteChatWindow::slotPrepareDetachMenu(void)
 {
+#warning TODO
+#if 0
 	Q3PopupMenu *detachMenu = actionDetachMenu->popupMenu();
 	detachMenu->clear();
 
@@ -931,6 +934,7 @@ void KopeteChatWindow::slotPrepareDetachMenu(void)
 		if( win != this )
 			detachMenu->insertItem( win->caption(), id );
 	}
+#endif
 }
 
 void KopeteChatWindow::slotSendMessage()
@@ -996,11 +1000,15 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 
 void KopeteChatWindow::slotPreparePlacementMenu()
 {
+#warning TODO
+#if 0
+
 	Q3PopupMenu *placementMenu = actionTabPlacementMenu->popupMenu();
 	placementMenu->clear();
 
 	placementMenu->insertItem( i18n("Top"), 0 );
 	placementMenu->insertItem( i18n("Bottom"), 1 );
+#endif
 }
 
 void KopeteChatWindow::slotPlaceTabs( int placement )

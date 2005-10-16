@@ -52,6 +52,7 @@
 #include <Q3PtrList>
 #include <QDropEvent>
 #include <QDragEnterEvent>
+#include <kvbox.h>
 
 typedef KGenericFactory<ChatWindowPlugin> ChatWindowPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_chatwindow, ChatWindowPluginFactory( "kopete_chatwindow" )  )
@@ -75,8 +76,8 @@ public:
 	bool visibleMembers;
 };
 
-ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent, const char *name )
-	 : KDockMainWindow( 0L, name, 0L ), KopeteView( mgr, parent )
+ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
+	 : KVBox( 0l ), KopeteView( mgr, parent )
 {
 	unsigned int i;
 
@@ -85,9 +86,10 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent, const ch
 	d->visibleMembers = false;
 	d->sendInProgress = false;
 
+	KVBox *vbox=this;
 
 	m_mainWindow = 0L;
-	membersDock = 0L;
+	membersDock = new KHBox(vbox);
 	membersStatus = Smart;
 	m_tabState = Normal;
 
@@ -95,19 +97,11 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent, const ch
 	//FIXME: don't widgets start off hidden anyway?
 	hide();
 
-	//Create the view dock widget (KHTML Part), and set it to no docking (lock it in place)
-	viewDock = createDockWidget(QString::fromLatin1( "viewDock" ), QPixmap(),
-		0L,QString::fromLatin1("viewDock"), QString::fromLatin1(" "));
-	m_messagePart = new ChatMessagePart( mgr, viewDock, "m_messagePart" );
-
-	viewDock->setWidget(messagePart()->widget());
-	viewDock->setDockSite(KDockWidget::DockBottom);
-	viewDock->setEnableDocking(KDockWidget::DockNone);
+	//Create the view dock widget (KHTML Part), and set it to no docking (lock it in place)	
+	m_messagePart = new ChatMessagePart( mgr, membersDock );
 
 	//Create the bottom dock widget, with the edit area, statusbar and send button
-	editDock = createDockWidget( QString::fromLatin1( "editDock" ), QPixmap(),
-		0L, QString::fromLatin1("editDock"), QString::fromLatin1(" ") );
-	m_editPart = new ChatTextEditPart( mgr, editDock, "kopeterichtexteditpart" );
+	m_editPart = new ChatTextEditPart( mgr, vbox );
 
 	// FIXME: is this used these days? it seems totally unnecessary
 	connect( editPart(), SIGNAL( toggleToolbar(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
@@ -119,19 +113,13 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent, const ch
 	connect( editPart(), SIGNAL( typing(bool) ),
 		 mgr, SLOT( typing(bool) ) );
 
-	//Make the edit area dockable for now
-	editDock->setWidget( editPart()->widget() );
-	editDock->setDockSite( KDockWidget::DockNone );
-	editDock->setEnableDocking(KDockWidget::DockBottom);
-
 	//Set the view as the main widget
-	setMainDockWidget( viewDock );
-	setView(viewDock);
+//	setView(viewDock);
 
 	//It is possible to drag and drop on this widget.
 	// I had to disable the acceptDrop in the khtml widget to be able to intercept theses events.
 	setAcceptDrops(true);
-	viewDock->setAcceptDrops(false);
+//	viewDock->setAcceptDrops(false);
 
 	m_remoteTypingMap.setAutoDelete( true );
 
@@ -168,9 +156,11 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent, const ch
 	editPart()->widget()->setFocus();
 
 	// init actions
+#warning TODO
+#if 0
 	KStdAction::copy( this, SLOT(copy()), actionCollection() );
 	KStdAction::close( this, SLOT(closeView()),actionCollection() );
-
+#endif 
 	setCaption( m_manager->displayName(), false );
 
 	// restore docking positions
@@ -430,11 +420,7 @@ void ChatView::createMembersList()
 	if ( !membersDock )
 	{
 		//Create the chat members list
-		membersDock = createDockWidget( QString::fromLatin1( "membersDock" ), QPixmap(), 0L,
-			QString::fromLatin1( "membersDock" ), QString::fromLatin1( " " ) );
-		m_membersList = new ChatMembersListWidget( m_manager, this, "m_membersList" );
-
-		membersDock->setWidget( m_membersList );
+		m_membersList = new ChatMembersListWidget( m_manager, membersDock );
 
 		Kopete::ContactPtrList members = m_manager->members();
 
@@ -477,11 +463,13 @@ void ChatView::toggleMembersVisibility()
 	}
 }
 
-void ChatView::placeMembersList( KDockWidget::DockPosition dp )
+void ChatView::placeMembersList( K3DockWidget::DockPosition dp )
 {
 // 	kdDebug(14000) << k_funcinfo << "Members list policy " << membersStatus <<
 // 			", visible " << d->visibleMembers << endl;
 
+	
+#if 0
 	if ( d->visibleMembers )
 	{
 		membersDockPosition = dp;
@@ -490,7 +478,7 @@ void ChatView::placeMembersList( KDockWidget::DockPosition dp )
 		int dockWidth;
 		KGlobal::config()->setGroup( QString::fromLatin1( "ChatViewDock" ) );
 
-		if( membersDockPosition == KDockWidget::DockLeft )
+		if( membersDockPosition == K3DockWidget::DockLeft )
 		{
 			dockWidth = KGlobal::config()->readNumEntry(
 				QString::fromLatin1( "membersDock,viewDock:sepPos" ), 30);
@@ -500,12 +488,11 @@ void ChatView::placeMembersList( KDockWidget::DockPosition dp )
 			dockWidth = KGlobal::config()->readNumEntry(
 				QString::fromLatin1( "viewDock,membersDock:sepPos" ), 70);
 		}
-
 		// Make sure it is shown then place it wherever
-		membersDock->setEnableDocking( KDockWidget::DockLeft | KDockWidget::DockRight );
+		membersDock->setEnableDocking( K3DockWidget::DockLeft | K3DockWidget::DockRight );
 		membersDock->manualDock( viewDock, membersDockPosition, dockWidth );
 		membersDock->show();
-		membersDock->setEnableDocking( KDockWidget::DockNone );
+		membersDock->setEnableDocking( K3DockWidget::DockNone );
 	}
 	else
 	{
@@ -513,6 +500,8 @@ void ChatView::placeMembersList( KDockWidget::DockPosition dp )
 		membersDock->undock();
 		membersDock->hide();
 	}
+
+#endif
 
 	if( d->isActive )
 		m_mainWindow->updateMembersActions();
@@ -670,7 +659,7 @@ void ChatView::setCaption( const QString &text, bool modified )
 	newCaption = KStringHandler::rsqueeze( d->captionText, 20 );
 
 	//Call the original set caption
-	KDockMainWindow::setCaption( newCaption, false );
+	QWidget::setCaption( newCaption );
 
 	emit updateChatTooltip( this, QString::fromLatin1("<qt>%1</qt>").arg( d->captionText ) );
 	emit updateChatLabel( this, newCaption );
@@ -789,7 +778,7 @@ void ChatView::saveOptions()
 {
 	KConfig *config = KGlobal::config();
 
-	writeDockConfig ( config, QString::fromLatin1( "ChatViewDock" ) );
+//	writeDockConfig ( config, QString::fromLatin1( "ChatViewDock" ) );
 	config->setGroup( QString::fromLatin1( "ChatViewDock" ) );
 	config->writeEntry( QString::fromLatin1( "membersDockPosition" ), membersDockPosition );
 	config->sync();
@@ -801,28 +790,29 @@ void ChatView::readOptions()
 
 	/** THIS IS BROKEN !!! */
 	//dockManager->readConfig ( config, QString::fromLatin1("ChatViewDock") );
-
+#if 0
 	//Work-around to restore dock widget positions
 	config->setGroup( QString::fromLatin1( "ChatViewDock" ) );
 
-	membersDockPosition = static_cast<KDockWidget::DockPosition>(
-		config->readNumEntry( QString::fromLatin1( "membersDockPosition" ), KDockWidget::DockRight ) );
+	membersDockPosition = static_cast<K3DockWidget::DockPosition>(
+		config->readNumEntry( QString::fromLatin1( "membersDockPosition" ), K3DockWidget::DockRight ) );
 
 	QString dockKey = QString::fromLatin1( "viewDock" );
 	if ( d->visibleMembers )
 	{
-		if( membersDockPosition == KDockWidget::DockLeft )
+		if( membersDockPosition == K3DockWidget::DockLeft )
 			dockKey.prepend( QString::fromLatin1( "membersDock," ) );
-		else if( membersDockPosition == KDockWidget::DockRight )
+		else if( membersDockPosition == K3DockWidget::DockRight )
 			dockKey.append( QString::fromLatin1( ",membersDock" ) );
 	}
 
 	dockKey.append( QString::fromLatin1( ",editDock:sepPos" ) );
 	//kdDebug(14000) << k_funcinfo << "reading splitterpos from key: " << dockKey << endl;
 	int splitterPos = config->readNumEntry( dockKey, 70 );
-	editDock->manualDock( viewDock, KDockWidget::DockBottom, splitterPos );
-	viewDock->setDockSite( KDockWidget::DockLeft | KDockWidget::DockRight );
-	editDock->setEnableDocking( KDockWidget::DockNone );
+	editDock->manualDock( viewDock, K3DockWidget::DockBottom, splitterPos );
+	viewDock->setDockSite( K3DockWidget::DockLeft | K3DockWidget::DockRight );
+	editDock->setEnableDocking( K3DockWidget::DockNone );
+#endif
 }
 
 void ChatView::setActive( bool value )
@@ -852,10 +842,9 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 			QString contact=lst[2];
 
 			bool found =false;
-			cts=m_manager->members();
-			for ( i = 0; i != cts.size(); i++ )
+			foreach(Kopete::Contact * cts, m_manager->members())
 			{
-				if(cts[i]->contactId() == contact)
+				if(cts->contactId() == contact)
 				{
 					found=true;
 					break;
@@ -897,7 +886,7 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 			event->accept();
 	}
 	else
-		KDockMainWindow::dragEnterEvent(event);
+		QWidget::dragEnterEvent(event);
 }
 
 void ChatView::dropEvent ( QDropEvent * event )
@@ -976,7 +965,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 		return;
 	}
 	else
-		KDockMainWindow::dropEvent(event);
+		QWidget::dropEvent(event);
 
 }
 
