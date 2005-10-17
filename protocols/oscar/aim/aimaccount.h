@@ -71,16 +71,15 @@ public:
 	// Accessor method for the action menu
 	virtual KActionMenu* actionMenu();
 
-	/** Reimplementation from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus&, const QString& ) {}
-
-	void setAway(bool away, const QString &awayReason);
+	void setAway(bool away, const QString &awayReason = QString::null );
 
 	virtual void connectWithPassword( const QString &password );
 
 	void setUserProfile(const QString &profile);
-
+	
 public slots:
+	/** Reimplementation from Kopete::Account */
+	void setOnlineStatus( const Kopete::OnlineStatus& status, const QString& reason = QString::null );
 	void slotEditInfo();
 	void slotGoOnline();
 
