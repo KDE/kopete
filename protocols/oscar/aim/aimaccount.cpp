@@ -348,6 +348,16 @@ void AIMAccount::setAway(bool away, const QString &awayReason)
 	}
 }
 
+void AIMAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const QString& reason )
+{
+	kdDebug(14152) << k_funcinfo << "called with reason = " << reason <<" status = "<< status.status() << endl;;
+	if ( status.status() == Kopete::OnlineStatus::Online )
+		setAway( false );
+	if ( status.status() == Kopete::OnlineStatus::Away )
+		setAway( true, reason );
+}
+
+
 void AIMAccount::setUserProfile(const QString &profile)
 {
 	kdDebug(14152) << k_funcinfo << "called." << endl;
