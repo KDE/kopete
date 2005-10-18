@@ -19,6 +19,7 @@ Name=Skype
 Name[pa]=ਸਕਾਈਪੀ
 Name[xx]=xxSkypexx
 Comment=Skype protocol plugin (only wrapper!)
+Comment[de]=Skype Protokoll-Modul (nur ein Wrapper!)
 Comment[el]=Πρόσθετο πρωτοκόλλου Skype (μόνο ενσωμάτωση!)
 Comment[es]=Extensión del protocolo skype (¡Solo la capa externa!)
 Comment[it]=Plugin per il protocollo Skype (solo un impacchettatore!)
