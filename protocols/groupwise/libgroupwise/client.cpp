@@ -20,6 +20,7 @@
 
 #include <qapplication.h>
 
+#include "chatroommanager.h"
 #include "gwclientstream.h"
 #include "privacymanager.h"
 #include "requestfactory.h"
@@ -55,6 +56,7 @@ public:
 /*	int tzoffset;*/
 	bool active;
 	RequestFactory * requestFactory;
+	ChatroomManager * chatroomMgr;
 	UserDetailsManager * userDetailsMgr;
 	PrivacyManager * privacyMgr;
 	uint protocolVersion;
@@ -72,6 +74,7 @@ Client::Client(QObject *par, uint protocolVersion )
 	d->clientVersion = "0.0";
 	d->id_seed = 0xaaaa;
 	d->root = new Task(this, true);
+	d->chatroomMgr = 0;
 	d->requestFactory = new RequestFactory;
 	d->userDetailsMgr = new UserDetailsManager( this, "userdetailsmgr" );
 	d->privacyMgr = new PrivacyManager( this, "privacymgr" );
@@ -490,4 +493,12 @@ uint Client::protocolVersion() const
 {
 	return d->protocolVersion;
 }
+
+ChatroomManager * Client::chatroomManager()
+{
+	if ( !d->chatroomMgr )
+		d->chatroomMgr = new ChatroomManager( this, "chatroommgr" );
+	return d->chatroomMgr;
+}
+
 #include "client.moc"

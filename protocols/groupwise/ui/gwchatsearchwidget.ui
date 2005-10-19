@@ -68,21 +68,21 @@
         </widget>
         <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>layout7</cstring>
+                <cstring>layout2</cstring>
             </property>
             <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QPushButton">
+                <widget class="KPushButton">
                     <property name="name">
-                        <cstring>m_btnRefresh</cstring>
+                        <cstring>m_btnProperties</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Refresh</string>
+                        <string>&amp;Properties</string>
                     </property>
                     <property name="accel">
-                        <string>Alt+R</string>
+                        <string>Alt+P</string>
                     </property>
                 </widget>
                 <spacer>
@@ -97,11 +97,22 @@
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>211</width>
+                            <width>340</width>
                             <height>20</height>
                         </size>
                     </property>
                 </spacer>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>m_btnRefresh</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Refresh</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+R</string>
+                    </property>
+                </widget>
             </hbox>
         </widget>
     </vbox>
@@ -109,5 +120,6 @@
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klistview.h</includehint>
+    <includehint>kpushbutton.h</includehint>
 </includehints>
 </UI>

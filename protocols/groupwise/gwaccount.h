@@ -141,14 +141,6 @@ public:
 	
 	void syncContact( GroupWiseContact * contact );
 	
-	/**
-	 * get the cache of server side chatrooms 
-	 */
-	QValueList<ChatroomSearchResult> chatrooms();
-	/**
-	 * set the cache of server side chatrooms
-	 */
-	void setChatrooms( const QValueList<ChatroomSearchResult>& );
 public slots:
 
 	void slotTestRTFize();
@@ -344,7 +336,6 @@ private:
 	QValueList<GroupWiseChatSession*> m_chatSessions;
 	bool m_dontSync;
 	GWContactList * m_serverListModel;
-	QValueList<ChatroomSearchResult> m_chatRooms;
 };
 
 /**

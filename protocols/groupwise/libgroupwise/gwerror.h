@@ -168,13 +168,6 @@ namespace GroupWise
 		QString name;
 		QString autoReply;
 	};
-	
-	struct ChatroomSearchResult
-	{
-		QString name;
-		QString owner;
-		uint participants;
-	};
 }
 
 // temporary typedef pending implementation

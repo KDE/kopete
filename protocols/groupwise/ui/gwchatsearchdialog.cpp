@@ -21,15 +21,15 @@
 #include <klistview.h>
 #include <klistviewsearchline.h>
 
-#include <qpushbutton.h>
+#include <kpushbutton.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include "client.h"
+#include "chatroommanager.h"
+
 #include "gwaccount.h"
 #include "gwprotocol.h"
 #include "gwchatsearchwidget.h"
-#include "tasks/chatcountstask.h"
-#include "tasks/searchchattask.h"
 #include "gwchatsearchdialog.h"
 
 GroupWiseChatSearchDialog::GroupWiseChatSearchDialog( GroupWiseAccount * account, QWidget *parent, const char *name )
@@ -40,12 +40,15 @@ GroupWiseChatSearchDialog::GroupWiseChatSearchDialog( GroupWiseAccount * account
 //	m_widget->m_searchLineWidget->createSearchLine( m_widget->m_chatrooms );
 	setMainWidget( m_widget );
 
-	populateWidget();
-
-	slotUpdate();
+	m_manager = m_account->client()->chatroomManager();
 	
-	connect( m_widget->m_btnRefresh, SIGNAL( clicked() ), SLOT( slotUpdate() ) );
+	connect ( m_manager, SIGNAL( updated() ), SLOT( slotManagerUpdated() ) );
+	connect ( m_manager, SIGNAL( gotProperties( const) ), SLOT( slotGotProperties() ) );
 
+	connect( m_widget->m_btnRefresh, SIGNAL( clicked() ), SLOT( slotUpdateClicked() ) );
+	connect( m_widget->m_btnProperties, SIGNAL( clicked() ), SLOT( slotPropertiesClicked() ) );
+
+	m_manager->update();
 	show();
 }
 
@@ -53,66 +56,42 @@ GroupWiseChatSearchDialog::~GroupWiseChatSearchDialog()
 {
 }
 
-void GroupWiseChatSearchDialog::populateWidget()
+void GroupWiseChatSearchDialog::slotUpdateClicked()
 {
-	QValueList<ChatroomSearchResult> results = m_account->chatrooms();
-	QValueListIterator<ChatroomSearchResult> it = results.begin();
-	QValueListIterator<ChatroomSearchResult> end = results.end();
-	while ( it != end )
-	{
-		new QListViewItem( m_widget->m_chatrooms,
-						   (*it).name,
-						   m_account->protocol()->dnToDotted( (*it).owner ),
-						   QString::number( (*it).participants ) );
-		++it;
-	}
-}
-
-void GroupWiseChatSearchDialog::slotUpdate()
-{
-	kdDebug() << "updating chatroom list " << endl;
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "updating chatroom list " << endl;
 	QListViewItem * first = m_widget->m_chatrooms->firstChild();
 	QString updateMessage = i18n("Updating chatroom list..." );
 	if ( first )
 		new QListViewItem( first, updateMessage );
 	else
 		new QListViewItem( m_widget->m_chatrooms, updateMessage );
-	SearchChatTask * sct = new SearchChatTask( m_account->client()->rootTask() );
-	sct->search( m_widget->m_chatrooms->childCount() ? SearchChatTask::SinceLastSearch : SearchChatTask::FetchAll );
-	connect( sct, SIGNAL( finished() ), SLOT( slotGotSearchResults() ) );
-	sct->go( true );
+	m_manager->update();
+
 }
 
-void GroupWiseChatSearchDialog::slotGotSearchResults()
+void GroupWiseChatSearchDialog::slotManagerUpdated()
 {
-	kdDebug() << k_funcinfo << endl;
-	SearchChatTask * sct = (SearchChatTask *)sender();
-	QValueList<ChatroomSearchResult> rooms = m_account->chatrooms();
-	rooms += sct->results();
-	m_account->setChatrooms( rooms );
-
-	ChatCountsTask * cct = new ChatCountsTask( m_account->client()->rootTask() );
-	connect( cct, SIGNAL( finished() ), SLOT( slotGotChatCounts() ) );
-	cct->go( true );
-}
-
-void GroupWiseChatSearchDialog::slotGotChatCounts()
-{
-	QValueList<ChatroomSearchResult> rooms = m_account->chatrooms();
-	ChatCountsTask * cct = (ChatCountsTask *)sender();
-	QMap< QString, int > newCounts = cct->results();
-	
-	QValueListIterator<ChatroomSearchResult> it = rooms.begin();
-	const QValueListIterator<ChatroomSearchResult> end = rooms.end();
-	const QMap< QString, int >::Iterator countsEnd = newCounts.end();
-	for ( ; it != end; ++it )
-		if ( newCounts.contains( (*it).name ) )
-			(*it).participants = newCounts[ (*it).name ];
-
-	m_account->setChatrooms( rooms );
-
 	m_widget->m_chatrooms->clear();
-	populateWidget();
-
+	ChatroomMap rooms = m_manager->rooms();
+	ChatroomMap::iterator it = rooms.begin();
+	const ChatroomMap::iterator end = rooms.end();
+	while ( it != end )
+	{
+		new QListViewItem( m_widget->m_chatrooms,
+						   it.data().displayName,
+						   m_account->protocol()->dnToDotted( it.data().ownerDN ),
+						   QString::number( it.data().participantsCount ) );
+		++it;
+	}
 }
+
+void GroupWiseChatSearchDialog::slotPropertiesClicked()
+{
+	QListViewItem * selected  = m_widget->m_chatrooms->selectedItem();
+	if ( selected )
+	{
+		m_manager->requestProperties( selected->text( 0 ) );
+	}
+}
+
 #include "gwchatsearchdialog.moc"

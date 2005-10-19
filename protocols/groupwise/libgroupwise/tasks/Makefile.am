@@ -12,7 +12,7 @@ libgroupwise_tasks_la_SOURCES = requesttask.cpp eventtask.cpp logintask.cpp \
 	movecontacttask.cpp updateitemtask.cpp createcontactinstancetask.cpp deleteitemtask.cpp \
 	updatefoldertask.cpp updatecontacttask.cpp pollsearchresultstask.cpp privacyitemtask.cpp \
 	needfoldertask.cpp searchchattask.cpp searchusertask.cpp searchusertask.h \
-	getchatsearchresultstask.cpp chatcountstask.cpp
+	getchatsearchresultstask.cpp chatcountstask.cpp chatpropertiestask.cpp
 noinst_HEADERS = requesttask.h eventtask.h logintask.h setstatustask.h \
 	statustask.h conferencetask.h createconferencetask.h sendmessagetask.h \
 	getdetailstask.h getstatustask.h typingtask.h connectiontask.h sendinvitetask.h \

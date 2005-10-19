@@ -33,11 +33,15 @@ class GroupWiseChatSearchDialog : public KDialogBase
 	protected:
 		void populateWidget();
 	protected slots:
-		void slotUpdate();
-		void slotGotSearchResults();
-		void slotGotChatCounts();
+		/* Button handlers */
+		void slotPropertiesClicked();
+		void slotUpdateClicked();
+		/* Manager update handler */
+		void slotManagerUpdated();
+		void slotGotProperties() {}
 	private:
 		GroupWiseAccount * m_account;
+		ChatroomManager * m_manager;
 		GroupWiseChatSearchWidget * m_widget;
 };
 #endif

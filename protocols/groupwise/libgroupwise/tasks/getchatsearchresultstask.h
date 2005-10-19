@@ -23,7 +23,7 @@
 
 #include <qvaluelist.h>
 
-#include "gwerror.h"
+#include "gwchatrooms.h"
 
 #include "requesttask.h"
 

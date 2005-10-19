@@ -1603,14 +1603,4 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 	}
 }
 
-QValueList<ChatroomSearchResult> GroupWiseAccount::chatrooms()
-{
-	return m_chatRooms;
-}
-
-void GroupWiseAccount::setChatrooms( const QValueList<ChatroomSearchResult>& rooms )
-{
-	m_chatRooms = rooms;
-}
-
 #include "gwaccount.moc"

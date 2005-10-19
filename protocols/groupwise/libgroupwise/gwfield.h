@@ -127,8 +127,20 @@
 #define NM_A_DISPLAY_NAME				"nnmDisplayName"
 #define NM_A_CHAT_OWNER_DN				"nnmChatOwnerDN"
 #define NM_A_UD_PARTICIPANTS			"NM_A_UD_PARTICIPANTS"
+#define NM_A_DESCRIPTION				"nnmDescription"
+#define NM_A_DISCLAIMER					"nnmDisclaimer"
+#define NM_A_QUERY						"nnmQuery"
+#define NM_A_ARCHIVE					"nnmArchive"
+#define NM_A_MAX_USERS					"nnmMaxUsers"
+#define NM_A_SZ_TOPIC					"NM_A_SZ_TOPIC"
+#define NM_A_FA_CHAT_ACL				"NM_A_FA_CHAT_ACL"
+#define NM_A_FA_CHAT_ACL_ENTRY			"NM_A_FA_CHAT_ACL_ENTRY"
+#define NM_A_SZ_ACCESS_FLAGS			"NM_A_SZ_ACCESS_FLAGS"
+#define NM_A_CHAT_CREATOR_DN			"nnmCreatorDN"
+#define NM_A_CREATION_TIME				"nnmCreationTime"
+#define NM_A_UD_CHAT_RIGHTS				"NM_A_UD_CHAT_RIGHTS"
 
-#define NM_PROTOCOL_VERSION		 		2
+#define NM_PROTOCOL_VERSION		 		5
 #define	NM_FIELD_TRUE					"1"
 #define	NM_FIELD_FALSE					"0"
 
