@@ -7,14 +7,14 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	$(all_includes)
 
 libkopeteircui_la_SOURCES = \
-	ircadd.ui \
-	ircaddcontactpage.cpp \
-	irceditaccountwidget.cpp \
-	irceditaccount.ui \
-	channellist.cpp \
-	channellistdialog.cpp \
-	networkconfig.ui \
-	networkconfigwidget.cpp \
-	kcodecaction.cpp
+#	ircadd.ui \
+#	ircaddcontactpage.cpp \
+#	irceditaccountwidget.cpp \
+#	irceditaccount.ui \
+#	channellist.cpp \
+#	channellistdialog.cpp \
+#	networkconfig.ui \
+#	networkconfigwidget.cpp \
+#	kcodecaction.cpp
 
 EXTRA_DIST = ircadd.ui ircprefs.ui

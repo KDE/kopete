@@ -42,8 +42,8 @@
 #include <qlineedit.h>
 #include <qtextcodec.h>
 
-IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent, const char * )
-	  : IRCEditAccountBase(parent), KopeteEditAccountWidget(ident)
+IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
+	: IRCEditAccountBase(parent), KopeteEditAccountWidget(ident)
 {
 	int currentCodec = 4;
 

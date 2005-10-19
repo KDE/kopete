@@ -126,6 +126,8 @@ private:
 	QByteArray encode(const QString &str, bool *success, QTextCodec *codec = 0) const;
 	bool setupSocket(bool useSSL);
 
+	Q_DISABLE_COPY(Socket)
+
 	class Private;
 	Private * const d;
 };

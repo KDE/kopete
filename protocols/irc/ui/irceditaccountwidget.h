@@ -30,7 +30,7 @@ class IRCEditAccountWidget : public Ui::IRCEditAccountBase, public KopeteEditAcc
 	Q_OBJECT
 
 public:
-	IRCEditAccountWidget(IRCAccount *, QWidget *parent=0, const char *name=0);
+	IRCEditAccountWidget(IRCAccount *, QWidget *parent=0);
 	~IRCEditAccountWidget();
 
 	IRCAccount *account();

@@ -111,7 +111,7 @@ private:
 
 	static IRCProtocol *s_protocol;
 
-	QMap<KIRC::EntityStatus, Kopete::OnlineStatus> m_statusMap;
+//	QMap<KIRC::EntityStatus, Kopete::OnlineStatus> m_statusMap;
 //	const Kopete::OnlineStatus m_connecting;
 	const Kopete::OnlineStatus m_StatusUnknown;
 

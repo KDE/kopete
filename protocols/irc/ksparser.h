@@ -11,7 +11,7 @@
 #include <qmap.h>
 #include <qregexp.h>
 #include <qstring.h>
-#include <qvaluestack.h>
+#include <qstack.h>
 
 /*
  * Helper class to parse IRC color/style codes and convert them to
@@ -22,7 +22,7 @@
  * <b>Hello </b><font color="red"><b>World</b>! </font><font color="blue">blue text</font>
  * to get correctly nested tags. (malte)
  */
-class KSParser
+namespace KSParser
 {
 public:
 	static QCString parse(const QCString &);
@@ -30,25 +30,6 @@ public:
 
 	static QColor ircColor(const QString &color);
 	static QColor ircColor(unsigned int color);
-
-	~KSParser();
-private:
-	KSParser();
-
-	QCString _parse(const QCString &);
-	QString pushTag(const QString &, const QString & = QString::null);
-	QString pushColorTag(const QColor &fgColor, const QColor &bgColor);
-	QString popTag(const QString &);
-	QString toggleTag(const QString &);
-	QString popAll();
-
-private:
-	static KSParser m_parser;
-	static const QColor IRC_Colors[17];
-	static const QRegExp sm_colorsModeRegexp;
-
-	QValueStack<QString> m_tags;
-	QMap<QString, QString> m_attributes;
 };
 
 #endif

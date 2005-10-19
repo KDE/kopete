@@ -22,21 +22,18 @@
 
 #include "ircconst.h"
 
-#include "kircengine.h"
-#include "kircentity.h"
-
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
 #include <QMap>
 
 class IRCAccount;
-class IRCContactPrivate;
 class IRCProtocol;
 
 namespace KIRC
 {
-class Engine;
+class Client;
+class Entity;
 }
 
 namespace Kopete
@@ -59,12 +56,12 @@ class IRCContact
 	Q_OBJECT
 
 public:
-	IRCContact(IRCAccount *account, KIRC::EntityPtr entity,
+	IRCContact(IRCAccount *account, KIRC::Entity *entity,
 		Kopete::MetaContact *metac = 0, const QString& icon = QString::null);
-	virtual ~IRCContact();
+	~IRCContact();
 
 	IRCAccount *ircAccount() const;
-	KIRC::Engine *kircEngine() const;
+	KIRC::Client *kircClient() const;
 
 	QString caption() const;
 
@@ -84,7 +81,7 @@ public:
 	 */
 	bool isChatting( Kopete::ChatSession *avoid = 0L ) const;
 
-//	Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate);
+	Kopete::ChatSession *manager(CanCreateFlags cancreate = CannotCreate);
 	Kopete::ChatSession *chatSessionCreate(IRC::ChatSessionType type = IRC::SERVER);
 
 	void appendMessage(Kopete::Message &);
@@ -117,19 +114,10 @@ private slots:
 	void deleteContact();
 
 private:
-	KIRC::EntityPtr m_entity;
+	Q_DISABLE_COPY(IRCContact)
 
-	Kopete::ChatSession *m_chatSession;
-
-	QList<Kopete::Contact *> mMyself;
-	Kopete::Message::MessageDirection execDir;
-
-	QList<KAction *> m_actions;
-	QList<KAction *> m_serverActions;
-	QList<KAction *> m_channelActions;
-	QList<KAction *> m_userActions;
-
-	IRCContactPrivate *d;
+	class Private;
+	Private * const d;
 };
 
 #endif

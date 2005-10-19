@@ -87,6 +87,8 @@ private:
 	static const QRegExp sm_userStrictRegExp;
 	static const QRegExp sm_channelRegExp;
 
+	Q_DISABLE_COPY(Entity)
+
 	class Private;
 	Private * const d;
 };

@@ -38,7 +38,7 @@
 using namespace IRC;
 using namespace Kopete;
 
-class IRCContactPrivate
+class IRCContact::Private
 {
 public:
 	KIRC::EntityPtr entity;
@@ -46,15 +46,23 @@ public:
 	QMap<ChatSessionType, ChatSession *> chatSessions;
 
 //	QList<IRContact *> members;
+
+//	QList<Kopete::Contact *> mMyself;
+	Kopete::Message::MessageDirection execDir;
+
+	QList<KAction *> actions;
+	QList<KAction *> serverActions;
+	QList<KAction *> channelActions;
+	QList<KAction *> userActions;
 };
 
 IRCContact::IRCContact(IRCAccount *account, KIRC::EntityPtr entity, MetaContact *metac, const QString& icon)
 	: Contact(account, entity->name(), metac, icon),
-	  m_entity(entity),
-	  m_chatSession(0)
-	  d (new IRCContactPrivate)
+	  d (new IRCContact::Private)
 {
 	kdDebug(14120) << k_funcinfo << entity->name() << endl;
+
+	d->entity = entity;
 
 	if (!metac)
 	{
@@ -63,7 +71,7 @@ IRCContact::IRCContact(IRCAccount *account, KIRC::EntityPtr entity, MetaContact 
 		setMetaContact(metac);
 	}
 
-	KIRC::Engine *engine = kircEngine();
+	KIRC::Client *client = kircClient();
 
 	// ChatSessionManager stuff
 	mMyself.append( static_cast<Contact*>( this ) );
@@ -72,7 +80,7 @@ IRCContact::IRCContact(IRCAccount *account, KIRC::EntityPtr entity, MetaContact 
 	connect(engine, SIGNAL(connectionStateChanged(KIRC::ConnectionState)),
 		this, SLOT(updateStatus()));
 
-	connect(m_entity, SIGNAL(updated()),
+	connect(entity, SIGNAL(updated()),
 		this, SLOT(entityUpdated()));
 
 	entityUpdated();
@@ -80,9 +88,9 @@ IRCContact::IRCContact(IRCAccount *account, KIRC::EntityPtr entity, MetaContact 
 
 IRCContact::~IRCContact()
 {
-//	kdDebug(14120) << k_funcinfo << m_nickName << endl;
-	if (metaContact() && metaContact()->isTemporary() && !isChatting(m_chatSession))
-		metaContact()->deleteLater();
+//	kdDebug(14120) << k_funcinfo << entity->name() << endl;
+//	if (metaContact() && metaContact()->isTemporary() && !isChatting(m_chatSession))
+//		metaContact()->deleteLater();
 
 	emit destroyed(this);
 
@@ -92,7 +100,7 @@ IRCContact::~IRCContact()
 
 void IRCContact::deleteContact()
 {
-	delete m_chatSession;
+//	delete m_chatSession; // qDeleteAll(d->chatSessions) ?
 
 	if (!isChatting())
 	{
@@ -112,9 +120,9 @@ IRCAccount *IRCContact::ircAccount() const
 	return static_cast<IRCAccount *>(account());
 }
 
-KIRC::Engine *IRCContact::kircEngine() const
+KIRC::Client *IRCContact::kircClient() const
 {
-	return ircAccount()->engine();
+	return ircAccount()->client();
 }
 
 void IRCContact::entityUpdated()
@@ -122,14 +130,14 @@ void IRCContact::entityUpdated()
 	Global::Properties *prop = Global::Properties::self();
 
 	// Basic entity properties.
-	setProperty(prop->nickName(), m_entity->name());
-//	setProperty(???->serverName(), m_entity->server());
-//	setProperty(???->type(), m_entity->type());
+	setProperty(prop->nickName(), d->entity->name());
+//	setProperty(???->serverName(), d->entity->server());
+//	setProperty(???->type(), d->entity->type());
 
 	// Server properties
 
 	// Channel properties
-//	setProperty(???->topic(), m_entity->topic());
+//	setProperty(???->topic(), d->entity->topic());
 
 	// Contact properties
 /*
@@ -161,7 +169,7 @@ void IRCContact::entityUpdated()
 QString IRCContact::caption() const
 {
 	QString ret = QString::fromLatin1("%1 @ %2")
-		.arg(m_nickName)
+		.arg(d->entity->nickName) // nickName
 		.arg(ircAccount()->networkName());
 
 	if(!mTopic.isEmpty())
@@ -172,7 +180,7 @@ QString IRCContact::caption() const
 
 void IRCContact::updateStatus()
 {
-	setOnlineStatus(IRCProtocol::self()->onlineStatusFor(m_entity->status()));
+	setOnlineStatus(IRCProtocol::self()->onlineStatusFor(d->entity->status()));
 }
 
 bool IRCContact::isReachable()
@@ -186,7 +194,7 @@ bool IRCContact::isReachable()
 
 void IRCContact::setCodec(QTextCodec *codec)
 {
-	m_entity->setCodec(codec);
+	d->entity->setCodec(codec);
 	if (codec)
 		metaContact()->setPluginData(IRCProtocol::self(), QString::fromLatin1("Codec"), QString::number(codec->mibEnum()));
 //	else
@@ -209,7 +217,7 @@ QTextCodec *IRCContact::codec()
 	}
 
 	if (!codec)
-		return kircEngine()->defaultCodec();
+		return kircClient()->defaultCodec();
 
 	return codec;
 }
@@ -217,12 +225,12 @@ QTextCodec *IRCContact::codec()
 ChatSession *IRCContact::chatSessionCreate(ChatSessionType type)
 {
 	IRCAccount *account = ircAccount();
-	KIRC::Engine *engine = kircEngine();
-
-	Kopete::ChatSession *chatSession = d->chatSessions.get()
+	KIRC::Client *engine = kircClient();
+/*
+	Kopete::ChatSession *chatSession = d->chatSessions.get();
 	if (!chatSession)
 	{
-//		if (engine->status() == KIRC::Engine::Idle && dynamic_cast<IRCServerContact*>(this) == 0)
+//		if (engine->status() == KIRC::Client::Idle && dynamic_cast<IRCServerContact*>(this) == 0)
 //			account->connect();
 
 		chatSession = ChatSessionManager::self()->create(account->myself(), mMyself, account->protocol());
@@ -237,11 +245,13 @@ ChatSession *IRCContact::chatSessionCreate(ChatSessionType type)
 	}
 
 	return chatSession;
+*/
+	return 0;
 }
 
 void IRCContact::chatSessionDestroyed(ChatSession *chatSession)
 {
-	m_chatSession = 0;
+//	m_chatSession = 0; // d->chatSessions.remove(chatSession);
 
 	if (metaContact()->isTemporary() && !isChatting())
 		deleteLater();
@@ -330,7 +340,7 @@ QString IRCContact::sendMessage(const QString &msg)
 		newMessage.truncate( 512 - ( m_nickName.length() + 12 ) );
 	}
 
-	kircEngine()->privmsg(m_nickName, newMessage );
+	kircClient()->privmsg(m_nickName, newMessage );
 
 	return newMessage;
 */
@@ -339,6 +349,7 @@ QString IRCContact::sendMessage(const QString &msg)
 
 Contact *IRCContact::locateUser(const QString &nick)
 {
+/*
 	IRCAccount *account = ircAccount();
 
 	if (m_chatSession)
@@ -355,6 +366,7 @@ Contact *IRCContact::locateUser(const QString &nick)
 			}
 		}
 	}
+*/
 	return 0;
 }
 

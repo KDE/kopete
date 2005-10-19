@@ -238,8 +238,6 @@ private slots:
 	void CtcpReply_version(KIRC::Message &msg);
 
 private:
-	Q_DISABLE_COPY(Client)
-
 	class Private;
 	Private * const d;
 };

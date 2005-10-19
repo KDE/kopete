@@ -19,8 +19,6 @@
 
 #include <kaction.h>
 
-#include <qintdict.h>
-
 class KCodecAction
 	: public KSelectAction
 {
@@ -39,7 +37,7 @@ private slots:
 	void slotActivated(int);
 
 private:
-	QIntDict<QTextCodec> codecMap;
+	QMap<quint32, QTextCodec *> codecMap;
 };
 
 #endif

@@ -20,15 +20,18 @@
 #ifndef IRCACCOUNT_H
 #define IRCACCOUNT_H
 
-#include "kircengine.h"
-
 #include "ircnetwork.h"
 
 #include "kopetepasswordedaccount.h"
 
-class IRCAccountPrivate;
 class IRCContact;
 class IRCProtocol;
+
+namespace KIRC
+{
+class Client;
+class Entity;
+}
 
 namespace Kopete
 {
@@ -109,13 +112,13 @@ public slots: // WRITE properties accessors.
 
 public:
 	// Returns the KIRC engine instance
-	KIRC::Engine *engine() const;
+	KIRC::Client *client() const;
 
 	QTextCodec *codec() const;
 	void setCodec( QTextCodec *codec );
-/*
-	IRCNetwork network();
-*/
+
+//	IRCNetwork network();
+
 	const QStringList connectCommands() const;
 
 	void setConnectCommands( const QStringList & ) const;
@@ -133,7 +136,7 @@ public:
 	Kopete::ChatSession *currentCommandSource();
 
 	IRCContact *getContact(const QString &name, Kopete::MetaContact *metac=0);
-	IRCContact *getContact(KIRC::EntityPtr entity, Kopete::MetaContact *metac=0);
+	IRCContact *getContact(KIRC::Entity *entity, Kopete::MetaContact *metac=0);
 
 	virtual bool isConnected();
 
@@ -167,25 +170,28 @@ protected:
 	virtual bool createContact( const QString &contactId, Kopete::MetaContact *parentContact ) ;
 
 private slots:
-	void engineConnectionStateChanged(KIRC::ConnectionState newstate);
+//	void engineConnectionStateChanged(KIRC::Socket::ConnectionState newstate);
 
 	void destroyed(IRCContact *contact);
-
+/*
 	void receivedMessage(	KIRC::MessageType type,
 				const KIRC::EntityPtr &from,
 				const KIRC::EntityPtrList &to,
 				const QString &msg);
-
+*/
 	void slotPerformOnConnectCommands();
 
 	void slotShowServerWindow();
 
 private:
-	void engineSetup();
-	void engineConnect();
+	void clientSetup();
+	void clientConnect();
 
 private:
-	IRCAccountPrivate *d;
+	Q_DISABLE_COPY(IRCAccount)
+
+	class Private;
+	Private * const d;
 };
 
 #endif

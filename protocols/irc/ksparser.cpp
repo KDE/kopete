@@ -29,7 +29,14 @@ Modified by Jason Keirstead <jason@keirstead.org>
 #include "ksparser.h"
 #include <stdlib.h>
 
-KSParser KSParser::m_parser;
+/*
+        static KSParser m_parser;
+        static const QColor IRC_Colors[17];
+        static const QRegExp sm_colorsModeRegexp;
+
+        QValueStack<QString> m_tags;
+        QMap<QString, QString> m_attributes;
+*/
 
 const QColor KSParser::IRC_Colors[17]=
 {
@@ -72,13 +79,7 @@ KSParser::~KSParser()
 	kdDebug(14120) << k_funcinfo << endl;
 }
 
-/* NOTE: If thread corruption are seen simply ad a qlock here */
 QCString KSParser::parse(const QCString &message)
-{
-	return m_parser._parse(message);
-}
-
-QCString KSParser::_parse(const QCString &message)
 {
 	QCString data( message.size() * 2 );
 	QBuffer buff( data );
@@ -172,7 +173,7 @@ QCString KSParser::_parse(const QCString &message)
 	return result;
 }
 
-QString KSParser::pushTag(const QString &tag, const QString &attributes)
+static QString pushTag(const QString &tag, const QString &attributes)
 {
 	QString res;
 	m_tags.push(tag);
@@ -186,7 +187,7 @@ QString KSParser::pushTag(const QString &tag, const QString &attributes)
 	return res + ">";
 }
 
-QString KSParser::pushColorTag(const QColor &fgColor, const QColor &bgColor)
+static QString pushColorTag(const QColor &fgColor, const QColor &bgColor)
 {
 	QString tagStyle;
 
@@ -201,7 +202,7 @@ QString KSParser::pushColorTag(const QColor &fgColor, const QColor &bgColor)
 	return pushTag(QString::fromLatin1("span"), tagStyle);;
 }
 
-QString KSParser::popTag(const QString &tag)
+QString popTag(const QString &tag)
 {
 	if (!m_tags.contains(tag))
 		return QString::null;
@@ -220,12 +221,12 @@ QString KSParser::popTag(const QString &tag)
 	return res;
 }
 
-QString KSParser::toggleTag(const QString &tag)
+QString toggleTag(const QString &tag)
 {
 	return m_attributes.contains(tag)?popTag(tag):pushTag(tag);
 }
 
-QString KSParser::popAll()
+QString popAll()
 {
 	QString res;
 	while(!m_tags.isEmpty())
@@ -234,7 +235,7 @@ QString KSParser::popAll()
 	return res;
 }
 
-QColor KSParser::ircColor(const QString &color)
+QColor ircColor(const QString &color)
 {
 	bool success;
 	unsigned int intColor = color.toUInt(&success);
@@ -245,13 +246,13 @@ QColor KSParser::ircColor(const QString &color)
 		return QColor();
 }
 
-QColor KSParser::ircColor(unsigned int color)
+QColor ircColor(unsigned int color)
 {
 	unsigned int maxcolor = sizeof(IRC_Colors)/sizeof(QColor);
 	return color<=maxcolor?IRC_Colors[color]:IRC_Colors[maxcolor];
 }
 
-int KSParser::colorForHTML(const QString &html)
+int colorForHTML(const QString &html)
 {
 	QColor color(html);
 	for(uint i=0; i<sizeof(IRC_Colors)/sizeof(QColor); i++)
@@ -261,3 +262,10 @@ int KSParser::colorForHTML(const QString &html)
 	}
 	return -1;
 }
+
+namespace KSParser
+{
+
+};
+
+

@@ -23,7 +23,7 @@
 #include "irccontact.h"
 #include "ircprotocol.h"
 
-#include "kircengine.h"
+#include "kircclient.h"
 
 #include "kopeteaccountmanager.h"
 #include "kopeteaway.h"
@@ -42,23 +42,23 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kinputdialog.h>
-#include <klineedit.h>
-#include <klineeditdlg.h>
+//#include <klineedit.h>
+//#include <klineeditdlg.h>
 #include <klocale.h>
+#include <kmenu.h>
 #include <kmessagebox.h>
 #include <knotifyclient.h>
-#include <kpopupmenu.h>
 
 #include <qtextcodec.h>
 
 using namespace IRC;
 using namespace Kopete;
 
-class IRCAccountPrivate
+class IRCAccount::Private
 {
 public:
-	IRCAccountPrivate()
-		: manager(0), engine(0),
+	Private()
+		: manager(0), client(0),
 		  server(0), self(0),
 		  commandSource(0),
 		  awayAction(0), joinChannelAction(0), searchChannelAction(0)
@@ -67,11 +67,11 @@ public:
 	Kopete::ChatSession *manager;
 	QString autoConnect;
 
-	KIRC::Engine *engine;
+	KIRC::Client *client;
 	IRCNetwork network;
 	uint currentHost;
 
-	QValueList<IRCContact *> contacts;
+	QList<IRCContact *> contacts;
 	IRCContact *server;
 	IRCContact *self;
 
@@ -89,22 +89,22 @@ public:
 
 IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const QString& netName, const QString &nickName)
 	: PasswordedAccount(IRCProtocol::self(), accountId, 0, true),
-	  d( new IRCAccountPrivate )
+	  d( new Private )
 {
-	d->engine = new KIRC::Engine(this);
+	d->client = new KIRC::Client(this);
 	d->autoConnect = autoChan;
 	d->currentHost = 0;
 
-	QObject::connect(d->engine, SIGNAL(connectionStateChanged(KIRC::ConnectionState)),
+	QObject::connect(d->client, SIGNAL(connectionStateChanged(KIRC::ConnectionState)),
 			 this, SLOT(engineConnectionStateChanged(KIRC::ConnectionState)));
 
-	QObject::connect(d->engine, SIGNAL(receivedMessage(KIRC::MessageType, const KIRC::EntityPtr &, const KIRC::EntityPtrList &, const QString &)),
+	QObject::connect(d->client, SIGNAL(receivedMessage(KIRC::MessageType, const KIRC::EntityPtr &, const KIRC::EntityPtrList &, const QString &)),
 			 this, SLOT(receivedMessage(KIRC::MessageType, const KIRC::EntityPtr &, const KIRC::EntityPtrList &, const QString &)));
 
 //	loadProperties();
 
-	d->server = new IRCContact(this, d->engine->server());
-	d->self = new IRCContact(this, d->engine->self());
+	d->server = new IRCContact(this, d->client->server());
+	d->self = new IRCContact(this, d->client->owner());
 	setMyself(d->self);
 /*
 	QString accountId = this->accountId();
@@ -168,35 +168,35 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 //	setAccountLabel( QString::fromLatin1("%1@%2").arg(mNickName,networkName) );
 
 	#warning spurus slot calls for now
-	d->joinChannelAction = new KAction ( i18n("Join Channel..."), QString::null, 0, this,
-				SLOT(slotJoinChannel()), this);
-	d->searchChannelAction = new KAction ( i18n("Search Channels..."), QString::null, 0, this,
-				SLOT(slotSearchChannels()), this);
+	d->joinChannelAction = new KAction ( i18n("Join Channel..."), QString::null, KShortcut(),
+		this, SLOT(slotJoinChannel()), 0/*actiongroup*/, 0);
+	d->searchChannelAction = new KAction ( i18n("Search Channels..."), QString::null, KShortcut(),
+		this, SLOT(slotSearchChannels()), 0/*actionGroup*/, 0);
 }
 
 IRCAccount::~IRCAccount()
 {
-	if (d->engine->isConnected())
-		d->engine->quit(i18n("Plugin Unloaded"), true);
+	if (d->client->isConnected())
+		d->client->quit(i18n("Plugin Unloaded"), true);
 
 	delete d;
 }
 
 
-void IRCAccount::engineSetup()
+void IRCAccount::clientSetup()
 {
-	d->engine->setDefaultCodec(codec());
+	d->client->setDefaultCodec(codec());
 
-	d->engine->setUserName(userName());
-	d->engine->setRealName(realName());
+	d->client->setUserName(userName());
+	d->client->setRealName(realName());
 
-//	d->engine->setNickName(nickName());
+//	d->client->setNickName(nickName());
 
-	d->engine->setVersionString(IRC::Version);
+	d->client->setVersionString(IRC::Version);
 /*
 	QMap<QString, QString> replies = customCtcpReplies();
 	for (QMap<QString, QString>::ConstIterator it = replies.begin(); it != replies.end(); ++it)
-		d->engine->addCustomCtcp(it.key(), it.data());
+		d->client->addCustomCtcp(it.key(), it.data());
 */
 
 //	d->network = IRCNetworkList::self()->network(networkName());
@@ -224,7 +224,7 @@ void IRCAccount::engineSetup()
 */
 }
 
-void IRCAccount::engineConnect()
+void IRCAccount::clientConnect()
 {
 /*
 	if (d->network.name.isEmpty())
@@ -259,7 +259,7 @@ void IRCAccount::engineConnect()
 		appendInternalMessage( i18n("Connecting to %1...").arg( host->host ) );
 		if( host->ssl )
 			appendInternalMessage( i18n("Using SSL") );
-//		d->engine->connectToServer( host->host, host->port, mNickName, host->ssl );
+//		d->client->connectToServer( host->host, host->port, mNickName, host->ssl );
 	}
 */
 }
@@ -272,7 +272,7 @@ int IRCAccount::codecMib() const
 void IRCAccount::setCodecFromMib(int mib)
 {
 	configGroup()->writeEntry(Config::CODECMIB, mib);
-	d->engine->setDefaultCodec(QTextCodec::codecForMib(mib));
+	d->client->setDefaultCodec(QTextCodec::codecForMib(mib));
 }
 
 QTextCodec *IRCAccount::codec() const
@@ -312,7 +312,7 @@ const QString IRCAccount::userName() const
 void IRCAccount::setUserName(const QString &userName)
 {
 	configGroup()->writeEntry(Config::USERNAME, userName);
-	d->engine->setUserName(userName);
+	d->client->setUserName(userName);
 }
 
 const QString IRCAccount::realName() const
@@ -323,7 +323,7 @@ const QString IRCAccount::realName() const
 void IRCAccount::setRealName( const QString &userName )
 {
 	configGroup()->writeEntry(Config::REALNAME, userName);
-	d->engine->setRealName(userName);
+	d->client->setRealName(userName);
 }
 
 const QString IRCAccount::nickName() const
@@ -383,9 +383,9 @@ void IRCAccount::setAutoShowServerWindow(bool autoShow)
 	configGroup()->writeEntry(QString::fromLatin1("AutoShowServerWindow"), autoShow);
 }
 
-KIRC::Engine *IRCAccount::engine() const
+KIRC::Client *IRCAccount::client() const
 {
-	return d->engine;
+	return d->client;
 }
 
 void IRCAccount::setCustomCtcpReplies( const QMap< QString, QString > &replies ) const
@@ -394,7 +394,7 @@ void IRCAccount::setCustomCtcpReplies( const QMap< QString, QString > &replies )
 	QStringList val;
 	for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
 	{
-		d->engine->addCustomCtcp( it.key(), it.data() );
+		d->client->addCustomCtcp( it.key(), it.data() );
 		val.append( QString::fromLatin1("%1=%2").arg( it.key() ).arg( it.data() ) );
 	}
 
@@ -441,9 +441,9 @@ KActionMenu *IRCAccount::actionMenu()
 	mActionMenu->insert(d->searchChannelAction);
 	mActionMenu->insert( new KAction ( i18n("Show Server Window"), QString::null, 0, this, SLOT(slotShowServerWindow()), mActionMenu ) );
 
-//	if (d->engine->isConnected() && d->engine->useSSL())
+//	if (d->client->isConnected() && d->client->useSSL())
 	{
-		mActionMenu->insert( new KAction ( i18n("Show Security Information"), "", 0, d->engine,
+		mActionMenu->insert( new KAction ( i18n("Show Security Information"), "", 0, d->client,
 			SLOT(showInfoDialog()), mActionMenu ) );
 	}
 
@@ -452,8 +452,8 @@ KActionMenu *IRCAccount::actionMenu()
 
 void IRCAccount::connectWithPassword(const QString &password)
 {
-	d->engine->setPassword(password);
-	engineConnect();
+	d->client->setPassword(password);
+	clientConnect();
 }
 
 void IRCAccount::engineConnectionStateChanged(KIRC::ConnectionState newstate)
@@ -480,7 +480,7 @@ void IRCAccount::engineConnectionStateChanged(KIRC::ConnectionState newstate)
 		{
 			//Reset the host so re-connection will start over at first server
 			d->currentHost = 0;
-//			d->contactManager->addToNotifyList( d->engine->nickName() );
+//			d->contactManager->addToNotifyList( d->client->nickName() );
 
 			// HACK! See bug #85200 for details. Some servers still cannot accept commands
 			// after the 001 is sent, you need to wait until all the init junk is done.
@@ -491,7 +491,7 @@ void IRCAccount::engineConnectionStateChanged(KIRC::ConnectionState newstate)
 		break;
 	case KIRC::Closing:
 //		mySelf()->setOnlineStatus( protocol->m_UserStatusOffline );
-//		d->contactManager->removeFromNotifyList( d->engine->nickName() );
+//		d->contactManager->removeFromNotifyList( d->client->nickName() );
 
 //		if (d->contactManager && !autoConnect.isNull())
 //			AccountManager::self()->removeAccount( this );
@@ -530,18 +530,18 @@ void IRCAccount::quit( const QString &quitMessage )
 	kdDebug(14120) << "Quitting IRC: " << quitMessage << endl;
 
 	if (quitMessage.isNull() || quitMessage.isEmpty())
-		d->engine->quit( defaultQuitMessage() );
+		d->client->quit( defaultQuitMessage() );
 	else
-		d->engine->quit( quitMessage );
+		d->client->quit( quitMessage );
 }
 
 void IRCAccount::setAway(bool isAway, const QString &awayMessage)
 {
 	kdDebug(14120) << k_funcinfo << isAway << " " << awayMessage << endl;
-	if (d->engine->isConnected())
+	if (d->client->isConnected())
 	{
 //		static_cast<IRCUserContact *>( myself() )->setAway( isAway );
-		engine()->away(isAway, awayMessage);
+		d->client->away(isAway, awayMessage);
 	}
 }
 
@@ -552,7 +552,7 @@ void IRCAccount::slotShowServerWindow()
 
 bool IRCAccount::isConnected()
 {
-	return d->engine->isConnected();
+	return d->client->isConnected();
 }
 
 void IRCAccount::setOnlineStatus(const OnlineStatus& status , const QString &reason)
@@ -567,8 +567,8 @@ void IRCAccount::setOnlineStatus(const OnlineStatus& status , const QString &rea
 	if ( expected != OnlineStatus::Offline && current == OnlineStatus::Offline )
 	{
 		kdDebug(14120) << k_funcinfo << "Connecting." << endl;
-		engineSetup();
-//		engineConnect();
+		clientSetup();
+//		clientConnect();
 		connect();
 	}
 
@@ -642,7 +642,7 @@ IRCContact *IRCAccount::mySelf() const
 IRCContact *IRCAccount::getContact(const QString &name, MetaContact *metac)
 {
 	kdDebug(14120) << k_funcinfo << name << endl;
-	return getContact(d->engine->getEntity(name), metac);
+	return getContact(d->client->getEntity(name), metac);
 }
 
 IRCContact *IRCAccount::getContact(KIRC::EntityPtr entity, MetaContact *metac)
