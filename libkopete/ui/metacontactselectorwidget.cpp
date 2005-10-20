@@ -75,7 +75,7 @@ MetaContactSelectorWidgetLVI::MetaContactSelectorWidgetLVI(Kopete::MetaContact *
 	
 	connect( d->metaContact, SIGNAL( photoChanged() ),
 		SLOT( slotPhotoChanged() ) );
-	connect( d->metaContact, SIGNAL( displayNameChanged() ),
+	connect( d->metaContact, SIGNAL( displayNameChanged(const QString&, const QString&) ),
 		SLOT( slotDisplayNameChanged() ) );
 	buildVisualComponents();
 }
@@ -194,7 +194,7 @@ MetaContactSelectorWidget::MetaContactSelectorWidget( QWidget *parent, const cha
 	connect( d->widget->metaContactListView, SIGNAL( spacePressed( QListViewItem * ) ),
 			SIGNAL( metaContactListClicked( QListViewItem * ) ) );
 	
-	connect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
+	connect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( Kopete::MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
 	
 	d->widget->kListViewSearchLine->setListView(d->widget->metaContactListView);
 	d->widget->metaContactListView->setFullWidth( true );
@@ -206,7 +206,7 @@ MetaContactSelectorWidget::MetaContactSelectorWidget( QWidget *parent, const cha
 
 MetaContactSelectorWidget::~MetaContactSelectorWidget()
 {
-	disconnect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
+	disconnect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( Kopete::MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
 }
 
 
