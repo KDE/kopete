@@ -1,0 +1,403 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>GroupWiseChatPropsWidget</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>GroupWiseChatPropsWidget</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>493</width>
+            <height>425</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>GroupWiseChatPropertiesWidget</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>m_displayName</cstring>
+            </property>
+            <property name="text">
+                <string>DISPLAY NAME</string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout16</cstring>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLineEdit" row="4" column="1">
+                    <property name="name">
+                        <cstring>m_creator</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="readOnly">
+                        <bool>true</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The user who created the chatroom</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="2">
+                    <property name="name">
+                        <cstring>textLabel10_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Query:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_firstName_2</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>lblTopic</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Topic:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_displayName</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="1" column="3">
+                    <property name="name">
+                        <cstring>m_disclaimer</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="readOnly">
+                        <bool>false</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>A disclaimer for users entering the chatroom</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>m__2_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Owner:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_displayName_3</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="1" column="1">
+                    <property name="name">
+                        <cstring>m_topic</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="readOnly">
+                        <bool>false</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The current topic of the discussion</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="2" column="3">
+                    <property name="name">
+                        <cstring>m_query</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="readOnly">
+                        <bool>true</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>UNKNOWN</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="2">
+                    <property name="name">
+                        <cstring>textLabel11_2_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Maximum Users:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_lastName_2_2</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>m__2_2_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Created on:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_displayName_3</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="2">
+                    <property name="name">
+                        <cstring>lbl_displayName_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Disclaimer:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_displayName_2</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="5" column="1">
+                    <property name="name">
+                        <cstring>m_description</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="readOnly">
+                        <bool>true</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>General description of the chatroom</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="3" column="3">
+                    <property name="name">
+                        <cstring>m_maxUsers</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="readOnly">
+                        <bool>true</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Maximum simiultaneous users allowed in the chatroom</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="4" column="0">
+                    <property name="name">
+                        <cstring>textLabel10</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Creator:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_firstName</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="5" column="0">
+                    <property name="name">
+                        <cstring>textLabel11</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Description:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_lastName</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="3" column="1">
+                    <property name="name">
+                        <cstring>m_createdOn</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="readOnly">
+                        <bool>false</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Date and time the chatroom was created</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="4" column="2">
+                    <property name="name">
+                        <cstring>m_archive</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Archived</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Indicates if the chatroom is being archived on the server</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="2" column="1">
+                    <property name="name">
+                        <cstring>m_owner</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="readOnly">
+                        <bool>false</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The user who owns this chatroom</string>
+                    </property>
+                </widget>
+                <widget class="Line" row="0" column="0" rowspan="1" colspan="4">
+                    <property name="name">
+                        <cstring>line4</cstring>
+                    </property>
+                    <property name="frameShape">
+                        <enum>HLine</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Sunken</enum>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>buttonGroup2</cstring>
+            </property>
+            <property name="title">
+                <string>Default Access</string>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>m_chkRead</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Read Message</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>General permission to read messages in the chatroom</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>m_chkWrite</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Write Message</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>General permission to write messages in the chatroom</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>m_chkModify</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Modify Access</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>General permission to modify the chatroom's access control list</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Access Control List</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>kListBox1</cstring>
+            </property>
+        </widget>
+        <widget class="KListBox">
+            <property name="name">
+                <cstring>m_acl</cstring>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Access permissions for specific users</string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout15</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="KPushButton">
+                    <property name="name">
+                        <cstring>m_btnAddAcl</cstring>
+                    </property>
+                    <property name="text">
+                        <string>A&amp;dd</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+D</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Add a new ACL entry</string>
+                    </property>
+                </widget>
+                <widget class="KPushButton">
+                    <property name="name">
+                        <cstring>m_btnEditAcl</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Ed&amp;it</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+I</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Edit an existing ACL entry</string>
+                    </property>
+                </widget>
+                <widget class="KPushButton">
+                    <property name="name">
+                        <cstring>m_btnDeleteAcl</cstring>
+                    </property>
+                    <property name="text">
+                        <string>D&amp;elete</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+E</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Delete a ACL entry</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+    </vbox>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>klistbox.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+</includehints>
+</UI>

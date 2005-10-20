@@ -118,6 +118,7 @@ void ChatroomManager::requestProperties( const QString & displayName )
 
 void ChatroomManager::slotGotChatProperties()
 {
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	ChatPropertiesTask * cpt = (ChatPropertiesTask *)sender();
 	if ( cpt )
 	{

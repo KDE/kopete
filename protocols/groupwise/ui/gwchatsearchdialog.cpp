@@ -30,6 +30,8 @@
 #include "gwaccount.h"
 #include "gwprotocol.h"
 #include "gwchatsearchwidget.h"
+#include "gwchatpropsdialog.h"
+
 #include "gwchatsearchdialog.h"
 
 GroupWiseChatSearchDialog::GroupWiseChatSearchDialog( GroupWiseAccount * account, QWidget *parent, const char *name )
@@ -43,7 +45,8 @@ GroupWiseChatSearchDialog::GroupWiseChatSearchDialog( GroupWiseAccount * account
 	m_manager = m_account->client()->chatroomManager();
 	
 	connect ( m_manager, SIGNAL( updated() ), SLOT( slotManagerUpdated() ) );
-	connect ( m_manager, SIGNAL( gotProperties( const) ), SLOT( slotGotProperties() ) );
+	connect ( m_manager, SIGNAL( gotProperties( const GroupWise::Chatroom & ) ),
+			  SLOT( slotGotProperties( const GroupWise::Chatroom & ) ) );
 
 	connect( m_widget->m_btnRefresh, SIGNAL( clicked() ), SLOT( slotUpdateClicked() ) );
 	connect( m_widget->m_btnProperties, SIGNAL( clicked() ), SLOT( slotPropertiesClicked() ) );
@@ -92,6 +95,12 @@ void GroupWiseChatSearchDialog::slotPropertiesClicked()
 	{
 		m_manager->requestProperties( selected->text( 0 ) );
 	}
+}
+
+void GroupWiseChatSearchDialog::slotGotProperties(const GroupWise::Chatroom & room)
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	new GroupWiseChatPropsDialog( room, true, this, "chatpropsdlg" );
 }
 
 #include "gwchatsearchdialog.moc"

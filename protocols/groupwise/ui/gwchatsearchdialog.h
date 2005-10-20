@@ -22,6 +22,8 @@
 class GroupWiseAccount;
 class GroupWiseChatSearchWidget;
 
+#include "gwchatrooms.h"
+
 #include <kdialogbase.h>
 
 class GroupWiseChatSearchDialog : public KDialogBase
@@ -38,7 +40,7 @@ class GroupWiseChatSearchDialog : public KDialogBase
 		void slotUpdateClicked();
 		/* Manager update handler */
 		void slotManagerUpdated();
-		void slotGotProperties() {}
+		void slotGotProperties( const GroupWise::Chatroom & room );
 	private:
 		GroupWiseAccount * m_account;
 		ChatroomManager * m_manager;

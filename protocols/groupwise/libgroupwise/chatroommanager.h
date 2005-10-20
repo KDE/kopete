@@ -39,7 +39,7 @@ class ChatroomManager : public QObject
 		void requestProperties( const QString & displayName );
 		void update();
 	signals:
-		void gotProperties( const GroupWise::Chatroom & room );
+		void gotProperties( const GroupWise::Chatroom & );
 		void updated();
 	public slots:
 	protected:
