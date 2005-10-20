@@ -21,7 +21,7 @@
 #include <kconfig.h>
 #include <kmessagebox.h>
 #include <kiconloader.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kstandarddirs.h>
 #include <klineeditdlg.h>
 

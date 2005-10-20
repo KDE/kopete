@@ -32,6 +32,7 @@
 #include "oscartypeclasses.h"
 //Added by qt3to4:
 #include <Q3ValueList>
+#include <krandom.h>
 
 
 class ConnectionPrivate
@@ -204,8 +205,8 @@ void Connection::forcedSend( Transfer* request ) const
 
 void Connection::initSequence()
 {
-	d->snacSequence = ( KApplication::random() & 0xFFFF );
-	d->flapSequence = ( KApplication::random() & 0xFFFF );
+	d->snacSequence = ( KRandom::random() & 0xFFFF );
+	d->flapSequence = ( KRandom::random() & 0xFFFF );
 }
 
 void Connection::distribute( Transfer * transfer ) const

@@ -23,7 +23,7 @@
 
 // KDE Includes
 #include <kdebug.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <klocale.h>
 #include <kconfig.h>
 
@@ -32,7 +32,7 @@
 // Local Includes
 #include "wpaccount.h"
 
-class KPopupMenu;
+class KMenu;
 
 WPAccount::WPAccount(WPProtocol *parent, const QString &accountID, const char *name) : Kopete::Account(parent, accountID, name)
 {

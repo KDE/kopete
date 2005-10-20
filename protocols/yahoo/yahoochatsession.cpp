@@ -29,7 +29,7 @@
 #include <kinputdialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <ktempfile.h>
 #include <kmainwindow.h>
 #include <ktoolbar.h>

@@ -21,7 +21,7 @@
 #include <klocale.h>
 #include <kmainwindow.h>
 #include <kmessagebox.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kshortcut.h>
 
 #include <kopetecontact.h>

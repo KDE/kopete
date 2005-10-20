@@ -29,6 +29,7 @@
 #include <kmessagebox.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
+#include <ktoolinvocation.h>
 
 // Kopete Includes
 #include "kopeteaccountmanager.h"
@@ -40,7 +41,7 @@
 #include "wpaccount.h"
 #include "wpcontact.h"
 
-class KPopupMenu;
+class KMenu;
 
 WPProtocol *WPProtocol::sProtocol = 0;
 
@@ -140,7 +141,7 @@ void WPProtocol::installSamba()
 	QStringList args;
 	args += KStandardDirs::findExe("winpopup-install.sh");
 	args += KStandardDirs::findExe("winpopup-send.sh");
-	if (KApplication::kdeinitExecWait("kdesu", args) == 0)
+	if (KToolInvocation::kdeinitExecWait("kdesu", args) == 0)
 		KMessageBox::information(Kopete::UI::Global::mainWidget(), i18n("The Samba configuration file is modified."), i18n("Configuration Succeeded"));
 	else
 		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Updating the Samba configuration file failed."), i18n("Configuration Failed"));

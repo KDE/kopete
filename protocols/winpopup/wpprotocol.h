@@ -36,7 +36,7 @@
 #include "wpaddcontact.h"
 
 namespace Kopete { class Account; }
-class KPopupMenu;
+class KMenu;
 class KActionMenu;
 class KAction;
 class WPContact;

@@ -25,7 +25,7 @@
 #include "kopetepassword.h"
 
 #include <kaction.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <klocale.h>
 #include <kconfigbase.h>
 #include "kopeteaway.h"

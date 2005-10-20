@@ -17,7 +17,7 @@
 #undef KDE_NO_COMPAT
 #include <kconfigbase.h>
 #include <kaction.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kprocess.h>
 #include <kdebug.h>
 #include <kmessagebox.h>

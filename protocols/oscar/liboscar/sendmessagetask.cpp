@@ -19,6 +19,7 @@
 #include <qtextcodec.h>
 #include <kapplication.h>
 #include <kdebug.h>
+#include <krandom.h>
 #include "connection.h"
 #include "oscartypes.h"
 #include "transfer.h"
@@ -70,8 +71,8 @@ void SendMessageTask::onGo()
 
 		if ( snacSubfamily == 0x0006 )
 		{
-			DWORD cookie1 = KApplication::random();
-			DWORD cookie2 = KApplication::random();
+			DWORD cookie1 = KRandom::random();
+			DWORD cookie2 = KRandom::random();
 
 			b->addDWord( cookie1 );
 			b->addDWord( cookie2 );

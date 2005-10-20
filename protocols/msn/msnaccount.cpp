@@ -24,7 +24,7 @@
 #include <kdebug.h>
 #include <kinputdialog.h>
 #include <kmessagebox.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kstandarddirs.h>
 #include <kcodecs.h>
 #include <klocale.h>

@@ -33,7 +33,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kaction.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kmessagebox.h>
 #include <kapplication.h>
 #include <krun.h>

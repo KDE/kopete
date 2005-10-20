@@ -27,6 +27,7 @@
 #include <klocale.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
+#include <krandom.h>
 
 #include "kopeteaway.h"
 #include "kopetechatsession.h"
@@ -189,7 +190,7 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
         if ( !mAccount->engine()->hasIconConnection() )
             mAccount->engine()->requestServerRedirect( 0x0010 );
 
-		int time = ( KApplication::random() % 10 ) * 1000;
+		int time = ( KRandom::random() % 10 ) * 1000;
 		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating buddy icon in " << time/1000 << " seconds" << endl;
 		QTimer::singleShot( time, this, SLOT( requestBuddyIcon() ) );
 	}

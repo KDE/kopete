@@ -25,7 +25,7 @@
 #include <qpixmap.h>
 #include <qmovie.h>
 #include <kaction.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 
 #include "kopetecontact.h"
 #include "kopetecontactproperty.h"

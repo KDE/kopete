@@ -39,7 +39,7 @@ ICQReadAway::ICQReadAway(ICQContact *c, QWidget *parent, const char* name)
 	mContact = c;
 	setCaption(i18n("'%2' Message for %1").arg(c->displayName()).arg(c->onlineStatus().description()));
 
-	Q3VBox *mMainWidget = makeVBoxMainWidget();
+	KVBox *mMainWidget = makeVBoxMainWidget();
 
 	awayMessageBrowser = new KTextBrowser(mMainWidget, "userInfoView");
 	awayMessageBrowser->setTextFormat(Qt::AutoText);

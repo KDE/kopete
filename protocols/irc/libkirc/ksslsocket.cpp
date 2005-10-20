@@ -31,6 +31,7 @@
 #include <ksslcertificatecache.h>
 #include <kapplication.h>
 #include <kmessagebox.h>
+#include <ktoolinvocation.h>
 
 #include "ksslsocket.h"
 
@@ -185,7 +186,7 @@ void KSSLSocket::showInfoDialog()
 	{
 		if (!d->dcc->isApplicationRegistered("kio_uiserver"))
 		{
-			KApplication::startServiceByDesktopPath("kio_uiserver.desktop",QStringList());
+			KToolInvocation::startServiceByDesktopPath("kio_uiserver.desktop",QStringList());
 		}
 
 		QByteArray data, ignore;
@@ -236,7 +237,7 @@ int KSSLSocket::messageBox( KIO::SlaveBase::MessageBoxType type, const QString &
 
 	if (!d->dcc->isApplicationRegistered("kio_uiserver"))
 	{
-		KApplication::startServiceByDesktopPath("kio_uiserver.desktop",QStringList());
+		KToolInvocation::startServiceByDesktopPath("kio_uiserver.desktop",QStringList());
 	}
 
 	d->dcc->call("kio_uiserver", "UIServer",

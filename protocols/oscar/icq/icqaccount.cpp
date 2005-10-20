@@ -21,7 +21,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kmdcodec.h>
 #include <kstandarddirs.h>
 

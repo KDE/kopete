@@ -52,7 +52,7 @@
 #include <klineeditdlg.h>
 #include <kmessagebox.h>
 #include <knotifyclient.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 
 #include <qlayout.h>
 #include <qtimer.h>

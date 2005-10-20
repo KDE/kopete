@@ -30,6 +30,7 @@
 #include "oscartypes.h"
 //Added by qt3to4:
 #include <Q3ValueList>
+#include <krandom.h>
 
 ChatServiceTask::ChatServiceTask( Task* parent, Oscar::WORD exchange, const QString& room )
 	: Task( parent )
@@ -59,8 +60,8 @@ void ChatServiceTask::onGo()
     kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending '" << m_message.text() << "' to the "
                              << m_room << " room" << endl;
     Buffer* b = new Buffer();
-    b->addDWord( KApplication::random() ); //use kapp since it's convenient
-    b->addDWord( KApplication::random() );
+    b->addDWord( KRandom::random() ); //use kapp since it's convenient
+    b->addDWord( KRandom::random() );
     b->addWord( 0x0003 ); //this be message channel 3 mateys! arrr!!
     b->addDWord( 0x00010000 ); //TLV 1 - this means it's a public message
     b->addDWord( 0x00060000 ); //TLV 6 - enables the server sending you your message back

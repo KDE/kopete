@@ -21,7 +21,7 @@
 #include <kconfig.h>
 #include <kdialogbase.h>
 #include <klocale.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kmessagebox.h>
 #include <kcodecs.h>
 

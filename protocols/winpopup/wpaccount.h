@@ -36,7 +36,7 @@
 #include "wpcontact.h"
 #include "wpaddcontact.h"
 
-class KPopupMenu;
+class KMenu;
 class KActionMenu;
 class KAction;
 class WPProtocol;

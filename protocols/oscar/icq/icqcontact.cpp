@@ -31,6 +31,7 @@
 #include <knotifyclient.h>
 #include <kpassivepopup.h>
 #include <kinputdialog.h>
+#include <krandom.h>
 
 #include "kopetechatsessionmanager.h"
 #include "kopeteuiglobal.h"
@@ -127,7 +128,7 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 		if ( !mAccount->engine()->hasIconConnection() )
 			mAccount->engine()->requestServerRedirect( 0x0010 );
 		
-		int time = ( KApplication::random() % 10 ) * 1000;
+		int time = ( KRandom::random() % 10 ) * 1000;
 		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating buddy icon in " << time/1000 << " seconds" << endl;
 		QTimer::singleShot( time, this, SLOT( requestBuddyIcon() ) );
 	}
@@ -169,7 +170,7 @@ void ICQContact::loggedIn()
 	     !m_requestingNickname )
 	{
 		m_requestingNickname = true;
-		int time = ( KApplication::random() % 20 ) * 1000;
+		int time = ( KRandom::random() % 20 ) * 1000;
 		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating nickname in " << time/1000 << " seconds" << endl;
 		QTimer::singleShot( time, this, SLOT( requestShortInfo() ) );
 	}

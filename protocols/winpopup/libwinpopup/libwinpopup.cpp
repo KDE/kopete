@@ -28,6 +28,7 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kfileitem.h>
+#include <ktoolinvocation.h>
 
 // Kopete Includes
 #include "kopeteuiglobal.h"
@@ -106,7 +107,7 @@ bool WinPopupLib::checkMessageDir()
 								     "Should the directory be created? (May need root password)"), QString::null, i18n("Create Directory"), i18n("Do Not Create"));
 		if (tmpYesNo == KMessageBox::Yes) {
 			QString kdesuArgs = "mkdir -p -m 0777 /var/lib/winpopup";
-			if (KApplication::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
+			if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
 		}
 	} else {
 		KFileItem tmpFileItem = KFileItem(KFileItem::Unknown, KFileItem::Unknown, "/var/lib/winpopup/");
@@ -121,7 +122,7 @@ bool WinPopupLib::checkMessageDir()
 									     "Fix? (May need root password)"), QString::null, i18n("Fix"), i18n("Do Not Fix"));
 			if (tmpYesNo == KMessageBox::Yes) {
 				QString kdesuArgs = "chmod 0777 /var/lib/winpopup";
-				if (KApplication::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
+				if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
 			}
 		} else {
 			return true;
@@ -277,7 +278,7 @@ void WinPopupLib::slotCheckForNewMessages()
 						if (tmpYesNo == KMessageBox::Yes) {
 							QFileInfo messageFileInfo(messageFile);
 							QString kdesuArgs = "chmod 0666 /var/lib/winpopup/" + messageFileInfo.fileName();
-							if (KApplication::kdeinitExecWait("kdesu", kdesuArgs) == 0) {
+							if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) {
 								if (!messageFile.remove())
 									KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Still cannot remove it; please fix manually."));
 							}

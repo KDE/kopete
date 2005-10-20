@@ -37,7 +37,7 @@
 #include "kopetecontactproperty.h"
 
 class YahooContact;
-class KPopupMenu;
+class KMenu;
 class KActionMenu;
 class KAction;
 namespace Kopete { class MetaContact; }
