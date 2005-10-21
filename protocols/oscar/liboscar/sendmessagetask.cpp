@@ -344,13 +344,8 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b, const QString& messag
 		b->addByte( m_message.messageType() );
 	
 	int messageFlags = 0x01; // Normal
-	if ( m_message.hasProperty( Oscar::Message::AutoResponse ) )
-	{
-		if ( m_message.hasProperty( Oscar::Message::StatusMessageRequest ) )
-			messageFlags = 0x03; // Auto message
-		else
-			messageFlags = 0x00; // nothing?
-	}
+	if ( m_message.hasProperty( Oscar::Message::StatusMessageRequest ) || m_message.hasProperty( Oscar::Message::AutoResponse ) )
+		messageFlags = 0x03; // Auto message. required for both requesting and sending status messages
 	b->addByte( messageFlags );
 	
 	// status code, priority:
