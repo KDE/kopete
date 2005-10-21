@@ -77,6 +77,8 @@ public:
 
 public slots:
 	void slotOpenInbox();
+	void slotMSNAlertLink(unsigned int action);
+	void slotMSNAlertUnwanted();
 
 signals:
 	void newContactList();
@@ -153,6 +155,7 @@ private:
 
 	MSNAccount *m_account;
 	QString m_password;
+	QStringList m_msnAlertURLs;
 
 	unsigned int mailCount;
 

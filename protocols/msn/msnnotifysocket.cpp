@@ -45,11 +45,11 @@
 #include <kconfig.h>
 #include <knotification.h>
 
-
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 
 #include <ctime>
+
 
 MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/, const QString &password )
 : MSNSocket( account )
@@ -683,6 +683,20 @@ void MSNNotifySocket::sslLoginSucceeded(QString ticket)
 	m_secureLoginHandler = 0L;
 }
 
+void MSNNotifySocket::slotMSNAlertUnwanted()
+{
+	// user not interested .. clean up the list of actions
+	m_msnAlertURLs.clear();
+}
+
+void MSNNotifySocket::slotMSNAlertLink(unsigned int action)
+{
+	// index into our action list and pull out the URL that was clicked ..
+	KURL tempURLForLaunch(m_msnAlertURLs[action-1]);
+	
+	KRun* urlToRun = new KRun(tempURLForLaunch);
+}
+
 void MSNNotifySocket::slotOpenInbox()
 {
 	sendCommand("URL", "INBOX" );
@@ -842,7 +856,6 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 			QDomNode msgDOM = msgElements.item(i);
 
 			QDomNodeList msgChildren = msgDOM.childNodes();
-			kdDebug ( 14140 ) << "children " << msgChildren.length() << endl;
 			for (uint i = 0 ; i < msgChildren.length() ; i++) {
 				QDomNode child = msgChildren.item(i);
 				QDomElement element = child.toElement();
@@ -879,10 +892,18 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 
 			}
 
-			kdDebug( 14140 ) << "subscString " << subscString << " actionString " << actionString << " textString " << textString << endl;
+//			kdDebug( 14140 ) << "subscString " << subscString << " actionString " << actionString << " textString " << textString << endl;
+			// build an internal list of actions ... we'll need to index into this list when we receive an event
+			QStringList actions;
+			actions.append(i18n("More Information"));
+			m_msnAlertURLs.append(actionString);
 
-			KNotification::event("msn_alert", textString);
-			
+			actions.append(i18n("Manage Subscription"));
+			m_msnAlertURLs.append(subscString);
+
+			KNotification* notification = KNotification::event("msn_alert", textString, 0L, 0L, actions);
+			QObject::connect(notification, SIGNAL(activated(unsigned int)), this, SLOT(slotMSNAlertLink(unsigned int)));
+			QObject::connect(notification, SIGNAL(closed()), this, SLOT(slotMSNAlertUnwanted()));
 		} // end for each MSG tag
 	}
 
@@ -1269,6 +1290,7 @@ Kopete::OnlineStatus MSNNotifySocket::convertOnlineStatus( const QString &status
 	else
 		return MSNProtocol::protocol()->UNK;
 }
+
 
 #include "msnnotifysocket.moc"
 
