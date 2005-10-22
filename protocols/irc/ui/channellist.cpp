@@ -190,7 +190,8 @@ ChannelList::ChannelList( QWidget* parent, KIRC::Engine *engine )
 	layout72_2->addWidget( mSearchButton );
 	ChannelListLayout->addLayout( layout72_2 );
 
-	mChannelList = new KListView( this, "mChannelList" );
+	mChannelList = new KListView( this );
+	mChannelList->setObjectName( "mChannelList" );
 	mChannelList->addColumn( i18n( "Channel" ) );
 	mChannelList->addColumn( i18n( "Users" ) );
 	mChannelList->header()->setResizeEnabled( FALSE, mChannelList->header()->count() - 1 );
