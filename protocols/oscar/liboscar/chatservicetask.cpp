@@ -181,7 +181,7 @@ void ChatServiceTask::parseRoomInfo()
         switch ( ( *it ).type )
         {
         case 0x006A:
-            m_room = QString( ( *it ).data );
+            m_internalRoom = QString( ( *it ).data );
             kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "room name: " << m_room << endl;
             break;
         case 0x006F:

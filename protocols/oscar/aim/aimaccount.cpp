@@ -584,7 +584,8 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
                 continue;
 
             if ( session->exchange() == message.exchange() &&
-                 session->roomName() == message.chatRoom() )
+                 Oscar::normalize( session->roomName() ) ==
+                 Oscar::normalize( message.chatRoom() ) )
             {
                 kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "found chat session for chat room" << endl;
                 Kopete::Contact* ocSender = contacts()[Oscar::normalize( message.sender() )];
