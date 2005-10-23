@@ -32,6 +32,7 @@ namespace Kopete
 {
 class Contact;
 class Group;
+class ChatSession;
 }
 
 class KAction;
@@ -66,7 +67,7 @@ private:
 	 * There has GOT to be a better way to get this away message
 	 */
 	QString m_lastAwayMessage;
-    QValueList<AIMChatSession*> m_chatRoomSessions;
+    QValueList<Kopete::ChatSession*> m_chatRoomSessions;
 
 
 };
@@ -87,7 +88,7 @@ public:
 	virtual void connectWithPassword( const QString &password );
 
 	void setUserProfile(const QString &profile);
-	
+
 public slots:
 	/** Reimplementation from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status, const QString& reason = QString::null );

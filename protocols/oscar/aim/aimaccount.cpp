@@ -89,23 +89,20 @@ Kopete::ChatSession* AIMMyselfContact::manager( Kopete::Contact::CanCreateFlags 
     AIMChatSession* session = dynamic_cast<AIMChatSession*>( genericManager );
 
     if ( !session && canCreate == Contact::CanCreate )
+    {
         session = new AIMChatSession( this, chatMembers, account()->protocol(), exchange, room );
+        session->setEngine( m_acct->engine() );
 
-    connect( session, SIGNAL( messageSent( Kopete::Message&, Kopete::ChatSession* ) ),
-             this, SLOT( sendMessage( Kopete::Message&, Kopete::ChatSession* ) ) );
-    connect( session, SIGNAL( closing( Kopete::ChatSession* ) ),
-             this, SLOT( chatSessionDestroyed( Kopete::ChatSession* ) ) );
-    m_chatRoomSessions.append( session );
+        connect( session, SIGNAL( messageSent( Kopete::Message&, Kopete::ChatSession* ) ),
+                 this, SLOT( sendMessage( Kopete::Message&, Kopete::ChatSession* ) ) );
+        m_chatRoomSessions.append( session );
+    }
     return session;
 }
 
 void AIMMyselfContact::chatSessionDestroyed( Kopete::ChatSession* session )
 {
-    //use sender, which is a bad idea, but oh well
-    AIMChatSession* s = dynamic_cast<AIMChatSession*>( session );
-    kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "removing " << s << endl;
-    m_chatRoomSessions.remove( s );
-    m_acct->engine()->disconnectChatRoom( s->exchange(), s->roomName() );
+    m_chatRoomSessions.remove( session );
 }
 
 void AIMMyselfContact::sendMessage( Kopete::Message& message, Kopete::ChatSession* session )
