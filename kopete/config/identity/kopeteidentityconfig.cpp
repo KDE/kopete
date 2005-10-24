@@ -427,9 +427,13 @@ void KopeteIdentityConfig::slotCopyIdentity()
 
 void KopeteIdentityConfig::slotRenameIdentity()
 {
-	QString renamedName = KInputDialog::getText(i18n("Rename Identity"), i18n("Identity name:"));
+	if(d->selectedIdentity.isNull())
+		return;
+	
+	bool ok;
+	QString renamedName = KInputDialog::getText(i18n("Rename Identity"), i18n("Identity name:") , d->selectedIdentity, &ok);
 
-	if(renamedName.isEmpty())
+	if(renamedName.isEmpty() || !ok)
 		return;
 
 	if(!GlobalIdentitiesManager::self()->isIdentityPresent(renamedName))
