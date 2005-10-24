@@ -27,6 +27,7 @@
 
 #include "ircaccount.h"
 #include "irccontactmanager.h"
+#include "ircusercontact.h"
 
 /***
 * IRC Signal handler. Mapps a KIRC engine signal to the right contact. Avoids
