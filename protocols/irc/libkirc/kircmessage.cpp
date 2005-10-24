@@ -393,7 +393,7 @@ void Message::dump() const
 */
 }
 /*
-EntityPtr Message::entityFromPrefix(KIRC::Engine *engine) const
+Entity::Ptr Message::entityFromPrefix(KIRC::Engine *engine) const
 {
 	if (d->prefix.isEmpty())
 		return engine->self();
@@ -401,7 +401,7 @@ EntityPtr Message::entityFromPrefix(KIRC::Engine *engine) const
 		return engine->getEntity(d->prefix);
 }
 
-EntityPtr Message::entityFromArg(KIRC::Engine *engine, size_t i) const
+Entity::Ptr Message::entityFromArg(KIRC::Engine *engine, size_t i) const
 {
 	return engine->getEntity(d->argList[i]);
 }

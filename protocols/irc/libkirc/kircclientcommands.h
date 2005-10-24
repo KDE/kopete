@@ -139,8 +139,8 @@ signals:
 	 */
 	// @param args the args to apply to this message.
 	void receivedMessage(	KIRC::MessageType type,
-				const KIRC::EntityPtr &from,
-				const KIRC::EntityPtrList &to,
+				const KIRC::Entity::Ptr &from,
+				const KIRC::Entity::List &to,
 				const QString &msg);
 
 private slots:

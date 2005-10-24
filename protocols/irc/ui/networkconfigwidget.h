@@ -23,8 +23,6 @@
 
 #include "ircnetwork.h"
 
-#include <qvaluelist.h>
-
 class IRCNetworkConfigWidget
 	: public NetworkConfig
 {
@@ -59,10 +57,8 @@ private:
 	void storeCurrentNetwork();
 	void storeCurrentHost();
 
-	QValueList<IRCNetwork> m_networks;
-
-	QString m_uiCurrentNetworkSelection;
-	QString m_uiCurrentHostSelection;
+	class Private;
+	Private * const d;
 };
 
 #endif

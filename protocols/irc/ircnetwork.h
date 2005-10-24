@@ -23,46 +23,51 @@
 #include <QList>
 #include <QObject>
 
-struct IRCHost
+namespace IRC
+{
+
+typedef struct
 {
 	QString host;
 	uint port;
 	QString password;
 	bool ssl;
-};
+} Host;
 
-typedef QList<IRCHost> IRCHostList;
-
-struct IRCNetwork
+typedef struct
 {
 	QString name;
 	QString description;
-	IRCHostList hosts;
-};
+	QList<Host> hosts;
+} Network;
 
-typedef QList<IRCNetwork> IRCNetworkList;
-/*
-class IRCNetworkList
+typedef QList<IRC::Network> NetworkList;
+
+class Networks
 	: public QObject
 {
 	Q_OBJECT
 
 private:
-	IRCNetworkList();
+	Networks();
+	~Networks();
 
 public:
-	static IRCNetworkList *self();
+	static IRC::Networks *self();
 
-	IRCNetworkList networks() const;
+	const IRC::NetworkList &networks() const;
 
 public slots:
 	bool slotReadNetworks();
-	bool slotSaveNetworkConfig();
+	bool slotSaveNetworkConfig() const;
 
 //	void addNetwork(const IRCNetwork &network);
 
 private:
-	IRCNetworkList m_networks;
+	class Private;
+	Private * const d;
 };
-*/
+
+}
+
 #endif

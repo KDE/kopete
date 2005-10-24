@@ -31,9 +31,7 @@
 // This is due to some changes of the message encoding with 14 arguments.(not very frequent :)
 // #define _IRC_STRICTNESS_
 
-#ifndef QByteArrayList
-#define QByteArrayList QList<QByteArray>
-#endif
+typedef QList<QByteArray> QByteArrayList;
 
 class QTextCodec;
 
@@ -136,8 +134,8 @@ public:
 	bool isNumeric() const;
 	void dump() const;
 
-//	KIRC::EntityPtr entityFromPrefix() const;
-//	KIRC::EntityPtr entityFromArg(size_t i) const;
+//	KIRC::Entity::Ptr entityFromPrefix() const;
+//	KIRC::Entity::Ptr entityFromArg(size_t i) const;
 
 	size_t argsSize() const;
 	QByteArray rawArg(size_t i) const;

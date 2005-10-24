@@ -20,6 +20,9 @@
 
 #include "kircconst.h"
 
+#include <ksharedptr.h>
+
+#include <QList>
 #include <QObject>
 
 class QTextCodec;
@@ -30,14 +33,17 @@ namespace KIRC
 class Engine;
 
 class Entity
-	: public QObject,
-	  public KShared
+	: public QObject
+	, public KShared
 {
 	Q_OBJECT
 
 //	Q_PROPERTY(QString modes READ modes write setModes)
 
 public:
+	typedef KSharedPtr<KIRC::Entity> Ptr;
+	typedef QList<KIRC::Entity::Ptr> List;
+
 	static KIRC::EntityType guessType(const QString &name);
 	static bool isChannel( const QString &name );
 	static bool isUser( const QString &name );
@@ -51,7 +57,7 @@ public: // Read attributes accessors
 	QString modes() const;
 	QString name() const;
 //	QString nick() const;
-//	QString topic() const;
+	QString topic() const;
 //	QString user() const;
 
 public slots: // Write attributes accessors

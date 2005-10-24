@@ -19,6 +19,7 @@
 #define KIRCSOCKET_H
 
 #include "kircconst.h"
+#include "kircentity.h"
 #include "kircmessage.h"
 
 #include <kbufferedsocket.h>
@@ -30,7 +31,6 @@ namespace KIRC
 {
 
 class CommandHandler;
-class Entity;
 class EntityManager;
 
 /**
@@ -73,14 +73,14 @@ public:
 
 	KIRC::CommandHandler *commandHandler();
 	KIRC::EntityManager *entityManager();
-	KIRC::Entity *owner();
+	KIRC::Entity::Ptr owner();
 
 public slots:
 	void setDefaultCodec(QTextCodec *codec);
 
 	void setCommandHandler(KIRC::CommandHandler *newCommandHandler);
 	void setEntityManager(KIRC::EntityManager *newEntityManager);
-	void setOwner(KIRC::Entity *newOwner);
+	void setOwner(const KIRC::Entity::Ptr &newOwner);
 
 	/**
 	 * @return true if the socket is got no error trying to establish the connection.

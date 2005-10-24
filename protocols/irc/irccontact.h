@@ -22,6 +22,8 @@
 
 #include "ircconst.h"
 
+#include "kircentity.h"
+
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
@@ -33,7 +35,6 @@ class IRCProtocol;
 namespace KIRC
 {
 class Client;
-class Entity;
 }
 
 namespace Kopete
@@ -56,7 +57,9 @@ class IRCContact
 	Q_OBJECT
 
 public:
-	IRCContact(IRCAccount *account, KIRC::Entity *entity,
+	typedef QList<IRCContact *> List;
+
+	IRCContact(IRCAccount *account, const KIRC::Entity::Ptr &entity,
 		Kopete::MetaContact *metac = 0, const QString& icon = QString::null);
 	~IRCContact();
 

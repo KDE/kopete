@@ -60,6 +60,15 @@
 
 using namespace Kopete;
 
+class IRCNetworkConfigWidget::Private
+{
+public:
+	QValueList<IRCNetwork> m_networks;
+
+	QString m_uiCurrentNetworkSelection;
+	QString m_uiCurrentHostSelection;
+};
+
 IRCNetworkConfigWidget::IRCNetworkConfigWidget(QWidget *parent, WFlags flags)
 	: NetworkConfig(parent, "network_config", flags)
 {

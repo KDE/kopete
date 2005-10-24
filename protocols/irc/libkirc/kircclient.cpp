@@ -55,9 +55,9 @@ public:
 	bool failedNickOnLogin;
 	bool useSSL;
 
-//	KIRC::EntityPtrList entities;
-	KIRC::EntityPtr server;
-//	KIRC::EntityPtr self; => owner
+//	KIRC::Entity::List entities;
+	KIRC::Entity::Ptr server;
+//	KIRC::Entity::Ptr self; => owner
 
 	QString versionString;
 	QString userString;
@@ -307,7 +307,7 @@ bool Client::invokeCtcpCommandOfMessage(const QMap<QString, MessageRedirector *>
 	return false;
 }
 */
-Entity *Client::server()
+Entity::Ptr Client::server()
 {
 	return d->server;
 }
@@ -323,6 +323,6 @@ void Client::receivedServerMessage(KIRC::Message &msg)
 
 void Client::receivedServerMessage(KIRC::Message &msg, const QString &message)
 {
-//	emit receivedMessage(InfoMessage, msg.prefix(), EntityPtrList(), message);
+//	emit receivedMessage(InfoMessage, msg.prefix(), Entity::List(), message);
 }
 

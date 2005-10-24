@@ -20,7 +20,6 @@
 #ifndef KIRCENGINE_H
 #define KIRCENGINE_H
 
-#include "kircentity.h"
 #include "kircsocket.h"
 #include "kirctransfer.h"
 
@@ -86,7 +85,7 @@ public:
 	void setUserString(const QString &userString);
 	void setSourceString(const QString &sourceString);
 
-	KIRC::Entity *server();
+	KIRC::Entity::Ptr server();
 
 public slots:
 	void away(bool isAway, const QString &awayMessage = QString::null);
@@ -139,8 +138,8 @@ signals:
 	 */
 	// @param args the args to apply to this message.
 	void receivedMessage(	KIRC::MessageType type,
-				const KIRC::EntityPtr &from,
-				const KIRC::EntityPtrList &to,
+				const KIRC::Entity::Ptr &from,
+				const KIRC::Entity::List &to,
 				const QString &msg);
 
 private slots:

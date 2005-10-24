@@ -18,9 +18,6 @@
 #ifndef KIRCCONST_H
 #define KIRCCONST_H
 
-#include <ksharedptr.h>
-
-#include <QList>
 #include <QRegExp>
 
 class QTextCodec;
@@ -139,11 +136,6 @@ namespace KIRC
 
 	// Static codecs
 	extern QTextCodec *UTF8;
-
-	// Some typdefs
-	class Entity;
-	typedef KSharedPtr<KIRC::Entity> EntityPtr;
-	typedef QList<KIRC::EntityPtr> EntityPtrList;
 }
 
 #endif

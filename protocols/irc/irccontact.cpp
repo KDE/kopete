@@ -22,6 +22,9 @@
 #include "ircprotocol.h"
 #include "ksparser.h"
 
+#include "kircclient.h"
+#include "kircentity.h"
+
 #include "kopetechatsessionmanager.h"
 #include "kopeteglobal.h"
 #include "kopeteuiglobal.h"
@@ -41,7 +44,7 @@ using namespace Kopete;
 class IRCContact::Private
 {
 public:
-	KIRC::EntityPtr entity;
+	KIRC::Entity::Ptr entity;
 
 	QMap<ChatSessionType, ChatSession *> chatSessions;
 
@@ -56,7 +59,7 @@ public:
 	QList<KAction *> userActions;
 };
 
-IRCContact::IRCContact(IRCAccount *account, KIRC::EntityPtr entity, MetaContact *metac, const QString& icon)
+IRCContact::IRCContact(IRCAccount *account, const KIRC::Entity::Ptr &entity, MetaContact *metac, const QString& icon)
 	: Contact(account, entity->name(), metac, icon),
 	  d (new IRCContact::Private)
 {
@@ -74,15 +77,15 @@ IRCContact::IRCContact(IRCAccount *account, KIRC::EntityPtr entity, MetaContact 
 	KIRC::Client *client = kircClient();
 
 	// ChatSessionManager stuff
-	mMyself.append( static_cast<Contact*>( this ) );
+//	mMyself.append( static_cast<Contact*>( this ) );
 
 	// KIRC stuff
-	connect(engine, SIGNAL(connectionStateChanged(KIRC::ConnectionState)),
+	connect(client, SIGNAL(connectionStateChanged(KIRC::ConnectionState)),
 		this, SLOT(updateStatus()));
-
+/*
 	connect(entity, SIGNAL(updated()),
 		this, SLOT(entityUpdated()));
-
+*/
 	entityUpdated();
 }
 
@@ -95,7 +98,6 @@ IRCContact::~IRCContact()
 	emit destroyed(this);
 
 	delete d;
-	d = 0;
 }
 
 void IRCContact::deleteContact()
@@ -168,19 +170,20 @@ void IRCContact::entityUpdated()
 
 QString IRCContact::caption() const
 {
-	QString ret = QString::fromLatin1("%1 @ %2")
-		.arg(d->entity->nickName) // nickName
+	QString caption = QString::fromLatin1("%1 @ %2")
+		.arg(d->entity->name()) // nickName
 		.arg(ircAccount()->networkName());
 
-	if(!mTopic.isEmpty())
-		ret.append( QString::fromLatin1(" - %1").arg(Kopete::Message::unescape(mTopic)) );
+	QString topic = d->entity->topic();
+	if(!topic.isEmpty())
+		caption.append( QString::fromLatin1(" - %1").arg(Kopete::Message::unescape(topic)) );
 
-	return cap;
+	return caption;
 }
 
 void IRCContact::updateStatus()
 {
-	setOnlineStatus(IRCProtocol::self()->onlineStatusFor(d->entity->status()));
+	setOnlineStatus(IRCProtocol::self()->onlineStatusFor(d->entity));
 }
 
 bool IRCContact::isReachable()
@@ -379,12 +382,14 @@ bool IRCContact::isChatting(ChatSession *avoid) const
 
 	foreach (ChatSession *chatSession, ChatSessionManager::self()->sessions())
 	{
+/*
 		if( chatSession != avoid &&
 			chatSession->account() == account &&
 			chatSession->members().contains(this) )
 		{
 			return true;
 		}
+*/
 	}
 	return false;
 }

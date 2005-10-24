@@ -179,13 +179,13 @@ void Engine::mode(Message &msg)
 	QStringList args = msg.argList();
 	args.pop_front();
 /*
-	EntityPtr *fromEntity = msg.entityFromPrefix();
-	EntityPtr *toEntity = msg.entityFromArg(0)
+	Entity::Ptr *fromEntity = msg.entityFromPrefix();
+	Entity::Ptr *toEntity = msg.entityFromArg(0)
 
 	emit receivedMessage(
 		Info,
 		fromEntity,
-		KIRC::EntityPtrList::null,
+		KIRC::Entity::List::null,
 		i18n(""));
 
 	toEntity->setModes(args.join(" "));
@@ -236,7 +236,7 @@ void Engine::nick(Message &msg)
 	emit receivedMessage(
 		InfoMessage,
 		msg.entityFromPrefix(),
-		KIRC::EntityPtrList::null,
+		KIRC::Entity::List::null,
 		message);
 
 	fromEntity->rename();
@@ -1064,7 +1064,7 @@ void Engine::numericReply_303(Message &msg)
 void Engine::numericReply_305(Message &msg)
 {
 /*
-	EntityPtr self = this->self();
+	Entity::Ptr self = this->self();
 	self->setAwayMessage(QString::null);
 //	self->setModes("-a");
 	receivedServerMessage(msg, i18n("You are no longer marked as being away."));
@@ -1076,7 +1076,7 @@ void Engine::numericReply_305(Message &msg)
  */
 void Engine::numericReply_306(Message &msg)
 {
-	EntityPtr self = this->self();
+	Entity::Ptr self = this->self();
 //	self->setModes("+a");
 	receivedServerMessage(msg, i18n("You have been marked as being away."));
 }

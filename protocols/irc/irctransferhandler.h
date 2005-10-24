@@ -18,8 +18,6 @@
 #ifndef IRCTRANSFERHANDLER_H
 #define IRCTRANSFERHANDLER_H
 
-#include <qintdict.h>
-
 #include <kopetetransfermanager.h>
 
 namespace Kopete
@@ -59,7 +57,7 @@ private:
 
 	KIRC::TransferHandler *handler();
 
-	QIntDict<KIRC::Transfer> m_idMap;
+//	QIntDict<KIRC::Transfer> m_idMap;
 };
 
 #endif

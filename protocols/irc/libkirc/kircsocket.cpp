@@ -48,7 +48,8 @@ public:
 	KIRC::Socket::ConnectionState state;
 
 	QTextCodec *defaultCodec;
-	KIRC::EntityPtr owner;
+
+	KIRC::Entity::Ptr owner;
 };
 
 Socket::Socket(QObject *parent)
@@ -84,12 +85,12 @@ void Socket::setDefaultCodec(QTextCodec *codec)
 	codec = d->defaultCodec;
 }
 
-Entity *Socket::owner()
+Entity::Ptr Socket::owner()
 {
 	return d->owner;
 }
 
-void Socket::setOwner(Entity *newOwner)
+void Socket::setOwner(const Entity::Ptr &newOwner)
 {
 	d->owner = newOwner;
 }

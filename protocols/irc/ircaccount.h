@@ -22,6 +22,8 @@
 
 #include "ircnetwork.h"
 
+#include "kircsocket.h"
+
 #include "kopetepasswordedaccount.h"
 
 class IRCContact;
@@ -30,7 +32,6 @@ class IRCProtocol;
 namespace KIRC
 {
 class Client;
-class Entity;
 }
 
 namespace Kopete
@@ -135,8 +136,8 @@ public:
 
 	Kopete::ChatSession *currentCommandSource();
 
-	IRCContact *getContact(const QString &name, Kopete::MetaContact *metac=0);
-	IRCContact *getContact(KIRC::Entity *entity, Kopete::MetaContact *metac=0);
+	IRCContact *getContact(const QByteArray &name, Kopete::MetaContact *metac=0);
+	IRCContact *getContact(const KIRC::Entity::Ptr &entity, Kopete::MetaContact *metac=0);
 
 	virtual bool isConnected();
 
@@ -170,15 +171,15 @@ protected:
 	virtual bool createContact( const QString &contactId, Kopete::MetaContact *parentContact ) ;
 
 private slots:
-//	void engineConnectionStateChanged(KIRC::Socket::ConnectionState newstate);
+	void clientConnectionStateChanged(KIRC::Socket::ConnectionState newstate);
 
 	void destroyed(IRCContact *contact);
-/*
+
 	void receivedMessage(	KIRC::MessageType type,
-				const KIRC::EntityPtr &from,
-				const KIRC::EntityPtrList &to,
+				const KIRC::Entity::Ptr &from,
+				const KIRC::Entity::List &to,
 				const QString &msg);
-*/
+
 	void slotPerformOnConnectCommands();
 
 	void slotShowServerWindow();

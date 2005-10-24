@@ -4,14 +4,11 @@
    This program is free software; you can redistribute it and/or
    modify it under the terms of the Artistic License.
 */
-#ifndef __ksparser_h__
-#define __ksparser_h__
+#ifndef KSPARSER_H
+#define KSPARSER_H
 
-#include <qcolor.h>
-#include <qmap.h>
-#include <qregexp.h>
-#include <qstring.h>
-#include <qstack.h>
+#include <QColor>
+#include <QString>
 
 /*
  * Helper class to parse IRC color/style codes and convert them to
@@ -24,12 +21,11 @@
  */
 namespace KSParser
 {
-public:
-	static QCString parse(const QCString &);
-	static int colorForHTML( const QString &html );
+	QString parse(QString);
+	int colorForHTML(const QString &html);
 
-	static QColor ircColor(const QString &color);
-	static QColor ircColor(unsigned int color);
+	QColor ircColor(const QString &color);
+	QColor ircColor(unsigned int color);
 };
 
 #endif

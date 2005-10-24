@@ -22,9 +22,7 @@
 #include "kopeteprotocol.h"
 #include "kopetemimetypehandler.h"
 
-#include "kircentity.h"
-
-#include <dom/dom_node.h>
+//#include <dom/dom_node.h>
 
 #include <QMap>
 
@@ -85,7 +83,7 @@ public:
 
 	virtual QList<KAction *> *customChatWindowPopupActions(const Kopete::Message &, DOM::Node &);
 
-	Kopete::OnlineStatus onlineStatusFor(const KIRC::Entity *entity);
+	Kopete::OnlineStatus onlineStatusFor(const KIRC::Entity::Ptr &entity);
 
 	bool commandInProgress(){ return m_commandInProgress; }
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }
@@ -106,7 +104,6 @@ private slots:
 
 private:
 	void initOnlineStatus();
-//	Kopete::OnlineStatus onlineStatusFor(const KIRC::EntityStatus &status, unsigned categories);
 	void simpleModeChange(const QString &, Kopete::ChatSession *, const QString &mode);
 
 	static IRCProtocol *s_protocol;
@@ -115,7 +112,7 @@ private:
 //	const Kopete::OnlineStatus m_connecting;
 	const Kopete::OnlineStatus m_StatusUnknown;
 
-	DOM::Node activeNode;
+//	DOM::Node activeNode;
 	IRCAccount *activeAccount;
 
 	bool m_commandInProgress;

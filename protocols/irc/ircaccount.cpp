@@ -24,6 +24,7 @@
 #include "ircprotocol.h"
 
 #include "kircclient.h"
+#include "kircentitymanager.h"
 
 #include "kopeteaccountmanager.h"
 #include "kopeteaway.h"
@@ -68,7 +69,7 @@ public:
 	QString autoConnect;
 
 	KIRC::Client *client;
-	IRCNetwork network;
+	IRC::Network network;
 	uint currentHost;
 
 	QList<IRCContact *> contacts;
@@ -96,10 +97,10 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 	d->currentHost = 0;
 
 	QObject::connect(d->client, SIGNAL(connectionStateChanged(KIRC::ConnectionState)),
-			 this, SLOT(engineConnectionStateChanged(KIRC::ConnectionState)));
+			 this, SLOT(clientConnectionStateChanged(KIRC::ConnectionState)));
 
-	QObject::connect(d->client, SIGNAL(receivedMessage(KIRC::MessageType, const KIRC::EntityPtr &, const KIRC::EntityPtrList &, const QString &)),
-			 this, SLOT(receivedMessage(KIRC::MessageType, const KIRC::EntityPtr &, const KIRC::EntityPtrList &, const QString &)));
+	QObject::connect(d->client, SIGNAL(receivedMessage(KIRC::MessageType, const KIRC::Entity::Ptr &, const KIRC::Entity::List &, const QString &)),
+			 this, SLOT(receivedMessage(KIRC::MessageType, const KIRC::Entity::Ptr &, const KIRC::Entity::List &, const QString &)));
 
 //	loadProperties();
 
@@ -439,6 +440,7 @@ KActionMenu *IRCAccount::actionMenu()
 	mActionMenu->popupMenu()->insertSeparator();
 	mActionMenu->insert(d->joinChannelAction);
 	mActionMenu->insert(d->searchChannelAction);
+/*
 	mActionMenu->insert( new KAction ( i18n("Show Server Window"), QString::null, 0, this, SLOT(slotShowServerWindow()), mActionMenu ) );
 
 //	if (d->client->isConnected() && d->client->useSSL())
@@ -446,7 +448,7 @@ KActionMenu *IRCAccount::actionMenu()
 		mActionMenu->insert( new KAction ( i18n("Show Security Information"), "", 0, d->client,
 			SLOT(showInfoDialog()), mActionMenu ) );
 	}
-
+*/
 	return mActionMenu;
 }
 
@@ -455,8 +457,8 @@ void IRCAccount::connectWithPassword(const QString &password)
 	d->client->setPassword(password);
 	clientConnect();
 }
-
-void IRCAccount::engineConnectionStateChanged(KIRC::ConnectionState newstate)
+/*
+void IRCAccount::clientConnectionStateChanged(KIRC::ConnectionState newstate)
 {
 	kdDebug(14120) << k_funcinfo << endl;
 
@@ -502,7 +504,7 @@ void IRCAccount::engineConnectionStateChanged(KIRC::ConnectionState newstate)
 //		break;
 	}
 }
-/*
+
 // Put that in error handling
 void IRCAccount::slotFailedServerPassword()
 {
@@ -517,12 +519,12 @@ void IRCAccount::slotPerformOnConnectCommands()
 	if (!manager)
 		return;
 
-	if (!d->autoConnect.isEmpty())
-		CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/join %1").arg(d->autoConnect), manager);
+//	if (!d->autoConnect.isEmpty())
+//		CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/join %1").arg(d->autoConnect), manager);
 
 	QStringList commands(connectCommands());
-	for (QStringList::Iterator it=commands.begin(); it != commands.end(); ++it)
-		CommandHandler::commandHandler()->processMessage(*it, manager);
+//	for (QStringList::Iterator it=commands.begin(); it != commands.end(); ++it)
+//		CommandHandler::commandHandler()->processMessage(*it, manager);
 }
 
 void IRCAccount::quit( const QString &quitMessage )
@@ -588,9 +590,9 @@ bool IRCAccount::createContact(const QString &contactId, MetaContact *metac)
 		);
 
 		return false;
-	}*/
+	}
 	IRCContact *contact = getContact(contactId, metac);
-/*
+
 	if (contact->metaContact() != metac )
 	{//This should NEVER happen
 		MetaContact *old = contact->metaContact();
@@ -599,9 +601,9 @@ bool IRCAccount::createContact(const QString &contactId, MetaContact *metac)
 		if (children.isEmpty())
 			ContactList::self()->removeMetaContact( old );
 	}
-	else */ if (contact->metaContact()->isTemporary())
+	else if (contact->metaContact()->isTemporary())
 		metac->setTemporary(false);
-
+*/
 	return true;
 }
 
@@ -639,13 +641,13 @@ IRCContact *IRCAccount::mySelf() const
 	return d->self;
 }
 
-IRCContact *IRCAccount::getContact(const QString &name, MetaContact *metac)
+IRCContact *IRCAccount::getContact(const QByteArray &name, MetaContact *metac)
 {
 	kdDebug(14120) << k_funcinfo << name << endl;
-	return getContact(d->client->getEntity(name), metac);
+	return getContact(d->client->entityManager()->entityByName(name), metac);
 }
 
-IRCContact *IRCAccount::getContact(KIRC::EntityPtr entity, MetaContact *metac)
+IRCContact *IRCAccount::getContact(const KIRC::Entity::Ptr &entity, MetaContact *metac)
 {
 	IRCContact *contact = 0;
 
@@ -669,12 +671,12 @@ void IRCAccount::destroyed(IRCContact *contact)
 
 void IRCAccount::receivedMessage(
 		KIRC::MessageType type,
-		const KIRC::EntityPtr &from,
-		const KIRC::EntityPtrList &to,
+		const KIRC::Entity::Ptr &from,
+		const KIRC::Entity::List &to,
 		const QString &message)
 {
 	IRCContact *fromContact = getContact(from);
-	IRCContact *toContact = getContact(to);
+//	IRCContact::List toContacts = getContacts(to);
 //	IRCContact *postContact = toContact;
 /*
 	Kopete::Message::Direction msgDirection =

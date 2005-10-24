@@ -25,26 +25,38 @@
 #include <qdom.h>
 #include <qfile.h>
 
-IRCNetworkList::IRCNetworkList()
+class IRC::Networks::Private {
+public:
+	IRC::NetworkList networks;
+};
+
+using namespace IRC;
+
+Networks::Networks()
+	: d(0)
 {
 	slotReadNetworks();
 }
 
-IRCNetworkList *IRCNetworkList::self()
+Networks::~Networks()
 {
-	static IRCNetworkList *s_self = new IRCNetworkList();
-
-	return s_self;
+//	delete d;
 }
 
-QValueList<IRCNetwork> IRCNetworkList::networks() const
+Networks *Networks::self()
 {
-	return m_networks;
+	static Networks *self = new IRC::Networks;
+	return self;
 }
 
-bool IRCNetworkList::slotReadNetworks()
+const NetworkList &Networks::networks() const
 {
-	m_networks.clear();
+	return d->networks;
+}
+
+bool Networks::slotReadNetworks()
+{
+	d->networks.clear();
 
 	QFile xmlFile( locate( "appdata", "ircnetworks.xml" ) );
 	xmlFile.open( IO_ReadOnly );
@@ -54,21 +66,21 @@ bool IRCNetworkList::slotReadNetworks()
 	QDomElement networkNode = doc.documentElement().firstChild().toElement();
 	while( !networkNode.isNull () )
 	{
-		IRCNetwork net;
+		Network network;
 
 		QDomElement networkChild = networkNode.firstChild().toElement();
 		while( !networkChild.isNull() )
 		{
 			if( networkChild.tagName() == "name" )
-				net.name = networkChild.text();
+				network.name = networkChild.text();
 			else if( networkChild.tagName() == "description" )
-				net.description = networkChild.text();
+				network.description = networkChild.text();
 			else if( networkChild.tagName() == "servers" )
 			{
 				QDomElement server = networkChild.firstChild().toElement();
 				while( !server.isNull() )
 				{
-					IRCHost host;
+					Host host;
 
 					QDomElement serverChild = server.firstChild().toElement();
 					while( !serverChild.isNull() )
@@ -83,22 +95,22 @@ bool IRCNetworkList::slotReadNetworks()
 						serverChild = serverChild.nextSibling().toElement();
 					}
 
-					net.hosts.append( host );
-//					m_hosts.insert( host->host, host );
+					network.hosts.append( host );
+//					d->hosts.insert( host->host, host );
 					server = server.nextSibling().toElement();
 				}
 			}
 			networkChild = networkChild.nextSibling().toElement();
 		}
 
-		m_networks.append(net);
+		d->networks.append(network);
 		networkNode = networkNode.nextSibling().toElement();
 	}
 
 	xmlFile.close();
 }
 
-bool IRCNetworkList::slotSaveNetworkConfig()
+bool Networks::slotSaveNetworkConfig() const
 {
 /*
 	// store any changes in the UI
@@ -109,10 +121,8 @@ bool IRCNetworkList::slotSaveNetworkConfig()
 	QDomDocument doc("irc-networks");
 	QDomNode root = doc.appendChild( doc.createElement("networks") );
 
-	for( QDictIterator<IRCNetwork> it( m_networks ); it.current(); ++it )
+	foreach(const Network &network, d->networks)
 	{
-		IRCNetwork *net = it.current();
-
 		QDomNode networkNode = root.appendChild( doc.createElement("network") );
 		QDomNode nameNode = networkNode.appendChild( doc.createElement("name") );
 		nameNode.appendChild( doc.createTextNode( net->name ) );
@@ -122,7 +132,7 @@ bool IRCNetworkList::slotSaveNetworkConfig()
 
 		QDomNode serversNode = networkNode.appendChild( doc.createElement("servers") );
 
-		for( QValueList<IRCHost*>::iterator it2 = net->hosts.begin(); it2 != net->hosts.end(); ++it2 )
+		foreach(const Host &host, network.host)
 		{
 			QDomNode serverNode = serversNode.appendChild( doc.createElement("server") );
 
@@ -152,7 +162,7 @@ bool IRCNetworkList::slotSaveNetworkConfig()
 	return false;
 }
 /*
-void IRCNetworkList::addNetwork( IRCNetwork *network )
+void Networks::addNetwork( IRCNetwork *network )
 {
 	m_networks.insert( network->name, network );
 //	slotSaveNetworkConfig();
