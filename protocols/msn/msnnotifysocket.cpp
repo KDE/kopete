@@ -30,7 +30,6 @@
 
 #include <qdatetime.h>
 #include <qregexp.h>
-#include <qdom.h>
 
 #include <kdebug.h>
 #include <kdeversion.h>
@@ -649,11 +648,6 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		KRun::runURL( KURL::fromPathOrURL( tmpMailFile.name() ), "text/html" , true );
 
 	}
-	else if ( cmd == "NOT" )
-	{
-		kdDebug( 14140 ) << k_funcinfo << "Received NOT command, issueing read block for '" << id << " more bytes" << endl;
-		readBlock( id );		
-	}	
 	else
 	{
 		// Let the base class handle the rest
@@ -822,21 +816,6 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 			m_localIP = rx.cap(1);
 		}
 	}
-	else if (msg.contains("NOTIFICATION"))
-	{
-		// MSN alert (i.e. NOTIFICATION) [for docs see http://www.hypothetic.org/docs/msn/client/notification.php]
-		// format of msg is as follows:
-		//
-		// <NOTIFICATION ver="2" id="1342902633" siteid="199999999" siteurl="http://alerts.msn.com">
-		// <TO pid="0x0006BFFD:0x8582C0FB" name="example@passport.com"/>
-		// <MSG pri="1" id="1342902633">
-		// 	<SUBSCR url="http://g.msn.com/3ALMSNTRACKING/199999999ToastChange?http://alerts.msn.com/Alerts/MyAlerts.aspx?strela=1"/>
-		// 	<ACTION url="http://g.msn.com/3ALMSNTRACKING/199999999ToastAction?http://alerts.msn.com/Alerts/MyAlerts.aspx?strela=1"/>
-		// 	<BODY lang="3076" icon="">
-		// 		<TEXT>utf8-encoded text</TEXT>
-		//	</BODY>
-		// </MSG>
-		// </NOTIFICATION>
 
 		// MSN sends out badly formed XML .. fix it for them (thanks MS!)
 		QString notificationDOMAsString(msg);
@@ -856,7 +835,8 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 			QDomNode msgDOM = msgElements.item(i);
 
 			QDomNodeList msgChildren = msgDOM.childNodes();
-			for (uint i = 0 ; i < msgChildren.length() ; i++) {
+			for (uint i = 0 ; i < msgChildren.length() ; i++)
+			{
 				QDomNode child = msgChildren.item(i);
 				QDomElement element = child.toElement();
 				if (element.tagName() == "SUBSCR")
@@ -888,12 +868,10 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 						textString = textElement.text();
 					}
 				}
-
-
 			}
 
-//			kdDebug( 14140 ) << "subscString " << subscString << " actionString " << actionString << " textString " << textString << endl;
-			// build an internal list of actions ... we'll need to index into this list when we receive an event
+			//kdDebug( 14140 ) << "subscString " << subscString << " actionString " << actionString << " textString " << textString << endl;
+			//build an internal list of actions ... we'll need to index into this list when we receive an event
 			QStringList actions;
 			actions.append(i18n("More Information"));
 			m_msnAlertURLs.append(actionString);
@@ -905,11 +883,10 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 			QObject::connect(notification, SIGNAL(activated(unsigned int)), this, SLOT(slotMSNAlertLink(unsigned int)));
 			QObject::connect(notification, SIGNAL(closed()), this, SLOT(slotMSNAlertUnwanted()));
 		} // end for each MSG tag
-	}
 
 	if(!m_configFile.isNull())
 	{
-		// TODO Get client features.
+		//TODO Get client features.
 	}
 
 	if(!m_tmpLastHandle.isNull())
