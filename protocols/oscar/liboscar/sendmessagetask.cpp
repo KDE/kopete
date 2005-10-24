@@ -60,7 +60,7 @@ void SendMessageTask::onGo()
 		// Check Message to see what SNAC to use
 		int snacSubfamily = 0x0006;
 		if ( ( m_message.type() == 2 ) && m_message.hasProperty( Oscar::Message::AutoResponse ) )
-		{ // read: automated response to a status message request
+		{ // an auto response is send for ack of channel 2 messages
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending SNAC 0x0B instead of 0x06 " << endl;
 			snacSubfamily = 0x000B;
 		}
@@ -344,8 +344,10 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b, const QString& messag
 		b->addByte( m_message.messageType() );
 	
 	int messageFlags = 0x01; // Normal
-	if ( m_message.hasProperty( Oscar::Message::StatusMessageRequest ) || m_message.hasProperty( Oscar::Message::AutoResponse ) )
+	if ( m_message.hasProperty( Oscar::Message::StatusMessageRequest ) )
 		messageFlags = 0x03; // Auto message. required for both requesting and sending status messages
+	else if ( m_message.hasProperty( Oscar::Message::AutoResponse ) )
+		messageFlags = 0x00; // A regular type 2 msg ack requires 0x00 here...
 	b->addByte( messageFlags );
 	
 	// status code, priority:
