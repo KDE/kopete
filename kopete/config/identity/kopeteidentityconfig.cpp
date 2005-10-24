@@ -401,8 +401,13 @@ void KopeteIdentityConfig::slotUpdateCurrentIdentity(const QString &selectedIden
 	
 void KopeteIdentityConfig::slotNewIdentity()
 {
-	QString newIdentityName = KInputDialog::getText(i18n("New Identity"), i18n("Identity name:"));
+	bool ok;
+	QString newIdentityName = KInputDialog::getText(i18n("New Identity"), i18n("Identity name:") , QString::null , &ok);
+	
+	if(newIdentityName.isEmpty() || !ok)
+		return;
 
+	
 	GlobalIdentitiesManager::self()->createNewIdentity(newIdentityName);
 
 	slotUpdateCurrentIdentity(newIdentityName);
@@ -411,7 +416,13 @@ void KopeteIdentityConfig::slotNewIdentity()
 
 void KopeteIdentityConfig::slotCopyIdentity()
 {
-	QString copyName = KInputDialog::getText(i18n("Copy Identity"), i18n("Identity name:"));
+	bool ok;
+	QString copyName = KInputDialog::getText(i18n("Copy Identity"), i18n("Identity name:") , QString::null, &ok);
+	
+	if(copyName.isEmpty() || !ok)
+		return;
+
+	
 	if(!GlobalIdentitiesManager::self()->isIdentityPresent(copyName))
 	{
 		GlobalIdentitiesManager::self()->copyIdentity(copyName, d->selectedIdentity);
