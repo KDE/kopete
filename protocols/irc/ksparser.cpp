@@ -165,11 +165,9 @@ QCString KSParser::_parse(const QCString &message)
 	chars += toAppend.length();
 	buff.writeBlock( toAppend.latin1(), toAppend.length() );
 
-	char* result = (char*)malloc(chars+1);
-	memcpy( result, buff.buffer(), chars );
-	result[chars] = '\0';
+	data[chars] = '\0';
 
-	return result;
+	return data;
 }
 
 QString KSParser::pushTag(const QString &tag, const QString &attributes)
