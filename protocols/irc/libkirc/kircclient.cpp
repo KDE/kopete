@@ -1,5 +1,5 @@
 /*
-    kircengine.cpp - IRC Client
+    kircclient.cpp - IRC Client
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003-2005 by Michel Hermier <michel.hermier@wanadoo.fr>

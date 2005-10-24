@@ -17,8 +17,8 @@
     *************************************************************************
 */
 
-#ifndef KIRCENGINE_H
-#define KIRCENGINE_H
+#ifndef KIRCCLIENT_H
+#define KIRCCLIENT_H
 
 #include "kircsocket.h"
 #include "kirctransfer.h"
@@ -87,41 +87,6 @@ public:
 
 	KIRC::Entity::Ptr server();
 
-public slots:
-	void away(bool isAway, const QString &awayMessage = QString::null);
-//	void invite();
-	void ison(const QStringList &nickList);
-	void join(const QString &name, const QString &key);
-	void kick(const QString &user, const QString &channel, const QString &reason);
-	void list();
-	void mode(const QString &target, const QString &mode);
-	void motd(const QString &server = QString::null);
-	void nick(const QString &newNickname);
-	void notice(const QString &target, const QString &message);
-	void part(const QString &name, const QString &reason);
-	void pass(const QString &password);
-	void privmsg(const QString &contact, const QString &message);
-
-	/**
-	 * Send a quit message for the given reason.
-	 * If now is set to true the connection is closed and no event message is sent.
-	 * Therefore setting now to true should only be used while destroying the object.
-	 */
-	void quit(const QString &reason, bool now=false);
-
-	void topic(const QString &channel, const QString &topic);
-	void user(const QString &newUsername, const QString &hostname, const QString &newRealname);
-	void user(const QString &newUsername, Q_UINT8 mode, const QString &newRealname);
-	void whois(const QString &user);
-
-
-	/* CTCP commands */
-	void CtcpRequestCommand(const QString &contact, const QString &command);
-	void CtcpRequest_action(const QString &contact, const QString &message);
-	void CtcpRequest_dcc(const QString &, const QString &, unsigned int port, KIRC::Transfer::Type type);
-	void CtcpRequest_ping(const QString &target);
-	void CtcpRequest_version(const QString &target);
-
 signals:
 	/**
 	 * Emit a received message.
@@ -152,89 +117,6 @@ private slots:
 	void ignoreMessage(KIRC::Message &msg);
 	void receivedServerMessage(KIRC::Message &msg); // emit the suffix of the message.
 	void receivedServerMessage(KIRC::Message &msg, const QString &message);
-
-	void error(KIRC::Message &msg);
-	void join(KIRC::Message &msg);
-	void kick(KIRC::Message &msg);
-	void mode(KIRC::Message &msg);
-	void nick(KIRC::Message &msg);
-	void notice(KIRC::Message &msg);
-	void part(KIRC::Message &msg);
-	void ping(KIRC::Message &msg);
-	void pong(KIRC::Message &msg);
-	void privmsg(KIRC::Message &msg);
-//	void squit(KIRC::Message &msg);
-	void quit(KIRC::Message &msg);
-	void topic(KIRC::Message &msg);
-
-	void numericReply_001(KIRC::Message &msg);
-	void numericReply_002(KIRC::Message &msg);
-	void numericReply_003(KIRC::Message &msg);
-	void numericReply_004(KIRC::Message &msg);
-	void numericReply_005(KIRC::Message &msg);
-	void numericReply_250(KIRC::Message &msg);
-	void numericReply_251(KIRC::Message &msg);
-	void numericReply_252(KIRC::Message &msg);
-	void numericReply_253(KIRC::Message &msg);
-	void numericReply_254(KIRC::Message &msg);
-	void numericReply_255(KIRC::Message &msg);
-	void numericReply_263(KIRC::Message &msg);
-	void numericReply_265(KIRC::Message &msg);
-	void numericReply_266(KIRC::Message &msg);
-	void numericReply_301(KIRC::Message &msg);
-	void numericReply_303(KIRC::Message &msg);
-	void numericReply_305(KIRC::Message &msg);
-	void numericReply_306(KIRC::Message &msg);
-	void numericReply_307(KIRC::Message &msg);
-	void numericReply_311(KIRC::Message &msg);
-	void numericReply_312(KIRC::Message &msg);
-	void numericReply_313(KIRC::Message &msg);
-	void numericReply_314(KIRC::Message &msg);
-	void numericReply_315(KIRC::Message &msg);
-	void numericReply_317(KIRC::Message &msg);
-	void numericReply_318(KIRC::Message &msg);
-	void numericReply_319(KIRC::Message &msg);
-	void numericReply_320(KIRC::Message &msg);
-	void numericReply_322(KIRC::Message &msg);
-	void numericReply_323(KIRC::Message &msg);
-	void numericReply_324(KIRC::Message &msg);
-	void numericReply_328(KIRC::Message &msg);
-	void numericReply_329(KIRC::Message &msg);
-	void numericReply_331(KIRC::Message &msg);
-	void numericReply_332(KIRC::Message &msg);
-	void numericReply_333(KIRC::Message &msg);
-	void numericReply_352(KIRC::Message &msg);
-	void numericReply_353(KIRC::Message &msg);
-	void numericReply_366(KIRC::Message &msg);
-	void numericReply_369(KIRC::Message &msg);
-	void numericReply_372(KIRC::Message &msg);
-	void numericReply_376(KIRC::Message &msg);
-
-	void numericReply_401(KIRC::Message &msg);
-	void numericReply_404(KIRC::Message &msg);
-	void numericReply_406(KIRC::Message &msg);
-	void numericReply_422(KIRC::Message &msg);
-	void numericReply_433(KIRC::Message &msg);
-	void numericReply_442(KIRC::Message &msg);
-	void numericReply_464(KIRC::Message &msg);
-	void numericReply_471(KIRC::Message &msg);
-	void numericReply_473(KIRC::Message &msg);
-	void numericReply_474(KIRC::Message &msg);
-	void numericReply_475(KIRC::Message &msg);
-
-	void CtcpQuery_action(KIRC::Message &msg);
-	void CtcpQuery_clientinfo(KIRC::Message &msg);
-	void CtcpQuery_finger(KIRC::Message &msg);
-	void CtcpQuery_dcc(KIRC::Message &msg);
-	void CtcpQuery_ping(KIRC::Message &msg);
-	void CtcpQuery_source(KIRC::Message &msg);
-	void CtcpQuery_time(KIRC::Message &msg);
-	void CtcpQuery_userinfo(KIRC::Message &msg);
-	void CtcpQuery_version(KIRC::Message &msg);
-
-	void CtcpReply_errmsg(KIRC::Message &msg);
-	void CtcpReply_ping(KIRC::Message &msg);
-	void CtcpReply_version(KIRC::Message &msg);
 
 private:
 	Q_DISABLE_COPY(Client)

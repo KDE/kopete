@@ -110,29 +110,29 @@ namespace KIRC
 	extern const QRegExp sm_RemoveLinefeeds;
 
 	// Static strings
-	extern const char *AWAY;
-	extern const char *ERROR;
-	extern const char *INVITE;
-	extern const char *ISON;
-	extern const char *JOIN;
-	extern const char *KICK;
-	extern const char *LIST;
-	extern const char *MODE;
-	extern const char *MOTD;
-	extern const char *NICK;
-	extern const char *NOTICE;
-	extern const char *PART;
-	extern const char *PASS;
-	extern const char *PING;
-	extern const char *PONG;
-	extern const char *PRIVMSG;
-	extern const char *QUIT;
-	extern const char *SQUIT;
-	extern const char *TOPIC;
-	extern const char *USER;
-	extern const char *WHO;
-	extern const char *WHOIS;
-	extern const char *WHOWAS;
+	extern const QByteArray AWAY;
+	extern const QByteArray ERROR;
+	extern const QByteArray INVITE;
+	extern const QByteArray ISON;
+	extern const QByteArray JOIN;
+	extern const QByteArray KICK;
+	extern const QByteArray LIST;
+	extern const QByteArray MODE;
+	extern const QByteArray MOTD;
+	extern const QByteArray NICK;
+	extern const QByteArray NOTICE;
+	extern const QByteArray PART;
+	extern const QByteArray PASS;
+	extern const QByteArray PING;
+	extern const QByteArray PONG;
+	extern const QByteArray PRIVMSG;
+	extern const QByteArray QUIT;
+	extern const QByteArray SQUIT;
+	extern const QByteArray TOPIC;
+	extern const QByteArray USER;
+	extern const QByteArray WHO;
+	extern const QByteArray WHOIS;
+	extern const QByteArray WHOWAS;
 
 	// Static codecs
 	extern QTextCodec *UTF8;

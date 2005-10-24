@@ -23,7 +23,7 @@
 
 #include <qtextcodec.h>
 
-#define CONST_STRING(str) const char * KIRC::str = #str
+#define CONST_STRING(str) const QByteArray KIRC::str(#str)
 
 /* The usage of the namespace, instead of the "using" keyword, is intentional.
  * Not using it introduce compiler confusion, and lead to new symbols declaration.

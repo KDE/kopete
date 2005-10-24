@@ -1,5 +1,5 @@
 /*
-    kircengine.h - IRC Client
+    kircclientcommands.h - IRC Client Commands
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
@@ -17,8 +17,8 @@
     *************************************************************************
 */
 
-#ifndef KIRCENGINE_H
-#define KIRCENGINE_H
+#ifndef KIRCCLIENTCOMMANDS_H
+#define KIRCCLIENTCOMMANDS_H
 
 #include "kircentity.h"
 #include "kircsocket.h"
@@ -34,18 +34,14 @@ class Message;
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
  * @author Jason Keirstead <jason@keirstead.org>
  */
-class Client
-	: public KIRC::Socket
+class ClientCommands
+	: public QObject
 {
 	Q_OBJECT
 
 public:
-	Client(QObject *parent = 0);
-	~Client();
-
-public: // READ properties accessors.
-
-public slots: // WRITE properties accessors.
+	ClientCommands(QObject *parent = 0);
+	~ClientCommands();
 
 public:
 	bool isDisconnected() const;
@@ -85,8 +81,6 @@ public:
 	void setVersionString(const QString &versionString);
 	void setUserString(const QString &userString);
 	void setSourceString(const QString &sourceString);
-
-	KIRC::Entity *server();
 
 public slots:
 	void away(bool isAway, const QString &awayMessage = QString::null);
@@ -238,6 +232,8 @@ private slots:
 	void CtcpReply_version(KIRC::Message &msg);
 
 private:
+	Q_DISABLE_COPY(ClientCommands)
+
 	class Private;
 	Private * const d;
 };
