@@ -33,15 +33,6 @@ libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(LIB_KIO) $(LIB_XSS) $(LIBXML_LI
 
 kde_kcfg_DATA = kopete.kcfg
 
-#AM_CXXFLAGS = -DQT_PLUGIN
-#kde_widget_LTLIBRARIES = libkopetewidgets.la
-#libkopetewidgets_la_LDFLAGS = $(KDE_PLUGIN) -module $(all_libraries)
-#libkopetewidgets_la_LIBADD = $(LIB_KIO) libkopete.la ui/libkopeteui.la
-#libkopetewidgets_la_SOURCES = ui/kopetewidgets.cpp
-
-#kopetewidgets.cpp: $(srcdir)/kopete.widgets
-#	$(MAKEKDEWIDGETS) -o kopetewidgets.cpp $(srcdir)/kopete.widgets
-
 rcdir = $(kde_datadir)/kopete
 rc_DATA = kopetecommandui.rc
 
