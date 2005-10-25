@@ -3,13 +3,6 @@ PluginName=KopeteWidgets
 Includes=kinstance.h
 Init=new KInstance("kopetewidgets");
 
-
-[Kopete::UI::PasswordWidget]
-Tooltip=Password Widget (Kopete)
-WhatsThis=The password widget used in Kopete that provides a checkbox to remember your password in addition to the password entry.
-IncludeFile=kopete/ui/kopetepasswordwidget.h
-Group=Input (Kopete)
-
 [Kopete::UI::ListView::ListView]
 ToolTip=List View (Kopete)
 WhatsThis=A component capable list view widget.

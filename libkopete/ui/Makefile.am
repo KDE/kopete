@@ -3,12 +3,13 @@ AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CA
 	$(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private $(all_includes)
 
 noinst_LTLIBRARIES = libkopeteui.la
+
 libkopeteui_la_SOURCES = kopetecontactaction.cpp addcontactpage.cpp \
-	editaccountwidget.cpp kopetepassworddialog.ui kopetestdaction.cpp kopeteawaydialogbase.ui \
-	kopetefileconfirmdialog.cpp fileconfirmbase.ui userinfodialog.cpp kopeteview.cpp \
-	kopetepasswordwidgetbase.ui kopetepasswordwidget.cpp accountselector.cpp kopeteviewplugin.cpp \
+		editaccountwidget.cpp kopetepassworddialog.ui kopetestdaction.cpp 	kopeteawaydialogbase.ui \
+	kopetefileconfirmdialog.cpp 	fileconfirmbase.ui userinfodialog.cpp kopeteview.cpp \
+	kopetepasswordwidgetbase.ui 	kopetepasswordwidget.cpp accountselector.cpp kopeteviewplugin.cpp \
 	addresseeitem.cpp addressbookselectorwidget_base.ui addressbookselectordialog.cpp \
-	addressbookselectorwidget.cpp metacontactselectorwidget_base.ui	metacontactselectorwidget.cpp \
+		addressbookselectorwidget.cpp metacontactselectorwidget_base.ui 	metacontactselectorwidget.cpp \
 	kopetelistview.cpp kopetelistviewitem.cpp kopetelistviewsearchline.cpp \
 	contactaddednotifywidget.ui contactaddednotifydialog.cpp
 
@@ -23,17 +24,6 @@ kopeteinclude_HEADERS = accountselector.h fileconfirmbase.h kopetefileconfirmdia
 	userinfodialog.h addressbookselectordialog.h addressbookselectorwidget.h kopetelistview.h kopetelistviewitem.h kopetelistviewsearchline.h
 
 noinst_HEADERS = addresseeitem.h contactaddednotifywidget.h
-
-kde_widget_LTLIBRARIES = kopetewidgets.la
-kopetewidgets_la_CXXFLAGS = -DQT_PLUGIN
-kopetewidgets_la_LDFLAGS = $(KDE_PLUGIN) -module $(all_libraries)
-kopetewidgets_la_LIBADD = ../libkopete.la 
-kopetewidgets_la_SOURCES = kopetewidgets.cpp
-
-kopetewidgets.cpp: $(srcdir)/kopete.widgets
-	makekdewidgets -o kopetewidgets.cpp $(srcdir)/kopete.widgets	
-
-CLEANFILES = kopetewidgets.cpp
 
 # vim: set noet:
 
