@@ -13,3 +13,11 @@ if test "$SKYPE_FAIL_REASON" == "NO_KOPETE" ; then
   echo "Please make sure Kopete from KDE >= 3.5 is installed and its headers are present"
   echo ""
 fi
+
+if test "$SKYPE_FAIL_REASON" == "TOO_NEW_DBUS" ; then
+  echo ""
+  echo "DBus found, but is too new."
+  echo "It is not supported by Skype neather by the skype plugin for Kopete"
+  echo "The plugin won't compile"
+  echo ""
+fi

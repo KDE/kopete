@@ -16,13 +16,20 @@ AC_FIND_FILE(dbus/dbus-arch-deps.h, $search_incs_arch_deps, dbus_incdir_arch_dep
 if [test -r $dbus_incdir/dbus/dbus.h] && [test -r $dbus_incdir_arch_deps/dbus/dbus-arch-deps.h] ; then
 	#set the compile flag
 	DBUS_INCS="-I$dbus_incdir -I$dbus_incdir_arch_deps"
-	#yeah, we found it
-	dbus_inc=FOUND
+	grep "dbus_message_get_auto_start" $dbus_incdir/dbus/*.h > /dev/null
+	if [test "$?" = "0"] ; then
+		dbus_inc=NOT_FOUND
+		dbus_too_new=true
+		echo "Too new!!"
+	else
+		#yeah, we found it
+		dbus_inc=FOUND
+	fi
 fi
 #now, find the libs
 search_libs="$kde_libraries $kde_extra_libs /usr/lib /usr/local/lib"
-AC_FIND_FILE(libdbus-qt-1.so, $search_libs, dbus_libdir)
-if test -r $dbus_libdir/libdbus-qt-1.so ; then
+AC_FIND_FILE(libdbus-1.so, $search_libs, dbus_libdir)
+if test -r $dbus_libdir/libdbus-1.so ; then
 	#some linker flags
 	DBUS_LIBS="-L$dbus_libdir -ldbus-qt-1 -ldbus-1"
 	#and we found something
@@ -87,6 +94,10 @@ AC_SUBST(KOPETE_LIBS)
 
 if test "$COMPILE_SKYPE" != "true" ; then
 	REASON="NO_KOPETE"
+fi
+
+if test "$dbus_too_new" = "true" ; then
+	REASON="TOO_NEW_DBUS"
 fi
 
 if test "$REASON" != "" ; then
