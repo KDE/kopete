@@ -556,6 +556,7 @@ void MeanwhileLibrary::newSession()
     im_handler.conversation_opened = _conversation_opened;
     im_handler.conversation_closed = _conversation_closed;
     im_handler.conversation_recv = _conversation_recv;
+    im_handler.place_invite = 0L;
     im_handler.clear = 0L;
     
     srvc_im = mwServiceIm_new(session, &im_handler);
