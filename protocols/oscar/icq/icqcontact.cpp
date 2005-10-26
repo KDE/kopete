@@ -46,6 +46,7 @@
 #include "client.h"
 #include "oscarutils.h"
 #include "oscarencodingselectiondialog.h"
+#include "ssimanager.h"
 
 ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaContact *parent,
 						const QString& icon, const Oscar::SSI& ssiItem )
@@ -572,12 +573,6 @@ QPtrList<KAction> *ICQContact::customContextMenuActions()
 		actionSendAuth = new KAction(i18n("&Grant Authorization"), "mail_forward", 0,
 			this, SLOT(slotSendAuth()), this, "actionSendAuth");
 		/*
-		actionIgnore = new KToggleAction(i18n("&Ignore"), "", 0,
-			this, SLOT(slotIgnore()), this, "actionIgnore");
-		actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), "", 0,
-			this, SLOT(slotVisibleTo()), this, "actionVisibleTo");
-		actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), "", 0,
-			this, SLOT(slotInvisibleTo()), this, "actionInvisibleTo");
 	}
 	else
 	{
@@ -586,15 +581,12 @@ QPtrList<KAction> *ICQContact::customContextMenuActions()
 	}
 
 */
-
-	QString i1 = i18n("&Ignore");
-	QString i2 = i18n("Always &Visible To");
-	QString i3 = i18n("Always &Invisible To");
-
-	Q_UNUSED( i1 );
-	Q_UNUSED( i2 );
-	Q_UNUSED( i3 );
-
+	m_actionIgnore = new KToggleAction(i18n("&Ignore"), "", 0,
+	                                   this, SLOT(slotIgnore()), this, "actionIgnore");
+	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), "", 0,
+	                                      this, SLOT(slotVisibleTo()), this, "actionVisibleTo");
+	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), "", 0,
+	                                        this, SLOT(slotInvisibleTo()), this, "actionInvisibleTo");
 
 	bool on = account()->isConnected();
 	if ( m_ssiItem.waitingAuth() )
@@ -610,24 +602,26 @@ QPtrList<KAction> *ICQContact::customContextMenuActions()
 
 /*
 	actionReadAwayMessage->setEnabled(status != OSCAR_OFFLINE && status != OSCAR_ONLINE);
-	actionIgnore->setEnabled(on);
-	actionVisibleTo->setEnabled(on);
-	actionInvisibleTo->setEnabled(on);
-
-	actionIgnore->setChecked(mIgnore);
-	actionVisibleTo->setChecked(mVisibleTo);
-	actionInvisibleTo->setChecked(mInvisibleTo);
-
 */
+	m_actionIgnore->setEnabled(on);
+	m_actionVisibleTo->setEnabled(on);
+	m_actionInvisibleTo->setEnabled(on);
+
+	SSIManager* ssi = account()->engine()->ssiManager();
+	m_actionIgnore->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_IGNORE ));
+	m_actionVisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_VISIBLE ));
+	m_actionInvisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_INVISIBLE ));
+
 	actionCollection->append(actionRequestAuth);
 	actionCollection->append(actionSendAuth);
     actionCollection->append( m_selectEncoding );
-/*
-	actionCollection->append(actionIgnore);
-	actionCollection->append(actionVisibleTo);
-	actionCollection->append(actionInvisibleTo);
-	actionCollection->append(actionReadAwayMessage);
-*/
+
+	actionCollection->append(m_actionIgnore);
+	actionCollection->append(m_actionVisibleTo);
+	actionCollection->append(m_actionInvisibleTo);
+
+//	actionCollection->append(actionReadAwayMessage);
+
 	return actionCollection;
 }
 
@@ -674,6 +668,22 @@ void ICQContact::changeEncodingDialogClosed( int result )
         m_oesd->delayedDestruct();
         m_oesd = 0L;
     }
+}
+
+
+void ICQContact::slotIgnore()
+{
+	account()->engine()->setIgnore( contactId(), m_actionIgnore->isChecked() );
+}
+
+void ICQContact::slotVisibleTo()
+{
+	account()->engine()->setVisibleTo( contactId(), m_actionVisibleTo->isChecked() );
+}
+
+void ICQContact::slotInvisibleTo()
+{
+	account()->engine()->setInvisibleTo( contactId(), m_actionInvisibleTo->isChecked() );
 }
 
 #if 0

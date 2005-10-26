@@ -274,6 +274,12 @@ public:
 
     void joinChatRoom( const QString& roomName, int exchange );
 
+	void setIgnore( const QString& user, bool ignore );
+	
+	void setVisibleTo( const QString& user, bool visible );
+	
+	void setInvisibleTo( const QString& user, bool invisible );
+	
 	/** Accessors needed for login */
 	QString host();
 	int port();

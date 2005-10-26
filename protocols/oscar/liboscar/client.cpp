@@ -871,6 +871,54 @@ void Client::connectToIconServer()
 	return;
 }
 
+void Client::setIgnore( const QString& user, bool ignore )
+{
+	Oscar::SSI item = ssiManager()->findItem( user,  ROSTER_IGNORE );
+	if ( item && !ignore )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << user << " from ignore list" << endl;
+		this->modifySSIItem( item, Oscar::SSI() );
+	}
+	else if ( !item && ignore )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to ignore list" << endl;
+		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_IGNORE, QValueList<TLV>() );
+		this->modifySSIItem( Oscar::SSI(), s );
+	}
+}
+
+void Client::setVisibleTo( const QString& user, bool visible )
+{
+	Oscar::SSI item = ssiManager()->findItem( user,  ROSTER_VISIBLE );
+	if ( item && !visible )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << user << " from visible list" << endl;
+		this->modifySSIItem( item, Oscar::SSI() );
+	}
+	else if ( !item && visible )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to visible list" << endl;
+		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_VISIBLE, QValueList<TLV>() );
+		this->modifySSIItem( Oscar::SSI(), s );
+	}
+}
+
+void Client::setInvisibleTo( const QString& user, bool invisible )
+{
+	Oscar::SSI item = ssiManager()->findItem( user,  ROSTER_INVISIBLE );
+	if ( item && !invisible )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << user << " from invisible list" << endl;
+		this->modifySSIItem( item, Oscar::SSI() );
+	}
+	else if ( !item && invisible )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to invisible list" << endl;
+		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_INVISIBLE, QValueList<TLV>() );
+		this->modifySSIItem( Oscar::SSI(), s );
+	}
+}
+
 void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE hashType )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0010 );

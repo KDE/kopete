@@ -87,6 +87,8 @@ public:
 	
 	Oscar::SSI findItemForIcon( QByteArray iconHash ) const;
 	Oscar::SSI findItemForIconByRef( int ) const;
+	
+	Oscar::SSI findItem( const QString &contact, int type ) const;
 
 	QValueList<Oscar::SSI> groupList() const;
 	QValueList<Oscar::SSI> contactList() const;

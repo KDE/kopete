@@ -270,6 +270,17 @@ Oscar::SSI SSIManager::findItemForIconByRef( int ref ) const
 	return m_dummyItem;	
 }
 
+Oscar::SSI SSIManager::findItem( const QString &contact, int type ) const
+{
+	QValueList<Oscar::SSI>::const_iterator it,  listEnd = d->SSIList.end();
+	
+	for ( it = d->SSIList.begin(); it!= listEnd; ++it )
+		if ( ( *it ).type() == type && ( *it ).name() == contact )
+			return ( *it );
+	
+	return m_dummyItem;
+}
+
 QValueList<Oscar::SSI> SSIManager::groupList() const
 {
 	QValueList<Oscar::SSI> list;
@@ -467,6 +478,12 @@ bool SSIManager::removeContact( const QString &contact )
 
 bool SSIManager::newItem( const Oscar::SSI& item )
 {
+	if ( item.bid() > d->nextContactId )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting next contact ID to " << item.bid() << endl;
+		d->nextContactId = item.bid();
+	}
+	
 	//no error checking for now
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding item " << item.toString() << endl;
 	d->SSIList.append( item );
