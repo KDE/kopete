@@ -205,7 +205,10 @@ void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint s
 	t->setParam( 0 , sn);
 	t->setParam( 6 , QString(resp_6));
 	t->setParam( 96 , QString(resp_96));
+	t->setParam( 59 , QString::fromLatin1( "B\\tfckeert1kk1nl&b=2" ) );	// ???
 	t->setParam( 135 , QString::fromLatin1( "7,0,0,437" ) );	// Client version
+	t->setParam( 148 , -60 );
+	t->setParam( 244 , 524223 );
 	t->setParam( 1 , sn);
 
 	if( !m_verificationWord.isEmpty() )
