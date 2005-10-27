@@ -13,9 +13,8 @@
 #include "skypeconnection.h"
 
 ///@todo When QT 4 is used, the signal-slot wrapper will be better, replace it
-#include <dbus/connection.h>
-#include <dbus/message.h>
-#include <dbus/dbus.h>
+#include "connection.h"
+
 #include <kdebug.h>
 #include <klocale.h>
 #include <sys/types.h>
@@ -33,26 +32,6 @@ typedef enum {
 	cfWaitingStart
 } connFase;
 
-class MyMessage : public DBusQt::Message {
-	public:
-		MyMessage(const QString& service, const QString& path,
-				const QString& interface, const QString& method) :
-			DBusQt::Message(service, path, interface, method)
-		{
-		}
-		void setAutoActivation(bool b) {
-			dbus_message_set_auto_activation(message(), b);
-		}
-};
-
-class MyConnection : public DBusQt::Connection {
-	public:
-		MyConnection(DBusBusType type, QObject * parent = 0) :
-			DBusQt::Connection(type, parent)
-		{
-		}
-};
-
 class SkypeConnectionPrivate {
 	public:
 		///Are we connected/connecting?
@@ -62,7 +41,7 @@ class SkypeConnectionPrivate {
 		///What is the protocol version used (wanted if not connected yet)
 		int protocolVer;
 		///The connection to DBus
-		MyConnection *conn;
+		DBusQt::Connection *conn;
 		///This timer will keep trying until Skype starts
 		QTimer *startTimer;
 		///How much time rest? (until I say starting skype did not work)
@@ -97,8 +76,7 @@ void SkypeConnection::startLogOn() {
 		d->startTimer = 0L;
 	}
 
-	MyMessage ping("com.Skype.API", "/com/Skype", "com.Skype.API", "Ping");//create a ping message
-	//ACT(m);
+	DBusQt::Message ping("com.Skype.API", "/com/Skype", "com.Skype.API", "Ping");//create a ping message
 	ping.setAutoActivation(true);
 	DBusQt::Message reply = d->conn->sendWithReplyAndBlock(ping);//send it there
 
@@ -131,13 +109,13 @@ void SkypeConnection::gotMessage(const DBusQt::Message &message) {
 			emit received((*it).toString());//Take out the string and use it
 		}
 
-		/*if (message.expectReply()) {
+		if (message.expectReply()) {
 			kdDebug(14311) << "Message expects reply, sending a dummy one" << endl;
 			DBusQt::Message *reply = new DBusQt::Message(message);//generate a reply for that message
 			(*reply) << QString("ERROR 2");//write there seme error
 			d->conn->send(*reply);//send the message
 			d->conn->flush();
-		}*/
+		}
 	}
 }
 
@@ -191,9 +169,9 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 	d->protocolVer = protocolVer;
 
 	if (bus == 0)
-		d->conn = new MyConnection(DBUS_BUS_SESSION, this);
+		d->conn = new DBusQt::Connection(DBUS_BUS_SESSION, this);
 	else
-		d->conn = new MyConnection(DBUS_BUS_SYSTEM, this);
+		d->conn = new DBusQt::Connection(DBUS_BUS_SYSTEM, this);
 
 	if ((!d->conn) || (!d->conn->isConnected())) {
 		if ((bus == 0) && (startDBus)) {
@@ -211,14 +189,13 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 		return;
 	}
 
-	//d->conn->registerObjectPath("org.kde.kopete.skype", "/com/Skype/Client");
+	d->conn->registerObjectPath("org.kde.kopete.skype", "/com/Skype/Client");
 
 	connect(d->conn, SIGNAL(messageArrived(const DBusQt::Message&)), this, SLOT(gotMessage(const DBusQt::Message &)));
 
 	{
-		MyMessage m("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "ServiceExists");
+		DBusQt::Message m("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "ServiceExists");
 		m << QString("com.Skype.API");
-		//ACT(m);
 		m.setAutoActivation(true);
 
 		DBusQt::Message reply = d->conn->sendWithReplyAndBlock(m);
@@ -280,21 +257,20 @@ void SkypeConnection::send(const QString &message) {
 	if (d->fase == cfNotConnected)
 		return;//not connected, posibly because of earlier error, do not show it again
 
-	MyMessage m("com.Skype.API", "/com/Skype", "com.Skype.API", "Invoke");
+	DBusQt::Message m("com.Skype.API", "/com/Skype", "com.Skype.API", "Invoke");
 	m << message;
-	//ACT(m);
 	m.setAutoActivation(true);
 	DBusQt::Message reply = d->conn->sendWithReplyAndBlock(m);
 
 	d->conn->flush();
-	/*if (d->conn->error()) {//There was some error
+	if (d->conn->error()) {//There was some error
 		emit error(i18n("Error while sending a message to skype (%1)").arg(d->conn->getError()));//say there was the error
 		if (d->fase != cfConnected)
 			emit connectionDone(seUnknown, 0);//Connection attempt finished with error
 		disconnectSkype(crLost);//lost the connection
 
 		return;//this is enough, no more errors please..
-	}*/
+	}
 
 	for (DBusQt::Message::iterator it = reply.begin(); it != reply.end(); ++it) {
 		emit received((*it).toString());//use the message
@@ -325,20 +301,19 @@ QString SkypeConnection::operator %(const QString &message) {
 	if (d->fase == cfNotConnected)
 		return "";//not connected, posibly because of earlier error, do not show it again
 
-	MyMessage m("com.Skype.API", "/com/Skype", "com.Skype.API", "Invoke");
+	DBusQt::Message m("com.Skype.API", "/com/Skype", "com.Skype.API", "Invoke");
 	m << message;
-	//ACT(m);
 	m.setAutoActivation(true);
 	DBusQt::Message reply = d->conn->sendWithReplyAndBlock(m);
 
 	d->conn->flush();
-	/*if (d->conn->error()) {//There was some error
+	if (d->conn->error()) {//There was some error
 		emit error(i18n("Error while sending a message to skype (%1)").arg(d->conn->getError()));//say there was the error
 		if (d->fase != cfConnected)
 			emit connectionDone(seUnknown, 0);//Connection attempt finished with error
 		disconnectSkype(crLost);//lost the connection
 		return "";//this is enough, no more errors please..
-		}*/
+	}
 
 	for (DBusQt::Message::iterator it = reply.begin(); it != reply.end(); ++it) {
 		kdDebug(14311) << (*it).toString() << endl;//show what we have received
@@ -382,10 +357,9 @@ void SkypeConnection::tryConnect() {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	{
-		MyMessage m("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "ServiceExists");
+		DBusQt::Message m("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "ServiceExists");
 		m << QString("com.Skype.API");
-		//ACT(m);
-		//m.setAutoActivation(true);
+		m.setAutoActivation(true);
 
 		DBusQt::Message reply = d->conn->sendWithReplyAndBlock(m);
 

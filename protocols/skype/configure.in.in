@@ -8,7 +8,7 @@ dbus=NOTFOUND
 #try to find the include files
 search_incs="$kde_includes $kde_extra_includes /usr/include /usr/include/dbus-1.0 /usr/local/include /usr/local/include/dbus-1.0"
 #look for the connection qt header, it should be there (I'm not interested in the low-level dbus.h)
-AC_FIND_FILE(dbus/message.h, $search_incs, dbus_incdir)
+AC_FIND_FILE(dbus/dbus.h, $search_incs, dbus_incdir)
 search_incs_arch_deps="$kde_includes $kde_extra_libs/dbus-1.0/include /usr/lib/dbus-1.0/include /usr/local/lib/dbus-1.0/include"
 #look for the arch-deps header
 AC_FIND_FILE(dbus/dbus-arch-deps.h, $search_incs_arch_deps, dbus_incdir_arch_deps)
@@ -31,7 +31,7 @@ search_libs="$kde_libraries $kde_extra_libs /usr/lib /usr/local/lib"
 AC_FIND_FILE(libdbus-1.so, $search_libs, dbus_libdir)
 if test -r $dbus_libdir/libdbus-1.so ; then
 	#some linker flags
-	DBUS_LIBS="-L$dbus_libdir -ldbus-qt-1 -ldbus-1"
+	DBUS_LIBS="-L$dbus_libdir -ldbus-1 -ldbus-1"
 	#and we found something
 	dbus_lib=FOUND
 fi
