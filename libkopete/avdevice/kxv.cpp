@@ -44,11 +44,10 @@ extern "C" {
 }
 #endif
 
-#undef HAVE_LIBXV
-//#ifdef HAVE_LIBXV
+#ifdef HAVE_LIBXV
 #include <X11/extensions/Xv.h>
 #include <X11/extensions/Xvlib.h>
-//#endif
+#endif
 
 #ifdef HAVE_LIBXVMC
 #include <X11/extensions/XvMC.h>
