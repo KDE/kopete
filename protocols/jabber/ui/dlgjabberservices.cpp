@@ -126,7 +126,7 @@ void dlgJabberServices::slotQueryFinished ()
 
 	if (!task->success ())
 	{
-		KMessageBox::error (this, i18n ("Unable to retrieve the list of services."), i18n ("Jabber Error"));
+		KMessageBox::queuedMessageBox (this, KMessageBox::Error, i18n ("Unable to retrieve the list of services."), i18n ("Jabber Error"));
 		return;
 	}
 

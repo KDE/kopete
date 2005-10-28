@@ -111,7 +111,7 @@ void JabberAccount::setS5BServerPort ( int port )
 
 	if ( !m_jabberClient->setS5BServerPort ( port ) )
 	{
-		KMessageBox::sorry ( Kopete::UI::Global::mainWidget (),
+		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (), KMessageBox::Sorry,
 							 i18n ( "Could not bind Jabber file transfer manager to local port. Please check if the file transfer port is already in use or choose another port in the account settings." ),
 							 i18n ( "Failed to start Jabber File Transfer Manager" ) );
 	}
@@ -476,7 +476,7 @@ void JabberAccount::slotClientError ( JabberClient::ErrorCode errorCode )
 	{
 		case JabberClient::NoTLS:
 		default:
-			KMessageBox::error ( Kopete::UI::Global::mainWidget (),
+			KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (), KMessageBox::Error,
 					     i18n ("An encrypted connection with the Jabber server could not be established."),
 					     i18n ("Jabber Connection Error"));
 			disconnect ( Kopete::Account::Manual );

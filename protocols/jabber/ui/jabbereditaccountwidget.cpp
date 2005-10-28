@@ -138,7 +138,7 @@ Kopete::Account *JabberEditAccountWidget::apply ()
 
 	if(account()->isConnected())
 	{
-		KMessageBox::information(this,
+		KMessageBox::queuedMessageBox(this, KMessageBox::Information,
 					i18n("The changes you just made will take effect next time you log in with Jabber."),
 					i18n("Jabber Changes During Online Jabber Session"));
 	}

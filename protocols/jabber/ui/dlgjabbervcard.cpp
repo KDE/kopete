@@ -293,7 +293,7 @@ void dlgJabberVCard::slotSelectPhoto()
 	{
 		if( !KIO::NetAccess::download( filePath, path, this ) ) 
 		{
-			KMessageBox::sorry( this, i18n( "Downloading of Jabber contact photo failed !" ) );
+			KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "Downloading of Jabber contact photo failed !" ) );
 			return;
 		}
 		remoteFile = true;
@@ -329,7 +329,7 @@ void dlgJabberVCard::slotSelectPhoto()
 	}
 	else
 	{
-		KMessageBox::sorry( this, i18n( "<qt>An error occurred when trying to change the photo.<br>"
+		KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "<qt>An error occurred when trying to change the photo.<br>"
 			"Make sure that you have selected a correct image file</qt>" ) );
 	}
 	if( remoteFile )

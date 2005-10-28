@@ -722,7 +722,7 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 		// Downalod photo from URI.
 		if( !KIO::NetAccess::download( vCard.photoURI(), tempPhotoPath, 0) ) 
 		{
-			KMessageBox::sorry( Kopete::UI::Global::mainWidget (), i18n( "Downloading of Jabber contact photo failed !" ) );
+			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget (), KMessageBox::Sorry, i18n( "Downloading of Jabber contact photo failed !" ) );
 			return;
 		}
 
@@ -901,7 +901,7 @@ void JabberContact::slotSentVCard ()
 	if (!vCard->success())
 	{
 		// unsuccessful, or incomplete
-		KMessageBox::error (Kopete::UI::Global::mainWidget (), i18n("Unable to store vCard for %1").arg (vCard->jid ().userHost ()));
+		KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (), KMessageBox::Error, i18n("Unable to store vCard for %1").arg (vCard->jid ().userHost ()));
 		return;
 	}
 
