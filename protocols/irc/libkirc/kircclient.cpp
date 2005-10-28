@@ -22,6 +22,9 @@
 
 #include "kircclient.moc"
 
+#include "kircclientcommandhandler.h"
+#include "kircstdcommands.h"
+
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -40,8 +43,6 @@ using namespace KIRC;
 class KIRC::Client::Private
 {
 public:
-	QTextCodec *defaultCodec;
-
 	QString host;
 	Q_UINT16 port;
 
@@ -57,17 +58,11 @@ public:
 
 //	KIRC::Entity::List entities;
 	KIRC::Entity::Ptr server;
-//	KIRC::Entity::Ptr self; => owner
 
 	QString versionString;
 	QString userString;
 	QString sourceString;
 	QString pendingNick;
-
-//	QMap<QString, KIRC::MessageRedirector *> commands;
-//	QMap<int, KIRC::MessageRedirector *> numericCommands;
-//	QMap<QString, KIRC::MessageRedirector *> ctcpQueries;
-//	QMap<QString, KIRC::MessageRedirector *> ctcpReplies;
 };
 
 Client::Client(QObject *parent)
@@ -75,7 +70,6 @@ Client::Client(QObject *parent)
 	  d( new Private )
 {
 /*
-	  d->defaultCodec(UTF8),
 	  d->FailedNickOnLogin(false),
 	  d->useSSL(false),
 	  d->server(new Entity(QString::null, KIRC::Server)),
@@ -93,14 +87,10 @@ Client::Client(QObject *parent)
 	d->userString = QString::fromLatin1("Response not supplied by user.");
 	d->sourceString = QString::fromLatin1("Unknown client, known source.");
 
-//	kdDebug(14120) << "Setting default engine codec, " << defaultCodec->name() << endl;
 /*
 	connect(this, SIGNAL(internalError(const QString &)),
 		this, SLOT());
 */
-	connect(this, SIGNAL(connectionStateChanged(KIRC::Socket::ConnectionState)),
-		this, SLOT(onConnectionStateChanged(KIRC::Socket::ConnectionState)));
-
 	connect(this, SIGNAL(receivedMessage(KIRC::Message &)),
 		this, SLOT(onReceivedMessage(KIRC::Message &)));
 }
@@ -108,7 +98,7 @@ Client::Client(QObject *parent)
 Client::~Client()
 {
 //	kdDebug(14120) << k_funcinfo << d->Host << endl;
-	quit("KIRC Deleted", true);
+	StdCommands::quit(this, QString::fromLatin1("KIRC Deleted"));
 
 	delete d;
 }
@@ -200,23 +190,14 @@ bool Engine::bindCtcpReply(const char *command, QObject *object, const char *mem
 		minArgs, maxArgs, helpMessage);
 }
 */
-void Client::onConnectionStateChanged(ConnectionState state)
+void Client::authentify()
 {
-	switch (state)
-	{
-	case Authentifying:
-		// If password is given for this server, send it now, and don't expect a reply
-		if (!(password()).isEmpty())
-			pass(password());
+	// If password is given for this server, send it now, and don't expect a reply
+	if (!(password()).isEmpty())
+		StdCommands::pass(this, password());
 
-		user(d->username, 0, d->realName);
-		nick(d->nickname);
-
-		break;
-	default:
-		// Do nothing for state
-		break;
-	}
+	StdCommands::user(this, d->username, Modes(), d->realName);
+	StdCommands::nick(this, d->nickname);
 }
 
 void Client::onReceivedMessage( KIRC::Message &msg )
@@ -310,6 +291,11 @@ bool Client::invokeCtcpCommandOfMessage(const QMap<QString, MessageRedirector *>
 Entity::Ptr Client::server()
 {
 	return d->server;
+}
+
+ClientCommandHandler *Client::clientCommandHandler()
+{
+	return dynamic_cast<ClientCommandHandler *>(commandHandler());
 }
 
 void Client::ignoreMessage(KIRC::Message &/*msg*/)

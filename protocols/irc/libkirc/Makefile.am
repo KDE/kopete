@@ -7,13 +7,16 @@ noinst_LTLIBRARIES = libkirc.la
 
 libkirc_la_SOURCES = \
 	kircclient.cpp \
-	kircclientcommands.cpp \
 	kirccommand.cpp \
+	kirccommandhandler.cpp \
 	kircconst.cpp \
 	kircentity.cpp \
 	kircentitymanager.cpp \
 	kircmessage.cpp \
-	kircsocket.cpp
+	kircsocket.cpp \
+	kircstdcommands.cpp
+#	kircclientcommands.cpp \
+#	kircclientcommandhandler.cpp \
 #	kirctransfer.cpp \
 #	kirctransferhandler.cpp \
 #	kirctransferserver.cpp

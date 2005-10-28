@@ -25,6 +25,7 @@
 
 #include "kircclient.h"
 #include "kircentitymanager.h"
+#include "kircstdcommands.h"
 
 #include "kopeteaccountmanager.h"
 #include "kopeteaway.h"
@@ -177,8 +178,7 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 
 IRCAccount::~IRCAccount()
 {
-	if (d->client->isConnected())
-		d->client->quit(i18n("Plugin Unloaded"), true);
+	KIRC::StdCommands::quit(d->client, i18n("Plugin Unloaded"));
 
 	delete d;
 }
@@ -531,20 +531,13 @@ void IRCAccount::quit( const QString &quitMessage )
 {
 	kdDebug(14120) << "Quitting IRC: " << quitMessage << endl;
 
-	if (quitMessage.isNull() || quitMessage.isEmpty())
-		d->client->quit( defaultQuitMessage() );
-	else
-		d->client->quit( quitMessage );
+	KIRC::StdCommands::quit(d->client, quitMessage.isEmpty() ? defaultQuitMessage() : quitMessage);
 }
 
 void IRCAccount::setAway(bool isAway, const QString &awayMessage)
 {
 	kdDebug(14120) << k_funcinfo << isAway << " " << awayMessage << endl;
-	if (d->client->isConnected())
-	{
-//		static_cast<IRCUserContact *>( myself() )->setAway( isAway );
-		d->client->away(isAway, awayMessage);
-	}
+	KIRC::StdCommands::away(d->client, awayMessage);
 }
 
 void IRCAccount::slotShowServerWindow()

@@ -58,7 +58,6 @@ public:
 	};
 
 	Socket(QObject *parent = 0);
-//	Socket(KIRC::Entity *owner, QObject *parent = 0);
 	~Socket();
 
 public: // READ properties accessors.
@@ -90,7 +89,6 @@ public slots:
 //	void bind();
 	void close();
 
-	void writeMessage(const char *message);
 	void writeMessage(const QByteArray &message);
 	void writeMessage(const QString &message, QTextCodec *codec = 0);
 	void writeMessage(const KIRC::Message &message);
@@ -114,6 +112,7 @@ signals:
 
 protected:
 	void setConnectionState(KIRC::Socket::ConnectionState newstate);
+	virtual void authentify();
 
 private slots:
 	void onReadyRead();

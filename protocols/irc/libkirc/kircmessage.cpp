@@ -27,7 +27,7 @@
 using namespace KIRC;
 
 //QRegExp Message::sm_("^()\\r\\n$")
-
+/*
 #ifndef _IRC_STRICTNESS_
 QRegExp Message::sm_IRCNumericCommand("^\\d{1,3}$");
 
@@ -44,7 +44,7 @@ QRegExp Message::sm_IRCCommandType1(
 QRegExp Message::sm_IRCCommandType2(
 	"^(?::[[^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*){14,14})(?: (.*))?$");
 #endif // _IRC_STRICTNESS_
-
+*/
 class KIRC::Message::Private
 	: public QSharedData
 {
@@ -202,13 +202,10 @@ Message &Message::setLine(const QByteArray &line)
 
 	while (tokens.size() > 0)
 	{
-	}
+#ifndef KIRC_STRICT
+//		eat empty tokens
+#endif // KIRC_STRICT
 
-	i = 0;
-
-	while (line.length() > 0)
-	{
-		token = line.mid(, i);
 	}
 
 	if (regexp.exactMatch(d->raw))
@@ -220,9 +217,9 @@ Message &Message::setLine(const QByteArray &line)
 //		d->argList = QStringList::split(' ', d->args);
 		d->suffix  = regexp.cap(4).latin1();
 
-#ifndef _IRC_STRICTNESS_
+#ifndef KIRC_STRICT
 		extractCtcpCommand();
-#endif // _IRC_STRICTNESS_
+#endif // KIRC_STRICT
 
 		d->valid = true;
 	}
@@ -373,7 +370,9 @@ bool Message::isValid() const
 
 bool Message::isNumeric() const
 {
-	return sm_IRCNumericCommand.exactMatch(d->command);
+#warning FIXME
+//	return sm_IRCNumericCommand.exactMatch(d->command);
+	return false;
 }
 
 void Message::dump() const
@@ -425,7 +424,7 @@ QTextCodec *Message::checkCodec(QTextCodec *codec) const
  * string is splited to get the first part of the message and fill the ctcp command.
  * FIXME: The code currently only match for a textual message or a ctcp message not both mixed as it can be (even if very rare).
  */
-#ifndef _IRC_STRICTNESS_
+#ifndef KIRC_STRICT
 bool Message::extractCtcpCommand()
 {
 	if (d->suffix.isEmpty())
@@ -458,6 +457,6 @@ bool Message::extractCtcpCommand()
 */
 	return false;
 }
-#endif // _IRC_STRICTNESS_
+#endif // KIRC_STRICT
 
 #include "kircmessage.moc"

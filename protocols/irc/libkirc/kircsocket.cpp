@@ -20,7 +20,7 @@
 #include <config.h>
 #endif
 
-#include "kircsocket.h"
+#include "kircsocket.moc"
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -57,6 +57,8 @@ Socket::Socket(QObject *parent)
 	  d( new Private )
 {
 	kdDebug(14120) << k_funcinfo << endl;
+
+	d->defaultCodec = UTF8;
 }
 
 Socket::~Socket()
@@ -118,7 +120,7 @@ void Socket::close()
 	}
 }
 
-void Socket::writeMessage(const char *msg)
+void Socket::writeMessage(const QByteArray &msg)
 {
 	if (!d->socket || d->socket->state() != KBufferedSocket::Open)
 	{
@@ -130,11 +132,6 @@ void Socket::writeMessage(const char *msg)
 	int wrote = d->socket->writeBlock(buffer.data(), buffer.length());
 //	kdDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg) << endl;
 */
-}
-
-void Socket::writeMessage(const QByteArray &msg)
-{
-	#warning implement me
 }
 
 void Socket::writeMessage(const QString &msg, QTextCodec *codec)
@@ -167,6 +164,11 @@ void Socket::setConnectionState(ConnectionState newstate)
 		d->state = newstate;
 		emit connectionStateChanged(newstate);
 	}
+}
+
+void Socket::authentify()
+{
+	setConnectionState(Open);
 }
 
 void Socket::onReadyRead()
@@ -215,6 +217,7 @@ void Socket::socketStateChanged(int newstate)
 //		d->socket->enableRead(true);
 //		d->socket->enableWrite(true); // Should not be needed
 		setConnectionState(Authentifying);
+		authentify();
 		break;
 	case KBufferedSocket::Closing:
 		setConnectionState(Closing);
@@ -304,6 +307,4 @@ bool Socket::setupSocket(bool useSSL)
 	connect(d->socket, SIGNAL(connectionFailed(int)),
 		this, SLOT(error(int)));
 }
-
-#include "kircsocket.moc"
 

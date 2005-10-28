@@ -26,6 +26,7 @@
 namespace KIRC
 {
 
+class ClientCommandHandler;
 class Message;
 
 /**
@@ -87,6 +88,8 @@ public:
 
 	KIRC::Entity::Ptr server();
 
+	KIRC::ClientCommandHandler *clientCommandHandler();
+
 signals:
 	/**
 	 * Emit a received message.
@@ -108,8 +111,8 @@ signals:
 				const QString &msg);
 
 private slots:
+	void authentify();
 
-	void onConnectionStateChanged(KIRC::Socket::ConnectionState state);
 	void onReceivedMessage( KIRC::Message &msg );
 
 	void destroyed(KIRC::Entity *entity);

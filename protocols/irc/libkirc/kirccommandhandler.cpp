@@ -1,5 +1,5 @@
 /*
-    kircmessageredirector.h - IRC Client
+    kirccommandhandler.cpp - IRC Client command hanler.
 
     Copyright (c) 2004-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
 
@@ -15,45 +15,40 @@
     *************************************************************************
 */
 
-#ifndef KIRC_COMMANDHANDLER_H
-#define KIRC_COMMANDHANDLER_H
+#include "kirccommandhandler.moc"
 
-#include <QObject>
+#include "kircsocket.h"
 
-namespace KIRC
+#include <QMultiMap>
+
+class KIRC::CommandHandler::Private 
 {
-
-class Command;
-
-class CommandHandler
-	: public QObject
-{
-	Q_OBJECT
-
 public:
-	CommandHandler(QObject *parent = 0);
-	~CommandHandler();
-
-	Command *registerCommand(const QString &name, Command *command);
-
-	/**
-	 * Connects the given object member signal/slot to this message redirector.
-	 * The member signal slot should be looking like:
-	 * SIGNAL(mysignal(KIRC::Message &msg))
-	 * or
-	 * SIGNAL(myslot(KIRC::Message &msg))
-	 */
-	Command *registerCommand(const QString &name, QObject *object, const char *member);
-
-	void unregisterCommand(Command *command);
-
-private:
-	Q_DISABLE_COPY(CommandHandler)
-
-	class Private;
-	Private * const d;
+	QMultiMap<QString, Command *> registry;
 };
 
+using namespace KIRC;
+
+CommandHandler::CommandHandler(QObject *parent)
+	: QObject(parent)
+	, d(new Private)
+{
 }
 
-#endif
+CommandHandler::~CommandHandler()
+{
+	delete d;
+}
+
+Command *CommandHandler::registerCommand(const QString &name, Command *command)
+{
+}
+
+Command *CommandHandler::registerCommand(const QString &name, QObject *object, const char *member)
+{
+}
+
+void unregisterCommand(Command *command)
+{
+}
+

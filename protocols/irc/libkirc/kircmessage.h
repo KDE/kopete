@@ -77,15 +77,6 @@ public:
 	static QByteArray ctcpQuote(const QByteArray &str);
 	static QByteArray ctcpUnquote(const QByteArray &str);
 
-private:
-
-	static QRegExp sm_IRCCommandType1;
-#ifdef _IRC_STRICTNESS_
-	static QRegExp sm_IRCCommandType2;
-#endif // _IRC_STRICTNESS_
-
-	static QRegExp sm_IRCNumericCommand;
-
 public:
 	Message();
 	Message(const QByteArray &rawLine, Direction direction);

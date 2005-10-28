@@ -17,10 +17,10 @@
     *************************************************************************
 */
 
-#ifndef KIRCCLIENTCOMMANDS_H
-#define KIRCCLIENTCOMMANDS_H
+#ifndef KIRCCLIENTCOMMANDHANDLER_H
+#define KIRCCLIENTCOMMANDHANDLER_H
 
-#include <QObject>
+#include "kirccommandhandler.h"
 
 namespace KIRC
 {
@@ -32,14 +32,69 @@ class Message;
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
  * @author Jason Keirstead <jason@keirstead.org>
  */
-class ClientCommands
-	: public QObject
+class ClientCommandHandler
+	: public CommandHandler
 {
 	Q_OBJECT
 
 public:
-	ClientCommands(QObject *parent = 0);
-	~ClientCommands();
+	ClientCommandHandler(QObject *parent = 0);
+	~ClientCommandHandler();
+
+public slots:
+	void away(bool isAway, const QString &awayMessage = QString::null);
+//	void invite();
+	void ison(const QStringList &nickList);
+	void join(const QString &name, const QString &key);
+	void kick(const QString &user, const QString &channel, const QString &reason);
+	void list();
+	void mode(const QString &target, const QString &mode);
+	void motd(const QString &server = QString::null);
+	void nick(const QString &newNickname);
+	void notice(const QString &target, const QString &message);
+	void part(const QString &name, const QString &reason);
+	void pass(const QString &password);
+	void privmsg(const QString &contact, const QString &message);
+
+	/**
+	 * Send a quit message for the given reason.
+	 * If now is set to true the connection is closed and no event message is sent.
+	 * Therefore setting now to true should only be used while destroying the object.
+	 */
+	void quit(const QString &reason, bool now=false);
+
+	void topic(const QString &channel, const QString &topic);
+	void user(const QString &newUsername, const QString &hostname, const QString &newRealname);
+	void user(const QString &newUsername, Q_UINT8 mode, const QString &newRealname);
+	void whois(const QString &user);
+
+
+	/* CTCP commands */
+	void CtcpRequestCommand(const QString &contact, const QString &command);
+	void CtcpRequest_action(const QString &contact, const QString &message);
+	void CtcpRequest_dcc(const QString &, const QString &, unsigned int port, KIRC::Transfer::Type type);
+	void CtcpRequest_ping(const QString &target);
+	void CtcpRequest_version(const QString &target);
+
+signals:
+	/**
+	 * Emit a received message.
+	 * The received message could have been translated to your locale.
+	 *
+	 * @param type the message type.
+	 * @param from the originator of the message.
+	 * @param to is the list of entities that are related to this message.
+	 * @param msg the message (usually translated).
+	 *
+	 * @note Most of the following numeric messages should be deprecated, and call this method instead.
+	 *	 Most of the methods, using it, update KIRC::Entities.
+	 *	 Lists based messages are sent via dedicated API, therefore they don't use this.
+	 */
+	// @param args the args to apply to this message.
+	void receivedMessage(	KIRC::MessageType type,
+				const KIRC::Entity::Ptr &from,
+				const KIRC::Entity::List &to,
+				const QString &msg);
 
 private slots:
 
@@ -136,7 +191,7 @@ private slots:
 	void CtcpReply_version(KIRC::Message &msg);
 
 private:
-	Q_DISABLE_COPY(ClientCommands)
+	Q_DISABLE_COPY(ClientCommandHandler)
 
 	class Private;
 	Private * const d;
