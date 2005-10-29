@@ -21,7 +21,6 @@
 #define KIRCCLIENT_H
 
 #include "kircsocket.h"
-#include "kirctransfer.h"
 
 namespace KIRC
 {

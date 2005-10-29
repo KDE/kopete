@@ -41,41 +41,6 @@ public:
 	ClientCommandHandler(QObject *parent = 0);
 	~ClientCommandHandler();
 
-public slots:
-	void away(bool isAway, const QString &awayMessage = QString::null);
-//	void invite();
-	void ison(const QStringList &nickList);
-	void join(const QString &name, const QString &key);
-	void kick(const QString &user, const QString &channel, const QString &reason);
-	void list();
-	void mode(const QString &target, const QString &mode);
-	void motd(const QString &server = QString::null);
-	void nick(const QString &newNickname);
-	void notice(const QString &target, const QString &message);
-	void part(const QString &name, const QString &reason);
-	void pass(const QString &password);
-	void privmsg(const QString &contact, const QString &message);
-
-	/**
-	 * Send a quit message for the given reason.
-	 * If now is set to true the connection is closed and no event message is sent.
-	 * Therefore setting now to true should only be used while destroying the object.
-	 */
-	void quit(const QString &reason, bool now=false);
-
-	void topic(const QString &channel, const QString &topic);
-	void user(const QString &newUsername, const QString &hostname, const QString &newRealname);
-	void user(const QString &newUsername, Q_UINT8 mode, const QString &newRealname);
-	void whois(const QString &user);
-
-
-	/* CTCP commands */
-	void CtcpRequestCommand(const QString &contact, const QString &command);
-	void CtcpRequest_action(const QString &contact, const QString &message);
-	void CtcpRequest_dcc(const QString &, const QString &, unsigned int port, KIRC::Transfer::Type type);
-	void CtcpRequest_ping(const QString &target);
-	void CtcpRequest_version(const QString &target);
-
 signals:
 	/**
 	 * Emit a received message.

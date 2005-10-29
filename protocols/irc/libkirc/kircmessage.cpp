@@ -54,6 +54,8 @@ public:
 		  dirty(false)
 	{ }
 
+	KIRC::Message::Direction direction;
+
 	QByteArray line;
 	QByteArray prefix;
 	QByteArray command;
@@ -183,6 +185,17 @@ Message &Message::operator = (const Message &o)
 	return *this;
 }
 
+Message::Direction Message::direction() const
+{
+	return d->direction;
+}
+
+Message &Message::setDirection(Message::Direction direction)
+{
+	d->direction = direction;
+	return *this;
+}
+
 QByteArray Message::rawLine() const
 {
 	return d->line;
@@ -262,6 +275,12 @@ QByteArray Message::rawArgs() const
 	return d->args;
 }
 
+Message &Message::setArgs(const QByteArray &args)
+{
+#warning implement me
+	return *this;
+}
+
 QByteArrayList Message::rawArgList() const
 {
 	return d->argList;
@@ -301,68 +320,74 @@ QString Message::prefix(QTextCodec *codec) const
 {
 	return checkCodec(codec)->toUnicode(d->prefix);
 }
-/*
+
 Message &Message::setPrefix(const QString &prefix, QTextCodec *codec)
 {
 	return setPrefix(checkCodec(codec)->fromUnicode(prefix));
 }
-*/
+
 QString Message::command(QTextCodec *codec) const
 {
 	return checkCodec(codec)->toUnicode(d->command);
 }
-/*
+
 Message &Message::setCommand(const QString &command, QTextCodec *codec)
 {
 	return setCommand(checkCodec(codec)->fromUnicode(command));
 }
-*/
+
 QString Message::args(QTextCodec *codec) const
 {
 	return checkCodec(codec)->toUnicode(d->args);
 }
-/*
+
 Message &Message::setArgs(const QString &args, QTextCodec *codec)
 {
-	return setArgs(checkCodec(codec)->fromUnicode(prefix));
+	return setArgs(checkCodec(codec)->fromUnicode(args));
 }
-*/
+
 QStringList Message::argList(QTextCodec *codec) const
 {
 	QStringList argList;
 	codec = checkCodec(codec);
 
-	for (size_t i=0; i < d->argList.size(); ++i)
-		argList.append(codec->toUnicode(d->argList[i]));
+	foreach(const QByteArray &arg, d->argList)
+		argList.append(codec->toUnicode(arg));
 
 	return argList;
 }
-/*
+
 Message &Message::setArgList(const QStringList &argList, QTextCodec *codec)
 {
-	return setArgList(checkCodec(codec)->fromUnicode(prefix));
+	QByteArrayList arrayList;
+	codec = checkCodec(codec);
+
+	foreach (const QString &arg, argList)
+		arrayList.append(codec->fromUnicode(arg));
+
+	return setArgList(arrayList);
 }
-*/
+
 QString Message::arg(size_t i, QTextCodec *codec) const
 {
 	return checkCodec(codec)->toUnicode(d->argList[i]);
 }
 /*
-Message &Message::setArg(const QString &arg, QTextCodec *codec)
+Message &Message::setArgs(size_t i, const QString &arg, QTextCodec *codec)
 {
-	return setArg(checkCodec(codec)->fromUnicode(arg));
+	return setArg(i, checkCodec(codec)->fromUnicode(arg));
 }
 */
 QString Message::suffix(QTextCodec *codec) const
 {
 	return checkCodec(codec)->toUnicode(d->suffix);
 }
-/*
+
 Message &Message::setSuffix(const QString &suffix, QTextCodec *codec)
 {
-	return setSuffix(checkCodec(codec)->fromUnicode(prefix));
+	return setSuffix(checkCodec(codec)->fromUnicode(suffix));
 }
-*/
+
 bool Message::isValid() const
 {
 	return d->valid;
@@ -416,6 +441,7 @@ QTextCodec *Message::checkCodec(QTextCodec *codec) const
 		return codec;
 
 //	return entityFromPrefix()->codec();
+	Q_ASSERT(0);
 	return 0;
 }
 

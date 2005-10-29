@@ -59,15 +59,16 @@ class Message
 //	Q_PROPERTY(QStringList argList READ argList)
 	Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
 
-//	Q_ENUMS(Direction)
+	Q_ENUMS(Direction)
 
 public:
 	typedef enum
 	{
-		Unknown = 0,
-		OutGoing, // From the client to the network
-		InGoing	  // From the network to the client
+		Unknown  = 0,
+		OutGoing = 1<<1, // From the client to the network
+		InGoing	 = 1<<2 // From the network to the client
 	} Direction;
+	Q_DECLARE_FLAGS(Directions, Direction)
 
 	// low level quoting, message quoting
 	static QByteArray quote(const QByteArray &str);
@@ -103,7 +104,7 @@ public: // Properties read accessors
 	QString suffix(QTextCodec *codec = 0) const;
 
 public slots: // Properties write accessors
-	void setDirection(Direction direction);
+	KIRC::Message &setDirection(KIRC::Message::Direction direction);
 
 	KIRC::Message &setLine(const QByteArray &);
 	KIRC::Message &setPrefix(const QByteArray &);
@@ -154,5 +155,7 @@ private:
 };
 
 }
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(KIRC::Message::Directions)
 
 #endif // KIRCMESSAGE_H

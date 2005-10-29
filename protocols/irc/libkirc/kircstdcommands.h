@@ -28,20 +28,6 @@ namespace KIRC
 
 class Socket;
 
-/* RFC2812: "<user> <mode> <unused> <realname>"
- * mode is a numeric value (from a bit mask).
- * 0x00 normal
- * 0x04 request +w
- * 0x08 request +i
- */
-typedef enum
-{
-//	W = 0x04,
-	Invisible = 0x08
-} Mode;
-Q_DECLARE_FLAGS(Modes, Mode)
-
-
 /**
  * @author Nick Betcher <nbetcher@kde.org>
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
@@ -49,6 +35,20 @@ Q_DECLARE_FLAGS(Modes, Mode)
  */
 namespace StdCommands
 {
+	/* RFC2812: "<user> <mode> <unused> <realname>"
+	 * mode is a numeric value (from a bit mask).
+	 * 0x00 normal
+	 * 0x04 request +w
+	 * 0x08 request +i
+	 */
+	typedef enum
+	{
+		Normal		= 0x00,
+	//	W		= 0x04,
+		Invisible	= 0x08
+	} Mode;
+	Q_DECLARE_FLAGS(Modes, Mode)
+
 	void away(KIRC::Socket *socket, const QString &awayMessage = QString::null);
 //	void invite(KIRC::Socket *socket);
 	void ison(KIRC::Socket *socket, const QStringList &nickList);
@@ -85,6 +85,8 @@ namespace StdCommands
 }
 
 }
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(KIRC::StdCommands::Modes)
 
 #endif
 

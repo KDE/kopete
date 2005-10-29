@@ -196,7 +196,7 @@ void Client::authentify()
 	if (!(password()).isEmpty())
 		StdCommands::pass(this, password());
 
-	StdCommands::user(this, d->username, Modes(), d->realName);
+	StdCommands::user(this, d->username, StdCommands::Normal, d->realName);
 	StdCommands::nick(this, d->nickname);
 }
 
