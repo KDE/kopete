@@ -208,6 +208,21 @@ public:
 			const QStringList &actions=QStringList(), ContextList contexts=ContextList() ,
 			unsigned int flags=CloseOnTimeout);
 
+	/**
+	 * @return the name of the event
+	 */
+	QString eventId() const;
+	
+	/**
+	 * @return the notification text
+	 */
+	QString text() const ;
+	
+	/**
+	 * @return the notification title
+	 */
+	QString title() const;
+
 public:	//from KNotifyClient
     /**
      * Describes the notification method.

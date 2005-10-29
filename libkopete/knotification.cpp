@@ -26,6 +26,7 @@
 */
 
 #include "knotification.h"
+#include "knotificationmanager.h"
 
 #include <kmessagebox.h>
 #include <klocale.h>
@@ -37,7 +38,7 @@
 #include <kdialog.h>
 #include <kmacroexpander.h>
 #include <kwin.h>
-
+#include <kdebug.h>
 
 #include <kvbox.h>
 #include <QMap>
@@ -71,6 +72,11 @@ struct KNotification::Private
 	QString text;
 	QStringList actions;
 	int level;
+	QString eventId;
+	QString title;
+	unsigned int id;
+	
+	Private() : widget(0l) , id(0) {}
 };
 
 KNotification::KNotification(QObject *parent) :
@@ -80,8 +86,24 @@ KNotification::KNotification(QObject *parent) :
 
 KNotification::~KNotification()
 {
-	emit closed();
+	if(d ->id != 0)
+		KNotificationManager::self()->remove( d->id );
 	delete d;
+}
+
+QString KNotification::eventId() const
+{
+	return d->eventId;
+}
+
+QString KNotification::text() const
+{
+	return d->text;
+}
+
+QString KNotification::title() const
+{
+	return d->title;
 }
 
 
@@ -167,75 +189,11 @@ void KNotification::notifyByMessagebox()
 	}
 }
 
-
-
 void KNotification::notifyByPassivePopup(const QPixmap &pix )
-{
-	QString appName = QString::fromAscii( kapp->instanceName() );
-	KIconLoader iconLoader( appName );
-	KConfig eventsFile( QString::fromAscii( kapp->instanceName()+"/eventsrc" ), true, false, "data");
-	KConfigGroup config( &eventsFile, "!Global!" );
-	QString iconName = config.readEntry( "IconName", appName );
-	QPixmap icon = iconLoader.loadIcon( iconName, KIcon::Small );
-	QString title = config.readEntry( "Comment", appName );
-    //KPassivePopup::message(title, text, icon, senderWinId);
-
-	WId winId=d->widget ? d->widget->topLevelWidget()->winId()  : 0;
-
-	KPassivePopup *pop = new KPassivePopup( checkWinId(appName, winId) );
-	QObject::connect(this, SIGNAL(closed()), pop, SLOT(deleteLater()));
-
-	KVBox *vb = pop->standardView( title, pix.isNull() ? d->text: QString::null , icon );
-	KVBox *vb2=vb;
-
-	if(!pix.isNull())
-	{
-		KHBox *hb = new KHBox(vb);
-		hb->setSpacing(KDialog::spacingHint());
-		QLabel *pil=new QLabel(hb);
-		pil->setPixmap(pix);
-		pil->setScaledContents(true);
-		if(pix.height() > 80 && pix.height() > pix.width() )
-		{
-			pil->setMaximumHeight(80);
-			pil->setMaximumWidth(80*pix.width()/pix.height());
-		}
-		else if(pix.width() > 80 && pix.height() <= pix.width())
-		{
-			pil->setMaximumWidth(80);
-			pil->setMaximumHeight(80*pix.height()/pix.width());
-		}
-		vb=new KVBox(hb);
-		QLabel *msg = new QLabel( d->text, vb, "msg_label" );
-		msg->setAlignment( Qt::AlignLeft );
-	}
-
-
-	if ( !d->actions.isEmpty() )
-	{
-		QString linkCode=QString::fromLatin1("<p align=\"right\">");
-		int i=0;
-		for ( QStringList::ConstIterator it = d->actions.begin() ; it != d->actions.end(); ++it )
-		{
-			i++;
-			linkCode+=QString::fromLatin1("&nbsp;<a href=\"%1\">%2</a> ").arg( QString::number(i) , Q3StyleSheet::escape(*it)  );
-		}
-		linkCode+=QString::fromLatin1("</p>");
-		KActiveLabel *link = new KActiveLabel(linkCode , vb );
-		//link->setAlignment( AlignRight );
-		QObject::disconnect(link, SIGNAL(linkClicked(const QString &)), link, SLOT(openLink(const QString &)));
-		QObject::connect(link, SIGNAL(linkClicked(const QString &)), this, SLOT(slotPopupLinkClicked(const QString &)));
-		QObject::connect(link, SIGNAL(linkClicked(const QString &)), pop, SLOT(hide()));
-	}
-
-	pop->setAutoDelete( true );
-	//pop->setTimeout(-1);
-
-	pop->setView( vb2 );
-	pop->show();
-
+{	
+	d->id=KNotificationManager::self()->notify( this , pix , d->actions );
+	kdDebug() << k_funcinfo << d->id << endl;
 }
-
 
 
 bool KNotification::notifyByLogfile(const QString &text, const QString &file)
@@ -383,12 +341,16 @@ void KNotification::activate(unsigned int action)
 	if(action==0)
 		emit activated();
 	emit activated(action);
+	kdDebug() << k_funcinfo << d->id << " " << action << endl;
 	deleteLater();
 }
 
 
 void KNotification::close()
 {
+	if(d->id != 0)
+		KNotificationManager::self()->close( d->id );
+	emit closed();
 	deleteLater();
 }
 
@@ -440,12 +402,12 @@ KNotification *KNotification::event( const QString& message , const QString& tex
 	QString sound;
 	QString file;
 	QString commandline;
-
+	QString appname = QString::fromAscii(kapp->instanceName());
 	// get config file
-	KConfig eventsFile( QString::fromAscii( kapp->instanceName()+"/eventsrc" ), true, false, "data");
+	KConfig eventsFile( appname+QString::fromAscii( "/eventsrc" ), true, false, "data");
 	eventsFile.setGroup(message);
 
-	KConfig configFile( QString::fromAscii( kapp->instanceName()+".eventsrc" ), true, false);
+	KConfig configFile( appname+QString::fromAscii( ".eventsrc" ), true, false);
 	configFile.setGroup(message);
 
 	int present=getPresentation(message);
@@ -488,10 +450,14 @@ KNotification *KNotification::event( const QString& message , const QString& tex
 	notify->d->text=text;
 	notify->d->actions=actions;
 	notify->d->level=level;
+	notify->d->eventId=message;
+	notify->d->title=eventsFile.readEntry( "Comment", appname );
+
 	WId winId=widget ? widget->topLevelWidget()->winId()  : 0;
 
 	if ( present & PassivePopup )
 	{
+		
 		notify->notifyByPassivePopup( pixmap );
 	}
 	if ( present & Messagebox )
@@ -505,7 +471,6 @@ KNotification *KNotification::event( const QString& message , const QString& tex
 	}
 	if ( present & Execute )
 	{
-		QString appname = QString::fromAscii( kapp->instanceName() );
 		notify->notifyByExecute(commandline, QString::null,appname,text, winId, 0 );
 	}
 	
