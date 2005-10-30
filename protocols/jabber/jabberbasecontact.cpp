@@ -31,6 +31,7 @@
 #include "jabberresource.h"
 #include "jabberresourcepool.h"
 #include "kopetemetacontact.h"
+#include "kopetemessage.h"
 
 /**
  * JabberBaseContact constructor
@@ -245,7 +246,10 @@ void JabberBaseContact::updateResourceList ()
 		if ( !(*it)->resource().status().status().stripWhiteSpace().isEmpty () )
 		{
 			resourceListStr += QString ( "<tr><td>%1: %2</td></tr>" ).
-							   arg ( i18n ( "Message" ), (*it)->resource().status().status () );
+							   arg ( 
+								i18n ( "Message" ), 
+								Kopete::Message::escape( (*it)->resource().status().status () ) 
+								);
 		}
 	}
 	
