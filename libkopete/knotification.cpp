@@ -54,6 +54,8 @@
 #include <qfile.h>
 #include <qtextstream.h>
 #include <QDateTime>
+#include <QMetaObject>
+#include <QMetaEnum>
 
 //TODO,  make the KNotification aware of the systemtray.
 #include "kopeteuiglobal.h"
@@ -144,10 +146,10 @@ void KNotification::notifyByMessagebox()
 	if ( d->text.isEmpty() )
 		return;
 
-	QString action=d->actions[0];
+	QStringList actions=d->actions;
 	WId winId=d->widget ? d->widget->topLevelWidget()->winId()  : 0;
 
-	if( action.isEmpty())
+	if( actions.count() == 0)
 	{
 	// display message box for specified event level
 		switch( d->level )
@@ -175,16 +177,16 @@ void KNotification::notifyByMessagebox()
 		{
 			default:
 			case Notification:
-				result = KMessageBox::questionYesNo(d->widget, d->text, i18n( "Notification" ), action, KStdGuiItem::cancel(), QString::null, false );
+				result = KMessageBox::questionYesNo(d->widget, d->text, i18n( "Notification" ), actions[0], KStdGuiItem::cancel(), QString::null, false );
 				break;
 			case Warning:
-				result = KMessageBox::warningYesNo( d->widget, d->text, i18n( "Warning" ), action, KStdGuiItem::cancel(), QString::null, false );
+				result = KMessageBox::warningYesNo( d->widget, d->text, i18n( "Warning" ), actions[0], KStdGuiItem::cancel(), QString::null, false );
 				break;
 			case Error:
-				result = KMessageBox::warningYesNo( d->widget, d->text, i18n( "Error" ), action, KStdGuiItem::cancel(), QString::null, false );
+				result = KMessageBox::warningYesNo( d->widget, d->text, i18n( "Error" ), actions[0], KStdGuiItem::cancel(), QString::null, false );
 				break;
 			case Catastrophe:
-				result = KMessageBox::warningYesNo( d->widget, d->text, i18n( "Catastrophe!" ), action, KStdGuiItem::cancel(), QString::null, false );
+				result = KMessageBox::warningYesNo( d->widget, d->text, i18n( "Catastrophe!" ), actions[0], KStdGuiItem::cancel(), QString::null, false );
 				break;
 		}
 		if(result==KMessageBox::Yes && _this)
@@ -314,82 +316,99 @@ void KNotification::raiseWidget(QWidget *w)
 }
 
 
+//to workaround the fact that , i not allowed in a macro
+#define VIRGULE ,    
+
+//this is temporary code
+class ConfigHelper
+{
+public:
+	KConfig eventsfile,configfile;
+	KNotification::ContextList contexts;
+	QString eventid;
+	ConfigHelper(const QString &appname, const KNotification::ContextList &_contexts , const QString &_eventid) 
+		:	eventsfile( appname+QString::fromAscii( "/eventsrc" ), true, false, "data"),
+			configfile( appname+QString::fromAscii( ".eventsrc" ), true, false),
+			contexts(_contexts) , eventid(_eventid)
+	{}
+				
+	QString readEntry(const QString& entry , bool path=false)
+	{
+		foreach( QPair<QString VIRGULE QString> context , contexts )
+		{
+			const QString group="Event/" + eventid + "/" + context.first + "/" + context.second;
+			if(configfile.hasGroup( group ) )
+			{
+				configfile.setGroup(group);
+				QString p=path ?  configfile.readPathEntry(entry) : configfile.readEntry(entry);
+				kdDebug() << k_funcinfo << "group=" << group << " value=" << p << " isNull=" << p.isNull() << endl; 
+				if(!p.isNull())
+					return p;
+			}
+		}
+		const QString group="Event/" + eventid ;
+		kdDebug() << k_funcinfo << "group=" << group  << endl;
+		if(configfile.hasGroup( group ) )
+		{
+			configfile.setGroup(group);
+			QString p=path ?  configfile.readPathEntry(entry) : configfile.readEntry(entry);
+			kdDebug() << k_funcinfo << "bib group=" << group << " value=" << p << " isNull=" << p.isNull() << endl;
+			if(!p.isNull())
+				return p;
+		}
+		if(eventsfile.hasGroup( group ) )
+		{
+			eventsfile.setGroup(group);
+			QString p=path ?  eventsfile.readPathEntry(entry) : eventsfile.readEntry(entry);
+			kdDebug() << k_funcinfo << "bob group=" << group << " value=" << p << " isNull=" << p.isNull() << endl;
+			if(!p.isNull())
+				return p;
+		}
+		return QString::null;
+	}
+
+};
+	
 
 
-KNotification *KNotification::event( const QString& message , const QString& text,
+KNotification *KNotification::event( const QString& eventid , const QString& text,
 			const QPixmap& pixmap, QWidget *widget, const QStringList &actions,
 			ContextList contexts, unsigned int flags)
 {
-	/* NOTE:  this function still use the KNotifyClient,
-	 *        in the future (KDE4) all the function of the knotifyclient will be moved there.
-	 *  Some code here is derived from the old KNotify deamon
-	 */
-	
-	//todo: handle context
-
 	int level=Default;
-	QString sound;
-	QString file;
-	QString commandline;
 	QString appname = QString::fromAscii(kapp->instanceName());
-	// get config file
-	KConfig eventsFile( appname+QString::fromAscii( "/eventsrc" ), true, false, "data");
-	eventsFile.setGroup(message);
-
-	KConfig configFile( appname+QString::fromAscii( ".eventsrc" ), true, false);
-	configFile.setGroup(message);
-
-	int present=getPresentation(message);
-	if(present==-1)
-		present=getDefaultPresentation(message);
-	if(present==-1)
-		present=0;
-
-	// get sound file name
-	if( present & Sound ) {
-		QString theSound = configFile.readPathEntry( "soundfile" );
-		if ( theSound.isEmpty() )
-			theSound = eventsFile.readPathEntry( "default_sound" );
-		if ( !theSound.isEmpty() )
-			sound = theSound;
-	}
-
-	// get log file name
-	if( present & Logfile ) {
-		QString theFile = configFile.readPathEntry( "logfile" );
-		if ( theFile.isEmpty() )
-			theFile = eventsFile.readPathEntry( "default_logfile" );
-		if ( !theFile.isEmpty() )
-			file = theFile;
-	}
-
-	// get default event level
-	if( present & Messagebox )
-		level = eventsFile.readNumEntry( "level", 0 );
-
-	// get command line
-	if (present & Execute ) {
-		commandline = configFile.readPathEntry( "commandline" );
-		if ( commandline.isEmpty() )
-			commandline = eventsFile.readPathEntry( "default_commandline" );
-	}
-
 	KNotification *notify=new KNotification(widget);
 	notify->d->widget=widget;
 	notify->d->text=text;
 	notify->d->actions=actions;
 	notify->d->level=level;
-	notify->d->eventId=message;
-	notify->d->title=eventsFile.readEntry( "Comment", appname );
+	notify->d->eventId=eventid;
 
 	WId winId=widget ? widget->topLevelWidget()->winId()  : 0;
+	
+		// get config file
+	ConfigHelper config( appname, contexts, eventid );
+	config.eventsfile.setGroup("Global");
+	notify->d->title=config.eventsfile.readEntry( "Comment", appname );
+	
+	int n = notify->metaObject()->indexOfEnumerator( "NotifyPresentation" );
+	QString presentstring=config.readEntry("Action");
+	int present= notify->metaObject()->enumerator(n).keysToValue( presentstring.latin1() );
+	if(present == -1)
+		present=0;
+	
+	kdDebug() << k_funcinfo << "Action: " << presentstring << " - " << present << endl;
+
+	// get default event level
+	if( present & Messagebox )
+		level = config.readEntry( "level"  ).toUInt();
 
 	if ( present & PassivePopup )
 	{
-		notify->notifyByPassivePopup( pixmap , (present & Sound) ? sound : QString::null );
+		notify->notifyByPassivePopup( pixmap , (present & Sound) ? config.readEntry( "sound" , true) : QString::null );
 	}
 	else if ( present & Sound ) // && QFile(sound).isReadable()
-		notify->notifyBySound( sound, kapp->instanceName(), 0 );
+		notify->notifyBySound( config.readEntry( "sound" , true), kapp->instanceName(), 0 );
 
 	
 	
@@ -404,12 +423,12 @@ KNotification *KNotification::event( const QString& message , const QString& tex
 	}
 	if ( present & Execute )
 	{
-		notify->notifyByExecute(commandline, QString::null,appname,text, winId, 0 );
+		notify->notifyByExecute(config.readEntry( "commandline" ), QString::null,appname,text, winId, 0 );
 	}
 	
 
 	if ( present & Logfile ) // && QFile(file).isWritable()
-		notify->notifyByLogfile( text, file );
+		notify->notifyByLogfile( text, config.readEntry( "logfile" , true) );
 	
 	if ( present & Stderr )
 		notify->notifyByStderr( text );
@@ -432,102 +451,6 @@ KNotification *KNotification::event( const QString& message , const QString& tex
 
 
 #if 0
-
-/* This code is there before i find a great way to perform context-dependent notifications
- * in a way independent of kopete.
- *   i'm in fact still using the Will's old code.
- */
-
-
-
-#include "kopeteeventpresentation.h"
-#include "kopetegroup.h"
-#include "kopetenotifydataobject.h"
-#include "kopetenotifyevent.h"
-#include "kopetemetacontact.h"
-#include "kopeteuiglobal.h"
-#include <qimage.h>
-
-
-static KNotification *performCustomNotifications( QWidget *widget, Kopete::MetaContact * mc, const QString &message, bool& suppress)
-{
-	KNotification *n=0L;
-	//kdDebug( 14010 ) << k_funcinfo << endl;
-	if ( suppress )
-		return n;
-
-	// Anything, including the MC itself, may set suppress and prevent further notifications
-
-	/* This is a really ugly piece of logic now.  The idea is to check for notifications
-	* first on the metacontact, then on each of its groups, until something suppresses
-	* any further notifications.
-	* So on the first run round this loop, dataObj points to the metacontact, and on subsequent
-	* iterations it points to one of the contact's groups.  The metacontact pointer is maintained
-	* so that if a group has a chat notification set for this event, we can call execute() on the MC.
-	*/
-
-	bool checkingMetaContact = true;
-	Kopete::NotifyDataObject * dataObj = mc;
-	do {
-		QString sound;
-		QString text;
-
-		if ( dataObj )
-		{
-			Kopete::NotifyEvent *evt = dataObj->notifyEvent( message );
-			if ( evt )
-			{
-				suppress = evt->suppressCommon();
-				int present = 0;
-				// sound
-				Kopete::EventPresentation *pres = evt->presentation( Kopete::EventPresentation::Sound );
-				if ( pres && pres->enabled() )
-				{
-					present = present | KNotifyClient::Sound;
-					sound = pres->content();
-					evt->firePresentation( Kopete::EventPresentation::Sound );
-				}
-				// message
-				if ( ( pres = evt->presentation( Kopete::EventPresentation::Message ) )
-								   && pres->enabled() )
-				{
-					present = present | KNotifyClient::PassivePopup;
-					text = pres->content();
-					evt->firePresentation( Kopete::EventPresentation::Message );
-				}
-				// chat
-				if ( ( pres = evt->presentation( Kopete::EventPresentation::Chat ) )
-								   && pres->enabled() )
-				{
-					if ( mc )
-						mc->execute();
-					evt->firePresentation( Kopete::EventPresentation::Chat );
-				}
-				// fire the event
-				n=KNotification::userEvent( text, QPixmap::fromImage( mc->photo() ), widget, QStringList(),
-                                            present, 0, sound, QString::null, QString::null , KNotification::CloseOnTimeout);
-			}
-		}
-
-		if ( mc )
-		{
-			if ( checkingMetaContact )
-			{
-				// only executed on first iteration
-				checkingMetaContact = false;
-				dataObj = mc->groups().first();
-			}
-			else
-				dataObj = mc->groups().next();
-		}
-	}
-	while ( dataObj && !suppress );
-	return n;
-}
-
-
-#endif
-
 
 
 int KNotification::getPresentation(const QString &eventname)
@@ -592,7 +515,7 @@ QString KNotification::getDefaultFile(const QString &eventname, int present)
 	return QString::null;
 }
 
-
+#endif
 
 #include "knotification.moc"
 

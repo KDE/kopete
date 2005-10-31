@@ -112,7 +112,7 @@ unsigned int KNotificationManager::notify( KNotification* n , const QPixmap &pix
 	QDataStream arg(&data, IO_WriteOnly);
 	QString appname=kapp->instanceName();
 	KConfig eventsFile( appname+QString::fromAscii( "/eventsrc" ), true, false, "data");
-	KConfigGroup config( &eventsFile, "!Global!" );
+	KConfigGroup config( &eventsFile, "Global" );
 	QString iconName = config.readEntry( "IconName", appname );
 	KIconLoader iconLoader( appname );
 	QPixmap appicon = iconLoader.loadIcon( iconName, KIcon::Small );

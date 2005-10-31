@@ -225,10 +225,13 @@ public:
 	
 
 public:	//from KNotifyClient
+	
+	Q_FLAGS(NotifyPresentation);
+	
     /**
      * Describes the notification method.
      */
-	enum {
+	enum NotifyPresentation {
 		Default = -1,
 		None = 0,
 		Sound = 1,
@@ -247,6 +250,7 @@ public:	//from KNotifyClient
 		Catastrophe=8
 	};
 	
+#if 0
 	/**
 	 * @brief emit a custom event
 	 *
@@ -306,7 +310,7 @@ public:	//from KNotifyClient
 	 * @return the default file. Can be QString::null if not found.
 	 */
 	static QString getDefaultFile(const QString &eventname, int present);
-
+#endif
 			  
 };
 
