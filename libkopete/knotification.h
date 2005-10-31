@@ -114,7 +114,7 @@ public:
 	 * When the notification is activated, the widget might be raised.
 	 * Depending of the configuration, the taskbar entry of the window containing the widget may blink.
 	 */
-	QWidget *widget();
+	QWidget *widget() const;
 
    signals:
 	/**
@@ -173,7 +173,7 @@ private:
 
 private slots:
 	void notifyByMessagebox();
-	void notifyByPassivePopup(const QPixmap &pix);
+	void notifyByPassivePopup(const QPixmap &pix, const QString & sound);
 	void notifyByExecute(const QString &command, const QString& event,const QString& fromApp, const QString& text,	int winId, int eventId);
 	void slotPopupLinkClicked(const QString &);
 	bool notifyBySound(const QString &sound, const QString &appname, int eventId);
@@ -222,6 +222,7 @@ public:
 	 * @return the notification title
 	 */
 	QString title() const;
+	
 
 public:	//from KNotifyClient
     /**

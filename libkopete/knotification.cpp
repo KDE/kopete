@@ -106,6 +106,11 @@ QString KNotification::title() const
 	return d->title;
 }
 
+QWidget *KNotification::widget() const
+{
+	return d->widget;
+}
+
 
 void KNotification::notifyByExecute(const QString &command, const QString& event,
 							  const QString& fromApp, const QString& text,
@@ -189,9 +194,9 @@ void KNotification::notifyByMessagebox()
 	}
 }
 
-void KNotification::notifyByPassivePopup(const QPixmap &pix )
+void KNotification::notifyByPassivePopup(const QPixmap &pix, const QString& sound )
 {	
-	d->id=KNotificationManager::self()->notify( this , pix , d->actions );
+	d->id=KNotificationManager::self()->notify( this , pix , d->actions , sound );
 	kdDebug() << k_funcinfo << d->id << endl;
 }
 
@@ -245,84 +250,8 @@ bool KNotification::notifyByTaskbar( WId win )
 
 bool KNotification::notifyBySound( const QString &sound, const QString &appname, int eventId )
 {
-#if 0 //TODO
-	if (sound.isEmpty()) {
-		soundFinished( eventId, NoSoundFile );
-		return false;
-	}
-
-	bool external = d->useExternal && !d->externalPlayer.isEmpty();
-    // get file name
-	QString soundFile(sound);
-	if ( QFileInfo(sound).isRelative() )
-	{
-		QString search = QString("%1/sounds/%2").arg(appname).arg(sound);
-		soundFile = KGlobal::instance()->dirs()->findResource("data", search);
-		if ( soundFile.isEmpty() )
-			soundFile = locate( "sound", sound );
-	}
-	if ( soundFile.isEmpty() )
-	{
-		soundFinished( eventId, NoSoundFile );
-		return false;
-	}
-
-
-//     kdDebug() << "KNotify::notifyBySound - trying to play file " << soundFile << endl;
-
-	if (!external) {
-        //If we disabled audio, just return,
-		if (!d->useKDEMM)
-		{
-			soundFinished( eventId, NoSoundSupport );
-			return false;
-		}
-
-		KURL soundURL;
-		soundURL.setPath(soundFile);
-#if defined(HAVE_AKODE)
-        if (d->player.state() != aKode::Player::Open) {
-	soundFinished( eventId, PlayerBusy );
-	return false;
-		}
-
-		if (d->player.load(soundFile.toLocal8Bit())) {
-			d->player.play();
-			d->akodePlayerEventId = eventId;
-			return true;
-		}
-#endif
-        soundFinished( eventId, NoSoundSupport );
-        return false;
-//	return KDE::Multimedia::Factory::self()->playSoundEvent(soundFile);
-
-	} else if(!d->externalPlayer.isEmpty()) {
-        // use an external player to play the sound
-		KProcess *proc = d->externalPlayerProc;
-		if (!proc)
-		{
-			proc = d->externalPlayerProc = new KProcess;
-			connect( proc, SIGNAL( processExited( KProcess * )),
-					 SLOT( slotPlayerProcessExited( KProcess * )));
-		}
-		if (proc->isRunning())
-		{
-			soundFinished( eventId, PlayerBusy );
-			return false; // Skip
-		}
-		proc->clearArguments();
-		(*proc) << d->externalPlayer << QFile::encodeName( soundFile );
-		d->externalPlayerEventId = eventId;
-		proc->start(KProcess::NotifyOnExit);
-		return true;
-	}
-
-	soundFinished( eventId, Unknown );
-#endif
-	return false;
+	return KNotificationManager::self()->notifyBySound( sound, appname, eventId );
 }
-
-
 
 
 void KNotification::slotPopupLinkClicked(const QString &adr)
@@ -457,9 +386,13 @@ KNotification *KNotification::event( const QString& message , const QString& tex
 
 	if ( present & PassivePopup )
 	{
-		
-		notify->notifyByPassivePopup( pixmap );
+		notify->notifyByPassivePopup( pixmap , (present & Sound) ? sound : QString::null );
 	}
+	else if ( present & Sound ) // && QFile(sound).isReadable()
+		notify->notifyBySound( sound, kapp->instanceName(), 0 );
+
+	
+	
 	if ( present & Messagebox )
 	{
 		QTimer::singleShot(0,notify,SLOT(notifyByMessagebox()));
@@ -474,8 +407,6 @@ KNotification *KNotification::event( const QString& message , const QString& tex
 		notify->notifyByExecute(commandline, QString::null,appname,text, winId, 0 );
 	}
 	
-	if ( present & Sound ) // && QFile(sound).isReadable()
-		notify->notifyBySound( sound, kapp->instanceName(), 0 );
 
 	if ( present & Logfile ) // && QFile(file).isWritable()
 		notify->notifyByLogfile( text, file );

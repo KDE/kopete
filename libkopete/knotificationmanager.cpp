@@ -29,6 +29,8 @@
 
 #include <QHash>
 
+typedef QHash<QString,QString> Dict;
+
 struct KNotificationManager::Private
 {
 	QHash<int , KNotification*> notifications;
@@ -102,7 +104,7 @@ void KNotificationManager::close(unsigned int id)
 	}
 }
 
-unsigned int KNotificationManager::notify( KNotification* n , const QPixmap &pix , const QStringList &actions )
+unsigned int KNotificationManager::notify( KNotification* n , const QPixmap &pix , const QStringList &actions , const QString & sound)
 {
 	DCOPClient *client=KApplication::dcopClient();
 	QByteArray data, replyData;
@@ -115,9 +117,18 @@ unsigned int KNotificationManager::notify( KNotification* n , const QPixmap &pix
 	KIconLoader iconLoader( appname );
 	QPixmap appicon = iconLoader.loadIcon( iconName, KIcon::Small );
 
+	Dict  hints;
+	if(! sound.isEmpty() )
+		hints["sound-file"]=sound;
+	else
+		hints["suppress-sound"]="true";
+
+	if( n->widget() )
+		hints["win-id"]=QString::number(n->widget()->winId());
+	
 	arg << appname << appicon << 0 << n->eventId() << 0 << n->title() << n->text() << pix ;
-	arg << actions << QStringList() << false << 0;
-	if (!client->call("knotify", "Notify", "Notify(QString,QPixmap,unsigned int,QString,int,QString,QString,QPixmap,QStringList,QStringList,bool,unsigned int)" ,
+	arg << actions << hints << false << 0;
+	if (!client->call("knotify", "Notify", "Notify(QString,QPixmap,unsigned int,QString,int,QString,QString,QPixmap,QStringList,Dict,bool,unsigned int)" ,
 		 	 data, replyType, replyData))
 	{
 		kdDebug() << k_funcinfo << "error while contacting knotify server" << endl;
@@ -142,5 +153,22 @@ unsigned int KNotificationManager::notify( KNotification* n , const QPixmap &pix
 void KNotificationManager::remove( unsigned int id)
 {
 	d->notifications.remove(id);
+}
+
+bool KNotificationManager::notifyBySound(const QString &file, const QString& appname,unsigned int id)
+{
+	DCOPClient *client=KApplication::dcopClient();
+	QByteArray data;
+	QDataStream arg(&data, IO_WriteOnly);
+	arg << file ;
+	arg << appname ;
+	arg << (int)id;
+	if (!client->send("knotify", "Notify", "notifyBySound(QString,QString,int)", data))
+	{
+		kdDebug() << k_funcinfo << "error while contacting knotify server" << endl;
+		return false;
+	}
+	return true;
+	
 }
 

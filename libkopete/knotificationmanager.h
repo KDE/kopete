@@ -17,6 +17,8 @@
 */
 
 
+
+
 #ifndef KNOTIFICATIONMANAGER_H
 #define KNOTIFICATIONMANAGER_H
 
@@ -43,7 +45,7 @@ class KNotificationManager :  virtual public DCOPObject
 		 * send the dcop call to the knotify server
 		 * @return the identification number
 		 */
-		unsigned int notify(KNotification *n, const QPixmap& pix, const QStringList &action);
+		unsigned int notify(KNotification *n, const QPixmap& pix, const QStringList &action , const QString &sound);
 		
 		/**
 		 * send the close dcop call to the knotify server for the notification with the identifier @p id .
@@ -57,6 +59,10 @@ class KNotificationManager :  virtual public DCOPObject
 		 */
 		void remove(unsigned int id);	
 		
+		/**
+		 * play a sound
+		 */
+		bool notifyBySound(const QString &file, const QString& appname, unsigned int id);
 	k_dcop:
 		ASYNC notificationClosed(unsigned int id,unsigned int reason);
 		ASYNC notificationActivated(unsigned int id, unsigned int action);
