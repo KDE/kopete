@@ -483,7 +483,7 @@ QPtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::ChatSession
 
 		if( isChannel )
 		{
-			bool isOperator = ( manager->contactOnlineStatus( account()->myself() ) == m_protocol->m_UserStatusOp );
+			bool isOperator = ( manager->contactOnlineStatus( account()->myself() ).internalStatus() & IRCProtocol::Operator );
 			actionModeMenu->setEnabled(isOperator);
 			actionBanMenu->setEnabled(isOperator);
 			actionKick->setEnabled(isOperator);
