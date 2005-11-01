@@ -236,8 +236,21 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 	
 				QString event;
 				QString body =i18n( "<qt>Incoming message from %1<br>\"%2\"</qt>" );
-	
 				switch( msg.importance() )
+				{
+					case Kopete::Message::Low:
+						event = QString::fromLatin1( "kopete_contact_lowpriority" );
+						break;
+					case Kopete::Message::Highlight:
+						event = QString::fromLatin1( "kopete_contact_highlight" );
+						body = i18n( "<qt>A highlighted message arrived from %1<br>\"%2\"</qt>" );
+						break;
+					default:
+						event = QString::fromLatin1( "kopete_contact_incoming" );
+				}
+				KNotification::ContextList contexts;
+				Kopete::MetaContact *mc= msg.from()->metaContact();
+				if(mc)
 				{
 					contexts.append( qMakePair( QString::fromLatin1("metacontact") , mc->metaContactId()) );
 					foreach( Kopete::Group *g , mc->groups() )
@@ -246,8 +259,8 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					}
 				} 
                 KNotification *notify=KNotification::event( event,
-                                        body.arg( Q3StyleSheet::escape(msgFrom), Q3StyleSheet::escape(msgText) ),
-                                        QPixmap(), w, QStringList( i18n( "View" ) ) , contexts );
+						body.arg( Q3StyleSheet::escape(msgFrom), Q3StyleSheet::escape(msgText) ),
+						QPixmap(), w, QStringList( i18n( "View" ) ) , contexts );
 
 				connect(notify,SIGNAL(activated(unsigned int )), manager , SLOT(raiseView()) );
 			}
