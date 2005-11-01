@@ -631,7 +631,7 @@ void TextComponent::paint( QPainter *painter, const QColorGroup &cg )
 		painter->setPen( cg.text() );
 	QString dispStr = KStringHandler::rPixelSqueeze( d->text, QFontMetrics( font() ), rect().width() );
 	painter->setFont( font() );
-	painter->drawText( rect(), Qt::SingleLine, dispStr );
+	painter->drawText( rect(), Qt::TextSingleLine, dispStr );
 }
 
 // DisplayNameComponent

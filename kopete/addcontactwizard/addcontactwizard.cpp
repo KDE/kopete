@@ -65,6 +65,7 @@
 #include <kabc/stdaddressbook.h>
 
 #include <addcontactpage.h>
+#include <kglobal.h>
 #include "addressbookselectorwidget.h"
 #include "addcontactwizard.h"
 #include "kopetecontactlist.h"
@@ -132,7 +133,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	connect( protocolListView, SIGNAL(spacePressed(Q3ListViewItem *)), this, SLOT(slotProtocolListClicked(Q3ListViewItem *)));
 
 	// read sticky settings
-	KConfig *config = kapp->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup("Add Contact Wizard");
 	bool useKABC = config->readBoolEntry( "UseAddressBook", false );
 	chkAddressee->setChecked( useKABC );
@@ -241,7 +242,7 @@ void AddContactWizard::accept()
 		delete metaContact;
 
 	// write sticky settings
-	KConfig *config = kapp->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup("Add Contact Wizard");
 	config->writeEntry( "UseAddressBook", chkAddressee->isChecked() );
 	config->sync();

@@ -32,6 +32,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpassdlg.h>
+#include <kglobal.h>
 #include "kopetepasswordedaccount.h"
 #include "kopetepasswordwidget.h"
 
@@ -57,7 +58,7 @@ GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, Kopete:
 	else
 	{
 		// look for a default server and port setting
-		KConfig *config = kapp->config();
+		KConfig *config = KGlobal::config();
 		config->setGroup("GroupWise Messenger");
 		m_preferencesDialog->m_server->setText( config->readEntry( "DefaultServer" ) );
 		m_preferencesDialog->m_port->setValue( config->readNumEntry( "DefaultPort", 8300 ) );
