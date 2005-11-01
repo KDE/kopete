@@ -688,7 +688,7 @@ void MSNContact::slotEmitDisplayPictureChanged()
 
 void MSNContact::setObject(const QString &obj)
 {
-	if(m_obj==obj)
+	if(m_obj==obj && (obj.isEmpty() || hasProperty(Kopete::Global::Properties::self()->photo().key())))
 		return;
 
 	m_obj=obj;
@@ -698,7 +698,7 @@ void MSNContact::setObject(const QString &obj)
 
 	KConfig *config = KGlobal::config();
 	config->setGroup( "MSN" );
-	if ( config->readNumEntry( "DownloadPicture", 1 ) >= 2 && !obj.isEmpty() )
+	if ( config->readNumEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty() )
 		manager(Kopete::Contact::CanCreate); //create the manager which will download the photo automatically.
 }
 

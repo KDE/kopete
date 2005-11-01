@@ -1,7 +1,8 @@
 /*
     avdeviceconfig.cpp  -  Kopete Video Device Configuration Panel
 
-    Copyright (c) 2005 by Cl�dio da Silveira Pinheiro   <taupter@gmail.com>
+    Copyright (c) 2005 by Cláudio da Silveira Pinheiro   <taupter@gmail.com>
+
 
     Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
 

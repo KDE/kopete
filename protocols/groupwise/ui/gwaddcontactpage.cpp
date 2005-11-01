@@ -55,7 +55,7 @@ GroupWiseAddContactPage::GroupWiseAddContactPage( Kopete::Account * owner, QWidg
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	if (owner->isConnected ())
 	{
-		m_searchUI = new GroupWiseSearch( m_account, Q3ListView::Single, false,
+		m_searchUI = new GroupWiseContactSearch( m_account, Q3ListView::Single, false,
 				 this, "acwsearchwidget" );
 		show();
 		m_canadd = true;

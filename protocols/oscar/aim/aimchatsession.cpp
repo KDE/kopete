@@ -22,6 +22,7 @@
 #include "kopetecontact.h"
 #include "kopetechatsessionmanager.h"
 #include "kopeteprotocol.h"
+#include "client.h"
 
 AIMChatSession::AIMChatSession( const Kopete::Contact* user,  Kopete::ContactPtrList others,
                                 Kopete::Protocol* protocol, Oscar::WORD exchange,
@@ -34,6 +35,17 @@ AIMChatSession::AIMChatSession( const Kopete::Contact* user,  Kopete::ContactPtr
     setMayInvite( false );
     m_exchange = exchange;
     m_roomName = room;
+    m_engine = 0;
+}
+
+AIMChatSession::~AIMChatSession()
+{
+    m_engine->disconnectChatRoom( m_exchange, m_roomName );
+}
+
+void AIMChatSession::setEngine( Client* engine )
+{
+    m_engine = engine;
 }
 
 QString AIMChatSession::roomName() const

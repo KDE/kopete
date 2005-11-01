@@ -67,6 +67,7 @@ namespace XMPP
 		QString lang() const;
 		QString subject(const QString &lang="") const;
 		QString body(const QString &lang="") const;
+		QString xHTMLBody(const QString &lang="") const;
 		QString thread() const;
 		Stanza::Error error() const;
 
@@ -77,6 +78,7 @@ namespace XMPP
 		void setLang(const QString &s);
 		void setSubject(const QString &s, const QString &lang="");
 		void setBody(const QString &s, const QString &lang="");
+		void setXHTMLBody(const QString &s, const QString &lang="", const QString &attr = "");
 		void setThread(const QString &s);
 		void setError(const Stanza::Error &err);
 
@@ -288,6 +290,7 @@ namespace XMPP
 		bool canSearch() const;
 		bool canGroupchat() const;
 		bool canDisco() const;
+		bool canXHTML() const;
 		bool isGateway() const;
 		bool haveVCard() const;
 
@@ -300,6 +303,7 @@ namespace XMPP
 			FID_Disco,
 			FID_Gateway,
 			FID_VCard,
+			FID_Xhtml,
 
 			// private Psi actions
 			FID_Add

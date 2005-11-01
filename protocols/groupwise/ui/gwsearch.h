@@ -21,24 +21,24 @@
 #include <q3listview.h>
 //Added by qt3to4:
 #include <Q3ValueList>
-#include "gwsearchwidget.h"
+#include "gwcontactsearch.h"
 
 class GroupWiseAccount;
 class GroupWiseContactProperties;
-class GroupWiseSearchWidget;
+class GroupWiseContactSearchWidget;
 
 /**
-Logic for searching and displaying results using a GroupWiseSearchWidget
+Logic for searching for and displaying users and chat rooms using a GroupWiseContactSearchWidget
 
-@author Kopete Developers
+@author SUSE Linux Products GmbH
 */
-class GroupWiseSearch : public GroupWiseSearchWidget
+class GroupWiseContactSearch : public GroupWiseContactSearchWidget
 {
 Q_OBJECT
 public:
-	GroupWiseSearch( GroupWiseAccount * account, Q3ListView::SelectionMode mode, bool onlineOnly, 
+	GroupWiseContactSearch( GroupWiseAccount * account, Q3ListView::SelectionMode mode, bool onlineOnly, 
 			QWidget *parent = 0, const char *name = 0);
-	~GroupWiseSearch();
+	~GroupWiseContactSearch();
 	Q3ValueList< GroupWise::ContactDetails > selectedResults();
 signals:
 	void selectionValidates( bool );

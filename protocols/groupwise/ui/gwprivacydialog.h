@@ -23,7 +23,7 @@
 
 class GroupWiseAccount;
 class GroupWisePrivacyWidget;
-class GroupWiseSearch;
+class GroupWiseContactSearch;
 class Q3ListBoxItem;
 
 /**
@@ -58,7 +58,7 @@ protected slots:
 private:
 	GroupWiseAccount * m_account;
 	GroupWisePrivacyWidget * m_privacy;
-	GroupWiseSearch * m_search;
+	GroupWiseContactSearch * m_search;
 	Q3ListBoxItem * m_defaultPolicy;
 	bool m_dirty;
 	KDialogBase * m_searchDlg;

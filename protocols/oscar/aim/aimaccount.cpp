@@ -43,6 +43,7 @@
 #include "aimuserinfo.h"
 #include "aimjoinchat.h"
 #include "oscarmyselfcontact.h"
+#include "oscarvisibilitydialog.h"
 
 #include "oscarutils.h"
 #include "client.h"
@@ -91,23 +92,20 @@ Kopete::ChatSession* AIMMyselfContact::manager( Kopete::Contact::CanCreateFlags 
     AIMChatSession* session = dynamic_cast<AIMChatSession*>( genericManager );
 
     if ( !session && canCreate == Contact::CanCreate )
+    {
         session = new AIMChatSession( this, chatMembers, account()->protocol(), exchange, room );
+        session->setEngine( m_acct->engine() );
 
-    connect( session, SIGNAL( messageSent( Kopete::Message&, Kopete::ChatSession* ) ),
-             this, SLOT( sendMessage( Kopete::Message&, Kopete::ChatSession* ) ) );
-    connect( session, SIGNAL( closing( Kopete::ChatSession* ) ),
-             this, SLOT( chatSessionDestroyed( Kopete::ChatSession* ) ) );
-    m_chatRoomSessions.append( session );
+        connect( session, SIGNAL( messageSent( Kopete::Message&, Kopete::ChatSession* ) ),
+                 this, SLOT( sendMessage( Kopete::Message&, Kopete::ChatSession* ) ) );
+        m_chatRoomSessions.append( session );
+    }
     return session;
 }
 
 void AIMMyselfContact::chatSessionDestroyed( Kopete::ChatSession* session )
 {
-    //use sender, which is a bad idea, but oh well
-    AIMChatSession* s = dynamic_cast<AIMChatSession*>( session );
-    kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "removing " << s << endl;
-    m_chatRoomSessions.remove( s );
-    m_acct->engine()->disconnectChatRoom( s->exchange(), s->roomName() );
+    m_chatRoomSessions.remove( session );
 }
 
 void AIMMyselfContact::sendMessage( Kopete::Message& message, Kopete::ChatSession* session )
@@ -213,7 +211,8 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID, const char *
 	mc->setOwnProfile( profile );
 	
     m_joinChatDialog = 0;
-	QObject::connect( Kopete::ContactList::self(), 
+	m_visibilityDialog = 0;
+	QObject::connect( Kopete::ContactList::self(),
 	                  SIGNAL( globalIdentityChanged( const QString&, const QVariant& ) ),
 	                  this,
 	                  SLOT( globalIdentityChanged( const QString&, const QVariant& ) ) );
@@ -325,6 +324,11 @@ KActionMenu* AIMAccount::actionMenu()
 
     KAction* m_joinChatAction = new KAction( i18n( "Join Chat..." ), QString::null,  0,  this,
                                              SLOT( slotJoinChat() ), mActionMenu, "join_a_chat" );
+
+	mActionMenu->insert( new KToggleAction( i18n( "Set Visibility..." ), 0, 0,
+	                                       this, SLOT( slotSetVisiblility() ), this,
+	                                       "AIMAccount::mActionSetVisibility") );
+
     mActionMenu->insert( m_joinChatAction );
     //mActionMenu->insert( KopeteStdAction::contactInfo( this, SLOT( slotEditInfo() ), mActionMenu, "AIMAccount::mActionEditInfo" ) );
 
@@ -349,6 +353,16 @@ void AIMAccount::setAway(bool away, const QString &awayReason)
 		me->removeProperty( Kopete::Global::Properties::self()->awayMessage() );
 	}
 }
+
+void AIMAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const QString& reason )
+{
+	kdDebug(14152) << k_funcinfo << "called with reason = " << reason <<" status = "<< status.status() << endl;;
+	if ( status.status() == Kopete::OnlineStatus::Online )
+		setAway( false );
+	if ( status.status() == Kopete::OnlineStatus::Away )
+		setAway( true, reason );
+}
+
 
 void AIMAccount::setUserProfile(const QString &profile)
 {
@@ -579,7 +593,8 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
                 continue;
 
             if ( session->exchange() == message.exchange() &&
-                 session->roomName() == message.chatRoom() )
+                 Oscar::normalize( session->roomName() ) ==
+                 Oscar::normalize( message.chatRoom() ) )
             {
                 kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "found chat session for chat room" << endl;
                 Kopete::Contact* ocSender = contacts()[Oscar::normalize( message.sender() )];
@@ -710,6 +725,84 @@ void AIMAccount::connectWithPassword( const QString & )
 		engine()->connectToServer( c, server, true /* doAuth */ );
 		myself()->setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusConnecting );
 	}
+}
+
+void AIMAccount::slotSetVisiblility()
+{
+	if( !isConnected() )
+	{
+		KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
+		                    i18n("You must be online to set users visibility."),
+		                    i18n("ICQ Plugin") );
+		return;
+	}
+	
+	if ( !m_visibilityDialog )
+	{
+		m_visibilityDialog = new OscarVisibilityDialog( engine(), Kopete::UI::Global::mainWidget() );
+		QObject::connect( m_visibilityDialog, SIGNAL( closing() ),
+		                  this, SLOT( slotVisibilityDialogClosed() ) );
+		
+		//add all contacts;
+		OscarVisibilityDialog::ContactMap contactMap;
+		QMap<QString, QString> revContactMap;
+	
+		QValueList<Oscar::SSI> contactList = engine()->ssiManager()->contactList();
+		QValueList<Oscar::SSI>::const_iterator it, cEnd = contactList.constEnd();
+		
+		for ( it = contactList.constBegin(); it != cEnd; ++it )
+		{
+			QString contactId = ( *it ).name();
+			
+			OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[( *it ).name()] );
+			if ( oc )
+			{
+				contactMap.insert( oc->nickName(), contactId );
+				revContactMap.insert( contactId, oc->nickName() );
+			}
+			else
+			{
+				contactMap.insert( contactId, contactId );
+				revContactMap.insert( contactId, contactId );
+			}
+		}
+		m_visibilityDialog->addContacts( contactMap );
+		
+		//add contacts from visible list
+		QStringList tmpList;
+		
+		contactList = engine()->ssiManager()->visibleList();
+		cEnd = contactList.constEnd();
+		
+		for ( it = contactList.constBegin(); it != cEnd; ++it )
+			tmpList.append( revContactMap[( *it ).name()] );
+		
+		m_visibilityDialog->addVisibleContacts( tmpList );
+		
+		//add contacts from invisible list
+		tmpList.clear();
+		
+		contactList = engine()->ssiManager()->invisibleList();
+		cEnd = contactList.constEnd();
+		
+		for ( it = contactList.constBegin(); it != cEnd; ++it )
+			tmpList.append( revContactMap[( *it ).name()] );
+		
+		m_visibilityDialog->addInvisibleContacts( tmpList );
+		
+		m_visibilityDialog->resize( 550, 350 );
+		m_visibilityDialog->show();
+	}
+	else
+	{
+		m_visibilityDialog->raise();
+	}
+}
+
+void AIMAccount::slotVisibilityDialogClosed()
+{
+	m_visibilityDialog->delayedDestruct();
+	m_visibilityDialog = 0L;
 }
 
 #include "aimaccount.moc"

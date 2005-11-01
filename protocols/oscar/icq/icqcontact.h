@@ -99,10 +99,12 @@ private:
 	KAction *actionRequestAuth;
 	KAction *actionSendAuth;
     KAction *m_selectEncoding;
-	/*
-	KToggleAction *actionIgnore;
-	KToggleAction *actionVisibleTo;
+	
+	KToggleAction *m_actionIgnore;
+	KToggleAction *m_actionVisibleTo;
+	KToggleAction *m_actionInvisibleTo;
 
+	/*
 	bool mInvisible;
 	*/
 
@@ -137,12 +139,14 @@ private slots:
 
 	void requestBuddyIcon();
 	void haveIcon( const QString&, QByteArray );
-	
+	void receivedStatusMessage( const QString &contact, const QString &message );
+
 //void slotCloseAwayMessageDialog();
 	//void slotReadAwayMessage();
 
-	//void slotIgnore();
-	//void slotVisibleTo();
+	void slotIgnore();
+	void slotVisibleTo();
+	void slotInvisibleTo();
 };
 
 #endif

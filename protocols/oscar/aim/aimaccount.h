@@ -32,6 +32,7 @@ namespace Kopete
 {
 class Contact;
 class Group;
+class ChatSession;
 }
 
 class KAction;
@@ -40,6 +41,7 @@ class AIMContact;
 class AIMAccount;
 class AIMJoinChatUI;
 class AIMChatSession;
+class OscarVisibilityDialog;
 
 class AIMMyselfContact : public OscarMyselfContact
 {
@@ -66,7 +68,7 @@ private:
 	 * There has GOT to be a better way to get this away message
 	 */
 	QString m_lastAwayMessage;
-    QValueList<AIMChatSession*> m_chatRoomSessions;
+    QValueList<Kopete::ChatSession*> m_chatRoomSessions;
 
 
 };
@@ -82,16 +84,15 @@ public:
 	// Accessor method for the action menu
 	virtual KActionMenu* actionMenu();
 
-	/** Reimplementation from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus&, const QString& ) {}
-
-	void setAway(bool away, const QString &awayReason);
+	void setAway(bool away, const QString &awayReason = QString::null );
 
 	virtual void connectWithPassword( const QString &password );
 
 	void setUserProfile(const QString &profile);
-
+	
 public slots:
+	/** Reimplementation from Kopete::Account */
+	void setOnlineStatus( const Kopete::OnlineStatus& status, const QString& reason = QString::null );
 	void slotEditInfo();
 	void slotGoOnline();
 
@@ -111,6 +112,9 @@ protected slots:
     void userJoinedChat( Oscar::WORD exchange, const QString& room, const QString& contact );
     void userLeftChat( Oscar::WORD exchange, const QString& room, const QString& contact );
 
+	void slotSetVisiblility();
+	void slotVisibilityDialogClosed();
+
 protected:
 
 	/**
@@ -123,6 +127,7 @@ protected:
 
 private:
     AIMJoinChatUI* m_joinChatDialog;
+	OscarVisibilityDialog* m_visibilityDialog;
 };
 #endif
 //kate: tab-width 4; indent-mode csands;

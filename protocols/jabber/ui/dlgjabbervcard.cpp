@@ -4,7 +4,7 @@
                              -------------------
     begin                : Thu Aug 08 2002
     copyright            : (C) 2002-2003 by Till Gerken <till@tantalo.net>
-    copyright            : (C) 2005      by Michaël Larouche <michael.larouche@kdemail.net>
+                           (C) 2005      by Michaël Larouche <michael.larouche@kdemail.net>
     email                : kopete-devel@kde.org
 
     Rewritten version of the original dialog
@@ -34,6 +34,12 @@
 #include <kdialogbase.h>
 #include <kmessagebox.h>
 #include <krun.h>
+// For photo handling.
+#include <kio/netaccess.h>
+#include <kfiledialog.h>
+#include <kpixmapregionselectordialog.h>
+#include <kstandarddirs.h>
+#include <qregexp.h>
 
 #include "im.h"
 #include "xmpp.h"
@@ -63,7 +69,8 @@ dlgJabberVCard::dlgJabberVCard (JabberAccount *account, JabberContact *contact, 
 	setMainWidget(m_mainWidget);
 
 	connect (this, SIGNAL (user1Clicked()), this, SLOT (slotSaveVCard ()));
-	connect (m_mainWidget->btnSaveNick, SIGNAL (clicked ()), this, SLOT (slotSaveNickname ()));
+	connect (m_mainWidget->btnSelectPhoto, SIGNAL (clicked()), this, SLOT (slotSelectPhoto()));
+	connect (m_mainWidget->btnClearPhoto, SIGNAL (clicked()), this, SLOT (slotClearPhoto()));
 	connect (m_mainWidget->urlHomeEmail, SIGNAL (leftClickedURL(const QString &)), this, SLOT (slotOpenURL (const QString &)));
 	connect (m_mainWidget->urlWorkEmail, SIGNAL (leftClickedURL(const QString &)), this, SLOT (slotOpenURL (const QString &)));
 	connect (m_mainWidget->urlHomepage, SIGNAL (leftClickedURL(const QString &)), this, SLOT (slotOpenURL (const QString &)));
@@ -98,7 +105,6 @@ void dlgJabberVCard::slotClose()
  */
 void dlgJabberVCard::assignContactProperties ()
 {
-
 	// general tab
 	m_mainWidget->leNick->setText (m_contact->property(m_account->protocol()->propNickName).value().toString());
 	m_mainWidget->leName->setText (m_contact->property(m_account->protocol()->propFullName).value().toString());
@@ -115,6 +121,13 @@ void dlgJabberVCard::assignContactProperties ()
 	m_mainWidget->urlHomepage->setText (homepage);
 	m_mainWidget->urlHomepage->setURL (homepage);
 	m_mainWidget->urlHomepage->setUseCursor ( !homepage.isEmpty () );
+
+	// Set photo
+	m_photoPath = m_contact->property(m_account->protocol()->propPhoto).value().toString();
+	if( !m_photoPath.isEmpty() )
+	{
+		m_mainWidget->lblPhoto->setPixmap( QPixmap(m_photoPath) );
+	}
 
 	// addresses
 	m_mainWidget->leWorkStreet->setText (m_contact->property(m_account->protocol()->propWorkStreet).value().toString());
@@ -166,28 +179,8 @@ void dlgJabberVCard::assignContactProperties ()
 	raise ();
 }
 
-/*
- * Save the nickname
- */
-void dlgJabberVCard::slotSaveNickname ()
-{
-
-	JabberBaseContact *jc = m_account->contactPool()->findExactMatch ( XMPP::Jid ( m_contact->contactId() ) );
-
-	if(!jc)
-	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "WARNING: Trying to save new nickname for non-existant contact " << m_contact->contactId() << endl;
-	}
-	else
-	{
-		jc->metaContact()->setDisplayNameSourceContact( jc );
-	}
-
-}
-
 void dlgJabberVCard::setReadOnly (bool state)
 {
-
 	// general tab
 	m_mainWidget->leNick->setReadOnly (false);
 	m_mainWidget->leName->setReadOnly (state);
@@ -195,6 +188,9 @@ void dlgJabberVCard::setReadOnly (bool state)
 	m_mainWidget->leBirthday->setReadOnly (state);
 	m_mainWidget->leTimezone->setReadOnly (state);
 	m_mainWidget->wsHomepage->raiseWidget(state ? 0 : 1);
+	// Disable photo buttons when read only
+	m_mainWidget->btnSelectPhoto->setEnabled(!state);
+	m_mainWidget->btnClearPhoto->setEnabled(!state);
 
 	// home address tab
 	m_mainWidget->leHomeStreet->setReadOnly (state);
@@ -231,7 +227,6 @@ void dlgJabberVCard::setReadOnly (bool state)
 
 	// save button
 	enableButton(User1, !state);
-
 }
 
 /*
@@ -246,6 +241,7 @@ void dlgJabberVCard::slotSaveVCard()
 	m_contact->setProperty(m_account->protocol()->propBirthday, m_mainWidget->leBirthday->text());
 	m_contact->setProperty(m_account->protocol()->propTimezone, m_mainWidget->leTimezone->text());
 	m_contact->setProperty(m_account->protocol()->propHomepage, m_mainWidget->leHomepage->text());
+	m_contact->setProperty(m_account->protocol()->propPhoto, m_photoPath);
 
 	// home address tab
 	m_contact->setProperty(m_account->protocol()->propHomeStreet, m_mainWidget->leHomeStreet->text());
@@ -283,15 +279,73 @@ void dlgJabberVCard::slotSaveVCard()
 	m_contact->setProperty(m_account->protocol()->propAbout, m_mainWidget->teAbout->text());
 
 	emit informationChanged();
+}
 
+void dlgJabberVCard::slotSelectPhoto()
+{
+	QString path;
+	bool remoteFile = false;
+	KURL filePath = KFileDialog::getImageOpenURL( QString::null, this, i18n( "Jabber Photo" ) );
+	if( filePath.isEmpty() )
+		return;
+
+	if( !filePath.isLocalFile() ) 
+	{
+		if( !KIO::NetAccess::download( filePath, path, this ) ) 
+		{
+			KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "Downloading of Jabber contact photo failed !" ) );
+			return;
+		}
+		remoteFile = true;
+	}
+	else 
+		path = filePath.path();
+
+	QImage img( path );
+	img = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(img), 96, 96, this );
+
+	if( !img.isNull() ) 
+	{
+		img = img.smoothScale( 96, 96, QImage::ScaleMax );
+		// crop image if not square
+		if(img.width() > img.height()) 
+		{
+			img = img.copy((img.width()-img.height())/2, 0, img.height(), img.height());
+		}
+		else 
+		{
+			img = img.copy(0, (img.height()-img.width())/2, img.width(), img.width());
+		}
+		
+		m_photoPath = locateLocal("appdata", "jabberphotos/" + m_contact->contactId().replace(QRegExp("[./~]"),"-")  +".png");
+		if( img.save(m_photoPath, "PNG") )
+		{
+			m_mainWidget->lblPhoto->setPixmap( QPixmap(img) );
+		}
+		else
+		{
+			m_photoPath = QString::null;
+		}
+	}
+	else
+	{
+		KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "<qt>An error occurred when trying to change the photo.<br>"
+			"Make sure that you have selected a correct image file</qt>" ) );
+	}
+	if( remoteFile )
+		KIO::NetAccess::removeTempFile( path );
+}
+
+void dlgJabberVCard::slotClearPhoto()
+{
+	m_mainWidget->lblPhoto->setPixmap( QPixmap() );
+	m_photoPath = QString::null;
 }
 
 void dlgJabberVCard::slotOpenURL(const QString &url)
 {
-
 	if ( !url.isEmpty () || (url == QString::fromLatin1("mailto:") ) )
 		new KRun(KURL( url ) );
-
 }
 
 #include "dlgjabbervcard.moc"

@@ -52,6 +52,28 @@ class JabberProtocol:public Kopete::Protocol
 public:
 
 	/**
+	 * Client features determine which features a resource support.
+	 *
+	 * Feature_Register - Support in-band registration.
+	 * Feature_Search - Support searching.
+	 * Feature_Groupchat - Support old Groupchat protocol (superseeded by MUC)
+	 * Feature_Disco - Support service discovery.
+	 * Feature_IsGateway - Current client is a gateway.
+	 * Feature_XHTML_IM - Support Rich Text message that are defined using XHTML (JEP-0071)
+	 * Feature_MultiUserChat - Support full Multi User Chat protocol (JEP-0045)
+	 */
+	enum ClientFeatures 
+	{ 
+		Feature_Register,
+		Feature_Search,
+		Feature_Groupchat,
+		Feature_Disco,
+		Feature_IsGateway,
+		Feature_XHTML_IM, 
+		Feature_MultiUserChat
+	};
+
+	/**
 	 * Object constructor and destructor
 	 */
 	 JabberProtocol (QObject * parent, const char *name, const QStringList &);
@@ -97,6 +119,7 @@ public:
 	const Kopete::ContactPropertyTmpl propAuthorizationStatus;
 	const Kopete::ContactPropertyTmpl propAvailableResources;
 	const Kopete::ContactPropertyTmpl propVCardCacheTimeStamp;
+	const Kopete::ContactPropertyTmpl propPhoto;
 	// extra properties to match with vCard
 	const Kopete::ContactPropertyTmpl propJid;
 	const Kopete::ContactPropertyTmpl propBirthday;

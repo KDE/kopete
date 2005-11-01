@@ -318,8 +318,11 @@ namespace XMPP
 
 		QDomDocument & doc() const;
 		QString baseNS() const;
+		QString xhtmlImNS() const;
+		QString xhtmlNS() const;
 		QDomElement createElement(const QString &ns, const QString &tagName);
 		QDomElement createTextElement(const QString &ns, const QString &tagName, const QString &text);
+		QDomElement createXHTMLElement(const QString &xHTML);
 		void appendChild(const QDomElement &e);
 
 		Kind kind() const;
@@ -372,6 +375,8 @@ namespace XMPP
 
 		virtual QDomDocument & doc() const=0;
 		virtual QString baseNS() const=0;
+		virtual QString xhtmlImNS() const=0;
+		virtual QString xhtmlNS() const=0;
 		virtual bool old() const=0;
 
 		virtual void close()=0;
@@ -479,6 +484,8 @@ namespace XMPP
 		// reimplemented
 		QDomDocument & doc() const;
 		QString baseNS() const;
+		QString xhtmlImNS() const;
+		QString xhtmlNS() const;
 		bool old() const;
 
 		void close();

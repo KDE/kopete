@@ -1185,7 +1185,16 @@ void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
 
 	if(dialog->added())
 	{
-		dialog->addContact();
+		Kopete::MetaContact *mc=dialog->addContact();
+		if(mc)
+		{ //if the contact has been added this way, it's because the other user added us.²
+		  // don't forgot to set the reversed flag  (Bug 114400)
+			MSNContact *c=dynamic_cast<MSNContact*>(mc->contacts().first());
+			if(c && c->contactId() == handle )
+			{
+				c->setReversed( true );
+			}
+		}
 	}
 
 	if ( !dialog->authorized() )

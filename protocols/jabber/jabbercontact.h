@@ -105,6 +105,12 @@ public slots:
 	 */ 
 	void slotSendVCard();
 
+	/**
+	 * Set contact photo.
+	 * @param path Path to the photo.
+	 */
+	void setPhoto(const QString &photoPath);
+
 private slots:
 
 	/**

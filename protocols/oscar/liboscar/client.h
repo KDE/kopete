@@ -96,7 +96,6 @@ public:
 
 	/** Logout and disconnect */
 	void close();
-
 	/** Set our status for AIM */
 	void setStatus( AIMStatus status, const QString &message = QString::null );
 	/** Set our status for ICQ */
@@ -278,6 +277,12 @@ public:
 
     void joinChatRoom( const QString& roomName, int exchange );
 
+	void setIgnore( const QString& user, bool ignore );
+	
+	void setVisibleTo( const QString& user, bool visible );
+	
+	void setInvisibleTo( const QString& user, bool invisible );
+	
 	/** Accessors needed for login */
 	QString host();
 	int port();
@@ -316,6 +321,9 @@ public:
 
 	/** The current status message (a.k.a. away message) */
 	QString statusMessage() const;
+
+	/** Change the current status message w/o changing status */
+	void setStatusMessage( const QString &message );
 
 	/** ICQ Settings */
 	bool isIcq() const;

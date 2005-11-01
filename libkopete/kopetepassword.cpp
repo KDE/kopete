@@ -208,7 +208,9 @@ public:
 
 		mView->m_text->setText( mPrompt );
 		mView->m_image->setPixmap( mImage );
+		/* Do not put the default password, or it will confuse those which doesn't echo anything for the password
 		mView->m_password->insert( password );
+		*/
 		int maxLength = mPassword.maximumLength();
 		if ( maxLength != 0 )
 			mView->m_password->setMaxLength( maxLength );

@@ -148,10 +148,10 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		d->ui->m_phones->setDisabled( true );
 	}
 
-	connect( d->ui->m_allowButton, SIGNAL( pressed() ), this, SLOT( slotAllow() ) );
-	connect( d->ui->m_blockButton, SIGNAL( pressed() ), this, SLOT( slotBlock() ) );
-	connect( d->ui->m_selectImage, SIGNAL( pressed() ), this, SLOT( slotSelectImage() ) );
-	connect( d->ui->m_RLButton, SIGNAL( pressed() ), this, SLOT( slotShowReverseList() ) );
+	connect( d->ui->m_allowButton, SIGNAL( clicked() ), this, SLOT( slotAllow() ) );
+	connect( d->ui->m_blockButton, SIGNAL( clicked() ), this, SLOT( slotBlock() ) );
+	connect( d->ui->m_selectImage, SIGNAL( clicked() ), this, SLOT( slotSelectImage() ) );
+	connect( d->ui->m_RLButton, SIGNAL( clicked() ), this, SLOT( slotShowReverseList() ) );
 	connect( d->ui->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
 	QWidget::setTabOrder( d->ui->m_login, d->ui->m_password->mRemembered );
 	QWidget::setTabOrder( d->ui->m_password->mRemembered, d->ui->m_password->mPassword );

@@ -313,12 +313,14 @@ void Kopete::CommandHandler::slotExecCommand( const QString &args, Kopete::ChatS
 
 void Kopete::CommandHandler::slotClearCommand( const QString &, Kopete::ChatSession *manager )
 {
-	manager->view()->clear();
+	if( manager->view() )
+		manager->view()->clear();
 }
 
 void Kopete::CommandHandler::slotPartCommand( const QString &, Kopete::ChatSession *manager )
 {
-	manager->view()->closeView();
+	if( manager->view() )
+		manager->view()->closeView();
 }
 
 void Kopete::CommandHandler::slotAwayCommand( const QString &args, Kopete::ChatSession *manager )
@@ -347,7 +349,8 @@ void Kopete::CommandHandler::slotAwayAllCommand( const QString &args, Kopete::Ch
 
 void Kopete::CommandHandler::slotCloseCommand( const QString &, Kopete::ChatSession *manager )
 {
-	manager->view()->closeView();
+	if( manager->view() )
+		manager->view()->closeView();
 }
 
 void Kopete::CommandHandler::slotExecReturnedData(KProcess *proc, char *buff, int bufflen )

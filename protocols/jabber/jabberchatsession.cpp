@@ -22,12 +22,16 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include "kopetechatsessionmanager.h"
+#include "kopetemessage.h"
 #include "kopeteviewplugin.h"
 #include "kopeteview.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
 #include "jabberclient.h"
 #include "jabbercontact.h"
+#include "jabberresource.h"
+#include "jabberresourcepool.h"
+#include "kioslave/jabberdisco.h"
 
 JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBaseContact *user,
 											 Kopete::ContactPtrList others, const QString &resource, const char *name )
@@ -50,9 +54,7 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	XMPP::Jid jid ( user->contactId () );
 
 	mResource = jid.resource().isEmpty () ? resource : jid.resource ();
-
 	slotUpdateDisplayName ();
-
 }
 
 void JabberChatSession::slotUpdateDisplayName ()
@@ -106,7 +108,6 @@ void JabberChatSession::appendMessage ( Kopete::Message &msg, const QString &fro
 	mResource = fromResource;
 
 	slotUpdateDisplayName ();
-
 	Kopete::ChatSession::appendMessage ( msg );
 
 	// We send the notifications for Delivered and Displayed events. More granular management
@@ -227,8 +228,32 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
         else
         {
 			// this message is not encrypted
-			jabberMessage.setBody ( message.plainBody () );
-        }
+			jabberMessage.setBody ( message.plainBody ());
+			if (message.format() ==  Kopete::Message::RichText) {
+				JabberResourcePool::ResourceList resourceList;
+
+				account()->resourcePool()->findResources ( toJid, resourceList );
+				QString currentResource;
+				if (!resource())
+					currentResource = account()->resourcePool()->bestResource(toJid, true).name();
+				else
+					currentResource = resource();
+				for ( JabberResourcePool::ResourceList::iterator it = resourceList.begin (); it != resourceList.end (); ++it )
+				{
+					if ((*it)->jid().resource().compare(currentResource) == 0)
+					{
+						if ((*it)->canHandleXHTML())
+						{
+							QString attribs = "";
+								for (unsigned int i = 0; i <= message.asXML().elementsByTagName("body").item(0).attributes().count()-1; i++) {
+									attribs += message.asXML().elementsByTagName("body").item(0).attributes().item(i).toAttr().name()+"=\""+ message.asXML().elementsByTagName("body").item(0).attributes().item(i).toAttr().value()+"\" ";
+								}
+							  jabberMessage.setXHTMLBody ( message.escapedBody(), "", attribs);
+						}
+					}
+				}
+        	}
+		}
 
 		// determine type of the widget and set message type accordingly
 		// "kopete_emailwindow" is the default email Kopete::ViewPlugin.  If other email plugins

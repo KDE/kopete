@@ -89,6 +89,7 @@ JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStrin
 	propAuthorizationStatus("jabberAuthorizationStatus", i18n ("Authorization Status"), QString::null, true, false),
 	propAvailableResources("jabberAvailableResources", i18n ("Available Resources"), "jabber_chatty", false, true),
 	propVCardCacheTimeStamp("jabberVCardCacheTimeStamp", i18n ("vCard Cache Timestamp"), QString::null, true, false, true),
+	propPhoto(Kopete::Global::Properties::self()->photo()),
 	propJid("jabberVCardJid", i18n("Jabber ID"), QString::null, true, false),
 	propBirthday("jabberVCardBirthday", i18n("Birthday"), QString::null, true, false),
 	propTimezone("jabberVCardTimezone", i18n("Timezone"), QString::null, true, false),
@@ -128,6 +129,7 @@ JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStrin
 	protocolInstance = this;
 
 	addAddressBookField ("messaging/xmpp", Kopete::Plugin::MakeIndexField);
+	setCapabilities(Kopete::Protocol::FullRTF|Kopete::Protocol::CanSendOffline);
 }
 
 JabberProtocol::~JabberProtocol ()

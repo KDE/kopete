@@ -19,7 +19,7 @@
  */
 
 #include"im.h"
-
+#include "protocol.h"
 #include<qmap.h>
 #include<qapplication.h>
 //Added by qt3to4:
@@ -182,7 +182,8 @@ public:
 	Jid to, from;
 	QString id, type, lang;
 
-	StringMap subject, body;
+	StringMap subject, body, xHTMLBody;
+
 	QString thread;
 	Stanza::Error error;
 
@@ -281,6 +282,11 @@ QString Message::body(const QString &lang) const
 	return d->body[lang];
 }
 
+QString Message::xHTMLBody(const QString &lang) const
+{
+	return d->xHTMLBody[lang];
+}
+
 QString Message::thread() const
 {
 	return d->thread;
@@ -342,7 +348,14 @@ void Message::setSubject(const QString &s, const QString &lang)
 void Message::setBody(const QString &s, const QString &lang)
 {
 	d->body[lang] = s;
-	//d->flag = false;
+}
+
+void Message::setXHTMLBody(const QString &s, const QString &lang, const QString &attr)
+{
+	//ugly but needed if s is not a node but a list of leaf
+
+	QString content = "<body xmlns='" + QString(NS_XHTML) + "' "+attr+" >\n" + s +"\n</body>";
+	d->xHTMLBody[lang] = content;
 }
 
 void Message::setThread(const QString &s)
@@ -491,7 +504,19 @@ Stanza Message::toStanza(Stream *stream) const
 			s.appendChild(e);
 		}
 	}
-
+	if ( !d->xHTMLBody.isEmpty()) {
+		QDomElement parent = s.createElement(s.xhtmlImNS(), "html");
+		for(it = d->xHTMLBody.begin(); it != d->xHTMLBody.end(); ++it) {
+			const QString &str = it.data();
+			if(!str.isEmpty()) {
+				QDomElement child = s.createXHTMLElement(str);
+				if(!it.key().isEmpty())
+					child.setAttributeNS(NS_XML, "xml:lang", it.key());
+				parent.appendChild(child);
+			}
+		}
+		s.appendChild(parent);
+	}
 	if(d->type == "error")
 		s.setError(d->error);
 
@@ -592,6 +617,21 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 				}
 				else if(e.tagName() == "thread")
 					d->thread = e.text();
+			}
+			else if (e.namespaceURI() == s.xhtmlImNS()) {
+				 if (e.tagName() == "html") {
+					QDomNodeList htmlNL= e.childNodes();
+					for (unsigned int x = 0; x < htmlNL.count(); x++) {
+						QDomElement i = htmlNL.item(x).toElement();
+
+						if (i.tagName() == "body") {
+							QDomDocument RichText;
+							QString lang = i.attributeNS(NS_XML, "lang", "");
+							RichText.appendChild(i);
+							d-> xHTMLBody[lang] = RichText.toString();
+						}
+					}
+				}
 			}
 			else {
 				//printf("extension element: [%s]\n", e.tagName().latin1());
@@ -1416,6 +1456,16 @@ bool Features::canSearch() const
 {
 	QStringList ns;
 	ns << FID_SEARCH;
+
+	return test(ns);
+}
+
+#define FID_XHTML  "http://jabber.org/protocol/xhtml-im"
+bool Features::canXHTML() const
+{
+	QStringList ns;
+
+	ns << FID_XHTML;
 
 	return test(ns);
 }

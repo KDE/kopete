@@ -24,10 +24,12 @@
 #include <kmenu.h>
 #include <kmdcodec.h>
 #include <kstandarddirs.h>
+#include <kmessagebox.h>
 
 #include "kopeteawayaction.h"
 #include "kopetemessage.h"
 #include "kopetecontactlist.h"
+#include "kopeteuiglobal.h"
 
 #include "client.h"
 #include "icquserinfo.h"
@@ -38,6 +40,8 @@
 #include "icqcontact.h"
 #include "icqprotocol.h"
 #include "icqaccount.h"
+
+#include "oscarvisibilitydialog.h"
 
 ICQMyselfContact::ICQMyselfContact( ICQAccount *acct ) : OscarMyselfContact( acct )
 {
@@ -75,6 +79,8 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID, const char *
 	kdDebug(14152) << k_funcinfo << accountID << ": Called."<< endl;
 	setMyself( new ICQMyselfContact( this ) );
 	myself()->setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::Visible ).toOnlineStatus() );
+
+	m_visibilityDialog = 0;
 
 	QString nickName = configGroup()->readEntry("NickName", QString::null);
 	mWebAware = configGroup()->readBoolEntry( "WebAware", false );
@@ -125,7 +131,10 @@ KActionMenu* ICQAccount::actionMenu()
 	actionInvisible->setChecked( presence().visibility() == ICQ::Presence::Invisible );
 	actionMenu->insert( actionInvisible );
 
-	//actionMenu->popupMenu()->insertSeparator();
+	actionMenu->popupMenu()->insertSeparator();
+	actionMenu->insert( new KToggleAction( i18n( "Set Visibility..." ), 0, 0,
+	                                       this, SLOT( slotSetVisiblility() ), this,
+	                                       "ICQAccount::mActionSetVisibility") );
 	//actionMenu->insert( new KToggleAction( i18n( "Send &SMS..." ), 0, 0, this, SLOT( slotSendSMS() ), this, "ICQAccount::mActionSendSMS") );
 
 	return actionMenu;
@@ -194,6 +203,87 @@ void ICQAccount::slotToggleInvisible()
 	setInvisible( (presence().visibility() == Presence::Visible) ? Presence::Invisible : Presence::Visible );
 }
 
+void ICQAccount::slotSetVisiblility()
+{
+	if( !isConnected() )
+	{
+		KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
+		                    i18n("You must be online to set users visibility."),
+		                    i18n("ICQ Plugin") );
+		return;
+	}
+	
+	if ( !m_visibilityDialog )
+	{
+		m_visibilityDialog = new OscarVisibilityDialog( engine(), Kopete::UI::Global::mainWidget() );
+		QObject::connect( m_visibilityDialog, SIGNAL( closing() ),
+		                  this, SLOT( slotVisibilityDialogClosed() ) );
+		
+		//add all contacts;
+		OscarVisibilityDialog::ContactMap contactMap;
+		//temporary map for faster lookup of contactId
+		QMap<QString, QString> revContactMap;
+		
+		QValueList<Oscar::SSI> contactList = engine()->ssiManager()->contactList();
+		QValueList<Oscar::SSI>::const_iterator it, cEnd = contactList.constEnd();
+		
+		for ( it = contactList.constBegin(); it != cEnd; ++it )
+		{
+			QString contactId = ( *it ).name();
+			
+			OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[( *it ).name()] );
+			if ( oc )
+			{	//for better orientation in lists use nickName and icq number
+				QString screenName( "%1 (%2)" );
+				screenName = screenName.arg( oc->nickName(), contactId);
+				contactMap.insert( screenName, contactId );
+				revContactMap.insert( contactId, screenName );
+			}
+			else
+			{
+				contactMap.insert( contactId, contactId );
+				revContactMap.insert( contactId, contactId );
+			}
+		}
+		m_visibilityDialog->addContacts( contactMap );
+		
+		//add contacts from visible list
+		QStringList tmpList;
+		
+		contactList = engine()->ssiManager()->visibleList();
+		cEnd = contactList.constEnd();
+		
+		for ( it = contactList.constBegin(); it != cEnd; ++it )
+			tmpList.append( revContactMap[( *it ).name()] );
+		
+		m_visibilityDialog->addVisibleContacts( tmpList );
+		
+		//add contacts from invisible list
+		tmpList.clear();
+		
+		contactList = engine()->ssiManager()->invisibleList();
+		cEnd = contactList.constEnd();
+		
+		for ( it = contactList.constBegin(); it != cEnd; ++it )
+			tmpList.append( revContactMap[( *it ).name()] );
+		
+		m_visibilityDialog->addInvisibleContacts( tmpList );
+		
+		m_visibilityDialog->resize( 550, 350 );
+		m_visibilityDialog->show();
+	}
+	else
+	{
+		m_visibilityDialog->raise();
+	}
+}
+
+void ICQAccount::slotVisibilityDialogClosed()
+{
+	m_visibilityDialog->delayedDestruct();
+	m_visibilityDialog = 0L;
+}
+
 void ICQAccount::setAway( bool away, const QString &awayReason )
 {
 	kdDebug(14153) << k_funcinfo << "account='" << accountId() << "'" << endl;
@@ -220,11 +310,11 @@ void ICQAccount::setPresenceType( ICQ::Presence::Type type, const QString &messa
 	ICQ::Presence pres = presence();
 	kdDebug(14153) << k_funcinfo << "new type=" << (int)type << ", old type=" << (int)pres.type() << endl;
 	//setAwayMessage(awayMessage);
-	setPresenceTarget( ICQ::Presence( type, pres.visibility() ) );
+	setPresenceTarget( ICQ::Presence( type, pres.visibility() ), message );
 	myself()->setProperty( Kopete::Global::Properties::self()->awayMessage(), message );
 }
 
-void ICQAccount::setPresenceTarget( const ICQ::Presence &newPres )
+void ICQAccount::setPresenceTarget( const ICQ::Presence &newPres, const QString &message )
 {
 	bool targetIsOffline = (newPres.type() == ICQ::Presence::Offline);
 	bool accountIsOffline = ( presence().type() == ICQ::Presence::Offline ||
@@ -238,11 +328,14 @@ void ICQAccount::setPresenceTarget( const ICQ::Presence &newPres )
 	}
 	else if ( accountIsOffline )
 	{
+		// set status message if given
+		if ( ! message.isEmpty() )
+			engine()->setStatusMessage( message );
 		OscarAccount::connect( newPres.toOnlineStatus() );
 	}
 	else
 	{
-		engine()->setStatus( newPres.toOscarStatus() );
+		engine()->setStatus( newPres.toOscarStatus(), message );
 	}
 }
 
@@ -318,7 +411,13 @@ void ICQAccount::setBuddyIcon( KURL url )
 		if ( image.isNull() )
 			return;
 		
-		image = image.smoothScale( 52, 64, QImage::ScaleMin );	
+		image = image.smoothScale( 52, 64, QImage::ScaleMax );
+		if(image.width() > image.height()) {
+			image = image.copy((image.width()-image.height())/2, 0, image.height(), image.height());
+		}
+		else if(image.height() > image.width()) {
+			image = image.copy(0, (image.height()-image.width())/2, image.width(), image.width());
+		}
 		
 		QString newlocation( locateLocal( "appdata", "oscarpictures/"+ accountId() + ".jpg" ) );
 		

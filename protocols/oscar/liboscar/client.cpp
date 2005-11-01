@@ -101,10 +101,10 @@ public:
 	//Our Userinfo
 	UserDetails ourDetails;
 
-	QString statusMessage; // for away-,DND-message etc...
-
     //Infos
     Q3ValueList<int> exchanges;
+
+	QString statusMessage; // for away-,DND-message etc...
 
 };
 
@@ -427,6 +427,11 @@ QString Client::statusMessage() const
 	return d->statusMessage;
 }
 
+void Client::setStatusMessage( const QString &message )
+{
+	d->statusMessage = message;
+}
+
 QByteArray Client::ipAddress() const
 {
 	//!TODO determine ip address
@@ -472,6 +477,24 @@ void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
 
 void Client::receivedMessage( const Oscar::Message& msg )
 {
+	if ( ( msg.type() == 2 ) && ( ! msg.hasProperty( Oscar::Message::AutoResponse ) ) )
+	{
+		// type 2 message needs an autoresponse, regardless of type
+		Connection* c = d->connections.connectionForFamily( 0x0004 );
+		if ( !c )
+			return;
+		
+		Oscar::Message response = Oscar::Message( msg );
+		if ( msg.hasProperty( Oscar::Message::StatusMessageRequest ) )
+			response.setText( statusMessage() );
+		else
+			response.setText( "" );
+		response.setReceiver( msg.sender() );
+		response.addProperty( Oscar::Message::AutoResponse );
+		SendMessageTask *sendMsgTask = new SendMessageTask( c->rootTask() );
+		sendMsgTask->setMessage( response );
+		sendMsgTask->go( true );
+	}
 	if ( msg.hasProperty( Oscar::Message::StatusMessageRequest ) )
 	{
 		if ( msg.hasProperty( Oscar::Message::AutoResponse ) )
@@ -479,21 +502,6 @@ void Client::receivedMessage( const Oscar::Message& msg )
 			// we got a response to a status message request.
 			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received an away message: " << msg.text() << endl;
 			emit receivedAwayMessage( msg.sender(), msg.text() );
-		}
-		else
-		{
-			// we got status message request ourselves. respond.
-			Connection* c = d->connections.connectionForFamily( 0x0004 );
-			if ( !c )
-				return;
-
-			Oscar::Message response = Oscar::Message( msg );
-			response.setText( statusMessage() );
-			response.setReceiver( msg.sender() );
-			response.addProperty( Oscar::Message::AutoResponse );
-			SendMessageTask *sendMsgTask = new SendMessageTask( c->rootTask() );
-			sendMsgTask->setMessage( response );
-			sendMsgTask->go( true );
 		}
 	}
 	else
@@ -864,6 +872,54 @@ void Client::connectToIconServer()
 
 	requestServerRedirect( 0x0010 );
 	return;
+}
+
+void Client::setIgnore( const QString& user, bool ignore )
+{
+	Oscar::SSI item = ssiManager()->findItem( user,  ROSTER_IGNORE );
+	if ( item && !ignore )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << user << " from ignore list" << endl;
+		this->modifySSIItem( item, Oscar::SSI() );
+	}
+	else if ( !item && ignore )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to ignore list" << endl;
+		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_IGNORE, QValueList<TLV>() );
+		this->modifySSIItem( Oscar::SSI(), s );
+	}
+}
+
+void Client::setVisibleTo( const QString& user, bool visible )
+{
+	Oscar::SSI item = ssiManager()->findItem( user,  ROSTER_VISIBLE );
+	if ( item && !visible )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << user << " from visible list" << endl;
+		this->modifySSIItem( item, Oscar::SSI() );
+	}
+	else if ( !item && visible )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to visible list" << endl;
+		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_VISIBLE, QValueList<TLV>() );
+		this->modifySSIItem( Oscar::SSI(), s );
+	}
+}
+
+void Client::setInvisibleTo( const QString& user, bool invisible )
+{
+	Oscar::SSI item = ssiManager()->findItem( user,  ROSTER_INVISIBLE );
+	if ( item && !invisible )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << user << " from invisible list" << endl;
+		this->modifySSIItem( item, Oscar::SSI() );
+	}
+	else if ( !item && invisible )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to invisible list" << endl;
+		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_INVISIBLE, QValueList<TLV>() );
+		this->modifySSIItem( Oscar::SSI(), s );
+	}
 }
 
 void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, BYTE hashType )

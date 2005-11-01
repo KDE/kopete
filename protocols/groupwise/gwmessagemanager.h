@@ -28,7 +28,7 @@ class KActionMenu;
 class KDialogBase;
 class GroupWiseAccount;
 class GroupWiseContact;
-class GroupWiseSearch;
+class GroupWiseContactSearch;
 /**
  * Specialised message manager, which tracks the GUID used by GroupWise to uniquely identify a given chat, and provides invite actions and logging and security indicators.  To instantiate call @ref GroupWiseAccount::chatSession().
  * @author SUSE AG
@@ -162,7 +162,7 @@ private:
 	KAction *m_secure;
 	KAction *m_logging;
 	// search widget and dialog used for inviting contacts
-	GroupWiseSearch * m_search;
+	GroupWiseContactSearch * m_search;
 	KDialogBase * m_searchDlg;
 	// contacts who have been invited to join but have not yet joined the chat
 	Kopete::ContactPtrList m_invitees;

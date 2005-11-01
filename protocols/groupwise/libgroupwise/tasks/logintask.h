@@ -51,6 +51,7 @@ protected:
 	ContactDetails extractUserDetails( Field::FieldList & fields );
 	void extractPrivacy( Field::FieldList & fields );
 	QStringList readPrivacyItems( const QByteArray & tag, Field::FieldList & fields );
+	void extractCustomStatuses( Field::FieldList & fields );
 
 signals:
 	void gotMyself( const GroupWise::ContactDetails & );
@@ -58,6 +59,7 @@ signals:
 	void gotContact( const ContactItem & );
 	void gotContactUserDetails( const GroupWise::ContactDetails & );
 	void gotPrivacySettings( bool locked, bool defaultDeny, const QStringList & allowList, const QStringList & denyList );
+	void gotCustomStatus( const GroupWise::CustomStatus & );
 };
 
 #endif

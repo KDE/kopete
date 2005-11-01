@@ -18,16 +18,12 @@
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qtooltip.h>
-#include <q3whatsthis.h>
-#include <q3vbox.h>
+#include <qwhatsthis.h>
+#include <qvbox.h>
 #include <qimage.h>
 #include <qpixmap.h>
 #include <qpainter.h>
 #include <qlayout.h>
-//Added by qt3to4:
-#include <QVBoxLayout>
-#include <Q3PtrList>
-#include <QBoxLayout>
 
 #include <kapplication.h>
 #include <kconfig.h>
@@ -72,14 +68,14 @@ public:
 };
 
 
-MetaContactSelectorWidgetLVI::MetaContactSelectorWidgetLVI(Kopete::MetaContact *mc, Q3ListView *parent, QObject *owner, const char *name) : Kopete::UI::ListView::Item(parent, owner, name) , d( new Private() )
+MetaContactSelectorWidgetLVI::MetaContactSelectorWidgetLVI(Kopete::MetaContact *mc, QListView *parent, QObject *owner, const char *name) : Kopete::UI::ListView::Item(parent, owner, name) , d( new Private() )
 {
 	d->metaContact = mc;
 	d->photoSize = 60;
 	
 	connect( d->metaContact, SIGNAL( photoChanged() ),
 		SLOT( slotPhotoChanged() ) );
-	connect( d->metaContact, SIGNAL( displayNameChanged() ),
+	connect( d->metaContact, SIGNAL( displayNameChanged(const QString&, const QString&) ),
 		SLOT( slotDisplayNameChanged() ) );
 	buildVisualComponents();
 }
@@ -116,7 +112,7 @@ void MetaContactSelectorWidgetLVI::slotPhotoChanged()
 	{
 		int photoSize = d->photoSize;
 		
-		photoImg = photoImg.smoothScale( photoSize, photoSize, Qt::KeepAspectRatio ) ;
+		photoImg = photoImg.smoothScale( photoSize, photoSize, QImage::ScaleMin ) ;
 		
 		// draw a 1 pixel black border
 		photoPixmap = photoImg;
@@ -170,7 +166,7 @@ void MetaContactSelectorWidgetLVI::buildVisualComponents()
 
 void MetaContactSelectorWidgetLVI::slotUpdateContactBox()
 {
-	Q3PtrList<Kopete::Contact> contacts = d->metaContact->contacts();
+	QPtrList<Kopete::Contact> contacts = d->metaContact->contacts();
 	for(Kopete::Contact *c = contacts.first(); c; c = contacts.next())
 	{
 		new ContactComponent(d->contactIconBox, c, IconSize( KIcon::Small ));
@@ -191,26 +187,26 @@ MetaContactSelectorWidget::MetaContactSelectorWidget( QWidget *parent, const cha
 	d->widget = new MetaContactSelectorWidget_Base(this);
 	l->addWidget(d->widget);
 	
-	connect( d->widget->metaContactListView, SIGNAL( clicked(Q3ListViewItem * ) ),
-			SIGNAL( metaContactListClicked( Q3ListViewItem * ) ) );
-	connect( d->widget->metaContactListView, SIGNAL( selectionChanged( Q3ListViewItem * ) ),
-			SIGNAL( metaContactListClicked( Q3ListViewItem * ) ) );
-	connect( d->widget->metaContactListView, SIGNAL( spacePressed( Q3ListViewItem * ) ),
-			SIGNAL( metaContactListClicked( Q3ListViewItem * ) ) );
+	connect( d->widget->metaContactListView, SIGNAL( clicked(QListViewItem * ) ),
+			SIGNAL( metaContactListClicked( QListViewItem * ) ) );
+	connect( d->widget->metaContactListView, SIGNAL( selectionChanged( QListViewItem * ) ),
+			SIGNAL( metaContactListClicked( QListViewItem * ) ) );
+	connect( d->widget->metaContactListView, SIGNAL( spacePressed( QListViewItem * ) ),
+			SIGNAL( metaContactListClicked( QListViewItem * ) ) );
 	
-	connect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
+	connect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( Kopete::MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
 	
 	d->widget->kListViewSearchLine->setListView(d->widget->metaContactListView);
 	d->widget->metaContactListView->setFullWidth( true );
 	d->widget->metaContactListView->header()->hide();
-	d->widget->metaContactListView->setColumnWidthMode(0, Q3ListView::Maximum);
+	d->widget->metaContactListView->setColumnWidthMode(0, QListView::Maximum);
 	slotLoadMetaContacts();
 }
 
 
 MetaContactSelectorWidget::~MetaContactSelectorWidget()
 {
-	disconnect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
+	disconnect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( Kopete::MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
 }
 
 
@@ -228,7 +224,7 @@ Kopete::MetaContact* MetaContactSelectorWidget::metaContact()
 void MetaContactSelectorWidget::selectMetaContact( Kopete::MetaContact *mc )
 {
 	// iterate trough list view
-	Q3ListViewItemIterator it( d->widget->metaContactListView );
+	QListViewItemIterator it( d->widget->metaContactListView );
 	while( it.current() )
 	{
 		MetaContactSelectorWidgetLVI *item = (MetaContactSelectorWidgetLVI *) it.current();
@@ -255,7 +251,7 @@ void MetaContactSelectorWidget::slotLoadMetaContacts()
 {
 	d->widget->metaContactListView->clear();
 
-	Q3PtrList<Kopete::MetaContact> metaContacts = Kopete::ContactList::self()->metaContacts();
+	QPtrList<Kopete::MetaContact> metaContacts = Kopete::ContactList::self()->metaContacts();
 	for( Kopete::MetaContact *mc = metaContacts.first(); mc ; mc = metaContacts.next() )
 	{
 		if( !mc->isTemporary() && mc != metaContact() )

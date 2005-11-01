@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>348</width>
-            <height>268</height>
+            <height>302</height>
         </rect>
     </property>
     <property name="caption">
@@ -63,9 +63,81 @@
                 </widget>
             </vbox>
         </widget>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>buttonGroup1</cstring>
+            </property>
+            <property name="title">
+                <string>Message Handling</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>mInstantMessageOpeningChk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Open messages instantl&amp;y</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Instantly open incoming messages</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>If there is no existing chat window a new window will be opened when a new message comes in. If there is already a chat window opened for the sender of the message it will be displayed there instantly.</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>mUseQueueChk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use message &amp;queue</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Use a message queue to store incoming messages</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Store new incoming messages in a message queue. New messages are messages that cannot be displayed in an already open chat window. Only queued or stacked messages trigger notification via bubble, a flashing tray icon, or both..</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>mUseStackChk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use message stac&amp;k</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Use a message stack to store incoming messages</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Store new incoming messages in a message stack. New messages are messages that cannot be displayed in an already open chat window. Only queued or stacked messages trigger notification via bubble and flashing tray.</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mQueueUnreadMessagesChk</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string>Queue/stack &amp;unread messages</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Also add unread messages to queue/stack</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Unread messages are messages that will be displayed in an already opened but inactive chat window. Only incoming queued messages trigger notification via the bubble, the flashing tray icon, or both. With this option disabled only new incoming messages are queued, i.e. messages that cannot be displayed in an already open chat window.</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
         <widget class="QGroupBox">
             <property name="name">
-                <cstring>groupBox1</cstring>
+                <cstring>groupBox2</cstring>
             </property>
             <property name="title">
                 <string>Miscellaneous</string>
@@ -74,64 +146,6 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>mUseQueueChk</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Use message &amp;queue</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Use a message queue instead of instantly opening a chat window on incoming messages</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Use a message queue for new incoming messages. New messages are messages that cannot be displayed in an already open chat window. Only queued messages trigger notification via the bubble, a flashing tray icon, or both.</string>
-                    </property>
-                </widget>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>layout7</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <spacer>
-                            <property name="name">
-                                <cstring>spacer11</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Fixed</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>16</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>mQueueUnreadMessagesChk</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="text">
-                                <string>Queue &amp;unread messages</string>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Also add unread messages to queue</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Unread messages are messages that will be displayed in an already opened but inactive chat window. Only incoming queued messages trigger notification via the bubble, the flashing tray icon, or both. With this option disabled only new incoming messages are queued, i.e. messages that cannot be displayed in an already open chat window.</string>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
                 <widget class="QCheckBox">
                     <property name="name">
                         <cstring>mAutoConnect</cstring>
@@ -190,6 +204,12 @@
     </connection>
     <connection>
         <sender>mUseQueueChk</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>mQueueUnreadMessagesChk</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>mUseStackChk</sender>
         <signal>toggled(bool)</signal>
         <receiver>mQueueUnreadMessagesChk</receiver>
         <slot>setEnabled(bool)</slot>

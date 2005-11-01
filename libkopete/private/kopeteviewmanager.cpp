@@ -58,7 +58,7 @@ struct KopeteViewManagerPrivate
     EventList eventList;
     KopeteView *activeView;
 
-    bool useQueue;
+    bool useQueueOrStack;
     bool raiseWindow;
     bool queueUnreadMessages;
     bool queueOnlyHighlightedMessagesInGroupChats;
@@ -110,7 +110,7 @@ KopeteViewManager::~KopeteViewManager()
 
 void KopeteViewManager::slotPrefsChanged()
 {
-    d->useQueue = KopetePrefs::prefs()->useQueue();
+	d->useQueueOrStack = KopetePrefs::prefs()->useQueue() || KopetePrefs::prefs()->useStack();
     d->raiseWindow = KopetePrefs::prefs()->raiseMsgWindow();
     d->queueUnreadMessages = KopetePrefs::prefs()->queueUnreadMessages();
     d->queueOnlyHighlightedMessagesInGroupChats = KopetePrefs::prefs()->queueOnlyHighlightedMessagesInGroupChats();
@@ -181,7 +181,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
         manager->view(true,msg.requestedPlugin())->appendMessage( msg );
         d->foreignMessage=false; //the view is created, reset the flag
 
-        bool appendMessageEvent = d->useQueue;
+		bool appendMessageEvent = d->useQueueOrStack;
 
         QWidget *w;
         if( d->queueUnreadMessages && ( w = dynamic_cast<QWidget*>(view( manager )) ) )
@@ -215,42 +215,29 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
             readMessages( manager, outgoingMessage );
         }
 
-        if ( !outgoingMessage && ( !manager->account()->isAway() || KopetePrefs::prefs()->soundIfAway() ) )
-        {
-            QWidget *w=dynamic_cast<QWidget*>(manager->view(false));
-            KConfig *config = KGlobal::config();
-            config->setGroup("General");
-            if( !manager->view(false) || !w || manager->view() != d->activeView
-                || config->readBoolEntry("EventIfActive", true) || !w->isActiveWindow() )
-            {
-                QString msgFrom = QString::null;
-                if( msg.from()->metaContact() )
-                        msgFrom = msg.from()->metaContact()->displayName();
-                else
-                        msgFrom = msg.from()->contactId();
-
-                QString msgText = msg.plainBody();
-                if( msgText.length() > 90 )
-                        msgText = msgText.left(88) + QString::fromLatin1("...");
-
-                QString event;
-                QString body =i18n( "<qt>Incoming message from %1<br>\"%2\"</qt>" );
-
-                switch( msg.importance() )
-                {
-                    case Kopete::Message::Low:
-                        event = QString::fromLatin1( "kopete_contact_lowpriority" );
-                        break;
-                    case Kopete::Message::Highlight:
-                        event = QString::fromLatin1( "kopete_contact_highlight" );
-                        body = i18n( "<qt>A highlighted message arrived from %1<br>\"%2\"</qt>" );
-                        break;
-                    default:
-                        event = QString::fromLatin1( "kopete_contact_incoming" );
-                }
-				KNotification::ContextList contexts;
-				Kopete::MetaContact *mc= msg.from()->metaContact();
-				if(mc)
+		if ( !outgoingMessage && ( !manager->account()->isAway() || KopetePrefs::prefs()->soundIfAway() ) )
+		{
+			QWidget *w=dynamic_cast<QWidget*>(manager->view(false));
+			KConfig *config = KGlobal::config();
+			config->setGroup("General");
+			if( (!manager->view(false) || !w || manager->view() != d->activeView ||
+						   config->readBoolEntry("EventIfActive", true) || !w->isActiveWindow())
+						   && msg.from())
+			{
+				QString msgFrom = QString::null;
+				if( msg.from()->metaContact() )
+					msgFrom = msg.from()->metaContact()->displayName();
+				else
+					msgFrom = msg.from()->contactId();
+	
+				QString msgText = msg.plainBody();
+				if( msgText.length() > 90 )
+					msgText = msgText.left(88) + QString::fromLatin1("...");
+	
+				QString event;
+				QString body =i18n( "<qt>Incoming message from %1<br>\"%2\"</qt>" );
+	
+				switch( msg.importance() )
 				{
 					contexts.append( qMakePair( QString::fromLatin1("metacontact") , mc->metaContactId()) );
 					foreach( Kopete::Group *g , mc->groups() )

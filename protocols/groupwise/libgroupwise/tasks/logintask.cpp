@@ -72,6 +72,8 @@ bool LoginTask::take( Transfer * transfer )
 	// read the privacy settings first, because this affects all contacts' apparent status
 	extractPrivacy( loginResponseFields );
 
+	extractCustomStatuses( loginResponseFields );
+
 	// CREATE CONTACT LIST
 	// locate contact list
 	Field::MultiField * contactList = loginResponseFields.findMultiField( NM_A_FA_CONTACT_LIST );
@@ -278,4 +280,39 @@ QStringList LoginTask::readPrivacyItems( const QByteArray & tag, Field::FieldLis
 	}
 	return items;
 }
+
+void LoginTask::extractCustomStatuses( Field::FieldList & fields )
+{
+	Field::FieldListIterator it = fields.find( NM_A_FA_CUSTOM_STATUSES );
+	if ( it != fields.end() )
+	{
+		if ( Field::MultiField * mf = dynamic_cast<Field::MultiField *>( *it ) )
+		{
+			Field::FieldList fl = mf->fields();
+			for ( Field::FieldListIterator custStatIt = fl.begin(); custStatIt != fl.end(); ++custStatIt )
+			{
+				Field::MultiField * mf2 = dynamic_cast<Field::MultiField *>( *custStatIt );
+				if ( mf2 && ( mf2->tag() == NM_A_FA_STATUS ) )
+				{
+					GroupWise::CustomStatus custom;
+					Field::FieldList fl2 = mf2->fields();
+					for ( Field::FieldListIterator custContentIt = fl2.begin(); custContentIt != fl2.end(); ++custContentIt )
+					{
+						if ( Field::SingleField * sf3 = dynamic_cast<Field::SingleField *>( *custContentIt ) )
+						{
+							if ( sf3->tag() == NM_A_SZ_TYPE )
+								custom.status = (GroupWise::Status)sf3->value().toInt();
+							else if ( sf3->tag() == NM_A_SZ_DISPLAY_NAME )
+								custom.name = sf3->value().toString();
+							else if ( sf3->tag() == NM_A_SZ_MESSAGE_BODY )
+								custom.autoReply = sf3->value().toString();
+						}
+					}
+					emit gotCustomStatus( custom );
+				}
+			}
+		}
+	}
+}
+
 #include "logintask.moc"

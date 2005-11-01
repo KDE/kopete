@@ -8,6 +8,7 @@ lib_LTLIBRARIES = libkopete_oscar.la
 
 libkopete_oscar_la_SOURCES = oscaraccount.cpp oscarcontact.cpp oscarmyselfcontact.cpp \
 	oscarencodingselectionbase.ui oscarencodingselectiondialog.cpp \
-	oscarlistcontactsbase.ui oscarlistnonservercontacts.cpp
+	oscarlistcontactsbase.ui oscarlistnonservercontacts.cpp \
+	oscarvisibilitybase.ui oscarvisibilitydialog.cpp
 libkopete_oscar_la_LDFLAGS = -no-undefined -version-info 2:0:0 $(all_libraries)
 libkopete_oscar_la_LIBADD  = $(LIB_KIO) $(top_builddir)/kopete/libkopete/libkopete.la ./liboscar/liboscar.la

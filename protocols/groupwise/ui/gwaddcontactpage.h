@@ -34,7 +34,8 @@ namespace Kopete { class Account; }
 namespace Kopete { class MetaContact; }
 class GroupWiseAccount;
 class GroupWiseAddUI;
-class GroupWiseSearch;
+//TODO: change this to a wrapper around Contact Search and Chatroom Search
+class GroupWiseContactSearch;
 
 /**
  * A page in the Add Contact Wizard
@@ -60,7 +61,8 @@ protected:
 	unsigned char searchOperation( int comboIndex );
 	GroupWiseAccount * m_account;
 	GroupWiseAddUI * m_gwAddUI;
-	GroupWiseSearch * m_searchUI;
+	//TODO: make wrapper
+	GroupWiseContactSearch * m_searchUI;
 	QLabel *m_noaddMsg1;
 	QLabel *m_noaddMsg2;
 	bool m_canadd;

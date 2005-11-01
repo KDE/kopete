@@ -22,6 +22,8 @@
 #include "kopetechatsession.h"
 #include "oscartypes.h"
 
+class Client;
+
 class AIMChatSession : public Kopete::ChatSession
 {
 Q_OBJECT
@@ -29,6 +31,13 @@ public:
     AIMChatSession( const Kopete::Contact* contact, Kopete::ContactPtrList others,
                     Kopete::Protocol* protocol, Oscar::WORD exchange = 0,
                     const QString& room = QString::null );
+    virtual ~AIMChatSession();
+
+    /**
+     * Set the engine to use so that we can disconnect from the chat service
+     * properly
+     */
+    void setEngine( Client* engine );
 
     /**
      * Get the name of the AIM chat room represented by
@@ -61,6 +70,7 @@ public:
 private:
     QString m_roomName;
     Oscar::WORD m_exchange;
+    Client* m_engine;
 };
 
 

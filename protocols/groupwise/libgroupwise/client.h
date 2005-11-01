@@ -30,6 +30,7 @@
 #include "rtf2html.h"
 #include "transfer.h"
 
+class ChatroomManager;
 class PrivacyManager;
 class RequestFactory;
 class UserDetailsManager;
@@ -207,13 +208,25 @@ fd		 * @param password
 		 * Host's IP address
 		 */
 		QByteArray ipAddress();
-		
+
+		/**
+		 * Obtain the list of custom statuses stored on the server 
+		 */
+		QValueList<GroupWise::CustomStatus> customStatuses();
+
 		/**
 		 * Get a reference to the RequestFactory for this Client. 
 		 * Used by Tasks to generate Requests with an ascending sequence of transaction IDs 
 		 * for this connection
 		 */
 		RequestFactory * requestFactory();
+
+		/**
+		 * Get a reference to the ChatroomManager for this Client.
+		 * This is constructed the first time this function is called.  Used to manipulate chat rooms on the server.
+		 */
+		ChatroomManager * chatroomManager();
+
 		/**
 		 * Get a reference to the UserDetailsManager for this Client.
 		 * Used to track known user details and issue new details requests
@@ -355,6 +368,10 @@ fd		 * @param password
 		 */ 
 		void ct_messageReceived( const ConferenceEvent & );
 		void jct_joinConfCompleted();
+		/**
+		 * Receive a custom status during login and record it
+		 */
+		void lt_gotCustomStatus( const GroupWise::CustomStatus & );
 
 		/**
 		 * Used by the client stream to notify errors to upper layers.

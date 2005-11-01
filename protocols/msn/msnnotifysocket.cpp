@@ -30,6 +30,7 @@
 
 #include <qdatetime.h>
 #include <qregexp.h>
+#include <qdom.h>
 
 #include <kdebug.h>
 #include <kdeversion.h>
@@ -44,11 +45,11 @@
 #include <kconfig.h>
 #include <knotification.h>
 
-
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 
 #include <ctime>
+
 
 MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/, const QString &password )
 : MSNSocket( account )
@@ -648,6 +649,11 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		KRun::runURL( KURL::fromPathOrURL( tmpMailFile.name() ), "text/html" , true );
 
 	}
+	else if ( cmd == "NOT" )
+	{
+		kdDebug( 14140 ) << k_funcinfo << "Received NOT command, issueing read block for '" << id << " more bytes" << endl;
+		readBlock( id );		
+	}	
 	else
 	{
 		// Let the base class handle the rest
@@ -677,6 +683,19 @@ void MSNNotifySocket::sslLoginSucceeded(QString ticket)
 	m_secureLoginHandler = 0L;
 }
 
+void MSNNotifySocket::slotMSNAlertUnwanted()
+{
+	// user not interested .. clean up the list of actions
+	m_msnAlertURLs.clear();
+}
+
+void MSNNotifySocket::slotMSNAlertLink(unsigned int action)
+{
+	// index into our action list and pull out the URL that was clicked ..
+	KURL tempURLForLaunch(m_msnAlertURLs[action-1]);
+	
+	KRun* urlToRun = new KRun(tempURLForLaunch);
+}
 
 void MSNNotifySocket::slotOpenInbox()
 {
@@ -802,6 +821,90 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 			rx.search(msg);
 			m_localIP = rx.cap(1);
 		}
+	}
+	else if (msg.contains("NOTIFICATION"))
+	{
+		// MSN alert (i.e. NOTIFICATION) [for docs see http://www.hypothetic.org/docs/msn/client/notification.php]
+		// format of msg is as follows:
+		//
+		// <NOTIFICATION ver="2" id="1342902633" siteid="199999999" siteurl="http://alerts.msn.com">
+		// <TO pid="0x0006BFFD:0x8582C0FB" name="example@passport.com"/>
+		// <MSG pri="1" id="1342902633">
+		// 	<SUBSCR url="http://g.msn.com/3ALMSNTRACKING/199999999ToastChange?http://alerts.msn.com/Alerts/MyAlerts.aspx?strela=1"/>
+		// 	<ACTION url="http://g.msn.com/3ALMSNTRACKING/199999999ToastAction?http://alerts.msn.com/Alerts/MyAlerts.aspx?strela=1"/>
+		// 	<BODY lang="3076" icon="">
+		// 		<TEXT>utf8-encoded text</TEXT>
+		//	</BODY>
+		// </MSG>
+		// </NOTIFICATION>
+
+		// MSN sends out badly formed XML .. fix it for them (thanks MS!)
+		QString notificationDOMAsString(msg);
+
+		QRegExp rx( "&(?!amp;)" );      // match ampersands but not &amp;
+		notificationDOMAsString.replace(rx, "&amp;");
+		QDomDocument alertDOM;
+		alertDOM.setContent(notificationDOMAsString);
+
+		QDomNodeList msgElements = alertDOM.elementsByTagName("MSG");
+		for (uint i = 0 ; i < msgElements.count() ; i++)
+		{
+			QString subscString;
+			QString actionString;
+			QString textString;
+
+			QDomNode msgDOM = msgElements.item(i);
+
+			QDomNodeList msgChildren = msgDOM.childNodes();
+			for (uint i = 0 ; i < msgChildren.length() ; i++) {
+				QDomNode child = msgChildren.item(i);
+				QDomElement element = child.toElement();
+				if (element.tagName() == "SUBSCR")
+				{
+					QDomAttr subscElementURLAttribute;
+					if (element.hasAttribute("url"))
+					{
+						subscElementURLAttribute = element.attributeNode("url");
+						subscString = subscElementURLAttribute.value();
+					}
+				}
+				else if (element.tagName() == "ACTION")
+				{
+					// process ACTION node to pull out URL the alert is tied to
+					QDomAttr actionElementURLAttribute;
+					if (element.hasAttribute("url"))
+					{
+						actionElementURLAttribute = element.attributeNode("url");
+						actionString = actionElementURLAttribute.value();
+					}
+				}
+				else if (element.tagName() == "BODY")
+				{
+					// process BODY node to get the text of the alert
+					QDomNodeList textElements = element.elementsByTagName("TEXT");
+					if (textElements.count() >= 1)
+					{
+						QDomElement textElement = textElements.item(0).toElement();
+						textString = textElement.text();
+					}
+				}
+
+
+			}
+
+//			kdDebug( 14140 ) << "subscString " << subscString << " actionString " << actionString << " textString " << textString << endl;
+			// build an internal list of actions ... we'll need to index into this list when we receive an event
+			QStringList actions;
+			actions.append(i18n("More Information"));
+			m_msnAlertURLs.append(actionString);
+
+			actions.append(i18n("Manage Subscription"));
+			m_msnAlertURLs.append(subscString);
+
+			KNotification* notification = KNotification::event("msn_alert", textString, 0L, 0L, actions);
+			QObject::connect(notification, SIGNAL(activated(unsigned int)), this, SLOT(slotMSNAlertLink(unsigned int)));
+			QObject::connect(notification, SIGNAL(closed()), this, SLOT(slotMSNAlertUnwanted()));
+		} // end for each MSG tag
 	}
 
 	if(!m_configFile.isNull())
@@ -1187,6 +1290,7 @@ Kopete::OnlineStatus MSNNotifySocket::convertOnlineStatus( const QString &status
 	else
 		return MSNProtocol::protocol()->UNK;
 }
+
 
 #include "msnnotifysocket.moc"
 

@@ -38,6 +38,7 @@
 #include "client.h"
 #include "oscartypes.h"
 #include "oscarutils.h"
+#include "ssimanager.h"
 
 #include "aimprotocol.h"
 #include "aimuserinfo.h"
@@ -92,10 +93,28 @@ Q3PtrList<KAction> *AIMContact::customContextMenuActions()
 	{
 		m_warnUserAction = new KAction( i18n( "&Warn User" ), 0, this, SLOT( warnUser() ), this, "warnAction" );
 	}
+	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), "", 0,
+	                                      this, SLOT(slotVisibleTo()), this, "actionVisibleTo");
+	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), "", 0,
+	                                        this, SLOT(slotInvisibleTo()), this, "actionInvisibleTo");
+	
+	bool on = account()->isConnected();
 
-	m_warnUserAction->setEnabled( account()->isConnected() );
+	m_warnUserAction->setEnabled( on );
+
+	m_actionVisibleTo->setEnabled(on);
+	m_actionInvisibleTo->setEnabled(on);
+
+	SSIManager* ssi = account()->engine()->ssiManager();
+	m_actionVisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_VISIBLE ));
+	m_actionInvisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_INVISIBLE ));
 
 	actionCollection->append( m_warnUserAction );
+
+	actionCollection->append(m_actionVisibleTo);
+	actionCollection->append(m_actionInvisibleTo);
+
+
 	return actionCollection;
 }
 
@@ -308,6 +327,16 @@ void AIMContact::warnUser()
 		mAccount->engine()->sendWarning( contactId(), true);
 	else if ( result == KMessageBox::No )
 		mAccount->engine()->sendWarning( contactId(), false);
+}
+
+void AIMContact::slotVisibleTo()
+{
+	account()->engine()->setVisibleTo( contactId(), m_actionVisibleTo->isChecked() );
+}
+
+void AIMContact::slotInvisibleTo()
+{
+	account()->engine()->setInvisibleTo( contactId(), m_actionInvisibleTo->isChecked() );
 }
 
 void AIMContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)

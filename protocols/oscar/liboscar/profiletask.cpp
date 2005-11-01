@@ -92,7 +92,7 @@ void ProfileTask::sendProfileUpdate()
 
 	if ( client()->isIcq() )
 	{
-		//capBuf.addString( oscar_caps[CAP_ICQSERVERRELAY], 16 ); // we support type-2 messages
+		capBuf.addString( oscar_caps[CAP_ICQSERVERRELAY], 16 ); // we support type-2 messages
 		capBuf.addString( oscar_caps[CAP_UTF8], 16 ); // we can send/receive UTF encoded messages
 		capBuf.addString( oscar_caps[CAP_ISICQ], 16 ); // I think this is an icq client, but maybe I'm wrong
 		capBuf.addString( oscar_caps[CAP_KOPETE], 16 ); // we are the borg, resistance is futile

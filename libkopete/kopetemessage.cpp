@@ -539,7 +539,7 @@ QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
 	int hash = 0;
 	const QString &contactId = contact->contactId();
 	for( uint f = 0; f < contactId.length(); ++f )
-		hash += contactId[f].latin1() * f;
+		hash += contactId[f].unicode() * f;
 
 	QString color = QColor( nameColors[ hash % nameColorsLen ] ).name();
 	contactNode.setAttribute( QString::fromLatin1("color"), color );

@@ -1,12 +1,12 @@
 /*
     Kopete Groupwise Protocol
-    searchtask.cpp - high level search for users on the server - spawns PollSearchResultsTasks
+    searchusertask.cpp - high level search for users on the server - spawns PollSearchResultsTasks
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+    Copyright (c) 2005      SUSE Linux Products GmbH	 	 http://www.suse.com
     
     Based on Iris, Copyright (C) 2003  Justin Karneges
 
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -20,8 +20,6 @@
 
 #include <qdatetime.h>
 #include <qtimer.h>
-//Added by qt3to4:
-#include <Q3ValueList>
 
 #include "client.h"
 #include "gwerror.h"
@@ -30,7 +28,7 @@
 
 #include "pollsearchresultstask.h"
 
-#include "searchtask.h"
+#include "searchusertask.h"
 
 // the delay we allow the server to initially do the search
 #define GW_POLL_INITIAL_DELAY 1000
@@ -41,16 +39,16 @@
 
 using namespace GroupWise;
 
-SearchTask::SearchTask(Task* parent): RequestTask(parent), m_polls( 0 )
+SearchUserTask::SearchUserTask(Task* parent): RequestTask(parent), m_polls( 0 )
 {
 }
 
 
-SearchTask::~SearchTask()
+SearchUserTask::~SearchUserTask()
 {
 }
 
-void SearchTask::search( const Q3ValueList<UserSearchQueryTerm> & query )
+void SearchUserTask::search( const QValueList<UserSearchQueryTerm> & query )
 {
 	m_queryHandle = QString::number( QDateTime::currentDateTime().toTime_t () );
 	Field::FieldList lst;
@@ -61,8 +59,8 @@ void SearchTask::search( const Q3ValueList<UserSearchQueryTerm> & query )
 	}
 	// object Id identifies the search for later reference
 	lst.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, m_queryHandle ) );
-	Q3ValueList<UserSearchQueryTerm>::ConstIterator it = query.begin();
-	const Q3ValueList<UserSearchQueryTerm>::ConstIterator end = query.end();
+	QValueList<UserSearchQueryTerm>::ConstIterator it = query.begin();
+	const QValueList<UserSearchQueryTerm>::ConstIterator end = query.end();
 	for ( ; it != end; ++it )
 	{
 		Field::SingleField * fld =  new Field::SingleField( (*it).field.ascii(), (*it).operation, 0, NMFIELD_TYPE_UTF8, (*it).argument );
@@ -74,7 +72,7 @@ void SearchTask::search( const Q3ValueList<UserSearchQueryTerm> & query )
 	createTransfer( "createsearch", lst );
 }
 
-bool SearchTask::take( Transfer * transfer )
+bool SearchUserTask::take( Transfer * transfer )
 {
 	if ( !forMe( transfer ) )
 		return false;
@@ -92,7 +90,7 @@ bool SearchTask::take( Transfer * transfer )
 	return true;
 }
 
-void SearchTask::slotPollForResults()
+void SearchUserTask::slotPollForResults()
 {
 	//create a PollSearchResultsTask
 	PollSearchResultsTask * psrt = new PollSearchResultsTask( client()->rootTask() );
@@ -101,7 +99,7 @@ void SearchTask::slotPollForResults()
 	psrt->go( true );
 }
 
-void SearchTask::slotGotPollResults()
+void SearchUserTask::slotGotPollResults()
 {
 	PollSearchResultsTask * psrt = (PollSearchResultsTask *)sender();
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "status code is " << psrt->queryStatus() << endl;
@@ -131,9 +129,9 @@ void SearchTask::slotGotPollResults()
 	}
 }
 
-Q3ValueList< GroupWise::ContactDetails > SearchTask::results()
+QValueList< GroupWise::ContactDetails > SearchUserTask::results()
 {
 	return m_results;
 }
 
-#include "searchtask.moc"
+#include "searchusertask.moc"

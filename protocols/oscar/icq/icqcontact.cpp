@@ -45,8 +45,10 @@
 #include "icquserinfowidget.h"
 #include "icqauthreplydialog.h"
 
+#include "client.h"
 #include "oscarutils.h"
 #include "oscarencodingselectiondialog.h"
+#include "ssimanager.h"
 
 ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaContact *parent,
 						const QString& icon, const Oscar::SSI& ssiItem )
@@ -75,6 +77,8 @@ ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaCo
 	                  this, SLOT( receivedLongInfo( const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
 	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL( receivedAwayMessage( const QString&, const QString& ) ),
+	                  this, SLOT( receivedStatusMessage( const QString&, const QString& ) ) );
 	QObject::connect( this, SIGNAL( featuresUpdated() ), this, SLOT( updateFeatures() ) );
 	QObject::connect( mAccount->engine(), SIGNAL( iconServerConnected() ),
 	                  this, SLOT( requestBuddyIcon() ) );
@@ -112,6 +116,37 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	kdDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
 	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( details.extendedStatus() & 0xffff );
 	setOnlineStatus( presence.toOnlineStatus() );
+
+	// ICQ does not support status messages for state Online
+	if ( presence.type() == ICQ::Presence::Online )
+		removeProperty( mProtocol->awayMessage );
+	else
+	{
+		if ( ICQ::Presence::fromOnlineStatus( account()->myself()->onlineStatus() ).visibility() == ICQ::Presence::Visible )
+		{
+			switch ( presence.type() )
+			{
+			case ICQ::Presence::Away:
+				mAccount->engine()->requestICQAwayMessage( contactId(), Client::ICQAway );
+				break;
+			case ICQ::Presence::NotAvailable:
+				mAccount->engine()->requestICQAwayMessage( contactId(), Client::ICQNotAvailable );
+				break;
+			case ICQ::Presence::Occupied:
+				mAccount->engine()->requestICQAwayMessage( contactId(), Client::ICQOccupied );
+				break;
+			case ICQ::Presence::DoNotDisturb:
+				mAccount->engine()->requestICQAwayMessage( contactId(), Client::ICQDoNotDisturb );
+				break;
+			case ICQ::Presence::FreeForChat:
+				mAccount->engine()->requestICQAwayMessage( contactId(), Client::ICQFreeForChat );
+				break;
+			default:
+				break;
+			}
+		}
+	}
+		
 
 	if ( details.dcExternalIp().isUnspecified() )
 		removeProperty( mProtocol->ipAddress );
@@ -301,6 +336,17 @@ void ICQContact::receivedShortInfo( const QString& contact )
 		setProperty( Kopete::Global::Properties::self()->nickName(), shortInfo.nickname );
 	}
 
+}
+
+void ICQContact::receivedStatusMessage( const QString &contact, const QString &message )
+{
+	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
+		return;
+
+	if ( ! message.isEmpty() )
+		setProperty( mProtocol->awayMessage, message );
+	else
+		removeProperty( mProtocol->awayMessage );
 }
 
 void ICQContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session )
@@ -529,12 +575,6 @@ Q3PtrList<KAction> *ICQContact::customContextMenuActions()
 		actionSendAuth = new KAction(i18n("&Grant Authorization"), "mail_forward", 0,
 			this, SLOT(slotSendAuth()), this, "actionSendAuth");
 		/*
-		actionIgnore = new KToggleAction(i18n("&Ignore"), "", 0,
-			this, SLOT(slotIgnore()), this, "actionIgnore");
-		actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), "", 0,
-			this, SLOT(slotVisibleTo()), this, "actionVisibleTo");
-		actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), "", 0,
-			this, SLOT(slotInvisibleTo()), this, "actionInvisibleTo");
 	}
 	else
 	{
@@ -543,15 +583,12 @@ Q3PtrList<KAction> *ICQContact::customContextMenuActions()
 	}
 
 */
-
-	QString i1 = i18n("&Ignore");
-	QString i2 = i18n("Always &Visible To");
-	QString i3 = i18n("Always &Invisible To");
-
-	Q_UNUSED( i1 );
-	Q_UNUSED( i2 );
-	Q_UNUSED( i3 );
-
+	m_actionIgnore = new KToggleAction(i18n("&Ignore"), "", 0,
+	                                   this, SLOT(slotIgnore()), this, "actionIgnore");
+	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), "", 0,
+	                                      this, SLOT(slotVisibleTo()), this, "actionVisibleTo");
+	m_actionInvisibleTo = new KToggleAction(i18n("Always &Invisible To"), "", 0,
+	                                        this, SLOT(slotInvisibleTo()), this, "actionInvisibleTo");
 
 	bool on = account()->isConnected();
 	if ( m_ssiItem.waitingAuth() )
@@ -567,24 +604,26 @@ Q3PtrList<KAction> *ICQContact::customContextMenuActions()
 
 /*
 	actionReadAwayMessage->setEnabled(status != OSCAR_OFFLINE && status != OSCAR_ONLINE);
-	actionIgnore->setEnabled(on);
-	actionVisibleTo->setEnabled(on);
-	actionInvisibleTo->setEnabled(on);
-
-	actionIgnore->setChecked(mIgnore);
-	actionVisibleTo->setChecked(mVisibleTo);
-	actionInvisibleTo->setChecked(mInvisibleTo);
-
 */
+	m_actionIgnore->setEnabled(on);
+	m_actionVisibleTo->setEnabled(on);
+	m_actionInvisibleTo->setEnabled(on);
+
+	SSIManager* ssi = account()->engine()->ssiManager();
+	m_actionIgnore->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_IGNORE ));
+	m_actionVisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_VISIBLE ));
+	m_actionInvisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_INVISIBLE ));
+
 	actionCollection->append(actionRequestAuth);
 	actionCollection->append(actionSendAuth);
     actionCollection->append( m_selectEncoding );
-/*
-	actionCollection->append(actionIgnore);
-	actionCollection->append(actionVisibleTo);
-	actionCollection->append(actionInvisibleTo);
-	actionCollection->append(actionReadAwayMessage);
-*/
+
+	actionCollection->append(m_actionIgnore);
+	actionCollection->append(m_actionVisibleTo);
+	actionCollection->append(m_actionInvisibleTo);
+
+//	actionCollection->append(actionReadAwayMessage);
+
 	return actionCollection;
 }
 
@@ -631,6 +670,22 @@ void ICQContact::changeEncodingDialogClosed( int result )
         m_oesd->delayedDestruct();
         m_oesd = 0L;
     }
+}
+
+
+void ICQContact::slotIgnore()
+{
+	account()->engine()->setIgnore( contactId(), m_actionIgnore->isChecked() );
+}
+
+void ICQContact::slotVisibleTo()
+{
+	account()->engine()->setVisibleTo( contactId(), m_actionVisibleTo->isChecked() );
+}
+
+void ICQContact::slotInvisibleTo()
+{
+	account()->engine()->setInvisibleTo( contactId(), m_actionInvisibleTo->isChecked() );
 }
 
 #if 0

@@ -534,7 +534,6 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 			int photoSize = d->iconSize;
 
 			photoImg = photoImg.smoothScale( photoSize, photoSize, Qt::KeepAspectRatio );
-			
 			KImageEffect *effect = 0L;
 			switch ( m_metaContact->status() )
 			{
