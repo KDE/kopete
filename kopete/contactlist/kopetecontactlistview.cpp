@@ -48,7 +48,6 @@
 #include <kmessagebox.h>
 #include <kmenu.h>
 #include <kurldrag.h>
-#include <kmultipledrag.h>
 #include <kabc/stdaddressbook.h>
 #include <kabc/vcardconverter.h>
 #include <kxmlguifactory.h>
@@ -1300,11 +1299,14 @@ Q3DragObject *KopeteContactListView::dragObject()
 
 	QPixmap pm;
 	Kopete::Contact *c = metaLVI->contactForPoint( m_startDragPos );
-        KMultipleDrag *drag = new KMultipleDrag( this );
-	drag->addDragObject( new Q3StoredDrag("application/x-qlistviewitem", 0L ) );
-
-	Q3StoredDrag *d = new Q3StoredDrag("kopete/x-metacontact", 0L );
+	
+	Q3StoredDrag *d = new Q3StoredDrag("kopete/x-metacontact", /*0L*/ this );
 	d->setEncodedData( metaLVI->metaContact()->metaContactId().toUtf8() );
+	return d;	
+#warning KMultipleDrag doesn't exist anymore
+#if 0    
+	KMultipleDrag *drag = new KMultipleDrag( this );
+	drag->addDragObject( new Q3StoredDrag("application/x-qlistviewitem", 0L ) );
 	drag->addDragObject( d );
 
 	if ( c ) 	// dragging a contact
@@ -1345,6 +1347,8 @@ Q3DragObject *KopeteContactListView::dragObject()
 	drag->setPixmap( pm /*, QPoint( s.width() , s.height() )*/ );
 
 	return drag;
+#endif
+
 }
 
 void KopeteContactListView::slotViewSelectionChanged()

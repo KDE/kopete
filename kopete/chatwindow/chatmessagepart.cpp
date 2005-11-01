@@ -41,7 +41,6 @@
 #include <khtmlview.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kmultipledrag.h>
 #include <kmenu.h>
 #include <krootpixmap.h>
 #include <krun.h>
@@ -646,7 +645,9 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 
 	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), this, SLOT( slotClearSelection()));
 
-#ifndef QT_NO_MIMECLIPBOARD
+#warning KMultipleDrag doesn't seems to exist anymore in kde4
+#if 0 
+//#ifndef QT_NO_MIMECLIPBOARD
 	if(!justselection)
 	{
       	Q3TextDrag *textdrag = new Q3TextDrag(text, 0L);

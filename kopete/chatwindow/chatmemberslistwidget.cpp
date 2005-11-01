@@ -29,7 +29,6 @@
 #include <kabc/addressee.h>
 #include <kabc/vcardconverter.h>
 #include <kdebug.h>
-#include <kmultipledrag.h>
 #include <kmenu.h>
 
 #include <q3header.h>
@@ -219,6 +218,8 @@ void ChatMembersListWidget::slotExecute( Q3ListViewItem *item )
 
 Q3DragObject *ChatMembersListWidget::dragObject()
 {
+#warning Implement me
+#if 0
 	Q3ListViewItem *currentLVI = currentItem();
 	if( !currentLVI )
 		return 0L;
@@ -253,6 +254,8 @@ Q3DragObject *ChatMembersListWidget::dragObject()
 	drag->setPixmap( c->onlineStatus().iconFor(c, 12) );
 
 	return drag;
+#endif
+	return 0l;
 }
 
 
