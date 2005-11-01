@@ -1,1 +1,1 @@
-SUBDIRS = iChat iChat-Trans Adium
+SUBDIRS = iChat iChat-Trans Adium Kopete

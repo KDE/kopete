@@ -89,7 +89,7 @@ public:
 	virtual void connectWithPassword( const QString &password );
 
 	void setUserProfile(const QString &profile);
-
+	
 public slots:
 	/** Reimplementation from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status, const QString& reason = QString::null );

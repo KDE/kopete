@@ -15,6 +15,7 @@
     *************************************************************************
 */
 
+#include "ircusercontact.h"
 #include "ircaccount.h"
 #include "irccontactmanager.h"
 #include "ircprotocol.h"
@@ -22,7 +23,6 @@
 
 #include "ircservercontact.h"
 #include "ircchannelcontact.h"
-#include "ircusercontact.h"
 
 #include "kircengine.h"
 

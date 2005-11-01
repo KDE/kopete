@@ -8,6 +8,7 @@ styles_DATA = \
 	Keramik.xsl \
 	Konsole.xsl \
 	Kopete.xsl \
+	Kopete-old.xsl \
 	Minimal.xsl \
 	MSN.xsl \
 	XChat.xsl

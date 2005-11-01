@@ -82,10 +82,6 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		informationReplies->setCurrentItem( config->readNumEntry( "InformationReplies", IRCAccount::ActiveWindow ) - 1 );
 		errorMessages->setCurrentItem( config->readNumEntry( "ErrorMessages", IRCAccount::ActiveWindow ) - 1 );
 
-		account()->setMessageDestinations( serverNotices->currentItem(), serverMessages->currentItem(),
-		informationReplies->currentItem(), errorMessages->currentItem()
-						     );
-
 		QStringList cmds = account()->connectCommands();
 		for( QStringList::Iterator i = cmds.begin(); i != cmds.end(); ++i )
 			new QListViewItem( commandList, *i );

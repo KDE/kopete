@@ -17,5 +17,8 @@ kcm_kopete_avdeviceconfig_la_LIBADD  = ../../../libkopete/libkopete.la \
 service_DATA = kopete_avdeviceconfig.desktop
 servicedir = $(kde_servicesdir)
 
+kopeteicondir = $(kde_datadir)/kopete/icons
+kopeteicon_ICON = AUTO
+
 # vim: set noet:
 noinst_HEADERS = avdeviceconfig_videoconfig.h
