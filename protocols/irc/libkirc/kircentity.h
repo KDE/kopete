@@ -54,7 +54,6 @@ public:
 	virtual ~Entity();
 
 public: // Read attributes accessors
-#warning Move to const QString & ?
 	QString awayMessage() const;
 	QString host() const;
 	QString modes() const;
@@ -72,7 +71,7 @@ public slots: // Write attributes accessors
 //	void setUser(const QString &);
 
 public:
-	bool operator == (const Entity &) const;
+//	bool operator == (const Entity &) const;
 
 	KIRC::EntityType type() const;
 	bool isChannel() const;

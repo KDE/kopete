@@ -104,13 +104,13 @@ Entity::~Entity()
 
 	delete d;
 }
-
+/*
 bool Entity::operator == (const Entity &) const
 {
 	#warning Implement Me
 	return false;
 }
-
+*/
 EntityType Entity::type() const
 {
 	return d->type;
