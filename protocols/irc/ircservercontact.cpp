@@ -143,13 +143,28 @@ void IRCServerContact::appendMessage( const QString &message )
 
 void IRCServerContact::slotIncomingNotice( const QString &orig, const QString &notice )
 {
-	QString originator = orig.contains('!') ? orig.section('!',0,1) : orig;
-	ircAccount()->appendMessage(
-		i18n("NOTICE from %1: %2").arg(
-			originator == ircAccount()->mySelf()->nickName() ? kircEngine()->currentHost() : originator, notice
-		),
-		IRCAccount::NoticeReply
-	);
+	if (orig.isEmpty()) {
+		// Prefix missing.
+		// NOTICE AUTH :*** Checking Ident
+
+		ircAccount()->appendMessage(i18n("NOTICE from %1: %2").arg(kircEngine()->currentHost(), notice),
+				IRCAccount::NoticeReply);
+
+	} else {
+		// :Global!service@rizon.net NOTICE foobar :[Logon News - Oct 12 2005] Due to growing problems ...
+		// :somenick!~fooobar@somehostname.fi NOTICE foobar :hello
+
+		if (orig.contains('!')) {
+			ircAccount()->appendMessage(i18n("NOTICE from %1 (%2): %3").arg(
+						orig.section('!', 0, 0),
+						orig.section('!', 1, 1),
+						notice),
+					IRCAccount::NoticeReply);
+		} else {
+			ircAccount()->appendMessage(i18n("NOTICE from %1: %2").arg(
+						orig, notice), IRCAccount::NoticeReply);
+		}
+	}
 }
 
 void IRCServerContact::slotIncomingUnknown(const QString &message)
