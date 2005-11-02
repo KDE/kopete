@@ -27,16 +27,6 @@ class QTextCodec;
  */
 namespace KIRC
 {
-/*
-	enum ConnectionState
-	{
-		Idle,
-		Connecting,
-		Authentifying,
-		Connected,
-		Closing
-	};
-*/
 	enum MessageType
 	{
 		ErrorMessage = -1,
@@ -50,16 +40,6 @@ namespace KIRC
 
 		MessageOfTheDayMessage,
 		MessageOfTheDayCondensedMessage
-	};
-
-	typedef enum EntityType
-	{
-		// From lower to higher importance
-		Unknown = 0,
-		User,
-		Service,
-		Channel,
-		Server
 	};
 /*
 	typedef struct EntityStatus

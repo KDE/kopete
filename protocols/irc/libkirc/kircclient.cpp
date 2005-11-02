@@ -29,6 +29,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
+#include <kurl.h>
 
 #include <qtextcodec.h>
 #include <qtimer.h>
@@ -75,7 +76,7 @@ Client::Client(QObject *parent)
 	  d->server(new Entity(QString::null, KIRC::Server)),
 	  d->self(new Entity(QString::null, KIRC::User))
 */
-	setUserName(QString::null);
+//	setUserName(QString::null);
 
 //	d->entities << d->server << d->self;
 
@@ -112,7 +113,7 @@ bool Client::isConnected() const
 {
 	return connectionState() == Open;
 }
-
+/*
 void Client::setVersionString(const QString &newString)
 {
 	d->versionString = newString;
@@ -143,7 +144,7 @@ void Client::setRealName(const QString &newName)
 	else
 		d->realName = newName;
 }
-/*
+
 bool Engine::_bind(QMap<QString, KIRC::MessageRedirector *> &dict,
 		const char *command, QObject *object, const char *member,
 		int minArgs, int maxArgs, const QString &helpMessage)
@@ -193,11 +194,14 @@ bool Engine::bindCtcpReply(const char *command, QObject *object, const char *mem
 void Client::authentify()
 {
 	// If password is given for this server, send it now, and don't expect a reply
-	if (!(password()).isEmpty())
-		StdCommands::pass(this, password());
+	const KURL &url = this->url();
 
-	StdCommands::user(this, d->username, StdCommands::Normal, d->realName);
-	StdCommands::nick(this, d->nickname);
+	if (url.hasPass())
+		StdCommands::pass(this, url.pass());
+
+	#warning make the following string arguments static const
+	StdCommands::user(this, url.user(), StdCommands::Normal, url.queryItem(QString::fromLatin1("realname")));
+	StdCommands::nick(this, url.queryItem(QString::fromLatin1("nickname")));
 }
 
 void Client::onReceivedMessage( KIRC::Message &msg )

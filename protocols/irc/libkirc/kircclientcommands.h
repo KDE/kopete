@@ -43,10 +43,7 @@ public:
 
 private slots:
 
-	void onConnectionStateChanged(KIRC::Socket::ConnectionState state);
-	void onReceivedMessage( KIRC::Message &msg );
-
-	void destroyed(KIRC::Entity *entity);
+	void onReceivedMessage(KIRC::Message &msg);
 
 	void ignoreMessage(KIRC::Message &msg);
 	void receivedServerMessage(KIRC::Message &msg); // emit the suffix of the message.

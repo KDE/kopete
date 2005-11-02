@@ -26,6 +26,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
+#include <kurl.h>
 
 #include <qtextcodec.h>
 #include <qtimer.h>
@@ -44,6 +45,7 @@ public:
 	{ }
 
 	KNetwork::KBufferedSocket *socket;
+	KURL url;
 	bool useSSL;
 	KIRC::Socket::ConnectionState state;
 
@@ -119,14 +121,25 @@ void Socket::setOwner(const Entity::Ptr &newOwner)
 	d->owner = newOwner;
 }
 
-void Socket::connectToServer(const QString &host, Q_UINT16 port, bool useSSL)
+const KURL &Socket::url() const
+{
+	return d->url;
+}
+
+bool Socket::connectToServer(const KURL &url)
+{
+	d->url = url;
+	return true;
+}
+
+bool Socket::connectToServer(const QString &host, Q_UINT16 port, bool useSSL)
 {
 //	kdDebug(14120) << k_funcinfo << useSSL << endl;
 	setupSocket(useSSL);
-	d->socket->connect(host, QString::number(port));
+	return d->socket->connect(host, QString::number(port));
 }
 
-void Socket::connectToServer(const KResolverEntry &entry, bool useSSL)
+bool Socket::connectToServer(const KResolverEntry &entry, bool useSSL)
 {
 //	kdDebug(14120) << k_funcinfo << useSSL << endl;
 	setupSocket(useSSL);

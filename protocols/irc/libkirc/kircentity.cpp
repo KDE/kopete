@@ -64,7 +64,8 @@ public:
 	{ }
 
 	EntityManager *manager;
-	EntityType type;
+
+	Entity::Type type;
 
 	QString name;
 	QString host;
@@ -76,7 +77,7 @@ public:
 	QTextCodec *codec;
 };
 
-Entity::Entity(const QString &name, const EntityType type)
+Entity::Entity(const QString &name, const Type type)
 	: d( new Private )
 {
 	setName(name);
@@ -104,14 +105,8 @@ Entity::~Entity()
 
 	delete d;
 }
-/*
-bool Entity::operator == (const Entity &) const
-{
-	#warning Implement Me
-	return false;
-}
-*/
-EntityType Entity::type() const
+
+Entity::Type Entity::type() const
 {
 	return d->type;
 }
@@ -131,7 +126,7 @@ bool Entity::isUser() const
 	return type() == User;
 }
 
-void Entity::setType( EntityType type )
+void Entity::setType( Entity::Type type )
 {
 	if ( d->type != type )
 	{

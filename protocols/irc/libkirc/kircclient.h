@@ -50,41 +50,6 @@ public:
 	bool isDisconnected() const;
 	bool isConnected() const;
 
-//	QString nick() const;
-//	QStringList nickList() const;
-//	void setNickList(const QStringList& nickList);
-
-//	QUrl serverURL() const;
-//	bool setServerURL(const QUrl &url);
-
-	const QString &nickName() const;
-//		{ return m_Nickname; };
-
-	const QString &password() const;
-//		{ return m_Passwd; }
-
-	void setPassword(const QString &passwd);
-//		{ m_Passwd = passwd; };
-
-	const QString &userName() const;
-//		{ return m_Username; }
-
-	void setUserName(const QString &newName);
-
-	void setRealName(const QString &newName);
-	const QString &realName() const;
-//		{ return m_realName; }
-
-	const bool reqsPassword() const;
-//		{ return m_ReqsPasswd; }
-
-	void setReqsPassword(bool b);
-//		{ m_ReqsPasswd = b; }
-
-	void setVersionString(const QString &versionString);
-	void setUserString(const QString &userString);
-	void setSourceString(const QString &sourceString);
-
 	KIRC::Entity::Ptr server();
 
 	KIRC::ClientCommandHandler *clientCommandHandler();

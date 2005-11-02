@@ -90,60 +90,11 @@ void ClientCommands::registerStandardCommands(CommandManager *cm)
 	bind(TOPIC,	this, SLOT(topic(KIRC::Message &)),	1, 1);
 }
 */
-void ClientCommands::away(bool isAway, const QString &awayMessage)
-{
-	Message msg;
-	msg.setCommand(AWAY);
-
-	if (isAway)
-	{
-		if (!awayMessage.isEmpty())
-			msg.setSuffix(awayMessage);
-		else
-			msg.setSuffix(QString::fromLatin1("I'm away."));
-	}
-
-	d->client->writeMessage(msg);
-}
 
 // FIXME: Really handle this message
 void ClientCommands::error(Message &)
 {
 //	d->client->close();
-}
-
-void ClientCommands::ison(const QStringList &nickList)
-{
-	#warning FIXME bogus length check
-/*
-	if (!nickList.isEmpty())
-	{
-		QString statement = ISON;
-		for (QStringList::ConstIterator it = nickList.begin(); it != nickList.end(); ++it)
-		{
-			if ((statement.length()+(*it).length())>509) // 512(max buf)-2("\r\n")-1(<space separator>)
-			{
-				writeMessage(statement);
-				statement = QString::fromLatin1("ISON ") +  (*it);
-			}
-			else
-				statement.append(QChar(' ') + (*it));
-		}
-		writeMessage(statement);
-	}
-*/
-}
-
-void ClientCommands::join(const QString &name, const QString &key)
-{
-	Message msg;
-	msg.setCommand(JOIN);
-	QStringList args(name);
-	if (!key.isNull())
-		args << key;
-//	msg.setArgs(args);
-
-	d->client->writeMessage(msg);
 }
 
 /* RFC say: "( <channel> *( "," <channel> ) [ <key> *( "," <key> ) ] ) / "0""
@@ -168,16 +119,6 @@ void ClientCommands::join(Message &msg)
 */
 }
 
-void ClientCommands::kick(const QString &user, const QString &channel, const QString &reason)
-{
-	Message msg;
-	msg.setCommand(KICK);
-//	msg.setArgs(QStringList(channel) << user);
-	msg.setSuffix(reason);
-
-	d->client->writeMessage(msg);
-}
-
 /* The given user is kicked.
  * "<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]"
  */
@@ -191,20 +132,6 @@ void ClientCommands::kick(Message &msg)
 		toEntity,
 		i18n(""));
 */
-}
-
-void ClientCommands::list()
-{
-	d->client->writeMessage(LIST);
-}
-
-void ClientCommands::mode(const QString &target, const QString &mode)
-{
-	Message msg;
-	msg.setCommand(MODE);
-//	msg.setArgs(QStringList(target) << mode);
-
-	d->client->writeMessage(msg);
 }
 
 /* Change the mode of a user.
@@ -226,25 +153,6 @@ void ClientCommands::mode(Message &msg)
 
 	toEntity->setModes(args.join(" "));
 */
-}
-
-void ClientCommands::motd(const QString &server)
-{
-	Message msg;
-	msg.setCommand(MOTD);
-//	msg.setArgs(server);
-
-	d->client->writeMessage(msg);
-}
-
-void ClientCommands::nick(const QString &newNickname)
-{
-//	m_PendingNick = newNickname;
-	Message msg;
-	msg.setCommand(NICK);
-//	msg.setArgs(newNickname);
-
-	d->client->writeMessage(msg);
 }
 
 /* Nick name of a user changed
@@ -275,16 +183,6 @@ void ClientCommands::nick(Message &msg)
 */
 }
 
-void ClientCommands::notice(const QString &target, const QString &content)
-{
-	Message msg;
-	msg.setCommand(NOTICE);
-//	msg.setArgs(target);
-	msg.setSuffix(content/*, target->codec()*/);
-
-	d->client->writeMessage(msg);
-}
-
 void ClientCommands::notice(Message &msg)
 {
 	if (!msg.suffix().isEmpty())
@@ -303,18 +201,6 @@ void ClientCommands::notice(Message &msg)
 //		invokeCtcpCommandOfMessage(m_ctcpReplies, msg);
 }
 
-/* This will part a channel with 'reason' as the reason for parting
- */
-void ClientCommands::part(const QString &channel, const QString &reason)
-{
-	Message msg;
-	msg.setCommand(PART);
-//	msg.setArgs(channel);
-	msg.setSuffix(reason/*, channel->codec()*/);
-	
-	d->client->writeMessage(msg);
-}
-
 /* This signal emits when a user parts a channel
  * "<channel> *( "," <channel> ) [ <Part Message> ]"
  */
@@ -329,15 +215,6 @@ void ClientCommands::part(Message &msg)
 */
 }
 
-void ClientCommands::pass(const QString &password)
-{
-	Message msg;
-	msg.setCommand(PASS);
-	msg.setArgs(password);
-
-	d->client->writeMessage(msg);
-}
-
 void ClientCommands::ping(Message &imsg)
 {
 	Message msg;
@@ -350,16 +227,6 @@ void ClientCommands::ping(Message &imsg)
 
 void ClientCommands::pong(Message &/*msg*/)
 {
-}
-
-void ClientCommands::privmsg(const QString &contact, const QString &content)
-{
-	Message msg;
-	msg.setCommand(PRIVMSG);
-//	msg.setArgs(contact);
-	msg.setSuffix(content/*, contact->codec*/);
-
-	d->client->writeMessage(msg);
 }
 
 void ClientCommands::privmsg(Message &msg)
@@ -381,21 +248,6 @@ void ClientCommands::privmsg(Message &msg)
 */
 }
 
-void ClientCommands::quit(const QString &reason, bool /*now*/)
-{
-	kdDebug(14120) << k_funcinfo << reason << endl;
-
-//	if (isDisconnected())
-//		return;
-
-	Message msg;
-	msg.setCommand(QUIT);
-	msg.setSuffix(reason);
-
-	d->client->writeMessage(msg);
-	d->client->close();
-}
-
 void ClientCommands::quit(Message &msg)
 {
 /*
@@ -405,16 +257,6 @@ void ClientCommands::quit(Message &msg)
 		m_server,
 		msg.suffix());
 */
-}
-
-void ClientCommands::topic(const QString &channel, const QString &topic)
-{
-	Message msg;
-	msg.setCommand(TOPIC);
-//	msg.setArgs(channel);
-	msg.setSuffix(topic/*, channel->codec*/);
-
-	d->client->writeMessage(msg);
 }
 
 /* "<channel> [ <topic> ]"
@@ -430,370 +272,6 @@ void ClientCommands::topic(Message &msg)
 		m_server,
 		msg.suffix());
 */
-}
-
-/* RFC1459: "<username> <hostname> <servername> <realname>"
- * The USER command is used at the beginning of connection to specify
- * the username, hostname and realname of a new user.
- * hostname is usualy set to "127.0.0.1"
- */
-void ClientCommands::user(const QString &newUserName, const QString &hostname, const QString &newRealName)
-{
-//	m_Username = newUserName;
-//	m_realName = newRealName;
-
-	Message msg;
-	msg.setCommand(USER);
-//	msg.setArgs(QStringList(newUserName) << hostname << m_Host);
-	msg.setSuffix(newRealName);
-
-	d->client->writeMessage(msg);
-}
-
-/* RFC2812: "<user> <mode> <unused> <realname>"
- * mode is a numeric value (from a bit mask).
- * 0x00 normal
- * 0x04 request +w
- * 0x08 request +i
- */
-void ClientCommands::user(const QString &newUserName, Q_UINT8 mode, const QString &newRealName)
-{
-//	m_Username = newUserName;
-//	m_realName = newRealName;
-
-	Message msg;
-	msg.setCommand(USER);
-//	msg.setArgs(QStringList(newUserName) << QString::number(mode) << QChar('*'));
-	msg.setSuffix(newRealName);
-
-	d->client->writeMessage(msg);
-}
-
-void ClientCommands::whois(const QString &user)
-{
-	Message msg;
-	msg.setCommand(WHOIS);
-//	msg.setArgs(user);
-
-	d->client->writeMessage(msg);
-}
-/*
-void ClientCommands::bindCtcp()
-{
-	bindCtcpQuery("ACTION",		this, SLOT(CtcpQuery_action(KIRC::Message &)),
-		-1,	-1);
-	bindCtcpQuery("CLIENTINFO",	this, SLOT(CtcpQuery_clientinfo(KIRC::Message &)),
-		-1,	1);
-	bindCtcpQuery("DCC",		this, SLOT(CtcpQuery_dcc(KIRC::Message &)),
-		4,	5);
-	bindCtcpQuery("FINGER",		this, SLOT(CtcpQuery_finger(KIRC::Message &)),
-		-1,	0);
-	bindCtcpQuery("PING",		this, SLOT(CtcpQuery_ping(KIRC::Message &)),
-		1,	1);
-	bindCtcpQuery("SOURCE",		this, SLOT(CtcpQuery_source(KIRC::Message &)),
-		-1,	0);
-	bindCtcpQuery("TIME",		this, SLOT(CtcpQuery_time(KIRC::Message &)),
-		-1,	0);
-	bindCtcpQuery("USERINFO",	this, SLOT(CtcpQuery_userinfo(KIRC::Message &)),
-		-1,	0);
-	bindCtcpQuery("VERSION",	this, SLOT(CtcpQuery_version(KIRC::Message &)),
-		-1,	0);
-
-	bindCtcpReply("ERRMSG",		this, SLOT(CtcpReply_errmsg(KIRC::Message &)),
-		1,	-1);
-	bindCtcpReply("PING",		this, SLOT(CtcpReply_ping(KIRC::Message &)),
-		1,	1,	"");
-	bindCtcpReply("VERSION",	this, SLOT(CtcpReply_version(KIRC::Message &)),
-		-1,	-1,	"");
-}
-
-void ClientCommands::writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage, QTextCodec *codec)
-{
-	#warning FIXME CTCP MESSAGE NOT SENT
-//	writeRawMessage(command, to, ctcpMessage, codec);
-}
-
-void ClientCommands::writeCtcpQueryMessage(const QString &to, const QString &ctcpQueryMessage, QTextCodec *codec)
-{
-	writeCtcpMessage("PRIVMSG", to, ctcpQueryMessage, codec);
-}
-
-void ClientCommands::writeCtcpReplyMessage(const QString &to, const QString &ctcpReplyMessage, QTextCodec *codec)
-{
-	writeCtcpMessage("NOTICE", to, ctcpReplyMessage, codec);
-}
-
-void ClientCommands::writeCtcpErrorMessage(const QString &to, const QString &ctcpLine, const QString &errorMsg, QTextCodec *codec)
-{
-	writeCtcpReplyMessage(to, "ERRMSG", ctcpLine, errorMsg);
-}
-*/
-// Normal order for a ctcp command:
-// CtcpRequest_*
-// CtcpQuery_*
-// CtcpReply_* (if any)
-
-/* Generic ctcp commnd for the /ctcp trigger */
-void ClientCommands::CtcpRequestCommand(const QString &contact, const QString &command)
-{
-//	writeCtcpQueryMessage(contact, Message::formatCtcp(command));
-}
-
-void ClientCommands::CtcpRequest_action(const QString &contact, const QString &message)
-{
-//	writeCtcpQueryMessage(contact, Message::formatCtcp(QString::fromLatin1("ACTION %1").arg(message)));
-}
-
-void ClientCommands::CtcpQuery_action(Message &msg)
-{
-/*	QString target = msg.arg(0);
-	if (target[0] == '#' || target[0] == '!' || target[0] == '&')
-		emit incomingAction(target, msg, msg.ctcpMessage().ctcpRaw());
-	else
-		emit incomingPrivAction(msg, target, msg.ctcpMessage().ctcpRaw());*/
-}
-
-/*
-NO REPLY EXIST FOR THE CTCP ACTION COMMAND !
-bool ClientCommands::CtcpReply_action(Message &msg)
-{
-}
-*/
-
-//	FIXME: the API can now answer to help commands.
-void ClientCommands::CtcpQuery_clientinfo(Message &msg)
-{
-	QString clientinfo = QString::fromLatin1("The following commands are supported, but "
-			"without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING,"
-			"ACTION.");
-
-//	writeCtcpReplyMessage(	msg.prefix(), QString::null,
-//				msg.ctcpMessage().command(), QString::null, clientinfo);
-}
-
-void ClientCommands::CtcpRequest_dcc(const QString &nickname, const QString &fileName, uint port, Transfer::Type type)
-{
-/*	if(	m_status != Connected ||
-		m_socket->localAddress() == 0 ||
-		m_socket->localAddress()->nodeName().isNull())
-		return;
-
-	switch(type)
-	{
-		case Transfer::Chat:
-		{
-			writeCtcpQueryMessage(nickname, QString::null,
-				QString::fromLatin1("DCC"),
-				QStringList(QString::fromLatin1("CHAT")) << QString::fromLatin1("chat") <<
-					m_sock->localAddress()->nodeName() << QString::number(port)
-			);
-			break;
-		}
-
-		case Transfer::FileOutgoing:
-		{
-			QFileInfo file(fileName);
-			QString noWhiteSpace = file.fileName();
-			if (noWhiteSpace.contains(' ') > 0)
-				noWhiteSpace.replace(QRegExp("\\s+"), "_");
-
-			TransferServer *server = TransferHandler::self()->createServer(this, nickname, type, fileName, file.size());
-
-			QString ip = m_sock->localAddress()->nodeName();
-			QString ipNumber = QString::number( ntohl( inet_addr( ip.latin1() ) ) );
-
-			kdDebug(14120) << "Starting DCC file outgoing transfer." << endl;
-
-			writeCtcpQueryMessage(nickname, QString::null,
-				QString::fromLatin1("DCC"),
-				QStringList(QString::fromLatin1("SEND")) << noWhiteSpace << ipNumber <<
-					QString::number(server->port()) << QString::number(file.size())
-			);
-			break;
-		}
-
-		case Transfer::FileIncoming:
-		case Transfer::Unknown:
-		default:
-			break;
-	}*/
-}
-
-void ClientCommands::CtcpQuery_dcc(Message &msg)
-{
-//	Message &ctcpMsg = msg.ctcpMessage();
-	Message ctcpMsg;
-
-	QString dccCommand = ctcpMsg.arg(0).upper();
-
-	if (dccCommand == QString::fromLatin1("CHAT"))
-	{
-//		if(ctcpMsg.argsSize()!=4) return false;
-
-		/* DCC CHAT type longip port
-		 *
-		 *  type   = Either Chat or Talk, but almost always Chat these days
-		 *  longip = 32-bit Internet address of originator's machine
-		 *  port   = Port on which the originator is waitng for a DCC chat
-		 */
-		bool okayHost, okayPort;
-		// should ctctMsg.arg(1) be tested?
-		QHostAddress address(ctcpMsg.arg(2).toUInt(&okayHost));
-		unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
-		if (okayHost && okayPort)
-		{
-			kdDebug(14120) << "Starting DCC chat window." << endl;
-//			TransferHandler::self()->createClient(
-//				this, msg.prefix(),
-//				address, port,
-//				Transfer::Chat );
-		}
-	}
-	else if (dccCommand == QString::fromLatin1("SEND"))
-	{
-//		if(ctcpMsg.argsSize()!=5) return false;
-
-		/* DCC SEND (filename) (longip) (port) (filesize)
-		 *
-		 *  filename = Name of file being sent
-		 *  longip   = 32-bit Internet address of originator's machine
-		 *  port     = Port on which the originator is waiitng for a DCC chat
-		 *  filesize = Size of file being sent
-		 */
-		bool okayHost, okayPort, okaySize;
-//		QFileInfo realfile(msg.arg(1));
-		QHostAddress address(ctcpMsg.arg(2).toUInt(&okayHost));
-		unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
-		unsigned int size = ctcpMsg.arg(4).toUInt(&okaySize);
-		if (okayHost && okayPort && okaySize)
-		{
-			kdDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1) << endl;
-//			TransferHandler::self()->createClient(
-//				this, msg.prefix(),
-//				address, port,
-//				Transfer::FileIncoming,
-//				ctcpMsg.arg(1), size );
-		}
-	}
-//	else
-//		((MessageRedirector *)sender())->error("Unknow dcc command");
-}
-
-/*
-NO REPLY EXIST FOR THE CTCP DCC COMMAND !
-bool ClientCommands::CtcpReply_dcc(Message &msg)
-{
-}
-*/
-
-void ClientCommands::CtcpReply_errmsg(Message &)
-{
-	// should emit one signal
-}
-
-void ClientCommands::CtcpQuery_finger( Message &)
-{
-	// To be implemented
-}
-
-void ClientCommands::CtcpRequest_ping(const QString &target)
-{
-	kdDebug(14120) << k_funcinfo << endl;
-/*
-	timeval time;
-	if (gettimeofday(&time, 0) == 0)
-	{
-		QString timeReply;
-
-		if( Entity::isChannel(target) )
-			timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
-		else
-		 	timeReply = QString::number( time.tv_sec );
-
-		writeCtcpQueryMessage(	target, QString::null, "PING", timeReply);
-	}
-//	else
-//		((MessageRedirector *)sender())->error("failed to get current time");*/
-}
-
-void ClientCommands::CtcpQuery_ping(Message &msg)
-{
-//	writeCtcpReplyMessage(	msg.prefix(), QString::null,
-//				msg.ctcpMessage().command(), msg.ctcpMessage().arg(0));
-}
-
-void ClientCommands::CtcpReply_ping(Message &msg)
-{
-/*	timeval time;
-	if (gettimeofday(&time, 0) == 0)
-	{
-		// FIXME: the time code is wrong for usec
-		QString timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
-		double newTime = timeReply.toDouble();
-		double oldTime = msg.suffix().section(' ',0, 0).toDouble();
-		double difference = newTime - oldTime;
-		QString diffString;
-
-		if (difference < 1)
-		{
-			diffString = QString::number(difference);
-			diffString.remove((diffString.find('.') -1), 2);
-			diffString.truncate(3);
-			diffString.append("milliseconds");
-		}
-		else
-		{
-			diffString = QString::number(difference);
-			QString seconds = diffString.section('.', 0, 0);
-			QString millSec = diffString.section('.', 1, 1);
-			millSec.remove(millSec.find('.'), 1);
-			millSec.truncate(3);
-			diffString = QString::fromLatin1("%1 seconds, %2 milliseconds").arg(seconds).arg(millSec);
-		}
-
-		emit incomingCtcpReply(QString::fromLatin1("PING"), msg.prefix(), diffString);
-	}
-//	else
-//		((MessageRedirector *)sender())->error("failed to get current time");*/
-}
-
-void ClientCommands::CtcpQuery_source(Message &msg)
-{
-//	writeCtcpReplyMessage(msg.prefix(), QString::null,
-//			      msg.ctcpMessage().command(), m_SourceString);
-}
-
-void ClientCommands::CtcpQuery_time(Message &msg)
-{
-//	writeCtcpReplyMessage(msg.prefix(), QString::null,
-//			      msg.ctcpMessage().command(), QDateTime::currentDateTime().toString(),
-//			      QString::null, false);
-}
-
-void ClientCommands::CtcpQuery_userinfo(Message &msg)
-{
-//	QString userinfo = m_UserString;
-
-//	writeCtcpReplyMessage(msg.prefix(), QString::null,
-//			      msg.ctcpMessage().command(), QString::null, userinfo);
-}
-
-void ClientCommands::CtcpRequest_version(const QString &target)
-{
-//	writeCtcpQueryMessage(target, QString::null, "VERSION");
-}
-
-void ClientCommands::CtcpQuery_version(Message &msg)
-{
-//	QString response = m_VersionString;
-
-//	writeCtcpReplyMessage(msg.prefix(),
-//		msg.ctcpMessage().command() + " " + response);
-}
-
-void ClientCommands::CtcpReply_version(Message &msg)
-{
-//	emit incomingCtcpReply(msg.ctcpMessage().command(), msg.prefix(), msg.ctcpMessage().ctcpRaw());
 }
 
 
@@ -1413,3 +891,215 @@ void ClientCommands::numericReply_475(Message &msg)
 
 /* 502: ":Cannot change mode for other users"
  */
+
+
+/*
+void ClientCommands::bindCtcp()
+{
+	bindCtcpQuery("ACTION",		this, SLOT(CtcpQuery_action(KIRC::Message &)),
+		-1,	-1);
+	bindCtcpQuery("CLIENTINFO",	this, SLOT(CtcpQuery_clientinfo(KIRC::Message &)),
+		-1,	1);
+	bindCtcpQuery("DCC",		this, SLOT(CtcpQuery_dcc(KIRC::Message &)),
+		4,	5);
+	bindCtcpQuery("FINGER",		this, SLOT(CtcpQuery_finger(KIRC::Message &)),
+		-1,	0);
+	bindCtcpQuery("PING",		this, SLOT(CtcpQuery_ping(KIRC::Message &)),
+		1,	1);
+	bindCtcpQuery("SOURCE",		this, SLOT(CtcpQuery_source(KIRC::Message &)),
+		-1,	0);
+	bindCtcpQuery("TIME",		this, SLOT(CtcpQuery_time(KIRC::Message &)),
+		-1,	0);
+	bindCtcpQuery("USERINFO",	this, SLOT(CtcpQuery_userinfo(KIRC::Message &)),
+		-1,	0);
+	bindCtcpQuery("VERSION",	this, SLOT(CtcpQuery_version(KIRC::Message &)),
+		-1,	0);
+
+	bindCtcpReply("ERRMSG",		this, SLOT(CtcpReply_errmsg(KIRC::Message &)),
+		1,	-1);
+	bindCtcpReply("PING",		this, SLOT(CtcpReply_ping(KIRC::Message &)),
+		1,	1,	"");
+	bindCtcpReply("VERSION",	this, SLOT(CtcpReply_version(KIRC::Message &)),
+		-1,	-1,	"");
+}
+*/
+
+void ClientCommands::CtcpQuery_action(Message &msg)
+{
+/*	QString target = msg.arg(0);
+	if (target[0] == '#' || target[0] == '!' || target[0] == '&')
+		emit incomingAction(target, msg, msg.ctcpMessage().ctcpRaw());
+	else
+		emit incomingPrivAction(msg, target, msg.ctcpMessage().ctcpRaw());*/
+}
+
+/*
+NO REPLY EXIST FOR THE CTCP ACTION COMMAND !
+bool ClientCommands::CtcpReply_action(Message &msg)
+{
+}
+*/
+
+//	FIXME: the API can now answer to help commands.
+void ClientCommands::CtcpQuery_clientinfo(Message &msg)
+{
+	QString clientinfo = QString::fromLatin1("The following commands are supported, but "
+			"without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING,"
+			"ACTION.");
+
+//	writeCtcpReplyMessage(	msg.prefix(), QString::null,
+//				msg.ctcpMessage().command(), QString::null, clientinfo);
+}
+
+void ClientCommands::CtcpQuery_dcc(Message &msg)
+{
+//	Message &ctcpMsg = msg.ctcpMessage();
+	Message ctcpMsg;
+
+	QString dccCommand = ctcpMsg.arg(0).upper();
+
+	if (dccCommand == QString::fromLatin1("CHAT"))
+	{
+//		if(ctcpMsg.argsSize()!=4) return false;
+
+		/* DCC CHAT type longip port
+		 *
+		 *  type   = Either Chat or Talk, but almost always Chat these days
+		 *  longip = 32-bit Internet address of originator's machine
+		 *  port   = Port on which the originator is waitng for a DCC chat
+		 */
+		bool okayHost, okayPort;
+		// should ctctMsg.arg(1) be tested?
+		QHostAddress address(ctcpMsg.arg(2).toUInt(&okayHost));
+		unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
+		if (okayHost && okayPort)
+		{
+			kdDebug(14120) << "Starting DCC chat window." << endl;
+//			TransferHandler::self()->createClient(
+//				this, msg.prefix(),
+//				address, port,
+//				Transfer::Chat );
+		}
+	}
+	else if (dccCommand == QString::fromLatin1("SEND"))
+	{
+//		if(ctcpMsg.argsSize()!=5) return false;
+
+		/* DCC SEND (filename) (longip) (port) (filesize)
+		 *
+		 *  filename = Name of file being sent
+		 *  longip   = 32-bit Internet address of originator's machine
+		 *  port     = Port on which the originator is waiitng for a DCC chat
+		 *  filesize = Size of file being sent
+		 */
+		bool okayHost, okayPort, okaySize;
+//		QFileInfo realfile(msg.arg(1));
+		QHostAddress address(ctcpMsg.arg(2).toUInt(&okayHost));
+		unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
+		unsigned int size = ctcpMsg.arg(4).toUInt(&okaySize);
+		if (okayHost && okayPort && okaySize)
+		{
+			kdDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1) << endl;
+//			TransferHandler::self()->createClient(
+//				this, msg.prefix(),
+//				address, port,
+//				Transfer::FileIncoming,
+//				ctcpMsg.arg(1), size );
+		}
+	}
+//	else
+//		((MessageRedirector *)sender())->error("Unknow dcc command");
+}
+
+/*
+NO REPLY EXIST FOR THE CTCP DCC COMMAND !
+bool ClientCommands::CtcpReply_dcc(Message &msg)
+{
+}
+*/
+
+void ClientCommands::CtcpReply_errmsg(Message &)
+{
+	// should emit one signal
+}
+
+void ClientCommands::CtcpQuery_finger( Message &)
+{
+	// To be implemented
+}
+
+void ClientCommands::CtcpQuery_ping(Message &msg)
+{
+//	writeCtcpReplyMessage(	msg.prefix(), QString::null,
+//				msg.ctcpMessage().command(), msg.ctcpMessage().arg(0));
+}
+
+void ClientCommands::CtcpReply_ping(Message &msg)
+{
+/*	timeval time;
+	if (gettimeofday(&time, 0) == 0)
+	{
+		// FIXME: the time code is wrong for usec
+		QString timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
+		double newTime = timeReply.toDouble();
+		double oldTime = msg.suffix().section(' ',0, 0).toDouble();
+		double difference = newTime - oldTime;
+		QString diffString;
+
+		if (difference < 1)
+		{
+			diffString = QString::number(difference);
+			diffString.remove((diffString.find('.') -1), 2);
+			diffString.truncate(3);
+			diffString.append("milliseconds");
+		}
+		else
+		{
+			diffString = QString::number(difference);
+			QString seconds = diffString.section('.', 0, 0);
+			QString millSec = diffString.section('.', 1, 1);
+			millSec.remove(millSec.find('.'), 1);
+			millSec.truncate(3);
+			diffString = QString::fromLatin1("%1 seconds, %2 milliseconds").arg(seconds).arg(millSec);
+		}
+
+		emit incomingCtcpReply(QString::fromLatin1("PING"), msg.prefix(), diffString);
+	}
+//	else
+//		((MessageRedirector *)sender())->error("failed to get current time");*/
+}
+
+void ClientCommands::CtcpQuery_source(Message &msg)
+{
+//	writeCtcpReplyMessage(msg.prefix(), QString::null,
+//			      msg.ctcpMessage().command(), m_SourceString);
+}
+
+void ClientCommands::CtcpQuery_time(Message &msg)
+{
+//	writeCtcpReplyMessage(msg.prefix(), QString::null,
+//			      msg.ctcpMessage().command(), QDateTime::currentDateTime().toString(),
+//			      QString::null, false);
+}
+
+void ClientCommands::CtcpQuery_userinfo(Message &msg)
+{
+//	QString userinfo = m_UserString;
+
+//	writeCtcpReplyMessage(msg.prefix(), QString::null,
+//			      msg.ctcpMessage().command(), QString::null, userinfo);
+}
+
+void ClientCommands::CtcpQuery_version(Message &msg)
+{
+//	QString response = m_VersionString;
+
+//	writeCtcpReplyMessage(msg.prefix(),
+//		msg.ctcpMessage().command() + " " + response);
+}
+
+void ClientCommands::CtcpReply_version(Message &msg)
+{
+//	emit incomingCtcpReply(msg.ctcpMessage().command(), msg.prefix(), msg.ctcpMessage().ctcpRaw());
+}
+

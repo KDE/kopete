@@ -143,100 +143,100 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		QString::fromLatin1("all ME"),
 		i18n("USAGE: /ame <action> - Do something in every open chat."),
 		CommandHandler::SystemAlias, 1);
-
-//	commandHandler->registerAlias(this, QString::fromLatin1("ban"),
-//		SLOT( slotBanCommand( const QString &, Kopete::ChatSession*) ),
-//		i18n("USAGE: /ban <mask> - Add someone to this channel's ban list. (requires operator status)."),
-//		CommandHandler::SystemAlias, 1, 1);
-
-	commandHandler->registerAlias( this, QString::fromLatin1("bannick"),
+/*
+	commandHandler->registerAlias(this, QString::fromLatin1("ban"),
+		SLOT(slotBanCommand(const QString &, Kopete::ChatSession*)),
+		i18n("USAGE: /ban <mask> - Add someone to this channel's ban list. (requires operator status)."),
+		CommandHandler::SystemAlias, 1, 1);
+*/
+	commandHandler->registerAlias(this, QString::fromLatin1("bannick"),
 		QString::fromLatin1("ban %1!*@*"),
 		i18n("USAGE: /bannick <nickname> - Add someone to this channel's ban list. Uses the hostmask nickname!*@* (requires operator status)."),
-		CommandHandler::SystemAlias, 1, 1 );
+		CommandHandler::SystemAlias, 1, 1);
 
-	commandHandler->registerAlias( this, QString::fromLatin1("deop"),
-		SLOT( slotDeopCommand( const QString &, Kopete::ChatSession*) ),
+	commandHandler->registerAlias(this, QString::fromLatin1("deop"),
+		SLOT(slotDeopCommand(const QString &, Kopete::ChatSession*)),
 		i18n("USAGE: /deop <nickname> [<nickname 2> <...>] - Remove channel operator status from someone (requires operator status)."),
-		CommandHandler::SystemAlias, 1 );
+		CommandHandler::SystemAlias, 1);
 
-	commandHandler->registerAlias( this, QString::fromLatin1("devoice"),
+	commandHandler->registerAlias(this, QString::fromLatin1("devoice"),
 		SLOT( slotDevoiceCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /devoice <nickname> [<nickname 2> <...>] - Remove channel voice status from someone (requires operator status)."),
-		CommandHandler::SystemAlias, 1 );
+		CommandHandler::SystemAlias, 1);
 
-	commandHandler->registerAlias( this, QString::fromLatin1("invite"),
+	commandHandler->registerAlias(this, QString::fromLatin1("invite"),
 		QString::fromLatin1("raw invite %s"),
 		i18n("USAGE: /invite <nickname> [<channel>] - Invite a user to join a channel."),
-		CommandHandler::SystemAlias, 1 );
+		CommandHandler::SystemAlias, 1);
 
-	commandHandler->registerAlias( this, QString::fromLatin1("join"),
-		QString::fromLatin1( "raw JOIN %s" ),
+	commandHandler->registerAlias(this, QString::fromLatin1("join"),
+		QString::fromLatin1("raw join %s"),
 		i18n("USAGE: /join <#channel 1> [<password>] - Joins the specified channel."),
-		CommandHandler::SystemAlias, 1, 2 );
+		CommandHandler::SystemAlias, 1, 2);
 
 	commandHandler->registerAlias( this, QString::fromLatin1("kick"),
 		SLOT( slotKickCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /kick <nickname> [<reason>] - Kick someone from the channel (requires operator status)."),
-		CommandHandler::SystemAlias, 1 );
+		CommandHandler::SystemAlias, 1);
 
-	commandHandler->registerAlias( this, QString::fromLatin1("list"),
-		QString::fromLatin1( "raw LIST %s" ),
+	commandHandler->registerAlias(this, QString::fromLatin1("list"),
+		QString::fromLatin1( "raw list %s"),
 		i18n("USAGE: /list - List the public channels on the server."),
 		CommandHandler::SystemAlias );
 
-	commandHandler->registerAlias( this, QString::fromLatin1("me"),
-		QString::fromLatin1( "ctcp ME" ),
+	commandHandler->registerAlias(this, QString::fromLatin1("me"),
+		QString::fromLatin1("ctcp me"),
 		i18n("USAGE: /me <action> - Do something."),
 		CommandHandler::SystemAlias, 1 );
 
 	// FIX help string, MODE is also available for user
 	commandHandler->registerAlias( this, QString::fromLatin1("mode"),
-		QString::fromLatin1( "raw MODE %s" ),
+		QString::fromLatin1("raw mode %s"),
 		i18n("USAGE: /mode <channel> <modes> - Set modes on the given channel."),
-		CommandHandler::SystemAlias, 2 );
+		CommandHandler::SystemAlias, 2);
 
-	commandHandler->registerAlias( this, QString::fromLatin1("motd"),
-		QString::fromLatin1( "raw MOTD %s" ),
+	commandHandler->registerAlias(this, QString::fromLatin1("motd"),
+		QString::fromLatin1("raw motd %s"),
 		i18n("USAGE: /motd [<server>] - Shows the message of the day for the current or the given server."),
-		CommandHandler::SystemAlias );
+		CommandHandler::SystemAlias);
 
-	commandHandler->registerAlias( this, QString::fromLatin1("nick"),
-		QString::fromLatin1 ( "raw NICK %s" ),
+	commandHandler->registerAlias(this, QString::fromLatin1("nick"),
+		QString::fromLatin1 ("raw nick %s"),
 		i18n("USAGE: /nick <nickname> - Change your nickname to the given one."),
-		CommandHandler::SystemAlias, 1, 1 );
+		CommandHandler::SystemAlias, 1, 1);
 
-	commandHandler->registerAlias( this, QString::fromLatin1("op"),
-		SLOT( slotOpCommand( const QString &, Kopete::ChatSession*) ),
+	commandHandler->registerAlias(this, QString::fromLatin1("op"),
+		SLOT( slotOpCommand(const QString &, Kopete::ChatSession*)),
 		i18n("USAGE: /op <nickname 1> [<nickname 2> <...>] - Give channel operator status to someone (requires operator status)."),
-		CommandHandler::SystemAlias, 1 );
+		CommandHandler::SystemAlias, 1);
 
-	commandHandler->registerAlias( this, QString::fromLatin1("part"),
+	commandHandler->registerAlias(this, QString::fromLatin1("part"),
 		QString::fromLatin1( "raw part %c :%s" ),
 		i18n("USAGE: /part [<reason>] - Part from a channel, optionally leaving a message."),
-		CommandHandler::SystemAlias );
+		CommandHandler::SystemAlias);
 
-	commandHandler->registerAlias( this, QString::fromLatin1("ping"),
+	commandHandler->registerAlias(this, QString::fromLatin1("ping"),
 		QString::fromLatin1( "ctcp %1 PING" ),
 		i18n("USAGE: /ping <nickname> - Alias for /CTCP <nickname> PING."),
-		CommandHandler::SystemAlias, 1, 1 );
+		CommandHandler::SystemAlias, 1, 1);
 /*
-	commandHandler->registerCommand( this, QString::fromLatin1("query"),
-		SLOT( slotQueryCommand( const QString &, Kopete::ChatSession*) ),
+	commandHandler->registerCommand(this, QString::fromLatin1("query"),
+		SLOT(slotQueryCommand(const QString &, Kopete::ChatSession*)),
 		i18n("USAGE: /query <nickname> [<message>] - Open a private chat with this user."),
-		CommandHandler::SystemAlias, 1 );
+		CommandHandler::SystemAlias, 1);
 */
-	commandHandler->registerAlias( this, QString::fromLatin1("quit"),
-		QString::fromLatin1( "raw quit :%s" ),
+	commandHandler->registerAlias(this, QString::fromLatin1("quit"),
+		QString::fromLatin1("raw quit :%s"),
 		i18n("USAGE: /quit [<reason>] - Disconnect from IRC, optionally leaving a message."),
-		CommandHandler::SystemAlias );
+		CommandHandler::SystemAlias);
 /*
-	commandHandler->registerAlias( this, QString::fromLatin1("topic"),
-		QString::fromLatin1( "raw TOPIC :%s" ),
+	commandHandler->registerAlias(this, QString::fromLatin1("topic"),
+		QString::fromLatin1("raw TOPIC :%s"),
 		i18n("USAGE: /topic [<topic>] - Sets and/or displays the topic for the active channel."),
-		CommandHandler::SystemAlias );
+		CommandHandler::SystemAlias);
 
-	commandHandler->registerAlias( this, QString::fromLatin1("voice"),
-		SLOT( slotVoiceCommand( const QString &, Kopete::ChatSession*) ),
+	commandHandler->registerAlias(this, QString::fromLatin1("voice"),
+		SLOT(slotVoiceCommand( const QString &, Kopete::ChatSession*)),
 		i18n("USAGE: /voice <nickname> [<nickname 2> <...>] - Give channel voice status to someone (requires operator status)."),
 		CommandHandler::SystemAlias, 1);
 */
@@ -266,6 +266,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		i18n("USAGE: /msg <nickname> [<message>] - Alias for QUERY <nickname> <message>."),
 		CommandHandler::SystemAlias, 1);
 */
+
 	QObject::connect( ChatSessionManager::self(), SIGNAL(aboutToDisplay(Kopete::Message &)),
 		this, SLOT(slotMessageFilter(Kopete::Message &)) );
 

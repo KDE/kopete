@@ -41,15 +41,27 @@ class Entity
 
 //	Q_PROPERTY(QString modes READ modes write setModes)
 
+//	Q_ENUMS(Type)
+
 public:
 	typedef KSharedPtr<KIRC::Entity> Ptr;
 	typedef QList<KIRC::Entity::Ptr> List;
 
+	typedef enum
+	{
+		// From lower to higher importance
+		Unknown,
+		User,
+		Service,
+		Channel,
+		Server
+	} Type;
+/*
 	static KIRC::EntityType guessType(const QString &name);
 	static bool isChannel( const QString &name );
 	static bool isUser( const QString &name );
-
-	Entity(const QString &name = QString::null, const KIRC::EntityType type = Unknown);
+*/
+	Entity(const QString &name = QString::null, const Type type = Unknown);
 	Entity(EntityManager *entityManager);
 	virtual ~Entity();
 
@@ -71,14 +83,12 @@ public slots: // Write attributes accessors
 //	void setUser(const QString &);
 
 public:
-//	bool operator == (const Entity &) const;
-
-	KIRC::EntityType type() const;
+	KIRC::Entity::Type type() const;
 	bool isChannel() const;
 	bool isUser() const;
-	void setType( KIRC::EntityType );
+	void setType(KIRC::Entity::Type type);
 
-	KIRC::EntityType guessType();
+//	KIRC::EntityType guessType();
 
 	QTextCodec *codec() const;
 	void setCodec(QTextCodec *);

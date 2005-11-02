@@ -186,15 +186,17 @@ IRCAccount::~IRCAccount()
 
 void IRCAccount::clientSetup()
 {
+/*
 	d->client->setDefaultCodec(codec());
 
+	// Build the URL instead
 	d->client->setUserName(userName());
 	d->client->setRealName(realName());
 
 //	d->client->setNickName(nickName());
 
 	d->client->setVersionString(IRC::Version);
-/*
+
 	QMap<QString, QString> replies = customCtcpReplies();
 	for (QMap<QString, QString>::ConstIterator it = replies.begin(); it != replies.end(); ++it)
 		d->client->addCustomCtcp(it.key(), it.data());
@@ -313,7 +315,6 @@ const QString IRCAccount::userName() const
 void IRCAccount::setUserName(const QString &userName)
 {
 	configGroup()->writeEntry(Config::USERNAME, userName);
-	d->client->setUserName(userName);
 }
 
 const QString IRCAccount::realName() const
@@ -324,7 +325,6 @@ const QString IRCAccount::realName() const
 void IRCAccount::setRealName( const QString &userName )
 {
 	configGroup()->writeEntry(Config::REALNAME, userName);
-	d->client->setRealName(userName);
 }
 
 const QString IRCAccount::nickName() const
@@ -454,7 +454,7 @@ KActionMenu *IRCAccount::actionMenu()
 
 void IRCAccount::connectWithPassword(const QString &password)
 {
-	d->client->setPassword(password);
+//	d->client->setPassword(password);
 	clientConnect();
 }
 

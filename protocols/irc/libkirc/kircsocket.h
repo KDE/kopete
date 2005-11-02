@@ -25,6 +25,8 @@
 #include <kbufferedsocket.h>
 #include <kresolver.h>
 
+class KURL;
+
 class QTextCodec;
 
 namespace KIRC
@@ -63,8 +65,6 @@ public:
 public: // READ properties accessors.
 	ConnectionState connectionState() const;
 
-//public slots: // WRITE properties accessors.
-
 public:
 	KNetwork::KStreamSocket *socket();
 
@@ -73,6 +73,9 @@ public:
 	KIRC::CommandHandler *commandHandler() const;
 	KIRC::EntityManager *entityManager() const;
 	KIRC::Entity::Ptr owner() const;
+
+	#warning Find a better name
+	const KURL &url() const;
 
 public slots:
 	void setDefaultCodec(QTextCodec *codec);
@@ -84,8 +87,9 @@ public slots:
 	/**
 	 * @return true if the socket is got no error trying to establish the connection.
 	 */
-	void connectToServer(const QString &host, Q_UINT16 port, bool useSSL);
-	void connectToServer(const KNetwork::KResolverEntry &entry, bool useSSL);
+	bool connectToServer(const KURL &url);
+	bool connectToServer(const QString &host, Q_UINT16 port, bool useSSL);
+	bool connectToServer(const KNetwork::KResolverEntry &entry, bool useSSL);
 //	void bind();
 	void close();
 

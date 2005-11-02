@@ -53,10 +53,10 @@ class Message
 //	Q_PROPERTY(QByteArrayList rawArgList )
 	Q_PROPERTY(QByteArray rawSuffix READ rawSuffix WRITE setSuffix)
 
-//	Q_PROPERTY(QString line READ rawLine)
+//	Q_PROPERTY(QString line READ line READ setLine)
 	Q_PROPERTY(QString prefix READ prefix WRITE setPrefix)
 	Q_PROPERTY(QString command READ command WRITE setCommand)
-//	Q_PROPERTY(QStringList argList READ argList)
+//	Q_PROPERTY(QStringList argList READ argList WRITE setArgList)
 	Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
 
 	Q_ENUMS(Direction)

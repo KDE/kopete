@@ -42,7 +42,7 @@
 
 using namespace KIRC;
 
-void StdCommands::away(KIRC::Socket *socket, const QString &awayMessage)
+void StdCommands::away(KIRC::Socket *socket, QString awayMessage)
 {
 	Q_ASSERT(socket);
 
@@ -53,7 +53,7 @@ void StdCommands::away(KIRC::Socket *socket, const QString &awayMessage)
 	socket->writeMessage(msg);
 }
 
-void StdCommands::ison(KIRC::Socket *socket, const QStringList &nickList)
+void StdCommands::ison(KIRC::Socket *socket, QStringList nickList)
 {
 	Q_ASSERT(socket);
 
@@ -77,7 +77,7 @@ void StdCommands::ison(KIRC::Socket *socket, const QStringList &nickList)
 */
 }
 
-void StdCommands::join(KIRC::Socket *socket, const QString &name, const QString &key)
+void StdCommands::join(KIRC::Socket *socket, QString name, QString key)
 {
 	Q_ASSERT(socket);
 
@@ -91,7 +91,7 @@ void StdCommands::join(KIRC::Socket *socket, const QString &name, const QString 
 	socket->writeMessage(msg);
 }
 
-void StdCommands::kick(KIRC::Socket *socket, const QString &user, const QString &channel, const QString &reason)
+void StdCommands::kick(KIRC::Socket *socket, QString user, QString channel, QString reason)
 {
 	Q_ASSERT(socket);
 
@@ -110,7 +110,7 @@ void StdCommands::list(KIRC::Socket *socket)
 	socket->writeMessage(LIST);
 }
 
-void StdCommands::mode(KIRC::Socket *socket, const QString &target, const QString &mode)
+void StdCommands::mode(KIRC::Socket *socket, QString target, QString mode)
 {
 	Q_ASSERT(socket);
 
@@ -121,7 +121,7 @@ void StdCommands::mode(KIRC::Socket *socket, const QString &target, const QStrin
 	socket->writeMessage(msg);
 }
 
-void StdCommands::motd(KIRC::Socket *socket, const QString &server)
+void StdCommands::motd(KIRC::Socket *socket, QString server)
 {
 	Q_ASSERT(socket);
 
@@ -132,7 +132,7 @@ void StdCommands::motd(KIRC::Socket *socket, const QString &server)
 	socket->writeMessage(msg);
 }
 
-void StdCommands::nick(KIRC::Socket *socket, const QString &newNickname)
+void StdCommands::nick(KIRC::Socket *socket, QString newNickname)
 {
 	Q_ASSERT(socket);
 
@@ -144,7 +144,7 @@ void StdCommands::nick(KIRC::Socket *socket, const QString &newNickname)
 	socket->writeMessage(msg);
 }
 
-void StdCommands::notice(KIRC::Socket *socket, const QString &target, const QString &content)
+void StdCommands::notice(KIRC::Socket *socket, QString target, QString content)
 {
 	Q_ASSERT(socket);
 
@@ -158,7 +158,7 @@ void StdCommands::notice(KIRC::Socket *socket, const QString &target, const QStr
 
 /* This will part a channel with 'reason' as the reason for parting
  */
-void StdCommands::part(KIRC::Socket *socket, const QString &channel, const QString &reason)
+void StdCommands::part(KIRC::Socket *socket, QString channel, QString reason)
 {
 	Q_ASSERT(socket);
 
@@ -170,7 +170,7 @@ void StdCommands::part(KIRC::Socket *socket, const QString &channel, const QStri
 	socket->writeMessage(msg);
 }
 
-void StdCommands::pass(KIRC::Socket *socket, const QString &password)
+void StdCommands::pass(KIRC::Socket *socket, QString password)
 {
 	Q_ASSERT(socket);
 
@@ -181,7 +181,7 @@ void StdCommands::pass(KIRC::Socket *socket, const QString &password)
 	socket->writeMessage(msg);
 }
 
-void StdCommands::privmsg(KIRC::Socket *socket, const QString &contact, const QString &content)
+void StdCommands::privmsg(KIRC::Socket *socket, QString contact, QString content)
 {
 	Q_ASSERT(socket);
 
@@ -193,7 +193,7 @@ void StdCommands::privmsg(KIRC::Socket *socket, const QString &contact, const QS
 	socket->writeMessage(msg);
 }
 
-void StdCommands::quit(KIRC::Socket *socket, const QString &reason)
+void StdCommands::quit(KIRC::Socket *socket, QString reason)
 {
 	Q_ASSERT(socket);
 
@@ -208,7 +208,7 @@ void StdCommands::quit(KIRC::Socket *socket, const QString &reason)
 	socket->close();
 }
 
-void StdCommands::topic(KIRC::Socket *socket, const QString &channel, const QString &topic)
+void StdCommands::topic(KIRC::Socket *socket, QString channel, QString topic)
 {
 	Q_ASSERT(socket);
 
@@ -225,12 +225,13 @@ void StdCommands::topic(KIRC::Socket *socket, const QString &channel, const QStr
  * the username, hostname and realname of a new user.
  * hostname is usualy set to "127.0.0.1"
  */
-void StdCommands::user(KIRC::Socket *socket, const QString &newUserName, const QString &hostName, const QString &newRealName)
+void StdCommands::user(KIRC::Socket *socket, QString newUserName, QString hostName, QString newRealName)
 {
 	Q_ASSERT(socket);
 
 //	m_Username = newUserName;
 //	m_realName = newRealName;
+//	Use KUser here
 
 	Message msg;
 	msg.setCommand(USER);
@@ -246,12 +247,13 @@ void StdCommands::user(KIRC::Socket *socket, const QString &newUserName, const Q
  * 0x04 request +w
  * 0x08 request +i
  */
-void StdCommands::user(KIRC::Socket *socket, const QString &newUserName, Modes modes, const QString &newRealName)
+void StdCommands::user(KIRC::Socket *socket, QString newUserName, Modes modes, QString newRealName)
 {
 	Q_ASSERT(socket);
 
 //	m_Username = newUserName;
 //	m_realName = newRealName;
+//	Use KUser here
 
 	Message msg;
 	msg.setCommand(USER);
@@ -261,7 +263,7 @@ void StdCommands::user(KIRC::Socket *socket, const QString &newUserName, Modes m
 	socket->writeMessage(msg);
 }
 
-void StdCommands::whois(KIRC::Socket *socket, const QString &user)
+void StdCommands::whois(KIRC::Socket *socket, QString user)
 {
 	Message msg;
 	msg.setCommand(WHOIS);

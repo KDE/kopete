@@ -49,39 +49,39 @@ namespace StdCommands
 	} Mode;
 	Q_DECLARE_FLAGS(Modes, Mode)
 
-	void away(KIRC::Socket *socket, const QString &awayMessage = QString::null);
+	void away(KIRC::Socket *socket, QString awayMessage = QString::null);
 //	void invite(KIRC::Socket *socket);
-	void ison(KIRC::Socket *socket, const QStringList &nickList);
-	void join(KIRC::Socket *socket, const QString &name, const QString &key);
-	void kick(KIRC::Socket *socket, const QString &user, const QString &channel, const QString &reason);
+	void ison(KIRC::Socket *socket, QStringList nickList);
+	void join(KIRC::Socket *socket, QString name, QString key);
+	void kick(KIRC::Socket *socket, QString user, QString channel, QString reason);
 	void list(KIRC::Socket *socket);
-	void mode(KIRC::Socket *socket, const QString &target, const QString &mode);
-	void motd(KIRC::Socket *socket, const QString &server = QString::null);
-	void nick(KIRC::Socket *socket, const QString &newNickname);
-	void notice(KIRC::Socket *socket, const QString &target, const QString &message);
-	void part(KIRC::Socket *socket, const QString &name, const QString &reason);
-	void pass(KIRC::Socket *socket, const QString &password);
-	void privmsg(KIRC::Socket *socket, const QString &contact, const QString &message);
+	void mode(KIRC::Socket *socket, QString target, QString mode);
+	void motd(KIRC::Socket *socket, QString server = QString::null);
+	void nick(KIRC::Socket *socket, QString newNickname);
+	void notice(KIRC::Socket *socket, QString target, QString message);
+	void part(KIRC::Socket *socket, QString name, QString reason);
+	void pass(KIRC::Socket *socket, QString password);
+	void privmsg(KIRC::Socket *socket, QString contact, QString message);
 
 	/**
 	 * Send a quit message for the given reason.
 	 * If now is set to true the connection is closed and no event message is sent.
 	 * Therefore setting now to true should only be used while destroying the object.
 	 */
-	void quit(KIRC::Socket *socket, const QString &reason);
+	void quit(KIRC::Socket *socket, QString reason);
 
-	void topic(KIRC::Socket *socket, const QString &channel, const QString &topic);
-	void user(KIRC::Socket *socket, const QString &newUsername, const QString &hostname, const QString &newRealname);
-	void user(KIRC::Socket *socket, const QString &newUsername, Modes modes, const QString &newRealname);
-	void whois(KIRC::Socket *socket, const QString &user);
+	void topic(KIRC::Socket *socket, QString channel, QString topic);
+	void user(KIRC::Socket *socket, QString newUsername, QString hostname, QString newRealname);
+	void user(KIRC::Socket *socket, QString newUsername, Modes modes, QString newRealname);
+	void whois(KIRC::Socket *socket, QString user);
 
 
 	/* CTCP commands */
-	void CtcpRequestCommand(KIRC::Socket *socket, const QString &contact, const QString &command);
-	void CtcpRequest_action(KIRC::Socket *socket, const QString &contact, const QString &message);
-//	void CtcpRequest_dcc(KIRC::Socket *socket, const QString &, const QString &, unsigned int port, KIRC::Transfer::Type type);
-	void CtcpRequest_ping(KIRC::Socket *socket, const QString &target);
-	void CtcpRequest_version(KIRC::Socket *socket, const QString &target);
+	void CtcpRequestCommand(KIRC::Socket *socket, QString contact, QString command);
+	void CtcpRequest_action(KIRC::Socket *socket, QString contact, QString message);
+//	void CtcpRequest_dcc(KIRC::Socket *socket, QString, QString, unsigned int port, KIRC::Transfer::Type type);
+	void CtcpRequest_ping(KIRC::Socket *socket, QString target);
+	void CtcpRequest_version(KIRC::Socket *socket, QString target);
 }
 
 }
