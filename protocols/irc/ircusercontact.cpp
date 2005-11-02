@@ -432,18 +432,6 @@ void IRCUserContact::newWhoReply( const QString &channel, const QString &user, c
 	mInfo.hops = hops;
 	mInfo.realName = realName;
 
-	/*
-	if (flags[0] == '@') {
-		//setManagerStatus( chan, m_protocol->m_UserStatusOp.internalStatus() );
-		;
-	} else if (flags[0] == '+') {
-		kdDebug(14120) << k_funcinfo << "User is VOICED" << endl;
-
-		IRCChannelContact *chan = ircAccount()->contactManager()->findChannel( channel );
-		addBitsToInternalOnlineStatus( chan, IRCProtocol::Voiced );
-	}
-	*/
-
 	setAway(away);
 
 	updateInfo();
