@@ -1,7 +1,9 @@
 /*
     kopetecommand.cpp - Command
 
-    Copyright (c) 2003 by Jason Keirstead <jason@keirstead.org>
+    Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
+    Copyright (c) 2005      by Michel Hermier <michel.hermier@wanadoo.fr>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -19,7 +21,7 @@
 #include "kopeteview.h"
 #include "kopeteuiglobal.h"
 
-#include <kapplication.h>
+#include <kauthorized.h>
 #include <kdebug.h>
 #include <kinputdialog.h>
 #include <klocale.h>
@@ -27,14 +29,32 @@
 
 #include <qstringlist.h>
 
+class Kopete::Command::Private
+{
+public:
+	QString command;
+	QString help;
+	QString formatString;
+	uint minArgs;
+	int maxArgs;
+	bool processing;
+	Kopete::Command::Types types;
+};
+
 Kopete::Command::Command( QObject *parent, const QString &command, const char* handlerSlot,
-	const QString &help, Kopete::CommandHandler::CommandType type, const QString &formatString,
-	uint minArgs, int maxArgs, const KShortcut &cut, const QString &pix )
+		const QString &help, Kopete::CommandHandler::CommandType type, const QString &formatString,
+		uint minArgs, int maxArgs, const KShortcut &cut, const QString &pix )
 	: KAction( command[0].toUpper() + command.right( command.length() - 1).toLower(), pix, cut, 
-			   this, SLOT(slotAction()) ,0l, ( command.toLower() + QString::fromLatin1("_command") ).latin1() )
+		this, SLOT(slotAction()) ,0l, (command.toLower() + QString::fromLatin1("_command")).latin1())
+	, d(new Private)
 {
 	connect(parent,SIGNAL(destroyed()),this,SLOT(deleteLAter()));
 	init( command, handlerSlot, help, type, formatString, minArgs, maxArgs );
+}
+
+Kopete::Command::~Command()
+{
+	delete d;
 }
 
 void Kopete::Command::init( const QString &command, const char* slot, const QString &help,
@@ -48,9 +68,9 @@ void Kopete::Command::init( const QString &command, const char* slot, const QStr
 	m_maxArgs = maxArgs;
 	m_processing = false;
 
-	if(  m_type == Kopete::CommandHandler::Normal )
+	if(m_type == Kopete::CommandHandler::Normal )
 	{
-		QObject::connect( this, SIGNAL( handleCommand( const QString &, Kopete::ChatSession *) ),
+		QObject::connect(this, SIGNAL( handleCommand(const QString &, Kopete::ChatSession *)),
 			parent(), slot );
 	}
 }
@@ -89,13 +109,10 @@ void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *
 			"\"%1\" has a maximum of %n arguments.", m_minArgs)
 			.arg( text() ), manager, gui );
 	}
-#warning  commented to make it compile
-#if 0
-    else if( !KApplication::kApplication()->authorizeKAction( name() ) )
+	else if( !KAuthorized::authorizeKAction( name() ) )
 	{
 		printError( i18n("You are not authorized to perform the command \"%1\".").arg(text()), manager, gui );
 	}
-#endif
 	else
 	{
 		m_processing = true;
@@ -119,7 +136,7 @@ void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *
 
 			kdDebug(14010) << "New Command after processing alias: " << formatString << endl;
 
-			Kopete::CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/") + formatString, manager );
+			Kopete::CommandHandler::self()->processMessage( QString::fromLatin1("/") + formatString, manager );
 		}
 		else
 		{
