@@ -115,7 +115,7 @@ public:
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
 signals:
-	void destoyed(IRCContact *self);
+	void destroyed(IRCContact *self);
 
 public slots:
 	void setCodec( const QTextCodec *codec );
