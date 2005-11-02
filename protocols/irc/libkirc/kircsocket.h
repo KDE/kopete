@@ -70,9 +70,9 @@ public:
 
 	QTextCodec *defaultCodec() const;
 
-	KIRC::CommandHandler *commandHandler();
-	KIRC::EntityManager *entityManager();
-	KIRC::Entity::Ptr owner();
+	KIRC::CommandHandler *commandHandler() const;
+	KIRC::EntityManager *entityManager() const;
+	KIRC::Entity::Ptr owner() const;
 
 public slots:
 	void setDefaultCodec(QTextCodec *codec);

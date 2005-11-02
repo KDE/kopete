@@ -55,13 +55,13 @@ public: // READ properties accessors.
 	QString help() const;
 
 public slots: // WRITE properties accessors.
-//	Command &setMin();
-//	Command &setMax();
-	Command &setHelp(const QString &help);
+//	void setMin();
+//	void setMax();
+	void setHelp(const QString &help);
 
 public slots:
-//	Command &setMinMax(int minMax);
-//	Command &setMinMax(int min, int max);
+//	void setMinMax(int minMax);
+//	void setMinMax(int min, int max);
 
 	/**
 	 * Attempt to send the message.

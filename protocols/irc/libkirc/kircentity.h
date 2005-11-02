@@ -31,6 +31,7 @@ namespace KIRC
 {
 
 class Engine;
+class EntityManager;
 
 class Entity
 	: public QObject
@@ -49,9 +50,11 @@ public:
 	static bool isUser( const QString &name );
 
 	Entity(const QString &name = QString::null, const KIRC::EntityType type = Unknown);
+	Entity(EntityManager *entityManager);
 	virtual ~Entity();
 
 public: // Read attributes accessors
+#warning Move to const QString & ?
 	QString awayMessage() const;
 	QString host() const;
 	QString modes() const;
@@ -88,10 +91,6 @@ signals:
 
 private:
 	static QString userInfo(const QString &s, int num_cap);
-
-	static const QRegExp sm_userRegExp;
-	static const QRegExp sm_userStrictRegExp;
-	static const QRegExp sm_channelRegExp;
 
 	Q_DISABLE_COPY(Entity)
 

@@ -44,6 +44,11 @@ QString Command::help() const
         return d->helpMessage;
 }
 
+void Command::setHelp(const QString &helpMessage)
+{
+	d->helpMessage = helpMessage;
+}
+
 void Command::invoke(Message msg)
 {
 	if (checkValidity(msg))

@@ -295,7 +295,8 @@ Entity::Ptr Client::server()
 
 ClientCommandHandler *Client::clientCommandHandler()
 {
-	return dynamic_cast<ClientCommandHandler *>(commandHandler());
+//	return dynamic_cast<ClientCommandHandler *>(commandHandler());
+	return 0;
 }
 
 void Client::ignoreMessage(KIRC::Message &/*msg*/)

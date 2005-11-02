@@ -68,7 +68,7 @@ Entity *EntityManager::entityByName(const QByteArray &name, bool createIfNotFoun
 	return entity;
 }
 */
-EntityManager &EntityManager::add(Entity *entity)
+void EntityManager::add(Entity *entity)
 {
 	if (!d->entities.contains(entity))
 	{
@@ -76,15 +76,11 @@ EntityManager &EntityManager::add(Entity *entity)
 		connect(entity, SIGNAL(destroyed(KIRC::Entity *)),
 			this, SLOT(remove(KIRC::Entity *)));
 	}
-
-	return *this;
 }
 
-EntityManager &EntityManager::remove(Entity *entity)
+void EntityManager::remove(Entity *entity)
 {
 	d->entities.remove(entity);
 //	disconnect(entity);
-
-	return *this;
 }
 

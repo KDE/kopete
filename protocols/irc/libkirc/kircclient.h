@@ -114,8 +114,6 @@ private slots:
 
 	void onReceivedMessage( KIRC::Message &msg );
 
-	void destroyed(KIRC::Entity *entity);
-
 	void ignoreMessage(KIRC::Message &msg);
 	void receivedServerMessage(KIRC::Message &msg); // emit the suffix of the message.
 	void receivedServerMessage(KIRC::Message &msg, const QString &message);

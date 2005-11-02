@@ -119,20 +119,23 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	addAddressBookField("messaging/irc", Plugin::MakeIndexField);
 
-//	CommandHandler *commandHandler = CommandHandler::commandHandler();
 	CommandHandler *commandHandler = CommandHandler::self();
 
-	commandHandler->registerCommand( this, QString::fromLatin1("raw"),
-		SLOT( slotRawCommand( const QString &, Kopete::ChatSession*) ),
-		i18n("USAGE: /raw <text> - Sends the text in raw form to the server."), 1 );
+	commandHandler->registerCommand(this, QString::fromLatin1("all"),
+		SLOT( slotAllCommand(const QString &, Kopete::ChatSession*)),
+		i18n("USAGE: /all <command> - Exectute the given command in all the chats."), 2);
 
-	commandHandler->registerCommand( this, QString::fromLatin1("quote"),
-		SLOT( slotQuoteCommand( const QString &, Kopete::ChatSession*) ),
-		i18n("USAGE: /quote <text> - Sends the text in quoted form to the server."), 1 );
+	commandHandler->registerCommand(this, QString::fromLatin1("ctcp"),
+		SLOT( slotCtcpCommand(const QString &, Kopete::ChatSession *)),
+		i18n("USAGE: /ctcp <nick> <message> - Send the CTCP message to nick."), 2);
 
-	commandHandler->registerCommand( this, QString::fromLatin1("ctcp"),
-		SLOT( slotCtcpCommand( const QString &, Kopete::ChatSession*) ),
-		i18n("USAGE: /ctcp <nick> <message> - Send the CTCP message to nick<action>."), 2 );
+	commandHandler->registerCommand(this, QString::fromLatin1("quote"),
+		SLOT( slotQuoteCommand(const QString &, Kopete::ChatSession*)),
+		i18n("USAGE: /quote <text> - Sends the text in quoted form to the server."), 1);
+
+	commandHandler->registerCommand(this, QString::fromLatin1("raw"),
+		SLOT( slotRawCommand( const QString &, Kopete::ChatSession*)),
+		i18n("USAGE: /raw <text> - Sends the text in raw form to the server."), 1);
 /*
 	commandHandler->registerAlias( this, QString::fromLatin1("ping"),
 		QString::fromLatin1( "ctcp %1 PING" ),
@@ -269,8 +272,6 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	setCapabilities(Protocol::RichBFormatting | Kopete::Protocol::RichUFormatting | Kopete::Protocol::RichColor);
 
 	m_protocolHandler = new IRCProtocolHandler();
-
-	IRCTransferHandler::self(); // Initiate the transfer handling system.
 }
 
 IRCProtocol * IRCProtocol::self()
@@ -449,22 +450,24 @@ QPtrList<KAction> *IRCProtocol::customChatWindowPopupActions(const Message &m, D
 
 	return 0;
 }
-
+*/
 AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent, Account *account)
 {
-	return new IRCAddContactPage(parent,static_cast<IRCAccount*>(account));
+//	return new IRCAddContactPage(parent,static_cast<IRCAccount*>(account));
+	return 0;
 }
 
 KopeteEditAccountWidget *IRCProtocol::createEditAccountWidget(Account *account, QWidget *parent)
 {
-	return new IRCEditAccountWidget(static_cast<IRCAccount*>(account), parent);
+//	return new IRCEditAccountWidget(static_cast<IRCAccount*>(account), parent);
+	return 0;
 }
 
 Account *IRCProtocol::createNewAccount(const QString &accountId)
 {
 	return new IRCAccount(accountId);
 }
-*/
+
 Contact *IRCProtocol::deserializeContact(MetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> &/*addressBookData*/)
 {
@@ -495,16 +498,19 @@ Contact *IRCProtocol::deserializeContact(MetaContact *metaContact, const QMap<QS
 	return 0;
 }
 
-void IRCProtocol::slotRawCommand( const QString &args, ChatSession *manager )
+void IRCProtocol::slotAllCommand(const QString &args, ChatSession *manager)
+{
+#warning IMPLEMENT ME
+}
+
+void IRCProtocol::slotCtcpCommand(const QString &args, ChatSession *manager)
 {
 	if (!args.isEmpty())
 	{
-//		static_cast<IRCAccount*>(manager->account())->client()->writeRawMessage(args);
-	}
-	else
-	{
-		static_cast<IRCAccount*>(manager->account())->appendErrorMessage(
-			i18n("You must enter some text to send to the server.") );
+		QString user = args.section( ' ', 0, 0 );
+		QString message = args.section( ' ', 1 );
+//		static_cast<IRCAccount*>(manager->account())->client()->writeCtcpQueryMessage(
+//			user, QString::null, message);
 	}
 }
 
@@ -521,14 +527,16 @@ void IRCProtocol::slotQuoteCommand( const QString &args, ChatSession *manager )
 	}
 }
 
-void IRCProtocol::slotCtcpCommand(const QString &args, ChatSession *manager)
+void IRCProtocol::slotRawCommand( const QString &args, ChatSession *manager )
 {
 	if (!args.isEmpty())
 	{
-		QString user = args.section( ' ', 0, 0 );
-		QString message = args.section( ' ', 1 );
-//		static_cast<IRCAccount*>(manager->account())->client()->writeCtcpQueryMessage(
-//			user, QString::null, message);
+//		static_cast<IRCAccount*>(manager->account())->client()->writeRawMessage(args);
+	}
+	else
+	{
+		static_cast<IRCAccount*>(manager->account())->appendErrorMessage(
+			i18n("You must enter some text to send to the server.") );
 	}
 }
 

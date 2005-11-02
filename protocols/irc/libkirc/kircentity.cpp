@@ -17,6 +17,8 @@
 
 #include "kircentity.moc"
 
+#include "kircentitymanager.h"
+
 #include <kdebug.h>
 
 using namespace KIRC;
@@ -27,17 +29,17 @@ using namespace KIRC;
  * where user and host are optionnal.
  * NOTE: If changes are done to the regexp string, update also the sm_userStrictRegExp regexp string.
  */
-const QRegExp Entity::sm_userRegExp(QString::fromLatin1("^([^\\s,:!@]+)(?:(?:!([^\\s,:!@]+))?(?:@([^\\s,!@]+)))?$"));
+//const QRegExp Entity::sm_userRegExp(QString::fromLatin1("^([^\\s,:!@]+)(?:(?:!([^\\s,:!@]+))?(?:@([^\\s,!@]+)))?$"));
 
 /**
  * Regexp to match strictly the complete user definition:
  * nick!user@host
  * NOTE: If changes are done to the regexp string, update also the sm_userRegExp regexp string.
  */
-const QRegExp Entity::sm_userStrictRegExp(QString::fromLatin1("^([^\\s,:!@]+)!([^\\s,:!@]+)@([^\\s,:!@]+)$"));
+//const QRegExp Entity::sm_userStrictRegExp(QString::fromLatin1("^([^\\s,:!@]+)!([^\\s,:!@]+)@([^\\s,:!@]+)$"));
 
-const QRegExp Entity::sm_channelRegExp( QString::fromLatin1("^[#!+&][^\\s,]+$") );
-
+//const QRegExp Entity::sm_channelRegExp( QString::fromLatin1("^[#!+&][^\\s,]+$") );
+/*
 // FIXME: Implement me
 EntityType Entity::guessType(const QString &)
 {
@@ -53,7 +55,7 @@ bool Entity::isChannel( const QString &name )
 {
 	return sm_channelRegExp.exactMatch(name);
 }
-
+*/
 class KIRC::Entity::Private
 {
 public:
@@ -61,6 +63,7 @@ public:
 		: codec(0)
 	{ }
 
+	EntityManager *manager;
 	EntityType type;
 
 	QString name;
@@ -68,6 +71,7 @@ public:
 
 	QString awayMessage;
 	QString modes;
+	QString topic;
 
 	QTextCodec *codec;
 };
@@ -78,13 +82,25 @@ Entity::Entity(const QString &name, const EntityType type)
 	setName(name);
 	setType(type);
 
-	if (d->type == Unknown)
-		guessType();
+//	if (d->type == Unknown)
+//		guessType();
+}
+
+Entity::Entity(EntityManager *entityManager)
+	: QObject(entityManager)
+	, d(new Private)
+{
+	Q_ASSERT(entityManager);
+
+	d->manager = entityManager;
+	d->manager->add(this);
+
+	d->type = Unknown;
 }
 
 Entity::~Entity()
 {
-	emit destroyed(this);
+	d->manager->remove(this);
 
 	delete d;
 }
@@ -98,6 +114,11 @@ bool Entity::operator == (const Entity &) const
 EntityType Entity::type() const
 {
 	return d->type;
+}
+
+QString Entity::topic() const
+{
+	return d->topic;
 }
 
 bool Entity::isChannel() const
@@ -118,13 +139,13 @@ void Entity::setType( EntityType type )
 		emit updated();
 	}
 }
-
+/*
 EntityType Entity::guessType()
 {
 	setType( guessType(d->name) );
 	return type();
 }
-
+*/
 QString Entity::name() const
 {
 	return d->name;

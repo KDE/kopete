@@ -35,6 +35,8 @@ class EntityManager
 {
 	Q_OBJECT
 
+	friend class Entity;
+
 public:
 	EntityManager(QObject *parent = 0);
 	~EntityManager();
@@ -47,12 +49,12 @@ public:
 
 	KIRC::Entity *entityByName(const QByteArray &name) const;
 
-public slots:
-	EntityManager &add(KIRC::Entity *entity);
-//	EntityManager &add(const QList<KIRC::Entity *> &entities);
+protected:
+	void add(KIRC::Entity *entity);
+//	void add(const QList<KIRC::Entity *> &entities);
 
-	EntityManager &remove(KIRC::Entity *entity);
-//	EntityManager &remove(const QList<KIRC::Entity *> &entities);
+	void remove(KIRC::Entity *entity);
+//	void remove(const QList<KIRC::Entity *> &entities);
 
 private:
 	Q_DISABLE_COPY(EntityManager);

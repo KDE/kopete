@@ -457,8 +457,8 @@ void IRCAccount::connectWithPassword(const QString &password)
 	d->client->setPassword(password);
 	clientConnect();
 }
-/*
-void IRCAccount::clientConnectionStateChanged(KIRC::ConnectionState newstate)
+
+void IRCAccount::clientConnectionStateChanged(KIRC::Socket::ConnectionState newstate)
 {
 	kdDebug(14120) << k_funcinfo << endl;
 
@@ -466,19 +466,15 @@ void IRCAccount::clientConnectionStateChanged(KIRC::ConnectionState newstate)
 
 	switch (newstate)
 	{
-	case KIRC::Idle:
-		// Do nothing.
-		break;
-	case KIRC::Connecting:
+	case KIRC::Socket::Connecting:
 	{
 		// d->expectedOnlineStatus check and use it
 		if (autoShowServerWindow())
 			myServer()->startChat();
 		break;
 	}
-	case KIRC::Authentifying:
-		break;
-	case KIRC::Connected:
+/*
+	case KIRC::Socket::Open:
 		{
 			//Reset the host so re-connection will start over at first server
 			d->currentHost = 0;
@@ -491,20 +487,23 @@ void IRCAccount::clientConnectionStateChanged(KIRC::ConnectionState newstate)
 //			QTimer::singleShot( 250, this, SLOT( slotPerformOnConnectCommands() ) );
 		}
 		break;
-	case KIRC::Closing:
+	case KIRC::Socket::Closing:
 //		mySelf()->setOnlineStatus( protocol->m_UserStatusOffline );
 //		d->contactManager->removeFromNotifyList( d->client->nickName() );
 
 //		if (d->contactManager && !autoConnect.isNull())
 //			AccountManager::self()->removeAccount( this );
 		break;
-//	case KIRC::Timeout:
+//	case KIRC::Socket::Timeout:
 		//Try next server
 //		connect();
 //		break;
+*/
+	default:
+		kdDebug(14120) << k_funcinfo << "Doing nothing on state" << newstate << endl;
 	}
 }
-
+/*
 // Put that in error handling
 void IRCAccount::slotFailedServerPassword()
 {

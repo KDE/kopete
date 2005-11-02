@@ -86,7 +86,7 @@ void StdCommands::join(KIRC::Socket *socket, const QString &name, const QString 
 	QStringList args(name);
 	if (!key.isNull())
 		args << key;
-//	msg.setArgs(args);
+	msg.setArgList(args);
 
 	socket->writeMessage(msg);
 }
@@ -97,7 +97,7 @@ void StdCommands::kick(KIRC::Socket *socket, const QString &user, const QString 
 
 	Message msg;
 	msg.setCommand(KICK);
-//	msg.setArgs(QStringList(channel) << user);
+	msg.setArgList(QStringList(channel) << user);
 	msg.setSuffix(reason);
 
 	socket->writeMessage(msg);
@@ -116,7 +116,7 @@ void StdCommands::mode(KIRC::Socket *socket, const QString &target, const QStrin
 
 	Message msg;
 	msg.setCommand(MODE);
-//	msg.setArgs(QStringList(target) << mode);
+	msg.setArgList(QStringList(target) << mode);
 
 	socket->writeMessage(msg);
 }
@@ -127,7 +127,7 @@ void StdCommands::motd(KIRC::Socket *socket, const QString &server)
 
 	Message msg;
 	msg.setCommand(MOTD);
-//	msg.setArgs(server);
+	msg.setArgs(server);
 
 	socket->writeMessage(msg);
 }
@@ -139,7 +139,7 @@ void StdCommands::nick(KIRC::Socket *socket, const QString &newNickname)
 //	m_PendingNick = newNickname;
 	Message msg;
 	msg.setCommand(NICK);
-//	msg.setArgs(newNickname);
+	msg.setArgs(newNickname);
 
 	socket->writeMessage(msg);
 }
@@ -150,7 +150,7 @@ void StdCommands::notice(KIRC::Socket *socket, const QString &target, const QStr
 
 	Message msg;
 	msg.setCommand(NOTICE);
-//	msg.setArgs(target);
+	msg.setArgs(target);
 	msg.setSuffix(content/*, target->codec()*/);
 
 	socket->writeMessage(msg);
@@ -164,7 +164,7 @@ void StdCommands::part(KIRC::Socket *socket, const QString &channel, const QStri
 
 	Message msg;
 	msg.setCommand(PART);
-//	msg.setArgs(channel);
+	msg.setArgs(channel);
 	msg.setSuffix(reason/*, channel->codec()*/);
 	
 	socket->writeMessage(msg);
@@ -187,7 +187,7 @@ void StdCommands::privmsg(KIRC::Socket *socket, const QString &contact, const QS
 
 	Message msg;
 	msg.setCommand(PRIVMSG);
-//	msg.setArgs(contact);
+	msg.setArgs(contact);
 	msg.setSuffix(content/*, contact->codec*/);
 
 	socket->writeMessage(msg);
@@ -214,7 +214,7 @@ void StdCommands::topic(KIRC::Socket *socket, const QString &channel, const QStr
 
 	Message msg;
 	msg.setCommand(TOPIC);
-//	msg.setArgs(channel);
+	msg.setArgs(channel);
 	msg.setSuffix(topic/*, channel->codec*/);
 
 	socket->writeMessage(msg);
@@ -225,7 +225,7 @@ void StdCommands::topic(KIRC::Socket *socket, const QString &channel, const QStr
  * the username, hostname and realname of a new user.
  * hostname is usualy set to "127.0.0.1"
  */
-void StdCommands::user(KIRC::Socket *socket, const QString &newUserName, const QString &hostname, const QString &newRealName)
+void StdCommands::user(KIRC::Socket *socket, const QString &newUserName, const QString &hostName, const QString &newRealName)
 {
 	Q_ASSERT(socket);
 
@@ -234,7 +234,7 @@ void StdCommands::user(KIRC::Socket *socket, const QString &newUserName, const Q
 
 	Message msg;
 	msg.setCommand(USER);
-//	msg.setArgs(QStringList(newUserName) << hostname << m_Host);
+//	msg.setArgList(QStringList(newUserName) << hostName << serverName);
 	msg.setSuffix(newRealName);
 
 	socket->writeMessage(msg);
@@ -255,7 +255,7 @@ void StdCommands::user(KIRC::Socket *socket, const QString &newUserName, Modes m
 
 	Message msg;
 	msg.setCommand(USER);
-//	msg.setArgs(QStringList(newUserName) << QString::number(mode) << QChar('*'));
+	msg.setArgList(QStringList(newUserName) << QString::number(modes) << QString::fromLatin1("*"));
 	msg.setSuffix(newRealName);
 
 	socket->writeMessage(msg);

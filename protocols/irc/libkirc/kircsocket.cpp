@@ -49,6 +49,8 @@ public:
 
 	QTextCodec *defaultCodec;
 
+	KIRC::CommandHandler *commandHandler;
+	KIRC::EntityManager *entityManager;
 	KIRC::Entity::Ptr owner;
 };
 
@@ -87,7 +89,27 @@ void Socket::setDefaultCodec(QTextCodec *codec)
 	codec = d->defaultCodec;
 }
 
-Entity::Ptr Socket::owner()
+CommandHandler *Socket::commandHandler() const
+{
+	return d->commandHandler;
+}
+
+void Socket::setCommandHandler(CommandHandler *commandHandler)
+{
+	d->commandHandler = commandHandler;
+}
+
+EntityManager *Socket::entityManager() const
+{
+	return d->entityManager;
+}
+
+void Socket::setEntityManager(EntityManager *entityManager)
+{
+	d->entityManager = entityManager;
+}
+
+Entity::Ptr Socket::owner() const
 {
 	return d->owner;
 }

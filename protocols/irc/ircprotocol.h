@@ -94,11 +94,10 @@ public slots:
 private slots:
 	void slotMessageFilter(Kopete::Message &msg);
 
-	void slotRawCommand(const QString &args, Kopete::ChatSession *manager );
-	void slotQuoteCommand(const QString &args, Kopete::ChatSession *manager );
-	void slotCtcpCommand(const QString &args, Kopete::ChatSession *manager );
-
 	void slotAllCommand(const QString &args, Kopete::ChatSession *manager );
+	void slotCtcpCommand(const QString &args, Kopete::ChatSession *manager );
+	void slotQuoteCommand(const QString &args, Kopete::ChatSession *manager );
+	void slotRawCommand(const QString &args, Kopete::ChatSession *manager );
 
 	void slotViewCreated(KopeteView *);
 
