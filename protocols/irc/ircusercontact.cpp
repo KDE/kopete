@@ -116,12 +116,12 @@ void IRCUserContact::updateStatus()
 				if( !(currentStatus.internalStatus() & IRCProtocol::Away) && newStatus == m_protocol->m_UserStatusAway )
 				{
 					//kdDebug(14120) << k_funcinfo << "was NOT away, but is now, channel " << channel->nickName() << endl;
-					addBitsToInternalOnlineStatus(channel, IRCProtocol::Away);
+					adjustInternalOnlineStatusBits(channel, IRCProtocol::Away, AddBits);
 				}
 				else if( (currentStatus.internalStatus() & IRCProtocol::Away) && newStatus == m_protocol->m_UserStatusOnline )
 				{
 					//kdDebug(14120) << k_funcinfo << "was away, but not anymore, channel " << channel->nickName() << endl;
-					removeBitsFromInternalOnlineStatus(channel, IRCProtocol::Away);
+					adjustInternalOnlineStatusBits(channel, IRCProtocol::Away, RemoveBits);
 
 				}
 				else if( newStatus.internalStatus() < IRCProtocol::Away )
@@ -512,61 +512,103 @@ QPtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::ChatSession
 	return 0L;
 }
 
-void IRCUserContact::slotIncomingModeChange( const QString &channel, const QString &, const QString &mode )
+void IRCUserContact::slotIncomingModeChange( const QString &channel, const QString &, const QString &mode_ )
 {
+	kdDebug(14120) << k_funcinfo << "channel: " << channel << " mode: " << mode_ << endl;
+
 	IRCChannelContact *chan = ircAccount()->contactManager()->findChannel( channel );
-	if( chan->locateUser( m_nickName ) )
+
+	if( !chan->locateUser( m_nickName ) )
+		return;
+
+	// :foobar_!~fooobar@dhcp.inet.fi MODE #foofoofoo2 +o kakkonen
+	// :foobar_!~fooobar@dhcp.inet.fi MODE #foofoofoo2 +o-o foobar001 kakkonen
+	// :foobar_!~fooobar@dhcp.inet.fi MODE #foofoofoo2 +oo kakkonen foobar001
+	// :foobar_!~fooobar@dhcp.inet.fi MODE #foofoofoo2 +o-ov foobar001 kakkonen foobar001
+	//
+	// irssi manual example: /MODE #channel +nto-o+v nick1 nick2 nick3
+
+	QStringList users = QStringList::split(' ', mode_);
+	users.pop_front();
+
+	const QString mode = mode_.section(' ', 0, 0);
+
+	bitAdjustment adjMode = RemoveBits;
+	QStringList::iterator user = users.begin();
+
+	//kdDebug(14120) << "me: " << m_nickName << " users: " << users << " mode: " << mode << endl;
+
+	for( uint i=0; i < mode.length(); i++ )
 	{
-		QString user = mode.section(' ', 1, 1);
-
-		if( user == m_nickName )
+		switch( mode[i] )
 		{
-			kdDebug(14120) << k_funcinfo << "mode: " << mode << ", affected user: " << user << ", my nick: " << m_nickName << endl;
+		case '+':
+			adjMode = AddBits;
+			break;
 
-			QString modeChange = mode.section(' ', 0, 0);
+		case '-':
+			adjMode = RemoveBits;
+			break;
 
-			if(modeChange == QString::fromLatin1("+o"))
-				addBitsToInternalOnlineStatus( chan, IRCProtocol::Operator );
-			else if(modeChange == QString::fromLatin1("-o"))
-				removeBitsFromInternalOnlineStatus( chan, IRCProtocol::Operator );
-			else if(modeChange == QString::fromLatin1("+v"))
-				addBitsToInternalOnlineStatus( chan, IRCProtocol::Voiced );
-			else if(modeChange == QString::fromLatin1("-v"))
-				removeBitsFromInternalOnlineStatus( chan, IRCProtocol::Voiced );
+		default:
+			//kdDebug(14120) << "got " << mode[i] << ", user: " << *user << endl;
+
+			if (mode[i] == 'o') {
+				if (user == users.end())
+					return;
+
+				if ((*user).lower() == m_nickName.lower())
+					adjustInternalOnlineStatusBits(chan, IRCProtocol::Operator, adjMode);
+
+				++user;
+			}
+			else if (mode[i] == 'v') {
+				if (user == users.end())
+					return;
+
+				if ((*user).lower() == m_nickName.lower())
+					adjustInternalOnlineStatusBits(chan, IRCProtocol::Voiced, adjMode);
+
+				++user;
+			}
+
+			break;
 		}
 	}
 }
 
 
-/* Removes the given bits for the given channel from the current internal online status.
+/* Remove or add the given bits for the given channel from the current internal online status.
  *
- * You could remove bits like IRCProtocol::Operator, IRCProtocol::Voiced, etc.
+ * You could fiddle with bits like IRCProtocol::Operator, IRCProtocol::Voiced, etc.
  */
 
-void IRCUserContact::removeBitsFromInternalOnlineStatus(IRCChannelContact *channel, unsigned statusAdjustment)
+void IRCUserContact::adjustInternalOnlineStatusBits(IRCChannelContact *channel, unsigned statusAdjustment, bitAdjustment adj)
 {
 	Kopete::OnlineStatus currentStatus = channel->manager()->contactOnlineStatus(this);
+	Kopete::OnlineStatus newStatus;
 
-	Kopete::OnlineStatus newStatus = m_protocol->statusLookup(
-		(IRCProtocol::IRCStatus)(currentStatus.internalStatus() & ~statusAdjustment)
-	);
+	if (adj == RemoveBits) {
 
-	channel->manager()->setContactOnlineStatus(this, newStatus);
-}
+		// If the bit is not set in the current internal status, stop here.
+		if ((currentStatus.internalStatus() & ~statusAdjustment) == currentStatus.internalStatus())
+			return;
 
+		newStatus = m_protocol->statusLookup(
+				(IRCProtocol::IRCStatus)(currentStatus.internalStatus() & ~statusAdjustment)
+				);
 
-/* Adds the given bits for the given channel to the current internal online status.
- *
- * You could add bits like IRCProtocol::Operator, IRCProtocol::Voiced, etc.
- */
+	} else if (adj == AddBits) {
 
-void IRCUserContact::addBitsToInternalOnlineStatus(IRCChannelContact *channel, unsigned statusAdjustment)
-{
-	Kopete::OnlineStatus currentStatus = channel->manager()->contactOnlineStatus(this);
+		// If the bit is already set in the current internal status, stop here.
+		if ((currentStatus.internalStatus() | statusAdjustment) == currentStatus.internalStatus())
+			return;
 
-	Kopete::OnlineStatus newStatus = m_protocol->statusLookup(
-		(IRCProtocol::IRCStatus)(currentStatus.internalStatus() | statusAdjustment)
-	);
+		newStatus = m_protocol->statusLookup(
+				(IRCProtocol::IRCStatus)(currentStatus.internalStatus() | statusAdjustment)
+				);
+
+	}
 
 	channel->manager()->setContactOnlineStatus(this, newStatus);
 }

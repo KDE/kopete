@@ -120,8 +120,8 @@ private slots:
 	void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 
 private:
-	void removeBitsFromInternalOnlineStatus(IRCChannelContact *channel, unsigned statusAdjustment);
-	void addBitsToInternalOnlineStatus(IRCChannelContact *channel, unsigned statusAdjustment);
+	enum bitAdjustment { RemoveBits, AddBits };
+	void adjustInternalOnlineStatusBits(IRCChannelContact *channel, unsigned statusAdjustment, bitAdjustment adj);
 
 	void contactMode(const QString &mode);
 	void updateInfo();
