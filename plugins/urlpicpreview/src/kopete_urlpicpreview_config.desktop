@@ -14,11 +14,13 @@ X-Kopete-Version=1000900
 
 Name=URLPicPreview Plugin Configuration
 Name[es]=Configuración de la extensión URLPicPreview
+Name[fr]=Configuration du module URLPicPreview
 Name[it]=Configurazione del plugin URLPicPreview
 Name[pt]=Configuração do 'Plugin' URLPicPreview
 Name[sv]=Inställning av insticksprogram för förhandsgranskning av webbadressbilder
 Comment=URLPicPreview Plugin
 Comment[es]=Extensión URLPicPreview
+Comment[fr]=Module URLPicPreview
 Comment[it]=Plugin URLPicPreview
 Comment[pt]='Plugin' do URLPicPreview
 Comment[sv]=Insticksprogram för förhandsgranskning av webbadressbilder
