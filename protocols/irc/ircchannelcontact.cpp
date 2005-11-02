@@ -266,9 +266,18 @@ void IRCChannelContact::channelTopic(const QString &topic)
 	mTopic = topic;
 	setProperty( m_protocol->propChannelTopic, mTopic );
 	manager()->setDisplayName(caption());
-	Kopete::Message msg((Kopete::Contact*)this, mMyself, i18n("Topic for %1 is %2").arg(m_nickName).arg(mTopic),
-	                    Kopete::Message::Internal, Kopete::Message::RichText, CHAT_VIEW);
-	appendMessage(msg);
+
+	if (mTopic.isEmpty()) {
+		Kopete::Message msg((Kopete::Contact*)this, mMyself,
+				i18n("Topic for %1 is set empty.").arg(m_nickName),
+				Kopete::Message::Internal, Kopete::Message::RichText, CHAT_VIEW);
+		appendMessage(msg);
+	} else {
+		Kopete::Message msg((Kopete::Contact*)this, mMyself,
+				i18n("Topic for %1 is %2").arg(m_nickName).arg(mTopic),
+				Kopete::Message::Internal, Kopete::Message::RichText, CHAT_VIEW);
+		appendMessage(msg);
+	}
 }
 
 void IRCChannelContact::channelHomePage(const QString &url)
