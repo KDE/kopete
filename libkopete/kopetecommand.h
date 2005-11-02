@@ -67,6 +67,7 @@ public:
 	 	const QString &help = QString::null, CommandHandler::CommandType type = CommandHandler::Normal, const QString &formatString = QString::null,
 		uint minArgs = 0, int maxArgs = -1, const KShortcut &cut = 0,
 		const QString &pix = QString::null );
+	~Command();
 
 	/**
 	 * Process this command
