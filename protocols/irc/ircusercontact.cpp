@@ -35,31 +35,31 @@
 
 IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString &nickname, Kopete::MetaContact *m )
 	: IRCContact(contactManager, nickname, m ),
-	  m_isAway(false)
+	actionCtcpMenu(0L)
 {
 	setFileCapable(true);
 
 	mOnlineTimer = new QTimer( this );
-	m_isOnline = metaContact()->isTemporary();
 
 	QObject::connect(mOnlineTimer, SIGNAL(timeout()), this, SLOT( slotUserOffline() ) );
 
 	QObject::connect(kircEngine(), SIGNAL(incomingChannelModeChange(const QString&, const QString&, const QString&)),
 		this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
 
-	actionCtcpMenu = 0L;
-
 	mInfo.isOperator = false;
 	mInfo.isIdentified = false;
 	mInfo.idle = 0;
 	mInfo.hops = 0;
 	mInfo.away = false;
+	mInfo.online = metaContact()->isTemporary();
 
 	updateStatus();
 }
 
 void IRCUserContact::updateStatus()
 {
+	//kdDebug(14120) << k_funcinfo << endl;
+
         Kopete::OnlineStatus newStatus;
 
 	switch (kircEngine()->status())
@@ -78,15 +78,24 @@ void IRCUserContact::updateStatus()
 
 		case KIRC::Engine::Connected:
 		case KIRC::Engine::Closing:
-			if (m_isAway)
+			if (mInfo.away)
 				newStatus = m_protocol->m_UserStatusAway;
-			else if (m_isOnline)
+			else if (mInfo.online)
 				newStatus = m_protocol->m_UserStatusOnline;
 			break;
 
 		default:
 			newStatus = m_protocol->m_StatusUnknown;
 	}
+
+	// Try hard not to emit several onlineStatusChanged() signals.
+	bool onlineStatusChanged = false;
+
+
+	/* The away status is global, so if the user goes away, we must set
+	 * the new status on all channels.
+	 */
+
 
 	// This may not be created yet ( for myself() on startup )
 	if( ircAccount()->contactManager() )
@@ -98,33 +107,36 @@ void IRCUserContact::updateStatus()
 			IRCChannelContact *channel = *it;
 			Kopete::OnlineStatus currentStatus = channel->manager()->contactOnlineStatus(this);
 
-			if( currentStatus.internalStatus() > IRCProtocol::Online )
+			//kdDebug(14120) << k_funcinfo << "iterating channel " << channel->nickName() << " internal status: " << currentStatus.internalStatus() << endl;
+
+			if( currentStatus.internalStatus() >= IRCProtocol::Online )
 			{
+				onlineStatusChanged = true;
+
 				if( !(currentStatus.internalStatus() & IRCProtocol::Away) && newStatus == m_protocol->m_UserStatusAway )
 				{
-					channel->manager()->setContactOnlineStatus(
-						this, m_protocol->statusLookup(
-							(IRCProtocol::IRCStatus)(currentStatus.internalStatus()+IRCProtocol::Away)
-						)
-					);
+					//kdDebug(14120) << k_funcinfo << "was NOT away, but is now, channel " << channel->nickName() << endl;
+					addBitsToInternalOnlineStatus(channel, IRCProtocol::Away);
 				}
 				else if( (currentStatus.internalStatus() & IRCProtocol::Away) && newStatus == m_protocol->m_UserStatusOnline )
 				{
-					channel->manager()->setContactOnlineStatus(
-						this, m_protocol->statusLookup(
-							(IRCProtocol::IRCStatus)(currentStatus.internalStatus()-IRCProtocol::Away)
-						)
-					);
+					//kdDebug(14120) << k_funcinfo << "was away, but not anymore, channel " << channel->nickName() << endl;
+					removeBitsFromInternalOnlineStatus(channel, IRCProtocol::Away);
+
 				}
 				else if( newStatus.internalStatus() < IRCProtocol::Away )
 				{
+					//kdDebug(14120) << k_funcinfo << "offline or connecting?" << endl;
 					channel->manager()->setContactOnlineStatus( this, newStatus );
 				}
 			}
 		}
 	}
 
-	setOnlineStatus( newStatus );
+	if (!onlineStatusChanged) {
+		//kdDebug(14120) << k_funcinfo << "setting status at last" << endl;
+		setOnlineStatus( newStatus );
+	}
 }
 
 void IRCUserContact::sendFile(const KURL &sourceURL, const QString&, unsigned int)
@@ -145,8 +157,9 @@ void IRCUserContact::sendFile(const KURL &sourceURL, const QString&, unsigned in
 
 void IRCUserContact::slotUserOffline()
 {
-	m_isOnline = false;
-	m_isAway = false;
+	mInfo.online = false;
+	mInfo.away   = false;
+
 	updateStatus();
 
 	if( !metaContact()->isTemporary() )
@@ -159,7 +172,9 @@ void IRCUserContact::slotUserOffline()
 
 void IRCUserContact::setAway(bool isAway)
 {
-	m_isAway = isAway;
+	//kdDebug(14120) << k_funcinfo << isAway << endl;
+
+	mInfo.away = isAway;
 	updateStatus();
 }
 
@@ -176,7 +191,7 @@ void IRCUserContact::incomingUserIsAway(const QString &reason)
 
 void IRCUserContact::userOnline()
 {
-	m_isOnline = true;
+	mInfo.online = true;
 	updateStatus();
 	if (this != ircAccount()->mySelf() && !metaContact()->isTemporary() && ircAccount()->isConnected())
 	{
@@ -417,6 +432,18 @@ void IRCUserContact::newWhoReply( const QString &channel, const QString &user, c
 	mInfo.hops = hops;
 	mInfo.realName = realName;
 
+	/*
+	if (flags[0] == '@') {
+		//setManagerStatus( chan, m_protocol->m_UserStatusOp.internalStatus() );
+		;
+	} else if (flags[0] == '+') {
+		kdDebug(14120) << k_funcinfo << "User is VOICED" << endl;
+
+		IRCChannelContact *chan = ircAccount()->contactManager()->findChannel( channel );
+		addBitsToInternalOnlineStatus( chan, IRCProtocol::Voiced );
+	}
+	*/
+
 	setAway(away);
 
 	updateInfo();
@@ -483,7 +510,7 @@ QPtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::ChatSession
 
 		if( isChannel )
 		{
-			bool isOperator = ( manager->contactOnlineStatus( account()->myself() ) == m_protocol->m_UserStatusOp );
+			bool isOperator = ( manager->contactOnlineStatus( account()->myself() ).internalStatus() & IRCProtocol::Operator );
 			actionModeMenu->setEnabled(isOperator);
 			actionBanMenu->setEnabled(isOperator);
 			actionKick->setEnabled(isOperator);
@@ -503,27 +530,54 @@ void IRCUserContact::slotIncomingModeChange( const QString &channel, const QStri
 	if( chan->locateUser( m_nickName ) )
 	{
 		QString user = mode.section(' ', 1, 1);
-		kdDebug(14120) << k_funcinfo << mode << ", " << user << ", " << m_nickName << endl;
+
 		if( user == m_nickName )
 		{
+			kdDebug(14120) << k_funcinfo << "mode: " << mode << ", affected user: " << user << ", my nick: " << m_nickName << endl;
+
 			QString modeChange = mode.section(' ', 0, 0);
+
 			if(modeChange == QString::fromLatin1("+o"))
-				setManagerStatus( chan, m_protocol->m_UserStatusOp.internalStatus() );
+				addBitsToInternalOnlineStatus( chan, IRCProtocol::Operator );
 			else if(modeChange == QString::fromLatin1("-o"))
-				setManagerStatus( chan, -m_protocol->m_UserStatusOp.internalStatus() );
+				removeBitsFromInternalOnlineStatus( chan, IRCProtocol::Operator );
 			else if(modeChange == QString::fromLatin1("+v"))
-				setManagerStatus( chan, m_protocol->m_UserStatusVoice.internalStatus() );
+				addBitsToInternalOnlineStatus( chan, IRCProtocol::Voiced );
 			else if(modeChange == QString::fromLatin1("-v"))
-				setManagerStatus( chan, -m_protocol->m_UserStatusVoice.internalStatus() );
+				removeBitsFromInternalOnlineStatus( chan, IRCProtocol::Voiced );
 		}
 	}
 }
 
-void IRCUserContact::setManagerStatus(IRCChannelContact *channel, int statusAdjustment)
+
+/* Removes the given bits for the given channel from the current internal online status.
+ *
+ * You could remove bits like IRCProtocol::Operator, IRCProtocol::Voiced, etc.
+ */
+
+void IRCUserContact::removeBitsFromInternalOnlineStatus(IRCChannelContact *channel, unsigned statusAdjustment)
 {
 	Kopete::OnlineStatus currentStatus = channel->manager()->contactOnlineStatus(this);
+
 	Kopete::OnlineStatus newStatus = m_protocol->statusLookup(
-		(IRCProtocol::IRCStatus)(currentStatus.internalStatus() + statusAdjustment)
+		(IRCProtocol::IRCStatus)(currentStatus.internalStatus() & ~statusAdjustment)
+	);
+
+	channel->manager()->setContactOnlineStatus(this, newStatus);
+}
+
+
+/* Adds the given bits for the given channel to the current internal online status.
+ *
+ * You could add bits like IRCProtocol::Operator, IRCProtocol::Voiced, etc.
+ */
+
+void IRCUserContact::addBitsToInternalOnlineStatus(IRCChannelContact *channel, unsigned statusAdjustment)
+{
+	Kopete::OnlineStatus currentStatus = channel->manager()->contactOnlineStatus(this);
+
+	Kopete::OnlineStatus newStatus = m_protocol->statusLookup(
+		(IRCProtocol::IRCStatus)(currentStatus.internalStatus() | statusAdjustment)
 	);
 
 	channel->manager()->setContactOnlineStatus(this, newStatus);

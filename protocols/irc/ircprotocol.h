@@ -26,7 +26,7 @@
 #include <dom/dom_node.h>
 #include <qdict.h>
 
-#define m_protocol ((IRCProtocol*)IRCProtocol::protocol())
+#define m_protocol (IRCProtocol::protocol())
 
 namespace Kopete
 {
@@ -68,17 +68,17 @@ class IRCProtocol : public Kopete::Protocol
 public:
 	enum IRCStatus
 	{
-		Offline = 1,
-		Connecting = 2,
-		Away = 4,
-		Online = 8,
-		Voiced = 16,
-		Operator = 32,
-		ServerOperator = 1024,
-		OfflineChannel = 4096,
-		OnlineChannel = 8192,
-		OfflineServer = 16384,
-		OnlineServer = 32768
+		Offline        = 1,                 //! An offline user.
+		Connecting     = 2,                 //! User that is connecting.
+		Away           = 4,                 //! User that is away. May be regular user, voiced user or (server) operator.
+		Online         = 8,                 //! This user is online.
+		Voiced         = 16,                //! This user is voiced.
+		Operator       = 32,                //! This user is a channel operator.
+		ServerOperator = 1024,              //! This user is a server operator.
+		OfflineChannel = 4096,              //! This channel is offline.
+		OnlineChannel  = 8192,              //! This channel is online.
+		OfflineServer  = 16384,             //! This server is offline.
+		OnlineServer   = 32768              //! This server is online.
 	};
 
 	IRCProtocol( QObject *parent, const char *name, const QStringList &args );
@@ -101,6 +101,9 @@ public:
 
 	static IRCProtocol *protocol();
 
+	/**
+	 * Maps the given IRC status to Kopete::OnlineStatus.
+	 */
 	const Kopete::OnlineStatus statusLookup( IRCStatus status ) const;
 
 	const Kopete::OnlineStatus m_ServerStatusOnline;
