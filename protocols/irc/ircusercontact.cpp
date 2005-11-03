@@ -241,22 +241,102 @@ void IRCUserContact::slotDevoice()
 
 void IRCUserContact::slotBanHost()
 {
-	slotKick();
+	// MODE #foofoofoo +b *!*@host.domain.net
+
+	if (mInfo.hostName.isEmpty()) {
+		if (kircEngine()->isConnected()) {
+			kircEngine()->whois(m_nickName);
+			QTimer::singleShot( 750, this, SLOT( slotBanHostOnce() ) );
+		}
+	} else {
+		slotBanHostOnce();
+	}
+}
+void IRCUserContact::slotBanHostOnce()
+{
+	if (mInfo.hostName.isEmpty())
+		return;
+
+	Kopete::ContactPtrList members = mActiveManager->members();
+	QString channelName = static_cast<IRCContact*>(members.first())->nickName();
+
+	kircEngine()->mode(channelName, QString::fromLatin1("+b *!*@%1").arg(mInfo.hostName));
 }
 
 void IRCUserContact::slotBanUserHost()
 {
-	slotKick();
+	// MODE #foofoofoo +b *!*user@host.domain.net
+
+	if (mInfo.hostName.isEmpty()) {
+		if (kircEngine()->isConnected()) {
+			kircEngine()->whois(m_nickName);
+			QTimer::singleShot( 750, this, SLOT( slotBanUserHostOnce() ) );
+		}
+	} else {
+		slotBanUserHostOnce();
+	}
+}
+void IRCUserContact::slotBanUserHostOnce()
+{
+	if (mInfo.hostName.isEmpty())
+		return;
+
+	Kopete::ContactPtrList members = mActiveManager->members();
+	QString channelName = static_cast<IRCContact*>(members.first())->nickName();
+
+	kircEngine()->mode(channelName, QString::fromLatin1("+b *!*%1@%2").arg(mInfo.userName, mInfo.hostName));
 }
 
 void IRCUserContact::slotBanDomain()
 {
-	slotKick();
+	// MODE #foofoofoo +b *!*@*.domain.net
+
+	if (mInfo.hostName.isEmpty()) {
+		if (kircEngine()->isConnected()) {
+			kircEngine()->whois(m_nickName);
+			QTimer::singleShot( 750, this, SLOT( slotBanDomainOnce() ) );
+		}
+	} else {
+		slotBanDomainOnce();
+	}
+}
+void IRCUserContact::slotBanDomainOnce()
+{
+	if (mInfo.hostName.isEmpty())
+		return;
+
+	Kopete::ContactPtrList members = mActiveManager->members();
+	QString channelName = static_cast<IRCContact*>(members.first())->nickName();
+
+	QString domain = mInfo.hostName.section('.', 1);
+
+	kircEngine()->mode(channelName, QString::fromLatin1("+b *!*@*.%1").arg(domain));
 }
 
 void IRCUserContact::slotBanUserDomain()
 {
-	slotKick();
+	// MODE #foofoofoo +b *!*user@*.domain.net
+
+	if (mInfo.hostName.isEmpty()) {
+		if (kircEngine()->isConnected()) {
+			kircEngine()->whois(m_nickName);
+			QTimer::singleShot( 750, this, SLOT( slotBanUserDomainOnce() ) );
+		}
+	} else {
+		slotBanUserDomainOnce();
+	}
+}
+void IRCUserContact::slotBanUserDomainOnce()
+{
+	if (mInfo.hostName.isEmpty())
+		return;
+
+	Kopete::ContactPtrList members = mActiveManager->members();
+	QString channelName = static_cast<IRCContact*>(members.first())->nickName();
+
+	QString domain = mInfo.hostName.section('.', 1);
+
+	kircEngine()->mode(channelName, QString::fromLatin1("+b *!*%1@*.%2").arg(mInfo.userName, domain));
 }
 
 void IRCUserContact::slotKick()
@@ -476,13 +556,13 @@ QPtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::ChatSession
 			actionKick->setEnabled( false );
 
 			actionBanMenu = new KActionMenu(i18n("&Ban"), 0, this, "actionBanMenu");
-			actionBanMenu->insert( new KAction(i18n("Ban *!*@*.host"), 0, this,
+			actionBanMenu->insert( new KAction(i18n("Host (*!*@host.domain.net)"), 0, this,
 				SLOT(slotBanHost()), actionBanMenu ) );
-			actionBanMenu->insert( new KAction(i18n("Ban *!*@domain"), 0, this,
+			actionBanMenu->insert( new KAction(i18n("Domain (*!*@*.domain.net)"), 0, this,
 				SLOT(slotBanDomain()), actionBanMenu ) );
-			actionBanMenu->insert( new KAction(i18n("Ban *!*user@*.host"), 0, this,
+			actionBanMenu->insert( new KAction(i18n("User@Host (*!*user@host.domain.net)"), 0, this,
 				 SLOT(slotBanUserHost()), actionBanMenu ) );
-			actionBanMenu->insert( new KAction(i18n("Ban *!*user@domain"), 0, this,
+			actionBanMenu->insert( new KAction(i18n("User@Domain (*!*user@*.domain.net)"), 0, this,
 				 SLOT(slotBanUserDomain()), actionBanMenu ) );
 			actionBanMenu->setEnabled( false );
 

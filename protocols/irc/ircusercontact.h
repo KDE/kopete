@@ -114,6 +114,11 @@ private slots:
 	void slotKick();
 	void slotUserOffline();
 
+	void slotBanHostOnce();
+	void slotBanUserHostOnce();
+	void slotBanDomainOnce();
+	void slotBanUserDomainOnce();
+
 	virtual void slotUserInfo();
 
 	//This can't be handled by the contact manager since
