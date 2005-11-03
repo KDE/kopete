@@ -14,27 +14,6 @@ Misc. Before Merge things
 - Test moving contacts from one group to another
 
 
-Type 2 Messaging
-====================================
-
-This is the area of OSCAR that I know the least about. Snac family 4 is used for messaging. Not much to tell you here other than to
-use oscarsocket for a reference and see the docs on iserverd. Also, http://joust.kano.net/wiki/oscar/moin.cgi/InstantMessages might have some useful info
-but i haven't looked at it to see if it's worth anything. This will be by far the hardest part of OSCAR to implement and do right.
-
-Here's what I know:
-
-We usually refer to channels in the docs as types.
-
-Basic instant messages are type-1 messages. AFAIK, AIM uses this for nearly all (if not all) of its messages. ICQ might use this for the simpler messages.
-ICQ RTF, ICQ away messages, and rendevous (direct connection stuff) is all handled via type-2 messages. 
-
-We may need to use gaim's code for reference on some things, but the last time i checked it wasn't very readable and thus not easy to use for reference.
-
-Be sure to test different encodings!! Russian especially has been a problem. See bugs 43701, 88033, 91808, 93057
-
-for things to look for when dealing with messages.
-
-
 Direct Connections
 ====================================
 When/If we get around to it. Matt knows absolutely nothing about direct connections and the only online source of documentation is no longer online. :(
