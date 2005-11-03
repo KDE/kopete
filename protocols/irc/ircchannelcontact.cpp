@@ -222,7 +222,7 @@ void IRCChannelContact::slotAddNicknames()
 		if( firstChar == '@' || firstChar == '%' || firstChar == '+' )
 			nickToAdd = nickToAdd.remove(0, 1);
 
-		IRCContact *user;
+		IRCUserContact *user;
 
 		if ( nickToAdd.lower() != account->mySelf()->nickName().lower() )
 		{
@@ -230,8 +230,11 @@ void IRCChannelContact::slotAddNicknames()
 
 			user = account->contactManager()->findUser(nickToAdd);
 
-			if (user->onlineStatus() != Kopete::OnlineStatus::Online &&
-			    user->onlineStatus() != Kopete::OnlineStatus::Away) {
+			// If the user is already present in some channel, dont flip the status
+			// back to online, because the other channels listen to
+			// onlineStatusChanged() emits, and they would adjust their statuses.
+
+			if (ircAccount()->contactManager()->findChannelsByMember(user).isEmpty()) {
 				//kdDebug(14120) << k_funcinfo << "Setting nick ONLINE" << endl;
 				user->setOnlineStatus(m_protocol->m_UserStatusOnline);
 			}
@@ -251,9 +254,9 @@ void IRCChannelContact::slotAddNicknames()
 			status = user->onlineStatus();
 
 		if( user != account->mySelf() )
-			manager()->addContact(static_cast<Kopete::Contact*>(user) , status, true);
+			manager()->addContact(user , status, true);
 		else
-			manager()->setContactOnlineStatus( static_cast<Kopete::Contact*>(user), status );
+			manager()->setContactOnlineStatus(user, status);
 
 		mJoinedNicks.pop_front();
 	}

@@ -115,11 +115,13 @@ void IRCUserContact::updateStatus()
 
 				if( !(currentStatus.internalStatus() & IRCProtocol::Away) && newStatus == m_protocol->m_UserStatusAway )
 				{
+					setOnlineStatus( newStatus );
 					//kdDebug(14120) << k_funcinfo << "was NOT away, but is now, channel " << channel->nickName() << endl;
 					adjustInternalOnlineStatusBits(channel, IRCProtocol::Away, AddBits);
 				}
 				else if( (currentStatus.internalStatus() & IRCProtocol::Away) && newStatus == m_protocol->m_UserStatusOnline )
 				{
+					setOnlineStatus( newStatus );
 					//kdDebug(14120) << k_funcinfo << "was away, but not anymore, channel " << channel->nickName() << endl;
 					adjustInternalOnlineStatusBits(channel, IRCProtocol::Away, RemoveBits);
 
