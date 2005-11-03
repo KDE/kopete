@@ -102,6 +102,7 @@ public:
 
 	int chatWindowPolicy() const { return mChatWindowPolicy; }
 	QString styleSheet() const { return mStyleSheet; }
+	QString styleDataPath() const { return mStyleDataPath; }
 	QString styleContents() const { return mStyleContents; }
 	QString defaultTheme() const { return QString::fromLatin1("Default"); }
 
@@ -286,6 +287,7 @@ private:
 
 	bool mRichText;
 	QString mStyleSheet;
+	QString mStyleDataPath;
 	QString mStyleContents;
 
 	QStringList mToolTipContents;
