@@ -318,7 +318,7 @@ void IRCChannelContact::partAction()
 
 void IRCChannelContact::part()
 {
-	if (manager())
+	if (manager() && !kircEngine()->isDisconnected())
 		kircEngine()->part(m_nickName, ircAccount()->defaultPart());
 }
 
