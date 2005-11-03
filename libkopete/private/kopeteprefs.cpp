@@ -417,9 +417,15 @@ void KopetePrefs::_setStyleSheet(const QString &value)
 	{
 		mStyleSheet = value;
 	}
-
+	
 	styleFileName = locate( "appdata", QString::fromLatin1("styles/") + mStyleSheet + QString::fromLatin1(".xsl"));
+
+	/* We must find the path of style data to replace $appdata by correct value in xsl that Kopete XSLT doesn't processing well (and impossible to fix without changing lots of things).  */
+	mStyleDataPath = styleFileName;
+	mStyleDataPath.replace(mStyleSheet + QString::fromLatin1(".xsl"),QString::fromLatin1("data/"));
+
 	mStyleContents = fileContents(styleFileName);
+
 }
 
 void KopetePrefs::setFontFace( const QFont &value )
