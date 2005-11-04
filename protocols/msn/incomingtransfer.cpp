@@ -173,7 +173,7 @@ void IncomingTransfer::processMessage(const Message& message)
 	{
 		QString body =
 			QCString(message.body.data(), message.header.dataSize);
-		kdDebug(14140) << k_funcinfo << "received, " << body << endl;
+//		kdDebug(14140) << k_funcinfo << "received, " << body << endl;
 
 		if(body.startsWith("INVITE"))
 		{
