@@ -27,6 +27,6 @@ mydatadir = $(kde_datadir)/kopete_skype
 mydata_DATA = skypeui.rc skypechatui.rc
 mydata_SCRIPTS = call_end call_start
 
-messages:
-	$(EXTRACTRC) `find . -name ui/\*.ui -o -name \*.rc` > rc.cpp
+messages: rc.cpp
+	$(EXTRACTRC) `find . -name ui/\*.ui -o -name \*.rc` >> rc.cpp
 	$(XGETTEXT) *.cpp libskype/*.cpp libskype/skypedbus/*.cpp -o $(podir)/kopete_skype.pot
