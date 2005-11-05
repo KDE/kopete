@@ -26,7 +26,7 @@ libkopete_la_SOURCES = knotification.cpp knotificationmanager.cpp connectionmana
 	kopetepluginmanager.cpp kopeteplugin.cpp 	kopetemessage.cpp kopetechatsession.cpp \
 	kopetechatsessionmanager.cpp 	kopetecontactlist.cpp kopetemetacontact.cpp kopeteawaydialog.cpp \
 	kopetetransfermanager.cpp 	kopetegroup.cpp kopeteaccountmanager.cpp kopeteaccount.cpp \
-		kopetecontactlistelement.cpp kopetecommandhandler.cpp kopeteaway.cpp 	kopeteawayaction.cpp \
+		kopetecontactlistelement.cpp kopetecommand.cpp kopetecommandhandler.cpp kopeteaway.cpp 	kopeteawayaction.cpp \
 	kopetewalletmanager.cpp kopetecontactproperty.cpp 	kopetepassword.cpp kopeteglobal.cpp \
 	kopeteuiglobal.cpp kopetepasswordedaccount.cpp 	kopetemimetypehandler.cpp kopetetask.cpp \
 	kopetemimesourcefactory.cpp kopetexsl.cpp 	kopeteeventpresentation.cpp kopetenotifyevent.cpp \
@@ -57,7 +57,7 @@ servicetypedir = $(kde_servicetypesdir)
 
 kopeteincludedir = $(includedir)/kopete
 kopeteinclude_HEADERS = kopeteaccount.h kopeteaccountmanager.h kopeteawayaction.h kopeteawaydialog.h kopeteaway.h \
-	kopeteblacklister.h kopetecommandhandler.h kopetecontact.h kopetecontactlistelement.h kopetecontactlist.h \
+	kopeteblacklister.h kopetecommand.h kopetecommandhandler.h kopetecontact.h kopetecontactlistelement.h kopetecontactlist.h \
 	kopetecontactproperty.h kopeteeventpresentation.h kopete_export.h kopeteglobal.h kopetegroup.h \
 	kopetemessageevent.h kopetemessage.h kopetemessagehandlerchain.h kopetemessagehandler.h \
 	kopetechatsession.h kopetechatsessionmanager.h kopetemetacontact.h kopetemimetypehandler.h \

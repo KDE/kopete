@@ -127,7 +127,6 @@ void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *
 			formatString.replace( QString::fromLatin1("%s"), args );
 
 			// Translate %1..%N to word1..wordN
-
 			while( mArgs.count() > 0 )
 			{
 				formatString = formatString.arg( mArgs.front() );
@@ -136,7 +135,7 @@ void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *
 
 			kdDebug(14010) << "New Command after processing alias: " << formatString << endl;
 
-			Kopete::CommandHandler::self()->processMessage( QString::fromLatin1("/") + formatString, manager );
+			Kopete::CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/") + formatString, manager );
 		}
 		else
 		{

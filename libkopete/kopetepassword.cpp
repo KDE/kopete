@@ -48,7 +48,7 @@ static QString cryptStr( const QString &aStr )
 {
 	//Once Kopete depends on 3.2 just remove this function and use KStringHandler::obscure
 	QString result;
-	for ( uint i = 0; i < aStr.length(); i++ )
+	for ( int i = 0; i < aStr.length(); i++ )
 		result += ( aStr[ i ].unicode() < 0x20) ? aStr[ i ] : QChar( 0x1001F - aStr[ i ].unicode() );
 
 	return result;

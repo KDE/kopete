@@ -298,7 +298,7 @@ public:
 	 * @param body The body
 	 * @param format The format of the message, @see MessageFormat
 	 */
-	void setBody( const QString &body, MessageFormat format = Qt::PlainText );
+	void setBody( const QString &body, MessageFormat format = PlainText );
 
 	/**
 	 * Get the message body back as plain text

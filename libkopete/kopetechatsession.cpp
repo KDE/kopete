@@ -66,7 +66,7 @@ Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 	Kopete::ContactPtrList others, Kopete::Protocol *protocol, const char *name )
 : QObject( user->account(), name )
 {
-	unsigned int i;
+	int i;
 
 	d = new KMMPrivate;
 	d->mUser = user;
@@ -142,7 +142,7 @@ void Kopete::ChatSession::setDisplayName( const QString &newName )
 
 void Kopete::ChatSession::slotUpdateDisplayName()
 {
-	unsigned int i;
+	int i;
 	
 	if( d->customDisplayName )
 		return;
@@ -390,7 +390,7 @@ void Kopete::ChatSession::receivedTypingMsg( const Kopete::Contact *c, bool t )
 
 void Kopete::ChatSession::receivedTypingMsg( const QString &contactId, bool t )
 {
-	unsigned int i;
+	int i;
 	
 	// FIXME: this needs better design. We can't iterate through List to find out who got what ID
 	// hash will be better for that, right ?

@@ -538,7 +538,7 @@ QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
 	// hash contactId to deterministically pick a color for the contact
 	int hash = 0;
 	const QString &contactId = contact->contactId();
-	for( uint f = 0; f < contactId.length(); ++f )
+	for( int f = 0; f < contactId.length(); ++f )
 		hash += contactId[f].unicode() * f;
 
 	QString color = QColor( nameColors[ hash % nameColorsLen ] ).name();

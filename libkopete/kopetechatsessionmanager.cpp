@@ -72,7 +72,7 @@ ChatSession* ChatSessionManager::findChatSession(const Contact *user,
 {
 	ChatSession *result = 0L;
 	Q3ValueList<ChatSession*>::Iterator it;
-	unsigned int i;
+	int i;
 
 	for ( it= d->sessions.begin(); it!=d->sessions.end() && !result ; ++it  )
 	{
