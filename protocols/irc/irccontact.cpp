@@ -3,8 +3,9 @@
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2004      by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2005      by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
 
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -220,6 +221,14 @@ void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::ChatSession *)
 {
 	QString htmlString = message.escapedBody();
 
+	// Messages we get with RichText enabled:
+	//
+	// Hello world in bold and color:
+	//   <span style="font-weight:600;color:#403897">Hello World</span>
+	// 
+	// Two-liner in color:
+	//   <span style="color:#403897">Hello<br />World</span>
+
 	if (htmlString.find(QString::fromLatin1("</span")) > -1)
 	{
 		QRegExp findTags( QString::fromLatin1("<span style=\"(.*)\">(.*)</span>") );
@@ -246,10 +255,15 @@ void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::ChatSession *)
 						if( ircColor > -1 )
 							replacement.prepend( QString( QChar(0x03) ).append( QString::number(ircColor) ) ).append( QChar( 0x03 ) );
 					}
-					else if( attribute == QString::fromLatin1("font-weight") && value == QString::fromLatin1("600") )
+					else if( attribute == QString::fromLatin1("font-weight") &&
+					             value == QString::fromLatin1("600") ) {
+						// Bolding
 						replacement.prepend( QChar(0x02) ).append( QChar(0x02) );
-					else if( attribute == QString::fromLatin1("text-decoration")  && value == QString::fromLatin1("underline") )
+					}
+					else if( attribute == QString::fromLatin1("text-decoration") &&
+					             value == QString::fromLatin1("underline") ) {
 						replacement.prepend( QChar(31) ).append( QChar(31) );
+					}
 				}
 
 				htmlString = htmlString.left( pos ) + replacement + htmlString.mid( pos + findTags.matchedLength() );
@@ -259,48 +273,62 @@ void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::ChatSession *)
 
 	htmlString = Kopete::Message::unescape(htmlString);
 
-	if (htmlString.find('\n') > -1)
+	QStringList messages = QStringList::split( '\n', htmlString );
+
+	for( QStringList::Iterator it = messages.begin(); it != messages.end(); ++it )
 	{
-		QStringList messages = QStringList::split( '\n', htmlString );
+		// Dont use the resulting string(s). The problem is that we'd have to parse them
+		// back to format that would be suitable for appendMessage().
+		//
+		// TODO: If the given message was plaintext, we could easily show what was
+		// actually sent.
 
-		for( QStringList::Iterator it = messages.begin(); it != messages.end(); ++it )
-		{
-			Kopete::Message msg(message.from(), message.to(), Kopete::Message::escape(sendMessage(*it)), message.direction(),
-			                    Kopete::Message::RichText, CHAT_VIEW, message.type());
-
-			msg.setBg(QColor());
-			msg.setFg(QColor());
-
-			appendMessage(msg);
-			manager(Kopete::Contact::CanCreate)->messageSucceeded();
-		}
+		sendMessage(*it);
 	}
-	else
-	{
-		message.setBody( Kopete::Message::escape(sendMessage( htmlString )), Kopete::Message::RichText );
 
-		message.setBg( QColor() );
-		message.setFg( QColor() );
+	if (message.requestedPlugin() != CHAT_VIEW) {
+		Kopete::Message msg(message.from(), message.to(), message.escapedBody(), message.direction(),
+				Kopete::Message::RichText, CHAT_VIEW, message.type());
 
-		appendMessage(message);
-		manager(Kopete::Contact::CanCreate)->messageSucceeded();
+		msg.setBg(QColor());
+		msg.setFg(QColor());
+
+		appendMessage(msg);
+	} else {
+		// Lets not modify the given message object.
+		Kopete::Message msg = message;
+		msg.setBg(QColor());
+		appendMessage(msg);
 	}
+
+	manager(Kopete::Contact::CanCreate)->messageSucceeded();
 }
 
-QString IRCContact::sendMessage( const QString &msg )
+QStringList IRCContact::sendMessage( const QString &msg )
 {
+	QStringList messages;
+
 	QString newMessage = msg;
-	uint trueLength = msg.length() + m_nickName.length() + 12;
-	if( trueLength > 512 )
-	{
-		//TODO: tell them it is truncated
-		kdWarning() << "Message was to long (" << trueLength << "), it has been truncated to 512 characters" << endl;
-		newMessage.truncate( 512 - ( m_nickName.length() + 12 ) );
-	}
 
-	kircEngine()->privmsg(m_nickName, newMessage );
+	// IRC limits the message size to 512 characters. So split the given
+	// message into pieces.
+	//
+	// This can of course give nasty results, but most of us dont write
+	// that long lines anyway ;-)... And this is how other clients also
+	// seem to behave.
 
-	return newMessage;
+	int l = 500 - m_nickName.length();
+
+	do {
+		messages.append(newMessage.mid(0, l));
+		newMessage.remove(0, l);
+	} while (!newMessage.isEmpty());
+
+	for (QStringList::const_iterator it = messages.begin();
+	     it != messages.end(); ++it)
+		kircEngine()->privmsg(m_nickName, *it);
+
+	return messages;
 }
 
 Kopete::Contact *IRCContact::locateUser(const QString &nick)
