@@ -165,6 +165,10 @@ QCString KSParser::_parse(const QCString &message)
 	chars += toAppend.length();
 	buff.writeBlock( toAppend.latin1(), toAppend.length() );
 
+	// Make sure we have enough room for NULL character.
+	if (data.size() < chars+1)
+		data.resize(chars+1);
+
 	data[chars] = '\0';
 
 	return data;
