@@ -1094,7 +1094,7 @@ void JabberContact::slotUserInfo ()
 	}
 	
 	// Update the vCard
-	slotGetTimedVCard();
+	//slotGetTimedVCard();
 
 	dlgJabberVCard *dlgVCard = new dlgJabberVCard ( account(), this, Kopete::UI::Global::mainWidget () );
 	
