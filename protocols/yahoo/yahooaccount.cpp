@@ -1127,7 +1127,6 @@ void YahooAccount::slotWebcamClosed( const QString& who, int reason )
 
 void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason)
 {
-kdDebug(14180) << k_funcinfo << "Setting status to :" << status.internalStatus() << " reason:" << reason << endl;
 	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline &&
 	     ( status.status() == Kopete::OnlineStatus::Online || status.status() == Kopete::OnlineStatus::Invisible ) )
 	{

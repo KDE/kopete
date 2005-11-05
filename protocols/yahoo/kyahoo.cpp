@@ -292,6 +292,7 @@ void YahooSession::getList()
 
 void YahooSession::keepalive()
 {
+	kdDebug(14181) << k_funcinfo << "Sending keepalive packet." << endl;
 	yahoo_keepalive( m_connId );
 }
 
