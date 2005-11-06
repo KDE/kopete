@@ -214,20 +214,32 @@ void KopeteApplication::slotAllPluginsLoaded()
 	if ( args->isSet( "connect" )  && KopetePrefs::prefs()->autoConnect() )
 		Kopete::AccountManager::self()->connectAll();
 
-	QCStringList connectArgs = args->getOptionList( "autoconnect" );
-	for ( QCStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
-	{
-		QString id = QString::fromLatin1( *i );
 
+	// Handle things like '--autoconnect foo,bar --autoconnect foobar'
+	QCStringList connectArgsC = args->getOptionList( "autoconnect" );
+	QStringList connectArgs;
+
+	for ( QCStringList::ConstIterator it = connectArgsC.begin(); it != connectArgsC.end(); ++it )
+	{
+		QStringList split = QStringList::split( ',', QString::fromLatin1( *it ) );
+
+		for ( QStringList::ConstIterator it2 = split.begin(); it2 != split.end(); ++it2 )
+		{
+			connectArgs.append( *it2 );
+		}
+	}
+	
+	for ( QStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
+	{
 		QRegExp rx( QString::fromLatin1( "([^\\|]*)\\|\\|(.*)" ) );
-		rx.search( id );
+		rx.search( *i );
 		QString protocolId = rx.cap( 1 );
 		QString accountId = rx.cap( 2 );
 
 		if ( accountId.isEmpty() )
 		{
 			if ( protocolId.isEmpty() )
-				accountId = id;
+				accountId = *i;
 			else
 				continue;
 		}
