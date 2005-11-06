@@ -901,7 +901,8 @@ void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
 	}
 
 	if ( m_tabBar )
-		m_tabBar->setTabIconSet( view, view->msgManager()->contactOnlineStatus( c ).iconFor( c ) );
+		m_tabBar->setTabIconSet( view, c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c ) :
+		                                   SmallIcon( view->msgManager()->protocol()->pluginIcon() ) );
 }
 
 void KopeteChatWindow::slotChatClosed()
