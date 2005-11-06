@@ -4,6 +4,7 @@
     Copyright (c) 2002-2005 by Olivier Goffart       <ogoffart @ kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
+    Copyright (c) 2005      by Michaël Larouche      <michael.larouche@kdemail.net>
 
     Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
@@ -19,17 +20,22 @@
 
 #include "chatmessagepart.h"
 
+// Qt includes
 #include <qclipboard.h>
 #include <qtooltip.h>
 #include <qrect.h>
 #include <qcursor.h>
 
+// KHTML::DOM includes
 #include <dom/dom_doc.h>
 #include <dom/dom_text.h>
 #include <dom/dom_element.h>
 #include <dom/html_base.h>
 #include <dom/html_document.h>
 #include <dom/html_inline.h>
+
+
+// KDE includes
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kdeversion.h>
@@ -45,7 +51,10 @@
 #include <ktempfile.h>
 #include <kurldrag.h>
 #include <kio/netaccess.h>
+#include <kstandarddirs.h>
+#include <kiconloader.h>
 
+// Kopete includes
 #include "chatmemberslistwidget.h"
 #include "kopetechatwindow.h"
 #include "kopetechatsession.h"
@@ -57,36 +66,7 @@
 #include "kopeteaccount.h"
 #include "kopeteglobal.h"
 #include "kopeteemoticons.h"
-
-
-#if !(KDE_IS_VERSION(3,3,90))
-//From  kdelibs/khtml/misc/htmltags.h
-//  used in ChatMessagePart::copy()
-#define ID_BLOCKQUOTE 12
-#define ID_BR 14
-#define ID_DD 22
-#define ID_DIV 26
-#define ID_DL 27
-#define ID_DT 28
-#define ID_H1 36
-#define ID_H2 37
-#define ID_H3 38
-#define ID_H4 39
-#define ID_H5 40
-#define ID_H6 41
-#define ID_HR 43
-#define ID_IMG 48
-#define ID_LI 57
-#define ID_OL 69
-#define ID_P 72
-#define ID_PRE 75
-#define ID_TD 90
-#define ID_TH 93
-#define ID_TR 96
-#define ID_TT 97
-#define ID_UL 99
-#endif
-
+#include "kopeteview.h"
 
 class ChatMessagePart::Private
 {
@@ -102,6 +82,25 @@ public:
 	QTimer refreshtimer;
 	bool transformAllMessages;
 	ToolTip *tt;
+
+	Kopete::ChatSession *manager;
+	unsigned long messageId;
+	QStringList messageMap;
+	bool scrollPressed;
+	bool bgChanged;
+
+	DOM::HTMLElement activeElement;
+
+	// FIXME: share
+	KTempFile *backgroundFile;
+	KRootPixmap *root;
+
+	KAction *copyAction;
+	KAction *saveAction;
+	KAction *printAction;
+	KAction *closeAction;
+	KAction *copyURLAction;
+
 };
 
 class ChatMessagePart::ToolTip : public QToolTip
@@ -159,16 +158,17 @@ private:
 
 
 ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, const char *name )
-	: KHTMLPart( parent, name ), m_manager( mgr ), d( new Private )
+	: KHTMLPart( parent, name ), d( new Private )
 {
+	d->manager = mgr;
 	d->xsltParser = new Kopete::XSLT( KopetePrefs::prefs()->styleContents() );
 	d->transformAllMessages = ( d->xsltParser->flags() & Kopete::XSLT::TransformAllMessages );
 
-	backgroundFile = 0;
-	root = 0;
-	messageId = 0;
-	bgChanged = false;
-	scrollPressed = false;
+	d->backgroundFile = 0;
+	d->root = 0;
+	d->messageId = 0;
+	d->bgChanged = false;
+	d->scrollPressed = false;
 
 	//Security settings, we don't need this stuff
 	setJScriptEnabled( false ) ;
@@ -210,11 +210,11 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	connect( &d->refreshtimer , SIGNAL(timeout()) , this, SLOT(slotRefreshNodes()));
 
 	//initActions
-	copyAction = KStdAction::copy( this, SLOT(copy()), actionCollection() );
-	saveAction = KStdAction::saveAs( this, SLOT(save()), actionCollection() );
-	printAction = KStdAction::print( this, SLOT(print()),actionCollection() );
-	closeAction = KStdAction::close( this, SLOT(slotCloseView()),actionCollection() );
-	copyURLAction = new KAction( i18n( "Copy Link Address" ), QString::fromLatin1( "editcopy" ), 0, this, SLOT( slotCopyURL() ), actionCollection() );
+	d->copyAction = KStdAction::copy( this, SLOT(copy()), actionCollection() );
+	d->saveAction = KStdAction::saveAs( this, SLOT(save()), actionCollection() );
+	d->printAction = KStdAction::print( this, SLOT(print()),actionCollection() );
+	d->closeAction = KStdAction::close( this, SLOT(slotCloseView()),actionCollection() );
+	d->copyURLAction = new KAction( i18n( "Copy Link Address" ), QString::fromLatin1( "editcopy" ), 0, this, SLOT( slotCopyURL() ), actionCollection() );
 
 	// read formatting override flags
 	readOverrides();
@@ -224,11 +224,11 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 
 ChatMessagePart::~ChatMessagePart()
 {
-	if( backgroundFile )
+	if( d->backgroundFile )
 	{
-		backgroundFile->close();
-		backgroundFile->unlink();
-		delete backgroundFile;
+		d->backgroundFile->close();
+		d->backgroundFile->unlink();
+		delete d->backgroundFile;
 	}
 
 	delete d->tt;
@@ -240,9 +240,9 @@ void ChatMessagePart::slotScrollingTo( int /*x*/, int y )
 {
 	int scrolledTo = y + view()->visibleHeight();
 	if ( scrolledTo >= ( view()->contentsHeight() - 10 ) )
-		scrollPressed = false;
+		d->scrollPressed = false;
 	else
-		scrollPressed = true;
+		d->scrollPressed = true;
 }
 
 void ChatMessagePart::save()
@@ -263,12 +263,12 @@ void ChatMessagePart::save()
 	if ( dlg.currentFilter() == QString::fromLatin1( "text/xml" ) )
 	{
 		stream << QString::fromLatin1( "<document>" );
-		stream << messageMap.join("\n");
+		stream << d->messageMap.join("\n");
 		stream << QString::fromLatin1( "</document>\n" );
 	}
 	else if ( dlg.currentFilter() == QString::fromLatin1( "text/plain" ) )
 	{
-		for( QStringList::Iterator it = messageMap.begin(); it != messageMap.end(); ++it)
+		for( QStringList::Iterator it = d->messageMap.begin(); it != d->messageMap.end(); ++it)
 		{
 			QDomDocument doc;
 			doc.setContent(*it);
@@ -307,7 +307,7 @@ void ChatMessagePart::slotOpenURLRequest(const KURL &url, const KParts::URLArgs 
 	kdDebug(14000) << k_funcinfo << "url=" << url.url() << endl;
 	if ( url.protocol() == QString::fromLatin1("kopetemessage") )
 	{
-		Kopete::Contact *contact = m_manager->account()->contacts()[ url.host() ];
+		Kopete::Contact *contact = d->manager->account()->contacts()[ url.host() ];
 		if ( contact )
 			contact->execute();
 	}
@@ -350,22 +350,22 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 	message.setFgOverride( d->fgOverride );
 	message.setRtfOverride( d->rtfOverride );
 
-	messageMap.append(  message.asXML().toString() );
+	d->messageMap.append(  message.asXML().toString() );
 
 	uint bufferLen = (uint)KopetePrefs::prefs()->chatViewBufferSize();
 
 	// transform all messages every time. needed for Adium style.
 	if(d->transformAllMessages)
 	{
-		while ( bufferLen>0 && messageMap.count() >= bufferLen )
-			messageMap.pop_front();
+		while ( bufferLen>0 && d->messageMap.count() >= bufferLen )
+			d->messageMap.pop_front();
 
 		d->refreshtimer.start(50,true); //let 50ms delay in the case several message are appended in the same time.
 	}
 	else
 	{
 		QDomDocument domMessage = message.asXML();
-		domMessage.documentElement().setAttribute( QString::fromLatin1( "id" ), QString::number( messageId ) );
+		domMessage.documentElement().setAttribute( QString::fromLatin1( "id" ), QString::number( d->messageId ) );
 		QString resultHTML = addNickLinks( d->xsltParser->transform( domMessage.toString() ) );
 
 		QString direction = ( message.plainBody().isRightToLeft() ? QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
@@ -375,13 +375,13 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 
 		htmlDocument().body().appendChild( newNode );
 
-		while ( bufferLen>0 && messageMap.count() >= bufferLen )
+		while ( bufferLen>0 && d->messageMap.count() >= bufferLen )
 		{
 			htmlDocument().body().removeChild( htmlDocument().body().firstChild() );
-			messageMap.pop_front();
+			d->messageMap.pop_front();
 		}
 
-		if ( !scrollPressed )
+		if ( !d->scrollPressed )
 			QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
 	}
 }
@@ -390,7 +390,7 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 {
 	QString retVal = html;
 
-	Kopete::ContactPtrList members = m_manager->members();
+	Kopete::ContactPtrList members = d->manager->members();
 	for ( QPtrListIterator<Kopete::Contact> it( members ); it.current(); ++it )
 	{
 		QString nick = (*it)->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
@@ -408,11 +408,11 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 				QRegExp( QString::fromLatin1("([\\s&;>])(%1)([\\s&;<:])")
 					.arg( QRegExp::escape( nick ) )  ),
 			QString::fromLatin1("\\1<a href=\"kopetemessage://%1/?protocolId=%2&accountId=%3\" class=\"KopeteDisplayName\">\\2</a>\\3")
-				.arg( (*it)->contactId(), m_manager->protocol()->pluginId(), m_manager->account()->accountId() )
+				.arg( (*it)->contactId(), d->manager->protocol()->pluginId(), d->manager->account()->accountId() )
 			);
 		}
 	}
-	QString nick = m_manager->myself()->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
+	QString nick = d->manager->myself()->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
 	retVal.replace( QRegExp( QString::fromLatin1("([\\s&;>])%1([\\s&;<:])")
 			.arg( QRegExp::escape( Kopete::Emoticons::parseEmoticons( nick ) ) )  ), QString::fromLatin1("\\1%1\\2").arg( nick ) );
 
@@ -425,7 +425,7 @@ void ChatMessagePart::slotRefreshNodes()
 	DOM::HTMLBodyElement bodyElement = htmlDocument().body();
 
 	QString xmlString = QString::fromLatin1( "<document>" );
-	xmlString += messageMap.join("\n");
+	xmlString += d->messageMap.join("\n");
 	xmlString += QString::fromLatin1( "</document>" );
 
 	d->xsltParser->transformAsync( xmlString, this, SLOT( slotTransformComplete( const QVariant & ) ) );
@@ -447,13 +447,13 @@ void ChatMessagePart::slotTransformComplete( const QVariant &result )
 {
 	htmlDocument().body().setInnerHTML( addNickLinks( result.toString() ) );
 
-	if ( !scrollPressed )
+	if ( !d->scrollPressed )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
 }
 
 void ChatMessagePart::keepScrolledDown()
 {
-	if ( !scrollPressed )
+	if ( !d->scrollPressed )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
 }
 
@@ -497,7 +497,7 @@ void ChatMessagePart::clear()
 	while ( body.hasChildNodes() )
 		body.removeChild( body.childNodes().item( body.childNodes().length() - 1 ) );
 
-	messageMap.clear();
+	d->messageMap.clear();
 }
 
 Kopete::Contact *ChatMessagePart::contactFromNode( const DOM::Node &n ) const
@@ -517,14 +517,14 @@ Kopete::Contact *ChatMessagePart::contactFromNode( const DOM::Node &n ) const
 	if ( element.hasAttribute( "contactid" ) )
 	{
 		QString contactId = element.getAttribute( "contactid" ).string();
-		for ( QPtrListIterator<Kopete::Contact> it ( m_manager->members() ); it.current(); ++it )
+		for ( QPtrListIterator<Kopete::Contact> it ( d->manager->members() ); it.current(); ++it )
 			if ( (*it)->contactId() == contactId )
 				return *it;
 	}
 	else
 	{
 		QString nick = element.innerText().string().stripWhiteSpace();
-		for ( QPtrListIterator<Kopete::Contact> it ( m_manager->members() ); it.current(); ++it )
+		for ( QPtrListIterator<Kopete::Contact> it ( d->manager->members() ); it.current(); ++it )
 			if ( (*it)->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString() == nick )
 				return *it;
 	}
@@ -540,39 +540,39 @@ void ChatMessagePart::slotRightClick( const QString &, const QPoint &point )
 		activeNode = activeNode.parentNode();
 
 	// make sure it's valid
-	activeElement = activeNode;
-	if ( activeElement.isNull() )
+	d->activeElement = activeNode;
+	if ( d->activeElement.isNull() )
 		return;
 
 	KPopupMenu *chatWindowPopup = 0L;
 
-	if ( Kopete::Contact *contact = contactFromNode( activeElement ) )
+	if ( Kopete::Contact *contact = contactFromNode( d->activeElement ) )
 	{
-		chatWindowPopup = contact->popupMenu( m_manager );
+		chatWindowPopup = contact->popupMenu( d->manager );
 		connect( chatWindowPopup, SIGNAL( aboutToHide() ), chatWindowPopup , SLOT( deleteLater() ) );
 	}
 	else
 	{
 		chatWindowPopup = new KPopupMenu();
 
-		if ( activeElement.className() == "KopeteDisplayName" )
+		if ( d->activeElement.className() == "KopeteDisplayName" )
 		{
 			chatWindowPopup->insertItem( i18n( "User Has Left" ), 1 );
 			chatWindowPopup->setItemEnabled( 1, false );
 			chatWindowPopup->insertSeparator();
 		}
-		else if ( activeElement.tagName().lower() == QString::fromLatin1( "a" ) )
+		else if ( d->activeElement.tagName().lower() == QString::fromLatin1( "a" ) )
 		{
-			copyURLAction->plug( chatWindowPopup );
+			d->copyURLAction->plug( chatWindowPopup );
 			chatWindowPopup->insertSeparator();
 		}
 
-		copyAction->setEnabled( hasSelection() );
-		copyAction->plug( chatWindowPopup );
-		saveAction->plug( chatWindowPopup );
-		printAction->plug( chatWindowPopup );
+		d->copyAction->setEnabled( hasSelection() );
+		d->copyAction->plug( chatWindowPopup );
+		d->saveAction->plug( chatWindowPopup );
+		d->printAction->plug( chatWindowPopup );
 		chatWindowPopup->insertSeparator();
-		closeAction->plug( chatWindowPopup );
+		d->closeAction->plug( chatWindowPopup );
 
 		connect( chatWindowPopup, SIGNAL( aboutToHide() ), chatWindowPopup, SLOT( deleteLater() ) );
 		chatWindowPopup->popup( point );
@@ -627,7 +627,7 @@ QString ChatMessagePart::textUnderMouse()
 
 void ChatMessagePart::slotCopyURL()
 {
-	DOM::HTMLAnchorElement a = activeElement;
+	DOM::HTMLAnchorElement a = d->activeElement;
 	if ( !a.isNull() )
 	{
 		QApplication::clipboard()->setText( a.href().string(), QClipboard::Clipboard );
@@ -655,123 +655,13 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 	QString text;
 	QString htmltext;
 
-#if KDE_IS_VERSION(3,3,90)
 	htmltext = selectedTextAsHTML();
 	text = selectedText();
 	//selectedText is now sufficent
 //	text=Kopete::Message::unescape( htmltext ).stripWhiteSpace();
 	// Message::unsescape will replace image by his title attribute
 	// stripWhiteSpace is for removing the newline added by the <!DOCTYPE> and other xml things of RangeImpl::toHTML
-#else
 
-	DOM::Node startNode, endNode;
-	long startOffset, endOffset;
-	selection( startNode, startOffset, endNode, endOffset );
-
-	//BEGIN: copied from KHTMLPart::selectedText
-
-	bool hasNewLine = true;
-	DOM::Node n = startNode;
-	while(!n.isNull())
-	{
-		if(n.nodeType() == DOM::Node::TEXT_NODE /*&& n.handle()->renderer()*/)
-		{
-			QString str = n.nodeValue().string();
-			hasNewLine = false;
-			if(n == startNode && n == endNode)
-				text = str.mid(startOffset, endOffset - startOffset);
-			else if(n == startNode)
-				text = str.mid(startOffset);
-			else if(n == endNode)
-				text += str.left(endOffset);
-			else
-				text += str;
-		}
-		else
-		{ // This is our simple HTML -> ASCII transformation:
-			unsigned short id = n.elementId();
-			switch(id)
-			{
-			case ID_IMG: //here is the main difference with KHTMLView::selectedText
-			{
-				DOM::HTMLElement e = n;
-				if( !e.isNull() && e.hasAttribute( "title" ) )
-					text+=e.getAttribute( "title" ).string();
-				break;
-			}
-			case ID_BR:
-				text += "\n";
-				hasNewLine = true;
-				break;
-			case ID_TD:  case ID_TH:  case ID_HR:
-			case ID_OL:  case ID_UL:  case ID_LI:
-			case ID_DD:  case ID_DL:  case ID_DT:
-			case ID_PRE: case ID_BLOCKQUOTE: case ID_DIV:
-				if (!hasNewLine)
-					text += "\n";
-				hasNewLine = true;
-				break;
-			case ID_P:   case ID_TR:
-			case ID_H1:  case ID_H2:  case ID_H3:
-			case ID_H4:  case ID_H5:  case ID_H6:
-				if (!hasNewLine)
-					text += "\n";
-				text += "\n";
-				hasNewLine = true;
-				break;
-			}
-		}
-		if(n == endNode)
-			break;
-		DOM::Node next = n.firstChild();
-		if(next.isNull())
-			next = n.nextSibling();
-		while( next.isNull() && !n.parentNode().isNull() )
-		{
-			n = n.parentNode();
-			next = n.nextSibling();
-			unsigned short id = n.elementId();
-			switch(id)
-			{
-			case ID_TD:  case ID_TH:  case ID_HR:
-			case ID_OL:  case ID_UL:  case ID_LI:
-			case ID_DD:  case ID_DL:  case ID_DT:
-			case ID_PRE: case ID_BLOCKQUOTE:  case ID_DIV:
-				if (!hasNewLine)
-					text += "\n";
-				hasNewLine = true;
-				break;
-			case ID_P:   case ID_TR:
-			case ID_H1:  case ID_H2:  case ID_H3:
-			case ID_H4:  case ID_H5:  case ID_H6:
-				if (!hasNewLine)
-					text += "\n";
-				text += "\n";
-				hasNewLine = true;
-				break;
-			}
-		}
-		n = next;
-	}
-
-	if(text.isEmpty())
-		return;
-
-	int start = 0;
-	int end = text.length();
-
-	// Strip leading LFs
-	while ((start < end) && (text[start] == '\n'))
-		start++;
-
-	// Strip excessive trailing LFs
-	while ((start < (end-1)) && (text[end-1] == '\n') && (text[end-2] == '\n'))
-		end--;
-
-	text=text.mid(start, end-start);
-
-	//END: copied from KHTMLPart::selectedText
-#endif
 	if(text.isEmpty()) return;
 
 	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), this, SLOT( slotClearSelection()));
@@ -813,34 +703,34 @@ void ChatMessagePart::slotTransparencyChanged()
 
 	if ( d->transparencyEnabled )
 	{
-		if ( !root )
+		if ( !d->root )
 		{
 //			kdDebug(14000) << k_funcinfo << "enabling transparency" << endl;
-			root = new KRootPixmap( view() );
-			connect(root, SIGNAL( backgroundUpdated( const QPixmap & ) ), this, SLOT( slotUpdateBackground( const QPixmap & ) ) );
-			root->setCustomPainting( true );
-			root->setFadeEffect( KopetePrefs::prefs()->transparencyValue() * 0.01, KopetePrefs::prefs()->transparencyColor() );
-			root->start();
+			d->root = new KRootPixmap( view() );
+			connect(d->root, SIGNAL( backgroundUpdated( const QPixmap & ) ), this, SLOT( slotUpdateBackground( const QPixmap & ) ) );
+			d->root->setCustomPainting( true );
+			d->root->setFadeEffect( KopetePrefs::prefs()->transparencyValue() * 0.01, KopetePrefs::prefs()->transparencyColor() );
+			d->root->start();
 		}
 		else
 		{
-			root->setFadeEffect( KopetePrefs::prefs()->transparencyValue() * 0.01, KopetePrefs::prefs()->transparencyColor() );
-			root->repaint( true );
+			d->root->setFadeEffect( KopetePrefs::prefs()->transparencyValue() * 0.01, KopetePrefs::prefs()->transparencyColor() );
+			d->root->repaint( true );
 		}
 	}
 	else
 	{
-		if ( root )
+		if ( d->root )
 		{
 //			kdDebug(14000) << k_funcinfo << "disabling transparency" << endl;
-			delete root;
-			root = 0;
-			if( backgroundFile )
+			delete d->root;
+			d->root = 0;
+			if( d->backgroundFile )
 			{
-				backgroundFile->close();
-				backgroundFile->unlink();
-				delete backgroundFile;
-				backgroundFile = 0;
+				d->backgroundFile->close();
+				d->backgroundFile->unlink();
+				delete d->backgroundFile;
+				d->backgroundFile = 0;
 			}
 			executeScript( QString::fromLatin1("document.body.background = \"\";") );
 		}
@@ -849,29 +739,29 @@ void ChatMessagePart::slotTransparencyChanged()
 
 void ChatMessagePart::slotUpdateBackground( const QPixmap &pixmap )
 {
-	if( backgroundFile )
+	if( d->backgroundFile )
 	{
-		backgroundFile->close();
-		backgroundFile->unlink();
-		delete backgroundFile;
+		d->backgroundFile->close();
+		d->backgroundFile->unlink();
+		delete d->backgroundFile;
 	}
 
-	backgroundFile = new KTempFile( QString::null, QString::fromLatin1( ".bmp" ) );
-	pixmap.save( backgroundFile->name(), "BMP" );
+	d->backgroundFile = new KTempFile( QString::null, QString::fromLatin1( ".bmp" ) );
+	pixmap.save( d->backgroundFile->name(), "BMP" );
 
-	bgChanged = true;
+	d->bgChanged = true;
 
 	//This doesn't work well using the DOM, so just use some JS
-	if ( bgChanged && backgroundFile && !backgroundFile->name().isNull() )
+	if ( d->bgChanged && d->backgroundFile && !d->backgroundFile->name().isNull() )
 	{
 		setJScriptEnabled( true ) ;
-		executeScript( QString::fromLatin1( "document.body.background = \"%1\";" ).arg( backgroundFile->name() ) );
+		executeScript( QString::fromLatin1( "document.body.background = \"%1\";" ).arg( d->backgroundFile->name() ) );
 		setJScriptEnabled( false ) ;
 	}
 
-	bgChanged = false;
+	d->bgChanged = false;
 
-	if ( !scrollPressed )
+	if ( !d->scrollPressed )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
 }
 
@@ -882,7 +772,7 @@ void ChatMessagePart::khtmlDrawContentsEvent( khtml::DrawContentsEvent * event) 
 }
 void ChatMessagePart::slotCloseView( bool force )
 {
-	m_manager->view()->closeView( force );
+	d->manager->view()->closeView( force );
 }
 
 void ChatMessagePart::emitTooltipEvent(  const QString &textUnderMouse, QString &toolTip )

@@ -19,19 +19,19 @@
 #define CHATMESSAGEPART_H
 
 #include <khtml_part.h>
-
 #include <dom/html_element.h>
 
 #include <qptrdict.h>
 #include <qvaluelist.h>
 #include <qpair.h>
 
-#include "kopeteview.h"
-
-class KTempFile;
-class KRootPixmap;
-namespace DOM { class Node; }
-namespace Kopete { class ChatSession; }
+namespace Kopete
+{ 
+	class Message; 
+	class ChatSession; 
+	class Contact; 
+}
+class KPopupMenu;
 
 /**
  * @author Richard Smith
@@ -138,26 +138,6 @@ protected:
 	virtual void khtmlDrawContentsEvent( khtml::DrawContentsEvent * );
 	
 private:
-	Kopete::ChatSession *m_manager;
-
-	unsigned long messageId;
-	QStringList messageMap;
-
-	bool scrollPressed;
-	bool bgChanged;
-
-	DOM::HTMLElement activeElement;
-
-	// FIXME: share
-	KTempFile *backgroundFile;
-	KRootPixmap *root;
-
-	KAction *copyAction;
-	KAction *saveAction;
-	KAction *printAction;
-	KAction *closeAction;
-	KAction *copyURLAction;
-
 	void readOverrides();
 
 	const QString styleHTML() const;
