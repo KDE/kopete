@@ -111,7 +111,10 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 
 	// ICQ does not support status messages for state Online
 	if ( presence.type() == ICQ::Presence::Online )
+	{
+		mAccount->engine()->removeICQAwayMessageRequest( contactId() );
 		removeProperty( mProtocol->awayMessage );
+	}
 	else
 	{
 		if ( ICQ::Presence::fromOnlineStatus( account()->myself()->onlineStatus() ).visibility() == ICQ::Presence::Visible )
@@ -119,23 +122,27 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 			switch ( presence.type() )
 			{
 			case ICQ::Presence::Away:
-				mAccount->engine()->requestICQAwayMessage( contactId(), Client::ICQAway );
+				mAccount->engine()->addICQAwayMessageRequest( contactId(), Client::ICQAway );
 				break;
 			case ICQ::Presence::NotAvailable:
-				mAccount->engine()->requestICQAwayMessage( contactId(), Client::ICQNotAvailable );
+				mAccount->engine()->addICQAwayMessageRequest( contactId(), Client::ICQNotAvailable );
 				break;
 			case ICQ::Presence::Occupied:
-				mAccount->engine()->requestICQAwayMessage( contactId(), Client::ICQOccupied );
+				mAccount->engine()->addICQAwayMessageRequest( contactId(), Client::ICQOccupied );
 				break;
 			case ICQ::Presence::DoNotDisturb:
-				mAccount->engine()->requestICQAwayMessage( contactId(), Client::ICQDoNotDisturb );
+				mAccount->engine()->addICQAwayMessageRequest( contactId(), Client::ICQDoNotDisturb );
 				break;
 			case ICQ::Presence::FreeForChat:
-				mAccount->engine()->requestICQAwayMessage( contactId(), Client::ICQFreeForChat );
+				mAccount->engine()->addICQAwayMessageRequest( contactId(), Client::ICQFreeForChat );
 				break;
 			default:
 				break;
 			}
+		}
+		else
+		{
+			mAccount->engine()->removeICQAwayMessageRequest( contactId() );
 		}
 	}
 		
