@@ -28,9 +28,6 @@
 #include <kurl.h>
 #include <kglobal.h>
 
-namespace Kopete
-{
-
 class ChatWindowStyleManager::Private
 {
 public:
@@ -126,6 +123,4 @@ void ChatWindowStyleManager::slotDirectoryFinished()
 	}
 }
 
-} // end namespace Kopete
-
-#include "kopetechatwindowstylemanager.moc" 
+#include "kopetechatwindowstylemanager.moc"

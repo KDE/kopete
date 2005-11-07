@@ -22,8 +22,6 @@
 #include <kfileitem.h>
 #include <kopete_export.h>
 
-namespace Kopete
-{
 /**
  * Sigleton class that create all the ChatWindowStyle objects.
  * This class list all the available styles in $KDEDATADIR/kopete/styles
@@ -68,5 +66,4 @@ private:
 	Private *d;
 };
 
-}
 #endif
