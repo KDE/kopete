@@ -1268,6 +1268,7 @@ default_presentation=2
 [buzz_nudge]
 Name=Buzz/Nudge
 Name[bg]=Сбутване
+Name[cs]=Štouchanec
 Name[da]=Påringning/luk
 Name[es]=Zumbido
 Name[et]=Mõmin/müks
@@ -1285,6 +1286,7 @@ Name[xx]=xxBuzz/Nudgexx
 Name[zh_CN]=闪屏振动
 Comment=A contact has sent you a buzz/nudge.
 Comment[bg]=Контакт Ви изпрати сбутване
+Comment[cs]=Osoba vám poslala šťouchanec :-)
 Comment[da]=En kontakt har sendt dig en buzz/nudge.
 Comment[de]=Ein Benutzer macht auf sich aufmerksam.
 Comment[es]=Un contacto le ha mandado un zumbido
