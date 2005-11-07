@@ -1004,6 +1004,7 @@ GroupWiseContact * GroupWiseAccount::createTemporaryContact( const QString & dn 
 		metaContact->setDisplayName( displayName );
 		c = new GroupWiseContact( this, details.dn, metaContact, 0, 0, 0 );
 		c->updateDetails( details );
+		c->setProperty( Kopete::Global::Properties::self()->nickName(), protocol()->dnToDotted( details.dn ) );
 		Kopete::ContactList::self()->addMetaContact( metaContact );
 		// the contact details probably don't contain status - but we can ask for it
 		if ( details.status == GroupWise::Invalid && isConnected() )
