@@ -46,7 +46,6 @@
 #include "kopeteprefs.h"
 #include "kopeteviewmanager.h"
 #include "videodevice.h"
-#include "kopetechatwindowstylemanager.h"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -118,9 +117,6 @@ void KopeteApplication::slotLoadPlugins()
 
 	Kopete::AccountManager::self()->load();
 	Kopete::ContactList::self()->load();
-
-	// Load all chat window styles
-	Kopete::ChatWindowStyleManager::self()->load();
 
 	KConfig *config = KGlobal::config();
 
