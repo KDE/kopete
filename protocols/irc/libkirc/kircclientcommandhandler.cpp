@@ -56,7 +56,6 @@ ClientCommandHandler::~ClientCommandHandler()
 void ClientCommandHandler::handleMessage( KIRC::Message &msg )
 {
 /*
-	KIRC::MessageRedirector *mr;
 	QStringList errors;
 
 	if (msg.isNumeric())
@@ -76,6 +75,8 @@ void ClientCommandHandler::handleMessage( KIRC::Message &msg )
 	}
 	else
 		mr = d->commands[ msg.command() ];
+
+	CommandHandler::handleMessage(msg);
 
 	if (mr)
 	{

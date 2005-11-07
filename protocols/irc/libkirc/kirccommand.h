@@ -66,7 +66,7 @@ public slots:
 	/**
 	 * Attempt to send the message.
 	 */
-	virtual void invoke(KIRC::Message msg);
+	virtual void handleMessage(KIRC::Message msg);
 
 signals:
 	void redirect(KIRC::Message);

@@ -18,7 +18,7 @@
 #ifndef KIRC_COMMANDHANDLER_H
 #define KIRC_COMMANDHANDLER_H
 
-#include <QObject>
+#include "kircmessage.h"
 
 namespace KIRC
 {
@@ -40,13 +40,13 @@ public slots:
 	/**
 	 * Connects the given object member signal/slot to this message redirector.
 	 * The member signal slot should be looking like:
-	 * SIGNAL(mysignal(KIRC::Message &msg))
+	 * SIGNAL(mysignal(KIRC::Message msg))
 	 * or
-	 * SIGNAL(myslot(KIRC::Message &msg))
+	 * SIGNAL(myslot(KIRC::Message msg))
 	 */
 	Command *registerCommand(const QString &name, QObject *object, const char *member);
 
-//	virtual void handleMessage(KIRC::Message &msg);
+	virtual void handleMessage(KIRC::Message msg);
 
 	void unregisterCommand(Command *command);
 

@@ -17,14 +17,15 @@
 
 #include "kirccommandhandler.moc"
 
+#include "kirccommand.h"
 #include "kircsocket.h"
 
-#include <QMultiMap>
+#include <QMultiHash>
 
 class KIRC::CommandHandler::Private 
 {
 public:
-	QMultiMap<QString, Command *> registry;
+	QMultiHash<QString, Command *> commands;
 };
 
 using namespace KIRC;
@@ -47,11 +48,21 @@ Command *CommandHandler::registerCommand(const QString &name, Command *command)
 Command *CommandHandler::registerCommand(const QString &name, QObject *object, const char *member)
 {
 }
-/*
-void CommandHandler::handleMessage(Message &msg)
+
+void CommandHandler::handleMessage(Message msg)
 {
+	QList<Command *> commands = d->commands.values(msg.command());
+	if (commands.isEmpty())
+	{
+//		emit unhandledMessage(msg);
+	}
+	else
+	{
+		foreach(Command *command, commands)
+			command->handleMessage(msg);
+	}
 }
-*/
+
 void CommandHandler::unregisterCommand(Command *command)
 {
 }

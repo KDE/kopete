@@ -49,7 +49,7 @@ void Command::setHelp(const QString &helpMessage)
 	d->helpMessage = helpMessage;
 }
 
-void Command::invoke(Message msg)
+void Command::handleMessage(Message msg)
 {
 	if (checkValidity(msg))
 		emit redirect(msg);

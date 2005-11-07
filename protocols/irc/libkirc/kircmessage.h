@@ -23,7 +23,6 @@
 #include "kdemacros.h"
 
 //#include <QList> // From QStringList
-#include <QObject>
 #include <QSharedDataPointer>
 #include <QStringList>
 
@@ -41,26 +40,7 @@ namespace KIRC
 class Socket;
 
 class Message
-	: public QObject
 {
-	Q_OBJECT
-
-//	Q_PROPERTY(Direction direction READ direction WRITE setDirection)
-
-	Q_PROPERTY(QByteArray rawLine READ rawLine)
-	Q_PROPERTY(QByteArray rawPrefix READ rawPrefix WRITE setPrefix)
-	Q_PROPERTY(QByteArray rawCommand READ rawCommand WRITE setCommand)
-//	Q_PROPERTY(QByteArrayList rawArgList )
-	Q_PROPERTY(QByteArray rawSuffix READ rawSuffix WRITE setSuffix)
-
-//	Q_PROPERTY(QString line READ line READ setLine)
-	Q_PROPERTY(QString prefix READ prefix WRITE setPrefix)
-	Q_PROPERTY(QString command READ command WRITE setCommand)
-//	Q_PROPERTY(QStringList argList READ argList WRITE setArgList)
-	Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
-
-	Q_ENUMS(Direction)
-
 public:
 	typedef enum
 	{
@@ -87,37 +67,46 @@ public:
 	Message &operator = (const KIRC::Message &o);
 
 public: // Properties read accessors
+	KIRC::Socket *socket() const;
+	KIRC::Message &setSocket(Socket *);
+
 	Direction direction() const;
-
-	QByteArray rawLine() const;
-	QByteArray rawPrefix() const;
-	QByteArray rawCommand() const;
-	QByteArray rawArgs() const;
-	QByteArrayList rawArgList() const;
-	QByteArray rawSuffix() const;
-
-//	QString line(QTextCodec *codec = 0) const;
-	QString prefix(QTextCodec *codec = 0) const;
-	QString command(QTextCodec *codec = 0) const;
-	QString args(QTextCodec *codec = 0) const;
-	QStringList argList(QTextCodec *codec = 0) const;
-	QString suffix(QTextCodec *codec = 0) const;
-
-public slots: // Properties write accessors
 	KIRC::Message &setDirection(KIRC::Message::Direction direction);
 
+	QByteArray rawLine() const;
 	KIRC::Message &setLine(const QByteArray &);
+
+	QByteArray rawPrefix() const;
 	KIRC::Message &setPrefix(const QByteArray &);
+
+	QByteArray rawCommand() const;
 	KIRC::Message &setCommand(const QByteArray &);
+
+	QByteArray rawArgs() const;
 	KIRC::Message &setArgs(const QByteArray &);
+
+	QByteArrayList rawArgList() const;
 	KIRC::Message &setArgList(const QByteArrayList &);
+
+	QByteArray rawSuffix() const;
 	KIRC::Message &setSuffix(const QByteArray &);
 
+//	QString line(QTextCodec *codec = 0) const;
 //	KIRC::Message &setLine(const QString &, QTextCodec *codec = 0);
+
+	QString prefix(QTextCodec *codec = 0) const;
 	KIRC::Message &setPrefix(const QString &, QTextCodec *codec = 0);
+
+	QString command(QTextCodec *codec = 0) const;
 	KIRC::Message &setCommand(const QString &, QTextCodec *codec = 0);
+
+	QString args(QTextCodec *codec = 0) const;
 	KIRC::Message &setArgs(const QString &, QTextCodec *codec = 0);
+
+	QStringList argList(QTextCodec *codec = 0) const;
 	KIRC::Message &setArgList(const QStringList &, QTextCodec *codec = 0);
+
+	QString suffix(QTextCodec *codec = 0) const;
 	KIRC::Message &setSuffix(const QString &, QTextCodec *codec = 0);
 
 public:

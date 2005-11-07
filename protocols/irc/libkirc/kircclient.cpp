@@ -59,10 +59,6 @@ Client::Client(QObject *parent)
 
 //	d->entities << d->server << d->self;
 
-//	bindCommands();
-//	bindNumericReplies();
-//	bindCtcp();
-
 //	d->versionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
 //	d->userString = QString::fromLatin1("Response not supplied by user.");
 //	d->sourceString = QString::fromLatin1("Unknown client, known source.");
@@ -152,47 +148,6 @@ void Client::authentify()
 	StdCommands::nick(this, url.queryItem(URL_NICKNAME));
 }
 
-/*
- * The ctcp commands seems to follow the same message behaviours has normal IRC command.
- * (Only missing the \n\r final characters)
- * So applying the same parsing rules to the messages.
- */
-/*
-bool Client::invokeCtcpCommandOfMessage(const QMap<QString, MessageRedirector *> &map, Message &msg)
-{
-//	appendMessage( i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived) );
-
-	if(msg.hasCtcpMessage() && msg.ctcpMessage().isValid())
-	{
-		Message &ctcpMsg = msg.ctcpMessage();
-
-		MessageRedirector *mr = map[ctcpMsg.command()];
-		if (mr)
-		{
-			QStringList errors = mr->operator()(msg);
-
-			if (errors.isEmpty())
-				return true;
-
-//			kdDebug(14120) << "Method error for line:" << ctcpMsg.raw();
-//			writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(),
-//				QString::fromLatin1("%1 internal error(s)").arg(errors.size()));
-		}
-		else
-		{
-//			kdDebug(14120) << "Unknow IRC/CTCP command for line:" << ctcpMsg.raw();
-//			writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(), "Unknown CTCP command");
-
-//			emit incomingUnknownCtcp(msg.ctcpRaw());
-		}
-	}
-	else
-	{
-//		kdDebug(14120) << "Message do not embed a CTCP message:" << msg.raw();
-	}
-	return false;
-}
-*/
 Entity::Ptr Client::server()
 {
 	return d->server;

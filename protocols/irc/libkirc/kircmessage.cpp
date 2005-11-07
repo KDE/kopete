@@ -17,10 +17,11 @@
 
 #include "kircmessage.h"
 
-//#include "kircclient.h"
+#include "kircsocket.h"
 
 #include <kdebug.h>
 
+#include <QPointer>
 #include <QSharedData>
 #include <QTextCodec>
 
@@ -54,6 +55,7 @@ public:
 		  dirty(false)
 	{ }
 
+	QPointer<KIRC::Socket> socket;
 	KIRC::Message::Direction direction;
 
 	QByteArray line;
@@ -182,6 +184,17 @@ Message::~Message()
 Message &Message::operator = (const Message &o)
 {
 	d = o.d;
+	return *this;
+}
+
+Socket *Message::socket() const
+{
+	return d->socket;
+}
+
+Message &Message::setSocket(Socket *socket)
+{
+	d->socket = socket;
 	return *this;
 }
 
@@ -440,9 +453,10 @@ QTextCodec *Message::checkCodec(QTextCodec *codec) const
 	if (codec)
 		return codec;
 
+//	if (d->engine)
 //	return entityFromPrefix()->codec();
-	Q_ASSERT(0);
-	return 0;
+
+	return UTF8;
 }
 
 /* Return true if the given string is a special command string
@@ -483,6 +497,5 @@ bool Message::extractCtcpCommand()
 */
 	return false;
 }
-#endif // KIRC_STRICT
+#endif
 
-#include "kircmessage.moc"
