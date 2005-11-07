@@ -59,6 +59,15 @@ ClientCommands::~ClientCommands()
 	delete d;
 }
 
+void ClientCommands::receivedServerMessage(KIRC::Message &msg)
+{
+	receivedServerMessage(msg, msg.suffix());
+}
+
+void ClientCommands::receivedServerMessage(KIRC::Message &msg, const QString &message)
+{
+//	emit receivedMessage(InfoMessage, msg.prefix(), Entity::List(), message);
+}
 /*
 void ClientCommands::registerStandardCommands(CommandManager *cm)
 {

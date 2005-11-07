@@ -444,9 +444,10 @@ void IRCProtocol::slotMessageFilter(Message &msg)
 		msg.setBody( messageText, Message::RichText );
 	}
 }
-/*
-QPtrList<KAction> *IRCProtocol::customChatWindowPopupActions(const Message &m, DOM::Node &n)
+
+QList<KAction *> *IRCProtocol::customChatWindowPopupActions(const Message &m, DOM::Node &n)
 {
+/*
 	DOM::HTMLElement e = n;
 
 	//isNull checks that the cast was successful
@@ -458,10 +459,10 @@ QPtrList<KAction> *IRCProtocol::customChatWindowPopupActions(const Message &m, D
 //			return activeAccount->contactManager()->findChannel(
 //				e.innerText().string() )->customContextMenuActions();
 	}
-
+*/
 	return 0;
 }
-*/
+
 AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent, Account *account)
 {
 //	return new IRCAddContactPage(parent,static_cast<IRCAccount*>(account));

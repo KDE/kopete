@@ -34,6 +34,7 @@ public:
 	CommandHandler(QObject *parent = 0);
 	~CommandHandler();
 
+public slots:
 	Command *registerCommand(const QString &name, Command *command);
 
 	/**
@@ -44,6 +45,8 @@ public:
 	 * SIGNAL(myslot(KIRC::Message &msg))
 	 */
 	Command *registerCommand(const QString &name, QObject *object, const char *member);
+
+//	virtual void handleMessage(KIRC::Message &msg);
 
 	void unregisterCommand(Command *command);
 

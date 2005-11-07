@@ -47,8 +47,12 @@ Command *CommandHandler::registerCommand(const QString &name, Command *command)
 Command *CommandHandler::registerCommand(const QString &name, QObject *object, const char *member)
 {
 }
-
-void unregisterCommand(Command *command)
+/*
+void CommandHandler::handleMessage(Message &msg)
+{
+}
+*/
+void CommandHandler::unregisterCommand(Command *command)
 {
 }
 

@@ -152,53 +152,6 @@ void Client::authentify()
 	StdCommands::nick(this, url.queryItem(URL_NICKNAME));
 }
 
-void Client::onReceivedMessage( KIRC::Message &msg )
-{
-/*
-	KIRC::MessageRedirector *mr;
-	QStringList errors;
-
-	if (msg.isNumeric())
-	{
-		if (d->FailedNickOnLogin)
-		{
-			// this is if we had a "Nickname in use" message when connecting and we set another nick.
-			// This signal emits that the nick was accepted and we are now logged in
-//			emit successfullyChangedNick(d->Nickname, d->PendingNick);
-			d->Nickname = d->PendingNick;
-			d->FailedNickOnLogin = false;
-		}
-//		mr = d->numericCommands[ msg.command().toInt() ];
-		// we do this conversion because some dummy servers sends 1 instead of 001
-		// numbers are stored as "1" instead of "001" to make convertion faster (no 0 pading).
-		mr = d->commands[ QString::number(msg.command().toInt()) ];
-	}
-	else
-		mr = d->commands[ msg.command() ];
-
-	if (mr)
-	{
-//		errors = mr->operator()(msg);
-	}
-	else if (msg.isNumeric())
-	{
-//		kdWarning(14120) << "Unknown IRC numeric reply for line:" << msg.raw() << endl;
-//		emit incomingUnknown(msg.raw());
-	}
-	else
-	{
-//		kdWarning(14120) << "Unknown IRC command for line:" << msg.raw() << endl;
-//		emit internalError(UnknownCommand, msg);
-	}
-
-	if (!errors.isEmpty())
-	{
-//		kdDebug(14120) << "Method error for line:" << msg.raw() << endl;
-//		emit internalError(MethodFailed, msg);
-	}
-*/
-}
-
 /*
  * The ctcp commands seems to follow the same message behaviours has normal IRC command.
  * (Only missing the \n\r final characters)
@@ -249,19 +202,5 @@ ClientCommandHandler *Client::clientCommandHandler()
 {
 //	return dynamic_cast<ClientCommandHandler *>(commandHandler());
 	return 0;
-}
-
-void Client::ignoreMessage(KIRC::Message &/*msg*/)
-{
-}
-
-void Client::receivedServerMessage(KIRC::Message &msg)
-{
-	receivedServerMessage(msg, msg.suffix());
-}
-
-void Client::receivedServerMessage(KIRC::Message &msg, const QString &message)
-{
-//	emit receivedMessage(InfoMessage, msg.prefix(), Entity::List(), message);
 }
 

@@ -77,12 +77,6 @@ signals:
 private slots:
 	void authentify();
 
-	void onReceivedMessage( KIRC::Message &msg );
-
-	void ignoreMessage(KIRC::Message &msg);
-	void receivedServerMessage(KIRC::Message &msg); // emit the suffix of the message.
-	void receivedServerMessage(KIRC::Message &msg, const QString &message);
-
 private:
 	Q_DISABLE_COPY(Client)
 

@@ -225,7 +225,12 @@ QTextCodec *IRCContact::codec()
 	return codec;
 }
 
-ChatSession *IRCContact::chatSessionCreate(ChatSessionType type)
+ChatSession *IRCContact::manager(CanCreateFlags create)
+{
+	return chatSession(IRC::SERVER, create);
+}
+
+ChatSession *IRCContact::chatSession(IRC::ChatSessionType type, CanCreateFlags create)
 {
 	IRCAccount *account = ircAccount();
 	KIRC::Client *engine = kircClient();

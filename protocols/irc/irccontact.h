@@ -85,7 +85,7 @@ public:
 	bool isChatting( Kopete::ChatSession *avoid = 0L ) const;
 
 	Kopete::ChatSession *manager(CanCreateFlags cancreate = CannotCreate);
-	Kopete::ChatSession *chatSessionCreate(IRC::ChatSessionType type = IRC::SERVER);
+	Kopete::ChatSession *chatSession(IRC::ChatSessionType type = IRC::SERVER, CanCreateFlags cancreate = CannotCreate);
 
 	void appendMessage(Kopete::Message &);
 
