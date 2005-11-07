@@ -34,36 +34,15 @@
 #include <qtextcodec.h>
 #include <qtimer.h>
 
-//Needed for getuid / getpwuid
-#include <unistd.h>
-#include <sys/types.h>
-#include <pwd.h>
-
 using namespace KIRC;
 
 class KIRC::Client::Private
 {
 public:
-	QString host;
-	Q_UINT16 port;
-
-//	QUrl serverURL;
-//	QUrl currentServerURL;
-	QString nickname;
-	QString username;
-	QString realName;
-	QString password;
-	bool reqsPassword;
 	bool failedNickOnLogin;
-	bool useSSL;
 
 //	KIRC::Entity::List entities;
 	KIRC::Entity::Ptr server;
-
-	QString versionString;
-	QString userString;
-	QString sourceString;
-	QString pendingNick;
 };
 
 Client::Client(QObject *parent)
@@ -84,9 +63,9 @@ Client::Client(QObject *parent)
 //	bindNumericReplies();
 //	bindCtcp();
 
-	d->versionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
-	d->userString = QString::fromLatin1("Response not supplied by user.");
-	d->sourceString = QString::fromLatin1("Unknown client, known source.");
+//	d->versionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
+//	d->userString = QString::fromLatin1("Response not supplied by user.");
+//	d->sourceString = QString::fromLatin1("Unknown client, known source.");
 
 /*
 	connect(this, SIGNAL(internalError(const QString &)),
@@ -114,37 +93,6 @@ bool Client::isConnected() const
 	return connectionState() == Open;
 }
 /*
-void Client::setVersionString(const QString &newString)
-{
-	d->versionString = newString;
-}
-
-void Client::setUserString(const QString &newString)
-{
-	d->userString = newString;
-}
-
-void Client::setSourceString(const QString &newString)
-{
-	d->sourceString = newString;
-}
-
-void Client::setUserName(const QString &newName)
-{
-	if(newName.isEmpty())
-		d->username = QString::fromLatin1(getpwuid(getuid())->pw_name);
-	else
-		d->username = newName;
-}
-
-void Client::setRealName(const QString &newName)
-{
-	if(newName.isEmpty())
-		d->realName = QString::fromLatin1(getpwuid(getuid())->pw_gecos);
-	else
-		d->realName = newName;
-}
-
 bool Engine::_bind(QMap<QString, KIRC::MessageRedirector *> &dict,
 		const char *command, QObject *object, const char *member,
 		int minArgs, int maxArgs, const QString &helpMessage)
@@ -200,8 +148,8 @@ void Client::authentify()
 		StdCommands::pass(this, url.pass());
 
 	#warning make the following string arguments static const
-	StdCommands::user(this, url.user(), StdCommands::Normal, url.queryItem(QString::fromLatin1("realname")));
-	StdCommands::nick(this, url.queryItem(QString::fromLatin1("nickname")));
+	StdCommands::user(this, url.user(), StdCommands::Normal, url.queryItem(URL_REALNAME));
+	StdCommands::nick(this, url.queryItem(URL_NICKNAME));
 }
 
 void Client::onReceivedMessage( KIRC::Message &msg )

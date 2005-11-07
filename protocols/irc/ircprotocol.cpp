@@ -267,6 +267,13 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		CommandHandler::SystemAlias, 1);
 */
 
+	// Utility alias
+/*
+	commandHandler->registerAlias( this, QString::fromLatin1("ns"),
+		QString::fromLatin1("msg nickserv %s"),
+		i18n("USAGE: /ns <message> - Alias for MSG NickServ <message>."),
+		CommandHandler::SystemAlias, 1);
+*/
 	QObject::connect( ChatSessionManager::self(), SIGNAL(aboutToDisplay(Kopete::Message &)),
 		this, SLOT(slotMessageFilter(Kopete::Message &)) );
 

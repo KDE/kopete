@@ -89,6 +89,10 @@ namespace KIRC
 	// Static regular expressions
 	extern const QRegExp sm_RemoveLinefeeds;
 
+	// Static URL query attributes.
+	extern const QString URL_NICKNAME;
+	extern const QString URL_REALNAME;
+
 	// Static strings
 	extern const QByteArray AWAY;
 	extern const QByteArray ERROR;

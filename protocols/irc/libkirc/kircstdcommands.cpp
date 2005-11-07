@@ -41,7 +41,18 @@
 #include <arpa/inet.h>
 
 using namespace KIRC;
+#warning make usage of KUser and make more usefull using some default strings.
+/*
+static QString getUsername()
+{
+	return QString::fromLatin1(getpwuid(getuid())->pw_name);
+}
 
+static QString getRealname()
+{
+	return QString::fromLatin1(getpwuid(getuid())->pw_gecos);
+}
+*/
 void StdCommands::away(KIRC::Socket *socket, QString awayMessage)
 {
 	Q_ASSERT(socket);
