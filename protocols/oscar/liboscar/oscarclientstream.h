@@ -121,7 +121,6 @@ signals:
 	void securityLayerActivated(int);
 	void authenticated(); // this signal is ordinarily emitted in processNext
 	void warning(int);
-	void readyRead(); //signals that there is a transfer ready to be read
 public slots:
 	void continueAfterWarning();
 

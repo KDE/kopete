@@ -67,7 +67,7 @@ public:
 signals:
 	void connectionClosed();
 	void delayedCloseFinished();
-	void readyRead();
+	void readyRead(); //signals that there is a transfer ready to be read
 //	void stanzaWritten();
 	void error(int);
 };
