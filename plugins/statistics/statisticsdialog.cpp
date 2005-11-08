@@ -93,7 +93,7 @@ void StatisticsDialog::slotOpenURLRequest(const KURL& url, const KParts::URLArgs
 	QString fileString = ::locate("appdata", "kopete_statistics.template.html");
 	QString templateString;
 	QFile file(file);
-	if (file.open(IO_ReadOnly))
+	if (file.open(QIODevice::ReadOnly))
 	{
 		QTextStream stream(&file);
 		templateString = stream.read();

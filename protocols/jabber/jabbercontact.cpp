@@ -851,7 +851,7 @@ void JabberContact::slotSendVCard()
 		QImage image( photoPath );
 		QByteArray ba;
 		QBuffer buffer( ba );
-		buffer.open( IO_WriteOnly );
+		buffer.open( QIODevice::WriteOnly );
 		image.save( &buffer, "PNG" );
 		vCard.setPhoto( ba );
 	}

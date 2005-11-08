@@ -227,7 +227,7 @@ class KopeteStyleNewStuff : public KNewStuff
 		QString base = i.baseName();
 
 		KTar tar( file, "application/x-gzip" );
-		tar.open( IO_ReadOnly );
+		tar.open( QIODevice::ReadOnly );
 		const KArchiveDirectory *dir = tar.directory();
 		QStringList list = dir->entries();
 

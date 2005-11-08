@@ -96,7 +96,7 @@ void KNotificationManager::close(unsigned int id)
 {
 	DCOPClient *client=KApplication::dcopClient();
 	QByteArray data;
-	QDataStream arg(&data, IO_WriteOnly);
+	QDataStream arg(&data, QIODevice::WriteOnly);
 	arg << id;
 	if (!client->send("knotify", "Notify", "CloseNotification(unsigned int)", data))
 	{
@@ -109,7 +109,7 @@ unsigned int KNotificationManager::notify( KNotification* n , const QPixmap &pix
 	DCOPClient *client=KApplication::dcopClient();
 	QByteArray data, replyData;
 	DCOPCString replyType;
-	QDataStream arg(&data, IO_WriteOnly);
+	QDataStream arg(&data, QIODevice::WriteOnly);
 	QString appname=kapp->instanceName();
 	KConfig eventsFile( appname+QString::fromAscii( "/eventsrc" ), true, false, "data");
 	KConfigGroup config( &eventsFile, "Global" );
@@ -135,7 +135,7 @@ unsigned int KNotificationManager::notify( KNotification* n , const QPixmap &pix
 	}
 	else 
 	{
-		QDataStream reply(&replyData, IO_ReadOnly);
+		QDataStream reply(&replyData, QIODevice::ReadOnly);
 		if (replyType == "unsigned int") 
 		{
 			unsigned int result;
@@ -159,7 +159,7 @@ bool KNotificationManager::notifyBySound(const QString &file, const QString& app
 {
 	DCOPClient *client=KApplication::dcopClient();
 	QByteArray data;
-	QDataStream arg(&data, IO_WriteOnly);
+	QDataStream arg(&data, QIODevice::WriteOnly);
 	arg << file ;
 	arg << appname ;
 	arg << (int)id;

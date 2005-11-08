@@ -175,7 +175,7 @@ KActionMenu* WPAccount::actionMenu()
 		theActionMenu->insert(new KAction("Away", QIcon(theProtocol->WPAway.iconFor(this)), 0,
 			this, SLOT(goAway()), theActionMenu, "actionGoAway"));
 		// One can not really go offline manually - appears online as long as samba server is running. GF
-//		theActionMenu->insert(new KAction("Offline", QIconSet(theProtocol->WPOffline.iconFor(this)), 0,
+//		theActionMenu->insert(new KAction("Offline", QIcon(theProtocol->WPOffline.iconFor(this)), 0,
 //			this, SLOT(disconnect()), theActionMenu, "actionGoOffline"));
 	}
 

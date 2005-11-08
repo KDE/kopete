@@ -80,7 +80,7 @@ Transfer *TransferHandler::createClient(
 }
 
 /*
-File *DCCHandler::openFile( QString file, int mode = IO_ReadWrite )
+File *DCCHandler::openFile( QString file, int mode = QIODevice::ReadWrite )
 {
 	QFile *file = new QFile(filename);
 	if (!file->open(mode))

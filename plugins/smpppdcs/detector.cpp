@@ -114,14 +114,14 @@ void Detector::smpppdCheckStatus() {
 	if(!m_kinternetApp.isEmpty() && m_client) {
 		QByteArray data, replyData;
 		QCString replyType;
-		QDataStream arg(data, IO_WriteOnly);
+		QDataStream arg(data, QIODevice::WriteOnly);
 		
 		kdDebug(14312) << k_funcinfo << "Start inquiring " << m_kinternetApp << " via DCOP" << endl;
 		
 		if(!m_client->call(m_kinternetApp, "KInternetIface", "isOnline()", data, replyType, replyData)) {
 			kdDebug(14312) << k_funcinfo << "there was some error using DCOP." << endl;
 		} else {
-  			QDataStream reply(replyData, IO_ReadOnly);
+  			QDataStream reply(replyData, QIODevice::ReadOnly);
   			if(replyType == "bool") {
     			bool result;
     			reply >> result;
@@ -157,7 +157,7 @@ void Detector::smpppdCheckStatus() {
                         kdDebug(14312) << k_funcinfo << "Found smpppd Version " << ver.cap(1) << endl;
                     } else if(clg.exactMatch(stream[0])) {
                         kdDebug(14312) << k_funcinfo << "Authentication required: " << stream[0] << endl;
-                        challenge  = clg.cap(1).stripWhiteSpace();
+                        challenge  = clg.cap(1).trimmed();
                         m_comState = CHALLENGED;
                     } else {
                         m_comState = UNSETTLED;

@@ -348,7 +348,7 @@ private:
 {
 	Q_OBJECT
   public:
-	OnlineStatusMessageAction ( const Kopete::OnlineStatus& status, const QString &text, const QString &message, const QIconSet &pix, QObject *parent=0, const char *name=0);
+	OnlineStatusMessageAction ( const Kopete::OnlineStatus& status, const QString &text, const QString &message, const QIcon &pix, QObject *parent=0, const char *name=0);
   signals:
 	void activated( const Kopete::OnlineStatus& status, const QString & );
   private slots:

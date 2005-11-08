@@ -211,7 +211,7 @@ bool KNotification::notifyByLogfile(const QString &text, const QString &file)
 
     // open file in append mode
 	QFile logFile(file);
-	if ( !logFile.open(IO_WriteOnly | IO_Append) )
+	if ( !logFile.open(QIODevice::WriteOnly | QIODevice::Append) )
 		return false;
 
     // append msg
@@ -231,7 +231,7 @@ bool KNotification::notifyByStderr(const QString &text)
 		return true;
 
     // open stderr for output
-	QTextStream strm( stderr, IO_WriteOnly );
+	QTextStream strm( stderr, QIODevice::WriteOnly );
 
     // output msg
 	strm << "KNotify " << QDateTime::currentDateTime().toString() << ": ";
@@ -439,7 +439,7 @@ KNotification *KNotification::event( const QString& eventid , const QString& tex
 	
 #if 0  //TODO
 	QByteArray qbd;
-	QDataStream ds(&qbd, IO_WriteOnly);
+	QDataStream ds(&qbd, QIODevice::WriteOnly);
 	ds << event << fromApp << text << sound << file << present << level
 			<< winId << eventId;
 	emitDCOPSignal("notifySignal(QString,QString,QString,QString,QString,int,int,int,int)", qbd);

@@ -593,7 +593,7 @@ void Client::send(const QDomElement &x)
 		return;
 
 	//QString out;
-	//QTextStream ts(&out, IO_WriteOnly);
+	//QTextStream ts(&out, QIODevice::WriteOnly);
 	//x.save(ts, 0);
 
 	//QString out = Stream::xmlToString(x);

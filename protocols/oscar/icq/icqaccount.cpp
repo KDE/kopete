@@ -471,7 +471,7 @@ void ICQAccount::slotBuddyIconChanged()
 	else
 	{
 		QFile iconFile( photoPath );
-		iconFile.open( IO_ReadOnly );
+		iconFile.open( QIODevice::ReadOnly );
 		
 		KMD5 iconHash;
 		iconHash.update( iconFile );
@@ -552,7 +552,7 @@ void ICQAccount::slotSendBuddyIcon()
 	kdDebug(14153) << k_funcinfo << photoPath << endl;
 	QFile iconFile( photoPath );
 	
-	if ( iconFile.open( IO_ReadOnly ) )
+	if ( iconFile.open( QIODevice::ReadOnly ) )
 	{
 		if ( !engine()->hasIconConnection() )
 		{

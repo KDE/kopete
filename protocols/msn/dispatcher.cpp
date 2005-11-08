@@ -169,7 +169,7 @@ void Dispatcher::sendImage(const QString& /*fileName*/, const QString& /*to*/)
 {
 // 	TODO kdDebug(14140) << k_funcinfo << endl;
 // 	QFile imageFile(fileName);
-// 	if(!imageFile.open(IO_ReadOnly))
+// 	if(!imageFile.open(QIODevice::ReadOnly))
 // 	{
 // 		kdDebug(14140) << k_funcinfo << "Error opening image file."
 // 			<< endl;
