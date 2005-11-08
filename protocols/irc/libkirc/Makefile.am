@@ -14,6 +14,7 @@ libkirc_la_SOURCES = \
 	kircconst.cpp \
 	kircentity.cpp \
 	kircentitymanager.cpp \
+	kircevent.cpp \
 	kircmessage.cpp \
 	kircsocket.cpp \
 	kircstdcommands.cpp

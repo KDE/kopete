@@ -21,9 +21,12 @@
 #define KIRCCLIENTCOMMANDS_H
 
 #include "kircmessage.h"
+#include "kircevent.h"
 
 namespace KIRC
 {
+
+class Event;
 
 /**
  * @author Nick Betcher <nbetcher@kde.org>
@@ -40,10 +43,15 @@ public:
 	~ClientCommands();
 
 private slots:
+	void postEvent(const KIRC::Message &msg, Event::MessageType messageType, const QString &message);
+	void postErrorEvent(const KIRC::Message &msg, const QString &message = QString());
+	void postInfoEvent(const KIRC::Message &msg, const QString &message = QString());
+	void postMOTDEvent(const KIRC::Message &msg, const QString &message = QString());
 
-	void receivedServerMessage(KIRC::Message msg); // emit the suffix of the message.
-	void receivedServerMessage(KIRC::Message msg, const QString &message);
+	void receivedServerMessage(KIRC::Message msg) KDE_DEPRECATED; // emit the suffix of the message.
+	void receivedServerMessage(KIRC::Message msg, const QString &message) KDE_DEPRECATED;
 
+private slots:
 	void error(KIRC::Message msg);
 	void join(KIRC::Message msg);
 	void kick(KIRC::Message msg);
@@ -99,6 +107,7 @@ private slots:
 	void numericReply_366(KIRC::Message msg);
 	void numericReply_369(KIRC::Message msg);
 	void numericReply_372(KIRC::Message msg);
+	void numericReply_375(KIRC::Message msg);
 	void numericReply_376(KIRC::Message msg);
 
 	void numericReply_401(KIRC::Message msg);

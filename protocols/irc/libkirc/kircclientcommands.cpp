@@ -24,7 +24,7 @@
 #include "kircclientcommands.moc"
 
 #include "kircclient.h"
-#include "kircmessage.h"
+#include "kircevent.h"
 #include "kirctransferhandler.h"
 
 #include <kdebug.h>
@@ -56,6 +56,36 @@ ClientCommands::ClientCommands(QObject *parent)
 ClientCommands::~ClientCommands()
 {
 //	delete d;
+}
+
+void ClientCommands::postEvent(const KIRC::Message &msg, Event::MessageType messageType, const QString &message)
+{
+	Event event;
+	event.setMessageType(messageType);
+//	event.setFrom(msg.prefix());
+//	event.setCc(msg.socket().owner()); // server instead ?
+
+	if (message.isEmpty())
+		event.setMessage(msg.suffix());
+	else
+		event.setMessage(message);
+
+//	post the message here ... still dunno where, socket ?
+}
+
+void ClientCommands::postErrorEvent(const KIRC::Message &msg, const QString &message)
+{
+//	postEvent(msg, Event::ErrorMessage, message);
+}
+
+void ClientCommands::postInfoEvent(const KIRC::Message &msg, const QString &message)
+{
+	postEvent(msg, Event::InfoMessage, message);
+}
+
+void ClientCommands::postMOTDEvent(const KIRC::Message &msg, const QString &message)
+{
+//	postEvent(msg, Event::MOTDMessage, message);
 }
 
 void ClientCommands::receivedServerMessage(KIRC::Message msg)
@@ -223,14 +253,14 @@ void ClientCommands::part(Message msg)
 */
 }
 
-void ClientCommands::ping(Message imsg)
+void ClientCommands::ping(Message msg)
 {
-	Message msg;
-	msg.setCommand(PONG);
-//	msg.setArgs(imsg.rawArg(0));
-	msg.setSuffix(imsg.rawSuffix());
+	Message reply;
+	reply.setCommand(PONG);
+//	reply.setArgs(msg.rawArg(0));
+	reply.setSuffix(msg.rawSuffix());
 
-//	msg->client->writeMessage(msg);
+//	msg->client->writeMessage(reply);
 }
 
 void ClientCommands::pong(Message /*msg*/)
@@ -239,21 +269,22 @@ void ClientCommands::pong(Message /*msg*/)
 
 void ClientCommands::privmsg(Message msg)
 {
-/*
 	if (!msg.suffix().isEmpty())
 	{
+/*
 		emit receivedMessage(
 			PrivateMessage,
 			msg.entityFromPrefix(),
 			msg.entityFromArg(0),
 			msg.suffix());
+*/
 	}
-
+#ifndef KIRC_STRICT
 	if (msg.hasCtcpMessage())
 	{
 		invokeCtcpCommandOfMessage(m_ctcpQueries, msg);
 	}
-*/
+#endif
 }
 
 void ClientCommands::quit(Message msg)
@@ -410,7 +441,7 @@ void ClientCommands::numericReply_005(Message msg)
  */
 void ClientCommands::numericReply_250(Message msg)
 {
-	receivedServerMessage(msg);
+	postInfoEvent(msg);
 }
 
 /* 251: ":There are <integer> users and <integer> services on <integer> servers"
@@ -418,7 +449,7 @@ void ClientCommands::numericReply_250(Message msg)
  */
 void ClientCommands::numericReply_251(Message msg)
 {
-	receivedServerMessage(msg);
+	postInfoEvent(msg);
 }
 
 /* 252: "<integer> :operator(s) online"
@@ -426,7 +457,7 @@ void ClientCommands::numericReply_251(Message msg)
  */
 void ClientCommands::numericReply_252(Message msg)
 {
-	receivedServerMessage(msg, i18n("There are %1 operators online.").arg(msg.arg(1)));
+	postInfoEvent(msg, i18n("There is 1 operator online.", "There are %s operators online.", msg.arg(1).toULong()));
 }
 
 /* 253: "<integer> :unknown connection(s)"
@@ -434,7 +465,7 @@ void ClientCommands::numericReply_252(Message msg)
  */
 void ClientCommands::numericReply_253(Message msg)
 {
-	receivedServerMessage(msg, i18n("There are %1 unknown connections.").arg(msg.arg(1)));
+	postInfoEvent(msg, i18n("There is 1 unknown connection.", "There are %s unknown connections.", msg.arg(1).toULong()));
 }
 
 /* 254: "<integer> :channels formed"
@@ -442,7 +473,7 @@ void ClientCommands::numericReply_253(Message msg)
  *  */
 void ClientCommands::numericReply_254(Message msg)
 {
-	receivedServerMessage(msg, i18n("There are %1 channel formed.").arg(msg.arg(1)));
+	postInfoEvent(msg, i18n("There is 1 channel formed.", "There are %s channel formed.", msg.arg(1).toULong()));
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"
@@ -450,7 +481,7 @@ void ClientCommands::numericReply_254(Message msg)
  */
 void ClientCommands::numericReply_255(Message msg)
 {
-	receivedServerMessage(msg);
+	postInfoEvent(msg);
 }
 
 /* 263: "<command> :Please wait a while and try again."
@@ -467,7 +498,7 @@ void ClientCommands::numericReply_263(Message msg)
  */
 void ClientCommands::numericReply_265(Message msg)
 {
-	receivedServerMessage(msg);
+	postInfoEvent(msg);
 }
 
 /* 266: ":Current global users: <integer>  Max: <integer>"
@@ -475,7 +506,7 @@ void ClientCommands::numericReply_265(Message msg)
  */
 void ClientCommands::numericReply_266(Message msg)
 {
-	receivedServerMessage(msg);
+	postInfoEvent(msg);
 }
 
 /* 301: "<nick> :<away message>"
@@ -513,7 +544,7 @@ void ClientCommands::numericReply_305(Message msg)
 	Entity::Ptr self = this->self();
 	self->setAwayMessage(QString::null);
 //	self->setModes("-a");
-	receivedServerMessage(msg, i18n("You are no longer marked as being away."));
+	postInfoEvent(msg, i18n("You are no longer marked as being away."));
 */
 }
 
@@ -524,7 +555,7 @@ void ClientCommands::numericReply_306(Message msg)
 {
 //	Entity::Ptr self = d->client->owner();
 //	self->setModes("+a");
-	receivedServerMessage(msg, i18n("You have been marked as being away."));
+	postInfoEvent(msg, i18n("You have been marked as being away."));
 }
 
 /* 307: ":is a registered nick"
@@ -532,7 +563,7 @@ void ClientCommands::numericReply_306(Message msg)
  */
 void ClientCommands::numericReply_307(Message msg)
 {
-	receivedServerMessage(msg, i18n("%1 is a registered nick.").arg(msg.arg(1)));
+	postErrorEvent(msg, i18n("%1 is a registered nick.").arg(msg.arg(1)));
 }
 
 /* 311: "<nick> <user> <host> * :<real name>"
@@ -556,7 +587,7 @@ void ClientCommands::numericReply_312(Message msg)
  */
 void ClientCommands::numericReply_313(Message msg)
 {
-	receivedServerMessage(msg, i18n("%1 is an IRC operator.").arg(msg.arg(1)));
+	postInfoEvent(msg, i18n("%1 is an IRC operator.").arg(msg.arg(1)));
 }
 
 /* 314: "<nick> <user> <host> * :<real name>"
@@ -640,7 +671,7 @@ void ClientCommands::numericReply_324(Message msg)
 //	emit incomingChannelMode(msg.arg(1), msg.arg(2), msg.arg(3));
 }
 
-/* 328: "<channel> <mode> <mode params>"
+/* 328:
  */
 void ClientCommands::numericReply_328(Message msg)
 {
@@ -736,19 +767,23 @@ void ClientCommands::numericReply_369(Message msg)
 void ClientCommands::numericReply_372(Message msg)
 {
 	#warning FIXME remove the "- " in front.
-	receivedServerMessage(msg);
+	postMOTDEvent(msg);
 }
 
 /* 375: ":- <server> Message of the day - "
  * Beginging the motd. This isn't emitted because the MOTD is sent out line by line.
  */
+void ClientCommands::numericReply_375(Message msg)
+{
+	postMOTDEvent(msg);
+}
 
 /* 376: ":End of MOTD command"
  * End of the motd.
  */
 void ClientCommands::numericReply_376(Message msg)
 {
-	receivedServerMessage(msg);
+	postMOTDEvent(msg);
 }
 
 /* 401: "<nickname> :No such nick/channel"
@@ -765,7 +800,7 @@ void ClientCommands::numericReply_401(Message msg)
  */
 void ClientCommands::numericReply_404(Message msg)
 {
-	receivedServerMessage(msg, i18n("You cannot send message to channel %2.").arg(msg.arg(1)));
+	postErrorEvent(msg, i18n("You cannot send message to channel %1.").arg(msg.arg(1)));
 }
 
 /* 406: "<nickname> :There was no such nickname"
@@ -784,7 +819,7 @@ void ClientCommands::numericReply_406(Message msg)
  */
 void ClientCommands::numericReply_422(Message msg)
 {
-	receivedServerMessage(msg);
+	postErrorEvent(msg);
 }
 
 /* 433: "<nick> :Nickname is already in use"
@@ -806,22 +841,24 @@ void ClientCommands::numericReply_433(Message msg)
 		// but it's already in use
 //		emit incomingNickInUse(msg.arg(1));
 //	}
+	postErrorEvent(msg, i18n("Nickname %1 is already in use.").arg(msg.arg(1)));
 }
 
 /* 442: "<channel> :You're not on that channel"
  */
 void ClientCommands::numericReply_442(Message msg)
 {
-	receivedServerMessage(msg, i18n("You are not on channel %1.").arg(msg.arg(1)));
+	postErrorEvent(msg, i18n("You are not on channel %1.").arg(msg.arg(1)));
 }
 
 /* 464: ":Password Incorrect"
  * Bad server password
  */
-void ClientCommands::numericReply_464(Message /*msg*/)
+void ClientCommands::numericReply_464(Message msg)
 {
 	/* Server need pass.. Call disconnect*/
 //	emit incomingFailedServerPassword();
+	postErrorEvent(msg, i18n("Incorrect password."));
 }
 
 /* 465: ":You are banned from this server"
@@ -832,7 +869,7 @@ void ClientCommands::numericReply_464(Message /*msg*/)
  */
 void ClientCommands::numericReply_471(Message msg)
 {
-	receivedServerMessage(msg, i18n("Cannot join %1, channel is full.").arg(msg.arg(1)) );
+	postErrorEvent(msg, i18n("Cannot join %1, channel is full.").arg(msg.arg(1)) );
 }
 
 /* 472: "<char> :is unknown mode char to me for <channel>"
@@ -843,7 +880,7 @@ void ClientCommands::numericReply_471(Message msg)
  */
 void ClientCommands::numericReply_473(Message msg)
 {
-	receivedServerMessage(msg, i18n("Cannot join %1, channel is invite only.").arg(msg.arg(1)) );
+	postErrorEvent(msg, i18n("Cannot join %1, channel is invite only.").arg(msg.arg(1)) );
 }
 
 /* 474: "<channel> :Cannot join channel (+b)"
@@ -851,7 +888,7 @@ void ClientCommands::numericReply_473(Message msg)
  */
 void ClientCommands::numericReply_474(Message msg)
 {
-	receivedServerMessage(msg, i18n("Cannot join %1, you are banned from that channel.").arg(msg.arg(1)) );
+	postErrorEvent(msg, i18n("Cannot join %1, you are banned from that channel.").arg(msg.arg(1)) );
 }
 
 /* 475: "<channel> :Cannot join channel (+k)"
@@ -859,7 +896,7 @@ void ClientCommands::numericReply_474(Message msg)
  */
 void ClientCommands::numericReply_475(Message msg)
 {
-	receivedServerMessage(msg, i18n("Cannot join %1, wrong channel key was given.").arg(msg.arg(1)) );
+	postErrorEvent(msg, i18n("Cannot join %1, wrong channel key was given.").arg(msg.arg(1)) );
 }
 
 /* 476: "<channel> :Bad Channel Mask"

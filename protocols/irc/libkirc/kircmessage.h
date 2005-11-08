@@ -26,10 +26,6 @@
 #include <QSharedDataPointer>
 #include <QStringList>
 
-// Uncoment this if you want a really rfc compliant message handling.
-// This is due to some changes of the message encoding with 14 arguments.(not very frequent :)
-// #define _IRC_STRICTNESS_
-
 typedef QList<QByteArray> QByteArrayList;
 
 class QTextCodec;
@@ -64,7 +60,7 @@ public:
 	Message(const KIRC::Message &o);
 	~Message();
 
-	Message &operator = (const KIRC::Message &o);
+	KIRC::Message &operator = (const KIRC::Message &o);
 
 public: // Properties read accessors
 	KIRC::Socket *socket() const;
