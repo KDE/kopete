@@ -129,21 +129,11 @@ const KURL &Socket::url() const
 bool Socket::connectToServer(const KURL &url)
 {
 	d->url = url;
-	return true;
-}
-
-bool Socket::connectToServer(const QString &host, Q_UINT16 port, bool useSSL)
-{
-//	kdDebug(14120) << k_funcinfo << useSSL << endl;
+/*
 	setupSocket(useSSL);
 	return d->socket->connect(host, QString::number(port));
-}
-
-bool Socket::connectToServer(const KResolverEntry &entry, bool useSSL)
-{
-//	kdDebug(14120) << k_funcinfo << useSSL << endl;
-	setupSocket(useSSL);
-	d->socket->connect(entry);
+*/
+	return true;
 }
 
 void Socket::close()

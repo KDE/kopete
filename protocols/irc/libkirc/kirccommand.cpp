@@ -21,6 +21,12 @@
 
 using namespace KIRC;
 
+QString Command::expand(QString command, QString args)
+{
+	#warning IMPLEMENT ME
+	return command;
+}
+
 class KIRC::Command::Private
 {
 public:

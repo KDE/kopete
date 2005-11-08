@@ -47,8 +47,8 @@ public: // READ properties accessors.
 public slots: // WRITE properties accessors.
 
 public:
-	bool isDisconnected() const;
-	bool isConnected() const;
+	bool isDisconnected() const KDE_DEPRECATED;
+	bool isConnected() const KDE_DEPRECATED;
 
 	KIRC::Entity::Ptr server();
 

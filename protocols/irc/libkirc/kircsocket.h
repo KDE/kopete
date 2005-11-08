@@ -88,8 +88,6 @@ public slots:
 	 * @return true if the socket is got no error trying to establish the connection.
 	 */
 	bool connectToServer(const KURL &url);
-	bool connectToServer(const QString &host, Q_UINT16 port, bool useSSL);
-	bool connectToServer(const KNetwork::KResolverEntry &entry, bool useSSL);
 //	void bind();
 	void close();
 

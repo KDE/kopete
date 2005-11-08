@@ -31,9 +31,6 @@
 #include <kstandarddirs.h>
 #include <kurl.h>
 
-#include <qtextcodec.h>
-#include <qtimer.h>
-
 using namespace KIRC;
 
 class KIRC::Client::Private
@@ -88,53 +85,7 @@ bool Client::isConnected() const
 {
 	return connectionState() == Open;
 }
-/*
-bool Engine::_bind(QMap<QString, KIRC::MessageRedirector *> &dict,
-		const char *command, QObject *object, const char *member,
-		int minArgs, int maxArgs, const QString &helpMessage)
-{
-//	FIXME: Force upper case.
-//	FIXME: Force number format.
 
-	MessageRedirector *mr = dict[command];
-
-	if (!mr)
-	{
-		mr = new MessageRedirector(this, minArgs, maxArgs, helpMessage);
-		dict.replace(command, mr);
-	}
-
-	return mr->connect(object, member);
-}
-
-bool Engine::bind(const char *command, QObject *object, const char *member,
-	int minArgs, int maxArgs, const QString &helpMessage)
-{
-	return _bind(d->commands, command, object, member,
-		minArgs, maxArgs, helpMessage);
-}
-
-bool Engine::bind(int id, QObject *object, const char *member,
-		int minArgs, int maxArgs, const QString &helpMessage)
-{
-	return _bind(d->commands, QByteArray::number(id), object, member,
-		     minArgs, maxArgs, helpMessage);
-}
-
-bool Engine::bindCtcpQuery(const char *command, QObject *object, const char *member,
-	int minArgs, int maxArgs, const QString &helpMessage)
-{
-	return _bind(d->ctcpQueries, command, object, member,
-		minArgs, maxArgs, helpMessage);
-}
-
-bool Engine::bindCtcpReply(const char *command, QObject *object, const char *member,
-	int minArgs, int maxArgs, const QString &helpMessage)
-{
-	return _bind(d->ctcpReplies, command, object, member,
-		minArgs, maxArgs, helpMessage);
-}
-*/
 void Client::authentify()
 {
 	// If password is given for this server, send it now, and don't expect a reply

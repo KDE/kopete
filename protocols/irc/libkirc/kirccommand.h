@@ -35,6 +35,9 @@ class Command
 //	Q_PROPERTY(QString help READ help WRITE setHelp)
 
 public:
+	static QString expand(QString command, QString args);
+
+public:
 	enum {
 		Unknown = -1,
 		Unlimited = -2
