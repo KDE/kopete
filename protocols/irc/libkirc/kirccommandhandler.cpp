@@ -20,38 +20,40 @@
 #include "kirccommand.h"
 #include "kircsocket.h"
 
-#include <QMultiHash>
-
-class KIRC::CommandHandler::Private 
-{
-public:
-	QMultiHash<QString, Command *> commands;
-};
-
 using namespace KIRC;
 
 CommandHandler::CommandHandler(QObject *parent)
 	: QObject(parent)
-	, d(new Private)
 {
 }
 
 CommandHandler::~CommandHandler()
 {
-	delete d;
 }
 
 Command *CommandHandler::registerCommand(const QString &name, Command *command)
 {
+	if (name.isEmpty() || !command)
+		return 0;
+
+	if (!m_commands.values(name).contains(command))
+	{
+		m_commands.insertMulti(name, command);
+		connect(command, SIGNAL(destroyed()),
+			this, SLOT(cleanup()));
+	}
+	return command;
 }
 
 Command *CommandHandler::registerCommand(const QString &name, QObject *object, const char *member)
 {
+//	Command command = new Command()
+//	return registerCommand(name, new Command);
 }
 
 void CommandHandler::handleMessage(Message msg)
 {
-	QList<Command *> commands = d->commands.values(msg.command());
+	QList<Command *> commands = m_commands.values(msg.command());
 	if (commands.isEmpty())
 	{
 //		emit unhandledMessage(msg);

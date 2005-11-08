@@ -20,6 +20,8 @@
 
 #include "kircmessage.h"
 
+#include <QMultiHash>
+
 namespace KIRC
 {
 
@@ -50,11 +52,11 @@ public slots:
 
 	void unregisterCommand(Command *command);
 
+protected:
+	QMultiHash<QString, Command*> m_commands;
+
 private:
 	Q_DISABLE_COPY(CommandHandler)
-
-	class Private;
-	Private * const d;
 };
 
 }

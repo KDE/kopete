@@ -24,5 +24,6 @@ libkirc_la_SOURCES = \
 libkirc_la_LDFLAGS = -no-undefined $(KDE_PLUGIN) $(all_libraries)
 libkirc_la_LIBADD = $(LIB_KIO)
 
-AM_CPPFLAGS = -I$(top_srcdir)/kopete/protocols/irc $(KOPETE_INCLUDES) $(all_includes)
+# Temporary add KIRC_STRICT here
+AM_CPPFLAGS = -DKIRC_STRICT -I$(top_srcdir)/kopete/protocols/irc $(KOPETE_INCLUDES) $(all_includes)
 METASOURCES = AUTO
