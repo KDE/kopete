@@ -167,7 +167,6 @@
 										</xsl:attribute>
 										<xsl:attribute name="style">
 										border:1px solid #888;
-										width:48px;
 										height:48px;
 										margin-top: 0.2em;
 										margin-left: 0.2em;
