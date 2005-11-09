@@ -234,7 +234,7 @@ void IRCChannelContact::slotAddNicknames()
 			// back to online, because the other channels listen to
 			// onlineStatusChanged() emits, and they would adjust their statuses.
 
-			if (ircAccount()->contactManager()->findChannelsByMember(user).isEmpty()) {
+			if (account->contactManager()->findChannelsByMember(user).isEmpty()) {
 				//kdDebug(14120) << k_funcinfo << "Setting nick ONLINE" << endl;
 				user->setOnlineStatus(m_protocol->m_UserStatusOnline);
 			}
