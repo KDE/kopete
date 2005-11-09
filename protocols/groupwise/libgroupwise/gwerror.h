@@ -31,7 +31,7 @@ typedef Q_UINT16 NMERR_T;
 #define BLANK_GUID "[00000000-00000000-00000000-0000-0000]"
 #define CONF_GUID_END 27
 
-#define LIBGW_DEBUG 1
+//#define LIBGW_DEBUG 1
 #define LIBGW_USE_KDEBUG 1
 
 namespace GroupWise
@@ -233,6 +233,8 @@ namespace GroupWise
 #define MSGPRES_ERR_RECIPIENT_TOO_OLD			(NMERR_SERVER_BASE + 0x005C) // The recipient's client version is too old.
 #define MSGPRES_ERR_CHAT_NO_LONGER_VALID		(NMERR_SERVER_BASE + 0x005D) // The chat has been removed from the server.
 
+/* protocol version capabilities */
+#define CMSGPRES_GW_6_5 2
 #define CMSGPRES_SUPPORTS_NO_DETAILS_ON_LOGIN 3
 #define CMSGPRES_SUPPORTS_BROADCAST 4
 #define CMSGPRES_SUPPORTS_CHAT 5
