@@ -1245,24 +1245,20 @@ void GroupWiseAccount::receiveConferenceJoin( const GroupWise::ConferenceGuid & 
 	// find each contact and add them to the GWMM, and tell them they are in the conference
 	for ( QValueList<QString>::ConstIterator it = participants.begin(); it != participants.end(); ++it )
 	{
+		//kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " adding participant " << *it << endl;
 		GroupWiseContact * c = contactForDN( *it );
-		if ( c )
-		{
-			sess->joined( c );
-		}
-		else
-			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a contact for participant DN: " << *it << endl;
+		if ( !c )
+			c = createTemporaryContact( *it );
+		sess->joined( c );	
 	}
 	// add each invitee too
 	for ( QValueList<QString>::ConstIterator it = invitees.begin(); it != invitees.end(); ++it )
 	{
+		//kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " adding invitee " << *it << endl;
 		GroupWiseContact * c = contactForDN( *it );
-		if ( c )
-		{
-			sess->addInvitee( c );
-		}
-		else
-			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a contact for invitee DN: " << *it << endl;
+		if ( !c )
+			c = createTemporaryContact( *it );
+		sess->addInvitee( c );
 	}
 	sess->view( true )->raise( false );
 }
