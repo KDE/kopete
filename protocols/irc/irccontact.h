@@ -95,7 +95,7 @@ public:
 	 * return true if the contact is in a chat. false if the contact is in no chats
 	 * that loop over all manager, and checks the presence of the user
 	 */
-	bool isChatting( Kopete::ChatSession *avoid = 0L ) const;
+	bool isChatting( const Kopete::ChatSession *avoid = 0L ) const;
 
 	virtual const QString caption() const;
 //	virtual const QString formatedName() const;

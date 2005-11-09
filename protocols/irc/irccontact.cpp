@@ -352,7 +352,7 @@ Kopete::Contact *IRCContact::locateUser(const QString &nick)
 	return 0;
 }
 
-bool IRCContact::isChatting(Kopete::ChatSession *avoid) const
+bool IRCContact::isChatting(const Kopete::ChatSession *avoid) const
 {
 	IRCAccount *account = ircAccount();
 
