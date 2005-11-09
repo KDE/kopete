@@ -266,7 +266,8 @@ void Contact::changeMetaContact()
 	w->setSpacing( KDialog::spacingHint() );
 	Kopete::UI::MetaContactSelectorWidget *selector = new Kopete::UI::MetaContactSelectorWidget(w);
 	selector->setLabelMessage(i18n( "Select the meta contact to which you want to move this contact:" ));
-
+	// exclude this metacontact as a target metacontact for the move
+	selector->excludeMetaContact( metaContact() );
 	QCheckBox *chkCreateNew = new QCheckBox( i18n( "Create a new metacontact for this contact" ), w );
 	QWhatsThis::add( chkCreateNew , i18n( "If you select this option, a new metacontact will be created in the top-level group "
 		"with the name of this contact and the contact will be moved to it." ) );
