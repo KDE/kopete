@@ -24,16 +24,12 @@
 class CustomNotificationWidget;
 class QBoxLayout;
 
-namespace Kopete
-{
-class NotifyDataObject;
-}
 
 class CustomNotificationProps : public QObject
 {
 	Q_OBJECT
 public:
-	CustomNotificationProps( QWidget *parent, Kopete::NotifyDataObject* item, const char * name = 0 );
+	CustomNotificationProps( QWidget *parent, const QPair<QString,QString> &context,  const char * name = 0 );
 	~CustomNotificationProps() {}
 	void dumpData();
 	void resetEventWidgets();
@@ -45,7 +41,7 @@ protected slots:
 
 private:
 	CustomNotificationWidget* m_notifyWidget;
-	Kopete::NotifyDataObject * m_item;
+	const QPair<QString,QString> m_item;
 	QStringList m_eventList;
 	QString m_event;
 };

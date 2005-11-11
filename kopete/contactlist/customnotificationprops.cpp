@@ -27,31 +27,33 @@
 #include <kurlrequester.h>
 
 #include "customnotifications.h"
-#include "kopeteeventpresentation.h"
-#include "kopetenotifyevent.h"
-#include "kopetenotifydataobject.h"
 
 #include "customnotificationprops.h"
 
-CustomNotificationProps::CustomNotificationProps( QWidget *parent, Kopete::NotifyDataObject* item, const char * name )
-: QObject( parent, name )
+#include <knotification.h>
+#include <kapplication.h>
+
+#include <QMetaEnum>
+
+CustomNotificationProps::CustomNotificationProps( QWidget *parent, const QPair<QString,QString> &context, const char * name )
+	: QObject( parent, name ) , m_item(context)
 {
 	m_notifyWidget = new CustomNotificationWidget( parent, "notificationWidget" );
 
-	m_item = item;
 	QString path = "kopete/eventsrc";
 	KConfig eventsfile( path, true, false, "data" );
 	m_eventList = eventsfile.groupList();
 	QStringList contactSpecificEvents; // we are only interested in events that relate to contacts
-	QStringList::Iterator it = m_eventList.begin();
-	QStringList::Iterator end = m_eventList.end();
-	for ( ; it != end; ++it )
+	QRegExp rx("^Event/([^/]*)$");
+	m_eventList=m_eventList.filter( rx );
+	foreach (QString group , m_eventList )
 	{
-		if ( !(*it).startsWith( QString::fromLatin1( "kopete_contact_" ) ) )
+		eventsfile.setGroup(group);
+		if( !eventsfile.readListEntry("Contexts").contains(m_item.first))
 			continue;
-		contactSpecificEvents.append( *it );
-		QMap<QString, QString> entries = eventsfile.entryMap( *it );
-		eventsfile.setGroup( *it );
+		rx.indexIn(group);
+		contactSpecificEvents.append( rx.cap(1) );
+		QMap<QString, QString> entries = eventsfile.entryMap( group );
 		QString comment = eventsfile.readEntry( "Comment", QString::fromLatin1( "Found nothing!" ) );
 		m_notifyWidget->cmbEvents->insertItem( comment );
 	}
@@ -69,47 +71,44 @@ void CustomNotificationProps::slotEventsComboChanged( int itemNo )
 	m_event = m_eventList[ itemNo ];
 	// update the widgets for the selected item
 	// get the corresponding Kopete::NotifyEvent
-	Kopete::NotifyEvent *evt = m_item->notifyEvent( m_event );
+	
+	KConfig configfile( QString::fromAscii(kapp->instanceName())+QString::fromAscii( ".eventsrc" ), true, false);
+	configfile.setGroup("Event/" + m_event + "/" + m_item.first + "/" + m_item.second);
+	
+	int presentationEnum = KNotification::staticMetaObject.indexOfEnumerator( "NotifyPresentation" );
+	QString presentstring=configfile.readEntry("Action");
+	int presentation = KNotification::staticMetaObject.enumerator(presentationEnum).keysToValue( presentstring.latin1() );
+	if(presentation == -1 ) presentation = 0;
+
 	// set the widgets accordingly
 	resetEventWidgets();
-	if ( evt )
-	{
 		// sound presentation
-		Kopete::EventPresentation *pres = evt->presentation( Kopete::EventPresentation::Sound );
-		if ( pres )
-		{
-			m_notifyWidget->chkCustomSound->setChecked( pres->enabled() );
-			m_notifyWidget->customSound->setURL( pres->content() );
-			m_notifyWidget->chkSoundSS->setChecked( pres->singleShot() );
-		}
+			m_notifyWidget->chkCustomSound->setChecked( presentation & KNotification::Sound );
+			m_notifyWidget->customSound->setURL( configfile.readEntry("Sound") );
+//			m_notifyWidget->chkSoundSS->setChecked( pres->singleShot() );
 		// message presentation
-		pres = evt->presentation( Kopete::EventPresentation::Message );
-		if ( pres )
-		{
-			m_notifyWidget->chkCustomMsg->setChecked( pres->enabled() );
-			m_notifyWidget->customMsg->setText( pres->content() );
-			m_notifyWidget->chkMsgSS->setChecked( pres->singleShot() );
-		}
+			m_notifyWidget->chkCustomMsg->setChecked( presentation & KNotification::PassivePopup );
+//			m_notifyWidget->customMsg->setText( pres->content() );
+//			m_notifyWidget->chkMsgSS->setChecked( pres->singleShot() );
 		// chat presentation
-		pres = evt->presentation( Kopete::EventPresentation::Chat );
+/*		pres = evt->presentation( Kopete::EventPresentation::Chat );
 		if ( pres )
 		{
 			m_notifyWidget->chkCustomChat->setChecked( pres->enabled() );
 			m_notifyWidget->chkChatSS->setChecked( pres->singleShot() );
 		}
-		m_notifyWidget->chkSuppressCommon->setChecked( evt->suppressCommon() );
-	}
+		m_notifyWidget->chkSuppressCommon->setChecked( evt->suppressCommon() ); */
 	//dumpData();
 }
 
 
 void CustomNotificationProps::dumpData()
 {
-	Kopete::NotifyEvent *evt = m_item->notifyEvent( m_event );
+/*	Kopete::NotifyEvent *evt = m_item->notifyEvent( m_event );
 	if ( evt )
 		kdDebug( 14000 ) << k_funcinfo << evt->toString() << endl;
 	else 
-		kdDebug( 14000 ) << k_funcinfo << " no event exists." << endl;
+		kdDebug( 14000 ) << k_funcinfo << " no event exists." << endl;*/
 }
 
 void CustomNotificationProps::resetEventWidgets()
@@ -129,34 +128,34 @@ void CustomNotificationProps::storeCurrentCustoms()
 {
 	if ( !m_event.isNull() )
 	{
-		Kopete::NotifyEvent *evt = m_item->notifyEvent( m_event );
-		if ( !evt )
-		{
-			evt = new Kopete::NotifyEvent( );
-			// store the changed event
-			m_item->setNotifyEvent( m_event, evt );
-		}
-		evt->setSuppressCommon( m_notifyWidget->chkSuppressCommon->isChecked() );
+		KConfig configfile( QString::fromAscii(kapp->instanceName())+QString::fromAscii( ".eventsrc" ), false, false);
+		configfile.setGroup("Event/" + m_event + "/" + m_item.first + "/" + m_item.second);
+	
+		int presentation=0;
+				
+	//	evt->setSuppressCommon( m_notifyWidget->chkSuppressCommon->isChecked() );
 		// set different presentations
-		Kopete::EventPresentation *eventNotify = 0;
-		eventNotify = new Kopete::EventPresentation( Kopete::EventPresentation::Sound, 
-				m_notifyWidget->customSound->url(),
-				m_notifyWidget->chkSoundSS->isChecked(),
-				m_notifyWidget->chkCustomSound->isChecked() );
-		evt->setPresentation( Kopete::EventPresentation::Sound, eventNotify );
+		
+		configfile.writeEntry("Sound" , m_notifyWidget->customSound->url());
+		//		m_notifyWidget->chkSoundSS->isChecked(),
+		if( m_notifyWidget->chkCustomSound->isChecked() )
+			presentation |= KNotification::Sound;
 		// set message attributes
-		eventNotify = new Kopete::EventPresentation( Kopete::EventPresentation::Message,
-				m_notifyWidget->customMsg->text(),
-				m_notifyWidget->chkMsgSS->isChecked(),
-				m_notifyWidget->chkCustomMsg->isChecked() );
-		evt->setPresentation( Kopete::EventPresentation::Message, eventNotify );
-		// set chat attributes
+//				m_notifyWidget->customMsg->text(),
+//				m_notifyWidget->chkMsgSS->isChecked(),
+		if( m_notifyWidget->chkCustomMsg->isChecked() )
+			presentation |= KNotification::PassivePopup;
+/*		// set chat attributes
 		eventNotify = new Kopete::EventPresentation( Kopete::EventPresentation::Chat,
 				QString::null,
 				m_notifyWidget->chkChatSS->isChecked(),
 				m_notifyWidget->chkCustomChat->isChecked() );
 		evt->setPresentation( Kopete::EventPresentation::Chat, eventNotify );
-		evt->setSuppressCommon( m_notifyWidget->chkSuppressCommon->isChecked() );
+		evt->setSuppressCommon( m_notifyWidget->chkSuppressCommon->isChecked() );*/
+		
+		int presentationEnum = KNotification::staticMetaObject.indexOfEnumerator( "NotifyPresentation" );
+		QString presentstring= KNotification::staticMetaObject.enumerator(presentationEnum).valueToKeys( presentation );
+		configfile.writeEntry("Action" , presentstring);
 	}
 }
 

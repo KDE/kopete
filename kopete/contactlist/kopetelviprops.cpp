@@ -80,8 +80,8 @@ KopeteGVIProps::KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent, const 
 	mainWidget = new KopeteGVIPropsWidget(this, "mainWidget");
 	mainWidget->icnbOpen->setIconSize(QSize(KIcon::SizeSmall,KIcon::SizeSmall));
 	mainWidget->icnbClosed->setIconSize(QSize(KIcon::SizeSmall,KIcon::SizeSmall));
-	
-	mNotificationProps = new CustomNotificationProps( this, gvi->group() );
+	QPair<QString,QString> context=qMakePair( QString::fromLatin1("group") , QString::number(gvi->group()->groupId() ) );
+	mNotificationProps = new CustomNotificationProps( this, context );
 	mainWidget->tabWidget->addTab( mNotificationProps->widget(), i18n( "Custom &Notifications" ) );
 
 	setMainWidget(mainWidget);
@@ -164,7 +164,8 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	mainWidget->icnbAway->setIconSize( QSize(KIcon::SizeSmall,KIcon::SizeSmall) );
 	mainWidget->icnbUnknown->setIconSize( QSize(KIcon::SizeSmall,KIcon::SizeSmall) );
 
-	mNotificationProps = new CustomNotificationProps( this, lvi->metaContact() );
+	QPair<QString,QString> context=qMakePair( QString::fromLatin1("contact"), lvi->metaContact()->metaContactId() );
+	mNotificationProps = new CustomNotificationProps( this, context  );
 	// add a button to the notification props to get the sound from KABC
 	// the widget's vert box layout, horiz box layout containing button, spacer, followed by a spacer
 	QBoxLayout * vb = static_cast<QVBoxLayout*>( mNotificationProps->widget()->layout() );
