@@ -46,14 +46,6 @@ public:
 	} Direction;
 	Q_DECLARE_FLAGS(Directions, Direction)
 
-	// low level quoting, message quoting
-	static QByteArray quote(const QByteArray &str);
-	static QByteArray unquote(const QByteArray &str);
-
-	// ctcp level quoting
-	static QByteArray ctcpQuote(const QByteArray &str);
-	static QByteArray ctcpUnquote(const QByteArray &str);
-
 public:
 	Message();
 	Message(const QByteArray &rawLine, Direction direction);
