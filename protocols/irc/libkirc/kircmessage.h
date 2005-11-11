@@ -70,11 +70,8 @@ public:
 	QByteArray rawCommand() const;
 	KIRC::Message &setCommand(const QByteArray &);
 
-	QByteArray rawArgs() const;
-	KIRC::Message &setArgs(const QByteArray &);
-
-	QByteArrayList rawArgList() const;
-	KIRC::Message &setArgList(const QByteArrayList &);
+	QByteArrayList rawArgs() const;
+	KIRC::Message &setArgs(const QByteArrayList &);
 
 	QByteArray rawSuffix() const;
 	KIRC::Message &setSuffix(const QByteArray &);
@@ -88,11 +85,10 @@ public:
 	QString command(QTextCodec *codec = 0) const;
 	KIRC::Message &setCommand(const QString &, QTextCodec *codec = 0);
 
-	QString args(QTextCodec *codec = 0) const;
-	KIRC::Message &setArgs(const QString &, QTextCodec *codec = 0);
-
-	QStringList argList(QTextCodec *codec = 0) const;
-	KIRC::Message &setArgList(const QStringList &, QTextCodec *codec = 0);
+	QStringList args(QTextCodec *codec = 0) const;
+	KIRC::Message &setArgs(const QStringList &, QTextCodec *codec = 0);
+	inline KIRC::Message &setArgs(const QString &arg, QTextCodec *codec = 0)
+	{ return setArgs(QStringList(arg), codec);}
 
 	QString suffix(QTextCodec *codec = 0) const;
 	KIRC::Message &setSuffix(const QString &, QTextCodec *codec = 0);

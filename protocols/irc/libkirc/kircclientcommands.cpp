@@ -177,9 +177,10 @@ void ClientCommands::kick(Message msg)
  */
 void ClientCommands::mode(Message msg)
 {
+/*
 	QStringList args = msg.argList();
 	args.pop_front();
-/*
+
 	Entity::Ptr fromEntity = msg.entityFromPrefix();
 	Entity::Ptr toEntity = msg.entityFromArg(0)
 

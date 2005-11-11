@@ -18,6 +18,7 @@
 #include "kircmessage.h"
 
 #include "kircsocket.h"
+#include "kircmessageutil.h"
 
 #include <kdebug.h>
 
@@ -61,8 +62,7 @@ public:
 	QByteArray line;
 	QByteArray prefix;
 	QByteArray command;
-	QByteArray args;
-	QByteArrayList argList;
+	QByteArrayList args;
 	QByteArray suffix;
 
 	QList<KIRC::Message> ctcpMessages;
@@ -135,9 +135,9 @@ Message &Message::setLine(const QByteArray &line)
  
 	#warning implement me: parsing
 
-	QList<QByteArray> tokens = line.split(' ');
-
-	while (tokens.size() > 0)
+	int token_start = 0;
+	int token_end;
+	while(token_endline.indexOf(' ') > 0)
 	{
 #ifndef KIRC_STRICT
 //		eat empty tokens
@@ -194,35 +194,24 @@ Message &Message::setCommand(const QByteArray &command)
 	return *this;
 }
 
-QByteArray Message::rawArgs() const
+QByteArrayList Message::rawArgs() const
 {
 	return d->args;
 }
 
-Message &Message::setArgs(const QByteArray &args)
+Message &Message::setArgs(const QByteArrayList &args)
 {
-#warning implement me
-	return *this;
-}
-
-QByteArrayList Message::rawArgList() const
-{
-	return d->argList;
-}
-
-Message &Message::setArgList(const QByteArrayList &argList)
-{
-	if (d->argList != argList)
+	if (d->args != args)
 	{
 		d->dirty = true;
-		d->argList = argList;
+		d->args = args;
 	}
 	return *this;
 }
 
 QByteArray Message::rawArg(size_t i) const
 {
-	return d->argList[i];
+	return d->args[i];
 }
 
 QByteArray Message::rawSuffix() const
@@ -260,44 +249,34 @@ Message &Message::setCommand(const QString &command, QTextCodec *codec)
 	return setCommand(checkCodec(codec)->fromUnicode(command));
 }
 
-QString Message::args(QTextCodec *codec) const
+QStringList Message::args(QTextCodec *codec) const
 {
-	return checkCodec(codec)->toUnicode(d->args);
-}
-
-Message &Message::setArgs(const QString &args, QTextCodec *codec)
-{
-	return setArgs(checkCodec(codec)->fromUnicode(args));
-}
-
-QStringList Message::argList(QTextCodec *codec) const
-{
-	QStringList argList;
+	QStringList args;
 	codec = checkCodec(codec);
 
-	foreach(const QByteArray &arg, d->argList)
-		argList.append(codec->toUnicode(arg));
+	foreach(const QByteArray &arg, d->args)
+		args.append(codec->toUnicode(arg));
 
-	return argList;
+	return args;
 }
 
-Message &Message::setArgList(const QStringList &argList, QTextCodec *codec)
+Message &Message::setArgs(const QStringList &args, QTextCodec *codec)
 {
 	QByteArrayList arrayList;
 	codec = checkCodec(codec);
 
-	foreach (const QString &arg, argList)
+	foreach (const QString &arg, args)
 		arrayList.append(codec->fromUnicode(arg));
 
-	return setArgList(arrayList);
+	return setArgs(arrayList);
 }
 
 QString Message::arg(size_t i, QTextCodec *codec) const
 {
-	return checkCodec(codec)->toUnicode(d->argList[i]);
+	return checkCodec(codec)->toUnicode(d->args[i]);
 }
 /*
-Message &Message::setArgs(size_t i, const QString &arg, QTextCodec *codec)
+Message &Message::setArgs(size_t i, QString arg, QTextCodec *codec)
 {
 	return setArg(i, checkCodec(codec)->fromUnicode(arg));
 }
@@ -330,7 +309,6 @@ void Message::dump() const
 			<< "Prefix:" << d->prefix << endl
 			<< "Command:" << d->command << endl
 			<< "Args:" << d->args << endl
-			<< "ArgList:" << d->argList << endl
 			<< "Suffix:" << d->suffix << endl;
 /*
 	if (d->ctcpMessage)

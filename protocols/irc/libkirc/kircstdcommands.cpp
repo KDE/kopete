@@ -97,7 +97,7 @@ void StdCommands::join(KIRC::Socket *socket, QString name, QString key)
 	QStringList args(name);
 	if (!key.isNull())
 		args << key;
-	msg.setArgList(args);
+	msg.setArgs(args);
 
 	socket->writeMessage(msg);
 }
@@ -108,7 +108,7 @@ void StdCommands::kick(KIRC::Socket *socket, QString user, QString channel, QStr
 
 	Message msg;
 	msg.setCommand(KICK);
-	msg.setArgList(QStringList(channel) << user);
+	msg.setArgs(QStringList(channel) << user);
 	msg.setSuffix(reason);
 
 	socket->writeMessage(msg);
@@ -127,7 +127,7 @@ void StdCommands::mode(KIRC::Socket *socket, QString target, QString mode)
 
 	Message msg;
 	msg.setCommand(MODE);
-	msg.setArgList(QStringList(target) << mode);
+	msg.setArgs(QStringList(target) << mode);
 
 	socket->writeMessage(msg);
 }
@@ -262,13 +262,11 @@ void StdCommands::user(KIRC::Socket *socket, QString newUserName, Modes modes, Q
 {
 	Q_ASSERT(socket);
 
-//	m_Username = newUserName;
-//	m_realName = newRealName;
-//	Use KUser here
+	#warning Use KUser here to get default values if null
 
 	Message msg;
 	msg.setCommand(USER);
-	msg.setArgList(QStringList(newUserName) << QString::number(modes) << QString::fromLatin1("*"));
+	msg.setArgs(QStringList(newUserName) << QString::number(modes) << QString::fromLatin1("*"));
 	msg.setSuffix(newRealName);
 
 	socket->writeMessage(msg);
