@@ -54,7 +54,7 @@ public:
 
 	Event();
 	Event(const KIRC::Event &o);
-	~Event();
+	virtual ~Event();
 
 	KIRC::Event &operator = (const KIRC::Event &o);
 

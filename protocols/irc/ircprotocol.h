@@ -18,6 +18,8 @@
 #ifndef IRCPROTOCOL_H
 #define IRCPROTOCOL_H
 
+#include "kircentity.h"
+
 #include "kopeteonlinestatus.h"
 #include "kopeteprotocol.h"
 #include "kopetemimetypehandler.h"

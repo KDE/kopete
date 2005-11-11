@@ -62,7 +62,7 @@ public:
 
 	KIRC::Message &operator = (const KIRC::Message &o);
 
-public: // Properties read accessors
+public:
 	KIRC::Socket *socket() const;
 	KIRC::Message &setSocket(Socket *);
 
@@ -105,6 +105,12 @@ public: // Properties read accessors
 	QString suffix(QTextCodec *codec = 0) const;
 	KIRC::Message &setSuffix(const QString &, QTextCodec *codec = 0);
 
+#ifndef KIRC_STRICT
+	bool hasCtcpMessage() const;
+	KIRC::Message ctcpMessage() const;
+#endif
+
+
 public:
 	bool isValid() const;
 
@@ -117,9 +123,6 @@ public:
 	size_t argsSize() const;
 	QByteArray rawArg(size_t i) const;
 	QString arg(size_t i, QTextCodec *codec = 0) const;
-
-	bool hasCtcpMessage() const;
-	KIRC::Message ctcpMessage() const;
 
 private:
 	/**

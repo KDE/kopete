@@ -128,12 +128,64 @@ const KURL &Socket::url() const
 
 bool Socket::connectToServer(const KURL &url)
 {
-	d->url = url;
+	close();
 /*
-	setupSocket(useSSL);
+	d->url = "";
+
+	bool useSSL = false;
+	if (url.schema() == "irc")
+		useSSL = false;
+	if (url.schema() == "ircs")
+		useSSL = true;
+	else
+	{
+//		#warning FIXME: send an event here to reflect the error
+		return false;
+	}
+
+	QString host = url.host();
+	if(host.isEmpty())
+		host = "localhost";
+
+	QString port = url.port();
+	if(port.isEmpty())
+	{
+		// Make the port beeing guessed by the socket (look into /etc/services) 
+		port = url.schema();
+	}
+
+//	the given url is now validated
+	d->url = url;
+
+	if( d->useSSL )
+	{
+#ifdef KIRC_SSL_SUPPORT
+		d->socket = new KSSLSocket(this);
+		d->socket->setSocketFlags( KExtendedSocket::inetSocket );
+	}
+	else
+#else
+		kdWarning(14120) << "You tried to use SSL, but this version of Kopete was"
+			" not compiled with IRC SSL support. A normal IRC connection will be attempted." << endl;
+	}
+#endif
+	{
+		d->socket = new KBufferedSocket(QString::null, QString::null, this);
+//		d->socket->setSocketFlags( KExtendedSocket::inputBufferedSocket | KExtendedSocket::inetSocket );
+	}
+
+	connect(d->socket, SIGNAL(closed(int)),
+		this, SLOT(slotConnectionClosed()));
+	connect(d->socket, SIGNAL(readyRead()),
+		this, SLOT(onReadyRead()));
+	connect(d->socket, SIGNAL(connectionSuccess()),
+		this, SLOT(slotConnected()));
+	connect(d->socket, SIGNAL(connectionFailed(int)),
+		this, SLOT(error(int)));
+
+	#warning FIXME: send an event here to reflect connection state
 	return d->socket->connect(host, QString::number(port));
 */
-	return true;
 }
 
 void Socket::close()
@@ -141,6 +193,7 @@ void Socket::close()
 	if (d->socket)
 	{
 		d->socket->close();
+		delete d->socket;
 		d->socket = 0;
 	}
 }
@@ -149,7 +202,7 @@ void Socket::writeMessage(const QByteArray &msg)
 {
 	if (!d->socket || d->socket->state() != KBufferedSocket::Open)
 	{
-//		emit internalError(i18n("Attempting to send while not connected: %1").arg(rawMsg));
+		postErrorEvent(i18n("Attempting to send while not connected: %1").arg(msg.data()));
 		return;
 	}
 /*
@@ -181,6 +234,11 @@ void Socket::showInfoDialog()
 */
 }
 
+void Socket::postEvent(Event::MessageType messageType, const QString &message)
+{
+#warning implement me
+}
+
 void Socket::setConnectionState(ConnectionState newstate)
 {
 	if (d->state != newstate)
@@ -210,7 +268,7 @@ void Socket::onReadyRead()
 		if (msg.isValid())
 			emit receivedMessage(msg);
 //		else
-//			emit internalError(i18n("Parse error while parsing: %1").arg(msg.rawLine()));
+//			postErrorEvent(i18n("Parse error while parsing: %1").arg(msg.rawLine()));
 
 		QTimer::singleShot( 0, this, SLOT( onReadyRead() ) );
 	}
@@ -248,23 +306,23 @@ void Socket::socketStateChanged(int newstate)
 		setConnectionState(Closing);
 		break;
 	default:
-		emit internalError(i18n("Unknown SocketState value:%1").arg(newstate));
+		postErrorEvent(i18n("Unknown SocketState value:%1").arg(newstate));
 		close();
 	}
 }
 
 void Socket::socketGotError(int errCode)
 {
-	KBufferedSocket::SocketError err = (KBufferedSocket::SocketError)errCode;
+	KBufferedSocket::SocketError err = d->socket->error();
 
 	// Ignore spurious error
 	if (err == KBufferedSocket::NoError)
 		return;
-/*
-	QString errStr = KBufferedSocket::errorString(err);
+
+	QString errStr = d->socket->errorString();
 	kdDebug(14120) << k_funcinfo << "Socket error: " << errStr << endl;
-	emit internalError(errStr);
-*/
+	postErrorEvent(errStr);
+
 	// ignore non-fatal error
 	if (!KBufferedSocket::isFatalError(err))
 		return;
@@ -282,12 +340,12 @@ QByteArray Socket::encode(const QString &str, bool *success, QTextCodec *codec) 
 		{
 			if (!UTF8 || !UTF8->canEncode(str))
 			{
-//				emit internalError(i18n("Codec Error: .").arg(codec->name()));
+//				postErrorEvent(i18n("Codec Error: .").arg(codec->name()));
 				return QByteArray();
 			}
 			else
 			{
-//				emit internalError(i18n("Codec Warning: Using codec %1 for:\n%2")
+//				postErrorEvent(i18n("Codec Warning: Using codec %1 for:\n%2.")
 //					.arg(UTF8->name(), str));
 				codec = UTF8;
 			}
@@ -299,37 +357,3 @@ QByteArray Socket::encode(const QString &str, bool *success, QTextCodec *codec) 
 	*success = true;
 	return codec->fromUnicode(str);
 }
-
-bool Socket::setupSocket(bool useSSL)
-{
-	close();
-
-	d->useSSL = useSSL;
-
-	if( d->useSSL )
-	{
-#ifdef KIRC_SSL_SUPPORT
-		d->socket = new KSSLSocket(this);
-		d->socket->setSocketFlags( KExtendedSocket::inetSocket );
-	}
-	else
-#else
-		kdWarning(14120) << "You tried to use SSL, but this version of Kopete was"
-			" not compiled with IRC SSL support. A normal IRC connection will be attempted." << endl;
-	}
-#endif
-	{
-		d->socket = new KBufferedSocket(QString::null, QString::null, this);
-//		d->socket->setSocketFlags( KExtendedSocket::inputBufferedSocket | KExtendedSocket::inetSocket );
-	}
-
-	connect(d->socket, SIGNAL(closed(int)),
-		this, SLOT(slotConnectionClosed()));
-	connect(d->socket, SIGNAL(readyRead()),
-		this, SLOT(onReadyRead()));
-	connect(d->socket, SIGNAL(connectionSuccess()),
-		this, SLOT(slotConnected()));
-	connect(d->socket, SIGNAL(connectionFailed(int)),
-		this, SLOT(error(int)));
-}
-

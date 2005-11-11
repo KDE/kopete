@@ -16,9 +16,10 @@
     *************************************************************************
 */
 
+#include "ircprotocol.moc"
+
 #include "ircaccount.h"
 #include "irccontact.h"
-#include "ircprotocol.h"
 #include "irctransferhandler.h"
 #include "ksparser.h"
 
@@ -528,28 +529,12 @@ void IRCProtocol::slotCtcpCommand(const QString &args, ChatSession *manager)
 
 void IRCProtocol::slotQuoteCommand( const QString &args, ChatSession *manager )
 {
-	if (!args.isEmpty())
-	{
-//		static_cast<IRCAccount *>(manager->account())->client()->writeRawMessage(args);
-	}
-	else
-	{
-		static_cast<IRCAccount *>(manager->account())->appendErrorMessage(
-			i18n("You must enter some text to send to the server.") );
-	}
+//	static_cast<IRCAccount *>(manager->account())->client()->writeRawMessage(args);
 }
 
 void IRCProtocol::slotRawCommand( const QString &args, ChatSession *manager )
 {
-	if (!args.isEmpty())
-	{
-//		static_cast<IRCAccount*>(manager->account())->client()->writeRawMessage(args);
-	}
-	else
-	{
-		static_cast<IRCAccount*>(manager->account())->appendErrorMessage(
-			i18n("You must enter some text to send to the server.") );
-	}
+//	static_cast<IRCAccount*>(manager->account())->client()->writeRawMessage(args);
 }
 
 void IRCProtocol::editNetworks(const QString &networkName)
@@ -561,4 +546,3 @@ void IRCProtocol::editNetworks(const QString &networkName)
 */
 }
 
-#include "ircprotocol.moc"

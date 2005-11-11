@@ -25,6 +25,7 @@
 
 #include "kircclient.h"
 #include "kircentitymanager.h"
+#include "kircevent.h"
 #include "kircstdcommands.h"
 
 #include "kopeteaccountmanager.h"
@@ -190,11 +191,12 @@ void IRCAccount::clientSetup()
 	d->client->setDefaultCodec(codec());
 
 	// Build the URL instead
-	d->client->setUserName(userName());
-	d->client->setRealName(realName());
+	KURL url;
+	url.setUser(userName());
+//	url.setPass(password());
 
-//	d->client->setNickName(nickName());
-
+	d->client->setNickName(nickName());
+	url.addQuery(URL_REALNAME, realName());
 	d->client->setVersionString(IRC::Version);
 
 	QMap<QString, QString> replies = customCtcpReplies();
@@ -609,20 +611,6 @@ ChatSession *IRCAccount::currentCommandSource()
 	return d->commandSource;
 }
 
-void IRCAccount::appendErrorMessage(const QString &message)
-{
-	#warning FIXME make a reall message.
-	appendInternalMessage(message);
-}
-
-void IRCAccount::appendInternalMessage(const QString &message)
-{
-	ContactPtrList members;
-	members.append(d->server);
-	Message msg(d->server, members, message, Message::Internal, Message::RichText, CHAT_VIEW);
-	d->server->appendMessage(msg);
-}
-
 IRCContact *IRCAccount::myServer() const
 {
 	return d->server;
@@ -661,20 +649,17 @@ void IRCAccount::destroyed(IRCContact *contact)
 	d->contacts.remove(contact);
 }
 
-void IRCAccount::receivedMessage(
-		KIRC::MessageType type,
-		const KIRC::Entity::Ptr &from,
-		const KIRC::Entity::List &to,
-		const QString &message)
+void IRCAccount::receivedEvent(KIRC::Event *event)
 {
-	IRCContact *fromContact = getContact(from);
-//	IRCContact::List toContacts = getContacts(to);
-//	IRCContact *postContact = toContact;
 /*
-	Kopete::Message::Direction msgDirection =
-		fromContact == mySelf ? Kopete::Message::OutBound : Kopete::Message::Indound;
+	IRCContact *from = getContact(event->from());
+	QList<IRCContact*> to = getContacts(event->to());
+	QList<IRCContact*> cc = getContacts(event->cc());
 
-	Kopete::Message::Type msgType;
+	Kopete::Message::MessageDirection msgDirection =
+		event->from() == mySelf ? Kopete::Message::OutBound : Kopete::Message::Indound;
+
+	Kopete::Message::MessageType msgType;
 	switch (type)
 	{
 	case KIRC::????: // Action
@@ -687,9 +672,10 @@ void IRCAccount::receivedMessage(
 //	make a notification if needed, istead of posting the message to the toContact.
 //	toContact may be the wrong contact where to post in case of private user chat
 
-	Message msg(fromContact, manager()->members(), message, msgDirection,
+	Message msg(event->from(), manager()->members(), message, msgDirection,
 		    Kopete::Message::RichText, CHAT_VIEW, msgType);
 
+	foreach
 		postContact->appendMessage(msg);
 */
 }

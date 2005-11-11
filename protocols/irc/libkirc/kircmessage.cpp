@@ -459,12 +459,12 @@ QTextCodec *Message::checkCodec(QTextCodec *codec) const
 	return UTF8;
 }
 
+#ifndef KIRC_STRICT
 /* Return true if the given string is a special command string
  * (i.e start and finish with the ascii code \001), and the given
  * string is splited to get the first part of the message and fill the ctcp command.
  * FIXME: The code currently only match for a textual message or a ctcp message not both mixed as it can be (even if very rare).
  */
-#ifndef KIRC_STRICT
 bool Message::extractCtcpCommand()
 {
 	if (d->suffix.isEmpty())

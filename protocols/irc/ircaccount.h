@@ -32,6 +32,7 @@ class IRCProtocol;
 namespace KIRC
 {
 class Client;
+class Event;
 }
 
 namespace Kopete
@@ -163,10 +164,6 @@ public slots:
 public slots:
 	void quit( const QString &quitMessage = QString::null );
 
-//	void appendMessage( const QString &message, MessageType type = Default );
-	void appendErrorMessage( const QString &message );
-	void appendInternalMessage( const QString &message );
-
 protected:
 	virtual bool createContact( const QString &contactId, Kopete::MetaContact *parentContact ) ;
 
@@ -175,10 +172,7 @@ private slots:
 
 	void destroyed(IRCContact *contact);
 
-	void receivedMessage(	KIRC::MessageType type,
-				const KIRC::Entity::Ptr &from,
-				const KIRC::Entity::List &to,
-				const QString &msg);
+	void receivedEvent(KIRC::Event *event);
 
 	void slotPerformOnConnectCommands();
 

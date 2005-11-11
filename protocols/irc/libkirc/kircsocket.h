@@ -20,6 +20,7 @@
 
 #include "kircconst.h"
 #include "kircentity.h"
+#include "kircevent.h"
 #include "kircmessage.h"
 
 #include <kbufferedsocket.h>
@@ -34,6 +35,7 @@ namespace KIRC
 
 class CommandHandler;
 class EntityManager;
+class Event;
 
 /**
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
@@ -74,7 +76,9 @@ public:
 	KIRC::EntityManager *entityManager() const;
 	KIRC::Entity::Ptr owner() const;
 
-	#warning Find a better name
+	/**
+	 * The connection url.
+	 */
 	const KURL &url() const;
 
 public slots:
@@ -97,16 +101,26 @@ public slots:
 
 	void showInfoDialog();
 
-signals:
 	/**
-	 * This message is emitted each time an internal error is detected.
+	 * Post an event for the given socket.
+	 *
+	 * @param messageType the type of event message.
+	 * @param message the event message content.
+	 */
+	void postEvent(KIRC::Event::MessageType messageType, const QString &message);
+
+	/**
+	 * Post an error event for the given socket.
 	 *
 	 * @param errStr the string describing the error.
 	 *
-	 * @note The signal can be fired on non fatal error also.
-	 *       It's the emiter responsability to change the state accordingly.
+	 * @note The error event is only informational and won't change the status.
 	 */
-	void internalError(const QString &errStr);
+	inline void postErrorEvent(const QString &errStr)
+	{ postEvent(KIRC::Event::ErrorMessage, errStr); }
+
+signals:
+//	void eventOccured(const KIRC::Event *);
 
 	void connectionStateChanged(KIRC::Socket::ConnectionState newstate);
 
@@ -125,7 +139,6 @@ private slots:
 
 private:
 	QByteArray encode(const QString &str, bool *success, QTextCodec *codec = 0) const;
-	bool setupSocket(bool useSSL);
 
 	Q_DISABLE_COPY(Socket)
 

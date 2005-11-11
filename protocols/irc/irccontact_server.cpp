@@ -29,33 +29,6 @@
 
 #include <qtimer.h>
 /*
-void IRCServerContact::engineInternalError(KIRC::Engine::Error engineError, KIRC::Message &ircmsg)
-{
-	QString error;
-	switch (engineError)
-	{
-		case KIRC::Engine::ParsingFailed:
-			error = i18n("KIRC Error - Parse error: ");
-			break;
-		case KIRC::Engine::UnknownCommand:
-			error = i18n("KIRC Error - Unknown command: ");
-			break;
-		case KIRC::Engine::UnknownNumericReply:
-			error = i18n("KIRC Error - Unknown numeric reply: ");
-			break;
-		case KIRC::Engine::InvalidNumberOfArguments:
-			error = i18n("KIRC Error - Invalid number of arguments: ");
-			break;
-		case KIRC::Engine::MethodFailed:
-			error = i18n("KIRC Error - Method failed: ");
-			break;
-		default:
-			error = i18n("KIRC Error - Unknown error: ");
-	}
-
-	ircAccount()->appendMessage(error + QString(ircmsg.raw()), IRCAccount::ErrorReply);
-}
-
 void IRCServerContact::slotSendMsg(Kopete::Message &, Kopete::ChatSession *manager)
 {
 	manager->messageSucceeded();
