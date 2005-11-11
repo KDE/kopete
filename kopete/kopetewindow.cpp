@@ -268,7 +268,7 @@ void KopeteWindow::initActions()
 	quickSearch->setAutoSized( true );
 	// quick search bar - clear button
 	KAction *resetQuickSearch = new KAction( i18n( "Reset Quick Search" ),
-		QApplication::reverseLayout() ? "clear_left" : "locationbar_erase",
+		QApplication::isRightToLeft() ? "clear_left" : "locationbar_erase",
 		0, searchBar, SLOT( clear() ), actionCollection(), "quicksearch_reset" );
 	resetQuickSearch->setWhatsThis( i18n( "Reset Quick Search\n"
 		"Resets the quick search so that all contacts and groups are shown again." ) );

@@ -106,12 +106,12 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent, const char* name)
 	mMainWidget->tbDown->setAutoRepeat(true);
 	connect(mMainWidget->tbDown, SIGNAL(clicked()), SLOT(slotDownButton()));
 
-	iconSet = QApplication::reverseLayout() ? SmallIconSet("back") : SmallIconSet("forward");
+	iconSet = QApplication::isRightToLeft() ? SmallIconSet("back") : SmallIconSet("forward");
 	mMainWidget->tbAdd->setIconSet(iconSet);
 	mMainWidget->tbAdd->setEnabled(false);
 	connect(mMainWidget->tbAdd, SIGNAL(clicked()), SLOT(slotAddButton()));
 
-	iconSet = QApplication::reverseLayout() ? SmallIconSet("forward") : SmallIconSet("back");
+	iconSet = QApplication::isRightToLeft() ? SmallIconSet("forward") : SmallIconSet("back");
 	mMainWidget->tbRemove->setIconSet(iconSet);
 	mMainWidget->tbRemove->setEnabled(false);
 	connect(mMainWidget->tbRemove, SIGNAL(clicked()), SLOT(slotRemoveButton()));

@@ -78,7 +78,7 @@ public:
 	 * handler in the chain.
 	 * 
 	 * @note If you store @p event, be aware that it could be deleted at any time, and either
-	 *       connect to the its discarded(Kopete::MessageEvent*) signal or store it in a QGuardedPtr.
+	 *       connect to the its discarded(Kopete::MessageEvent*) signal or store it in a QPointer.
 	 */
 	virtual void handleMessage( MessageEvent *event );
 

@@ -337,7 +337,7 @@ void HistoryDialog::setMessages(Q3ValueList<Kopete::Message> msgs)
 		htmlBody.removeChild(htmlBody.childNodes().item(htmlBody.childNodes().length() - 1));
 	// ----
 
-	QString dir = (QApplication::reverseLayout() ? QString::fromLatin1("rtl") :
+	QString dir = (QApplication::isRightToLeft() ? QString::fromLatin1("rtl") :
 		QString::fromLatin1("ltr"));
 
 	Q3ValueList<Kopete::Message>::iterator it = msgs.begin();

@@ -1280,7 +1280,7 @@ void ClientStream::srvProcessNext()
 
 void ClientStream::doReadyRead()
 {
-	//QGuardedPtr<QObject> self = this;
+	//QPointer<QObject> self = this;
 	readyRead();
 	//if(!self)
 	//	return;

@@ -94,7 +94,7 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 	}
 	d->widget->m_groupList->setCurrentText(QString::null); //default to top-level
 
-	d->widget->btnClear->setIconSet( SmallIconSet( QApplication::reverseLayout() ?
+	d->widget->btnClear->setIconSet( SmallIconSet( QApplication::isRightToLeft() ?
 			 QString::fromLatin1 ( "locationbar_erase" ) : QString::fromLatin1 ("clear_left") ) );
 	connect( d->widget->btnClear, SIGNAL( clicked() ), this, SLOT( slotClearAddresseeClicked() ) );
 	connect( d->widget->btnSelectAddressee, SIGNAL( clicked() ), this, SLOT( slotSelectAddresseeClicked() ) );

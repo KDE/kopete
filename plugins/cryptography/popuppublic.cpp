@@ -120,7 +120,7 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
 	
 	QToolButton *clearSearch = new QToolButton(hBar);
 	clearSearch->setTextLabel(i18n("Clear Search"), true);
-	clearSearch->setIconSet(SmallIconSet(QApplication::reverseLayout() ? "clear_left"
+	clearSearch->setIconSet(SmallIconSet(QApplication::isRightToLeft() ? "clear_left"
                                             : "locationbar_erase"));
 	(void) new QLabel(i18n("Search: "),hBar);
 	KListViewSearchLine* listViewSearch = new KListViewSearchLine(hBar);
