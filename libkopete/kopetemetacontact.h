@@ -28,7 +28,6 @@
 #include <kdemacros.h>
 #include "kopete_export.h"
 
-#include "kopetenotifydataobject.h"
 #include "kopetecontactlistelement.h"
 #include "kopeteonlinestatus.h"
 
@@ -53,7 +52,7 @@ class Group;
  * the metacontact. Plugins can store data in it with all
  * @ref ContactListElement methods
  */
-class KOPETE_EXPORT MetaContact : public ContactListElement, public NotifyDataObject
+class KOPETE_EXPORT MetaContact : public ContactListElement
 {
 	Q_OBJECT
 
@@ -343,7 +342,7 @@ public:
 	 * Return a XML representation of the metacontact
 	 * @internal
 	 * @param minimal When true, it doesn't save the
-	 * plugins, groups and notification data. False by default.
+	 * plugins, groups. False by default.
 	 */
 	const QDomElement toXML(bool minimal = false);
 

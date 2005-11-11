@@ -136,10 +136,6 @@ const QDomElement Group::toXML()
 	for ( Q3ValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
 		group.documentElement().appendChild( group.importNode( *it, true ) );
 
-	// Store custom notification data
-	QDomElement notifyData = Kopete::NotifyDataObject::notifyDataToXML();
-	if ( notifyData.hasChildNodes() )
-		group.documentElement().appendChild( group.importNode( notifyData, true ) );
 
 	return group.documentElement();
 }
@@ -192,10 +188,6 @@ bool Group::fromXML( const QDomElement &data )
 			// Don't set display name for temporary or top-level items
 			if ( d->type == Normal )
 				d->displayName = groupElement.text();
-		}
-		else if( groupElement.tagName() == QString::fromLatin1( "custom-notifications" ) )
-		{
-			Kopete::NotifyDataObject::notifyDataFromXML( groupElement );
 		}
 		else
 		{

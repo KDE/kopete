@@ -1004,10 +1004,6 @@ const QDomElement MetaContact::toXML(bool minimal)
 		for( Q3ValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
 			metaContact.documentElement().appendChild( metaContact.importNode( *it, true ) );
 
-		// Store custom notification data
-		QDomElement notifyData = NotifyDataObject::notifyDataToXML();
-		if ( notifyData.hasChildNodes() )
-			metaContact.documentElement().appendChild( metaContact.importNode( notifyData, true ) );
 	}
 	return metaContact.documentElement();
 }
@@ -1144,10 +1140,6 @@ bool MetaContact::fromXML( const QDomElement& element )
 			QString key = contactElement.attribute( QString::fromUtf8( "key" ), QString::null );
 			QString val = contactElement.text();
 			d->addressBook[ app ][ key ] = val;
-		}
-		else if( contactElement.tagName() == QString::fromUtf8( "custom-notifications" ) )
-		{
-			Kopete::NotifyDataObject::notifyDataFromXML( contactElement );
 		}
 		else //if( groupElement.tagName() == QString::fromUtf8( "plugin-data" ) || groupElement.tagName() == QString::fromUtf8("custom-icons" ))
 		{

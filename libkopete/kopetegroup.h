@@ -19,7 +19,6 @@
 #ifndef KOPETEGROUP_H
 #define KOPETEGROUP_H
 
-#include "kopetenotifydataobject.h"
 #include "kopetecontactlistelement.h"
 
 #include "kopete_export.h"
@@ -44,7 +43,7 @@ class Message;
  *
  * @author Olivier Goffart
  */
-class KOPETE_EXPORT Group : public ContactListElement, public NotifyDataObject
+class KOPETE_EXPORT Group : public ContactListElement
 {
 	Q_PROPERTY( QString displayName READ displayName WRITE setDisplayName )
 	Q_PROPERTY( uint groupId READ groupId )

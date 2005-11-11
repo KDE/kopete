@@ -22,8 +22,8 @@ libkopete_la_SOURCES = knotification.cpp knotificationmanager.cpp knotifywidgetb
 		kopetecontactlistelement.cpp kopetecommand.cpp kopetecommandhandler.cpp kopeteaway.cpp 	kopeteawayaction.cpp \
 	kopetewalletmanager.cpp kopetecontactproperty.cpp 	kopetepassword.cpp kopeteglobal.cpp \
 	kopeteuiglobal.cpp kopetepasswordedaccount.cpp 	kopetemimetypehandler.cpp kopetetask.cpp \
-	kopetemimesourcefactory.cpp kopetexsl.cpp 	kopeteeventpresentation.cpp kopetenotifyevent.cpp \
-	kopetenotifydataobject.cpp kopeteblacklister.cpp 	kopetemessageevent.cpp kopetemessagehandler.cpp \
+	kopetemimesourcefactory.cpp kopetexsl.cpp 	\
+	kopeteblacklister.cpp 	kopetemessageevent.cpp kopetemessagehandler.cpp \
 	kopetemessagehandlerchain.cpp 	kopetesimplemessagehandler.cpp kopeteproperties.cpp \
 	kabcpersistence.cpp connectionmanager.skel 	clientiface.stub managedconnectionaccount.cpp \
 	networkstatuscommon.h kopeteconfig.kcfgc kopeteutils.cpp knotificationmanager.skel
@@ -51,13 +51,13 @@ servicetypedir = $(kde_servicetypesdir)
 kopeteincludedir = $(includedir)/kopete
 kopeteinclude_HEADERS = kopeteaccount.h kopeteaccountmanager.h kopeteawayaction.h kopeteawaydialog.h kopeteaway.h \
 	kopeteblacklister.h kopetecommand.h kopetecommandhandler.h kopetecontact.h kopetecontactlistelement.h kopetecontactlist.h \
-	kopetecontactproperty.h kopeteeventpresentation.h kopete_export.h kopeteglobal.h kopetegroup.h \
+	kopetecontactproperty.h kopete_export.h kopeteglobal.h kopetegroup.h \
 	kopetemessageevent.h kopetemessage.h kopetemessagehandlerchain.h kopetemessagehandler.h \
 	kopetechatsession.h kopetechatsessionmanager.h kopetemetacontact.h kopetemimetypehandler.h \
 	kopeteonlinestatus.h kopeteonlinestatusmanager.h kopetepasswordedaccount.h \
 	kopetepassword.h kopeteplugin.h kopeteprotocol.h kopetesimplemessagehandler.h kopetetask.h \
 	kopetetransfermanager.h kopeteuiglobal.h kopetexsl.h kabcpersistence.h managedconnectionaccount.h \
-	kopetenotifydataobject.h kopeteversion.h
+	 kopeteversion.h
 
 # vim: set noet:
 
