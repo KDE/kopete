@@ -115,7 +115,7 @@ public:
 	 * Depending of the configuration, the taskbar entry of the window containing the widget may blink.
 	 */
 	QWidget *widget() const;
-
+			  
    signals:
 	/**
 	 * Emit only when the default activation has occured
