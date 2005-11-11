@@ -157,6 +157,20 @@ public slots:
 	 */
 	void raiseWidget();
 
+	/**
+	 * The notification will automatically be closed if all presentation are finished.
+	 * if you want to show your own presentation in your application, you should use this
+	 * function, so it will not be automatically closed when there is nothing to show.
+	 * 
+	 * don't forgot to deref, or the notification may be never closed if there is no timeout.
+	 */
+	void ref();
+	/**
+	 * remove a reference made with ref()
+	 * the notification may be closed when calling this.
+	 * @see ref
+	 */
+	void deref();
 
 
 private:
@@ -232,7 +246,6 @@ public:	//from KNotifyClient
      * Describes the notification method.
      */
 	enum NotifyPresentation {
-		Default = -1,
 		None = 0,
 		Sound = 1,
 		Messagebox = 2,
@@ -250,68 +263,6 @@ public:	//from KNotifyClient
 		Catastrophe=8
 	};
 	
-#if 0
-	/**
-	 * @brief emit a custom event
-	 *
-	 * @param text is the text of the notification to show in the popup.
-	 * @param pixmap is a picture which may be shown in the popup
-	 * @param widget is a widget where the notification raports to
-	 * @param actions is a list of actions text.
-	 * @param present The presentation method of the event
-	 * @param level The error message level
-	 * @param sound The sound to play if selected with @p present
-	 * @param file The log file to append the message to if selected with @p parent
-	 * @param commandLine the command line to run if selected with @p parent
-	 * @param flags Indicates the way in which the notification should be handled
-	 */
-	static KNotification *userEvent( const QString& text, const QPixmap& pixmap,
-				QWidget *widget, QStringList actions,int present, int level,
-				const QString &sound, const QString &file,
-				const QString &commandLine, unsigned int flags);
-
-	/**
-	 * Gets the presentation associated with a certain event name
-	 * Remeber that they may be ORed:
-	 * \code
-	 * if (present & KNotification::Sound) { [Yes, sound is a default] }	
-	 * \endcode
-	 * @param eventname the event name to check
-	 * @return the presentation methods
-	 */
-	static int getPresentation(const QString &eventname);
-	/**
-	 * Gets the default file associated with a certain event name
-	 * The control panel module will list all the event names
-	 * This has the potential for being slow.
-	 * @param eventname the name of the event
-	 * @param present the presentation method
-	 * @return the associated file. Can be QString::null if not found.
-	 */
-	static QString getFile(const QString &eventname, int present);
-	
-	/**
-	 * Gets the default presentation for the event of this program.
-	 * Remember that the Presentation may be ORed.  Try this:
-	 * \code
-	 * if (present & KNotifyClient::Sound) { [Yes, sound is a default] }
-	 * \endcode
-	 * @return the presentation methods
-	 */
-	static int getDefaultPresentation(const QString &eventname);
-	
-	/**
-	 * Gets the default File for the event of this program.
-	 * It gets it in relation to present.
-	 * Some events don't apply to this function ("Message Box")
-	 * Some do (Sound)
-	 * @param eventname the name of the event
-	 * @param present the presentation method
-	 * @return the default file. Can be QString::null if not found.
-	 */
-	static QString getDefaultFile(const QString &eventname, int present);
-#endif
-			  
 };
 
 

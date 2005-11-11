@@ -78,7 +78,9 @@ struct KNotification::Private
 	QString title;
 	unsigned int id;
 	
-	Private() : widget(0l) , id(0) {}
+	int ref;
+	
+	Private() : widget(0l) , id(0), ref(1) {}
 };
 
 KNotification::KNotification(QObject *parent) :
@@ -154,10 +156,6 @@ void KNotification::notifyByMessagebox()
 	// display message box for specified event level
 		switch( d->level )
 		{
-			default:
-			case Notification:
-				KMessageBox::informationWId( winId, d->text, i18n( "Notification" ) , 0 , false );
-				break;
 			case Warning:
 				KMessageBox::sorryWId( winId, d->text, i18n( "Warning" ) , false );
 				break;
@@ -167,6 +165,11 @@ void KNotification::notifyByMessagebox()
 			case Catastrophe:
 				KMessageBox::errorWId( winId, d->text, i18n( "Catastrophe!" ) , false );
 				break;
+			default:
+			case Notification:
+				KMessageBox::informationWId( winId, d->text, i18n( "Notification" ) , 0 , false );
+				break;
+
 		}
 	}
 	else
@@ -198,6 +201,7 @@ void KNotification::notifyByMessagebox()
 
 void KNotification::notifyByPassivePopup(const QPixmap &pix, const QString& sound )
 {	
+	ref();
 	d->id=KNotificationManager::self()->notify( this , pix , d->actions , sound );
 	kdDebug() << k_funcinfo << d->id << endl;
 }
@@ -375,7 +379,7 @@ KNotification *KNotification::event( const QString& eventid , const QString& tex
 			const QPixmap& pixmap, QWidget *widget, const QStringList &actions,
 			ContextList contexts, unsigned int flags)
 {
-	int level=Default;
+	int level=Notification;
 	QString appname = QString::fromAscii(kapp->instanceName());
 	KNotification *notify=new KNotification(widget);
 	notify->d->widget=widget;
@@ -436,6 +440,8 @@ KNotification *KNotification::event( const QString& eventid , const QString& tex
 	if ( present & Taskbar )
 		notify->notifyByTaskbar( checkWinId( kapp->instanceName(), winId ));
 	
+	//after a small timeout, the notification will be deleted if all presentation are finished
+	QTimer::singleShot(1000, notify, SLOT(deref()));
 	
 #if 0  //TODO
 	QByteArray qbd;
@@ -448,74 +454,17 @@ KNotification *KNotification::event( const QString& eventid , const QString& tex
 	return notify;
 }
 
-
-
-#if 0
-
-
-int KNotification::getPresentation(const QString &eventname)
+void KNotification::ref()
 {
-	int present;
-	if (eventname.isEmpty()) return Default;
-
-	KConfig eventsfile( kapp->instanceName()+".eventsrc", true, false);
-	eventsfile.setGroup(eventname);
-
-	present=eventsfile.readNumEntry("presentation", -1);
-
-	return present;
+	d->ref++;
 }
 
-QString KNotification::getFile(const QString &eventname, int present)
+void KNotification::deref()
 {
-	if (eventname.isEmpty()) return QString::null;
-
-	KConfig eventsfile( kapp->instanceName()+".eventsrc", true, false);
-	eventsfile.setGroup(eventname);
-
-	switch (present)
-	{
-		case (Sound):
-			return eventsfile.readPathEntry("soundfile");
-		case (Logfile):
-			return eventsfile.readPathEntry("logfile");
-	}
-
-	return QString::null;
+	d->ref--;
+	if(d->ref==0)
+		close();
 }
-
-int KNotification::getDefaultPresentation(const QString &eventname)
-{
-	int present;
-	if (eventname.isEmpty()) return Default;
-
-	KConfig eventsfile( kapp->instanceName()+"/eventsrc", true, false, "data");
-	eventsfile.setGroup(eventname);
-
-	present=eventsfile.readNumEntry("default_presentation", -1);
-
-	return present;
-}
-
-QString KNotification::getDefaultFile(const QString &eventname, int present)
-{
-	if (eventname.isEmpty()) return QString::null;
-
-	KConfig eventsfile( kapp->instanceName()+"/eventsrc", true, false, "data");
-	eventsfile.setGroup(eventname);
-
-	switch (present)
-	{
-		case (Sound):
-			return eventsfile.readPathEntry("default_sound");
-		case (Logfile):
-			return eventsfile.readPathEntry("default_logfile");
-	}
-
-	return QString::null;
-}
-
-#endif
 
 #include "knotification.moc"
 
