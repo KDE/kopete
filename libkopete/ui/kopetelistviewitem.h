@@ -313,6 +313,7 @@ class ContactComponent : public ImageComponent
 {
 public:
 	ContactComponent( ComponentBase *parent, Kopete::Contact *contact, int iconSize);
+	~ContactComponent();
 	void updatePixmap();
 	Kopete::Contact *contact();
 	std::pair<QString,QRect> toolTip( const QPoint &relativePos );

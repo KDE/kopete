@@ -819,6 +819,11 @@ ContactComponent::ContactComponent( ComponentBase *parent, Kopete::Contact *cont
 	updatePixmap();
 }
 
+ContactComponent::~ContactComponent()
+{
+	delete d;
+}
+
 void ContactComponent::updatePixmap()
 {
 	setPixmap( contact()->onlineStatus().iconFor( contact(), d->iconSize ) );
