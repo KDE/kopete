@@ -355,9 +355,9 @@ int VideoDevicePool::scanDevices()
         videodevice_dir.setFilter( QDir::System | QDir::NoSymLinks | QDir::Readable | QDir::Writable );
         videodevice_dir.setSorting( QDir::Name );
 
-	const QFileInfoList *list = videodevice_dir.entryInfoList();
+	QFileInfoList list = videodevice_dir.entryInfoList();
 
-	if (!list)
+	if (list.isEmpty())
 	{
 		kdDebug() << k_funcinfo << "Found no suitable devices in " << videodevice_dir_path << endl;
 		QDir videodevice_dir;
@@ -370,21 +370,21 @@ int VideoDevicePool::scanDevices()
         	videodevice_dir.setFilter( QDir::System | QDir::NoSymLinks | QDir::Readable | QDir::Writable );
         	videodevice_dir.setSorting( QDir::Name );
 
-		const QFileInfoList *list = videodevice_dir.entryInfoList();
+		QFileInfoList list = videodevice_dir.entryInfoList();
 
-		if (!list)
+		if (list.isEmpty())
 		{
 			kdDebug() << k_funcinfo << "Found no suitable devices in " << videodevice_dir_path << endl;
 			return EXIT_FAILURE;
 		}
-		QFileInfoListIterator fileiterator ( *list );
-		QFileInfo *fileinfo;
+		QFileInfoList::iterator fileiterator, itEnd = list.end();
 
 		m_videodevice.clear();
 		kdDebug() <<  k_funcinfo << "scanning devices in " << videodevice_dir_path << "..." << endl;
-		while ( (fileinfo = fileiterator.current()) != 0 )
+		for ( fileiterator = list.begin(); fileiterator != itEnd; ++fileiterator )
 		{
-			videodevice.setFileName(fileinfo->absoluteFilePath());
+			QFileInfo fileinfo = ( *fileiterator );
+			videodevice.setFileName(fileinfo.absoluteFilePath());
 			kdDebug() <<  k_funcinfo << "Found device " << videodevice.full_filename << endl;
 			videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
 			if(videodevice.isOpen())
@@ -399,20 +399,18 @@ int VideoDevicePool::scanDevices()
 				videodevice.close();
 				m_videodevice.push_back(videodevice);
 			}
-			++fileiterator;
 		}
-
 
 		return EXIT_FAILURE;
 	}
-	QFileInfoListIterator fileiterator ( *list );
-	QFileInfo *fileinfo;
 
+	QFileInfoList::iterator fileiterator, itEnd = list.end();
 	m_videodevice.clear();
 	kdDebug() <<  k_funcinfo << "scanning devices in " << videodevice_dir_path << "..." << endl;
-	while ( (fileinfo = fileiterator.current()) != 0 )
+	for ( fileiterator = list.begin(); fileiterator != itEnd; ++fileiterator )
 	{
-		videodevice.setFileName(fileinfo->absoluteFilePath());
+		QFileInfo fileinfo = ( *fileiterator );
+		videodevice.setFileName(fileinfo.absoluteFilePath());
 		kdDebug() <<  k_funcinfo << "Found device " << videodevice.full_filename << endl;
 		videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
 		if(videodevice.isOpen())
@@ -475,7 +473,7 @@ void VideoDevicePool::loadConfig()
 void VideoDevicePool::saveConfig()
 {
     /// @todo implement me
-	if(hasDevices())
+	if(!m_videodevice.isEmpty())
 	{
 		if(m_model.size())
 		{

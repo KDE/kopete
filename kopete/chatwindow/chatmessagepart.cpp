@@ -46,7 +46,6 @@
 #include <krun.h>
 #include <kstringhandler.h>
 #include <ktempfile.h>
-#include <kurldrag.h>
 #include <kio/netaccess.h>
 
 #include "chatmemberslistwidget.h"

@@ -40,7 +40,6 @@
 #include <kmenu.h>
 #include <kstringhandler.h>
 #include <kwin.h>
-#include <kurldrag.h>
 #include <kglobalsettings.h>
 #include <kgenericfactory.h>
 #include <khtmlview.h>

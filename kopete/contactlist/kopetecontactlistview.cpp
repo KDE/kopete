@@ -47,7 +47,6 @@
 #include <kmainwindow.h>
 #include <kmessagebox.h>
 #include <kmenu.h>
-#include <kurldrag.h>
 #include <kabc/stdaddressbook.h>
 #include <kabc/vcardconverter.h>
 #include <kxmlguifactory.h>
