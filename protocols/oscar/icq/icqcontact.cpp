@@ -621,7 +621,7 @@ void ICQContact::changeContactEncoding()
     if ( m_oesd )
         return;
 
-    m_oesd = new OscarEncodingSelectionDialog( Kopete::UI::Global::mainWidget() );
+    m_oesd = new OscarEncodingSelectionDialog( Kopete::UI::Global::mainWidget(), property(mProtocol->contactEncoding).value().toInt() );
     connect( m_oesd, SIGNAL( closing( int ) ),
              this, SLOT( changeEncodingDialogClosed( int ) ) );
     m_oesd->show();
