@@ -4,6 +4,7 @@
 #include <qlayout.h>
 #include <qcheckbox.h>
 #include <qpushbutton.h>
+#include <qradiobutton.h>
 #include <qlineedit.h>
 #include <qspinbox.h>
 
@@ -49,6 +50,32 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 		mGui->edtServerAddress->setText( serverEntry );
 		mGui->sbxServerPort->setValue( portEntry );
 
+		using namespace AIM::PrivacySettings;
+
+		int privacySetting = mAccount->configGroup()->readNumEntry( "PrivacySetting", AllowAll );
+		switch( privacySetting )
+		{
+			case AllowAll:
+				mGui->rbAllowAll->setChecked( true );
+				break;
+			case AllowMyContacts:
+				mGui->rbAllowMyContacts->setChecked( true );
+				break;
+			case AllowPremitList:
+				mGui->rbAllowPerimtList->setChecked( true );
+				break;
+			case BlockAll:
+				mGui->rbBlockAll->setChecked( true );
+				break;
+			case BlockAIM:
+				mGui->rbBlockAIM->setChecked( true );
+				break;
+			case BlockDenyList:
+				mGui->rbBlockDenyList->setChecked( true );
+				break;
+			default:
+				mGui->rbAllowAll->setChecked( true );
+		}
     }
 	QObject::connect( mGui->buttonRegister, SIGNAL( clicked() ), this, SLOT( slotOpenRegister() ) );
 
@@ -86,6 +113,25 @@ Kopete::Account *AIMEditAccountWidget::apply()
 		static_cast<OscarAccount *>( mAccount )->setServerAddress( "login.oscar.aol.com" );
 		static_cast<OscarAccount *>( mAccount )->setServerPort( 5190 );
 	}
+
+	using namespace AIM::PrivacySettings;
+	int privacySetting = AllowAll;
+
+	if ( mGui->rbAllowAll->isChecked() )
+		privacySetting = AllowAll;
+	else if ( mGui->rbAllowMyContacts->isChecked() )
+		privacySetting = AllowMyContacts;
+	else if ( mGui->rbAllowPerimtList->isChecked() )
+		privacySetting = AllowPremitList;
+	else if ( mGui->rbBlockAll->isChecked() )
+		privacySetting = BlockAll;
+	else if ( mGui->rbBlockAIM->isChecked() )
+		privacySetting = BlockAIM;
+	else if ( mGui->rbBlockDenyList->isChecked() )
+		privacySetting = BlockDenyList;
+
+	mAccount->configGroup()->writeEntry( "PrivacySetting", privacySetting );
+	mAccount->setPrivacySettings( privacySetting );
 
 	return mAccount;
 }

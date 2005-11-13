@@ -110,7 +110,7 @@ protected:
 protected slots:
 
 	//! do stuff on login
-	void loginActions();
+	virtual void loginActions();
 
     void processSSIList();
 
