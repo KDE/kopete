@@ -43,12 +43,86 @@ class QWidget;
  * Notify when one received a new message, or when something important happened
  * the user has to know.  This notification has a start and a end.  It start when
  * the event actually occurs, and finish when the message is acknowledged.
- *
- *
- * use the static function event() to fire an event
- *
- * the returned KNotification pointer may be used to connect signals or slots
  * 
+ * In order to do a notification, you need to create a description files, which contains 
+ * default parametters of the notification, and use KNotification::event at the place of the
+ * code where the notification occurs.
+ * the returned KNotification pointer may be used to connect signals or slots
+ *
+ * \section file The global config file
+ * On installation, there should be a file called 
+ * 
+ * <p>On installation, there should be a file called
+ *  <em>$KDEDIR/share/apps/appname/eventsrc</em>
+ *  This file contains  mainly 3 parts
+ *   <ol><li>Global information</li><li>Context information</li><li>Information about every events</li></ol>
+ *  
+ *  \subsection global Global information
+ * The global part looks like that
+ * <pre>
+		   [Global]
+		   IconName=Filename
+		   Comment=Freindly Name of app
+ * </pre>
+ *   The icon filename is just the name, without extention,  it's found with the KIconLoader
+ * 
+ * \subsection context Context information
+ * 
+ * This part is only hints for the configuration widget
+ *  <pre>
+		   [Context/group]
+		   Name=Group name
+		   Comment=The name of the group of the contact
+
+		   [Context/folder]
+		   Name=Group name
+ *  </pre>
+ *  the second part of the groupname is the context identifier.
+ *  It should not contains special characters.
+ *  The Name field is the one the user will see (and which is translated)
+ * 
+ * \subsection events Description of Events
+ * 
+ * Now comes the most important,  the description of each events.
+ * <pre>
+		   [Event/newmail]
+		   Name=New email
+		   Comment=You have got a new email
+		   Action=Sound|Popup
+
+		   [Event/contactOnline]
+		   Name=Contact goes online
+		   Comment=One of your contact has been connected
+		   Sound=filetoplay.ogg
+		   Action=None
+ *  </pre>
+ *   All you put there are the default value.
+ *   Action is a bitmask of KNotification::NotifyPresentation
+ * 
+ *  \section userfile The user's config file
+ * 
+ *  This is only an implementation detail, for your information.
+ * 
+ * On the config file, there is two parts:  the events configuration, and the context informations
+ * \subsection context Context informations
+ *  This is only hints for the configuration dialog. It contains both the internal id of the context, and the user visible string.
+ *  <pre>
+		   [Context/group]
+		   Values=1:Friends,2:Work,3:Family
+ *  </pre>
+ * \subsection event Events configuration
+ *   This contains the configuration of events for the user.
+ *   It contains the same fields as the description file.
+ *    The key of groups is in the form 
+ *  <em>Event/&lt;EventName&gt;/&lt;ContextName&gt;/&lt;ContextValue&gt;</em>
+ * <pre>
+		   [Event/contactOnline]
+		   Action=Sound
+		   Sound=/usr/share/sounds/super.ogg
+
+		   [Event/contactOnline/group/1]
+		   Action=PassivePopup|Sound
+ * </pre>
  * @author Olivier Goffart  <ogoffart @ kde.org>
  */
 class KOPETE_EXPORT KNotification : public QObject
@@ -70,9 +144,7 @@ public:
 	 * 
 	 * the order of contexts in the list is is importent, most importent context 
 	 * should be placed first
-	 * 
-	 * @todo  contexts doesn't works yet
-	 * 
+	 *
 	 * @see event
 	 */
 	typedef QList< QPair<QString,QString> > ContextList;
@@ -163,6 +235,7 @@ public slots:
 	 * function, so it will not be automatically closed when there is nothing to show.
 	 * 
 	 * don't forgot to deref, or the notification may be never closed if there is no timeout.
+	 * @see ref
 	 */
 	void ref();
 	/**
@@ -238,7 +311,7 @@ public:
 	QString title() const;
 	
 
-public:	//from KNotifyClient
+public:	
 	
 	Q_FLAGS(NotifyPresentation);
 	
