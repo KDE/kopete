@@ -168,11 +168,11 @@ Message Message::parse(Engine *engine, const QTextCodec *codec, bool *parseSucce
 			//
 			// Some servers send '\n' instead of '\r\n' that the RFCs say they should be sending.
 
-			if (length > 1 && raw[length-2] == '\n') {
-				raw[length-2] = '\0';
+			if (length > 1 && raw.at(length-2) == '\n') {
+				raw.at(length-2) = '\0';
 			}
-			if (length > 2 && raw[length-3] == '\r') {
-				raw[length-3] = '\0';
+			if (length > 2 && raw.at(length-3) == '\r') {
+				raw.at(length-3) = '\0';
 			}
 
 			kdDebug(14121) << "<< " << raw << endl;
