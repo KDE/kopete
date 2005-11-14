@@ -40,11 +40,10 @@ namespace KIRC
 class Engine;
 
 class Message
-	: public QObject
 {
-	Q_OBJECT
-
 public:
+	/** \brief Sends the message as-is to the server.
+	 */
 	static void writeRawMessage(KIRC::Engine *engine, const QTextCodec *codec, const QString &str);
 
 	static void writeMessage(KIRC::Engine *engine, const QTextCodec *codec, const QString &str);
@@ -71,23 +70,65 @@ public:
 
 	QString toString() const;
 
+	/** \brief Returns true if the message command is numeric.
+	 */
 	bool isNumeric() const;
+
+	/** \brief Message is valid if it was parsed correctly.
+	 */
 	bool isValid() const;
+
+	/** \brief Writes internal message information about this message through kdDebug().
+	 */
 	void dump() const;
+
+	/** \brief Re-decodes the message with given codec.
+	 */
 	void decodeAgain( const QTextCodec *codec );
 
+	/** \brief The whole message as received.
+	 */
 	inline const QCString &raw() const
 		{ return m_raw; }
+
+	/** \brief Prefix of this message.
+	 *
+	 * Returns the prefix of the message. Note that it can be empty.
+	 *
+	 * Prefix is the server name or the nick name of the sender.
+	 *
+	 * message    =  [ ":" prefix SPACE ] command [ params ] crlf
+	 * prefix     =  servername / ( nickname [ [ "!" user ] "@" host ] )
+	 */
 	inline const QString &prefix() const
 		{ return m_prefix; }
+
+	/** \brief The command part of this message.
+	 *
+	 * Returns the command of this message. Can be numerical.
+	 *
+	 * Examples: "MODE", "PRIVMSG", 303, 001, ...
+	 */
 	inline const QString &command() const
 		{ return m_command; }
+
+	/** \brief The number of command arguments this message contains.
+	 */
 	inline size_t argsSize() const
 		{ return m_args.size(); }
+
+	/** \brief i:th command argument.
+	 */
 	inline const QString &arg(size_t i) const
 		{ return m_args[i]; }
+
+	/** \brief All command arguments.
+	 */
 	inline const QStringList &args() const
 		{ return m_args; }
+
+	/** \brief Message suffix.
+	 */
 	inline const QString &suffix() const
 		{ return m_suffix; }
 	inline const QString &ctcpRaw() const

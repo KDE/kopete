@@ -53,7 +53,7 @@ Message::Message()
 }
 
 Message::Message(const Message &obj)
-        : QObject(), m_ctcpMessage(0)
+        : m_ctcpMessage(0)
 {
 	m_raw = obj.m_raw;
 
@@ -163,7 +163,17 @@ Message Message::parse(Engine *engine, const QTextCodec *codec, bool *parseSucce
 		if( length > -1 )
 		{
 			raw.resize( length );
-			raw.replace("\r\n",""); //remove the trailling \r\n if any(there must be in fact)
+
+			// Remove trailing '\r\n' or '\n'.
+			//
+			// Some servers send '\n' instead of '\r\n' that the RFCs say they should be sending.
+
+			if (length > 1 && raw.at(length-2) == '\n') {
+				raw.at(length-2) = '\0';
+			}
+			if (length > 2 && raw.at(length-3) == '\r') {
+				raw.at(length-3) = '\0';
+			}
 
 			kdDebug(14121) << "<< " << raw << endl;
 
@@ -203,10 +213,8 @@ QString Message::unquote(const QString &str)
 {
 	QString tmp = str;
 
-	char b[3];
-	b[0] = 20; b[1] = 20; b[2] = '\0';
-	char b2[2];
-	b2[0] = (char)20; b2[1] = '\0';
+	char b[3] = { 020, 020, '\0' };
+	const char b2[2] = { 020, '\0' };
 
 	tmp.replace( b, b2 );
 	b[1] = 'r';
@@ -360,5 +368,3 @@ void Message::dump() const
 		m_ctcpMessage->dump();
 	}
 }
-
-#include "kircmessage.moc"
