@@ -54,7 +54,7 @@ class ContactList::Private
 	bool loaded ;
 
 	Q3PtrList<MetaContact> contacts;
-	Q3PtrList<Group> groups;
+	QList<Group *> groups;
 	Q3PtrList<MetaContact> selectedMetaContacts;
 	Q3PtrList<Group> selectedGroups;
 
@@ -116,7 +116,7 @@ Q3PtrList<MetaContact> ContactList::metaContacts() const
 }
 
 
-Q3PtrList<Group> ContactList::groups() const
+QList<Group *> ContactList::groups() const
 {
 	return d->groups;
 }
@@ -138,11 +138,13 @@ MetaContact *ContactList::metaContact( const QString &metaContactId ) const
 
 Group * ContactList::group(unsigned int groupId) const
 {
-	Group *groupIterator;
-	for ( groupIterator = d->groups.first(); groupIterator; groupIterator = d->groups.next() )
+	QListIterator<Group *> it(d->groups);
+	
+	while ( it.hasNext() )
 	{
-		if( groupIterator->groupId()==groupId )
-			return groupIterator;
+		Group *curr = it.next();
+		if( curr->groupId()==groupId )
+			return curr;
 	}
 	return 0L;
 }
@@ -194,11 +196,12 @@ Group * ContactList::findGroup(const QString& displayName, int type)
 	if( type == Group::Temporary )
 		return Group::temporary();
 
-	Group *groupIterator;
-	for ( groupIterator = d->groups.first(); groupIterator; groupIterator = d->groups.next() )
+	QListIterator<Group *> it(d->groups);
+	while ( it.hasNext() )
 	{
-		if( groupIterator->type() == type && groupIterator->displayName() == displayName )
-			return groupIterator;
+		Group *curr = it.next();
+		if( curr->type() == type && curr->displayName() == displayName )
+			return curr;
 	}
 
 	Group *newGroup = new Group( displayName, (Group::GroupType)type );
@@ -895,8 +898,9 @@ const QDomDocument ContactList::toXML()
 	doc.documentElement().setAttribute( QString::fromLatin1("version"), QString::fromLatin1("1.0"));
 
 	// Save group information. ie: Open/Closed, pehaps later icons? Who knows.
-	for( Kopete::Group *g = d->groups.first(); g; g = d->groups.next() )
-		doc.documentElement().appendChild( doc.importNode( g->toXML(), true ) );
+	QListIterator<Group *> it(d->groups);
+	while ( it.hasNext() )
+		doc.documentElement().appendChild( doc.importNode( (it.next())->toXML(), true ) );
 
 	// Save metacontact information.
 	for( Kopete::MetaContact *m = d->contacts.first(); m; m = d->contacts.next() )

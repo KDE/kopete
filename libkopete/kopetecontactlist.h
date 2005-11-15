@@ -21,6 +21,7 @@
 
 #include <qobject.h>
 #include <q3ptrlist.h>
+#include <QList>
 
 #include "kopete_export.h"
 
@@ -75,7 +76,7 @@ public:
 	/**
 	 * @return all groups
 	 */
-	Q3PtrList<Group> groups() const;
+	QList<Group *> groups() const;
 
 	/**
 	 * Return the metacontact referenced by the given id. is none is found, return 0L

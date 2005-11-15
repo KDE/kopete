@@ -83,11 +83,12 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 		d->widget->m_contactInfoBox->hide();
 
 	// Populate the groups list
-	Kopete::GroupList groups=Kopete::ContactList::self()->groups();
-	for( Kopete::Group *it = groups.first(); it; it = groups.next() )
+	QListIterator<Group *> it(Kopete::ContactList::self()->groups());
+	while ( it.hasNext() )
 	{
-		QString groupname = it->displayName();
-		if ( it->type() == Group::Normal && !groupname.isEmpty() )
+		Group *g = it.next();
+		QString groupname = g->displayName();
+		if ( g->type() == Group::Normal && !groupname.isEmpty() )
 		{
 			d->widget->m_groupList->insertItem(groupname);
 		}
