@@ -338,7 +338,7 @@ void MessageReceiverTask::handleType4Message()
 	msg.setTimestamp( QDateTime::currentDateTime() );
 	msg.setSender( msgSender );
 	msg.setReceiver( client()->userId() );
-	msg.setText( QString(msgText) );
+	msg.setTextArray( msgText );
 	emit receivedMessage( msg );
 }
 

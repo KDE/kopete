@@ -113,6 +113,24 @@ bool RateClass::queueIsEmpty() const
 	return m_packetQueue.isEmpty();
 }
 
+int RateClass::timeToInitialLevel()
+{
+	DWORD newLevel = 0;
+
+	//get time elapsed since the last packet was sent
+	int timeDiff = m_packetTimer.elapsed();
+
+	newLevel = calcNewLevel( timeDiff );
+
+	if ( newLevel < m_rateInfo.initialLevel )
+	{
+		int waitTime = ( m_rateInfo.initialLevel * m_rateInfo.windowSize ) - ( ( m_rateInfo.windowSize - 1 ) * m_rateInfo.currentLevel );
+		return waitTime;
+	}
+
+	return 0;
+}
+
 int RateClass::timeToNextSend()
 {
 	

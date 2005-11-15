@@ -107,7 +107,7 @@ bool JoinConferenceTask::take( Transfer * transfer )
 			if ( m_unknowns.empty() )	// ready to chat
 			{
 				client()->debug( "JoinConferenceTask::finished()" );
-				finished();	
+				finished();
 			}
 			else								// need to get some more details first
 			{
@@ -149,11 +149,12 @@ void JoinConferenceTask::slotReceiveUserDetails( const ContactDetails & details 
 		client()->debug( " - finished()" );
 		finished();
 	}
-	else
-	{
-		client()->debug( " - ERROR - we requested details for the list of chat participants/invitees, but the server did not send us all the details! - setting finished() anyway, so the chat can take place." );
-		finished();
-	}
+// would be better to count the number of received details and listen to the getdetails task's error signal.
+//	else
+//	{
+//		client()->debug( " - ERROR - we requested details for the list of chat participants/invitees, but the server did not send us all the details! - setting finished() anyway, so the chat can take place." );
+//		finished();
+//	}
 }
 
 QStringList JoinConferenceTask::participants() const

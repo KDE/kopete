@@ -292,7 +292,7 @@ void GroupWiseAccount::performConnectWithPassword( const QString &password )
 	// not implemented: error
 	QObject::connect( m_clientStream, SIGNAL( error(int) ), SLOT( slotCSError(int) ) );
 
-	m_client = new Client( this, CMSGPRES_SUPPORTS_CHAT );
+	m_client = new Client( this, CMSGPRES_GW_6_5 );
 
 	// NB these are prefixed with QObject:: to avoid any chance of a clash with our connect() methods.
 	// we connected successfully
@@ -1008,6 +1008,7 @@ GroupWiseContact * GroupWiseAccount::createTemporaryContact( const QString & dn 
 		metaContact->setDisplayName( displayName );
 		c = new GroupWiseContact( this, details.dn, metaContact, 0, 0, 0 );
 		c->updateDetails( details );
+		c->setProperty( Kopete::Global::Properties::self()->nickName(), protocol()->dnToDotted( details.dn ) );
 		Kopete::ContactList::self()->addMetaContact( metaContact );
 		// the contact details probably don't contain status - but we can ask for it
 		if ( details.status == GroupWise::Invalid && isConnected() )
@@ -1248,24 +1249,20 @@ void GroupWiseAccount::receiveConferenceJoin( const GroupWise::ConferenceGuid & 
 	// find each contact and add them to the GWMM, and tell them they are in the conference
 	for ( QValueList<QString>::ConstIterator it = participants.begin(); it != participants.end(); ++it )
 	{
+		//kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " adding participant " << *it << endl;
 		GroupWiseContact * c = contactForDN( *it );
-		if ( c )
-		{
-			sess->joined( c );
-		}
-		else
-			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a contact for participant DN: " << *it << endl;
+		if ( !c )
+			c = createTemporaryContact( *it );
+		sess->joined( c );	
 	}
 	// add each invitee too
 	for ( QValueList<QString>::ConstIterator it = invitees.begin(); it != invitees.end(); ++it )
 	{
+		//kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " adding invitee " << *it << endl;
 		GroupWiseContact * c = contactForDN( *it );
-		if ( c )
-		{
-			sess->addInvitee( c );
-		}
-		else
-			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a contact for invitee DN: " << *it << endl;
+		if ( !c )
+			c = createTemporaryContact( *it );
+		sess->addInvitee( c );
 	}
 	sess->view( true )->raise( false );
 }

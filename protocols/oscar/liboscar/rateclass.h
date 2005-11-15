@@ -80,6 +80,12 @@ public:
 	int timeToNextSend();
 	
 	/**
+	 * Calulate the time until we get to initial level
+	 * \return the time in milliseconds that we need to wait
+	 */
+	int timeToInitialLevel();
+	
+	/**
 	 * Calculates a new rate level and updates the rate class' current level
 	 * to match
 	 */

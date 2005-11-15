@@ -51,7 +51,7 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 	OutToLunch( Kopete::OnlineStatus::Away,     10, this, 8, "contact_food_overlay",  i18n( "Out to lunch" ), i18n( "Out to lunch" ) ),
 	SteppedOut( Kopete::OnlineStatus::Away,     14, this, 9, "contact_away_overlay",  i18n( "Stepped out" ),  i18n( "Stepped out" ) ),
 	Invisible( Kopete::OnlineStatus::Invisible,  3, this, 12, "contact_invisible_overlay",  i18n( "Invisible" ), i18n( "Invisible" ), Kopete::OnlineStatusManager::Invisible ),
-	Custom( Kopete::OnlineStatus::Away,         25, this, 99, "contact_away_overlay", i18n( "Custom" ),       i18n( "Custom" ),       Kopete::OnlineStatusManager::Online, Kopete::OnlineStatusManager::HideFromMenu ),
+	Custom( Kopete::OnlineStatus::Away,         25, this, 99, "contact_busy_overlay", i18n( "Custom" ),       i18n( "Custom" ),	Kopete::OnlineStatusManager::HideFromMenu ),
 	Idle( Kopete::OnlineStatus::Away,           15, this, 999, "yahoo_idle",          i18n( "Idle" ),         i18n( "Idle" ),         Kopete::OnlineStatusManager::Idle ),
 	Connecting( Kopete::OnlineStatus::Connecting,2, this, 555, "yahoo_connecting",    i18n( "Connecting" ) ),
 	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
