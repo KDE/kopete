@@ -462,12 +462,6 @@ void MeanwhileLibrary::login()
                     strdup(account->accountId().ascii()), 0L);
     mwSession_setProperty(session, mwSession_AUTH_PASSWORD,
                     strdup(account->password().cachedValue().ascii()), 0L);
-    mwSession_setProperty(session, mwSession_CLIENT_TYPE_ID,
-                    GUINT_TO_POINTER(0x1003), 0L);
-    mwSession_setProperty(session, mwSession_CLIENT_VER_MAJOR,
-                    GUINT_TO_POINTER(0x1e), 0L);
-    mwSession_setProperty(session, mwSession_CLIENT_VER_MINOR,
-                    GUINT_TO_POINTER(0x17), 0L);
 
     mwSession_start(session);
 }
