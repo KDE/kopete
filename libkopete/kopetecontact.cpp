@@ -504,12 +504,12 @@ void Contact::setIcon( const QString& icon )
 	return;
 }
 
-Q3PtrList<KAction> *Contact::customContextMenuActions()
+QList<KAction *> *Contact::customContextMenuActions()
 {
 	return 0L;
 }
 
-Q3PtrList<KAction> *Contact::customContextMenuActions( ChatSession * /* manager */ )
+QList<KAction*> *Contact::customContextMenuActions( ChatSession * /* manager */ )
 {
 	return customContextMenuActions();
 }

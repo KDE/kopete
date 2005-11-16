@@ -64,7 +64,7 @@ class  MetaContact::Private
 		photoSyncedWithKABC(false)
 	{}
 
-	Q3PtrList<Contact> contacts;
+	QList<Contact *> contacts;
 
 	// property sources
 	PropertySource photoSource;
@@ -81,7 +81,7 @@ class  MetaContact::Private
 	QString displayName;
 	KURL photoUrl;
 
-	Q3PtrList<Group> groups;
+	QList<Group *> groups;
 	QMap<QString, QMap<QString, QString> > addressBook;
 	bool temporary;
 
@@ -172,11 +172,13 @@ void MetaContact::updateOnlineStatus()
 	Kopete::OnlineStatus::StatusType newStatus = Kopete::OnlineStatus::Unknown;
 	Kopete::OnlineStatus mostSignificantStatus;
 
-	for ( Q3PtrListIterator<Contact> it( d->contacts ); it.current(); ++it )
+	QListIterator<Contact *> it(d->contacts);
+	while ( it.hasNext() )
 	{
+		Contact *c = it.next();
 		// find most significant status
-		if ( it.current()->onlineStatus() > mostSignificantStatus )
-			mostSignificantStatus = it.current()->onlineStatus();
+		if ( c->onlineStatus() > mostSignificantStatus )
+			mostSignificantStatus = c->onlineStatus();
 	}
 
 	newStatus = mostSignificantStatus.status();
@@ -280,20 +282,21 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 Contact *MetaContact::findContact( const QString &protocolId, const QString &accountId, const QString &contactId )
 {
 	//kdDebug( 14010 ) << k_funcinfo << "Num contacts: " << d->contacts.count() << endl;
-	Q3PtrListIterator<Contact> it( d->contacts );
-	for( ; it.current(); ++it )
+	QListIterator<Contact *> it( d->contacts );
+	while ( it.hasNext() )
 	{
+		Contact *c = it.next();
 		//kdDebug( 14010 ) << k_funcinfo << "Trying " << it.current()->contactId() << ", proto "
 		//<< it.current()->protocol()->pluginId() << ", account " << it.current()->accountId() << endl;
-		if( ( it.current()->contactId() == contactId ) && ( it.current()->protocol()->pluginId() == protocolId || protocolId.isNull() ) )
+		if( ( c->contactId() == contactId ) && ( c->protocol()->pluginId() == protocolId || protocolId.isNull() ) )
 		{
 			if ( accountId.isNull() )
-				return it.current();
+				return c;
 
-			if(it.current()->account())
+			if(c->account())
 			{
-				if(it.current()->account()->accountId() == accountId)
-					return it.current();
+				if(c->account()->accountId() == accountId)
+					return c;
 			}
 		}
 	}
@@ -384,9 +387,10 @@ Contact *MetaContact::preferredContact()
 
 	Contact *contact = 0;
 	bool hasOpenView=false; //has the selected contact already an open chatwindow
-	for ( Q3PtrListIterator<Contact> it( d->contacts ); it.current(); ++it )
+	QListIterator<Contact *> it(d->contacts);
+	while ( it.hasNext() )
 	{
-		Contact *c=it.current();
+		Contact *c=it.next();
 
 		//Does the contact an open chatwindow?
 		if( c->manager( Contact::CannotCreate ) )
@@ -449,11 +453,12 @@ Contact *MetaContact::execute()
 unsigned long int MetaContact::idleTime() const
 {
 	unsigned long int time = 0;
-	Q3PtrListIterator<Contact> it( d->contacts );
-	for( ; it.current(); ++it )
+	QListIterator<Contact *> it( d->contacts );
+	while ( it.hasNext() )
 	{
-		unsigned long int i = it.current()->idleTime();
-		if( it.current()->isOnline() && i < time || time == 0 )
+		Contact *c = it.next();
+		unsigned long int i = c->idleTime();
+		if( c->isOnline() && i < time || time == 0 )
 		{
 			time = i;
 		}
@@ -516,10 +521,10 @@ OnlineStatus::StatusType MetaContact::status() const
 
 bool MetaContact::isOnline() const
 {
-	Q3PtrListIterator<Contact> it( d->contacts );
-	for( ; it.current(); ++it )
+	QListIterator<Contact *> it( d->contacts );
+	while ( it.hasNext() )
 	{
-		if( it.current()->isOnline() )
+		if( it.next()->isOnline() )
 			return true;
 	}
 	return false;
@@ -530,9 +535,11 @@ bool MetaContact::isReachable() const
 	if ( isOnline() )
 		return true;
 
-	for ( Q3PtrListIterator<Contact> it( d->contacts ); it.current(); ++it )
+	QListIterator<Contact *> it( d->contacts );
+	while ( it.hasNext() )
 	{
-		if ( it.current()->account()->isConnected() && it.current()->isReachable() )
+		Contact *c = it.next();
+		if ( c->account()->isConnected() && c->isReachable() )
 			return true;
 	}
 	return false;
@@ -544,10 +551,10 @@ bool MetaContact::canAcceptFiles() const
 	if( !isOnline() )
 		return false;
 
-	Q3PtrListIterator<Contact> it( d->contacts );
-	for( ; it.current(); ++it )
+	QListIterator<Contact *> it( d->contacts );
+	while ( it.hasNext() )
 	{
-		if( it.current()->canAcceptFiles() )
+		if( it.next()->canAcceptFiles() )
 			return true;
 	}
 	return false;
@@ -562,10 +569,12 @@ void MetaContact::sendFile( const KURL &sourceURL, const QString &altFileName, u
 
 	//Find the highest ranked protocol that can accept files
 	Contact *contact = d->contacts.first();
-	for( Q3PtrListIterator<Contact> it( d->contacts ) ; it.current(); ++it )
+	QListIterator<Contact *> it( d->contacts );
+	while ( it.hasNext() )
 	{
-		if( ( *it )->onlineStatus() > contact->onlineStatus() && ( *it )->canAcceptFiles() )
-			contact = *it;
+		Contact *curr = it.next();
+		if( (curr)->onlineStatus() > contact->onlineStatus() && (curr)->canAcceptFiles() )
+			contact = curr;
 	}
 
 	//Call the sendFile slot of this protocol
@@ -592,9 +601,9 @@ void MetaContact::setDisplayName( const QString &name )
 	d->displayName = name;
 
 	emit displayNameChanged( old , name );
-
-	for( Q3PtrListIterator<Kopete::Contact> it( d->contacts ) ; it.current(); ++it )
-		( *it )->sync(Contact::DisplayNameChanged);
+	QListIterator<Kopete::Contact *> it( d->contacts );
+	while (  it.hasNext() )
+		( it.next() )->sync(Contact::DisplayNameChanged);
 
 }
 
@@ -863,8 +872,9 @@ void MetaContact::moveToGroup( Group *from, Group *to )
 	d->groups.remove( from );
 	d->groups.append( to );
 
-	for( Contact *c = d->contacts.first(); c ; c = d->contacts.next() )
-		c->sync(Contact::MovedBetweenGroup);
+	QListIterator<Contact *> it(d->contacts);
+	while( it.hasNext() )
+		it.next()->sync(Contact::MovedBetweenGroup);
 
 	emit movedToGroup( this, from, to );
 }
@@ -885,8 +895,9 @@ void MetaContact::removeFromGroup( Group *group )
 		emit addedToGroup( this, Group::topLevel() );
 	}
 
-	for( Contact *c = d->contacts.first(); c ; c = d->contacts.next() )
-		c->sync(Contact::MovedBetweenGroup);
+	QListIterator<Contact *> it(d->contacts);
+	while( it.hasNext() )
+		it.next()->sync(Contact::MovedBetweenGroup);
 
 	emit removedFromGroup( this, group );
 }
@@ -907,13 +918,14 @@ void MetaContact::addToGroup( Group *to )
 
 	d->groups.append( to );
 
-	for( Contact *c = d->contacts.first(); c ; c = d->contacts.next() )
-		c->sync(Contact::MovedBetweenGroup);
+	QListIterator<Contact *> it(d->contacts);
+	while( it.hasNext() )
+		it.next()->sync(Contact::MovedBetweenGroup);
 
 	emit addedToGroup( this, to );
 }
 
-Q3PtrList<Group> MetaContact::groups() const
+QList<Group *> MetaContact::groups() const
 {
 	return d->groups;
 }
@@ -990,8 +1002,10 @@ const QDomElement MetaContact::toXML(bool minimal)
 		{
 			QDomElement groups = metaContact.createElement( QString::fromUtf8("groups") );
 			Group *g;
-			for ( g = d->groups.first(); g; g = d->groups.next() )
+			QListIterator<Group *> it(d->groups);
+			while ( it.hasNext() )
 			{
+				g = it.next();
 				QDomElement group = metaContact.createElement( QString::fromUtf8("group") );
 				group.setAttribute( QString::fromUtf8("id"), g->groupId() );
 				groups.appendChild( group );
@@ -1269,9 +1283,10 @@ void MetaContact::setTemporary( bool isTemporary, Group *group )
 	if ( d->temporary )
 	{
 		addToGroup (temporaryGroup);
-		Group *g;
-		for( g = d->groups.first(); g; g = d->groups.next() )
+		QListIterator<Group *> it(d->groups);
+		while ( it.hasNext() )
 		{
+			Group *g = it.next();
 			if(g != temporaryGroup)
 				removeFromGroup(g);
 		}
@@ -1380,7 +1395,7 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 	}
 }
 
-Q3PtrList<Contact> MetaContact::contacts() const
+QList<Contact *> MetaContact::contacts() const
 {
 	return d->contacts;
 }

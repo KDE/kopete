@@ -170,9 +170,11 @@ void MetaContactSelectorWidgetLVI::buildVisualComponents()
 
 void MetaContactSelectorWidgetLVI::slotUpdateContactBox()
 {
-	Q3PtrList<Kopete::Contact> contacts = d->metaContact->contacts();
-	for(Kopete::Contact *c = contacts.first(); c; c = contacts.next())
+	QList<Kopete::Contact *> contacts = d->metaContact->contacts();
+	QListIterator<Contact *> it(contacts);
+	while (it.hasNext())
 	{
+		Kopete::Contact *c = it.next();
 		new ContactComponent(d->contactIconBox, c, IconSize( KIcon::Small ));
 	}
 }
@@ -255,9 +257,11 @@ void MetaContactSelectorWidget::slotLoadMetaContacts()
 {
 	d->widget->metaContactListView->clear();
 
-	Q3PtrList<Kopete::MetaContact> metaContacts = Kopete::ContactList::self()->metaContacts();
-	for( Kopete::MetaContact *mc = metaContacts.first(); mc ; mc = metaContacts.next() )
+	QList<Kopete::MetaContact *> metaContacts = Kopete::ContactList::self()->metaContacts();
+	QListIterator<Kopete::MetaContact *> it(metaContacts);
+	while ( it.hasNext() )
 	{
+		Kopete::MetaContact *mc = it.next();
 		if( !mc->isTemporary() && mc != metaContact() )
 		{
 			new MetaContactSelectorWidgetLVI(mc, d->widget->metaContactListView);

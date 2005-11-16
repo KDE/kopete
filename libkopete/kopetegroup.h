@@ -104,7 +104,7 @@ public:
 	 * This function is not very efficient - it searches through all the metacontacts in the contact list
 	 * \return the members of this group
 	 */
-	Q3PtrList<MetaContact> members() const;
+	QList<MetaContact *> members() const;
 
 	/**
 	 * \brief Set if the group is expanded.
@@ -176,7 +176,7 @@ private:
 	/**
 	 * @internal  used to get reachabe contact to send message to thom.
 	 */
-	Q3PtrList<MetaContact> onlineMembers() const;
+	QList<MetaContact *> onlineMembers() const;
 };
 
 } //END namespace Kopete 

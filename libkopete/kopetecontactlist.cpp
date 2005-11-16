@@ -53,10 +53,10 @@ class ContactList::Private
 	/** Flag:  do not save the contactlist until she is completely loaded */
 	bool loaded ;
 
-	Q3PtrList<MetaContact> contacts;
+	QList<MetaContact *> contacts;
 	QList<Group *> groups;
-	Q3PtrList<MetaContact> selectedMetaContacts;
-	Q3PtrList<Group> selectedGroups;
+	QList<MetaContact *> selectedMetaContacts;
+	QList<Group *> selectedGroups;
 
 	QTimer *saveTimer;
 
@@ -110,7 +110,7 @@ ContactList::~ContactList()
 	delete d;
 }
 
-Q3PtrList<MetaContact> ContactList::metaContacts() const
+QList<MetaContact *> ContactList::metaContacts() const
 {
 	return d->contacts;
 }
@@ -124,12 +124,13 @@ QList<Group *> ContactList::groups() const
 
 MetaContact *ContactList::metaContact( const QString &metaContactId ) const
 {
-	Q3PtrListIterator<MetaContact> it( d->contacts );
+	QListIterator<MetaContact *> it( d->contacts );
 
-	for( ; it.current(); ++it )
+	while ( it.hasNext() )
 	{
-		if( it.current()->metaContactId() == metaContactId )
-			return it.current();
+		MetaContact *mc = it.next();
+		if( mc->metaContactId() == metaContactId )
+			return mc;
 	}
 
 	return 0L;
@@ -166,12 +167,13 @@ Contact *ContactList::findContact( const QString &protocolId,
 
 MetaContact *ContactList::findMetaContactByDisplayName( const QString &displayName ) const
 {
-	Q3PtrListIterator<MetaContact> it( d->contacts );
-	for( ; it.current(); ++it )
+	QListIterator<MetaContact *> it( d->contacts );
+	while ( it.hasNext() )
 	{
+		MetaContact *mc = it.next();
 //		kdDebug(14010) << "Display Name: " << it.current()->displayName() << "\n";
-		if( it.current()->displayName() == displayName ) {
-			return it.current();
+		if( mc->displayName() == displayName ) {
+			return mc;
 		}
 	}
 
@@ -210,12 +212,12 @@ Group * ContactList::findGroup(const QString& displayName, int type)
 }
 
 
-Q3PtrList<MetaContact> ContactList::selectedMetaContacts() const
+QList<MetaContact *> ContactList::selectedMetaContacts() const
 {
 	return d->selectedMetaContacts;
 }
 
-Q3PtrList<Group> ContactList::selectedGroups() const
+QList<Group *> ContactList::selectedGroups() const
 {
 	return d->selectedGroups;
 }
@@ -250,10 +252,11 @@ void ContactList::removeMetaContact(MetaContact *m)
 	}
 
 	//removes subcontact from server here and now.
-	Q3PtrList<Contact> cts=m->contacts();
-	for( Contact *c = cts.first(); c; c = cts.next() )
+	QList<Contact *> cts = m->contacts();
+	QListIterator<Contact *> it(cts);
+	while( it.hasNext() )
 	{
-		c->deleteContact();
+		it.next()->deleteContact();
 	}
 
 	d->contacts.remove( m );
@@ -286,7 +289,7 @@ void ContactList::removeGroup( Group *g )
 }
 
 
-void ContactList::setSelectedItems(Q3PtrList<MetaContact> metaContacts , Q3PtrList<Group> groups)
+void ContactList::setSelectedItems(QList<MetaContact *> metaContacts , QList<Group *> groups)
 {
 	kdDebug( 14010 ) << k_funcinfo << metaContacts.count() << " metacontacts, " << groups.count() << " groups selected" << endl;
 	d->selectedMetaContacts=metaContacts;
@@ -903,10 +906,13 @@ const QDomDocument ContactList::toXML()
 		doc.documentElement().appendChild( doc.importNode( (it.next())->toXML(), true ) );
 
 	// Save metacontact information.
-	for( Kopete::MetaContact *m = d->contacts.first(); m; m = d->contacts.next() )
-		if( !m->isTemporary() )
-			doc.documentElement().appendChild( doc.importNode( m->toXML(), true ) );
-
+	QListIterator<MetaContact *> mcit(d->contacts);
+	while ( mcit.hasNext() )
+	{
+		MetaContact *mc = mcit.next();
+		if( !mc->isTemporary() )
+			doc.documentElement().appendChild( doc.importNode( mc->toXML(), true ) );
+	}
 	// Save myself metacontact information
 	QDomElement myselfElement = myself()->toXML(true); // Save minimal information.
 	myselfElement.setTagName( QString::fromLatin1("myself-meta-contact") );
@@ -918,10 +924,10 @@ const QDomDocument ContactList::toXML()
 QStringList ContactList::contacts() const
 {
 	QStringList contacts;
-	Q3PtrListIterator<Kopete::MetaContact> it( d->contacts );
-	for( ; it.current(); ++it )
+	QListIterator<Kopete::MetaContact *> it( d->contacts );
+	while ( it.hasNext() )
 	{
-		contacts.append( it.current()->displayName() );
+		contacts.append( it.next()->displayName() );
 	}
 	return contacts;
 }
@@ -929,11 +935,12 @@ QStringList ContactList::contacts() const
 QStringList ContactList::contactStatuses() const
 {
 	QStringList meta_contacts;
-	Q3PtrListIterator<Kopete::MetaContact> it( d->contacts );
-	for( ; it.current(); ++it )
+	QListIterator<Kopete::MetaContact *> it( d->contacts );
+	while ( it.hasNext() )
 	{
+		Kopete::MetaContact * mc = it.next();
 		meta_contacts.append( QString::fromLatin1( "%1 (%2)" ).
-			arg( it.current()->displayName(), it.current()->statusString() ));
+			arg( mc->displayName(), mc->statusString() ));
 	}
 	return meta_contacts;
 }
@@ -941,83 +948,91 @@ QStringList ContactList::contactStatuses() const
 QStringList ContactList::reachableContacts() const
 {
 	QStringList contacts;
-	Q3PtrListIterator<Kopete::MetaContact> it( d->contacts );
-	for( ; it.current(); ++it )
+	QListIterator<Kopete::MetaContact *> it( d->contacts );
+	while ( it.hasNext() )
 	{
-		if ( it.current()->isReachable() )
-			contacts.append( it.current()->displayName() );
+		Kopete::MetaContact * mc = it.next();
+		if ( mc->isReachable() )
+			contacts.append( mc->displayName() );
 	}
 	return contacts;
 }
 
-Q3PtrList<Contact> ContactList::onlineContacts() const
+QList<Contact *> ContactList::onlineContacts() const
 {
-	Q3PtrList<Kopete::Contact> result;
-	Q3PtrListIterator<Kopete::MetaContact> it( d->contacts );
-	for( ; it.current(); ++it )
+	QList<Kopete::Contact *> result;
+	QListIterator<Kopete::MetaContact *> it( d->contacts );
+	while ( it.hasNext() )
 	{
-		if ( it.current()->isOnline() )
+		Kopete::MetaContact *mc = it.next();
+		if ( mc->isOnline() )
 		{
-			Q3PtrList<Kopete::Contact> contacts = it.current()->contacts();
-			Q3PtrListIterator<Kopete::Contact> cit( contacts );
-			for( ; cit.current(); ++cit )
+			QList<Kopete::Contact *> contacts = mc->contacts();
+			QListIterator<Kopete::Contact *> cit( contacts );
+			while ( cit.hasNext() )
 			{
-				if ( cit.current()->isOnline() )
-					result.append( cit.current() );
+				Kopete::Contact *c = cit.next();
+				if ( c->isOnline() )
+					result.append( c );
 			}
 		}
 	}
 	return result;
 }
 
-Q3PtrList<Kopete::MetaContact> Kopete::ContactList::onlineMetaContacts() const
+QList<Kopete::MetaContact *> Kopete::ContactList::onlineMetaContacts() const
 {
-	Q3PtrList<Kopete::MetaContact> result;
-	Q3PtrListIterator<Kopete::MetaContact> it( d->contacts );
-	for( ; it.current(); ++it )
+	QList<Kopete::MetaContact *> result;
+	QListIterator<Kopete::MetaContact *> it( d->contacts );
+	while ( it.hasNext() )
 	{
-		if ( it.current()->isOnline() )
-			result.append( it.current() );
+		Kopete::MetaContact * mc = it.next();
+		if ( mc->isOnline() )
+			result.append( mc );
 	}
 	return result;
 }
 
-Q3PtrList<Kopete::MetaContact> Kopete::ContactList::onlineMetaContacts( const QString &protocolId ) const
+QList<Kopete::MetaContact *> Kopete::ContactList::onlineMetaContacts( const QString &protocolId ) const
 {
-	Q3PtrList<Kopete::MetaContact> result;
-	Q3PtrListIterator<Kopete::MetaContact> it( d->contacts );
-	for( ; it.current(); ++it )
+	QList<Kopete::MetaContact *> result;
+	QListIterator<Kopete::MetaContact *> it( d->contacts );
+	while ( it.hasNext() )
 	{
+		Kopete::MetaContact * mc = it.next();
 		// FIXME: This loop is not very efficient :(
-		if ( it.current()->isOnline() )
+		if ( mc->isOnline() )
 		{
-			Q3PtrList<Kopete::Contact> contacts = it.current()->contacts();
-			Q3PtrListIterator<Kopete::Contact> cit( contacts );
-			for( ; cit.current(); ++cit )
+			QList<Kopete::Contact *> contacts = mc->contacts();
+			QListIterator<Kopete::Contact *> cit( contacts );
+			while ( cit.hasNext() )
 			{
-				if( cit.current()->isOnline() && cit.current()->protocol()->pluginId() == protocolId )
-					result.append( it.current() );
+				Kopete::Contact *c = cit.next();
+				if( c->isOnline() && c->protocol()->pluginId() == protocolId )
+					result.append( mc );
 			}
 		}
 	}
 	return result;
 }
 
-Q3PtrList<Kopete::Contact> Kopete::ContactList::onlineContacts( const QString &protocolId ) const
+QList<Kopete::Contact *> Kopete::ContactList::onlineContacts( const QString &protocolId ) const
 {
-	Q3PtrList<Kopete::Contact> result;
-	Q3PtrListIterator<Kopete::MetaContact> it( d->contacts );
-	for( ; it.current(); ++it )
+	QList<Kopete::Contact *> result;
+	QListIterator<Kopete::MetaContact *> it( d->contacts );
+	while ( it.hasNext() )
 	{
+		Kopete::MetaContact * mc = it.next();
 		// FIXME: This loop is not very efficient :(
-		if ( it.current()->isOnline() )
+		if ( mc->isOnline() )
 		{
-			Q3PtrList<Kopete::Contact> contacts = it.current()->contacts();
-			Q3PtrListIterator<Kopete::Contact> cit( contacts );
-			for( ; cit.current(); ++cit )
+			QList<Kopete::Contact *> contacts = mc->contacts();
+			QListIterator<Kopete::Contact *> cit( contacts );
+			while ( cit.hasNext() )
 			{
-				if( cit.current()->isOnline() && cit.current()->protocol()->pluginId() == protocolId )
-					result.append( cit.current() );
+				Kopete::Contact *c = cit.next();
+				if( c->isOnline() && c->protocol()->pluginId() == protocolId )
+					result.append( c );
 			}
 		}
 	}
@@ -1027,11 +1042,13 @@ Q3PtrList<Kopete::Contact> Kopete::ContactList::onlineContacts( const QString &p
 QStringList Kopete::ContactList::fileTransferContacts() const
 {
 	QStringList contacts;
-	Q3PtrListIterator<Kopete::MetaContact> it( d->contacts );
-	for( ; it.current(); ++it )
+	QList<Kopete::MetaContact *> result;
+	QListIterator<Kopete::MetaContact *> it( d->contacts );
+	while ( it.hasNext() )
 	{
-		if ( it.current()->canAcceptFiles() )
-			contacts.append( it.current()->displayName() );
+		Kopete::MetaContact * mc = it.next();
+		if ( mc->canAcceptFiles() )
+			contacts.append( mc->displayName() );
 	}
 	return contacts;
 }
@@ -1068,15 +1085,16 @@ QStringList Kopete::ContactList::contactFileProtocols(const QString &displayName
 	Kopete::MetaContact *c = findMetaContactByDisplayName( displayName );
 	if( c )
 	{
-		Q3PtrList<Kopete::Contact> mContacts = c->contacts();
+		QList<Kopete::Contact *> mContacts = c->contacts();
 		kdDebug(14010) << mContacts.count() << endl;
-		Q3PtrListIterator<Kopete::Contact> jt( mContacts );
-		for ( ; jt.current(); ++jt )
+		QListIterator<Kopete::Contact *> jt( mContacts );
+		while ( jt.hasNext() )
 		{
-			kdDebug(14010) << "1" << jt.current()->protocol()->pluginId() << endl;
-			if( jt.current()->canAcceptFiles() ) {
-				kdDebug(14010) << jt.current()->protocol()->pluginId() << endl;
-				protocols.append ( jt.current()->protocol()->pluginId() );
+			Kopete::Contact *c = jt.next();
+			kdDebug(14010) << "1" << c->protocol()->pluginId() << endl;
+			if( c->canAcceptFiles() ) {
+				kdDebug(14010) << c->protocol()->pluginId() << endl;
+				protocols.append ( c->protocol()->pluginId() );
 			}
 		}
 		return protocols;

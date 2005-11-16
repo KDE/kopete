@@ -104,12 +104,12 @@ public:
 	/**
 	 * @brief Retrieve the list of contacts that are part of the meta contact
 	 */
-	Q3PtrList<Contact> contacts() const;
+	QList<Contact *> contacts() const;
 
 	/**
 	 * @brief The groups the contact is stored in
 	 */
-	Q3PtrList<Group> groups() const;
+	QList<Group *> groups() const;
 
 	/**
 	 * Find the Contact to a given contact. If contact

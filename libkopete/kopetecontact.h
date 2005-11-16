@@ -43,7 +43,7 @@ class OnlineStatus;
 class Plugin;
 class Protocol;
 class Account;
-typedef Q3PtrList<Group> GroupList;
+typedef QList<Group *> GroupList;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -224,12 +224,12 @@ public:
 	 * @return Collection of menu items to be show on the context menu
 	 * @todo if possible, try to use KXMLGUI
 	 */
-	virtual Q3PtrList<KAction> *customContextMenuActions();
+	virtual QList<KAction *> *customContextMenuActions();
 
 	/**
 	 * @todo  What is this function for ?
 	 */
-	virtual Q3PtrList<KAction> *customContextMenuActions( ChatSession *manager );
+	virtual QList<KAction *> *customContextMenuActions( ChatSession *manager );
 
 	/**
 	 * @brief Get the Context Menu for this contact

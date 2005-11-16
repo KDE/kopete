@@ -90,17 +90,21 @@ Group::~Group()
 	delete d;
 }
 
-Q3PtrList<MetaContact> Group::members() const
+QList<MetaContact *> Group::members() const
 {
-	Q3PtrList<MetaContact> members = ContactList::self()->metaContacts();
+	QList<MetaContact *> members = ContactList::self()->metaContacts();
 	// members is a *copy* of the meta contacts, so using first(), next() and remove() is fine.
-	for( members.first(); members.current(); )
+	// FIXME DUNCAN
+	/*
+	QListIterator<MetaContact *> it(members);
+	while ( it.hasNext() )
 	{
-		if ( members.current()->groups().contains( this ) )
-			members.next();
-		else
-			members.remove();
+		MetaContact *mc = it.next();
+		// FIXME not sure
+		if ( !mc->groups().contains( this ) )
+			members.remove(mc);
 	}
+	*/
 	return members;
 }
 
@@ -264,7 +268,7 @@ uint Group::groupId() const
 
 void Group::sendMessage()
 {
-	Q3PtrList<Kopete::MetaContact> list = onlineMembers();
+	QList<Kopete::MetaContact *> list = onlineMembers();
 	Kopete::MetaContact *mc = list.first();
 	Kopete::Contact *c;
 	
@@ -280,7 +284,7 @@ void Group::sendMessage()
 
 void Group::sendMessage( Message& msg )
 {
-	Q3PtrList<MetaContact> list = onlineMembers();
+	QList<MetaContact *> list = onlineMembers();
 	Kopete::MetaContact *mc = list.first();
 	ChatSession *cs=msg.manager();
 	if(  cs )
@@ -293,8 +297,10 @@ void Group::sendMessage( Message& msg )
 	if(!mc)
 		return;
 	list.remove( msg.to().first()->metaContact() );
-	for( mc = list.first(); mc; mc = list.next() )
+	QListIterator<MetaContact *> it(list);
+	while ( it.hasNext() )
 	{
+		MetaContact *mc = it.next();
 		if(mc->isReachable())
 		{
 			Contact *kcontact=mc->preferredContact();
@@ -309,15 +315,20 @@ void Group::sendMessage( Message& msg )
 	}
 }
 
-Q3PtrList<MetaContact> Group::onlineMembers() const
+QList<MetaContact *> Group::onlineMembers() const
 {
-	Q3PtrList<MetaContact> list = members();
-	
-	for( list.first(); list.current(); )
+	QList<MetaContact *> list = members();
+	QListIterator<MetaContact *> it(list);
+	while ( it.hasNext() )
+	{
+		/* FIXME DUNCAN
+		MetaContact *mc = it.next();
 		if( list.current()->isReachable() && list.current()->isOnline() )
 			list.next();
 		else
 			list.remove();
+		*/
+	}
 	return list;
 }
 

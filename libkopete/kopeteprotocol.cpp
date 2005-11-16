@@ -165,9 +165,10 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 
 	//kdDebug( 14010 ) << "Protocol::metaContactAboutToSave: protocol " << pluginId() << ": serializing " << metaContact->displayName() << endl;
 
-	Q3PtrList<Contact> contacts=metaContact->contacts();
-	for (Contact *c=contacts.first() ; c ; c=contacts.next() )
+	QListIterator<Contact *> cit(metaContact->contacts());
+	while ( cit.hasNext() )
 	{
+		Contact *c = cit.next();
 		if( c->protocol()->pluginId() != pluginId() )
 			continue;
 

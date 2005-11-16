@@ -67,14 +67,14 @@ public:
 	Private() 
 	 : addrBookWritePending(false)
 	{}
-	Q3PtrList<KABC::Resource> pendingResources;
+	QList<KABC::Resource *> pendingResources;
 	bool addrBookWritePending;
 };
 
 KABCPersistence::KABCPersistence( QObject * parent, const char * name ) : QObject( parent, name )
 {
 	d = new Private;
-	d->pendingResources.setAutoDelete( false );
+	// FIXME DUNCAN d->pendingResources.setAutoDelete( false );
 }
 
 KABCPersistence::~KABCPersistence()
@@ -123,14 +123,14 @@ void KABCPersistence::write( MetaContact * mc )
 	{
 		// collate the instant messaging data to be inserted into the address book
 		QMap<QString, QStringList> addressMap;
-		Q3PtrList<Contact> contacts = mc->contacts();
-		Q3PtrListIterator<Contact> cIt( contacts );
-		while ( Contact * c = cIt.current() )
+		QList<Contact *> contacts = mc->contacts();
+		QListIterator<Contact *> cIt( contacts );
+		while ( cIt.hasNext() )
 		{
+			Contact * c = cIt.next();
 			QStringList addresses = addressMap[ c->protocol()->addressBookIndexField() ];
 			addresses.append( c->contactId() );
 			addressMap.insert( c->protocol()->addressBookIndexField(), addresses );
-			++cIt;
 		}
 
 		// insert a custom field for each protocol
@@ -183,6 +183,7 @@ void KABCPersistence::write( MetaContact * mc )
 
 void KABCPersistence::writeAddressBook( const KABC::Resource * res)
 {
+	/* FIXME DUNCAN
 	if ( !d->pendingResources.containsRef( res ) )
 		d->pendingResources.append( res );
 	if ( !d->addrBookWritePending )
@@ -190,17 +191,18 @@ void KABCPersistence::writeAddressBook( const KABC::Resource * res)
 		d->addrBookWritePending = true;
 		QTimer::singleShot( 2000, this, SLOT( slotWriteAddressBook() ) );
 	}
+	*/
 }
 
 void KABCPersistence::slotWriteAddressBook()
 {
 	//kdDebug(  14010 ) << k_funcinfo << endl;
 	KABC::AddressBook* ab = addressBook();
-	Q3PtrListIterator<KABC::Resource> it( d->pendingResources );
-	for ( ; it.current(); ++it )
+	QListIterator<KABC::Resource *> it( d->pendingResources );
+	while ( it.hasNext() )
 	{
 		//kdDebug(  14010 )  << "Writing resource " << it.current()->resourceName() << endl;
-		KABC::Ticket *ticket = ab->requestSaveTicket( it.current() );
+		KABC::Ticket *ticket = ab->requestSaveTicket( it.next() );
 		if ( !ticket )
 			kdWarning( 14010 ) << "WARNING: Resource is locked by other application!" << endl;
 		else

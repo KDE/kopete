@@ -71,7 +71,7 @@ public:
 	 * The contained MetaContacts are obviously _not_ duplicates, so
 	 * changing those *will* have the expected result :-)
 	 */
-	Q3PtrList<MetaContact> metaContacts() const;
+	QList<MetaContact *> metaContacts() const;
 	
 	/**
 	 * @return all groups
@@ -123,12 +123,12 @@ public:
 	/**
 	 * return the list of metacontact actually selected in the contactlist UI
 	 */
-	Q3PtrList<MetaContact> selectedMetaContacts() const;
+	QList<MetaContact *> selectedMetaContacts() const;
 
 	/**
 	 * return the list of groups actualy selected in the contactlist UI
 	 */
-	Q3PtrList<Group> selectedGroups() const ;
+	QList<Group *> selectedGroups() const ;
 
 	/**
 	  * return the metacontact that represent the user itself.
@@ -172,7 +172,7 @@ public slots:
 	 * This method has to be called by the contactlist UI side.
 	 * it stores the selected items, and emits signals
 	 */
-	 void setSelectedItems(Q3PtrList<MetaContact> metaContacts , Q3PtrList<Group> groups);
+	 void setSelectedItems(QList<MetaContact *> metaContacts , QList<Group *> groups);
 
 signals:
 	/**
@@ -316,24 +316,24 @@ public: //TODO I think all theses method should be moved to the decop interface.
 	/**
 	 * Return all contacts that are online
 	 */
-	Q3PtrList<Contact> onlineContacts() const;
+	QList<Contact *> onlineContacts() const;
 
 	/**
 	 * Overloaded method of @ref onlineContacts() that only returns
 	 * the online contacts for a single protocol
 	 */
-	Q3PtrList<Contact> onlineContacts( const QString &protocolId ) const;
+	QList<Contact *> onlineContacts( const QString &protocolId ) const;
 
 	/**
 	 * Return all meta contacts that are online
 	 */
-	Q3PtrList<MetaContact> onlineMetaContacts() const;
+	QList<MetaContact *> onlineMetaContacts() const;
 
 	/**
 	 * Overloaded method of @ref onlineMetaContacts() that only returns
 	 * the online meta contacts for a single protocol
 	 */
-	Q3PtrList<MetaContact> onlineMetaContacts( const QString &protocolId ) const;
+	QList<MetaContact *> onlineMetaContacts( const QString &protocolId ) const;
 
 	/**
 	 * Returns all contacts which can accept file transfers
