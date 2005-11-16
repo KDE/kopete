@@ -51,8 +51,6 @@ class QWidget;
  *
  * \section file The global config file
  * On installation, there should be a file called 
- * 
- * <p>On installation, there should be a file called
  *  <em>$KDEDIR/share/apps/appname/eventsrc</em>
  *  This file contains  mainly 3 parts
  *   <ol><li>Global information</li><li>Context information</li><li>Information about every events</li></ol>
