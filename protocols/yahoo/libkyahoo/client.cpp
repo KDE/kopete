@@ -38,6 +38,7 @@
 #include "picturenotifiertask.h"
 #include "requestpicturetask.h"
 #include "stealthtask.h"
+#include "sendpicturetask.h"
 #include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
@@ -283,7 +284,7 @@ void Client::requestPicture( const QString &userId )
 	rpt->go( true );
 }
 
-void Client::downloadBuddyIcon(  const QString &userId, KURL url, int checksum )
+void Client::downloadPicture(  const QString &userId, KURL url, int checksum )
 {
 	if( !d->iconLoader )
 	{
@@ -293,6 +294,56 @@ void Client::downloadBuddyIcon(  const QString &userId, KURL url, int checksum )
 	}
 
 	d->iconLoader->fetchBuddyIcon( QString(userId), KURL(url), checksum );
+}
+
+void Client::uploadPicture( KURL url )
+{
+	kdDebug(14181) << k_funcinfo << "URL: " << url.url() << endl;
+	SendPictureTask *spt = new SendPictureTask( d->root );
+	spt->setType( SendPictureTask::UploadPicture );
+	spt->setFilename( url.fileName() );
+	if ( url.isLocalFile() )
+		spt->setPath( url.path() );
+	else
+		spt->setPath( url.url() );
+	spt->go( true );
+}
+
+void Client::sendPictureChecksum( int checksum, const QString &who )
+{
+	kdDebug(14181) << k_funcinfo << "checksum: " << checksum << endl;
+	SendPictureTask *spt = new SendPictureTask( d->root );
+	spt->setType( SendPictureTask::SendChecksum );
+	spt->setChecksum( checksum );
+	if( !who.isEmpty() )
+		spt->setTarget( who );
+	spt->go( true );	
+}
+
+void Client::sendPictureInformation( const QString &userId, const QString &url, int checksum )
+{
+	kdDebug(14181) << k_funcinfo << "checksum: " << checksum << endl;
+	SendPictureTask *spt = new SendPictureTask( d->root );
+	spt->setType( SendPictureTask::SendInformation );
+	spt->setChecksum( checksum );
+	spt->setUrl( url );
+	spt->setTarget( userId );
+	spt->go( true );
+}
+
+void Client::sendPictureStatusUpdate( const QString &userId, int type )
+{
+	kdDebug(14181) << k_funcinfo << "Setting PictureStatus to: " << type << endl;
+	SendPictureTask *spt = new SendPictureTask( d->root );
+	spt->setType( SendPictureTask::SendStatus );
+	spt->setStatus( type );
+	spt->setTarget( userId );
+	spt->go( true );
+}
+
+void Client::notifyError( const QString & error )
+{
+	kdDebug(14181) << k_funcinfo << "The Server returned the following error: " << error << endl;
 }
 
 QString Client::userId()
@@ -357,6 +408,21 @@ int Client::pictureFlag()
 	return 0;
 }
 
+QString Client::yCookie()
+{
+	return d->yCookie;
+};
+
+QString Client::tCookie()
+{
+	return d->tCookie;
+};
+
+QString Client::cCookie()
+{
+	return d->cCookie;
+};
+
 void Client::distribute( Transfer * transfer )
 {
 	kdDebug(14180) << k_funcinfo << endl;
@@ -420,6 +486,11 @@ void Client::initTasks()
 				SIGNAL( pictureChecksumNotify( const QString &, int ) ) );
 	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureInfoNotify( const QString &, KURL, int ) ),
 				SIGNAL( pictureInfoNotify( const QString &, KURL, int ) ) );
+	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureRequest( const QString & ) ),
+				SIGNAL( pictureRequest( const QString & ) ) );
+	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureUploaded( const QString & ) ),
+				SIGNAL( pictureUploaded( const QString & ) ) );
+	
 }
 
 void Client::deleteTasks()

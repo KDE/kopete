@@ -176,6 +176,10 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceStealth " << servicenum << endl;
 			service = Yahoo::ServiceStealth;
 		break;
+		case (Yahoo::ServicePictureUpload) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServicePictureUpload " << servicenum << endl;
+			service = Yahoo::ServicePictureUpload;
+		break;
 		/*
 		ServiceIdle, // 5 (placemarker)
 		ServiceMailStat,
@@ -218,7 +222,6 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		ServiceChatPing,
 		ServiceComment = 0xa8
 		ServicePictureUpdate = 0xc1,
-		ServicePictureUpload = 0xc2,
 		ServiceVisibility = 0xc5,	// YMSG13, key 13: 2 = invisible, 1 = visible 
 		ServiceStatus = 0xc6,		// YMSG13 
 		*/

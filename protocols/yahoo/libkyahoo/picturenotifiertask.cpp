@@ -56,6 +56,9 @@ bool PictureNotifierTask::take( Transfer* transfer )
 		case Yahoo::ServicePicture:
 			parsePicture( transfer );
 		break;
+		case Yahoo::ServicePictureUpload:
+			parsePictureUploadResponse( transfer );
+		break;
 		default:
 		break;
 	}	
@@ -113,7 +116,8 @@ void PictureNotifierTask::parsePictureChecksum( Transfer *transfer )
 	nick = t->firstParam( 4 );
 	checksum = t->firstParam( 192 ).toInt();
 	
-	emit pictureChecksumNotify( nick, checksum );
+	if( nick != client()->userId() )
+		emit pictureChecksumNotify( nick, checksum );
 }
 
 void PictureNotifierTask::parsePicture( Transfer *transfer )
@@ -125,14 +129,43 @@ void PictureNotifierTask::parsePicture( Transfer *transfer )
 		return;
 
 	QString	nick;		/* key = 4 */
+	int type;		/* key = 13: 1 = request, 2 = notification */
 	QString url;		/* key = 20 */
 	int checksum;		/* key = 192  */
 
 	nick = t->firstParam( 4 );
 	url = t->firstParam( 20 );
 	checksum = t->firstParam( 192 ).toInt();
+	type = t->firstParam( 13 ).toInt();
 	
-	emit pictureInfoNotify( nick, KURL( url ), checksum );	
+	if( type == 1 )
+		emit pictureRequest( nick );
+	else if( type == 2 )
+		emit pictureInfoNotify( nick, KURL( url ), checksum );
+}
+
+void PictureNotifierTask::parsePictureUploadResponse( Transfer *transfer )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	YMSGTransfer *t = 0L;
+	t = dynamic_cast<YMSGTransfer*>(transfer);
+	if (!t)
+		return;
+
+	QString url;
+	QString error;
+
+	url = t->firstParam( 20 );
+	error = t->firstParam( 16 );
+	
+	if( !error.isEmpty() )
+		client()->notifyError( error );
+
+	if( !url.isEmpty() )
+	{
+		kdDebug(14180) << k_funcinfo << "Emitting url: " << url << endl;
+		emit pictureUploaded( url );
+	}
 }
 
 #include "picturenotifiertask.moc"

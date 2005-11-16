@@ -208,44 +208,62 @@ QByteArray YMSGTransfer::serialize()
 	
 	int pos = 0;
 	int packetSize = 20 + length();
-	QByteArray buffer(packetSize);
 	QStringList::ConstIterator listIt = 0;
+	QByteArray buffer;
+	QDataStream stream( buffer, IO_WriteOnly );
 	
-	memcpy(buffer.data() + pos, "YMSG", 4);
-	pos += 4;
-	
-	yahoo_put16(buffer.data() + pos, 0x000d);
-	pos += 2;
-	
-	yahoo_put16(buffer.data() + pos, 0x0000);
-	pos += 2;
-	
-	int len = length();
-	kdDebug(14180) << k_funcinfo << " length is " << len << endl;
-	
-	
-	yahoo_put16(buffer.data() + pos, len);
-	pos += 2;
-	yahoo_put16(buffer.data() + pos, d->service);
-	pos += 2;
-	yahoo_put32(buffer.data() + pos, d->status);
-	pos += 4;
-	yahoo_put32(buffer.data() + pos, d->id);
-	pos += 4;
-	
-	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
+	stream << (Q_INT8)'Y' << (Q_INT8)'M' << (Q_INT8)'S' << (Q_INT8)'G';
+// 	memcpy(buffer.data(), "YMSG", 4);
+// 	pos += 4;
+// 	
+	if( d->service == Yahoo::ServicePictureUpload )
+		stream << (Q_INT16)0x0d00;
+	else
+		stream << (Q_INT16)0x000d;
+// 	yahoo_put16(buffer.data() + pos, 0x000d);
+// 	pos += 2;
+// 	
+	stream << (Q_INT16)0x0000;
+// 	yahoo_put16(buffer.data() + pos, 0x0000);
+// 	pos += 2;
+// 	
+// 	int len = length();
+// 	kdDebug(14180) << k_funcinfo << " length is " << len << endl;
+// 	
+// 	
+	if( d->service == Yahoo::ServicePictureUpload )
+		stream << (Q_INT16)(length()+4);
+	else
+		stream << (Q_INT16)length();
+// 	yahoo_put16(buffer.data() + pos, len);
+// 	pos += 2;
+	stream << (Q_INT16)d->service;
+// 	yahoo_put16(buffer.data() + pos, d->service);
+// 	pos += 2;
+	stream << (Q_INT32)d->status;
+// 	yahoo_put32(buffer.data() + pos, d->status);
+// 	pos += 4;
+	stream << (Q_INT32)d->id;
+// 	yahoo_put32(buffer.data() + pos, d->id);
+// 	pos += 4;
+// 	
+ 	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
 	{
-		kdDebug(14180) << k_funcinfo << " Serializing key " << (*it).first << " value " << (*it).second << endl;
-		memcpy( buffer.data() + pos, QString::number( (*it).first ).latin1(), QString::number( (*it).first ).length());
-		pos += QString::number( (*it).first ).length();
-		buffer[pos++] = 0xc0;
-		buffer[pos++] = 0x80;
-		memcpy( buffer.data() + pos, (*it).second.latin1(), (*it).second.length());
-		pos += (*it).second.length();
-		buffer[pos++] = 0xc0;
-		buffer[pos++] = 0x80;
+ 		kdDebug(14180) << k_funcinfo << " Serializing key " << (*it).first << " value " << (*it).second << endl;
+		stream.writeRawBytes ( QString::number( (*it).first ).local8Bit(), QString::number( (*it).first ).length() );
+		stream << (Q_INT8)0xc0 << (Q_INT8)0x80;
+// 		memcpy( buffer.data() + pos, QString::number( (*it).first ).latin1(), QString::number( (*it).first ).length());
+// 		pos += QString::number( (*it).first ).length();
+// 		buffer[pos++] = 0xc0;
+// 		buffer[pos++] = 0x80;
+		stream.writeRawBytes( (*it).second.local8Bit(), (*it).second.length() );
+		stream << (Q_INT8)0xc0 << (Q_INT8)0x80;
+// 		memcpy( buffer.data() + pos, (*it).second.latin1(), (*it).second.length());
+// 		pos += (*it).second.length();
+// 		buffer[pos++] = 0xc0;
+// 		buffer[pos++] = 0x80;
 	}
-	kdDebug(14180) << k_funcinfo << " pos=" << pos << " (packet size)" << endl;
+	kdDebug(14180) << k_funcinfo << " pos=" << pos << " (packet size)" << buffer << endl;
 	return buffer;
 }
 

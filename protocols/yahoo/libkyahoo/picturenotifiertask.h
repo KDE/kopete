@@ -38,10 +38,13 @@ protected:
 	void parsePictureChecksum( Transfer *transfer );
 	void parsePictureStatus( Transfer *transfer );
 	void parsePicture( Transfer *transfer );
+	void parsePictureUploadResponse( Transfer *transfer );
 signals:
 	void pictureStatusNotify( const QString &, int );
 	void pictureChecksumNotify( const QString &, int );
-	void pictureInfoNotify( const QString &, KURL, int );
+	void pictureInfoNotify( const QString &, KURL, int ); 
+	void pictureRequest( const QString & );
+	void pictureUploaded( const QString & );
 };
 
 #endif

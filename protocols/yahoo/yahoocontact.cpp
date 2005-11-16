@@ -453,20 +453,20 @@ void YahooContact::gotWebcamInvite()
 void YahooContact::sendBuddyIconChecksum( int checksum )
 {
 	kdDebug(14180) << k_funcinfo << endl;
-	//m_account->yahooSession()->sendBuddyIconChecksum( checksum, m_userId );
+	m_account->yahooSession()->sendPictureChecksum( checksum, m_userId );
 	
 }
 
 void YahooContact::sendBuddyIconInfo( const QString &url, int checksum )
 {
 	kdDebug(14180) << k_funcinfo << endl;
-	//m_account->yahooSession()->sendBuddyIconInfo( m_userId, url, checksum );
+	m_account->yahooSession()->sendPictureInformation( m_userId, url, checksum );
 }
 
 void YahooContact::sendBuddyIconUpdate( int type )
 {
 	kdDebug(14180) << k_funcinfo << endl;
-	//m_account->yahooSession()->sendBuddyIconUpdate( m_userId, type );
+	m_account->yahooSession()->sendPictureStatusUpdate( m_userId, type );
 }
 
 void YahooContact::setDisplayPicture(KTempFile *f, int checksum)

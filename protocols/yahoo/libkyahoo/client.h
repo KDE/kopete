@@ -129,9 +129,29 @@ Q_OBJECT
 		void requestPicture( const QString &userId );
 
 		/**
-		 * Request the buddy's picture
+		 * Download the buddy's picture
 		 */
-		void downloadBuddyIcon(  const QString &userId, KURL url, int checksum );
+		void downloadPicture( const QString &userId, KURL url, int checksum );
+
+		/**
+		 * Send our picture
+		 */
+		void uploadPicture( KURL url );
+
+		/**
+		 * Send checksum of our picture
+		 */
+		void sendPictureChecksum( int checksum, const QString & );
+
+		/**
+		 * Send information about our picture
+		 */
+		void sendPictureInformation( const QString &userId, const QString &url, int checksum );
+
+		/**
+		 * Notify the buddies about our new status
+		 */
+		void sendPictureStatusUpdate( const QString &userId, int type );
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -186,6 +206,17 @@ Q_OBJECT
 		 */
 		Task* rootTask();
 
+		/**
+		 * Accessors to the cookies
+		 */
+		QString yCookie();
+		QString tCookie();
+		QString cCookie();
+
+		/**
+		 * Error
+		 */
+		void notifyError( const QString & );
 	signals:
 		/** CONNECTION EVENTS */
 		
@@ -259,6 +290,14 @@ Q_OBJECT
 		 * The iconLoader has successfully downloaded a picutre
 		 */
 		void pictureDownloaded( const QString &, KTempFile *, int );
+		/**
+		 * A Buddy asks for our picture
+		 */
+		void pictureRequest( const QString & );
+		/**
+		 * Information about the picture upload
+		 */
+		void pictureUploaded( const QString & );		
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();
