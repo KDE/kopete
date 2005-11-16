@@ -57,7 +57,7 @@ public:
 	/**
 	 * Return the actions for this contact
 	 */
-	virtual Q3PtrList<KAction> *customContextMenuActions();
+	virtual QList<KAction *> *customContextMenuActions();
 	/**
 	 * Returns a Kopete::ChatSession associated with this contact
 	 */

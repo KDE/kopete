@@ -84,7 +84,7 @@ Kopete::ChatSession* TestbedContact::manager( CanCreateFlags )
 }
 
 
-Q3PtrList<KAction> *TestbedContact::customContextMenuActions() //OBSOLETE
+QList<KAction *> *TestbedContact::customContextMenuActions() //OBSOLETE
 {
 	//FIXME!!!  this function is obsolete, we should use XMLGUI instead
 	/*m_actionCollection = new KActionCollection( this, "userColl" );
