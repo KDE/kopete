@@ -534,6 +534,15 @@ void AIMAccount::joinChatDialogClosed( int code )
     m_joinChatDialog = 0L;
 }
 
+void AIMAccount::loginActions()
+{
+	OscarAccount::loginActions();
+
+	using namespace AIM::PrivacySettings;
+	int privacySetting = this->configGroup()->readNumEntry( "PrivacySetting", AllowAll );
+	this->setPrivacySettings( privacySetting );
+}
+
 void AIMAccount::disconnected( DisconnectReason reason )
 {
 	kdDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "Attempting to set status offline" << endl;
@@ -803,6 +812,67 @@ void AIMAccount::slotVisibilityDialogClosed()
 {
 	m_visibilityDialog->delayedDestruct();
 	m_visibilityDialog = 0L;
+}
+
+void AIMAccount::setPrivacySettings( int privacy )
+{
+	using namespace AIM::PrivacySettings;
+
+	BYTE privacyByte = 0x01;
+	DWORD userClasses = 0xFFFFFFFF;
+
+	switch ( privacy )
+	{
+	case AllowAll:
+		privacyByte = 0x01;
+		break;
+	case BlockAll:
+		privacyByte = 0x02;
+		break;
+	case AllowPremitList:
+		privacyByte = 0x03;
+		break;
+	case BlockDenyList:
+		privacyByte = 0x04;
+		break;
+	case AllowMyContacts:
+		privacyByte = 0x05;
+		break;
+	case BlockAIM:
+		privacyByte = 0x01;
+		userClasses = 0x00000004;
+		break;
+	}
+
+	this->setPrivacyTLVs( privacyByte, userClasses );
+}
+
+void AIMAccount::setPrivacyTLVs( BYTE privacy, DWORD userClasses )
+{
+	SSIManager* ssi = engine()->ssiManager();
+	Oscar::SSI item = ssi->findItem( QString::null, ROSTER_VISIBILITY );
+
+	QValueList<Oscar::TLV> tList;
+
+	tList.append( TLV( 0x00CA, 1, (char *)&privacy ) );
+	tList.append( TLV( 0x00CB, sizeof(userClasses), (char *)&userClasses ) );
+
+	if ( !item )
+	{
+		kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Adding new privacy TLV item" << endl;
+		Oscar::SSI s( QString::null, 0, ssi->nextContactId(), ROSTER_VISIBILITY, tList );
+		engine()->modifySSIItem( item, s );
+	}
+	else
+	{ //found an item
+		Oscar::SSI s(item);
+
+		if ( Oscar::uptateTLVs( s, tList ) == true )
+		{
+			kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Updating privacy TLV item" << endl;
+			engine()->modifySSIItem( item, s );
+		}
+	}
 }
 
 #include "aimaccount.moc"

@@ -115,7 +115,7 @@ protected:
 	/**
 	 * The selected items have changed; update our actions to show what's possible.
 	 */
-	void updateActionsForSelection( Q3PtrList<Kopete::MetaContact> contacts, Q3PtrList<Kopete::Group> groups );
+	void updateActionsForSelection( QList<Kopete::MetaContact*> contacts, QList<Kopete::Group*> groups );
 
 private slots:
 	/**

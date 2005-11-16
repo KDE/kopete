@@ -38,31 +38,31 @@
 
 IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString &nickname, Kopete::MetaContact *m )
 	: IRCContact(contactManager, nickname, m ),
-	  m_isAway(false)
+	actionCtcpMenu(0L)
 {
 	setFileCapable(true);
 
 	mOnlineTimer = new QTimer( this );
-	m_isOnline = metaContact()->isTemporary();
 
 	QObject::connect(mOnlineTimer, SIGNAL(timeout()), this, SLOT( slotUserOffline() ) );
 
 	QObject::connect(kircEngine(), SIGNAL(incomingChannelModeChange(const QString&, const QString&, const QString&)),
 		this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
 
-	actionCtcpMenu = 0L;
-
 	mInfo.isOperator = false;
 	mInfo.isIdentified = false;
 	mInfo.idle = 0;
 	mInfo.hops = 0;
 	mInfo.away = false;
+	mInfo.online = metaContact()->isTemporary();
 
 	updateStatus();
 }
 
 void IRCUserContact::updateStatus()
 {
+	//kdDebug(14120) << k_funcinfo << endl;
+
         Kopete::OnlineStatus newStatus;
 
 	switch (kircEngine()->status())
@@ -81,15 +81,24 @@ void IRCUserContact::updateStatus()
 
 		case KIRC::Engine::Connected:
 		case KIRC::Engine::Closing:
-			if (m_isAway)
+			if (mInfo.away)
 				newStatus = m_protocol->m_UserStatusAway;
-			else if (m_isOnline)
+			else if (mInfo.online)
 				newStatus = m_protocol->m_UserStatusOnline;
 			break;
 
 		default:
 			newStatus = m_protocol->m_StatusUnknown;
 	}
+
+	// Try hard not to emit several onlineStatusChanged() signals.
+	bool onlineStatusChanged = false;
+
+
+	/* The away status is global, so if the user goes away, we must set
+	 * the new status on all channels.
+	 */
+
 
 	// This may not be created yet ( for myself() on startup )
 	if( ircAccount()->contactManager() )
@@ -101,33 +110,38 @@ void IRCUserContact::updateStatus()
 			IRCChannelContact *channel = *it;
 			Kopete::OnlineStatus currentStatus = channel->manager()->contactOnlineStatus(this);
 
-			if( currentStatus.internalStatus() > IRCProtocol::Online )
+			//kdDebug(14120) << k_funcinfo << "iterating channel " << channel->nickName() << " internal status: " << currentStatus.internalStatus() << endl;
+
+			if( currentStatus.internalStatus() >= IRCProtocol::Online )
 			{
+				onlineStatusChanged = true;
+
 				if( !(currentStatus.internalStatus() & IRCProtocol::Away) && newStatus == m_protocol->m_UserStatusAway )
 				{
-					channel->manager()->setContactOnlineStatus(
-						this, m_protocol->statusLookup(
-							(IRCProtocol::IRCStatus)(currentStatus.internalStatus()+IRCProtocol::Away)
-						)
-					);
+					setOnlineStatus( newStatus );
+					//kdDebug(14120) << k_funcinfo << "was NOT away, but is now, channel " << channel->nickName() << endl;
+					adjustInternalOnlineStatusBits(channel, IRCProtocol::Away, AddBits);
 				}
 				else if( (currentStatus.internalStatus() & IRCProtocol::Away) && newStatus == m_protocol->m_UserStatusOnline )
 				{
-					channel->manager()->setContactOnlineStatus(
-						this, m_protocol->statusLookup(
-							(IRCProtocol::IRCStatus)(currentStatus.internalStatus()-IRCProtocol::Away)
-						)
-					);
+					setOnlineStatus( newStatus );
+					//kdDebug(14120) << k_funcinfo << "was away, but not anymore, channel " << channel->nickName() << endl;
+					adjustInternalOnlineStatusBits(channel, IRCProtocol::Away, RemoveBits);
+
 				}
 				else if( newStatus.internalStatus() < IRCProtocol::Away )
 				{
+					//kdDebug(14120) << k_funcinfo << "offline or connecting?" << endl;
 					channel->manager()->setContactOnlineStatus( this, newStatus );
 				}
 			}
 		}
 	}
 
-	setOnlineStatus( newStatus );
+	if (!onlineStatusChanged) {
+		//kdDebug(14120) << k_funcinfo << "setting status at last" << endl;
+		setOnlineStatus( newStatus );
+	}
 }
 
 void IRCUserContact::sendFile(const KURL &sourceURL, const QString&, unsigned int)
@@ -148,8 +162,9 @@ void IRCUserContact::sendFile(const KURL &sourceURL, const QString&, unsigned in
 
 void IRCUserContact::slotUserOffline()
 {
-	m_isOnline = false;
-	m_isAway = false;
+	mInfo.online = false;
+	mInfo.away   = false;
+
 	updateStatus();
 
 	if( !metaContact()->isTemporary() )
@@ -162,7 +177,9 @@ void IRCUserContact::slotUserOffline()
 
 void IRCUserContact::setAway(bool isAway)
 {
-	m_isAway = isAway;
+	//kdDebug(14120) << k_funcinfo << isAway << endl;
+
+	mInfo.away = isAway;
 	updateStatus();
 }
 
@@ -179,7 +196,7 @@ void IRCUserContact::incomingUserIsAway(const QString &reason)
 
 void IRCUserContact::userOnline()
 {
-	m_isOnline = true;
+	mInfo.online = true;
 	updateStatus();
 	if (this != ircAccount()->mySelf() && !metaContact()->isTemporary() && ircAccount()->isConnected())
 	{
@@ -227,22 +244,102 @@ void IRCUserContact::slotDevoice()
 
 void IRCUserContact::slotBanHost()
 {
-	slotKick();
+	// MODE #foofoofoo +b *!*@host.domain.net
+
+	if (mInfo.hostName.isEmpty()) {
+		if (kircEngine()->isConnected()) {
+			kircEngine()->whois(m_nickName);
+			QTimer::singleShot( 750, this, SLOT( slotBanHostOnce() ) );
+		}
+	} else {
+		slotBanHostOnce();
+	}
+}
+void IRCUserContact::slotBanHostOnce()
+{
+	if (mInfo.hostName.isEmpty())
+		return;
+
+	Kopete::ContactPtrList members = mActiveManager->members();
+	QString channelName = static_cast<IRCContact*>(members.first())->nickName();
+
+	kircEngine()->mode(channelName, QString::fromLatin1("+b *!*@%1").arg(mInfo.hostName));
 }
 
 void IRCUserContact::slotBanUserHost()
 {
-	slotKick();
+	// MODE #foofoofoo +b *!*user@host.domain.net
+
+	if (mInfo.hostName.isEmpty()) {
+		if (kircEngine()->isConnected()) {
+			kircEngine()->whois(m_nickName);
+			QTimer::singleShot( 750, this, SLOT( slotBanUserHostOnce() ) );
+		}
+	} else {
+		slotBanUserHostOnce();
+	}
+}
+void IRCUserContact::slotBanUserHostOnce()
+{
+	if (mInfo.hostName.isEmpty())
+		return;
+
+	Kopete::ContactPtrList members = mActiveManager->members();
+	QString channelName = static_cast<IRCContact*>(members.first())->nickName();
+
+	kircEngine()->mode(channelName, QString::fromLatin1("+b *!*%1@%2").arg(mInfo.userName, mInfo.hostName));
 }
 
 void IRCUserContact::slotBanDomain()
 {
-	slotKick();
+	// MODE #foofoofoo +b *!*@*.domain.net
+
+	if (mInfo.hostName.isEmpty()) {
+		if (kircEngine()->isConnected()) {
+			kircEngine()->whois(m_nickName);
+			QTimer::singleShot( 750, this, SLOT( slotBanDomainOnce() ) );
+		}
+	} else {
+		slotBanDomainOnce();
+	}
+}
+void IRCUserContact::slotBanDomainOnce()
+{
+	if (mInfo.hostName.isEmpty())
+		return;
+
+	Kopete::ContactPtrList members = mActiveManager->members();
+	QString channelName = static_cast<IRCContact*>(members.first())->nickName();
+
+	QString domain = mInfo.hostName.section('.', 1);
+
+	kircEngine()->mode(channelName, QString::fromLatin1("+b *!*@*.%1").arg(domain));
 }
 
 void IRCUserContact::slotBanUserDomain()
 {
-	slotKick();
+	// MODE #foofoofoo +b *!*user@*.domain.net
+
+	if (mInfo.hostName.isEmpty()) {
+		if (kircEngine()->isConnected()) {
+			kircEngine()->whois(m_nickName);
+			QTimer::singleShot( 750, this, SLOT( slotBanUserDomainOnce() ) );
+		}
+	} else {
+		slotBanUserDomainOnce();
+	}
+}
+void IRCUserContact::slotBanUserDomainOnce()
+{
+	if (mInfo.hostName.isEmpty())
+		return;
+
+	Kopete::ContactPtrList members = mActiveManager->members();
+	QString channelName = static_cast<IRCContact*>(members.first())->nickName();
+
+	QString domain = mInfo.hostName.section('.', 1);
+
+	kircEngine()->mode(channelName, QString::fromLatin1("+b *!*%1@*.%2").arg(mInfo.userName, domain));
 }
 
 void IRCUserContact::slotKick()
@@ -462,13 +559,13 @@ Q3PtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::ChatSessio
 			actionKick->setEnabled( false );
 
 			actionBanMenu = new KActionMenu(i18n("&Ban"), 0, this, "actionBanMenu");
-			actionBanMenu->insert( new KAction(i18n("Ban *!*@*.host"), 0, this,
+			actionBanMenu->insert( new KAction(i18n("Host (*!*@host.domain.net)"), 0, this,
 				SLOT(slotBanHost()), actionBanMenu ) );
-			actionBanMenu->insert( new KAction(i18n("Ban *!*@domain"), 0, this,
+			actionBanMenu->insert( new KAction(i18n("Domain (*!*@*.domain.net)"), 0, this,
 				SLOT(slotBanDomain()), actionBanMenu ) );
-			actionBanMenu->insert( new KAction(i18n("Ban *!*user@*.host"), 0, this,
+			actionBanMenu->insert( new KAction(i18n("User@Host (*!*user@host.domain.net)"), 0, this,
 				 SLOT(slotBanUserHost()), actionBanMenu ) );
-			actionBanMenu->insert( new KAction(i18n("Ban *!*user@domain"), 0, this,
+			actionBanMenu->insert( new KAction(i18n("User@Domain (*!*user@*.domain.net)"), 0, this,
 				 SLOT(slotBanUserDomain()), actionBanMenu ) );
 			actionBanMenu->setEnabled( false );
 
@@ -486,7 +583,7 @@ Q3PtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::ChatSessio
 
 		if( isChannel )
 		{
-			bool isOperator = ( manager->contactOnlineStatus( account()->myself() ) == m_protocol->m_UserStatusOp );
+			bool isOperator = ( manager->contactOnlineStatus( account()->myself() ).internalStatus() & IRCProtocol::Operator );
 			actionModeMenu->setEnabled(isOperator);
 			actionBanMenu->setEnabled(isOperator);
 			actionKick->setEnabled(isOperator);
@@ -500,34 +597,103 @@ Q3PtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::ChatSessio
 	return 0L;
 }
 
-void IRCUserContact::slotIncomingModeChange( const QString &channel, const QString &, const QString &mode )
+void IRCUserContact::slotIncomingModeChange( const QString &channel, const QString &, const QString &mode_ )
 {
+	kdDebug(14120) << k_funcinfo << "channel: " << channel << " mode: " << mode_ << endl;
+
 	IRCChannelContact *chan = ircAccount()->contactManager()->findChannel( channel );
-	if( chan->locateUser( m_nickName ) )
+
+	if( !chan->locateUser( m_nickName ) )
+		return;
+
+	// :foobar_!~fooobar@dhcp.inet.fi MODE #foofoofoo2 +o kakkonen
+	// :foobar_!~fooobar@dhcp.inet.fi MODE #foofoofoo2 +o-o foobar001 kakkonen
+	// :foobar_!~fooobar@dhcp.inet.fi MODE #foofoofoo2 +oo kakkonen foobar001
+	// :foobar_!~fooobar@dhcp.inet.fi MODE #foofoofoo2 +o-ov foobar001 kakkonen foobar001
+	//
+	// irssi manual example: /MODE #channel +nto-o+v nick1 nick2 nick3
+
+	QStringList users = QStringList::split(' ', mode_);
+	users.pop_front();
+
+	const QString mode = mode_.section(' ', 0, 0);
+
+	bitAdjustment adjMode = RemoveBits;
+	QStringList::iterator user = users.begin();
+
+	//kdDebug(14120) << "me: " << m_nickName << " users: " << users << " mode: " << mode << endl;
+
+	for( uint i=0; i < mode.length(); i++ )
 	{
-		QString user = mode.section(' ', 1, 1);
-		kdDebug(14120) << k_funcinfo << mode << ", " << user << ", " << m_nickName << endl;
-		if( user == m_nickName )
+		switch( mode[i] )
 		{
-			QString modeChange = mode.section(' ', 0, 0);
-			if(modeChange == QString::fromLatin1("+o"))
-				setManagerStatus( chan, m_protocol->m_UserStatusOp.internalStatus() );
-			else if(modeChange == QString::fromLatin1("-o"))
-				setManagerStatus( chan, -m_protocol->m_UserStatusOp.internalStatus() );
-			else if(modeChange == QString::fromLatin1("+v"))
-				setManagerStatus( chan, m_protocol->m_UserStatusVoice.internalStatus() );
-			else if(modeChange == QString::fromLatin1("-v"))
-				setManagerStatus( chan, -m_protocol->m_UserStatusVoice.internalStatus() );
+		case '+':
+			adjMode = AddBits;
+			break;
+
+		case '-':
+			adjMode = RemoveBits;
+			break;
+
+		default:
+			//kdDebug(14120) << "got " << mode[i] << ", user: " << *user << endl;
+
+			if (mode[i] == 'o') {
+				if (user == users.end())
+					return;
+
+				if ((*user).lower() == m_nickName.lower())
+					adjustInternalOnlineStatusBits(chan, IRCProtocol::Operator, adjMode);
+
+				++user;
+			}
+			else if (mode[i] == 'v') {
+				if (user == users.end())
+					return;
+
+				if ((*user).lower() == m_nickName.lower())
+					adjustInternalOnlineStatusBits(chan, IRCProtocol::Voiced, adjMode);
+
+				++user;
+			}
+
+			break;
 		}
 	}
 }
 
-void IRCUserContact::setManagerStatus(IRCChannelContact *channel, int statusAdjustment)
+
+/* Remove or add the given bits for the given channel from the current internal online status.
+ *
+ * You could fiddle with bits like IRCProtocol::Operator, IRCProtocol::Voiced, etc.
+ */
+
+void IRCUserContact::adjustInternalOnlineStatusBits(IRCChannelContact *channel, unsigned statusAdjustment, bitAdjustment adj)
 {
 	Kopete::OnlineStatus currentStatus = channel->manager()->contactOnlineStatus(this);
-	Kopete::OnlineStatus newStatus = m_protocol->statusLookup(
-		(IRCProtocol::IRCStatus)(currentStatus.internalStatus() + statusAdjustment)
-	);
+	Kopete::OnlineStatus newStatus;
+
+	if (adj == RemoveBits) {
+
+		// If the bit is not set in the current internal status, stop here.
+		if ((currentStatus.internalStatus() & ~statusAdjustment) == currentStatus.internalStatus())
+			return;
+
+		newStatus = m_protocol->statusLookup(
+				(IRCProtocol::IRCStatus)(currentStatus.internalStatus() & ~statusAdjustment)
+				);
+
+	} else if (adj == AddBits) {
+
+		// If the bit is already set in the current internal status, stop here.
+		if ((currentStatus.internalStatus() | statusAdjustment) == currentStatus.internalStatus())
+			return;
+
+		newStatus = m_protocol->statusLookup(
+				(IRCProtocol::IRCStatus)(currentStatus.internalStatus() | statusAdjustment)
+				);
+
+	}
 
 	channel->manager()->setContactOnlineStatus(this, newStatus);
 }

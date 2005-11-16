@@ -108,9 +108,6 @@
                                 <property name="text">
                                     <string>E&amp;xclude from connect all</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+X</string>
-                                </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
                                 </property>

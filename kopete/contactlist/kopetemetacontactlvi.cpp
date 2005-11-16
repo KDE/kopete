@@ -25,8 +25,7 @@
 #include <q3stylesheet.h>
 //Added by qt3to4:
 #include <QPixmap>
-#include <Q3PtrList>
-
+#include <QList>
 #include "knotification.h"
 #include <kdebug.h>
 #include <kiconeffect.h>
@@ -116,7 +115,7 @@ public:
 
 		toolTip += QString::fromLatin1("<b><font size=\"+1\">%1</font></b><br><br>").arg( displayName );
 
-		Q3PtrList<Contact> contacts = metaContact->contacts();
+		QList<Contact*> contacts = metaContact->contacts();
 		if ( contacts.count() == 1 )
 		{
 			return toolTip + contacts.first()->toolTip() + QString::fromLatin1("</td></tr></table></qt>");
@@ -126,8 +125,10 @@ public:
 
         // We are over a metacontact with > 1 child contacts, and not over a specific contact
         // Iterate through children and display a summary tooltip
-        for(Contact *c = contacts.first(); c; c = contacts.next())
+		QList<Contact*>::iterator cit = contacts.begin();
+        for(; cit != contacts.end(); ++cit)
 		{
+			Contact* c = (*cit);
 			QString iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
 			.arg( KURL::encode_string( c->protocol()->pluginId() ),
 					KURL::encode_string( c->account()->accountId() ),
@@ -504,7 +505,7 @@ void KopeteMetaContactLVI::execute() const
 		m_metaContact->execute();
 	
 	//The selection is removed, but the contact still hihjlihted,  remove the selection in the contactlist (see bug 106090)
-	Kopete::ContactList::self()->setSelectedItems( Q3PtrList<Kopete::MetaContact>() , Q3PtrList<Kopete::Group>() );
+	Kopete::ContactList::self()->setSelectedItems( QList<Kopete::MetaContact*>() , QList<Kopete::Group*>() );
 }
 
 void KopeteMetaContactLVI::slotDisplayNameChanged()
@@ -787,8 +788,8 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 	slotIdleStateChanged( 0 );
 
 	// finally, re-add all contacts so their icons appear. remove them first for consistency.
-	Q3PtrList<Kopete::Contact> contacts = m_metaContact->contacts();
-	for ( Q3PtrListIterator<Kopete::Contact> it( contacts ); it.current(); ++it )
+	QList<Kopete::Contact*> contacts = m_metaContact->contacts();
+	for ( QList<Kopete::Contact*>::iterator it = contacts.begin(); it != contacts.end(); ++it )
 	{
 		slotContactRemoved( *it );
 		slotContactAdded( *it );
@@ -856,8 +857,8 @@ void KopeteMetaContactLVI::slotContactRemoved( Kopete::Contact *c )
 void KopeteMetaContactLVI::updateContactIcons()
 {
 	// show offline contacts setting may have changed
-	Q3PtrList<Kopete::Contact> contacts = m_metaContact->contacts();
-	for ( Q3PtrListIterator<Kopete::Contact> it( contacts ); it.current(); ++it )
+	QList<Kopete::Contact*> contacts = m_metaContact->contacts();
+	for ( QList<Kopete::Contact*>::iterator it = contacts.begin(); it != contacts.end(); ++it )
 		updateContactIcon( *it );
 }
 

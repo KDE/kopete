@@ -126,12 +126,12 @@ void KopeteAddressBookExport::fetchPhoneNumbers( KListBox * listBox, int type, u
 
 void KopeteAddressBookExport::fetchIMData()
 {	
-	Q3PtrList<Kopete::Contact> contacts = mMetaContact->contacts();
-	Q3PtrListIterator<Kopete::Contact> cit( contacts );
-	for( ; cit.current(); ++cit )
+	QList<Kopete::Contact*> contacts = mMetaContact->contacts();
+	QList<Kopete::Contact*>::iterator cit, citEnd = contacts.end();
+	for( cit = contacts.begin(); cit != citEnd; ++cit )
 	{
 		// for each contact, get the property content
-		Kopete::Contact* c = cit.current();
+		Kopete::Contact* c = (*cit);
 		QPixmap contactIcon = c->account()->accountIcon( 16 );
 		// given name
 		populateIM( c, contactIcon, mUI->mFirstName, Kopete::Global::Properties::self()->firstName() );

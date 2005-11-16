@@ -23,28 +23,29 @@
 #include "dlgjabbervcard.h"
 
 #include <q3textedit.h>
+#include <qregexp.h>
 
 #include <qapplication.h>
 #include <q3widgetstack.h>
+// KDE includes
 #include <kdebug.h>
 #include <kpushbutton.h>
 #include <klineedit.h>
 #include <klocale.h>
 #include <kurllabel.h>
-#include <kdialogbase.h>
 #include <kmessagebox.h>
 #include <krun.h>
-// For photo handling.
 #include <kio/netaccess.h>
 #include <kfiledialog.h>
 #include <kpixmapregionselectordialog.h>
 #include <kstandarddirs.h>
-#include <qregexp.h>
 
+// libiris(XMPP backend) includes
 #include "im.h"
 #include "xmpp.h"
 #include "xmpp_tasks.h"
 
+// Kopete includes
 #include "jabberprotocol.h"
 #include "jabbercontact.h"
 #include "jabberaccount.h"
@@ -59,7 +60,7 @@
  *
  */
 dlgJabberVCard::dlgJabberVCard (JabberAccount *account, JabberContact *contact, QWidget * parent, const char *name)
-	: KDialogBase (parent, name, false, i18n("Jabber vCard"), Close | User1, Close, false, i18n("&Save User Info"))
+	: KDialogBase (parent, name, false, i18n("Jabber vCard"), Close | User1 | User2, Close, false, i18n("&Save User Info"), i18n("&Fetch vCard") )
 {
 
 	m_account = account;
@@ -69,18 +70,18 @@ dlgJabberVCard::dlgJabberVCard (JabberAccount *account, JabberContact *contact, 
 	setMainWidget(m_mainWidget);
 
 	connect (this, SIGNAL (user1Clicked()), this, SLOT (slotSaveVCard ()));
+	connect (this, SIGNAL( user2Clicked()), this, SLOT (slotGetVCard ()));
+
 	connect (m_mainWidget->btnSelectPhoto, SIGNAL (clicked()), this, SLOT (slotSelectPhoto()));
 	connect (m_mainWidget->btnClearPhoto, SIGNAL (clicked()), this, SLOT (slotClearPhoto()));
 	connect (m_mainWidget->urlHomeEmail, SIGNAL (leftClickedURL(const QString &)), this, SLOT (slotOpenURL (const QString &)));
 	connect (m_mainWidget->urlWorkEmail, SIGNAL (leftClickedURL(const QString &)), this, SLOT (slotOpenURL (const QString &)));
 	connect (m_mainWidget->urlHomepage, SIGNAL (leftClickedURL(const QString &)), this, SLOT (slotOpenURL (const QString &)));
 
-	if(m_account->myself() == m_contact)
-		setReadOnly (false);
-	else
-		setReadOnly (true);
-
 	assignContactProperties();
+
+	show ();
+	raise ();
 }
 
 /*
@@ -174,15 +175,17 @@ void dlgJabberVCard::assignContactProperties ()
 
 	// about tab
 	m_mainWidget->teAbout->setText (m_contact->property(m_account->protocol()->propAbout).value().toString());
-	
-	show ();
-	raise ();
+
+	if(m_account->myself() == m_contact)
+		setReadOnly (false);
+	else
+		setReadOnly (true);
 }
 
 void dlgJabberVCard::setReadOnly (bool state)
 {
 	// general tab
-	m_mainWidget->leNick->setReadOnly (false);
+	m_mainWidget->leNick->setReadOnly (state);
 	m_mainWidget->leName->setReadOnly (state);
 	m_mainWidget->leJID->setReadOnly (state);
 	m_mainWidget->leBirthday->setReadOnly (state);
@@ -227,6 +230,57 @@ void dlgJabberVCard::setReadOnly (bool state)
 
 	// save button
 	enableButton(User1, !state);
+}
+
+void dlgJabberVCard::setEnabled(bool state)
+{
+	// general tab
+	m_mainWidget->leNick->setEnabled (state);
+	m_mainWidget->leName->setEnabled (state);
+	m_mainWidget->leJID->setEnabled (state);
+	m_mainWidget->leBirthday->setEnabled (state);
+	m_mainWidget->leTimezone->setEnabled (state);
+	m_mainWidget->wsHomepage->raiseWidget(state ? 1 : 0);
+	// Disable photo buttons when read only
+	m_mainWidget->btnSelectPhoto->setEnabled(state);
+	m_mainWidget->btnClearPhoto->setEnabled(state);
+
+	// home address tab
+	m_mainWidget->leHomeStreet->setEnabled (state);
+	m_mainWidget->leHomeExtAddr->setEnabled (state);
+	m_mainWidget->leHomePOBox->setEnabled (state);
+	m_mainWidget->leHomeCity->setEnabled (state);
+	m_mainWidget->leHomePostalCode->setEnabled (state);
+	m_mainWidget->leHomeCountry->setEnabled (state);
+	m_mainWidget->wsHomeEmail->raiseWidget(state ? 0 : 1);
+
+	// work address tab
+	m_mainWidget->leWorkStreet->setEnabled (state);
+	m_mainWidget->leWorkExtAddr->setEnabled (state);
+	m_mainWidget->leWorkPOBox->setEnabled (state);
+	m_mainWidget->leWorkCity->setEnabled (state);
+	m_mainWidget->leWorkPostalCode->setEnabled (state);
+	m_mainWidget->leWorkCountry->setEnabled (state);
+	m_mainWidget->wsWorkEmail->raiseWidget(state ? 0 : 1);
+
+	// work information tab
+	m_mainWidget->leCompany->setEnabled (state);
+	m_mainWidget->leDepartment->setEnabled (state);
+	m_mainWidget->lePosition->setEnabled (state);
+	m_mainWidget->leRole->setEnabled (state);
+
+	// phone numbers tab
+	m_mainWidget->lePhoneHome->setEnabled (state);
+	m_mainWidget->lePhoneWork->setEnabled (state);
+	m_mainWidget->lePhoneFax->setEnabled (state);
+	m_mainWidget->lePhoneCell->setEnabled (state);
+
+	// about tab
+	m_mainWidget->teAbout->setEnabled (state);
+
+	// save button
+	enableButton(User1, state);
+	enableButton(User2, state);
 }
 
 /*
@@ -279,6 +333,41 @@ void dlgJabberVCard::slotSaveVCard()
 	m_contact->setProperty(m_account->protocol()->propAbout, m_mainWidget->teAbout->text());
 
 	emit informationChanged();
+}
+
+void dlgJabberVCard::slotGetVCard()
+{
+	m_mainWidget->lblStatus->setText( i18n("Fetching contact vCard...") );
+
+	setReadOnly(true);
+	setEnabled(false);
+
+	XMPP::JT_VCard *task = new XMPP::JT_VCard ( m_account->client()->rootTask() );
+	// signal to ourselves when the vCard data arrived
+	QObject::connect( task, SIGNAL ( finished () ), this, SLOT ( slotGotVCard () ) );
+	task->get ( m_contact->contactId() );
+	task->go ( true );	
+}
+
+void dlgJabberVCard::slotGotVCard()
+{
+	XMPP::JT_VCard * vCard = (XMPP::JT_VCard *) sender ();
+	
+	if( vCard->success() )
+	{
+		m_contact->setPropertiesFromVCard( vCard->vcard() );
+		setEnabled( true );
+
+		assignContactProperties();		
+
+		m_mainWidget->lblStatus->setText( i18n("vCard fetching Done.") );
+	}
+	else
+	{
+		m_mainWidget->lblStatus->setText( i18n("Error: vCard could not be fetched correctly.") );
+		KMessageBox::queuedMessageBox(this, KMessageBox::Error, 
+			i18n("An error occurred while fetching vCard. Check connectivity with the Jabber server."));
+	}
 }
 
 void dlgJabberVCard::slotSelectPhoto()

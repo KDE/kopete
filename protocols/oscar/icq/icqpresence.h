@@ -75,6 +75,7 @@ class OnlineStatusManager
 {
 public:
 	OnlineStatusManager();
+	~OnlineStatusManager();
 	ICQ::Presence presenceOf( uint internalStatus );
 	Kopete::OnlineStatus onlineStatusOf( const ICQ::Presence &presence );
 	Kopete::OnlineStatus connectingStatus();

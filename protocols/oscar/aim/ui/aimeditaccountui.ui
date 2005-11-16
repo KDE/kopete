@@ -365,6 +365,97 @@
                     </widget>
                 </grid>
             </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>P&amp;rivacy</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QButtonGroup" row="0" column="0">
+                        <property name="name">
+                            <cstring>buttonGroup1</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Visibility settings</string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QRadioButton" row="2" column="0">
+                                <property name="name">
+                                    <cstring>rbAllowPerimtList</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Allow only from visible list</string>
+                                </property>
+                            </widget>
+                            <widget class="QRadioButton" row="0" column="1">
+                                <property name="name">
+                                    <cstring>rbBlockAll</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Block all users</string>
+                                </property>
+                            </widget>
+                            <widget class="QRadioButton" row="1" column="1">
+                                <property name="name">
+                                    <cstring>rbBlockAIM</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Block AIM users</string>
+                                </property>
+                            </widget>
+                            <widget class="QRadioButton" row="2" column="1">
+                                <property name="name">
+                                    <cstring>rbBlockDenyList</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Block only from invisible list</string>
+                                </property>
+                            </widget>
+                            <widget class="QRadioButton" row="0" column="0">
+                                <property name="name">
+                                    <cstring>rbAllowAll</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Allow all users</string>
+                                </property>
+                            </widget>
+                            <widget class="QRadioButton" row="1" column="0">
+                                <property name="name">
+                                    <cstring>rbAllowMyContacts</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Allow only contact list's users</string>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <spacer row="1" column="0">
+                        <property name="name">
+                            <cstring>spacer3</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>31</width>
+                                <height>225</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </grid>
+            </widget>
         </widget>
     </grid>
 </widget>
@@ -426,6 +517,13 @@
     <tabstop>optionOverrideServer</tabstop>
     <tabstop>edtServerAddress</tabstop>
     <tabstop>sbxServerPort</tabstop>
+    <tabstop>encodingCombo</tabstop>
+    <tabstop>rbAllowAll</tabstop>
+    <tabstop>rbAllowMyContacts</tabstop>
+    <tabstop>rbAllowPerimtList</tabstop>
+    <tabstop>rbBlockAll</tabstop>
+    <tabstop>rbBlockAIM</tabstop>
+    <tabstop>rbBlockDenyList</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

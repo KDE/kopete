@@ -261,19 +261,20 @@ void KopeteIdentityConfig::slotLoadNameSources()
 {
 	Kopete::Contact *nameSourceContact = d->currentIdentity->displayNameSourceContact();
 
-	Q3PtrList<Kopete::Contact> contactList = d->myself->contacts(); // Use myself contact PtrList. Safer.
-	Q3PtrListIterator<Kopete::Contact> it(contactList);
+	QList<Kopete::Contact*> contactList = d->myself->contacts(); // Use myself contact PtrList. Safer.
+	QList<Kopete::Contact*>::iterator it;
 
 	d->m_view->comboNameContact->clear();
 
-	for(; it.current(); ++it)
+	for( it = contactList.begin(); it != contactList.end(); ++it)
 	{
-		QString account = it.current()->property(Kopete::Global::Properties::self()->nickName()).value().toString() + " <" + it.current()->contactId() + ">";
-		QPixmap accountIcon = it.current()->account()->accountIcon();
+		
+		QString account = (*it)->property(Kopete::Global::Properties::self()->nickName()).value().toString() + " <" + (*it)->contactId() + ">";
+		QPixmap accountIcon = (*it)->account()->accountIcon();
 		d->m_view->comboNameContact->insertItem(accountIcon,  account);
 
 		// Select this item if it's the one we're tracking.
-		if(it.current() == nameSourceContact)
+		if((*it) == nameSourceContact)
 		{
 			d->m_view->comboNameContact->setCurrentItem(d->m_view->comboNameContact->count() - 1);
 		}
@@ -292,16 +293,16 @@ void KopeteIdentityConfig::slotLoadPhotoSources()
 {
 	Kopete::Contact *photoSourceContact = d->currentIdentity->photoSourceContact();
 
-	Q3PtrList<Kopete::Contact> contactList = d->myself->contacts(); // Use myself contact PtrList. Safer.
-	Q3PtrListIterator<Kopete::Contact> it(contactList);
+	QList<Kopete::Contact*> contactList = d->myself->contacts(); // Use myself contact PtrList. Safer.
+	QList<Kopete::Contact*>::iterator it;
 
 	d->m_view->comboPhotoContact->clear();
 //	d->m_view->comboPhotoURL->clear();
 	d->contactPhotoSourceList.clear();
 
-	for(; it.current(); ++it)
+	for( it = contactList.begin(); it != contactList.end(); ++it)
 	{
-		Kopete::Contact *currentContact = it.current();
+		Kopete::Contact *currentContact = (*it);
 		if(currentContact->hasProperty(Kopete::Global::Properties::self()->photo().key()))
 		{
 			QString account = currentContact->property(Kopete::Global::Properties::self()->nickName()).value().toString() + " <" + currentContact->contactId() + ">";

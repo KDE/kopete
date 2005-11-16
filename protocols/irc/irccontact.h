@@ -1,11 +1,12 @@
 /*
     irccontact.h - IRC Contact
 
+    Copyright (c) 2005      by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
     Copyright (c) 2003-2004 by Michel Hermier <michel.hermier@wanadoo.fr>
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
 
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -94,7 +95,7 @@ public:
 	 * return true if the contact is in a chat. false if the contact is in no chats
 	 * that loop over all manager, and checks the presence of the user
 	 */
-	bool isChatting( Kopete::ChatSession *avoid = 0L ) const;
+	bool isChatting( const Kopete::ChatSession *avoid = 0L ) const;
 
 	virtual const QString caption() const;
 //	virtual const QString formatedName() const;
@@ -115,7 +116,7 @@ public:
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
 signals:
-	void destoyed(IRCContact *self);
+	void destroyed(IRCContact *self);
 
 public slots:
 	void setCodec( const QTextCodec *codec );
@@ -123,7 +124,7 @@ public slots:
 
 protected slots:
 	virtual void slotSendMsg(Kopete::Message &message, Kopete::ChatSession *);
-	QString sendMessage( const QString &msg );
+	QStringList sendMessage( const QString &msg );
 
 	virtual void chatSessionDestroyed();
 

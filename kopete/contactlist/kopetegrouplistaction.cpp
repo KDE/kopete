@@ -50,11 +50,12 @@ void KopeteGroupListAction::slotUpdateList()
 	QStringList groupList;
 
 	// Add groups to our list
-	Q3PtrList<Kopete::Group> groups = Kopete::ContactList::self()->groups();
-	for ( Kopete::Group *it = groups.first(); it; it = groups.next() )
+	QList<Kopete::Group*> groups = Kopete::ContactList::self()->groups();
+	QList<Kopete::Group*>::iterator it, itEnd = groups.end();
+	for ( it = groups.begin(); it != itEnd; ++it )
 	{
-		if(it->type() == Kopete::Group::Normal)
-			groupList.append( it->displayName() );
+		if((*it)->type() == Kopete::Group::Normal)
+			groupList.append( (*it)->displayName() );
 	}
 
 	groupList.sort();

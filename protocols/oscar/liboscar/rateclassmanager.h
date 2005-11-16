@@ -56,6 +56,13 @@ public:
 	/** Recalculate the rate levels for all the classes */
 	void recalcRateLevels();
 
+	/**
+	 * Find the rate class for the snac and
+	 * calculate time until we get to initial level
+	 * \return the time in milliseconds that we need to wait
+	 */
+	int timeToInitialLevel( Oscar::SNAC s );
+
 public slots:
 
 	void transferReady( Transfer* );

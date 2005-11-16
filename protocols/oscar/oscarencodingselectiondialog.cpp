@@ -20,12 +20,14 @@
 #include "oscarencodingselectionbase.h"
 #include "oscarencodingselectiondialog.h"
 
+#include <kdebug.h>
 #include <qcombobox.h>
 #include <klocale.h>
 
-OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent )
+OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent, int initialEncoding )
     : KDialogBase( parent, 0, false, i18n( "Select Encoding" ), Ok | Cancel )
 {
+    int initialEncodingIndex;
 
     clearWFlags( QWidget::WDestructiveClose );
     m_encodingUI = new OscarEncodingBaseUI( this );
@@ -74,7 +76,22 @@ OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent )
 
 	m_encodings.insert(2259, i18n("TIS-620 Thai"));
 
+	m_encodings.insert(106, i18n("UTF-8 Unicode"));
+	m_encodings.insert(1015, i18n("UTF-16 Unicode"));
+
     m_encodingUI->encodingCombo->insertStringList( m_encodings.values() );
+    if( (initialEncodingIndex = m_encodings.keys().findIndex(initialEncoding)) == -1 )
+    {
+        kdWarning() << k_funcinfo << "Requested encoding mib " << initialEncoding
+                << " not in encoding list - defaulting to first encoding item"
+                << " in list to be shown in combobox initially" << endl;
+        /* initialEncodingIndex = position in combobox, value 0 currently
+         * corresponds to ISO-8859-1, generally to the first item in combobox,
+         * which usually is the default
+         */
+        initialEncodingIndex = 0;
+    }
+    m_encodingUI->encodingCombo->setCurrentItem( initialEncodingIndex );
     setMainWidget( m_encodingUI );
 }
 
@@ -82,16 +99,10 @@ OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent )
 int OscarEncodingSelectionDialog::selectedEncoding() const
 {
     QString encoding = m_encodingUI->encodingCombo->currentText();
-    QMap<int, QString>::const_iterator it,  itEnd = m_encodings.end();
-    int mib = 0;
-    for ( it = m_encodings.begin(); it != itEnd; ++it )
-    {
-        if ( it.data() == encoding )
-        {
-            mib = it.key();
-            break;
-        }
-    }
+    int mib = m_encodings.keys()[ m_encodings.values().findIndex(encoding) ];
+    
+    if( mib == -1 )
+        return 0;
     return mib;
 }
 

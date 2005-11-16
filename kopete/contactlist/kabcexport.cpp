@@ -96,17 +96,18 @@ KabcExportWizard::KabcExportWizard( QWidget *parent, const char *name )
 		m_addrBooks->setSelected( 0, true );
 	
 	// fill contact list
-	Q3PtrList<Kopete::MetaContact> contacts = Kopete::ContactList::self()->metaContacts();
-	Q3PtrListIterator<Kopete::MetaContact> it( contacts );
+	QList<Kopete::MetaContact*> contacts = Kopete::ContactList::self()->metaContacts();
+	QList<Kopete::MetaContact*>::iterator it, itEnd = contacts.end();
 	counter = 0;
 	QString alreadyIn = i18n( " (already in address book)" );
-	for (; it.current(); ++it)
+	for ( it = contacts.begin(); it != itEnd; ++it)
 	{
-		m_contactMap.insert( counter, it.current() );
-		Q3CheckListItem * lvi = new ContactLVI( it.current(), m_contactList,
-				it.current()->displayName(), Q3CheckListItem::CheckBox );
+		Kopete::MetaContact* mc = (*it);
+		m_contactMap.insert( counter, mc );
+		Q3CheckListItem * lvi = new ContactLVI( mc, m_contactList,
+				mc->displayName(), Q3CheckListItem::CheckBox );
 		lvi->setOn( false );
-		if ( it.current()->metaContactId().contains(':') )
+		if ( mc->metaContactId().contains(':') )
 		{
 			lvi->setOn( true );
 			lvi->setEnabled( true );
@@ -175,7 +176,7 @@ void KabcExportWizard::accept()
 					addr.setResource( selectedResource );
 
 					// set name
-					Q3PtrList<Kopete::Contact> contacts = item->mc->contacts();
+					QList<Kopete::Contact*> contacts = item->mc->contacts();
 					if ( contacts.count() == 1 )
 					{
 						Kopete::ContactProperty prop;
@@ -212,10 +213,9 @@ void KabcExportWizard::accept()
 
 void KabcExportWizard::exportDetails( Kopete::MetaContact * mc, KABC::Addressee & addr )
 {
-	// for each contact
-	Q3PtrList<Kopete::Contact> contacts = mc->contacts();
-	Q3PtrListIterator<Kopete::Contact> cit( contacts );
-	for( ; cit.current(); ++cit )
+	QList<Kopete::Contact*> contacts = mc->contacts();
+	QList<Kopete::Contact*>::iterator cit, citEnd = contacts.begin();
+	for( cit = contacts.begin(); cit != citEnd; ++cit )
 	{
 		Kopete::ContactProperty prop;
 		prop = (*cit)->property( Kopete::Global::Properties::self()->emailAddress() );
@@ -240,7 +240,7 @@ void KabcExportWizard::exportDetails( Kopete::MetaContact * mc, KABC::Addressee 
 		}
 	
 	}
-	// metacontact photo
+	
 	QImage photo = mc->photo();
 	if ( !photo.isNull() )
 		addr.setPhoto( KABC::Picture( photo ) );

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>600</width>
-            <height>30</height>
+            <width>290</width>
+            <height>55</height>
         </rect>
     </property>
     <grid>
@@ -30,12 +30,12 @@
                 <cstring>encodingCombo</cstring>
             </property>
         </widget>
-        <widget class="QComboBox" row="0" column="1">
+        <widget class="QComboBox" row="1" column="0">
             <property name="name">
                 <cstring>encodingCombo</cstring>
             </property>
         </widget>
-        <spacer row="1" column="0">
+        <spacer row="2" column="0">
             <property name="name">
                 <cstring>spacer3</cstring>
             </property>

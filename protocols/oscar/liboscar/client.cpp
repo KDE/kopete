@@ -59,6 +59,7 @@
 #include "usersearchtask.h"
 #include "warningtask.h"
 #include "chatservicetask.h"
+#include "rateclassmanager.h"
 
 
 class Client::ClientPrivate
@@ -106,6 +107,14 @@ public:
 
 	QString statusMessage; // for away-,DND-message etc...
 
+	//away messages
+	struct AwayMsgRequest
+	{
+		QString contact;
+		ICQStatus contactStatus;
+	};
+	QValueList<AwayMsgRequest> awayMsgRequestQueue;
+	QTimer* awayMsgRequestTimer;
 };
 
 Client::Client( QObject* parent )
@@ -133,10 +142,12 @@ Client::Client( QObject* parent )
 	d->closeConnectionTask = 0L;
 	d->stage = ClientPrivate::StageOne;
 	d->typingNotifyTask = 0L;
+	d->awayMsgRequestTimer = new QTimer();
 
 	connect( this, SIGNAL( redirectionFinished( WORD ) ),
 	         this, SLOT( checkRedirectionQueue( WORD ) ) );
-
+	connect( d->awayMsgRequestTimer, SIGNAL( timeout() ),
+	         this, SLOT( nextICQAwayMessageRequest() ) );
 }
 
 Client::~Client()
@@ -147,6 +158,7 @@ Client::~Client()
 	deleteStaticTasks();
     delete d->settings;
 	delete d->ssiManager;
+	delete d->awayMsgRequestTimer;
 	delete d;
 }
 
@@ -812,6 +824,74 @@ void Client::requestICQAwayMessage( const QString& contact, ICQStatus contactSta
 		return;
 	}
 	sendMessage( msg );
+}
+
+void Client::addICQAwayMessageRequest( const QString& contact, ICQStatus contactStatus )
+{
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "adding away message request for "
+	                         << contact << " to queue" << endl;
+
+	//remove old request if still exists
+	removeICQAwayMessageRequest( contact );
+
+	ClientPrivate::AwayMsgRequest amr = { contact, contactStatus };
+	d->awayMsgRequestQueue.prepend( amr );
+	
+	if ( !d->awayMsgRequestTimer->isActive() )
+		d->awayMsgRequestTimer->start( 1000 );
+}
+
+void Client::removeICQAwayMessageRequest( const QString& contact )
+{
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "removing away message request for "
+	                         << contact << " from queue" << endl;
+
+	QValueList<ClientPrivate::AwayMsgRequest>::iterator it = d->awayMsgRequestQueue.begin();
+	while ( it != d->awayMsgRequestQueue.end() )
+	{
+		if ( (*it).contact == contact )
+			it = d->awayMsgRequestQueue.erase( it );
+		else
+			it++;
+	}
+}
+
+void Client::nextICQAwayMessageRequest()
+{
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "request queue count " << d->awayMsgRequestQueue.count() << endl;
+	
+	if ( d->awayMsgRequestQueue.empty() )
+	{
+		d->awayMsgRequestTimer->stop();
+		return;
+	}
+	else
+	{
+		Connection* c = d->connections.connectionForFamily( 0x0004 );
+		if ( !c )
+			return;
+		
+		SNAC s = { 0x0004, 0x0006, 0x0000, 0x00000000 };
+		//get time needed to restore level to initial
+		//for some reason when we are long under initial level
+		//icq server will start to block our messages
+		int time = c->rateManager()->timeToInitialLevel( s );
+		if ( time > 0 )
+		{
+			d->awayMsgRequestTimer->changeInterval( time );
+			return;
+		}
+		else
+		{
+			d->awayMsgRequestTimer->changeInterval( 5000 );
+		}
+	}
+
+	ClientPrivate::AwayMsgRequest amr;
+
+	amr = d->awayMsgRequestQueue.back();
+	d->awayMsgRequestQueue.pop_back();
+	requestICQAwayMessage( amr.contact, amr.contactStatus );
 }
 
 void Client::requestStatusInfo( const QString& contact )

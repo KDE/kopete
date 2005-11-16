@@ -65,10 +65,10 @@ QStringList KopeteIface::reachableContacts()
 QStringList KopeteIface::onlineContacts()
 {
 	QStringList result;
-	Q3PtrList<Kopete::Contact> list = Kopete::ContactList::self()->onlineContacts();
-	Q3PtrListIterator<Kopete::Contact> it( list );
-	for( ; it.current(); ++it )
-		result.append( it.current()->contactId() );
+	QList<Kopete::Contact*> list = Kopete::ContactList::self()->onlineContacts();
+	QList<Kopete::Contact*>::iterator it;
+	for( it = list.begin(); it != list.end(); ++it )
+		result.append( (*it)->contactId() );
 
 	return result;
 }

@@ -186,6 +186,11 @@ OnlineStatusManager::OnlineStatusManager()
 {
 }
 
+OnlineStatusManager::~OnlineStatusManager()
+{
+	delete d;
+}
+
 Presence OnlineStatusManager::presenceOf( uint internalStatus )
 {
 	if ( internalStatus < Presence::TypeCount )

@@ -441,13 +441,13 @@ bool Engine::invokeCtcpCommandOfMessage(const Q3Dict<MessageRedirector> &map, Me
 			if (errors.isEmpty())
 				return true;
 
-			kdDebug(14120) << "Method error for line:" << ctcpMsg.raw();
+			kdDebug(14120) << "Method error for line:" << ctcpMsg.raw() << endl;
 			writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(),
 				QString::fromLatin1("%1 internal error(s)").arg(errors.size()));
 		}
 		else
 		{
-			kdDebug(14120) << "Unknow IRC/CTCP command for line:" << ctcpMsg.raw();
+			kdDebug(14120) << "Unknow IRC/CTCP command for line:" << ctcpMsg.raw() << endl;
 			writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(), "Unknown CTCP command");
 
 			emit incomingUnknownCtcp(msg.ctcpRaw());

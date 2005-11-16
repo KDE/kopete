@@ -59,7 +59,6 @@ namespace UI
 class MetaContactSelectorWidgetLVI::Private
 {
 public:
-	
 	Kopete::MetaContact *metaContact;
 	ImageComponent *metaContactPhoto;
 	ImageComponent *metaContactIcon;
@@ -79,7 +78,7 @@ MetaContactSelectorWidgetLVI::MetaContactSelectorWidgetLVI(Kopete::MetaContact *
 	
 	connect( d->metaContact, SIGNAL( photoChanged() ),
 		SLOT( slotPhotoChanged() ) );
-	connect( d->metaContact, SIGNAL( displayNameChanged() ),
+	connect( d->metaContact, SIGNAL( displayNameChanged(const QString&, const QString&) ),
 		SLOT( slotDisplayNameChanged() ) );
 	buildVisualComponents();
 }
@@ -183,6 +182,7 @@ class MetaContactSelectorWidget::Private
 {
 public:
 	MetaContactSelectorWidget_Base *widget;
+	QList<Kopete::MetaContact *> excludedMetaContacts;
 };
 
 
@@ -200,7 +200,7 @@ MetaContactSelectorWidget::MetaContactSelectorWidget( QWidget *parent, const cha
 	connect( d->widget->metaContactListView, SIGNAL( spacePressed( Q3ListViewItem * ) ),
 			SIGNAL( metaContactListClicked( Q3ListViewItem * ) ) );
 	
-	connect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
+	connect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( Kopete::MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
 	
 	d->widget->kListViewSearchLine->setListView(d->widget->metaContactListView);
 	d->widget->metaContactListView->setFullWidth( true );
@@ -212,7 +212,7 @@ MetaContactSelectorWidget::MetaContactSelectorWidget( QWidget *parent, const cha
 
 MetaContactSelectorWidget::~MetaContactSelectorWidget()
 {
-	disconnect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
+	disconnect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( Kopete::MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
 }
 
 
@@ -247,12 +247,21 @@ void MetaContactSelectorWidget::selectMetaContact( Kopete::MetaContact *mc )
 	}
 }
 
+void MetaContactSelectorWidget::excludeMetaContact( Kopete::MetaContact *mc )
+{
+	if( d->excludedMetaContacts.findIndex(mc) == -1 )
+	{
+		d->excludedMetaContacts.append(mc);
+	}
+	slotLoadMetaContacts();
+}
+
 bool MetaContactSelectorWidget::metaContactSelected()
 {
 	return d->widget->metaContactListView->selectedItem() ? true : false;
 }
 
-/**  Read in contacts from addressbook, and select the contact that is for our nick. */
+/**  Read in metacontacts from contactlist */
 void MetaContactSelectorWidget::slotLoadMetaContacts()
 {
 	d->widget->metaContactListView->clear();
@@ -263,6 +272,7 @@ void MetaContactSelectorWidget::slotLoadMetaContacts()
 	{
 		Kopete::MetaContact *mc = it.next();
 		if( !mc->isTemporary() && mc != metaContact() )
+		if( !mc->isTemporary() && (d->excludedMetaContacts.findIndex(mc) == -1) )
 		{
 			new MetaContactSelectorWidgetLVI(mc, d->widget->metaContactListView);
 		}

@@ -87,6 +87,16 @@ private slots:
 	 */
 	void slotOpenURL(const QString &url);
 
+	/**
+	 * Retrieve vCard information for the current contact.
+	 */
+	void slotGetVCard();
+	/**
+	 * vCard was succesfully fetched, update contact properties
+	 * and enable display.
+	 */
+	void slotGotVCard();
+
 private:
 	JabberAccount *m_account;
 	JabberContact *m_contact;
@@ -95,7 +105,8 @@ private:
 
 	void assignContactProperties();
 	void setReadOnly(bool state);
-
+	void setEnabled(bool state);
+	
 };
 
 #endif // DLGJABBERVCARD_H

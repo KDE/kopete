@@ -3,7 +3,7 @@
   'Kopete' theme for Kopete
   Copyright (C) 2005:
   - Johann Ollivier Lapeyre <johann.ollivierlapeyre@gmail.com>
-  - Original "Clean" theme, Jonas Lihnell <gg02-jli@mail2.nti.se> 
+  - Original "Clean" theme, Jonas Lihnell <roze@roze.mine.nu> , Jid: yellowroze@jabber.org
 
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -167,7 +167,6 @@
 										</xsl:attribute>
 										<xsl:attribute name="style">
 										border:1px solid #888;
-										width:48px;
 										height:48px;
 										margin-top: 0.2em;
 										margin-left: 0.2em;

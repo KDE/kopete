@@ -113,6 +113,36 @@ void IRCChannelContact::slotChannelListed( const QString &channel, uint members,
 	}
 }
 
+void IRCChannelContact::toggleOperatorActions(bool enabled)
+{
+	if (enabled) {
+		actionTopic->setEnabled(true);
+	} else if (modeEnabled('t')) {
+		actionTopic->setEnabled(false);
+	}
+
+	actionModeT->setEnabled(enabled);
+	actionModeN->setEnabled(enabled);
+	actionModeS->setEnabled(enabled);
+	actionModeM->setEnabled(enabled);
+	actionModeI->setEnabled(enabled);
+}
+
+void IRCChannelContact::slotOnlineStatusChanged(Kopete::Contact *c, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus)
+{
+	Q_UNUSED(oldStatus);
+
+	if (c == account()->myself()) {
+		if (status.internalStatus() & IRCProtocol::Operator) { 
+			kdDebug(14120) << k_funcinfo << "WE NOW HAVE OP STATUS" << endl;
+			toggleOperatorActions(true);
+		} else {
+			kdDebug(14120) << k_funcinfo << "WE NOW dont HAVE OP STATUS" << endl;
+			toggleOperatorActions(false);
+		}
+	}
+}
+
 void IRCChannelContact::updateStatus()
 {
 	KIRC::Engine::Status status = kircEngine()->status();
@@ -187,21 +217,33 @@ void IRCChannelContact::slotAddNicknames()
 
 	for( uint i = 0; !mJoinedNicks.isEmpty() && i < NICK_BATCH_LENGTH; ++i )
 	{
+		// Pick a nick from the front of the list.
+
 		QString nickToAdd = mJoinedNicks.front();
 		QChar firstChar = nickToAdd[0];
 		if( firstChar == '@' || firstChar == '%' || firstChar == '+' )
 			nickToAdd = nickToAdd.remove(0, 1);
 
-		IRCContact *user;
+		IRCUserContact *user;
 
 		if ( nickToAdd.toLower() != account->mySelf()->nickName().toLower() )
 		{
-			//kdDebug(14120) << k_funcinfo << m_nickName << " NICK: " << nickToAdd << endl;
+			//kdDebug(14120) << k_funcinfo << m_nickName << " nick to add: " << nickToAdd << endl;
+
 			user = account->contactManager()->findUser(nickToAdd);
-			user->setOnlineStatus(m_protocol->m_UserStatusOnline);
+
+			// If the user is already present in some channel, dont flip the status
+			// back to online, because the other channels listen to
+			// onlineStatusChanged() emits, and they would adjust their statuses.
+
+			if (account->contactManager()->findChannelsByMember(user).isEmpty()) {
+				//kdDebug(14120) << k_funcinfo << "Setting nick ONLINE" << endl;
+				user->setOnlineStatus(m_protocol->m_UserStatusOnline);
+			}
 		}
 		else
 		{
+			// Handling my nick in the list.
 			user = account->mySelf();
 		}
 
@@ -214,9 +256,9 @@ void IRCChannelContact::slotAddNicknames()
 			status = user->onlineStatus();
 
 		if( user != account->mySelf() )
-			manager()->addContact(static_cast<Kopete::Contact*>(user) , status, true);
+			manager()->addContact(user , status, true);
 		else
-			manager()->setContactOnlineStatus( static_cast<Kopete::Contact*>(user), status );
+			manager()->setContactOnlineStatus(user, status);
 
 		mJoinedNicks.pop_front();
 	}
@@ -229,9 +271,18 @@ void IRCChannelContact::channelTopic(const QString &topic)
 	mTopic = topic;
 	setProperty( m_protocol->propChannelTopic, mTopic );
 	manager()->setDisplayName(caption());
-	Kopete::Message msg((Kopete::Contact*)this, mMyself, i18n("Topic for %1 is %2").arg(m_nickName).arg(mTopic),
-	                    Kopete::Message::Internal, Kopete::Message::RichText, CHAT_VIEW);
-	appendMessage(msg);
+
+	if (mTopic.isEmpty()) {
+		Kopete::Message msg((Kopete::Contact*)this, mMyself,
+				i18n("Topic for %1 is set empty.").arg(m_nickName),
+				Kopete::Message::Internal, Kopete::Message::RichText, CHAT_VIEW);
+		appendMessage(msg);
+	} else {
+		Kopete::Message msg((Kopete::Contact*)this, mMyself,
+				i18n("Topic for %1 is %2").arg(m_nickName).arg(mTopic),
+				Kopete::Message::Internal, Kopete::Message::RichText, CHAT_VIEW);
+		appendMessage(msg);
+	}
 }
 
 void IRCChannelContact::channelHomePage(const QString &url)
@@ -251,12 +302,26 @@ void IRCChannelContact::join()
 			kdDebug() << k_funcinfo << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false) << endl;
 		startChat();
 	}
+
+	if (manager()) {
+		connect(manager(),
+			SIGNAL(onlineStatusChanged(Kopete::Contact *, const Kopete::OnlineStatus &,
+					const Kopete::OnlineStatus &)),
+			SLOT(slotOnlineStatusChanged(Kopete::Contact *, const Kopete::OnlineStatus &,
+					const Kopete::OnlineStatus &)));
+	}
+}
+
+void IRCChannelContact::partAction()
+{
+	if (manager())
+		manager()->view()->closeView();
 }
 
 void IRCChannelContact::part()
 {
-	if (manager(Kopete::Contact::CannotCreate))
-	  kircEngine()->part(m_nickName, ircAccount()->defaultPart());
+	if (manager() && !kircEngine()->isDisconnected())
+		kircEngine()->part(m_nickName, ircAccount()->defaultPart());
 }
 
 void IRCChannelContact::slotIncomingUserIsAway( const QString &nick, const QString & )
@@ -266,7 +331,7 @@ void IRCChannelContact::slotIncomingUserIsAway( const QString &nick, const QStri
 	if( nick.toLower() == account->mySelf()->nickName().toLower() )
 	{
 		IRCUserContact *c = account->mySelf();
-		if (manager(Kopete::Contact::CannotCreate) && manager()->members().contains(c))
+		if (manager() && manager()->members().contains(c))
 		{
 			Kopete::OnlineStatus status = manager()->contactOnlineStatus(c);
 			if (status == m_protocol->m_UserStatusOp)
@@ -294,6 +359,7 @@ void IRCChannelContact::userJoinedChannel(const QString &nickname)
 		kdDebug() << k_funcinfo << "Me:" << this << endl;
 		kdDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
 		kdDebug() << k_funcinfo << "My manager:" << manager(Kopete::Contact::CannotCreate) << endl;
+
 		if (manager(Kopete::Contact::CannotCreate))
 			kdDebug() << k_funcinfo << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false) << endl;
 
@@ -306,6 +372,10 @@ void IRCChannelContact::userJoinedChannel(const QString &nickname)
 	}
 	else
 	{
+		// If we have lag or huge channels, we might receive a JOIN after we have left a channel.
+		if (!manager())
+			return;
+
 		IRCUserContact *contact = account->contactManager()->findUser( nickname );
 		contact->setOnlineStatus( m_protocol->m_UserStatusOnline );
 		manager()->addContact((Kopete::Contact *)contact, true);
@@ -337,26 +407,40 @@ void IRCChannelContact::userKicked(const QString &nick, const QString &nickKicke
 {
 	IRCAccount *account = ircAccount();
 
-	QString r = i18n("Kicked by %1.").arg(nick);
-	if (reason != nick)
-		r.append( i18n(" Reason: %2").arg( reason ) );
-
 	if( nickKicked.toLower() != account->engine()->nickName().toLower() )
 	{
 		Kopete::Contact *c = locateUser( nickKicked );
 		if (c)
 		{
+			QString r;
+
+			if ((reason != nick) && (reason != nickKicked)) {
+				r = i18n( "%1 was kicked by %2. Reason: %3" ).arg(nickKicked, nick, reason);
+			} else {
+				r = i18n( "%1 was kicked by %2." ).arg(nickKicked, nick);
+			}
+
 			manager()->removeContact( c, r );
-			Kopete::Message msg( (Kopete::Contact *)this, mMyself,
-					      r, Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
+			Kopete::Message msg( this, mMyself, r,
+					Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
 			msg.setImportance(Kopete::Message::Low);
 			appendMessage(msg);
-			if( c->metaContact()->isTemporary() && !static_cast<IRCContact*>(c)->isChatting( manager(Kopete::Contact::CannotCreate) ) )
+
+			if( c->metaContact()->isTemporary() &&
+			    !static_cast<IRCContact*>(c)->isChatting( manager() ) )
 				c->deleteLater();
 		}
 	}
 	else
 	{
+		QString r;
+
+		if ((reason != nick) && (reason != nickKicked)) {
+			r = i18n( "You were kicked from %1 by %2. Reason: %3" ).arg(m_nickName, nickKicked, reason);
+		} else {
+			r = i18n( "You were kicked from %1 by %2." ).arg(m_nickName, nickKicked);
+		}
+
 		KMessageBox::error(Kopete::UI::Global::mainWidget(), r, i18n("IRC Plugin"));
 		manager()->view()->closeView();
 	}
@@ -421,7 +505,7 @@ void IRCChannelContact::topicUser(const QString &nick, const QDateTime &time)
 
 void IRCChannelContact::incomingModeChange( const QString &nick, const QString &mode )
 {
-	Kopete::Message msg((Kopete::Contact *)this, mMyself, i18n("%1 sets mode %2 on  %3").arg(nick).arg(mode).arg(m_nickName), Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
+	Kopete::Message msg(this, mMyself, i18n("%1 sets mode %2 on %3").arg(nick).arg(mode).arg(m_nickName), Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
 	msg.setImportance( Kopete::Message::Low); //set the importance manualy to low
 	appendMessage(msg);
 
@@ -524,21 +608,28 @@ void IRCChannelContact::toggleMode( QChar mode, bool enabled, bool update )
 	{
 		switch( mode )
 		{
-			case 't':
-   				actionModeT->setChecked( enabled );
-				break;
-			case 'n':
-				actionModeN->setChecked( enabled );
-				break;
-			case 's':
-				actionModeS->setChecked( enabled );
-				break;
-			case 'm':
-				actionModeM->setChecked( enabled );
-				break;
-			case 'i':
-				actionModeI->setChecked( enabled );
-				break;
+		case 't':
+			actionModeT->setChecked( enabled );
+
+			// If someones sets +t and we're not channel operators, disable the action.
+			if (enabled && !(manager()->contactOnlineStatus(ircAccount()->myself()).internalStatus() & IRCProtocol::Operator)) {
+				actionTopic->setEnabled( false );
+			} else {
+				actionTopic->setEnabled( true );
+			}
+			break;
+		case 'n':
+			actionModeN->setChecked( enabled );
+			break;
+		case 's':
+			actionModeS->setChecked( enabled );
+			break;
+		case 'm':
+			actionModeM->setChecked( enabled );
+			break;
+		case 'i':
+			actionModeI->setChecked( enabled );
+			break;
 		}
 	}
 
@@ -566,12 +657,11 @@ bool IRCChannelContact::modeEnabled( QChar mode, QString *value )
 
 Q3PtrList<KAction> *IRCChannelContact::customContextMenuActions()
 {
-	// KAction stuff
 	Q3PtrList<KAction> *mCustomActions = new Q3PtrList<KAction>();
 	if( !actionJoin )
 	{
 		actionJoin = new KAction(i18n("&Join"), 0, this, SLOT(join()), this, "actionJoin");
-		actionPart = new KAction(i18n("&Part"), 0, this, SLOT(part()), this, "actionPart");
+		actionPart = new KAction(i18n("&Part"), 0, this, SLOT(partAction()), this, "actionPart");
 		actionTopic = new KAction(i18n("Change &Topic..."), 0, this, SLOT(setTopic()), this, "actionTopic");
 		actionModeMenu = new KActionMenu(i18n("Channel Modes"), 0, this, "actionModeMenu");
 
@@ -607,17 +697,13 @@ Q3PtrList<KAction> *IRCChannelContact::customContextMenuActions()
 		mCustomActions->append( actionHomePage );
 
 	bool isOperator = manager(Kopete::Contact::CannotCreate) &&
-	    (manager()->contactOnlineStatus(ircAccount()->myself()) == m_protocol->m_UserStatusOp);
+	    (manager()->contactOnlineStatus(ircAccount()->myself()).internalStatus() & IRCProtocol::Operator);
 
 	actionJoin->setEnabled( !manager(Kopete::Contact::CannotCreate) );
 	actionPart->setEnabled( manager(Kopete::Contact::CannotCreate) );
 	actionTopic->setEnabled( manager(Kopete::Contact::CannotCreate) && ( !modeEnabled('t') || isOperator ) );
 
-	actionModeT->setEnabled(isOperator);
-	actionModeN->setEnabled(isOperator);
-	actionModeS->setEnabled(isOperator);
-	actionModeM->setEnabled(isOperator);
-	actionModeI->setEnabled(isOperator);
+	toggleOperatorActions(isOperator);
 
 	return mCustomActions;
 }

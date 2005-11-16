@@ -266,17 +266,17 @@ KopeteMetaLVIProps::~KopeteMetaLVIProps()
 void KopeteMetaLVIProps::slotLoadNameSources()
 {
 	Kopete::Contact* trackingName = item->metaContact()->displayNameSourceContact();
-	Q3PtrList< Kopete::Contact > cList = item->metaContact()->contacts();
-	Q3PtrListIterator<Kopete::Contact> it( cList );
+	QList<Kopete::Contact*> cList = item->metaContact()->contacts();
+	QList<Kopete::Contact*>::iterator it = cList.begin();
 	mainWidget->cmbAccountName->clear();
-	for( ; it.current(); ++it )
+	for( ; it != cList.end(); ++it )
 	{
-		QString acct = it.current()->property( Kopete::Global::Properties::self()->nickName() ).value().toString() + " <" + it.current()->contactId() + ">";
-		QPixmap acctIcon = it.current()->account()->accountIcon();
+		QString acct = (*it)->property( Kopete::Global::Properties::self()->nickName() ).value().toString() + " <" + (*it)->contactId() + ">";
+		QPixmap acctIcon = (*it)->account()->accountIcon();
 		mainWidget->cmbAccountName->insertItem( acctIcon, acct );
 		
 		// Select this item if it's the one we're tracking.
-		if( it.current() == trackingName )
+		if( (*it) == trackingName )
 		{
 			mainWidget->cmbAccountName->setCurrentItem( mainWidget->cmbAccountName->count() - 1 );
 		}
@@ -295,14 +295,14 @@ void KopeteMetaLVIProps::slotLoadNameSources()
 void KopeteMetaLVIProps::slotLoadPhotoSources()
 {
 	// fill photo contact sources
-	Q3PtrList< Kopete::Contact > cList = item->metaContact()->contacts();
+	QList<Kopete::Contact*> cList = item->metaContact()->contacts();
 	m_withPhotoContacts.clear();
 	Kopete::Contact* trackingPhoto = item->metaContact()->photoSourceContact();
 	mainWidget->cmbAccountPhoto->clear();
-	Q3PtrListIterator<Kopete::Contact> itp( cList );
-	for( ; itp.current(); ++itp )
+	QList<Kopete::Contact*>::iterator itp = cList.begin();
+	for( ; itp != cList.end(); ++itp )
 	{
-		Kopete::Contact *citem = itp.current();
+		Kopete::Contact *citem = (*itp);
 		if ( citem->hasProperty( Kopete::Global::Properties::self()->photo().key() ) )
 		{
 			QString acct = citem->property( Kopete::Global::Properties::self()->nickName() ).value().toString() + " <" + citem->contactId() + ">";

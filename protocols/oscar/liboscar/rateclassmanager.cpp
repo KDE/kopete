@@ -157,6 +157,21 @@ void RateClassManager::recalcRateLevels()
 		( *it )->updateRateInfo();
 }
 
+int RateClassManager::timeToInitialLevel( SNAC s )
+{
+	QValueList<RateClass*>::const_iterator it;
+	QValueList<RateClass*>::const_iterator rcEnd = d->classList.constEnd();
+	
+	for ( it = d->classList.constBegin(); it != rcEnd; ++it )
+	{
+		if ( ( *it )->isMember( s.family, s.subtype ) )
+		{
+			return ( *it )->timeToInitialLevel();
+		}
+	}
+	return 0;
+}
+
 #include "rateclassmanager.moc"
 
 //kate: tab-width 4; indent-mode csands;

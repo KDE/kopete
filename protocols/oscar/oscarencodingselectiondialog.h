@@ -28,7 +28,7 @@ class KOPETE_EXPORT OscarEncodingSelectionDialog : public KDialogBase
 {
 Q_OBJECT
 public:
-    OscarEncodingSelectionDialog( QWidget* parent = 0 );
+    OscarEncodingSelectionDialog( QWidget* parent = 0, int initialEncoding = 4);
     ~OscarEncodingSelectionDialog() {}
 
     int selectedEncoding() const;

@@ -218,14 +218,14 @@ const QDomDocument GlobalIdentitiesManager::toXML()
 Kopete::MetaContact *GlobalIdentitiesManager::createNewMetaContact()
 {
 	Kopete::MetaContact *newMetaContact = new Kopete::MetaContact();
-	Q3PtrList<Kopete::Contact> contactList = Kopete::ContactList::self()->myself()->contacts();
+	QList<Kopete::Contact*> contactList = Kopete::ContactList::self()->myself()->contacts();
 
 	// Copy the contacts list to the new metacontact, so Kopete::Contact for SourceContact
 	// will not be null.
-	Q3PtrListIterator<Kopete::Contact> it( contactList);
-	for ( ; it.current(); ++it )
+	QList<Kopete::Contact*>::iterator it;
+	for ( it = contactList.begin(); it != contactList.end(); ++it )
 	{
-		newMetaContact->addContact(it.current());
+		newMetaContact->addContact( (*it) );
 	}
 
 	newMetaContact->setDisplayNameSource(Kopete::MetaContact::SourceCustom);

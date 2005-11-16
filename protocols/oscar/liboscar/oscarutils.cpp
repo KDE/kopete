@@ -54,6 +54,32 @@ TLV Oscar::findTLV( const Q3ValueList<TLV>& list, int type )
 	return t;
 }
 
+bool Oscar::uptateTLVs( SSI& item, const QValueList<TLV>& list )
+{
+	bool changed = false;
+	QValueList<TLV> tList( item.tlvList() );
+
+	QValueList<TLV>::const_iterator it;
+	for ( it = list.begin(); it != list.end(); ++it )
+	{
+		TLV t = Oscar::findTLV( tList, ( *it ).type );
+		if ( t && t.length == ( *it ).length &&
+		     memcmp( t.data.data(), ( *it ).data.data(), t.length ) == 0 )
+			continue;
+
+		if ( t )
+			tList.remove( t );
+
+		tList.append( *it );
+		changed = true;
+	}
+
+	if ( changed )
+		item.setTLVList( tList );
+
+	return changed;
+}
+
 int Oscar::parseCap( char* cap )
 {
 	int capflag = -1;

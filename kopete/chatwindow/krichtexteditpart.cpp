@@ -508,7 +508,7 @@ void KopeteRichTextEditPart::setItalic( bool b )
 void KopeteRichTextEditPart::setUnderline( bool b )
 {
 	mFont.setUnderline( b );
-	if( m_capabilities & Kopete::Protocol::RichIFormatting ||  m_capabilities & Kopete::Protocol::BaseIFormatting  )
+	if( m_capabilities & Kopete::Protocol::RichUFormatting ||  m_capabilities & Kopete::Protocol::BaseUFormatting  )
 	{
 		if(m_richTextEnabled)
 			editor->setUnderline(b);

@@ -32,8 +32,9 @@ namespace UI
 
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
+ * This class provides a widget which allows easy selection
+ * of available Kopete metacontacts.
  */
-
 class KOPETE_EXPORT MetaContactSelectorWidget : public QWidget
 {
 	Q_OBJECT
@@ -51,6 +52,11 @@ public:
 	 * pre-selects a contact
 	 */
 	void selectMetaContact( Kopete::MetaContact *mc );
+	/**
+	 * excludes a metacontact from being shown in the list
+	* if the metacontact is already excluded, do nothing
+	 */
+	void excludeMetaContact( Kopete::MetaContact *mc );
 	/**
 	 * @return true if there is a contact selected
 	 */

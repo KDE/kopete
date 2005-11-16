@@ -46,6 +46,9 @@
 #include <klocale.h>
 #include <kstandarddirs.h>
 
+#include "kopeteprefs.h" //to get style path 
+
+
 /**
  * @author Jason Keirstead <jason@keirstead.org>
  *
@@ -143,6 +146,7 @@ QString KopeteXSLThread::xsltTransform( const QString &xmlString, xsltStylesheet
 		if ( styleSheet )
 		{
 			static QByteArray appPath( QString::fromLatin1("\"%1\"").arg( KApplication::kApplication()->dirs()->findDirs("appdata", QString::fromLatin1("styles/data") ).front() ).toUtf8() );
+			KopetePrefs *p = KopetePrefs::prefs();
 
 			static const char* params[3] = {
 				"appdata",

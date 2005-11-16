@@ -247,11 +247,16 @@ public:
 	void requestAIMAwayMessage( const QString& contact );
 
 	/**
-	 * Request the icq away message
+	 * Add the icq away message request to queue
 	 * \param contact the contact to get info for
 	 */
-	//TODO only made a default for testing w/o frontend
-	void requestICQAwayMessage( const QString& contact, ICQStatus contactStatus = ICQAway );
+	void addICQAwayMessageRequest( const QString& contact, ICQStatus contactStatus );
+
+	/**
+	 * Remove the icq away message request from queue
+	 * \param contact the contact to get info for
+	 */
+	void removeICQAwayMessageRequest( const QString& contact );
 
 	/** Request the extended status info */
 	void requestStatusInfo( const QString& contact );
@@ -467,6 +472,10 @@ protected slots:
     
     void determineDisconnection( int, const QString& );
 
+	void nextICQAwayMessageRequest();
+
+	void nextICQAwayMessageRequest();
+
 private:
 
 	/** Initialize some static tasks */
@@ -476,6 +485,13 @@ private:
 	void deleteStaticTasks();
 
 	Connection* createConnection( const QString& host, const QString& port );
+
+	/**
+	 * Request the icq away message
+	 * \param contact the contact to get info for
+	 */
+	//TODO only made a default for testing w/o frontend
+	void requestICQAwayMessage( const QString& contact, ICQStatus contactStatus = ICQAway );
 
 private:
 	class ClientPrivate;

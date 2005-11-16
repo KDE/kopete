@@ -58,12 +58,12 @@ KIMIfaceImpl::~KIMIfaceImpl()
 QStringList KIMIfaceImpl::allContacts()
 {
 	QStringList result;
-	Q3PtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
-	Q3PtrListIterator<Kopete::MetaContact> it( list );
-	for( ; it.current(); ++it )
+	QList<Kopete::MetaContact*> list = Kopete::ContactList::self()->metaContacts();
+	QList<Kopete::MetaContact*>::iterator it;
+	for( it = list.begin(); it != list.end(); ++it )
 	{
-		if ( !it.current()->metaContactId().contains(':') )
-			result.append( it.current()->metaContactId() );
+		if ( !(*it)->metaContactId().contains(':') )
+			result.append( (*it)->metaContactId() );
 	}
 
 	return result;
@@ -72,12 +72,12 @@ QStringList KIMIfaceImpl::allContacts()
 QStringList KIMIfaceImpl::reachableContacts()
 {
 	QStringList result;
-	Q3PtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
-	Q3PtrListIterator<Kopete::MetaContact> it( list );
-	for( ; it.current(); ++it )
+	QList<Kopete::MetaContact*> list = Kopete::ContactList::self()->metaContacts();
+	QList<Kopete::MetaContact*>::iterator it;
+	for( it = list.begin(); it != list.end(); ++it )
 	{
-		if ( it.current()->isReachable() && !it.current()->metaContactId().contains(':') )
-			result.append( it.current()->metaContactId() );
+		if ( (*it)->isReachable() && !(*it)->metaContactId().contains(':') )
+			result.append( (*it)->metaContactId() );
 	}
 
 	return result;
@@ -86,12 +86,12 @@ QStringList KIMIfaceImpl::reachableContacts()
 QStringList KIMIfaceImpl::onlineContacts()
 {
 	QStringList result;
-	Q3PtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
-	Q3PtrListIterator<Kopete::MetaContact> it( list );
-	for( ; it.current(); ++it )
+	QList<Kopete::MetaContact*> list = Kopete::ContactList::self()->metaContacts();
+	QList<Kopete::MetaContact*>::iterator it;
+	for( it = list.begin(); it != list.end(); ++it )
 	{
-		if ( it.current()->isOnline() && !it.current()->metaContactId().contains(':') )
-			result.append( it.current()->metaContactId() );
+		if ( (*it)->isOnline() && !(*it)->metaContactId().contains(':') )
+			result.append( (*it)->metaContactId() );
 	}
 
 	return result;
@@ -100,12 +100,12 @@ QStringList KIMIfaceImpl::onlineContacts()
 QStringList KIMIfaceImpl::fileTransferContacts()
 {
 	QStringList result;
-	Q3PtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
-	Q3PtrListIterator<Kopete::MetaContact> it( list );
-	for( ; it.current(); ++it )
+	QList<Kopete::MetaContact*> list = Kopete::ContactList::self()->metaContacts();
+	QList<Kopete::MetaContact*>::iterator it;
+	for( it = list.begin(); it != list.end(); ++it )
 	{
-		if ( it.current()->canAcceptFiles() && !it.current()->metaContactId().contains(':') )
-			result.append( it.current()->metaContactId() );
+		if ( (*it)->canAcceptFiles() && !(*it)->metaContactId().contains(':') )
+			result.append( (*it)->metaContactId() );
 	}
 
 	return result;
@@ -199,14 +199,13 @@ bool KIMIfaceImpl::canRespond( const QString & uid )
 
 	if ( mc )
 	{
-		Q3PtrList<Kopete::Contact> list = mc->contacts();
-		Q3PtrListIterator<Kopete::Contact> it( list );
-		Kopete::Contact *contact;
-		while ( ( contact = it.current() ) != 0 )
+		QList<Kopete::Contact*> list = mc->contacts();
+		QList<Kopete::Contact*>::iterator it;
+		for ( it = list.begin(); it != list.end(); ++it )
 		{
-			++it;
+			Kopete::Contact *contact = (*it);
 			if ( contact->isOnline() && contact->protocol()->pluginId() != "SMSProtocol" )
-			return true;
+				return true;
 		}
 	}
 	return false;

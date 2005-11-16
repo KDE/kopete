@@ -543,9 +543,6 @@
                                 <property name="text">
                                     <string>Auto-show anonymous windows</string>
                                 </property>
-                                <property name="disabled" stdset="0">
-                                    <bool>true</bool>
-                                </property>
                             </widget>
                             <widget class="QCheckBox" row="1" column="0">
                                 <property name="name">

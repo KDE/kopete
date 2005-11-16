@@ -103,14 +103,14 @@ public:
 	void addCurrentItems()
 	{
 		// Add the already existing groups now
-		Q3PtrList<Kopete::Group> grps = Kopete::ContactList::self()->groups();
-		for ( Q3PtrListIterator<Kopete::Group> groupIt( grps ); groupIt.current(); ++groupIt )
-			addGroup( groupIt.current() );
+		QList<Kopete::Group*> grps = Kopete::ContactList::self()->groups();
+		for ( QList<Kopete::Group*>::iterator groupIt = grps.begin(); groupIt != grps.end(); ++groupIt )
+			addGroup( *groupIt );
 
 		// Add the already existing meta contacts now
-		Q3PtrList<Kopete::MetaContact> metaContacts = Kopete::ContactList::self()->metaContacts();
-		for ( Q3PtrListIterator<Kopete::MetaContact> it( metaContacts ); it.current(); ++it )
-			addMetaContact( it.current() );
+		QList<Kopete::MetaContact*> metaContacts = Kopete::ContactList::self()->metaContacts();
+		for ( QList<Kopete::MetaContact*>::iterator it = metaContacts.begin(); it != metaContacts.end(); ++it )
+			addMetaContact( *it );
 	}
 
 	virtual void addMetaContact( Kopete::MetaContact *mc ) = 0;
@@ -164,10 +164,11 @@ public:
 	{
 		// create group items
 		Kopete::GroupList list = mc->groups();
-		for ( Kopete::Group *gp = list.first(); gp; gp = list.next() )
+		Kopete::GroupList::iterator it, itEnd = list.end();
+		for ( it = list.begin(); it != itEnd; ++it )
 			// will check to see if the contact is already in the group.
 			// this is inefficient but makes this function idempotent.
-			addMetaContactToGroup( mc, gp );
+			addMetaContactToGroup( mc, (*it) );
 	}
 	void removeMetaContact( Kopete::MetaContact *mc )
 	{
@@ -175,8 +176,9 @@ public:
 		// need to make sure that the item count of the groups is correct.
 		// as a bonus, this allows us to remove a MC from the contact list without deleting it.
 		Kopete::GroupList list = mc->groups();
-		for ( Kopete::Group *gp = list.first(); gp; gp = list.next() )
-			removeMetaContactFromGroup( mc, gp );
+		Kopete::GroupList::iterator it, itEnd = list.end();
+		for ( it = list.begin(); it != itEnd; ++it )
+			removeMetaContactFromGroup( mc, (*it) );
 	}
 
 	void addGroup( Kopete::Group *group )
@@ -658,7 +660,7 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 	{
 		clearSelection();
 		//Clear selection doesn't update lists of selected contact if the item is onlt heilighted (see bug 106090)
-		Kopete::ContactList::self()->setSelectedItems( Q3PtrList<Kopete::MetaContact>() , Q3PtrList<Kopete::Group>() );
+		Kopete::ContactList::self()->setSelectedItems( QList<Kopete::MetaContact*>() , QList<Kopete::Group*>() );
 	}
 
 	int nb = Kopete::ContactList::self()->selectedMetaContacts().count() +
@@ -708,8 +710,9 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 
 				// Submenus for separate contact actions
 				bool sep = false;  //FIXME: find if there is already a separator in the end - Olivier
-				Q3PtrList<Kopete::Contact> it = metaLVI->metaContact()->contacts();
-				for( Kopete::Contact *c = it.first(); c; c = it.next() )
+				QList<Kopete::Contact*> contactsList = metaLVI->metaContact()->contacts();
+				QList<Kopete::Contact*>::iterator it, itEnd = contactsList.end();
+				for( it = contactsList.begin(); it != itEnd; ++it )
 				{
 					if( sep )
 					{
@@ -717,7 +720,7 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 						sep = false;
 					}
 
-					KMenu *contactMenu = it.current()->popupMenu();
+					KMenu *contactMenu = (*it)->popupMenu();
 					connect( popup, SIGNAL( aboutToHide() ), contactMenu, SLOT( deleteLater() ) );
 					QString nick=c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 					QString text= nick.isEmpty() ?  c->contactId() : i18n( "Translators: format: '<displayName> (<id>)'", "%2 <%1>" ). arg( c->contactId(), nick );
@@ -1352,8 +1355,8 @@ Q3DragObject *KopeteContactListView::dragObject()
 
 void KopeteContactListView::slotViewSelectionChanged()
 {
-	Q3PtrList<Kopete::MetaContact> contacts;
-	Q3PtrList<Kopete::Group> groups;
+	QList<Kopete::MetaContact*> contacts;
+	QList<Kopete::Group*> groups;
 
 	m_selectedContacts.clear();
 	m_selectedGroups.clear();
@@ -1387,8 +1390,8 @@ void KopeteContactListView::slotViewSelectionChanged()
 
 void KopeteContactListView::slotListSelectionChanged()
 {
-	Q3PtrList<Kopete::MetaContact> contacts = Kopete::ContactList::self()->selectedMetaContacts();
-	Q3PtrList<Kopete::Group> groups = Kopete::ContactList::self()->selectedGroups();
+	QList<Kopete::MetaContact*> contacts = Kopete::ContactList::self()->selectedMetaContacts();
+	QList<Kopete::Group*> groups = Kopete::ContactList::self()->selectedGroups();
 
 	//TODO: update the list to select the items that should be selected.
 	// make sure slotViewSelectionChanged is *not* called.
@@ -1396,7 +1399,7 @@ void KopeteContactListView::slotListSelectionChanged()
 }
 
 void KopeteContactListView::updateActionsForSelection(
-	Q3PtrList<Kopete::MetaContact> contacts, Q3PtrList<Kopete::Group> groups )
+	QList<Kopete::MetaContact*> contacts, QList<Kopete::Group*> groups )
 {
 	bool singleContactSelected = groups.isEmpty() && contacts.count() == 1;
 	bool inkabc=false;
@@ -1570,22 +1573,26 @@ void KopeteContactListView::slotCopyToGroup()
 
 void KopeteContactListView::slotRemove()
 {
-	Q3PtrList<Kopete::MetaContact> contacts = Kopete::ContactList::self()->selectedMetaContacts();
-	Q3PtrList<Kopete::Group> groups = Kopete::ContactList::self()->selectedGroups();
+	QList<Kopete::MetaContact*> contacts = Kopete::ContactList::self()->selectedMetaContacts();
+	QList<Kopete::Group*> groups = Kopete::ContactList::self()->selectedGroups();
 
 	if(groups.count() + contacts.count() == 0)
 		return;
 
 	QStringList items;
-	for( Kopete::Group *it = groups.first(); it; it = groups.next() )
+	Kopete::GroupList::iterator it, itEnd = groups.end();
+	for( it = groups.begin(); it != itEnd; ++it )
 	{
-		if(!it->displayName().isEmpty())
-			items.append( it->displayName() );
+		if(!(*it)->displayName().isEmpty())
+			items.append( (*it)->displayName() );
+		
 	}
-	for( Kopete::MetaContact *it = contacts.first(); it; it = contacts.next() )
+
+	QList<Kopete::MetaContact*>::iterator mcIt, mcItEnd = contacts.end();
+	for( mcIt = contacts.begin(); mcIt != mcItEnd; ++mcIt )
 	{
-		if(!it->displayName().isEmpty() )
-			items.append( it->displayName() );
+		if(!(*mcIt)->displayName().isEmpty() )
+			items.append( (*mcIt)->displayName() );
 	}
 
 	if( items.count() <= 1 )
@@ -1632,8 +1639,10 @@ void KopeteContactListView::slotRemove()
 
 	bool undo_step=true; //only  the first undo item we will add will be a step
 
-	for( Kopete::MetaContact *mc = contacts.first(); mc; mc = contacts.next() )
+	QList<Kopete::MetaContact*>::iterator cit, citEnd = contacts.end();
+	for( cit = contacts.begin(); cit != citEnd; ++cit )
 	{
+		Kopete::MetaContact* mc = (*cit);
 		if(mc->groups().count()==1 || mc->isTemporary() )
 			Kopete::ContactList::self()->removeMetaContact( mc );
 		else
@@ -1669,26 +1678,28 @@ void KopeteContactListView::slotRemove()
 		}
 	}
 
-	for( Kopete::Group *it = groups.first(); it; it = groups.next() )
+	Kopete::GroupList::iterator git, gitEnd = groups.end();
+	for( git = groups.begin(); git != gitEnd; ++git )
 	{
-		Q3PtrList<Kopete::MetaContact> list = it->members();
-		for( list.first(); list.current(); list.next() )
+		QList<Kopete::MetaContact*> list = (*git)->members();
+		QList<Kopete::MetaContact*>::iterator scIt, scItEnd = list.end();
+		for( scIt = list.begin(); scIt != scItEnd; ++scIt )
 		{
-			Kopete::MetaContact *mc = list.current();
+			Kopete::MetaContact *mc = (*scIt);
 			if(mc->groups().count()==1)
 				Kopete::ContactList::self()->removeMetaContact(mc);
 			else
-				mc->removeFromGroup(it);
+				mc->removeFromGroup((*it));
 		}
 
-		if( !it->members().isEmpty() )
+		if( !(*git)->members().isEmpty() )
 		{
 			kdDebug(14000) << "KopeteContactListView::slotRemove(): "
 				<< "all subMetaContacts are not removed... Aborting" << endl;
 			continue;
 		}
 
-		Kopete::ContactList::self()->removeGroup( it );
+		Kopete::ContactList::self()->removeGroup( (*git) );
 	}
 }
 

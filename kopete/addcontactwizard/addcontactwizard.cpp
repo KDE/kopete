@@ -85,7 +85,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 
 	// Populate the groups list
 	Kopete::GroupList groups=Kopete::ContactList::self()->groups();
-	for( Kopete::Group *it = groups.first(); it; it = groups.next() )
+	for( Kopete::Group *it = groups.first(); it; ++it )
 	{
 		QString groupname = it->displayName();
 		if ( !groupname.isEmpty() )

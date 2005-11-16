@@ -112,7 +112,7 @@ public slots:
 	void setMode( const QString &mode = QString::null );
 
 	void part();
-
+	void partAction();
 	void join();
 
 protected slots:
@@ -129,9 +129,9 @@ private slots:
 	void slotUpdateInfo();
 	void slotHomepage();
 	void slotChannelListed(const QString &channel, uint members, const QString &topic);
+	void slotOnlineStatusChanged(Kopete::Contact *c, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus);
 
 private:
-	// KAction stuff:
 	KAction *actionJoin;
 	KAction *actionPart;
 	KAction *actionTopic;
@@ -139,21 +139,20 @@ private:
 	KActionMenu *actionModeMenu;
 	KCodecAction *codecAction;
 
-	KToggleAction *actionModeT;
-	KToggleAction *actionModeN;
-	KToggleAction *actionModeS;
-	KToggleAction *actionModeI;
-	KToggleAction *actionModeP;
-	KToggleAction *actionModeM;
-	KToggleAction *actionModeB;
+	KToggleAction *actionModeT;    // Only Operators Can Change Topic
+	KToggleAction *actionModeN;    // No Outside Messages
+	KToggleAction *actionModeS;    // Secret
+	KToggleAction *actionModeI;    // Invite Only
+	KToggleAction *actionModeM;    // Moderated
 
 	QString mTopic;
 	QString mPassword;
 	QStringList mJoinedNicks;
-	QMap<QString,bool> modeMap;
+	QMap<QString, bool> modeMap;
 	QTimer *mInfoTimer;
 
 	void toggleMode( QChar mode, bool enabled, bool update );
+	void toggleOperatorActions( bool enabled );
 };
 
 #endif

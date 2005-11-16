@@ -27,6 +27,13 @@
 #include "oscaraccount.h"
 #include "oscarmyselfcontact.h"
 
+namespace AIM
+{
+	namespace PrivacySettings
+	{
+		enum { AllowAll = 0, AllowMyContacts, AllowPremitList, BlockAll, BlockAIM, BlockDenyList };
+	}
+}
 
 namespace Kopete
 {
@@ -90,6 +97,8 @@ public:
 
 	void setUserProfile(const QString &profile);
 	
+	void setPrivacySettings( int privacy );
+
 public slots:
 	/** Reimplementation from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status, const QString& reason = QString::null );
@@ -105,6 +114,7 @@ protected slots:
 	void slotGoAway(const QString&);
     void joinChatDialogClosed( int );
 
+	virtual void loginActions();
 	virtual void disconnected( Kopete::Account::DisconnectReason reason );
 	virtual void messageReceived( const Oscar::Message& message );
 
@@ -126,6 +136,9 @@ protected:
 	QString sanitizedMessage( const QString& message );
 
 private:
+	// Set privacy tlv item
+	void setPrivacyTLVs( BYTE privacy, DWORD userClasses );
+
     AIMJoinChatUI* m_joinChatDialog;
 	OscarVisibilityDialog* m_visibilityDialog;
 };

@@ -48,6 +48,7 @@ struct IRCUserInfo
 	bool isOperator;
 	bool isIdentified;
 	bool away;
+	bool online;
 	uint hops;
 	QDateTime lastOnline;
 	QTime lastUpdate;
@@ -92,6 +93,8 @@ public:
 		const QString &realName );
 
 public slots:
+	/** \brief Updates online status for channels based on current internal status.
+	 */
 	virtual void updateStatus();
 
 	virtual void sendFile(const KURL &sourceURL, const QString&, unsigned int);
@@ -113,13 +116,22 @@ private slots:
 	void slotKick();
 	void slotUserOffline();
 
+	void slotBanHostOnce();
+	void slotBanUserHostOnce();
+	void slotBanDomainOnce();
+	void slotBanUserDomainOnce();
+
 	virtual void slotUserInfo();
 
 	//This can't be handled by the contact manager since
 	void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 
 private:
-	void setManagerStatus(IRCChannelContact *channel, int statusAdjustment );
+	enum bitAdjustment { RemoveBits, AddBits };
+	void adjustInternalOnlineStatusBits(IRCChannelContact *channel, unsigned statusAdjustment, bitAdjustment adj);
+
+	void contactMode(const QString &mode);
+	void updateInfo();
 
 	KActionMenu *actionModeMenu;
 	KActionMenu *actionCtcpMenu;
@@ -129,15 +141,8 @@ private:
 	Kopete::ChatSession *mActiveManager;
 	QTimer *mOnlineTimer;
 	IRCUserInfo mInfo;
-
-	bool m_isAway;
-	bool m_isOnline;
-
-	void contactMode(const QString &mode);
-	void updateInfo();
 };
 
 #endif
 
 // vim: set noet ts=4 sts=4 tw=4:
-

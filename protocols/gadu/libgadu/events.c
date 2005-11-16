@@ -500,7 +500,6 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 				memcpy(e->event.notify_descr.notify, p, sizeof(*n));
 				e->event.notify_descr.notify[0].uin = gg_fix32(e->event.notify_descr.notify[0].uin);
 				e->event.notify_descr.notify[0].status = gg_fix32(e->event.notify_descr.notify[0].status);
-				e->event.notify_descr.notify[0].remote_ip = e->event.notify_descr.notify[0].remote_ip;
 				e->event.notify_descr.notify[0].remote_port = gg_fix16(e->event.notify_descr.notify[0].remote_port);
 
 				count = h->length - sizeof(*n);
@@ -527,7 +526,6 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 				for (i = 0; i < count; i++) {
 					e->event.notify[i].uin = gg_fix32(e->event.notify[i].uin);
 					e->event.notify[i].status = gg_fix32(e->event.notify[i].status);
-					e->event.notify[i].remote_ip = e->event.notify[i].remote_ip;
 					e->event.notify[i].remote_port = gg_fix16(e->event.notify[i].remote_port);
 				}
 			}
@@ -1473,7 +1471,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 				break;
 			}
 	
-			if (h->type == GG_LOGIN_OK) {
+			if (h->type == GG_LOGIN_OK || h->type == GG_NEED_EMAIL) {
 				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() login succeded\n");
 				e->type = GG_EVENT_CONN_SUCCESS;
 				sess->state = GG_STATE_CONNECTED;
@@ -1486,10 +1484,6 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			if (h->type == GG_LOGIN_FAILED) {
 				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() login failed\n");
 				e->event.failure = GG_FAILURE_PASSWORD;
-				errno = EACCES;
-			} else if (h->type == GG_NEED_EMAIL) {
-				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() email change needed\n");
-				e->event.failure = GG_FAILURE_NEED_EMAIL;
 				errno = EACCES;
 			} else {
 				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() invalid packet\n");
