@@ -130,14 +130,6 @@ int ByteStream::bytesToWrite() const
 	return d->writeBuf.size();
 }
 
-//!
-//! Writes string \a cs to the stream.
-void ByteStream::write(const QByteArray &cs)
-{
-	QByteArray block(cs.length());
-	memcpy(block.data(), cs.data(), block.size());
-	write(block);
-}
 
 //!
 //! Clears the read buffer.

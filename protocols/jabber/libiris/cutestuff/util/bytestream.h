@@ -42,7 +42,6 @@ public:
 	virtual int bytesAvailable() const;
 	virtual int bytesToWrite() const;
 
-	void write(const QByteArray &);
 
 	static void appendArray(QByteArray *a, const QByteArray &b);
 	static QByteArray takeArray(QByteArray *from, int size=0, bool del=true);
