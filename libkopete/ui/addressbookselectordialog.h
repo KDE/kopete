@@ -22,7 +22,7 @@
 #include <kdemacros.h>
 #include "kopete_export.h"
 #include <kdialogbase.h>
-
+#include <q3listview.h>
 namespace KABC
 {
 		class AddressBook;

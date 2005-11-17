@@ -390,7 +390,7 @@ void KopeteChatWindow::initActions(void)
 	toggleAutoSpellCheck = new KToggleAction( i18n( "Automatic Spell Checking" ), QString::null, 0,
 		this, SLOT( toggleAutoSpellChecking() ), coll, "enable_auto_spell_check" );
 	toggleAutoSpellCheck->setChecked( true );
-	
+
 	actionSmileyMenu = new KopeteEmoticonAction( coll, "format_smiley" );
 	actionSmileyMenu->setDelayed( false );
 	connect(actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
@@ -899,7 +899,7 @@ void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
 		if(!c || c->onlineStatus() < contact->onlineStatus())
 			c=contact;
 	}
-	
+
 	if ( view == m_activeView )
  	{
 		QPixmap icon16 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 16) :
@@ -1143,7 +1143,7 @@ bool KopeteChatWindow::queryExit()
 		Kopete::PluginManager::self()->shutdown();
 		return true;
 	}
-	else 
+	else
 		return false;
 }
 
@@ -1158,7 +1158,7 @@ void KopeteChatWindow::closeEvent( QCloseEvent * e )
 		// Save settings if auto-save is enabled, and settings have changed
 		if ( settingsDirty() && autoSaveSettings() )
 			saveAutoSaveSettings();
-	
+
 		if ( queryClose() ) {
 			e->accept();
 		}
@@ -1175,10 +1175,12 @@ void KopeteChatWindow::slotConfKeys()
 	if( m_activeView )
 	{
 		dlg.insert(m_activeView->msgManager()->actionCollection() , i18n("Plugin Actions") );
-		Q3PtrListIterator<KXMLGUIClient> it( *m_activeView->msgManager()->childClients() );
+        QList<KXMLGUIClient*> xmlGuis = m_activeView->msgManager()->childClients();
+		QList<KXMLGUIClient*>::iterator it, itEnd = xmlGuis.end();
 		KXMLGUIClient *c = 0;
-		while( (c = it.current()) != 0 )
+		for ( it = xmlGuis.begin(); it != itEnd; ++it )
 		{
+            c = ( *it );
 			dlg.insert( c->actionCollection() /*, i18n("Plugin Actions")*/ );
 			++it;
 		}

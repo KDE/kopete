@@ -22,6 +22,8 @@
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <QByteArray>
+#include <QFrame>
+#include <QWidget>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -55,7 +57,8 @@ KopetePluginConfig::KopetePluginConfig( QWidget *parent, const char *name )
 
 	setInitialSize( QSize( 640, 480 ) );
 
-	( new QVBoxLayout( plainPage(), 0, 0 ) )->setAutoAdd( true );
+	QWidget* dialogPage = plainPage();
+	( new QVBoxLayout( dialogPage, 0, 0 ) )->setAutoAdd( true );
 	d->pluginSelector = new KPluginSelector( plainPage() );
 	setMainWidget( d->pluginSelector );
 	connect( d->pluginSelector, SIGNAL( changed( bool ) ), this, SLOT( setChanged( bool ) ) );

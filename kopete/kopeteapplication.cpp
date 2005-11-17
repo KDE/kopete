@@ -53,7 +53,7 @@
 #include <Q3PtrList>
 
 KopeteApplication::KopeteApplication()
-: KUniqueApplication( true, true, true )
+: KUniqueApplication( true, true )
 {
 	m_isShuttingDown = false;
 	m_mainWindow = new KopeteWindow( 0, "mainWindow" );
@@ -313,10 +313,11 @@ void KopeteApplication::quitKopete()
 	m_isShuttingDown = true;
 
 	// close all windows
-	Q3PtrListIterator<KMainWindow> it(*KMainWindow::memberList());
-	for (it.toFirst(); it.current(); ++it)
+	QList<KMainWindow*> members = KMainWindow::memberList();
+	QList<KMainWindow*>::iterator it, itEnd = members.end();
+	for ( it = members.begin(); it != itEnd; ++it)
 	{
-		if ( !it.current()->close() )
+		if ( (*it)->close() )
 		{
 			m_isShuttingDown = false;
 			break;
