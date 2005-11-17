@@ -125,23 +125,24 @@ namespace QCA
 			obj.update(a);
 			return obj.final();
 		}
-
+#if 0
 		static QByteArray hash(const QByteArray &cs)
 		{
 			QByteArray a(cs.length());
 			memcpy(a.data(), cs.data(), a.size());
 			return hash(a);
 		}
-
+#endif
 		static QString hashToString(const QByteArray &a)
 		{
 			return arrayToHex(hash(a));
 		}
-
+#if 0
 		static QString hashToString(const QByteArray &cs)
 		{
 			return arrayToHex(hash(cs));
 		}
+#endif
 	};
 
 	class QCA_EXPORT Cipher
