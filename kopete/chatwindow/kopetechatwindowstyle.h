@@ -83,7 +83,9 @@ public:
 	QString getHeaderHtml() const;
 	QString getFooterHtml() const;
 	QString getIncomingHtml() const;
+	QString getNextIncomingHtml() const;
 	QString getOutgoingHtml() const;
+	QString getNextOutgoingHtml() const;
 	QString getStatusHtml() const;
 
 private:
@@ -91,6 +93,11 @@ private:
 	 * Read style HTML files from disk
 	 */
 	void readStyleFiles();
+
+	/**
+	 * Init this class
+	 */
+	void init(const QString &stylePath, int styleBuildMode);
 
 private:
 	class Private;

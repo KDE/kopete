@@ -119,6 +119,7 @@ public:
 	KAction *copyURLAction;
 
 	ChatWindowStyle *adiumStyle;
+	Kopete::Message::MessageDirection latestDirection;
 };
 
 class ChatMessagePart::ToolTip : public QToolTip
@@ -462,16 +463,23 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 		}
 #else
 		QString formattedMessageHtml;
+		// TODO: Check if the user want consecutive messages.
 		switch(message.direction())
 		{
 			case Kopete::Message::Inbound:
 			{
-				formattedMessageHtml = d->adiumStyle->getIncomingHtml();
+				if(d->latestDirection == Kopete::Message::Inbound)
+					formattedMessageHtml = d->adiumStyle->getNextIncomingHtml();
+				else
+					formattedMessageHtml = d->adiumStyle->getIncomingHtml();
 				break;
 			}
 			case Kopete::Message::Outbound:
 			{
-				formattedMessageHtml = d->adiumStyle->getOutgoingHtml();
+				if(d->latestDirection == Kopete::Message::Outbound)
+					formattedMessageHtml = d->adiumStyle->getNextOutgoingHtml();
+				else
+					formattedMessageHtml = d->adiumStyle->getOutgoingHtml();
 				break;
 			}
 			case Kopete::Message::Internal:
@@ -483,17 +491,37 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 
 		formattedMessageHtml = formatStyleKeywords( formattedMessageHtml, message );
 
-		// Remove the insert block, because it's a new message (don't supporte appending mode now)
-		DOM::HTMLElement insertNode = document().getElementById( QString::fromUtf8("insert") );
-		if( !insertNode.isNull() )
-			insertNode.parentNode().removeChild(insertNode);
-		
-		// Find the "Chat" 
-		DOM::HTMLElement chatNode = document().getElementById( QString::fromUtf8("Chat") );
+		// newMessageNode is common to both code path
 		// FIXME: Find a better than to create a dummy span.
 		DOM::HTMLElement newMessageNode = document().createElement( QString::fromUtf8("span") );
 		newMessageNode.setInnerHTML( formattedMessageHtml );
-		chatNode.appendChild(newMessageNode);
+
+		// Find the insert Node
+		DOM::HTMLElement insertNode = document().getElementById( QString::fromUtf8("insert") );
+
+		if( d->latestDirection == message.direction() )
+		{
+			// Replace the insert block, because it's a consecutive message.
+			if( !insertNode.isNull() )
+			{
+				insertNode.parentNode().replaceChild(newMessageNode, insertNode);
+			}
+		}
+		else
+		{
+			// Remove the insert block, because it's a new message.
+			if( !insertNode.isNull() )
+				insertNode.parentNode().removeChild(insertNode);
+			
+			// Find the "Chat" 
+			DOM::HTMLElement chatNode = document().getElementById( QString::fromUtf8("Chat") );
+			// Append to the chat.
+			chatNode.appendChild(newMessageNode);
+		}
+
+		// Keep the direction to see on next message
+		// if it's a consecutive message
+		d->latestDirection = message.direction();
 #endif
 		if ( !d->scrollPressed )
 			QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
@@ -939,11 +967,19 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	}
 
 	// FIXME: Force update of photo when using image path.
-	// Replace userIconPath (use data:base64)
+	// Replace userIconPath (use image path)
 	if( message.from() )
 	{
 
 		QString photoPath = message.from()->property(Kopete::Global::Properties::self()->photo().key()).value().toString();
+		// If the photo path is empty, set the default buddy icon for the theme
+		if( photoPath.isEmpty() )
+		{
+			if(message.direction() == Kopete::Message::Inbound)
+				photoPath = QString::fromUtf8("Incoming/buddy_icon.png");
+			else if(message.direction() == Kopete::Message::Outbound)
+				photoPath = QString::fromUtf8("Outgoing/buddy_icon.png");
+		}
 		resultHTML = resultHTML.replace(QString::fromUtf8("%userIconPath%"), photoPath);
 #if 0
 		QImage photo = message.from()->metaContact()->photo();
@@ -1005,27 +1041,28 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 
 		resultHTML = resultHTML.replace( QString::fromUtf8("%incomingIconPath%"), photoIncomingPath);
 		resultHTML = resultHTML.replace( QString::fromUtf8("%outgoingIconPath%"), photoOutgoingPath);
-
-// 		QImage photoIncoming = remoteContact->metaContact()->photo();
-// 		if( !photoIncoming.isNull() )
-// 		{
-// 			QByteArray ba;
-// 			QBuffer buffer( ba );
-// 			buffer.open( IO_WriteOnly );
-// 			photoIncoming.save ( &buffer, "PNG" );
-// 			QString photo64=KCodecs::base64Encode(ba);
-// 			resultHTML = resultHTML.replace( QString::fromUtf8("%incomingIconPath%"), QString("data:image/png;base64,%1").arg(photo64) );
-// 		}
-// 		QImage photoOutgoing = d->manager->myself()->metaContact()->photo();
-// 		if( !photoOutgoing.isNull() )
-// 		{
-// 			QByteArray ba;
-// 			QBuffer buffer( ba );
-// 			buffer.open( IO_WriteOnly );
-// 			photoOutgoing.save ( &buffer, "PNG" );
-// 			QString photo64=KCodecs::base64Encode(ba);
-// 			resultHTML = resultHTML.replace( QString::fromUtf8("%outgoingIconPath%"), QString("data:image/png;base64,%1").arg(photo64) );
-// 		}
+#if 0
+		QImage photoIncoming = remoteContact->metaContact()->photo();
+		if( !photoIncoming.isNull() )
+		{
+			QByteArray ba;
+			QBuffer buffer( ba );
+			buffer.open( IO_WriteOnly );
+			photoIncoming.save ( &buffer, "PNG" );
+			QString photo64=KCodecs::base64Encode(ba);
+			resultHTML = resultHTML.replace( QString::fromUtf8("%incomingIconPath%"), QString("data:image/png;base64,%1").arg(photo64) );
+		}
+		QImage photoOutgoing = d->manager->myself()->metaContact()->photo();
+		if( !photoOutgoing.isNull() )
+		{
+			QByteArray ba;
+			QBuffer buffer( ba );
+			buffer.open( IO_WriteOnly );
+			photoOutgoing.save ( &buffer, "PNG" );
+			QString photo64=KCodecs::base64Encode(ba);
+			resultHTML = resultHTML.replace( QString::fromUtf8("%outgoingIconPath%"), QString("data:image/png;base64,%1").arg(photo64) );
+		}
+#endif
 	}
 
 	return resultHTML;
