@@ -21,7 +21,7 @@
 #include "chatmessagepart.h"
 
 // KOPETE_XSLT enable old style engine
-#define KOPETE_XSLT
+//#define KOPETE_XSLT
 // STYLE_TIMETEST is for time staticstic gathering.
 //#define STYLE_TIMETEST
 
@@ -932,7 +932,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 {
 	QString resultHTML = sourceHTML;
 	QString messageBody = message.parsedBody();
-	QString nick, contactId, service;
+	QString nick, contactId, service, protocolIcon;
 	
 	if( message.from() )
 	{
@@ -942,8 +942,14 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 		// protocol() returns NULL here in the style preview in appearance config.
 		// this isn't the right place to work around it, since contacts should never have
 		// no protocol, but it works for now.
+		QString iconName = QString::fromUtf8("kopete");
 		if(message.from()->protocol())
+		{
 			service =  message.from()->protocol()->displayName();
+			iconName = message.from()->protocol()->pluginIcon();
+		}
+
+		protocolIcon = KGlobal::iconLoader()->iconPath( iconName, KIcon::Small );
 	}
 	
 	// Replace messages.
@@ -956,6 +962,8 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	resultHTML = resultHTML.replace( QString::fromUtf8("%senderScreenName%"), contactId );
 	// Replace service name (protocol name)
 	resultHTML = resultHTML.replace( QString::fromUtf8("%service%"), service );
+	// Replace protocolIcon (sender statusIcon)
+	resultHTML = resultHTML.replace( QString::fromUtf8("%senderStatusIcon%"), protocolIcon );
 	
 	// Look for %time{X}%
 	QRegExp timeRegExp("%time\\{([^}]*)\\}%");
@@ -1008,7 +1016,8 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 	QPtrList<Kopete::Contact> membersList =  d->manager->members();
 	Kopete::Contact *remoteContact = membersList.first();
 
-	if( remoteContact )
+	// Verify that all contacts are not null before doing anything
+	if( remoteContact && d->manager->myself() )
 	{
 		// Replace %chatName%
 		resultHTML = resultHTML.replace( QString::fromUtf8("%chatName%"), d->manager->displayName() );
