@@ -71,7 +71,7 @@ fi
 #now, find the libs
 search_libs="$kde_libraries /usr/lib /usr/local/lib"
 AC_FIND_FILE(libkopete.la, $search_libs, kopete_libdir)
-if test -r $dbus_libdir/libdbus-1.so ; then
+if test -r $kopete_libdir/libkopete.so ; then
 	#some linker flags
 	KOPETE_LIBS="-L$kopete_libdir -lkopete"
 	#and we found something
