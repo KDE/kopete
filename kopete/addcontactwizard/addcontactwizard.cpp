@@ -84,12 +84,14 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 //	selectAddressee->addWidget(m_addressbookSelectorWidget);
 
 	// Populate the groups list
-	Kopete::GroupList groups=Kopete::ContactList::self()->groups();
-	for( Kopete::Group *it = groups.first(); it; ++it )
+	Kopete::GroupList groups = Kopete::ContactList::self()->groups();
+	QListIterator<Kopete::Group *> it(groups);
+	while ( it.hasNext() )
 	{
-		QString groupname = it->displayName();
+		Kopete::Group *grp = it.next();
+		QString groupname = grp->displayName();
 		if ( !groupname.isEmpty() )
-			m_groupItems.insert(new Q3CheckListItem( groupList, groupname, Q3CheckListItem::CheckBox) , it ) ;
+			m_groupItems.insert(new Q3CheckListItem( groupList, groupname, Q3CheckListItem::CheckBox) , grp ) ;
 	}
 
 	protocolListView->clear();
