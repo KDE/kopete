@@ -57,7 +57,7 @@ void ChatWindowStyle_Test::testHtml()
 "<div>%incomingIconPath%</div>\n"
 "<div>%outgoingIconPath%</div>\n"
 "<div>%timeOpened%</div>\n"
-"<div>%timeOpened{%I:%N}</div>");
+"<div>%timeOpened{%H:%M}%</div>");
 	// Footer is empty on purpose, this is to test if the file doesn't exist.
 	QString exceptedFooter;
 	QString exceptedIncoming = QString::fromUtf8(
@@ -68,7 +68,7 @@ void ChatWindowStyle_Test::testHtml()
 "<div>%service%</div>\n"
 "<div>%message%</div>\n"
 "<div>%time%</div>\n"
-"<div>%time{%I:%N}%</div>\n"
+"<div>%time{%H:%M}%</div>\n"
 "<div id=\"insert\">");
 	QString exceptedNextIncoming = QString::fromUtf8(
 "Incoming:\n"
@@ -83,7 +83,7 @@ void ChatWindowStyle_Test::testHtml()
 "<div>%service%</div>\n"
 "<div>%message%</div>\n"
 "<div>%time%</div>\n"
-"<div>%time{%I:%N}%</div>\n"
+"<div>%time{%H:%M}%</div>\n"
 "<div id=\"insert\">");
 	QString exceptedNextOutgoing = QString::fromUtf8(
 "Outgoing:\n"
@@ -93,7 +93,7 @@ void ChatWindowStyle_Test::testHtml()
 	QString exceptedStatus = QString::fromUtf8(
 "<div>%message%</div>\n"
 "<div>%time%</div>\n"
-"<div>%time{%I:%N}%</div>");
+"<div>%time{%H:%M}%</div>");
 
 	CHECK(testStyle->getHeaderHtml(), exceptedHeader);
 	CHECK(testStyle->getFooterHtml(), exceptedFooter);

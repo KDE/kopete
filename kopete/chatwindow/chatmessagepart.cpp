@@ -176,7 +176,7 @@ private:
 
 
 
-ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, const char *name )
+ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, const char *name)
 	: KHTMLPart( parent, name ), d( new Private )
 {
 	d->manager = mgr;
