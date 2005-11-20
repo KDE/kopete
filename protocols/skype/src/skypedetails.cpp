@@ -55,7 +55,7 @@ void SkypeDetails::changeAuthor(int item) {
 }
 
 SkypeDetails &SkypeDetails::setNames(const QString &id, const QString &nick, const QString &name) {
-	setCaption(i18n("Details for user %1").arg(id));
+	setCaption(i18n("Details for User %1").arg(id));
 	idEdit->setText(id);
 	nickEdit->setText(nick);
 	nameEdit->setText(name);

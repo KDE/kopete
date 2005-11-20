@@ -65,17 +65,17 @@ bool SkypeAddContact::validateData() {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (!d->account->canComunicate()) {
-		KMessageBox::sorry(d->widget, i18n("You must connect to Skype first"), i18n("Not connected"));
+		KMessageBox::sorry(d->widget, i18n("You must connect to Skype first"), i18n("Not Connected"));
 		return false;
 	}
 
 	if (d->widget->NameEdit->text().isEmpty()) {//He wrote nothing
-		KMessageBox::sorry(d->widget, i18n("You must write the contact's name"), i18n("Wrong information"));//Tell the user I don't like this at all
+		KMessageBox::sorry(d->widget, i18n("You must write the contact's name"), i18n("Wrong Information"));//Tell the user I don't like this at all
 		return false;//and don't allow to continue
 	}
 
 	if (d->account->contact(d->widget->NameEdit->text())) {//this contact already exists in this account
-		KMessageBox::sorry(d->widget, i18n("This contact already exists in this account"), i18n("Wrong information"));//Tell the user
+		KMessageBox::sorry(d->widget, i18n("This contact already exists in this account"), i18n("Wrong Information"));//Tell the user
 		return false;//do not proceed
 	}
 

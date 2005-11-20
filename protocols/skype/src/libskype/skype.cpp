@@ -730,7 +730,7 @@ void Skype::inviteUser(const QString &chatId, const QString &userId) {
 	kdDebug(14311) << k_funcinfo << " " << chatId << " " << userId << endl;//some debug info
 
 	if (d->connection.protocolVer() <= 4) {
-		KMessageBox::error(0L, i18n("This version of Skype does not support adding users to chat"), i18n("Skype protocol"));
+		KMessageBox::error(0L, i18n("This version of Skype does not support adding users to chat."), i18n("Skype Protocol"));
 		return;
 	}
 

@@ -41,7 +41,7 @@ SkypeConference::SkypeConference(const QString &id) : QDialog() {
 	d = new SkypeConferencePrivate();
 
 	//some UI
-	setCaption(i18n("Conference call"));
+	setCaption(i18n("Conference Call"));
 	d->layout = new QHBoxLayout(this);
 
 	//remember all things

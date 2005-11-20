@@ -13,7 +13,7 @@
         </rect>
     </property>
     <property name="caption">
-        <string>Skype call</string>
+        <string>Skype Call</string>
     </property>
     <property name="sizeGripEnabled">
         <bool>false</bool>

@@ -772,7 +772,7 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                             <cstring>LeaveCheck</cstring>
                         </property>
                         <property name="text">
-                            <string>Leave On E&amp;xit</string>
+                            <string>Leave on e&amp;xit</string>
                         </property>
                         <property name="checked">
                             <bool>true</bool>
@@ -819,7 +819,7 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                             <cstring>StartCallCommandCheck</cstring>
                         </property>
                         <property name="text">
-                            <string>E&amp;xecute Before Call</string>
+                            <string>E&amp;xecute before call</string>
                         </property>
                     </widget>
                     <widget class="QLayoutWidget">
@@ -890,7 +890,7 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                                     <bool>false</bool>
                                 </property>
                                 <property name="text">
-                                    <string>Wait For Fi&amp;nish</string>
+                                    <string>Wait for fi&amp;nish</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>This will wait before making/accepting the call for the command to finish</string>
@@ -907,7 +907,7 @@ Note that it will freeze kopete for the time.</string>
                             <cstring>EndCallCommandCheck</cstring>
                         </property>
                         <property name="text">
-                            <string>Execute After Call</string>
+                            <string>Execute after call</string>
                         </property>
                         <property name="accel">
                             <string></string>
@@ -981,7 +981,7 @@ Note that it will freeze kopete for the time.</string>
                                     <bool>false</bool>
                                 </property>
                                 <property name="text">
-                                    <string>Onl&amp;y For Last Call</string>
+                                    <string>Onl&amp;y for last call</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Ususally makes no difference, just when there are some other calls on hold, it is executend only for the last ended one.</string>
@@ -994,7 +994,7 @@ Note that it will freeze kopete for the time.</string>
                             <cstring>IncomingCommandCheck</cstring>
                         </property>
                         <property name="text">
-                            <string>Execute On Inco&amp;ming Call</string>
+                            <string>Execute on inco&amp;ming call</string>
                         </property>
                     </widget>
                     <widget class="QLayoutWidget">

@@ -123,7 +123,7 @@
                 <cstring>textLabel5</cstring>
             </property>
             <property name="text">
-                <string>Mobile Phone:</string>
+                <string>Mobile phone:</string>
             </property>
             <property name="alignment">
                 <set>AlignVCenter|AlignRight</set>
@@ -134,7 +134,7 @@
                 <cstring>textLabel6</cstring>
             </property>
             <property name="text">
-                <string>Work Phone:</string>
+                <string>Work phone:</string>
             </property>
             <property name="alignment">
                 <set>AlignVCenter|AlignRight</set>
@@ -153,7 +153,7 @@
                 <cstring>textLabel4</cstring>
             </property>
             <property name="text">
-                <string>Private Phone:</string>
+                <string>Private phone:</string>
             </property>
             <property name="alignment">
                 <set>AlignVCenter|AlignRight</set>
@@ -164,7 +164,7 @@
                 <cstring>textLabel7</cstring>
             </property>
             <property name="text">
-                <string>Is Authorized:</string>
+                <string>Is authorized:</string>
             </property>
             <property name="alignment">
                 <set>AlignVCenter|AlignRight</set>
@@ -218,7 +218,7 @@
                 <cstring>textLabel3</cstring>
             </property>
             <property name="text">
-                <string>Full Name:</string>
+                <string>Full name:</string>
             </property>
             <property name="alignment">
                 <set>AlignVCenter|AlignRight</set>

@@ -95,7 +95,7 @@ bool skypeEditAccount::validateData() {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (d->protocol->hasAccount() && (!account())) {//he wants to create some account witch name is already used
-		KMessageBox::sorry(this, i18n("You can have only one skype account"), i18n("Wrong information"));//Tell him to use something other
+		KMessageBox::sorry(this, i18n("You can have only one skype account"), i18n("Wrong Information"));//Tell him to use something other
 		return false;
 	}
 
