@@ -196,6 +196,8 @@ void ChatWindowStyleRendering_Test::allTests()
 	chatPart = new ChatMessagePart(d->fakeChatSession, 0, 0);
 
 	testHeaderRendering();
+	// Crash on protocol()->displayName in ChatMessagePart.
+	//testMessageRendering();
 }
 
 void ChatWindowStyleRendering_Test::testHeaderRendering()
@@ -219,4 +221,39 @@ void ChatWindowStyleRendering_Test::testHeaderRendering()
 	kdDebug(14000) << "Result HTML: " << resultHtml << endl;
 
 	CHECK(resultHtml, expectedHtml);
+}
+
+void ChatWindowStyleRendering_Test::testMessageRendering()
+{
+	QString expectedIncomingHtml = QString(
+"Incoming:\n"
+"<div>Incoming/buddy_icon.png</div>\n"
+"<div>audrey@localhost</div>\n"
+"<div>Audrey</div>\n"
+"<div>FakeProtocol</div>\n"
+"<div>Test</div>\n"
+"<div>%1</div>\n"
+"<div>%2</div>\n"
+"<div id=\"insert\">"
+	).arg(KGlobal::locale()->formatDateTime( QDateTime::currentDateTime()))
+	.arg(QDateTime::currentDateTime().toString("h:m"));
+
+	QString expectedOutgoingHtml = QString();
+	QString expectedNextIncomingHtml = QString();
+	QString tempHtml;
+	QString resultHtml;
+	
+	Kopete::Message msgIn(d->other, d->myself, QString::fromUtf8("Test"), Kopete::Message::Inbound );
+
+	tempHtml = d->testStyle->getIncomingHtml();
+	resultHtml = chatPart->formatStyleKeywords(tempHtml, msgIn);
+
+	kdDebug(14000) << "Message incomign HTML: " << resultHtml << endl;
+
+	CHECK(resultHtml, expectedIncomingHtml);
+}
+
+void ChatWindowStyleRendering_Test::testStatusRendering()
+{
+	
 }

@@ -33,7 +33,8 @@ public:
 	void allTests();
 public slots:
 	void testHeaderRendering();
-
+	void testMessageRendering();
+	void testStatusRendering();
 private:
 	class Private;
 	Private *d;
