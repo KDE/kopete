@@ -74,7 +74,6 @@ public:
 KABCPersistence::KABCPersistence( QObject * parent, const char * name ) : QObject( parent, name )
 {
 	d = new Private;
-	// FIXME DUNCAN d->pendingResources.setAutoDelete( false );
 }
 
 KABCPersistence::~KABCPersistence()
@@ -181,17 +180,15 @@ void KABCPersistence::write( MetaContact * mc )
 		}*/
 }
 
-void KABCPersistence::writeAddressBook( const KABC::Resource * res)
+void KABCPersistence::writeAddressBook( KABC::Resource * res)
 {
-	/* FIXME DUNCAN
-	if ( !d->pendingResources.containsRef( res ) )
+	if ( !d->pendingResources.count( res ) )
 		d->pendingResources.append( res );
 	if ( !d->addrBookWritePending )
 	{
 		d->addrBookWritePending = true;
 		QTimer::singleShot( 2000, this, SLOT( slotWriteAddressBook() ) );
 	}
-	*/
 }
 
 void KABCPersistence::slotWriteAddressBook()

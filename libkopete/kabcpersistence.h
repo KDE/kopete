@@ -83,7 +83,7 @@ class KOPETE_EXPORT KABCPersistence : public QObject
 		/**
 		 * Request an address book write, will be delayed to bundle any others happening around the same time
 		 */
-		void writeAddressBook( const KABC::Resource * res );
+		void writeAddressBook( KABC::Resource * res );
 	protected:
 
 		static void splitField( const QString &str, QString &app, QString &name, QString &value );
