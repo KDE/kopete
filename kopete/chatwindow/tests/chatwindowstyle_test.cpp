@@ -37,6 +37,7 @@ void ChatWindowStyle_Test::allTests()
 
 	testPaths();
 	testHtml();
+	testVariants();
 }
 
 void ChatWindowStyle_Test::testPaths()
@@ -102,4 +103,24 @@ void ChatWindowStyle_Test::testHtml()
 	CHECK(testStyle->getOutgoingHtml(), exceptedOutgoing);
 	CHECK(testStyle->getNextOutgoingHtml(), exceptedNextOutgoing);
 	CHECK(testStyle->getStatusHtml(), exceptedStatus);
+}
+
+void ChatWindowStyle_Test::testVariants()
+{
+	QString expectedNameResult("Variant1;Variant2");
+	QString expectedPathResult("Variants/Variant1.css;Variants/Variant2.css");
+	QStringList variantNameList;
+	QStringList variantPathList;
+	ChatWindowStyle::StyleVariants variantList;
+	ChatWindowStyle::StyleVariants::ConstIterator it;
+	variantList = testStyle->getVariants();
+
+	for(it = variantList.constBegin(); it != variantList.constEnd(); ++it)
+	{
+		variantNameList.append(it.key());
+		variantPathList.append(it.data());
+	}	
+	
+	CHECK(variantNameList.join(";"), expectedNameResult);
+	CHECK(variantPathList.join(";"), expectedPathResult);
 }

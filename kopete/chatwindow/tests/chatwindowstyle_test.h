@@ -29,7 +29,8 @@ public:
 public slots:
 	void testPaths();
 	void testHtml();
-
+	void testVariants();
+	
 private:
 	ChatWindowStyle *testStyle;
 };

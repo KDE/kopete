@@ -19,7 +19,6 @@
 
 // Qt includes
 #include <qvaluestack.h>
-#include <qmap.h>
 
 // KDE includes
 #include <kstandarddirs.h>
@@ -27,6 +26,8 @@
 #include <kdebug.h>
 #include <kurl.h>
 #include <kglobal.h>
+
+#include "kopetechatwindowstyle.h"
 
 class ChatWindowStyleManager::Private
 {
@@ -36,8 +37,7 @@ public:
 	{}
 
 	KDirLister *styleDirLister;
-	// key=style name, value=path
-	QMap<QString, QString> styleNamePathMap;
+	StyleList availableStyles;
 
 	QValueStack<KURL> styleDirs;
 };
@@ -63,13 +63,15 @@ ChatWindowStyleManager::~ChatWindowStyleManager()
 	delete d;
 }
 
-void ChatWindowStyleManager::load()
-{
-	// TODO: Init latest current chat window style.
-}
-
 void ChatWindowStyleManager::loadStyles()
 {
+	// Clear current Dir Lister.
+	if(d->styleDirLister)
+	{
+		d->styleDirLister->deleteLater();
+		d->styleDirLister = 0L;
+	}
+
 	QStringList chatStyles = KGlobal::dirs()->findDirs( "appdata", QString::fromUtf8( "styles" ) );
 	QStringList::const_iterator it;
 	for(it = chatStyles.constBegin(); it != chatStyles.constEnd(); ++it)
@@ -87,6 +89,21 @@ void ChatWindowStyleManager::loadStyles()
 	d->styleDirLister->openURL(d->styleDirs.pop(), true);
 }
 
+ChatWindowStyleManager::StyleList ChatWindowStyleManager::getAvailableStyles()
+{
+	return d->availableStyles;
+}
+
+void ChatWindowStyleManager::installStyle()
+{
+	
+}
+
+void ChatWindowStyleManager::removeStyle()
+{
+	
+}
+
 void ChatWindowStyleManager::slotNewStyles(const KFileItemList &dirList)
 {
 	KFileItem *item;
@@ -97,7 +114,10 @@ void ChatWindowStyleManager::slotNewStyles(const KFileItemList &dirList)
 		if( !item->url().fileName().contains(QString::fromUtf8("data")) )
 		{
 			kdDebug(14010) << k_funcinfo << "Listing: " << item->url().fileName() << endl;
-			d->styleNamePathMap.insert(item->url().fileName(), item->url().path());
+			// Build a chat window style and list its variants.
+			ChatWindowStyle *newStyle = new ChatWindowStyle(item->url().fileName(), ChatWindowStyle::StyleBuildNormal);
+			// TODO: Use name from Info.plist
+			d->availableStyles.insert(item->url().fileName(), newStyle);
 		}
 		++it;
 	}
@@ -113,13 +133,7 @@ void ChatWindowStyleManager::slotDirectoryFinished()
 	}
 	else
 	{
-		// TODO: Remove this debug code.
-		// TODO: Call building of each chat window style instead.
-		QMap<QString, QString>::const_iterator it;
-		for(it = d->styleNamePathMap.constBegin(); it != d->styleNamePathMap.constEnd(); ++it)
-		{
-			kdDebug(14010) << k_funcinfo << "Theme name: " << it.key() << " path: " << it.data() << endl;
-		}
+		emit loadStylesFinished();
 	}
 }
 

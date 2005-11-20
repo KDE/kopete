@@ -19,6 +19,8 @@
 
 // Qt includes
 #include <qfile.h>
+#include <qdir.h>
+#include <qstringlist.h>
 #include <qtextstream.h>
 
 // KDE includes
@@ -62,7 +64,7 @@ void ChatWindowStyle::init(const QString &stylePath, int styleBuildMode)
 	readStyleFiles();
 	if(styleBuildMode & StyleBuildNormal)
 	{
-		// TODO: List all available variants
+		listVariants();
 	}
 }
 
@@ -71,8 +73,13 @@ ChatWindowStyle::~ChatWindowStyle()
 	delete d;
 }
 
-ChatWindowStyle::StyleVariants ChatWindowStyle::getVariants() const
+ChatWindowStyle::StyleVariants ChatWindowStyle::getVariants()
 {
+	// If the variantList is empty, list available variants.
+	if( d->variantsList.isEmpty() )
+	{
+		listVariants();
+	}
 	return d->variantsList;
 }
 
@@ -119,6 +126,24 @@ QString ChatWindowStyle::getNextOutgoingHtml() const
 QString ChatWindowStyle::getStatusHtml() const
 {
 	return d->statusHtml;
+}
+
+void ChatWindowStyle::listVariants()
+{
+	QString variantDirPath = d->baseHref + QString::fromUtf8("Variants/");
+	QDir variantDir(variantDirPath);
+
+	QStringList variantList = variantDir.entryList("*.css");
+	QStringList::ConstIterator it, itEnd = variantList.constEnd();
+	for(it = variantList.constBegin(); it != itEnd; ++it)
+	{
+		QString variantName = *it, variantPath;
+		// Retrieve only the file name.
+		variantName = variantName.left(variantName.findRev("."));
+		// variantPath is relative to baseHref.
+		variantPath = QString("Variants/%1").arg(*it);
+		d->variantsList.insert(variantName, variantPath);
+	}
 }
 
 void ChatWindowStyle::readStyleFiles()
