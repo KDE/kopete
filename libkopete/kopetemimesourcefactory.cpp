@@ -151,7 +151,7 @@ const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 			 * Note that if the cache has been invalidated in the meantime, we'll just
 			 * get an empty pixmap back.
 			 */
-			Account *account = AccountManager::self()->accounts().getFirst();
+			Account *account = AccountManager::self()->accounts().first();
 			if ( account )
 			{
 				img = account->myself()->onlineStatus().iconFor( parts[1] );

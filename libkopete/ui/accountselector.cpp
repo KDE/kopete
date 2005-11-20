@@ -114,10 +114,11 @@ void AccountSelector::initUI()
 	else
 	{
 		kdDebug(14010) << k_funcinfo << "creating list of all accounts" << endl;
-		Q3PtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
-		Kopete::Account *account = 0;
-		for(account = accounts.first(); account; account = accounts.next())
+		QListIterator<Kopete::Account *> it( Kopete::AccountManager::self()->accounts() );
+		Kopete::Account *account;
+		while ( it.hasNext() )
 		{
+			account = it.next(); 
 			new AccountListViewItem(d->lv, account);
 		}
 	}

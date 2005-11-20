@@ -179,7 +179,7 @@ void PluginManager::shutdown()
 	   from a OO point of view, theses lines should not be there, but i don't
 	   see better place -Olivier
 	*/
-	Kopete::ContactList::self()->save();
+	//Kopete::ContactList::self()->save();
 	Kopete::AccountManager::self()->save();
 	
 	// Remove any pending plugins to load, we're shutting down now :)

@@ -95,7 +95,7 @@ ContactList::ContactList()
 
 	// automatically save on changes to the list
 	d->saveTimer = new QTimer( this, "saveTimer" );
-	connect( d->saveTimer, SIGNAL( timeout() ), SLOT ( save() ) );
+	//connect( d->saveTimer, SIGNAL( timeout() ), SLOT ( save() ) );
 
 	connect( this, SIGNAL( metaContactAdded( Kopete::MetaContact * ) ), SLOT( slotSaveLater() ) );
 	connect( this, SIGNAL( metaContactRemoved( Kopete::MetaContact * ) ), SLOT( slotSaveLater() ) );
@@ -182,11 +182,12 @@ MetaContact *ContactList::findMetaContactByDisplayName( const QString &displayNa
 
 MetaContact* ContactList::findMetaContactByContactId( const QString &contactId ) const
 {
-	Q3PtrList<Account> acts=AccountManager::self()->accounts();
-	Q3PtrListIterator<Account> it( acts );
-	for ( ; it.current(); ++it )
+	QListIterator<Kopete::Account *> it( Kopete::AccountManager::self()->accounts() );
+	Kopete::Account *a;
+	while ( it.hasNext() )
 	{
-		Contact *c=(*it)->contacts()[contactId];
+		a = it.next();
+		Contact *c=a->contacts()[contactId];
 		if(c && c->metaContact())
 			return c->metaContact();
 	}

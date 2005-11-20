@@ -39,27 +39,23 @@
 
 namespace Kopete {
 
+static int compareAccountsByPriority( Account *a, Account *b )
+{
+	uint priority1 = a->priority();
+	uint priority2 = b->priority();
+	
+	if( a==b ) //two account are equal only if they are equal :-)
+		return 0;  // remember than an account can be only once on the list, but two account may have the same priority when loading
+	else if( priority1 > priority2 )
+		return 1;
+	else
+		return -1;
+}
+
 class AccountManager::Private
 {
 public:
-
-	class AccountPtrList : public Q3PtrList<Account>
-	{
-		protected:
-			int compareItems( AccountPtrList::Item a, AccountPtrList::Item b )
-			{
-				uint priority1 = static_cast<Account*>(a)->priority();
-				uint priority2 = static_cast<Account*>(b)->priority();
-	
-				if( a==b ) //two account are equal only if they are equal :-)
-					return 0;  // remember than an account can be only once on the list, but two account may have the same priority when loading
-				else if( priority1 > priority2 )
-					return 1;
-				else
-					return -1;
-			}
-	} accounts;
-
+	QList<Account *> accounts;
 };
 
 AccountManager * AccountManager::s_self = 0L;
@@ -90,18 +86,21 @@ AccountManager::~AccountManager()
 bool AccountManager::isAnyAccountConnected()
 {
 	bool anyConnected = false;
-	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
-	{
-		anyConnected |= it.current()->isConnected();
-	}
+	QListIterator<Account *> it( d->accounts );
+	while ( it.hasNext() )
+		anyConnected |= it.next()->isConnected();
+
 	return anyConnected;
 }
 
 void AccountManager::connectAll()
 {
-	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
-		if(!it.current()->excludeConnect())
-			it.current()->connect();
+	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
+	{
+		Account *a = it.next();
+		if( ! a->excludeConnect())
+			a->connect();
+	}
 }
 
 void AccountManager::setAvailableAll( const QString &awayReason )
@@ -109,23 +108,24 @@ void AccountManager::setAvailableAll( const QString &awayReason )
 	Away::setGlobalAway( false );
 	bool anyConnected = isAnyAccountConnected();
 
-	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
 	{
+		Account *a = it.next();
 		if ( anyConnected )
 		{
-			if ( it.current()->isConnected() )
-				it.current()->setAway( false, awayReason );
+			if ( a->isConnected() )
+				a->setAway( false, awayReason );
 		}
 		else 
-			if(!it.current()->excludeConnect())
-				it.current()->connect();
+			if(!a->excludeConnect())
+				a->connect();
 	}
 }
 
 void AccountManager::disconnectAll()
 {
-	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
-		it.current()->disconnect();
+	for ( QListIterator<Account *> it( d->accounts ); it.hasNext() ; )
+		it.next()->disconnect();
 }
 
 void AccountManager::setAwayAll( const QString &awayReason, bool away )
@@ -133,20 +133,21 @@ void AccountManager::setAwayAll( const QString &awayReason, bool away )
 	Away::setGlobalAway( true );
 	bool anyConnected = isAnyAccountConnected();
 
-	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
 	{
+		Account *a = it.next();
 		// FIXME: ICQ's invisible online should be set to invisible away
-		Contact *self = it.current()->myself();
+		Contact *self = a->myself();
 		bool isInvisible = self && self->onlineStatus().status() == OnlineStatus::Invisible;
 		if ( anyConnected )
 		{
-			if ( it.current()->isConnected() && !isInvisible )
-				it.current()->setAway( away, awayReason );
+			if ( a->isConnected() && !isInvisible )
+				a->setAway( away, awayReason );
 		}
 		else
 		{
-			if ( !it.current()->excludeConnect() && !isInvisible )
-				it.current()->setAway( away, awayReason );
+			if ( !a->excludeConnect() && !isInvisible )
+				a->setAway( away, awayReason );
 		}
 	}
 }
@@ -156,9 +157,9 @@ void AccountManager::setOnlineStatus( uint category , const QString& awayMessage
 	OnlineStatusManager::Categories katgor=(OnlineStatusManager::Categories)category;
 	bool anyConnected = isAnyAccountConnected();
 	
-	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
 	{
-		Account *account = it.current();
+		Account *account = it.next();
 		Kopete::OnlineStatus status = OnlineStatusManager::self()->onlineStatus(account->protocol() , katgor);
 		if ( anyConnected )
 		{
@@ -181,9 +182,10 @@ QColor AccountManager::guessColor( Protocol *protocol ) const
 	//   -- Olivier
 	int protocolCount = 0;
 
-	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
 	{
-		if ( it.current()->protocol()->pluginId() == protocol->pluginId() )
+		Account *a = it.next();
+		if ( a->protocol()->pluginId() == protocol->pluginId() )
 			protocolCount++;
 	}
 
@@ -229,9 +231,11 @@ Account* AccountManager::registerAccount( Account *account )
 	}
 
 	// If this account already exists, do nothing
-	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	QListIterator<Account *> it( d->accounts );
+	while ( it.hasNext() )
 	{
-		if ( ( account->protocol() == it.current()->protocol() ) && ( account->accountId() == it.current()->accountId() ) )
+		Account *curracc = it.next();
+		if ( ( account->protocol() == curracc->protocol() ) && ( account->accountId() == curracc->accountId() ) )
 		{
 			account->deleteLater();
 			return 0L;
@@ -239,7 +243,7 @@ Account* AccountManager::registerAccount( Account *account )
 	}
 
 	d->accounts.append( account );	
-	d->accounts.sort();
+	qSort( d->accounts.begin(), d->accounts.end(), compareAccountsByPriority );
 	
 	// Connect to the account's status changed signal
 	connect(account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact *,
@@ -253,14 +257,14 @@ Account* AccountManager::registerAccount( Account *account )
 	return account;
 }
 
-void AccountManager::unregisterAccount( const Account *account )
+void AccountManager::unregisterAccount( Account *account )
 {
 	kdDebug( 14010 ) << k_funcinfo << "Unregistering account " << account->accountId() << endl;
 	d->accounts.remove( account );
 	emit accountUnregistered( account );
 }
 
-const Q3PtrList<Account>& AccountManager::accounts() const
+const QList<Account *>& AccountManager::accounts() const
 {
 	return d->accounts;
 }
@@ -268,10 +272,11 @@ const Q3PtrList<Account>& AccountManager::accounts() const
 Q3Dict<Account> AccountManager::accounts( const Protocol *protocol ) const
 {
 	Q3Dict<Account> dict;
-	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
 	{
-		if ( it.current()->protocol() == protocol && !it.current()->accountId().isNull() )
-			dict.insert( it.current()->accountId(), it.current() );
+		Account *a = it.next();
+		if (a->protocol() == protocol && a->accountId().isNull() )
+			dict.insert(a->accountId(), a );
 	}
 
 	return dict;
@@ -279,10 +284,11 @@ Q3Dict<Account> AccountManager::accounts( const Protocol *protocol ) const
 
 Account * AccountManager::findAccount( const QString &protocolId, const QString &accountId )
 {
-	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
 	{
-		if ( it.current()->protocol()->pluginId() == protocolId && it.current()->accountId() == accountId )
-			return it.current();
+		Account *a = it.next();
+		if ( a->protocol()->pluginId() == protocolId && a->accountId() == accountId )
+			return a;
 	}
 	return 0L;
 }
@@ -320,14 +326,15 @@ void AccountManager::removeAccount( Account *account )
 void AccountManager::save()
 {
 	//kdDebug( 14010 ) << k_funcinfo << endl;
-	d->accounts.sort();
+	qSort( d->accounts.begin(), d->accounts.end(), compareAccountsByPriority );
 	
-	for ( Q3PtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
 	{
-		KConfigBase *config = it.current()->configGroup();
+		Account *a = it.next();
+		KConfigBase *config = a->configGroup();
 	
-		config->writeEntry( "Protocol", it.current()->protocol()->pluginId() );
-		config->writeEntry( "AccountId", it.current()->accountId() );
+		config->writeEntry( "Protocol", a->protocol()->pluginId() );
+		config->writeEntry( "AccountId", a->accountId() );
 	}
 
 	KGlobal::config()->sync();

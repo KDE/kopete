@@ -65,7 +65,7 @@ public:
 	 * \brief Retrieve the list of accounts
 	 * \return a list of all the accounts
 	 */
-	const Q3PtrList<Account> & accounts() const;
+	const QList<Account *> & accounts() const;
 
 	/**
 	 * \brief Retrieve a QDict of accounts for the given protocol
@@ -216,7 +216,7 @@ private slots:
 	 * \internal
 	 * Unregister the account.
 	 */
-	void unregisterAccount( const Kopete::Account *account );
+	void unregisterAccount( Kopete::Account *account );
 
 private:
 	bool isAnyAccountConnected();
