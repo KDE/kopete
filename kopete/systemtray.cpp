@@ -342,9 +342,10 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 	bool bOffline = false;
 	Kopete::Contact *c = 0;
 
-	for (Q3PtrListIterator<Kopete::Account> it(Kopete::AccountManager::self()->accounts()); it.current(); ++it)
+	QListIterator<Kopete::Account *> it(Kopete::AccountManager::self()->accounts());
+	while ( it.hasNext() )
 	{
-		c = it.current()->myself();
+		c = it.next()->myself();
 		if (!c)
 			continue;
 

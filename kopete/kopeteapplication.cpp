@@ -241,12 +241,11 @@ void KopeteApplication::slotAllPluginsLoaded()
 				continue;
 		}
 
-		Q3PtrListIterator<Kopete::Account> it( Kopete::AccountManager::self()->accounts() );
+		QListIterator<Kopete::Account *> it( Kopete::AccountManager::self()->accounts() );
 		Kopete::Account *account;
-		while ( ( account = it.current() ) != 0 )
+		while ( it.hasNext() )
 		{
-			++it;
-
+			account = it.next();
 			if ( ( account->accountId() == accountId ) )
 			{
 				if ( protocolId.isEmpty() || account->protocol()->pluginId() == protocolId )

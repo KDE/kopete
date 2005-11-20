@@ -154,10 +154,13 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 		slotPluginLoaded( *it );
 
 	// If some account alrady loaded, build the status icon
-	Q3PtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
-	for(Kopete::Account *a=accounts.first() ; a; a=accounts.next() )
+	QListIterator<Kopete::Account *>  accit( Kopete::AccountManager::self()->accounts() );
+	Kopete::Account *a;
+	while ( accit.hasNext() )
+	{
+		a = accit.next();
 		slotAccountRegistered(a);
-
+	}
     //install an event filter for the quick search toolbar so we can
     //catch the hide events
     toolBar( "quickSearchBar" )->installEventFilter( this );
@@ -682,7 +685,7 @@ void KopeteWindow::slotAccountRegistered( Kopete::Account *account )
 void KopeteWindow::slotAccountUnregistered( const Kopete::Account *account)
 {
 //	kdDebug(14000) << k_funcinfo << "Called." << endl;
-	Q3PtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
+	QList<Kopete::Account *> accounts = Kopete::AccountManager::self()->accounts();
 	if (accounts.isEmpty())
 	{
 //		actionConnect->setEnabled(false);
@@ -759,9 +762,11 @@ void KopeteWindow::makeTrayToolTip()
 		QToolTip::remove(m_tray);
 
 		QString tt = QString::fromLatin1("<qt>");
-		Q3PtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
-		for(Kopete::Account *a = accounts.first(); a; a = accounts.next())
+		QListIterator<Kopete::Account *> it( Kopete::AccountManager::self()->accounts() );
+		Kopete::Account *a;
+		while ( it.hasNext() )
 		{
+			a = it.next();
 			Kopete::Contact *self = a->myself();
 			tt += i18n( "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</i>)<br/>",
 			            "<nobr><img src=\"kopete-account-icon:%3:%4\"> <b>%1:</b> %2 (<i>%5</i>)<br/>" )
@@ -785,9 +790,11 @@ void KopeteWindow::slotAccountStatusIconRightClicked( Kopete::Account *account, 
 
 void KopeteWindow::slotTrayAboutToShowMenu( KMenu * popup )
 {
-	Q3PtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
-	for(Kopete::Account *a=accounts.first() ; a; a=accounts.next() )
+	QListIterator<Kopete::Account *> it( Kopete::AccountManager::self()->accounts() );
+	Kopete::Account *a;
+	while ( it.hasNext() )
 	{
+		a = it.next();
 		KActionMenu *menu = a->actionMenu();
 		if( menu )
 			menu->plug(popup, 1 );

@@ -107,9 +107,11 @@ void KopeteAccountConfig::load()
 
 	m_view->mAccountList->clear();
 
-	Q3PtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
-	for ( Kopete::Account *i = accounts.first() ; i; i = accounts.next() )
+	QListIterator<Kopete::Account *> it( Kopete::AccountManager::self()->accounts() );
+	Kopete::Account *i;
+	while ( it.hasNext() )
 	{
+		i = it.next();
 		// Insert the item after the previous one
 		lvi = new KopeteAccountLVI( i, m_view->mAccountList );
 		lvi->setText( 0, i->protocol()->displayName() );

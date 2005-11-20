@@ -65,10 +65,9 @@ QStringList KopeteIface::reachableContacts()
 QStringList KopeteIface::onlineContacts()
 {
 	QStringList result;
-	QList<Kopete::Contact*> list = Kopete::ContactList::self()->onlineContacts();
-	QList<Kopete::Contact*>::iterator it;
-	for( it = list.begin(); it != list.end(); ++it )
-		result.append( (*it)->contactId() );
+	QListIterator<Kopete::Contact*> it(Kopete::ContactList::self()->onlineContacts());
+	while ( it.hasNext() )
+		result.append( it.next()->contactId() );
 
 	return result;
 }
@@ -182,28 +181,23 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 QStringList KopeteIface::accounts()
 {
 	QStringList list;
-	Q3PtrList<Kopete::Account> m_accounts=Kopete::AccountManager::self()->accounts();
-	Q3PtrListIterator<Kopete::Account> it( m_accounts );
+	QListIterator<Kopete::Account *> it( Kopete::AccountManager::self()->accounts() );
 	Kopete::Account *account;
-	while ( ( account = it.current() ) != 0 )
+	while ( it.hasNext() )
 	{
-		++it;
-
+		account = it.next();
 		list += ( account->protocol()->pluginId() +"||" + account->accountId() );
 	}
-
 	return list;
-
 }
 
 void KopeteIface::connect(const QString &protocolId, const QString &accountId )
 {
-	Q3PtrListIterator<Kopete::Account> it( Kopete::AccountManager::self()->accounts() );
+	QListIterator<Kopete::Account *> it( Kopete::AccountManager::self()->accounts() );
 	Kopete::Account *account;
-	while ( ( account = it.current() ) != 0 )
+	while ( it.hasNext() )
 	{
-		++it;
-
+		account = it.next();
 		if( ( account->accountId() == accountId) )
 		{
 			if( protocolId.isEmpty() || account->protocol()->pluginId() == protocolId )
@@ -217,12 +211,11 @@ void KopeteIface::connect(const QString &protocolId, const QString &accountId )
 
 void KopeteIface::disconnect(const QString &protocolId, const QString &accountId )
 {
-	Q3PtrListIterator<Kopete::Account> it( Kopete::AccountManager::self()->accounts() );
+	QListIterator<Kopete::Account *> it( Kopete::AccountManager::self()->accounts() );
 	Kopete::Account *account;
-	while ( ( account = it.current() ) != 0 )
+	while ( it.hasNext() )
 	{
-		++it;
-
+		account = it.next();
 		if( ( account->accountId() == accountId) )
 		{
 			if( protocolId.isEmpty() || account->protocol()->pluginId() == protocolId )

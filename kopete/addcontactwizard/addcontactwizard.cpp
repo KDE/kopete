@@ -99,9 +99,11 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 
 	// Populate the accounts list
 	Q3CheckListItem* accountLVI = 0;
-	Q3PtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
-	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next() )
+	QList<Kopete::Account *>  accounts = Kopete::AccountManager::self()->accounts();
+	QListIterator<Kopete::Account *> accit(accounts);
+	while ( accit.hasNext() )
 	{
+		Kopete::Account *i= accit.next();
 		accountLVI= new Q3CheckListItem( protocolListView, i->accountLabel(), Q3CheckListItem::CheckBox);
 		accountLVI->setText(1,i->protocol()->displayName() + QString::fromLatin1(" ") );
 		//FIXME - I'm not sure the column 1 is a right place for the colored icon -Olivier
