@@ -86,16 +86,20 @@ class QWidget;
 		   [Event/newmail]
 		   Name=New email
 		   Comment=You have got a new email
+		   Contexts=folder,group
 		   Action=Sound|Popup
 
 		   [Event/contactOnline]
 		   Name=Contact goes online
 		   Comment=One of your contact has been connected
+		   Contexts=group
 		   Sound=filetoplay.ogg
 		   Action=None
  *  </pre>
  *   All you put there are the default value.
  *   Action is a bitmask of KNotification::NotifyPresentation
+ * 
+ *  Contexts is a comma separated list of possible context for this event.
  * 
  *  \section userfile The user's config file
  * 
@@ -121,7 +125,24 @@ class QWidget;
 		   [Event/contactOnline/group/1]
 		   Action=PassivePopup|Sound
  * </pre>
- * @author Olivier Goffart  <ogoffart @ kde.org>
+ * 
+ * \section example Example of code
+ * 
+ * This portion of code will fire the event for the "contactOnline" event
+ * 
+ * @code
+	KNotification::ContextList contexts;
+	foreach( QString group , contact->groups() ) {
+		contexts.append( qMakePair( QString("group") , group ) );
+	}
+    
+	KNotification *notification=KNotification::event( "contactOnline",
+			i18n("The contact <i>%1</i> has gone online").arg( contact->name() ),
+			contact->pixmap() , 0l , QStringList( i18n( "Open chat" ) ) , contexts );
+	connect(notify, SIGNAL(activated(unsigned int )), contact , SLOT(slotOpenChat()) );
+ * @endcode
+ * 
+ * @author Olivier Goffart  <ogoffart\@kde.org>
  */
 class KOPETE_EXPORT KNotification : public QObject
 {
@@ -140,8 +161,8 @@ public:
 	 * Theses string are the one present in the config file, and are in theory not 
 	 * shown in the user interface
 	 * 
-	 * the order of contexts in the list is is importent, most importent context 
-	 * should be placed first
+	 * the order of contexts in the list is is important, most important context 
+	 * should be placed first. They are proceded in that order when the notification occurs.
 	 *
 	 * @see event
 	 */
@@ -285,7 +306,7 @@ public:
 	 * @param pixmap is a picture which may be shown in the popup.
 	 * @param widget is a widget where the notification reports to
 	 * @param actions is a list of action texts.
-	 * @param contexts is the lists of contexts
+	 * @param contexts is the lists of contexts, see ContextList
 	 * @param flags is a bitmask of NotificationsFlags  
 	 */
 	static KNotification *event( const QString& eventId , const QString& text=QString::null,
