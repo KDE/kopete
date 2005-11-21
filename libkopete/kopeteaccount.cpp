@@ -100,15 +100,10 @@ Account::Account( Protocol *parent, const QString &accountId, const char *name )
 Account::~Account()
 {
 	d->contacts.remove( d->myself->contactId() );
-	
 	// Delete all registered child contacts first
+	qDeleteAll(d->contacts);
+	d->contacts.clear();
 	
-	QHashIterator<QString, Contact*> it(d->contacts);
-	while ( it.hasNext() ) {
-		it.next();
-		delete it.value();
-	}
-
 	kdDebug( 14010 ) << k_funcinfo << " account '" << d->id << "' about to emit accountDestroyed " << endl;
 	emit accountDestroyed(this);
 
@@ -384,6 +379,8 @@ Contact * Account::myself() const
 
 void Account::setMyself( Contact *myself )
 {
+	//FIXME  does it make sens to change the myself contact to another ?   - Olivier 2005-11-21
+	
 	bool wasConnected = isConnected();
 
 	if ( d->myself )
@@ -509,21 +506,6 @@ void Account::editAccount(QWidget *parent)
 	}
 
 	editDialog->deleteLater();
-}
-
-void Account::setPluginData( Plugin* /*plugin*/, const QString &key, const QString &value )
-{
-	configGroup()->writeEntry(key,value);
-}
-
-QString Account::pluginData( Plugin* /*plugin*/, const QString &key ) const
-{
-	return configGroup()->readEntry(key);
-}
-
-void Account::setAway(bool away, const QString& reason)
-{
-	setOnlineStatus( OnlineStatusManager::self()->onlineStatus(protocol() , away ? OnlineStatusManager::Away : OnlineStatusManager::Online)  , reason );
 }
 
 void Account::virtual_hook( uint /*id*/, void* /*data*/)

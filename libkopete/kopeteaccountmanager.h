@@ -120,15 +120,12 @@ public:
 
 public slots:
 	/**
-	 * \brief Connect all accounts at once.
-	 *
-	 * Connect every account if the flag excludeConnect is false
-	 * @see @ref Account::excludeConnect()
+ 	 * @deprecated  use setOnlineStatus
 	 */
 	void connectAll();
 
 	/**
-	 * \brief Disconnect all accounts at once.
+	 * @deprecated  use setOnlineStatus
 	 */
 	void disconnectAll();
 
@@ -145,22 +142,12 @@ public slots:
 						  const QString& awayMessage = QString::null, uint flags=0);
 
 	/**
-	 * \brief Set all accounts to away at once.
-	 *
-	 * All account that are connected, but not invisible will be set to away
-	 * @see Account::setAway
-	 * @param awayReason is the away message that will be set.
-	 * @param away decides whether the message is away/non-away
+	 * @deprecated  use setOnlineStatus
 	 */
 	void setAwayAll( const QString &awayReason = QString::null, bool away=true );
 
 	/**
-	 * \brief Connect or make available every account.
-	 * Make all accounts Available, by setting status, and connecting if necessary.
-	 * Accounts are connected based on their excludeConnect() setting.
-	 * Accounts which are already connected are controlled regardless of their excludeConnect() setting.
-	 * This is a slot, so you can connect directly to it from e.g. a KAction.
-	 * @param awayReason is the away(status) message that will be set.
+	 * @deprecated  use setOnlineStatus
 	 */
 	void setAvailableAll( const QString &awayReason = QString::null );
 

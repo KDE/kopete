@@ -95,61 +95,22 @@ bool AccountManager::isAnyAccountConnected()
 
 void AccountManager::connectAll()
 {
-	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
-	{
-		Account *a = it.next();
-		if( ! a->excludeConnect())
-			a->connect();
-	}
+	setOnlineStatus( OnlineStatusManager::Online  );
 }
 
 void AccountManager::setAvailableAll( const QString &awayReason )
 {
-	Away::setGlobalAway( false );
-	bool anyConnected = isAnyAccountConnected();
-
-	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
-	{
-		Account *a = it.next();
-		if ( anyConnected )
-		{
-			if ( a->isConnected() )
-				a->setAway( false, awayReason );
-		}
-		else 
-			if(!a->excludeConnect())
-				a->connect();
-	}
+	setOnlineStatus( OnlineStatusManager::Online  , awayReason );
 }
 
 void AccountManager::disconnectAll()
 {
-	for ( QListIterator<Account *> it( d->accounts ); it.hasNext() ; )
-		it.next()->disconnect();
+	setOnlineStatus( OnlineStatusManager::Offline   );
 }
 
 void AccountManager::setAwayAll( const QString &awayReason, bool away )
 {
-	Away::setGlobalAway( true );
-	bool anyConnected = isAnyAccountConnected();
-
-	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
-	{
-		Account *a = it.next();
-		// FIXME: ICQ's invisible online should be set to invisible away
-		Contact *self = a->myself();
-		bool isInvisible = self && self->onlineStatus().status() == OnlineStatus::Invisible;
-		if ( anyConnected )
-		{
-			if ( a->isConnected() && !isInvisible )
-				a->setAway( away, awayReason );
-		}
-		else
-		{
-			if ( !a->excludeConnect() && !isInvisible )
-				a->setAway( away, awayReason );
-		}
-	}
+	setOnlineStatus( away ? OnlineStatusManager::Away : OnlineStatusManager::Online  , awayReason );
 }
 
 void AccountManager::setOnlineStatus( uint category , const QString& awayMessage, uint flags )
@@ -157,9 +118,8 @@ void AccountManager::setOnlineStatus( uint category , const QString& awayMessage
 	OnlineStatusManager::Categories katgor=(OnlineStatusManager::Categories)category;
 	bool anyConnected = isAnyAccountConnected();
 	
-	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
+	foreach( Account *account ,  d->accounts )
 	{
-		Account *account = it.next();
 		Kopete::OnlineStatus status = OnlineStatusManager::self()->onlineStatus(account->protocol() , katgor);
 		if ( anyConnected )
 		{

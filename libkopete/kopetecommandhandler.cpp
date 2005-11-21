@@ -36,6 +36,7 @@
 #include "kopetecommandhandler.h"
 #include "kopetecontact.h"
 #include "kopetecommand.h"
+#include "kopeteonlinestatusmanager.h"
 
 using Kopete::CommandList;
 
@@ -326,11 +327,11 @@ void Kopete::CommandHandler::slotPartCommand( const QString &, Kopete::ChatSessi
 void Kopete::CommandHandler::slotAwayCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	bool goAway = !manager->account()->isAway();
-
+											 
 	if( args.isEmpty() )
-		manager->account()->setAway( goAway );
+		manager->account()->setOnlineStatus( OnlineStatusManager::self()->onlineStatus(manager->account()->protocol() , goAway ? OnlineStatusManager::Away : OnlineStatusManager::Online) );
 	else
-		manager->account()->setAway( goAway, args );
+		manager->account()->setOnlineStatus( OnlineStatusManager::self()->onlineStatus(manager->account()->protocol() , goAway ? OnlineStatusManager::Away : OnlineStatusManager::Online) , args);
 }
 
 void Kopete::CommandHandler::slotAwayAllCommand( const QString &args, Kopete::ChatSession *manager )

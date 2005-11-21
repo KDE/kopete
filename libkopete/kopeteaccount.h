@@ -1,7 +1,7 @@
 /*
     kopeteaccount.h - Kopete Account
 
-    Copyright (c) 2003-2004 by Olivier Goffart       <ogoffart@ tiscalinet.be>
+    Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart@ kde.org>
     Copyright (c) 2003-2004 by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
     Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -23,8 +23,7 @@
 
 #include "kopete_export.h"
 
-#include <qobject.h>
-//Added by qt3to4:
+#include <QObject>
 #include <QPixmap>
 #include <QHash>
 
@@ -63,7 +62,7 @@ class BlackLister;
  * When you create a new account, you have to register it with the account manager by calling
  * @ref AccountManager::registerAccount.
  *
- * @author Olivier Goffart  <ogoffart@tiscalinet.be>
+ * @author Olivier Goffart  <ogoffart\@kde.org>
  */
 class KOPETE_EXPORT Account : public QObject
 {
@@ -313,11 +312,13 @@ public:
 
 	/**
 	 * \return a pointer to the blacklist of the account
+	 * @todo remove or implement correctly (BlackLister)
 	 */
 	BlackLister* blackLister();
 
 	/**
 	 * \return @c true if the contact with ID @p contactId is in the blacklist, @c false otherwise.
+	 * @todo remove or implement correctly (BlackLister)
 	 */
 	virtual bool isBlocked( const QString &contactId );
 
@@ -429,6 +430,7 @@ public slots:
 	 *
 	 * @param initialStatus is the status to connect with. If it is an invalid status for this
 	 * account, the default online for the account should be used.
+	 * @todo probably deprecate in favor of setOnlineStatus
 	 */
 	virtual void connect( const Kopete::OnlineStatus& initialStatus = OnlineStatus() ) = 0;
 
@@ -438,18 +440,11 @@ public slots:
 	 * If the service is connecting, you should abort the connection.
 	 *
 	 * You should call the @ref disconnected function from this function.
+	 * @todo  probably deprecate in favor of setOnlineStatus
 	 */
 	virtual void disconnect( ) = 0 ;
 
 public slots:
-	/**
-	 * If @p away is @c true, set the account away with away message @p reason. Otherwise,
-	 * set the account to not be away.
-	 *
-	 * @todo change ; make use of setOnlineStatus
-	 */
-	virtual void setAway( bool away, const QString &reason = QString::null );
-
 	/**
 	 * Reimplement this function to set the online status
 	 * @param status is the new status
@@ -468,6 +463,7 @@ public slots:
 	 * blackList()->addContact( contactId )
 	 *
 	 * @param contactId the contact to be added to the blacklist
+	 * @todo remove or implement correctly (BlackLister)
 	 */
 	virtual void block( const QString &contactId );
 
@@ -476,6 +472,7 @@ public slots:
 	 * blackList()->removeContact( contactId )
 	 *
 	 * @param contactId the contact to be removed from the blacklist
+	 * @todo remove or implement correctly (BlackLister)
 	 */
 	virtual void unblock( const QString &contactId );
 
@@ -502,18 +499,6 @@ private:
 protected:
 	virtual void virtual_hook( uint id, void* data);
 
-public:
-	/**
-	 * @todo remove
-	 * @deprecated  use configGroup
-	 */
-	void setPluginData( Plugin* /*plugin*/, const QString &key, const QString &value ) KDE_DEPRECATED;
-
-	/**
-	 * @todo remove
-	 * @deprecated  use configGroup
-	 */
-	QString pluginData( Plugin* /*plugin*/, const QString &key ) const KDE_DEPRECATED;
 };
 
 } //END namespace Kopete
