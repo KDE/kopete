@@ -1,10 +1,10 @@
 /*
     kopetegroup.cpp - Kopete (Meta)Contact Group
 
-    Copyright (c) 2002-2004 by Olivier Goffart       <ogoffart@ tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart       <ogoffart @ kde.org>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -24,9 +24,6 @@
 #include "kopetechatsession.h"
 
 #include <klocale.h>
-//Added by qt3to4:
-#include <Q3ValueList>
-#include <Q3PtrList>
 
 namespace Kopete {
 
@@ -136,9 +133,8 @@ const QDomElement Group::toXML()
 	group.documentElement().appendChild( displayName );
 
 	// Store other plugin data
-	Q3ValueList<QDomElement> pluginData = ContactListElement::toXML();
-	for ( Q3ValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
-		group.documentElement().appendChild( group.importNode( *it, true ) );
+	foreach ( QDomElement  it , ContactListElement::toXML() )
+		group.documentElement().appendChild( group.importNode( it, true ) );
 
 
 	return group.documentElement();

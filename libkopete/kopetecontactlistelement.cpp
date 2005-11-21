@@ -1,10 +1,10 @@
 /*
     kopeteplugindataobject.cpp - Kopete Plugin Data Object
 
-    Copyright (c) 2003-2004 by Olivier Goffart       <ogoffart @tiscalinet.be>
+    Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart @ kde.org>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -23,8 +23,6 @@
 #include <kglobal.h>
 
 #include "kopeteplugin.h"
-//Added by qt3to4:
-#include <Q3ValueList>
 
 namespace Kopete {
 
@@ -88,10 +86,10 @@ QString ContactListElement::pluginData( Plugin *plugin, const QString &key ) con
 	return d->pluginData[ plugin->pluginId() ][ key ];
 }
 
-const Q3ValueList<QDomElement> ContactListElement::toXML()
+const QList<QDomElement> ContactListElement::toXML()
 {
 	QDomDocument pluginData;
-	Q3ValueList<QDomElement> pluginNodes;
+	QList<QDomElement> pluginNodes;
 	pluginData.appendChild( pluginData.createElement( QString::fromLatin1( "plugin-data" ) ) );
 
 	if ( !d->pluginData.isEmpty() )

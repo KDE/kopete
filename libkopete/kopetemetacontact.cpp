@@ -43,8 +43,6 @@
 #include "kopeteuiglobal.h"
 //Added by qt3to4:
 #include <QPixmap>
-#include <Q3ValueList>
-#include <Q3PtrList>
 
 namespace Kopete {
 
@@ -1014,10 +1012,8 @@ const QDomElement MetaContact::toXML(bool minimal)
 		}
 
 		// Store other plugin data
-		Q3ValueList<QDomElement> pluginData = Kopete::ContactListElement::toXML();
-		for( Q3ValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
-			metaContact.documentElement().appendChild( metaContact.importNode( *it, true ) );
-
+		foreach ( QDomElement  it , ContactListElement::toXML() )
+			metaContact.documentElement().appendChild( metaContact.importNode( it, true ) );
 	}
 	return metaContact.documentElement();
 }

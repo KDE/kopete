@@ -1,7 +1,7 @@
 /*
     kopeteplugindataobject.h - Kopete Plugin Data Object
 
-    Copyright (c) 2003-2004 by Olivier Goffart       <ogoffart@ tiscalinet.be>
+    Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart @ kde.org>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
     Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -19,10 +19,10 @@
 #ifndef KOPETEPLUGINDATAOBJECT_H
 #define KOPETEPLUGINDATAOBJECT_H
 
-#include <qobject.h>
+#include <QObject>
 #include <qdom.h>
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
+#include <QMap>
 
 #include "kopete_export.h"
 
@@ -32,7 +32,7 @@ class Plugin;
 
 
 /**
- * @author Olivier Goffart  <ogoffart@ tiscalinet.be>
+ * @author Olivier Goffart
  *
  * This is the base class for  base elements of the contactlist.
  * His purpose is to share the code between @ref Group and @ref MetaContact
@@ -152,11 +152,11 @@ protected:
 	/**
 	 * Return a XML representation of plugin data
 	 */
-	const Q3ValueList<QDomElement> toXML();
+	const QList<QDomElement> toXML();
 
 	/**
 	 * Load plugin data from one Dom Element:
-	 * It should be a <plugin-data> element or a <custom-icons> element. if not, nothing will happen
+	 * It should be a \<plugin-data\> element or a \<custom-icons\> element. if not, nothing will happen
 	 * @return true if something has ben loaded. false if the element was not a fine
 	 */
 	bool fromXML( const QDomElement &element );

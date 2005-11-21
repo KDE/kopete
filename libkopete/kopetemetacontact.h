@@ -6,7 +6,7 @@
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart @ kde.org>
     Copyright (c) 2003      by Will Stephenson        <will@stevello.free-online.co.uk>
 
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -22,7 +22,7 @@
 #define kopetemetacontact_h__
 
 #include "kopetecontactlistelement.h"
-#include <q3ptrlist.h>
+#include <QList>
 #include <qstring.h>
 
 #include <kdemacros.h>
@@ -45,7 +45,7 @@ class Group;
  * @author Will Stephenson <will@stevello.free-online.co.uk>
  * @author Martijn Klingens <klingens@kde.org>
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
- * @author Olivier Goffart <ogoffart@tiscalinet.be>
+ * @author Olivier Goffart 
  *
  * A metacontact represent a person. This is a kind of entry to
  * the contactlist. All information of a contact is contained in

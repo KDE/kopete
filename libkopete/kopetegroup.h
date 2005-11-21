@@ -1,10 +1,10 @@
 /*
     kopetegroup.h - Kopete (Meta)Contact Group
 
-    Copyright (c) 2002-2004 by Olivier Goffart       <ogoffart @ kde.org>
+    Copyright (c) 2002-2005 by Olivier Goffart       <ogoffart @ kde.org>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -22,8 +22,6 @@
 #include "kopetecontactlistelement.h"
 
 #include "kopete_export.h"
-
-#include <q3ptrlist.h>
 
 class QDomElement;
 
@@ -171,7 +169,6 @@ private:
 
 	class Private;
 	Private *d;
-	
 	
 	/**
 	 * @internal  used to get reachabe contact to send message to thom.
