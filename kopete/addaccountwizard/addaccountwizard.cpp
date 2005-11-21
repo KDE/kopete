@@ -208,10 +208,22 @@ void AddAccountWizard::accept()
 void AddAccountWizard::reject()
 {
     // if we have a protocol plugin loaded and its not being used, unload it
-	if (m_proto && Kopete::AccountManager::self()->accounts(m_proto).isEmpty())
+	if (m_proto)
 	{
-		const QString PROTO_NAME = m_proto->pluginId().remove("Protocol").toLower();
-		Kopete::PluginManager::self()->unloadPlugin(PROTO_NAME);
+		bool hasAccount=false;
+		foreach( Kopete::Account *act, Kopete::AccountManager::self()->accounts() )
+		{
+			if( act->protocol() == m_proto )
+			{
+				hasAccount=true;
+				break;
+			}
+		}
+		if(hasAccount)
+		{
+			const QString PROTO_NAME = m_proto->pluginId().remove("Protocol").toLower();
+			Kopete::PluginManager::self()->unloadPlugin(PROTO_NAME);
+		}
 	}
 
 	KWizard::reject();

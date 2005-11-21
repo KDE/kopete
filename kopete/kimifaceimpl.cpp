@@ -222,26 +222,18 @@ QString KIMIfaceImpl::locate( const QString & contactId, const QString & protoco
 
 Kopete::MetaContact * KIMIfaceImpl::locateProtocolContact( const QString & contactId, const QString & protocolId )
 {
-	Kopete::MetaContact *mc = 0;
-	// find a matching protocol
-	Kopete::Protocol *protocol = dynamic_cast<Kopete::Protocol*>( Kopete::PluginManager::self()->plugin( protocolId ) );
-
-	if ( protocol )
+	foreach( Kopete::Account *ac , Kopete::AccountManager::self()->accounts() )
 	{
-		// find its accounts
-		Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( protocol );
-		Q3DictIterator<Kopete::Account> it( accounts );
-		for( ; it.current(); ++it )
+		if( ac->protocol()->pluginId() == protocolId )
 		{
-			Kopete::Contact *c = Kopete::ContactList::self()->findContact( protocolId, it.currentKey(), contactId  );
-			if (c)
+			if( ac->contacts().contains(contactId) )
 			{
-				mc=c->metaContact();
-				break;
+				Kopete::Contact *c=ac->contacts()[contactId];
+				if(c)
+					return c->metaContact();
 			}
 		}
 	}
-	return mc;
 }
 
 QPixmap KIMIfaceImpl::icon( const QString & uid )
@@ -315,19 +307,12 @@ void KIMIfaceImpl::sendFile(const QString &uid, const KURL &sourceURL,
 
 bool KIMIfaceImpl::addContact( const QString &contactId, const QString &protocolId )
 {
-	// find a matching protocol
-	Kopete::Protocol *protocol = dynamic_cast<Kopete::Protocol*>( Kopete::PluginManager::self()->plugin( protocolId ) );
-
-	if ( protocol )
+	// find its accounts
+	foreach( Kopete::Account *ac , Kopete::AccountManager::self()->accounts() )
 	{
-		// find its accounts
-		Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( protocol );
-		Q3DictIterator<Kopete::Account> it( accounts );
-		Kopete::Account *ac = it.toFirst();
-		if ( ac )
+		if( ac->protocol()->pluginId() == protocolId )
 		{
-			ac->addContact( contactId );
-			return true;
+			return ac->addContact( contactId );
 		}
 	}
 	return false;
