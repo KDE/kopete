@@ -53,7 +53,9 @@ class QWidget;
  * On installation, there should be a file called 
  *  <em>$KDEDIR/share/apps/appname/eventsrc</em>
  *  This file contains  mainly 3 parts
- *   <ol><li>Global information</li><li>Context information</li><li>Information about every events</li></ol>
+ *   <ol><li>\ref global "Global information"</li>
+ *       <li>\ref context "Context information"</li>
+ *       <li>\ref events "Information about every events"</li></ol>
  *  
  *  \subsection global Global information
  * The global part looks like that
@@ -142,11 +144,13 @@ class QWidget;
 	connect(notify, SIGNAL(activated(unsigned int )), contact , SLOT(slotOpenChat()) );
  * @endcode
  * 
- * @author Olivier Goffart  <ogoffart\@kde.org>
+ * @author Olivier Goffart  \<ogoffart\@kde.org\>
  */
 class KOPETE_EXPORT KNotification : public QObject
 {
         Q_OBJECT
+		Q_FLAGS(NotifyPresentation);
+
 public:
 	/**
 	 * Sometimes, the user may want different notification for the same event, 
@@ -307,7 +311,7 @@ public:
 	 * @param widget is a widget where the notification reports to
 	 * @param actions is a list of action texts.
 	 * @param contexts is the lists of contexts, see ContextList
-	 * @param flags is a bitmask of NotificationsFlags  
+	 * @param flags is a bitmask of KNotificationFlags  
 	 */
 	static KNotification *event( const QString& eventId , const QString& text=QString::null,
 			const QPixmap& pixmap=QPixmap(), QWidget *widget=0L,
@@ -331,9 +335,6 @@ public:
 	
 
 public:	
-	
-	Q_FLAGS(NotifyPresentation);
-	
     /**
      * Describes the notification method.
      */
