@@ -21,7 +21,7 @@
 #include "chatmessagepart.h"
 
 // KOPETE_XSLT enable old style engine
-#define KOPETE_XSLT
+//#define KOPETE_XSLT
 // STYLE_TIMETEST is for time staticstic gathering.
 //#define STYLE_TIMETEST
 
@@ -549,7 +549,7 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 			retVal.replace( QRegExp( QString::fromLatin1("([\\s&;>])%1([\\s&;<:])")
 					.arg( QRegExp::escape( parsed_nick ) )  ), QString::fromLatin1("\\1%1\\2").arg( nick ) );
 		}
-		if ( nick.length() > 0 && ( retVal.find( nick ) > -1 ) )
+		if ( nick.length() > 0 && ( retVal.find( nick ) > -1 ) && d->manager->protocol() )
 		{
 			retVal.replace(
 				QRegExp( QString::fromLatin1("([\\s&;>])(%1)([\\s&;<:])")
@@ -942,8 +942,11 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 		// protocol() returns NULL here in the style preview in appearance config.
 		// this isn't the right place to work around it, since contacts should never have
 		// no protocol, but it works for now.
+		//
+		// Use default if protocol() and protocol()->displayName() is NULL.
 		QString iconName = QString::fromUtf8("kopete");
-		if(message.from()->protocol())
+		service = QString::fromUtf8("Kopete");
+		if(message.from()->protocol() && !message.from()->protocol()->displayName().isNull())
 		{
 			service =  message.from()->protocol()->displayName();
 			iconName = message.from()->protocol()->pluginIcon();

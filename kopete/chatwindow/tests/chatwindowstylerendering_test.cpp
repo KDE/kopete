@@ -65,15 +65,6 @@ FakeProtocol( KInstance *instance, QObject *parent, const char *name ) : Kopete:
 	
 }
 
-QString displayName() const
-{
-	return QString("FakeProtocol");
-}
-QString pluginIcon () const
-{
-	return QString("kopete");
-}
-
 Account* createNewAccount( const QString &/*accountId*/ )
 {
 	return 0L;
@@ -136,8 +127,10 @@ public:
 		// Create fake meta/contacts
 		myselfMetaContact = new Kopete::MetaContact();
 		myself = new FakeContact(account, "bob@localhost", myselfMetaContact);
+		myself->setNickName("Bob");
 		otherMetaContact = new Kopete::MetaContact();
 		other = new FakeContact(account, "audrey@localhost", otherMetaContact);
+		other->setNickName("Audrey");
 		myselfMetaContact->setDisplayName("Bob");
 		myselfMetaContact->setDisplayNameSource(Kopete::MetaContact::SourceCustom);
 		otherMetaContact->setDisplayName("Audrey");
@@ -196,8 +189,8 @@ void ChatWindowStyleRendering_Test::allTests()
 	chatPart = new ChatMessagePart(d->fakeChatSession, 0, 0);
 
 	testHeaderRendering();
-	// Crash on protocol()->displayName in ChatMessagePart.
-	//testMessageRendering();
+	testMessageRendering();
+	testStatusRendering();
 }
 
 void ChatWindowStyleRendering_Test::testHeaderRendering()
@@ -211,7 +204,7 @@ void ChatWindowStyleRendering_Test::testHeaderRendering()
 "<div>%1</div>\n"
 "<div>%2</div>"
 	).arg(KGlobal::locale()->formatDateTime( QDateTime::currentDateTime()))
-	.arg(QDateTime::currentDateTime().toString("h:m"));
+	.arg(QDateTime::currentDateTime().toString("hh:mm"));
 
 	QString headerHtml = d->testStyle->getHeaderHtml();
 	QString resultHtml;
@@ -230,30 +223,63 @@ void ChatWindowStyleRendering_Test::testMessageRendering()
 "<div>Incoming/buddy_icon.png</div>\n"
 "<div>audrey@localhost</div>\n"
 "<div>Audrey</div>\n"
-"<div>FakeProtocol</div>\n"
+"<div>Kopete</div>\n"
 "<div>Test</div>\n"
 "<div>%1</div>\n"
 "<div>%2</div>\n"
 "<div id=\"insert\">"
 	).arg(KGlobal::locale()->formatDateTime( QDateTime::currentDateTime()))
-	.arg(QDateTime::currentDateTime().toString("h:m"));
+	.arg(QDateTime::currentDateTime().toString("hh:mm"));
 
-	QString expectedOutgoingHtml = QString();
-	QString expectedNextIncomingHtml = QString();
+	QString expectedOutgoingHtml = QString(
+"Outgoing:\n"
+"<div>Outgoing/buddy_icon.png</div>\n"
+"<div>bob@localhost</div>\n"
+"<div>Bob</div>\n"
+"<div>Kopete</div>\n"
+"<div>Hello there</div>\n"
+"<div>%1</div>\n"
+"<div>%2</div>\n"
+"<div id=\"insert\">"
+	).arg(KGlobal::locale()->formatDateTime( QDateTime::currentDateTime()))
+	.arg(QDateTime::currentDateTime().toString("hh:mm"));
+
+
 	QString tempHtml;
 	QString resultHtml;
 	
 	Kopete::Message msgIn(d->other, d->myself, QString::fromUtf8("Test"), Kopete::Message::Inbound );
+	Kopete::Message msgOut(d->myself, d->other, QString::fromUtf8("Hello there"), Kopete::Message::Outbound);
 
 	tempHtml = d->testStyle->getIncomingHtml();
 	resultHtml = chatPart->formatStyleKeywords(tempHtml, msgIn);
 
-	kdDebug(14000) << "Message incomign HTML: " << resultHtml << endl;
+	kdDebug(14000) << "Message incoming HTML: " << resultHtml << endl;
 
 	CHECK(resultHtml, expectedIncomingHtml);
+
+	tempHtml = d->testStyle->getOutgoingHtml();
+	resultHtml = chatPart->formatStyleKeywords(tempHtml, msgOut);
+
+	kdDebug(14000) << "Message outgoing HTML: " << resultHtml << endl;
+
+	CHECK(resultHtml, expectedOutgoingHtml);
 }
 
 void ChatWindowStyleRendering_Test::testStatusRendering()
 {
+	QString expectedStatusHtml = QString(
+"<div>A contact went offline.</div>\n"
+"<div>%1</div>\n"
+"<div>%2</div>"
+	).arg(KGlobal::locale()->formatDateTime( QDateTime::currentDateTime()))
+	.arg(QDateTime::currentDateTime().toString("hh:mm"));
+
+	QString statusHtml = d->testStyle->getStatusHtml();
+	QString resultHtml;
 	
+	Kopete::Message msgStatus(0,0, QString::fromUtf8("A contact went offline."), Kopete::Message::Internal);
+	resultHtml = chatPart->formatStyleKeywords(statusHtml, msgStatus);
+
+	CHECK(resultHtml, expectedStatusHtml);
 }
