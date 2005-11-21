@@ -86,9 +86,8 @@ AccountManager::~AccountManager()
 bool AccountManager::isAnyAccountConnected()
 {
 	bool anyConnected = false;
-	QListIterator<Account *> it( d->accounts );
-	while ( it.hasNext() )
-		anyConnected |= it.next()->isConnected();
+	foreach( Account *a , d->accounts )
+		anyConnected |= a->isConnected();
 
 	return anyConnected;
 }
@@ -229,19 +228,6 @@ const QList<Account *>& AccountManager::accounts() const
 	return d->accounts;
 }
 
-Q3Dict<Account> AccountManager::accounts( const Protocol *protocol ) const
-{
-	Q3Dict<Account> dict;
-	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
-	{
-		Account *a = it.next();
-		if (a->protocol() == protocol && a->accountId().isNull() )
-			dict.insert(a->accountId(), a );
-	}
-
-	return dict;
-}
-
 Account * AccountManager::findAccount( const QString &protocolId, const QString &accountId )
 {
 	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
@@ -260,7 +246,6 @@ void AccountManager::removeAccount( Account *account )
 
 	Protocol *protocol = account->protocol();
 
-
 	KConfigGroup *configgroup = account->configGroup();
 
 	// Clean up the account list
@@ -272,15 +257,19 @@ void AccountManager::removeAccount( Account *account )
 
 	delete account;
 
-	if ( accounts( protocol ).isEmpty() )
+	foreach( Account *account , d->accounts )
 	{
-		// FIXME: pluginId() should return the internal name and not the class name, so
-		//        we can get rid of this hack - Olivier/Martijn
-		QString protocolName = protocol->pluginId().remove( QString::fromLatin1( "Protocol" ) ).toLower();
-
-		PluginManager::self()->setPluginEnabled( protocolName, false );
-		PluginManager::self()->unloadPlugin( protocolName );
+		if( account->protocol() == protocol )
+			return;
 	}
+	//there is nomore account from the protocol,  we can unload it
+	
+	// FIXME: pluginId() should return the internal name and not the class name, so
+	//        we can get rid of this hack - Olivier/Martijn
+	QString protocolName = protocol->pluginId().remove( QString::fromLatin1( "Protocol" ) ).toLower();
+
+	PluginManager::self()->setPluginEnabled( protocolName, false );
+	PluginManager::self()->unloadPlugin( protocolName );
 }
 
 void AccountManager::save()

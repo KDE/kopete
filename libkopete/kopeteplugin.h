@@ -3,7 +3,7 @@
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@ tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart @ kde.org>
 
     Copyright (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -21,7 +21,7 @@
 #define KOPETEPLUGIN_H
 
 #include <kxmlguiclient.h>
-#include <qobject.h>
+#include <QObject>
 #include <kdemacros.h>
 
 #include "kopete_export.h"
@@ -85,7 +85,7 @@ Comment=Plugin that do some nice stuff
  * so you have to create every actions in the constructor
  *
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
- * @author Olivier Goffart <ogoffart @ tiscalinet.be>
+ * @author Olivier Goffart <ogoffart\@kde.org>
  */
 class KOPETE_EXPORT Plugin : public QObject, public KXMLGUIClient
 {

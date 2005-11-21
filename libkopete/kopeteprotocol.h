@@ -3,7 +3,7 @@
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@ tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart @ kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -53,7 +53,7 @@ class Account;
  *
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  * @author Martijn Klingens       <klingens@kde.org>
- * @author Olivier Goffart        <ogoffart @ tiscalinet.be>
+ * @author Olivier Goffart        <ogoffart\@kde.org>
  */
 class KOPETE_EXPORT Protocol : public Plugin
 {

@@ -2,7 +2,7 @@
     kopeteaccountmanager.h - Kopete Account Manager
 
     Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
-    Copyright (c) 2003-2004 by Olivier Goffart       <ogoffart@ tiscalinet.be>
+    Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart@ kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
@@ -19,9 +19,7 @@
 #ifndef __kopeteaccountmanager_h__
 #define __kopeteaccountmanager_h__
 
-#include <qobject.h>
-#include <q3ptrlist.h>
-#include <q3dict.h>
+#include <QObject>
 #include <QColor>
 #include "kopete_export.h"
 
@@ -41,7 +39,7 @@ class OnlineStatus;
  * AccountManager is a singleton, you may uses it with @ref AccountManager::self()
  *
  * @author Martijn Klingens <klingens@kde.org>
- * @author Olivier Goffart <ogoffart@ tiscalinet.be>
+ * @author Olivier Goffart <ogoffart\@kde.org>
  */
 class KOPETE_EXPORT AccountManager : public QObject
 {
@@ -66,15 +64,6 @@ public:
 	 * \return a list of all the accounts
 	 */
 	const QList<Account *> & accounts() const;
-
-	/**
-	 * \brief Retrieve a QDict of accounts for the given protocol
-	 *
-	 * The list is guaranteed to contain only accounts for the specified
-	 * protocol
-	 * \param p is the Protocol object you want accounts for
-	 */
-	Q3Dict<Account> accounts( const Protocol *p ) const;
 
 	/**
 	 * \brief Return the account asked

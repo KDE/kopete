@@ -3,7 +3,7 @@
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart @ kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -22,10 +22,6 @@
 #include <kdebug.h>
 #include <kaction.h>
 #include <klocale.h>
-
-#include <q3dict.h>
-//Added by qt3to4:
-#include <Q3PtrList>
 
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
@@ -66,15 +62,16 @@ Protocol::Protocol( KInstance *instance, QObject *parent, const char *name )
 Protocol::~Protocol()
 {
 	// Remove all active accounts
-	Q3Dict<Account> accounts = AccountManager::self()->accounts( this );
-	if ( !accounts.isEmpty() )
+	foreach( Account *a , AccountManager::self()->accounts() )
 	{
-		kdWarning( 14010 ) << k_funcinfo << "Deleting protocol with existing accounts! Did the account unloading go wrong?" << endl;
-
-		for( Q3DictIterator<Account> it( accounts ); it.current() ; ++it )
-			delete *it;
+		if( a->protocol() == this )
+		{
+			kdWarning( 14010 ) << k_funcinfo << "Deleting protocol with existing accounts! Did the account unloading go wrong?  account: " 
+					<< a->accountId() << endl;
+		
+			delete a;
+		}
 	}
-
 	delete d;
 }
 
@@ -101,7 +98,7 @@ void Protocol::slotAccountOnlineStatusChanged( Contact *self )
 	// some protocols change status several times during shutdown.  We should only call deleteLater() once
 	disconnect( self, 0, this, 0 );
 
-	connect( self->account(), SIGNAL(accountDestroyed(const Kopete::Account* )),
+	connect( self->account(), SIGNAL(destroyed( )),
 		this, SLOT( slotAccountDestroyed( ) ) );
 
 	self->account()->deleteLater();
@@ -109,15 +106,20 @@ void Protocol::slotAccountOnlineStatusChanged( Contact *self )
 
 void Protocol::slotAccountDestroyed( )
 {
-	Q3Dict<Account> dict = AccountManager::self()->accounts( this );
-	if ( dict.isEmpty() )
+	foreach( Account *a , AccountManager::self()->accounts() )
 	{
-		// While at this point we are still in a stack trace from the destroyed
-		// account it's safe to emit readyForUnload already, because it uses a
-		// deleteLater rather than a delete for exactly this reason, to keep the
-		// API managable
-		emit( readyForUnload() );
+		if( a->protocol() == this )
+		{
+			//all accounts has not been deleted yet
+			return;
+		}
 	}
+
+	// While at this point we are still in a stack trace from the destroyed
+	// account it's safe to emit readyForUnload already, because it uses a
+	// deleteLater rather than a delete for exactly this reason, to keep the
+	// API managable
+	emit( readyForUnload() );
 }
 
 void Protocol::aboutToUnload()
@@ -125,33 +127,41 @@ void Protocol::aboutToUnload()
 
 	d->unloading = true;
 
+	bool accountcountcount=0;
 	// Disconnect all accounts
-	Q3Dict<Account> accounts = AccountManager::self()->accounts( this );
-
-	if ( accounts.isEmpty() )
-		emit readyForUnload();
-	else for ( Q3DictIterator<Account> it( accounts ); it.current() ; ++it )
+	foreach( Account *a , AccountManager::self()->accounts() )
 	{
-		if ( it.current()->myself() && it.current()->myself()->isOnline() )
+		if( a->protocol() == this )
 		{
-			kdDebug( 14010 ) << k_funcinfo << it.current()->accountId() <<
-				" is still connected, disconnecting..." << endl;
+			accountcountcount++;
+			
+			if ( a->myself() && a->myself()->isOnline() )
+			{
+				kdDebug( 14010 ) << k_funcinfo << a->accountId() <<
+						" is still connected, disconnecting..." << endl;
 
-			QObject::connect( it.current()->myself(),
-				SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
-				this, SLOT( slotAccountOnlineStatusChanged( Kopete::Contact * ) ) );
-			it.current()->disconnect();
-		}
-		else
-		{
-			// Remove account, it's already disconnected
-			kdDebug( 14010 ) << k_funcinfo << it.current()->accountId() <<
-				" is already disconnected, deleting..." << endl;
+				QObject::connect( a->myself(),
+								  SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
+								  this, SLOT( slotAccountOnlineStatusChanged( Kopete::Contact * ) ) );
+				a->disconnect();
+			}
+			else
+			{
+				// Remove account, it's already disconnected
+				kdDebug( 14010 ) << k_funcinfo << a->accountId() <<
+						" is already disconnected, deleting..." << endl;
 
-			QObject::connect( it.current(), SIGNAL( accountDestroyed( const Kopete::Account* ) ),
-				this, SLOT( slotAccountDestroyed( ) ) );
-			it.current()->deleteLater();
+				QObject::connect( a, SIGNAL( destroyed( ) ),
+								  this, SLOT( slotAccountDestroyed( ) ) );
+				a->deleteLater();
+			}
 		}
+	}
+
+	if( accountcountcount > 0 )
+	{
+		//no accounts in there anymore ,   we can unload safelly
+		emit readyForUnload();
 	}
 }
 

@@ -17,8 +17,6 @@
 
 #include <qstring.h>
 #include <qtimer.h>
-//Added by qt3to4:
-#include <Q3PtrList>
 
 #include <kabc/addressbook.h>
 #include <kabc/addressee.h>
@@ -318,12 +316,12 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 						if ( separatorPos != -1 )
 							*it = (*it).left( separatorPos );
 
-						Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( proto );
-						Q3DictIterator<Kopete::Account> acs(accounts);
 						Kopete::MetaContact *otherMc = 0;
-						for ( acs.toFirst(); acs.current(); ++acs )
+						foreach( Kopete::Account *act, Kopete::AccountManager::self()->accounts() )
 						{
-							Kopete::Contact *c= acs.current()->contacts()[*it];
+							if( act->protocol() != proto )
+								continue;
+							Kopete::Contact *c= act->contacts()[*it];
 							if(c)
 							{
 								otherMc=c->metaContact();
@@ -353,12 +351,23 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 								// Check the accounts for this protocol are all connected
 								// Most protocols do not allow you to add contacts while offline
 								// Would be better to have a virtual bool Kopete::Account::readyToAddContact()
+								int accountcount=0;
 								bool allAccountsConnected = true;
-								for ( acs.toFirst(); acs.current(); ++acs )
-									if ( !acs.current()->isConnected() )
-								{	allAccountsConnected = false;
-								break;
+								Kopete::Account *chosen = 0;
+								foreach( Kopete::Account *act, Kopete::AccountManager::self()->accounts() )
+								{
+									if( act->protocol() == proto) 
+									{
+										accountcount++;
+										if(!act->isConnected())
+										{
+											allAccountsConnected=false;
+											break;
+										}
+										chosen=act;
+									}
 								}
+
 								if ( !allAccountsConnected )
 								{
 									KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
@@ -369,8 +378,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 
 								// we have got a contact to add, our accounts are connected, so add it.
 								// Do we need to choose an account
-								Kopete::Account *chosen = 0;
-								if ( accounts.count() > 1 )
+								if ( accountcount > 1 )
 								{	// if we have >1 account in this protocol, prompt for the protocol.
 									KDialogBase *chooser = new KDialogBase(0, "chooser", true,
 											i18n("Choose Account"), KDialogBase::Ok|KDialogBase::Cancel,
@@ -384,16 +392,12 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 
 									delete chooser;
 								}
-								else if ( accounts.isEmpty() )
+								else if ( accountcount == 0 )
 								{
 									KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
 											i18n( "<qt>You do not have an account configured for <b>%1</b> yet.  Please create an account, connect it, and try again.</qt>" ).arg( protocolName ),
 											i18n( "No Account Found" )  );
 									continue;
-								}
-								else // if we have 1 account in this protocol, choose it
-								{
-									chosen = acs.toFirst();
 								}
 
 								// add the contact to the chosen account

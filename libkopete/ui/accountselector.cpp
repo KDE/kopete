@@ -101,26 +101,11 @@ void AccountSelector::initUI()
 	d->lv->addColumn(QString::fromLatin1(""));
 	d->lv->header()->hide();
 
-	if(d->proto != 0)
+	kdDebug(14010) << k_funcinfo << "creating list of all accounts" << endl;
+	foreach(Kopete::Account *account , Kopete::AccountManager::self()->accounts() )
 	{
-		kdDebug(14010) << k_funcinfo << "creating list for a certain protocol" << endl;
-		Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(d->proto);
-		Q3DictIterator<Kopete::Account> it(accounts);
-		for(; Kopete::Account *account = it.current(); ++it)
-		{
+		if( !d->proto  ||  account->protocol() == d->proto )
 			new AccountListViewItem(d->lv, account);
-		}
-	}
-	else
-	{
-		kdDebug(14010) << k_funcinfo << "creating list of all accounts" << endl;
-		QListIterator<Kopete::Account *> it( Kopete::AccountManager::self()->accounts() );
-		Kopete::Account *account;
-		while ( it.hasNext() )
-		{
-			account = it.next(); 
-			new AccountListViewItem(d->lv, account);
-		}
 	}
 
 	connect(d->lv, SIGNAL(selectionChanged(Q3ListViewItem *)),
