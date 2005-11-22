@@ -21,7 +21,7 @@
 #include "chatmessagepart.h"
 
 // KOPETE_XSLT enable old style engine
-#define KOPETE_XSLT
+//#define KOPETE_XSLT
 // STYLE_TIMETEST is for time staticstic gathering.
 //#define STYLE_TIMETEST
 
@@ -499,13 +499,11 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 		// Find the insert Node
 		DOM::HTMLElement insertNode = document().getElementById( QString::fromUtf8("insert") );
 
-		if( d->latestDirection == message.direction() )
+		// Consecutive messages are only for normal messages, status messages do not have a <div id="insert">
+		if( d->latestDirection == message.direction() && !insertNode.isNull() )
 		{
 			// Replace the insert block, because it's a consecutive message.
-			if( !insertNode.isNull() )
-			{
-				insertNode.parentNode().replaceChild(newMessageNode, insertNode);
-			}
+			insertNode.parentNode().replaceChild(newMessageNode, insertNode);
 		}
 		else
 		{
