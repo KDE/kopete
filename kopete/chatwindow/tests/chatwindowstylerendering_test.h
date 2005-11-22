@@ -35,6 +35,7 @@ public slots:
 	void testHeaderRendering();
 	void testMessageRendering();
 	void testStatusRendering();
+	void testFullRendering();
 private:
 	class Private;
 	Private *d;

@@ -24,6 +24,7 @@
 #include <qdir.h>
 #include <qfile.h>
 #include <qdatetime.h>
+#include <qtextstream.h>
 
 // KDE includes
 #include <kapplication.h>
@@ -191,6 +192,7 @@ void ChatWindowStyleRendering_Test::allTests()
 	testHeaderRendering();
 	testMessageRendering();
 	testStatusRendering();
+	//testFullRendering();
 }
 
 void ChatWindowStyleRendering_Test::testHeaderRendering()
@@ -282,4 +284,36 @@ void ChatWindowStyleRendering_Test::testStatusRendering()
 	resultHtml = chatPart->formatStyleKeywords(statusHtml, msgStatus);
 
 	CHECK(resultHtml, expectedStatusHtml);
+}
+
+void ChatWindowStyleRendering_Test::testFullRendering()
+{
+	QString expectedFullHtml;
+	QString resultHtml;
+
+	Kopete::Message msgIn1((d->myself, d->other, QString("Hello there !"), Kopete::Message::Inbound);
+	Kopete::Message msgIn2(d->myself, d->other, QString("How are you doing ?"), Kopete::Message::Inbound);
+	Kopete::Message msgOut1(d->other, d->myself, QString("Fine and you ?"), Kopete::Message::Outbound);
+	Kopete::Message msgStatus1(0,0, QString("You are now marked as away."), Kopete::Message::Internal);
+	Kopete::Message msgStatus2(0,0, QString("You are now marked as online."), Kopete::Message::Internal);
+	Kopete::Message msgIn3(d->myself, d->other, QString("Well, doing some tests."), Kopete::Message::Internal);
+	Kopete::Message msgOut2(d->other, d->myself, QString("All your bases are belong to us."), Kopete::Message::Outbound);
+	Kopete::Message msgOut3(d->other, d->myself, QString("You are on the way to destruction"), Kopete::Message::Outbound);
+
+	// TODO: Make change style on the fly in ChatMessagePart so this test would run
+	resultHtml = charPart->htmlDocument().asHTML();
+
+	// Read the expected(sample) HTML from file.
+	QFile sampleHtml(QString(SRCDIR)+"sample.html");
+	if(sampleHtml.open())
+	{
+		QTextStream stream(&sampleHtml);
+		stream.setEncoding(QTextStream::UnicodeUTF8);
+		expectedFullHtml = stream.read();
+		sampleHtml.close();
+	}
+	
+	// Simulate a chat session here.
+
+	CHECK(resultHtml, expectedFullHtml);
 }

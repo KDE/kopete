@@ -120,6 +120,7 @@ public:
 
 	ChatWindowStyle *adiumStyle;
 	Kopete::Message::MessageDirection latestDirection;
+	Kopete::Contact *latestContact;
 };
 
 class ChatMessagePart::ToolTip : public QToolTip
@@ -463,12 +464,18 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 		}
 #else
 		QString formattedMessageHtml;
+		bool isConsecutiveMessage = false;
+		// Check if it's a consecutive Message
+		// Consecutive messages are only for normal messages, status messages do not have a <div id="insert">
+		// We check if the from() is the latestContact, because consecutive incoming/outgoing message can come from differents peopole(in groupchat and IRC)
+		isConsecutiveMessage = (d->latestDirection == message.direction() && d->latestContact && d->latestContact == message.from());
+
 		// TODO: Check if the user want consecutive messages.
 		switch(message.direction())
 		{
 			case Kopete::Message::Inbound:
 			{
-				if(d->latestDirection == Kopete::Message::Inbound)
+				if(isConsecutiveMessage)
 					formattedMessageHtml = d->adiumStyle->getNextIncomingHtml();
 				else
 					formattedMessageHtml = d->adiumStyle->getIncomingHtml();
@@ -476,7 +483,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 			}
 			case Kopete::Message::Outbound:
 			{
-				if(d->latestDirection == Kopete::Message::Outbound)
+				if(isConsecutiveMessage)
 					formattedMessageHtml = d->adiumStyle->getNextOutgoingHtml();
 				else
 					formattedMessageHtml = d->adiumStyle->getOutgoingHtml();
@@ -499,8 +506,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 		// Find the insert Node
 		DOM::HTMLElement insertNode = document().getElementById( QString::fromUtf8("insert") );
 
-		// Consecutive messages are only for normal messages, status messages do not have a <div id="insert">
-		if( d->latestDirection == message.direction() && !insertNode.isNull() )
+		if( isConsecutiveMessage && !insertNode.isNull() )
 		{
 			// Replace the insert block, because it's a consecutive message.
 			insertNode.parentNode().replaceChild(newMessageNode, insertNode);
@@ -519,7 +525,9 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 
 		// Keep the direction to see on next message
 		// if it's a consecutive message
+		// Keep also the from() contact.
 		d->latestDirection = message.direction();
+		d->latestContact = const_cast<Kopete::Contact*>(message.from());
 #endif
 		if ( !d->scrollPressed )
 			QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
