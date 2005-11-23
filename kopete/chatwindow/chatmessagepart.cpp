@@ -21,7 +21,7 @@
 #include "chatmessagepart.h"
 
 // KOPETE_XSLT enable old style engine
-//#define KOPETE_XSLT
+#define KOPETE_XSLT
 // STYLE_TIMETEST is for time staticstic gathering.
 //#define STYLE_TIMETEST
 
