@@ -3,7 +3,7 @@ body	{
 	background: url("images/kopete.png"); background-position: center; background-attachment: fixed; background-repeat: no-repeat; background-color: black
 	}
 
-#Chat  { padding-top: 10px; margin: 4px; overflow: hidden }
+#Chat  { padding-top: 50px; margin: 4px; overflow: hidden }
 
 #Header { background: url("images/background.png") repeat-x right top; position: fixed; z-index: 100; top: 0; right: 0; left: 0; height: 80px; border-bottom: 0 none }
 
