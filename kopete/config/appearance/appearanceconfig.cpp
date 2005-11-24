@@ -71,6 +71,10 @@
 #include <ktexteditor/document.h>
 #include <ktexteditor/view.h>
 
+//for kopete style
+#include <kopetechatwindowstylemanager.h>
+#include <kopetechatwindowstyle.h>
+
 // Things we fake to get the message preview to work
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
@@ -592,9 +596,11 @@ void AppearanceConfig::load()
 
 void AppearanceConfig::loadStyles()
 {
+	//XSLT :
 	// FIXME: Using the filename as user-visible name is not translatable! - Martijn
 	mPrfsChatWindow->styleList->clear();
 	QStringList chatStyles = KGlobal::dirs()->findAllResources( "appdata", QString::fromLatin1( "styles/*.xsl" ) );
+
 	for ( QStringList::Iterator it = chatStyles.begin(); it != chatStyles.end(); ++it )
 	{
 		QFileInfo fi( *it );
@@ -607,6 +613,26 @@ void AppearanceConfig::loadStyles()
 			mPrfsChatWindow->styleList->setSelected( mPrfsChatWindow->styleList->firstItem(), true );
 	}
 	mPrfsChatWindow->styleList->sort();
+
+	// XHTML + CSS :
+	// We get a list of avalable style (in a Qmap) from ChatWindowStyleManager
+/*	typedef QMap<QString, ChatWindowStyle*> StyleMap;
+	ChatWindowStyleManager::self()->loadStyles();
+
+	StyleMap styleMap = ChatWindowStyleManager::self()->getAvailableStyles();
+
+	for ( StyleMap::Iterator it = styleMap.begin(); it != styleMap.end(); ++it )
+	{
+		//QFileInfo fi( *it );
+		//QString fileName = fi.fileName().section( '.', 0, 0 );
+		mPrfsChatWindow->styleList->insertItem( it.key(), 0 );
+		itemMap.insert( mPrfsChatWindow->styleList->firstItem(), it.key() );
+		//KDirWatch::self()->addFile(it.key());
+
+		if ( it.data()->getStylePath() == KopetePrefs::prefs()->stylePath() )
+			mPrfsChatWindow->styleList->setSelected( mPrfsChatWindow->styleList->firstItem(), true );
+	}
+	mPrfsChatWindow->styleList->sort();*/
 }
 
 void AppearanceConfig::updateEmoticonlist()

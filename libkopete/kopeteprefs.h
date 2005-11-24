@@ -101,10 +101,16 @@ public:
 	bool autoConnect() const { return mAutoConnect; }
 
 	int chatWindowPolicy() const { return mChatWindowPolicy; }
+
+	//Styles
+	QString defaultTheme() const { return QString::fromLatin1("Default"); }
+	//for XSLT
 	QString styleSheet() const { return mStyleSheet; }
 	QString styleDataPath() const { return mStyleDataPath; }
 	QString styleContents() const { return mStyleContents; }
-	QString defaultTheme() const { return QString::fromLatin1("Default"); }
+	//for Adium (xhtml+css)
+	QString stylePath() const { return mStylePath; }
+	QString styleVariant() const { return mStyleVariant; }
 
 	QStringList toolTipContents() const { return mToolTipContents; }
 
@@ -286,9 +292,15 @@ private:
 	int mMaxContactNameLength;
 
 	bool mRichText;
+
+	//XSLT
 	QString mStyleSheet;
 	QString mStyleDataPath;
 	QString mStyleContents;
+	// xhtml+css
+	//for Adium (xhtml+css)
+	QString mStylePath;
+	QString mStyleVariant;
 
 	QStringList mToolTipContents;
 

@@ -190,16 +190,12 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	d->bgChanged = false;
 	d->scrollPressed = false;
 
-	// FIXME: Use KopetePrefs instead, this is just for the moment.
 #ifndef KOPETE_XSLT
-	KConfig *config = KGlobal::config();
-	config->reparseConfiguration();
-	config->setGroup("KopeteChatWindow");
-	d->adiumStyle = new ChatWindowStyle(config->readEntry("StylePath"), ChatWindowStyle::StyleBuildFast);
 
-	// Set style variant(if applicable)
-	// FIXME: Use KopetePrefs
-	QString variantPath = config->readEntry("VariantPath");
+	KopetePrefs *kopetePrefs = KopetePrefs::prefs();
+
+	d->adiumStyle = new ChatWindowStyle(kopetePrefs->stylePath(), ChatWindowStyle::StyleBuildFast);
+
 #endif
 	//Security settings, we don't need this stuff
 	setJScriptEnabled( true ) ;
@@ -242,7 +238,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 		).arg(d->adiumStyle->getStyleBaseHref())
 		.arg( formatStyleKeywords(d->adiumStyle->getHeaderHtml()) )
 		.arg( formatStyleKeywords(d->adiumStyle->getFooterHtml()) )
-		.arg(variantPath);
+		.arg(kopetePrefs->styleVariant());
 	write(xhtmlBase);
 #endif
 #ifdef STYLE_TIMETEST

@@ -112,6 +112,9 @@ void KopetePrefs::load()
 	_setStyleSheet.
 	*/
 	_setStyleSheet(config->readEntry("Stylesheet", QString::fromLatin1(KOPETE_DEFAULT_CHATSTYLE)));
+	mStylePath = config->readEntry("StylePath"); 
+	mStyleVariant = config->readEntry("StyleVariant");
+
 
 	mToolTipContents = config->readListEntry("ToolTipContents");
 	if(mToolTipContents.empty())
@@ -225,7 +228,14 @@ void KopetePrefs::save()
 	config->writeEntry("View Plugin", mInterfacePreference);
 
 	config->writeEntry("Show Systemtray", mShowTray);
+
+	//Style
+	//for XSLT
 	config->writeEntry("Stylesheet", mStyleSheet);
+	//for xhtml+css
+	config->writeEntry("StylePath", mStylePath);
+	config->writeEntry("StyleVariant", mStyleVariant);
+
 
 	config->writeEntry("ToolTipContents", mToolTipContents);
 
