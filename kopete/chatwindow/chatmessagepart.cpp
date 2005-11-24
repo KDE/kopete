@@ -21,7 +21,7 @@
 #include "chatmessagepart.h"
 
 // KOPETE_XSLT enable old style engine
-#define KOPETE_XSLT
+//#define KOPETE_XSLT
 // STYLE_TIMETEST is for time staticstic gathering.
 //#define STYLE_TIMETEST
 
@@ -119,7 +119,6 @@ public:
 	KAction *copyURLAction;
 
 	ChatWindowStyle *adiumStyle;
-	Kopete::Message::MessageDirection latestDirection;
 	Kopete::Contact *latestContact;
 };
 
@@ -464,7 +463,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 		// Check if it's a consecutive Message
 		// Consecutive messages are only for normal messages, status messages do not have a <div id="insert">
 		// We check if the from() is the latestContact, because consecutive incoming/outgoing message can come from differents peopole(in groupchat and IRC)
-		isConsecutiveMessage = (d->latestDirection == message.direction() && d->latestContact && d->latestContact == message.from());
+		isConsecutiveMessage = (d->latestContact && d->latestContact == message.from());
 
 		// TODO: Check if the user want consecutive messages.
 		switch(message.direction())
@@ -522,7 +521,6 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 		// Keep the direction to see on next message
 		// if it's a consecutive message
 		// Keep also the from() contact.
-		d->latestDirection = message.direction();
 		d->latestContact = const_cast<Kopete::Contact*>(message.from());
 #endif
 		if ( !d->scrollPressed )
