@@ -115,7 +115,7 @@ void ChatWindowStyleManager::slotNewStyles(const KFileItemList &dirList)
 		{
 			kdDebug(14010) << k_funcinfo << "Listing: " << item->url().fileName() << endl;
 			// Build a chat window style and list its variants.
-			ChatWindowStyle *newStyle = new ChatWindowStyle(item->url().fileName(), ChatWindowStyle::StyleBuildNormal);
+			ChatWindowStyle *newStyle = new ChatWindowStyle(item->url().path(), ChatWindowStyle::StyleBuildNormal);
 			// TODO: Use name from Info.plist
 			d->availableStyles.insert(item->url().fileName(), newStyle);
 		}

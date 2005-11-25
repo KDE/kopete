@@ -45,12 +45,11 @@ private slots:
 	void slotUpdatePreview();
 	void slotHighlightChanged();
 	void slotChangeFont();
-	void slotEditStyle();
 	void slotDeleteStyle();
 	void slotImportStyle();
 	void slotCopyStyle();
-	void slotStyleModified(const QString &);
 	void slotStyleSelected();
+	void slotVariantSelected(const QString &variantName);
 	void slotEditTooltips();
 	void emitChanged();
 	void installNewTheme();

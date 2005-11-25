@@ -459,6 +459,16 @@ void KopetePrefs::_setStyleSheet(const QString &value)
 
 }
 
+void KopetePrefs::setStylePath(const QString &stylePath)
+{
+	mStylePath = stylePath;
+}
+
+void KopetePrefs::setStyleVariant(const QString &variantPath)
+{
+	mStyleVariant = variantPath;
+}
+
 void KopetePrefs::setFontFace( const QFont &value )
 {
 	if( value != mFontFace ) mWindowAppearanceChanged = true;

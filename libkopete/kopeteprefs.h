@@ -166,6 +166,8 @@ public:
 	void setBeepNotify(bool);
 	void setChatWindowPolicy(int);
 	void setStyleSheet (const QString &);
+	void setStylePath(const QString &);
+	void setStyleVariant(const QString &);
 	void setTransparencyEnabled(bool);
 	void setTransparencyColor(const QColor &);
 	void setChatViewBufferSize(int);

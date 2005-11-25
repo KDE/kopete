@@ -68,11 +68,6 @@
 #include <knewstuff/provider.h>       // "
 #include <kfilterdev.h>               // knewstuff gzipped file support
 
-#include <ktexteditor/highlightinginterface.h>
-#include <ktexteditor/editinterface.h>
-#include <ktexteditor/document.h>
-#include <ktexteditor/view.h>
-
 // For Kopete Chat Window Style configuration and preview.
 #include <kopetechatwindowstylemanager.h>
 #include <kopetechatwindowstyle.h>
@@ -84,7 +79,6 @@
 #include "kopetemessage.h"
 
 #include "kopeteprefs.h"
-#include "kopetexsl.h"
 #include "kopeteemoticons.h"
 #include "kopeteglobal.h"
 
@@ -98,7 +92,7 @@ class AppearanceConfig::Private
 public:
 	Private()
 	 : mAppearanceTabCtl(0L), preview(0L), mPrfsEmoticons(0L),mPrfsChatWindow(0L),
-	   mPrfsColors(0L), mPrfsContactList(0L), editedItem(0L), loading(false),
+	   mPrfsColors(0L), mPrfsContactList(0L), loading(false),
 	   styleChanged(false)
 	{}
 
@@ -110,9 +104,10 @@ public:
 	AppearanceConfig_Colors *mPrfsColors;
 	AppearanceConfig_ContactList *mPrfsContactList;
 	
-	QListBoxItem *editedItem;
 	QMap<QListBoxItem*,QString> itemMap;
-	QString currentStyle;
+	QMap<QListBoxItem*,ChatWindowStyle*> styleItemMap;
+	ChatWindowStyle::StyleVariants currentVariantMap;
+	ChatWindowStyle *currentStyle;
 	bool loading;
 	bool styleChanged;
 };
@@ -358,8 +353,6 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 
 	// Disable current non-working (and also obsolete) buttons
 	// TODO: Remove these following lines when everything will be back to normal.
-	d->mPrfsChatWindow->addButton->setEnabled(false);
-	d->mPrfsChatWindow->editButton->setEnabled(false);
 	d->mPrfsChatWindow->deleteButton->setEnabled(false);
 	d->mPrfsChatWindow->importButton->setEnabled(false);
 	d->mPrfsChatWindow->copyButton->setEnabled(false);
@@ -368,10 +361,8 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(slotTransparencyChanged(bool)));
 	connect(d->mPrfsChatWindow->styleList, SIGNAL(selectionChanged(QListBoxItem *)),
 		this, SLOT(slotStyleSelected()));
-	connect(d->mPrfsChatWindow->addButton, SIGNAL(clicked()),
-		this, SLOT(slotAddStyle()));
-	connect(d->mPrfsChatWindow->editButton, SIGNAL(clicked()),
-		this, SLOT(slotEditStyle()));
+	connect(d->mPrfsChatWindow->variantList, SIGNAL(activated(const QString&)),
+		this, SLOT(slotVariantSelected(const QString &)));
 	connect(d->mPrfsChatWindow->deleteButton, SIGNAL(clicked()),
 		this, SLOT(slotDeleteStyle()));
 	connect(d->mPrfsChatWindow->importButton, SIGNAL(clicked()),
@@ -409,10 +400,6 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 // 	l->addWidget(htmlWidget);
 
 	d->mAppearanceTabCtl->addTab( d->mPrfsChatWindow, i18n("Chat Window") );
-
-
-	connect( KDirWatch::self() , SIGNAL(dirty(const QString&)) , this, SLOT( slotStyleModified( const QString &) ) );
-
 
 	// "Contact List" TAB =======================================================
 	d->mPrfsContactList = new AppearanceConfig_ContactList(d->mAppearanceTabCtl);
@@ -514,10 +501,13 @@ void AppearanceConfig::save()
 	p->setTransparencyColor( d->mPrfsChatWindow->mTransparencyTintColor->color() );
 	p->setTransparencyEnabled( d->mPrfsChatWindow->mTransparencyEnabled->isChecked() );
 	p->setTransparencyValue( d->mPrfsChatWindow->mTransparencyValue->value() );
-	// TODO: Replace with new code.
-// 	if( styleChanged || p->styleSheet() != mPrfsChatWindow->styleList->selectedItem()->text() )
-// 		p->setStyleSheet(  mPrfsChatWindow->styleList->selectedItem()->text() );
-// 	kdDebug(14000) << k_funcinfo << p->styleSheet()  << mPrfsChatWindow->styleList->selectedItem()->text() << endl;
+
+	// Get the stylePath
+	kdDebug(14000) << k_funcinfo << d->currentStyle->getStylePath() << endl;
+	p->setStylePath(d->currentStyle->getStylePath());
+	// Get and save the styleVariant
+	kdDebug(14000) << k_funcinfo << d->currentVariantMap[ d->mPrfsChatWindow->variantList->currentText()] << endl;
+	p->setStyleVariant(d->currentVariantMap[ d->mPrfsChatWindow->variantList->currentText()]);
 
 	// "Contact List" TAB =======================================================
 	p->setTreeView(d->mPrfsContactList->mTreeContactList->isChecked());
@@ -628,15 +618,23 @@ void AppearanceConfig::load()
 void AppearanceConfig::slotLoadStyles()
 {
 	d->mPrfsChatWindow->styleList->clear();
+	d->styleItemMap.clear();
 
 	ChatWindowStyleManager::StyleList availableStyles;
 	availableStyles = ChatWindowStyleManager::self()->getAvailableStyles();
 	ChatWindowStyleManager::StyleList::ConstIterator it, itEnd = availableStyles.constEnd();
 	for(it = availableStyles.constBegin(); it != itEnd; ++it)
 	{
+		// Insert style name into the listbox
 		d->mPrfsChatWindow->styleList->insertItem( it.key(), 0 );
+		// Insert the style class into the internal map for futher acces.
+		d->styleItemMap.insert( d->mPrfsChatWindow->styleList->firstItem(), it.data() );
+
 		if( it.data()->getStylePath() == KopetePrefs::prefs()->stylePath() )
+		{
+			d->currentStyle = it.data();
 			d->mPrfsChatWindow->styleList->setSelected( d->mPrfsChatWindow->styleList->firstItem(), true );
+		}
 	}
 	d->mPrfsChatWindow->styleList->sort();
 }
@@ -712,26 +710,39 @@ void AppearanceConfig::slotHighlightChanged()
 
 void AppearanceConfig::slotChangeFont()
 {
-	d->currentStyle = QString::null; //force to update preview;
 	slotUpdatePreview();
 	emitChanged();
 }
 
 void AppearanceConfig::slotStyleSelected()
 {
-	QString filePath = d->itemMap[d->mPrfsChatWindow->styleList->selectedItem()];
-	QFileInfo fi( filePath );
-	if(fi.isWritable())
+	// Retrieve variant list.
+	d->currentStyle = d->styleItemMap[d->mPrfsChatWindow->styleList->selectedItem()];
+	d->currentVariantMap = d->currentStyle->getVariants();
+	
+	// Update the variant list based on current style.
+	d->mPrfsChatWindow->variantList->clear();
+
+	ChatWindowStyle::StyleVariants::ConstIterator it, itEnd = d->currentVariantMap.constEnd();
+	int currentIndex = 0;
+	for(it = d->currentVariantMap.constBegin(); it != itEnd; ++it)
 	{
-		d->mPrfsChatWindow->editButton->setEnabled( true );
-		d->mPrfsChatWindow->deleteButton->setEnabled( true );
+		// Insert variant name into the combobox.
+		d->mPrfsChatWindow->variantList->insertItem( it.key() );
+
+		if( it.data() == KopetePrefs::prefs()->styleVariant() )
+			d->mPrfsChatWindow->variantList->setCurrentItem(currentIndex);
+
+		currentIndex++;
 	}
-	else
-	{
-		d->mPrfsChatWindow->editButton->setEnabled( false );
-		d->mPrfsChatWindow->deleteButton->setEnabled( false );
-	}
-	slotUpdatePreview();
+	
+	// TODO: Update the preview
+	emitChanged();
+}
+
+void AppearanceConfig::slotVariantSelected(const QString &variantName)
+{
+	// TODO: Update the preview
 	emitChanged();
 }
 
@@ -789,14 +800,6 @@ void AppearanceConfig::slotCopyStyle()
 	emitChanged();
 }
 
-void AppearanceConfig::slotEditStyle()
-{
-	d->editedItem = d->mPrfsChatWindow->styleList->selectedItem();
-	QString stylePath = d->itemMap[ d->editedItem ];
-
-	KRun::runURL(stylePath, "text/plain");
-}
-
 void AppearanceConfig::slotDeleteStyle()
 {
 	if( KMessageBox::warningContinueCancel( this, i18n("Are you sure you want to delete the style \"%1\"?")
@@ -823,20 +826,6 @@ void AppearanceConfig::slotDeleteStyle()
 		delete style;
 	}
 	emitChanged();
-}
-
-void AppearanceConfig::slotStyleModified(const QString &filename)
-{
-	d->editedItem = d->mPrfsChatWindow->styleList->selectedItem();
-	QString stylePath = d->itemMap[ d->editedItem ];
-
-	if(filename == stylePath)
-	{
-		d->currentStyle=QString::null;  //force to relead the preview
-		slotUpdatePreview();
-
-		emitChanged();
-	}
 }
 
 void AppearanceConfig::slotGetStyles()
@@ -890,9 +879,9 @@ void AppearanceConfig::slotUpdatePreview()
 	if(d->loading)
 		return;
 
-	QListBoxItem *style = d->mPrfsChatWindow->styleList->selectedItem();
-	if( style && style->text() != d->currentStyle )
-	{
+// 	QListBoxItem *style = d->mPrfsChatWindow->styleList->selectedItem();
+// 	if( style && style->text() != d->currentStyle )
+// 	{
 		//TODO: should be using a ChatMessagePart
 // 		d->preview->begin();
 // 		d->preview->write( QString::fromLatin1(
@@ -915,7 +904,7 @@ void AppearanceConfig::slotUpdatePreview()
 // 		preview->end();
 
 		emitChanged();
-	}
+// 	}
 }
 
 void AppearanceConfig::emitChanged()
