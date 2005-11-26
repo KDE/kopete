@@ -291,7 +291,7 @@ void ChatWindowStyleRendering_Test::testFullRendering()
 	QString expectedFullHtml;
 	QString resultHtml;
 
-	Kopete::Message msgIn1((d->myself, d->other, QString("Hello there !"), Kopete::Message::Inbound);
+	Kopete::Message msgIn1(d->myself, d->other, QString("Hello there !"), Kopete::Message::Inbound);
 	Kopete::Message msgIn2(d->myself, d->other, QString("How are you doing ?"), Kopete::Message::Inbound);
 	Kopete::Message msgOut1(d->other, d->myself, QString("Fine and you ?"), Kopete::Message::Outbound);
 	Kopete::Message msgStatus1(0,0, QString("You are now marked as away."), Kopete::Message::Internal);
@@ -301,11 +301,11 @@ void ChatWindowStyleRendering_Test::testFullRendering()
 	Kopete::Message msgOut3(d->other, d->myself, QString("You are on the way to destruction"), Kopete::Message::Outbound);
 
 	// TODO: Make change style on the fly in ChatMessagePart so this test would run
-	resultHtml = charPart->htmlDocument().asHTML();
+	resultHtml = chatPart->htmlDocument().toHTML();
 
 	// Read the expected(sample) HTML from file.
 	QFile sampleHtml(QString(SRCDIR)+"sample.html");
-	if(sampleHtml.open())
+	if(sampleHtml.open(IO_ReadOnly))
 	{
 		QTextStream stream(&sampleHtml);
 		stream.setEncoding(QTextStream::UnicodeUTF8);

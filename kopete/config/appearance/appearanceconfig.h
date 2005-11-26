@@ -60,6 +60,8 @@ private slots:
 
 private:
 	void updateEmoticonlist();
+	void createPreviewChatSession();
+	void createPreviewMessages();
 	
 private:
 	class Private;

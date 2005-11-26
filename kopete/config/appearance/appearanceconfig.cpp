@@ -74,9 +74,13 @@
 #include <chatmessagepart.h>
 
 // Things we fake to get the message preview to work
-#include "kopetemetacontact.h"
-#include "kopetecontact.h"
-#include "kopetemessage.h"
+#include <kopeteprotocol.h>
+#include <kopetemetacontact.h>
+#include <kopeteaccount.h>
+#include <kopetecontact.h>
+#include <kopetemessage.h>
+#include <kopetechatsession.h>
+#include <kopetechatsessionmanager.h>
 
 #include "kopeteprefs.h"
 #include "kopeteemoticons.h"
@@ -86,6 +90,10 @@
 
 typedef KGenericFactory<AppearanceConfig, QWidget> KopeteAppearanceConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_appearanceconfig, KopeteAppearanceConfigFactory( "kcm_kopete_appearanceconfig" ) )
+
+class FakeProtocol;
+class FakeAccount;
+class FakeContact;
 
 class AppearanceConfig::Private
 {
@@ -104,12 +112,20 @@ public:
 	AppearanceConfig_Colors *mPrfsColors;
 	AppearanceConfig_ContactList *mPrfsContactList;
 	
-	QMap<QListBoxItem*,QString> itemMap;
 	QMap<QListBoxItem*,ChatWindowStyle*> styleItemMap;
 	ChatWindowStyle::StyleVariants currentVariantMap;
 	ChatWindowStyle *currentStyle;
 	bool loading;
 	bool styleChanged;
+
+	// For style preview
+	FakeProtocol *previewProtocol;
+	FakeAccount *previewAccount;
+	Kopete::MetaContact *myselfMetaContact;
+	Kopete::MetaContact *jackMetaContact;
+	FakeContact *myself;
+	FakeContact *jack;
+	Kopete::ChatSession *previewChatSession;
 };
 
 // TODO: Rewrite KopeteStyleNewStuff, support new theme format and remove bugs.
@@ -384,20 +400,24 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(emitChanged()));
 
 	d->mPrfsChatWindow->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
+	// Create the fake Chat Session
+	createPreviewChatSession();
 	// TODO: ChatMessagePart require a Kopete::ChatSession.
-// 	QVBoxLayout *l = new QVBoxLayout(d->mPrfsChatWindow->htmlFrame);
-// 	d->preview = new ChatMessagePart(d->mPrfsChatWindow->htmlFrame, "preview");
-// 	d->preview->setJScriptEnabled(false);
-// 	d->preview->setJavaEnabled(false);
-// 	d->preview->setPluginsEnabled(false);
-// 	d->preview->setMetaRefreshEnabled(false);
-// 	KHTMLView *htmlWidget = preview->view();
-// 	htmlWidget->setMarginWidth(4);
-// 	htmlWidget->setMarginHeight(4);
-// 	htmlWidget->setFocusPolicy(NoFocus);
-// 	htmlWidget->setSizePolicy(
-// 		QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-// 	l->addWidget(htmlWidget);
+	QVBoxLayout *l = new QVBoxLayout(d->mPrfsChatWindow->htmlFrame);
+	d->preview = new ChatMessagePart(d->previewChatSession, d->mPrfsChatWindow->htmlFrame, "preview");
+	d->preview->setJScriptEnabled(false);
+	d->preview->setJavaEnabled(false);
+	d->preview->setPluginsEnabled(false);
+	d->preview->setMetaRefreshEnabled(false);
+	KHTMLView *htmlWidget = d->preview->view();
+	htmlWidget->setMarginWidth(4);
+	htmlWidget->setMarginHeight(4);
+	htmlWidget->setFocusPolicy(NoFocus);
+	htmlWidget->setSizePolicy(
+		QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+	l->addWidget(htmlWidget);
+	// Add the preview message to the ChatMessagePart
+	createPreviewMessages();
 
 	d->mAppearanceTabCtl->addTab( d->mPrfsChatWindow, i18n("Chat Window") );
 
@@ -504,7 +524,8 @@ void AppearanceConfig::save()
 
 	// Get the stylePath
 	kdDebug(14000) << k_funcinfo << d->currentStyle->getStylePath() << endl;
-	p->setStylePath(d->currentStyle->getStylePath());
+	if(d->currentStyle)
+		p->setStylePath(d->currentStyle->getStylePath());
 	// Get and save the styleVariant
 	kdDebug(14000) << k_funcinfo << d->currentVariantMap[ d->mPrfsChatWindow->variantList->currentText()] << endl;
 	p->setStyleVariant(d->currentVariantMap[ d->mPrfsChatWindow->variantList->currentText()]);
@@ -636,6 +657,10 @@ void AppearanceConfig::slotLoadStyles()
 			d->mPrfsChatWindow->styleList->setSelected( d->mPrfsChatWindow->styleList->firstItem(), true );
 		}
 	}
+	// Set the initial preview style
+	d->preview->setStyle(d->currentStyle);
+	d->preview->setStyleVariant(KopetePrefs::prefs()->styleVariant());
+
 	d->mPrfsChatWindow->styleList->sort();
 }
 
@@ -720,6 +745,8 @@ void AppearanceConfig::slotStyleSelected()
 	d->currentStyle = d->styleItemMap[d->mPrfsChatWindow->styleList->selectedItem()];
 	d->currentVariantMap = d->currentStyle->getVariants();
 	
+	kdDebug(14000) << "Loading style: " << d->currentStyle->getStylePath() << endl;
+
 	// Update the variant list based on current style.
 	d->mPrfsChatWindow->variantList->clear();
 
@@ -736,13 +763,23 @@ void AppearanceConfig::slotStyleSelected()
 		currentIndex++;
 	}
 	
-	// TODO: Update the preview
+	// Update the preview
+	d->preview->setStyle(d->currentStyle);
+	// Get the first variant to preview
+	// Check if the current style has variants.
+	if( !d->currentVariantMap.empty() )
+		d->preview->setStyleVariant(d->currentVariantMap[0]);
+
 	emitChanged();
 }
 
 void AppearanceConfig::slotVariantSelected(const QString &variantName)
 {
-	// TODO: Update the preview
+// 	kdDebug(14000) << k_funcinfo << variantName << endl;
+// 	kdDebug(14000) << k_funcinfo << d->currentVariantMap[variantName] << endl;
+
+	// Update the preview
+	d->preview->setStyleVariant(d->currentVariantMap[variantName]);
 	emitChanged();
 }
 
@@ -780,51 +817,51 @@ void AppearanceConfig::slotImportStyle()
 
 void AppearanceConfig::slotCopyStyle()
 {
-	QListBoxItem *copiedItem = d->mPrfsChatWindow->styleList->selectedItem();
-	if( copiedItem )
-	{
-		QString styleName =
-			KInputDialog::getText( i18n( "New Style Name" ), i18n( "Enter the name of the new style:" ) );
-
-		if ( !styleName.isEmpty() )
-		{
-			QString stylePath = d->itemMap[ copiedItem ];
-			//addStyle( styleName, fileContents( stylePath ) );
-		}
-	}
-	else
-	{
-		KMessageBox::queuedMessageBox( this, KMessageBox::Sorry,
-			i18n("Please select a style to copy."), i18n("No Style Selected") );
-	}
+// 	QListBoxItem *copiedItem = d->mPrfsChatWindow->styleList->selectedItem();
+// 	if( copiedItem )
+// 	{
+// 		QString styleName =
+// 			KInputDialog::getText( i18n( "New Style Name" ), i18n( "Enter the name of the new style:" ) );
+// 
+// 		if ( !styleName.isEmpty() )
+// 		{
+// 			QString stylePath = d->itemMap[ copiedItem ];
+// 			addStyle( styleName, fileContents( stylePath ) );
+// 		}
+// 	}
+// 	else
+// 	{
+// 		KMessageBox::queuedMessageBox( this, KMessageBox::Sorry,
+// 			i18n("Please select a style to copy."), i18n("No Style Selected") );
+// 	}
 	emitChanged();
 }
 
 void AppearanceConfig::slotDeleteStyle()
 {
-	if( KMessageBox::warningContinueCancel( this, i18n("Are you sure you want to delete the style \"%1\"?")
-		.arg( d->mPrfsChatWindow->styleList->selectedItem()->text() ),
-		i18n("Delete Style"), KGuiItem(i18n("Delete Style"),"editdelete")) == KMessageBox::Continue )
-	{
-		QListBoxItem *style = d->mPrfsChatWindow->styleList->selectedItem();
-		QString filePath = d->itemMap[ style ];
-		d->itemMap.remove( style );
-
-		QFileInfo fi( filePath );
-		if( fi.isWritable() )
-			QFile::remove( filePath );
-
-		KConfig *config = KGlobal::config();
-		config->setGroup("KNewStuffStatus");
-		config->deleteEntry( style->text() );
-		config->sync();
-
-		if( style->next() )
-			d->mPrfsChatWindow->styleList->setSelected( style->next(), true );
-		else
-			d->mPrfsChatWindow->styleList->setSelected( style->prev(), true );
-		delete style;
-	}
+// 	if( KMessageBox::warningContinueCancel( this, i18n("Are you sure you want to delete the style \"%1\"?")
+// 		.arg( d->mPrfsChatWindow->styleList->selectedItem()->text() ),
+// 		i18n("Delete Style"), KGuiItem(i18n("Delete Style"),"editdelete")) == KMessageBox::Continue )
+// 	{
+// 		QListBoxItem *style = d->mPrfsChatWindow->styleList->selectedItem();
+// 		QString filePath = d->itemMap[ style ];
+// 		d->itemMap.remove( style );
+// 
+// 		QFileInfo fi( filePath );
+// 		if( fi.isWritable() )
+// 			QFile::remove( filePath );
+// 
+// 		KConfig *config = KGlobal::config();
+// 		config->setGroup("KNewStuffStatus");
+// 		config->deleteEntry( style->text() );
+// 		config->sync();
+// 
+// 		if( style->next() )
+// 			d->mPrfsChatWindow->styleList->setSelected( style->next(), true );
+// 		else
+// 			d->mPrfsChatWindow->styleList->setSelected( style->prev(), true );
+// 		delete style;
+// 	}
 	emitChanged();
 }
 
@@ -843,35 +880,90 @@ void AppearanceConfig::slotGetStyles()
 }
 
 // Reimplement Kopete::Contact and its abstract method
+// This is for style preview.
 class FakeContact : public Kopete::Contact
 {
 public:
-	FakeContact ( const QString &id, Kopete::MetaContact *mc ) : Kopete::Contact( 0, id, mc ) {}
+	FakeContact (Kopete::Account *account, const QString &id, Kopete::MetaContact *mc ) : Kopete::Contact( account, id, mc ) {}
 	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags /*c*/) { return 0L; }
 	virtual void slotUserInfo() {};
 };
 
-static QString sampleConversationXML()
+// This is for style preview.
+class FakeProtocol : public Kopete::Protocol
 {
-	//Kopete::MetaContact jackMC;
-	FakeContact myself( i18n( "Myself" ), 0 );
-	FakeContact jack( i18n( "Jack" ), /*&jackMC*/ 0 );
+public:
+FakeProtocol( KInstance *instance, QObject *parent, const char *name ) : Kopete::Protocol(instance, parent, name){}
+Kopete::Account* createNewAccount( const QString &/*accountId*/ ){return 0L;}
+AddContactPage* createAddContactWidget( QWidget */*parent*/, Kopete::Account */*account*/){return 0L;}
+KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account */*account*/, QWidget */*parent */){return 0L;}
+};
 
-	Kopete::Message msgIn  ( &jack,   &myself, i18n( "Hello, this is an incoming message :-)" ), Kopete::Message::Inbound );
-	Kopete::Message msgOut ( &myself, &jack,   i18n( "Ok, this is an outgoing message" ), Kopete::Message::Outbound );
-	Kopete::Message msgCol ( &jack,   &myself, i18n( "Here is an incoming colored message" ), Kopete::Message::Inbound );
+// This is for style preview.
+class FakeAccount : public Kopete::Account
+{
+public:
+FakeAccount(Kopete::Protocol *parent, const QString &accountID, const char *name) : Kopete::Account(parent, accountID, name){}
+~FakeAccount()
+{}
+bool createContact( const QString &/*contactId*/, Kopete::MetaContact */*parentContact*/ ){return true;}
+void connect( const Kopete::OnlineStatus& /*initialStatus*/){}
+void disconnect(){}
+void setOnlineStatus( const Kopete::OnlineStatus& /*status*/ , const QString &/*reason*/){}
+};
+
+void AppearanceConfig::createPreviewChatSession()
+{
+	d->previewProtocol = new FakeProtocol( new KInstance(QCString("kopete-preview-chatwindowstyle")), 0L, "kopete-preview-chatwindowstyle");
+	d->previewAccount = new FakeAccount(d->previewProtocol, QString("previewaccount"), 0);
+
+	// Create fake meta/contacts
+	d->myselfMetaContact = new Kopete::MetaContact();
+	d->myself = new FakeContact(d->previewAccount, i18n("This is the myself preview contact id", "myself@preview"), d->myselfMetaContact);
+	d->myself->setNickName(i18n("This is the myself preview contact nickname", "Myself"));
+	d->jackMetaContact = new Kopete::MetaContact();
+	d->jack = new FakeContact(d->previewAccount, i18n("This is the other preview contact id", "jack@preview"), d->jackMetaContact);
+	d->jack->setNickName(i18n("This is the other preview contact nickname", "Jack"));
+	d->myselfMetaContact->setDisplayName(i18n("Myself"));
+	d->myselfMetaContact->setDisplayNameSource(Kopete::MetaContact::SourceCustom);
+	d->jackMetaContact->setDisplayName(i18n("Jack"));
+	d->jackMetaContact->setDisplayNameSource(Kopete::MetaContact::SourceCustom);
+
+	Kopete::ContactPtrList contactList;
+	contactList.append(d->jack);
+	// Create fakeChatSession
+	d->previewChatSession = Kopete::ChatSessionManager::self()->create(d->myself, contactList, 0);
+	d->previewChatSession->setDisplayName("Preview Session");	
+}
+
+void AppearanceConfig::createPreviewMessages()
+{
+	Kopete::Message msgIn( d->jack,d->myself, i18n( "Hello, this is an incoming message :-)" ), Kopete::Message::Inbound );
+	Kopete::Message msgIn2( d->jack, d->myself, i18n( "Hello, this a incoming consecutive message." ), Kopete::Message::Inbound );
+
+	Kopete::Message msgOut( d->myself, d->jack, i18n( "Ok, this is an outgoing message" ), Kopete::Message::Outbound );
+	Kopete::Message msgOut2( d->myself, d->jack, i18n( "Ok, a outgoing consecutive message." ), Kopete::Message::Outbound );
+ 
+	Kopete::Message msgCol( d->jack, d->myself, i18n( "Here is an incoming colored message" ), Kopete::Message::Inbound );
 	msgCol.setFg( QColor( "DodgerBlue" ) );
 	msgCol.setBg( QColor( "LightSteelBlue" ) );
-	Kopete::Message msgInt ( &jack,   &myself, i18n( "This is an internal message" ), Kopete::Message::Internal );
-	Kopete::Message msgAct ( &jack,   &myself, i18n( "performed an action" ), Kopete::Message::Inbound,
+	Kopete::Message msgInt( d->jack, d->myself, i18n( "This is an internal message" ), Kopete::Message::Internal );
+	Kopete::Message msgAct( d->jack, d->myself, i18n( "performed an action" ), Kopete::Message::Inbound,
 				  Kopete::Message::PlainText, QString::null, Kopete::Message::TypeAction );
-	Kopete::Message msgHigh( &jack,   &myself, i18n( "This is a highlighted message" ), Kopete::Message::Inbound );
+	Kopete::Message msgHigh( d->jack, d->myself, i18n( "This is a highlighted message" ), Kopete::Message::Inbound );
 	msgHigh.setImportance( Kopete::Message::Highlight );
-	Kopete::Message msgBye ( &myself, &jack,   i18n( "Bye" ), Kopete::Message::Outbound );
+	Kopete::Message msgBye ( d->myself, d->jack,   i18n( "Bye" ), Kopete::Message::Outbound );
 
-	return QString::fromLatin1( "<document>" ) + msgIn.asXML().toString() + msgOut.asXML().toString()
-	       + msgCol.asXML().toString() + msgInt.asXML().toString() + msgAct.asXML().toString()
-	       + msgHigh.asXML().toString() + msgBye.asXML().toString() + QString::fromLatin1( "</document>" );
+	// Add the messages to ChatMessagePart
+	d->preview->appendMessage(msgIn);
+	d->preview->appendMessage(msgIn2);
+	d->preview->appendMessage(msgOut);
+	d->preview->appendMessage(msgOut2);
+	d->preview->appendMessage(msgCol);
+	d->preview->appendMessage(msgInt);
+	d->preview->appendMessage(msgAct);
+	d->preview->appendMessage(msgHigh);
+	d->preview->appendMessage(msgBye);
 }
 
 void AppearanceConfig::slotUpdatePreview()

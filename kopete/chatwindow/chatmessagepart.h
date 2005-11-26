@@ -33,6 +33,7 @@ namespace Kopete
 	class Contact; 
 }
 class KPopupMenu;
+class ChatWindowStyle;
 
 /**
  * @author Richard Smith
@@ -56,18 +57,7 @@ public:
 	 * Change XSLT stylesheet
 	 */
 	void setStylesheet( const QString &style  );
-	/**
-	 * Change the current style. 
-	 * Need to rebuild all the XHTML content.
-	 * @param stylePath absolute path to the style.
-	 */
-	void changeStyle( const QString &stylePath );
-	/**
-	 * Change the current variant for the current style
-	 * @param variantPath relative path to the style variant.
-	 */
-	void setStyleVariant( const QString &variantPath );
-
+	
 	/**
 	 * Immediately scroll the chat to the bottom, as long as it has not been intentionally scrolled away from the bottom
 	 * use 
@@ -108,8 +98,37 @@ public slots:
 	/**
 	 * Appends a message to the messave view
 	 * @param message The message to be appended
+	 * @param restoring This flag is used to not re-append message when changing style. By default false.
 	 */
-	void appendMessage( Kopete::Message &message );
+	void appendMessage( Kopete::Message &message, bool restoring = false);
+
+	/**
+	 * Change the current style.
+	 * This method override is used when preferences change.
+	 * This method create a new ChatWindowStyle object.
+	 *
+	 * Need to rebuild all the XHTML content.
+	 *
+	 * @param stylePath absolute path to the style.
+	 */
+	void setStyle( const QString &stylePath );
+	
+	/**
+	 * Change the current style
+	 * This method override is used on preview and unit tests.
+	 * Use a already existing ChatWindowStyle object.
+	 *
+	 * Need to rebuild all the XHTML content.
+	 *
+	 * @param chatWindowStyle ChatWindowStyle object.
+	 */
+	void setStyle( ChatWindowStyle *style );
+	
+	/**
+	 * Change the current variant for the current style
+	 * @param variantPath relative path to the style variant.
+	 */
+	void setStyleVariant( const QString &variantPath );
 
 signals:
 	/**
@@ -203,6 +222,16 @@ private:
 	 * @return the formatted time string.
 	 */
 	QString formatTime(const QString &timeFormat, const QDateTime &dateTime);
+
+	/**
+	 * Do the actual style change.
+	 */
+	void changeStyle();
+
+	/**
+	 * Write the template file to KHTMLPart
+	 */
+	void writeTemplate();
 
 	class ToolTip;
 	friend class ToolTip;

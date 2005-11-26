@@ -71,6 +71,14 @@ void ChatWindowStyleManager::loadStyles()
 		d->styleDirLister->deleteLater();
 		d->styleDirLister = 0L;
 	}
+	
+	// Clear current availableStyles
+	StyleList::ConstIterator styleIt, styleItEnd = d->availableStyles.constEnd();
+	for(styleIt = d->availableStyles.constBegin(); styleIt != styleItEnd; ++styleIt)
+	{
+		delete styleIt.data();
+	}
+	d->availableStyles.clear();
 
 	QStringList chatStyles = KGlobal::dirs()->findDirs( "appdata", QString::fromUtf8( "styles" ) );
 	QStringList::const_iterator it;

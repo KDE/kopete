@@ -35,6 +35,7 @@
 #include <qbuffer.h>
 #include <qptrlist.h>
 #include <qregexp.h>
+#include <qvaluelist.h>
 
 // KHTML::DOM includes
 #include <dom/dom_doc.h>
@@ -118,8 +119,12 @@ public:
 	KAction *closeAction;
 	KAction *copyURLAction;
 
-	ChatWindowStyle *adiumStyle;
+	ChatWindowStyle *currentChatStyle;
+	Kopete::Message::MessageDirection latestDirection;
 	Kopete::Contact *latestContact;
+	// Yep I know it will take memory, but I don't have choice
+	// to enable on-the-fly style changing.
+	QValueList<Kopete::Message> allMessages;
 };
 
 class ChatMessagePart::ToolTip : public QToolTip
@@ -193,7 +198,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 
 	KopetePrefs *kopetePrefs = KopetePrefs::prefs();
 
-	d->adiumStyle = new ChatWindowStyle(kopetePrefs->stylePath(), ChatWindowStyle::StyleBuildFast);
+	d->currentChatStyle = new ChatWindowStyle(kopetePrefs->stylePath(), ChatWindowStyle::StyleBuildFast);
 
 #endif
 	//Security settings, we don't need this stuff
@@ -203,47 +208,24 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	setMetaRefreshEnabled( false );
 	setOnlyLocalReferences( true );
 
-	begin();
 #ifdef STYLE_TIMETEST
 	QTime beforeHeader = QTime::currentTime();
 #endif
 #ifdef KOPETE_XSLT
+	begin();
 	write( QString::fromLatin1( "<html><head>\n"
 		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=") +
 		encoding() + QString::fromLatin1("\">\n<style>") + styleHTML() +
 		QString::fromLatin1("</style></head><body></body></html>") );
+	end();
 #else
-	// FIXME: Maybe this string should be load from a file, then parsed for args.
-	QString xhtmlBase;
-	xhtmlBase += QString("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-		"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n"
-		"\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n"
-		"<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
-    	"<head>\n"
-        "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\n\" />\n"
-        "<base href=\"%1\">\n"
-		"<style id=\"baseStyle\" type=\"text/css\" media=\"screen,print\">\n"
-		"	@import url(\"main.css\");\n"
-		"	*{ word-wrap:break-word; }\n"
-		"</style>\n"
-		"<style id=\"mainStyle\" type=\"text/css\" media=\"screen,print\">\n"
-		"	@import url(\"%4\");\n"
-        "</style>\n"
-		"</head>\n"
-		"<body>\n"
-		"%2\n"
-		"<div id=\"Chat\">\n"
-		"%3\n"
-		).arg(d->adiumStyle->getStyleBaseHref())
-		.arg( formatStyleKeywords(d->adiumStyle->getHeaderHtml()) )
-		.arg( formatStyleKeywords(d->adiumStyle->getFooterHtml()) )
-		.arg(kopetePrefs->styleVariant());
-	write(xhtmlBase);
+	// Write the template to KHTMLPart
+	writeTemplate();
 #endif
 #ifdef STYLE_TIMETEST
 	kdDebug(14000) << "Header time: " << beforeHeader.msecsTo( QTime::currentTime()) << endl;
 #endif
-	end();
+	
 
 	view()->setFocusPolicy( QWidget::NoFocus );
 
@@ -394,16 +376,33 @@ void ChatMessagePart::setStylesheet( const QString &style )
 	slotRefreshNodes();
 }
 
-void ChatMessagePart::changeStyle( const QString &stylePath )
+void ChatMessagePart::setStyle( const QString &stylePath )
 {
-	// TODO	
+	// Clear the old style.
+	delete d->currentChatStyle;
+	d->currentChatStyle = 0L;
+	
+	// Create a new ChatWindowStyle
+	d->currentChatStyle = new ChatWindowStyle(stylePath);
+
+	// Do the actual style switch
+	changeStyle();
+}
+
+void ChatMessagePart::setStyle( ChatWindowStyle *style )
+{
+	// Change the current style
+	d->currentChatStyle = style;
+
+	// Do the actual style switch
+	changeStyle();
 }
 
 void ChatMessagePart::setStyleVariant( const QString &variantPath )
 {
 	DOM::HTMLElement variantNode = document().getElementById( QString::fromUtf8("mainStyle") );
 	if( !variantNode.isNull() )
-		variantNode.setInnerHTML( QString("@import url(\"%1\");").arg(variantPath) );
+		variantNode.setInnerText( QString("@import url(\"%1\");").arg(variantPath) );
 }
 
 void ChatMessagePart::slotAppearanceChanged()
@@ -414,15 +413,14 @@ void ChatMessagePart::slotAppearanceChanged()
 	slotRefreshNodes();
 }
 
-void ChatMessagePart::appendMessage( Kopete::Message &message )
+void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 {
-	//parse emoticons and URL now.
+	// parse emoticons and URL now.
 	message.setBody( message.parsedBody() , Kopete::Message::ParsedHTML );
 
 	message.setBgOverride( d->bgOverride );
 	message.setFgOverride( d->fgOverride );
 	message.setRtfOverride( d->rtfOverride );
-
 #ifdef STYLE_TIMETEST
 	QTime beforeMessage = QTime::currentTime();
 #endif
@@ -463,7 +461,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 		// Check if it's a consecutive Message
 		// Consecutive messages are only for normal messages, status messages do not have a <div id="insert">
 		// We check if the from() is the latestContact, because consecutive incoming/outgoing message can come from differents peopole(in groupchat and IRC)
-		isConsecutiveMessage = (d->latestContact && d->latestContact == message.from());
+		isConsecutiveMessage = (message.direction() == d->latestDirection && d->latestContact && d->latestContact == message.from());
 
 		// TODO: Check if the user want consecutive messages.
 		switch(message.direction())
@@ -471,22 +469,22 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 			case Kopete::Message::Inbound:
 			{
 				if(isConsecutiveMessage)
-					formattedMessageHtml = d->adiumStyle->getNextIncomingHtml();
+					formattedMessageHtml = d->currentChatStyle->getNextIncomingHtml();
 				else
-					formattedMessageHtml = d->adiumStyle->getIncomingHtml();
+					formattedMessageHtml = d->currentChatStyle->getIncomingHtml();
 				break;
 			}
 			case Kopete::Message::Outbound:
 			{
 				if(isConsecutiveMessage)
-					formattedMessageHtml = d->adiumStyle->getNextOutgoingHtml();
+					formattedMessageHtml = d->currentChatStyle->getNextOutgoingHtml();
 				else
-					formattedMessageHtml = d->adiumStyle->getOutgoingHtml();
+					formattedMessageHtml = d->currentChatStyle->getOutgoingHtml();
 				break;
 			}
 			case Kopete::Message::Internal:
 			{
-				formattedMessageHtml = d->adiumStyle->getStatusHtml();
+				formattedMessageHtml = d->currentChatStyle->getStatusHtml();
 				break;
 			}
 		}
@@ -521,7 +519,12 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 		// Keep the direction to see on next message
 		// if it's a consecutive message
 		// Keep also the from() contact.
+		d->latestDirection = message.direction();
 		d->latestContact = const_cast<Kopete::Contact*>(message.from());
+
+		// Add the message to the list for futher restoring if needed
+		if(!restoring)
+			d->allMessages.append(message);
 #endif
 		if ( !d->scrollPressed )
 			QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
@@ -1093,6 +1096,54 @@ QString ChatMessagePart::formatTime(const QString &timeFormat, const QDateTime &
 	strftime (buffer, 256, timeFormat.ascii(), loctime);
 
 	return QString(buffer);
+}
+
+void ChatMessagePart::changeStyle()
+{
+	// Rewrite the header and footer.
+	writeTemplate();
+	
+	// Readd all current messages.
+	QValueList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
+	for(it = d->allMessages.constBegin(); it != itEnd; ++it)
+	{
+		Kopete::Message tempMessage = *it;
+		appendMessage(tempMessage, true); // true means that we are restoring.
+	}
+	kdDebug(14000) << k_funcinfo << "Finish changing style." << endl;
+}
+
+void ChatMessagePart::writeTemplate()
+{
+	// Clear all the page, and begin a new page.
+	begin();
+	// FIXME: Maybe this string should be load from a file, then parsed for args.
+	QString xhtmlBase;
+	xhtmlBase += QString("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+		"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n"
+		"\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n"
+		"<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
+    	"<head>\n"
+        "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\n\" />\n"
+        "<base href=\"%1\">\n"
+		"<style id=\"baseStyle\" type=\"text/css\" media=\"screen,print\">\n"
+		"	@import url(\"main.css\");\n"
+		"	*{ word-wrap:break-word; }\n"
+		"</style>\n"
+		"<style id=\"mainStyle\" type=\"text/css\" media=\"screen,print\">\n"
+		"	@import url(\"%4\");\n"
+        "</style>\n"
+		"</head>\n"
+		"<body>\n"
+		"%2\n"
+		"<div id=\"Chat\">\n"
+		"%3\n"
+		).arg( d->currentChatStyle->getStyleBaseHref() )
+		.arg( formatStyleKeywords(d->currentChatStyle->getHeaderHtml()) )
+		.arg( formatStyleKeywords(d->currentChatStyle->getFooterHtml()) )
+		.arg( KopetePrefs::prefs()->styleVariant() );
+	write(xhtmlBase);
+	end();
 }
 
 #include "chatmessagepart.moc"
