@@ -112,7 +112,8 @@ void KopetePrefs::load()
 	_setStyleSheet.
 	*/
 	_setStyleSheet(config->readEntry("Stylesheet", QString::fromLatin1(KOPETE_DEFAULT_CHATSTYLE)));
-	mStylePath = config->readEntry("StylePath"); 
+
+	_setStylePath(config->readEntry("StylePath"));
 	mStyleVariant = config->readEntry("StyleVariant");
 
 
@@ -461,7 +462,21 @@ void KopetePrefs::_setStyleSheet(const QString &value)
 
 void KopetePrefs::setStylePath(const QString &stylePath)
 {
+	_setStylePath(stylePath);
+}
+
+void KopetePrefs::_setStylePath(const QString &stylePath)
+{
 	mStylePath = stylePath;
+	
+	// Fallback to default style if the directory doesn't exist
+	// or the value is empty.
+	if( !QFile::exists(stylePath) || stylePath.isEmpty() )
+	{
+		QString fallback;
+		fallback = QString(QString::fromLatin1("styles/%1/")).arg(QString::fromLatin1(KOPETE_DEFAULT_CHATSTYLE));
+		mStylePath = locate("appdata", fallback);
+	}
 }
 
 void KopetePrefs::setStyleVariant(const QString &variantPath)
