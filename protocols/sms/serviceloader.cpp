@@ -14,6 +14,8 @@
     *************************************************************************
 */
 
+#include "config.h"
+
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kdebug.h>
@@ -21,6 +23,9 @@
 #include "serviceloader.h"
 #include "smssend.h"
 #include "smsclient.h"
+#ifdef INCLUDE_SMSGSM
+#	include "gsmlib.h"
+#endif
 #include "kopeteuiglobal.h"
 
 SMSService* ServiceLoader::loadService(const QString& name, Kopete::Account* account)
@@ -32,6 +37,10 @@ SMSService* ServiceLoader::loadService(const QString& name, Kopete::Account* acc
 		s = new SMSSend(account);
 	else if (name == "SMSClient")
 		s = new SMSClient(account);
+#ifdef INCLUDE_SMSGSM
+	else if (name == "GSMLib")
+		s = new GSMLib(account);
+#endif
 	else
 	{
 		KMessageBox::sorry(Kopete::UI::Global::mainWidget(), i18n("Could not load service %1.").arg(name),
@@ -47,6 +56,9 @@ QStringList ServiceLoader::services()
 	QStringList toReturn;
 	toReturn.append("SMSSend");
 	toReturn.append("SMSClient");
+#ifdef INCLUDE_SMSGSM
+	toReturn.append("GSMLib");
+#endif	
 	return toReturn;
 }
 

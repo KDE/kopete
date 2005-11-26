@@ -4,8 +4,15 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
     -I.. \
     $(all_includes)
 
+KDE_CXXFLAGS = $(USE_EXCEPTIONS)
+
 noinst_LTLIBRARIES = libkopetesmsservices.la
 
+
 libkopetesmsservices_la_SOURCES = smssend.cpp smssendprefs.ui smssendprovider.cpp \
-	smsclient.cpp smsclientprefs.ui
+	smsclient.cpp smsclientprefs.ui gsmlib.cpp gsmlibprefs.ui
+
+if include_smsgsm
+libkopetesmsservices_la_LIBADD = -lgsmme
+endif
 

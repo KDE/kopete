@@ -24,10 +24,10 @@
 #include "kopetechatsessionmanager.h"
 #include "kopeteaccount.h"
 #include "kopeteuiglobal.h"
-#include "serviceloader.h"
 
 #include "smscontact.h"
 #include "smsprotocol.h"
+#include "smsservice.h"
 #include "smsaccount.h"
 #include "smsuserpreferences.h"
 
@@ -35,13 +35,13 @@ SMSContact::SMSContact( Kopete::Account* _account, const QString &phoneNumber,
 	const QString &displayName, Kopete::MetaContact *parent )
 : Kopete::Contact( _account, phoneNumber, parent ), m_phoneNumber( phoneNumber )
 {
-	kdWarning( 14160 ) << k_funcinfo << " this = " << this << ", phone = " << phoneNumber << endl;
+//	kdWarning( 14160 ) << k_funcinfo << " this = " << this << ", phone = " << phoneNumber << endl;
 	setNickName( displayName );
 
 	m_msgManager = 0L;
 	m_actionPrefs = 0L;
 
-	setOnlineStatus( SMSProtocol::protocol()->SMSUnknown );
+	setOnlineStatus( SMSProtocol::protocol()->SMSOnline );
 }
 
 void SMSContact::slotSendingSuccess(const Kopete::Message &msg)
@@ -70,7 +70,6 @@ void SMSContact::serialize( QMap<QString, QString> &serializedData,
 
 Kopete::ChatSession* SMSContact::manager( Kopete::Contact::CanCreateFlags canCreate  )
 {
-	kdWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
 	if ( m_msgManager || canCreate != Kopete::Contact::CanCreate )
 	{
 		return m_msgManager;
@@ -81,9 +80,8 @@ Kopete::ChatSession* SMSContact::manager( Kopete::Contact::CanCreateFlags canCre
 		contacts.append(this);
 		m_msgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), contacts, protocol());
 		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)),
-		this, SLOT(slotSendMessage(Kopete::Message&)));
+			account(), SLOT(slotSendMessage(Kopete::Message&)));
 		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotChatSessionDestroyed()));
-		connect(this, SIGNAL(messageSuccess()), m_msgManager, SIGNAL(messageSuccess()));
 		return m_msgManager;
 	}
 }
@@ -93,40 +91,6 @@ void SMSContact::slotChatSessionDestroyed()
 	m_msgManager = 0L;
 }
 
-void SMSContact::slotSendMessage(Kopete::Message &msg)
-{
-	kdWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
-	QString sName = account()->configGroup()->readEntry("ServiceName", QString::null);
-
-	SMSService *s = ServiceLoader::loadService(sName, account());
-
-	if (s == 0L) return;
-
-	connect (s, SIGNAL(messageSent(const Kopete::Message &)), this, SLOT(slotSendingSuccess(const Kopete::Message &)));
-	connect (s, SIGNAL(messageNotSent(const Kopete::Message &, const QString &)), this, SLOT(slotSendingFailure(const Kopete::Message &, const QString &)));
-
-	int msgLength = msg.plainBody().length();
-
-	if (s->maxSize() == -1)
-		s->send(msg);
-	else if (s->maxSize() < msgLength)
-	{	if (dynamic_cast<SMSAccount *>(account())->splitNowMsgTooLong(s->maxSize(), msgLength))
-			for (int i=0; i < msgLength / s->maxSize() + 1; i++)
-			{	QString text = msg.plainBody();
-				text = text.mid( s->maxSize() * i, s->maxSize() );
-				Kopete::Message m( msg.from(), msg.to(), text, Kopete::Message::Outbound);
-				s->send(m);
-			}
-		else
-			slotSendingFailure(msg, i18n("Message too long."));
-	}
-	else
-		s->send(msg);
-
-//	delete s;
-
-	kdWarning( 14160 ) << "<<<" << endl;
-}
 
 void SMSContact::slotUserInfo()
 {
@@ -134,7 +98,6 @@ void SMSContact::slotUserInfo()
 
 void SMSContact::deleteContact()
 {
-	kdWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
 	deleteLater();
 }
 

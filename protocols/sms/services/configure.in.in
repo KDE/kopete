@@ -1,0 +1,35 @@
+AC_LANG_PUSH(C++)
+# Let the user disable the GSM SMS plugin
+AC_ARG_ENABLE(smsgsm-plugin,
+      AC_HELP_STRING([--enable-smsgsm-plugin], [build the Kopete GSM SMS plugin @<:@default=no@:>@]),
+      [compile_smsgsm=$enableval],
+      [compile_smsgsm=no]
+      )
+
+ac_save_LIBS="$LIBS"
+LIBS="-lgsmme $LIBS"
+AC_TRY_LINK([#include <gsmlib/gsm_util.h>],[(void)gsmlib::latin1ToGsm("text");], 
+	[have_smsgsm_lib=yes],
+	[have_smsgsm_lib=no])
+LIBS=$ac_save_LIBS
+
+AC_CHECK_HEADER(gsmlib/gsm_util.h, 
+	[have_smsgsm_inc=yes],
+	[have_smsgsm_inc=no])
+
+if test "x$have_smsgsm_lib" != "xyes" || test "x$have_smsgsm_inc" != "xyes"; then
+    compile_smsgsm=no
+fi
+
+# Let the user know
+AC_MSG_CHECKING([if SMSGSM Plugin should be compiled])
+AC_MSG_RESULT($compile_smsgsm)
+
+# Here we go
+AM_CONDITIONAL(include_smsgsm, [test "x$compile_smsgsm" = "xyes"])
+
+if test "x$compile_smsgsm" = "xyes"; then
+	AC_DEFINE(INCLUDE_SMSGSM, 1, [Define to compile with GSM SMS support])
+fi
+
+AC_LANG_POP(C++)
