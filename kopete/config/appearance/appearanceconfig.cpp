@@ -2,7 +2,7 @@
     appearanceconfig.cpp  -  Kopete Look Feel Config
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
+    Copyright (c) 2005      by MichaÃ«l Larouche       <michael.larouche@kdemail.net>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -100,7 +100,7 @@ class AppearanceConfig::Private
 public:
 	Private()
 	 : mAppearanceTabCtl(0L), preview(0L), mPrfsEmoticons(0L),mPrfsChatWindow(0L),
-	   mPrfsColors(0L), mPrfsContactList(0L), loading(false),
+	   mPrfsColors(0L), mPrfsContactList(0L), currentStyle(0L), loading(false),
 	   styleChanged(false)
 	{}
 
@@ -402,7 +402,6 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	d->mPrfsChatWindow->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
 	// Create the fake Chat Session
 	createPreviewChatSession();
-	// TODO: ChatMessagePart require a Kopete::ChatSession.
 	QVBoxLayout *l = new QVBoxLayout(d->mPrfsChatWindow->htmlFrame);
 	d->preview = new ChatMessagePart(d->previewChatSession, d->mPrfsChatWindow->htmlFrame, "preview");
 	d->preview->setJScriptEnabled(false);
@@ -523,12 +522,17 @@ void AppearanceConfig::save()
 	p->setTransparencyValue( d->mPrfsChatWindow->mTransparencyValue->value() );
 
 	// Get the stylePath
-	kdDebug(14000) << k_funcinfo << d->currentStyle->getStylePath() << endl;
 	if(d->currentStyle)
+	{
+		kdDebug(14000) << k_funcinfo << d->currentStyle->getStylePath() << endl;
 		p->setStylePath(d->currentStyle->getStylePath());
+	}
 	// Get and save the styleVariant
-	kdDebug(14000) << k_funcinfo << d->currentVariantMap[ d->mPrfsChatWindow->variantList->currentText()] << endl;
-	p->setStyleVariant(d->currentVariantMap[ d->mPrfsChatWindow->variantList->currentText()]);
+	if( !d->currentVariantMap.empty() )
+	{
+		kdDebug(14000) << k_funcinfo << d->currentVariantMap[ d->mPrfsChatWindow->variantList->currentText()] << endl;
+		p->setStyleVariant(d->currentVariantMap[ d->mPrfsChatWindow->variantList->currentText()]);
+	}
 
 	// "Contact List" TAB =======================================================
 	p->setTreeView(d->mPrfsContactList->mTreeContactList->isChecked());
@@ -643,6 +647,9 @@ void AppearanceConfig::slotLoadStyles()
 
 	ChatWindowStyleManager::StyleList availableStyles;
 	availableStyles = ChatWindowStyleManager::self()->getAvailableStyles();
+	if( availableStyles.empty() )
+		kdDebug(14000) << k_funcinfo << "Warning, available styles is empty !" << endl;
+
 	ChatWindowStyleManager::StyleList::ConstIterator it, itEnd = availableStyles.constEnd();
 	for(it = availableStyles.constBegin(); it != itEnd; ++it)
 	{
@@ -653,13 +660,18 @@ void AppearanceConfig::slotLoadStyles()
 
 		if( it.data()->getStylePath() == KopetePrefs::prefs()->stylePath() )
 		{
+			kdDebug(14000) << k_funcinfo << "Restoring saved style: " << it.key() << endl;
+
 			d->currentStyle = it.data();
 			d->mPrfsChatWindow->styleList->setSelected( d->mPrfsChatWindow->styleList->firstItem(), true );
 		}
 	}
-	// Set the initial preview style
-	d->preview->setStyle(d->currentStyle);
-	d->preview->setStyleVariant(KopetePrefs::prefs()->styleVariant());
+	if(d->currentStyle)
+	{
+		// Set the initial preview style
+		d->preview->setStyle(d->currentStyle);
+		d->preview->setStyleVariant(KopetePrefs::prefs()->styleVariant());
+	}
 
 	d->mPrfsChatWindow->styleList->sort();
 }
@@ -743,34 +755,37 @@ void AppearanceConfig::slotStyleSelected()
 {
 	// Retrieve variant list.
 	d->currentStyle = d->styleItemMap[d->mPrfsChatWindow->styleList->selectedItem()];
-	d->currentVariantMap = d->currentStyle->getVariants();
 	
-	kdDebug(14000) << "Loading style: " << d->currentStyle->getStylePath() << endl;
-
-	// Update the variant list based on current style.
-	d->mPrfsChatWindow->variantList->clear();
-
-	ChatWindowStyle::StyleVariants::ConstIterator it, itEnd = d->currentVariantMap.constEnd();
-	int currentIndex = 0;
-	for(it = d->currentVariantMap.constBegin(); it != itEnd; ++it)
+	if(d->currentStyle)
 	{
-		// Insert variant name into the combobox.
-		d->mPrfsChatWindow->variantList->insertItem( it.key() );
-
-		if( it.data() == KopetePrefs::prefs()->styleVariant() )
-			d->mPrfsChatWindow->variantList->setCurrentItem(currentIndex);
-
-		currentIndex++;
-	}
+		d->currentVariantMap = d->currentStyle->getVariants();
+		kdDebug(14000) << "Loading style: " << d->currentStyle->getStylePath() << endl;
 	
-	// Update the preview
-	d->preview->setStyle(d->currentStyle);
-	// Get the first variant to preview
-	// Check if the current style has variants.
-	if( !d->currentVariantMap.empty() )
-		d->preview->setStyleVariant(d->currentVariantMap[0]);
-
-	emitChanged();
+		// Update the variant list based on current style.
+		d->mPrfsChatWindow->variantList->clear();
+	
+		ChatWindowStyle::StyleVariants::ConstIterator it, itEnd = d->currentVariantMap.constEnd();
+		int currentIndex = 0;
+		for(it = d->currentVariantMap.constBegin(); it != itEnd; ++it)
+		{
+			// Insert variant name into the combobox.
+			d->mPrfsChatWindow->variantList->insertItem( it.key() );
+	
+			if( it.data() == KopetePrefs::prefs()->styleVariant() )
+				d->mPrfsChatWindow->variantList->setCurrentItem(currentIndex);
+	
+			currentIndex++;
+		}
+		
+		// Update the preview
+		d->preview->setStyle(d->currentStyle);
+		// Get the first variant to preview
+		// Check if the current style has variants.
+		if( !d->currentVariantMap.empty() )
+			d->preview->setStyleVariant(d->currentVariantMap[0]);
+	
+		emitChanged();
+	}
 }
 
 void AppearanceConfig::slotVariantSelected(const QString &variantName)
