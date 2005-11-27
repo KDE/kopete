@@ -524,7 +524,7 @@ void MSNChatSession::slotRequestPicture()
 			if( !c->object().isEmpty() )
 				m_chatService->requestDisplayPicture();
 		}
-		else
+		else if(myself()->onlineStatus().isDefinitelyOnline()  && myself()->onlineStatus().status() != Kopete::OnlineStatus::Invisible )
 			startChatSession();
 	}
 	else
