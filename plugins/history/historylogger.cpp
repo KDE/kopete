@@ -320,7 +320,7 @@ void HistoryLogger::saveToDisk()
 		m_toSaveDocument.save( *stream, 1 );
 		file.close();
 
-		m_saveTimerTime=QMIN(t.elapsed()*1000, 300000);
+		m_saveTimerTime=qMin(t.elapsed()*1000, 300000);
 		    //a time 1000 times supperior to the time needed to save.  but with a upper limit of 5 minutes
 		//on a my machine, (2.4Ghz, but old HD) it should take about 10 ms to save the file.
 		// So that would mean save every 10 seconds, which seems to be ok.

@@ -45,7 +45,7 @@ Kopete::Command::Command( QObject *parent, const QString &command, const char* h
 		const QString &help, Kopete::CommandHandler::CommandType type, const QString &formatString,
 		uint minArgs, int maxArgs, const KShortcut &cut, const QString &pix )
 	: KAction( command[0].toUpper() + command.right( command.length() - 1).toLower(), pix, cut, 
-		this, SLOT(slotAction()) ,0l, (command.toLower() + QString::fromLatin1("_command")).latin1())
+		this, SLOT(slotAction()) ,0l, (command.toLower() + QString::fromLatin1("_command")).toLatin1())
 	, d(new Private)
 {
 	connect(parent,SIGNAL(destroyed()),this,SLOT(deleteLAter()));

@@ -172,9 +172,9 @@ const cap oscar_caps[] =
 };
 
 //! Oscar Data Types
-typedef Q_UINT8 BYTE;
-typedef Q_UINT16 WORD;
-typedef Q_UINT32 DWORD;
+typedef quint8 BYTE;
+typedef quint16 WORD;
+typedef quint32 DWORD;
 
 
 struct FLAP

@@ -132,7 +132,7 @@ Oscar::Settings* Connection::settings() const
 	return d->client->clientSettings();
 }
 
-Q_UINT16 Connection::flapSequence()
+quint16 Connection::flapSequence()
 {
 	d->flapSequence++;
 	if ( d->flapSequence >= 0x8000 ) //the max flap sequence is 0x8000 ( HEX )
@@ -141,7 +141,7 @@ Q_UINT16 Connection::flapSequence()
 	return d->flapSequence;
 }
 
-Q_UINT32 Connection::snacSequence()
+quint32 Connection::snacSequence()
 {
 	d->snacSequence++;
 	return d->snacSequence;

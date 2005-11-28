@@ -255,7 +255,7 @@ void S5BConnection::connectToJid(const Jid &peer, const QString &sid, Mode m)
 	d->state = Requesting;
 	d->mode = m;
 #ifdef S5B_DEBUG
-	printf("S5BConnection[%d]: connecting %s [%s]\n", d->id, d->peer.full().latin1(), d->sid.latin1());
+	printf("S5BConnection[%d]: connecting %s [%s]\n", d->id, d->peer.full().toLatin1(), d->sid.toLatin1());
 #endif
 	d->m->con_connect(this);
 }
@@ -267,7 +267,7 @@ void S5BConnection::accept()
 
 	d->state = Connecting;
 #ifdef S5B_DEBUG
-	printf("S5BConnection[%d]: accepting %s [%s]\n", d->id, d->peer.full().latin1(), d->sid.latin1());
+	printf("S5BConnection[%d]: accepting %s [%s]\n", d->id, d->peer.full().toLatin1(), d->sid.toLatin1());
 #endif
 	d->m->con_accept(this);
 }
@@ -282,7 +282,7 @@ void S5BConnection::close()
 	else if(d->state == Active)
 		d->sc->close();
 #ifdef S5B_DEBUG
-	printf("S5BConnection[%d]: closing %s [%s]\n", d->id, d->peer.full().latin1(), d->sid.latin1());
+	printf("S5BConnection[%d]: closing %s [%s]\n", d->id, d->peer.full().toLatin1(), d->sid.toLatin1());
 #endif
 	reset();
 }
@@ -404,7 +404,7 @@ void S5BConnection::man_clientReady(SocksClient *sc, SocksUDP *sc_udp)
 
 	d->state = Active;
 #ifdef S5B_DEBUG
-	printf("S5BConnection[%d]: %s [%s] <<< success >>>\n", d->id, d->peer.full().latin1(), d->sid.latin1());
+	printf("S5BConnection[%d]: %s [%s] <<< success >>>\n", d->id, d->peer.full().toLatin1(), d->sid.toLatin1());
 #endif
 
 	// bytes already in the stream?
@@ -648,7 +648,7 @@ S5BConnection *S5BManager::takeIncoming()
 void S5BManager::ps_incoming(const S5BRequest &req)
 {
 #ifdef S5B_DEBUG
-	printf("S5BManager: incoming from %s\n", req.from.full().latin1());
+	printf("S5BManager: incoming from %s\n", req.from.full().toLatin1());
 #endif
 
 	bool ok = false;
@@ -1030,7 +1030,7 @@ void S5BManager::queryProxy(Entry *e)
 		return;
 
 #ifdef S5B_DEBUG
-	printf("querying proxy: [%s]\n", e->c->d->proxy.full().latin1());
+	printf("querying proxy: [%s]\n", e->c->d->proxy.full().toLatin1());
 #endif
 	e->query = new JT_S5B(d->client->rootTask());
 	connect(e->query, SIGNAL(finished()), SLOT(query_finished()));
@@ -1060,7 +1060,7 @@ void S5BManager::query_finished()
 	if(query->success()) {
 		e->proxyInfo = query->proxyInfo();
 #ifdef S5B_DEBUG
-		printf("host/ip=[%s] port=[%d]\n", e->proxyInfo.host().latin1(), e->proxyInfo.port());
+		printf("host/ip=[%s] port=[%d]\n", e->proxyInfo.host().toLatin1(), e->proxyInfo.port());
 #endif
 	}
 	else {
@@ -1168,7 +1168,7 @@ void S5BManager::Item::startInitiator(const QString &_sid, const Jid &_self, con
 	udp = _udp;
 
 #ifdef S5B_DEBUG
-	printf("S5BManager::Item initiating request %s [%s]\n", peer.full().latin1(), sid.latin1());
+	printf("S5BManager::Item initiating request %s [%s]\n", peer.full().toLatin1(), sid.toLatin1());
 #endif
 	state = Initiator;
 	doOutgoing();
@@ -1187,7 +1187,7 @@ void S5BManager::Item::startTarget(const QString &_sid, const Jid &_self, const 
 	udp = _udp;
 
 #ifdef S5B_DEBUG
-	printf("S5BManager::Item incoming request %s [%s]\n", peer.full().latin1(), sid.latin1());
+	printf("S5BManager::Item incoming request %s [%s]\n", peer.full().toLatin1(), sid.toLatin1());
 #endif
 	state = Target;
 	if(fast)
@@ -1302,7 +1302,7 @@ void S5BManager::Item::doIncoming()
 void S5BManager::Item::setIncomingClient(SocksClient *sc)
 {
 #ifdef S5B_DEBUG
-	printf("S5BManager::Item: %s [%s] successful incoming connection\n", peer.full().latin1(), sid.latin1());
+	printf("S5BManager::Item: %s [%s] successful incoming connection\n", peer.full().toLatin1(), sid.toLatin1());
 #endif
 
 	connect(sc, SIGNAL(readyRead()), SLOT(sc_readyRead()));
@@ -1368,7 +1368,7 @@ void S5BManager::Item::jt_finished()
 			}
 			else {
 #ifdef S5B_DEBUG
-				printf("S5BManager::Item %s claims to have connected to us, but we don't see this\n", peer.full().latin1());
+				printf("S5BManager::Item %s claims to have connected to us, but we don't see this\n", peer.full().toLatin1());
 #endif
 				reset();
 				error(ErrWrongHost);
@@ -1398,7 +1398,7 @@ void S5BManager::Item::jt_finished()
 		}
 		else {
 #ifdef S5B_DEBUG
-			printf("S5BManager::Item %s claims to have connected to a streamhost we never offered\n", peer.full().latin1());
+			printf("S5BManager::Item %s claims to have connected to a streamhost we never offered\n", peer.full().toLatin1());
 #endif
 			reset();
 			error(ErrWrongHost);
@@ -1406,7 +1406,7 @@ void S5BManager::Item::jt_finished()
 	}
 	else {
 #ifdef S5B_DEBUG
-		printf("S5BManager::Item %s [%s] error\n", peer.full().latin1(), sid.latin1());
+		printf("S5BManager::Item %s [%s] error\n", peer.full().toLatin1(), sid.toLatin1());
 #endif
 		remoteFailed = true;
 		statusCode = j->statusCode();
@@ -1436,7 +1436,7 @@ void S5BManager::Item::conn_result(bool b)
 		connSuccess = true;
 
 #ifdef S5B_DEBUG
-		printf("S5BManager::Item: %s [%s] successful outgoing connection\n", peer.full().latin1(), sid.latin1());
+		printf("S5BManager::Item: %s [%s] successful outgoing connection\n", peer.full().toLatin1(), sid.toLatin1());
 #endif
 
 		connect(sc, SIGNAL(readyRead()), SLOT(sc_readyRead()));
@@ -1735,7 +1735,7 @@ void S5BManager::Item::finished()
 	client->disconnect(this);
 	state = Active;
 #ifdef S5B_DEBUG
-	printf("S5BManager::Item %s [%s] linked successfully\n", peer.full().latin1(), sid.latin1());
+	printf("S5BManager::Item %s [%s] linked successfully\n", peer.full().toLatin1(), sid.toLatin1());
 #endif
 	connected();
 }
@@ -1808,7 +1808,7 @@ private slots:
 	void sc_error(int)
 	{
 #ifdef S5B_DEBUG
-		printf("S5BConnector[%s]: error\n", host.host().latin1());
+		printf("S5BConnector[%s]: error\n", host.host().toLatin1());
 #endif
 		cleanup();
 		result(false);
@@ -1843,7 +1843,7 @@ private:
 	void success()
 	{
 #ifdef S5B_DEBUG
-		printf("S5BConnector[%s]: success\n", host.host().latin1());
+		printf("S5BConnector[%s]: success\n", host.host().toLatin1());
 #endif
 		client->disconnect(this);
 		result(true);
@@ -2099,7 +2099,7 @@ void S5BServer::ss_incomingReady()
 {
 	Item *i = new Item(d->serv.takeIncoming());
 #ifdef S5B_DEBUG
-	printf("S5BServer: incoming connection from %s:%d\n", i->client->peerAddress().toString().latin1(), i->client->peerPort());
+	printf("S5BServer: incoming connection from %s:%d\n", i->client->peerAddress().toString().toLatin1(), i->client->peerPort());
 #endif
 	connect(i, SIGNAL(result(bool)), SLOT(item_result(bool)));
 	d->itemList.append(i);

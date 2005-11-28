@@ -104,8 +104,8 @@ static void ensureEndian()
  * efficiently on either one than if ARCH_IS_BIG_ENDIAN is defined.
  */
 
-typedef Q_UINT8  md5_byte_t; /* 8-bit byte */
-typedef Q_UINT32 md5_word_t; /* 32-bit word */
+typedef quint8  md5_byte_t; /* 8-bit byte */
+typedef quint32 md5_word_t; /* 32-bit word */
 
 /* Define the state of the MD5 Algorithm. */
 typedef struct md5_state_s {
@@ -437,14 +437,14 @@ md5_finish(md5_state_t *pms, md5_byte_t digest[16])
 
 struct SHA1_CONTEXT
 {
-	Q_UINT32 state[5];
-	Q_UINT32 count[2];
+	quint32 state[5];
+	quint32 count[2];
 	unsigned char buffer[64];
 };
 
 typedef union {
 	unsigned char c[64];
-	Q_UINT32 l[16];
+	quint32 l[16];
 } CHAR64LONG16;
 
 class SHA1Context : public QCA_HashContext
@@ -480,7 +480,7 @@ public:
 		*out = b;
 	}
 
-	unsigned long blk0(Q_UINT32 i)
+	unsigned long blk0(quint32 i)
 	{
 		if(bigEndian)
 			return block->l[i];
@@ -489,9 +489,9 @@ public:
 	}
 
 	// Hash a single 512-bit block. This is the core of the algorithm.
-	void transform(Q_UINT32 state[5], unsigned char buffer[64])
+	void transform(quint32 state[5], unsigned char buffer[64])
 	{
-		Q_UINT32 a, b, c, d, e;
+		quint32 a, b, c, d, e;
 
 		block = (CHAR64LONG16*)buffer;
 
@@ -548,9 +548,9 @@ public:
 	}
 
 	// Run your data through this
-	void sha1_update(SHA1_CONTEXT* context, unsigned char* data, Q_UINT32 len)
+	void sha1_update(SHA1_CONTEXT* context, unsigned char* data, quint32 len)
 	{
-		Q_UINT32 i, j;
+		quint32 i, j;
 
 		j = (context->count[0] >> 3) & 63;
 		if((context->count[0] += len << 3) < (len << 3))
@@ -573,7 +573,7 @@ public:
 	// Add padding and return the message digest
 	void sha1_final(unsigned char digest[20], SHA1_CONTEXT* context)
 	{
-		Q_UINT32 i, j;
+		quint32 i, j;
 		unsigned char finalcount[8];
 
 		for (i = 0; i < 8; i++) {

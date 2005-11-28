@@ -35,7 +35,7 @@
 
 StatisticsDB::StatisticsDB()
 {
-	QByteArray path = (::locateLocal("appdata", "kopete_statistics-0.1.db")).latin1();
+	QByteArray path = (::locateLocal("appdata", "kopete_statistics-0.1.db")).toLatin1();
 	kdDebug() << "statistics: DB path:" << path << endl;
 
 	// Open database file and check for correctness

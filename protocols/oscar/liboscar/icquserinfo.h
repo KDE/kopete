@@ -164,7 +164,7 @@ class KOPETE_EXPORT ICQSearchResult
 public:
 	ICQSearchResult();
 	void fill( Buffer* buffer );
-	Q_UINT32 uin;
+	quint32 uin;
 	QString firstName;
 	QString lastName;
 	QString nickName;
@@ -172,7 +172,7 @@ public:
 	bool auth;
 	bool online;
 	char gender;
-	Q_UINT16 age;
+	quint16 age;
 };
 
 class KOPETE_EXPORT ICQWPSearchInfo

@@ -93,7 +93,7 @@ void TextEffectPlugin::slotOutgoingMessage( Kopete::Message& msg )
 				}
 				resultat+="\">";
 			}
-			switch (x.latin1())
+			switch (x.toLatin1())
 			{
 				case '>':
 					resultat+="&gt;";

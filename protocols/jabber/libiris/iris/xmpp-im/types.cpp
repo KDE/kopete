@@ -634,7 +634,7 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 				}
 			}
 			else {
-				//printf("extension element: [%s]\n", e.tagName().latin1());
+				//printf("extension element: [%s]\n", e.tagName().toLatin1());
 			}
 		}
 	}

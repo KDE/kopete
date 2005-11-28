@@ -352,11 +352,11 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	else if( cmd == "GCF" )
 	{
 		m_configFile = data.section(' ', 0, 0);
-		readBlock( data.section( ' ', 1, 1 ).toUInt() );
+		read( data.section( ' ', 1, 1 ).toUInt() );
 	}
 	else if( cmd == "MSG" )
 	{
-		readBlock( data.section( ' ', 2, 2 ).toUInt() );
+		read( data.section( ' ', 2, 2 ).toUInt() );
 	}
 	else if( cmd == "ILN" ||  cmd == "NLN" )
 	{
@@ -380,7 +380,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		m_tmpLastHandle = data.section(' ', 0, 0);
 		uint length = data.section( ' ', 1, 1 ).toUInt();
 		if(length > 0) {
-			readBlock( length );
+			read( length );
 		}
 	}
 	else if( cmd == "UUX" )
@@ -652,7 +652,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	else if ( cmd == "NOT" )
 	{
 		kdDebug( 14140 ) << k_funcinfo << "Received NOT command, issueing read block for '" << id << " more bytes" << endl;
-		readBlock( id );		
+		read( id );		
 	}	
 	else
 	{

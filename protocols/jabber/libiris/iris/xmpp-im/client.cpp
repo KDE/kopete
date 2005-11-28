@@ -65,7 +65,7 @@
 //!    if(success)
 //!      printf("Login success!");
 //!    else
-//!      printf("Login failed.  Here's why: %s\n", err.latin1());
+//!      printf("Login failed.  Here's why: %s\n", err.toLatin1());
 //!  }
 //!  \endcode
 
@@ -611,7 +611,7 @@ void Client::send(const QDomElement &x)
 	debug(QString("Client: outgoing: [\n%1]\n").arg(out));
 	xmlOutgoing(out);
 
-	//printf("x[%s] x2[%s] s[%s]\n", Stream::xmlToString(x).latin1(), Stream::xmlToString(e).latin1(), s.toString().latin1());
+	//printf("x[%s] x2[%s] s[%s]\n", Stream::xmlToString(x).toLatin1(), Stream::xmlToString(e).toLatin1(), s.toString().toLatin1());
 	d->stream->write(s);
 }
 
@@ -910,7 +910,7 @@ void Client::importRosterItem(const RosterItem &item)
 	}
 
 	QString dstr, str;
-	str.sprintf("  %s %-32s", substr.latin1(), item.jid().full().latin1());
+	str.sprintf("  %s %-32s", substr.toLatin1(), item.jid().full().toLatin1());
 	if(!item.name().isEmpty())
 		str += QString(" [") + item.name() + "]";
 	str += '\n';

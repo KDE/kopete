@@ -93,13 +93,13 @@ void MSNP2POutgoing::slotSendData()
 	int bytesRead =0;
 	if(m_Sfile)
 	{
-		bytesRead=m_Sfile->readBlock( ptr,1200 );
+		bytesRead=m_Sfile->read( ptr,1200 );
 		data=ptr;
 	}
 	else if(m_imageToSend.size()>0)
 	{
 		data=m_imageToSend.data()+m_offset;
-		bytesRead=QMIN(1200, m_imageToSend.size()-m_offset);
+		bytesRead=qMin(1200, m_imageToSend.size()-m_offset);
 	}
 	else return;
 

@@ -50,7 +50,7 @@ private:
 	/**
 	 * Creates a 64-bit hash key.
 	 */
-	 Q_INT64 createHashKey(const Q3ValueVector<Q_INT32>& md5Integers, const Q3ValueVector<Q_INT32>& challengeIntegers);
+	 qint64 createHashKey(const Q3ValueVector<qint32>& md5Integers, const Q3ValueVector<qint32>& challengeIntegers);
 	 
 	/**
 	 * Swaps the bytes in a hex string.

@@ -185,7 +185,7 @@ QString GroupWiseProtocol::rtfizeText( const QString & plain )
 	uint index = 0; // current char to transcode
 	while ( index  < plainUtf8.length() )
 	{
-		Q_UINT8 current = plainUtf8.data()[ index ];
+		quint8 current = plainUtf8.data()[ index ];
 		if ( current <= 0x7F )
 		{
 			switch ( current )
@@ -206,7 +206,7 @@ QString GroupWiseProtocol::rtfizeText( const QString & plain )
 		}
 		else
 		{
-			Q_UINT32 ucs4Char;
+			quint32 ucs4Char;
 			int bytesEncoded;
 			QString escapedUnicodeChar;
 			if ( current <= 0xDF )

@@ -160,12 +160,12 @@ QByteArray KSParser::_parse(const QByteArray &message)
 		}
 
 		chars += toAppend.length();
-		buff.writeBlock( toAppend.latin1(), toAppend.length() );
+		buff.write( toAppend.toLatin1(), toAppend.length() );
 	}
 
 	QString toAppend = popAll();
 	chars += toAppend.length();
-	buff.writeBlock( toAppend.latin1(), toAppend.length() );
+	buff.write( toAppend.toLatin1(), toAppend.length() );
 
 	// Make sure we have enough room for NULL character.
 	if (data.size() < chars+1)

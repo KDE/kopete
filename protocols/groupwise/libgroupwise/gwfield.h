@@ -169,18 +169,18 @@ namespace Field
 	{
 	public:
 		FieldBase() {}
-		FieldBase( QByteArray tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type );
+		FieldBase( QByteArray tag, quint8 method, quint8 flags, quint8 type );
 		virtual ~FieldBase() {}
 		QByteArray tag() const;
-		Q_UINT8 method() const;
-		Q_UINT8 flags() const;
-		Q_UINT8 type() const;
-		void setFlags( const Q_UINT8 flags );
+		quint8 method() const;
+		quint8 flags() const;
+		quint8 type() const;
+		void setFlags( const quint8 flags );
 	protected:
 		QByteArray m_tag;
-		Q_UINT8 m_method;
-		Q_UINT8 m_flags;
-		Q_UINT8 m_type;  // doch needed
+		quint8 m_method;
+		quint8 m_flags;
+		quint8 m_type;  // doch needed
 	};
 	
 	typedef Q3ValueListIterator<FieldBase *> FieldListIterator;
@@ -244,11 +244,11 @@ namespace Field
 		/** 
 		 * Single field constructor
 		 */
-		SingleField( QByteArray tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, QVariant value );
+		SingleField( QByteArray tag, quint8 method, quint8 flags, quint8 type, QVariant value );
 		/** 
 		 * Convenience constructor for NMFIELD_METHOD_VALID fields
 		 */
-		SingleField( QByteArray tag, Q_UINT8 flags, Q_UINT8 type, QVariant value );
+		SingleField( QByteArray tag, quint8 flags, quint8 type, QVariant value );
 		~SingleField();
 		void setValue( const QVariant v );
 		QVariant value() const;
@@ -263,8 +263,8 @@ namespace Field
 	class MultiField : public FieldBase
 	{
 	public:  
-		MultiField( QByteArray tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type );
-		MultiField( QByteArray tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, FieldList fields );
+		MultiField( QByteArray tag, quint8 method, quint8 flags, quint8 type );
+		MultiField( QByteArray tag, quint8 method, quint8 flags, quint8 type, FieldList fields );
 		~MultiField();
 		FieldList fields() const;
 		void setFields( FieldList );

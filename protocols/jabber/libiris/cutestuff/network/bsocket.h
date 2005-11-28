@@ -36,7 +36,7 @@ public:
 	BSocket(QObject *parent=0);
 	~BSocket();
 
-	void connectToHost(const QString &host, Q_UINT16 port);
+	void connectToHost(const QString &host, quint16 port);
 	void connectToServer(const QString &srv, const QString &type);
 	int socket() const;
 	void setSocket(int);
@@ -52,11 +52,11 @@ public:
 
 	// local
 	QHostAddress address() const;
-	Q_UINT16 port() const;
+	quint16 port() const;
 
 	// remote
 	QHostAddress peerAddress() const;
-	Q_UINT16 peerPort() const;
+	quint16 peerPort() const;
 
 signals:
 	void hostFound();

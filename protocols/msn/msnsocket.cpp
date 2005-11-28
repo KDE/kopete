@@ -218,15 +218,15 @@ void MSNSocket::slotDataReceived()
 	// incoming data, plus an extra char where we pretend a NUL is so the conversion
 	// to QCString doesn't go over the end of the allocated memory.
 	char *buffer = new char[ avail + 1 ];
-	int ret = m_socket->readBlock( buffer, avail );
+	int ret = m_socket->read( buffer, avail );
 
 	if ( ret < 0 )
 	{
-		kdWarning( 14140 ) << k_funcinfo << "readBlock() returned " << ret << "!" <<endl;
+		kdWarning( 14140 ) << k_funcinfo << "read() returned " << ret << "!" <<endl;
 	}
 	else if ( ret == 0 )
 	{
-		kdWarning( 14140 ) << k_funcinfo << "readBlock() returned no data!" <<endl;
+		kdWarning( 14140 ) << k_funcinfo << "read() returned no data!" <<endl;
 	}
 	else
 	{
@@ -235,7 +235,7 @@ void MSNSocket::slotDataReceived()
 			if ( ret != avail)
 			{
 				kdWarning( 14140 ) << k_funcinfo << avail << " bytes were reported available, "
-					<< "but readBlock() returned only " << ret << " bytes! Proceeding anyway." << endl;
+					<< "but read() returned only " << ret << " bytes! Proceeding anyway." << endl;
 			}
 		}
 		else
@@ -462,7 +462,7 @@ void MSNSocket::slotReadLine()
 	}
 }
 
-void MSNSocket::readBlock( uint len )
+void MSNSocket::read( uint len )
 {
 	if ( m_waitBlockSize )
 	{
@@ -703,7 +703,7 @@ void MSNSocket::slotReadyWrite()
 				kdDebug( 14141 ) << k_funcinfo << "Sending http command: " << QString(*it).trimmed() << endl;
 
 				// Write the request bytes to the socket.
-				m_socket->writeBlock(bytes.data(), bytes.size());
+				m_socket->write(bytes.data(), bytes.size());
 
 				// Remove the request from the request queue.
 				m_sendQueue.remove(it);
@@ -721,7 +721,7 @@ void MSNSocket::slotReadyWrite()
 		{
 			// Otherwise, send the command normally.
 			kdDebug( 14141 ) << k_funcinfo << "Sending command: " << QString( *it ).trimmed() << endl;
-			m_socket->writeBlock( *it, ( *it ).size() );
+			m_socket->write( *it, ( *it ).size() );
 			m_sendQueue.remove( it );
 
 			// If the queue is empty agalin stop waiting for readyWrite signals
@@ -833,7 +833,7 @@ void MSNSocket::slotHttpPoll()
 
 	// Create the http request headers.
 	const QByteArray headers = makeHttpRequestString(m_gwip, "Action=poll&SessionID=" + m_sessionId, 0).toUtf8();
-	m_socket->writeBlock(headers, headers.length());
+	m_socket->write(headers, headers.length());
 	// Wait for the response.
 	m_pending = true;
 	m_socket->enableWrite(true);
@@ -854,7 +854,7 @@ void MSNSocket::sendBytes( const QByteArray &data )
 		return;
 	}
 
-	m_socket->writeBlock( data, data.size() );
+	m_socket->write( data, data.size() );
 	m_socket->enableWrite( true );
 }
 

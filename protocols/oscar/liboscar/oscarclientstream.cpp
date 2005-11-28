@@ -82,7 +82,7 @@ public:
 	bool doAuth; //send the initial login sequences to get the cookie
 	bool haveLocalAddr;
 	QHostAddress localAddr;
-	Q_UINT16 localPort;
+	quint16 localPort;
 	bool doBinding;
 
 	Connector *conn;
@@ -207,7 +207,7 @@ void ClientStream::setNoopTime(int mills)
 	d->noopTimer.start( d->noop_time );
 }
 
-void ClientStream::setLocalAddr(const QHostAddress &addr, Q_UINT16 port)
+void ClientStream::setLocalAddr(const QHostAddress &addr, quint16 port)
 {
 	d->haveLocalAddr = true;
 	d->localAddr = addr;

@@ -44,9 +44,9 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 	m_din.setByteOrder( QDataStream::LittleEndian );
 	
 	// check that this begins with a HTTP (is a response)
-	Q_UINT32 val;
+	quint32 val;
 	m_din >> val;
-	m_bytes += sizeof( Q_UINT32 );
+	m_bytes += sizeof( quint32 );
 	
 	Q_ASSERT( qstrncmp( (const char *)&val, "HTTP", strlen( "HTTP" ) ) == 0 );
 	
@@ -177,8 +177,8 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 	{
 		// the field being read
 		// read field
-		Q_UINT8 type, method;
-		Q_UINT32 val;
+		quint8 type, method;
+		quint32 val;
 		QByteArray tag;
 		// read uint8 type
 		if ( !okToProceed() )
@@ -187,7 +187,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 			return false;
 		}
 		m_din >> type;
-		m_bytes += sizeof( Q_UINT8 );
+		m_bytes += sizeof( quint8 );
 		// if type is 0 SOMETHING_INVALID, we're at the end of the fields
 		if ( type == 0 ) /*&& m_din->atEnd() )*/
 		{
@@ -203,7 +203,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 			return false;
 		}
 		m_din >> method;
-		m_bytes += sizeof( Q_UINT8 );
+		m_bytes += sizeof( quint8 );
 		// read tag and length
 		if ( !safeReadBytes( tag, val ) )
 		{
@@ -222,7 +222,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 				return false;
 			}
 			m_din >> val;
-			m_bytes += sizeof( Q_UINT32 );
+			m_bytes += sizeof( quint32 );
 
 			// create multifield
 			debug( QString( " multi field containing: %1" ).arg( val ) );
@@ -267,7 +267,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 					return false;
 				}
 				m_din >> val;
-				m_bytes += sizeof( Q_UINT32 );
+				m_bytes += sizeof( quint32 );
 				debug( QString( "- numeric field: %1" ).arg( val ) );
 				Field::SingleField* s = new Field::SingleField( tag, method, 0, type, val );
 				currentList.append( s );
@@ -300,7 +300,7 @@ bool ResponseProtocol::readGroupWiseLine( QByteArray & line )
 	line = QByteArray();
 	while ( true )
 	{
-		Q_UINT8 c;
+		quint8 c;
 		
 		if (! okToProceed() )
 			return false;

@@ -337,7 +337,7 @@ void SSIModifyTask::changeGroupOnServer()
 	FLAP f1 = { 0x02, 0, 0 };
 	SNAC s1 = { 0x0013,  0x000A, 0x0000, client()->snacSequence() };
 	Buffer* b1 = new Buffer;
-	b1->addBSTR( m_oldItem.name().latin1() );
+	b1->addBSTR( m_oldItem.name().toLatin1() );
 	b1->addWord( m_oldItem.gid() );
 	b1->addWord( m_oldItem.bid() );
 	b1->addWord( m_oldItem.type() );
@@ -484,7 +484,7 @@ void SSIModifyTask::sendEditEnd()
 
 void SSIModifyTask::addItemToBuffer( Oscar::SSI item, Buffer* buffer )
 {
-	buffer->addBSTR( item.name().latin1() );
+	buffer->addBSTR( item.name().toLatin1() );
 	buffer->addWord( item.gid() );
 	buffer->addWord( item.bid() );
 	buffer->addWord( item.type() );

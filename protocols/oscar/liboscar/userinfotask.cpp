@@ -63,7 +63,7 @@ bool UserInfoTask::take( Transfer * transfer )
 	if ( forMe( transfer ) )
 	{
 		setTransfer( transfer );
-		Q_UINT16 seq = 0;
+		quint16 seq = 0;
 		SnacTransfer* st = dynamic_cast<SnacTransfer*>( transfer );
 		if ( st )
 			seq = st->snacRequest();
@@ -137,7 +137,7 @@ void UserInfoTask::onGo()
 
 void UserInfoTask::requestInfoFor( const QString& contact, unsigned int types )
 {
-	Q_UINT16 seq = client()->snacSequence();
+	quint16 seq = client()->snacSequence();
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting sequence " << seq << " for contact " << contact << endl;
 	m_contactSequenceMap[seq] = contact;
 	m_typesSequenceMap[seq] = types;
@@ -145,7 +145,7 @@ void UserInfoTask::requestInfoFor( const QString& contact, unsigned int types )
 	onGo();
 }
 
-UserDetails UserInfoTask::getInfoFor( Q_UINT16 sequence ) const
+UserDetails UserInfoTask::getInfoFor( quint16 sequence ) const
 {
 	return m_sequenceInfoMap[sequence];
 }

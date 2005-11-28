@@ -45,7 +45,7 @@ using P2P::Dispatcher;
 using P2P::OutgoingTransfer;
 using P2P::Message;
 
-OutgoingTransfer::OutgoingTransfer(const QString& to, P2P::Dispatcher *dispatcher, Q_UINT32 sessionId)
+OutgoingTransfer::OutgoingTransfer(const QString& to, P2P::Dispatcher *dispatcher, quint32 sessionId)
 : TransferContext(to,dispatcher,sessionId)
 {
 	m_direction = Outgoing;
@@ -89,11 +89,11 @@ void OutgoingTransfer::sendImage(const QByteArray& image)
 
 void OutgoingTransfer::slotSendData()
 {		
-	Q_INT32 bytesRead = 0;
+	qint32 bytesRead = 0;
 	QByteArray buffer(1202);
 	if(m_file){
 		// Read a chunk from the source file.
-		bytesRead = m_file->readBlock(buffer.data(), buffer.size());
+		bytesRead = m_file->read(buffer.data(), buffer.size());
 	}
 
 	if(bytesRead < 1202){
@@ -355,7 +355,7 @@ void OutgoingTransfer::slotConnected()
 {
 	kdDebug(14140) << k_funcinfo << endl;
 	// Check if connection is ok.
-	Q_UINT32 bytesWritten = m_socket->writeBlock(QByteArray("foo").data(), 4);
+	quint32 bytesWritten = m_socket->write(QByteArray("foo").data(), 4);
 	if(bytesWritten != 4)
 	{
 		// Not all data was written, close the socket.
@@ -379,21 +379,21 @@ void OutgoingTransfer::slotConnected()
 	handshake.header.ackSessionIdentifier = nonce.mid(0, 8).toUInt(0, 16);
 	handshake.header.ackUniqueIdentifier  =
 		nonce.mid(8, 4).toUInt(0, 16) | (nonce.mid(12, 4).toUInt(0, 16) << 16);
-	const Q_UINT32 lo = nonce.mid(16, 8).toUInt(0, 16);
-	const Q_UINT32 hi = nonce.mid(24, 8).toUInt(0, 16);
+	const quint32 lo = nonce.mid(16, 8).toUInt(0, 16);
+	const quint32 hi = nonce.mid(24, 8).toUInt(0, 16);
 	handshake.header.ackDataSize =
-		((Q_INT64)htonl(lo)) | (((Q_INT64)htonl(hi)) << 32);
+		((qint64)htonl(lo)) | (((qint64)htonl(hi)) << 32);
 
 	QByteArray stream;
 	// Write the message to the memory stream.
 	m_messageFormatter.writeMessage(handshake, stream, true);
 	// Send the byte stream over the wire.
-	m_socket->writeBlock(stream.data(), stream.size());
+	m_socket->write(stream.data(), stream.size());
 }
 
 void OutgoingTransfer::slotRead()
 {
-	Q_INT32 bytesAvailable = m_socket->bytesAvailable();
+	qint32 bytesAvailable = m_socket->bytesAvailable();
 	kdDebug(14140) << k_funcinfo << bytesAvailable << ", bytes available." << endl;
 }
 

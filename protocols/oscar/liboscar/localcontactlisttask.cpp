@@ -55,7 +55,7 @@ void LocalContactListTask::onGo()
 		for ( Q3ValueList<Oscar::SSI>::const_iterator it = contactList.constBegin(); it != cEnd; ++it )
 		{
 			kdDebug( OSCAR_RAW_DEBUG ) << "Adding contact " << ( *it ).name() << " to CLI_BUDDYLIST_ADD packet" << endl;
-			buffer->addBUIN( ( *it ).name().latin1() );
+			buffer->addBUIN( ( *it ).name().toLatin1() );
 		}
 		
 		Transfer* t = createTransfer( f, s, buffer );

@@ -37,7 +37,7 @@ class Webcam  : public TransferContext
 	public:
 		enum Who { wProducer , wViewer };
 		
-		Webcam( Who who , const QString& to, Dispatcher *parent, Q_UINT32 sessionID);
+		Webcam( Who who , const QString& to, Dispatcher *parent, quint32 sessionID);
 		~Webcam( );
 
 		virtual void processMessage(const Message& message);
@@ -48,7 +48,7 @@ class Webcam  : public TransferContext
 		void sendBYEMessage();
 	
 	private:
-		void makeSIPMessage(const QString &message, Q_UINT8 XX=0, Q_UINT8 YY=9 , Q_UINT8 ZZ=0);
+		void makeSIPMessage(const QString &message, quint8 XX=0, quint8 YY=9 , quint8 ZZ=0);
 		void sendBigP2PMessage( const QByteArray& dataMessage );
 		void closeAllOtherSockets();
 		QString m_content;

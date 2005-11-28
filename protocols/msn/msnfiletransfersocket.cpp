@@ -142,7 +142,7 @@ void MSNFileTransferSocket::bytesReceived(const QByteArray & head)
 	}
 	unsigned int sz=(int)((unsigned char)head.data()[2])*256+(int)((unsigned char)head.data()[1]);
 //	kdDebug(14140) << "MSNFileTransferSocket::bytesReceived: " << sz <<endl;
-	readBlock(sz);
+	read(sz);
 }
 
 void MSNFileTransferSocket::slotSocketClosed()
@@ -166,7 +166,7 @@ void MSNFileTransferSocket::slotSocketClosed()
 
 void MSNFileTransferSocket::slotReadBlock(const QByteArray &block)
 {
-	m_file->writeBlock( block.data(), block.size() );      // write to file
+	m_file->write( block.data(), block.size() );      // write to file
 
 	m_downsize+=block.size();
 	if(m_kopeteTransfer) m_kopeteTransfer->slotProcessed(m_downsize);
@@ -295,7 +295,7 @@ void MSNFileTransferSocket::slotSendFile()
 	if(ready)
 	{
 		char data[2046];
-		int bytesRead = m_file->readBlock( data, 2045 );
+		int bytesRead = m_file->read( data, 2045 );
 			
 		QByteArray block(bytesRead+3);
 //		char i1= (char)fmod( bytesRead, 256 ) ;

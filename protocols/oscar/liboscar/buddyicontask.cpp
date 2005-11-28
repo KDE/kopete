@@ -165,7 +165,7 @@ void BuddyIconTask::sendAIMBuddyIconRequest()
 	SNAC s = { 0x0010, 0x0004, 0x0000, m_seq };
 	Buffer* b = new Buffer;
 
-	b->addBUIN( m_user.latin1() ); //TODO: check encoding
+	b->addBUIN( m_user.toLatin1() ); //TODO: check encoding
 	b->addByte( 0x01 );
 	b->addWord( 0x0001 );
 	b->addByte( m_hashType );
@@ -200,7 +200,7 @@ void BuddyIconTask::sendICQBuddyIconRequest()
 	SNAC s = { 0x0010, 0x0006, 0x0000, m_seq };
 	Buffer* b = new Buffer;
 
-	b->addBUIN( m_user.latin1() ); //TODO: check encoding
+	b->addBUIN( m_user.toLatin1() ); //TODO: check encoding
 	b->addByte( 0x01 );
 	b->addWord( 0x0001 );
 	b->addByte( m_hashType );

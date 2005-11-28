@@ -278,7 +278,7 @@ fd		 * @param password
 		/** 
 		 * A remote contact changed status
 		 */
-		void statusReceived( const QString & contactId, Q_UINT16 status, const QString & statusText );
+		void statusReceived( const QString & contactId, quint16 status, const QString & statusText );
 		/** 
 		 * Our status changed on the server
 		 */

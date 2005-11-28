@@ -149,7 +149,7 @@ void Engine::CtcpRequest_dcc(const QString &nickname, const QString &fileName, u
 			TransferServer *server = TransferHandler::self()->createServer(this, nickname, type, fileName, file.size());
 
 			QString ip = m_sock->localAddress()->nodeName();
-			QString ipNumber = QString::number( ntohl( inet_addr( ip.latin1() ) ) );
+			QString ipNumber = QString::number( ntohl( inet_addr( ip.toLatin1() ) ) );
 
 			kdDebug(14120) << "Starting DCC file outgoing transfer." << endl;
 

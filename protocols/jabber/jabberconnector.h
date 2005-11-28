@@ -43,7 +43,7 @@ public:
 	ByteStream *stream () const;
 	void done ();
 
-	void setOptHostPort ( const QString &host, Q_UINT16 port );
+	void setOptHostPort ( const QString &host, quint16 port );
 	void setOptSSL ( bool );
 	void setOptProbe ( bool );
 
@@ -55,7 +55,7 @@ private slots:
 
 private:
 	QString mHost;
-	Q_UINT16 mPort;
+	quint16 mPort;
 	int mErrorCode;
 
 	JabberByteStream *mByteStream;

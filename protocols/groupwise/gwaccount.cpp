@@ -309,7 +309,7 @@ void GroupWiseAccount::performConnectWithPassword( const QString &password )
 	// contact details listed
 	QObject::connect( m_client, SIGNAL( contactUserDetailsReceived( const GroupWise::ContactDetails & ) ), SLOT( receiveContactUserDetails( const GroupWise::ContactDetails & ) ) );
 	// contact status changed
-	QObject::connect( m_client, SIGNAL( statusReceived( const QString &, Q_UINT16, const QString & ) ), SLOT( receiveStatus( const QString &, Q_UINT16 , const QString & ) ) );
+	QObject::connect( m_client, SIGNAL( statusReceived( const QString &, quint16, const QString & ) ), SLOT( receiveStatus( const QString &, quint16 , const QString & ) ) );
 	// incoming message
 	QObject::connect( m_client, SIGNAL( messageReceived( const ConferenceEvent & ) ), SLOT( handleIncomingMessage( const ConferenceEvent & ) ) );
 	// auto reply to one of our messages because the recipient is away
@@ -1022,7 +1022,7 @@ GroupWiseContact * GroupWiseAccount::createTemporaryContact( const QString & dn 
 	return c;
 }
 
-void GroupWiseAccount::receiveStatus( const QString & contactId, Q_UINT16 status, const QString &awayMessage )
+void GroupWiseAccount::receiveStatus( const QString & contactId, quint16 status, const QString &awayMessage )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "got status for: " << contactId << ", status: " << status << ", away message: " << awayMessage << endl;
 	GroupWiseContact * c = contactForDN( contactId );

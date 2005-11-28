@@ -150,7 +150,7 @@ public:
 		}
 		else {
 #ifdef XMPP_PARSER_DEBUG
-			printf("next() = [%c]\n", c.latin1());
+			printf("next() = [%c]\n", c.toLatin1());
 #endif
 			last = c;
 		}
@@ -242,7 +242,7 @@ private:
 						QString enc = processXmlHeader(h);
 						QTextCodec *codec = 0;
 						if(!enc.isEmpty())
-							codec = QTextCodec::codecForName(enc.latin1());
+							codec = QTextCodec::codecForName(enc.toLatin1());
 
 						// changing codecs
 						if(codec) {
@@ -491,7 +491,7 @@ namespace XMPP
 
 		/*bool processingInstruction(const QString &target, const QString &data)
 		{
-			printf("Processing: [%s], [%s]\n", target.latin1(), data.latin1());
+			printf("Processing: [%s], [%s]\n", target.toLatin1(), data.toLatin1());
 			in->resetLastData();
 			return true;
 		}*/

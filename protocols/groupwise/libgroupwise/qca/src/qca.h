@@ -413,8 +413,8 @@ namespace QCA
 		void setExternalAuthID(const QString &authid);
 		void setExternalSSF(int);
 
-		void setLocalAddr(const QHostAddress &addr, Q_UINT16 port);
-		void setRemoteAddr(const QHostAddress &addr, Q_UINT16 port);
+		void setLocalAddr(const QHostAddress &addr, quint16 port);
+		void setRemoteAddr(const QHostAddress &addr, quint16 port);
 
 		// initialize
 		bool startClient(const QString &service, const QString &host, const QStringList &mechlist, bool allowClientSendFirst=true);

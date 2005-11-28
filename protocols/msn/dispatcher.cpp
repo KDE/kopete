@@ -80,7 +80,7 @@ QString Dispatcher::localContact()
 
 void Dispatcher::requestDisplayIcon(const QString& from, const QString& msnObject)
 {
-	Q_UINT32 sessionId = rand()%0xFFFFFF00 + 4;
+	quint32 sessionId = rand()%0xFFFFFF00 + 4;
 	TransferContext* current =
 		new IncomingTransfer(from, this, sessionId);
 
@@ -107,11 +107,11 @@ void Dispatcher::requestDisplayIcon(const QString& from, const QString& msnObjec
 	current->sendMessage(INVITE, content);
 }
 
-void Dispatcher::sendFile(const QString& path, Q_INT64 fileSize, const QString& to)
+void Dispatcher::sendFile(const QString& path, qint64 fileSize, const QString& to)
 {
 	// Create a new transfer context that will handle
 	// the file transfer.
-	Q_UINT32 sessionId = rand()%0xFFFFFF00 + 4;
+	quint32 sessionId = rand()%0xFFFFFF00 + 4;
 	TransferContext *current =
 		new OutgoingTransfer(to, this, sessionId);
 	current->m_branch = P2P::Uid::createUid();
@@ -132,14 +132,14 @@ void Dispatcher::sendFile(const QString& path, Q_INT64 fileSize, const QString& 
 	writer.setByteOrder(QDataStream::LittleEndian);
 
 	// Write the header length to the stream.
-	writer << (Q_INT32)638;
+	writer << (qint32)638;
 	// Write client version to the stream.
-	writer << (Q_INT32)3;
+	writer << (qint32)3;
 	// Write the file size to the stream.
 	writer << fileSize;
 	// Write the file transfer flag to the stream.
 	// TODO support file preview. For now disable file preview.
-	writer << (Q_INT32)1;
+	writer << (qint32)1;
 	// Write the file name in utf-16 to the stream.
 	QTextStream ts(header, QIODevice::WriteOnly);
 	ts.setEncoding(QTextStream::Unicode);
@@ -151,7 +151,7 @@ void Dispatcher::sendFile(const QString& path, Q_INT64 fileSize, const QString& 
 	// NOTE File - 0xFFFFFFFF
 	// NOTE Background Sharing - 0xFFFFFFFE
 	writer.device()->at(570);
-	writer << (Q_UINT32)0xFFFFFFFF;
+	writer << (quint32)0xFFFFFFFF;
 
 	// Encode the file context header to base64 encoding.
 	context = QString::fromUtf8(KCodecs::base64Encode(header));
@@ -185,7 +185,7 @@ void Dispatcher::sendImage(const QString& /*fileName*/, const QString& /*to*/)
 #if MSN_WEBCAM
 void Dispatcher::startWebcam(const QString &/*myHandle*/, const QString &msgHandle, bool wantToReceive)
 {
-	Q_UINT32 sessionId = rand()%0xFFFFFF00 + 4;
+	quint32 sessionId = rand()%0xFFFFFF00 + 4;
 	Webcam::Who who= wantToReceive ? Webcam::wViewer : Webcam::wProducer;
 	TransferContext* current =
 			new Webcam(who, msgHandle, this, sessionId);
@@ -225,7 +225,7 @@ void Dispatcher::slotReadMessage(const QString &from, const QByteArray& stream)
 		if((receivedMessage.header.dataSize == 0)/* && ((receivedMessage.header.flag & 0x02) == 0x02)*/)
 		{
 			TransferContext *current = 0l;
-			QMap<Q_UINT32, TransferContext*>::Iterator it = m_sessions.begin();
+			QMap<quint32, TransferContext*>::Iterator it = m_sessions.begin();
 			for(; it != m_sessions.end(); it++)
 			{
 				if(receivedMessage.header.ackSessionIdentifier == it.data()->m_identifier){
@@ -263,7 +263,7 @@ void Dispatcher::slotReadMessage(const QString &from, const QByteArray& stream)
 			m_messageBuffer.remove(receivedMessage.header.identifier);
 
 			bufferedMessage.body.resize(bufferedMessage.body.size() + receivedMessage.header.dataSize);
-			for(Q_UINT32 i=0; i < receivedMessage.header.dataSize; i++){
+			for(quint32 i=0; i < receivedMessage.header.dataSize; i++){
 				// Add the remaining message data to the buffered message.
 				bufferedMessage.body[receivedMessage.header.dataOffset + i] = receivedMessage.body[i];
 			}
@@ -296,7 +296,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 		QRegExp regex("SessionID: ([0-9]*)\r\n");
 		if(regex.search(body) > 0)
 		{
-			Q_UINT32 sessionId = regex.cap(1).toUInt();
+			quint32 sessionId = regex.cap(1).toUInt();
 			if(m_sessions.contains(sessionId)){
 				// Retrieve the message handler associated with the specified session Id.
 				messageHandler = m_sessions[sessionId];
@@ -320,7 +320,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				QString callId = regex.cap(1);
 
 				TransferContext *current = 0l;
-				QMap<Q_UINT32, TransferContext*>::Iterator it = m_sessions.begin();
+				QMap<quint32, TransferContext*>::Iterator it = m_sessions.begin();
 				for(; it != m_sessions.end(); it++)
 				{
 					current = it.data();
@@ -383,7 +383,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 			// is being requested.
 			regex = QRegExp("AppID: ([0-9]*)\r\n");
 			regex.search(body);
-			Q_UINT32 applicationId = regex.cap(1).toUInt();
+			quint32 applicationId = regex.cap(1).toUInt();
 
 			if(applicationId == 1  || applicationId == 12)
 			{                         //the AppID is 12 since Messenger 7.5
@@ -462,13 +462,13 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				//Retrieve the file info from the context field.
 				// File Size [8..15] Int64
 				reader.device()->at(8);
-				Q_INT64 fileSize;
+				qint64 fileSize;
 				reader >> fileSize;
 				// Flag [15..18] Int32
 				// 0x00 File transfer with preview data.
 				// 0x01 File transfer without preview data.
 				// 0x02 Background sharing.
-				Q_INT32 flag;
+				qint32 flag;
 				reader >> flag;
 				kdDebug(14140) << flag << endl;
 				// FileName UTF16 (Unicode) [19..539]
@@ -555,7 +555,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 			// A contact has sent an inkformat (handwriting) gif.
 			// NOTE The entire message body is UTF16 encoded.
 			QString body = "";
-			for (Q_UINT32 i=0; i < message.header.totalDataSize; i++){
+			for (quint32 i=0; i < message.header.totalDataSize; i++){
 				if (message.body[i] != QChar('\0')){
 					body += QChar(message.body[i]);
 				}
@@ -580,7 +580,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				KTempFile *ink = new KTempFile(locateLocal("tmp", "inkformatgif-" ), ".gif");
 				ink->setAutoDelete(true);
 // 				Save the image data to disk.
-				ink->file()->writeBlock(image);
+				ink->file()->write(image);
 				ink->file()->close();
 				displayIconReceived(ink, "inkformatgif");
 				ink = 0l;
@@ -594,7 +594,7 @@ void Dispatcher::messageAcknowledged(unsigned int correlationId, bool fullReceiv
 	if(fullReceive)
 	{
 		TransferContext *current = 0l;
-		QMap<Q_UINT32, TransferContext*>::Iterator it = m_sessions.begin();
+		QMap<quint32, TransferContext*>::Iterator it = m_sessions.begin();
 		for(; it != m_sessions.end(); it++)
 		{
 			current = it.data();
@@ -632,7 +632,7 @@ Dispatcher::CallbackChannel::CallbackChannel(MSNSwitchBoardSocket *switchboard)
 Dispatcher::CallbackChannel::~CallbackChannel()
 {}
 
-Q_UINT32 Dispatcher::CallbackChannel::send(const QByteArray& stream)
+quint32 Dispatcher::CallbackChannel::send(const QByteArray& stream)
 {
 	return m_switchboard->sendCommand("MSG", "D", true, stream, true);
 }

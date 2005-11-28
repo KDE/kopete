@@ -578,7 +578,7 @@ public:
 	bool allowPlain, mutualAuth;
 	bool haveLocalAddr;
 	QHostAddress localAddr;
-	Q_UINT16 localPort;
+	quint16 localPort;
 	int minimumSSF, maximumSSF;
 	QString sasl_mech;
 	bool doBinding;
@@ -836,7 +836,7 @@ void ClientStream::setSASLMechanism(const QString &s)
 	d->sasl_mech = s;
 }
 
-void ClientStream::setLocalAddr(const QHostAddress &addr, Q_UINT16 port)
+void ClientStream::setLocalAddr(const QHostAddress &addr, quint16 port)
 {
 	d->haveLocalAddr = true;
 	d->localAddr = addr;
@@ -1116,7 +1116,7 @@ void ClientStream::sasl_needParams(bool user, bool authzid, bool pass, bool real
 void ClientStream::sasl_authCheck(const QString &user, const QString &)
 {
 //#ifdef XMPP_DEBUG
-//	printf("authcheck: [%s], [%s]\n", user.latin1(), authzid.latin1());
+//	printf("authcheck: [%s], [%s]\n", user.toLatin1(), authzid.toLatin1());
 //#endif
 	QString u = user;
 	int n = u.find('@');

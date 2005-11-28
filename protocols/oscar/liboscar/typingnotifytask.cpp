@@ -72,7 +72,7 @@ void TypingNotifyTask::onGo()
 	
 	b->addWord( 0x0001 ); //mtn messages are always sent as type 1 messages
 	
-	b->addBUIN( m_contact.latin1() );
+	b->addBUIN( m_contact.toLatin1() );
 	
 	b->addWord( m_notificationType );
 	
@@ -92,7 +92,7 @@ void TypingNotifyTask::handleNotification()
 	
 	QString contact( b->getBUIN() );
 	
-	Q_UINT32 word = b->getWord();
+	quint32 word = b->getWord();
 	switch ( word )
 	{
 	case 0x0000:

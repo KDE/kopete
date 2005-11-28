@@ -55,7 +55,7 @@ static QString hpk(int n, const QString &s)
 	if(n == 0)
 		return s;
 	else
-		return Base64::arrayToString( QCA::SHA1::hash( QByteArray(hpk(n - 1, s).latin1()) ) );
+		return Base64::arrayToString( QCA::SHA1::hash( QByteArray(hpk(n - 1, s).toLatin1()) ) );
 }
 
 class HttpPoll::Private
@@ -157,11 +157,11 @@ void HttpPoll::connectToHost(const QString &proxyHost, int proxyPort, const QStr
 	QString key = getKey(&last);
 
 #ifdef PROX_DEBUG
-	fprintf(stderr, "HttpPoll: Connecting to %s:%d [%s]", d->host.latin1(), d->port, d->url.latin1());
+	fprintf(stderr, "HttpPoll: Connecting to %s:%d [%s]", d->host.toLatin1(), d->port, d->url.toLatin1());
 	if(d->user.isEmpty())
 		fprintf(stderr, "\n");
 	else
-		fprintf(stderr, ", auth {%s,%s}\n", d->user.latin1(), d->pass.latin1());
+		fprintf(stderr, ", auth {%s,%s}\n", d->user.toLatin1(), d->pass.toLatin1());
 #endif
 	QPointer<QObject> self = this;
 	syncStarted();
@@ -185,7 +185,7 @@ QByteArray HttpPoll::makePacket(const QString &ident, const QString &key, const 
 		str += newkey;
 	}
 	str += ',';
-	QByteArray cs = str.latin1();
+	QByteArray cs = str.toLatin1();
 	int len = cs.length();
 
 	QByteArray a(len + block.size());
@@ -487,11 +487,11 @@ void HttpProxyPost::post(const QString &proxyHost, int proxyPort, const QString 
 	d->asProxy = asProxy;
 
 #ifdef PROX_DEBUG
-	fprintf(stderr, "HttpProxyPost: Connecting to %s:%d", proxyHost.latin1(), proxyPort);
+	fprintf(stderr, "HttpProxyPost: Connecting to %s:%d", proxyHost.toLatin1(), proxyPort);
 	if(d->user.isEmpty())
 		fprintf(stderr, "\n");
 	else
-		fprintf(stderr, ", auth {%s,%s}\n", d->user.latin1(), d->pass.latin1());
+		fprintf(stderr, ", auth {%s,%s}\n", d->user.toLatin1(), d->pass.toLatin1());
 #endif
 	d->sock.connectToHost(proxyHost, proxyPort);
 }
@@ -603,9 +603,9 @@ void HttpProxyPost::sock_readyRead()
 			}
 			else {
 #ifdef PROX_DEBUG
-				fprintf(stderr, "HttpProxyPost: header proto=[%s] code=[%d] msg=[%s]\n", proto.latin1(), code, msg.latin1());
+				fprintf(stderr, "HttpProxyPost: header proto=[%s] code=[%d] msg=[%s]\n", proto.toLatin1(), code, msg.toLatin1());
 				for(QStringList::ConstIterator it = d->headerLines.begin(); it != d->headerLines.end(); ++it)
-					fprintf(stderr, "HttpProxyPost: * [%s]\n", (*it).latin1());
+					fprintf(stderr, "HttpProxyPost: * [%s]\n", (*it).toLatin1());
 #endif
 			}
 
@@ -639,7 +639,7 @@ void HttpProxyPost::sock_readyRead()
 				}
 
 #ifdef PROX_DEBUG
-				fprintf(stderr, "HttpProxyPost: << Error >> [%s]\n", errStr.latin1());
+				fprintf(stderr, "HttpProxyPost: << Error >> [%s]\n", errStr.toLatin1());
 #endif
 				reset(true);
 				error(err);

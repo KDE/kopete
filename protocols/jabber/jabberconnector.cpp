@@ -107,7 +107,7 @@ void JabberConnector::done ()
 
 }
 
-void JabberConnector::setOptHostPort ( const QString &host, Q_UINT16 port )
+void JabberConnector::setOptHostPort ( const QString &host, quint16 port )
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Manually specifying host " << host << " and port " << port << endl;
 

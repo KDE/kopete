@@ -28,7 +28,7 @@ namespace P2P{
 	class OutgoingTransfer : public TransferContext
 	{	Q_OBJECT
 		public:
-			OutgoingTransfer(const QString& to, P2P::Dispatcher *dispatcher, Q_UINT32 sessionId);
+			OutgoingTransfer(const QString& to, P2P::Dispatcher *dispatcher, quint32 sessionId);
 			virtual ~OutgoingTransfer();
 
 			void sendImage(const QByteArray& image);

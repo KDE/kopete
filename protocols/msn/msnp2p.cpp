@@ -417,7 +417,7 @@ void MSNP2PWebcam::makeSIPMessage(const QString &message)
 	dataMessage[9]=0x00;
 	for(uint f=0; f<message.length(); f++)
 	{
-		dataMessage[10+2*f]=message[f].latin1();
+		dataMessage[10+2*f]=message[f].toLatin1();
 		dataMessage[11+2*f]=0x00;
 	}
 
@@ -468,7 +468,7 @@ void MSNP2PWebcam::sendBigP2PMessage( const QByteArray & dataMessage)
 	{
 		m_offset=f;
 		QByteArray dm2;
-		dm2.duplicate(dataMessage.data()+m_offset, QMIN(1200,m_totalDataSize-m_offset));
+		dm2.duplicate(dataMessage.data()+m_offset, qMin(1200,m_totalDataSize-m_offset));
 		sendP2PMessage(dm2);
 	}
 }

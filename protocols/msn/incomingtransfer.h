@@ -31,7 +31,7 @@ namespace P2P{
 	class IncomingTransfer : public P2P::TransferContext
 	{	Q_OBJECT
 		public:
-			IncomingTransfer(const QString& from, P2P::Dispatcher *dispatcher, Q_UINT32 sessionId);
+			IncomingTransfer(const QString& from, P2P::Dispatcher *dispatcher, quint32 sessionId);
 			virtual ~IncomingTransfer();
 
 		private slots:

@@ -64,7 +64,7 @@ void YahooBuddyIconLoader::slotData( KIO::Job *job, const QByteArray& data )
 	KIO::TransferJob *transfer = static_cast< KIO::TransferJob * >(job);
 
 	if( m_jobs[transfer].file )
-		m_jobs[transfer].file->file()->writeBlock( data.data() , data.size() );
+		m_jobs[transfer].file->file()->write( data.data() , data.size() );
 
 }
 

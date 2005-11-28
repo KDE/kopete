@@ -53,7 +53,7 @@ JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * p
 		kdDebug (14130) << "[JabberFormTranslator] Adding field realName()==" <<
 			(*it).realName () << ", fieldName()==" << (*it).fieldName () << " to the dialog" << endl;
 
-		label = new QLabel ((*it).fieldName (), this, (*it).fieldName ().latin1 ());
+		label = new QLabel ((*it).fieldName (), this, (*it).fieldName ().toLatin1 ());
 		formLayout->addWidget (label, row, 0);
 		label->show ();
 

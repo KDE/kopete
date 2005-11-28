@@ -82,7 +82,7 @@ Buffer* RedirectTest::SetupBuffer(WORD Service, QString Cookie)
 	b->addString("65.86.43.45:5190", 16);
 	b->addWord(0x0006);
 	b->addWord(Cookie.length());
-	b->addString(Cookie.latin1(), Cookie.length());
+	b->addString(Cookie.toLatin1(), Cookie.length());
 	return b;
 }
 

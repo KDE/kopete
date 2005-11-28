@@ -59,7 +59,7 @@ signals:
 protected slots:
 	void slotReceiveUserDetails( const GroupWise::ContactDetails & );
 protected:
-	Q_UINT32 readFlags( QDataStream & din );
+	quint32 readFlags( QDataStream & din );
 	QString readMessage( QDataStream & din );
 	/**
 	 * Checks to see if we need more data from the client before we can propagate this event

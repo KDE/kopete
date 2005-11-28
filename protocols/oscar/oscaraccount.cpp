@@ -64,7 +64,7 @@ public:
 	//The liboscar hook for the account
 	Client* engine;
 
-	Q_UINT32 ssiLastModTime;
+	quint32 ssiLastModTime;
 
 	//contacts waiting on SSI add ack and their metacontact
 	QMap<QString, Kopete::MetaContact*> addContactMap;

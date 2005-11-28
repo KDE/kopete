@@ -109,7 +109,7 @@ void KNetworkConnector::done ()
 	mByteStream->close ();
 }
 
-void KNetworkConnector::setOptHostPort ( const QString &host, Q_UINT16 port )
+void KNetworkConnector::setOptHostPort ( const QString &host, quint16 port )
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Manually specifying host " << host << " and port " << port << endl;
 

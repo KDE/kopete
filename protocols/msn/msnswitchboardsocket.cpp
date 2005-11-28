@@ -222,7 +222,7 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint  id ,
 				m_account->contacts()[ m_msgHandle ]->rename(displayName);
 		}*/
 
-		readBlock(len.toUInt());
+		read(len.toUInt());
 	}
 }
 
@@ -522,7 +522,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 		{
 			bool valid = true;
 			// Retrieve the nmber of data chunks.
-			Q_UINT32 numberOfChunks = chunks.toUInt(&valid);
+			quint32 numberOfChunks = chunks.toUInt(&valid);
 			if(valid && (numberOfChunks > 1))
 			{
 				regex = QRegExp("base64:([0-9a-zA-Z+/=]+)");
@@ -577,7 +577,7 @@ void MSNSwitchBoardSocket::DispatchInkMessage(const QString& base64String)
 	KCodecs::base64Decode(base64String.utf8() , image);
 	KTempFile *inkImage = new KTempFile(locateLocal( "tmp", "inkformatgif-" ), ".gif");
 	inkImage->setAutoDelete(true);
-	inkImage->file()->writeBlock(image.data(), image.size());
+	inkImage->file()->write(image.data(), image.size());
 	inkImage->file()->close();
 
 	slotEmoticonReceived(inkImage , "inkformatgif");
@@ -953,7 +953,7 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 	}
 }
 
-void MSNSwitchBoardSocket::slotIncomingFileTransfer(const QString& from, const QString& /*fileName*/, Q_INT64 /*fileSize*/)
+void MSNSwitchBoardSocket::slotIncomingFileTransfer(const QString& from, const QString& /*fileName*/, qint64 /*fileSize*/)
 {
 	Q3PtrList<Kopete::Contact> others;
 	others.append( m_account->myself() );
@@ -1084,7 +1084,7 @@ Dispatcher* MSNSwitchBoardSocket::PeerDispatcher()
 
 // 		QObject::connect(this, SIGNAL(blockRead(const QByteArray&)), m_dispatcher, SLOT(slotReadMessage(const QByteArray&)));
 // 		QObject::connect(m_dispatcher, SIGNAL(sendCommand(const QString&, const QString&, bool, const QByteArray&, bool)), this, SLOT(sendCommand(const QString&, const QString&, bool, const QByteArray&, bool)));
-		QObject::connect(m_dispatcher, SIGNAL(incomingTransfer(const QString&, const QString&, Q_INT64)), this, SLOT(slotIncomingFileTransfer(const QString&, const QString&, Q_INT64)));
+		QObject::connect(m_dispatcher, SIGNAL(incomingTransfer(const QString&, const QString&, qint64)), this, SLOT(slotIncomingFileTransfer(const QString&, const QString&, qint64)));
 		QObject::connect(m_dispatcher, SIGNAL(displayIconReceived(KTempFile *, const QString&)), this, SLOT(slotEmoticonReceived( KTempFile *, const QString&)));
 		QObject::connect(this, SIGNAL(msgAcknowledgement(unsigned int, bool)), m_dispatcher, SLOT(messageAcknowledged(unsigned int, bool)));
 		m_dispatcher->m_pictureUrl = m_account->pictureUrl();

@@ -33,7 +33,7 @@ public:
 	~ServSock();
 
 	bool isActive() const;
-	bool listen(Q_UINT16 port);
+	bool listen(quint16 port);
 	void stop();
 	int port() const;
 	QHostAddress address() const;

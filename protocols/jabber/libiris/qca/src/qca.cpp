@@ -140,7 +140,7 @@ static void plugin_scan()
 			// don't load the same plugin again!
 			if(plugin_have(fname))
 				continue;
-			//printf("f=[%s]\n", fname.latin1());
+			//printf("f=[%s]\n", fname.toLatin1());
 
 			ProviderItem *i = ProviderItem::load(fname);
 			if(!i)
@@ -594,7 +594,7 @@ QString RSAKey::toPEM(bool publicOnly) const
 
 bool RSAKey::fromPEM(const QString &str)
 {
-	QByteArray cs = str.latin1();
+	QByteArray cs = str.toLatin1();
 	QByteArray a(cs.length());
 	memcpy(a.data(), cs.data(), a.size());
 	return d->c->createFromPEM(a.data(), a.size());
@@ -802,7 +802,7 @@ QString Cert::toPEM() const
 
 bool Cert::fromPEM(const QString &str)
 {
-	QByteArray cs = str.latin1();
+	QByteArray cs = str.toLatin1();
 	QByteArray a(cs.length());
 	memcpy(a.data(), cs.data(), a.size());
 	return d->c->createFromPEM(a.data(), a.size());
@@ -1230,13 +1230,13 @@ void SASL::setExternalSSF(int x)
 	d->ext_ssf = x;
 }
 
-void SASL::setLocalAddr(const QHostAddress &addr, Q_UINT16 port)
+void SASL::setLocalAddr(const QHostAddress &addr, quint16 port)
 {
 	d->localAddr = addr;
 	d->localPort = port;
 }
 
-void SASL::setRemoteAddr(const QHostAddress &addr, Q_UINT16 port)
+void SASL::setRemoteAddr(const QHostAddress &addr, quint16 port)
 {
 	d->remoteAddr = addr;
 	d->remotePort = port;

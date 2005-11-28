@@ -56,28 +56,28 @@ void SSITest::testIt()
 	//try to find a group by name
 	ssi = m_manager->findGroup("SecondGroup");
 	if ( ssi )
-		qDebug( QString("Found group SecondGroup with gid=%1").arg( ssi->gid() ).latin1());
+		qDebug( QString("Found group SecondGroup with gid=%1").arg( ssi->gid() ).toLatin1());
 	else
 		qDebug( "Oops, group SecondGroup not found" );
 
 	//try to find a group by gid
 	ssi = m_manager->findGroup( 3 );
 	if ( ssi )
-		qDebug( QString("Found group 3 with name=%1").arg( ssi->name() ).latin1() );
+		qDebug( QString("Found group 3 with name=%1").arg( ssi->name() ).toLatin1() );
 	else
 		qDebug( "Oops, group 3 not found" );
 
 	//try to find a contact by name
 	ssi = m_manager->findContact("ThirdContact");
 	if ( ssi )
-		qDebug( QString( "Found contact ThirdContact with gid=%1" ).arg( ssi->gid() ).latin1() );
+		qDebug( QString( "Found contact ThirdContact with gid=%1" ).arg( ssi->gid() ).toLatin1() );
 	else
 		qDebug( "Oops, contact ThirdContact not found" );
 
 	//try to find a contact using the name and the group name
 	ssi = m_manager->findContact("FourthContact","SecondGroup");
 	if ( ssi )
-		qDebug( QString("Found contact FourthContact with bid=%1").arg( ssi->bid() ).latin1() );
+		qDebug( QString("Found contact FourthContact with bid=%1").arg( ssi->bid() ).toLatin1() );
 	else
 		qDebug( "Oops, contact FourthContact not found" );
 
@@ -92,13 +92,13 @@ void SSITest::testIt()
 	Q3ValueList<SSI*>::iterator it;
 	qDebug( "Contacts from group FirtsGroup:" );
 	for ( it = list.begin(); it != list.end(); ++it)
-		qDebug( QString("      name=%1").arg( (*it)->name() ).latin1() );
+		qDebug( QString("      name=%1").arg( (*it)->name() ).toLatin1() );
 
 	//the group list
 	Q3ValueList<SSI*> list2 = m_manager->groupList();
 	qDebug( "Group list:" );
 	for ( it = list2.begin(); it != list2.end(); ++it)
-		qDebug( QString("      name=%1").arg( (*it)->name() ).latin1() );
+		qDebug( QString("      name=%1").arg( (*it)->name() ).toLatin1() );
 	
 	//remove a group - this shouldn't report any debug line
 	m_manager->removeGroup( "SecondGroup" );

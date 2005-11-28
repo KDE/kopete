@@ -42,7 +42,7 @@ Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 	inBuf.open( QIODevice::ReadOnly); 
 	m_din.setDevice( &inBuf );
 	m_din.setByteOrder( QDataStream::LittleEndian );
-	Q_UINT32 type;
+	quint32 type;
 
 	if ( !okToProceed() )
 	{
@@ -51,7 +51,7 @@ Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 	}
 	// read the event type
 	m_din >> type;
-	m_bytes += sizeof( Q_UINT32 );
+	m_bytes += sizeof( quint32 );
 	
 	debug( QString( "EventProtocol::parse() Reading event of type %1" ).arg( type ) );
 	if ( type > Stop )
@@ -77,8 +77,8 @@ Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 	// Note: if there are any errors in the way the data is read below, we will soon be OutOfSync
 	QString statusText;
 	QString guid;
-	Q_UINT16 status;
-	Q_UINT32 flags;
+	quint16 status;
+	quint32 flags;
 	QString message;
 	
 	switch ( type )
@@ -90,7 +90,7 @@ Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 				return 0;
 			}
 			m_din >> status;
-			m_bytes += sizeof( Q_UINT16 );
+			m_bytes += sizeof( quint16 );
 			if ( !readString( statusText ) )
 			{
 				m_din.unsetDevice();
@@ -202,12 +202,12 @@ Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 	return tentative;
 }
 
-bool EventProtocol::readFlags( Q_UINT32 &flags)
+bool EventProtocol::readFlags( quint32 &flags)
 {
 	if ( okToProceed() )
 	{
 		m_din >> flags;
-		m_bytes += sizeof( Q_UINT32 );
+		m_bytes += sizeof( quint32 );
 		return true;
 	}
 	return false;

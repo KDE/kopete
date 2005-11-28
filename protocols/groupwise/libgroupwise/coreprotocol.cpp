@@ -289,7 +289,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		// method
 		//dout.writeRawBytes( GW_URLVAR_METHOD, sizeof( GW_URLVAR_METHOD ) );
 		//		char methodChar = encode_method( field->method() );
-		//dout << (Q_UINT8)methodChar;
+		//dout << (quint8)methodChar;
 		
 		// value
 		//dout.writeRawBytes( GW_URLVAR_VAL, sizeof( GW_URLVAR_VAL ) );
@@ -380,7 +380,7 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 	m_din->setByteOrder( QDataStream::LittleEndian );
 	
 	// look at first four bytes and decide what to do with the chunk
-	Q_UINT32 val;
+	quint32 val;
 	if ( okToProceed() )
 	{
 		*m_din >> val;
@@ -427,7 +427,7 @@ void CoreProtocol::reset()
 	m_in.resize( 0 );
 }
 
-QChar CoreProtocol::encode_method( Q_UINT8 method )
+QChar CoreProtocol::encode_method( quint8 method )
 {
 	QChar str;
 

@@ -51,7 +51,7 @@
 //----------------------------------------------------------------------------
 // SocksUDP
 //----------------------------------------------------------------------------
-static QByteArray sp_create_udp(const QString &host, Q_UINT16 port, const QByteArray &buf)
+static QByteArray sp_create_udp(const QString &host, quint16 port, const QByteArray &buf)
 {
 	// detect for IP addresses
 	//QHostAddress addr;
@@ -91,7 +91,7 @@ static QByteArray sp_create_udp(const QString &host, Q_UINT16 port, const QByteA
 struct SPS_UDP
 {
 	QString host;
-	Q_UINT16 port;
+	quint16 port;
 	QByteArray data;
 };
 
@@ -109,7 +109,7 @@ static int sp_read_udp(QByteArray *from, SPS_UDP *s)
 		full_len += 4;
 		if((int)from->size() < full_len)
 			return 0;
-		Q_UINT32 ip4;
+		quint32 ip4;
 		memcpy(&ip4, from->data() + 4, 4);
 		addr.setAddress(ntohl(ip4));
 		host = addr.toString();
@@ -130,7 +130,7 @@ static int sp_read_udp(QByteArray *from, SPS_UDP *s)
 		full_len += 16;
 		if((int)from->size() < full_len)
 			return 0;
-		Q_UINT8 a6[16];
+		quint8 a6[16];
 		memcpy(a6, from->data() + 4, 16);
 		addr.setAddress(a6);
 		host = addr.toString();
@@ -140,7 +140,7 @@ static int sp_read_udp(QByteArray *from, SPS_UDP *s)
 	if((int)from->size() < full_len)
 		return 0;
 
-	Q_UINT16 p;
+	quint16 p;
 	memcpy(&p, from->data() + full_len - 2, 2);
 
 	s->host = host;
@@ -195,14 +195,14 @@ void SocksUDP::write(const QByteArray &data)
 {
 	QByteArray buf = sp_create_udp(d->host, d->port, data);
 	d->sd->setBlocking(true);
-	d->sd->writeBlock(buf.data(), buf.size(), d->routeAddr, d->routePort);
+	d->sd->write(buf.data(), buf.size(), d->routeAddr, d->routePort);
 	d->sd->setBlocking(false);
 }
 
 void SocksUDP::sn_activated(int)
 {
 	QByteArray buf(8192);
-	int actual = d->sd->readBlock(buf.data(), buf.size());
+	int actual = d->sd->read(buf.data(), buf.size());
 	buf.resize(actual);
 	packetReady(buf);
 }
@@ -368,17 +368,17 @@ static QByteArray sp_set_request(const QHostAddress &addr, unsigned short port, 
 	a[at++] = 0x00; // reserved
 	if(addr.isIp4Addr()) {
 		a[at++] = 0x01; // address type = ipv4
-		Q_UINT32 ip4 = htonl(addr.ip4Addr());
+		quint32 ip4 = htonl(addr.ip4Addr());
 		a.resize(at+4);
 		memcpy(a.data() + at, &ip4, 4);
 		at += 4;
 	}
 	else {
 		a[at++] = 0x04;
-		Q_UINT8 a6[16];
+		quint8 a6[16];
 		QStringList s6 = QStringList::split(':', addr.toString(), true);
 		int at = 0;
-		Q_UINT16 c;
+		quint16 c;
 		bool ok;
 		for(QStringList::ConstIterator it = s6.begin(); it != s6.end(); ++it) {
 			c = (*it).toInt(&ok, 16);
@@ -398,7 +398,7 @@ static QByteArray sp_set_request(const QHostAddress &addr, unsigned short port, 
 	return a;
 }
 
-static QByteArray sp_set_request(const QString &host, Q_UINT16 port, unsigned char cmd1)
+static QByteArray sp_set_request(const QString &host, quint16 port, unsigned char cmd1)
 {
 	// detect for IP addresses
 	QHostAddress addr;
@@ -438,7 +438,7 @@ struct SPS_CONNREQ
 	int address_type;
 	QString host;
 	QHostAddress addr;
-	Q_UINT16 port;
+	quint16 port;
 };
 
 static int sp_get_request(QByteArray *from, SPS_CONNREQ *s)
@@ -455,7 +455,7 @@ static int sp_get_request(QByteArray *from, SPS_CONNREQ *s)
 		full_len += 4;
 		if((int)from->size() < full_len)
 			return 0;
-		Q_UINT32 ip4;
+		quint32 ip4;
 		memcpy(&ip4, from->data() + 4, 4);
 		addr.setAddress(ntohl(ip4));
 	}
@@ -475,7 +475,7 @@ static int sp_get_request(QByteArray *from, SPS_CONNREQ *s)
 		full_len += 16;
 		if((int)from->size() < full_len)
 			return 0;
-		Q_UINT8 a6[16];
+		quint8 a6[16];
 		memcpy(a6, from->data() + 4, 16);
 		addr.setAddress(a6);
 	}
@@ -486,7 +486,7 @@ static int sp_get_request(QByteArray *from, SPS_CONNREQ *s)
 
 	QByteArray a = ByteStream::takeArray(from, full_len);
 
-	Q_UINT16 p;
+	quint16 p;
 	memcpy(&p, a.data() + full_len - 2, 2);
 
 	s->version = a[0];
@@ -601,11 +601,11 @@ void SocksClient::connectToHost(const QString &proxyHost, int proxyPort, const Q
 	d->udp = udpMode;
 
 #ifdef PROX_DEBUG
-	fprintf(stderr, "SocksClient: Connecting to %s:%d", proxyHost.latin1(), proxyPort);
+	fprintf(stderr, "SocksClient: Connecting to %s:%d", proxyHost.toLatin1(), proxyPort);
 	if(d->user.isEmpty())
 		fprintf(stderr, "\n");
 	else
-		fprintf(stderr, ", auth {%s,%s}\n", d->user.latin1(), d->pass.latin1());
+		fprintf(stderr, ", auth {%s,%s}\n", d->user.toLatin1(), d->pass.toLatin1());
 #endif
 	d->sock.connectToHost(d->host, d->port);
 }
@@ -755,7 +755,7 @@ void SocksClient::processOutgoing(const QByteArray &block)
 #ifdef PROX_DEBUG
 				fprintf(stderr, "SocksClient: Authenticating [Username] ...\n");
 #endif
-				writeData(spc_set_authUsername(d->user.latin1(), d->pass.latin1()));
+				writeData(spc_set_authUsername(d->user.toLatin1(), d->pass.toLatin1()));
 			}
 		}
 	}
@@ -1070,7 +1070,7 @@ QHostAddress SocksClient::peerAddress() const
 	return d->sock.peerAddress();
 }
 
-Q_UINT16 SocksClient::peerPort() const
+quint16 SocksClient::peerPort() const
 {
 	return d->sock.peerPort();
 }
@@ -1080,7 +1080,7 @@ QString SocksClient::udpAddress() const
 	return d->udpAddr;
 }
 
-Q_UINT16 SocksClient::udpPort() const
+quint16 SocksClient::udpPort() const
 {
 	return d->udpPort;
 }
@@ -1126,7 +1126,7 @@ bool SocksServer::isActive() const
 	return d->serv.isActive();
 }
 
-bool SocksServer::listen(Q_UINT16 port, bool udp)
+bool SocksServer::listen(quint16 port, bool udp)
 {
 	stop();
 	if(!d->serv.listen(port))
@@ -1186,7 +1186,7 @@ void SocksServer::writeUDP(const QHostAddress &addr, int port, const QByteArray 
 {
 	if(d->sd) {
 		d->sd->setBlocking(true);
-		d->sd->writeBlock(data.data(), data.size(), addr, port);
+		d->sd->write(data.data(), data.size(), addr, port);
 		d->sd->setBlocking(false);
 	}
 }
@@ -1209,7 +1209,7 @@ void SocksServer::connectionError()
 void SocksServer::sn_activated(int)
 {
 	QByteArray buf(8192);
-	int actual = d->sd->readBlock(buf.data(), buf.size());
+	int actual = d->sd->read(buf.data(), buf.size());
 	buf.resize(actual);
 	QHostAddress pa = d->sd->peerAddress();
 	int pp = d->sd->peerPort();

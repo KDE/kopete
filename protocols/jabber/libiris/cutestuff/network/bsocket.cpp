@@ -84,7 +84,7 @@ void BSocket::reset(bool clear)
 		if(!clear && d->qsock->isOpen()) {
 			// move remaining into the local queue
 			QByteArray block(d->qsock->bytesAvailable());
-			d->qsock->readBlock(block.data(), block.size());
+			d->qsock->read(block.data(), block.size());
 			appendRead(block);
 		}
 
@@ -120,7 +120,7 @@ void BSocket::ensureSocket()
 	}
 }
 
-void BSocket::connectToHost(const QString &host, Q_UINT16 port)
+void BSocket::connectToHost(const QString &host, quint16 port)
 {
 	reset(true);
 	d->host = host;
@@ -197,7 +197,7 @@ void BSocket::write(const QByteArray &a)
 	QString s = QString::fromUtf8(cs);
 	fprintf(stderr, "BSocket: writing [%d]: {%s}\n", a.size(), cs.data());
 #endif
-	d->qsock->writeBlock(a.data(), a.size());
+	d->qsock->write(a.data(), a.size());
 }
 
 QByteArray BSocket::read(int bytes)
@@ -208,7 +208,7 @@ QByteArray BSocket::read(int bytes)
 		if(bytes <= 0 || bytes > max)
 			bytes = max;
 		block.resize(bytes);
-		d->qsock->readBlock(block.data(), block.size());
+		d->qsock->read(block.data(), block.size());
 	}
 	else
 		block = ByteStream::read(bytes);
@@ -218,7 +218,7 @@ QByteArray BSocket::read(int bytes)
 	cs.resize(block.size()+1);
 	memcpy(cs.data(), block.data(), block.size());
 	QString s = QString::fromUtf8(cs);
-	fprintf(stderr, "BSocket: read [%d]: {%s}\n", block.size(), s.latin1());
+	fprintf(stderr, "BSocket: read [%d]: {%s}\n", block.size(), s.toLatin1());
 #endif
 	return block;
 }
@@ -246,7 +246,7 @@ QHostAddress BSocket::address() const
 		return QHostAddress();
 }
 
-Q_UINT16 BSocket::port() const
+quint16 BSocket::port() const
 {
 	if(d->qsock)
 		return d->qsock->port();
@@ -262,7 +262,7 @@ QHostAddress BSocket::peerAddress() const
 		return QHostAddress();
 }
 
-Q_UINT16 BSocket::peerPort() const
+quint16 BSocket::peerPort() const
 {
 	if(d->qsock)
 		return d->qsock->port();
@@ -309,7 +309,7 @@ void BSocket::ndns_done()
 void BSocket::do_connect()
 {
 #ifdef BS_DEBUG
-	fprintf(stderr, "BSocket: Connecting to %s:%d\n", d->host.latin1(), d->port);
+	fprintf(stderr, "BSocket: Connecting to %s:%d\n", d->host.toLatin1(), d->port);
 #endif
 	ensureSocket();
 	d->qsock->connectToHost(d->host, d->port);

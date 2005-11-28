@@ -85,7 +85,7 @@ void SendMessageTask::onGo()
 		b->addWord( m_message.type() );
 		
 		b->addByte( m_message.receiver().length() );
-		b->addString( m_message.receiver().latin1(), m_message.receiver().length() );
+		b->addString( m_message.receiver().toLatin1(), m_message.receiver().length() );
 		
 		QString msgChunk = m_message.text().mid( msgPostion, CHUNK_LENGTH );
 		// Try to split on space if needed
@@ -191,7 +191,7 @@ void SendMessageTask::addChannel1Data( Buffer* b, const QString& message )
 		tlv2buffer.addWord( message.length() + 4 ); // add TLV length
 		tlv2buffer.addWord( 0x0000 );
 		tlv2buffer.addWord( 0x0000 );
-		tlv2buffer.addString( message.latin1(), message.length() );
+		tlv2buffer.addString( message.toLatin1(), message.length() );
 	}
 	else
 	{
@@ -380,7 +380,7 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b, const QString& messag
 // 	b->addString( utfMessage, length ); // string itself
 	
 	b->addLEWord( message.length() + 1 ); // length of string + zero termination
-	b->addString( message.latin1(), message.length() ); // string itself
+	b->addString( message.toLatin1(), message.length() ); // string itself
 	b->addByte( 0x00 ); // zero termination
 }
 

@@ -388,7 +388,7 @@ void Contact::deserializeProperties(
 		QString type( keyList[1] ); // needed for QVariant casting
 
 		QVariant variant( it.data() );
-		if( !variant.cast(QVariant::nameToType(type.latin1())) )
+		if( !variant.cast(QVariant::nameToType(type.toLatin1())) )
 		{
 			kdDebug(14010) << k_funcinfo <<
 				"Casting QVariant to needed type FAILED" <<

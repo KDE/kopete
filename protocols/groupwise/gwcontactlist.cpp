@@ -103,7 +103,7 @@ int GWContactList::maxSequenceNumber()
 	while ( (obj = it.current()) != 0 )
 	{
 		GWFolder * current = ::qt_cast< GWFolder * >( obj );
-		sequence = QMAX( sequence, current->sequence );
+		sequence = qMax( sequence, current->sequence );
 		++it;
 	}
 	delete l;

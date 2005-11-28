@@ -111,28 +111,28 @@ int KUnitTest::runTests()
 	  cout << "    Unexpected pass" << ( ( 1 == numXPass )?"":"es") << ":" << endl;
 	  QStringList list = test->xpassList();
 	  for ( QStringList::Iterator itr = list.begin(); itr != list.end(); ++itr ) {
-	    cout << "\t" << (*itr).latin1() << endl;
+	    cout << "\t" << (*itr).toLatin1() << endl;
 	  }
 	}
 	if ( 0 < (numFail - numXFail) ) {
 	  cout << "    Unexpected failure" << ( ( 1 == numFail )?"":"s") << ":" << endl;
 	  QStringList list = test->errorList();
 	  for ( QStringList::Iterator itr = list.begin(); itr != list.end(); ++itr ) {
-	    cout << "\t" << (*itr).latin1() << endl;
+	    cout << "\t" << (*itr).toLatin1() << endl;
 	  }
 	}
 	if ( 0 < numXFail ) {
 	  cout << "    Expected failure" << ( ( 1 == numXFail)?"":"s") << ":" << endl;
 	  QStringList list = test->xfailList();
 	  for ( QStringList::Iterator itr = list.begin(); itr != list.end(); ++itr ) {
-	    cout << "\t" << (*itr).latin1() << endl;
+	    cout << "\t" << (*itr).toLatin1() << endl;
 	  }
 	}
 	if ( 0 < numSkip ) {
 	    cout << "    Skipped test" << ( ( 1 == numSkip )?"":"s") << ":" << endl;
 	    QStringList list = test->skipList();
 	    for ( QStringList::Iterator itr = list.begin(); itr != list.end(); ++itr ) {
-		cout << "\t" << (*itr).latin1() << endl;
+		cout << "\t" << (*itr).toLatin1() << endl;
 	    }
 	}
 	cout << endl;

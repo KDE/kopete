@@ -17,7 +17,7 @@
 
 #include "eventtransfer.h"
 
-EventTransfer::EventTransfer( const Q_UINT32 eventType, const QString & source, QDateTime timeStamp )
+EventTransfer::EventTransfer( const quint32 eventType, const QString & source, QDateTime timeStamp )
  : Transfer(), m_eventType( eventType ), m_source( source ), m_timeStamp( timeStamp )
 {
 	m_contentFlags |= ( EventType | Source | TimeStamp );
@@ -92,7 +92,7 @@ GroupWise::ConferenceGuid EventTransfer::guid()
 	return m_guid;
 }
 
-Q_UINT32 EventTransfer::flags()
+quint32 EventTransfer::flags()
 {
 	return m_flags;
 }
@@ -102,7 +102,7 @@ QString EventTransfer::message()
 	return m_message;
 }
 
-Q_UINT16 EventTransfer::status()
+quint16 EventTransfer::status()
 {
 	return m_status;
 }
@@ -119,7 +119,7 @@ void EventTransfer::setGuid( const GroupWise::ConferenceGuid & guid )
 	m_guid = guid;
 }
 
-void EventTransfer::setFlags( const Q_UINT32 flags )
+void EventTransfer::setFlags( const quint32 flags )
 {
 	m_contentFlags |= Flags;
 	m_flags = flags;
@@ -131,7 +131,7 @@ void EventTransfer::setMessage( const QString & message )
 	m_message = message;
 }
 
-void EventTransfer::setStatus( const Q_UINT16 inStatus )
+void EventTransfer::setStatus( const quint16 inStatus )
 {
 	m_contentFlags |= Status;
 	m_status = inStatus;

@@ -167,7 +167,7 @@ void Detector::smpppdCheckStatus() {
                 break;
             case CHALLENGED: {
                     // write response to challenge
-                    writeSMPPPD(QString("response = %1\n").arg(make_response(challenge, pass)).latin1());
+                    writeSMPPPD(QString("response = %1\n").arg(make_response(challenge, pass)).toLatin1());
                     // and then read the answer
                     QStringList stream = readSMPPPD();
                     kdDebug(14312) << k_funcinfo << "smpppd challenge ack: " << stream[0] << endl;
@@ -214,7 +214,7 @@ void Detector::smpppdCheckStatus() {
             case LISTIFCFG: {
                     for(unsigned int i = 0; i < m_ifcfgs.count(); i++) {
                         QString cmd = "list-status " + m_ifcfgs[i];
-                        writeSMPPPD(cmd.latin1());
+                        writeSMPPPD(cmd.toLatin1());
                         m_sock->waitForMore(0);
                         QStringList stream = readSMPPPD();
                         if(stream[0].startsWith("ok")) {

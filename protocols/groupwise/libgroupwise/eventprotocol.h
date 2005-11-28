@@ -61,7 +61,7 @@ class EventTransfer;
 						UndeliverableStatus 	= 102,
 							NOTHANDLED * 
 						StatusChange 			= 103,
-							Q_UINT16 STATUS
+							quint16 STATUS
 							STATUSTEXT
 						ContactAdd 				= 104,
 							NOTHANDLED
@@ -124,7 +124,7 @@ protected:
 	/**
 	 * Reads a conference's flags
 	 */
-	bool readFlags( Q_UINT32 &flags);
+	bool readFlags( quint32 &flags);
 };
 
 #endif

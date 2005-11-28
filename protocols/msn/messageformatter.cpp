@@ -38,7 +38,7 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 {
 	Message inbound;
 	
-	Q_UINT32 index = 0;
+	quint32 index = 0;
 	if(compact == false)
 	{
 		// Determine the end position of the message header.
@@ -147,7 +147,7 @@ void MessageFormatter::writeMessage(const Message& message, QByteArray& stream, 
 		// Set the capacity of the message buffer.
 		stream.resize(4 + 48 + message.body.size());
 		// Write the message size to the stream.
-		writer << (Q_INT32)(48+message.body.size());
+		writer << (qint32)(48+message.body.size());
 	}
 
 	

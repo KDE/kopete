@@ -52,7 +52,7 @@ bool GetStatusTask::take( Transfer * transfer )
 	responseFields.dump( true );
 	// parse received details and signal like billio
 	Field::SingleField * sf = 0;
-	Q_UINT16 status;
+	quint16 status;
 	sf = responseFields.findSingleField( NM_A_SZ_STATUS );
 	if ( sf )
 	{

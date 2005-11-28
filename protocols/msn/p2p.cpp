@@ -46,7 +46,7 @@ QString P2P::Uid::createUid()
 			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)).toUpper();
 }
 
-TransferContext::TransferContext(const QString &contact, P2P::Dispatcher *dispatcher, Q_UINT32 sessionId) 
+TransferContext::TransferContext(const QString &contact, P2P::Dispatcher *dispatcher, quint32 sessionId) 
 	: QObject(dispatcher) ,
 	   m_sessionId(sessionId) ,
 	   m_identifier(0) ,
@@ -128,7 +128,7 @@ void TransferContext::acknowledge(const Message& message)
 	else
 	{
 		// Send acknowledge message directly.
-		m_socket->writeBlock(stream.data(), stream.size());
+		m_socket->write(stream.data(), stream.size());
 	}
 }
 
@@ -178,7 +178,7 @@ void TransferContext::sendData(const QByteArray& bytes)
  	else
  	{
  		// Send data directly.
- 		m_socket->writeBlock(stream.data(), stream.size());
+ 		m_socket->write(stream.data(), stream.size());
  	}
 }
 
@@ -208,7 +208,7 @@ void TransferContext::sendDataPreparation()
  	m_dispatcher->callbackChannel()->send(stream);
 }
 
-void TransferContext::sendMessage(MessageType type, const QString& content, Q_INT32 flag, Q_INT32 appId)
+void TransferContext::sendMessage(MessageType type, const QString& content, qint32 flag, qint32 appId)
 {
 	Message outbound;
 	if(appId != 0){
@@ -320,8 +320,8 @@ void TransferContext::sendMessage(MessageType type, const QString& content, Q_IN
 
 void TransferContext::sendMessage(Message& outbound, const QByteArray& body)
 {
-	Q_INT64 offset = 0L, bytesLeft = outbound.header.totalDataSize;
-	Q_INT16 chunkLength = 1202;
+	qint64 offset = 0L, bytesLeft = outbound.header.totalDataSize;
+	qint16 chunkLength = 1202;
 
 	// Split the outbound message if necessary.
 	while(bytesLeft > 0L)
@@ -359,7 +359,7 @@ void TransferContext::sendMessage(Message& outbound, const QByteArray& body)
 		else
 		{
 			// Send outbound message directly.
-			m_socket->writeBlock(stream.data(), stream.size());
+			m_socket->write(stream.data(), stream.size());
 		}
 	}
 }

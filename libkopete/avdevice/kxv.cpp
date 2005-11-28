@@ -708,5 +708,5 @@ void KXvDevice::destroyImage()
 
 Atom KXvDeviceAttribute::atom()
 {
-    return XInternAtom(QX11Info::display(), name.latin1(), False);
+    return XInternAtom(QX11Info::display(), name.toLatin1(), False);
 }

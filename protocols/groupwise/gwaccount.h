@@ -225,7 +225,7 @@ protected slots:
 	/**
 	 * A contact changed status
 	 */
-	void receiveStatus( const QString &, Q_UINT16, const QString & );
+	void receiveStatus( const QString &, quint16, const QString & );
 	/**
 	 * Our status changed on the server
 	 */

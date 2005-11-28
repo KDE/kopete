@@ -46,7 +46,7 @@ using namespace KNetwork;
 
 namespace P2P {
 
-Webcam::Webcam(Who who, const QString& to, Dispatcher *parent, Q_UINT32 sessionId)
+Webcam::Webcam(Who who, const QString& to, Dispatcher *parent, quint32 sessionId)
 	: TransferContext(to,parent,sessionId)  , m_who(who) , m_timerId(0)
 {
 	setType(P2P::WebcamType);
@@ -417,20 +417,20 @@ void Webcam::processMessage(const Message& message)
 	m_content=QString::null;
 }
 
-void Webcam::makeSIPMessage(const QString &message, Q_UINT8 XX, Q_UINT8 YY , Q_UINT8 ZZ)
+void Webcam::makeSIPMessage(const QString &message, quint8 XX, quint8 YY , quint8 ZZ)
 {
 	QByteArray dataMessage; //(12+message.length()*2);
 	QDataStream writer( &dataMessage,QIODevice::WriteOnly);
 	writer.setVersion(QDataStream::Qt_3_1);
 	writer.setByteOrder(QDataStream::LittleEndian);
-	writer << (Q_UINT8)0x80;
-	writer << (Q_UINT8)XX;
-	writer << (Q_UINT8)YY;
-	writer << (Q_UINT8)ZZ;
-	writer << (Q_UINT8)0x08;
-	writer << (Q_UINT8)0x00;
+	writer << (quint8)0x80;
+	writer << (quint8)XX;
+	writer << (quint8)YY;
+	writer << (quint8)ZZ;
+	writer << (quint8)0x08;
+	writer << (quint8)0x00;
 	writer << message+'\0';
-	//writer << (Q_UINT16)0x0000;
+	//writer << (quint16)0x0000;
 
 	/*QString echoS="";
 	unsigned int f=0;
@@ -475,7 +475,7 @@ void Webcam::sendBigP2PMessage( const QByteArray & dataMessage)
 	{
 		m_offset=f;
 		QByteArray dm2;
-		dm2.duplicate(dataMessage.data()+m_offset, QMIN(1200,m_totalDataSize-m_offset));
+		dm2.duplicate(dataMessage.data()+m_offset, qMin(1200,m_totalDataSize-m_offset));
 		sendData( dm2 );
 		m_offset+=dm2.size();
 	}
@@ -551,7 +551,7 @@ void Webcam::slotSocketConnected()
 
 	m_webcamState=wsConnected;
 	QByteArray to_send=m_peerAuth.toUtf8();
-	m_webcamSocket->writeBlock(to_send.data(), to_send.length());
+	m_webcamSocket->write(to_send.data(), to_send.length());
 	kdDebug(14140) << k_funcinfo << "sending "<< m_peerAuth << endl;
 
 }
@@ -609,7 +609,7 @@ void Webcam::slotSocketRead()
 				break;
 			}
 			QByteArray buffer(available);
-			m_webcamSocket->readBlock(buffer.data(), buffer.size());
+			m_webcamSocket->read(buffer.data(), buffer.size());
 		
 			kdDebug(14140) << k_funcinfo << buffer.data() <<  endl;
 
@@ -618,7 +618,7 @@ void Webcam::slotSocketRead()
 				closeAllOtherSockets();
 				kdDebug(14140) << k_funcinfo << "Sending " << connected_str << endl;
 				QByteArray conne=connected_str.toUtf8();
-				m_webcamSocket->writeBlock(conne.data(), conne.length());
+				m_webcamSocket->write(conne.data(), conne.length());
 				m_webcamState=wsConnecting;
 				
 				//SHOULD NOT BE THERE
@@ -659,7 +659,7 @@ void Webcam::slotSocketRead()
 				break;
 			}
 			QByteArray buffer(connected_str.length());
-			m_webcamSocket->readBlock(buffer.data(), buffer.size());
+			m_webcamSocket->read(buffer.data(), buffer.size());
 			
 // 			kdDebug(14140) << k_funcinfo << "state " << m_webcamState << " received :" << QCString(buffer) <<  endl;
 				
@@ -671,7 +671,7 @@ void Webcam::slotSocketRead()
 					closeAllOtherSockets();
 					kdDebug(14140) << k_funcinfo << "Sending " << connected_str << endl;
 					QByteArray conne=connected_str.toUtf8();
-					m_webcamSocket->writeBlock(conne.data(), conne.length());
+					m_webcamSocket->write(conne.data(), conne.length());
 												
 					//SHOULD BE DONE IN ALL CASE
 				m_mimic=new MimicWrapper();
@@ -719,16 +719,16 @@ void Webcam::slotSocketRead()
 			QByteArray buffer(available);
 			m_webcamSocket->peekBlock(buffer.data(), buffer.size());
 			
-			Q_UINT32 paysize=(uchar)buffer[8] + ((uchar)buffer[9]<<8) + ((uchar)buffer[10]<<16) + ((uchar)buffer[11]<<24);
+			quint32 paysize=(uchar)buffer[8] + ((uchar)buffer[9]<<8) + ((uchar)buffer[10]<<16) + ((uchar)buffer[11]<<24);
 			
 			if(available < (paysize+24))
 			{
 				kdDebug(14140) << k_funcinfo << "waiting more data   ( " << available << "  of  " <<paysize<< " )"<<  endl;
 				break;
 			}
-			m_webcamSocket->readBlock(buffer.data(), 24); //flush
+			m_webcamSocket->read(buffer.data(), 24); //flush
 			buffer.resize(paysize);
-			m_webcamSocket->readBlock(buffer.data(), buffer.size());
+			m_webcamSocket->read(buffer.data(), buffer.size());
 			
 			QPixmap pix=m_mimic->decode(buffer);
 			if(pix.isNull())
@@ -824,17 +824,17 @@ void Webcam::timerEvent( QTimerEvent *e )
 	QDataStream writer( &header,QIODevice::WriteOnly);
 	writer.setVersion(QDataStream::Qt_3_1);
 	writer.setByteOrder(QDataStream::LittleEndian);
-	writer << (Q_UINT16)24;  // header size
-	writer << (Q_UINT16)img.width();
-	writer << (Q_UINT16)img.height();
-	writer << (Q_UINT16)0x0000; //wtf .?
-	writer << (Q_UINT32)frame.size();
-	writer << (Q_UINT8)('M') << (Q_UINT8)('L') << (Q_UINT8)('2') << (Q_UINT8)('0');
-	writer << (Q_UINT32)0x00000000; //wtf .?
+	writer << (quint16)24;  // header size
+	writer << (quint16)img.width();
+	writer << (quint16)img.height();
+	writer << (quint16)0x0000; //wtf .?
+	writer << (quint32)frame.size();
+	writer << (quint8)('M') << (quint8)('L') << (quint8)('2') << (quint8)('0');
+	writer << (quint32)0x00000000; //wtf .?
 	writer << QTime::currentTime();  //FIXME:  possible midnight bug ?
 
-	m_webcamSocket->writeBlock(header.data(), header.size());
-	m_webcamSocket->writeBlock(frame.data(), frame.size());
+	m_webcamSocket->write(header.data(), header.size());
+	m_webcamSocket->write(frame.data(), frame.size());
 }
 
 

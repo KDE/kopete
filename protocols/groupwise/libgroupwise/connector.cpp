@@ -46,7 +46,7 @@ QHostAddress Connector::peerAddress() const
 	return addr;
 }
 
-Q_UINT16 Connector::peerPort() const
+quint16 Connector::peerPort() const
 {
 	return port;
 }
@@ -63,7 +63,7 @@ void Connector::setPeerAddressNone()
 	port = 0;
 }
 
-void Connector::setPeerAddress(const QHostAddress &_addr, Q_UINT16 _port)
+void Connector::setPeerAddress(const QHostAddress &_addr, quint16 _port)
 {
 	haveaddr = true;
 	addr = _addr;

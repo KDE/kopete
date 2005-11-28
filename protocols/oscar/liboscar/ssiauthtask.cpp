@@ -92,8 +92,8 @@ void SSIAuthTask::grantFutureAuth( const QString& uin, const QString& reason )
 	SNAC s = { 0x0013, 0x0014, 0x0000, client()->snacSequence() };
 	
 	Buffer* buf = new Buffer();
-	buf->addBUIN( uin.latin1() );
-	buf->addBSTR( reason.latin1() );
+	buf->addBUIN( uin.toLatin1() );
+	buf->addBSTR( reason.toLatin1() );
 	buf->addWord( 0x0000 ); // Unknown
 	
 	Transfer* t = createTransfer( f, s, buf );
@@ -106,8 +106,8 @@ void SSIAuthTask::sendAuthRequest( const QString& uin, const QString& reason )
 	SNAC s = { 0x0013, 0x0018, 0x0000, client()->snacSequence() };
 	
 	Buffer* buf = new Buffer();
-	buf->addBUIN( uin.latin1() );
-	buf->addBSTR( reason.latin1() );
+	buf->addBUIN( uin.toLatin1() );
+	buf->addBSTR( reason.toLatin1() );
 	buf->addWord( 0x0000 ); // Unknown
 	
 	Transfer* t = createTransfer( f, s, buf );
@@ -124,9 +124,9 @@ void SSIAuthTask::sendAuthReply( const QString& uin, const QString& reason, bool
 	SNAC s = { 0x0013, 0x001A, 0x0000, client()->snacSequence() };
 	
 	Buffer* buf = new Buffer();
-	buf->addBUIN( uin.latin1() );
+	buf->addBUIN( uin.toLatin1() );
 	buf->addByte( auth ? 0x01 : 0x00 ); // accepted / declined
-	buf->addBSTR( reason.latin1() );
+	buf->addBSTR( reason.toLatin1() );
 	
 	Transfer* t = createTransfer( f, s, buf );
 	send( t );

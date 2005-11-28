@@ -111,7 +111,7 @@ GroupWise::ChatroomSearchResult GetChatSearchResultsTask::extractChatDetails( Fi
 	if ( ( sf = fields.findSingleField ( NM_A_DISPLAY_NAME ) ) )
 		csr.name = sf->value().toString();
 	if ( ( sf = fields.findSingleField ( NM_A_CHAT_OWNER_DN ) ) )
-		csr.ownerDN = sf->value().toString().lower(); // HACK: lowercased DN
+		csr.ownerDN = sf->value().toString().toLower(); // HACK: lowercased DN
 	if ( ( sf = fields.findSingleField ( NM_A_UD_PARTICIPANTS ) ) )
 		csr.participants = sf->value().toInt();
 	

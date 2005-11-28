@@ -77,7 +77,7 @@ KSSLSocket::~KSSLSocket()
 	delete d;
 }
 
-Q_LONG KSSLSocket::readBlock( char* data, Q_ULONG maxLen )
+Q_LONG KSSLSocket::read( char* data, Q_ULONG maxLen )
 {
 	//Re-implemented because KExtSocket doesn't use this when not in buffered mode
 	Q_LONG retval = consumeReadBuffer(maxLen, data);
@@ -105,7 +105,7 @@ int KSSLSocket::peekBlock( char* data, uint maxLen )
 	return consumeReadBuffer(maxLen, data, false);
 }
 
-Q_LONG KSSLSocket::writeBlock( const char* data, Q_ULONG len )
+Q_LONG KSSLSocket::write( const char* data, Q_ULONG len )
 {
 	return d->kssl->write( data, len );
 }

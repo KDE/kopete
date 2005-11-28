@@ -37,7 +37,7 @@ using namespace KNetwork;
 // Kopete includes
 #include <kopetetransfermanager.h>
 
-IncomingTransfer::IncomingTransfer(const QString& from, P2P::Dispatcher *dispatcher, Q_UINT32 sessionId)
+IncomingTransfer::IncomingTransfer(const QString& from, P2P::Dispatcher *dispatcher, quint32 sessionId)
 : TransferContext(from,dispatcher,sessionId)
 {
 	m_direction = P2P::Incoming;
@@ -63,7 +63,7 @@ IncomingTransfer::~IncomingTransfer()
 
 void IncomingTransfer::slotTransferAccepted(Kopete::Transfer* transfer, const QString& /*fileName*/)
 {
-	Q_UINT32 sessionId = transfer->info().internalId().toUInt();
+	quint32 sessionId = transfer->info().internalId().toUInt();
 	if(sessionId!=m_sessionId)
 		return;
 	
@@ -78,7 +78,7 @@ void IncomingTransfer::slotTransferAccepted(Kopete::Transfer* transfer, const QS
 
 void IncomingTransfer::slotTransferRefused(const Kopete::FileTransferInfo& info)
 {
-	Q_UINT32 sessionId = info.internalId().toUInt();
+	quint32 sessionId = info.internalId().toUInt();
 	if(sessionId!=m_sessionId)
 		return;
 	
@@ -130,7 +130,7 @@ void IncomingTransfer::processMessage(const Message& message)
 		// Write the recieved data to the file.
 		kdDebug(14140) << k_funcinfo << QString("Received, %1 bytes").arg(message.header.dataSize) << endl;
 		
-		m_file->writeBlock(message.body.data(), message.header.dataSize);
+		m_file->write(message.body.data(), message.header.dataSize);
 		if(m_transfer){
 			m_transfer->slotProcessed(message.header.dataOffset + message.header.dataSize);
 		}
@@ -360,7 +360,7 @@ void IncomingTransfer::slotSocketRead()
 	if(available > 0)
 	{
 		QByteArray buffer(available);
-		m_socket->readBlock(buffer.data(), buffer.size());
+		m_socket->read(buffer.data(), buffer.size());
 
 		if(QString(buffer) == "foo"){
 			kdDebug(14140) << "Connection Check." << endl;

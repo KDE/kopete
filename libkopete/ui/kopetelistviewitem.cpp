@@ -317,7 +317,7 @@ int BoxComponent::widthForHeight( int height )
 	{
 		int width = 0;
 		for ( uint n = 0; n < components(); ++n )
-			width = QMAX( width, component( n )->widthForHeight( height ) );
+			width = qMax( width, component( n )->widthForHeight( height ) );
 		return width;
 	}
 	else
@@ -335,7 +335,7 @@ int BoxComponent::heightForWidth( int width )
 	{
 		int height = 0;
 		for ( uint n = 0; n < components(); ++n )
-			height = QMAX( height, component( n )->heightForWidth( width ) );
+			height = qMax( height, component( n )->heightForWidth( width ) );
 		return height;
 	}
 	else
@@ -355,12 +355,12 @@ void BoxComponent::calcMinSize()
 		Component *comp = component( n );
 		if ( d->direction == Horizontal )
 		{
-			max = QMAX( max, comp->minHeight() );
+			max = qMax( max, comp->minHeight() );
 			sum += comp->minWidth();
 		}
 		else
 		{
-			max = QMAX( max, comp->minWidth() );
+			max = qMax( max, comp->minWidth() );
 			sum += comp->minHeight();
 		}
 	}
@@ -406,9 +406,9 @@ void BoxComponent::layout( const QRect &rect )
 	// that cases we should pretend that we're wide/high enough.
 	int total;
 	if ( horiz )
-		total = QMAX( rect.width(), minWidth() );
+		total = qMax( rect.width(), minWidth() );
 	else
-		total = QMAX( rect.height(), minHeight() );
+		total = qMax( rect.height(), minHeight() );
 
 	int remaining = total - fixedSize - padding * (components() - 1);
 
@@ -426,7 +426,7 @@ void BoxComponent::layout( const QRect &rect )
 			rc.setHeight( rect.height() );
 			int minWidth = comp->minWidth();
 			int desiredWidth = comp->widthForHeight( rect.height() );
-			rc.setWidth( QMIN( remaining + minWidth, desiredWidth ) );
+			rc.setWidth( qMin( remaining + minWidth, desiredWidth ) );
 			pos += rc.width();
 			remaining -= rc.width() - minWidth;
 		}
@@ -437,7 +437,7 @@ void BoxComponent::layout( const QRect &rect )
 			rc.setWidth( rect.width() );
 			int minHeight = comp->minHeight();
 			int desiredHeight = comp->heightForWidth( rect.width() );
-			rc.setHeight( QMIN( remaining + minHeight, desiredHeight ) );
+			rc.setHeight( qMin( remaining + minHeight, desiredHeight ) );
 			pos += rc.height();
 			remaining -= rc.height() - minHeight;
 		}
@@ -1054,7 +1054,7 @@ void Item::slotLayoutAnimateItems()
 		d->layoutAnimateTimer.stop();
 
 	const int s = Private::layoutAnimateStepsTotal;
-	const int p = QMIN( d->layoutAnimateSteps, s );
+	const int p = qMin( d->layoutAnimateSteps, s );
 
 	updateAnimationPosition( p, s );
 	setHeight(0);
@@ -1165,7 +1165,7 @@ void Item::setHeight( int )
 {
 	int minHeight = 0;
 	for ( uint n = 0; n < components(); ++n )
-		minHeight = QMAX( minHeight, component( n )->rect().height() );
+		minHeight = qMax( minHeight, component( n )->rect().height() );
 	//kdDebug(14000) << k_funcinfo << "Height is " << minHeight << endl;
 	if ( Private::foldVisibility && d->visibilityTimer.isActive() )
 	{
@@ -1250,7 +1250,7 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 		// draw the tree gubbins
 		if ( multiLinesEnabled() && column == 0 && isOpen() && childCount() ) {
 			int textheight = fm.size( align, t ).height() + 2 * lv->itemMargin();
-			textheight = QMAX( textheight, QApplication::globalStrut().height() );
+			textheight = qMax( textheight, QApplication::globalStrut().height() );
 			if ( textheight % 2 > 0 )
 				textheight++;
 			if ( textheight < height() ) {

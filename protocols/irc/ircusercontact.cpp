@@ -642,7 +642,7 @@ void IRCUserContact::slotIncomingModeChange( const QString &channel, const QStri
 				if (user == users.end())
 					return;
 
-				if ((*user).lower() == m_nickName.lower())
+				if ((*user).toLower() == m_nickName.toLower())
 					adjustInternalOnlineStatusBits(chan, IRCProtocol::Operator, adjMode);
 
 				++user;
@@ -651,7 +651,7 @@ void IRCUserContact::slotIncomingModeChange( const QString &channel, const QStri
 				if (user == users.end())
 					return;
 
-				if ((*user).lower() == m_nickName.lower())
+				if ((*user).toLower() == m_nickName.toLower())
 					adjustInternalOnlineStatusBits(chan, IRCProtocol::Voiced, adjMode);
 
 				++user;

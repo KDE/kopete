@@ -144,7 +144,7 @@ public:
 struct QCA_SASLHostPort
 {
 	QHostAddress addr;
-	Q_UINT16 port;
+	quint16 port;
 };
 
 struct QCA_SASLNeedParams

@@ -162,7 +162,7 @@ QByteArray Base64::stringToArray(const QString &s)
 	QString us(s);
 	us.remove('\n');
 
-	const char *c = us.latin1();
+	const char *c = us.toLatin1();
 	int len = strlen(c);
 	QByteArray b(len);
 	memcpy(b.data(), c, len);

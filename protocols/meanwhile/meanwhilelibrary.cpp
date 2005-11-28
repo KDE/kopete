@@ -496,7 +496,7 @@ int MeanwhileLibrary::writeToSocket(const char *buffer, unsigned int count)
     HERE;
     int remaining, retval = 0;
     for (remaining = count; remaining > 0; remaining -= retval) {
-        retval = socket->writeBlock(buffer, count);
+        retval = socket->write(buffer, count);
         if (retval <= 0)
             return 1;
     }
@@ -614,7 +614,7 @@ void MeanwhileLibrary::slotSocketReader()
     HERE;
     char buffer[4000];
     int readAmount;
-    readAmount = socket->readBlock(buffer,4000);
+    readAmount = socket->read(buffer,4000);
     if (readAmount < 0)
         return;
     mwSession_recv(session, buffer, (unsigned int) readAmount);

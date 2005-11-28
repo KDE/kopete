@@ -47,7 +47,7 @@ namespace P2P{
 			void detach(TransferContext* transfer);
 			QString localContact();
 			void requestDisplayIcon(const QString& from, const QString& msnObject);
-			void sendFile(const QString& path, Q_INT64 fileSize, const QString& to);
+			void sendFile(const QString& path, qint64 fileSize, const QString& to);
 			void sendImage(const QString& fileName, const QString& to);
 			QString m_pictureUrl;
 			QMap<QString, QString> objectList;
@@ -64,7 +64,7 @@ namespace P2P{
 		signals:
 			void sendCommand(const QString &cmd, const QString &args = QString::null, bool addId = true, const QByteArray &body = QByteArray(), bool binary=false);
 			void displayIconReceived(KTempFile* file, const QString& msnObject);
-			void incomingTransfer(const QString& from, const QString& fileName, Q_INT64 fileSize);
+			void incomingTransfer(const QString& from, const QString& fileName, qint64 fileSize);
 
 		private:
 				class CallbackChannel
@@ -73,7 +73,7 @@ namespace P2P{
 						CallbackChannel(MSNSwitchBoardSocket *switchboard);
 						~CallbackChannel();
 
-						Q_UINT32 send(const QByteArray& stream);
+						quint32 send(const QByteArray& stream);
 
 					private:
 						MSNSwitchBoardSocket *m_switchboard;
@@ -92,8 +92,8 @@ namespace P2P{
 			Kopete::Contact* getContactByAccountId(const QString& accountId);
 
 			P2P::MessageFormatter m_messageFormatter;
-			QMap<Q_UINT32, P2P::TransferContext*> m_sessions;
-			QMap<Q_UINT32, P2P::Message> m_messageBuffer;
+			QMap<quint32, P2P::TransferContext*> m_sessions;
+			QMap<quint32, P2P::Message> m_messageBuffer;
 			QString m_contact;
 			CallbackChannel *m_callbackChannel;
 			QStringList m_ip;

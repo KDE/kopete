@@ -51,7 +51,7 @@ bool ServSock::isActive() const
 	return (d->serv ? true: false);
 }
 
-bool ServSock::listen(Q_UINT16 port)
+bool ServSock::listen(quint16 port)
 {
 	stop();
 

@@ -77,7 +77,7 @@ void CustomNotificationProps::slotEventsComboChanged( int itemNo )
 	
 	int presentationEnum = KNotification::staticMetaObject.indexOfEnumerator( "NotifyPresentation" );
 	QString presentstring=configfile.readEntry("Action");
-	int presentation = KNotification::staticMetaObject.enumerator(presentationEnum).keysToValue( presentstring.latin1() );
+	int presentation = KNotification::staticMetaObject.enumerator(presentationEnum).keysToValue( presentstring.toLatin1() );
 	if(presentation == -1 ) presentation = 0;
 
 	// set the widgets accordingly

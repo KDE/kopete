@@ -666,7 +666,7 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 	//selectedText is now sufficent
 //	text=Kopete::Message::unescape( htmltext ).trimmed();
 	// Message::unsescape will replace image by his title attribute
-	// stripWhiteSpace is for removing the newline added by the <!DOCTYPE> and other xml things of RangeImpl::toHTML
+	// trimmed is for removing the newline added by the <!DOCTYPE> and other xml things of RangeImpl::toHTML
 	if(text.isEmpty()) return;
 
 	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), this, SLOT( slotClearSelection()));

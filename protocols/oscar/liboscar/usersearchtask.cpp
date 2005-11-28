@@ -61,7 +61,7 @@ bool UserSearchTask::take( Transfer* t )
 	{
 		setTransfer( t );
 		
-		Q_UINT16 seq = 0;
+		quint16 seq = 0;
 		SnacTransfer* st = dynamic_cast<SnacTransfer*>( t );
 		if ( st )
 			seq = st->snacRequest();
@@ -144,22 +144,22 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 	//LNTS FIRST
 	search.addLEWord(first.length());
 	if(first.length()>0)
-		search.addLEString(first.latin1(), first.length());
+		search.addLEString(first.toLatin1(), first.length());
 	
 	// LNTS LAST
 	search.addLEWord(last.length());
 	if(last.length()>0)
-		search.addLEString(last.latin1(), last.length());
+		search.addLEString(last.toLatin1(), last.length());
 	
 	// LNTS NICK
 	search.addLEWord(nick.length());
 	if(nick.length()>0)
-		search.addLEString(nick.latin1(), nick.length());
+		search.addLEString(nick.toLatin1(), nick.length());
 	
 	// LNTS EMAIL
 	search.addLEWord(mail.length());
 	if(mail.length()>0)
-		search.addLEString(mail.latin1(), mail.length());
+		search.addLEString(mail.toLatin1(), mail.length());
 	
 	// WORD.L MINAGE
 	search.addLEWord(minage);
@@ -181,12 +181,12 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 	// LNTS CITY
 	search.addLEWord(city.length());
 	if(city.length()>0)
-		search.addLEString(city.latin1(), city.length());
+		search.addLEString(city.toLatin1(), city.length());
 	
 	// LNTS STATE
 	search.addLEWord(state.length());
 	if(state.length()>0)
-		search.addLEString(state.latin1(), state.length());
+		search.addLEString(state.toLatin1(), state.length());
 	
 	// WORD.L xx xx COUNTRY
 	search.addLEWord(country);
@@ -194,17 +194,17 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 	// LNTS COMPANY
 	search.addLEWord(company.length());
 	if(company.length()>0)
-		search.addLEString(company.latin1(), company.length());
+		search.addLEString(company.toLatin1(), company.length());
 	
 	// LNTS DEPARTMENT
 	search.addLEWord(department.length());
 	if(department.length()>0)
-		search.addLEString(department.latin1(), department.length());
+		search.addLEString(department.toLatin1(), department.length());
 	
 	// LNTS POSITION
 	search.addLEWord(position.length());
 	if(position.length()>0)
-		search.addLEString(position.latin1(), position.length());
+		search.addLEString(position.toLatin1(), position.length());
 	
 	// BYTE xx OCCUPATION
 	search.addLEByte(occupation);
@@ -242,7 +242,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 	if ( !info.firstName.isEmpty() )
 	{
 		tlvData->addLEWord( info.firstName.length() );
-		tlvData->addLEString( info.firstName.latin1(), info.firstName.length() );
+		tlvData->addLEString( info.firstName.toLatin1(), info.firstName.length() );
 	}
 	else
 		tlvData->addLEWord( 0x0000 );
@@ -250,7 +250,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 	if ( !info.lastName.isEmpty() )
 	{
 		tlvData->addLEWord( info.lastName.length() );
-		tlvData->addLEString( info.lastName.latin1(), info.lastName.length() );
+		tlvData->addLEString( info.lastName.toLatin1(), info.lastName.length() );
 	}
 	else
 		tlvData->addLEWord( 0x0000 );
@@ -258,7 +258,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 	if ( !info.nickName.isEmpty() )
 	{
 		tlvData->addLEWord( info.nickName.length() );
-		tlvData->addLEString( info.nickName.latin1(), info.nickName.length() );
+		tlvData->addLEString( info.nickName.toLatin1(), info.nickName.length() );
 	}
 	else
 		tlvData->addLEWord( 0x0000 );
@@ -266,7 +266,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 	if ( !info.email.isEmpty() )
 	{
 		tlvData->addLEWord( info.email.length() );
-		tlvData->addLEString( info.email.latin1(), info.email.length() );
+		tlvData->addLEString( info.email.toLatin1(), info.email.length() );
 	}
 	else
 		tlvData->addLEWord( 0x0000 );
@@ -279,7 +279,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 	if ( !info.city.isEmpty() )
 	{
 		tlvData->addLEWord( info.city.length() );
-		tlvData->addLEString( info.city.latin1(), info.city.length() );
+		tlvData->addLEString( info.city.toLatin1(), info.city.length() );
 	}
 	else
 		tlvData->addLEWord( 0x0000 );

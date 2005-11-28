@@ -45,12 +45,12 @@ public:
 	void onGo();
 
 	void requestInfoFor( const QString& userId, unsigned int types );
-	UserDetails getInfoFor( Q_UINT16 sequence ) const;
-	QString contactForSequence( Q_UINT16 sequence ) const;
+	UserDetails getInfoFor( quint16 sequence ) const;
+	QString contactForSequence( quint16 sequence ) const;
 
 
 signals:
-	void gotInfo( Q_UINT16 seqNumber );
+	void gotInfo( quint16 seqNumber );
 	void receivedProfile( const QString& contact, const QString& profile );
 	void receivedAwayMessage( const QString& contact, const QString& message );
 
@@ -58,7 +58,7 @@ private:
 	QMap<quint16, UserDetails> m_sequenceInfoMap;
 	QMap<quint16, QString> m_contactSequenceMap;
 	QMap<quint16, unsigned int> m_typesSequenceMap;
-	Q_UINT16 m_seq;
+	quint16 m_seq;
 
 };
 

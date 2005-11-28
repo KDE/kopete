@@ -48,8 +48,8 @@ QString MSNChallengeHandler::computeHash(const QString& challengeString)
 
  	kdDebug(14140) << k_funcinfo << "md5: " << digest << endl;
 
- 	Q3ValueVector<Q_INT32> md5Integers(4);
- 	for(Q_UINT32 i=0; i < md5Integers.count(); i++)
+ 	Q3ValueVector<qint32> md5Integers(4);
+ 	for(quint32 i=0; i < md5Integers.count(); i++)
  	{
  		md5Integers[i] = hexSwap(digest.mid(i*8, 8)).toUInt(0, 16) & 0x7FFFFFFF;
  		kdDebug(14140) << k_funcinfo << ("0x" + hexSwap(digest.mid(i*8, 8))) << " " << md5Integers[i] << endl;
@@ -63,15 +63,15 @@ QString MSNChallengeHandler::computeHash(const QString& challengeString)
 
 	kdDebug(14140) << k_funcinfo << "challenge key: " << challengeKey << endl;
 
-	Q3ValueVector<Q_INT32> challengeIntegers(challengeKey.length() / 4);
-	for(Q_UINT32 i=0; i < challengeIntegers.count(); i++)
+	Q3ValueVector<qint32> challengeIntegers(challengeKey.length() / 4);
+	for(quint32 i=0; i < challengeIntegers.count(); i++)
 	{
 		QString sNum = challengeKey.mid(i*4, 4), sNumHex;
 
 		// Go through the number string, determining the hex equivalent of each value
 		// and add that to our new hex string for this number.
 		for(uint j=0; j < sNum.length(); j++) {
-			sNumHex += QString::number((int)sNum[j].latin1(), 16);
+			sNumHex += QString::number((int)sNum[j].toLatin1(), 16);
 		}
 
 		// swap because of the byte ordering issue.
@@ -84,7 +84,7 @@ QString MSNChallengeHandler::computeHash(const QString& challengeString)
 	// Step Three: Create the 64-bit hash key.
 
 	// Get the hash key using the specified arrays.
-	Q_INT64 key = createHashKey(md5Integers, challengeIntegers);
+	qint64 key = createHashKey(md5Integers, challengeIntegers);
 	kdDebug(14140) << k_funcinfo << "key: " << key << endl;
 
 	// Step Four: Create the final hash key.
@@ -100,16 +100,16 @@ QString MSNChallengeHandler::computeHash(const QString& challengeString)
 	return (upper + lower);
 }
 
-Q_INT64 MSNChallengeHandler::createHashKey(const Q3ValueVector<Q_INT32>& md5Integers,
-	const Q3ValueVector<Q_INT32>& challengeIntegers)
+qint64 MSNChallengeHandler::createHashKey(const Q3ValueVector<qint32>& md5Integers,
+	const Q3ValueVector<qint32>& challengeIntegers)
 {
 	kdDebug(14140) << k_funcinfo << "Creating 64-bit key." << endl;
 
-	Q_INT64 magicNumber = 0x0E79A9C1L, high = 0L, low = 0L;
+	qint64 magicNumber = 0x0E79A9C1L, high = 0L, low = 0L;
 		
 	for(uint i=0; i < challengeIntegers.count(); i += 2)
 	{
-		Q_INT64 temp = ((challengeIntegers[i] * magicNumber) % 0x7FFFFFFF) + high;
+		qint64 temp = ((challengeIntegers[i] * magicNumber) % 0x7FFFFFFF) + high;
 		temp = ((temp * md5Integers[0]) + md5Integers[1]) % 0x7FFFFFFF;
 
 		high = (challengeIntegers[i + 1] + temp) % 0x7FFFFFFF;
@@ -124,12 +124,12 @@ Q_INT64 MSNChallengeHandler::createHashKey(const Q3ValueVector<Q_INT32>& md5Inte
 	QDataStream buffer(QByteArray( &8),QIODevice::ReadWrite);
 	buffer(QByteArray.setVersion(QDataStream::Qt_3_1);
 	buffer.setByteOrder(QDataStream::LittleEndian);
-	buffer << (Q_INT32)high;
-	buffer << (Q_INT32)low;
+	buffer << (qint32)high;
+	buffer << (qint32)low;
 
 	buffer.device()->reset();
 	buffer.setByteOrder(QDataStream::BigEndian);
-	Q_INT64 key;
+	qint64 key;
 	buffer >> key;
 	
 	return key;

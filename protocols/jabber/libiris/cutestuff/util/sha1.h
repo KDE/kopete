@@ -39,22 +39,22 @@ private:
 
 	struct SHA1_CONTEXT
 	{
-		Q_UINT32 state[5];
-		Q_UINT32 count[2];
+		quint32 state[5];
+		quint32 count[2];
 		unsigned char buffer[64];
 	};
 
 	typedef union {
 		unsigned char c[64];
-		Q_UINT32 l[16];
+		quint32 l[16];
 	} CHAR64LONG16;
 
-	void transform(Q_UINT32 state[5], unsigned char buffer[64]);
+	void transform(quint32 state[5], unsigned char buffer[64]);
 	void init(SHA1_CONTEXT* context);
-	void update(SHA1_CONTEXT* context, unsigned char* data, Q_UINT32 len);
+	void update(SHA1_CONTEXT* context, unsigned char* data, quint32 len);
 	void final(unsigned char digest[20], SHA1_CONTEXT* context);
 
-	unsigned long blk0(Q_UINT32 i);
+	unsigned long blk0(quint32 i);
 	bool bigEndian;
 
 	CHAR64LONG16* block;

@@ -44,7 +44,7 @@ SHA1::SHA1()
 	qSysInfo(&wordSize, &bigEndian);
 }
 
-unsigned long SHA1::blk0(Q_UINT32 i)
+unsigned long SHA1::blk0(quint32 i)
 {
 	if(bigEndian)
 		return block->l[i];
@@ -53,9 +53,9 @@ unsigned long SHA1::blk0(Q_UINT32 i)
 }
 
 // Hash a single 512-bit block. This is the core of the algorithm.
-void SHA1::transform(Q_UINT32 state[5], unsigned char buffer[64])
+void SHA1::transform(quint32 state[5], unsigned char buffer[64])
 {
-	Q_UINT32 a, b, c, d, e;
+	quint32 a, b, c, d, e;
 
 	block = (CHAR64LONG16*)buffer;
 
@@ -112,9 +112,9 @@ void SHA1::init(SHA1_CONTEXT* context)
 }
 
 // Run your data through this
-void SHA1::update(SHA1_CONTEXT* context, unsigned char* data, Q_UINT32 len)
+void SHA1::update(SHA1_CONTEXT* context, unsigned char* data, quint32 len)
 {
-	Q_UINT32 i, j;
+	quint32 i, j;
 
 	j = (context->count[0] >> 3) & 63;
 	if((context->count[0] += len << 3) < (len << 3))
@@ -137,7 +137,7 @@ void SHA1::update(SHA1_CONTEXT* context, unsigned char* data, Q_UINT32 len)
 // Add padding and return the message digest
 void SHA1::final(unsigned char digest[20], SHA1_CONTEXT* context)
 {
-	Q_UINT32 i, j;
+	quint32 i, j;
 	unsigned char finalcount[8];
 
 	for (i = 0; i < 8; i++) {

@@ -36,7 +36,7 @@ public:
 	void userDN( const QString & dn );
 	bool take( Transfer * transfer );
 signals:
-	void gotStatus( const QString & contactId, Q_UINT16 status, const QString & statusText );
+	void gotStatus( const QString & contactId, quint16 status, const QString & statusText );
 private:
 	QString m_userDN;
 };

@@ -293,7 +293,7 @@ DWORD Oscar::getNumericalIP(const QString &address)
 QString Oscar::getDottedDecimal( DWORD address )
 {
 	QHostAddress addr;
-	addr.setAddress((Q_UINT32)address);
+	addr.setAddress((quint32)address);
 	return addr.toString();
 }
 

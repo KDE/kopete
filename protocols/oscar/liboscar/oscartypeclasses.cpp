@@ -32,7 +32,7 @@ Oscar::TLV::TLV()
 	length = 0;
 }
 
-Oscar::TLV::TLV( Q_UINT16 newType, Q_UINT16 newLength, char* newData )
+Oscar::TLV::TLV( quint16 newType, quint16 newLength, char* newData )
 {
 	type = newType;
 	length = newLength;
@@ -40,7 +40,7 @@ Oscar::TLV::TLV( Q_UINT16 newType, Q_UINT16 newLength, char* newData )
 	data.duplicate( newData, length );
 }
 
-Oscar::TLV::TLV( Q_UINT16 newType, Q_UINT16 newLength, const QByteArray& newData )
+Oscar::TLV::TLV( quint16 newType, quint16 newLength, const QByteArray& newData )
 {
 	type = newType;
 	length = newLength;
@@ -112,17 +112,17 @@ QString Oscar::SSI::name() const
 	return m_name;
 }
 
-Q_UINT16 Oscar::SSI::gid() const
+quint16 Oscar::SSI::gid() const
 {
 	return m_gid;
 }
 
-Q_UINT16 Oscar::SSI::bid() const
+quint16 Oscar::SSI::bid() const
 {
 	return m_bid;
 }
 
-Q_UINT16 Oscar::SSI::type() const
+quint16 Oscar::SSI::type() const
 {
 	return m_type;
 }
@@ -132,12 +132,12 @@ const Q3ValueList<TLV>& Oscar::SSI::tlvList() const
 	return m_tlvList;
 }
 
-void Oscar::SSI::setTLVListLength( Q_UINT16 newLength )
+void Oscar::SSI::setTLVListLength( quint16 newLength )
 {
 	m_tlvLength = newLength;
 }
 
-Q_UINT16 Oscar::SSI::tlvListLength() const
+quint16 Oscar::SSI::tlvListLength() const
 {
 	return m_tlvLength;
 }
@@ -252,7 +252,7 @@ Oscar::SSI::operator QByteArray() const
 {
 	Buffer b;
 	b.addWord( m_name.length() );
-	b.addString( m_name.latin1(), m_name.length() ); //TODO check encoding
+	b.addString( m_name.toLatin1(), m_name.length() ); //TODO check encoding
 	b.addWord( m_gid );
 	b.addWord( m_bid );
 	b.addWord( m_type );

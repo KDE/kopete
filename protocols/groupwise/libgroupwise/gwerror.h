@@ -23,7 +23,7 @@
 #include <qmap.h>
 #include <qstring.h>
 
-typedef Q_UINT16 NMERR_T;
+typedef quint16 NMERR_T;
 #define GROUPWISE_DEBUG_GLOBAL 14190
 #define GROUPWISE_DEBUG_LIBGW 14191
 #define GROUPWISE_DEBUG_RAW 14192
@@ -113,7 +113,7 @@ namespace GroupWise
 		ConferenceGuid guid;
 		QString user;
 		QDateTime timeStamp;
-		Q_UINT32 flags;
+		quint32 flags;
 		QString message;
 	};
 	

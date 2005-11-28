@@ -106,7 +106,7 @@ void Message::writeRawMessage(Engine *engine, const QTextCodec *codec, const QSt
 	QByteArray s(codec->fromUnicode(txt));
         kdDebug(14120) << "Message is " << s.length() << " chars" << endl;
 	// FIXME: Should check the amount of data really writen.
-	int wrote = engine->socket()->writeBlock(s.data(), s.length());
+	int wrote = engine->socket()->write(s.data(), s.length());
 
 	kdDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(str) << endl;
 }

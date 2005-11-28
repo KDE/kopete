@@ -505,7 +505,7 @@ void MSNP2PDisplatcher::sendImage(const QString& fileName)
 	for(unsigned int f=0;f<header.length();f++)
 	{
 		if(header[f] != '\1')
-			toSend[2*f]=header[f].latin1();
+			toSend[2*f]=header[f].toLatin1();
 	}
 	for(unsigned int f=0;f<ar.size();f++)
 	{

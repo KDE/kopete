@@ -1102,7 +1102,7 @@ void Application::reloadEvents( bool revertToDefaults )
 
                 if ( revertToDefaults )
                 {
-					e->presentation = KNotification::staticMetaObject.enumerator(presentationEnum).keysToValue(default_rep.latin1());
+					e->presentation = KNotification::staticMetaObject.enumerator(presentationEnum).keysToValue(default_rep.toLatin1());
                     e->logfile = default_logfile;
                     e->soundfile = default_soundfile;
                     e->commandline = default_commandline;
@@ -1111,7 +1111,7 @@ void Application::reloadEvents( bool revertToDefaults )
                 else
                 {
 					e->presentation = KNotification::staticMetaObject.enumerator(presentationEnum).keysToValue(
-							config->readEntry("presentation",   default_rep).latin1());
+							config->readEntry("presentation",   default_rep).toLatin1());
                     e->logfile = config->readPathEntry("logfile",
                                                    default_logfile);
                     e->soundfile = config->readPathEntry("sound",

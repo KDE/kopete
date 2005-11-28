@@ -142,7 +142,7 @@ void ChannelListItem::paintCell( QPainter *p, const QColorGroup &cg, int column,
 		// draw the tree gubbins
 		if ( multiLinesEnabled() && column == 0 && isOpen() && childCount() ) {
 			int textheight = fm.size( align, t ).height() + 2 * lv->itemMargin();
-			textheight = QMAX( textheight, QApplication::globalStrut().height() );
+			textheight = qMax( textheight, QApplication::globalStrut().height() );
 			if ( textheight % 2 > 0 )
 				textheight++;
 			if ( textheight < height() ) {

@@ -268,7 +268,7 @@ void JabberFileTransfer::slotIncomingDataReady ( const QByteArray &data )
 
 	mKopeteTransfer->slotProcessed ( mBytesTransferred );
 
-	mLocalFile.writeBlock ( data );
+	mLocalFile.write ( data );
 
 	if ( mBytesToTransfer <= 0 )
 	{
@@ -308,7 +308,7 @@ void JabberFileTransfer::slotOutgoingBytesWritten ( int nrWritten )
 
 		QByteArray readBuffer ( nrToWrite );
 
-		mLocalFile.readBlock ( readBuffer.data (), nrToWrite );
+		mLocalFile.read ( readBuffer.data (), nrToWrite );
 
 		mXMPPTransfer->writeFileData ( readBuffer );
 	}

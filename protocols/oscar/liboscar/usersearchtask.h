@@ -56,7 +56,7 @@ signals:
 private:
 	Q3ValueList<ICQSearchResult> m_results;
 	QString m_uin;
-	Q_UINT16 m_seq;
+	quint16 m_seq;
 	SearchType m_type;
 };
 

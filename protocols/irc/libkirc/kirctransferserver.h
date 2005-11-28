@@ -37,10 +37,10 @@ class TransferServer
 
 public:
 //	TransferServer(QObject *parent = 0, const char *name = 0);
-	TransferServer(Q_UINT16 port, int backlog = 1, QObject *parent = 0, const char *name = 0);
+	TransferServer(quint16 port, int backlog = 1, QObject *parent = 0, const char *name = 0);
 	TransferServer(KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
 			Transfer::Type type,
-			QString fileName, Q_UINT32 fileSize,
+			QString fileName, quint32 fileSize,
 			QObject *parent = 0, const char *name = 0);
 
 	~TransferServer();
@@ -50,7 +50,7 @@ public:
 
 protected:
 	bool initServer();
-	bool initServer( Q_UINT16 port, int backlog = 1 );
+	bool initServer( quint16 port, int backlog = 1 );
 
 signals:
 	void incomingNewTransfer(Transfer *transfer);
@@ -61,7 +61,7 @@ protected slots:
 
 private:
 	KExtendedSocket *	m_socket;
-	Q_UINT16		m_port;
+	quint16		m_port;
 	int			m_backlog;
 
 	// The following will be deprecated ...
@@ -69,7 +69,7 @@ private:
 	QString			m_nick;
 	Transfer::Type	m_type;
 	QString			m_fileName;
-	Q_UINT32		m_fileSize;
+	quint32		m_fileSize;
 	// by
 	// QPtrList<Transfer> m_pendingTransfers;
 	// QPtrList<Transfer> m_activeTransfers;

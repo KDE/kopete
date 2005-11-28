@@ -477,7 +477,7 @@ void MSNChatSession::sendFile(const QString &fileLocation, const QString &/*file
 	// TODO create a switchboard to send the file is one is not available.
 	if(m_chatService && members().getFirst())
 	{
-		m_chatService->PeerDispatcher()->sendFile(fileLocation, (Q_INT64)fileSize, members().getFirst()->contactId());
+		m_chatService->PeerDispatcher()->sendFile(fileLocation, (qint64)fileSize, members().getFirst()->contactId());
 	}
 }
 

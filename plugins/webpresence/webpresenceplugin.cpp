@@ -370,7 +370,7 @@ bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 	}
 
 	// is the cast safe?
-	cur = xsltParseStylesheetFile( (const xmlChar *) sheet.name().latin1() );
+	cur = xsltParseStylesheetFile( (const xmlChar *) sheet.name().toLatin1() );
 	if ( !cur ) {
 		kdDebug(14309) << k_funcinfo << "ERROR: Style sheet parsing failed" << endl;
 		retval = false;

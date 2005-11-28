@@ -124,7 +124,7 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal):KDialog
       tst=tst.section(":",9,9);
 
       // FIXME: Same here: don't use popen! - Martijn
-      fp2 = popen( QString( "gpg --no-tty --with-colon --list-key %1" ).arg( KShellProcess::quote( id ) ).latin1(), "r" );
+      fp2 = popen( QString( "gpg --no-tty --with-colon --list-key %1" ).arg( KShellProcess::quote( id ) ).toLatin1(), "r" );
       bool dead=true;
       while ( fgets( line, sizeof(line), fp2))
       {

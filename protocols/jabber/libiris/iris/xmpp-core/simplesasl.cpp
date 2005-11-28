@@ -362,7 +362,7 @@ public:
 			QByteArray a(32);
 			for(int n = 0; n < (int)a.size(); ++n)
 				a[n] = (char)(256.0*rand()/(RAND_MAX+1.0));
-			QByteArray cnonce = Base64::arrayToString(a).latin1();
+			QByteArray cnonce = Base64::arrayToString(a).toLatin1();
 
 			// make other variables
 			realm = host;
@@ -379,10 +379,10 @@ public:
 			memcpy(A1.data(), Y.data(), Y.size());
 			memcpy(A1.data() + Y.size(), tmp.data(), tmp.length());
 			QByteArray A2 = "AUTHENTICATE:" + uri;
-			QByteArray HA1 = QCA::MD5::hashToString(A1).latin1();
-			QByteArray HA2 = QCA::MD5::hashToString(A2).latin1();
+			QByteArray HA1 = QCA::MD5::hashToString(A1).toLatin1();
+			QByteArray HA2 = QCA::MD5::hashToString(A2).toLatin1();
 			QByteArray KD = HA1 + ':' + nonce + ':' + nc + ':' + cnonce + ':' + qop + ':' + HA2;
-			QByteArray Z = QCA::MD5::hashToString(KD).latin1();
+			QByteArray Z = QCA::MD5::hashToString(KD).toLatin1();
 
 			// build output
 			PropList out;

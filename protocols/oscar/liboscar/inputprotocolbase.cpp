@@ -85,7 +85,7 @@ bool InputProtocolBase::safeReadBytes( QByteArray& data, uint & len )
 		// the rest of the string will be filled with FF,
 		// so look for that in the last position instead of \0
 		// this caused a crash - guessing that temp.length() is set to the number of bytes actually read...
-		// if ( (Q_UINT8)( * ( temp.data() + ( temp.length() - 1 ) ) ) == 0xFF )
+		// if ( (quint8)( * ( temp.data() + ( temp.length() - 1 ) ) ) == 0xFF )
 		if ( temp.length() < ( val - 1 ) )
 		{
 			qDebug( "InputProtocol::safeReadBytes() - string broke, giving up, only got: %i bytes out of %i",  temp.length(), val );

@@ -162,7 +162,7 @@ Index: iris/xmpp-im/types.cpp
 +				}
 +			}
  			else {
- 				//printf("extension element: [%s]\n", e.tagName().latin1());
+ 				//printf("extension element: [%s]\n", e.tagName().toLatin1());
  			}
 @@ -1418,6 +1458,16 @@
  	return test(ns);

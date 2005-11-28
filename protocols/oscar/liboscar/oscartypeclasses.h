@@ -33,14 +33,14 @@ class KOPETE_EXPORT TLV
 public:
 
 	TLV();
-	TLV( Q_UINT16, Q_UINT16, char* data );
-	TLV( Q_UINT16, Q_UINT16, const QByteArray& );
+	TLV( quint16, quint16, char* data );
+	TLV( quint16, quint16, const QByteArray& );
 	TLV( const TLV& t );
 
 	operator bool() const;
 
-	Q_UINT16 type;
-	Q_UINT16 length;
+	quint16 type;
+	quint16 length;
 	QByteArray data;
 
 };
@@ -60,17 +60,17 @@ public:
 	QString name() const;
 
 	/** \brief The group id of the SSI item */
-	Q_UINT16 gid() const;
+	quint16 gid() const;
 
 	/** \brief The buddy id of the SSI item */
-	Q_UINT16 bid() const;
+	quint16 bid() const;
 
 	/**
 	 * \brief The type of the SSI Item.
 	 * see ROSTER_* defines on oscartypes.h
 	 * Use a value of 0xFFFF for an SSI item not on the server list
 	 */
-	Q_UINT16 type() const;
+	quint16 type() const;
 
 	/** \brief the TLV list for the item */
 	const Q3ValueList<TLV>& tlvList() const;
@@ -84,10 +84,10 @@ public:
 	 * This is not the number of items in the list!! It's the aggregation of the
 	 * sizes of the TLVs
 	 */
-	void setTLVListLength( Q_UINT16 newLength );
+	void setTLVListLength( quint16 newLength );
 
 	/** \brief Get the TLV list length */
-	Q_UINT16 tlvListLength() const;
+	quint16 tlvListLength() const;
 
 	/**
 	 * Get the alias for the SSI item

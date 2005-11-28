@@ -33,7 +33,7 @@ TransferServer::TransferServer( QObject *parent, const char *name )
 {
 }
 */
-TransferServer::TransferServer(Q_UINT16 port, int backlog, QObject *parent, const char *name)
+TransferServer::TransferServer(quint16 port, int backlog, QObject *parent, const char *name)
 	: QObject( parent, name ),
 	  m_socket( 0 ),
 	  m_port( port ),
@@ -43,7 +43,7 @@ TransferServer::TransferServer(Q_UINT16 port, int backlog, QObject *parent, cons
 
 TransferServer::TransferServer(Engine *engine, QString nick,// QString nick_peer_adress,
 			Transfer::Type type,
-			QString fileName, Q_UINT32 fileSize,
+			QString fileName, quint32 fileSize,
 			QObject *parent, const char *name)
 	: QObject( parent, name ),
 	  m_socket(0),
@@ -104,7 +104,7 @@ bool TransferServer::initServer()
 	return (m_socket->socketStatus() != KExtendedSocket::error);
 }
 
-bool TransferServer::initServer( Q_UINT16 port, int backlog )
+bool TransferServer::initServer( quint16 port, int backlog )
 {
 	if (m_socket)
 	{

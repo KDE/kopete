@@ -78,8 +78,8 @@ void ChatServiceTask::onGo()
     type3.data = QCString( "en" ); //hardcode for right now. don't know that we can do others
 
     type1.type = 0x0001;
-    type1.length = strlen( m_message.text().latin1() );
-    type1.data = QCString( m_message.text().latin1() );
+    type1.length = strlen( m_message.text().toLatin1() );
+    type1.data = QCString( m_message.text().toLatin1() );
     tlv5.addWord( 0x0005 );
     tlv5.addWord( 12 + type1.length + type2.length + type3.length );
     tlv5.addTLV( type1 );

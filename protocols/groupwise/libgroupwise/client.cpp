@@ -186,7 +186,7 @@ void Client::initialiseEventTasks()
 {
 	// The StatusTask handles incoming status changes
 	StatusTask * st = new StatusTask( d->root ); // FIXME - add an additional EventRoot?
-	connect( st, SIGNAL( gotStatus( const QString &, Q_UINT16, const QString & ) ), SIGNAL( statusReceived( const QString &, Q_UINT16, const QString & ) ) );
+	connect( st, SIGNAL( gotStatus( const QString &, quint16, const QString & ) ), SIGNAL( statusReceived( const QString &, quint16, const QString & ) ) );
 	// The ConferenceTask handles incoming conference events, messages, joins, leaves, etc
 	ConferenceTask * ct = new ConferenceTask( d->root ); 
 	connect( ct, SIGNAL( message( const ConferenceEvent & ) ), SLOT( ct_messageReceived( const ConferenceEvent & ) ) );
@@ -222,7 +222,7 @@ void Client::requestStatus( const QString & userDN )
 {
 	GetStatusTask * gst = new GetStatusTask( d->root );
 	gst->userDN( userDN );
-	connect( gst, SIGNAL( gotStatus( const QString &, Q_UINT16, const QString & ) ), SIGNAL( statusReceived( const QString &, Q_UINT16, const QString & ) ) );
+	connect( gst, SIGNAL( gotStatus( const QString &, quint16, const QString & ) ), SIGNAL( statusReceived( const QString &, quint16, const QString & ) ) );
 	gst->go( true );
 }
 
@@ -350,7 +350,7 @@ void Client::ct_messageReceived( const ConferenceEvent & messageEvent )
 	RTF2HTML parser;
 	QString rtf = messageEvent.message;
 	if ( !rtf.isEmpty() )
-		transformedEvent.message = parser.Parse( rtf.latin1(), "" );
+		transformedEvent.message = parser.Parse( rtf.toLatin1(), "" );
 
 	// fixes for RTF to HTML conversion problems
 	// we can drop these once the server reenables the sending of unformatted text

@@ -594,7 +594,7 @@ void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, ui
 
 	if ( !filePath.isEmpty() )
 	{
-		Q_UINT32 fileSize = QFileInfo(filePath).size();
+		quint32 fileSize = QFileInfo(filePath).size();
 		//Send the file
 		static_cast<MSNChatSession*>( manager(Kopete::Contact::CanCreate) )->sendFile( filePath, altFileName, fileSize );
 

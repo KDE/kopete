@@ -224,7 +224,7 @@ void Engine::user(const QString &newUserName, const QString &hostname, const QSt
 	writeMessage("USER", QStringList(m_Username) << hostname << m_Host, m_realName);
 }
 
-void Engine::user(const QString &newUserName, Q_UINT8 mode, const QString &newRealName)
+void Engine::user(const QString &newUserName, quint8 mode, const QString &newRealName)
 {
 	/* RFC2812: "<user> <mode> <unused> <realname>"
 	* mode is a numeric value (from a bit mask).

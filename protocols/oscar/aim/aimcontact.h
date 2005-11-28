@@ -70,7 +70,7 @@ public slots:
 	void userOffline( const QString& userId );
 	void updateAwayMessage( const QString& userId, const QString& message );
 	void updateProfile( const QString& contact, const QString& profile );
-	void gotWarning( const QString& contact, Q_UINT16, Q_UINT16 );
+	void gotWarning( const QString& contact, quint16, quint16 );
 
 signals:
 	void updatedProfile();

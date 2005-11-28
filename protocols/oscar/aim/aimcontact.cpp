@@ -67,8 +67,8 @@ AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::M
 	                  this, SLOT( updateAwayMessage( const QString&, const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedProfile( const QString&, const QString& ) ),
 	                  this, SLOT( updateProfile( const QString&, const QString& ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( userWarned( const QString&, Q_UINT16, Q_UINT16 ) ),
-	                  this, SLOT( gotWarning( const QString&, Q_UINT16, Q_UINT16 ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL( userWarned( const QString&, quint16, quint16 ) ),
+	                  this, SLOT( gotWarning( const QString&, quint16, quint16 ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( haveIconForContact( const QString&, QByteArray ) ),
 	                  this, SLOT( haveIcon( const QString&, QByteArray ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( iconServerConnected() ),
@@ -267,7 +267,7 @@ void AIMContact::updateProfile( const QString& contact, const QString& profile )
 	emit updatedProfile();
 }
 
-void AIMContact::gotWarning( const QString& contact, Q_UINT16 increase, Q_UINT16 newLevel )
+void AIMContact::gotWarning( const QString& contact, quint16 increase, quint16 newLevel )
 {
 	//somebody just got bitchslapped! :O
 	Q_UNUSED( increase );

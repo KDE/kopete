@@ -132,10 +132,10 @@ public:
 	Oscar::Settings* settings() const;
 
 	/** Get the current FLAP sequence for this connection */
-	Q_UINT16 flapSequence();
+	quint16 flapSequence();
 
 	/** Get the current SNAC sequence for this connection */
-	Q_UINT32 snacSequence();
+	quint32 snacSequence();
 
 	/** Get the cookie for this connection */
 	QByteArray cookie() const;

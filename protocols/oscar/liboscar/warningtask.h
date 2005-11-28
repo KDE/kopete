@@ -44,7 +44,7 @@ public:
 	virtual void onGo();
 
 signals:
-	void userWarned( const QString&, Q_UINT16, Q_UINT16 );
+	void userWarned( const QString&, quint16, quint16 );
 	
 private:
 	QString m_contact;

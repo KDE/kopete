@@ -40,7 +40,7 @@ Transfer::Transfer(	Engine *engine, QString nick,// QString nick_peer_adress
 
 Transfer::Transfer(	Engine *engine, QString nick,// QString nick_peer_adress
 			Transfer::Type type,
-			QString fileName, Q_UINT32 fileSize, // put this in a QVariant ?
+			QString fileName, quint32 fileSize, // put this in a QVariant ?
 			QObject *parent, const char *name )
 	: QObject( parent, name ),
 	  m_engine(engine), m_nick(nick),
@@ -52,9 +52,9 @@ Transfer::Transfer(	Engine *engine, QString nick,// QString nick_peer_adress
 }
 
 Transfer::Transfer(	Engine *engine, QString nick,// QString nick_peer_adress
-			QHostAddress hostAdress, Q_UINT16 port, // put this in a QVariant ?
+			QHostAddress hostAdress, quint16 port, // put this in a QVariant ?
 			Transfer::Type type,
-			QString fileName, Q_UINT32 fileSize, // put this in a QVariant ?
+			QString fileName, quint32 fileSize, // put this in a QVariant ?
 			QObject *parent, const char *name )
 	: QObject( parent, name ),
 	  m_engine(engine), m_nick(nick),
@@ -284,11 +284,11 @@ void Transfer::readyReadFileIncoming()
 {
 	kdDebug(14121) << k_funcinfo << endl;
 
-	m_bufferLength = m_socket->readBlock(m_buffer, sizeof(m_buffer));
+	m_bufferLength = m_socket->read(m_buffer, sizeof(m_buffer));
 
 	if(m_bufferLength > 0)
 	{
-		int written = m_file.writeBlock(m_buffer, m_bufferLength);
+		int written = m_file.write(m_buffer, m_bufferLength);
 		if(m_bufferLength == written)
 		{
 			m_fileSizeCur += written;
@@ -310,7 +310,7 @@ void Transfer::readyReadFileOutgoing()
 	kdDebug(14121) << k_funcinfo << "Available bytes:" << m_socket->bytesAvailable() << endl;
 
 	bool hadData = false;
-	Q_UINT32 fileSizeAck = 0;
+	quint32 fileSizeAck = 0;
 
 //	if (m_socket->bytesAvailable() >= sizeof(fileSizeAck)) // BUGGY: bytesAvailable() that allways return 0 on unbuffered sockets.
 	{
@@ -331,10 +331,10 @@ void Transfer::writeFileOutgoing()
 
 	if (m_fileSizeAck < m_fileSize)
 	{
-		m_bufferLength = m_file.readBlock(m_buffer, sizeof(m_buffer));
+		m_bufferLength = m_file.read(m_buffer, sizeof(m_buffer));
 		if (m_bufferLength > 0)
 		{
-			Q_UINT32 read = m_socket->writeBlock(m_buffer, m_bufferLength); // should check written == read
+			quint32 read = m_socket->write(m_buffer, m_bufferLength); // should check written == read
 
 //			if(read != m_buffer_length)
 //				buffer is not cleared still
@@ -348,7 +348,7 @@ void Transfer::writeFileOutgoing()
 	}
 }
 
-void Transfer::checkFileTransferEnd(Q_UINT32 fileSizeAck)
+void Transfer::checkFileTransferEnd(quint32 fileSizeAck)
 {
 	kdDebug(14121) << k_funcinfo << "Acknowledged:" << fileSizeAck << endl;
 

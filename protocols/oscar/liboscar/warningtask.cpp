@@ -86,7 +86,7 @@ void WarningTask::onGo()
 	else
 		b->addWord( 0x0000 );
 	
-	b->addBUIN( m_contact.latin1() ); //TODO i should probably check the encoding here. nyeh
+	b->addBUIN( m_contact.toLatin1() ); //TODO i should probably check the encoding here. nyeh
 	Transfer* t = createTransfer( f, s, b );
 	send( t );
 }

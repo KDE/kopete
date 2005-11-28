@@ -131,7 +131,7 @@ void AimLoginTask::sendAuthStringRequest()
 	SNAC s = { 0x0017, 0x0006, 0x0000, client()->snacSequence() };
 		
 	Buffer* outbuf = new Buffer;
-	outbuf->addTLV(0x0001, client()->userId().length(), client()->userId().latin1() );
+	outbuf->addTLV(0x0001, client()->userId().length(), client()->userId().toLatin1() );
 	outbuf->addDWord(0x004B0000); // empty TLV 0x004B
 	outbuf->addDWord(0x005A0000); // empty TLV 0x005A
 	
@@ -156,7 +156,7 @@ void AimLoginTask::sendLoginRequest()
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0017, 0x0002, 0x0000, client()->snacSequence() };
 	Buffer *outbuf = new Buffer;
-	outbuf->addTLV(0x0001, client()->userId().length(), client()->userId().latin1());
+	outbuf->addTLV(0x0001, client()->userId().length(), client()->userId().toLatin1());
 
 	QByteArray digest( 17 ); //apparently MD5 digests are 16 bytes long
 	encodePassword( digest );
@@ -244,7 +244,7 @@ void AimLoginTask::encodePassword( QByteArray& digest ) const
 	md5_state_t state;
 	md5_init( &state );
 	md5_append( &state, ( const md5_byte_t* ) m_authKey.data(), m_authKey.size() );
-	md5_append( &state, ( const md5_byte_t* ) client()->password().latin1(), client()->password().length() );
+	md5_append( &state, ( const md5_byte_t* ) client()->password().toLatin1(), client()->password().length() );
 	md5_append( &state, ( const md5_byte_t* ) AIM_MD5_STRING, strlen( AIM_MD5_STRING ) );
 	md5_finish( &state, ( md5_byte_t* ) digest.data() );
 }

@@ -61,19 +61,19 @@ public:
 			QObject *parent = 0L, const char *name = 0L );
 
 	Transfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
-			QHostAddress peer_address, Q_UINT16 peer_port,
+			QHostAddress peer_address, quint16 peer_port,
 			Transfer::Type type,
 			QObject *parent = 0L, const char *name = 0L );
 
 	Transfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
 			Transfer::Type type,
-			QString fileName, Q_UINT32 fileSize,
+			QString fileName, quint32 fileSize,
 			QObject *parent = 0L, const char *name = 0L );
 
 	Transfer(	KIRC::Engine *engine, QString nick,// QString nick_peer_adress,
-			QHostAddress peer_address, Q_UINT16 peer_port,
+			QHostAddress peer_address, quint16 peer_port,
 			Transfer::Type type,
-			QString fileName, Q_UINT32 fileSize,
+			QString fileName, quint32 fileSize,
 			QObject *parent = 0L, const char *name = 0L );
 /*
 	For a file transfer properties are:
@@ -81,11 +81,11 @@ public:
 		KExntendedSocket	*socket
 	or
 		QHostAddress		peerAddress
-		Q_UINT16		peerPort
+		quint16		peerPort
 	for determining the socket.
 
 		QString			fileName
-		Q_UINT32		fileSize
+		quint32		fileSize
 	for detemining the file propeties.
 *//*
 	Transfer(	KIRC *engine, QString nick,// QString nick_peer_adress,
@@ -133,8 +133,8 @@ signals:
 	void fileSizeCurrent( unsigned int );
 	void fileSizeAcknowledge( unsigned int );
 
-//	void received(Q_UINT32);
-//	void sent(Q_UINT32);
+//	void received(quint32);
+//	void sent(quint32);
 
 	void abort(QString);
 
@@ -155,7 +155,7 @@ protected slots:
 
 protected:
 //	void emitSignals();
-	void checkFileTransferEnd( Q_UINT32 fileSizeAck );
+	void checkFileTransferEnd( quint32 fileSizeAck );
 
 	KIRC::Engine *	m_engine;
 	QString		m_nick;
@@ -171,19 +171,19 @@ protected:
 	// File member data
 	QFile		m_file;
 	QString		m_fileName;
-	Q_UINT32	m_fileSize;
-	Q_UINT32 /*usize_t*/	m_fileSizeCur;
-	Q_UINT32 /*usize_t*/	m_fileSizeAck;
+	quint32	m_fileSize;
+	quint32 /*usize_t*/	m_fileSizeCur;
+	quint32 /*usize_t*/	m_fileSizeAck;
 	QDataStream	m_socketDataStream;
 	char		m_buffer[1024];
 	int		m_bufferLength;
 
 	// Data transfer measures
-	Q_UINT32	m_receivedBytes;
-	Q_UINT32	m_receivedBytesLimit;
+	quint32	m_receivedBytes;
+	quint32	m_receivedBytesLimit;
 
-	Q_UINT32	m_sentBytes;
-	Q_UINT32	m_sentBytesLimit;
+	quint32	m_sentBytes;
+	quint32	m_sentBytesLimit;
 };
 
 }

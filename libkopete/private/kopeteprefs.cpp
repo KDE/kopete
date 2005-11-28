@@ -136,10 +136,10 @@ void KopetePrefs::load()
 	config->setGroup("ContactList");
 	int n = metaObject()->indexOfEnumerator( "contactListDisplayMode" );
 	QString value = config->readEntry("DisplayMode",QString::fromLatin1("Default"));
-	mContactListDisplayMode = (ContactDisplayMode)metaObject()->enumerator( n ).keyToValue( value.latin1() );
+	mContactListDisplayMode = (ContactDisplayMode)metaObject()->enumerator( n ).keyToValue( value.toLatin1() );
 	n = metaObject()->indexOfEnumerator( "contactListIconMode" );
 	value = config->readEntry("IconMode", QString::fromLatin1("IconDefault"));
-	mContactListIconMode = (IconDisplayMode)metaObject()->enumerator( n ).keyToValue( value.latin1() );
+	mContactListIconMode = (IconDisplayMode)metaObject()->enumerator( n ).keyToValue( value.toLatin1() );
 	mContactListIndentContacts = config->readBoolEntry("IndentContacts", false);
 	mContactListHideVerticalScrollBar = config->readBoolEntry("HideVerticalScrollBar", false );
 	mContactListUseCustomFonts = config->readBoolEntry("UseCustomFonts", false);

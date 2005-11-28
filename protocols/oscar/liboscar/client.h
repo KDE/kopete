@@ -397,7 +397,7 @@ signals:
 	void receivedUserInfo( const QString& contact, const UserDetails& details );
 
 	/** We warned a user */
-	void userWarned( const QString& contact, Q_UINT16 increase, Q_UINT16 newLevel );
+	void userWarned( const QString& contact, quint16 increase, quint16 newLevel );
 
 	/** Search signals */
 	void gotSearchResults( const ICQSearchResult& );
@@ -448,7 +448,7 @@ protected slots:
 	void receivedIcqInfo( const QString& contact, unsigned int type );
 
 	/** we have normal user info for a contact */
-	void receivedInfo( Q_UINT16 sequence );
+	void receivedInfo( quint16 sequence );
 
 	/** received a message of some kind */
 	void receivedMessage( const Oscar::Message& msg );

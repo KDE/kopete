@@ -57,8 +57,8 @@ void IcqLoginTask::onGo()
 	QString encodedPassword = encodePassword( client()->password() );
 	
 	outbuf->addDWord(flapVersion);
-	outbuf->addTLV(0x0001, client()->userId().length(), client()->userId().latin1() );
-	outbuf->addTLV(0x0002, encodedPassword.length(), encodedPassword.latin1() );
+	outbuf->addTLV(0x0001, client()->userId().length(), client()->userId().toLatin1() );
+	outbuf->addTLV(0x0002, encodedPassword.length(), encodedPassword.toLatin1() );
 	outbuf->addTLV(0x0003, strlen(ICQ_CLIENTSTRING), ICQ_CLIENTSTRING);
 	outbuf->addTLV16(0x0016, ICQ_CLIENTID);
 	outbuf->addTLV16(0x0017, ICQ_MAJOR);
@@ -81,7 +81,7 @@ QString IcqLoginTask::encodePassword( const QString& loginPassword )
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Called." << endl;
 
 	// TODO: check if latin1 is the right conversion
-	const char *password = loginPassword.latin1();
+	const char *password = loginPassword.toLatin1();
 	unsigned int i = 0;
 	QString encodedPassword = QString::null;
 

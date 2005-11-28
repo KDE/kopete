@@ -402,7 +402,7 @@ void Client::receivedIcqInfo( const QString& contact, unsigned int type )
 		emit receivedIcqLongInfo( contact );
 }
 
-void Client::receivedInfo( Q_UINT16 sequence )
+void Client::receivedInfo( quint16 sequence )
 {
 	UserDetails details = d->userInfoTask->getInfoFor( sequence );
 	emit receivedUserInfo( details.userId(), details );
@@ -739,8 +739,8 @@ void Client::sendWarning( const QString& contact, bool anonymous )
 	WarningTask* warnTask = new WarningTask( c->rootTask() );
 	warnTask->setContact( contact );
 	warnTask->setAnonymous( anonymous );
-	QObject::connect( warnTask, SIGNAL( userWarned( const QString&, Q_UINT16, Q_UINT16 ) ),
-	                  this, SIGNAL( userWarned( const QString&, Q_UINT16, Q_UINT16 ) ) );
+	QObject::connect( warnTask, SIGNAL( userWarned( const QString&, quint16, quint16 ) ),
+	                  this, SIGNAL( userWarned( const QString&, quint16, quint16 ) ) );
 	warnTask->go( true );
 }
 
@@ -878,12 +878,12 @@ void Client::nextICQAwayMessageRequest()
 		int time = c->rateManager()->timeToInitialLevel( s );
 		if ( time > 0 )
 		{
-			d->awayMsgRequestTimer->changeInterval( time );
+			d->awayMsgRequestTimer->start( time );
 			return;
 		}
 		else
 		{
-			d->awayMsgRequestTimer->changeInterval( 5000 );
+			d->awayMsgRequestTimer->start( 5000 );
 		}
 	}
 

@@ -1516,7 +1516,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 	}
 	// server
 	else if(step == GetRequest) {
-		printf("get request: [%s], %s\n", e.namespaceURI().latin1(), e.tagName().latin1());
+		printf("get request: [%s], %s\n", e.namespaceURI().toLatin1(), e.tagName().toLatin1());
 		if(e.namespaceURI() == NS_TLS && e.localName() == "starttls") {
 			// TODO: don't let this be done twice
 

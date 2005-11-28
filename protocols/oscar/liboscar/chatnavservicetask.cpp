@@ -125,7 +125,7 @@ void ChatNavServiceTask::createRoom( WORD exchange, const QString& name )
 	Buffer *b = new Buffer;
 
 	b->addWord( exchange );
-	b->addBUIN( cookie.latin1() );
+	b->addBUIN( cookie.toLatin1() );
 	b->addWord( 0xFFFF ); //assign the last instance
 	b->addByte( 0x01 ); //detail level
 
@@ -136,15 +136,15 @@ void ChatNavServiceTask::createRoom( WORD exchange, const QString& name )
 
 	b->addWord( 0x00D3 ); //type of 0x00D3 - name
 	b->addWord( name.length() );
-	b->addString( name.latin1(), name.length() );
+	b->addString( name.toLatin1(), name.length() );
 
 	b->addWord( 0x00D6 ); //type of 0x00D6 - charset
 	b->addWord( charset.length() );
-	b->addString( charset.latin1(), charset.length() );
+	b->addString( charset.toLatin1(), charset.length() );
 
 	b->addWord( 0x00D7 ); //type of 0x00D7 - lang
 	b->addWord( lang.length() );
-	b->addString( lang.latin1(), lang.length() );
+	b->addString( lang.toLatin1(), lang.length() );
 
     kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending join room packet" << endl;
 	Transfer* t = createTransfer( f, s, b );

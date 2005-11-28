@@ -145,11 +145,11 @@ void HttpConnect::connectToHost(const QString &proxyHost, int proxyPort, const Q
 	d->real_port = port;
 
 #ifdef PROX_DEBUG
-	fprintf(stderr, "HttpConnect: Connecting to %s:%d", proxyHost.latin1(), proxyPort);
+	fprintf(stderr, "HttpConnect: Connecting to %s:%d", proxyHost.toLatin1(), proxyPort);
 	if(d->user.isEmpty())
 		fprintf(stderr, "\n");
 	else
-		fprintf(stderr, ", auth {%s,%s}\n", d->user.latin1(), d->pass.latin1());
+		fprintf(stderr, ", auth {%s,%s}\n", d->user.toLatin1(), d->pass.toLatin1());
 #endif
 	d->sock.connectToHost(d->host, d->port);
 }
@@ -274,9 +274,9 @@ void HttpConnect::sock_readyRead()
 				}
 				else {
 #ifdef PROX_DEBUG
-					fprintf(stderr, "HttpConnect: header proto=[%s] code=[%d] msg=[%s]\n", proto.latin1(), code, msg.latin1());
+					fprintf(stderr, "HttpConnect: header proto=[%s] code=[%d] msg=[%s]\n", proto.toLatin1(), code, msg.toLatin1());
 					for(QStringList::ConstIterator it = d->headerLines.begin(); it != d->headerLines.end(); ++it)
-						fprintf(stderr, "HttpConnect: * [%s]\n", (*it).latin1());
+						fprintf(stderr, "HttpConnect: * [%s]\n", (*it).toLatin1());
 #endif
 				}
 
@@ -319,7 +319,7 @@ void HttpConnect::sock_readyRead()
 					}
 
 #ifdef PROX_DEBUG
-					fprintf(stderr, "HttpConnect: << Error >> [%s]\n", errStr.latin1());
+					fprintf(stderr, "HttpConnect: << Error >> [%s]\n", errStr.toLatin1());
 #endif
 					reset(true);
 					error(err);

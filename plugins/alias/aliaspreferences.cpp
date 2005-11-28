@@ -80,7 +80,7 @@ class AliasItem : public Q3ListViewItem
 
 				if ( isSelected() && ( column == 0 || listView()->allColumnsShowFocus() ) )
 				{
-					p->fillRect( QMAX( cellWidth, r - marg ), 0,
+					p->fillRect( qMax( cellWidth, r - marg ), 0,
 						width - cellWidth - r + marg, height(),
 						cg.brush( QColorGroup::Highlight ) );
 					if ( isEnabled() || !lv )

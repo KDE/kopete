@@ -397,7 +397,7 @@ KNotification *KNotification::event( const QString& eventid , const QString& tex
 	
 	int n = notify->metaObject()->indexOfEnumerator( "NotifyPresentation" );
 	QString presentstring=config.readEntry("Action");
-	int present= notify->metaObject()->enumerator(n).keysToValue( presentstring.latin1() );
+	int present= notify->metaObject()->enumerator(n).keysToValue( presentstring.toLatin1() );
 	if(present == -1)
 		present=0;
 	

@@ -102,7 +102,7 @@ void NLKscd::update()
 			reply.setVersion(QDataStream::Qt_3_1);
 			if ( replyType == "QString" ) {
 				reply >> newTrack;
-				//kdDebug( 14307 ) << "the result is: " << newTrack.latin1()
+				//kdDebug( 14307 ) << "the result is: " << newTrack.toLatin1()
 				//	<< endl;
 			} else
 				kdDebug( 14307 ) << "NLKscd::update()-  currentTrackTitle "

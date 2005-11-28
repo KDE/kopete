@@ -64,15 +64,15 @@ namespace P2P{
 
 	struct TransportHeader
 	{
-		Q_UINT32 sessionId;
-		Q_UINT32 identifier;
-		Q_INT64  dataOffset;
-		Q_INT64  totalDataSize;
-		Q_UINT32 dataSize;
-		Q_UINT32 flag;
-		Q_UINT32 ackSessionIdentifier;
-		Q_UINT32 ackUniqueIdentifier;
-		Q_INT64  ackDataSize;
+		quint32 sessionId;
+		quint32 identifier;
+		qint64  dataOffset;
+		qint64  totalDataSize;
+		quint32 dataSize;
+		quint32 flag;
+		quint32 ackSessionIdentifier;
+		quint32 ackUniqueIdentifier;
+		qint64  ackDataSize;
 	};
 
 	struct Message
@@ -84,7 +84,7 @@ namespace P2P{
 			QString source;
 			TransportHeader header;
 			QByteArray body;
-			Q_INT32 applicationIdentifier;
+			qint32 applicationIdentifier;
 			bool attachApplicationIdentifier;
 	};
 
@@ -103,16 +103,16 @@ namespace P2P{
 			void error();
 			virtual void processMessage(const P2P::Message& message) = 0;
 			void sendDataPreparation();
-			void sendMessage(MessageType type, const QString& content=QString::null, Q_INT32 flag=0, Q_INT32 appId=0);
+			void sendMessage(MessageType type, const QString& content=QString::null, qint32 flag=0, qint32 appId=0);
 			void setType(TransferType type);
 
 		public:
-			Q_UINT32 m_sessionId;
-			Q_UINT32 m_identifier;
+			quint32 m_sessionId;
+			quint32 m_identifier;
 			QFile   *m_file;
-			Q_UINT32 m_transactionId;
-			Q_UINT32 m_ackSessionIdentifier;
-			Q_UINT32 m_ackUniqueIdentifier;
+			quint32 m_transactionId;
+			quint32 m_ackSessionIdentifier;
+			quint32 m_ackUniqueIdentifier;
 			Kopete::Transfer *m_transfer;
 			QString  m_branch;
 			QString  m_callId;
@@ -124,17 +124,17 @@ namespace P2P{
 			void readyWrite();
 
 		protected:
-			TransferContext(const QString& contact, P2P::Dispatcher *dispatcher,Q_UINT32 sessionId);
+			TransferContext(const QString& contact, P2P::Dispatcher *dispatcher,quint32 sessionId);
 			void sendData(const QByteArray& bytes);
 			void sendMessage(P2P::Message& outbound, const QByteArray& body);
 			virtual void readyToSend();
 
-			Q_UINT32 m_baseIdentifier;
+			quint32 m_baseIdentifier;
 			TransferDirection m_direction;
 			P2P::Dispatcher *m_dispatcher;
 			bool m_isComplete;
-			Q_INT64 m_offset;
-			Q_INT64 m_totalDataSize;
+			qint64 m_offset;
+			qint64 m_totalDataSize;
 			P2P::MessageFormatter m_messageFormatter;
 			QString m_recipient;
 			QString m_sender;

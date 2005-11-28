@@ -138,7 +138,7 @@ MultiField * FieldList::findMultiField( FieldListIterator &it, QByteArray tag )
 
 /* === FieldBase ========================================================= */
 
-FieldBase::FieldBase( QByteArray tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type )
+FieldBase::FieldBase( QByteArray tag, quint8 method, quint8 flags, quint8 type )
 : m_tag( tag ), m_method( method ), m_flags( flags ), m_type( type )
 {
 
@@ -149,34 +149,34 @@ QByteArray FieldBase::tag() const
 	return m_tag;
 }
 
-Q_UINT8 FieldBase::method() const
+quint8 FieldBase::method() const
 {
 	return m_method;
 }
 
-Q_UINT8 FieldBase::flags() const
+quint8 FieldBase::flags() const
 {
 	return m_flags;
 }
 
-Q_UINT8 FieldBase::type() const
+quint8 FieldBase::type() const
 {
 	return m_type;
 }
 
-void FieldBase::setFlags( const Q_UINT8 flags )
+void FieldBase::setFlags( const quint8 flags )
 {
 	m_flags = flags;
 }
 
 /* === SingleField ========================================================= */
 
-SingleField::SingleField( QByteArray tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, QVariant value )
+SingleField::SingleField( QByteArray tag, quint8 method, quint8 flags, quint8 type, QVariant value )
 : FieldBase( tag, method, flags, type ), m_value( value )
 {
 }
 
-SingleField::SingleField( QByteArray tag, Q_UINT8 flags, Q_UINT8 type, QVariant value )
+SingleField::SingleField( QByteArray tag, quint8 flags, quint8 type, QVariant value )
 : FieldBase( tag, NMFIELD_METHOD_VALID, flags, type ), m_value( value )
 {
 }
@@ -197,12 +197,12 @@ QVariant SingleField::value() const
 
 /* === MultiField ========================================================= */
 
-MultiField::MultiField( QByteArray tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, FieldList fields )
+MultiField::MultiField( QByteArray tag, quint8 method, quint8 flags, quint8 type, FieldList fields )
 : FieldBase( tag, method, flags, type ), m_fields( fields )
 {
 }
 
-MultiField::MultiField( QByteArray tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type )
+MultiField::MultiField( QByteArray tag, quint8 method, quint8 flags, quint8 type )
 : FieldBase( tag, method, flags, type )
 {
 }

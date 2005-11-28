@@ -55,12 +55,12 @@ public:
 	 * @param source the user generating the event.
 	 * @param timeStamp the time at which the event was received.
 	 */
-	EventTransfer( const Q_UINT32 eventType, const QString & source, QDateTime timeStamp );
+	EventTransfer( const quint32 eventType, const QString & source, QDateTime timeStamp );
 	~EventTransfer();
 	/** 
 	 * Access the bitmask that describes the transfer's contents.  Use @ref Contents to determine what it contains
 	 */
-	Q_UINT32 contents();
+	quint32 contents();
 	/**
 	 * Convenience accessors to see what the transfer contains
 	 */
@@ -81,29 +81,29 @@ public:
 	QString source();
 	QDateTime timeStamp();
 	GroupWise::ConferenceGuid guid();
-	Q_UINT32 flags();
+	quint32 flags();
 	QString message();
-	Q_UINT16 status();
+	quint16 status();
 	QString statusText();
 	
 	/**
 	 * Mutators to set the transfer's contents
 	 */
 	void setGuid( const GroupWise::ConferenceGuid & guid );
-	void setFlags( const Q_UINT32 flags );
+	void setFlags( const quint32 flags );
 	void setMessage( const QString & message );
-	void setStatus( const Q_UINT16 status );
+	void setStatus( const quint16 status );
 	void setStatusText( const QString & statusText);
 	
 private:
-	Q_UINT32 m_contentFlags;
+	quint32 m_contentFlags;
 	int m_eventType;
 	QString m_source;
 	QDateTime m_timeStamp;
 	GroupWise::ConferenceGuid m_guid;
-	Q_UINT32 m_flags;
+	quint32 m_flags;
 	QString m_message;
-	Q_UINT16 m_status;
+	quint16 m_status;
 	QString m_statusText;
 };
 

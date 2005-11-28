@@ -58,7 +58,7 @@ protected:
 	 */
 	bool okToProceed();
 	/**
-	 * read a Q_UINT32 giving the number of following bytes, then a string of that length
+	 * read a quint32 giving the number of following bytes, then a string of that length
 	 * updates the bytes parsed counter
 	 * @return false if the string was broken or there was no data available at all
 	 */

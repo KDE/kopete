@@ -61,7 +61,7 @@ public:
 	 *       command-processing this method can effectively block all
 	 *       communications when passed a wrong length!
 	 */
-	void readBlock( uint len );
+	void read( uint len );
 
 	/**
 	 * OnlineStatus encapsulates the 4 states a connection can be in,

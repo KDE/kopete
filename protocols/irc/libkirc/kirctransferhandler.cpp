@@ -43,7 +43,7 @@ TransferServer *TransferHandler::server()
 	return m_server;
 }
 
-TransferServer *TransferHandler::server( Q_UINT16 port, int backlog )
+TransferServer *TransferHandler::server( quint16 port, int backlog )
 {
 //	if( m_server )
 //		m_server->terminate();
@@ -56,7 +56,7 @@ TransferServer *TransferHandler::server( Q_UINT16 port, int backlog )
 
 TransferServer *TransferHandler::createServer(Engine *engine, QString m_userName,
 		Transfer::Type type,
-		QString fileName, Q_UINT32 fileSize)
+		QString fileName, quint32 fileSize)
 {
 	TransferServer *server = new TransferServer(engine, m_userName, type, fileName, fileSize, this);
 	transferServerCreated(server);
@@ -65,9 +65,9 @@ TransferServer *TransferHandler::createServer(Engine *engine, QString m_userName
 
 Transfer *TransferHandler::createClient(
 	Engine *engine, QString nick,// QString nick_peer_adress,
-	QHostAddress peer_address, Q_UINT16 peer_port,
+	QHostAddress peer_address, quint16 peer_port,
 	Transfer::Type type,
-	QString fileName, Q_UINT32 fileSize )
+	QString fileName, quint32 fileSize )
 {
 	Transfer *client = new Transfer(
 		engine, nick,// QString nick_peer_adress,

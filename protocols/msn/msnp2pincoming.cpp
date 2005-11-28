@@ -68,8 +68,8 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 	MSNP2P::parseMessage(msgStr);
 
 	if(m_Rfile)  //we are already downloading something to this file
-	{			//m_file->file()->writeBlock( (msg.data()+startBinHeader+48) , dataMessageSize );
-		m_Rfile->writeBlock( (msgStr.message.data()+48) , msgStr.dataMessageSize );
+	{			//m_file->file()->write( (msg.data()+startBinHeader+48) , dataMessageSize );
+		m_Rfile->write( (msgStr.message.data()+48) , msgStr.dataMessageSize );
 
 		if(m_kopeteTransfer)
 			m_kopeteTransfer->slotProcessed( msgStr.dataOffset+msgStr.dataMessageSize );
@@ -227,7 +227,7 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 
 					KTempFile *imageFile=new KTempFile( locateLocal( "tmp", "msntypewrite-" ), ext );
 					imageFile->setAutoDelete(true);
-					imageFile->file()->writeBlock( image.data() , image.size() );
+					imageFile->file()->write( image.data() , image.size() );
 					imageFile->file()->close();
 
 					m_parent->fileReceived( imageFile , "typewrite" );

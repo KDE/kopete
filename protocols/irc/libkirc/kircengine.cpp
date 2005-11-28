@@ -54,7 +54,7 @@ using namespace KIRC;
 const QRegExp Engine::m_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
 
 Engine::Engine(QObject *parent, const char *name)
-	: QObject(parent, QString::fromLatin1("[KIRC::Engine]%1").arg(name).latin1()),
+	: QObject(parent, QString::fromLatin1("[KIRC::Engine]%1").arg(name).toLatin1()),
 	  m_status(Idle),
 	  m_FailedNickOnLogin(false),
 	  m_useSSL(false),
@@ -183,7 +183,7 @@ void Engine::setStatus(Engine::Status status)
 	}
 }
 
-void Engine::connectToServer(const QString &host, Q_UINT16 port, const QString &nickname, bool useSSL )
+void Engine::connectToServer(const QString &host, quint16 port, const QString &nickname, bool useSSL )
 {
 	setUseSSL(useSSL);
 

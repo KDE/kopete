@@ -174,7 +174,7 @@ QTextCodec* BookmarksPlugin::getPageEncoding( QByteArray data )
 	for( pos = 0 ; temp[pos].isLetterOrNumber() || temp[pos] == '-' ; pos++ );
 	temp = temp.left( pos );
 	//kdDebug(14501) << "encoding: " << temp << endl;
-	codec = QTextCodec::codecForName( temp.latin1() );
+	codec = QTextCodec::codecForName( temp.toLatin1() );
 	if( !codec ){
 		return QTextCodec::codecForName("iso8859-1");
 	}

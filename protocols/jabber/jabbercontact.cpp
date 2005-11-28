@@ -181,7 +181,7 @@ Q3PtrList<KAction> *JabberContact::customContextMenuActions ()
 			if( i == activeItem )
 			{
 				actionSelectResource->insert ( new KAction( ( *it ), "button_ok", 0, this, SLOT( slotSelectResource() ),
-											   actionSelectResource, QString::number( i ).latin1() ) );
+											   actionSelectResource, QString::number( i ).toLatin1() ) );
 			}
 			else
 			{
@@ -193,7 +193,7 @@ Q3PtrList<KAction> *JabberContact::customContextMenuActions ()
 					protocol()->resourceToKOS ( account()->resourcePool()->bestResource ( mRosterItem.jid(), false ) ).iconFor ( account () ) : protocol()->resourceToKOS ( *availableResources.find(*it) ).iconFor ( account () ));
 
 				actionSelectResource->insert ( new KAction( ( *it ), iconSet, 0, this, SLOT( slotSelectResource() ),
-											   actionSelectResource, QString::number( i ).latin1() ) );
+											   actionSelectResource, QString::number( i ).toLatin1() ) );
 			}
 
 			i++;
@@ -873,7 +873,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	if(contactPhoto.width() != 96 || contactPhoto.height() != 96)
 	{
 		// Save image to a new location if the image isn't the correct format.
-		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KURL(photoPath).fileName().lower() ) );
+		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KURL(photoPath).fileName().toLower() ) );
 	
 		// Scale and crop the picture.
 		contactPhoto = contactPhoto.smoothScale( 96, 96, QImage::ScaleMax );

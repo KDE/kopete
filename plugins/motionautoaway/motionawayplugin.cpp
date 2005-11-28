@@ -122,7 +122,7 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name, const QSt
 
 	kdDebug(14305) << k_funcinfo << "Opening Video4Linux Device" << endl;
 
-	m_deviceHandler = open( videoDevice.latin1() , O_RDWR);
+	m_deviceHandler = open( videoDevice.toLatin1() , O_RDWR);
 
 	if (m_deviceHandler < 0)
 	{

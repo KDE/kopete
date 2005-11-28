@@ -165,13 +165,13 @@ YahooSessionManager::~YahooSessionManager()
 void YahooSessionManager::setPager( QString host, int port )
 {
 	strcpy( pager_host, host.toUtf8() );
-	strcpy( pager_port, QString::number( port ).latin1() );
+	strcpy( pager_port, QString::number( port ).toLatin1() );
 }
 
 void YahooSessionManager::setFileTransfer( QString host, int port )
 {
 	strcpy( filetransfer_host, host.toUtf8() );
-	strcpy( filetransfer_port, QString::number( port ).latin1() );
+	strcpy( filetransfer_port, QString::number( port ).toLatin1() );
 }
 
 YahooSession* YahooSessionManager::createSession( const QString username, const QString password )
@@ -574,7 +574,7 @@ QStringList YahooSession::getIdentities()
 
 QString YahooSession::getCookie( const QString &which)
 {
-	return QString( yahoo_get_cookie( m_connId, which.latin1() ) );
+	return QString( yahoo_get_cookie( m_connId, which.toLatin1() ) );
 }
 
 QString YahooSession::getProfile_url( void )
@@ -584,12 +584,12 @@ QString YahooSession::getProfile_url( void )
 
 void YahooSession::requestWebcam( const QString& from )
 {
-	yahoo_webcam_get_feed( m_connId, from.latin1() );
+	yahoo_webcam_get_feed( m_connId, from.toLatin1() );
 }
 
 void YahooSession::closeWebcam( const QString& from )
 {
-	yahoo_webcam_close_feed( m_connId, from.latin1() );
+	yahoo_webcam_close_feed( m_connId, from.toLatin1() );
 }
 
 void YahooSession::slotLoginResponseReceiver( int /* succ */, char * /* url */ )
@@ -693,9 +693,9 @@ void YahooSession::saveAdressBookEntry( const YahooUserInfo &entry)
 	// FIX for bug 107472 by Heiko Schaefer <heiko@rangun.de>
         // The fields in the YahooUserInfo should get encoded into an valid
         // URL. Before we turn them into latin1()
-	QString firstName = QString::fromUtf8(entry.firstName.latin1());
-	QString lastName  = QString::fromUtf8(entry.lastName.latin1());
-	QString nickName  = QString::fromUtf8(entry.nickName.latin1());
+	QString firstName = QString::fromUtf8(entry.firstName.toLatin1());
+	QString lastName  = QString::fromUtf8(entry.lastName.toLatin1());
+	QString nickName  = QString::fromUtf8(entry.nickName.toLatin1());
 
 	QUrl::encode(firstName);
 	QUrl::encode(lastName);
@@ -1098,9 +1098,9 @@ void YahooSession::slotTransmitFile( int fd, YahooUploadData *uploadData )
 	
 	socket->setBlocking( true );
 	
-	read = uploadData->file.readBlock( buf, 2048 );
+	read = uploadData->file.read( buf, 2048 );
 	
-	written = socket->writeBlock( buf, read );
+	written = socket->write( buf, read );
 	
 	uploadData->transmitted += written;
 	
@@ -1176,7 +1176,7 @@ void YahooSession::_receiveFileProceed( int id, int fd, int error,
 	if ( file.open(QIODevice::WriteOnly ) )
 	{
 		QTextStream stream( &file );
-		while( (read = socket->readBlock( buf, 1024 )) > 0 )
+		while( (read = socket->read( buf, 1024 )) > 0 )
 		{
 			stream << buf;
 			received += read;
@@ -1565,7 +1565,7 @@ void YahooSession::_gotWebcamImage( const char* who, const unsigned char* image,
 		currentImage = new QBuffer();
 		currentImage->open(QIODevice::ReadWrite);
 	}
-	currentImage->writeBlock( (char *) image, real_size );
+	currentImage->write( (char *) image, real_size );
 	//kdDebug(14181) << " real_size " << real_size << " image_size " << image_size << " timestamp " << timestamp << " " << who << endl;
 	
 	if ( currentImage->size() == image_size ) {
@@ -1578,7 +1578,7 @@ void YahooSession::_gotWebcamImage( const char* who, const unsigned char* image,
 		KTempFile jpcTmpImageFile;
 		KTempFile bmpTmpImageFile;
 		QFile *file = jpcTmpImageFile.file();;
-		file->writeBlock((currentImage->buffer()).data(), currentImage->size());
+		file->write((currentImage->buffer()).data(), currentImage->size());
 		file->close();
 		
 		KProcess p;

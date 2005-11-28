@@ -187,7 +187,7 @@ protected:
 	/**
 	 * encodes a method number (usually supplied as a #defined symbol) to a char
 	 */
-	QChar encode_method( Q_UINT8 method );
+	QChar encode_method( quint8 method );
 private:
 	QByteArray m_in;	// buffer containing unprocessed bytes we received
 	QDataStream* m_din; // contains the packet currently being parsed

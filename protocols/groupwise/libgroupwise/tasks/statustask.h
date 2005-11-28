@@ -34,7 +34,7 @@ public:
 	~StatusTask();
 	bool take( Transfer * transfer );
 signals:
-	void gotStatus( const QString & contactId, Q_UINT16 status, const QString & statusText );
+	void gotStatus( const QString & contactId, quint16 status, const QString & statusText );
 };
 
 #endif

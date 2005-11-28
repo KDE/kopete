@@ -120,7 +120,7 @@ public:
 	inline const QString &currentHost() const
 		{ return m_Host; };
 
-	inline Q_UINT16 currentPort()
+	inline quint16 currentPort()
 		{ return m_Port; }
 
 	inline const QString &nickName() const
@@ -161,7 +161,7 @@ public:
 	void setVersionString(const QString &versionString);
 	void setUserString(const QString &userString);
 	void setSourceString(const QString &sourceString);
-	void connectToServer(const QString &host, Q_UINT16 port, const QString &nickname, bool useSSL = false);
+	void connectToServer(const QString &host, quint16 port, const QString &nickname, bool useSSL = false);
 
 	KExtendedSocket *socket()
 		{ return m_sock; };
@@ -261,7 +261,7 @@ public slots:
 
 	void topic(const QString &channel, const QString &topic);
 	void user(const QString &newUsername, const QString &hostname, const QString &newRealname);
-	void user(const QString &newUsername, Q_UINT8 mode, const QString &newRealname);
+	void user(const QString &newUsername, quint8 mode, const QString &newRealname);
 	void whois(const QString &user);
 
 
@@ -496,7 +496,7 @@ private:
 
 	KIRC::Engine::Status m_status;
 	QString m_Host;
-	Q_UINT16 m_Port;
+	quint16 m_Port;
 
 //	QUrl serverURL;
 //	QUrl currentServerURL;

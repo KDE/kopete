@@ -351,7 +351,7 @@ int Buffer::addChatTLV(const WORD type, const WORD exchange,
 	addWord(0x0005 + roomname.length());
 	addWord(exchange);
 	addByte(roomname.length());
-	addString(roomname.latin1(), roomname.length()); // TODO: check encoding
+	addString(roomname.toLatin1(), roomname.length()); // TODO: check encoding
 
 	return addWord(instance);
 }

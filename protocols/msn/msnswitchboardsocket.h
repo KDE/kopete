@@ -61,7 +61,7 @@ private:
 	QString m_myHandle; // our handle
 
 	// contains the handle of the last person that msg'ed us.
-	// since we receive the actual message by readBlock(), we need
+	// since we receive the actual message by read(), we need
 	// to remember what the handle was of the person sending us the message.
 	QString m_msgHandle;
 
@@ -78,7 +78,7 @@ private:
 	Q3PtrList<KTempFile> m_typewrited;
 
 	struct InkMessage{
-		Q_UINT32 chunks;
+		quint32 chunks;
 		QString data;
 	};
 	QMap<QString, InkMessage> m_inkMessageBuffer;
@@ -138,7 +138,7 @@ private slots:
 	void slotSocketClosed(  );
 	void slotReadMessage( const QByteArray &bytes );
 	void slotEmoticonReceived( KTempFile *, const QString& );
-	void slotIncomingFileTransfer(const QString& from, const QString& fileName, Q_INT64 fileSize);
+	void slotIncomingFileTransfer(const QString& from, const QString& fileName, qint64 fileSize);
 	void cleanQueue();
 
 signals:
