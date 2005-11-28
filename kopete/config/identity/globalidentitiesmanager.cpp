@@ -20,8 +20,6 @@
 #include <qdom.h>
 #include <qfile.h>
 #include <qtextstream.h>
-//Added by qt3to4:
-#include <Q3PtrList>
 
 // KDE includes
 #include <kdebug.h>

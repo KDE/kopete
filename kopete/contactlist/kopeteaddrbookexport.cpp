@@ -23,7 +23,6 @@
 #include <qlabel.h>
 //Added by qt3to4:
 #include <QPixmap>
-#include <Q3PtrList>
 
 #include <kdialogbase.h>
 #include <kiconloader.h>

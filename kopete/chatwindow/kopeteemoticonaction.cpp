@@ -22,10 +22,6 @@
 
 #include <math.h>
 
-
-//Added by qt3to4:
-#include <Q3PopupMenu>
-
 #include <kapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -136,7 +132,7 @@ int KopeteEmoticonAction::plug( QWidget* widget, int index )
 	// KDE4/Qt TODO: Use qobject_cast instead.
 	if ( widget->inherits("QPopupMenu") )
 	{
-		Q3PopupMenu* menu = static_cast<Q3PopupMenu*>( widget );
+		QMenu* menu = static_cast<QMenu*>( widget );
 		int id;
 		if ( hasIcon() )
 			id = menu->insertItem( iconSet(KIcon::Small), text(), d->m_popup, -1, index );

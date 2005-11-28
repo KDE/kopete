@@ -28,7 +28,7 @@
 
 #include <kmainwindow.h>
 
-class Q3HBox;
+class KHBox;
 class QTimer;
 
 class KAction;
@@ -214,7 +214,7 @@ private:
 	bool hidden;
 	int deskRight;
 	QPoint position;
-	Q3HBox *m_statusBarWidget;
+	KHBox *m_statusBarWidget;
 	KopeteSystemTray *m_tray;
 	bool m_autoHide;
 	unsigned int m_autoHideTimeout;

@@ -29,7 +29,6 @@
 //Added by qt3to4:
 #include <QPixmap>
 #include <QVBoxLayout>
-#include <Q3PtrList>
 
 // KDE includes
 #include <kcombobox.h>

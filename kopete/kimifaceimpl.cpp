@@ -18,8 +18,6 @@
 #include <qstringlist.h>
 //Added by qt3to4:
 #include <QPixmap>
-#include <Q3ValueList>
-#include <Q3PtrList>
 
 #include <dcopclient.h>
 #include <kapplication.h>
@@ -256,9 +254,9 @@ QString KIMIfaceImpl::context( const QString & uid )
 
 QStringList KIMIfaceImpl::protocols()
 {
-	Q3ValueList<KPluginInfo *> protocols = Kopete::PluginManager::self()->availablePlugins( "Protocols" );
+	QList<KPluginInfo *> protocols = Kopete::PluginManager::self()->availablePlugins( "Protocols" );
 	QStringList protocolList;
-	for ( Q3ValueList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it )
+	for ( QList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it )
 		protocolList.append( (*it)->name() );
 
 	return protocolList;

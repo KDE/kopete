@@ -18,12 +18,9 @@
 #define __APPEARANCE_H
 
 #include "kcmodule.h"
-#include <q3ptrlist.h>
-#include <qmap.h>
-//Added by qt3to4:
-#include <Q3Frame>
 
-class Q3Frame;
+#include <qmap.h>
+
 class QTabWidget;
 class QCheckBox;
 class KListBox;

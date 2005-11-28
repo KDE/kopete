@@ -27,8 +27,6 @@
 #include "kopetegvipropswidget.h"
 #include "kopetemetalvipropswidget.h"
 
-class Q3ButtonGroup;
-
 class CustomNotificationProps;
 class KPushButton;
 class KopeteGroupViewItem;

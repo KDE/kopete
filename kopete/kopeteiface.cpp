@@ -32,8 +32,6 @@
 #include "kopetegroup.h"
 #include "kopetecontact.h"
 #include "kopeteconfig.h"
-//Added by qt3to4:
-#include <Q3PtrList>
 
 KopeteIface::KopeteIface() : DCOPObject( "KopeteIface" )
 {

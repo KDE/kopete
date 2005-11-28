@@ -44,10 +44,9 @@
 
 #include <qcheckbox.h>
 #include <qlayout.h>
-#include <q3vbox.h>
-//Added by qt3to4:
-#include <Q3PtrList>
+
 #include <kapplication.h>
+#include <kvbox.h>
 #include <kconfig.h>
 #include <klocale.h>
 #include <kiconloader.h>

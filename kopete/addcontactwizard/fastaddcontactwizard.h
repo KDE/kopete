@@ -23,8 +23,6 @@
 #include <kdebug.h>
 #include <klistview.h>
 
-#include <q3ptrlist.h>
-#include <q3valuelist.h>
 #include <qmap.h>
 
 #include <kdebug.h>

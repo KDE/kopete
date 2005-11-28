@@ -20,8 +20,6 @@
 
 #include <qcheckbox.h>
 #include <qlabel.h>
-//Added by qt3to4:
-#include <Q3ValueList>
 
 #include <kcolorbutton.h>
 #include <kdebug.h>
@@ -60,8 +58,8 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 	setFinishEnabled(m_finish, true);
 
 	// add the available messanger services to the dialogs list
-	Q3ValueList<KPluginInfo *> protocols = Kopete::PluginManager::self()->availablePlugins("Protocols");
-	for (Q3ValueList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it)
+	QList<KPluginInfo *> protocols = Kopete::PluginManager::self()->availablePlugins("Protocols");
+	for (QList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it)
 	{
 		Q3ListViewItem *pluginItem = new Q3ListViewItem(m_selectService->protocolListView);
 		pluginItem->setPixmap(0, SmallIcon((*it)->icon()));

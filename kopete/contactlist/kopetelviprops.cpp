@@ -36,7 +36,6 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QBoxLayout>
-#include <Q3PtrList>
 #include <QSize>
 
 #include <kdialogbase.h>

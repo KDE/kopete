@@ -50,7 +50,6 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <Q3PtrList>
 
 KopeteApplication::KopeteApplication()
 : KUniqueApplication( true, true )

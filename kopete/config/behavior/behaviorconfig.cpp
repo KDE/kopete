@@ -26,7 +26,6 @@
 #include <qcombobox.h>
 //Added by qt3to4:
 #include <QVBoxLayout>
-#include <Q3ValueList>
 
 #include <kdebug.h>
 #include <kplugininfo.h>
@@ -253,7 +252,7 @@ void BehaviorConfig::load()
 
 	mPrfsChat->viewPlugin->clear();
 	int selectedIdx = 0, i = 0;
-	for(  Q3ValueList<KPluginInfo*>::iterator it = viewPlugins.begin(); it != viewPlugins.end(); ++it )
+	for(  QList<KPluginInfo*>::iterator it = viewPlugins.begin(); it != viewPlugins.end(); ++it )
 	{
 		if( (*it)->pluginName() == p->interfacePreference() )
 			selectedIdx = i;

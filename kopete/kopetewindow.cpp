@@ -22,17 +22,16 @@
 
 #include <qcursor.h>
 #include <qlayout.h>
-#include <q3hbox.h>
 #include <qtooltip.h>
 #include <qtimer.h>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QCloseEvent>
-#include <Q3PtrList>
 #include <QEvent>
 #include <QLabel>
 #include <QShowEvent>
 
+#include <khbox.h>
 #include <kaction.h>
 #include <kactionclasses.h>
 #include <kconfig.h>
@@ -109,7 +108,8 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	// a MacOS-style MenuBar.
 	// This fixes a "statusbar drawn over the top of the toolbar" bug
 	// e.g. it can happen when you switch desktops on Kopete startup
-	m_statusBarWidget = new Q3HBox(statusBar(), "m_statusBarWidget");
+	m_statusBarWidget = new KHBox(statusBar());
+	m_statusBarWidget->setObjectName( "m_statusBarWidget" );
 	m_statusBarWidget->setMargin( 2 );
 	m_statusBarWidget->setSpacing( 1 );
 	statusBar()->addWidget(m_statusBarWidget, 0, true);

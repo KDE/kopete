@@ -17,7 +17,6 @@
     *                                                                       *
     *************************************************************************
 */
-#include <q3ptrlist.h>
 #include <addcontactpage.h>
 
 #include <kiconloader.h>
@@ -37,7 +36,7 @@ FastAddContactWizard::FastAddContactWizard( QWidget *parent, const char *name )
 
 	// Populate the accounts list
 	Q3ListViewItem* accountLVI = 0L;
-	Q3PtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
+	QList<Kopete::Account*>  accounts = Kopete::AccountManager::self()->accounts();
 	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next() )
 	{
 		accountLVI= new Q3ListViewItem( protocolListView, i->accountLabel() );

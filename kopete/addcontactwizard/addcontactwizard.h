@@ -20,8 +20,6 @@
 #ifndef ADDCONTACTWIZARD_H
 #define ADDCONTACTWIZARD_H
 
-#include <q3ptrlist.h>
-#include <q3valuelist.h>
 #include <qmap.h>
 
 #include <kdebug.h>
@@ -29,7 +27,6 @@
 #include "addcontactwizard_base.h"
 
 class AddContactPage;
-class Q3CheckListItem;
 
 namespace Kopete
 {

@@ -23,7 +23,6 @@
 
 #include <qapplication.h>
 #include <qtoolbutton.h>
-#include <q3header.h>
 #include <qstringlist.h>
 
 #include <kiconloader.h>

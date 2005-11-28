@@ -18,7 +18,6 @@
 #define TOOLTIPEDITDIALOG_H
 
 #include <kdebug.h>
-#include <q3hbox.h>
 #include <kdialogbase.h>
 #include <q3listview.h>
 

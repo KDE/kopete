@@ -28,8 +28,6 @@
 
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
-//Added by qt3to4:
-#include <Q3PtrList>
 
 KopeteGroupListAction::KopeteGroupListAction( const QString &text, const QString &pix, const KShortcut &cut, const QObject *receiver,
 	const char *slot, KActionCollection *parent, const char *name )

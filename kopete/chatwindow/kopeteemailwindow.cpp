@@ -54,11 +54,11 @@
 #include <kwin.h>
 #include <kgenericfactory.h>
 #include <kxmlguifactory.h>
+#include <kvbox.h>
 
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qtimer.h>
-#include <q3vbox.h>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QCloseEvent>
@@ -108,7 +108,7 @@ public:
 KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowPlugin *parent, bool foreignMessage )
 	:  KParts::MainWindow( ), KopeteView( manager, parent ), d( new Private )
 {
-	Q3VBox *v = new Q3VBox( this );
+	KVBox *v = new KVBox( this );
 	setCentralWidget( v );
 
 	setMinimumSize( QSize( 75, 20 ) );

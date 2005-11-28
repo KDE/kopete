@@ -23,14 +23,11 @@
 #include <qimage.h>
 #include <qpixmap.h>
 #include <qtimer.h>
-//Added by qt3to4:
-#include <Q3Frame>
 
 #ifdef HAVE_GL
 # include <qgl.h>
 #endif
 
-class Q3Frame;
 class QTabWidget;
 
 class AVDeviceConfig_VideoDevice;

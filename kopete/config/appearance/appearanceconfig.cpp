@@ -35,7 +35,6 @@
 //Added by qt3to4:
 #include <QPixmap>
 #include <QTextStream>
-#include <Q3Frame>
 #include <QVBoxLayout>
 
 #include <kdeversion.h>
@@ -362,7 +361,7 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	connect(mPrfsChatWindow->mTransparencyValue, SIGNAL(valueChanged(int)),
 		this, SLOT(emitChanged()));
 
-	mPrfsChatWindow->htmlFrame->setFrameStyle(Q3Frame::WinPanel | Q3Frame::Sunken);
+	mPrfsChatWindow->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
 	QVBoxLayout *l = new QVBoxLayout(mPrfsChatWindow->htmlFrame);
 	preview = new KHTMLPart(mPrfsChatWindow->htmlFrame, "preview");
 	preview->setJScriptEnabled(false);
