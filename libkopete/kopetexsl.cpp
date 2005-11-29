@@ -34,7 +34,6 @@
 
 #include <qregexp.h>
 #include <q3signal.h>
-#include <q3stylesheet.h>
 #include <qthread.h>
 #include <qevent.h>
 #include <qmutex.h>

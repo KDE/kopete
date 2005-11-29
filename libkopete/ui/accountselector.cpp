@@ -24,7 +24,6 @@
 #include <qpixmap.h>
 //Added by qt3to4:
 #include <QVBoxLayout>
-#include <Q3PtrList>
 
 #include <kdebug.h>
 #include <klistview.h>

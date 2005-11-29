@@ -32,8 +32,7 @@
 #include <kconfig.h>
 #include <qtimer.h>
 #include <QTime>
-//Added by qt3to4:
-#include <Q3PtrList>
+
 #include <kapplication.h>
 
 #include <klocale.h>

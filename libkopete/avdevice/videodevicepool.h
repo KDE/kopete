@@ -18,7 +18,6 @@
 #ifndef KOPETE_AVVIDEODEVICE_H
 #define KOPETE_AVVIDEODEVICE_H
 
-#include <q3valuevector.h>
 #include <iostream>
 
 

@@ -40,12 +40,8 @@
 #include "knotification.h"
 
 #include <qcheckbox.h>
-#include <q3groupbox.h>
-#include <q3header.h>
 #include <qlabel.h>
-#include <q3listview.h>
 #include <qlayout.h>
-#include <q3ptrlist.h>
 #include <qpushbutton.h>
 #include <qstring.h>
 #include <qtooltip.h>

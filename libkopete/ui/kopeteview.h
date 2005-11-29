@@ -20,7 +20,6 @@
 #define KOPETEVIEW_H
 
 #include "kopetemessage.h"
-#include <q3valuelist.h>
 #include "kopete_export.h"
 
 namespace Kopete

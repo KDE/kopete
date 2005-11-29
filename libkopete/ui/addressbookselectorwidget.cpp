@@ -41,7 +41,6 @@
 #include <klistviewsearchline.h>
 #include <qlabel.h>
 #include <qtooltip.h>
-#include <q3whatsthis.h>
 
 #include "addressbookselectorwidget.h"
 #include <addresseeitem.h>

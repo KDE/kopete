@@ -21,8 +21,7 @@
 #define __KOPETECONTACT_H__
 
 #include <qobject.h>
-//Added by qt3to4:
-#include <Q3PtrList>
+
 #include <kurl.h>
 #include <kdemacros.h>
 #include "kopeteglobal.h"

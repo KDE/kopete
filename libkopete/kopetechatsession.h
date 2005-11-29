@@ -24,8 +24,6 @@
 #define __KOPETECHATSESSION_H__
 
 #include <qobject.h>
-#include <q3ptrlist.h>
-#include <q3valuelist.h>
 
 #include <kxmlguiclient.h>
 

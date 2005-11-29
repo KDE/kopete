@@ -21,7 +21,7 @@
 #include <kdialogbase.h>
 #include <qdialog.h>
 #include <q3listview.h>
-#include <q3vbox.h>
+#include <kvbox.h>
 #include <klocale.h>
 #include <kdialog.h>
 
@@ -32,7 +32,7 @@ namespace UI
 
 AddressBookSelectorDialog::AddressBookSelectorDialog(const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent, const char *name, bool modal ) : KDialogBase(parent, name, modal, title, Help|Ok|Cancel, Ok, true )
 {
-	Q3VBox *vbox=new Q3VBox(this);
+	KVBox *vbox=new KVBox(this);
 	m_addressBookSelectorWidget= new AddressBookSelectorWidget(vbox);
 	m_addressBookSelectorWidget->setLabelMessage(message);	
 

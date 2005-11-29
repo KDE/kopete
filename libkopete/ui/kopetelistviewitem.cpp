@@ -32,7 +32,6 @@
 #include <qapplication.h>
 #include <qpixmap.h>
 #include <qpainter.h>
-#include <q3ptrlist.h>
 #include <qrect.h>
 #include <qtimer.h>
 #include <q3header.h>

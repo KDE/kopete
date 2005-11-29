@@ -44,9 +44,7 @@
 #include <QMap>
 #include <QPixmap>
 #include <dcopclient.h>
-#include <q3cstring.h>
 #include <qpointer.h>
-#include <q3stylesheet.h>
 #include <qlabel.h>
 #include <qtimer.h>
 #include <qtabwidget.h>

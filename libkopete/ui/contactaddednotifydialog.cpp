@@ -16,11 +16,8 @@
 #include "contactaddednotifydialog.h"
 
 
-#include <q3vbox.h>
 #include <qlabel.h>
 #include <qcheckbox.h>
-#include <q3groupbox.h>
-#include <q3stylesheet.h>
 #include <qapplication.h>
 
 #include <klocale.h>

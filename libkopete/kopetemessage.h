@@ -21,7 +21,6 @@
 
 #include "kopetecontact.h"
 
-#include <q3ptrlist.h>
 #include <qstring.h>
 #include <qdom.h>
 #include <qcolor.h>

@@ -20,7 +20,6 @@
 #include "kopetecontact.h"
 
 #include <qapplication.h>
-#include <Q3PtrList>
 #include <Q3StyleSheet>
 
 #include <kdebug.h>
@@ -51,7 +50,7 @@
 #include <qlabel.h>
 #include <qimage.h>
 #include <qmime.h>
-#include <q3vbox.h>
+#include <kvbox.h>
 #include <klistview.h>
 #include <qcheckbox.h>
 
@@ -264,7 +263,7 @@ void Contact::changeMetaContact()
 	KDialogBase *moveDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "moveDialog", true, i18n( "Move Contact" ),
 		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
 
-	Q3VBox *w = new Q3VBox( moveDialog );
+	KVBox *w = new KVBox( moveDialog );
 	w->setSpacing( KDialog::spacingHint() );
 	Kopete::UI::MetaContactSelectorWidget *selector = new Kopete::UI::MetaContactSelectorWidget(w);
 	selector->setLabelMessage(i18n( "Select the meta contact to which you want to move this contact:" ));

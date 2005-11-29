@@ -18,15 +18,12 @@
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qtooltip.h>
-#include <q3whatsthis.h>
-#include <q3vbox.h>
 #include <qimage.h>
 #include <qpixmap.h>
 #include <qpainter.h>
 #include <qlayout.h>
 //Added by qt3to4:
 #include <QVBoxLayout>
-#include <Q3PtrList>
 #include <QBoxLayout>
 
 #include <kapplication.h>

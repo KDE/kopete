@@ -20,7 +20,6 @@
 #define KOPETECONTACTLIST_H__
 
 #include <qobject.h>
-#include <q3ptrlist.h>
 #include <QList>
 
 #include "kopete_export.h"

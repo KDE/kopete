@@ -21,8 +21,6 @@
 #include <qapplication.h>
 #include <qregexp.h>
 #include <qtimer.h>
-//Added by qt3to4:
-#include <Q3PtrList>
 
 #include <kconfig.h>
 #include <kdebug.h>
