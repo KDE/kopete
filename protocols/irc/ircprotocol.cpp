@@ -1185,10 +1185,8 @@ void IRCProtocol::slotMoveServerDown()
 	QValueList<IRCHost*>::iterator pos = selectedNetwork->hosts.find( selectedHost );
 	if( *pos != selectedNetwork->hosts.back() )
 	{
-		QValueList<IRCHost*>::iterator nextPos = pos;
-		nextPos++;
-		selectedNetwork->hosts.insert( nextPos, selectedHost );
-		selectedNetwork->hosts.remove( pos );
+		QValueList<IRCHost*>::iterator nextPos = selectedNetwork->hosts.remove( pos );
+		selectedNetwork->hosts.insert( ++nextPos, selectedHost );
 	}
 
 	unsigned int currentPos = netConf->hostList->currentItem();
