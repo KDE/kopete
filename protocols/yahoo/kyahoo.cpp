@@ -88,27 +88,26 @@ YahooConnectionManager::~ YahooConnectionManager()
 {
 }
 
-void YahooConnectionManager::addConnection( KStreamSocket* socket )
+void YahooConnectionManager::addConnection( QPair< KStreamSocket*, void *> *connection )
 {
-	kdDebug(14181) << k_funcinfo << "Adding socket with fd " << socket->socketDevice()->socket() << endl;
+	kdDebug(14181) << k_funcinfo << "Adding socket with fd " << connection->first->socketDevice()->socket() << endl;
 	
-	m_connectionList.append( socket );
+	m_connectionList.append( connection );
 }
 
-KStreamSocket* YahooConnectionManager::connectionForFD( int fd )
+QPair< KStreamSocket*, void *> *YahooConnectionManager::connectionForFD( int fd )
 {
 	//kdDebug(14181) << k_funcinfo << "Looking for socket with fd " << fd << endl;
-	QValueList<KStreamSocket*>::const_iterator it, ycEnd = m_connectionList.constEnd();
+	QValueList< QPair< KStreamSocket*, void *> *>::const_iterator it, ycEnd = m_connectionList.constEnd();
 	KSocketDevice *dev;
 	
 	for ( it = m_connectionList.begin(); it != ycEnd; ++it )
 	{
-		dev = ( *it )->socketDevice();
+		dev = ( *it )->first->socketDevice();
 		if ( dev->socket() == fd )
 		{
 			//kdDebug(14181) << k_funcinfo << "Found socket" << endl;
-			KStreamSocket* socket = ( *it );
-			return socket;
+			return *it;
 		}
 	}
 	
@@ -117,11 +116,11 @@ KStreamSocket* YahooConnectionManager::connectionForFD( int fd )
 
 void YahooConnectionManager::remove( KStreamSocket* socket )
 {
-	QValueList<KStreamSocket*>::iterator it, ycEnd = m_connectionList.end();
+	QValueList< QPair< KStreamSocket*, void *> *>::iterator it, ycEnd = m_connectionList.end();
 	
 	for ( it = m_connectionList.begin(); it != ycEnd; it++ )
 	{
-		if ( ( *it ) == socket )
+		if ( ( *it )->first == socket )
 		{
 			socket->reset();
 			m_connectionList.remove( it );
@@ -133,11 +132,11 @@ void YahooConnectionManager::remove( KStreamSocket* socket )
 
 void YahooConnectionManager::reset()
 {
-	QValueList<KStreamSocket*>::iterator it, ycEnd = m_connectionList.end();
+	QValueList< QPair< KStreamSocket*, void *> *>::iterator it, ycEnd = m_connectionList.end();
 	
 	for ( it = m_connectionList.begin(); it != ycEnd; it++ )
 	{
-		KStreamSocket *socket = ( *it );
+		KStreamSocket *socket = ( *it )->first;
 		socket->reset();
 		it = m_connectionList.remove( it );
 		delete socket;
@@ -1072,7 +1071,11 @@ void YahooSession::_uploadFileReceiver( int /*id*/, int fd, int error, void *dat
 
 void YahooSession::slotTransmitFile( int fd, YahooUploadData *uploadData )
 {
-	KStreamSocket* socket = m_connManager.connectionForFD( fd );
+	QPair< KStreamSocket*, void *> *connection =  m_connManager.connectionForFD( fd );
+	if( !connection )
+		return;
+		
+	KStreamSocket* socket = connection->first;
 	if( !socket )
 		return;
 	
@@ -1160,9 +1163,15 @@ void YahooSession::_receiveFileProceed( int id, int fd, int error,
 		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n( "An error occurred when trying to download the file." ), i18n("Error") );
 		return;
 	}
+	QPair< KStreamSocket*, void *> *connection =  m_connManager.connectionForFD( fd );
+	if( !connection )
+	{
+		kdDebug(14181) << k_funcinfo << "No connection found for fd." << endl;
+		return;
+	}
 	
-	KStreamSocket* socket = m_connManager.connectionForFD( fd );
-	if ( !socket )
+	KStreamSocket* socket = connection->first;
+	if( !socket )
 	{
 		kdDebug(14181) << k_funcinfo << "No existing socket for connection found. We're screwed" << endl;
 		return;
@@ -1423,20 +1432,22 @@ int YahooSession::_addHandlerReceiver( int fd, yahoo_input_condition cond, void 
 {
 	//kdDebug(14181) << k_funcinfo << " " << m_connId << " Socket: " << fd << endl;
 
-	m_data = data;
 	if ( fd == -1 )
 	{
 		kdDebug(14181) << k_funcinfo << "why is fd -1?" << endl;
 		return -1;
 	}
 	
-	KStreamSocket* socket = m_connManager.connectionForFD( fd );
-	if ( !socket )
+	QPair< KStreamSocket*, void *> *connection = m_connManager.connectionForFD( fd );
+	if ( !connection )
 	{
 		kdDebug(14181) << k_funcinfo << "No existing socket for connection found. We're screwed"
 			<< endl;
 		return -1;
 	}
+	
+	KStreamSocket *socket = connection->first;
+	connection->second = data;
 	
 	/* This works ONLY IF (YAHOO_INPUT_READ==1 && YAHOO_INPUT_WRITE==2) */
 	int tag = 0;
@@ -1468,13 +1479,14 @@ void YahooSession::_removeHandlerReceiver( int tag )
 	if ( tag == 0 )
 		return;
 
-	KStreamSocket* socket = m_connManager.connectionForFD( (tag-1)/2 );
-	if ( !socket )
+	QPair< KStreamSocket*, void *> *connection = m_connManager.connectionForFD( (tag-1)/2 );
+	if ( !connection )
 	{
 		kdDebug(14181) << k_funcinfo << "No existing socket for connection found. We're screwed"
 			<< endl;
 		return;
 	}
+	KStreamSocket *socket = connection->first;
 	/* This works ONLY IF (YAHOO_INPUT_READ==1 && YAHOO_INPUT_WRITE==2) */
 	if( tag % 2 == YAHOO_INPUT_READ ) {
 		//kdDebug(14181) << k_funcinfo << " read off" << endl;
@@ -1522,7 +1534,8 @@ void YahooSession::slotAsyncConnectSucceeded()
 {
 	KStreamSocket* socket = const_cast<KStreamSocket*>( dynamic_cast<const KStreamSocket*>( sender() ) );
 	kdDebug(14181) << k_funcinfo << " Connected! fd "<< socket->socketDevice()->socket() << endl;
-	m_connManager.addConnection( socket );
+	QPair< KStreamSocket*, void * > *connection = new QPair< KStreamSocket*, void * >( socket, 0L );
+	m_connManager.addConnection( connection );
 	
 	disconnect( socket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( slotAsyncConnectSucceeded() ) );
 	disconnect( socket, SIGNAL( gotError(int) ), this, SLOT( slotAsyncConnectFailed(int) ) );
@@ -1623,7 +1636,14 @@ void YahooSession::slotReadReady()
 	int fd = socket->socketDevice()->socket();
 	//kdDebug(14181) << k_funcinfo << "Socket FD: " << fd << endl;
 	
-	ret = yahoo_read_ready( m_connId , fd, m_data );
+	QPair< KStreamSocket*, void *> *connection = m_connManager.connectionForFD( fd );
+	if ( !connection )
+	{
+		kdDebug(14181) << k_funcinfo << "No connection found for socket!" << endl;
+		return;
+	}
+	
+	ret = yahoo_read_ready( m_connId , fd, connection->second );
 
 	if ( ret == -1 )
 		kdDebug(14181) << k_funcinfo << "Read Error (" << errno << ": " << strerror(errno) << endl;
@@ -1646,8 +1666,15 @@ void YahooSession::slotWriteReady()
 	
 	int fd = socket->socketDevice()->socket();
 	//kdDebug(14181) << k_funcinfo << "Socket FD: " << fd << endl;
-
-	ret = yahoo_write_ready( m_connId , fd, m_data );
+	
+	QPair< KStreamSocket*, void *> *connection = m_connManager.connectionForFD( fd );
+	if ( !connection )
+	{
+		kdDebug(14181) << k_funcinfo << "No connection found for socket!" << endl;
+		return;
+	}
+	
+	ret = yahoo_write_ready( m_connId , fd, connection->second );
 
 	if ( ret == -1 )
 		kdDebug(14181) << k_funcinfo << "Read Error (" << errno << ": " << strerror(errno) << endl;

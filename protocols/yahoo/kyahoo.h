@@ -25,6 +25,7 @@
 #include <qmap.h>
 #include <qpixmap.h>
 #include <qbuffer.h>
+#include <qpair.h>
 
 #include "libyahoo2/yahoo2.h"
 #include "libyahoo2/yahoo2_callbacks.h"
@@ -70,12 +71,12 @@ public:
 	 * from the connection manager and a new connection of that type is expected
 	 * to be created.
 	 */
-	void addConnection( KStreamSocket* socket );
+	void addConnection( QPair< KStreamSocket*, void * > *connection );
 	
 	/**
 	 * Get the connection by its file descriptor
 	 */
-	KStreamSocket* connectionForFD( int fd );
+	QPair< KStreamSocket*, void *> *connectionForFD( int fd );
 	
 	/**
 	 * Remove a connection from the manager
@@ -89,7 +90,7 @@ public:
 	void reset();
 	
 private:
-	QValueList<KStreamSocket*> m_connectionList;
+	QValueList< QPair< KStreamSocket*, void *> *> m_connectionList;
 };
 	
 	
@@ -339,7 +340,6 @@ private:
 	struct connect_callback_data *m_ccd;
 	
 	YahooConnectionManager m_connManager;
-	void *m_data;
 	
 	Kopete::Contact* m_contact;
 	Kopete::Transfer* m_kopeteTransfer;
