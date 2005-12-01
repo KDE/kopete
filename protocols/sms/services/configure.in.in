@@ -1,9 +1,9 @@
 AC_LANG_PUSH(C++)
 # Let the user disable the GSM SMS plugin
-AC_ARG_ENABLE(smsgsm-plugin,
-      AC_HELP_STRING([--enable-smsgsm-plugin], [build the Kopete GSM SMS plugin @<:@default=no@:>@]),
+AC_ARG_ENABLE(smsgsm,
+      AC_HELP_STRING([--disable-smsgsm], [disable the GSM SMS protocol]),
       [compile_smsgsm=$enableval],
-      [compile_smsgsm=no]
+      [compile_smsgsm=yes]
       )
 
 ac_save_LIBS="$LIBS"
