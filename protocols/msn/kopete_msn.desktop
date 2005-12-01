@@ -31,7 +31,6 @@ Name[ro]=Mesaje instantanee MSN
 Name[tg]=MSN Пайёмбар
 Name[uk]=Кур'єр MSN
 Name[uz]=MSN месенжер
-Name[xx]=xxMSN Messengerxx
 Comment=Protocol to connect to MSN Messenger
 Comment[ar]=البرتوكول سيتصل بمرسال MSN
 Comment[bg]=Протокол за връзка с MSN Messenger
@@ -77,6 +76,5 @@ Comment[tr]=MSN Messenger'a bağlantı iletişim kuralı
 Comment[uk]=Протокол для з'єднання з MSN Messenger
 Comment[uz]=MSN месенжер билан алоқа ўрнатиш учун протокол
 Comment[wa]=Protocole po s' raloyî a MSN
-Comment[xx]=xxProtocol to connect to MSN Messengerxx
 Comment[zh_CN]=连接到 MSN Messenger 协议
 
