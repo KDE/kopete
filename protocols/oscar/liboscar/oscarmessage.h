@@ -23,7 +23,7 @@
 
 #include <qglobal.h>
 #include <qstring.h>
-#include <qcstring.h>
+#include <q3cstring.h>
 #include <qdatetime.h>
 #include "kopete_export.h"
 #include "oscartypes.h"

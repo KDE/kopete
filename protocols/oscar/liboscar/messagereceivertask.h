@@ -61,7 +61,7 @@ private:
 	//!Parses Rendezvous data in Buffer and puts the information into Message
 	void parseRendezvousData( Buffer* b, Oscar::Message* msg );
 	
-	QTextCodec* guessCodec( const QByteArray& string );
+	QTextCodec* guessCodec( const Q3CString& string );
 
 private:
 	

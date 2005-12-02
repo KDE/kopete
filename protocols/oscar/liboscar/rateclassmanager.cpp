@@ -159,8 +159,8 @@ void RateClassManager::recalcRateLevels()
 
 int RateClassManager::timeToInitialLevel( SNAC s )
 {
-	QValueList<RateClass*>::const_iterator it;
-	QValueList<RateClass*>::const_iterator rcEnd = d->classList.constEnd();
+	Q3ValueList<RateClass*>::const_iterator it;
+	Q3ValueList<RateClass*>::const_iterator rcEnd = d->classList.constEnd();
 	
 	for ( it = d->classList.constBegin(); it != rcEnd; ++it )
 	{

@@ -21,7 +21,7 @@
 #include "oscarencodingselectiondialog.h"
 
 #include <kdebug.h>
-#include <qcombobox.h>
+#include <q3combobox.h>
 #include <klocale.h>
 
 OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent, int initialEncoding )
@@ -29,7 +29,7 @@ OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent, int
 {
     int initialEncodingIndex;
 
-    clearWFlags( QWidget::WDestructiveClose );
+    setAttribute( Qt::WA_DeleteOnClose, false );
     m_encodingUI = new OscarEncodingBaseUI( this );
     //fill the encoding combo boxes
   	m_encodings.insert(2026, i18n("Big5"));

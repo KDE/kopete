@@ -21,10 +21,10 @@
 #include <qlayout.h>
 #include <qlineedit.h>
 #include <qspinbox.h>
-#include <qcombobox.h>
+#include <q3combobox.h>
 #include <qobject.h>
 //Added by qt3to4:
-#include <QVBoxLayout>
+#include <Q3VBoxLayout>
 #include <Q3Frame>
 
 #include <kdatewidget.h>
@@ -50,28 +50,28 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, const char * name )
 	QFrame* genInfo = addPage( i18n( "General Info" ),
 	                                         i18n( "General ICQ Information" ),
 	                                         KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "identity" ), KIcon::Desktop ) );
-	QVBoxLayout* genLayout = new QVBoxLayout( genInfo );
+	Q3VBoxLayout* genLayout = new Q3VBoxLayout( genInfo );
 	m_genInfoWidget = new ICQGeneralInfoWidget( genInfo, "Basic Information" );
 	genLayout->addWidget( m_genInfoWidget );
 	
 	QFrame* workInfo = addPage( i18n( "Work Info" ),
 	                                          i18n( "Work Information" ),
 	                                          KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "attach" ), KIcon::Desktop ) );
-	QVBoxLayout* workLayout = new QVBoxLayout( workInfo );
+	Q3VBoxLayout* workLayout = new Q3VBoxLayout( workInfo );
 	m_workInfoWidget = new ICQWorkInfoWidget( workInfo, "Work Information" );
 	workLayout->addWidget( m_workInfoWidget );
 	
 	QFrame* otherInfo = addPage( i18n( "Other Info" ),
 	                                           i18n( "Other ICQ Information" ),
 	                                           KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "email" ), KIcon::Desktop ) );
-	QVBoxLayout* otherLayout = new QVBoxLayout( otherInfo );
+	Q3VBoxLayout* otherLayout = new Q3VBoxLayout( otherInfo );
 	m_otherInfoWidget = new ICQOtherInfoWidget( otherInfo, "Other Information"  );
 	otherLayout->addWidget( m_otherInfoWidget );
 	
 	QFrame* interestInfo = addPage( i18n( "Interest Info" ),
 	                                           i18n( "Interest" ),
 	                                           KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "email" ), KIcon::Desktop ) );
-	QVBoxLayout* interestLayout = new QVBoxLayout( interestInfo );
+	Q3VBoxLayout* interestLayout = new Q3VBoxLayout( interestInfo );
 	m_interestInfoWidget = new ICQInterestInfoWidget( interestInfo, "Other Information"  );
 	interestLayout->addWidget( m_interestInfoWidget );
 

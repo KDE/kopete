@@ -96,7 +96,7 @@ Kopete::ChatSession* OscarContact::manager( CanCreateFlags canCreate )
 		/*kdDebug(14190) << k_funcinfo <<
 			"Creating new ChatSession for contact '" << displayName() << "'" << endl;*/
 
-		Q3PtrList<Kopete::Contact> theContact;
+		QList<Kopete::Contact*> theContact;
 		theContact.append(this);
 
 		mMsgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), theContact, protocol());

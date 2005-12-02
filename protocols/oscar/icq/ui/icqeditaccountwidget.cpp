@@ -19,13 +19,13 @@
 
 #include <qlayout.h>
 #include <qcheckbox.h>
-#include <qcombobox.h>
+#include <q3combobox.h>
 #include <qlineedit.h>
 #include <q3textedit.h>
 #include <qspinbox.h>
 #include <qpushbutton.h>
 //Added by qt3to4:
-#include <QVBoxLayout>
+#include <Q3VBoxLayout>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -54,7 +54,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	mAccount=dynamic_cast<ICQAccount*>(account);
 	mProtocol=protocol;
 
-	(new QVBoxLayout(this))->setAutoAdd(true);
+	(new Q3VBoxLayout(this))->setAutoAdd(true);
 	mAccountSettings = new ICQEditAccountUI( this );
 
     mProtocol->fillComboFromTable( mAccountSettings->encodingCombo, mProtocol->encodings() );

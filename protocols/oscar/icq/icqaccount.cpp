@@ -17,6 +17,8 @@
 
 #include <qfile.h>
 #include <qimage.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -224,8 +226,8 @@ void ICQAccount::slotSetVisiblility()
 		//temporary map for faster lookup of contactId
 		QMap<QString, QString> revContactMap;
 		
-		QValueList<Oscar::SSI> contactList = engine()->ssiManager()->contactList();
-		QValueList<Oscar::SSI>::const_iterator it, cEnd = contactList.constEnd();
+		Q3ValueList<Oscar::SSI> contactList = engine()->ssiManager()->contactList();
+		Q3ValueList<Oscar::SSI>::const_iterator it, cEnd = contactList.constEnd();
 		
 		for ( it = contactList.constBegin(); it != cEnd; ++it )
 		{
@@ -411,7 +413,7 @@ void ICQAccount::setBuddyIcon( KURL url )
 		if ( image.isNull() )
 			return;
 		
-		image = image.smoothScale( 52, 64, QImage::ScaleMax );
+		image = image.smoothScale( 52, 64, Qt::KeepAspectRatioByExpanding );
 		if(image.width() > image.height()) {
 			image = image.copy((image.width()-image.height())/2, 0, image.height(), image.height());
 		}
@@ -454,7 +456,7 @@ void ICQAccount::slotBuddyIconChanged()
 			Oscar::SSI s(item);
 			
 			//remove hash and alias
-			QValueList<TLV> tList( item.tlvList() );
+			Q3ValueList<TLV> tList( item.tlvList() );
 			TLV t = Oscar::findTLV( tList, 0x00D5 );
 			if ( t )
 				tList.remove( t );
@@ -495,7 +497,7 @@ void ICQAccount::slotBuddyIconChanged()
 			t2.type = 0x0131;
 			t2.length = 0;
 			
-			QValueList<Oscar::TLV> list;
+			Q3ValueList<Oscar::TLV> list;
 			list.append( t );
 			list.append( t2 );
 			
@@ -509,7 +511,7 @@ void ICQAccount::slotBuddyIconChanged()
 		{ //found an item
 			Oscar::SSI s(item);
 			kdDebug(14153) << k_funcinfo << "modifying old item in ssi." << endl;
-			QValueList<TLV> tList( item.tlvList() );
+			Q3ValueList<TLV> tList( item.tlvList() );
 			
 			TLV t = Oscar::findTLV( tList, 0x00D5 );
 			if ( t )

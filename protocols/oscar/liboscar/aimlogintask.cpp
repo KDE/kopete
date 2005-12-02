@@ -244,7 +244,7 @@ void AimLoginTask::encodePassword( QByteArray& digest ) const
 	md5_state_t state;
 	md5_init( &state );
 	md5_append( &state, ( const md5_byte_t* ) m_authKey.data(), m_authKey.size() );
-	md5_append( &state, ( const md5_byte_t* ) client()->password().toLatin1(), client()->password().length() );
+	md5_append( &state, ( const md5_byte_t* ) client()->password().toLatin1().data(), client()->password().length() );
 	md5_append( &state, ( const md5_byte_t* ) AIM_MD5_STRING, strlen( AIM_MD5_STRING ) );
 	md5_finish( &state, ( md5_byte_t* ) digest.data() );
 }

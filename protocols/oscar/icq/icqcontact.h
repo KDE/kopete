@@ -22,7 +22,7 @@
 #include "oscarcontact.h"
 #include "userdetails.h"
 //Added by qt3to4:
-#include <Q3PtrList>
+#include <QList>
 
 class OscarEncodingSelectionDialog;
 class KAction;
@@ -61,7 +61,7 @@ public:
 	 * Returns a set of custom menu items for
 	 * the context menu
 	 */
-	virtual Q3PtrList<KAction> *customContextMenuActions();
+	virtual QList<KAction*> *customContextMenuActions();
 
 	/** Return whether or not this contact is reachable. */
 	virtual bool isReachable();

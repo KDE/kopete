@@ -23,7 +23,7 @@
 
 #include <netinet/in.h> // for ntohl()
 
-#include <qcombobox.h>
+#include <q3combobox.h>
 /*
 #include <qhostaddress.h>
 #include <qlistbox.h>

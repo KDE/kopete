@@ -19,7 +19,7 @@
 
 #include "oscarmessage.h"
 
-#include <qdeepcopy.h>
+#include <q3deepcopy.h>
 
 
 Oscar::Message::Message()

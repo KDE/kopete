@@ -113,7 +113,7 @@ public:
 		QString contact;
 		ICQStatus contactStatus;
 	};
-	QValueList<AwayMsgRequest> awayMsgRequestQueue;
+	Q3ValueList<AwayMsgRequest> awayMsgRequestQueue;
 	QTimer* awayMsgRequestTimer;
 };
 
@@ -846,7 +846,7 @@ void Client::removeICQAwayMessageRequest( const QString& contact )
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "removing away message request for "
 	                         << contact << " from queue" << endl;
 
-	QValueList<ClientPrivate::AwayMsgRequest>::iterator it = d->awayMsgRequestQueue.begin();
+	Q3ValueList<ClientPrivate::AwayMsgRequest>::iterator it = d->awayMsgRequestQueue.begin();
 	while ( it != d->awayMsgRequestQueue.end() )
 	{
 		if ( (*it).contact == contact )
@@ -965,7 +965,7 @@ void Client::setIgnore( const QString& user, bool ignore )
 	else if ( !item && ignore )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to ignore list" << endl;
-		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_IGNORE, QValueList<TLV>() );
+		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_IGNORE, Q3ValueList<TLV>() );
 		this->modifySSIItem( Oscar::SSI(), s );
 	}
 }
@@ -981,7 +981,7 @@ void Client::setVisibleTo( const QString& user, bool visible )
 	else if ( !item && visible )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to visible list" << endl;
-		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_VISIBLE, QValueList<TLV>() );
+		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_VISIBLE, Q3ValueList<TLV>() );
 		this->modifySSIItem( Oscar::SSI(), s );
 	}
 }
@@ -997,7 +997,7 @@ void Client::setInvisibleTo( const QString& user, bool invisible )
 	else if ( !item && invisible )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to invisible list" << endl;
-		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_INVISIBLE, QValueList<TLV>() );
+		Oscar::SSI s( user, 0, ssiManager()->nextContactId(), ROSTER_INVISIBLE, Q3ValueList<TLV>() );
 		this->modifySSIItem( Oscar::SSI(), s );
 	}
 }

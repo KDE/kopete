@@ -539,9 +539,9 @@ bool ICQContact::isReachable()
 	return account()->isConnected();
 }
 
-Q3PtrList<KAction> *ICQContact::customContextMenuActions()
+QList<KAction*> *ICQContact::customContextMenuActions()
 {
-	Q3PtrList<KAction> *actionCollection = new Q3PtrList<KAction>();
+	QList<KAction*> *actionCollection = new QList<KAction*>();
 /*
 	QString awTxt;
 	QString awIcn;

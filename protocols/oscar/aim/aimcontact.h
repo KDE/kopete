@@ -44,7 +44,7 @@ public:
 	virtual ~AIMContact();
 
 	bool isReachable();
-	Q3PtrList<KAction> *customContextMenuActions();
+	QList<KAction*> *customContextMenuActions();
 
 	const QString &userProfile() { return mUserProfile; }
 

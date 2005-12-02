@@ -64,19 +64,19 @@ void OscarVisibilityDialog::addInvisibleContacts( const QStringList& contactList
 
 void OscarVisibilityDialog::slotAddToVisible()
 {
-	QListBoxItem *itm = m_visibilityUI->contacts->selectedItem();
+	Q3ListBoxItem *itm = m_visibilityUI->contacts->selectedItem();
 	if ( !itm ) return;
 	
 	QString contactId = m_contactMap[itm->text()];
 	m_visibleListChangesMap[contactId] = Add;
 	
-	if ( !m_visibilityUI->visibleContacts->findItem( itm->text(), Qt::CaseSensitive | Qt::ExactMatch ) )
+	if ( !m_visibilityUI->visibleContacts->findItem( itm->text(), Q3ListBox::CaseSensitive | Q3ListBox::ExactMatch ) )
 		m_visibilityUI->visibleContacts->insertItem( itm->text() );
 }
 
 void OscarVisibilityDialog::slotRemoveFromVisible()
 {
-	QListBoxItem *itm = m_visibilityUI->visibleContacts->selectedItem();
+	Q3ListBoxItem *itm = m_visibilityUI->visibleContacts->selectedItem();
 	if ( !itm ) return;
 	
 	QString contactId = m_contactMap[itm->text()];
@@ -88,19 +88,19 @@ void OscarVisibilityDialog::slotRemoveFromVisible()
 
 void OscarVisibilityDialog::slotAddToInvisible()
 {
-	QListBoxItem *itm = m_visibilityUI->contacts->selectedItem();
+	Q3ListBoxItem *itm = m_visibilityUI->contacts->selectedItem();
 	if ( !itm ) return;
 	
 	QString contactId = m_contactMap[itm->text()];
 	m_invisibleListChangesMap[contactId] = Add;
 	
-	if ( !m_visibilityUI->invisibleContacts->findItem( itm->text(), Qt::CaseSensitive | Qt::ExactMatch ) )
+	if ( !m_visibilityUI->invisibleContacts->findItem( itm->text(), Q3ListBox::CaseSensitive | Q3ListBox::ExactMatch ) )
 		m_visibilityUI->invisibleContacts->insertItem( itm->text() );
 }
 
 void OscarVisibilityDialog::slotRemoveFromInvisible()
 {
-	QListBoxItem *itm = m_visibilityUI->invisibleContacts->selectedItem();
+	Q3ListBoxItem *itm = m_visibilityUI->invisibleContacts->selectedItem();
 	if ( !itm ) return;
 	
 	QString contactId = m_contactMap[itm->text()];

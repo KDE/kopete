@@ -18,6 +18,7 @@
 
 #include "connectionhandler.h"
 #include <q3valuelist.h>
+#include <qmap.h>
 #include <kdebug.h>
 #include "connection.h"
 #include "oscartypes.h"
@@ -26,7 +27,7 @@ class ConnectionHandler::Private
 {
 public:
 	Q3ValueList<Connection*> connections;
-    QMap<Connection*, ConnectionRoomInfo> chatRoomConnections;
+	QMap<Connection*, ConnectionRoomInfo> chatRoomConnections;
 };
 
 ConnectionHandler::ConnectionHandler()

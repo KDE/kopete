@@ -20,14 +20,14 @@
 
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qcombobox.h>
+#include <q3combobox.h>
 #include <qcheckbox.h>
 #include <qlineedit.h>
 #include <qtabwidget.h>
 #include <qlabel.h>
 //Added by qt3to4:
 #include <QShowEvent>
-#include <QVBoxLayout>
+#include <Q3VBoxLayout>
 
 #include <kdebug.h>
 #include <kiconloader.h>
@@ -49,7 +49,7 @@ ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent, const c
 	mAccount = owner;
 	m_searchDialog = 0L;
 
-	(new QVBoxLayout(this))->setAutoAdd(true);
+	(new Q3VBoxLayout(this))->setAutoAdd(true);
 	addUI = new icqAddUI(this);
 	connect( addUI->searchButton, SIGNAL( clicked() ), this, SLOT( showSearchDialog() ) );
 }

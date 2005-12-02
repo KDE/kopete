@@ -38,7 +38,7 @@ ICQAuthReplyDialog::ICQAuthReplyDialog( QWidget *parent, const char *name, bool 
 	}
 	else
 	{
-		this->setWFlags( this->getWFlags() | Qt::WDestructiveClose );
+		setAttribute( Qt::WA_DeleteOnClose );
 	}
 }
 

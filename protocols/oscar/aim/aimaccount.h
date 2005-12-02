@@ -75,7 +75,7 @@ private:
 	 * There has GOT to be a better way to get this away message
 	 */
 	QString m_lastAwayMessage;
-    QValueList<Kopete::ChatSession*> m_chatRoomSessions;
+    Q3ValueList<Kopete::ChatSession*> m_chatRoomSessions;
 
 
 };

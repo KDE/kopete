@@ -85,11 +85,11 @@ bool AIMContact::isReachable()
 	return true;
 }
 
-Q3PtrList<KAction> *AIMContact::customContextMenuActions()
+QList<KAction*> *AIMContact::customContextMenuActions()
 {
 
-	Q3PtrList<KAction> *actionCollection = new Q3PtrList<KAction>();
-	if ( !m_warnUserAction )
+	QList<KAction*> *actionCollection = new QList<KAction*>();
+	/*if ( !m_warnUserAction )
 	{
 		m_warnUserAction = new KAction( i18n( "&Warn User" ), 0, this, SLOT( warnUser() ), this, "warnAction" );
 	}
@@ -113,7 +113,7 @@ Q3PtrList<KAction> *AIMContact::customContextMenuActions()
 
 	actionCollection->append(m_actionVisibleTo);
 	actionCollection->append(m_actionInvisibleTo);
-
+*/
 
 	return actionCollection;
 }

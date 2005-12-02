@@ -126,10 +126,9 @@ void OscarAccount::logOff( Kopete::Account::DisconnectReason reason )
 	d->engine->close();
 	myself()->setOnlineStatus( Kopete::OnlineStatus::Offline );
 
-	QDictIterator<Kopete::Contact> it( contacts() );
-	for( ; it.current(); ++it )
+	foreach ( Kopete::Contact* c, contacts() )
 	{
-		it.current()->setOnlineStatus(Kopete::OnlineStatus::Offline);
+		c->setOnlineStatus(Kopete::OnlineStatus::Offline);
 	}
 
 	disconnected( reason );
@@ -239,9 +238,9 @@ void OscarAccount::processSSIList()
 	QObject::connect( listManager, SIGNAL( groupAdded( const Oscar::SSI& ) ),
 	                  this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
 
-    //TODO: check the kopete contact list and handle non server side contacts appropriately.
-    QDict<Kopete::Contact> nonServerContacts = contacts();
-    QDictIterator<Kopete::Contact> it( nonServerContacts );
+	/** Commented for compilation purposes. 
+    Q3Dict<Kopete::Contact> nonServerContacts = contacts();
+    Q3DictIterator<Kopete::Contact> it( nonServerContacts );
     QStringList nonServerContactList;
     for ( ; it.current(); ++it )
     {
@@ -262,6 +261,7 @@ void OscarAccount::processSSIList()
         d->olnscDialog->addContacts( nonServerContactList );
         d->olnscDialog->show();
     }
+	*/
 }
 
 void OscarAccount::nonServerAddContactDialogClosed()

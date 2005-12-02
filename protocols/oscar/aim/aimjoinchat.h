@@ -35,8 +35,8 @@ public:
 	               const char* name = 0 );
 	~AIMJoinChatUI();
 
-    void setExchangeList( const QValueList<int>& );
-    QValueList<int> exchangeList() const;
+    void setExchangeList( const Q3ValueList<int>& );
+    Q3ValueList<int> exchangeList() const;
 
     QString roomName() const;
     QString exchange() const;
@@ -52,7 +52,7 @@ signals:
 private:
 	AIMJoinChatBase* m_joinUI;
 	AIMAccount* m_account;
-    QValueList<int> m_exchanges;
+    Q3ValueList<int> m_exchanges;
     QString m_roomName;
     QString m_exchange;
 

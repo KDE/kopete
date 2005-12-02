@@ -24,7 +24,7 @@
 #include <qlineedit.h>
 //Added by qt3to4:
 #include <QLabel>
-#include <QVBoxLayout>
+#include <Q3VBoxLayout>
 #include <klocale.h>
 #include <kmessagebox.h>
 
@@ -33,7 +33,7 @@ AIMAddContactPage::AIMAddContactPage(bool connected, QWidget *parent,
 	: AddContactPage(parent,name)
 {
     m_gui = 0;
-	(new QVBoxLayout(this))->setAutoAdd(true);
+	(new Q3VBoxLayout(this))->setAutoAdd(true);
 
 	if(connected)
 	{

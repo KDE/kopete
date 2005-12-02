@@ -20,6 +20,8 @@
 //Added by qt3to4:
 #include <Q3ValueList>
 #include <QByteArray>
+//Added by qt3to4:
+#include <Q3CString>
 #include <kdebug.h>
 #include "transfer.h"
 #include "buffer.h"
@@ -432,7 +434,7 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 	}
 }
 
-QTextCodec* MessageReceiverTask::guessCodec( const QCString& string )
+QTextCodec* MessageReceiverTask::guessCodec( const Q3CString& string )
 {
 	Q_UNUSED( string );
 	return 0;

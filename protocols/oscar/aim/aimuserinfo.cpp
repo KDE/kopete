@@ -25,7 +25,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <QVBoxLayout>
+#include <Q3VBoxLayout>
 #include <Q3Frame>
 #include <qtimer.h>
 
@@ -78,10 +78,9 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, bool 
 
 		userInfoView=0L;
 		mMainWidget->userInfoFrame->setFrameStyle(Q3Frame::NoFrame | Q3Frame::Plain);
-		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
-		userInfoEdit = new KTextEdit(QString::null, QString::null,
-			mMainWidget->userInfoFrame, "userInfoEdit");
-		userInfoEdit->setTextFormat(PlainText);
+		Q3VBoxLayout *l = new Q3VBoxLayout(mMainWidget->userInfoFrame);
+		userInfoEdit = new KTextEdit(QString(), mMainWidget->userInfoFrame);
+		userInfoEdit->setTextFormat(Qt::PlainText);
 		
 		AIMMyselfContact* aimmc = dynamic_cast<AIMMyselfContact*>( c );
 		if ( !aimmc )
@@ -97,9 +96,9 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, bool 
 	{
 		userInfoEdit=0L;
 		mMainWidget->userInfoFrame->setFrameStyle(Q3Frame::NoFrame | Q3Frame::Plain);
-		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
+		Q3VBoxLayout *l = new Q3VBoxLayout(mMainWidget->userInfoFrame);
 		userInfoView = new KTextBrowser(mMainWidget->userInfoFrame, "userInfoView");
-		userInfoView->setTextFormat(AutoText);
+		userInfoView->setTextFormat(Qt::AutoText);
 		userInfoView->setNotifyClick(true);
 		QObject::connect(
 			userInfoView, SIGNAL(urlClick(const QString&)),
@@ -211,14 +210,15 @@ void AIMUserInfoDialog::slotUpdateProfile()
 	
 }
 
+//KRun changed, so comment it so it compiles FIXME
 void AIMUserInfoDialog::slotUrlClicked(const QString &url)
 {
-	new KRun(KURL(url));
+	//new KRun(KURL(url));
 }
 
 void AIMUserInfoDialog::slotMailClicked(const QString&, const QString &address)
 {
-	new KRun(KURL(address));
+	//new KRun(KURL(address));
 }
 
 #include "aimuserinfo.moc"

@@ -43,7 +43,7 @@ KOPETE_EXPORT TLV findTLV( const Q3ValueList<TLV>&, int type );
  * Update TLVs of SSI item from TLV list if necessary
  * \return true if something was updated
  */
-KOPETE_EXPORT bool uptateTLVs( SSI& item, const QValueList<TLV>& list );
+KOPETE_EXPORT bool updateTLVs( SSI& item, const Q3ValueList<TLV>& list );
 
 /**
  * Get the value of the capability that corresponds to the value

@@ -54,12 +54,12 @@ TLV Oscar::findTLV( const Q3ValueList<TLV>& list, int type )
 	return t;
 }
 
-bool Oscar::uptateTLVs( SSI& item, const QValueList<TLV>& list )
+bool Oscar::updateTLVs( SSI& item, const Q3ValueList<TLV>& list )
 {
 	bool changed = false;
-	QValueList<TLV> tList( item.tlvList() );
+	Q3ValueList<TLV> tList( item.tlvList() );
 
-	QValueList<TLV>::const_iterator it;
+	Q3ValueList<TLV>::const_iterator it;
 	for ( it = list.begin(); it != list.end(); ++it )
 	{
 		TLV t = Oscar::findTLV( tList, ( *it ).type );

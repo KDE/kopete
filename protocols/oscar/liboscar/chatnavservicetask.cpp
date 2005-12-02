@@ -235,8 +235,8 @@ void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
     kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "e: " << exchange
                              << " c: " << cookie << " i: " << instance << endl;
 
-    QValueList<Oscar::TLV> tlvList = b.getTLVList();
-    QValueList<Oscar::TLV>::iterator it, itEnd = tlvList.end();
+    Q3ValueList<Oscar::TLV> tlvList = b.getTLVList();
+    Q3ValueList<Oscar::TLV>::iterator it, itEnd = tlvList.end();
     QString roomName;
     for ( it = tlvList.begin(); it != itEnd; ++it )
     {

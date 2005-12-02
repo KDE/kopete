@@ -474,8 +474,6 @@ protected slots:
 
 	void nextICQAwayMessageRequest();
 
-	void nextICQAwayMessageRequest();
-
 private:
 
 	/** Initialize some static tasks */

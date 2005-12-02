@@ -20,7 +20,7 @@
 
 #include <qlineedit.h>
 #include <qcheckbox.h>
-#include <qcombobox.h>
+#include <q3combobox.h>
 #include <qlayout.h>
 #include <kdebug.h>
 #include <kiconloader.h>

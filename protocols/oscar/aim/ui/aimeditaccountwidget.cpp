@@ -8,7 +8,7 @@
 #include <qlineedit.h>
 #include <qspinbox.h>
 //Added by qt3to4:
-#include <QVBoxLayout>
+#include <Q3VBoxLayout>
 
 #include <kdebug.h>
 #include <krun.h>
@@ -31,7 +31,7 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 	mProtocol = protocol;
 
 	// create the gui (generated from a .ui file)
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
+	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
 	mGui = new aimEditAccountUI( this, "AIMEditAccountWidget::mGui" );
 
 	// Read in the settings from the account if it exists

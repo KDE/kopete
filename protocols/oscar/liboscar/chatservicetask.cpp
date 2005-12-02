@@ -21,6 +21,8 @@
 #include "chatservicetask.h"
 
 #include <qstring.h>
+//Added by qt3to4:
+#include <Q3CString>
 #include <kapplication.h>
 #include <kdebug.h>
 
@@ -71,15 +73,15 @@ void ChatServiceTask::onGo()
 
     type2.type = 0x0002;
     type2.length = 0x0008;
-    type2.data = QCString( "us-ascii" ); //hardcode for right now. don't know that we can do others
+    type2.data = Q3CString( "us-ascii" ); //hardcode for right now. don't know that we can do others
 
     type3.type = 0x0003;
     type3.length = 0x0002;
-    type3.data = QCString( "en" ); //hardcode for right now. don't know that we can do others
+    type3.data = Q3CString( "en" ); //hardcode for right now. don't know that we can do others
 
     type1.type = 0x0001;
-    type1.length = strlen( m_message.text().toLatin1() );
-    type1.data = QCString( m_message.text().toLatin1() );
+    type1.length = strlen( m_message.text().latin1() );
+    type1.data = Q3CString( m_message.text().latin1() );
     tlv5.addWord( 0x0005 );
     tlv5.addWord( 12 + type1.length + type2.length + type3.length );
     tlv5.addTLV( type1 );
