@@ -226,6 +226,17 @@ const QList<Account *>& AccountManager::accounts() const
 	return d->accounts;
 }
 
+QList<Account*> AccountManager::accounts( Protocol* protocol ) const
+{
+	QList<Account*> protocolAccounts;
+	foreach( Account* acct, d->accounts )
+	{
+		if ( acct->protocol() == protocol )
+			protocolAccounts.append( acct );
+	}
+	return protocolAccounts;
+}
+
 Account * AccountManager::findAccount( const QString &protocolId, const QString &accountId )
 {
 	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )

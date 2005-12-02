@@ -66,6 +66,16 @@ public:
 	const QList<Account *> & accounts() const;
 
 	/**
+	 * \brief Retrieve a list of accounts per protocol
+	 *
+	 * Provides a list of accounts for a certain protocol. If there are
+	 * no accounts for that protocol then the list is empty.
+	 * \param protocol the protocol to get accounts for
+	 * \return the list of accounts that belong to the @p protocol protocol
+	 */
+	QList<Account*> accounts( Kopete::Protocol* protocol ) const;
+
+	/**
 	 * \brief Return the account asked
 	 * \param protocolId is the ID for the protocol
 	 * \param accountId is the ID for the account you want
