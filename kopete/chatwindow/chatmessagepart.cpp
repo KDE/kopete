@@ -820,7 +820,7 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 
 	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), this, SLOT( slotClearSelection()));
 
-#warning KMultipleDrag doesn't seems to exist anymore in kde4
+#warning KMultipleDrag does not seems to exist anymore in kde4
 #if 0 
 //#ifndef QT_NO_MIMECLIPBOARD
 	if(!justselection)

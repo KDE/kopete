@@ -108,7 +108,7 @@ public:
 	 */
 	void begin()
 	{
-#warning disable kwallet for now, it doesn't works
+#warning disable kwallet for now, it does not work
 #if 0
 		kdDebug( 14010 ) << k_funcinfo << endl;
 		Kopete::WalletManager::self()->openWallet( this, SLOT( walletReceived( KWallet::Wallet* ) ) );

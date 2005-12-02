@@ -1306,7 +1306,7 @@ Q3DragObject *KopeteContactListView::dragObject()
 	Q3StoredDrag *d = new Q3StoredDrag("kopete/x-metacontact", /*0L*/ this );
 	d->setEncodedData( metaLVI->metaContact()->metaContactId().toUtf8() );
 	return d;	
-#warning KMultipleDrag doesn't exist anymore
+#warning KMultipleDrag does not exist anymore
 #if 0    
 	KMultipleDrag *drag = new KMultipleDrag( this );
 	drag->addDragObject( new Q3StoredDrag("application/x-qlistviewitem", 0L ) );
