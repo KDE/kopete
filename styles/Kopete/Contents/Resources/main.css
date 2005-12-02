@@ -11,34 +11,6 @@
 	border-color:#fafafa #d1dfef #d1dfef #fafafa;
 	border-width:2px;
 }
-.OutgoingMessageHeader
-{
-	background-color:#f5f5f5;
-	padding:.1em;
-	border:solid;
-	border-color:#fafafa #e3e3e3 #e3e3e3 #fafafa;
-	border-width:2px;
-}
-.InternalMessageHeader
-{
-	border-top: 0.1em dashed #afafaf; 
-	border-right: 0.1em dashed #afafaf;
-	border-bottom: 0.1em dashed #afafaf;
-	border-left: 0.1em dashed #afafaf;
-	padding-left: 0.1em; 
-	padding-bottom: 0.1em; 
-	padding-right: 0.1em; 
-	vertical-align: middle;
-}
-
-.userPhoto
-{
-	border: 1px solid #888;
-	height: 48px;
-	margin-top: 0.2em;
-	margin-left: 0.2em;
-	margin-right: 1ex;
-}
 
 .IncomingMessage
 {
@@ -57,6 +29,15 @@
 	padding-top: 0.25em;
 	padding-bottom: 0.5em;
 	line-height: 1.2;
+}
+
+.OutgoingMessageHeader
+{
+	background-color:#f5f5f5;
+	padding:.1em;
+	border:solid;
+	border-color:#fafafa #e3e3e3 #e3e3e3 #fafafa;
+	border-width:2px;
 }
 
 .OutgoingMessage
@@ -78,10 +59,52 @@
 	line-height: 1.2;
 }
 
+.InternalMessageHeader
+{
+	border-top: 0.1em dashed #afafaf; 
+	border-right: 0.1em dashed #afafaf;
+	border-bottom: 0.1em dashed #afafaf;
+	border-left: 0.1em dashed #afafaf;
+	padding-left: 0.1em; 
+	padding-bottom: 0.1em; 
+	padding-right: 0.1em; 
+	vertical-align: middle;
+}
+
 .InternalMessage
 {
+/*float: left; */
+	width: 80%;
 	text-align: left;
 	font-size: 10px;
 	font-weight: bold;
 	color: #808080;
+}
+
+.InternalMessageHeaderTime
+{
+	font-size: 10px;
+float: right; 
+font-weight: normal;
+	/*vertical-align: middle;*/
+
+margin-right: 1ex;
+}
+
+.systemLogo
+{
+float: left;
+margin-right: 1ex;
+	vertical-align: middle;
+}
+
+.userPhoto
+{
+float: left;
+	border: 1px solid #888;
+	height: 48px;
+	margin-top: 0.2em;
+	margin-left: 0.2em;
+	margin-right: 1ex;
+
 }
