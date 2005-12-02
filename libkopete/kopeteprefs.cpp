@@ -19,8 +19,7 @@
 #include <qfile.h>
 #include <qfont.h>
 #include <qmetaobject.h>
-//Added by qt3to4:
-#include <QTextStream>
+#include <qtextstream.h>
 
 #include <kapplication.h>
 #include <kglobalsettings.h>
@@ -63,6 +62,7 @@ void KopetePrefs::load()
 	mUseStack = config->readBoolEntry("Use Stack", false);
 	mRaiseMsgWindow = config->readBoolEntry("Raise Msg Window", false);
 	mShowEvents = config->readBoolEntry("Show Events in Chat Window", true);
+	mSpellCheck = config->readBoolEntry("SpellCheck", true);
 	mQueueUnreadMessages = config->readBoolEntry("Queue Unread Messages", false);
 	mQueueOnlyHighlightedMessagesInGroupChats = config->readBoolEntry("Queue Only Highlighted Messages In Group Chats", false);
 	mQueueOnlyMessagesOnAnotherDesktop = config->readBoolEntry("Queue Only Messages On Another Desktop", false);
@@ -83,11 +83,9 @@ void KopetePrefs::load()
 	mTruncateContactNames = config->readBoolEntry("TruncateContactNames", false);
 	mMaxContactNameLength = config->readNumEntry("MaxContactNameLength", 20);
 
-	QColor tmpColor( Qt::white );
-	mTransparencyColor = config->readColorEntry("ChatView Transparency Tint Color", &tmpColor);
 	mChatViewBufferSize = config->readNumEntry("ChatView BufferSize", 250);
 
-	tmpColor = KGlobalSettings::highlightColor();
+	QColor tmpColor = KGlobalSettings::highlightColor();
 	mHighlightBackground = config->readColorEntry("Highlight Background Color", &tmpColor);
 	tmpColor = KGlobalSettings::highlightedTextColor();
 	mHighlightForeground = config->readColorEntry("Highlight Foreground Color", &tmpColor);
@@ -115,6 +113,10 @@ void KopetePrefs::load()
 	*/
 	_setStyleSheet(config->readEntry("Stylesheet", QString::fromLatin1(KOPETE_DEFAULT_CHATSTYLE)));
 
+	_setStylePath(config->readEntry("StylePath"));
+	mStyleVariant = config->readEntry("StyleVariant");
+
+
 	mToolTipContents = config->readListEntry("ToolTipContents");
 	if(mToolTipContents.empty())
 	{
@@ -134,12 +136,13 @@ void KopetePrefs::load()
 	}
 
 	config->setGroup("ContactList");
-	int n = metaObject()->indexOfEnumerator( "contactListDisplayMode" );
+	int n = metaObject()->indexOfProperty( "contactListDisplayMode" );
 	QString value = config->readEntry("DisplayMode",QString::fromLatin1("Default"));
-	mContactListDisplayMode = (ContactDisplayMode)metaObject()->enumerator( n ).keyToValue( value.toLatin1() );
-	n = metaObject()->indexOfEnumerator( "contactListIconMode" );
-	value = config->readEntry("IconMode", QString::fromLatin1("IconDefault"));
-	mContactListIconMode = (IconDisplayMode)metaObject()->enumerator( n ).keyToValue( value.toLatin1() );
+	mContactListDisplayMode = (ContactDisplayMode)metaObject()->property( n ).read( this ).toInt();
+	n = metaObject()->indexOfProperty( "contactListIconMode" );
+	value = config->readEntry("IconMode",
+                                  QString::fromLatin1("IconDefault"));
+	mContactListIconMode = (IconDisplayMode) metaObject()->property( n ).read( this ).toInt();
 	mContactListIndentContacts = config->readBoolEntry("IndentContacts", false);
 	mContactListHideVerticalScrollBar = config->readBoolEntry("HideVerticalScrollBar", false );
 	mContactListUseCustomFonts = config->readBoolEntry("UseCustomFonts", false);
@@ -150,7 +153,7 @@ void KopetePrefs::load()
 	else
 		font.setPointSizeFloat( font.pointSizeFloat() * 0.75 );
 	mContactListSmallFont = config->readFontEntry("SmallFont", &font);
-    tmpColor = Qt::darkRed;
+	tmpColor = Qt::darkRed;
 	mContactListGroupNameColor = config->readColorEntry("GroupNameColor", &tmpColor);
 	mContactListAnimation = config->readBoolEntry("AnimateChanges", true);
 	mContactListFading = config->readBoolEntry("FadeItems", true);
@@ -190,6 +193,7 @@ void KopetePrefs::save()
 	config->writeEntry("Use Stack", mUseStack);
 	config->writeEntry("Raise Msg Window", mRaiseMsgWindow);
 	config->writeEntry("Show Events in Chat Window", mShowEvents);
+	config->writeEntry("SpellCheck", mSpellCheck);
 	config->writeEntry("Queue Unread Messages", mQueueUnreadMessages);
 	config->writeEntry("Queue Only Highlighted Messages In Group Chats", mQueueOnlyHighlightedMessagesInGroupChats);
 	config->writeEntry("Queue Only Messages On Another Desktop", mQueueOnlyMessagesOnAnotherDesktop);
@@ -226,15 +230,23 @@ void KopetePrefs::save()
 	config->writeEntry("View Plugin", mInterfacePreference);
 
 	config->writeEntry("Show Systemtray", mShowTray);
+
+	//Style
+	//for XSLT
 	config->writeEntry("Stylesheet", mStyleSheet);
+	//for xhtml+css
+	config->writeEntry("StylePath", mStylePath);
+	config->writeEntry("StyleVariant", mStyleVariant);
+
 
 	config->writeEntry("ToolTipContents", mToolTipContents);
 
 	config->setGroup("ContactList");
-	int n = metaObject()->indexOfEnumerator( "contactListDisplayMode" );
-	config->writeEntry("DisplayMode", metaObject()->enumerator( n ).valueToKey( mContactListDisplayMode ));
-	n = metaObject()->indexOfEnumerator( "contactListIconMode" );
-	config->writeEntry("IconMode", metaObject()->enumerator( n ).valueToKey( mContactListIconMode ));
+	int n = metaObject()->indexOfProperty( "contactListDisplayMode" );
+	config->writeEntry("DisplayMode", metaObject()->property( n ).write( this, (int)mContactListDisplayMode ));
+	n = metaObject()->indexOfProperty( "contactListIconMode" );
+	
+	config->writeEntry("IconMode", metaObject()->property( n ).write(this, (int)mContactListIconMode));
 	config->writeEntry("IndentContacts", mContactListIndentContacts);
 	config->writeEntry("HideVerticalScrollBar", mContactListHideVerticalScrollBar );
 	config->writeEntry("UseCustomFonts", mContactListUseCustomFonts);
@@ -363,6 +375,11 @@ void KopetePrefs::setTrayflashNotify(bool value)
 	mTrayflashNotify = value;
 }
 
+void KopetePrefs::setSpellCheck(bool value)
+{
+	mSpellCheck = value;
+}
+
 void KopetePrefs::setQueueUnreadMessages(bool value)
 {
 	mQueueUnreadMessages = value;
@@ -443,6 +460,30 @@ void KopetePrefs::_setStyleSheet(const QString &value)
 
 	mStyleContents = fileContents(styleFileName);
 
+}
+
+void KopetePrefs::setStylePath(const QString &stylePath)
+{
+	_setStylePath(stylePath);
+}
+
+void KopetePrefs::_setStylePath(const QString &stylePath)
+{
+	mStylePath = stylePath;
+	
+	// Fallback to default style if the directory doesn't exist
+	// or the value is empty.
+	if( !QFile::exists(stylePath) || stylePath.isEmpty() )
+	{
+		QString fallback;
+		fallback = QString(QString::fromLatin1("styles/%1/")).arg(QString::fromLatin1(KOPETE_DEFAULT_CHATSTYLE));
+		mStylePath = locate("appdata", fallback);
+	}
+}
+
+void KopetePrefs::setStyleVariant(const QString &variantPath)
+{
+	mStyleVariant = variantPath;
 }
 
 void KopetePrefs::setFontFace( const QFont &value )
@@ -558,7 +599,7 @@ QString KopetePrefs::fileContents(const QString &path)
 {
  	QString contents;
 	QFile file( path );
-	if ( file.open( QIODevice::ReadOnly ) )
+	if ( file.open( IO_ReadOnly ) )
 	{
 		QTextStream stream( &file );
 		contents = stream.read();

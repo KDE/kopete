@@ -55,14 +55,8 @@ public:
 public slots:
 	virtual void slotUserInfo();
 	virtual void deleteContact();
-	void slotSendMessage(Kopete::Message &msg);
-
-private slots:
 	void slotSendingSuccess(const Kopete::Message &msg);
 	void slotSendingFailure(const Kopete::Message &msg, const QString &error);
-
-signals:
-	void messageSuccess();
 
 private slots:
 	void userPrefs();

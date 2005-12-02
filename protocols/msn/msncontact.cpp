@@ -698,7 +698,8 @@ void MSNContact::setObject(const QString &obj)
 
 	KConfig *config = KGlobal::config();
 	config->setGroup( "MSN" );
-	if ( config->readNumEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty() )
+	if ( config->readNumEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty() 
+			 && account()->myself()->onlineStatus().status() != Kopete::OnlineStatus::Invisible )
 		manager(Kopete::Contact::CanCreate); //create the manager which will download the photo automatically.
 }
 

@@ -993,6 +993,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& list, c
 
 void MSNAccount::slotContactRemoved( const QString& handle, const QString& list, const QString& contactGuid, const QString& groupGuid )
 {
+	kdDebug( 14140 ) << k_funcinfo << "handle: " << handle << " list: " << list << " contact-uid: " << contactGuid << endl;
 	MSNContact *c=static_cast<MSNContact *>( contacts()[ handle ] );
 	if ( list == "BL" )
 	{
@@ -1041,7 +1042,6 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 	{
 		// The FL list only use the contact GUID, use the contact referenced by the GUID.
 		MSNContact *contactRemoved = findContactByGuid(contactGuid);
-
 		QStringList groupGuidList;
 		// Remove the contact from the contact list for all the group he is a member.
 		if( groupGuid.isEmpty() )
@@ -1049,8 +1049,9 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 			if(contactRemoved)
 			{
 				Q3PtrList<Kopete::Group> groupList = contactRemoved->metaContact()->groups();
-				for( Kopete::Group *group = groupList.first(); group; groupList.next() )
+				for( QPtrList<Kopete::Group>::Iterator it = groupList.begin(); it != groupList.end(); ++it )
 				{
+					Kopete::Group *group = *it;
 					if ( !group->pluginData( protocol(), accountId() + " id" ).isEmpty() )
 					{
 						groupGuidList.append( group->pluginData( protocol(), accountId() + " id" ) );
@@ -1187,7 +1188,7 @@ void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
 	{
 		Kopete::MetaContact *mc=dialog->addContact();
 		if(mc)
-		{ //if the contact has been added this way, it's because the other user added us.²
+		{ //if the contact has been added this way, it's because the other user added us.
 		  // don't forgot to set the reversed flag  (Bug 114400)
 			MSNContact *c=dynamic_cast<MSNContact*>(mc->contacts().first());
 			if(c && c->contactId() == handle )

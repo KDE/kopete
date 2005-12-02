@@ -19,6 +19,8 @@
 
 // Qt includes
 #include <qfile.h>
+#include <qdir.h>
+#include <qstringlist.h>
 #include <qtextstream.h>
 
 // KDE includes
@@ -36,35 +38,33 @@ public:
 	QString headerHtml;
 	QString footerHtml;
 	QString incomingHtml;
+	QString nextIncomingHtml;
 	QString outgoingHtml;
+	QString nextOutgoingHtml;
 	QString statusHtml;
 };
 
 ChatWindowStyle::ChatWindowStyle(const QString &stylePath, int styleBuildMode)
 	: d(new Private)
 {
-	// TODO: Add a private method init or create() to do not duplicate code.
-	d->stylePath = stylePath;
-	d->baseHref = stylePath + QString::fromUtf8("/Contents/Resources/");
-	
-	readStyleFiles();
-	if(styleBuildMode & StyleBuildNormal)
-	{
-		// TODO: List all available variants
-	}
+	init(stylePath, styleBuildMode);
 }
 
 ChatWindowStyle::ChatWindowStyle(const QString &stylePath, const QString &variantPath, int styleBuildMode)
 	: d(new Private)
 {
+	d->currentVariantPath = variantPath;
+	init(stylePath, styleBuildMode);
+}
+
+void ChatWindowStyle::init(const QString &stylePath, int styleBuildMode)
+{
 	d->stylePath = stylePath;
 	d->baseHref = stylePath + QString::fromUtf8("/Contents/Resources/");
-	d->currentVariantPath = variantPath;
-
 	readStyleFiles();
 	if(styleBuildMode & StyleBuildNormal)
 	{
-		// TODO: List all available variants
+		listVariants();
 	}
 }
 
@@ -73,8 +73,13 @@ ChatWindowStyle::~ChatWindowStyle()
 	delete d;
 }
 
-ChatWindowStyle::StyleVariants ChatWindowStyle::getVariants() const
+ChatWindowStyle::StyleVariants ChatWindowStyle::getVariants()
 {
+	// If the variantList is empty, list available variants.
+	if( d->variantsList.isEmpty() )
+	{
+		listVariants();
+	}
 	return d->variantsList;
 }
 
@@ -103,9 +108,19 @@ QString ChatWindowStyle::getIncomingHtml() const
 	return d->incomingHtml;
 }
 
+QString ChatWindowStyle::getNextIncomingHtml() const
+{
+	return d->nextIncomingHtml;
+}
+
 QString ChatWindowStyle::getOutgoingHtml() const
 {
 	return d->outgoingHtml;
+}
+
+QString ChatWindowStyle::getNextOutgoingHtml() const
+{
+	return d->nextOutgoingHtml;
 }
 
 QString ChatWindowStyle::getStatusHtml() const
@@ -113,12 +128,32 @@ QString ChatWindowStyle::getStatusHtml() const
 	return d->statusHtml;
 }
 
+void ChatWindowStyle::listVariants()
+{
+	QString variantDirPath = d->baseHref + QString::fromUtf8("Variants/");
+	QDir variantDir(variantDirPath);
+
+	QStringList variantList = variantDir.entryList("*.css");
+	QStringList::ConstIterator it, itEnd = variantList.constEnd();
+	for(it = variantList.constBegin(); it != itEnd; ++it)
+	{
+		QString variantName = *it, variantPath;
+		// Retrieve only the file name.
+		variantName = variantName.left(variantName.findRev("."));
+		// variantPath is relative to baseHref.
+		variantPath = QString("Variants/%1").arg(*it);
+		d->variantsList.insert(variantName, variantPath);
+	}
+}
+
 void ChatWindowStyle::readStyleFiles()
 {
 	QString headerFile = d->baseHref + QString("Header.html");
 	QString footerFile = d->baseHref + QString("Footer.html");
 	QString incomingFile = d->baseHref + QString("Incoming/Content.html");
+	QString nextIncomingFile = d->baseHref + QString("Incoming/NextContent.html");
 	QString outgoingFile = d->baseHref + QString("Outgoing/Content.html");
+	QString nextOutgoingFile = d->baseHref + QString("Outgoing/NextContent.html");
 	QString statusFile = d->baseHref + QString("Status.html");
 
 	QFile fileAccess;
@@ -155,6 +190,17 @@ void ChatWindowStyle::readStyleFiles()
 		kdDebug(14000) << k_funcinfo << d->incomingHtml << endl;
 		fileAccess.close();
 	}
+	// Load next Incoming file
+	if( QFile::exists(nextIncomingFile) )
+	{
+		fileAccess.setName(nextIncomingFile);
+		fileAccess.open(IO_ReadOnly);
+		QTextStream headerStream(&fileAccess);
+		headerStream.setEncoding(QTextStream::UnicodeUTF8);
+		d->nextIncomingHtml = headerStream.read();
+		kdDebug(14000) << k_funcinfo << d->nextIncomingHtml << endl;
+		fileAccess.close();
+	}
 	// Load outgoing file
 	if( QFile::exists(outgoingFile) )
 	{
@@ -164,6 +210,17 @@ void ChatWindowStyle::readStyleFiles()
 		headerStream.setEncoding(QTextStream::UnicodeUTF8);
 		d->outgoingHtml = headerStream.read();
 		kdDebug(14000) << k_funcinfo << d->outgoingHtml << endl;
+		fileAccess.close();
+	}
+	// Load next outgoing file
+	if( QFile::exists(nextOutgoingFile) )
+	{
+		fileAccess.setName(nextOutgoingFile);
+		fileAccess.open(IO_ReadOnly);
+		QTextStream headerStream(&fileAccess);
+		headerStream.setEncoding(QTextStream::UnicodeUTF8);
+		d->nextOutgoingHtml = headerStream.read();
+		kdDebug(14000) << k_funcinfo << d->nextOutgoingHtml << endl;
 		fileAccess.close();
 	}
 	// Load status file

@@ -31,6 +31,8 @@
 
 using namespace Oscar;
 
+#define PACKET_SIZE_LIMIT 8000
+
 LocalContactListTask::LocalContactListTask(Task* parent): Task(parent)
 {
 }
@@ -54,10 +56,24 @@ void LocalContactListTask::onGo()
 		Q3ValueList<Oscar::SSI>::const_iterator cEnd = contactList.constEnd();
 		for ( Q3ValueList<Oscar::SSI>::const_iterator it = contactList.constBegin(); it != cEnd; ++it )
 		{
-			kdDebug( OSCAR_RAW_DEBUG ) << "Adding contact " << ( *it ).name() << " to CLI_BUDDYLIST_ADD packet" << endl;
-			buffer->addBUIN( ( *it ).name().toLatin1() );
+			if ( ( buffer->length() + ( *it ).name().length() ) 
+				< PACKET_SIZE_LIMIT )
+			{
+				kdDebug( OSCAR_RAW_DEBUG ) << "Adding contact " << ( *it ).name() << " to CLI_BUDDYLIST_ADD packet" << endl;
+				buffer->addBUIN( ( *it ).name().latin1() );
+			}
+			else
+			{
+				kdDebug( OSCAR_RAW_DEBUG ) << "CLI_BUDDYLIST_ADD packet is full. Transmitting the packet" << endl;
+				Transfer* t = createTransfer( f, s, buffer );
+				send( t );
+
+				buffer = new Buffer();
+				kdDebug( OSCAR_RAW_DEBUG ) << "Adding contact " << ( *it ).name() << " to CLI_BUDDYLIST_ADD packet" << endl;
+				buffer->addBUIN( ( *it ).name().latin1() );
+			}
 		}
-		
+	
 		Transfer* t = createTransfer( f, s, buffer );
 		send( t );
 	}

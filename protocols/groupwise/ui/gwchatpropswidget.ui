@@ -354,9 +354,6 @@
                     <property name="text">
                         <string>A&amp;dd</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+D</string>
-                    </property>
                     <property name="toolTip" stdset="0">
                         <string>Add a new ACL entry</string>
                     </property>
@@ -368,9 +365,6 @@
                     <property name="text">
                         <string>Ed&amp;it</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+I</string>
-                    </property>
                     <property name="toolTip" stdset="0">
                         <string>Edit an existing ACL entry</string>
                     </property>
@@ -381,9 +375,6 @@
                     </property>
                     <property name="text">
                         <string>D&amp;elete</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+E</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Delete a ACL entry</string>

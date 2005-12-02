@@ -2,8 +2,9 @@
     chatmessagepart.h - Chat Message KPart
 
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
+    Copyright (c) 2005      by Michaël Larouche      <michael.larouche@kdemail.net>
 
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -33,6 +34,7 @@ namespace Kopete
 	class Contact; 
 }
 class KPopupMenu;
+class ChatWindowStyle;
 
 /**
  * @author Richard Smith
@@ -41,6 +43,9 @@ class ChatMessagePart : public KHTMLPart
 {
 	Q_OBJECT
 public:
+	/**
+	 * Create a new ChatMessage Part.
+	 */
 	ChatMessagePart( Kopete::ChatSession *manager, QWidget *parent);
 	~ChatMessagePart();
 
@@ -49,8 +54,11 @@ public:
 	 */
 	void clear();
 
+	/**
+	 * Change XSLT stylesheet
+	 */
 	void setStylesheet( const QString &style  );
-
+	
 	/**
 	 * Immediately scroll the chat to the bottom, as long as it has not been intentionally scrolled away from the bottom
 	 * use 
@@ -91,8 +99,37 @@ public slots:
 	/**
 	 * Appends a message to the messave view
 	 * @param message The message to be appended
+	 * @param restoring This flag is used to not re-append message when changing style. By default false.
 	 */
-	void appendMessage( Kopete::Message &message );
+	void appendMessage( Kopete::Message &message, bool restoring = false);
+
+	/**
+	 * Change the current style.
+	 * This method override is used when preferences change.
+	 * This method create a new ChatWindowStyle object.
+	 *
+	 * Need to rebuild all the XHTML content.
+	 *
+	 * @param stylePath absolute path to the style.
+	 */
+	void setStyle( const QString &stylePath );
+	
+	/**
+	 * Change the current style
+	 * This method override is used on preview and unit tests.
+	 * Use a already existing ChatWindowStyle object.
+	 *
+	 * Need to rebuild all the XHTML content.
+	 *
+	 * @param chatWindowStyle ChatWindowStyle object.
+	 */
+	void setStyle( ChatWindowStyle *style );
+	
+	/**
+	 * Change the current variant for the current style
+	 * @param variantPath relative path to the style variant.
+	 */
+	void setStyleVariant( const QString &variantPath );
 
 signals:
 	/**
@@ -159,6 +196,46 @@ private:
 
 //	class ToolTip;
 //	friend class ToolTip;
+
+	/**
+	 * Format(replace) style keywords for messages (incoming, outgoing, internal)
+	 * Use formatStyleKeywords(const QString &sourceHTML) for header and footer.
+	 *
+	 * @param sourceHTML the source html which contains the keywords
+	 * @param message the current Message.
+	 * 
+	 * @return the resulting HTML with replaced keywords.
+	 */
+	QString formatStyleKeywords( const QString &sourceHTML, Kopete::Message &message );
+	/**
+	 * Format(replace) style keywords for header and footers.
+	 * For messages, use formatStyleKeywords(const QString &sourceHTML, Kopete::Message &message)  instead.
+	 *
+	 * @param sourceHTML HTML source needed to be replaced.
+	 *
+	 * @return the resulting HTML with replaced keywords.
+	 */
+	QString formatStyleKeywords( const QString &sourceHTML );
+
+	/**
+	 * Helper function to parse time in correct format.
+	 * Use glibc strftime function.
+	 *
+	 * @param timeFormat the time format to parse.
+	 * @param dateTime the QDateTime which contains the datetime to format.
+	 * @return the formatted time string.
+	 */
+	QString formatTime(const QString &timeFormat, const QDateTime &dateTime);
+
+	/**
+	 * Do the actual style change.
+	 */
+	void changeStyle();
+
+	/**
+	 * Write the template file to KHTMLPart
+	 */
+	void writeTemplate();
 
 	class Private;
 	Private *d;

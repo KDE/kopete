@@ -202,7 +202,7 @@ AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 
 # Do we everything we need to compile the plugin
-if test "x$have_meanwhile" != "xyes" && test "x$have_glib" != "xyes"; then
+if test "x$have_meanwhile" != "xyes" || test "x$have_glib" != "xyes"; then
     compile_meanwhile=no
 fi
 

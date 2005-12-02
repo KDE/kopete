@@ -32,7 +32,7 @@ class KOPETE_EXPORT KopetePrefs : public QObject
 	// here so we can use Qt to translate enums<-->strings
 	Q_PROPERTY( ContactDisplayMode contactListDisplayMode READ contactListDisplayMode WRITE setContactListDisplayMode )
 	Q_PROPERTY( IconDisplayMode contactListIconMode READ contactListIconMode WRITE setContactListIconMode )
-	Q_ENUMS( ContactDisplayMode IconDisplayMode )
+        Q_ENUMS( ContactDisplayMode IconDisplayMode )
 
 public:
 	/**
@@ -66,6 +66,7 @@ public:
 	bool raiseMsgWindow() const{ return mRaiseMsgWindow; }
 	bool showEvents() const{ return mShowEvents; }
 	bool trayflashNotify() const { return mTrayflashNotify; }
+	bool spellCheck() const { return mSpellCheck; }
 	bool queueUnreadMessages() const { return mQueueUnreadMessages; }
 	bool queueOnlyHighlightedMessagesInGroupChats() const { return mQueueOnlyHighlightedMessagesInGroupChats; }
 	bool queueOnlyMessagesOnAnotherDesktop() const { return mQueueOnlyMessagesOnAnotherDesktop; }
@@ -100,10 +101,16 @@ public:
 	bool autoConnect() const { return mAutoConnect; }
 
 	int chatWindowPolicy() const { return mChatWindowPolicy; }
+
+	//Styles
+	QString defaultTheme() const { return QString::fromLatin1("Default"); }
+	//for XSLT
 	QString styleSheet() const { return mStyleSheet; }
 	QString styleDataPath() const { return mStyleDataPath; }
 	QString styleContents() const { return mStyleContents; }
-	QString defaultTheme() const { return QString::fromLatin1("Default"); }
+	//for Adium (xhtml+css)
+	QString stylePath() const { return mStylePath; }
+	QString styleVariant() const { return mStyleVariant; }
 
 	QStringList toolTipContents() const { return mToolTipContents; }
 
@@ -147,6 +154,7 @@ public:
 	void setRaiseMsgWindow(bool);
 	void setShowEvents(bool);
 	void setTrayflashNotify(bool);
+	void setSpellCheck(bool);
 	void setQueueUnreadMessages(bool);
 	void setQueueOnlyHighlightedMessagesInGroupChats(bool);
 	void setQueueOnlyMessagesOnAnotherDesktop(bool);
@@ -158,6 +166,8 @@ public:
 	void setBeepNotify(bool);
 	void setChatWindowPolicy(int);
 	void setStyleSheet (const QString &);
+	void setStylePath(const QString &);
+	void setStyleVariant(const QString &);
 	void setTransparencyEnabled(bool);
 	void setTransparencyColor(const QColor &);
 	void setChatViewBufferSize(int);
@@ -242,6 +252,7 @@ private:
 	bool mRaiseMsgWindow;
 	bool mShowEvents;
 	bool mTrayflashNotify;
+	bool mSpellCheck;
 	bool mQueueUnreadMessages;
 	bool mQueueOnlyHighlightedMessagesInGroupChats;
 	bool mQueueOnlyMessagesOnAnotherDesktop;
@@ -283,9 +294,15 @@ private:
 	int mMaxContactNameLength;
 
 	bool mRichText;
+
+	//XSLT
 	QString mStyleSheet;
 	QString mStyleDataPath;
 	QString mStyleContents;
+	// xhtml+css
+	//for Adium (xhtml+css)
+	QString mStylePath;
+	QString mStyleVariant;
 
 	QStringList mToolTipContents;
 
@@ -310,6 +327,7 @@ private:
 
 	QString fileContents(const QString &path);
 	void _setStyleSheet (const QString &);
+	void _setStylePath (const QString &);
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

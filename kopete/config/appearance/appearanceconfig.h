@@ -2,7 +2,9 @@
     appearanceconfig.h  -  Kopete Look Feel Config
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
+
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -21,28 +23,6 @@
 
 #include <qmap.h>
 
-class QTabWidget;
-class QCheckBox;
-class KListBox;
-class KTextEdit;
-class KHTMLPart;
-class StyleEditDialog;
-class Q3ListBoxItem;
-
-class AppearanceConfig_Emoticons;
-class AppearanceConfig_ChatWindow;
-class AppearanceConfig_Colors;
-class AppearanceConfig_ContactList;
-
-class KopeteAppearanceConfigPrivate;
-
-namespace KTextEditor
-{
-	class View;
-	class Document;
-}
-
-typedef QMap<QString,QString> KopeteChatStyleMap;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -66,49 +46,27 @@ private slots:
 	void slotUpdatePreview();
 	void slotHighlightChanged();
 	void slotChangeFont();
-	void slotAddStyle();
-	void slotEditStyle();
 	void slotDeleteStyle();
 	void slotImportStyle();
 	void slotCopyStyle();
-	void slotStyleModified(const QString &);
 	void slotStyleSelected();
+	void slotVariantSelected(const QString &variantName);
 	void slotEditTooltips();
 	void emitChanged();
 	void installNewTheme();
 	void removeSelectedTheme();
 	void slotGetThemes();
 	void slotGetStyles();
+	void slotLoadStyles();
 
 private:
-	void updateHighlight();
-	QString fileContents(const QString &path);
-	bool addStyle(const QString &styleName, const QString &xslString);
 	void updateEmoticonlist();
-	void loadStyles();
-
+	void createPreviewChatSession();
+	void createPreviewMessages();
+	
 private:
-	QTabWidget* mAppearanceTabCtl;
-
-	// Widgets for Chat TAB
-	KHTMLPart *preview;
-	KTextEditor::Document* editDocument;
-
-	// All other TABs have their own ui-file
-	AppearanceConfig_Emoticons *mPrfsEmoticons;
-	AppearanceConfig_ChatWindow *mPrfsChatWindow;
-	AppearanceConfig_Colors *mPrfsColors;
-	AppearanceConfig_ContactList *mPrfsContactList;
-
-	// Vars used in ChatWindow TAB
-	StyleEditDialog *styleEditor;
-	Q3ListBoxItem *editedItem;
-	QMap<Q3ListBoxItem*,QString> itemMap;
-	QString currentStyle;
-	bool loading;
-	bool styleChanged;
-
-	KopeteAppearanceConfigPrivate *d;
+	class Private;
+	Private *d;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

@@ -2,7 +2,7 @@
  oscarprotocol.h  -  Oscar Protocol Plugin
 
  Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
-
+ Copyright (c) 2005 by Matt Rogers <mattr@kde.org>
  Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
  *************************************************************************

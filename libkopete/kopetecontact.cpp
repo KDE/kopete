@@ -92,11 +92,18 @@ Contact::Contact( Account *account, const QString &contactId,
 	d->idleTime = 0;
 	d->icon = icon;
 
+	// If can happend that a MetaContact may be used without a account
+	// (ex: for unit tests or chat window style preview)
 	if ( account )
+	{
 		account->registerContact( this );
+		connect( account, SIGNAL( isConnectedChanged() ), SLOT( slotAccountIsConnectedChanged() ) );
+	}
 
 	// Need to check this because myself() may have no parent
-	if( parent )
+	// Maybe too the metaContact doesn't have a valid protocol() 
+	// (ex: for unit tests or chat window style preview)
+	if( parent && protocol() )
 	{
 		connect( parent, SIGNAL( aboutToSave( Kopete::MetaContact * ) ),
 			protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );
@@ -104,7 +111,7 @@ Contact::Contact( Account *account, const QString &contactId,
 		parent->addContact( this );
 	}
 
-	connect( account, SIGNAL( isConnectedChanged() ), SLOT( slotAccountIsConnectedChanged() ) );
+	
 }
 
 Contact::~Contact()

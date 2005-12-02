@@ -1203,7 +1203,6 @@ void IRCProtocol::slotMoveServerUp()
 	if( currentPos > 0 )
 	{
 		netConf->hostList->removeItem( currentPos );
-		kdDebug(14121) << k_funcinfo << selectedHost->host << endl;
 		netConf->hostList->insertItem( selectedHost->host, --currentPos );
 		netConf->hostList->setSelected( currentPos, true );
 	}
@@ -1220,10 +1219,8 @@ void IRCProtocol::slotMoveServerDown()
 	Q3ValueList<IRCHost*>::iterator pos = selectedNetwork->hosts.find( selectedHost );
 	if( *pos != selectedNetwork->hosts.back() )
 	{
-		Q3ValueList<IRCHost*>::iterator nextPos = pos;
-		nextPos++;
-		selectedNetwork->hosts.insert( nextPos, selectedHost );
-		selectedNetwork->hosts.remove( pos );
+		Q3ValueList<IRCHost*>::iterator nextPos = selectedNetwork->hosts.remove( pos );
+		selectedNetwork->hosts.insert( ++nextPos, selectedHost );
 	}
 
 	unsigned int currentPos = netConf->hostList->currentItem();

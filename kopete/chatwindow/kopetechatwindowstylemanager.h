@@ -19,9 +19,11 @@
 #define KOPETECHATWINDOWSTYLEMANAGER_H
 
 #include <qobject.h>
+#include <qmap.h>
 #include <kfileitem.h>
 #include <kopete_export.h>
 
+class ChatWindowStyle;
 /**
  * Sigleton class that create all the ChatWindowStyle objects.
  * This class list all the available styles in $KDEDATADIR/kopete/styles
@@ -34,6 +36,8 @@ class KOPETE_EXPORT ChatWindowStyleManager : public QObject
 {
 	Q_OBJECT
 public:
+	typedef QMap<QString, ChatWindowStyle*> StyleList;
+
 	~ChatWindowStyleManager();
 
 	/**
@@ -43,15 +47,34 @@ public:
 	static ChatWindowStyleManager *self();
 
 	/**
-	 * Init this class.
-	 * Create the latest current chat window style.
-	 */
-	void load();
-
-	/**
 	 * List all availables styles.
 	 */
 	void loadStyles();
+
+	/**
+	 * Get all available styles.
+	 */
+	StyleList getAvailableStyles();
+
+public slots:
+	/**
+	 * Install a new style into user style directory
+	 * TODO: all :)
+	 */
+	void installStyle();
+
+	/**
+	 * Remove a style from user style directory
+	 * TODO: all :)
+	 */
+	void removeStyle();
+	
+signals:
+	/**
+	 * This signal is emitted when all styles finished to list.
+	 * Used to inform and/or update GUI.
+	 */
+	void loadStylesFinished();
 
 private slots:
 	void slotNewStyles(const KFileItemList &dirList);

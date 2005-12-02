@@ -194,7 +194,8 @@ struct ListView::Private
 	  scrollAutoHide(false),
 	  scrollHide(false),
 	  mouseNavigationOffset(20),
-	  mouseNavigation(false) {}
+	  mouseNavigation(false),
+	  pressedControl( QStyle::SC_None ) {}
 };
 
 ListView::ListView( QWidget *parent )

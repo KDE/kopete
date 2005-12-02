@@ -54,9 +54,13 @@ public:
 
 	/**
 	 * Get the list of all variants for this theme.
+	 * If the variant aren't listed, it call the lister
+	 * before returning the list of the Variants.
+	 * If the variant are listed, it just return the cached
+	 * variant list.
 	 * @return the StyleVariants QMap.
 	 */
-	StyleVariants getVariants() const;
+	StyleVariants getVariants();
 
 	/**
 	 * Get the style path.
@@ -83,7 +87,9 @@ public:
 	QString getHeaderHtml() const;
 	QString getFooterHtml() const;
 	QString getIncomingHtml() const;
+	QString getNextIncomingHtml() const;
 	QString getOutgoingHtml() const;
+	QString getNextOutgoingHtml() const;
 	QString getStatusHtml() const;
 
 private:
@@ -91,6 +97,16 @@ private:
 	 * Read style HTML files from disk
 	 */
 	void readStyleFiles();
+
+	/**
+	 * Init this class
+	 */
+	void init(const QString &stylePath, int styleBuildMode);
+
+	/**
+	 * List available variants for the current style.
+	 */
+	void listVariants();
 
 private:
 	class Private;

@@ -30,6 +30,7 @@
 #include "kopeteonlinestatusmanager.h"
 #include "kopeteglobal.h"
 #include "kopeteuiglobal.h"
+#include "kopetemetacontact.h"
 
 #include <kdialogbase.h>
 #include <kmessagebox.h>
@@ -71,84 +72,149 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
  * aim:RegisterUser?ScreenName=sn&Password=pw&SignonNow=False
  * Away Message  ===================================================
  * aim:goaway?message=brb+or+something
+ * Chat Rooms  =====================================================
+ * aim:GoChat?RoomName=room+name&Exchange=number
  **/
 
 	AIMProtocol *proto = AIMProtocol::protocol();
 	kdDebug(14152) << k_funcinfo << "URL url   : '" << url.url() << "'" << endl;
+	kdDebug(14152) << k_funcinfo << "URL path  : '" << url.path() << "'" << endl;
 	QString command = url.path();
-
-	if (command.startsWith("goim") || command.startsWith("addbuddy"))
+	QString realCommand, firstParam, secondParam;
+	bool needContactAddition = false;
+	if ( command.find( "goim", 0, false ) != -1 )
 	{
-		if (command.startsWith("goim"))
-			command.remove(0,4);
-		else
-			command.remove(0,8);
-
-		if (!command.startsWith("?screenname="))
+		realCommand = "goim";
+		kdDebug(14152) << k_funcinfo << "Handling send IM request" << endl;
+		command.remove(0,4);
+		if ( command.find( "?screenname=", 0, false ) == -1 )
 		{
-			kdWarning(14152) << "Unhandled aim URI : " << url.url() << endl;
+		kdWarning(14152) << k_funcinfo << "Unhandled AIM URI:" << url.url() << endl;
 			return;
 		}
+		command.remove( 0, 12 );
+		int andSign = command.find( "&" );
+		if ( andSign > 0 )
+			command = command.left( andSign );
 
-		command.remove(0, 12);
-
+		firstParam = command;
+		firstParam.replace( "+", " " );
+		needContactAddition = true;
+	}
+	else
+		if ( command.find( "addbuddy", 0, false ) != -1 )
+		{
+			realCommand = "addbuddy";
+			kdDebug(14152) << k_funcinfo << "Handling AIM add buddy request" << endl;
+			command.remove( 0, 8 );
+			if ( command.find( "?screenname=", 0, false ) == -1 )
+			{
+			kdWarning(14152) << k_funcinfo << "Unhandled AIM URI:" << url.url() << endl;
+				return;
+			}
+			
+			command.remove(0, 12);
+			int andSign = command.find("&");
+			if ( andSign > 0 )
+				command = command.left(andSign);
+			command.replace("+", " ");
+			
+			firstParam = command;
+			needContactAddition = true;
+		}
+	else
+	if ( command.find( "gochat", 0, false ) != -1 )
+	{
+		realCommand = "gochat";
+		kdDebug(14152) << k_funcinfo << "Handling AIM chat room request" << endl;
+		command.remove( 0, 6 );
+		
+		if ( command.find( "?RoomName=", 0, false ) == -1 )
+		{
+		kdWarning(14152) << "Unhandled AIM URI: " << url.url() << endl;
+			return;
+		}
+		
+		command.remove( 0, 10 );
+		
 		int andSign = command.find("&");
 		if (andSign > 0) // strip off anything else for now
-			command = command.left(andSign);
-		command.replace("+", " ");
-
-		QString screenname = command;
-
-		Kopete::Account *account = 0;
-		Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(proto);
-		// do not show chooser if we only have one account to "choose" from
-		if (accounts.count() == 1)
 		{
-			Q3DictIterator<Kopete::Account> it(accounts);
-			account = it.current();
-
-			if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
-				i18n("Do you want to add '%1' to your contact list?").arg(command), QString::null, i18n("Add"), i18n("Do Not Add"))
-				!= KMessageBox::Yes)
-			{
-				kdDebug(14152) << k_funcinfo << "Cancelled" << endl;
-				return;
-			}
+			firstParam = command.left(andSign);
 		}
-		else
-		{
-			KDialogBase *chooser = new KDialogBase(0, "chooser", true,
-				i18n("Choose Account"), KDialogBase::Ok|KDialogBase::Cancel,
-				KDialogBase::Ok, false);
-			AccountSelector *accSelector = new AccountSelector(proto, chooser,
-				"accSelector");
-			chooser->setMainWidget(accSelector);
-
-			int ret = chooser->exec();
-			Kopete::Account *account = accSelector->selectedItem();
-
-			delete chooser;
-			if (ret == QDialog::Rejected || account == 0)
-			{
-				kdDebug(14152) << k_funcinfo << "Cancelled" << endl;
-				return;
-			}
-		}
-
-
-		kdDebug(14152) << k_funcinfo <<
-			"Adding Contact; screenname = " << screenname << endl;
-		if ( account->addContact(screenname, command, 0L, Kopete::Account::Temporary) )
-		{
-			//Kopete::Contact *contact = account->contacts()[screenname];
-		}
-
-
+		command.remove( 0, andSign );
+		kdDebug(14152) << "command is now: " << command << endl;
+		command.remove( 0, 10 ); //remove "&Exchange="
+		secondParam = command;
+		kdDebug(14152) << k_funcinfo << firstParam << " " << secondParam << endl;
+		firstParam.replace("+", " ");
+	}
+	
+	Kopete::Account *account = 0;
+	Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(proto);
+	
+	if (accounts.count() == 1)
+	{
+		Q3DictIterator<Kopete::Account> it(accounts);
+		account = it.current();
+		
 	}
 	else
 	{
-		kdWarning(14152) << "Unhandled aim URI : " << url.url() << endl;
+		KDialogBase *chooser = new KDialogBase(0, "chooser", true,
+		                                       i18n("Choose Account"), KDialogBase::Ok|KDialogBase::Cancel,
+		                                       KDialogBase::Ok, false);
+		AccountSelector *accSelector = new AccountSelector(proto, chooser, "accSelector");
+		chooser->setMainWidget(accSelector);
+		
+		int ret = chooser->exec();
+		Kopete::Account *account = accSelector->selectedItem();
+		
+		delete chooser;
+		if (ret == QDialog::Rejected || account == 0)
+		{
+			kdDebug(14152) << k_funcinfo << "Cancelled" << endl;
+			return;
+		}
 	}
+	
+	Kopete::MetaContact* mc = 0;
+	if ( needContactAddition || realCommand == "addbuddy" )
+	{
+		if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
+		                               i18n("Do you want to add '%1' to your contact list?").arg(command),
+		                               QString::null, i18n("Add"), i18n("Do Not Add"))
+		    != KMessageBox::Yes)
+		{
+			kdDebug(14152) << k_funcinfo << "Cancelled" << endl;
+			return;
+		}
+		
+		kdDebug(14152) << k_funcinfo <<
+			"Adding Contact; screenname = " << firstParam << endl;
+		mc = account->addContact(firstParam, command, 0L, Kopete::Account::Temporary);
+	}
+
+	if ( realCommand == "gochat" )
+	{
+		AIMAccount* aimAccount = dynamic_cast<AIMAccount*>( account );
+		if ( aimAccount && aimAccount->isConnected() )
+		{
+			aimAccount->engine()->joinChatRoom( firstParam, secondParam.toInt() );
+		}
+		else
+			KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
+			                    i18n( "Unable to connect to the chat room %1 because the account"
+			                          " for %2 is not connected." ).arg( firstParam ).arg( aimAccount->accountId() ),
+			                    QString::null );
+		
+	}
+
+	if ( realCommand == "goim" )
+	{
+		mc->execute();
+	}
+	
 }
 
 
@@ -158,7 +224,7 @@ AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
   : Kopete::Protocol( AIMProtocolFactory::instance(), parent, name ),
 	statusOnline( Kopete::OnlineStatus::Online, 1, this, 0, QString::null, i18n("Online"), i18n("Online"), Kopete::OnlineStatusManager::Online ),
 	statusOffline( Kopete::OnlineStatus::Offline, 1, this, 10, QString::null, i18n("Offline"), i18n("Offline"), Kopete::OnlineStatusManager::Offline ),
-	statusAway( Kopete::OnlineStatus::Away, 1, this, 20, "contact_away_overlay", i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away, 
+	statusAway( Kopete::OnlineStatus::Away, 1, this, 20, "contact_away_overlay", i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away,
 							Kopete::OnlineStatusManager::HasAwayMessage ),
 	statusConnecting(Kopete::OnlineStatus::Connecting, 99, this, 99, "aim_connecting", i18n("Connecting...")),
 	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
@@ -216,10 +282,10 @@ Kopete::Contact *AIMProtocol::deserializeContact(Kopete::MetaContact *metaContac
 		ssiBid = serializedData["ssi_bid"].toUInt();
 		ssiType = serializedData["ssi_type"].toUInt();
 	}
-	
+
 	Oscar::SSI item( ssiName, ssiGid, ssiBid, ssiType, Q3ValueList<TLV>(), 0 );
 	item.setWaitingAuth( ssiWaitingAuth );
-	
+
 	AIMContact *c = new AIMContact( account, contactId, metaContact, QString::null, item );
 	return c;
 }

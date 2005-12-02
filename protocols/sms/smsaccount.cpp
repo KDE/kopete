@@ -15,6 +15,7 @@
 */
 
 #undef KDE_NO_COMPAT
+
 #include <kconfigbase.h>
 #include <kaction.h>
 #include <kmenu.h>
@@ -26,6 +27,8 @@
 #include <kopetecontactlist.h>
 
 #include "kopeteuiglobal.h"
+
+#include "serviceloader.h"
 
 #include "smsaccount.h"
 #include "smsprotocol.h"
@@ -56,8 +59,12 @@ void SMSAccount::translateNumber(QString &theNumber)
 		theNumber.replace(0, 1, theSubCode);
 }
 
-const bool SMSAccount::splitNowMsgTooLong(int max, int msgLength)
+const bool SMSAccount::splitNowMsgTooLong(int msgLength)
 {
+	if( theService == NULL )
+		return false;
+	
+	int max = theService->maxSize();
 	if(theLongMsgAction == ACT_CANCEL) return false;
 	if(theLongMsgAction == ACT_SPLIT) return true;
 	if(KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(), i18n("This message is longer than the maximum length (%1). Should it be divided to %2 messages?").arg(max).arg(msgLength / max + 1),
@@ -74,6 +81,18 @@ void SMSAccount::setAway( bool /*away*/, const QString &)
 void SMSAccount::connect(const Kopete::OnlineStatus&)
 {
 	myself()->setOnlineStatus( SMSProtocol::protocol()->SMSOnline );
+
+	QString sName = configGroup()->readEntry("ServiceName", QString::null);
+
+	theService = ServiceLoader::loadService(sName, this);
+	if (theService == NULL)
+		return;
+
+	QObject::connect (theService, SIGNAL(messageSent(const Kopete::Message &)), 
+				this, SLOT(slotSendingSuccess(const Kopete::Message &)));
+	QObject::connect (theService, SIGNAL(messageNotSent(const Kopete::Message &, const QString &)), 
+				this, SLOT(slotSendingFailure(const Kopete::Message &, const QString &)));
+
 }
 
 KActionMenu* SMSAccount::actionMenu()
@@ -86,6 +105,58 @@ KActionMenu* SMSAccount::actionMenu()
 void SMSAccount::disconnect()
 {
 	myself()->setOnlineStatus( SMSProtocol::protocol()->SMSOffline );
+	delete theService;
+	theService = NULL;
+}
+
+void SMSAccount::slotSendMessage(Kopete::Message &msg)
+{
+	kdWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
+
+	if(theService == 0L)
+		return;
+
+	int msgLength = msg.plainBody().length();
+
+	if( theService->maxSize() == -1 )
+	{
+		theService->send(msg);
+	}
+	else if( theService->maxSize() < msgLength )
+	{
+		if( splitNowMsgTooLong(msgLength) )
+		{
+			for (int i=0; i < msgLength / theService->maxSize() + 1; i++)
+			{
+				QString text = msg.plainBody();
+				text = text.mid( theService->maxSize() * i, theService->maxSize() );
+				Kopete::Message m( msg.from(), msg.to(), text, Kopete::Message::Outbound);
+				
+				theService->send(m);
+			}
+		}
+		else
+			slotSendingFailure(msg, i18n("Message too long."));
+	}
+	else
+	{
+		theService->send(msg);
+	}
+
+}
+
+void SMSAccount::slotSendingSuccess(const Kopete::Message &msg)
+{
+	SMSContact* c = dynamic_cast<SMSContact*>(msg.to().first());
+	if( c )
+		c->slotSendingSuccess(msg);
+}
+
+void SMSAccount::slotSendingFailure(const Kopete::Message &msg, const QString &error)
+{
+	SMSContact* c = dynamic_cast<SMSContact*>(msg.to().first());
+	if( c )
+		c->slotSendingFailure(msg, error);
 }
 
 bool SMSAccount::createContact( const QString &contactId,
@@ -105,6 +176,11 @@ void SMSAccount::setOnlineStatus( const Kopete::OnlineStatus & status , const QS
 		disconnect();
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Away )
 		setAway( true, reason );
+}
+
+SMSService* SMSAccount::service()
+{
+	return theService;
 }
 
 #include "smsaccount.moc"

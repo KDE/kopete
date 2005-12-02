@@ -98,6 +98,8 @@ class HistoryDialog : public KDialogBase
 		void init();
 		void slotLoadDays();
 
+		void slotRightClick(const QString &, const QPoint &point);
+		void slotCopy();
 
 	private:
 		enum Disabled { Prev=1, Next=2 };

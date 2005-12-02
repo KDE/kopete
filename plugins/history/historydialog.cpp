@@ -24,6 +24,7 @@
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopetecontactlist.h"
+#include "kopeteprefs.h"
 
 #include <dom/dom_doc.h>
 #include <dom/dom_element.h>
@@ -40,6 +41,7 @@
 #include <qdatetime.h>
 #include <q3header.h>
 #include <qlabel.h>
+#include <qclipboard.h>
 //Added by qt3to4:
 #include <QTextStream>
 #include <Q3PtrList>
@@ -58,6 +60,7 @@
 #include <kprogress.h>
 #include <kiconloader.h>
 #include <kcombobox.h>
+#include <kpopupmenu.h>
 
 class KListViewDateItem : public KListViewItem
 {
@@ -100,6 +103,10 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 	const char* name) : KDialogBase(parent, name, false,
 		i18n("History for %1").arg(mc->displayName()), 0)
 {
+	QString fontSize;
+	QString htmlCode;
+	QString fontStyle;
+
 	kdDebug(14310) << k_funcinfo << "called." << endl;
 	setWFlags(Qt::WDestructiveClose);	// send SIGNAL(closing()) on quit
 
@@ -153,8 +160,12 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 	QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 	l->addWidget(mHtmlView);
 
+	QTextOStream( &fontSize ) << KopetePrefs::prefs()->fontFace().pointSize();
+	fontStyle = "<style>.hf { font-size:" + fontSize + ".0pt; font-family:" + KopetePrefs::prefs()->fontFace().family() + "; }</style>";
+
 	mHtmlPart->begin();
-	mHtmlPart->write( QString::fromLatin1( "<html><head></head><body></body></html>") );
+	htmlCode = "<html><head>" + fontStyle + "</head><body class=\"hf\"></body></html>";
+	mHtmlPart->write( QString::fromLatin1( htmlCode.latin1() ) );
 	mHtmlPart->end();
 
 	
@@ -167,6 +178,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 	connect(mMainWidget->searchErase, SIGNAL(clicked()), this, SLOT(slotSearchErase()));
 	connect(mMainWidget->contactComboBox, SIGNAL(activated(int)), this, SLOT(slotContactChanged(int)));
 	connect(mMainWidget->messageFilterBox, SIGNAL(activated(int)), this, SLOT(slotFilterChanged(int )));
+	connect(mHtmlPart, SIGNAL(popupMenu(const QString &, const QPoint &)), this, SLOT(slotRightClick(const QString &, const QPoint &)));
 
 	resize(650, 700);
 	centerOnScreen(this);
@@ -586,6 +598,22 @@ void HistoryDialog::doneProgressBar()
 {
 		mMainWidget->searchProgress->hide();
 		mMainWidget->statusLabel->setText(i18n("Ready"));
+}
+
+void HistoryDialog::slotRightClick(const QString &, const QPoint &point)
+{
+	KPopupMenu *chatWindowPopup = 0L;
+	chatWindowPopup = new KPopupMenu();
+	chatWindowPopup->insertItem(i18n("Copy"), this, SLOT(slotCopy()));
+	chatWindowPopup->popup(point);
+}
+
+void HistoryDialog::slotCopy()
+{
+	QString qsSelection;
+	qsSelection = mHtmlPart->selectedText();
+	QApplication::clipboard()->setText(qsSelection, QClipboard::Clipboard);
+	QApplication::clipboard()->setText(qsSelection, QClipboard::Selection);
 }
 
 #include "historydialog.moc"

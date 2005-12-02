@@ -19,6 +19,7 @@
 #include <qdom.h>
 
 #include <kstandarddirs.h>
+#include <kinstance.h>
 
 static QTextStream qcerr( stderr, QIODevice::WriteOnly );
 

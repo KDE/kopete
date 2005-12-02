@@ -125,7 +125,7 @@ void Message::writeMessage(Engine *engine, const QTextCodec *codec,
 		msg += QChar(' ') + args.join(QChar(' ')).trimmed(); // some extra check should be done here
 
 	if (!suffix.isNull())
-		msg += QString::fromLatin1(" :") + suffix;
+		msg = msg.stripWhiteSpace() + QString::fromLatin1(" :") + suffix;
 
 	writeMessage(engine, codec, msg);
 }
