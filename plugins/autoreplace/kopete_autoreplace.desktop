@@ -60,7 +60,6 @@ Name[tr]=Otomatik Değiştir
 Name[uk]=Автоматична заміна
 Name[uz]=Авто-алмаштириш
 Name[wa]=Replaecî otomaticmint
-Name[xx]=xxAuto Replacexx
 Name[zh_CN]=自动替换
 Comment=Auto replaces some text you can choose
 Comment[ar]=يقوم بتغيير تلفائي للنصوص التي يمكن اختيارها
@@ -104,6 +103,5 @@ Comment[ta]=நீங்கள் தேர்வு செய்த உரை�
 Comment[tg]=Матни интихобкардаи шуморо ба таври худкор иваз мекунад
 Comment[tr]=Seçilen bazı metinler otomatik değiştirilir
 Comment[uk]=Автоматично заміняє текст, який Ви вкажете
-Comment[xx]=xxAuto replaces some text you can choosexx
 Comment[zh_CN]=自动替换您可选择的某些文字
 

@@ -709,6 +709,7 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 					connect( popup, SIGNAL( aboutToHide() ), contactMenu, SLOT( deleteLater() ) );
 					QString nick=c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 					QString text= nick.isEmpty() ?  c->contactId() : i18n( "Translators: format: '<displayName> (<id>)'", "%2 <%1>" ). arg( c->contactId(), nick );
+					text=text.replace("&","&&"); // cf BUG 115449
 
 					if ( text.length() > 41 )
 						text = text.left( 38 ) + QString::fromLatin1( "..." );
