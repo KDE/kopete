@@ -195,8 +195,7 @@ void Contact::slotAddContact()
 KMenu* Contact::popupMenu( ChatSession *manager )
 {
 	KMenu *menu = new KMenu();
-#warning Need to port KAction stuff. Where do we get the action collection from?
-/*
+
 	QString titleText;
 	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if( nick.isEmpty() )
@@ -208,7 +207,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 	if( metaContact() && metaContact()->isTemporary() && contactId() != account()->myself()->contactId() )
 	{
 		KAction *actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "bookmark_add" ),
-		                                         KShortcut(), this, SLOT( slotAddContact() ), actionCollection(), "actionAddContact" );
+		                                         KShortcut(), this, SLOT( slotAddContact() ), 0, "actionAddContact" );
 		actionAddContact->plug( menu );
 		menu->addSeparator();
 	}
@@ -217,15 +216,15 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 	bool reach = account()->isConnected() && isReachable();
 	bool myself = (this == account()->myself());
 
-	KAction *actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ), actionCollection(), "actionSendMessage" );
+	KAction *actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ), 0, "actionSendMessage" );
 	actionSendMessage->setEnabled( reach && !myself );
 	actionSendMessage->plug( menu );
 
-	KAction *actionChat = KopeteStdAction::chat( this, SLOT( startChat() ), actionCollection(), "actionChat" );
+	KAction *actionChat = KopeteStdAction::chat( this, SLOT( startChat() ), 0, "actionChat" );
 	actionChat->setEnabled( reach && !myself );
 	actionChat->plug( menu );
 
-	KAction *actionSendFile = KopeteStdAction::sendFile( this, SLOT( sendFile() ), actionCollection(), "actionSendFile" );
+	KAction *actionSendFile = KopeteStdAction::sendFile( this, SLOT( sendFile() ), 0, "actionSendFile" );
 	actionSendFile->setEnabled( reach && d->fileCapable && !myself );
 	actionSendFile->plug( menu );
 
@@ -237,18 +236,18 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 	if( customActions && !customActions->isEmpty() )
 	{
 		menu->addSeparator();
-
-		for( KAction *a = customActions->first(); a; a = customActions->next() )
-			a->plug( menu );
+		QList<KAction*>::iterator it, itEnd = customActions->end();
+		for( it = customActions->begin(); it != itEnd; ++it )
+			(*it)->plug( menu );
 	}
 	delete customActions;
 
 	menu->addSeparator();
 
 	if( metaContact() && !metaContact()->isTemporary() )
-		KopeteStdAction::changeMetaContact( this, SLOT( changeMetaContact() ), menu, "actionChangeMetaContact" )->plug( menu );
+		KopeteStdAction::changeMetaContact( this, SLOT( changeMetaContact() ), 0, "actionChangeMetaContact" )->plug( menu );
 
-	KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), menu, "actionUserInfo" )->plug( menu );
+	KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), 0, "actionUserInfo" )->plug( menu );
 
 #if 0 //this is not fully implemented yet (and doesn't work).  disable for now   - Olivier 2005-01-11
 	if ( account()->isBlocked( d->contactId ) )
@@ -258,8 +257,8 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 #endif
 
 	if( metaContact() && !metaContact()->isTemporary() )
-		KopeteStdAction::deleteContact( this, SLOT( slotDelete() ), menu, "actionDeleteContact" )->plug( menu );
-*/
+		KopeteStdAction::deleteContact( this, SLOT( slotDelete() ), 0, "actionDeleteContact" )->plug( menu );
+
 	return menu;
 }
 
