@@ -115,7 +115,9 @@ void KopetePrefs::load()
 
 	_setStylePath(config->readEntry("StylePath"));
 	mStyleVariant = config->readEntry("StyleVariant");
-
+	// Read Chat Window Style display
+	mMetaContactDisplay = config->readBoolEntry("MetaContactDisplay", false);
+	mGroupConsecutiveMessages = config->readBoolEntry("GroupConsecutiveMessages", true);
 
 	mToolTipContents = config->readListEntry("ToolTipContents");
 	if(mToolTipContents.empty())
@@ -238,7 +240,9 @@ void KopetePrefs::save()
 	//for xhtml+css
 	config->writeEntry("StylePath", mStylePath);
 	config->writeEntry("StyleVariant", mStyleVariant);
-
+	// Chat Window Display
+	config->writeEntry("MetaContactDisplay", mMetaContactDisplay);
+	config->writeEntry("GroupConsecutiveMessages", mGroupConsecutiveMessages);
 
 	config->writeEntry("ToolTipContents", mToolTipContents);
 
@@ -756,5 +760,14 @@ void KopetePrefs::setEmoticonsRequireSpaces( bool b )
 	mEmoticonsRequireSpaces=b;
 }
 
+void KopetePrefs::setMetaContactDisplay( bool value )
+{
+	mMetaContactDisplay = value;
+}
+
+void KopetePrefs::setGroupConsecutiveMessages( bool value )
+{
+	mGroupConsecutiveMessages = value;
+}
 #include "kopeteprefs.moc"
 // vim: set noet ts=4 sts=4 sw=4:

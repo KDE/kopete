@@ -387,6 +387,10 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(slotCopyStyle()));
 	connect(d->mPrfsChatWindow->btnGetStyles, SIGNAL(clicked()),
 		this, SLOT(slotGetStyles()));
+	connect(d->mPrfsChatWindow->metaContactDisplayEnabled, SIGNAL(toggled(bool)),
+		this, SLOT(emitChanged()));
+	connect(d->mPrfsChatWindow->groupConsecutiveMessages, SIGNAL(toggled(bool)),
+		this, SLOT(emitChanged()));
 	// Show the available styles when the Manager has finish to load the styles.
 	connect(ChatWindowStyleManager::self(), SIGNAL(loadStylesFinished()), this, SLOT(slotLoadStyles()));
 
@@ -520,6 +524,8 @@ void AppearanceConfig::save()
 	p->setTransparencyColor( d->mPrfsChatWindow->mTransparencyTintColor->color() );
 	p->setTransparencyEnabled( d->mPrfsChatWindow->mTransparencyEnabled->isChecked() );
 	p->setTransparencyValue( d->mPrfsChatWindow->mTransparencyValue->value() );
+	p->setMetaContactDisplay( d->mPrfsChatWindow->metaContactDisplayEnabled->isChecked() );
+	p->setGroupConsecutiveMessages( d->mPrfsChatWindow->groupConsecutiveMessages->isChecked() );
 
 	// Get the stylePath
 	if(d->currentStyle)
@@ -588,6 +594,8 @@ void AppearanceConfig::load()
 	d->mPrfsChatWindow->mTransparencyEnabled->setChecked( p->transparencyEnabled() );
 	d->mPrfsChatWindow->mTransparencyTintColor->setColor( p->transparencyColor() );
 	d->mPrfsChatWindow->mTransparencyValue->setValue( p->transparencyValue() );
+	d->mPrfsChatWindow->metaContactDisplayEnabled->setChecked( p->metaContactDisplay() );
+	d->mPrfsChatWindow->groupConsecutiveMessages->setChecked( p->groupConsecutiveMessages() );
 	// Look for avaiable chat window styles.
 	ChatWindowStyleManager::self()->loadStyles();
 	

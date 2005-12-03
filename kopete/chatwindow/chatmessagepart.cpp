@@ -460,9 +460,12 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 		// Check if it's a consecutive Message
 		// Consecutive messages are only for normal messages, status messages do not have a <div id="insert" />
 		// We check if the from() is the latestContact, because consecutive incoming/outgoing message can come from differents peopole(in groupchat and IRC)
-		isConsecutiveMessage = (message.direction() == d->latestDirection && d->latestContact && d->latestContact == message.from());
+		// Group only if the user want it.
+		if( KopetePrefs::prefs()->groupConsecutiveMessages() )
+		{
+			isConsecutiveMessage = (message.direction() == d->latestDirection && d->latestContact && d->latestContact == message.from());
+		}
 
-		// TODO: Check if the user want consecutive messages.
 		switch(message.direction())
 		{
 			case Kopete::Message::Inbound:
@@ -937,8 +940,16 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	
 	if( message.from() )
 	{
-		// Use metaContact()->displayName(), so it's configurable by contact.
-		nick = message.from()->metaContact()->displayName();
+		// Use either MetaContact displayname or contact nickname
+		// Depending on settings.
+		if( KopetePrefs::prefs()->metaContactDisplay() && message.from()->metaContact() )
+		{
+			nick = message.from()->metaContact()->displayName();
+		}
+		else
+		{
+			nick = message.from()->nickName();
+		}
 		nick = formatName(nick);
 		contactId = message.from()->contactId();
 		// protocol() returns NULL here in the style preview in appearance config.
@@ -1027,12 +1038,25 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 	// Verify that all contacts are not null before doing anything
 	if( remoteContact && d->manager->myself() )
 	{
+		QString sourceName, destinationName;
+		// Use either MetaContact displayname or contact nickname
+		// Depending on settings.
+		if( KopetePrefs::prefs()->metaContactDisplay() )
+		{
+			sourceName = d->manager->myself()->metaContact()->displayName();
+			destinationName = remoteContact->metaContact()->displayName();
+		}
+		else
+		{
+			sourceName = d->manager->myself()->nickName();
+			destinationName = remoteContact->nickName();
+		}
 		// Replace %chatName%
 		resultHTML = resultHTML.replace( QString::fromUtf8("%chatName%"), formatName(d->manager->displayName()) );
 		// Replace %sourceName%
-		resultHTML = resultHTML.replace( QString::fromUtf8("%sourceName%"), formatName(d->manager->myself()->metaContact()->displayName()) );
+		resultHTML = resultHTML.replace( QString::fromUtf8("%sourceName%"), formatName(sourceName) );
 		// Replace %destinationName%
-		resultHTML = resultHTML.replace( QString::fromUtf8("%destinationName%"), formatName(remoteContact->metaContact()->displayName()) );
+		resultHTML = resultHTML.replace( QString::fromUtf8("%destinationName%"), formatName(destinationName) );
 		resultHTML = resultHTML.replace( QString::fromUtf8("%timeOpened%"), KGlobal::locale()->formatDateTime( QDateTime::currentDateTime() ) );
 
 		// Look for %timeOpened{X}%
@@ -1046,7 +1070,6 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 		}
 		// Get contact image paths
 		// TODO: Use metaContact current photo path.
-		// TODO: check for appearance configuration
 		QString photoIncomingPath, photoOutgoingPath;
 		photoIncomingPath = remoteContact->property( Kopete::Global::Properties::self()->photo().key()).value().toString();
 		photoOutgoingPath = d->manager->myself()->property(Kopete::Global::Properties::self()->photo().key()).value().toString();
