@@ -64,7 +64,7 @@ const QString IRCAccount::CONFIG_USERNAME = QString::fromLatin1("UserName");
 const QString IRCAccount::CONFIG_REALNAME = QString::fromLatin1("RealName");
 
 IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QString &autoChan, const QString& netName, const QString &nickName)
-	: Kopete::PasswordedAccount(protocol, accountId, 0, true), autoConnect( autoChan ), commandSource(0)
+	: Kopete::PasswordedAccount(protocol, accountId, 0, false), autoConnect( autoChan ), commandSource(0)
 {
 	m_manager = 0L;
 	m_channelList = 0L;
