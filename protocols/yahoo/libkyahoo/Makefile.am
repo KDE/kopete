@@ -16,4 +16,4 @@ libkyahoo_la_SOURCES = client.cpp task.cpp connector.cpp inputprotocolbase.cpp \
 libkyahoo_la_LDFLAGS = -no-undefined $(all_libraries)
 libkyahoo_la_LIBADD = $(LIB_QT)
 
-noinst_HEADERS = logintask.h yabentry.h
+noinst_HEADERS = logintask.h
