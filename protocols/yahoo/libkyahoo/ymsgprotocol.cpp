@@ -180,6 +180,10 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServicePictureUpload " << servicenum << endl;
 			service = Yahoo::ServicePictureUpload;
 		break;
+		case (Yahoo::ServiceWebcam) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceWebcam " << servicenum << endl;
+			service = Yahoo::ServiceWebcam;
+		break;
 		/*
 		ServiceIdle, // 5 (placemarker)
 		ServiceMailStat,
@@ -208,7 +212,6 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		ServiceVerify = 76,
 		ServiceP2PFileXfer,
 		ServicePeerToPeer = 0x4F,	// Checks if P2P possible 
-		ServiceWebcam,x
 		ServiceRemBuddy,
 		ServiceIgnoreContact,	// > 1, 7, 13 < 1, 66, 13, 0
 		ServiceRejectContact,

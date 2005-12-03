@@ -1,6 +1,6 @@
 /*
     Kopete Yahoo Protocol
-    Send our picture or information about it
+    sendpicturetask.h - Send our picture or information about it
 
     Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
 

@@ -39,6 +39,7 @@
 #include "requestpicturetask.h"
 #include "stealthtask.h"
 #include "sendpicturetask.h"
+#include "webcamtask.h"
 #include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
@@ -64,6 +65,7 @@ public:
 	MailNotifierTask *mailTask;
 	MessageReceiverTask *messageReceiverTask;
 	PictureNotifierTask *pictureNotifierTask;
+	WebcamTask *webcamTask;
 
 	// Connection data
 	uint sessionID;
@@ -193,13 +195,9 @@ void Client::slotGotCookies()
 	d->cCookie = d->loginTask->cCookie();
 }
 
-void slotPictureFetched(const QString &who, KTempFile *file,  int checksum )
-{
-
-}
-
 // INTERNALS //
 
+// ***** Messaging handling *****
 void Client::sendTyping( const QString &who, int typ)
 {
 	SendNotifyTask *snt = new SendNotifyTask( d->root );
@@ -240,6 +238,9 @@ void Client::changeStatus( Yahoo::Status status, const QString &message, Yahoo::
 	
 	setStatus( status );
 }
+
+// ***** Contactlist handling *****
+
 void Client::stealthContact(QString const &userId, Yahoo::StealthStatus state)
 {
 	StealthTask *st = new StealthTask( d->root );
@@ -276,6 +277,8 @@ void Client::moveBuddy( const QString &userId, const QString &oldGroup, const QS
 	mbt->setGroup( newGroup );
 	mbt->go( true );
 }
+
+// ***** Buddyicon handling *****
 
 void Client::requestPicture( const QString &userId )
 {
@@ -339,6 +342,18 @@ void Client::sendPictureStatusUpdate( const QString &userId, int type )
 	spt->setStatus( type );
 	spt->setTarget( userId );
 	spt->go( true );
+}
+
+// ***** Webcam handling *****
+
+void Client::requestWebcam( const QString &userId )
+{
+	d->webcamTask->requestWebcam( userId );
+}
+
+void Client::closeWebcam( const QString &userId )
+{
+	d->webcamTask->closeWebcam( userId );
 }
 
 void Client::notifyError( const QString & error )
@@ -474,10 +489,12 @@ void Client::initTasks()
 				SIGNAL( gotIm(const QString&, const QString&, long, int) ) );
 	QObject::connect( d->messageReceiverTask, SIGNAL( systemMessage(const QString&) ),
 				SIGNAL( systemMessage(const QString&) ) );
-	QObject::connect( d->messageReceiverTask, SIGNAL( typingNotify(const QString &, int) ),
+	QObject::connect( d->messageReceiverTask, SIGNAL( gotTypingNotify(const QString &, int) ),
 				SIGNAL( typingNotify(const QString &, int) ) );
 	QObject::connect( d->messageReceiverTask, SIGNAL( gotBuzz( const QString &, long ) ),
 				SIGNAL( gotBuzz( const QString &, long ) ) );
+	QObject::connect( d->messageReceiverTask, SIGNAL( gotWebcamInvite(const QString &) ),
+				SIGNAL( gotWebcamInvite(const QString &) ) );
 
 	d->pictureNotifierTask = new PictureNotifierTask( d->root );
 	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureStatusNotify( const QString &, int ) ),
@@ -490,7 +507,16 @@ void Client::initTasks()
 				SIGNAL( pictureRequest( const QString & ) ) );
 	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureUploaded( const QString & ) ),
 				SIGNAL( pictureUploaded( const QString & ) ) );
-	
+
+	d->webcamTask = new WebcamTask( d->root );
+	QObject::connect( d->webcamTask, SIGNAL( webcamImageReceived( const QString &, const QPixmap &) ),
+				SIGNAL( webcamImageReceived( const QString &, const QPixmap &) ) );
+	QObject::connect( d->webcamTask, SIGNAL( webcamNotAvailable( const QString & ) ),
+				SIGNAL( webcamNotAvailable( const QString & ) ) );
+	QObject::connect( d->webcamTask, SIGNAL( webcamClosed( const QString &, int ) ),
+				SIGNAL( webcamClosed( const QString &, int ) ) );
+	QObject::connect( d->webcamTask, SIGNAL( webcamPaused(const QString&) ),
+				SIGNAL( webcamPaused(const QString&) ) );
 }
 
 void Client::deleteTasks()
@@ -504,6 +530,8 @@ void Client::deleteTasks()
 	d->messageReceiverTask = 0L;
 	d->pictureNotifierTask->deleteLater();
 	d->pictureNotifierTask = 0L;
+	d->webcamTask->deleteLater();
+	d->webcamTask = 0L;
 }
 
 #include "client.moc"

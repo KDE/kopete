@@ -45,7 +45,7 @@ bool MessageReceiverTask::take( Transfer* transfer )
 		return false;
 	
 	if( t->service() == Yahoo::ServiceNotify )
-		parseIsTyping( transfer );
+		parseNotify( transfer );
 	else
 		parseMessage( transfer );
 
@@ -104,7 +104,7 @@ void MessageReceiverTask::parseMessage( Transfer *transfer )
 	}
 }
 
-void MessageReceiverTask::parseIsTyping( Transfer *transfer )
+void MessageReceiverTask::parseNotify( Transfer *transfer )
 {
 	kdDebug(14181) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
@@ -119,11 +119,19 @@ void MessageReceiverTask::parseIsTyping( Transfer *transfer )
 	QString ind = t->firstParam( 14 );
 
 	if( type.startsWith( "TYPING" ) )
-		emit typingNotify( from, stat.toInt() );
+		emit gotTypingNotify( from, stat.toInt() );
 	else if( type.startsWith( "GAME" ) )
 		;
 	else if( type.startsWith( "WEBCAMINVITE" ) )
-		;
+	{
+		if( ind.startsWith(" ") )
+		{
+			kdDebug(14181) << k_funcinfo << "Got a WebcamInvitation." << endl;
+			emit gotWebcamInvite( from );
+		}
+		else
+			kdDebug(14181) << k_funcinfo << "Got a WebcamRequest-Response: " << ind.toInt() << endl;
+	}
 }
 
 #include "messagereceivertask.moc"

@@ -1,6 +1,6 @@
 /*
     Kopete Yahoo Protocol
-    Send our picture or information about it
+    sendpicturetask.cpp - Send our picture or information about it
 
     Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
 
@@ -27,8 +27,6 @@
 #include <kio/job.h>
 #include <kio/jobclasses.h>
 #include <kbufferedsocket.h>
-
-using namespace KNetwork;
 
 SendPictureTask::SendPictureTask(Task* parent) : Task(parent)
 {

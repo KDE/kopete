@@ -250,6 +250,8 @@ void LoginTask::handleAuthResp(Transfer *transfer)
 			kdDebug(14180) << k_funcinfo << "Emitting Signal" << endl;
 			emit loginResponse( t->firstParam( 66 ).toInt(), t->firstParam( 20 ) );
 		break;
+		default:
+		break;
 	}
 	mState = InitialState;
 }

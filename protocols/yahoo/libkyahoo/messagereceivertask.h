@@ -36,12 +36,13 @@ public:
 protected:
 	bool forMe( Transfer *transfer ) const;
 	void parseMessage( Transfer *transfer );
-	void parseIsTyping( Transfer *transfer );
+	void parseNotify( Transfer *transfer );
 signals:
 	void gotIm(const QString&, const QString&, long, int);
 	void gotBuzz( const QString &who, long tm );
 	void systemMessage(const QString&);
-	void typingNotify(const QString &, int);
+	void gotTypingNotify(const QString &, int);
+	void gotWebcamInvite(const QString &);
 };
 
 #endif

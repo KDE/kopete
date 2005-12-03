@@ -285,7 +285,9 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 				
 		QObject::connect(m_session, SIGNAL(webcamImageReceived(const QString&, const QPixmap& )), this, SLOT(slotGotWebcamImage(const QString&, const QPixmap& )));
 		
-		QObject::connect(m_session, SIGNAL(remoteWebcamClosed(const QString&, int )), this, SLOT(slotWebcamClosed(const QString&, int )));
+		QObject::connect(m_session, SIGNAL(webcamClosed(const QString&, int )), this, SLOT(slotWebcamClosed(const QString&, int )));
+		
+		QObject::connect(m_session, SIGNAL(webcamPaused(const QString&)), this, SLOT(slotWebcamPaused(const QString&)));
 
 		QObject::connect(m_session, SIGNAL(pictureStatusNotify( const QString&, int )), SLOT(slotPictureStatusNotiy( const QString&, int)));
 		
@@ -376,7 +378,9 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::disconnect(m_session, SIGNAL(webcamImageReceived(const QString&, const QPixmap& )), this, SLOT(slotGotWebcamImage(const QString&, const QPixmap& )));
 		
-		QObject::disconnect(m_session, SIGNAL(remoteWebcamClosed(const QString&, int )), this, SLOT(slotWebcamClosed(const QString&, int )));
+		QObject::disconnect(m_session, SIGNAL(webcamClosed(const QString&, int )), this, SLOT(slotWebcamClosed(const QString&, int )));
+		
+		QObject::disconnect(m_session, SIGNAL(webcamPaused(const QString&)), this, SLOT(slotWebcamPaused(const QString&)));
 		
 		QObject::disconnect(m_session, SIGNAL(pictureDownloaded(const QString&, KTempFile*, int )), this, SLOT(slotGotBuddyIcon(const QString&, KTempFile*,int )));
 
@@ -741,7 +745,7 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	// Check for ping-messages
 	if( contact( who ) == myself() && msg.startsWith("<ping>") )
 	{
-		kdDebug(14180) << "Ping paket received." << endl;
+		kdDebug(14180) << "Ping packet received." << endl;
 		m_waitingForResponse = false;
 		return;
 	}
@@ -765,6 +769,9 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	
 	kdDebug(14180) << "Message after stripping color codes '" << newMsgText << "'" << endl;
 
+	newMsgText.replace( QString::fromLatin1( "&" ), QString::fromLatin1( "&amp;" ) );
+	
+	// Replace Font tags
 	regExp.setMinimal( true );
 	regExp.setPattern( "<font([^>]*)size=\"([^>]*)\"([^>]*)>" );
 	pos = 0;
@@ -775,6 +782,37 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 			newMsgText.replace( regExp, QString::fromLatin1("<font\\1style=\"font-size:\\2pt\">" ) );
 		}
 	}
+	
+	// Replace < and > in text
+	regExp.setPattern( "<(?![\"/fbui])" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( newMsgText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			newMsgText.replace( regExp, QString::fromLatin1("&lt;" ) );
+		}
+	}
+	regExp.setPattern( "([^\"bui])>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( newMsgText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			newMsgText.replace( regExp, QString::fromLatin1("\\1&gt;" ) );
+		}
+	}
+	
+	// add closing tags when needed
+	regExp.setMinimal( false );
+	regExp.setPattern( "(<b>.*)(?!</b>)" );
+	newMsgText.replace( regExp, QString::fromLatin1("\\1</b>" ) );
+	regExp.setPattern( "(<i>.*)(?!</i>)" );
+	newMsgText.replace( regExp, QString::fromLatin1("\\1</i>" ) );
+	regExp.setPattern( "(<u>.*)(?!</u>)" );
+	newMsgText.replace( regExp, QString::fromLatin1("\\1</u>" ) );
+	regExp.setPattern( "(<font.*)(?!</font>)" );
+	newMsgText.replace( regExp, QString::fromLatin1("\\1</font>" ) );
 	
 	newMsgText.replace( QString::fromLatin1( "\r" ), QString::fromLatin1( "<br/>" ) );
 	
@@ -918,11 +956,13 @@ void YahooAccount::slotError( const QString &err, int fatal )
 	kdDebug(14180) << k_funcinfo << fatal << ": " << err << endl;
 	m_lastDisconnectCode = fatal;
 	m_keepaliveTimer->stop();
-	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, i18n( "<qt>The connection with the Yahoo server was lost.</qt>" ), 
-						i18n( "Connection Lost - Yahoo Plugin" ) );
+	if(isConnected()) { // If we are already disconnected we don't need this MessageBox (<heiko@rangun.de>)
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, i18n( "<qt>The connection with the Yahoo server was lost.</qt>" ), 
+							i18n( "Connection Lost - Yahoo Plugin" ) );
 	
-	if ( fatal == 1 || fatal == 2 || fatal == -1 )
-		disconnect();
+		if ( fatal == 1 || fatal == 2 || fatal == -1 )
+			disconnect();
+	}
 }
 
 void YahooAccount::slotRemoveHandler( int /* fd */ )
@@ -937,7 +977,10 @@ void YahooAccount::slotGotWebcamInvite( const QString& who )
 		kdDebug(14180) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
 		return;
 	}
-	kc->gotWebcamInvite();
+	
+	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 has invited you to view his/her webcam. Accept?")
+							.arg(who), QString::null, i18n("Accept"), i18n("Ignore") ) )	
+		m_session->requestWebcam( who );
 }
 
 void YahooAccount::slotGotWebcamImage( const QString& who, const QPixmap& image )
@@ -1129,27 +1172,38 @@ void YahooAccount::slotWebcamClosed( const QString& who, int reason )
 	kc->webcamClosed( reason );
 }
 
+void YahooAccount::slotWebcamPaused( const QString &who )
+{
+	YahooContact* kc = contact( who );
+	if ( kc == NULL ) {
+		kdDebug(14180) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		return;
+	}
+	kc->webcamPaused();
+}
+
 void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason)
 {
 	kdDebug(14180) << k_funcinfo << endl;
 	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline &&
-	     ( status.status() == Kopete::OnlineStatus::Online ||
-	       status.status() == Kopete::OnlineStatus::Invisible) )
+	     ( status.status() == Kopete::OnlineStatus::Online || status.status() == Kopete::OnlineStatus::Invisible ) )
 	{
 		connect( status );
 	}
-	else 
-		
-	if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline &&
+	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline &&
 	          status.status() == Kopete::OnlineStatus::Offline )
 	{
 		disconnect();
 	}
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline &&
+	          status.internalStatus() == 2 && !reason.isEmpty())
+	{
+		slotGoStatus( 99, reason );
+	}
+	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline &&
 	          status.internalStatus() == 99 && reason.isEmpty())
 	{
-		// Get custom away message from User
-		theAwayDialog->show( 99 );
+		slotGoStatus( 2, reason );
 	}
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline )
 	{

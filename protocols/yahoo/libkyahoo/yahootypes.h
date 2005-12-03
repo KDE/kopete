@@ -134,6 +134,11 @@ namespace Yahoo
 		NotStealthed = 2
 	};
 
+	enum Response {
+		ResponseAccept,
+		ResponseDecline
+	};
+
 	typedef Q_UINT8 BYTE;
 	typedef Q_UINT16 WORD;
 	typedef Q_UINT32 DWORD;

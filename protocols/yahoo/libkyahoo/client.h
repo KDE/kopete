@@ -152,6 +152,16 @@ Q_OBJECT
 		 * Notify the buddies about our new status
 		 */
 		void sendPictureStatusUpdate( const QString &userId, int type );
+
+		/**
+		 * Send a response to the webcam invite ( Accept / Decline )
+		 */
+		void requestWebcam( const QString &userId );
+
+		/**
+		 * Stop receiving of webcam
+		 */
+		void closeWebcam( const QString &userId );
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -271,6 +281,10 @@ Q_OBJECT
 		 */
 		void typingNotify( const QString &, int );
 		/**
+		 * The buddy has invited us to view his webcam
+		 */
+		void gotWebcamInvite(const QString &);
+		/**
 		 * Notifies about a BUZZ notification
 		 */
 		void gotBuzz( const QString &, long );
@@ -297,7 +311,23 @@ Q_OBJECT
 		/**
 		 * Information about the picture upload
 		 */
-		void pictureUploaded( const QString & );		
+		void pictureUploaded( const QString & );
+		/**
+		 * We've received a webcam image from a buddy
+		 */
+		void webcamImageReceived( const QString &, const QPixmap &);
+		/**
+		 * The requested Webcam is not available
+		 */
+		void webcamNotAvailable( const QString & );
+		/**
+		 * The connection to the webcam was closed
+		 */
+		void webcamClosed( const QString &, int );
+		/**
+		 * The webcamtranmission is paused
+		 */
+		void webcamPaused(const QString&);
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();

@@ -61,9 +61,9 @@ public:
 	/** The userId getter method**/
 	QString userId() const;
 
-	void gotWebcamInvite();
 	void receivedWebcamImage( const QPixmap& );
 	void webcamClosed( int );
+	void webcamPaused();
 
 public slots:
 	virtual void slotUserInfo();
@@ -87,10 +87,9 @@ public slots:
 	void sync(unsigned int flags);
 
 signals:
-	void signalReceivedWebcamInvite();
 	void signalReceivedWebcamImage( const QPixmap &pic );
 	void signalWebcamClosed( int reason );
-	void signalWebcamInviteAccepted();
+	void signalWebcamPaused();
 	void displayPictureChanged();
 
 private slots:
@@ -100,6 +99,7 @@ private slots:
 	void slotEmitDisplayPictureChanged();
 
 	void closeWebcamDialog();
+	void initWebcamViewer();
 	//void webcamClosed( const QString& contact, int reason );
 
 private:
@@ -108,6 +108,7 @@ private:
 	YahooChatSession *m_manager;
 	YahooAccount* m_account;
 	bool m_stealthed;
+	bool m_receivingWebcam;
 	
 	//stealth
 	KAction* m_stealthAction;

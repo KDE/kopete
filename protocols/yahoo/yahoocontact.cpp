@@ -30,7 +30,7 @@
 #include "yahoocontact.h"
 #include "yahooaccount.h"
 #include "client.h"
-//#include "yahoowebcamdialog.h"
+#include "yahoowebcamdialog.h"
 #include "yahoostealthsetting.h"
 #include "yahoochatsession.h"
 
@@ -52,7 +52,7 @@
 #include <kio/job.h>
 #include <kurl.h>
 #include <kio/jobclasses.h>
-//#include <kimageio.h>
+#include <kimageio.h>
 #include <kstandarddirs.h>
 #include <kfiledialog.h>
 
@@ -67,6 +67,7 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 	m_manager = 0L;
 	m_account = account;
 	m_stealthed = false;
+	m_receivingWebcam = false;
 
 	// Update ContactList
 	setNickName( fullName );
@@ -434,22 +435,6 @@ void YahooContact::buzzContact()
 	}
 }
 
-void YahooContact::gotWebcamInvite()
-{
-	// emit signalReceivedWebcamInvite();
-	
-	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 has invited you to view his/her webcam. Accept?").arg(nickName()), QString::null, i18n("Accept"), i18n("Ignore") ) )
-		
-	{
-		emit signalWebcamInviteAccepted ( );
-	}
-	else
-	{
-		// libyahoo2 doesn't do anything for rejecting invites
-	}
-	
-}
-
 void YahooContact::sendBuddyIconChecksum( int checksum )
 {
 	kdDebug(14180) << k_funcinfo << endl;
@@ -498,60 +483,79 @@ void YahooContact::slotEmitDisplayPictureChanged()
 
 void YahooContact::receivedWebcamImage( const QPixmap& image )
 {
+	if( !m_webcamDialog )
+		initWebcamViewer();
+	m_receivingWebcam = true;
 	emit signalReceivedWebcamImage( image );
 }
 
 void YahooContact::webcamClosed( int reason )
 {
+	m_receivingWebcam = false;
 	emit signalWebcamClosed( reason );
+}
+
+void YahooContact::webcamPaused()
+{
+	emit signalWebcamPaused();
+}
+
+void YahooContact::initWebcamViewer()
+{
+	//KImageIO::registerFormats();
+	
+	if ( !m_webcamDialog )
+	{
+		m_webcamDialog = new YahooWebcamDialog( this, Kopete::UI::Global::mainWidget() );
+// 		QObject::connect( m_webcamDialog, SIGNAL( closeClicked() ), this, SLOT( closeWebcamDialog() ) );
+	
+		QObject::connect( this, SIGNAL( signalWebcamClosed( int ) ),
+		                  m_webcamDialog, SLOT( webcamClosed( int ) ) );
+		
+		QObject::connect( this, SIGNAL( signalWebcamPaused() ),
+		                  m_webcamDialog, SLOT( webcamPaused() ) );
+		
+		QObject::connect( this, SIGNAL ( signalReceivedWebcamImage( const QPixmap& ) ),
+				m_webcamDialog, SLOT( newImage( const QPixmap& ) ) );
+		
+		QObject::connect( m_webcamDialog, SIGNAL ( closingWebcamDialog ( ) ),
+				this, SLOT ( closeWebcamDialog ( ) ) );
+	}
+	m_webcamDialog->show();
 }
 
 void YahooContact::requestWebcam()
 {
-	/*if ( !KStandardDirs::findExe("jasper") )
+	if ( !KStandardDirs::findExe("jasper") )
 	{
 		KMessageBox::queuedMessageBox(                            		Kopete::UI::Global::mainWidget(),
 			KMessageBox::Error, i18n("I cannot find the jasper image convert program.\njasper is required to render the yahoo webcam images.\nPlease go to http://kopete.kde.org/yahoo/jasper.html for instructions.")
                 );
 		return;
 	}
-
-	// uncomment this when kdelibs supports jpc
-	// KImageIO::registerFormats();
 	
-	delete m_webcamDialog;
-	m_webcamDialog = NULL;
-	if ( !m_webcamDialog )
-	{
-		m_webcamDialog = new YahooWebcamDialog( this, Kopete::UI::Global::mainWidget() );
-		QObject::connect( m_webcamDialog, SIGNAL( closeClicked() ), this, SLOT( closeWebcamDialog() ) );
-	}
-	
-	QObject::connect( this, SIGNAL( signalWebcamClosed( int ) ),
-	                  m_webcamDialog, SLOT( webcamClosed( int ) ) );
-	
-	QObject::connect( this, SIGNAL ( signalReceivedWebcamImage( const QPixmap& ) ),
-	                  m_webcamDialog, SLOT( newImage( const QPixmap& ) ) );
-
-	QObject::connect( m_webcamDialog, SIGNAL ( closingWebcamDialog ( ) ),
-	                  this, SLOT ( closeWebcamDialog ( ) ) );
-	
-	m_account->yahooSession()->requestWebcam( contactId() );*/
+	if( !m_webcamDialog )
+		initWebcamViewer();
+	m_account->yahooSession()->requestWebcam( contactId() );
 }
 
 void YahooContact::closeWebcamDialog()
 {
-	/*QObject::disconnect( this, SIGNAL( signalWebcamClosed( int ) ),
+	QObject::disconnect( this, SIGNAL( signalWebcamClosed( int ) ),
 	                  m_webcamDialog, SLOT( webcamClosed( int ) ) );
+	
+	QObject::disconnect( this, SIGNAL( signalWebcamPaused() ),
+	                  m_webcamDialog, SLOT( webcamPaused( int ) ) );
 	
 	QObject::disconnect( this, SIGNAL ( signalReceivedWebcamImage( const QPixmap& ) ),
 	                  m_webcamDialog, SLOT( newImage( const QPixmap& ) ) );
 	
 	QObject::disconnect( m_webcamDialog, SIGNAL ( closingWebcamDialog ( ) ),
 	                  this, SLOT ( closeWebcamDialog ( ) ) );
-	
-	m_account->yahooSession()->closeWebcam( contactId() );*/
-	//m_webcamDialog->delayedDestruct();
+	if( m_receivingWebcam )
+		m_account->yahooSession()->closeWebcam( contactId() );
+	m_webcamDialog->delayedDestruct();
+	m_webcamDialog = 0L;
 }
 
 void YahooContact::deleteContact()

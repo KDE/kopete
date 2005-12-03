@@ -6,13 +6,14 @@ AM_CPPFLAGS = $(all_includes)
 
 
 libkyahoo_la_SOURCES = client.cpp task.cpp connector.cpp inputprotocolbase.cpp \
-		ymsgprotocol.cpp ymsgtransfer.cpp transfer.cpp rtf.cc yahoobytestream.cpp bytestream.cpp \
-	yahooclientstream.cpp yahooconnector.cpp	safedelete.cpp stream.cpp sha1.c md5.c crypt.c \
-	 coreprotocol.cpp logintask.cpp libyahoo.c yahoo_fn.c listtask.cpp statusnotifiertask.cpp \
-	mailnotifiertask.cpp messagereceivertask.cpp sendnotifytask.cpp sendmessagetask.cpp logofftask.cpp \
-	changestatustask.cpp modifybuddytask.cpp picturenotifiertask.cpp requestpicturetask.cpp \
-	yahoobuddyiconloader.cpp stealthtask.cpp sendpicturetask.cpp
+				ymsgprotocol.cpp ymsgtransfer.cpp transfer.cpp rtf.cc yahoobytestream.cpp bytestream.cpp \
+			yahooclientstream.cpp yahooconnector.cpp	safedelete.cpp stream.cpp sha1.c md5.c crypt.c 	 \
+		coreprotocol.cpp logintask.cpp libyahoo.c yahoo_fn.c listtask.cpp statusnotifiertask.cpp \
+			mailnotifiertask.cpp messagereceivertask.cpp sendnotifytask.cpp sendmessagetask.cpp \
+		logofftask.cpp 	changestatustask.cpp modifybuddytask.cpp picturenotifiertask.cpp \
+		requestpicturetask.cpp 	yahoobuddyiconloader.cpp stealthtask.cpp sendpicturetask.cpp \
+		yabentry.cpp webcamtask.cpp
 libkyahoo_la_LDFLAGS = -no-undefined $(all_libraries)
 libkyahoo_la_LIBADD = $(LIB_QT)
 
-noinst_HEADERS = logintask.h
+noinst_HEADERS = logintask.h yabentry.h
