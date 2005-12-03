@@ -17,15 +17,13 @@
 #ifndef KOPETEMESSAGEHANDLER_H
 #define KOPETEMESSAGEHANDLER_H
 
-#include <qobject.h>
-//#include <kdemacros.h>
+#include <QObject>
+#include <QList>
 #include "kopete_export.h"
 
 //FIXME: Message::MessageDirection could be moved into namespace Kopete
 // to avoid this being included everywhere
 #include "kopetemessage.h"
-
-#include <q3valuelist.h>
 
 namespace Kopete
 {
@@ -124,7 +122,7 @@ public:
 	 */
 	virtual ~MessageHandlerFactory();
 	
-	typedef Q3ValueList<MessageHandlerFactory*> FactoryList;
+	typedef QList<MessageHandlerFactory*> FactoryList;
 	/**
 	 * @return the list of registered message handler factories
 	 */

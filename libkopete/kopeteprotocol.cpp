@@ -280,7 +280,8 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 		
 #else
 		QMap<QString, QStringList>::Iterator serializedDataIt;
-		for( serializedDataIt = serializedData.begin(); serializedDataIt != serializedData.end(); ++serializedDataIt )
+		QMap<QString, QStringList>::Iterator serializedDataItEnd = serializedData.end();
+		for( serializedDataIt = serializedData.begin(); serializedDataIt != serializedDataItEnd; ++serializedDataIt )
 		{
 			QStringList sl=serializedDataIt.data();
 			if(sl.count()>i)

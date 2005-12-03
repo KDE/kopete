@@ -37,8 +37,8 @@ class Contact;
 class Protocol;
 class MessageEvent;
 
-typedef QList<Contact*>        ContactPtrList;
-typedef Q3ValueList<Message>      MessageList;
+typedef QList<Contact*>     ContactPtrList;
+typedef QList<Message>      MessageList;
 
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -85,7 +85,7 @@ public:
 	/**
 	 * Get a list of all open sessions.
 	 */
-	Q3ValueList<ChatSession*> sessions();
+	QList<ChatSession*> sessions();
 
 	/**
 	 * @internal

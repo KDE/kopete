@@ -18,7 +18,7 @@
 
 #include <klocale.h>
 
-#include <q3ptrlist.h>
+#include <QList>
 
 namespace Kopete
 {
@@ -34,7 +34,7 @@ public:
 
 	Task::Result result;
 	QString errorMessage;
-	Q3PtrList<Task> subtasks;
+	QList<Task*> subtasks;
 };
 
 Task::Task()
@@ -60,8 +60,9 @@ const QString &Task::errorString() const
 void Task::abort( int flags )
 {
 	int childFlags = flags & ~AbortEmitResult;
-	for ( Task *task = d->subtasks.first(); task; task = d->subtasks.next() )
-		task->abort( childFlags );
+	QList<Task*>::iterator it, itEnd = d->subtasks.end();
+	for ( it = d->subtasks.begin(); it != itEnd; ++it )
+		( *it )->abort( childFlags );
 
 	if ( flags & AbortEmitResult )
 		emitResult( ResultFailed, i18n( "Aborted" ) );

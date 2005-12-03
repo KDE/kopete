@@ -71,7 +71,7 @@ struct KopeteAwayPrivate
 	bool goAvailable;
 	int awayTimeout;
 	bool useAutoAway;
-	Q3PtrList<Kopete::Account> autoAwayAccounts;
+	QList<Kopete::Account*> autoAwayAccounts;
 
 	int mouse_x;
 	int mouse_y;
@@ -356,9 +356,10 @@ void Kopete::Away::setActivity()
 		emit activity();
 		if (d->goAvailable)
 		{
-			d->autoAwayAccounts.setAutoDelete(false);
-			for(Kopete::Account *i=d->autoAwayAccounts.first() ; i; i=d->autoAwayAccounts.current() )
+			QList<Kopete::Account*>::iterator it, itEnd = d->autoAwayAccounts.end();
+			for( it = d->autoAwayAccounts.begin(); it != itEnd; ++it )
 			{
+				Kopete::Account* i = (*it);
 				if(i->isConnected() && i->isAway())
 				{
 					i->setOnlineStatus( Kopete::OnlineStatusManager::self()->onlineStatus( i->protocol() ,
@@ -368,7 +369,7 @@ void Kopete::Away::setActivity()
 
 				// remove() makes the next entry in the list the current one,
 				// that's why we use current() above
-				d->autoAwayAccounts.remove();
+				d->autoAwayAccounts.remove( i );
 			}
 		}
 	}

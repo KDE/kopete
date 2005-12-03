@@ -36,8 +36,8 @@ namespace Kopete
 
 namespace
 {
-	static Q3Dict<Kopete::MimeTypeHandler> g_mimeHandlers;
-	static Q3Dict<Kopete::MimeTypeHandler> g_protocolHandlers;
+	static QHash<QString, Kopete::MimeTypeHandler*> g_mimeHandlers;
+	static QHash<QString, Kopete::MimeTypeHandler*> g_protocolHandlers;
 }
 
 class MimeTypeHandler::Private

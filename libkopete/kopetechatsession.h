@@ -6,7 +6,7 @@
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @ kde.org>
     Copyright (c) 2003      by Jason Keirstead        <jason@keirstead.org>
-    Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
+    Copyright (c) 2005      by Michaï¿½ Larouche       <michael.larouche@kdemail.net>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -50,7 +50,7 @@ class MessageHandlerChain;
 class TemporaryKMMCallbackAppendMessageHandler;
 
 typedef QList<Contact*>   ContactPtrList;
-typedef Q3ValueList<Message> MessageList;
+typedef QList<Message> MessageList;
 
 
 /**

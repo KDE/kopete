@@ -23,9 +23,6 @@
 
 #include "ui/kopeteview.h"
 #include "kopetecontact.h"
-//Added by qt3to4:
-#include <Q3ValueList>
-#include <Q3PtrList>
 #include <QList>
 
 namespace Kopete {
@@ -33,7 +30,7 @@ namespace Kopete {
 class ChatSessionManager::Private
 {
   public:
-	Q3ValueList <ChatSession*> sessions;
+	QList <ChatSession*> sessions;
 //	UI::ChatView *activeView;
 };
 
@@ -58,7 +55,7 @@ ChatSessionManager::ChatSessionManager( QObject* parent,
 ChatSessionManager::~ChatSessionManager()
 {
 	s_self = 0L;
-	Q3ValueListIterator<ChatSession*> it;
+	QList<ChatSession*>::Iterator it;
 	for ( it=d->sessions.begin() ; it!=d->sessions.end() ; ++it )
 	{
 		kdDebug( 14010 ) << k_funcinfo << "Unloading KMM: Why this KMM isn't yet unloaded?" << endl;
@@ -71,7 +68,7 @@ ChatSession* ChatSessionManager::findChatSession(const Contact *user,
 		ContactPtrList chatContacts, Protocol *protocol)
 {
 	ChatSession *result = 0L;
-	Q3ValueList<ChatSession*>::Iterator it;
+	QList<ChatSession*>::Iterator it;
 	int i;
 
 	for ( it= d->sessions.begin(); it!=d->sessions.end() && !result ; ++it  )
@@ -153,7 +150,7 @@ void ChatSessionManager::removeSession( ChatSession *session)
 	d->sessions.remove( session );
 }
 
-Q3ValueList<ChatSession*> ChatSessionManager::sessions( )
+QList<ChatSession*> ChatSessionManager::sessions( )
 {
 	return d->sessions;
 }

@@ -25,7 +25,6 @@
 #include <qregexp.h>
 #include <qtextcodec.h>
 #include <QByteArray>
-#include <Q3PtrList>
 #include <QSharedData>
 
 #include <kdebug.h>

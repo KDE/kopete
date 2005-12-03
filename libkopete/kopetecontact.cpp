@@ -195,7 +195,8 @@ void Contact::slotAddContact()
 KMenu* Contact::popupMenu( ChatSession *manager )
 {
 	KMenu *menu = new KMenu();
-
+#warning Need to port KAction stuff. Where do we get the action collection from?
+/*
 	QString titleText;
 	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if( nick.isEmpty() )
@@ -204,13 +205,10 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( nick, contactId(), onlineStatus().description() );
 	menu->addTitle( titleText );
 
-#warning TODO
-#if 0	
-	
 	if( metaContact() && metaContact()->isTemporary() && contactId() != account()->myself()->contactId() )
 	{
 		KAction *actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "bookmark_add" ),
-		                                         0, this, SLOT( slotAddContact() ), menu, "actionAddContact" );
+		                                         KShortcut(), this, SLOT( slotAddContact() ), actionCollection(), "actionAddContact" );
 		actionAddContact->plug( menu );
 		menu->addSeparator();
 	}
@@ -219,15 +217,15 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 	bool reach = account()->isConnected() && isReachable();
 	bool myself = (this == account()->myself());
 
-	KAction *actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ), menu, "actionSendMessage" );
+	KAction *actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ), actionCollection(), "actionSendMessage" );
 	actionSendMessage->setEnabled( reach && !myself );
 	actionSendMessage->plug( menu );
 
-	KAction *actionChat = KopeteStdAction::chat( this, SLOT( startChat() ), menu, "actionChat" );
+	KAction *actionChat = KopeteStdAction::chat( this, SLOT( startChat() ), actionCollection(), "actionChat" );
 	actionChat->setEnabled( reach && !myself );
 	actionChat->plug( menu );
 
-	KAction *actionSendFile = KopeteStdAction::sendFile( this, SLOT( sendFile() ), menu, "actionSendFile" );
+	KAction *actionSendFile = KopeteStdAction::sendFile( this, SLOT( sendFile() ), actionCollection(), "actionSendFile" );
 	actionSendFile->setEnabled( reach && d->fileCapable && !myself );
 	actionSendFile->plug( menu );
 
@@ -235,7 +233,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 	// through the use of the customContextMenuActions() function
 
 	// Get the custom actions from the protocols ( pure virtual function )
-	Q3PtrList<KAction> *customActions = customContextMenuActions( manager );
+	QList<KAction*> *customActions = customContextMenuActions( manager );
 	if( customActions && !customActions->isEmpty() )
 	{
 		menu->addSeparator();
@@ -261,7 +259,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 
 	if( metaContact() && !metaContact()->isTemporary() )
 		KopeteStdAction::deleteContact( this, SLOT( slotDelete() ), menu, "actionDeleteContact" )->plug( menu );
-#endif
+*/
 	return menu;
 }
 

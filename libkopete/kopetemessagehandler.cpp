@@ -79,7 +79,7 @@ public:
 	FactoryList::Iterator iterator;
 };
 
-MessageHandlerFactory::FactoryList &MessageHandlerFactory::Private::factories()
+MessageHandlerFactory::FactoryList& MessageHandlerFactory::Private::factories()
 {
 	static KStaticDeleter<FactoryList> deleter;
 	static FactoryList *list = 0;
@@ -91,7 +91,7 @@ MessageHandlerFactory::FactoryList &MessageHandlerFactory::Private::factories()
 MessageHandlerFactory::MessageHandlerFactory()
 	: d( new Private )
 {
-	d->iterator = Private::factories().append(this);
+	d->iterator = Private::factories().insert( Private::factories().end(), (this));
 }
 
 MessageHandlerFactory::~MessageHandlerFactory()
