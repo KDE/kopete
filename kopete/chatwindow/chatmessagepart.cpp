@@ -464,8 +464,9 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 #else
 		QString formattedMessageHtml;
 		bool isConsecutiveMessage = false;
+
 		// Check if it's a consecutive Message
-		// Consecutive messages are only for normal messages, status messages do not have a <div id="insert">
+		// Consecutive messages are only for normal messages, status messages do not have a <div id="insert" />
 		// We check if the from() is the latestContact, because consecutive incoming/outgoing message can come from differents peopole(in groupchat and IRC)
 		isConsecutiveMessage = (message.direction() == d->latestDirection && d->latestContact && d->latestContact == message.from());
 
@@ -518,6 +519,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 			
 			// Find the "Chat" 
 			DOM::HTMLElement chatNode = document().getElementById( QString::fromUtf8("Chat") );
+
 			// Append to the chat.
 			chatNode.appendChild(newMessageNode);
 		}
@@ -589,11 +591,9 @@ void ChatMessagePart::slotRefreshNodes()
 
 void ChatMessagePart::slotRefreshView()
 {
-	DOM::Element htmlElement = document().documentElement();
-	DOM::Element headElement = htmlElement.getElementsByTagName( QString::fromLatin1( "head" ) ).item(0);
-	DOM::HTMLElement styleElement = headElement.getElementsByTagName( QString::fromLatin1( "style" ) ).item(0);
-	if ( !styleElement.isNull() )
-		styleElement.setInnerText( styleHTML() );
+	DOM::HTMLElement kopeteNode = document().getElementById( QString::fromUtf8("KopeteStyle") );
+	if( !kopeteNode.isNull() )
+		kopeteNode.setInnerText( styleHTML() );
 
 	DOM::HTMLBodyElement bodyElement = htmlDocument().body();
 	bodyElement.setBgColor( KopetePrefs::prefs()->bgColor().name() );
@@ -618,7 +618,7 @@ const QString ChatMessagePart::styleHTML() const
 	KopetePrefs *p = KopetePrefs::prefs();
 
 	QString style = QString::fromLatin1(
-		"body{margin:4px;background-color:%1;font-family:%2;font-size:%3pt;color:%4;background-repeat:no-repeat;background-attachment:fixed}"
+		"body{background-color:%1;font-family:%2;font-size:%3pt;color:%4}"
 		"td{font-family:%5;font-size:%6pt;color:%7}"
 		"a{color:%8}a.visited{color:%9}"
 		"a.KopeteDisplayName{text-decoration:none;color:inherit;}"
@@ -947,6 +947,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	{
 		// Use metaContact()->displayName(), so it's configurable by contact.
 		nick = message.from()->metaContact()->displayName();
+		nick = formatName(nick);
 		contactId = message.from()->contactId();
 		// protocol() returns NULL here in the style preview in appearance config.
 		// this isn't the right place to work around it, since contacts should never have
@@ -1035,11 +1036,11 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 	if( remoteContact && d->manager->myself() )
 	{
 		// Replace %chatName%
-		resultHTML = resultHTML.replace( QString::fromUtf8("%chatName%"), d->manager->displayName() );
+		resultHTML = resultHTML.replace( QString::fromUtf8("%chatName%"), formatName(d->manager->displayName()) );
 		// Replace %sourceName%
-		resultHTML = resultHTML.replace( QString::fromUtf8("%sourceName%"), d->manager->myself()->metaContact()->displayName() );
+		resultHTML = resultHTML.replace( QString::fromUtf8("%sourceName%"), formatName(d->manager->myself()->metaContact()->displayName()) );
 		// Replace %destinationName%
-		resultHTML = resultHTML.replace( QString::fromUtf8("%destinationName%"), remoteContact->metaContact()->displayName() );
+		resultHTML = resultHTML.replace( QString::fromUtf8("%destinationName%"), formatName(remoteContact->metaContact()->displayName()) );
 		resultHTML = resultHTML.replace( QString::fromUtf8("%timeOpened%"), KGlobal::locale()->formatDateTime( QDateTime::currentDateTime() ) );
 
 		// Look for %timeOpened{X}%
@@ -1107,6 +1108,17 @@ QString ChatMessagePart::formatTime(const QString &timeFormat, const QDateTime &
 	return QString(buffer);
 }
 
+QString ChatMessagePart::formatName(const QString &sourceName)
+{
+	QString formattedName = sourceName;
+	if( KopetePrefs::prefs()->truncateContactNames() )
+	{
+		formattedName = KStringHandler::csqueeze( sourceName, KopetePrefs::prefs()->maxConactNameLength() );
+	}
+
+	return formattedName;
+}
+
 void ChatMessagePart::changeStyle()
 {
 	// Rewrite the header and footer.
@@ -1126,6 +1138,16 @@ void ChatMessagePart::writeTemplate()
 {
 	// Clear all the page, and begin a new page.
 	begin();
+
+	// NOTE: About styles
+	// Order of style tag in the template is important.
+	// mainStyle take over all other style definition (which is what we want).
+	//
+	// KopeteStyle: Kopete appearance configuration into a style. It loaded first because
+	// we don't want Kopete settings to override CSS Chat Window Style.
+	// baseStyle: Import the main.css from the Chat Window Style
+	// mainStyle: Currrent variant CSS url.
+
 	// FIXME: Maybe this string should be load from a file, then parsed for args.
 	QString xhtmlBase;
 	xhtmlBase += QString("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
@@ -1135,6 +1157,9 @@ void ChatMessagePart::writeTemplate()
     	"<head>\n"
         "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\n\" />\n"
         "<base href=\"%1\">\n"
+		"<style id=\"KopeteStyle\" type=\"text/css\" media=\"screen,print\">\n"
+		"	%5\n"
+		"</style>\n"
 		"<style id=\"baseStyle\" type=\"text/css\" media=\"screen,print\">\n"
 		"	@import url(\"main.css\");\n"
 		"	*{ word-wrap:break-word; }\n"
@@ -1150,7 +1175,8 @@ void ChatMessagePart::writeTemplate()
 		).arg( d->currentChatStyle->getStyleBaseHref() )
 		.arg( formatStyleKeywords(d->currentChatStyle->getHeaderHtml()) )
 		.arg( formatStyleKeywords(d->currentChatStyle->getFooterHtml()) )
-		.arg( KopetePrefs::prefs()->styleVariant() );
+		.arg( KopetePrefs::prefs()->styleVariant() )
+		.arg( styleHTML() );
 	write(xhtmlBase);
 	end();
 }
