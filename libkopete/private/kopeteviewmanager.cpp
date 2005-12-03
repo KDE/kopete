@@ -35,7 +35,7 @@
 #include "kopetemetacontact.h"
 #include "kopetemessageevent.h"
 #include "kopeteview.h"
-//#include "systemtray.h"
+#include "kopetechatsession.h"
 #include "kopetegroup.h"
 
 #include "kopeteviewmanager.h"

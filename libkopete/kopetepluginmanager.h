@@ -19,12 +19,11 @@
 #ifndef KOPETEPLUGINMANAGER_H
 #define KOPETEPLUGINMANAGER_H
 
-#include <qmap.h>
-#include <qobject.h>
-#include <qstring.h>
-#include <qstringlist.h>
-#include <q3valuelist.h>
-
+#include <QMap>
+#include <QObject>
+#include <QString>
+#include <QStringList>
+#include <QList>
 #include "kopete_export.h"
 
 class KPluginInfo;
@@ -33,8 +32,7 @@ namespace Kopete
 {
 
 class Plugin;
-
-typedef Q3ValueList<Plugin*> PluginList;
+typedef QList<Plugin*> PluginList;
 
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -63,7 +61,7 @@ public:
 	 * You can query all information on the plugins through the KPluginInfo
 	 * interface.
 	 */
-	Q3ValueList<KPluginInfo *> availablePlugins( const QString &category = QString::null ) const;
+	QList<KPluginInfo *> availablePlugins( const QString &category = QString::null ) const;
 
 	/**
 	 * Returns a list of all plugins that are actually loaded.
