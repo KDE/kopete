@@ -24,7 +24,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmenu.h>
-#include <kmdcodec.h>
+#include <kcodecs.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
 
@@ -126,19 +126,19 @@ KActionMenu* ICQAccount::actionMenu()
 
 	actionMenu->popupMenu()->insertSeparator();
 
-	KToggleAction* actionInvisible =
+	/*	KToggleAction* actionInvisible =
 	    new KToggleAction( i18n( "In&visible" ),
 	                       ICQ::Presence( presence().type(), ICQ::Presence::Invisible ).toOnlineStatus().iconFor( this ),
 	                       0, this, SLOT( slotToggleInvisible() ), this );
 	actionInvisible->setChecked( presence().visibility() == ICQ::Presence::Invisible );
 	actionMenu->insert( actionInvisible );
-
+    
 	actionMenu->popupMenu()->insertSeparator();
 	actionMenu->insert( new KToggleAction( i18n( "Set Visibility..." ), 0, 0,
 	                                       this, SLOT( slotSetVisiblility() ), this,
 	                                       "ICQAccount::mActionSetVisibility") );
 	//actionMenu->insert( new KToggleAction( i18n( "Send &SMS..." ), 0, 0, this, SLOT( slotSendSMS() ), this, "ICQAccount::mActionSendSMS") );
-
+	*/
 	return actionMenu;
 }
 

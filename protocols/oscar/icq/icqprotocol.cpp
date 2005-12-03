@@ -23,7 +23,7 @@
 
 #include <netinet/in.h> // for ntohl()
 
-#include <q3combobox.h>
+#include <qcombobox.h>
 /*
 #include <qhostaddress.h>
 #include <qlistbox.h>
@@ -106,12 +106,11 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KURL & url) co
 	QString email = file.readEntry("Email");
 
 	Kopete::Account *account = 0;
-	Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(proto);
+	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts(proto);
 	// do not show chooser if we only have one account to "choose" from
 	if (accounts.count() == 1)
 	{
-		Q3DictIterator<Kopete::Account> it(accounts);
-		account = it.current();
+		account = accounts.first();
 		QString nickuin = nick.isEmpty() ?
 			i18n("'%1'").arg(uin) :
 			i18n("'%1' (%2)").arg(nick, uin);
@@ -656,7 +655,7 @@ void ICQProtocol::fillComboFromTable(QComboBox *box, const QMap<int, QString> &m
 
 	QStringList list = map.values();
 	list.sort();
-	box->insertStringList(list);
+	box->addItems(list);
 }
 
 void ICQProtocol::setComboFromTable(QComboBox *box, const QMap<int, QString> &map, int value)
@@ -664,14 +663,14 @@ void ICQProtocol::setComboFromTable(QComboBox *box, const QMap<int, QString> &ma
 //	kdDebug(14153) << k_funcinfo << "Called." << endl;
 	QMap<int, QString>::ConstIterator it;
 	it = map.find(value);
-	if (!(*it))
+	if ( it = map.end() )
 		return;
 
 	for(int i=0; i<box->count(); i++)
 	{
-		if((*it) == box->text(i))
+		if((*it) == box->itemText(i))
 		{
-			box->setCurrentItem(i);
+			box->setCurrentIndex(i);
 			return;
 		}
 	}
@@ -746,8 +745,7 @@ Kopete::Contact *ICQProtocol::deserializeContact( Kopete::MetaContact *metaConta
                                                   const QMap<QString, QString> &/*addressBookData*/ )
 {
 	QString accountId = serializedData["accountId"];
-	Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(this);
-	ICQAccount *account = static_cast<ICQAccount*>(accounts[accountId]);
+	Kopete::Account *account = Kopete::AccountManager::self()->findAccount( this->pluginId(), accountId );
 
 	if(!account)
 	{
@@ -779,7 +777,7 @@ Kopete::Contact *ICQProtocol::deserializeContact( Kopete::MetaContact *metaConta
 
 	Oscar::SSI item( ssiName, ssiGid, ssiBid, ssiType, Q3ValueList<TLV>(), 0 );
 	item.setWaitingAuth( ssiWaitingAuth );
-	ICQContact *c = new ICQContact( account, contactId, metaContact, QString::null, item );
+	ICQContact *c = new ICQContact( static_cast<ICQAccount*>(account), contactId, metaContact, QString::null, item );
 	return c;
 }
 

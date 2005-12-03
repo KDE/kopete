@@ -576,12 +576,12 @@ QList<KAction*> *ICQContact::customContextMenuActions()
 	{
 		actionReadAwayMessage = new KAction(awTxt, awIcn, 0,
 			this, SLOT(slotReadAwayMessage()), this, "actionReadAwayMessage");
-		*/
+		
 		actionRequestAuth = new KAction(i18n("&Request Authorization"), "mail_reply", 0,
 			this, SLOT(slotRequestAuth()), this, "actionRequestAuth");
 		actionSendAuth = new KAction(i18n("&Grant Authorization"), "mail_forward", 0,
 			this, SLOT(slotSendAuth()), this, "actionSendAuth");
-		/*
+		
 	}
 	else
 	{
@@ -589,7 +589,7 @@ QList<KAction*> *ICQContact::customContextMenuActions()
 		actionReadAwayMessage->setIconSet(SmallIconSet(awIcn));
 	}
 
-*/
+
 	m_actionIgnore = new KToggleAction(i18n("&Ignore"), "", 0,
 	                                   this, SLOT(slotIgnore()), this, "actionIgnore");
 	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), "", 0,
@@ -609,9 +609,8 @@ QList<KAction*> *ICQContact::customContextMenuActions()
     m_selectEncoding = new KAction( i18n( "Select Encoding..." ), "charset", 0,
                                     this, SLOT( changeContactEncoding() ), this, "changeEncoding" );
 
-/*
 	actionReadAwayMessage->setEnabled(status != OSCAR_OFFLINE && status != OSCAR_ONLINE);
-*/
+
 	m_actionIgnore->setEnabled(on);
 	m_actionVisibleTo->setEnabled(on);
 	m_actionInvisibleTo->setEnabled(on);
@@ -630,7 +629,7 @@ QList<KAction*> *ICQContact::customContextMenuActions()
 	actionCollection->append(m_actionInvisibleTo);
 
 //	actionCollection->append(actionReadAwayMessage);
-
+*/
 	return actionCollection;
 }
 
