@@ -225,6 +225,16 @@ signals:
 	void messageAppearanceChanged();
 	void contactListAppearanceChanged();
 	void transparencyChanged();
+	/**
+	 * Emitted when chat Window Style changed.
+	 * @param stylePath New stylePath
+	 */
+	void styleChanged(const QString &stylePath);
+	/**
+	 * Emitted when ChatWindowStyle variant changed.
+	 * @param variantPath New variant Path.
+	 */
+	void styleVariantChanged(const QString &variantPath);
 
 private:
 	/**
@@ -303,6 +313,8 @@ private:
 	//for Adium (xhtml+css)
 	QString mStylePath;
 	QString mStyleVariant;
+	bool mStylePathChanged;
+	bool mStyleVariantChanged;
 
 	QStringList mToolTipContents;
 

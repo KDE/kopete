@@ -172,6 +172,8 @@ void KopetePrefs::load()
 	mTransparencyChanged = false;
 	mContactListAppearanceChanged = false;
 	mMessageAppearanceChanged = false;
+	mStylePathChanged = false;
+	mStyleVariantChanged = false;
 }
 
 void KopetePrefs::save()
@@ -279,12 +281,20 @@ void KopetePrefs::save()
 	if(mMessageAppearanceChanged)
 		emit messageAppearanceChanged();
 
+	if(mStylePathChanged)
+		emit styleChanged(mStylePath);
+
+	if(mStyleVariantChanged)
+		emit styleVariantChanged(mStyleVariant);
+
 	// Clear all *Changed flags. This will cause breakage if someone makes some
 	// changes but doesn't save them in a slot connected to a *Changed signal.
 	mWindowAppearanceChanged = false;
 	mTransparencyChanged = false;
 	mContactListAppearanceChanged = false;
 	mMessageAppearanceChanged = false;
+	mStylePathChanged = false;
+	mStyleVariantChanged = false;
 }
 
 void KopetePrefs::setIconTheme(const QString &value)
@@ -462,6 +472,7 @@ void KopetePrefs::_setStyleSheet(const QString &value)
 
 void KopetePrefs::setStylePath(const QString &stylePath)
 {
+	if(mStylePath != stylePath) mStylePathChanged = true;
 	_setStylePath(stylePath);
 }
 
@@ -481,6 +492,7 @@ void KopetePrefs::_setStylePath(const QString &stylePath)
 
 void KopetePrefs::setStyleVariant(const QString &variantPath)
 {
+	if(mStyleVariant != variantPath) mStyleVariantChanged = true;
 	mStyleVariant = variantPath;
 }
 

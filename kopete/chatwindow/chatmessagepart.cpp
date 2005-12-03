@@ -65,9 +65,6 @@
 #include <kstandarddirs.h>
 #include <kiconloader.h>
 #include <kmdcodec.h>
-// TODO: Remove
-#include <kglobal.h>
-#include <kconfig.h>
 
 // Kopete includes
 #include "chatmemberslistwidget.h"
@@ -222,9 +219,6 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	setMetaRefreshEnabled( false );
 	setOnlyLocalReferences( true );
 
-#ifdef STYLE_TIMETEST
-	QTime beforeHeader = QTime::currentTime();
-#endif
 #ifdef KOPETE_XSLT
 	begin();
 	write( QString::fromLatin1( "<html><head>\n"
@@ -236,10 +230,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	// Write the template to KHTMLPart
 	writeTemplate();
 #endif
-#ifdef STYLE_TIMETEST
-	kdDebug(14000) << "Header time: " << beforeHeader.msecsTo( QTime::currentTime()) << endl;
-#endif
-	
+
 	view()->setFocusPolicy( QWidget::NoFocus );
 
 	d->tt=new ToolTip( this );
@@ -254,6 +245,10 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	         this, SLOT( slotAppearanceChanged() ) );
 	connect( KopetePrefs::prefs(), SIGNAL(windowAppearanceChanged()),
 	         this, SLOT( slotRefreshView() ) );
+	connect( KopetePrefs::prefs(), SIGNAL(styleChanged(const QString &)),
+			 this, SLOT( setStyle(const QString &) ) );
+	connect( KopetePrefs::prefs(), SIGNAL(styleVariantChanged(const QString &)),
+			 this, SLOT( setStyleVariant(const QString &) ) );
 
 	connect ( browserExtension(), SIGNAL( openURLRequestDelayed( const KURL &, const KParts::URLArgs & ) ),
 	          this, SLOT( slotOpenURLRequest( const KURL &, const KParts::URLArgs & ) ) );
@@ -296,7 +291,7 @@ void ChatMessagePart::slotScrollingTo( int /*x*/, int y )
 
 void ChatMessagePart::save()
 {
-	KFileDialog dlg( QString::null, QString::fromLatin1( "text/html text/xml text/plain" ), view(), "fileSaveDialog", false );
+	KFileDialog dlg( QString::null, QString::fromLatin1( "text/html text/plain" ), view(), "fileSaveDialog", false );
 	dlg.setCaption( i18n( "Save Conversation" ) );
 	dlg.setOperationMode( KFileDialog::Saving );
 
@@ -309,21 +304,20 @@ void ChatMessagePart::save()
 	QFile* file = tempFile.file();
 
 	QTextStream stream ( file );
-	if ( dlg.currentFilter() == QString::fromLatin1( "text/xml" ) )
+	stream.setEncoding(QTextStream::UnicodeUTF8);
+
+	if ( dlg.currentFilter() == QString::fromLatin1( "text/plain" ) )
 	{
-		stream << QString::fromLatin1( "<document>" );
-		stream << d->messageMap.join("\n");
-		stream << QString::fromLatin1( "</document>\n" );
-	}
-	else if ( dlg.currentFilter() == QString::fromLatin1( "text/plain" ) )
-	{
-		for( QStringList::Iterator it = d->messageMap.begin(); it != d->messageMap.end(); ++it)
+		QValueList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
+		for(it = d->allMessages.constBegin(); it != itEnd; ++it)
 		{
-			QDomDocument doc;
-			doc.setContent(*it);
-			stream << "[" << doc.elementsByTagName("message").item(0).toElement().attribute("formattedTimestamp");
-			stream << "] " << doc.elementsByTagName("contact").item(0).toElement().attribute("contactId") ;
-			stream << ": " << doc.elementsByTagName("body").item(0).toElement().text() << "\n";
+			Kopete::Message tempMessage = *it;
+			stream << "[" << KGlobal::locale()->formatDateTime(tempMessage.timestamp()) << "] ";
+			if( tempMessage.from() && tempMessage.from()->metaContact() )
+			{
+				stream << formatName(tempMessage.from()->metaContact()->displayName());
+			}
+			stream << ": " << tempMessage.plainBody() << "\n";
 		}
 	}
 	else
@@ -414,9 +408,7 @@ void ChatMessagePart::setStyleVariant( const QString &variantPath )
 void ChatMessagePart::slotAppearanceChanged()
 {
 	readOverrides();
-
-	d->xsltParser->setXSLT( KopetePrefs::prefs()->styleContents() );
-	slotRefreshNodes();
+	changeStyle();
 }
 
 void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
@@ -1121,6 +1113,9 @@ QString ChatMessagePart::formatName(const QString &sourceName)
 
 void ChatMessagePart::changeStyle()
 {
+#ifdef STYLE_TIMETEST
+	QTime beforeChange = QTime::currentTime();
+#endif
 	// Rewrite the header and footer.
 	writeTemplate();
 	
@@ -1132,10 +1127,16 @@ void ChatMessagePart::changeStyle()
 		appendMessage(tempMessage, true); // true means that we are restoring.
 	}
 	kdDebug(14000) << k_funcinfo << "Finish changing style." << endl;
+#ifdef STYLE_TIMETEST
+	kdDebug(14000) << "Change time: " << beforeChange.msecsTo( QTime::currentTime()) << endl;
+#endif
 }
 
 void ChatMessagePart::writeTemplate()
 {
+#ifdef STYLE_TIMETEST
+	QTime beforeHeader = QTime::currentTime();
+#endif
 	// Clear all the page, and begin a new page.
 	begin();
 
@@ -1179,6 +1180,9 @@ void ChatMessagePart::writeTemplate()
 		.arg( styleHTML() );
 	write(xhtmlBase);
 	end();
+#ifdef STYLE_TIMETEST
+	kdDebug(14000) << "Header time: " << beforeHeader.msecsTo( QTime::currentTime()) << endl;
+#endif
 }
 
 #include "chatmessagepart.moc"
