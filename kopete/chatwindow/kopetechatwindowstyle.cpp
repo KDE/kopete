@@ -70,6 +70,7 @@ void ChatWindowStyle::init(const QString &stylePath, int styleBuildMode)
 
 ChatWindowStyle::~ChatWindowStyle()
 {
+	kdDebug(14000) << k_funcinfo << endl;
 	delete d;
 }
 

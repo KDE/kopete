@@ -86,9 +86,31 @@
 
 #include "kopetechatwindowstyle.h"
 
+class ToolTip;
+
 class ChatMessagePart::Private
 {
 public:
+	Private() 
+	 : tt(0L), manager(0L), messageId(0), scrollPressed(false), bgChanged(false),
+	   backgroundFile(0L), root(0L), copyAction(0L), saveAction(0L), printAction(0L),
+	   closeAction(0L),copyURLAction(0L), currentChatStyle(0L), latestContact(0L)
+	{}
+	
+	~Private()
+	{
+		delete xsltParser;
+		// Don't delete manager and latestContact, because they could be still used.
+		delete currentChatStyle;
+
+		if( backgroundFile )
+		{
+			backgroundFile->close();
+			backgroundFile->unlink();
+			delete backgroundFile;
+		}
+	}
+
 	Kopete::XSLT *xsltParser;
 	bool transparencyEnabled;
 	bool bgOverride;
@@ -188,18 +210,10 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	d->xsltParser = new Kopete::XSLT( KopetePrefs::prefs()->styleContents() );
 	d->transformAllMessages = ( d->xsltParser->flags() & Kopete::XSLT::TransformAllMessages );
 
-	d->backgroundFile = 0;
-	d->root = 0;
-	d->messageId = 0;
-	d->bgChanged = false;
-	d->scrollPressed = false;
-
 #ifndef KOPETE_XSLT
-
 	KopetePrefs *kopetePrefs = KopetePrefs::prefs();
 
 	d->currentChatStyle = new ChatWindowStyle(kopetePrefs->stylePath(), ChatWindowStyle::StyleBuildFast);
-
 #endif
 	//Security settings, we don't need this stuff
 	setJScriptEnabled( true ) ;
@@ -226,7 +240,6 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	kdDebug(14000) << "Header time: " << beforeHeader.msecsTo( QTime::currentTime()) << endl;
 #endif
 	
-
 	view()->setFocusPolicy( QWidget::NoFocus );
 
 	d->tt=new ToolTip( this );
@@ -267,15 +280,8 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 
 ChatMessagePart::~ChatMessagePart()
 {
-	if( d->backgroundFile )
-	{
-		d->backgroundFile->close();
-		d->backgroundFile->unlink();
-		delete d->backgroundFile;
-	}
-
+	kdDebug(14000) << k_funcinfo << endl;
 	delete d->tt;
-	delete d->xsltParser;
 	delete d;
 }
 
@@ -939,14 +945,15 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	
 	if( message.from() )
 	{
-		// TODO: Maybe using metaContact()->displayName(), this should be configurable.
-		nick = message.from()->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
+		// Use metaContact()->displayName(), so it's configurable by contact.
+		nick = message.from()->metaContact()->displayName();
 		contactId = message.from()->contactId();
 		// protocol() returns NULL here in the style preview in appearance config.
 		// this isn't the right place to work around it, since contacts should never have
 		// no protocol, but it works for now.
 		//
 		// Use default if protocol() and protocol()->displayName() is NULL.
+		// For preview and unit tests.
 		QString iconName = QString::fromUtf8("kopete");
 		service = QString::fromUtf8("Kopete");
 		if(message.from()->protocol() && !message.from()->protocol()->displayName().isNull())
@@ -958,8 +965,6 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 		protocolIcon = KGlobal::iconLoader()->iconPath( iconName, KIcon::Small );
 	}
 	
-	// Replace messages.
-	resultHTML = resultHTML.replace( QString::fromUtf8("%message%"), messageBody );
 	// Replace sender (contact nick)
 	resultHTML = resultHTML.replace( QString::fromUtf8("%sender%"), Kopete::Message::escape(nick) );
 	// Replace time
@@ -1008,6 +1013,10 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 		}
 #endif
 	}
+
+	// Replace messages.
+	// Replace message at the end, maybe someone could put a Adium keyword in his message :P
+	resultHTML = resultHTML.replace( QString::fromUtf8("%message%"), messageBody );
 
 	// TODO: %status, %textbackgroundcolor{X}%
 	resultHTML = addNickLinks( resultHTML );
