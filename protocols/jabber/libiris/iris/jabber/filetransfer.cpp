@@ -143,7 +143,8 @@ void FileTransfer::writeFileData(const QByteArray &a)
 
 	QByteArray block;
 	if((qlonglong)a.size() > left) {
-		block = a.copy();
+		block = a;
+		//block = a.copy();
 		block.resize((uint)left);
 	}
 	else

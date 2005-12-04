@@ -2396,7 +2396,7 @@ bool JT_PushS5B::take(const QDomElement &e)
 
 	StreamHostList hosts;
 	QDomNodeList nl = q.elementsByTagName("streamhost");
-	for(uint n = 0; n < nl.count(); ++n) {
+	for(int n = 0; n < nl.count(); ++n) {
 		QDomElement shost = nl.item(n).toElement();
 		if(hosts.count() < MAXSTREAMHOSTS) {
 			Jid j = shost.attribute("jid");
