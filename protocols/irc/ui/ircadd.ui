@@ -122,7 +122,7 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QHBox">
+                    <widget class="Q3HBox">
                         <property name="name">
                             <cstring>hbox</cstring>
                         </property>
@@ -134,8 +134,8 @@
 </widget>
 <customwidgets>
     <customwidget>
-        <class>QHBox</class>
-        <header>qhbox.h</header>
+        <class>Q3HBox</class>
+        <header>q3hbox.h</header>
         <sizehint>
             <width>-1</width>
             <height>-1</height>
