@@ -24,7 +24,7 @@
 #include <qstring.h>
 //Added by qt3to4:
 #include <QByteArray>
-
+#include <Q3ValueList>
 #include "gwclientstream.h"
 #include "gwerror.h"
 #include "rtf2html.h"
@@ -212,7 +212,7 @@ fd		 * @param password
 		/**
 		 * Obtain the list of custom statuses stored on the server 
 		 */
-		QValueList<GroupWise::CustomStatus> customStatuses();
+		Q3ValueList<GroupWise::CustomStatus> customStatuses();
 
 		/**
 		 * Get a reference to the RequestFactory for this Client. 

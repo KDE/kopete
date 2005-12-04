@@ -62,7 +62,7 @@ public:
 	UserDetailsManager * userDetailsMgr;
 	PrivacyManager * privacyMgr;
 	uint protocolVersion;
-	QValueList<GroupWise::CustomStatus> customStatuses;
+	Q3ValueList<GroupWise::CustomStatus> customStatuses;
 };
 
 Client::Client(QObject *par, uint protocolVersion )
@@ -177,7 +177,7 @@ int Client::port()
 	return d->port;
 }
 
-QValueList<GroupWise::CustomStatus> Client::customStatuses()
+Q3ValueList<GroupWise::CustomStatus> Client::customStatuses()
 {
 	return d->customStatuses;
 }

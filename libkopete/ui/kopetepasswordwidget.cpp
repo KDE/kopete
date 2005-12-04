@@ -25,7 +25,7 @@
 class Kopete::UI::PasswordWidget::Private
 {
 public:
-	uint maxLength;
+	int maxLength;
 };
 
 Kopete::UI::PasswordWidget::PasswordWidget( QWidget *parent, const char *name, Kopete::Password *from )

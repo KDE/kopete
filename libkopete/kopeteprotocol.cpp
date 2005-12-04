@@ -263,7 +263,7 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 		serializedDataIterators[ it.key() ] = serializedData[ it.key() ].begin();
 	}
 
-	uint count = serializedData[QString::fromLatin1("contactId")].count();
+	int count = serializedData[QString::fromLatin1("contactId")].count();
 
 	// Prepare the independent entries to pass to the plugin's implementation
 	for( int i = 0; i < count ; i++ )

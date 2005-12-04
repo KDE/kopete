@@ -27,7 +27,7 @@ extern guchar _col_zag[64];
  */
 gboolean _vlc_decode_block(MimCtx *ctx, gint *block, gint num_coeffs)
 {
-    guint pos;
+    gint pos;
 
     memset(block, 0, 64 * sizeof(gint));
 
