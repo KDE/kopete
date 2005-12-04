@@ -78,7 +78,7 @@ class KOPETE_EXPORT KopeteView
 		 *
 		 * The default implementation just call @ref appendMessage() X times
 		 */
-		virtual void appendMessages( Q3ValueList<Kopete::Message> );
+		virtual void appendMessages( QList<Kopete::Message> );
 
 		/**
 		 * @brief Raises the view above other windows

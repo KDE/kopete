@@ -716,8 +716,8 @@ void DisplayNameComponent::redraw()
 		((TextComponent*)component(n))->color();
 	}
 	
-	Q3ValueList<Kopete::Emoticons::Token> tokens;
-	Q3ValueList<Kopete::Emoticons::Token>::const_iterator token;
+	QList<Kopete::Emoticons::Token> tokens;
+	QList<Kopete::Emoticons::Token>::const_iterator token;
 	
 	clear(); // clear childs
 
