@@ -733,7 +733,7 @@ bool JT_PushFT::take(const QDomElement &e)
 			QDomElement field = x.elementsByTagName("field").item(0).toElement();
 			if(!field.isNull() && field.attribute("var") == "stream-method" && field.attribute("type") == "list-single") {
 				QDomNodeList nl = field.elementsByTagName("option");
-				for(uint n = 0; n < nl.count(); ++n) {
+				for(int n = 0; n < nl.count(); ++n) {
 					QDomElement e = nl.item(n).toElement();
 					QDomElement value = e.elementsByTagName("value").item(0).toElement();
 					if(!value.isNull())
