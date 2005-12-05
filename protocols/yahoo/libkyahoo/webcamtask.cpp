@@ -487,7 +487,6 @@ void WebcamTask::cleanUpConnection( KStreamSocket *socket )
 		delete info->buffer;
 	socketMap.remove( socket );
 	delete socket;	
-	info->buffer = 0;
 }
 
 void WebcamTask::closeWebcam( const QString & who )

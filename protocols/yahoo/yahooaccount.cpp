@@ -1197,7 +1197,7 @@ void YahooAccount::slotWebcamStopTransmission()
 void YahooAccount::slotOutgoingWebcamClosing()
 {
 	m_session->closeOutgoingWebcam();
-	delete m_webcam;
+	m_webcam->deleteLater();
 	m_webcam = 0L;
 }
 

@@ -60,6 +60,13 @@ void YahooWebcam::startTransmission()
 	m_timer->start( 1000 );
 }
 
+void YahooWebcam::webcamDialogClosing()
+{
+	m_timer->stop();
+	theDialog->delayedDestruct();
+	emit webcamClosing();
+}
+
 void YahooWebcam::sendImage()
 {
 	kdDebug(14180) << k_funcinfo << endl;
@@ -72,7 +79,7 @@ void YahooWebcam::sendImage()
 	if( !theDialog )
 	{
 		theDialog = new YahooWebcamDialog( "YahooWebcam" );
-		connect( theDialog, SIGNAL(closingWebcamDialog()), SIGNAL(webcamClosing()) );
+		connect( theDialog, SIGNAL(closingWebcamDialog()), this, SLOT(webcamDialogClosing()) );
 	}
 	
 	KTempFile origImg;

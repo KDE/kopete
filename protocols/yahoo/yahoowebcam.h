@@ -32,6 +32,7 @@ public slots:
 	void startTransmission();
 	void stopTransmission();
 	void sendImage();
+	void webcamDialogClosing();
 signals:
 	void webcamClosing();
 private:
