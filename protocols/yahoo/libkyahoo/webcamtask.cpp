@@ -529,7 +529,7 @@ void WebcamTask::addPendingInvitation( const QString &userId )
 void WebcamTask::closeOutgoingWebcam()
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	KStreamSocket *socket;
+	KStreamSocket *socket = 0L;
 	SocketInfoMap::Iterator it;
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
 	{
@@ -552,6 +552,7 @@ void WebcamTask::sendEmptyWebcamImage()
 {
 	kdDebug(14181) << k_funcinfo << endl;
 
+	KStreamSocket *socket = 0L;
 	SocketInfoMap::Iterator it;
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
 	{
@@ -572,7 +573,6 @@ void WebcamTask::sendEmptyWebcamImage()
 	pictureBuffer.resize( 0 );
 	transmissionPending = true;
 
-	KStreamSocket *socket;
 	QTimer::singleShot( 1000, this, SLOT(sendEmptyWebcamImage()) );
 
 }
