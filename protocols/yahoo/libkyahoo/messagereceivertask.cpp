@@ -130,7 +130,9 @@ void MessageReceiverTask::parseNotify( Transfer *transfer )
 			emit gotWebcamInvite( from );
 		}
 		else
+		{
 			kdDebug(14181) << k_funcinfo << "Got a WebcamRequest-Response: " << ind.toInt() << endl;
+		}
 	}
 }
 

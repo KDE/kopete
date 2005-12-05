@@ -21,12 +21,9 @@
 #include <qwidget.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include "yahoocontact.h"
 
-
-
-YahooWebcamDialog::YahooWebcamDialog( YahooContact* contact, QWidget * parent, const char * name )
-	: KDialogBase( KDialogBase::Plain, i18n( "Webcam for %1" ).arg( contact->nickName() ),
+YahooWebcamDialog::YahooWebcamDialog( const QString &contactId, QWidget * parent, const char * name )
+: KDialogBase( KDialogBase::Plain, i18n( "Webcam for %1" ).arg( contactId ),
                    KDialogBase::Close, KDialogBase::Close, parent, name, false, true /*seperator*/ ),
 	m_imageContainer( this )
 {
@@ -41,7 +38,7 @@ YahooWebcamDialog::YahooWebcamDialog( YahooContact* contact, QWidget * parent, c
 	/*
 	QObject::connect( contact, SIGNAL( webcamClosed( int ) ), this, SLOT( webcamClosed( int ) ) );
 	*/
-	contactName = contact->contactId();
+	contactName = contactId;
 	
 	QFrame* page = plainPage();
 	if ( page )

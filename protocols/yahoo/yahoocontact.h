@@ -72,6 +72,7 @@ public slots:
 	virtual void sendFile( const KURL &sourceURL = KURL(), const QString &fileName = QString::null, uint fileSize = 0L );
 	void stealthContact();
 	void requestWebcam();
+	void inviteWebcam();
 	void buzzContact();
 	void setDisplayPicture(KTempFile *f, int checksum);
 	void sendBuddyIconInfo( const QString &url, int checksum );
@@ -115,6 +116,7 @@ private:
 	
 	//webcam handling
 	KAction* m_webcamAction;
+	KAction* m_inviteWebcamAction;
 	YahooWebcamDialog* m_webcamDialog;
 	
 	//buzz

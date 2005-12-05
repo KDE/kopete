@@ -207,6 +207,14 @@ void Client::sendTyping( const QString &who, int typ)
 	snt->go( true );
 }
 
+void Client::sendWebcamInvite( const QString &who )
+{
+	if( !d->webcamTask->transmitting() )
+		d->webcamTask->registerWebcam();
+
+	d->webcamTask->addPendingInvitation( who );
+}
+
 void Client::sendMessage( const QString &to, const QString &msg )
 {
 	SendMessageTask *smt = new SendMessageTask( d->root );
@@ -356,6 +364,17 @@ void Client::closeWebcam( const QString &userId )
 	d->webcamTask->closeWebcam( userId );
 }
 
+void Client::sendWebcamImage( const QByteArray &ar, int length, int timestamp )
+{
+	d->webcamTask->sendWebcamImage( ar, length, timestamp );
+}
+
+void Client::closeOutgoingWebcam()
+{
+	d->webcamTask->closeOutgoingWebcam();
+}
+
+// ***** other *****
 void Client::notifyError( const QString & error )
 {
 	kdDebug(14181) << k_funcinfo << "The Server returned the following error: " << error << endl;
@@ -517,6 +536,10 @@ void Client::initTasks()
 				SIGNAL( webcamClosed( const QString &, int ) ) );
 	QObject::connect( d->webcamTask, SIGNAL( webcamPaused(const QString&) ),
 				SIGNAL( webcamPaused(const QString&) ) );
+	QObject::connect( d->webcamTask, SIGNAL( readyForTransmission() ),
+				SIGNAL( webcamReadyForTransmission() ) );
+	QObject::connect( d->webcamTask, SIGNAL( stopTransmission() ),
+				SIGNAL( webcamStopTransmission() ) );
 }
 
 void Client::deleteTasks()

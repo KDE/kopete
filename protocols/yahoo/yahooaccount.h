@@ -39,6 +39,7 @@ class KActionMenu;
 class YahooContact;
 class YahooAccount;
 class YahooProtocol;
+class YahooWebcam;
 class KTempFile;
 class QTimer;
 struct KURL;
@@ -195,6 +196,9 @@ protected slots:
 	//void slotHostConnect(const QString &host, int port);
 	void slotGotWebcamInvite(const QString &);
 	void slotGotWebcamImage(const QString&, const QPixmap&);
+	void slotWebcamReadyForTransmission();
+	void slotWebcamStopTransmission();
+	void slotOutgoingWebcamClosing();
 	void slotWebcamClosed(const QString&, int);
 	void slotWebcamPaused(const QString&);
 	void slotPictureStatusNotiy( const QString&, int);
@@ -248,6 +252,7 @@ private:
 	int m_pictureFlag;			// Describes if we send a buddy icon or not
 	YahooProtocol *m_protocol;	// The Protocol Object
 
+	YahooWebcam *m_webcam;
 
 	YahooAwayDialog *theAwayDialog;	// Our away message dialog
 

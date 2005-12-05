@@ -20,6 +20,7 @@
 #include "task.h"
 #include <qmap.h>
 #include <qpixmap.h>
+#include <qstringlist.h>
 
 class QString;
 class QBuffer;
@@ -28,8 +29,9 @@ namespace KNetwork {
 }
 using namespace KNetwork;
 
-enum ConnectionStatus{ InitialStatus, ConnectedStage1, ConnectedStage2, Receiving };
-enum PacketType { Image = 0x02, ConnectionClosed = 0x07 }; 
+enum ConnectionStatus{ InitialStatus, ConnectedStage1, ConnectedStage2, Receiving, Sending, SendingEmpty };
+enum PacketType { Image, ConnectionClosed, UserRequest, NewWatcher, WatcherLeft };
+enum Direction { Incoming, Outgoing };
 
 struct YahooWebcamInformation
 {
@@ -38,6 +40,7 @@ struct YahooWebcamInformation
 	QString		key;
 	ConnectionStatus status;
 	PacketType	type;
+	Direction	direction;
 	uchar		reason;
 	Q_INT32		dataLength;
 	Q_INT32		timestamp;
@@ -59,22 +62,33 @@ public:
 	
 	bool take(Transfer *transfer);
 	bool forMe( Transfer* transfer ) const;
+
+	bool transmitting() { return transmittingData; }
 	
 	void requestWebcam( const QString &who );
 	void closeWebcam( const QString &who );
+	
+	void registerWebcam();
+	void sendWebcamImage( const QByteArray &image, int length, int timestamp );
+	void addPendingInvitation( const QString &userId );
+	void closeOutgoingWebcam();
 signals:
 	void webcamNotAvailable( const QString & );
 	void webcamClosed( const QString &, int );
 	void webcamPaused( const QString& );
 	void webcamImageReceived( const QString &, const QPixmap &);
+	void readyForTransmission();
+	void stopTransmission();
 private slots:
 	void slotConnectionStage1Established();
 	void slotConnectionStage2Established();
 	void slotConnectionFailed(int);
 	void slotRead();
-
+	void sendEmptyWebcamImage();
+	void transmitWebcamImage();
 private:
 	void parseWebcamInformation( Transfer *transfer );
+	void parseData( QByteArray &data, KStreamSocket *socket );
 
 	void connectStage2( KStreamSocket *socket );
 	void processData( KStreamSocket *socket );
@@ -82,6 +96,11 @@ private:
 
 	QString keyPending;	// the buddy we have requested the webcam from
 	SocketInfoMap socketMap;
+	bool transmittingData;
+	QStringList pendingInvitations;
+	int timestamp;
+	QByteArray pictureBuffer;
+	bool transmissionPending;
 };
 
 #endif

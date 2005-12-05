@@ -17,6 +17,7 @@
 #ifndef YAHOOWEBCAMDIALOG_H_
 #define YAHOOWEBCAMDIALOG_H_
 
+#include <qstring.h>
 #include <qlabel.h>
 #include <kdialogbase.h>
 
@@ -29,7 +30,7 @@ class YahooWebcamDialog : public KDialogBase
 {
 Q_OBJECT
 public:
-	YahooWebcamDialog( YahooContact*, QWidget* parent = 0, const char* name = 0 );
+	YahooWebcamDialog( const QString &, QWidget* parent = 0, const char* name = 0 );
 	~YahooWebcamDialog();
 	
 public slots:

@@ -162,6 +162,13 @@ Q_OBJECT
 		 * Stop receiving of webcam
 		 */
 		void closeWebcam( const QString &userId );
+
+		/**
+		 * Invite the user to view your Webcam
+		 */
+		void sendWebcamInvite( const QString &userId );
+		void sendWebcamImage( const QByteArray &image, int length, int timestamp );
+		void closeOutgoingWebcam();
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -325,9 +332,17 @@ Q_OBJECT
 		 */
 		void webcamClosed( const QString &, int );
 		/**
-		 * The webcamtranmission is paused
+		 * The webcamtransmission is paused
 		 */
 		void webcamPaused(const QString&);
+		/**
+		 * The webcam connection is ready for transmission
+		 */
+		void webcamReadyForTransmission();
+		/**
+		 * The webcam should stop sending images
+		 */
+		void webcamStopTransmission();
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();

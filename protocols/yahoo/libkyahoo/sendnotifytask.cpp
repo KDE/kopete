@@ -37,14 +37,17 @@ void SendNotifyTask::onGo()
 	t->setStatus( Yahoo::StatusNotify );
 	t->setParam( 4, client()->userId());
 	t->setParam( 5, m_target );
-	t->setParam( 13, m_state );
 	t->setParam( 14, QString::fromLatin1(" ") );	
 	switch( m_type )
 	{
 	case NotifyTyping:
+		t->setParam( 13, m_state );
 		t->setParam( 49, QString::fromLatin1("TYPING") );
 	break;
 	case NotifyWebcamInvite:
+		t->setParam( 13, 0 );
+		t->setParam( 49, QString::fromLatin1("WEBCAMINVITE") );		
+	break;
 	case NotifyGame:
 	default:
 		setSuccess( false );

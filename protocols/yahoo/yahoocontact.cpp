@@ -80,6 +80,7 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 	m_webcamDialog = 0L;
 	m_webcamAction = 0L;
 	m_stealthAction = 0L;
+	m_inviteWebcamAction = 0L;
 
 	m_buzzAction = 0L;
 }
@@ -358,6 +359,17 @@ QPtrList<KAction> *YahooContact::customContextMenuActions()
 		m_webcamAction->setEnabled( false );
 	actionCollection->append( m_webcamAction );
 	
+	if( !m_inviteWebcamAction )
+	{
+		m_inviteWebcamAction = new KAction( i18n( "Invite to view your Webcam" ), "camera_unmount", KShortcut(),
+		                                    this, SLOT( inviteWebcam() ), this, "invite_webcam" );
+	}
+	if ( isReachable() )
+		m_inviteWebcamAction->setEnabled( true );
+	else
+		m_inviteWebcamAction->setEnabled( false );
+	actionCollection->append( m_inviteWebcamAction );
+	
 	if ( !m_buzzAction )
 	{
 		m_buzzAction = new KAction( i18n( "&Buzz Contact" ), KShortcut(), this, SLOT( buzzContact() ), this, "buzz_contact");
@@ -481,6 +493,11 @@ void YahooContact::slotEmitDisplayPictureChanged()
 	emit displayPictureChanged();
 }
 
+void YahooContact::inviteWebcam()
+{
+	m_account->yahooSession()->sendWebcamInvite( m_userId );
+}
+
 void YahooContact::receivedWebcamImage( const QPixmap& image )
 {
 	if( !m_webcamDialog )
@@ -506,7 +523,7 @@ void YahooContact::initWebcamViewer()
 	
 	if ( !m_webcamDialog )
 	{
-		m_webcamDialog = new YahooWebcamDialog( this, Kopete::UI::Global::mainWidget() );
+		m_webcamDialog = new YahooWebcamDialog( userId(), Kopete::UI::Global::mainWidget() );
 // 		QObject::connect( m_webcamDialog, SIGNAL( closeClicked() ), this, SLOT( closeWebcamDialog() ) );
 	
 		QObject::connect( this, SIGNAL( signalWebcamClosed( int ) ),

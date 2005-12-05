@@ -57,6 +57,7 @@
 #include "yahooclientstream.h"
 #include "client.h"
 #include "yahooverifyaccount.h"
+#include "yahoowebcam.h"
 
 YahooAwayDialog::YahooAwayDialog(YahooAccount* account, QWidget *parent, const char *name) :
 	KopeteAwayDialog(parent, name)
@@ -83,6 +84,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	m_lastDisconnectCode = 0;
 	m_currentMailCount = 0;
 	m_pictureFlag = 0;
+	m_webcam = 0L;
 	m_waitingForResponse = false;
 	m_keepaliveTimer = new QTimer( this, "keepaliveTimer" );
 	
@@ -288,7 +290,11 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(webcamClosed(const QString&, int )), this, SLOT(slotWebcamClosed(const QString&, int )));
 		
 		QObject::connect(m_session, SIGNAL(webcamPaused(const QString&)), this, SLOT(slotWebcamPaused(const QString&)));
-
+		
+		QObject::connect(m_session, SIGNAL(webcamReadyForTransmission()), this, SLOT(slotWebcamReadyForTransmission()));
+		
+		QObject::connect(m_session, SIGNAL(webcamStopTransmission()), this, SLOT(slotWebcamStopTransmission()));
+		
 		QObject::connect(m_session, SIGNAL(pictureStatusNotify( const QString&, int )), SLOT(slotPictureStatusNotiy( const QString&, int)));
 		
 		QObject::connect(m_session, SIGNAL(pictureDownloaded(const QString&, KTempFile*, int)), this, SLOT(slotGotBuddyIcon(const QString&, KTempFile*, int)) );
@@ -381,6 +387,10 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::disconnect(m_session, SIGNAL(webcamClosed(const QString&, int )), this, SLOT(slotWebcamClosed(const QString&, int )));
 		
 		QObject::disconnect(m_session, SIGNAL(webcamPaused(const QString&)), this, SLOT(slotWebcamPaused(const QString&)));
+		
+		QObject::disconnect(m_session, SIGNAL(webcamReadyForTransmission()), this, SLOT(slotWebcamReadyForTransmission()));
+		
+		QObject::disconnect(m_session, SIGNAL(webcamStopTransmission()), this, SLOT(slotWebcamStopTransmission()));
 		
 		QObject::disconnect(m_session, SIGNAL(pictureDownloaded(const QString&, KTempFile*, int )), this, SLOT(slotGotBuddyIcon(const QString&, KTempFile*,int )));
 
@@ -1160,6 +1170,35 @@ void YahooAccount::slotBuddyIconChanged( const QString &url )
 // 		static_cast< YahooContact* >( it.current() )->sendBuddyIconChecksum( checksum );
 // 		static_cast< YahooContact* >( it.current() )->sendBuddyIconUpdate( pictureFlag() );
 // 	}
+}
+
+void YahooAccount::slotWebcamReadyForTransmission()
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	if( !m_webcam )
+	{
+		m_webcam = new YahooWebcam( this );
+		QObject::connect( m_webcam, SIGNAL(webcamClosing()), this, SLOT(slotOutgoingWebcamClosing()) );
+	}
+	
+	m_webcam->startTransmission();
+}
+
+void YahooAccount::slotWebcamStopTransmission()
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	
+	if( m_webcam )
+	{
+		m_webcam->stopTransmission();
+	}
+}
+
+void YahooAccount::slotOutgoingWebcamClosing()
+{
+	m_session->closeOutgoingWebcam();
+	delete m_webcam;
+	m_webcam = 0L;
 }
 
 void YahooAccount::slotWebcamClosed( const QString& who, int reason )
