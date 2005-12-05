@@ -46,8 +46,6 @@ YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0, "yahoo_webcam" )
 YahooWebcam::~YahooWebcam()
 {
 	delete m_timer;
-	if( theDialog )
-		delete theDialog;
 }
 
 void YahooWebcam::stopTransmission()
@@ -65,6 +63,9 @@ void YahooWebcam::webcamDialogClosing()
 	m_timer->stop();
 	theDialog->delayedDestruct();
 	emit webcamClosing();
+	Kopete::AV::VideoDevicePool *videoDevice = Kopete::AV::VideoDevicePool::self(); 
+	videoDevice->stopCapturing(); 
+	videoDevice->close();
 }
 
 void YahooWebcam::sendImage()

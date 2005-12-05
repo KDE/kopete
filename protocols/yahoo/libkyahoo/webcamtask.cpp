@@ -545,6 +545,7 @@ void WebcamTask::closeOutgoingWebcam()
 	}
 	
 	cleanUpConnection( socket );
+	transmittingData = false;
 }
 
 void WebcamTask::sendEmptyWebcamImage()
