@@ -567,7 +567,7 @@ void WebcamTask::sendEmptyWebcamImage()
 		kdDebug(14181) << k_funcinfo << "Error. No outgoing socket found." << endl;
 		return;
 	}
-	if( !socketMap[socket].status == SendingEmpty )
+	if( socketMap[socket].status != SendingEmpty )
 		return;	
 
 	pictureBuffer.resize( 0 );
