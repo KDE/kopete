@@ -1178,30 +1178,29 @@ void ChatMessagePart::writeTemplate()
 		"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n"
 		"\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n"
 		"<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
-		"<head>\n"
-		"<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\n\" />\n"
-		"<base href=\"%1\">\n").arg( d->currentChatStyle->getStyleBaseHref());
-#ifdef KOPETE_XSLT
-	xhtmlBase += QString("<style id=\"KopeteStyle\" type=\"text/css\" media=\"screen,print\">\n"
-		"	%1\n"
-		"</style>\n").arg( styleHTML() );
-#endif
-
-	xhtmlBase += QString("<style id=\"baseStyle\" type=\"text/css\" media=\"screen,print\">\n"
+    	"<head>\n"
+        "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\n\" />\n"
+        "<base href=\"%1\">\n"
+		"<style id=\"KopeteStyle\" type=\"text/css\" media=\"screen,print\">\n"
+		"	%5\n"
+		"</style>\n"
+		"<style id=\"baseStyle\" type=\"text/css\" media=\"screen,print\">\n"
 		"	@import url(\"main.css\");\n"
 		"	*{ word-wrap:break-word; }\n"
 		"</style>\n"
 		"<style id=\"mainStyle\" type=\"text/css\" media=\"screen,print\">\n"
-		"	@import url(\"%3\");\n"
-        	"</style>\n"
+		"	@import url(\"%4\");\n"
+        "</style>\n"
 		"</head>\n"
 		"<body>\n"
-		"%1\n"
-		"<div id=\"Chat\">\n"
 		"%2\n"
-		).arg( formatStyleKeywords(d->currentChatStyle->getHeaderHtml()) )
+		"<div id=\"Chat\">\n"
+		"%3\n"
+		).arg( d->currentChatStyle->getStyleBaseHref() )
+		.arg( formatStyleKeywords(d->currentChatStyle->getHeaderHtml()) )
 		.arg( formatStyleKeywords(d->currentChatStyle->getFooterHtml()) )
-		.arg( KopetePrefs::prefs()->styleVariant() );
+		.arg( KopetePrefs::prefs()->styleVariant() )
+		.arg( styleHTML() );
 	write(xhtmlBase);
 	end();
 #ifdef STYLE_TIMETEST
