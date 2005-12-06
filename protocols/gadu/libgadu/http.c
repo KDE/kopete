@@ -44,17 +44,17 @@
 /*
  * gg_http_connect() // funkcja pomocnicza
  *
- * rozpoczyna po³±czenie po http.
+ * rozpoczyna poÅ‚Ä…czenie po http.
  *
  *  - hostname - adres serwera
  *  - port - port serwera
- *  - async - asynchroniczne po³±czenie
+ *  - async - asynchroniczne poÅ‚Ä…czenie
  *  - method - metoda http (GET, POST, cokolwiek)
- *  - path - ¶cie¿ka do zasobu (musi byæ poprzedzona ,,/'')
- *  - header - nag³ówek zapytania plus ewentualne dane dla POST
+ *  - path - Å›cieÅ¼ka do zasobu (musi byÄ‡ poprzedzona ,,/'')
+ *  - header - nagÅ‚Ã³wek zapytania plus ewentualne dane dla POST
  *
- * zaalokowana struct gg_http, któr± po¼niej nale¿y
- * zwolniæ funkcj± gg_http_free(), albo NULL je¶li wyst±pi³ b³±d.
+ * zaalokowana struct gg_http, ktÃ³rÄ… poÅºniej naleÅ¼y
+ * zwolniÄ‡ funkcjÄ… gg_http_free(), albo NULL jeÅ›li wystÄ…piÅ‚ bÅ‚Ä…d.
  */
 struct gg_http *gg_http_connect(const char *hostname, int port, int async, const char *method, const char *path, const char *header)
 {
@@ -166,14 +166,14 @@ struct gg_http *gg_http_connect(const char *hostname, int port, int async, const
 /*
  * gg_http_watch_fd()
  *
- * przy asynchronicznej obs³udze HTTP funkcjê t± nale¿y wywo³aæ, je¶li
- * zmieni³o siê co¶ na obserwowanym deskryptorze.
+ * przy asynchronicznej obsÅ‚udze HTTP funkcjÄ™ tÄ… naleÅ¼y wywoÅ‚aÄ‡, jeÅ›li
+ * zmieniÅ‚o siÄ™ coÅ› na obserwowanym deskryptorze.
  *
- *  - h - struktura opisuj±ca po³±czenie
+ *  - h - struktura opisujÄ…ca poÅ‚Ä…czenie
  *
- * je¶li wszystko posz³o dobrze to 0, inaczej -1. po³±czenie bêdzie
- * zakoñczone, je¶li h->state == GG_STATE_PARSING. je¶li wyst±pi jaki¶
- * b³±d, to bêdzie tam GG_STATE_ERROR i odpowiedni kod b³êdu w h->error.
+ * jeÅ›li wszystko poszÅ‚o dobrze to 0, inaczej -1. poÅ‚Ä…czenie bÄ™dzie
+ * zakoÅ„czone, jeÅ›li h->state == GG_STATE_PARSING. jeÅ›li wystÄ…pi jakiÅ›
+ * bÅ‚Ä…d, to bÄ™dzie tam GG_STATE_ERROR i odpowiedni kod bÅ‚Ä™du w h->error.
  */
 int gg_http_watch_fd(struct gg_http *h)
 {
@@ -451,9 +451,9 @@ int gg_http_watch_fd(struct gg_http *h)
 /*
  * gg_http_stop()
  *
- * je¶li po³±czenie jest w trakcie, przerywa je. nie zwalnia h->data.
+ * jeÅ›li poÅ‚Ä…czenie jest w trakcie, przerywa je. nie zwalnia h->data.
  * 
- *  - h - struktura opisuj±ca po³±czenie
+ *  - h - struktura opisujÄ…ca poÅ‚Ä…czenie
  */
 void gg_http_stop(struct gg_http *h)
 {
@@ -469,7 +469,7 @@ void gg_http_stop(struct gg_http *h)
 }
 
 /*
- * gg_http_free_fields() // funkcja wewnêtrzna
+ * gg_http_free_fields() // funkcja wewnÄ™trzna
  *
  * zwalnia pola struct gg_http, ale nie zwalnia samej struktury.
  */
@@ -497,9 +497,9 @@ void gg_http_free_fields(struct gg_http *h)
 /*
  * gg_http_free()
  *
- * próbuje zamkn±æ po³±czenie i zwalnia pamiêæ po nim.
+ * prÃ³buje zamknÄ…Ä‡ poÅ‚Ä…czenie i zwalnia pamiÄ™Ä‡ po nim.
  *
- *  - h - struktura, któr± nale¿y zlikwidowaæ
+ *  - h - struktura, ktÃ³rÄ… naleÅ¼y zlikwidowaÄ‡
  */
 void gg_http_free(struct gg_http *h)
 {

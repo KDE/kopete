@@ -2,8 +2,8 @@
 
 /*
  *  (C) Copyright 2001-2003 Wojtek Kaniewski <wojtekka@irc.pl>
- *                          Robert J. Woºny <speedy@ziew.org>
- *                          Arkadiusz Mi∂kiewicz <arekm@pld-linux.org>
+ *                          Robert J. Wo≈∫ny <speedy@ziew.org>
+ *                          Arkadiusz Mi≈õkiewicz <arekm@pld-linux.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License Version
@@ -49,9 +49,9 @@
 /*
  * gg_event_free()
  *
- * zwalnia pamiÍÊ zajmowan± przez informacjÍ o zdarzeniu.
+ * zwalnia pamiƒôƒá zajmowanƒÖ przez informacjƒô o zdarzeniu.
  *
- *  - e - wskaºnik do informacji o zdarzeniu
+ *  - e - wska≈∫nik do informacji o zdarzeniu
  */
 void gg_event_free(struct gg_event *e)
 {
@@ -126,7 +126,7 @@ void gg_event_free(struct gg_event *e)
  *
  *  - s - sesja
  *  - q - kolejka
- *  - freeq - czy zwolniÊ kolejkÍ
+ *  - freeq - czy zwolniƒá kolejkƒô
  *
  * 0/-1
  */
@@ -160,9 +160,9 @@ int gg_image_queue_remove(struct gg_session *s, struct gg_image_queue *q, int fr
 }
 
 /*
- * gg_image_queue_parse() // funkcja wewnÍtrzna
+ * gg_image_queue_parse() // funkcja wewnƒôtrzna
  *
- * parsuje przychodz±cy pakiet z obrazkiem.
+ * parsuje przychodzƒÖcy pakiet z obrazkiem.
  *
  *  - e - opis zdarzenia
  *  - 
@@ -177,7 +177,7 @@ static void gg_image_queue_parse(struct gg_event *e, char *p, unsigned int len, 
 		return;
 	}
 
-	/* znajdº dany obrazek w kolejce danej sesji */
+	/* znajd≈∫ dany obrazek w kolejce danej sesji */
 	
 	for (qq = sess->images, q = NULL; qq; qq = qq->next) {
 		if (sender == qq->sender && i->size == qq->size && i->crc32 == qq->crc32) {
@@ -199,7 +199,7 @@ static void gg_image_queue_parse(struct gg_event *e, char *p, unsigned int len, 
 		len -= sizeof(struct gg_msg_image_reply);
 		p += sizeof(struct gg_msg_image_reply);
 
-		/* sprawdº, czy mamy tekst zakoÒczony \0 */
+		/* sprawd≈∫, czy mamy tekst zako≈Ñczony \0 */
 
 		for (i = 0; i < len; i++) {
 			if (!p[i]) {
@@ -231,7 +231,7 @@ static void gg_image_queue_parse(struct gg_event *e, char *p, unsigned int len, 
 	memcpy(q->image + q->done, p, len);
 	q->done += len;
 
-	/* je∂li skoÒczono odbieraÊ obrazek, wygeneruj zdarzenie */
+	/* je≈õli sko≈Ñczono odbieraƒá obrazek, wygeneruj zdarzenie */
 
 	if (q->done >= q->size) {
 		e->type = GG_EVENT_IMAGE_REPLY;
@@ -248,12 +248,12 @@ static void gg_image_queue_parse(struct gg_event *e, char *p, unsigned int len, 
 }
 
 /*
- * gg_handle_recv_msg() // funkcja wewnÍtrzna
+ * gg_handle_recv_msg() // funkcja wewnƒôtrzna
  *
- * obs≥uguje pakiet z przychodz±c± wiadomo∂ci±, rozbijaj±c go na dodatkowe
+ * obs≈Çuguje pakiet z przychodzƒÖcƒÖ wiadomo≈õciƒÖ, rozbijajƒÖc go na dodatkowe
  * struktury (konferencje, kolorki) w razie potrzeby.
  *
- *  - h - nag≥Ûwek pakietu
+ *  - h - nag≈Ç√≥wek pakietu
  *  - e - opis zdarzenia
  *
  * 0, -1.
@@ -383,7 +383,7 @@ static int gg_handle_recv_msg(struct gg_header *h, struct gg_event *e, struct gg
 
 				if (p + sizeof(struct gg_msg_image_reply) == packet_end) {
 
-					/* pusta odpowiedº - klient po drugiej stronie nie ma ø±danego obrazka */
+					/* pusta odpowied≈∫ - klient po drugiej stronie nie ma ≈ºƒÖdanego obrazka */
 
 					e->type = GG_EVENT_IMAGE_REPLY;
 					e->event.image_reply.sender = gg_fix32(r->sender);
@@ -437,11 +437,11 @@ fail:
 }
 
 /*
- * gg_watch_fd_connected() // funkcja wewnÍtrzna
+ * gg_watch_fd_connected() // funkcja wewnƒôtrzna
  *
- * patrzy na gniazdo, odbiera pakiet i wype≥nia strukturÍ zdarzenia.
+ * patrzy na gniazdo, odbiera pakiet i wype≈Çnia strukturƒô zdarzenia.
  *
- *  - sess - struktura opisuj±ca sesjÍ
+ *  - sess - struktura opisujƒÖca sesjƒô
  *  - e - opis zdarzenia
  *
  * 0, -1.
@@ -726,7 +726,7 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 			if (h->length < 1)
 				break;
 
-			/* je∂li odpowiedº na eksport, wywo≥aj zdarzenie tylko
+			/* je≈õli odpowied≈∫ na eksport, wywo≈Çaj zdarzenie tylko
 			 * gdy otrzymano wszystkie odpowiedzi */
 			if (p[0] == GG_USERLIST_PUT_REPLY || p[0] == GG_USERLIST_PUT_MORE_REPLY) {
 				if (--sess->userlist_blocks)
@@ -779,16 +779,16 @@ fail:
 /*
  * gg_watch_fd()
  *
- * funkcja, ktÛr± naleøy wywo≥aÊ, gdy co∂ siÍ stanie z obserwowanym
- * deskryptorem. zwraca klientowi informacjÍ o tym, co siÍ dzieje.
+ * funkcja, kt√≥rƒÖ nale≈ºy wywo≈Çaƒá, gdy co≈õ siƒô stanie z obserwowanym
+ * deskryptorem. zwraca klientowi informacjƒô o tym, co siƒô dzieje.
  *
  *  - sess - opis sesji
  *
- * wskaºnik do struktury gg_event, ktÛr± trzeba zwolniÊ pÛºniej
- * za pomoc± gg_event_free(). jesli rodzaj zdarzenia jest rÛwny
- * GG_EVENT_NONE, naleøy je zignorowaÊ. je∂li zwrÛci≥o NULL,
- * sta≥o siÍ co∂ niedobrego -- albo zabrak≥o pamiÍci albo zerwa≥o
- * po≥±czenie.
+ * wska≈∫nik do struktury gg_event, kt√≥rƒÖ trzeba zwolniƒá p√≥≈∫niej
+ * za pomocƒÖ gg_event_free(). jesli rodzaj zdarzenia jest r√≥wny
+ * GG_EVENT_NONE, nale≈ºy je zignorowaƒá. je≈õli zwr√≥ci≈Ço NULL,
+ * sta≈Ço siƒô co≈õ niedobrego -- albo zabrak≈Ço pamiƒôci albo zerwa≈Ço
+ * po≈ÇƒÖczenie.
  */
 struct gg_event *gg_watch_fd(struct gg_session *sess)
 {
@@ -844,14 +844,14 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 				goto fail_resolving;
 			}
 
-			/* je∂li jeste∂my w resolverze i mamy ustawiony port
-			 * proxy, znaczy, øe resolvowali∂my proxy. zatem
+			/* je≈õli jeste≈õmy w resolverze i mamy ustawiony port
+			 * proxy, znaczy, ≈ºe resolvowali≈õmy proxy. zatem
 			 * wpiszmy jego adres. */
 			if (sess->proxy_port)
 				sess->proxy_addr = addr.s_addr;
 
 			/* zapiszmy sobie adres huba i adres serwera (do
-			 * bezpo∂redniego po≥±czenia, je∂li hub leøy)
+			 * bezpo≈õredniego po≈ÇƒÖczenia, je≈õli hub le≈ºy)
 			 * z resolvera. */
 			if (sess->proxy_addr && sess->proxy_port)
 				port = sess->proxy_port;
@@ -862,17 +862,17 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 			gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() resolved, connecting to %s:%d\n", inet_ntoa(addr), port);
 			
-			/* ≥±czymy siÍ albo z hubem, albo z proxy, zaleønie
-			 * od tego, co resolvowali∂my. */
+			/* ≈ÇƒÖczymy siƒô albo z hubem, albo z proxy, zale≈ºnie
+			 * od tego, co resolvowali≈õmy. */
 			if ((sess->fd = gg_connect(&addr, port, sess->async)) == -1) {
-				/* je∂li w trybie asynchronicznym gg_connect()
-				 * zwrÛci b≥±d, nie ma sensu prÛbowaÊ dalej. */
+				/* je≈õli w trybie asynchronicznym gg_connect()
+				 * zwr√≥ci b≈ÇƒÖd, nie ma sensu pr√≥bowaƒá dalej. */
 				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() connection failed (errno=%d, %s), critical\n", errno, strerror(errno));
 				goto fail_connecting;
 			}
 
-			/* je∂li podano serwer i ≥±czmy siÍ przez proxy,
-			 * jest to bezpo∂rednie po≥±czenie, inaczej jest
+			/* je≈õli podano serwer i ≈ÇƒÖczmy siƒô przez proxy,
+			 * jest to bezpo≈õrednie po≈ÇƒÖczenie, inaczej jest
 			 * do huba. */
 			sess->state = (sess->proxy_addr && sess->proxy_port && sess->server_addr) ? GG_STATE_CONNECTING_GG : GG_STATE_CONNECTING_HUB;
 			sess->check = GG_CHECK_WRITE;
@@ -889,11 +889,11 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 			gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() GG_STATE_CONNECTING_HUB\n");
 
-			/* je∂li asynchroniczne, sprawdzamy, czy nie wyst±pi≥
-			 * przypadkiem jaki∂ b≥±d. */
+			/* je≈õli asynchroniczne, sprawdzamy, czy nie wystƒÖpi≈Ç
+			 * przypadkiem jaki≈õ b≈ÇƒÖd. */
 			if (sess->async && (getsockopt(sess->fd, SOL_SOCKET, SO_ERROR, &res, &res_size) || res)) {
-				/* no tak, nie uda≥o siÍ po≥±czyÊ z proxy. nawet
-				 * nie prÛbujemy dalej. */
+				/* no tak, nie uda≈Ço siƒô po≈ÇƒÖczyƒá z proxy. nawet
+				 * nie pr√≥bujemy dalej. */
 				if (sess->proxy_addr && sess->proxy_port) {
 					gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() connection to proxy failed (errno=%d, %s)\n", res, strerror(res));
 					goto fail_connecting;
@@ -904,9 +904,9 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 				if ((sess->fd = gg_connect(&sess->hub_addr, GG_DEFAULT_PORT, sess->async)) == -1) {
 					/* przy asynchronicznych, gg_connect()
-					 * zwraca -1 przy b≥Ídach socket(),
+					 * zwraca -1 przy b≈Çƒôdach socket(),
 					 * ioctl(), braku routingu itd. dlatego
-					 * nawet nie prÛbujemy dalej. */
+					 * nawet nie pr√≥bujemy dalej. */
 					gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() direct connection failed (errno=%d, %s), critical\n", errno, strerror(errno));
 					goto fail_connecting;
 				}
@@ -951,7 +951,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			
 			free(client);
 
-			/* zwolnij pamiÍÊ po wersji klienta. */
+			/* zwolnij pamiƒôƒá po wersji klienta. */
 			if (sess->client_version) {
 				free(sess->client_version);
 				sess->client_version = NULL;
@@ -959,9 +959,9 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 			gg_debug(GG_DEBUG_MISC, "=> -----BEGIN-HTTP-QUERY-----\n%s\n=> -----END-HTTP-QUERY-----\n", buf);
 	 
-			/* zapytanie jest krÛtkie, wiÍc zawsze zmie∂ci siÍ
-			 * do bufora gniazda. je∂li write() zwrÛci mniej,
-			 * sta≥o siÍ co∂ z≥ego. */
+			/* zapytanie jest kr√≥tkie, wiƒôc zawsze zmie≈õci siƒô
+			 * do bufora gniazda. je≈õli write() zwr√≥ci mniej,
+			 * sta≈Ço siƒô co≈õ z≈Çego. */
 			if (write(sess->fd, buf, strlen(buf)) < (signed)strlen(buf)) {
 				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() sending query failed\n");
 
@@ -988,22 +988,22 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 			gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() GG_STATE_READING_DATA\n");
 
-			/* czytamy liniÍ z gniazda i obcinamy \r\n. */
+			/* czytamy liniƒô z gniazda i obcinamy \r\n. */
 			gg_read_line(sess->fd, buf, sizeof(buf) - 1);
 			gg_chomp(buf);
 			gg_debug(GG_DEBUG_TRAFFIC, "// gg_watch_fd() received http header (%s)\n", buf);
 	
-			/* sprawdzamy, czy wszystko w porz±dku. */
+			/* sprawdzamy, czy wszystko w porzƒÖdku. */
 			if (strncmp(buf, "HTTP/1.", 7) || strncmp(buf + 9, "200", 3)) {
 				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() that's not what we've expected, trying direct connection\n");
 
 				close(sess->fd);
 
-				/* je∂li otrzymali∂my jakie∂ dziwne informacje,
-				 * prÛbujemy siÍ ≥±czyÊ z pominiÍciem huba. */
+				/* je≈õli otrzymali≈õmy jakie≈õ dziwne informacje,
+				 * pr√≥bujemy siƒô ≈ÇƒÖczyƒá z pominiƒôciem huba. */
 				if (sess->proxy_addr && sess->proxy_port) {
 					if ((sess->fd = gg_connect(&sess->proxy_addr, sess->proxy_port, sess->async)) == -1) {
-						/* trudno. nie wysz≥o. */
+						/* trudno. nie wysz≈Ço. */
 						gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() connection to proxy failed (errno=%d, %s)\n", errno, strerror(errno));
 						goto fail_connecting;
 					}
@@ -1016,13 +1016,13 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 				
 				sess->port = GG_DEFAULT_PORT;
 
-				/* ≥±czymy siÍ na port 8074 huba. */
+				/* ≈ÇƒÖczymy siƒô na port 8074 huba. */
 				if ((sess->fd = gg_connect(&sess->hub_addr, sess->port, sess->async)) == -1) {
 					gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() connection failed (errno=%d, %s), trying https\n", errno, strerror(errno));
 
 					sess->port = GG_HTTPS_PORT;
 					
-					/* ≥±czymy siÍ na port 443. */
+					/* ≈ÇƒÖczymy siƒô na port 443. */
 					if ((sess->fd = gg_connect(&sess->hub_addr, sess->port, sess->async)) == -1) {
 						gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() connection failed (errno=%d, %s)\n", errno, strerror(errno));
 						goto fail_connecting;
@@ -1035,16 +1035,16 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 				break;
 			}
 	
-			/* ignorujemy resztÍ nag≥Ûwka. */
+			/* ignorujemy resztƒô nag≈Ç√≥wka. */
 			while (strcmp(buf, "\r\n") && strcmp(buf, ""))
 				gg_read_line(sess->fd, buf, sizeof(buf) - 1);
 
-			/* czytamy pierwsz± liniÍ danych. */
+			/* czytamy pierwszƒÖ liniƒô danych. */
 			gg_read_line(sess->fd, buf, sizeof(buf) - 1);
 			gg_chomp(buf);
 			
-			/* je∂li pierwsza liczba w linii nie jest rÛwna zeru,
-			 * oznacza to, øe mamy wiadomo∂Ê systemow±. */
+			/* je≈õli pierwsza liczba w linii nie jest r√≥wna zeru,
+			 * oznacza to, ≈ºe mamy wiadomo≈õƒá systemowƒÖ. */
 			if (atoi(buf)) {
 				char tmp[1024], *foo, *sysmsg_buf = NULL;
 				int len = 0;
@@ -1096,9 +1096,9 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			sess->server_addr = addr.s_addr;
 
 			if (!gg_proxy_http_only && sess->proxy_addr && sess->proxy_port) {
-				/* je∂li mamy proxy, ≥±czymy siÍ z nim. */
+				/* je≈õli mamy proxy, ≈ÇƒÖczymy siƒô z nim. */
 				if ((sess->fd = gg_connect(&sess->proxy_addr, sess->proxy_port, sess->async)) == -1) {
-					/* nie wysz≥o? trudno. */
+					/* nie wysz≈Ço? trudno. */
 					gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() connection to proxy failed (errno=%d, %s)\n", errno, strerror(errno));
 					goto fail_connecting;
 				}
@@ -1111,15 +1111,15 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 			sess->port = port;
 
-			/* ≥±czymy siÍ z w≥a∂ciwym serwerem. */
+			/* ≈ÇƒÖczymy siƒô z w≈Ça≈õciwym serwerem. */
 			if ((sess->fd = gg_connect(&addr, sess->port, sess->async)) == -1) {
 				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() connection failed (errno=%d, %s), trying https\n", errno, strerror(errno));
 
 				sess->port = GG_HTTPS_PORT;
 
-				/* nie wysz≥o? prÛbujemy portu 443. */
+				/* nie wysz≈Ço? pr√≥bujemy portu 443. */
 				if ((sess->fd = gg_connect(&addr, GG_HTTPS_PORT, sess->async)) == -1) {
-					/* ostatnia deska ratunku zawiod≥a?
+					/* ostatnia deska ratunku zawiod≈Ça?
 					 * w takim razie zwijamy manatki. */
 					gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() connection failed (errno=%d, %s)\n", errno, strerror(errno));
 					goto fail_connecting;
@@ -1139,10 +1139,10 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 			gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() GG_STATE_CONNECTING_GG\n");
 
-			/* je∂li wyst±pi≥ b≥±d podczas ≥±czenia siÍ... */
+			/* je≈õli wystƒÖpi≈Ç b≈ÇƒÖd podczas ≈ÇƒÖczenia siƒô... */
 			if (sess->async && (sess->timeout == 0 || getsockopt(sess->fd, SOL_SOCKET, SO_ERROR, &res, &res_size) || res)) {
-				/* je∂li nie uda≥o siÍ po≥±czenie z proxy,
-				 * nie mamy czego prÛbowaÊ wiÍcej. */
+				/* je≈õli nie uda≈Ço siƒô po≈ÇƒÖczenie z proxy,
+				 * nie mamy czego pr√≥bowaƒá wiƒôcej. */
 				if (sess->proxy_addr && sess->proxy_port) {
 					gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() connection to proxy failed (errno=%d, %s)\n", res, strerror(res));
 					goto fail_connecting;
@@ -1157,10 +1157,10 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 #endif
 
 #ifdef __GG_LIBGADU_HAVE_OPENSSL
-				/* je∂li logujemy siÍ po TLS, nie prÛbujemy
-				 * siÍ ≥±czyÊ juø z niczym innym w przypadku
-				 * b≥Ídu. nie do∂Ê, øe nie ma sensu, to i
-				 * trzeba by siÍ bawiÊ w tworzenie na nowo
+				/* je≈õli logujemy siƒô po TLS, nie pr√≥bujemy
+				 * siƒô ≈ÇƒÖczyƒá ju≈º z niczym innym w przypadku
+				 * b≈Çƒôdu. nie do≈õƒá, ≈ºe nie ma sensu, to i
+				 * trzeba by siƒô bawiƒá w tworzenie na nowo
 				 * SSL i SSL_CTX. */
 
 				if (sess->ssl) {
@@ -1173,7 +1173,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 				sess->port = GG_HTTPS_PORT;
 
-				/* prÛbujemy na port 443. */
+				/* pr√≥bujemy na port 443. */
 				if ((sess->fd = gg_connect(&sess->server_addr, sess->port, sess->async)) == -1) {
 					gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() connection failed (errno=%d, %s)\n", errno, strerror(errno));
 					goto fail_connecting;
@@ -1185,7 +1185,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			if (gg_proxy_http_only)
 				sess->proxy_port = 0;
 
-			/* je∂li mamy proxy, wy∂lijmy zapytanie. */
+			/* je≈õli mamy proxy, wy≈õlijmy zapytanie. */
 			if (sess->proxy_addr && sess->proxy_port) {
 				char buf[100], *auth = gg_proxy_auth();
 				struct in_addr addr;
@@ -1199,9 +1199,9 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() proxy request:\n//   %s", buf);
 				
-				/* wysy≥amy zapytanie. jest ono na tyle krÛtkie,
-				 * øe musi siÍ zmie∂ciÊ w buforze gniazda. je∂li
-				 * write() zawiedzie, sta≥o siÍ co∂ z≥ego. */
+				/* wysy≈Çamy zapytanie. jest ono na tyle kr√≥tkie,
+				 * ≈ºe musi siƒô zmie≈õciƒá w buforze gniazda. je≈õli
+				 * write() zawiedzie, sta≈Ço siƒô co≈õ z≈Çego. */
 				if (write(sess->fd, buf, strlen(buf)) < (signed)strlen(buf)) {
 					gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() can't send proxy request\n");
 					goto fail_connecting;
@@ -1334,8 +1334,8 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			memset(&l, 0, sizeof(l));
 			l.dunno2 = 0xbe;
 
-			/* XXX bardzo, bardzo, bardzo g≥upi pomys≥ na pozbycie
-			 * siÍ tekstu wrzucanego przez proxy. */
+			/* XXX bardzo, bardzo, bardzo g≈Çupi pomys≈Ç na pozbycie
+			 * siƒô tekstu wrzucanego przez proxy. */
 			if (sess->proxy_addr && sess->proxy_port) {
 				char buf[100];
 
@@ -1352,7 +1352,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 				}
 
 				/* XXX niech czeka jeszcze raz w tej samej
-				 * fazie. g≥upio, ale dzia≥a. */
+				 * fazie. g≈Çupio, ale dzia≈Ça. */
 				sess->proxy_port = 0;
 				
 				break;

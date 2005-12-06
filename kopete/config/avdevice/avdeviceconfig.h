@@ -1,7 +1,7 @@
 /*
     avdeviceconfig.h  -  Kopete Video Device Configuration Panel
 
-    Copyright (c) 2005 by Cl·udio da Silveira Pinheiro   <taupter@gmail.com>
+    Copyright (c) 2005 by Cl√°udio da Silveira Pinheiro   <taupter@gmail.com>
 
     Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
 
@@ -34,7 +34,7 @@ class AVDeviceConfig_VideoDevice;
 class AVDeviceConfig_AudioDevice;
 
 /**
-@author Cl·udio da Silveira Pinheiro
+@author Cl√°udio da Silveira Pinheiro
 */
 class AVDeviceConfig : public KCModule
 {

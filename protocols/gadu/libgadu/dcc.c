@@ -2,7 +2,7 @@
 
 /*
  *  (C) Copyright 2001-2002 Wojtek Kaniewski <wojtekka@irc.pl>
- *                          Tomasz Chiliñski <chilek@chilan.com>
+ *                          Tomasz ChiliÅ„ski <chilek@chilan.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License Version
@@ -43,9 +43,9 @@
 
 #ifndef GG_DEBUG_DISABLE
 /*
- * gg_dcc_debug_data() // funkcja wewnêtrzna
+ * gg_dcc_debug_data() // funkcja wewnÄ™trzna
  *
- * wy¶wietla zrzut pakietu w hexie.
+ * wyÅ›wietla zrzut pakietu w hexie.
  * 
  *  - prefix - prefiks zrzutu pakietu
  *  - fd - deskryptor gniazda
@@ -70,11 +70,11 @@ static void gg_dcc_debug_data(const char *prefix, int fd, const void *buf, unsig
 /*
  * gg_dcc_request()
  *
- * wysy³a informacjê o tym, ¿e dany klient powinien siê z nami po³±czyæ.
- * wykorzystywane, kiedy druga strona, której chcemy co¶ wys³aæ jest za
- * maskarad±.
+ * wysyÅ‚a informacjÄ™ o tym, Å¼e dany klient powinien siÄ™ z nami poÅ‚Ä…czyÄ‡.
+ * wykorzystywane, kiedy druga strona, ktÃ³rej chcemy coÅ› wysÅ‚aÄ‡ jest za
+ * maskaradÄ….
  *
- *  - sess - struktura opisuj±ca sesjê GG
+ *  - sess - struktura opisujÄ…ca sesjÄ™ GG
  *  - uin - numerek odbiorcy
  *
  * patrz gg_send_message_ctcp().
@@ -85,7 +85,7 @@ int gg_dcc_request(struct gg_session *sess, uin_t uin)
 }
 
 /* 
- * gg_dcc_fill_filetime()  // funkcja wewnêtrzna
+ * gg_dcc_fill_filetime()  // funkcja wewnÄ™trzna
  *
  * zamienia czas w postaci unixowej na windowsowy.
  *
@@ -115,9 +115,9 @@ void gg_dcc_fill_filetime(uint32_t ut, uint32_t *ft)
 /*
  * gg_dcc_fill_file_info()
  *
- * wype³nia pola struct gg_dcc niezbêdne do wys³ania pliku.
+ * wypeÅ‚nia pola struct gg_dcc niezbÄ™dne do wysÅ‚ania pliku.
  *
- *  - d - struktura opisuj±ca po³±czenie DCC
+ *  - d - struktura opisujÄ…ca poÅ‚Ä…czenie DCC
  *  - filename - nazwa pliku
  *
  * 0, -1.
@@ -130,11 +130,11 @@ int gg_dcc_fill_file_info(struct gg_dcc *d, const char *filename)
 /*
  * gg_dcc_fill_file_info2()
  *
- * wype³nia pola struct gg_dcc niezbêdne do wys³ania pliku.
+ * wypeÅ‚nia pola struct gg_dcc niezbÄ™dne do wysÅ‚ania pliku.
  *
- *  - d - struktura opisuj±ca po³±czenie DCC
+ *  - d - struktura opisujÄ…ca poÅ‚Ä…czenie DCC
  *  - filename - nazwa pliku
- *  - local_filename - nazwa na lokalnym systemie plików
+ *  - local_filename - nazwa na lokalnym systemie plikÃ³w
  *
  * 0, -1.
  */
@@ -231,17 +231,17 @@ int gg_dcc_fill_file_info2(struct gg_dcc *d, const char *filename, const char *l
 }
 
 /*
- * gg_dcc_transfer() // funkcja wewnêtrzna
+ * gg_dcc_transfer() // funkcja wewnÄ™trzna
  * 
  * inicjuje proces wymiany pliku z danym klientem.
  *
  *  - ip - adres ip odbiorcy
  *  - port - port odbiorcy
- *  - my_uin - w³asny numer
+ *  - my_uin - wÅ‚asny numer
  *  - peer_uin - numer obiorcy
  *  - type - rodzaj wymiany (GG_SESSION_DCC_SEND lub GG_SESSION_DCC_GET)
  *
- * zaalokowana struct gg_dcc lub NULL je¶li wyst±pi³ b³±d.
+ * zaalokowana struct gg_dcc lub NULL jeÅ›li wystÄ…piÅ‚ bÅ‚Ä…d.
  */
 static struct gg_dcc *gg_dcc_transfer(uint32_t ip, uint16_t port, uin_t my_uin, uin_t peer_uin, int type)
 {
@@ -285,15 +285,15 @@ static struct gg_dcc *gg_dcc_transfer(uint32_t ip, uint16_t port, uin_t my_uin, 
 /*
  * gg_dcc_get_file()
  * 
- * inicjuje proces odbierania pliku od danego klienta, gdy ten wys³a³ do
- * nas ¿±danie po³±czenia.
+ * inicjuje proces odbierania pliku od danego klienta, gdy ten wysÅ‚aÅ‚ do
+ * nas Å¼Ä…danie poÅ‚Ä…czenia.
  *
  *  - ip - adres ip odbiorcy
  *  - port - port odbiorcy
- *  - my_uin - w³asny numer
+ *  - my_uin - wÅ‚asny numer
  *  - peer_uin - numer obiorcy
  *
- * zaalokowana struct gg_dcc lub NULL je¶li wyst±pi³ b³±d.
+ * zaalokowana struct gg_dcc lub NULL jeÅ›li wystÄ…piÅ‚ bÅ‚Ä…d.
  */
 struct gg_dcc *gg_dcc_get_file(uint32_t ip, uint16_t port, uin_t my_uin, uin_t peer_uin)
 {
@@ -305,14 +305,14 @@ struct gg_dcc *gg_dcc_get_file(uint32_t ip, uint16_t port, uin_t my_uin, uin_t p
 /*
  * gg_dcc_send_file()
  * 
- * inicjuje proces wysy³ania pliku do danego klienta.
+ * inicjuje proces wysyÅ‚ania pliku do danego klienta.
  *
  *  - ip - adres ip odbiorcy
  *  - port - port odbiorcy
- *  - my_uin - w³asny numer
+ *  - my_uin - wÅ‚asny numer
  *  - peer_uin - numer obiorcy
  *
- * zaalokowana struct gg_dcc lub NULL je¶li wyst±pi³ b³±d.
+ * zaalokowana struct gg_dcc lub NULL jeÅ›li wystÄ…piÅ‚ bÅ‚Ä…d.
  */
 struct gg_dcc *gg_dcc_send_file(uint32_t ip, uint16_t port, uin_t my_uin, uin_t peer_uin)
 {
@@ -324,14 +324,14 @@ struct gg_dcc *gg_dcc_send_file(uint32_t ip, uint16_t port, uin_t my_uin, uin_t 
 /*
  * gg_dcc_voice_chat()
  * 
- * próbuje nawi±zaæ po³±czenie g³osowe.
+ * prÃ³buje nawiÄ…zaÄ‡ poÅ‚Ä…czenie gÅ‚osowe.
  *
  *  - ip - adres ip odbiorcy
  *  - port - port odbiorcy
- *  - my_uin - w³asny numer
+ *  - my_uin - wÅ‚asny numer
  *  - peer_uin - numer obiorcy
  *
- * zaalokowana struct gg_dcc lub NULL je¶li wyst±pi³ b³±d.
+ * zaalokowana struct gg_dcc lub NULL jeÅ›li wystÄ…piÅ‚ bÅ‚Ä…d.
  */
 struct gg_dcc *gg_dcc_voice_chat(uint32_t ip, uint16_t port, uin_t my_uin, uin_t peer_uin)
 {
@@ -343,11 +343,11 @@ struct gg_dcc *gg_dcc_voice_chat(uint32_t ip, uint16_t port, uin_t my_uin, uin_t
 /*
  * gg_dcc_set_type()
  *
- * po zdarzeniu GG_EVENT_DCC_CALLBACK nale¿y ustawiæ typ po³±czenia za
- * pomoc± tej funkcji.
+ * po zdarzeniu GG_EVENT_DCC_CALLBACK naleÅ¼y ustawiÄ‡ typ poÅ‚Ä…czenia za
+ * pomocÄ… tej funkcji.
  *
- *  - d - struktura opisuj±ca po³±czenie
- *  - type - typ po³±czenia (GG_SESSION_DCC_SEND lub GG_SESSION_DCC_VOICE)
+ *  - d - struktura opisujÄ…ca poÅ‚Ä…czenie
+ *  - type - typ poÅ‚Ä…czenia (GG_SESSION_DCC_SEND lub GG_SESSION_DCC_VOICE)
  */
 void gg_dcc_set_type(struct gg_dcc *d, int type)
 {
@@ -356,12 +356,12 @@ void gg_dcc_set_type(struct gg_dcc *d, int type)
 }
 	
 /*
- * gg_dcc_callback() // funkcja wewnêtrzna
+ * gg_dcc_callback() // funkcja wewnÄ™trzna
  *
- * wywo³ywana z struct gg_dcc->callback, odpala gg_dcc_watch_fd i umieszcza
+ * wywoÅ‚ywana z struct gg_dcc->callback, odpala gg_dcc_watch_fd i umieszcza
  * rezultat w struct gg_dcc->event.
  *
- *  - d - structura opisuj±ca po³±czenie
+ *  - d - structura opisujÄ…ca poÅ‚Ä…czenie
  *
  * 0, -1.
  */
@@ -377,13 +377,13 @@ static int gg_dcc_callback(struct gg_dcc *d)
 /*
  * gg_dcc_socket_create()
  *
- * tworzy gniazdo dla bezpo¶redniej komunikacji miêdzy klientami.
+ * tworzy gniazdo dla bezpoÅ›redniej komunikacji miÄ™dzy klientami.
  *
- *  - uin - w³asny numer
- *  - port - preferowany port, je¶li równy 0 lub -1, próbuje domy¶lnego
+ *  - uin - wÅ‚asny numer
+ *  - port - preferowany port, jeÅ›li rÃ³wny 0 lub -1, prÃ³buje domyÅ›lnego
  *
- * zaalokowana struct gg_dcc, któr± po¼niej nale¿y zwolniæ funkcj±
- * gg_dcc_free(), albo NULL je¶li wyst±pi³ b³±d.
+ * zaalokowana struct gg_dcc, ktÃ³rÄ… poÅºniej naleÅ¼y zwolniÄ‡ funkcjÄ…
+ * gg_dcc_free(), albo NULL jeÅ›li wystÄ…piÅ‚ bÅ‚Ä…d.
  */
 struct gg_dcc *gg_dcc_socket_create(uin_t uin, uint16_t port)
 {
@@ -457,9 +457,9 @@ struct gg_dcc *gg_dcc_socket_create(uin_t uin, uint16_t port)
 /*
  * gg_dcc_voice_send()
  *
- * wysy³a ramkê danych dla rozmowy g³osowej.
+ * wysyÅ‚a ramkÄ™ danych dla rozmowy gÅ‚osowej.
  *
- *  - d - struktura opisuj±ca po³±czenie dcc
+ *  - d - struktura opisujÄ…ca poÅ‚Ä…czenie dcc
  *  - buf - bufor z danymi
  *  - length - rozmiar ramki
  *
@@ -537,11 +537,11 @@ int gg_dcc_voice_send(struct gg_dcc *d, char *buf, int length)
 /*
  * gg_dcc_watch_fd()
  *
- * funkcja, któr± nale¿y wywo³aæ, gdy co¶ siê zmieni na gg_dcc->fd.
+ * funkcja, ktÃ³rÄ… naleÅ¼y wywoÅ‚aÄ‡, gdy coÅ› siÄ™ zmieni na gg_dcc->fd.
  *
- *  - h - struktura zwrócona przez gg_create_dcc_socket()
+ *  - h - struktura zwrÃ³cona przez gg_create_dcc_socket()
  *
- * zaalokowana struct gg_event lub NULL, je¶li zabrak³o pamiêci na ni±.
+ * zaalokowana struct gg_event lub NULL, jeÅ›li zabrakÅ‚o pamiÄ™ci na niÄ….
  */
 struct gg_event *gg_dcc_watch_fd(struct gg_dcc *h)
 {
@@ -845,7 +845,7 @@ struct gg_event *gg_dcc_watch_fd(struct gg_dcc *h)
 						break;
 					case 0x04:	/* XXX */
 						gg_debug(GG_DEBUG_MISC, "// gg_dcc_watch_fd() peer breaking connection\n");
-						/* XXX zwracaæ odpowiedni event */
+						/* XXX zwracaÄ‡ odpowiedni event */
 					default:
 						gg_debug(GG_DEBUG_MISC, "// gg_dcc_watch_fd() unknown request (%.2x)\n", tiny.type);
 						e->type = GG_EVENT_DCC_ERROR;
@@ -1025,7 +1025,7 @@ struct gg_event *gg_dcc_watch_fd(struct gg_dcc *h)
 
 				memcpy(&file_info_packet.file_info, &h->file_info, sizeof(h->file_info));
 
-				/* zostaj± teraz u nas, wiêc odwracamy z powrotem */
+				/* zostajÄ… teraz u nas, wiÄ™c odwracamy z powrotem */
 				h->file_info.size = gg_fix32(h->file_info.size);
 				h->file_info.mode = gg_fix32(h->file_info.mode);
 				
@@ -1042,7 +1042,7 @@ struct gg_event *gg_dcc_watch_fd(struct gg_dcc *h)
 				
 				gg_read(h->fd, &big, sizeof(big));
 
-				/* XXX sprawdzaæ wynik */
+				/* XXX sprawdzaÄ‡ wynik */
 				h->offset = gg_fix32(big.dunno1);
 				
 				h->state = GG_STATE_SENDING_FILE_HEADER;
@@ -1116,7 +1116,7 @@ struct gg_event *gg_dcc_watch_fd(struct gg_dcc *h)
 
 				size = read(h->file_fd, buf, utmp);
 
-				/* b³±d */
+				/* bÅ‚Ä…d */
 				if (size == -1) {
 					gg_debug(GG_DEBUG_MISC, "// gg_dcc_watch_fd() read() failed. (errno=%d, %s)\n", errno, strerror(errno));
 
@@ -1135,7 +1135,7 @@ struct gg_event *gg_dcc_watch_fd(struct gg_dcc *h)
 					return e;
 				}
 				
-				/* je¶li wczytali¶my wiêcej, utnijmy. */
+				/* jeÅ›li wczytaliÅ›my wiÄ™cej, utnijmy. */
 				if (h->offset + size > h->file_info.size) {
 					gg_debug(GG_DEBUG_MISC, "// gg_dcc_watch_fd() read() too much (read=%d, ofs=%d, size=%d)\n", size, h->offset, h->file_info.size);
 					size = h->file_info.size - h->offset;
@@ -1188,7 +1188,7 @@ struct gg_event *gg_dcc_watch_fd(struct gg_dcc *h)
 
 				gg_debug(GG_DEBUG_MISC, "// gg_dcc_watch_fd() ofs=%d, size=%d, read()=%d\n", h->offset, h->file_info.size, size);
 				
-				/* b³±d */
+				/* bÅ‚Ä…d */
 				if (size == -1) {
 					gg_debug(GG_DEBUG_MISC, "// gg_dcc_watch_fd() read() failed. (errno=%d, %s)\n", errno, strerror(errno));
 
@@ -1263,7 +1263,7 @@ struct gg_event *gg_dcc_watch_fd(struct gg_dcc *h)
 /*
  * gg_dcc_free()
  *
- * zwalnia pamiêæ po strukturze po³±czenia dcc.
+ * zwalnia pamiÄ™Ä‡ po strukturze poÅ‚Ä…czenia dcc.
  *
  *  - d - zwalniana struktura
  */

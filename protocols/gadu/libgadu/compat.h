@@ -2,7 +2,7 @@
 
 /*
  *  (C) Copyright 2001-2002 Wojtek Kaniewski <wojtekka@irc.pl>
- *                          Robert J. Woºny <speedy@ziew.org>
+ *                          Robert J. Wo≈∫ny <speedy@ziew.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License Version

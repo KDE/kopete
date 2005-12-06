@@ -2,9 +2,9 @@
 
 /*
  *  (C) Copyright 2001-2003 Wojtek Kaniewski <wojtekka@irc.pl>
- *                          Robert J. Wo¼ny <speedy@ziew.org>
- *                          Arkadiusz Mi¶kiewicz <arekm@pld-linux.org>
- *                          Tomasz Chiliñski <chilek@chilan.com>
+ *                          Robert J. WoÅºny <speedy@ziew.org>
+ *                          Arkadiusz MiÅ›kiewicz <arekm@pld-linux.org>
+ *                          Tomasz ChiliÅ„ski <chilek@chilan.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License Version
@@ -58,7 +58,7 @@ unsigned long gg_dcc_ip = 0;
 
 unsigned long gg_local_ip = 0;
 /*
- * zmienne opisuj±ce parametry proxy http.
+ * zmienne opisujÄ…ce parametry proxy http.
  */
 char *gg_proxy_host = NULL;
 int gg_proxy_port = 0;
@@ -78,7 +78,7 @@ __attribute__ ((unused))
 /*
  * gg_libgadu_version()
  *
- * zwraca wersjê libgadu.
+ * zwraca wersjÄ™ libgadu.
  *
  *  - brak
  *
@@ -92,13 +92,13 @@ const char *gg_libgadu_version()
 /*
  * gg_fix32()
  *
- * zamienia kolejno¶æ bajtów w liczbie 32-bitowej tak, by odpowiada³a
- * kolejno¶ci bajtów w protokole GG. ze wzglêdu na LE-owo¶æ serwera,
+ * zamienia kolejnoÅ›Ä‡ bajtÃ³w w liczbie 32-bitowej tak, by odpowiadaÅ‚a
+ * kolejnoÅ›ci bajtÃ³w w protokole GG. ze wzglÄ™du na LE-owoÅ›Ä‡ serwera,
  * zamienia tylko na maszynach BE-wych.
  *
  *  - x - liczba do zamiany
  *
- * liczba z odpowiedni± kolejno¶ci± bajtów.
+ * liczba z odpowiedniÄ… kolejnoÅ›ciÄ… bajtÃ³w.
  */
 uint32_t gg_fix32(uint32_t x)
 {
@@ -116,13 +116,13 @@ uint32_t gg_fix32(uint32_t x)
 /*
  * gg_fix16()
  *
- * zamienia kolejno¶æ bajtów w liczbie 16-bitowej tak, by odpowiada³a
- * kolejno¶ci bajtów w protokole GG. ze wzglêdu na LE-owo¶æ serwera,
+ * zamienia kolejnoÅ›Ä‡ bajtÃ³w w liczbie 16-bitowej tak, by odpowiadaÅ‚a
+ * kolejnoÅ›ci bajtÃ³w w protokole GG. ze wzglÄ™du na LE-owoÅ›Ä‡ serwera,
  * zamienia tylko na maszynach BE-wych.
  *
  *  - x - liczba do zamiany
  *
- * liczba z odpowiedni± kolejno¶ci± bajtów.
+ * liczba z odpowiedniÄ… kolejnoÅ›ciÄ… bajtÃ³w.
  */
 uint16_t gg_fix16(uint16_t x)
 {
@@ -136,12 +136,12 @@ uint16_t gg_fix16(uint16_t x)
 }
 
 /* 
- * gg_login_hash() // funkcja wewnêtrzna
+ * gg_login_hash() // funkcja wewnÄ™trzna
  * 
- * liczy hash z has³a i danego seeda.
+ * liczy hash z hasÅ‚a i danego seeda.
  * 
- *  - password - has³o do hashowania
- *  - seed - warto¶æ podana przez serwer
+ *  - password - hasÅ‚o do hashowania
+ *  - seed - wartoÅ›Ä‡ podana przez serwer
  *
  * hash.
  */
@@ -170,15 +170,15 @@ unsigned int gg_login_hash(const unsigned char *password, unsigned int seed)
 }
 
 /*
- * gg_resolve() // funkcja wewnêtrzna
+ * gg_resolve() // funkcja wewnÄ™trzna
  *
- * tworzy potok, forkuje siê i w drugim procesie zaczyna resolvowaæ 
- * podanego hosta. zapisuje w sesji deskryptor potoku. je¶li co¶ tam
- * bêdzie gotowego, znaczy, ¿e mo¿na wczytaæ struct in_addr. je¶li
+ * tworzy potok, forkuje siÄ™ i w drugim procesie zaczyna resolvowaÄ‡ 
+ * podanego hosta. zapisuje w sesji deskryptor potoku. jeÅ›li coÅ› tam
+ * bÄ™dzie gotowego, znaczy, Å¼e moÅ¼na wczytaÄ‡ struct in_addr. jeÅ›li
  * nie znajdzie, zwraca INADDR_NONE.
  *
- *  - fd - wska¼nik gdzie wrzuciæ deskryptor
- *  - pid - gdzie wrzuciæ pid procesu potomnego
+ *  - fd - wskaÅºnik gdzie wrzuciÄ‡ deskryptor
+ *  - pid - gdzie wrzuciÄ‡ pid procesu potomnego
  *  - hostname - nazwa hosta do zresolvowania
  *
  * 0, -1.
@@ -267,19 +267,19 @@ static void *gg_resolve_pthread_thread(void *arg)
 
 	pthread_exit(NULL);
 
-	return NULL;	/* ¿eby kompilator nie marudzi³ */
+	return NULL;	/* Å¼eby kompilator nie marudziÅ‚ */
 }
 
 /*
- * gg_resolve_pthread() // funkcja wewnêtrzna
+ * gg_resolve_pthread() // funkcja wewnÄ™trzna
  *
- * tworzy potok, nowy w±tek i w nim zaczyna resolvowaæ podanego hosta.
- * zapisuje w sesji deskryptor potoku. je¶li co¶ tam bêdzie gotowego,
- * znaczy, ¿e mo¿na wczytaæ struct in_addr. je¶li nie znajdzie, zwraca
+ * tworzy potok, nowy wÄ…tek i w nim zaczyna resolvowaÄ‡ podanego hosta.
+ * zapisuje w sesji deskryptor potoku. jeÅ›li coÅ› tam bÄ™dzie gotowego,
+ * znaczy, Å¼e moÅ¼na wczytaÄ‡ struct in_addr. jeÅ›li nie znajdzie, zwraca
  * INADDR_NONE.
  *
- *  - fd - wska¼nik do zmiennej przechowuj±cej desktyptor resolvera
- *  - resolver - wska¼nik do wska¼nika resolvera
+ *  - fd - wskaÅºnik do zmiennej przechowujÄ…cej desktyptor resolvera
+ *  - resolver - wskaÅºnik do wskaÅºnika resolvera
  *  - hostname - nazwa hosta do zresolvowania
  *
  * 0, -1.
@@ -360,14 +360,14 @@ cleanup:
 /*
  * gg_read() // funkcja pomocnicza
  *
- * czyta z gniazda okre¶lon± ilo¶æ bajtów. bierze pod uwagê, czy mamy
- * po³±czenie zwyk³e czy TLS.
+ * czyta z gniazda okreÅ›lonÄ… iloÅ›Ä‡ bajtÃ³w. bierze pod uwagÄ™, czy mamy
+ * poÅ‚Ä…czenie zwykÅ‚e czy TLS.
  *
  *  - sess - sesja,
  *  - buf - bufor,
- *  - length - ilo¶æ bajtów,
+ *  - length - iloÅ›Ä‡ bajtÃ³w,
  *
- * takie same warto¶ci jak read().
+ * takie same wartoÅ›ci jak read().
  */
 int gg_read(struct gg_session *sess, char *buf, int length)
 {
@@ -397,14 +397,14 @@ int gg_read(struct gg_session *sess, char *buf, int length)
 /*
  * gg_write() // funkcja pomocnicza
  *
- * zapisuje do gniazda okre¶lon± ilo¶æ bajtów. bierze pod uwagê, czy mamy
- * po³±czenie zwyk³e czy TLS.
+ * zapisuje do gniazda okreÅ›lonÄ… iloÅ›Ä‡ bajtÃ³w. bierze pod uwagÄ™, czy mamy
+ * poÅ‚Ä…czenie zwykÅ‚e czy TLS.
  *
  *  - sess - sesja,
  *  - buf - bufor,
- *  - length - ilo¶æ bajtów,
+ *  - length - iloÅ›Ä‡ bajtÃ³w,
  *
- * takie same warto¶ci jak write().
+ * takie same wartoÅ›ci jak write().
  */
 int gg_write(struct gg_session *sess, const char *buf, int length)
 {
@@ -448,16 +448,16 @@ int gg_write(struct gg_session *sess, const char *buf, int length)
 }
 
 /*
- * gg_recv_packet() // funkcja wewnêtrzna
+ * gg_recv_packet() // funkcja wewnÄ™trzna
  *
- * odbiera jeden pakiet i zwraca wska¼nik do niego. pamiêæ po nim
- * nale¿y zwolniæ za pomoc± free().
+ * odbiera jeden pakiet i zwraca wskaÅºnik do niego. pamiÄ™Ä‡ po nim
+ * naleÅ¼y zwolniÄ‡ za pomocÄ… free().
  *
  *  - sess - opis sesji
  *
- * w przypadku b³êdu NULL, kod b³êdu w errno. nale¿y zwróciæ uwagê, ¿e gdy
- * po³±czenie jest nieblokuj±ce, a kod b³êdu wynosi EAGAIN, nie uda³o siê
- * odczytaæ ca³ego pakietu i nie nale¿y tego traktowaæ jako b³±d.
+ * w przypadku bÅ‚Ä™du NULL, kod bÅ‚Ä™du w errno. naleÅ¼y zwrÃ³ciÄ‡ uwagÄ™, Å¼e gdy
+ * poÅ‚Ä…czenie jest nieblokujÄ…ce, a kod bÅ‚Ä™du wynosi EAGAIN, nie udaÅ‚o siÄ™
+ * odczytaÄ‡ caÅ‚ego pakietu i nie naleÅ¼y tego traktowaÄ‡ jako bÅ‚Ä…d.
  */
 void *gg_recv_packet(struct gg_session *sess)
 {
@@ -526,7 +526,7 @@ void *gg_recv_packet(struct gg_session *sess)
 	} else
 		memcpy(&h, sess->recv_buf, sizeof(h));
 	
-	/* jakie¶ sensowne limity na rozmiar pakietu */
+	/* jakieÅ› sensowne limity na rozmiar pakietu */
 	if (h.length > 65535) {
 		gg_debug(GG_DEBUG_MISC, "// gg_recv_packet() invalid packet length (%d)\n", h.length);
 		errno = ERANGE;
@@ -596,22 +596,22 @@ void *gg_recv_packet(struct gg_session *sess)
 }
 
 /*
- * gg_send_packet() // funkcja wewnêtrzna
+ * gg_send_packet() // funkcja wewnÄ™trzna
  *
- * konstruuje pakiet i wysy³a go do serwera.
+ * konstruuje pakiet i wysyÅ‚a go do serwera.
  *
  *  - sock - deskryptor gniazda
  *  - type - typ pakietu
- *  - payload_1 - pierwsza czê¶æ pakietu
- *  - payload_length_1 - d³ugo¶æ pierwszej czê¶ci
- *  - payload_2 - druga czê¶æ pakietu
- *  - payload_length_2 - d³ugo¶æ drugiej czê¶ci
- *  - ... - kolejne czê¶ci pakietu i ich d³ugo¶ci
- *  - NULL - koñcowym parametr (konieczny!)
+ *  - payload_1 - pierwsza czÄ™Å›Ä‡ pakietu
+ *  - payload_length_1 - dÅ‚ugoÅ›Ä‡ pierwszej czÄ™Å›ci
+ *  - payload_2 - druga czÄ™Å›Ä‡ pakietu
+ *  - payload_length_2 - dÅ‚ugoÅ›Ä‡ drugiej czÄ™Å›ci
+ *  - ... - kolejne czÄ™Å›ci pakietu i ich dÅ‚ugoÅ›ci
+ *  - NULL - koÅ„cowym parametr (konieczny!)
  *
- * je¶li siê powiod³o, zwraca 0, w przypadku b³êdu -1. je¶li errno == ENOMEM,
- * zabrak³o pamiêci. inaczej by³ b³±d przy wysy³aniu pakietu. dla errno == 0
- * nie wys³ano ca³ego pakietu.
+ * jeÅ›li siÄ™ powiodÅ‚o, zwraca 0, w przypadku bÅ‚Ä™du -1. jeÅ›li errno == ENOMEM,
+ * zabrakÅ‚o pamiÄ™ci. inaczej byÅ‚ bÅ‚Ä…d przy wysyÅ‚aniu pakietu. dla errno == 0
+ * nie wysÅ‚ano caÅ‚ego pakietu.
  */
 int gg_send_packet(struct gg_session *sess, int type, ...)
 {
@@ -682,9 +682,9 @@ int gg_send_packet(struct gg_session *sess, int type, ...)
 }
 
 /*
- * gg_session_callback() // funkcja wewnêtrzna
+ * gg_session_callback() // funkcja wewnÄ™trzna
  *
- * wywo³ywany z gg_session->callback, wykonuje gg_watch_fd() i pakuje
+ * wywoÅ‚ywany z gg_session->callback, wykonuje gg_watch_fd() i pakuje
  * do gg_session->event jego wynik.
  */
 static int gg_session_callback(struct gg_session *s)
@@ -700,17 +700,17 @@ static int gg_session_callback(struct gg_session *s)
 /*
  * gg_login()
  *
- * rozpoczyna procedurê ³±czenia siê z serwerem. resztê obs³uguje siê przez
+ * rozpoczyna procedurÄ™ Å‚Ä…czenia siÄ™ z serwerem. resztÄ™ obsÅ‚uguje siÄ™ przez
  * gg_watch_fd().
  *
- * UWAGA! program musi obs³u¿yæ SIGCHLD, je¶li ³±czy siê asynchronicznie,
- * ¿eby poprawnie zamkn±æ proces resolvera.
+ * UWAGA! program musi obsÅ‚uÅ¼yÄ‡ SIGCHLD, jeÅ›li Å‚Ä…czy siÄ™ asynchronicznie,
+ * Å¼eby poprawnie zamknÄ…Ä‡ proces resolvera.
  *
- *  - p - struktura opisuj±ca pocz±tkowy stan. wymagane pola: uin, 
+ *  - p - struktura opisujÄ…ca poczÄ…tkowy stan. wymagane pola: uin, 
  *    password
  *
- * w przypadku b³êdu NULL, je¶li idzie dobrze (async) albo posz³o
- * dobrze (sync), zwróci wska¼nik do zaalokowanej struct gg_session.
+ * w przypadku bÅ‚Ä™du NULL, jeÅ›li idzie dobrze (async) albo poszÅ‚o
+ * dobrze (sync), zwrÃ³ci wskaÅºnik do zaalokowanej struct gg_session.
  */
 struct gg_session *gg_login(const struct gg_login_params *p)
 {
@@ -913,7 +913,7 @@ fail:
 /* 
  * gg_free_session()
  *
- * próbuje zamkn±æ po³±czenia i zwalnia pamiêæ zajmowan± przez sesjê.
+ * prÃ³buje zamknÄ…Ä‡ poÅ‚Ä…czenia i zwalnia pamiÄ™Ä‡ zajmowanÄ… przez sesjÄ™.
  *
  *  - sess - opis sesji
  */
@@ -922,7 +922,7 @@ void gg_free_session(struct gg_session *sess)
 	if (!sess)
 		return;
 
-	/* XXX dopisaæ zwalnianie i zamykanie wszystkiego, co mog³o zostaæ */
+	/* XXX dopisaÄ‡ zwalnianie i zamykanie wszystkiego, co mogÅ‚o zostaÄ‡ */
 
 	if (sess->password)
 		free(sess->password);
@@ -967,10 +967,10 @@ void gg_free_session(struct gg_session *sess)
 /*
  * gg_change_status()
  *
- * zmienia status u¿ytkownika. przydatne do /away i /busy oraz /quit.
+ * zmienia status uÅ¼ytkownika. przydatne do /away i /busy oraz /quit.
  *
  *  - sess - opis sesji
- *  - status - nowy status u¿ytkownika
+ *  - status - nowy status uÅ¼ytkownika
  *
  * 0, -1.
  */
@@ -1000,10 +1000,10 @@ int gg_change_status(struct gg_session *sess, int status)
 /*
  * gg_change_status_descr()
  *
- * zmienia status u¿ytkownika na opisowy.
+ * zmienia status uÅ¼ytkownika na opisowy.
  *
  *  - sess - opis sesji
- *  - status - nowy status u¿ytkownika
+ *  - status - nowy status uÅ¼ytkownika
  *  - descr - opis statusu
  *
  * 0, -1.
@@ -1034,10 +1034,10 @@ int gg_change_status_descr(struct gg_session *sess, int status, const char *desc
 /*
  * gg_change_status_descr_time()
  *
- * zmienia status u¿ytkownika na opisowy z godzin± powrotu.
+ * zmienia status uÅ¼ytkownika na opisowy z godzinÄ… powrotu.
  *
  *  - sess - opis sesji
- *  - status - nowy status u¿ytkownika
+ *  - status - nowy status uÅ¼ytkownika
  *  - descr - opis statusu
  *  - time - czas w formacie uniksowym
  *
@@ -1072,7 +1072,7 @@ int gg_change_status_descr_time(struct gg_session *sess, int status, const char 
 /*
  * gg_logoff()
  *
- * wylogowuje u¿ytkownika i zamyka po³±czenie, ale nie zwalnia pamiêci.
+ * wylogowuje uÅ¼ytkownika i zamyka poÅ‚Ä…czenie, ale nie zwalnia pamiÄ™ci.
  *
  *  - sess - opis sesji
  */
@@ -1114,7 +1114,7 @@ void gg_logoff(struct gg_session *sess)
 /*
  * gg_image_request()
  *
- * wysy³a ¿±danie wys³ania obrazka o podanych parametrach.
+ * wysyÅ‚a Å¼Ä…danie wysÅ‚ania obrazka o podanych parametrach.
  *
  *  - sess - opis sesji
  *  - recipient - numer adresata
@@ -1199,7 +1199,7 @@ int gg_image_request(struct gg_session *sess, uin_t recipient, int size, uint32_
 /*
  * gg_image_reply()
  *
- * wysy³a ¿±dany obrazek.
+ * wysyÅ‚a Å¼Ä…dany obrazek.
  *
  *  - sess - opis sesji
  *  - recipient - numer adresata
@@ -1234,7 +1234,7 @@ int gg_image_reply(struct gg_session *sess, uin_t recipient, const char *filenam
 		return -1;
 	}
 
-	/* wytnij ¶cie¿ki, zostaw tylko nazwê pliku */
+	/* wytnij Å›cieÅ¼ki, zostaw tylko nazwÄ™ pliku */
 	while ((tmp = strrchr(filename, '/')) || (tmp = strrchr(filename, '\\')))
 		filename = tmp + 1;
 
@@ -1260,7 +1260,7 @@ int gg_image_reply(struct gg_session *sess, uin_t recipient, const char *filenam
 		/* \0 + struct gg_msg_image_reply */
 		buflen = sizeof(struct gg_msg_image_reply) + 1;
 
-		/* w pierwszym kawa³ku jest nazwa pliku */
+		/* w pierwszym kawaÅ‚ku jest nazwa pliku */
 		if (r->flag == 0x05) {
 			strcpy(buf + buflen, filename);
 			buflen += strlen(filename) + 1;
@@ -1286,16 +1286,16 @@ int gg_image_reply(struct gg_session *sess, uin_t recipient, const char *filenam
 /*
  * gg_send_message_ctcp()
  *
- * wysy³a wiadomo¶æ do innego u¿ytkownika. zwraca losowy numer
- * sekwencyjny, który mo¿na zignorowaæ albo wykorzystaæ do potwierdzenia.
+ * wysyÅ‚a wiadomoÅ›Ä‡ do innego uÅ¼ytkownika. zwraca losowy numer
+ * sekwencyjny, ktÃ³ry moÅ¼na zignorowaÄ‡ albo wykorzystaÄ‡ do potwierdzenia.
  *
  *  - sess - opis sesji
- *  - msgclass - rodzaj wiadomo¶ci
+ *  - msgclass - rodzaj wiadomoÅ›ci
  *  - recipient - numer adresata
- *  - message - tre¶æ wiadomo¶ci
- *  - message_len - d³ugo¶æ
+ *  - message - treÅ›Ä‡ wiadomoÅ›ci
+ *  - message_len - dÅ‚ugoÅ›Ä‡
  *
- * numer sekwencyjny wiadomo¶ci lub -1 w przypadku b³êdu.
+ * numer sekwencyjny wiadomoÅ›ci lub -1 w przypadku bÅ‚Ä™du.
  */
 int gg_send_message_ctcp(struct gg_session *sess, int msgclass, uin_t recipient, const unsigned char *message, int message_len)
 {
@@ -1323,15 +1323,15 @@ int gg_send_message_ctcp(struct gg_session *sess, int msgclass, uin_t recipient,
 /*
  * gg_send_message()
  *
- * wysy³a wiadomo¶æ do innego u¿ytkownika. zwraca losowy numer
- * sekwencyjny, który mo¿na zignorowaæ albo wykorzystaæ do potwierdzenia.
+ * wysyÅ‚a wiadomoÅ›Ä‡ do innego uÅ¼ytkownika. zwraca losowy numer
+ * sekwencyjny, ktÃ³ry moÅ¼na zignorowaÄ‡ albo wykorzystaÄ‡ do potwierdzenia.
  *
  *  - sess - opis sesji
- *  - msgclass - rodzaj wiadomo¶ci
+ *  - msgclass - rodzaj wiadomoÅ›ci
  *  - recipient - numer adresata
- *  - message - tre¶æ wiadomo¶ci
+ *  - message - treÅ›Ä‡ wiadomoÅ›ci
  *
- * numer sekwencyjny wiadomo¶ci lub -1 w przypadku b³êdu.
+ * numer sekwencyjny wiadomoÅ›ci lub -1 w przypadku bÅ‚Ä™du.
  */
 int gg_send_message(struct gg_session *sess, int msgclass, uin_t recipient, const unsigned char *message)
 {
@@ -1343,17 +1343,17 @@ int gg_send_message(struct gg_session *sess, int msgclass, uin_t recipient, cons
 /*
  * gg_send_message_richtext()
  *
- * wysy³a kolorow± wiadomo¶æ do innego u¿ytkownika. zwraca losowy numer
- * sekwencyjny, który mo¿na zignorowaæ albo wykorzystaæ do potwierdzenia.
+ * wysyÅ‚a kolorowÄ… wiadomoÅ›Ä‡ do innego uÅ¼ytkownika. zwraca losowy numer
+ * sekwencyjny, ktÃ³ry moÅ¼na zignorowaÄ‡ albo wykorzystaÄ‡ do potwierdzenia.
  *
  *  - sess - opis sesji
- *  - msgclass - rodzaj wiadomo¶ci
+ *  - msgclass - rodzaj wiadomoÅ›ci
  *  - recipient - numer adresata
- *  - message - tre¶æ wiadomo¶ci
+ *  - message - treÅ›Ä‡ wiadomoÅ›ci
  *  - format - informacje o formatowaniu
- *  - formatlen - d³ugo¶æ informacji o formatowaniu
+ *  - formatlen - dÅ‚ugoÅ›Ä‡ informacji o formatowaniu
  *
- * numer sekwencyjny wiadomo¶ci lub -1 w przypadku b³êdu.
+ * numer sekwencyjny wiadomoÅ›ci lub -1 w przypadku bÅ‚Ä™du.
  */
 int gg_send_message_richtext(struct gg_session *sess, int msgclass, uin_t recipient, const unsigned char *message, const unsigned char *format, int formatlen)
 {
@@ -1392,16 +1392,16 @@ int gg_send_message_richtext(struct gg_session *sess, int msgclass, uin_t recipi
 /*
  * gg_send_message_confer()
  *
- * wysy³a wiadomo¶æ do kilku u¿ytkownikow (konferencja). zwraca losowy numer
- * sekwencyjny, który mo¿na zignorowaæ albo wykorzystaæ do potwierdzenia.
+ * wysyÅ‚a wiadomoÅ›Ä‡ do kilku uÅ¼ytkownikow (konferencja). zwraca losowy numer
+ * sekwencyjny, ktÃ³ry moÅ¼na zignorowaÄ‡ albo wykorzystaÄ‡ do potwierdzenia.
  *
  *  - sess - opis sesji
- *  - msgclass - rodzaj wiadomo¶ci
- *  - recipients_count - ilo¶æ adresatów
- *  - recipients - numerki adresatów
- *  - message - tre¶æ wiadomo¶ci
+ *  - msgclass - rodzaj wiadomoÅ›ci
+ *  - recipients_count - iloÅ›Ä‡ adresatÃ³w
+ *  - recipients - numerki adresatÃ³w
+ *  - message - treÅ›Ä‡ wiadomoÅ›ci
  *
- * numer sekwencyjny wiadomo¶ci lub -1 w przypadku b³êdu.
+ * numer sekwencyjny wiadomoÅ›ci lub -1 w przypadku bÅ‚Ä™du.
  */
 int gg_send_message_confer(struct gg_session *sess, int msgclass, int recipients_count, uin_t *recipients, const unsigned char *message)
 {
@@ -1413,19 +1413,19 @@ int gg_send_message_confer(struct gg_session *sess, int msgclass, int recipients
 /*
  * gg_send_message_confer_richtext()
  *
- * wysy³a kolorow± wiadomo¶æ do kilku u¿ytkownikow (konferencja). zwraca
- * losowy numer sekwencyjny, który mo¿na zignorowaæ albo wykorzystaæ do
+ * wysyÅ‚a kolorowÄ… wiadomoÅ›Ä‡ do kilku uÅ¼ytkownikow (konferencja). zwraca
+ * losowy numer sekwencyjny, ktÃ³ry moÅ¼na zignorowaÄ‡ albo wykorzystaÄ‡ do
  * potwierdzenia.
  *
  *  - sess - opis sesji
- *  - msgclass - rodzaj wiadomo¶ci
- *  - recipients_count - ilo¶æ adresatów
- *  - recipients - numerki adresatów
- *  - message - tre¶æ wiadomo¶ci
+ *  - msgclass - rodzaj wiadomoÅ›ci
+ *  - recipients_count - iloÅ›Ä‡ adresatÃ³w
+ *  - recipients - numerki adresatÃ³w
+ *  - message - treÅ›Ä‡ wiadomoÅ›ci
  *  - format - informacje o formatowaniu
- *  - formatlen - d³ugo¶æ informacji o formatowaniu
+ *  - formatlen - dÅ‚ugoÅ›Ä‡ informacji o formatowaniu
  *
- * numer sekwencyjny wiadomo¶ci lub -1 w przypadku b³êdu.
+ * numer sekwencyjny wiadomoÅ›ci lub -1 w przypadku bÅ‚Ä™du.
  */
 int gg_send_message_confer_richtext(struct gg_session *sess, int msgclass, int recipients_count, uin_t *recipients, const unsigned char *message, const unsigned char *format, int formatlen)
 {
@@ -1490,7 +1490,7 @@ int gg_send_message_confer_richtext(struct gg_session *sess, int msgclass, int r
 /*
  * gg_ping()
  *
- * wysy³a do serwera pakiet ping.
+ * wysyÅ‚a do serwera pakiet ping.
  *
  *  - sess - opis sesji
  *
@@ -1516,13 +1516,13 @@ int gg_ping(struct gg_session *sess)
 /*
  * gg_notify_ex()
  *
- * wysy³a serwerowi listê kontaktów (wraz z odpowiadaj±cymi im typami userów),
- * dziêki czemu wie, czyj stan nas interesuje.
+ * wysyÅ‚a serwerowi listÄ™ kontaktÃ³w (wraz z odpowiadajÄ…cymi im typami userÃ³w),
+ * dziÄ™ki czemu wie, czyj stan nas interesuje.
  *
  *  - sess - opis sesji
- *  - userlist - wska¼nik do tablicy numerów
- *  - types - wska¼nik do tablicy typów u¿ytkowników
- *  - count - ilo¶æ numerków
+ *  - userlist - wskaÅºnik do tablicy numerÃ³w
+ *  - types - wskaÅºnik do tablicy typÃ³w uÅ¼ytkownikÃ³w
+ *  - count - iloÅ›Ä‡ numerkÃ³w
  *
  * 0, -1.
  */
@@ -1586,12 +1586,12 @@ int gg_notify_ex(struct gg_session *sess, uin_t *userlist, char *types, int coun
 /*
  * gg_notify()
  *
- * wysy³a serwerowi listê kontaktów, dziêki czemu wie, czyj stan nas
+ * wysyÅ‚a serwerowi listÄ™ kontaktÃ³w, dziÄ™ki czemu wie, czyj stan nas
  * interesuje.
  *
  *  - sess - opis sesji
- *  - userlist - wska¼nik do tablicy numerów
- *  - count - ilo¶æ numerków
+ *  - userlist - wskaÅºnik do tablicy numerÃ³w
+ *  - count - iloÅ›Ä‡ numerkÃ³w
  *
  * 0, -1.
  */
@@ -1653,8 +1653,8 @@ int gg_notify(struct gg_session *sess, uin_t *userlist, int count)
 /*
  * gg_add_notify_ex()
  *
- * dodaje do listy kontaktów dany numer w trakcie po³±czenia.
- * dodawanemu u¿ytkownikowi okre¶lamy jego typ (patrz protocol.html)
+ * dodaje do listy kontaktÃ³w dany numer w trakcie poÅ‚Ä…czenia.
+ * dodawanemu uÅ¼ytkownikowi okreÅ›lamy jego typ (patrz protocol.html)
  *
  *  - sess - opis sesji
  *  - uin - numer
@@ -1687,7 +1687,7 @@ int gg_add_notify_ex(struct gg_session *sess, uin_t uin, char type)
 /*
  * gg_add_notify()
  *
- * dodaje do listy kontaktów dany numer w trakcie po³±czenia.
+ * dodaje do listy kontaktÃ³w dany numer w trakcie poÅ‚Ä…czenia.
  *
  *  - sess - opis sesji
  *  - uin - numer
@@ -1702,8 +1702,8 @@ int gg_add_notify(struct gg_session *sess, uin_t uin)
 /*
  * gg_remove_notify_ex()
  *
- * usuwa z listy kontaktów w trakcie po³±czenia.
- * usuwanemu u¿ytkownikowi okre¶lamy jego typ (patrz protocol.html)
+ * usuwa z listy kontaktÃ³w w trakcie poÅ‚Ä…czenia.
+ * usuwanemu uÅ¼ytkownikowi okreÅ›lamy jego typ (patrz protocol.html)
  *
  *  - sess - opis sesji
  *  - uin - numer
@@ -1736,7 +1736,7 @@ int gg_remove_notify_ex(struct gg_session *sess, uin_t uin, char type)
 /*
  * gg_remove_notify()
  *
- * usuwa z listy kontaktów w trakcie po³±czenia.
+ * usuwa z listy kontaktÃ³w w trakcie poÅ‚Ä…czenia.
  *
  *  - sess - opis sesji
  *  - uin - numer
@@ -1751,11 +1751,11 @@ int gg_remove_notify(struct gg_session *sess, uin_t uin)
 /*
  * gg_userlist_request()
  *
- * wysy³a ¿±danie/zapytanie listy kontaktów na serwerze.
+ * wysyÅ‚a Å¼Ä…danie/zapytanie listy kontaktÃ³w na serwerze.
  *
  *  - sess - opis sesji
- *  - type - rodzaj zapytania/¿±dania
- *  - request - tre¶æ zapytania/¿±dania (mo¿e byæ NULL)
+ *  - type - rodzaj zapytania/Å¼Ä…dania
+ *  - request - treÅ›Ä‡ zapytania/Å¼Ä…dania (moÅ¼e byÄ‡ NULL)
  *
  * 0, -1
  */

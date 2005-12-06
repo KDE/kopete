@@ -2,7 +2,7 @@
 
 /*
  *  (C) Copyright 2001-2002 Wojtek Kaniewski <wojtekka@irc.pl>
- *                          Robert J. Wo¼ny <speedy@ziew.org>
+ *                          Robert J. WoÅºny <speedy@ziew.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License Version
@@ -44,12 +44,12 @@ FILE *gg_debug_file = NULL;
 #ifndef GG_DEBUG_DISABLE
 
 /*
- * gg_debug() // funkcja wewnêtrzna
+ * gg_debug() // funkcja wewnÄ™trzna
  *
- * wy¶wietla komunikat o danym poziomie, o ile u¿ytkownik sobie tego ¿yczy.
+ * wyÅ›wietla komunikat o danym poziomie, o ile uÅ¼ytkownik sobie tego Å¼yczy.
  *
- *  - level - poziom wiadomo¶ci
- *  - format... - tre¶æ wiadomo¶ci (kompatybilna z printf())
+ *  - level - poziom wiadomoÅ›ci
+ *  - format... - treÅ›Ä‡ wiadomoÅ›ci (kompatybilna z printf())
  */
 void gg_debug(int level, const char *format, ...)
 {
@@ -79,15 +79,15 @@ cleanup:
 /*
  * gg_vsaprintf() // funkcja pomocnicza
  *
- * robi dok³adnie to samo, co vsprintf(), tyle ¿e alokuje sobie wcze¶niej
- * miejsce na dane. powinno dzia³aæ na tych maszynach, które maj± funkcjê
- * vsnprintf() zgodn± z C99, jak i na wcze¶niejszych.
+ * robi dokÅ‚adnie to samo, co vsprintf(), tyle Å¼e alokuje sobie wczeÅ›niej
+ * miejsce na dane. powinno dziaÅ‚aÄ‡ na tych maszynach, ktÃ³re majÄ… funkcjÄ™
+ * vsnprintf() zgodnÄ… z C99, jak i na wczeÅ›niejszych.
  *
- *  - format - opis wy¶wietlanego tekstu jak dla printf()
- *  - ap - lista argumentów dla printf()
+ *  - format - opis wyÅ›wietlanego tekstu jak dla printf()
+ *  - ap - lista argumentÃ³w dla printf()
  *
- * zaalokowany bufor, który nale¿y pó¼niej zwolniæ, lub NULL
- * je¶li nie uda³o siê wykonaæ zadania.
+ * zaalokowany bufor, ktÃ³ry naleÅ¼y pÃ³Åºniej zwolniÄ‡, lub NULL
+ * jeÅ›li nie udaÅ‚o siÄ™ wykonaÄ‡ zadania.
  */
 char *gg_vsaprintf(const char *format, va_list ap)
 {
@@ -129,8 +129,8 @@ char *gg_vsaprintf(const char *format, va_list ap)
 	{
 		char tmp[2];
 		
-		/* libce Solarisa przy buforze NULL zawsze zwracaj± -1, wiêc
-		 * musimy podaæ co¶ istniej±cego jako cel printf()owania. */
+		/* libce Solarisa przy buforze NULL zawsze zwracajÄ… -1, wiÄ™c
+		 * musimy podaÄ‡ coÅ› istniejÄ…cego jako cel printf()owania. */
 		size = vsnprintf(tmp, sizeof(tmp), format, ap);
 		if (!(buf = malloc(size + 1)))
 			return NULL;
@@ -157,14 +157,14 @@ char *gg_vsaprintf(const char *format, va_list ap)
 /*
  * gg_saprintf() // funkcja pomocnicza
  *
- * robi dok³adnie to samo, co sprintf(), tyle ¿e alokuje sobie wcze¶niej
- * miejsce na dane. powinno dzia³aæ na tych maszynach, które maj± funkcjê
- * vsnprintf() zgodn± z C99, jak i na wcze¶niejszych.
+ * robi dokÅ‚adnie to samo, co sprintf(), tyle Å¼e alokuje sobie wczeÅ›niej
+ * miejsce na dane. powinno dziaÅ‚aÄ‡ na tych maszynach, ktÃ³re majÄ… funkcjÄ™
+ * vsnprintf() zgodnÄ… z C99, jak i na wczeÅ›niejszych.
  *
- *  - format... - tre¶æ taka sama jak w funkcji printf()
+ *  - format... - treÅ›Ä‡ taka sama jak w funkcji printf()
  *
- * zaalokowany bufor, który nale¿y pó¼niej zwolniæ, lub NULL
- * je¶li nie uda³o siê wykonaæ zadania.
+ * zaalokowany bufor, ktÃ³ry naleÅ¼y pÃ³Åºniej zwolniÄ‡, lub NULL
+ * jeÅ›li nie udaÅ‚o siÄ™ wykonaÄ‡ zadania.
  */
 char *gg_saprintf(const char *format, ...)
 {
@@ -181,15 +181,15 @@ char *gg_saprintf(const char *format, ...)
 /*
  * gg_get_line() // funkcja pomocnicza
  * 
- * podaje kolejn± liniê z bufora tekstowego. niszczy go bezpowrotnie, dziel±c
- * na kolejne stringi. zdarza siê, nie ma potrzeby pisania funkcji dubluj±cej
- * bufor ¿eby tylko mieæ nieruszone dane wej¶ciowe, skoro i tak nie bêd± nam
- * po¼niej potrzebne. obcina `\r\n'.
+ * podaje kolejnÄ… liniÄ™ z bufora tekstowego. niszczy go bezpowrotnie, dzielÄ…c
+ * na kolejne stringi. zdarza siÄ™, nie ma potrzeby pisania funkcji dublujÄ…cej
+ * bufor Å¼eby tylko mieÄ‡ nieruszone dane wejÅ›ciowe, skoro i tak nie bÄ™dÄ… nam
+ * poÅºniej potrzebne. obcina `\r\n'.
  * 
- *  - ptr - wska¼nik do zmiennej, która przechowuje aktualn± pozycjê
+ *  - ptr - wskaÅºnik do zmiennej, ktÃ³ra przechowuje aktualnÄ… pozycjÄ™
  *    w przemiatanym buforze
  * 
- * wska¼nik do kolejnej linii tekstu lub NULL, je¶li to ju¿ koniec bufora.
+ * wskaÅºnik do kolejnej linii tekstu lub NULL, jeÅ›li to juÅ¼ koniec bufora.
  */
 char *gg_get_line(char **ptr)
 {
@@ -215,15 +215,15 @@ char *gg_get_line(char **ptr)
 /*
  * gg_connect() // funkcja pomocnicza
  *
- * ³±czy siê z serwerem. pierwszy argument jest typu (void *), ¿eby nie
- * musieæ niczego inkludowaæ w libgadu.h i nie psuæ jaki¶ g³upich zale¿no¶ci
+ * Å‚Ä…czy siÄ™ z serwerem. pierwszy argument jest typu (void *), Å¼eby nie
+ * musieÄ‡ niczego inkludowaÄ‡ w libgadu.h i nie psuÄ‡ jakiÅ› gÅ‚upich zaleÅ¼noÅ›ci
  * na dziwnych systemach.
  *
  *  - addr - adres serwera (struct in_addr *)
  *  - port - port serwera
- *  - async - asynchroniczne po³±czenie
+ *  - async - asynchroniczne poÅ‚Ä…czenie
  *
- * deskryptor gniazda lub -1 w przypadku b³êdu (kod b³êdu w zmiennej errno).
+ * deskryptor gniazda lub -1 w przypadku bÅ‚Ä™du (kod bÅ‚Ä™du w zmiennej errno).
  */
 int gg_connect(void *addr, int port, int async)
 {
@@ -288,13 +288,13 @@ int gg_connect(void *addr, int port, int async)
 /*
  * gg_read_line() // funkcja pomocnicza
  *
- * czyta jedn± liniê tekstu z gniazda.
+ * czyta jednÄ… liniÄ™ tekstu z gniazda.
  *
  *  - sock - deskryptor gniazda
- *  - buf - wska¼nik do bufora
- *  - length - d³ugo¶æ bufora
+ *  - buf - wskaÅºnik do bufora
+ *  - length - dÅ‚ugoÅ›Ä‡ bufora
  *
- * je¶li trafi na b³±d odczytu lub podano nieprawid³owe parametry, zwraca NULL.
+ * jeÅ›li trafi na bÅ‚Ä…d odczytu lub podano nieprawidÅ‚owe parametry, zwraca NULL.
  * inaczej zwraca buf.
  */
 char *gg_read_line(int sock, char *buf, int length)
@@ -330,9 +330,9 @@ char *gg_read_line(int sock, char *buf, int length)
 /*
  * gg_chomp() // funkcja pomocnicza
  *
- * ucina "\r\n" lub "\n" z koñca linii.
+ * ucina "\r\n" lub "\n" z koÅ„ca linii.
  *
- *  - line - linia do przyciêcia
+ *  - line - linia do przyciÄ™cia
  */
 void gg_chomp(char *line)
 {
@@ -350,15 +350,15 @@ void gg_chomp(char *line)
 }
 
 /*
- * gg_urlencode() // funkcja wewnêtrzna
+ * gg_urlencode() // funkcja wewnÄ™trzna
  *
- * zamienia podany tekst na ci±g znaków do formularza http. przydaje siê
- * przy ró¿nych us³ugach katalogu publicznego.
+ * zamienia podany tekst na ciÄ…g znakÃ³w do formularza http. przydaje siÄ™
+ * przy rÃ³Å¼nych usÅ‚ugach katalogu publicznego.
  *
- *  - str - ci±g znaków do zakodowania
+ *  - str - ciÄ…g znakÃ³w do zakodowania
  *
- * zaalokowany bufor, który nale¿y pó¼niej zwolniæ albo NULL
- * w przypadku b³êdu.
+ * zaalokowany bufor, ktÃ³ry naleÅ¼y pÃ³Åºniej zwolniÄ‡ albo NULL
+ * w przypadku bÅ‚Ä™du.
  */
 char *gg_urlencode(const char *str)
 {
@@ -397,14 +397,14 @@ char *gg_urlencode(const char *str)
 }
 
 /*
- * gg_http_hash() // funkcja wewnêtrzna
+ * gg_http_hash() // funkcja wewnÄ™trzna
  *
- * funkcja licz±ca hash dla adresu e-mail, has³a i paru innych.
+ * funkcja liczÄ…ca hash dla adresu e-mail, hasÅ‚a i paru innych.
  *
- *  - format... - format kolejnych parametrów ('s' je¶li dany parametr jest
- *                ci±giem znaków lub 'u' je¶li numerem GG)
+ *  - format... - format kolejnych parametrÃ³w ('s' jeÅ›li dany parametr jest
+ *                ciÄ…giem znakÃ³w lub 'u' jeÅ›li numerem GG)
  *
- * hash wykorzystywany przy rejestracji i wszelkich manipulacjach w³asnego
+ * hash wykorzystywany przy rejestracji i wszelkich manipulacjach wÅ‚asnego
  * wpisu w katalogu publicznym.
  */
 int gg_http_hash(const char *format, ...)
@@ -441,12 +441,12 @@ int gg_http_hash(const char *format, ...)
 /*
  * gg_gethostbyname() // funkcja pomocnicza
  *
- * odpowiednik gethostbyname() troszcz±cy siê o wspó³bie¿no¶æ, gdy mamy do
- * dyspozycji funkcjê gethostbyname_r().
+ * odpowiednik gethostbyname() troszczÄ…cy siÄ™ o wspÃ³Å‚bieÅ¼noÅ›Ä‡, gdy mamy do
+ * dyspozycji funkcjÄ™ gethostbyname_r().
  *
  *  - hostname - nazwa serwera
  *
- * zwraca wska¼nik na strukturê in_addr, któr± nale¿y zwolniæ.
+ * zwraca wskaÅºnik na strukturÄ™ in_addr, ktÃ³rÄ… naleÅ¼y zwolniÄ‡.
  */
 struct in_addr *gg_gethostbyname(const char *hostname)
 {
@@ -540,20 +540,20 @@ struct gg_win32_thread *gg_win32_threads = 0;
 /*
  * gg_win32_thread_socket() // funkcja pomocnicza, tylko dla win32
  *
- * zwraca deskryptor gniazda, które by³o ostatnio tworzone dla w±tku
+ * zwraca deskryptor gniazda, ktÃ³re byÅ‚o ostatnio tworzone dla wÄ…tku
  * o podanym identyfikatorze.
  *
- * je¶li na win32 przy po³±czeniach synchronicznych zapamiêtamy w jakim
- * w±tku uruchomili¶my funkcjê, która siê z czymkolwiek ³±czy, to z osobnego
- * w±tku mo¿emy anulowaæ po³±czenie poprzez gg_win32_thread_socket(watek, -1);
+ * jeÅ›li na win32 przy poÅ‚Ä…czeniach synchronicznych zapamiÄ™tamy w jakim
+ * wÄ…tku uruchomiliÅ›my funkcjÄ™, ktÃ³ra siÄ™ z czymkolwiek Å‚Ä…czy, to z osobnego
+ * wÄ…tku moÅ¼emy anulowaÄ‡ poÅ‚Ä…czenie poprzez gg_win32_thread_socket(watek, -1);
  * 
- * - thread_id - id w±tku. je¶li jest równe 0, brany jest aktualny w±tek,
- *               je¶li równe -1, usuwa wpis o podanym sockecie.
- * - socket - deskryptor gniazda. je¶li równe 0, zwraca deskryptor gniazda
- *            dla podanego w±tku, je¶li równe -1, usuwa wpis, je¶li co¶
- *            innego, ustawia dla podanego w±tku dany numer deskryptora.
+ * - thread_id - id wÄ…tku. jeÅ›li jest rÃ³wne 0, brany jest aktualny wÄ…tek,
+ *               jeÅ›li rÃ³wne -1, usuwa wpis o podanym sockecie.
+ * - socket - deskryptor gniazda. jeÅ›li rÃ³wne 0, zwraca deskryptor gniazda
+ *            dla podanego wÄ…tku, jeÅ›li rÃ³wne -1, usuwa wpis, jeÅ›li coÅ›
+ *            innego, ustawia dla podanego wÄ…tku dany numer deskryptora.
  *
- * je¶li socket jest równe 0, zwraca deskryptor gniazda dla podanego w±tku.
+ * jeÅ›li socket jest rÃ³wne 0, zwraca deskryptor gniazda dla podanego wÄ…tku.
  */
 int gg_win32_thread_socket(int thread_id, int socket)
 {
@@ -608,9 +608,9 @@ static char gg_base64_charset[] =
 /*
  * gg_base64_encode()
  *
- * zapisuje ci±g znaków w base64.
+ * zapisuje ciÄ…g znakÃ³w w base64.
  *
- *  - buf - ci±g znaków.
+ *  - buf - ciÄ…g znakÃ³w.
  *
  * zaalokowany bufor.
  */
@@ -665,9 +665,9 @@ char *gg_base64_encode(const char *buf)
 /*
  * gg_base64_decode()
  *
- * dekoduje ci±g znaków z base64.
+ * dekoduje ciÄ…g znakÃ³w z base64.
  *
- *  - buf - ci±g znaków.
+ *  - buf - ciÄ…g znakÃ³w.
  *
  * zaalokowany bufor.
  */
@@ -721,11 +721,11 @@ char *gg_base64_decode(const char *buf)
 }
 
 /*
- * gg_proxy_auth() // funkcja wewnêtrzna
+ * gg_proxy_auth() // funkcja wewnÄ™trzna
  *
- * tworzy nag³ówek autoryzacji dla proxy.
+ * tworzy nagÅ‚Ã³wek autoryzacji dla proxy.
  * 
- * zaalokowany tekst lub NULL, je¶li proxy nie jest w³±czone lub nie wymaga
+ * zaalokowany tekst lub NULL, jeÅ›li proxy nie jest wÅ‚Ä…czone lub nie wymaga
  * autoryzacji.
  */
 char *gg_proxy_auth()
@@ -764,7 +764,7 @@ static uint32_t gg_crc32_table[256];
 static int gg_crc32_initialized = 0;
 
 /*
- * gg_crc32_make_table()  // funkcja wewnêtrzna
+ * gg_crc32_make_table()  // funkcja wewnÄ™trzna
  */
 static void gg_crc32_make_table()
 {
@@ -786,11 +786,11 @@ static void gg_crc32_make_table()
 /*
  * gg_crc32()
  *
- * wyznacza sumê kontroln± CRC32 danego bloku danych.
+ * wyznacza sumÄ™ kontrolnÄ… CRC32 danego bloku danych.
  *
- *  - crc - suma kontrola poprzedniego bloku danych lub 0 je¶li pierwszy
+ *  - crc - suma kontrola poprzedniego bloku danych lub 0 jeÅ›li pierwszy
  *  - buf - bufor danych
- *  - size - ilo¶æ danych
+ *  - size - iloÅ›Ä‡ danych
  *
  * suma kontrolna CRC32.
  */

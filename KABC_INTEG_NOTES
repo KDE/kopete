@@ -224,7 +224,7 @@ Possible ACW order including kabc
         yup - Matt
 If we delay the KABC assoc question until after contacts are added, we cannot use any IM information
 that is already present in KABC.  And if different contacts are in the KABC, this might surprise the user when
-the KMC appears in the contactlist with extra contacts.·
+the KMC appears in the contactlist with extra contacts.Â·
 
 So it would be better if we performed this check before adding any contacts, in the ACW
 

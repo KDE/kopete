@@ -32,17 +32,17 @@
 /*
  * gg_register3()
  *
- * rozpoczyna rejestracjê u¿ytkownika protoko³em GG 6.0. wymaga wcze¶niejszego
- * pobrania tokenu za pomoc± funkcji gg_token().
+ * rozpoczyna rejestracjÄ™ uÅ¼ytkownika protokoÅ‚em GG 6.0. wymaga wczeÅ›niejszego
+ * pobrania tokenu za pomocÄ… funkcji gg_token().
  *
  *  - email - adres e-mail klienta
- *  - password - has³o klienta
+ *  - password - hasÅ‚o klienta
  *  - tokenid - identyfikator tokenu
- *  - tokenval - warto¶æ tokenu
- *  - async - po³±czenie asynchroniczne
+ *  - tokenval - wartoÅ›Ä‡ tokenu
+ *  - async - poÅ‚Ä…czenie asynchroniczne
  *
- * zaalokowana struct gg_http, któr± po¼niej nale¿y zwolniæ
- * funkcj± gg_register_free(), albo NULL je¶li wyst±pi³ b³±d.
+ * zaalokowana struct gg_http, ktÃ³rÄ… poÅºniej naleÅ¼y zwolniÄ‡
+ * funkcjÄ… gg_register_free(), albo NULL jeÅ›li wystÄ…piÅ‚ bÅ‚Ä…d.
  */
 struct gg_http *gg_register3(const char *email, const char *password, const char *tokenid, const char *tokenval, int async)
 {
@@ -124,16 +124,16 @@ struct gg_http *gg_register3(const char *email, const char *password, const char
 /*
  * gg_unregister3()
  *
- * usuwa konto u¿ytkownika z serwera protoko³em GG 6.0
+ * usuwa konto uÅ¼ytkownika z serwera protokoÅ‚em GG 6.0
  *
  *  - uin - numerek GG
- *  - password - has³o klienta
+ *  - password - hasÅ‚o klienta
  *  - tokenid - identyfikator tokenu
- *  - tokenval - warto¶æ tokenu
- *  - async - po³±czenie asynchroniczne
+ *  - tokenval - wartoÅ›Ä‡ tokenu
+ *  - async - poÅ‚Ä…czenie asynchroniczne
  *
- * zaalokowana struct gg_http, któr± po¼niej nale¿y zwolniæ
- * funkcj± gg_unregister_free(), albo NULL je¶li wyst±pi³ b³±d.
+ * zaalokowana struct gg_http, ktÃ³rÄ… poÅºniej naleÅ¼y zwolniÄ‡
+ * funkcjÄ… gg_unregister_free(), albo NULL jeÅ›li wystÄ…piÅ‚ bÅ‚Ä…d.
  */
 struct gg_http *gg_unregister3(uin_t uin, const char *password, const char *tokenid, const char *tokenval, int async)
 {
@@ -213,19 +213,19 @@ struct gg_http *gg_unregister3(uin_t uin, const char *password, const char *toke
 /*
  * gg_change_passwd4()
  *
- * wysy³a ¿±danie zmiany has³a zgodnie z protoko³em GG 6.0. wymaga
- * wcze¶niejszego pobrania tokenu za pomoc± funkcji gg_token().
+ * wysyÅ‚a Å¼Ä…danie zmiany hasÅ‚a zgodnie z protokoÅ‚em GG 6.0. wymaga
+ * wczeÅ›niejszego pobrania tokenu za pomocÄ… funkcji gg_token().
  *
  *  - uin - numer
  *  - email - adres e-mail
- *  - passwd - stare has³o
- *  - newpasswd - nowe has³o
+ *  - passwd - stare hasÅ‚o
+ *  - newpasswd - nowe hasÅ‚o
  *  - tokenid - identyfikator tokenu
- *  - tokenval - warto¶æ tokenu
- *  - async - po³±czenie asynchroniczne
+ *  - tokenval - wartoÅ›Ä‡ tokenu
+ *  - async - poÅ‚Ä…czenie asynchroniczne
  *
- * zaalokowana struct gg_http, któr± po¼niej nale¿y zwolniæ
- * funkcj± gg_change_passwd_free(), albo NULL je¶li wyst±pi³ b³±d.
+ * zaalokowana struct gg_http, ktÃ³rÄ… poÅºniej naleÅ¼y zwolniÄ‡
+ * funkcjÄ… gg_change_passwd_free(), albo NULL jeÅ›li wystÄ…piÅ‚ bÅ‚Ä…d.
  */
 struct gg_http *gg_change_passwd4(uin_t uin, const char *email, const char *passwd, const char *newpasswd, const char *tokenid, const char *tokenval, int async)
 {
@@ -312,16 +312,16 @@ struct gg_http *gg_change_passwd4(uin_t uin, const char *email, const char *pass
 /*
  * gg_remind_passwd3()
  *
- * wysy³a ¿±danie przypomnienia has³a e-mailem.
+ * wysyÅ‚a Å¼Ä…danie przypomnienia hasÅ‚a e-mailem.
  *
  *  - uin - numer
  *  - email - adres e-mail taki, jak ten zapisany na serwerze
- *  - async - po³±czenie asynchroniczne
+ *  - async - poÅ‚Ä…czenie asynchroniczne
  *  - tokenid - identyfikator tokenu
- *  - tokenval - warto¶æ tokenu
+ *  - tokenval - wartoÅ›Ä‡ tokenu
  *
- * zaalokowana struct gg_http, któr± po¼niej nale¿y zwolniæ
- * funkcj± gg_remind_passwd_free(), albo NULL je¶li wyst±pi³ b³±d.
+ * zaalokowana struct gg_http, ktÃ³rÄ… poÅºniej naleÅ¼y zwolniÄ‡
+ * funkcjÄ… gg_remind_passwd_free(), albo NULL jeÅ›li wystÄ…piÅ‚ bÅ‚Ä…d.
  */
 struct gg_http *gg_remind_passwd3(uin_t uin, const char *email, const char *tokenid, const char *tokenval, int async)
 {
@@ -399,14 +399,14 @@ struct gg_http *gg_remind_passwd3(uin_t uin, const char *email, const char *toke
 /*
  * gg_pubdir_watch_fd()
  *
- * przy asynchronicznych operacjach na katalogu publicznym nale¿y wywo³ywaæ
- * tê funkcjê przy zmianach na obserwowanym deskryptorze.
+ * przy asynchronicznych operacjach na katalogu publicznym naleÅ¼y wywoÅ‚ywaÄ‡
+ * tÄ™ funkcjÄ™ przy zmianach na obserwowanym deskryptorze.
  *
- *  - h - struktura opisuj±ca po³±czenie
+ *  - h - struktura opisujÄ…ca poÅ‚Ä…czenie
  *
- * je¶li wszystko posz³o dobrze to 0, inaczej -1. operacja bêdzie
- * zakoñczona, je¶li h->state == GG_STATE_DONE. je¶li wyst±pi jaki¶
- * b³±d, to bêdzie tam GG_STATE_ERROR i odpowiedni kod b³êdu w h->error.
+ * jeÅ›li wszystko poszÅ‚o dobrze to 0, inaczej -1. operacja bÄ™dzie
+ * zakoÅ„czona, jeÅ›li h->state == GG_STATE_DONE. jeÅ›li wystÄ…pi jakiÅ›
+ * bÅ‚Ä…d, to bÄ™dzie tam GG_STATE_ERROR i odpowiedni kod bÅ‚Ä™du w h->error.
  */
 int gg_pubdir_watch_fd(struct gg_http *h)
 {
@@ -461,7 +461,7 @@ int gg_pubdir_watch_fd(struct gg_http *h)
 /*
  * gg_pubdir_free()
  *
- * zwalnia pamiêæ po efektach operacji na katalogu publicznym.
+ * zwalnia pamiÄ™Ä‡ po efektach operacji na katalogu publicznym.
  *
  *  - h - zwalniana struktura
  */
@@ -477,11 +477,11 @@ void gg_pubdir_free(struct gg_http *h)
 /*
  * gg_token()
  *
- * pobiera z serwera token do autoryzacji zak³adania konta, usuwania
- * konta i zmiany has³a.
+ * pobiera z serwera token do autoryzacji zakÅ‚adania konta, usuwania
+ * konta i zmiany hasÅ‚a.
  *
- * zaalokowana struct gg_http, któr± po¼niej nale¿y zwolniæ
- * funkcj± gg_token_free(), albo NULL je¶li wyst±pi³ b³±d.
+ * zaalokowana struct gg_http, ktÃ³rÄ… poÅºniej naleÅ¼y zwolniÄ‡
+ * funkcjÄ… gg_token_free(), albo NULL jeÅ›li wystÄ…piÅ‚ bÅ‚Ä…d.
  */
 struct gg_http *gg_token(int async)
 {
@@ -514,14 +514,14 @@ struct gg_http *gg_token(int async)
 /*
  * gg_token_watch_fd()
  *
- * przy asynchronicznych operacjach zwi±zanych z tokenem nale¿y wywo³ywaæ
- * tê funkcjê przy zmianach na obserwowanym deskryptorze.
+ * przy asynchronicznych operacjach zwiÄ…zanych z tokenem naleÅ¼y wywoÅ‚ywaÄ‡
+ * tÄ™ funkcjÄ™ przy zmianach na obserwowanym deskryptorze.
  *
- *  - h - struktura opisuj±ca po³±czenie
+ *  - h - struktura opisujÄ…ca poÅ‚Ä…czenie
  *
- * je¶li wszystko posz³o dobrze to 0, inaczej -1. operacja bêdzie
- * zakoñczona, je¶li h->state == GG_STATE_DONE. je¶li wyst±pi jaki¶
- * b³±d, to bêdzie tam GG_STATE_ERROR i odpowiedni kod b³êdu w h->error.
+ * jeÅ›li wszystko poszÅ‚o dobrze to 0, inaczej -1. operacja bÄ™dzie
+ * zakoÅ„czona, jeÅ›li h->state == GG_STATE_DONE. jeÅ›li wystÄ…pi jakiÅ›
+ * bÅ‚Ä…d, to bÄ™dzie tam GG_STATE_ERROR i odpowiedni kod bÅ‚Ä™du w h->error.
  */
 int gg_token_watch_fd(struct gg_http *h)
 {
@@ -547,8 +547,8 @@ int gg_token_watch_fd(struct gg_http *h)
 	if (h->state != GG_STATE_PARSING)
 		return 0;
 	
-	/* je¶li h->data jest puste, to ¶ci±gali¶my tokenid i url do niego,
-	 * ale je¶li co¶ tam jest, to znaczy, ¿e mamy drugi etap polegaj±cy
+	/* jeÅ›li h->data jest puste, to Å›ciÄ…galiÅ›my tokenid i url do niego,
+	 * ale jeÅ›li coÅ› tam jest, to znaczy, Å¼e mamy drugi etap polegajÄ…cy
 	 * na pobieraniu tokenu. */
 	if (!h->data) {
 		int width, height, length;
@@ -573,8 +573,8 @@ int gg_token_watch_fd(struct gg_http *h)
 			return -1;
 		}
 		
-		/* dostali¶my tokenid i wszystkie niezbêdne informacje,
-		 * wiêc pobierzmy obrazek z tokenem */
+		/* dostaliÅ›my tokenid i wszystkie niezbÄ™dne informacje,
+		 * wiÄ™c pobierzmy obrazek z tokenem */
 
 		if (strncmp(url, "http://", 7)) {
 			path = gg_saprintf("%s?tokenid=%s", url, tokenid);
@@ -655,7 +655,7 @@ int gg_token_watch_fd(struct gg_http *h)
 /*
  * gg_token_free()
  *
- * zwalnia pamiêæ po efektach pobierania tokenu.
+ * zwalnia pamiÄ™Ä‡ po efektach pobierania tokenu.
  *
  *  - h - zwalniana struktura
  */
