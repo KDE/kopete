@@ -584,6 +584,23 @@ void WebcamTask::sendWebcamImage( const QByteArray &image, int length, int ts )
 	kdDebug(14181) << k_funcinfo << endl;
 	pictureBuffer.duplicate( image );
 	transmissionPending = true;
+	KStreamSocket *socket;
+	SocketInfoMap::Iterator it;
+	for( it = socketMap.begin(); it != socketMap.end(); it++ )
+	{
+		if( it.data().direction == Outgoing )
+		{
+			socket = it.key();
+			break;
+		}
+	}
+	if( !socket )
+	{
+		kdDebug(14181) << k_funcinfo << "Error. No outgoing socket found." << endl;
+		return;
+	}
+
+	socket->enableWrite( true );
 }
 
 void WebcamTask::transmitWebcamImage()
@@ -609,6 +626,7 @@ void WebcamTask::transmitWebcamImage()
 		return;
 	}
 
+	socket->enableWrite( false );
 	QByteArray buffer;
 	QDataStream stream( buffer, IO_WriteOnly );
 	stream << (Q_INT8)0x0d << (Q_INT8)0x00 << (Q_INT8)0x05 << (Q_INT8)0x00 << (Q_INT32)pictureBuffer.size()
