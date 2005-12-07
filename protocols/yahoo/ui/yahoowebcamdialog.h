@@ -18,7 +18,6 @@
 #define YAHOOWEBCAMDIALOG_H_
 
 #include <qstring.h>
-#include <qlabel.h>
 #include <kdialogbase.h>
 
 
@@ -33,16 +32,17 @@ public:
 	YahooWebcamDialog( const QString &, QWidget* parent = 0, const char* name = 0 );
 	~YahooWebcamDialog();
 	
+	void setViewer( const QStringList & );
 public slots:
 	void newImage( const QPixmap& image );
 	void webcamClosed( int );
 	void webcamPaused();
-
 signals:
 	void closingWebcamDialog();
 	
 private:
-	QLabel m_imageContainer;
+	QLabel *m_imageContainer;
+	QLabel *m_Viewer;
 	QString contactName;
 	
 };

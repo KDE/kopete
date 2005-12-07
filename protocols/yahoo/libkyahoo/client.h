@@ -343,6 +343,14 @@ Q_OBJECT
 		 * The webcam should stop sending images
 		 */
 		void webcamStopTransmission();
+		/**
+		 * A new buddy watches the cam
+		 */
+		void webcamViewerJoined( const QString & );
+		/**
+		 * A buddy no longer watches the cam
+		 */
+		void webcamViewerLeft( const QString & );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();

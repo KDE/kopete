@@ -33,6 +33,8 @@ public slots:
 	void stopTransmission();
 	void sendImage();
 	void webcamDialogClosing();
+	void addViewer( const QString & );
+	void removeViewer( const QString & );
 signals:
 	void webcamClosing();
 private:
@@ -40,6 +42,7 @@ private:
 	YahooWebcamDialog *theDialog;
 	int m_timestamp;
 	QTimer *m_timer;
+	QStringList m_viewer;
 };
 
 #endif

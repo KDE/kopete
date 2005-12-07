@@ -540,6 +540,10 @@ void Client::initTasks()
 				SIGNAL( webcamReadyForTransmission() ) );
 	QObject::connect( d->webcamTask, SIGNAL( stopTransmission() ),
 				SIGNAL( webcamStopTransmission() ) );
+	QObject::connect( d->webcamTask, SIGNAL( viewerJoined( const QString &) ),
+				SIGNAL( webcamViewerJoined( const QString &) ) );
+	QObject::connect( d->webcamTask, SIGNAL( viewerLeft( const QString &) ),
+				SIGNAL( webcamViewerLeft( const QString &) ) );
 }
 
 void Client::deleteTasks()

@@ -365,11 +365,11 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 					emit webcamClosed( info->sender, info->reason );
 					cleanUpConnection( socket );
 				case 0x0c:
-					info->type = WatcherLeft;
+					info->type = NewWatcher;
 					info->headerRead = true;
 				break;
 				case 0x0d:
-					info->type = NewWatcher;
+					info->type = WatcherLeft;
 					info->headerRead = true;
 				break;
 			}
@@ -425,10 +425,12 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 		case NewWatcher:
 			who.append( info->buffer->buffer() );
 			kdDebug(14181) << k_funcinfo << "New Watcher of webcam: " << who << endl;
+			emit viewerJoined( who );
 		break;
 		case WatcherLeft:
 			who.append( info->buffer->buffer() );
 			kdDebug(14181) << k_funcinfo << "A Watcher left: " << who << endl;
+			emit viewerLeft( who );
 		break;
 		case Image:
 			QPixmap webcamImage;

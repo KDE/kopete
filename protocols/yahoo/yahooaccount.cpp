@@ -295,6 +295,10 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::connect(m_session, SIGNAL(webcamStopTransmission()), this, SLOT(slotWebcamStopTransmission()));
 		
+		QObject::connect(m_session, SIGNAL(webcamViewerJoined(const QString&)), this, SLOT(slotWebcamViewerJoined(const QString&)));
+		
+		QObject::connect(m_session, SIGNAL(webcamViewerLeft(const QString&)), this, SLOT(slotWebcamViewerLeft(const QString&)));
+		
 		QObject::connect(m_session, SIGNAL(pictureStatusNotify( const QString&, int )), SLOT(slotPictureStatusNotiy( const QString&, int)));
 		
 		QObject::connect(m_session, SIGNAL(pictureDownloaded(const QString&, KTempFile*, int)), this, SLOT(slotGotBuddyIcon(const QString&, KTempFile*, int)) );
@@ -391,6 +395,10 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::disconnect(m_session, SIGNAL(webcamReadyForTransmission()), this, SLOT(slotWebcamReadyForTransmission()));
 		
 		QObject::disconnect(m_session, SIGNAL(webcamStopTransmission()), this, SLOT(slotWebcamStopTransmission()));
+		
+		QObject::disconnect(m_session, SIGNAL(webcamViewerJoined(const QString&)), this, SLOT(slotWebcamViewerJoined(const QString&)));
+		
+		QObject::disconnect(m_session, SIGNAL(webcamViewerLeft(const QString&)), this, SLOT(slotWebcamViewerLeft(const QString&)));
 		
 		QObject::disconnect(m_session, SIGNAL(pictureDownloaded(const QString&, KTempFile*, int )), this, SLOT(slotGotBuddyIcon(const QString&, KTempFile*,int )));
 
@@ -1199,6 +1207,22 @@ void YahooAccount::slotOutgoingWebcamClosing()
 	m_session->closeOutgoingWebcam();
 	m_webcam->deleteLater();
 	m_webcam = 0L;
+}
+
+void YahooAccount::slotWebcamViewerJoined( const QString &viewer )
+{
+	if( m_webcam )
+	{
+		m_webcam->addViewer( viewer );
+	}
+}
+
+void YahooAccount::slotWebcamViewerLeft( const QString &viewer )
+{
+	if( m_webcam )
+	{
+		m_webcam->removeViewer( viewer );
+	}
 }
 
 void YahooAccount::slotWebcamClosed( const QString& who, int reason )

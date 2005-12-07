@@ -113,4 +113,18 @@ void YahooWebcam::sendImage()
 	}
 }
 
+void YahooWebcam::addViewer( const QString &viewer )
+{
+	m_viewer.push_back( viewer );
+	if( theDialog )
+		theDialog->setViewer( m_viewer );
+}
+
+void YahooWebcam::removeViewer( const QString &viewer )
+{
+	m_viewer.remove( viewer );
+	if( theDialog )
+		theDialog->setViewer( m_viewer );
+}
+
 #include "yahoowebcam.moc"

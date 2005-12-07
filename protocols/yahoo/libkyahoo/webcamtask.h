@@ -79,6 +79,8 @@ signals:
 	void webcamImageReceived( const QString &, const QPixmap &);
 	void readyForTransmission();
 	void stopTransmission();
+	void viewerJoined( const QString & );
+	void viewerLeft( const QString & );
 private slots:
 	void slotConnectionStage1Established();
 	void slotConnectionStage2Established();
