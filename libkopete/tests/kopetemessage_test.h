@@ -2,6 +2,7 @@
     Tests for Kopete::Message
 
     Copyright (c) 2005      by Duncan Mac-Vicar       <duncan@kde.org>
+    Copyright (c) 2005      by Tommi Rantala  <tommi.rantala@cs.helsinki.fi>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 

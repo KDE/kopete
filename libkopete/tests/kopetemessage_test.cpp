@@ -1,8 +1,9 @@
 /*
     Tests for Kopete::Message
 
-    Copyright (c) 2005 by Duncan Mac-Vicar Prett  <duncan@kde.org>
-		Copyright (c) 2004 by Richard Smith <kde@metafoo.co.uk>
+    Copyright (c) 2005   by Tommi Rantala  <tommi.rantala@cs.helsinki.fi>
+    Copyright (c) 2005   by Duncan Mac-Vicar Prett  <duncan@kde.org>
+    Copyright (c) 2004   by Richard Smith <kde@metafoo.co.uk>
 
     Kopete (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
