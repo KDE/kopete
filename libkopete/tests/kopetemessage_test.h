@@ -27,7 +27,7 @@
 class Kopete::Protocol;
 class Kopete::Account;
 class Kopete::MetaContact;
-class	Kopete::Contact;
+class Kopete::Contact;
 
 // change to SlotTester when it works
 class KopeteMessage_Test : public KUnitTest::Tester
@@ -35,8 +35,9 @@ class KopeteMessage_Test : public KUnitTest::Tester
 public:
 	KopeteMessage_Test();
 	void allTests();
+
 public slots:
-	void testFormats();
+	void testPrimitives();
 	void testValidXML();
 	void testLinkParser();
 
