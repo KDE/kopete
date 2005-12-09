@@ -49,18 +49,9 @@ KUNITTEST_MODULE_REGISTER_TESTER( KopeteMessage_Test );
 
 KopeteMessage_Test::KopeteMessage_Test()
 {
-	setup();
-}
-
-void KopeteMessage_Test::allTests()
-{
 	// change user data dir to avoid messing with user's .kde dir
 	setenv( "KDEHOME", QFile::encodeName( QDir::homeDirPath() + "/.kopete-unittest" ), true );
 
-	KApplication::disableAutoDcopRegistration();
-	//KCmdLineArgs::init(argc,argv,"testkopetemessage", 0, 0, 0, 0);
-	KApplication app;
-	
 	// create fake objects needed to build a reasonable testeable message
 	m_protocol = new Kopete::Test::Mock::Protocol( new KInstance(QCString("test-kopete-message")), 0L, "test-kopete-message");
 	m_account = new Kopete::Test::Mock::Account(m_protocol, "testaccount");
@@ -69,7 +60,20 @@ void KopeteMessage_Test::allTests()
 	m_contactFrom = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-myself"), m_metaContactMyself, QString::null);
 	m_contactTo = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-dest"), m_metaContactOther, QString::null);
 	m_message = new Kopete::Message( m_contactFrom, m_contactTo, QString::null, Kopete::Message::Outbound, Kopete::Message::PlainText);
-	
+}
+
+void KopeteMessage_Test::allTests()
+{
+	KApplication::disableAutoDcopRegistration();
+	//KCmdLineArgs::init(argc,argv,"testkopetemessage", 0, 0, 0, 0);
+
+	// At least Kopete::Message::asXML() seems to require that a QApplication
+	// is created. Running the console version doesn't create it, but the GUI
+	// version does.
+
+	if (!kapp)
+		new KApplication();
+
 	testPrimitives();
 	testLinkParser();
 	testValidXML();
