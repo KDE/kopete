@@ -154,7 +154,7 @@ void LoginTask::sendAuth(Transfer* transfer)
 	/* got ServiceVerify ACK, send a ServiceAuth with username */
 	kdDebug(14180) << k_funcinfo << endl;
 	YMSGTransfer *t = new YMSGTransfer( Yahoo::ServiceAuth );
-	t->setParam( 1 , client()->userId());
+	t->setParam( 1 , client()->userId().local8Bit() );
 	send(t);
 	mState = SentAuth;
 }
@@ -202,18 +202,18 @@ void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint s
 	kdDebug(14180) << k_funcinfo << "resp_6: " << resp_6 << " resp_69: " << resp_96 << endl;
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceAuthResp, m_stateOnConnect);
 	t->setId( sessionID );
-	t->setParam( 0 , sn);
-	t->setParam( 6 , QString(resp_6));
-	t->setParam( 96 , QString(resp_96));
-	t->setParam( 59 , QString::fromLatin1( "B\\tfckeert1kk1nl&b=2" ) );	// ???
-	t->setParam( 135 , QString::fromLatin1( "7,0,0,437" ) );	// Client version
+	t->setParam( 0 , sn.local8Bit());
+	t->setParam( 6 , resp_6);
+	t->setParam( 96 , resp_96);
+	t->setParam( 59 , "B\\tfckeert1kk1nl&b=2" );	// ???
+	t->setParam( 135 , "7,0,0,437" );	// Client version
 	t->setParam( 148 , -60 );
 	t->setParam( 244 , 524223 );
-	t->setParam( 1 , sn);
+	t->setParam( 1 , sn.local8Bit());
 
 	if( !m_verificationWord.isEmpty() )
 	{
-		t->setParam( 227 , m_verificationWord );
+		t->setParam( 227 , m_verificationWord.local8Bit() );
 		m_verificationWord = QString::null;
 	}
 

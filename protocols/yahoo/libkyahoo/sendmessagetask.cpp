@@ -43,11 +43,11 @@ void SendMessageTask::onGo()
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceMessage);
 	t->setId( client()->sessionID() );
 	t->setStatus( Yahoo::StatusNotify );
-	t->setParam( 1, client()->userId() );
-	t->setParam( 5, m_target );
+	t->setParam( 1, client()->userId().local8Bit() );
+	t->setParam( 5, m_target.local8Bit() );
 	t->setParam( 14, m_text.utf8() );
-	t->setParam( 63, QString::fromLatin1( ";0" ) );
-	t->setParam( 64, QString::fromLatin1( "0" )  );	
+	t->setParam( 63, ";0" );
+	t->setParam( 64, "0"  );	
 	t->setParam( 97, 1 );	// UTF-8
 	t->setParam( 206, client()->pictureFlag() );	
 	send( t );

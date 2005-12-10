@@ -79,12 +79,12 @@ void SendPictureTask::connectSucceeded()
 	QFile file( m_path );
 
 	t->setId( client()->sessionID() );
-	t->setParam( 1, client()->userId());
+	t->setParam( 1, client()->userId().local8Bit());
 	t->setParam( 38, 604800);
-	t->setParam( 0, client()->userId());
+	t->setParam( 0, client()->userId().local8Bit());
 	t->setParam( 28, file.size() );	
-	t->setParam( 27, m_fileName );
-	t->setParam( 14, QString::fromLatin1("") );
+	t->setParam( 27, m_fileName.local8Bit() );
+	t->setParam( 14, "" );
 	QByteArray buffer;
 	QByteArray paket;
 	QDataStream stream( buffer, IO_WriteOnly );
@@ -137,9 +137,9 @@ void SendPictureTask::sendChecksum()
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePictureChecksum);
 	t->setId( client()->sessionID() );
-	t->setParam(1, client()->userId());
+	t->setParam(1, client()->userId().local8Bit());
 	if( !m_target.isEmpty() )
-		t->setParam( 5, m_target );
+		t->setParam( 5, m_target.local8Bit() );
 	t->setParam(192, m_checksum);
 	t->setParam(212, 1);
 	send( t );
@@ -153,11 +153,11 @@ void SendPictureTask::sendInformation()
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePicture);
 	t->setId( client()->sessionID() );
-	t->setParam(1, client()->userId());
-	t->setParam(4, client()->userId());
+	t->setParam(1, client()->userId().local8Bit());
+	t->setParam(4, client()->userId().local8Bit());
 	t->setParam(13, 2 );
-	t->setParam(5, m_target );
-	t->setParam(20, m_url );
+	t->setParam(5, m_target.local8Bit() );
+	t->setParam(20, m_url.local8Bit() );
 	t->setParam(192, m_checksum);
 
 	send( t );
@@ -171,9 +171,9 @@ void SendPictureTask::sendStatus()
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePictureUpdate);
 	t->setId( client()->sessionID() );
-	t->setParam(1, client()->userId());
-	t->setParam(5, m_target );
-	t->setParam(206, m_status);
+	t->setParam(1, client()->userId().local8Bit());
+	t->setParam(5, m_target.local8Bit() );
+	t->setParam(206, m_status );
 
 	send( t );
 	

@@ -319,7 +319,7 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		if (accept) 
 		{
 			kdDebug(14180) << k_funcinfo << " setting packet key [" << QString(key) << "] to " << QString(value) << endl;
-			t->setParam(QString(key).toInt(), QString(value));
+			t->setParam(QString(key).toInt(), value);
 			free(value);
 			free(key);
 		}

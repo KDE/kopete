@@ -82,8 +82,8 @@ void WebcamTask::requestWebcam( const QString &who )
 	
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceWebcam);
 	t->setId( client()->sessionID() );
-	t->setParam( 1, client()->userId());
-	t->setParam( 5, who );
+	t->setParam( 1, client()->userId().local8Bit());
+	t->setParam( 5, who.local8Bit() );
 	keyPending = who;
 
 	send( t );
@@ -402,9 +402,9 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 	
 	kdDebug(14181) << k_funcinfo << "data.size() " << data.size() << " headerLength " << headerLength << " buffersize " << info->buffer->size() << endl;
 	read = headerLength + info->dataLength - info->buffer->size();
-	info->buffer->writeBlock( data.data() + headerLength, info->dataLength - info->buffer->size() );
-	kdDebug(14181) << k_funcinfo << "read " << data.size() << " Bytes." << endl;
-	if( info->buffer->size() == static_cast<uint>(info->dataLength) )
+	info->buffer->writeBlock( data.data() + headerLength, data.size() - headerLength );//info->dataLength - info->buffer->size() );
+	kdDebug(14181) << k_funcinfo << "read " << data.size() - headerLength << " Bytes, Buffer is now " << info->buffer->size() << endl;
+	if( info->buffer->size() >= static_cast<uint>(info->dataLength) )
 	{	
 		info->buffer->close();
 		QString who;
@@ -516,7 +516,7 @@ void WebcamTask::registerWebcam()
 	
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceWebcam);
 	t->setId( client()->sessionID() );
-	t->setParam( 1, client()->userId());
+	t->setParam( 1, client()->userId().local8Bit());
 	keyPending  = client()->userId();
 
 	send( t );

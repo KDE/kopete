@@ -88,6 +88,7 @@ void MessageReceiverTask::parseMessage( Transfer *transfer )
 	if( msg.isEmpty() )
 	{
 		kdDebug(14181) << k_funcinfo << "Got a empty message. Dropped." << endl;
+		return;
 	}
 
 	if( utf8.startsWith( "1" ) )

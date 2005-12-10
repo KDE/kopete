@@ -132,7 +132,7 @@ int YMSGTransfer::paramCount( int index )
 }
 
 
-const QString &YMSGTransfer::nthParam( int index, int occurence )
+QCString YMSGTransfer::nthParam( int index, int occurence )
 {
 	int cnt = 0;
 	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
@@ -140,10 +140,10 @@ const QString &YMSGTransfer::nthParam( int index, int occurence )
 		if( (*it).first == index && cnt++ == occurence)
 			return (*it).second;
 	}
-	return QString::null;
+	return QCString();
 }
 
-const QString &YMSGTransfer::nthParamSeparated( int index, int occurence, int separator )
+QCString YMSGTransfer::nthParamSeparated( int index, int occurence, int separator )
 {
 
 	int cnt = -1;
@@ -154,27 +154,27 @@ const QString &YMSGTransfer::nthParamSeparated( int index, int occurence, int se
 		if( (*it).first == index && cnt == occurence)
 			return (*it).second;
 	}
-	return QString::null;
+	return QCString();
 }
 
-const QString &YMSGTransfer::firstParam( int index )
+QCString YMSGTransfer::firstParam( int index )
 {
 	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
 	{
 		if( (*it).first == index )
 			return (*it).second;
 	}
-	return QString::null;
+	return QCString();
 }
 
-void YMSGTransfer::setParam(int index, const QString &data)
+void YMSGTransfer::setParam(int index, const QCString &data)
 {
 	d->data.append( Param( index, data ) );
 }
 
 void YMSGTransfer::setParam( int index, int data )
 {
-	d->data.append( Param( index, QString::number( data ) ) );
+	d->data.append( Param( index, QString::number( data ).local8Bit() ) );
 }
 
 int YMSGTransfer::length()
@@ -256,7 +256,7 @@ QByteArray YMSGTransfer::serialize()
 // 		pos += QString::number( (*it).first ).length();
 // 		buffer[pos++] = 0xc0;
 // 		buffer[pos++] = 0x80;
-		stream.writeRawBytes( (*it).second.local8Bit(), (*it).second.length() );
+		stream.writeRawBytes( (*it).second, (*it).second.length() );
 		stream << (Q_INT8)0xc0 << (Q_INT8)0x80;
 // 		memcpy( buffer.data() + pos, (*it).second.latin1(), (*it).second.length());
 // 		pos += (*it).second.length();

@@ -34,9 +34,9 @@ void StealthTask::onGo()
 {
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceStealth);
 	t->setId( client()->sessionID() );
-	t->setParam( 1, client()->userId());
-	t->setParam( 7, m_target );
-	t->setParam( 13, QString::fromLatin1("2") );
+	t->setParam( 1, client()->userId().local8Bit());
+	t->setParam( 7, m_target.local8Bit() );
+	t->setParam( 13, "2" );
 	t->setParam( 31, m_state );	
 	send( t );
 	

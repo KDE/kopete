@@ -56,10 +56,10 @@ void ModifyBuddyTask::addBuddy()
 {
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceAddBuddy);
 	t->setId( client()->sessionID() );
-	t->setParam( 1, client()->userId() );
-	t->setParam( 7, m_target );
+	t->setParam( 1, client()->userId().local8Bit() );
+	t->setParam( 7, m_target.local8Bit() );
 	t->setParam( 14, m_message.utf8() );
-	t->setParam( 65, m_group );	
+	t->setParam( 65, m_group.local8Bit() );	
 	t->setParam( 97, 1 );	// UTF-8
 	send( t );
 }
@@ -68,9 +68,9 @@ void ModifyBuddyTask::removeBuddy()
 {
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceRemBuddy);
 	t->setId( client()->sessionID() );
-	t->setParam( 1, client()->userId() );
-	t->setParam( 7, m_target );
-	t->setParam( 65, m_group );	
+	t->setParam( 1, client()->userId().local8Bit() );
+	t->setParam( 7, m_target.local8Bit() );
+	t->setParam( 65, m_group.local8Bit() );	
 	send( t );
 }
 
@@ -78,17 +78,17 @@ void ModifyBuddyTask::moveBuddy()
 {
 	YMSGTransfer *add = new YMSGTransfer(Yahoo::ServiceRemBuddy);
 	add->setId( client()->sessionID() );
-	add->setParam( 1, client()->userId() );
-	add->setParam( 7, m_target );
-	add->setParam( 65, m_oldGroup );	
-	add->setParam( 14, QString::fromLatin1( " " ) );	// UTF-8
+	add->setParam( 1, client()->userId().local8Bit() );
+	add->setParam( 7, m_target.local8Bit() );
+	add->setParam( 65, m_oldGroup.local8Bit() );	
+	add->setParam( 14, " " );
 	send( add );
 
 	YMSGTransfer *rem = new YMSGTransfer(Yahoo::ServiceAddBuddy);
 	rem->setId( client()->sessionID() );
-	rem->setParam( 1, client()->userId() );
-	rem->setParam( 7, m_target );
-	rem->setParam( 65, m_group );	
+	rem->setParam( 1, client()->userId().local8Bit() );
+	rem->setParam( 7, m_target.local8Bit() );
+	rem->setParam( 65, m_group.local8Bit() );	
 	send( rem );
 }
 

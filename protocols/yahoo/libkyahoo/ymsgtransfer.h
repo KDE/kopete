@@ -31,7 +31,7 @@
 class YMSGTransferPrivate;
 class QString;
 
-typedef QPair< int, QString > Param;
+typedef QPair< int, QCString > Param;
 typedef QValueList< Param > ParamList;
 
 /**
@@ -58,13 +58,13 @@ public:
 	void setId(unsigned int id);
 
 	ParamList paramList();
-	const QString &firstParam( int index );
-	const QString &nthParam( int index, int occurence );
-	const QString &nthParamSeparated( int index, int occurence, int separator );
+	QCString firstParam( int index );
+	QCString nthParam( int index, int occurence );
+	QCString nthParamSeparated( int index, int occurence, int separator );
 	int paramCount( int index );
 	
 
-	void setParam(int index, const QString &data);
+	void setParam(int index, const QCString &data);
 	void setParam(int index, int data);
 	QByteArray serialize();
 	
