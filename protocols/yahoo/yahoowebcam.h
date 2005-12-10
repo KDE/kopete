@@ -40,7 +40,6 @@ signals:
 private:
 	YahooAccount *theAccount;
 	YahooWebcamDialog *theDialog;
-	int m_timestamp;
 	QTimer *m_timer;
 	QStringList m_viewer;
 };

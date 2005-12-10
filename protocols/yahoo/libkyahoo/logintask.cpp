@@ -223,10 +223,9 @@ void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint s
 
 }
 
-void LoginTask::sendAuthResp_pre_0x0b(const QString &sn, const QString &seed)
+void LoginTask::sendAuthResp_pre_0x0b(const QString &/*sn*/, const QString &/*seed*/)
 {
 	kdDebug(14180) << k_funcinfo << endl;
-
 }
 
 void LoginTask::handleAuthResp(Transfer *transfer)

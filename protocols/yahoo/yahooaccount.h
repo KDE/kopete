@@ -203,6 +203,7 @@ protected slots:
 	void slotWebcamPaused(const QString&);
 	void slotWebcamViewerJoined( const QString & );
 	void slotWebcamViewerLeft( const QString & );
+	void slotWebcamViewerRequest( const QString & );
 	void slotPictureStatusNotiy( const QString&, int);
 	void slotGotBuddyIcon(const QString&, KTempFile*, int);
 	void slotGotBuddyIconInfo(const QString&, KURL, int);

@@ -408,31 +408,36 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 	{	
 		info->buffer->close();
 		QString who;
-		QByteArray ar;
-		QDataStream stream( ar, IO_WriteOnly );
-
 		switch( info->type )
 		{
 		case UserRequest:
+			{
 			who.append( info->buffer->buffer() );
-			who = who.left( who.find('\n') + 1);
-			kdDebug(14181) << k_funcinfo << "User wants to view webcam: " << who << endl;
-			stream << (Q_INT8)0x0d << (Q_INT8)0x00 << (Q_INT8)0x05 << (Q_INT8)0x00 << (Q_INT32)who.length()
-			<< (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x01;
-			socket->writeBlock( ar.data(), ar.size() );
-			socket->writeBlock( who.local8Bit(), who.length() );
+			who = who.mid( 2, who.find('\n') - 3);
+			kdDebug(14181) << k_funcinfo << "User wants to view webcam: " << who << " len: " << who.length() << " Index: " << accessGranted.findIndex( who ) << endl;
+			if( accessGranted.findIndex( who ) >= 0 )
+			{
+				grantAccess( who );
+			}
+			else
+				emit viewerRequest( who );
+			}
 		break;
 		case NewWatcher:
 			who.append( info->buffer->buffer() );
+			who = who.left( who.length() - 1 );
 			kdDebug(14181) << k_funcinfo << "New Watcher of webcam: " << who << endl;
 			emit viewerJoined( who );
 		break;
 		case WatcherLeft:
 			who.append( info->buffer->buffer() );
-			kdDebug(14181) << k_funcinfo << "A Watcher left: " << who << endl;
+			who = who.left( who.length() - 1 );
+			kdDebug(14181) << k_funcinfo << "A Watcher left: " << who << " len: " << who.length() << endl;
+			accessGranted.remove( who );
 			emit viewerLeft( who );
 		break;
 		case Image:
+			{
 			QPixmap webcamImage;
 			//webcamImage.loadFromData( info->buffer->buffer() );
 	
@@ -461,8 +466,9 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 			QFile::remove(bmpTmpImageFile.name());
 	
 			kdDebug(14181) << k_funcinfo << "Image Received. Size: " << webcamImage.size() << endl;
-		
-
+			}
+		break;
+		default:
 		break;
 		}
 		
@@ -524,7 +530,37 @@ void WebcamTask::registerWebcam()
 
 void WebcamTask::addPendingInvitation( const QString &userId )
 {
+	kdDebug(14181) << k_funcinfo << "Inviting " << userId << " to watch the webcam." << endl;
 	pendingInvitations.append( userId );
+	accessGranted.append( userId );
+}
+
+void WebcamTask::grantAccess( const QString &userId )
+{
+	kdDebug(14181) << k_funcinfo << endl;
+	KStreamSocket *socket = 0L;
+	SocketInfoMap::Iterator it;
+	for( it = socketMap.begin(); it != socketMap.end(); it++ )
+	{
+		if( it.data().direction == Outgoing )
+		{
+			socket = it.key();
+			break;
+		}
+	}
+	if( !socket )
+	{
+		kdDebug(14181) << k_funcinfo << "Error. No outgoing socket found." << endl;
+		return;
+	}
+	QByteArray ar;
+	QDataStream stream( ar, IO_WriteOnly );
+	QString user = QString("u=%1").arg(userId);
+
+	stream << (Q_INT8)0x0d << (Q_INT8)0x00 << (Q_INT8)0x05 << (Q_INT8)0x00 << (Q_INT32)user.length()
+	<< (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x00 << (Q_INT8)0x01;
+	socket->writeBlock( ar.data(), ar.size() );
+	socket->writeBlock( user.local8Bit(), user.length() );
 }
 
 void WebcamTask::closeOutgoingWebcam()
@@ -579,12 +615,12 @@ void WebcamTask::sendEmptyWebcamImage()
 
 }
 
-void WebcamTask::sendWebcamImage( const QByteArray &image, int length, int ts )
+void WebcamTask::sendWebcamImage( const QByteArray &image )
 {
 	kdDebug(14181) << k_funcinfo << endl;
 	pictureBuffer.duplicate( image );
 	transmissionPending = true;
-	KStreamSocket *socket;
+	KStreamSocket *socket = 0L;
 	SocketInfoMap::Iterator it;
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
 	{
@@ -610,7 +646,7 @@ void WebcamTask::transmitWebcamImage()
 	kdDebug(14181) << k_funcinfo << "arraysize: " << pictureBuffer.size() << endl;
 
 	// Find outgoing socket
-	KStreamSocket *socket;
+	KStreamSocket *socket = 0L;
 	SocketInfoMap::Iterator it;
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
 	{

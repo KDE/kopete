@@ -364,14 +364,20 @@ void Client::closeWebcam( const QString &userId )
 	d->webcamTask->closeWebcam( userId );
 }
 
-void Client::sendWebcamImage( const QByteArray &ar, int length, int timestamp )
+void Client::sendWebcamImage( const QByteArray &ar )
 {
-	d->webcamTask->sendWebcamImage( ar, length, timestamp );
+	d->webcamTask->sendWebcamImage( ar );
 }
 
 void Client::closeOutgoingWebcam()
 {
 	d->webcamTask->closeOutgoingWebcam();
+}
+
+
+void Client::grantWebcamAccess( const QString &userId )
+{
+	d->webcamTask->grantAccess( userId );
 }
 
 // ***** other *****
@@ -544,6 +550,8 @@ void Client::initTasks()
 				SIGNAL( webcamViewerJoined( const QString &) ) );
 	QObject::connect( d->webcamTask, SIGNAL( viewerLeft( const QString &) ),
 				SIGNAL( webcamViewerLeft( const QString &) ) );
+	QObject::connect( d->webcamTask, SIGNAL( viewerRequest( const QString &) ),
+				SIGNAL( webcamViewerRequest( const QString &) ) );
 }
 
 void Client::deleteTasks()

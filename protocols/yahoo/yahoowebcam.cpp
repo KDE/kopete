@@ -30,7 +30,6 @@ YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0, "yahoo_webcam" )
 	kdDebug(14180) << k_funcinfo << endl;
 	theAccount = account;
 	theDialog = 0L;
-	m_timestamp = 1;
 
 	m_timer = new QTimer();
 	connect( m_timer, SIGNAL(timeout()), this, SLOT(sendImage()) );	
@@ -106,7 +105,7 @@ void YahooWebcam::sendImage()
 		if( file.open( IO_ReadOnly ) )
 		{
 			QByteArray ar = file.readAll();
-			theAccount->yahooSession()->sendWebcamImage( ar, ar.size(), m_timestamp++ );
+			theAccount->yahooSession()->sendWebcamImage( ar );
 		}
 		else
 			kdDebug(14181) << "Error opening the converted webcam image." << endl;

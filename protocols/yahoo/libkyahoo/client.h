@@ -167,8 +167,9 @@ Q_OBJECT
 		 * Invite the user to view your Webcam
 		 */
 		void sendWebcamInvite( const QString &userId );
-		void sendWebcamImage( const QByteArray &image, int length, int timestamp );
+		void sendWebcamImage( const QByteArray &image );
 		void closeOutgoingWebcam();
+		void grantWebcamAccess( const QString &userId );
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -351,6 +352,10 @@ Q_OBJECT
 		 * A buddy no longer watches the cam
 		 */
 		void webcamViewerLeft( const QString & );
+		/**
+		 * A buddy wants to watch the cam
+		 */
+		void webcamViewerRequest( const QString & );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();

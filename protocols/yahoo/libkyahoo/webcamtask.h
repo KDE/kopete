@@ -69,8 +69,9 @@ public:
 	void closeWebcam( const QString &who );
 	
 	void registerWebcam();
-	void sendWebcamImage( const QByteArray &image, int length, int timestamp );
+	void sendWebcamImage( const QByteArray &image );
 	void addPendingInvitation( const QString &userId );
+	void grantAccess( const QString &userId );
 	void closeOutgoingWebcam();
 signals:
 	void webcamNotAvailable( const QString & );
@@ -81,6 +82,7 @@ signals:
 	void stopTransmission();
 	void viewerJoined( const QString & );
 	void viewerLeft( const QString & );
+	void viewerRequest( const QString & );
 private slots:
 	void slotConnectionStage1Established();
 	void slotConnectionStage2Established();
@@ -100,6 +102,7 @@ private:
 	SocketInfoMap socketMap;
 	bool transmittingData;
 	QStringList pendingInvitations;
+	QStringList accessGranted;
 	int timestamp;
 	QByteArray pictureBuffer;
 	bool transmissionPending;
