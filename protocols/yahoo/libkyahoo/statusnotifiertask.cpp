@@ -102,8 +102,6 @@ void StatusNotifierTask::parseStatus( Transfer* transfer )
 		emit error( customError );
 
 	myNick = t->firstParam( 1 );
-	if( myNick.startsWith( client()->userId() ) )
-		emit loginResponse( Yahoo::LoginOk, QString::null );
 	
 	for( int i = 0; i < t->paramCount( 7 ); ++i)
 	{
