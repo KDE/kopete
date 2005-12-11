@@ -169,6 +169,7 @@ void MSNAccount::createNotificationServer( const QString &host, uint port )
 		m_notifySocket=0L;
 	}
 
+	m_msgHandle.clear();
 
 	myself()->setOnlineStatus( MSNProtocol::protocol()->CNT );
 
@@ -397,7 +398,7 @@ void MSNAccount::slotNotifySocketClosed()
 			i18n( "Connection Lost - MSN Plugin" ), KMessageBox::Notify );
 	}
 #endif
-
+	m_msgHandle.clear();
 	// kdDebug( 14140 ) << "MSNAccount::slotNotifySocketClosed - done" << endl;
 }
 
@@ -1167,7 +1168,7 @@ void MSNAccount::slotStartChatSession( const QString& handle )
 	{
 		if ( !c->manager(Kopete::Contact::CannotCreate) || !static_cast<MSNChatSession *>( c->manager( Kopete::Contact::CanCreate ) )->service() )
 		{
-			m_msgHandle.append(handle);
+			m_msgHandle.prepend(handle);
 			m_notifySocket->createChatSession();
 		}
 	}
@@ -1270,6 +1271,7 @@ void MSNAccount::slotErrorMessageReceived( int type, const QString &msg )
 	kdDebug(14140) << k_funcinfo << msg << endl;
 	// Display the error
 	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), msgBoxType, msg, caption );
+
 }
 
 bool MSNAccount::createContact( const QString &contactId, Kopete::MetaContact *metaContact )
