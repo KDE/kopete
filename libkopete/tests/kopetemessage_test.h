@@ -2,6 +2,7 @@
     Tests for Kopete::Message
 
     Copyright (c) 2005      by Duncan Mac-Vicar       <duncan@kde.org>
+    Copyright (c) 2005      by Tommi Rantala  <tommi.rantala@cs.helsinki.fi>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -27,7 +28,7 @@
 class Kopete::Protocol;
 class Kopete::Account;
 class Kopete::MetaContact;
-class	Kopete::Contact;
+class Kopete::Contact;
 
 // change to SlotTester when it works
 class KopeteMessage_Test : public KUnitTest::Tester
@@ -35,8 +36,9 @@ class KopeteMessage_Test : public KUnitTest::Tester
 public:
 	KopeteMessage_Test();
 	void allTests();
+
 public slots:
-	void testFormats();
+	void testPrimitives();
 	void testValidXML();
 	void testLinkParser();
 

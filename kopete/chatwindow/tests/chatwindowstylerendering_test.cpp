@@ -294,13 +294,25 @@ void ChatWindowStyleRendering_Test::testFullRendering()
 	Kopete::Message msgIn1(d->myself, d->other, QString("Hello there !"), Kopete::Message::Inbound);
 	Kopete::Message msgIn2(d->myself, d->other, QString("How are you doing ?"), Kopete::Message::Inbound);
 	Kopete::Message msgOut1(d->other, d->myself, QString("Fine and you ?"), Kopete::Message::Outbound);
-	Kopete::Message msgStatus1(0,0, QString("You are now marked as away."), Kopete::Message::Internal);
-	Kopete::Message msgStatus2(0,0, QString("You are now marked as online."), Kopete::Message::Internal);
+	Kopete::Message msgStatus1(d->myself,d->other, QString("You are now marked as away."), Kopete::Message::Internal);
+	Kopete::Message msgStatus2(d->myself,d->other, QString("You are now marked as online."), Kopete::Message::Internal);
 	Kopete::Message msgIn3(d->myself, d->other, QString("Well, doing some tests."), Kopete::Message::Internal);
 	Kopete::Message msgOut2(d->other, d->myself, QString("All your bases are belong to us."), Kopete::Message::Outbound);
 	Kopete::Message msgOut3(d->other, d->myself, QString("You are on the way to destruction"), Kopete::Message::Outbound);
 
-	// TODO: Make change style on the fly in ChatMessagePart so this test would run
+	// Change style on the fly in ChatMessagePart so this test would run
+	chatPart->setStyle(d->testStyle);
+	
+	// Simulate a consersation
+	chatPart->appendMessage(msgIn1);
+	chatPart->appendMessage(msgIn2);
+	chatPart->appendMessage(msgOut1);
+	chatPart->appendMessage(msgStatus1);
+	chatPart->appendMessage(msgStatus2);
+	chatPart->appendMessage(msgIn3);
+	chatPart->appendMessage(msgOut2);
+	chatPart->appendMessage(msgOut3);
+
 	resultHtml = chatPart->htmlDocument().toHTML();
 
 	// Read the expected(sample) HTML from file.
@@ -312,8 +324,6 @@ void ChatWindowStyleRendering_Test::testFullRendering()
 		expectedFullHtml = stream.read();
 		sampleHtml.close();
 	}
-	
-	// Simulate a chat session here.
 
 	CHECK(resultHtml, expectedFullHtml);
 }

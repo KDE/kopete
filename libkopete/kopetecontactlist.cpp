@@ -42,6 +42,7 @@
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 #include "kopetegroup.h"
+#include "kopetepicture.h"
 
 
 namespace  Kopete
@@ -341,32 +342,9 @@ void ContactList::slotDisplayNameChanged()
 
 void ContactList::slotPhotoChanged()
 {
-	QString photoURL;
+	kdDebug( 14010 ) << k_funcinfo << myself()->picture().path() << endl;
 
-	MetaContact::PropertySource photoSource = myself()->photoSource();
-
-	// Save the image to ~./kde/share/apps/kopete/global-photo.png if the source is not custom.
-	if(photoSource != MetaContact::SourceCustom)
-	{
-		QImage globalPhoto = myself()->photo();
-
-		photoURL = "global-photo.png";
-		photoURL = locateLocal("appdata", photoURL);
-
-		if(!globalPhoto.save(photoURL, "PNG"))
-		{
-				kdDebug( 14010 ) << k_funcinfo << "Error while saving the global photo to file." << endl;
-				return;
-		}
-	}
-	else
-	{
-		photoURL = myself()->customPhoto().path();
-	}
-
-	kdDebug( 14010 ) << k_funcinfo << photoURL << endl;
-
-	emit globalIdentityChanged(Kopete::Global::Properties::self()->photo().key(), photoURL);
+	emit globalIdentityChanged(Kopete::Global::Properties::self()->photo().key(), myself()->picture().path());
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

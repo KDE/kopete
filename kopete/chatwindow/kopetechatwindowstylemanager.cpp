@@ -36,6 +36,20 @@ public:
 	 : styleDirLister(0)
 	{}
 
+	~Private()
+	{
+		if(styleDirLister)
+		{
+			styleDirLister->deleteLater();
+		}
+
+		StyleList::Iterator styleIt, styleItEnd = availableStyles.end();
+		for(styleIt = availableStyles.begin(); styleIt != styleItEnd; ++styleIt)
+		{
+			delete styleIt.data();
+		}
+	}
+
 	KDirLister *styleDirLister;
 	StyleList availableStyles;
 
@@ -55,11 +69,12 @@ ChatWindowStyleManager *ChatWindowStyleManager::self()
 ChatWindowStyleManager::ChatWindowStyleManager(QObject *parent, const char *name)
 	: QObject(parent, name), d(new Private())
 {
-	
+	kdDebug(14000) << k_funcinfo << endl;
 }
 
 ChatWindowStyleManager::~ChatWindowStyleManager()
-{
+{	
+	kdDebug(14000) << k_funcinfo << endl;
 	delete d;
 }
 
@@ -73,12 +88,14 @@ void ChatWindowStyleManager::loadStyles()
 	}
 	
 	// Clear current availableStyles
-	StyleList::ConstIterator styleIt, styleItEnd = d->availableStyles.constEnd();
-	for(styleIt = d->availableStyles.constBegin(); styleIt != styleItEnd; ++styleIt)
-	{
-		delete styleIt.data();
-	}
-	d->availableStyles.clear();
+	// FIXME: It crash :(
+// 	StyleList::Iterator styleIt, styleItEnd = d->availableStyles.end();
+// 	for(styleIt = d->availableStyles.begin(); styleIt != styleItEnd; ++styleIt)
+// 	{
+// 		delete styleIt.data();
+// 		styleIt.data() = 0L;
+// 	}
+// 	d->availableStyles.clear();
 
 	QStringList chatStyles = KGlobal::dirs()->findDirs( "appdata", QString::fromUtf8( "styles" ) );
 	QStringList::const_iterator it;

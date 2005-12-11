@@ -12,9 +12,6 @@
             <height>168</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>GSMLibPrefsUI</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>

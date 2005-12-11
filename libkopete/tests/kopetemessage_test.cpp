@@ -1,8 +1,9 @@
 /*
     Tests for Kopete::Message
 
-    Copyright (c) 2005 by Duncan Mac-Vicar Prett  <duncan@kde.org>
-		Copyright (c) 2004 by Richard Smith <kde@metafoo.co.uk>
+    Copyright (c) 2005   by Tommi Rantala  <tommi.rantala@cs.helsinki.fi>
+    Copyright (c) 2005   by Duncan Mac-Vicar Prett  <duncan@kde.org>
+    Copyright (c) 2004   by Richard Smith <kde@metafoo.co.uk>
 
     Kopete (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -51,18 +52,9 @@ KUNITTEST_MODULE_REGISTER_TESTER( KopeteMessage_Test );
 
 KopeteMessage_Test::KopeteMessage_Test()
 {
-	setup();
-}
-
-void KopeteMessage_Test::allTests()
-{
 	// change user data dir to avoid messing with user's .kde dir
 	setenv( "KDEHOME", QFile::encodeName( QDir::homePath() + "/.kopete-unittest" ), true );
 
-	KApplication::disableAutoDcopRegistration();
-	//KCmdLineArgs::init(argc,argv,"testkopetemessage", 0, 0, 0, 0);
-	KApplication app;
-	
 	// create fake objects needed to build a reasonable testeable message
 	m_protocol = new Kopete::Test::Mock::Protocol( new KInstance(QByteArray("test-kopete-message")), 0L, "test-kopete-message");
 	m_account = new Kopete::Test::Mock::Account(m_protocol, "testaccount");
@@ -71,14 +63,180 @@ void KopeteMessage_Test::allTests()
 	m_contactFrom = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-myself"), m_metaContactMyself, QString::null);
 	m_contactTo = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-dest"), m_metaContactOther, QString::null);
 	m_message = new Kopete::Message( m_contactFrom, m_contactTo, QString::null, Kopete::Message::Outbound, Kopete::Message::PlainText);
-	
+}
+
+void KopeteMessage_Test::allTests()
+{
+	KApplication::disableAutoDcopRegistration();
+	//KCmdLineArgs::init(argc,argv,"testkopetemessage", 0, 0, 0, 0);
+
+	// At least Kopete::Message::asXML() seems to require that a QApplication
+	// is created. Running the console version doesn't create it, but the GUI
+	// version does.
+
+	if (!kapp)
+		new KApplication();
+
+	testPrimitives();
 	testLinkParser();
 	testValidXML();
 }
 
-void KopeteMessage_Test::testFormats()
+void KopeteMessage_Test::testPrimitives()
 {
-	
+	/**********************************************
+	 * from(), to()
+	 *********************************************/
+
+	{
+		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Inbound, Kopete::Message::PlainText);
+		Q_ASSERT(msg.from());
+		Q_ASSERT(!msg.to().isEmpty());
+	}
+
+	/**********************************************
+	 * Direction
+	 *********************************************/
+
+	{
+		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Inbound, Kopete::Message::PlainText);
+		CHECK(Kopete::Message::Inbound, msg.direction());
+	}
+	{
+		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Outbound, Kopete::Message::RichText);
+		CHECK(Kopete::Message::Outbound, msg.direction());
+	}
+	{
+		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Internal, Kopete::Message::RichText);
+		CHECK(Kopete::Message::Internal, msg.direction());
+	}
+
+	/**********************************************
+	 * Message Format
+	 *********************************************/
+
+	{
+		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Inbound, Kopete::Message::PlainText);
+		CHECK(Kopete::Message::PlainText, msg.format());
+	}
+	{
+		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Inbound, Kopete::Message::RichText);
+		CHECK(Kopete::Message::RichText, msg.format());
+	}
+	{
+		QString m = "foobar";
+		Kopete::Message msg( m_contactFrom, m_contactTo, m, Kopete::Message::Inbound, Kopete::Message::RichText);
+
+		msg.setBody(m, Kopete::Message::PlainText);
+		CHECK(Kopete::Message::PlainText, msg.format());
+
+		msg.setBody(m, Kopete::Message::RichText);
+		CHECK(Kopete::Message::RichText, msg.format());
+
+		msg.setBody(m, Kopete::Message::ParsedHTML);
+		CHECK(Kopete::Message::ParsedHTML, msg.format());
+
+		msg.setBody(m, Kopete::Message::Crypted);
+		CHECK(Kopete::Message::Crypted, msg.format());
+	}
+
+
+	/**********************************************
+	 * setBody()
+	 *********************************************/
+
+	{
+		QString m = "foobar";
+		Kopete::Message msg( m_contactFrom, m_contactTo, m, Kopete::Message::Inbound, Kopete::Message::RichText);
+
+		msg.setBody("NEW", Kopete::Message::PlainText);
+		CHECK(QString("NEW"), msg.plainBody());
+
+		msg.setBody("NEW_NEW", Kopete::Message::RichText);
+		CHECK(QString("NEW_NEW"), msg.plainBody());
+	}
+	{
+		QString m = "foobar";
+		Kopete::Message msg( m_contactFrom, m_contactTo, m, Kopete::Message::Inbound, Kopete::Message::PlainText);
+
+		msg.setBody("NEW", Kopete::Message::PlainText);
+		CHECK(QString("NEW"), msg.plainBody());
+
+		msg.setBody("NEW_NEW", Kopete::Message::RichText);
+		CHECK(QString("NEW_NEW"), msg.plainBody());
+	}
+	{
+		QString m = "<html><head></head><body foo=\"bar\">   <b>HELLO WORLD</b>   </body></html>";
+		Kopete::Message msg( m_contactFrom, m_contactTo, m, Kopete::Message::Inbound, Kopete::Message::PlainText);
+		CHECK(m, msg.plainBody());
+
+		msg.setBody("<simple> SIMPLE", Kopete::Message::PlainText);
+		CHECK(QString("<simple> SIMPLE"), msg.plainBody());
+		CHECK(QString("&lt;simple&gt; SIMPLE"), msg.escapedBody());
+
+		msg.setBody(m, Kopete::Message::RichText);
+
+		// FIXME: Should setBody() also strip extra white space?
+		//CHECK(msg.plainBody(),   QString("HELLO WORLD"));
+		//CHECK(msg.escapedBody(), QString("<b>HELLO WORLD</b>"));
+
+		CHECK(msg.plainBody().stripWhiteSpace(),   QString("HELLO WORLD"));
+		CHECK(msg.escapedBody().stripWhiteSpace(), QString("<b>HELLO WORLD</b>"));
+	}
+	{
+		Kopete::Message msg( m_contactFrom, m_contactTo, "foo", Kopete::Message::Inbound, Kopete::Message::PlainText);
+
+		msg.setBody("<p>foo", Kopete::Message::RichText);
+		CHECK(msg.escapedBody(), QString("foo"));
+
+		msg.setBody("<p>foo</p>", Kopete::Message::RichText);
+		CHECK(msg.escapedBody(), QString("foo"));
+
+		msg.setBody("\n<p>foo</p>\n<br/>", Kopete::Message::RichText);
+		CHECK(msg.escapedBody(), QString("foo<br/>"));
+	}
+
+	/**********************************************
+	 * Copy constructor
+	 *********************************************/
+
+	{
+		Kopete::Message msg1(m_contactFrom, m_contactTo, "foo", Kopete::Message::Inbound, Kopete::Message::RichText);
+		Kopete::Message msg2(msg1);
+
+		CHECK(msg1.plainBody(), msg2.plainBody());
+		CHECK(msg1.escapedBody(), msg2.escapedBody());
+
+		msg1.setBody("NEW", Kopete::Message::PlainText);
+		CHECK(msg1.plainBody(), QString("NEW"));
+		CHECK(msg2.plainBody(), QString("foo"));
+	}
+
+	/**********************************************
+	 * operator=
+	 *********************************************/
+
+	{
+		Kopete::Message msg1(m_contactFrom, m_contactTo, "foo", Kopete::Message::Inbound, Kopete::Message::RichText);
+		{
+			Kopete::Message msg2;
+
+			CHECK(msg2.plainBody(), QString::null);
+
+			msg2 = msg1;
+
+			CHECK(msg1.plainBody(), msg2.plainBody());
+			CHECK(msg1.escapedBody(), msg2.escapedBody());
+
+			msg1.setBody("NEW", Kopete::Message::PlainText);
+			CHECK(msg1.plainBody(), QString("NEW"));
+			CHECK(msg2.plainBody(), QString("foo"));
+		}
+		CHECK(msg1.plainBody(), QString("NEW"));
+
+		msg1 = msg1;
+		CHECK(msg1.plainBody(), QString("NEW"));
+	}
 }
 
 void KopeteMessage_Test::testValidXML()
@@ -91,14 +249,16 @@ void KopeteMessage_Test::testValidXML()
 	Kopete::Test::Mock::Contact* contactFrom = new Kopete::Test::Mock::Contact( 0L /*account*/, QString::fromLatin1("test-friend"), 0L /* metaContact */);
 	Kopete::Test::Mock::Contact* contactTo = new Kopete::Test::Mock::Contact( 0L /*account*/, QString::fromLatin1("test-myself"), 0L /* metaContact */);
 	
-	Kopete::Message message( contactFrom, contactTo, QString::fromLatin1("Hello my friend, I am Testing you"), Kopete::Message::Inbound, Kopete::Message::PlainText);
+	Kopete::Message message( contactFrom, contactTo,
+			QString::fromLatin1("Hello my friend, I am Testing you"),
+			Kopete::Message::Inbound, Kopete::Message::PlainText);
 	
-	kdDebug(14010) << k_funcinfo << endl;
+	//kdDebug(14010) << k_funcinfo << endl;
 	QString xml = message.asXML().toString();
 	QFile xmlFile("message.xml");
 	if ( xmlFile.open( QIODevice::WriteOnly ) )
 	{
-		kdDebug(14010) << k_funcinfo << "Writing xml" << endl;
+		//kdDebug(14010) << k_funcinfo << "Writing xml" << endl;
 		QTextStream outXML(&xmlFile);
 		outXML << QString::fromLatin1("<?xml version=\"1.0\"?>\n");
 		outXML << xml;	
@@ -110,7 +270,7 @@ void KopeteMessage_Test::testValidXML()
 	}
 
 	QString schemaPath = QString::fromLatin1( SRCDIR ) + QString::fromLatin1("/kopetemessage.xsd");
-	kdDebug() << k_funcinfo << schemaPath << endl;
+	//kdDebug() << k_funcinfo << schemaPath << endl;
 	KProcess p;
 	p << "xmllint" << "--noout" << "--schema" << schemaPath << QString::fromLatin1("message.xml"); 
 	p.start(KProcess::Block);
@@ -126,7 +286,6 @@ void KopeteMessage_Test::testValidXML()
 
 void KopeteMessage_Test::setup()
 {
-	
 }
 
 void KopeteMessage_Test::testLinkParser()
@@ -184,12 +343,12 @@ void KopeteMessage_Test::testLinkParser()
 			// otherwise use CHECK
 			if ( fileName.section("-", 0, 0) == QString::fromLatin1("broken") )
 			{
-				kdDebug() << "checking known-broken testcase: " << fileName << endl;
+				//kdDebug() << "checking known-broken testcase: " << fileName << endl;
 				XFAIL(result, expectedData);
 			}
 			else
 			{
-				kdDebug() << "checking known-working testcase: " << fileName << endl;
+				//kdDebug() << "checking known-working testcase: " << fileName << endl;
 				CHECK(result, expectedData);
 			}
 		}
@@ -199,5 +358,6 @@ void KopeteMessage_Test::testLinkParser()
 			continue;
 		}
 	}
-	
 }
+
+// vim: set noet ts=4 sts=4 sw=4:

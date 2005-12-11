@@ -115,7 +115,9 @@ void KopetePrefs::load()
 
 	_setStylePath(config->readEntry("StylePath"));
 	mStyleVariant = config->readEntry("StyleVariant");
-
+	// Read Chat Window Style display
+	mMetaContactDisplay = config->readBoolEntry("MetaContactDisplay", false);
+	mGroupConsecutiveMessages = config->readBoolEntry("GroupConsecutiveMessages", true);
 
 	mToolTipContents = config->readListEntry("ToolTipContents");
 	if(mToolTipContents.empty())
@@ -173,6 +175,8 @@ void KopetePrefs::load()
 	mTransparencyChanged = false;
 	mContactListAppearanceChanged = false;
 	mMessageAppearanceChanged = false;
+	mStylePathChanged = false;
+	mStyleVariantChanged = false;
 }
 
 void KopetePrefs::save()
@@ -237,7 +241,9 @@ void KopetePrefs::save()
 	//for xhtml+css
 	config->writeEntry("StylePath", mStylePath);
 	config->writeEntry("StyleVariant", mStyleVariant);
-
+	// Chat Window Display
+	config->writeEntry("MetaContactDisplay", mMetaContactDisplay);
+	config->writeEntry("GroupConsecutiveMessages", mGroupConsecutiveMessages);
 
 	config->writeEntry("ToolTipContents", mToolTipContents);
 
@@ -281,12 +287,20 @@ void KopetePrefs::save()
 	if(mMessageAppearanceChanged)
 		emit messageAppearanceChanged();
 
+	if(mStylePathChanged)
+		emit styleChanged(mStylePath);
+
+	if(mStyleVariantChanged)
+		emit styleVariantChanged(mStyleVariant);
+
 	// Clear all *Changed flags. This will cause breakage if someone makes some
 	// changes but doesn't save them in a slot connected to a *Changed signal.
 	mWindowAppearanceChanged = false;
 	mTransparencyChanged = false;
 	mContactListAppearanceChanged = false;
 	mMessageAppearanceChanged = false;
+	mStylePathChanged = false;
+	mStyleVariantChanged = false;
 }
 
 void KopetePrefs::setIconTheme(const QString &value)
@@ -464,6 +478,7 @@ void KopetePrefs::_setStyleSheet(const QString &value)
 
 void KopetePrefs::setStylePath(const QString &stylePath)
 {
+	if(mStylePath != stylePath) mStylePathChanged = true;
 	_setStylePath(stylePath);
 }
 
@@ -483,6 +498,7 @@ void KopetePrefs::_setStylePath(const QString &stylePath)
 
 void KopetePrefs::setStyleVariant(const QString &variantPath)
 {
+	if(mStyleVariant != variantPath) mStyleVariantChanged = true;
 	mStyleVariant = variantPath;
 }
 
@@ -746,5 +762,14 @@ void KopetePrefs::setEmoticonsRequireSpaces( bool b )
 	mEmoticonsRequireSpaces=b;
 }
 
+void KopetePrefs::setMetaContactDisplay( bool value )
+{
+	mMetaContactDisplay = value;
+}
+
+void KopetePrefs::setGroupConsecutiveMessages( bool value )
+{
+	mGroupConsecutiveMessages = value;
+}
 #include "kopeteprefs.moc"
 // vim: set noet ts=4 sts=4 sw=4:

@@ -140,6 +140,8 @@ public:
 	bool truncateContactNames() const { return mTruncateContactNames; }
 	int maxConactNameLength() const { return mMaxContactNameLength; }
 	bool emoticonsRequireSpaces() const { return mEmoticonsRequireSpaces; }
+	bool metaContactDisplay() const { return mMetaContactDisplay; }
+	bool groupConsecutiveMessages() const { return mGroupConsecutiveMessages; }
 
 	void setIconTheme(const QString &value);
 	void setUseEmoticons(bool value);
@@ -210,6 +212,8 @@ public:
 	void setEmoticonsRequireSpaces( bool );
 	void setBalloonClose( bool );
 	void setBalloonDelay( int );
+	void setMetaContactDisplay( bool );
+	void setGroupConsecutiveMessages( bool );
 
 signals:
 	/**
@@ -225,6 +229,16 @@ signals:
 	void messageAppearanceChanged();
 	void contactListAppearanceChanged();
 	void transparencyChanged();
+	/**
+	 * Emitted when chat Window Style changed.
+	 * @param stylePath New stylePath
+	 */
+	void styleChanged(const QString &stylePath);
+	/**
+	 * Emitted when ChatWindowStyle variant changed.
+	 * @param variantPath New variant Path.
+	 */
+	void styleVariantChanged(const QString &variantPath);
 
 private:
 	/**
@@ -303,6 +317,8 @@ private:
 	//for Adium (xhtml+css)
 	QString mStylePath;
 	QString mStyleVariant;
+	bool mStylePathChanged;
+	bool mStyleVariantChanged;
 
 	QStringList mToolTipContents;
 
@@ -324,6 +340,8 @@ private:
 
 	bool mReconnectOnDisconnect;
 	bool mEmoticonsRequireSpaces;
+	bool mMetaContactDisplay;
+	bool mGroupConsecutiveMessages;
 
 	QString fileContents(const QString &path);
 	void _setStyleSheet (const QString &);

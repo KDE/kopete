@@ -41,8 +41,9 @@
 #include "kopeteglobal.h"
 #include "kopeteprefs.h"
 #include "kopeteuiglobal.h"
-//Added by qt3to4:
 #include <QPixmap>
+
+#include "kopetepicture.h"
 
 namespace Kopete {
 
@@ -58,10 +59,13 @@ class  MetaContact::Private
 { public:
 	Private() :
 		photoSource(MetaContact::SourceCustom), displayNameSource(MetaContact::SourceCustom),
-		displayNameSourceContact(0L),  photoSourceContact(0L), temporary(false), onlineStatus(Kopete::OnlineStatus::Offline),
-		photoSyncedWithKABC(false)
+		displayNameSourceContact(0L),  photoSourceContact(0L), temporary(false),
+		onlineStatus(Kopete::OnlineStatus::Offline), photoSyncedWithKABC(false)
 	{}
 
+	~Private()
+	{}
+	
 	QList<Contact *> contacts;
 
 	// property sources
@@ -77,7 +81,6 @@ class  MetaContact::Private
 
 	// used when source is custom
 	QString displayName;
-	KURL photoUrl;
 
 	QList<Group *> groups;
 	QMap<QString, QMap<QString, QString> > addressBook;
@@ -91,7 +94,7 @@ class  MetaContact::Private
 	QString photoSourcePID, photoSourceAID, photoSourceCID;
 
 	// The photo cache. Reduce disk access and CPU usage.
-	QImage customPhotoCache, contactPhotoCache;
+	Picture customPicture, contactPicture, kabcPicture;
 };
 
 MetaContact::MetaContact()
@@ -109,6 +112,8 @@ MetaContact::MetaContact()
 	connect( this, SIGNAL( contactAdded( Kopete::Contact * ) ), SIGNAL( persistentDataChanged() ) );
 	connect( this, SIGNAL( contactRemoved( Kopete::Contact * ) ), SIGNAL( persistentDataChanged() ) );
 
+	// Update the KABC picture when the KDE Address book change.
+	connect(KABCPersistence::self()->addressBook(), SIGNAL(addressBookChanged(AddressBook *)), this, SLOT(slotUpdateAddressBookPicture()));
 
 	// make sure MetaContact is at least in one group
 	addToGroup( Group::topLevel() );
@@ -323,7 +328,6 @@ void MetaContact::setPhotoSource(PropertySource source)
 	d->photoSource = source;
 	if ( source != oldSource )
 	{
-		Message::clearImageCache();
 		emit photoChanged();
 	}
 }
@@ -664,45 +668,41 @@ QString nameFromContact( Kopete::Contact *c) /*const*/
 
 KURL MetaContact::customPhoto() const
 {
-	return d->photoUrl;
+	return KURL(d->customPicture.path());
 }
 
 void MetaContact::setPhoto( const KURL &url )
 {
-	d->photoUrl = url;
-	// Create the cache for the photo.
-	d->customPhotoCache = photoFromCustom();
+	d->customPicture.setPicture(url.path());
 
 	if ( photoSource() == SourceCustom )
 	{
-		Message::clearImageCache();
 		emit photoChanged();
 	}
 }
 
 QImage MetaContact::photo() const
 {
+	return picture().image();
+}
+
+Picture &MetaContact::picture() const
+{
 	if ( photoSource() == SourceKABC )
 	{
-		// kabc source, try to get from addressbook
-		// if the metacontact has a kabc association
-		if ( ! metaContactId().isEmpty() )
-			return photoFromKABC(metaContactId());
+		return d->kabcPicture;
 	}
 	else if ( photoSource() == SourceContact )
 	{
-		return d->contactPhotoCache;
+		return d->contactPicture;
 	}
 
-	return d->customPhotoCache;
+	return d->customPicture;
 }
 
 QImage MetaContact::photoFromCustom() const
 {
-	if ( d->photoUrl.isEmpty() || !d->photoUrl.isValid() )
-		return QImage();
-
-	return QImage(d->photoUrl.path());
+	return d->customPicture.image();
 }
 
 QImage photoFromContact( Kopete::Contact *contact) /*const*/
@@ -788,11 +788,23 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 
 	// Create a cache for the contact photo.
 	if(d->photoSourceContact != 0L)
-		d->contactPhotoCache = photoFromContact(d->photoSourceContact);
+	{
+		QVariant photoProp;
+		if ( contact->hasProperty( Kopete::Global::Properties::self()->photo().key() ) )
+			photoProp = contact->property( Kopete::Global::Properties::self()->photo().key() ).value();
+
+		if(photoProp.canCast( QVariant::Image ))
+			d->contactPicture.setPicture(photoProp.toImage());
+		else if(photoProp.canCast( QVariant::Pixmap ))
+			d->contactPicture.setPicture(photoProp.toPixmap().convertToImage());
+		else if(!photoProp.asString().isEmpty())
+		{
+			d->contactPicture.setPicture(photoProp.toString());
+		}
+	}
 
 	if ( photoSource() == SourceContact )
 	{
-		Message::clearImageCache();
 		emit photoChanged();
 	}
 }
@@ -835,11 +847,7 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 				if(d->photoSyncedWithKABC)
 					setPhotoSyncedWithKABC(true);
 					
-				// Update the contact photo cache.
-				d->contactPhotoCache = photoFromContact(subcontact);
-
-				Message::clearImageCache();
-				emit photoChanged();
+				setPhotoSourceContact(subcontact);
 			}
 		}
 	}
@@ -947,7 +955,7 @@ const QDomElement MetaContact::toXML(bool minimal)
 	displayName.appendChild( metaContact.createTextNode( d->displayName ) );
 	metaContact.documentElement().appendChild( displayName );
 	QDomElement photo = metaContact.createElement( QString::fromUtf8("photo" ) );
-	KURL photoUrl = d->photoUrl;
+	KURL photoUrl = KURL(d->customPicture.path());
 	photo.appendChild( metaContact.createTextNode( photoUrl.url() ) );
 	metaContact.documentElement().appendChild( photo );
 
@@ -1028,7 +1036,11 @@ bool MetaContact::fromXML( const QDomElement& element )
 
 	QString strContactId = element.attribute( QString::fromUtf8("contactId") );
 	if( !strContactId.isEmpty() )
+	{
 		d->metaContactId = strContactId;
+		// Set the KABC Picture
+		slotUpdateAddressBookPicture();
+	}
 
 	QDomElement contactElement = element.firstChild().toElement();
 	while( !contactElement.isNull() )
@@ -1267,6 +1279,28 @@ void MetaContact::slotAllPluginsLoaded()
 	setPhotoSourceContact( findContact( d->photoSourcePID, d->photoSourceAID, d->photoSourceCID) );
 }
 
+void MetaContact::slotUpdateAddressBookPicture()
+{
+	KABC::AddressBook* ab = KABCPersistence::self()->addressBook();
+	QString id = metaContactId();
+	if ( !id.isEmpty() && !id.contains(':') )
+	{
+		KABC::Addressee theAddressee = ab->findByUid(id);
+		if ( theAddressee.isEmpty() )
+		{
+			kdDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << id << " ) " << " in current address book" << endl;
+		}
+		else
+		{
+			KABC::Picture pic = theAddressee.photo();
+			if ( pic.data().isNull() && pic.url().isEmpty() )
+				pic = theAddressee.logo();
+
+			d->kabcPicture.setPicture(pic);
+		}
+	}
+}
+
 bool MetaContact::isTemporary() const
 {
 	return d->temporary;
@@ -1346,8 +1380,8 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 			}
 			case SourceCustom:
 			{
-				if( !d->photoUrl.isEmpty() )
-					newValue = d->photoUrl.url();
+				if( !d->customPicture.isNull() )
+					newValue = d->customPicture.path();
 				break;
 			}
 			// Don't sync the photo with KABC if the source is KABC !

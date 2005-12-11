@@ -228,6 +228,14 @@ private:
 	QString formatTime(const QString &timeFormat, const QDateTime &dateTime);
 
 	/**
+	 * Format a nickname/displayname according to preferences.
+	 *
+	 * @param sourceName Source name to format.
+	 * @return the formatted name.
+	 */
+	QString formatName( const QString &sourceName );
+
+	/**
 	 * Do the actual style change.
 	 */
 	void changeStyle();
