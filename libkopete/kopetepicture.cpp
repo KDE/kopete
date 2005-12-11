@@ -20,7 +20,7 @@
 
 #include <kabc/picture.h>
 
-#include <kmdcodec.h>
+#include <kcodecs.h>
 #include <kstandarddirs.h>
 #include <kdebug.h>
 
@@ -92,8 +92,8 @@ QString Picture::base64()
 	{
 		// Generate base64 cache for the picture.
 		QByteArray tempArray;
-		QBuffer tempBuffer( tempArray );
-		tempBuffer.open( IO_WriteOnly );
+		QBuffer tempBuffer( &tempArray );
+		tempBuffer.open( QIODevice::WriteOnly );
 		// Make sure it create a image cache.
 		image().save( &tempBuffer, "PNG" );
 		d->pictureBase64 = KCodecs::base64Encode(tempArray);
@@ -112,8 +112,8 @@ QString Picture::path()
 		
 		// Generate MD5 Hash for the image.
 		QByteArray tempArray;
-		QBuffer tempBuffer(tempArray);
-		tempBuffer.open( IO_WriteOnly );
+		QBuffer tempBuffer(&tempArray);
+		tempBuffer.open( QIODevice::WriteOnly );
 		image().save(&tempBuffer, "PNG");
 		KMD5 context(tempArray);
 		// Save the image to a file.

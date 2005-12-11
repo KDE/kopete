@@ -794,9 +794,9 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 			photoProp = contact->property( Kopete::Global::Properties::self()->photo().key() ).value();
 
 		if(photoProp.canCast( QVariant::Image ))
-			d->contactPicture.setPicture(photoProp.toImage());
+			d->contactPicture.setPicture(photoProp.value<QImage>());
 		else if(photoProp.canCast( QVariant::Pixmap ))
-			d->contactPicture.setPicture(photoProp.toPixmap().convertToImage());
+			d->contactPicture.setPicture(photoProp.value<QPixmap>().convertToImage());
 		else if(!photoProp.asString().isEmpty())
 		{
 			d->contactPicture.setPicture(photoProp.toString());
