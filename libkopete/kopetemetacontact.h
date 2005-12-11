@@ -41,6 +41,7 @@ namespace Kopete {
 
 class Plugin;
 class Group;
+class Picture;
 
 /**
  * @author Will Stephenson <will@stevello.free-online.co.uk>
@@ -187,6 +188,15 @@ public:
 	QImage photo() const;
 
 	/**
+	 * Return the correct Kopete::Picture object depending of the metacontact photo source.
+	 *
+	 * This photo is obtained from the source set with @ref setPhotoSource
+	 *
+	 * KDE4 TODO: Rename this to photo() and use the new object.
+	 */
+	Picture &picture() const;
+
+	/**
 	 * @brief Set the custom displayName.
 	 *
 	 * This display name is used when name source is Custom
@@ -207,10 +217,10 @@ public:
 	QString customDisplayName() const;
 
 	/**
-	 * @brief Returns the custom display name
+	 * @brief Returns the custom display photo
 	 *
-	 * @see displayName()
-	 * @see displayNameSource()
+	 * @see photo()
+	 * @see photoSource()
 	 */
 	KURL customPhoto() const;
 
@@ -570,6 +580,11 @@ private slots:
 	 * When all the plugins are loaded, set the Contact Source.
 	 */
 	void slotAllPluginsLoaded();
+
+	/**
+	 * Update the KABC Picture when the addressbook is changed.
+	 */
+	void slotUpdateAddressBookPicture();
 
 protected:
 	//QImage photoFromContact( Kopete::Contact *c) const;

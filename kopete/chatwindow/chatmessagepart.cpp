@@ -80,6 +80,7 @@
 #include "kopeteglobal.h"
 #include "kopeteemoticons.h"
 #include "kopeteview.h"
+#include "kopetepicture.h"
 
 #include "kopetechatwindowstyle.h"
 
@@ -989,12 +990,12 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 		resultHTML = resultHTML.replace( pos , timeRegExp.cap(0).length() , timeKeyword );
 	}
 
-	// FIXME: Force update of photo when using image path.
-	// Replace userIconPath (use image path)
+	// Replace userIconPath
 	if( message.from() )
 	{
-
-		QString photoPath = message.from()->property(Kopete::Global::Properties::self()->photo().key()).value().toString();
+		QString photoPath;
+#if 0
+		photoPath = message.from()->property(Kopete::Global::Properties::self()->photo().key()).value().toString();
 		// If the photo path is empty, set the default buddy icon for the theme
 		if( photoPath.isEmpty() )
 		{
@@ -1003,19 +1004,19 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 			else if(message.direction() == Kopete::Message::Outbound)
 				photoPath = QString::fromUtf8("Outgoing/buddy_icon.png");
 		}
-		resultHTML = resultHTML.replace(QString::fromUtf8("%userIconPath%"), photoPath);
-#if 0
-		QImage photo = message.from()->metaContact()->photo();
-		if( !photo.isNull() )
-		{
-			QByteArray ba;
-			QBuffer buffer( ba );
-			buffer.open( IO_WriteOnly );
-			photo.save ( &buffer, "PNG" );
-			QString photo64=KCodecs::base64Encode(ba);
-			resultHTML = resultHTML.replace( QString::fromUtf8("%userIconPath%"), QString("data:image/png;base64,%1").arg(photo64) );
-		}
 #endif
+		if( !message.from()->metaContact()->picture().isNull() )
+		{
+			photoPath = QString("data:image/png;base64,%1").arg( message.from()->metaContact()->picture().base64() );
+		}
+		else
+		{
+			if(message.direction() == Kopete::Message::Inbound)
+				photoPath = QString::fromUtf8("Incoming/buddy_icon.png");
+			else if(message.direction() == Kopete::Message::Outbound)
+				photoPath = QString::fromUtf8("Outgoing/buddy_icon.png");
+		}
+		resultHTML = resultHTML.replace(QString::fromUtf8("%userIconPath%"), photoPath);
 	}
 
 	// Replace messages.
@@ -1069,7 +1070,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 			resultHTML = resultHTML.replace( pos , timeRegExp.cap(0).length() , timeKeyword );
 		}
 		// Get contact image paths
-		// TODO: Use metaContact current photo path.
+#if 0
 		QString photoIncomingPath, photoOutgoingPath;
 		photoIncomingPath = remoteContact->property( Kopete::Global::Properties::self()->photo().key()).value().toString();
 		photoOutgoingPath = d->manager->myself()->property(Kopete::Global::Properties::self()->photo().key()).value().toString();
@@ -1081,28 +1082,29 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 
 		resultHTML = resultHTML.replace( QString::fromUtf8("%incomingIconPath%"), photoIncomingPath);
 		resultHTML = resultHTML.replace( QString::fromUtf8("%outgoingIconPath%"), photoOutgoingPath);
-#if 0
-		QImage photoIncoming = remoteContact->metaContact()->photo();
-		if( !photoIncoming.isNull() )
-		{
-			QByteArray ba;
-			QBuffer buffer( ba );
-			buffer.open( IO_WriteOnly );
-			photoIncoming.save ( &buffer, "PNG" );
-			QString photo64=KCodecs::base64Encode(ba);
-			resultHTML = resultHTML.replace( QString::fromUtf8("%incomingIconPath%"), QString("data:image/png;base64,%1").arg(photo64) );
-		}
-		QImage photoOutgoing = d->manager->myself()->metaContact()->photo();
-		if( !photoOutgoing.isNull() )
-		{
-			QByteArray ba;
-			QBuffer buffer( ba );
-			buffer.open( IO_WriteOnly );
-			photoOutgoing.save ( &buffer, "PNG" );
-			QString photo64=KCodecs::base64Encode(ba);
-			resultHTML = resultHTML.replace( QString::fromUtf8("%outgoingIconPath%"), QString("data:image/png;base64,%1").arg(photo64) );
-		}
 #endif
+		QString photoIncoming, photoOutgoing;
+		if( !remoteContact->metaContact()->picture().isNull() )
+		{
+			photoIncoming = QString("data:image/png;base64,%1").arg( remoteContact->metaContact()->picture().base64() );
+		}
+		else
+		{
+			photoIncoming = QString::fromUtf8("Incoming/buddy_icon.png");
+		}
+		
+		if( !d->manager->myself()->metaContact()->picture().isNull() )
+		{
+			photoOutgoing =  QString("data:image/png;base64,%1").arg( d->manager->myself()->metaContact()->picture().base64() );
+		}
+		else
+		{
+			photoOutgoing = QString::fromUtf8("Outgoing/buddy_icon.png");
+		}
+
+
+		resultHTML = resultHTML.replace( QString::fromUtf8("%incomingIconPath%"), photoIncoming);
+		resultHTML = resultHTML.replace( QString::fromUtf8("%outgoingIconPath%"), photoOutgoing );
 	}
 
 	return resultHTML;
