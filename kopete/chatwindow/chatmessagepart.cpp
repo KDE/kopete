@@ -308,7 +308,7 @@ void ChatMessagePart::save()
 
 	if ( dlg.currentFilter() == QString::fromLatin1( "text/plain" ) )
 	{
-		QValueList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
+		Q3ValueList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
 		for(it = d->allMessages.constBegin(); it != itEnd; ++it)
 		{
 			Kopete::Message tempMessage = *it;
