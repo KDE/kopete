@@ -95,8 +95,10 @@ QString Picture::base64()
 		QBuffer tempBuffer( tempArray );
 		tempBuffer.open( IO_WriteOnly );
 		// Make sure it create a image cache.
-		image().save( &tempBuffer, "PNG" );
-		d->pictureBase64 = KCodecs::base64Encode(tempArray);
+		if( image().save( &tempBuffer, "PNG" ) )
+		{
+			d->pictureBase64 = KCodecs::base64Encode(tempArray);
+		}
 	}
 
 	return d->pictureBase64;
@@ -119,8 +121,10 @@ QString Picture::path()
 		// Save the image to a file.
 		localPhotoPath = context.hexDigest() + ".png";
 		localPhotoPath = locateLocal( "appdata", QString::fromUtf8("metacontactpicturecache/%1").arg( localPhotoPath) );
-		image().save(localPhotoPath, "PNG");
-		d->picturePath = localPhotoPath;
+		if( image().save(localPhotoPath, "PNG") )
+		{
+			d->picturePath = localPhotoPath;
+		}
 	}
 
 	return d->picturePath;

@@ -79,6 +79,7 @@ class  MetaContact::Private
 	
 	// used when source is custom
 	QString displayName;
+	KURL photoUrl;
 
 	QPtrList<Group> groups;
 	QMap<QString, QMap<QString, QString> > addressBook;
@@ -657,11 +658,12 @@ QString nameFromContact( Kopete::Contact *c) /*const*/
 
 KURL MetaContact::customPhoto() const
 {
-	return KURL(d->customPicture.path());
+	return d->photoUrl;
 }
 
 void MetaContact::setPhoto( const KURL &url )
 {
+	d->photoUrl = url;
 	d->customPicture.setPicture(url.path());
 
 	if ( photoSource() == SourceCustom )
@@ -935,7 +937,7 @@ const QDomElement MetaContact::toXML(bool minimal)
 	displayName.appendChild( metaContact.createTextNode( d->displayName ) );
 	metaContact.documentElement().appendChild( displayName );
 	QDomElement photo = metaContact.createElement( QString::fromUtf8("photo" ) );
-	KURL photoUrl = KURL(d->customPicture.path());
+	KURL photoUrl = d->photoUrl;
 	photo.appendChild( metaContact.createTextNode( photoUrl.url() ) );
 	metaContact.documentElement().appendChild( photo );
 
