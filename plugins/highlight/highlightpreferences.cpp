@@ -51,6 +51,7 @@ HighlightPreferences::HighlightPreferences(QWidget *parent, const char* /*name*/
 	m_config = new HighlightConfig;
 
 	connect(preferencesDialog->m_list , SIGNAL(selectionChanged()) , this , SLOT(slotCurrentFilterChanged()));
+    connect(preferencesDialog->m_list , SIGNAL(doubleClicked ( QListViewItem *, const QPoint &, int )) , this , SLOT(slotRenameFilter()));		
 	connect(preferencesDialog->m_add , SIGNAL(pressed()) , this , SLOT(slotAddFilter()));
 	connect(preferencesDialog->m_remove , SIGNAL(pressed()) , this , SLOT(slotRemoveFilter()));
 	connect(preferencesDialog->m_rename , SIGNAL(pressed()) , this , SLOT(slotRenameFilter()));
