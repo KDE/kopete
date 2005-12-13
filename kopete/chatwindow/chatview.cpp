@@ -44,12 +44,14 @@
 #include <kgenericfactory.h>
 #include <khtmlview.h>
 #include <ksyntaxhighlighter.h>
+#include <kvbox.h>
+
 #include <qtimer.h>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QDropEvent>
 #include <QDragEnterEvent>
-#include <kvbox.h>
+#include <Q3UriDrag>
 
 typedef KGenericFactory<ChatWindowPlugin> ChatWindowPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_chatwindow, ChatWindowPluginFactory( "kopete_chatwindow" )  )
@@ -935,9 +937,6 @@ void ChatView::dropEvent ( QDropEvent * event )
 	}
 	else if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 )
 	{
-#warning commented to make it compile
-#if 0
-
 		Kopete::ContactPtrList members = m_manager->members();
 		Kopete::Contact *contact = members.first();
 
@@ -947,8 +946,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 			return;
 		}
 
-		KURL::List urlList;
-		KURLDrag::decode( event, urlList );
+		KURL::List urlList = KURL::List::fromMimeData( event->mimeData() );
 
 		for ( KURL::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
 		{
@@ -963,7 +961,6 @@ void ChatView::dropEvent ( QDropEvent * event )
 		}
 		event->acceptAction();
 		return;
-#endif
 	}
 	else
 		QWidget::dropEvent(event);

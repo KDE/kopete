@@ -29,6 +29,8 @@
 #include <kabc/addressee.h>
 #include <kabc/vcardconverter.h>
 #include <kdebug.h>
+#include <k3multipledrag.h>
+
 #include <kmenu.h>
 
 #include <q3header.h>
@@ -218,8 +220,6 @@ void ChatMembersListWidget::slotExecute( Q3ListViewItem *item )
 
 Q3DragObject *ChatMembersListWidget::dragObject()
 {
-#warning Implement me
-#if 0
 	Q3ListViewItem *currentLVI = currentItem();
 	if( !currentLVI )
 		return 0L;
@@ -229,7 +229,7 @@ Q3DragObject *ChatMembersListWidget::dragObject()
 		return 0L;
 
 	Kopete::Contact *c = lvi->contact();
-	KMultipleDrag *drag = new KMultipleDrag( this );
+	K3MultipleDrag *drag = new K3MultipleDrag( this );
 	drag->addDragObject( new Q3StoredDrag("application/x-qlistviewitem", 0L ) );
 
 	Q3StoredDrag *d = new Q3StoredDrag("kopete/x-contact", 0L );
@@ -254,7 +254,6 @@ Q3DragObject *ChatMembersListWidget::dragObject()
 	drag->setPixmap( c->onlineStatus().iconFor(c, 12) );
 
 	return drag;
-#endif
 	return 0l;
 }
 

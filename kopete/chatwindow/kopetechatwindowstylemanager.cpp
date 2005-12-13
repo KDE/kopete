@@ -18,7 +18,7 @@
 #include "kopetechatwindowstylemanager.h"
 
 // Qt includes
-#include <q3valuestack.h>
+#include <QStack>
 
 // KDE includes
 #include <kstandarddirs.h>
@@ -53,7 +53,7 @@ public:
 	KDirLister *styleDirLister;
 	StyleList availableStyles;
 
-	Q3ValueStack<KURL> styleDirs;
+	QStack<KURL> styleDirs;
 };
 
 ChatWindowStyleManager *ChatWindowStyleManager::s_self = 0;

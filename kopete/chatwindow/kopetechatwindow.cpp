@@ -20,8 +20,6 @@
 */
 
 #include <qtimer.h>
-#include <q3hbox.h>
-#include <q3vbox.h>
 #include <qlayout.h>
 #include <qtooltip.h>
 #include <qfileinfo.h>
@@ -30,10 +28,10 @@
 #include <QTextStream>
 #include <QCloseEvent>
 #include <Q3PtrList>
-#include <Q3Frame>
+#include <QFrame>
 #include <QLabel>
 #include <QVBoxLayout>
-#include <Q3PopupMenu>
+#include <QMenu>
 
 #include <kapplication.h>
 #include <kcursor.h>
@@ -56,6 +54,8 @@
 #include <ksqueezedtextlabel.h>
 #include <kstdaccel.h>
 #include <kglobalsettings.h>
+#include <khbox.h>
+#include <kvbox.h>
 
 #include "chatmessagepart.h"
 #include "chattexteditpart.h"
@@ -185,15 +185,15 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name )
 
 	initActions();
 
-	Q3VBox *vBox = new Q3VBox( this );
+	KVBox *vBox = new KVBox( this );
 	vBox->setLineWidth( 0 );
 	vBox->setSpacing( 0 );
-	vBox->setFrameStyle( Q3Frame::NoFrame );
+	vBox->setFrameStyle( QFrame::NoFrame );
 	// set default window size.  This could be removed by fixing the size hints of the contents
 	resize( 500, 500 );
 	setCentralWidget( vBox );
 
-	mainArea = new Q3Frame( vBox );
+	mainArea = new QFrame( vBox );
 	mainArea->setLineWidth( 0 );
 	mainArea->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	mainLayout = new QVBoxLayout( mainArea );
@@ -924,9 +924,7 @@ void KopeteChatWindow::slotChatClosed()
 
 void KopeteChatWindow::slotPrepareDetachMenu(void)
 {
-#warning TODO
-#if 0
-	Q3PopupMenu *detachMenu = actionDetachMenu->popupMenu();
+	QMenu *detachMenu = actionDetachMenu->popupMenu();
 	detachMenu->clear();
 
 	for ( unsigned id=0; id < windows.count(); id++ )
@@ -935,20 +933,17 @@ void KopeteChatWindow::slotPrepareDetachMenu(void)
 		if( win != this )
 			detachMenu->insertItem( win->caption(), id );
 	}
-#endif
 }
 
 void KopeteChatWindow::slotSendMessage()
 {
 	if ( m_activeView && m_activeView->canSend() )
 	{
-#if 0
 		if( !animIcon.isNull() )
 		{
 			anim->setMovie( &animIcon );
 			animIcon.unpause();
 		}
-#endif
 		m_activeView->sendMessage();
 	}
 }
@@ -1001,15 +996,11 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 
 void KopeteChatWindow::slotPreparePlacementMenu()
 {
-#warning TODO
-#if 0
-
-	Q3PopupMenu *placementMenu = actionTabPlacementMenu->popupMenu();
+	QMenu *placementMenu = actionTabPlacementMenu->popupMenu();
 	placementMenu->clear();
 
 	placementMenu->insertItem( i18n("Top"), 0 );
 	placementMenu->insertItem( i18n("Bottom"), 1 );
-#endif
 }
 
 void KopeteChatWindow::slotPlaceTabs( int placement )

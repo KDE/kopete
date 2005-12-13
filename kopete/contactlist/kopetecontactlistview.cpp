@@ -50,6 +50,7 @@
 #include <kabc/stdaddressbook.h>
 #include <kabc/vcardconverter.h>
 #include <kxmlguifactory.h>
+#include <k3multipledrag.h>
 
 #include <kdeversion.h>
 #include <kinputdialog.h>
@@ -951,8 +952,6 @@ void KopeteContactListView::slotDropped(QDropEvent *e, Q3ListViewItem *, Q3ListV
 	}
 	else if( e->provides("text/uri-list") )
 	{
-#warning commented to make it compile
-#if 0
 
 		if ( !Q3UriDrag::canDecode( e ) )
 		{
@@ -960,8 +959,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, Q3ListViewItem *, Q3ListV
 			return;
 		}
 
-		KURL::List urlList;
-		KURLDrag::decode( e, urlList );
+		KURL::List urlList = KURL::List::fromMimeData( e->mimeData() );
 
 		for ( KURL::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
 		{
@@ -1009,7 +1007,6 @@ void KopeteContactListView::slotDropped(QDropEvent *e, Q3ListViewItem *, Q3ListV
 			}
 		}
 		e->acceptAction();
-#endif
 	}
 }
 
@@ -1178,9 +1175,6 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 	}
 	else
 	{
-#warning commented to make it compile
-#if 0
-
 		if( e->provides( "text/uri-list" ) )
 		{
 			//we are sending a file (or dragging from the chat view)
@@ -1206,8 +1200,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 			if ( !Q3UriDrag::canDecode(e) )
 				return false;
 
-			KURL::List urlList;
-			KURLDrag::decode( e, urlList );
+			KURL::List urlList = KURL::List::fromMimeData( e->mimeData() );
 
 			for ( KURL::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
 			{
@@ -1228,7 +1221,6 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 			Q3TextDrag::decode(e, text);
 			kdDebug(14000) << k_funcinfo << "drop with mimetype:" << e->format() << " data as text:" << text << endl;
 		}
-#endif
 	}
 
 	return false;
@@ -1305,10 +1297,9 @@ Q3DragObject *KopeteContactListView::dragObject()
 	
 	Q3StoredDrag *d = new Q3StoredDrag("kopete/x-metacontact", /*0L*/ this );
 	d->setEncodedData( metaLVI->metaContact()->metaContactId().toUtf8() );
-	return d;	
-#warning KMultipleDrag does not exist anymore
-#if 0    
-	KMultipleDrag *drag = new KMultipleDrag( this );
+	return d;
+
+	K3MultipleDrag *drag = new K3MultipleDrag( this );
 	drag->addDragObject( new Q3StoredDrag("application/x-qlistviewitem", 0L ) );
 	drag->addDragObject( d );
 
@@ -1350,8 +1341,6 @@ Q3DragObject *KopeteContactListView::dragObject()
 	drag->setPixmap( pm /*, QPoint( s.width() , s.height() )*/ );
 
 	return drag;
-#endif
-
 }
 
 void KopeteContactListView::slotViewSelectionChanged()

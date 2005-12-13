@@ -22,9 +22,6 @@
 
 #include <qpixmap.h>
 #include <qmovie.h>
-//Added by qt3to4:
-#include <QMouseEvent>
-#include <Q3PtrList>
 
 #include <ksystemtray.h>
 
@@ -96,8 +93,8 @@ private:
 
 	static KopeteSystemTray* s_systemTray;
 
-	Q3PtrList<Kopete::MessageEvent> mEventList;
-	Q3PtrList<Kopete::MessageEvent> mBalloonEventList;
+	QList<Kopete::MessageEvent*> mEventList;
+	QList<Kopete::MessageEvent*> mBalloonEventList;
 	KopeteBalloon *m_balloon;
 };
 

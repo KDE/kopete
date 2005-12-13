@@ -25,7 +25,7 @@
 #include <QPixmap>
 #include <QLabel>
 #include <QVBoxLayout>
-#include <Q3Frame>
+#include <QFrame>
 #include <Q3PtrList>
 #include <QCloseEvent>
 #include <QList>
@@ -40,9 +40,9 @@ class QPixmap;
 class QTabWidget;
 class KSqueezedTextLabel;
 class KPushButton;
-class Q3VBox;
+class KVBox;
 class QVBoxLayout;
-class Q3Frame;
+class QFrame;
 class KTabWidget;
 class QLabel;
 class KopeteEmoticonAction;
@@ -140,7 +140,7 @@ private:
 	KPushButton *m_button_send;
 	KSqueezedTextLabel *m_status_text;
 	QVBoxLayout *mainLayout;
-	Q3Frame *mainArea;
+	QFrame *mainArea;
 	QLabel *anim;
 	QMovie animIcon;
 	QPixmap normalIcon;

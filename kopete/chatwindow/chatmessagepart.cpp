@@ -67,6 +67,7 @@
 #include <kstandarddirs.h>
 #include <kiconloader.h>
 #include <kcodecs.h>
+#include <k3multipledrag.h>
 
 // Kopete includes
 #include "chatmemberslistwidget.h"
@@ -822,13 +823,11 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 
 	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), this, SLOT( slotClearSelection()));
 
-#warning KMultipleDrag does not seems to exist anymore in kde4
-#if 0 
-//#ifndef QT_NO_MIMECLIPBOARD
+#ifndef QT_NO_MIMECLIPBOARD
 	if(!justselection)
 	{
       	Q3TextDrag *textdrag = new Q3TextDrag(text, 0L);
-	    KMultipleDrag *drag = new KMultipleDrag( );
+	    K3MultipleDrag *drag = new K3MultipleDrag( );
     	drag->addDragObject( textdrag );
     	if(!htmltext.isEmpty()) {
 	    	htmltext.replace( QChar( 0xa0 ), ' ' );
