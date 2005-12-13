@@ -52,8 +52,8 @@ public:
 
 public slots:
 	void loadConfig();
-
 	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+
 public slots:
 	virtual void connect(const Kopete::OnlineStatus& initial= Kopete::OnlineStatus());
 	virtual void disconnect();
@@ -62,7 +62,9 @@ public slots:
 protected slots:
 	virtual void slotSendingSuccess(const Kopete::Message &msg);
 	virtual void slotSendingFailure(const Kopete::Message &msg, const QString &error);
-
+	virtual void slotConnected();
+	virtual void slotDisconnected();
+	
 
 protected:
 	bool createContact(const QString &contactId,  Kopete::MetaContact *parentContact);

@@ -39,11 +39,27 @@ SMSAccount::SMSAccount( SMSProtocol *parent, const QString &accountID, const cha
 {
 	setMyself( new SMSContact(this, accountID, accountID, Kopete::ContactList::self()->myself()) );
 	loadConfig();
+	
+	QString sName = configGroup()->readEntry("ServiceName", QString::null);
+	theService = ServiceLoader::loadService(sName, this);
+	
+	if( theService )
+	{
+		QObject::connect (theService, SIGNAL(messageSent(const Kopete::Message &)), 
+					this, SLOT(slotSendingSuccess(const Kopete::Message &)));
+		QObject::connect (theService, SIGNAL(messageNotSent(const Kopete::Message &, const QString &)), 
+					this, SLOT(slotSendingFailure(const Kopete::Message &, const QString &)));
+		QObject::connect (theService, SIGNAL(connected()), this, SLOT(slotConnected()));
+		QObject::connect (theService, SIGNAL(disconnected()), this, SLOT(slotDisconnected()));
+	}
+	
 	connect();
 }
 
 SMSAccount::~SMSAccount()
 {
+	delete theService;
+	theService = NULL;
 }
 
 void SMSAccount::loadConfig()
@@ -80,33 +96,26 @@ void SMSAccount::setAway( bool /*away*/, const QString &)
 
 void SMSAccount::connect(const Kopete::OnlineStatus&)
 {
-	myself()->setOnlineStatus( SMSProtocol::protocol()->SMSOnline );
-
-	QString sName = configGroup()->readEntry("ServiceName", QString::null);
-
-	theService = ServiceLoader::loadService(sName, this);
-	if (theService == NULL)
-		return;
-
-	QObject::connect (theService, SIGNAL(messageSent(const Kopete::Message &)), 
-				this, SLOT(slotSendingSuccess(const Kopete::Message &)));
-	QObject::connect (theService, SIGNAL(messageNotSent(const Kopete::Message &, const QString &)), 
-				this, SLOT(slotSendingFailure(const Kopete::Message &, const QString &)));
-
+	if( theService )
+		theService->connect();
 }
 
-KActionMenu* SMSAccount::actionMenu()
+void SMSAccount::slotConnected()
 {
-	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
-
-	return theActionMenu;
+	myself()->setOnlineStatus( SMSProtocol::protocol()->SMSOnline );
+	setAllContactsStatus( SMSProtocol::protocol()->SMSOnline );
 }
 
 void SMSAccount::disconnect()
 {
+	if( theService )
+		theService->disconnect();
+}
+
+void SMSAccount::slotDisconnected()
+{
 	myself()->setOnlineStatus( SMSProtocol::protocol()->SMSOffline );
-	delete theService;
-	theService = NULL;
+	setAllContactsStatus( SMSProtocol::protocol()->SMSOffline );
 }
 
 void SMSAccount::slotSendMessage(Kopete::Message &msg)
@@ -166,6 +175,12 @@ bool SMSAccount::createContact( const QString &contactId,
 		return true;
 	else
 		return false;
+}
+
+KActionMenu* SMSAccount::actionMenu()
+{
+	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
+	return theActionMenu;
 }
 
 void SMSAccount::setOnlineStatus( const Kopete::OnlineStatus & status , const QString &reason)

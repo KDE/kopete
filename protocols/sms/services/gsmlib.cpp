@@ -17,6 +17,7 @@
 
 #include <qcombobox.h>
 #include <qlayout.h>
+#include <qcheckbox.h>
 
 #include <klocale.h>
 #include <kurlrequester.h>
@@ -49,15 +50,51 @@ GSMLib::GSMLib(Kopete::Account* account)
 	kdWarning( 14160 ) << k_funcinfo << endl;
 	prefWidget = 0L;
 	m_MeTa = NULL;
-
-	KConfigGroup* c = m_account->configGroup();
-	QString device = c->readEntry(QString("%1:%2").arg("GSMLib").arg("Device"), QString::null);
 	
+	loadConfig();
+}
+
+GSMLib::~GSMLib()
+{
+	disconnect();
+}
+
+void GSMLib::saveConfig()
+{
+	if( m_account == NULL )
+	{
+		KConfigGroup* c = m_account->configGroup();
+
+		c->writeEntry(QString("%1:%2").arg("GSMLib").arg("Device"), m_device);
+	}
+}
+
+void GSMLib::loadConfig()
+{
+	m_device = "/dev/bluetooth/rfcomm0";
+	if( m_account == NULL )
+	{
+		QString temp;
+		KConfigGroup* c = m_account->configGroup();
+		
+		temp = c->readEntry(QString("%1:%2").arg("GSMLib").arg("Device"), QString::null);
+		if( temp != QString::null )
+			m_device = temp;
+	}
+}
+
+void GSMLib::connect()
+{
+			
 	// open the port and ME/TA
 	try
 	{
-		gsmlib::Ref<gsmlib::Port> port = new gsmlib::UnixSerialPort(device.latin1(), 9600, gsmlib::DEFAULT_INIT_STRING, false);
+		kdWarning( 14160 ) << "Connecting to: '"<<m_device<<"'"<<endl;
 		
+		gsmlib::Ref<gsmlib::Port> port = new gsmlib::UnixSerialPort(m_device.latin1(), 9600, gsmlib::DEFAULT_INIT_STRING, false);
+		
+		kdWarning( 14160 ) << "Port created"<<endl;
+				
 		m_MeTa = new gsmlib::MeTa(port);
 		std::string dummy1, dummy2, receiveStoreName;
 		m_MeTa->getSMSStore(dummy1, dummy2, receiveStoreName );
@@ -69,19 +106,26 @@ GSMLib::GSMLib(Kopete::Account* account)
 		m_MeTa->setSMSRoutingToTA(true, false, false, true);
 
 		m_MeTa->setEventHandler(this);
+		killTimers();
 		startTimer(1000);
+		emit connected();
 	}
 	catch(gsmlib::GsmException &e)
 	{
 		kdWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
-		delete m_MeTa;
-		m_MeTa = NULL;
+		disconnect();
 		return;
 	}
 }
 
-GSMLib::~GSMLib()
+void GSMLib::disconnect()
 {
+	killTimers();
+	kdWarning( 14160 ) << k_funcinfo <<endl;
+	delete m_MeTa;
+	m_MeTa = NULL;
+
+	emit disconnected();
 }
 
 void GSMLib::setWidgetContainer(QWidget* parent, QGridLayout* layout)
@@ -139,13 +183,8 @@ QWidget* GSMLib::configureWidget(QWidget* parent)
 	if (prefWidget == 0L)
 		prefWidget = new GSMLibPrefsUI(parent);
 
-	QString device;
-	if (m_account)
-		device = m_account->configGroup()->readEntry(QString("%1:%2").arg("GSMLib").arg("Device"),
-		                                                  QString::null);
-	if (device.isNull())
-		device = "/dev/rfcomm0";
-	prefWidget->device->setURL(device);
+	loadConfig();
+	prefWidget->device->setURL(m_device);
 
 	return prefWidget;
 }
@@ -154,12 +193,11 @@ void GSMLib::savePreferences()
 {
 //	kdWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be work if zero!!)" << endl;
 
-	if (prefWidget != 0L && m_account != 0L)
+	if( prefWidget )
 	{
-		KConfigGroup* c = m_account->configGroup();
-
-		c->writeEntry(QString("%1:%2").arg("GSMLib").arg("Device"), prefWidget->device->url());
+		m_device = prefWidget->device->url();
 	}
+	saveConfig();
 }
 
 int GSMLib::maxSize()
@@ -169,11 +207,14 @@ int GSMLib::maxSize()
 
 void GSMLib::timerEvent( QTimerEvent * )
 {
+	if( m_MeTa == NULL )
+		return;
+	
 	try
 	{
 		struct timeval timeoutVal;
 		timeoutVal.tv_sec = 0;
-		timeoutVal.tv_usec = 500;
+		timeoutVal.tv_usec = 100;
 		m_MeTa->waitEvent(&timeoutVal);
 		
 		MessageList::iterator it;
@@ -194,11 +235,12 @@ void GSMLib::timerEvent( QTimerEvent * )
 
 			QString text = m.Message->userData().c_str();
 			QString nr = m.Message->address().toString().c_str();
-			kdWarning( 14160 ) << k_funcinfo <<"Msg='"<<text <<"' addr='"<<nr<<"'"<<endl;
+			kdWarning( 14160 ) << "Msg='"<<text <<"' addr='"<<nr<<"'"<<endl;
 		
 			// Locate a contact
 			SMSContact* contact = static_cast<SMSContact*>( m_account->contacts().find( nr ));
-			if ( !contact )
+			kdWarning( 14160 ) <<"contact="<<contact<<endl;
+			if ( contact==NULL )
 			{
 				// No contact found, make a new one
 				Kopete::MetaContact* metaContact = new Kopete::MetaContact ();
@@ -209,7 +251,9 @@ void GSMLib::timerEvent( QTimerEvent * )
 			
 			// Deliver the msg
 			Kopete::Message msg( contact, m_account->myself(), text, Kopete::Message::Inbound, Kopete::Message::RichText );
+			kdWarning( 14160 ) <<"MARK1"<<endl;
 			contact->manager(Kopete::Contact::CanCreate)->appendMessage( msg );
+			kdWarning( 14160 ) <<"MARK2"<<endl;
 
 		}
 		m_newMessages.clear();
@@ -217,6 +261,7 @@ void GSMLib::timerEvent( QTimerEvent * )
 	catch(gsmlib::GsmException &e)
 	{
 		kdWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
+		disconnect();
 	}
 }
 

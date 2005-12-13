@@ -38,6 +38,18 @@ void SMSService::setAccount(Kopete::Account* account)
 		savePreferences();
 }
 
+// The Default impl simply flips a signal back
+void SMSService::connect()
+{
+	emit connected();
+}
+
+// The Default impl simply flips a signal back
+void SMSService::disconnect()
+{
+	emit disconnected();
+}
+
 /*
  * Local variables:
  * c-indentation-style: k&r

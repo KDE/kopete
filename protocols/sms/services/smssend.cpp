@@ -67,8 +67,8 @@ void SMSSend::send(const Kopete::Message& msg)
 
 	m_provider = new SMSSendProvider(provider, prefix, m_account, this);
 
-	connect( m_provider, SIGNAL(messageSent(const Kopete::Message &)), this, SIGNAL(messageSent(const Kopete::Message &)));
-	connect( m_provider, SIGNAL(messageNotSent(const Kopete::Message &, const QString &)), this, SIGNAL(messageNotSent(const Kopete::Message &, const QString &)));
+	QObject::connect( m_provider, SIGNAL(messageSent(const Kopete::Message &)), this, SIGNAL(messageSent(const Kopete::Message &)));
+	QObject::connect( m_provider, SIGNAL(messageNotSent(const Kopete::Message &, const QString &)), this, SIGNAL(messageNotSent(const Kopete::Message &, const QString &)));
 
 	m_provider->send(msg);
 }
@@ -108,12 +108,12 @@ void SMSSend::setWidgetContainer(QWidget* parent, QGridLayout* layout)
 		}
 	}
 
-	connect (prefWidget->program, SIGNAL(textChanged(const QString &)),
+	QObject::connect (prefWidget->program, SIGNAL(textChanged(const QString &)),
 		this, SLOT(loadProviders(const QString&)));
 
 	prefWidget->program->setURL(prefix);
 
-	connect(prefWidget->provider, SIGNAL(activated(const QString &)),
+	QObject::connect(prefWidget->provider, SIGNAL(activated(const QString &)),
 		this, SLOT(setOptions(const QString &)));
 
 	prefWidget->show();

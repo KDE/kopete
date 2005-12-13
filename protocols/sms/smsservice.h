@@ -56,10 +56,14 @@ public:
 
 public slots:
 	virtual void savePreferences() = 0;
+	virtual void connect();
+	virtual void disconnect();
 
 signals:
 	void messageSent(const Kopete::Message &);
 	void messageNotSent(const Kopete::Message &, const QString &);
+	void connected();
+	void disconnected();
 
 protected:
 	Kopete::Account* m_account;
