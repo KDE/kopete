@@ -103,8 +103,8 @@ Contact::Contact( Account *account, const QString &contactId,
 
 		parent->addContact( this );
 	}
-
-	connect( account, SIGNAL( isConnectedChanged() ), SLOT( slotAccountIsConnectedChanged() ) );
+	if( account )
+		connect( account, SIGNAL( isConnectedChanged() ), SLOT( slotAccountIsConnectedChanged() ) );
 }
 
 Contact::~Contact()
