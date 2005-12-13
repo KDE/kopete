@@ -65,6 +65,10 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent, const char* name)
 		Kopete::Global::Properties::self()->templateMap());
 	QStringList usedKeys = KopetePrefs::prefs()->toolTipContents();
 
+#warning "kde4: test if it works with qt4"
+    connect(mMainWidget->lstUnusedItems, SIGNAL(doubleClicked ( QListViewItem *, const QPoint &, int )), this, SLOT(slotAddButton()));
+    connect(mMainWidget->lstUsedItems, SIGNAL(doubleClicked ( QListViewItem *, const QPoint &, int )), this, SLOT(slotRemoveButton()));
+
 	// first fill the "used" list
 	QStringList::Iterator usedIt=usedKeys.end();
 	do
