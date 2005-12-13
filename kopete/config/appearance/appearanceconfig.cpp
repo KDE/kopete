@@ -358,7 +358,7 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	d->mPrfsEmoticons = new AppearanceConfig_Emoticons(d->mAppearanceTabCtl);
 	connect(d->mPrfsEmoticons->chkUseEmoticons, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
-	connect(mPrfsEmoticons->chkUseEmoticons, SIGNAL(toggled(bool)),
+	connect(d->mPrfsEmoticons->chkUseEmoticons, SIGNAL(toggled(bool)),
 			                    this, SLOT(updateEmoticonsButton(bool)));
 	connect(d->mPrfsEmoticons->chkRequireSpaces, SIGNAL(toggled(bool)),
 			this, SLOT(emitChanged()));
@@ -369,7 +369,7 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 
 	// Since KNewStuff is incomplete and buggy we'll disable it by default.
     d->m_allowDownloadTheme = config->readBoolEntry( "ForceNewStuff", false );
-    mPrfsEmoticons->btnGetThemes->setEnabled( d->m_allowDownloadTheme );
+    d->mPrfsEmoticons->btnGetThemes->setEnabled( d->m_allowDownloadTheme );
 	connect(d->mPrfsEmoticons->btnGetThemes, SIGNAL(clicked()),
 		this, SLOT(slotGetThemes()));
 	connect(d->mPrfsEmoticons->btnRemoveTheme, SIGNAL(clicked()),
@@ -525,10 +525,10 @@ AppearanceConfig::~AppearanceConfig()
 
 void AppearanceConfig::updateEmoticonsButton(bool _b)
 {
-    QString themeName = mPrfsEmoticons->icon_theme_list->currentText();
+    QString themeName = d->mPrfsEmoticons->icon_theme_list->currentText();
     QFileInfo fileInf(KGlobal::dirs()->findResource("emoticons", themeName+"/"));
-    mPrfsEmoticons->btnRemoveTheme->setEnabled( _b && fileInf.isWritable());
-    mPrfsEmoticons->btnGetThemes->setEnabled( d->m_allowDownloadTheme );
+    d->mPrfsEmoticons->btnRemoveTheme->setEnabled( _b && fileInf.isWritable());
+    d->mPrfsEmoticons->btnGetThemes->setEnabled( d->m_allowDownloadTheme );
 }
 
 void AppearanceConfig::save()
