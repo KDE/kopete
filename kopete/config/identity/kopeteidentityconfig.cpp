@@ -151,7 +151,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char */*name*/
 	connect(d->m_view->comboNameContact, SIGNAL(activated(int )), this, SLOT(slotSettingsChanged()));
 	connect(d->m_view->comboPhotoContact, SIGNAL(activated(int )), this, SLOT(slotEnableAndDisableWidgets()));
 
-	connect(this, SIGNAL(changed()), this, SLOT(slotSettingsChanged()));
+	connect(this, SIGNAL(changed(bool)), this, SLOT(slotSettingsChanged()));
 }
 
 KopeteIdentityConfig::~KopeteIdentityConfig()
