@@ -80,7 +80,7 @@ private slots:
 	void removeSelectedTheme();
 	void slotGetThemes();
 	void slotGetStyles();
-
+	void updateEmoticonsButton(bool);
 private:
 	void updateHighlight();
 	QString fileContents(const QString &path);
@@ -108,6 +108,7 @@ private:
 	QString currentStyle;
 	bool loading;
 	bool styleChanged;
+	bool m_allowDownloadTheme;
 
 	KopeteAppearanceConfigPrivate *d;
 };
