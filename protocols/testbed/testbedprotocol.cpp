@@ -13,11 +13,11 @@
     *                                                                       *
     *************************************************************************
 */
+#include <QList>
 #include <kgenericfactory.h>
 #include <kdebug.h>
 
 #include "kopeteaccountmanager.h"
-
 #include "testbedaccount.h"
 #include "testbedcontact.h"
 #include "testbedprotocol.h"
@@ -65,9 +65,14 @@ Kopete::Contact *TestbedProtocol::deserializeContact(
 	else
 		tbcType = TestbedContact::Null;
 
-	Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
+	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts( this );
+	Kopete::Account* account = 0;
+	foreach( Kopete::Account* acct, accounts )
+	{
+		if ( acct->accountId() == accountId )
+			account = acct;
+	}
 
-	Kopete::Account *account = accounts[ accountId ];
 	if ( !account )
 	{
 		kdDebug(14210) << "Account doesn't exist, skipping" << endl;
