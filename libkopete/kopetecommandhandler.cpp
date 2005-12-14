@@ -192,15 +192,17 @@ bool Kopete::CommandHandler::processMessage( const QString &msg, Kopete::ChatSes
 {
 	if( p->inCommand )
 		return false;
-
-	QRegExp spaces( QString::fromLatin1("\\s+") );
-	QString command = msg.section(spaces, 0, 0).section('/',1).lower();
-
-	if(command.isEmpty())
+	QRegExp splitRx( QString::fromLatin1("^/([\\S]+)(.*)") );
+	QString command;
+	QString args;
+	if(splitRx.search(msg) != -1)
+	{
+		command = splitRx.cap(1);
+		args = splitRx.cap(2).mid(1);
+	}
+	else
 		return false;
-
-	QString args = msg.section( spaces, 1 );
-
+	
 	CommandList mCommands = commands( manager->protocol() );
 	Kopete::Command *c = mCommands[ command ];
 	if(c)
