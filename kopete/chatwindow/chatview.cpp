@@ -409,7 +409,7 @@ void ChatView::updateChatState( KopeteTabState newState )
 	if( newState != Typing )
 	{
 		setStatusText( i18n( "One other person in the chat",
-			       "%n other people in the chat", m_manager->members().count() ) );
+			       "%n other people in the chat", m_manager->members().count() - 1 ) );
 	}
 }
 
