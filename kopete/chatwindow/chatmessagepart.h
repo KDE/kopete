@@ -171,6 +171,11 @@ private slots:
 
 	void slotCloseView( bool force = false );
 
+	/**
+	 * Do the actual style change.
+	 */
+	void changeStyle();
+
 protected:
 	virtual void khtmlDrawContentsEvent( khtml::DrawContentsEvent * );
 	
@@ -232,9 +237,13 @@ private:
 	QString formatName( const QString &sourceName );
 
 	/**
-	 * Do the actual style change.
+	 * Format a message body according to the style included
+	 * in the message.
+	 *
+	 * @param message Kopete::Message to format.
+	 * @return a span tag with a style attribute.
 	 */
-	void changeStyle();
+	QString formatMessageBody( const Kopete::Message &message );
 
 	/**
 	 * Write the template file to KHTMLPart

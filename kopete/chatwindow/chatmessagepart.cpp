@@ -32,7 +32,6 @@
 #include <qtooltip.h>
 #include <qrect.h>
 #include <qcursor.h>
-#include <qbuffer.h>
 #include <qptrlist.h>
 #include <qregexp.h>
 #include <qvaluelist.h>
@@ -64,7 +63,6 @@
 #include <kio/netaccess.h>
 #include <kstandarddirs.h>
 #include <kiconloader.h>
-#include <kmdcodec.h>
 
 // Kopete includes
 #include "chatmemberslistwidget.h"
@@ -246,11 +244,14 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	         this, SLOT( slotAppearanceChanged() ) );
 	connect( KopetePrefs::prefs(), SIGNAL(windowAppearanceChanged()),
 	         this, SLOT( slotRefreshView() ) );
+#ifndef KOPETE_XSLT
 	connect( KopetePrefs::prefs(), SIGNAL(styleChanged(const QString &)),
 			 this, SLOT( setStyle(const QString &) ) );
 	connect( KopetePrefs::prefs(), SIGNAL(styleVariantChanged(const QString &)),
 			 this, SLOT( setStyleVariant(const QString &) ) );
-
+	// Refresh the style if the display name change.
+	connect( d->manager, SIGNAL(displayNameChanged()), this, SLOT(changeStyle()) );
+#endif
 	connect ( browserExtension(), SIGNAL( openURLRequestDelayed( const KURL &, const KParts::URLArgs & ) ),
 	          this, SLOT( slotOpenURLRequest( const KURL &, const KParts::URLArgs & ) ) );
 
@@ -409,7 +410,12 @@ void ChatMessagePart::setStyleVariant( const QString &variantPath )
 void ChatMessagePart::slotAppearanceChanged()
 {
 	readOverrides();
+#ifdef KOPETE_XSLT
+	d->xsltParser->setXSLT( KopetePrefs::prefs()->styleContents() );
+	slotRefreshNodes();
+#else
 	changeStyle();
+#endif
 }
 
 void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
@@ -471,18 +477,36 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 		{
 			case Kopete::Message::Inbound:
 			{
-				if(isConsecutiveMessage)
+				// Use status Template for Action messages.
+				if(message.type() == Kopete::Message::TypeAction)
+				{
+					formattedMessageHtml = d->currentChatStyle->getStatusHtml();
+				}
+				else if(isConsecutiveMessage)
+				{
 					formattedMessageHtml = d->currentChatStyle->getNextIncomingHtml();
+				}
 				else
+				{
 					formattedMessageHtml = d->currentChatStyle->getIncomingHtml();
+				}
 				break;
 			}
 			case Kopete::Message::Outbound:
 			{
-				if(isConsecutiveMessage)
+				// Use status Template for Action messages.
+				if(message.type() == Kopete::Message::TypeAction)
+				{
+					formattedMessageHtml = d->currentChatStyle->getStatusHtml();
+				}
+				else if(isConsecutiveMessage)
+				{
 					formattedMessageHtml = d->currentChatStyle->getNextOutgoingHtml();
+				}
 				else
+				{
 					formattedMessageHtml = d->currentChatStyle->getOutgoingHtml();
+				}
 				break;
 			}
 			case Kopete::Message::Internal:
@@ -587,10 +611,17 @@ void ChatMessagePart::slotRefreshNodes()
 
 void ChatMessagePart::slotRefreshView()
 {
+#ifdef KOPETE_XSLT
+	DOM::Element htmlElement = document().documentElement();
+	DOM::Element headElement = htmlElement.getElementsByTagName( QString::fromLatin1( "head" ) ).item(0);
+	DOM::HTMLElement styleElement = headElement.getElementsByTagName( QString::fromLatin1( "style" ) ).item(0);
+	if ( !styleElement.isNull() )
+		styleElement.setInnerText( styleHTML() );
+#else
 	DOM::HTMLElement kopeteNode = document().getElementById( QString::fromUtf8("KopeteStyle") );
 	if( !kopeteNode.isNull() )
 		kopeteNode.setInnerText( styleHTML() );
-
+#endif
 	DOM::HTMLBodyElement bodyElement = htmlDocument().body();
 	bodyElement.setBgColor( KopetePrefs::prefs()->bgColor().name() );
 }
@@ -613,6 +644,24 @@ const QString ChatMessagePart::styleHTML() const
 {
 	KopetePrefs *p = KopetePrefs::prefs();
 
+#ifdef KOPETE_XSLT
+	QString style = QString::fromLatin1(
+		"body{margin:4px;background-color:%1;font-family:%2;font-size:%3pt;color:%4;background-repeat:no-repeat;background-attachment:fixed}"
+		"td{font-family:%5;font-size:%6pt;color:%7}"
+		"a{color:%8}a.visited{color:%9}"
+		"a.KopeteDisplayName{text-decoration:none;color:inherit;}"
+		"a.KopeteDisplayName:hover{text-decoration:underline;color:inherit}"
+		".KopeteLink{cursor:pointer;}.KopeteLink:hover{text-decoration:underline}" )
+		.arg( p->bgColor().name() )
+		.arg( p->fontFace().family() )
+		.arg( p->fontFace().pointSize() )
+		.arg( p->textColor().name() )
+		.arg( p->fontFace().family() )
+		.arg( p->fontFace().pointSize() )
+		.arg( p->textColor().name() )
+		.arg( p->linkColor().name() )
+		.arg( p->linkColor().name() );
+#else
 	QString style = QString::fromLatin1(
 		"body{background-color:%1;font-family:%2;font-size:%3pt;color:%4}"
 		"td{font-family:%5;font-size:%6pt;color:%7}"
@@ -629,6 +678,7 @@ const QString ChatMessagePart::styleHTML() const
 		.arg( p->textColor().name() )
 		.arg( p->linkColor().name() )
 		.arg( p->linkColor().name() );
+#endif
 
 	//JASON, VA TE FAIRE FOUTRE AVEC TON *default* HIGHLIGHT!
 	// that broke my highlight plugin
@@ -936,7 +986,6 @@ void ChatMessagePart::emitTooltipEvent(  const QString &textUnderMouse, QString 
 QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete::Message &message )
 {
 	QString resultHTML = sourceHTML;
-	QString messageBody = message.parsedBody();
 	QString nick, contactId, service, protocolIcon;
 	
 	if( message.from() )
@@ -971,7 +1020,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	}
 	
 	// Replace sender (contact nick)
-	resultHTML = resultHTML.replace( QString::fromUtf8("%sender%"), Kopete::Message::escape(nick) );
+	resultHTML = resultHTML.replace( QString::fromUtf8("%sender%"), nick );
 	// Replace time
 	resultHTML = resultHTML.replace( QString::fromUtf8("%time%"), KGlobal::locale()->formatDateTime(message.timestamp()) );
 	// Replace %screenName% (contact ID)
@@ -1020,8 +1069,14 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	}
 
 	// Replace messages.
+	// Check if the message is an action, if yes then we will build the "status" message
+	if( message.type() == Kopete::Message::TypeAction )
+	{
+		message.setBody( QString("<b>%1</b> %2").arg(nick).arg(message.parsedBody()), Kopete::Message::ParsedHTML );
+	}
+
 	// Replace message at the end, maybe someone could put a Adium keyword in his message :P
-	resultHTML = resultHTML.replace( QString::fromUtf8("%message%"), messageBody );
+	resultHTML = resultHTML.replace( QString::fromUtf8("%message%"), formatMessageBody(message) );
 
 	// TODO: %status, %textbackgroundcolor{X}%
 	resultHTML = addNickLinks( resultHTML );
@@ -1066,7 +1121,6 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 		while( (pos=timeRegExp.search(resultHTML, pos) ) != -1 )
 		{
 			QString timeKeyword = formatTime( timeRegExp.cap(1), QDateTime::currentDateTime() );
-			kdDebug(14000) << k_funcinfo << timeKeyword << endl;
 			resultHTML = resultHTML.replace( pos , timeRegExp.cap(0).length() , timeKeyword );
 		}
 		// Get contact image paths
@@ -1118,7 +1172,7 @@ QString ChatMessagePart::formatTime(const QString &timeFormat, const QDateTime &
 	struct tm *loctime;
 	// Get current time
 	timeT = dateTime.toTime_t();
-	/* Convert it to local time representation. */
+	// Convert it to local time representation.
 	loctime = localtime (&timeT);
 	strftime (buffer, 256, timeFormat.ascii(), loctime);
 
@@ -1128,12 +1182,55 @@ QString ChatMessagePart::formatTime(const QString &timeFormat, const QDateTime &
 QString ChatMessagePart::formatName(const QString &sourceName)
 {
 	QString formattedName = sourceName;
+	// Escape the name.
+	formattedName = Kopete::Message::escape(formattedName);
+
+	// Squeeze the nickname if the user want it
 	if( KopetePrefs::prefs()->truncateContactNames() )
 	{
 		formattedName = KStringHandler::csqueeze( sourceName, KopetePrefs::prefs()->maxConactNameLength() );
 	}
 
 	return formattedName;
+}
+
+QString ChatMessagePart::formatMessageBody(const Kopete::Message &message)
+{
+	QString formattedBody("<span style=\"");
+	
+	// Affect foreground(color) and background color to message.
+	if( !d->fgOverride && message.fg().isValid() )
+	{
+		formattedBody += QString::fromUtf8("color: %1; ").arg(message.fg().name());
+	}
+	if( !d->bgOverride && message.bg().isValid() )
+	{
+		formattedBody += QString::fromUtf8("background-color: %1; ").arg(message.bg().name());
+	}
+	
+	// Affect font parameters.
+	if( !d->rtfOverride && message.font() != QFont() )
+	{
+		QString fontstr;
+		QFont font = message.font();
+		if( !font.family().isNull() )
+			fontstr += QString::fromUtf8("font-family: ") + font.family() + QString::fromUtf8("; ");
+		if( font.italic() )
+			fontstr += QString::fromUtf8("font-style: italic; ");
+		if( font.strikeOut() )
+			fontstr += QString::fromUtf8("text-decoration: line-through; ");
+		if( font.underline() )
+			fontstr += QString::fromUtf8("text-decoration: underline; ");
+		if( font.bold() )
+			fontstr += QString::fromUtf8("font-weight: bold;");
+
+		formattedBody += fontstr;
+	}
+	
+	// Close the span tag and affect the parsed body.
+	formattedBody += QString::fromUtf8("\">%1</span>").arg(message.parsedBody());
+	
+	return formattedBody;
 }
 
 void ChatMessagePart::changeStyle()
