@@ -180,7 +180,8 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint mode )
 		}
 
 		if ( mode & StrictParse )
-			if ( !p.isSpace() )
+			//<br /> marks beginning of line
+			if ( !p.isSpace() && message.mid(pos - 6, 6) != QString::fromLatin1("<br />"))
 			{
 				p = c;
 				continue;
@@ -200,7 +201,10 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint mode )
 					{
 					/* check if the character after this match is space or end of string*/
 						n = message[ pos + needle.length() ];
-						if( !n.isSpace() &&  !n.isNull() && n!='&') break;
+						//<br/> marks the end of a line
+						if( message.mid( pos + needle.length(), 3) != QString::fromLatin1("<br") && 
+								!n.isSpace() &&  !n.isNull() && n!= '&') 
+							break;
 					}
 					/* Perfect match */
 					foundEmoticons.append( EmoticonNode( (*it), pos ) );
