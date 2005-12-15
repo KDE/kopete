@@ -53,7 +53,6 @@ SMSAccount::SMSAccount( SMSProtocol *parent, const QString &accountID, const cha
 		QObject::connect (theService, SIGNAL(disconnected()), this, SLOT(slotDisconnected()));
 	}
 	
-	connect();
 }
 
 SMSAccount::~SMSAccount()
