@@ -26,7 +26,6 @@
 #include <kdebug.h>
 #include <kconfigbase.h>
 
-#include <gsmlib/gsm_unix_serial.h>
 #include <unistd.h>
 #include <gsmlib/gsm_me_ta.h>
 #include <gsmlib/gsm_sms.h>
@@ -43,6 +42,8 @@
 #include "gsmlibprefs.h"
 #include "smsprotocol.h"
 #include "smscontact.h"
+
+#include "kopete_unix_serial.h"
 
 GSMLib::GSMLib(Kopete::Account* account)
 	: SMSService(account)
@@ -91,7 +92,7 @@ void GSMLib::connect()
 	{
 		kdWarning( 14160 ) << "Connecting to: '"<<m_device<<"'"<<endl;
 		
-		gsmlib::Ref<gsmlib::Port> port = new gsmlib::UnixSerialPort(m_device.latin1(), 9600, gsmlib::DEFAULT_INIT_STRING, false);
+		gsmlib::Ref<gsmlib::Port> port = new gsmlib::KopeteUnixSerialPort(m_device.latin1(), 9600, gsmlib::DEFAULT_INIT_STRING, false);
 		
 		kdWarning( 14160 ) << "Port created"<<endl;
 				
