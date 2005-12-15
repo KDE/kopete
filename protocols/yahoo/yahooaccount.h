@@ -29,7 +29,6 @@
 #include "kopeteawaydialog.h"
 
 // Local
-#include "yahooconferencemessagemanager.h"
 #include "yahooprotocol.h"
 #include "yahootypes.h"
 
@@ -40,11 +39,13 @@ class YahooContact;
 class YahooAccount;
 class YahooProtocol;
 class YahooWebcam;
+class YahooConferenceChatSession;
 class KTempFile;
 class QTimer;
 struct KURL;
 namespace Kopete{
 class Transfer;
+class ChatSession;
 }
 class Client;
 
@@ -122,6 +123,8 @@ public:
 	int pictureFlag();
 
 	void verifyAccount( const QString &word );
+
+	void sendConfMessage( YahooConferenceChatSession *s, Kopete::Message &message );
 public slots:
 	/**
 	 * Connect to the Yahoo service
@@ -184,6 +187,7 @@ protected slots:
 	void slotConfUserJoin(const QString &who, const QString &room);
 	void slotConfUserLeave(const QString &who, const QString &room);
 	void slotConfMessage(const QString &who, const QString &room, const QString &msg);
+	void slotConfLeave( YahooConferenceChatSession *s );
 	void slotGotFile(const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize);
 	void slotContactAdded(const QString &myid, const QString &who, const QString &msg);
 	void slotRejected(const QString &, const QString &);
@@ -225,6 +229,8 @@ private:
 	 * Handle the signal and slot connections and disconnects
 	 */
 	void initConnectionSignals( enum SignalConnectionType sct );
+
+	const QString &prepareIncomingMessage( QString msg );
 
 	/**
 	 * internal (to the plugin) controls/flags

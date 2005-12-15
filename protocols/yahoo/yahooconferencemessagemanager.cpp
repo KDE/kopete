@@ -29,19 +29,46 @@
 #include "kopetechatsessionmanager.h"
 
 #include "yahooconferencemessagemanager.h"
+#include "yahoocontact.h"
+#include "yahooaccount.h"
 
-YahooConferenceChatSession::YahooConferenceChatSession( const QString & /* yahooRoom */, Kopete::Protocol *protocol, const Kopete::Contact *user,
+YahooConferenceChatSession::YahooConferenceChatSession( const QString & yahooRoom, Kopete::Protocol *protocol, const Kopete::Contact *user,
 	Kopete::ContactPtrList others, const char *name )
 : Kopete::ChatSession( user, others, protocol,  name )
 {
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
+
+	connect ( this, SIGNAL( messageSent ( Kopete::Message &, Kopete::ChatSession * ) ),
+			  SLOT( slotMessageSent ( Kopete::Message &, Kopete::ChatSession * ) ) );
+
+	m_yahooRoom = yahooRoom;
 }
 
 YahooConferenceChatSession::~YahooConferenceChatSession()
 {
+	emit leavingConference( this );
 }
 
+const QString &YahooConferenceChatSession::room()
+{
+	return m_yahooRoom;
+}
 
+void YahooConferenceChatSession::joined( YahooContact *c )
+{
+	addContact( c );
+}
+
+void YahooConferenceChatSession::slotMessageSent( Kopete::Message & message, Kopete::ChatSession * )
+{
+	kdDebug ( 14180 ) << k_funcinfo << endl;
+
+	YahooAccount *acc = dynamic_cast< YahooAccount *>( account() );
+	if( acc )
+		acc->sendConfMessage( this, message );
+	appendMessage( message );
+	messageSucceeded();
+}
 
 #include "yahooconferencemessagemanager.moc"
 

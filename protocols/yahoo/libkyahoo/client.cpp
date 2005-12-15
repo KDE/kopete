@@ -40,6 +40,7 @@
 #include "stealthtask.h"
 #include "sendpicturetask.h"
 #include "webcamtask.h"
+#include "conferencetask.h"
 #include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
@@ -66,6 +67,7 @@ public:
 	MessageReceiverTask *messageReceiverTask;
 	PictureNotifierTask *pictureNotifierTask;
 	WebcamTask *webcamTask;
+	ConferenceTask *conferenceTask;
 
 	// Connection data
 	uint sessionID;
@@ -380,6 +382,26 @@ void Client::grantWebcamAccess( const QString &userId )
 	d->webcamTask->grantAccess( userId );
 }
 
+// ***** Conferences *****
+void Client::joinConference( const QString &room, const QStringList &members )
+{
+	d->conferenceTask->joinConference( room, members );
+}
+
+void Client::declineConference( const QString &room, const QStringList &members, const QString &msg )
+{
+	d->conferenceTask->declineConference( room, members, msg );
+}
+
+void Client::leaveConference( const QString &room, const QStringList &members )
+{
+	d->conferenceTask->leaveConference( room, members );
+}
+
+void Client::sendConferenceMessage( const QString &room, const QStringList &members, const QString &msg )
+{
+	d->conferenceTask->sendMessage( room, members, msg );
+}
 // ***** other *****
 void Client::notifyError( const QString & error )
 {
@@ -552,6 +574,12 @@ void Client::initTasks()
 				SIGNAL( webcamViewerLeft( const QString &) ) );
 	QObject::connect( d->webcamTask, SIGNAL( viewerRequest( const QString &) ),
 				SIGNAL( webcamViewerRequest( const QString &) ) );
+
+	d->conferenceTask = new ConferenceTask( d->root );
+	QObject::connect( d->conferenceTask, SIGNAL( gotInvite( const QString &, const QString &, const QString &, const QStringList & ) ),
+				SIGNAL( gotConferenceInvite( const QString &, const QString &, const QString &, const QStringList & ) ) );
+	QObject::connect( d->conferenceTask, SIGNAL( gotMessage( const QString &, const QString &, const QString & ) ),
+				SIGNAL( gotConferenceMessage( const QString &, const QString &, const QString & ) ) );
 }
 
 void Client::deleteTasks()

@@ -65,6 +65,8 @@ public:
 	void webcamClosed( int );
 	void webcamPaused();
 
+	static const QString &prepareMessage( QString messageText );
+
 public slots:
 	virtual void slotUserInfo();
 	virtual void slotSendFile();

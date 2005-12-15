@@ -170,6 +170,10 @@ Q_OBJECT
 		void sendWebcamImage( const QByteArray &image );
 		void closeOutgoingWebcam();
 		void grantWebcamAccess( const QString &userId );
+		void joinConference( const QString &room, const QStringList &members );
+		void declineConference( const QString &room, const QStringList &members, const QString &msg );
+		void leaveConference( const QString &room, const QStringList &members );
+		void sendConferenceMessage( const QString &room, const QStringList &members, const QString &msg );
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -356,6 +360,14 @@ Q_OBJECT
 		 * A buddy wants to watch the cam
 		 */
 		void webcamViewerRequest( const QString & );
+		/**
+		 * A buddy invited us to a conference
+		 */
+		void gotConferenceInvite( const QString &, const QString &, const QString &, const QStringList & );
+		/**
+		 * A conference message was received
+		 */
+		void gotConferenceMessage( const QString &, const QString &, const QString & );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();

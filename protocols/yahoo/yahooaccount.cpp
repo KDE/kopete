@@ -49,6 +49,7 @@
 #include <kopetemetacontact.h>
 #include <kopetecontactlist.h>
 #include <kopetetransfermanager.h>
+#include <kopeteview.h>
 
 // Yahoo
 #include "yahooaccount.h"
@@ -58,6 +59,7 @@
 #include "client.h"
 #include "yahooverifyaccount.h"
 #include "yahoowebcam.h"
+#include "yahooconferencemessagemanager.h"
 
 YahooAwayDialog::YahooAwayDialog(YahooAccount* account, QWidget *parent, const char *name) :
 	KopeteAwayDialog(parent, name)
@@ -235,7 +237,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(gotBuzz(const QString&, long)),
 		                 this, SLOT(slotGotBuzz(const QString &, long)));
 
-		QObject::connect(m_session, SIGNAL( gotConfInvite( const QString&, const QString&,
+		QObject::connect(m_session, SIGNAL( gotConferenceInvite( const QString&, const QString&,
 		                                                   const QString&, const QStringList&) ),
 		                 this,
 		                 SLOT( slotGotConfInvite( const QString&, const QString&,
@@ -251,7 +253,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session , SIGNAL(confUserLeave( const QString &, const QString &)), this,
 		                 SLOT(slotConfUserLeave( const QString &, const QString &)) );
 		
-		QObject::connect(m_session , SIGNAL(confMessage( const QString &, const QString &, const QString &)), this,
+		QObject::connect(m_session , SIGNAL(gotConferenceMessage( const QString &, const QString &, const QString &)), this,
 		                 SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
 		
 		QObject::connect(m_session,
@@ -335,7 +337,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		                    this, SLOT(slotGotBuzz(const QString &, long)));
 		
 		QObject::disconnect(m_session,
-		                    SIGNAL( gotConfInvite( const QString&, const QString&,
+		                    SIGNAL( gotConferenceInvite( const QString&, const QString&,
 		                                           const QString&, const QStringList&) ),
 		                    this, 
 		                    SLOT( slotGotConfInvite( const QString&, const QString&,
@@ -352,7 +354,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::disconnect(m_session , SIGNAL(confUserLeave( const QString &, const QString &)),
 		                    this, SLOT(slotConfUserLeave( const QString &, const QString &)) );
 		
-		QObject::disconnect(m_session , SIGNAL(confMessage( const QString &, const QString &, const QString &)), this,
+		QObject::disconnect(m_session , SIGNAL(gotConferenceMessage( const QString &, const QString &, const QString &)), this,
 		                    SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
 		
 		QObject::disconnect(m_session,
@@ -756,41 +758,14 @@ void YahooAccount::slotStealthStatusChanged( const QString &who, Yahoo::StealthS
 	kc->setStealthed( state == Yahoo::Stealthed );
 }
 
-void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, int /*stat*/)
+const QString &YahooAccount::prepareIncomingMessage( QString newMsgText )
 {
-	QFont msgFont;
-	QDateTime msgDT;
-	Kopete::ContactPtrList justMe;
 	QRegExp regExp;
 	int pos = 0;
-	
-	// Check for ping-messages
-	if( contact( who ) == myself() && msg.startsWith("<ping>") )
-	{
-		kdDebug(14180) << "Ping packet received." << endl;
-		m_waitingForResponse = false;
-		return;
-	}
-	
-	if( !contact( who ) )
-	{
-		kdDebug(14180) << "Adding contact " << who << endl;
-		addContact( who,who,  0L, Kopete::Account::Temporary );
-	}
-	
-	//Parse the message for it's properties
-	kdDebug(14180) << "Original message is '" << msg << "'" << endl;
-	//kdDebug(14180) << "Message color is " << getMsgColor(msg) << endl;
-	QColor fgColor = getMsgColor( msg );
-	if (tm == 0)
-		msgDT.setTime_t(time(0L));
-	else
-		msgDT.setTime_t(tm, Qt::LocalTime);
-	
-	QString newMsgText = stripMsgColorCodes( msg );
+	newMsgText = stripMsgColorCodes( newMsgText );
 	
 	kdDebug(14180) << "Message after stripping color codes '" << newMsgText << "'" << endl;
-
+	
 	newMsgText.replace( QString::fromLatin1( "&" ), QString::fromLatin1( "&amp;" ) );
 	
 	// Replace Font tags
@@ -801,7 +776,7 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 		pos = regExp.search( newMsgText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsgText.replace( regExp, QString::fromLatin1("<font\\1style=\"font-size:\\2pt\">" ) );
+		newMsgText.replace( regExp, QString::fromLatin1("<font\\1style=\"font-size:\\2pt\">" ) );
 		}
 	}
 	
@@ -837,6 +812,40 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	newMsgText.replace( regExp, QString::fromLatin1("\\1</font>" ) );
 	
 	newMsgText.replace( QString::fromLatin1( "\r" ), QString::fromLatin1( "<br/>" ) );
+	
+	return newMsgText;
+}
+
+void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, int /*stat*/)
+{
+	QFont msgFont;
+	QDateTime msgDT;
+	Kopete::ContactPtrList justMe;
+	
+	// Check for ping-messages
+	if( contact( who ) == myself() && msg.startsWith("<ping>") )
+	{
+		kdDebug(14180) << "Ping packet received." << endl;
+		m_waitingForResponse = false;
+		return;
+	}
+	
+	if( !contact( who ) )
+	{
+		kdDebug(14180) << "Adding contact " << who << endl;
+		addContact( who,who,  0L, Kopete::Account::Temporary );
+	}
+	
+	//Parse the message for it's properties
+	kdDebug(14180) << "Original message is '" << msg << "'" << endl;
+	//kdDebug(14180) << "Message color is " << getMsgColor(msg) << endl;
+	QColor fgColor = getMsgColor( msg );
+	if (tm == 0)
+		msgDT.setTime_t(time(0L));
+	else
+		msgDT.setTime_t(tm, Qt::LocalTime);
+	
+	QString newMsgText = prepareIncomingMessage( msg );
 	
 	kdDebug(14180) << "Message after fixing font tags '" << newMsgText << "'" << endl;
 	
@@ -886,9 +895,50 @@ void YahooAccount::slotGotBuzz( const QString &who, long tm )
 	mm->emitNudgeNotification();
 }
 
-void YahooAccount::slotGotConfInvite( const QString & /* who */, const QString & /* room */, const QString & /* msg */, const QStringList & /* members */ )
+void YahooAccount::slotGotConfInvite( const QString & who, const QString & room, const QString &msg, const QStringList &members )
 {
-//	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(14180) << k_funcinfo << who << " has invited you to join the conference \"" << room << "\" : " << msg << endl;
+	kdDebug(14180) << k_funcinfo << "Members: " << members << endl;
+	QString m = who;
+	QStringList myMembers;
+	myMembers.push_back( who );
+	for( QStringList::const_iterator it = ++members.begin(); it != members.end(); it++ )
+	{
+		if( *it != m_session->userId() )
+		{
+			m.append( QString(", %1").arg( *it ) );
+			myMembers.push_back( *it );
+		}
+	}
+	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), 
+				i18n("%1 has invited you to join a conference with %2.\n\nHis message: %3\n\n Accept?")
+				.arg(who).arg(m).arg(msg), QString::null, i18n("Accept"), i18n("Ignore") ) )
+	{
+		m_session->joinConference( room, myMembers );
+		if( !m_conferences[room] )
+		{
+			Kopete::ContactPtrList others;
+			YahooConferenceChatSession *session = new YahooConferenceChatSession( room, protocol(), myself(), others );
+			m_conferences[room] = session;
+			
+			QObject::connect( session, SIGNAL(leavingConference( YahooConferenceChatSession * ) ), this, SLOT( slotConfLeave( YahooConferenceChatSession * ) ) );
+			
+			for ( QValueList<QString>::ConstIterator it = myMembers.begin(); it != myMembers.end(); ++it )
+			{
+				YahooContact * c = contact( *it );
+				if ( !c )
+				{
+					kdDebug(14180) << k_funcinfo << "Adding contact " << *it << " to conference." << endl;
+					addContact( *it,*it,  0L, Kopete::Account::Temporary );
+					c = contact( *it );
+				}
+				session->joined( c );	
+			}
+			session->view( true )->raise( false );
+		}
+	}
+	else
+		m_session->declineConference( room, myMembers, QString::null );
 }
 
 void YahooAccount::slotConfUserDecline( const QString & /* who */, const QString & /* room */, const QString & /* msg */ )
@@ -906,9 +956,77 @@ void YahooAccount::slotConfUserLeave( const QString & /* who */, const QString &
 //	kdDebug(14180) << k_funcinfo << endl;
 }
 
-void YahooAccount::slotConfMessage( const QString & /* who */, const QString & /* room */, const QString & /* msg */ )
+void YahooAccount::slotConfLeave( YahooConferenceChatSession *s )
 {
-//	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(14180) << k_funcinfo << endl;
+	if( !s )
+		return;
+	QStringList members;
+	for( Kopete::ContactPtrList::iterator it = s->members().begin(); it != s->members().end(); ++it )
+	{
+		if( (*it) == myself() )
+			continue;
+		kdDebug(14180) << k_funcinfo << "Member: " << (*it)->contactId() << endl;
+		members.append( (*it)->contactId() );
+	}
+	m_session->leaveConference( s->room(), members );
+	m_conferences.remove( s->room() );
+}
+
+void YahooAccount::slotConfMessage( const QString &who, const QString &room, const QString &msg )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	
+	if( !m_conferences.contains( room ) )
+	{
+		kdDebug(14180) << k_funcinfo << "Error. No chatsession for this conference found." << endl;
+		return;
+	}
+	
+	YahooConferenceChatSession *session = m_conferences[room];
+
+	QFont msgFont;
+	QDateTime msgDT;
+	Kopete::ContactPtrList justMe;
+	QRegExp regExp;
+	int pos = 0;
+	
+	if( !contact( who ) )
+	{
+		kdDebug(14180) << "Adding contact " << who << endl;
+		addContact( who,who,  0L, Kopete::Account::Temporary );
+	}
+	kdDebug(14180) << "Original message is '" << msg << "'" << endl;
+	
+	QColor fgColor = getMsgColor( msg );
+	msgDT.setTime_t(time(0L));	
+	
+	QString newMsgText = prepareIncomingMessage( msg );
+	
+	kdDebug(14180) << "Message after fixing font tags '" << newMsgText << "'" << endl;
+	session->receivedTypingMsg(contact(who), false);
+	
+	justMe.append(myself());
+	
+	Kopete::Message kmsg(msgDT, contact(who), justMe, newMsgText,
+	                     Kopete::Message::Inbound , Kopete::Message::RichText);
+	
+	kmsg.setFg( fgColor );
+	session->appendMessage(kmsg);
+}
+
+void YahooAccount::sendConfMessage( YahooConferenceChatSession *s, Kopete::Message &message )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	QStringList members;
+	for( Kopete::ContactPtrList::iterator it = s->members().begin(); it != s->members().end(); ++it )
+	{
+		if( (*it) == myself() )
+			continue;
+		kdDebug(14180) << k_funcinfo << "Member: " << (*it)->contactId() << endl;
+		members.append( (*it)->contactId() );
+	}
+	m_session->sendConferenceMessage( s->room(), members, YahooContact::prepareMessage( message.escapedBody() ) );
 }
 
 void YahooAccount::slotGotFile( const QString &  who, const QString &  url , long /* expires */, const QString &  msg ,

@@ -184,6 +184,30 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceWebcam " << servicenum << endl;
 			service = Yahoo::ServiceWebcam;
 		break;
+		case (Yahoo::ServiceConfInvite) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceConfInvite " << servicenum << endl;
+			service = Yahoo::ServiceConfInvite;
+		break;
+		case (Yahoo::ServiceConfLogon) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceConfLogon " << servicenum << endl;
+			service = Yahoo::ServiceConfLogon;
+		break;
+		case (Yahoo::ServiceConfDecline) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceConfDecline " << servicenum << endl;
+			service = Yahoo::ServiceConfDecline;
+		break;
+		case (Yahoo::ServiceConfLogoff) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceConfLogoff " << servicenum << endl;
+			service = Yahoo::ServiceConfLogoff;
+		break;
+		case (Yahoo::ServiceConfAddInvite) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceConfAddInvite " << servicenum << endl;
+			service = Yahoo::ServiceConfAddInvite;
+		break;
+		case (Yahoo::ServiceConfMsg) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceConfMsg " << servicenum << endl;
+			service = Yahoo::ServiceConfMsg;
+		break;
 		/*
 		ServiceIdle, // 5 (placemarker)
 		ServiceMailStat,
@@ -197,12 +221,6 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		ServiceGotGroupRename, // < 1, 36(old), 37(new)
 		ServiceSysMessage = 0x14,
 		ServicePassThrough2 = 0x16,
-		ServiceConfInvite = 0x18,
-		ServiceConfLogon,
-		ServiceConfDecline,
-		ServiceConfLogoff,
-		ServiceConfAddInvite,
-		ServiceConfMsg,
 		ServiceChatLogon,
 		ServiceChatLogoff,
 		ServiceChatMsg = 0x20,

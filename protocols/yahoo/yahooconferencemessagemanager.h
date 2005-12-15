@@ -24,6 +24,7 @@ class KActionCollection;
 class YahooContact;
 class KActionMenu;
 
+class YahooContact;
 
 /**
  * @author Duncan Mac-Vicar Prett
@@ -35,6 +36,13 @@ class YahooConferenceChatSession : public Kopete::ChatSession
 public:
 	YahooConferenceChatSession( const QString &m_yahooRoom, Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others, const char *name = 0 );
 	~YahooConferenceChatSession();
+
+	void joined( YahooContact *c );
+	const QString &room();
+signals:
+	void leavingConference( YahooConferenceChatSession *s );
+protected slots:
+	void slotMessageSent( Kopete::Message &message, Kopete::ChatSession * );
 private:
 	QString m_yahooRoom;
 };

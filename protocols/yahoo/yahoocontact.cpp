@@ -202,19 +202,14 @@ Kopete::ChatSession *YahooContact::manager( Kopete::Contact::CanCreateFlags canC
 	return m_manager;
 }
 
-void YahooContact::slotSendMessage( Kopete::Message &message )
-{
-	kdDebug(14180) << k_funcinfo << endl;
-	
+const QString &YahooContact::prepareMessage( QString messageText )
+{	
 	// Yahoo does not understand XML/HTML message data, so send plain text
 	// instead.  (Yahoo has its own format for "rich text".)
 	QRegExp regExp;
 	int pos = 0;
 	regExp.setMinimal( true );
 	
-	QString messageText = message.escapedBody();
-	kdDebug(14180) << "Original message: " << messageText << endl;
-
 	// find and replace Bold-formattings
 	regExp.setPattern( "<span([^>]*)font-weight:600([^>]*)>(.*)</span>" );
 	pos = 0;
@@ -233,7 +228,7 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 		pos = regExp.search( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			messageText.replace( regExp, QString::fromLatin1("<span\\1text-decoration:underline\\2>\033[4m\\3\033[x4m</span>" ) );
+		messageText.replace( regExp, QString::fromLatin1("<span\\1text-decoration:underline\\2>\033[4m\\3\033[x4m</span>" ) );
 		}
 	}
 	
@@ -244,7 +239,7 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 		pos = regExp.search( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			messageText.replace( regExp, QString::fromLatin1("<span\\1font-style:italic\\2>\033[2m\\3\033[x2m</span>" ) );
+		messageText.replace( regExp, QString::fromLatin1("<span\\1font-style:italic\\2>\033[2m\\3\033[x2m</span>" ) );
 		}
 	}
 	
@@ -300,6 +295,16 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 	messageText.replace( QString::fromLatin1( "&amp;" ), QString::fromLatin1( "&" ) );
 	messageText.replace( QString::fromLatin1( "<br/>" ), QString::fromLatin1( "\r" ) );
 	
+	return messageText;
+}
+
+void YahooContact::slotSendMessage( Kopete::Message &message )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	
+	QString messageText = message.escapedBody();
+	kdDebug(14180) << "Original message: " << messageText << endl;
+	messageText = prepareMessage( messageText );
 	kdDebug(14180) << "Converted message: " << messageText << endl;
 	
 	Kopete::ContactPtrList m_them = manager(Kopete::Contact::CanCreate)->members();
