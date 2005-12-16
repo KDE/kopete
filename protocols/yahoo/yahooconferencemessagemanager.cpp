@@ -61,7 +61,7 @@ void YahooConferenceChatSession::joined( YahooContact *c )
 
 void YahooConferenceChatSession::left( YahooContact *c )
 {
-	removeContact( c, i18n("%1 has left the conference.").arg(c->userId()) );
+	removeContact( c );
 }
 
 void YahooConferenceChatSession::slotMessageSent( Kopete::Message & message, Kopete::ChatSession * )
