@@ -53,8 +53,8 @@ void SendMessageTask::onGo()
 		return;
 	}
 
-	const uint CHUNK_LENGTH = 450;
-	uint msgPostion = 0;
+	const int CHUNK_LENGTH = 450;
+	int msgPostion = 0;
 
 	do
 	{
@@ -159,6 +159,7 @@ void SendMessageTask::onGo()
 
 void SendMessageTask::addBasicTLVs( Buffer* b )
 {
+	Q_UNUSED( b );
 	//TODO add stuff like user class, user status, online time, etc TLVS
 }
 
@@ -199,7 +200,7 @@ void SendMessageTask::addChannel1Data( Buffer* b, const QString& message )
 			<< "UCS-2" << endl;
 		int length = message.length() * 2;
 		unsigned char* utfMessage = new unsigned char[length];
-		for ( unsigned int l = 0; l < message.length(); l++ )
+		for ( int l = 0; l < message.length(); l++ )
 		{
 			utfMessage[l * 2] = message.unicode()[l].row();
 			utfMessage[( l * 2 ) + 1] = message.unicode()[l].cell();
@@ -298,6 +299,8 @@ void SendMessageTask::addChannel2Data( Buffer* b, const QString& message )
 
 void SendMessageTask::addChannel4Data( Buffer* b, const QString& message )
 {
+	Q_UNUSED( b );
+	Q_UNUSED( message );
 	//TODO
 }
 

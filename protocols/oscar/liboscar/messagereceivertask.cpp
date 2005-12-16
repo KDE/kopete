@@ -121,8 +121,8 @@ bool MessageReceiverTask::take( Transfer* transfer )
 			return true;
 		}
 	}
-	else
-		return false;
+
+	return false;
 }
 
 void MessageReceiverTask::handleType1Message()
@@ -395,20 +395,20 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 	{
 	case 0x000E:
 	{
-		int cookie = b->getLEWord();
-		for ( int i = 0; i < 12; i++ )
-		{	// 12 bytes all zeros
-			b->getByte();
-		}
+		b->skipBytes(14); //cookie is the first 4 bytes. next 12 is apparently all zeros
 
 		// now starts the real message
 		// TODO if type is PLAIN, there is (might be?) an additional TLV with color and font information at the end...
 
 		uint messageType = b->getByte();
+		
+		/*
 		int flags = b->getByte();
 		int status = b->getLEWord(); 	// don't know what status this is or what to use it for
 		int priority = b->getLEWord(); 	// don't know what that's good for either
-
+		*/
+		b->skipBytes(5); //same as above
+		
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Message type is: " << messageType << endl;
 		
 		msg->setText( b->getLELNTS() );

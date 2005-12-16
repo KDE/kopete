@@ -113,7 +113,7 @@ QString Transfer::toString() const
 void Transfer::populateWireBuffer( int offset, const QByteArray& buffer )
 {
 	int j;
-	for ( uint i = 0; i < buffer.size(); ++i )
+	for ( int i = 0; i < buffer.size(); ++i )
 	{
 		j = i + offset;
 		m_wireFormat[j] = buffer[i];
