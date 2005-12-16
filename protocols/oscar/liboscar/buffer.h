@@ -4,8 +4,8 @@
     begin                : Thu Jun 6 2002
 
     Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
-    Copyright (c) 2003-2004 by Matt Rogers <mattr@kde.org>
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2003-2005 by Matt Rogers <mattr@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -21,9 +21,8 @@
 #define BUFFER_H
 
 #include "oscartypes.h"
-
-#include <q3valuelist.h>
-#include <q3cstring.h>
+#include <QList>
+#include <QByteArray>
 
 class QString;
 
@@ -45,7 +44,7 @@ class Buffer
 		 * Constructor that creates a prefilled buffer of @p len length
 		 * that contains the data from @p b.
 		 */
-		Buffer(const char *b, Q_ULONG len);
+		Buffer(const char *b, int len);
 
 		/**
 		 * \brief Create a prefilled buffer
@@ -61,7 +60,7 @@ class Buffer
 		/**
 		 * returns the raw buffer
 		 */
-		const char *buffer() const;
+		QByteArray buffer() const;
 
 		/**
 		 * Returns the remaining length of the buffer past the current read
@@ -216,7 +215,7 @@ class Buffer
 		/**
 		 * Gets a list of TLV's
 		 */
-		Q3ValueList<TLV> getTLVList();
+		QList<TLV> getTLVList();
 
 		/**
 		 * Creates a chat data segment for a tlv and calls addTLV with that data
@@ -244,7 +243,7 @@ class Buffer
 
 	private:
 		QByteArray mBuffer;
-		unsigned int mReadPos;
+		int mReadPos;
 
 };
 

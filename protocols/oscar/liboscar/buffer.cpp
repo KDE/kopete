@@ -4,8 +4,8 @@
     begin                : Thu Jun 6 2002
 
     Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
-    Copyright (c) 2004 by Matt Rogers <mattr@kde.org>
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2004,2005 by Matt Rogers <mattr@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -17,14 +17,12 @@
     *************************************************************************
 */
 
-#include <kdebug.h>
-#include <kapplication.h>
 #include "buffer.h"
 
 #include <ctype.h>
-//Added by qt3to4:
-#include <Q3ValueList>
-#include <QByteArray>
+#include <kdebug.h>
+#include <kapplication.h>
+
 
 Buffer::Buffer()
 {
@@ -33,19 +31,19 @@ Buffer::Buffer()
 
 Buffer::Buffer( const Buffer& other )
 {
-	mBuffer.duplicate( other.mBuffer );
+	mBuffer =  other.mBuffer;
 	mReadPos = other.mReadPos;
 }
 
-Buffer::Buffer(const char *b, Q_ULONG len)
+Buffer::Buffer(const char *b, int len)
 {
-	mBuffer.duplicate(b, len);
-	mReadPos=0;
+	mBuffer = QByteArray::fromRawData( b, len );
+	mReadPos = 0;
 }
 
 Buffer::Buffer( const QByteArray& data )
 {
-	mBuffer.duplicate( data );
+	mBuffer = data;
 	mReadPos = 0;
 }
 
@@ -133,8 +131,7 @@ int Buffer::addString(QByteArray s, DWORD len)
 
 int Buffer::addString( const char* s, DWORD len )
 {
-	QByteArray qba;
-	qba.duplicate( s, len );
+	QByteArray qba( s, len );
 	return addString( qba );
 }
 
@@ -243,9 +240,7 @@ DWORD Buffer::getLEDWord()
 
 void Buffer::setBuf(char *b, const WORD len)
 {
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
-
-	mBuffer.duplicate(b, len);
+	mBuffer = QByteArray::fromRawData(b, len);
 	mReadPos = 0;
 }
 
@@ -262,8 +257,7 @@ QByteArray Buffer::getBlock(WORD len)
 
 QByteArray Buffer::getBBlock(WORD len)
 {
-	QByteArray data;
-	data.duplicate(mBuffer.data() + mReadPos, len);
+	QByteArray data = QByteArray::fromRawData( mBuffer.data() + mReadPos, len);
 	mReadPos += len;
 	return data;
 }
@@ -322,9 +316,9 @@ TLV Buffer::getTLV()
 	return t;
 }
 
-Q3ValueList<TLV> Buffer::getTLVList()
+QList<TLV> Buffer::getTLVList()
 {
-	Q3ValueList<TLV> ql;
+	QList<TLV> ql;
 
 	while (mReadPos < mBuffer.size())
 	{
@@ -431,9 +425,9 @@ QByteArray Buffer::getBUIN()
 	return qba;
 }
 
-const char *Buffer::buffer() const
+QByteArray Buffer::buffer() const
 {
-	return mBuffer.data();
+	return mBuffer;
 }
 
 int Buffer::length() const
