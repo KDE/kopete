@@ -38,6 +38,7 @@ public:
 	~YahooConferenceChatSession();
 
 	void joined( YahooContact *c );
+	void left( YahooContact *c );
 	const QString &room();
 signals:
 	void leavingConference( YahooConferenceChatSession *s );

@@ -247,10 +247,10 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		                 this,
 		                 SLOT(slotConfUserDecline( const QString &, const QString &, const QString &)) );
 		
-		QObject::connect(m_session , SIGNAL(confUserJoin( const QString &, const QString &)), this,
+		QObject::connect(m_session , SIGNAL(confUserJoined( const QString &, const QString &)), this,
 		                 SLOT(slotConfUserJoin( const QString &, const QString &)) );
 		
-		QObject::connect(m_session , SIGNAL(confUserLeave( const QString &, const QString &)), this,
+		QObject::connect(m_session , SIGNAL(confUserLeft( const QString &, const QString &)), this,
 		                 SLOT(slotConfUserLeave( const QString &, const QString &)) );
 		
 		QObject::connect(m_session , SIGNAL(gotConferenceMessage( const QString &, const QString &, const QString &)), this,
@@ -348,10 +348,10 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		                    this,
 		                    SLOT(slotConfUserDecline( const QString &, const QString &, const QString& ) ) );
 		
-		QObject::disconnect(m_session , SIGNAL(confUserJoin( const QString &, const QString &)),
+		QObject::disconnect(m_session , SIGNAL(confUserJoined( const QString &, const QString &)),
 		                    this, SLOT(slotConfUserJoin( const QString &, const QString &)) );
 		
-		QObject::disconnect(m_session , SIGNAL(confUserLeave( const QString &, const QString &)),
+		QObject::disconnect(m_session , SIGNAL(confUserLeft( const QString &, const QString &)),
 		                    this, SLOT(slotConfUserLeave( const QString &, const QString &)) );
 		
 		QObject::disconnect(m_session , SIGNAL(gotConferenceMessage( const QString &, const QString &, const QString &)), this,
@@ -946,14 +946,38 @@ void YahooAccount::slotConfUserDecline( const QString & /* who */, const QString
 //	kdDebug(14180) << k_funcinfo << endl;
 }
 
-void YahooAccount::slotConfUserJoin( const QString & /* who */, const QString & /* room */ )
+void YahooAccount::slotConfUserJoin( const QString &who, const QString &room )
 {
-//	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(14180) << k_funcinfo << endl;	
+	if( !m_conferences.contains( room ) )
+	{
+		kdDebug(14180) << k_funcinfo << "Error. No chatsession for this conference found." << endl;
+		return;
+	}
+	
+	YahooConferenceChatSession *session = m_conferences[room];
+	if( !contact( who ) )
+	{
+		addContact( who, who,  0L, Kopete::Account::Temporary );
+	}
+	session->joined( contact( who ) );
 }
 
-void YahooAccount::slotConfUserLeave( const QString & /* who */, const QString & /* room */ )
+void YahooAccount::slotConfUserLeave( const QString & who, const QString &room )
 {
-//	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(14180) << k_funcinfo << endl;	
+	if( !m_conferences.contains( room ) )
+	{
+		kdDebug(14180) << k_funcinfo << "Error. No chatsession for this conference found." << endl;
+		return;
+	}
+	
+	YahooConferenceChatSession *session = m_conferences[room];
+	if( !contact( who ) )
+	{
+		addContact( who, who,  0L, Kopete::Account::Temporary );
+	}
+	session->left( contact( who ) );
 }
 
 void YahooAccount::slotConfLeave( YahooConferenceChatSession *s )
@@ -988,8 +1012,6 @@ void YahooAccount::slotConfMessage( const QString &who, const QString &room, con
 	QFont msgFont;
 	QDateTime msgDT;
 	Kopete::ContactPtrList justMe;
-	QRegExp regExp;
-	int pos = 0;
 	
 	if( !contact( who ) )
 	{

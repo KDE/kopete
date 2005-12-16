@@ -580,6 +580,10 @@ void Client::initTasks()
 				SIGNAL( gotConferenceInvite( const QString &, const QString &, const QString &, const QStringList & ) ) );
 	QObject::connect( d->conferenceTask, SIGNAL( gotMessage( const QString &, const QString &, const QString & ) ),
 				SIGNAL( gotConferenceMessage( const QString &, const QString &, const QString & ) ) );
+	QObject::connect( d->conferenceTask, SIGNAL( userJoined( const QString &, const QString & ) ),
+				SIGNAL( confUserJoined( const QString &, const QString & ) ) );
+	QObject::connect( d->conferenceTask, SIGNAL( userLeft( const QString &, const QString & ) ),
+				SIGNAL( confUserLeft( const QString &, const QString & ) ) );
 }
 
 void Client::deleteTasks()

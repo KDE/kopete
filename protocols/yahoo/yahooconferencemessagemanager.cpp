@@ -59,6 +59,11 @@ void YahooConferenceChatSession::joined( YahooContact *c )
 	addContact( c );
 }
 
+void YahooConferenceChatSession::left( YahooContact *c )
+{
+	removeContact( c, i18n("%1 has left the conference.").arg(c->userId()) );
+}
+
 void YahooConferenceChatSession::slotMessageSent( Kopete::Message & message, Kopete::ChatSession * )
 {
 	kdDebug ( 14180 ) << k_funcinfo << endl;

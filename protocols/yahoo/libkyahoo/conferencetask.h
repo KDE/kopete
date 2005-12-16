@@ -39,10 +39,14 @@ public:
 signals:
 	void gotInvite( const QString &who, const QString &room, const QString &msg, const QStringList &members);
 	void gotMessage( const QString &who, const QString &room, const QString &msg );
+	void userJoined( const QString &who, const QString &room );
+	void userLeft( const QString &who, const QString &room );
 private slots:
 private:
 	void parseInvitation( Transfer *transfer );
 	void parseMessage( Transfer *transfer );
+	void parseUserJoined( Transfer *transfer );
+	void parseUserLeft( Transfer *transfer );
 };
 
 #endif

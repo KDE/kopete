@@ -46,9 +46,11 @@ bool ConferenceTask::take( Transfer* transfer )
  		parseInvitation( transfer );
 	else if( t->service() == Yahoo::ServiceConfMsg )
 		parseMessage( transfer );
-	else if( t->service() == Yahoo::ServiceConfLogon ||
-		t->service() == Yahoo::ServiceConfDecline ||
-		t->service() == Yahoo::ServiceConfLogoff ||
+	else if( t->service() == Yahoo::ServiceConfLogon )
+		parseUserJoined( transfer );
+	else if( t->service() == Yahoo::ServiceConfLogoff )
+		parseUserLeft( transfer );
+	else if( t->service() == Yahoo::ServiceConfDecline ||
 		t->service() == Yahoo::ServiceConfAddInvite )
 		;
 // 	else
@@ -125,6 +127,38 @@ void ConferenceTask::parseMessage( Transfer *transfer )
 
 	if( !msg.isEmpty() )
 		emit gotMessage( from, room, msg ); 
+}
+
+void ConferenceTask::parseUserJoined( Transfer *transfer )
+{
+	kdDebug(14181) << k_funcinfo << endl;
+
+	YMSGTransfer *t = 0L;
+	t = dynamic_cast<YMSGTransfer*>(transfer);
+	if (!t)
+		return;
+	
+	QString room = t->firstParam( 57 );
+	QString who = t->firstParam( 53 );
+
+	if( !who.isEmpty() && !room.isEmpty() )
+		emit userJoined( who, room );
+}
+
+void ConferenceTask::parseUserLeft( Transfer *transfer )
+{
+	kdDebug(14181) << k_funcinfo << endl;
+
+	YMSGTransfer *t = 0L;
+	t = dynamic_cast<YMSGTransfer*>(transfer);
+	if (!t)
+		return;
+	
+	QString room = t->firstParam( 57 );
+	QString who = t->firstParam( 56 );
+
+	if( !who.isEmpty() && !room.isEmpty() )
+		emit userLeft( who, room );
 }
 
 void ConferenceTask::joinConference( const QString &room, const QStringList &members )
