@@ -125,7 +125,7 @@ DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 				if (memcmp(&oscar_caps[i], cap.data(), 12) == 0)
 				{
 					capflags |= (1 << i);
-					versionString.sprintf( "%d.%d.%d%d", cap[12], cap[13], cap[14], cap[15] );
+					versionString.sprintf( "%d.%d.%d%d", cap.at(12), cap.at(13), cap.at(14), cap.at(15) );
 					versionString.insert( 0, "Kopete " );
 					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Kopete version - " << versionString << endl;
 				}
@@ -155,7 +155,7 @@ DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 						(unsigned int)cap[14] << ":" << (unsigned int)cap[15] << ">" << endl;
 					capflags |= (1 << i);
 					versionString.sprintf("%d.%d.%d%d",
-					                      cap[12], cap[13], cap[14], cap[15]);
+					                      cap.at(12), cap.at(13), cap.at(14), cap.at(15));
 					versionString.insert( 0, "SIM " );
 					break;
 				}
