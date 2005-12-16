@@ -183,12 +183,12 @@ namespace Field
 		quint8 m_type;  // doch needed
 	};
 	
-	typedef Q3ValueListIterator<FieldBase *> FieldListIterator;
-	typedef Q3ValueListConstIterator<FieldBase *> FieldListConstIterator;
+	typedef QList<FieldBase*>::Iterator FieldListIterator;
+	typedef QList<FieldBase*>::ConstIterator FieldListConstIterator;
 	class SingleField;
 	class MultiField;
 	
-	class FieldList : public Q3ValueList<FieldBase *>
+	class FieldList : public QList<FieldBase *>
 	{
 		public:
 			/** 

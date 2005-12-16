@@ -16,8 +16,8 @@
     *************************************************************************
 */
 
-#include <qdatetime.h>
-#include <qvaluelist.h>
+#include <QDateTime>
+#include <QList>
 
 #ifndef GROUPWISE_CHATROOMS_H
 #define GROUPWISE_CHATROOMS_H
@@ -31,7 +31,7 @@ class ChatContact
 		QString dn;
 		uint chatRights;
 };
-typedef QValueList<GroupWise::ChatContact> ChatContactList;
+typedef QList<GroupWise::ChatContact> ChatContactList;
 
 struct ChatroomSearchResult
 {
@@ -72,7 +72,7 @@ class Chatroom
 		Chatroom( ChatroomSearchResult csr ) { archive = false; maxUsers = 0; chatRights = 0; participantsCount = csr.participants; haveParticipants = false; haveAcl = false; haveInvites = false; ownerDN = csr.ownerDN; displayName = csr.name; }
 };
 
-typedef QValueList<Chatroom> ChatroomList;
+typedef QList<Chatroom> ChatroomList;
 typedef QMap<QString, Chatroom> ChatroomMap;
 };
 #endif
