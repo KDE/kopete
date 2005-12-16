@@ -52,13 +52,13 @@ class SearchChatTask : public RequestTask
 	/**
 		 * Access the results of the search
 	 */
-		QValueList< GroupWise::ChatroomSearchResult > results();
+		QList< GroupWise::ChatroomSearchResult > results();
 	protected slots:
 		void slotPollForResults();
 		void slotGotPollResults();
 	private: 
 		QTimer * m_resultsPollTimer;
-		QValueList< GroupWise::ChatroomSearchResult > m_results;
+		QList< GroupWise::ChatroomSearchResult > m_results;
 		int m_polls;
 		int m_objectId; // used to identify our query to the server, so we can poll for its results
 };

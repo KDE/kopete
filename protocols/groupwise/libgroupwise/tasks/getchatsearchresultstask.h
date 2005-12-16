@@ -21,7 +21,7 @@
 #ifndef CHATSEARCHRESULTSTASK_H
 #define CHATSEARCHRESULTSTASK_H
 
-#include <qvaluelist.h>
+#include <QList>
 
 #include "gwchatrooms.h"
 
@@ -42,11 +42,11 @@ class GetChatSearchResultsTask : public RequestTask
 		void poll( int queryHandle);
 		bool take( Transfer * transfer );
 		int queryStatus();
-		QValueList< GroupWise::ChatroomSearchResult > results();
+		QList< GroupWise::ChatroomSearchResult > results();
 	private:
 		GroupWise::ChatroomSearchResult extractChatDetails( Field::FieldList & fields );
 		SearchResultCode m_queryStatus;
-		QValueList< GroupWise::ChatroomSearchResult > m_results;
+		QList< GroupWise::ChatroomSearchResult > m_results;
 };
 
 #endif

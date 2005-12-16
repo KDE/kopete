@@ -48,7 +48,7 @@ SearchUserTask::~SearchUserTask()
 {
 }
 
-void SearchUserTask::search( const QValueList<UserSearchQueryTerm> & query )
+void SearchUserTask::search( const QList<UserSearchQueryTerm> & query )
 {
 	m_queryHandle = QString::number( QDateTime::currentDateTime().toTime_t () );
 	Field::FieldList lst;
@@ -59,8 +59,8 @@ void SearchUserTask::search( const QValueList<UserSearchQueryTerm> & query )
 	}
 	// object Id identifies the search for later reference
 	lst.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, m_queryHandle ) );
-	QValueList<UserSearchQueryTerm>::ConstIterator it = query.begin();
-	const QValueList<UserSearchQueryTerm>::ConstIterator end = query.end();
+	QList<UserSearchQueryTerm>::ConstIterator it = query.begin();
+	const QList<UserSearchQueryTerm>::ConstIterator end = query.end();
 	for ( ; it != end; ++it )
 	{
 		Field::SingleField * fld =  new Field::SingleField( (*it).field.ascii(), (*it).operation, 0, NMFIELD_TYPE_UTF8, (*it).argument );
@@ -129,7 +129,7 @@ void SearchUserTask::slotGotPollResults()
 	}
 }
 
-QValueList< GroupWise::ContactDetails > SearchUserTask::results()
+QList< GroupWise::ContactDetails > SearchUserTask::results()
 {
 	return m_results;
 }

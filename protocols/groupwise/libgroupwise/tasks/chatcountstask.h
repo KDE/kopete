@@ -19,7 +19,7 @@
 #ifndef CHATCOUNTSTASK_H
 #define CHATCOUNTSTASK_H
 
-#include <qvaluelist.h>
+#include <qlist.h>
 
 #include "gwerror.h"
 #include "gwfield.h"

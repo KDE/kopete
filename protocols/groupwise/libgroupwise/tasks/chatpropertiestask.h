@@ -20,7 +20,7 @@
 #define CHATPROPERTIESTASK_H
 
 #include <qdatetime.h>
-#include <qvaluelist.h>
+#include <qlist.h>
 #include "gwchatrooms.h"
 #include "gwerror.h"
 #include "gwfield.h"
@@ -46,7 +46,7 @@ class ChatPropertiesTask : public RequestTask
 		/**
 		 * Contains a list of the ACL entries for the specified chatroom
 		 */
-		QValueList< GroupWise::ChatContact > aclEntries();
+		QList< GroupWise::ChatContact > aclEntries();
 		QString m_chat;
 		QString m_ownerDn;
 		QString m_description;
@@ -58,7 +58,7 @@ class ChatPropertiesTask : public RequestTask
 		QString m_creatorDn;
 		QDateTime m_creationTime;
 		uint m_rights;
-		QValueList< GroupWise::ChatContact > m_aclEntries;
+		QList< GroupWise::ChatContact > m_aclEntries;
 };
 
 #endif

@@ -131,7 +131,7 @@ bool ChatPropertiesTask::take( Transfer * transfer )
 	return true;
 }
 
-QValueList< ChatContact > ChatPropertiesTask::aclEntries()
+QList< ChatContact > ChatPropertiesTask::aclEntries()
 {
 	return m_aclEntries;
 }

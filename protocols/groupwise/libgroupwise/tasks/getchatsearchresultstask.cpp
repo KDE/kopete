@@ -92,7 +92,7 @@ bool GetChatSearchResultsTask::take( Transfer * transfer )
 	return true;
 }
 
-QValueList< GroupWise::ChatroomSearchResult > GetChatSearchResultsTask::results()
+QList< GroupWise::ChatroomSearchResult > GetChatSearchResultsTask::results()
 {
 	return m_results;
 }
