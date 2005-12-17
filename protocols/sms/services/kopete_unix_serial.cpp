@@ -10,10 +10,9 @@
 // *
 // * Created: 10.5.1999
 // *************************************************************************
+#include "config.h"
+#ifdef INCLUDE_SMSGSM
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 #include <gsmlib/gsm_util.h>
 #include <termios.h>
 #include <fcntl.h>
@@ -441,3 +440,6 @@ KopeteUnixSerialPort::~KopeteUnixSerialPort()
 		close(_fd);
 }
 
+#include "kopete_unix_serial.moc"
+
+#endif

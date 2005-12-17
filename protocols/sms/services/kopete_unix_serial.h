@@ -14,6 +14,9 @@
 #ifndef GSM_UNIX_SERIAL_KOPETE_H
 #define GSM_UNIX_SERIAL_KOPETE_H
 
+#include "config.h"
+#ifdef INCLUDE_SMSGSM
+
 #include <string>
 #include <gsmlib/gsm_error.h>
 #include <gsmlib/gsm_port.h>
@@ -63,4 +66,5 @@ signals:
 };
 
 }
+#endif
 #endif // GSM_UNIX_SERIAL_KOPETE_H
