@@ -378,7 +378,7 @@ QPtrList<KAction> *YahooContact::customContextMenuActions()
 	
 	if ( !m_buzzAction )
 	{
-		m_buzzAction = new KAction( i18n( "&Buzz Contact" ), KShortcut(), this, SLOT( buzzContact() ), this, "buzz_contact");
+		m_buzzAction = new KAction( i18n( "&Buzz Contact" ), "bell", KShortcut(), this, SLOT( buzzContact() ), this, "buzz_contact");
 	}
 	if ( isReachable() )
 		m_buzzAction->setEnabled( true );
@@ -388,7 +388,7 @@ QPtrList<KAction> *YahooContact::customContextMenuActions()
 
 	if ( !m_stealthAction )
 	{
-		m_stealthAction = new KAction( i18n( "&Stealth Setting" ), KShortcut(), this, SLOT( stealthContact() ), this, "stealth_contact");
+		m_stealthAction = new KAction( i18n( "&Stealth Setting" ), "yahoo_stealthed", KShortcut(), this, SLOT( stealthContact() ), this, "stealth_contact");
 	}
 	if ( isReachable() )
 		m_stealthAction->setEnabled( true );
@@ -398,7 +398,7 @@ QPtrList<KAction> *YahooContact::customContextMenuActions()
 	
 	if ( !m_inviteConferenceAction )
 	{
-		m_inviteConferenceAction = new KAction( i18n( "&Invite to Conference" ), KShortcut(), this, SLOT( inviteConference() ), this, "invite_conference");
+		m_inviteConferenceAction = new KAction( i18n( "&Invite to Conference" ), "kontact_contacts", KShortcut(), this, SLOT( inviteConference() ), this, "invite_conference");
 	}
 	if ( isReachable() )
 		m_inviteConferenceAction->setEnabled( true );
