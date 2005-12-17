@@ -74,15 +74,12 @@ void KopetePrefs::load()
 	mTrayflashNotifySetCurrentDesktopToChatView = config->readBoolEntry("Trayflash Notification Set Current Desktop To Chat View", false);
 	mSoundIfAway = config->readBoolEntry("Sound Notification If Away", true);
 	mChatWindowPolicy = config->readNumEntry("Chatwindow Policy", 0);
-	mTransparencyEnabled = config->readBoolEntry("ChatView Transparency Enabled", false);
-	mTransparencyValue = config->readNumEntry("ChatView Transparency Value", 50);
 	mRichText = config->readBoolEntry("RichText editor", false);
 	mChatWShowSend = config->readBoolEntry("Show Chatwindow Send Button", true);
 	mRememberedMessages = config->readNumEntry("Remembered Messages", 5);
 	mTruncateContactNames = config->readBoolEntry("TruncateContactNames", false);
 	mMaxContactNameLength = config->readNumEntry("MaxContactNameLength", 20);
 
-	mTransparencyColor = config->readColorEntry("ChatView Transparency Tint Color", &Qt::white);
 	mChatViewBufferSize = config->readNumEntry("ChatView BufferSize", 250);
 
 	QColor tmpColor = KGlobalSettings::highlightColor();
@@ -171,7 +168,6 @@ void KopetePrefs::load()
 
 	// Nothing has changed yet
 	mWindowAppearanceChanged = false;
-	mTransparencyChanged = false;
 	mContactListAppearanceChanged = false;
 	mMessageAppearanceChanged = false;
 	mStylePathChanged = false;
@@ -209,9 +205,6 @@ void KopetePrefs::save()
 	config->writeEntry("Trayflash Notification Set Current Desktop To Chat View", mTrayflashNotifySetCurrentDesktopToChatView);
 	config->writeEntry("Sound Notification If Away", mSoundIfAway);
 	config->writeEntry("Chatwindow Policy", mChatWindowPolicy);
-	config->writeEntry("ChatView Transparency Enabled", mTransparencyEnabled);
-	config->writeEntry("ChatView Transparency Value", mTransparencyValue);
-	config->writeEntry("ChatView Transparency Tint Color", mTransparencyColor);
 	config->writeEntry("ChatView Override Background", mBgOverride);
 	config->writeEntry("ChatView Override Foreground", mFgOverride);
 	config->writeEntry("ChatView Override RTF", mRtfOverride);
@@ -273,9 +266,6 @@ void KopetePrefs::save()
 	config->sync();
 	emit saved();
 
-	if(mTransparencyChanged)
-		emit transparencyChanged();
-
 	if(mWindowAppearanceChanged)
 		emit windowAppearanceChanged();
 
@@ -294,7 +284,6 @@ void KopetePrefs::save()
 	// Clear all *Changed flags. This will cause breakage if someone makes some
 	// changes but doesn't save them in a slot connected to a *Changed signal.
 	mWindowAppearanceChanged = false;
-	mTransparencyChanged = false;
 	mContactListAppearanceChanged = false;
 	mMessageAppearanceChanged = false;
 	mStylePathChanged = false;
@@ -544,18 +533,6 @@ void KopetePrefs::setInterfacePreference(const QString &value)
 	mInterfacePreference = value;
 }
 
-void KopetePrefs::setTransparencyEnabled(bool value)
-{
-	if( value != mTransparencyEnabled ) mTransparencyChanged = true;
-	mTransparencyEnabled = value;
-}
-
-void KopetePrefs::setTransparencyColor(const QColor &value)
-{
-	if( value != mTransparencyColor ) mTransparencyChanged = true;
-	mTransparencyColor = value;
-}
-
 void KopetePrefs::setChatViewBufferSize( int value )
 {
 	mChatViewBufferSize = value;
@@ -577,12 +554,6 @@ void KopetePrefs::setHighlightEnabled(bool value)
 {
 	if( value != mHighlightEnabled ) mWindowAppearanceChanged = true;
 	mHighlightEnabled = value;
-}
-
-void KopetePrefs::setTransparencyValue(int value)
-{
-	if( value != mTransparencyValue ) mTransparencyChanged = true;
-	mTransparencyValue = value;
 }
 
 void KopetePrefs::setBgOverride(bool value)

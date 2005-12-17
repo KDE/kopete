@@ -55,7 +55,6 @@
 #include <kmessagebox.h>
 #include <kmultipledrag.h>
 #include <kpopupmenu.h>
-#include <krootpixmap.h>
 #include <krun.h>
 #include <kstringhandler.h>
 #include <ktempfile.h>
@@ -88,8 +87,8 @@ class ChatMessagePart::Private
 {
 public:
 	Private() 
-	 : tt(0L), manager(0L), messageId(0), scrollPressed(false), bgChanged(false),
-	   backgroundFile(0L), root(0L), copyAction(0L), saveAction(0L), printAction(0L),
+	 : tt(0L), manager(0L), messageId(0), scrollPressed(false),
+	   copyAction(0L), saveAction(0L), printAction(0L),
 	   closeAction(0L),copyURLAction(0L), currentChatStyle(0L), latestContact(0L)
 	{}
 	
@@ -98,17 +97,9 @@ public:
 		delete xsltParser;
 		// Don't delete manager and latestContact, because they could be still used.
 		delete currentChatStyle;
-
-		if( backgroundFile )
-		{
-			backgroundFile->close();
-			backgroundFile->unlink();
-			delete backgroundFile;
-		}
 	}
 
 	Kopete::XSLT *xsltParser;
-	bool transparencyEnabled;
 	bool bgOverride;
 	bool fgOverride;
 	bool rtfOverride;
@@ -126,10 +117,6 @@ public:
 	bool bgChanged;
 
 	DOM::HTMLElement activeElement;
-
-	// FIXME: share
-	KTempFile *backgroundFile;
-	KRootPixmap *root;
 
 	KAction *copyAction;
 	KAction *saveAction;
@@ -237,9 +224,6 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	// It is not possible to drag and drop on our widget
 	view()->setAcceptDrops(false);
 
-	// some signals and slots connections
-	connect( KopetePrefs::prefs(), SIGNAL(transparencyChanged()),
-	         this, SLOT( slotTransparencyChanged() ) );
 	connect( KopetePrefs::prefs(), SIGNAL(messageAppearanceChanged()),
 	         this, SLOT( slotAppearanceChanged() ) );
 	connect( KopetePrefs::prefs(), SIGNAL(windowAppearanceChanged()),
@@ -271,8 +255,6 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 
 	// read formatting override flags
 	readOverrides();
-
-	slotTransparencyChanged();
 }
 
 ChatMessagePart::~ChatMessagePart()
@@ -895,76 +877,6 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 void ChatMessagePart::print()
 {
 	view()->print();
-}
-
-void ChatMessagePart::slotTransparencyChanged()
-{
-	d->transparencyEnabled = KopetePrefs::prefs()->transparencyEnabled();
-
-//	kdDebug(14000) << k_funcinfo << "transparencyEnabled=" << transparencyEnabled << ", bgOverride=" << bgOverride << "." << endl;
-
-	if ( d->transparencyEnabled )
-	{
-		if ( !d->root )
-		{
-//			kdDebug(14000) << k_funcinfo << "enabling transparency" << endl;
-			d->root = new KRootPixmap( view() );
-			connect(d->root, SIGNAL( backgroundUpdated( const QPixmap & ) ), this, SLOT( slotUpdateBackground( const QPixmap & ) ) );
-			d->root->setCustomPainting( true );
-			d->root->setFadeEffect( KopetePrefs::prefs()->transparencyValue() * 0.01, KopetePrefs::prefs()->transparencyColor() );
-			d->root->start();
-		}
-		else
-		{
-			d->root->setFadeEffect( KopetePrefs::prefs()->transparencyValue() * 0.01, KopetePrefs::prefs()->transparencyColor() );
-			d->root->repaint( true );
-		}
-	}
-	else
-	{
-		if ( d->root )
-		{
-//			kdDebug(14000) << k_funcinfo << "disabling transparency" << endl;
-			delete d->root;
-			d->root = 0;
-			if( d->backgroundFile )
-			{
-				d->backgroundFile->close();
-				d->backgroundFile->unlink();
-				delete d->backgroundFile;
-				d->backgroundFile = 0;
-			}
-			executeScript( QString::fromLatin1("document.body.background = \"\";") );
-		}
-	}
-}
-
-void ChatMessagePart::slotUpdateBackground( const QPixmap &pixmap )
-{
-	if( d->backgroundFile )
-	{
-		d->backgroundFile->close();
-		d->backgroundFile->unlink();
-		delete d->backgroundFile;
-	}
-
-	d->backgroundFile = new KTempFile( QString::null, QString::fromLatin1( ".bmp" ) );
-	pixmap.save( d->backgroundFile->name(), "BMP" );
-
-	d->bgChanged = true;
-
-	//This doesn't work well using the DOM, so just use some JS
-	if ( d->bgChanged && d->backgroundFile && !d->backgroundFile->name().isNull() )
-	{
-		setJScriptEnabled( true ) ;
-		executeScript( QString::fromLatin1( "document.body.background = \"%1\";" ).arg( d->backgroundFile->name() ) );
-		setJScriptEnabled( false ) ;
-	}
-
-	d->bgChanged = false;
-
-	if ( !d->scrollPressed )
-		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
 }
 
 void ChatMessagePart::khtmlDrawContentsEvent( khtml::DrawContentsEvent * event) //virtual

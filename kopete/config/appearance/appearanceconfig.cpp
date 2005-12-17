@@ -373,8 +373,6 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	d->mPrfsChatWindow->importButton->setEnabled(false);
 	d->mPrfsChatWindow->copyButton->setEnabled(false);
 
-	connect(d->mPrfsChatWindow->mTransparencyEnabled, SIGNAL(toggled(bool)),
-		this, SLOT(slotTransparencyChanged(bool)));
 	connect(d->mPrfsChatWindow->styleList, SIGNAL(selectionChanged(QListBoxItem *)),
 		this, SLOT(slotStyleSelected()));
 	connect(d->mPrfsChatWindow->variantList, SIGNAL(activated(const QString&)),
@@ -394,14 +392,8 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	// Show the available styles when the Manager has finish to load the styles.
 	connect(ChatWindowStyleManager::self(), SIGNAL(loadStylesFinished()), this, SLOT(slotLoadStyles()));
 
-
 	// Since KNewStuff is incomplete and buggy we'll disable it by default.
 	d->mPrfsChatWindow->btnGetStyles->setEnabled( config->readBoolEntry( "ForceNewStuff", false ) );
-
-	connect(d->mPrfsChatWindow->mTransparencyTintColor, SIGNAL(activated (const QColor &)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsChatWindow->mTransparencyValue, SIGNAL(valueChanged(int)),
-		this, SLOT(emitChanged()));
 
 	d->mPrfsChatWindow->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
 	// Create the fake Chat Session
@@ -500,8 +492,6 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 
 	// ==========================================================================
 
-	slotTransparencyChanged(d->mPrfsChatWindow->mTransparencyEnabled->isChecked());
-
 	load();
 }
 
@@ -521,9 +511,6 @@ void AppearanceConfig::save()
 	p->setEmoticonsRequireSpaces( d->mPrfsEmoticons->chkRequireSpaces->isChecked() );
 
 	// "Chat Window" TAB ========================================================
-	p->setTransparencyColor( d->mPrfsChatWindow->mTransparencyTintColor->color() );
-	p->setTransparencyEnabled( d->mPrfsChatWindow->mTransparencyEnabled->isChecked() );
-	p->setTransparencyValue( d->mPrfsChatWindow->mTransparencyValue->value() );
 	p->setMetaContactDisplay( d->mPrfsChatWindow->metaContactDisplayEnabled->isChecked() );
 	p->setGroupConsecutiveMessages( d->mPrfsChatWindow->groupConsecutiveMessages->isChecked() );
 
@@ -591,9 +578,6 @@ void AppearanceConfig::load()
 	d->mPrfsEmoticons->chkRequireSpaces->setChecked( p->emoticonsRequireSpaces() );
 
 	// "Chat Window" TAB ========================================================
-	d->mPrfsChatWindow->mTransparencyEnabled->setChecked( p->transparencyEnabled() );
-	d->mPrfsChatWindow->mTransparencyTintColor->setColor( p->transparencyColor() );
-	d->mPrfsChatWindow->mTransparencyValue->setValue( p->transparencyValue() );
 	d->mPrfsChatWindow->metaContactDisplayEnabled->setChecked( p->metaContactDisplay() );
 	d->mPrfsChatWindow->groupConsecutiveMessages->setChecked( p->groupConsecutiveMessages() );
 	// Look for avaiable chat window styles.
@@ -735,13 +719,6 @@ void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
 
 	newContentText += QString::fromLatin1("</qt>");
 	d->mPrfsEmoticons->icon_theme_preview->setText(newContentText);
-	emitChanged();
-}
-
-void AppearanceConfig::slotTransparencyChanged ( bool checked )
-{
-	d->mPrfsChatWindow->mTransparencyTintColor->setEnabled( checked );
-	d->mPrfsChatWindow->mTransparencyValue->setEnabled( checked );
 	emitChanged();
 }
 

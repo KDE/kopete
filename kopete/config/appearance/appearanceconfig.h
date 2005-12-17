@@ -41,7 +41,6 @@ public:
 
 private slots:
 	void slotSelectedEmoticonsThemeChanged();
-	void slotTransparencyChanged(bool);
 	void slotUpdatePreview();
 	void slotHighlightChanged();
 	void slotChangeFont();

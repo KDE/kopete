@@ -77,9 +77,6 @@ public:
 	bool balloonClose() const { return mBalloonClose; }
 	int balloonCloseDelay() const { return mBalloonCloseDelay; }
 	bool soundIfAway() const { return mSoundIfAway; }
-	bool transparencyEnabled() const { return mTransparencyEnabled; }
-	int transparencyValue() const { return mTransparencyValue; }
-	QColor transparencyColor() const { return mTransparencyColor; }
 	int chatViewBufferSize() const { return mChatViewBufferSize; }
 	int rememberedMessages() const { return mRememberedMessages; }
 	const QColor &highlightBackground() const { return mHighlightBackground; }
@@ -170,13 +167,10 @@ public:
 	void setStyleSheet (const QString &);
 	void setStylePath(const QString &);
 	void setStyleVariant(const QString &);
-	void setTransparencyEnabled(bool);
-	void setTransparencyColor(const QColor &);
 	void setChatViewBufferSize(int);
 	void setHighlightBackground(const QColor &);
 	void setHighlightForeground(const QColor &);
 	void setHighlightEnabled(bool);
-	void setTransparencyValue(int);
 	void setBgOverride(bool);
 	void setFgOverride(bool);
 	void setRtfOverride(bool);
@@ -228,7 +222,6 @@ signals:
 	void windowAppearanceChanged();
 	void messageAppearanceChanged();
 	void contactListAppearanceChanged();
-	void transparencyChanged();
 	/**
 	 * Emitted when chat Window Style changed.
 	 * @param stylePath New stylePath
@@ -277,11 +270,8 @@ private:
 	bool mBalloonClose;
 	int mBalloonCloseDelay;
 	bool mSoundIfAway;
-	bool mTransparencyEnabled;
-	int mTransparencyValue;
 	int mRememberedMessages;
 	QString mInterfacePreference;
-	QColor mTransparencyColor;
 	int mChatViewBufferSize;
 	QColor mHighlightBackground;
 	QColor mHighlightForeground;
@@ -295,7 +285,6 @@ private:
 	bool mFgOverride;
 	bool mRtfOverride;
 	bool mShowTray;
-	bool mTransparencyChanged;
 	bool mWindowAppearanceChanged;
 	bool mMessageAppearanceChanged;
 	bool mContactListAppearanceChanged;

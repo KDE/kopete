@@ -146,17 +146,6 @@ private slots:
 	void slotScrollView();
 	void slotAppearanceChanged();
 
-	/**
-	 * Called when KopetePrefs are saved
-	 */
-	void slotTransparencyChanged();
-
-	/**
-	 * Sets the background of the widget
-	 * @param pm The new background image
-	 */
-	void slotUpdateBackground( const QPixmap &pm );
-
 	void slotScrollingTo( int x, int y );
 
 	void slotRefreshNodes();

@@ -15,9 +15,14 @@
     <description/>
     <ignoreparts>
       <part>kdevabbrev</part>
+      <part>kdevdebugger</part>
+      <part>kdevvalgrind</part>
+      <part>kdevctags2</part>
+      <part>kdevbookmarks</part>
       <part>kdevsnippet</part>
-      <part>kdevdistpart</part>
       <part>kdevquickopen</part>
+      <part>kdevfileselector</part>
+      <part>kdevdistpart</part>
     </ignoreparts>
     <secondaryLanguages/>
     <versioncontrol>kdevsubversion</versioncontrol>
@@ -118,11 +123,14 @@
       <envvar value="1" name="WANT_AUTOMAKE_1_6" />
     </makeenvvars>
     <make>
-      <envvars/>
+      <envvars>
+        <envvar value="1" name="WANT_AUTOCONF_2_5" />
+        <envvar value="1" name="WANT_AUTOMAKE_1_6" />
+      </envvars>
       <abortonerror>true</abortonerror>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin>unsermake</makebin>
+      <makebin>make</makebin>
       <prio>0</prio>
     </make>
     <general>
@@ -141,8 +149,8 @@
     <configurations>
       <default>
         <configargs>--enable-debug=full</configargs>
-        <builddir>/home/kde/branches/build/KDE/3.5/kdenetwork/kopete</builddir>
-        <topsourcedir>/home/kde/branches/KDE/3.5/kdenetwork</topsourcedir>
+        <builddir/>
+        <topsourcedir/>
         <cppflags/>
         <ldflags/>
         <ccompiler>kdevgccoptions</ccompiler>
@@ -210,11 +218,6 @@
       <inlineGet>true</inlineGet>
       <inlineSet>true</inlineSet>
     </creategettersetter>
-    <qt>
-      <used>true</used>
-      <version>3</version>
-      <root>/usr/qt/3</root>
-    </qt>
   </kdevcppsupport>
   <kdevcvsservice>
     <recursivewhenupdate>true</recursivewhenupdate>
