@@ -749,6 +749,11 @@ void AppearanceConfig::slotStyleSelected()
 		// Update the variant list based on current style.
 		d->mPrfsChatWindow->variantList->clear();
 	
+		// Add the no variant item to the list
+		// TODO: Use default name variant from Info.plist
+		// TODO: Select default variant from Info.plist
+		d->mPrfsChatWindow->variantList->insertItem( i18n("(No Variant)") );
+
 		ChatWindowStyle::StyleVariants::ConstIterator it, itEnd = d->currentVariantMap.constEnd();
 		int currentIndex = 0;
 		for(it = d->currentVariantMap.constBegin(); it != itEnd; ++it)
@@ -939,7 +944,7 @@ void AppearanceConfig::createPreviewChatSession()
 void AppearanceConfig::createPreviewMessages()
 {
 	Kopete::Message msgIn( d->jack,d->myself, i18n( "Hello, this is an incoming message :-)" ), Kopete::Message::Inbound );
-	Kopete::Message msgIn2( d->jack, d->myself, i18n( "Hello, this a incoming consecutive message." ), Kopete::Message::Inbound );
+	Kopete::Message msgIn2( d->jack, d->myself, i18n( "Hello, this is an incoming consecutive message." ), Kopete::Message::Inbound );
 
 	Kopete::Message msgOut( d->myself, d->jack, i18n( "Ok, this is an outgoing message" ), Kopete::Message::Outbound );
 	Kopete::Message msgOut2( d->myself, d->jack, i18n( "Ok, a outgoing consecutive message." ), Kopete::Message::Outbound );

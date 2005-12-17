@@ -114,7 +114,6 @@ public:
 	unsigned long messageId;
 	QStringList messageMap;
 	bool scrollPressed;
-	bool bgChanged;
 
 	DOM::HTMLElement activeElement;
 
@@ -446,6 +445,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 #else
 		QString formattedMessageHtml;
 		bool isConsecutiveMessage = false;
+		uint bufferLen = (uint)KopetePrefs::prefs()->chatViewBufferSize();
 
 		// Check if it's a consecutive Message
 		// Consecutive messages are only for normal messages, status messages do not have a <div id="insert" />
@@ -505,6 +505,9 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 		// Find the insert Node
 		DOM::HTMLElement insertNode = document().getElementById( QString::fromUtf8("insert") );
 
+		// Find the "Chat" 
+		DOM::HTMLElement chatNode = document().getElementById( QString::fromUtf8("Chat") );
+
 		if( isConsecutiveMessage && !insertNode.isNull() )
 		{
 			// Replace the insert block, because it's a consecutive message.
@@ -516,9 +519,6 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 			if( !insertNode.isNull() )
 				insertNode.parentNode().removeChild(insertNode);
 			
-			// Find the "Chat" 
-			DOM::HTMLElement chatNode = document().getElementById( QString::fromUtf8("Chat") );
-
 			// Append to the chat.
 			chatNode.appendChild(newMessageNode);
 		}
@@ -533,6 +533,22 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 		// Add the message to the list for futher restoring if needed
 		if(!restoring)
 			d->allMessages.append(message);
+
+		while ( bufferLen>0 && d->allMessages.count() >= bufferLen )
+		{
+			d->allMessages.pop_front();
+			
+			// Do a complete style refresh only if using consecutive messages.
+			// FIXME: Find a better way than that.
+			if( KopetePrefs::prefs()->groupConsecutiveMessages() )
+			{
+				changeStyle();
+			}
+			else
+			{
+				chatNode.removeChild( chatNode.firstChild() );
+			}
+		}
 #endif
 		if ( !d->scrollPressed )
 			QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
@@ -1148,6 +1164,9 @@ void ChatMessagePart::changeStyle()
 #ifdef STYLE_TIMETEST
 	QTime beforeChange = QTime::currentTime();
 #endif
+	// Make latestContact null to reset consecutives messages.
+	d->latestContact = 0;
+
 	// Rewrite the header and footer.
 	writeTemplate();
 	
