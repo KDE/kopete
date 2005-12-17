@@ -383,6 +383,16 @@ void Client::grantWebcamAccess( const QString &userId )
 }
 
 // ***** Conferences *****
+void Client::inviteConference( const QString &room, const QStringList &members, const QString &msg )
+{
+	d->conferenceTask->inviteConference( room, members, msg );
+}
+
+void Client::addInviteConference( const QString &room, const QStringList &members, const QString &msg )
+{
+	d->conferenceTask->addInvite( room, members, msg );
+}
+
 void Client::joinConference( const QString &room, const QStringList &members )
 {
 	d->conferenceTask->joinConference( room, members );
@@ -584,6 +594,8 @@ void Client::initTasks()
 				SIGNAL( confUserJoined( const QString &, const QString & ) ) );
 	QObject::connect( d->conferenceTask, SIGNAL( userLeft( const QString &, const QString & ) ),
 				SIGNAL( confUserLeft( const QString &, const QString & ) ) );
+	QObject::connect( d->conferenceTask, SIGNAL( userDeclined( const QString &, const QString &, const QString & ) ),
+				SIGNAL( confUserDeclined( const QString &, const QString &, const QString & ) ) );
 }
 
 void Client::deleteTasks()

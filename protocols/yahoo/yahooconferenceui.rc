@@ -1,0 +1,11 @@
+<!DOCTYPE kpartgui>
+<kpartgui version="4" name="kopete_yahoo_conference">
+
+	<MenuBar>
+		<Menu noMerge="1" name="file">
+			<Action name="yahooInvite" />
+		</Menu>
+	</MenuBar>
+
+</kpartgui>
+

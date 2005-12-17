@@ -125,6 +125,7 @@ public:
 	void verifyAccount( const QString &word );
 
 	void sendConfMessage( YahooConferenceChatSession *s, Kopete::Message &message );
+	void prepareConference( const QString &who );
 public slots:
 	/**
 	 * Connect to the Yahoo service
@@ -188,6 +189,8 @@ protected slots:
 	void slotConfUserLeave(const QString &who, const QString &room);
 	void slotConfMessage(const QString &who, const QString &room, const QString &msg);
 	void slotConfLeave( YahooConferenceChatSession *s );
+	void slotInviteConference( const QString &room, const QStringList &members, const QString &msg );
+	void slotAddInviteConference( const QString &room, const QStringList &members, const QString &msg );
 	void slotGotFile(const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize);
 	void slotContactAdded(const QString &myid, const QString &who, const QString &msg);
 	void slotRejected(const QString &, const QString &);
@@ -242,6 +245,7 @@ private:
 	 * Conferences list, maped by room name (id)
 	 */
 	QMap<QString, YahooConferenceChatSession *> m_conferences;
+	QStringList m_pendingConfInvites;
 
 	void setPictureFlag( int flag );
 

@@ -81,6 +81,7 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 	m_webcamAction = 0L;
 	m_stealthAction = 0L;
 	m_inviteWebcamAction = 0L;
+	m_inviteConferenceAction = 0L;
 
 	m_buzzAction = 0L;
 }
@@ -395,6 +396,16 @@ QPtrList<KAction> *YahooContact::customContextMenuActions()
 		m_stealthAction->setEnabled( false );
 	actionCollection->append( m_stealthAction );
 	
+	if ( !m_inviteConferenceAction )
+	{
+		m_inviteConferenceAction = new KAction( i18n( "&Invite to Conference" ), KShortcut(), this, SLOT( inviteConference() ), this, "invite_conference");
+	}
+	if ( isReachable() )
+		m_inviteConferenceAction->setEnabled( true );
+	else
+		m_inviteConferenceAction->setEnabled( false );
+	actionCollection->append( m_inviteConferenceAction );
+	
 	return actionCollection;
 	
 	//return 0L;
@@ -496,6 +507,11 @@ void YahooContact::slotEmitDisplayPictureChanged()
 	setProperty( Kopete::Global::Properties::self()->photo(), QString::null );
 	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
 	emit displayPictureChanged();
+}
+
+void YahooContact::inviteConference()
+{
+	m_account->prepareConference( m_userId );
 }
 
 void YahooContact::inviteWebcam()

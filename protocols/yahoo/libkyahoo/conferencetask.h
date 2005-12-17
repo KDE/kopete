@@ -36,17 +36,21 @@ public:
 	void declineConference( const QString &room, const QStringList &members, const QString &msg );
 	void leaveConference( const QString &room, const QStringList &members );
 	void sendMessage( const QString &room, const QStringList &members, const QString &msg );
+	void inviteConference( const QString &room, const QStringList &members, const QString &msg );
+	void addInvite( const QString &room, const QStringList &members, const QString &msg );
 signals:
 	void gotInvite( const QString &who, const QString &room, const QString &msg, const QStringList &members);
 	void gotMessage( const QString &who, const QString &room, const QString &msg );
 	void userJoined( const QString &who, const QString &room );
 	void userLeft( const QString &who, const QString &room );
+	void userDeclined( const QString &who, const QString &room, const QString &msg );
 private slots:
 private:
 	void parseInvitation( Transfer *transfer );
 	void parseMessage( Transfer *transfer );
 	void parseUserJoined( Transfer *transfer );
 	void parseUserLeft( Transfer *transfer );
+	void parseUserDeclined( Transfer *transfer );
 };
 
 #endif

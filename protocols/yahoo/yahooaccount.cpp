@@ -60,6 +60,7 @@
 #include "yahooverifyaccount.h"
 #include "yahoowebcam.h"
 #include "yahooconferencemessagemanager.h"
+#include "yahooinvitelistimpl.h"
 
 YahooAwayDialog::YahooAwayDialog(YahooAccount* account, QWidget *parent, const char *name) :
 	KopeteAwayDialog(parent, name)
@@ -243,7 +244,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		                 SLOT( slotGotConfInvite( const QString&, const QString&,
 		                                          const QString&, const QStringList& ) ) );
 		
-		QObject::connect(m_session, SIGNAL(confUserDecline(const QString&, const QString &, const QString &)),
+		QObject::connect(m_session, SIGNAL(confUserDeclined(const QString&, const QString &, const QString &)),
 		                 this,
 		                 SLOT(slotConfUserDecline( const QString &, const QString &, const QString &)) );
 		
@@ -344,7 +345,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		                                             const QString&, const QStringList&) ) );
 		
 		QObject::disconnect(m_session,
-		                    SIGNAL(confUserDecline(const QString&, const QString &, const QString &)),
+		                    SIGNAL(confUserDeclined(const QString&, const QString &, const QString &)),
 		                    this,
 		                    SLOT(slotConfUserDecline( const QString &, const QString &, const QString& ) ) );
 		
@@ -899,6 +900,14 @@ void YahooAccount::slotGotConfInvite( const QString & who, const QString & room,
 {
 	kdDebug(14180) << k_funcinfo << who << " has invited you to join the conference \"" << room << "\" : " << msg << endl;
 	kdDebug(14180) << k_funcinfo << "Members: " << members << endl;
+	
+	if( !m_pendingConfInvites.contains( room ) )	// We have to keep track of the invites as the server will send the same invite twice if it gets canceled by the host
+		m_pendingConfInvites.push_back( room );
+	else
+	{
+		return;
+	}
+	
 	QString m = who;
 	QStringList myMembers;
 	myMembers.push_back( who );
@@ -939,11 +948,75 @@ void YahooAccount::slotGotConfInvite( const QString & who, const QString & room,
 	}
 	else
 		m_session->declineConference( room, myMembers, QString::null );
+	
+	m_pendingConfInvites.remove( room );
 }
 
-void YahooAccount::slotConfUserDecline( const QString & /* who */, const QString & /* room */, const QString & /* msg */ )
+void YahooAccount::prepareConference( const QString &who )
 {
-//	kdDebug(14180) << k_funcinfo << endl;
+	QString room;
+	for( int i = 0; i < 22; i++ )
+	{
+		char c = rand()%52;
+		room += (c > 25)  ? c + 71 : c + 65;
+	}
+	room = QString("%1-%2--").arg(accountId()).arg(room);
+	kdDebug(14180) << k_funcinfo << "The generated roomname is: " << room << endl;
+	
+	QStringList buddies;
+	QDictIterator<Kopete::Contact> it( contacts() );
+	for( ; it.current(); ++it )
+	{
+		if( (*it) != myself() )
+			buddies.push_back( (*it)->contactId() );
+	}
+	
+	YahooInviteListImpl *dlg = new YahooInviteListImpl( Kopete::UI::Global::mainWidget() );
+	QObject::connect( dlg, SIGNAL( readyToInvite( const QString &, const QStringList &, const QString & ) ), 
+				this, SLOT( slotInviteConference( const QString &, const QStringList &, const QString & ) ) );
+	dlg->setRoom( room );
+	dlg->fillFriendList( buddies );
+	dlg->addInvitees( QStringList( who ) );
+	dlg->show();
+}
+
+void YahooAccount::slotInviteConference( const QString &room, const QStringList &members, const QString &msg )
+{	
+kdDebug(14180) << k_funcinfo << "Inviting " << members << " to the conference " << room << ". Message: " << msg << endl;
+	m_session->inviteConference( room, members, msg );
+	
+	Kopete::ContactPtrList others;
+	YahooConferenceChatSession *session = new YahooConferenceChatSession( room, protocol(), myself(), others );
+	m_conferences[room] = session;
+	
+	QObject::connect( session, SIGNAL(leavingConference( YahooConferenceChatSession * ) ), this, SLOT( slotConfLeave( YahooConferenceChatSession * ) ) );
+	
+	session->joined( static_cast< YahooContact *>(myself()) );
+	session->view( true )->raise( false );
+}
+
+void YahooAccount::slotAddInviteConference( const QString &room, const QStringList &members, const QString &msg )
+{	
+	kdDebug(14180) << k_funcinfo << "Inviting " << members << " to the conference " << room << ". Message: " << msg << endl;
+	m_session->addInviteConference( room, members, msg );
+}
+
+void YahooAccount::slotConfUserDecline( const QString &who, const QString &room, const QString &msg)
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	
+	if( !m_conferences.contains( room ) )
+	{
+		kdDebug(14180) << k_funcinfo << "Error. No chatsession for this conference found." << endl;
+		return;
+	}
+	
+	YahooConferenceChatSession *session = m_conferences[room];
+	
+	QString body = i18n( "%1 declined to join the conference: \"%2\"" ).arg( who ).arg( msg );
+	Kopete::Message message = Kopete::Message( contact( who ), myself(), body, Kopete::Message::Internal, Kopete::Message::PlainText );
+	
+	session->appendMessage( message );
 }
 
 void YahooAccount::slotConfUserJoin( const QString &who, const QString &room )

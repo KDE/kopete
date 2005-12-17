@@ -50,11 +50,8 @@ bool ConferenceTask::take( Transfer* transfer )
 		parseUserJoined( transfer );
 	else if( t->service() == Yahoo::ServiceConfLogoff )
 		parseUserLeft( transfer );
-	else if( t->service() == Yahoo::ServiceConfDecline ||
-		t->service() == Yahoo::ServiceConfAddInvite )
-		;
-// 	else
-// 		parseMessage( transfer );
+	else if( t->service() == Yahoo::ServiceConfDecline )
+		parseUserDeclined( transfer );
 
 	return true;
 }
@@ -101,6 +98,9 @@ void ConferenceTask::parseInvitation( Transfer *transfer )
 	QStringList members;
 	for( i = 0; i < t->paramCount( 52 ); i++ )
 		members.append( t->nthParam( 52, i ) );
+
+	if( who == client()->userId() )
+		return;
 
 	if( !who.isEmpty() && !room.isEmpty() )
 		emit gotInvite( who, room, msg, members );
@@ -161,6 +161,62 @@ void ConferenceTask::parseUserLeft( Transfer *transfer )
 		emit userLeft( who, room );
 }
 
+void ConferenceTask::parseUserDeclined( Transfer *transfer )
+{
+	kdDebug(14181) << k_funcinfo << endl;
+
+	YMSGTransfer *t = 0L;
+	t = dynamic_cast<YMSGTransfer*>(transfer);
+	if (!t)
+		return;
+	
+	QString room = t->firstParam( 57 );
+	QString who = t->firstParam( 54 );
+	QString msg = t->firstParam( 14 );
+
+	if( !who.isEmpty() && !room.isEmpty() )
+		emit userDeclined( who, room, msg );
+}
+
+void ConferenceTask::inviteConference( const QString &room, const QStringList &members, const QString &msg )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+
+	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfInvite);
+	t->setId( client()->sessionID() );
+	t->setParam( 1, client()->userId().local8Bit() );
+	t->setParam( 50, client()->userId().local8Bit() );
+	t->setParam( 57, room.local8Bit() );
+	t->setParam( 58, msg.local8Bit() );
+	t->setParam( 97, 1 );
+	for( QStringList::const_iterator it = members.begin(); it != members.end(); it++ )
+		t->setParam( 52, (*it).local8Bit() );
+	t->setParam( 13, "0" );
+
+	send( t );
+}
+
+void ConferenceTask::addInvite( const QString &room, const QStringList &members, const QString &msg )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+
+	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfInvite);
+	t->setId( client()->sessionID() );
+	t->setParam( 1, client()->userId().local8Bit() );
+	t->setParam( 51, client()->userId().local8Bit() );
+	t->setParam( 57, room.local8Bit() );
+	t->setParam( 58, msg.local8Bit() );
+	t->setParam( 97, 1 );
+	for( QStringList::const_iterator it = members.begin(); it != members.end(); it++ )
+	{
+		t->setParam( 52, (*it).local8Bit() );
+		t->setParam( 53, (*it).local8Bit() );
+	}
+	t->setParam( 13, "0" );
+
+	send( t );
+}
+
 void ConferenceTask::joinConference( const QString &room, const QStringList &members )
 {
 	kdDebug(14180) << k_funcinfo << endl;
@@ -174,6 +230,7 @@ void ConferenceTask::joinConference( const QString &room, const QStringList &mem
 
 	send( t );
 }
+
 void ConferenceTask::declineConference( const QString &room, const QStringList &members, const QString &msg )
 {
 	kdDebug(14180) << k_funcinfo << endl;
@@ -184,7 +241,7 @@ void ConferenceTask::declineConference( const QString &room, const QStringList &
 	for( QStringList::const_iterator it = members.begin(); it != members.end(); it++ )
 		t->setParam( 3, (*it).local8Bit() );
 	t->setParam( 57, room.local8Bit() );	
-	t->setParam( 14, msg.local8Bit() );
+	t->setParam( 14, msg.utf8() );
 	t->setParam( 97, 1 );
 
 	send( t );

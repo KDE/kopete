@@ -27,13 +27,30 @@ class YahooInviteListImpl : public YahooInviteListBase
 	Q_OBJECT
 public: 
 	YahooInviteListImpl(QWidget *parent=0, const char *name=0);
-	~YahooInviteListImpl();	
+	~YahooInviteListImpl();
+	
+	void fillFriendList( const QStringList &buddies );
+	void addInvitees( const QStringList &buddies );
+	void removeInvitees( const QStringList &buddies );
+	void setRoom( const QString &room );
 private:
 	
 signals:
-	
+	void readyToInvite( const QString &room, const QStringList &buddies, const QString &msg );
 protected slots:
 
+public slots:
+    virtual void btnInvite_clicked();
+    virtual void btnCancel_clicked();
+    virtual void btnAddCustom_clicked();
+    virtual void btnRemove_clicked();
+    virtual void btnAdd_clicked();
+private:
+	void updateListBoxes();
+
+	QStringList m_buddyList;
+	QStringList m_inviteeList;
+	QString m_room;
 };
 
 #endif

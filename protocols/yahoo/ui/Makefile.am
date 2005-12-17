@@ -7,6 +7,6 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 
 
 libkopeteyahooui_la_SOURCES = yahooadd.ui yahooeditaccountbase.ui \
-		yahooinvitelistbase.ui yahooinvitelistimpl.cpp empty.cpp 	yahooverifyaccountbase.ui \
+	yahooinvitelistbase.ui yahooinvitelistimpl.cpp empty.cpp yahooverifyaccountbase.ui \
 	yahoostealthsetting.ui yahoowebcamdialog.cpp
 EXTRA_DIST = dlgrename.ui

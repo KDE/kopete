@@ -15,7 +15,6 @@
     *************************************************************************
 */
 
-
 #include <kdebug.h>
 #include <klineeditdlg.h>
 #include <klocale.h>
@@ -23,14 +22,16 @@
 #include <kpopupmenu.h>
 #include <kconfig.h>
 
-#include "kopetecontactaction.h"
-#include "kopetecontactlist.h"
-#include "kopetecontact.h"
-#include "kopetechatsessionmanager.h"
+#include <kopetecontactaction.h>
+#include <kopetecontactlist.h>
+#include <kopetecontact.h>
+#include <kopetechatsessionmanager.h>
+#include <kopeteuiglobal.h>
 
 #include "yahooconferencemessagemanager.h"
 #include "yahoocontact.h"
 #include "yahooaccount.h"
+#include "yahooinvitelistimpl.h"
 
 YahooConferenceChatSession::YahooConferenceChatSession( const QString & yahooRoom, Kopete::Protocol *protocol, const Kopete::Contact *user,
 	Kopete::ContactPtrList others, const char *name )
@@ -42,12 +43,21 @@ YahooConferenceChatSession::YahooConferenceChatSession( const QString & yahooRoo
 			  SLOT( slotMessageSent ( Kopete::Message &, Kopete::ChatSession * ) ) );
 
 	m_yahooRoom = yahooRoom;
+
+	m_actionInvite = new KAction( i18n( "&Invite others" ), KShortcut(), this, SLOT( slotInviteOthers() ), this, "yahoo_invite");
+
+	setXMLFile("yahooconferenceui.rc");
 }
 
 YahooConferenceChatSession::~YahooConferenceChatSession()
 {
 	emit leavingConference( this );
 }
+
+YahooAccount *YahooConferenceChatSession::account()
+{
+	return static_cast< YahooAccount *>( Kopete::ChatSession::account() );
+}	
 
 const QString &YahooConferenceChatSession::room()
 {
@@ -73,6 +83,25 @@ void YahooConferenceChatSession::slotMessageSent( Kopete::Message & message, Kop
 		acc->sendConfMessage( this, message );
 	appendMessage( message );
 	messageSucceeded();
+}
+
+void YahooConferenceChatSession::slotInviteOthers()
+{
+	QStringList buddies;
+	QDictIterator<Kopete::Contact> it( account()->contacts() );
+	Kopete::Contact *myself = account()->myself();
+	for( ; it.current(); ++it )
+	{
+		if( (*it) != myself && !members().contains( *it ) )
+			buddies.push_back( (*it)->contactId() );
+	}
+
+	YahooInviteListImpl *dlg = new YahooInviteListImpl( Kopete::UI::Global::mainWidget() );
+	QObject::connect( dlg, SIGNAL( readyToInvite( const QString &, const QStringList &, const QString & ) ), 
+				account(), SLOT( slotAddInviteConference( const QString &, const QStringList &, const QString & ) ) );
+	dlg->setRoom( m_yahooRoom );
+	dlg->fillFriendList( buddies );
+	dlg->show();
 }
 
 #include "yahooconferencemessagemanager.moc"

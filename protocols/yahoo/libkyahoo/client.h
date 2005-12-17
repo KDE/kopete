@@ -184,6 +184,16 @@ Q_OBJECT
 		void grantWebcamAccess( const QString &userId );
 
 		/**
+		 * Invite buddies to a conference
+		 */
+		void inviteConference( const QString &room, const QStringList &members, const QString &msg );
+
+		/**
+		 * Invite buddies to a already existing conference
+		 */
+		void addInviteConference( const QString &room, const QStringList &members, const QString &msg );
+
+		/**
 		 * Join a conference
 		 */
 		void joinConference( const QString &room, const QStringList &members );
@@ -404,6 +414,10 @@ Q_OBJECT
 		 * A buddy left the conference
 		 */
 		void confUserLeft( const QString &, const QString & );
+		/**
+		 * A buddy declined to join the conference
+		 */
+		void confUserDeclined( const QString &, const QString &, const QString & );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();

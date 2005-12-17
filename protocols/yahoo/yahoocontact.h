@@ -103,6 +103,7 @@ private slots:
 
 	void closeWebcamDialog();
 	void initWebcamViewer();
+	void inviteConference();
 	//void webcamClosed( const QString& contact, int reason );
 
 private:
@@ -123,6 +124,8 @@ private:
 	
 	//buzz
 	KAction* m_buzzAction;	
+
+	KAction* m_inviteConferenceAction;
 };
 
 #endif
