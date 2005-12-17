@@ -78,7 +78,7 @@ bool JabberAddContactPage::apply ( Kopete::Account *account, Kopete::MetaContact
 		// collect all group names
 		QStringList groupNames;
 		Kopete::GroupList groupList = parentContact->groups();
-		for(Kopete::Group *group = groupList.first(); group; group = groupList.next())
+		foreach(Kopete::Group *group, groupList)
 			groupNames += group->displayName();
 
 		if ( account->addContact ( contactId, parentContact, Kopete::Account::ChangeKABC ) )

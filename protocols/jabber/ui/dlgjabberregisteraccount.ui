@@ -267,7 +267,7 @@
                         <string></string>
                     </property>
                     <property name="alignment">
-                        <set>WordBreak|AlignVCenter</set>
+                        <set>Qt::TextWordWrap|Qt::AlignVCenter</set>
                     </property>
                 </widget>
                 <spacer>
@@ -275,7 +275,7 @@
                         <cstring>spacerMiddle</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Vertical</enum>
+                        <enum>Qt::Vertical</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>
@@ -295,13 +295,25 @@
                         <string></string>
                     </property>
                     <property name="alignment">
-                        <set>AlignCenter</set>
+                        <set>Qt::AlignCenter</set>
                     </property>
                 </widget>
             </vbox>
         </widget>
     </grid>
 </widget>
+<customwidgets>
+    <customwidget>
+        <class>KPasswordEdit</class>
+        <header location="global">kpassdlg.h</header>
+        <container>0</container>
+    </customwidget>
+    <customwidget>
+        <class>KIntSpinBox</class>
+        <header location="global">knuminput.h</header>
+        <container>0</container>
+    </customwidget>
+</customwidgets>
 <tabstops>
     <tabstop>leServer</tabstop>
     <tabstop>btnChooseServer</tabstop>
@@ -313,7 +325,6 @@
 <includehints>
     <includehint>kpushbutton.h</includehint>
     <includehint>knuminput.h</includehint>
-    <includehint>kpassdlg.h</includehint>
     <includehint>kpassdlg.h</includehint>
 </includehints>
 </UI>

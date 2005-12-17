@@ -395,7 +395,7 @@ void dlgJabberVCard::slotSelectPhoto()
 
 	if( !img.isNull() ) 
 	{
-		img = img.smoothScale( 96, 96, QImage::ScaleMax );
+		img = img.smoothScale( 96, 96, Qt::KeepAspectRatioByExpanding );
 		// crop image if not square
 		if(img.width() > img.height()) 
 		{
@@ -434,7 +434,7 @@ void dlgJabberVCard::slotClearPhoto()
 void dlgJabberVCard::slotOpenURL(const QString &url)
 {
 	if ( !url.isEmpty () || (url == QString::fromLatin1("mailto:") ) )
-		new KRun(KURL( url ) );
+		new KRun( KURL( url ), this );
 }
 
 #include "dlgjabbervcard.moc"

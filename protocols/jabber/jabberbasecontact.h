@@ -68,7 +68,7 @@ public:
 	 * Create custom context menu items for the contact
 	 * FIXME: implement manager version here?
 	 */
-	virtual Q3PtrList<KAction> *customContextMenuActions () = 0;
+	virtual QList<KAction*> *customContextMenuActions () = 0;
 
 	/**
 	 * Serialize contact
