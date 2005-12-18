@@ -18,7 +18,7 @@
 #define SMSUSERPREFERENCES_H
 
 #include <kdialogbase.h>
-#include <q3vbox.h>
+#include <kvbox.h>
 
 class SMSPreferencesBase;
 class SMSUserPrefsUI;
@@ -33,7 +33,7 @@ public:
 private:
 	SMSPreferencesBase* prefBase;
 	SMSUserPrefsUI* userPrefs;
-	Q3VBox* topWidget;
+	KVBox* topWidget;
 
 	SMSContact* m_contact;
 public slots:

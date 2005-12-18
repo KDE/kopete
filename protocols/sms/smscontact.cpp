@@ -30,8 +30,6 @@
 #include "smsservice.h"
 #include "smsaccount.h"
 #include "smsuserpreferences.h"
-//Added by qt3to4:
-#include <Q3PtrList>
 
 SMSContact::SMSContact( Kopete::Account* _account, const QString &phoneNumber,
 	const QString &displayName, Kopete::MetaContact *parent )
@@ -78,7 +76,7 @@ Kopete::ChatSession* SMSContact::manager( Kopete::Contact::CanCreateFlags canCre
 	}
 	else
 	{
-		Q3PtrList<Kopete::Contact> contacts;
+		QList<Kopete::Contact*> contacts;
 		contacts.append(this);
 		m_msgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), contacts, protocol());
 		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)),
@@ -121,9 +119,9 @@ void SMSContact::setPhoneNumber( const QString phoneNumber )
 	new SMSContact(account(), phoneNumber, nickName(), metaContact());
 }
 
-Q3PtrList<KAction>* SMSContact::customContextMenuActions()
+QList<KAction*>* SMSContact::customContextMenuActions()
 {
-	Q3PtrList<KAction> *m_actionCollection = new Q3PtrList<KAction>();
+	QList<KAction*> *m_actionCollection = new QList<KAction*>();
 	if( !m_actionPrefs )
 		m_actionPrefs = new KAction(i18n("&Contact Settings"), 0, this, SLOT(userPrefs()), this, "userPrefs");
 

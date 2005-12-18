@@ -14,7 +14,6 @@
     *************************************************************************
 */
 
-#include <qvgroupbox.h>
 #include <qlayout.h>
 #include <qcombobox.h>
 #include <qpushbutton.h>

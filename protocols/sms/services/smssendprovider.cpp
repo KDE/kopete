@@ -66,7 +66,7 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 		numberWords.append("telefone");
 		numberWords.append("ToPhone");
 
-		while( !t.eof())
+		while( !t.atEnd())
 		{
 			QString s = t.readLine();
 			if( s[0] == '%')

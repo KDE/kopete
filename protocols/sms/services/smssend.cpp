@@ -15,7 +15,6 @@
 */
 
 #include <qcombobox.h>
-#include <qvgroupbox.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qtooltip.h>

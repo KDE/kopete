@@ -21,8 +21,6 @@
 #include "kopetemessage.h"
 
 #include <qstring.h>
-//Added by qt3to4:
-#include <Q3PtrList>
 
 class SMSAccount;
 namespace Kopete { class ChatSession; }
@@ -38,7 +36,7 @@ public:
 	SMSContact( Kopete::Account* _account, const QString &phoneNumber,
 		const QString &displayName, Kopete::MetaContact *parent );
 
-	Q3PtrList<KAction>* customContextMenuActions();
+	QList<KAction*>* customContextMenuActions();
 
 	const QString &phoneNumber();
 	void setPhoneNumber( const QString phoneNumber );
