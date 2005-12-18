@@ -68,6 +68,11 @@ AwayAction::AwayAction( const OnlineStatus& status, const QString &text, const Q
 	slotAwayChanged();
 }
 
+AwayAction::~AwayAction()
+{
+	delete d;
+}
+
 void AwayAction::slotAwayChanged()
 {
 	QStringList awayMessages = Kopete::Away::getInstance()->getMessages();
