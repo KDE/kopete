@@ -66,6 +66,7 @@
 // Kopete includes
 #include "chatmemberslistwidget.h"
 #include "kopetecontact.h"
+#include "kopetecontactlist.h"
 #include "kopetechatwindow.h"
 #include "kopetechatsession.h"
 #include "kopetemetacontact.h"
@@ -917,12 +918,12 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	
 	if( message.from() )
 	{
-		// Use either MetaContact displayname or contact nickname
-		// Depending on settings.
-		if( KopetePrefs::prefs()->metaContactDisplay() && message.from()->metaContact() )
+		// Use metacontact display name if the metacontact exists and if its not the myself metacontact.
+		if( message.from()->metaContact() && message.from()->metaContact() != Kopete::ContactList::self()->myself() )
 		{
 			nick = message.from()->metaContact()->displayName();
 		}
+		// Use contact nickname for no metacontact or myself.
 		else
 		{
 			nick = message.from()->nickName();
@@ -1022,18 +1023,13 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 	if( remoteContact && d->manager->myself() )
 	{
 		QString sourceName, destinationName;
-		// Use either MetaContact displayname or contact nickname
-		// Depending on settings.
-		if( KopetePrefs::prefs()->metaContactDisplay() )
-		{
-			sourceName = d->manager->myself()->metaContact()->displayName();
+		// Use contact nickname for ourselfs, Myself metacontact display name isn't a reliable source.
+		sourceName = d->manager->myself()->nickName();
+		if( remoteContact->metaContact() )
 			destinationName = remoteContact->metaContact()->displayName();
-		}
 		else
-		{
-			sourceName = d->manager->myself()->nickName();
 			destinationName = remoteContact->nickName();
-		}
+
 		// Replace %chatName%
 		resultHTML = resultHTML.replace( QString::fromUtf8("%chatName%"), formatName(d->manager->displayName()) );
 		// Replace %sourceName%

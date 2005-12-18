@@ -376,8 +376,6 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(slotInstallStyle()));
 	connect(d->mPrfsChatWindow->btnGetStyles, SIGNAL(clicked()),
 		this, SLOT(slotGetStyles()));
-	connect(d->mPrfsChatWindow->metaContactDisplayEnabled, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
 	connect(d->mPrfsChatWindow->groupConsecutiveMessages, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
 	// Show the available styles when the Manager has finish to load the styles.
@@ -502,7 +500,6 @@ void AppearanceConfig::save()
 	p->setEmoticonsRequireSpaces( d->mPrfsEmoticons->chkRequireSpaces->isChecked() );
 
 	// "Chat Window" TAB ========================================================
-	p->setMetaContactDisplay( d->mPrfsChatWindow->metaContactDisplayEnabled->isChecked() );
 	p->setGroupConsecutiveMessages( d->mPrfsChatWindow->groupConsecutiveMessages->isChecked() );
 
 	// Get the stylePath
@@ -569,7 +566,6 @@ void AppearanceConfig::load()
 	d->mPrfsEmoticons->chkRequireSpaces->setChecked( p->emoticonsRequireSpaces() );
 
 	// "Chat Window" TAB ========================================================
-	d->mPrfsChatWindow->metaContactDisplayEnabled->setChecked( p->metaContactDisplay() );
 	d->mPrfsChatWindow->groupConsecutiveMessages->setChecked( p->groupConsecutiveMessages() );
 	// Look for avaiable chat window styles.
 	ChatWindowStyleManager::self()->loadStyles();

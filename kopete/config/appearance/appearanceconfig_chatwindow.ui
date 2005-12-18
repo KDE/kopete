@@ -168,14 +168,6 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QCheckBox" row="0" column="0">
-                    <property name="name">
-                        <cstring>metaContactDisplayEnabled</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Use meta contact &amp;name for display in chat window</string>
-                    </property>
-                </widget>
                 <widget class="QCheckBox" row="1" column="0">
                     <property name="name">
                         <cstring>groupConsecutiveMessages</cstring>

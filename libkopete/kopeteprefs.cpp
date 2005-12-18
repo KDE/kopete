@@ -113,7 +113,6 @@ void KopetePrefs::load()
 	_setStylePath(config->readEntry("StylePath"));
 	mStyleVariant = config->readEntry("StyleVariant");
 	// Read Chat Window Style display
-	mMetaContactDisplay = config->readBoolEntry("MetaContactDisplay", false);
 	mGroupConsecutiveMessages = config->readBoolEntry("GroupConsecutiveMessages", true);
 
 	mToolTipContents = config->readListEntry("ToolTipContents");
@@ -234,7 +233,6 @@ void KopetePrefs::save()
 	config->writeEntry("StylePath", mStylePath);
 	config->writeEntry("StyleVariant", mStyleVariant);
 	// Chat Window Display
-	config->writeEntry("MetaContactDisplay", mMetaContactDisplay);
 	config->writeEntry("GroupConsecutiveMessages", mGroupConsecutiveMessages);
 
 	config->writeEntry("ToolTipContents", mToolTipContents);
@@ -729,11 +727,6 @@ void KopetePrefs::setEmoticonsRequireSpaces( bool b )
 		 mContactListAppearanceChanged = true;
 	}
 	mEmoticonsRequireSpaces=b;
-}
-
-void KopetePrefs::setMetaContactDisplay( bool value )
-{
-	mMetaContactDisplay = value;
 }
 
 void KopetePrefs::setGroupConsecutiveMessages( bool value )

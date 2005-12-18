@@ -304,6 +304,9 @@ signals:
 
 private slots:
 	void slotRemoteTypingTimeout();
+	/**
+	 * Show that a contact changed his nickname when a metacontact is not avaiable.
+	 */
 	void slotPropertyChanged( Kopete::Contact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
 	/**
@@ -341,6 +344,11 @@ private slots:
 	void slotMarkMessageRead();
 
 	void slotToggleRtfToolbar( bool enabled );
+
+	/**
+	 * Show that a (meta)contact change his display name.
+	 */
+	void slotDisplayNameChanged(const QString &oldValue, const QString &newValue);
 
 protected:
 	virtual void dragEnterEvent ( QDragEnterEvent * );

@@ -137,7 +137,6 @@ public:
 	bool truncateContactNames() const { return mTruncateContactNames; }
 	int maxConactNameLength() const { return mMaxContactNameLength; }
 	bool emoticonsRequireSpaces() const { return mEmoticonsRequireSpaces; }
-	bool metaContactDisplay() const { return mMetaContactDisplay; }
 	bool groupConsecutiveMessages() const { return mGroupConsecutiveMessages; }
 
 	void setIconTheme(const QString &value);
@@ -206,7 +205,6 @@ public:
 	void setEmoticonsRequireSpaces( bool );
 	void setBalloonClose( bool );
 	void setBalloonDelay( int );
-	void setMetaContactDisplay( bool );
 	void setGroupConsecutiveMessages( bool );
 
 signals:
@@ -329,7 +327,6 @@ private:
 
 	bool mReconnectOnDisconnect;
 	bool mEmoticonsRequireSpaces;
-	bool mMetaContactDisplay;
 	bool mGroupConsecutiveMessages;
 
 	QString fileContents(const QString &path);

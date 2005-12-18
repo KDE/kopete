@@ -536,8 +536,16 @@ void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
 	for( ; it.current(); ++it )
 	{
 		Kopete::Contact *c = static_cast<Kopete::Contact*>( it.currentKey() );
-		QString nick = c->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-		typingList.append( c->metaContact() ? c->metaContact()->displayName() : ( nick.isEmpty() ? c->contactId() : nick ) );
+		QString nick;
+		if( c->metaContact() && c->metaContact() != Kopete::ContactList::self()->myself() )
+		{
+			nick = c->metaContact()->displayName();
+		}
+		else
+		{
+			nick = c->nickName();
+		}
+		typingList.append( nick );
 	}
 
 	// Update the status area
@@ -594,11 +602,38 @@ void ChatView::slotPropertyChanged( Kopete::Contact*, const QString &key,
 	}
 }
 
+void ChatView::slotDisplayNameChanged( const QString &oldValue, const QString &newValue )
+{
+	if( KopetePrefs::prefs()->showEvents() )
+	{
+		if( oldValue != newValue )
+			sendInternalMessage( i18n( "%1 is now known as %2" ). arg( oldValue, newValue ) );
+	}
+}
+
 void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 {
-	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
-	connect( contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
+	QString contactName; 
+	// Myself metacontact is not a reliable source.
+	if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
+	{
+		contactName = contact->metaContact()->displayName();
+	}
+	else
+	{
+		contactName = contact->nickName();
+	}
+
+	if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
+	{
+		connect( contact->metaContact(), SIGNAL( displayNameChanged(const QString&, const QString&) ),
+			this, SLOT( slotDisplayNameChanged(const QString &, const QString &) ) );
+	}
+	else
+	{
+		connect( contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
 		this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+	}
 
 	if( !suppress && m_manager->members().count() > 1 )
 		sendInternalMessage(  i18n("%1 has joined the chat.").arg(contactName) );
@@ -624,13 +659,29 @@ void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString
 	{
 		m_remoteTypingMap.remove( const_cast<Kopete::Contact *>( contact ) );
 
-		QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+		QString contactName;
+		if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
+		{
+			contactName = contact->metaContact()->displayName();
+		}
+		else
+		{
+			contactName = contact->nickName();
+		}
 
 		// When the last person leaves, don't disconnect the signals, since we're in a one-to-one chat
 		if ( m_manager->members().count() > 0 )
 		{
-			disconnect(contact,SIGNAL(propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & )),
+			if( contact->metaContact() )
+			{
+				disconnect( contact->metaContact(), SIGNAL( displayNameChanged(const QString&, const QString&) ),
+				this, SLOT( slotDisplayNameChanged(const QString&, const QString&) ) );
+			}
+			else
+			{
+				disconnect(contact,SIGNAL(propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & )),
 				this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+			}
 		}
 
 		if ( !suppressNotification )
@@ -736,16 +787,16 @@ void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete:
 		else if ( !contact->account() || !contact->account()->suppressStatusNotification() )
 		{
 			// Don't send notifications when we just connected ourselves, i.e. when suppressions are still active
-			if ( contact->metaContact() )
+			if ( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
 			{
 				sendInternalMessage( i18n( "%2 is now %1." )
 					.arg( newStatus.description(), contact->metaContact()->displayName() ) );
 			}
 			else
 			{
-				QString nick=contact->property(Kopete::Global::Properties::self()->nickName().key()).value().toString();
+				QString nick=contact->nickName();
 				sendInternalMessage( i18n( "%2 is now %1." )
-					.arg( newStatus.description(), nick.isEmpty() ? contact->contactId() : nick  ) );
+					.arg( newStatus.description(), nick ) );
 			}
 		}
 	}
