@@ -99,6 +99,12 @@ void JabberAccount::cleanup ()
 
 	m_jabberClient = 0L;
 
+	delete m_resourcePool;
+	m_resourcePool = 0L;
+
+	delete m_contactPool;
+	m_contactPool = 0L;
+
 }
 
 void JabberAccount::setS5BServerPort ( int port )

@@ -98,8 +98,9 @@ void KopeteEditGlobalIdentityWidget::setIconSize(int size)
 	// Update the picture (change the size of it)
 	d->iconSize = size;
 	d->labelPicture->setMinimumSize(QSize(d->iconSize, d->iconSize));
-	d->labelPicture->setMaximumSize(QSize(d->iconSize, d->iconSize));	
-	d->labelPicture->setPixmap(QPixmap(d->myself->photo().smoothScale(d->iconSize, d->iconSize, QImage::ScaleMin)));
+	d->labelPicture->setMaximumSize(QSize(d->iconSize, d->iconSize));
+	if( !d->myself->photo().isNull() )
+		d->labelPicture->setPixmap(QPixmap(d->myself->photo().smoothScale(d->iconSize, d->iconSize, QImage::ScaleMin)));
 }
 
 void KopeteEditGlobalIdentityWidget::iconSizeChanged()
@@ -112,8 +113,9 @@ void KopeteEditGlobalIdentityWidget::iconSizeChanged()
 		// Update the picture (change the size of it)
 		d->iconSize = tb->iconSize();
 		d->labelPicture->setMinimumSize(QSize(d->iconSize, d->iconSize));
-		d->labelPicture->setMaximumSize(QSize(d->iconSize, d->iconSize));	
-		d->labelPicture->setPixmap(QPixmap(d->myself->photo().smoothScale(d->iconSize, d->iconSize, QImage::ScaleMin)));
+		d->labelPicture->setMaximumSize(QSize(d->iconSize, d->iconSize));
+		if( !d->myself->photo().isNull() )	
+			d->labelPicture->setPixmap(QPixmap(d->myself->photo().smoothScale(d->iconSize, d->iconSize, QImage::ScaleMin)));
 	}
 }
 
@@ -145,8 +147,11 @@ void KopeteEditGlobalIdentityWidget::updateGUI(const QString &key, const QVarian
 	if(key == Kopete::Global::Properties::self()->photo().key())
 	{
 		// Update the picture and the tooltip
-		d->labelPicture->setPixmap(QPixmap(d->myself->photo().smoothScale(d->iconSize, d->iconSize, QImage::ScaleMin)));
-		QToolTip::add(d->labelPicture, "<qt><img src=\""+ value.toString() +"\"></qt>");
+		if( !d->myself->photo().isNull() )
+		{
+			d->labelPicture->setPixmap(QPixmap(d->myself->photo().smoothScale(d->iconSize, d->iconSize, QImage::ScaleMin)));
+			QToolTip::add(d->labelPicture, "<qt><img src=\""+ value.toString() +"\"></qt>");
+		}
 	}
 	else if(key == Kopete::Global::Properties::self()->nickName().key())
 	{

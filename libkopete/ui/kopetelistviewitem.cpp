@@ -647,6 +647,7 @@ int DisplayNameComponent::RTTI = Rtti_DisplayNameComponent;
 
 DisplayNameComponent::~DisplayNameComponent()
 {
+	delete d;
 }
 
 void DisplayNameComponent::layout( const QRect &rect )

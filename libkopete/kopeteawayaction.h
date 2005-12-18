@@ -61,6 +61,11 @@ class KOPETE_EXPORT AwayAction : public KSelectAction
 				   const KShortcut &cut, const QObject *receiver, const char *slot,
 				   QObject *parent, const char *name = 0);
 
+		/**
+	 	 * Destructor.
+	 	 */
+		~AwayAction();
+
 	signals:
 		/**
 		* @brief Emits when the user selects an away message
