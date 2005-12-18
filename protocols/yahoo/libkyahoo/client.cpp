@@ -200,11 +200,11 @@ void Client::slotGotCookies()
 // INTERNALS //
 
 // ***** Messaging handling *****
-void Client::sendTyping( const QString &who, int typ)
+void Client::sendTyping( const QString &who, bool typing )
 {
 	SendNotifyTask *snt = new SendNotifyTask( d->root );
 	snt->setTarget( who );
-	snt->setState( SendNotifyTask::Active );
+	snt->setState( typing ? SendNotifyTask::Active : SendNotifyTask::NotActive );
 	snt->setType( SendNotifyTask::NotifyTyping );
 	snt->go( true );
 }

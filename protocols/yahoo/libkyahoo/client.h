@@ -80,7 +80,7 @@ Q_OBJECT
 		/**
 		 * Send a Typing notification
 		 */
-		void sendTyping( const QString &to, int typ);
+		void sendTyping( const QString &to, bool typing );
 		
 		/**
 		 * Send a Message
