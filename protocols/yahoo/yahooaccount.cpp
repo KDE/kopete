@@ -731,7 +731,9 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 		{
 			//m_session->requestBuddyIcon( who );		// Try to get Buddy Icon
 
-			if ( !myself()->property( Kopete::Global::Properties::self()->photo() ).isNull() )
+			if ( !myself()->property( Kopete::Global::Properties::self()->photo() ).isNull() &&
+					myself()->onlineStatus() != m_protocol->Invisible && 
+					!kc->stealthed() )
 			{
 				kc->sendBuddyIconUpdate( pictureFlag() );
 				kc->sendBuddyIconChecksum( myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );

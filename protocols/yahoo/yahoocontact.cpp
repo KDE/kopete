@@ -122,6 +122,11 @@ void YahooContact::setStealthed( bool stealthed )
 	setOnlineStatus( onlineStatus() );
 }
 
+bool YahooContact::stealthed()
+{
+	return m_stealthed;
+}
+
 void YahooContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)
 {
 	//kdDebug(14180) << k_funcinfo << endl;

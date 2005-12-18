@@ -54,6 +54,9 @@ public:
 	void setOnlineStatus(const Kopete::OnlineStatus &status);
 	void setYahooStatus( const Kopete::OnlineStatus& );
 	void setStealthed( bool );
+	bool stealthed();
+
+
 	/** The group name getter and setter methods**/
 	QString group() const;
 	void setGroup( const QString& );
