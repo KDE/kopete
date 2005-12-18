@@ -53,12 +53,12 @@
 class NowListeningPlugin::Private
 {
 public:
-	Private() : m_mediaPlayerList(0L), m_currentMediaPlayer(0L), m_client(0L), m_currentChatSession(0L), m_currentMetaContact(0L), 
-				m_musicSentTo(0L), advertTimer(0L)
+	Private() : m_currentMediaPlayer(0L), m_client(0L), m_currentChatSession(0L), m_currentMetaContact(0L), 
+				advertTimer(0L)
 	{}
 
 	// abstracted media player interfaces
-	QPtrList<NLMediaPlayer> *m_mediaPlayerList;
+	QPtrList<NLMediaPlayer> m_mediaPlayerList;
 	NLMediaPlayer *m_currentMediaPlayer;
 
 	// Needed for DCOP interprocess communication
@@ -68,7 +68,7 @@ public:
 
 	// Used when using automatic advertising to know who has already gotten
 	// the music information
-	QStringList *m_musicSentTo;
+	QStringList m_musicSentTo;
 
 	// Used when advertising to status message.
 	QTimer *advertTimer;
@@ -108,16 +108,15 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 	d->m_client = kapp->dcopClient(); //new DCOPClient();
 
 	// set up known media players
-	d->m_mediaPlayerList = new QPtrList<NLMediaPlayer>;
-	d->m_mediaPlayerList->setAutoDelete( true );
-	d->m_mediaPlayerList->append( new NLKscd( d->m_client ) );
-	d->m_mediaPlayerList->append( new NLNoatun( d->m_client ) );
-	d->m_mediaPlayerList->append( new NLJuk( d->m_client ) );
-	d->m_mediaPlayerList->append( new NLamaroK( d->m_client ) );
-	d->m_mediaPlayerList->append( new NLKaffeine( d->m_client ) );
+	d->m_mediaPlayerList.setAutoDelete( true );
+	d->m_mediaPlayerList.append( new NLKscd( d->m_client ) );
+	d->m_mediaPlayerList.append( new NLNoatun( d->m_client ) );
+	d->m_mediaPlayerList.append( new NLJuk( d->m_client ) );
+	d->m_mediaPlayerList.append( new NLamaroK( d->m_client ) );
+	d->m_mediaPlayerList.append( new NLKaffeine( d->m_client ) );
 
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && HAVE_XMMS
-	d->m_mediaPlayerList->append( new NLXmms() );
+	d->m_mediaPlayerList.append( new NLXmms() );
 #endif
 
 	// User has selected a specific mediaPlayer so update the currentMediaPlayer pointer.
@@ -125,8 +124,6 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 	{
 		updateCurrentMediaPlayer();
 	}
-
-	d->m_musicSentTo = new QStringList();
 
 	// watch for '/media' getting typed
 	Kopete::CommandHandler::commandHandler()->registerCommand(
@@ -207,12 +204,12 @@ void NowListeningPlugin::slotOutgoingMessage(Kopete::Message& msg)
 	for( Kopete::Contact *c = dest.first() ; c ; c = dest.next() )
 	{
 		const QString& cId = c->contactId();
-		if( 0 == d->m_musicSentTo->contains( cId ) )
+		if( 0 == d->m_musicSentTo.contains( cId ) )
 		{
 			mustSendAnyway = true;
 
 			// The contact will get the music information so we put it in the list.
-			d->m_musicSentTo->push_back( cId );
+			d->m_musicSentTo.push_back( cId );
 		}
 	}
 
@@ -230,10 +227,10 @@ void NowListeningPlugin::slotOutgoingMessage(Kopete::Message& msg)
 		// rebuild the list of contacts the latest information was sent to.
 		if( newTrack )
 		{
-			d->m_musicSentTo->clear();
+			d->m_musicSentTo.clear();
 			for( Kopete::Contact *c = dest.first() ; c ; c = dest.next() )
 			{
-				d->m_musicSentTo->push_back( c->contactId() );
+				d->m_musicSentTo.push_back( c->contactId() );
 			}
 		}
 	}
@@ -282,7 +279,7 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 				}
 				else
 				{
-					for ( NLMediaPlayer* i = d->m_mediaPlayerList->first(); i; i = d->m_mediaPlayerList->next() )
+					for ( NLMediaPlayer* i = d->m_mediaPlayerList.first(); i; i = d->m_mediaPlayerList.next() )
 					{
 						if( i->playing() )
 						{
@@ -319,7 +316,7 @@ QString NowListeningPlugin::mediaPlayerAdvert(bool update)
 	}
 	else
 	{
-		for ( NLMediaPlayer* i = d->m_mediaPlayerList->first(); i; i = d->m_mediaPlayerList->next() )
+		for ( NLMediaPlayer* i = d->m_mediaPlayerList.first(); i; i = d->m_mediaPlayerList.next() )
 		{
 			buildTrackMessage(message, i, update);
 		}
@@ -358,7 +355,7 @@ bool NowListeningPlugin::newTrackPlaying(void) const
 	}
 	else
 	{
-		for ( NLMediaPlayer* i = d->m_mediaPlayerList->first(); i; i = d->m_mediaPlayerList->next() )
+		for ( NLMediaPlayer* i = d->m_mediaPlayerList.first(); i; i = d->m_mediaPlayerList.next() )
 		{
 			i->update();
 			if( i->newTrack() )
@@ -476,7 +473,7 @@ void NowListeningPlugin::updateCurrentMediaPlayer()
 {
 	kdDebug(14307) << k_funcinfo << "Update current media player (single mode)" << endl;
 
-	d->m_currentMediaPlayer = d->m_mediaPlayerList->at( NowListeningConfig::self()->selectedMediaPlayer() );
+	d->m_currentMediaPlayer = d->m_mediaPlayerList.at( NowListeningConfig::self()->selectedMediaPlayer() );
 }
 
 void NowListeningPlugin::slotSettingsChanged()
