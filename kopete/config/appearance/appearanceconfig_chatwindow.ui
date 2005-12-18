@@ -118,18 +118,10 @@
                         </widget>
                         <widget class="KPushButton">
                             <property name="name">
-                                <cstring>importButton</cstring>
+                                <cstring>installButton</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Import...</string>
-                            </property>
-                        </widget>
-                        <widget class="KPushButton">
-                            <property name="name">
-                                <cstring>copyButton</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Cop&amp;y...</string>
+                                <string>&amp;Install...</string>
                             </property>
                         </widget>
                         <widget class="KPushButton">
@@ -198,14 +190,12 @@
 </widget>
 <tabstops>
     <tabstop>styleList</tabstop>
-    <tabstop>importButton</tabstop>
-    <tabstop>copyButton</tabstop>
+    <tabstop>installButton</tabstop>
     <tabstop>deleteButton</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klistbox.h</includehint>
-    <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>

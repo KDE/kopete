@@ -25,6 +25,7 @@
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
+ * @author Michaël Larouche <michael.larouche@kdemail.net>
  */
 class AppearanceConfig : public KCModule
 {
@@ -44,8 +45,8 @@ private slots:
 	void slotUpdatePreview();
 	void slotHighlightChanged();
 	void slotChangeFont();
+	void slotInstallStyle();
 	void slotDeleteStyle();
-	void slotImportStyle();
 	void slotCopyStyle();
 	void slotStyleSelected();
 	void slotVariantSelected(const QString &variantName);

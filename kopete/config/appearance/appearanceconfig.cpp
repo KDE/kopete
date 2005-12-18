@@ -46,9 +46,8 @@
 #include <kdebug.h>
 #include <kfontrequester.h>
 #include <kgenericfactory.h>
-#include <khtmlview.h>
-#include <khtml_part.h>
 #include <kio/netaccess.h>
+#include <khtmlview.h>
 #include <klineedit.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -59,7 +58,7 @@
 #include <kurlrequesterdlg.h>
 #include <krun.h>
 #include <ktar.h> // for extracting tarballed chatwindow styles fetched with KNewStuff
-#include <kdirwatch.h>
+#include <kfiledialog.h>
 
 #include <knewstuff/downloaddialog.h> // knewstuff emoticon and chatwindow fetching
 #include <knewstuff/engine.h>         // "
@@ -367,22 +366,14 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	// "Chat Window" TAB ========================================================
 	d->mPrfsChatWindow = new AppearanceConfig_ChatWindow(d->mAppearanceTabCtl);
 
-	// Disable current non-working (and also obsolete) buttons
-	// TODO: Remove these following lines when everything will be back to normal.
-	d->mPrfsChatWindow->deleteButton->setEnabled(false);
-	d->mPrfsChatWindow->importButton->setEnabled(false);
-	d->mPrfsChatWindow->copyButton->setEnabled(false);
-
 	connect(d->mPrfsChatWindow->styleList, SIGNAL(selectionChanged(QListBoxItem *)),
 		this, SLOT(slotStyleSelected()));
 	connect(d->mPrfsChatWindow->variantList, SIGNAL(activated(const QString&)),
 		this, SLOT(slotVariantSelected(const QString &)));
 	connect(d->mPrfsChatWindow->deleteButton, SIGNAL(clicked()),
 		this, SLOT(slotDeleteStyle()));
-	connect(d->mPrfsChatWindow->importButton, SIGNAL(clicked()),
-		this, SLOT(slotImportStyle()));
-	connect(d->mPrfsChatWindow->copyButton, SIGNAL(clicked()),
-		this, SLOT(slotCopyStyle()));
+	connect(d->mPrfsChatWindow->installButton, SIGNAL(clicked()),
+		this, SLOT(slotInstallStyle()));
 	connect(d->mPrfsChatWindow->btnGetStyles, SIGNAL(clicked()),
 		this, SLOT(slotGetStyles()));
 	connect(d->mPrfsChatWindow->metaContactDisplayEnabled, SIGNAL(toggled(bool)),
@@ -629,7 +620,6 @@ void AppearanceConfig::load()
 	d->mPrfsColors->mRtfOverride->setChecked( p->rtfOverride() );
 
 	d->loading=false;
-	slotUpdatePreview();
 }
 
 void AppearanceConfig::slotLoadStyles()
@@ -768,7 +758,7 @@ void AppearanceConfig::slotStyleSelected()
 		}
 		
 		// Update the preview
-		d->preview->setStyle(d->currentStyle);
+		slotUpdatePreview();
 		// Get the first variant to preview
 		// Check if the current style has variants.
 		if( !d->currentVariantMap.empty() )
@@ -788,34 +778,47 @@ void AppearanceConfig::slotVariantSelected(const QString &variantName)
 	emitChanged();
 }
 
-void AppearanceConfig::slotImportStyle()
+void AppearanceConfig::slotInstallStyle()
 {
-	KURL chosenStyle = KURLRequesterDlg::getURL( QString::null, this, i18n( "Choose Stylesheet" ) );
-	if ( !chosenStyle.isEmpty() )
+	KURL styleToInstall = KFileDialog::getOpenURL( QString::null, QString::fromUtf8("application/x-zip application/x-tgz application/x-tbz"), this, i18n("Choose Chat Window style to install.") );
+
+	if( !styleToInstall.isEmpty() )
 	{
 		QString stylePath;
-		// FIXME: Using NetAccess uses nested event loops with all associated problems.
-		//        Better use normal KIO and an async API - Martijn
-		if ( KIO::NetAccess::download( chosenStyle, stylePath, this ) )
+		if( KIO::NetAccess::download( styleToInstall, stylePath, this ) )
 		{
-// 			QString styleSheet = fileContents( stylePath );
-// 			if ( Kopete::XSLT( styleSheet ).isValid() )
-// 			{
-// 				QFileInfo fi( stylePath );
-// 				addStyle( fi.fileName().section( '.', 0, 0 ), styleSheet );
-// 			}
-// 			else
-// 			{
-// 				KMessageBox::queuedMessageBox( this, KMessageBox::Error,
-// 					i18n( "'%1' is not a valid XSLT document. Import canceled." ).arg( chosenStyle.path() ),
-// 					i18n( "Invalid Style" ) );
-// 			}
-		}
-		else
-		{
-			KMessageBox::queuedMessageBox( this, KMessageBox::Error,
-				i18n( "Could not import '%1'. Check access permissions/network connection." ).arg( chosenStyle.path() ),
-				i18n( "Import Error" ) );
+			int styleInstallReturn = 0;
+			styleInstallReturn = ChatWindowStyleManager::self()->installStyle( stylePath );
+			switch(styleInstallReturn)
+			{
+				case ChatWindowStyleManager::StyleCannotOpen:
+				{
+					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive cannot be openned.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Can't open archive") );
+					break;
+				}
+				case ChatWindowStyleManager::StyleNoDirectoryValid:
+				{
+					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Could not find a suitable place to install the Chat Window style in user directory."), i18n("Can't find styles directory") );
+					break;
+				}
+				case ChatWindowStyleManager::StyleNotValid:
+					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive does not contain a valid Chat Window style."), i18n("Invalid Style") );
+					break;
+				case ChatWindowStyleManager::StyleInstallOk:
+				{
+					KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n("The Chat Window style was succesfully installed !"), i18n("Install succesful") );
+					break;
+				}
+				case ChatWindowStyleManager::StyleUnknow:
+				default:
+				{
+					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("An unknow error occurred while trying to install the Chat Window style."), i18n("Unknow error") );
+					break;
+				}
+			}
+			
+			// removeTempFile check if the file is a temp file, so it's ok for local files.
+			KIO::NetAccess::removeTempFile( stylePath );
 		}
 	}
 }
@@ -867,7 +870,21 @@ void AppearanceConfig::slotDeleteStyle()
 // 			d->mPrfsChatWindow->styleList->setSelected( style->prev(), true );
 // 		delete style;
 // 	}
-	emitChanged();
+
+	QString styleNameToDelete = d->mPrfsChatWindow->styleList->selectedItem()->text();
+	if( ChatWindowStyleManager::self()->removeStyle(styleNameToDelete) )
+	{
+		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "The style %1 was succesfully deleted.").arg(styleNameToDelete));
+		
+		// Get the first item in the stye List.
+		d->currentStyle = (*d->styleItemMap.begin());
+		emitChanged();
+	}
+	else
+	{
+		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "An error occured while trying to delete %1 style.").arg(styleNameToDelete));
+	}
+	
 }
 
 void AppearanceConfig::slotGetStyles()
@@ -976,32 +993,10 @@ void AppearanceConfig::slotUpdatePreview()
 	if(d->loading)
 		return;
 
-// 	QListBoxItem *style = d->mPrfsChatWindow->styleList->selectedItem();
-// 	if( style && style->text() != d->currentStyle )
-// 	{
-		//TODO: should be using a ChatMessagePart
-// 		d->preview->begin();
-// 		d->preview->write( QString::fromLatin1(
-// 			"<html><head><style>"
-// 			"body{ font-family:%1;color:%2; }"
-// 			"td{ font-family:%3;color:%4; }"
-// 			".highlight{ color:%5;background-color:%6 }"
-// 			"</style></head>"
-// 			"<body bgcolor=\"%7\" vlink=\"%8\" link=\"%9\">"
-// 		).arg( mPrfsColors->fontFace->font().family() ).arg( mPrfsColors->textColor->color().name() )
-// 			.arg( mPrfsColors->fontFace->font().family() ).arg( mPrfsColors->textColor->color().name() )
-// 			.arg( mPrfsColors->foregroundColor->color().name() ).arg( mPrfsColors->backgroundColor->color().name() )
-// 			.arg( mPrfsColors->bgColor->color().name() ).arg( mPrfsColors->linkColor->color().name() )
-// 			.arg( mPrfsColors->linkColor->color().name() ) );
+	// Update the preview
+	d->preview->setStyle(d->currentStyle);
 
-// 		QString stylePath = d->itemMap[ style ];
-// 		//d->xsltParser->setXSLT( fileContents(stylePath) );
-// 		//preview->write( d->xsltParser->transform( sampleConversationXML() ) );
-// 		preview->write( QString::fromLatin1( "</body></html>" ) );
-// 		preview->end();
-
-		emitChanged();
-// 	}
+	emitChanged();
 }
 
 void AppearanceConfig::emitChanged()

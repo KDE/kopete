@@ -89,7 +89,8 @@ public:
 	Private() 
 	 : tt(0L), manager(0L), messageId(0), scrollPressed(false),
 	   copyAction(0L), saveAction(0L), printAction(0L),
-	   closeAction(0L),copyURLAction(0L), currentChatStyle(0L), latestContact(0L)
+	   closeAction(0L),copyURLAction(0L), currentChatStyle(0L), latestContact(0L),
+	   latestDirection(Kopete::Message::Inbound), latestType(Kopete::Message::TypeNormal)
 	{}
 	
 	~Private()
@@ -124,8 +125,8 @@ public:
 	KAction *copyURLAction;
 
 	ChatWindowStyle *currentChatStyle;
-	Kopete::Message::MessageDirection latestDirection;
 	Kopete::Contact *latestContact;
+	Kopete::Message::MessageDirection latestDirection;
 	Kopete::Message::MessageType latestType;
 	// Yep I know it will take memory, but I don't have choice
 	// to enable on-the-fly style changing.

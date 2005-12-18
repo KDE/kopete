@@ -26,6 +26,11 @@
 #include <kdebug.h>
 #include <kurl.h>
 #include <kglobal.h>
+#include <karchive.h>
+#include <kzip.h>
+#include <ktar.h>
+#include <kmimetype.h>
+#include <kio/netaccess.h>
 
 #include "kopetechatwindowstyle.h"
 
@@ -119,14 +124,170 @@ ChatWindowStyleManager::StyleList ChatWindowStyleManager::getAvailableStyles()
 	return d->availableStyles;
 }
 
-void ChatWindowStyleManager::installStyle()
+int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 {
+	QString localStyleDir( locateLocal( "appdata", QString::fromUtf8("styles/") ) );
 	
+	KArchiveEntry *currentEntry = 0L;
+	KArchiveDirectory* currentDir = 0L;
+	KArchive *archive = 0L;
+
+	if( localStyleDir.isEmpty() )
+	{
+		return StyleNoDirectoryValid;
+	}
+
+	// Find mimetype for current bundle. ZIP and KTar need separate constructor
+	QString currentBundleMimeType = KMimeType::findByPath(styleBundlePath, 0, false)->name();
+	if(currentBundleMimeType == "application/x-zip")
+	{
+		archive = new KZip(styleBundlePath);
+	}
+	else if( currentBundleMimeType == "application/x-tgz" || currentBundleMimeType == "application/x-tbz" || currentBundleMimeType == "application/x-gzip" || currentBundleMimeType == "application/x-bzip2" )
+	{
+		archive = new KTar(styleBundlePath);
+	}
+	else
+	{
+		return StyleCannotOpen;
+	}
+
+	if ( !archive->open(IO_ReadOnly) )
+	{
+		delete archive;
+
+		return StyleCannotOpen;
+	}
+
+	const KArchiveDirectory* rootDir = archive->directory();
+
+	// Ok where we go to check if the archive is valid.
+	// Each time we found a correspondance to a theme bundle, we add a point to validResult.
+	// A valid style bundle must have:
+	// -a Contents, Contents/Resources, Co/Res/Incoming, Co/Res/Outgoing dirs
+	// main.css, Footer.html, Header.html, Status.html files in Contents/Ressources.
+	// So for a style bundle to be valid, it must have a result greather than 8, because we test for 8 required entry.
+	int validResult = 0;
+	QStringList entries = rootDir->entries();
+	// Will be reused later.
+	QStringList::Iterator entriesIt, entriesItEnd = entries.end();
+	for(entriesIt = entries.begin(); entriesIt != entries.end(); ++entriesIt)
+	{
+		currentEntry = const_cast<KArchiveEntry*>(rootDir->entry(*entriesIt));
+// 		kdDebug() << k_funcinfo << "Current entry name: " << currentEntry->name() << endl;
+		if (currentEntry->isDirectory())
+		{
+			currentDir = dynamic_cast<KArchiveDirectory*>( currentEntry );
+			if (currentDir)
+			{
+				if( currentDir->entry(QString::fromUtf8("Contents")) )
+				{
+// 					kdDebug() << k_funcinfo << "Contents found" << endl;
+					validResult += 1;
+				}
+				if( currentDir->entry(QString::fromUtf8("Contents/Resources")) )
+				{
+// 					kdDebug() << k_funcinfo << "Contents/Resources found" << endl;
+					validResult += 1;
+				}
+				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Incoming")) )
+				{
+// 					kdDebug() << k_funcinfo << "Contents/Resources/Incoming found" << endl;
+					validResult += 1;
+				}
+				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Outgoing")) )
+				{
+// 					kdDebug() << k_funcinfo << "Contents/Resources/Outgoing found" << endl;
+					validResult += 1;
+				}
+				if( currentDir->entry(QString::fromUtf8("Contents/Resources/main.css")) )
+				{
+// 					kdDebug() << k_funcinfo << "Contents/Resources/main.css found" << endl;
+					validResult += 1;
+				}
+				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Footer.html")) )
+				{
+// 					kdDebug() << k_funcinfo << "Contents/Resources/Footer.html found" << endl;
+					validResult += 1;
+				}
+				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Status.html")) )
+				{
+// 					kdDebug() << k_funcinfo << "Contents/Resources/Status.html found" << endl;
+					validResult += 1;
+				}
+				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Header.html")) )
+				{
+// 					kdDebug() << k_funcinfo << "Contents/Resources/Header.html found" << endl;
+					validResult += 1;
+				}
+			}
+		}
+	}
+// 	kdDebug() << k_funcinfo << "Valid result: " << QString::number(validResult) << endl;
+	// The archive is a valid style bundle.
+	if(validResult >= 8)
+	{
+		bool installOk = false;
+		for(entriesIt = entries.begin(); entriesIt != entries.end(); ++entriesIt)
+		{
+			currentEntry = const_cast<KArchiveEntry*>(rootDir->entry(*entriesIt));
+			if(currentEntry && currentEntry->isDirectory())
+			{
+				// Ignore this MacOS X "garbage" directory in zip.
+				if(currentEntry->name() == QString::fromUtf8("__MACOSX"))
+				{
+					continue;
+				}
+				else
+				{
+					currentDir = dynamic_cast<KArchiveDirectory*>(currentEntry);
+					if(currentDir)
+					{
+						currentDir->copyTo(localStyleDir + currentDir->name());
+						installOk = true;
+					}
+				}
+			}
+		}
+
+		archive->close();
+		delete archive;
+
+		if(installOk)
+			return StyleInstallOk;
+		else
+			return StyleUnknow;
+	}
+	else
+	{
+		archive->close();
+		delete archive;
+
+		return StyleNotValid;
+	}
+
+	if(archive)
+	{
+		archive->close();
+		delete archive;
+	}
+
+	return StyleUnknow;
 }
 
-void ChatWindowStyleManager::removeStyle()
+bool ChatWindowStyleManager::removeStyle(const QString &styleName)
 {
-	
+	ChatWindowStyle *deletedStyle = d->availableStyles[styleName];
+	if(deletedStyle)
+	{
+		QString stylePath = deletedStyle->getStylePath();
+		// Remove style from Available Styles
+		d->availableStyles.remove(styleName);
+
+		// Do the actual deletion of the directory style.
+		return KIO::NetAccess::del( KURL(stylePath), 0 );
+	}
+	return false;
 }
 
 void ChatWindowStyleManager::slotNewStyles(const KFileItemList &dirList)

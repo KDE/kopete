@@ -36,7 +36,22 @@ class KOPETE_EXPORT ChatWindowStyleManager : public QObject
 {
 	Q_OBJECT
 public:
+	/**
+	 * StyleList typedef (a QMap)
+	 * key = Name of the style (currently the directory name)
+	 * value = Pointer to a ChatWindowStyle instance.
+	 */
 	typedef QMap<QString, ChatWindowStyle*> StyleList;
+
+	/**
+	 * The StyleInstallStatus enum. It gives better return value for installStyle().
+	 * - StyleInstallOk : The install went fine.
+	 * - StyleNotValid : The archive didn't contain a valid Chat Window style.
+	 * - StyleNoDirectoryValid : It didn't find a suitable directory to install the theme.
+	 * - StyleCannotOpen : The archive couldn't be openned.
+	 * - StyleUnknow : Unknow error.
+	 */
+	enum StyleInstallStatus { StyleInstallOk = 0, StyleNotValid, StyleNoDirectoryValid, StyleCannotOpen, StyleUnknow };
 
 	~ChatWindowStyleManager();
 
@@ -59,15 +74,19 @@ public:
 public slots:
 	/**
 	 * Install a new style into user style directory
-	 * TODO: all :)
+	 * Note that you must pass a path to a archive.
+	 *
+	 * @param styleBundlePath Path to the container file to install.
+	 * @return a value contained in the StyleInstallStatus.
 	 */
-	void installStyle();
+	int installStyle(const QString &styleBundlePath);
 
 	/**
 	 * Remove a style from user style directory
-	 * TODO: all :)
+	 *
+	 * @param styleName the name(not the path) of the style to remove
 	 */
-	void removeStyle();
+	bool removeStyle(const QString &styleName);
 	
 signals:
 	/**
