@@ -681,7 +681,8 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 			kc->removeProperty( m_protocol->awayMessage );
 
 		if( newStatus != static_cast<YahooProtocol*>( m_protocol )->Offline &&
-		    oldStatus == static_cast<YahooProtocol*>( m_protocol )->Offline && contact(who) != myself() )
+		    oldStatus == static_cast<YahooProtocol*>( m_protocol )->Offline && contact(who) != myself() &&
+		    myself()->onlineStatus() != m_protocol->Invisible )
 		{
 			m_session->requestBuddyIcon( who );		// Try to get Buddy Icon
 
