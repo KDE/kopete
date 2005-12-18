@@ -39,7 +39,7 @@ protected:
 	void parseStatus( Transfer *transfer );
 	void parseStealthStatus( Transfer *transfer );
 signals:
-	void statusChanged( const QString&, int, const QString&, int );
+	void statusChanged( const QString&, int, const QString&, int, int );
 	void stealthStatusChanged( const QString&, Yahoo::StealthStatus );
 	void error( const QString& );
 	void loginResponse( int, const QString& );

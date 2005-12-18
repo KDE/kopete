@@ -179,7 +179,7 @@ protected slots:
 	void slotGotBuddy(const QString &userid, const QString &alias, const QString &group);
 	void slotGotIgnore(const QStringList &);
 	void slotGotIdentities(const QStringList &);
-	void slotStatusChanged(const QString &who, int stat, const QString &msg, int away);
+	void slotStatusChanged(const QString &who, int stat, const QString &msg, int away, int idle);
 	void slotStealthStatusChanged(const QString &who, Yahoo::StealthStatus state);
 	void slotGotIm(const QString &who, const QString &msg, long tm, int stat);
 	void slotGotBuzz(const QString &who, long tm);

@@ -226,8 +226,8 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
 		                 this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
 		
-		QObject::connect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int)),
-		                 this, SLOT(slotStatusChanged(const QString&, int, const QString&, int)));
+		QObject::connect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int, int)),
+		                 this, SLOT(slotStatusChanged(const QString&, int, const QString&, int, int)));
 		
 		QObject::connect(m_session, SIGNAL(stealthStatusChanged(const QString &, Yahoo::StealthStatus)), 
 		                 this, SLOT(slotStealthStatusChanged( const QString &, Yahoo::StealthStatus)) );
@@ -325,8 +325,8 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::disconnect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
 		                    this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
 		
-		QObject::disconnect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int)),
-		                    this, SLOT(slotStatusChanged(const QString&, int, const QString&, int)));
+		QObject::disconnect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int, int)),
+		                    this, SLOT(slotStatusChanged(const QString&, int, const QString&, int, int)));
 		
 		QObject::disconnect(m_session, SIGNAL(stealthStatusChanged(const QString &, Yahoo::StealthStatus)), 
 		                 this, SLOT(slotStealthStatusChanged( const QString &, Yahoo::StealthStatus)) );
@@ -705,9 +705,9 @@ void YahooAccount::slotGotIdentities( const QStringList & /* ids */ )
 	//kdDebug(14180) << k_funcinfo << endl;
 }
 
-void YahooAccount::slotStatusChanged( const QString &who, int stat, const QString &msg, int  away )
+void YahooAccount::slotStatusChanged( const QString &who, int stat, const QString &msg, int away, int idle )
 {
-	//kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(14180) << k_funcinfo << who << " status: " << stat << " msg: " << msg << " away: " << away << " idle: " << idle <<endl;
 	YahooContact *kc = contact( who );
 	
 	if( contact( who ) == myself() )
@@ -715,33 +715,34 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 	
 	if ( kc )
 	{
-		Kopete::OnlineStatus newStatus = static_cast<YahooProtocol*>( m_protocol )->statusFromYahoo( stat );
+		Kopete::OnlineStatus newStatus = m_protocol->statusFromYahoo( stat );
 		Kopete::OnlineStatus oldStatus = kc->onlineStatus();
 
-		if( newStatus == static_cast<YahooProtocol*>( m_protocol )->Custom ) {
+		if( newStatus == m_protocol->Custom ) {
 			if( away == 0 )
-				newStatus = static_cast<YahooProtocol*>( m_protocol )->Online;
+				newStatus =m_protocol->Online;
 			kc->setProperty( m_protocol->awayMessage, msg);
 		}
 		else
 			kc->removeProperty( m_protocol->awayMessage );
 
-		if( newStatus != static_cast<YahooProtocol*>( m_protocol )->Offline &&
-		    oldStatus == static_cast<YahooProtocol*>( m_protocol )->Offline && contact(who) != myself() )
+		if( newStatus != m_protocol->Offline &&
+		    oldStatus == m_protocol->Offline && contact(who) != myself() )
 		{
 			//m_session->requestBuddyIcon( who );		// Try to get Buddy Icon
 
 			if ( !myself()->property( Kopete::Global::Properties::self()->photo() ).isNull() )
 			{
-				static_cast< YahooContact* >( contact( who ) )->sendBuddyIconUpdate( pictureFlag() );
-				static_cast< YahooContact* >( contact( who ) )->sendBuddyIconChecksum(
-					myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
+				kc->sendBuddyIconUpdate( pictureFlag() );
+				kc->sendBuddyIconChecksum( myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
 			}
 		}
 		
-		if( newStatus == static_cast<YahooProtocol*>( m_protocol )->Idle ) {
-			// TODO: Use the argument 'away' to set the idleTime
-		}
+		//if( newStatus == static_cast<YahooProtocol*>( m_protocol )->Idle ) {
+		if( newStatus == m_protocol->Idle )
+			kc->setIdleTime( idle ? idle : 1 );
+		else
+			kc->setIdleTime( 0 );
 		
 		kc->setOnlineStatus( newStatus );
 	}

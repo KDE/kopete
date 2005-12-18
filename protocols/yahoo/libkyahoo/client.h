@@ -309,7 +309,7 @@ Q_OBJECT
 		/**
 		 * Notifies about the status of online buddies
 		 */
-		void statusChanged( const QString&, int, const QString&, int );
+		void statusChanged( const QString&, int, const QString&, int, int );
 		/**
 		 * Notifies about the stealth status of buddies
 		 */
