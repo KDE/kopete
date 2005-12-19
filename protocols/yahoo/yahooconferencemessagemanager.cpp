@@ -2,8 +2,9 @@
     yahooconferencemessagemanager.h - Yahoo Conference Message Manager
 
     Copyright (c) 2003 by Duncan Mac-Vicar <duncan@kde.org>
+    Copyright (c) 2005 by André Duffeck        <andre@duffeck.de>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -37,6 +38,7 @@ YahooConferenceChatSession::YahooConferenceChatSession( const QString & yahooRoo
 	Kopete::ContactPtrList others, const char *name )
 : Kopete::ChatSession( user, others, protocol,  name )
 {
+
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
 
 	connect ( this, SIGNAL( messageSent ( Kopete::Message &, Kopete::ChatSession * ) ),
@@ -44,7 +46,7 @@ YahooConferenceChatSession::YahooConferenceChatSession( const QString & yahooRoo
 
 	m_yahooRoom = yahooRoom;
 
-	m_actionInvite = new KAction( i18n( "&Invite others" ), "kontact_contacts", this, SLOT( slotInviteOthers() ), this, "yahoo_invite");
+	m_actionInvite = new KAction( i18n( "&Invite others" ), "kontact_contacts", this, SLOT( slotInviteOthers() ), actionCollection(), "yahooInvite");
 
 	setXMLFile("yahooconferenceui.rc");
 }
