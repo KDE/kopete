@@ -733,6 +733,7 @@ void ChatView::appendMessage(Kopete::Message &message)
 	remoteTyping( message.from(), false );
 
 	messagePart()->appendMessage(message);
+
 	if( !d->isActive )
 	{
 		switch ( message.importance() )
@@ -753,8 +754,14 @@ void ChatView::appendMessage(Kopete::Message &message)
 
 	if( message.direction() == Kopete::Message::Inbound )
 	{
-		unreadMessageFrom = message.from()->metaContact() ?
-			 message.from()->metaContact()->displayName() : message.from()->contactId();
+		if( message.from()->metaContact() && message.from()->metaContact() != Kopete::ContactList::self()->myself() )
+		{
+			unreadMessageFrom = message.from()->metaContact()->displayName();
+		}
+		else
+		{
+			unreadMessageFrom = message.from()->nickName();
+		}
 		QTimer::singleShot( 1000, this, SLOT( slotMarkMessageRead() ) );
 	}
 	else

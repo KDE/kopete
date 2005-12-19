@@ -449,6 +449,16 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 		bool isConsecutiveMessage = false;
 		uint bufferLen = (uint)KopetePrefs::prefs()->chatViewBufferSize();
 
+		// Find the "Chat" div element.
+		// If the "Chat" div element is not found, do nothing. It's the central part of Adium format.
+		DOM::HTMLElement chatNode = htmlDocument().getElementById( "Chat" );
+
+		if( chatNode.isNull() )
+		{
+			kdDebug(14000) << k_funcinfo << "WARNING: Chat Node was null !" << endl;
+			return;
+		}
+
 		// Check if it's a consecutive Message
 		// Consecutive messages are only for normal messages, status messages do not have a <div id="insert" />
 		// We check if the from() is the latestContact, because consecutive incoming/outgoing message can come from differents peopole(in groupchat and IRC)
@@ -507,9 +517,6 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 		// Find the insert Node
 		DOM::HTMLElement insertNode = document().getElementById( QString::fromUtf8("insert") );
 
-		// Find the "Chat" 
-		DOM::HTMLElement chatNode = document().getElementById( QString::fromUtf8("Chat") );
-
 		if( isConsecutiveMessage && !insertNode.isNull() )
 		{
 			// Replace the insert block, because it's a consecutive message.
@@ -520,7 +527,6 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 			// Remove the insert block, because it's a new message.
 			if( !insertNode.isNull() )
 				insertNode.parentNode().removeChild(insertNode);
-			
 			// Append to the chat.
 			chatNode.appendChild(newMessageNode);
 		}
@@ -1061,7 +1067,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 		resultHTML = resultHTML.replace( QString::fromUtf8("%outgoingIconPath%"), photoOutgoingPath);
 #endif
 		QString photoIncoming, photoOutgoing;
-		if( !remoteContact->metaContact()->picture().isNull() )
+		if( remoteContact->metaContact() && !remoteContact->metaContact()->picture().isNull() )
 		{
 			photoIncoming = QString("data:image/png;base64,%1").arg( remoteContact->metaContact()->picture().base64() );
 		}
@@ -1070,7 +1076,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 			photoIncoming = QString::fromUtf8("Incoming/buddy_icon.png");
 		}
 		
-		if( !d->manager->myself()->metaContact()->picture().isNull() )
+		if( d->manager->myself()->metaContact() && !d->manager->myself()->metaContact()->picture().isNull() )
 		{
 			photoOutgoing =  QString("data:image/png;base64,%1").arg( d->manager->myself()->metaContact()->picture().base64() );
 		}
@@ -1219,8 +1225,10 @@ void ChatMessagePart::writeTemplate()
 		"</head>\n"
 		"<body>\n"
 		"%2\n"
-		"<div id=\"Chat\">\n"
+		"<div id=\"Chat\">\n</div>\n"
 		"%3\n"
+		"</body>"
+		"</html>"
 		).arg( d->currentChatStyle->getStyleBaseHref() )
 		.arg( formatStyleKeywords(d->currentChatStyle->getHeaderHtml()) )
 		.arg( formatStyleKeywords(d->currentChatStyle->getFooterHtml()) )
