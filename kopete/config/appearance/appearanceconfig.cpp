@@ -707,7 +707,7 @@ void AppearanceConfig::slotAddStyle()
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 			"<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n"
 			"<xsl:output method=\"html\"/>\n"
-			"<xsl:template match=\"message\">\n\n\n\n</xsl:template>\n</xsl:stylesheet>"  ) );
+			"<xsl:template match=\"message\">\n\n\n\n</xsl:template>\n</xsl:stylesheet>"  ) )
 	{
 		KRun::runURL( KURL(locateLocal("appdata", QString::fromLatin1("styles/%1.xsl").arg( styleName ) )) , "text/plain");
 		currentStyle = QString::null; //force to update preview;
