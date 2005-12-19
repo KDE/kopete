@@ -93,8 +93,9 @@ void YahooInviteListImpl::btnInvite_clicked()
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
-	emit readyToInvite( m_room, m_inviteeList, editMessage->text() );
-	QDialog::reject();
+	if( m_inviteeList.count() )
+		emit readyToInvite( m_room, m_inviteeList, editMessage->text() );
+	QDialog::accept();
 }
 
 
