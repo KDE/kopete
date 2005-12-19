@@ -884,7 +884,7 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 	{
 		Kopete::ContactPtrList members = m_manager->members();
 		Kopete::Contact *contact = members.first();
-		if ( contact && contact->canAcceptFiles() );
+		if ( contact && contact->canAcceptFiles() )
 			event->accept();
 	}
 	else
