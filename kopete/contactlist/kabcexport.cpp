@@ -22,7 +22,6 @@
 #include <qpushbutton.h>
 #include <q3listbox.h>
 #include <q3listview.h>
-#include <q3ptrlist.h>
 #include <qmap.h>
 
 #include <klocale.h>
@@ -66,15 +65,15 @@ KabcExportWizard::KabcExportWizard( QWidget *parent, const char *name )
 	// fill resource selector
 	m_addressBook = Kopete::KABCPersistence::self()->addressBook();
 
-	Q3PtrList<KABC::Resource> kabcResources = m_addressBook->resources();
+	QList<KABC::Resource*> kabcResources = m_addressBook->resources();
 
-	Q3PtrListIterator<KABC::Resource> resIt( kabcResources );
+	QListIterator<KABC::Resource*> resIt( kabcResources );
 	KABC::Resource *resource;
 	
 	uint counter = 0;
-	while ( ( resource = resIt.current() ) != 0 ) 
+	while ( resIt.hasNext() ) 
 	{
-		++resIt;
+		resource = resIt.next();
 		if ( !resource->readOnly() ) 
 		{
 			m_resourceMap.insert( counter, resource );
