@@ -87,7 +87,7 @@ protected:
 	/**
 	 * Check that there is data to read, and set the protocol's state if there isn't any.
 	 */
-	bool okToProceed();
+	bool okToProceed( QDataStream & );
 	/**
 	 * Convert incoming wire data into a Transfer object and queue it
 	 * @return number of bytes from the input that were parsed into a Transfer
@@ -96,7 +96,6 @@ protected:
 
 private:
 	QByteArray m_in;	// buffer containing unprocessed bytes we received
-	QDataStream* m_din; // contains the packet currently being parsed
 	int m_error;
 	Transfer* m_inTransfer; // the transfer that is being received
 	int m_state;		// represents the protocol's overall state

@@ -159,10 +159,10 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		return bytesParsed;
 	}
 	
-	m_din = new QDataStream( wire, IO_ReadOnly );
+	QDataStream din( wire, IO_ReadOnly );
 	
 	// look at first four bytes and decide what to do with the chunk
-	if ( okToProceed() )
+	if ( okToProceed( din ) )
 	{
 		if ( (wire[0] == 'Y') && (wire[1] == 'M') && (wire[2] == 'S') && (wire[3] == 'G'))
 		{
@@ -182,10 +182,22 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		}
 		else 
 		{ 
-			kdDebug(14180) << k_funcinfo << " - not a valid YMSG packet" << endl;
+			kdDebug(14180) << k_funcinfo << " - not a valid YMSG packet. Trying to recover." << endl;
+			QTextStream s( wire, IO_ReadOnly );
+			QString remaining = s.read();
+			int pos = remaining.find( "YMSG", bytesParsed );
+			if( pos >= 0 )
+			{
+				kdDebug(14180) << k_funcinfo << "Recover successful." << endl;
+				bytesParsed += pos;
+			}
+			else
+			{
+				kdDebug(14180) << k_funcinfo << "Recover failed. Dump it!" << endl;
+				bytesParsed = wire.size();
+			}
 		}
 	}
-	delete m_din;
 	return bytesParsed;
 }
 
@@ -199,19 +211,16 @@ void CoreProtocol::slotOutgoingData( const QCString &out )
 	qDebug( "%s", out.data() );
 }
 
-bool CoreProtocol::okToProceed()
+bool CoreProtocol::okToProceed( QDataStream &din)
 {
-	if ( m_din )
+	if ( din.atEnd() )
 	{
-		if ( m_din->atEnd() )
-		{
-			m_state = NeedMore;
-			kdDebug(14180) << k_funcinfo << " saved message prematurely" << endl;
-		}
-		else
-			return true;
+		m_state = NeedMore;
+		kdDebug(14180) << k_funcinfo << " saved message prematurely" << endl;
+		return false;
 	}
-	return false;
+	else
+		return true;
 }
 
 #include "coreprotocol.moc"
