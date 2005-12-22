@@ -30,6 +30,8 @@ YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0, "yahoo_webcam" )
 	kdDebug(14180) << k_funcinfo << endl;
 	theAccount = account;
 	theDialog = 0L;
+	origImg = new KTempFile();
+	convertedImg = new KTempFile();
 
 	m_timer = new QTimer();
 	connect( m_timer, SIGNAL(timeout()), this, SLOT(sendImage()) );	
@@ -44,6 +46,10 @@ YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0, "yahoo_webcam" )
 
 YahooWebcam::~YahooWebcam()
 {
+	QFile::remove( origImg->name() );
+	QFile::remove( convertedImg->name() );
+	delete origImg;
+	delete convertedImg;
 	delete m_timer;
 }
 
@@ -82,17 +88,15 @@ void YahooWebcam::sendImage()
 		connect( theDialog, SIGNAL(closingWebcamDialog()), this, SLOT(webcamDialogClosing()) );
 	}
 	
-	KTempFile origImg;
-	KTempFile convertedImg;
-	origImg.close();
-	convertedImg.close();
+	origImg->close();
+	convertedImg->close();
 	
-	img.save( origImg.name(), "JPEG");
+	img.save( origImg->name(), "JPEG");
 	
 	theDialog->newImage( img );
 	KProcess p;
 	p << "jasper";
-	p << "--input" << origImg.name() << "--output" << convertedImg.name() << "--output-format" << "jpc" << "-O" << "rate=0.01" ;
+	p << "--input" << origImg->name() << "--output" << convertedImg->name() << "--output-format" << "jpc" << "-O" << "rate=0.02" ;
 	
 	p.start( KProcess::Block );
 	if( p.exitStatus() != 0 )
@@ -101,7 +105,7 @@ void YahooWebcam::sendImage()
 	}
 	else
 	{
-		QFile file( convertedImg.name() );
+		QFile file( convertedImg->name() );
 		if( file.open( IO_ReadOnly ) )
 		{
 			QByteArray ar = file.readAll();

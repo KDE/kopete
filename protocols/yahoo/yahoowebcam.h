@@ -21,6 +21,7 @@
 class YahooAccount;
 class YahooWebcamDialog;
 class QTimer;
+class KTempFile;
 
 class YahooWebcam : public QObject
 {
@@ -42,6 +43,8 @@ private:
 	YahooWebcamDialog *theDialog;
 	QTimer *m_timer;
 	QStringList m_viewer;
+	KTempFile *origImg;
+	KTempFile *convertedImg;
 };
 
 #endif
