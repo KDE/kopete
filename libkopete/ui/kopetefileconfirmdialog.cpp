@@ -42,7 +42,7 @@ KopeteFileConfirmDialog::KopeteFileConfirmDialog(const Kopete::FileTransferInfo 
 	m_view=new FileConfirmBase(this, "FileConfirmView");
 	m_view->m_from->setText( info.contact()->metaContact()->displayName() + QString::fromLatin1( " <" ) +
 			info.contact()->contactId() + QString::fromLatin1( "> " ) );
-	m_view->m_size->setText( KGlobal::locale()->formatNumber( long( info.size() ) ) );
+	m_view->m_size->setText( KGlobal::locale()->formatNumber( long( info.size() ), 0 ) );
 	m_view->m_description->setText( description );
 	m_view->m_filename->setText( info.file() );
 	
