@@ -663,6 +663,17 @@ const QString ChatMessagePart::styleHTML() const
 		.arg( p->textColor().name() )
 		.arg( p->linkColor().name() )
 		.arg( p->linkColor().name() );
+
+	//JASON, VA TE FAIRE FOUTRE AVEC TON *default* HIGHLIGHT!
+	// that broke my highlight plugin
+	// if the user has not Spetialy specified that it you theses 'putaint de' default color, WE DON'T USE THEM
+	if ( p->highlightEnabled() )
+	{
+		style += QString::fromLatin1( ".highlight{color:%1;background-color:%2}" )
+			.arg( p->highlightForeground().name() )
+			.arg( p->highlightBackground().name() );
+	}
+
 #else
 	QString style = QString::fromLatin1(
 		"body{background-color:%1;font-family:%2;font-size:%3pt;color:%4}"
@@ -681,16 +692,6 @@ const QString ChatMessagePart::styleHTML() const
 		.arg( p->linkColor().name() )
 		.arg( p->linkColor().name() );
 #endif
-
-	//JASON, VA TE FAIRE FOUTRE AVEC TON *default* HIGHLIGHT!
-	// that broke my highlight plugin
-	// if the user has not Spetialy specified that it you theses 'putaint de' default color, WE DON'T USE THEM
-	if ( p->highlightEnabled() )
-	{
-		style += QString::fromLatin1( ".highlight{color:%1;background-color:%2}" )
-			.arg( p->highlightForeground().name() )
-			.arg( p->highlightBackground().name() );
-	}
 
 	return style;
 }
@@ -971,6 +972,19 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 		resultHTML = resultHTML.replace( pos , timeRegExp.cap(0).length() , timeKeyword );
 	}
 
+	// Look for %textbacgroundcolor{X}% 
+	// TODO: use the X value.
+	// Only look for textbackgroundcolor if the message is hightlighted and hightlight is enabled.
+	if( message.importance() == Kopete::Message::Highlight && KopetePrefs::prefs()->highlightEnabled() )
+	{
+		QRegExp textBackgroundRegExp("%textbackgroundcolor\\{([^}]*)\\}%");
+		int textPos=0;
+		while( (textPos=textBackgroundRegExp.search(resultHTML, textPos) ) != -1 )
+		{
+			resultHTML = resultHTML.replace( textPos , textBackgroundRegExp.cap(0).length() , KopetePrefs::prefs()->highlightBackground().name() );
+		}
+	}
+
 	// Replace userIconPath
 	if( message.from() )
 	{
@@ -1010,7 +1024,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 		message.setBody( QString("<b>%1</b> %2").arg(nick).arg(message.parsedBody()), Kopete::Message::ParsedHTML );
 	}
 
-	// TODO: %status, %textbackgroundcolor{X}%
+	// TODO: %status
 	resultHTML = addNickLinks( resultHTML );
 	return resultHTML;
 }
