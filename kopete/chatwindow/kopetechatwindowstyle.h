@@ -92,6 +92,15 @@ public:
 	QString getNextOutgoingHtml() const;
 	QString getStatusHtml() const;
 
+	QString getActionIncomingHtml() const;
+	QString getActionOutgoingHtml() const;
+
+	/**
+	 * Check if the style has the support for Kopete Action template (Kopete extension)
+	 * @return true if the style has Action template.
+	 */
+	bool hasActionTemplate() const;
+
 	/**
 	 * Reload style from disk.
 	 */

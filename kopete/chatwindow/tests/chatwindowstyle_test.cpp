@@ -38,6 +38,7 @@ void ChatWindowStyle_Test::allTests()
 	testPaths();
 	testHtml();
 	testVariants();
+	testAction();
 }
 
 void ChatWindowStyle_Test::testPaths()
@@ -103,6 +104,11 @@ void ChatWindowStyle_Test::testHtml()
 	CHECK(testStyle->getOutgoingHtml(), exceptedOutgoing);
 	CHECK(testStyle->getNextOutgoingHtml(), exceptedNextOutgoing);
 	CHECK(testStyle->getStatusHtml(), exceptedStatus);
+}
+
+void ChatWindowStyle_Test::testAction()
+{
+	CHECK(testStyle->hasActionTemplate(), false);
 }
 
 void ChatWindowStyle_Test::testVariants()

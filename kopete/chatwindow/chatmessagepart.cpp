@@ -466,43 +466,64 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 			isConsecutiveMessage = (message.direction() == d->latestDirection && d->latestContact && d->latestContact == message.from() && message.type() == d->latestType);
 		}
 
-		switch(message.direction())
-		{
-			case Kopete::Message::Inbound:
-			{
-				if(isConsecutiveMessage)
-				{
-					formattedMessageHtml = d->currentChatStyle->getNextIncomingHtml();
-				}
-				else
-				{
-					formattedMessageHtml = d->currentChatStyle->getIncomingHtml();
-				}
-				break;
-			}
-			case Kopete::Message::Outbound:
-			{
-				if(isConsecutiveMessage)
-				{
-					formattedMessageHtml = d->currentChatStyle->getNextOutgoingHtml();
-				}
-				else
-				{
-					formattedMessageHtml = d->currentChatStyle->getOutgoingHtml();
-				}
-				break;
-			}
-			case Kopete::Message::Internal:
-			{
-				formattedMessageHtml = d->currentChatStyle->getStatusHtml();
-				break;
-			}
-		}
-		// Use status Template for Action messages.
 		// Don't test it in the switch to don't break consecutive messages.
 		if(message.type() == Kopete::Message::TypeAction)
 		{
-			formattedMessageHtml = d->currentChatStyle->getStatusHtml();
+			// Check if chat style support Action template (Kopete extension)
+			if( d->currentChatStyle->hasActionTemplate() )
+			{
+				switch(message.direction())
+				{
+					case Kopete::Message::Inbound:
+						formattedMessageHtml = d->currentChatStyle->getActionIncomingHtml();
+						break;
+					case Kopete::Message::Outbound:
+						formattedMessageHtml = d->currentChatStyle->getActionOutgoingHtml();
+						break;
+					default:
+						break;
+				}
+			}
+			// Use status template if no Action template.
+			else
+			{
+				formattedMessageHtml = d->currentChatStyle->getStatusHtml();
+			}
+		}
+		else
+		{
+			switch(message.direction())
+			{
+				case Kopete::Message::Inbound:
+				{
+					if(isConsecutiveMessage)
+					{
+						formattedMessageHtml = d->currentChatStyle->getNextIncomingHtml();
+					}
+					else
+					{
+						formattedMessageHtml = d->currentChatStyle->getIncomingHtml();
+					}
+					break;
+				}
+				case Kopete::Message::Outbound:
+				{
+					if(isConsecutiveMessage)
+					{
+						formattedMessageHtml = d->currentChatStyle->getNextOutgoingHtml();
+					}
+					else
+					{
+						formattedMessageHtml = d->currentChatStyle->getOutgoingHtml();
+					}
+					break;
+				}
+				case Kopete::Message::Internal:
+				{
+					formattedMessageHtml = d->currentChatStyle->getStatusHtml();
+					break;
+				}
+			}
 		}
 
 		formattedMessageHtml = formatStyleKeywords( formattedMessageHtml, message );
@@ -1014,15 +1035,23 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 		resultHTML = resultHTML.replace(QString::fromUtf8("%userIconPath%"), photoPath);
 	}
 
+	// Replace messages.
+	// Build the action message if the currentChatStyle do not have Action template.
+	if( message.type() == Kopete::Message::TypeAction && !d->currentChatStyle->hasActionTemplate() )
+	{
+		kdDebug(14000) << k_funcinfo << "Map Action message to Status template. " << endl;
+
+		QString boldNick = QString::fromUtf8("<b>%1</b> ").arg(nick);
+		// Don't set the body twice.
+		if( !message.parsedBody().contains(boldNick) )
+		{
+			QString newBody = boldNick + message.parsedBody();
+			message.setBody(newBody, Kopete::Message::ParsedHTML );
+		}
+	}
+
 	// Replace message at the end, maybe someone could put a Adium keyword in his message :P
 	resultHTML = resultHTML.replace( QString::fromUtf8("%message%"), formatMessageBody(message) );
-
-	// Replace messages.
-	// Check if the message is an action, if yes then we will build the "status" message
-	if( message.type() == Kopete::Message::TypeAction )
-	{
-		message.setBody( QString("<b>%1</b> %2").arg(nick).arg(message.parsedBody()), Kopete::Message::ParsedHTML );
-	}
 
 	// TODO: %status
 	resultHTML = addNickLinks( resultHTML );
