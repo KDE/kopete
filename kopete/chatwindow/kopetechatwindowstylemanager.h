@@ -29,7 +29,7 @@ class ChatWindowStyle;
  * This class list all the available styles in $KDEDATADIR/kopete/styles
  *
  * Each style is in own subdirectory
- * 
+ *
  * @author Michaël Larouche <michael.larouche@kdemail.net>
  */
 class KOPETE_EXPORT ChatWindowStyleManager : public QObject
@@ -39,9 +39,9 @@ public:
 	/**
 	 * StyleList typedef (a QMap)
 	 * key = Name of the style (currently the directory name)
-	 * value = Pointer to a ChatWindowStyle instance.
+	 * value = Path to the style
 	 */
-	typedef QMap<QString, ChatWindowStyle*> StyleList;
+	typedef QMap<QString, QString> StyleList;
 
 	/**
 	 * The StyleInstallStatus enum. It gives better return value for installStyle().
@@ -88,6 +88,16 @@ public slots:
 	 */
 	bool removeStyle(const QString &styleName);
 	
+	/**
+	 * Get a instance of a ChatWindowStyle from the pool.
+	 * If they are no instance for the specified style, it gets created.
+	 * DO NOT DELETE the resulting pointer, it is handled by this class.
+	 *
+	 * @param stylePath Path for the specified style. Name can be ambigous.
+	 * @return the instance of ChatWindow for the specified style. DO NOT DELETE IT.
+	 */
+	ChatWindowStyle *getStyleFromPool(const QString &stylePath);
+
 signals:
 	/**
 	 * This signal is emitted when all styles finished to list.

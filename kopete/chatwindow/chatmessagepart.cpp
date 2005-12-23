@@ -35,6 +35,7 @@
 #include <qptrlist.h>
 #include <qregexp.h>
 #include <qvaluelist.h>
+#include <qtimer.h>
 
 // KHTML::DOM includes
 #include <dom/dom_doc.h>
@@ -81,6 +82,7 @@
 #include "kopetepicture.h"
 
 #include "kopetechatwindowstyle.h"
+#include "kopetechatwindowstylemanager.h"
 
 class ToolTip;
 
@@ -98,7 +100,7 @@ public:
 	{
 		delete xsltParser;
 		// Don't delete manager and latestContact, because they could be still used.
-		delete currentChatStyle;
+		// Don't delete currentChatStyle, it is handled by ChatWindowStyleManager.
 	}
 
 	Kopete::XSLT *xsltParser;
@@ -186,8 +188,6 @@ private:
 	ChatMessagePart *m_chat;
 };
 
-
-
 ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, const char *name)
 	: KHTMLPart( parent, name ), d( new Private )
 {
@@ -198,7 +198,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 #ifndef KOPETE_XSLT
 	KopetePrefs *kopetePrefs = KopetePrefs::prefs();
 
-	d->currentChatStyle = new ChatWindowStyle(kopetePrefs->stylePath(), ChatWindowStyle::StyleBuildFast);
+	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool( kopetePrefs->stylePath() );
 #endif
 	//Security settings, we don't need this stuff
 	setJScriptEnabled( true ) ;
@@ -364,15 +364,12 @@ void ChatMessagePart::setStylesheet( const QString &style )
 
 void ChatMessagePart::setStyle( const QString &stylePath )
 {
-	// Clear the old style.
-	delete d->currentChatStyle;
-	d->currentChatStyle = 0L;
-	
 	// Create a new ChatWindowStyle
-	d->currentChatStyle = new ChatWindowStyle(stylePath);
+	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool(stylePath);
 
 	// Do the actual style switch
-	changeStyle();
+	// Wait for the event loop before switching the style
+	QTimer::singleShot( 0, this, SLOT(changeStyle()) );
 }
 
 void ChatMessagePart::setStyle( ChatWindowStyle *style )
@@ -381,7 +378,8 @@ void ChatMessagePart::setStyle( ChatWindowStyle *style )
 	d->currentChatStyle = style;
 
 	// Do the actual style switch
-	changeStyle();
+	// Wait for the event loop before switching the style
+	QTimer::singleShot( 0, this, SLOT(changeStyle()) );
 }
 
 void ChatMessagePart::setStyleVariant( const QString &variantPath )
@@ -1188,6 +1186,8 @@ void ChatMessagePart::changeStyle()
 
 void ChatMessagePart::writeTemplate()
 {
+	kdDebug(14000) << k_funcinfo << endl;
+
 #ifdef STYLE_TIMETEST
 	QTime beforeHeader = QTime::currentTime();
 #endif

@@ -111,7 +111,8 @@ public:
 	AppearanceConfig_Colors *mPrfsColors;
 	AppearanceConfig_ContactList *mPrfsContactList;
 	
-	QMap<QListBoxItem*,ChatWindowStyle*> styleItemMap;
+	// value is the style path
+	QMap<QListBoxItem*,QString> styleItemMap;
 	ChatWindowStyle::StyleVariants currentVariantMap;
 	ChatWindowStyle *currentStyle;
 	bool loading;
@@ -568,7 +569,7 @@ void AppearanceConfig::load()
 	// "Chat Window" TAB ========================================================
 	d->mPrfsChatWindow->groupConsecutiveMessages->setChecked( p->groupConsecutiveMessages() );
 	// Look for avaiable chat window styles.
-	ChatWindowStyleManager::self()->loadStyles();
+	slotLoadStyles();
 	
 	// "Contact List" TAB =======================================================
 	d->mPrfsContactList->mTreeContactList->setChecked( p->treeView() );
@@ -616,6 +617,7 @@ void AppearanceConfig::load()
 	d->mPrfsColors->mRtfOverride->setChecked( p->rtfOverride() );
 
 	d->loading=false;
+	slotUpdatePreview();
 }
 
 void AppearanceConfig::slotLoadStyles()
@@ -636,19 +638,12 @@ void AppearanceConfig::slotLoadStyles()
 		// Insert the style class into the internal map for futher acces.
 		d->styleItemMap.insert( d->mPrfsChatWindow->styleList->firstItem(), it.data() );
 
-		if( it.data()->getStylePath() == KopetePrefs::prefs()->stylePath() )
+		if( it.data() == KopetePrefs::prefs()->stylePath() )
 		{
 			kdDebug(14000) << k_funcinfo << "Restoring saved style: " << it.key() << endl;
 
-			d->currentStyle = it.data();
 			d->mPrfsChatWindow->styleList->setSelected( d->mPrfsChatWindow->styleList->firstItem(), true );
 		}
-	}
-	if(d->currentStyle)
-	{
-		// Set the initial preview style
-		d->preview->setStyle(d->currentStyle);
-		d->preview->setStyleVariant(KopetePrefs::prefs()->styleVariant());
 	}
 
 	d->mPrfsChatWindow->styleList->sort();
@@ -725,12 +720,13 @@ void AppearanceConfig::slotChangeFont()
 void AppearanceConfig::slotStyleSelected()
 {
 	// Retrieve variant list.
-	d->currentStyle = d->styleItemMap[d->mPrfsChatWindow->styleList->selectedItem()];
+	QString stylePath = d->styleItemMap[d->mPrfsChatWindow->styleList->selectedItem()];
+	d->currentStyle = ChatWindowStyleManager::self()->getStyleFromPool( stylePath );
 	
 	if(d->currentStyle)
 	{
 		d->currentVariantMap = d->currentStyle->getVariants();
-		kdDebug(14000) << "Loading style: " << d->currentStyle->getStylePath() << endl;
+		kdDebug(14000) << k_funcinfo << "Loading style: " << d->currentStyle->getStylePath() << endl;
 	
 		// Update the variant list based on current style.
 		d->mPrfsChatWindow->variantList->clear();
@@ -873,7 +869,8 @@ void AppearanceConfig::slotDeleteStyle()
 		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "The style %1 was succesfully deleted.").arg(styleNameToDelete));
 		
 		// Get the first item in the stye List.
-		d->currentStyle = (*d->styleItemMap.begin());
+		QString stylePath = (*d->styleItemMap.begin());
+		d->currentStyle = ChatWindowStyleManager::self()->getStyleFromPool(stylePath);
 		emitChanged();
 	}
 	else
@@ -986,7 +983,7 @@ void AppearanceConfig::createPreviewMessages()
 
 void AppearanceConfig::slotUpdatePreview()
 {
-	if(d->loading)
+	if(d->loading || !d->currentStyle)
 		return;
 
 	// Update the preview

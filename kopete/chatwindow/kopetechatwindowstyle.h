@@ -92,6 +92,10 @@ public:
 	QString getNextOutgoingHtml() const;
 	QString getStatusHtml() const;
 
+	/**
+	 * Reload style from disk.
+	 */
+	void reload();
 private:
 	/**
 	 * Read style HTML files from disk

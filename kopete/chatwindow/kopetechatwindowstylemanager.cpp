@@ -31,6 +31,7 @@
 #include <ktar.h>
 #include <kmimetype.h>
 #include <kio/netaccess.h>
+#include <kstaticdeleter.h>
 
 #include "kopetechatwindowstyle.h"
 
@@ -48,8 +49,8 @@ public:
 			styleDirLister->deleteLater();
 		}
 
-		StyleList::Iterator styleIt, styleItEnd = availableStyles.end();
-		for(styleIt = availableStyles.begin(); styleIt != styleItEnd; ++styleIt)
+		QMap<QString, ChatWindowStyle*>::Iterator styleIt, styleItEnd = stylePool.end();
+		for(styleIt = stylePool.begin(); styleIt != styleItEnd; ++styleIt)
 		{
 			delete styleIt.data();
 		}
@@ -57,16 +58,23 @@ public:
 
 	KDirLister *styleDirLister;
 	StyleList availableStyles;
+	
+	// key = style path, value = ChatWindowStyle instance
+	QMap<QString, ChatWindowStyle*> stylePool;
 
 	QValueStack<KURL> styleDirs;
 };
+
+static KStaticDeleter<ChatWindowStyleManager> ChatWindowStyleManagerstaticDeleter;
 
 ChatWindowStyleManager *ChatWindowStyleManager::s_self = 0;
 
 ChatWindowStyleManager *ChatWindowStyleManager::self()
 {
 	if( !s_self )
-		s_self = new ChatWindowStyleManager;
+	{
+		ChatWindowStyleManagerstaticDeleter.setObject( s_self, new ChatWindowStyleManager() );
+	}
 	
 	return s_self;
 }
@@ -75,6 +83,7 @@ ChatWindowStyleManager::ChatWindowStyleManager(QObject *parent, const char *name
 	: QObject(parent, name), d(new Private())
 {
 	kdDebug(14000) << k_funcinfo << endl;
+	loadStyles();
 }
 
 ChatWindowStyleManager::~ChatWindowStyleManager()
@@ -85,28 +94,11 @@ ChatWindowStyleManager::~ChatWindowStyleManager()
 
 void ChatWindowStyleManager::loadStyles()
 {
-	// Clear current Dir Lister.
-	if(d->styleDirLister)
-	{
-		d->styleDirLister->deleteLater();
-		d->styleDirLister = 0L;
-	}
-	
-	// Clear current availableStyles
-	// FIXME: It crash :(
-// 	StyleList::Iterator styleIt, styleItEnd = d->availableStyles.end();
-// 	for(styleIt = d->availableStyles.begin(); styleIt != styleItEnd; ++styleIt)
-// 	{
-// 		delete styleIt.data();
-// 		styleIt.data() = 0L;
-// 	}
-// 	d->availableStyles.clear();
-
 	QStringList chatStyles = KGlobal::dirs()->findDirs( "appdata", QString::fromUtf8( "styles" ) );
 	QStringList::const_iterator it;
 	for(it = chatStyles.constBegin(); it != chatStyles.constEnd(); ++it)
 	{
-		kdDebug(14010) << k_funcinfo << *it << endl;
+		kdDebug(14000) << k_funcinfo << *it << endl;
 		d->styleDirs.push( KURL(*it) );
 	}
 	
@@ -277,17 +269,37 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 
 bool ChatWindowStyleManager::removeStyle(const QString &styleName)
 {
-	ChatWindowStyle *deletedStyle = d->availableStyles[styleName];
-	if(deletedStyle)
-	{
-		QString stylePath = deletedStyle->getStylePath();
-		// Remove style from Available Styles
-		d->availableStyles.remove(styleName);
+	QString stylePath = d->availableStyles[styleName];
 
-		// Do the actual deletion of the directory style.
-		return KIO::NetAccess::del( KURL(stylePath), 0 );
+	d->availableStyles.remove(styleName);
+
+	if( d->stylePool.contains(stylePath) )
+	{
+		ChatWindowStyle *deletedStyle = d->stylePool[stylePath];
+		d->stylePool.remove(stylePath);
+		delete deletedStyle;
 	}
-	return false;
+
+	// Do the actual deletion of the directory style.
+	return KIO::NetAccess::del( KURL(stylePath), 0 );
+}
+
+ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &stylePath)
+{
+	if( d->stylePool.contains(stylePath) )
+	{
+		return d->stylePool[stylePath];
+	}
+	else
+	{
+		// Build a chat window style and list its variants, then add it to the pool.
+		ChatWindowStyle *style = new ChatWindowStyle(stylePath, ChatWindowStyle::StyleBuildNormal);
+		d->stylePool.insert(stylePath, style);
+
+		return style;
+	}
+	
+	return 0;
 }
 
 void ChatWindowStyleManager::slotNewStyles(const KFileItemList &dirList)
@@ -299,11 +311,24 @@ void ChatWindowStyleManager::slotNewStyles(const KFileItemList &dirList)
 		// Ignore data dir(from deprecated XSLT themes)
 		if( !item->url().fileName().contains(QString::fromUtf8("data")) )
 		{
-			kdDebug(14010) << k_funcinfo << "Listing: " << item->url().fileName() << endl;
-			// Build a chat window style and list its variants.
-			ChatWindowStyle *newStyle = new ChatWindowStyle(item->url().path(), ChatWindowStyle::StyleBuildNormal);
-			// TODO: Use name from Info.plist
-			d->availableStyles.insert(item->url().fileName(), newStyle);
+			kdDebug(14000) << k_funcinfo << "Listing: " << item->url().fileName() << endl;
+			// If the style path is already in the pool, that's mean the style was updated on disk
+			// Reload the style
+			if( d->stylePool.contains(item->url().path()) )
+			{
+				kdDebug(14000) << k_funcinfo << "Updating style: " << item->url().path() << endl;
+
+				d->stylePool[item->url().path()]->reload();
+
+				// Add to avaialble if required.
+				if( !d->availableStyles.contains(item->url().fileName()) )
+					d->availableStyles.insert(item->url().fileName(), item->url().path());
+			}
+			else
+			{
+				// TODO: Use name from Info.plist
+				d->availableStyles.insert(item->url().fileName(), item->url().path());
+			}
 		}
 		++it;
 	}
@@ -314,7 +339,7 @@ void ChatWindowStyleManager::slotDirectoryFinished()
 	// Start another scanning if the directories stack is not empty
 	if( !d->styleDirs.isEmpty() )
 	{
-		kdDebug(14010) << k_funcinfo << "Starting another directory." << endl;
+		kdDebug(14000) << k_funcinfo << "Starting another directory." << endl;
 		d->styleDirLister->openURL(d->styleDirs.pop(), true);
 	}
 	else
