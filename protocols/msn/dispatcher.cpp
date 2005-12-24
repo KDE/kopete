@@ -139,7 +139,7 @@ void Dispatcher::sendFile(const QString& path, Q_INT64 fileSize, const QString& 
 	writer << (Q_INT32)1;
 	// Write the file name in utf-16 to the stream.
 	QTextStream ts(header, IO_WriteOnly);
-	ts.setEncoding(QTextStream::Unicode);
+	ts.setEncoding(QTextStream::RawUnicode);
 	ts.device()->at(20);
 	ts << path.section('/', -1);
 	// NOTE Background Sharing base64 [540..569]
