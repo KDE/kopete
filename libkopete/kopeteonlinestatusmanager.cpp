@@ -414,7 +414,7 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 			{
 				action=new OnlineStatusAction( status, caption, status.iconFor(account) , account, actionName );
 				connect(action,SIGNAL(activated(const Kopete::OnlineStatus&)) ,
-						0l, SLOT(setOnlineStatus(const Kopete::OnlineStatus&)));
+						account , SLOT(setOnlineStatus(const Kopete::OnlineStatus&)));
 			}
 		}
 
