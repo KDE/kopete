@@ -52,7 +52,7 @@ KopeteFileConfirmDialog::KopeteFileConfirmDialog(const Kopete::FileTransferInfo 
 
 	setMainWidget(m_view);
 
-	connect(m_view->cmdBrowse, SIGNAL(pressed()), this, SLOT(slotBrowsePressed()));
+	connect(m_view->cmdBrowse, SIGNAL(clicked()), this, SLOT(slotBrowsePressed()));
 }
 
 KopeteFileConfirmDialog::~KopeteFileConfirmDialog()
