@@ -1,15 +1,13 @@
 <div class="KopeteMessage">
 	<div class="IncomingMessageHeader">
 		<!-- Contact photo -->
-		<img class="userPhoto" src="%userIconPath%" />
+		<img class="inUserPicture" src="%userIconPath%" />
 		<!-- Protocol Icon -->
-		<div style="float: left;"><img src="%senderStatusIcon%" /></div>
+		<img class="inStatusIcon" src="%senderStatusIcon%" />
 		<!-- Time Display -->
-		<div style="float: right;">%time%</div>
+		<div class="inTime">%time%</div>
 		<!-- MetaContact display -->
-		<div style="margin-left: 60px;">
-			<span style="font-weight: bold;">%sender% &#160;</span>
-		</div>
+		<div class="inMetacontact">%sender% &#160;</div>
 	</div>
 	<div class="IncomingMessage">
 		%message%
