@@ -81,7 +81,7 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent, 
 	mMainWidget->leServer->setText ( parent->mServer->text () );
 	mMainWidget->leJID->setText ( parent->mID->text () );
 	mMainWidget->lePassword->setText ( parent->mPass->password () );
-	mMainWidget->lePasswordVerify->setText ( parent->mPass->password () );
+	//	mMainWidget->lePasswordVerify->setText ( parent->mPass->password () ); //BUG 14631
 	mMainWidget->sbPort->setValue ( parent->mPort->value () );
 	mMainWidget->cbUseSSL->setChecked ( parent->cbUseSSL->isChecked () );
 
