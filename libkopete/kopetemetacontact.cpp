@@ -789,17 +789,20 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 	// Create a cache for the contact photo.
 	if(d->photoSourceContact != 0L)
 	{
-		QVariant photoProp;
 		if ( contact->hasProperty( Kopete::Global::Properties::self()->photo().key() ) )
-			photoProp = contact->property( Kopete::Global::Properties::self()->photo().key() ).value();
-
-		if(photoProp.canCast( QVariant::Image ))
-			d->contactPicture.setPicture(photoProp.value<QImage>());
-		else if(photoProp.canCast( QVariant::Pixmap ))
-			d->contactPicture.setPicture(photoProp.value<QPixmap>().convertToImage());
-		else if(!photoProp.asString().isEmpty())
 		{
-			d->contactPicture.setPicture(photoProp.toString());
+			QVariant photoProp = contact->property( Kopete::Global::Properties::self()->photo().key() ).value();
+
+			if(photoProp.canCast( QVariant::Image ))
+				d->contactPicture.setPicture(photoProp.value<QImage>());
+			else if(photoProp.canCast( QVariant::Pixmap ))
+				d->contactPicture.setPicture(photoProp.value<QPixmap>().convertToImage());
+			else
+			{
+				QString str=photoProp.toString();
+				if(!str.isEmpty())
+					d->contactPicture.setPicture(str);
+			}
 		}
 	}
 
