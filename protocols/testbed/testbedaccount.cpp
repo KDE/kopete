@@ -23,6 +23,7 @@
 #include <kmenu.h>
 
 #include "kopetemetacontact.h"
+#include "kopetecontactlist.h"
 
 #include "testbedcontact.h"
 #include "testbedfakeserver.h"
@@ -33,8 +34,7 @@ TestbedAccount::TestbedAccount( TestbedProtocol *parent, const QString& accountI
 : Kopete::Account ( parent, accountID , name )
 {
 	// Init the myself contact
-	// FIXME: I think we should add a global self metaContact (Olivier)
-	setMyself( new TestbedContact( this, accountId(), TestbedContact::Null, accountId(), 0L ) );
+	setMyself( new TestbedContact( this, accountId(), TestbedContact::Null, accountId(), Kopete::ContactList::self()->myself() ) );
 	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
 	m_server = new TestbedFakeServer();;
 }
