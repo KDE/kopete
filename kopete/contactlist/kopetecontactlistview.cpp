@@ -711,9 +711,7 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 
 				// Submenus for separate contact actions
 				bool sep = false;  //FIXME: find if there is already a separator in the end - Olivier
-				QList<Kopete::Contact*> contactsList = metaLVI->metaContact()->contacts();
-				QList<Kopete::Contact*>::iterator it, itEnd = contactsList.end();
-				for( it = contactsList.begin(); it != itEnd; ++it )
+				foreach( c , metaLVI->metaContact()->contacts() )
 				{
 					if( sep )
 					{
@@ -721,7 +719,7 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 						sep = false;
 					}
 
-					KMenu *contactMenu = (*it)->popupMenu();
+					KMenu *contactMenu = c->popupMenu();
 					connect( popup, SIGNAL( aboutToHide() ), contactMenu, SLOT( deleteLater() ) );
 					QString nick=c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 					QString text= nick.isEmpty() ?  c->contactId() : i18n( "Translators: format: '<displayName> (<id>)'", "%2 <%1>" ). arg( c->contactId(), nick );
