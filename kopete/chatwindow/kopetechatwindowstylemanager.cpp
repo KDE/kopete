@@ -111,7 +111,8 @@ void ChatWindowStyleManager::loadStyles()
 	connect(d->styleDirLister, SIGNAL(newItems(const KFileItemList &)), this, SLOT(slotNewStyles(const KFileItemList &)));
 	connect(d->styleDirLister, SIGNAL(completed()), this, SLOT(slotDirectoryFinished()));
 
-	d->styleDirLister->openURL(d->styleDirs.pop(), true);
+	if(!d->styleDirs.isEmpty())
+		d->styleDirLister->openURL(d->styleDirs.pop(), true);
 }
 
 ChatWindowStyleManager::StyleList ChatWindowStyleManager::getAvailableStyles()
