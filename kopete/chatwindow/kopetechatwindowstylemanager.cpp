@@ -32,6 +32,8 @@
 #include <kmimetype.h>
 #include <kio/netaccess.h>
 #include <kstaticdeleter.h>
+#include <kconfig.h>
+#include <kglobal.h>
 
 #include "kopetechatwindowstyle.h"
 
@@ -108,7 +110,8 @@ void ChatWindowStyleManager::loadStyles()
 	connect(d->styleDirLister, SIGNAL(newItems(const KFileItemList &)), this, SLOT(slotNewStyles(const KFileItemList &)));
 	connect(d->styleDirLister, SIGNAL(completed()), this, SLOT(slotDirectoryFinished()));
 
-	d->styleDirLister->openURL(d->styleDirs.pop(), true);
+	if( !d->styleDirs.isEmpty() )
+		d->styleDirLister->openURL(d->styleDirs.pop(), true);
 }
 
 ChatWindowStyleManager::StyleList ChatWindowStyleManager::getAvailableStyles()
@@ -288,6 +291,17 @@ ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &stylePa
 {
 	if( d->stylePool.contains(stylePath) )
 	{
+		// NOTE: This is a hidden config switch for style developers
+		// Check in the config if the cache is disabled.
+		// if the cache is disabled, reload the style everytime it's getted.
+		KConfig *config = KGlobal::config();
+		config->setGroup("KopeteStyleDebug");
+		bool disableCache = config->readBoolEntry("disableStyleCache", false);
+		if(disableCache)
+		{
+			d->stylePool[stylePath]->reload();
+		}
+
 		return d->stylePool[stylePath];
 	}
 	else
