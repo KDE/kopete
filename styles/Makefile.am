@@ -1,4 +1,4 @@
-SUBDIRS = . data Kopete Hacker
+SUBDIRS = . data Kopete Hacker Clean
 
 styles_DATA = \
 	Adium.xsl \
