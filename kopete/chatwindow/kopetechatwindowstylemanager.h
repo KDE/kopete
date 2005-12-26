@@ -25,10 +25,19 @@
 
 class ChatWindowStyle;
 /**
- * Sigleton class that create all the ChatWindowStyle objects.
- * This class list all the available styles in $KDEDATADIR/kopete/styles
+ * Sigleton class that handle Chat Window styles. 
+ * It use style absolute path to avoid unexpected behavior that could happen when using style name.
  *
- * Each style is in own subdirectory
+ * It can install, delete styles. The styles are managed in a pool, they are only retrieved on demand.
+ *
+ * Use getStyleFromPool to retrieve a ChatWindowStyle instance. Do not delete the returned instance, it
+ * is handled by this class.
+ *
+ * When called the first time, it list all the available styles in $KDEDATADIR/kopete/styles and
+ * KDirWatch (via KDirLister) watch for new styles. 
+ *
+ * If you want to keep a trace of avaiable styles, connect to loadStylesFinished() signal. 
+ * It is called when KDirLister finish a job(ex: on new directory).
  *
  * @author Michaël Larouche <michael.larouche@kdemail.net>
  */
@@ -53,6 +62,9 @@ public:
 	 */
 	enum StyleInstallStatus { StyleInstallOk = 0, StyleNotValid, StyleNoDirectoryValid, StyleCannotOpen, StyleUnknow };
 
+	/**
+	 * Destructor.
+	 */
 	~ChatWindowStyleManager();
 
 	/**
@@ -63,6 +75,7 @@ public:
 
 	/**
 	 * List all availables styles.
+	 * Init KDirLister and thus KDirWatch that watch for new styles.
 	 */
 	void loadStyles();
 
@@ -77,16 +90,17 @@ public slots:
 	 * Note that you must pass a path to a archive.
 	 *
 	 * @param styleBundlePath Path to the container file to install.
-	 * @return a value contained in the StyleInstallStatus.
+	 * @return A status code from StyleInstallStatus enum.
 	 */
 	int installStyle(const QString &styleBundlePath);
 
 	/**
 	 * Remove a style from user style directory
 	 *
-	 * @param styleName the name(not the path) of the style to remove
+	 * @param stylePath the path of the style to remove.
+	 * @return true if the deletion went without problems.
 	 */
-	bool removeStyle(const QString &styleName);
+	bool removeStyle(const QString &stylePath);
 	
 	/**
 	 * Get a instance of a ChatWindowStyle from the pool.
@@ -106,10 +120,22 @@ signals:
 	void loadStylesFinished();
 
 private slots:
+	/**
+	 * KDirLister found new files.
+	 * @param dirList new files found.
+	 */
 	void slotNewStyles(const KFileItemList &dirList);
+	/**
+	 * KDirLister finished a job.
+	 * Emit loadStylesFinished() if they are no directory left in the stack.
+	 */
 	void slotDirectoryFinished();
 
 private:
+	/**
+	 * Private constructor(it's a singleton class)
+	 * Call loadStyles() to list all avaiable styles.
+	 */
 	ChatWindowStyleManager(QObject *parent = 0, const char *name = 0);
 
 	static ChatWindowStyleManager *s_self;

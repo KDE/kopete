@@ -160,7 +160,7 @@ class KopeteStyleNewStuff : public KNewStuff
 // 			if ( Kopete::XSLT( styleSheet ).isValid() )
 // 				mAppearanceConfig->addStyle( origFileName.section( '.', 0, 0 ), styleSheet );
 // 			QFile::remove( fileName );
-// 			mAppearanceConfig->slotLoadStyles();
+// 			mAppearanceConfig->slotLoadChatStyles();
 			return true;
 		}
 		else if ( origFileName.endsWith( ".tar.gz" ) )
@@ -184,7 +184,7 @@ class KopeteStyleNewStuff : public KNewStuff
 			dir->copyTo( locateLocal( "appdata", QString::fromLatin1( "styles" ) ) );
 			tar.close();
 			QFile::remove(fileName);
-			mAppearanceConfig->slotLoadStyles();
+			mAppearanceConfig->slotLoadChatStyles();
 			return true;
 		}
 		else if ( origFileName.endsWith( ".xsl.gz" ) )
@@ -207,7 +207,7 @@ class KopeteStyleNewStuff : public KNewStuff
 // 			if ( Kopete::XSLT( styleSheet ).isValid() )
 // 				mAppearanceConfig->addStyle( origFileName.section( '.', 0, 0 ), styleSheet );
 			QFile::remove( fileName );
-			mAppearanceConfig->slotLoadStyles();
+			mAppearanceConfig->slotLoadChatStyles();
 			return true;
 
 		}
@@ -353,14 +353,14 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	connect(d->mPrfsEmoticons->icon_theme_list, SIGNAL(selectionChanged()),
 		this, SLOT(slotSelectedEmoticonsThemeChanged()));
 	connect(d->mPrfsEmoticons->btnInstallTheme, SIGNAL(clicked()),
-		this, SLOT(installNewTheme()));
+		this, SLOT(installEmoticonTheme()));
 
 	// Since KNewStuff is incomplete and buggy we'll disable it by default.
 	d->mPrfsEmoticons->btnGetThemes->setEnabled( config->readBoolEntry( "ForceNewStuff", false ) );
 	connect(d->mPrfsEmoticons->btnGetThemes, SIGNAL(clicked()),
-		this, SLOT(slotGetThemes()));
+		this, SLOT(slotGetEmoticonThemes()));
 	connect(d->mPrfsEmoticons->btnRemoveTheme, SIGNAL(clicked()),
-		this, SLOT(removeSelectedTheme()));
+		this, SLOT(removeSelectedEmoticonTheme()));
 
 	d->mAppearanceTabCtl->addTab(d->mPrfsEmoticons, i18n("&Emoticons"));
 
@@ -368,19 +368,19 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	d->mPrfsChatWindow = new AppearanceConfig_ChatWindow(d->mAppearanceTabCtl);
 
 	connect(d->mPrfsChatWindow->styleList, SIGNAL(selectionChanged(QListBoxItem *)),
-		this, SLOT(slotStyleSelected()));
+		this, SLOT(slotChatStyleSelected()));
 	connect(d->mPrfsChatWindow->variantList, SIGNAL(activated(const QString&)),
-		this, SLOT(slotVariantSelected(const QString &)));
+		this, SLOT(slotChatStyleVariantSelected(const QString &)));
 	connect(d->mPrfsChatWindow->deleteButton, SIGNAL(clicked()),
-		this, SLOT(slotDeleteStyle()));
+		this, SLOT(slotDeleteChatStyle()));
 	connect(d->mPrfsChatWindow->installButton, SIGNAL(clicked()),
-		this, SLOT(slotInstallStyle()));
+		this, SLOT(slotInstallChatStyle()));
 	connect(d->mPrfsChatWindow->btnGetStyles, SIGNAL(clicked()),
-		this, SLOT(slotGetStyles()));
+		this, SLOT(slotGetChatStyles()));
 	connect(d->mPrfsChatWindow->groupConsecutiveMessages, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
 	// Show the available styles when the Manager has finish to load the styles.
-	connect(ChatWindowStyleManager::self(), SIGNAL(loadStylesFinished()), this, SLOT(slotLoadStyles()));
+	connect(ChatWindowStyleManager::self(), SIGNAL(loadStylesFinished()), this, SLOT(slotLoadChatStyles()));
 
 	// Since KNewStuff is incomplete and buggy we'll disable it by default.
 	d->mPrfsChatWindow->btnGetStyles->setEnabled( config->readBoolEntry( "ForceNewStuff", false ) );
@@ -453,11 +453,11 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	connect(d->mPrfsColors->fontFace, SIGNAL(fontSelected(const QFont &)),
 		this, SLOT(slotChangeFont()));
 	connect(d->mPrfsColors->textColor, SIGNAL(changed(const QColor &)),
-		this, SLOT(slotUpdatePreview()));
+		this, SLOT(slotUpdateChatPreview()));
 	connect(d->mPrfsColors->bgColor, SIGNAL(changed(const QColor &)),
-		this, SLOT(slotUpdatePreview()));
+		this, SLOT(slotUpdateChatPreview()));
 	connect(d->mPrfsColors->linkColor, SIGNAL(changed(const QColor &)),
-		this, SLOT(slotUpdatePreview()));
+		this, SLOT(slotUpdateChatPreview()));
 	connect(d->mPrfsColors->mGreyIdleMetaContacts, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
 	connect(d->mPrfsColors->idleContactColor, SIGNAL(changed(const QColor &)),
@@ -569,7 +569,7 @@ void AppearanceConfig::load()
 	// "Chat Window" TAB ========================================================
 	d->mPrfsChatWindow->groupConsecutiveMessages->setChecked( p->groupConsecutiveMessages() );
 	// Look for avaiable chat window styles.
-	slotLoadStyles();
+	slotLoadChatStyles();
 	
 	// "Contact List" TAB =======================================================
 	d->mPrfsContactList->mTreeContactList->setChecked( p->treeView() );
@@ -617,10 +617,10 @@ void AppearanceConfig::load()
 	d->mPrfsColors->mRtfOverride->setChecked( p->rtfOverride() );
 
 	d->loading=false;
-	slotUpdatePreview();
+	slotUpdateChatPreview();
 }
 
-void AppearanceConfig::slotLoadStyles()
+void AppearanceConfig::slotLoadChatStyles()
 {
 	d->mPrfsChatWindow->styleList->clear();
 	d->styleItemMap.clear();
@@ -708,16 +708,16 @@ void AppearanceConfig::slotHighlightChanged()
 //	bool value = mPrfsChatWindow->highlightEnabled->isChecked();
 //	mPrfsChatWindow->foregroundColor->setEnabled ( value );
 //	mPrfsChatWindow->backgroundColor->setEnabled ( value );
-	slotUpdatePreview();
+	slotUpdateChatPreview();
 }
 
 void AppearanceConfig::slotChangeFont()
 {
-	slotUpdatePreview();
+	slotUpdateChatPreview();
 	emitChanged();
 }
 
-void AppearanceConfig::slotStyleSelected()
+void AppearanceConfig::slotChatStyleSelected()
 {
 	// Retrieve variant list.
 	QString stylePath = d->styleItemMap[d->mPrfsChatWindow->styleList->selectedItem()];
@@ -750,7 +750,7 @@ void AppearanceConfig::slotStyleSelected()
 		}
 		
 		// Update the preview
-		slotUpdatePreview();
+		slotUpdateChatPreview();
 		// Get the first variant to preview
 		// Check if the current style has variants.
 		if( !d->currentVariantMap.empty() )
@@ -760,7 +760,7 @@ void AppearanceConfig::slotStyleSelected()
 	}
 }
 
-void AppearanceConfig::slotVariantSelected(const QString &variantName)
+void AppearanceConfig::slotChatStyleVariantSelected(const QString &variantName)
 {
 // 	kdDebug(14000) << k_funcinfo << variantName << endl;
 // 	kdDebug(14000) << k_funcinfo << d->currentVariantMap[variantName] << endl;
@@ -770,7 +770,7 @@ void AppearanceConfig::slotVariantSelected(const QString &variantName)
 	emitChanged();
 }
 
-void AppearanceConfig::slotInstallStyle()
+void AppearanceConfig::slotInstallChatStyle()
 {
 	KURL styleToInstall = KFileDialog::getOpenURL( QString::null, QString::fromUtf8("application/x-zip application/x-tgz application/x-tbz"), this, i18n("Choose Chat Window style to install.") );
 
@@ -815,58 +815,13 @@ void AppearanceConfig::slotInstallStyle()
 	}
 }
 
-void AppearanceConfig::slotCopyStyle()
+void AppearanceConfig::slotDeleteChatStyle()
 {
-// 	QListBoxItem *copiedItem = d->mPrfsChatWindow->styleList->selectedItem();
-// 	if( copiedItem )
-// 	{
-// 		QString styleName =
-// 			KInputDialog::getText( i18n( "New Style Name" ), i18n( "Enter the name of the new style:" ) );
-// 
-// 		if ( !styleName.isEmpty() )
-// 		{
-// 			QString stylePath = d->itemMap[ copiedItem ];
-// 			addStyle( styleName, fileContents( stylePath ) );
-// 		}
-// 	}
-// 	else
-// 	{
-// 		KMessageBox::queuedMessageBox( this, KMessageBox::Sorry,
-// 			i18n("Please select a style to copy."), i18n("No Style Selected") );
-// 	}
-	emitChanged();
-}
-
-void AppearanceConfig::slotDeleteStyle()
-{
-// 	if( KMessageBox::warningContinueCancel( this, i18n("Are you sure you want to delete the style \"%1\"?")
-// 		.arg( d->mPrfsChatWindow->styleList->selectedItem()->text() ),
-// 		i18n("Delete Style"), KGuiItem(i18n("Delete Style"),"editdelete")) == KMessageBox::Continue )
-// 	{
-// 		QListBoxItem *style = d->mPrfsChatWindow->styleList->selectedItem();
-// 		QString filePath = d->itemMap[ style ];
-// 		d->itemMap.remove( style );
-// 
-// 		QFileInfo fi( filePath );
-// 		if( fi.isWritable() )
-// 			QFile::remove( filePath );
-// 
-// 		KConfig *config = KGlobal::config();
-// 		config->setGroup("KNewStuffStatus");
-// 		config->deleteEntry( style->text() );
-// 		config->sync();
-// 
-// 		if( style->next() )
-// 			d->mPrfsChatWindow->styleList->setSelected( style->next(), true );
-// 		else
-// 			d->mPrfsChatWindow->styleList->setSelected( style->prev(), true );
-// 		delete style;
-// 	}
-
-	QString styleNameToDelete = d->mPrfsChatWindow->styleList->selectedItem()->text();
-	if( ChatWindowStyleManager::self()->removeStyle(styleNameToDelete) )
+	QString styleName = d->mPrfsChatWindow->styleList->selectedItem()->text();
+	QString stylePathToDelete = d->styleItemMap[d->mPrfsChatWindow->styleList->selectedItem()];
+	if( ChatWindowStyleManager::self()->removeStyle(stylePathToDelete) )
 	{
-		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "The style %1 was succesfully deleted.").arg(styleNameToDelete));
+		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "The style %1 was succesfully deleted.").arg(styleName));
 		
 		// Get the first item in the stye List.
 		QString stylePath = (*d->styleItemMap.begin());
@@ -875,12 +830,11 @@ void AppearanceConfig::slotDeleteStyle()
 	}
 	else
 	{
-		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "An error occured while trying to delete %1 style.").arg(styleNameToDelete));
+		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "An error occured while trying to delete %1 style.").arg(styleName));
 	}
-	
 }
 
-void AppearanceConfig::slotGetStyles()
+void AppearanceConfig::slotGetChatStyles()
 {
 	// we need this because KNewStuffGeneric's install function isn't clever enough
 	KopeteStyleNewStuff * kns = new KopeteStyleNewStuff( "kopete/chatstyle", this );
@@ -981,7 +935,7 @@ void AppearanceConfig::createPreviewMessages()
 	d->preview->appendMessage(msgBye);
 }
 
-void AppearanceConfig::slotUpdatePreview()
+void AppearanceConfig::slotUpdateChatPreview()
 {
 	if(d->loading || !d->currentStyle)
 		return;
@@ -997,7 +951,7 @@ void AppearanceConfig::emitChanged()
 	emit changed( true );
 }
 
-void AppearanceConfig::installNewTheme()
+void AppearanceConfig::installEmoticonTheme()
 {
 	KURL themeURL = KURLRequesterDlg::getURL(QString::null, this,
 			i18n("Drag or Type Emoticon Theme URL"));
@@ -1016,7 +970,7 @@ void AppearanceConfig::installNewTheme()
 	updateEmoticonlist();
 }
 
-void AppearanceConfig::removeSelectedTheme()
+void AppearanceConfig::removeSelectedEmoticonTheme()
 {
 	QListBoxItem *selected = d->mPrfsEmoticons->icon_theme_list->selectedItem();
 	if(selected==0)
@@ -1040,7 +994,7 @@ void AppearanceConfig::removeSelectedTheme()
 	updateEmoticonlist();
 }
 
-void AppearanceConfig::slotGetThemes()
+void AppearanceConfig::slotGetEmoticonThemes()
 {
 	KConfig* config = KGlobal::config();
 	config->setGroup( "KNewStuff" );

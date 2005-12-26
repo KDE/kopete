@@ -270,21 +270,30 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 	return StyleUnknow;
 }
 
-bool ChatWindowStyleManager::removeStyle(const QString &styleName)
+bool ChatWindowStyleManager::removeStyle(const QString &stylePath)
 {
-	QString stylePath = d->availableStyles[styleName];
-
-	d->availableStyles.remove(styleName);
-
-	if( d->stylePool.contains(stylePath) )
+	// Find for the current style in avaiableStyles map.
+	StyleList::Iterator foundStyle = d->availableStyles.find(stylePath);
+	// QMap iterator return end() if it found no item.
+	if(foundStyle != d->availableStyles.end())
 	{
-		ChatWindowStyle *deletedStyle = d->stylePool[stylePath];
-		d->stylePool.remove(stylePath);
-		delete deletedStyle;
+		d->availableStyles.remove(foundStyle);
+		
+		// Remove and delete style from pool if needed.
+		if( d->stylePool.contains(stylePath) )
+		{
+			ChatWindowStyle *deletedStyle = d->stylePool[stylePath];
+			d->stylePool.remove(stylePath);
+			delete deletedStyle;
+		}
+	
+		// Do the actual deletion of the directory style.
+		return KIO::NetAccess::del( KURL(stylePath), 0 );
 	}
-
-	// Do the actual deletion of the directory style.
-	return KIO::NetAccess::del( KURL(stylePath), 0 );
+	else
+	{
+		return false;
+	}
 }
 
 ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &stylePath)

@@ -42,21 +42,20 @@ public:
 
 private slots:
 	void slotSelectedEmoticonsThemeChanged();
-	void slotUpdatePreview();
+	void slotUpdateChatPreview();
 	void slotHighlightChanged();
 	void slotChangeFont();
-	void slotInstallStyle();
-	void slotDeleteStyle();
-	void slotCopyStyle();
-	void slotStyleSelected();
-	void slotVariantSelected(const QString &variantName);
+	void slotInstallChatStyle();
+	void slotDeleteChatStyle();
+	void slotChatStyleSelected();
+	void slotChatStyleVariantSelected(const QString &variantName);
 	void slotEditTooltips();
 	void emitChanged();
-	void installNewTheme();
-	void removeSelectedTheme();
-	void slotGetThemes();
-	void slotGetStyles();
-	void slotLoadStyles();
+	void installEmoticonTheme();
+	void removeSelectedEmoticonTheme();
+	void slotGetEmoticonThemes();
+	void slotGetChatStyles();
+	void slotLoadChatStyles();
 
 private:
 	void updateEmoticonlist();
