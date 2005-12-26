@@ -229,7 +229,8 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
         {
 			// this message is not encrypted
 			jabberMessage.setBody ( message.plainBody ());
-			if (message.format() ==  Kopete::Message::RichText) {
+			if (message.format() ==  Kopete::Message::RichText) 
+			{
 				JabberResourcePool::ResourceList resourceList;
 
 				account()->resourcePool()->findResources ( toJid, resourceList );
@@ -242,13 +243,17 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 				{
 					if ((*it)->jid().resource().compare(currentResource) == 0)
 					{
-						if ((*it)->canHandleXHTML())
+						// Check if ressource support XHTML-IM
+						if ((*it)->supportedFeatures() & JabberProtocol::Feature_XHTML_IM)
 						{
-							QString attribs = "";
-								for (unsigned int i = 0; i <= message.asXML().elementsByTagName("body").item(0).attributes().count()-1; i++) {
-									attribs += message.asXML().elementsByTagName("body").item(0).attributes().item(i).toAttr().name()+"=\""+ message.asXML().elementsByTagName("body").item(0).attributes().item(i).toAttr().value()+"\" ";
-								}
-							  jabberMessage.setXHTMLBody ( message.escapedBody(), "", attribs);
+							QString xhtmlStyleAttr;
+							// TODO: Do not use asXML because it will be removed someday -Michael (DarkShock)
+							QDomNode bodyNode = message.asXML().elementsByTagName("body").item(0);
+							for (unsigned int i = 0; i <= bodyNode.attributes().count()-1; i++)
+							{
+									xhtmlStyleAttr += bodyNode.attributes().item(i).toAttr().name()+"=\""+ bodyNode.attributes().item(i).toAttr().value()+"\" ";
+							}
+							jabberMessage.setXHTMLBody ( message.escapedBody(), QString::null, xhtmlStyleAttr);
 						}
 					}
 				}
