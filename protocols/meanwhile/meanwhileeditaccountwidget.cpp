@@ -48,8 +48,8 @@ MeanwhileEditAccountWidget::MeanwhileEditAccountWidget(
         mPasswordWidget->load(&static_cast<MeanwhileAccount*>(account())->password());
         mAutoConnect->setChecked(account()->excludeConnect());
         MeanwhileAccount *myAccount = static_cast<MeanwhileAccount *>(account());
-        mServerName->setText(myAccount->serverName());
-        mServerPort->setValue(myAccount->serverPort());
+        mServerName->setText(myAccount->getServerName());
+        mServerPort->setValue(myAccount->getServerPort());
     }
     else
     {
@@ -70,9 +70,7 @@ MeanwhileEditAccountWidget::~MeanwhileEditAccountWidget()
 Kopete::Account* MeanwhileEditAccountWidget::apply()
 {
     if(!account())
-        setAccount(
-                new MeanwhileAccount( 
-                        MeanwhileProtocol::protocol(), mScreenName->text()));
+        setAccount(new MeanwhileAccount(protocol, mScreenName->text()));
 
     MeanwhileAccount *myAccount = static_cast<MeanwhileAccount *>(account());
 

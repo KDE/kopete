@@ -30,40 +30,39 @@ namespace Kopete { class MetaContact; }
 
 class MeanwhileContact : public Kopete::Contact
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
 
-	MeanwhileContact( QString userId,
-	                  QString nickname,
-	                  MeanwhileAccount *account,
-	                  Kopete::MetaContact *parent);
-	~MeanwhileContact();
+    MeanwhileContact(QString userId, QString nickname,
+            MeanwhileAccount *account, Kopete::MetaContact *parent);
+    ~MeanwhileContact();
 
-	virtual bool isReachable();
+    virtual bool isReachable();
 
-	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
+    virtual void serialize(QMap<QString, QString> &serializedData,
+            QMap<QString, QString> &addressBookData);
 
-	virtual QPtrList<KAction> *customContextMenuActions();
+    virtual Kopete::ChatSession *manager(
+            CanCreateFlags canCreate = CanCreate);
 
-	virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CanCreate );
+    QString meanwhileId() const;
 
-	QString meanwhileId;
+        virtual void sync(unsigned int changed = 0xff);
 
 public slots:
 
-	void sendMessage( Kopete::Message &message );
-	void receivedMessage( const QString &message );
-	virtual void slotUserInfo();
+    void sendMessage( Kopete::Message &message );
+    void receivedMessage( const QString &message );
+    virtual void slotUserInfo();
 
 protected slots:
-	void showContactSettings();
-	void slotChatSessionDestroyed();
-	void slotSendTyping(bool isTyping);
+    void showContactSettings();
+    void slotChatSessionDestroyed();
+    void slotSendTyping(bool isTyping);
 	
-protected:
-        Kopete::ChatSession *m_msgManager;
-	KActionCollection *m_actionCollection;
-	KAction* m_actionPrefs;
+private:
+    QString m_meanwhileId;
+    Kopete::ChatSession *m_msgManager;
 };
 
 #endif

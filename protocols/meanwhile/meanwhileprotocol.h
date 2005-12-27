@@ -1,6 +1,7 @@
 /*
     meanwhileprotocl.h - the meanwhile protocol definition
 
+    Copyright (c) 2005      by Jeremy Kerr <jk@ozlabs.org>
     Copyright (c) 2003-2004 by Sivaram Gottimukkala  <suppandi@gmail.com>
 
     Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -22,6 +23,7 @@
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
 #include "kopeteonlinestatus.h"
+#include "kopeteonlinestatusmanager.h"
 #include "addcontactpage.h"
 
 #include <kdebug.h>
@@ -37,44 +39,39 @@ class MeanwhileProtocol : public Kopete::Protocol
 {
     Q_OBJECT
 public:
-/* const */
-    MeanwhileProtocol(QObject *parent, 
-                      const char *name, 
-                      const QStringList &args);
-/* destructor */
-    ~MeanwhileProtocol();
-    
-    virtual AddContactPage * createAddContactWidget( 
-                                    QWidget *parent, 
-                                    Kopete::Account *account );
-                                    
-    virtual KopeteEditAccountWidget * createEditAccountWidget( 
-                                    Kopete::Account *account, 
-                                    QWidget *parent );     
+    MeanwhileProtocol(QObject *parent, const char *name,
+            const QStringList &args);
 
-    virtual Kopete::Account * createNewAccount( 
-                                    const QString &accountId );                               
+    ~MeanwhileProtocol();
+
+    virtual AddContactPage *createAddContactWidget(QWidget *parent,
+            Kopete::Account *account);
+
+    virtual KopeteEditAccountWidget *createEditAccountWidget(
+            Kopete::Account *account, QWidget *parent);
+
+    virtual Kopete::Account *createNewAccount(const QString &accountId);
 
     virtual Kopete::Contact *deserializeContact(
-                Kopete::MetaContact *metaContact,
-                const QMap<QString,QString> &serializedData,
-                const QMap<QString, QString> &addressBookData );
+            Kopete::MetaContact *metaContact,
+            const QMap<QString,QString> &serializedData,
+            const QMap<QString, QString> &addressBookData);
 
-    /* kopete doesnt know about these funcs */
-    static MeanwhileProtocol *protocol();
+    const Kopete::OnlineStatus accountOfflineStatus();
 
-    const Kopete::OnlineStatus meanwhileOffline;
-    const Kopete::OnlineStatus meanwhileOnline;
-    const Kopete::OnlineStatus meanwhileAway;
-    const Kopete::OnlineStatus meanwhileBusy;
-    const Kopete::OnlineStatus meanwhileIdle;
-    const Kopete::OnlineStatus meanwhileUnknown;
+    const Kopete::OnlineStatus lookupStatus(
+            enum Kopete::OnlineStatusManager::Categories cats);
 
-    const Kopete::ContactPropertyTmpl statusMessage;
-    const Kopete::ContactPropertyTmpl awayMessage;
+    const Kopete::OnlineStatus statusOffline;
+    const Kopete::OnlineStatus statusOnline;
+    const Kopete::OnlineStatus statusAway;
+    const Kopete::OnlineStatus statusBusy;
+    const Kopete::OnlineStatus statusIdle;
+    const Kopete::OnlineStatus statusAccountOffline;
 
-protected:
-    static MeanwhileProtocol *s_protocol;
+    Kopete::ContactPropertyTmpl statusMessage;
+    Kopete::ContactPropertyTmpl awayMessage;
+
 };
 
 #endif

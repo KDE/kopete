@@ -107,31 +107,6 @@
                             </widget>
                         </vbox>
                     </widget>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>textLabel14</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>3</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="minimumSize">
-                            <size>
-                                <width>600</width>
-                                <height>0</height>
-                            </size>
-                        </property>
-                        <property name="text">
-                            <string>&lt;i&gt;contact suppandi@gmail.com if you have any problems.&lt;/i&gt;</string>
-                        </property>
-                        <property name="alignment">
-                            <set>WordBreak|AlignTop</set>
-                        </property>
-                    </widget>
                 </vbox>
             </widget>
             <widget class="QWidget">

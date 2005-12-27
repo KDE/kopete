@@ -18,89 +18,76 @@
 #include "meanwhileaddcontactpage.h"
 #include "meanwhileeditaccountwidget.h"
 #include "meanwhileaccount.h"
-#include "meanwhilelibrary.h"
 #include <kgenericfactory.h>
 #include "kopeteaccountmanager.h"
 #include "kopeteglobal.h"
 #include "kopeteonlinestatusmanager.h"
 
-MeanwhileProtocol *MeanwhileProtocol::s_protocol = 0L;
+#include "mw_common.h"
 
 typedef KGenericFactory<MeanwhileProtocol> MeanwhileProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( 
-                kopete_meanwhile, 
-                MeanwhileProtocolFactory( "kopete_meanwhile" ))
+K_EXPORT_COMPONENT_FACTORY(kopete_meanwhile,
+    MeanwhileProtocolFactory("kopete_meanwhile"))
 
-MeanwhileProtocol::MeanwhileProtocol( QObject* parent, 
-                                      const char *name, 
-                                      const QStringList &/*args*/)
-    : Kopete::Protocol(MeanwhileProtocolFactory::instance(), 
-                     parent, name),
+MeanwhileProtocol::MeanwhileProtocol(QObject* parent, const char *name,
+        const QStringList &/*args*/)
+: Kopete::Protocol(MeanwhileProtocolFactory::instance(), parent, name),
 
-      meanwhileOffline(Kopete::OnlineStatus::Offline,  25, this, 
-              MeanwhileLibrary::Offline,
-              QString::null, i18n( "Offline" ), i18n( "Go Offline" ),
-              Kopete::OnlineStatusManager::Offline),
+    statusOffline(Kopete::OnlineStatus::Offline, 25, this, 0, QString::null,
+            i18n("Offline"), i18n("Offline"),
+            Kopete::OnlineStatusManager::Offline,
+	    Kopete::OnlineStatusManager::DisabledIfOffline),
 
-      meanwhileOnline(Kopete::OnlineStatus::Online, 25, this, 
-              MeanwhileLibrary::Active, QString::null, i18n( "Online" ),
-              i18n( "Go Online" ), Kopete::OnlineStatusManager::Online),
+    statusOnline(Kopete::OnlineStatus::Online, 25, this, mwStatus_ACTIVE,
+            QString::null, i18n("Online"), i18n("Online"),
+            Kopete::OnlineStatusManager::Online, 0),
 
-      meanwhileAway(Kopete::OnlineStatus::Away, 25, this, 
-              MeanwhileLibrary::Away, "meanwhile_away", i18n( "Away" ),
-              i18n( "Go Away" ), Kopete::OnlineStatusManager::Away),
+    statusAway(Kopete::OnlineStatus::Away, 20, this, mwStatus_AWAY,
+            "meanwhile_away", i18n("Away"), i18n("Away"),
+            Kopete::OnlineStatusManager::Away,
+	    Kopete::OnlineStatusManager::HasAwayMessage),
 
-      meanwhileBusy(Kopete::OnlineStatus::Away, 25, this, 
-              MeanwhileLibrary::Busy, "meanwhile_dnd",
-              i18n( "Busy" ) , i18n( "Mark as Busy" ),
-              Kopete::OnlineStatusManager::Busy),
+    statusBusy(Kopete::OnlineStatus::Away, 25, this, mwStatus_BUSY,
+            "meanwhile_dnd", i18n("Busy"), i18n("Busy"),
+          Kopete::OnlineStatusManager::Busy,
+	  Kopete::OnlineStatusManager::HasAwayMessage),
 
-      meanwhileIdle(Kopete::OnlineStatus::Away, 25, this, 
-              MeanwhileLibrary::Idle, "meanwhile_idle",
-              i18n( "Idle" ), i18n( "Marked as Idle" ),
-              Kopete::OnlineStatusManager::Idle),
+    statusIdle(Kopete::OnlineStatus::Away, 30, this, mwStatus_AWAY,
+            "meanwhile_idle", i18n("Idle"), i18n("Idle"),
+            Kopete::OnlineStatusManager::Idle, 0),
 
-      meanwhileUnknown(Kopete::OnlineStatus::Unknown, 25, this, 0,
-              "meanwhile_unknown", i18n( "Catch me if you can" )),
+    statusAccountOffline(Kopete::OnlineStatus::Offline, 0, this, 0,
+            QString::null, i18n("Account Offline")),
 
-      statusMessage(QString::fromLatin1("statusMessage"),
-              i18n("Status Message"), QString::null, false, true),
-	  awayMessage(Kopete::Global::Properties::self()->awayMessage())
+    statusMessage(QString::fromLatin1("statusMessage"),
+        i18n("Status Message"), QString::null, false, true),
+
+    awayMessage(Kopete::Global::Properties::self()->awayMessage())
 {
-//    LOG("MeanwhileProtocol()");
-    s_protocol = this;
+    HERE;
 
-    addAddressBookField( "messaging/meanwhile", Kopete::Plugin::MakeIndexField );
+    addAddressBookField("messaging/meanwhile", Kopete::Plugin::MakeIndexField);
 }
 
 MeanwhileProtocol::~MeanwhileProtocol()
 {
 }
 
-AddContactPage * MeanwhileProtocol::createAddContactWidget(
-                                    QWidget *parent, 
-                                    Kopete::Account * account )
+AddContactPage * MeanwhileProtocol::createAddContactWidget(QWidget *parent,
+        Kopete::Account *account )
 {
 	return new MeanwhileAddContactPage(parent, account);
 }
 
-KopeteEditAccountWidget * MeanwhileProtocol::createEditAccountWidget( 
-                                    Kopete::Account *account, 
-                                    QWidget *parent )
+KopeteEditAccountWidget * MeanwhileProtocol::createEditAccountWidget(
+        Kopete::Account *account, QWidget *parent )
 {
-//    LOG("createEditAccountWidget");
-	return new MeanwhileEditAccountWidget( parent, account, this );
+	return new MeanwhileEditAccountWidget(parent, account, this);
 }
 
-Kopete::Account *MeanwhileProtocol::createNewAccount( 
-                                    const QString &accountId )
+Kopete::Account *MeanwhileProtocol::createNewAccount(const QString &accountId)
 {
-	return new MeanwhileAccount( this, accountId, accountId.ascii() );
-}
-
-MeanwhileProtocol *MeanwhileProtocol::protocol()
-{
-    return s_protocol;
+	return new MeanwhileAccount(this, accountId, accountId.ascii());
 }
 
 Kopete::Contact *MeanwhileProtocol::deserializeContact( 
@@ -115,7 +102,7 @@ Kopete::Contact *MeanwhileProtocol::deserializeContact(
     MeanwhileAccount *theAccount = 
             static_cast<MeanwhileAccount*>(
                             Kopete::AccountManager::self()->
-                                    findAccount(protocol()->pluginId(), accountId));
+                                    findAccount(pluginId(), accountId));
 
     if(!theAccount)
     {
@@ -126,5 +113,14 @@ Kopete::Contact *MeanwhileProtocol::deserializeContact(
     return theAccount->contacts()[contactId];
 }
 
+const Kopete::OnlineStatus MeanwhileProtocol::accountOfflineStatus()
+{
+    return statusAccountOffline;
+}
 
+const Kopete::OnlineStatus MeanwhileProtocol::lookupStatus(
+            enum Kopete::OnlineStatusManager::Categories cats)
+{
+    return Kopete::OnlineStatusManager::self()->onlineStatus(this, cats);
+}
 #include "meanwhileprotocol.moc"

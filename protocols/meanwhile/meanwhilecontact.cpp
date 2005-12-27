@@ -24,19 +24,20 @@
 #include "kopetemetacontact.h"
 
 #include "meanwhileprotocol.h"
-#include "meanwhilelibrary.h"
+#include "meanwhilesession.h"
 #include "meanwhileaccount.h"
 #include "meanwhilecontact.h"
 #include "meanwhileplugin.h"
 
-MeanwhileContact::MeanwhileContact(QString _userId, QString _nickname,
-		MeanwhileAccount *_account, Kopete::MetaContact *_parent)
-		: Kopete::Contact(_account, _userId, _parent)
+MeanwhileContact::MeanwhileContact(QString userId, QString nickname,
+		MeanwhileAccount *account, Kopete::MetaContact *parent)
+		: Kopete::Contact(account, userId, parent)
 {
-	setNickName(_nickname);
+	setNickName(nickname);
 	m_msgManager = 0L;
-	meanwhileId = _userId;
-	setOnlineStatus( MeanwhileProtocol::protocol()->meanwhileOffline );
+	m_meanwhileId = userId;
+	setOnlineStatus(static_cast<MeanwhileProtocol *>(account->protocol())
+			->statusOffline);
 }
 
 MeanwhileContact::~MeanwhileContact()
@@ -45,21 +46,13 @@ MeanwhileContact::~MeanwhileContact()
 
 bool MeanwhileContact::isReachable()
 {
-    return true;
+    return isOnline();
 }
 
-void MeanwhileContact::serialize( 
-			QMap< QString, 
-			QString > &serializedData, 
-			QMap< QString, 
-			QString > & addressBookData )
+void MeanwhileContact::serialize(QMap<QString, QString> &serializedData,
+		QMap<QString, QString> &addressBookData)
 {
 	Kopete::Contact::serialize(serializedData, addressBookData);
-}
-
-QPtrList<KAction> *MeanwhileContact::customContextMenuActions() 
-{
-	return 0L;
 }
 
 void MeanwhileContact::showContactSettings()
@@ -69,12 +62,12 @@ void MeanwhileContact::showContactSettings()
 void MeanwhileContact::slotUserInfo()
 {
 	MeanwhileAccount *theAccount = static_cast<MeanwhileAccount *>( account());
-	theAccount->infoPlugin->showUserInfo(meanwhileId);
+	theAccount->infoPlugin->showUserInfo(m_meanwhileId);
 }
 
 Kopete::ChatSession* MeanwhileContact::manager(CanCreateFlags canCreate)
 {
-	if (m_msgManager || canCreate == Kopete::Contact::CannotCreate)
+	if (m_msgManager != 0L || canCreate == Kopete::Contact::CannotCreate)
 		return m_msgManager;
 
 	QPtrList<Kopete::Contact> contacts;
@@ -95,36 +88,41 @@ Kopete::ChatSession* MeanwhileContact::manager(CanCreateFlags canCreate)
 	return m_msgManager;
 }
 
+QString MeanwhileContact::meanwhileId() const
+{
+	return m_meanwhileId;
+}
+
 void MeanwhileContact::sendMessage(Kopete::Message &message)
 {
-	/*
-	Kopete::ChatSession *manager = this->manager(Kopete::Contact::CanCreate);
-	*/
-	static_cast<MeanwhileAccount *>(account())->library()->sendMessage(message);
+	static_cast<MeanwhileAccount *>(account())->session()->sendMessage(message);
 }
 
 void MeanwhileContact::slotSendTyping(bool isTyping)
 {
-	static_cast<MeanwhileAccount *>(account())->library()->
+	static_cast<MeanwhileAccount *>(account())->session()->
 		sendTyping(this, isTyping);
 }
-	
-void MeanwhileContact::receivedMessage( const QString &message )
+
+void MeanwhileContact::receivedMessage(const QString &message)
 {
-	Kopete::Message *newMessage;
 	Kopete::ContactPtrList contactList;
-	account();
-	contactList.append( account()->myself() );
-	newMessage = new Kopete::Message( this, contactList, 
-							message, Kopete::Message::Inbound );
+	contactList.append(account()->myself());
+	Kopete::Message kmessage(this, contactList, message,
+			Kopete::Message::Inbound);
 
-	manager(Kopete::Contact::CanCreate)->appendMessage (*newMessage);
+	manager(Kopete::Contact::CanCreate)->appendMessage(kmessage);
+}
 
-	delete newMessage;
+void MeanwhileContact::sync(unsigned int changed)
+{
+	if (changed)
+		static_cast<MeanwhileAccount *>(account())->syncContactsToServer();
 }
 
 void MeanwhileContact::slotChatSessionDestroyed()
 {
+	m_msgManager->deref();
 	m_msgManager = 0L;
 }
 
