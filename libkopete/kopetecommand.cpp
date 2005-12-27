@@ -48,7 +48,7 @@ Kopete::Command::Command( QObject *parent, const QString &command, const char* h
 		this, SLOT(slotAction()) ,0l, (command.toLower() + QString::fromLatin1("_command")).toLatin1())
 	, d(new Private)
 {
-	connect(parent,SIGNAL(destroyed()),this,SLOT(deleteLAter()));
+	connect(parent,SIGNAL(destroyed()),this,SLOT(deleteLater()));
 	init( command, handlerSlot, help, type, formatString, minArgs, maxArgs );
 }
 
