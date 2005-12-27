@@ -16,7 +16,8 @@ KDE_CHECK_HEADERS(knotifydialog.h)
 
 KOPETE_INCLUDES='-I$(top_srcdir)/kopete/libkopete -I$(top_builddir)/kopete/libkopete -I$(top_srcdir)/kopete/libkopete/avdevice -I$(top_srcdir)/kopete/libkopete/ui -I$(top_builddir)/kopete/libkopete/ui'
 
-AC_ARG_ENABLE(smpppd, [  --enable-smpppd       enable support for smpppd],
+AC_ARG_ENABLE(smpppd,
+[AS_HELP_STRING([--enable-smpppd], [enable support for the SuSE Meta PPP Daemon (smpppd) (default is NO)])],
 [
   if test $enableval = yes; then
     AC_DEFINE(USE_SMPPPD, 1, [enable support for the smpppd])
