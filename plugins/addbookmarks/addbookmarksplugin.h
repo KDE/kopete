@@ -16,8 +16,8 @@
 #include <kgenericfactory.h>
 #include <kopeteplugin.h>
 #include <kbookmarkmanager.h>
+#include <kopetemessage.h>
 #include <kio/job.h>
-#include <q3cstring.h>
 #include <qmap.h>
 
 /**

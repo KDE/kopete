@@ -97,7 +97,7 @@ void BookmarksPreferences::load()
 			 m_settings.isFolderForEachContact() == BookmarksPrefsSettings::UnselectedContacts );
 	list = m_settings.getContactsList();
 	for( it = list.begin() ; it != list.end() ; ++it){
-		if ( ( item = p_dialog->contactList->findItem(*it, Qt::ExactMatch ) ) ){
+		if ( ( item = p_dialog->contactList->findItem(*it, Q3ListBox::ExactMatch ) ) ){
 			p_dialog->contactList->setSelected( item, true );
 		}
 	}
