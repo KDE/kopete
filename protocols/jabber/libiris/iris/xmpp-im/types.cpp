@@ -826,6 +826,21 @@ void Status::setSongTitle(const QString & _songtitle)
 	v_songTitle = _songtitle;
 }
 
+void Status::setCapsNode(const QString & _capsNode)
+{
+	v_capsNode = _capsNode;
+}
+
+void Status::setCapsVersion(const QString & _capsVersion)
+{
+	v_capsVersion = _capsVersion;
+}
+
+void Status::setCapsExt(const QString & _capsExt)
+{
+	v_capsExt = _capsExt;
+}
+
 bool Status::isAvailable() const
 {
 	return v_isAvailable;
@@ -876,6 +891,21 @@ const QString & Status::xsigned() const
 const QString & Status::songTitle() const
 {
 	return v_songTitle;
+}
+
+const QString & Status::capsNode() const
+{
+	return v_capsNode;
+}
+
+const QString & Status::capsVersion() const
+{
+	return v_capsVersion;
+}
+
+const QString & Status::capsExt() const
+{
+	return v_capsExt;
 }
 
 int Status::errorCode() const
@@ -1474,6 +1504,15 @@ bool Features::canGroupchat() const
 	QStringList ns;
 	ns << "http://jabber.org/protocol/muc";
 	ns << FID_GROUPCHAT;
+
+	return test(ns);
+}
+
+#define FID_VOICE "http://www.google.com/xmpp/protocol/voice/v1"
+bool Features::canVoice() const
+{
+	QStringList ns;
+	ns << FID_VOICE;
 
 	return test(ns);
 }
