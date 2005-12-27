@@ -20,6 +20,7 @@ Description[et]=Jabberi teenuste tuvastamise KIO-moodul
 Description[eu]=Jabber aurkikuntza zerbitzureako KIO morroi bat
 Description[fr]=Un module d'entrée / sortie pour la recherche de service Jabber
 Description[gl]=Un KIO slave para Jabber Service Discovery
+Description[hu]=KDE-protokoll a Jabber szolgáltatáskereső használatához
 Description[is]=kioslave fyrir Jabber þjónustu uppgötvun
 Description[it]=Un KIO slave per il servizio di discovery per jabber
 Description[ja]=Jabber Service Discovery のKIOスレーブ
