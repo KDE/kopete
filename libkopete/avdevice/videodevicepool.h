@@ -44,8 +44,8 @@ struct VideoDeviceModel
 	size_t count;
 };
 
-typedef Q3ValueVector<Kopete::AV::VideoDevice> VideoDeviceVector;
-typedef Q3ValueVector<VideoDeviceModel> VideoDeviceModelVector;
+typedef QVector<Kopete::AV::VideoDevice> VideoDeviceVector;
+typedef QVector<VideoDeviceModel> VideoDeviceModelVector;
 
 class VideoDevicePoolPrivate;
 

@@ -27,7 +27,6 @@
 #include <qpixmap.h>
 #include <qdatetime.h>
 //Added by qt3to4:
-#include <Q3ValueList>
 #include <QMap>
 
 #include <kapplication.h>
@@ -59,7 +58,7 @@ struct Emoticons::Emoticon
 
 /* This is the object we will store each emoticon match in */
 struct Emoticons::EmoticonNode {
-		const Emoticon emoticon;
+		Emoticon emoticon;
 		int		pos;
 		EmoticonNode() : emoticon(), pos( -1 ) {}
 		EmoticonNode( const Emoticon e, int p ) : emoticon( e ), pos( p ) {}
@@ -68,7 +67,7 @@ struct Emoticons::EmoticonNode {
 class Emoticons::Private
 {
 public:
-	QMap<QChar, Q3ValueList<Emoticon> > emoticonMap;
+	QMap<QChar, QList<Emoticon> > emoticonMap;
 	QMap<QString, QString> emoticonAndPicList;
 
 	/**
@@ -121,11 +120,11 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint mode )
 	QChar c; /* current char */
 
 	/* This is the EmoticonNode container, it will represent each matched emoticon */
-	Q3ValueList<EmoticonNode> foundEmoticons;
-	Q3ValueList<EmoticonNode>::const_iterator found;
+	QList<EmoticonNode> foundEmoticons;
+	QList<EmoticonNode>::const_iterator found;
 	/* First-pass, store the matched emoticon locations in foundEmoticons */
-	Q3ValueList<Emoticon> emoticonList;
-	Q3ValueList<Emoticon>::const_iterator it;
+	QList<Emoticon> emoticonList;
+	QList<Emoticon>::const_iterator it;
 	int pos;
 
 	bool inHTMLTag = false;

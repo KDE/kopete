@@ -113,7 +113,7 @@ struct imagebuffer
 	int height;
 	int width;
 	pixel_format pixelformat;
-	Q3ValueVector <uchar> data; // maybe it should be a rawbuffer instead of it? It could make us avoid a memory copy
+	QVector <uchar> data; // maybe it should be a rawbuffer instead of it? It could make us avoid a memory copy
 };
 struct rawbuffer // raw buffer
 {
@@ -194,12 +194,12 @@ public:
 	struct video_capability V4L_capabilities;
 	struct video_buffer V4L_videobuffer;
 #endif	
-	Q3ValueVector<Kopete::AV::VideoInput> m_input;
+	QVector<Kopete::AV::VideoInput> m_input;
 //	QFile file;
 protected:
 	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
 
-	Q3ValueVector<rawbuffer> m_rawbuffers;
+	QVector<rawbuffer> m_rawbuffers;
 	unsigned int m_streambuffers;
 	imagebuffer m_currentbuffer;
 	int m_buffer_size;
