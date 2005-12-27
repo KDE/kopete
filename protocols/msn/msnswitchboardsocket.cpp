@@ -459,7 +459,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 #if 0  // Disabled for privacy reason
 			if(msg.contains("JabberID"))
 			{ // Find a Jabber account in order to get the jabberID
-				Q3PtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
+				QList<Kopete::Account*>  accounts = Kopete::AccountManager::self()->accounts();
 				for(Kopete::Account *a=accounts.first() ; a; a=accounts.next() )
 				{
 					if(a->protocol()->pluginId()=="JabberProtocol")

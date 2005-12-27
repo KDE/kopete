@@ -22,7 +22,6 @@
 #include "msncontact.h"
 
 #include <qcheckbox.h>
-//Added by qt3to4:
 #include <QList>
 
 #undef KDE_NO_COMPAT
@@ -495,7 +494,7 @@ void MSNContact::sync( unsigned int changed )
 	//STEP TWO : remove the contact from groups where the MC is not, but let it at least in one group
 
 	//contact is not in that group. on the server. we will remove them dirrectly after the loop
-	Q3ValueList<QString> removinglist; 
+	QStringList removinglist; 
 	
 	for( QMap<QString, Kopete::Group*>::Iterator it = m_serverGroups.begin();(count > 1 && it != m_serverGroups.end()); ++it )
 	{
@@ -524,7 +523,7 @@ void MSNContact::sync( unsigned int changed )
 		}
 	}
 	
-	for(Q3ValueList<QString>::Iterator it= removinglist.begin() ; it != removinglist.end() ; ++it )
+	for(QStringList::Iterator it= removinglist.begin() ; it != removinglist.end() ; ++it )
 		contactRemovedFromGroup(*it);
 
 	//FINAL TEST: is the contact at least in a group..

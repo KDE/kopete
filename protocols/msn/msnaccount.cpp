@@ -411,7 +411,6 @@ void MSNAccount::slotStatusChanged( const Kopete::OnlineStatus &status )
 	{
 		m_newContactList=false;
 
-		//Q3DictIterator<Kopete::Contact> it( contacts() );
 		QHash<QString,Kopete::Contact*> contactList = contacts();
 		QHash<QString,Kopete::Contact*>::Iterator it, itEnd = contactList.end();
 		for ( it = contactList.begin(); it != itEnd; ++it )

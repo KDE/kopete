@@ -26,7 +26,7 @@
 #include <qdatastream.h>
 #include <qstringlist.h>
 #include <qtimer.h>
-#include <q3valuelist.h>
+#include <QList>
 
 #include "kopete_export.h"
 
@@ -268,7 +268,7 @@ private:
 	 * Queue of pending commands (should be mostly empty, but is needed to
 	 * send more than one command to the server)
 	 */
-	Q3ValueList<QByteArray> m_sendQueue;
+	QList<QByteArray> m_sendQueue;
 
 	/**
 	 * Parse a single line of data.

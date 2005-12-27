@@ -23,10 +23,8 @@
 #include "msnsocket.h"
 //#include "msnprotocol.h"
 
-#include <qregexp.h>
-#include <qtimer.h>
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QRegExp>
+#include <QTimer>
 #include <QByteArray>
 
 #include <kdebug.h>
@@ -655,7 +653,7 @@ void MSNSocket::slotReadyWrite()
 	if ( !m_sendQueue.isEmpty() )
 	{
 		// If the command queue is not empty, retrieve the first command.
-		Q3ValueList<QByteArray>::Iterator it = m_sendQueue.begin();
+		QList<QByteArray>::Iterator it = m_sendQueue.begin();
 
 		if(m_useHttp)
 		{

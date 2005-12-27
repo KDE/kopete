@@ -27,12 +27,9 @@
 #include "kopeteonlinestatus.h"
 
 #include <kurl.h>
-//Added by qt3to4:
 #include <QPixmap>
 #include <QList>
 
-class Q3ListView;
-class Q3ListViewItem;
 class QPixmap;
 class QTimer;
 
