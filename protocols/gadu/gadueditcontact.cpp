@@ -83,8 +83,8 @@ void
 GaduEditContact::fillGroups()
 {
 	Kopete::Group *g, *cg;
-	Q3PtrList<Kopete::Group> cgl;
-	Q3PtrList<Kopete::Group> gl;
+	QList<Kopete::Group*> cgl;
+	QList<Kopete::Group*> gl;
 
 	if ( contact_ ) {
 		cgl = contact_->metaContact()->groups();
@@ -92,13 +92,13 @@ GaduEditContact::fillGroups()
 
 	gl = Kopete::ContactList::self()->groups();
 
-	for( g = gl.first(); g; g = gl.next() ) {
+	foreach (g, gl)  {
 		if ( g->type() == Kopete::Group::Temporary ) {
 			continue;
 		}
 		Q3CheckListItem* item = new Q3CheckListItem( ui_->groups, g->displayName(), Q3CheckListItem::CheckBox );
 		// FIXME: optimize this O(2) search
-		for( cg = cgl.first(); cg; cg = cgl.next() ) {
+		foreach( cg , cgl ) {
 			if ( cg->groupId() == g->groupId() ) {
 				item->setOn( TRUE );
 				break;
@@ -147,7 +147,7 @@ GaduEditContact::fillIn()
 void
 GaduEditContact::slotApply()
 {
-	Q3PtrList<Kopete::Group> gl;
+	QList<Kopete::Group*> gl;
 	Kopete::Group* group;
 
 	cl_->firstname = ui_->fornameEdit_->text().trimmed();
@@ -181,7 +181,7 @@ GaduEditContact::slotApply()
 		}
 
 		if ( check->isOn() ) {
-			for( group = gl.first(); group; group = gl.next() ) {
+			foreach( group, gl )  {
 				if ( group->displayName() == check->text() ) {
 					contact_->metaContact()->addToGroup( group );
 				}
@@ -189,7 +189,7 @@ GaduEditContact::slotApply()
 		}
 		else {
 			// check metacontact's in the group, and if so, remove it from
-			for( group = gl.first(); group; group = gl.next() ) {
+			foreach( group, gl ) {
 				if ( group->displayName() == check->text() ) {
 					contact_->metaContact()->removeFromGroup( group );
 				}

@@ -136,9 +136,7 @@ GaduProtocol::deserializeContact( Kopete::MetaContact* metaContact,
 	const QString cid	= serializedData[ "contactId" ];
 	const QString dn	= serializedData[ "displayName" ];
 
-	Q3Dict<Kopete::Account> daccounts = Kopete::AccountManager::self()->accounts( this );
-
-	Kopete::Account* account = daccounts[ aid ];
+	Kopete::Account* account = Kopete::AccountManager::self()->findAccount( pluginId(), aid ); 
 	if (!account) {
 		account = createNewAccount(aid);
 	}

@@ -40,11 +40,9 @@
 #include "kopetestdaction.h"
 #include "kopeteuiglobal.h"
 
-#include "userinfodialog.h"
-//Added by qt3to4:
-#include <Q3PtrList>
+//#include "userinfodialog.h"
 
-using Kopete::UserInfoDialog;
+//using Kopete::UserInfoDialog;
 
 GaduContact::GaduContact( uin_t uin, const QString& name, Kopete::Account* account, Kopete::MetaContact* parent )
 : Kopete::Contact( account, QString::number( uin ), parent ), uin_( uin )
@@ -164,8 +162,8 @@ GaduContact::slotChatSessionDestroyed()
 void
 GaduContact::initActions()
 {
-	actionSendMessage_	= KopeteStdAction::sendMessage( this, SLOT( execute() ), this, "actionMessage" );
-	actionInfo_		= KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), this, "actionInfo" );
+	actionSendMessage_	= KopeteStdAction::sendMessage( this, SLOT( execute() ), 0, "actionMessage" );
+	actionInfo_		= KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), 0, "actionInfo" );
 }
 
 void
@@ -190,20 +188,20 @@ GaduContact::isReachable()
 	return account_->isConnected();
 }
 
-Q3PtrList<KAction>*
+QList<KAction*>*
 GaduContact::customContextMenuActions()
 {
-	Q3PtrList<KAction> *fakeCollection = new Q3PtrList<KAction>();
+	QList<KAction*> *fakeCollection = new QList<KAction*>();
 	//show profile
 	KAction* actionShowProfile = new KAction( i18n("Show Profile") , "info", 0,
 						this, SLOT( slotShowPublicProfile() ),
-						this, "actionShowPublicProfile" );
+						0, "actionShowPublicProfile" );
 
 	fakeCollection->append( actionShowProfile );
 
 	KAction* actionEditContact = new KAction( i18n("Edit...") , "edit", 0,
 						this, SLOT( slotEditContact() ),
-						this, "actionEditContact" );
+						0, "actionEditContact" );
 
 	fakeCollection->append( actionEditContact );
 
@@ -225,14 +223,16 @@ GaduContact::slotShowPublicProfile()
 void
 GaduContact::slotUserInfo()
 {
-	/// FIXME: use more decent information here
-	UserInfoDialog *dlg = new UserInfoDialog( i18n( "Gadu contact" ) );
+// FIXME: there is no UserInfoDialog anymore
 
-	dlg->setName( metaContact()->displayName() );
-	dlg->setId( QString::number( uin_ ) );
-	dlg->setStatus( onlineStatus().description() );
-	dlg->setAwayMessage( description_ );
-	dlg->show();
+	/// FIXME: use more decent information here
+//	UserInfoDialog *dlg = new UserInfoDialog( i18n( "Gadu contact" ) );
+
+//	dlg->setName( metaContact()->displayName() );
+//	dlg->setId( QString::number( uin_ ) );
+//	dlg->setStatus( onlineStatus().description() );
+//	dlg->setAwayMessage( description_ );
+//	dlg->show();
 }
 
 void
@@ -297,7 +297,7 @@ GaduContact::contactDetails()
 	groupList = metaContact()->groups();
 
 	Kopete::Group* gr;
-	for ( gr = groupList.first (); gr ; gr = groupList.next () ) {
+	foreach ( gr, groupList ) {
 // if present in any group, don't export to top level
 // FIXME: again, probably bug in libkopete
 // in case of topLevel group, Kopete::Group::displayName() returns "TopLevel" ineasted of just " " or "/"

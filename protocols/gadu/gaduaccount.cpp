@@ -182,15 +182,15 @@ void
 GaduAccount::initActions()
 {
 	p->searchAction		= new KAction( i18n( "&Search for Friends" ), "", 0,
-							this, SLOT( slotSearch() ), this, "actionSearch" );
+							this, SLOT( slotSearch() ), 0, "actionSearch" );
 	p->listputAction		= new KAction( i18n( "Export Contacts to Server" ), "", 0,
-							this, SLOT( slotExportContactsList() ), this, "actionListput" );
+							this, SLOT( slotExportContactsList() ), 0, "actionListput" );
 	p->listToFileAction	= new KAction( i18n( "Export Contacts to File..." ), "", 0,
-							this, SLOT( slotExportContactsListToFile() ), this, "actionListputFile" );
+							this, SLOT( slotExportContactsListToFile() ), 0, "actionListputFile" );
 	p->listFromFileAction	= new KAction( i18n( "Import Contacts From File..." ), "", 0,
-							this, SLOT( slotImportContactsFromFile() ), this, "actionListgetFile" );
+							this, SLOT( slotImportContactsFromFile() ), 0, "actionListgetFile" );
 	p->friendsModeAction	= new KToggleAction( i18n( "Only for Friends" ), "", 0,
-							this, SLOT( slotFriendsMode() ), this,
+							this, SLOT( slotFriendsMode() ), 0,
 							"actionFriendsMode" );
 }
 
@@ -247,8 +247,8 @@ GaduAccount::actionMenu()
 {
 	kdDebug(14100) << "actionMenu() " << endl;
 
-	p->actionMenu_ = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ), this );
-	p->actionMenu_->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> " ).
+	p->actionMenu_ = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ) );
+	p->actionMenu_->popupMenu()->addTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> " ).
 	    arg( myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), accountId() ) );
 
 	if ( p->session_->isConnected() ) {
@@ -284,22 +284,22 @@ GaduAccount::actionMenu()
 	}
 	p->actionMenu_->insert( new KAction( i18n( "Go O&nline" ),
 				GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ).iconFor( this ),
-				0, this, SLOT( slotGoOnline() ), this, "actionGaduConnect" ) );
+				0, this, SLOT( slotGoOnline() ), 0, "actionGaduConnect" ) );
 
 	p->actionMenu_->insert( new KAction( i18n( "Set &Busy" ),
 				GaduProtocol::protocol()->convertStatus( GG_STATUS_BUSY ).iconFor( this ),
-				0, this, SLOT( slotGoBusy() ), this, "actionGaduConnect" ) );
+				0, this, SLOT( slotGoBusy() ), 0, "actionGaduConnect" ) );
 
 	p->actionMenu_->insert( new KAction( i18n( "Set &Invisible" ),
 				GaduProtocol::protocol()->convertStatus( GG_STATUS_INVISIBLE ).iconFor( this ),
-				0, this, SLOT( slotGoInvisible() ), this, "actionGaduConnect" ) );
+				0, this, SLOT( slotGoInvisible() ), 0, "actionGaduConnect" ) );
 
 	p->actionMenu_->insert( new KAction( i18n( "Go &Offline" ),
 				GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ).iconFor( this ),
-				0, this, SLOT( slotGoOffline() ), this, "actionGaduConnect" ) );
+				0, this, SLOT( slotGoOffline() ), 0, "actionGaduConnect" ) );
 
 	p->actionMenu_->insert( new KAction( i18n( "Set &Description..." ), "info",
-			0, this, SLOT( slotDescription() ), this, "actionGaduDescription" ) );
+			0, this, SLOT( slotDescription() ), 0, "actionGaduDescription" ) );
 
 	p->actionMenu_->insert( p->friendsModeAction );
 
