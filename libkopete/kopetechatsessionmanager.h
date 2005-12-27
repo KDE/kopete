@@ -19,9 +19,7 @@
 #define KOPETEMESSAGEMANAGERFACTORY_H
 
 #include <qobject.h>
-#include <q3ptrlist.h>
-#include <q3intdict.h>
-#include <q3valuelist.h>
+#include <QList>
 
 #include "kopetechatsession.h"
 #include "kopetemessage.h"

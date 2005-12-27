@@ -188,9 +188,9 @@ void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 	}
 
 	//Ack sessionID
-#if ! MSN_WEBCAM
+//#if ! MSN_WEBCAM
 	MKDWORD(binHeader,32,rand()%0x8FFFFFF0+4);
-#else
+//#else
 	//For webcam, the OK and INVITE message should have the smae id, but not others.
 	binHeader[32]=0xDE;
 	binHeader[33]=0xC7;
@@ -327,7 +327,8 @@ void MSNP2P::parseMessage(MessageStruct &msgStr)
 
 //---------------------------------------------------------------
 
-#if MSN_WEBCAM
+#if 0
+//#if MSN_WEBCAM
 
 MSNP2PWebcam::MSNP2PWebcam( unsigned long int sessionID , MSNP2PDisplatcher *parent )
 	: MSNP2P(sessionID , parent)

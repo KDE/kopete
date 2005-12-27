@@ -1,9 +1,18 @@
-Last update: 26 december 2006.
+Last update: 27 december 2006.
 
 This is a non-exhaustive guide to porting code from Kopete >= 0.11 (based on KDE3.x) to Kopete4 (based on KDE 4.x).
 
 Libkopete changes
 -----------------
+*) Kopete::Account
+   - contacts() now return a const QHash<QString,Contact*>&
+
+*) Kopete::AccountManager
+   - accounts() now return a QList<Account*>.
+
+*) Kopete::ChatSessionManager
+   - sessions() now return a QList<ChatSession*>
+
 *) kopetecommandhandler.h
    -CommandList is now a QMultiHash<QString, Command*>
 
@@ -14,6 +23,6 @@ Libkopete changes
 *) kopetexsl.h
    - Was removed in 0.12 version.
 
-*) kopetemessage.h
+*) Kopete::Message
    - asXML() no longer exist (removed in 0.12)
 

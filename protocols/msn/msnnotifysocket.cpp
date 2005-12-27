@@ -28,9 +28,10 @@
 #include "msnsecureloginhandler.h"
 #include "msnchallengehandler.h"
 
-#include <qdatetime.h>
-#include <qregexp.h>
+#include <QDateTime>
+#include <QRegExp>
 #include <qdom.h>
+#include <QTextStream>
 
 #include <kdebug.h>
 #include <kdeversion.h>
@@ -461,12 +462,12 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		if( list  == "FL" )
 		{
 			// Removing a contact
-		 	if( data.contains( ' ' ) < 2 )
+		 	if( data.count( ' ' ) < 2 )
 			{
 				contactGuid = data.section( ' ', 1, 1 );
 			}
 			// Removing a contact from a group
-			else if( data.contains( ' ' ) < 3 )
+			else if( data.count( ' ' ) < 3 )
 			{
 				contactGuid = data.section( ' ', 1, 1 );
 				groupGuid = data.section( ' ', 2, 2 );
@@ -643,7 +644,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 				"</form></body>\n</html>\n";
 
 		KTempFile tmpMailFile( locateLocal( "tmp", "kopetehotmail-" ), ".html" );
-		*tmpMailFile.textStream() << hotmailRequest;
+		QTextStream *textStream = tmpMailFile.textStream();
+		*textStream << hotmailRequest;
 		tmpMailFile.file()->flush();
 
 		KRun::runURL( KURL::fromPathOrURL( tmpMailFile.name() ), "text/html" , true );
@@ -694,7 +696,7 @@ void MSNNotifySocket::slotMSNAlertLink(unsigned int action)
 	// index into our action list and pull out the URL that was clicked ..
 	KURL tempURLForLaunch(m_msnAlertURLs[action-1]);
 	
-	KRun* urlToRun = new KRun(tempURLForLaunch);
+	KRun::runURL(tempURLForLaunch, QString::fromUtf8("text/html"));
 }
 
 void MSNNotifySocket::slotOpenInbox()
@@ -749,8 +751,8 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 		if(unread && mailCount > 0)
 		{
 			// If there are new email message available, raise the unread email event.
-			QObject::connect(KNotification::event( "msn_mail", i18n( "You have one unread message in your MSN inbox.",
-					"You have %n unread messages in your MSN inbox.", mailCount ), 0 , 0 , i18n( "Open Inbox..." ) ),
+			QObject::connect(KNotification::event( QString::fromUtf8("msn_mail"), i18n( "You have one unread message in your MSN inbox.",
+					"You have %n unread messages in your MSN inbox.", mailCount ), 0 , 0 , QStringList(i18n( "Open Inbox..." )) ),
 				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 		}
 	}
@@ -771,8 +773,8 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 		mailCount++;
 
 		//TODO:  it is also possible to get the subject  (but warning about the encoding)
-		QObject::connect(KNotification::event( "msn_mail",i18n( "You have one new email from %1 in your MSN inbox." ).arg(m),
-										0 , 0 , i18n( "Open Inbox..." ) ),
+		QObject::connect(KNotification::event( QString::fromUtf8("msn_mail"),i18n( "You have one new email from %1 in your MSN inbox." ).arg(m),
+										0 , 0 , QStringList(i18n( "Open Inbox..." )) ),
 				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 	}
 	else if(msg.contains("text/x-msmsgsprofile"))
@@ -988,9 +990,11 @@ QString MSNNotifySocket::processCurrentMedia( const QString &mediaXmlElement )
 	// Get the formatter strings
 	QStringList formatterStrings;
 	QStringList::ConstIterator it;
-	for( it = argumentLists.at(4); it != argumentLists.end(); ++it )
+	int stringListIndex = 0;
+	//for( it = argumentLists.indexOf(4); it != argumentLists.end(); ++it )
+	for(stringListIndex = 4; stringListIndex < argumentLists.count() - 1; stringListIndex++)
 	{
-		formatterStrings.append( *it );
+		formatterStrings.append( argumentLists[stringListIndex] );
 	}
 
 	// Replace the formatter in the format string.

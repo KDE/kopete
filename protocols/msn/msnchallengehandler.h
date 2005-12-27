@@ -21,7 +21,7 @@
 #define MSNCHALLENGEHANDLER_H
 
 #include <qobject.h>
-#include <q3valuevector.h>
+#include <QVector>
 
 /**
  * Provides a simple way to compute a msn challenge response hash key.
@@ -50,7 +50,7 @@ private:
 	/**
 	 * Creates a 64-bit hash key.
 	 */
-	 qint64 createHashKey(const Q3ValueVector<qint32>& md5Integers, const Q3ValueVector<qint32>& challengeIntegers);
+	 qint64 createHashKey(const QVector<qint32>& md5Integers, const QVector<qint32>& challengeIntegers);
 	 
 	/**
 	 * Swaps the bytes in a hex string.

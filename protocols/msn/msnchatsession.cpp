@@ -21,11 +21,11 @@
 #include <qimage.h>
 #include <qtooltip.h>
 #include <qfile.h>
-//Added by qt3to4:
-#include <QPixmap>
-#include <Q3ValueList>
-#include <Q3PtrList>
 
+#include <QPixmap>
+
+#include <kaction.h>
+#include <kactionclasses.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kinputdialog.h>
@@ -96,7 +96,7 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 	{
 		
 		connect( c, SIGNAL( displayPictureChanged() ), this, SLOT( slotDisplayPictureChanged() ) );
-		m_image = new QLabel( 0L, "kde toolbar widget" );
+		m_image = new QLabel( 0L );
 		new KWidgetAction( m_image, i18n( "MSN Display Picture" ), 0, this, SLOT( slotRequestPicture() ), actionCollection(), "msnDisplayPicture" );
 		if(c->hasProperty(Kopete::Global::Properties::self()->photo().key())  )
 		{
@@ -133,6 +133,7 @@ MSNChatSession::~MSNChatSession()
 		delete *it;
 		m_invitations.remove( it );
 	}
+	qDeleteAll(m_inviteactions);
 }
 
 void MSNChatSession::createChat( const QString &handle,
@@ -290,25 +291,26 @@ void MSNChatSession::slotActionInviteAboutToShow()
 {
 	// We can't simply insert  KAction in this menu bebause we don't know when to delete them.
 	//  items inserted with insert items are automatically deleted when we call clear
-
-	m_inviteactions.setAutoDelete(true);
+	
+	qDeleteAll(m_inviteactions);
 	m_inviteactions.clear();
 
 	m_actionInvite->popupMenu()->clear();
 
 	
-	Q3DictIterator<Kopete::Contact> it( account()->contacts() );
-	for( ; it.current(); ++it )
+	QHash<QString, Kopete::Contact*> contactList = account()->contacts();
+	QHash<QString, Kopete::Contact*>::Iterator it, itEnd = contactList.end();
+	for( it = contactList.begin(); it != itEnd; ++it )
 	{
-		if( !members().contains( it.current() ) && it.current()->isOnline() && it.current() != myself() )
+		if( !members().contains( it.value() ) && it.value()->isOnline() && it.value() != myself() )
 		{
-			KAction *a=new KopeteContactAction( it.current(), this,
+			KAction *a=new KopeteContactAction( it.value(), this,
 				SLOT( slotInviteContact( Kopete::Contact * ) ), m_actionInvite );
 			m_actionInvite->insert( a );
 			m_inviteactions.append( a ) ;
 		}
 	}
-	KAction *b=new KAction( i18n ("Other..."), 0, this, SLOT( slotInviteOtherContact() ), m_actionInvite, "actionOther" );
+	KAction *b=new KAction( i18n ("Other..."), 0, this, SLOT( slotInviteOtherContact() ),0, "actionOther" );
 	m_actionInvite->insert( b );
 	m_inviteactions.append( b ) ;
 }
@@ -362,7 +364,8 @@ void MSNChatSession::sendMessageQueue()
 		return;
 	}
 //	kdDebug(14140) << "MSNChatSession::sendMessageQueue: " << m_messagesQueue.count() <<endl;
-	for ( Q3ValueList<Kopete::Message>::iterator it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
+	QList<Kopete::Message>::Iterator it;
+	for ( it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
 	{
 		//m_chatService->sendMsg( *it)  ;
 		slotMessageSent(*it , this);
@@ -370,13 +373,13 @@ void MSNChatSession::sendMessageQueue()
 	}
 
 
-	QMap<unsigned long int, MSNInvitation*>::Iterator it;
-	for( it = m_invitations.begin(); it != m_invitations.end() ; ++it)
+	QMap<unsigned long int, MSNInvitation*>::Iterator mapIt;
+	for( mapIt = m_invitations.begin(); mapIt != m_invitations.end() ; ++mapIt)
 	{
-		if(! (*it)->incoming() && (*it)->state()<MSNInvitation::Invited)
+		if(! (*mapIt)->incoming() && (*mapIt)->state()<MSNInvitation::Invited)
 		{
-			m_chatService->sendCommand( "MSG" , "N", true, (*it)->invitationHead().toUtf8() );
-			(*it)->setState(MSNInvitation::Invited);
+			m_chatService->sendCommand( "MSG" , "N", true, (*mapIt)->invitationHead().toUtf8() );
+			(*mapIt)->setState(MSNInvitation::Invited);
 		}
 	}
 }
@@ -475,9 +478,9 @@ void MSNChatSession::sendFile(const QString &fileLocation, const QString &/*file
 	long unsigned int fileSize)
 {
 	// TODO create a switchboard to send the file is one is not available.
-	if(m_chatService && members().getFirst())
+	if(m_chatService && (*members().begin()))
 	{
-		m_chatService->PeerDispatcher()->sendFile(fileLocation, (qint64)fileSize, members().getFirst()->contactId());
+		m_chatService->PeerDispatcher()->sendFile(fileLocation, (qint64)fileSize, (*members().begin())->contactId());
 	}
 }
 
@@ -499,7 +502,7 @@ void MSNChatSession::initInvitation(MSNInvitation* invitation)
 
 void MSNChatSession::slotRequestPicture()
 {
-	Q3PtrList<Kopete::Contact> mb=members();
+	QList<Kopete::Contact*> mb=members();
 	MSNContact *c = static_cast<MSNContact*>( mb.first() );
 	if(!c)
 	 return;
@@ -523,7 +526,7 @@ void MSNChatSession::slotRequestPicture()
 
 void MSNChatSession::slotDisplayPictureChanged()
 {
-	Q3PtrList<Kopete::Contact> mb=members();
+	QList<Kopete::Contact*> mb=members();
 	MSNContact *c = static_cast<MSNContact *>( mb.first() );
 	if ( c && m_image )
 	{
@@ -538,26 +541,29 @@ void MSNChatSession::slotDisplayPictureChanged()
 				//We connected that in the constructor.  we don't need to keep this slot active.
 				disconnect( Kopete::ChatSessionManager::self() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );
 			
-				Q3PtrListIterator<KToolBar>  it=w->toolBarIterator() ;
 				KAction *imgAction=actionCollection()->action("msnDisplayPicture");
-				if(imgAction)  while(it)
+				if(imgAction)
 				{
-					KToolBar *tb=*it;
-					if(imgAction->isPlugged(tb))
+					QList<KToolBar*> toolbarList = w->toolBarList();
+					QList<KToolBar*>::Iterator it, itEnd = toolbarList.end();
+					for(it = toolbarList.begin(); it != itEnd; ++it)
 					{
-						sz=tb->iconSize();
-						//ipdate if the size of the toolbar change.
-						disconnect(tb, SIGNAL(modechange()), this, SLOT(slotDisplayPictureChanged()));
-						connect(tb, SIGNAL(modechange()), this, SLOT(slotDisplayPictureChanged()));
-						break;
+						KToolBar *tb=*it;
+						if(imgAction->isPlugged(tb))
+						{
+							sz=tb->iconSize();
+							//ipdate if the size of the toolbar change.
+							disconnect(tb, SIGNAL(modechange()), this, SLOT(slotDisplayPictureChanged()));
+							connect(tb, SIGNAL(modechange()), this, SLOT(slotDisplayPictureChanged()));
+							break;
+						}
 					}
-					++it;
 				}
 			}
 			QString imgURL=c->property(Kopete::Global::Properties::self()->photo()).value().toString();
 			QImage scaledImg = QPixmap( imgURL ).convertToImage().smoothScale( sz, sz );
 			if(!scaledImg.isNull())
-				m_image->setPixmap( scaledImg );
+				m_image->setPixmap( QPixmap::fromImage(scaledImg) );
 			else
 			{ //the image has maybe not been transfered correctly..  force to download again
 				c->removeProperty(Kopete::Global::Properties::self()->photo());
@@ -636,25 +642,29 @@ void MSNChatSession::slotNudgeReceived()
 
 void MSNChatSession::slotWebcamReceive()
 {
-	if(m_chatService && members().getFirst())
+	if(m_chatService && members().first())
 	{
-		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().getFirst()->contactId() , true);
+#if 0
+		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().first()->contactId() , true);
+#endif
 	}
 }
 
 void MSNChatSession::slotWebcamSend()
 {
 	kdDebug(14140) << k_funcinfo << endl;
-	if(m_chatService && members().getFirst())
+	if(m_chatService && members().first())
 	{
-		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().getFirst()->contactId() , false);
+#if 0
+		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().first()->contactId() , false);
+#endif
 	}
 }
 
 
 void MSNChatSession::startChatSession()
 {
-	QPtrList<Kopete::Contact> mb=members();
+	QList<Kopete::Contact*> mb=members();
 	static_cast<MSNAccount*>( account() )->slotStartChatSession( mb.first()->contactId() );
 	
 	if(!m_timeoutTimer)
@@ -690,17 +700,20 @@ void MSNChatSession::cleanMessageQueue( const QString & reason )
 	{
 		Kopete::Message m;
 		QString body=i18n("These messages have not been sent correctly (%1): <br /><ul>").arg(reason);
-		for ( QMap<unsigned int , Kopete::Message>::iterator it = m_messagesSent.begin(); it!=m_messagesSent.end(); it = m_messagesSent.begin() )
+
+		QMap<unsigned int, Kopete::Message>::Iterator mapIt;
+		for (  mapIt = m_messagesSent.begin(); mapIt!=m_messagesSent.end(); mapIt = m_messagesSent.begin() )
 		{
-			m=it.data();
+			m=mapIt.data();
 			body+= "<li>"+m.escapedBody()+"</li>";
-			m_messagesSent.remove(it);
+			m_messagesSent.remove(mapIt);
 		}
-		for ( QValueList<Kopete::Message>::iterator it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
+		QList<Kopete::Message>::Iterator messageIt;
+		for ( messageIt = m_messagesQueue.begin(); messageIt!=m_messagesQueue.end(); messageIt = m_messagesQueue.begin() )
 		{
-			m=(*it);
+			m=(*messageIt);
 			body+= "<li>"+m.escapedBody()+"</li>";
-			m_messagesQueue.remove(it);
+			m_messagesQueue.remove(messageIt);
 		}
 		body+="</ul>";
 		Kopete::Message msg = Kopete::Message(m.to().first() , members() , body , Kopete::Message::Internal, Kopete::Message::RichText);

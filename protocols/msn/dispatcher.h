@@ -17,8 +17,9 @@
 #ifndef DISPATCHER_H
 #define DISPATCHER_H
 
-#include <qobject.h>
-#include <qstringlist.h>
+#include <QObject>
+#include <QStringList>
+#include <QMap>
 
 #include "kopete_export.h"
 
@@ -52,7 +53,8 @@ namespace P2P{
 			QString m_pictureUrl;
 			QMap<QString, QString> objectList;
 
-#if MSN_WEBCAM
+//#if MSN_WEBCAM
+#if 0
 			void startWebcam(const QString &myHandle, const QString &msgHandle, bool wantToReceive);
 #endif
 

@@ -15,8 +15,7 @@
     *************************************************************************
 */
 
-#if 0
-//#ifndef __kopetecontactaction_h__
+#ifndef __kopetecontactaction_h__
 #define __kopetecontactaction_h__
 
 #include <kaction.h>
@@ -57,6 +56,5 @@ private:
 };
 
 #endif
-
 // vim: set noet ts=4 sts=4 sw=4:
 

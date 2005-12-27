@@ -29,7 +29,7 @@
 #include <kurl.h>
 //Added by qt3to4:
 #include <QPixmap>
-#include <Q3PtrList>
+#include <QList>
 
 class Q3ListView;
 class Q3ListViewItem;
@@ -99,7 +99,7 @@ public:
 
 	virtual bool isReachable();
 
-	virtual Q3PtrList<KAction> *customContextMenuActions();
+	virtual QList<KAction*> *customContextMenuActions();
 
 	/**
 	 * update the server group map

@@ -22,11 +22,10 @@
 #define MSNSWITCHBOARDSOCKET_H
 
 #include <qobject.h>
-#include <q3strlist.h>
-#include <q3valuevector.h>
-//Added by qt3to4:
-#include <Q3ValueList>
-#include <Q3PtrList>
+#include <QStringList>
+#include <QVector>
+#include <QList>
+#include <QPair>
 
 #include <kstringhandler.h>
 
@@ -70,12 +69,12 @@ private:
 	QStringList m_chatMembers;
 
 	//used for emoticons
-	Q3ValueList<const Kopete::Message> m_msgQueue;
+	QList<Kopete::Message> m_msgQueue;
 	unsigned  m_recvIcons;
 	QMap<QString , QPair<QString , KTempFile*> >  m_emoticons;
 	Kopete::Message &parseCustomEmoticons(Kopete::Message &msg);
 	QTimer *m_emoticonTimer;
-	Q3PtrList<KTempFile> m_typewrited;
+	QList<KTempFile*> m_typewrited;
 
 	struct InkMessage{
 		quint32 chunks;

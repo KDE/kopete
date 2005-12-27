@@ -1,11 +1,14 @@
 if include_msn_webcam
 WEBCAM = webcam
+# FIXME: Disable compile of this class for now
+WEBCAMCPP=
 WEBCAM_LIBMINICWRAPPER = webcam/libmimicwrapper.la
 endif
 
 KDE_OPTIONS = nofinal
 METASOURCES = AUTO
-SUBDIRS = ui $(WEBCAM) . icons config
+# Disabled config subdir
+SUBDIRS = ui $(WEBCAM) . icons
 AM_CPPFLAGS = -Iui \
 	-I$(srcdir)/webcam \
 	-I$(srcdir)/ui \
@@ -22,7 +25,7 @@ libkopete_msn_shared_la_SOURCES = msnprotocol.cpp msnaccount.cpp \
 	msnnotifysocket.cpp msnswitchboardsocket.cpp msnfiletransfersocket.cpp msninvitation.cpp \
 	sha1.cpp msnsecureloginhandler.cpp msnchallengehandler.cpp dispatcher.cpp \
 	p2p.cpp messageformatter.cpp incomingtransfer.cpp outgoingtransfer.cpp \
-	webcam.cpp
+	$(WEBCAMCPP)
 
 libkopete_msn_shared_la_LIBADD  = ./ui/libkopetemsnui.la ../../libkopete/libkopete.la $(WEBCAM_LIBMINICWRAPPER) ../../libkopete/avdevice/libkopete_videodevice.la   $(LIB_KIO)
 libkopete_msn_shared_la_LDFLAGS = -version-info 0:0:0 -no-undefined $(all_libraries)

@@ -72,7 +72,8 @@ public slots:
 	 */
 	void sendImage( const QString &fileName);
 
-#if MSN_WEBCAM
+//#if MSN_WEBCAM
+#if 0
 public:
 	/**
 	 * Start a webcam transfer

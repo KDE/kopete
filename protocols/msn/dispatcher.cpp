@@ -18,9 +18,9 @@
 #include "incomingtransfer.h"
 #include "outgoingtransfer.h"
 
-#if MSN_WEBCAM
+//#if MSN_WEBCAM
+#if 0
 #include "webcam.h"
-//Added by qt3to4:
 #include <QByteArray>
 #endif
 
@@ -182,7 +182,8 @@ void Dispatcher::sendImage(const QString& /*fileName*/, const QString& /*to*/)
 // 	outbound->sendImage(imageFile.readAll());
 }
 
-#if MSN_WEBCAM
+//#if MSN_WEBCAM
+#if 0
 void Dispatcher::startWebcam(const QString &/*myHandle*/, const QString &msgHandle, bool wantToReceive)
 {
 	quint32 sessionId = rand()%0xFFFFFF00 + 4;
@@ -265,7 +266,8 @@ void Dispatcher::slotReadMessage(const QString &from, const QByteArray& stream)
 			bufferedMessage.body.resize(bufferedMessage.body.size() + receivedMessage.header.dataSize);
 			for(quint32 i=0; i < receivedMessage.header.dataSize; i++){
 				// Add the remaining message data to the buffered message.
-				bufferedMessage.body[receivedMessage.header.dataOffset + i] = receivedMessage.body[i];
+				int offset = receivedMessage.header.dataOffset + i;
+				bufferedMessage.body[offset] = receivedMessage.body[i];
 			}
 			bufferedMessage.header.dataSize += receivedMessage.header.dataSize;
 			bufferedMessage.header.dataOffset = 0;
@@ -515,7 +517,8 @@ void Dispatcher::dispatch(const P2P::Message& message)
 			}
 			else if(applicationId == 4)
 			{
-#if MSN_WEBCAM
+//#if MSN_WEBCAM
+#if 0
 				regex = QRegExp("EUF-GUID: \\{([0-9a-zA-Z\\-]*)\\}");
 				regex.search(body);
 				QString GUID=regex.cap(1);

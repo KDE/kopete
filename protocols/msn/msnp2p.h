@@ -19,7 +19,7 @@
 #include <qobject.h>
 #include <q3strlist.h>
 
-#define MSN_WEBCAM 0
+
 #define MSN_NEWFILETRANSFER 0
 
 
@@ -108,7 +108,8 @@ public:
 };
 
 
-#if MSN_WEBCAM
+//#if MSN_WEBCAM
+#if 0
 class MSNP2PWebcam : public MSNP2P
 {
 //Q_OBJECT

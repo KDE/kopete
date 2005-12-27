@@ -113,9 +113,16 @@ Kopete::Contact *MSNProtocol::deserializeContact( Kopete::MetaContact *metaConta
 	QStringList groups  = QStringList::split( ",", serializedData[ "groups" ] );
 	QString contactGuid = serializedData[ "contactGuid" ] ;
 
-	Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
+	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts( this );
 
-	Kopete::Account *account = accounts[ accountId ];
+	Kopete::Account *account = 0;
+	QList<Kopete::Account*>::Iterator accountIt, accountItEnd = accounts.end();
+	for(accountIt = accounts.begin(); accountIt != accountItEnd; ++accountIt)
+	{
+		if((*accountIt)->accountId() == accountId)
+			account = *accountIt;
+	}
+	// If no account was found.
 	if( !account )
 		account = createNewAccount( accountId );
 
@@ -181,7 +188,7 @@ MSNProtocol* MSNProtocol::protocol()
 
 bool MSNProtocol::validContactId(const QString& userid)
 {
-	return( userid.count(QChar('@')) ==1 && userid.count(QChar('.')) >=1 &&  userid.count(QChar(' ')) == 1 );
+	return( userid.count("@") ==1 && userid.count(".") >=1 /*&& userid.count(QChar(' ')) == 1*/ );
 }
 
 QString MSNProtocol::clientId()

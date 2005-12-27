@@ -15,7 +15,6 @@
 */
 
 #include <kgenericfactory.h>
-#include "kcautoconfigmodule.h"
 #include "msnprefs.h"
 
 class MSNPreferences;

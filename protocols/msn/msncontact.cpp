@@ -23,8 +23,7 @@
 
 #include <qcheckbox.h>
 //Added by qt3to4:
-#include <Q3ValueList>
-#include <Q3PtrList>
+#include <QList>
 
 #undef KDE_NO_COMPAT
 #include <kaction.h>
@@ -127,24 +126,21 @@ Kopete::ChatSession *MSNContact::manager( Kopete::Contact::CanCreateFlags canCre
 	return manager;
 }
 
-Q3PtrList<KAction> *MSNContact::customContextMenuActions()
+QList<KAction*> *MSNContact::customContextMenuActions()
 {
-	Q3PtrList<KAction> *m_actionCollection = new Q3PtrList<KAction>;
+	QList<KAction*> *m_actionCollection = new QList<KAction*>;
 
 	// Block/unblock Contact
 	QString label = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
 	if( !actionBlock )
 	{
-		actionBlock = new KAction( label, "msn_blocked",0, this, SLOT( slotBlockUser() ),
-			this, "actionBlock" );
+		actionBlock = new KAction( label, "msn_blocked",0, this, SLOT( slotBlockUser() ), 0, "actionBlock" );
 
 		//show profile
-		actionShowProfile = new KAction( i18n("Show Profile") , 0, this, SLOT( slotShowProfile() ),
-			this, "actionShowProfile" );
+		actionShowProfile = new KAction( i18n("Show Profile") , 0, this, SLOT( slotShowProfile() ), 0, "actionShowProfile" );
 
 		// Send mail (only available if it is an hotmail account)
-		actionSendMail = new KAction( i18n("Send Email...") , "mail_generic",0, this, SLOT( slotSendMail() ),
-			this, "actionSendMail" );
+		actionSendMail = new KAction( i18n("Send Email...") , "mail_generic",0, this, SLOT( slotSendMail() ), 0, "actionSendMail" );
 	}
 	else
 		actionBlock->setText( label );
@@ -447,8 +443,9 @@ void MSNContact::sync( unsigned int changed )
 		return;
 
 	//STEP ONE : add the contact to every kopetegroups where the MC is
-	Q3PtrList<Kopete::Group> groupList = metaContact()->groups();
-	for ( Kopete::Group *group = groupList.first(); group; group = groupList.next() )
+	QList<Kopete::Group*> groupList = metaContact()->groups();
+	Kopete::Group *group;
+	foreach( group, groupList )
 	{
 		//For each group, ensure it is on the MSN server
 		if( !group->pluginData( protocol() , account()->accountId() + " id" ).isEmpty() )

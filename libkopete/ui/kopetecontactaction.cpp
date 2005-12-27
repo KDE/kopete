@@ -21,12 +21,11 @@
 #include "kopetecontact.h"
 #include "kopeteonlinestatus.h"
 
-#if 0
 
 KopeteContactAction::KopeteContactAction( Kopete::Contact *contact, const QObject *receiver,
 	const char *slot, KAction *parent )
 : KAction( contact->metaContact()->displayName(), QIcon( contact->onlineStatus().iconFor( contact ) ), KShortcut(),
-		   parent->parentCollection(), contact->contactId().toLatin1() )
+		   0,0,parent->parentCollection(), contact->contactId().toLatin1().data() )
 {
 	m_contact = contact;
 
@@ -52,5 +51,3 @@ Kopete::Contact * KopeteContactAction::contact() const
 #include "kopetecontactaction.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-
-#endif

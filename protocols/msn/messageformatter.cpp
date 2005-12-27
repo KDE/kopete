@@ -73,7 +73,8 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 		QString destination = regex.cap(1);
 	}
 	
-	QDataStream reader( &stream,QIODevice::ReadOnly);
+	QByteArray tempStream = stream;
+	QDataStream reader( &tempStream,QIODevice::ReadOnly);
 	reader.setVersion(QDataStream::Qt_3_1);
 	reader.setByteOrder(QDataStream::LittleEndian);
 	// Seek to the start position of the message

@@ -14,13 +14,17 @@
 #ifndef P2PWEBCAM_H
 #define P2PWEBCAM_H
 
+//#if MSN_WEBCAM
+#if 0
+
 #include "p2p.h"
+
 //Added by qt3to4:
 #include <QLabel>
 #include <QTimerEvent>
-#include <Q3ValueList>
+#include <QList>
 
-#if MSN_WEBCAM
+
 
 namespace KNetwork{ class KServerSocket; class KBufferedSocket;  }
 
@@ -38,7 +42,7 @@ class Webcam  : public TransferContext
 		enum Who { wProducer , wViewer };
 		
 		Webcam( Who who , const QString& to, Dispatcher *parent, quint32 sessionID);
-		~Webcam( );
+		virtual ~Webcam();
 
 		virtual void processMessage(const Message& message);
 		
@@ -69,7 +73,7 @@ class Webcam  : public TransferContext
 		MimicWrapper *m_mimic;
 		MSNWebcamDialog *m_widget;
 				
-		Q3ValueList<KNetwork::KBufferedSocket* > m_allSockets;
+		QList<KNetwork::KBufferedSocket* > m_allSockets;
 		
 		int m_timerId;
 

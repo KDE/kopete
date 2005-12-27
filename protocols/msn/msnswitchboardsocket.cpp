@@ -32,10 +32,7 @@
 #include <qtimer.h>
 #include <qfile.h>
 #include <qfileinfo.h>
-//Added by qt3to4:
 #include <QByteArray>
-#include <Q3PtrList>
-#include <Q3ValueList>
 
 // kde
 #include <kdebug.h>
@@ -47,6 +44,7 @@
 #include <kcodecs.h>
 #include <kstandarddirs.h>
 #include <ktempfile.h>
+#include <klocale.h>
 
 // for the display picture
 #include <msncontact.h>
@@ -87,6 +85,7 @@ MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
 	{
 		delete it.data().second;
 	}
+	qDeleteAll(m_typewrited);
 }
 
 void MSNSwitchBoardSocket::connectToSwitchBoard(QString ID, QString address, QString auth)
@@ -338,7 +337,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 			}
 		}
 
-		Q3PtrList<Kopete::Contact> others;
+		QList<Kopete::Contact*> others;
 		others.append( m_account->myself() );
 		QStringList::iterator it2;
 		for( it2 = m_chatMembers.begin(); it2 != m_chatMembers.end(); ++it2 )
@@ -745,7 +744,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	// Color support
 	if (msg.fg().isValid())
 	{
-		QString colorCode = QColor(msg.fg().Qt::blue(),msg.fg().Qt::green(),msg.fg().Qt::red()).name().remove(0,1);  //colors aren't sent in RGB but in BGR (O.G.)
+		QString colorCode = QColor(msg.fg().blue(),msg.fg().green(),msg.fg().red()).name().remove(0,1);  //colors aren't sent in RGB but in BGR (O.G.)
 		head += "CO=" + colorCode;
 	}
 	else
@@ -862,7 +861,7 @@ void MSNSwitchBoardSocket::slotOnlineStatusChanged( MSNSocket::OnlineStatus stat
 		QByteArray command;
 		QString args;
 
-		if( !m_ID ) // we're inviting
+		if( m_ID.isEmpty() ) // we're inviting
 		{
 			command = "USR";
 			args = m_myHandle + " " + m_auth;
@@ -917,9 +916,8 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 		kdDebug(14140) << k_funcinfo << file->name()  <<endl;
 
 		m_typewrited.append(file);
-		m_typewrited.setAutoDelete(true);
 
-		Q3PtrList<Kopete::Contact> others;
+		QList<Kopete::Contact*> others;
 		others.append( m_account->myself() );
 
 		QStringList::iterator it2;
@@ -955,7 +953,7 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 
 void MSNSwitchBoardSocket::slotIncomingFileTransfer(const QString& from, const QString& /*fileName*/, qint64 /*fileSize*/)
 {
-	Q3PtrList<Kopete::Contact> others;
+	QList<Kopete::Contact*> others;
 	others.append( m_account->myself() );
 	QStringList::iterator it2;
 	for( it2 = m_chatMembers.begin(); it2 != m_chatMembers.end(); ++it2 )
@@ -988,7 +986,7 @@ void MSNSwitchBoardSocket::cleanQueue()
 	}
 	kdDebug(14141) << k_funcinfo << m_msgQueue.count() << endl;
 
-	Q3ValueList<const Kopete::Message>::Iterator it_msg;
+	QList<Kopete::Message>::Iterator it_msg;
 	for ( it_msg = m_msgQueue.begin(); it_msg != m_msgQueue.end(); ++it_msg )
 	{
 	 	Kopete::Message kmsg = (*it_msg);

@@ -20,8 +20,7 @@
 #define MSNACCOUNT_H
 
 #include <qobject.h>
-//Added by qt3to4:
-#include <Q3PtrList>
+#include <QList>
 
 #include "kopetepasswordedaccount.h"
 
@@ -215,7 +214,7 @@ private:
 	 * Add the contact on the server in the given groups.
 	 * this is a helper function called bu createContact and slotStatusChanged
 	 */
-	void addContactServerside(const QString &contactId, Q3PtrList<Kopete::Group> groupList);
+	void addContactServerside(const QString &contactId, QList<Kopete::Group*> groupList);
 
 	
 

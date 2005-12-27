@@ -356,7 +356,8 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 			Kopete::TransferManager::transferManager()->askIncomingTransfer(c  , filename , filesize, QString::null, QString::number(m_sessionId));
 
 		}
-#if MSN_WEBCAM  //The code for the webcam doesn't works fine yet
+#if 0
+//#if MSN_WEBCAM  //The code for the webcam doesn't works fine yet
 		else if(AppID==4) //webcam
 		{
 			//TODO invitation patati patata ......
@@ -533,7 +534,8 @@ void MSNP2PDisplatcher::sendImage(const QString& fileName)
 	QTimer::singleShot( 10, p2p, SLOT(slotSendData()) ); //Go for upload
 }
 
-#if MSN_WEBCAM
+//#if MSN_WEBCAM
+#if 0
 void MSNP2PDisplatcher::startWebcam(const QString &myHandle, const QString &msgHandle)
 {
 	unsigned long int sessID=rand()%0xFFFFFF00+4;

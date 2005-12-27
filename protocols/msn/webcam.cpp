@@ -11,19 +11,19 @@
     *************************************************************************
 */
 
-
 #include "webcam.h"
 
-#if MSN_WEBCAM
+//#if MSN_WEBCAM
+#if 0
 
 #include <stdlib.h>
 #include <kdebug.h>
-#include <qregexp.h>
-//Added by qt3to4:
+#include <QRegExp>
 #include <QPixmap>
 #include <QByteArray>
-#include <Q3ValueList>
 #include <QTimerEvent>
+
+#include <kconfig.h>
 #include <kbufferedsocket.h>
 #include <klocale.h>
 #include <kserversocket.h>
@@ -278,7 +278,7 @@ void Webcam::processMessage(const Message& message)
 	
 	for(uint pos=m_content.isNull() ? 10 : 0; pos<dataMessage.size(); pos+=2)
 	{
-		if(dataMessage[pos] !=0 )
+		if(dataMessage[pos])
 			m_content+=dataMessage[pos];
 	}
 
@@ -399,7 +399,7 @@ void Webcam::processMessage(const Message& message)
 				sock->connect(ip, port3);
 			}
 		}
-		Q3ValueList<KBufferedSocket*>::iterator it;
+		QList<KBufferedSocket*>::iterator it;
 		for ( it = m_allSockets.begin(); it != m_allSockets.end(); ++it )
 		{
 			KBufferedSocket *sock=(*it);
@@ -475,7 +475,10 @@ void Webcam::sendBigP2PMessage( const QByteArray & dataMessage)
 	{
 		m_offset=f;
 		QByteArray dm2;
-		dm2.duplicate(dataMessage.data()+m_offset, qMin(1200,m_totalDataSize-m_offset));
+		unsigned int tempValue1, tempValue2;
+		tempValue1 = 1200;
+		tempValue2 = m_totalDataSize-m_offset;
+		dm2.duplicate(dataMessage.data()+m_offset, qMin(tempValue1,tempValue2));
 		sendData( dm2 );
 		m_offset+=dm2.size();
 	}
@@ -527,7 +530,7 @@ void Webcam::slotSocketConnected()
 	delete m_listener;
 	m_listener=0L;
 	
-	Q3ValueList<KBufferedSocket*>::iterator it;
+	QList<KBufferedSocket*>::iterator it;
 	for ( it = m_allSockets.begin(); it != m_allSockets.end(); ++it )
 	{
 		KBufferedSocket *sock=(*it);
@@ -717,7 +720,7 @@ void Webcam::slotSocketRead()
 				break;
 			}
 			QByteArray buffer(available);
-			m_webcamSocket->peekBlock(buffer.data(), buffer.size());
+			m_webcamSocket->peek(buffer.data(), buffer.size());
 			
 			quint32 paysize=(uchar)buffer[8] + ((uchar)buffer[9]<<8) + ((uchar)buffer[10]<<16) + ((uchar)buffer[11]<<24);
 			
@@ -771,7 +774,7 @@ void Webcam::closeAllOtherSockets()
 	delete m_listener;
 	m_listener=0l;
 	
-	Q3ValueList<KBufferedSocket*>::iterator it;
+	QList<KBufferedSocket*>::iterator it;
 	for ( it = m_allSockets.begin(); it != m_allSockets.end(); ++it )
 	{
 		KBufferedSocket *sock=(*it);
@@ -794,7 +797,7 @@ void Webcam::timerEvent( QTimerEvent *e )
 	videoDevice->getImage(&img);
 	
 	if(m_widget)
-		m_widget->newImage(img);
+		m_widget->newImage(QPixmap::fromImage(img));
 	
 	if(img.width()!=320 || img.height()!=240)
 	{

@@ -32,7 +32,6 @@
 #include <QPixmap>
 #include <QVBoxLayout>
 
-#include <kautoconfig.h>
 #include <kfiledialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -55,11 +54,11 @@
 #include "msnnotifysocket.h"
 #include "msnprotocol.h"
 
+// TODO: This was using KAutoConfig before, use KConfigXT instead.
 class MSNEditAccountWidgetPrivate
 {
 public:
 	MSNProtocol *protocol;
-	KAutoConfig *autoConfig;
 	MSNEditAccountUI *ui;
 
 	QString pictureUrl;
@@ -76,10 +75,6 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 	( new QVBoxLayout( this, 0, 0 ) )->setAutoAdd( true );
 
 	d->ui = new MSNEditAccountUI( this );
-
-	d->autoConfig = new KAutoConfig( d->ui );
-	d->autoConfig->addWidget( d->ui->global_settings_page, "MSN" );
-	d->autoConfig->retrieveSettings( true );
 
 	// FIXME: actually, I don't know how to set fonts for qlistboxitem - Olivier
 	d->ui->label_font->hide();
@@ -165,8 +160,6 @@ MSNEditAccountWidget::~MSNEditAccountWidget()
 
 Kopete::Account * MSNEditAccountWidget::apply()
 {
-	d->autoConfig->saveSettings();
-
 	if ( !account() )
 		setAccount( new MSNAccount( d->protocol, d->ui->m_login->text() ) );
 	
@@ -235,6 +228,7 @@ Kopete::Account * MSNEditAccountWidget::apply()
 bool MSNEditAccountWidget::validateData()
 {
 	QString userid = d->ui->m_login->text();
+	KMessageBox::information(this, userid, "Debug");
 	if ( MSNProtocol::validContactId( userid ) )
 		return true;
 
