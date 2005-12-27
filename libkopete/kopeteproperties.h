@@ -17,7 +17,7 @@
 #ifndef KOPETEPROPERTIES_H
 #define KOPETEPROPERTIES_H
 
-#include <q3asciidict.h>
+#include <QMultiHash>
 
 #include <typeinfo>
 
@@ -66,7 +66,7 @@ public:
 	 *
 	 * @return the name of this property.
 	 */
-	virtual const char *name() const = 0;
+	virtual const QByteArray &name() const = 0;
 };
 
 /**
@@ -121,13 +121,17 @@ struct PropertyData
  */
 class PropertyStorage
 {
-	typedef Q3AsciiDict<PropertyData> PropertyDict;
+	typedef QMultiHash<QByteArray, PropertyData*> PropertyDict;
 	// setCustomPropertyData can be called on a const object, allowing the
 	// guarantee that DataProperty::data() never returns 0.
 	mutable PropertyDict _storage;
 
 public:
-	PropertyStorage() { _storage.setAutoDelete( true ); }
+	PropertyStorage() {}
+	~PropertyStorage()
+	{
+		qDeleteAll(_storage);
+	}
 
 	/**
 	 * Sets the stored property data with name @p name to be @p data.
@@ -137,13 +141,13 @@ public:
 	 * name their custom data differently. Names are bound by the same rules as are laid out
 	 * for naming properties in PropertyBase<Parent>::name.
 	 */
-	void setCustomPropertyData( const char *name, PropertyData *data ) const { _storage.replace( name, data ); }
+	void setCustomPropertyData( const QByteArray &name, PropertyData *data ) const { _storage.replace( name, data ); }
 
 	/**
 	 * Gets the stored property data with name @p name. Returns a null
 	 * pointer if no data has been stored for that property.
 	 */
-	PropertyData *getCustomPropertyData( const char *name ) const { return _storage[name]; }
+	PropertyData *getCustomPropertyData( const QByteArray &name ) const { return _storage.value(name); }
 };
 
 /**

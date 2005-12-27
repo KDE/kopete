@@ -17,7 +17,7 @@
 #include <kapplication.h>
 #include <qregexp.h>
 //Added by qt3to4:
-#include <Q3PtrList>
+#include <QList>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kprocess.h>
@@ -57,9 +57,10 @@ class KopeteCommandGUIClient : public QObject, public KXMLGUIClient
 					manager->protocol()
 			);
 
-			for( Q3DictIterator<Kopete::Command> it( mCommands ); it.current(); ++it )
+			CommandList::Iterator it, itEnd = mCommands.end();
+			for( it = mCommands.begin(); it != itEnd; ++it )
 			{
-				KAction *a = static_cast<KAction*>( it.current() );
+				KAction *a = static_cast<KAction*>( it.value() );
 				actionCollection()->insert( a );
 				QDomElement newNode = doc.createElement( QString::fromLatin1("Action") );
 				newNode.setAttribute( QString::fromLatin1("name"),
@@ -93,7 +94,7 @@ struct CommandHandlerPrivate
 	Kopete::CommandHandler *s_handler;
 	QMap<KProcess*,ManagerPair> processMap;
 	bool inCommand;
-	Q3PtrList<KAction> m_commands;
+	QList<KAction *> m_commands;
 };
 
 CommandHandlerPrivate *Kopete::CommandHandler::p = 0L;
@@ -103,8 +104,8 @@ Kopete::CommandHandler::CommandHandler() : QObject( qApp )
 	p->s_handler = this;
 	p->inCommand = false;
 
-	CommandList mCommands(31, false);
-	mCommands.setAutoDelete( true );
+	CommandList mCommands;
+	mCommands.reserve(31);
 	p->pluginCommands.insert( this, mCommands );
 
 	registerCommand( this, QString::fromLatin1("help"), SLOT( slotHelpCommand( const QString &, Kopete::ChatSession * ) ),
@@ -146,6 +147,14 @@ Kopete::CommandHandler::CommandHandler() : QObject( qApp )
 
 Kopete::CommandHandler::~CommandHandler()
 {
+	CommandList commandList = p->pluginCommands[this];
+	while (!commandList.isEmpty()) 
+	{
+		Kopete::Command *value = *commandList.begin();
+		commandList.erase(commandList.begin());
+		delete value;
+    	}
+	
 	delete p;
 }
 
@@ -208,7 +217,7 @@ bool Kopete::CommandHandler::processMessage( const QString &msg, Kopete::ChatSes
 		return false;
 
 	CommandList mCommands = commands( manager->protocol() );
-	Kopete::Command *c = mCommands[ command ];
+	Kopete::Command *c = mCommands.value(command);
 	if(c)
 	{
 		kdDebug(14010) << k_funcinfo << "Handled Command" << endl;
@@ -240,10 +249,10 @@ void Kopete::CommandHandler::slotHelpCommand( const QString &args, Kopete::ChatS
 		output = i18n( "Available Commands:\n" );
 
 		CommandList mCommands = commands( manager->myself()->protocol() );
-		Q3DictIterator<Kopete::Command> it( mCommands );
-		for( ; it.current(); ++it )
+		CommandList::Iterator it, itEnd = mCommands.end();
+		for( it = mCommands.begin(); it != itEnd; ++it )
 		{
-			output.append( it.current()->command().toUpper() + '\t' );
+			output.append( it.value()->command().toUpper() + '\t' );
 			if( commandCount++ == 5 )
 			{
 				commandCount = 0;
@@ -255,7 +264,7 @@ void Kopete::CommandHandler::slotHelpCommand( const QString &args, Kopete::ChatS
 	else
 	{
 		QString command = parseArguments( args ).front().toLower();
-		Kopete::Command *c = commands( manager->myself()->protocol() )[ command ];
+		Kopete::Command *c = commands( manager->myself()->protocol() ).value( command );
 		if( c && !c->help().isNull() )
 			output = c->help();
 		else
@@ -279,11 +288,11 @@ void Kopete::CommandHandler::slotExecCommand( const QString &args, Kopete::ChatS
 	if( !args.isEmpty() )
 	{
 		KProcess *proc = 0L;
-#warning commented to make it compile
-#if 0
-		if ( KAuthorized::authorizeKAction( QString::fromLatin1( "shell_access" ) ) )
+//#warning commented to make it compile
+//#if 0
+		if ( KAuthorized::authorizeKAction( "shell_access" ) )
 				proc = new KProcess(manager);
-#endif		
+//#endif		
 		if( proc )
 		{
 			*proc << QString::fromLatin1("sh") << QString::fromLatin1("-c");
@@ -397,7 +406,7 @@ bool Kopete::CommandHandler::commandHandled( const QString &command )
 {
 	for( PluginCommandMap::Iterator it = p->pluginCommands.begin(); it != p->pluginCommands.end(); ++it )
 	{
-		if( it.data()[ command ] )
+		if( it.data().value( command ) )
 			return true;
 	}
 
@@ -412,12 +421,12 @@ bool Kopete::CommandHandler::commandHandledByProtocol( const QString &command, K
 
 	// Fetch the commands for the protocol
 	CommandList commandList = commands( protocol );
-	Q3DictIterator<Kopete::Command> it ( commandList );
+	CommandList::Iterator it, itEnd = commandList.end();
 
 	// Loop through commands and check if they match the supplied command
-	for( ; it.current(); ++it )
+	for( it = commandList.begin(); it != itEnd; ++it )
 	{
-		if( it.current()->command().toLower() == command )
+		if( it.value()->command().toLower() == command )
 			return true;
 	}
 
@@ -427,7 +436,8 @@ bool Kopete::CommandHandler::commandHandledByProtocol( const QString &command, K
 
 CommandList Kopete::CommandHandler::commands( Kopete::Protocol *protocol )
 {
-	CommandList commandList(63, false);
+	CommandList commandList;
+	commandList.reserve(63);
 
 	//Add plugin user aliases first
 	addCommands( p->pluginCommands[protocol], commandList, UserAlias );
@@ -459,12 +469,12 @@ CommandList Kopete::CommandHandler::commands( Kopete::Protocol *protocol )
 
 void Kopete::CommandHandler::addCommands( CommandList &from, CommandList &to, CommandType type )
 {
-	Q3DictIterator<Kopete::Command> itDict( from );
-	for( ; itDict.current(); ++itDict )
+	CommandList::Iterator itDict, itDictEnd = from.end();
+	for( itDict = from.begin(); itDict != itDictEnd; ++itDict )
 	{
-		if( !to[ itDict.currentKey() ] &&
-				( type == Undefined || itDict.current()->type() == type ) )
-			to.insert( itDict.currentKey(), itDict.current() );
+		if( !to.value( itDict.key() ) &&
+				( type == Undefined || itDict.value()->type() == type ) )
+			to.insert( itDict.key(), itDict.value() );
 	}
 }
 
@@ -479,8 +489,8 @@ void Kopete::CommandHandler::slotPluginLoaded( Kopete::Plugin *plugin )
 	if( !p->pluginCommands.contains( plugin ) )
 	{
 		//Create a QDict optomized for a larger # of commands, and case insensitive
-		CommandList mCommands(31, false);
-		mCommands.setAutoDelete( true );
+		CommandList mCommands;
+		mCommands.reserve(31);
 		p->pluginCommands.insert( plugin, mCommands );
 	}
 }

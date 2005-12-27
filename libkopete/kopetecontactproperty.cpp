@@ -23,8 +23,9 @@
 namespace Kopete
 {
 
-struct ContactPropertyTmplPrivate
+class ContactPropertyTmpl::Private
 {
+public:
 	QString key;
 	QString label;
 	QString icon;
@@ -39,7 +40,7 @@ ContactPropertyTmpl ContactPropertyTmpl::null;
 
 ContactPropertyTmpl::ContactPropertyTmpl()
 {
-	d = new ContactPropertyTmplPrivate;
+	d = new Private;
 	d->refCount = 1;
 	d->persistent = false;
 	// Don't register empty template
@@ -53,7 +54,7 @@ ContactPropertyTmpl::ContactPropertyTmpl(const QString &key,
 	{
 //		kdDebug(14000) << k_funcinfo << "Creating new template for key = '" << key << "'" << endl;
 
-		d = new ContactPropertyTmplPrivate;
+		d = new Private;
 		d->refCount = 1;
 		d->key = key;
 		d->label = label;

@@ -26,11 +26,6 @@
 
 #include "kopete_export.h"
 
-#include <kopetemessage.h> //TODO: remove
-namespace DOM  { class Node; }  //TODO: remove
-class KAction; //TODO: remove
-
-
 class KPluginInfo;
 
 

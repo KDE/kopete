@@ -17,7 +17,7 @@
 #ifndef _KOPETECOMMANDHANDLER_H_
 #define _KOPETECOMMANDHANDLER_H_
 
-#include <q3dict.h>
+#include <QMultiHash>
 #include <kshortcut.h>
 #include "kopetemessage.h"
 
@@ -38,7 +38,7 @@ class Plugin;
 class Protocol;
 class Command;
 
-typedef Q3Dict<Command> CommandList;
+typedef QMultiHash<QString, Command*> CommandList;
 
 /**
  * @author Jason Keirstead   <jason@keirstead.org>

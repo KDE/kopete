@@ -26,8 +26,6 @@
 namespace Kopete
 {
 
-struct ContactPropertyTmplPrivate;
-
 /**
  * @author Stefan Gehn <metz AT gehn.net>
  *
@@ -124,7 +122,8 @@ class KOPETE_EXPORT ContactPropertyTmpl
 		typedef QMap<QString, ContactPropertyTmpl>  Map;
 
 	private:
-		ContactPropertyTmplPrivate *d;
+		class Private;
+		Private *d;
 };
 
 

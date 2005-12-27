@@ -68,6 +68,7 @@
 #include "addressbookselectorwidget.h"
 #include "addcontactwizard.h"
 #include "kopetecontactlist.h"
+#include "kopetecontact.h"
 #include "kopetemetacontact.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"

@@ -22,6 +22,7 @@
 #include <QVBoxLayout>
 #include <kdebug.h>
 #include "kopeteaccount.h"
+#include "kopetecontact.h"
 #include "testbedaccountpreferences.h"
 #include "testbedaccount.h"
 #include "testbedprotocol.h"
