@@ -20,7 +20,6 @@
 #include "historylogger.h"
 #include "historyviewer.h"
 #include "kopetemetacontact.h"
-#include "kopetexsl.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopetecontactlist.h"

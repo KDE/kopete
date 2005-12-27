@@ -335,11 +335,6 @@ public:
 	 void setManager(ChatSession *);
 
 	/**
-	 * get a XML version of this message
-	 */
-	const QDomDocument asXML();
-
-	/**
 	 * Enables the use of a background for a message
 	 * @param enable A flag to indicate if the background should be enabled or disabled.
 	 */
@@ -357,6 +352,11 @@ public:
 	 */
 	void setRtfOverride( bool enable );
 
+	/**
+	 * Return HTML style attribute for this message.
+	 * @return A string formatted like this: "style=attr"
+	 */
+	QString getHtmlStyleAttribute() const;
 
 public:  /* static helpers */
 
@@ -387,14 +387,6 @@ public:  /* static helpers */
 	static QString decodeString( const QCString &message,
  		const QTextCodec *providedCodec = 0L, bool *success = 0L );
 
-	
-	/**
-	 * @internal
-	 * this function will clear the cache of metacontact photo.
-	 * it is called when the photo of a contact change.
-	 */
-	static void clearImageCache();
-
 private:
 	/**
 	 * Message is implicitly shared.
@@ -406,8 +398,6 @@ private:
 	KSharedPtr<Private> d;
 
 	static QString parseLinks( const QString &message, MessageFormat format );
-
-	QDomElement contactNode( QDomDocument doc, const Contact *contact );
 };
 
 }

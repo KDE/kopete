@@ -68,14 +68,7 @@ public:
 	QColor bgColor;
 	QString body;
 	QString subject;
-	
-	//the cache is used to keep the base64 if images
-	//Note: in QT4 this should be probably a QHash
-	static QMap <QString , QString> imageCache;
-
 };
-
-QMap <QString , QString> Message::Private::imageCache;
 
 Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
              const ContactPtrList &to, const QString &body, const QString &subject,
@@ -467,209 +460,23 @@ void Message::setManager(ChatSession *kmm)
 	d->manager=kmm;
 }
 
-
-QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
+QString Message::getHtmlStyleAttribute() const
 {
-	KopetePrefs *p = KopetePrefs::prefs();
-
-	// These colors are used for coloring nicknames. I tried to use
-	// colors both visible on light and dark background.
-	static const char* const nameColors[] =
-	{
-		"red", "blue" , "gray", "magenta", "violet", "olive", "yellowgreen",
-		"darkred", "darkgreen", "darksalmon", "darkcyan", "darkyellow",
-		"mediumpurple", "peru", "olivedrab", "royalred", "darkorange", "slateblue",
-		"slategray", "goldenrod", "orangered", "tomato", "dogderblue", "steelblue",
-		"deeppink", "saddlebrown", "coral", "royalblue"
-	};
-
-	static const int nameColorsLen = sizeof(nameColors) / sizeof(nameColors[0]) - 1;
+	QString styleAttribute;
 	
-	QString contactName = contact->property(Global::Properties::self()->nickName()).value().toString();
-	if( p->truncateContactNames() )
-	{
-		contactName = KStringHandler::csqueeze( contactName, p->maxConactNameLength() );
-	}
+	styleAttribute = QString::fromUtf8("style=\"");
 
-	if(contactName.isEmpty())
-		contactName = contact->metaContact() ? contact->metaContact()->displayName() : contact->contactId();
-
-	QString metacontactName = contact->metaContact() ? contact->metaContact()->displayName() : contactName;
-	QDomElement contactNode = doc.createElement( QString::fromLatin1("contact") );
-	contactNode.setAttribute( QString::fromLatin1("contactId"), contact->contactId() );
-
-	QDomElement contactNameNode = doc.createElement( QString::fromLatin1("contactDisplayName") );
-	contactNameNode.setAttribute( QString::fromLatin1("dir"), contactName.isRightToLeft() ?
-	                              QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
-	contactNameNode.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( contactName ) );
-	contactNode.appendChild( contactNameNode );
-
-
-	QDomElement metacontactNameNode = doc.createElement( QString::fromLatin1("metaContactDisplayName") );
-	metacontactNameNode.setAttribute( QString::fromLatin1("dir"), metacontactName.isRightToLeft() ?
-	                                  QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
-	metacontactNameNode.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( metacontactName ) );
-
-	
-	if( contact->metaContact() && !contact->metaContact()->metaContactId().isEmpty())
-	{
-		if(d->imageCache.contains(contact->metaContact()->metaContactId()))
-		{
-			contactNode.setAttribute( QString::fromLatin1("userPhoto"), d->imageCache[contact->metaContact()->metaContactId()]);
-		}
-		else
-		{
-			QImage photo = contact->metaContact()->photo();
-			if( !photo.isNull() )
-			{
-				QByteArray ba;
-				QBuffer buffer( ba );
-				buffer.open( IO_WriteOnly );
-				photo.save ( &buffer, "PNG" );
-				QString photo64=KCodecs::base64Encode(ba);
-			
-				if(d->imageCache.count() > 14)
-				{
-					d->imageCache.clear();
-				}
-				d->imageCache.insert(contact->metaContact()->metaContactId(), photo64);
-				
-				contactNode.setAttribute( QString::fromLatin1("userPhoto"), photo64 );
-			}
-		}
-	}
-
-	contactNode.appendChild( metacontactNameNode );
-
-	// protocol() returns NULL here in the style preview in appearance config.
-	// this isn't the right place to work around it, since contacts should never have
-	// no protocol, but it works for now.
-	QString iconName = QString::fromLatin1("kopete");
-	if ( Protocol *protocol = contact->protocol() )
-		iconName = protocol->pluginIcon();
-
-	QString iconPath = KGlobal::iconLoader()->iconPath( iconName, KIcon::Small );
-	contactNode.setAttribute( QString::fromLatin1("protocolIcon"), iconPath );
-
-	// hash contactId to deterministically pick a color for the contact
-	int hash = 0;
-	const QString &contactId = contact->contactId();
-	for( uint f = 0; f < contactId.length(); ++f )
-		hash += contactId[f].unicode() * f;
-
-	QString color = QColor( nameColors[ hash % nameColorsLen ] ).name();
-	contactNode.setAttribute( QString::fromLatin1("color"), color );
-
-	return contactNode;
-}
-
-
-const QDomDocument Message::asXML()
-{
-	QDomDocument doc;
-	QDomElement messageNode = doc.createElement( QString::fromLatin1("message") );
-	messageNode.setAttribute( QString::fromLatin1("time"),
-		KGlobal::locale()->formatTime(d->timeStamp.time(), true) );
-	messageNode.setAttribute( QString::fromLatin1("timestamp"),
-		KGlobal::locale()->formatDateTime(d->timeStamp) );
-	if( d->timeStamp.date() == QDate::currentDate() )
-	{
-		messageNode.setAttribute( QString::fromLatin1("formattedTimestamp"),
-			KGlobal::locale()->formatTime(d->timeStamp.time(), true) );
-	}
-	else
-	{
-		messageNode.setAttribute( QString::fromLatin1("formattedTimestamp"),
-			KGlobal::locale()->formatDateTime(d->timeStamp) );
-	}
-	messageNode.setAttribute( QString::fromLatin1("subject"), QStyleSheet::escape( d->subject ) );
-
-	/**
-	 * @deprecated backwards-compatibility direction attribute for old XSLT
-	 * It used to be the case that Action was in the MessageDirection enum.
-	 * Clearly this is broken - Action is not a direction, and it was impossible
-	 * to tell whether actions were incoming or outgoing. Anyway, some XSLT view
-	 * styles were written back when this was the case. They expected numeric
-	 * 'directions'. So we fake some for them.
-	 */
-	{
-		int oldDirection = 0;
-		if( type() == TypeAction )
-			oldDirection = 3;
-		else if( direction() == Inbound )
-			oldDirection = 0;
-		else if( direction() == Outbound )
-			oldDirection = 1;
-		else if( direction() == Internal )
-			oldDirection = 2;
-		messageNode.setAttribute( QString::fromLatin1("direction"), oldDirection );
-	}
-
-	const char *route;
-	switch( d->direction )
-	{
-		case Inbound:
-			route = "inbound";
-			break;
-		case Outbound:
-			route = "outbound";
-			break;
-		case Internal:
-			route = "internal";
-			break;
-		default:
-			kdWarning(14000) << k_funcinfo << "unknown message direction " << d->direction << endl;
-			route = "unknown";
-			break;
-	}
-	messageNode.setAttribute( QString::fromLatin1("route"), QString::fromLatin1(route) );
-
-	const char *type;
-	switch( d->type )
-	{
-		case TypeNormal:
-			type = "normal";
-			break;
-		case TypeAction:
-			type = "action";
-			break;
-		default:
-			kdWarning(14000) << k_funcinfo << "unknown message type " << d->type << endl;
-			type = "unknown";
-			break;
-	}
-	messageNode.setAttribute( QString::fromLatin1("type"), QString::fromLatin1(type) );
-
-	messageNode.setAttribute( QString::fromLatin1("importance"), d->importance );
-
-
-	//build the <from> and <to>  node
-	if( const Contact *mainContact = (d->direction == Inbound ? d->from : d->to.getFirst()) )
-		messageNode.setAttribute( QString::fromLatin1("mainContactId"), mainContact->contactId() );
-
-	doc.appendChild( messageNode );
-
-	if( const Contact *c = d->from )
-	{
-		QDomElement fromNode = doc.createElement( QString::fromLatin1("from") );
-		fromNode.appendChild( contactNode( doc, c ) );
-		messageNode.appendChild( fromNode );
-	}
-
-	if( const Contact *c = d->to.getFirst() )
-	{
-		QDomElement toNode = doc.createElement( QString::fromLatin1("to") );
-		toNode.appendChild( contactNode( doc, c ) );
-		messageNode.appendChild( toNode );
-	}
-
-	QDomElement bodyNode = doc.createElement( QString::fromLatin1("body") );
-
+	// Affect foreground(color) and background color to message.
 	if( !d->fgOverride && d->fgColor.isValid() )
-		bodyNode.setAttribute( QString::fromLatin1("color"), d->fgColor.name() );
+	{
+		styleAttribute += QString::fromUtf8("color: %1; ").arg(d->fgColor.name());
+	}
 	if( !d->bgOverride && d->bgColor.isValid() )
-		bodyNode.setAttribute( QString::fromLatin1("bgcolor"), d->bgColor.name() );
-
+	{
+		styleAttribute += QString::fromUtf8("background-color: %1; ").arg(d->bgColor.name());
+	}
+	
+	// Affect font parameters.
 	if( !d->rtfOverride && d->font!=QFont() )
 	{
 		QString fontstr;
@@ -684,17 +491,12 @@ const QDomDocument Message::asXML()
 		if(d->font.bold())
 			fontstr+=QString::fromLatin1("font-weight: bold;");
 
-		bodyNode.setAttribute( QString::fromLatin1("font"), fontstr );
+		styleAttribute += fontstr;
 	}
 
-	bodyNode.setAttribute( QString::fromLatin1("dir"),
-		plainBody().isRightToLeft() ? QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
-	QDomCDATASection bodyText = doc.createCDATASection( parsedBody() );
-	bodyNode.appendChild( bodyText );
+	styleAttribute += QString::fromUtf8("\"");
 
-	messageNode.appendChild( bodyNode );
-
-	return doc;
+	return styleAttribute;
 }
 
 // KDE4: Move that to a utils class/namespace
@@ -775,9 +577,3 @@ QString Message::decodeString( const QCString &message, const QTextCodec *provid
 
 	return result;
 }
-
-void Kopete::Message::clearImageCache()  //[static]
-{
-	Private::imageCache.clear();
-}
-

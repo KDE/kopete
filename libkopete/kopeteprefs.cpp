@@ -103,13 +103,6 @@ void KopetePrefs::load()
 
 	mShowTray = config->readBoolEntry("Show Systemtray", true);
 
-	/*
-	The stylesheet config value is now just the basename of the xsl file ie: Messenger, Kopete.
-	To avoid having duplicated fallback code, I used the extract method refactoring and left all in
-	_setStyleSheet.
-	*/
-	_setStyleSheet(config->readEntry("Stylesheet", QString::fromLatin1(KOPETE_DEFAULT_CHATSTYLE)));
-
 	_setStylePath(config->readEntry("StylePath"));
 	mStyleVariant = config->readEntry("StyleVariant");
 	// Read Chat Window Style display
@@ -227,8 +220,6 @@ void KopetePrefs::save()
 	config->writeEntry("Show Systemtray", mShowTray);
 
 	//Style
-	//for XSLT
-	config->writeEntry("Stylesheet", mStyleSheet);
 	//for xhtml+css
 	config->writeEntry("StylePath", mStylePath);
 	config->writeEntry("StyleVariant", mStyleVariant);
@@ -427,38 +418,6 @@ void KopetePrefs::setBalloonDelay( int value )
 void KopetePrefs::setSoundIfAway(bool value)
 {
 	mSoundIfAway = value;
-}
-
-void KopetePrefs::setStyleSheet(const QString &value)
-{
-	if( mStyleSheet != value ) mMessageAppearanceChanged = true;
-	_setStyleSheet(value);
-}
-
-void KopetePrefs::_setStyleSheet(const QString &value)
-{
-	QString styleFileName  = locate( "appdata", QString::fromLatin1("styles/") + value + QString::fromLatin1(".xsl"));
-
-	/* In case the user had selected a style not available now */
-	if ( !QFile::exists(styleFileName) || value.isEmpty() )
-	{
-		/* Try to fallback to default style */
-		mStyleSheet = QString::fromLatin1(KOPETE_DEFAULT_CHATSTYLE);
-		// FIXME: Duncan: we could check here if Kopete XSL exists too and show a msgbox about a broken install in case it is not found
-	}
-	else
-	{
-		mStyleSheet = value;
-	}
-	
-	styleFileName = locate( "appdata", QString::fromLatin1("styles/") + mStyleSheet + QString::fromLatin1(".xsl"));
-
-	/* We must find the path of style data to replace $appdata by correct value in xsl that Kopete XSLT doesn't processing well (and impossible to fix without changing lots of things).  */
-	mStyleDataPath = styleFileName;
-	mStyleDataPath.replace(mStyleSheet + QString::fromLatin1(".xsl"),QString::fromLatin1("data/"));
-
-	mStyleContents = fileContents(styleFileName);
-
 }
 
 void KopetePrefs::setStylePath(const QString &stylePath)

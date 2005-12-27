@@ -14,7 +14,7 @@ libkopeteui_la_SOURCES = kopetecontactaction.cpp addcontactpage.cpp \
 	contactaddednotifywidget.ui contactaddednotifydialog.cpp
 
 libkopeteui_la_LDFLAGS = $(all_libraries) -lkabc
-libkopeteui_la_LIBADD = ../private/libkopeteprivate.la $(LIB_KHTML) $(LIBXML_LIBS) $(LIBXSLT_LIBS)
+libkopeteui_la_LIBADD = ../private/libkopeteprivate.la $(LIB_KHTML)
 
 kopeteincludedir = $(includedir)/kopete/ui
 kopeteinclude_HEADERS = accountselector.h fileconfirmbase.h kopetefileconfirmdialog.h \

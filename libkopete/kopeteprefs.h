@@ -101,10 +101,6 @@ public:
 
 	//Styles
 	QString defaultTheme() const { return QString::fromLatin1("Default"); }
-	//for XSLT
-	QString styleSheet() const { return mStyleSheet; }
-	QString styleDataPath() const { return mStyleDataPath; }
-	QString styleContents() const { return mStyleContents; }
 	//for Adium (xhtml+css)
 	QString stylePath() const { return mStylePath; }
 	QString styleVariant() const { return mStyleVariant; }
@@ -163,7 +159,6 @@ public:
 	void setSoundIfAway(bool);
 	void setBeepNotify(bool);
 	void setChatWindowPolicy(int);
-	void setStyleSheet (const QString &);
 	void setStylePath(const QString &);
 	void setStyleVariant(const QString &);
 	void setChatViewBufferSize(int);
@@ -296,10 +291,6 @@ private:
 
 	bool mRichText;
 
-	//XSLT
-	QString mStyleSheet;
-	QString mStyleDataPath;
-	QString mStyleContents;
 	// xhtml+css
 	//for Adium (xhtml+css)
 	QString mStylePath;
@@ -330,7 +321,6 @@ private:
 	bool mGroupConsecutiveMessages;
 
 	QString fileContents(const QString &path);
-	void _setStyleSheet (const QString &);
 	void _setStylePath (const QString &);
 };
 #endif

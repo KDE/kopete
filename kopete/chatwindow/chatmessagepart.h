@@ -22,9 +22,7 @@
 #include <khtml_part.h>
 #include <dom/html_element.h>
 
-#include <qptrdict.h>
 #include <qvaluelist.h>
-#include <qpair.h>
 
 namespace Kopete
 { 
@@ -53,11 +51,6 @@ public:
 	 */
 	void clear();
 
-	/**
-	 * Change XSLT stylesheet
-	 */
-	void setStylesheet( const QString &style  );
-	
 	/**
 	 * Immediately scroll the chat to the bottom, as long as it has not been intentionally scrolled away from the bottom
 	 * use 
@@ -148,11 +141,7 @@ private slots:
 
 	void slotScrollingTo( int x, int y );
 
-	void slotRefreshNodes();
-
 	void slotRefreshView();
-
-	void slotTransformComplete( const QVariant &result );
 
 	void slotRightClick( const QString &, const QPoint &point );
 
