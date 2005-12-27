@@ -14,26 +14,33 @@
     *************************************************************************
 */
 
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qcursor.h>
 #include <qgroupbox.h>
 #include <qradiobutton.h>
-
+ 
+#include <kstandarddirs.h>
 #include <kapplication.h>
 #include <kpushbutton.h>
 #include <kdebug.h>
-
+ 
+#include "smpppdlocationwidget.h"
 #include "smpppdcsprefsimpl.h"
 #include "smpppdsearcher.h"
 
 SMPPPDCSPrefs::SMPPPDCSPrefs(QWidget* parent, const char* name, WFlags fl)
- : SMPPPDCSPrefsBase(parent, name, fl) {
- 	
-	// signals and slots connections
-    connect( useNetstat, SIGNAL( toggled(bool) ), this, SLOT( disableSMPPPDSettings() ) );
-    connect( useSmpppd, SIGNAL( toggled(bool) ), this, SLOT( enableSMPPPDSettings() ) );
-    connect( autoCSTest, SIGNAL( clicked() ), this, SLOT( determineCSType() ) );
+        : SMPPPDCSPrefsBase(parent, name, fl) {
+
+    // signals and slots connections
+    connect(useNetstat, SIGNAL(toggled(bool)), this, SLOT(disableSMPPPDSettings()));
+    connect(useSmpppd, SIGNAL(toggled(bool)), this, SLOT(enableSMPPPDSettings()));
+    connect(autoCSTest, SIGNAL(clicked()), this, SLOT(determineCSType()));
+
+	// if netstat is NOT available, disable the option and set to SMPPPD
+	if(KStandardDirs::findExe("netstat") == QString::null) {
+		autoCSTest->setEnabled(FALSE);
+		useNetstat->setEnabled(FALSE);
+		useNetstat->setChecked(FALSE);
+		useSmpppd->setChecked(TRUE);
+	}
 }
 
 SMPPPDCSPrefs::~SMPPPDCSPrefs() {}
@@ -48,30 +55,30 @@ void SMPPPDCSPrefs::disableSMPPPDSettings() {
 
 void SMPPPDCSPrefs::determineCSType() {
 
-	// while we search, we'll disable the button
-	autoCSTest->setEnabled(false);
-	qApp->processEvents();
-	
+    // while we search, we'll disable the button
+    autoCSTest->setEnabled(false);
+    qApp->processEvents();
+
     /* broadcast network for a smpppd.
        If one is available set to smpppd method */
-	   
-	SMPPPDSearcher searcher;
-	connect(&searcher, SIGNAL(smpppdFound(const QString&)), this, SLOT(smpppdFound(const QString&)));
-	connect(&searcher, SIGNAL(smpppdNotFound()), this, SLOT(smpppdNotFound()));
-	searcher.searchNetwork();
+
+    SMPPPDSearcher searcher;
+    connect(&searcher, SIGNAL(smpppdFound(const QString&)), this, SLOT(smpppdFound(const QString&)));
+    connect(&searcher, SIGNAL(smpppdNotFound()), this, SLOT(smpppdNotFound()));
+    searcher.searchNetwork();
 }
 
 void SMPPPDCSPrefs::smpppdFound(const QString& host) {
-	kdDebug(14312) << k_funcinfo << endl;
-	server->setText(host);
-	useSmpppd->setChecked(true);
-	autoCSTest->setEnabled(true);
+    kdDebug(14312) << k_funcinfo << endl;
+    SMPPPDLocation->setServer(host);
+    useSmpppd->setChecked(true);
+    autoCSTest->setEnabled(true);
 }
 
 void SMPPPDCSPrefs::smpppdNotFound() {
-	kdDebug(14312) << k_funcinfo << endl;
-	useNetstat->setChecked(true);
-	autoCSTest->setEnabled(true);
+    kdDebug(14312) << k_funcinfo << endl;
+    useNetstat->setChecked(true);
+    autoCSTest->setEnabled(true);
 }
 
 #include "smpppdcsprefsimpl.moc"

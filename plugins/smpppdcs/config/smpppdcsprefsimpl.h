@@ -17,12 +17,10 @@
 #ifndef SMPPPDCSPREFSIMPL_H
 #define SMPPPDCSPREFSIMPL_H
 
-#include <klineedit.h>
-
 #include "smpppdcsprefs.h"
 
 /**
-@author Heiko Schaefer <heiko@rangun.de>
+@author Heiko Sch&auml;fer <heiko@rangun.de>
 */
 class SMPPPDCSPrefs : public SMPPPDCSPrefsBase 
 {
@@ -42,7 +40,6 @@ protected slots:
     void determineCSType();
     void smpppdFound(const QString & host);
     void smpppdNotFound();
-
 };
 
 #endif
