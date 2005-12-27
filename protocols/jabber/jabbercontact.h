@@ -108,6 +108,11 @@ public slots:
 	 * @param path Path to the photo.
 	 */
 	void setPhoto(const QString &photoPath);
+	
+	/**
+	 * this will start a voice call to the contact
+	 */
+	void voiceCall();
 
 private slots:
 

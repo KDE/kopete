@@ -63,6 +63,12 @@
 
 #include <sys/utsname.h>
 
+#ifndef JABBER_WITHOUT_VOICE
+#include "jingle/voicecaller.h"
+#include "jingle/jinglevoicecaller.h"
+#include "jingle/voicecalldlg.h"
+#endif
+
 JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId, const char *name)
 			  :Kopete::PasswordedAccount ( parent, accountId, 0, name )
 {
@@ -74,6 +80,10 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 
 	m_resourcePool = 0L;
 	m_contactPool = 0L;
+	
+#ifndef JABBER_WITHOUT_VOICE
+	m_voiceCaller = 0L;
+#endif
 
 	// add our own contact to the pool
 	JabberContact *myContact = contactPool()->addContact ( XMPP::RosterItem ( accountId ), Kopete::ContactList::self()->myself(), false );
@@ -96,7 +106,7 @@ void JabberAccount::cleanup ()
 {
 
 	delete m_jabberClient;
-
+	
 	m_jabberClient = 0L;
 
 	delete m_resourcePool;
@@ -104,6 +114,11 @@ void JabberAccount::cleanup ()
 
 	delete m_contactPool;
 	m_contactPool = 0L;
+	
+#ifndef JABBER_WITHOUT_VOICE
+	delete m_voiceCaller;
+	m_voiceCaller = 0L;
+#endif
 
 }
 
@@ -374,6 +389,15 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		case JabberClient::Ok:
 		default:
 			// everything alright!
+#ifndef JABBER_WITHOUT_VOICE
+			if(!m_voiceCaller)
+			{
+				m_voiceCaller = new JingleVoiceCaller( m_jabberClient );
+				QObject::connect(m_voiceCaller,SIGNAL(incoming(const Jid&)),this,SLOT(slotIncomingVoiceCall( const Jid& )));
+			}
+			m_jabberClient->client()->addExtension("voice-v1", Features(QString("http://www.google.com/xmpp/protocol/voice/v1")));
+#endif
+
 			break;
 	}
 
@@ -494,6 +518,12 @@ void JabberAccount::slotClientError ( JabberClient::ErrorCode errorCode )
 void JabberAccount::slotConnected ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Connected to Jabber server." << endl;
+	
+#ifndef JABBER_WITHOUT_VOICE
+	if(m_voiceCaller)
+		m_voiceCaller->initialize();
+#endif
+
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Requesting roster..." << endl;
 	m_jabberClient->requestRoster ();
@@ -1469,6 +1499,15 @@ void JabberAccount::slotGetServices ()
 
 	dialog->show ();
 	dialog->raise ();
+}
+
+void JabberAccount::slotIncomingVoiceCall( const Jid & j)
+{
+#ifndef JABBER_WITHOUT_VOICE
+	VoiceCallDlg* vc = new VoiceCallDlg(j,voiceCaller());
+	vc->show();
+	vc->incoming();
+#endif
 }
 
 #include "jabberaccount.moc"

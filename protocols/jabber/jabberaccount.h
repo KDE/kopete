@@ -38,6 +38,8 @@ class JabberContactPool;
 class JabberProtocol;
 namespace Kopete { class MetaContact; }
 
+class VoiceCaller;
+
 /* @author Daniel Stone, Till Gerken */
 
 class JabberAccount : public Kopete::PasswordedAccount
@@ -69,6 +71,13 @@ public:
 	{
 		return m_jabberClient;
 	}
+	
+#ifndef JABBER_WITHOUT_VOICE
+	VoiceCaller *voiceCaller() const
+	{
+		return m_voiceCaller;
+	}
+#endif
 
 	// change the default S5B server port
 	void setS5BServerPort ( int port );
@@ -102,6 +111,7 @@ public:
 	 * Handle stream errors. Displays a dialog and returns.
 	 */
 	static void handleStreamError (int streamError, int streamCondition, int connectorCode, const QString &server, Kopete::Account::DisconnectReason &errorClass);
+	
 
 public slots:
 	/* Connects to the server. */
@@ -144,6 +154,9 @@ private:
 
 	JabberResourcePool *m_resourcePool;
 	JabberContactPool *m_contactPool;
+#ifndef JABBER_WITHOUT_VOICE
+	VoiceCaller *m_voiceCaller;
+#endif
 
 	/* Set up our actions for the status menu. */
 	void initActions ();
@@ -240,6 +253,9 @@ private slots:
 
 	/* Update the myself information if the global identity changes. */
 	void slotGlobalIdentityChanged( const QString &key, const QVariant &value );
+	
+	/* we received a voice invitation */	
+	void slotIncomingVoiceCall(const Jid&);
 };
 
 #endif

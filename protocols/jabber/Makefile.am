@@ -1,5 +1,5 @@
 METASOURCES = AUTO
-SUBDIRS = ui icons libiris . kioslave
+SUBDIRS = ui icons libiris jingle . kioslave
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(srcdir)/libiris/iris/include \
 	-I$(srcdir)/libiris/iris/xmpp-im \
@@ -45,7 +45,20 @@ kopete_jabber_la_LIBADD  = $(top_builddir)/kopete/libkopete/libkopete.la \
 	libiris/qca/src/libqca.la \
 	libiris/cutestuff/network/libcutestuff_network.la \
 	libiris/cutestuff/util/libcutestuff_util.la \
-	libjabberclient.la
+	libjabberclient.la \
+	 libiris/libjingle/talk/examples/login/libcricketexampleslogin.la \
+	 libiris/libjingle/talk/session/phone/libcricketsessionphone.la \
+	 libiris/libjingle/talk/p2p/client/libcricketp2pclient.la \
+	 libiris/libjingle/talk/p2p/base/libcricketp2pbase.la \
+	 libiris/libjingle/talk/xmpp/libcricketxmpp.la \
+	 libiris/libjingle/talk/xmllite/libcricketxmllite.la \
+	 libiris/libjingle/talk/base/libcricketbase.la \
+	 libiris/libjingle/talk/third_party/mediastreamer/libmediastreamer.la \
+	 jingle/libkopetejabberjingle.la \
+	   $(EXPAT_LIBS) $(ORTP_LIBS) -lpthread $(ILBC_LIBS) $(SPEEX_LIBS) $(GLIB_LIBS) -lasound \
+	   	       -lexpat -lortp -lspeex -lglib  -lgmodule
+##-L/usr/lib/libortp.so
+
 
 service_DATA = kopete_jabber.desktop
 servicedir = $(kde_servicesdir)

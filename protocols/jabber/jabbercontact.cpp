@@ -49,6 +49,9 @@
 #include "jabberfiletransfer.h"
 #include "dlgjabbervcard.h"
 
+#ifndef JABBER_WITHOUT_VOICE
+#include "jingle/voicecalldlg.h"
+#endif
 
 /**
  * JabberContact constructor
@@ -202,6 +205,11 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 	actionCollection->append( actionAuthorization );
 	actionCollection->append( actionSetAvailability );
 	actionCollection->append( actionSelectResource );
+	
+#ifndef JABBER_WITHOUT_VOICE
+	actionCollection->append( new KAction (i18n ("Voice call"), 0, 0, this, SLOT (voiceCall ()), this, "jabber_voicecall"));
+#endif
+	
 
 	return actionCollection;
 
@@ -1285,6 +1293,39 @@ bool JabberContact::isContactRequestingEvent( XMPP::MsgEvent event )
 QString JabberContact::lastReceivedMessageId () const
 {
 	return mLastReceivedMessageId;
+}
+
+void JabberContact::voiceCall( )
+{
+#ifndef JABBER_WITHOUT_VOICE
+	Jid jid=mRosterItem.jid();
+	
+#if 0 //TODO (code from psi)
+	if (j.resource().isEmpty()) {
+		bool found = false;
+		UserListItem *u = find(j);
+		if (u) {
+			const UserResourceList &rl = u->userResourceList();
+			for (UserResourceList::ConstIterator it = rl.begin(); it != rl.end() && !found; ++it) {
+				if (CapsManager::instance()->features(j.withResource((*it).name())).canVoice()) {
+					jid = j.withResource((*it).name());
+					found = true;
+				}
+			}
+		}
+	
+		if (!found)
+			return;
+	}
+	else {
+		jid = j;
+	}
+#endif
+
+	VoiceCallDlg* vc = new VoiceCallDlg(jid,account()->voiceCaller());
+	vc->show();
+	vc->call();
+#endif
 }
 
 
