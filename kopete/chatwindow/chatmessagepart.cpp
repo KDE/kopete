@@ -922,6 +922,9 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 		}
 	}
 
+	// Set message direction("rtl"(Right-To-Left) or "ltr"(Left-to-right))
+	resultHTML = resultHTML.replace( QString::fromUtf8("%messageDirection%"), message.plainBody().isRightToLeft() ? "rtl" : "ltr" );
+
 	// Replace message at the end, maybe someone could put a Adium keyword in his message :P
 	resultHTML = resultHTML.replace( QString::fromUtf8("%message%"), formatMessageBody(message) );
 
