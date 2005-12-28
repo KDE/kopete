@@ -222,6 +222,9 @@ fi
 AC_MSG_CHECKING([if MSN webcam support should be enabled])
 AC_MSG_RESULT($compile_msn_webcam)
 AC_DEFINE_UNQUOTED(MSN_WEBCAM, $msn_webcam_val, [Define if MSN webcam support can be enabled])
+AC_DEFINE_UNQUOTED(HAVE_GLIB, $msn_webcam_val, [for libjingle])
+AC_DEFINE_UNQUOTED(HAVE_SPEEX, 1, [for libjingle])
+
 
 AM_CONDITIONAL(include_msn_webcam, test "x$compile_msn_webcam" = "xyes")
 

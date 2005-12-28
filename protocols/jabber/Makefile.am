@@ -46,7 +46,6 @@ kopete_jabber_la_LIBADD  = $(top_builddir)/kopete/libkopete/libkopete.la \
 	libiris/cutestuff/network/libcutestuff_network.la \
 	libiris/cutestuff/util/libcutestuff_util.la \
 	libjabberclient.la \
-	 libiris/libjingle/talk/examples/login/libcricketexampleslogin.la \
 	 libiris/libjingle/talk/session/phone/libcricketsessionphone.la \
 	 libiris/libjingle/talk/p2p/client/libcricketp2pclient.la \
 	 libiris/libjingle/talk/p2p/base/libcricketp2pbase.la \
