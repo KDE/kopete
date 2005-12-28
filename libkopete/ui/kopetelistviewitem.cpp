@@ -1212,6 +1212,7 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 
 		int marg = lv->itemMargin();
 		int r = marg;
+		p->fillRect( 0, 0, width, height(), _cg.background() );
 	//	const QPixmap * icon = pixmap( column );
 #warning Item::paintCell needs fixing
 /*
