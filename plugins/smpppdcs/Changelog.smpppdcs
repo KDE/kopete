@@ -15,6 +15,10 @@ activates all Kopete accounts, too.
 Changelog
 =========
 
+0.74 (2005/12/27)
+* minor bugfixes
+* disable netstat in config if the binary cannot be found
+
 0.72 (2005/09/07)
 * internal refactoring to provide online status
 

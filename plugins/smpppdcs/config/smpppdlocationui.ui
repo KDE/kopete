@@ -1,0 +1,149 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>SMPPPDLocationWidgetBase</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>SMPPPDLocationWidgetBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>365</width>
+            <height>167</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>SMPPPDLocation</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Ser&amp;ver:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>server</cstring>
+            </property>
+        </widget>
+        <widget class="KLineEdit">
+            <property name="name">
+                <cstring>server</cstring>
+            </property>
+            <property name="cursor">
+                <cursor>4</cursor>
+            </property>
+            <property name="text">
+                <string>localhost</string>
+            </property>
+            <property name="maxLength">
+                <number>256</number>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>The server on which the SMPPPD is running</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>P&amp;ort:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>port</cstring>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout14</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="KIntNumInput">
+                    <property name="name">
+                        <cstring>port</cstring>
+                    </property>
+                    <property name="cursor">
+                        <cursor>4</cursor>
+                    </property>
+                    <property name="value">
+                        <number>3185</number>
+                    </property>
+                    <property name="minValue">
+                        <number>0</number>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The port on which the SMPPPD is running on</string>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Default: 3185</string>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer15</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>130</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+            </hbox>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>m_passwordLabel</cstring>
+            </property>
+            <property name="text">
+                <string>Pass&amp;word:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>Password</cstring>
+            </property>
+        </widget>
+        <widget class="KLineEdit">
+            <property name="name">
+                <cstring>Password</cstring>
+            </property>
+            <property name="cursor">
+                <cursor>4</cursor>
+            </property>
+            <property name="echoMode">
+                <enum>Password</enum>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>The password to authenticate with the smpppd</string>
+            </property>
+        </widget>
+    </vbox>
+</widget>
+<customwidgets>
+</customwidgets>
+<layoutdefaults spacing="6" margin="0"/>
+<includehints>
+    <includehint>klineedit.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>klineedit.h</includehint>
+</includehints>
+</UI>

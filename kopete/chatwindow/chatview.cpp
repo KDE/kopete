@@ -409,7 +409,7 @@ void ChatView::updateChatState( KopeteTabState newState )
 	if( newState != Typing )
 	{
 		setStatusText( i18n( "One other person in the chat",
-			       "%n other people in the chat", m_manager->members().count() ) );
+			       "%n other people in the chat", m_manager->members().count() - 1 ) );
 	}
 }
 
@@ -942,7 +942,7 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 	{
 		Kopete::ContactPtrList members = m_manager->members();
 		Kopete::Contact *contact = members.first();
-		if ( contact && contact->canAcceptFiles() );
+		if ( contact && contact->canAcceptFiles() )
 			event->accept();
 	}
 	else

@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>454</width>
-            <height>343</height>
+            <width>476</width>
+            <height>221</height>
         </rect>
     </property>
     <property name="caption">
@@ -35,18 +35,9 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <property name="margin">
-                        <number>6</number>
-                    </property>
-                    <property name="spacing">
-                        <number>6</number>
-                    </property>
-                    <widget class="QButtonGroup">
+                    <widget class="QLayoutWidget">
                         <property name="name">
-                            <cstring>csMethod</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Method of Connection Status Detection</string>
+                            <cstring>layout4</cstring>
                         </property>
                         <vbox>
                             <property name="name">
@@ -58,226 +49,134 @@
                             <property name="spacing">
                                 <number>6</number>
                             </property>
-                            <widget class="QRadioButton">
+                            <widget class="QButtonGroup">
                                 <property name="name">
-                                    <cstring>useNetstat</cstring>
+                                    <cstring>csMethod</cstring>
                                 </property>
-                                <property name="text">
-                                    <string>&amp;netstat - Standard method of connection status detection</string>
+                                <property name="title">
+                                    <string>Method of Connection Status Detection</string>
                                 </property>
-                                <property name="checked">
-                                    <bool>true</bool>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Uses the netstat command to find a gateway; suitable on dial-up computers</string>
-                                </property>
-                            </widget>
-                            <widget class="QRadioButton">
-                                <property name="name">
-                                    <cstring>useSmpppd</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>s&amp;mpppd - Advanced method of connection status detection</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Uses the smpppd on a gateway; suitable for a computer in a private network</string>
-                                </property>
-                            </widget>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>autoCSLayout</cstring>
-                                </property>
-                                <hbox>
+                                <vbox>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="KPushButton">
+                                    <property name="margin">
+                                        <number>6</number>
+                                    </property>
+                                    <property name="spacing">
+                                        <number>6</number>
+                                    </property>
+                                    <widget class="QRadioButton">
                                         <property name="name">
-                                            <cstring>autoCSTest</cstring>
+                                            <cstring>useNetstat</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>Try to Detect &amp;Automatically</string>
+                                            <string>&amp;netstat - Standard method of connection status detection</string>
+                                        </property>
+                                        <property name="checked">
+                                            <bool>true</bool>
                                         </property>
                                         <property name="toolTip" stdset="0">
-                                            <string>Tries to find an appropriate connection method</string>
+                                            <string>Uses the netstat command to find a gateway; suitable on dial-up computers</string>
                                         </property>
                                     </widget>
-                                    <spacer>
+                                    <widget class="QRadioButton">
                                         <property name="name">
-                                            <cstring>spacer4</cstring>
+                                            <cstring>useSmpppd</cstring>
                                         </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
+                                        <property name="text">
+                                            <string>smpppd - Ad&amp;vanced method of connection status detection</string>
                                         </property>
-                                        <property name="sizeType">
-                                            <enum>Expanding</enum>
+                                        <property name="toolTip" stdset="0">
+                                            <string>Uses the smpppd on a gateway; suitable for a computer in a private network</string>
                                         </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>341</width>
-                                                <height>20</height>
-                                            </size>
+                                    </widget>
+                                    <widget class="QLayoutWidget">
+                                        <property name="name">
+                                            <cstring>autoCSLayout</cstring>
                                         </property>
-                                    </spacer>
-                                </hbox>
+                                        <hbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="KPushButton">
+                                                <property name="name">
+                                                    <cstring>autoCSTest</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>&amp;Try to Detect Automatically</string>
+                                                </property>
+                                                <property name="toolTip" stdset="0">
+                                                    <string>Tries to find an appropriate connection method</string>
+                                                </property>
+                                            </widget>
+                                            <spacer>
+                                                <property name="name">
+                                                    <cstring>spacer4</cstring>
+                                                </property>
+                                                <property name="orientation">
+                                                    <enum>Horizontal</enum>
+                                                </property>
+                                                <property name="sizeType">
+                                                    <enum>Expanding</enum>
+                                                </property>
+                                                <property name="sizeHint">
+                                                    <size>
+                                                        <width>341</width>
+                                                        <height>20</height>
+                                                    </size>
+                                                </property>
+                                            </spacer>
+                                        </hbox>
+                                    </widget>
+                                </vbox>
                             </widget>
+                            <widget class="QGroupBox">
+                                <property name="name">
+                                    <cstring>smpppdPrefs</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>false</bool>
+                                </property>
+                                <property name="title">
+                                    <string>Location of the SMPPPD</string>
+                                </property>
+                                <vbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <property name="margin">
+                                        <number>6</number>
+                                    </property>
+                                    <property name="spacing">
+                                        <number>6</number>
+                                    </property>
+                                    <widget class="SMPPPDLocationWidget">
+                                        <property name="name">
+                                            <cstring>SMPPPDLocation</cstring>
+                                        </property>
+                                    </widget>
+                                </vbox>
+                            </widget>
+                            <spacer>
+                                <property name="name">
+                                    <cstring>spacer18</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Vertical</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
                         </vbox>
                     </widget>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>smpppdPrefs</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>false</bool>
-                        </property>
-                        <property name="title">
-                            <string>Location of the SMPPPD</string>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <property name="margin">
-                                <number>6</number>
-                            </property>
-                            <property name="spacing">
-                                <number>6</number>
-                            </property>
-                            <widget class="QLabel" row="0" column="0">
-                                <property name="name">
-                                    <cstring>textLabel1</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Server:</string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>server</cstring>
-                                </property>
-                            </widget>
-                            <widget class="KLineEdit" row="5" column="0">
-                                <property name="name">
-                                    <cstring>Password</cstring>
-                                </property>
-                                <property name="cursor">
-                                    <cursor>4</cursor>
-                                </property>
-                                <property name="echoMode">
-                                    <enum>Password</enum>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>The password to authenticate with the smpppd</string>
-                                </property>
-                            </widget>
-                            <widget class="QLayoutWidget" row="3" column="0">
-                                <property name="name">
-                                    <cstring>layout14</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="KIntNumInput">
-                                        <property name="name">
-                                            <cstring>port</cstring>
-                                        </property>
-                                        <property name="cursor">
-                                            <cursor>4</cursor>
-                                        </property>
-                                        <property name="value">
-                                            <number>3185</number>
-                                        </property>
-                                        <property name="minValue">
-                                            <number>0</number>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The port on which the SMPPPD is running on</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLabel">
-                                        <property name="name">
-                                            <cstring>textLabel3</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>Default: 3185</string>
-                                        </property>
-                                    </widget>
-                                    <spacer>
-                                        <property name="name">
-                                            <cstring>spacer15</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>Expanding</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>130</width>
-                                                <height>20</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
-                                </hbox>
-                            </widget>
-                            <widget class="KLineEdit" row="1" column="0">
-                                <property name="name">
-                                    <cstring>server</cstring>
-                                </property>
-                                <property name="cursor">
-                                    <cursor>4</cursor>
-                                </property>
-                                <property name="text">
-                                    <string>localhost</string>
-                                </property>
-                                <property name="maxLength">
-                                    <number>256</number>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>The server on which the SMPPPD is running</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="4" column="0">
-                                <property name="name">
-                                    <cstring>m_passwordLabel</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Password:</string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>Password</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="2" column="0">
-                                <property name="name">
-                                    <cstring>textLabel2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>P&amp;ort:</string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>port</cstring>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer18</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>30</height>
-                            </size>
-                        </property>
-                    </spacer>
                 </vbox>
             </widget>
             <widget class="QWidget">
@@ -285,7 +184,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>&amp;Accounts</string>
+                    <string>Acco&amp;unts</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -347,24 +246,39 @@
     </vbox>
 </widget>
 <customwidgets>
+    <customwidget>
+        <class>SMPPPDLocationWidget</class>
+        <header location="global">/usr/src/build/zxmpl18/kdesvn/kdenetwork/kopete/plugins/smpppdcs/config/smpppdlocationwidget.h</header>
+        <sizehint>
+            <width>16</width>
+            <height>16</height>
+        </sizehint>
+        <container>1</container>
+        <sizepolicy>
+            <hordata>5</hordata>
+            <verdata>5</verdata>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+        <pixmap>image0</pixmap>
+    </customwidget>
 </customwidgets>
+<images>
+    <image name="image0">
+        <data format="PNG" length="1125">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b0000042c49444154388db5954f6c14551cc73fefcd7476b65bdaae4bb78bb5502a14d404e4801c88182d1c4c2c693da847400f9c24c68b878684238660e2b1e01f12c19493012ef2478c814412d354a46017a8a564bb6da5bbedccee767776e63d0ffb073751d483bfe49799974c3eeffb7ebf37df9fd05a530b2184040cc0042420aaf9a4d0d554800f045a6b256ae0e1e1e1d6bebebe838ee31c48a7d39b5cd7fd075e251cc7617272f2ded8d8d819cff33e0316819259537aead4a9839d5dd6d1784f91f55b0a94830242088404d304292bef68a89f520802a598fecddaa04f1a876f5c250c7c0a64cdeac686e33807e23d45e6b297c8b877f1831542614550b6599835c83c2a81b6786a75134faf2f1169f12997350881d9021d0903e06de0745d3160a6d3e94dbd5b0a64dcbb94b5831d0e3375ab892b1772dcf9790528543f8dd0d367b36768153b5e31503a0f1aecb004580b44ffac58baae8b1714f0833c7638cc8dab303a320f4822ab4c7a37c69196203de3319d5ce1c4d13c733331dedc67a129a154fd128401ab0616d55a130ac3d42d93d1913940d13fd0c9ee0183685c60da01c5421bd72f7a8c8efccef9afd374267ad93d642365be0636a0d28ec7600941d9e6f23917f0e97f23ce5bef35d19ec863da0ed9059b2be70bec196c66dfa10ec0e49b338f7017258651bf95021035c595429bb0903248fe52a2b5b595dd7b4d945cc2340cdca536be389ee3f67886c5798f773fe8e0dac508c989659277a2180da4ca4ff07821058b8b251445d63d6b13ed1098a6417e39cac85197dbe31962ab9bd9f1f22a226d45366f6d0620fdb08c900d281af6110284b20085b414861d905d88f2e52739ee8cbb8022143259d3dd84691730aa2d52da441a8de0c6958068870022a41e9629ad3473fd3b8fdbe319dadb9b4924da994d2d716c7896fbe35152f78b48245d6b2da4507faf582be8eaf159b721cc837b05ae7debb1f79d08cb8b515edad942a22bc4b1c33eb3d34b1c797f06af90a72d16e2f96d9a74aa11dca8586b222d01af0fb60070f6c402d72f15d97f28c6f6d7027a5f5ce6c3233dc4e2ede496b278be4fff608cee8d3e1add806aeca51094cbb06397c1ecc328e746537c7e3ccdb5cb1136bf60635882d4d41c6ec6836ab37efa214f72208ed9f4d7cdd38ee310280542e38b1c43fb6de26b3672e1ec3cc99bcb246f66a938a3241ab3e91f7c861fbf77710b1e5e49915bae974203ba0e9e9c9cbc373d6d6d305a040a89c2a77f50b27d5782bbbf7acccf28349235dd16cf6dd374f7295e1de8a45c02d37499182b01cc0201a085d61a2144d8b2ac8fb6ed340e77240c4261890e04c250185262546d534a032154b59e0ad394e41c98182bf268ce6721ed9f064e0253356f6da2e24c1f030f783c15fe6da680af8021602bd051532ca9b8521488559f61aa86c29343578fbf0264a94c906c7d3409214c20043457a116ff6de6795578012889ff6b98fe016ea0ce1c6a2573410000000049454e44ae426082</data>
+    </image>
+</images>
 <tabstops>
     <tabstop>tabWidget</tabstop>
     <tabstop>useNetstat</tabstop>
     <tabstop>autoCSTest</tabstop>
-    <tabstop>server</tabstop>
-    <tabstop>port</tabstop>
-    <tabstop>Password</tabstop>
     <tabstop>useSmpppd</tabstop>
     <tabstop>accountList</tabstop>
 </tabstops>
 <layoutdefaults spacing="0" margin="0"/>
 <includehints>
     <includehint>kpushbutton.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>klineedit.h</includehint>
+    <includehint>smpppdlocationwidget.h</includehint>
     <includehint>klistview.h</includehint>
 </includehints>
 </UI>

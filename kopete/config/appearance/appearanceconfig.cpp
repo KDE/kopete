@@ -490,6 +490,14 @@ AppearanceConfig::~AppearanceConfig()
 	delete d;
 }
 
+void AppearanceConfig::updateEmoticonsButton(bool _b)
+{
+    QString themeName = d->mPrfsEmoticons->icon_theme_list->currentText();
+    QFileInfo fileInf(KGlobal::dirs()->findResource("emoticons", themeName+"/"));
+    d->mPrfsEmoticons->btnRemoveTheme->setEnabled( _b && fileInf.isWritable());
+    d->mPrfsEmoticons->btnGetThemes->setEnabled( false );
+}
+
 void AppearanceConfig::save()
 {
 //	kdDebug(14000) << k_funcinfo << "called." << endl;

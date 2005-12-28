@@ -786,6 +786,8 @@ void IRCProtocol::editNetworks( const QString &networkName )
 		connect( netConf->newNetwork, SIGNAL( clicked() ), this, SLOT( slotNewNetwork() ) );
 		connect( netConf->renameNetwork, SIGNAL( clicked() ), this, SLOT( slotRenameNetwork() ) );
 		connect( netConf->port, SIGNAL( valueChanged( int ) ), this, SLOT( slotHostPortChanged( int ) ) );
+		connect( netConf->networkList, SIGNAL( doubleClicked ( QListBoxItem * )), SLOT(slotRenameNetwork()));
+				
 	}
 
 	disconnect( netConf->networkList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkConfig() ) );

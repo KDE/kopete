@@ -56,7 +56,7 @@ private slots:
 	void slotGetEmoticonThemes();
 	void slotGetChatStyles();
 	void slotLoadChatStyles();
-
+	void updateEmoticonsButton(bool);
 private:
 	void updateEmoticonlist();
 	void createPreviewChatSession();

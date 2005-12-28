@@ -27,7 +27,7 @@ class KExtendedSocket;
  * @brief Searches a network for a smpppd
  *
  * @todo Use of the SLP to find the smpppd
- * @author Heiko Schaefer <heiko@rangun.de>
+ * @author Heiko Sch&auml;fer <heiko@rangun.de>
  */
 class SMPPPDSearcher : public QObject {
     Q_OBJECT

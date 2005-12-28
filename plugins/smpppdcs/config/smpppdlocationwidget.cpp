@@ -1,10 +1,10 @@
 /*
-    smpppdcsiface.h
- 
-    Copyright (c) 2005      by Heiko Schaefer        <heiko@rangun.de>
- 
+    smpppdlocationwidget.cpp
+
+    Copyright (c) 2004-2005 by Heiko Schaefer        <heiko@rangun.de>
+
     Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This program is free software; you can redistribute it and/or modify  *
@@ -14,23 +14,18 @@
     *************************************************************************
 */
 
-#ifndef SMPPPDCSIFACE_H
-#define SMPPPDCSIFACE_H
+#include <klineedit.h>
 
-#include <dcopobject.h>
+#include "smpppdlocationwidget.h"
 
-/**
- * @author Heiko Sch&auml;fer <heiko@rangun.de>
- */
+SMPPPDLocationWidget::SMPPPDLocationWidget(QWidget* parent, const char* name, WFlags fl)
+ : SMPPPDLocationWidgetBase(parent, name, fl) {}
 
-class SMPPPDCSIFace : virtual public DCOPObject
+SMPPPDLocationWidget::~SMPPPDLocationWidget() {}
+
+void SMPPPDLocationWidget::setServer(const QString& serv)
 {
-  K_DCOP
+    server->setText(serv);
+}
 
-  k_dcop:
-
-    virtual QString detectionMethod() const = 0;
-    virtual bool isOnline() = 0;
-};
-
-#endif
+#include "smpppdlocationwidget.moc"
