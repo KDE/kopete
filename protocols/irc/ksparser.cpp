@@ -25,7 +25,7 @@ Modified by Jason Keirstead <jason@keirstead.org>
 #include <kdebug.h>
 #include <qbuffer.h>
 #include <qdatastream.h>
-#include <q3stylesheet.h>
+#include <QTextDocument>
 //Added by qt3to4:
 #include <QByteArray>
 #include "ksparser.h"
@@ -156,7 +156,7 @@ QByteArray KSParser::_parse(const QByteArray &message)
 				if (cur < QChar(' ')) // search for control characters
 					toAppend = QString::fromLatin1("&lt;%1&gt;").arg(cur, 2, 16).toUpper();
 				else
-					toAppend = Q3StyleSheet::escape(cur);
+					toAppend = Qt::escape(cur);
 		}
 
 		chars += toAppend.length();

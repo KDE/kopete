@@ -20,7 +20,7 @@
 #include <qimage.h>
 #include <qbuffer.h>
 #include <q3cstring.h>
-#include <q3stylesheet.h>
+#include <QTextDocument>
 //Added by qt3to4:
 #include <Q3ValueList>
 #include <kgenericfactory.h>
@@ -169,7 +169,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 			continue;
 		imagePxWidth = theImage.width();
 		imagePxHeight = theImage.height();
-		QString escapedLATEX=Q3StyleSheet::escape(it.key()).replace("\"","&quot;");  //we need  the escape quotes because that string will be in a title="" argument, but not the \n
+		QString escapedLATEX=Qt::escape(it.key()).replace("\"","&quot;");  //we need  the escape quotes because that string will be in a title="" argument, but not the \n
 		messageText.replace(Kopete::Message::escape(it.key()), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(imagePxHeight) + "\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
 	}
 
@@ -208,7 +208,7 @@ void LatexPlugin::slotMessageAboutToSend( Kopete::Message& msg)
 
 		if(!url.isNull())
 		{
-			QString escapedLATEX= Q3StyleSheet::escape(messageText).replace("\"","&quot;");
+			QString escapedLATEX= Qt::escape(messageText).replace("\"","&quot;");
 			QString messageText="<img src=\"" + url + "\" alt=\"" + escapedLATEX + "\" title=\"" + escapedLATEX +"\"  />";
 			msg.setBody( messageText, Kopete::Message::RichText );
 		}

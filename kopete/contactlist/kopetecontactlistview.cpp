@@ -28,7 +28,6 @@
 #include <qcursor.h>
 #include <q3dragobject.h>
 #include <q3header.h>
-#include <q3stylesheet.h>
 #include <qtimer.h>
 #include <qtooltip.h>
 #include <qpointer.h>

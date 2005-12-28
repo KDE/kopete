@@ -22,7 +22,7 @@
 
 #include <qtimer.h>
 #include <qdatetime.h>
-#include <q3stylesheet.h>
+#include <QTextDocument>
 //Added by qt3to4:
 #include <Q3PtrList>
 #include <qimage.h>
@@ -320,7 +320,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 
 		for ( XMPP::UrlList::const_iterator it = urlList.begin (); it != urlList.end (); ++it )
 		{
-			QString description = (*it).desc().isEmpty() ? (*it).url() : Q3StyleSheet::escape ( (*it).desc() );
+			QString description = (*it).desc().isEmpty() ? (*it).url() : Qt::escape ( (*it).desc() );
 			QString url = (*it).url ();
 
 			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList,

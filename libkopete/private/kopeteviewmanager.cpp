@@ -15,7 +15,7 @@
 */
 
 #include <QList>
-#include <q3stylesheet.h>
+#include <QTextDocument>
 #include <QtAlgorithms>
 
 #include <kapplication.h>
@@ -258,7 +258,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					}
 				} 
                 KNotification *notify=KNotification::event( event,
-						body.arg( Q3StyleSheet::escape(msgFrom), Q3StyleSheet::escape(msgText) ),
+						body.arg( Qt::escape(msgFrom), Qt::escape(msgText) ),
 						QPixmap(), w, QStringList( i18n( "View" ) ) , contexts );
 
 				connect(notify,SIGNAL(activated(unsigned int )), manager , SLOT(raiseView()) );

@@ -34,7 +34,6 @@
 
 #include <qapplication.h>
 #include <qregexp.h>
-#include <q3stylesheet.h>
 #include <qtimer.h>
 #include <q3ptrlist.h>
 //Added by qt3to4:

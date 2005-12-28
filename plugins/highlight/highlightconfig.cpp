@@ -17,7 +17,7 @@
 */
 
 #include <qfile.h>
-#include <q3stylesheet.h>
+#include <QTextDocument>
 #include <qregexp.h>
 #include <qdir.h>
 #include <qdom.h>
@@ -176,23 +176,23 @@ void HighlightConfig::save()
 		{
 			Filter *filtre = *filtreIt;
 			xml += QString::fromLatin1( "  <filter>\n    <display-name>" )
-				+ Q3StyleSheet::escape(filtre->displayName)
+				+ Qt::escape(filtre->displayName)
 				+ QString::fromLatin1( "</display-name>\n" );
 
 			xml += QString::fromLatin1("    <search caseSensitive=\"") + QString::number( static_cast<int>( filtre->caseSensitive ) ) +
 				QString::fromLatin1("\" regExp=\"") + QString::number( static_cast<int>( filtre->isRegExp ) ) +
-				QString::fromLatin1( "\">" ) + Q3StyleSheet::escape( filtre->search ) + QString::fromLatin1( "</search>\n" );
+				QString::fromLatin1( "\">" ) + Qt::escape( filtre->search ) + QString::fromLatin1( "</search>\n" );
 
 			xml += QString::fromLatin1("    <BG set=\"") + QString::number( static_cast<int>( filtre->setBG ) ) +
-				QString::fromLatin1( "\">" ) + Q3StyleSheet::escape( filtre->BG.name() ) + QString::fromLatin1( "</BG>\n" );
+				QString::fromLatin1( "\">" ) + Qt::escape( filtre->BG.name() ) + QString::fromLatin1( "</BG>\n" );
 			xml += QString::fromLatin1("    <FG set=\"") + QString::number( static_cast<int>( filtre->setFG ) ) +
-				QString::fromLatin1( "\">" ) + Q3StyleSheet::escape( filtre->FG.name() ) + QString::fromLatin1( "</FG>\n" );
+				QString::fromLatin1( "\">" ) + Qt::escape( filtre->FG.name() ) + QString::fromLatin1( "</FG>\n" );
 
 			xml += QString::fromLatin1("    <importance set=\"") + QString::number( static_cast<int>( filtre->setImportance ) ) +
 				QString::fromLatin1( "\">" ) + QString::number( filtre->importance ) + QString::fromLatin1( "</importance>\n" );
 
 			xml += QString::fromLatin1("    <sound set=\"") + QString::number( static_cast<int>( filtre->playSound ) ) +
-				QString::fromLatin1( "\">" ) + Q3StyleSheet::escape( filtre->soundFN ) + QString::fromLatin1( "</sound>\n" );
+				QString::fromLatin1( "\">" ) + Qt::escape( filtre->soundFN ) + QString::fromLatin1( "</sound>\n" );
 
 			xml += QString::fromLatin1("    <raise set=\"") + QString::number( static_cast<int>( filtre->raiseView ) ) +
 				QString::fromLatin1( "\"></raise>\n" );

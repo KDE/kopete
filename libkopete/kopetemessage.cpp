@@ -21,7 +21,7 @@
 #include <qcolor.h>
 #include <qbuffer.h>
 #include <qimage.h>
-#include <q3stylesheet.h>
+#include <QTextDocument>
 #include <qregexp.h>
 #include <qtextcodec.h>
 #include <QByteArray>
@@ -248,7 +248,7 @@ QString Message::unescape( const QString &xml )
 
 QString Message::escape( const QString &text )
 {
-	QString html = Q3StyleSheet::escape( text );
+	QString html = Qt::escape( text );
  	//Replace carriage returns inside the text
 	html.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br />" ) );
 	//Replace a tab with 4 spaces
@@ -483,14 +483,14 @@ QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
 	QDomElement contactNameNode = doc.createElement( QString::fromLatin1("contactDisplayName") );
 	contactNameNode.setAttribute( QString::fromLatin1("dir"), contactName.isRightToLeft() ?
 	                              QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
-	contactNameNode.setAttribute( QString::fromLatin1("text"), Q3StyleSheet::escape( contactName ) );
+	contactNameNode.setAttribute( QString::fromLatin1("text"), Qt::escape( contactName ) );
 	contactNode.appendChild( contactNameNode );
 
 
 	QDomElement metacontactNameNode = doc.createElement( QString::fromLatin1("metaContactDisplayName") );
 	metacontactNameNode.setAttribute( QString::fromLatin1("dir"), metacontactName.isRightToLeft() ?
 	                                  QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
-	metacontactNameNode.setAttribute( QString::fromLatin1("text"), Q3StyleSheet::escape( metacontactName ) );
+	metacontactNameNode.setAttribute( QString::fromLatin1("text"), Qt::escape( metacontactName ) );
 
 	
 	if( contact->metaContact() && !contact->metaContact()->metaContactId().isEmpty())
@@ -565,7 +565,7 @@ const QDomDocument Message::asXML()
 		messageNode.setAttribute( QString::fromLatin1("formattedTimestamp"),
 			KGlobal::locale()->formatDateTime(d->timeStamp) );
 	}
-	messageNode.setAttribute( QString::fromLatin1("subject"), Q3StyleSheet::escape( d->subject ) );
+	messageNode.setAttribute( QString::fromLatin1("subject"), Qt::escape( d->subject ) );
 
 	/**
 	 * @deprecated backwards-compatibility direction attribute for old XSLT

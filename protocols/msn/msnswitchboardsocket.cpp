@@ -26,7 +26,7 @@
 #include <cmath>
 
 // qt
-#include <q3stylesheet.h>
+#include <QTextDocument>
 #include <qregexp.h>
 #include <qimage.h>
 #include <qtimer.h>
@@ -1001,7 +1001,7 @@ Kopete::Message &MSNSwitchBoardSocket::parseCustomEmoticons(Kopete::Message &kms
 	QMap<QString , QPair<QString , KTempFile*> >::Iterator it;
 	for ( it = m_emoticons.begin(); it != m_emoticons.end(); ++it )
 	{
-		QString es=Q3StyleSheet::escape(it.data().first);
+		QString es=Qt::escape(it.data().first);
 		KTempFile *f=it.data().second;
 		if(message.contains(es) && f)
 		{

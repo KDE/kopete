@@ -23,7 +23,7 @@
 
 #include <qdom.h>
 #include <qfile.h>
-#include <q3stylesheet.h>
+#include <QTextDocument>
 #include <qpixmap.h>
 #include <qdatetime.h>
 //Added by qt3to4:
@@ -322,7 +322,7 @@ void Emoticons::addIfPossible( const QString& filenameNoExt, const QStringList &
 		for ( QStringList::const_iterator it = emoticons.constBegin(), end = emoticons.constEnd();
 		      it != end; ++it )
 		{
-			QString matchEscaped=Q3StyleSheet::escape(*it);
+			QString matchEscaped=Qt::escape(*it);
 
 			Emoticon e;
 			e.picPath = pic;

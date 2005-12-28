@@ -22,10 +22,10 @@
 #include <qtimer.h>
 #include <qvariant.h>
 #include <qmime.h>
-#include <q3stylesheet.h>
-//Added by qt3to4:
+#include <QTextDocument>
 #include <QPixmap>
 #include <QList>
+
 #include "knotification.h"
 #include <kdebug.h>
 #include <kiconeffect.h>
@@ -109,7 +109,7 @@ public:
 				displayName += (*it).picHTMLCode;
 			} else if( (*it).type == Kopete::Emoticons::Text )
 			{
-				displayName += Q3StyleSheet::escape( (*it).text );
+				displayName += Qt::escape( (*it).text );
 			}
 		}
 
@@ -386,8 +386,8 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 			//int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 
 			QString text = i18n( "<qt><i>%1</i> is now %2.</qt>" )
-					.arg( Kopete::Emoticons::parseEmoticons( Q3StyleSheet::escape(m_metaContact->displayName()) ) ,
-						  Q3StyleSheet::escape(c->onlineStatus().description()));
+					.arg( Kopete::Emoticons::parseEmoticons( Qt::escape(m_metaContact->displayName()) ) ,
+						  Qt::escape(c->onlineStatus().description()));
 			
 			// figure out what's happened
 			enum ChangeType { noChange, noEvent, signedIn, changedStatus, signedOut };

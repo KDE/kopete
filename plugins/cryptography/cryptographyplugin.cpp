@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <q3stylesheet.h>
+#include <QTextDocument>
 #include <qtimer.h>
 #include <qregexp.h>
 //Added by qt3to4:
@@ -180,7 +180,7 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 			//Check if this is a RTF message before escaping it
 			if( !isHTML.exactMatch( plainBody ) )
 			{
-				plainBody = Q3StyleSheet::escape( plainBody );
+				plainBody = Qt::escape( plainBody );
 
 				//this is the same algoritm as in Kopete::Message::escapedBody();
 				plainBody.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) )
