@@ -24,8 +24,8 @@
 #include <qpixmap.h>
 #include <qobject.h>
 #include <qstringlist.h>
-#include "kopete_export.h"
 #include <qpair.h>
+#include <kdemacros.h>
 
 class QWidget;
 
@@ -146,10 +146,9 @@ class QWidget;
  * 
  * @author Olivier Goffart  \<ogoffart\@kde.org\>
  */
-class KOPETE_EXPORT KNotification : public QObject
+class KDE_EXPORT KNotification : public QObject
 {
         Q_OBJECT
-		Q_FLAGS(NotifyPresentation);
 
 public:
 	/**
@@ -281,16 +280,6 @@ private:
 	static void raiseWidget(QWidget *w);
 
 
-private slots:
-	void notifyByMessagebox();
-	void notifyByPassivePopup(const QPixmap &pix, const QString & sound);
-	void notifyByExecute(const QString &command, const QString& event,const QString& fromApp, const QString& text,	int winId, int eventId);
-	void slotPopupLinkClicked(const QString &);
-	bool notifyBySound(const QString &sound, const QString &appname, int eventId);
-	bool notifyByLogfile(const QString &text, const QString &file);
-	bool notifyByStderr(const QString &text);
-	bool notifyByTaskbar( WId winId );
-
 public:
 	/**
 	 * @brief emit an event
@@ -317,6 +306,14 @@ public:
 			const QPixmap& pixmap=QPixmap(), QWidget *widget=0L,
 			const QStringList &actions=QStringList(), ContextList contexts=ContextList() ,
 			unsigned int flags=CloseOnTimeout);
+	
+	/**
+	 * This is a simple substitution for QApplication::beep()
+	 * 
+	 * @param reason a small text explaining what's happen (may be null)
+	 * @param widget the widget where the notification refer to 
+	 */
+	static void beep( const QString& reason = QString::null , QWidget *widget=0L);
 
 	/**
 	 * @return the name of the event
@@ -332,30 +329,9 @@ public:
 	 * @return the notification title
 	 */
 	QString title() const;
-	
+
 
 public:	
-    /**
-     * Describes the notification method.
-     */
-	enum NotifyPresentation {
-		None = 0,
-		Sound = 1,
-		Messagebox = 2,
-		Logfile = 4,
-		Stderr = 8,
-		PassivePopup = 16, ///< @since 3.1
-		Execute = 32,      ///< @since 3.1
-		Taskbar = 64       ///< @since 3.2
-	};
-
-	enum {
-		Notification=1,
-		Warning=2,
-		Error=4,
-		Catastrophe=8
-	};
-	
 };
 
 

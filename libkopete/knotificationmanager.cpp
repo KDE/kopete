@@ -52,11 +52,11 @@ KNotificationManager::KNotificationManager() : DCOPObject("KNotification") , d(n
 {
 	
 	bool b1=connectDCOPSignal("knotify", "Notify",
-					  "NotificationClosed(unsigned int,unsigned int)", 
-					  "notificationClosed(unsigned int,unsigned int)", false);
+					  "notificationClosed(int,int)", 
+					  "notificationClosed(int,int)", false);
 	bool b2=connectDCOPSignal("knotify", "Notify",
-					  "ActionInvoked (unsigned int,unsigned int)", 
-					  "notificationActivated(unsigned int,unsigned int)", false);
+					  "actionInvoked (int,int)", 
+					  "notificationActivated(int,int)", false);
 	
 	kdDebug() << k_funcinfo << b1 << " " << b2 << endl;
 }
@@ -69,7 +69,7 @@ KNotificationManager::~KNotificationManager()
 }
 
 
-ASYNC KNotificationManager::notificationActivated( unsigned int id, unsigned int action )
+ASYNC KNotificationManager::notificationActivated( int id, int action )
 {
 	kdDebug() << k_funcinfo << id << " " << action << endl;
 	if(d->notifications.contains(id))
@@ -81,7 +81,7 @@ ASYNC KNotificationManager::notificationActivated( unsigned int id, unsigned int
 	}
 }
 
-ASYNC KNotificationManager::notificationClosed( unsigned int id, unsigned int /*reason*/ )
+ASYNC KNotificationManager::notificationClosed( int id )
 {
 	if(d->notifications.contains(id))
 	{
@@ -92,43 +92,31 @@ ASYNC KNotificationManager::notificationClosed( unsigned int id, unsigned int /*
 }
 
 
-void KNotificationManager::close(unsigned int id)
+void KNotificationManager::close( int id)
 {
 	DCOPClient *client=KApplication::dcopClient();
 	QByteArray data;
 	QDataStream arg(&data, QIODevice::WriteOnly);
 	arg << id;
-	if (!client->send("knotify", "Notify", "CloseNotification(unsigned int)", data))
+	if (!client->send("knotify", "Notify", "closeNotification( int)", data))
 	{
 		kdDebug() << k_funcinfo << "error while contacting knotify server" << endl;
 	}
 }
 
-unsigned int KNotificationManager::notify( KNotification* n , const QPixmap &pix , const QStringList &actions , const QString & sound)
+unsigned int KNotificationManager::notify( KNotification* n , const QPixmap &pix , const QStringList &actions , 
+										   const KNotification::ContextList & contexts)
 {
+	kdDebug() << k_funcinfo << endl;
+	QString appname=kapp->instanceName();
+	WId winId=n->widget() ? n->widget()->topLevelWidget()->winId()  : 0;
+
 	DCOPClient *client=KApplication::dcopClient();
 	QByteArray data, replyData;
 	DCOPCString replyType;
 	QDataStream arg(&data, QIODevice::WriteOnly);
-	QString appname=kapp->instanceName();
-	KConfig eventsFile( appname+QString::fromAscii( "/eventsrc" ), true, false, "data");
-	KConfigGroup config( &eventsFile, "Global" );
-	QString iconName = config.readEntry( "IconName", appname );
-	KIconLoader iconLoader( appname );
-	QPixmap appicon = iconLoader.loadIcon( iconName, KIcon::Small );
-
-	Dict  hints;
-	if(! sound.isEmpty() )
-		hints["sound-file"]=sound;
-	else
-		hints["suppress-sound"]="true";
-
-	if( n->widget() )
-		hints["win-id"]=QString::number(n->widget()->winId());
-	
-	arg << appname << appicon << 0 << n->eventId() << 0 << n->title() << n->text() << pix ;
-	arg << actions << hints << false << 0;
-	if (!client->call("knotify", "Notify", "Notify(QString,QPixmap,unsigned int,QString,int,QString,QString,QPixmap,QStringList,Dict,bool,unsigned int)" ,
+	arg << n->eventId() << appname << contexts << n->text() << pix << actions << winId  ;
+	if (!client->call("knotify", "Notify", "event(QString,QString,ContextList,QString,QPixmap,QStringList,int)" ,
 		 	 data, replyType, replyData))
 	{
 		kdDebug() << k_funcinfo << "error while contacting knotify server" << endl;
@@ -136,11 +124,12 @@ unsigned int KNotificationManager::notify( KNotification* n , const QPixmap &pix
 	else 
 	{
 		QDataStream reply(&replyData, QIODevice::ReadOnly);
-		if (replyType == "unsigned int") 
+		if (replyType == "int") 
 		{
-			unsigned int result;
+			int result;
 			reply >> result;
 			d->notifications.insert(result, n);
+			kdDebug() << k_funcinfo << "got id " << result << endl;
 			return result;
 		}
 		else
@@ -150,25 +139,9 @@ unsigned int KNotificationManager::notify( KNotification* n , const QPixmap &pix
 }
 
 
-void KNotificationManager::remove( unsigned int id)
+void KNotificationManager::remove( int id)
 {
 	d->notifications.remove(id);
 }
 
-bool KNotificationManager::notifyBySound(const QString &file, const QString& appname,unsigned int id)
-{
-	DCOPClient *client=KApplication::dcopClient();
-	QByteArray data;
-	QDataStream arg(&data, QIODevice::WriteOnly);
-	arg << file ;
-	arg << appname ;
-	arg << (int)id;
-	if (!client->send("knotify", "Notify", "notifyBySound(QString,QString,int)", data))
-	{
-		kdDebug() << k_funcinfo << "error while contacting knotify server" << endl;
-		return false;
-	}
-	return true;
-	
-}
 

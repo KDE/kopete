@@ -23,6 +23,7 @@
 #define KNOTIFICATIONMANAGER_H
 
 #include <dcopobject.h>
+#include <knotification.h>
 
 class KNotification;
 class QPixmap;
@@ -34,38 +35,35 @@ class QStringList;
  * don't use this class dirrectly,  use KNotification instead
  * @author Olivier Goffart
  */
-class KNotificationManager :  virtual public DCOPObject
+class KNotificationManager :  public DCOPObject
 {  
 	K_DCOP
 	public: 
 		static KNotificationManager* self();		
-		virtual ~KNotificationManager();
+		~KNotificationManager();
 		
 		/**
 		 * send the dcop call to the knotify server
 		 * @return the identification number
 		 */
-		unsigned int notify(KNotification *n, const QPixmap& pix, const QStringList &action , const QString &sound);
+		unsigned int notify(KNotification *n, const QPixmap& pix, const QStringList &action ,
+							const KNotification::ContextList& contexts);
 		
 		/**
 		 * send the close dcop call to the knotify server for the notification with the identifier @p id .
 		 * @param id the id of the notification
 		 */
-		void close(unsigned int id);
+		void close( int id);
 		
 		/**
 		 * remove the KNotification ptr from the internal map
 		 * To be called in the KNotification destructor
 		 */
-		void remove(unsigned int id);	
+		void remove( int id);	
 		
-		/**
-		 * play a sound
-		 */
-		bool notifyBySound(const QString &file, const QString& appname, unsigned int id);
 	k_dcop:
-		ASYNC notificationClosed(unsigned int id,unsigned int reason);
-		ASYNC notificationActivated(unsigned int id, unsigned int action);
+			ASYNC notificationClosed( int id );
+		ASYNC notificationActivated( int id,  int action);
 
 	private:
 		struct Private;

@@ -44,7 +44,9 @@
 #include <QMap>
 #include <QPixmap>
 #include <dcopclient.h>
+#include <q3cstring.h>
 #include <qpointer.h>
+#include <q3stylesheet.h>
 #include <qlabel.h>
 #include <qtimer.h>
 #include <qtabwidget.h>
@@ -55,15 +57,6 @@
 #include <QMetaObject>
 #include <QMetaEnum>
 
-//TODO,  make the KNotification aware of the systemtray.
-#include "kopeteuiglobal.h"
-static WId checkWinId( const QString &/*appName*/, WId senderWinId )
-{
-	if(senderWinId==0)
-		senderWinId=Kopete::UI::Global::sysTrayWId();
-
-	return senderWinId;
-}
 
 
 struct KNotification::Private
@@ -111,160 +104,6 @@ QString KNotification::title() const
 QWidget *KNotification::widget() const
 {
 	return d->widget;
-}
-
-
-void KNotification::notifyByExecute(const QString &command, const QString& event,
-							  const QString& fromApp, const QString& text,
-							  int winId, int eventId)
-{
-	if (!command.isEmpty()) {
-// 	kdDebug() << "executing command '" << command << "'" << endl;
-		QHash<QChar,QString> subst;
-		subst.insert( 'e', event );
-		subst.insert( 'a', fromApp );
-		subst.insert( 's', text );
-		subst.insert( 'w', QString::number( winId ));
-		subst.insert( 'i', QString::number( eventId ));
-		QString execLine = KMacroExpander::expandMacrosShellQuote( command, subst );
-		if ( execLine.isEmpty() )
-			execLine = command; // fallback
-
-		KProcess p;
-		p.setUseShell(true);
-		p << execLine;
-		p.start(KProcess::DontCare);
-// 		return true;
-	}
-// 	return false;
-}
-
-
-void KNotification::notifyByMessagebox()
-{
-		// ignore empty messages
-	if ( d->text.isEmpty() )
-		return;
-
-	QStringList actions=d->actions;
-	WId winId=d->widget ? d->widget->topLevelWidget()->winId()  : 0;
-
-	if( actions.count() == 0)
-	{
-	// display message box for specified event level
-		switch( d->level )
-		{
-			case Warning:
-				KMessageBox::sorryWId( winId, d->text, i18n( "Warning" ) , false );
-				break;
-			case Error:
-				KMessageBox::errorWId( winId, d->text, i18n( "Error" ) , false );
-				break;
-			case Catastrophe:
-				KMessageBox::errorWId( winId, d->text, i18n( "Catastrophe!" ) , false );
-				break;
-			default:
-			case Notification:
-				KMessageBox::informationWId( winId, d->text, i18n( "Notification" ) , 0 , false );
-				break;
-
-		}
-	}
-	else
-	{ //we may show the specific action button
-		int result=0;
-		QPointer<KNotification> _this=this; //this can be deleted
-		switch( d->level )
-		{
-			default:
-			case Notification:
-				result = KMessageBox::questionYesNo(d->widget, d->text, i18n( "Notification" ), actions[0], KStdGuiItem::cancel(), QString::null, false );
-				break;
-			case Warning:
-				result = KMessageBox::warningYesNo( d->widget, d->text, i18n( "Warning" ), actions[0], KStdGuiItem::cancel(), QString::null, false );
-				break;
-			case Error:
-				result = KMessageBox::warningYesNo( d->widget, d->text, i18n( "Error" ), actions[0], KStdGuiItem::cancel(), QString::null, false );
-				break;
-			case Catastrophe:
-				result = KMessageBox::warningYesNo( d->widget, d->text, i18n( "Catastrophe!" ), actions[0], KStdGuiItem::cancel(), QString::null, false );
-				break;
-		}
-		if(result==KMessageBox::Yes && _this)
-		{
-			activate(0);
-		}
-	}
-}
-
-void KNotification::notifyByPassivePopup(const QPixmap &pix, const QString& sound )
-{	
-	ref();
-	d->id=KNotificationManager::self()->notify( this , pix , d->actions , sound );
-	kdDebug() << k_funcinfo << d->id << endl;
-}
-
-
-bool KNotification::notifyByLogfile(const QString &text, const QString &file)
-{
-    // ignore empty messages
-	if ( text.isEmpty() )
-		return true;
-
-    // open file in append mode
-	QFile logFile(file);
-	if ( !logFile.open(QIODevice::WriteOnly | QIODevice::Append) )
-		return false;
-
-    // append msg
-	QTextStream strm( &logFile );
-	strm << "- KNotify " << QDateTime::currentDateTime().toString() << ": ";
-	strm << text << endl;
-
-    // close file
-	logFile.close();
-	return true;
-}
-
-bool KNotification::notifyByStderr(const QString &text)
-{
-    // ignore empty messages
-	if ( text.isEmpty() )
-		return true;
-
-    // open stderr for output
-	QTextStream strm( stderr, QIODevice::WriteOnly );
-
-    // output msg
-	strm << "KNotify " << QDateTime::currentDateTime().toString() << ": ";
-	strm << text << endl;
-
-	return true;
-}
-
-bool KNotification::notifyByTaskbar( WId win )
-{
-	if( win == 0 )
-		return false;
-	KWin::demandAttention( win );
-	return true;
-}
-
-
-
-bool KNotification::notifyBySound( const QString &sound, const QString &appname, int eventId )
-{
-	return KNotificationManager::self()->notifyBySound( sound, appname, eventId );
-}
-
-
-void KNotification::slotPopupLinkClicked(const QString &adr)
-{
-	unsigned int action=adr.toUInt();
-	if(action==0)
-		return;
-
-	activate(action);
 }
 
 
@@ -318,137 +157,31 @@ void KNotification::raiseWidget(QWidget *w)
 }
 
 
-//to workaround the fact that , i not allowed in a macro
-#define VIRGULE ,    
-
-//this is temporary code
-class ConfigHelper
-{
-public:
-	KConfig eventsfile,configfile;
-	KNotification::ContextList contexts;
-	QString eventid;
-	ConfigHelper(const QString &appname, const KNotification::ContextList &_contexts , const QString &_eventid) 
-		:	eventsfile( appname+QString::fromAscii( "/eventsrc" ), true, false, "data"),
-			configfile( appname+QString::fromAscii( ".eventsrc" ), true, false),
-			contexts(_contexts) , eventid(_eventid)
-	{}
-				
-	QString readEntry(const QString& entry , bool path=false)
-	{
-		foreach( QPair<QString VIRGULE QString> context , contexts )
-		{
-			const QString group="Event/" + eventid + "/" + context.first + "/" + context.second;
-			if(configfile.hasGroup( group ) )
-			{
-				configfile.setGroup(group);
-				QString p=path ?  configfile.readPathEntry(entry) : configfile.readEntry(entry);
-				kdDebug() << k_funcinfo << "group=" << group << " value=" << p << " isNull=" << p.isNull() << endl; 
-				if(!p.isNull())
-					return p;
-			}
-		}
-		const QString group="Event/" + eventid ;
-		kdDebug() << k_funcinfo << "group=" << group  << endl;
-		if(configfile.hasGroup( group ) )
-		{
-			configfile.setGroup(group);
-			QString p=path ?  configfile.readPathEntry(entry) : configfile.readEntry(entry);
-			kdDebug() << k_funcinfo << "bib group=" << group << " value=" << p << " isNull=" << p.isNull() << endl;
-			if(!p.isNull())
-				return p;
-		}
-		if(eventsfile.hasGroup( group ) )
-		{
-			eventsfile.setGroup(group);
-			QString p=path ?  eventsfile.readPathEntry(entry) : eventsfile.readEntry(entry);
-			kdDebug() << k_funcinfo << "bob group=" << group << " value=" << p << " isNull=" << p.isNull() << endl;
-			if(!p.isNull())
-				return p;
-		}
-		return QString::null;
-	}
-
-};
-	
-
-
 KNotification *KNotification::event( const QString& eventid , const QString& text,
 			const QPixmap& pixmap, QWidget *widget, const QStringList &actions,
 			ContextList contexts, unsigned int flags)
 {
-	int level=Notification;
 	QString appname = QString::fromAscii(kapp->instanceName());
 	KNotification *notify=new KNotification(widget);
 	notify->d->widget=widget;
 	notify->d->text=text;
 	notify->d->actions=actions;
-	notify->d->level=level;
 	notify->d->eventId=eventid;
 
-	WId winId=widget ? widget->topLevelWidget()->winId()  : 0;
-	
-		// get config file
-	ConfigHelper config( appname, contexts, eventid );
-	config.eventsfile.setGroup("Global");
-	notify->d->title=config.eventsfile.readEntry( "Comment", appname );
-	
-	int n = notify->metaObject()->indexOfEnumerator( "NotifyPresentation" );
-	QString presentstring=config.readEntry("Action");
-	int present= notify->metaObject()->enumerator(n).keysToValue( presentstring.toLatin1() );
-	if(present == -1)
-		present=0;
-	
-	kdDebug() << k_funcinfo << "Action: " << presentstring << " - " << present << endl;
+	notify->d->id=KNotificationManager::self()->notify( notify , pixmap , notify->d->actions , contexts );
+	if(notify->d->id>0)
+		notify->ref();
+//	kdDebug() << k_funcinfo << d->id << endl;
 
-	// get default event level
-	if( present & Messagebox )
-		level = config.readEntry( "level"  ).toUInt();
-
-	if ( present & PassivePopup )
-	{
-		notify->notifyByPassivePopup( pixmap , (present & Sound) ? config.readEntry( "sound" , true) : QString::null );
-	}
-	else if ( present & Sound ) // && QFile(sound).isReadable()
-		notify->notifyBySound( config.readEntry( "sound" , true), kapp->instanceName(), 0 );
-
-	
-	
-	if ( present & Messagebox )
-	{
-		QTimer::singleShot(0,notify,SLOT(notifyByMessagebox()));
-	}
-	else  //not a message box  (because closing the event when a message box is there is suicide)
-		if(flags & CloseOnTimeout)
+	if(flags & CloseOnTimeout)
 	{
 		QTimer::singleShot(6*1000, notify, SLOT(close()));
 	}
-	if ( present & Execute )
-	{
-		notify->notifyByExecute(config.readEntry( "commandline" ), QString::null,appname,text, winId, 0 );
-	}
-	
 
-	if ( present & Logfile ) // && QFile(file).isWritable()
-		notify->notifyByLogfile( text, config.readEntry( "logfile" , true) );
-	
-	if ( present & Stderr )
-		notify->notifyByStderr( text );
-
-	if ( present & Taskbar )
-		notify->notifyByTaskbar( checkWinId( kapp->instanceName(), winId ));
 	
 	//after a small timeout, the notification will be deleted if all presentation are finished
 	QTimer::singleShot(1000, notify, SLOT(deref()));
 	
-#if 0  //TODO
-	QByteArray qbd;
-	QDataStream ds(&qbd, QIODevice::WriteOnly);
-	ds << event << fromApp << text << sound << file << present << level
-			<< winId << eventId;
-	emitDCOPSignal("notifySignal(QString,QString,QString,QString,QString,int,int,int,int)", qbd);
-#endif
-
 	return notify;
 }
 
@@ -462,6 +195,12 @@ void KNotification::deref()
 	d->ref--;
 	if(d->ref==0)
 		close();
+}
+
+void KNotification::beep( const QString & reason, QWidget * widget )
+{
+	QApplication::beep();
+	//TODO use kde configuration
 }
 
 #include "knotification.moc"
