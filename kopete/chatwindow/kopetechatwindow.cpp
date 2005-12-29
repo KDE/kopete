@@ -939,11 +939,13 @@ void KopeteChatWindow::slotSendMessage()
 {
 	if ( m_activeView && m_activeView->canSend() )
 	{
+#if 0
 		if( !animIcon.isNull() )
 		{
 			anim->setMovie( &animIcon );
 			animIcon.unpause();
 		}
+#endif
 		m_activeView->sendMessage();
 	}
 }
