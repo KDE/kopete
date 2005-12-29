@@ -39,7 +39,7 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
-#include <knotifydialog.h>
+#include <knotifyconfigwidget.h>
 #include <kmenu.h>
 #include <kaccel.h>
 #include <kkeydialog.h>
@@ -515,7 +515,7 @@ void KopeteWindow::slotContactListAppearanceChanged()
 
 void KopeteWindow::slotConfNotifications()
 {
-	KNotifyDialog::configure( this );
+	KNotifyConfigWidget::configure( this );
 }
 
 void KopeteWindow::slotConfigurePlugins()

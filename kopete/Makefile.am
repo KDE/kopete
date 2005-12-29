@@ -17,12 +17,13 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(kopete_builddir)/kopete/config \
 	-I$(kopete_srcdir)/libkopete/private \
 	-I$(kopete_srcdir)/libkopete/avdevice \
+	-I$(kopete_srcdir)/kopete/config/knotify \
 	-I$(kopete_srcdir) \
 	$(all_includes)
 KDE_ICON = AUTO
 METASOURCES = AUTO
 
-SUBDIRS = addaccountwizard addcontactwizard contactlist chatwindow config . kconf_update
+SUBDIRS = addaccountwizard addcontactwizard config contactlist chatwindow . kconf_update
 
 bin_PROGRAMS = kopete
 kopete_SOURCES = main.cpp 	kopeteapplication.cpp kopeteiface.cpp \
@@ -38,7 +39,8 @@ kopete_LDADD = \
 	contactlist/libkopetecontactlist.la \
 	config/plugins/libkopetepluginconfig.la \
 	../libkopete/libkopete.la \
-	../libkopete/ui/libkopeteui.la
+	../libkopete/ui/libkopeteui.la \
+	config/knotify/libknotifyconfig.la
 
 mydatadir    = $(kde_datadir)/kopete
 mydata_DATA  = kopeteui.rc eventsrc

@@ -62,7 +62,6 @@
 #include "addressbookselectordialog.h"
 
 #include "customnotificationprops.h"
-#include "customnotifications.h"
 
 const char MC_OFF[] = "metacontact_offline";
 const char MC_ON[] = "metacontact_online";
@@ -250,8 +249,6 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 					 this, SLOT( slotExportClicked() ) );
 	connect( mFromKABC, SIGNAL( clicked() ),
 		this, SLOT( slotFromKABCClicked() ) );
-	connect( mNotificationProps->widget()->customSound, SIGNAL( openFileDialog( KURLRequester * )),
-             SLOT( slotOpenSoundDialog( KURLRequester * )));
 
 	slotUseCustomIconsToggled( mainWidget->chkUseCustomIcons->isChecked() );
 	slotEnableAndDisableWidgets();
@@ -526,7 +523,9 @@ void KopeteMetaLVIProps::slotImportClicked()
 
 void KopeteMetaLVIProps::slotFromKABCClicked()
 {
-	 mNotificationProps->widget()->customSound->setURL( mSound.url() );
+#if 0 
+	mNotificationProps->widget()->customSound->setURL( mSound.url() );
+#endif
 }
 
 void KopeteMetaLVIProps::slotOpenSoundDialog( KURLRequester *requester )

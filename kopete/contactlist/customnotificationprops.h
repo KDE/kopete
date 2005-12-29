@@ -21,7 +21,7 @@
 #ifndef KOPETE_CUSTOM_NOTIFICATION_PROPS_H
 #define KOPETE_CUSTOM_NOTIFICATION_PROPS_H
 
-class CustomNotificationWidget;
+class KNotifyConfigWidget;
 class QBoxLayout;
 
 
@@ -34,13 +34,10 @@ public:
 	void dumpData();
 	void resetEventWidgets();
 	void storeCurrentCustoms();
-	CustomNotificationWidget* widget();
-
-protected slots:
-	void slotEventsComboChanged( int itemNo );
+	QWidget* widget();
 
 private:
-	CustomNotificationWidget* m_notifyWidget;
+	KNotifyConfigWidget* m_notifyWidget;
 	const QPair<QString,QString> m_item;
 	QStringList m_eventList;
 	QString m_event;
