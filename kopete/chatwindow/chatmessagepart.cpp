@@ -925,6 +925,26 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	// Set message direction("rtl"(Right-To-Left) or "ltr"(Left-to-right))
 	resultHTML = resultHTML.replace( QString::fromUtf8("%messageDirection%"), message.plainBody().isRightToLeft() ? "rtl" : "ltr" );
 
+	// These colors are used for coloring nicknames. I tried to use
+	// colors both visible on light and dark background.
+	static const char* const nameColors[] =
+	{
+		"red", "blue" , "gray", "magenta", "violet", "olive", "yellowgreen",
+		"darkred", "darkgreen", "darksalmon", "darkcyan", "darkyellow",
+		"mediumpurple", "peru", "olivedrab", "royalred", "darkorange", "slateblue",
+		"slategray", "goldenrod", "orangered", "tomato", "dogderblue", "steelblue",
+		"deeppink", "saddlebrown", "coral", "royalblue"
+	};
+	static const int nameColorsLen = sizeof(nameColors) / sizeof(nameColors[0]) - 1;
+	// hash contactId to deterministically pick a color for the contact
+	int hash = 0;
+	for( uint f = 0; f < contactId.length(); ++f )
+		hash += contactId[f].unicode() * f;
+
+	QString color = QColor( nameColors[ hash % nameColorsLen ] ).name();
+	
+	resultHTML = resultHTML.replace( QString::fromUtf8("%senderColor%"), color);
+
 	// Replace message at the end, maybe someone could put a Adium keyword in his message :P
 	resultHTML = resultHTML.replace( QString::fromUtf8("%message%"), formatMessageBody(message) );
 
