@@ -43,7 +43,7 @@ kopete_LDADD = \
 	config/knotify/libknotifyconfig.la
 
 mydatadir    = $(kde_datadir)/kopete
-mydata_DATA  = kopeteui.rc eventsrc
+mydata_DATA  = kopeteui.rc kopete.notifyrc
 
 mimedir      = $(kde_mimedir)/application
 mime_DATA    = x-kopete-emoticons.desktop

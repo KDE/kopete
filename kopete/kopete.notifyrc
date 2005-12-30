@@ -1,6 +1,7 @@
 [Global]
 IconName=kopete
 Comment=Kopete Messenger
+Version=4
 
 [Context/group]
 Name=Group
