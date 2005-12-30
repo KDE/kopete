@@ -1,2 +1,2 @@
-SUBDIRS = iris qca cutestuff  libjingle
+SUBDIRS = iris qca cutestuff
 
