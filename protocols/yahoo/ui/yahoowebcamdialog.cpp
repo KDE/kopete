@@ -77,7 +77,7 @@ void YahooWebcamDialog::webcamClosed( int reason  )
 	case 1:
 		closeReason = i18n( "%1 has stopped broadcasting" ).arg( contactName ); break;
 	case 2:
-		closeReason = i18n( "%1 has cancelled viewing permission" ).arg( contactName ); break;
+		closeReason = i18n( "%1 has canceled viewing permission" ).arg( contactName ); break;
 	case 3:
 		closeReason = i18n( "%1 has declined permission to view webcam" ).arg( contactName ); break;
 	case 4:

@@ -83,7 +83,7 @@
                                 <string>Left mouse click on flashing system tray opens message instead of restoring/minimizing contact list</string>
                             </property>
                             <property name="whatsThis" stdset="0">
-                                <string>A left mouse click on the flashing system tray opens the incoming message instead of restoring/minimizing the contact list (e.g. to check who sent messages). A middle click always opens this message.</string>
+                                <string>A left mouse click on the flashing system tray icon opens the incoming message instead of restoring/minimizing the contact list (e.g. to check who is sending messages). A middle click always opens this message.</string>
                             </property>
                         </widget>
                     </hbox>
@@ -226,7 +226,7 @@
                         <string>Switch to the desktop which contains the chat window for the sender when opening his/her message</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>If there is already a chat window opened for the sender of the message opening his/her message will cause a switch to the desktop which contains this chat window.</string>
+                        <string>If there is already a chat window open for the sender of the message, opening his/her message will cause a switch to the desktop which contains this chat window.</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">

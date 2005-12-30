@@ -452,7 +452,7 @@ void HistoryDialog::slotSearch()
 	mSearch->item = 0;
 	mSearch->foundPrevious = false;
 
-	initProgressBar(i18n("Searching ..."), mMainWidget->dateListView->childCount() );
+	initProgressBar(i18n("Searching..."), mMainWidget->dateListView->childCount() );
 	mMainWidget->searchButton->setText(i18n("&Cancel"));
 
 	mSearch->item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());

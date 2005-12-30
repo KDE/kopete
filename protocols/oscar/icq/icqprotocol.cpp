@@ -641,7 +641,7 @@ void ICQProtocol::initInterests()
 	mInterests.insert(142, i18n("Health and beauty"));
 	mInterests.insert(143, i18n("Media"));
 	mInterests.insert(144, i18n("Household products"));
-	mInterests.insert(145, i18n("Mail order catalogue"));
+	mInterests.insert(145, i18n("Mail order catalog"));
 	mInterests.insert(146, i18n("Business services"));
 	mInterests.insert(147, i18n("Audio and visual"));
 	mInterests.insert(148, i18n("Sporting and athletic"));
