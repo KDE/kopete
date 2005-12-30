@@ -49,9 +49,9 @@
 #include "jabberfiletransfer.h"
 #include "dlgjabbervcard.h"
 
-#ifndef JABBER_WITHOUT_VOICE
-#include "jingle/voicecalldlg.h"
-#endif
+// #ifndef JABBER_WITHOUT_VOICE
+// #include "jingle/voicecalldlg.h"
+// #endif
 
 /**
  * JabberContact constructor
@@ -1322,9 +1322,9 @@ void JabberContact::voiceCall( )
 	}
 #endif
 
-	VoiceCallDlg* vc = new VoiceCallDlg(jid,account()->voiceCaller());
-	vc->show();
-	vc->call();
+// 	VoiceCallDlg* vc = new VoiceCallDlg(jid,account()->voiceCaller());
+// 	vc->show();
+// 	vc->call();
 #endif
 }
 

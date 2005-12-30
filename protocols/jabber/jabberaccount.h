@@ -72,12 +72,12 @@ public:
 		return m_jabberClient;
 	}
 	
-#ifndef JABBER_WITHOUT_VOICE
-	VoiceCaller *voiceCaller() const
-	{
-		return m_voiceCaller;
-	}
-#endif
+// #ifndef JABBER_WITHOUT_VOICE
+// 	VoiceCaller *voiceCaller() const
+// 	{
+// 		return m_voiceCaller;
+// 	}
+// #endif
 
 	// change the default S5B server port
 	void setS5BServerPort ( int port );
@@ -154,9 +154,9 @@ private:
 
 	JabberResourcePool *m_resourcePool;
 	JabberContactPool *m_contactPool;
-#ifndef JABBER_WITHOUT_VOICE
-	VoiceCaller *m_voiceCaller;
-#endif
+// #ifndef JABBER_WITHOUT_VOICE
+// 	VoiceCaller *m_voiceCaller;
+// #endif
 
 	/* Set up our actions for the status menu. */
 	void initActions ();
