@@ -666,9 +666,12 @@ void KopeteWindow::slotAccountRegistered( Kopete::Account *account )
 //	connect( account, SIGNAL( iconAppearanceChanged() ), SLOT( slotAccountStatusIconChanged() ) );
 	connect( account, SIGNAL( colorChanged(const QColor& ) ), SLOT( slotAccountStatusIconChanged() ) );
 
+	//FIXME:  i don't know why this is require, cmmenting for now)
+#if 0
 	connect( account->myself(),
 		SIGNAL(propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
 		this, SLOT( slotAccountStatusIconChanged( Kopete::Contact* ) ) );
+#endif
 
 	KopeteAccountStatusBarIcon *sbIcon = new KopeteAccountStatusBarIcon( account, m_statusBarWidget );
 	connect( sbIcon, SIGNAL( rightClicked( Kopete::Account *, const QPoint & ) ),
@@ -729,14 +732,14 @@ void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 	// Because we want null pixmaps to detect the need for a loadMovie
 	// we can't use the SmallIcon() method directly
 	KIconLoader *loader = KGlobal::instance()->iconLoader();
-
+#if 0
 	QMovie *mv = new QMovie(loader->loadMovie( status.overlayIcons().first(), KIcon::Small ));
 
 	if ( mv->isNull() )
 	{
 		// No movie found, fallback to pixmap
 		// Get the icon for our status
-
+#endif
 		//QPixmap pm = SmallIcon( icon );
 		QPixmap pm = status.iconFor( contact->account() );
 
@@ -745,12 +748,14 @@ void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 			i->setPixmap( KIconLoader::unknown() );
 		else
 			i->setPixmap( pm );
+#if 0
 	}
 	else
 	{
 		//kdDebug( 14000 ) << k_funcinfo << "Using movie."  << endl;
 		i->setMovie( mv );
 	}
+#endif
 	makeTrayToolTip();
 }
 
