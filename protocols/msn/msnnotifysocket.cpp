@@ -752,7 +752,7 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 		{
 			// If there are new email message available, raise the unread email event.
 			QObject::connect(KNotification::event( QString::fromUtf8("msn_mail"), i18n( "You have one unread message in your MSN inbox.",
-					"You have %n unread messages in your MSN inbox.", mailCount ), 0 , 0 , QStringList(i18n( "Open Inbox..." )) ),
+							 "You have %n unread messages in your MSN inbox.", mailCount ), QPixmap() , 0 , QStringList(i18n( "Open Inbox..." )) ),
 				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 		}
 	}
