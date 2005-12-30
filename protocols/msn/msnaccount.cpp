@@ -720,11 +720,9 @@ void MSNAccount::slotNewContactList()
 
 		// clear all date information which will be received.
 		// if the information is not anymore on the server, it will not be received
-		QHash<QString, Kopete::Contact*> contactList = contacts();
-		QHash<QString, Kopete::Contact*>::Iterator contactIt, contactItEnd = contactList.end();
-		for ( contactIt = contactList.begin(); contactIt != contactItEnd; ++it )
+		foreach ( Kopete::Contact *kc , contacts() )
 		{
-			MSNContact *c = static_cast<MSNContact *>( contactIt.value() );
+			MSNContact *c = static_cast<MSNContact *>( kc );
 			c->setBlocked( false );
 			c->setAllowed( false );
 			c->setReversed( false );
