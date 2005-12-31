@@ -214,10 +214,10 @@ Account* AccountManager::registerAccount( Account *account )
 	return account;
 }
 
-void AccountManager::unregisterAccount( Account *account )
+void AccountManager::unregisterAccount( const Account *account )
 {
 	kdDebug( 14010 ) << k_funcinfo << "Unregistering account " << account->accountId() << endl;
-	d->accounts.remove( account );
+	d->accounts.removeAll( const_cast<Account*>(account) );
 	emit accountUnregistered( account );
 }
 

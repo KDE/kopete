@@ -202,7 +202,7 @@ private slots:
 	 * \internal
 	 * Unregister the account.
 	 */
-	void unregisterAccount( Kopete::Account *account );
+	void unregisterAccount( const Kopete::Account *account );
 
 private:
 	bool isAnyAccountConnected();
