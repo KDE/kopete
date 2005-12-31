@@ -56,7 +56,7 @@ KopeteSystemTray* KopeteSystemTray::systemTray( QWidget *parent, const char* nam
 }
 
 KopeteSystemTray::KopeteSystemTray(QWidget* parent, const char* name)
-	: KSystemTray(parent,name)
+	: KSystemTray(parent,name), mMovie(0)
 {
 //	kdDebug(14010) << "Creating KopeteSystemTray" << endl;
 	QToolTip::add( this, kapp->aboutData()->shortDescription() );
@@ -169,7 +169,7 @@ void KopeteSystemTray::startBlink( QMovie *movie )
 
 void KopeteSystemTray::startBlink()
 {
-	if ( mMovie->isNull() )
+	if ( !mMovie )
 		mMovie = new QMovie(KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Panel ));
 
 	startBlink( mMovie );

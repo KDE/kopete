@@ -1439,12 +1439,11 @@ void KopeteContactListView::updateActionsForSelection(
 void KopeteContactListView::slotSendMessage()
 {
 	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
-	Kopete::Group *group = Kopete::ContactList::self()->selectedGroups().first();
 	if(m)
 		m->sendMessage();
 	else
-		if(group)
-			group->sendMessage();
+		if(!Kopete::ContactList::self()->selectedGroups().isEmpty())
+			Kopete::ContactList::self()->selectedGroups().first()->sendMessage();
 }
 
 void KopeteContactListView::slotStartChat()
