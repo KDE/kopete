@@ -101,6 +101,7 @@ Account::~Account()
 {
 	d->contacts.remove( d->myself->contactId() );
 	// Delete all registered child contacts first
+	foreach (Contact* c, d->contacts) QObject::disconnect(c, SIGNAL( contactDestroyed( Kopete::Contact * ) ), this, 0);
 	qDeleteAll(d->contacts);
 	d->contacts.clear();
 	
