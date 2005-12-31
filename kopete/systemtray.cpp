@@ -101,6 +101,7 @@ KopeteSystemTray::~KopeteSystemTray()
 //	kdDebug(14010) << "[KopeteSystemTray] ~KopeteSystemTray" << endl;
 //	delete mBlinkTimer;
 	Kopete::UI::Global::setSysTrayWId( 0 );
+	delete mMovie;
 }
 
 void KopeteSystemTray::mousePressEvent( QMouseEvent *me )
@@ -162,7 +163,8 @@ void KopeteSystemTray::startBlink( const QPixmap &icon )
 void KopeteSystemTray::startBlink( QMovie *movie )
 {
 	//kdDebug( 14010 ) << k_funcinfo << "starting movie." << endl;
-	const_cast<QMovie *>( movie )->unpause();
+	kdDebug( 14010 ) << "Movie is " << movie->loopCount() << " loops, " << movie->frameCount() << " frames " << endl;
+	movie->unpause();
 	setMovie( movie );
 	mIsBlinking = true;
 }
@@ -170,8 +172,10 @@ void KopeteSystemTray::startBlink( QMovie *movie )
 void KopeteSystemTray::startBlink()
 {
 	if ( !mMovie )
-		mMovie = new QMovie(KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Panel ));
-
+		mMovie = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Panel );
+	// KIconLoader already checked isValid()
+	if ( !mMovie) return;
+	
 	startBlink( mMovie );
 }
 
@@ -182,7 +186,7 @@ void KopeteSystemTray::stopBlink()
 	else if ( mBlinkTimer->isActive() )
 		mBlinkTimer->stop();
 
-	if ( !mMovie->isValid() )
+	if ( mMovie )
 		mMovie->pause();
 
 	mIsBlinkIcon = false;
