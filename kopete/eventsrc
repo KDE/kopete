@@ -1054,6 +1054,10 @@ Name[uk]=З'єднання втрачено
 Name[uz]=Уланиш узилди
 Name[zh_CN]=连接已丢失
 Comment=The connection has been lost
+Comment[da]=Forbindelsen er gået tabt
+Comment[et]=Ühendus kadus
+Comment[nl]=De verbinding is verbroken
+Comment[uk]=З'єднання було втрачено
 default_presentation=16
 
 [cannot_connect]
@@ -1214,6 +1218,10 @@ Name[tr]=Sunucu İç Hatası
 Name[uk]=Внутрішня помилка сервера
 Name[zh_CN]=服务器内部错误
 Comment=A service internal error has occurred
+Comment[da]=En intern fejl for tjenesten er opstået
+Comment[et]=Tekkis teenuse sisemine viga
+Comment[nl]=Er deed zich een interne fout op de server voor
+Comment[uk]=Трапилась внутрішня помилка служби
 default_presentation=2
 
 [buzz_nudge]
