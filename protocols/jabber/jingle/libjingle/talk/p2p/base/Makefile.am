@@ -31,7 +31,7 @@ noinst_HEADERS =               candidate.h \
 			       relayserver.h \
 			       stunserver.h
 
-AM_CPPFLAGS = -DPOSIX
+AM_CPPFLAGS = -DPOSIX  $(all_includes) -I$(srcdir)/../../..
 
 bin_PROGRAMS = relayserver stunserver
 relayserver_SOURCES = relayserver.cc relayserver_main.cc

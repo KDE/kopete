@@ -89,4 +89,4 @@ libmediastreamer_la_LIBADD= $(GLIB_LIBS) $(ORTP_LIBS)
 
 AM_CFLAGS=$(GLIB_CFLAGS) -DG_LOG_DOMAIN=\"MediaStreamer\" $(ORTP_CFLAGS) $(IPV6_CFLAGS) $(ILBC_CFLAGS) $(SPEEX_CFLAGS)
 
-INCLUDES=  -I$(srcdir)/../../.. $(ORTP_CFLAGS) 	$(GLIB_CFLAGS)
+INCLUDES=  -I$(srcdir)/../../.. $(ORTP_CFLAGS)

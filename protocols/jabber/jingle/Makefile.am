@@ -1,3 +1,4 @@
+SUBDIRS = libjingle
 METASOURCES = AUTO
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(srcdir)/../libiris/iris/include \
