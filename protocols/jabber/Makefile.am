@@ -35,6 +35,17 @@ kopete_jabber_la_SOURCES = \
 	jabbergroupchatmanager.cpp \
 	jabberfiletransfer.cpp
 
+JINGLE_LIBS= jingle/libkopetejabberjingle.la \
+	jingle/libjingle/talk/session/phone/libcricketsessionphone.la \
+	jingle/libjingle/talk/p2p/client/libcricketp2pclient.la \
+	jingle/libjingle/talk/p2p/base/libcricketp2pbase.la \
+	jingle/libjingle/talk/xmpp/libcricketxmpp.la \
+	jingle/libjingle/talk/xmllite/libcricketxmllite.la \
+	jingle/libjingle/talk/base/libcricketbase.la \
+	jingle/libjingle/talk/third_party/mediastreamer/libmediastreamer.la  \
+	$(EXPAT_LIBS) $(ORTP_LIBS) -lpthread $(ILBC_LIBS) $(SPEEX_LIBS) $(GLIB_LIBS) -lasound \
+		 -lexpat -lortp -lspeex -lglib  -lgmodule
+
 kopete_jabber_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_jabber_la_LIBADD  = $(top_builddir)/kopete/libkopete/libkopete.la \
 	ui/libkopetejabberui.la \
@@ -45,7 +56,7 @@ kopete_jabber_la_LIBADD  = $(top_builddir)/kopete/libkopete/libkopete.la \
 	libiris/qca/src/libqca.la \
 	libiris/cutestuff/network/libcutestuff_network.la \
 	libiris/cutestuff/util/libcutestuff_util.la \
-	libjabberclient.la 
+	libjabberclient.la   $(JINGLE_LIBS)
 
 service_DATA = kopete_jabber.desktop
 servicedir = $(kde_servicesdir)
