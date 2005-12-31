@@ -88,9 +88,9 @@ void Transport::setDefaultBridge(MSNSwitchBoardSocket* mss)
 
 //BEGIN Private Slot Methods
 
-void Transport::slotOnReceive(const QByteArray& bytes)
-{
-}
+// void Transport::slotOnReceive(Message& message)
+// {
+// }
 
 void Transport::slotOnReceive(const QString& contact, const QByteArray& bytes)
 {
