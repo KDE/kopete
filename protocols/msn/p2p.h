@@ -135,7 +135,7 @@ namespace P2P{
 			bool m_isComplete;
 			Q_INT64 m_offset;
 			Q_INT64 m_totalDataSize;
-			P2P::MessageFormatter m_messageFormatter;
+			PeerToPeer::MessageFormatter m_messageFormatter;
 			QString m_recipient;
 			QString m_sender;
 			KNetwork::KBufferedSocket *m_socket;

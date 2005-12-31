@@ -117,7 +117,8 @@ void TransferContext::acknowledge(const Message& message)
 
 	QByteArray stream;
 	// Write the acknowledge message to the stream.
-	m_messageFormatter.writeMessage(outbound, stream, (m_socket != 0l));
+	// FIXME: Disabled to fix compile -DarkShock
+	//m_messageFormatter.writeMessage(outbound, stream, (m_socket != 0l));
 	if(!m_socket)
 	{
 		// Send the acknowledge message.
@@ -167,7 +168,8 @@ void TransferContext::sendData(const QByteArray& bytes)
 	outbound.destination = m_recipient;
 
 	QByteArray stream;
-	m_messageFormatter.writeMessage(outbound, stream, (m_socket != 0l));
+	// FIXME: Disabled to fix compile -DarkShock
+	//m_messageFormatter.writeMessage(outbound, stream, (m_socket != 0l));
 	if(!m_socket)
 	{
 		// Send the data message.
@@ -201,7 +203,8 @@ void TransferContext::sendDataPreparation()
 	outbound.destination = m_recipient;
 
 	QByteArray stream;
-	m_messageFormatter.writeMessage(outbound, stream);
+	// FIXME: Disabled to fix compile -DarkShock
+	//m_messageFormatter.writeMessage(outbound, stream);
 	// Send the receiving client the data prepartion message.
  	m_dispatcher->callbackChannel()->send(stream);
 }
@@ -348,7 +351,8 @@ void TransferContext::sendMessage(Message& outbound, const QByteArray& body)
 
 		QByteArray stream;
 		// Write the outbound message to the stream.
-		m_messageFormatter.writeMessage(outbound, stream, (m_socket != 0l));
+		// FIXME: Disabled to fix compile -DarkShock
+		//m_messageFormatter.writeMessage(outbound, stream, (m_socket != 0l));
 		if(!m_socket)
 		{
 			// Send the outbound message.

@@ -380,7 +380,8 @@ void OutgoingTransfer::slotConnected()
 
 	QByteArray stream;
 	// Write the message to the memory stream.
-	m_messageFormatter.writeMessage(handshake, stream, true);
+	// FIXME: Disabled to fix compile -DarkShock
+	//m_messageFormatter.writeMessage(handshake, stream, true);
 	// Send the byte stream over the wire.
 	m_socket->writeBlock(stream.data(), stream.size());
 }
