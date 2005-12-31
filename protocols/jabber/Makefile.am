@@ -45,7 +45,7 @@ kopete_jabber_la_LIBADD  = $(top_builddir)/kopete/libkopete/libkopete.la \
 	libiris/qca/src/libqca.la \
 	libiris/cutestuff/network/libcutestuff_network.la \
 	libiris/cutestuff/util/libcutestuff_util.la \
-	libjabberclient.la \
+	libjabberclient.la 
 
 service_DATA = kopete_jabber.desktop
 servicedir = $(kde_servicesdir)
