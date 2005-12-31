@@ -152,7 +152,7 @@ int alsa_set_params(AlsaCard *obj, int rw, int bits, int stereo, int rate)
 	}
 	obj->frame_size=channels*(bits/8);
 	SND_CARD(obj)->bsize=periodsize*obj->frame_size;
-	//SND_CARD(obj)->bsize=4096;
+	/* //SND_CARD(obj)->bsize=4096; */
 	obj->frames=periodsize;
 	g_message("alsa_set_params:  blocksize=%i.",SND_CARD(obj)->bsize);
 	return SND_CARD(obj)->bsize;	
@@ -267,7 +267,7 @@ gboolean alsa_card_can_read(AlsaCard *obj)
 	g_return_val_if_fail(obj->read_handle!=NULL,0);
 	if (obj->readpos!=0) return TRUE;
 	if ( frames=snd_pcm_avail_update(obj->read_handle)>=obj->frames) return 1;
-	//g_message("frames=%i",frames);
+	/* //g_message("frames=%i",frames); */
 	return 0;
 }
 
@@ -402,7 +402,7 @@ static gint get_mixer_element(snd_mixer_t *mixer,const char *name, MixerAction a
 	elem=snd_mixer_first_elem(mixer);
 	while (elem!=NULL){
 		elemname=snd_mixer_selem_get_name(elem);
-		//g_message("Found alsa mixer element %s.",elemname);
+		/* //g_message("Found alsa mixer element %s.",elemname); */
 		if (strcmp(elemname,name)==0){
 			switch (action){
 				case CAPTURE:
@@ -412,7 +412,7 @@ static gint get_mixer_element(snd_mixer_t *mixer,const char *name, MixerAction a
 					newvol-=sndMixerPMin;
 					value=(100*newvol)/(sndMixerPMax-sndMixerPMin);
 					if (err<0) g_warning("Could not get capture volume for %s:%s",name,snd_strerror(err));
-					//else g_message("Succesfully get capture level for %s.",elemname);
+					/* //else g_message("Succesfully get capture level for %s.",elemname); */
 					break;
 				}
 				break;
@@ -423,7 +423,7 @@ static gint get_mixer_element(snd_mixer_t *mixer,const char *name, MixerAction a
 					newvol-=sndMixerPMin;
 					value=(100*newvol)/(sndMixerPMax-sndMixerPMin);
 					if (err<0) g_warning("Could not get playback volume for %s:%s",name,snd_strerror(err));
-					//else g_message("Succesfully get playback level for %s.",elemname);
+					/* //else g_message("Succesfully get playback level for %s.",elemname); */
 					break;
 				}
 				break;
@@ -451,7 +451,7 @@ static void set_mixer_element(snd_mixer_t *mixer,const char *name, gint level,Mi
 	
 	while (elem!=NULL){
 		elemname=snd_mixer_selem_get_name(elem);
-		//g_message("Found alsa mixer element %s.",elemname);
+		/* //g_message("Found alsa mixer element %s.",elemname); */
 		if (strcmp(elemname,name)==0){
 			switch(action){
 				case CAPTURE:
@@ -459,7 +459,7 @@ static void set_mixer_element(snd_mixer_t *mixer,const char *name, gint level,Mi
 					snd_mixer_selem_get_playback_volume_range(elem, &sndMixerPMin, &sndMixerPMax);
 					newvol=(((sndMixerPMax-sndMixerPMin)*level)/100)+sndMixerPMin;
 					snd_mixer_selem_set_capture_volume_all(elem,newvol);
-					//g_message("Succesfully set capture level for %s.",elemname);
+					/* //g_message("Succesfully set capture level for %s.",elemname); */
 					return;
 				}
 				break;
@@ -468,20 +468,20 @@ static void set_mixer_element(snd_mixer_t *mixer,const char *name, gint level,Mi
 					snd_mixer_selem_get_playback_volume_range(elem, &sndMixerPMin, &sndMixerPMax);
 					newvol=(((sndMixerPMax-sndMixerPMin)*level)/100)+sndMixerPMin;
 					snd_mixer_selem_set_playback_volume_all(elem,newvol);
-					//g_message("Succesfully set playback level for %s.",elemname);
+					/* //g_message("Succesfully set playback level for %s.",elemname); */
 					return;
 				}
 				break;
 				case CAPTURE_SWITCH:
 				if (snd_mixer_selem_has_capture_switch(elem)){
 					snd_mixer_selem_set_capture_switch_all(elem,level);
-					//g_message("Succesfully set capture switch for %s.",elemname);
+					/* //g_message("Succesfully set capture switch for %s.",elemname); */
 				}
 				break;
 				case PLAYBACK_SWITCH:
 				if (snd_mixer_selem_has_playback_switch(elem)){
 					snd_mixer_selem_set_playback_switch_all(elem,level);
-					//g_message("Succesfully set capture switch for %s.",elemname);
+					/* //g_message("Succesfully set capture switch for %s.",elemname); */
 				}
 				break;
 
