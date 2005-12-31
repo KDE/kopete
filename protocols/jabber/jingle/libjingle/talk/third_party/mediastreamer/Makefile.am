@@ -85,7 +85,7 @@ noinst_HEADERS = affine.h \
 			      sndcard.h
 
 
-libmediastreamer_la_LIBADD= $(GLIB_LIBS) $(ORTP_LIBS)
+libmediastreamer_la_LIBADD= $(GLIB_LIBS) $(ORTP_LIBS) $(SPEEX_LIBS)
 
 AM_CFLAGS=$(GLIB_CFLAGS) -DG_LOG_DOMAIN=\"MediaStreamer\" $(ORTP_CFLAGS) $(IPV6_CFLAGS) $(ILBC_CFLAGS) $(SPEEX_CFLAGS)
 

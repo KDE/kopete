@@ -23,6 +23,10 @@
 #ifndef JABBERACCOUNT_H
 #define JABBERACCOUNT_H
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 // we need these for type reasons
 #include <kopetepasswordedaccount.h>
 #include <kopeteonlinestatus.h>

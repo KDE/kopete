@@ -18,6 +18,10 @@
 #ifndef JABBERCONTACT_H
 #define JABBERCONTACT_H
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "jabberbasecontact.h"
 #include "xmpp_vcard.h"
 

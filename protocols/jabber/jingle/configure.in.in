@@ -40,12 +40,18 @@ fi
 AC_SUBST(ORTP_CFLAGS)
 AC_SUBST(ORTP_LIBS)
 
+AC_ARG_WITH( speex,
+      [  --with-speex      Set prefix where speex lib can be found (ex:/usr, /usr/local) [default=/usr] ],
+      [ speex_prefix=${withval}],[ speex_prefix="/usr" ])
+
 PKG_CHECK_MODULES(SPEEX, speex, speex_found=yes, speex_found=no)
+AC_CHECK_HEADERS(speex.h,[AC_CHECK_LIB(speex,speex_encode_int,speex_found=yes,speex_found=no)],speex_found=no)
 AC_CHECK_HEADERS(speex/speex.h,[AC_CHECK_LIB(speex,speex_encode_int,speex_found=yes,speex_found=no)],speex_found=no)
 
 if test x$speex_found = xno; then
 	AC_MSG_WARN([Could not find a libspeex version that have the speex_encode_int() function. Please install libspeex=1.0.5 or libspeex>=1.1.6 from http://www.speex.org/])
 else
+	SPEEX_CFLAGS="$SPEEX_CFLAGS -I${speex_prefix}/include -I${speex_prefix}/include/speex"
 	AC_SUBST(SPEEX_CFLAGS)
 	AC_SUBST(SPEEX_LIBS)
 	AC_DEFINE(HAVE_SPEEX,1,[has speex])
