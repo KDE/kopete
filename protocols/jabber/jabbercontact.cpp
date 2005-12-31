@@ -49,7 +49,7 @@
 #include "jabberfiletransfer.h"
 #include "dlgjabbervcard.h"
 
-#ifndef JABBER_WITHOUT_VOICE
+#ifdef SUPPORT_JINGLE
 #include "jingle/voicecalldlg.h"
 #endif
 
@@ -206,7 +206,8 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 	actionCollection->append( actionSetAvailability );
 	actionCollection->append( actionSelectResource );
 	
-#ifndef JABBER_WITHOUT_VOICE
+	// TODO: CHeck if contact has voice support with caps
+#ifdef SUPPORT_JINGLE
 	actionCollection->append( new KAction (i18n ("Voice call"), 0, 0, this, SLOT (voiceCall ()), this, "jabber_voicecall"));
 #endif
 	
@@ -1297,7 +1298,7 @@ QString JabberContact::lastReceivedMessageId () const
 
 void JabberContact::voiceCall( )
 {
-#ifndef JABBER_WITHOUT_VOICE
+#ifdef SUPPORT_JINGLE
 	Jid jid=mRosterItem.jid();
 	
 #if 0 //TODO (code from psi)

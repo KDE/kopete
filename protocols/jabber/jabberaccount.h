@@ -72,7 +72,7 @@ public:
 		return m_jabberClient;
 	}
 	
-#ifndef JABBER_WITHOUT_VOICE
+#ifdef SUPPORT_JINGLE
 	VoiceCaller *voiceCaller() const
 	{
 		return m_voiceCaller;
@@ -154,7 +154,8 @@ private:
 
 	JabberResourcePool *m_resourcePool;
 	JabberContactPool *m_contactPool;
-#ifndef JABBER_WITHOUT_VOICE
+
+#ifdef SUPPORT_JINGLE
 	VoiceCaller *m_voiceCaller;
 #endif
 
