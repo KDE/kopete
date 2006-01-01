@@ -91,17 +91,16 @@ QList<MetaContact *> Group::members() const
 {
 	QList<MetaContact *> members = ContactList::self()->metaContacts();
 	// members is a *copy* of the meta contacts, so using first(), next() and remove() is fine.
-	// FIXME DUNCAN
-	/*
-	QListIterator<MetaContact *> it(members);
-	while ( it.hasNext() )
+	
+	QList<MetaContact *>::iterator it=members.begin();
+	while ( it!=members.end() )
 	{
-		MetaContact *mc = it.next();
 		// FIXME not sure
-		if ( !mc->groups().contains( this ) )
-			members.remove(mc);
+		if ( !(*it)->groups().contains( const_cast<Group*>(this) ) )
+			it=members.erase(it);
+		else
+			++it;
 	}
-	*/
 	return members;
 }
 
@@ -264,13 +263,11 @@ uint Group::groupId() const
 
 void Group::sendMessage()
 {
-	QList<Kopete::MetaContact *> list = onlineMembers();
-	Kopete::MetaContact *mc = list.first();
 	Kopete::Contact *c;
 	
-	if(!mc)
+	if(onlineMembers().isEmpty())
 		return;
-	c = mc->preferredContact();
+	c = onlineMembers().first()->preferredContact();
 	c->sendMessage();
 	if( c->manager( Contact::CanCreate ) )
 	{
@@ -281,7 +278,6 @@ void Group::sendMessage()
 void Group::sendMessage( Message& msg )
 {
 	QList<MetaContact *> list = onlineMembers();
-	Kopete::MetaContact *mc = list.first();
 	ChatSession *cs=msg.manager();
 	if(  cs )
 	{
@@ -290,7 +286,7 @@ void Group::sendMessage( Message& msg )
 	else
 		return;
 	
-	if(!mc)
+	if(list.isEmpty())
 		return;
 	list.remove( msg.to().first()->metaContact() );
 	QListIterator<MetaContact *> it(list);
@@ -314,16 +310,13 @@ void Group::sendMessage( Message& msg )
 QList<MetaContact *> Group::onlineMembers() const
 {
 	QList<MetaContact *> list = members();
-	QListIterator<MetaContact *> it(list);
-	while ( it.hasNext() )
+	QList<MetaContact *>::iterator it=list.begin();
+	while ( it!=list.end() )
 	{
-		/* FIXME DUNCAN
-		MetaContact *mc = it.next();
-		if( list.current()->isReachable() && list.current()->isOnline() )
-			list.next();
-		else
-			list.remove();
-		*/
+		if( (*it)->isReachable() && (*it)->isOnline() ) 
+			++it; 
+		else   
+			it=list.erase(it); 
 	}
 	return list;
 }
