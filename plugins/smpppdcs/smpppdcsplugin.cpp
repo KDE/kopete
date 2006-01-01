@@ -49,14 +49,11 @@ SMPPPDCSPlugin::SMPPPDCSPlugin(QObject *parent, const char * name, const QString
 
     m_onlineInquiry = new OnlineInquiry();
     m_detector      = new Detector(this);
-    connect(m_detector, SIGNAL(retryRequested()), this, SLOT(slotCheckStatus()));
 }
 
 SMPPPDCSPlugin::~SMPPPDCSPlugin() {
 
     kdDebug(14312) << k_funcinfo << endl;
-
-    disconnect(m_detector, SIGNAL(retryRequested()), this, SLOT(slotCheckStatus()));
 
     delete m_timer;
     delete m_detector;

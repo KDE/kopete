@@ -68,7 +68,7 @@ void Detector::netstatCheckStatus() {
     kdDebug(14312) << k_funcinfo << endl;
 
     if(m_process) {
-		kdWarning(14312) << k_funcinfo << "Previous netstat process is still running!" << endl
+        kdWarning(14312) << k_funcinfo << "Previous netstat process is still running!" << endl
         << "Not starting new netstat. Perhaps your system is under heavy load?" << endl;
 
         return;
@@ -84,7 +84,7 @@ void Detector::netstatCheckStatus() {
     connect(m_process, SIGNAL(processExited(KProcess *)), this, SLOT(slotProcessExited(KProcess *)));
 
     if(!m_process->start(KProcess::NotifyOnExit, KProcess::Stdout)) {
-		kdWarning(14312) << k_funcinfo << "Unable to start netstat process!" << endl;
+        kdWarning(14312) << k_funcinfo << "Unable to start netstat process!" << endl;
 
         delete m_process;
         m_process = 0L;
@@ -138,14 +138,14 @@ void Detector::smpppdCheckStatus() {
     QString pass = config->readEntry("Password", "").utf8();
 
     if(m_sock &&
-       m_sock->state() == KNetwork::KStreamSocket::Connected) {
+            m_sock->state() == KNetwork::KStreamSocket::Connected) {
 
         bool isConnected  = false;
         QString challenge = "";
         QRegExp ver("^SuSE Meta pppd \\(smpppd\\), Version (.*)$");
 
         while(m_comState != STATUSIFCFG &&
-              m_comState != UNSETTLED) {
+                m_comState != UNSETTLED) {
             switch(m_comState) {
             case READY: {
 
@@ -203,9 +203,11 @@ void Detector::smpppdCheckStatus() {
                             }
 
                         } else {
+                            disconnectFromSMPPPD();
                             kdDebug(14312) << k_funcinfo << "unexpected reply from smpppd" << endl;
                         }
                     } else {
+                        disconnectFromSMPPPD();
                         kdDebug(14312) << k_funcinfo << "smpppd doesn't seem to understand me" << endl;
                     }
                     m_comState = LISTIFCFG;
@@ -225,11 +227,13 @@ void Detector::smpppdCheckStatus() {
                         }
                     }
 
+#ifndef NDEBUG
                     if(isConnected) {
                         kdDebug(14312) << k_funcinfo << "we are CONNECTED to the internet" << endl;
                     } else {
                         kdDebug(14312) << k_funcinfo << "we are DISCONNECTED from the internet" << endl;
                     }
+#endif
 
                     m_comState = STATUSIFCFG;
                 }
@@ -247,11 +251,17 @@ void Detector::smpppdCheckStatus() {
         }
 
     } else {
-        kdDebug(14312) << k_funcinfo << "not connected to smpppd => I try again" << endl;
+        kdDebug(14312) << k_funcinfo << "not connected to smpppd => I'll try again later" << endl;
         m_connector->setConnectedStatus(false);
         connectToSMPPPD();
-        emit retryRequested();
     }
+}
+
+void Detector::disconnectFromSMPPPD() {
+    kdDebug(14312) << k_funcinfo << endl;
+    delete m_sock;
+    m_sock = NULL;
+    m_comState = READY;
 }
 
 /*!
@@ -268,16 +278,15 @@ void Detector::connectToSMPPPD() {
         unsigned int port = config->readUnsignedNumEntry("port", 3185);
         QString    server = config->readEntry("server", "localhost").utf8();
 
-        delete m_sock;
-        m_sock = NULL;
-        m_comState = READY;
+        disconnectFromSMPPPD();
         m_sock = new KNetwork::KStreamSocket(server, QString::number(port));
         m_sock->setBlocking(TRUE);
 
-        kdDebug(14312) << k_funcinfo << "connect to smpppd \"" << server << ":" << port << "\"" << endl;
-
         if(!m_sock->connect()) {
             kdDebug(14312) << k_funcinfo << "Socket Error: " << KNetwork::KStreamSocket::errorString(m_sock->error()) << endl;
+        } else {
+            kdDebug(14312) << k_funcinfo << "Successfully connected to smpppd \"" << server << ":" << port << "\"" << endl;
+            smpppdCheckStatus();
         }
     }
 }

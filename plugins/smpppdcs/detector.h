@@ -108,13 +108,10 @@ public:
     virtual void smpppdCheckStatus();
 #endif
 
-signals:
-    void retryRequested();
-
 private:
 #ifdef USE_SMPPPD
-
     void connectToSMPPPD();
+    void disconnectFromSMPPPD();
     QStringList readSMPPPD();
     void writeSMPPPD(const char * cmd);
 #endif

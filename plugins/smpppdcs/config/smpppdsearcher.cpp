@@ -25,8 +25,8 @@
 
 SMPPPDSearcher::SMPPPDSearcher()
         : m_cancelSearchNow(FALSE),
-          m_procIfconfig(NULL),
-          m_procNetstat(NULL) {}
+        m_procIfconfig(NULL),
+m_procNetstat(NULL) {}
 
 SMPPPDSearcher::~SMPPPDSearcher() {
     delete m_procIfconfig;
@@ -37,8 +37,8 @@ SMPPPDSearcher::~SMPPPDSearcher() {
     \fn SMPPPDSearcher::searchNetwork() const
  */
 void SMPPPDSearcher::searchNetwork() {
-	kdDebug(14312) << k_funcinfo << endl;
-	
+    kdDebug(14312) << k_funcinfo << endl;
+
     // the first point to search is localhost
     if(!scan("127.0.0.1", "255.0.0.0")) {
 
@@ -62,8 +62,8 @@ void SMPPPDSearcher::searchNetwork() {
     \fn SMPPPDSearcher::slotStdoutReceived(KProcess * proc, char * buf, int len)
  */
 void SMPPPDSearcher::slotStdoutReceivedIfconfig(KProcess * /* proc */, char * buf, int len) {
-	kdDebug(14312) << k_funcinfo << endl;
-	
+    kdDebug(14312) << k_funcinfo << endl;
+
     QString myBuf = QString::fromLatin1(buf,len);
     QRegExp rex("^[ ]{10}.*inet addr:([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}).*Mask:([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})");
     // tokenize the string into lines
@@ -79,8 +79,8 @@ void SMPPPDSearcher::slotStdoutReceivedIfconfig(KProcess * /* proc */, char * bu
     emit smpppdNotFound();
 }
 void SMPPPDSearcher::slotStdoutReceivedNetstat(KProcess * /* proc */, char * buf, int len) {
-	kdDebug(14312) << k_funcinfo << endl;
-	
+    kdDebug(14312) << k_funcinfo << endl;
+
     QRegExp rexGW(".*\\n0.0.0.0[ ]*([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}).*");
     QString myBuf = QString::fromLatin1(buf,len);
 
@@ -107,68 +107,67 @@ void SMPPPDSearcher::slotStdoutReceivedNetstat(KProcess * /* proc */, char * buf
  */
 bool SMPPPDSearcher::scan(const QString& ip, const QString& mask) {
     kdDebug(14312) << k_funcinfo << "Scanning " << ip << "/" << mask << "..." << endl;
+	
+	if(ip == "127.0.0.1") { // if localhost, we only scan this one host
+		if(scanIP(ip)) {
+			return true;
+		}
+		
+		return false;
+	}
 
-    if(ip == "127.0.0.1") { // localhost
-        // we need only to check the existence of the socket file
-        if(QFile::exists("/var/run/smpppd/control")) {
-            emit smpppdFound("localhost");
-            return true;
+    uint min_range = 0;
+    uint max_range = 255;
+
+    // calculate ip range (only last mask entry)
+    QRegExp lastRex("([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})");
+    if(lastRex.exactMatch(ip)) {
+
+        uint lastWordIP = lastRex.cap(4).toUInt();
+
+        QStringList ipToks;
+        for(int i = 1; i < 5; i++) {
+            ipToks.push_back(lastRex.cap(i));
         }
-    } else { // other interfaces
 
-        uint min_range = 0;
-        uint max_range = 255;
+        if(lastRex.exactMatch(mask)) {
+            uint lastWordMask = lastRex.cap(4).toUInt();
 
-        // calculate ip range (only last mask entry)
-        QRegExp lastRex("([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})");
-        if(lastRex.exactMatch(ip)) {
-
-            uint lastWordIP = lastRex.cap(4).toUInt();
-
-            QStringList ipToks;
-            for(int i = 1; i < 5; i++) {
-                ipToks.push_back(lastRex.cap(i));
+            if(lastWordMask == 0) {
+                kdDebug(14312) << k_funcinfo << "IP-Range: " << ipToks[0] << "." << ipToks[1] << "." <<  ipToks[2] << ".0 - " << ipToks[0] << "." << ipToks[1] << "." << ipToks[2] << ".255" << endl;
+                max_range = 255;
+            } else if(lastWordMask == 255) {
+                min_range = max_range = lastWordIP;
+            } else {
+                kdDebug(14312) << k_funcinfo << "IP-Range: " << ipToks[0] << "." << ipToks[1] << "." <<  ipToks[2] << ".0 - " << ipToks[0] << "." << ipToks[1] << "." << ipToks[2] << "." << lastWordMask << endl;
+                max_range = lastWordMask;
             }
+        }
 
-            if(lastRex.exactMatch(mask)) {
-                uint lastWordMask = lastRex.cap(4).toUInt();
-
-                if(lastWordMask == 0) {
-                    kdDebug(14312) << k_funcinfo << "IP-Range: " << ipToks[0] << "." << ipToks[1] << "." <<  ipToks[2] << ".0 - " << ipToks[0] << "." << ipToks[1] << "." << ipToks[2] << ".255" << endl;
-                    max_range = 255;
-                } else if(lastWordMask == 255) {
-                    min_range = max_range = lastWordIP;
-                } else {
-                    kdDebug(14312) << k_funcinfo << "IP-Range: " << ipToks[0] << "." << ipToks[1] << "." <<  ipToks[2] << ".0 - " << ipToks[0] << "." << ipToks[1] << "." << ipToks[2] << "." << lastWordMask << endl;
-                    max_range = lastWordMask;
-                }
-            }
-
-			uint range = max_range - min_range;
-            m_cancelSearchNow = FALSE;
-			if(range > 1) {
-                emit scanStarted(max_range);
-            }
-            for(uint i = min_range; i <= max_range; i++) {
-                if(m_cancelSearchNow) {
-					if(range > 1) {
-						emit scanFinished();
-					}
-                    break;
-                }
+        uint range = max_range - min_range;
+        m_cancelSearchNow = FALSE;
+        if(range > 1) {
+            emit scanStarted(max_range);
+        }
+        for(uint i = min_range; i <= max_range; i++) {
+            if(m_cancelSearchNow) {
                 if(range > 1) {
-                    emit scanProgress(i);
+                    emit scanFinished();
                 }
-                if(scanIP(QString(ipToks[0] + "." + ipToks[1] + "." + ipToks[2] + "." + QString::number(i)))) {
-                    if(range > 1) {
-                        emit scanFinished();
-                    }
-                    return true;
-                }
+                break;
             }
             if(range > 1) {
-                emit scanFinished();
+                emit scanProgress(i);
             }
+            if(scanIP(QString(ipToks[0] + "." + ipToks[1] + "." + ipToks[2] + "." + QString::number(i)))) {
+                if(range > 1) {
+                    emit scanFinished();
+                }
+                return true;
+            }
+        }
+        if(range > 1) {
+            emit scanFinished();
         }
     }
 
