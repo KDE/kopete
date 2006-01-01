@@ -1438,9 +1438,8 @@ void KopeteContactListView::updateActionsForSelection(
 
 void KopeteContactListView::slotSendMessage()
 {
-	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
-	if(m)
-		m->sendMessage();
+	if(!Kopete::ContactList::self()->selectedMetaContacts().isEmpty())
+		Kopete::ContactList::self()->selectedMetaContacts().first()->sendMessage();
 	else
 		if(!Kopete::ContactList::self()->selectedGroups().isEmpty())
 			Kopete::ContactList::self()->selectedGroups().first()->sendMessage();
