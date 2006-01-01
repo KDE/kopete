@@ -95,7 +95,8 @@ ContactList::ContactList()
 
 	// automatically save on changes to the list
 	d->saveTimer = new QTimer( this, "saveTimer" );
-	//connect( d->saveTimer, SIGNAL( timeout() ), SLOT ( save() ) );
+	d->saveTimer->setSingleShot( true );
+	connect( d->saveTimer, SIGNAL( timeout() ), SLOT ( save() ) );
 
 	connect( this, SIGNAL( metaContactAdded( Kopete::MetaContact * ) ), SLOT( slotSaveLater() ) );
 	connect( this, SIGNAL( metaContactRemoved( Kopete::MetaContact * ) ), SLOT( slotSaveLater() ) );
@@ -1085,7 +1086,7 @@ void ContactList::slotSaveLater()
 {
 	// if we already have a save scheduled, it will be cancelled. either way,
 	// start a timer to save the contact list a bit later.
-	d->saveTimer->start( 17100 /* 17,1 seconds */, true /* single-shot */ );
+	d->saveTimer->start( 17100 /* 17,1 seconds */ );
 }
 
 void ContactList::slotKABCChanged()
