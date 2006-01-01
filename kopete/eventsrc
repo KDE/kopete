@@ -1055,8 +1055,12 @@ Name[uz]=Уланиш узилди
 Name[zh_CN]=连接已丢失
 Comment=The connection has been lost
 Comment[da]=Forbindelsen er gået tabt
+Comment[el]=Η σύνδεση έκλεισε
+Comment[es]=Se perdió la conexión
 Comment[et]=Ühendus kadus
 Comment[nl]=De verbinding is verbroken
+Comment[pt]=A ligação foi-se abaixo
+Comment[pt_BR]=A ligação foi-se abaixo
 Comment[uk]=З'єднання було втрачено
 default_presentation=16
 
@@ -1219,8 +1223,12 @@ Name[uk]=Внутрішня помилка сервера
 Name[zh_CN]=服务器内部错误
 Comment=A service internal error has occurred
 Comment[da]=En intern fejl for tjenesten er opstået
+Comment[el]=Παρουσιάστηκε ένα εσωτερικό σφάλμα της υπηρεσίας
+Comment[es]=Ocurrió un error interno en el servicio
 Comment[et]=Tekkis teenuse sisemine viga
 Comment[nl]=Er deed zich een interne fout op de server voor
+Comment[pt]=Ocorreu um erro interno do serviço
+Comment[pt_BR]=Ocorreu um erro interno do serviço
 Comment[uk]=Трапилась внутрішня помилка служби
 default_presentation=2
 
