@@ -4,8 +4,9 @@
                              -------------------
     begin                : Sat May 25 2005
     copyright            : (C) 2005 by Till Gerken <till@tantalo.net>
+                           (C) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
 
-			   Kopete (C) 2001-2005 Kopete developers
+			   Kopete (C) 2001-2006 Kopete developers
 			   <kopete-devel@kde.org>.
  ***************************************************************************/
 
@@ -242,6 +243,53 @@ public:
 	QString osName () const;
 
 	/**
+	 * Set the caps(JEP-0115: Entity capabilities) node name.
+	 * @param node Node name.
+	 */
+	void setCapsNode( const QString &capsNode );
+	/**
+	 * Return the caps node name for this client.
+	 * @return the caps node name.
+	 */
+	QString capsNode() const;
+	
+	/**
+	 * Set the caps(JEP-0115: Entity capabilities) node version.
+	 * @param capsVersion the node version.
+	 */
+	void setCapsVersion( const QString &capsVersion );
+	/**
+	 * Return the caps version for this client.
+	 * @return the caps version.
+	 */
+	QString capsVersion() const;
+
+	/**
+	 * Return the caps extension list for this client.
+	 * @return A string containing all extensions separated by space.
+	 */
+	QString capsExt() const;
+
+	/**
+	 * Set the disco Identity information for this client.
+	 * Create a Disco identity like this:
+	 * @code
+	 * DiscoItem::Identity identity;
+	 * identity.category = "client";
+	 * identity.type = "pc";
+	 * identity.name = "Kopete";
+	 * @endcode
+	 *
+	 * @param identity DiscoItem::Identity for the client.
+	 */
+	void setDiscoIdentity(DiscoItem::Identity identity);
+	/**
+	 * Get the disco Identity information for this client.
+	 * @return the DiscoItem::Identity for this client.
+	 */
+	DiscoItem::Identity discoIdentity() const;
+
+	/**
 	 * Set timezone information. Default is UTC.
 	 */
 	void setTimeZone ( const QString &timeZoneName, int timeZoneOffset );
@@ -435,71 +483,25 @@ signals:
 	void debugMessage ( const QString &message );
 
 private:
-	// connection details
-	XMPP::Jid m_jid;
-	QString m_password;
+	class Private;
+	Private *d;
 
-	// XMPP backend
-	XMPP::Client *m_jabberClient;
-	XMPP::ClientStream *m_jabberClientStream;
-	JabberConnector *m_jabberClientConnector;
-	QCA::TLS *m_jabberTLS;
-	XMPP::QCATLSHandler *m_jabberTLSHandler;
-
-	// ignore TLS warnings
-	bool m_ignoreTLSWarnings;
-
-	// current S5B server instance
-	static XMPP::S5BServer *m_s5bServer;
-	// address list being handled by the S5B server instance
-	static QStringList m_s5bAddressList;
-	// port of S5B server
-	static int m_s5bServerPort;
-
-	// local IP address
-	QString m_localAddress;
-
-	// whether TLS (or direct SSL in case of the old protocol) should be used
-	bool m_forceTLS;
-
-	// whether direct SSL connections should be used
-	bool m_useSSL;
-
-	// use XMPP 1.0 or the older protocol version
-	bool m_useXMPP09;
-
-	// whether SSL support should be probed in case the old protocol is used
-	bool m_probeSSL;
-
-	// override the default server name and port (only pre-XMPP 1.0)
-	bool m_overrideHost;
-	QString m_server;
-	int m_port;
-
-	// allow transmission of plaintext passwords
-	bool m_allowPlainTextPassword;
-
-	// enable file transfers
-	bool m_fileTransfersEnabled;
-
-	// current penalty time
-	int m_currentPenaltyTime;
-
-	// client information
-	QString m_clientName, m_clientVersion, m_osName;
-
-	// timezone information
-	QString m_timeZoneName;
-	int m_timeZoneOffset;
-
-	// delete all member classes and reset the class to a predefined state
+	/**
+	 * Delete all member classes and reset the class to a predefined state.
+	 */
 	void cleanUp ();
 
-	// return current instance of the S5B server
+	/** 
+	 * Return current instance of the S5B server.
+	 */
 	XMPP::S5BServer *s5bServer ();
-	// add an address that the S5B server should handle
+	/** 
+	 * Add an address that the S5B server should handle.
+	 */
 	void addS5BServerAddress ( const QString &address );
-	// remove an address that the S5B server currently handles
+	/** 
+	 * Remove an address that the S5B server currently handles.
+	 */
 	void removeS5BServerAddress ( const QString &address );
 
 private slots:

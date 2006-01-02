@@ -69,6 +69,8 @@
 #include "jingle/voicecalldlg.h"
 #endif
 
+#define KOPETE_CAPS_NODE "http://kopete.kde.org/jabber/caps"
+
 JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId, const char *name)
 			  :Kopete::PasswordedAccount ( parent, accountId, 0, name )
 {
@@ -336,7 +338,19 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		m_jabberClient->setClientVersion (kapp->aboutData ()->version ());
 		m_jabberClient->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2));
 	}
+
+	// Set caps node information
+	m_jabberClient->setCapsNode(KOPETE_CAPS_NODE);
+	m_jabberClient->setCapsVersion(kapp->aboutData()->version());
 	
+	// Set Disco Identity information
+	DiscoItem::Identity identity;
+	identity.category = "client";
+	identity.type = "pc";
+	identity.name = "Kopete";
+	m_jabberClient->setDiscoIdentity(identity);
+
+	//BEGIN TIMEZONE INFORMATION
 	//
 	// Set timezone information (code from Psi)
 	// Copyright (C) 2001-2003  Justin Karneges
@@ -365,7 +379,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 
 	if ( strcmp ( fmt, str ) )
 		timezoneString = str;
-	// end of timezone code
+	//END of timezone code
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Determined timezone " << timezoneString << " with UTC offset " << timezoneOffset << " hours." << endl;
 
@@ -394,6 +408,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 				m_voiceCaller = new JingleVoiceCaller( m_jabberClient );
 				QObject::connect(m_voiceCaller,SIGNAL(incoming(const Jid&)),this,SLOT(slotIncomingVoiceCall( const Jid& )));
 			}
+			// Set caps extensions
 			m_jabberClient->client()->addExtension("voice-v1", Features(QString("http://www.google.com/xmpp/protocol/voice/v1")));
 #endif
 			break;
@@ -963,6 +978,15 @@ void JabberAccount::setPresence ( const XMPP::Status &status )
 
 	// fetch input status
 	XMPP::Status newStatus = status;
+	
+	// TODO: Check if Caps is enabled
+	// Send entity capabilities
+	if( client() )
+	{
+		newStatus.setCapsNode( client()->capsNode() );
+		newStatus.setCapsVersion( client()->capsVersion() );
+		newStatus.setCapsExt( client()->capsExt() );
+	}
 
 	// make sure the status gets the correct priority
 	newStatus.setPriority ( configGroup()->readNumEntry ( "Priority", 5 ) );
