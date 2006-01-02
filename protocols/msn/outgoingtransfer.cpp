@@ -53,14 +53,14 @@ OutgoingTransfer::~OutgoingTransfer()
 
 void OutgoingTransfer::sendImage(const QByteArray& image)
 {
-	
+
 // 	TODO QByteArray base64 = KCodecs::base64Encode(image);
-// 
+//
 // 	QCString body = "MIME-Version: 1.0\r\n"
 // 		"Content-Type: image/gif\r\n"
 // 		"\r\n"
 // 		"base64:" +
-// 
+//
 // 	Message outbound;
 // 	outbound.header.sessionId  = m_sessionId;
 // 	outbound.header.identifier = m_baseIdentifier;
@@ -77,12 +77,12 @@ void OutgoingTransfer::sendImage(const QByteArray& image)
 // 	outbound.applicationIdentifier = 0;
 // 	outbound.attachApplicationId = false;
 // 	outbound.destination = m_recipient;
-// 
+//
 // 	sendMessage(outbound, body);
 }
 
 void OutgoingTransfer::slotSendData()
-{		
+{
 	Q_INT32 bytesRead = 0;
 	QByteArray buffer(1202);
 	if(m_file){
@@ -95,7 +95,7 @@ void OutgoingTransfer::slotSendData()
 	}
 
 	kdDebug(14140) << k_funcinfo << QString("Sending, %1 bytes").arg(bytesRead) << endl;
-	
+
 	if((m_offset + bytesRead) < m_file->size())
 	{
 		sendData(buffer);
@@ -110,7 +110,7 @@ void OutgoingTransfer::slotSendData()
 		// Close the file.
 		m_file->close();
 	}
-	
+
 	if(m_transfer){
 		m_transfer->slotProcessed(m_offset);
 		if(m_isComplete){
@@ -123,7 +123,7 @@ void OutgoingTransfer::slotSendData()
 void OutgoingTransfer::acknowledged()
 {
 	kdDebug(14140) << k_funcinfo << endl;
-	
+
 	switch(m_state)
 	{
 		case Invitation:
@@ -149,7 +149,7 @@ void OutgoingTransfer::acknowledged()
 			}
 			break;
 		}
-		
+
 		case DataTransfer:
 			// NOTE <<< Data acknowledged message.
 			// <<< Bye message should follow.
@@ -169,7 +169,7 @@ void OutgoingTransfer::acknowledged()
 					sendMessage(BYE, "\r\n");
 				}
 			}
-			
+
 			break;
 
 		case Finished:
@@ -178,7 +178,7 @@ void OutgoingTransfer::acknowledged()
 				// BYE acknowledge message.
 				m_dispatcher->detach(this);
 			}
-			
+
 			break;
 	}
 }
@@ -234,16 +234,16 @@ void OutgoingTransfer::processMessage(const Message& message)
 				error();
 				return;
 			}
-			
+
 			m_transfer =
 				Kopete::TransferManager::transferManager()->addTransfer(contact, m_file->name(), m_file->size(), m_recipient, Kopete::FileTransferInfo::Outgoing);
 
 			QObject::connect(m_transfer , SIGNAL(transferCanceled()), this, SLOT(abort()));
-			
+
 			m_state = Negotiation;
 
 			m_branch = P2P::Uid::createUid();
-			
+
 			// Send the direct connection invitation message.
 			QString content = "Bridges: TRUDPv1 TCPv1\r\n" +
 				QString("NetID: %1\r\n").arg("-123657987") +
@@ -269,7 +269,7 @@ void OutgoingTransfer::processMessage(const Message& message)
 
 #if 1
 			isListening = false; // TODO complete direct connection.
-#endif				
+#endif
 			if(isListening)
 			{
 				// Retrieve the hashed nonce for this direct connection instance.
@@ -324,7 +324,7 @@ void OutgoingTransfer::readyToSend()
 		// Ignore, do nothing.
 		return;
 	}
-		
+
 	slotSendData();
 }
 
@@ -380,8 +380,7 @@ void OutgoingTransfer::slotConnected()
 
 	QByteArray stream;
 	// Write the message to the memory stream.
-	// FIXME: Disabled to fix compile -DarkShock
-	//m_messageFormatter.writeMessage(handshake, stream, true);
+	m_messageFormatter.writeMessage(handshake, stream, true);
 	// Send the byte stream over the wire.
 	m_socket->writeBlock(stream.data(), stream.size());
 }

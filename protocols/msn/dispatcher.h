@@ -91,7 +91,7 @@ namespace P2P{
 			void dispatch(const P2P::Message& message);
 			Kopete::Contact* getContactByAccountId(const QString& accountId);
 
-			PeerToPeer::MessageFormatter m_messageFormatter;
+			P2P::MessageFormatter m_messageFormatter;
 			QMap<Q_UINT32, P2P::TransferContext*> m_sessions;
 			QMap<Q_UINT32, P2P::Message> m_messageBuffer;
 			QString m_contact;
