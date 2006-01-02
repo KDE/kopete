@@ -8,8 +8,7 @@ JINGLE_LIBS= jingle/libkopetejabberjingle.la \
 	jingle/libjingle/talk/xmllite/libcricketxmllite.la \
 	jingle/libjingle/talk/base/libcricketbase.la \
 	jingle/libjingle/talk/third_party/mediastreamer/libmediastreamer.la  \
-	$(EXPAT_LIBS) $(ORTP_LIBS) -lpthread $(ILBC_LIBS) $(SPEEX_LIBS) $(GLIB_LIBS) -lasound \
-		 -lexpat -lortp -lspeex -lglib  -lgmodule
+	$(EXPAT_LIBS) $(ORTP_LIBS) -lpthread $(ILBC_LIBS) $(SPEEX_LIBS) $(GLIB_LIBS) $(ALSA_LIBS)
 endif
 
 METASOURCES = AUTO

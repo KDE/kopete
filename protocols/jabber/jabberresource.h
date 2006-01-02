@@ -1,10 +1,10 @@
  /*
   * jabberresource.h
   *
-  * Copyright (c) 2005 by Michaël Larouche <michael.larouche@kdemail.net>
+  * Copyright (c) 2005-2006 by Michaël Larouche <michael.larouche@kdemail.net>
   * Copyright (c) 2004 by Till Gerken <till@tantalo.net>
   *
-  * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
+  * Kopete    (c) 2001-2006 by the Kopete developers  <kopete-devel@kde.org>
   *
   * *************************************************************************
   * *                                                                       *
@@ -50,11 +50,23 @@ public:
 
 	void setResource ( const XMPP::Resource &resource );
 
+	/**
+	 * Return the client name for this resource.
+	 * @return the client name
+	 */
 	const QString &clientName () const;
+	/**
+	 * Return the client system for this resource.
+	 * @return the client system.
+	 */
 	const QString &clientSystem () const;
+	/**
+	 * Check if the current resource support XHTML-IM.
+	 * @return true if resource support XHTML-IM
+	 */
 	bool canHandleXHTML();
 	/**
-	 * "List" of supported features of the resource.
+	 *  Flag of supported features of the resource.
 	 *  Use JabberProtocol::ClientFeatures enum.
 	 * @return Integer that hold features.
 	 */

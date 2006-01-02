@@ -1,10 +1,10 @@
  /*
   * jabberresource.cpp
   *
-  * Copyright (c) 2005 by Michaël Larouche <michael.larouche@kdemail.net>
+  * Copyright (c) 2005-2006 by Michaël Larouche <michael.larouche@kdemail.net>
   * Copyright (c) 2004 by Till Gerken <till@tantalo.net>
   *
-  * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
+  * Kopete    (c) 2001-2006 by the Kopete developers  <kopete-devel@kde.org>
   *
   * *************************************************************************
   * *                                                                       *
@@ -55,7 +55,6 @@ JabberResource::JabberResource ( JabberAccount *account, const XMPP::Jid &jid, c
 		QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT ( slotGetTimedClientVersion () ) );
 		QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT ( slotGetDiscoCapabilties () ) );
 	}
-
 }
 
 JabberResource::~JabberResource ()
@@ -146,12 +145,12 @@ void JabberResource:: slotGetDiscoCapabilties ()
 
 void JabberResource::slotGotDiscoCapabilities ()
 {
-	XMPP::JT_DiscoInfo *DiscoInfos = (XMPP::JT_DiscoInfo *) sender ();
+	XMPP::JT_DiscoInfo *discoInfo = (XMPP::JT_DiscoInfo *) sender ();
 
-	if ( DiscoInfos->success () )
+	if ( discoInfo->success () )
 	{
 		//If we don't want to patch libiris, we can also retrieve a QStringList that we should parse manually
-		if (DiscoInfos->item().features().canXHTML())
+		if (discoInfo->item().features().canXHTML())
 		{
 			d->supportedFeatures |= JabberProtocol::Feature_XHTML_IM;
 		}

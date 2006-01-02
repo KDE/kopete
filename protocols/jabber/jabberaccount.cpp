@@ -1501,9 +1501,12 @@ void JabberAccount::slotGetServices ()
 void JabberAccount::slotIncomingVoiceCall( const Jid & j)
 {
 #ifdef SUPPORT_JINGLE
-	VoiceCallDlg* vc = new VoiceCallDlg(j,voiceCaller());
-	vc->show();
-	vc->incoming();
+	if(voiceCaller())
+	{
+		VoiceCallDlg* vc = new VoiceCallDlg(j,voiceCaller());
+		vc->show();
+		vc->incoming();
+	}
 #endif
 }
 

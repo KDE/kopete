@@ -314,6 +314,7 @@ void JingleVoiceCaller::sendStanza(const char* stanza)
 void JingleVoiceCaller::registerCall(const Jid& jid, cricket::Call* call)
 {
 	qDebug("jinglevoicecaller.cpp: Registering call\n");
+	kdDebug(14000) << k_funcinfo << jid.full() << endl;
 	if (!calls_.contains(jid.full())) {
 		calls_[jid.full()] = call;
 	}
@@ -361,7 +362,7 @@ void JingleVoiceCaller::receiveStanza(const QString& stanza)
 	
 	// Spread the word
 	if (ok) {
-		//qDebug(QString("jinglevoicecaller.cpp: Handing down %1").arg(stanza));
+		qDebug(QString("jinglevoicecaller.cpp: Handing down %1").arg(stanza));
 		buzz::XmlElement *e = buzz::XmlElement::ForStr(stanza.ascii());
 		phone_client_->OnIncomingStanza(e);
 	}

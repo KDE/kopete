@@ -1323,9 +1323,12 @@ void JabberContact::voiceCall( )
 	}
 #endif
 
-	VoiceCallDlg* vc = new VoiceCallDlg(jid,account()->voiceCaller());
-	vc->show();
-	vc->call();
+	if(account()->voiceCaller())
+	{
+		VoiceCallDlg* vc = new VoiceCallDlg(jid,account()->voiceCaller());
+		vc->show();
+		vc->call();
+	}
 #endif
 }
 
