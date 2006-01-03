@@ -26,21 +26,21 @@ METASOURCES = AUTO
 SUBDIRS = addaccountwizard addcontactwizard config contactlist chatwindow . kconf_update
 
 bin_PROGRAMS = kopete
-kopete_SOURCES = main.cpp 	kopeteapplication.cpp kopeteiface.cpp \
-	kopeteiface.skel 	systemtray.cpp 	kopeteballoon.cpp kopetewindow.cpp \
-		kopeteaccountstatusbaricon.cpp 	kimifaceimpl.cpp kimiface.skel kopeteeditglobalidentitywidget.cpp
+kopete_SOURCES = main.cpp kopeteapplication.cpp kopeteiface.cpp \
+	kopeteiface.skel systemtray.cpp kopeteballoon.cpp kopetewindow.cpp \
+	kopeteaccountstatusbaricon.cpp 	kimifaceimpl.cpp kimiface.skel kopeteeditglobalidentitywidget.cpp
 
 kimiface_DIR = $(kde_includes)
 
-kopete_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH) -lktexteditor \
-		 -lknotifyconfig  #FIXME
+kopete_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH) -lktexteditor -lknotifyconfig
+
 kopete_LDADD = \
 	addcontactwizard/libkopeteaddcontactwizard.la \
 	addaccountwizard/libkopeteaddaccountwizard.la \
 	contactlist/libkopetecontactlist.la \
 	config/plugins/libkopetepluginconfig.la \
 	../libkopete/libkopete.la \
-	../libkopete/ui/libkopeteui.la \
+	../libkopete/ui/libkopeteui.la
 
 mydatadir    = $(kde_datadir)/kopete
 mydata_DATA  = kopeteui.rc kopete.notifyrc
