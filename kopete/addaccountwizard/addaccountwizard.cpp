@@ -1,10 +1,10 @@
 /*
     addaccountwizard.cpp - Kopete Add Account Wizard
 
-    Copyright (c) 2003-2004 by Olivier Goffart       <ogoffart @ kde.org>
+    Copyright (c) 2003-2006 by Olivier Goffart       <ogoffart @ kde.org>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2003-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2003-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -122,7 +122,10 @@ void AddAccountWizard::next()
 	if (currentPage() == m_selectService)
 	{
 		Q3ListViewItem *lvi = m_selectService->protocolListView->selectedItem();
-        
+		if(!m_protocolItems[lvi])
+		{ //no item selected
+			return;
+		}
 		m_proto = dynamic_cast<Kopete::Protocol *>(Kopete::PluginManager::self()->loadPlugin(m_protocolItems[lvi]->pluginName()));
 		if (!m_proto)
 		{
