@@ -1332,6 +1332,8 @@ QString MetaContact::metaContactId() const
 {
 	if(d->metaContactId.isEmpty())
 	{
+		if(d->contacts.isEmpty())
+			return QString::null;
 		Contact *c=d->contacts.first();
 		if(!c)
 			return QString::null;
