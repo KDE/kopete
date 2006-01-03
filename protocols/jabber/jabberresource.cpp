@@ -84,7 +84,7 @@ void JabberResource::setResource ( const XMPP::Resource &resource )
 	d->resource = resource;
 
 	// Check if the caps are now available.
-	d->capsEnabled = account->protocol()->capabilitiesManager()->capabilitiesEnabled(d->jid);
+	d->capsEnabled = d->account->protocol()->capabilitiesManager()->capabilitiesEnabled(d->jid);
 
 	emit updated( this );
 }
