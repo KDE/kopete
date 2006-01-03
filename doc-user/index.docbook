@@ -5,6 +5,8 @@
   <!ENTITY Will.Stephenson.mail "<email>lists@stevello.free-online.co.uk</email>">
   <!ENTITY Matt.Rogers "<personname><firstname>Matt</firstname><surname>Rogers</surname></personname>">
   <!ENTITY Matt.Rogers.mail "<email>mattr@kde.org</email>">
+  <!ENTITY Michael.Larouche "<personname><firstname>Michaël</firstname><surname>Larouche</surname></personname>">
+  <!ENTITY Michael.Larouche.mail "<email>michael.larouche@kdemail.net</email>">
   <!ENTITY package "kdenetwork">
   <!ENTITY kappname "&kopete;">
   <!ENTITY im "<acronym>IM</acronym>">
@@ -12,6 +14,7 @@
   <!ENTITY % English "INCLUDE">
   <!ENTITY kopetewww "<ulink url='http://kopete.kde.org'>http://kopete.kde.org</ulink>">
   <!ENTITY kopete-menus SYSTEM "menus.docbook">
+  <!ENTITY kopete-chatstyle SYSTEM "chatstyle.docbook">
 ]>
 <!--
 Intro (1st draft, Will)
@@ -62,6 +65,7 @@ Specialised Tasks
 	Command line flags
 Credits (1st draft, Will)
 Appendix: Obtaining and installation (1st draft, Will)
+Appendix: Chat Window Style Guide (1st draft, Michaël)
 -->
 
 <book lang="&language;">
@@ -72,6 +76,7 @@ Appendix: Obtaining and installation (1st draft, Will)
 
 <author>&Will.Stephenson; &Will.Stephenson.mail;</author>
 <author>&Matt.Rogers; &Matt.Rogers.mail;</author>
+<author>&Michael.Larouche; &Michael.Larouche.mail;</author>
 
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
@@ -577,13 +582,10 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <title>Chat Window</title>
 <sect4 id="configuring-appearance-chat-styles">
 <title>Styles</title>
-<para>The style of the chat view can be altered to look like other clients, or you can invent your own style here.  Installed styles are shown in the list on the left and are previewed in the main panel.</para>
-<para>Third party styles are available at <ulink url="http://kde-look.org">http://kde-look.org</ulink>.</para>
-<para>To modify a style, click <guibutton>Edit...</guibutton>.  &kopete; represents chats internally as XML and uses the Extensible Stylesheet Language (<acronym>XSL</acronym>) to specify how this should be transformed into HTML for display.  You need to be familiar with <acronym>HTML</acronym> and <acronym>XSL</acronym> to edit styles.</para>
-</sect4>
-<sect4 id="configuring-appearance-chat-translucency">
-<title>Chat Window</title>
-<para>&kopete; supports translucent chat views.  You can control the degree of translucency and add a color tint here.  Changes to the translucency settings only become visible when a new chat view opens.</para>
+<para>The style of the chat view can be altered to look like other clients. Installed styles are shown in the list on the left and are previewed in the main panel. See <link linkend="chatwindowstyleguide">Chat Window Style guide</link> for a document how to make your own style.</para>
+<para>Third party styles are available at <ulink url="http://kde-look.org">http://kde-look.org</ulink>. Starting with &kopete; 0.12, it support styles from Adium(a &im; program on Mac OS X). So you can download styles from Adium here: <ulink url="http://www.adiumxtras.com/">Adium Xtras</ulink> and select Message View Styles.</para>
+<para>To install a style, click<guibutton>Instal...</guibutton>. Select a archive file containing the style. To delete a style, select a style in the list and click <guibutton>Delete</guibutton>.</para>
+<para><guilabel>Group consecutive messages</guilabel> is a nice option. It group consecutive message coming from the same user. </para>
 </sect4>
 </sect3>
 <sect3 id="configuring-behavior-general-contactlist">
@@ -854,14 +856,16 @@ sets that you can simply extract there.</para>
 <itemizedlist>
 <listitem><para>Duncan Mac-Vicar Prett (duncan at kde org): Original author, developer, and project leader</para></listitem>
 <listitem><para>Till Gerken (till at tantalo net): Developer, Jabber maintainer</para></listitem>
-<listitem><para>Olivier Goffart (ogoffart at tiscalinet be): Developer, MSN Plugin Maintainer</para></listitem>
-<listitem><para>Andy Goossens (andygoossens at telenet be): Current version maintainer</para></listitem>
+<listitem><para>Olivier Goffart (ogoffart at tiscalinet be): Lead Developer, MSN Plugin Maintainer</para></listitem>
+<listitem><para>Andy Goossens (andygoossens at telenet be): Developer</para></listitem>
 <listitem><para>Grzegorz Jaskiewicz (gregj at pointblue com pl): Developer, Gadu-gadu Plugin Maintainer</para></listitem>
-<listitem><para>Jason Keirstead (jason at keirstead org): Developer, IRC Plugin Maintainer, Website</para></listitem>
-<listitem><para>Martijn Klingens (klingens at kde org): Developer, MSN hacker</para></listitem>
-<listitem><para>Matt Rogers (mattr at kde org): Developer, Yahoo Plugin Maintainer, Oscar Plugin Maintainer</para></listitem>
+<listitem><para>Jason Keirstead (jason at keirstead org): Developer</para></listitem>
+<listitem><para>Matt Rogers (mattr at kde org): Lead Developer, AIM and ICQ plugin maintainer</para></listitem>
 <listitem><para>Richard Smith (lilachaze at hotmail com): Developer, UI maintainer</para></listitem>
 <listitem><para>Will Stephenson (lists at stevello free-online co uk): Developer, icons, plugins, manual author</para></listitem>
+<listitem><para>Michel Hermier (michel.hermier at wanadoo fr): IRC Plugin Maintainer</para></listitem>
+<listitem><para>Andre Duffeck (andre at duffeck de): Developer: Developer, Yahoo plugin maintainer</para></listitem>
+<listitem><para>Michaël Larouche (michael.larouche at kdemail net): Developer, MSN, Chat Window.</para></listitem>
 </itemizedlist>
 </sect1>
 <sect1 id="ex-team">
@@ -879,12 +883,13 @@ sets that you can simply extract there.</para>
 <listitem><para>James Grant (topace at lightbox org): Developer, importer Plugin author</para></listitem>
 <listitem><para>Zack Rusin (zack at kde org): Developer, old Gadu-gadu Plugin author</para></listitem>
 <listitem><para>Gav Wood (gav at kde org): WinPopup Plugin author</para></listitem>
+<listitem><para>Martijn Klingens (klingens at kde org): Developer, MSN hacker</para></listitem>
 </itemizedlist>
 </sect1>
 <sect1 id="documentation">
 <title>Documentation</title>
 <para>
-Documentation copyright 2003,2004,2005 Will Stephenson (lists at stevello free-online co uk), copyright 2005 Matt Rogers (mattr at kde org).
+Documentation copyright 2003,2004,2005 Will Stephenson (lists at stevello free-online co uk), copyright 2005 Matt Rogers (mattr at kde org), copyright 2005,2006 Michaël Larouche (michael.larouche at kdemail net).
 </para>
 </sect1>
 </chapter><!-- credits-and-licenses -->
@@ -907,6 +912,9 @@ Documentation copyright 2003,2004,2005 Will Stephenson (lists at stevello free-o
 &install.compile.documentation;
 </sect1>
 </appendix>
+
+&kopete-chatstyle;
+
 &documentation.index;
 </book>
 
