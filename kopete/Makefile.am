@@ -32,7 +32,8 @@ kopete_SOURCES = main.cpp 	kopeteapplication.cpp kopeteiface.cpp \
 
 kimiface_DIR = $(kde_includes)
 
-kopete_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH) -lktexteditor
+kopete_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH) -lktexteditor \
+		 -lknotifyconfig  #FIXME
 kopete_LDADD = \
 	addcontactwizard/libkopeteaddcontactwizard.la \
 	addaccountwizard/libkopeteaddaccountwizard.la \
@@ -40,7 +41,6 @@ kopete_LDADD = \
 	config/plugins/libkopetepluginconfig.la \
 	../libkopete/libkopete.la \
 	../libkopete/ui/libkopeteui.la \
-	config/knotify/libknotifyconfig.la
 
 mydatadir    = $(kde_datadir)/kopete
 mydata_DATA  = kopeteui.rc kopete.notifyrc

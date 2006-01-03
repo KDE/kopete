@@ -6,7 +6,7 @@ AVDEVICEDIR = avdevice
 endif
 
 
-SUBDIRS = plugins accounts behavior appearance identity knotify
+SUBDIRS = plugins accounts behavior appearance identity 
 # $(AVDEVICEDIR)
 
 
