@@ -356,7 +356,7 @@ void KopeteRichTextEditPart::writeConfig()
 	config->writeEntry("FontUnderline", mFont.underline() );
 	config->writeEntry("BgColor", mBgColor );
 	config->writeEntry("FgColor", mFgColor );
-	config->writeEntry("EditAlignment", editor->alignment() );
+	config->writeEntry("EditAlignment", QVariant(editor->alignment()) );
 	config->sync();
 }
 
