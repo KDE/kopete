@@ -35,6 +35,8 @@ public:
     void addContacts( const QStringList& contactList );
     QStringList nonServerContactList() const;
 
+    bool onlyShowOnce();
+
 protected:
     virtual void slotOk();
     virtual void slotCancel();

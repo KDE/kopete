@@ -21,6 +21,7 @@
 #include "oscarlistnonservercontacts.h"
 #include "oscarlistcontactsbase.h"
 #include <qstringlist.h>
+#include <qcheckbox.h>
 #include <klocale.h>
 
 OscarListNonServerContacts::OscarListNonServerContacts(QWidget* parent)
@@ -49,6 +50,10 @@ QStringList OscarListNonServerContacts::nonServerContactList() const
     return m_nonServerContacts;
 }
 
+bool OscarListNonServerContacts::onlyShowOnce()
+{
+    return m_contactsList->doNotShowAgain->isChecked();
+}
 
 
 void OscarListNonServerContacts::slotCancel()
