@@ -147,15 +147,21 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	}
 		
 
-	if ( details.dcExternalIp().isUnspecified() )
-		removeProperty( mProtocol->ipAddress );
-	else
-		setProperty( mProtocol->ipAddress, details.dcExternalIp().toString() );
+	if ( details.dcOutsideSpecified() )
+	{
+		if ( details.dcExternalIp().isUnspecified() )
+			removeProperty( mProtocol->ipAddress );
+		else
+			setProperty( mProtocol->ipAddress, details.dcExternalIp().toString() );
+	}
 
-	if ( details.clientName().isEmpty() )
-		removeProperty( mProtocol->clientFeatures );
-	else
-		setProperty( mProtocol->clientFeatures, details.clientName() );
+	if ( details.capabilitiesSpecified() )
+	{
+		if ( details.clientName().isEmpty() )
+			removeProperty( mProtocol->clientFeatures );
+		else
+			setProperty( mProtocol->clientFeatures, details.clientName() );
+	}
 
 	OscarContact::userInfoUpdated( contact, details );
 }

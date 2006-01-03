@@ -45,6 +45,16 @@ UserDetails::UserDetails()
 	m_dcLastInfoUpdateTime = 0;
 	m_dcLastExtInfoUpdateTime = 0;
 	m_dcLastExtStatusUpdateTime = 0;
+	m_userClassSpecified = false;
+	m_memberSinceSpecified = false;
+	m_onlineSinceSpecified = false;
+	m_numSecondsOnlineSpecified = false;
+	m_idleTimeSpecified = false;
+	m_extendedStatusSpecified = false;
+	m_capabilitiesSpecified = false;
+	m_dcOutsideSpecified = false;
+	m_dcInsideSpecified = false;
+	m_iconSpecified = false;
 }
 
 
@@ -141,6 +151,7 @@ void UserDetails::fill( Buffer * buffer )
 			{
 			case 0x0001: //user class
 				m_userClass = b.getWord();
+				m_userClassSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "User class is " << m_userClass << endl;
 #endif
@@ -148,12 +159,14 @@ void UserDetails::fill( Buffer * buffer )
 			case 0x0002: //member since
 			case 0x0005: //member since
 				m_memberSince.setTime_t( b.getDWord() );
+				m_memberSinceSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Member since " << m_memberSince << endl;
 #endif
 				break;
 			case 0x0003: //sigon time
 				m_onlineSince.setTime_t( b.getDWord() );
+				m_onlineSinceSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Signed on at " << m_onlineSince << endl;
 #endif
@@ -161,17 +174,20 @@ void UserDetails::fill( Buffer * buffer )
 			case 0x0004: //idle time
 				m_idleTime = b.getWord() * 60;
 #ifdef OSCAR_USERINFO_DEBUG
+				m_idleTimeSpecified = true;
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Idle time is " << m_idleTime << endl;
 #endif
 				break;
 			case 0x0006: //extended user status
 				m_extendedStatus = b.getDWord();
+				m_extendedStatusSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Extended status is " << QString::number( m_extendedStatus, 16 ) << endl;
 #endif
                 break;
 			case 0x000A: //external IP address
 				m_dcOutsideIp = KNetwork::KIpAddress( ntohl( b.getDWord() ) );
+				m_dcOutsideSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "External IP address is " << m_dcOutsideIp.toString() << endl;
 #endif
@@ -192,16 +208,19 @@ void UserDetails::fill( Buffer * buffer )
 				m_dcLastExtInfoUpdateTime = b.getDWord();
 				m_dcLastExtStatusUpdateTime = b.getDWord();
 				b.getWord(); //unknown.
+				m_dcInsideSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got DC info" << endl;
 #endif
 				break;
 			case 0x000D: //capability info
 				m_capabilities = Oscar::parseCapabilities( b, m_clientVersion );
+				m_capabilitiesSpecified = true;
 				break;
 			case 0x0010:
 			case 0x000F: //online time
 				m_numSecondsOnline = b.getDWord();
+				m_numSecondsOnlineSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Online for " << m_numSecondsOnline << endl;
 #endif
@@ -229,6 +248,7 @@ void UserDetails::fill( Buffer * buffer )
 						{
 							m_iconChecksumType = number;
  							m_md5IconHash.duplicate( b.getBlock( length ), length );
+							m_iconSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
 							kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksum:" << m_md5IconHash << endl;
 #endif
@@ -273,7 +293,8 @@ void UserDetails::fill( Buffer * buffer )
 	}
 
 	//do client detection on fill
-	detectClient();
+	if ( m_capabilitiesSpecified )
+		detectClient();
 }
 
 void UserDetails::detectClient()
@@ -450,6 +471,75 @@ bool UserDetails::hasCap( int capNumber ) const
 {
 	bool capPresent = ( ( m_capabilities & ( 1 << capNumber ) ) != 0 );
 	return capPresent;
+}
+
+void UserDetails::merge( const UserDetails& ud )
+{
+	m_userId = ud.m_userId;
+	m_warningLevel = ud.m_warningLevel;
+	if ( ud.m_userClassSpecified )
+	{
+		m_userClass = ud.m_userClass;
+		m_userClassSpecified = true;
+	}
+	if ( ud.m_memberSinceSpecified )
+	{
+		m_memberSince = ud.m_memberSince;
+		m_memberSinceSpecified = true;
+	}
+	if ( ud.m_onlineSinceSpecified )
+	{
+		m_onlineSince = ud.m_onlineSince;
+		m_onlineSinceSpecified = true;
+	}
+	if ( ud.m_numSecondsOnlineSpecified )
+	{
+		m_numSecondsOnline = ud.m_numSecondsOnline;
+		m_numSecondsOnlineSpecified = true;
+	}
+	if ( ud.m_idleTimeSpecified )
+	{
+		m_idleTime = ud.m_idleTime;
+		m_idleTimeSpecified = true;
+	}
+	if ( ud.m_extendedStatusSpecified )
+	{
+		m_extendedStatus = ud.m_extendedStatus;
+		m_extendedStatusSpecified = true;
+	}
+	if ( ud.m_capabilitiesSpecified )
+	{
+		m_capabilities = ud.m_capabilities;
+		m_clientVersion = ud.m_clientVersion;
+		m_clientName = ud.m_clientName;
+		m_capabilitiesSpecified = true;
+	}
+	if ( ud.m_dcOutsideSpecified )
+	{
+		m_dcOutsideIp = ud.m_dcOutsideIp;
+		m_dcOutsideSpecified = true;
+	}
+	if ( ud.m_dcInsideSpecified )
+	{
+		m_dcInsideIp = ud.m_dcInsideIp;
+		m_dcPort = ud.m_dcPort;
+		m_dcType = ud.m_dcType;
+		m_dcProtoVersion = ud.m_dcProtoVersion;
+		m_dcAuthCookie = ud.m_dcAuthCookie;
+		m_dcWebFrontPort = ud.m_dcWebFrontPort;
+		m_dcClientFeatures = ud.m_dcClientFeatures;
+		m_dcLastInfoUpdateTime = ud.m_dcLastInfoUpdateTime;
+		m_dcLastExtInfoUpdateTime = ud.m_dcLastExtInfoUpdateTime;
+		m_dcLastExtStatusUpdateTime = ud.m_dcLastExtStatusUpdateTime;
+		m_dcInsideSpecified = true;
+	}
+	if ( ud.m_iconSpecified )
+	{
+		m_iconChecksumType = ud.m_iconChecksumType;
+		m_md5IconHash = ud.m_md5IconHash;
+		m_iconSpecified = true;
+	}
+	m_availableMessage = ud.m_availableMessage;
 }
 
 //kate: tab-width 4; indent-mode csands;

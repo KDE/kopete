@@ -55,10 +55,27 @@ public:
 	 * It only updates what's available.
 	 */
 	void fill( Buffer* buffer );
+
+	/**
+	 * Merge only those data from another UserDetails
+	 * which are marked as specified.
+	 */
+	void merge( const UserDetails& ud );
+
+	bool userClassSpecified() const { return m_userClassSpecified; }
+	bool memberSinceSpecified() const { return m_memberSinceSpecified; }
+	bool onlineSinceSpecified() const { return m_onlineSinceSpecified; }
+	bool numSecondsOnlineSpecified() const { return m_numSecondsOnlineSpecified; }
+	bool idleTimeSpecified() const { return m_idleTimeSpecified; }
+	bool extendedStatusSpecified() const { return m_extendedStatusSpecified; }
+	bool capabilitiesSpecified() const { return m_capabilitiesSpecified; }
+	bool dcOutsideSpecified() const { return m_dcOutsideSpecified; }
+	bool dcInsideSpecified() const { return m_dcInsideSpecified; }
+	bool iconSpecified() const { return m_iconSpecified; }
 private:
 	//! Do client detection 
 	void detectClient();
-	
+
 
 private:
 	QString m_userId; /// the screename/uin of the contact
@@ -86,6 +103,17 @@ private:
 	BYTE m_iconChecksumType; /// The OSCAR checksum type for the buddy icon TLV 0x1D
 	QByteArray m_md5IconHash; /// Buddy Icon MD5 Hash - TLV 0x1D
 	QString m_availableMessage; /// Message a person can have when available - TLV 0x0D
+	
+	bool m_userClassSpecified;
+	bool m_memberSinceSpecified;
+	bool m_onlineSinceSpecified;
+	bool m_numSecondsOnlineSpecified;
+	bool m_idleTimeSpecified;
+	bool m_extendedStatusSpecified;
+	bool m_capabilitiesSpecified;
+	bool m_dcOutsideSpecified;
+	bool m_dcInsideSpecified;
+	bool m_iconSpecified;
 	
 };
 
