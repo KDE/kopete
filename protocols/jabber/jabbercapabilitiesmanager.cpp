@@ -425,6 +425,9 @@ void JabberCapabilitiesManager::updateCapabilities(JabberAccount *account, const
 
 void JabberCapabilitiesManager::requestDiscoInfo(JabberAccount *account, const Jid& jid, const QString& node) 
 {
+	if( !account->client()->rootTask() )
+		return;
+ 
 	JT_DiscoInfo *discoInfo = new JT_DiscoInfo(account->client()->rootTask());
 	connect(discoInfo, SIGNAL(finished()), SLOT(discoRequestFinished()));
 	discoInfo->get(jid, node);
