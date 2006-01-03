@@ -473,6 +473,10 @@ void JabberContact::slotGotLastActivity ()
 	if ( task->success () )
 	{
 		setProperty ( protocol()->propLastSeen, QDateTime::currentDateTime().addSecs ( -task->seconds () ) );
+		if( !task->message().isEmpty() )
+		{
+			setProperty( protocol()->propAwayMessage, task->message() );
+		}
 	}
 
 }
