@@ -23,6 +23,7 @@
 #include "jabberbasecontact.h"
 #include "jabberaccount.h"
 #include "jabberprotocol.h"
+#include "jabbercapabilitiesmanager.h"
 
 /**
  * This resource will be returned if no other resource
@@ -53,7 +54,6 @@ void JabberResourcePool::slotResourceDestroyed (QObject *sender)
 
 	// remove this resource from the lock list if it existed
 	mLockList.remove ( oldResource );
-
 }
 
 void JabberResourcePool::slotResourceUpdated ( JabberResource *resource )
@@ -66,6 +66,12 @@ void JabberResourcePool::slotResourceUpdated ( JabberResource *resource )
 		mContact->updateResourceList ();
 	}
 
+	// Update capabilities
+	if( !resource->resource().status().capsNode().isEmpty() )
+	{
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating/Creating capabilities for JID: " << resource->jid().full() << endl;
+		mAccount->protocol()->capabilitiesManager()->updateCapabilities( mAccount, resource->jid(), resource->resource().status() );
+	}
 }
 
 void JabberResourcePool::notifyRelevantContacts ( const XMPP::Jid &jid )
@@ -109,6 +115,9 @@ void JabberResourcePool::addResource ( const XMPP::Jid &jid, const XMPP::Resourc
 	JabberResource *newResource = new JabberResource(mAccount, jid, resource);
 	connect ( newResource, SIGNAL ( destroyed (QObject *) ), this, SLOT ( slotResourceDestroyed (QObject *) ) );
 	connect ( newResource, SIGNAL ( updated (JabberResource *) ), this, SLOT ( slotResourceUpdated (JabberResource *) ) );
+	// Update initial capabilities if available
+	if( !resource.status().capsNode().isEmpty() )
+		mAccount->protocol()->capabilitiesManager()->updateCapabilities(mAccount, jid, resource.status());
 	mPool.append ( newResource );
 
 	// send notifications out to the relevant contacts that
@@ -364,6 +373,19 @@ void JabberResourcePool::findResources ( const XMPP::Jid &jid, XMPP::ResourceLis
 		}
 	}
 
+}
+
+JabberResource *JabberResourcePool::getJabberResourceFromXMPPResource( const XMPP::Resource &resource )
+{
+	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
+	{
+		if(mResource->resource().name() == resource.name() && mResource->resource().priority() == resource.priority())
+		{
+			return mResource;
+		}
+	}
+
+	return 0L;
 }
 
 #include "jabberresourcepool.moc"

@@ -40,6 +40,7 @@ class JabberResourcePool;
 class JabberContact;
 class JabberContactPool;
 class JabberProtocol;
+
 namespace Kopete { class MetaContact; }
 
 class VoiceCaller;

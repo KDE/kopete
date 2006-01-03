@@ -102,6 +102,11 @@ public:
 	void findResources ( const XMPP::Jid &jid, JabberResourcePool::ResourceList &resourceList );
 	void findResources ( const XMPP::Jid &jid, XMPP::ResourceList &resourceList );
 
+	/**
+	 * Return the JabberResource object for the given XMPP::Resource.
+	 */
+	JabberResource *getJabberResourceFromXMPPResource( const XMPP::Resource &resource );
+	
 private slots:
 	void slotResourceDestroyed ( QObject *sender );
 	void slotResourceUpdated ( JabberResource *resource );

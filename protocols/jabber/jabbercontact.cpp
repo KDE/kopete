@@ -206,9 +206,15 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 	actionCollection->append( actionSetAvailability );
 	actionCollection->append( actionSelectResource );
 	
-	// TODO: CHeck if contact has voice support with caps
+	
 #ifdef SUPPORT_JINGLE
-	actionCollection->append( new KAction (i18n ("Voice call"), 0, 0, this, SLOT (voiceCall ()), this, "jabber_voicecall"));
+	// Check if the current contact support Voice calls
+	XMPP::Resource tempResource = account()->resourcePool()->bestResource( mRosterItem.jid(), true);
+	JabberResource *bestResource = account()->resourcePool()->getJabberResourceFromXMPPResource( tempResource );
+	if( bestResource && bestResource->features().canVoice() )
+	{
+		actionCollection->append( new KAction (i18n ("Voice call"), 0, 0, this, SLOT (voiceCall ()), this, "jabber_voicecall"));
+	}
 #endif
 	
 

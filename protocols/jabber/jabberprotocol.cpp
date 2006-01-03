@@ -46,17 +46,19 @@
 #include "kopeteglobal.h"
 #include "kopeteprotocol.h"
 #include "kopeteplugin.h"
+#include "kopeteaccountmanager.h"
 #include "addcontactpage.h"
+#include "kopetecommandhandler.h"
+
 #include "jabbercontact.h"
-#include "dlgjabbersendraw.h"
-#include "dlgjabberservices.h"
-#include "dlgjabberchatjoin.h"
 #include "jabberaddcontactpage.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
-#include "kopeteaccountmanager.h"
 #include "jabbereditaccountwidget.h"
-#include "kopetecommandhandler.h"
+#include "jabbercapabilitiesmanager.h"
+#include "dlgjabbersendraw.h"
+#include "dlgjabberservices.h"
+#include "dlgjabberchatjoin.h"
 
 JabberProtocol *JabberProtocol::protocolInstance = 0;
 
@@ -130,11 +132,18 @@ JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStrin
 
 	addAddressBookField ("messaging/xmpp", Kopete::Plugin::MakeIndexField);
 	setCapabilities(Kopete::Protocol::FullRTF|Kopete::Protocol::CanSendOffline);
+
+	// Init the Entity Capabilities manager.
+	capsManager = new JabberCapabilitiesManager;
+	capsManager->loadCachedInformation();
 }
 
 JabberProtocol::~JabberProtocol ()
 {
 	//disconnectAll();
+
+	delete capsManager;
+	capsManager = 0L;
 
 	/* make sure that the next attempt to load Jabber
 	 * re-initializes the protocol class. */
@@ -210,6 +219,11 @@ Kopete::OnlineStatus JabberProtocol::resourceToKOS ( const XMPP::Resource &resou
 
 	return status;
 
+}
+
+JabberCapabilitiesManager *JabberProtocol::capabilitiesManager()
+{
+	return capsManager;
 }
 
 JabberProtocol *JabberProtocol::protocol ()

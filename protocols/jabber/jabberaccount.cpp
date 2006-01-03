@@ -49,6 +49,7 @@
 #include "kopeteuiglobal.h"
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
+
 #include "jabberconnector.h"
 #include "jabberclient.h"
 #include "jabberprotocol.h"
@@ -57,6 +58,7 @@
 #include "jabberfiletransfer.h"
 #include "jabbercontact.h"
 #include "jabbergroupcontact.h"
+#include "jabbercapabilitiesmanager.h"
 #include "dlgjabbersendraw.h"
 #include "dlgjabberservices.h"
 #include "dlgjabberchatjoin.h"
@@ -82,7 +84,6 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 
 	m_resourcePool = 0L;
 	m_contactPool = 0L;
-	
 #ifdef SUPPORT_JINGLE
 	m_voiceCaller = 0L;
 #endif
@@ -100,6 +101,9 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 JabberAccount::~JabberAccount ()
 {
 	disconnect ( Kopete::Account::Manual );
+
+	// Remove this account from Capabilities manager.
+	protocol()->capabilitiesManager()->removeAccount( this );
 
 	cleanup ();
 }

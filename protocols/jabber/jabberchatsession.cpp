@@ -231,24 +231,11 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 			jabberMessage.setBody ( message.plainBody ());
 			if (message.format() ==  Kopete::Message::RichText) 
 			{
-				JabberResourcePool::ResourceList resourceList;
-
-				account()->resourcePool()->findResources ( toJid, resourceList );
-				QString currentResource;
-				if (!resource())
-					currentResource = account()->resourcePool()->bestResource(toJid, true).name();
-				else
-					currentResource = resource();
-				for ( JabberResourcePool::ResourceList::iterator it = resourceList.begin (); it != resourceList.end (); ++it )
+				XMPP::Resource tempResource = account()->resourcePool()->bestResource(toJid, true);
+				JabberResource *bestResource = account()->resourcePool()->getJabberResourceFromXMPPResource( tempResource );
+				if( bestResource && bestResource->features().canXHTML() )
 				{
-					if ((*it)->jid().resource().compare(currentResource) == 0)
-					{
-						// Check if ressource support XHTML-IM
-						if ((*it)->supportedFeatures() & JabberProtocol::Feature_XHTML_IM)
-						{
-							jabberMessage.setXHTMLBody ( message.escapedBody(), QString::null, message.getHtmlStyleAttribute() );
-						}
-					}
+					jabberMessage.setXHTMLBody ( message.escapedBody(), QString::null, message.getHtmlStyleAttribute() );
 				}
         	}
 		}

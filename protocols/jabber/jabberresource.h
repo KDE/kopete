@@ -32,6 +32,7 @@ namespace XMPP
 {
 class Resource;
 class Jid;
+class Features;
 }
 
 class JabberResource : public QObject
@@ -60,17 +61,11 @@ public:
 	 * @return the client system.
 	 */
 	const QString &clientSystem () const;
+
 	/**
-	 * Check if the current resource support XHTML-IM.
-	 * @return true if resource support XHTML-IM
+	 * Get the available features for this resource.
 	 */
-	bool canHandleXHTML();
-	/**
-	 *  Flag of supported features of the resource.
-	 *  Use JabberProtocol::ClientFeatures enum.
-	 * @return Integer that hold features.
-	 */
-	int supportedFeatures();
+	XMPP::Features features() const;
 
 signals:
 	void updated ( JabberResource * );
