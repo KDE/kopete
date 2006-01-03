@@ -148,7 +148,7 @@ Kopete::Away::Away() : QObject( kapp , "Kopete::Away")
 		QStringList titles = config->readListEntry("Titles");  // Get the titles
 		for(QStringList::iterator i = titles.begin(); i != titles.end(); ++i)
 		{
-			d->awayMessageList.append( config->readEntry(*i) ); // And add it to the list
+			d->awayMessageList.append( config->readEntry(*i , QString() ) ); // And add it to the list
 		}
 
 		/* Save this list to disk */
