@@ -514,9 +514,15 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 			
 			// Find the "Chat" 
 			DOM::HTMLElement chatNode = document().getElementById( QString::fromUtf8("Chat") );
-
-			// Append to the chat.
-			chatNode.appendChild(newMessageNode);
+			if(!chatNode.isNull())
+			{
+				// Append to the chat.
+				chatNode.appendChild(newMessageNode);
+			}
+			else
+			{
+				kdWarning() << k_funcinfo << "'Chat' node not found" << endl;
+			}
 		}
 
 		// Keep the direction to see on next message
