@@ -208,12 +208,16 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 	
 	
 #ifdef SUPPORT_JINGLE
+	KAction *actionVoiceCall = new KAction (i18n ("Voice call"), 0, 0, this, SLOT (voiceCall ()), this, "jabber_voicecall");
+	actionVoiceCall->setEnabled( false );
+	actionCollection->append( actionVoiceCall );
+
 	// Check if the current contact support Voice calls
 	XMPP::Resource tempResource = account()->resourcePool()->bestResource( mRosterItem.jid(), true);
 	JabberResource *bestResource = account()->resourcePool()->getJabberResourceFromXMPPResource( tempResource );
 	if( bestResource && bestResource->features().canVoice() )
 	{
-		actionCollection->append( new KAction (i18n ("Voice call"), 0, 0, this, SLOT (voiceCall ()), this, "jabber_voicecall"));
+		actionVoiceCall->setEnabled( true );
 	}
 #endif
 	
