@@ -1315,27 +1315,17 @@ void JabberContact::voiceCall( )
 #ifdef SUPPORT_JINGLE
 	Jid jid=mRosterItem.jid();
 	
-#if 0 //TODO (code from psi)
-	if (j.resource().isEmpty()) {
-		bool found = false;
-		UserListItem *u = find(j);
-		if (u) {
-			const UserResourceList &rl = u->userResourceList();
-			for (UserResourceList::ConstIterator it = rl.begin(); it != rl.end() && !found; ++it) {
-				if (CapsManager::instance()->features(j.withResource((*it).name())).canVoice()) {
-					jid = j.withResource((*it).name());
-					found = true;
-				}
-			}
-		}
-	
-		if (!found)
-			return;
+	if( jid.resource().isEmpty() )
+	{
+		// If the jid resource is empty, get the best resource for this contact.
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "WARNING: Resource was empty for contact " << jid.full() << endl;
+
+		// Honour lock
+		JabberResource *bestResource = account()->resourcePool()->getJabberResourceFromXMPPResource( account()->resourcePool()->bestResource( jid, true ) );
+		jid = bestResource->jid();
+
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Found best resource JID: " << jid.full() << endl;
 	}
-	else {
-		jid = j;
-	}
-#endif
 
 	if(account()->voiceCaller())
 	{
