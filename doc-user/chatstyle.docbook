@@ -121,7 +121,7 @@ These templates are not used in Kopete. In Adium, they are used to display histo
 
 <sect3 id="chatstyle-reference-css">
 	<title>About CSS styles and Variants</title>
-	<para>HTML template are used to describe how the structure is made. But all the style is described in <acronym>CSS</acronym> files. <filename>main.css</filename> is the main style, where variants are just alterations of the main style. Examples of variants are differents colors, no display of user photo.</para>
+	<para>HTML template are used to describe how the structure is made. But all the style is described in <acronym>CSS</acronym> files. <filename>main.css</filename> is the main style, where variants are just alterations of the main style. Examples of variants are differents colors, no display of user photo. Both <filename>main.css</filename> and variants and imported in final <acronym>XHTML</acronym> page.</para>
 	<sect4 id="chatstyle-reference-css-main">
 		<title>-<filename>main.css</filename></title>
 		<para>This is the main <acronym>CSS</acronym> file which is common for all variants. This file should contain all the main description of the style.</para>
@@ -155,7 +155,7 @@ disableStyleCache=true
 	<title>Keywords reference</title>
 	<para>Keywords are likes holes to fill with details. On each new message, they are replaced with the correct value corresponding to their context. To fully support all features of Kopete, we added some keywords extentions to the Adium. Also some keywords are only available in certain context.</para>
 
-<variablelist><title>Keyword list for Header and Footer templates. </title>
+<variablelist><title>Keywords list for Header and Footer templates. </title>
 <para>There keywords are processed at the beginning of the chat.</para>
 <varlistentry><term><filename>%chatName%</filename></term>
 <listitem>
@@ -194,7 +194,7 @@ It is the time when the chat session begin. <filename>%timeOpened%</filename> us
 
 </variablelist>
 
-<variablelist><title>Keyword list for Content, NextContent, Context, NextContext, Action template</title>
+<variablelist><title>Keywords list for Content, NextContent, Context, NextContext, Action template</title>
 <para>There keywords are processed for each message.</para>
 
 <varlistentry><term><filename>%userIconPath%</filename></term>
@@ -288,18 +288,59 @@ Represent the message direction, if the message must be displayed right-to-left 
 
 <sect1 id="chatstyle-guideline">
 	<title>&kopete; Chat Window Style Guideline</title>
-<para>The &kopete; Chat Window Style Guideline is a set of things that your Chat Window style must support to be compilant with Kopete. </para>
+<para>The &kopete; Chat Window Style Guideline is a set of things that your Chat Window style must support to be compilant with Kopete.</para>
 <sect2 id="chatstyle-guideline-highlight">
 	<title>Support highlight</title>
-	<para>Hightlight</para>
+	<para>Your style must show hightlight. In Kopete and Adium, the <filename>%textbackgroundcolor{}%</filename> is replaced with the hightlight color. Add this style attribute: <code>background-color: %textbackgroundcolor{}%</code> to the HTML element that display the message.</para>
 </sect2>
+<sect2 id="chatstyle-guideline-consecutive">
+	<title>Consecutive message templates are required.</title>
+	<para>This guideline is for people rewriting old XSL styles to the new format. All styles must supply a template for consecutive messages. It is now a default feature.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-encoding">
+	<title>Use <acronym>UTF-8</acronym> encoding.</title>
+	<para>The title said it all. You must save your files to <acronym>UTF-8</acronym>.</para>
+</sect2>
+
 <sect2 id="chatstyle-guideline-info">
-	<title>Supply Info.plist for interopability with Adium</title>
-	<para>Info.plist</para>
+	<title>Supply <filename>Contents/Info.plist</filename> for interopability with Adium</title>
+	<para>The <filename>Contents/Info.plist</filename> file is not used in Kopete yet. But if you want your style to be compatible with <application>Adium</application>, you must supply that file. Here a basic example file. Strings to replace are enclosed with "$".</para>
+<programlisting>
+<![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleGetInfoString</key>
+	<string>$Your style full name$</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.adiumx.smooth.operator.style</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>1.0</string>
+	<key>CFBundleName</key>
+	<string>$Your style name here$</string>
+	<key>CFBundlePackageType</key>
+	<string>AdIM</string>
+	<key>MessageViewVersion</key>
+	<integer>3</integer>
+</dict>
+</plist>
+]]>
+</programlisting>
+
 </sect2>
+
 <sect2 id="chatstyle-guideline-direction">
-	<title>Use <filename>%messageDirection%</filename> keyword.</title>
-	<para>Use %messageDirection% keyword.</para>
+	<title>Supply <filename>buddy_icon.png</filename></title>
+	<para>You must place a file named <filename>buddy_icon.png</filename> in the <filename>Incoming</filename> and <filename>Outgoing</filename>. These images will be used when the contact have no photo.</para>
+</sect2>
+
+<sect2 id="chatstyle-guideline-direction">
+	<title>Support right-to-left languages with <filename>%messageDirection%</filename> keyword.</title>
+	<para><filename>%messageDirection%</filename> keyword is present for languages in the world that write right-to-left. It define the message direction, if it's "rtl"(right-to-left) or "ltr"(left-to-right). Add this style attribute to the HTML element that display the message: <code>direction: %messageDirection%</code>. Style preview in appearance config include a right-to-left to check if your style display it correctly. It should begin the string from the right.</para>
 </sect2>
 </sect1>
 </appendix>
