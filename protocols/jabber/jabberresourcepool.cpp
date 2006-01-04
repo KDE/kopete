@@ -69,7 +69,7 @@ void JabberResourcePool::slotResourceUpdated ( JabberResource *resource )
 	// Update capabilities
 	if( !resource->resource().status().capsNode().isEmpty() )
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating/Creating capabilities for JID: " << resource->jid().full() << endl;
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating capabilities for JID: " << resource->jid().full() << endl;
 		mAccount->protocol()->capabilitiesManager()->updateCapabilities( mAccount, resource->jid(), resource->resource().status() );
 	}
 }
@@ -111,13 +111,18 @@ void JabberResourcePool::addResource ( const XMPP::Jid &jid, const XMPP::Resourc
 
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Adding new resource " << resource.name() << " for " << jid.userHost() << endl;
 
+	// Update initial capabilities if available.
+	// Called before creating JabberResource so JabberResource wouldn't ask for disco information. 
+	if( !resource.status().capsNode().isEmpty() )
+	{
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Initial update of capabilities for JID: " << jid.full() << endl;
+		mAccount->protocol()->capabilitiesManager()->updateCapabilities(mAccount, jid, resource.status());
+	}
+
 	// create new resource instance and add it to the dictionary
 	JabberResource *newResource = new JabberResource(mAccount, jid, resource);
 	connect ( newResource, SIGNAL ( destroyed (QObject *) ), this, SLOT ( slotResourceDestroyed (QObject *) ) );
 	connect ( newResource, SIGNAL ( updated (JabberResource *) ), this, SLOT ( slotResourceUpdated (JabberResource *) ) );
-	// Update initial capabilities if available
-	if( !resource.status().capsNode().isEmpty() )
-		mAccount->protocol()->capabilitiesManager()->updateCapabilities(mAccount, jid, resource.status());
 	mPool.append ( newResource );
 
 	// send notifications out to the relevant contacts that
