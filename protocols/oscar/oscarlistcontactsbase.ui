@@ -12,9 +12,6 @@
             <height>361</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>OscarListContactsBase</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -44,9 +41,6 @@
             </property>
             <property name="text">
                 <string>Do &amp;not ask again</string>
-            </property>
-            <property name="accel">
-                <string>Alt+N</string>
             </property>
         </widget>
     </vbox>
