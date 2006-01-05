@@ -4,6 +4,7 @@
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2001-2002 by Stefan Gehn            <metz AT gehn.net>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2005-2006 by Will Stephenson        <wstephenson at kde.org>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -32,6 +33,7 @@ class KActionMenu;
 
 class KGlobalAccel;
 class KSelectAction;
+class KSqueezedTextLabel;
 class KToggleAction;
 
 class KopeteAccountStatusBarIcon;
@@ -81,6 +83,10 @@ private slots:
 	void slotShowHide();
 	void slotToggleAway();
 
+	/* show the global status message selector menu
+	 */
+	void setStatusMessage( const QString & );
+	
 	/**
 	 * Checks if the mousecursor is in the contact list.
 	 * If not, the window will be hidden.
@@ -95,14 +101,13 @@ private slots:
 	void slotContactListAppearanceChanged();
 
 	/**
-	 * This slot will show an away dialog and then
-	 * set all the protocols to away
+	 * This slot will set all the protocols to away
 	 */
-	void slotGlobalAwayMessageSelect( const QString & );
-	void slotGlobalBusyMessageSelect( const QString & );
-	void slotGlobalAvailableMessageSelect( const QString & );
-	void slotSetInvisibleAll(  );
-
+	void slotGlobalAway();
+	void slotGlobalBusy();
+	void slotGlobalAvailable();
+	void slotSetInvisibleAll();
+	void slotDisconnectAll();
 
 	void slotQuit();
 
@@ -163,6 +168,13 @@ private slots:
 	 * signals.
 	 */
 	void slotAllPluginsLoaded();
+	
+	/**
+	 * Protected slot to setup the Set Global Status Message menu.
+	 */
+	void slotBuildStatusMessageMenu();
+	void slotStatusMessageSelected( int i );
+	void slotNewStatusMessageEntered();
 
 public:
 	KopeteContactListView *contactlist;
@@ -177,8 +189,8 @@ public:
 
 	KActionMenu* actionAwayMenu;
 	KActionMenu* actionDockMenu;
-	Kopete::AwayAction* selectAway;
-	Kopete::AwayAction* selectBusy;
+	KAction* selectAway;
+	KAction* selectBusy;
 	KAction* actionSetAvailable;
 	KAction* actionSetInvisible;
 
@@ -225,6 +237,9 @@ private:
 	 * use QObject instead.
 	 */
 	QPtrDict<QObject> m_accountStatusBarIcons;
+	KSqueezedTextLabel * m_globalStatusMessage;
+	KPopupMenu * m_globalStatusMessageMenu;
+	QLineEdit * m_newMessageEdit;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:
