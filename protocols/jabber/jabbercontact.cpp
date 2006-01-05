@@ -212,18 +212,15 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 	actionVoiceCall->setEnabled( false );
 	actionCollection->append( actionVoiceCall );
 
-	// Check if the current contact support Voice calls
-	XMPP::Resource tempResource = account()->resourcePool()->bestResource( mRosterItem.jid(), true);
-	JabberResource *bestResource = account()->resourcePool()->getJabberResourceFromXMPPResource( tempResource );
+	// Check if the current contact support Voice calls, also honour lock by default.
+	JabberResource *bestResource = account()->resourcePool()->bestJabberResource( mRosterItem.jid() );
 	if( bestResource && bestResource->features().canVoice() )
 	{
 		actionVoiceCall->setEnabled( true );
 	}
 #endif
 	
-
 	return actionCollection;
-
 }
 
 void JabberContact::handleIncomingMessage (const XMPP::Message & message)
@@ -1313,28 +1310,31 @@ QString JabberContact::lastReceivedMessageId () const
 void JabberContact::voiceCall( )
 {
 #ifdef SUPPORT_JINGLE
-	Jid jid=mRosterItem.jid();
+	Jid jid = mRosterItem.jid();
 	
-	if( jid.resource().isEmpty() )
+	// It's honour lock by default.
+	JabberResource *bestResource = account()->resourcePool()->bestJabberResource( jid );
+	if( bestResource )
 	{
-		// If the jid resource is empty, get the best resource for this contact.
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "WARNING: Resource was empty for contact " << jid.full() << endl;
-
-		// Honour lock
-		JabberResource *bestResource = account()->resourcePool()->getJabberResourceFromXMPPResource( account()->resourcePool()->bestResource( jid, true ) );
-		jid = bestResource->jid();
-
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Found best resource JID: " << jid.full() << endl;
+		if( jid.resource().isEmpty() )
+		{
+			// If the jid resource is empty, get the JID from best resource for this contact.
+			jid = bestResource->jid();
+		}
+	
+		// Check if the voice caller exist and the current resource support voice.
+		if( account()->voiceCaller() && bestResource->features().canVoice() )
+		{
+			VoiceCallDlg *vc = new VoiceCallDlg( jid, account()->voiceCaller() );
+			vc->show();
+			vc->call();
+		}
 	}
-
-	if(account()->voiceCaller())
+	else
 	{
-		VoiceCallDlg* vc = new VoiceCallDlg(jid,account()->voiceCaller());
-		vc->show();
-		vc->call();
+		// Shouldn't never go there.
 	}
 #endif
 }
-
 
 #include "jabbercontact.moc"

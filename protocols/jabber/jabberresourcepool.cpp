@@ -2,6 +2,7 @@
   * jabberresourcepool.cpp
   *
   * Copyright (c) 2004 by Till Gerken <till@tantalo.net>
+  * Copyright (c) 2006 by Michaël Larouche <michael.larouche@kdemail.net>
   *
   * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
   *
@@ -17,6 +18,7 @@
 
 #include <qptrlist.h>
 #include <kdebug.h>
+
 #include "jabberresourcepool.h"
 #include "jabberresource.h"
 #include "jabbercontactpool.h"
@@ -32,18 +34,32 @@
  */
 XMPP::Resource JabberResourcePool::EmptyResource ( "", XMPP::Status ( "", "", 0, false ) );
 
-JabberResourcePool::JabberResourcePool ( JabberAccount *account )
+class JabberResourcePool::Private
 {
+public:
+	Private(JabberAccount *pAccount)
+	 : account(pAccount)
+	{
+		// automatically delete all resources in the pool upon removal
+		pool.setAutoDelete(true);
+	}
+	
+	QPtrList<JabberResource> pool;
+	QPtrList<JabberResource> lockList;
 
-	// automatically delete all resources in the pool upon removal
-	mPool.setAutoDelete (true);
+	/**
+	 * Pointer to the JabberAccount instance.
+	 */
+	JabberAccount *account;
+};
 
-	mAccount = account;
-
-}
+JabberResourcePool::JabberResourcePool ( JabberAccount *account )
+	: d(new Private(account))
+{}
 
 JabberResourcePool::~JabberResourcePool ()
 {
+	delete d;
 }
 
 void JabberResourcePool::slotResourceDestroyed (QObject *sender)
@@ -53,13 +69,12 @@ void JabberResourcePool::slotResourceDestroyed (QObject *sender)
 	JabberResource *oldResource = static_cast<JabberResource *>(sender);
 
 	// remove this resource from the lock list if it existed
-	mLockList.remove ( oldResource );
+	d->lockList.remove ( oldResource );
 }
 
 void JabberResourcePool::slotResourceUpdated ( JabberResource *resource )
 {
-
-	QPtrList<JabberBaseContact> list = mAccount->contactPool()->findRelevantSources ( resource->jid () );
+	QPtrList<JabberBaseContact> list = d->account->contactPool()->findRelevantSources ( resource->jid () );
 
 	for(JabberBaseContact *mContact = list.first (); mContact; mContact = list.next ())
 	{
@@ -70,27 +85,24 @@ void JabberResourcePool::slotResourceUpdated ( JabberResource *resource )
 	if( !resource->resource().status().capsNode().isEmpty() )
 	{
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating capabilities for JID: " << resource->jid().full() << endl;
-		mAccount->protocol()->capabilitiesManager()->updateCapabilities( mAccount, resource->jid(), resource->resource().status() );
+		d->account->protocol()->capabilitiesManager()->updateCapabilities( d->account, resource->jid(), resource->resource().status() );
 	}
 }
 
 void JabberResourcePool::notifyRelevantContacts ( const XMPP::Jid &jid )
 {
-
-	QPtrList<JabberBaseContact> list = mAccount->contactPool()->findRelevantSources ( jid );
+	QPtrList<JabberBaseContact> list = d->account->contactPool()->findRelevantSources ( jid );
 
 	for(JabberBaseContact *mContact = list.first (); mContact; mContact = list.next ())
 	{
 		mContact->reevaluateStatus ();
 	}
-
 }
 
 void JabberResourcePool::addResource ( const XMPP::Jid &jid, const XMPP::Resource &resource )
 {
-
 	// see if the resource already exists
-	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
+	for(JabberResource *mResource = d->pool.first (); mResource; mResource = d->pool.next ())
 	{
 		if ( (mResource->jid().userHost().lower() == jid.userHost().lower()) && (mResource->resource().name().lower() == resource.name().lower()) )
 		{
@@ -116,44 +128,42 @@ void JabberResourcePool::addResource ( const XMPP::Jid &jid, const XMPP::Resourc
 	if( !resource.status().capsNode().isEmpty() )
 	{
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Initial update of capabilities for JID: " << jid.full() << endl;
-		mAccount->protocol()->capabilitiesManager()->updateCapabilities(mAccount, jid, resource.status());
+		d->account->protocol()->capabilitiesManager()->updateCapabilities( d->account, jid, resource.status() );
 	}
 
 	// create new resource instance and add it to the dictionary
-	JabberResource *newResource = new JabberResource(mAccount, jid, resource);
+	JabberResource *newResource = new JabberResource(d->account, jid, resource);
 	connect ( newResource, SIGNAL ( destroyed (QObject *) ), this, SLOT ( slotResourceDestroyed (QObject *) ) );
 	connect ( newResource, SIGNAL ( updated (JabberResource *) ), this, SLOT ( slotResourceUpdated (JabberResource *) ) );
-	mPool.append ( newResource );
+	d->pool.append ( newResource );
 
 	// send notifications out to the relevant contacts that
 	// a new resource is available for them
 	notifyRelevantContacts ( jid );
-
 }
 
 void JabberResourcePool::removeResource ( const XMPP::Jid &jid, const XMPP::Resource &resource )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing resource " << resource.name() << " from " << jid.userHost() << endl;
 
-	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
+	for(JabberResource *mResource = d->pool.first (); mResource; mResource = d->pool.next ())
 	{
 		if ( (mResource->jid().userHost().lower() == jid.userHost().lower()) && (mResource->resource().name().lower() == resource.name().lower()) )
 		{
-			mPool.remove ();
+			d->pool.remove ();
 			notifyRelevantContacts ( jid );
 			return;
 		}
 	}
 
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "WARNING: No match found!" << endl;
-
 }
 
 void JabberResourcePool::removeAllResources ( const XMPP::Jid &jid )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing all resources for " << jid.userHost() << endl;
 
-	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
+	for(JabberResource *mResource = d->pool.first (); mResource; mResource = d->pool.next ())
 	{
 		if ( mResource->jid().userHost().lower() == jid.userHost().lower() )
 		{
@@ -161,11 +171,10 @@ void JabberResourcePool::removeAllResources ( const XMPP::Jid &jid )
 			if ( jid.resource().isEmpty () || ( jid.resource().lower () == mResource->resource().name().lower () ) )
 			{
 				kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing resource " << jid.userHost() << "/" << mResource->resource().name () << endl;
-				mPool.remove ();
+				d->pool.remove ();
 			}
 		}
 	}
-
 }
 
 void JabberResourcePool::clear ()
@@ -182,7 +191,7 @@ void JabberResourcePool::clear ()
 
 	QStringList jidList;
 
-	for ( JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next () )
+	for ( JabberResource *mResource = d->pool.first (); mResource; mResource = d->pool.next () )
 	{
 		jidList += mResource->jid().full ();
 	}
@@ -191,7 +200,7 @@ void JabberResourcePool::clear ()
 	 * Since mPool has autodeletion enabled, this will cause all
 	 * items to be deleted. The lock list will be cleaned automatically.
 	 */
-	mPool.clear ();
+	d->pool.clear ();
 
 	/*
 	 * Now go through the list of JIDs and notify each contact
@@ -206,24 +215,22 @@ void JabberResourcePool::clear ()
 
 void JabberResourcePool::lockToResource ( const XMPP::Jid &jid, const XMPP::Resource &resource )
 {
-
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Locking " << jid.full() << " to " << resource.name() << endl;
 
 	// remove all existing locks first
 	removeLock ( jid );
 
 	// find the resource in our dictionary that matches
-	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
+	for(JabberResource *mResource = d->pool.first (); mResource; mResource = d->pool.next ())
 	{
 		if ( (mResource->jid().userHost().lower() == jid.full().lower()) && (mResource->resource().name().lower() == resource.name().lower()) )
 		{
-			mLockList.append ( mResource );
+			d->lockList.append ( mResource );
 			return;
 		}
 	}
 
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "WARNING: No match found!" << endl;
-
 }
 
 void JabberResourcePool::removeLock ( const XMPP::Jid &jid )
@@ -231,68 +238,69 @@ void JabberResourcePool::removeLock ( const XMPP::Jid &jid )
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing resource lock for " << jid.userHost() << endl;
 
 	// find the resource in our dictionary that matches
-	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
+	for(JabberResource *mResource = d->pool.first (); mResource; mResource = d->pool.next ())
 	{
 		if ( (mResource->jid().userHost().lower() == jid.userHost().lower()) )
 		{
-			mLockList.remove (mResource);
+			d->lockList.remove (mResource);
 		}
 	}
 
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "No locks found." << endl;
-
 }
 
-const XMPP::Resource &JabberResourcePool::lockedResource ( const XMPP::Jid &jid )
+JabberResource *JabberResourcePool::lockedJabberResource( const XMPP::Jid &jid )
 {
-
 	// check if the JID already carries a resource, then we will have to use that one
 	if ( !jid.resource().isEmpty () )
 	{
 		// we are subscribed to a JID, find the according resource in the pool
-		for ( JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next () )
+		for ( JabberResource *mResource = d->pool.first (); mResource; mResource = d->pool.next () )
 		{
 			if ( ( mResource->jid().userHost().lower () == jid.userHost().lower () ) && ( mResource->resource().name () == jid.resource () ) )
 			{
-				return mResource->resource ();
+				return mResource;
 			}
 		}
 
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "WARNING: No resource found in pool, returning as offline." << endl;
 
-		return EmptyResource;
+		return 0L;
 	}
 
 	// see if we have a locked resource
-	for(JabberResource *mResource = mLockList.first (); mResource; mResource = mLockList.next ())
+	for(JabberResource *mResource = d->lockList.first (); mResource; mResource = d->lockList.next ())
 	{
 		if ( mResource->jid().userHost().lower() == jid.userHost().lower() )
 		{
 			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Current lock for " << jid.userHost () << " is '" << mResource->resource().name () << "'" << endl;
-			return mResource->resource ();
+			return mResource;
 		}
 	}
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "No lock available for " << jid.userHost () << endl;
 
 	// there's no locked resource, return an empty resource
-	return EmptyResource;
-
+	return 0L;
 }
 
-const XMPP::Resource &JabberResourcePool::bestResource ( const XMPP::Jid &jid, bool honourLock )
+const XMPP::Resource &JabberResourcePool::lockedResource ( const XMPP::Jid &jid )
+{
+	JabberResource *resource = lockedJabberResource( jid );
+	return (resource) ? resource->resource() : EmptyResource;
+}
+
+JabberResource *JabberResourcePool::bestJabberResource( const XMPP::Jid &jid, bool honourLock )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Determining best resource for " << jid.full () << endl;
-
-	// FIXME: the code below would be more efficient if it would cache results
 
 	if ( honourLock )
 	{
 		// if we are locked to a certain resource, always return that one
-		const XMPP::Resource &mResource = lockedResource ( jid );
-		if ( !mResource.name().isEmpty() )
+		JabberResource *mResource = lockedJabberResource ( jid );
+		if ( mResource )
 		{
-			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "We have a locked resource '" << mResource.name () << "' for " << jid.full () << endl;
+			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "We have a locked resource '" << mResource->resource().name () << "' for " << jid.full () << endl;
 			return mResource;
 		}
 	}
@@ -300,7 +308,7 @@ const XMPP::Resource &JabberResourcePool::bestResource ( const XMPP::Jid &jid, b
 	JabberResource *bestResource = 0L;
 	JabberResource *currentResource = 0L;
 
-	for(currentResource = mPool.first (); currentResource; currentResource = mPool.next ())
+	for(currentResource = d->pool.first (); currentResource; currentResource = d->pool.next ())
 	{
 		// make sure we are only looking up resources for the specified JID
 		if ( currentResource->jid().userHost().lower() != jid.userHost().lower() )
@@ -339,13 +347,18 @@ const XMPP::Resource &JabberResourcePool::bestResource ( const XMPP::Jid &jid, b
 		}
 	}
 
-	return (bestResource == 0L) ? EmptyResource : bestResource->resource();
+	return (bestResource) ? bestResource : 0L;
+}
+
+const XMPP::Resource &JabberResourcePool::bestResource ( const XMPP::Jid &jid, bool honourLock )
+{
+	JabberResource *bestResource = bestJabberResource( jid, honourLock);
+	return (bestResource) ? bestResource->resource() : EmptyResource;
 }
 
 void JabberResourcePool::findResources ( const XMPP::Jid &jid, JabberResourcePool::ResourceList &resourceList )
 {
-
-	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
+	for(JabberResource *mResource = d->pool.first (); mResource; mResource = d->pool.next ())
 	{
 		if ( mResource->jid().userHost().lower() == jid.userHost().lower() )
 		{
@@ -358,13 +371,11 @@ void JabberResourcePool::findResources ( const XMPP::Jid &jid, JabberResourcePoo
 			resourceList.append ( mResource );
 		}
 	}
-
 }
 
 void JabberResourcePool::findResources ( const XMPP::Jid &jid, XMPP::ResourceList &resourceList )
 {
-
-	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
+	for(JabberResource *mResource = d->pool.first (); mResource; mResource = d->pool.next ())
 	{
 		if ( mResource->jid().userHost().lower() == jid.userHost().lower() )
 		{
@@ -377,20 +388,6 @@ void JabberResourcePool::findResources ( const XMPP::Jid &jid, XMPP::ResourceLis
 			resourceList.append ( mResource->resource () );
 		}
 	}
-
-}
-
-JabberResource *JabberResourcePool::getJabberResourceFromXMPPResource( const XMPP::Resource &resource )
-{
-	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
-	{
-		if(mResource->resource().name() == resource.name() && mResource->resource().priority() == resource.priority())
-		{
-			return mResource;
-		}
-	}
-
-	return 0L;
 }
 
 #include "jabberresourcepool.moc"

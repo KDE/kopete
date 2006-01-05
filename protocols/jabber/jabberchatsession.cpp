@@ -231,8 +231,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 			jabberMessage.setBody ( message.plainBody ());
 			if (message.format() ==  Kopete::Message::RichText) 
 			{
-				XMPP::Resource tempResource = account()->resourcePool()->bestResource(toJid, true);
-				JabberResource *bestResource = account()->resourcePool()->getJabberResourceFromXMPPResource( tempResource );
+				JabberResource *bestResource = account()->resourcePool()->bestJabberResource(toJid);
 				if( bestResource && bestResource->features().canXHTML() )
 				{
 					jabberMessage.setXHTMLBody ( message.escapedBody(), QString::null, message.getHtmlStyleAttribute() );

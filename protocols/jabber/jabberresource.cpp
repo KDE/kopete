@@ -38,7 +38,10 @@ class JabberResource::Private
 public:
 	Private( JabberAccount *t_account, const XMPP::Jid &t_jid, const XMPP::Resource &t_resource )
 	 : account(t_account), jid(t_jid), resource(t_resource), capsEnabled(false)
-	{}
+	{
+		// Make sure the resource is always set.
+		jid.setResource(resource.name());
+	}
 
 	JabberAccount *account;
 	XMPP::Jid jid;
