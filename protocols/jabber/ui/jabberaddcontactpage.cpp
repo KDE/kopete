@@ -5,6 +5,7 @@
     begin                : Thu Aug 08 2002
     copyright            : (C) 2003 by Till Gerken <till@tantalo.net>
                            (C) 2003 by Daniel Stone <dstone@kde.org>
+                           (C) 2006 by Olivier Goffart <ogoffart at kde.org>
     email                : kopete-devel@kde.org
  ***************************************************************************/
 
@@ -29,6 +30,8 @@
 
 #include "dlgaddcontact.h"
 #include "jabberaccount.h"
+#include "jabbertransport.h"
+#include "kopetecontact.h"
 #include "jabberclient.h"
 #include "xmpp_tasks.h"
 
@@ -67,19 +70,29 @@ bool JabberAddContactPage::apply ( Kopete::Account *account, Kopete::MetaContact
 
 	if( canadd && validateData () )
 	{
+		JabberTransport *transport=dynamic_cast<JabberTransport*>(account);
+		JabberAccount *jaccount=transport?transport->account():dynamic_cast<JabberAccount*>(account);
+				
 		QString contactId = jabData->addID->text ();
-		QString displayName = parentContact->displayName ();
 		
+		if(transport)
+		{
+			//TODO: support jabber:iq:gateway (JEP-0100)  or  JID escaping (JEP-0106)
+			contactId= contactId.replace('@','%') + "@" + transport->myself()->contactId();
+		}
+		
+		QString displayName = parentContact->displayName ();
+		/*		
 		if ( displayName.isEmpty () )
 			displayName = contactId;
-
+		*/
 		// collect all group names
 		QStringList groupNames;
 		Kopete::GroupList groupList = parentContact->groups();
 		for(Kopete::Group *group = groupList.first(); group; group = groupList.next())
 			groupNames += group->displayName();
 
-		if ( account->addContact ( contactId, parentContact, Kopete::Account::ChangeKABC ) )
+		if ( jaccount->addContact ( contactId, parentContact, Kopete::Account::ChangeKABC ) )
 		{
 			XMPP::RosterItem item;
 			XMPP::Jid jid ( contactId );
@@ -89,13 +102,13 @@ bool JabberAddContactPage::apply ( Kopete::Account *account, Kopete::MetaContact
 			item.setGroups ( groupNames );
 
 			// add the new contact to our roster.
-			XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( static_cast<JabberAccount *>(account)->client()->rootTask () );
+			XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( jaccount->client()->rootTask () );
 
 			rosterTask->set ( item.jid(), item.name(), item.groups() );
 			rosterTask->go ( true );
 
 			// send a subscription request.
-			XMPP::JT_Presence *presenceTask = new XMPP::JT_Presence ( static_cast<JabberAccount *>(account)->client()->rootTask () );
+			XMPP::JT_Presence *presenceTask = new XMPP::JT_Presence ( jaccount->client()->rootTask () );
 
 			presenceTask->sub ( jid, "subscribe" );
 			presenceTask->go ( true );

@@ -173,9 +173,9 @@ Kopete::Account *JabberProtocol::createNewAccount (const QString & accountId)
 		return 0L;  //the account may already exist if greated just above
 
 	int slash=accountId.find('/');
-	if(slash>0)
+	if(slash>=0)
 	{
-		QString realAccountId=accountId.right(slash);
+		QString realAccountId=accountId.mid(slash+1);
 		QString myselfId=accountId.left(slash);
 		JabberAccount *realAccount=dynamic_cast<JabberAccount*>(Kopete::AccountManager::self()->findAccount( pluginId() , realAccountId ));
 		if(!realAccount) //if it doesn't exist yet, create it
@@ -273,8 +273,11 @@ Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaC
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "WARNING: Account for contact does not exist, skipping." << endl;
 		return 0;
 	}
-
-	if (account)
+	
+	JabberTransport *transport = dynamic_cast<JabberTransport*>(account);
+	if( transport )
+		transport->account()->addContact (contactId,  metaContact);
+	else
 		account->addContact (contactId,  metaContact);
 	return account->contacts()[contactId];
 }

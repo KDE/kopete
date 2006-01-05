@@ -6,6 +6,7 @@
     copyright            : (C) 2003 by Till Gerken <till@tantalo.net>
 							Based on JabberProtocol by Daniel Stone <dstone@kde.org>
 							and Till Gerken <till@tantalo.net>.
+	copyright            : (C) 2006 by Olivier Goffart <ogoffart at kde.org>
 
 			   Kopete (C) 2001-2003 Kopete developers
 			   <kopete-devel@kde.org>.
@@ -106,6 +107,11 @@ JabberAccount::~JabberAccount ()
 	protocol()->capabilitiesManager()->removeAccount( this );
 
 	cleanup ();
+	
+	QMap<QString,JabberTransport*> tranposrts_copy=m_transports;
+	QMap<QString,JabberTransport*>::Iterator it;
+	for ( it = tranposrts_copy.begin(); it != tranposrts_copy.end(); ++it ) 
+		delete it.data();
 }
 
 void JabberAccount::cleanup ()
