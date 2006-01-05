@@ -106,12 +106,17 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	m_statusBarWidget = new QHBox(statusBar(), "m_statusBarWidget");
 	m_statusBarWidget->setMargin( 2 );
 	m_statusBarWidget->setSpacing( 1 );
-	QLabel * label = new QLabel( m_statusBarWidget, "statusmsglabel" );
+	statusBar()->addWidget(m_statusBarWidget, 0, true );
+	QHBox *statusBarMessage = new QHBox(statusBar(), "m_statusBarWidget");
+	m_statusBarWidget->setMargin( 2 );
+	m_statusBarWidget->setSpacing( 1 );
+
+	QLabel * label = new QLabel( statusBarMessage, "statusmsglabel" );
 	label->setFixedSize( 16, 16 );
 	label->setPixmap( SmallIcon( "kopetestatusmessage" ) );
 	QToolTip::add( label, i18n( "Global status message" ) );
-	m_globalStatusMessage = new KSqueezedTextLabel( m_statusBarWidget );
-	statusBar()->addWidget(m_statusBarWidget, 0, true );
+	m_globalStatusMessage = new KSqueezedTextLabel( statusBarMessage );
+	statusBar()->addWidget(statusBarMessage, 1, false );
 
 	m_pluginConfig = 0L;
 	m_autoHideTimer = new QTimer( this );
