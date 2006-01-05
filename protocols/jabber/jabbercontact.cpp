@@ -56,8 +56,8 @@
 /**
  * JabberContact constructor
  */
-JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, Kopete::MetaContact * mc)
-				: JabberBaseContact ( rosterItem, account, mc)
+JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Account *_account, Kopete::MetaContact * mc)
+				: JabberBaseContact ( rosterItem, _account, mc)
 {
 
 	// this contact is able to transfer files
@@ -78,7 +78,7 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 
 	mVCardUpdateInProgress = false;
 
-	if ( !account->myself () )
+	if ( !account()->myself () )
 	{
 		// this contact is a regular contact
 		connect ( this,
@@ -88,11 +88,11 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 	else
 	{
 		// this contact is the myself instance
-		connect ( account->myself (),
+		connect ( account()->myself (),
 				  SIGNAL ( onlineStatusChanged ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 				  this, SLOT ( slotCheckVCard () ) );
 
-		connect ( account->myself (),
+		connect ( account()->myself (),
 				  SIGNAL ( onlineStatusChanged ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 				  this, SLOT ( slotCheckLastActivity ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 
@@ -100,7 +100,7 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 		 * Trigger update once if we're already connected for contacts
 		 * that are being added while we are online.
 		 */
-		if ( account->myself()->onlineStatus().isDefinitelyOnline() )
+		if ( account()->myself()->onlineStatus().isDefinitelyOnline() )
 		{
 			slotGetTimedVCard ();
 		}

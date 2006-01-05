@@ -2,6 +2,7 @@
   * jabbercontactpool.cpp
   *
   * Copyright (c) 2004 by Till Gerken <till@tantalo.net>
+  * Copyright (c) 2006      by Olivier Goffart  <ogoffart at kde.org>
   *
   * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
   *
@@ -20,6 +21,7 @@
 #include <qptrlist.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
+#include <kopeteaccountmanager.h>
 #include "kopeteuiglobal.h"
 #include "jabberprotocol.h"
 #include "jabberbasecontact.h"
@@ -28,6 +30,7 @@
 #include "jabbergroupmembercontact.h"
 #include "jabberresourcepool.h"
 #include "jabberaccount.h"
+#include "jabbertransport.h"
 
 JabberContactPool::JabberContactPool ( JabberAccount *account )
 {
@@ -61,7 +64,6 @@ JabberContactPoolItem *JabberContactPool::findPoolItem ( const XMPP::RosterItem 
 
 JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, Kopete::MetaContact *metaContact, bool dirty )
 {
-
 	// see if the contact already exists
 	JabberContactPoolItem *mContactItem = findPoolItem ( contact );
 	if ( mContactItem)
@@ -86,9 +88,24 @@ JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, 
 	}
 
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Adding new contact " << contact.jid().full() << endl;
+	
+	JabberTransport *transport=0l;
+	//find if the contact should be added to a transport.
+	if(mAccount->transports().contains(contact.jid().domain()))
+		transport=mAccount->transports()[contact.jid().domain()];
+		
+	//check if the account *is* a transport
+	if(!transport && contact.jid().node().isEmpty() && contact.jid().domain() != mAccount->server()  ) //FIXME how to know if this is a transport
+	{
+		transport = new JabberTransport( mAccount , contact.jid().full() );
+		if(Kopete::AccountManager::self()->registerAccount(  transport ))
+		{
+			return static_cast<JabberContact*>(transport->myself());
+		}
+	}
 
 	// create new contact instance and add it to the dictionary
-	JabberContact *newContact = new JabberContact ( contact, mAccount, metaContact );
+	JabberContact *newContact = new JabberContact ( contact, transport ? (Kopete::Account*)transport : (Kopete::Account*)mAccount, metaContact );
 	JabberContactPoolItem *newContactItem = new JabberContactPoolItem ( newContact );
 	connect ( newContact, SIGNAL ( contactDestroyed ( Kopete::Contact * ) ), this, SLOT ( slotContactDestroyed ( Kopete::Contact * ) ) );
 	newContactItem->setDirty ( dirty );

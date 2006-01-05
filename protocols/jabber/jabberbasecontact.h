@@ -27,6 +27,7 @@ class dlgJabberVCard;
 class JabberProtocol;
 class JabberAccount;
 class JabberResource;
+class JabberTransport;
 namespace Kopete { class MetaContact; }
 
 class JabberBaseContact : public Kopete::Contact
@@ -38,7 +39,7 @@ friend class JabberAccount;	/* Friends can touch each other's private parts. */
 public:
 
 	JabberBaseContact (const XMPP::RosterItem &rosterItem,
-				   JabberAccount *account, Kopete::MetaContact * mc);
+					   Kopete::Account *account, Kopete::MetaContact * mc);
 
 	/********************************************************************
 	 *
@@ -54,8 +55,13 @@ public:
 	/**
 	 * Return the account instance associated with this contact
 	 */
-	JabberAccount *account ();
-
+	JabberAccount *account () { return m_account; };
+	
+	/**
+	 * return the transport if any, or null
+	 */
+	JabberTransport *transport();
+			
 	/**
 	 * Return if the contact is reachable (this is true if the account
 	 * is online)
@@ -151,6 +157,7 @@ protected:
 
 private:
 	bool mDontSync;
+	JabberAccount *m_account;
 
 };
 

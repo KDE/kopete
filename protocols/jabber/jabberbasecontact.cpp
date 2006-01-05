@@ -32,15 +32,19 @@
 #include "jabberresourcepool.h"
 #include "kopetemetacontact.h"
 #include "kopetemessage.h"
+#include "jabbertransport.h"
 
 /**
  * JabberBaseContact constructor
  */
-JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, Kopete::MetaContact * mc)
+JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, Kopete::Account *account, Kopete::MetaContact * mc)
 				: Kopete::Contact (account, rosterItem.jid().full(), mc)
 {
-
 	setDontSync ( false );
+	
+	JabberTransport *t=transport();
+	m_account= t ? t->account() : static_cast<JabberAccount *>(Kopete::Contact::account());
+
 
 	// take roster item and update display name
 	updateContact ( rosterItem );
@@ -63,12 +67,12 @@ JabberProtocol *JabberBaseContact::protocol ()
 
 }
 
-JabberAccount *JabberBaseContact::account ()
+
+JabberTransport * JabberBaseContact::transport( )
 {
-
-	return static_cast<JabberAccount *>(Kopete::Contact::account ());
-
+	return dynamic_cast<JabberTransport*>(Kopete::Contact::account());
 }
+
 
 /* Return if we are reachable (defaults to true because
    we can send on- and offline, only return false if the

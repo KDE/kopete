@@ -3,6 +3,7 @@
   *
   * Copyright (c) 2002-2003 by Till Gerken <till@tantalo.net>
   * Copyright (c) 2002 by Daniel Stone <dstone@kde.org>
+  * Copyright (c) 2006      by Olivier Goffart  <ogoffart at kde.org>
   *
   *  Kopete   (c) by the Kopete developers  <kopete-devel@kde.org>
   *
@@ -56,6 +57,7 @@
 #include "jabberaccount.h"
 #include "jabbereditaccountwidget.h"
 #include "jabbercapabilitiesmanager.h"
+#include "jabbertransport.h"
 #include "dlgjabbersendraw.h"
 #include "dlgjabberservices.h"
 #include "dlgjabberchatjoin.h"
@@ -167,7 +169,29 @@ KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Accoun
 Kopete::Account *JabberProtocol::createNewAccount (const QString & accountId)
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create New Account. ID: " << accountId << "\n" << endl;
-	return new JabberAccount (this, accountId);
+	if( Kopete::AccountManager::self()->findAccount( pluginId() , accountId ) )
+		return 0L;  //the account may already exist if greated just above
+
+	int slash=accountId.find('/');
+	if(slash>0)
+	{
+		QString realAccountId=accountId.right(slash);
+		QString myselfId=accountId.left(slash);
+		JabberAccount *realAccount=dynamic_cast<JabberAccount*>(Kopete::AccountManager::self()->findAccount( pluginId() , realAccountId ));
+		if(!realAccount) //if it doesn't exist yet, create it
+		{
+			realAccount = new JabberAccount( this, realAccountId );
+			if(!Kopete::AccountManager::self()->registerAccount(  realAccount ) )
+				return 0L;
+		}
+		if(!realAccount)
+			return 0L;
+		return new JabberTransport( realAccount , myselfId );
+	}
+	else
+	{
+		return new JabberAccount (this, accountId);
+	}
 }
 
 Kopete::OnlineStatus JabberProtocol::resourceToKOS ( const XMPP::Resource &resource )

@@ -1538,6 +1538,16 @@ void JabberAccount::slotIncomingVoiceCall( const Jid & j)
 #endif
 }
 
+void JabberAccount::addTransport( JabberTransport * tr, const QString &jid )
+{
+	m_transports.insert(jid,tr);
+}
+
+void JabberAccount::removeTransport( const QString &jid )
+{
+	m_transports.remove(jid);
+}
+
 #include "jabberaccount.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

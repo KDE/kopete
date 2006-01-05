@@ -40,6 +40,7 @@ class JabberResourcePool;
 class JabberContact;
 class JabberContactPool;
 class JabberProtocol;
+class JabberTransport;
 
 namespace Kopete { class MetaContact; }
 
@@ -117,6 +118,8 @@ public:
 	 */
 	static void handleStreamError (int streamError, int streamCondition, int connectorCode, const QString &server, Kopete::Account::DisconnectReason &errorClass);
 	
+	const QMap<QString, JabberTransport *> &transports()
+	{ return m_transports; }
 
 public slots:
 	/* Connects to the server. */
@@ -130,6 +133,9 @@ public slots:
 
 	/* Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+	
+	void addTransport( JabberTransport *tr ,  const QString &jid);
+	void removeTransport( const QString &jid );
 
 protected:
 	/**
@@ -183,6 +189,8 @@ private:
 	 */
 	bool isConnecting ();
 
+	QMap<QString, JabberTransport *>m_transports;
+	
 private slots:
 	/* Connects to the server. */
 	void slotConnect ();
