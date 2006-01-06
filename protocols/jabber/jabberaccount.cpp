@@ -1204,7 +1204,8 @@ void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 	 * See if the contact is already on our contact list
 	 */
 	Kopete::MetaContact *metaContact;
-	Kopete::Contact *c= Kopete::ContactList::self()->findContact ( protocol()->pluginId (), accountId (), item.jid().full().lower () ) ;
+	Kopete::Contact *c= contactPool()->findExactMatch( item.jid() );
+			//Kopete::ContactList::self()->findContact ( protocol()->pluginId (), accountId (), item.jid().full().lower () ) ;
 	if ( !c  )
 	{
 		/*
