@@ -60,6 +60,7 @@
 #include "jabbercontact.h"
 #include "jabbergroupcontact.h"
 #include "jabbercapabilitiesmanager.h"
+#include "jabbertransport.h"
 #include "dlgjabbersendraw.h"
 #include "dlgjabberservices.h"
 #include "dlgjabberchatjoin.h"

@@ -51,7 +51,7 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 	// check if the user ID contains a hardwired resource,
 	// we'll have to use that one in that case
-	XMPP::Jid jid ( user->contactId () );
+	XMPP::Jid jid = user->rosterItem().jid() ;
 
 	mResource = jid.resource().isEmpty () ? resource : jid.resource ();
 	slotUpdateDisplayName ();
@@ -67,7 +67,7 @@ void JabberChatSession::slotUpdateDisplayName ()
 	if ( !chatMembers.first () )
 		return;
 
-	XMPP::Jid jid ( chatMembers.first()->contactId () );
+	XMPP::Jid jid = static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid();
 
 	if ( !mResource.isEmpty () )
 		jid.setResource ( mResource );
@@ -142,11 +142,11 @@ void JabberChatSession::sendNotification( XMPP::MsgEvent event )
 		if ( contact->isContactRequestingEvent( event ) )
 		{
 			// create JID for us as sender
-			XMPP::Jid fromJid ( myself()->contactId () );
+			XMPP::Jid fromJid = static_cast<const JabberBaseContact*>(myself())->rosterItem().jid();
 			fromJid.setResource ( account()->resource () );
 	
 			// create JID for the recipient
-			XMPP::Jid toJid ( contact->contactId () );
+			XMPP::Jid toJid = contact->rosterItem().jid();
 	
 			// set resource properly if it has been selected already
 			if ( !resource().isEmpty () )
@@ -173,7 +173,7 @@ void JabberChatSession::slotSendTypingNotification ( bool typing )
 		return;
 
 	// create JID for us as sender
-	XMPP::Jid fromJid ( myself()->contactId () );
+	XMPP::Jid fromJid = static_cast<const JabberBaseContact*>(myself())->rosterItem().jid();
 	fromJid.setResource ( account()->configGroup()->readEntry( "Resource", QString::null ) );
 
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Sending out typing notification (" << typing << ") to all chat members." << endl;
@@ -187,13 +187,13 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 	if( account()->isConnected () )
 	{
 		XMPP::Message jabberMessage;
-		Kopete::Contact *recipient = message.to().first ();
+		JabberBaseContact *recipient = static_cast<JabberBaseContact*>(message.to().first());
 
-		XMPP::Jid jid ( message.from()->contactId () );
+		XMPP::Jid jid = static_cast<const JabberBaseContact*>(message.from())->rosterItem().jid();
 		jid.setResource ( account()->configGroup()->readEntry( "Resource", QString::null ) );
 		jabberMessage.setFrom ( jid );
 
-		XMPP::Jid toJid ( recipient->contactId () );
+		XMPP::Jid toJid = recipient->rosterItem().jid();
 
 		if( !resource().isEmpty () )
 			toJid.setResource ( resource() );

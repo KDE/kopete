@@ -132,6 +132,12 @@ public:
 	 * See @ref setDontSync for a full description.
 	 */
 	bool dontSync ();
+	
+	/**
+	 * return the roster item of the contact.
+	 * to get the jid, use  rosterItem().jid().full()  don't use contactId as it is not the same with transport
+	 */
+	XMPP::RosterItem rosterItem() const { return mRosterItem; }
 
 public slots:
 

@@ -52,7 +52,7 @@ JabberContactPoolItem *JabberContactPool::findPoolItem ( const XMPP::RosterItem 
 	// see if the contact already exists
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
-		if ( mContactItem->contact()->contactId().lower() == contact.jid().full().lower() )
+		if ( mContactItem->contact()->rosterItem().jid().full().lower() == contact.jid().full().lower() )
 		{
 			return mContactItem;
 		}
@@ -160,7 +160,7 @@ void JabberContactPool::removeContact ( const XMPP::Jid &jid )
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
-		if ( mContactItem->contact()->contactId().lower() == jid.full().lower() )
+		if ( mContactItem->contact()->rosterItem().jid().full().lower() == jid.full().lower() )
 		{
 			/*
 			 * The following deletion will cause slotContactDestroyed()
@@ -179,7 +179,8 @@ void JabberContactPool::slotContactDestroyed ( Kopete::Contact *contact )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Contact deleted, collecting the pieces..." << endl;
 
-	JabberBaseContact *jabberContact = static_cast<JabberBaseContact *>( contact );
+	JabberBaseContact *jabberContact = static_cast<JabberBaseContact *>( contact ); 
+	//WARNING  this ptr is not usable, we are in the Kopete::Contact destructor
 
 	// remove contact from the pool
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
@@ -192,7 +193,14 @@ void JabberContactPool::slotContactDestroyed ( Kopete::Contact *contact )
 	}
 
 	// delete all resources for it
-	mAccount->resourcePool()->removeAllResources ( XMPP::Jid ( contact->contactId() ) );
+	if(contact->account()==(Kopete::Account*)(mAccount))
+		mAccount->resourcePool()->removeAllResources ( XMPP::Jid ( contact->contactId() ) );
+	else
+	{
+		//this is a legacy contact. we have no way to get the real Jid at this point, we can only guess it.
+		QString contactId= contact->contactId().replace('@','%') + "@" + contact->account()->myself()->contactId();
+		mAccount->resourcePool()->removeAllResources ( XMPP::Jid ( contactId ) ) ;
+	}
 
 }
 
@@ -218,7 +226,7 @@ void JabberContactPool::setDirty ( const XMPP::Jid &jid, bool dirty )
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
-		if ( mContactItem->contact()->contactId().lower() == jid.full().lower() )
+		if ( mContactItem->contact()->rosterItem().jid().full().lower() == jid.full().lower() )
 		{
 			mContactItem->setDirty ( dirty );
 			return;
@@ -254,7 +262,7 @@ JabberBaseContact *JabberContactPool::findExactMatch ( const XMPP::Jid &jid )
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
-		if ( mContactItem->contact()->contactId().lower () == jid.full().lower () )
+		if ( mContactItem->contact()->rosterItem().jid().full().lower () == jid.full().lower () )
 		{
 			return mContactItem->contact ();
 		}
@@ -269,7 +277,7 @@ JabberBaseContact *JabberContactPool::findRelevantRecipient ( const XMPP::Jid &j
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
-		if ( mContactItem->contact()->contactId().lower () == jid.userHost().lower () )
+		if ( mContactItem->contact()->rosterItem().jid().full().lower () == jid.userHost().lower () )
 		{
 			return mContactItem->contact ();
 		}
@@ -285,7 +293,7 @@ QPtrList<JabberBaseContact> JabberContactPool::findRelevantSources ( const XMPP:
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
-		if ( XMPP::Jid ( mContactItem->contact()->contactId() ).userHost().lower () == jid.userHost().lower () )
+		if ( mContactItem->contact()->rosterItem().jid().userHost().lower () == jid.userHost().lower () )
 		{
 			list.append ( mContactItem->contact () );
 		}

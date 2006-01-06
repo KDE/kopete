@@ -111,7 +111,7 @@ void dlgJabberVCard::assignContactProperties ()
 	m_mainWidget->leName->setText (m_contact->property(m_account->protocol()->propFullName).value().toString());
 	// Guess the JID from the Kopete::Contact if the propJid is empty.
 	if( m_contact->property( m_account->protocol()->propJid ).value().toString().isEmpty() )
-		m_mainWidget->leJID->setText (m_contact->contactId());
+		m_mainWidget->leJID->setText (m_contact->rosterItem().jid().full());
 	else
 		m_mainWidget->leJID->setText (m_contact->property(m_account->protocol()->propJid).value().toString());
 	m_mainWidget->leBirthday->setText (m_contact->property(m_account->protocol()->propBirthday).value().toString());
@@ -345,7 +345,7 @@ void dlgJabberVCard::slotGetVCard()
 	XMPP::JT_VCard *task = new XMPP::JT_VCard ( m_account->client()->rootTask() );
 	// signal to ourselves when the vCard data arrived
 	QObject::connect( task, SIGNAL ( finished () ), this, SLOT ( slotGotVCard () ) );
-	task->get ( m_contact->contactId() );
+	task->get ( m_contact->rosterItem().jid().full() );
 	task->go ( true );	
 }
 
@@ -406,7 +406,7 @@ void dlgJabberVCard::slotSelectPhoto()
 			img = img.copy(0, (img.height()-img.width())/2, img.width(), img.width());
 		}
 		
-		m_photoPath = locateLocal("appdata", "jabberphotos/" + m_contact->contactId().replace(QRegExp("[./~]"),"-")  +".png");
+		m_photoPath = locateLocal("appdata", "jabberphotos/" + m_contact->rosterItem().jid().full().lower().replace(QRegExp("[./~]"),"-")  +".png");
 		if( img.save(m_photoPath, "PNG") )
 		{
 			m_mainWidget->lblPhoto->setPixmap( QPixmap(img) );

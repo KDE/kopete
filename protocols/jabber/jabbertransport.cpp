@@ -214,7 +214,7 @@ void JabberTransport::removeAllContacts( )
 	for( ; it.current(); ++it )
 	{
 		XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
-		rosterTask->remove ( it.current()->contactId() );
+		rosterTask->remove ( static_cast<JabberBaseContact*>(it.current())->rosterItem().jid() );
 		rosterTask->go ( true );
 	}
 	m_status = Removing; //in theory that's already our status
