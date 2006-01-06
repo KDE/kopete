@@ -15,66 +15,33 @@
     *************************************************************************
  */
 
-#include "im.h"
-#include "filetransfer.h"
-#include "xmpp.h"
-#include "xmpp_tasks.h"
-#include "qca.h"
-#include "bsocket.h"
-
 #include "jabbertransport.h"
-
-#include <time.h>
-
-#include <qstring.h>
-#include <qregexp.h>
-#include <qtimer.h>
-
-#include <kconfig.h>
-#include <kdebug.h>
-#include <kmessagebox.h>
-#include <klocale.h>
-#include <kapplication.h>
-#include <kaboutdata.h>
-#include <ksocketbase.h>
-
-#include "kopetepassword.h"
-#include "kopeteawayaction.h"
-#include "kopetemetacontact.h"
-#include "kopeteuiglobal.h"
-#include "kopetegroup.h"
-#include "kopetecontactlist.h"
-
-#include "jabberconnector.h"
-#include "jabberclient.h"
-#include "jabberprotocol.h"
-#include "jabberresourcepool.h"
-#include "jabbercontactpool.h"
-#include "jabberfiletransfer.h"
 #include "jabbercontact.h"
-#include "jabbergroupcontact.h"
-#include "jabbercapabilitiesmanager.h"
-#include "dlgjabbersendraw.h"
-#include "dlgjabberservices.h"
-#include "dlgjabberchatjoin.h"
+#include "jabberaccount.h"
+#include "jabberprotocol.h"
+#include "jabbercontactpool.h"
 
-#include <sys/utsname.h>
+#include <kopeteaccountmanager.h>
+#include <kopetecontact.h>
+#include <kopetecontactlist.h>
 
-#ifdef SUPPORT_JINGLE
-#include "jingle/voicecaller.h"
-#include "jingle/jinglevoicecaller.h"
-#include "jingle/voicecalldlg.h"
-#endif
+#include <qpixmap.h>
+#include <kaction.h>
+#include <kdebug.h>
+#include <klocale.h>
 
+#include "xmpp_tasks.h"
 
 JabberTransport::JabberTransport (JabberAccount * parentAccount, const QString & myselfContactId, const char *name)
 	:Kopete::Account ( parentAccount->protocol(), myselfContactId+"/"+parentAccount->accountId(), name )
 {
+	m_status=Creating;
 	m_account = parentAccount;
 	m_account->addTransport( this, myselfContactId );
 	
 	JabberContact *myContact = m_account->contactPool()->addContact ( XMPP::RosterItem ( myselfContactId ), Kopete::ContactList::self()->myself(), false );
 	setMyself( myContact );
+	m_status=Normal;
 }
 
 JabberTransport::~JabberTransport ()
@@ -213,6 +180,9 @@ JabberProtocol * JabberTransport::protocol( ) const
 
 bool JabberTransport::removeAccount( )
 {
+	if(m_status == Removing)
+		return true; //so it can be deleted
+	m_status = Removing;
 	XMPP::JT_Register *task = new XMPP::JT_Register ( m_account->client()->rootTask () );
 	QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( removeAllContacts() ) );
 
@@ -224,29 +194,24 @@ bool JabberTransport::removeAccount( )
 
 void JabberTransport::removeAllContacts( )
 {
-	XMPP::JT_Register * task = (XMPP::JT_Register *) sender ();
+//	XMPP::JT_Register * task = (XMPP::JT_Register *) sender ();
 
-	if (task->success ())
-	{
-		
-		kdDebug() << k_funcinfo << "delete all contacts of the transport"<< endl;
-		QDictIterator<Kopete::Contact> it( contacts() ); 
-		for( ; it.current(); ++it )
-		{
-			XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
-			rosterTask->remove ( it.current()->contactId() );
-			rosterTask->go ( true );
-		}
-	}
-	else
-	{
-		KMessageBox::queuedMessageBox (/*Kopete::UI::Global::mainWidget()*/ 0L, KMessageBox::Error,
-									   i18n ("An error occured when trying to remove the transport:\n%1").arg(task->statusString()),
-									   i18n ("Jabber Service Unregistration"));
+/*	if ( ! task->success ())
+	KMessageBox::queuedMessageBox ( 0L, KMessageBox::Error,
+									i18n ("An error occured when trying to remove the transport:\n%1").arg(task->statusString()),
+									i18n ("Jabber Service Unregistration"));
+	*/ //we don't really care, we remove everithing anyway.
 
+	kdDebug() << k_funcinfo << "delete all contacts of the transport"<< endl;
+	QDictIterator<Kopete::Contact> it( contacts() ); 
+	for( ; it.current(); ++it )
+	{
+		XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
+		rosterTask->remove ( it.current()->contactId() );
+		rosterTask->go ( true );
 	}
-	
-	deleteLater(); //myself is going to be deleted soon;
+	m_status = Removing; //in theory that's already our status
+	Kopete::AccountManager::self()->removeAccount( this ); //this will delete this
 }
 
 

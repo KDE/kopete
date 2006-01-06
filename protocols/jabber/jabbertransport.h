@@ -73,6 +73,10 @@ public:
 	 * will remove the subscription
 	 */
 	virtual bool removeAccount();
+	
+	enum TransportStatus { Normal , Creating, Removing };
+	TransportStatus transportStatus() { return m_status; };
+	
 
 public slots:
 
@@ -107,6 +111,7 @@ protected:
 
 private:
 	JabberAccount *m_account;
+	TransportStatus m_status;
 
 };
 
