@@ -268,9 +268,12 @@ Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaC
 	QString contactId = serializedData["contactId"];
 	QString displayName = serializedData["displayName"];
 	QString accountId = serializedData["accountId"];
+	QString jid = serializedData["JID"];
 
 	QDict < Kopete::Account > accounts = Kopete::AccountManager::self ()->accounts (this);
 	Kopete::Account *account = accounts[accountId];
+	
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "##############: " << contactId <<  "   -   " << jid <<  endl;
 
 	if (!account)
 	{
@@ -280,7 +283,7 @@ Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaC
 	
 	JabberTransport *transport = dynamic_cast<JabberTransport*>(account);
 	if( transport )
-		transport->account()->addContact (contactId,  metaContact);
+		transport->account()->addContact ( jid.isEmpty() ? contactId : jid ,  metaContact);
 	else
 		account->addContact (contactId,  metaContact);
 	return account->contacts()[contactId];

@@ -1091,7 +1091,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 				task->go ( true );
 
 				// Is the user already in our contact list?
-				contact = Kopete::ContactList::self ()->findContact (protocol ()->pluginId (), accountId (), jid.full().lower () );
+				contact = contactPool()->findExactMatch( jid );
 				if(contact)
 					metaContact=contact->metaContact();
 

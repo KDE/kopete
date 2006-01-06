@@ -37,7 +37,7 @@ Q_OBJECT
 public:
 
 	JabberContact (const XMPP::RosterItem &rosterItem,
-				   Kopete::Account *account, Kopete::MetaContact * mc);
+				   Kopete::Account *account, Kopete::MetaContact * mc, const QString &legacyId = QString());
 
 	/**
 	 * Create custom context menu items for the contact

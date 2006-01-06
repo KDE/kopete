@@ -38,8 +38,12 @@ friend class JabberAccount;	/* Friends can touch each other's private parts. */
 
 public:
 
+	/**
+	 * @param legacyId is the contactId of the contact if != Jid
+	 */
 	JabberBaseContact (const XMPP::RosterItem &rosterItem,
-					   Kopete::Account *account, Kopete::MetaContact * mc);
+					   Kopete::Account *account, Kopete::MetaContact * mc, 
+					   const QString &legacyId=QString());
 
 	/********************************************************************
 	 *

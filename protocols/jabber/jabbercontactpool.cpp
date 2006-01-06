@@ -90,9 +90,13 @@ JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, 
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Adding new contact " << contact.jid().full() << endl;
 	
 	JabberTransport *transport=0l;
+	QString legacyId;
 	//find if the contact should be added to a transport.
 	if(mAccount->transports().contains(contact.jid().domain()))
+	{
 		transport=mAccount->transports()[contact.jid().domain()];
+		legacyId=transport->legacyId( contact.jid() );
+	}
 		
 	//check if the account *is* a transport
 	if(!transport && contact.jid().node().isEmpty() && contact.jid().domain() != mAccount->server()  ) //FIXME how to know if this is a transport
@@ -105,7 +109,7 @@ JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, 
 	}
 
 	// create new contact instance and add it to the dictionary
-	JabberContact *newContact = new JabberContact ( contact, transport ? (Kopete::Account*)transport : (Kopete::Account*)mAccount, metaContact );
+	JabberContact *newContact = new JabberContact ( contact, transport ? (Kopete::Account*)transport : (Kopete::Account*)mAccount, metaContact , legacyId );
 	JabberContactPoolItem *newContactItem = new JabberContactPoolItem ( newContact );
 	connect ( newContact, SIGNAL ( contactDestroyed ( Kopete::Contact * ) ), this, SLOT ( slotContactDestroyed ( Kopete::Contact * ) ) );
 	newContactItem->setDirty ( dirty );

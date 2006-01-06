@@ -25,18 +25,10 @@
 
 #include <kopeteaccount.h>
 
-class QString;
-class QStringList;
-class KActionMenu;
-class JabberResourcePool;
-class JabberContact;
-class JabberContactPool;
-class JabberProtocol;
+
+namespace XMPP { class Jid; }
 class JabberAccount;
-
-namespace Kopete { class MetaContact; }
-
-class VoiceCaller;
+class JabberProtocol;
 
 /**
  * this class handle a jabber gateway
@@ -77,7 +69,12 @@ public:
 	enum TransportStatus { Normal , Creating, Removing };
 	TransportStatus transportStatus() { return m_status; };
 	
-
+	/**
+	 * return the legacyId conrresponding to the jid
+	 *  example:  jhon%msn.com@msn.foojabber.org  ->  jhon@msn.com
+	 */
+	QString legacyId( const XMPP::Jid &jid );
+	
 public slots:
 
 	/* Reimplemented from Kopete::Account */

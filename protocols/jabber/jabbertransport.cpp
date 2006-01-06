@@ -221,6 +221,14 @@ void JabberTransport::removeAllContacts( )
 	Kopete::AccountManager::self()->removeAccount( this ); //this will delete this
 }
 
+QString JabberTransport::legacyId( const XMPP::Jid & jid )
+{
+	if(jid.node().isEmpty())
+		return QString();
+	QString node = jid.node();
+	return node.replace("%","@");
+}
+
 
 
 #include "jabbertransport.moc"

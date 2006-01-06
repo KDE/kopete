@@ -2,6 +2,7 @@
   * jabbercontact.cpp  -  Base class for the Kopete Jabber protocol contact
   *
   * Copyright (c) 2002-2004 by Till Gerken <till@tantalo.net>
+  * Copyright (c)      2006 by Olivier Goffart <ogoffart at kde.org>
   *
   * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
   *
@@ -37,8 +38,8 @@
 /**
  * JabberBaseContact constructor
  */
-JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, Kopete::Account *account, Kopete::MetaContact * mc)
-				: Kopete::Contact (account, rosterItem.jid().full(), mc)
+JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, Kopete::Account *account, Kopete::MetaContact * mc, const QString &legacyId)
+	: Kopete::Contact (account, legacyId.isEmpty() ? rosterItem.jid().full() : legacyId , mc )
 {
 	setDontSync ( false );
 	
@@ -218,7 +219,7 @@ void JabberBaseContact::updateResourceList ()
 	 * the richtext.
 	 */
 	JabberResourcePool::ResourceList resourceList;
-	account()->resourcePool()->findResources ( XMPP::Jid ( contactId () ), resourceList );
+	account()->resourcePool()->findResources ( rosterItem().jid() , resourceList );
 
 	if ( resourceList.isEmpty () )
 	{
@@ -294,7 +295,7 @@ void JabberBaseContact::reevaluateStatus ()
 QString JabberBaseContact::fullAddress ()
 {
 
-	XMPP::Jid jid ( contactId () );
+	XMPP::Jid jid = rosterItem().jid();
 
 	if ( jid.resource().isEmpty () )
 	{
@@ -341,7 +342,7 @@ void JabberBaseContact::serialize (QMap < QString, QString > &serializedData, QM
 {
 
 	// Contact id and display name are already set for us, only add the rest
-	serializedData["identityId"] = account()->accountId();
+	serializedData["JID"] = mRosterItem.jid().full();
 
 	serializedData["groups"] = mRosterItem.groups ().join (QString::fromLatin1 (","));
 }

@@ -2,6 +2,7 @@
   * jabbercontact.cpp  -  Regular Kopete Jabber protocol contact
   *
   * Copyright (c) 2002-2004 by Till Gerken <till@tantalo.net>
+  * Copyright (c) 2006     by Olivier Goffart <ogoffart at kde.org>
   *
   * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
   *
@@ -56,8 +57,8 @@
 /**
  * JabberContact constructor
  */
-JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Account *_account, Kopete::MetaContact * mc)
-				: JabberBaseContact ( rosterItem, _account, mc)
+JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Account *_account, Kopete::MetaContact * mc, const QString &legacyId)
+				: JabberBaseContact ( rosterItem, _account, mc, legacyId)
 {
 
 	// this contact is able to transfer files
@@ -950,7 +951,7 @@ JabberChatSession *JabberContact::manager ( Kopete::ContactPtrList chatMembers, 
 	 */
 	if ( !manager &&  canCreate )
 	{
-		XMPP::Jid jid ( contactId () );
+		XMPP::Jid jid = rosterItem().jid();
 
 		/*
 		 * If we have no hardwired JID, set any eventually
@@ -1189,7 +1190,7 @@ void JabberContact::slotSelectResource ()
 	{
 		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing active resource, trusting bestResource()." << endl;
 
-		account()->resourcePool()->removeLock ( XMPP::Jid ( contactId () ) );
+		account()->resourcePool()->removeLock ( rosterItem().jid() );
 	}
 	else
 	{
@@ -1197,7 +1198,7 @@ void JabberContact::slotSelectResource ()
 
 		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Moving to resource " << selectedResource << endl;
 
-		account()->resourcePool()->lockToResource ( XMPP::Jid ( contactId () ), XMPP::Resource ( selectedResource ) );
+		account()->resourcePool()->lockToResource ( rosterItem().jid() , XMPP::Resource ( selectedResource ) );
 	}
 
 }
