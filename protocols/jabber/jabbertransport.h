@@ -78,6 +78,12 @@ public slots:
 
 	/* Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+	
+	/**
+	 * the account has been unregistered.
+	 * loop over all contact and remove them
+	 */
+	void removeAllContacts();
 
 protected:
 	/**

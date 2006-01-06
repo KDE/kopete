@@ -164,7 +164,7 @@ KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Accoun
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Edit Account Widget\n" << endl;
 	JabberAccount *ja=dynamic_cast < JabberAccount * >(account);
-	if(ja)
+	if(ja || !account)
 		return new JabberEditAccountWidget (this,ja , parent);
 	else
 		return 0L; //FIXME: implement me

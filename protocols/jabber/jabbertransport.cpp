@@ -214,12 +214,39 @@ JabberProtocol * JabberTransport::protocol( ) const
 bool JabberTransport::removeAccount( )
 {
 	XMPP::JT_Register *task = new XMPP::JT_Register ( m_account->client()->rootTask () );
-	QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( deleteLater() ) );
+	QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( removeAllContacts() ) );
 
 	//JabberContact *my=static_cast<JabberContact*>(myself());
 	task->unreg ( myself()->contactId() );
 	task->go ( true );
-	return true;
+	return false; //delay the removal
+}
+
+void JabberTransport::removeAllContacts( )
+{
+	XMPP::JT_Register * task = (XMPP::JT_Register *) sender ();
+
+	if (task->success ())
+	{
+		
+		kdDebug() << k_funcinfo << "delete all contacts of the transport"<< endl;
+		QDictIterator<Kopete::Contact> it( contacts() ); 
+		for( ; it.current(); ++it )
+		{
+			XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
+			rosterTask->remove ( it.current()->contactId() );
+			rosterTask->go ( true );
+		}
+	}
+	else
+	{
+		KMessageBox::queuedMessageBox (/*Kopete::UI::Global::mainWidget()*/ 0L, KMessageBox::Error,
+									   i18n ("An error occured when trying to remove the transport:\n%1").arg(task->statusString()),
+									   i18n ("Jabber Service Unregistration"));
+
+	}
+	
+	deleteLater(); //myself is going to be deleted soon;
 }
 
 
