@@ -90,7 +90,7 @@ bool JabberAddContactPage::apply ( Kopete::Account *account, Kopete::MetaContact
 		{
 			XMPP::JT_Gateway * gatewayTask = new XMPP::JT_Gateway ( jaccount->client()->rootTask () );
 			JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND *workaround = 
-					new JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND( transport , parentContact );
+					new JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND( transport , parentContact , gatewayTask );
 			QObject::connect (gatewayTask, SIGNAL (finished ()), workaround, SLOT (slotJidReceived()));
 			gatewayTask->set ( transport->myself()->contactId() , contactId );
 			gatewayTask->go ( true );
@@ -151,8 +151,8 @@ void JabberAddContactPage::slotPromtReceived( )
 	}
 }
 
-JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND::JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND( JabberTransport *t, Kopete::MetaContact * mc )
-	: QObject(t) , metacontact(mc) ,  transport(t)
+JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND::JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND( JabberTransport *t, Kopete::MetaContact * mc, QObject* task )
+	: QObject(task) , metacontact(mc) ,  transport(t)
 {}
 
 void JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND::slotJidReceived( )

@@ -55,7 +55,7 @@ class JabberTransport;
 class  JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND : public QObject
 { Q_OBJECT
 	public:
-		JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND( JabberTransport * , Kopete::MetaContact *mc);
+		JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND( JabberTransport * , Kopete::MetaContact *mc, QObject *parent);
 		Kopete::MetaContact *metacontact;
 		JabberTransport *transport;
 	public slots:
