@@ -28,7 +28,7 @@
 //Added by qt3to4:
 #include <QHideEvent>
 #include <QShowEvent>
-#include <Q3ValueList>
+#include <QList>
 class QGridLayout;
 class QHideEvent;
 class QShowEvent;
@@ -58,7 +58,7 @@ public:
 	EmoticonSelector ( QWidget *parent = 0, const char *name = 0 );
 //	~EmoticonSelector();
 
-	typedef Q3ValueList<QMovie*> MovieList;
+	typedef QList<QMovie*> MovieList;
 signals:
 	/**
 	* gets emitted when an emoticon has been selected from the list

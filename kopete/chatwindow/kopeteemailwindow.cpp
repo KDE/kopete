@@ -63,7 +63,7 @@
 #include <QPixmap>
 #include <QCloseEvent>
 #include <QHBoxLayout>
-#include <Q3ValueList>
+#include <QList>
 #include <QMovie>
 #include <QSplitter>
 
@@ -83,7 +83,7 @@ KopeteView* EmailWindowPlugin::createView( Kopete::ChatSession *manager )
 class KopeteEmailWindow::Private
 {
 public:
-	Q3ValueList<Kopete::Message> messageQueue;
+	QList<Kopete::Message> messageQueue;
 	bool showingMessage;
 	bool sendInProgress;
 	bool visible;
@@ -375,7 +375,7 @@ void KopeteEmailWindow::slotReadNext()
 
 	d->queuePosition++;
 
-	writeMessage( (*d->messageQueue.at( d->queuePosition - 1 )) );
+	writeMessage( (d->messageQueue[ d->queuePosition - 1 ]) );
 
 	updateNextButton();
 }
@@ -388,7 +388,7 @@ void KopeteEmailWindow::slotReadPrev()
 
 	d->queuePosition--;
 
-	writeMessage( (*d->messageQueue.at( d->queuePosition - 1 )) );
+	writeMessage( (d->messageQueue[ d->queuePosition - 1 ]) );
 
 	updateNextButton();
 }
@@ -485,7 +485,7 @@ void KopeteEmailWindow::toggleMode( WindowMode newMode )
 			d->btnReadPrev->show();
 			break;
 		case Reply:
-			Q3ValueList<int> splitPercent;
+			QList<int> splitPercent;
 			// FIXME: should be saved and restored
 			splitPercent.append(50);
 			splitPercent.append(50);

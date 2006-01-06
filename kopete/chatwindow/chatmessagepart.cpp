@@ -147,7 +147,7 @@ public:
 	Kopete::Contact *latestContact;
 	// Yep I know it will take memory, but I don't have choice
 	// to enable on-the-fly style changing.
-	Q3ValueList<Kopete::Message> allMessages;
+	QList<Kopete::Message> allMessages;
 };
 /*
 class ChatMessagePart::ToolTip : public Q3ToolTip
@@ -309,7 +309,7 @@ void ChatMessagePart::save()
 
 	if ( dlg.currentFilter() == QString::fromLatin1( "text/plain" ) )
 	{
-		Q3ValueList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
+		QList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
 		for(it = d->allMessages.constBegin(); it != itEnd; ++it)
 		{
 			Kopete::Message tempMessage = *it;
@@ -1156,7 +1156,7 @@ void ChatMessagePart::changeStyle()
 	writeTemplate();
 	
 	// Readd all current messages.
-	Q3ValueList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
+	QList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
 	for(it = d->allMessages.constBegin(); it != itEnd; ++it)
 	{
 		Kopete::Message tempMessage = *it;
