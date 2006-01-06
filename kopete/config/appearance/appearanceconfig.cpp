@@ -2,9 +2,9 @@
     appearanceconfig.cpp  -  Kopete Look Feel Config
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
+    Copyright (c) 2005-2006 by Michaël Larouche       <michael.larouche@kdemail.net>
 
-    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -57,7 +57,6 @@
 #include <kurl.h> // KNewStuff
 #include <kurlrequesterdlg.h>
 #include <krun.h>
-#include <ktar.h> // for extracting tarballed chatwindow styles fetched with KNewStuff
 #include <kfiledialog.h>
 
 #include <knewstuff/downloaddialog.h> // knewstuff emoticon and chatwindow fetching
@@ -65,7 +64,6 @@
 #include <knewstuff/entry.h>          // "
 #include <knewstuff/knewstuff.h>      // "
 #include <knewstuff/provider.h>       // "
-#include <kfilterdev.h>               // knewstuff gzipped file support
 
 // For Kopete Chat Window Style configuration and preview.
 #include <kopetechatwindowstylemanager.h>
@@ -128,208 +126,55 @@ public:
 	Kopete::ChatSession *previewChatSession;
 };
 
-// TODO: Rewrite KopeteStyleNewStuff, support new theme format and remove bugs.
-//       so Get Hot New Stuff will be actived by default.
 class KopeteStyleNewStuff : public KNewStuff
 {
-	public:
-	KopeteStyleNewStuff(const QString &type, AppearanceConfig * ac, QWidget *parentWidget=0) 
-         : KNewStuff( type, parentWidget ), mAppearanceConfig( ac ), m_integrity( false )
-	{ }
+public:
+	KopeteStyleNewStuff(const QString &type, QWidget *parentWidget = 0)
+	 : KNewStuff( type, parentWidget)
+	{}
 
-	bool createUploadFile(const QString&)
-	{ return false; }
-
-	bool install( const QString & fileName)
+	bool createUploadFile(const QString &)
 	{
-		QString origFileName = mFilenameMap[ fileName ];
-		if ( origFileName.endsWith( ".xsl" ) )
-		{
-			// copy to apps/kopete/styles
-			kdDebug(14000) << k_funcinfo << " installing simple style file: " << origFileName << endl;
-			/*
-			if( !m_integrity )
-			{
-				KMessageBox::queuedMessageBox( parentWidget(), KMessageBox::Error,
-					i18n( "Package could not be verified. Please contact to author of the package. [Error: 7]" ),
-					i18n( "Package Verification Failed" ) );
-				return false;
-			}
-			*/
-// 			QString styleSheet = mAppearanceConfig->fileContents(fileName);
-// 			if ( Kopete::XSLT( styleSheet ).isValid() )
-// 				mAppearanceConfig->addStyle( origFileName.section( '.', 0, 0 ), styleSheet );
-// 			QFile::remove( fileName );
-// 			mAppearanceConfig->slotLoadChatStyles();
-			return true;
-		}
-		else if ( origFileName.endsWith( ".tar.gz" ) )
-		{
-			/* If KNewStuff is forced to be enabled from config file, then no verification is necessary.
-			int r;
-			if( ( r = verify( fileName ) ) != 0 )
-			{
-				KMessageBox::queuedMessageBox( parentWidget(), KMessageBox::Error,
-					i18n( "Package could not be verified. Please contact to author of the package. [Error: %1]" ).arg( r ),
-					i18n( "Package Verification Failed" ) );
-				return false;
-			}
-			*/
-			// install a tar.gz
-			kdDebug(14000) << k_funcinfo << " extracting gzipped tarball: " << origFileName << endl;
-			QString uncompress = "application/x-gzip";
-			KTar tar(fileName, uncompress);
-			tar.open(IO_ReadOnly);
-			const KArchiveDirectory *dir = tar.directory();
-			dir->copyTo( locateLocal( "appdata", QString::fromLatin1( "styles" ) ) );
-			tar.close();
-			QFile::remove(fileName);
-			mAppearanceConfig->slotLoadChatStyles();
-			return true;
-		}
-		else if ( origFileName.endsWith( ".xsl.gz" ) )
-		{
-			kdDebug(14000) << k_funcinfo << " installing gzipped single style file: " << origFileName << endl;
-			/*
-			if( !m_integrity )
-			{
-				KMessageBox::queuedMessageBox( parentWidget(), KMessageBox::Error,
-					i18n( "Package could not be verified. Please contact to author of the package. [Error: 7]" ),
-					i18n( "Package Verification Failed" ) );
-				return false;
-			}
-			*/
-			QIODevice * iod = KFilterDev::deviceForFile( fileName, "application/x-gzip" );
-			iod->open( IO_ReadOnly );
-			QTextStream stream( iod );
-			QString styleSheet = stream.read();
-			iod->close();
-// 			if ( Kopete::XSLT( styleSheet ).isValid() )
-// 				mAppearanceConfig->addStyle( origFileName.section( '.', 0, 0 ), styleSheet );
-			QFile::remove( fileName );
-			mAppearanceConfig->slotLoadChatStyles();
-			return true;
-
-		}
-		else
-		{
-			/* Commented out due to string freeze.
-			KMessageBox::queuedMessageBox( parentWidget(), KMessageBox::Error,
-				i18n( "Only allowed package extensions are .xsl, .tar.gz and .xsl.gz" ),
-				i18n( "Extension not supported" ) );
-			*/
-			return false;
-		}
+		return false;
 	}
 
-	/**
-	 * A package named Foo must be packaged as Foo.tar.gz use alphanumeric package
-	 * names (i.e. do not use a . in the file name ).
-	 * content should be like as follows:
-	 * /Foo.xsl
-	 * /data/Foo/file1.png
-	 * /data/Foo/file2.png
-	 * /data/Foo/bar/zoo/boo.png ...
-	 *
-	 * @param file file name to be verified
-	 * @return 0 on success<br>
-	 *         1 if root directory contains garbage<br>
-	 *         2 data directory does not exists<br>
-	 *         3 data directory contains garbage files/dirs<br>
-	 *         4 the directory under data/ is not the same name as package<br>
-	 *         5 Style file does not exist.<br>
-	 *         6 data directory does not contain any files<br>
-	 *         7 file does not even exists!
-	 *         8 package name must be same with basename of the file
-	 */
-	int verify( const QString& file )
+	bool install(const QString &styleFilename)
 	{
-		QFileInfo i( file );
-		if( !i.exists() )
-		{
-			kdDebug( 14000 ) << k_funcinfo << "ERROR: Could not open file [" << file << "] This should never have happened." << endl;
-			return 7; // actually it's pointless to return this, since this is a sign of internal error.
-		}
+		int styleInstallReturn = 0;
+		styleInstallReturn = ChatWindowStyleManager::self()->installStyle( styleFilename );
 
-		if( !m_integrity )
+		switch(styleInstallReturn)
 		{
-			kdDebug( 14000 ) << k_funcinfo << "ERROR: Package name is not the same with basename of the filename." << endl;
-			return 8;
-		}
-
-		QString base = i.baseName();
-
-		KTar tar( file, "application/x-gzip" );
-		tar.open( IO_ReadOnly );
-		const KArchiveDirectory *dir = tar.directory();
-		QStringList list = dir->entries();
-
-		if( list.count() != 2 )
-		{
-			kdDebug( 14000 ) << k_funcinfo << "ERROR: Garbage file or directory in root directory of the package" << endl;
-			return 1;
-		}
-
-		const KArchiveEntry *data = dir->entry( "data" );
-		if( !data || !data->isDirectory()  )
-		{
-			kdDebug( 14000 ) << k_funcinfo << "ERROR: data directory does not exist" << endl;
-			return 2;
-		}
-		else
-		{
-			list = ((KArchiveDirectory*)data)->entries();
-			if( list.count() == 0 )
+			case ChatWindowStyleManager::StyleInstallOk:
 			{
-				kdDebug( 14000 ) << k_funcinfo << "ERROR: There is no file in the data directory. So why use a tarball?" << endl;
-				return 6;
+				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Information, i18n("The Chat Window style was succesfully installed !"), i18n("Install succesful") );
+				return true;
 			}
-			else if( list.count() != 1 )
+			case ChatWindowStyleManager::StyleCannotOpen:
 			{
-				kdDebug( 14000 ) << k_funcinfo << "ERROR: data directory contains garbage entries" << endl;
-				return 3;
+				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("The specified archive cannot be openned.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Can't open archive") );
+				break;
 			}
-			data = ((KArchiveDirectory*)data)->entry( base );
-			if( !data || !data->isDirectory() )
+			case ChatWindowStyleManager::StyleNoDirectoryValid:
 			{
-				kdDebug( 14000 ) << k_funcinfo << "ERROR: directory under data dir should have the same name as package" << endl;
-				return 4;
+				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("Could not find a suitable place to install the Chat Window style in user directory."), i18n("Can't find styles directory") );
+				break;
+			}
+			case ChatWindowStyleManager::StyleNotValid:
+			{
+				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("The specified archive does not contain a valid Chat Window style."), i18n("Invalid Style") );
+				break;
+			}
+				
+			case ChatWindowStyleManager::StyleUnknow:
+			default:
+			{
+				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("An unknow error occurred while trying to install the Chat Window style."), i18n("Unknow error") );
+				break;
 			}
 		}
-
-		const KArchiveEntry *xsl = dir->entry( base + ".xsl" );
-		if( !xsl || !xsl->isFile() )
-		{
-			kdDebug( 14000 ) << k_funcinfo << "ERROR: Style file does not exist." << endl;
-			return 5;
-		}
-
-		return 0;
-
+		return false;
 	}
-
-	QString downloadDestination( KNS::Entry * e )
-	{
-		QString filename = e->payload().fileName();
-		QFileInfo i( filename );
-		if( e->name() != i.baseName() )
-		{
-			kdDebug( 14000 ) << k_funcinfo << "ERROR: Package name is not the basename of the file." << endl;
-			m_integrity = false;
-		}
-		else
-		{
-			m_integrity = true;
-		}
-		QString tempDestination = KNewStuff::downloadDestination( e );
-		mFilenameMap.insert( tempDestination, filename );
-		return tempDestination;
-	}
-
-	QMap<QString, QString > mFilenameMap;
-	AppearanceConfig * mAppearanceConfig;
-private:
-	bool m_integrity;
 };
 
 // TODO: Someday, this configuration dialog must(not should) use KConfigXT
@@ -845,15 +690,15 @@ void AppearanceConfig::slotDeleteChatStyle()
 void AppearanceConfig::slotGetChatStyles()
 {
 	// we need this because KNewStuffGeneric's install function isn't clever enough
-	KopeteStyleNewStuff * kns = new KopeteStyleNewStuff( "kopete/chatstyle", this );
-	KNS::Engine * engine = new KNS::Engine( kns, "kopete/chatstyle", this );
-	KNS::DownloadDialog * d = new KNS::DownloadDialog( engine, this );
-	d->setType( "kopete/chatstyle" );
+	KopeteStyleNewStuff *kopeteNewStuff = new KopeteStyleNewStuff( "kopete/chatstyle", this );
+	KNS::Engine *engine = new KNS::Engine( kopeteNewStuff, "kopete/chatstyle", this );
+	KNS::DownloadDialog *downloadDialog = new KNS::DownloadDialog( engine, this );
+	downloadDialog->setType( "kopete/chatstyle" );
 	// you have to do this by hand when providing your own Engine
-	KNS::ProviderLoader * p = new KNS::ProviderLoader( this );
-	QObject::connect( p, SIGNAL( providersLoaded(Provider::List*) ), d, SLOT( slotProviders (Provider::List *) ) );
-	p->load( "kopete/chatstyle", "http://download.kde.org/khotnewstuff/kopetestyles-providers.xml" );
-	d->exec();
+	KNS::ProviderLoader *provider = new KNS::ProviderLoader( this );
+	QObject::connect( provider, SIGNAL( providersLoaded(Provider::List*) ), downloadDialog, SLOT( slotProviders (Provider::List *) ) );
+	provider->load( "kopete/chatstyle", "http://download.kde.org/khotnewstuff/kopetestyles12-providers.xml" );
+	downloadDialog->exec();
 }
 
 // Reimplement Kopete::Contact and its abstract method
