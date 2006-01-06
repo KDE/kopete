@@ -408,19 +408,22 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Message type is: " << messageType << endl;
 		
 		QCString msgtext( b->getLELNTS() );
-		int fgcolor = b->getLEDWord();
-		int bgcolor = b->getLEDWord();
 		int prop = Oscar::Message::NotDecoded;
-
-		while ( b->length() >= 4 )
+		if ( messageType == 0x01 )
 		{
-			int capLength = b->getLEDWord();
-			if ( b->length() < capLength )
-				break;
-
-			QByteArray cap( b->getBlock( capLength ) );
-			if ( qstrncmp ( cap.data(), "{0946134E-4C7F-11D1-8222-444553540000}", capLength ) == 0 )
-				prop = Oscar::Message::UCS2;
+			int fgcolor = b->getLEDWord();
+			int bgcolor = b->getLEDWord();
+			
+			while ( b->length() >= 4 )
+			{
+				int capLength = b->getLEDWord();
+				if ( b->length() < capLength )
+					break;
+	
+				QByteArray cap( b->getBlock( capLength ) );
+				if ( qstrncmp ( cap.data(), "{0946134E-4C7F-11D1-8222-444553540000}", capLength ) == 0 )
+					prop = Oscar::Message::UCS2;
+			}
 		}
 
 		msg->addProperty( prop );

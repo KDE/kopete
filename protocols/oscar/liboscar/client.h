@@ -375,6 +375,7 @@ signals:
 
 	void receivedProfile( const QString& contact, const QString& profile );
 	void receivedAwayMessage( const QString& contact, const QString& message );
+	void receivedAwayMessage( const Oscar::Message& message );
 	void receivedUserInfo( const QString& contact, const UserDetails& details );
 
 	/** We warned a user */

@@ -485,8 +485,8 @@ void Client::receivedMessage( const Oscar::Message& msg )
 		if ( msg.hasProperty( Oscar::Message::AutoResponse ) )
 		{
 			// we got a response to a status message request.
-			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received an away message: " << msg.text() << endl;
-			emit receivedAwayMessage( msg.sender(), msg.text() );
+			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received an away message." << endl;
+			emit receivedAwayMessage( msg );
 		}
 	}
 	else

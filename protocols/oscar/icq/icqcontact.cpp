@@ -75,6 +75,8 @@ ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaCo
 	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedAwayMessage( const QString&, const QString& ) ),
 	                  this, SLOT( receivedStatusMessage( const QString&, const QString& ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL( receivedAwayMessage( const Oscar::Message& ) ),
+	                  this, SLOT( receivedStatusMessage( const Oscar::Message& ) ) );
 	QObject::connect( this, SIGNAL( featuresUpdated() ), this, SLOT( updateFeatures() ) );
 
 }
@@ -340,6 +342,25 @@ void ICQContact::receivedStatusMessage( const QString &contact, const QString &m
 
 	if ( ! message.isEmpty() )
 		setProperty( mProtocol->awayMessage, message );
+	else
+		removeProperty( mProtocol->awayMessage );
+}
+
+void ICQContact::receivedStatusMessage( const Oscar::Message &message )
+{
+	if ( Oscar::normalize( message.sender() ) != Oscar::normalize( contactId() ) )
+		return;
+	
+	//decode message
+    QTextCodec* codec = QTextCodec::codecForMib( this->property( "contactEncoding" ).value().toInt() );
+	
+	QString realText = message.text();
+	if ( message.properties() & Oscar::Message::NotDecoded )
+		realText = codec->toUnicode( message.textArray() );
+	
+	
+	if ( !realText.isEmpty() )
+		setProperty( mProtocol->awayMessage, realText );
 	else
 		removeProperty( mProtocol->awayMessage );
 }

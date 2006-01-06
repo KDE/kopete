@@ -134,6 +134,7 @@ private slots:
     void changeEncodingDialogClosed( int );
 
 	void receivedStatusMessage( const QString &contact, const QString &message );
+	void receivedStatusMessage( const Oscar::Message &message );
 
 //void slotCloseAwayMessageDialog();
 	//void slotReadAwayMessage();
