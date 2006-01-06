@@ -163,7 +163,11 @@ AddContactPage *JabberProtocol::createAddContactWidget (QWidget * parent, Kopete
 KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Account * account, QWidget * parent)
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Edit Account Widget\n" << endl;
-	return new JabberEditAccountWidget (this, static_cast < JabberAccount * >(account), parent);
+	JabberAccount *ja=dynamic_cast < JabberAccount * >(account);
+	if(ja)
+		return new JabberEditAccountWidget (this,ja , parent);
+	else
+		return 0L; //FIXME: implement me
 }
 
 Kopete::Account *JabberProtocol::createNewAccount (const QString & accountId)
