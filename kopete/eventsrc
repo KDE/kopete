@@ -1062,6 +1062,7 @@ Comment[hu]=A kapcsolat megszakadt
 Comment[nl]=De verbinding is verbroken
 Comment[pt]=A ligação foi-se abaixo
 Comment[pt_BR]=A ligação foi-se abaixo
+Comment[sv]=Anslutningen har förlorats
 Comment[uk]=З'єднання було втрачено
 default_presentation=16
 
@@ -1231,6 +1232,7 @@ Comment[hu]=Belső hiba történt a szolgáltatásban
 Comment[nl]=Er deed zich een interne fout op de server voor
 Comment[pt]=Ocorreu um erro interno do serviço
 Comment[pt_BR]=Ocorreu um erro interno do serviço
+Comment[sv]=Ett internt fel har inträffat i tjänsten
 Comment[uk]=Трапилась внутрішня помилка служби
 default_presentation=2
 
