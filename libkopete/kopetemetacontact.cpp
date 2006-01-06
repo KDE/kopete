@@ -199,12 +199,6 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 	}
 	else
 	{
-		// if the contact was a source of property data, clean
-		if (displayNameSourceContact() == c)
-			setDisplayNameSourceContact(0L);
-		if (photoSourceContact() == c)
-			setPhotoSourceContact(0L);
-
 		// must check before removing, or will always be false
 		bool wasTrackingName = ( !displayNameSourceContact() && (displayNameSource() == SourceContact) );
 		bool wasTrackingPhoto = ( !photoSourceContact() && (photoSource() == SourceContact) );
@@ -212,6 +206,13 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 		QString currDisplayName = displayName();
 
 		d->contacts.remove( c );
+		
+		// if the contact was a source of property data, clean
+		if (displayNameSourceContact() == c)
+			setDisplayNameSourceContact(0L);
+		if (photoSourceContact() == c)
+			setPhotoSourceContact(0L);
+
 
 		if ( wasTrackingName )
 		{
@@ -621,6 +622,7 @@ QString MetaContact::displayName() const
 			if( d->contacts.count() >= 1 )
 			{// don't call setDisplayNameSource , or there will probably be an infinite loop
 				d->displayNameSourceContact=d->contacts.first();
+//				kdDebug( 14010 ) << k_funcinfo << " setting displayname source for " << metaContactId()  << endl;
 			}
 		}
 		if ( displayNameSourceContact() != 0L )
@@ -629,7 +631,7 @@ QString MetaContact::displayName() const
 		}
 		else
 		{
-			kdDebug( 14010 ) << k_funcinfo << " source == SourceContact , but there is no displayNameSourceContact " << endl;
+//			kdDebug( 14010 ) << k_funcinfo << " source == SourceContact , but there is no displayNameSourceContact for contact " << metaContactId() << endl;
 		}
 	}
 	return d->displayName;
@@ -963,7 +965,6 @@ const QDomElement MetaContact::toXML(bool minimal)
 	// set contact source metadata
 	if (displayNameSourceContact())
 	{
-		//kdDebug(14010) << k_funcinfo << "serializing name source " << nameFromContact(displayNameSourceContact()) << endl;
 		QDomElement contactNameSource = metaContact.createElement( QString::fromUtf8("contact-source") );
 		contactNameSource.setAttribute( NSCID_ELEM, displayNameSourceContact()->contactId() );
 		contactNameSource.setAttribute( NSPID_ELEM, displayNameSourceContact()->protocol()->pluginId() );
