@@ -300,12 +300,8 @@ MetaContact* ContactList::myself()
 
 void ContactList::loadGlobalIdentity()
 {
-	bool useGlobalIdentity;
-
-	useGlobalIdentity = Kopete::Config::enableGlobalIdentity();
- 
  	// Apply the global identity
-	if(useGlobalIdentity)
+	if(Kopete::Config::enableGlobalIdentity())
  	{
 		connect(myself(), SIGNAL(displayNameChanged(const QString&, const QString&)), this, SLOT(slotDisplayNameChanged()));
 		connect(myself(), SIGNAL(photoChanged()), this, SLOT(slotPhotoChanged()));
@@ -447,7 +443,8 @@ void ContactList::loadXML()
 				Kopete::ContactList::self()->addGroup( group );
 			}
 		}
-		else if( element.tagName() == QString::fromLatin1("myself-meta-contact") )
+		// Only load myself metacontact information when Global Identity is enabled.
+		else if( element.tagName() == QString::fromLatin1("myself-meta-contact") && Kopete::Config::enableGlobalIdentity() )
 		{
 			if( !myself()->fromXML( element ) )
 			{
@@ -901,9 +898,12 @@ const QDomDocument ContactList::toXML()
 			doc.documentElement().appendChild( doc.importNode( m->toXML(), true ) );
 
 	// Save myself metacontact information
-	QDomElement myselfElement = myself()->toXML(true); // Save minimal information.
-	myselfElement.setTagName( QString::fromLatin1("myself-meta-contact") );
-	doc.documentElement().appendChild( doc.importNode( myselfElement, true ) );
+	if( Kopete::Config::enableGlobalIdentity() )
+	{
+		QDomElement myselfElement = myself()->toXML(true); // Save minimal information.
+		myselfElement.setTagName( QString::fromLatin1("myself-meta-contact") );
+		doc.documentElement().appendChild( doc.importNode( myselfElement, true ) );
+	}
 
 	return doc;
 }
