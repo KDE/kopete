@@ -211,6 +211,17 @@ JabberProtocol * JabberTransport::protocol( ) const
 	return m_account->protocol(); 
 }
 
+bool JabberTransport::removeAccount( )
+{
+	XMPP::JT_Register *task = new XMPP::JT_Register ( m_account->client()->rootTask () );
+	QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( deleteLater() ) );
+
+	//JabberContact *my=static_cast<JabberContact*>(myself());
+	task->unreg ( myself()->contactId() );
+	task->go ( true );
+	return true;
+}
+
 
 
 #include "jabbertransport.moc"

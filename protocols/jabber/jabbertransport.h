@@ -67,6 +67,12 @@ public:
 
 	void connect( const Kopete::OnlineStatus& ) {}
 	virtual void disconnect( ) {}
+	
+	/** 
+	 * called when the account is removed in the config ui
+	 * will remove the subscription
+	 */
+	virtual bool removeAccount();
 
 public slots:
 
