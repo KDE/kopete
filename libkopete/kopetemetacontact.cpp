@@ -611,9 +611,20 @@ QString MetaContact::displayName() const
 	}
 	else if ( source == SourceContact )
 	{
+		if ( d->displayNameSourceContact==0 )
+		{
+			if( d->contacts.count() >= 1 )
+			{// don't call setDisplayNameSource , or there will probably be an infinite loop
+				d->displayNameSourceContact=d->contacts.first();
+			}
+		}
 		if ( displayNameSourceContact() != 0L )
 		{
 			return nameFromContact(displayNameSourceContact());
+		}
+		else
+		{
+			kdDebug( 14010 ) << k_funcinfo << " source == SourceContact , but there is no displayNameSourceContact " << endl;
 		}
 	}
 	return d->displayName;
