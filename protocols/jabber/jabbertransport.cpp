@@ -182,6 +182,13 @@ bool JabberTransport::removeAccount( )
 {
 	if(m_status == Removing)
 		return true; //so it can be deleted
+	
+	if (!account()->isConnected())
+	{
+		account()->errorConnectFirst ();
+		return false;
+	}
+	
 	m_status = Removing;
 	XMPP::JT_Register *task = new XMPP::JT_Register ( m_account->client()->rootTask () );
 	QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( removeAllContacts() ) );
