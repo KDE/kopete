@@ -555,18 +555,18 @@ void KopeteWindow::slotUpdateToolbar()
 
 void KopeteWindow::slotGlobalAway()
 {
-	Kopete::AccountManager::self()->setAwayAll( m_globalStatusMessage->text() );
+	Kopete::AccountManager::self()->setAwayAll( m_globalStatusMessageStored );
 }
 
 void KopeteWindow::slotGlobalBusy()
 {
 	Kopete::AccountManager::self()->setOnlineStatus(
-			Kopete::OnlineStatusManager::Busy, m_globalStatusMessage->text() );
+			Kopete::OnlineStatusManager::Busy, m_globalStatusMessageStored );
 }
 
 void KopeteWindow::slotGlobalAvailable()
 {
-	Kopete::AccountManager::self()->setAvailableAll( m_globalStatusMessage->text() );
+	Kopete::AccountManager::self()->setAvailableAll( m_globalStatusMessageStored );
 }
 
 void KopeteWindow::slotSetInvisibleAll()
@@ -577,6 +577,7 @@ void KopeteWindow::slotSetInvisibleAll()
 void KopeteWindow::slotDisconnectAll()
 {
 	m_globalStatusMessage->setText( "" );
+	m_globalStatusMessageStored = QString();
 	Kopete::AccountManager::self()->disconnectAll();
 }
 
@@ -723,8 +724,11 @@ void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 	Kopete::OnlineStatus status = contact->onlineStatus();
 
 	if ( status != Kopete::OnlineStatus::Connecting )
-		m_globalStatusMessage->setText( contact->property( Kopete::Global::Properties::self()->awayMessage() ).value().toString() );
-
+	{
+		m_globalStatusMessageStored = contact->property( Kopete::Global::Properties::self()->awayMessage() ).value().toString();
+		m_globalStatusMessage->setText( m_globalStatusMessageStored );
+	}
+	
 	KopeteAccountStatusBarIcon *i = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ contact->account() ] );
 	if( !i )
 		return;
@@ -876,6 +880,7 @@ void KopeteWindow::setStatusMessage( const QString & message )
 		}
 	}
 	Kopete::Away::getInstance()->setGlobalAwayMessage( message );
+	m_globalStatusMessageStored = message;
 	m_globalStatusMessage->setText( message );
 }
 

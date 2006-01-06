@@ -240,6 +240,7 @@ private:
 	KSqueezedTextLabel * m_globalStatusMessage;
 	KPopupMenu * m_globalStatusMessageMenu;
 	QLineEdit * m_newMessageEdit;
+	QString m_globalStatusMessageStored;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:
