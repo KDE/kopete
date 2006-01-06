@@ -326,16 +326,38 @@ void ContactList::loadGlobalIdentity()
 
 void ContactList::slotDisplayNameChanged()
 {
+	static bool mutex=false;
+	if(mutex)
+	{
+		kdDebug (14010) << k_funcinfo << " mutex blocked" << endl ;
+		return;
+	}
+	mutex=true;
+
 	kdDebug( 14010 ) << k_funcinfo << myself()->displayName() << endl;
 
 	emit globalIdentityChanged(Kopete::Global::Properties::self()->nickName().key(), myself()->displayName());
+	mutex=false;
 }
 
 void ContactList::slotPhotoChanged()
 {
+	static bool mutex=false;
+	if(mutex)
+	{
+		kdDebug (14010) << k_funcinfo << " mutex blocked" << endl ;
+		return;
+	}
+	mutex=true;
 	kdDebug( 14010 ) << k_funcinfo << myself()->picture().path() << endl;
 
 	emit globalIdentityChanged(Kopete::Global::Properties::self()->photo().key(), myself()->picture().path());
+	mutex=false;
+	/* The mutex is usefull to don't have such as stack overflow 
+	Kopete::ContactList::slotPhotoChanged  ->  Kopete::ContactList::globalIdentityChanged  
+	MSNAccount::slotGlobalIdentityChanged  ->  Kopete::Contact::propertyChanged 
+	Kopete::MetaContact::slotPropertyChanged -> Kopete::MetaContact::photoChanged -> Kopete::ContactList::slotPhotoChanged 
+	*/
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
