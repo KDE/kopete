@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>443</width>
-            <height>398</height>
+            <width>391</width>
+            <height>370</height>
         </rect>
     </property>
     <property name="caption">
@@ -208,47 +208,46 @@ Expressions in brackets depend on a substitution being made.</string>
                         <property name="title">
                             <string></string>
                         </property>
-                        <grid>
+                        <vbox>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLayoutWidget" row="0" column="0">
+                            <widget class="QRadioButton">
                                 <property name="name">
-                                    <cstring>layout6</cstring>
+                                    <cstring>kcfg_ExplicitAdvertising</cstring>
                                 </property>
-                                <vbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QRadioButton">
-                                        <property name="name">
-                                            <cstring>kcfg_ExplicitAdvertising</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>Explicit &amp;via "Tools-&gt;Send Media Info",
+                                <property name="text">
+                                    <string>Explicit &amp;via "Tools-&gt;Send Media Info",
 or by typing "/media" in the chat
 window edit area.</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="QRadioButton">
-                                        <property name="name">
-                                            <cstring>kcfg_ChatAdvertising</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>Show in chat &amp;window (automatic)</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="QRadioButton">
-                                        <property name="name">
-                                            <cstring>kcfg_StatusAdvertising</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>Show in &amp;your status message (automatic)</string>
-                                        </property>
-                                    </widget>
-                                </vbox>
+                                </property>
                             </widget>
-                        </grid>
+                            <widget class="QRadioButton">
+                                <property name="name">
+                                    <cstring>kcfg_ChatAdvertising</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;Show in chat window (automatic)</string>
+                                </property>
+                            </widget>
+                            <widget class="QRadioButton">
+                                <property name="name">
+                                    <cstring>kcfg_StatusAdvertising</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Show &amp;the music you are listening to 
+in place of your status message.</string>
+                                </property>
+                            </widget>
+                            <widget class="QRadioButton">
+                                <property name="name">
+                                    <cstring>kcfg_AppendStatusAdvertising</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Appe&amp;nd to your status message</string>
+                                </property>
+                            </widget>
+                        </vbox>
                     </widget>
                     <spacer>
                         <property name="name">
@@ -263,7 +262,7 @@ window edit area.</string>
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>40</height>
+                                <height>80</height>
                             </size>
                         </property>
                     </spacer>

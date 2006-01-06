@@ -33,8 +33,13 @@
 		</entry>
 
 		<entry name="StatusAdvertising" type="Bool">
-			<label>Show the current music listened in your status message.</label>
+			<label>Show the current music listened in place of your status message.</label>
 			<default>false</default>
+		</entry>
+
+		<entry name="AppendStatusAdvertising" type="Bool">
+			<label>Show the current music listened appended to your status message.</label>
+			<default>false</default> 
 		</entry>
 	
 		<entry name="UseSpecifiedMediaPlayer" type="Bool">
