@@ -141,7 +141,7 @@ void dlgJabberServices::slotQueryFinished ()
 		dlgJabberServies_item *item=new dlgJabberServies_item( lvServices , (*it).jid ().userHost () , (*it).name ());
 		item->jid=(*it).jid();
 		item->can_browse=(*it).features().canSearch();
-		item->can_browse=(*it).features().canRegister();
+		item->can_register=(*it).features().canRegister();
 	}
 }
 
