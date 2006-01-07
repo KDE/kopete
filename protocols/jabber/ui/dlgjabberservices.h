@@ -25,6 +25,7 @@
 #include "xmpp_tasks.h"
 
 #include "dlgservices.h"
+#include <qlistview.h>
 
 /**
   *@author Till Gerken <till@tantalo.net>
@@ -39,17 +40,34 @@ public:
 	 ~dlgJabberServices ();
 
 private slots:
-	void slotSetSelection (int row, int, int, const QPoint &);
+	void slotSetSelection (QListViewItem *);
 	void slotQuery ();
 	void slotQueryFinished ();
 	void slotRegister ();
 	void slotBrowse ();
+	
+	void slotDiscoFinished();
 
 private:
 	JabberAccount *m_account;
 	XMPP::JT_GetServices * serviceTask;
-	int selectedRow;
+	XMPP::Jid current_jid;
 
+};
+
+
+class dlgJabberServies_item : protected QObject, public QListViewItem  
+{
+	Q_OBJECT
+	public:
+		dlgJabberServies_item( QListView *parent , const QString &s1 , const QString &s2 ) 
+			: QListViewItem(parent,s1,s2), can_browse(false) , can_register(false) {}
+		bool can_browse, can_register;
+		XMPP::Jid jid;
+		
+		void updateInfo(const XMPP::Jid& jid, const QString &node , JabberAccount *account);
+	private slots:
+		void slotDiscoFinished();
 };
 
 #endif
