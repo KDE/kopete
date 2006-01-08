@@ -25,10 +25,13 @@
 #include <kopetecontact.h>
 #include <kopetecontactlist.h>
 
+#include <kopeteversion.h>
+
 #include <qpixmap.h>
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <kconfig.h>
 
 #include "xmpp_tasks.h"
 
@@ -41,6 +44,37 @@ JabberTransport::JabberTransport (JabberAccount * parentAccount, const QString &
 	
 	JabberContact *myContact = m_account->contactPool()->addContact ( XMPP::RosterItem ( myselfContactId ), Kopete::ContactList::self()->myself(), false );
 	setMyself( myContact );
+	
+	//we have to know if the account get loaded from the config, or newly created
+	bool exist=configGroup()->readBoolEntry("exist",false);
+	
+	if(!exist)
+	{
+		setColor( account()->color() );
+#if KOPETE_IS_VERSION(0,11,51)
+		//TODO:  use http://www.jabber.org/registrar/disco-categories.html#gateway
+		QString cIcon;
+		if(myselfContactId.startsWith("msn"))
+			cIcon="msn_protocol";
+		else if(myselfContactId.startsWith("icq"))
+			cIcon="icq_protocol";
+		else if(myselfContactId.startsWith("aim"))
+			cIcon="aim_protocol";
+		else if(myselfContactId.startsWith("irc"))
+			cIcon="irc_protocol";
+		else if(myselfContactId.startsWith("yahoo"))
+			cIcon="yahoo_protocol";
+		else if(myselfContactId.startsWith("sms"))
+			cIcon="sms_protocol";
+		else if(myselfContactId.startsWith("gg"))
+			cIcon="gadu_protocol";
+		
+		if( !cIcon.isEmpty() )
+			setCustomIcon( cIcon );
+		configGroup()->writeEntry("exist",true);
+#endif
+	}
+	
 	m_status=Normal;
 }
 
