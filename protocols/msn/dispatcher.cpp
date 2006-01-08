@@ -212,68 +212,67 @@ void Dispatcher::startWebcam(const QString &/*myHandle*/, const QString &msgHand
 
 void Dispatcher::slotReadMessage(const QString &from, const QByteArray& stream)
 {
-	// FIXME: Commented out to make compile -DarkShock
-// 	P2P::Message receivedMessage =
-// 		m_messageFormatter.readMessage(stream);
-// 
-// 	receivedMessage.source = from;
-// 
-// 	if(receivedMessage.contentType == "application/x-msnmsgrp2p")
-// 	{
-// 		if((receivedMessage.header.dataSize == 0)/* && ((receivedMessage.header.flag & 0x02) == 0x02)*/)
-// 		{
-// 			TransferContext *current = 0l;
-// 			QMap<Q_UINT32, TransferContext*>::Iterator it = m_sessions.begin();
-// 			for(; it != m_sessions.end(); it++)
-// 			{
-// 				if(receivedMessage.header.ackSessionIdentifier == it.data()->m_identifier){
-// 					current = it.data();
-// 					break;
-// 				}
-// 			}
-// 
-// 			if(current){
-//     			// Inform the transfer object of the acknowledge.
-//     			current->m_ackSessionIdentifier = receivedMessage.header.identifier;
-//     			current->m_ackUniqueIdentifier = receivedMessage.header.ackSessionIdentifier;
-// 				current->acknowledged();
-// 			}
-// 			else
-// 			{
-// 				kdDebug(14140) << k_funcinfo
-// 					<< "no transfer context with identifier, "
-// 					<< receivedMessage.header.ackSessionIdentifier
-// 					<< endl;
-// 			}
-// 			return;
-// 		}
-// 
-// 		if(m_messageBuffer.contains(receivedMessage.header.identifier))
-// 		{
-// 			kdDebug(14140) << k_funcinfo
-// 				<< QString("retrieving buffered messsage, %1").arg(receivedMessage.header.identifier)
-// 				<< endl;
-// 
-// 			// The message was split, try to reconstruct the message
-// 			// with this received piece.
-// 			Message bufferedMessage = m_messageBuffer[receivedMessage.header.identifier];
-// 			// Remove the buffered message.
-// 			m_messageBuffer.remove(receivedMessage.header.identifier);
-// 
-// 			bufferedMessage.body.resize(bufferedMessage.body.size() + receivedMessage.header.dataSize);
-// 			for(Q_UINT32 i=0; i < receivedMessage.header.dataSize; i++){
-// 				// Add the remaining message data to the buffered message.
-// 				bufferedMessage.body[receivedMessage.header.dataOffset + i] = receivedMessage.body[i];
-// 			}
-// 			bufferedMessage.header.dataSize += receivedMessage.header.dataSize;
-// 			bufferedMessage.header.dataOffset = 0;
-// 
-// 			receivedMessage = bufferedMessage;
-// 		}
-// 
-// 		// Dispatch the received message.
-// 		dispatch(receivedMessage);
-// 	}
+	P2P::Message receivedMessage =
+		m_messageFormatter.readMessage(stream);
+
+	receivedMessage.source = from;
+
+	if(receivedMessage.contentType == "application/x-msnmsgrp2p")
+	{
+		if((receivedMessage.header.dataSize == 0)/* && ((receivedMessage.header.flag & 0x02) == 0x02)*/)
+		{
+			TransferContext *current = 0l;
+			QMap<Q_UINT32, TransferContext*>::Iterator it = m_sessions.begin();
+			for(; it != m_sessions.end(); it++)
+			{
+				if(receivedMessage.header.ackSessionIdentifier == it.data()->m_identifier){
+					current = it.data();
+					break;
+				}
+			}
+
+			if(current){
+    			// Inform the transfer object of the acknowledge.
+    			current->m_ackSessionIdentifier = receivedMessage.header.identifier;
+    			current->m_ackUniqueIdentifier = receivedMessage.header.ackSessionIdentifier;
+				current->acknowledged();
+			}
+			else
+			{
+				kdDebug(14140) << k_funcinfo
+					<< "no transfer context with identifier, "
+					<< receivedMessage.header.ackSessionIdentifier
+					<< endl;
+			}
+			return;
+		}
+
+		if(m_messageBuffer.contains(receivedMessage.header.identifier))
+		{
+			kdDebug(14140) << k_funcinfo
+				<< QString("retrieving buffered messsage, %1").arg(receivedMessage.header.identifier)
+				<< endl;
+
+			// The message was split, try to reconstruct the message
+			// with this received piece.
+			Message bufferedMessage = m_messageBuffer[receivedMessage.header.identifier];
+			// Remove the buffered message.
+			m_messageBuffer.remove(receivedMessage.header.identifier);
+
+			bufferedMessage.body.resize(bufferedMessage.body.size() + receivedMessage.header.dataSize);
+			for(Q_UINT32 i=0; i < receivedMessage.header.dataSize; i++){
+				// Add the remaining message data to the buffered message.
+				bufferedMessage.body[receivedMessage.header.dataOffset + i] = receivedMessage.body[i];
+			}
+			bufferedMessage.header.dataSize += receivedMessage.header.dataSize;
+			bufferedMessage.header.dataOffset = 0;
+
+			receivedMessage = bufferedMessage;
+		}
+
+		// Dispatch the received message.
+		dispatch(receivedMessage);
+	}
 }
 
 void Dispatcher::dispatch(const P2P::Message& message)
