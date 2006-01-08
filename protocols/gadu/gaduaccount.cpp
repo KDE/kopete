@@ -83,6 +83,7 @@ public:
 
 	QString		lastDescription;
 	bool		forFriends;
+	bool		ignoreAnons;
         
 	QTimer*         exportTimer_;
 	bool		exportUserlist;
@@ -157,6 +158,8 @@ static const char* const servers_ip[] = {
 
 	p->config = configGroup();
 
+	p->ignoreAnons = ignoreAnons();
+	
 	initConnections();
 	initActions();
 
@@ -597,6 +600,10 @@ GaduAccount::messageReceived( KGaduMessage* gaduMessage )
 	contact = static_cast<GaduContact*> ( contacts()[ QString::number( gaduMessage->sender_id ) ] );
 
 	if ( !contact ) {
+		if ( p->ignoreAnons == true ) {
+			return;
+		}
+
 		Kopete::MetaContact* metaContact = new Kopete::MetaContact ();
 		metaContact->setTemporary ( true );
 		contact = new GaduContact( gaduMessage->sender_id,
@@ -1138,6 +1145,33 @@ GaduAccount::setDcc( bool d )
 	kdDebug( 14100 ) << "s: "<<s<<endl;
 
 	return f;
+}
+
+// might be bit inconsistent with what I used in DCC, but hell, it is so much easier to parse :-)
+bool
+GaduAccount::ignoreAnons()
+{
+	QString s;
+	bool r;
+	int n;
+	
+	s = p->config->readEntry( QString::fromAscii( "ignoreAnons" ) );
+	n = s.toInt( &r );
+	
+	if ( n ) {
+		return true;
+	}
+
+	return false;
+	
+}
+
+void 
+GaduAccount::setIgnoreAnons( bool i )
+{
+	p->ignoreAnons = i;
+	p->config->writeEntry( QString::fromAscii( "ignoreAnons" ), 
+			i == true ? QString::fromAscii( "1" ) : QString::fromAscii( "0" ) );
 }
 
 GaduAccount::tlsConnection

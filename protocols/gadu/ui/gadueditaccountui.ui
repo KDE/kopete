@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>545</width>
+            <width>580</width>
             <height>390</height>
         </rect>
     </property>
@@ -217,11 +217,28 @@ If you do not currently have an account, please click the button to create one.<
                 <attribute name="title">
                     <string>A&amp;ccount Preferences</string>
                 </attribute>
-                <vbox>
+                <grid>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QGroupBox">
+                    <spacer row="1" column="0">
+                        <property name="name">
+                            <cstring>spacer16</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>160</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QGroupBox" row="0" column="0">
                         <property name="name">
                             <cstring>groupBox64</cstring>
                         </property>
@@ -234,26 +251,6 @@ If you do not currently have an account, please click the button to create one.<
                             </property>
                             <widget class="QCheckBox" row="1" column="0">
                                 <property name="name">
-                                    <cstring>cacheServersCheck__</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
-                                <property name="text">
-                                    <string>C&amp;ache server information</string>
-                                </property>
-                                <property name="checked">
-                                    <bool>true</bool>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Cache connection information for each server connected to in case the main load-balancing server fails.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>This option is used whenever the primary Gadu-Gadu load-balancing server fails.  If this is checked, Kopete will try to connect to the actual servers directly using cached information about them.  This prevents connection errors when the main load-balancing server does not answer. In practice it only helps very rarely.</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="2" column="0">
-                                <property name="name">
                                     <cstring>dccCheck_</cstring>
                                 </property>
                                 <property name="enabled">
@@ -261,6 +258,9 @@ If you do not currently have an account, please click the button to create one.<
                                 </property>
                                 <property name="text">
                                     <string>&amp;Use direct connections (DCC)</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+U</string>
                                 </property>
                                 <property name="checked">
                                     <bool>true</bool>
@@ -325,26 +325,49 @@ If you do not currently have an account, please click the button to create one.<
                                     </widget>
                                 </hbox>
                             </widget>
+                            <widget class="QCheckBox" row="0" column="0">
+                                <property name="name">
+                                    <cstring>cacheServersCheck__</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>false</bool>
+                                </property>
+                                <property name="text">
+                                    <string>C&amp;ache server information</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+A</string>
+                                </property>
+                                <property name="checked">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Cache connection information for each server connected to in case the main load-balancing server fails.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>This option is used whenever the primary Gadu-Gadu load-balancing server fails.  If this is checked, Kopete will try to connect to the actual servers directly using cached information about them.  This prevents connection errors when the main load-balancing server does not answer. In practice it only helps very rarely.</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="2" column="0">
+                                <property name="name">
+                                    <cstring>ignoreCheck_</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="text">
+                                    <string>Ignore people off your contact list</string>
+                                </property>
+                                <property name="accel">
+                                    <string></string>
+                                </property>
+                                <property name="checked">
+                                    <bool>false</bool>
+                                </property>
+                            </widget>
                         </grid>
                     </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer16</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>160</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </vbox>
+                </grid>
             </widget>
             <widget class="QWidget">
                 <property name="name">
@@ -851,6 +874,7 @@ If you do not currently have an account, please click the button to create one.<
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klineedit.h</includehint>
+    <includehint>kopete::ui::passwordwidget.h</includehint>
     <includehint>krestrictedline.h</includehint>
 </includehints>
 </UI>
