@@ -66,7 +66,8 @@ public:
 	 */
 	virtual bool removeAccount();
 	
-	enum TransportStatus { Normal , Creating, Removing };
+
+	enum TransportStatus { Normal , Creating, Removing , AccountRemoved };
 	TransportStatus transportStatus() { return m_status; };
 	
 	/**
@@ -85,6 +86,12 @@ public slots:
 	 * loop over all contact and remove them
 	 */
 	void removeAllContacts();
+	
+	/**
+	 * the JabberAccount has been removed from Kopete,  remove this account also
+	 */
+	void jabberAccountRemoved();
+
 
 protected:
 	/**

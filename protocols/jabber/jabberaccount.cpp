@@ -1556,6 +1556,26 @@ void JabberAccount::removeTransport( const QString &jid )
 	m_transports.remove(jid);
 }
 
+bool JabberAccount::removeAccount( )
+{
+	//TODO: ask to remove the account on the server.
+
+	//result=messagebox("do you want to remove on te server")
+	//if(result=yes)  { JT_Rgister->go(true) } //remove the account on server
+	//if(result=cancel)  { return false }
+	//if(result=no) {  //remove the transports from config file
+
+	QMap<QString,JabberTransport*> tranposrts_copy=m_transports;
+	QMap<QString,JabberTransport*>::Iterator it;
+	for ( it = tranposrts_copy.begin(); it != tranposrts_copy.end(); ++it )
+	{
+		(*it)->jabberAccountRemoved();
+	}
+	return true;
+}
+
+
+
 #include "jabberaccount.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

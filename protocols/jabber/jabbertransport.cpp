@@ -214,7 +214,7 @@ JabberProtocol * JabberTransport::protocol( ) const
 
 bool JabberTransport::removeAccount( )
 {
-	if(m_status == Removing)
+	if(m_status == Removing  ||  m_status == AccountRemoved)
 		return true; //so it can be deleted
 	
 	if (!account()->isConnected())
@@ -261,6 +261,12 @@ QString JabberTransport::legacyId( const XMPP::Jid & jid )
 		return QString();
 	QString node = jid.node();
 	return node.replace("%","@");
+}
+
+void JabberTransport::jabberAccountRemoved( )
+{
+	m_status = AccountRemoved;
+	Kopete::AccountManager::self()->removeAccount( this ); //this will delete this	
 }
 
 

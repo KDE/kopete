@@ -120,6 +120,12 @@ public:
 	
 	const QMap<QString, JabberTransport *> &transports()
 	{ return m_transports; }
+	
+	
+	/** 
+	 * called when the account is removed in the config ui
+	*/
+	virtual bool removeAccount();
 
 public slots:
 	/* Connects to the server. */
@@ -156,6 +162,8 @@ protected:
 	 * @param parentContact The metacontact to add this contact to
 	 */
 	virtual bool createContact (const QString & contactID, Kopete::MetaContact * parentContact);
+	
+	
 
 private:
 	JabberProtocol *m_protocol;
