@@ -583,25 +583,6 @@ bool JT_PushPresence::take(const QDomElement &e)
 			p.setError(code, str);
 		}
 		else {
-			for(QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling()) {
-				QDomElement i = n.toElement();
-				if(i.isNull())
-					continue;
-
-				if(i.tagName() == "x" && i.attribute("xmlns") == "http://jabber.org/protocol/roster-subsync") {
-					QDomElement item;
-					bool found;
-					item = findSubTag(i, "item", &found);	
-					if(found && !item.isNull()) {
-						QString subs=item.attribute("subscription");
-						if(!subs.isNull())
-						{
-							type=type+":"+subs;
-							break;
-						}
-					}
-				}
-			}
 			subscription(j, type);
 			return true;
 		}
