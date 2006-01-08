@@ -50,6 +50,7 @@
 #include "kopeteuiglobal.h"
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
+#include "kopeteaccountmanager.h"
 
 #include "jabberconnector.h"
 #include "jabberclient.h"
@@ -89,6 +90,7 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 #ifdef SUPPORT_JINGLE
 	m_voiceCaller = 0L;
 #endif
+	m_removing=false;
 
 	// add our own contact to the pool
 	JabberContact *myContact = contactPool()->addContact ( XMPP::RosterItem ( accountId ), Kopete::ContactList::self()->myself(), false );
@@ -974,7 +976,8 @@ void JabberAccount::slotCSError ( int error )
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Disconnecting." << endl;
 
 		// display message to user
-		handleStreamError (error, client()->clientStream()->errorCondition (), client()->clientConnector()->errorCode (), server (), errorClass);
+		if(!m_removing) //when removing the account, connection errors are normal.
+			handleStreamError (error, client()->clientStream()->errorCondition (), client()->clientConnector()->errorCode (), server (), errorClass);
 
 		disconnect ( errorClass );
 
@@ -1558,13 +1561,42 @@ void JabberAccount::removeTransport( const QString &jid )
 
 bool JabberAccount::removeAccount( )
 {
-	//TODO: ask to remove the account on the server.
-
-	//result=messagebox("do you want to remove on te server")
-	//if(result=yes)  { JT_Rgister->go(true) } //remove the account on server
-	//if(result=cancel)  { return false }
-	//if(result=no) {  //remove the transports from config file
-
+	if(!m_removing)
+	{
+		int result=KMessageBox::warningYesNoCancel( Kopete::UI::Global::mainWidget () ,
+				   i18n( "Do you want to also unregister \"%1\" from the Jabber server ?\n"
+				   			    "If you unregister, all your contact list may be removed on the server,"
+							    "And you will never be able to connect to this account with any client").arg( accountLabel() ),
+					i18n("Unregister"),
+					KGuiItem(i18n( "Remove and Unregister" ), "editdelete"),
+					KGuiItem(i18n( "Remove from kopete only"), "edittrash"),
+					"askUnregisterJabberAccount", KMessageBox::Notify | KMessageBox::Dangerous );
+		if(result == KMessageBox::Cancel)
+		{
+			return false;
+		}
+		else if(result == KMessageBox::Yes)
+		{
+			if (!isConnected())
+			{
+				errorConnectFirst ();
+				return false;
+			}
+			
+			XMPP::JT_Register *task = new XMPP::JT_Register ( client()->rootTask () );
+			QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotUnregisterFinished ) );
+			task->unreg ();
+			task->go ( true );
+			m_removing=true;
+			// from my experiment, not all server reply us with a response.   it simply dosconnect
+			// so after one seconde, we will force to remove the account
+			QTimer::singleShot(1111, this, SLOT(slotUnregisterFinished())); 
+			
+			return false; //the account will be removed when the task will be finished
+		}
+	}
+	
+	//remove transports from config file.
 	QMap<QString,JabberTransport*> tranposrts_copy=m_transports;
 	QMap<QString,JabberTransport*>::Iterator it;
 	for ( it = tranposrts_copy.begin(); it != tranposrts_copy.end(); ++it )
@@ -1572,6 +1604,22 @@ bool JabberAccount::removeAccount( )
 		(*it)->jabberAccountRemoved();
 	}
 	return true;
+}
+
+void JabberAccount::slotUnregisterFinished( )
+{
+	const XMPP::JT_Register * task = dynamic_cast<const XMPP::JT_Register *>(sender ());
+
+	if ( task && ! task->success ())
+	{
+		KMessageBox::queuedMessageBox ( 0L, KMessageBox::Error,
+			i18n ("An error occured when trying to remove the account:\n%1").arg(task->statusString()),
+			i18n ("Jabber Account Unregistration"));
+		m_removing=false;
+		return;
+	}
+	if(m_removing)  //it may be because this is now the timer.
+		Kopete::AccountManager::self()->removeAccount( this ); //this will delete this
 }
 
 

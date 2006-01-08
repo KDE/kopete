@@ -199,6 +199,8 @@ private:
 
 	QMap<QString, JabberTransport *>m_transports;
 	
+	/* used in removeAccount() */
+	bool m_removing;
 private slots:
 	/* Connects to the server. */
 	void slotConnect ();
@@ -278,6 +280,9 @@ private slots:
 	
 	/* we received a voice invitation */	
 	void slotIncomingVoiceCall(const Jid&);
+	
+	/* the unregister task finished */
+	void slotUnregisterFinished();
 };
 
 #endif
