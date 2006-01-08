@@ -248,7 +248,6 @@
 <customwidgets>
     <customwidget>
         <class>SMPPPDLocationWidget</class>
-        <header location="global">/usr/src/build/zxmpl18/kdesvn/kdenetwork/kopete/plugins/smpppdcs/config/smpppdlocationwidget.h</header>
         <sizehint>
             <width>16</width>
             <height>16</height>
