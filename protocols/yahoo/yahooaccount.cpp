@@ -751,6 +751,26 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 		}
 	}
 	
+	// Remove FADE and ALT tags
+    regExp.setPattern( "<[/]*FADE([^>]*)>" );
+    pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( newMsgText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			newMsgText.replace( regExp, QString::fromLatin1("" ) );
+		}
+	}
+	regExp.setPattern( "<[/]*ALT([^>]*)>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( newMsgText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			newMsgText.replace( regExp, QString::fromLatin1("" ) );
+		}
+	}
+				
 	// Replace < and > in text
 	regExp.setPattern( "<(?![\"/fbui])" );
 	pos = 0;
