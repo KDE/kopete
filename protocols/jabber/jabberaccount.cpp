@@ -51,6 +51,7 @@
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
+#include "contactaddednotifydialog.h"
 
 #include "jabberconnector.h"
 #include "jabberclient.h"
@@ -1063,84 +1064,21 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 		 */
 		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << jid.full () << " is asking for authorization to subscribe." << endl;
 
+		// Is the user already in our contact list?
+		JabberBaseContact *contact = contactPool()->findExactMatch( jid );
 		Kopete::MetaContact *metaContact=0L;
-		Kopete::Contact *contact;
-		XMPP::JT_Presence *task;
-
-		switch (KMessageBox::questionYesNoCancel (Kopete::UI::Global::mainWidget (),
-												  i18n
-												  ("The Jabber user %1 wants to add you to their "
-												   "contact list; do you want to authorize them? "
-												   "Selecting Cancel will ignore the request.").
-												  arg (jid.userHost (), 1), i18n ("Authorize Jabber User?"), i18n ("Authorize"), i18n ("Deny")))
-		{
-			case KMessageBox::Yes:
-				/*
-				 * Authorize user.
-				 */
-
-				// this safety check needs to be here because
-				// a long time could have passed between the
-				// actual request and the user's answer
-				if ( !isConnected () )
-				{
-					errorConnectionLost ();
-					break;
-				}
-
-				task = new XMPP::JT_Presence ( client()->rootTask () );
-
-				task->sub ( jid, "subscribed" );
-				task->go ( true );
-
-				// Is the user already in our contact list?
-				contact = contactPool()->findExactMatch( jid );
-				if(contact)
-					metaContact=contact->metaContact();
-
-				// If it is not, ask the user if he wants to subscribe in return.
-				if ( ( !metaContact || metaContact->isTemporary() ) &&
-					 ( KMessageBox::questionYesNo (Kopete::UI::Global::mainWidget (),
-												   i18n ( "Do you want to add %1 to your contact list in return?").
-												   arg (jid.userHost (), 1), i18n ("Add Jabber User?"),i18n("Add"), i18n("Do Not Add")) == KMessageBox::Yes) )
-				{
-					// Subscribe to user's presence.
-					task = new XMPP::JT_Presence ( client()->rootTask () );
-
-					task->sub ( jid, "subscribe" );
-					task->go ( true );
-				}
-
-				break;
-
-			case KMessageBox::No:
-				/*
-				 * Reject subscription.
-				 */
-
-				// this safety check needs to be here because
-				// a long time could have passed between the
-				// actual request and the user's answer
-				if ( !isConnected () )
-				{
-					errorConnectionLost ();
-					break;
-				}
-
-				task = new XMPP::JT_Presence ( client()->rootTask () );
-
-				task->sub ( jid, "unsubscribed" );
-				task->go ( true );
-
-				break;
-
-			case KMessageBox::Cancel:
-				/*
-				 * Simply ignore the request.
-				 */
-				break;
-		}
-
+		if(contact)
+			metaContact=contact->metaContact();
+		
+		int hideFlags=Kopete::UI::ContactAddedNotifyDialog::InfoButton;
+		if( metaContact && !metaContact->isTemporary() )
+			hideFlags |= Kopete::UI::ContactAddedNotifyDialog::AddCheckBox | Kopete::UI::ContactAddedNotifyDialog::AddGroupBox ;
+		
+		Kopete::UI::ContactAddedNotifyDialog *dialog=
+				new Kopete::UI::ContactAddedNotifyDialog( jid.full(),QString::null,this, hideFlags );
+		QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),
+						this,SLOT(slotContactAddedNotifyDialogClosed(const QString& )));
+		dialog->show();
 	}
 	else if (type == "unsubscribed")
 	{
@@ -1183,6 +1121,72 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 		}
 	}
 }
+
+void JabberAccount::slotContactAddedNotifyDialogClosed( const QString & contactid )
+{	// the dialog that asked the authorisation is closed. (it was shown in slotSubscrition)
+	
+	XMPP::JT_Presence *task;
+	XMPP::Jid jid(contactid);
+
+	const Kopete::UI::ContactAddedNotifyDialog *dialog =
+			dynamic_cast<const Kopete::UI::ContactAddedNotifyDialog *>(sender());
+	if(!dialog || !isConnected())
+		return;
+
+	if ( dialog->authorized() )
+	{
+		/*
+		* Authorize user.
+		*/
+
+		task = new XMPP::JT_Presence ( client()->rootTask () );
+		task->sub ( jid, "subscribed" );
+		task->go ( true );
+	}
+	else
+	{
+		/*
+		* Reject subscription.
+		*/
+		task = new XMPP::JT_Presence ( client()->rootTask () );
+		task->sub ( jid, "unsubscribed" );
+		task->go ( true );
+	}
+
+
+	if(dialog->added())
+	{
+		Kopete::MetaContact *parentContact=dialog->addContact();
+		if(parentContact)
+		{
+			QStringList groupNames;
+			Kopete::GroupList groupList = parentContact->groups();
+			for(Kopete::Group *group = groupList.first(); group; group = groupList.next())
+				groupNames += group->displayName();
+
+			XMPP::RosterItem item;
+//			XMPP::Jid jid ( contactId );
+
+			item.setJid ( jid );
+			item.setName ( parentContact->displayName() );
+			item.setGroups ( groupNames );
+
+			// add the new contact to our roster.
+			XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( client()->rootTask () );
+
+			rosterTask->set ( item.jid(), item.name(), item.groups() );
+			rosterTask->go ( true );
+
+			// send a subscription request.
+			XMPP::JT_Presence *presenceTask = new XMPP::JT_Presence ( client()->rootTask () );
+	
+			presenceTask->sub ( jid, "subscribe" );
+			presenceTask->go ( true );
+		}
+	}
+}
+
+
 
 void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 {
@@ -1621,6 +1625,7 @@ void JabberAccount::slotUnregisterFinished( )
 	if(m_removing)  //it may be because this is now the timer.
 		Kopete::AccountManager::self()->removeAccount( this ); //this will delete this
 }
+
 
 
 
