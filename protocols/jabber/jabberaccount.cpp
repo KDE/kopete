@@ -164,15 +164,24 @@ KActionMenu *JabberAccount::actionMenu ()
 		this, SLOT (slotJoinNewChat ()), this, "actionJoinChat"));
 
 	m_actionMenu->popupMenu()->insertSeparator();
+	
+	KAction *action;
 
-	m_actionMenu->insert ( new KAction ( i18n ("Services..."), "jabber_serv_on", 0,
-										 this, SLOT ( slotGetServices () ), this, "actionJabberServices") );
+	action =  new KAction ( i18n ("Services..."), "jabber_serv_on", 0,
+							this, SLOT ( slotGetServices () ), this, "actionJabberServices");
+	action->setEnabled( isConnected() );
+	m_actionMenu->insert ( action );
 
-	m_actionMenu->insert ( new KAction ( i18n ("Send Raw Packet to Server..."), "mail_new", 0,
-										 this, SLOT ( slotSendRaw () ), this, "actionJabberSendRaw") );
+	action = new KAction ( i18n ("Send Raw Packet to Server..."), "mail_new", 0,
+										 this, SLOT ( slotSendRaw () ), this, "actionJabberSendRaw") ;
+	action->setEnabled( isConnected() );
+	m_actionMenu->insert ( action );
 
-	m_actionMenu->insert ( new KAction ( i18n ("Edit User Info..."), "identity", 0,
-										 this, SLOT ( slotEditVCard () ), this, "actionEditVCard") );
+	action = new KAction ( i18n ("Edit User Info..."), "identity", 0,
+										 this, SLOT ( slotEditVCard () ), this, "actionEditVCard") ;
+	action->setEnabled( isConnected() );
+	m_actionMenu->insert ( action );
+
 
 	return m_actionMenu;
 
