@@ -769,6 +769,27 @@ void JabberClient::disconnect ()
 
 }
 
+void JabberClient::disconnect( XMPP::Status &reason )
+{
+    if ( d->jabberClient )
+    {
+        if ( d->jabberClientStream->isActive() )
+        {
+            XMPP::JT_Presence *pres = new JT_Presence(rootTask());
+            reason.setIsAvailable( false );
+            pres->pres( reason );
+            pres->go();
+            
+            d->jabberClientStream->close();
+            d->jabberClient->close();
+        }
+    }
+    else
+    {
+        cleanUp();
+    }
+}
+
 bool JabberClient::isConnected () const
 {
 

@@ -86,6 +86,12 @@ public:
 	 * Disconnect from Jabber server.
 	 */
 	void disconnect ();
+	
+	/**
+	 * Disconnect from Jabber server with reason
+	 * @param reason The reason for disconnecting
+	 */
+	void disconnect (XMPP::Status &reason);
 
 	/**
 	 * Returns if this instance is connected to a server.

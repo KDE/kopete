@@ -595,19 +595,21 @@ void JabberAccount::slotIncomingFileTransfer ()
 
 void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status  , const QString &reason)
 {
+	XMPP::Status xmppStatus ( "", reason );
+
 	if( status.status() == Kopete::OnlineStatus::Offline )
 	{
-		disconnect( Kopete::Account::Manual );
-		return;
-	}
+	   	xmppStatus.setIsAvailable( false );
+        kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "CROSS YOUR FINGERS! THIS IS GONNA BE WILD" << endl;
+        if( isConnected() )
+            m_jabberClient->disconnect (xmppStatus);
+    }
 
 	if( isConnecting () )
 	{
 		errorConnectionInProgress ();
 		return;
 	}
-
-	XMPP::Status xmppStatus ( "", reason );
 
 	switch ( status.internalStatus () )
 	{

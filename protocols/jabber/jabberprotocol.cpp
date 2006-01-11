@@ -76,7 +76,7 @@ JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStrin
 	JabberKOSAway(Kopete::OnlineStatus::Away,             80, this, JabberAway, "contact_away_overlay", i18n ("Away"), i18n ("Away"), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasAwayMessage),
 	JabberKOSXA(Kopete::OnlineStatus::Away,               70, this, JabberXA, "contact_xa_overlay", i18n ("Extended Away"), i18n ("Extended Away"), 0, Kopete::OnlineStatusManager::HasAwayMessage),
 	JabberKOSDND(Kopete::OnlineStatus::Away,              60, this, JabberDND, "contact_busy_overlay", i18n ("Do not Disturb"), i18n ("Do not Disturb"), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasAwayMessage),
-	JabberKOSOffline(Kopete::OnlineStatus::Offline,       50, this, JabberOffline, QString::null, i18n ("Offline") ,i18n ("Offline"), Kopete::OnlineStatusManager::Offline ),
+	JabberKOSOffline(Kopete::OnlineStatus::Offline,       50, this, JabberOffline, QString::null, i18n ("Offline") ,i18n ("Offline"), Kopete::OnlineStatusManager::Offline, Kopete::OnlineStatusManager::HasAwayMessage ),
 	JabberKOSInvisible(Kopete::OnlineStatus::Invisible,   40, this, JabberInvisible, "contact_invisible_overlay",   i18n ("Invisible") ,i18n ("Invisible"), Kopete::OnlineStatusManager::Invisible),
 	JabberKOSConnecting(Kopete::OnlineStatus::Connecting, 30, this, JabberConnecting, "jabber_connecting",  i18n("Connecting")),
 	propLastSeen(Kopete::Global::Properties::self()->lastSeen()),
