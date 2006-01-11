@@ -61,6 +61,7 @@
 #include "dlgjabbersendraw.h"
 #include "dlgjabberservices.h"
 #include "dlgjabberchatjoin.h"
+#include "dlgjabberregister.h"
 
 JabberProtocol *JabberProtocol::protocolInstance = 0;
 
@@ -167,7 +168,15 @@ KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Accoun
 	if(ja || !account)
 		return new JabberEditAccountWidget (this,ja , parent);
 	else
-		return 0L; //FIXME: implement me
+	{
+		JabberTransport *transport = dynamic_cast < JabberTransport * >(account);
+		if(!transport)
+			return 0L;
+		dlgJabberRegister *registerDialog = new dlgJabberRegister (transport->account(), transport->myself()->contactId());
+		registerDialog->show (); 
+		registerDialog->raise ();
+		return 0l; //we make ourself our own dialog, not an editAccountWidget.
+	}
 }
 
 Kopete::Account *JabberProtocol::createNewAccount (const QString & accountId)
