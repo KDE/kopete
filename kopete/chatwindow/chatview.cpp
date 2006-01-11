@@ -779,7 +779,7 @@ void ChatView::saveOptions()
 
 //	writeDockConfig ( config, QString::fromLatin1( "ChatViewDock" ) );
 	config->setGroup( QString::fromLatin1( "ChatViewDock" ) );
-	config->writeEntry( QString::fromLatin1( "membersDockPosition" ), membersDockPosition );
+	config->writeEntry( QString::fromLatin1( "membersDockPosition" ), (int)membersDockPosition );
 	config->sync();
 }
 

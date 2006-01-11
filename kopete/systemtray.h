@@ -47,7 +47,7 @@ public:
 	/**
 	 * Retrieve the system tray instance
 	 */
-	static KopeteSystemTray* systemTray( QWidget* parent = 0, const char* name = 0 );
+	static KopeteSystemTray* systemTray( QWidget* parent = 0);
 
 	~KopeteSystemTray();
 
@@ -79,7 +79,7 @@ private slots:
 	void addBalloon();
 
 private:
-	KopeteSystemTray( QWidget* parent, const char* name );
+	KopeteSystemTray( QWidget* parent );
 	QString squashMessage( const Kopete::Message& msgText );
 	void removeBalloonEvent(Kopete::MessageEvent *);
 

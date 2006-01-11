@@ -338,7 +338,7 @@ void KopeteWindow::slotToggleAway()
 
 void KopeteWindow::initSystray()
 {
-	m_tray = KopeteSystemTray::systemTray( this, "KopeteSystemTray" );
+	m_tray = KopeteSystemTray::systemTray( this );
 	Kopete::UI::Global::setSysTrayWId( m_tray->winId() );
 	KMenu *tm = m_tray->contextMenu();
 

@@ -158,7 +158,7 @@ void KopeteApplication::slotLoadPlugins()
 	// Load some plugins exclusively? (--load-plugins=foo,bar)
 	if ( args->isSet( "load-plugins" ) )
 	{
-		config->deleteGroup( "Plugins", true );
+		config->deleteGroup( "Plugins", KConfigBase::Global );
 		showConfigDialog = false;
 		QStringList plugins = QStringList::split( ',', args->getOption( "load-plugins" ) );
 		for ( QStringList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it )

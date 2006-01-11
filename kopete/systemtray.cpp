@@ -47,16 +47,16 @@
 
 KopeteSystemTray* KopeteSystemTray::s_systemTray = 0L;
 
-KopeteSystemTray* KopeteSystemTray::systemTray( QWidget *parent, const char* name )
+KopeteSystemTray* KopeteSystemTray::systemTray( QWidget *parent )
 {
 	if( !s_systemTray )
-		s_systemTray = new KopeteSystemTray( parent, name );
+		s_systemTray = new KopeteSystemTray( parent  );
 
 	return s_systemTray;
 }
 
-KopeteSystemTray::KopeteSystemTray(QWidget* parent, const char* name)
-	: KSystemTray(parent,name), mMovie(0)
+KopeteSystemTray::KopeteSystemTray(QWidget* parent)
+	: KSystemTray(parent), mMovie(0)
 {
 //	kdDebug(14010) << "Creating KopeteSystemTray" << endl;
 	QToolTip::add( this, kapp->aboutData()->shortDescription() );

@@ -212,7 +212,7 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name )
 	else
 		m_button_send = 0L;
 
-	m_status_text = new KSqueezedTextLabel( i18n("Ready."), statusBar(), "m_status_text" );
+	m_status_text = new KSqueezedTextLabel( i18n("Ready."), statusBar() );
 	m_status_text->setAlignment( Qt::AlignLeft | Qt::AlignVCenter );
 	m_status_text->setFont( statusBar()->font() );
 	m_status_text->setFixedHeight( statusBar()->sizeHint().height() );
@@ -1038,7 +1038,7 @@ void KopeteChatWindow::saveOptions()
 	saveMainWindowSettings( config, QString::fromLatin1( "KopeteChatWindow" ) );
 	config->setGroup( QString::fromLatin1("ChatWindowSettings") );
 	if( m_tabBar )
-		config->writeEntry ( QString::fromLatin1("Tab Placement"), m_tabBar->tabPosition() );
+		config->writeEntry ( QString::fromLatin1("Tab Placement"), (int)m_tabBar->tabPosition() );
 
 	config->sync();
 }

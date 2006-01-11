@@ -163,7 +163,7 @@ static const char* const servers_ip[] = {
 	initConnections();
 	initActions();
 
-	QString nick = p->config->readEntry( QString::fromAscii( "nickName" ) );
+	QString nick = p->config->readEntry( QString::fromAscii( "nickName" ), QString() );
 	if ( !nick.isNull() ) {
 		myself()->setProperty( Kopete::Global::Properties::self()->nickName(), nick );
 	}
@@ -1112,7 +1112,7 @@ GaduAccount::dccRequest( GaduContact* peer )
 bool
 GaduAccount::dccEnabled()
 {
-	QString s = p->config->readEntry( QString::fromAscii( "useDcc" ) );
+	QString s = p->config->readEntry( QString::fromAscii( "useDcc" ), QString() );
 	kdDebug( 14100 ) << "dccEnabled: "<<s<<endl;
 	if ( s == QString::fromAscii( "enabled" ) ) {
 		return true;
@@ -1152,7 +1152,7 @@ GaduAccount::useTls()
 	unsigned int oldC;
 	tlsConnection Tls;
 
-	s = p->config->readEntry( QString::fromAscii( "useEncryptedConnection" ) );
+	s = p->config->readEntry( QString::fromAscii( "useEncryptedConnection" ), QString() );
 	oldC = s.toUInt( &c );
 	// we have old format
 	if ( c ) {
@@ -1160,7 +1160,7 @@ GaduAccount::useTls()
 				oldC << " willl be converted to new string value" << endl;
 		setUseTls( (tlsConnection) oldC );
 		// should be string now, unless there was an error reading
-		s = p->config->readEntry( QString::fromAscii( "useEncryptedConnection" ) );
+		s = p->config->readEntry( QString::fromAscii( "useEncryptedConnection" ), QString() );
 		kdDebug( 14100 ) << "new useEncryptedConnection value : " << s << endl;
 	}
 

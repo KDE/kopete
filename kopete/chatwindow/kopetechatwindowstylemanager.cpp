@@ -133,17 +133,17 @@ void ChatWindowStyleManager::removeStyle()
 void ChatWindowStyleManager::slotNewStyles(const KFileItemList &dirList)
 {
 	KFileItem *item;
-	Q3PtrListIterator<KFileItem> it( dirList );
-	while( (item = it.current()) != 0 ) 
+	QList<KFileItem*>::const_iterator it=dirList.begin();
+	while( it!=dirList.end() ) 
 	{
 		// Ignore data dir(from deprecated XSLT themes)
-		if( !item->url().fileName().contains(QString::fromUtf8("data")) )
+		if( !(*it)->url().fileName().contains(QString::fromUtf8("data")) )
 		{
-			kdDebug(14010) << k_funcinfo << "Listing: " << item->url().fileName() << endl;
+			kdDebug(14010) << k_funcinfo << "Listing: " << (*it)->url().fileName() << endl;
 			// Build a chat window style and list its variants.
-			ChatWindowStyle *newStyle = new ChatWindowStyle(item->url().path(), ChatWindowStyle::StyleBuildNormal);
+			ChatWindowStyle *newStyle = new ChatWindowStyle((*it)->url().path(), ChatWindowStyle::StyleBuildNormal);
 			// TODO: Use name from Info.plist
-			d->availableStyles.insert(item->url().fileName(), newStyle);
+			d->availableStyles.insert((*it)->url().fileName(), newStyle);
 		}
 		++it;
 	}
