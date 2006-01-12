@@ -328,7 +328,11 @@ KActionMenu* AIMAccount::actionMenu()
 	                                       "AIMAccount::mActionSetVisibility") );
 
     mActionMenu->insert( m_joinChatAction );
-    //mActionMenu->insert( KopeteStdAction::contactInfo( this, SLOT( slotEditInfo() ), mActionMenu, "AIMAccount::mActionEditInfo" ) );
+    
+    KAction* m_editInfoAction = new KAction( i18n( "Edit User Info..." ), "identity", 0,
+                                             this, SLOT( slotEditInfo() ), mActionMenu, "actionEditInfo");
+    
+    mActionMenu->insert( m_editInfoAction );
 
 	return mActionMenu;
 }
@@ -373,6 +377,14 @@ void AIMAccount::setUserProfile(const QString &profile)
 
 void AIMAccount::slotEditInfo()
 {
+    if ( !isConnected() )
+    {
+        KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
+                            i18n( "Editing your user info is not possible because "
+                                  "you are not connected." ),
+                            i18n( "Unable to edit user info" ) );
+        return;
+    }
 	AIMUserInfoDialog *myInfo = new AIMUserInfoDialog(static_cast<AIMContact *>( myself() ), this, true, 0L, "myInfo");
 	myInfo->exec(); // This is a modal dialog
 }
