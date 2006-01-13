@@ -3,9 +3,9 @@
  
     Copyright (c) 2002-2003 by Chris Howells         <howells@kde.org>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
-    Copyright (c) 2004-2005 by Heiko Schaefer        <heiko@rangun.de>
+    Copyright (c) 2004-2006 by Heiko Schaefer        <heiko@rangun.de>
  
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -49,14 +49,11 @@ SMPPPDCSPlugin::SMPPPDCSPlugin(QObject *parent, const char * name, const QString
 
     m_onlineInquiry = new OnlineInquiry();
     m_detector      = new Detector(this);
-    connect(m_detector, SIGNAL(retryRequested()), this, SLOT(slotCheckStatus()));
 }
 
 SMPPPDCSPlugin::~SMPPPDCSPlugin() {
 
     kdDebug(14312) << k_funcinfo << endl;
-
-    disconnect(m_detector, SIGNAL(retryRequested()), this, SLOT(slotCheckStatus()));
 
     delete m_timer;
     delete m_detector;

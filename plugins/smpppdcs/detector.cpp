@@ -1,9 +1,9 @@
 /*
     detector.cpp
-
-    Copyright (c) 2005      by Heiko Schaefer        <heiko@rangun.de>
  
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2005-2006 by Heiko Schaefer        <heiko@rangun.de>
+ 
+    Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -20,9 +20,9 @@
 #include <kglobal.h>
 #include <kconfig.h>
 #include <kprocess.h>
-#include <kextsock.h>
 #include <dcopclient.h>
 #include <kapplication.h>
+#include <kstreamsocket.h>
 
 #include <cstdlib>
 #include <openssl/md5.h>
@@ -32,33 +32,33 @@
 
 QCString Detector::m_kinternetApp = "";
 
-Detector::Detector(IConnector * connector) 
- : m_comState(READY), m_client(NULL), m_sock(NULL), m_connector(connector), m_process(NULL) {}
+Detector::Detector(IConnector * connector)
+        : m_comState(READY), m_client(NULL), m_sock(NULL), m_connector(connector), m_process(NULL) {}
 
 Detector::~Detector() {
 
-	if(m_sock) {
-		m_sock->flush();
-		m_sock->closeNow();
-	}
+    if(m_sock) {
+        m_sock->flush();
+        m_sock->close();
+    }
 
-	delete m_process;
-	delete m_sock;
+    delete m_process;
+    delete m_sock;
 }
 
-void Detector::slotProcessExited( KProcess *process ) {
-    if ( process == m_process ) {
+void Detector::slotProcessExited(KProcess *process) {
+    if(process == m_process) {
         delete m_process;
         m_process = 0L;
     }
 }
 
-void Detector::slotProcessStdout( KProcess *, char *buffer, int buflen ) {
+void Detector::slotProcessStdout(KProcess *, char *buffer, int buflen) {
     // Look for a default gateway
     kdDebug(14312) << k_funcinfo << endl;
-    QString qsBuffer = QString::fromLatin1( buffer, buflen );
+    QString qsBuffer = QString::fromLatin1(buffer, buflen);
     kdDebug(14312) << qsBuffer << endl;
-    m_connector->setConnectedStatus( qsBuffer.contains( "default" ) );
+    m_connector->setConnectedStatus(qsBuffer.contains("default"));
 }
 
 /*!
@@ -67,8 +67,8 @@ void Detector::slotProcessStdout( KProcess *, char *buffer, int buflen ) {
 void Detector::netstatCheckStatus() {
     kdDebug(14312) << k_funcinfo << endl;
 
-    if ( m_process ) {
-        kdWarning( 0 ) << k_funcinfo << "Previous netstat process is still running!" << endl
+    if(m_process) {
+        kdWarning(14312) << k_funcinfo << "Previous netstat process is still running!" << endl
         << "Not starting new netstat. Perhaps your system is under heavy load?" << endl;
 
         return;
@@ -80,11 +80,11 @@ void Detector::netstatCheckStatus() {
     m_process = new KProcess;
     *m_process << "netstat" << "-r";
 
-    connect( m_process, SIGNAL( receivedStdout( KProcess *, char *, int ) ), this, SLOT( slotProcessStdout( KProcess *, char *, int ) ) );
-    connect( m_process, SIGNAL( processExited( KProcess * ) ), this, SLOT( slotProcessExited( KProcess * ) ) );
+    connect(m_process, SIGNAL(receivedStdout(KProcess *, char *, int)), this, SLOT(slotProcessStdout( KProcess *, char *, int)));
+    connect(m_process, SIGNAL(processExited(KProcess *)), this, SLOT(slotProcessExited(KProcess *)));
 
-    if ( !m_process->start( KProcess::NotifyOnExit, KProcess::Stdout ) ) {
-        kdWarning( 0 ) << k_funcinfo << "Unable to start netstat process!" << endl;
+    if(!m_process->start(KProcess::NotifyOnExit, KProcess::Stdout)) {
+        kdWarning(14312) << k_funcinfo << "Unable to start netstat process!" << endl;
 
         delete m_process;
         m_process = 0L;
@@ -96,56 +96,56 @@ void Detector::netstatCheckStatus() {
  */
 void Detector::smpppdCheckStatus() {
 
-	// get dcop client object and attach to it
-	m_client = kapp->dcopClient();
-	if(m_kinternetApp.isEmpty() && m_client && m_client->isAttached()) {
-		// get all registered dcop apps and search for kinternet
-		QCStringList apps = m_client->registeredApplications();
-		QCStringList::iterator iter;
-		for(iter = apps.begin(); iter != apps.end(); ++iter) {
-			if((*iter).left(9) == "kinternet") {
-				m_kinternetApp = *iter;
-				break;
-			}
-		}
-	}
+    // get dcop client object and attach to it
+    m_client = kapp->dcopClient();
+    if(m_kinternetApp.isEmpty() && m_client && m_client->isAttached()) {
+        // get all registered dcop apps and search for kinternet
+        QCStringList apps = m_client->registeredApplications();
+        QCStringList::iterator iter;
+        for(iter = apps.begin(); iter != apps.end(); ++iter) {
+            if((*iter).left(9) == "kinternet") {
+                m_kinternetApp = *iter;
+                break;
+            }
+        }
+    }
 
     // we try to inquire an running kinternet
-	if(!m_kinternetApp.isEmpty() && m_client) {
-		QByteArray data, replyData;
-		QCString replyType;
-		QDataStream arg(data, IO_WriteOnly);
-		
-		kdDebug(14312) << k_funcinfo << "Start inquiring " << m_kinternetApp << " via DCOP" << endl;
-		
-		if(!m_client->call(m_kinternetApp, "KInternetIface", "isOnline()", data, replyType, replyData)) {
-			kdDebug(14312) << k_funcinfo << "there was some error using DCOP." << endl;
-		} else {
-  			QDataStream reply(replyData, IO_ReadOnly);
-  			if(replyType == "bool") {
-    			bool result;
-    			reply >> result;
-    			m_connector->setConnectedStatus(result);
-				return;
-  			} else {
-    			kdDebug(14312) << k_funcinfo << "isOnline() returned an unexpected type of reply!" << endl;
-			}
-		}
-	}
+    if(!m_kinternetApp.isEmpty() && m_client) {
+        QByteArray data, replyData;
+        QCString replyType;
+        QDataStream arg(data, IO_WriteOnly);
+
+        kdDebug(14312) << k_funcinfo << "Start inquiring " << m_kinternetApp << " via DCOP" << endl;
+
+        if(!m_client->call(m_kinternetApp, "KInternetIface", "isOnline()", data, replyType, replyData)) {
+            kdDebug(14312) << k_funcinfo << "there was some error using DCOP." << endl;
+        } else {
+            QDataStream reply(replyData, IO_ReadOnly);
+            if(replyType == "bool") {
+                bool result;
+                reply >> result;
+                m_connector->setConnectedStatus(result);
+                return;
+            } else {
+                kdDebug(14312) << k_funcinfo << "isOnline() returned an unexpected type of reply!" << endl;
+            }
+        }
+    }
 
     static KConfig *config = KGlobal::config();
     config->setGroup(SMPPPDCS_CONFIG_GROUP);
     QString pass = config->readEntry("Password", "").utf8();
 
-    if(m_sock && 
-	   m_sock->socketStatus() == KExtendedSocket::connected) {
+    if(m_sock &&
+            m_sock->state() == KNetwork::KStreamSocket::Connected) {
 
         bool isConnected  = false;
         QString challenge = "";
         QRegExp ver("^SuSE Meta pppd \\(smpppd\\), Version (.*)$");
 
         while(m_comState != STATUSIFCFG &&
-              m_comState != UNSETTLED) {
+                m_comState != UNSETTLED) {
             switch(m_comState) {
             case READY: {
 
@@ -203,9 +203,11 @@ void Detector::smpppdCheckStatus() {
                             }
 
                         } else {
+                            disconnectFromSMPPPD();
                             kdDebug(14312) << k_funcinfo << "unexpected reply from smpppd" << endl;
                         }
                     } else {
+                        disconnectFromSMPPPD();
                         kdDebug(14312) << k_funcinfo << "smpppd doesn't seem to understand me" << endl;
                     }
                     m_comState = LISTIFCFG;
@@ -225,11 +227,13 @@ void Detector::smpppdCheckStatus() {
                         }
                     }
 
+#ifndef NDEBUG
                     if(isConnected) {
                         kdDebug(14312) << k_funcinfo << "we are CONNECTED to the internet" << endl;
                     } else {
                         kdDebug(14312) << k_funcinfo << "we are DISCONNECTED from the internet" << endl;
                     }
+#endif
 
                     m_comState = STATUSIFCFG;
                 }
@@ -243,15 +247,21 @@ void Detector::smpppdCheckStatus() {
         if(m_comState != UNSETTLED) {
             m_comState = SMPPPDSETTLED;
             m_connector->setConnectedStatus(isConnected);
-	
+
         }
 
     } else {
-        kdDebug(14312) << k_funcinfo << "not connected to smpppd => I try again" << endl;
+        kdDebug(14312) << k_funcinfo << "not connected to smpppd => I'll try again later" << endl;
         m_connector->setConnectedStatus(false);
-	connectToSMPPPD();
-	emit retryRequested();
+        connectToSMPPPD();
     }
+}
+
+void Detector::disconnectFromSMPPPD() {
+    kdDebug(14312) << k_funcinfo << endl;
+    delete m_sock;
+    m_sock = NULL;
+    m_comState = READY;
 }
 
 /*!
@@ -260,37 +270,23 @@ void Detector::smpppdCheckStatus() {
 void Detector::connectToSMPPPD() {
 
     if(!m_sock ||
-        m_sock->socketStatus() != KExtendedSocket::connected ||
-        m_sock->socketStatus() != KExtendedSocket::connecting) {
+        m_sock->state() != KNetwork::KStreamSocket::Connected ||
+        m_sock->state() != KNetwork::KStreamSocket::Connecting) {
 
         static KConfig *config = KGlobal::config();
         config->setGroup(SMPPPDCS_CONFIG_GROUP);
         unsigned int port = config->readUnsignedNumEntry("port", 3185);
         QString    server = config->readEntry("server", "localhost").utf8();
 
-        delete m_sock;
-        m_sock = NULL;
-        m_comState = READY;
-        m_sock = new KExtendedSocket(server, port, KExtendedSocket::inetSocket);
+        disconnectFromSMPPPD();
+        m_sock = new KNetwork::KStreamSocket(server, QString::number(port));
+        m_sock->setBlocking(TRUE);
 
-        kdDebug(14312) << k_funcinfo << "connect to smpppd \"" << server << ":" << port << "\"" << endl;
-
-        switch(m_sock->connect()) {
-        case  0:
-            kdDebug(14312) << k_funcinfo << "connected to smpppd \"" << server << ":" << port << "\"" << endl;
-            break;
-        case -1:
-            kdDebug(14312) << k_funcinfo << "system error" << endl;
-            break;
-        case -2:
-            kdDebug(14312) << k_funcinfo << "this socket cannot connect(); this is a passiveSocket" << endl;
-            break;
-        case -3:
-            kdDebug(14312) << k_funcinfo << "connection timed out" << endl;
-            break;
-        default:
-            kdDebug(14312) << k_funcinfo << "unknown error" << endl;
-            break;
+        if(!m_sock->connect()) {
+            kdDebug(14312) << k_funcinfo << "Socket Error: " << KNetwork::KStreamSocket::errorString(m_sock->error()) << endl;
+        } else {
+            kdDebug(14312) << k_funcinfo << "Successfully connected to smpppd \"" << server << ":" << port << "\"" << endl;
+            smpppdCheckStatus();
         }
     }
 }

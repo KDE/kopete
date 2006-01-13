@@ -1,9 +1,9 @@
 /*
     smpppdsearcher.h
  
-    Copyright (c) 2004-2005      by Heiko Schaefer        <heiko@rangun.de>
+    Copyright (c) 2004-2006 by Heiko Schaefer        <heiko@rangun.de>
  
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -18,10 +18,9 @@
 #ifndef SMPPPDSEARCHER_H
 #define SMPPPDSEARCHER_H
 
-#include <qobject.h>
+#include <kresolver.h>
 
 class KProcess;
-class KExtendedSocket;
 
 /**
  * @brief Searches a network for a smpppd
@@ -52,6 +51,8 @@ public:
 	 * @see smpppdNotFound
      */
     void searchNetwork();
+	
+	void cancelSearch();
 
 protected:
     /**
@@ -86,16 +87,24 @@ signals:
      * @brief No smpppd was found 
      */
     void smpppdNotFound();
+	
+	void scanStarted(uint total);
+	void scanProgress(uint cur);
+	void scanFinished();
 
 protected slots:
     void slotStdoutReceivedIfconfig(KProcess * proc, char * buf, int len);
     void slotStdoutReceivedNetstat (KProcess * proc, char * buf, int len);
 
 private:
-    KProcess        * m_procIfconfig;
-    KProcess        * m_procNetstat;
-    KExtendedSocket * m_sock;
+	bool m_cancelSearchNow;
+    KProcess * m_procIfconfig;
+    KProcess * m_procNetstat;
 };
+
+inline void SMPPPDSearcher::cancelSearch() {
+	m_cancelSearchNow = TRUE;
+}
 
 #endif
 

@@ -200,7 +200,7 @@ void OutgoingTransfer::processMessage(const Message& message)
 			if(m_transfer)
 			{
 				// Inform the user of the file transfer cancelation.
-				m_transfer->slotError(KIO::ERR_ABORTED, i18n("File transfer cancelled."));
+				m_transfer->slotError(KIO::ERR_ABORTED, i18n("File transfer canceled."));
 			}
 		}
 		// Dispose of this transfer context.
@@ -307,7 +307,7 @@ void OutgoingTransfer::processMessage(const Message& message)
 		if(m_transfer)
 		{
 			// Inform the user of the file transfer cancelation.
-			m_transfer->slotError(KIO::ERR_ABORTED, i18n("File transfer cancelled."));
+			m_transfer->slotError(KIO::ERR_ABORTED, i18n("File transfer canceled."));
 		}
 
 		if(m_file && m_file->isOpen()){

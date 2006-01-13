@@ -1,9 +1,9 @@
 /*
     detector.h
  
-    Copyright (c) 2004-2005 by Heiko Schaefer        <heiko@rangun.de>
+    Copyright (c) 2004-2006 by Heiko Schaefer        <heiko@rangun.de>
  
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -26,10 +26,13 @@
 
 #define SMPPPDCS_CONFIG_GROUP "SMPPPDCS Plugin"
 
+namespace KNetwork {
+class KStreamSocket;
+};
+
 class KProcess;
 class DCOPClient;
 class IConnector;
-class KExtendedSocket;
 
 /**
  * @brief Detector to find out if there is a connection to the internet.
@@ -44,10 +47,10 @@ class KExtendedSocket;
  */
 
 class Detector : protected QObject {
-	Q_OBJECT
+    Q_OBJECT
 
-	Detector(const Detector&);
-	Detector& operator=(const Detector&);
+    Detector(const Detector&);
+    Detector& operator=(const Detector&);
 
     /**
      * @brief Enumerates the different states of communication with the smpppd
@@ -68,86 +71,85 @@ class Detector : protected QObject {
     };
 
 public:
-	/**
-	 * @brief Creates an <code>Detector</code> instance.
-	 *
-	 * @param connector A connector to send feedback to the calling object
-	 */
-	Detector(IConnector * connector);
+    /**
+     * @brief Creates an <code>Detector</code> instance.
+     *
+     * @param connector A connector to send feedback to the calling object
+     */
+    Detector(IConnector * connector);
 
-	/**
-	 * @brief Destroys an <code>Detector</code> instance.
-	 *
-	 */
-	virtual ~Detector();
+    /**
+     * @brief Destroys an <code>Detector</code> instance.
+     *
+     */
+    virtual ~Detector();
 
-	/**
-	 * @brief Use netstat to get the status of an internet connection.
-	 *
-	 * Calls IConnector::setConnectedStatus of the IConnector given in
-	 * the constructor.
-	 *
-	 * @see IConnector
-	 *
-	 */
-	virtual void netstatCheckStatus();
+    /**
+     * @brief Use netstat to get the status of an internet connection.
+     *
+     * Calls IConnector::setConnectedStatus of the IConnector given in
+     * the constructor.
+     *
+     * @see IConnector
+     *
+     */
+    virtual void netstatCheckStatus();
 
 #ifdef USE_SMPPPD
-	/**
-	 * @brief Use the smpppd to get the status of an internet connection.
-	 *
-	 * Calls IConnector::setConnectedStatus of the IConnector given in
-	 * the constructor.
-	 *
-	 * @see IConnector
-	 *
-	 */
-    	virtual void smpppdCheckStatus();
+    /**
+     * @brief Use the smpppd to get the status of an internet connection.
+     *
+     * Calls IConnector::setConnectedStatus of the IConnector given in
+     * the constructor.
+     *
+     * @see IConnector
+     *
+     */
+    virtual void smpppdCheckStatus();
 #endif
-
-signals:
-	void retryRequested();
 
 private:
 #ifdef USE_SMPPPD
-	void connectToSMPPPD();
-	QStringList readSMPPPD();
-	void writeSMPPPD(const char * cmd);
+    void connectToSMPPPD();
+    void disconnectFromSMPPPD();
+    QStringList readSMPPPD();
+    void writeSMPPPD(const char * cmd);
 #endif
 
-	/**
-	* @brief Makes an response for an challenge
-	*
-	* If the smpppd requests an authorization, it sends an challenge.
-	* The password has to be appended to this challenge and the m5sum
-	* in hex-display has to get responded to the smpppd.
-	*
-	* @param chex the challenge in hex display
-	* @param password the passwort to authenticate
-	* @return the reponse for the smpppd
-	*/
-	QString make_response(const QString& chex, const QString& password) const;
+    /**
+    * @brief Makes an response for an challenge
+    *
+    * If the smpppd requests an authorization, it sends an challenge.
+    * The password has to be appended to this challenge and the m5sum
+    * in hex-display has to get responded to the smpppd.
+    *
+    * @param chex the challenge in hex display
+    * @param password the passwort to authenticate
+    * @return the reponse for the smpppd
+    */
+    QString make_response(const QString& chex, const QString& password) const;
 
 private slots:
     // Original cs-plugin code
-    void slotProcessStdout( KProcess *process, char *buffer, int len );
+    void slotProcessStdout(KProcess *process, char *buffer, int len);
 
     /**
      * Notify when the netstat process has exited
      */
-    void slotProcessExited( KProcess *process );
+    void slotProcessExited(KProcess *process);
 
 private:
 #ifdef USE_SMPPPD
-	CommunicationState m_comState;
-	DCOPClient        *m_client;
-	static QCString    m_kinternetApp;
-	KExtendedSocket   *m_sock;
-	QStringList        m_ifcfgs;
+
+    CommunicationState       m_comState;
+    DCOPClient              *m_client;
+    static QCString          m_kinternetApp;
+	KNetwork::KStreamSocket *m_sock;
+    QStringList              m_ifcfgs;
 #endif
 
-	IConnector        *m_connector;
-	KProcess          *m_process;
+    IConnector        *m_connector;
+    KProcess          *m_process;
 };
 
 #endif

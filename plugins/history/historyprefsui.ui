@@ -105,7 +105,7 @@
                         <number>7</number>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>This is the number of messages that will be added automatically in the chat window when opening a new chat</string>
+                        <string>This is the number of messages that will be added automatically in the chat window when opening a new chat.</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="1" column="0">
@@ -119,7 +119,7 @@
                         <cstring>Number_Auto_chatwindow</cstring>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>This is the number of messages that will be added automatically in the chat window when opening a new chat</string>
+                        <string>This is the number of messages that will be added automatically in the chat window when opening a new chat.</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
@@ -133,7 +133,7 @@
                         <bool>true</bool>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>When a new chat is open, automatically add the few last messages you had with that contact.</string>
+                        <string>When a new chat is opened, automatically add the last few messages between you and that contact.</string>
                     </property>
                 </widget>
             </grid>
