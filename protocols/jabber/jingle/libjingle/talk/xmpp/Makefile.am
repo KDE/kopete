@@ -27,7 +27,5 @@ noinst_HEADERS = asyncsocket.h \
 		     	    xmppengineimpl.h
 
 
-AM_CPPFLAGS = -DPOSIX
-
+AM_CPPFLAGS = -DPOSIX -I$(srcdir)/../..
 noinst_LTLIBRARIES = libcricketxmpp.la
-DEFAULT_INCLUDES = -I$(srcdir)/../..

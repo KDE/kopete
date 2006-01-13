@@ -13,7 +13,6 @@ noinst_HEADERS =               qname.h \
 			       xmlnsstack.h \
 			       xmlparser.h \
 			       xmlprinter.h
-AM_CPPFLAGS = -DPOSIX
+AM_CPPFLAGS = -DPOSIX -I$(srcdir)/../..
 
 noinst_LTLIBRARIES = libcricketxmllite.la
-DEFAULT_INCLUDES = -I$(srcdir)/../..

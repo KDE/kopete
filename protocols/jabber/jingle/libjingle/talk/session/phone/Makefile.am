@@ -14,7 +14,5 @@ noinst_HEADERS =                    audiomonitor.h \
                                     call.h \
 				    mediachannel.h 
 
-AM_CPPFLAGS := -DPOSIX $(ORTP_CFLAGS) $(ILBC_CFLAGS) -I$(srcdir)/../../../talk/third_party/mediastreamer $(GLIB_CFLAGS) $(SPEEX_CFLAGS)
+AM_CPPFLAGS = -DPOSIX $(ORTP_CFLAGS) $(ILBC_CFLAGS) -I$(srcdir)/../../../talk/third_party/mediastreamer -I$(srcdir)/../../.. $(GLIB_CFLAGS) $(SPEEX_CFLAGS)
 noinst_LTLIBRARIES = libcricketsessionphone.la
-				    
-DEFAULT_INCLUDES = -I$(srcdir)/../../..

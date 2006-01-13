@@ -6,6 +6,6 @@ noinst_HEADERS =                 basicportallocator.h \
 				 sessionclient.h \
 				 socketmonitor.h 
 
-AM_CPPFLAGS = -I../../.. -DLINUX -DPOSIX -DINTERNAL_BUILD
+AM_CPPFLAGS = -I$(srcdir)/../../.. -DLINUX -DPOSIX -DINTERNAL_BUILD
 
 noinst_LTLIBRARIES = libcricketp2pclient.la
