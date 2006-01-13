@@ -595,7 +595,7 @@ void JabberAccount::slotIncomingFileTransfer ()
 
 void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status  , const QString &reason)
 {
-	XMPP::Status xmppStatus ( "", reason );
+	XMPP::Status xmppStatus = m_protocol->kosToStatus( status, reason);
 
 	if( status.status() == Kopete::OnlineStatus::Offline )
 	{
@@ -610,33 +610,7 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status  , const
 		errorConnectionInProgress ();
 		return;
 	}
-
-	switch ( status.internalStatus () )
-	{
-		case JabberProtocol::JabberFreeForChat:
-			xmppStatus.setShow ( "chat" );
-			break;
-
-		case JabberProtocol::JabberOnline:
-			xmppStatus.setShow ( "" );
-			break;
-
-		case JabberProtocol::JabberAway:
-			xmppStatus.setShow ( "away" );
-			break;
-
-		case JabberProtocol::JabberXA:
-			xmppStatus.setShow ( "xa" );
-			break;
-
-		case JabberProtocol::JabberDND:
-			xmppStatus.setShow ( "dnd" );
-			break;
-
-		case JabberProtocol::JabberInvisible:
-			xmppStatus.setIsInvisible ( true );
-			break;
-	}
+	
 
 	if ( !isConnected () )
 	{
@@ -1396,10 +1370,15 @@ void JabberAccount::slotGroupChatJoined (const XMPP::Jid & jid)
 	// Create a groupchat contact for this room
 	JabberGroupContact *groupContact = dynamic_cast<JabberGroupContact *>( contactPool()->addGroupContact ( XMPP::RosterItem ( jid ), true, metaContact, false ) );
 
-	// Add the groupchat contact to the meta contact.
-	metaContact->addContact ( groupContact );
-
-	Kopete::ContactList::self ()->addMetaContact ( metaContact );
+	if(groupContact)
+	{
+		// Add the groupchat contact to the meta contact.
+		//metaContact->addContact ( groupContact );
+	
+		Kopete::ContactList::self ()->addMetaContact ( metaContact );
+	}
+	else
+		delete metaContact;
 
 	/**
 	 * Add an initial resource for this contact to the pool. We need
@@ -1418,16 +1397,23 @@ void JabberAccount::slotGroupChatJoined (const XMPP::Jid & jid)
 void JabberAccount::slotGroupChatLeft (const XMPP::Jid & jid)
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo "Left groupchat " << jid.full () << endl;
-
+	
 	// remove group contact from list
-	Kopete::MetaContact *metaContact = Kopete::ContactList::self()->findMetaContactByContactId ( jid.userHost () );
+	Kopete::Contact *contact = 
+			Kopete::ContactList::self()->findContact( protocol()->pluginId() , accountId() , jid.userHost() );
 
-	if ( metaContact )
-		Kopete::ContactList::self()->removeMetaContact ( metaContact );
+	if ( contact )
+	{
+		Kopete::MetaContact *metaContact= contact->metaContact();
+		if( metaContact && metaContact->isTemporary() )
+			Kopete::ContactList::self()->removeMetaContact ( metaContact );
+		else
+			contact->deleteLater();
+	}
 
 	// now remove it from our pool, which should clean up all subcontacts as well
 	contactPool()->removeContact ( XMPP::Jid ( jid.userHost () ) );
-
+	
 }
 
 void JabberAccount::slotGroupChatPresence (const XMPP::Jid & jid, const XMPP::Status & status)

@@ -83,6 +83,11 @@ private slots:
 	 * Catch a dying message manager and leave the room.
 	 */
 	void slotChatSessionDeleted ();
+	
+	/**
+	 * When our own status change, we need to manually send the presence.
+	 */
+	void slotStatusChanged();
 
 private:
 
@@ -90,6 +95,7 @@ private:
 	QPtrList<Kopete::MetaContact> mMetaContactList;
 
 	JabberGroupChatManager *mManager;
+	QString mNick;
 
 };
 

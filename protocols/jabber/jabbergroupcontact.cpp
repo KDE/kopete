@@ -2,6 +2,7 @@
   * jabbercontact.cpp  -  Regular Kopete Jabber protocol contact
   *
   * Copyright (c) 2002-2004 by Till Gerken <till@tantalo.net>
+  * Copyright (c) 2006      by Olivier Goffart <ogoffart @ kde.org>
   *
   * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
   *
@@ -28,6 +29,7 @@
 #include "jabbergroupmembercontact.h"
 #include "jabbercontactpool.h"
 #include "kopetemetacontact.h"
+#include "xmpp_tasks.h"
 
 /**
  * JabberGroupContact constructor
@@ -35,9 +37,11 @@
 JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, Kopete::MetaContact * mc)
 				: JabberBaseContact ( XMPP::RosterItem ( rosterItem.jid().userHost () ), account, mc)
 {
-
+	setIcon( "jabber_group" );
+	
 	// initialize here, we need it set before we instantiate the manager below
 	mManager = 0;
+	mNick = rosterItem.jid().resource();
 
 	setFileCapable ( false );
 
@@ -55,6 +59,9 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 											Kopete::ContactPtrList (), XMPP::Jid ( rosterItem.jid().userHost () ) );
 
 	connect ( mManager, SIGNAL ( closing ( Kopete::ChatSession* ) ), this, SLOT ( slotChatSessionDeleted () ) );
+	
+	connect ( account->myself() , SIGNAL(onlineStatusChanged( Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus& ) ) ,
+			  this , SLOT(slotStatusChanged()  ) ) ;
 
 	/**
 	 * FIXME: The first contact in the list of the message manager
@@ -278,8 +285,31 @@ void JabberGroupContact::slotChatSessionDeleted ()
 		account()->client()->leaveGroupChat ( mRosterItem.jid().host (), mRosterItem.jid().user () );
 	}
 	
-	deleteLater();
+	//deleteLater(); //we will be deleted later when the the account will know we have left
 
+}
+
+void JabberGroupContact::slotStatusChanged( )
+{
+	if( !account()->isConnected() )
+		return;
+	
+	
+	if( !isOnline() )
+	{
+		//HACK WORKAROUND   XMPP::client->d->groupChatList must contains us.
+		account()->client()->joinGroupChat( rosterItem().jid().host() , rosterItem().jid().user() , mNick );
+	}
+	
+	//TODO: away message
+	//FIXME:  use XMPP::Client::groupChatSetStatus
+	XMPP::Status newStatus = account()->protocol()->kosToStatus( account()->myself()->onlineStatus() );
+
+	XMPP::Jid jid = rosterItem().jid();
+	jid.setResource( mNick );
+	XMPP::JT_Presence * task = new XMPP::JT_Presence ( account()->client()->rootTask () );
+	task->pres ( jid , newStatus);
+	task->go ( true );
 }
 
 #include "jabbergroupcontact.moc"

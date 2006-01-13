@@ -134,7 +134,8 @@ JabberBaseContact *JabberContactPool::addGroupContact ( const XMPP::RosterItem &
 		mContactItem->contact()->updateContact ( mContact );
 		mContactItem->setDirty ( dirty );
 
-		return mContactItem->contact ();
+		//we must tell to the originating function that no new contact has been added
+		return 0L;//mContactItem->contact ();
 	}
 
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Adding new contact " << mContact.jid().full() << endl;

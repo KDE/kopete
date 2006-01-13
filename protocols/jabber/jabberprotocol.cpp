@@ -298,4 +298,42 @@ Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaC
 	return account->contacts()[contactId];
 }
 
+XMPP::Status JabberProtocol::kosToStatus( const Kopete::OnlineStatus & status , const QString & message )
+{
+	XMPP::Status xmppStatus ( "", message );
+
+	if( status.status() == Kopete::OnlineStatus::Offline )
+	{
+		xmppStatus.setIsAvailable( false );
+	}
+
+	switch ( status.internalStatus () )
+	{
+		case JabberProtocol::JabberFreeForChat:
+			xmppStatus.setShow ( "chat" );
+			break;
+
+		case JabberProtocol::JabberOnline:
+			xmppStatus.setShow ( "" );
+			break;
+
+		case JabberProtocol::JabberAway:
+			xmppStatus.setShow ( "away" );
+			break;
+
+		case JabberProtocol::JabberXA:
+			xmppStatus.setShow ( "xa" );
+			break;
+
+		case JabberProtocol::JabberDND:
+			xmppStatus.setShow ( "dnd" );
+			break;
+
+		case JabberProtocol::JabberInvisible:
+			xmppStatus.setIsInvisible ( true );
+			break;
+	}
+	return xmppStatus;
+}
+
 #include "jabberprotocol.moc"
