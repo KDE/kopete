@@ -303,7 +303,15 @@ void JabberGroupContact::slotChatSessionDeleted ()
 void JabberGroupContact::slotStatusChanged( )
 {
 	if( !account()->isConnected() )
+	{
+		//we need to remove all contact, because when we connect again, we will not receive the notificaion they are gone.
+		QPtrList<Kopete::Contact> copy_contactlist=mContactList;
+		for ( Kopete::Contact *contact = copy_contactlist.first (); contact; contact = copy_contactlist.next () )
+		{
+			removeSubContact( XMPP::Jid(contact->contactId()) );
+		}
 		return;
+	}
 	
 	
 	if( !isOnline() )
