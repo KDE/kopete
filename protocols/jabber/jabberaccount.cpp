@@ -70,9 +70,13 @@
 #include <sys/utsname.h>
 
 #ifdef SUPPORT_JINGLE
-#include "jingle/voicecaller.h"
-#include "jingle/jinglevoicecaller.h"
-#include "jingle/voicecalldlg.h"
+#include "voicecaller.h"
+#include "jinglevoicecaller.h"
+#include "voicecalldlg.h"
+
+#include "jinglesessionmanager.h"
+#include "jinglesession.h"
+#include "jinglevoicesession.h"
 #endif
 
 #define KOPETE_CAPS_NODE "http://kopete.kde.org/jabber/caps"
@@ -90,6 +94,7 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	m_contactPool = 0L;
 #ifdef SUPPORT_JINGLE
 	m_voiceCaller = 0L;
+	m_jingleSessionManager = 0L;
 #endif
 	m_removing=false;
 
@@ -134,6 +139,9 @@ void JabberAccount::cleanup ()
 #ifdef SUPPORT_JINGLE
 	delete m_voiceCaller;
 	m_voiceCaller = 0L;
+
+	delete m_jingleSessionManager;
+	m_jingleSessionManager = 0L;
 #endif
 }
 
@@ -425,15 +433,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		case JabberClient::Ok:
 		default:
 			// everything alright!
-#ifdef SUPPORT_JINGLE
-			if(!m_voiceCaller)
-			{
-				m_voiceCaller = new JingleVoiceCaller( m_jabberClient );
-				QObject::connect(m_voiceCaller,SIGNAL(incoming(const Jid&)),this,SLOT(slotIncomingVoiceCall( const Jid& )));
-			}
-			// Set caps extensions
-			m_jabberClient->client()->addExtension("voice-v1", Features(QString("http://www.google.com/xmpp/protocol/voice/v1")));
-#endif
+
 			break;
 	}
 
@@ -556,8 +556,26 @@ void JabberAccount::slotConnected ()
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Connected to Jabber server." << endl;
 	
 #ifdef SUPPORT_JINGLE
-	if(m_voiceCaller)
-		m_voiceCaller->initialize();
+	if(!m_voiceCaller)
+	{
+		m_voiceCaller = new JingleVoiceCaller( m_jabberClient );
+		QObject::connect(m_voiceCaller,SIGNAL(incoming(const Jid&)),this,SLOT(slotIncomingVoiceCall( const Jid& )));
+	}
+	m_voiceCaller->initialize();
+
+// 	if(!m_jingleSessionManager)
+// 	{
+// 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Creating Jingle Session Manager..." << endl;
+// 		m_jingleSessionManager = new JingleSessionManager( this );
+// 		QObject::connect(m_jingleSessionManager, SIGNAL(incomingSession(const QString &, JingleSession *)), this, SLOT(slotIncomingJingleSession(const QString &, JingleSession *)));
+// 	}
+
+	// Set caps extensions
+	m_jabberClient->client()->addExtension("voice-v1", Features(QString("http://www.google.com/xmpp/protocol/voice/v1")));
+
+	
+// 	if(m_voiceCaller)
+// 		m_voiceCaller->initialize();
 #endif
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Requesting roster..." << endl;
@@ -1549,6 +1567,20 @@ void JabberAccount::slotIncomingVoiceCall( const Jid & j)
 	}
 #endif
 }
+
+#ifdef SUPPORT_JINGLE
+void JabberAccount::slotIncomingJingleSession( const QString &sessionType, JingleSession *session )
+{
+	if(sessionType == "http://www.google.com/session/phone")
+	{
+		QString from = ((XMPP::Jid)session->peers().first()).full();
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, QString("Received a voice session invitation from %1.").arg(from) );
+
+		session->decline();
+		sessionManager()->removeSession(session);
+	}
+}
+#endif
 
 void JabberAccount::addTransport( JabberTransport * tr, const QString &jid )
 {

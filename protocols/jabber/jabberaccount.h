@@ -44,7 +44,11 @@ class JabberTransport;
 
 namespace Kopete { class MetaContact; }
 
+#ifdef SUPPORT_JINGLE
+class JingleSessionManager;
+class JingleSession;
 class VoiceCaller;
+#endif
 
 /* @author Daniel Stone, Till Gerken */
 
@@ -82,6 +86,11 @@ public:
 	VoiceCaller *voiceCaller() const
 	{
 		return m_voiceCaller;
+	}
+
+	JingleSessionManager *sessionManager()  const
+	{
+		return m_jingleSessionManager;
 	}
 #endif
 
@@ -176,6 +185,7 @@ private:
 
 #ifdef SUPPORT_JINGLE
 	VoiceCaller *m_voiceCaller;
+	JingleSessionManager *m_jingleSessionManager;
 #endif
 
 	/* Set up our actions for the status menu. */
@@ -286,6 +296,11 @@ private slots:
 	
 	/* the unregister task finished */
 	void slotUnregisterFinished();
+
+#ifdef SUPPORT_JINGLE
+	void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);
+#endif
+
 };
 
 #endif

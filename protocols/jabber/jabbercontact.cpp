@@ -51,7 +51,9 @@
 #include "dlgjabbervcard.h"
 
 #ifdef SUPPORT_JINGLE
-#include "jingle/voicecalldlg.h"
+#include "voicecalldlg.h"
+#include "jinglesessionmanager.h"
+#include "jinglevoicesession.h"
 #endif
 
 /**
@@ -1330,6 +1332,8 @@ void JabberContact::voiceCall( )
 			vc->show();
 			vc->call();
 		}
+// 		JingleVoiceSession *session = static_cast<JingleVoiceSession*>(account()->sessionManager()->createSession("http://www.google.com/session/phone", jid));
+// 		session->start();
 	}
 	else
 	{

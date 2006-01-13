@@ -53,6 +53,7 @@ noinst_HEADERS =            asyncfile.h \
 			    host.h \
 			    socketaddresspair.h
 
-AM_CPPFLAGS = -DPOSIX -I$(srcdir)/../.. -I../..
+AM_CPPFLAGS = -DPOSIX -I$(srcdir)/../..
 noinst_LTLIBRARIES = libcricketbase.la
+DEFAULT_INCLUDES = -I$(srcdir)/../..
 
