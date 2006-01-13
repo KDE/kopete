@@ -21,6 +21,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kfiledialog.h>
+#include <kinputdialog.h>
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
 #include "jabberclient.h"
@@ -35,13 +36,12 @@
  * JabberGroupContact constructor
  */
 JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, Kopete::MetaContact * mc)
-				: JabberBaseContact ( XMPP::RosterItem ( rosterItem.jid().userHost () ), account, mc)
+	: JabberBaseContact ( XMPP::RosterItem ( rosterItem.jid().userHost () ), account, mc) , mNick( rosterItem.jid().resource() )
 {
 	setIcon( "jabber_group" );
 	
 	// initialize here, we need it set before we instantiate the manager below
 	mManager = 0;
-	mNick = rosterItem.jid().resource();
 
 	setFileCapable ( false );
 
@@ -100,9 +100,12 @@ JabberGroupContact::~JabberGroupContact ()
 
 QPtrList<KAction> *JabberGroupContact::customContextMenuActions ()
 {
+	QPtrList<KAction> *actionCollection = new QPtrList<KAction>();
 
-	return 0;
+	KAction *actionSetNick = new KAction (i18n ("Change nick name"), 0, 0, this, SLOT (slotChangeNick()), this, "jabber_changenick");
+	actionCollection->append( actionSetNick );
 
+	return actionCollection;
 }
 
 Kopete::ChatSession *JabberGroupContact::manager ( Kopete::Contact::CanCreateFlags /*canCreate*/ )
@@ -188,7 +191,7 @@ JabberBaseContact *JabberGroupContact::addSubContact ( const XMPP::RosterItem &r
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact already exists, not adding again." << endl;
 		return subContact;
 	}
-
+	
 	// Create new meta contact that holds the group chat contact.
 	Kopete::MetaContact *metaContact = new Kopete::MetaContact ();
 	metaContact->setTemporary ( true );
@@ -230,6 +233,14 @@ void JabberGroupContact::removeSubContact ( const XMPP::RosterItem &rosterItem )
 	if ( !subContact )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "WARNING: Subcontact couldn't be located!" << endl;
+		return;
+	}
+	
+	if(mManager && subContact->contactId() == mManager->myself()->contactId() )
+	{
+		//HACK WORKAROUND FIXME KDE4
+		//impossible to remove myself, or we will die
+		//subContact->setNickName( mNick ); //this is even worse than nothing
 		return;
 	}
 
@@ -302,14 +313,25 @@ void JabberGroupContact::slotStatusChanged( )
 	}
 	
 	//TODO: away message
-	//FIXME:  use XMPP::Client::groupChatSetStatus
 	XMPP::Status newStatus = account()->protocol()->kosToStatus( account()->myself()->onlineStatus() );
+	account()->client()->setGroupChatStatus( rosterItem().jid().host() , rosterItem().jid().user() , newStatus );
+}
 
-	XMPP::Jid jid = rosterItem().jid();
-	jid.setResource( mNick );
-	XMPP::JT_Presence * task = new XMPP::JT_Presence ( account()->client()->rootTask () );
-	task->pres ( jid , newStatus);
-	task->go ( true );
+void JabberGroupContact::slotChangeNick( )
+{
+	
+	bool ok;
+	QString futureNewNickName = KInputDialog::getText( i18n( "Change nickanme - Jabber Plugin" ),
+			i18n( "Please enter the new nick name you want to have on the room <i>%1</i>" ).arg(rosterItem().jid().userHost()),
+			mNick, &ok );
+	if ( !ok || !account()->isConnected())
+		return;
+	
+	mNick=futureNewNickName;
+	
+	XMPP::Status status = account()->protocol()->kosToStatus( account()->myself()->onlineStatus() );
+	account()->client()->changeGroupChatNick( rosterItem().jid().host() , rosterItem().jid().user()  , mNick , status);
+
 }
 
 #include "jabbergroupcontact.moc"

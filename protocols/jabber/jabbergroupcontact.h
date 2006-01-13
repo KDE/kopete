@@ -88,6 +88,11 @@ private slots:
 	 * When our own status change, we need to manually send the presence.
 	 */
 	void slotStatusChanged();
+	
+	/**
+	 * ask the user to change the nick, and change it
+	 */
+	void slotChangeNick();
 
 private:
 
@@ -96,7 +101,6 @@ private:
 
 	JabberGroupChatManager *mManager;
 	QString mNick;
-
 };
 
 #endif

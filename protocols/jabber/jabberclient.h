@@ -361,6 +361,15 @@ public:
 	 * @param room Name of room to leave.
 	 */
 	void leaveGroupChat ( const QString &host, const QString &room );
+	
+	/**
+	 * change the status of a group chat
+	 */
+	void setGroupChatStatus(const QString &host, const QString &room, const XMPP::Status &);
+	/**
+	 * change the nick in a group chat
+	 */
+	void changeGroupChatNick(const QString &host, const QString &room, const QString &nick, const XMPP::Status &status =XMPP::Status());
 
 	/**
 	 * Send a message.
