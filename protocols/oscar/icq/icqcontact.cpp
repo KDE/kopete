@@ -298,11 +298,13 @@ void ICQContact::receivedLongInfo( const QString& contact )
 		return;
 	}
 
+	QTextCodec* codec = contactCodec();
+
 	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "received long info from engine" << endl;
 
 	ICQGeneralUserInfo genInfo = mAccount->engine()->getGeneralInfo( contact );
 	if ( !genInfo.nickname.isEmpty() )
-		setNickName( genInfo.nickname );
+		setNickName( codec->toUnicode( genInfo.nickname ) );
 	emit haveBasicInfo( genInfo );
 
 	ICQWorkUserInfo workInfo = mAccount->engine()->getWorkInfo( contact );
@@ -321,16 +323,18 @@ void ICQContact::receivedShortInfo( const QString& contact )
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 
+	QTextCodec* codec = contactCodec();
+
 	m_requestingNickname = false; //done requesting nickname
 	ICQShortInfo shortInfo = mAccount->engine()->getShortInfo( contact );
 	/*
 	if(!shortInfo.firstName.isEmpty())
-		setProperty(mProtocol->firstName, shortInfo.firstName);
+		setProperty( mProtocol->firstName, codec->toUnicode( shortInfo.firstName ) );
 	else
 		removeProperty(mProtocol->firstName);
 
 	if(!shortInfo.lastName.isEmpty())
-		setProperty(mProtocol->lastName, shortInfo.lastName);
+		setProperty( mProtocol->lastName, codec->toUnicode( shortInfo.lastName ) );
 	else
 		removeProperty(mProtocol->lastName);
 	*/
@@ -338,7 +342,7 @@ void ICQContact::receivedShortInfo( const QString& contact )
 	{
 		kdDebug(14153) << k_funcinfo <<
 			"setting new displayname for former UIN-only Contact" << endl;
-		setProperty( Kopete::Global::Properties::self()->nickName(), shortInfo.nickname );
+		setProperty( Kopete::Global::Properties::self()->nickName(), codec->toUnicode( shortInfo.nickname ) );
 	}
 
 }
@@ -358,23 +362,64 @@ void ICQContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session
 {
 	//Why is this unused?
 	Q_UNUSED( session );
-	Oscar::Message message;
 
-	message.setText( msg.plainBody() );
+	QTextCodec* codec = contactCodec();
 
-	message.setTimestamp( msg.timestamp() );
-	message.setSender( mAccount->accountId() );
-	message.setReceiver( mName );
-	message.setType( 0x01 );
+	int messageChannel;
+	Oscar::Message::Encoding messageEncoding;
 
-	//TODO add support for type 2 messages
-	/*if ( msg.type() == Kopete::Message::PlainText )
-		message.setType( 0x01 );
+	if ( !isOnline() )
+	{
+		messageChannel = 0x01;
+		messageEncoding = Oscar::Message::UserDefined;
+	}
+	else if ( !m_details.hasCap( CAP_UTF8 ) )
+	{
+		if ( m_details.hasCap( CAP_ICQSERVERRELAY ) )
+			messageChannel = 0x02;
+		else
+			messageChannel = 0x01;
+		messageEncoding = Oscar::Message::UserDefined;
+	}
+	else if ( m_details.hasCap( CAP_ICQSERVERRELAY ) )
+	{
+		messageChannel = 0x02;
+		messageEncoding = Oscar::Message::UTF8;
+	}
 	else
-		message.setType( 0x02 );*/
-	//TODO: we need to check for channel 0x04 messages too;
+	{
+		messageChannel = 0x01;
+		messageEncoding = Oscar::Message::UCS2;
+	}
 
-	mAccount->engine()->sendMessage( message );
+	QString msgText( msg.plainBody() );
+	// TODO: More intelligent handling of message length.
+	uint chunk_length = !isOnline() ? 450 : 4096;
+	uint msgPosition = 0;
+
+	do
+	{
+		QString msgChunk( msgText.mid( msgPosition, chunk_length ) );
+		// Try to split on space if needed
+		if ( msgChunk.length() == chunk_length )
+		{
+			for ( int i = 0; i < 100; i++ )
+			{
+				if ( msgChunk[chunk_length - i].isSpace() )
+				{
+					msgChunk = msgChunk.left( chunk_length - i );
+					msgPosition++;
+				}
+			}
+		}
+		msgPosition += msgChunk.length();
+
+		Oscar::Message message( messageEncoding, msgChunk, messageChannel, 0, msg.timestamp(), codec );
+		message.setSender( mAccount->accountId() );
+		message.setReceiver( mName );
+		mAccount->engine()->sendMessage( message );
+	} while ( msgPosition < msgText.length() );
+
 	manager(Kopete::Contact::CanCreate)->appendMessage(msg);
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();
 }

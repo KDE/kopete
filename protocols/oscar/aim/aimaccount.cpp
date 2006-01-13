@@ -176,7 +176,7 @@ void AIMMyselfContact::sendMessage( Kopete::Message& message, Kopete::ChatSessio
         << s << endl;
 
     msg.setSender( contactId() );
-    msg.setText(s);
+    msg.setText( Oscar::Message::UserDefined, s, m_acct->defaultCodec() );
     msg.setTimestamp(message.timestamp());
     msg.setType(0x03);
     msg.addProperty( Oscar::Message::ChatRoom );
@@ -618,7 +618,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
                 kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "found chat session for chat room" << endl;
                 Kopete::Contact* ocSender = contacts()[Oscar::normalize( message.sender() )];
                 //sanitize;
-                QString sanitizedMsg = sanitizedMessage( message.text() );
+                QString sanitizedMsg = sanitizedMessage( message.text( defaultCodec() ) );
 
                 Kopete::ContactPtrList me;
                 me.append( myself() );

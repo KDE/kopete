@@ -19,6 +19,7 @@
 #include <time.h>
 
 #include <qapplication.h>
+#include <qtextcodec.h>
 
 #include <kaction.h>
 #include <kdebug.h>
@@ -235,6 +236,14 @@ void OscarContact::slotTyping( bool typing )
 {
 	if ( this != account()->myself() )
 		account()->engine()->sendTyping( contactId(), typing );
+}
+
+QTextCodec* OscarContact::contactCodec() const
+{
+	if ( hasProperty( "contactEncoding" ) )
+		return QTextCodec::codecForMib( property( "contactEncoding" ).value().toInt() );
+	else
+		return mAccount->defaultCodec();
 }
 
 #include "oscarcontact.moc"

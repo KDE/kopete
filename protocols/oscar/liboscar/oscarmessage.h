@@ -28,6 +28,8 @@
 #include "kopete_export.h"
 #include "oscartypes.h"
 
+class QTextCodec;
+
 namespace Oscar
 {
 
@@ -47,16 +49,22 @@ public:
 		AutoResponse = 0x0001,
 		WWP = 0x0002,
 		EMail = 0x0004,
-        ChatRoom = 0x0008,
-		UCS2 = 0x0010,
-		NotDecoded = 0x0020,
+		ChatRoom = 0x0008,
 		Request = 0x0100,
 		StatusMessageRequest = 0x0200
 	};
 
+	enum Encoding {
+		UserDefined,
+		UTF8,
+		UCS2
+	};
+
 	Message();
-	Message( const QString& messageText, int channel, int properties = 0, QDateTime timestamp = QDateTime() );
-	Message( const Oscar::Message& m );
+
+	Message( Encoding messageEncoding, const QByteArray& messageText, int channel, int properties, QDateTime timestamp );
+	Message( Encoding messageEncoding, const QCString& messageText, int channel, int properties, QDateTime timestamp );
+	Message( Encoding messageEncoding, const QString& messageText, int channel, int properties, QDateTime timestamp, QTextCodec* codec = 0 );
 
 	/** Get the sender of the message */
 	QString sender() const;
@@ -71,16 +79,19 @@ public:
 	void setReceiver( const QString& receiver);
 
 	/** get the message text */
-	QString text() const;
+	QString text( QTextCodec* codec ) const;
 
 	/** set the message text */
-	void setText( const QString& newText );
+	void setText( Encoding newEncoding, const QString& newText, QTextCodec* codec  = 0);
 
 	/** get the message text as a bytearray for decoding */
 	QByteArray textArray() const;
 
 	/** set the message text as a bytearray for decoding */
 	void setTextArray( const QByteArray& newTextArray );
+
+	/** set the mesasge text as a bytearray for decoding */
+	void setTextArray( const QCString& newTextArray );
 
 	/** get the message properties */
 	int properties() const;
@@ -139,6 +150,12 @@ public:
     /** set the chat room that this message is for */
     void setChatRoom( const QString& );
 
+	/** get the message encoding */
+	Encoding encoding() const;
+
+	/** set the message encoding */
+	void setEncoding( Encoding newEncoding );
+
 	operator bool() const;
 
 private:
@@ -150,12 +167,12 @@ private:
 	int m_messageType;
 	int m_protocolVersion;
 	int m_channel2Counter;
-	QString m_text;
 	QByteArray m_icbmCookie;
-    QByteArray m_textArray;
+	QByteArray m_textArray;
 	QDateTime m_timestamp;
-    Oscar::WORD m_exchange;
-    QString m_chatRoom;
+	Oscar::WORD m_exchange;
+	QString m_chatRoom;
+	Encoding m_encoding;
 };
 
 }

@@ -23,6 +23,7 @@
 #include <qstring.h>
 #include <kapplication.h>
 #include <kdebug.h>
+#include <qtextcodec.h>
 
 #include "connection.h"
 #include "transfer.h"
@@ -30,7 +31,7 @@
 #include "oscartypes.h"
 
 ChatServiceTask::ChatServiceTask( Task* parent, Oscar::WORD exchange, const QString& room )
-	: Task( parent )
+	: Task( parent ), m_encoding( "us-ascii" )
 {
     m_exchange = exchange;
     m_room = room;
@@ -46,6 +47,11 @@ void ChatServiceTask::setMessage( const Oscar::Message& msg )
     m_message = msg;
 }
 
+void ChatServiceTask::setEncoding( const QCString& enc )
+{
+    m_encoding = enc;
+}
+
 void ChatServiceTask::onGo()
 {
     if ( !m_message )
@@ -54,7 +60,7 @@ void ChatServiceTask::onGo()
         return;
     }
 
-    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending '" << m_message.text() << "' to the "
+    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending '" << m_message.textArray() << "' to the "
                              << m_room << " room" << endl;
     Buffer* b = new Buffer();
     b->addDWord( KApplication::random() ); //use kapp since it's convenient
@@ -68,15 +74,15 @@ void ChatServiceTask::onGo()
 
     type2.type = 0x0002;
     type2.length = 0x0008;
-    type2.data = QCString( "us-ascii" ); //hardcode for right now. don't know that we can do others
+    type2.data = m_encoding;
 
     type3.type = 0x0003;
     type3.length = 0x0002;
     type3.data = QCString( "en" ); //hardcode for right now. don't know that we can do others
 
     type1.type = 0x0001;
-    type1.length = strlen( m_message.text().latin1() );
-    type1.data = QCString( m_message.text().latin1() );
+    type1.length = m_message.textArray().size();
+    type1.data = m_message.textArray();
     tlv5.addWord( 0x0005 );
     tlv5.addWord( 12 + type1.length + type2.length + type3.length );
     tlv5.addTLV( type1 );
@@ -275,7 +281,8 @@ void ChatServiceTask::parseChatMessage()
     kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "have new chat room message" << endl;
     Buffer* b = transfer()->buffer();
     bool whisper = true, reflection = false;
-    QString language, encoding, message, sender;
+    QByteArray language, encoding, message;
+    QString sender;
     QByteArray icbmCookie( b->getBlock( 8 ) );
     b->skipBytes( 2 ); //message channel always 0x03
     QValueList<Oscar::TLV> chatTLVs = b->getTLVList();
@@ -301,15 +308,15 @@ void ChatServiceTask::parseChatMessage()
                 switch( t.type )
                 {
                 case 0x0003:
-                    language = QString( t.data );
+                    language = t.data;
                     kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "language: " << language << endl;
                     break;
                 case 0x0002:
-                    encoding = QString( t.data );
+                    encoding = t.data;
                     kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "encoding: " << encoding << endl;
                     break;
                 case 0x0001:
-                    message = QString( t.data );
+                    message = t.data;
                     kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message: " << message << endl;
                     break;
                 }
@@ -327,11 +334,15 @@ void ChatServiceTask::parseChatMessage()
         }
     }
 
+    QTextCodec* codec = QTextCodec::codecForName( encoding );
+    if ( ! codec )
+        codec = QTextCodec::codecForMib( 4 );
+    QString msgText( codec->toUnicode( message ) );
     Oscar::Message omessage;
     omessage.setReceiver( client()->userId() );
     omessage.setSender( sender );
     omessage.setTimestamp( QDateTime::currentDateTime() );
-    omessage.setText( message );
+    omessage.setText( Oscar::Message::UTF8, msgText );
     omessage.setType( 0x03 );
     omessage.setExchange( m_exchange );
     omessage.setChatRoom( m_room );

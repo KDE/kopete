@@ -37,6 +37,7 @@ class Client;
 class Connection;
 class OscarContact;
 class OscarAccountPrivate;
+class QTextCodec;
 
 class KDE_EXPORT OscarAccount : public Kopete::PasswordedAccount
 {
@@ -79,6 +80,21 @@ public:
 	/** Set the server port */
 	void setServerPort( int port );
 
+	/** Returns codec for account's default encoding */
+	QTextCodec* defaultCodec() const;
+
+	/**
+	 * Returns codec for given contact's encoding or default one
+	 * if contact has no encoding
+	 */
+	QTextCodec* contactCodec( const OscarContact* contact ) const;
+
+	/**
+	 * Returns codec for given contact's encoding or default one
+	 * if contact has no encoding
+	 */
+	QTextCodec* contactCodec( const QString& contactName ) const;
+	
 public slots:
 	void slotGoOffline();
 

@@ -65,7 +65,9 @@ void ICQMyselfContact::receivedShortInfo( const QString& contact )
 
 	ICQShortInfo shortInfo = static_cast<ICQAccount*>( account() )->engine()->getShortInfo( contact );
 	if ( !shortInfo.nickname.isEmpty() )
-		setProperty( Kopete::Global::Properties::self()->nickName(), shortInfo.nickname );
+	{
+		setProperty( Kopete::Global::Properties::self()->nickName(), static_cast<ICQAccount*>( account() )->defaultCodec()->toUnicode( shortInfo.nickname ) );
+	}
 }
 
 void ICQMyselfContact::fetchShortInfo()

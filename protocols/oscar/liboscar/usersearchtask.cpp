@@ -242,7 +242,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 	if ( !info.firstName.isEmpty() )
 	{
 		tlvData->addLEWord( info.firstName.length() );
-		tlvData->addLEString( info.firstName.latin1(), info.firstName.length() );
+		tlvData->addLEString( info.firstName, info.firstName.length() );
 	}
 	else
 		tlvData->addLEWord( 0x0000 );
@@ -250,7 +250,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 	if ( !info.lastName.isEmpty() )
 	{
 		tlvData->addLEWord( info.lastName.length() );
-		tlvData->addLEString( info.lastName.latin1(), info.lastName.length() );
+		tlvData->addLEString( info.lastName, info.lastName.length() );
 	}
 	else
 		tlvData->addLEWord( 0x0000 );
@@ -258,7 +258,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 	if ( !info.nickName.isEmpty() )
 	{
 		tlvData->addLEWord( info.nickName.length() );
-		tlvData->addLEString( info.nickName.latin1(), info.nickName.length() );
+		tlvData->addLEString( info.nickName, info.nickName.length() );
 	}
 	else
 		tlvData->addLEWord( 0x0000 );
@@ -266,7 +266,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 	if ( !info.email.isEmpty() )
 	{
 		tlvData->addLEWord( info.email.length() );
-		tlvData->addLEString( info.email.latin1(), info.email.length() );
+		tlvData->addLEString( info.email, info.email.length() );
 	}
 	else
 		tlvData->addLEWord( 0x0000 );
@@ -279,7 +279,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 	if ( !info.city.isEmpty() )
 	{
 		tlvData->addLEWord( info.city.length() );
-		tlvData->addLEString( info.city.latin1(), info.city.length() );
+		tlvData->addLEString( info.city, info.city.length() );
 	}
 	else
 		tlvData->addLEWord( 0x0000 );

@@ -148,24 +148,17 @@ void MessageReceiverTask::handleType1Message()
 			m_subCharSet = message.getWord();
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Message charset: " << m_charSet
 				<< " message subcharset: " << m_subCharSet << endl;
-            if ( m_charSet == 0x0002 )
-			{
-				msg.addProperty( Oscar::Message::UCS2 );
-				int messageLength = ( ( *it ).length - 4 ) / 2;
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message length: " << messageLength << endl;
-				msg.setText( QString::fromUcs2( message.getWordBlock( messageLength ) ) );
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message is: " << msg.text() << endl;
-			}
-            else
-            {
-                msg.addProperty( Oscar::Message::NotDecoded );
-                //message length is buffer length - length of ( charset + subcharset ) */
-                int msgLength = ( *it ).length - 4;
-                QByteArray msgArray( message.getBlock( msgLength ) );
-                msg.setTextArray( msgArray );
-            }
+			if ( m_charSet == 0x0002 )
+				msg.setEncoding( Oscar::Message::UCS2 );
+			else
+				msg.setEncoding( Oscar::Message::UserDefined );
 
-            break;
+			//message length is buffer length - length of ( charset + subcharset ) */
+			int msgLength = ( *it ).length - 4;
+			QByteArray msgArray( message.getBlock( msgLength ) );
+			msg.setTextArray( msgArray );
+
+			break;
 		} //end case
 		default:
 			kdDebug(OSCAR_RAW_DEBUG) << "Ignoring TLV of type " << ( *it ).type << endl;
@@ -309,7 +302,7 @@ void MessageReceiverTask::handleType4Message()
 		break;
 	};
 
-	QByteArray msgText = tlv5buffer.getLNTS();
+	QCString msgText = tlv5buffer.getLNTS();
 	int msgLength = msgText.size();
 	if ( msgType == 0x0D || msgType == 0x0E )
 	{
@@ -320,7 +313,6 @@ void MessageReceiverTask::handleType4Message()
 		}
 	}
 
-	msg.addProperty( Oscar::Message::NotDecoded );
 	switch ( msgFlags )
 	{
 	case 0x03:
@@ -338,6 +330,7 @@ void MessageReceiverTask::handleType4Message()
 	msg.setTimestamp( QDateTime::currentDateTime() );
 	msg.setSender( msgSender );
 	msg.setReceiver( client()->userId() );
+	msg.setEncoding( Oscar::Message::UserDefined );
 	msg.setTextArray( msgText );
 	emit receivedMessage( msg );
 }
@@ -406,27 +399,30 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Message type is: " << messageType << endl;
 		
-		QCString msgtext( b->getLELNTS() );
-		int fgcolor = b->getLEDWord();
-		int bgcolor = b->getLEDWord();
-		int prop = Oscar::Message::NotDecoded;
+		QCString msgText( b->getLELNTS() );
+		Oscar::Message::Encoding encoding = Oscar::Message::UserDefined;
+		int fgcolor = 0x00000000;
+		int bgcolor = 0x00ffffff;
 
-		while ( b->length() >= 4 )
+		if ( b->length() >= 8 )
 		{
-			int capLength = b->getLEDWord();
-			if ( b->length() < capLength )
-				break;
+			fgcolor = b->getLEDWord();
+			bgcolor = b->getLEDWord();
 
-			QByteArray cap( b->getBlock( capLength ) );
-			if ( qstrncmp ( cap.data(), "{0946134E-4C7F-11D1-8222-444553540000}", capLength ) == 0 )
-				prop = Oscar::Message::UCS2;
+			while ( b->length() >= 4 )
+			{
+				int capLength = b->getLEDWord();
+				if ( b->length() < capLength )
+					break;
+
+				QByteArray cap( b->getBlock( capLength ) );
+				if ( qstrncmp ( cap.data(), "{0946134E-4C7F-11D1-8222-444553540000}", capLength ) == 0 )
+					encoding = Oscar::Message::UTF8;
+			}
 		}
 
-		msg->addProperty( prop );
-		if ( prop == Oscar::Message::UCS2 )
-			msg->setText( QString::fromUtf8( msgtext ) );
-		else
-			msg->setTextArray( msgtext );
+		msg->setEncoding( encoding );
+		msg->setTextArray( msgText );
 		
 		if ( ( messageType & 0xF0 ) == 0xE0 ) // check higher byte for value E -> status message request
 			msg->addProperty( Oscar::Message::StatusMessageRequest );

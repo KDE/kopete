@@ -21,6 +21,7 @@
 #include "client.h"
 
 #include <qtimer.h>
+#include <qtextcodec.h>
 
 #include <kdebug.h> //for kdDebug()
 #include <klocale.h>
@@ -40,6 +41,7 @@
 #include "oscarclientstream.h"
 #include "oscarconnector.h"
 #include "oscarsettings.h"
+#include "oscarutils.h"
 #include "ownuserinfotask.h"
 #include "profiletask.h"
 #include "senddcinfotask.h"
@@ -58,6 +60,24 @@
 #include "chatservicetask.h"
 #include "rateclassmanager.h"
 
+
+namespace
+{
+	class DefaultCodecProvider : public Client::CodecProvider
+	{
+	public:
+		virtual QTextCodec* codecForContact( const QString& ) const
+		{
+			return QTextCodec::codecForMib( 4 );
+		}
+		virtual QTextCodec* codecForAccount() const
+		{
+			return QTextCodec::codecForMib( 4 );
+		}
+	};
+
+	DefaultCodecProvider defaultCodecProvider;
+}
 
 class Client::ClientPrivate
 {
@@ -112,6 +132,7 @@ public:
 	};
 	QValueList<AwayMsgRequest> awayMsgRequestQueue;
 	QTimer* awayMsgRequestTimer;
+	CodecProvider* codecProvider;
 };
 
 Client::Client( QObject* parent )
@@ -140,6 +161,7 @@ Client::Client( QObject* parent )
 	d->stage = ClientPrivate::StageOne;
 	d->typingNotifyTask = 0L;
 	d->awayMsgRequestTimer = new QTimer();
+	d->codecProvider = &defaultCodecProvider;
 
 	connect( this, SIGNAL( redirectionFinished( WORD ) ),
 	         this, SLOT( checkRedirectionQueue( WORD ) ) );
@@ -418,6 +440,11 @@ void Client::haveOwnUserInfo()
 	emit haveOwnInfo();
 }
 
+void Client::setCodecProvider( Client::CodecProvider* codecProvider )
+{
+	d->codecProvider = codecProvider;
+}
+
 
 // INTERNALS //
 
@@ -469,6 +496,7 @@ void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
         kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending message to chat room" << endl;
         ChatServiceTask* cst = new ChatServiceTask( c->rootTask(), msg.exchange(), msg.chatRoom() );
         cst->setMessage( msg );
+        cst->setEncoding( d->codecProvider->codecForAccount()->name() );
         cst->go( true );
     }
     else
@@ -486,18 +514,24 @@ void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
 
 void Client::receivedMessage( const Oscar::Message& msg )
 {
-	if ( ( msg.type() == 2 ) && ( ! msg.hasProperty( Oscar::Message::AutoResponse ) ) )
+	if ( msg.type() == 2 && !msg.hasProperty( Oscar::Message::AutoResponse ) )
 	{
 		// type 2 message needs an autoresponse, regardless of type
 		Connection* c = d->connections.connectionForFamily( 0x0004 );
 		if ( !c )
 			return;
 		
-		Oscar::Message response = Oscar::Message( msg );
+		Oscar::Message response ( msg );
 		if ( msg.hasProperty( Oscar::Message::StatusMessageRequest ) )
-			response.setText( statusMessage() );
+		{
+			QTextCodec* codec = d->codecProvider->codecForContact( msg.sender() );
+			response.setText( Oscar::Message::UserDefined, statusMessage(), codec );
+		}
 		else
-			response.setText( "" );
+		{
+			response.setEncoding( Oscar::Message::UserDefined );
+			response.setTextArray( QByteArray() );
+		}
 		response.setReceiver( msg.sender() );
 		response.addProperty( Oscar::Message::AutoResponse );
 		SendMessageTask *sendMsgTask = new SendMessageTask( c->rootTask() );
@@ -509,11 +543,12 @@ void Client::receivedMessage( const Oscar::Message& msg )
 		if ( msg.hasProperty( Oscar::Message::AutoResponse ) )
 		{
 			// we got a response to a status message request.
-			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received an away message: " << msg.text() << endl;
-			emit receivedAwayMessage( msg.sender(), msg.text() );
+			QString awayMessage( msg.text( d->codecProvider->codecForContact( msg.sender() ) ) );
+			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received an away message: " << awayMessage << endl;
+			emit receivedAwayMessage( msg.sender(), awayMessage );
 		}
 	}
-	else
+	else if ( ! msg.hasProperty( Oscar::Message::AutoResponse ) )
 	{
 		// let application handle it
 		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Emitting receivedMessage" << endl;
