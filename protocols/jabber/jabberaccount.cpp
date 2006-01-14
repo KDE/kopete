@@ -1568,9 +1568,9 @@ void JabberAccount::slotIncomingVoiceCall( const Jid & j)
 #endif
 }
 
-#ifdef SUPPORT_JINGLE
 void JabberAccount::slotIncomingJingleSession( const QString &sessionType, JingleSession *session )
 {
+#ifdef SUPPORT_JINGLE
 	if(sessionType == "http://www.google.com/session/phone")
 	{
 		QString from = ((XMPP::Jid)session->peers().first()).full();
@@ -1579,8 +1579,12 @@ void JabberAccount::slotIncomingJingleSession( const QString &sessionType, Jingl
 		session->decline();
 		sessionManager()->removeSession(session);
 	}
-}
+#else
+	Q_UNUSED( sessionType );
+	Q_UNUSED( session );
 #endif
+}
+
 
 void JabberAccount::addTransport( JabberTransport * tr, const QString &jid )
 {

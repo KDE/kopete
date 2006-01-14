@@ -46,9 +46,9 @@ namespace Kopete { class MetaContact; }
 
 #ifdef SUPPORT_JINGLE
 class JingleSessionManager;
-class JingleSession;
 class VoiceCaller;
 #endif
+class JingleSession; 
 
 /* @author Daniel Stone, Till Gerken */
 
@@ -296,11 +296,8 @@ private slots:
 	
 	/* the unregister task finished */
 	void slotUnregisterFinished();
-
-#ifdef SUPPORT_JINGLE
+//ifdef SUPPORT_JINGLE  (we can't disable slot, or moc cill complain)
 	void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);
-#endif
-
 };
 
 #endif
