@@ -208,6 +208,10 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceConfMsg " << servicenum << endl;
 			service = Yahoo::ServiceConfMsg;
 		break;
+		case (Yahoo::ServiceAuthorization) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceAuthorization " << servicenum << endl;
+			service = Yahoo::ServiceAuthorization;
+		break;
 		/*
 		ServiceIdle, // 5 (placemarker)
 		ServiceMailStat,

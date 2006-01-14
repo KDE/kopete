@@ -38,11 +38,14 @@ protected:
 	bool forMe( Transfer *transfer ) const;
 	void parseStatus( Transfer *transfer );
 	void parseStealthStatus( Transfer *transfer );
+	void parseAuthorization( Transfer *transfer );
 signals:
 	void statusChanged( const QString&, int, const QString&, int, int );
 	void stealthStatusChanged( const QString&, Yahoo::StealthStatus );
 	void error( const QString& );
 	void loginResponse( int, const QString& );
+	void authorizationAccepted( const QString &who );
+	void authorizationRejected( const QString &who, const QString &msg );
 };
 
 #endif

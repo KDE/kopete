@@ -536,6 +536,10 @@ void Client::initTasks()
 				SIGNAL( stealthStatusChanged( const QString&, Yahoo::StealthStatus ) ) );
 	QObject::connect( d->statusTask, SIGNAL( loginResponse( int, const QString& ) ), 
 				SIGNAL( loggedIn( int, const QString& ) ) );
+	QObject::connect( d->statusTask, SIGNAL( authorizationRejected( const QString&, const QString& ) ), 
+				SIGNAL( authorizationRejected( const QString&, const QString& ) ) );
+	QObject::connect( d->statusTask, SIGNAL( authorizationAccepted( const QString& ) ), 
+				SIGNAL( authorizationAccepted( const QString& ) ) );
 
 	d->mailTask = new MailNotifierTask( d->root );
 	QObject::connect( d->mailTask, SIGNAL( mailNotify(const QString&, const QString&, int) ), 

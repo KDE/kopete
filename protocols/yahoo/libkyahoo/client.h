@@ -418,6 +418,14 @@ Q_OBJECT
 		 * A buddy declined to join the conference
 		 */
 		void confUserDeclined( const QString &, const QString &, const QString & );
+		/**
+		 * A buddy accepted our authorization request
+		 */
+		void authorizationAccepted( const QString & );
+		/**
+		 * A buddy rejected our authorization request
+		 */
+		void authorizationRejected( const QString &, const QString & );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();

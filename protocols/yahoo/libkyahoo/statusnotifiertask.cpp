@@ -44,6 +44,8 @@ bool StatusNotifierTask::take( Transfer* transfer )
 
 	if( t->service() == Yahoo::ServiceStealth )
 		parseStealthStatus( transfer );
+	else if( t->service() == Yahoo::ServiceAuthorization )
+		parseAuthorization( transfer );
 	else
 		parseStatus( transfer );	
 
@@ -68,7 +70,8 @@ bool StatusNotifierTask::forMe( Transfer* transfer ) const
 		t->service() == Yahoo::ServiceIdAct ||
 		t->service() == Yahoo::ServiceIddeAct ||
 		t->service() == Yahoo::ServiceStatus ||
-		t->service() == Yahoo::ServiceStealth
+		t->service() == Yahoo::ServiceStealth ||
+		t->service() == Yahoo::ServiceAuthorization
 	)
 		return true;
 	else
@@ -113,10 +116,36 @@ void StatusNotifierTask::parseStatus( Transfer* transfer )
 		away = t->nthParamSeparated( 47, i, 7 ).toInt();
 		idle = t->nthParamSeparated( 137, i, 7 ).toInt();
 
-		if( t->service() == Yahoo::ServiceLogoff || flags == 0 )
+		if( t->service() == Yahoo::ServiceLogoff || ( state != 0 && flags == 0 ) )
 			emit statusChanged( nick, Yahoo::StatusOffline, QString::null, 0, 0 );
 		else
 			emit statusChanged( nick, state, message, away, idle );
+	}
+}
+
+void StatusNotifierTask::parseAuthorization( Transfer* transfer )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	YMSGTransfer *t = 0L;
+	t = dynamic_cast<YMSGTransfer*>(transfer);
+	if (!t)
+		return;
+
+	QString nick;		/* key = 4  */	
+	QString msg;		/* key = 14  */
+	int state;		/* key = 13  */
+
+	nick = t->firstParam( 4 );
+	msg = t->firstParam( 14 );
+	state = t->firstParam( 13 ).toInt();
+
+	if( state == 1 )
+	{
+		emit( authorizationAccepted( nick ) );
+	}
+	else if( state == 2 )
+	{
+		emit( authorizationRejected( nick, msg ) );
 	}
 }
 

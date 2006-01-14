@@ -226,6 +226,12 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
 		                 this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
 		
+		QObject::connect(m_session, SIGNAL(authorizationAccepted( const QString & )),
+		                 this, SLOT(slotAuthorizationAccepted( const QString & )) );
+		
+		QObject::connect(m_session, SIGNAL(authorizationRejected( const QString &, const QString & )),
+		                 this, SLOT(slotAuthorizationRejected( const QString &, const QString & )) );
+		
 		QObject::connect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int, int)),
 		                 this, SLOT(slotStatusChanged(const QString&, int, const QString&, int, int)));
 		
@@ -324,6 +330,12 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::disconnect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
 		                    this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
+		
+		QObject::disconnect(m_session, SIGNAL(authorizationAccepted( const QString &)),
+		                 this, SLOT(slotAuthorizationAccepted( const QString &)) );
+		
+		QObject::disconnect(m_session, SIGNAL(authorizationRejected( const QString &, const QString &)),
+		                    this, SLOT(slotAuthorizationRejected( const QString &, const QString & )) );
 		
 		QObject::disconnect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int, int)),
 		                    this, SLOT(slotStatusChanged(const QString&, int, const QString&, int, int)));
@@ -695,6 +707,16 @@ void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, co
 	}
 }
 
+void YahooAccount::slotAuthorizationAccepted( const QString &who )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+}
+
+void YahooAccount::slotAuthorizationRejected( const QString &who, const QString &msg )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, i18n( "<qt>%1 rejected your request for authorization:<br>His/Her message was: \"%2\"</qt>" ).arg(who).arg(msg), i18n( "Authorization rejected - Yahoo Plugin" ) );
+}
 void YahooAccount::slotGotIgnore( const QStringList & /* igns */ )
 {
 	//kdDebug(14180) << k_funcinfo << endl;
@@ -781,6 +803,26 @@ const QString &YahooAccount::prepareIncomingMessage( QString newMsgText )
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
 		newMsgText.replace( regExp, QString::fromLatin1("<font\\1style=\"font-size:\\2pt\">" ) );
+		}
+	}
+	
+	// Remove FADE and ALT tags
+	regExp.setPattern( "<[/]*FADE([^>]*)>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( newMsgText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			newMsgText.replace( regExp, QString::fromLatin1("" ) );
+		}
+	}
+	regExp.setPattern( "<[/]*ALT([^>]*)>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( newMsgText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			newMsgText.replace( regExp, QString::fromLatin1("" ) );
 		}
 	}
 	

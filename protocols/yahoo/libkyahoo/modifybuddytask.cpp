@@ -76,20 +76,17 @@ void ModifyBuddyTask::removeBuddy()
 
 void ModifyBuddyTask::moveBuddy()
 {
-	YMSGTransfer *add = new YMSGTransfer(Yahoo::ServiceRemBuddy);
-	add->setId( client()->sessionID() );
-	add->setParam( 1, client()->userId().local8Bit() );
-	add->setParam( 7, m_target.local8Bit() );
-	add->setParam( 65, m_oldGroup.local8Bit() );	
-	add->setParam( 14, " " );
-	send( add );
-
-	YMSGTransfer *rem = new YMSGTransfer(Yahoo::ServiceAddBuddy);
-	rem->setId( client()->sessionID() );
-	rem->setParam( 1, client()->userId().local8Bit() );
-	rem->setParam( 7, m_target.local8Bit() );
-	rem->setParam( 65, m_group.local8Bit() );	
-	send( rem );
+	YMSGTransfer *mov = new YMSGTransfer( Yahoo::ServiceBuddyChangeGroup );
+	mov->setId( client()->sessionID() );
+	mov->setParam( 1, client()->userId().local8Bit() );
+	mov->setParam( 302, 240 );
+	mov->setParam( 300, 240 );
+	mov->setParam( 7, m_target.local8Bit() );
+	mov->setParam( 224, m_oldGroup.local8Bit() );
+	mov->setParam( 264, m_group.local8Bit() );
+	mov->setParam( 301, 240 );
+	mov->setParam( 303, 240 );
+	send( mov );
 }
 
 void ModifyBuddyTask::setTarget( const QString &target )
