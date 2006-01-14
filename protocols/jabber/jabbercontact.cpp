@@ -36,6 +36,8 @@
 #include <kapplication.h>
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
+#include <kinputdialog.h>
+#include <kopeteview.h>
 
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
@@ -239,7 +241,27 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	// evaluate notifications
 	if ( message.type () != "error" )
 	{
-		if (message.body().isEmpty())
+		if (!message.invite().isEmpty())
+		{
+			QString room=message.invite();
+			QString originalBody=message.body().isEmpty() ? QString() :
+					i18n( "The original message is : <i>\" %1 \"</i><br>" ).arg(QStyleSheet::escape(message.body()));
+			QString mes=i18n("<qt><i>%1</i> invited you to join the conference <b>%2</b><br>%3<br>"
+					"If you want to accept and join, just <b>enter your nickname</b> and press ok<br>"
+							 "If you want to decline, press cancel</qt>")
+					.arg(message.from().full(), room , originalBody);
+			
+			bool ok=false;
+			QString futureNewNickName = KInputDialog::getText( i18n( "Invited to a conference - Jabber Plugin" ),
+					mes, QString() , &ok , (mManager ? dynamic_cast<QWidget*>(mManager->view(false)) : 0) );
+			if ( !ok || !account()->isConnected() || futureNewNickName.isEmpty() )
+				return;
+			
+			XMPP::Jid roomjid(room);
+			account()->client()->joinGroupChat( roomjid.host() , roomjid.user() , futureNewNickName );
+			return;
+		}
+		else if (message.body().isEmpty())
 		// Then here could be event notifications
 		{
 			if (message.containsEvent ( XMPP::CancelEvent ) )

@@ -34,6 +34,8 @@ JabberGroupChatManager::JabberGroupChatManager ( JabberProtocol *protocol, const
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId () << endl;
 
 	mRoomJid = roomJid;
+	
+	setMayInvite( true );
 
 	// make sure Kopete knows about this instance
 	Kopete::ChatSessionManager::self()->registerChatSession ( this );
@@ -128,7 +130,28 @@ void JabberGroupChatManager::slotMessageSent ( Kopete::Message &message, Kopete:
 		// but we need to stop the animation etc.
 		messageSucceeded ();
 	}
+}
 
+void JabberGroupChatManager::inviteContact( const QString & contactId )
+{
+	if( account()->isConnected () )
+	{
+		//NOTE: this is the obsolete, NOT RECOMMANDED protocol.
+		//      iris doesn't implement groupchat yet
+		XMPP::Message jabberMessage;
+		XMPP::Jid jid = static_cast<const JabberBaseContact*>(account()->myself())->rosterItem().jid() ;
+		jabberMessage.setFrom ( jid );
+		jabberMessage.setTo ( contactId );
+		jabberMessage.setInvite( mRoomJid.userHost() );
+		jabberMessage.setBody( i18n("You have been invited to %1").arg( mRoomJid.userHost() ) );
+
+		// send the message
+		account()->client()->sendMessage ( jabberMessage );
+	}
+	else
+	{
+		account()->errorConnectFirst ();
+	}
 }
 
 #include "jabbergroupchatmanager.moc"
