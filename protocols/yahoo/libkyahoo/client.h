@@ -61,6 +61,11 @@ Q_OBJECT
 		void connect( const QString &host, const uint port, const QString &userId, const QString &pass );
 
 		/**
+		 * Cancel active login attemps
+		 */
+		void cancelConnect();
+
+		/**
 		 * Logout and disconnect
 		 */
 		void close();

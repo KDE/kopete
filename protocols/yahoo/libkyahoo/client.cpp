@@ -125,10 +125,16 @@ void Client::connect( const QString &host, const uint port, const QString &userI
 	m_connector->setOptHostPort( host, port );
 	d->stream = new ClientStream( m_connector, this );
 	QObject::connect( d->stream, SIGNAL( connected() ), this, SLOT( cs_connected() ) );
+	QObject::connect( d->stream, SIGNAL( error(int) ), this, SLOT( streamError(int) ) );
 	QObject::connect( d->stream, SIGNAL( readyRead() ), this, SLOT( streamReadyRead() ) );
 	
 	
 	d->stream->connectToServer( host, false );
+}
+
+void Client::cancelConnect()
+{
+	d->loginTask->reset();
 }
 
 void Client::cs_connected()
@@ -146,8 +152,11 @@ void Client::cs_connected()
 void Client::close()
 {
 	kdDebug(14180) << k_funcinfo << endl;
-	LogoffTask *lt = new LogoffTask( d->root );
-	lt->go( true );
+	if( d->active )
+	{
+		LogoffTask *lt = new LogoffTask( d->root );
+		lt->go( true );
+	}
 	deleteTasks();
 }
 
@@ -155,6 +164,7 @@ void Client::close()
 void Client::streamError( int error )
 {
 	kdDebug(14180) << k_funcinfo << "CLIENT ERROR (Error " <<  error<< ")" << endl;
+	d->active = false;
 }
 
 void Client::streamReadyRead()

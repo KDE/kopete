@@ -39,6 +39,7 @@ public:
 	bool take(Transfer* transfer);
 	virtual void onGo();
 
+	void reset();
 	void setStateOnConnect( Yahoo::Status status );
 	void setVerificationWord( const QString &word );
 

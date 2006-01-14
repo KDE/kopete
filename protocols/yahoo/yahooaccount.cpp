@@ -472,13 +472,14 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 	//m_session = YahooSessionManager::manager()->createSession( accountId(), passwd );
 	kdDebug(14180) << "Attempting to connect to Yahoo on <" << server << ":" 
 		<< port << ">. user <" << accountId() << ">"  << endl;
+	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Connecting );
 	m_session->setStatusOnConnect( Yahoo::Status( initialStatus().internalStatus() ) );
 	m_session->connect( server, port, accountId().lower(), passwd );
 }
 
 void YahooAccount::disconnect()
 {
-//	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(14180) << k_funcinfo << endl;
 
 	m_currentMailCount = 0;
 	if ( isConnected() )
@@ -495,7 +496,8 @@ void YahooAccount::disconnect()
 	}
 	else
 	{       //make sure we set everybody else offline explicitly, just for cleanup
-		kdDebug(14180) << "Ignoring disconnect request (not fully connected)." << endl;
+		kdDebug(14180) << "Cancelling active login attempts (not fully connected)." << endl;
+		m_session->cancelConnect();
 
 		for ( QDictIterator<Kopete::Contact> i(contacts()); i.current(); ++i )
 			static_cast<YahooContact*>( i.current() )->setOnlineStatus( m_protocol->Offline );

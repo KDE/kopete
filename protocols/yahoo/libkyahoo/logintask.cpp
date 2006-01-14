@@ -135,6 +135,11 @@ void LoginTask::onGo()
 	//emit finished();
 }
 
+void LoginTask::reset()
+{
+	mState = InitialState;
+}
+
 void LoginTask::sendVerify()
 {
 	/* send a ServiceVerify */
