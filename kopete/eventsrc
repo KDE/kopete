@@ -661,7 +661,10 @@ Comment[uk]=Отримано повідомлення з низьким пріо
 Comment[zh_CN]=收到了标为低优先级的消息
 default_presentation=0
 
-
+[kopete_authorization]
+Name=Authorization
+Comment=An user has accepted/declined your authorization request
+default_presentation=16
 
 [yahoo_mail]
 Name=Yahoo Mail
