@@ -73,9 +73,15 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 	if( hide & InfoButton)
 		d->widget->m_infoButton->hide() ;
 	if( hide & AuthorizeCheckBox )
+	{
 		d->widget->m_authorizeCb->hide();
+		d->widget->m_authorizeCb->setChecked(false);
+	}
 	if( hide & AddCheckBox )
+	{
 		d->widget->m_addCb->hide();
+		d->widget->m_addCb->setChecked(false);
+	}
 	if( hide & AddGroupBox )
 		d->widget->m_contactInfoBox->hide();
 

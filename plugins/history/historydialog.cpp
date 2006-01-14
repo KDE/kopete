@@ -20,7 +20,6 @@
 #include "historylogger.h"
 #include "historyviewer.h"
 #include "kopetemetacontact.h"
-#include "kopetexsl.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopetecontactlist.h"
@@ -61,6 +60,7 @@
 #include <kiconloader.h>
 #include <kcombobox.h>
 #include <kpopupmenu.h>
+
 
 class KListViewDateItem : public KListViewItem
 {

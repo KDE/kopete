@@ -71,6 +71,7 @@
 
 #include<stdarg.h>
 #include<qobject.h>
+#include<qmap.h>
 #include<qtimer.h>
 #include<qpointer.h>
 //Added by qt3to4:
@@ -127,7 +128,9 @@ public:
 	int id_seed;
 	Task *root;
 	QString host, user, pass, resource;
-	QString osname, tzname, clientName, clientVersion;
+	QString osname, tzname, clientName, clientVersion, capsNode, capsVersion, capsExt;
+	DiscoItem::Identity identity;
+	QMap<QString,Features> extension_features;
 	int tzoffset;
 	bool active;
 
@@ -151,6 +154,9 @@ Client::Client(QObject *par)
 	d->osname = "N/A";
 	d->clientName = "N/A";
 	d->clientVersion = "0.0";
+	d->capsNode = "";
+	d->capsVersion = "";
+	d->capsExt = "";
 
 	d->id_seed = 0xaaaa;
 	d->root = new Task(this, true);
@@ -998,6 +1004,21 @@ QString Client::clientVersion() const
 	return d->clientVersion;
 }
 
+QString Client::capsNode() const
+{
+	return d->capsNode;
+}
+
+QString Client::capsVersion() const
+{
+	return d->capsVersion;
+}
+
+QString Client::capsExt() const
+{
+	return d->capsExt;
+}
+
 void Client::setOSName(const QString &name)
 {
 	d->osname = name;
@@ -1017,6 +1038,52 @@ void Client::setClientName(const QString &s)
 void Client::setClientVersion(const QString &s)
 {
 	d->clientVersion = s;
+}
+
+void Client::setCapsNode(const QString &s)
+{
+	d->capsNode = s;
+}
+
+void Client::setCapsVersion(const QString &s)
+{
+	d->capsVersion = s;
+}
+
+DiscoItem::Identity Client::identity()
+{
+	return d->identity;
+}
+
+void Client::setIdentity(DiscoItem::Identity identity)
+{
+	d->identity = identity;
+}
+
+void Client::addExtension(const QString& ext, const Features& features)
+{
+	if (!ext.isEmpty()) {
+		d->extension_features[ext] = features;
+		d->capsExt = extensions().join(" ");
+	}
+}
+
+void Client::removeExtension(const QString& ext)
+{
+	if (d->extension_features.contains(ext)) {
+		d->extension_features.remove(ext);
+		d->capsExt = extensions().join(" ");
+	}
+}
+
+QStringList Client::extensions() const
+{
+	return d->extension_features.keys();
+}
+
+const Features& Client::extension(const QString& ext) const
+{
+	return d->extension_features[ext];
 }
 
 void Client::s5b_incomingReady()

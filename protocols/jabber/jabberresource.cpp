@@ -1,10 +1,10 @@
  /*
   * jabberresource.cpp
   *
-  * Copyright (c) 2005 by Michaël Larouche <michael.larouche@kdemail.net>
+  * Copyright (c) 2005-2006 by Michaël Larouche <michael.larouche@kdemail.net>
   * Copyright (c) 2004 by Till Gerken <till@tantalo.net>
   *
-  * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
+  * Kopete    (c) 2001-2006 by the Kopete developers  <kopete-devel@kde.org>
   *
   * *************************************************************************
   * *                                                                       *
@@ -31,31 +31,40 @@
 // Kopete includes
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
+#include "jabbercapabilitiesmanager.h"
 
 class JabberResource::Private
 {
 public:
 	Private( JabberAccount *t_account, const XMPP::Jid &t_jid, const XMPP::Resource &t_resource )
-	 : account(t_account), jid(t_jid), resource(t_resource), supportedFeatures(0)
-	{}
+	 : account(t_account), jid(t_jid), resource(t_resource), capsEnabled(false)
+	{
+		// Make sure the resource is always set.
+		jid.setResource(resource.name());
+	}
 
 	JabberAccount *account;
 	XMPP::Jid jid;
 	XMPP::Resource resource;
 	
 	QString clientName, clientSystem;
-	int supportedFeatures;
+	XMPP::Features supportedFeatures;
+	bool capsEnabled;
 };
 
 JabberResource::JabberResource ( JabberAccount *account, const XMPP::Jid &jid, const XMPP::Resource &resource )
 	: d( new Private(account, jid, resource) )
 {
+	d->capsEnabled = account->protocol()->capabilitiesManager()->capabilitiesEnabled(jid);
+
 	if ( account->isConnected () )
 	{
 		QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT ( slotGetTimedClientVersion () ) );
-		QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT ( slotGetDiscoCapabilties () ) );
+		if(!d->capsEnabled)
+		{
+			QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT ( slotGetDiscoCapabilties () ) );
+		}
 	}
-
 }
 
 JabberResource::~JabberResource ()
@@ -76,6 +85,11 @@ const XMPP::Resource &JabberResource::resource () const
 void JabberResource::setResource ( const XMPP::Resource &resource )
 {
 	d->resource = resource;
+
+	// Check if the caps are now available.
+	d->capsEnabled = d->account->protocol()->capabilitiesManager()->capabilitiesEnabled(d->jid);
+
+	emit updated( this );
 }
 
 const QString &JabberResource::clientName () const
@@ -88,14 +102,16 @@ const QString &JabberResource::clientSystem () const
 	return d->clientSystem;
 }
 
-bool JabberResource::canHandleXHTML()
+XMPP::Features JabberResource::features() const
 {
-	return (d->supportedFeatures & JabberProtocol::Feature_XHTML_IM);
-}
-
-int JabberResource::supportedFeatures()
-{
-	return d->supportedFeatures;
+	if(d->capsEnabled)
+	{
+		return d->account->protocol()->capabilitiesManager()->features(d->jid);
+	}
+	else
+	{
+		return d->supportedFeatures;
+	}
 }
 
 void JabberResource::slotGetTimedClientVersion ()
@@ -121,10 +137,9 @@ void JabberResource::slotGotClientVersion ()
 	{
 		d->clientName = clientVersion->name () + " " + clientVersion->version ();
 		d->clientSystem = clientVersion->os ();
+
+		emit updated ( this );
 	}
-
-	emit updated ( this );
-
 }
 
 void JabberResource:: slotGetDiscoCapabilties ()
@@ -132,9 +147,6 @@ void JabberResource:: slotGetDiscoCapabilties ()
 	if ( d->account->isConnected () )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Requesting Client Features for " << d->jid.full () << endl;
-
-		// Reset supported features.
-		d->supportedFeatures = 0;
 
 		XMPP:: JT_DiscoInfo *task = new XMPP::JT_DiscoInfo ( d->account->client()->rootTask () );
 		// Retrive features when service discovery is done.
@@ -146,15 +158,13 @@ void JabberResource:: slotGetDiscoCapabilties ()
 
 void JabberResource::slotGotDiscoCapabilities ()
 {
-	XMPP::JT_DiscoInfo *DiscoInfos = (XMPP::JT_DiscoInfo *) sender ();
+	XMPP::JT_DiscoInfo *discoInfo = (XMPP::JT_DiscoInfo *) sender ();
 
-	if ( DiscoInfos->success () )
+	if ( discoInfo->success () )
 	{
-		//If we don't want to patch libiris, we can also retrieve a QStringList that we should parse manually
-		if (DiscoInfos->item().features().canXHTML())
-		{
-			d->supportedFeatures |= JabberProtocol::Feature_XHTML_IM;
-		}
+		d->supportedFeatures = discoInfo->item().features();
+		
+		emit updated ( this );
 	}
 }
 

@@ -231,6 +231,8 @@ QString OnlineStatus::mimeSourceFor( const Contact *contact, int size ) const
 	// figure out what icon we should use for this contact
  	QString iconName = contact->icon();
 	if ( iconName.isNull() )
+		iconName = contact->account()->customIcon();
+	if ( iconName.isNull() )
 		iconName = d->protocolIcon();
 
 
@@ -244,8 +246,11 @@ QPixmap OnlineStatus::iconFor( const Account *account, int size ) const
 
 QString OnlineStatus::mimeSourceFor( const Account *account, int size ) const
 {
-	//FIXME: support Kopete::Account having knowledge of a custom icon
-	return mimeSource( d->protocolIcon(), size, account->color(), false );
+	QString iconName = account->customIcon();
+	if ( iconName.isNull() )
+		iconName = d->protocolIcon();
+
+	return mimeSource( iconName, size, account->color(), false );
 }
 
 QPixmap OnlineStatus::iconFor( const QString &mimeSource ) const

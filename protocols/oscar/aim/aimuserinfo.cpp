@@ -83,7 +83,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, bool 
 		userInfoEdit->setTextFormat(Qt::PlainText);
 		
 		AIMMyselfContact* aimmc = dynamic_cast<AIMMyselfContact*>( c );
-		if ( !aimmc )
+		if ( aimmc )
 			userInfoEdit->setText( aimmc->userProfile() );
 		else
 			userInfoEdit->setText( QString::null );

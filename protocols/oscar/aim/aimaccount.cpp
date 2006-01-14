@@ -178,7 +178,7 @@ void AIMMyselfContact::sendMessage( Kopete::Message& message, Kopete::ChatSessio
         << s << endl;
 
     msg.setSender( contactId() );
-    msg.setText(s);
+    msg.setText( Oscar::Message::UserDefined, s, m_acct->defaultCodec() );
     msg.setTimestamp(message.timestamp());
     msg.setType(0x03);
     msg.addProperty( Oscar::Message::ChatRoom );
@@ -333,7 +333,11 @@ KActionMenu* AIMAccount::actionMenu()
 	                                       "AIMAccount::mActionSetVisibility") );
 
     mActionMenu->insert( m_joinChatAction );
-    //mActionMenu->insert( KopeteStdAction::contactInfo( this, SLOT( slotEditInfo() ), mActionMenu, "AIMAccount::mActionEditInfo" ) );
+    
+    KAction* m_editInfoAction = new KAction( i18n( "Edit User Info..." ), "identity", 0,
+                                             this, SLOT( slotEditInfo() ), mActionMenu, "actionEditInfo");
+    
+    mActionMenu->insert( m_editInfoAction );
 
 	return mActionMenu;
 	*/
@@ -379,6 +383,14 @@ void AIMAccount::setUserProfile(const QString &profile)
 
 void AIMAccount::slotEditInfo()
 {
+    if ( !isConnected() )
+    {
+        KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
+                            i18n( "Editing your user info is not possible because "
+                                  "you are not connected." ),
+                            i18n( "Unable to edit user info" ) );
+        return;
+    }
 	AIMUserInfoDialog *myInfo = new AIMUserInfoDialog(static_cast<AIMContact *>( myself() ), this, true, 0L, "myInfo");
 	myInfo->exec(); // This is a modal dialog
 }
@@ -612,7 +624,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
                 kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "found chat session for chat room" << endl;
                 Kopete::Contact* ocSender = contacts()[Oscar::normalize( message.sender() )];
                 //sanitize;
-                QString sanitizedMsg = sanitizedMessage( message.text() );
+                QString sanitizedMsg = sanitizedMessage( message.text( defaultCodec() ) );
 
                 Kopete::ContactPtrList me;
                 me.append( myself() );

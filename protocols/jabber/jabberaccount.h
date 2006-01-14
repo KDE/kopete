@@ -23,6 +23,10 @@
 #ifndef JABBERACCOUNT_H
 #define JABBERACCOUNT_H
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 // we need these for type reasons
 #include <kopetepasswordedaccount.h>
 #include <kopeteonlinestatus.h>
@@ -36,7 +40,11 @@ class JabberResourcePool;
 class JabberContact;
 class JabberContactPool;
 class JabberProtocol;
+class JabberTransport;
+
 namespace Kopete { class MetaContact; }
+
+class VoiceCaller;
 
 /* @author Daniel Stone, Till Gerken */
 
@@ -69,6 +77,13 @@ public:
 	{
 		return m_jabberClient;
 	}
+	
+#ifdef SUPPORT_JINGLE
+	VoiceCaller *voiceCaller() const
+	{
+		return m_voiceCaller;
+	}
+#endif
 
 	// change the default S5B server port
 	void setS5BServerPort ( int port );
@@ -102,6 +117,15 @@ public:
 	 * Handle stream errors. Displays a dialog and returns.
 	 */
 	static void handleStreamError (int streamError, int streamCondition, int connectorCode, const QString &server, Kopete::Account::DisconnectReason &errorClass);
+	
+	const QMap<QString, JabberTransport *> &transports()
+	{ return m_transports; }
+	
+	
+	/** 
+	 * called when the account is removed in the config ui
+	*/
+	virtual bool removeAccount();
 
 public slots:
 	/* Connects to the server. */
@@ -115,6 +139,9 @@ public slots:
 
 	/* Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+	
+	void addTransport( JabberTransport *tr ,  const QString &jid);
+	void removeTransport( const QString &jid );
 
 protected:
 	/**
@@ -135,6 +162,8 @@ protected:
 	 * @param parentContact The metacontact to add this contact to
 	 */
 	virtual bool createContact (const QString & contactID, Kopete::MetaContact * parentContact);
+	
+	
 
 private:
 	JabberProtocol *m_protocol;
@@ -144,6 +173,10 @@ private:
 
 	JabberResourcePool *m_resourcePool;
 	JabberContactPool *m_contactPool;
+
+#ifdef SUPPORT_JINGLE
+	VoiceCaller *m_voiceCaller;
+#endif
 
 	/* Set up our actions for the status menu. */
 	void initActions ();
@@ -164,6 +197,10 @@ private:
 	 */
 	bool isConnecting ();
 
+	QMap<QString, JabberTransport *>m_transports;
+	
+	/* used in removeAccount() */
+	bool m_removing;
 private slots:
 	/* Connects to the server. */
 	void slotConnect ();
@@ -207,6 +244,9 @@ private slots:
 
 	/* Incoming subscription request. */
 	void slotSubscription ( const XMPP::Jid &jid, const QString &type );
+	
+	/* the dialog that asked to add the contact was closed   (that dialog is shown in slotSubscription) */
+	void slotContactAddedNotifyDialogClosed(const QString& contactid);
 
 	/**
 	 * A new item appeared in our roster, synch it with the
@@ -240,6 +280,12 @@ private slots:
 
 	/* Update the myself information if the global identity changes. */
 	void slotGlobalIdentityChanged( const QString &key, const QVariant &value );
+	
+	/* we received a voice invitation */	
+	void slotIncomingVoiceCall(const Jid&);
+	
+	/* the unregister task finished */
+	void slotUnregisterFinished();
 };
 
 #endif

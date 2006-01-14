@@ -21,6 +21,7 @@
 #include <qmap.h>
 
 
+
 /**
  * This class represent a single chat window style.
  *
@@ -92,6 +93,19 @@ public:
 	QString getNextOutgoingHtml() const;
 	QString getStatusHtml() const;
 
+	QString getActionIncomingHtml() const;
+	QString getActionOutgoingHtml() const;
+
+	/**
+	 * Check if the style has the support for Kopete Action template (Kopete extension)
+	 * @return true if the style has Action template.
+	 */
+	bool hasActionTemplate() const;
+
+	/**
+	 * Reload style from disk.
+	 */
+	void reload();
 private:
 	/**
 	 * Read style HTML files from disk

@@ -479,10 +479,9 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 
 				QCString message = QString( "MIME-Version: 1.0\r\n"
 						"Content-Type: text/x-clientcaps\r\n"
-						"\r\n"
 						"Client-Name: Kopete/"+escape(kapp->aboutData()->version())+"\r\n"
 						+JabberID+
-						"\r\n\r\n" ).utf8();
+						"\r\n" ).utf8();
 
 				QString args = "U";
 				sendCommand( "MSG", args, true, message );

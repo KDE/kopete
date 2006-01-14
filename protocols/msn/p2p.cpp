@@ -72,7 +72,7 @@ TransferContext::TransferContext(const QString &contact, P2P::Dispatcher *dispat
 TransferContext::~TransferContext()
 {
 	m_transfer = 0l;
-	
+
 	if(m_file){
 		delete m_file;
 		m_file = 0l;
@@ -82,10 +82,10 @@ TransferContext::~TransferContext()
 void TransferContext::acknowledge(const Message& message)
 {
 	kdDebug(14140) << k_funcinfo << m_dispatcher<< endl;
-	
+
 	Message outbound;
 	outbound.header.sessionId = message.header.sessionId;
-	
+
 	if(m_identifier == 0){
 		m_identifier = m_baseIdentifier;
 	}
@@ -97,7 +97,7 @@ void TransferContext::acknowledge(const Message& message)
 	}
 	else
 		++m_identifier;
-		
+
 	outbound.header.identifier    = m_identifier;
 	outbound.header.dataOffset    = 0l;
 	outbound.header.totalDataSize = message.header.totalDataSize;
@@ -109,7 +109,7 @@ void TransferContext::acknowledge(const Message& message)
 // 	}
 // 	else
 		outbound.header.flag = 2;
-		
+
 	outbound.header.ackSessionIdentifier = message.header.identifier;
 	outbound.header.ackUniqueIdentifier  = message.header.ackSessionIdentifier;
 	outbound.header.ackDataSize   = message.header.totalDataSize;
@@ -150,7 +150,7 @@ void TransferContext::sendData(const QByteArray& bytes)
 	}
 	else
 		outbound.header.totalDataSize = m_totalDataSize;
-	
+
 	outbound.header.dataSize = bytes.size();
 	if(m_type == UserDisplayIcon){
 		outbound.header.flag = 0x20;
@@ -159,13 +159,13 @@ void TransferContext::sendData(const QByteArray& bytes)
 		outbound.header.flag = 0x01000030;
 	}
 	else  outbound.header.flag = 0;
-		 
+
 	outbound.header.ackSessionIdentifier = rand()%0x8FFFFFF0 + 4;
 	outbound.header.ackUniqueIdentifier  = 0;
 	outbound.header.ackDataSize = 0l;
 	outbound.body = bytes;
 	outbound.applicationIdentifier = (uint)m_type;
-	
+
 	outbound.destination = m_recipient;
 
 	QByteArray stream;
@@ -185,7 +185,7 @@ void TransferContext::sendData(const QByteArray& bytes)
 void TransferContext::sendDataPreparation()
 {
 	kdDebug(14140) << k_funcinfo << endl;
-	
+
 	Message outbound;
 	outbound.header.sessionId  = m_sessionId;
 	outbound.header.identifier = ++m_identifier;
@@ -230,7 +230,7 @@ void TransferContext::sendMessage(MessageType type, const QString& content, qint
 	}
 	else
 		++m_identifier;
-		
+
 	outbound.header.identifier = m_identifier;
 	outbound.header.flag = flag;
 	outbound.header.ackSessionIdentifier = m_ackSessionIdentifier;
@@ -238,7 +238,7 @@ void TransferContext::sendMessage(MessageType type, const QString& content, qint
 	outbound.header.ackDataSize = 0l;
 	outbound.applicationIdentifier = appId;
 	outbound.destination = m_recipient;
-	
+
 	QString contentType, cSeq, method;
 
 	switch(m_state)
@@ -267,7 +267,7 @@ void TransferContext::sendMessage(MessageType type, const QString& content, qint
 			}
 			break;
 	}
-	
+
 	switch(type)
 	{
 		case BYE:

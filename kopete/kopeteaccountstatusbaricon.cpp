@@ -16,6 +16,7 @@
 */
 
 #include "kopeteaccountstatusbaricon.h"
+#include "qcursor.h"
 
 #include <kdebug.h>
 //Added by qt3to4:
@@ -24,6 +25,7 @@
 #include <QEvent>
 
 //#include <kdebug.h>
+
 
 KopeteAccountStatusBarIcon::KopeteAccountStatusBarIcon( Kopete::Account *acc, QWidget *parent,
 	const char *name )
@@ -35,6 +37,7 @@ KopeteAccountStatusBarIcon::KopeteAccountStatusBarIcon( Kopete::Account *acc, QW
 	//setPixmap( proto->status().protocolIcon() );
 
 	setFixedSize ( 16, 16 );
+	setCursor(QCursor(Qt::PointingHandCursor));
 	show();
 
 	m_account = acc;

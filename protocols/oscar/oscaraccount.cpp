@@ -38,6 +38,7 @@
 #include <q3ptrlist.h>
 //Added by qt3to4:
 #include <Q3ValueList>
+#include <qtextcodec.h>
 
 #include <kdebug.h>
 #include <kconfig.h>
@@ -54,11 +55,13 @@
 #include "oscarconnector.h"
 #include "ssimanager.h"
 #include "oscarlistnonservercontacts.h"
-#include <qtextcodec.h>
 
-class OscarAccountPrivate
+class OscarAccountPrivate : public Client::CodecProvider
 {
+	// Backreference
+	OscarAccount& account;
 public:
+	OscarAccountPrivate( OscarAccount& a ): account( a ) {}
 
 	//The liboscar hook for the account
 	Client* engine;
@@ -73,6 +76,15 @@ public:
 
     OscarListNonServerContacts* olnscDialog;
 
+	virtual QTextCodec* codecForContact( const QString& contactName ) const
+	{
+		return account.contactCodec( Oscar::normalize( contactName ) );
+	}
+
+	virtual QTextCodec* codecForAccount() const
+	{
+		return account.defaultCodec();
+	}
 };
 
 OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, const char *name, bool isICQ)
@@ -81,8 +93,9 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, c
 	kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << " accountID='" << accountID <<
 		"', isICQ=" << isICQ << endl;
 
-	d = new OscarAccountPrivate;
+	d = new OscarAccountPrivate( *this );
 	d->engine = new Client( this );
+	d->engine->setCodecProvider( d );
     d->olnscDialog = 0L;
     QObject::connect( d->engine, SIGNAL( loggedIn() ), this, SLOT( loginActions() ) );
 	QObject::connect( d->engine, SIGNAL( messageReceived( const Oscar::Message& ) ),
@@ -252,7 +265,8 @@ void OscarAccount::processSSIList()
     }
     kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "the following contacts are not on the server side list"
                              << nonServerContactList << endl;
-    if ( !nonServerContactList.isEmpty() )
+	bool showMissingContactsDialog = configGroup()->readBoolEntry(QString::fromLatin1("ShowMissingContactsDialog"), true);
+    if ( !nonServerContactList.isEmpty() && showMissingContactsDialog )
     {
         d->olnscDialog = new OscarListNonServerContacts( Kopete::UI::Global::mainWidget() );
         QObject::connect( d->olnscDialog, SIGNAL( closing() ),
@@ -320,6 +334,10 @@ void OscarAccount::nonServerAddContactDialogClosed()
 
     }
 
+	bool showOnce = d->olnscDialog->onlyShowOnce();
+	configGroup()->writeEntry( QString::fromLatin1("ShowMissingContactsDialog") , !showOnce);
+	configGroup()->sync();
+	
     d->olnscDialog->delayedDestruct();
     d->olnscDialog = 0L;
 }
@@ -358,7 +376,7 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	if ( Oscar::normalize( message.receiver() ) != Oscar::normalize( accountId() ) )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got a message but we're not the receiver: "
-			<< message.text() << endl;
+			<< message.textArray() << endl;
 		return;
 	}
 
@@ -380,7 +398,7 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	if ( !ocSender )
 	{
 		kdWarning(OSCAR_RAW_DEBUG) << "Temporary contact creation failed for '"
-			<< sender << "'! Discarding message: " << message.text() << endl;
+			<< sender << "'! Discarding message: " << message.textArray() << endl;
 		return;
 	}
 	else
@@ -395,20 +413,11 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	chatSession->receivedTypingMsg( ocSender, false ); //person is done typing
 
 
-    //decode message
-    //HACK HACK HACK! Until AIM supports per contact encoding, just decode as ISO-8559-1
-    QTextCodec* codec = 0L;
-    if ( ocSender->hasProperty( "contactEncoding" ) )
-        codec = QTextCodec::codecForMib( ocSender->property( "contactEncoding" ).value().toInt() );
-    else
-        codec = QTextCodec::codecForMib( 4 );
+	//decode message
+	QString realText( message.text( contactCodec( ocSender ) ) );
 
-    QString realText = message.text();
-    if ( message.properties() & Oscar::Message::NotDecoded )
-        realText = codec->toUnicode( message.textArray() );
-
-    //sanitize;
-    QString sanitizedMsg = sanitizedMessage( realText );
+	//sanitize;
+	QString sanitizedMsg = sanitizedMessage( realText );
 
 	Kopete::ContactPtrList me;
 	me.append( myself() );
@@ -430,6 +439,27 @@ void OscarAccount::setServerPort(int port)
 		configGroup()->writeEntry( QString::fromLatin1( "Port" ), port );
 	else //set to default 5190
 		configGroup()->writeEntry( QString::fromLatin1( "Port" ), 5190 );
+}
+
+QTextCodec* OscarAccount::defaultCodec() const
+{
+	return QTextCodec::codecForMib( configGroup()->readNumEntry( "DefaultEncoding", 4 ) );
+}
+
+QTextCodec* OscarAccount::contactCodec( const OscarContact* contact ) const
+{
+	if ( contact )
+		return contact->contactCodec();
+	else
+		return defaultCodec();
+}
+
+QTextCodec* OscarAccount::contactCodec( const QString& contactName ) const
+{
+	// XXX  Need const_cast because Kopete::Account::contacts()
+	// XXX  method is not const for some strange reason.
+	OscarContact* contact = static_cast<OscarContact *> ( const_cast<OscarAccount *>(this)->contacts()[contactName] );
+	return contactCodec( contact );
 }
 
 Connection* OscarAccount::setupConnection( const QString& server, uint port )

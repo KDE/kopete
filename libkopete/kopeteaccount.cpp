@@ -82,6 +82,7 @@ public:
 	bool suppressStatusNotification;
 	Kopete::BlackLister *blackList;
 	KConfigGroup *configGroup;
+	QString customIcon;
 };
 
 Account::Account( Protocol *parent, const QString &accountId, const char *name )
@@ -91,6 +92,7 @@ Account::Account( Protocol *parent, const QString &accountId, const char *name )
 
 	d->excludeconnect = d->configGroup->readBoolEntry( "ExcludeConnect", false );
 	d->color = d->configGroup->readColorEntry( "Color", &d->color );
+	d->customIcon = d->configGroup->readEntry( "Icon", QString() );
 	d->priority = d->configGroup->readNumEntry( "Priority", 0 );
 
 	QObject::connect( &d->suppressStatusTimer, SIGNAL( timeout() ),
@@ -170,9 +172,11 @@ uint Account::priority() const
 
 QPixmap Account::accountIcon(const int size) const
 {
+	QString icon= d->customIcon.isEmpty() ? d->protocol->pluginIcon() : d->customIcon;
+	
 	// FIXME: this code is duplicated with OnlineStatus, can we merge it somehow?
 	QPixmap base = KGlobal::instance()->iconLoader()->loadIcon(
-		d->protocol->pluginIcon(), KIcon::Small, size );
+		icon, KIcon::Small, size );
 
 	if ( d->color.isValid() )
 	{
@@ -509,11 +513,29 @@ void Account::editAccount(QWidget *parent)
 	editDialog->deleteLater();
 }
 
+void Account::setCustomIcon( const QString & i)
+{
+	d->customIcon = i;
+	if(!i.isEmpty())
+		d->configGroup->writeEntry( "Icon", i );
+	else
+		d->configGroup->deleteEntry( "Icon" );
+	emit colorChanged( color() );
+}
+
+QString Account::customIcon()  const
+{
+	return d->customIcon;
+}
+
 void Account::virtual_hook( uint /*id*/, void* /*data*/)
 {
 }
 
 
-} //END namespace Kopete
+
+}
+
+ //END namespace Kopete
 
 #include "kopeteaccount.moc"

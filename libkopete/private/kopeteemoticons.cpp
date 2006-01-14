@@ -118,6 +118,7 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint mode )
 	 * to let emoticons at the beginning, the very first previous QChar must be a space. */
 	QChar p = ' ';
 	QChar c; /* current char */
+	QChar n; /* next character after a match candidate, if strict this should be QChar::null or space */
 
 	/* This is the EmoticonNode container, it will represent each matched emoticon */
 	QList<EmoticonNode> foundEmoticons;
@@ -198,12 +199,11 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint mode )
 					if( mode & StrictParse )
 					{
 					/* check if the character after this match is space or end of string*/
-						if( pos + needle.length() < message.length() )
-						{
-							QChar n = message[ pos + needle.length() ];
-							if(!n.isSpace() &&  !n.isNull() && n!= '&' && n!='<')
-								break;
-						}
+						n = message[ pos + needle.length() ];
+						//<br/> marks the end of a line
+						if( message.mid( pos + needle.length(), 3) != QString::fromLatin1("<br") && 
+								!n.isSpace() &&  !n.isNull() && n!= '&') 
+							break;
 					}
 					/* Perfect match */
 					foundEmoticons.append( EmoticonNode( (*it), pos ) );

@@ -2,6 +2,7 @@
   * jabbercontact.cpp  -  Regular Kopete Jabber protocol contact
   *
   * Copyright (c) 2002-2004 by Till Gerken <till@tantalo.net>
+  * Copyright (c) 2006     by Olivier Goffart <ogoffart at kde.org>
   *
   * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
   *
@@ -51,12 +52,15 @@
 #include "jabberfiletransfer.h"
 #include "dlgjabbervcard.h"
 
+#ifdef SUPPORT_JINGLE
+#include "jingle/voicecalldlg.h"
+#endif
 
 /**
  * JabberContact constructor
  */
-JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, Kopete::MetaContact * mc)
-				: JabberBaseContact ( rosterItem, account, mc)
+JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Account *_account, Kopete::MetaContact * mc, const QString &legacyId)
+				: JabberBaseContact ( rosterItem, _account, mc, legacyId)
 {
 
 	// this contact is able to transfer files
@@ -77,7 +81,7 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 
 	mVCardUpdateInProgress = false;
 
-	if ( !account->myself () )
+	if ( !account()->myself () )
 	{
 		// this contact is a regular contact
 		connect ( this,
@@ -87,11 +91,11 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 	else
 	{
 		// this contact is the myself instance
-		connect ( account->myself (),
+		connect ( account()->myself (),
 				  SIGNAL ( onlineStatusChanged ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 				  this, SLOT ( slotCheckVCard () ) );
 
-		connect ( account->myself (),
+		connect ( account()->myself (),
 				  SIGNAL ( onlineStatusChanged ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 				  this, SLOT ( slotCheckLastActivity ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 
@@ -99,7 +103,7 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 		 * Trigger update once if we're already connected for contacts
 		 * that are being added while we are online.
 		 */
-		if ( account->myself()->onlineStatus().isDefinitelyOnline() )
+		if ( account()->myself()->onlineStatus().isDefinitelyOnline() )
 		{
 			slotGetTimedVCard ();
 		}
@@ -204,9 +208,22 @@ Q3PtrList<KAction> *JabberContact::customContextMenuActions ()
 	actionCollection->append( actionAuthorization );
 	actionCollection->append( actionSetAvailability );
 	actionCollection->append( actionSelectResource );
+	
+	
+#ifdef SUPPORT_JINGLE
+	KAction *actionVoiceCall = new KAction (i18n ("Voice call"), 0, 0, this, SLOT (voiceCall ()), this, "jabber_voicecall");
+	actionVoiceCall->setEnabled( false );
+	actionCollection->append( actionVoiceCall );
 
+	// Check if the current contact support Voice calls, also honour lock by default.
+	JabberResource *bestResource = account()->resourcePool()->bestJabberResource( mRosterItem.jid() );
+	if( bestResource && bestResource->features().canVoice() )
+	{
+		actionVoiceCall->setEnabled( true );
+	}
+#endif
+	
 	return actionCollection;
-
 }
 
 void JabberContact::handleIncomingMessage (const XMPP::Message & message)
@@ -487,6 +504,10 @@ void JabberContact::slotGotLastActivity ()
 	if ( task->success () )
 	{
 		setProperty ( protocol()->propLastSeen, QDateTime::currentDateTime().addSecs ( -task->seconds () ) );
+		if( !task->message().isEmpty() )
+		{
+			setProperty( protocol()->propAwayMessage, task->message() );
+		}
 	}
 
 }
@@ -932,7 +953,7 @@ JabberChatSession *JabberContact::manager ( Kopete::ContactPtrList chatMembers, 
 	 */
 	if ( !manager &&  canCreate )
 	{
-		XMPP::Jid jid ( contactId () );
+		XMPP::Jid jid = rosterItem().jid();
 
 		/*
 		 * If we have no hardwired JID, set any eventually
@@ -1171,7 +1192,7 @@ void JabberContact::slotSelectResource ()
 	{
 		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing active resource, trusting bestResource()." << endl;
 
-		account()->resourcePool()->removeLock ( XMPP::Jid ( contactId () ) );
+		account()->resourcePool()->removeLock ( rosterItem().jid() );
 	}
 	else
 	{
@@ -1179,7 +1200,7 @@ void JabberContact::slotSelectResource ()
 
 		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Moving to resource " << selectedResource << endl;
 
-		account()->resourcePool()->lockToResource ( XMPP::Jid ( contactId () ), XMPP::Resource ( selectedResource ) );
+		account()->resourcePool()->lockToResource ( rosterItem().jid() , XMPP::Resource ( selectedResource ) );
 	}
 
 }
@@ -1289,5 +1310,34 @@ QString JabberContact::lastReceivedMessageId () const
 	return mLastReceivedMessageId;
 }
 
+void JabberContact::voiceCall( )
+{
+#ifdef SUPPORT_JINGLE
+	Jid jid = mRosterItem.jid();
+	
+	// It's honour lock by default.
+	JabberResource *bestResource = account()->resourcePool()->bestJabberResource( jid );
+	if( bestResource )
+	{
+		if( jid.resource().isEmpty() )
+		{
+			// If the jid resource is empty, get the JID from best resource for this contact.
+			jid = bestResource->jid();
+		}
+	
+		// Check if the voice caller exist and the current resource support voice.
+		if( account()->voiceCaller() && bestResource->features().canVoice() )
+		{
+			VoiceCallDlg *vc = new VoiceCallDlg( jid, account()->voiceCaller() );
+			vc->show();
+			vc->call();
+		}
+	}
+	else
+	{
+		// Shouldn't never go there.
+	}
+#endif
+}
 
 #include "jabbercontact.moc"

@@ -21,6 +21,7 @@
 #include <qtimer.h>
 //Added by qt3to4:
 #include <Q3PtrList>
+#include <qtextcodec.h>
 
 #include <kapplication.h>
 #include <kactionclasses.h>
@@ -406,7 +407,13 @@ void AIMContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
 	kdDebug(14190) << k_funcinfo << "sending "
 		<< s << endl;
 
-	msg.setText(s);
+	// XXX Need to check for message size?
+
+	if ( m_details.hasCap( CAP_UTF8 ) )
+		msg.setText( Oscar::Message::UCS2, s );
+	else
+		msg.setText( Oscar::Message::UserDefined, s, contactCodec() );
+
 	msg.setReceiver(mName);
 	msg.setTimestamp(message.timestamp());
 	msg.setType(0x01);
@@ -434,11 +441,24 @@ void AIMContact::sendAutoResponse(Kopete::Message& msg)
 	if(delta > 120)
 	{
 		kdDebug(14152) << k_funcinfo << "Sending auto response" << endl;
+
 		// This code was yoinked straight from OscarContact::slotSendMsg()
 		// If only that slot wasn't private, but I'm not gonna change it right now.
 		Oscar::Message message;
 
-		message.setText( msg.plainBody() );
+		if ( m_details.hasCap( CAP_UTF8 ) )
+		{
+			message.setText( Oscar::Message::UCS2, msg.plainBody() );
+		}
+		else
+		{
+			QTextCodec* codec;
+			if ( hasProperty( "contactEncoding" ) )
+				codec = QTextCodec::codecForMib( property( "contactEncoding" ).value().toInt() );
+			else
+				codec = QTextCodec::codecForMib( 4 );
+			message.setText( Oscar::Message::UserDefined, msg.plainBody(), codec );
+		}
 
 		message.setTimestamp( msg.timestamp() );
 		message.setSender( mAccount->accountId() );

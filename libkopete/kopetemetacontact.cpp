@@ -41,7 +41,7 @@
 #include "kopeteglobal.h"
 #include "kopeteprefs.h"
 #include "kopeteuiglobal.h"
-#include <QPixmap>
+#include "kopetepicture.h"
 
 #include "kopetepicture.h"
 
@@ -63,10 +63,10 @@ class  MetaContact::Private
 		onlineStatus(Kopete::OnlineStatus::Offline), photoSyncedWithKABC(false)
 	{}
 
+	QList<Contact *> contacts;
 	~Private()
 	{}
-	
-	QList<Contact *> contacts;
+
 
 	// property sources
 	PropertySource photoSource;
@@ -81,6 +81,7 @@ class  MetaContact::Private
 
 	// used when source is custom
 	QString displayName;
+	KURL photoUrl;
 
 	QList<Group *> groups;
 	QMap<QString, QMap<QString, QString> > addressBook;
@@ -202,12 +203,6 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 	}
 	else
 	{
-		// if the contact was a source of property data, clean
-		if (displayNameSourceContact() == c)
-			setDisplayNameSourceContact(0L);
-		if (photoSourceContact() == c)
-			setPhotoSourceContact(0L);
-
 		// must check before removing, or will always be false
 		bool wasTrackingName = ( !displayNameSourceContact() && (displayNameSource() == SourceContact) );
 		bool wasTrackingPhoto = ( !photoSourceContact() && (photoSource() == SourceContact) );
@@ -215,6 +210,13 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 		QString currDisplayName = displayName();
 
 		d->contacts.remove( c );
+		
+		// if the contact was a source of property data, clean
+		if (displayNameSourceContact() == c)
+			setDisplayNameSourceContact(0L);
+		if (photoSourceContact() == c)
+			setPhotoSourceContact(0L);
+
 
 		if ( wasTrackingName )
 		{
@@ -626,9 +628,21 @@ QString MetaContact::displayName() const
 	}
 	else if ( source == SourceContact )
 	{
+		if ( d->displayNameSourceContact==0 )
+		{
+			if( d->contacts.count() >= 1 )
+			{// don't call setDisplayNameSource , or there will probably be an infinite loop
+				d->displayNameSourceContact=d->contacts.first();
+//				kdDebug( 14010 ) << k_funcinfo << " setting displayname source for " << metaContactId()  << endl;
+			}
+		}
 		if ( displayNameSourceContact() != 0L )
 		{
 			return nameFromContact(displayNameSourceContact());
+		}
+		else
+		{
+//			kdDebug( 14010 ) << k_funcinfo << " source == SourceContact , but there is no displayNameSourceContact for contact " << metaContactId() << endl;
 		}
 	}
 	return d->displayName;
@@ -673,6 +687,7 @@ KURL MetaContact::customPhoto() const
 
 void MetaContact::setPhoto( const KURL &url )
 {
+	d->photoUrl = url;
 	d->customPicture.setPicture(url.path());
 
 	if ( photoSource() == SourceCustom )
@@ -784,25 +799,28 @@ void MetaContact::setDisplayNameSourceContact( Contact *contact )
 
 void MetaContact::setPhotoSourceContact( Contact *contact )
 {
+
+	
 	d->photoSourceContact = contact;
 
+#ifdef __GNUC_
+#warning Metacontact photos need to be ported
+#endif
+	/*
 	// Create a cache for the contact photo.
 	if(d->photoSourceContact != 0L)
 	{
+		QVariant photoProp;
 		if ( contact->hasProperty( Kopete::Global::Properties::self()->photo().key() ) )
-		{
-			QVariant photoProp = contact->property( Kopete::Global::Properties::self()->photo().key() ).value();
+			photoProp = contact->property( Kopete::Global::Properties::self()->photo().key() ).value();
 
-			if(photoProp.canCast( QVariant::Image ))
-				d->contactPicture.setPicture(photoProp.value<QImage>());
-			else if(photoProp.canCast( QVariant::Pixmap ))
-				d->contactPicture.setPicture(photoProp.value<QPixmap>().convertToImage());
-			else
-			{
-				QString str=photoProp.toString();
-				if(!str.isEmpty())
-					d->contactPicture.setPicture(str);
-			}
+		if(photoProp.canCast( QVariant::Image ))
+			d->contactPicture.setPicture(photoProp.toImage());
+		else if(photoProp.canCast( QVariant::Pixmap ))
+			d->contactPicture.setPicture(photoProp.toPixmap().convertToImage());
+		else if(!photoProp.asString().isEmpty())
+		{
+			d->contactPicture.setPicture(photoProp.toString());
 		}
 	}
 
@@ -810,6 +828,7 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 	{
 		emit photoChanged();
 	}
+	*/
 }
 
 void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
@@ -973,7 +992,6 @@ const QDomElement MetaContact::toXML(bool minimal)
 	// set contact source metadata
 	if (displayNameSourceContact())
 	{
-		//kdDebug(14010) << k_funcinfo << "serializing name source " << nameFromContact(displayNameSourceContact()) << endl;
 		QDomElement contactNameSource = metaContact.createElement( QString::fromUtf8("contact-source") );
 		contactNameSource.setAttribute( NSCID_ELEM, displayNameSourceContact()->contactId() );
 		contactNameSource.setAttribute( NSPID_ELEM, displayNameSourceContact()->protocol()->pluginId() );

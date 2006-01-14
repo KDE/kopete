@@ -2,9 +2,9 @@
     appearanceconfig.cpp  -  Kopete Look Feel Config
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2005      by Michaël Larouche       <michael.larouche@kdemail.net>
+    Copyright (c) 2005-2006 by Michaël Larouche       <michael.larouche@kdemail.net>
 
-    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -49,9 +49,8 @@
 #include <kdebug.h>
 #include <kfontrequester.h>
 #include <kgenericfactory.h>
-#include <khtmlview.h>
-#include <khtml_part.h>
 #include <kio/netaccess.h>
+#include <khtmlview.h>
 #include <klineedit.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -61,15 +60,13 @@
 #include <kurl.h> // KNewStuff
 #include <kurlrequesterdlg.h>
 #include <krun.h>
-#include <ktar.h> // for extracting tarballed chatwindow styles fetched with KNewStuff
-#include <kdirwatch.h>
+#include <kfiledialog.h>
 
 #include <knewstuff/downloaddialog.h> // knewstuff emoticon and chatwindow fetching
 #include <knewstuff/engine.h>         // "
 #include <knewstuff/entry.h>          // "
 #include <knewstuff/knewstuff.h>      // "
 #include <knewstuff/provider.h>       // "
-#include <kfilterdev.h>               // knewstuff gzipped file support
 
 #include <ktexteditor/highlightinginterface.h>
 // kde4 - doesn't exists anymore
@@ -122,7 +119,8 @@ public:
 	AppearanceConfig_Colors *mPrfsColors;
 	AppearanceConfig_ContactList *mPrfsContactList;
 	
-	QMap<Q3ListBoxItem*,ChatWindowStyle*> styleItemMap;
+	// value is the style path
+	QMap<Q3ListBoxItem*,QString> styleItemMap;
 	ChatWindowStyle::StyleVariants currentVariantMap;
 	ChatWindowStyle *currentStyle;
 	bool loading;
@@ -138,208 +136,55 @@ public:
 	Kopete::ChatSession *previewChatSession;
 };
 
-// TODO: Rewrite KopeteStyleNewStuff, support new theme format and remove bugs.
-//       so Get Hot New Stuff will be actived by default.
 class KopeteStyleNewStuff : public KNewStuff
 {
-	public:
-	KopeteStyleNewStuff(const QString &type, AppearanceConfig * ac, QWidget *parentWidget=0) 
-         : KNewStuff( type, parentWidget ), mAppearanceConfig( ac ), m_integrity( false )
-	{ }
+public:
+	KopeteStyleNewStuff(const QString &type, QWidget *parentWidget = 0)
+	 : KNewStuff( type, parentWidget)
+	{}
 
-	bool createUploadFile(const QString&)
-	{ return false; }
-
-	bool install( const QString & fileName)
+	bool createUploadFile(const QString &)
 	{
-		QString origFileName = mFilenameMap[ fileName ];
-		if ( origFileName.endsWith( ".xsl" ) )
-		{
-			// copy to apps/kopete/styles
-			kdDebug(14000) << k_funcinfo << " installing simple style file: " << origFileName << endl;
-			/*
-			if( !m_integrity )
-			{
-				KMessageBox::queuedMessageBox( parentWidget(), KMessageBox::Error,
-					i18n( "Package could not be verified. Please contact to author of the package. [Error: 7]" ),
-					i18n( "Package Verification Failed" ) );
-				return false;
-			}
-			*/
-// 			QString styleSheet = mAppearanceConfig->fileContents(fileName);
-// 			if ( Kopete::XSLT( styleSheet ).isValid() )
-// 				mAppearanceConfig->addStyle( origFileName.section( '.', 0, 0 ), styleSheet );
-// 			QFile::remove( fileName );
-// 			mAppearanceConfig->slotLoadStyles();
-			return true;
-		}
-		else if ( origFileName.endsWith( ".tar.gz" ) )
-		{
-			/* If KNewStuff is forced to be enabled from config file, then no verification is necessary.
-			int r;
-			if( ( r = verify( fileName ) ) != 0 )
-			{
-				KMessageBox::queuedMessageBox( parentWidget(), KMessageBox::Error,
-					i18n( "Package could not be verified. Please contact to author of the package. [Error: %1]" ).arg( r ),
-					i18n( "Package Verification Failed" ) );
-				return false;
-			}
-			*/
-			// install a tar.gz
-			kdDebug(14000) << k_funcinfo << " extracting gzipped tarball: " << origFileName << endl;
-			QString uncompress = "application/x-gzip";
-			KTar tar(fileName, uncompress);
-			tar.open(QIODevice::ReadOnly);
-			const KArchiveDirectory *dir = tar.directory();
-			dir->copyTo( locateLocal( "appdata", QString::fromLatin1( "styles" ) ) );
-			tar.close();
-			QFile::remove(fileName);
-			mAppearanceConfig->slotLoadStyles();
-			return true;
-		}
-		else if ( origFileName.endsWith( ".xsl.gz" ) )
-		{
-			kdDebug(14000) << k_funcinfo << " installing gzipped single style file: " << origFileName << endl;
-			/*
-			if( !m_integrity )
-			{
-				KMessageBox::queuedMessageBox( parentWidget(), KMessageBox::Error,
-					i18n( "Package could not be verified. Please contact to author of the package. [Error: 7]" ),
-					i18n( "Package Verification Failed" ) );
-				return false;
-			}
-			*/
-			QIODevice * iod = KFilterDev::deviceForFile( fileName, "application/x-gzip" );
-			iod->open( QIODevice::ReadOnly );
-			QTextStream stream( iod );
-			QString styleSheet = stream.read();
-			iod->close();
-// 			if ( Kopete::XSLT( styleSheet ).isValid() )
-// 				mAppearanceConfig->addStyle( origFileName.section( '.', 0, 0 ), styleSheet );
-			QFile::remove( fileName );
-			mAppearanceConfig->slotLoadStyles();
-			return true;
-
-		}
-		else
-		{
-			/* Commented out due to string freeze.
-			KMessageBox::queuedMessageBox( parentWidget(), KMessageBox::Error,
-				i18n( "Only allowed package extensions are .xsl, .tar.gz and .xsl.gz" ),
-				i18n( "Extension not supported" ) );
-			*/
-			return false;
-		}
+		return false;
 	}
 
-	/**
-	 * A package named Foo must be packaged as Foo.tar.gz use alphanumeric package
-	 * names (i.e. do not use a . in the file name ).
-	 * content should be like as follows:
-	 * /Foo.xsl
-	 * /data/Foo/file1.png
-	 * /data/Foo/file2.png
-	 * /data/Foo/bar/zoo/boo.png ...
-	 *
-	 * @param file file name to be verified
-	 * @return 0 on success<br>
-	 *         1 if root directory contains garbage<br>
-	 *         2 data directory does not exists<br>
-	 *         3 data directory contains garbage files/dirs<br>
-	 *         4 the directory under data/ is not the same name as package<br>
-	 *         5 Style file does not exist.<br>
-	 *         6 data directory does not contain any files<br>
-	 *         7 file does not even exists!
-	 *         8 package name must be same with basename of the file
-	 */
-	int verify( const QString& file )
+	bool install(const QString &styleFilename)
 	{
-		QFileInfo i( file );
-		if( !i.exists() )
-		{
-			kdDebug( 14000 ) << k_funcinfo << "ERROR: Could not open file [" << file << "] This should never have happened." << endl;
-			return 7; // actually it's pointless to return this, since this is a sign of internal error.
-		}
+		int styleInstallReturn = 0;
+		styleInstallReturn = ChatWindowStyleManager::self()->installStyle( styleFilename );
 
-		if( !m_integrity )
+		switch(styleInstallReturn)
 		{
-			kdDebug( 14000 ) << k_funcinfo << "ERROR: Package name is not the same with basename of the filename." << endl;
-			return 8;
-		}
-
-		QString base = i.baseName();
-
-		KTar tar( file, "application/x-gzip" );
-		tar.open( QIODevice::ReadOnly );
-		const KArchiveDirectory *dir = tar.directory();
-		QStringList list = dir->entries();
-
-		if( list.count() != 2 )
-		{
-			kdDebug( 14000 ) << k_funcinfo << "ERROR: Garbage file or directory in root directory of the package" << endl;
-			return 1;
-		}
-
-		const KArchiveEntry *data = dir->entry( "data" );
-		if( !data || !data->isDirectory()  )
-		{
-			kdDebug( 14000 ) << k_funcinfo << "ERROR: data directory does not exist" << endl;
-			return 2;
-		}
-		else
-		{
-			list = ((KArchiveDirectory*)data)->entries();
-			if( list.count() == 0 )
+			case ChatWindowStyleManager::StyleInstallOk:
 			{
-				kdDebug( 14000 ) << k_funcinfo << "ERROR: There is no file in the data directory. So why use a tarball?" << endl;
-				return 6;
+				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Information, i18n("The Chat Window style was succesfully installed !"), i18n("Install succesful") );
+				return true;
 			}
-			else if( list.count() != 1 )
+			case ChatWindowStyleManager::StyleCannotOpen:
 			{
-				kdDebug( 14000 ) << k_funcinfo << "ERROR: data directory contains garbage entries" << endl;
-				return 3;
+				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("The specified archive cannot be openned.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Can't open archive") );
+				break;
 			}
-			data = ((KArchiveDirectory*)data)->entry( base );
-			if( !data || !data->isDirectory() )
+			case ChatWindowStyleManager::StyleNoDirectoryValid:
 			{
-				kdDebug( 14000 ) << k_funcinfo << "ERROR: directory under data dir should have the same name as package" << endl;
-				return 4;
+				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("Could not find a suitable place to install the Chat Window style in user directory."), i18n("Can't find styles directory") );
+				break;
+			}
+			case ChatWindowStyleManager::StyleNotValid:
+			{
+				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("The specified archive does not contain a valid Chat Window style."), i18n("Invalid Style") );
+				break;
+			}
+				
+			case ChatWindowStyleManager::StyleUnknow:
+			default:
+			{
+				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("An unknow error occurred while trying to install the Chat Window style."), i18n("Unknow error") );
+				break;
 			}
 		}
-
-		const KArchiveEntry *xsl = dir->entry( base + ".xsl" );
-		if( !xsl || !xsl->isFile() )
-		{
-			kdDebug( 14000 ) << k_funcinfo << "ERROR: Style file does not exist." << endl;
-			return 5;
-		}
-
-		return 0;
-
+		return false;
 	}
-
-	QString downloadDestination( KNS::Entry * e )
-	{
-		QString filename = e->payload().fileName();
-		QFileInfo i( filename );
-		if( e->name() != i.baseName() )
-		{
-			kdDebug( 14000 ) << k_funcinfo << "ERROR: Package name is not the basename of the file." << endl;
-			m_integrity = false;
-		}
-		else
-		{
-			m_integrity = true;
-		}
-		QString tempDestination = KNewStuff::downloadDestination( e );
-		mFilenameMap.insert( tempDestination, filename );
-		return tempDestination;
-	}
-
-	QMap<QString, QString > mFilenameMap;
-	AppearanceConfig * mAppearanceConfig;
-private:
-	bool m_integrity;
 };
 
 // TODO: Someday, this configuration dialog must(not should) use KConfigXT
@@ -365,56 +210,40 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	connect(d->mPrfsEmoticons->icon_theme_list, SIGNAL(selectionChanged()),
 		this, SLOT(slotSelectedEmoticonsThemeChanged()));
 	connect(d->mPrfsEmoticons->btnInstallTheme, SIGNAL(clicked()),
-		this, SLOT(installNewTheme()));
+		this, SLOT(installEmoticonTheme()));
 
 	// Since KNewStuff is incomplete and buggy we'll disable it by default.
     d->m_allowDownloadTheme = config->readBoolEntry( "ForceNewStuff", false );
     d->mPrfsEmoticons->btnGetThemes->setEnabled( d->m_allowDownloadTheme );
 	connect(d->mPrfsEmoticons->btnGetThemes, SIGNAL(clicked()),
-		this, SLOT(slotGetThemes()));
+		this, SLOT(slotGetEmoticonThemes()));
 	connect(d->mPrfsEmoticons->btnRemoveTheme, SIGNAL(clicked()),
-		this, SLOT(removeSelectedTheme()));
+		this, SLOT(removeSelectedEmoticonTheme()));
 
 	d->mAppearanceTabCtl->addTab(d->mPrfsEmoticons, i18n("&Emoticons"));
 
 	// "Chat Window" TAB ========================================================
 	d->mPrfsChatWindow = new AppearanceConfig_ChatWindow(d->mAppearanceTabCtl);
 
-	// Disable current non-working (and also obsolete) buttons
-	// TODO: Remove these following lines when everything will be back to normal.
-	d->mPrfsChatWindow->deleteButton->setEnabled(false);
-	d->mPrfsChatWindow->importButton->setEnabled(false);
-	d->mPrfsChatWindow->copyButton->setEnabled(false);
-
-	connect(d->mPrfsChatWindow->mTransparencyEnabled, SIGNAL(toggled(bool)),
-		this, SLOT(slotTransparencyChanged(bool)));
 	connect(d->mPrfsChatWindow->styleList, SIGNAL(selectionChanged(Q3ListBoxItem *)),
-		this, SLOT(slotStyleSelected()));
+		this, SLOT(slotChatStyleSelected()));
 	connect(d->mPrfsChatWindow->variantList, SIGNAL(activated(const QString&)),
-		this, SLOT(slotVariantSelected(const QString &)));
+		this, SLOT(slotChatStyleVariantSelected(const QString &)));
 	connect(d->mPrfsChatWindow->deleteButton, SIGNAL(clicked()),
-		this, SLOT(slotDeleteStyle()));
-	connect(d->mPrfsChatWindow->importButton, SIGNAL(clicked()),
-		this, SLOT(slotImportStyle()));
-	connect(d->mPrfsChatWindow->copyButton, SIGNAL(clicked()),
-		this, SLOT(slotCopyStyle()));
+		this, SLOT(slotDeleteChatStyle()));
+	connect(d->mPrfsChatWindow->installButton, SIGNAL(clicked()),
+		this, SLOT(slotInstallChatStyle()));
 	connect(d->mPrfsChatWindow->btnGetStyles, SIGNAL(clicked()),
-		this, SLOT(slotGetStyles()));
-	connect(d->mPrfsChatWindow->metaContactDisplayEnabled, SIGNAL(toggled(bool)),
+		this, SLOT(slotGetChatStyles()));
+	connect(d->mPrfsChatWindow->groupConsecutiveMessages, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
 	connect(d->mPrfsChatWindow->groupConsecutiveMessages, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
 	// Show the available styles when the Manager has finish to load the styles.
-	connect(ChatWindowStyleManager::self(), SIGNAL(loadStylesFinished()), this, SLOT(slotLoadStyles()));
-
+	connect(ChatWindowStyleManager::self(), SIGNAL(loadStylesFinished()), this, SLOT(slotLoadChatStyles()));
 
 	// Since KNewStuff is incomplete and buggy we'll disable it by default.
 	d->mPrfsChatWindow->btnGetStyles->setEnabled( config->readBoolEntry( "ForceNewStuff", false ) );
-
-	connect(d->mPrfsChatWindow->mTransparencyTintColor, SIGNAL(activated (const QColor &)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsChatWindow->mTransparencyValue, SIGNAL(valueChanged(int)),
-		this, SLOT(emitChanged()));
 
 	d->mPrfsChatWindow->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
 	// Create the fake Chat Session
@@ -484,11 +313,11 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	connect(d->mPrfsColors->fontFace, SIGNAL(fontSelected(const QFont &)),
 		this, SLOT(slotChangeFont()));
 	connect(d->mPrfsColors->textColor, SIGNAL(changed(const QColor &)),
-		this, SLOT(slotUpdatePreview()));
+		this, SLOT(slotUpdateChatPreview()));
 	connect(d->mPrfsColors->bgColor, SIGNAL(changed(const QColor &)),
-		this, SLOT(slotUpdatePreview()));
+		this, SLOT(slotUpdateChatPreview()));
 	connect(d->mPrfsColors->linkColor, SIGNAL(changed(const QColor &)),
-		this, SLOT(slotUpdatePreview()));
+		this, SLOT(slotUpdateChatPreview()));
 	connect(d->mPrfsColors->mGreyIdleMetaContacts, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
 	connect(d->mPrfsColors->idleContactColor, SIGNAL(changed(const QColor &)),
@@ -513,8 +342,6 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 
 	// ==========================================================================
 
-	slotTransparencyChanged(d->mPrfsChatWindow->mTransparencyEnabled->isChecked());
-
 	load();
 }
 
@@ -528,7 +355,7 @@ void AppearanceConfig::updateEmoticonsButton(bool _b)
     QString themeName = d->mPrfsEmoticons->icon_theme_list->currentText();
     QFileInfo fileInf(KGlobal::dirs()->findResource("emoticons", themeName+"/"));
     d->mPrfsEmoticons->btnRemoveTheme->setEnabled( _b && fileInf.isWritable());
-    d->mPrfsEmoticons->btnGetThemes->setEnabled( d->m_allowDownloadTheme );
+    d->mPrfsEmoticons->btnGetThemes->setEnabled( false );
 }
 
 void AppearanceConfig::save()
@@ -542,10 +369,7 @@ void AppearanceConfig::save()
 	p->setEmoticonsRequireSpaces( d->mPrfsEmoticons->chkRequireSpaces->isChecked() );
 
 	// "Chat Window" TAB ========================================================
-	p->setTransparencyColor( d->mPrfsChatWindow->mTransparencyTintColor->color() );
-	p->setTransparencyEnabled( d->mPrfsChatWindow->mTransparencyEnabled->isChecked() );
-	p->setTransparencyValue( d->mPrfsChatWindow->mTransparencyValue->value() );
-	p->setMetaContactDisplay( d->mPrfsChatWindow->metaContactDisplayEnabled->isChecked() );
+	p->setGroupConsecutiveMessages( d->mPrfsChatWindow->groupConsecutiveMessages->isChecked() );
 	p->setGroupConsecutiveMessages( d->mPrfsChatWindow->groupConsecutiveMessages->isChecked() );
 
 	// Get the stylePath
@@ -612,13 +436,10 @@ void AppearanceConfig::load()
 	d->mPrfsEmoticons->chkRequireSpaces->setChecked( p->emoticonsRequireSpaces() );
 
 	// "Chat Window" TAB ========================================================
-	d->mPrfsChatWindow->mTransparencyEnabled->setChecked( p->transparencyEnabled() );
-	d->mPrfsChatWindow->mTransparencyTintColor->setColor( p->transparencyColor() );
-	d->mPrfsChatWindow->mTransparencyValue->setValue( p->transparencyValue() );
-	d->mPrfsChatWindow->metaContactDisplayEnabled->setChecked( p->metaContactDisplay() );
+	d->mPrfsChatWindow->groupConsecutiveMessages->setChecked( p->groupConsecutiveMessages() );
 	d->mPrfsChatWindow->groupConsecutiveMessages->setChecked( p->groupConsecutiveMessages() );
 	// Look for avaiable chat window styles.
-	ChatWindowStyleManager::self()->loadStyles();
+	slotLoadChatStyles();
 	
 	// "Contact List" TAB =======================================================
 	d->mPrfsContactList->mTreeContactList->setChecked( p->treeView() );
@@ -666,10 +487,10 @@ void AppearanceConfig::load()
 	d->mPrfsColors->mRtfOverride->setChecked( p->rtfOverride() );
 
 	d->loading=false;
-	slotUpdatePreview();
+	slotUpdateChatPreview();
 }
 
-void AppearanceConfig::slotLoadStyles()
+void AppearanceConfig::slotLoadChatStyles()
 {
 	d->mPrfsChatWindow->styleList->clear();
 	d->styleItemMap.clear();
@@ -687,19 +508,12 @@ void AppearanceConfig::slotLoadStyles()
 		// Insert the style class into the internal map for futher acces.
 		d->styleItemMap.insert( d->mPrfsChatWindow->styleList->firstItem(), it.data() );
 
-		if( it.data()->getStylePath() == KopetePrefs::prefs()->stylePath() )
+		if( it.data() == KopetePrefs::prefs()->stylePath() )
 		{
 			kdDebug(14000) << k_funcinfo << "Restoring saved style: " << it.key() << endl;
 
-			d->currentStyle = it.data();
 			d->mPrfsChatWindow->styleList->setSelected( d->mPrfsChatWindow->styleList->firstItem(), true );
 		}
-	}
-	if(d->currentStyle)
-	{
-		// Set the initial preview style
-		d->preview->setStyle(d->currentStyle);
-		d->preview->setStyleVariant(KopetePrefs::prefs()->styleVariant());
 	}
 
 	d->mPrfsChatWindow->styleList->sort();
@@ -759,40 +573,39 @@ void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
 	emitChanged();
 }
 
-void AppearanceConfig::slotTransparencyChanged ( bool checked )
-{
-	d->mPrfsChatWindow->mTransparencyTintColor->setEnabled( checked );
-	d->mPrfsChatWindow->mTransparencyValue->setEnabled( checked );
-	emitChanged();
-}
-
 void AppearanceConfig::slotHighlightChanged()
 {
 //	bool value = mPrfsChatWindow->highlightEnabled->isChecked();
 //	mPrfsChatWindow->foregroundColor->setEnabled ( value );
 //	mPrfsChatWindow->backgroundColor->setEnabled ( value );
-	slotUpdatePreview();
+	slotUpdateChatPreview();
 }
 
 void AppearanceConfig::slotChangeFont()
 {
-	slotUpdatePreview();
+	slotUpdateChatPreview();
 	emitChanged();
 }
 
-void AppearanceConfig::slotStyleSelected()
+void AppearanceConfig::slotChatStyleSelected()
 {
 	// Retrieve variant list.
-	d->currentStyle = d->styleItemMap[d->mPrfsChatWindow->styleList->selectedItem()];
+	QString stylePath = d->styleItemMap[d->mPrfsChatWindow->styleList->selectedItem()];
+	d->currentStyle = ChatWindowStyleManager::self()->getStyleFromPool( stylePath );
 	
 	if(d->currentStyle)
 	{
 		d->currentVariantMap = d->currentStyle->getVariants();
-		kdDebug(14000) << "Loading style: " << d->currentStyle->getStylePath() << endl;
+		kdDebug(14000) << k_funcinfo << "Loading style: " << d->currentStyle->getStylePath() << endl;
 	
 		// Update the variant list based on current style.
 		d->mPrfsChatWindow->variantList->clear();
 	
+		// Add the no variant item to the list
+		// TODO: Use default name variant from Info.plist
+		// TODO: Select default variant from Info.plist
+		d->mPrfsChatWindow->variantList->insertItem( i18n("(No Variant)") );
+
 		ChatWindowStyle::StyleVariants::ConstIterator it, itEnd = d->currentVariantMap.constEnd();
 		int currentIndex = 0;
 		for(it = d->currentVariantMap.constBegin(); it != itEnd; ++it)
@@ -807,7 +620,7 @@ void AppearanceConfig::slotStyleSelected()
 		}
 		
 		// Update the preview
-		d->preview->setStyle(d->currentStyle);
+		slotUpdateChatPreview();
 		// Get the first variant to preview
 		// Check if the current style has variants.
 		if( !d->currentVariantMap.empty() )
@@ -817,7 +630,7 @@ void AppearanceConfig::slotStyleSelected()
 	}
 }
 
-void AppearanceConfig::slotVariantSelected(const QString &variantName)
+void AppearanceConfig::slotChatStyleVariantSelected(const QString &variantName)
 {
 // 	kdDebug(14000) << k_funcinfo << variantName << endl;
 // 	kdDebug(14000) << k_funcinfo << d->currentVariantMap[variantName] << endl;
@@ -827,100 +640,83 @@ void AppearanceConfig::slotVariantSelected(const QString &variantName)
 	emitChanged();
 }
 
-void AppearanceConfig::slotImportStyle()
+void AppearanceConfig::slotInstallChatStyle()
 {
-	KURL chosenStyle = KURLRequesterDlg::getURL( QString::null, this, i18n( "Choose Stylesheet" ) );
-	if ( !chosenStyle.isEmpty() )
+	KURL styleToInstall = KFileDialog::getOpenURL( QString::null, QString::fromUtf8("application/x-zip application/x-tgz application/x-tbz"), this, i18n("Choose Chat Window style to install.") );
+
+	if( !styleToInstall.isEmpty() )
 	{
 		QString stylePath;
-		// FIXME: Using NetAccess uses nested event loops with all associated problems.
-		//        Better use normal KIO and an async API - Martijn
-		if ( KIO::NetAccess::download( chosenStyle, stylePath, this ) )
+		if( KIO::NetAccess::download( styleToInstall, stylePath, this ) )
 		{
-// 			QString styleSheet = fileContents( stylePath );
-// 			if ( Kopete::XSLT( styleSheet ).isValid() )
-// 			{
-// 				QFileInfo fi( stylePath );
-// 				addStyle( fi.fileName().section( '.', 0, 0 ), styleSheet );
-// 			}
-// 			else
-// 			{
-// 				KMessageBox::queuedMessageBox( this, KMessageBox::Error,
-// 					i18n( "'%1' is not a valid XSLT document. Import canceled." ).arg( chosenStyle.path() ),
-// 					i18n( "Invalid Style" ) );
-// 			}
-		}
-		else
-		{
-			KMessageBox::queuedMessageBox( this, KMessageBox::Error,
-				i18n( "Could not import '%1'. Check access permissions/network connection." ).arg( chosenStyle.path() ),
-				i18n( "Import Error" ) );
+			int styleInstallReturn = 0;
+			styleInstallReturn = ChatWindowStyleManager::self()->installStyle( stylePath );
+			switch(styleInstallReturn)
+			{
+				case ChatWindowStyleManager::StyleCannotOpen:
+				{
+					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive cannot be openned.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Can't open archive") );
+					break;
+				}
+				case ChatWindowStyleManager::StyleNoDirectoryValid:
+				{
+					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Could not find a suitable place to install the Chat Window style in user directory."), i18n("Can't find styles directory") );
+					break;
+				}
+				case ChatWindowStyleManager::StyleNotValid:
+					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive does not contain a valid Chat Window style."), i18n("Invalid Style") );
+					break;
+				case ChatWindowStyleManager::StyleInstallOk:
+				{
+					KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n("The Chat Window style was succesfully installed !"), i18n("Install succesful") );
+					break;
+				}
+				case ChatWindowStyleManager::StyleUnknow:
+				default:
+				{
+					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("An unknow error occurred while trying to install the Chat Window style."), i18n("Unknow error") );
+					break;
+				}
+			}
+			
+			// removeTempFile check if the file is a temp file, so it's ok for local files.
+			KIO::NetAccess::removeTempFile( stylePath );
 		}
 	}
 }
 
-void AppearanceConfig::slotCopyStyle()
+void AppearanceConfig::slotDeleteChatStyle()
 {
-// 	Q3ListBoxItem *copiedItem = d->mPrfsChatWindow->styleList->selectedItem();
-// 	if( copiedItem )
-// 	{
-// 		QString styleName =
-// 			KInputDialog::getText( i18n( "New Style Name" ), i18n( "Enter the name of the new style:" ) );
-// 
-// 		if ( !styleName.isEmpty() )
-// 		{
-// 			QString stylePath = d->itemMap[ copiedItem ];
-// 			addStyle( styleName, fileContents( stylePath ) );
-// 		}
-// 	}
-// 	else
-// 	{
-// 		KMessageBox::queuedMessageBox( this, KMessageBox::Sorry,
-// 			i18n("Please select a style to copy."), i18n("No Style Selected") );
-// 	}
+//	QString styleName = d->mPrfsChatWindow->styleList->selectedItem()->text();
+//	QString stylePathToDelete = d->styleItemMap[d->mPrfsChatWindow->styleList->selectedItem()];
+//	if( ChatWindowStyleManager::self()->removeStyle(stylePathToDelete) )
+//	{
+//		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "The style %1 was succesfully deleted.").arg(styleName));
+//		
+		// Get the first item in the stye List.
+//		QString stylePath = (*d->styleItemMap.begin());
+//		d->currentStyle = ChatWindowStyleManager::self()->getStyleFromPool(stylePath);
+//		emitChanged();
+//	}
+//	else
+//	{
+//		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "An error occured while trying to delete %1 style.").arg(styleName));
+//	}
 	emitChanged();
 }
 
-void AppearanceConfig::slotDeleteStyle()
-{
-// 	if( KMessageBox::warningContinueCancel( this, i18n("Are you sure you want to delete the style \"%1\"?")
-// 		.arg( d->mPrfsChatWindow->styleList->selectedItem()->text() ),
-// 		i18n("Delete Style"), KGuiItem(i18n("Delete Style"),"editdelete")) == KMessageBox::Continue )
-// 	{
-// 		QListBoxItem *style = d->mPrfsChatWindow->styleList->selectedItem();
-// 		QString filePath = d->itemMap[ style ];
-// 		d->itemMap.remove( style );
-// 
-// 		QFileInfo fi( filePath );
-// 		if( fi.isWritable() )
-// 			QFile::remove( filePath );
-// 
-// 		KConfig *config = KGlobal::config();
-// 		config->setGroup("KNewStuffStatus");
-// 		config->deleteEntry( style->text() );
-// 		config->sync();
-// 
-// 		if( style->next() )
-// 			d->mPrfsChatWindow->styleList->setSelected( style->next(), true );
-// 		else
-// 			d->mPrfsChatWindow->styleList->setSelected( style->prev(), true );
-// 		delete style;
-// 	}
-	emitChanged();
-}
-
-void AppearanceConfig::slotGetStyles()
+void AppearanceConfig::slotGetChatStyles()
 {
 	// we need this because KNewStuffGeneric's install function isn't clever enough
-	KopeteStyleNewStuff * kns = new KopeteStyleNewStuff( "kopete/chatstyle", this );
-	KNS::Engine * engine = new KNS::Engine( kns, "kopete/chatstyle", this );
-	KNS::DownloadDialog * d = new KNS::DownloadDialog( engine, this );
-	d->setType( "kopete/chatstyle" );
+	KopeteStyleNewStuff *kopeteNewStuff = new KopeteStyleNewStuff( "kopete/chatstyle", this );
+	KNS::Engine *engine = new KNS::Engine( kopeteNewStuff, "kopete/chatstyle", this );
+	KNS::DownloadDialog *downloadDialog = new KNS::DownloadDialog( engine, this );
+	downloadDialog->setType( "kopete/chatstyle" );
 	// you have to do this by hand when providing your own Engine
-	KNS::ProviderLoader * p = new KNS::ProviderLoader( this );
-	QObject::connect( p, SIGNAL( providersLoaded(Provider::List*) ), d, SLOT( slotProviders (Provider::List *) ) );
-	p->load( "kopete/chatstyle", "http://download.kde.org/khotnewstuff/kopetestyles-providers.xml" );
-	d->exec();
+	KNS::ProviderLoader *provider = new KNS::ProviderLoader( this );
+	QObject::connect( provider, SIGNAL( providersLoaded(Provider::List*) ), downloadDialog, SLOT( slotProviders (Provider::List *) ) );
+	provider->load( "kopete/chatstyle", "http://download.kde.org/khotnewstuff/kopetestyles12-providers.xml" );
+	downloadDialog->exec();
 }
 
 // Reimplement Kopete::Contact and its abstract method
@@ -983,7 +779,7 @@ void AppearanceConfig::createPreviewChatSession()
 void AppearanceConfig::createPreviewMessages()
 {
 	Kopete::Message msgIn( d->jack,d->myself, i18n( "Hello, this is an incoming message :-)" ), Kopete::Message::Inbound );
-	Kopete::Message msgIn2( d->jack, d->myself, i18n( "Hello, this a incoming consecutive message." ), Kopete::Message::Inbound );
+	Kopete::Message msgIn2( d->jack, d->myself, i18n( "Hello, this is an incoming consecutive message." ), Kopete::Message::Inbound );
 
 	Kopete::Message msgOut( d->myself, d->jack, i18n( "Ok, this is an outgoing message" ), Kopete::Message::Outbound );
 	Kopete::Message msgOut2( d->myself, d->jack, i18n( "Ok, a outgoing consecutive message." ), Kopete::Message::Outbound );
@@ -996,6 +792,8 @@ void AppearanceConfig::createPreviewMessages()
 				  Kopete::Message::PlainText, QString::null, Kopete::Message::TypeAction );
 	Kopete::Message msgHigh( d->jack, d->myself, i18n( "This is a highlighted message" ), Kopete::Message::Inbound );
 	msgHigh.setImportance( Kopete::Message::Highlight );
+	// This is a UTF-8 string btw.
+	Kopete::Message msgRightToLeft(d->myself, d->jack, i18n("This special UTF-8 string is to test if the style support Right-to-Left language display.", "הודעות טקסט"), Kopete::Message::Outbound);
 	Kopete::Message msgBye ( d->myself, d->jack,   i18n( "Bye" ), Kopete::Message::Outbound );
 
 	// Add the messages to ChatMessagePart
@@ -1007,40 +805,19 @@ void AppearanceConfig::createPreviewMessages()
 	d->preview->appendMessage(msgInt);
 	d->preview->appendMessage(msgAct);
 	d->preview->appendMessage(msgHigh);
+	d->preview->appendMessage(msgRightToLeft);
 	d->preview->appendMessage(msgBye);
 }
 
-void AppearanceConfig::slotUpdatePreview()
+void AppearanceConfig::slotUpdateChatPreview()
 {
-	if(d->loading)
+	if(d->loading || !d->currentStyle)
 		return;
 
-// 	Q3ListBoxItem *style = d->mPrfsChatWindow->styleList->selectedItem();
-// 	if( style && style->text() != d->currentStyle )
-// 	{
-		//TODO: should be using a ChatMessagePart
-// 		d->preview->begin();
-// 		d->preview->write( QString::fromLatin1(
-// 			"<html><head><style>"
-// 			"body{ font-family:%1;color:%2; }"
-// 			"td{ font-family:%3;color:%4; }"
-// 			".highlight{ color:%5;background-color:%6 }"
-// 			"</style></head>"
-// 			"<body bgcolor=\"%7\" vlink=\"%8\" link=\"%9\">"
-// 		).arg( mPrfsColors->fontFace->font().family() ).arg( mPrfsColors->textColor->color().name() )
-// 			.arg( mPrfsColors->fontFace->font().family() ).arg( mPrfsColors->textColor->color().name() )
-// 			.arg( mPrfsColors->foregroundColor->color().name() ).arg( mPrfsColors->backgroundColor->color().name() )
-// 			.arg( mPrfsColors->bgColor->color().name() ).arg( mPrfsColors->linkColor->color().name() )
-// 			.arg( mPrfsColors->linkColor->color().name() ) );
+	// Update the preview
+	d->preview->setStyle(d->currentStyle);
 
-// 		QString stylePath = d->itemMap[ style ];
-// 		//d->xsltParser->setXSLT( fileContents(stylePath) );
-// 		//preview->write( d->xsltParser->transform( sampleConversationXML() ) );
-// 		preview->write( QString::fromLatin1( "</body></html>" ) );
-// 		preview->end();
-
-		emitChanged();
-// 	}
+	emitChanged();
 }
 
 void AppearanceConfig::emitChanged()
@@ -1048,7 +825,7 @@ void AppearanceConfig::emitChanged()
 	emit changed( true );
 }
 
-void AppearanceConfig::installNewTheme()
+void AppearanceConfig::installEmoticonTheme()
 {
 	KURL themeURL = KURLRequesterDlg::getURL(QString::null, this,
 			i18n("Drag or Type Emoticon Theme URL"));
@@ -1067,7 +844,7 @@ void AppearanceConfig::installNewTheme()
 	updateEmoticonlist();
 }
 
-void AppearanceConfig::removeSelectedTheme()
+void AppearanceConfig::removeSelectedEmoticonTheme()
 {
 	Q3ListBoxItem *selected = d->mPrfsEmoticons->icon_theme_list->selectedItem();
 	if(selected==0)
@@ -1091,7 +868,7 @@ void AppearanceConfig::removeSelectedTheme()
 	updateEmoticonlist();
 }
 
-void AppearanceConfig::slotGetThemes()
+void AppearanceConfig::slotGetEmoticonThemes()
 {
 	KConfig* config = KGlobal::config();
 	config->setGroup( "KNewStuff" );

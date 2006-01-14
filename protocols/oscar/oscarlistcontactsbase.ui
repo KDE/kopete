@@ -8,15 +8,18 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>459</width>
-            <height>266</height>
+            <width>478</width>
+            <height>361</height>
         </rect>
     </property>
-    <grid>
+    <property name="caption">
+        <string>OscarListContactsBase</string>
+    </property>
+    <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLabel" row="0" column="0">
+        <widget class="QLabel">
             <property name="name">
                 <cstring>textLabel1</cstring>
             </property>
@@ -24,12 +27,29 @@
                 <string>The following contacts are not on your contact list. Would you like to add them?</string>
             </property>
         </widget>
-        <widget class="QListBox" row="1" column="0">
+        <widget class="QListBox">
             <property name="name">
                 <cstring>notServerContacts</cstring>
             </property>
+            <property name="frameShape">
+                <enum>StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
         </widget>
-    </grid>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>doNotShowAgain</cstring>
+            </property>
+            <property name="text">
+                <string>Do &amp;not ask again</string>
+            </property>
+            <property name="accel">
+                <string>Alt+N</string>
+            </property>
+        </widget>
+    </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -2,6 +2,7 @@
   * jabbercontactpool.cpp
   *
   * Copyright (c) 2004 by Till Gerken <till@tantalo.net>
+  * Copyright (c) 2006      by Olivier Goffart  <ogoffart at kde.org>
   *
   * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
   *
@@ -20,6 +21,7 @@
 #include <q3ptrlist.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
+#include <kopeteaccountmanager.h>
 #include "kopeteuiglobal.h"
 #include "jabberprotocol.h"
 #include "jabberbasecontact.h"
@@ -28,6 +30,7 @@
 #include "jabbergroupmembercontact.h"
 #include "jabberresourcepool.h"
 #include "jabberaccount.h"
+#include "jabbertransport.h"
 
 JabberContactPool::JabberContactPool ( JabberAccount *account )
 {
@@ -49,7 +52,7 @@ JabberContactPoolItem *JabberContactPool::findPoolItem ( const XMPP::RosterItem 
 	// see if the contact already exists
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
-		if ( mContactItem->contact()->contactId().toLower() == contact.jid().full().toLower() )
+		if ( mContactItem->contact()->rosterItem().jid().full().lower() == contact.jid().full().lower() )
 		{
 			return mContactItem;
 		}
@@ -61,7 +64,6 @@ JabberContactPoolItem *JabberContactPool::findPoolItem ( const XMPP::RosterItem 
 
 JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, Kopete::MetaContact *metaContact, bool dirty )
 {
-
 	// see if the contact already exists
 	JabberContactPoolItem *mContactItem = findPoolItem ( contact );
 	if ( mContactItem)
@@ -86,9 +88,28 @@ JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, 
 	}
 
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Adding new contact " << contact.jid().full() << endl;
+	
+	JabberTransport *transport=0l;
+	QString legacyId;
+	//find if the contact should be added to a transport.
+	if(mAccount->transports().contains(contact.jid().domain()))
+	{
+		transport=mAccount->transports()[contact.jid().domain()];
+		legacyId=transport->legacyId( contact.jid() );
+	}
+		
+	//check if the account *is* a transport
+	if(!transport && contact.jid().node().isEmpty() && contact.jid().domain() != mAccount->server()  ) //FIXME how to know if this is a transport
+	{
+		transport = new JabberTransport( mAccount , contact.jid().domain() );
+		if(Kopete::AccountManager::self()->registerAccount(  transport ))
+		{
+			return static_cast<JabberContact*>(transport->myself());
+		}
+	}
 
 	// create new contact instance and add it to the dictionary
-	JabberContact *newContact = new JabberContact ( contact, mAccount, metaContact );
+	JabberContact *newContact = new JabberContact ( contact, transport ? (Kopete::Account*)transport : (Kopete::Account*)mAccount, metaContact , legacyId );
 	JabberContactPoolItem *newContactItem = new JabberContactPoolItem ( newContact );
 	connect ( newContact, SIGNAL ( contactDestroyed ( Kopete::Contact * ) ), this, SLOT ( slotContactDestroyed ( Kopete::Contact * ) ) );
 	newContactItem->setDirty ( dirty );
@@ -143,7 +164,7 @@ void JabberContactPool::removeContact ( const XMPP::Jid &jid )
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
-		if ( mContactItem->contact()->contactId().toLower() == jid.full().toLower() )
+		if ( mContactItem->contact()->rosterItem().jid().full().lower() == jid.full().lower() )
 		{
 			/*
 			 * The following deletion will cause slotContactDestroyed()
@@ -162,7 +183,8 @@ void JabberContactPool::slotContactDestroyed ( Kopete::Contact *contact )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Contact deleted, collecting the pieces..." << endl;
 
-	JabberBaseContact *jabberContact = static_cast<JabberBaseContact *>( contact );
+	JabberBaseContact *jabberContact = static_cast<JabberBaseContact *>( contact ); 
+	//WARNING  this ptr is not usable, we are in the Kopete::Contact destructor
 
 	// remove contact from the pool
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
@@ -175,7 +197,14 @@ void JabberContactPool::slotContactDestroyed ( Kopete::Contact *contact )
 	}
 
 	// delete all resources for it
-	mAccount->resourcePool()->removeAllResources ( XMPP::Jid ( contact->contactId() ) );
+	if(contact->account()==(Kopete::Account*)(mAccount))
+		mAccount->resourcePool()->removeAllResources ( XMPP::Jid ( contact->contactId() ) );
+	else
+	{
+		//this is a legacy contact. we have no way to get the real Jid at this point, we can only guess it.
+		QString contactId= contact->contactId().replace('@','%') + "@" + contact->account()->myself()->contactId();
+		mAccount->resourcePool()->removeAllResources ( XMPP::Jid ( contactId ) ) ;
+	}
 
 }
 
@@ -201,7 +230,7 @@ void JabberContactPool::setDirty ( const XMPP::Jid &jid, bool dirty )
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
-		if ( mContactItem->contact()->contactId().toLower() == jid.full().toLower() )
+		if ( mContactItem->contact()->rosterItem().jid().full().lower() == jid.full().lower() )
 		{
 			mContactItem->setDirty ( dirty );
 			return;
@@ -237,7 +266,7 @@ JabberBaseContact *JabberContactPool::findExactMatch ( const XMPP::Jid &jid )
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
-		if ( mContactItem->contact()->contactId().toLower () == jid.full().toLower () )
+		if ( mContactItem->contact()->rosterItem().jid().full().lower () == jid.full().lower () )
 		{
 			return mContactItem->contact ();
 		}
@@ -252,7 +281,7 @@ JabberBaseContact *JabberContactPool::findRelevantRecipient ( const XMPP::Jid &j
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
-		if ( mContactItem->contact()->contactId().toLower () == jid.userHost().toLower () )
+		if ( mContactItem->contact()->rosterItem().jid().full().lower () == jid.userHost().lower () )
 		{
 			return mContactItem->contact ();
 		}
@@ -268,7 +297,7 @@ Q3PtrList<JabberBaseContact> JabberContactPool::findRelevantSources ( const XMPP
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
-		if ( XMPP::Jid ( mContactItem->contact()->contactId() ).userHost().toLower () == jid.userHost().toLower () )
+		if ( mContactItem->contact()->rosterItem().jid().userHost().lower () == jid.userHost().lower () )
 		{
 			list.append ( mContactItem->contact () );
 		}

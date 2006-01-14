@@ -74,7 +74,8 @@ void dlgJabberRegister::slotGotForm ()
 
 void dlgJabberRegister::slotSendForm ()
 {
-
+	if(!translator)
+		return;
 	XMPP::JT_Register * task = new XMPP::JT_Register (m_account->client()->rootTask ());
 
 	connect (task, SIGNAL (finished ()), this, SLOT (slotSentForm ()));

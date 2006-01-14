@@ -19,7 +19,7 @@
 #ifndef _ICQUSERINFO_H_
 #define _ICQUSERINFO_H_
 
-#include <qstring.h>
+#include <qcstring.h>
 #include <q3valuelist.h>
 #include <qdatetime.h>
 #include "kopete_export.h"
@@ -56,10 +56,10 @@ public:
 	
 public:
 	unsigned long uin;
-	QString nickname;
-	QString firstName;
-	QString lastName;
-	QString email;
+	QCString nickname;
+	QCString firstName;
+	QCString lastName;
+	QCString email;
 	bool needsAuth;
 	unsigned int gender; // 0=offline, 1=online, 2=not webaware
 };
@@ -73,17 +73,17 @@ public:
 	
 public:
 	unsigned long uin;
-	QString nickname;
-	QString firstName;
-	QString lastName;
-	QString email;
-	QString city;
-	QString state;
-	QString phoneNumber;
-	QString faxNumber;
-	QString address;
-	QString cellNumber;
-	QString zip;
+	QCString nickname;
+	QCString firstName;
+	QCString lastName;
+	QCString email;
+	QCString city;
+	QCString state;
+	QCString phoneNumber;
+	QCString faxNumber;
+	QCString address;
+	QCString cellNumber;
+	QCString zip;
 	int country;
 	char timezone;
 	bool publishEmail;
@@ -99,18 +99,18 @@ public:
 	void fill( Buffer* buffer );
 	
 public:
-	QString city;
-	QString state;
-	QString phone;
-	QString fax;
-	QString address;
-	QString zip;
+	QCString city;
+	QCString state;
+	QCString phone;
+	QCString fax;
+	QCString address;
+	QCString zip;
 	int country;
-	QString company;
-	QString department;
-	QString position;
+	QCString company;
+	QCString department;
+	QCString position;
 	int occupation;
-	QString homepage;
+	QCString homepage;
 };
 
 class KOPETE_EXPORT ICQMoreUserInfo : public ICQInfoBase
@@ -123,13 +123,13 @@ public:
 public:
 	int age;
 	unsigned int gender;
-	QString homepage;
+	QCString homepage;
 	QDate birthday;
 	unsigned int lang1;
 	unsigned int lang2;
 	unsigned int lang3;
-	QString ocity;
-	QString ostate;
+	QCString ocity;
+	QCString ostate;
 	int ocountry;
 	int marital;
 };
@@ -142,7 +142,7 @@ public:
 	void fill( Buffer* buffer );
 	
 public:
-	Q3ValueList<QString> emailList;
+	QValueList<QCString> emailList;
 };
 
 class KOPETE_EXPORT ICQInterestInfo : public ICQInfoBase
@@ -155,7 +155,7 @@ public:
 public:
 	int count;
 	int topics[4];
-	QString descriptions[4];
+	QCString descriptions[4];
 };
 
 
@@ -165,10 +165,10 @@ public:
 	ICQSearchResult();
 	void fill( Buffer* buffer );
 	quint32 uin;
-	QString firstName;
-	QString lastName;
-	QString nickName;
-	QString email;
+	QCString firstName;
+	QCString lastName;
+	QCString nickName;
+	QCString email;
 	bool auth;
 	bool online;
 	char gender;
@@ -180,19 +180,19 @@ class KOPETE_EXPORT ICQWPSearchInfo
 public:
 	ICQWPSearchInfo();
 	
-	QString firstName;
-	QString lastName;
-	QString nickName;
-	QString email;
+	QCString firstName;
+	QCString lastName;
+	QCString nickName;
+	QCString email;
 	int age;
 	int gender;
 	int language;
-	QString city;
-	QString state;
+	QCString city;
+	QCString state;
 	int country;
-	QString company;
-	QString department;
-	QString position;
+	QCString company;
+	QCString department;
+	QCString position;
 	int occupation;
 	bool onlineOnly;
 };
@@ -202,7 +202,7 @@ class ICQInfoItem
 {
 public:
 	int category;
-	QString description;
+	QCString description;
 };
 
 

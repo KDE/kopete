@@ -178,6 +178,25 @@ public:
 	 * @return the icon for this account, colored if needed
 	 */
 	QPixmap accountIcon( const int size = 0 ) const;
+	
+	/**
+	 * \brief change the account icon.
+	 * by default the icon of an account is the protocol one, but it may be overide it.
+	 * Set QString::null to go back to the default  (the protocol icon)
+	 * 
+	 * this call will emit colorChanged()
+	 */
+	void setCustomIcon( const QString& );
+	
+	/**
+	 * \brief return the icon base
+	 * This is the custom account icon set with setIcon.   if this icon is null, then the protocol icon is used
+	 * don't use this funciton to get the icon that need to be displayed, use accountIcon
+	 */
+	QString customIcon() const;
+	
+			
+			
 
 	/**
 	 * \brief Retrieve the 'myself' contact.
@@ -290,8 +309,10 @@ public:
 	/**
 	 * Return the @ref KConfigGroup used to write and read special properties
 	 *
-	 * "Protocol", "AccountId" , "Color", "AutoConnect", "Priority", "Enabled" are reserved keyword
+	 * "Protocol", "AccountId" , "Color", "AutoConnect", "Priority", "Enabled" , "Icon" are reserved keyword
 	 * already in use in that group.
+	 * 
+	 * for compatibility, try to not use key that start with a uppercase
 	 */
 	KConfigGroup *configGroup() const;
 
@@ -395,6 +416,9 @@ protected slots:
 signals:
 	/**
 	 * The color of the account has been changed
+	 * 
+	 * also emited when the icon change
+	 * @todo  probably rename to accountIconChanged
 	 */
 	void colorChanged( const QColor & );
 

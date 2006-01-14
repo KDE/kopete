@@ -42,6 +42,8 @@ public:
 	QString outgoingHtml;
 	QString nextOutgoingHtml;
 	QString statusHtml;
+	QString actionIncomingHtml;
+	QString actionOutgoingHtml;
 };
 
 ChatWindowStyle::ChatWindowStyle(const QString &stylePath, int styleBuildMode)
@@ -129,6 +131,21 @@ QString ChatWindowStyle::getStatusHtml() const
 	return d->statusHtml;
 }
 
+QString ChatWindowStyle::getActionIncomingHtml() const
+{
+	return d->actionIncomingHtml;	
+}
+
+QString ChatWindowStyle::getActionOutgoingHtml() const
+{
+	return d->actionOutgoingHtml;
+}
+
+bool ChatWindowStyle::hasActionTemplate() const
+{
+	return ( !d->actionIncomingHtml.isEmpty() && !d->actionOutgoingHtml.isEmpty() );
+}
+
 void ChatWindowStyle::listVariants()
 {
 	QString variantDirPath = d->baseHref + QString::fromUtf8("Variants/");
@@ -156,6 +173,8 @@ void ChatWindowStyle::readStyleFiles()
 	QString outgoingFile = d->baseHref + QString("Outgoing/Content.html");
 	QString nextOutgoingFile = d->baseHref + QString("Outgoing/NextContent.html");
 	QString statusFile = d->baseHref + QString("Status.html");
+	QString actionIncomingFile = d->baseHref + QString("Incoming/Action.html");
+	QString actionOutgoingFile = d->baseHref + QString("Outgoing/Action.html");
 
 	QFile fileAccess;
 	// First load header file.
@@ -166,7 +185,7 @@ void ChatWindowStyle::readStyleFiles()
 		QTextStream headerStream(&fileAccess);
 		headerStream.setEncoding(QTextStream::UnicodeUTF8);
 		d->headerHtml = headerStream.read();
-		kdDebug(14000) << k_funcinfo << d->headerHtml << endl;
+		kdDebug(14000) << k_funcinfo << "Header HTML: " << d->headerHtml << endl;
 		fileAccess.close();
 	}
 	// Load Footer file
@@ -177,7 +196,7 @@ void ChatWindowStyle::readStyleFiles()
 		QTextStream headerStream(&fileAccess);
 		headerStream.setEncoding(QTextStream::UnicodeUTF8);
 		d->footerHtml = headerStream.read();
-		kdDebug(14000) << k_funcinfo << d->footerHtml << endl;
+		kdDebug(14000) << k_funcinfo << "Footer HTML: " << d->footerHtml << endl;
 		fileAccess.close();
 	}
 	// Load incoming file
@@ -188,7 +207,7 @@ void ChatWindowStyle::readStyleFiles()
 		QTextStream headerStream(&fileAccess);
 		headerStream.setEncoding(QTextStream::UnicodeUTF8);
 		d->incomingHtml = headerStream.read();
-		kdDebug(14000) << k_funcinfo << d->incomingHtml << endl;
+		kdDebug(14000) << k_funcinfo << "Incoming HTML: " << d->incomingHtml << endl;
 		fileAccess.close();
 	}
 	// Load next Incoming file
@@ -199,7 +218,7 @@ void ChatWindowStyle::readStyleFiles()
 		QTextStream headerStream(&fileAccess);
 		headerStream.setEncoding(QTextStream::UnicodeUTF8);
 		d->nextIncomingHtml = headerStream.read();
-		kdDebug(14000) << k_funcinfo << d->nextIncomingHtml << endl;
+		kdDebug(14000) << k_funcinfo << "NextIncoming HTML: " << d->nextIncomingHtml << endl;
 		fileAccess.close();
 	}
 	// Load outgoing file
@@ -210,7 +229,7 @@ void ChatWindowStyle::readStyleFiles()
 		QTextStream headerStream(&fileAccess);
 		headerStream.setEncoding(QTextStream::UnicodeUTF8);
 		d->outgoingHtml = headerStream.read();
-		kdDebug(14000) << k_funcinfo << d->outgoingHtml << endl;
+		kdDebug(14000) << k_funcinfo << "Outgoing HTML: " << d->outgoingHtml << endl;
 		fileAccess.close();
 	}
 	// Load next outgoing file
@@ -221,7 +240,7 @@ void ChatWindowStyle::readStyleFiles()
 		QTextStream headerStream(&fileAccess);
 		headerStream.setEncoding(QTextStream::UnicodeUTF8);
 		d->nextOutgoingHtml = headerStream.read();
-		kdDebug(14000) << k_funcinfo << d->nextOutgoingHtml << endl;
+		kdDebug(14000) << k_funcinfo << "NextOutgoing HTML: " << d->nextOutgoingHtml << endl;
 		fileAccess.close();
 	}
 	// Load status file
@@ -232,7 +251,37 @@ void ChatWindowStyle::readStyleFiles()
 		QTextStream headerStream(&fileAccess);
 		headerStream.setEncoding(QTextStream::UnicodeUTF8);
 		d->statusHtml = headerStream.read();
-		kdDebug(14000) << k_funcinfo << d->statusHtml << endl;
+		kdDebug(14000) << k_funcinfo << "Status HTML: " << d->statusHtml << endl;
 		fileAccess.close();
 	}
+	
+	// Load Action Incoming file
+	if( QFile::exists(actionIncomingFile) )
+	{
+		fileAccess.setName(actionIncomingFile);
+		fileAccess.open(IO_ReadOnly);
+		QTextStream headerStream(&fileAccess);
+		headerStream.setEncoding(QTextStream::UnicodeUTF8);
+		d->actionIncomingHtml = headerStream.read();
+		kdDebug(14000) << k_funcinfo << "ActionIncoming HTML: " << d->actionIncomingHtml << endl;
+		fileAccess.close();
+	}
+	// Load Action Outgoing file
+	if( QFile::exists(actionOutgoingFile) )
+	{
+		fileAccess.setName(actionOutgoingFile);
+		fileAccess.open(IO_ReadOnly);
+		QTextStream headerStream(&fileAccess);
+		headerStream.setEncoding(QTextStream::UnicodeUTF8);
+		d->actionOutgoingHtml = headerStream.read();
+		kdDebug(14000) << k_funcinfo << "ActionOutgoing HTML: " << d->actionOutgoingHtml << endl;
+		fileAccess.close();
+	}
+}
+
+void ChatWindowStyle::reload()
+{
+	d->variantsList.clear();
+	readStyleFiles();
+	listVariants();
 }

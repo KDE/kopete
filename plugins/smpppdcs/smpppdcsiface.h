@@ -19,6 +19,10 @@
 
 #include <dcopobject.h>
 
+/**
+ * @author Heiko Sch&auml;fer <heiko@rangun.de>
+ */
+
 class SMPPPDCSIFace : virtual public DCOPObject
 {
   K_DCOP

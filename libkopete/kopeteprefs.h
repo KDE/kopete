@@ -77,9 +77,6 @@ public:
 	bool balloonClose() const { return mBalloonClose; }
 	int balloonCloseDelay() const { return mBalloonCloseDelay; }
 	bool soundIfAway() const { return mSoundIfAway; }
-	bool transparencyEnabled() const { return mTransparencyEnabled; }
-	int transparencyValue() const { return mTransparencyValue; }
-	QColor transparencyColor() const { return mTransparencyColor; }
 	int chatViewBufferSize() const { return mChatViewBufferSize; }
 	int rememberedMessages() const { return mRememberedMessages; }
 	const QColor &highlightBackground() const { return mHighlightBackground; }
@@ -104,10 +101,6 @@ public:
 
 	//Styles
 	QString defaultTheme() const { return QString::fromLatin1("Default"); }
-	//for XSLT
-	QString styleSheet() const { return mStyleSheet; }
-	QString styleDataPath() const { return mStyleDataPath; }
-	QString styleContents() const { return mStyleContents; }
 	//for Adium (xhtml+css)
 	QString stylePath() const { return mStylePath; }
 	QString styleVariant() const { return mStyleVariant; }
@@ -140,7 +133,6 @@ public:
 	bool truncateContactNames() const { return mTruncateContactNames; }
 	int maxConactNameLength() const { return mMaxContactNameLength; }
 	bool emoticonsRequireSpaces() const { return mEmoticonsRequireSpaces; }
-	bool metaContactDisplay() const { return mMetaContactDisplay; }
 	bool groupConsecutiveMessages() const { return mGroupConsecutiveMessages; }
 
 	void setIconTheme(const QString &value);
@@ -167,16 +159,12 @@ public:
 	void setSoundIfAway(bool);
 	void setBeepNotify(bool);
 	void setChatWindowPolicy(int);
-	void setStyleSheet (const QString &);
 	void setStylePath(const QString &);
 	void setStyleVariant(const QString &);
-	void setTransparencyEnabled(bool);
-	void setTransparencyColor(const QColor &);
 	void setChatViewBufferSize(int);
 	void setHighlightBackground(const QColor &);
 	void setHighlightForeground(const QColor &);
 	void setHighlightEnabled(bool);
-	void setTransparencyValue(int);
 	void setBgOverride(bool);
 	void setFgOverride(bool);
 	void setRtfOverride(bool);
@@ -212,7 +200,6 @@ public:
 	void setEmoticonsRequireSpaces( bool );
 	void setBalloonClose( bool );
 	void setBalloonDelay( int );
-	void setMetaContactDisplay( bool );
 	void setGroupConsecutiveMessages( bool );
 
 signals:
@@ -228,7 +215,6 @@ signals:
 	void windowAppearanceChanged();
 	void messageAppearanceChanged();
 	void contactListAppearanceChanged();
-	void transparencyChanged();
 	/**
 	 * Emitted when chat Window Style changed.
 	 * @param stylePath New stylePath
@@ -277,11 +263,8 @@ private:
 	bool mBalloonClose;
 	int mBalloonCloseDelay;
 	bool mSoundIfAway;
-	bool mTransparencyEnabled;
-	int mTransparencyValue;
 	int mRememberedMessages;
 	QString mInterfacePreference;
-	QColor mTransparencyColor;
 	int mChatViewBufferSize;
 	QColor mHighlightBackground;
 	QColor mHighlightForeground;
@@ -295,7 +278,6 @@ private:
 	bool mFgOverride;
 	bool mRtfOverride;
 	bool mShowTray;
-	bool mTransparencyChanged;
 	bool mWindowAppearanceChanged;
 	bool mMessageAppearanceChanged;
 	bool mContactListAppearanceChanged;
@@ -309,10 +291,6 @@ private:
 
 	bool mRichText;
 
-	//XSLT
-	QString mStyleSheet;
-	QString mStyleDataPath;
-	QString mStyleContents;
 	// xhtml+css
 	//for Adium (xhtml+css)
 	QString mStylePath;
@@ -340,11 +318,9 @@ private:
 
 	bool mReconnectOnDisconnect;
 	bool mEmoticonsRequireSpaces;
-	bool mMetaContactDisplay;
 	bool mGroupConsecutiveMessages;
 
 	QString fileContents(const QString &path);
-	void _setStyleSheet (const QString &);
 	void _setStylePath (const QString &);
 };
 #endif

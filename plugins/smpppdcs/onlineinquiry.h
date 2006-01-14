@@ -21,6 +21,10 @@
 
 class Detector;
 
+/**
+ * @author Heiko Sch&auml;fer <heiko@rangun.de>
+ */
+
 class OnlineInquiry : public IConnector {
 	OnlineInquiry(const OnlineInquiry&);
 	OnlineInquiry& operator=(const OnlineInquiry&);

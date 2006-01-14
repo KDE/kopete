@@ -34,6 +34,7 @@ class OnlineStatus;
 
 class OscarAccount;
 class QTimer;
+class QTextCodec;
 class KToggleAction;
 
 /**
@@ -81,7 +82,13 @@ public:
 	/** we received a typing notification from this contact, tell any message manager */
 	void startedTyping();
 	void stoppedTyping();
-	
+
+	/**
+	 * Returns codec for contact's encoding or default one
+	 * if contact has no encoding
+	 */
+	QTextCodec *contactCodec() const;
+
 public slots:
 	/** slot so that properties can be updated based on a new SSI item */
 	virtual void updateSSIItem() = 0;

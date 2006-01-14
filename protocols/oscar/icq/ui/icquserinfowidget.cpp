@@ -26,6 +26,7 @@
 //Added by qt3to4:
 #include <Q3VBoxLayout>
 #include <Q3Frame>
+#include <qtextcodec.h>
 
 #include <kdatewidget.h>
 #include <kdebug.h>
@@ -94,18 +95,19 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 
 void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
 {
+	QTextCodec* codec = m_contact->contactCodec();
 	m_genInfoWidget->uinEdit->setText( m_contact->contactId() );
-	m_genInfoWidget->nickNameEdit->setText( ui.nickname );
-	m_genInfoWidget->fullNameEdit->setText( ui.firstName + " " + ui.lastName );
+	m_genInfoWidget->nickNameEdit->setText( codec->toUnicode( ui.nickname ) );
+	m_genInfoWidget->fullNameEdit->setText( codec->toUnicode( ui.firstName ) + " " + codec->toUnicode( ui.lastName ) );
 	m_genInfoWidget->ipEdit->setText( m_contact->property( "ipAddress" ).value().toString() );
-	m_genInfoWidget->emailEdit->setText( ui.email );
-	m_genInfoWidget->cityEdit->setText( ui.city );
-	m_genInfoWidget->stateEdit->setText( ui.state );
-	m_genInfoWidget->phoneEdit->setText( ui.phoneNumber );
-	m_genInfoWidget->faxEdit->setText( ui.faxNumber );
-	m_genInfoWidget->addressEdit->setText( ui.address );
-	m_genInfoWidget->cellEdit->setText( ui.cellNumber );
-	m_genInfoWidget->zipEdit->setText(  ui.zip );
+	m_genInfoWidget->emailEdit->setText( codec->toUnicode( ui.email ) );
+	m_genInfoWidget->cityEdit->setText( codec->toUnicode( ui.city ) );
+	m_genInfoWidget->stateEdit->setText( codec->toUnicode( ui.state ) );
+	m_genInfoWidget->phoneEdit->setText( codec->toUnicode( ui.phoneNumber ) );
+	m_genInfoWidget->faxEdit->setText( codec->toUnicode( ui.faxNumber ) );
+	m_genInfoWidget->addressEdit->setText( codec->toUnicode( ui.address ) );
+	m_genInfoWidget->cellEdit->setText( codec->toUnicode( ui.cellNumber ) );
+	m_genInfoWidget->zipEdit->setText(  codec->toUnicode( ui.zip ) );
 	
 	QString country = static_cast<ICQProtocol*>( m_contact->protocol() )->countries()[ui.country];
 	m_genInfoWidget->countryEdit->setText( country );
@@ -113,16 +115,17 @@ void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
 
 void ICQUserInfoWidget::fillWorkInfo( const ICQWorkUserInfo& ui )
 {
-	m_workInfoWidget->cityEdit->setText( ui.city );
-	m_workInfoWidget->stateEdit->setText( ui.state );
-	m_workInfoWidget->phoneEdit->setText( ui.phone );
-	m_workInfoWidget->faxEdit->setText( ui.fax );
-	m_workInfoWidget->addressEdit->setText( ui.address );
-	m_workInfoWidget->zipEdit->setText( ui.zip );
-	m_workInfoWidget->companyEdit->setText( ui.company );
-	m_workInfoWidget->departmentEdit->setText( ui.department );
-	m_workInfoWidget->positionEdit->setText( ui.position );
-	m_workInfoWidget->homepageEdit->setText( ui.homepage );
+	QTextCodec* codec = m_contact->contactCodec();
+	m_workInfoWidget->cityEdit->setText( codec->toUnicode( ui.city ) );
+	m_workInfoWidget->stateEdit->setText( codec->toUnicode( ui.state ) );
+	m_workInfoWidget->phoneEdit->setText( codec->toUnicode( ui.phone ) );
+	m_workInfoWidget->faxEdit->setText( codec->toUnicode( ui.fax ) );
+	m_workInfoWidget->addressEdit->setText( codec->toUnicode( ui.address ) );
+	m_workInfoWidget->zipEdit->setText( codec->toUnicode( ui.zip ) );
+	m_workInfoWidget->companyEdit->setText( codec->toUnicode( ui.company ) );
+	m_workInfoWidget->departmentEdit->setText( codec->toUnicode( ui.department ) );
+	m_workInfoWidget->positionEdit->setText( codec->toUnicode( ui.position ) );
+	m_workInfoWidget->homepageEdit->setText( codec->toUnicode( ui.homepage ) );
 
 	ICQProtocol* p = static_cast<ICQProtocol*>( m_contact->protocol() );
 	QString country = p->countries()[ui.country];
@@ -137,43 +140,45 @@ void ICQUserInfoWidget::fillEmailInfo( const ICQEmailInfo& )
 
 void ICQUserInfoWidget::fillInterestInfo( const ICQInterestInfo& info)
 {
+	QTextCodec* codec = m_contact->contactCodec();
 	if (info.count>0) {
 		QString topic = static_cast<ICQProtocol*>( m_contact->protocol() )->interests()[info.topics[0]];
 		m_interestInfoWidget->topic1->setText( topic );
-		m_interestInfoWidget->desc1->setText(info.descriptions[0]);
+		m_interestInfoWidget->desc1->setText( codec->toUnicode( info.descriptions[0] ) );
 	}
 	if (info.count>1) {
 		QString topic = static_cast<ICQProtocol*>( m_contact->protocol() )->interests()[info.topics[1]];
 		m_interestInfoWidget->topic2->setText( topic );
-		m_interestInfoWidget->desc2->setText(info.descriptions[1]);
+		m_interestInfoWidget->desc2->setText( codec->toUnicode( info.descriptions[1] ) );
 	}
 	if (info.count>2) {
 		QString topic = static_cast<ICQProtocol*>( m_contact->protocol() )->interests()[info.topics[2]];
 		m_interestInfoWidget->topic3->setText( topic );
-		m_interestInfoWidget->desc3->setText(info.descriptions[2]);
+		m_interestInfoWidget->desc3->setText( codec->toUnicode( info.descriptions[2] ) );
 	}
 	if (info.count>3) {
 		QString topic = static_cast<ICQProtocol*>( m_contact->protocol() )->interests()[info.topics[3]];
 		m_interestInfoWidget->topic4->setText( topic );
-		m_interestInfoWidget->desc4->setText(info.descriptions[3]);
+		m_interestInfoWidget->desc4->setText( codec->toUnicode( info.descriptions[3] ) );
 	}
 }
 
 void ICQUserInfoWidget::fillMoreInfo( const ICQMoreUserInfo& ui )
 {
+	QTextCodec* codec = m_contact->contactCodec();
 	m_genInfoWidget->ageSpinBox->setValue( ui.age );
 	if ( ui.birthday.isValid() )
 		m_genInfoWidget->birthday->setText( KGlobal::locale()->formatDate( ui.birthday,true ) );
 		
 	QString gender = static_cast<ICQProtocol*>( m_contact->protocol() )->genders()[ui.gender];
 	m_genInfoWidget->genderEdit->setText( gender );
-	m_genInfoWidget->homepageEdit->setText( ui.homepage );
+	m_genInfoWidget->homepageEdit->setText( codec->toUnicode( ui.homepage ) );
 
 	QString ms = static_cast<ICQProtocol*>( m_contact->protocol() )->maritals()[ui.marital];
 	m_genInfoWidget->marital->setText( ms );
 
-	m_genInfoWidget->oCityEdit->setText(ui.ocity);
-	m_genInfoWidget->oStateEdit->setText(ui.ostate);
+	m_genInfoWidget->oCityEdit->setText( codec->toUnicode( ui.ocity) );
+	m_genInfoWidget->oStateEdit->setText( codec->toUnicode( ui.ostate) );
 	
 	QString ocountry = static_cast<ICQProtocol*>( m_contact->protocol() )->countries()[ui.ocountry];
 	m_genInfoWidget->oCountryEdit->setText( ocountry );

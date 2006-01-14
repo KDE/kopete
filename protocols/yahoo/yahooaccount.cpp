@@ -683,7 +683,8 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 			kc->removeProperty( m_protocol->awayMessage );
 
 		if( newStatus != static_cast<YahooProtocol*>( m_protocol )->Offline &&
-		    oldStatus == static_cast<YahooProtocol*>( m_protocol )->Offline && contact(who) != myself() )
+		    oldStatus == static_cast<YahooProtocol*>( m_protocol )->Offline && contact(who) != myself() &&
+		    myself()->onlineStatus() != m_protocol->Invisible )
 		{
 			m_session->requestBuddyIcon( who );		// Try to get Buddy Icon
 
@@ -749,6 +750,26 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
 			newMsgText.replace( regExp, QString::fromLatin1("<font\\1style=\"font-size:\\2pt\">" ) );
+		}
+	}
+	
+	// Remove FADE and ALT tags
+	regExp.setPattern( "<[/]*FADE([^>]*)>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( newMsgText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			newMsgText.replace( regExp, QString::fromLatin1("" ) );
+		}
+	}
+	regExp.setPattern( "<[/]*ALT([^>]*)>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.search( newMsgText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			newMsgText.replace( regExp, QString::fromLatin1("" ) );
 		}
 	}
 	

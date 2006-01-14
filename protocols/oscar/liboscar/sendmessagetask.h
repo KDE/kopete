@@ -39,14 +39,15 @@ public:
 
 private:
 	void addBasicTLVs( Buffer* b );
-	void addChannel1Data( Buffer* b, const QString& message );
-	void addChannel2Data( Buffer* b, const QString& message );
-	void addChannel4Data( Buffer* b, const QString& message );
-	void addRendezvousMessageData( Buffer* b, const QString& message );
+	void addChannel1Data( Buffer* b );
+	void addChannel2Data( Buffer* b );
+	void addChannel4Data( Buffer* b );
+	void addRendezvousMessageData( Buffer* b );
 
 private:
 	Oscar::Message m_message;
 	bool m_autoResponse;
+	uint m_cookieCount;
 };
 
 #endif

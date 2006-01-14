@@ -14,20 +14,19 @@
     *************************************************************************
 */
 
-#include <qstringlist.h>
 #include <qregexp.h>
 #include <qfile.h>
 
 #include <kextendedsocket.h>
 #include <kprocess.h>
 #include <kdebug.h>
-
+ 
 #include "smpppdsearcher.h"
 
 SMPPPDSearcher::SMPPPDSearcher()
         : m_procIfconfig(NULL),
-        m_procNetstat(NULL),
-m_sock(NULL) {
+          m_procNetstat(NULL),
+		  m_sock(NULL) {
 
     m_sock = new KExtendedSocket();
 }

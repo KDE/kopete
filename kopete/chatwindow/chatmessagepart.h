@@ -22,10 +22,10 @@
 #include <khtml_part.h>
 #include <dom/html_element.h>
 
-#include <qpair.h>
 //Added by qt3to4:
 #include <QPixmap>
 #include <kmenu.h>
+
 
 namespace Kopete
 { 
@@ -54,11 +54,6 @@ public:
 	 */
 	void clear();
 
-	/**
-	 * Change XSLT stylesheet
-	 */
-	void setStylesheet( const QString &style  );
-	
 	/**
 	 * Immediately scroll the chat to the bottom, as long as it has not been intentionally scrolled away from the bottom
 	 * use 
@@ -147,30 +142,20 @@ private slots:
 	void slotScrollView();
 	void slotAppearanceChanged();
 
-	/**
-	 * Called when KopetePrefs are saved
-	 */
-	void slotTransparencyChanged();
-
-	/**
-	 * Sets the background of the widget
-	 * @param pm The new background image
-	 */
-	void slotUpdateBackground( const QPixmap &pm );
-
 	void slotScrollingTo( int x, int y );
 
-	void slotRefreshNodes();
-
 	void slotRefreshView();
-
-	void slotTransformComplete( const QVariant &result );
 
 	void slotRightClick( const QString &, const QPoint &point );
 
 	void slotCopyURL();
 
 	void slotCloseView( bool force = false );
+
+	/**
+	 * Do the actual style change.
+	 */
+	void changeStyle();
 
 protected:
 	virtual void khtmlDrawContentsEvent( khtml::DrawContentsEvent * );
@@ -236,9 +221,13 @@ private:
 	QString formatName( const QString &sourceName );
 
 	/**
-	 * Do the actual style change.
+	 * Format a message body according to the style included
+	 * in the message.
+	 *
+	 * @param message Kopete::Message to format.
+	 * @return a span tag with a style attribute.
 	 */
-	void changeStyle();
+	QString formatMessageBody( const Kopete::Message &message );
 
 	/**
 	 * Write the template file to KHTMLPart

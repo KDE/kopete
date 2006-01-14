@@ -22,15 +22,23 @@
 #include "meanwhileprotocol.h"
 #include "meanwhileplugin.h"
 
-class MeanwhileLibrary;
+class MeanwhileSession;
 
+/**
+ * A class to handle a single Meanwhile Account.
+ */
 class MeanwhileAccount : public Kopete::PasswordedAccount
 {
     Q_OBJECT
 public:
-    MeanwhileAccount(   MeanwhileProtocol *parent,
-                        const QString &accountID,
-                        const char *name = 0L);
+    /**
+     * Create a new Meanwhile account
+     * @param protocol  The MeanwhileProtocol that this acccount is for
+     * @param accountID The (meanwhile) account id of this account
+     * @param name      The name of this account
+     */
+    MeanwhileAccount(MeanwhileProtocol *protocol, const QString &accountID,
+            const char *name = 0L);
 
     ~MeanwhileAccount();
 
@@ -40,49 +48,65 @@ public:
     virtual void connectWithPassword(const QString &password);
 
     virtual void disconnect();
-    virtual void disconnect(Kopete::Account::DisconnectReason reason);
 
-    virtual void setAway(bool away,
-                        const QString &reason);
+    virtual void disconnect(Kopete::Account::DisconnectReason reason);
 
     virtual KActionMenu *actionMenu();
 
-    QString serverName();
-    int     serverPort();
+    /** Get the server host name */
+    QString getServerName();
+    /** Get the server port */
+    int     getServerPort();
+    /** Set the server host name */
     void    setServerName(const QString &server);
+    /** Set the server port */
     void    setServerPort(int port);
+    /** Provide an information plugin for this account */
     void    setPlugin(MeanwhilePlugin *plugin);
 
     MeanwhilePlugin *infoPlugin;
 
     /**
-     * Get a reference to the meanwhile library object
+     * Save the current contact list to the server
      */
-    MeanwhileLibrary *library();
+    void syncContactsToServer();
 
-protected slots:
-    void meanwhileGoOnline();
-    void meanwhileGoAway();
-    void meanwhileGoOffline();
-    void meanwhileGoDND();
-    void meanwhileChangeStatus();
+    /**
+     * Get a reference to the meanwhile session object, if one exists
+     */
+    MeanwhileSession *session();
+
+    /**
+     * Get the meanwhile id for this account
+     * @return The meanwhile ID for the account
+     */
+    QString meanwhileId() const;
 
 public slots:
-    void slotLoginDone();
+    /**
+     * Called by the session to notify that the state has changed
+     */
+    void slotSessionStateChange(Kopete::OnlineStatus status);
+
+    /**
+     * Called by the session when a notification message has been received
+     */
     void slotServerNotification(const QString &mesg);
-    void slotConnectionLost();
 
     /** Reimplemented from Kopete::Account */
     void setOnlineStatus(const Kopete::OnlineStatus& status,
             const QString &reason = QString::null);
+    void setAway(bool away, const QString&reason = QString::null);
 
 private:
-    void initLibrary();
-    void meanwhileGoAway(const QString &statusmsg);
-    QString statusMesg;
+    /** Current online status */
+    Kopete::OnlineStatus status;
 
-    /** The interface to the libmeanwhile library */
-    MeanwhileLibrary *m_library;
+    /** A meanwhile session */
+    MeanwhileSession *m_session;
+
+    /* The user id for this account */
+    QString m_meanwhileId;
 };
 
 #endif

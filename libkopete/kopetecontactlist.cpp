@@ -310,12 +310,8 @@ MetaContact* ContactList::myself()
 
 void ContactList::loadGlobalIdentity()
 {
-	bool useGlobalIdentity;
-
-	useGlobalIdentity = Kopete::Config::enableGlobalIdentity();
-
  	// Apply the global identity
-	if(useGlobalIdentity)
+	if(Kopete::Config::enableGlobalIdentity())
  	{
 		connect(myself(), SIGNAL(displayNameChanged(const QString&, const QString&)), this, SLOT(slotDisplayNameChanged()));
 		connect(myself(), SIGNAL(photoChanged()), this, SLOT(slotPhotoChanged()));
@@ -336,16 +332,38 @@ void ContactList::loadGlobalIdentity()
 
 void ContactList::slotDisplayNameChanged()
 {
+	static bool mutex=false;
+	if(mutex)
+	{
+		kdDebug (14010) << k_funcinfo << " mutex blocked" << endl ;
+		return;
+	}
+	mutex=true;
+
 	kdDebug( 14010 ) << k_funcinfo << myself()->displayName() << endl;
 
 	emit globalIdentityChanged(Kopete::Global::Properties::self()->nickName().key(), myself()->displayName());
+	mutex=false;
 }
 
 void ContactList::slotPhotoChanged()
 {
+	static bool mutex=false;
+	if(mutex)
+	{
+		kdDebug (14010) << k_funcinfo << " mutex blocked" << endl ;
+		return;
+	}
+	mutex=true;
 	kdDebug( 14010 ) << k_funcinfo << myself()->picture().path() << endl;
 
 	emit globalIdentityChanged(Kopete::Global::Properties::self()->photo().key(), myself()->picture().path());
+	mutex=false;
+	/* The mutex is usefull to don't have such as stack overflow 
+	Kopete::ContactList::slotPhotoChanged  ->  Kopete::ContactList::globalIdentityChanged  
+	MSNAccount::slotGlobalIdentityChanged  ->  Kopete::Contact::propertyChanged 
+	Kopete::MetaContact::slotPropertyChanged -> Kopete::MetaContact::photoChanged -> Kopete::ContactList::slotPhotoChanged 
+	*/
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -435,7 +453,8 @@ void ContactList::loadXML()
 				Kopete::ContactList::self()->addGroup( group );
 			}
 		}
-		else if( element.tagName() == QString::fromLatin1("myself-meta-contact") )
+		// Only load myself metacontact information when Global Identity is enabled.
+		else if( element.tagName() == QString::fromLatin1("myself-meta-contact") && Kopete::Config::enableGlobalIdentity() )
 		{
 			if( !myself()->fromXML( element ) )
 			{
@@ -893,9 +912,12 @@ const QDomDocument ContactList::toXML()
 			doc.documentElement().appendChild( doc.importNode( mc->toXML(), true ) );
 	}
 	// Save myself metacontact information
-	QDomElement myselfElement = myself()->toXML(true); // Save minimal information.
-	myselfElement.setTagName( QString::fromLatin1("myself-meta-contact") );
-	doc.documentElement().appendChild( doc.importNode( myselfElement, true ) );
+	if( Kopete::Config::enableGlobalIdentity() )
+	{
+		QDomElement myselfElement = myself()->toXML(true); // Save minimal information.
+		myselfElement.setTagName( QString::fromLatin1("myself-meta-contact") );
+		doc.documentElement().appendChild( doc.importNode( myselfElement, true ) );
+	}
 
 	return doc;
 }

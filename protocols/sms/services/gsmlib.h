@@ -54,6 +54,8 @@ public:
 
 public slots:
     void savePreferences();
+	virtual void connect();
+	virtual void disconnect();
 
 //signals:
 //	void messageSent(const Kopete::Message &);
@@ -61,13 +63,16 @@ protected:
     void timerEvent( QTimerEvent * );
     void SMSReception(gsmlib::SMSMessageRef newMessage, SMSMessageType messageType);
     void SMSReceptionIndication(std::string storeName, unsigned int index, SMSMessageType messageType);
-
-private:
+	
     QWidget* configureWidget(QWidget* parent);
+	void saveConfig(); 
+	void loadConfig(); 
 
     GSMLibPrefsUI* prefWidget;
     QStringList output;
 
+	QString m_device;
+	
     QString m_description;
 
     gsmlib::MeTa* m_MeTa;

@@ -21,10 +21,14 @@
 #include <qwidget.h>
 #include <kopeteprotocol.h>
 
+
 #include "kopete_export.h"
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
+ * @todo   i want to be able to have a assync apply. 
+ *     (in the case of jabber, i need to translate the legacy id to a JID)
+ *     this could also be usefull in the case of MLSN to check if no error  (and also jabber)
  */
 class KOPETE_EXPORT AddContactPage : public QWidget
 {

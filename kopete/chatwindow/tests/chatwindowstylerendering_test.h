@@ -22,6 +22,7 @@
 // HACK: Needed to access private methods of ChatMessagePart.
 #define private public
 #include <chatmessagepart.h>
+
 #undef private
 
 class ChatWindowStyleRendering_Test : public KUnitTest::Tester

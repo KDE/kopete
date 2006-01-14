@@ -127,7 +127,7 @@ void OfflineMessagesTask::handleOfflineMessage()
 	time = time.addSecs( tz );
 	
 	QDateTime hackyTime( date, time );
-	Oscar::Message message( msg.data(), type, flags, hackyTime );
+	Oscar::Message message( Oscar::Message::UserDefined, msg, type, flags, hackyTime );
 	message.setSender( QString::number( senderUin ) );
 	message.setReceiver( QString::number( receiverUin ) );
 	

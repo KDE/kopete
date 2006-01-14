@@ -43,6 +43,7 @@ class SSIManager;
 class UserDetails;
 class QString;
 class Task;
+class QTextCodec;
 
 namespace Oscar
 {
@@ -54,6 +55,13 @@ class KOPETE_EXPORT Client : public QObject
 Q_OBJECT
 
 public:
+
+	class CodecProvider {
+	public:
+		virtual ~CodecProvider() {}
+		virtual QTextCodec* codecForContact( const QString& contactName ) const = 0;
+		virtual QTextCodec* codecForAccount() const = 0;
+	};
 
 	enum ErrorCodes {
 		NoError = 0,
@@ -303,6 +311,8 @@ public:
     /** We've finished chatting in a chat room, disconnect from it */
     void disconnectChatRoom( WORD exchange, const QString& room );
 
+	/** Set codec provider */
+	void setCodecProvider( CodecProvider* codecProvider );
 
 	/*************
 	  INTERNAL (FOR USE BY TASKS OR CONNECTIONS) METHODS

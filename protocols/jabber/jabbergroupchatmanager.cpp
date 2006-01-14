@@ -74,7 +74,7 @@ void JabberGroupChatManager::slotMessageSent ( Kopete::Message &message, Kopete:
 	{
 		XMPP::Message jabberMessage;
 
-		XMPP::Jid jid ( message.from()->contactId () );
+		XMPP::Jid jid = static_cast<const JabberBaseContact*>(message.from())->rosterItem().jid() ;
 		jabberMessage.setFrom ( jid );
 
 		XMPP::Jid toJid ( mRoomJid );

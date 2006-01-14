@@ -43,7 +43,7 @@ KopeteFileConfirmDialog::KopeteFileConfirmDialog(const Kopete::FileTransferInfo 
 	m_view=new FileConfirmBase(this, "FileConfirmView");
 	m_view->m_from->setText( info.contact()->metaContact()->displayName() + QString::fromLatin1( " <" ) +
 			info.contact()->contactId() + QString::fromLatin1( "> " ) );
-	m_view->m_size->setText( KGlobal::locale()->formatNumber( long( info.size() ) ) );
+	m_view->m_size->setText( KGlobal::locale()->formatNumber( long( info.size() ), 0 ) );
 	m_view->m_description->setText( description );
 	m_view->m_filename->setText( info.file() );
 
@@ -53,7 +53,7 @@ KopeteFileConfirmDialog::KopeteFileConfirmDialog(const Kopete::FileTransferInfo 
 
 	setMainWidget(m_view);
 
-	connect(m_view->cmdBrowse, SIGNAL(pressed()), this, SLOT(slotBrowsePressed()));
+	connect(m_view->cmdBrowse, SIGNAL(clicked()), this, SLOT(slotBrowsePressed()));
 }
 
 KopeteFileConfirmDialog::~KopeteFileConfirmDialog()

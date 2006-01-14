@@ -6,6 +6,7 @@
     copyright            : (C) 2003 by Till Gerken <till@tantalo.net>
 							Based on JabberProtocol by Daniel Stone <dstone@kde.org>
 							and Till Gerken <till@tantalo.net>.
+	copyright            : (C) 2006 by Olivier Goffart <ogoffart at kde.org>
 
 			   Kopete (C) 2001-2003 Kopete developers
 			   <kopete-devel@kde.org>.
@@ -49,6 +50,9 @@
 #include "kopeteuiglobal.h"
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
+#include "kopeteaccountmanager.h"
+#include "contactaddednotifydialog.h"
+
 #include "jabberconnector.h"
 #include "jabberclient.h"
 #include "jabberprotocol.h"
@@ -57,11 +61,21 @@
 #include "jabberfiletransfer.h"
 #include "jabbercontact.h"
 #include "jabbergroupcontact.h"
+#include "jabbercapabilitiesmanager.h"
+#include "jabbertransport.h"
 #include "dlgjabbersendraw.h"
 #include "dlgjabberservices.h"
 #include "dlgjabberchatjoin.h"
 
 #include <sys/utsname.h>
+
+#ifdef SUPPORT_JINGLE
+#include "jingle/voicecaller.h"
+#include "jingle/jinglevoicecaller.h"
+#include "jingle/voicecalldlg.h"
+#endif
+
+#define KOPETE_CAPS_NODE "http://kopete.kde.org/jabber/caps"
 
 JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId, const char *name)
 			  :Kopete::PasswordedAccount ( parent, accountId, 0, name )
@@ -74,6 +88,10 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 
 	m_resourcePool = 0L;
 	m_contactPool = 0L;
+#ifdef SUPPORT_JINGLE
+	m_voiceCaller = 0L;
+#endif
+	m_removing=false;
 
 	// add our own contact to the pool
 	JabberContact *myContact = contactPool()->addContact ( XMPP::RosterItem ( accountId ), Kopete::ContactList::self()->myself(), false );
@@ -89,16 +107,34 @@ JabberAccount::~JabberAccount ()
 {
 	disconnect ( Kopete::Account::Manual );
 
+	// Remove this account from Capabilities manager.
+	protocol()->capabilitiesManager()->removeAccount( this );
+
 	cleanup ();
+	
+	QMap<QString,JabberTransport*> tranposrts_copy=m_transports;
+	QMap<QString,JabberTransport*>::Iterator it;
+	for ( it = tranposrts_copy.begin(); it != tranposrts_copy.end(); ++it ) 
+		delete it.data();
 }
 
 void JabberAccount::cleanup ()
 {
 
 	delete m_jabberClient;
-
+	
 	m_jabberClient = 0L;
 
+	delete m_resourcePool;
+	m_resourcePool = 0L;
+
+	delete m_contactPool;
+	m_contactPool = 0L;
+	
+#ifdef SUPPORT_JINGLE
+	delete m_voiceCaller;
+	m_voiceCaller = 0L;
+#endif
 }
 
 void JabberAccount::setS5BServerPort ( int port )
@@ -128,15 +164,24 @@ KActionMenu *JabberAccount::actionMenu ()
 		this, SLOT (slotJoinNewChat ()), this, "actionJoinChat"));
 
 	m_actionMenu->popupMenu()->insertSeparator();
+	
+	KAction *action;
 
-	m_actionMenu->insert ( new KAction ( i18n ("Services..."), "jabber_serv_on", 0,
-										 this, SLOT ( slotGetServices () ), this, "actionJabberServices") );
+	action =  new KAction ( i18n ("Services..."), "jabber_serv_on", 0,
+							this, SLOT ( slotGetServices () ), this, "actionJabberServices");
+	action->setEnabled( isConnected() );
+	m_actionMenu->insert ( action );
 
-	m_actionMenu->insert ( new KAction ( i18n ("Send Raw Packet to Server..."), "mail_new", 0,
-										 this, SLOT ( slotSendRaw () ), this, "actionJabberSendRaw") );
+	action = new KAction ( i18n ("Send Raw Packet to Server..."), "mail_new", 0,
+										 this, SLOT ( slotSendRaw () ), this, "actionJabberSendRaw") ;
+	action->setEnabled( isConnected() );
+	m_actionMenu->insert ( action );
 
-	m_actionMenu->insert ( new KAction ( i18n ("Edit User Info..."), "identity", 0,
-										 this, SLOT ( slotEditVCard () ), this, "actionEditVCard") );
+	action = new KAction ( i18n ("Edit User Info..."), "identity", 0,
+										 this, SLOT ( slotEditVCard () ), this, "actionEditVCard") ;
+	action->setEnabled( isConnected() );
+	m_actionMenu->insert ( action );
+
 
 	return m_actionMenu;
 
@@ -316,7 +361,19 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		m_jabberClient->setClientVersion (kapp->aboutData ()->version ());
 		m_jabberClient->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2));
 	}
+
+	// Set caps node information
+	m_jabberClient->setCapsNode(KOPETE_CAPS_NODE);
+	m_jabberClient->setCapsVersion(kapp->aboutData()->version());
 	
+	// Set Disco Identity information
+	DiscoItem::Identity identity;
+	identity.category = "client";
+	identity.type = "pc";
+	identity.name = "Kopete";
+	m_jabberClient->setDiscoIdentity(identity);
+
+	//BEGIN TIMEZONE INFORMATION
 	//
 	// Set timezone information (code from Psi)
 	// Copyright (C) 2001-2003  Justin Karneges
@@ -345,7 +402,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 
 	if ( strcmp ( fmt, str ) )
 		timezoneString = str;
-	// end of timezone code
+	//END of timezone code
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Determined timezone " << timezoneString << " with UTC offset " << timezoneOffset << " hours." << endl;
 
@@ -368,6 +425,15 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		case JabberClient::Ok:
 		default:
 			// everything alright!
+#ifdef SUPPORT_JINGLE
+			if(!m_voiceCaller)
+			{
+				m_voiceCaller = new JingleVoiceCaller( m_jabberClient );
+				QObject::connect(m_voiceCaller,SIGNAL(incoming(const Jid&)),this,SLOT(slotIncomingVoiceCall( const Jid& )));
+			}
+			// Set caps extensions
+			m_jabberClient->client()->addExtension("voice-v1", Features(QString("http://www.google.com/xmpp/protocol/voice/v1")));
+#endif
 			break;
 	}
 
@@ -488,6 +554,11 @@ void JabberAccount::slotClientError ( JabberClient::ErrorCode errorCode )
 void JabberAccount::slotConnected ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Connected to Jabber server." << endl;
+	
+#ifdef SUPPORT_JINGLE
+	if(m_voiceCaller)
+		m_voiceCaller->initialize();
+#endif
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Requesting roster..." << endl;
 	m_jabberClient->requestRoster ();
@@ -524,19 +595,21 @@ void JabberAccount::slotIncomingFileTransfer ()
 
 void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status  , const QString &reason)
 {
+	XMPP::Status xmppStatus ( "", reason );
+
 	if( status.status() == Kopete::OnlineStatus::Offline )
 	{
-		disconnect( Kopete::Account::Manual );
-		return;
-	}
+	   	xmppStatus.setIsAvailable( false );
+        kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "CROSS YOUR FINGERS! THIS IS GONNA BE WILD" << endl;
+        if( isConnected() )
+            m_jabberClient->disconnect (xmppStatus);
+    }
 
 	if( isConnecting () )
 	{
 		errorConnectionInProgress ();
 		return;
 	}
-
-	XMPP::Status xmppStatus ( "", reason );
 
 	switch ( status.internalStatus () )
 	{
@@ -915,7 +988,8 @@ void JabberAccount::slotCSError ( int error )
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Disconnecting." << endl;
 
 		// display message to user
-		handleStreamError (error, client()->clientStream()->errorCondition (), client()->clientConnector()->errorCode (), server (), errorClass);
+		if(!m_removing) //when removing the account, connection errors are normal.
+			handleStreamError (error, client()->clientStream()->errorCondition (), client()->clientConnector()->errorCode (), server (), errorClass);
 
 		disconnect ( errorClass );
 
@@ -930,6 +1004,15 @@ void JabberAccount::setPresence ( const XMPP::Status &status )
 
 	// fetch input status
 	XMPP::Status newStatus = status;
+	
+	// TODO: Check if Caps is enabled
+	// Send entity capabilities
+	if( client() )
+	{
+		newStatus.setCapsNode( client()->capsNode() );
+		newStatus.setCapsVersion( client()->capsVersion() );
+		newStatus.setCapsExt( client()->capsExt() );
+	}
 
 	// make sure the status gets the correct priority
 	newStatus.setPriority ( configGroup()->readNumEntry ( "Priority", 5 ) );
@@ -992,84 +1075,21 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 		 */
 		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << jid.full () << " is asking for authorization to subscribe." << endl;
 
+		// Is the user already in our contact list?
+		JabberBaseContact *contact = contactPool()->findExactMatch( jid );
 		Kopete::MetaContact *metaContact=0L;
-		Kopete::Contact *contact;
-		XMPP::JT_Presence *task;
-
-		switch (KMessageBox::questionYesNoCancel (Kopete::UI::Global::mainWidget (),
-												  i18n
-												  ("The Jabber user %1 wants to add you to their "
-												   "contact list; do you want to authorize them? "
-												   "Selecting Cancel will ignore the request.").
-												  arg (jid.userHost (), 1), i18n ("Authorize Jabber User?"), i18n ("Authorize"), i18n ("Deny")))
-		{
-			case KMessageBox::Yes:
-				/*
-				 * Authorize user.
-				 */
-
-				// this safety check needs to be here because
-				// a long time could have passed between the
-				// actual request and the user's answer
-				if ( !isConnected () )
-				{
-					errorConnectionLost ();
-					break;
-				}
-
-				task = new XMPP::JT_Presence ( client()->rootTask () );
-
-				task->sub ( jid, "subscribed" );
-				task->go ( true );
-
-				// Is the user already in our contact list?
-				contact = Kopete::ContactList::self ()->findContact (protocol ()->pluginId (), accountId (), jid.full().toLower () );
-				if(contact)
-					metaContact=contact->metaContact();
-
-				// If it is not, ask the user if he wants to subscribe in return.
-				if ( ( !metaContact || metaContact->isTemporary() ) &&
-					 ( KMessageBox::questionYesNo (Kopete::UI::Global::mainWidget (),
-												   i18n ( "Do you want to add %1 to your contact list in return?").
-												   arg (jid.userHost (), 1), i18n ("Add Jabber User?"),i18n("Add"), i18n("Do Not Add")) == KMessageBox::Yes) )
-				{
-					// Subscribe to user's presence.
-					task = new XMPP::JT_Presence ( client()->rootTask () );
-
-					task->sub ( jid, "subscribe" );
-					task->go ( true );
-				}
-
-				break;
-
-			case KMessageBox::No:
-				/*
-				 * Reject subscription.
-				 */
-
-				// this safety check needs to be here because
-				// a long time could have passed between the
-				// actual request and the user's answer
-				if ( !isConnected () )
-				{
-					errorConnectionLost ();
-					break;
-				}
-
-				task = new XMPP::JT_Presence ( client()->rootTask () );
-
-				task->sub ( jid, "unsubscribed" );
-				task->go ( true );
-
-				break;
-
-			case KMessageBox::Cancel:
-				/*
-				 * Simply ignore the request.
-				 */
-				break;
-		}
-
+		if(contact)
+			metaContact=contact->metaContact();
+		
+		int hideFlags=Kopete::UI::ContactAddedNotifyDialog::InfoButton;
+		if( metaContact && !metaContact->isTemporary() )
+			hideFlags |= Kopete::UI::ContactAddedNotifyDialog::AddCheckBox | Kopete::UI::ContactAddedNotifyDialog::AddGroupBox ;
+		
+		Kopete::UI::ContactAddedNotifyDialog *dialog=
+				new Kopete::UI::ContactAddedNotifyDialog( jid.full(),QString::null,this, hideFlags );
+		QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),
+						this,SLOT(slotContactAddedNotifyDialogClosed(const QString& )));
+		dialog->show();
 	}
 	else if (type == "unsubscribed")
 	{
@@ -1113,6 +1133,72 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 	}
 }
 
+void JabberAccount::slotContactAddedNotifyDialogClosed( const QString & contactid )
+{	// the dialog that asked the authorisation is closed. (it was shown in slotSubscrition)
+	
+	XMPP::JT_Presence *task;
+	XMPP::Jid jid(contactid);
+
+	const Kopete::UI::ContactAddedNotifyDialog *dialog =
+			dynamic_cast<const Kopete::UI::ContactAddedNotifyDialog *>(sender());
+	if(!dialog || !isConnected())
+		return;
+
+	if ( dialog->authorized() )
+	{
+		/*
+		* Authorize user.
+		*/
+
+		task = new XMPP::JT_Presence ( client()->rootTask () );
+		task->sub ( jid, "subscribed" );
+		task->go ( true );
+	}
+	else
+	{
+		/*
+		* Reject subscription.
+		*/
+		task = new XMPP::JT_Presence ( client()->rootTask () );
+		task->sub ( jid, "unsubscribed" );
+		task->go ( true );
+	}
+
+
+	if(dialog->added())
+	{
+		Kopete::MetaContact *parentContact=dialog->addContact();
+		if(parentContact)
+		{
+			QStringList groupNames;
+			Kopete::GroupList groupList = parentContact->groups();
+			for(Kopete::Group *group = groupList.first(); group; group = groupList.next())
+				groupNames += group->displayName();
+
+			XMPP::RosterItem item;
+//			XMPP::Jid jid ( contactId );
+
+			item.setJid ( jid );
+			item.setName ( parentContact->displayName() );
+			item.setGroups ( groupNames );
+
+			// add the new contact to our roster.
+			XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( client()->rootTask () );
+
+			rosterTask->set ( item.jid(), item.name(), item.groups() );
+			rosterTask->go ( true );
+
+			// send a subscription request.
+			XMPP::JT_Presence *presenceTask = new XMPP::JT_Presence ( client()->rootTask () );
+	
+			presenceTask->sub ( jid, "subscribe" );
+			presenceTask->go ( true );
+		}
+	}
+}
+
+
+
 void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 {
 
@@ -1137,7 +1223,8 @@ void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 	 * See if the contact is already on our contact list
 	 */
 	Kopete::MetaContact *metaContact;
-	Kopete::Contact *c= Kopete::ContactList::self()->findContact ( protocol()->pluginId (), accountId (), item.jid().full().toLower () ) ;
+	Kopete::Contact *c= contactPool()->findExactMatch( item.jid() );
+			//Kopete::ContactList::self()->findContact ( protocol()->pluginId (), accountId (), item.jid().full().lower () ) ;
 	if ( !c  )
 	{
 		/*
@@ -1464,6 +1551,94 @@ void JabberAccount::slotGetServices ()
 	dialog->show ();
 	dialog->raise ();
 }
+
+void JabberAccount::slotIncomingVoiceCall( const Jid & j)
+{
+#ifdef SUPPORT_JINGLE
+	if(voiceCaller())
+	{
+		VoiceCallDlg* vc = new VoiceCallDlg(j,voiceCaller());
+		vc->show();
+		vc->incoming();
+	}
+#endif
+}
+
+void JabberAccount::addTransport( JabberTransport * tr, const QString &jid )
+{
+	m_transports.insert(jid,tr);
+}
+
+void JabberAccount::removeTransport( const QString &jid )
+{
+	m_transports.remove(jid);
+}
+
+bool JabberAccount::removeAccount( )
+{
+	if(!m_removing)
+	{
+		int result=KMessageBox::warningYesNoCancel( Kopete::UI::Global::mainWidget () ,
+				   i18n( "Do you want to also unregister \"%1\" from the Jabber server ?\n"
+				   			    "If you unregister, all your contact list may be removed on the server,"
+							    "And you will never be able to connect to this account with any client").arg( accountLabel() ),
+					i18n("Unregister"),
+					KGuiItem(i18n( "Remove and Unregister" ), "editdelete"),
+					KGuiItem(i18n( "Remove from kopete only"), "edittrash"),
+					"askUnregisterJabberAccount", KMessageBox::Notify | KMessageBox::Dangerous );
+		if(result == KMessageBox::Cancel)
+		{
+			return false;
+		}
+		else if(result == KMessageBox::Yes)
+		{
+			if (!isConnected())
+			{
+				errorConnectFirst ();
+				return false;
+			}
+			
+			XMPP::JT_Register *task = new XMPP::JT_Register ( client()->rootTask () );
+			QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotUnregisterFinished ) );
+			task->unreg ();
+			task->go ( true );
+			m_removing=true;
+			// from my experiment, not all server reply us with a response.   it simply dosconnect
+			// so after one seconde, we will force to remove the account
+			QTimer::singleShot(1111, this, SLOT(slotUnregisterFinished())); 
+			
+			return false; //the account will be removed when the task will be finished
+		}
+	}
+	
+	//remove transports from config file.
+	QMap<QString,JabberTransport*> tranposrts_copy=m_transports;
+	QMap<QString,JabberTransport*>::Iterator it;
+	for ( it = tranposrts_copy.begin(); it != tranposrts_copy.end(); ++it )
+	{
+		(*it)->jabberAccountRemoved();
+	}
+	return true;
+}
+
+void JabberAccount::slotUnregisterFinished( )
+{
+	const XMPP::JT_Register * task = dynamic_cast<const XMPP::JT_Register *>(sender ());
+
+	if ( task && ! task->success ())
+	{
+		KMessageBox::queuedMessageBox ( 0L, KMessageBox::Error,
+			i18n ("An error occured when trying to remove the account:\n%1").arg(task->statusString()),
+			i18n ("Jabber Account Unregistration"));
+		m_removing=false;
+		return;
+	}
+	if(m_removing)  //it may be because this is now the timer.
+		Kopete::AccountManager::self()->removeAccount( this ); //this will delete this
+}
+
+
+
 
 #include "jabberaccount.moc"
 

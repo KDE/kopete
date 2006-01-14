@@ -18,6 +18,10 @@
 #ifndef JABBERCONTACT_H
 #define JABBERCONTACT_H
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "jabberbasecontact.h"
 #include "xmpp_vcard.h"
 
@@ -35,7 +39,7 @@ Q_OBJECT
 public:
 
 	JabberContact (const XMPP::RosterItem &rosterItem,
-				   JabberAccount *account, Kopete::MetaContact * mc);
+				   Kopete::Account *account, Kopete::MetaContact * mc, const QString &legacyId = QString());
 
 	/**
 	 * Create custom context menu items for the contact
@@ -110,6 +114,11 @@ public slots:
 	 * @param path Path to the photo.
 	 */
 	void setPhoto(const QString &photoPath);
+	
+	/**
+	 * this will start a voice call to the contact
+	 */
+	void voiceCall();
 
 private slots:
 

@@ -1,10 +1,11 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kopete" version="22">
+<kpartgui name="kopete" version="23">
 	<MenuBar>
 		<Menu name="file" noMerge="1">
 			<text>&amp;File</text>
 			<!-- <Action name="Connection"/> -->
 			<Action name="Status"/>
+			<Action name="SetStatusMessage"/>
 			<Separator lineSeparator="true"/>
 			<Action name="AddContact"/>
 			<Action name="AddGroup"/>
@@ -48,6 +49,7 @@
 
 	<ToolBar fullWidth="true" name="mainToolBar" noMerge="1"><Text>Main Toolbar</Text>
 		<Action name="Status"/>
+		<Action name="SetStatusMessage"/>
 		<Action name="AddContact"/>
 		<Action name="settings_show_offliners"/>
 		<Action name="settings_show_empty_groups"/>

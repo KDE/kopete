@@ -1,10 +1,10 @@
  /*
   * jabberresource.h
   *
-  * Copyright (c) 2005 by Michaël Larouche <michael.larouche@kdemail.net>
+  * Copyright (c) 2005-2006 by Michaël Larouche <michael.larouche@kdemail.net>
   * Copyright (c) 2004 by Till Gerken <till@tantalo.net>
   *
-  * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
+  * Kopete    (c) 2001-2006 by the Kopete developers  <kopete-devel@kde.org>
   *
   * *************************************************************************
   * *                                                                       *
@@ -32,6 +32,7 @@ namespace XMPP
 {
 class Resource;
 class Jid;
+class Features;
 }
 
 class JabberResource : public QObject
@@ -50,15 +51,21 @@ public:
 
 	void setResource ( const XMPP::Resource &resource );
 
-	const QString &clientName () const;
-	const QString &clientSystem () const;
-	bool canHandleXHTML();
 	/**
-	 * "List" of supported features of the resource.
-	 *  Use JabberProtocol::ClientFeatures enum.
-	 * @return Integer that hold features.
+	 * Return the client name for this resource.
+	 * @return the client name
 	 */
-	int supportedFeatures();
+	const QString &clientName () const;
+	/**
+	 * Return the client system for this resource.
+	 * @return the client system.
+	 */
+	const QString &clientSystem () const;
+
+	/**
+	 * Get the available features for this resource.
+	 */
+	XMPP::Features features() const;
 
 signals:
 	void updated ( JabberResource * );

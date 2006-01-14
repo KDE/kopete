@@ -44,6 +44,24 @@ public:
 	QLabel *noaddMsg1;
 	QLabel *noaddMsg2;
 	bool canadd;
+public slots:
+	void slotPromtReceived();
+};
+
+class JabberTransport;
+
+/**
+ * @author Olivier Goffart
+ * this class is just there to workaround the fact that it's not possible to add contact assync with Kopete::AddContactPage::apply
+ */
+class  JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND : public QObject
+{ Q_OBJECT
+	public:
+		JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND( JabberTransport * , Kopete::MetaContact *mc, QObject *parent);
+		Kopete::MetaContact *metacontact;
+		JabberTransport *transport;
+	public slots:
+		void slotJidReceived();
 };
 
 

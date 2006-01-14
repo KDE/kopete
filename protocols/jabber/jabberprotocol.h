@@ -44,35 +44,13 @@ namespace XMPP
 class JabberContact;
 class dlgJabberStatus;
 class dlgJabberSendRaw;
+class JabberCapabilitiesManager;
 
 class JabberProtocol:public Kopete::Protocol
 {
 	Q_OBJECT
 
 public:
-
-	/**
-	 * Client features determine which features a resource support.
-	 *
-	 * Feature_Register - Support in-band registration.
-	 * Feature_Search - Support searching.
-	 * Feature_Groupchat - Support old Groupchat protocol (superseeded by MUC)
-	 * Feature_Disco - Support service discovery.
-	 * Feature_IsGateway - Current client is a gateway.
-	 * Feature_XHTML_IM - Support Rich Text message that are defined using XHTML (JEP-0071)
-	 * Feature_MultiUserChat - Support full Multi User Chat protocol (JEP-0045)
-	 */
-	enum ClientFeatures 
-	{ 
-		Feature_Register,
-		Feature_Search,
-		Feature_Groupchat,
-		Feature_Disco,
-		Feature_IsGateway,
-		Feature_XHTML_IM, 
-		Feature_MultiUserChat
-	};
-
 	/**
 	 * Object constructor and destructor
 	 */
@@ -160,12 +138,21 @@ public:
 	 */
 	Kopete::OnlineStatus resourceToKOS ( const XMPP::Resource &resource );
 
+	/**
+	 * Return the Entity Capabilities(JEP-0115) manager instance.
+	 */
+	JabberCapabilitiesManager *capabilitiesManager();
+
 private:
 	/*
 	 * Singleton instance of our protocol class
 	 */
 	static JabberProtocol *protocolInstance;
 
+	/**
+	 * Unique Instance of the Entity Capabilities(JEP-0115) manager for Kopete Jabber plugin.
+	 */
+	JabberCapabilitiesManager *capsManager;
 };
 
 #endif

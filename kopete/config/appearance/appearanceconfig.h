@@ -26,6 +26,7 @@
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
+ * @author Michaël Larouche <michael.larouche@kdemail.net>
  */
 class AppearanceConfig : public KCModule
 {
@@ -42,24 +43,21 @@ public:
 
 private slots:
 	void slotSelectedEmoticonsThemeChanged();
-	void slotTransparencyChanged(bool);
-	void slotUpdatePreview();
+	void slotUpdateChatPreview();
 	void slotHighlightChanged();
 	void slotChangeFont();
-	void slotDeleteStyle();
-	void slotImportStyle();
-	void slotCopyStyle();
-	void slotStyleSelected();
-	void slotVariantSelected(const QString &variantName);
+	void slotInstallChatStyle();
+	void slotDeleteChatStyle();
+	void slotChatStyleSelected();
+	void slotChatStyleVariantSelected(const QString &variantName);
 	void slotEditTooltips();
 	void emitChanged();
-	void installNewTheme();
-	void removeSelectedTheme();
-	void slotGetThemes();
-	void slotGetStyles();
-	void slotLoadStyles();
+	void installEmoticonTheme();
+	void removeSelectedEmoticonTheme();
+	void slotGetEmoticonThemes();
+	void slotGetChatStyles();
+	void slotLoadChatStyles();
 	void updateEmoticonsButton(bool);
-	
 private:
 	void updateEmoticonlist();
 	void createPreviewChatSession();

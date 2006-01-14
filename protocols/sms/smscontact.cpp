@@ -41,12 +41,11 @@ SMSContact::SMSContact( Kopete::Account* _account, const QString &phoneNumber,
 	m_msgManager = 0L;
 	m_actionPrefs = 0L;
 
-	setOnlineStatus( SMSProtocol::protocol()->SMSOnline );
+//	setOnlineStatus( SMSProtocol::protocol()->SMSOnline );
 }
 
 void SMSContact::slotSendingSuccess(const Kopete::Message &msg)
 {
-//	KMessageBox::information(Kopete::UI::Global::mainWidget(), i18n("Message sent"), output.join("\n"), i18n("Message Sent"));
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();
 	manager(Kopete::Contact::CanCreate)->appendMessage((Kopete::Message &)msg);
 }

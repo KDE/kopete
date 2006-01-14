@@ -20,9 +20,10 @@
 
 #include <kabc/picture.h>
 
-#include <kcodecs.h>
+#include <kmdcodec.h>
 #include <kstandarddirs.h>
 #include <kdebug.h>
+
 
 namespace Kopete
 {
@@ -93,10 +94,12 @@ QString Picture::base64()
 		// Generate base64 cache for the picture.
 		QByteArray tempArray;
 		QBuffer tempBuffer( &tempArray );
-		tempBuffer.open( QIODevice::WriteOnly );
+		tempBuffer.open( IO_WriteOnly );
 		// Make sure it create a image cache.
-		image().save( &tempBuffer, "PNG" );
-		d->pictureBase64 = KCodecs::base64Encode(tempArray);
+		if( image().save( &tempBuffer, "PNG" ) )
+		{
+			d->pictureBase64 = KCodecs::base64Encode(tempArray);
+		}
 	}
 
 	return d->pictureBase64;
@@ -113,14 +116,16 @@ QString Picture::path()
 		// Generate MD5 Hash for the image.
 		QByteArray tempArray;
 		QBuffer tempBuffer(&tempArray);
-		tempBuffer.open( QIODevice::WriteOnly );
+		tempBuffer.open( IO_WriteOnly );
 		image().save(&tempBuffer, "PNG");
 		KMD5 context(tempArray);
 		// Save the image to a file.
 		localPhotoPath = context.hexDigest() + ".png";
 		localPhotoPath = locateLocal( "appdata", QString::fromUtf8("metacontactpicturecache/%1").arg( localPhotoPath) );
-		image().save(localPhotoPath, "PNG");
-		d->picturePath = localPhotoPath;
+		if( image().save(localPhotoPath, "PNG") )
+		{
+			d->picturePath = localPhotoPath;
+		}
 	}
 
 	return d->picturePath;

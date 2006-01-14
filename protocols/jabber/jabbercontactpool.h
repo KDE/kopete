@@ -30,6 +30,7 @@ class JabberBaseContact;
 class JabberContact;
 class JabberGroupContact;
 class JabberAccount;
+class JabberTransport;
 
 /**
  * @author Till Gerken <till@tantalo.net>
@@ -53,7 +54,7 @@ public:
 	/**
 	 * Add a contact to the pool
 	 */
-	JabberContact *addContact ( const XMPP::RosterItem &contact, Kopete::MetaContact *metaContact, bool dirty = true );
+	JabberContact *addContact ( const XMPP::RosterItem &contact, Kopete::MetaContact *metaContact, bool dirty = true  );
 	JabberBaseContact *addGroupContact ( const XMPP::RosterItem &contact, bool roomContact, Kopete::MetaContact *metaContact, bool dirty = true );
 
 	/**

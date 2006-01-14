@@ -1,4 +1,4 @@
-SUBDIRS = . data Kopete Hacker
+SUBDIRS = . data Kopete Hacker Clean Clear Konqi
 
 styles_DATA = \
 	Adium.xsl \

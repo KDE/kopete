@@ -29,6 +29,7 @@ class dlgJabberVCard;
 class JabberProtocol;
 class JabberAccount;
 class JabberResource;
+class JabberTransport;
 namespace Kopete { class MetaContact; }
 
 class JabberBaseContact : public Kopete::Contact
@@ -39,8 +40,12 @@ friend class JabberAccount;	/* Friends can touch each other's private parts. */
 
 public:
 
+	/**
+	 * @param legacyId is the contactId of the contact if != Jid
+	 */
 	JabberBaseContact (const XMPP::RosterItem &rosterItem,
-				   JabberAccount *account, Kopete::MetaContact * mc);
+					   Kopete::Account *account, Kopete::MetaContact * mc, 
+					   const QString &legacyId=QString());
 
 	/********************************************************************
 	 *
@@ -56,8 +61,13 @@ public:
 	/**
 	 * Return the account instance associated with this contact
 	 */
-	JabberAccount *account ();
-
+	JabberAccount *account () { return m_account; };
+	
+	/**
+	 * return the transport if any, or null
+	 */
+	JabberTransport *transport();
+			
 	/**
 	 * Return if the contact is reachable (this is true if the account
 	 * is online)
@@ -128,6 +138,12 @@ public:
 	 * See @ref setDontSync for a full description.
 	 */
 	bool dontSync ();
+	
+	/**
+	 * return the roster item of the contact.
+	 * to get the jid, use  rosterItem().jid().full()  don't use contactId as it is not the same with transport
+	 */
+	XMPP::RosterItem rosterItem() const { return mRosterItem; }
 
 public slots:
 
@@ -153,6 +169,7 @@ protected:
 
 private:
 	bool mDontSync;
+	JabberAccount *m_account;
 
 };
 
