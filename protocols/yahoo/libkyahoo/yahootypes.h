@@ -73,6 +73,7 @@ namespace Yahoo
 		ServiceIgnoreContact,	/* > 1, 7, 13 < 1, 66, 13, 0*/
 		ServiceRejectContact,
 		ServiceGroupRename = 0x89, /* > 1, 65(new), 66(0), 67(old) */
+		ServicePing7 = 0x8a,
 		ServiceChatOnline = 0x96, /* > 109(id), 1, 6(abcde) < 0,1*/
 		ServiceChatGoto,
 		ServiceChatJoin,	/* > 1 104-room 129-1600326591 62-2 */
@@ -89,8 +90,8 @@ namespace Yahoo
 		ServiceVisibility = 0xc5,	/* YMSG13, key 13: 2 = invisible, 1 = visible */
 		ServiceStatus = 0xc6,		/* YMSG13 */
 		ServicePictureStatus = 0xc7,	/* YMSG13, key 213: 0 = none, 1 = avatar, 2 = picture */
-		ServiceContactDetails = 0xd3,		/* YMSG13 */
-		ServiceAuthorization = 0xd6,		/* YMSG13 */
+		ServiceContactDetails = 0xd3,	/* YMSG13 */
+		ServiceAuthorization = 0xd6,	/* YMSG13 */
 		ServiceBuddyChangeGroup = 0xe7	/* YMSG13 */
 	};
 	

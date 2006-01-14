@@ -19,6 +19,8 @@
     *************************************************************************
 */
 
+#include <qtimer.h>
+
 #include <kdebug.h>
 #include <kurl.h>
 
@@ -42,6 +44,7 @@
 #include "webcamtask.h"
 #include "conferencetask.h"
 #include "sendauthresptask.h"
+#include "pingtask.h"
 #include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
@@ -93,6 +96,9 @@ Client::Client(QObject *par) :QObject(par, "yahooclient" )
 	d->iconLoader = 0L;
 	d->loginTask = new LoginTask( d->root );
 	d->listTask = new ListTask( d->root );
+
+	m_pingTimer = new QTimer( this );
+	QObject::connect( m_pingTimer, SIGNAL( timeout() ), this, SLOT( sendPing() ) );
 
 	QObject::connect( d->loginTask, SIGNAL( haveSessionID( uint ) ), SLOT( lt_gotSessionID( uint ) ) );
 	QObject::connect( d->loginTask, SIGNAL( loginResponse( int, const QString& ) ), 
@@ -157,6 +163,7 @@ void Client::close()
 		LogoffTask *lt = new LogoffTask( d->root );
 		lt->go( true );
 	}
+	m_pingTimer->stop();
 	deleteTasks();
 }
 
@@ -178,17 +185,18 @@ void Client::lt_loginFinished()
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
-	if( d->loginTask->statusCode() == Yahoo::LoginOk )
-		initTasks();
-	kdDebug(14180) << k_funcinfo << "Emitting loggedIn" << endl;
-	emit loggedIn( d->loginTask->statusCode(), d->loginTask->statusString() );
+	slotLoginResponse( d->loginTask->statusCode(), d->loginTask->statusString() );
 }
 
 void Client::slotLoginResponse( int response, const QString &msg )
 {
 	if( response == Yahoo::LoginOk )
+	{
+		m_pingTimer->start( 60 * 1000 );
 		initTasks();
+	}
 
+	kdDebug(14180) << k_funcinfo << "Emitting loggedIn" << endl;
 	emit loggedIn( response, msg );
 }
 
@@ -267,6 +275,13 @@ void Client::sendAuthReply( const QString &userId, bool accept, const QString &m
 	sarp->setTarget( userId );
 	sarp->setMessage( msg );
 	sarp->go( true );
+}
+
+void Client::sendPing()
+{
+	kdDebug(14181) << k_funcinfo << "Sending a PING" << endl;
+	PingTask *pt = new PingTask( d->root );
+	pt->go( true );
 }
 
 // ***** Contactlist handling *****

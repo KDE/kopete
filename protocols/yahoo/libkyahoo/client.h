@@ -30,6 +30,7 @@
 
 
 class QString;
+class QTimer;
 class ClientStream;
 class KNetworkConnector;
 class Task;
@@ -462,6 +463,11 @@ Q_OBJECT
 		 * The client stream has data ready to read.
 		 */
 		void streamReadyRead();
+
+		/**
+		 * Send a Yahoo Ping packet to the server
+		 */
+		void sendPing();
 	private:
 		void distribute( Transfer *transfer );
 		
@@ -478,6 +484,8 @@ Q_OBJECT
 		class ClientPrivate;
 		ClientPrivate* d;
 		KNetworkConnector *m_connector;
+
+		QTimer *m_pingTimer;
 };
 
 #endif
