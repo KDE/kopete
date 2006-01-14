@@ -1,0 +1,107 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>DlgJabberChooseServer</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>DlgJabberChooseServer</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>334</width>
+            <height>343</height>
+        </rect>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>300</width>
+            <height>300</height>
+        </size>
+    </property>
+    <property name="caption">
+        <string>Choose Server - Jabber</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QTable" row="0" column="0">
+            <column>
+                <property name="text">
+                    <string>Server</string>
+                </property>
+                <property name="pixmap">
+                    <pixmap>image0</pixmap>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Description</string>
+                </property>
+            </column>
+            <property name="name">
+                <cstring>listServers</cstring>
+            </property>
+            <property name="focusPolicy">
+                <enum>NoFocus</enum>
+            </property>
+            <property name="resizePolicy">
+                <enum>Default</enum>
+            </property>
+            <property name="hScrollBarMode">
+                <enum>Auto</enum>
+            </property>
+            <property name="numRows">
+                <number>0</number>
+            </property>
+            <property name="numCols">
+                <number>2</number>
+            </property>
+            <property name="readOnly">
+                <bool>true</bool>
+            </property>
+            <property name="sorting">
+                <bool>false</bool>
+            </property>
+            <property name="selectionMode">
+                <enum>SingleRow</enum>
+            </property>
+            <property name="resizeMode" stdset="0">
+            </property>
+        </widget>
+        <widget class="KActiveLabel" row="2" column="0">
+            <property name="name">
+                <cstring>linkServerDetails</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>3</hsizetype>
+                    <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>&lt;a href="http://www.jabber.org/network/"&gt;Details about free public Jabber servers&lt;/a&gt;</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>lblStatus</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<images>
+    <image name="image0">
+        <data format="XPM.GZ" length="2846">789c75d54953dd381007f03b9fe255fa969aea585ea59a9a039084256c0f0810a6e6204b32fbfe58a7e6bb8fddff3609c90ce6f27b6acbea764bfef07e72b0b53e79ff61ee6ee6672761128efdede47dbcbfb878fef3af3ffe9e7b67eac9f05fb849feeeb7b977d3d9244c36ae2ed300ef7b50664cac337127b626cf9db885f3a22e075325762694324edfc4de74954c4e6b705ed595dc4fe2ceb842c6fdd16093e5be6e24be1e9ce7856f647e7f227685ad647db4230e65d178194fe26eb8c43cb8903f89df1e5d4a3c1d8a7d9559acff40dccf57c1e5e0d20c97b811fb2ad928f31f8b43e59b56c6dde0aa1d2ef1ba3895b194f5901d5cd7755307b93f8add70c9f87470636a5be2fe7d71d5b416f905b1b399433db706dbcc3695d4930ab1192ef1e660d7b8429fbf216e6dd2f9b3c1a18d59443df7c4a9772dcec5dd70897707f7a355c2f33f8a8bc66678fe17b5cb50bf4f62eb7223fd430fe2d0a40cf7afc2ce1658cff9e0646c9521fe515cfad2209f457555607ee99f543bafcf3f1337aecbe4fdd005eccb4ceacd976217cacccaf8bdd8b719fa830fd57926f5e62b38984ceac12fea5ac7a5bf53eb23c689e156f3e5353834fafc67b5c3faf862b491fcf949dd66526f967aa61082ce77a04e46eac7f23e536c8b1ce3ab70e80cf291fe4ba96f70a91fefc33137c8675edcb555867807c7d220bf95d139eedf53d746fa95b3d1fafc85c15dd666b9bc0fb670b4c88fbcba3f2164fcebab518f1bb1f10eef9f23dc6abf7003c760a45f7977748efbafc579db68fc231cfb05cbf34fd429c7fb3f1d5da0decba3b15fb85677c89fe4bceb8a7e39c8bf529b1cfd78acce612e5f8d7c315eb699e697d441dfcf0e9c8c9e4f97ea02f5a4237595cbf9c84be2fe80a9b17fa3ba413da8535bac97d2abf17ee53ce9ea100af8014ed6211f1d4faec27e9c8d463d19eb69fa7a231f525b7501275fa3bfcd683d9feed46d055fa9638e7c3e8fd6f3fbf6d518bf51a702cf43beb61dfbe71c4efd8692f8157572a8dff6abd10fd7ea0ef3d1c2e806cf43bfdace75a817d6e3a2b7e8974db8df7118bf57772df617fadf875062ff213fdf7738ce8f2775897a30fab58d49e7cfe1ae6ad11ff3eadae23c5d52fb12df4fa3ee2fb91ffd1b626cb05fb6e0ae8ea8d799ba89e8d799daeaf7e159ed1accff32da62bfcbf7a08b7dc658ffa2da27d47baa6e615a56077d1fe887d4cf88f59caa6327ef87e57bd20d7fb2fee90c17137b6e3970e4c41d1f8dbf7f8fe1633ee1533ee373bee04bbee26b3e7e1bc3377ccb773ce37b7ee0477ee2677ee179be7913b3c08bfc913ff1675ee2655ee155fec26bbcfe26668337798ba7bccd3bbccb5f798ff7f980bfbd8939e48c0de75c70c915d7dcb06547fc630c11796a2950a4441d1dd1319dd0299dbd8939a70bbaecc7afe89a6ee896ee6846f774fe36777aa0c73ee2899ee985e6698116e9e1e7faf4511fe9137da6255aa6155aa52fbfd6b08f59a375daa04ddaa2296d8fbffe14b343bbf495f6689f0ee8dbffc41c524686722aa8a4ea7f626a6ac892f3ecc9fbff8e99ce7ceb838f3ef9eefb6fbfc4787fe48ffdc98fb3f431fffc3ef72fd6519eaa</data>
+    </image>
+</images>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kactivelabel.h</includehint>
+</includehints>
+</UI>

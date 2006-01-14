@@ -1,0 +1,50 @@
+Plan for updating Kopete's groupwise support for GW7.
+
+Review protocol DONE
+
+libgroupwise:
+
+Update error codes DONE
+Extend event protocol to handle new event formats PROGRESS
+Make protocol version selectable in Client DONE
+Add new event tasks
+	Event codes DONE
+	Broadcast in ConferenceTask - small Event proto update  DONE
+	Chat events in ChatroomTask
+		ConfAttribUpdate 	- large Event proto update
+		ConfTopicChanged
+		ChatroomNameChanged - large Event proto update
+		ConfRightsChanged	- vlarge Event proto update
+		ConfRemoved 		- large Event proto update and more info from Mike.
+		ChatOwner changed	- vlarge Event proto update
+(large update -> requires new EventTransfer subclass)
+
+Update Client with event signals
+	Broadcast DONE
+	Chatroom
+
+Add request tasks
+
+Update Attribs
+
+Search for chats
+  Get Results
+  Stop Search
+  Update Numbers
+
+Add Client interface for requests
+
+kopete_groupwise:
+
+Handle broadcasts DONE
+
+Set custom statuses on the server
+
+search for chats
+
+join chat
+
+create chat
+
+modify chat
+

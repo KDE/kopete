@@ -1,0 +1,4 @@
+Id=kopete0.9/r1
+File=kopeterc
+Script=kopete-jabberpriorityaddition-kconf_update.sh,sh
+

@@ -1,0 +1,27 @@
+TODO for Jabber:
+
+- implement support for transports/agents
+- support all message types (chat/ticker/etc)
+- add a button for server defaults
+- port dialogs to KDialogBase
+- support different icons for contacts from servers with broken connections etc.
+- show (i.e. with a QToolTip) the subscription status: both, to, from
+- add "querying..." feedback while waiting for vCard
+- clean up class names in the ui directory, no real scheme there right now
+- if a contact subscribed to you, it is being added as a real contact,
+  should either be added as temporary or not at all
+- provide better feedback for dialogs querying the server
+- support avatars and idle times for tooltips
+- when trying to register an account, try to display the actual server error
+  message
+- clean up JabberAddContactPage (needs rewrite)
+- support advanced auth methods
+- subclass TLS to make use of KDE classes
+- allow SSL fallback with setOptProbe
+- support account deletion
+- factor out client backend to single class JabberClient
+- make vCard dialog better, maybe use KIMProxy somehow
+- allow fetching vCard from "auth user?" dialog
+- allow adding file transfer reasons
+- support resuming
+- support addAddressBookField

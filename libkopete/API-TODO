@@ -1,0 +1,248 @@
+This file is a listing of (proposed) changes to be made to libkopete's API.
+
+
+ Buddy Icons:
+==============
+
+Some support for buddy icons is needed in libkopete. Maybe just a simple contact property and a
+metacontact property computed from it will do.
+
+
+ Properties:
+=============
+
+The current properties system is a bit of a mess. With the PluginDataObjects, the ContactProperties,
+KopeteContact's serializeProperties, and the various properties which are stored specially but
+shouldn't be (such as KopeteGroup::expanded) it's hard to know where you are. I (Richard) would like
+to replace this whole set of different property systems with a unified one. The way I see this
+working is as follows:
+- An object is created for each property. That object represents the property, and knows how to read
+  set store and manipulate that property.
+- Properties on objects supporting them (KopeteContact, KopeteMetaContact, KopeteGroup, and so on)
+  will be accessed in a uniform manner, eg:
+    contact(myProperty) = 42;
+    metaContact(displayName) = i18n("Ford Prefect");
+  The exact notation is not finalised yet. Maybe X[...] or X.property(...) would be clearer?
+- New types of properties with different serialization requirements and so on can easily be created
+- MetaContact properties can be computed from Contact properties (eg, for buddy icon, away message,
+  idle time and so on) by writing an appropriate property class.
+- This system would be extended to plugin configuration, so plugin authors can easily deal with
+  configuration variables without having to use strings as keys.
+
+
+ KopeteMessageManager:
+=======================
+
+KopeteMessageManager should allow any number of views to be attached, from 0
+to infinity.
+
+A lot of code should be moved from the KopeteViewManager to the KopeteMessageManager.
+Allowing the creation of chatwindow plugin more easy
+
+The chat window should be restructured so each ChatView object has its own
+send button.  (-that's not a part of the libkopete api-)
+
+
+ KopeteMessage:
+================
+
+KopeteMessage should be reorganised to use QDomDocument or something similar
+to store its contents - the purpose of this is so libkopete can provide a
+uniform way of dealing with messages; the emoticon and link-adding filters
+don't then need to grok HTML in order to be able to mangle a message
+
+
+ KopeteContactList
+===================
+
+Add to KopeteMetaContact a statusPixmap() function to return the pixmap
+associated with its name. Take implementation from KopeteMetaContactLVI.
+Use this function in the Kopete::MimeSourceFactory so we get MCs being
+grayed if they're idle in tooltips too.
+
+KopeteContactList::removeGroup should remove the group from all
+metacontacts. Move code from KopeteContactListView to KopeteContactList for
+this.
+
+KopeteContactList::findContact and KopeteMetaContact::findContact should maybe be removed,
+or at least contains ptr to accounts insteads of id.
+
+KopeteContact::slotDeleteContact should be renamed, maybe return a bool to cancel the deletion of the contact.
+
+Add an iconName() function to contacts, metacontacts and accounts returning a string that
+can be put in an <img src="%1"> in any rich text to give the appropriate icon. See the
+MimeSourceFactory.
+
+KCL::selectedMetaContacts really doesn't belong here. A contact list shouldn't
+have a concept of selected items (this is action- and UI-specific knowledge).
+The only place this is used is when plugins' actions need to be enabled and
+disabled, or applied. Find a better way to do this UI-specific task.
+KCL::selectedGroups can be removed outright.
+
+
+ KopeteEmoticon
+================
+
+Allow emoticons and emoticon sets to be flagged as being for only a specific protocol.
+Allow the user to have more than one emoticon set enabled at once, and to set priorities.
+This way, the user will be able to have a base theme, a set of MSN-specific emoticons, a
+set of Gadu-Gadu-specific emoticons and so on.
+
+Possibly move emoticon support into a plugin?
+
+
+ KopeteOnlineStatus
+====================
+
+Add an Unknown status to KopeteOnlineStatus for when the status of a
+contact is unknown (in the case that they've not authorised you, or the
+protocol does not provide presence information) and a status for Unreachable
+(in the case that your account is offline, etc). The crucial difference is
+that a contact with Unknown status may be reachable (though that contact
+should probably be avoided for messaging unless nothing else is available).
+
+More granular away settings: see Bug 57297.
+The number of different global statuses (away / busy / be right back) should
+be extended to a configurable list where each element contains the name of the
+status, the default away message, and the KOS for every account)... though
+perhaps this would be better placed in an 'advanced status' plugin?
+
+Add a way to register automatically KOS. The code for the right-click menu in
+the Kopete account tray is duplicated all over the place; this should be
+done automatically by the account tray code.
+
+
+ KopeteAccount
+===============
+
+KopeteAccount::password should be split in two method: KopeteAccount::password which return the
+remembered password if any, but which does not try to ask it to the user.  and getPassword which
+acts like the acutal function.
+
+<lilachaze> KopeteAccount will soon have no ::password. instead, use Kopete::PasswordedAccount,
+            and acct.password().request(...) or acct.password().cachedValue()
+
+
+ DCOP
+======
+The DCOP interface needs to be totally re-done so as to be useful, and to hopefully not rely on
+display names. Obsolete functions previously used only for DCOP should be removed from KopeteContactList
+where applicable.
+
+
+ KopeteTransferManager
+=======================
+
+The file transfer mechanisms should be available to plugins... ie, a plugin should be able to
+both initiate file transfers, and intercept and possibly cancel file transfer requests, the exact
+same as plugins can ( will ) be able to filter KopeteMessages ( see below ).
+
+
+ Message Processing
+====================
+
+Some sort of async message processing API needs to be designed and implemented
+Richard's proposal: (email questions to the list or to kde@metafoo.co.uk)
+- how do we order the various message filters available properly?
+  they give us a processing stage, and an offset within that stage. the
+  stages will be something like:
+   for an incoming message:
+      - Start     - message was just received (History)
+      - ToSent    - convert from received format to sent format (GPG)
+      - ToDesired - convert to how the user wants the message (Translator, AutoReplace)
+         ToDesired+Before - Highlight
+      - Format    - decorate the message (without changing the content) (Links, Emoticons, TextEffect)
+      - Finished  - message is now ready for display (ChatWindow / MessageQueue)
+   for an outgoing message:
+      - Start     - user just hit Send
+      - Parse     - process commands (CommandHandler, Alias, Now Listening)
+         Parse+After - History
+      - ToDesired - convert to how the user wanted to send (Translator, AutoReplace)
+      - Format    - decorate the message (without changing the content) (TextEffect)
+      - ToSent    - convert to the format to send in (GPG)
+      - Finished  - message is now ready for sending (Protocols)
+   There should be a number of offsets defined for when to do the
+   processing, within a stage, such as:
+      - Before    - before any other processing in this stage
+      - VeryEarly
+      - Early
+      - Normal
+      - Late
+      - VeryLate
+      - After     - after any other processing in this stage
+- how do we construct a set of message filters for a particular message
+  manager?
+   - message filters register themselves with the filter manager, with a
+     message direction, a stage and an offset within that stage.
+   - each registered message filter factory gets queried (in stage/offset
+     order) by the object creating the filter chain. it either returns a
+     new filter for the chain, or returns NULL (meaning this filter is not
+     needed in this chain).
+   - the signals in one filter are connected to the slots in the next. any
+     sent/received message is handed to the first filter in the appropriate
+     chain.
+- how long does a filter chain live for?
+   - it's created when it's first needed (when a message is sent / received
+     and no chain already exists to process it, or when a chatwindow is
+     opened)
+   - it's reference counted
+   - the MessageQueue / ChatWindow holds a reference to its chains
+   - the chain knows how many messages are in it (the messages unregister
+     themselves when they're destroyed)
+   - this makes it trivial to implement 65803 - stay in chatwindows when no
+     window is open - just make the Kopete::Contact hold a reference to the
+     receive chain
+- interactions with the chat manager
+   - the chat manager (or possibly just 'chat') is an abstraction for a
+     conversation between our client/user and some other computer/user. it's
+     a bit like the message manager we have now, but more sophisticated.
+   - the send and receive chains are fundamentally linked - they are owned
+     by the same chat manager (which has a chainFor(MessageDirection)
+     function)
+   - when a chain's reference count drops to 0, it stays alive until
+     all the messages in it have been processed, but calls to
+     chainFor(Outgoing) will create a new chain. if we want, we can
+     guarantee messages from the old chain get sent over the wire before
+     ones from the new chain, but it's probably not essential.
+- interactions with a chat view
+   - the ChatWindow component above is actually the ChatWindowFilter. it's
+     owned by the filter chain, and so should not be a QWidget.
+   - when a chat view is closed, it drops its reference to the various
+     message chains. but the receive chain will still exist if there's an
+     incoming message that's still being processed. therefore:
+   - the chatwindow prompts you if you ask it to be closed and there are
+     messages left in its receive chain
+   - the chatwindow filter will *drop* messages that reach it if there's no
+     chatview available to send them to. but that's ok since the user will
+     already have been prompted about this.
+- problems with this design
+   - when the receive chain is closed (refcount drops to 0), it's not
+     necessarily the case that messages in it still need to be processed.
+     for instance, if you don't use the History plugin, or all the messages
+     are already past it, it probably doesn't matter if they're dropped. we
+     should somehow allow the filters to prevent destruction of the part of
+     the chain before them, and if none of them does, destroy it.
+
+
+
+ Invitation Handling Proposal:
+===============================
+
+Invitations is framework that allow others network applications (Games, Desktop
+Sharing, Video conference, [file transfer?], ...) to initiate the communication
+with kopete. (like Windows Messenger does)
+
+The user has two ways to initiate such as thing:
+
+- in the application itself, they could (with the help of KABC) select a
+  contactable contact; the invitaiton is transported to Kopete.
+- in Kopete, in the chat window, an "tools" menu, with all possible actions.
+
+
+
+ Blacklist support:
+====================
+
+<roie> BlackList API is added. Protocols maintainers, please check if a contact 
+       is blocked before passing messages to MessageManager. 
+       I will also attach the GUI to block() and unblock() in the near future.

@@ -1,0 +1,320 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>GroupWiseAccountPreferences</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>GroupWiseAccountPreferences</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>366</width>
+            <height>404</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Account Preferences - Groupwise</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <property name="spacing">
+            <number>0</number>
+        </property>
+        <widget class="QTabWidget">
+            <property name="name">
+                <cstring>tabWidget11</cstring>
+            </property>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>B&amp;asic Setup</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>groupBox55</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Account Information</string>
+                        </property>
+                        <vbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout1</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>textLabel1</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;User ID:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>m_userId</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The account name of your account.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The account name of your account.</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLineEdit">
+                                        <property name="name">
+                                            <cstring>m_userId</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The account name of your account.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The account name of your account.</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                            <widget class="Kopete::UI::PasswordWidget">
+                                <property name="name">
+                                    <cstring>m_password</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>m_autoConnect</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>E&amp;xclude from connect all</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
+                                </property>
+                            </widget>
+                            <widget class="Line">
+                                <property name="name">
+                                    <cstring>line1</cstring>
+                                </property>
+                                <property name="frameShape">
+                                    <enum>HLine</enum>
+                                </property>
+                                <property name="frameShadow">
+                                    <enum>Sunken</enum>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout66</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>labelServer</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>5</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="text">
+                                            <string>Ser&amp;ver:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>m_server</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The IP address or hostname of the server you would like to connect to.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The IP address or hostname of the server you would like to connect to (for example im.yourcorp.com).</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLineEdit">
+                                        <property name="name">
+                                            <cstring>m_server</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="text">
+                                            <string></string>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The IP address or hostname of the server you would like to connect to.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The IP address or hostname of the server you would like to connect to (for example im.yourcorp.com).</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>labelPort</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>5</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="text">
+                                            <string>Po&amp;rt:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>m_port</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The port on the server that you would like to connect to.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The port on the server that you would like to connect to (default is 5222).</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QSpinBox">
+                                        <property name="name">
+                                            <cstring>m_port</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>0</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="buttonSymbols">
+                                            <enum>UpDownArrows</enum>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>65535</number>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>1</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>8300</number>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The port on the server that you would like to connect to.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The port on the server that you would like to connect to (default is 5222).</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                        </vbox>
+                    </widget>
+                </vbox>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>TabPage</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Advanced &amp;Options</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>m_alwaysAccept</cstring>
+                        </property>
+                        <property name="text">
+                            <string>A&amp;lways accept invitations</string>
+                        </property>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer7</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>91</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
+            </widget>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>labelStatusMessage</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
+    </vbox>
+</widget>
+<customwidgets>
+    <customwidget>
+        <class>Kopete::UI::PasswordWidget</class>
+        <header location="local">kopetepasswordwidget.h</header>
+        <sizehint>
+            <width>50</width>
+            <height>50</height>
+        </sizehint>
+        <container>0</container>
+        <sizepolicy>
+            <hordata>1</hordata>
+            <verdata>0</verdata>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+        <pixmap>image0</pixmap>
+        <signal>changed()</signal>
+    </customwidget>
+</customwidgets>
+<images>
+    <image name="image0">
+        <data format="PNG" length="866">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b0000032949444154388db59531681b6714c77f32373c8186ef0305eea005093258900eca26d30e3174a8a807d1c9ee940e5d4a276f09a414e22974ee609a4c75a0857a70a20c199ce93424e43414aee0c26910dc8105f7410df706413a7c915551db049a3e38b87bf7bedffddfc7ff7d578be398456c6c6cbce13d441cc7b5da02fcf4e8e99bde7a8f899b501515d959f64e10e71cd949c6e8d508e6cb7cb050fae49727444d87ed08a566dc0cea545a621b96725e62c522f312c4929ff9e7725e6203439282ec0bc72f74150c30c927d89690163f539619a044564973a1980ae54c01c136a1db518a0024808942780dead16a27e7e0ca55949a81668023b242fcd2901c394663072cd408ad75e18b6d43a7076143710aa1b9049ccd326e064a5979e8f0191cfc5878544368af1b24807caa4cfe507ef8aea0bf6dd8b92de7f00bc1562c95e64416e297f216aadcfa3ca43f10da1f8243112286871507fb05c3c7059d568bde96c5885b01af2d6e4a2db10dc8ff128e0fdd39f4cbaf8576dbe170702afcf6b86467bbce57df8680f0d3230767e0e62bdc55c5e53c476742fabbc318437f209886c3cd41d4b0f74049c78ef21476ef5846cf7ded2831848d55f0aa62816caade11adb7ed2fa0f71ce9d8619ac2e627824a45a72b00e413c5a95c0cf63e052bbe2014bfa738c3de3d251dfb0f8a80fda04e6480600113cc558a11a0e10b93a9225886cff04a8d10868662eab87f37271e59f2136f85a855bfda15f9594eb7a3b4ae0b933f95e161c5ceed88f254e97f2ad49b75eedf8562e2d8fb264355314da1dbada866abe47fedb106d01f78b71fec170c8f7276ef58da3de8f64a76bf6f634283730e9d2b9b8390ce0dae565c6a8e04b0710b746678f8a8e0e18382d173a1d7151c909fe4e84ccf57be3e76245b115143584ee73f27afc8e80b4c667e4c37b7054c8be1afde0de978a9c63485fea0457cec70aa089015ab9297e0938c240573cdb7651a4a7f20f43feb304a72aac2e73bd723da1fe5746ec0682bc26070f38c345905d7e238f6077c00dd8f85280211fcd91af84b02ef94a50c004502c1394813252f14575ca09839242f9484cb42df31e763edd237ff31d6c0ffa3fe17f0fb86c7715cfb1ba8bd86cc8d2decd30000000049454e44ae426082</data>
+    </image>
+</images>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

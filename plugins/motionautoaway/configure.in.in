@@ -1,0 +1,18 @@
+dnl Only compile motionautoaway on Linux (needs video4linux)
+
+dnl Disabled for now. It breaks with patched Linux 2.4 kernels and
+dnl vanilla Linux 2.5 and 2.6 kernels
+
+#AC_MSG_CHECKING([if motionautoaway plugin should be compiled])
+
+#if test "x`uname`" = "xLinux"; then
+#  COMPILEMOTION=true
+#  AC_SUBST(COMPILEMOTION)
+#  AC_MSG_RESULT([yes])
+#else
+  COMPILEMOTION=
+#  AC_SUBST(COMPILEMOTION)
+#  AC_MSG_RESULT([no])
+#fi
+
+AM_CONDITIONAL(include_motionautoaway, test -n "$COMPILEMOTION")

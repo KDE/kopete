@@ -1,0 +1,219 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>WPUserInfoWidget</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>WPUserInfoWidget</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>402</width>
+            <height>175</height>
+        </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>7</hsizetype>
+            <vsizetype>5</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLayoutWidget" row="0" column="0">
+            <property name="name">
+                <cstring>layout6</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout5</cstring>
+                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>lblComputerName</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Computer name:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>sComputerName</cstring>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The hostname of the computer for this contact.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The hostname of the computer for this contact.</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel2_2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Comment:</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Workgroup/domain:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>sWorkgroup</cstring>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The workgroup or domain the contact's computer is on.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The workgroup or domain the contact's computer is on.</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel3</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Operating s&amp;ystem:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>sOS</cstring>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The operating system the contact's computer is running.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The operating system the contact's computer is running.</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel1</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Ser&amp;ver software:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>sServer</cstring>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The software the contact's computer is running.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The software the contact's computer is running.</string>
+                            </property>
+                        </widget>
+                    </vbox>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout4</cstring>
+                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="KLineEdit">
+                            <property name="name">
+                                <cstring>sComputerName</cstring>
+                            </property>
+                            <property name="readOnly">
+                                <bool>true</bool>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The hostname of the computer for this contact.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The hostname of the computer for this contact.</string>
+                            </property>
+                        </widget>
+                        <widget class="KLineEdit">
+                            <property name="name">
+                                <cstring>sComment</cstring>
+                            </property>
+                            <property name="readOnly">
+                                <bool>true</bool>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The comment of the computer for this contact.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The comment of the computer for this contact.</string>
+                            </property>
+                        </widget>
+                        <widget class="KLineEdit">
+                            <property name="name">
+                                <cstring>sWorkgroup</cstring>
+                            </property>
+                            <property name="readOnly">
+                                <bool>true</bool>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The workgroup or domain the contact's computer is on.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The workgroup or domain the contact's computer is on.</string>
+                            </property>
+                        </widget>
+                        <widget class="KLineEdit">
+                            <property name="name">
+                                <cstring>sOS</cstring>
+                            </property>
+                            <property name="readOnly">
+                                <bool>true</bool>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The operating system the contact's computer is running.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The operating system the contact's computer is running.</string>
+                            </property>
+                        </widget>
+                        <widget class="KLineEdit">
+                            <property name="name">
+                                <cstring>sServer</cstring>
+                            </property>
+                            <property name="readOnly">
+                                <bool>true</bool>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The software the contact's computer is running.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The software the contact's computer is running.</string>
+                            </property>
+                        </widget>
+                    </vbox>
+                </widget>
+            </hbox>
+        </widget>
+    </grid>
+</widget>
+<tabstops>
+    <tabstop>sComputerName</tabstop>
+    <tabstop>sWorkgroup</tabstop>
+    <tabstop>sOS</tabstop>
+    <tabstop>sServer</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="0"/>
+<includehints>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
+</includehints>
+</UI>

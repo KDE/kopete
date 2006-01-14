@@ -1,0 +1,493 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>ICQSearchBase</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>ICQSearchBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>603</width>
+            <height>465</height>
+        </rect>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="KPushButton" row="4" column="1">
+            <property name="name">
+                <cstring>clearButton</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>C&amp;lear</string>
+            </property>
+            <property name="stdItem" stdset="0">
+                <number>10</number>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Clear the results</string>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="7" column="1">
+            <property name="name">
+                <cstring>closeButton</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Close</string>
+            </property>
+            <property name="stdItem" stdset="0">
+                <number>13</number>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Close this dialog</string>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="3" column="1">
+            <property name="name">
+                <cstring>stopButton</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>Stop</string>
+            </property>
+            <property name="accel">
+                <string></string>
+            </property>
+            <property name="stdItem" stdset="0">
+                <number>26</number>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Stops the search</string>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="5" column="1">
+            <property name="name">
+                <cstring>addButton</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>Add</string>
+            </property>
+            <property name="accel">
+                <string></string>
+            </property>
+            <property name="stdItem" stdset="0">
+                <number>27</number>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Add the selected user to your contact list</string>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="6" column="1">
+            <property name="name">
+                <cstring>userInfoButton</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>User Info</string>
+            </property>
+            <property name="accel">
+                <string></string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Show information about the selected contact</string>
+            </property>
+        </widget>
+        <spacer row="0" column="1">
+            <property name="name">
+                <cstring>spacer6</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>41</width>
+                    <height>190</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QTabWidget" row="0" column="0">
+            <property name="name">
+                <cstring>tabWidget3</cstring>
+            </property>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>UIN Search</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>textLabel1</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;UIN #:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>uin</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="0" column="1">
+                        <property name="name">
+                            <cstring>uin</cstring>
+                        </property>
+                    </widget>
+                    <spacer row="1" column="1">
+                        <property name="name">
+                            <cstring>spacer4</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>105</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </grid>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>ICQ Whitepages Search</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLineEdit" row="1" column="3">
+                        <property name="name">
+                            <cstring>lastName</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="0" column="1">
+                        <property name="name">
+                            <cstring>nickName</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="2">
+                        <property name="name">
+                            <cstring>textLabel4</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Last name:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>lastName</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="0" column="2">
+                        <property name="name">
+                            <cstring>textLabel3</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;First name:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>firstName</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel6</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Email:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>email</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>textLabel2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Nickname:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>nickName</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="3" column="3">
+                        <property name="name">
+                            <cstring>country</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="3" column="0">
+                        <property name="name">
+                            <cstring>textLabel9</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Lan&amp;guage:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>language</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="3" column="1">
+                        <property name="name">
+                            <cstring>language</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="2" column="3">
+                        <property name="name">
+                            <cstring>city</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="2" column="2">
+                        <property name="name">
+                            <cstring>textLabel10</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;City:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>city</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="0" column="3">
+                        <property name="name">
+                            <cstring>firstName</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="1" column="1">
+                        <property name="name">
+                            <cstring>email</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>textLabel8</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Gender:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>gender</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="2" column="1">
+                        <property name="name">
+                            <cstring>gender</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>onlyOnline</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Only search for online contacts</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="3" column="2">
+                        <property name="name">
+                            <cstring>textLabel11</cstring>
+                        </property>
+                        <property name="text">
+                            <string>C&amp;ountry:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>country</cstring>
+                        </property>
+                    </widget>
+                    <spacer row="5" column="1">
+                        <property name="name">
+                            <cstring>spacer5</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>16</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <spacer row="4" column="2" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>spacer3</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>166</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </grid>
+            </widget>
+        </widget>
+        <widget class="KListView" row="1" column="0" rowspan="7" colspan="1">
+            <column>
+                <property name="text">
+                    <string>UIN</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Nickname</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>First Name</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Last Name</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Email</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Requires Authorization?</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <property name="name">
+                <cstring>searchResults</cstring>
+            </property>
+            <property name="allColumnsShowFocus">
+                <bool>true</bool>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>This is where the results from your search are displayed. If you double-click a result, the search window will close and pass the UIN of the contact you wish to add back to the Add Contact Wizard. You can only add one contact at a time.</string>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="1" column="1">
+            <property name="name">
+                <cstring>searchButton</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Search</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Search the ICQ Whitepages with your search criteria</string>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="2" column="1">
+            <property name="name">
+                <cstring>newSearchButton</cstring>
+            </property>
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
+            <property name="text">
+                <string>New Search</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Clears both search fields and results</string>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<tabstops>
+    <tabstop>tabWidget3</tabstop>
+    <tabstop>uin</tabstop>
+    <tabstop>nickName</tabstop>
+    <tabstop>firstName</tabstop>
+    <tabstop>email</tabstop>
+    <tabstop>lastName</tabstop>
+    <tabstop>gender</tabstop>
+    <tabstop>city</tabstop>
+    <tabstop>language</tabstop>
+    <tabstop>country</tabstop>
+    <tabstop>onlyOnline</tabstop>
+    <tabstop>searchButton</tabstop>
+    <tabstop>stopButton</tabstop>
+    <tabstop>clearButton</tabstop>
+    <tabstop>addButton</tabstop>
+    <tabstop>userInfoButton</tabstop>
+    <tabstop>closeButton</tabstop>
+    <tabstop>searchResults</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>klistview.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+</includehints>
+</UI>

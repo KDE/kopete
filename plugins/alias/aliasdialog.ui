@@ -1,0 +1,193 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>AliasDialog</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>AliasDialog</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>361</width>
+            <height>268</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Add New Alias</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>textLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>Command:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>command</cstring>
+            </property>
+        </widget>
+        <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>command</cstring>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>This is the command that you want to run when you execute this alias. </string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>&lt;qt&gt;This is the command that you want to run when you execute this alias.
+
+You can use the variables &lt;b&gt;%1, %2 ... %9&lt;/b&gt; in your command, and they will be replaced with the arguments of the alias. The variable &lt;b&gt;%s&lt;/b&gt; will be replaced with all arguments. &lt;b&gt;%n&lt;/b&gt; expands to your nickname.
+
+Do not include the '/' in the command (if you do it will be stripped off anyway).&lt;/qt&gt;</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Alias:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>alias</cstring>
+            </property>
+        </widget>
+        <widget class="KLineEdit" row="0" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>alias</cstring>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>This is the alias you are adding (what you will type after the command identifier, '/').</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>This is the alias you are adding (what you will type after the command identifier, '/'). Do not include the '/' (it will be stripped off if you do anyway).</string>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="4" column="1">
+            <property name="name">
+                <cstring>addButton</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Save</string>
+            </property>
+            <property name="default">
+                <bool>false</bool>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="4" column="2">
+            <property name="name">
+                <cstring>kPushButton3</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Cancel</string>
+            </property>
+        </widget>
+        <widget class="KListView" row="2" column="1" rowspan="1" colspan="2">
+            <column>
+                <property name="text">
+                    <string>Protocols</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <property name="name">
+                <cstring>protocolList</cstring>
+            </property>
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
+            <property name="selectionMode" stdset="0">
+                <enum>Multi</enum>
+            </property>
+            <property name="itemMargin">
+                <number>0</number>
+            </property>
+            <property name="resizeMode">
+                <enum>AllColumns</enum>
+            </property>
+            <property name="fullWidth">
+                <bool>true</bool>
+            </property>
+            <property name="itemsMovable">
+                <bool>false</bool>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>If you want this alias to only be active for certain protocols, select those protocols here.</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>If you want this alias to only be active for certain protocols, select those protocols here.</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0">
+            <property name="name">
+                <cstring>textLabel4</cstring>
+            </property>
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
+            <property name="text">
+                <string>For protocols:</string>
+            </property>
+            <property name="alignment">
+                <set>AlignTop</set>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>kListView2</cstring>
+            </property>
+        </widget>
+        <widget class="Line" row="3" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>line1</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<customwidgets>
+</customwidgets>
+<connections>
+    <connection>
+        <sender>kPushButton3</sender>
+        <signal>clicked()</signal>
+        <receiver>AliasDialog</receiver>
+        <slot>reject()</slot>
+    </connection>
+    <connection>
+        <sender>addButton</sender>
+        <signal>clicked()</signal>
+        <receiver>AliasDialog</receiver>
+        <slot>accept()</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>alias</tabstop>
+    <tabstop>command</tabstop>
+    <tabstop>protocolList</tabstop>
+    <tabstop>addButton</tabstop>
+    <tabstop>kPushButton3</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>klistview.h</includehint>
+</includehints>
+</UI>

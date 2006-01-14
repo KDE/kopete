@@ -1,0 +1,59 @@
+dnl AM_PATH_XMMS([1.0.0])
+dnl AM_INIT_AUTOMAKE(mediacontrol, 0.1)
+dnl AC_PATH_PROG(XMMS_CONFIG, xmms-config, no)
+dnl AM_PATH_XMMS(1.0.0,,AC_MSG_ERROR([*** XMMS >= 1.0.0 not installed - please install first ***]))
+
+AC_DEFUN([AC_CHECK_XMMS],
+[
+  AC_MSG_CHECKING([for libxmms])
+  AC_CACHE_VAL(ac_cv_have_xmms,
+  [
+    ac_save_libs="$LIBS"
+    LIBS="`xmms-config --libs`"
+    ac_CPPFLAGS_save="$CPPFLAGS"
+    CPPFLAGS="$CPPFLAGS $all_includes `xmms-config --cflags`"
+    ac_LDFLAGS_save="$LDFLAGS"
+    LDFLAGS="$LDFLAGS $all_libraries"
+    AC_TRY_LINK(
+      [#include <xmms/xmmsctrl.h>],
+      [xmms_remote_stop(0);],
+      [ac_cv_have_xmms="yes"],
+      [ac_cv_have_xmms="no"]
+    )
+    LIBS="$ac_save_libs"
+    LDFLAGS="$ac_LDFLAGS_save"
+    CPPFLAGS="$ac_CPPFLAGS_save"
+  ])
+  AC_MSG_RESULT($ac_cv_have_xmms)
+  if test "$ac_cv_have_xmms" = "yes"; then
+    XMMS_INCLUDES="`xmms-config --cflags`"
+
+    for arg in `xmms-config --libs`; do
+	case $arg in
+	    -[[lL]]*)
+	    XMMS_LIBS="$XMMS_LIBS $arg"
+	    ;;
+	    *)
+	    XMMS_LDFLAGS="$XMMS_LDFLAGS $arg"
+	esac
+    done
+    AC_DEFINE(HAVE_XMMS, 1, [Define if you have xmms libraries and header files.])
+  fi
+])
+
+AC_ARG_WITH(xmms,
+  [AC_HELP_STRING(--with-xmms,
+    [enable support for XMMS @<:@default=check@:>@])],
+  [], with_xmms=check)
+
+if test "x$with_xmms" != xno; then
+  AC_CHECK_XMMS
+
+  if test "x$with_xmms" != xcheck && test "x$ac_cv_have_xmms" = xno; then
+    AC_MSG_ERROR([--with-xmms was given, but test for XMMS failed])
+  fi
+fi
+
+AC_SUBST(XMMS_LIBS)
+AC_SUBST(XMMS_LDFLAGS)
+AC_SUBST(XMMS_INCLUDES)

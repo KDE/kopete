@@ -1,0 +1,156 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>KopeteGVIPropsWidget</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>KopeteGVIPropsWidget</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>220</width>
+            <height>223</height>
+        </rect>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <widget class="QTabWidget">
+            <property name="name">
+                <cstring>tabWidget</cstring>
+            </property>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>&amp;General</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLayoutWidget">
+                        <property name="name">
+                            <cstring>layout7</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>lblDisplayName</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;Name:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>edtDisplayName</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit">
+                                <property name="name">
+                                    <cstring>edtDisplayName</cstring>
+                                </property>
+                            </widget>
+                        </hbox>
+                    </widget>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>grpIcons</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Icons</string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="KIconButton" row="1" column="1">
+                                <property name="name">
+                                    <cstring>icnbOpen</cstring>
+                                </property>
+                                <property name="text">
+                                    <string></string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="1" column="0">
+                                <property name="name">
+                                    <cstring>lblOpen</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>O&amp;pen:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>icnbOpen</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="2" column="0">
+                                <property name="name">
+                                    <cstring>lblClosed</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>C&amp;losed:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>icnbClosed</cstring>
+                                </property>
+                            </widget>
+                            <widget class="KIconButton" row="2" column="1">
+                                <property name="name">
+                                    <cstring>icnbClosed</cstring>
+                                </property>
+                                <property name="text">
+                                    <string></string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
+                                <property name="name">
+                                    <cstring>chkUseCustomIcons</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Use custom &amp;icons</string>
+                                </property>
+                            </widget>
+                            <spacer row="1" column="2">
+                                <property name="name">
+                                    <cstring>spacerHorizontal1</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>16</width>
+                                        <height>16</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </grid>
+                    </widget>
+                </vbox>
+            </widget>
+        </widget>
+    </vbox>
+</widget>
+<tabstops>
+    <tabstop>tabWidget</tabstop>
+    <tabstop>edtDisplayName</tabstop>
+    <tabstop>chkUseCustomIcons</tabstop>
+    <tabstop>icnbOpen</tabstop>
+    <tabstop>icnbClosed</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kicondialog.h</includehint>
+    <includehint>kicondialog.h</includehint>
+</includehints>
+</UI>

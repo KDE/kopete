@@ -1,0 +1,16 @@
+if test "$with_jingle" = yes; then
+	echo ""
+	echo Supported Jabber Jingle voice Codecs for Kopete:
+	echo Speex: $speex_found
+	echo iLBC:  $ilbc_found
+	echo MULAW: yes
+else
+	echo ""
+	echo "You have disabled or you are missing required librairies required to compile Jabber Jingle voice support."
+	echo "Jingle is a new Jabber standard that define a signaling protocol via XMPP for peer-to-peer applications."
+	echo "Jingle audio is compatible with Google Talk voice offering."
+	echo ""
+	echo "Required Jingle dependencies are listed on this page:"
+	echo "http://wiki.kde.org/tiki-index.php?page=Kopete+Jabber+Jingle"
+	all_tests=bad
+fi

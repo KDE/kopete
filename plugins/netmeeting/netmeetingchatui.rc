@@ -1,0 +1,9 @@
+<!DOCTYPE kpartgui>
+<kpartgui version="1" name="kopete_msn_netmeeting">
+	<MenuBar>
+		<Menu name="tools">
+			<text>&amp;Tools</text>
+			<Action name="netmeeting" />
+		</Menu>
+	</MenuBar>
+</kpartgui>

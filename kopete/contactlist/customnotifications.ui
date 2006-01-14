@@ -1,0 +1,238 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>CustomNotificationWidget</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>CustomNotificationWidget</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>389</width>
+            <height>220</height>
+        </rect>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout13</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>On &amp;event:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>cmbEvents</cstring>
+                    </property>
+                </widget>
+                <widget class="QComboBox">
+                    <property name="name">
+                        <cstring>cmbEvents</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Choose the event that should have a custom notification</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout12</cstring>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="KURLRequester" row="0" column="1">
+                    <property name="name">
+                        <cstring>customSound</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Select the sound to play</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="0" column="0">
+                    <property name="name">
+                        <cstring>chkCustomSound</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Play a sound:</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Play a sound when this event occurs for this contact</string>
+                    </property>
+                </widget>
+                <spacer row="2" column="1">
+                    <property name="name">
+                        <cstring>spacer10</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>140</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QCheckBox" row="2" column="0">
+                    <property name="name">
+                        <cstring>chkCustomChat</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Start a cha&amp;t</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Open a chat window with this contact when this event occurs for this contact</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="0">
+                    <property name="name">
+                        <cstring>chkCustomMsg</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Display a message:</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Display a message on your screen when this event occurs for this contact</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="1" column="1">
+                    <property name="name">
+                        <cstring>customMsg</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Enter the message to display</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="2">
+                    <property name="name">
+                        <cstring>chkMsgSS</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string>D&amp;isplay once</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Only display a message the next time the event occurs</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="0" column="2">
+                    <property name="name">
+                        <cstring>chkSoundSS</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string>P&amp;lay once</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Only play a sound the next time the event occurs</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="2" column="2">
+                    <property name="name">
+                        <cstring>chkChatSS</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string>T&amp;rigger once</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Only start a chat the next time the event occurs</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>chkSuppressCommon</cstring>
+            </property>
+            <property name="text">
+                <string>S&amp;uppress standard notifications</string>
+            </property>
+            <property name="checked">
+                <bool>false</bool>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Check to prevent notifications common to all contacts from happening for this contact</string>
+            </property>
+        </widget>
+    </vbox>
+</widget>
+<connections>
+    <connection>
+        <sender>chkCustomSound</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>customSound</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>chkCustomSound</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>chkSoundSS</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>chkCustomMsg</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>customMsg</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>chkCustomMsg</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>chkMsgSS</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>chkCustomChat</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>chkChatSS</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>cmbEvents</tabstop>
+    <tabstop>chkCustomSound</tabstop>
+    <tabstop>customSound</tabstop>
+    <tabstop>chkSoundSS</tabstop>
+    <tabstop>chkCustomMsg</tabstop>
+    <tabstop>customMsg</tabstop>
+    <tabstop>chkMsgSS</tabstop>
+    <tabstop>chkCustomChat</tabstop>
+    <tabstop>chkChatSS</tabstop>
+    <tabstop>chkSuppressCommon</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kurlrequester.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+</includehints>
+</UI>

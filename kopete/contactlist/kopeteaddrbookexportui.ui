@@ -1,0 +1,149 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>AddressBookExportUI</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>AddressBookExportUI</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>598</width>
+            <height>651</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Merge with Address Book</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>mLblFirstName</cstring>
+            </property>
+            <property name="text">
+                <string>First name:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>comboBox1</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="4" column="0">
+            <property name="name">
+                <cstring>mLblHomePhone</cstring>
+            </property>
+            <property name="text">
+                <string>Home phone:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>mPhones</cstring>
+            </property>
+        </widget>
+        <widget class="KListBox" row="5" column="1">
+            <property name="name">
+                <cstring>mWorkPhones</cstring>
+            </property>
+            <property name="selectionMode">
+                <enum>Extended</enum>
+            </property>
+        </widget>
+        <widget class="KListBox" row="6" column="1">
+            <property name="name">
+                <cstring>mMobilePhones</cstring>
+            </property>
+            <property name="selectionMode">
+                <enum>Extended</enum>
+            </property>
+        </widget>
+        <widget class="KListBox" row="4" column="1">
+            <property name="name">
+                <cstring>mHomePhones</cstring>
+            </property>
+            <property name="selectionMode">
+                <enum>Extended</enum>
+            </property>
+        </widget>
+        <widget class="QLabel" row="5" column="0">
+            <property name="name">
+                <cstring>mLblWorkPhone</cstring>
+            </property>
+            <property name="text">
+                <string>Work phone:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>mPhones_2</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="6" column="0">
+            <property name="name">
+                <cstring>mLblMobilePhone</cstring>
+            </property>
+            <property name="text">
+                <string>Mobile phone:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>mPhones_3</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="3" column="0">
+            <property name="name">
+                <cstring>mLblUrl</cstring>
+            </property>
+            <property name="text">
+                <string>URL:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>comboBox4</cstring>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="3" column="1">
+            <property name="name">
+                <cstring>mUrl</cstring>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="0" column="1">
+            <property name="name">
+                <cstring>mFirstName</cstring>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="1" column="1">
+            <property name="name">
+                <cstring>mLastName</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>mLblLastName</cstring>
+            </property>
+            <property name="text">
+                <string>Last name:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>comboBox2</cstring>
+            </property>
+        </widget>
+        <widget class="KListBox" row="2" column="1">
+            <property name="name">
+                <cstring>mEmails</cstring>
+            </property>
+            <property name="selectionMode">
+                <enum>Extended</enum>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0">
+            <property name="name">
+                <cstring>mLblEmail</cstring>
+            </property>
+            <property name="text">
+                <string>Email:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>mEmails</cstring>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

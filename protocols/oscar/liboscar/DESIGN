@@ -1,0 +1,12 @@
+This file attempts to detail the design of the liboscar library. It's still a 
+work in progress.
+
+liboscar is based off of the libgroupwise library which handles connections to
+Novell's Groupwise messenging system. libgroupwise is based off of the libiris
+library which is used to interface with the jabber instant messaging network.
+
+Details of the library:
+============================================
+
+All the protocol actions are encapsulated in Tasks.
+

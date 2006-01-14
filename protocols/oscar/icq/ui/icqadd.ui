@@ -1,0 +1,122 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>icqAddUI</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>icqAddUI</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>452</width>
+            <height>88</height>
+        </rect>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout3</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>UIN #:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>uinEdit</cstring>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout4</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Alternatively, you can search the ICQ Whitepages :</string>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer8</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>47</width>
+                            <height>26</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="KPushButton">
+                    <property name="name">
+                        <cstring>searchButton</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Search</string>
+                    </property>
+                    <property name="iconSet">
+                        <iconset>image0</iconset>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer4</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
+</widget>
+<images>
+    <image name="image0">
+        <data format="PNG" length="736">89504e470d0a1a0a0000000d49484452000000100000001008060000001ff3ff61000002a749444154388d7d91cd4b945114c69f73ef3b33ea7ca838a6a32681501194d2975050b4c82f92dc042e5a550b5bf60744bb16b58a8268218144d026da64da228a0a2b52d1c8c8c48f2c54669c19df79df793fefbd2d662469860e1cb870cef3e339cf2500989b5b88e56cb78b0857f2b6d3e67b0e0b0503baf4e57bdbb21eb8b6fadedf7fda4599a2e999f9bdb66b5fb75db79b3164b8c6b3504af8426852885adff3272dc31cb14c313e38d827fe0568593d77225811b8d8d810475555a89e88e0791e0c330f2515cc7c9e6ccb822f8d6f00964a009e6b5f8ed554211a0d235c5501ce1874c30411414a89582cdc0625c3e964e64c3900b35de768301000e70c1ae7608c81738e80a6a1b2b202b16814cd4d8946ced550b90c98e33a158c113ccf47ceccc3cc5b080534282591d94c637d6d1d5bd92c2ccb3af2f0d1e8bd92135cd7370184018088c0350ec639a291086291083ccf432e6740d3822c994cc54a1c5886f5d1755d48a920a584520a4a291000251508844c3a83baf82e1051e90996e5dc5959fe0d21fd4270424208015184e9ba8e0f139350d050460fd6de7ec80e5786313b3307c33021a484effb104222994c61ecc52b380ec1cbfcc281fcd33dd3379af7ec04d0f497c5ae8977afc77b7acf6262620a7a2e0d2505a0181a1a1388d735209f5a41647504bb833fdcad8de4e896c9864edd5edb00006d9bd49468c4c0406f318b420b2121a440eaf324226d3588b79c0f6a536303d6fc2a9e5d4d5c1bb8bfb6cc769829f7cd2010aaf77741f7dbb095d1517bb81b0dadf57dd1907bf3f1a5448b5656b52d2ea6c62b6bf076ad09355f17cc939d84face736185d10bd9d9541dfbbb5c1010018c1158f14d44205600ad878ebdf9f47cfceec6a6e5b0d6e39a1139d8a5b1e2707878e47f660a15aaddfcb9a4df4a3f79d921abf7f52cda1d737f0030624881b39160420000000049454e44ae426082</data>
+    </image>
+</images>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kpushbutton.h</includehint>
+</includehints>
+</UI>

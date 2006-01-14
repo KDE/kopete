@@ -1,0 +1,190 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>WPAddContactBase</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>WPAddContactBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>396</width>
+            <height>342</height>
+        </rect>
+    </property>
+    <property name="font">
+        <font>
+        </font>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout59</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout57</cstring>
+                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>TextLabel2_2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Com&amp;puter hostname:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>mHostName</cstring>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The hostname you would like to use to send WinPopup messages to.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The hostname you would like to use to send WinPopup messages to.</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>TextLabel1_2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Workgroup/domain:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>mHostGroup</cstring>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The workgroup or domain the computer is on that you would like to use to send WinPopup messages to.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The workgroup or domain the computer is on that you would like to use to send WinPopup messages to.</string>
+                            </property>
+                        </widget>
+                    </vbox>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout58</cstring>
+                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="KComboBox">
+                            <property name="name">
+                                <cstring>mHostName</cstring>
+                            </property>
+                            <property name="editable">
+                                <bool>true</bool>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The hostname you would like to use to send WinPopup messages to.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The hostname you would like to use to send WinPopup messages to.</string>
+                            </property>
+                        </widget>
+                        <widget class="KComboBox">
+                            <property name="name">
+                                <cstring>mHostGroup</cstring>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The workgroup or domain the computer is on that you would like to use to send WinPopup messages to.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The workgroup or domain the computer is on that you would like to use to send WinPopup messages to.</string>
+                            </property>
+                        </widget>
+                    </vbox>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout11</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <spacer>
+                    <property name="name">
+                        <cstring>Spacer2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="KPushButton">
+                    <property name="name">
+                        <cstring>mRefresh</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Refresh</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Refresh the list of available workgroups &amp; domains on the Windows network.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Refresh the list of available workgroups &amp; domains on the Windows network.</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>Spacer4</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>50</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
+</widget>
+<tabstops>
+    <tabstop>mHostName</tabstop>
+    <tabstop>mHostGroup</tabstop>
+    <tabstop>mRefresh</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kcombobox.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>kcombobox.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+</includehints>
+</UI>

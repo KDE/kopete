@@ -1,0 +1,106 @@
+Have fun using this all-improved plugin and feel free to contribute patches
+and other improvements to our mailing list! Although we all like to boast
+about our great work, we're sure there are still bugs remaining, which is
+why we don't call this release 1.0, but only 0.5.
+
+Nevertheless, we feel this new MSN plugin is an enormous step forward from
+the last 0.4.1 release and we recommend anyone to try out this all-improved
+plugin. Please read the release notes first before reporting bugs, but please
+do report anything not listed there!
+
+Thanks for your interest in Kopete!
+
+                        October 2002, the Kopete team <kopete-devel@kde.org>
+
+
+CHANGES IN THE MSN PLUGIN SINCE KOPETE 0.4.1
+
+- Ported the plugin to the new MetaContact API, allowing a locally cached
+  copy of the contact list to be always available (even when offline) and
+  to combine your MSN contacts with other messaging systems in one entry
+  in the contact list.
+
+- Added additional online states ('be right back', 'out to lunch', 'busy',
+  'invisible') and the possibility to connect directly with a particular
+  status (especially useful with 'invisible')
+
+- Fix multi-user chat now the API finally supports it properly
+
+- Fix a grave bug in Kopete 0.4.1 where Kopete would popup the 'new user'
+  dialog for every user in your block list, asking whether you want to
+  allow or block the user, often crashing Kopete completely
+
+- Fix support for Unicode messages
+
+- Fix the 'unhandled error 219' problem that caused Kopete to disconnect
+  unexpectedly for some people
+
+- Added possibility to talk with users who aren't in the contact list
+
+- Incoming filetransfers
+
+- As usual, several other bugfixes
+
+CHANGES IN THE MSN PLUGIN SINCE KOPETE 0.4
+
+- Added block/unblock user
+
+- Don't show contacts from the allow list if they are not also in the
+  friend list (like deleted contacts). Small problem: there already was
+  a need to have a gui for manipulating blocked/allowed contacts, with
+  this change this is even a bit more urgent...
+
+- Hopefully fix a problem with an empty reverse list on a fresh MSN account.
+  can't test, because by the time the recompile was done the reverse list
+  was no longer empty...
+
+- Fix a problem with MSN users no longer receiving messages. Apparently
+  Microsoft changed the server so messages without an explicit font name are
+  no longer passed on.
+
+- Fixed UTF8 handling not really being UTF8. MSN should work fine now with
+  all unicode characters
+
+- Moved the plugin to use KGenericFactory as preparation for more KDE-style
+  plugin handling (as opposed to the current custom code)
+
+- Fixed crash when disconnecting while an earlier connect was still running
+
+- Made the connect code asynchronous, so connecting doesn't hang kopete
+  while processing
+
+- Fixed minor memory leak in the connect code
+
+CHANGES IN THE MSN PLUGIN SINCE KOPETE 0.3
+
+Many things changed since 0.3. I won't mention them all, because so much of
+the internal code changed that the individual commits often fix more than I
+was even aware of at that time. Below are the bigger changes and fixes:
+
+- Ported the plugin to the new KopeteMessageManager. This move unifies the
+  handling of various resources like chat windows, balloons, system tray
+  flashing, and more. In Kopete 0.3 this was the exclusive domain of the
+  ICQ plugin, in this release all plugins except IRC already use the shared
+  code.
+
+- Rewrote almost all of the internal protocol handling, fixing an awful lot
+  of bugs during the process. The main goal was to make the code more
+  maintainable and extensible, but the gratuitous bug fixes are of course
+  much more useful for most people. The most important fix of all is a
+  grave bug that caused the plugin to read a fixed-size 1kb buffer in Kopete
+  0.3 without checking for additional data, often causing the plugin to
+  seemingly 'hang'.
+
+- Added the ability to change the display name while connected. This can
+  currently only be done from the context menu. The option in the
+  preferences never worked, and still does not do what you'd expect it to
+  do. Sorry :)
+
+- Added much more useful debug code for developers, testers and other
+  interested people. It is also a lot *more* debug output, so if you're
+  scared of console output, better not start Kopete from it...
+
+- All those tiny bugfixes of which I don't even know whether they fix
+  regressions introduced during the development of version 0.4, or whether
+  they fix long-standing bugs.
+

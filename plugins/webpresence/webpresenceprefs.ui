@@ -1,0 +1,369 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>WebPresencePrefsUI</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>WebPresencePrefsUI</cstring>
+    </property>
+    <property name="enabled">
+        <bool>true</bool>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>426</width>
+            <height>554</height>
+        </rect>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>11</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>groupBox1</cstring>
+            </property>
+            <property name="title">
+                <string>Uploading</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="frameShape">
+                        <enum>NoFrame</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Plain</enum>
+                    </property>
+                    <property name="text">
+                        <string>Uplo&amp;ad to:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>uploadURL</cstring>
+                    </property>
+                </widget>
+                <widget class="KURLRequester" row="0" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>uploadURL</cstring>
+                    </property>
+                </widget>
+                <spacer row="1" column="2">
+                    <property name="name">
+                        <cstring>spacer5</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>449</width>
+                            <height>0</height>
+                        </size>
+                    </property>
+                </spacer>
+            </grid>
+        </widget>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>buttonGroup2_2</cstring>
+            </property>
+            <property name="title">
+                <string>Formatting</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>formatHTML</cstring>
+                    </property>
+                    <property name="text">
+                        <string>HTML (simple loo&amp;k)</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>HTML 4.01 Transitional using the ISO-8859-1 (aka. Latin 1) character set encoding.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>HTML 4.01 Transitional formatting using ISO-8859-1 (aka. Latin 1) character set encoding.
+
+This version should be easily opened by most web browsers.</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>formatXHTML</cstring>
+                    </property>
+                    <property name="text">
+                        <string>XHTML (simple look)</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>XHTML 1.0 Strict</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The resulting page will be formatted using the XHTML 1.0 Strict W3C Recommendation. The character set encoding is UTF-8.
+
+Note that some web browsers do not support XHTML. You should also make sure your web server serves it out with the correct mime type, such as application/xhtml+xml.</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>formatXML</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;XML</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Save the output in XML format using UTF-8 character set.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Save the output in XML format using the UTF-8 encoding.</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>formatStylesheet</cstring>
+                    </property>
+                    <property name="text">
+                        <string>XML transformation &amp;using this XSLT sheet:</string>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout1</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer10</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Fixed</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>30</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="KURLRequester">
+                            <property name="name">
+                                <cstring>formatStylesheetURL</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>useImagesHTML</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Repla&amp;ce protocol text with images in (X)HTML</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Replaces the protocol names, such as MSN and IRC with images.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Replaces the protocol names, such as MSN and IRC with images.
+
+Note that you have to manually copy the PNG files into place.
+
+The following files are used by default:
+
+images/msn_protocol.png
+images/icq_protocol.png
+images/jabber_protocol.png
+images/yahoo_protocol.png
+images/aim_protocol.png
+images/irc_protocol.png
+images/sms_protocol.png
+images/gadu_protocol.png
+images/winpopup_protocol.png</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>buttonGroup2</cstring>
+            </property>
+            <property name="title">
+                <string>Display Name</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>showName</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use one of &amp;your IM names</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>showAnotherName</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use another &amp;name:</string>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout2</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer4_2</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Fixed</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>30</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QLineEdit">
+                            <property name="name">
+                                <cstring>showThisName</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>includeIMAddress</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Include &amp;IM addresses</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>Spacer7</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>16</width>
+                    <height>93</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
+</widget>
+<connections>
+    <connection>
+        <sender>formatStylesheet</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>formatStylesheetURL</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>showAnotherName</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>showThisName</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>formatXML</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>useImagesHTML</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>formatStylesheet</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>useImagesHTML</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>uploadURL</tabstop>
+    <tabstop>formatHTML</tabstop>
+    <tabstop>formatStylesheetURL</tabstop>
+    <tabstop>useImagesHTML</tabstop>
+    <tabstop>showName</tabstop>
+    <tabstop>showThisName</tabstop>
+    <tabstop>includeIMAddress</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kurlrequester.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kurlrequester.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+</includehints>
+</UI>

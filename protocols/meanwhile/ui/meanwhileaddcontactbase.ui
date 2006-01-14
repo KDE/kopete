@@ -1,0 +1,111 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>MeanwhileAddContactBase</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>Form1</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>396</width>
+            <height>347</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Add Sametime Contact</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout53</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Userid:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>contactID</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The user id of the contact you would like to add.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The user id of the contact you would like to add.</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>contactID</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The user id of the contact you would like to add.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The user id of the contact you would like to add.</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>btnFindUser</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Find</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Find Userid</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Find Userid</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel3_2</cstring>
+            </property>
+            <property name="text">
+                <string>&lt;i&gt;(for example: johndoe)&lt;/i&gt;</string>
+            </property>
+            <property name="alignment">
+                <set>AlignVCenter|AlignRight</set>
+            </property>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>80</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

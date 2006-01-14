@@ -1,0 +1,107 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>MetaContactSelectorWidget_Base</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>MetaContactSelectorWidget_Base</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>427</width>
+            <height>306</height>
+        </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>1</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <property name="caption">
+        <string>Select Contact</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="KActiveLabel">
+            <property name="name">
+                <cstring>lblHeader</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>4</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout2</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>lblSearch</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>S&amp;earch:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kListViewSearchLine</cstring>
+                    </property>
+                </widget>
+                <widget class="Kopete::UI::ListView::SearchLine">
+                    <property name="name">
+                        <cstring>kListViewSearchLine</cstring>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="Kopete::UI::ListView::ListView">
+            <column>
+                <property name="text">
+                    <string>Meta Contact</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <property name="name">
+                <cstring>metaContactListView</cstring>
+            </property>
+        </widget>
+    </vbox>
+</widget>
+<includes>
+    <include location="local" impldecl="in declaration">kopetelistviewsearchline.h</include>
+    <include location="local" impldecl="in declaration">kopetelistview.h</include>
+    <include location="global" impldecl="in declaration">qheader.h</include>
+</includes>
+<layoutdefaults spacing="6" margin="11"/>
+<layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
+<includehints>
+    <includehint>kactivelabel.h</includehint>
+    <includehint>kopetelistviewsearchline.h</includehint>
+    <includehint>kopetelistview.h</includehint>
+</includehints>
+</UI>

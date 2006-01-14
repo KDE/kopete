@@ -1,0 +1,29 @@
+Qt Cryptographic Architecture
+-----------------------------
+Version: API v1.0, Plugin v1
+Author: Justin Karneges <justin@affinix.com>
+Date: September 10th 2003
+
+This library provides an easy API for the following features:
+
+  SSL/TLS
+  X509
+  SASL
+  RSA
+  Hashing (SHA1, MD5)
+  Ciphers (BlowFish, 3DES, AES)
+
+Functionality is supplied via plugins.  This is useful for avoiding
+dependence on a particular crypto library and makes upgrading easier,
+as there is no need to recompile your application when adding or
+upgrading a crypto plugin.  Also, by pushing crypto functionality into
+plugins, your application is free of legal issues, such as export
+regulation.
+
+And of course, you get a very simple crypto API for Qt, where you can
+do things like:
+
+  QString hash = QCA::SHA1::hashToString(blockOfData);
+
+Have fun!
+

@@ -1,0 +1,37 @@
+This is the TODO file for liboscar. Please note that this TODO file is on a
+very short timeframe since the goal is to have liboscar done before KDE 3.4.
+Realistically, KDE 4 is a better goal, but i want to push hard for KDE 3.4
+
+If you're going to be looking at the docs, I suggest downloading the zip file (click the download link) from iserverd.khstu.ru/oscar for
+faster loading.
+
+Misc. Before Merge things
+====================================
+
+- Don't hardcode the values in SendDCInfoTask. Find a way to get them from the account or something.
+- Rename SendDCInfoTask to SendExtInfoTask (rename the files on the server too. contact sysadmin@kde.org to see about this. It may have to wait until the merge)
+- Check capabilities handling (the code is from oscarsocket, we need to make sure it will still work ok for liboscar until we come up with something better)
+- Test moving contacts from one group to another
+
+
+Direct Connections
+====================================
+When/If we get around to it. Matt knows absolutely nothing about direct connections and the only online source of documentation is no longer online. :(
+This will definately be one of those things we have to dissect gaim for. :/
+
+
+SNAC 0x15 parsing
+====================================
+
+SNAC 0x15 parsing is done. however parts may need to be reworked as things have gotten
+very messy. we currently don't do a good job of handling extra data (i.e. i can't call
+addInitialData with just the initial data and get the type 1 tlv length right. maybe a
+prepareSend( const Buffer& ) function that adds the type one tlv to our packet so we 
+get the tlv length right.
+
+also, we may want to implement a removeInitialData function that we can call if the packet
+is for us so we don't have to have code in all the icq tasks that get rid of the initial tlv
+data that we parse in parse initial data.
+
+
+

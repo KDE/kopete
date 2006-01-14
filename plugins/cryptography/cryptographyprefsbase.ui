@@ -1,0 +1,196 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>CryptographyPrefsUI</class>
+<author>Olivier Goffart</author>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>CryptographyPrefsUI</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>403</width>
+            <height>287</height>
+        </rect>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>TextLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Your private PGP key:</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="0" column="2">
+            <property name="name">
+                <cstring>m_selectOwnKey</cstring>
+            </property>
+            <property name="text">
+                <string>Select...</string>
+            </property>
+        </widget>
+        <widget class="KLineEdit" row="0" column="1">
+            <property name="name">
+                <cstring>PGP_private_key</cstring>
+            </property>
+            <property name="readOnly">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>Also_my_key</cstring>
+            </property>
+            <property name="text">
+                <string>Encrypt outgoing messages with this key</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>&lt;qt&gt;Check this box if you want to encrypt outgoing messages with this key, so that you will be able to decrypt them yourself later.&lt;br&gt;
+&lt;b&gt;Warning:&lt;/b&gt; This can increase the size of messages, and some protocols will refuse to send your messages because they are too large.</string>
+            </property>
+        </widget>
+        <spacer row="5" column="1">
+            <property name="name">
+                <cstring>spacer3</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>21</width>
+                    <height>50</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QButtonGroup" row="4" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>m_cache</cstring>
+            </property>
+            <property name="title">
+                <string>Cache Passphrase</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>Cache_Till_App_Close</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Until Kopete closes</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QSpinBox" row="2" column="1">
+                    <property name="name">
+                        <cstring>Cache_Time</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="maxValue">
+                        <number>999</number>
+                    </property>
+                    <property name="minValue">
+                        <number>1</number>
+                    </property>
+                    <property name="value">
+                        <number>15</number>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="2">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>minutes</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="2" column="0">
+                    <property name="name">
+                        <cstring>Cache_Till_Time</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>For</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="3" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>Cache_Never</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Never</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>No_Passphrase_Handling</cstring>
+            </property>
+            <property name="text">
+                <string>Do not ask for the passphrase</string>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>No_Passphrase_Handling</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_cache</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>PGP_private_key</tabstop>
+    <tabstop>m_selectOwnKey</tabstop>
+    <tabstop>Also_my_key</tabstop>
+    <tabstop>No_Passphrase_Handling</tabstop>
+    <tabstop>Cache_Till_App_Close</tabstop>
+    <tabstop>Cache_Till_Time</tabstop>
+    <tabstop>Cache_Time</tabstop>
+    <tabstop>Cache_Never</tabstop>
+</tabstops>
+<slots>
+    <slot>m_selectOwnKey_clicked()</slot>
+    <slot>m_selectOwnKey_toggled(bool)</slot>
+    <slot>m_selectOwnKey_stateChanged(int)</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>klineedit.h</includehint>
+</includehints>
+</UI>

@@ -1,0 +1,13 @@
+iconset     - generic classes for handling iconsets / animations
+idle        - detecting desktop idle
+input       - making life easier with text input (including richtext)
+openpgp     - pgp/gpg classes
+richtext    - richtext parsing function, xhtml conversion
+ssl         - SSL
+tray        - desktop tray icon
+util        - various things, see util/TODO
+globalaccel - global hotkeys
+network     - sockets, servers, dns, and proxies
+sasl        - SASL library
+xmlsec      - XML Encryption
+crash       - generates some (hopefully useful) feedback when program crashes

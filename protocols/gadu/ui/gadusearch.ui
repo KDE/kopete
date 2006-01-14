@@ -1,0 +1,692 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>GaduPublicDirectory</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>GaduPublicDirectory</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>570</width>
+            <height>386</height>
+        </rect>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QWidgetStack" row="0" column="0">
+            <property name="name">
+                <cstring>pubsearch</cstring>
+            </property>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>page</cstring>
+                </property>
+                <attribute name="id">
+                    <number>0</number>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QButtonGroup" row="0" column="0">
+                        <property name="name">
+                            <cstring>buttonGroup2</cstring>
+                        </property>
+                        <property name="lineWidth">
+                            <number>0</number>
+                        </property>
+                        <property name="title">
+                            <string></string>
+                        </property>
+                        <property name="flat">
+                            <bool>true</bool>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLayoutWidget" row="1" column="0">
+                                <property name="name">
+                                    <cstring>layout38</cstring>
+                                </property>
+                                <vbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLayoutWidget">
+                                        <property name="name">
+                                            <cstring>layout36</cstring>
+                                        </property>
+                                        <vbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLayoutWidget">
+                                                <property name="name">
+                                                    <cstring>layout31</cstring>
+                                                </property>
+                                                <hbox>
+                                                    <property name="name">
+                                                        <cstring>unnamed</cstring>
+                                                    </property>
+                                                    <widget class="QLayoutWidget">
+                                                        <property name="name">
+                                                            <cstring>layout29</cstring>
+                                                        </property>
+                                                        <vbox>
+                                                            <property name="name">
+                                                                <cstring>unnamed</cstring>
+                                                            </property>
+                                                            <widget class="QLabel">
+                                                                <property name="name">
+                                                                    <cstring>textLabel1a</cstring>
+                                                                </property>
+                                                                <property name="text">
+                                                                    <string>Name:</string>
+                                                                </property>
+                                                            </widget>
+                                                            <widget class="QLabel">
+                                                                <property name="name">
+                                                                    <cstring>textLabel1_2a</cstring>
+                                                                </property>
+                                                                <property name="text">
+                                                                    <string>Surname:</string>
+                                                                </property>
+                                                            </widget>
+                                                            <widget class="QLabel">
+                                                                <property name="name">
+                                                                    <cstring>textLabel1_3a</cstring>
+                                                                </property>
+                                                                <property name="text">
+                                                                    <string>Nick:</string>
+                                                                </property>
+                                                            </widget>
+                                                            <widget class="QLabel">
+                                                                <property name="name">
+                                                                    <cstring>textLabel1_3_2a</cstring>
+                                                                </property>
+                                                                <property name="text">
+                                                                    <string>City:</string>
+                                                                </property>
+                                                            </widget>
+                                                        </vbox>
+                                                    </widget>
+                                                    <widget class="QLayoutWidget">
+                                                        <property name="name">
+                                                            <cstring>layout30</cstring>
+                                                        </property>
+                                                        <vbox>
+                                                            <property name="name">
+                                                                <cstring>unnamed</cstring>
+                                                            </property>
+                                                            <widget class="QLineEdit">
+                                                                <property name="name">
+                                                                    <cstring>nameS</cstring>
+                                                                </property>
+                                                            </widget>
+                                                            <widget class="QLineEdit">
+                                                                <property name="name">
+                                                                    <cstring>surname</cstring>
+                                                                </property>
+                                                            </widget>
+                                                            <widget class="QLineEdit">
+                                                                <property name="name">
+                                                                    <cstring>nick</cstring>
+                                                                </property>
+                                                            </widget>
+                                                            <widget class="QLineEdit">
+                                                                <property name="name">
+                                                                    <cstring>cityS</cstring>
+                                                                </property>
+                                                            </widget>
+                                                        </vbox>
+                                                    </widget>
+                                                </hbox>
+                                            </widget>
+                                            <widget class="QLayoutWidget">
+                                                <property name="name">
+                                                    <cstring>layout34</cstring>
+                                                </property>
+                                                <hbox>
+                                                    <property name="name">
+                                                        <cstring>unnamed</cstring>
+                                                    </property>
+                                                    <widget class="QLabel">
+                                                        <property name="name">
+                                                            <cstring>textLabel1_2_2a</cstring>
+                                                        </property>
+                                                        <property name="text">
+                                                            <string>Age from:</string>
+                                                        </property>
+                                                    </widget>
+                                                    <widget class="QSpinBox">
+                                                        <property name="name">
+                                                            <cstring>ageFrom</cstring>
+                                                        </property>
+                                                        <property name="cursor">
+                                                            <cursor>0</cursor>
+                                                        </property>
+                                                        <property name="buttonSymbols">
+                                                            <enum>PlusMinus</enum>
+                                                        </property>
+                                                        <property name="maxValue">
+                                                            <number>120</number>
+                                                        </property>
+                                                        <property name="minValue">
+                                                            <number>0</number>
+                                                        </property>
+                                                        <property name="value">
+                                                            <number>0</number>
+                                                        </property>
+                                                    </widget>
+                                                    <widget class="QLabel">
+                                                        <property name="name">
+                                                            <cstring>textLabel1_2_3</cstring>
+                                                        </property>
+                                                        <property name="text">
+                                                            <string>to:</string>
+                                                        </property>
+                                                    </widget>
+                                                    <widget class="QSpinBox">
+                                                        <property name="name">
+                                                            <cstring>ageTo</cstring>
+                                                        </property>
+                                                        <property name="cursor">
+                                                            <cursor>0</cursor>
+                                                        </property>
+                                                        <property name="buttonSymbols">
+                                                            <enum>PlusMinus</enum>
+                                                        </property>
+                                                        <property name="maxValue">
+                                                            <number>120</number>
+                                                        </property>
+                                                        <property name="minValue">
+                                                            <number>0</number>
+                                                        </property>
+                                                        <property name="value">
+                                                            <number>0</number>
+                                                        </property>
+                                                    </widget>
+                                                    <spacer>
+                                                        <property name="name">
+                                                            <cstring>spacer1</cstring>
+                                                        </property>
+                                                        <property name="orientation">
+                                                            <enum>Horizontal</enum>
+                                                        </property>
+                                                        <property name="sizeType">
+                                                            <enum>Expanding</enum>
+                                                        </property>
+                                                        <property name="sizeHint">
+                                                            <size>
+                                                                <width>297</width>
+                                                                <height>21</height>
+                                                            </size>
+                                                        </property>
+                                                    </spacer>
+                                                </hbox>
+                                            </widget>
+                                            <widget class="QLayoutWidget">
+                                                <property name="name">
+                                                    <cstring>layout32</cstring>
+                                                </property>
+                                                <hbox>
+                                                    <property name="name">
+                                                        <cstring>unnamed</cstring>
+                                                    </property>
+                                                    <widget class="QLabel">
+                                                        <property name="name">
+                                                            <cstring>textLabel1_4a</cstring>
+                                                        </property>
+                                                        <property name="text">
+                                                            <string>Gender:</string>
+                                                        </property>
+                                                        <property name="textFormat">
+                                                            <enum>PlainText</enum>
+                                                        </property>
+                                                        <property name="scaledContents">
+                                                            <bool>false</bool>
+                                                        </property>
+                                                    </widget>
+                                                    <widget class="QComboBox">
+                                                        <item>
+                                                            <property name="text">
+                                                                <string></string>
+                                                            </property>
+                                                        </item>
+                                                        <item>
+                                                            <property name="text">
+                                                                <string>Male</string>
+                                                            </property>
+                                                        </item>
+                                                        <item>
+                                                            <property name="text">
+                                                                <string>Female</string>
+                                                            </property>
+                                                        </item>
+                                                        <property name="name">
+                                                            <cstring>gender</cstring>
+                                                        </property>
+                                                        <property name="focusPolicy">
+                                                            <enum>TabFocus</enum>
+                                                        </property>
+                                                    </widget>
+                                                </hbox>
+                                            </widget>
+                                        </vbox>
+                                    </widget>
+                                </vbox>
+                            </widget>
+                            <widget class="QLayoutWidget" row="3" column="0">
+                                <property name="name">
+                                    <cstring>layout37</cstring>
+                                </property>
+                                <vbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLayoutWidget">
+                                        <property name="name">
+                                            <cstring>layout33</cstring>
+                                        </property>
+                                        <hbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>uin_static</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>User number:</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="KRestrictedLine">
+                                                <property name="name">
+                                                    <cstring>UIN</cstring>
+                                                </property>
+                                                <property name="maxLength">
+                                                    <number>32</number>
+                                                </property>
+                                                <property name="echoMode">
+                                                    <enum>Normal</enum>
+                                                </property>
+                                            </widget>
+                                        </hbox>
+                                    </widget>
+                                </vbox>
+                            </widget>
+                            <widget class="QRadioButton" row="2" column="0">
+                                <property name="name">
+                                    <cstring>radioByUin</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Request information about user:</string>
+                                </property>
+                                <property name="autoRepeat">
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                            <widget class="QRadioButton" row="0" column="0">
+                                <property name="name">
+                                    <cstring>radioByData</cstring>
+                                </property>
+                                <property name="autoMask">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="text">
+                                    <string>Search by specified data:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget" row="5" column="0">
+                                <property name="name">
+                                    <cstring>layout35</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QCheckBox">
+                                        <property name="name">
+                                            <cstring>onlyOnline</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Lookup only those that are currently online</string>
+                                        </property>
+                                    </widget>
+                                    <spacer>
+                                        <property name="name">
+                                            <cstring>spacer2</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Expanding</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>224</width>
+                                                <height>21</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                </hbox>
+                            </widget>
+                            <spacer row="4" column="0">
+                                <property name="name">
+                                    <cstring>spacer5</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Vertical</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>21</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </grid>
+                    </widget>
+                </grid>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>page</cstring>
+                </property>
+                <attribute name="id">
+                    <number>1</number>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="KListView" row="0" column="0">
+                        <column>
+                            <property name="text">
+                                <string>Status</string>
+                            </property>
+                            <property name="pixmap">
+                                <pixmap>image0</pixmap>
+                            </property>
+                            <property name="clickable">
+                                <bool>true</bool>
+                            </property>
+                            <property name="resizable">
+                                <bool>false</bool>
+                            </property>
+                        </column>
+                        <column>
+                            <property name="text">
+                                <string>Name</string>
+                            </property>
+                            <property name="clickable">
+                                <bool>true</bool>
+                            </property>
+                            <property name="resizable">
+                                <bool>false</bool>
+                            </property>
+                        </column>
+                        <column>
+                            <property name="text">
+                                <string>Nick Name</string>
+                            </property>
+                            <property name="clickable">
+                                <bool>true</bool>
+                            </property>
+                            <property name="resizable">
+                                <bool>false</bool>
+                            </property>
+                        </column>
+                        <column>
+                            <property name="text">
+                                <string>Age</string>
+                            </property>
+                            <property name="clickable">
+                                <bool>true</bool>
+                            </property>
+                            <property name="resizable">
+                                <bool>false</bool>
+                            </property>
+                        </column>
+                        <column>
+                            <property name="text">
+                                <string>City</string>
+                            </property>
+                            <property name="clickable">
+                                <bool>true</bool>
+                            </property>
+                            <property name="resizable">
+                                <bool>false</bool>
+                            </property>
+                        </column>
+                        <column>
+                            <property name="text">
+                                <string>UIN</string>
+                            </property>
+                            <property name="clickable">
+                                <bool>true</bool>
+                            </property>
+                            <property name="resizable">
+                                <bool>false</bool>
+                            </property>
+                        </column>
+                    <item>
+                        <property name="text">
+                            <string>12</string>
+                        </property>
+                        <property name="text">
+                            <string>DONT_TRANSLATE</string>
+                        </property>
+                        <property name="text">
+                            <string>DONT_TRANSL</string>
+                        </property>
+                        <property name="text">
+                            <string>999</string>
+                        </property>
+                        <property name="text">
+                            <string>DONT_TRANSL</string>
+                        </property>
+                        <property name="text">
+                            <string>245324956234</string>
+                        </property>
+                        <property name="pixmap">
+                            <pixmap></pixmap>
+                        </property>
+                        <property name="pixmap">
+                            <pixmap></pixmap>
+                        </property>
+                        <property name="pixmap">
+                            <pixmap></pixmap>
+                        </property>
+                        <property name="pixmap">
+                            <pixmap></pixmap>
+                        </property>
+                        <property name="pixmap">
+                            <pixmap></pixmap>
+                        </property>
+                        <property name="pixmap">
+                            <pixmap></pixmap>
+                        </property>
+                    </item>
+                        <property name="name">
+                            <cstring>listFound</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>3</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                            <size>
+                                <width>512</width>
+                                <height>256</height>
+                            </size>
+                        </property>
+                        <property name="maximumSize">
+                            <size>
+                                <width>640</width>
+                                <height>512</height>
+                            </size>
+                        </property>
+                        <property name="lineWidth">
+                            <number>2</number>
+                        </property>
+                        <property name="resizePolicy">
+                            <enum>AutoOneFit</enum>
+                        </property>
+                        <property name="selectionMode" stdset="0">
+                            <enum>Extended</enum>
+                        </property>
+                        <property name="allColumnsShowFocus">
+                            <bool>true</bool>
+                        </property>
+                        <property name="showSortIndicator">
+                            <bool>true</bool>
+                        </property>
+                        <property name="resizeMode">
+                            <enum>NoColumn</enum>
+                        </property>
+                        <property name="fullWidth">
+                            <bool>false</bool>
+                        </property>
+                        <property name="itemsMovable">
+                            <bool>false</bool>
+                        </property>
+                        <property name="autoOpen">
+                            <bool>false</bool>
+                        </property>
+                        <property name="dropVisualizer">
+                            <bool>false</bool>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
+        </widget>
+    </grid>
+</widget>
+<images>
+    <image name="image0">
+        <data format="XPM.GZ" length="499">789c8590cf6ac3300cc6ef790a13dd4259d37414c6e823acec58183be85fd21dda42d71ec6d8bb57929d50b6c28463f4fba4cf913d6fd2f6f52535f3eaf38ce70f4ebcc3536ae4b2df7fbdbdafbfab7ab14ab69ed2a29e55f543e2b4391ed473b01cda08c7de9127544765796cc3288e7d275dbb74c4829aab43603f7a29a362ae7246afc70c39004a5234434084488a0686a179923543f42f3698fa90984990a63e1389894455a7f3008818544004217bdd695d117e60d19054c49650d1c22b7e07d5d1ebffb08e61b0e6db996d0a4421fd6fe63f77bbfb06bfdeeae7b9ba0259af7424</data>
+    </image>
+</images>
+<connections>
+    <connection>
+        <sender>radioByData</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>UIN</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>radioByData</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>uin_static</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>radioByUin</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>ageFrom</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>radioByUin</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>ageTo</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>radioByUin</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>cityS</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>radioByUin</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>gender</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>radioByUin</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>nameS</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>radioByUin</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>surname</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>radioByUin</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel1_2_2a</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>radioByUin</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel1_2a</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>radioByUin</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel1_3_2a</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>radioByUin</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel1a</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>radioByUin</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>nick</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>radioByUin</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel1_4a</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>radioByUin</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel1_3a</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>nameS</tabstop>
+    <tabstop>surname</tabstop>
+    <tabstop>nick</tabstop>
+    <tabstop>cityS</tabstop>
+    <tabstop>gender</tabstop>
+    <tabstop>UIN</tabstop>
+    <tabstop>ageFrom</tabstop>
+    <tabstop>ageTo</tabstop>
+    <tabstop>onlyOnline</tabstop>
+    <tabstop>listFound</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>krestrictedline.h</includehint>
+    <includehint>klistview.h</includehint>
+</includehints>
+</UI>

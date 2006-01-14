@@ -1,0 +1,194 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>GaduAwayUI</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>GaduAwayUI</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>332</width>
+            <height>188</height>
+        </rect>
+    </property>
+    <property name="backgroundOrigin">
+        <enum>WidgetOrigin</enum>
+    </property>
+    <property name="caption">
+        <string>Away Dialog</string>
+    </property>
+    <property name="focusPolicy">
+        <enum>TabFocus</enum>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QLayoutWidget" row="0" column="0">
+            <property name="name">
+                <cstring>layout3</cstring>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QButtonGroup">
+                    <property name="name">
+                        <cstring>statusGroup_</cstring>
+                    </property>
+                    <property name="title">
+                        <string>Status</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose status, by default present status is selected. 
+So all you need to do is just to type in your description. 
+Choosing Offline status will disconnect you, with given description.</string>
+                    </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLayoutWidget" row="0" column="0">
+                            <property name="name">
+                                <cstring>layout2</cstring>
+                            </property>
+                            <vbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <widget class="QRadioButton">
+                                    <property name="name">
+                                        <cstring>onlineButton_</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>O&amp;nline</string>
+                                    </property>
+                                    <property name="buttonGroupId">
+                                        <number>4</number>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>Set your status to Online.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>Set your status to Online, indicating that you are available to chat with anyone who wishes.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QRadioButton">
+                                    <property name="name">
+                                        <cstring>awayButton_</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>&amp;Busy</string>
+                                    </property>
+                                    <property name="buttonGroupId">
+                                        <number>5</number>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>Set your status to busy.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>Set your status to busy, indicating that you may should not be bothered with trivial chat, and may not be able to reply immediately.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QRadioButton">
+                                    <property name="name">
+                                        <cstring>invisibleButton_</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>&amp;Invisible</string>
+                                    </property>
+                                    <property name="buttonGroupId">
+                                        <number>22</number>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>Set status to invisible, which will hide your presence from other users.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>Set status to invisible, which will hide your presence from other users (who will see you as offline).  However you may still chat, and see the online presence of others.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QRadioButton">
+                                    <property name="name">
+                                        <cstring>offlineButton_</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>O&amp;ffline</string>
+                                    </property>
+                                    <property name="buttonGroupId">
+                                        <number>21</number>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>Choose this status to disconnect with description entered below.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>Choose this status to disconnect with description entered below.</string>
+                                    </property>
+                                </widget>
+                            </vbox>
+                        </widget>
+                    </grid>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout278</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel3</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Message:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>textEdit_</cstring>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Description of your status.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Description of your status (up to 70 characters).</string>
+                            </property>
+                        </widget>
+                        <widget class="QLineEdit">
+                            <property name="name">
+                                <cstring>textEdit_</cstring>
+                            </property>
+                            <property name="acceptDrops">
+                                <bool>false</bool>
+                            </property>
+                            <property name="maxLength">
+                                <number>70</number>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Description of your status.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Description of your status (up to 70 characters).</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+            </vbox>
+        </widget>
+    </grid>
+</widget>
+<tabstops>
+    <tabstop>textEdit_</tabstop>
+    <tabstop>onlineButton_</tabstop>
+    <tabstop>awayButton_</tabstop>
+    <tabstop>invisibleButton_</tabstop>
+    <tabstop>offlineButton_</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

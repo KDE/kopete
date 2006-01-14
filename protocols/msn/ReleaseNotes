@@ -1,0 +1,31 @@
+If you can bear with beta-quality code, we welcome you to try out this
+highly improved plugin and use it as your primary instant messaging system!
+Patches are always welcome on kopete-devel@kde.org. Trivial fixes can be
+committed directly to KDE CVS if you have an account, but please coordinate
+larger changes with us to avoid double work.
+
+Thanks for your interest in Kopete!
+
+                        October 2002, the Kopete team <kopete-devel@kde.org>
+
+RELEASE NOTES FOR THE MSN PLUGIN IN KOPETE 0.5
+
+Most of the MSN plugin has seen an enormous improvement since the previous
+release, with many bugs fixed in all aspects of the plugin, most notably
+the contact list handling and group chats. See the Changelog for a more
+detailed description of what was changed in this release.
+
+Some issues in MSN are still remaining though. We hope to fix them in the
+next release, since we think they are not critical enough to delay this
+release:
+
+- MSN allows you to have multiple groups with the same name, because
+  internally a group ID is used. Kopete currently uses the name as a unique
+  identifier, however, and will likely get a bit confused by this. If you
+  do experience problems, you could join both groups using another MSN
+  client, like the official client, Trillian or Gaim as a workaround.
+
+- Kopete contacts can be at Top-Level and in no groups. MSN doesn't
+  support this freature. The kopete's contact list can differe from server 
+  if you have top-level contact
+

@@ -1,0 +1,49 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="krichtexteditpart" version="7">
+<MenuBar>
+  <Menu name="format"><text>F&amp;ormat</text>
+    <Action name="format_bold"/>
+    <Action name="format_italic"/>
+    <Action name="format_underline"/>
+    <Action name="format_color"/>
+    <Action name="format_bgcolor"/>
+    <Separator/>
+    <Menu name="alignment"><text>&amp;Alignment</text>
+       <Action name="format_align_left"/>
+       <Action name="format_align_center"/>
+       <Action name="format_align_right"/>
+       <Action name="format_align_justify"/>
+    </Menu>
+    <Separator/>
+    <Action name="format_font_size"/>
+    <Action name="format_font"/>
+  </Menu>
+  <Merge />
+</MenuBar>
+
+<ToolBar name="mainToolBar"><text>Main Toolbar</text>
+  <Separator weakSeparator="true" lineSeparator="true"/>
+  <Action name="enableRichText"/>
+  <Separator/>
+  <Action name="check_spelling"/>
+  <Separator weakSeparator="true" lineSeparator="true"/>
+</ToolBar>
+
+<ToolBar name="formatToolBar"><text>Format Toolbar</text>
+  <Action name="format_bold"/>
+  <Action name="format_italic"/>
+  <Action name="format_underline"/>
+  <Action name="format_color"/>
+  <Action name="format_bgcolor"/>
+  <Separator lineSeparator="true"/>
+  <Action name="format_font"/>
+  <Action name="format_font_size"/>
+  <Separator lineSeparator="true"/>
+  <Action name="format_align_left"/>
+  <Action name="format_align_center"/>
+  <Action name="format_align_right"/>
+  <Action name="format_align_justify"/>
+</ToolBar>
+</kpartgui>
+
+

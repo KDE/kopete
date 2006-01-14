@@ -1,0 +1,14 @@
+Index: iris/xmpp-core/jid.cpp
+===================================================================
+--- iris/xmpp-core/jid.cpp	(revision 469141)
++++ iris/xmpp-core/jid.cpp	(working copy)
+@@ -233,6 +233,9 @@
+ 		b = d;
+ 	else
+ 		b = n + '@' + d;
++	
++	b=b.lower(); // JID are not case sensitive
++	
+ 	if(r.isEmpty())
+ 		f = b;
+ 	else

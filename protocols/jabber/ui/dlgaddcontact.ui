@@ -1,0 +1,105 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>dlgAddContact</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>dlgAddContact</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>398</width>
+            <height>345</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Add Contacts</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout24</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>lblID</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Jabber ID:</string>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignTop</set>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>addID</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The Jabber ID for the account you would like to add.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The Jabber ID for the account you would like to add.  Note that this must include the username and the domain (like an E-mail address), as there are many Jabber servers.</string>
+                    </property>
+                </widget>
+                <widget class="KLineEdit">
+                    <property name="name">
+                        <cstring>addID</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The Jabber ID for the account you would like to add.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The Jabber ID for the account you would like to add.  Note that this must include the username and the domain (like an E-mail address), as there are many Jabber servers.</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>&lt;i&gt;(for example: joe@jabber.org)&lt;/i&gt;</string>
+            </property>
+            <property name="alignment">
+                <set>WordBreak|AlignVCenter|AlignRight</set>
+            </property>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer14</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>190</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
+</widget>
+<customwidgets>
+</customwidgets>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>klineedit.h</includehint>
+</includehints>
+</UI>

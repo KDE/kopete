@@ -1,0 +1,7 @@
+[Project Dir]
+Dirs=
+Files=statisticscontact.cpp/statisticscontact.h/statisticsdb.cpp/statisticsdb.h/statisticsdialog.cpp/statisticsdialog.h/statisticsplugin.cpp/statisticsplugin.h/statisticsui.rc/statisticswidget.cpp/statisticswidget.h/statisticswidget.ui/TODO/Makefile.am/kopete_statistics.template.html/kopete_statistics.css/kopete_statistics.desktop/statisticsdcopiface.h
+
+[Project File]
+Name=KopeteStatistics
+Type=Default

@@ -1,0 +1,23 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+X-Kopete-Version=1000900
+Icon=meanwhile_protocol
+ServiceTypes=Kopete/Protocol
+X-KDE-Library=kopete_meanwhile
+X-Kopete-Messaging-Protocol=messaging/meanwhile
+X-KDE-PluginInfo-Author=Jeremy Kerr
+X-KDE-PluginInfo-Email=jk@ozlabs.org
+X-KDE-PluginInfo-Name=kopete_meanwhile
+X-KDE-PluginInfo-Version=0.0.1
+X-KDE-PluginInfo-Website=http://kopete.kde.org
+X-KDE-PluginInfo-Category=Protocols
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=false
+Name=Meanwhile
+Name[is]=Á meðan
+Name[mk]=Во меѓувреме
+Name[nb]=Imens
+Name[ta]=இடைப்பட்ட பொழுதில்
+Comment=Meanwhile (Lotus Sametime) Protocol

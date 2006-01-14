@@ -1,0 +1,43 @@
+
+GaduGadu is primarily used and created for Poles, but it does not mean that it
+cannot be used by anyone else. There is only one small issue, by design
+protocol uses cp1250 encoding. Unfortunately, there's nothing we can do about
+that, as it's needed to maintain compatibility with the Windows client, which
+is the only one supported (and created) by the creators of gadu-gadu - sms-
+express company.
+
+Gadu-Gadu plugin uses libgadu. If it's not avaliable in the system, 
+it will automaticaly switch to it's copy in /protocols/gadu/lib (v1.5).
+
+Following describes what to do if you still want to use external library version:
+
+You can download libgadu (part of ekg package) from http://dev.null.pl/ekg, 
+This should be version 1.5 (release candidate or stable), please stick with version
+1.5 if possible. Author of libgadu/ekg does not keep any compatibility between
+minor releases. It should support protocol version 6.0 by default.
+ 
+You have to download the ekg communicator package 
+(which is a gadugadu client for the console). 
+To install from sources, run:
+
+./configure --enable-shared --disable-static --enable-dynamic --with-pthread --prefix=/usr
+make
+(and as root)
+make install.
+
+It is also available pre-packaged, e.g. for debian unstable, by default as
+libgadu2 (binary) and libgadu-dev (development).
+In order to compile kopete from sources, including the gadu-gadu plugin you
+will need the libgadu headers and libraries installed and set up in your
+system.
+
+Please refer INSTALL for information about building kopete from sources.
+
+If you're looking for more information, please refer to http://kopete.kde.org 
+and read the FAQ . 
+
+If you have found an error in kopete, or in the gadu-gadu plugin
+- please use the kde bug tracking system at http://bugs.kde.org/
+
+Grzegorz Jaskiewicz aka Kain/K4
+gj AT pointblue DOT com DOT pl

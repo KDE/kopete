@@ -1,0 +1,25 @@
+test:
+  httppoll
+  sasl
+  xmlenc
+
+code:
+  bsocket: 'maintain' internal sockets even after destruct (till flush)
+  qssl: server support
+  securestream: wrap QSSLFilter as ByteStream
+  qrandom: better randomness (use /dev/urandom on unix, srand on windows)
+  floating TODOs in gnupg, gpgproc ?
+  import misha's code
+  finish globalaccel
+  finish dirwatch
+  trayicon?
+
+port:
+  win32: bconsole
+
+document:
+  sha1
+  servsock
+  srvresolver
+  bsocket
+

@@ -1,0 +1,17 @@
+<!DOCTYPE kpartgui>
+<kpartgui version="19" name="kopetechatwindow">
+	<MenuBar>
+		<Menu name="tools" >
+			<text>&amp;Tools</text>
+			<Action name="historyPrevious" />
+			<Action name="historyNext" />
+			<Action name="historyLast"  />
+		</Menu>
+	</MenuBar>
+
+	<ToolBar name="mainToolBar" fullWidth="true">
+		<Action name="historyPrevious" />
+		<Action name="historyNext" />
+	</ToolBar>
+
+</kpartgui>

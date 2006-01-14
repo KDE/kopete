@@ -1,0 +1,174 @@
+2004-09-10 11:10  Will Stephenson <lists@stevello.free-online.org.uk>
+
+	* Make it possible to suppress "XXX has left the chat" messages in
+	  group chat.  Needed for groupwise.
+
+2004-09-10 11:09  Will Stephenson <lists@stevello.free-online.org.uk>
+
+	* merge Novell GroupWise Messenger support into HEAD.
+
+2004-09-10 02:42  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* Fix the popup menu over contacts
+
+2004-09-09 22:50  Matt Rogers <matt.rogers@kdemail.net>
+
+	* Fix the reappearing format toolbar. (#59080)
+
+2004-09-07 12:21  Will Stephenson <lists@stevello.free-online.org.uk>
+
+	* Fix stale chat window member lists on join/leave
+
+2004-09-07 06:24  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* Don't request the picture on group chat.  this might have verry
+	  bad side effect
+
+2004-09-07 06:06  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* Allow to drag and drop contact to the chatwindow to invite them
+	  to the chat
+
+2004-09-06 04:58  Will Stephenson <lists@stevello.free-online.org.uk>
+
+	* Emoticon scheme for GroupWise
+
+2004-09-06 04:09  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* Remove unused file Add tooltip
+
+2004-09-05 16:16  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* Allow configuring the application used for the netmeeting plugin.
+	  So you can now use Konference insteads of Gnomemeeting
+
+2004-09-04 15:52  Matt Rogers <matt.rogers@kdemail.net>
+
+	* default to enter to send messages
+
+2004-09-03 17:58  Ingo Klöcker <kloecker@kde.org>
+
+	* Fix bug 88759: (Multiple formulas in one paragraph
+	  confuse Kopete). Approved by Olivier.
+
+2004-09-03 12:33  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* Fix Bug 88751: (right click move contact context menu not
+	  updated)
+
+2004-09-03 12:31  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* Import the popup to ask the public key from KGPG (it has a quick
+	  search line, and show more info) (#88757, #88756)
+
+2004-09-02 08:02  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* Use the highlight color for highlight cells. (#88495)
+
+2004-09-02 04:53  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* Do not crash if the sending movie can't be found. (88594
+
+2004-09-02 04:26  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* Let drag URL in the chatwindow to send files. (#82733)
+
+2004-09-02 02:26  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* Ask for confirmation before deleting a contact. (#76224)
+
+2004-09-02 01:55  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* Add Undo/Redo functions in the contactlist
+	  -Group or metacontacts renames
+	  -Move of metacontacts between groups 
+	  -Move of contact between metacontact
+	  -Addition of contacts on the list.
+
+2004-08-30 12:53  Michel Hermier <michel.hermier@wanadoo.fr>
+
+	* Avoid to remove/destroy protocol managed temporary metacontact
+	  while attempting to remove them of the contactlist. (#81823, #86358)
+
+2004-08-29 03:09  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* Ask confirmation before overwrite a file for incomming file
+	  transfers.
+
+2004-08-28 16:47  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* Remove the edit style dialog, and run the default editor instead.
+	  I used text/plain as mimetype because text/xml or text/x-xslt
+	  don't have default editor by default.  I added a tracker to
+	  update the preview when the style is saved (#77649, #63825, #77650)
+
+2004-08-28 01:58  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* Hide the header of the contactlist view (which only contains
+	  "Contacts") (#87974)
+
+2004-08-27 14:20  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* fix bug 73901
+
+2004-08-27 13:41  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* Add tooltips and whatsthis help
+
+2004-08-26 14:03  Michel Hermier <michel.hermier@wanadoo.fr>
+
+	* Removed KStringHandler::isUtf8 workaround bug, as now
+	  KopeteMessage::decodeString should not trigger the bug anymore.
+
+2004-08-26 13:59  Michel Hermier <michel.hermier@wanadoo.fr>
+
+	* Make the decodeMessage function more fast for empty CString.	As
+	  a side effect it fix possible attempt to decode null string using
+	  KStringHandler::isUtf8 wich make kopete crash with kdelibs prior
+	  to 3.2.92.
+
+2004-08-23 12:54  Gustavo P. Boiko <boiko@conectiva.com.br>
+
+	* Fix encoding of sent OSCAR messages
+
+2004-08-22 22:27  Matt Rogers <matt.rogers@kdemail.net>
+
+	* Fix bug 87727.
+
+	  saveOptions() was in the destructor, which meant the window state
+	  was always hidden.
+
+2004-08-19 23:27  Matt Rogers <matt.rogers@kdemail.net>
+
+	* Rearrange the yahoo message parsing a bit so we do it all before we
+	  create the KopeteMessage object for it.
+
+	  Workaround gaim's bugginess when sending URLs so that there
+	  aren't parse errors. (#87190)
+
+2004-08-14 14:22  Matt Rogers <matt.rogers@kdemail.net>
+
+	* derive a new class from KActiveLabel so we can control how the
+	  links are opened
+
+2004-08-14 14:11  Will Stephenson <lists@stevello.free-online.org.uk>
+
+	* Stupid crash bug, now fixed.	Always keep a good MC pointer
+	  around to call execute() on. (#87065)
+
+2004-08-13 16:01  Michel Hermier <michel.hermier@wanadoo.fr>
+
+	* Let's forget about deleting objects, QOject will make it for us.
+	  Don't remove automagically added temporary irc account while
+	  connection disconnected (was causing a crash).  The previous
+	  changes remove crashs and invalid reads while quitting.
+
+2004-08-13 13:55  Michel Hermier <michel.hermier@wanadoo.fr>
+
+	* Removed a possibly usage of a destroyed object, while clossing
+	  kopete and attempting to loggin to IRC.
+
+2004-08-13 13:22  Michel Hermier <michel.hermier@wanadoo.fr>
+
+	* Avoided usage of a possible null pointer. (#87083, #86928)
+

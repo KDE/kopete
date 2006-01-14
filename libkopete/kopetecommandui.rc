@@ -1,0 +1,12 @@
+<!DOCTYPE kpartgui>
+<kpartgui version="2" name="kopetechatwindow">
+	<MenuBar>
+		<Menu noMerge="1" name="file">
+			<Menu name="commandmenu">
+				<text>Commands</text>
+				<ActionList name="commandactionlist" />
+			</Menu>
+		</Menu>
+	</MenuBar>
+
+</kpartgui>
