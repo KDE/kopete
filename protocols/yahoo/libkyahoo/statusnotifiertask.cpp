@@ -134,9 +134,14 @@ void StatusNotifierTask::parseAuthorization( Transfer* transfer )
 	QString nick;		/* key = 4  */	
 	QString msg;		/* key = 14  */
 	int state;		/* key = 13  */
+	bool utf;		/* key = 97 */
 
+	utf = t->firstParam( 97 ).toInt() == 1;
 	nick = t->firstParam( 4 );
-	msg = t->firstParam( 14 );
+	if( utf )
+		msg = QString::fromUtf8( t->firstParam( 14 ) );
+	else
+		msg = t->firstParam( 14 );
 	state = t->firstParam( 13 ).toInt();
 
 	if( state == 1 )
@@ -146,6 +151,17 @@ void StatusNotifierTask::parseAuthorization( Transfer* transfer )
 	else if( state == 2 )
 	{
 		emit( authorizationRejected( nick, msg ) );
+	}
+	else	// This is a request
+	{
+		QString fname = t->firstParam( 216 );
+		QString lname = t->firstParam( 254 );
+		QString name;
+		if( !fname.isEmpty() || !lname.isEmpty() )
+			name = QString("%1 %2").arg(fname).arg(lname);
+
+		kdDebug(14180) << k_funcinfo << "Emitting gotAuthorizationRequest( " << nick<< ", " << msg << ", " << name << " )" << endl;
+		emit gotAuthorizationRequest( nick, msg, name );
 	}
 }
 

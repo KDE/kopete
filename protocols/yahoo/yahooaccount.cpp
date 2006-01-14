@@ -61,6 +61,7 @@
 #include "yahoowebcam.h"
 #include "yahooconferencemessagemanager.h"
 #include "yahooinvitelistimpl.h"
+#include "yahooauthreply.h"
 
 YahooAwayDialog::YahooAwayDialog(YahooAccount* account, QWidget *parent, const char *name) :
 	KopeteAwayDialog(parent, name)
@@ -232,6 +233,9 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(authorizationRejected( const QString &, const QString & )),
 		                 this, SLOT(slotAuthorizationRejected( const QString &, const QString & )) );
 		
+		QObject::connect(m_session, SIGNAL(gotAuthorizationRequest( const QString &, const QString &, const QString & )),
+		                 this, SLOT(slotgotAuthorizationRequest( const QString &, const QString &, const QString & )) );
+		
 		QObject::connect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int, int)),
 		                 this, SLOT(slotStatusChanged(const QString&, int, const QString&, int, int)));
 		
@@ -336,6 +340,9 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::disconnect(m_session, SIGNAL(authorizationRejected( const QString &, const QString &)),
 		                    this, SLOT(slotAuthorizationRejected( const QString &, const QString & )) );
+		
+		QObject::disconnect(m_session, SIGNAL(gotAuthorizationRequest( const QString &, const QString &, const QString & )),
+		                 this, SLOT(slotgotAuthorizationRequest( const QString &, const QString &, const QString & )) );
 		
 		QObject::disconnect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int, int)),
 		                    this, SLOT(slotStatusChanged(const QString&, int, const QString&, int, int)));
@@ -710,13 +717,44 @@ void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, co
 void YahooAccount::slotAuthorizationAccepted( const QString &who )
 {
 	kdDebug(14180) << k_funcinfo << endl;
+	QString message;
+	message = i18n( "User %1 has granted your authorization request." )
+		.arg( who );
+	KNotification::event( "kopete_authorization", message, 0 , 0 , 0 );
+// 	KNotifyClient::event( Kopete::UI::Global::sysTrayWId(), "yahoo_authorization", message );
 }
 
 void YahooAccount::slotAuthorizationRejected( const QString &who, const QString &msg )
 {
 	kdDebug(14180) << k_funcinfo << endl;
-KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, i18n( "<qt>%1 rejected your request for authorization:<br>His/Her message was: \"%2\"</qt>" ).arg(who).arg(msg), i18n( "Authorization rejected - Yahoo Plugin" ) );
+	QString message;
+	message = i18n( "User %1 has granted your authorization request.\n%2" )
+		.arg( who ).arg( msg );
+	KNotification::event( "kopete_authorization", message, 0 , 0 , 0 );
 }
+
+void YahooAccount::slotgotAuthorizationRequest( const QString &user, const QString &msg, const QString &name )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	YahooAuthReply *dlg = new YahooAuthReply();
+	
+	QObject::connect( dlg, SIGNAL( okClicked() ), this, SLOT( slotAuthReplyOkClicked() ) );
+	dlg->setUser( user );
+	dlg->setName( name );
+	dlg->setRequestReason( msg );
+	dlg->setModal( TRUE );
+	dlg->show();
+}
+
+void YahooAccount::slotAuthReplyOkClicked()
+{
+	YahooAuthReply *dlg = const_cast<YahooAuthReply*>( dynamic_cast< const YahooAuthReply *>( sender() ) );
+	if( !dlg )
+		return;
+	
+	m_session->sendAuthReply( dlg->user(), dlg->acceptAuth(), dlg->reason() );
+}
+
 void YahooAccount::slotGotIgnore( const QStringList & /* igns */ )
 {
 	//kdDebug(14180) << k_funcinfo << endl;

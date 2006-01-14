@@ -179,6 +179,8 @@ protected slots:
 	void slotGotBuddy(const QString &userid, const QString &alias, const QString &group);
 	void slotAuthorizationAccepted( const QString &who );
 	void slotAuthorizationRejected( const QString &who, const QString &msg );
+	void slotgotAuthorizationRequest( const QString &, const QString &, const QString & );
+	void slotAuthReplyOkClicked();
 	void slotGotIgnore(const QStringList &);
 	void slotGotIdentities(const QStringList &);
 	void slotStatusChanged(const QString &who, int stat, const QString &msg, int away, int idle);

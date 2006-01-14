@@ -212,6 +212,12 @@ Q_OBJECT
 		 * Send a message to the conference
 		 */
 		void sendConferenceMessage( const QString &room, const QStringList &members, const QString &msg );
+
+		/**
+		 * Send a authorization request response
+		 */
+		void sendAuthReply( const QString &userId, bool accept, const QString &msg );
+
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -426,6 +432,10 @@ Q_OBJECT
 		 * A buddy rejected our authorization request
 		 */
 		void authorizationRejected( const QString &, const QString & );
+		/**
+		 * A buddy requests authorization
+		 */
+		void gotAuthorizationRequest( const QString &, const QString &, const QString & );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();

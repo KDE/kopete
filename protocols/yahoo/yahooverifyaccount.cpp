@@ -37,7 +37,6 @@
 #include "yahooverifyaccount.h"
 #include "yahooaccount.h"
 
-// Yahoo Add Contact page
 YahooVerifyAccount::YahooVerifyAccount(Kopete::Account *account, QWidget *parent, const char *name)
 : KDialogBase(parent, name, true, i18n("Account Verification - Yahoo"), Cancel|Apply,
               Apply, true )

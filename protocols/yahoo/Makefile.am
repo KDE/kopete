@@ -10,8 +10,8 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 kde_module_LTLIBRARIES = kopete_yahoo.la
 
 kopete_yahoo_la_SOURCES = yahooprotocol.cpp yahoocontact.cpp \
-			yahooaddcontact.cpp yahooaccount.cpp yahooeditaccount.cpp yahooconferencemessagemanager.cpp \
-			yahoochatsession.cpp yahooverifyaccount.cpp yahoowebcam.cpp
+				yahooaddcontact.cpp yahooaccount.cpp yahooeditaccount.cpp yahooconferencemessagemanager.cpp \
+				yahoochatsession.cpp yahooverifyaccount.cpp yahoowebcam.cpp yahooauthreply.cpp
 kopete_yahoo_la_LDFLAGS     = -module $(KDE_PLUGIN)
 kopete_yahoo_la_LIBADD = ../../libkopete/avdevice/libkopete_videodevice.la \
 	$(top_builddir)/kopete/libkopete/libkopete.la ui/libkopeteyahooui.la libkyahoo/libkyahoo.la
@@ -22,4 +22,5 @@ servicedir = $(kde_servicesdir)
 
 mydatadir = $(kde_datadir)/kopete_yahoo
 mydata_DATA = yahooconferenceui.rc yahoochatui.rc
+
 

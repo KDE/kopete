@@ -44,8 +44,9 @@ signals:
 	void stealthStatusChanged( const QString&, Yahoo::StealthStatus );
 	void error( const QString& );
 	void loginResponse( int, const QString& );
-	void authorizationAccepted( const QString &who );
-	void authorizationRejected( const QString &who, const QString &msg );
+	void authorizationAccepted( const QString & );
+	void authorizationRejected( const QString &, const QString & );
+	void gotAuthorizationRequest( const QString &, const QString &, const QString & );
 };
 
 #endif

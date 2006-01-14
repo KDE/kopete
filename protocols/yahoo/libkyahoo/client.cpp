@@ -41,6 +41,7 @@
 #include "sendpicturetask.h"
 #include "webcamtask.h"
 #include "conferencetask.h"
+#include "sendauthresptask.h"
 #include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
@@ -247,6 +248,15 @@ void Client::changeStatus( Yahoo::Status status, const QString &message, Yahoo::
 	cst->go( true );
 	
 	setStatus( status );
+}
+
+void Client::sendAuthReply( const QString &userId, bool accept, const QString &msg )
+{
+	SendAuthRespTask *sarp = new SendAuthRespTask( d->root );
+	sarp->setGranted( accept );
+	sarp->setTarget( userId );
+	sarp->setMessage( msg );
+	sarp->go( true );
 }
 
 // ***** Contactlist handling *****
@@ -540,6 +550,8 @@ void Client::initTasks()
 				SIGNAL( authorizationRejected( const QString&, const QString& ) ) );
 	QObject::connect( d->statusTask, SIGNAL( authorizationAccepted( const QString& ) ), 
 				SIGNAL( authorizationAccepted( const QString& ) ) );
+	QObject::connect( d->statusTask, SIGNAL( gotAuthorizationRequest( const QString &, const QString &, const QString & ) ), 
+				SIGNAL( gotAuthorizationRequest( const QString &, const QString &, const QString & ) ) );
 
 	d->mailTask = new MailNotifierTask( d->root );
 	QObject::connect( d->mailTask, SIGNAL( mailNotify(const QString&, const QString&, int) ), 
