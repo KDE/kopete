@@ -1,0 +1,121 @@
+Voice Use cases:
+----------------
+
+In JabberAccount:
+-Account is connected:
+* Init the JingleSessionManager (accessible via account()->jingleSessionManager())
+* Add voice extension to client features.
+* Connect to incomingSession(const QString &sessionType, JingleSession *session) signal in JabberAccount.
+
+-On incoming session
+* Create and show VoiceConversationDialog.
+* VoiceConversationDialog will handle the communcation between the user and the session.
+
+In JabberContact:
+-User select "Start voice conversation..."
+* Get the best resource that support voice. If no compatible resource is found, show a message box.
+* Create a JingleVoiceSession using JingleVoiceSessionManager.
+* Create VoiceConversationDialog
+* and VoiceConversationDialog will handle the communication between the user and the session.
+
+In VoiceConversationDialog:
+-Incoming voice session
+* Accept the session call JingleVoiceSession::accept();
+* Decline the session call JingleVoiceSession::decline();
+
+-Accepted voice session
+* Change GUI to "Voice session in progress."
+
+-On declining voice session or terminating a session.
+* Remove JingleVoiceSession from JingleVoiceSessionManager.
+* Close the dialog.
+
+===================================================================================================
+Design with future in mind. Only voice session type is available today, but others will come.
+
+A session is a connection between two or multiple peers.
+A session do not handle multiple "calls"(or whatever it called depending of the context). That's will be job of SessionManager
+A sesson has a myself user and others users, all identified by their full JID. (maybe their JabberBaseContact or JabberResource object ?)
+
+-Maybe use the Channel pattern, where Session will hold one or multiple Channels. Think for voice+video for example. ?
+
+All manager classes must be unique for each account.
+
+JidList = QValueList<XMPP::Jid> or QStringList if QValueList<XMPP::Jid> doesn't work.
+
+JingleSession and derivated are created by the Manager class.
+
+SessionType is the XML Namespace of the session type (ex: http://jabber.org/protocol/sessions/audio)
+
+JingleSessionManager
+--------------------
+Manage Jingle sessions. 
+-Manage global (maybe static ?)objects shared by all sessions (cricket::BasicPortAllocator, cricket::SessionManager).
+
+Has a JingleWatchSessionTask(derived from XMPP::Task) that check for incoming session in JingleSessionManager, that check the session type,
+create the right JingleSession subclass, then emit the required signal. This bypass libjingle to have a better
+control on incoming session request and avoid using multiple Manager for each session type.
+
+JingleSessionManager manage the JingleSession pointers. Do not delete it in user classes.
+
+* JingleSessionManager(JabberAccount *)
+
+* public slots:
+* JingleSession *createSession(const QString &sessionType, const JidList &peers);
+* void removeSession(JingleSession *);
+
+signals:
+* void incomingSession(const QString &sessionType, JingleSession *session);
+
+JingleSession
+-------------
+Base class for Jingle session. A session is a 
+
+* JingleSession(JingleSessionManager *manager, const JidList &peers);
+
+* XMPP::Jid &myself(); // account()->client()->jid();
+* JidList &peers();
+* JabberAccount *account();
+* JingleSessionManager *manager();
+
+// Start the negociation phase.
+* virtual void start() = 0;
+// Send the IQ stanza with action "accept"
+* virtual void accept() = 0;
+// Send the IQ stanza with action "
+* virtual void decline() = 0;
+* virtual void terminate() = 0;
+
+// Return Session XML namespace
+* virtual QString sessionType() = 0;
+
+protected slots:
+	void sendStanza(const QString &stanza) { account()->client->send(stanza);
+
+signals:
+	void accepted();
+	void declined();
+	void terminated();
+
+JingleVoiceSession : public JingleSession
+------------------
+Define a VoIP voice session between two peers(for the moment).
+Hold the PhoneSessionClient object.
+
+connect(account()->client(),SIGNAL(xmlIncoming(const QString&)),SLOT(receiveStanza(const QString&)));
+
+
+private slots:
+	void receiveStanza(const QString &stanza);
+	
+VoiceConversationDialog
+-----------------------
+* VoiceConversationDialog(JingleVoiceSession *)
+VoiceConversationDialog will handle the communcation between the user and a session.
+Should auto-delete when closed.
+It can:
+-Accept a voice session.
+-Decline a voice session.
+-Terminate a voice session(or hang-up).
+
+It is the Action menu that can start a session.
