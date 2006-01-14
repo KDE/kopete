@@ -56,7 +56,7 @@ if test "x$with_external_libgadu" != xno; then
 			return 1;
 		}
 
-		if ( min == 5 ){
+		if ( min == 5 || min == 6 ){
 			return 0;
 		}
 			     
