@@ -18,4 +18,4 @@ if include_smsgsm
 SMS=sms
 endif
 
-SUBDIRS = $(TESTBED) groupwise msn irc oscar yahoo $(SMS) $(JABBER) $(GADU) $(MEANWHILE)
+SUBDIRS = $(TESTBED) groupwise msn irc oscar yahoo winpopup $(SMS) $(JABBER) $(GADU) $(MEANWHILE)
