@@ -1,0 +1,17 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=Service discovery
+Comment=Publish/discover services over IM
+Icon=konqueror
+ServiceTypes=Kopete/Plugin
+X-Kopete-Version=1000900
+X-KDE-Library=kopete_srvdisco
+X-KDE-PluginInfo-Author=Jakub Stachowski
+X-KDE-PluginInfo-Email=qbast@go2.pl
+X-KDE-PluginInfo-Name=kopete_srvdisco
+X-KDE-PluginInfo-Version=0.0.1
+X-KDE-PluginInfo-Category=Plugins
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=false

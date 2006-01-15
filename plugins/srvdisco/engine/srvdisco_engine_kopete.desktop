@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Service
+Name=Kopete engine
+ServiceTypes=ServiceDiscovery/Engine
+X-KDE-Library=libdiscovery_kopete
+X-KDE-EngineID=kopete
