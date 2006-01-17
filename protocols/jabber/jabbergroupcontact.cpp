@@ -83,6 +83,7 @@ JabberGroupContact::~JabberGroupContact ()
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
 	delete mManager;
+	mManager=0l;
 
 	for ( Kopete::Contact *contact = mContactList.first (); contact; contact = mContactList.next () )
 	{
@@ -117,6 +118,8 @@ Kopete::ChatSession *JabberGroupContact::manager ( Kopete::Contact::CanCreateFla
 
 void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 {
+	if(!mManager)  //NOTE:  in theory, we should create it.
+		return; 
 	// message type is always chat in a groupchat
 	QString viewType = "kopete_chatwindow";
 	Kopete::Message *newMessage = 0L;
@@ -245,7 +248,8 @@ void JabberGroupContact::removeSubContact ( const XMPP::RosterItem &rosterItem )
 	}
 
 	// remove the contact from the message manager first
-	mManager->removeContact ( subContact );
+	if(mManager)
+		mManager->removeContact ( subContact );
 
 	// remove the contact's meta contact from our internal list
 	mMetaContactList.remove ( subContact->metaContact () );
