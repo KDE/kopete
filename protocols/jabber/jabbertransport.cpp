@@ -28,6 +28,7 @@
 #include <kopeteversion.h>
 
 #include <qpixmap.h>
+#include <qtimer.h>
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -82,6 +83,7 @@ JabberTransport::JabberTransport (JabberAccount * parentAccount, const QString &
 			setCustomIcon( cIcon );
 		configGroup()->writeEntry("exist",true);
 #endif
+		QTimer::singleShot(0, this, SLOT(eatContacts()));
 	}
 	
 	m_status=Normal;
@@ -276,6 +278,33 @@ void JabberTransport::jabberAccountRemoved( )
 {
 	m_status = AccountRemoved;
 	Kopete::AccountManager::self()->removeAccount( this ); //this will delete this	
+}
+
+void JabberTransport::eatContacts( )
+{
+	/*
+	* "Gateway Contact Eating" (c)(r)(tm)(g)(o)(f)
+	* this comes directly from my mind into the kopete code.
+	* principe: - the transport is ungry
+	*           - it will eat contacts which belong to him
+	*           - the contact will die
+	*           - a new contact will born, with the same caracteristic, but owned by the transport
+	* - Olivier 2006-01-17 -
+	*/
+	
+	QDict<Kopete::Contact> cts=account()->contacts();
+	QDictIterator<Kopete::Contact> it( cts ); 
+	for( ; it.current(); ++it )
+	{
+		JabberContact *contact=dynamic_cast<JabberContact*>(it.current());
+		if( contact && !contact->transport() && contact->rosterItem().jid().domain() == myself()->contactId() && contact != account()->myself())
+		{
+			XMPP::RosterItem item=contact->rosterItem();
+			Kopete::MetaContact *mc=contact->metaContact();
+			delete *it;
+			account()->contactPool()->addContact( item , mc , false ); //not sure this is false;
+		}
+	}
 }
 
 

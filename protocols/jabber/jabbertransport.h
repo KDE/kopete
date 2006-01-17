@@ -93,6 +93,10 @@ public slots:
 	 */
 	void jabberAccountRemoved();
 
+	/**
+	 *  "eat" all contact in the account that have the same domain as us.
+	 */
+	void eatContacts();
 
 protected:
 	/**

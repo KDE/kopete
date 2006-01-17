@@ -1401,23 +1401,18 @@ void JabberContact::slotDiscoFinished( )
 	mDiscoDone = true;
 	JT_DiscoInfo *jt = (JT_DiscoInfo *)sender();
 	
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << contactId() << endl;	
-	
 	bool is_transport=false;
 	QString tr_type;
 
 	if ( jt->success() )
  	{
 		QValueList<XMPP::DiscoItem::Identity> identities = jt->item().identities();
-		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "success : " << identities.count() << endl;	
 		QValueList<XMPP::DiscoItem::Identity>::Iterator it;
 		for ( it = identities.begin(); it != identities.end(); ++it )
 		{
 			XMPP::DiscoItem::Identity ident=*it;
-			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "hop " << ident.category << endl;	
 			if(ident.category == "gateway")
 			{
-				kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "hip " << ident.type << endl;	
 				is_transport=true;
 				tr_type=ident.type;
 				//name=ident.name;
@@ -1433,8 +1428,6 @@ void JabberContact::slotDiscoFinished( )
 		const QString jid = rosterItem().jid().full();
 		Kopete::MetaContact *mc=metaContact();
 		JabberAccount *parentAccount=account();
-		
-		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "delete this        " << tr_type << endl;	
 		
 		delete this; //we are not a contact i said !
 		
