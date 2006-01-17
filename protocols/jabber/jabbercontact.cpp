@@ -1428,6 +1428,7 @@ void JabberContact::slotDiscoFinished( )
 		const QString jid = rosterItem().jid().full();
 		Kopete::MetaContact *mc=metaContact();
 		JabberAccount *parentAccount=account();
+		Kopete::OnlineStatus status=onlineStatus();
 		
 		delete this; //we are not a contact i said !
 		
@@ -1436,7 +1437,9 @@ void JabberContact::slotDiscoFinished( )
 		
 		//we need to create the transport when 'this' is already deleted, so transport->myself() will not conflict with it
 		JabberTransport *transport = new JabberTransport( parentAccount , jid , tr_type );
-		Kopete::AccountManager::self()->registerAccount( transport );
+		if(!Kopete::AccountManager::self()->registerAccount( transport ))
+			return;
+		transport->myself()->setOnlineStatus( status ); //push back the online status
 		return;
 	}
 }

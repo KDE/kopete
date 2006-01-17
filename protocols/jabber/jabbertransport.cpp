@@ -20,12 +20,14 @@
 #include "jabberaccount.h"
 #include "jabberprotocol.h"
 #include "jabbercontactpool.h"
+#include "jabberchatsession.h"
 
 #include <kopeteaccountmanager.h>
 #include <kopetecontact.h>
 #include <kopetecontactlist.h>
 
 #include <kopeteversion.h>
+
 
 #include <qpixmap.h>
 #include <qtimer.h>
@@ -301,8 +303,11 @@ void JabberTransport::eatContacts( )
 		{
 			XMPP::RosterItem item=contact->rosterItem();
 			Kopete::MetaContact *mc=contact->metaContact();
-			delete *it;
-			account()->contactPool()->addContact( item , mc , false ); //not sure this is false;
+			Kopete::OnlineStatus status = contact->onlineStatus();
+			delete contact;
+			Kopete::Contact *c2=account()->contactPool()->addContact( item , mc , false ); //not sure this is false;
+			if(c2)
+				c2->setOnlineStatus( status ); //put back the old status
 		}
 	}
 }
