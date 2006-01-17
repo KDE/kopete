@@ -1,0 +1,194 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>dlgChatRoomsList</class>
+<widget class="KDialog">
+    <property name="name">
+        <cstring>dlgChatRoomsList</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>467</width>
+            <height>298</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string> List Chatrooms - KDevelop</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout4</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>lblServer</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Server</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>leServer</cstring>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>pbQuery</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Query</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+Q</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QTable">
+            <column>
+                <property name="text">
+                    <string>Chatroom Name</string>
+                </property>
+                <property name="pixmap">
+                    <pixmap></pixmap>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Chatroom Description</string>
+                </property>
+                <property name="pixmap">
+                    <pixmap></pixmap>
+                </property>
+            </column>
+            <property name="name">
+                <cstring>tblChatRoomsList</cstring>
+            </property>
+            <property name="focusPolicy">
+                <enum>ClickFocus</enum>
+            </property>
+            <property name="numRows">
+                <number>0</number>
+            </property>
+            <property name="numCols">
+                <number>2</number>
+            </property>
+            <property name="rowMovingEnabled">
+                <bool>true</bool>
+            </property>
+            <property name="columnMovingEnabled">
+                <bool>true</bool>
+            </property>
+            <property name="readOnly">
+                <bool>true</bool>
+            </property>
+            <property name="selectionMode">
+                <enum>SingleRow</enum>
+            </property>
+            <property name="focusStyle">
+                <enum>FollowStyle</enum>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout5</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>121</width>
+                            <height>21</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>pbJoin</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Join</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+J</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>pbClose</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Clos&amp;e</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+E</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+    </vbox>
+</widget>
+<connections>
+    <connection>
+        <sender>pbClose</sender>
+        <signal>clicked()</signal>
+        <receiver>dlgChatRoomsList</receiver>
+        <slot>close()</slot>
+    </connection>
+    <connection>
+        <sender>pbJoin</sender>
+        <signal>clicked()</signal>
+        <receiver>dlgChatRoomsList</receiver>
+        <slot>slotJoin()</slot>
+    </connection>
+    <connection>
+        <sender>pbQuery</sender>
+        <signal>clicked()</signal>
+        <receiver>dlgChatRoomsList</receiver>
+        <slot>slotQuery()</slot>
+    </connection>
+    <connection>
+        <sender>tblChatRoomsList</sender>
+        <signal>clicked(int,int,int,const QPoint&amp;)</signal>
+        <receiver>dlgChatRoomsList</receiver>
+        <slot>slotClick(int,int,int,const QPoint&amp;)</slot>
+    </connection>
+    <connection>
+        <sender>tblChatRoomsList</sender>
+        <signal>doubleClicked(int,int,int,const QPoint&amp;)</signal>
+        <receiver>dlgChatRoomsList</receiver>
+        <slot>slotDoubleClick(int,int,int,const QPoint&amp;)</slot>
+    </connection>
+</connections>
+<slots>
+    <slot>slotQuery()</slot>
+    <slot>slotJoin()</slot>
+    <slot>slotClick(int row, int col, int button, const QPoint&amp; mousePos)</slot>
+    <slot>slotDoubleClick(int row, int col, int button, const QPoint&amp; mousePos)</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kdialog.h</includehint>
+</includehints>
+</UI>
