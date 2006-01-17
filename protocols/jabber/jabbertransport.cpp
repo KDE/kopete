@@ -35,8 +35,8 @@
 
 #include "xmpp_tasks.h"
 
-JabberTransport::JabberTransport (JabberAccount * parentAccount, const QString & myselfContactId, const char *name)
-	:Kopete::Account ( parentAccount->protocol(), myselfContactId+"/"+parentAccount->accountId(), name )
+JabberTransport::JabberTransport (JabberAccount * parentAccount, const QString & myselfContactId, const QString& gateway_type)
+	:Kopete::Account ( parentAccount->protocol(), myselfContactId+"/"+parentAccount->accountId())
 {
 	m_status=Creating;
 	m_account = parentAccount;
@@ -52,23 +52,32 @@ JabberTransport::JabberTransport (JabberAccount * parentAccount, const QString &
 	{
 		setColor( account()->color() );
 #if KOPETE_IS_VERSION(0,11,51)
-		//TODO:  use http://www.jabber.org/registrar/disco-categories.html#gateway
 		QString cIcon;
-		if(myselfContactId.startsWith("msn"))
+		if(gateway_type=="msn")
 			cIcon="msn_protocol";
-		else if(myselfContactId.startsWith("icq"))
+		else if(gateway_type=="icq")
 			cIcon="icq_protocol";
-		else if(myselfContactId.startsWith("aim"))
+		else if(gateway_type=="aim")
 			cIcon="aim_protocol";
-		else if(myselfContactId.startsWith("irc"))
-			cIcon="irc_protocol";
-		else if(myselfContactId.startsWith("yahoo"))
+		else if(gateway_type=="yahoo")
 			cIcon="yahoo_protocol";
-		else if(myselfContactId.startsWith("sms"))
+		else if(gateway_type=="sms")
 			cIcon="sms_protocol";
-		else if(myselfContactId.startsWith("gg"))
+		else if(gateway_type=="gadu-gadu")
 			cIcon="gadu_protocol";
-		
+		else if(gateway_type=="smtp")
+			cIcon="mail_generic";
+		//TODO: theses gateway are referenced in http://www.jabber.org/registrar/disco-categories.html#gateway 
+		//      but i don't have icon now
+/*		else if(gateway_type=="http-ws") 
+			cIcon="";
+		else if(gateway_type=="qq")
+			cIcon="";
+		else if(gateway_type=="tlen")
+			cIcon="";*/
+		else if(gateway_type=="irc")  //NOTE: this is not official 
+			cIcon="irc_protocol";
+
 		if( !cIcon.isEmpty() )
 			setCustomIcon( cIcon );
 		configGroup()->writeEntry("exist",true);

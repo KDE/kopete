@@ -98,16 +98,6 @@ JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, 
 		legacyId=transport->legacyId( contact.jid() );
 	}
 		
-	//check if the account *is* a transport
-	if(!transport && contact.jid().node().isEmpty() && contact.jid().domain() != mAccount->server()  ) //FIXME how to know if this is a transport
-	{
-		transport = new JabberTransport( mAccount , contact.jid().domain() );
-		if(Kopete::AccountManager::self()->registerAccount(  transport ))
-		{
-			return static_cast<JabberContact*>(transport->myself());
-		}
-	}
-
 	// create new contact instance and add it to the dictionary
 	JabberContact *newContact = new JabberContact ( contact, transport ? (Kopete::Account*)transport : (Kopete::Account*)mAccount, metaContact , legacyId );
 	JabberContactPoolItem *newContactItem = new JabberContactPoolItem ( newContact );

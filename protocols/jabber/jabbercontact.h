@@ -190,6 +190,11 @@ private slots:
 	 * Display a error message if the vCard sent was unsuccesful.
 	 */
 	void slotSentVCard();
+	
+	/**
+	 * The service discovery on that contact is finished
+	 */
+	void slotDiscoFinished();
 private:
 
 	/**
@@ -245,6 +250,10 @@ private:
 	bool mRequestOfflineEvent;
 	bool mRequestDisplayedEvent;
 	bool mRequestDeliveredEvent;
+	/**
+	 * tell if the disco#info has been done for this contact.
+	 */
+	bool mDiscoDone;
 
 	QString mLastReceivedMessageId;
 

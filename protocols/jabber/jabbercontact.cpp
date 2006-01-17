@@ -43,6 +43,7 @@
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
 #include "kopetechatsessionmanager.h"
+#include "kopeteaccountmanager.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
 #include "jabberclient.h"
@@ -50,6 +51,7 @@
 #include "jabberresource.h"
 #include "jabberresourcepool.h"
 #include "jabberfiletransfer.h"
+#include "jabbertransport.h"
 #include "dlgjabbervcard.h"
 
 #ifdef SUPPORT_JINGLE
@@ -118,6 +120,7 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 	mRequestDisplayedEvent = false;
 	mRequestDeliveredEvent = false;
 	mRequestComposingEvent = false;
+	mDiscoDone = false;
 }
 
 QPtrList<KAction> *JabberContact::customContextMenuActions ()
@@ -385,6 +388,22 @@ void JabberContact::slotCheckVCard ()
 	{
 		return;
 	}
+	
+	if(!mDiscoDone)
+	{
+		if(transport()) //no need to disco if this is a legacy contact
+			mDiscoDone = true;
+		else
+		{
+			mDiscoDone = true; //or it will happen twice, we don't want that.
+			//disco to see if it's not a transport
+			XMPP::JT_DiscoInfo *jt = new XMPP::JT_DiscoInfo(account()->client()->rootTask());
+			QObject::connect(jt, SIGNAL(finished()),this, SLOT(slotDiscoFinished()));
+			jt->get(rosterItem().jid(), QString());
+			jt->go(true);
+		}
+	}
+
 
 	// avoid warning if key does not exist in configuration file
 	if ( cacheDateString.isNull () )
@@ -408,7 +427,6 @@ void JabberContact::slotCheckVCard ()
 
 void JabberContact::slotGetTimedVCard ()
 {
-
 	mVCardUpdateInProgress = false;
 
 	// check if we are still connected - eventually we lost our connection in the meantime
@@ -416,6 +434,20 @@ void JabberContact::slotGetTimedVCard ()
 	{
 		// we are not connected, discard this update
 		return;
+	}
+	
+	if(!mDiscoDone)
+	{
+		if(transport()) //no need to disco if this is a legacy contact
+			mDiscoDone = true;
+		else
+		{
+			//disco to see if it's not a transport
+			XMPP::JT_DiscoInfo *jt = new XMPP::JT_DiscoInfo(account()->client()->rootTask());
+			QObject::connect(jt, SIGNAL(finished()),this, SLOT(slotDiscoFinished()));
+			jt->get(rosterItem().jid(), QString());
+			jt->go(true);
+		}
 	}
 
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Requesting vCard for " << contactId () << " from update timer." << endl;
@@ -1362,6 +1394,58 @@ void JabberContact::voiceCall( )
 		// Shouldn't never go there.
 	}
 #endif
+}
+
+void JabberContact::slotDiscoFinished( )
+{
+	mDiscoDone = true;
+	JT_DiscoInfo *jt = (JT_DiscoInfo *)sender();
+	
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << contactId() << endl;	
+	
+	bool is_transport=false;
+	QString tr_type;
+
+	if ( jt->success() )
+ 	{
+		QValueList<XMPP::DiscoItem::Identity> identities = jt->item().identities();
+		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "success : " << identities.count() << endl;	
+		QValueList<XMPP::DiscoItem::Identity>::Iterator it;
+		for ( it = identities.begin(); it != identities.end(); ++it )
+		{
+			XMPP::DiscoItem::Identity ident=*it;
+			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "hop " << ident.category << endl;	
+			if(ident.category == "gateway")
+			{
+				kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "hip " << ident.type << endl;	
+				is_transport=true;
+				tr_type=ident.type;
+				//name=ident.name;
+				
+				break;  //(we currently only support gateway)
+			}
+		}
+ 	}
+
+	if(is_transport && !transport()) 
+ 	{   //ok, we are not a contact, we are a transport....
+		
+		const QString jid = rosterItem().jid().full();
+		Kopete::MetaContact *mc=metaContact();
+		JabberAccount *parentAccount=account();
+		
+		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "delete this        " << tr_type << endl;	
+		
+		delete this; //we are not a contact i said !
+		
+		if(mc->contacts().count() == 0)
+			Kopete::ContactList::self()->removeMetaContact( mc );
+		
+		//we need to create the transport when 'this' is already deleted, so transport->myself() will not conflict with it
+		JabberTransport *transport = new JabberTransport( parentAccount , jid , tr_type );
+		Kopete::AccountManager::self()->registerAccount( transport );
+		return;
+	}
 }
 
 #include "jabbercontact.moc"
