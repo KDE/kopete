@@ -285,10 +285,10 @@ void JabberTransport::eatContacts( )
 	/*
 	* "Gateway Contact Eating" (c)(r)(tm)(g)(o)(f)
 	* this comes directly from my mind into the kopete code.
-	* principe: - the transport is ungry
-	*           - it will eat contacts which belong to him
-	*           - the contact will die
-	*           - a new contact will born, with the same caracteristic, but owned by the transport
+	* principle: - the transport is hungry
+	*            - it will eat contacts which belong to him
+	*            - the contact will die
+	*            - a new contact will born, with the same characteristics, but owned by the transport
 	* - Olivier 2006-01-17 -
 	*/
 	
