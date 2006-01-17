@@ -18,6 +18,7 @@
 
 #include <qlayout.h>
 #include <qradiobutton.h>
+#include <qlineedit.h>
 #include <kdebug.h>
 
 #include "kopeteaccount.h"
@@ -46,7 +47,7 @@ bool TestbedAddContactPage::apply( Kopete::Account* a, Kopete::MetaContact* m )
 		QString name;
 		if ( m_testbedAddUI->m_rbEcho->isOn() )
 		{
-			type = QString::fromLatin1( "echo" );
+			type = m_testbedAddUI->m_uniqueName->text();
 			name = QString::fromLatin1( "Echo Contact" );
 			ok = true;
 		}
