@@ -68,7 +68,11 @@ public:
 		Ok,					/** No error. */
 		InvalidPassword,	/** Password used to connect to the server was incorrect. */
 		AlreadyConnected,	/** A new connection was attempted while the previous one hasn't been closed. */
-		NoTLS				/** Use of TLS has been forced (see @ref forceTLS) but TLS is not available, either server- or client-side. */
+		NoTLS,				/** Use of TLS has been forced (see @ref forceTLS) but TLS is not available, either server- or client-side. */
+		InvalidPasswordForMUC = 401,	/** A password is require to enter on this Multi-User Chat */
+		NicknameConflict = 409,		/** There is already someone with that nick connected to the Multi-User Chat */
+		BannedFromThisMUC = 403,	/** You can't join this Multi-User Chat because you were bannished */
+		MaxUsersReachedForThisMuc = 503	/** You can't join this Multi-User Chat because it is full */
 	};
 
 	JabberClient();
@@ -354,6 +358,15 @@ public:
 	 * @param nick Nick name you want to join with.
 	 */
 	void joinGroupChat ( const QString &host, const QString &room, const QString &nick );
+
+	/**
+	 * Join a group chat that require a password.
+	 * @param host Node to join the room at.
+	 * @param room Name of room to join.
+	 * @param nick Nick name you want to join with.
+	 * @param password The password to join the room.
+	 */
+	void joinGroupChat ( const QString &host, const QString &room, const QString &nick, const QString &password );
 
 	/**
 	 * Leave a group chat.

@@ -809,6 +809,13 @@ void JabberClient::joinGroupChat ( const QString &host, const QString &room, con
 
 }
 
+void JabberClient::joinGroupChat ( const QString &host, const QString &room, const QString &nick, const QString &password )
+{
+
+	client()->groupChatJoin ( host, room, nick, password );
+
+}
+
 void JabberClient::leaveGroupChat ( const QString &host, const QString &room )
 {
 

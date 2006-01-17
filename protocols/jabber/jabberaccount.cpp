@@ -43,6 +43,8 @@
 #include <kapplication.h>
 #include <kaboutdata.h>
 #include <ksocketbase.h>
+#include <kpassdlg.h>
+#include <kinputdialog.h>
 
 #include "kopetepassword.h"
 #include "kopeteawayaction.h"
@@ -1472,12 +1474,55 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Group chat error - room " << jid.full () << " had error " << error << " (" << reason << ")" << endl;
 
-	QString detailedReason = reason.isEmpty () ? i18n ( "No reason given by the server" ) : reason;
+	switch (error)
+	{
+	case JabberClient::InvalidPasswordForMUC:
+		{
+			QCString password;
+ 			int result = KPasswordDialog::getPassword(password, i18n("A password is required to join the room %1.").arg(jid.node()));
+			if (result == KPasswordDialog::Accepted)
+				m_jabberClient->joinGroupChat(jid.domain(), jid.node(), jid.resource(), password);
+		}
+		break;
 
-	KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
+	case JabberClient::NicknameConflict:
+		{
+			bool ok;
+			QString nickname = KInputDialog::getText(i18n("Error trying to join %1 : nickname %2 is already in use").arg(jid.node(), jid.resource()),
+									i18n("Give your nickname"),
+									QString(),
+									&ok);
+			if (ok)
+			{
+				m_jabberClient->joinGroupChat(jid.domain(), jid.node(), nickname);
+			}
+		}
+		break;
+
+	case JabberClient::BannedFromThisMUC:
+		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
+									KMessageBox::Error,
+									i18n ("You can't join the room %1 because you were banned").arg(jid.node()),
+									i18n ("Jabber Group Chat") );
+		break;
+
+	case JabberClient::MaxUsersReachedForThisMuc:
+		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
+									KMessageBox::Error,
+									i18n ("You can't join the room %1 because the maximum users has been reached").arg(jid.node()),
+									i18n ("Jabber Group Chat") );
+		break;
+
+	default:
+		{
+		QString detailedReason = reason.isEmpty () ? i18n ( "No reason given by the server" ) : reason;
+
+		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
 									KMessageBox::Error,
 									i18n ("There was an error processing your request for group chat %1. (Reason: %2, Code %3)").arg ( jid.full (), detailedReason, QString::number ( error ) ),
 									i18n ("Jabber Group Chat") );
+		}
+	}
 }
 
 void JabberAccount::slotResourceAvailable (const XMPP::Jid & jid, const XMPP::Resource & resource)
