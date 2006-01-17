@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>470</width>
-            <height>429</height>
+            <width>528</width>
+            <height>457</height>
         </rect>
     </property>
     <property name="toolTip" stdset="0">
@@ -30,11 +30,11 @@
                 <attribute name="title">
                     <string>&amp;General</string>
                 </attribute>
-                <vbox>
+                <grid>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QGroupBox">
+                    <widget class="QGroupBox" row="0" column="0">
                         <property name="name">
                             <cstring>grpAddressbook</cstring>
                         </property>
@@ -94,7 +94,7 @@
                                             <bool>true</bool>
                                         </property>
                                         <property name="text">
-                                            <string>Change...</string>
+                                            <string>C&amp;hange...</string>
                                         </property>
                                         <property name="toolTip" stdset="0">
                                             <string>Select an address book entry</string>
@@ -159,7 +159,7 @@
                             </widget>
                         </vbox>
                     </widget>
-                    <widget class="QButtonGroup">
+                    <widget class="QButtonGroup" row="1" column="0">
                         <property name="name">
                             <cstring>buttonGroup1</cstring>
                         </property>
@@ -175,7 +175,7 @@
                                     <cstring>radioNameKABC</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Use addressbook name (needs addressbook link)</string>
+                                    <string>Use addressbook &amp;name (needs addressbook link)</string>
                                 </property>
                             </widget>
                             <widget class="QLayoutWidget">
@@ -242,7 +242,7 @@
                                             <cstring>radioNameCustom</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>Custom:</string>
+                                            <string>Cus&amp;tom:</string>
                                         </property>
                                     </widget>
                                     <spacer>
@@ -271,7 +271,7 @@
                             </widget>
                         </vbox>
                     </widget>
-                    <widget class="QButtonGroup">
+                    <widget class="QButtonGroup" row="2" column="0">
                         <property name="name">
                             <cstring>buttonGroup2</cstring>
                         </property>
@@ -282,7 +282,7 @@
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLabel" row="0" column="1">
+                            <widget class="QLabel" row="0" column="1" rowspan="3" colspan="1">
                                 <property name="name">
                                     <cstring>photoLabel</cstring>
                                 </property>
@@ -311,118 +311,130 @@
                                     <bool>false</bool>
                                 </property>
                             </widget>
-                            <widget class="QLayoutWidget" row="0" column="0">
+                            <widget class="QRadioButton" row="0" column="0">
                                 <property name="name">
-                                    <cstring>layout20</cstring>
+                                    <cstring>radioPhotoKABC</cstring>
                                 </property>
-                                <vbox>
+                                <property name="text">
+                                    <string>U&amp;se addressbook photo (needs addressbook link)</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget" row="1" column="0">
+                                <property name="name">
+                                    <cstring>layout13</cstring>
+                                </property>
+                                <hbox>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
                                     <widget class="QRadioButton">
                                         <property name="name">
-                                            <cstring>radioPhotoKABC</cstring>
+                                            <cstring>radioPhotoContact</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>Use addressbook photo (needs addressbook link)</string>
+                                            <string>From contact:</string>
                                         </property>
                                     </widget>
-                                    <widget class="QLayoutWidget">
+                                    <spacer>
                                         <property name="name">
-                                            <cstring>layout13</cstring>
+                                            <cstring>spacer9</cstring>
                                         </property>
-                                        <hbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QRadioButton">
-                                                <property name="name">
-                                                    <cstring>radioPhotoContact</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>From contact:</string>
-                                                </property>
-                                            </widget>
-                                            <spacer>
-                                                <property name="name">
-                                                    <cstring>spacer9</cstring>
-                                                </property>
-                                                <property name="orientation">
-                                                    <enum>Horizontal</enum>
-                                                </property>
-                                                <property name="sizeType">
-                                                    <enum>Fixed</enum>
-                                                </property>
-                                                <property name="sizeHint">
-                                                    <size>
-                                                        <width>20</width>
-                                                        <height>20</height>
-                                                    </size>
-                                                </property>
-                                            </spacer>
-                                            <widget class="QComboBox">
-                                                <property name="name">
-                                                    <cstring>cmbAccountPhoto</cstring>
-                                                </property>
-                                                <property name="sizePolicy">
-                                                    <sizepolicy>
-                                                        <hsizetype>7</hsizetype>
-                                                        <vsizetype>0</vsizetype>
-                                                        <horstretch>0</horstretch>
-                                                        <verstretch>0</verstretch>
-                                                    </sizepolicy>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>Contact to synchronize the displayname with.</string>
-                                                </property>
-                                            </widget>
-                                        </hbox>
-                                    </widget>
-                                    <widget class="QLayoutWidget">
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Fixed</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>20</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                    <widget class="QComboBox">
                                         <property name="name">
-                                            <cstring>layout19</cstring>
+                                            <cstring>cmbAccountPhoto</cstring>
                                         </property>
-                                        <hbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QRadioButton">
-                                                <property name="name">
-                                                    <cstring>radioPhotoCustom</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Custom:</string>
-                                                </property>
-                                            </widget>
-                                            <spacer>
-                                                <property name="name">
-                                                    <cstring>spacer9_2</cstring>
-                                                </property>
-                                                <property name="orientation">
-                                                    <enum>Horizontal</enum>
-                                                </property>
-                                                <property name="sizeType">
-                                                    <enum>Fixed</enum>
-                                                </property>
-                                                <property name="sizeHint">
-                                                    <size>
-                                                        <width>20</width>
-                                                        <height>20</height>
-                                                    </size>
-                                                </property>
-                                            </spacer>
-                                            <widget class="KURLComboRequester">
-                                                <property name="name">
-                                                    <cstring>cmbPhotoUrl</cstring>
-                                                </property>
-                                            </widget>
-                                        </hbox>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>7</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>Contact to synchronize the displayname with.</string>
+                                        </property>
                                     </widget>
-                                </vbox>
+                                </hbox>
+                            </widget>
+                            <widget class="QLayoutWidget" row="2" column="0">
+                                <property name="name">
+                                    <cstring>layout7</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QRadioButton">
+                                        <property name="name">
+                                            <cstring>radioPhotoCustom</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Custom:</string>
+                                        </property>
+                                    </widget>
+                                    <spacer>
+                                        <property name="name">
+                                            <cstring>spacer9_2</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Fixed</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>20</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                    <widget class="KURLComboRequester">
+                                        <property name="name">
+                                            <cstring>cmbPhotoUrl</cstring>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>7</hsizetype>
+                                                <vsizetype>5</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                    </widget>
+                                    <widget class="KPushButton">
+                                        <property name="name">
+                                            <cstring>btnClearPhoto</cstring>
+                                        </property>
+                                        <property name="maximumSize">
+                                            <size>
+                                                <width>32</width>
+                                                <height>32</height>
+                                            </size>
+                                        </property>
+                                        <property name="text">
+                                            <string></string>
+                                        </property>
+                                    </widget>
+                                </hbox>
                             </widget>
                         </grid>
                     </widget>
-                    <widget class="QCheckBox">
+                    <widget class="QCheckBox" row="3" column="0">
                         <property name="name">
                             <cstring>chkSyncPhoto</cstring>
                         </property>
@@ -430,14 +442,14 @@
                             <string>S&amp;ync photo to addressbook</string>
                         </property>
                     </widget>
-                </vbox>
+                </grid>
             </widget>
             <widget class="QWidget">
                 <property name="name">
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>&amp;Advanced</string>
+                    <string>Ad&amp;vanced</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -605,6 +617,7 @@
     <includehint>kpushbutton.h</includehint>
     <includehint>kurlrequester.h</includehint>
     <includehint>kcombobox.h</includehint>
+    <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
     <includehint>kicondialog.h</includehint>
     <includehint>kicondialog.h</includehint>

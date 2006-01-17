@@ -47,9 +47,6 @@
                     <property name="text">
                         <string>&amp;Query</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+Q</string>
-                    </property>
                 </widget>
             </hbox>
         </widget>
@@ -130,9 +127,6 @@
                     <property name="text">
                         <string>&amp;Join</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+J</string>
-                    </property>
                 </widget>
                 <widget class="QPushButton">
                     <property name="name">
@@ -140,9 +134,6 @@
                     </property>
                     <property name="text">
                         <string>Clos&amp;e</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+E</string>
                     </property>
                 </widget>
             </hbox>

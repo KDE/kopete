@@ -20,9 +20,6 @@
             <verstretch>0</verstretch>
         </sizepolicy>
     </property>
-    <property name="caption">
-        <string>YahooAuthReplyBase</string>
-    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -98,9 +95,6 @@
                     <property name="text">
                         <string>Decline authori&amp;zation</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+Z</string>
-                    </property>
                 </widget>
                 <widget class="QLayoutWidget" row="2" column="0">
                     <property name="name">
@@ -166,9 +160,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Grant authorization</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+G</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>

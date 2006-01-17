@@ -259,9 +259,6 @@ If you do not currently have an account, please click the button to create one.<
                                 <property name="text">
                                     <string>&amp;Use direct connections (DCC)</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+U</string>
-                                </property>
                                 <property name="checked">
                                     <bool>true</bool>
                                 </property>
@@ -334,9 +331,6 @@ If you do not currently have an account, please click the button to create one.<
                                 </property>
                                 <property name="text">
                                     <string>C&amp;ache server information</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+A</string>
                                 </property>
                                 <property name="checked">
                                     <bool>true</bool>

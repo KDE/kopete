@@ -12,9 +12,6 @@
             <height>160</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>dlgChatJoin</string>
-    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -90,9 +87,6 @@
                     <property name="text">
                         <string>&amp;Join</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+J</string>
-                    </property>
                     <property name="default">
                         <bool>true</bool>
                     </property>
@@ -103,9 +97,6 @@
                     </property>
                     <property name="text">
                         <string>Bro&amp;wse</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+W</string>
                     </property>
                 </widget>
             </hbox>

@@ -178,7 +178,9 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	connect( mainWidget->cmbPhotoUrl, SIGNAL(urlSelected(const QString &)), SLOT(slotEnableAndDisableWidgets()));
 
 	mainWidget->btnClear->setIconSet( SmallIconSet( QApplication::reverseLayout() ? "locationbar_erase" : "clear_left" ) );
+	mainWidget->btnClearPhoto->setIconSet( SmallIconSet( QApplication::reverseLayout() ? "locationbar_erase" : "clear_left" ) );
 	connect( mainWidget->btnClear, SIGNAL( clicked() ), this, SLOT( slotClearAddresseeClicked() ) );
+	connect( mainWidget->btnClearPhoto, SIGNAL( clicked() ), this, SLOT( slotClearPhotoClicked() ) );
 		
 	mainWidget->chkUseCustomIcons->setChecked( item->metaContact()->useCustomIcon() );
 
@@ -372,6 +374,8 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 	}
 	if( !photo.isNull() )
 		mainWidget->photoLabel->setPixmap(QPixmap(photo.smoothScale( 64, 92, QImage::ScaleMin )));
+	else
+		mainWidget->photoLabel->setPixmap( QPixmap() );
 }
 
 Kopete::MetaContact::PropertySource KopeteMetaLVIProps::selectedNameSource() const
@@ -556,6 +560,18 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KURLRequester *requester )
 			++it;
 		}
 	}
+}
+
+void KopeteMetaLVIProps::slotClearPhotoClicked()
+{
+#if KDE_IS_VERSION(3,4,0)
+	mainWidget->cmbPhotoUrl->setKURL( KURL() );
+#else
+	mainWidget->cmbPhotoUrl->setURL( QString::null );
+#endif
+	item->metaContact()->setPhoto( KURL() );
+
+	slotEnableAndDisableWidgets();
 }
 
 #include "kopetelviprops.moc"
