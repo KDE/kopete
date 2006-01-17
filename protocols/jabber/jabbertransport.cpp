@@ -83,8 +83,8 @@ JabberTransport::JabberTransport (JabberAccount * parentAccount, const QString &
 
 		if( !cIcon.isEmpty() )
 			setCustomIcon( cIcon );
-		configGroup()->writeEntry("exist",true);
 #endif
+		configGroup()->writeEntry("exist",true);
 		QTimer::singleShot(0, this, SLOT(eatContacts()));
 	}
 	
@@ -256,7 +256,7 @@ void JabberTransport::removeAllContacts( )
 									i18n ("Jabber Service Unregistration"));
 	*/ //we don't really care, we remove everithing anyway.
 
-	kdDebug() << k_funcinfo << "delete all contacts of the transport"<< endl;
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "delete all contacts of the transport"<< endl;
 	QDictIterator<Kopete::Contact> it( contacts() ); 
 	for( ; it.current(); ++it )
 	{
@@ -293,7 +293,6 @@ void JabberTransport::eatContacts( )
 	*            - a new contact will born, with the same characteristics, but owned by the transport
 	* - Olivier 2006-01-17 -
 	*/
-	
 	QDict<Kopete::Contact> cts=account()->contacts();
 	QDictIterator<Kopete::Contact> it( cts ); 
 	for( ; it.current(); ++it )

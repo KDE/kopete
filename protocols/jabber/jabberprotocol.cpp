@@ -282,8 +282,6 @@ Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaC
 	QDict < Kopete::Account > accounts = Kopete::AccountManager::self ()->accounts (this);
 	Kopete::Account *account = accounts[accountId];
 	
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "##############: " << contactId <<  "   -   " << jid <<  endl;
-
 	if (!account)
 	{
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "WARNING: Account for contact does not exist, skipping." << endl;
