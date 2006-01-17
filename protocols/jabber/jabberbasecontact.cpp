@@ -242,7 +242,25 @@ void JabberBaseContact::updateResourceList ()
 			resourceListStr += QString ( "<tr><td>%1: %2 (%3)</td></tr>" ).
 							   arg ( i18n ( "Client" ), (*it)->clientName (), (*it)->clientSystem () );
 		}
-
+		
+		// Supported features
+		QStringList supportedFeatures = (*it)->features().list();
+		QStringList::ConstIterator featuresIt, featuresItEnd = supportedFeatures.constEnd();
+		if( !supportedFeatures.empty() )
+			resourceListStr += QString( "<tr><td>Supported Features:" );
+		for( featuresIt = supportedFeatures.constBegin(); featuresIt != featuresItEnd; ++featuresIt )
+		{
+			XMPP::Features tempFeature(*featuresIt);
+			resourceListStr += QString("\n<br>");
+			if ( tempFeature.id() > XMPP::Features::FID_None )
+				resourceListStr += tempFeature.name() + QString(" (");
+			resourceListStr += *featuresIt;
+			if ( tempFeature.id() > Features::FID_None )
+				resourceListStr += QString(")");	
+		}
+		if( !supportedFeatures.empty() )
+			resourceListStr += QString( "</td></tr>" );
+		
 		// resource timestamp
 		resourceListStr += QString ( "<tr><td>%1: %2</td></tr>" ).
 						   arg ( i18n ( "Timestamp" ), KGlobal::locale()->formatDateTime ( (*it)->resource().status().timeStamp(), true, true ) );
