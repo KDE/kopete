@@ -29,34 +29,85 @@
 #include <qtimer.h>
 #include "kopetepublisher.h"
 #include "debug.h"
+#include "srvdiscoiface_stub.h"
+#include <srvdisco/publicservice.h>
+#include "datatypes.h"
+
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <unistd.h>
+#include <ksocketaddress.h>
 
 namespace SrvDisco {
 
 KopetePublisher::KopetePublisher(PublicService* service, Scope::Ptr scope)
- : Publisher(service,scope)
+ : Publisher(service,scope), DCOPObject(), sid(0)
 {
 	debug() << "KopetePublisher created for " << service << " at " << scope->id() <<	 endl;
+	iface = new SrvDiscoIface_stub("kopete","srvdisco");
 }
 
 
 KopetePublisher::~KopetePublisher()
 {
 	debug() << "KopetePublisher for " <<  m_scope->id()  << " destructor" << endl;
+	delete iface;
 }
+
+QString KopetePublisher::getInternetIP()
+{
+	struct sockaddr_in addr;
+	socklen_t len = sizeof(addr);
+	int sock = socket(AF_INET,SOCK_DGRAM,0);
+	if (sock == -1) return QString();
+	addr.sin_family = AF_INET;
+	addr.sin_port = 1;	// Not important, any port and public address will do
+	addr.sin_addr.s_addr = 0x11111111;
+	if ((::connect(sock,(const struct sockaddr*)&addr,sizeof(addr))) == -1) { close(sock); return QString(); }
+	if ((getsockname(sock,(struct sockaddr*)&addr, &len)) == -1) { close(sock); return QString(); }
+	::close(sock);
+	KNetwork::KIpAddress s_addr(addr.sin_addr.s_addr);
+	return s_addr.toString();
+}
+
 
 void KopetePublisher::start()
 {
-	QTimer::singleShot(0,this,SLOT(result()));
+	ServiceDef d;
+	d.name = m_service->serviceName();
+	d.type = m_service->serviceType();
+	if (m_service->hostName().isEmpty()) { // guess internet IP 
+		QString ip = getInternetIP();
+		if (ip.isEmpty()) {
+			emit finished(false);
+			return;
+		}
+		// FIXME: set m_service->hostName as well?
+		d.hostName = ip;
+	} else 	d.hostName=m_service->hostName();
+	d.port = m_service->port();
+	d.txt = m_service->properties();
+	d.contact = m_scope->id().section('.',0,-2);
+	sid=iface->publish(d);
+	debug() << "Got SID " << sid << endl;
+	if (!sid) emit finished(false);
+	connectDCOPSignal("kopete","srvdisco","published(int,bool)","published(int,bool)",true);
 }
 
-void KopetePublisher::result()
+void KopetePublisher::published(int id, bool result)
 {
-	bool b = true; // get this from engine's properties?
-	emit finished(b); 
+	if (sid!=id) return;
+	emit finished(result); 
 }
 
 void KopetePublisher::stop()
 {
+	debug() << "doing stop" << endl;
+	disconnectDCOPSignal("kopete","srvdisco","published(int,bool)","published(int,bool)");
+	if (sid) {
+		debug()<< "Sending stopPublishing(" << sid << ")" << endl;
+		iface->stopPublishing(sid);
+	}
 	debug() << "KopetePublisher:Stopped" << endl;
 	Publisher::stop();
 }

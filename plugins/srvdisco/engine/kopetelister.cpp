@@ -51,16 +51,8 @@ KopeteLister::~KopeteLister()
 
 void KopeteLister::start()
 {
-//	QTimer::singleShot(0,this,SLOT(list()));
-	list();
 	connectDCOPSignal("kopete","srvdisco","newContact(ContactDef)","newContact(ContactDef)",false);
 	connectDCOPSignal("kopete","srvdisco","deleteContact(QString)","deleteContact(QString)",false);
-	debug() << "I am " << objId() << endl;
-}
-
-void KopeteLister::list()
-{
-	DEBUG_FUNC_INFO
 	debug() << "DCOPCL: " << DCOPClient::mainClient() << endl;
 	SrvDiscoIface_stub iface(DCOPClient::mainClient(),"kopete","srvdisco");
 	QList<ContactDef> cs = iface.contacts();
@@ -71,12 +63,16 @@ void KopeteLister::list()
 		m_scopes.append(n);
 		emit scopeAdded(n);
 	}
+	connectDCOPSignal("kopete","srvdisco","newContact(ContactDef)","newContact(ContactDef)",false);
+	connectDCOPSignal("kopete","srvdisco","deleteContact(QString)","deleteContact(QString)",false);
 }
 
 void KopeteLister::newContact(ContactDef c)
 {
 	DEBUG_FUNC_INFO
 	debug() << "Got new contact " << c.display << endl;
+	QString fullID=c.id+".kopete";
+	foreach (Scope::Ptr n, m_scopes) if (fullID==n->id()) return;
 	Scope* n = new Scope(c.id+".kopete",ScopeTree::self(m_type).byId("contacts.core"),"kopete",c.display);
 	m_scopes.append(n);
 	emit scopeAdded(n);

@@ -63,7 +63,7 @@ SrvDiscoFilter::~SrvDiscoFilter()
 
 void SrvDiscoFilter::handleMessage( MessageEvent *event )
 {
-	QRegExp rx("^#SRVDISCO:(ANNOUNCE:|RELEASE:)([^/]+)/([^/]+)/([^/]+)/(TCP|UDP)/([^/]+)/([\\d]+)/([^/]+)/");
+	QRegExp rx("^#SRVDISCO:(ANNOUNCE:|RELEASE:)([^/]+)/([^/]+)/([^/]*)/(TCP|UDP)/([^/]+)/([\\d]+)/([^/]*)/");
 	kdDebug() << "Got message: " << event->message().plainBody() << endl;
 	if (rx.search(event->message().plainBody())==-1) MessageHandler::handleMessage( event );
 	else {

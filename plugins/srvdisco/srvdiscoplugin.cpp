@@ -38,7 +38,7 @@ SrvDiscoPlugin::SrvDiscoPlugin(QObject *parent, const char *name, const QStringL
  : Kopete::Plugin(SrvDiscoPluginFactory::instance(), parent, name)
 {
 	kdDebug() << "SrvDisco plugin loading" << endl;
-	impl = new SrvDiscoIfaceImpl(/*"srvdisco"*/QString().toAscii());
+	impl = new SrvDiscoIfaceImpl("srvdisco");
 	filter = new SrvDiscoFilterFactory();
 	connect(filter,SIGNAL(created(SrvDiscoFilter*)),impl,SLOT(newHandler(SrvDiscoFilter*)));
 }

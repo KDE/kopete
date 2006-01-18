@@ -46,8 +46,6 @@ public:
 k_dcop:
 	void newContact(ContactDef c);
 	void deleteContact(const QString& id);
-private slots:
-	void list();
 
 };
 

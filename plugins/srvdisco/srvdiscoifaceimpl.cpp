@@ -30,6 +30,7 @@
 #include <kopetecontact.h>
 #include <kopetechatsession.h>
 #include <kurl.h>
+#include <dcopclient.h>
 
 #include "srvdiscoifaceimpl.h"
 #include "srvdiscofilter.h"
@@ -50,6 +51,8 @@ SrvDiscoIfaceImpl::SrvDiscoIfaceImpl(const DCOPCString& obj) : DCOPObject(obj), 
 		++it;
 	}	
 	connect(ContactList::self(),SIGNAL(metaContactAdded(Kopete::MetaContact*)),this,SLOT(contactAdded(Kopete::MetaContact*)));
+	connect(DCOPClient::mainClient(),SIGNAL(applicationRemoved(const QByteArray&)),this, 
+		SLOT(applicationRemoved(const QByteArray&)));
 }
 
 void SrvDiscoIfaceImpl::contactAdded(Kopete::MetaContact* c)
@@ -97,6 +100,14 @@ bool SrvDiscoIfaceImpl::sendMessage(bool announce, Kopete::MetaContact *m, Servi
 	// we assume that message has been sent correctly, maybe use messageSuccess signal?
 	return true;
 }
+
+void SrvDiscoIfaceImpl::applicationRemoved(const QByteArray& app)
+{
+	kdDebug() << "Application " << app << " died" << endl;
+	if (!published.contains(app)) return;
+	QList<int> ids = published[app].keys();
+	foreach (int i, ids) stopInternal(i,app);
+}
 	
 
 // FIXME: deal with our state change
@@ -126,18 +137,27 @@ void SrvDiscoIfaceImpl::displayNameChanged( const QString &oldName, const QStrin
 
 int SrvDiscoIfaceImpl::publish(ServiceDef d)
 {
+	kdDebug() << "Calling app is " << callingDcopClient()->senderId() << endl;
 	Kopete::MetaContact *m = Kopete::ContactList::self()->metaContact( d.contact );
 	if (!m) return 0;
-	published[++pcounter]=d;
+	published[callingDcopClient()->senderId()][++pcounter]=d;
 	sendMessage(true,m,d);
+	kdDebug() << "Returning pcounter " << pcounter << endl;
 	return pcounter;
 }
 
 void SrvDiscoIfaceImpl::stopPublishing(int i)
 {
-	if (!published.contains(i)) return;
-	ServiceDef d  = published.take(i);
+	stopInternal(i,callingDcopClient()->senderId());
+}
+
+void SrvDiscoIfaceImpl::stopInternal(int i, const QByteArray& app)
+{
+	kdDebug() << "Stop publishing " << i << " , " << app  << endl;
+	if (!published.contains(app) || !published[app].contains(i)) return;
+	ServiceDef d  = published[app].take(i);
 	Kopete::MetaContact *m = Kopete::ContactList::self()->metaContact( d.contact );
+	kdDebug() << "MC: " << m << endl;
 	if (!m) return;
 	sendMessage(false,m,d);
 }

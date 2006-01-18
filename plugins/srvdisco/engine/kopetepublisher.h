@@ -27,7 +27,9 @@
 #define SRVDISCOKOPETEPUBLISHER_H
 
 #include <srvdisco/enginelisters.h>
+#include <dcopobject.h>
 
+class SrvDiscoIface_stub;
 namespace SrvDisco {
 
 /**
@@ -35,17 +37,23 @@ Kopete publisher - success is based on metainfo
 
 @author Jakub Stachowski
 */
-class KopetePublisher : public Publisher
+class KopetePublisher : public Publisher, public DCOPObject
 {
 Q_OBJECT
+K_DCOP
 public:
     KopetePublisher(PublicService* service, Scope::Ptr scope);
 
-    ~KopetePublisher();
+    virtual ~KopetePublisher();
     virtual void start();
     virtual void stop();
-private slots:
-	void result();
+k_dcop:
+    void published(int,bool);
+private:
+    QString getInternetIP();
+    
+    int sid;
+    SrvDiscoIface_stub* iface;
 
 };
 

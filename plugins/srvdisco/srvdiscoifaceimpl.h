@@ -50,11 +50,13 @@ private slots:
 	void gotNewService(Kopete::MetaContact *c,ServiceDef d);
 	void gotDeleteService(Kopete::MetaContact *c, ServiceDef d);
 	void contactAdded(Kopete::MetaContact* c);
+	void applicationRemoved(const QByteArray& app);
 private:
 	bool sendMessage(bool announce, Kopete::MetaContact *m, ServiceDef d);
+	void stopInternal(int i, const QByteArray& app);
 	
 	unsigned int pcounter;
-	QHash<int,ServiceDef> published;
+	QHash<QByteArray, QHash<int,ServiceDef> > published;
 	QHash<Kopete::MetaContact*, QHash<QString, ServiceDef> > discovered;
 };
 
