@@ -261,8 +261,9 @@ private slots:
 	/**
 	 * A new item appeared in our roster, synch it with the
 	 * contact list.
+	 * (or the contact has been updated
 	 */
-	void slotNewContact ( const XMPP::RosterItem & );
+	void slotContactUpdated ( const XMPP::RosterItem & );
 
 	/**
 	 * An item has been deleted from our roster,
@@ -270,8 +271,6 @@ private slots:
 	 */
 	void slotContactDeleted ( const XMPP::RosterItem & );
 
-	/* Update a contact's details. */
-	void slotContactUpdated ( const XMPP::RosterItem & );
 
 	/* Someone on our contact list had (another) resource come online. */
 	void slotResourceAvailable ( const XMPP::Jid &, const XMPP::Resource & );

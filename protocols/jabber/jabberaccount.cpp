@@ -312,7 +312,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		QObject::connect ( m_jabberClient, SIGNAL ( rosterRequestFinished ( bool ) ),
 				   this, SLOT ( slotRosterRequestFinished ( bool ) ) );
 		QObject::connect ( m_jabberClient, SIGNAL ( newContact ( const XMPP::RosterItem & ) ),
-				   this, SLOT ( slotNewContact ( const XMPP::RosterItem & ) ) );
+				   this, SLOT ( slotContactUpdated ( const XMPP::RosterItem & ) ) );
 		QObject::connect ( m_jabberClient, SIGNAL ( contactUpdated ( const XMPP::RosterItem & ) ),
 				   this, SLOT ( slotContactUpdated ( const XMPP::RosterItem & ) ) );
 		QObject::connect ( m_jabberClient, SIGNAL ( contactDeleted ( const XMPP::RosterItem & ) ),
@@ -1193,7 +1193,7 @@ void JabberAccount::slotContactAddedNotifyDialogClosed( const QString & contacti
 
 
 
-void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
+void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
 {
 
 	/**
@@ -1214,51 +1214,78 @@ void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New roster item " << item.jid().full () << " (Subscription: " << item.subscription().toString () << ")" << endl;
 
 	/*
+	 * See if the contact need to be added, according to the criterias of 
+	 *  JEP-0162: Best Practices for Roster and Subscription Management
+	 * http://www.jabber.org/jeps/jep-0162.html#contacts
+	 */
+	bool need_to_add=false;
+	if(item.subscription().type() == XMPP::Subscription::Both || item.subscription().type() == XMPP::Subscription::To)
+		need_to_add = true;
+	else if( !item.ask().isEmpty() )
+		need_to_add = true;
+	else if( !item.name().isEmpty() || !item.groups().isEmpty() )
+		need_to_add = true;
+	
+	
+	/*
 	 * See if the contact is already on our contact list
 	 */
-	Kopete::MetaContact *metaContact;
 	Kopete::Contact *c= contactPool()->findExactMatch( item.jid() );
-			//Kopete::ContactList::self()->findContact ( protocol()->pluginId (), accountId (), item.jid().full().lower () ) ;
-	if ( !c  )
+
+	if(need_to_add)
 	{
+		Kopete::MetaContact *metaContact=0L;
+		if (!c)
+		{
+			/*
+			* No metacontact has been found which contains a contact with this ID,
+			* so add a new metacontact to the list.
+			*/
+			metaContact = new Kopete::MetaContact ();
+			QStringList groups = item.groups ();
+	
+			// add this metacontact to all groups the contact is a member of
+			for (QStringList::Iterator it = groups.begin (); it != groups.end (); ++it)
+				metaContact->addToGroup (Kopete::ContactList::self ()->findGroup (*it));
+	
+			// put it onto contact list
+			Kopete::ContactList::self ()->addMetaContact ( metaContact );
+		}
+		else
+		{
+			metaContact=c->metaContact();
+			//TODO: syncronize groups
+		}
+
 		/*
-		 * No metacontact has been found which contains a contact with this ID,
-		 * so add a new metacontact to the list.
-		 */
-		metaContact = new Kopete::MetaContact ();
-		QStringList groups = item.groups ();
+		* Add / update the contact in our pool. In case the contact is already there,
+		* it will be updated. In case the contact is not in the meta contact yet, it
+		* will be added to it.
+		* The "dirty" flag is false here, because we just received the contact from
+		* the server's roster. As such, it is now a synchronized entry.
+		*/
+		JabberContact *contact = contactPool()->addContact ( item, metaContact, false );
 
-		// add this metacontact to all groups the contact is a member of
-		for (QStringList::Iterator it = groups.begin (); it != groups.end (); ++it)
-			metaContact->addToGroup (Kopete::ContactList::self ()->findGroup (*it));
-
-		// put it onto contact list
-		Kopete::ContactList::self ()->addMetaContact ( metaContact );
+		/*
+		* Set authorization property
+		*/
+		if ( !item.ask().isEmpty () )
+		{
+			contact->setProperty ( protocol()->propAuthorizationStatus, i18n ( "Waiting for authorization" ) );
+		}
+		else
+		{
+			contact->removeProperty ( protocol()->propAuthorizationStatus );
+		}
 	}
-	else
+	else if(c)  //we don't need to add it, and it is in the contactlist
 	{
-		metaContact=c->metaContact();
-	}
-
-	/*
-	 * Add / update the contact in our pool. In case the contact is already there,
-	 * it will be updated. In case the contact is not in the meta contact yet, it
-	 * will be added to it.
-	 * The "dirty" flag is false here, because we just received the contact from
-	 * the server's roster. As such, it is now a synchronized entry.
-	 */
-	JabberContact *contact = contactPool()->addContact ( item, metaContact, false );
-
-	/*
-	 * Set authorization property
-	 */
-	if ( !item.ask().isEmpty () )
-	{
-		contact->setProperty ( protocol()->propAuthorizationStatus, i18n ( "Waiting for authorization" ) );
-	}
-	else
-	{
-		contact->removeProperty ( protocol()->propAuthorizationStatus );
+		Kopete::MetaContact *metaContact=c->metaContact();
+		if(metaContact->isTemporary())
+			return;
+		delete c;
+		if(metaContact->contacts().isEmpty())
+			Kopete::ContactList::self()->removeMetaContact( metaContact );
 	}
 
 }
@@ -1269,31 +1296,6 @@ void JabberAccount::slotContactDeleted (const XMPP::RosterItem & item)
 
 	// since the contact instance will get deleted here, the GUI should be updated
 	contactPool()->removeContact ( item.jid () );
-
-}
-
-void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
-{
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Status update for " << item.jid().full () << endl;
-
-	/*
-	 * Sanity check: make sure that we have a matchin contact
-	 * in our local pool before we try to updating it.
-	 * (if no contact would be present, we'd add a contact
-	 * without parent meta contact)
-	 */
-	if ( !contactPool()->findExactMatch ( item.jid () ) )
-	{
-		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "WARNING: Trying to update non-existing contact " << item.jid().full () << endl;
-		return;
-	}
-
-	/*
-	 * Adding the contact again will update the existing instance.
-	 * We're also explicitely setting the dirty flag to "false" since
-	 * we are in synch with the server.
-	 */
-	contactPool()->addContact ( item, 0L, false );
 
 }
 

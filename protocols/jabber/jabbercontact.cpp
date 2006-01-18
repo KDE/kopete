@@ -1099,19 +1099,43 @@ void JabberContact::deleteContact ()
 		account()->errorConnectFirst ();
 		return;
 	}
+	
+	/*
+	* Follow the recommendation of
+	*  JEP-0162: Best Practices for Roster and Subscription Management
+	* http://www.jabber.org/jeps/jep-0162.html#removal
+	*/
 
-	if ( KMessageBox::questionYesNo (Kopete::UI::Global::mainWidget(),
-		 i18n ( "Do you also want to remove the authorization from user %1 to see your status?" ).
-				arg ( mRosterItem.jid().bare () ), i18n ("Notification"),
-				KStdGuiItem::del (), i18n("Keep"), "JabberRemoveAuthorizationOnDelete" ) == KMessageBox::Yes )
+	bool remove_from_roster=false;
+	
+	if( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From )
 	{
-		sendSubscription ("unsubscribed");
+		int result = KMessageBox::questionYesNoCancel (Kopete::UI::Global::mainWidget(),
+		 				i18n ( "Do you also want to remove the authorization from user %1 to see your status?" ).
+						arg ( mRosterItem.jid().bare () ), i18n ("Notification"),
+						KStdGuiItem::del (), i18n("Keep"), "JabberRemoveAuthorizationOnDelete" );
+		if(result == KMessageBox::Yes )
+			remove_from_roster = true;
+		else if( result == KMessageBox::Cancel)
+			return;
 	}
+	else if( mRosterItem.subscription().type() == XMPP::Subscription::None || mRosterItem.subscription().type() == XMPP::Subscription::To )
+		remove_from_roster = true;
+	
+	if( remove_from_roster )
+	{
+		XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
+		rosterTask->remove ( mRosterItem.jid () );
+		rosterTask->go ( true );
+	}
+	else
+	{
+		sendSubscription("unsubscribe");
 
-	XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
-
-	rosterTask->remove ( mRosterItem.jid () );
-	rosterTask->go ( true );
+		XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
+		rosterTask->set ( mRosterItem.jid (), QString() , QStringList() );
+		rosterTask->go (true);
+	}
 
 }
 
