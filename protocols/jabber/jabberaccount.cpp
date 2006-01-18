@@ -171,7 +171,13 @@ KActionMenu *JabberAccount::actionMenu ()
 	m_actionMenu->popupMenu()->insertSeparator();
 
 	m_actionMenu->insert(new KAction (i18n ("Join Groupchat..."), "jabber_group", 0,
-		this, SLOT (slotJoinNewChat ()), this, "actionJoinChat"));
+						 this, SLOT (slotJoinNewChat ()), this, "actionJoinChat"));
+	
+	KSelectAction *groupchatBM = new KSelectAction( i18n("Groupchat bookmark") , "jabber_group" , 0 , this , "actionBookMark" );
+	m_actionMenu->insert( groupchatBM );
+	groupchatBM->setItems(m_bookmarkGroupChat);
+	QObject::connect(groupchatBM, SIGNAL(activated (const QString&)) , this, SLOT(slotJoinChatBookmark(const QString&)));
+		
 
 	m_actionMenu->popupMenu()->insertSeparator();
 	
@@ -590,7 +596,12 @@ void JabberAccount::slotConnected ()
 	 * information in that case either). */
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting initial presence..." << endl;
 	setPresence ( m_initialPresence );
-
+	
+	
+	XMPP::JT_PrivateStorage * task = new XMPP::JT_PrivateStorage ( client()->rootTask ());
+	task->get( "storage" , "storage:bookmarks" );
+	QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotReceivedGroupChatBookmark() ) );
+	task->go ( true );
 }
 
 void JabberAccount::slotRosterRequestFinished ( bool success )
@@ -1413,6 +1424,32 @@ void JabberAccount::slotGroupChatJoined (const XMPP::Jid & jid)
 
 	// lock the room to our own status
 	resourcePool()->lockToResource ( XMPP::Jid ( jid.userHost () ), jid.resource () );
+	
+	
+	if(!m_bookmarkGroupChat.contains(jid.full()))
+	{
+		m_bookmarkGroupChat.append(jid.full());
+		
+		QDomDocument doc("storage");
+		QDomElement storage=doc.createElement("storage");
+		doc.appendChild(storage);
+		storage.setAttribute("xmlns","storage:bookmarks");
+		for ( QStringList::Iterator it = m_bookmarkGroupChat.begin(); it != m_bookmarkGroupChat.end(); ++it ) 
+		{
+			XMPP::Jid jid(*it);
+			QDomElement conference=doc.createElement("conference");
+			storage.appendChild(conference);
+			conference.setAttribute("jid",jid.userHost());
+			QDomElement nick=doc.createElement("nick");
+			conference.appendChild(nick);
+			nick.appendChild(doc.createTextNode(jid.resource()));
+		}
+		
+		XMPP::JT_PrivateStorage * task = new XMPP::JT_PrivateStorage ( client()->rootTask ());
+		task->set( storage );
+		QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotReceivedGroupChatBookmark() ) );
+		task->go ( true );
+	}
 
 }
 
@@ -1612,6 +1649,8 @@ void JabberAccount::slotIncomingVoiceCall( const Jid & j)
 		vc->show();
 		vc->incoming();
 	}
+#else
+	Q_UNUSED(j);
 #endif
 }
 
@@ -1704,6 +1743,41 @@ void JabberAccount::slotUnregisterFinished( )
 	}
 	if(m_removing)  //it may be because this is now the timer.
 		Kopete::AccountManager::self()->removeAccount( this ); //this will delete this
+}
+
+void JabberAccount::slotReceivedGroupChatBookmark( )
+{
+	XMPP::JT_PrivateStorage * task = (XMPP::JT_PrivateStorage*)(sender());
+	if(task->success())
+	{
+		m_bookmarkGroupChat.clear();
+		QDomElement storage=task->element();
+		for(QDomNode n = storage.firstChild(); !n.isNull(); n = n.nextSibling()) {
+			QDomElement i = n.toElement();
+			if(i.isNull())
+				continue;
+			if(i.tagName() == "conference")
+			{
+				QString jid=i.attribute("jid");
+				for(QDomNode n = i.firstChild(); !n.isNull(); n = n.nextSibling()) {
+					QDomElement e = n.toElement();
+					if(e.isNull())
+						continue;
+					
+					if(e.tagName() == "nick")
+						jid+="/"+e.text();
+				}
+				m_bookmarkGroupChat += jid;
+			}
+		}
+	}
+
+}
+
+void JabberAccount::slotJoinChatBookmark( const QString & _jid )
+{
+	XMPP::Jid jid(_jid);
+	client()->joinGroupChat( jid.host() , jid.user() , jid.resource() );
 }
 
 

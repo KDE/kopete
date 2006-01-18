@@ -6,9 +6,9 @@
     copyright            : (C) 2003 by Till Gerken <till@tantalo.net>
 							Based on JabberProtocol by Daniel Stone <dstone@kde.org>
 							and Till Gerken <till@tantalo.net>.
+   copyright            : (C) 2006 by Olivier Goffart <ogoffart at kde.org>
 
-			   Kopete (C) 2001-2003 Kopete developers
-			   <kopete-devel@kde.org>.
+			   Kopete (C) 2001-2003 Kopete developers  <kopete-devel@kde.org>.
  ***************************************************************************/
 
 /***************************************************************************
@@ -211,6 +211,9 @@ private:
 	
 	/* used in removeAccount() */
 	bool m_removing;
+	
+	QStringList m_bookmarkGroupChat;
+
 private slots:
 	/* Connects to the server. */
 	void slotConnect ();
@@ -297,6 +300,9 @@ private slots:
 	void slotUnregisterFinished();
 //ifdef SUPPORT_JINGLE  (we can't disable slot, or moc cill complain)
 	void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);
+	
+	void slotReceivedGroupChatBookmark();
+	void slotJoinChatBookmark(const QString& jid);
 };
 
 #endif
