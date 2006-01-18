@@ -1,10 +1,10 @@
 /*
-    smpppdlocationwidget.h
-
+    detectordcop.h
+ 
     Copyright (c) 2004-2006 by Heiko Schaefer        <heiko@rangun.de>
-
+ 
     Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
-
+ 
     *************************************************************************
     *                                                                       *
     * This program is free software; you can redistribute it and/or modify  *
@@ -14,26 +14,40 @@
     *************************************************************************
 */
 
-#ifndef SMPPPDLOCATIONWIDGET_H
-#define SMPPPDLOCATIONWIDGET_H
+#ifndef DETECTORDCOP_H
+#define DETECTORDCOP_H
 
-#include "smpppdlocationui.h"
+#include "detector.h"
+
+class DCOPClient;
+class IConnector;
 
 /**
 	@author Heiko Sch&auml;fer <heiko@rangun.de>
 */
-class SMPPPDLocationWidget : public SMPPPDLocationWidgetBase
-{
-	Q_OBJECT
+class DetectorDCOP : public Detector {
 
-	SMPPPDLocationWidget(const SMPPPDLocationWidget&);
-	SMPPPDLocationWidget& operator=(const SMPPPDLocationWidget&);
+    DetectorDCOP(const DetectorDCOP&);
+    DetectorDCOP& operator=(const DetectorDCOP&);
 
 public:
-    SMPPPDLocationWidget(QWidget* parent = 0, const char* name = 0, WFlags fl = 0);
-    ~SMPPPDLocationWidget();
+    DetectorDCOP(IConnector * connector);
+    virtual ~DetectorDCOP();
 
-    void setServer(const QString& serv);
+protected:
+
+    enum KInternetDCOPState {
+        CONNECTED,
+        DISCONNECTED,
+        ERROR
+    };
+
+    QCString getKInternetDCOP();
+    KInternetDCOPState getConnectionStatusDCOP();
+
+protected:
+    static QCString  m_kinternetApp;
+    DCOPClient     * m_client;
 };
 
 #endif

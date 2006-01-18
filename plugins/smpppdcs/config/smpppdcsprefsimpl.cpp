@@ -27,17 +27,32 @@
 #include <klocale.h>
 #include <kdebug.h>
 
+#include "kopetepluginmanager.h"
+
+#include "../smpppdcsplugin.h"
+
 #include "smpppdlocationwidget.h"
 #include "smpppdcsprefsimpl.h"
 #include "smpppdsearcher.h"
 
 SMPPPDCSPrefs::SMPPPDCSPrefs(QWidget* parent, const char* name, WFlags fl)
-        : SMPPPDCSPrefsBase(parent, name, fl), m_scanProgressDlg(NULL), m_curSearcher(NULL) {
+	: SMPPPDCSPrefsBase(parent, name, fl), m_plugin(NULL), m_scanProgressDlg(NULL), m_curSearcher(NULL) {
+
+	// search for our main-plugin instance
+	Kopete::Plugin * p = Kopete::PluginManager::self()->plugin("kopete_smpppdcs");
+	if(p) {
+		m_plugin = static_cast<SMPPPDCSPlugin *>(p);
+	}
 
     // signals and slots connections
     connect(useNetstat, SIGNAL(toggled(bool)), this, SLOT(disableSMPPPDSettings()));
     connect(useSmpppd,  SIGNAL(toggled(bool)), this, SLOT(enableSMPPPDSettings()));
     connect(autoCSTest, SIGNAL(clicked()),     this, SLOT(determineCSType()));
+	
+	if(m_plugin) {
+		connect((QObject *)SMPPPDLocation->server, SIGNAL(textChanged(const QString&)),
+				m_plugin, SLOT(smpppdServerChanged(const QString&)));
+	}
 
     // if netstat is NOT available, disable the option and set to SMPPPD
     if(KStandardDirs::findExe("netstat") == QString::null) {

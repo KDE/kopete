@@ -14,24 +14,28 @@
     *************************************************************************
 */
 
-#include "detector.h"
+#include "detectornetstat.h"
+#include "detectorsmpppd.h"
 #include "onlineinquiry.h"
 
 OnlineInquiry::OnlineInquiry()
-        : m_detector(NULL), m_online(FALSE) {
-    m_detector = new Detector(this);
-}
+        : m_detector(NULL), m_online(FALSE) {}
 
 OnlineInquiry::~OnlineInquiry() {
     delete m_detector;
 }
 
 bool OnlineInquiry::isOnline(bool useSMPPPD) {
+	
+	delete m_detector;
+	
     if(useSMPPPD) {
-        m_detector->smpppdCheckStatus();
+		m_detector = new DetectorSMPPPD(this);
     } else {
-        m_detector->netstatCheckStatus();
+		m_detector = new DetectorNetstat(this);
     }
+	
+	m_detector->checkStatus();
 
     return m_online;
 }

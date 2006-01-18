@@ -23,6 +23,7 @@
 
 #include "smpppdcsprefs.h"
 
+class SMPPPDCSPlugin;
 class SMPPPDSearcher;
 
 /**
@@ -55,6 +56,7 @@ protected slots:
 	void cancelScanning();
 
 private:
+	SMPPPDCSPlugin  * m_plugin;
 	KProgressDialog * m_scanProgressDlg;
 	SMPPPDSearcher  * m_curSearcher;
 };

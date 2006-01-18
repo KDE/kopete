@@ -88,6 +88,9 @@ protected:
      */
     bool useSmpppd() const;
 
+public slots:
+	void smpppdServerChanged(const QString& server);
+
 private slots:
     void slotCheckStatus();
     void allPluginsLoaded();
@@ -98,13 +101,13 @@ private:
 
 private:
 
-    Detector          *m_detector;
-    bool               m_pluginConnected;
-    QTimer            *m_timer;
-    OnlineInquiry     *m_onlineInquiry;
+    Detector      * m_detectorSMPPPD;
+    Detector      * m_detectorNetstat;
+    bool            m_pluginConnected;
+    QTimer        * m_timer;
+    OnlineInquiry * m_onlineInquiry;
 };
 
 #endif /* SMPPPDCSPLUGIN_H */
 
 // vim: set noet ts=4 sts=4 sw=4:
-

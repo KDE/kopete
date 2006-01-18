@@ -23,8 +23,7 @@ SMPPPDLocationWidget::SMPPPDLocationWidget(QWidget* parent, const char* name, WF
 
 SMPPPDLocationWidget::~SMPPPDLocationWidget() {}
 
-void SMPPPDLocationWidget::setServer(const QString& serv)
-{
+void SMPPPDLocationWidget::setServer(const QString& serv) {
     server->setText(serv);
 }
 
