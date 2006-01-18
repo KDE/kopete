@@ -42,6 +42,9 @@ MessageEvent::MessageEvent( const Message& m, QObject *parent, const char *name 
 {
 	d->message = m;
 	d->state = Nothing;
+	const Contact *c=m.from();
+	if(c)
+		connect(c,SIGNAL(contactDestroyed( Kopete::Contact* )),this,SLOT(discard()));
 }
 
 MessageEvent::~MessageEvent()
