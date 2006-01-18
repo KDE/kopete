@@ -101,13 +101,6 @@ public:
 	void updateResourceList ();
 
 	/**
-	 * Re-evaluate online status. Gets called
-	 * whenever a resource is added, removed, or
-	 * changed in the resource pool.
-	 */
-	void reevaluateStatus ();
-
-	/**
 	 * Return current full address.
 	 * Uses bestResource() if no presubscribed
 	 * address exists.
@@ -149,6 +142,14 @@ public slots:
 	 * Retrieve a vCard for the contact
 	 */
 	virtual void slotUserInfo () = 0;
+	
+	
+	/**
+	 * Re-evaluate online status. Gets called
+	 * whenever a resource is added, removed, or
+	 * changed in the resource pool.
+	 */
+	void reevaluateStatus ();
 
 protected:
 	/**

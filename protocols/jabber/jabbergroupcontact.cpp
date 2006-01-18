@@ -71,10 +71,6 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 	 * is empty. This makes at least the history plugin crash.
 	 */
 	mManager->addContact ( this );
-
-	// call moved from superclass, see JabberBaseContact for details
-	reevaluateStatus ();
-
 }
 
 JabberGroupContact::~JabberGroupContact ()

@@ -113,9 +113,6 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 		}
 	}
 
-	// call moved from superclass, see JabberBaseContact for details
-	reevaluateStatus ();
-
 	mRequestOfflineEvent = false;
 	mRequestDisplayedEvent = false;
 	mRequestDeliveredEvent = false;
