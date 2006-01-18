@@ -328,30 +328,29 @@ ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &stylePa
 
 void ChatWindowStyleManager::slotNewStyles(const KFileItemList &dirList)
 {
-	KFileItem *item;
 	QList<KFileItem*>::const_iterator it=dirList.begin();
 	while( it!=dirList.end() ) 
 	{
 		// Ignore data dir(from deprecated XSLT themes)
 		if( !(*it)->url().fileName().contains(QString::fromUtf8("data")) )
 		{
-			kdDebug(14000) << k_funcinfo << "Listing: " << item->url().fileName() << endl;
+			kdDebug(14000) << k_funcinfo << "Listing: " << (*it)->url().fileName() << endl;
 			// If the style path is already in the pool, that's mean the style was updated on disk
 			// Reload the style
-			if( d->stylePool.contains(item->url().path()) )
+			if( d->stylePool.contains((*it)->url().path()) )
 			{
-				kdDebug(14000) << k_funcinfo << "Updating style: " << item->url().path() << endl;
+				kdDebug(14000) << k_funcinfo << "Updating style: " << (*it)->url().path() << endl;
 
-				d->stylePool[item->url().path()]->reload();
+				d->stylePool[(*it)->url().path()]->reload();
 
 				// Add to avaialble if required.
-				if( !d->availableStyles.contains(item->url().fileName()) )
-					d->availableStyles.insert(item->url().fileName(), item->url().path());
+				if( !d->availableStyles.contains((*it)->url().fileName()) )
+					d->availableStyles.insert((*it)->url().fileName(), (*it)->url().path());
 			}
 			else
 			{
 				// TODO: Use name from Info.plist
-				d->availableStyles.insert(item->url().fileName(), item->url().path());
+				d->availableStyles.insert((*it)->url().fileName(), (*it)->url().path());
 			}
 		}
 		++it;
