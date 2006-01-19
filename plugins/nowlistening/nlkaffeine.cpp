@@ -22,9 +22,7 @@
 */
 
 #include <kdebug.h>
-#include <qstring.h>
-//Added by qt3to4:
-#include <QByteArray>
+#include <QString>
 
 #include "nlmediaplayer.h"
 #include "nlkaffeine.h"
@@ -42,23 +40,23 @@ void NLKaffeine::update()
 	m_newTrack = false;
 	QString newTrack;
 	bool error = true; // Asume we have a error first. 
-	QByteArray kaffeineIface("Kaffeine"), kaffeineGetTrack("getTitle()");
+	DCOPCString kaffeineIface("Kaffeine"), kaffeineGetTrack("getTitle()");
 
 	// see if kaffeine is  registered with DCOP
-	if ( m_client->isApplicationRegistered( "kaffeine" ) )
+	if ( m_client->isApplicationRegistered( DCOPCString("kaffeine") ) )
 	{
 		// see if it's playing
 		QByteArray data, replyData;
-		QByteArray replyType;
+		DCOPCString replyType;
 		QString result;
-		if ( !m_client->call( "kaffeine", kaffeineIface, "isPlaying()", data,
+		if ( !m_client->call( DCOPCString("kaffeine"), kaffeineIface, DCOPCString("isPlaying()"), data,
 					replyType, replyData ) )
 		{
 			kdDebug ( 14307 ) << k_funcinfo << " Trying DCOP interface of Kaffeine >= 0.5" << endl;
 			// Trying with the new Kaffeine DCOP interface (>=0.5)
 			kaffeineIface = "KaffeineIface";
 			kaffeineGetTrack = "title()";
-			if( !m_client->call( "kaffeine", kaffeineIface, "isPlaying()", data, replyType, replyData ) )
+			if( !m_client->call( DCOPCString("kaffeine"), kaffeineIface, DCOPCString("isPlaying()"), data, replyType, replyData ) )
 			{
 				kdDebug( 14307 ) << k_funcinfo << " DCOP error on Kaffeine." << endl;
 			}
@@ -83,7 +81,7 @@ void NLKaffeine::update()
 			}
 		}
 
-		if ( m_client->call( "kaffeine", kaffeineIface, kaffeineGetTrack, data,
+		if ( m_client->call( DCOPCString("kaffeine"), kaffeineIface, kaffeineGetTrack, data,
 					replyType, replyData ) )
 		{
 			QDataStream reply( &replyData,QIODevice::ReadOnly );

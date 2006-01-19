@@ -22,9 +22,7 @@
 */
 
 #include <kdebug.h>
-#include <qstring.h>
-//Added by qt3to4:
-#include <QByteArray>
+#include <QString>
 
 #include "nlmediaplayer.h"
 #include "nljuk.h"
@@ -46,10 +44,10 @@ void NLJuk::update()
 	{
 		// see if it's playing
 		QByteArray data, replyData;
-		QByteArray replyType;
+		DCOPCString replyType;
 		QString result;
 
-		if ( m_client->call( "juk", "Player", "playing()", data, 
+		if ( m_client->call( DCOPCString("juk"), DCOPCString("Player"), DCOPCString("playing()"), data, 
 					replyType, replyData ) )
 		{
 			QDataStream reply( &replyData,QIODevice::ReadOnly );

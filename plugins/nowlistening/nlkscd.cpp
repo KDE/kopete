@@ -46,8 +46,8 @@ void NLKscd::update()
 	{
 		// see if it's playing
 		QByteArray data, replyData;
-		QByteArray replyType;
-		if ( !m_client->call( "kscd", "CDPlayer", "playing()", data,
+		DCOPCString replyType;
+		if ( !m_client->call( DCOPCString("kscd"), DCOPCString("CDPlayer"), DCOPCString("playing()"), data,
 					replyType, replyData ) )
 		{
 			// we're talking to a KsCD without the playing() method

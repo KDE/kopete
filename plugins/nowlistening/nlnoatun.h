@@ -25,8 +25,6 @@
 #define NLNOATUN_H
 
 #include <dcopclient.h>
-//Added by qt3to4:
-#include <QByteArray>
 
 class NLNoatun : public NLMediaPlayer
 {
@@ -34,8 +32,8 @@ class NLNoatun : public NLMediaPlayer
 		NLNoatun( DCOPClient *client );
 		virtual void update();
  	protected:
-		QByteArray find() const;
-		QString currentProperty( QByteArray appname, QString property ) const;
+		DCOPCString find() const;
+		QString currentProperty( DCOPCString appname, QString property ) const;
 		DCOPClient *m_client;
 };
 

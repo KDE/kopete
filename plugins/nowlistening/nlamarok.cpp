@@ -22,9 +22,7 @@
 */
 
 #include <kdebug.h>
-#include <qstring.h>
-//Added by qt3to4:
-#include <QByteArray>
+#include <QString>
 
 #include "nlmediaplayer.h"
 #include "nlamarok.h"
@@ -42,11 +40,11 @@ void NLamaroK::update()
 	m_newTrack = false;
 	QString newTrack;
 	QByteArray data, replyData;
-	QByteArray replyType;
+	DCOPCString replyType;
 	QString result;
 
 	// see if amaroK is  registered with DCOP
-	if ( !m_client->isApplicationRegistered( "amarok" ) )
+	if ( !m_client->isApplicationRegistered( DCOPCString("amarok") ) )
 	{
 		kdDebug ( 14307 ) << "AmaroK is not running!\n" << endl;
 		return;
@@ -55,11 +53,11 @@ void NLamaroK::update()
 	// see if it's playing
 	// use status() call first, if not supported (amaroK 1.0 or earlier), use isPlaying
 	
-	if ( !m_client->call( "amarok", "player", "status()", data,
+	if ( !m_client->call( DCOPCString("amarok"), DCOPCString("player"), DCOPCString("status()"), data,
 	      replyType, replyData ) )
 	{
 		kdDebug( 14307 ) << k_funcinfo << " DCOP status() returned error, falling back to isPlaying()." << endl;
-		if ( !m_client->call( "amarok", "player", "isPlaying()", data,
+		if ( !m_client->call( DCOPCString("amarok"), DCOPCString("player"), DCOPCString("isPlaying()"), data,
 					replyType, replyData ) )
 		{
 			kdDebug( 14307 ) << k_funcinfo << " DCOP error on Amarok." << endl;
@@ -90,7 +88,7 @@ void NLamaroK::update()
 		}
 	}
 
-	if ( m_client->call( "amarok", "player", "title()", data,
+	if ( m_client->call( DCOPCString("amarok"), DCOPCString("player"), DCOPCString("title()"), data,
 				replyType, replyData ) )
 	{
 		QDataStream reply( &replyData,QIODevice::ReadOnly );
@@ -107,7 +105,7 @@ void NLamaroK::update()
 		m_track = newTrack;
 	}
 
-	if ( m_client->call( "amarok", "player", "album()", data,
+	if ( m_client->call( DCOPCString("amarok"), DCOPCString("player"), DCOPCString("album()"), data,
 				replyType, replyData ) )
 	{
 		QDataStream reply( &replyData,QIODevice::ReadOnly );
@@ -118,7 +116,7 @@ void NLamaroK::update()
 		}
 	}
 
-	if ( m_client->call( "amarok", "player", "artist()", data,
+	if ( m_client->call( DCOPCString("amarok"), DCOPCString("player"), DCOPCString("artist()"), data,
 				replyType, replyData ) )
 	{
 		QDataStream reply( &replyData,QIODevice::ReadOnly );

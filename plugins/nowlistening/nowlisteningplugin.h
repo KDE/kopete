@@ -23,7 +23,6 @@
 
 
 #include "kopeteplugin.h"
-#include <q3ptrlist.h>
 
 namespace Kopete { class ChatSession; class Message; }
 

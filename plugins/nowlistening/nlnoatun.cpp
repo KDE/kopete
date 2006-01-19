@@ -24,8 +24,6 @@
 #include <kdebug.h>
 #include "nlmediaplayer.h"
 #include "nlnoatun.h"
-//Added by qt3to4:
-#include <QByteArray>
 
 NLNoatun::NLNoatun( DCOPClient *client ) : NLMediaPlayer()
 {
@@ -41,13 +39,13 @@ void NLNoatun::update()
 	m_playing = false;
 	QString newTrack;
 	// see if it's registered with DCOP
-	QByteArray appname = find();
+	DCOPCString appname = find();
 	if ( !appname.isEmpty() )
 	{
 		// see if it's playing
 		QByteArray data, replyData;
-		QByteArray replyType;
-		if ( !m_client->call( appname, "Noatun", "state()", data,
+		DCOPCString replyType;
+		if ( !m_client->call( appname, DCOPCString("Noatun"), DCOPCString("state()"), data,
 					replyType, replyData ) )
 		{
 			kdDebug( 14307 ) <<  "NLNoatun::update() DCOP error on " << appname << endl;
@@ -73,8 +71,8 @@ void NLNoatun::update()
 			newTrack = title;
 		else
 			// Using the title() method
-			if ( !m_client->call( appname, "Noatun",
-						"title()", data, replyType, replyData ) )
+			if ( !m_client->call( appname, DCOPCString("Noatun"),
+						DCOPCString("title()"), data, replyType, replyData ) )
 				kdDebug( 14307 ) <<  "NLNoatun::update() DCOP error on " << appname 
 					<< endl;
 			else {
@@ -101,14 +99,14 @@ void NLNoatun::update()
 		kdDebug( 14307 ) << "NLNoatun::update() - noatun not found" << endl;
 }
 
-QByteArray NLNoatun::find() const
+DCOPCString NLNoatun::find() const
 {
-	QByteArray app = "noatun";
+	DCOPCString app = "noatun";
 	if ( !m_client->isApplicationRegistered( app ) )
 	{
 		// looking for a registered app prefixed with 'app'
-		QCStringList allApps = m_client->registeredApplications();
-		QCStringList::iterator it;
+		DCOPCStringList allApps = m_client->registeredApplications();
+		DCOPCStringList::iterator it;
 		for ( it = allApps.begin(); it != allApps.end(); it++ )
 		{
 			//kdDebug( 14307 ) << ( *it ) << endl;
@@ -125,16 +123,16 @@ QByteArray NLNoatun::find() const
 	return app;
 }
 		
-QString NLNoatun::currentProperty( QByteArray appname, QString property ) const
+QString NLNoatun::currentProperty( DCOPCString appname, QString property ) const
 {
 	QByteArray data, replyData;
-	QByteArray replyType;
+	DCOPCString replyType;
 	QDataStream arg( &data,QIODevice::WriteOnly );
 	arg.setVersion(QDataStream::Qt_3_1);
 	QString result = "";
 	arg << property;
-	if ( !m_client->call( appname, "Noatun",
-				"currentProperty(QString)", data, replyType, replyData ) )
+	if ( !m_client->call( appname, DCOPCString("Noatun"),
+				DCOPCString("currentProperty(QString)"), data, replyType, replyData ) )
 	{
 		kdDebug( 14307 ) <<  "NLNoatun::currentProperty() DCOP error on "
 			<< appname << endl;

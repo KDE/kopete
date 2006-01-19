@@ -18,12 +18,10 @@
     *************************************************************************
 */
 
-#include <qtimer.h>
-#include <qstringlist.h>
-//Added by qt3to4:
-#include <Q3ValueList>
-#include <Q3PtrList>
-#include <qregexp.h>
+#include <QTimer>
+#include <QStringList>
+#include <QList>
+#include <QRegExp>
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
@@ -60,9 +58,13 @@ public:
 	Private() : m_currentMediaPlayer(0L), m_client(0L), m_currentChatSession(0L), m_currentMetaContact(0L), 
 				advertTimer(0L)
 	{}
+	~Private()
+	{
+		qDeleteAll(m_mediaPlayerList);
+	}
 
 	// abstracted media player interfaces
-	Q3PtrList<NLMediaPlayer> m_mediaPlayerList;
+	QList<NLMediaPlayer*> m_mediaPlayerList;
 	NLMediaPlayer *m_currentMediaPlayer;
 
 	// Needed for DCOP interprocess communication
@@ -104,15 +106,14 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 			this,
 			SLOT(slotOutgoingMessage(Kopete::Message&)));
 
-	Q3ValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
-	for (Q3ValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
+	QList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+	for (QList<Kopete::ChatSession*>::Iterator it= sessions.begin(); it!=sessions.end() ; ++it)
 	  slotNewKMM( *it );
 
 	// get a pointer to the dcop client
 	d->m_client = kapp->dcopClient(); //new DCOPClient();
 
 	// set up known media players
-	d->m_mediaPlayerList.setAutoDelete( true );
 	d->m_mediaPlayerList.append( new NLKscd( d->m_client ) );
 	d->m_mediaPlayerList.append( new NLNoatun( d->m_client ) );
 	d->m_mediaPlayerList.append( new NLJuk( d->m_client ) );
@@ -205,7 +206,8 @@ void NowListeningPlugin::slotOutgoingMessage(Kopete::Message& msg)
 	// one of them has never gotten the current music information.
 	Kopete::ContactPtrList dest = msg.to();
 	bool mustSendAnyway = false;
-	for( Kopete::Contact *c = dest.first() ; c ; c = dest.next() )
+	
+	foreach( Kopete::Contact *c, dest )
 	{
 		const QString& cId = c->contactId();
 		if( 0 == d->m_musicSentTo.contains( cId ) )
@@ -232,7 +234,7 @@ void NowListeningPlugin::slotOutgoingMessage(Kopete::Message& msg)
 		if( newTrack )
 		{
 			d->m_musicSentTo.clear();
-			for( Kopete::Contact *c = dest.first() ; c ; c = dest.next() )
+			foreach( Kopete::Contact *c, dest )
 			{
 				d->m_musicSentTo.push_back( c->contactId() );
 			}
@@ -257,8 +259,8 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 	{
 		QString advert;
 
-		Q3PtrList<Kopete::Account> accountsList = Kopete::AccountManager::self()->accounts();
-		for( Kopete::Account* a = accountsList.first(); a; a = accountsList.next() )
+		QList<Kopete::Account*> accountsList = Kopete::AccountManager::self()->accounts();
+		foreach( Kopete::Account* a, accountsList )
 		{
 			/*
 				NOTE:
@@ -283,7 +285,7 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 				}
 				else
 				{
-					for ( NLMediaPlayer* i = d->m_mediaPlayerList.first(); i; i = d->m_mediaPlayerList.next() )
+					foreach( NLMediaPlayer *i, d->m_mediaPlayerList )
 					{
 						if( i->playing() )
 						{
@@ -344,7 +346,7 @@ QString NowListeningPlugin::mediaPlayerAdvert(bool update)
 	}
 	else
 	{
-		for ( NLMediaPlayer* i = d->m_mediaPlayerList.first(); i; i = d->m_mediaPlayerList.next() )
+		foreach( NLMediaPlayer* i, d->m_mediaPlayerList )
 		{
 			buildTrackMessage(message, i, update);
 		}
@@ -383,7 +385,7 @@ bool NowListeningPlugin::newTrackPlaying(void) const
 	}
 	else
 	{
-		for ( NLMediaPlayer* i = d->m_mediaPlayerList.first(); i; i = d->m_mediaPlayerList.next() )
+		foreach( NLMediaPlayer* i, d->m_mediaPlayerList )
 		{
 			i->update();
 			if( i->newTrack() )

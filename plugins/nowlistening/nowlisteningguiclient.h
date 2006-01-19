@@ -21,7 +21,7 @@
 #ifndef NOWLISTENINGGUICLIENT_H
 #define NOWLISTENINGGUICLIENT_H
 
-#include <qobject.h>
+#include <QObject>
 #include <kxmlguiclient.h>
 
 class KAction;
