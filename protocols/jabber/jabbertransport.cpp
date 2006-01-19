@@ -57,27 +57,25 @@ JabberTransport::JabberTransport (JabberAccount * parentAccount, const QString &
 #if KOPETE_IS_VERSION(0,11,51)
 		QString cIcon;
 		if(gateway_type=="msn")
-			cIcon="msn_protocol";
+			cIcon="jabber_gateway_msn";
 		else if(gateway_type=="icq")
-			cIcon="icq_protocol";
+			cIcon="jabber_gateway_icq";
 		else if(gateway_type=="aim")
-			cIcon="aim_protocol";
+			cIcon="jabber_gateway_aim";
 		else if(gateway_type=="yahoo")
-			cIcon="yahoo_protocol";
+			cIcon="jabber_gateway_yahoo";
 		else if(gateway_type=="sms")
-			cIcon="sms_protocol";
+			cIcon="jabber_gateway_sms";
 		else if(gateway_type=="gadu-gadu")
-			cIcon="gadu_protocol";
+			cIcon="jabber_gateway_gadu";
 		else if(gateway_type=="smtp")
-			cIcon="mail_generic";
-		//TODO: theses gateway are referenced in http://www.jabber.org/registrar/disco-categories.html#gateway 
-		//      but i don't have icon now
-/*		else if(gateway_type=="http-ws") 
-			cIcon="";
+			cIcon="jabber_gateway_smtp";
+		else if(gateway_type=="http-ws") 
+			cIcon="jabber_gateway_http-ws";
 		else if(gateway_type=="qq")
-			cIcon="";
+			cIcon="jabber_gateway_qq";
 		else if(gateway_type=="tlen")
-			cIcon="";*/
+			cIcon="jabber_gateway_tlen";
 		else if(gateway_type=="irc")  //NOTE: this is not official 
 			cIcon="irc_protocol";
 
