@@ -112,7 +112,7 @@ public:
 #if 0
 		kdDebug( 14010 ) << k_funcinfo << endl;
 		Kopete::WalletManager::self()->openWallet( this, SLOT( walletReceived( KWallet::Wallet* ) ) );
-#else
+#else 
 		processRequest();
 #endif
 	}
@@ -411,8 +411,8 @@ void Kopete::Password::readConfig()
 	else
 		d->passwordFromKConfig = cryptStr( passwordCrypted );
 
-	d->remembered = config->readBoolEntry( "RememberPassword", false );
-	d->isWrong = config->readBoolEntry( "PasswordIsWrong", false );
+	d->remembered = config->readEntry( "RememberPassword", false );
+	d->isWrong = config->readEntry( "PasswordIsWrong", false );
 }
 
 void Kopete::Password::writeConfig()

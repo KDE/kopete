@@ -22,6 +22,8 @@
 
 #include "task.h"
 #include "oscarmessage.h"
+//Added by qt3to4:
+#include <Q3CString>
 
 class Transfer;
 
@@ -44,7 +46,7 @@ public:
     void parseChatError();
 
     void setMessage( const Oscar::Message& msg );
-    void setEncoding( const QCString &enc );
+    void setEncoding( const Q3CString &enc );
 
 signals:
     void userJoinedChat( Oscar::WORD, const QString& r, const QString& u );
@@ -59,7 +61,7 @@ private:
     QString m_room;
     QString m_internalRoom;
     Oscar::Message m_message;
-    QCString m_encoding;
+    Q3CString m_encoding;
 };
 
 #endif

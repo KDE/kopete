@@ -20,6 +20,8 @@
 #include "buffer.h"
 
 #include <kdebug.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 ICQShortInfo::ICQShortInfo()
 {
@@ -183,7 +185,7 @@ void ICQInterestInfo::fill( Buffer* buffer )
 		for ( int i = 0; i < len; i++ )
 		{
 			int t=buffer->getLEWord();
-			QCString d = buffer->getLELNTS();
+			Q3CString d = buffer->getLELNTS();
 			if (t>0) { //there is some topic
 				if (count<4) { //i think this could not happen, i have never seen more
 					topics[count]=t;
@@ -216,19 +218,19 @@ void ICQSearchResult::fill( Buffer* buffer )
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found UIN " << QString::number( uin ) << endl;
 	len = buffer->getLEWord();
 	if ( len > 0 )
-		nickName = QCString( buffer->getBlock( len ) );
+		nickName = Q3CString( buffer->getBlock( len ) );
 	
 	len = buffer->getLEWord();
 	if ( len > 0 )
-		firstName = QCString( buffer->getBlock( len ) );
+		firstName = Q3CString( buffer->getBlock( len ) );
 	
 	len = buffer->getLEWord();
 	if ( len > 0 )
-		lastName = QCString( buffer->getBlock( len ) );
+		lastName = Q3CString( buffer->getBlock( len ) );
 	
 	len = buffer->getLEWord();
 	if ( len > 0 )
-		email = QCString( buffer->getBlock( len ) );
+		email = Q3CString( buffer->getBlock( len ) );
 	
 	auth = ( buffer->getByte() != 0x01 );
 	online = ( buffer->getLEWord() == 0x0001 );

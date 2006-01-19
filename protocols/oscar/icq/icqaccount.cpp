@@ -86,7 +86,7 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID, const char *
 
 	m_visibilityDialog = 0;
 
-	QString nickName = configGroup()->readEntry("NickName", QString::null);
+	QString nickName = configGroup()->readEntry("NickName", QString() );
 	mWebAware = configGroup()->readBoolEntry( "WebAware", false );
 	mHideIP = configGroup()->readBoolEntry( "HideIP", true );
 

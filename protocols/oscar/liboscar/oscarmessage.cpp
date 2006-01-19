@@ -21,6 +21,8 @@
 
 #include <q3deepcopy.h>
 #include <qtextcodec.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 
 Oscar::Message::Message()
@@ -45,7 +47,7 @@ Oscar::Message::Message( Encoding messageEncoding, const QByteArray& messageText
 {
 }
 
-Oscar::Message::Message( Encoding messageEncoding, const QCString& messageText, int channel, int properties, QDateTime timestamp )
+Oscar::Message::Message( Encoding messageEncoding, const Q3CString& messageText, int channel, int properties, QDateTime timestamp )
 : m_channel( channel ),
   m_properties( properties ),
   m_messageType( 0 ),
@@ -158,7 +160,7 @@ void Oscar::Message::setTextArray( const QByteArray& newTextArray )
 	m_textArray.duplicate( newTextArray );
 }
 
-void Oscar::Message::setTextArray( const QCString& newTextArray )
+void Oscar::Message::setTextArray( const Q3CString& newTextArray )
 {
 	m_textArray.duplicate( newTextArray );
 	uint len = m_textArray.size();

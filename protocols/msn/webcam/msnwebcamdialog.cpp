@@ -34,7 +34,7 @@ MSNWebcamDialog::MSNWebcamDialog( const QString& contact, QWidget * parent, cons
                    KDialogBase::Close, KDialogBase::Close, parent, name, false, true /*seperator*/ ),
 	m_imageContainer( this )
 {
-	setInitialSize( QSize(320,290), true );
+	setInitialSize( QSize(320,290) );
 	
 	setEscapeButton( KDialogBase::Close );
 	/*

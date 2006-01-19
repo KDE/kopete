@@ -115,12 +115,12 @@ QString MSNAccount::serverName()
 
 uint MSNAccount::serverPort()
 {
-	return configGroup()->readNumEntry(  "serverPort" , 1863 );
+	return configGroup()->readEntry(  "serverPort" , 1863 );
 }
 
 bool MSNAccount::useHttpMethod() const
 {
-	return configGroup()->readBoolEntry(  "useHttpMethod" , false );
+	return configGroup()->readEntry(  "useHttpMethod" , false );
 }
 
 void MSNAccount::connectWithPassword( const QString &passwd )
@@ -715,9 +715,9 @@ void MSNAccount::slotNewContactList()
 		m_reverseList.clear();
 		m_groupList.clear();
 		KConfigGroup *config=configGroup();
-		config->writeEntry( "blockList" , QString::null ) ;
-		config->writeEntry( "allowList" , QString::null );
-		config->writeEntry( "reverseList" , QString::null );
+		config->writeEntry( "blockList" , QString() ) ;
+		config->writeEntry( "allowList" , QString() );
+		config->writeEntry( "reverseList" , QString() );
 
 		// clear all date information which will be received.
 		// if the information is not anymore on the server, it will not be received

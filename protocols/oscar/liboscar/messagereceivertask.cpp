@@ -307,7 +307,7 @@ void MessageReceiverTask::handleType4Message()
 		break;
 	};
 
-	QCString msgText = tlv5buffer.getLNTS();
+	Q3CString msgText = tlv5buffer.getLNTS();
 	int msgLength = msgText.size();
 	if ( msgType == 0x0D || msgType == 0x0E )
 	{
@@ -404,7 +404,7 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 		
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Message type is: " << messageType << endl;
 		
-		QCString msgText( b->getLELNTS() );
+		Q3CString msgText( b->getLELNTS() );
 		Oscar::Message::Encoding encoding = Oscar::Message::UserDefined;
 		int fgcolor = 0x00000000;
 		int bgcolor = 0x00ffffff;

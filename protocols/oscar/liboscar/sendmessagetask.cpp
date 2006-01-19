@@ -66,8 +66,8 @@ void SendMessageTask::onGo()
 
 	if ( snacSubfamily == 0x0006 )
 	{
-		DWORD cookie1 = KApplication::random();
-		DWORD cookie2 = KApplication::random();
+		DWORD cookie1 = KRandom::random();
+		DWORD cookie2 = KRandom::random();
 		
 		b->addDWord( cookie1 );
 		b->addDWord( cookie2 );
@@ -260,7 +260,7 @@ void SendMessageTask::addChannel2Data( Buffer* b )
 void SendMessageTask::addChannel4Data( Buffer* b )
 {
 	Q_UNUSED( b );
-	Q_UNUSED( message );
+	//Q_UNUSED( message );
 	//TODO
 }
 

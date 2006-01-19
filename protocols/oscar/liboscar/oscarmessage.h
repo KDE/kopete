@@ -63,7 +63,7 @@ public:
 	Message();
 
 	Message( Encoding messageEncoding, const QByteArray& messageText, int channel, int properties, QDateTime timestamp );
-	Message( Encoding messageEncoding, const QCString& messageText, int channel, int properties, QDateTime timestamp );
+	Message( Encoding messageEncoding, const Q3CString& messageText, int channel, int properties, QDateTime timestamp );
 	Message( Encoding messageEncoding, const QString& messageText, int channel, int properties, QDateTime timestamp, QTextCodec* codec = 0 );
 
 	/** Get the sender of the message */
@@ -91,7 +91,7 @@ public:
 	void setTextArray( const QByteArray& newTextArray );
 
 	/** set the mesasge text as a bytearray for decoding */
-	void setTextArray( const QCString& newTextArray );
+	void setTextArray( const Q3CString& newTextArray );
 
 	/** get the message properties */
 	int properties() const;

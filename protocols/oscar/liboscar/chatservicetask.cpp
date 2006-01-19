@@ -52,7 +52,7 @@ void ChatServiceTask::setMessage( const Oscar::Message& msg )
     m_message = msg;
 }
 
-void ChatServiceTask::setEncoding( const QCString& enc )
+void ChatServiceTask::setEncoding( const Q3CString& enc )
 {
     m_encoding = enc;
 }
