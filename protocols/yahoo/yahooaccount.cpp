@@ -679,11 +679,11 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 void YahooAccount::slotDisconnected()
 {
 	kdDebug(14180) << k_funcinfo << endl;
+	initConnectionSignals( DeleteConnections );
 	if( !isConnected() )
 		return;
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 	disconnected( ConnectionReset );	// may reconnect
-	initConnectionSignals( DeleteConnections );
 	
 	QString message;
 	message = i18n( "%1 has been disconnected.\nError message:\n%2 - %3" )
@@ -694,9 +694,9 @@ void YahooAccount::slotDisconnected()
 void YahooAccount::slotLoginFailed()
 {
 	kdDebug(14180) << k_funcinfo << endl;
+	initConnectionSignals( DeleteConnections );
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 	disconnected( Manual );			// don't reconnect
-	initConnectionSignals( DeleteConnections );
 	
 	QString message;
 	message = i18n( "There was an error while connecting %1 to the Yahoo server.\nError message:\n%2 - %3" )
