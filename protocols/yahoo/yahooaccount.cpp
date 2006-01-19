@@ -329,7 +329,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		                    this, SLOT(slotDisconnected()) );
 		
 		QObject::disconnect(m_session, SIGNAL(loginFailed()),
-		                 this, SLOT(slotloginFailed()) );
+		                 this, SLOT(slotLoginFailed()) );
 		
 		QObject::disconnect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
 		                    this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
@@ -683,6 +683,7 @@ void YahooAccount::slotDisconnected()
 		return;
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 	disconnected( ConnectionReset );	// may reconnect
+	initConnectionSignals( DeleteConnections );
 	
 	QString message;
 	message = i18n( "%1 has been disconnected.\nError message:\n%2 - %3" )
@@ -694,7 +695,8 @@ void YahooAccount::slotLoginFailed()
 {
 	kdDebug(14180) << k_funcinfo << endl;
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
-	disconnected( Unknown );	// don't reconnect
+	disconnected( Manual );			// don't reconnect
+	initConnectionSignals( DeleteConnections );
 	
 	QString message;
 	message = i18n( "There was an error while connecting %1 to the Yahoo server.\nError message:\n%2 - %3" )
