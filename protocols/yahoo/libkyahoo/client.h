@@ -72,6 +72,16 @@ Q_OBJECT
 		void close();
 
 		/**
+		 * Returns the errorcode
+		 */
+		int error();
+
+		/**
+		 * Returns a description of the error
+		 */
+		QString errorString();
+
+		/**
 		 * Specifies the status we connect with.
 		 * May be Online or Invisible.
 		 */
@@ -291,7 +301,6 @@ Q_OBJECT
 		void notifyError( const QString & );
 	signals:
 		/** CONNECTION EVENTS */
-		
 		/**
 		 * Notifies that the login process has succeeded.
 		 */

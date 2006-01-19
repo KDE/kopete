@@ -24,7 +24,6 @@
 #include <qcolor.h>
 #include <qregexp.h>
 #include <qimage.h>
-#include <qtimer.h>
 #include <qfile.h>
 
 // KDE
@@ -89,8 +88,6 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	m_currentMailCount = 0;
 	m_pictureFlag = 0;
 	m_webcam = 0L;
-	m_waitingForResponse = false;
-	m_keepaliveTimer = new QTimer( this, "keepaliveTimer" );
 	
 	m_session->setUserId( accountId.lower() );
 	
@@ -106,7 +103,6 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	myself()->setProperty( YahooProtocol::protocol()->iconExpire, configGroup()->readNumEntry( "iconExpire", 0 ) );
 	
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged(const QString&, const QVariant& ) ), SLOT( slotGlobalIdentityChanged(const QString&, const QVariant& ) ));
-	QObject::connect( m_keepaliveTimer, SIGNAL( timeout() ), this, SLOT( slotKeepalive() ) );
 // 	initConnectionSignals( MakeConnections );
 	
 	QString displayName = configGroup()->readEntry(QString::fromLatin1("displayName"));
@@ -224,6 +220,12 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(loggedIn( int, const QString &)),
 		                 this, SLOT(slotLoginResponse(int, const QString &)) );
 		
+		QObject::connect(m_session, SIGNAL(disconnected()),
+		                 this, SLOT(slotDisconnected()) );
+		
+		QObject::connect(m_session, SIGNAL(loginFailed()),
+		                 this, SLOT(slotLoginFailed()) );
+		
 		QObject::connect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
 		                 this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
 		
@@ -267,22 +269,16 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session , SIGNAL(gotConferenceMessage( const QString &, const QString &, const QString &)), this,
 		                 SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
 		
-		QObject::connect(m_session,
-		                 SIGNAL(gotFile(const QString &, const QString &, long, const QString &, const QString &, unsigned long)),
-		                 this,
-		                 SLOT(slotGotFile(const QString&, const QString&, long, const QString&, const QString&, unsigned long)));
-		
-		QObject::connect(m_session , SIGNAL(contactAdded(const QString &, const QString &, const QString &)), this,
-		                 SLOT(slotContactAdded(const QString &, const QString &, const QString &)));
-		
-		QObject::connect(m_session , SIGNAL(rejected(const QString &, const QString &)), this,
-		                 SLOT(slotRejected(const QString&, const QString&)));
+// 		QObject::connect(m_session,
+// 		                 SIGNAL(gotFile(const QString &, const QString &, long, const QString &, const QString &, unsigned long)),
+// 		                 this,
+// 		                 SLOT(slotGotFile(const QString&, const QString&, long, const QString&, const QString&, unsigned long)));
 		
 		QObject::connect(m_session, SIGNAL(typingNotify(const QString &, int)), this ,
 		                 SLOT(slotTypingNotify(const QString &, int)));
 		
-		QObject::connect(m_session, SIGNAL(gameNotify(const QString &, int)), this,
-		                 SLOT(slotGameNotify( const QString &, int)));
+// 		QObject::connect(m_session, SIGNAL(gameNotify(const QString &, int)), this,
+// 		                 SLOT(slotGameNotify( const QString &, int)));
 		
 		QObject::connect(m_session, SIGNAL(mailNotify(const QString&, const QString&, int)), this,
 		                 SLOT(slotMailNotify(const QString &, const QString&, int)));
@@ -290,11 +286,8 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(systemMessage(const QString&)), this,
 		                 SLOT(slotSystemMessage(const QString &)));
 		
-		QObject::connect(m_session, SIGNAL(error(const QString&, int)), this,
-		                 SLOT(slotError(const QString &, int )));
-		
-		QObject::connect(m_session, SIGNAL(gotIdentities(const QStringList &)), this,
-		                 SLOT(slotGotIdentities( const QStringList&)));
+// 		QObject::connect(m_session, SIGNAL(gotIdentities(const QStringList &)), this,
+// 		                 SLOT(slotGotIdentities( const QStringList&)));
 		
 		QObject::connect(m_session, SIGNAL(gotWebcamInvite(const QString&)), this, SLOT(slotGotWebcamInvite(const QString&)));
 				
@@ -331,6 +324,12 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 	{
 		QObject::disconnect(m_session, SIGNAL(loggedIn(int, const QString &)),
 		                    this, SLOT(slotLoginResponse(int, const QString &)) );
+		
+		QObject::disconnect(m_session, SIGNAL(disconnected()),
+		                    this, SLOT(slotDisconnected()) );
+		
+		QObject::disconnect(m_session, SIGNAL(loginFailed()),
+		                 this, SLOT(slotloginFailed()) );
 		
 		QObject::disconnect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
 		                    this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
@@ -377,24 +376,18 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::disconnect(m_session , SIGNAL(gotConferenceMessage( const QString &, const QString &, const QString &)), this,
 		                    SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
 		
-		QObject::disconnect(m_session,
-		                    SIGNAL(gotFile(const QString &, const QString &,
-		                                   long, const QString &, const QString &, unsigned long)),
-		                    this,
-		                    SLOT(slotGotFile(const QString&, const QString&,
-		                                     long, const QString&, const QString&, unsigned long)));
-		
-		QObject::disconnect(m_session , SIGNAL(contactAdded(const QString &, const QString &, const QString &)), this,
-		                    SLOT(slotContactAdded(const QString &, const QString &, const QString &)));
-		
-		QObject::disconnect(m_session , SIGNAL(rejected(const QString &, const QString &)), this,
-		                    SLOT(slotRejected(const QString&, const QString&)));
+// 		QObject::disconnect(m_session,
+// 		                    SIGNAL(gotFile(const QString &, const QString &,
+// 		                                   long, const QString &, const QString &, unsigned long)),
+// 		                    this,
+// 		                    SLOT(slotGotFile(const QString&, const QString&,
+// 		                                     long, const QString&, const QString&, unsigned long)));
 		
 		QObject::disconnect(m_session, SIGNAL(typingNotify(const QString &, int)), this ,
 		                    SLOT(slotTypingNotify(const QString &, int)));
 		
-		QObject::disconnect(m_session, SIGNAL(gameNotify(const QString &, int)), this,
-		                    SLOT(slotGameNotify( const QString &, int)));
+// 		QObject::disconnect(m_session, SIGNAL(gameNotify(const QString &, int)), this,
+// 		                    SLOT(slotGameNotify( const QString &, int)));
 		
 		QObject::disconnect(m_session, SIGNAL(mailNotify(const QString&, const QString&, int)), this,
 		                    SLOT(slotMailNotify(const QString &, const QString&, int)));
@@ -402,11 +395,8 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::disconnect(m_session, SIGNAL(systemMessage(const QString&)), this,
 		                    SLOT(slotSystemMessage(const QString &)));
 		
-		QObject::disconnect(m_session, SIGNAL(error(const QString&, int)), this,
-		                    SLOT(slotError(const QString &, int )));
-		
-		QObject::disconnect(m_session, SIGNAL(gotIdentities(const QStringList &)), this,
-		                    SLOT(slotGotIdentities( const QStringList&)));
+// 		QObject::disconnect(m_session, SIGNAL(gotIdentities(const QStringList &)), this,
+// 		                    SLOT(slotGotIdentities( const QStringList&)));
 		
 		QObject::disconnect(m_session, SIGNAL(gotWebcamInvite(const QString&)), this, SLOT(slotGotWebcamInvite(const QString&)));
 		
@@ -512,23 +502,6 @@ void YahooAccount::verifyAccount( const QString &word )
 	kdDebug(14180) << k_funcinfo << "Word: s" << word << endl;
 	m_session->setVerificationWord( word );
 	disconnected( BadPassword );
-}
-
-void YahooAccount::slotKeepalive()
-{
-	if( m_waitingForResponse )
-	{
-		m_waitingForResponse = false;
-		slotError( QString::null, 1 );
-		return;
-	}
-	if( isConnected() && m_session )
-	{	
-		//m_session->keepalive();
-		//m_session->sendIm( accountId(), accountId(), QString("<ping>")/*, pictureFlag() */);
-		kdDebug(14180) << "Ping paket sent." << endl;
-	}
-	m_waitingForResponse = true;
 }
 
 void YahooAccount::setAway(bool status, const QString &awayMessage)
@@ -648,7 +621,6 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		 
 		setBuddyIcon( myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString() );
 		m_lastDisconnectCode = 0;
-		//m_keepaliveTimer->start( 60 * 1000 );
 		return;
 	}
 	else if(succ == Yahoo::LoginPasswd)
@@ -668,7 +640,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		disconnected( BadUserName ); // FIXME: add a more appropriate disconnect reason
 		return;
 	}
-	else if ( succ == Yahoo::LoginUname )
+	else if( succ == Yahoo::LoginUname )
 	{
 		initConnectionSignals( DeleteConnections );
 		errorMsg = i18n("Could not log into the Yahoo service: the username specified was invalid.");
@@ -677,7 +649,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		disconnected( BadUserName );
 		return;
 	}
-	else if ( succ == Yahoo::LoginDupl && m_lastDisconnectCode != 2 )
+	else if( succ == Yahoo::LoginDupl && m_lastDisconnectCode != 2 )
 	{
 		initConnectionSignals( DeleteConnections );
 		errorMsg = i18n("You have been logged out of the Yahoo service, possibly due to a duplicate login.");
@@ -686,7 +658,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		disconnected( Manual ); // cannot use ConnectionReset since that will auto-reconnect
 		return;
 	}
-	else if ( succ == Yahoo::LoginVerify )
+	else if( succ == Yahoo::LoginVerify )
 	{
 		initConnectionSignals( DeleteConnections );
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
@@ -699,7 +671,32 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	//If we get here, something went wrong, so set ourselves to offline
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 	disconnected( Unknown );
+}
 
+void YahooAccount::slotDisconnected()
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	if( !isConnected() )
+		return;
+	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
+	disconnected( ConnectionReset );	// may reconnect
+	
+	QString message;
+	message = i18n( "%1 has been disconnected.\nError message:\n%2 - %3" )
+		.arg( accountId() ).arg( m_session->error() ).arg( m_session->errorString() );
+	KNotification::event( "connection_lost", message, myself()->onlineStatus().protocolIcon() );
+}
+
+void YahooAccount::slotLoginFailed()
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
+	disconnected( Unknown );	// don't reconnect
+	
+	QString message;
+	message = i18n( "There was an error while connecting %1 to the Yahoo server.\nError message:\n%2 - %3" )
+		.arg( accountId() ).arg( m_session->error() ).arg( m_session->errorString() );
+	KNotification::event( "cannot_connect", message, myself()->onlineStatus().protocolIcon() );
 }
 
 void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, const QString &group )
@@ -723,7 +720,6 @@ void YahooAccount::slotAuthorizationAccepted( const QString &who )
 	message = i18n( "User %1 has granted your authorization request." )
 		.arg( who );
 	KNotification::event( "kopete_authorization", message, 0 , 0 , 0 );
-// 	KNotifyClient::event( Kopete::UI::Global::sysTrayWId(), "yahoo_authorization", message );
 }
 
 void YahooAccount::slotAuthorizationRejected( const QString &who, const QString &msg )
@@ -907,14 +903,6 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	QFont msgFont;
 	QDateTime msgDT;
 	Kopete::ContactPtrList justMe;
-	
-	// Check for ping-messages
-	if( contact( who ) == myself() && msg.startsWith("<ping>") )
-	{
-		kdDebug(14180) << "Ping packet received." << endl;
-		m_waitingForResponse = false;
-		return;
-	}
 	
 	if( !contact( who ) )
 	{
@@ -1269,20 +1257,6 @@ void YahooAccount::slotMailNotify( const QString& from, const QString& /* subjec
 void YahooAccount::slotSystemMessage( const QString & /* msg */ )
 {
 //	kdDebug(14180) << k_funcinfo << msg << endl;
-}
-
-void YahooAccount::slotError( const QString &err, int fatal )
-{
-	kdDebug(14180) << k_funcinfo << fatal << ": " << err << endl;
-	m_lastDisconnectCode = fatal;
-	m_keepaliveTimer->stop();
-	if(isConnected()) { // If we are already disconnected we don't need this MessageBox (<heiko@rangun.de>)
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, i18n( "<qt>The connection with the Yahoo server was lost.</qt>" ), 
-							i18n( "Connection Lost - Yahoo Plugin" ) );
-	
-		if ( fatal == 1 || fatal == 2 || fatal == -1 )
-			disconnect();
-	}
 }
 
 void YahooAccount::slotRemoveHandler( int /* fd */ )

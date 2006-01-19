@@ -61,6 +61,8 @@ public:
 	uint port;
 	bool active;
 	YahooBuddyIconLoader *iconLoader;
+	int error;
+	QString errorString;
 	
 	// tasks
 	bool tasksInitialized;
@@ -90,7 +92,7 @@ Client::Client(QObject *par) :QObject(par, "yahooclient" )
 
 	d->root = new Task(this, true);
 	d->statusOnConnect = Yahoo::StatusAvailable;
-	d->status = Yahoo::StatusDisconnected;
+	setStatus( Yahoo::StatusDisconnected );
 	d->tasksInitialized = false;
 	d->stream = 0L;
 	d->iconLoader = 0L;
@@ -126,6 +128,7 @@ void Client::connect( const QString &host, const uint port, const QString &userI
 	d->port = port;
 	d->user = userId;
 	d->pass = pass;
+	setStatus( Yahoo::StatusConnecting );
 
 	m_connector = new KNetworkConnector;
 	m_connector->setOptHostPort( host, port );
@@ -150,28 +153,58 @@ void Client::cs_connected()
 	kdDebug(14180) << k_funcinfo << " starting login task ... "<<  endl;
 
 	d->loginTask->setStateOnConnect( d->statusOnConnect );
-	d->loginTask->go(true);
+	d->loginTask->go();
 	d->active = true;
-	setStatus( d->statusOnConnect );
 }
 
 void Client::close()
 {
 	kdDebug(14180) << k_funcinfo << endl;
+	m_pingTimer->stop();
 	if( d->active )
 	{
 		LogoffTask *lt = new LogoffTask( d->root );
 		lt->go( true );
 	}
-	m_pingTimer->stop();
-	deleteTasks();
+	if( d->tasksInitialized)
+		deleteTasks();
+}
+
+int Client::error()
+{
+	return d->error;
+}
+
+QString Client::errorString()
+{
+	return d->errorString;
 }
 
 // SLOTS //
 void Client::streamError( int error )
 {
-	kdDebug(14180) << k_funcinfo << "CLIENT ERROR (Error " <<  error<< ")" << endl;
+	kdDebug(14180) << k_funcinfo << "CLIENT ERROR (Error " <<  error << ")" << endl;
+	QString msg;
+
 	d->active = false;
+	close();
+
+	// Examine error
+	if( error == ClientStream::ErrConnection )			// Ask Connector in this case
+	{
+		d->error = m_connector->errorCode();
+		d->errorString = KSocketBase::errorString( (KNetwork::KSocketBase::SocketError)error );
+	}
+	else
+	{
+		d->error = error;
+		d->errorString = d->stream->errorText();
+	}
+
+	if( status() == Yahoo::StatusConnecting )
+		emit loginFailed();
+	else
+		emit disconnected();
 }
 
 void Client::streamReadyRead()
@@ -192,6 +225,7 @@ void Client::slotLoginResponse( int response, const QString &msg )
 {
 	if( response == Yahoo::LoginOk )
 	{
+		setStatus( d->statusOnConnect );
 		m_pingTimer->start( 60 * 1000 );
 		initTasks();
 	}
@@ -279,7 +313,12 @@ void Client::sendAuthReply( const QString &userId, bool accept, const QString &m
 
 void Client::sendPing()
 {
-	kdDebug(14181) << k_funcinfo << "Sending a PING" << endl;
+	if( !d->active )
+	{
+		kdDebug(14181) << k_funcinfo << "Disconnected. NOT sending a PING." << endl;
+		return;
+	}
+	kdDebug(14181) << k_funcinfo << "Sending a PING." << endl;
 	PingTask *pt = new PingTask( d->root );
 	pt->go( true );
 }
@@ -652,6 +691,8 @@ void Client::deleteTasks()
 	d->pictureNotifierTask = 0L;
 	d->webcamTask->deleteLater();
 	d->webcamTask = 0L;
+	d->conferenceTask->deleteLater();
+	d->conferenceTask = 0L;
 }
 
 #include "client.moc"

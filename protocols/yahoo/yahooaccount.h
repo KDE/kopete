@@ -41,7 +41,6 @@ class YahooProtocol;
 class YahooWebcam;
 class YahooConferenceChatSession;
 class KTempFile;
-class QTimer;
 struct KURL;
 namespace Kopete{
 class Transfer;
@@ -175,6 +174,8 @@ protected slots:
 
 	void slotGoStatus(int status, const QString &awayMessage = QString::null);
 	void slotLoginResponse(int succ, const QString &url);
+	void slotDisconnected();
+	void slotLoginFailed();
 	void slotGotBuddies(const YList * buds);
 	void slotGotBuddy(const QString &userid, const QString &alias, const QString &group);
 	void slotAuthorizationAccepted( const QString &who );
@@ -202,7 +203,6 @@ protected slots:
 	void slotGameNotify(const QString &, int);
 	void slotMailNotify(const QString &, const QString &, int);
 	void slotSystemMessage(const QString &);
-	void slotError(const QString &, int);
 	void slotRemoveHandler(int fd);
 	//void slotHostConnect(const QString &host, int port);
 	void slotGotWebcamInvite(const QString &);
@@ -229,7 +229,6 @@ private slots:
 	 * When a global identity key get changed.
 	 */
 	void slotGlobalIdentityChanged( const QString &key, const QVariant &value );
-	void slotKeepalive();
 private:
 
 	/**
@@ -255,8 +254,6 @@ private:
 
 	bool theHaveContactList;	// Do we have the full server-side contact list yet?
 	int stateOnConnection;		// The state to change to on connection
-	QTimer* m_keepaliveTimer;
-	bool m_waitingForResponse;
 
 	/**
 	 * External Settings and Descriptors

@@ -360,6 +360,7 @@ void ClientStream::bs_delayedCloseFinished()
 
 void ClientStream::bs_error(int)
 {
+	kdDebug(14180) << k_funcinfo << endl;
 	// TODO
 }
 
