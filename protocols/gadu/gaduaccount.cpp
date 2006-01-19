@@ -1159,7 +1159,7 @@ GaduAccount::ignoreAnons()
 	bool r;
 	int n;
 	
-	s = p->config->readEntry( QString::fromAscii( "ignoreAnons" ) );
+	s = p->config->readEntry( QString( "ignoreAnons" ), QString() );
 	n = s.toInt( &r );
 	
 	if ( n ) {
