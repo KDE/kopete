@@ -489,6 +489,6 @@ If you do not currently have an ICQ account, please click the button to create o
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kopete::ui::passwordwidget.h</includehint>
+    <includehint>kopetepasswordwidget.h</includehint>
 </includehints>
 </UI>
