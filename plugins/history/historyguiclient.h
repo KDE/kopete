@@ -16,7 +16,7 @@
 #ifndef HISTORYGUICLIENT_H
 #define HISTORYGUICLIENT_H
 
-#include <qobject.h>
+#include <QObject>
 #include <kxmlguiclient.h>
 
 namespace Kopete { class ChatSession; }

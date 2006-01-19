@@ -19,11 +19,9 @@
 #ifndef _HISTORYDIALOG_H
 #define _HISTORYDIALOG_H
 
-#include <qfile.h>
-#include <qstringlist.h>
-//Added by qt3to4:
-#include <Q3ValueList>
-#include <Q3PtrList>
+#include <QFile>
+#include <QStringList>
+#include <QList>
 
 #include <kdialogbase.h>
 #include <klistview.h>
@@ -113,7 +111,7 @@ class HistoryDialog : public KDialogBase
 		/**
 		 * Show the messages in the HTML View
 		 */
-		void setMessages(Q3ValueList<Kopete::Message> m);
+		void setMessages(QList<Kopete::Message> m);
 
 		void listViewShowElements(bool s);
 
@@ -129,7 +127,7 @@ class HistoryDialog : public KDialogBase
 		 */
 		Kopete::MetaContact *mMetaContact;
 
-		Q3PtrList<Kopete::MetaContact> mMetaContactList;
+		QList<Kopete::MetaContact*> mMetaContactList;
 
 		// History View
 		KHTMLView *mHtmlView;
@@ -139,12 +137,12 @@ class HistoryDialog : public KDialogBase
 
 		struct Init
 		{
-			Q3ValueList<DMPair> dateMCList; // mc for MetaContact
+			QList<DMPair> dateMCList; // mc for MetaContact
 		} mInit;
 
 		struct Search
 		{
-				typedef QMap<QDate, Q3ValueList<Kopete::MetaContact*> > DateSearchMap;
+				typedef QMap<QDate, QList<Kopete::MetaContact*> > DateSearchMap;
 				DateSearchMap dateSearchMap;
 
 				KListViewDateItem *item;

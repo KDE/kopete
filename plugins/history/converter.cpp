@@ -28,10 +28,10 @@
 #include <kprogress.h>
 #include <kapplication.h>
 #include <ksavefile.h>
-#include <qdir.h>
-#include <qdom.h>
-#include <qregexp.h>
-//Added by qt3to4:
+
+#include <QDir>
+#include <QtXml> // old qdom.h
+#include <QRegExp>
 #include <QTextStream>
 
 #define CBUFLENGTH 512 // buffer length for fgets()
@@ -51,50 +51,51 @@ void HistoryPlugin::convertOldHistory()
 
 	d.setFilter( QDir::Dirs  );
 
-	const QFileInfoList *list = d.entryInfoList();
-	QFileInfoListIterator it( *list );
-	QFileInfo *fi;
-	while ( (fi = it.current()) != 0 )
+	const QFileInfoList list = d.entryInfoList();
+	QFileInfo fi;
+
+	foreach(fi, list)
 	{
 		QString protocolId;
 		QString accountId;
 
-		if( Kopete::Protocol *p = dynamic_cast<Kopete::Protocol *>( Kopete::PluginManager::self()->plugin( fi->fileName() ) ) )
+		if( Kopete::Protocol *p = dynamic_cast<Kopete::Protocol *>( Kopete::PluginManager::self()->plugin( fi.fileName() ) ) )
 		{
 			protocolId=p->pluginId();
-			Q3DictIterator<Kopete::Account> it(Kopete::AccountManager::self()->accounts(p));
-			Kopete::Account *a = it.current();
+			
+			QList<Kopete::Account*> accountList = Kopete::AccountManager::self()->accounts(p);
+			Kopete::Account *a = accountList.first();
 			if(a)
 				accountId=a->accountId();
 		}
 
 		if(accountId.isNull() || protocolId.isNull())
 		{
-			if(fi->fileName() == "MSNProtocol" || fi->fileName() == "msn_logs" )
+			if(fi.fileName() == "MSNProtocol" || fi.fileName() == "msn_logs" )
 			{
 				protocolId="MSNProtocol";
 				KGlobal::config()->setGroup("MSN");
 				accountId=KGlobal::config()->readEntry( "UserID" );
 			}
-			else if(fi->fileName() == "ICQProtocol" || fi->fileName() == "icq_logs" )
+			else if(fi.fileName() == "ICQProtocol" || fi.fileName() == "icq_logs" )
 			{
 				protocolId="ICQProtocol";
 				KGlobal::config()->setGroup("ICQ");
 				accountId=KGlobal::config()->readEntry( "UIN" );
 			}
-			else if(fi->fileName() == "AIMProtocol" || fi->fileName() == "aim_logs" )
+			else if(fi.fileName() == "AIMProtocol" || fi.fileName() == "aim_logs" )
 			{
 				protocolId="AIMProtocol";
 				KGlobal::config()->setGroup("AIM");
 				accountId=KGlobal::config()->readEntry( "UserID" );
 			}
-			else if(fi->fileName() == "OscarProtocol" )
+			else if(fi.fileName() == "OscarProtocol" )
 			{
 				protocolId="AIMProtocol";
 				KGlobal::config()->setGroup("OSCAR");
 				accountId=KGlobal::config()->readEntry( "UserID" );
 			}
-			else if(fi->fileName() == "JabberProtocol" || fi->fileName() == "jabber_logs")
+			else if(fi.fileName() == "JabberProtocol" || fi.fileName() == "jabber_logs")
 			{
 				protocolId="JabberProtocol";
 				KGlobal::config()->setGroup("Jabber");
@@ -105,26 +106,25 @@ void HistoryPlugin::convertOldHistory()
 
 		if(!protocolId.isEmpty() || !accountId.isEmpty())
 		{
-			QDir d2( fi->absoluteFilePath() );
+			QDir d2( fi.absoluteFilePath() );
 			d2.setFilter( QDir::Files  );
 			d2.setNameFilter("*.log");
-			const QFileInfoList *list = d2.entryInfoList();
-			QFileInfoListIterator it2( *list );
-			QFileInfo *fi2;
+			const QFileInfoList list = d2.entryInfoList();;
+			QFileInfo fi2;
 
 			progressDlg->progressBar()->reset();
 			progressDlg->progressBar()->setTotalSteps(d2.count());
-			progressDlg->setLabel(i18n("Parsing old history in %1").arg(fi->fileName()));
+			progressDlg->setLabel(i18n("Parsing old history in %1").arg(fi.fileName()));
 			progressDlg->show(); //if it was not already showed...
 
-			while ( (fi2 = it2.current()) != 0 )
+			foreach(fi2, list)
 			{
 				//we assume that all "-" are dots.  (like in hotmail.com)
-				QString contactId=fi2->fileName().replace(".log" , QString::null).replace("-" , ".");
+				QString contactId=fi2.fileName().replace(".log" , QString::null).replace("-" , ".");
 
 				if(!contactId.isEmpty() )
 				{
-					progressDlg->setLabel(i18n("Parsing old history in %1:\n%2").arg(fi->fileName()).arg(contactId));
+					progressDlg->setLabel(i18n("Parsing old history in %1:\n%2").arg(fi.fileName()).arg(contactId));
 					kapp->processEvents(0); //make sure the text is updated in the progressDlg
 
 					int month=0;
@@ -140,7 +140,7 @@ void HistoryPlugin::convertOldHistory()
 					QString buffer, msgBlock;
 					char cbuf[CBUFLENGTH]; // buffer for the log file
 
-					QString logFileName = fi2->absoluteFilePath();
+					QString logFileName = fi2.absoluteFilePath();
 
 					// open the file
 					FILE *f = fopen(QFile::encodeName(logFileName), "r");
@@ -255,7 +255,7 @@ void HistoryPlugin::convertOldHistory()
 								contactElem.setAttribute( "contactId", contactId );
 								headElem.appendChild(contactElem);
 								QDomElement importElem = doc.createElement( "imported" );
-								importElem.setAttribute( "from",  fi->fileName() );
+								importElem.setAttribute( "from",  fi.fileName() );
 								importElem.setAttribute( "date", QDateTime::currentDateTime().toString()  );
 								headElem.appendChild(importElem);
 							}
@@ -272,7 +272,7 @@ void HistoryPlugin::convertOldHistory()
 
 					fclose( f );
 					if(deleteFiles)
-						d2.remove(fi2->fileName() , false);
+						d2.remove(fi2.fileName());
 
 					if(!docElem.isNull())
 					{
@@ -293,10 +293,8 @@ void HistoryPlugin::convertOldHistory()
 
 				}
 				progressDlg->progressBar()->setProgress(progressDlg->progressBar()->progress()+1);
-				++it2;
 			}
 		}
-		++it;
 	}
 	delete progressDlg;
 
@@ -319,25 +317,24 @@ bool HistoryPlugin::detectOldHistory()
 
 	QDir d2( locateLocal( "data", QString::fromLatin1( "kopete")) );
 	d2.setFilter( QDir::Dirs  );
-	const QFileInfoList *list = d2.entryInfoList();
-	QFileInfoListIterator it( *list );
-	QFileInfo *fi;
-	while ( (fi = it.current()) != 0 )
+	const QFileInfoList list = d2.entryInfoList();
+	QFileInfo fi;
+
+	foreach(fi, list)
 	{
-		if( dynamic_cast<Kopete::Protocol *>( Kopete::PluginManager::self()->plugin( fi->fileName() ) ) )
+		if( dynamic_cast<Kopete::Protocol *>( Kopete::PluginManager::self()->plugin( fi.fileName() ) ) )
 			return true;
 
-		if(fi->fileName() == "MSNProtocol" || fi->fileName() == "msn_logs" )
+		if(fi.fileName() == "MSNProtocol" || fi.fileName() == "msn_logs" )
 			return true;
-		else if(fi->fileName() == "ICQProtocol" || fi->fileName() == "icq_logs" )
+		else if(fi.fileName() == "ICQProtocol" || fi.fileName() == "icq_logs" )
 			return true;
-		else if(fi->fileName() == "AIMProtocol" || fi->fileName() == "aim_logs" )
+		else if(fi.fileName() == "AIMProtocol" || fi.fileName() == "aim_logs" )
 			return true;
-		else if(fi->fileName() == "OscarProtocol" )
+		else if(fi.fileName() == "OscarProtocol" )
 			return true;
-		else if(fi->fileName() == "JabberProtocol" || fi->fileName() == "jabber_logs")
+		else if(fi.fileName() == "JabberProtocol" || fi.fileName() == "jabber_logs")
 			return true;
-		++it;
 	}
 	return false;
 }

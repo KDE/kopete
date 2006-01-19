@@ -20,10 +20,11 @@
 #include "historyprefsui.h"
 
 #include <kgenericfactory.h>
-#include <qlayout.h>
-#include <q3groupbox.h>
-//Added by qt3to4:
+
+#include <QLayout>
+#include <Q3GroupBox>
 #include <QVBoxLayout>
+
 #include <kcolorbutton.h>
 #include <knuminput.h>
 #include <qcheckbox.h>

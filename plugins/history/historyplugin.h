@@ -18,9 +18,9 @@
 #ifndef HISTORYPLUGIN_H
 #define HISTORYPLUGIN_H
 
-#include <qobject.h>
-#include <qmap.h>
-#include <qstring.h>
+#include <QObject>
+#include <QMap>
+#include <QString>
 
 #include "kopeteplugin.h"
 
