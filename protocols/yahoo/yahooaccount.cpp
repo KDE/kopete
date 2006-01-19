@@ -581,9 +581,12 @@ bool YahooAccount::createContact(const QString &contactId, Kopete::MetaContact *
 
 void YahooAccount::slotGlobalIdentityChanged( const QString &key, const QVariant &value )
 {
-	if ( key == Kopete::Global::Properties::self()->photo().key() )
+	if( !configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) )
 	{
-		setBuddyIcon( KURL( value.toString() ) );
+		if ( key == Kopete::Global::Properties::self()->photo().key() )
+		{
+			setBuddyIcon( KURL( value.toString() ) );
+		}
 	}
 }
 

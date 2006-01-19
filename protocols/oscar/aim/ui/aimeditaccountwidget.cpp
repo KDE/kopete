@@ -76,6 +76,9 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 			default:
 				mGui->rbAllowAll->setChecked( true );
 		}
+
+		// Global Identity
+		mGui->mGlobalIdentity->setChecked( account->configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) );
     }
 	QObject::connect( mGui->buttonRegister, SIGNAL( clicked() ), this, SLOT( slotOpenRegister() ) );
 
@@ -133,6 +136,8 @@ Kopete::Account *AIMEditAccountWidget::apply()
 	mAccount->configGroup()->writeEntry( "PrivacySetting", privacySetting );
 	mAccount->setPrivacySettings( privacySetting );
 
+	// Global Identity
+	mAccount->configGroup()->writeEntry( "ExcludeGlobalIdentity", mGui->mGlobalIdentity->isChecked() );
 	return mAccount;
 }
 

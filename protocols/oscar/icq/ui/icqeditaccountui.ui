@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>499</width>
+            <width>592</width>
             <height>404</height>
         </rect>
     </property>
@@ -34,7 +34,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>B&amp;asic Setup</string>
+                    <string>&amp;Basic Setup</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -106,6 +106,14 @@
                                 </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>If you check that case, the account will not be connected when you press the "Connect All" button, or at startup even if you selected to automatically connect at startup</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>chkGlobalIdentity</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Exclu&amp;de from Global Identity</string>
                                 </property>
                             </widget>
                         </vbox>
@@ -189,7 +197,7 @@ If you do not currently have an ICQ account, please click the button to create o
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>A&amp;ccount Preferences</string>
+                    <string>Accou&amp;nt Preferences</string>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -480,4 +488,7 @@ If you do not currently have an ICQ account, please click the button to create o
     <tabstop>chkWebAware</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kopete::ui::passwordwidget.h</includehint>
+</includehints>
 </UI>

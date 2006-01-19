@@ -1589,24 +1589,28 @@ void JabberAccount::slotEditVCard ()
 
 void JabberAccount::slotGlobalIdentityChanged (const QString &key, const QVariant &value)
 {
-	JabberContact *jabberMyself = static_cast<JabberContact *>( myself() );
-	if( key == Kopete::Global::Properties::self()->nickName().key() )
+	// Check if this account is excluded from Global Identity.
+	if( !configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) )
 	{
-		QString oldNick = jabberMyself->property( protocol()->propNickName ).value().toString();
-		QString newNick = value.toString();
-	
-		if( newNick != oldNick && isConnected() )
+		JabberContact *jabberMyself = static_cast<JabberContact *>( myself() );
+		if( key == Kopete::Global::Properties::self()->nickName().key() )
 		{
-			jabberMyself->setProperty( protocol()->propNickName, newNick );
-			jabberMyself->slotSendVCard();
+			QString oldNick = jabberMyself->property( protocol()->propNickName ).value().toString();
+			QString newNick = value.toString();
+		
+			if( newNick != oldNick && isConnected() )
+			{
+				jabberMyself->setProperty( protocol()->propNickName, newNick );
+				jabberMyself->slotSendVCard();
+			}
 		}
-	}
-	if( key == Kopete::Global::Properties::self()->photo().key() )
-	{
-		if( isConnected() )
+		if( key == Kopete::Global::Properties::self()->photo().key() )
 		{
-			jabberMyself->setPhoto( value.toString() );
-			jabberMyself->slotSendVCard();
+			if( isConnected() )
+			{
+				jabberMyself->setPhoto( value.toString() );
+				jabberMyself->slotSendVCard();
+			}
 		}
 	}
 }

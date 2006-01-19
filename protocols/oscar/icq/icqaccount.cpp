@@ -390,14 +390,18 @@ void ICQAccount::slotGlobalIdentityChanged( const QString& key, const QVariant& 
 	kdDebug(14153) << k_funcinfo << "Global identity changed" << endl;
 	kdDebug(14153) << k_funcinfo << "key: " << key << endl;
 	kdDebug(14153) << k_funcinfo << "value: " << value << endl;
-	if ( key == Kopete::Global::Properties::self()->nickName().key() )
-	{
-		//edit ssi item to change alias (if possible)
-	}
 	
-	if ( key == Kopete::Global::Properties::self()->photo().key() )
+	if( !configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) )
 	{
-		setBuddyIcon( value.toString() );
+		if ( key == Kopete::Global::Properties::self()->nickName().key() )
+		{
+			//edit ssi item to change alias (if possible)
+		}
+		
+		if ( key == Kopete::Global::Properties::self()->photo().key() )
+		{
+			setBuddyIcon( value.toString() );
+		}
 	}
 }
 

@@ -92,7 +92,8 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
                                       mProtocol->encodings(),
                                       encodingValue );
 
-
+		// Global Identity
+		mAccountSettings->chkGlobalIdentity->setChecked( mAccount->configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) );
 	}
 
 	QObject::connect(mAccountSettings->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
@@ -146,6 +147,9 @@ Kopete::Account *ICQEditAccountWidget::apply()
 		mAccount->setServerAddress("login.oscar.aol.com");
 		mAccount->setServerPort(5190);
 	}
+	
+	// Global Identity
+	mAccount->configGroup()->writeEntry( "ExcludeGlobalIdentity", mAccountSettings->chkGlobalIdentity->isChecked() );
 
 	return mAccount;
 }

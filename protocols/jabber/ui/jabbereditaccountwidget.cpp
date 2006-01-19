@@ -125,6 +125,9 @@ void JabberEditAccountWidget::reopen ()
 	cbSendComposingEvent->setChecked( account()->configGroup()->readBoolEntry("SendComposingEvent", true) );
 
 	cbHideSystemInfo->setChecked( account()->configGroup()->readBoolEntry("HideSystemInfo", false) );
+
+	// Global Identity
+	cbGlobalIdentity->setChecked( account()->configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) );
 }
 
 Kopete::Account *JabberEditAccountWidget::apply ()
@@ -185,6 +188,8 @@ void JabberEditAccountWidget::writeConfig ()
 	
 	account()->configGroup()->writeEntry("HideSystemInfo", cbHideSystemInfo->isChecked());
 
+	// Global Identity
+	account()->configGroup()->writeEntry("ExcludeGlobalIdentity", cbGlobalIdentity->isChecked());
 }
 
 bool JabberEditAccountWidget::validateData ()

@@ -163,6 +163,9 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		d->ui->m_displayPicture->setPixmap( d->pictureUrl );
 
 		d->ui->m_useDisplayPicture->setChecked( config->readBoolEntry( "exportCustomPicture" ));
+
+		// Global Identity
+		d->ui->m_globalIdentity->setChecked( config->readBoolEntry("ExcludeGlobalIdentity", false) );
 	}
 	else
 	{
@@ -216,6 +219,9 @@ Kopete::Account * MSNEditAccountWidget::apply()
 		config->writeEntry( "WebcamPort" , d->ui->m_webcamPort->value() );
 	else
 		config->writeEntry( "WebcamPort" , 0 );
+
+	// Global Identity
+	config->writeEntry( "ExcludeGlobalIdentity", d->ui->m_globalIdentity->isChecked() );
 
 	// Save the avatar image
 	if( d->ui->m_useDisplayPicture->isChecked() && !d->pictureData.isNull() )

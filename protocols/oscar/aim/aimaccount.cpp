@@ -395,75 +395,79 @@ void AIMAccount::globalIdentityChanged( const QString& key, const QVariant& valu
 	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Global identity changed" << endl;
 	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "key: " << key << endl;
 	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "value: " << value << endl;
-	if ( key == Kopete::Global::Properties::self()->nickName().key() )
+	
+	if( !configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) )
 	{
-		//edit ssi item to change alias (if possible)
-	}
-
-	if ( key == Kopete::Global::Properties::self()->photo().key() )
-	{
-		//yay for brain damage. since i have no way to access the global
-		//properties outside of this slot, i've got to set them somewhere
-		//else so i can get at them later.
-		myself()->setProperty( Kopete::Global::Properties::self()->photo(), value.toString() );
-
-		//generate a new icon hash
-		//photo is a url, gotta load it first.
-		QFile iconFile( value.toString() );
-		iconFile.open( IO_ReadOnly );
-		kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "hashing global identity image" << endl;
-		KMD5 iconHash;
-		iconHash.update( iconFile );
-		kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo  << "hash is :" << iconHash.hexDigest() << endl;
-		//find old item, create updated item
-		if ( engine()->isActive() )
+		if ( key == Kopete::Global::Properties::self()->nickName().key() )
 		{
-			SSIManager* ssi = engine()->ssiManager();
-			Oscar::SSI item = ssi->findItemForIconByRef( 1 );
-
-			if ( !item )
-			{
-				kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "no existing icon hash item in ssi. creating new"
-					<< endl;
-				TLV t;
-				t.type = 0x00D5;
-				t.data.resize( 18 );
-				t.data[0] = 0x00;
-				t.data[1] = 0x10;
-				memcpy(t.data.data() + 2, iconHash.rawDigest(), 16);
-				t.length = t.data.size();
-
-				QValueList<Oscar::TLV> list;
-				list.append( t );
-
-				Oscar::SSI s( "1", 0, ssi->nextContactId(), ROSTER_BUDDYICONS, list );
-
-				//item is a non-valid ssi item, so the function will add an item
-				kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "setting new icon item" << endl;
-				engine()->modifySSIItem( item, s );
-			}
-			else
-			{ //found an item
-				Oscar::SSI s(item);
-				kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "modifying old item in ssi."
-					<< endl;
-				QValueList<TLV> tList( item.tlvList() );
-				TLV t = Oscar::findTLV( tList, 0x00D5 );
-				if ( !t )
-					return;
-				tList.remove( t );
-				t.data.resize( 18 );
-				t.data[0] = 0x00;
-				t.data[1] = 0x10;
-				memcpy(t.data.data() + 2, iconHash.rawDigest(), 16);
-				t.length = t.data.size();
-				tList.append( t );
-				item.setTLVList( tList );
-				//s is old, item is new. modification will occur
-				engine()->modifySSIItem( s, item );
-			}
+			//edit ssi item to change alias (if possible)
 		}
-		iconFile.close();
+	
+		if ( key == Kopete::Global::Properties::self()->photo().key() )
+		{
+			//yay for brain damage. since i have no way to access the global
+			//properties outside of this slot, i've got to set them somewhere
+			//else so i can get at them later.
+			myself()->setProperty( Kopete::Global::Properties::self()->photo(), value.toString() );
+	
+			//generate a new icon hash
+			//photo is a url, gotta load it first.
+			QFile iconFile( value.toString() );
+			iconFile.open( IO_ReadOnly );
+			kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "hashing global identity image" << endl;
+			KMD5 iconHash;
+			iconHash.update( iconFile );
+			kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo  << "hash is :" << iconHash.hexDigest() << endl;
+			//find old item, create updated item
+			if ( engine()->isActive() )
+			{
+				SSIManager* ssi = engine()->ssiManager();
+				Oscar::SSI item = ssi->findItemForIconByRef( 1 );
+	
+				if ( !item )
+				{
+					kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "no existing icon hash item in ssi. creating new"
+						<< endl;
+					TLV t;
+					t.type = 0x00D5;
+					t.data.resize( 18 );
+					t.data[0] = 0x00;
+					t.data[1] = 0x10;
+					memcpy(t.data.data() + 2, iconHash.rawDigest(), 16);
+					t.length = t.data.size();
+	
+					QValueList<Oscar::TLV> list;
+					list.append( t );
+	
+					Oscar::SSI s( "1", 0, ssi->nextContactId(), ROSTER_BUDDYICONS, list );
+	
+					//item is a non-valid ssi item, so the function will add an item
+					kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "setting new icon item" << endl;
+					engine()->modifySSIItem( item, s );
+				}
+				else
+				{ //found an item
+					Oscar::SSI s(item);
+					kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "modifying old item in ssi."
+						<< endl;
+					QValueList<TLV> tList( item.tlvList() );
+					TLV t = Oscar::findTLV( tList, 0x00D5 );
+					if ( !t )
+						return;
+					tList.remove( t );
+					t.data.resize( 18 );
+					t.data[0] = 0x00;
+					t.data[1] = 0x10;
+					memcpy(t.data.data() + 2, iconHash.rawDigest(), 16);
+					t.length = t.data.size();
+					tList.append( t );
+					item.setTLVList( tList );
+					//s is old, item is new. modification will occur
+					engine()->modifySSIItem( s, item );
+				}
+			}
+			iconFile.close();
+		}
 	}
 }
 

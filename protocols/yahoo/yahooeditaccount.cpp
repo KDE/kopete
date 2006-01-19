@@ -81,6 +81,9 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 		if( !iconUrl.isEmpty() )
 			m_Picture->setPixmap( KURL( iconUrl ).path() );
 		editPictureUrl->setEnabled( sendPicture );
+
+		// Global Identity
+		mGlobalIdentity->setChecked( account()->configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) );
 	}
 
 	QObject::connect(buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
@@ -148,6 +151,9 @@ Kopete::Account *YahooEditAccount::apply()
 		yahooAccount->setBuddyIcon( KURL( QString::null ) );
 	}
 	
+	// Global Identity
+	account()->configGroup()->writeEntry("ExcludeGlobalIdentity", mGlobalIdentity->isChecked() );
+
 	return yahooAccount;
 }
 
