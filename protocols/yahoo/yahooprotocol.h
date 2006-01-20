@@ -19,9 +19,6 @@
 #ifndef YAHOOPROTOCOL_H
 #define YAHOOPROTOCOL_H
 
-#include "libyahoo2/yahoo2.h"
-#include "libyahoo2/yahoo2_callbacks.h"
-
 // Kopete Includes
 #include "kopeteonlinestatus.h"
 

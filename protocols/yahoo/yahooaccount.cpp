@@ -549,11 +549,6 @@ KActionMenu *YahooAccount::actionMenu()
 	return theActionMenu;
 }
 
-void YahooAccount::slotGotBuddies( const YList */*theList*/ )
-{
-	kdDebug(14180) << k_funcinfo << endl;
-}
-
 YahooContact *YahooAccount::contact( const QString &id )
 {
 	return static_cast<YahooContact *>(contacts()[id]);
