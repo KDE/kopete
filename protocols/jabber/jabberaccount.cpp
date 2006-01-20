@@ -1237,11 +1237,16 @@ void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
 	else if( !item.name().isEmpty() || !item.groups().isEmpty() )
 		need_to_add = true;
 	
-	
 	/*
 	 * See if the contact is already on our contact list
 	 */
 	Kopete::Contact *c= contactPool()->findExactMatch( item.jid() );
+	
+	if( c && c == c->Kopete::Contact::account()->myself() )  //don't use JabberBaseContact::account() which return alwaus the JabberAccount, and not the transport
+	{
+		// don't let remove the gateway contact, eh!
+		need_to_add = true;  
+	}
 
 	if(need_to_add)
 	{
