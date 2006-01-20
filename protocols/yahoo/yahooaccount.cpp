@@ -772,7 +772,7 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	}
 				
 	// Replace < and > in text
-	regExp.setPattern( "<(?![\"/fbui])" );
+	regExp.setPattern( "<(?!(/*(font.*|[\"fbui])>))" );
 	pos = 0;
 	while ( pos >= 0 ) {
 		pos = regExp.search( newMsgText, pos );
