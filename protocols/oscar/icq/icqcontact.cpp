@@ -372,7 +372,7 @@ void ICQContact::receivedStatusMessage( const Oscar::Message &message )
 		return;
 	
 	//decode message
-    QTextCodec* codec = QTextCodec::codecForMib( this->property( "contactEncoding" ).value().toInt() );
+	QTextCodec* codec = contactCodec();
 	
 	QString realText = message.text(codec);
 
