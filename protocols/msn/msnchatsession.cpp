@@ -84,7 +84,7 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 
 	m_actionNudge=new KAction( i18n( "Send Nudge" ), 0, this, SLOT(slotSendNudge() ), actionCollection(), "msnSendNudge" ) ;
 	m_actionNudge->setEnabled(false);
-	m_actionWebcamReceive=new KAction( i18n( "Invite to Receive User Webcam" ), 0, this, SLOT(slotWebcamReceive() ), actionCollection(), "msnWebcamReceive" ) ;
+	m_actionWebcamReceive=new KAction( i18n( "View Contact's Webcam" ), 0, this, SLOT(slotWebcamReceive() ), actionCollection(), "msnWebcamReceive" ) ;
 	m_actionWebcamSend=new KAction( i18n( "Send Webcam" ), 0, this, SLOT(slotWebcamSend() ), actionCollection(), "msnWebcamSend" ) ;
 	
 	
@@ -632,7 +632,7 @@ void MSNChatSession::slotNudgeReceived()
 {
 	// FIXME: When nudge is the first received message, you can't see your own message you send before the others send you a message.
 	//        Ok, this is only with chat window style which use "Parse All Message" flag.
-	QString nudgeBody = i18n( "You have received a nudge!" );
+	QString nudgeBody = i18n( "You have received a nudge." );
 	Kopete::Message msg = Kopete::Message(myself(), members(), nudgeBody, Kopete::Message::Internal, Kopete::Message::PlainText );
 	appendMessage( msg );
 	// Emit the nudge/buzz notification (configured by user).

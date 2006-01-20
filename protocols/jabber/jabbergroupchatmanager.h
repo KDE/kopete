@@ -54,6 +54,12 @@ public:
 	 * Re-generate the display name
 	 */
 	void updateDisplayName ();
+	
+	/**
+	 * reimplemented from Kopete::ChatSession
+	 * called when a contact is droped in the window
+	 */
+	virtual void inviteContact(const QString &contactId);
 
 private slots:
 	void slotMessageSent ( Kopete::Message &message, Kopete::ChatSession *kmm );

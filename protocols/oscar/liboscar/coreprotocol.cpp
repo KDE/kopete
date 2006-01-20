@@ -194,21 +194,21 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "packet size is " << wire.size() << endl;
 		m_state = NeedMore;
 		return bytesParsed;
-	}
-
-	m_din = new QDataStream( const_cast<QByteArray*>( &wire ), QIODevice::ReadOnly );
-
+	}	
+	
+	QDataStream din( wire, IO_ReadOnly );
+	
 	// look at first four bytes and decide what to do with the chunk
-	if ( okToProceed() )
+	if ( okToProceed( din ) )
 	{
-		*m_din >> flapStart;
+		din >> flapStart;
 		QByteArray packet;
 		packet.duplicate( wire );
 		if ( flapStart == 0x2A )
 		{
-			*m_din >> flapChannel;
-			*m_din >> flapLength; //discard the first one it's not really the flap length
-			*m_din >> flapLength;
+			din >> flapChannel;
+			din >> flapLength; //discard the first one it's not really the flap length
+			din >> flapLength;
 			if ( wire.size() < flapLength )
 			{
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo
@@ -233,8 +233,8 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 
 			if ( flapChannel == 2 )
 			{
-				*m_din >> s1;
-				*m_din >> s2;
+				din >> s1;
+				din >> s2;
 
 				Transfer * t = m_snacProtocol->parse( packet, bytesParsed );
 				if ( t )
@@ -258,7 +258,6 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		}
 
 	}
-	delete m_din;
 	return bytesParsed;
 }
 
@@ -272,19 +271,16 @@ void CoreProtocol::slotOutgoingData( const QByteArray &out )
 	kdDebug(OSCAR_RAW_DEBUG) << out.data() << endl;
 }
 
-bool CoreProtocol::okToProceed()
+bool CoreProtocol::okToProceed( const QDataStream &din )
 {
-	if ( m_din )
+	if ( din.atEnd() )
 	{
-		if ( m_din->atEnd() )
-		{
-			m_state = NeedMore;
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Server message ended prematurely!" << endl;
-		}
-		else
-			return true;
+		m_state = NeedMore;
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Server message ended prematurely!" << endl;
+		return false;
 	}
-	return false;
+	else
+		return true;
 }
 
 #include "coreprotocol.moc"

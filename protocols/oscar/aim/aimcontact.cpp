@@ -452,11 +452,7 @@ void AIMContact::sendAutoResponse(Kopete::Message& msg)
 		}
 		else
 		{
-			QTextCodec* codec;
-			if ( hasProperty( "contactEncoding" ) )
-				codec = QTextCodec::codecForMib( property( "contactEncoding" ).value().toInt() );
-			else
-				codec = QTextCodec::codecForMib( 4 );
+			QTextCodec* codec = contactCodec();
 			message.setText( Oscar::Message::UserDefined, msg.plainBody(), codec );
 		}
 

@@ -116,7 +116,7 @@ void DlgJabberChangePassword::slotChangePasswordDone ()
 
 	if ( task->success () )
 	{
-		KMessageBox::queuedMessageBox ( this, KMessageBox::Information,
+		KMessageBox::queuedMessageBox ( dynamic_cast<QWidget*>(parent()), KMessageBox::Information,
 								   i18n ( "Your password has been changed successfully. Please note that the change may not be instantaneous. If you have problems logging in with your new password, please contact the administrator." ),
 								   i18n ( "Jabber Password Change" ) );
 
@@ -124,11 +124,11 @@ void DlgJabberChangePassword::slotChangePasswordDone ()
 	}
 	else
 	{
-		KMessageBox::queuedMessageBox ( this, KMessageBox::Sorry, 
+		KMessageBox::queuedMessageBox ( dynamic_cast<QWidget*>(parent()), KMessageBox::Sorry, 
 							 i18n ( "Your password could not be changed. Either your server does not support this feature or the administrator does not allow you to change your password." ) );
 	}
 
-	deleteLater ();
+	deleteLater();
 
 }
 

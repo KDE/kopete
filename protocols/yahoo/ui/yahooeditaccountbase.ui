@@ -1,0 +1,467 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>YahooEditAccountBase</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>YahooEditAccountBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>462</width>
+            <height>344</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Account Preferences - Yahoo</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <property name="spacing">
+            <number>0</number>
+        </property>
+        <widget class="QTabWidget">
+            <property name="name">
+                <cstring>tabWidget11</cstring>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>460</width>
+                    <height>0</height>
+                </size>
+            </property>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>&amp;Basic Setup</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>mAccountInfo</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Account Information</string>
+                        </property>
+                        <vbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout81</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>label1</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;Yahoo username:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>mScreenName</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The account name of your Yahoo account.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The account name of your Yahoo account.  This should be in the form of an alphanumeric string (no spaces).</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLineEdit">
+                                        <property name="name">
+                                            <cstring>mScreenName</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The account name of your Yahoo account.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The account name of your Yahoo account.  This should be in the form of an alphanumeric string (no spaces).</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>mAutoConnect</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>E&amp;xclude from connect all</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>mGlobalIdentity</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Exclude from &amp;Global Identity</string>
+                                </property>
+                            </widget>
+                        </vbox>
+                    </widget>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>groupBox5</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>1</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="title">
+                            <string>Registration</string>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>textLabel6</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>1</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                    <size>
+                                        <width>0</width>
+                                        <height>0</height>
+                                    </size>
+                                </property>
+                                <property name="text">
+                                    <string>To connect to the Yahoo network, you will need a Yahoo account.&lt;br&gt;&lt;br&gt;If you do not currently have a Yahoo account, please click the button to create one.</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>WordBreak|AlignVCenter</set>
+                                </property>
+                            </widget>
+                            <widget class="QPushButton">
+                                <property name="name">
+                                    <cstring>buttonRegister</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="text">
+                                    <string>Register &amp;New Account</string>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Register a new account on this network.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Register a new account on this network.</string>
+                                </property>
+                            </widget>
+                        </hbox>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer6</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>81</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>TabPage</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Accoun&amp;t Preferences</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <spacer row="2" column="0">
+                        <property name="name">
+                            <cstring>spacer4</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>110</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QGroupBox" row="0" column="0">
+                        <property name="name">
+                            <cstring>groupBox73</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Connection Preferences</string>
+                        </property>
+                        <vbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>optionOverrideServer</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>O&amp;verride default server information</string>
+                                </property>
+                                <property name="checked">
+                                    <bool>false</bool>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout58</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>lblServer</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="text">
+                                            <string>Ser&amp;ver:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>edtServerAddress</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The IP address or hostmask of the Yahoo server you wish to connect to.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The IP address or hostmask of the Yahoo server you wish to connect to.  Normally you will want the default (scs.msg.yahoo.com).</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLineEdit">
+                                        <property name="name">
+                                            <cstring>editServerAddress</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="text">
+                                            <string>scs.msg.yahoo.com</string>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The IP address or hostmask of the Yahoo server you wish to connect to.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The IP address or hostmask of the Yahoo server you wish to connect to.  Normally you will want the default (scs.msg.yahoo.com).</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>lblPort</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="text">
+                                            <string>P&amp;ort:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>sbxServerPort</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The port on the Yahoo server that you would like to connect to.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The port on the Yahoo server that you would like to connect to.  Normally this is 5050, but Yahoo also allows port 80 in case you are behind a firewall.</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QSpinBox">
+                                        <property name="name">
+                                            <cstring>sbxServerPort</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>65534</number>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>1</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>5050</number>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The port on the Yahoo server that you would like to connect  to.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The port on the Yahoo server that you would like to connect to.  Normally this is 5050, but Yahoo also allows port 80 in case you are behind a firewall.</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                        </vbox>
+                    </widget>
+                    <widget class="QGroupBox" row="1" column="0">
+                        <property name="name">
+                            <cstring>groupBox4</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Buddy Icon</string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLineEdit" row="1" column="0">
+                                <property name="name">
+                                    <cstring>editPictureUrl</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QPushButton" row="1" column="1">
+                                <property name="name">
+                                    <cstring>buttonSelectPicture</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Select Picture...</string>
+                                </property>
+                                <property name="accel">
+                                    <string></string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="0" column="2" rowspan="2" colspan="1">
+                                <property name="name">
+                                    <cstring>m_Picture</cstring>
+                                </property>
+                                <property name="minimumSize">
+                                    <size>
+                                        <width>96</width>
+                                        <height>96</height>
+                                    </size>
+                                </property>
+                                <property name="maximumSize">
+                                    <size>
+                                        <width>96</width>
+                                        <height>96</height>
+                                    </size>
+                                </property>
+                                <property name="frameShape">
+                                    <enum>GroupBoxPanel</enum>
+                                </property>
+                                <property name="margin">
+                                    <number>0</number>
+                                </property>
+                                <property name="text">
+                                    <string></string>
+                                </property>
+                                <property name="scaledContents">
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
+                                <property name="name">
+                                    <cstring>optionSendBuddyIcon</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Se&amp;nd buddy icon to other users</string>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                </grid>
+            </widget>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>labelStatusMessage</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
+    </vbox>
+</widget>
+<connections>
+    <connection>
+        <sender>optionOverrideServer</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>lblPort</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>optionOverrideServer</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>lblServer</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>optionOverrideServer</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>editServerAddress</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>optionOverrideServer</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>sbxServerPort</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>optionSendBuddyIcon</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>editPictureUrl</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>tabWidget11</tabstop>
+    <tabstop>mScreenName</tabstop>
+    <tabstop>mAutoConnect</tabstop>
+    <tabstop>buttonRegister</tabstop>
+</tabstops>
+<slots>
+    <slot access="private" specifier="nicht virtual">slotSelectPicture()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

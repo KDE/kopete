@@ -6,9 +6,9 @@
     copyright            : (C) 2003 by Till Gerken <till@tantalo.net>
 							Based on JabberProtocol by Daniel Stone <dstone@kde.org>
 							and Till Gerken <till@tantalo.net>.
+   copyright            : (C) 2006 by Olivier Goffart <ogoffart at kde.org>
 
-			   Kopete (C) 2001-2003 Kopete developers
-			   <kopete-devel@kde.org>.
+			   Kopete (C) 2001-2003 Kopete developers  <kopete-devel@kde.org>.
  ***************************************************************************/
 
 /***************************************************************************
@@ -44,7 +44,11 @@ class JabberTransport;
 
 namespace Kopete { class MetaContact; }
 
+#ifdef SUPPORT_JINGLE
+class JingleSessionManager;
 class VoiceCaller;
+#endif
+class JingleSession; 
 
 /* @author Daniel Stone, Till Gerken */
 
@@ -82,6 +86,11 @@ public:
 	VoiceCaller *voiceCaller() const
 	{
 		return m_voiceCaller;
+	}
+
+	JingleSessionManager *sessionManager()  const
+	{
+		return m_jingleSessionManager;
 	}
 #endif
 
@@ -176,6 +185,7 @@ private:
 
 #ifdef SUPPORT_JINGLE
 	VoiceCaller *m_voiceCaller;
+	JingleSessionManager *m_jingleSessionManager;
 #endif
 
 	/* Set up our actions for the status menu. */
@@ -201,6 +211,9 @@ private:
 	
 	/* used in removeAccount() */
 	bool m_removing;
+	
+	QStringList m_bookmarkGroupChat;
+
 private slots:
 	/* Connects to the server. */
 	void slotConnect ();
@@ -251,8 +264,9 @@ private slots:
 	/**
 	 * A new item appeared in our roster, synch it with the
 	 * contact list.
+	 * (or the contact has been updated
 	 */
-	void slotNewContact ( const XMPP::RosterItem & );
+	void slotContactUpdated ( const XMPP::RosterItem & );
 
 	/**
 	 * An item has been deleted from our roster,
@@ -260,8 +274,6 @@ private slots:
 	 */
 	void slotContactDeleted ( const XMPP::RosterItem & );
 
-	/* Update a contact's details. */
-	void slotContactUpdated ( const XMPP::RosterItem & );
 
 	/* Someone on our contact list had (another) resource come online. */
 	void slotResourceAvailable ( const XMPP::Jid &, const XMPP::Resource & );
@@ -286,6 +298,11 @@ private slots:
 	
 	/* the unregister task finished */
 	void slotUnregisterFinished();
+//ifdef SUPPORT_JINGLE  (we can't disable slot, or moc cill complain)
+	void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);
+	
+	void slotReceivedGroupChatBookmark();
+	void slotJoinChatBookmark(const QString& jid);
 };
 
 #endif

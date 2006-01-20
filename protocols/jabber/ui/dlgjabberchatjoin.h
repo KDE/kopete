@@ -19,28 +19,48 @@
 #ifndef DLGJABBERCHATJOIN_H
 #define DLGJABBERCHATJOIN_H
 
-#include <kdialogbase.h>
+#include "dlgchatjoin.h"
 #include "jabberaccount.h"
 
-/**
-  *@author Till Gerken <till@tantalo.net>
-  */
-
-class dlgJabberChatJoin : public KDialogBase
+class dlgJabberChatJoin : public dlgChatJoin
 {
-
-	Q_OBJECT
+  Q_OBJECT
 
 public:
-	  dlgJabberChatJoin (JabberAccount *account, QWidget * parent = 0, const char *name = 0);
+  dlgJabberChatJoin(JabberAccount *account, QWidget* parent = 0, const char* name = 0);
+  ~dlgJabberChatJoin();
+  /*$PUBLIC_FUNCTIONS$*/
 
-private slots:
-	void slotOk ();
-	void slotCancel ();
+public slots:
+  /*$PUBLIC_SLOTS$*/
+  virtual void          slotJoin();
+  virtual void          slotBowse();
+
+protected:
+  /*$PROTECTED_FUNCTIONS$*/
+
+protected slots:
+  /*$PROTECTED_SLOTS$*/
 
 private:
+	
+
 	JabberAccount *m_account;
+	QString m_chatroomsServer;
+
+	/*
+		TODO : Used to look for the default chat server,
+		this is duplicate with dlgjabberservices.h
+		should be merged elsewhere !
+	*/
+	void checkDefaultChatroomServer();
+private slots:
+	void slotQueryFinished();
+	void slotDiscoFinished();
+
+	// end todo.
 
 };
 
 #endif
+

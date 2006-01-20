@@ -1,14 +1,7 @@
 if include_jingle
 JINGLE=jingle
-JINGLE_LIBS= jingle/libkopetejabberjingle.la \
-	jingle/libjingle/talk/session/phone/libcricketsessionphone.la \
-	jingle/libjingle/talk/p2p/client/libcricketp2pclient.la \
-	jingle/libjingle/talk/p2p/base/libcricketp2pbase.la \
-	jingle/libjingle/talk/xmpp/libcricketxmpp.la \
-	jingle/libjingle/talk/xmllite/libcricketxmllite.la \
-	jingle/libjingle/talk/base/libcricketbase.la \
-	jingle/libjingle/talk/third_party/mediastreamer/libmediastreamer.la  \
-	$(EXPAT_LIBS) $(ORTP_LIBS) -lpthread $(ILBC_LIBS) $(SPEEX_LIBS) $(GLIB_LIBS) $(ALSA_LIBS)
+JINGLE_LIBS=jingle/libkopetejabberjingle.la
+JINGLE_INCLUDES=-I$(srcdir)/jingle
 endif
 
 METASOURCES = AUTO
@@ -22,7 +15,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(srcdir)/libiris/cutestuff/network \
 	-I$(srcdir)/ui \
 	-I./ui \
-	$(all_includes)
+	$(all_includes) $(JINGLE_INCLUDES)
 
 noinst_LTLIBRARIES = libjabberclient.la
 libjabberclient_la_SOURCES = \

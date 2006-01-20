@@ -56,7 +56,7 @@ if test "x$with_external_libgadu" != xno; then
 			return 1;
 		}
 
-		if ( min == 5 ){
+		if ( min == 5 || min == 6 ){
 			return 0;
 		}
 			     
@@ -241,6 +241,7 @@ AC_ARG_ENABLE(smsgsm,
       [compile_smsgsm=yes]
       )
 
+AC_LANG_PUSH(C++)
 ac_save_LIBS="$LIBS"
 LIBS="-lgsmme $LIBS"
 AC_TRY_LINK([#include <gsmlib/gsm_util.h>],[(void)gsmlib::latin1ToGsm("text");], 
@@ -255,6 +256,7 @@ AC_CHECK_HEADER(gsmlib/gsm_util.h,
 if test "x$have_smsgsm_lib" != "xyes" || test "x$have_smsgsm_inc" != "xyes"; then
     compile_smsgsm=no
 fi
+AC_LANG_POP(C++)
 
 # Let the user know
 AC_MSG_CHECKING([if SMSGSM Plugin should be compiled])

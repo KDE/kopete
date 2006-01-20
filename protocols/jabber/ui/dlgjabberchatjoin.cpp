@@ -16,53 +16,104 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "dlgjabberchatjoin.h"
-
 #include <kdebug.h>
 #include <klocale.h>
-#include <kdialogbase.h>
 #include <qlineedit.h>
+#include <qpushbutton.h>
 
 #include "jabberaccount.h"
 #include "jabberclient.h"
+#include "dlgjabberchatroomslist.h"
 
-#include "dlgchatjoin.h"
+#include "dlgjabberchatjoin.h"
 
-dlgJabberChatJoin::dlgJabberChatJoin (JabberAccount *account, QWidget * parent, const char *name)
-									: KDialogBase (parent, name, false,
-												   i18n("Join Jabber Groupchat"),
-												   KDialogBase::Ok | KDialogBase::Cancel)
+dlgJabberChatJoin::dlgJabberChatJoin(JabberAccount *account, QWidget* parent, const char* name) :
+dlgChatJoin(parent, name),
+m_account(account)
 {
-
-	m_account = account;
-
-	setMainWidget ( new dlgChatJoin ( this ) );
-
+	setCaption(i18n("Join Jabber Groupchat"));
+	leNick->setText(m_account->client()->client()->user());
+	checkDefaultChatroomServer();
 }
 
-void dlgJabberChatJoin::slotOk ()
+dlgJabberChatJoin::~dlgJabberChatJoin()
 {
+}
 
+/*$SPECIALIZATION$*/
+void dlgJabberChatJoin::slotJoin()
+{
 	if(!m_account->isConnected())
 	{
 		m_account->errorConnectFirst();
 		return;
 	}
 
-	dlgChatJoin *widget = dynamic_cast<dlgChatJoin *>(mainWidget ());
-
-	// send the join request
-	m_account->client()->joinGroupChat ( widget->leServer->text (), widget->leRoom->text (), widget->leNick->text () );
-
-	delete this;
-
+	m_account->client()->joinGroupChat(leServer->text(), leRoom->text(), leNick->text());
+	accept();
 }
 
-void dlgJabberChatJoin::slotCancel ()
+void dlgJabberChatJoin::slotBowse()
 {
+	if(!m_account->isConnected())
+	{
+		m_account->errorConnectFirst();
+		return;
+	}
 
-	delete this;
-
+	dlgJabberChatRoomsList *crl = new dlgJabberChatRoomsList(*m_account, m_chatroomsServer);
+	crl->show();
+	accept();
 }
+
+/*
+	TODO : Used to look for the default chat server,
+	this is duplicate with dlgjabberservices.cpp
+	should be merged elsewhere !
+*/
+//	JabberAccount *m_account;
+//	XMPP::JT_GetServices * serviceTask;
+
+void dlgJabberChatJoin::checkDefaultChatroomServer()
+{
+	XMPP::JT_GetServices *serviceTask = new XMPP::JT_GetServices(m_account->client()->rootTask());
+	connect(serviceTask, SIGNAL (finished()), this, SLOT (slotQueryFinished()));
+
+	serviceTask->get(m_account->server());
+	serviceTask->go(true);
+}
+
+void dlgJabberChatJoin::slotQueryFinished()
+{
+	XMPP::JT_GetServices *task = (XMPP::JT_GetServices*)sender();
+	if (!task->success ())
+		return;
+
+	for (XMPP::AgentList::const_iterator it = task->agents().begin(); it != task->agents().end(); ++it)
+	{
+		XMPP::JT_DiscoInfo *discoTask = new XMPP::JT_DiscoInfo(m_account->client()->rootTask());
+		connect(discoTask, SIGNAL (finished()), this, SLOT (slotDiscoFinished()));
+
+		discoTask->get((*it).jid().full());
+		discoTask->go(true);
+	}
+}
+
+void dlgJabberChatJoin::slotDiscoFinished()
+{
+	XMPP::JT_DiscoInfo *task = (XMPP::JT_DiscoInfo*)sender();
+
+	if (!task->success())
+		return;
+
+	if (task->item().features().canGroupchat() && !task->item().features().isGateway())
+	{
+		m_chatroomsServer = task->item().jid().full();
+		leServer->setText(m_chatroomsServer);
+	}
+}
+
+// end todo
 
 #include "dlgjabberchatjoin.moc"
+

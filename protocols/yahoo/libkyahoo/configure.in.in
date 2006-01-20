@@ -1,0 +1,38 @@
+YAHOO2_VERSION=""
+AC_SUBST(YAHOO2_VERSION)
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_C_BIGENDIAN
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_SIZE_T
+AC_STRUCT_TM
+
+AC_CHECK_TYPE([uint8_t],,
+[AC_DEFINE([uint8_t], [unsigned char],
+[Define to `unsigned char' if not defined.])])
+AC_CHECK_TYPE([uint32_t],,
+[AC_DEFINE([uint32_t], [unsigned int],
+[Define to `unsigned int' if not defined.])])
+AC_CHECK_TYPE([uint64_t],,
+[AC_DEFINE([uint64_t], [unsigned long long],
+[Define to `unsigned long long' if not defined.])])
+
+dnl Checks for library functions.
+AC_CHECK_FUNCS(strerror)
+
+# Checks for library functions.
+
+AC_ARG_WITH([struct-callbacks], [AC_HELP_STRING([--with-struct-callbacks],
+[use a callback structure instead of callback functions])])
+if test "$with_struct_callbacks" = "yes"; then
+	AC_DEFINE(USE_STRUCT_CALLBACKS, 1, 
+	[Define if you want to use a callback structure instead of callback functions])
+fi
+
+enable_sample_client="no"
+AM_CONDITIONAL(SAMPLE_CLIENT, test "$enable_sample_client" != "no")
+
+YAHOOPKGREQ=""
+AC_SUBST(YAHOOPKGREQ)
+

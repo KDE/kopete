@@ -1,9 +1,9 @@
 /*
     smpppdlocationwidget.cpp
 
-    Copyright (c) 2004-2005 by Heiko Schaefer        <heiko@rangun.de>
+    Copyright (c) 2004-2006 by Heiko Schaefer        <heiko@rangun.de>
 
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -23,8 +23,7 @@ SMPPPDLocationWidget::SMPPPDLocationWidget(QWidget* parent, const char* name, WF
 
 SMPPPDLocationWidget::~SMPPPDLocationWidget() {}
 
-void SMPPPDLocationWidget::setServer(const QString& serv)
-{
+void SMPPPDLocationWidget::setServer(const QString& serv) {
     server->setText(serv);
 }
 

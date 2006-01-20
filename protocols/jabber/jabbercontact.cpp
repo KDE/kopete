@@ -38,11 +38,14 @@
 #include <kapplication.h>
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
+#include <kinputdialog.h>
+#include <kopeteview.h>
 
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
 #include "kopetechatsessionmanager.h"
+#include "kopeteaccountmanager.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
 #include "jabberclient.h"
@@ -50,10 +53,13 @@
 #include "jabberresource.h"
 #include "jabberresourcepool.h"
 #include "jabberfiletransfer.h"
+#include "jabbertransport.h"
 #include "dlgjabbervcard.h"
 
 #ifdef SUPPORT_JINGLE
-#include "jingle/voicecalldlg.h"
+#include "voicecalldlg.h"
+#include "jinglesessionmanager.h"
+#include "jinglevoicesession.h"
 #endif
 
 /**
@@ -109,13 +115,11 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 		}
 	}
 
-	// call moved from superclass, see JabberBaseContact for details
-	reevaluateStatus ();
-
 	mRequestOfflineEvent = false;
 	mRequestDisplayedEvent = false;
 	mRequestDeliveredEvent = false;
 	mRequestComposingEvent = false;
+	mDiscoDone = false;
 }
 
 Q3PtrList<KAction> *JabberContact::customContextMenuActions ()
@@ -239,7 +243,27 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	// evaluate notifications
 	if ( message.type () != "error" )
 	{
-		if (message.body().isEmpty())
+		if (!message.invite().isEmpty())
+		{
+			QString room=message.invite();
+			QString originalBody=message.body().isEmpty() ? QString() :
+					i18n( "The original message is : <i>\" %1 \"</i><br>" ).arg(QStyleSheet::escape(message.body()));
+			QString mes=i18n("<qt><i>%1</i> invited you to join the conference <b>%2</b><br>%3<br>"
+					"If you want to accept and join, just <b>enter your nickname</b> and press ok<br>"
+							 "If you want to decline, press cancel</qt>")
+					.arg(message.from().full(), room , originalBody);
+			
+			bool ok=false;
+			QString futureNewNickName = KInputDialog::getText( i18n( "Invited to a conference - Jabber Plugin" ),
+					mes, QString() , &ok , (mManager ? dynamic_cast<QWidget*>(mManager->view(false)) : 0) );
+			if ( !ok || !account()->isConnected() || futureNewNickName.isEmpty() )
+				return;
+			
+			XMPP::Jid roomjid(room);
+			account()->client()->joinGroupChat( roomjid.host() , roomjid.user() , futureNewNickName );
+			return;
+		}
+		else if (message.body().isEmpty())
 		// Then here could be event notifications
 		{
 			if (message.containsEvent ( XMPP::CancelEvent ) )
@@ -363,6 +387,22 @@ void JabberContact::slotCheckVCard ()
 	{
 		return;
 	}
+	
+	if(!mDiscoDone)
+	{
+		if(transport()) //no need to disco if this is a legacy contact
+			mDiscoDone = true;
+		else
+		{
+			mDiscoDone = true; //or it will happen twice, we don't want that.
+			//disco to see if it's not a transport
+			XMPP::JT_DiscoInfo *jt = new XMPP::JT_DiscoInfo(account()->client()->rootTask());
+			QObject::connect(jt, SIGNAL(finished()),this, SLOT(slotDiscoFinished()));
+			jt->get(rosterItem().jid(), QString());
+			jt->go(true);
+		}
+	}
+
 
 	// avoid warning if key does not exist in configuration file
 	if ( cacheDateString.isNull () )
@@ -386,7 +426,6 @@ void JabberContact::slotCheckVCard ()
 
 void JabberContact::slotGetTimedVCard ()
 {
-
 	mVCardUpdateInProgress = false;
 
 	// check if we are still connected - eventually we lost our connection in the meantime
@@ -394,6 +433,20 @@ void JabberContact::slotGetTimedVCard ()
 	{
 		// we are not connected, discard this update
 		return;
+	}
+	
+	if(!mDiscoDone)
+	{
+		if(transport()) //no need to disco if this is a legacy contact
+			mDiscoDone = true;
+		else
+		{
+			//disco to see if it's not a transport
+			XMPP::JT_DiscoInfo *jt = new XMPP::JT_DiscoInfo(account()->client()->rootTask());
+			QObject::connect(jt, SIGNAL(finished()),this, SLOT(slotDiscoFinished()));
+			jt->get(rosterItem().jid(), QString());
+			jt->go(true);
+		}
 	}
 
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Requesting vCard for " << contactId () << " from update timer." << endl;
@@ -1045,19 +1098,43 @@ void JabberContact::deleteContact ()
 		account()->errorConnectFirst ();
 		return;
 	}
+	
+	/*
+	* Follow the recommendation of
+	*  JEP-0162: Best Practices for Roster and Subscription Management
+	* http://www.jabber.org/jeps/jep-0162.html#removal
+	*/
 
-	if ( KMessageBox::questionYesNo (Kopete::UI::Global::mainWidget(),
-		 i18n ( "Do you also want to remove the authorization from user %1 to see your status?" ).
-				arg ( mRosterItem.jid().bare () ), i18n ("Notification"),
-				KStdGuiItem::del (), i18n("Keep"), "JabberRemoveAuthorizationOnDelete" ) == KMessageBox::Yes )
+	bool remove_from_roster=false;
+	
+	if( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From )
 	{
-		sendSubscription ("unsubscribed");
+		int result = KMessageBox::questionYesNoCancel (Kopete::UI::Global::mainWidget(),
+		 				i18n ( "Do you also want to remove the authorization from user %1 to see your status?" ).
+						arg ( mRosterItem.jid().bare () ), i18n ("Notification"),
+						KStdGuiItem::del (), i18n("Keep"), "JabberRemoveAuthorizationOnDelete" );
+		if(result == KMessageBox::Yes )
+			remove_from_roster = true;
+		else if( result == KMessageBox::Cancel)
+			return;
 	}
+	else if( mRosterItem.subscription().type() == XMPP::Subscription::None || mRosterItem.subscription().type() == XMPP::Subscription::To )
+		remove_from_roster = true;
+	
+	if( remove_from_roster )
+	{
+		XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
+		rosterTask->remove ( mRosterItem.jid () );
+		rosterTask->go ( true );
+	}
+	else
+	{
+		sendSubscription("unsubscribe");
 
-	XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
-
-	rosterTask->remove ( mRosterItem.jid () );
-	rosterTask->go ( true );
+		XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
+		rosterTask->set ( mRosterItem.jid (), QString() , QStringList() );
+		rosterTask->go (true);
+	}
 
 }
 
@@ -1332,12 +1409,62 @@ void JabberContact::voiceCall( )
 			vc->show();
 			vc->call();
 		}
+// 		JingleVoiceSession *session = static_cast<JingleVoiceSession*>(account()->sessionManager()->createSession("http://www.google.com/session/phone", jid));
+// 		session->start();
 	}
 	else
 	{
 		// Shouldn't never go there.
 	}
 #endif
+}
+
+void JabberContact::slotDiscoFinished( )
+{
+	mDiscoDone = true;
+	JT_DiscoInfo *jt = (JT_DiscoInfo *)sender();
+	
+	bool is_transport=false;
+	QString tr_type;
+
+	if ( jt->success() )
+ 	{
+		QValueList<XMPP::DiscoItem::Identity> identities = jt->item().identities();
+		QValueList<XMPP::DiscoItem::Identity>::Iterator it;
+		for ( it = identities.begin(); it != identities.end(); ++it )
+		{
+			XMPP::DiscoItem::Identity ident=*it;
+			if(ident.category == "gateway")
+			{
+				is_transport=true;
+				tr_type=ident.type;
+				//name=ident.name;
+				
+				break;  //(we currently only support gateway)
+			}
+		}
+ 	}
+
+	if(is_transport && !transport()) 
+ 	{   //ok, we are not a contact, we are a transport....
+		
+		const QString jid = rosterItem().jid().full();
+		Kopete::MetaContact *mc=metaContact();
+		JabberAccount *parentAccount=account();
+		Kopete::OnlineStatus status=onlineStatus();
+		
+		delete this; //we are not a contact i said !
+		
+		if(mc->contacts().count() == 0)
+			Kopete::ContactList::self()->removeMetaContact( mc );
+		
+		//we need to create the transport when 'this' is already deleted, so transport->myself() will not conflict with it
+		JabberTransport *transport = new JabberTransport( parentAccount , jid , tr_type );
+		if(!Kopete::AccountManager::self()->registerAccount( transport ))
+			return;
+		transport->myself()->setOnlineStatus( status ); //push back the online status
+		return;
+	}
 }
 
 #include "jabbercontact.moc"

@@ -85,6 +85,16 @@ private slots:
 	 * Catch a dying message manager and leave the room.
 	 */
 	void slotChatSessionDeleted ();
+	
+	/**
+	 * When our own status change, we need to manually send the presence.
+	 */
+	void slotStatusChanged();
+	
+	/**
+	 * ask the user to change the nick, and change it
+	 */
+	void slotChangeNick();
 
 private:
 
@@ -92,7 +102,7 @@ private:
 	Q3PtrList<Kopete::MetaContact> mMetaContactList;
 
 	JabberGroupChatManager *mManager;
-
+	QString mNick;
 };
 
 #endif

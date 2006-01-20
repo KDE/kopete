@@ -1360,13 +1360,16 @@ void KopeteContactListView::slotViewSelectionChanged()
 			if(metaLVI)
 			{
 				m_selectedContacts.append( metaLVI );
-				contacts.append( metaLVI->metaContact() );
+				if(!contacts.contains(metaLVI->metaContact()))
+					contacts.append( metaLVI->metaContact() );
 			}
 			KopeteGroupViewItem *groupLVI=dynamic_cast<KopeteGroupViewItem*>(item);
 			if(groupLVI)
 			{
 				m_selectedGroups.append( groupLVI );
-				groups.append( groupLVI->group() );
+				if(!groups.contains(groupLVI->group()))
+					groups.append( groupLVI->group() );
+				
 			}
 		}
 	}

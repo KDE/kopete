@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>637</width>
-            <height>456</height>
+            <width>706</width>
+            <height>455</height>
         </rect>
     </property>
     <property name="caption">
@@ -38,7 +38,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>B&amp;asic Setup</string>
+                    <string>&amp;Basic Setup</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -110,6 +110,14 @@
                                 </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>cbGlobalIdentity</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Exclu&amp;de from Global Identity</string>
                                 </property>
                             </widget>
                         </vbox>
@@ -713,7 +721,7 @@ If two resources have the same priority, the messages will be sent to the one co
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>&amp;Privacy</string>
+                    <string>Pri&amp;vacy</string>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -1005,4 +1013,7 @@ If two resources have the same priority, the messages will be sent to the one co
     <tabstop>cbSendComposingEvent</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kopetepasswordwidget.h</includehint>
+</includehints>
 </UI>

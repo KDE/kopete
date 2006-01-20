@@ -43,8 +43,9 @@ public:
 	 * constructor
 	 * @param parentAccount is the parent jabber account.
 	 * @param accountId is in the form    LegacyUserAddress@gateway.example.com
+	 * @param gateway_type eg: "msn" or "icq"  only used when the account is not loaded from config file for determining the icon
 	 */
-	JabberTransport (JabberAccount * parentAccount, const QString & accountId, const char *name = 0L);
+	JabberTransport (JabberAccount * parentAccount, const QString & accountId, const QString& gateway_type=QString());
 	 ~JabberTransport ();
 
 	/** Returns the action menu for this account. */
@@ -92,6 +93,10 @@ public slots:
 	 */
 	void jabberAccountRemoved();
 
+	/**
+	 *  "eat" all contact in the account that have the same domain as us.
+	 */
+	void eatContacts();
 
 protected:
 	/**

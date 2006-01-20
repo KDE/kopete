@@ -215,11 +215,12 @@
       <inlineGet>true</inlineGet>
       <inlineSet>true</inlineSet>
     </creategettersetter>
-    <qt>
-      <used>false</used>
-      <version>3</version>
-      <root>/home/qt/3.3</root>
-    </qt>
+    <designerintegration>
+      <qtdesigner>
+        <implementation class="dlgChatJoin" path="protocols/jabber/ui/dlgchatjoin.ui" implementationpath="protocols/jabber/ui/dlgchatjoin.h" />
+        <implementation class="dlgChatRoomsList" path="protocols/jabber/ui/dlgchatroomslist.ui" implementationpath="protocols/jabber/ui/dlgchatroomslist.h" />
+      </qtdesigner>
+    </designerintegration>
   </kdevcppsupport>
   <kdevcvsservice>
     <recursivewhenupdate>true</recursivewhenupdate>

@@ -1,9 +1,9 @@
 /*
     onlineinquiry.cpp
  
-    Copyright (c) 2005      by Heiko Schaefer        <heiko@rangun.de>
+    Copyright (c) 2005-2006 by Heiko Schaefer        <heiko@rangun.de>
  
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -14,28 +14,32 @@
     *************************************************************************
 */
 
-#include "detector.h"
+#include "detectornetstat.h"
+#include "detectorsmpppd.h"
 #include "onlineinquiry.h"
 
-OnlineInquiry::OnlineInquiry() 
- : m_detector(NULL), m_online(FALSE) {
-	m_detector = new Detector(this);
-}
+OnlineInquiry::OnlineInquiry()
+        : m_detector(NULL), m_online(FALSE) {}
 
 OnlineInquiry::~OnlineInquiry() {
+    delete m_detector;
+}
+
+bool OnlineInquiry::isOnline(bool useSMPPPD) {
+	
 	delete m_detector;
+	
+    if(useSMPPPD) {
+		m_detector = new DetectorSMPPPD(this);
+    } else {
+		m_detector = new DetectorNetstat(this);
+    }
+	
+	m_detector->checkStatus();
+
+    return m_online;
 }
 
-bool OnlineInquiry::isOnline(bool useSMPPPD) { 
-	if(useSMPPPD) {
-		m_detector->smpppdCheckStatus();
-	} else {
-		m_detector->netstatCheckStatus();
-	}
-
-	return m_online; 
-}
-
-void OnlineInquiry::setConnectedStatus(bool newStatus) { 
-	m_online = newStatus; 
+void OnlineInquiry::setConnectedStatus(bool newStatus) {
+    m_online = newStatus;
 }

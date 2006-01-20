@@ -3,9 +3,9 @@
  
     Copyright (c) 2002-2003 by Chris Howells         <howells@kde.org>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
-    Copyright (c) 2004-2005 by Heiko Schaefer        <heiko@rangun.de>
+    Copyright (c) 2004-2006 by Heiko Schaefer        <heiko@rangun.de>
  
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -31,17 +31,16 @@
 #include "kopetepluginmanager.h"
 #include "kopeteaccountmanager.h"
 
+#include "detectornetstat.h"
+#include "detectorsmpppd.h"
+
 typedef KGenericFactory<SMPPPDCSPlugin> SMPPPDCSPluginFactory;
 K_EXPORT_COMPONENT_FACTORY(kopete_smpppdcs, SMPPPDCSPluginFactory("kopete_smpppdcs"))
 
 SMPPPDCSPlugin::SMPPPDCSPlugin(QObject *parent, const char * name, const QStringList& /* args */)
- : DCOPObject("SMPPPDCSIface"), Kopete::Plugin(SMPPPDCSPluginFactory::instance(), parent, name),
-   m_detector(NULL), m_timer(NULL), m_onlineInquiry(NULL)
-    {
-   
-    /*if(useSmpppd()) {
-        connectToSMPPPD();
-    } */
+        : DCOPObject("SMPPPDCSIface"), Kopete::Plugin(SMPPPDCSPluginFactory::instance(), parent, name),
+        m_detectorSMPPPD(NULL), m_detectorNetstat(NULL), m_timer(NULL),
+m_onlineInquiry(NULL) {
 
     m_pluginConnected = false;
 
@@ -49,19 +48,18 @@ SMPPPDCSPlugin::SMPPPDCSPlugin(QObject *parent, const char * name, const QString
     connect(Kopete::PluginManager::self(), SIGNAL(allPluginsLoaded()),
             this, SLOT(allPluginsLoaded()));
 
-    m_onlineInquiry = new OnlineInquiry();
-    m_detector      = new Detector(this);
-    connect(m_detector, SIGNAL(retryRequested()), this, SLOT(slotCheckStatus()));
+    m_onlineInquiry   = new OnlineInquiry();
+    m_detectorSMPPPD  = new DetectorSMPPPD(this);
+    m_detectorNetstat = new DetectorNetstat(this);
 }
 
 SMPPPDCSPlugin::~SMPPPDCSPlugin() {
 
     kdDebug(14312) << k_funcinfo << endl;
 
-    disconnect(m_detector, SIGNAL(retryRequested()), this, SLOT(slotCheckStatus()));
-
     delete m_timer;
-    delete m_detector;
+    delete m_detectorSMPPPD;
+    delete m_detectorNetstat;
     delete m_onlineInquiry;
 }
 
@@ -81,19 +79,19 @@ void SMPPPDCSPlugin::allPluginsLoaded() {
 }
 
 bool SMPPPDCSPlugin::isOnline() {
-	return m_onlineInquiry->isOnline(useSmpppd());
+    return m_onlineInquiry->isOnline(useSmpppd());
 }
 
 void SMPPPDCSPlugin::slotCheckStatus() {
     if(useSmpppd()) {
-        m_detector->smpppdCheckStatus();
+        m_detectorSMPPPD->checkStatus();
     } else {
-        m_detector->netstatCheckStatus();
+        m_detectorNetstat->checkStatus();
     }
 }
 
 void SMPPPDCSPlugin::setConnectedStatus( bool connected ) {
-    kdDebug(14312) << k_funcinfo << endl;
+    kdDebug(14312) << k_funcinfo << connected << endl;
 
     // We have to handle a few cases here. First is the machine is connected, and the plugin thinks
     // we're connected. Then we don't do anything. Next, we can have machine connected, but plugin thinks
@@ -106,15 +104,13 @@ void SMPPPDCSPlugin::setConnectedStatus( bool connected ) {
         // The machine is connected and plugin thinks we're disconnected
         kdDebug(14312) << k_funcinfo << "Setting m_pluginConnected to true" << endl;
         m_pluginConnected = true;
-        //Kopete::AccountManager::self()->connectAll(true);
-		connectAllowed();
+        connectAllowed();
         kdDebug(14312) << k_funcinfo << "We're connected" << endl;
     } else if ( !connected && m_pluginConnected ) {
         // The machine isn't connected and plugin thinks we're connected
         kdDebug(14312) << k_funcinfo << "Setting m_pluginConnected to false" << endl;
         m_pluginConnected = false;
-        //Kopete::AccountManager::self()->disconnectAll();
-	disconnectAllowed();
+        disconnectAllowed();
         kdDebug(14312) << k_funcinfo << "We're offline" << endl;
     }
 }
@@ -133,9 +129,8 @@ void SMPPPDCSPlugin::connectAllowed()
 	}
 }
 
-void SMPPPDCSPlugin::disconnectAllowed()
-{
-	static KConfig *config = KGlobal::config();
+void SMPPPDCSPlugin::disconnectAllowed() {
+    static KConfig *config = KGlobal::config();
     config->setGroup(SMPPPDCS_CONFIG_GROUP);
 	QStringList list = config->readListEntry("ignoredAccounts");
 	
@@ -162,6 +157,21 @@ QString SMPPPDCSPlugin::detectionMethod() const {
     } else {
         return "netstat";
     }
+}
+
+/*!
+    \fn SMPPPDCSPlugin::smpppdServerChanged(const QString& server)
+ */
+void SMPPPDCSPlugin::smpppdServerChanged(const QString& server)
+{
+	static KConfig *config = KGlobal::config();
+	config->setGroup(SMPPPDCS_CONFIG_GROUP);
+	QString oldServer = config->readEntry("server", "localhost").utf8();
+	
+	if(oldServer != server) {
+		kdDebug(14312) << k_funcinfo << "Detected a server change" << endl;
+		m_detectorSMPPPD->smpppdServerChange();
+	}
 }
 
 #include "smpppdcsplugin.moc"

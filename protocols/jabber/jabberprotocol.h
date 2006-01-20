@@ -39,6 +39,7 @@
 namespace XMPP
 {
 	class Resource;
+	class Status;
 }
 
 class JabberContact;
@@ -137,6 +138,11 @@ public:
 	 * Convert an XMPP::Resource status to a Kopete::OnlineStatus
 	 */
 	Kopete::OnlineStatus resourceToKOS ( const XMPP::Resource &resource );
+	
+	/**
+	 * Convert an online status to a  XMPP::Status
+	 */
+	XMPP::Status kosToStatus( const Kopete::OnlineStatus & status, const QString& message=QString() );
 
 	/**
 	 * Return the Entity Capabilities(JEP-0115) manager instance.

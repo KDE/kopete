@@ -84,6 +84,7 @@ class KopeteMetaLVIProps: public KDialogBase
 		void slotOkClicked();
 		void slotUseCustomIconsToggled( bool on );
 		void slotClearAddresseeClicked();
+		void slotClearPhotoClicked();
 		void slotSelectAddresseeClicked();
 		void slotExportClicked();
 		void slotImportClicked();

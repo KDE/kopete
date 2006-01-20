@@ -1,9 +1,9 @@
 /*
     onlineinquiry.h
  
-    Copyright (c) 2005      by Heiko Schaefer        <heiko@rangun.de>
+    Copyright (c) 2005-2006 by Heiko Schaefer        <heiko@rangun.de>
  
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -26,20 +26,20 @@ class Detector;
  */
 
 class OnlineInquiry : public IConnector {
-	OnlineInquiry(const OnlineInquiry&);
-	OnlineInquiry& operator=(const OnlineInquiry&);
+    OnlineInquiry(const OnlineInquiry&);
+    OnlineInquiry& operator=(const OnlineInquiry&);
 
 public:
-	OnlineInquiry();
-	virtual ~OnlineInquiry();
+    OnlineInquiry();
+    virtual ~OnlineInquiry();
 
-	bool isOnline(bool useSMPPPD);
+    bool isOnline(bool useSMPPPD);
 
-	virtual void setConnectedStatus(bool newStatus);
+    virtual void setConnectedStatus(bool newStatus);
 
 private:
-	Detector * m_detector;
-	bool       m_online;
+    Detector * m_detector;
+    bool       m_online;
 };
 
 #endif

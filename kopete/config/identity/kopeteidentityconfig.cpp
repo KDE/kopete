@@ -125,6 +125,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char */*name*/
 	d->m_view->buttonCopyIdentity->setIconSet(SmallIconSet("editcopy"));
 	d->m_view->buttonRenameIdentity->setIconSet(SmallIconSet("edit"));
 	d->m_view->buttonRemoveIdentity->setIconSet(SmallIconSet("editdelete"));
+	d->m_view->buttonClearPhoto->setIconSet(  SmallIconSet( QApplication::reverseLayout() ? "locationbar_erase" : "clear_left" ) );
 
 	load(); // Load Configuration
 
@@ -136,6 +137,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char */*name*/
 	connect(d->m_view->buttonRenameIdentity, SIGNAL(clicked()), this, SLOT(slotRenameIdentity()));
 	connect(d->m_view->buttonRemoveIdentity, SIGNAL(clicked()), this, SLOT(slotRemoveIdentity()));
 //	connect(d->m_view->comboPhotoURL, SIGNAL(urlSelected(const QString& )), this, SLOT(slotChangePhoto(const QString& )));
+	connect(d->m_view->buttonClearPhoto, SIGNAL(clicked()), this, SLOT(slotClearPhoto()));
 
 	// Settings signal/slots
 	connect(d->m_view->radioNicknameContact, SIGNAL(toggled(bool )), this, SLOT(slotEnableAndDisableWidgets()));
@@ -200,6 +202,8 @@ void KopeteIdentityConfig::save()
 		d->myself->setPhotoSourceContact(selectedPhotoSourceContact());
 //		if(!d->m_view->comboPhotoURL->url().isEmpty())
 //			d->myself->setPhoto(d->m_view->comboPhotoURL->url());
+		else
+			d->myself->setPhoto( KURL() );
 		d->myself->setPhotoSyncedWithKABC(d->m_view->checkSyncPhotoKABC->isChecked());
 	}
 	
@@ -251,6 +255,8 @@ void KopeteIdentityConfig::saveCurrentIdentity()
 	d->currentIdentity->setPhotoSourceContact(selectedPhotoSourceContact());
 //	if(!d->m_view->comboPhotoURL->url().isEmpty())
 //		d->currentIdentity->setPhoto(d->m_view->comboPhotoURL->url());
+	else
+		d->currentIdentity->setPhoto( KURL() );
 	d->currentIdentity->setPhotoSyncedWithKABC(d->m_view->checkSyncPhotoKABC->isChecked());
 }
 
@@ -377,6 +383,8 @@ void KopeteIdentityConfig::slotEnableAndDisableWidgets()
 
 	if(!photo.isNull())
 		d->m_view->labelPhoto->setPixmap(QPixmap(photo.scaled(64, 92, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
+	else
+		d->m_view->labelPhoto->setPixmap(QPixmap());
 
 	emit changed(true);
 }
@@ -539,6 +547,12 @@ void KopeteIdentityConfig::slotChangePhoto(const QString &photoUrl)
 					i18n("An error occurred when trying to save the custom photo for %1 identity.").arg(d->selectedIdentity),
 					i18n("Identity Configuration"));
 	}
+}
+
+void KopeteIdentityConfig::slotClearPhoto()
+{
+	d->m_view->comboPhotoURL->setKURL( KURL() );
+	slotEnableAndDisableWidgets();
 }
 
 void KopeteIdentityConfig::slotSettingsChanged()

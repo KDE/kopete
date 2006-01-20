@@ -21,8 +21,10 @@
 #include <QObject>
 #include <QList>
 #include <QRegExp>
-
+#include <QMap>
 #include "kopete_export.h"
+
+
 
 namespace Kopete {
 

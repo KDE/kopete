@@ -20,6 +20,7 @@
 #include "jabberaccount.h"
 #include "jabberprotocol.h"
 #include "jabbercontactpool.h"
+#include "jabberchatsession.h"
 
 #include <kopeteaccountmanager.h>
 #include <kopetecontact.h>
@@ -27,7 +28,9 @@
 
 #include <kopeteversion.h>
 
+
 #include <qpixmap.h>
+#include <qtimer.h>
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -35,8 +38,8 @@
 
 #include "xmpp_tasks.h"
 
-JabberTransport::JabberTransport (JabberAccount * parentAccount, const QString & myselfContactId, const char *name)
-	:Kopete::Account ( parentAccount->protocol(), myselfContactId+"/"+parentAccount->accountId(), name )
+JabberTransport::JabberTransport (JabberAccount * parentAccount, const QString & myselfContactId, const QString& gateway_type)
+	:Kopete::Account ( parentAccount->protocol(), myselfContactId+"/"+parentAccount->accountId())
 {
 	m_status=Creating;
 	m_account = parentAccount;
@@ -52,27 +55,35 @@ JabberTransport::JabberTransport (JabberAccount * parentAccount, const QString &
 	{
 		setColor( account()->color() );
 #if KOPETE_IS_VERSION(0,11,51)
-		//TODO:  use http://www.jabber.org/registrar/disco-categories.html#gateway
 		QString cIcon;
-		if(myselfContactId.startsWith("msn"))
-			cIcon="msn_protocol";
-		else if(myselfContactId.startsWith("icq"))
-			cIcon="icq_protocol";
-		else if(myselfContactId.startsWith("aim"))
-			cIcon="aim_protocol";
-		else if(myselfContactId.startsWith("irc"))
+		if(gateway_type=="msn")
+			cIcon="jabber_gateway_msn";
+		else if(gateway_type=="icq")
+			cIcon="jabber_gateway_icq";
+		else if(gateway_type=="aim")
+			cIcon="jabber_gateway_aim";
+		else if(gateway_type=="yahoo")
+			cIcon="jabber_gateway_yahoo";
+		else if(gateway_type=="sms")
+			cIcon="jabber_gateway_sms";
+		else if(gateway_type=="gadu-gadu")
+			cIcon="jabber_gateway_gadu";
+		else if(gateway_type=="smtp")
+			cIcon="jabber_gateway_smtp";
+		else if(gateway_type=="http-ws") 
+			cIcon="jabber_gateway_http-ws";
+		else if(gateway_type=="qq")
+			cIcon="jabber_gateway_qq";
+		else if(gateway_type=="tlen")
+			cIcon="jabber_gateway_tlen";
+		else if(gateway_type=="irc")  //NOTE: this is not official 
 			cIcon="irc_protocol";
-		else if(myselfContactId.startsWith("yahoo"))
-			cIcon="yahoo_protocol";
-		else if(myselfContactId.startsWith("sms"))
-			cIcon="sms_protocol";
-		else if(myselfContactId.startsWith("gg"))
-			cIcon="gadu_protocol";
-		
+
 		if( !cIcon.isEmpty() )
 			setCustomIcon( cIcon );
-		configGroup()->writeEntry("exist",true);
 #endif
+		configGroup()->writeEntry("exist",true);
+		QTimer::singleShot(0, this, SLOT(eatContacts()));
 	}
 	
 	m_status=Normal;
@@ -243,7 +254,7 @@ void JabberTransport::removeAllContacts( )
 									i18n ("Jabber Service Unregistration"));
 	*/ //we don't really care, we remove everithing anyway.
 
-	kdDebug() << k_funcinfo << "delete all contacts of the transport"<< endl;
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "delete all contacts of the transport"<< endl;
 	QDictIterator<Kopete::Contact> it( contacts() ); 
 	for( ; it.current(); ++it )
 	{
@@ -267,6 +278,35 @@ void JabberTransport::jabberAccountRemoved( )
 {
 	m_status = AccountRemoved;
 	Kopete::AccountManager::self()->removeAccount( this ); //this will delete this	
+}
+
+void JabberTransport::eatContacts( )
+{
+	/*
+	* "Gateway Contact Eating" (c)(r)(tm)(g)(o)(f)
+	* this comes directly from my mind into the kopete code.
+	* principle: - the transport is hungry
+	*            - it will eat contacts which belong to him
+	*            - the contact will die
+	*            - a new contact will born, with the same characteristics, but owned by the transport
+	* - Olivier 2006-01-17 -
+	*/
+	QDict<Kopete::Contact> cts=account()->contacts();
+	QDictIterator<Kopete::Contact> it( cts ); 
+	for( ; it.current(); ++it )
+	{
+		JabberContact *contact=dynamic_cast<JabberContact*>(it.current());
+		if( contact && !contact->transport() && contact->rosterItem().jid().domain() == myself()->contactId() && contact != account()->myself())
+		{
+			XMPP::RosterItem item=contact->rosterItem();
+			Kopete::MetaContact *mc=contact->metaContact();
+			Kopete::OnlineStatus status = contact->onlineStatus();
+			delete contact;
+			Kopete::Contact *c2=account()->contactPool()->addContact( item , mc , false ); //not sure this is false;
+			if(c2)
+				c2->setOnlineStatus( status ); //put back the old status
+		}
+	}
 }
 
 

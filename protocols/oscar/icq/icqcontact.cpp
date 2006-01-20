@@ -79,6 +79,8 @@ ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaCo
 	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedAwayMessage( const QString&, const QString& ) ),
 	                  this, SLOT( receivedStatusMessage( const QString&, const QString& ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL( receivedAwayMessage( const Oscar::Message& ) ),
+	                  this, SLOT( receivedStatusMessage( const Oscar::Message& ) ) );
 	QObject::connect( this, SIGNAL( featuresUpdated() ), this, SLOT( updateFeatures() ) );
 	QObject::connect( mAccount->engine(), SIGNAL( iconServerConnected() ),
 	                  this, SLOT( requestBuddyIcon() ) );
@@ -155,15 +157,21 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	}
 		
 
-	if ( details.dcExternalIp().isUnspecified() )
-		removeProperty( mProtocol->ipAddress );
-	else
-		setProperty( mProtocol->ipAddress, details.dcExternalIp().toString() );
+	if ( details.dcOutsideSpecified() )
+	{
+		if ( details.dcExternalIp().isUnspecified() )
+			removeProperty( mProtocol->ipAddress );
+		else
+			setProperty( mProtocol->ipAddress, details.dcExternalIp().toString() );
+	}
 
-	if ( details.clientName().isEmpty() )
-		removeProperty( mProtocol->clientFeatures );
-	else
-		setProperty( mProtocol->clientFeatures, details.clientName() );
+	if ( details.capabilitiesSpecified() )
+	{
+		if ( details.clientName().isEmpty() )
+			removeProperty( mProtocol->clientFeatures );
+		else
+			setProperty( mProtocol->clientFeatures, details.clientName() );
+	}
 
 	if ( details.buddyIconHash().size() > 0 && details.buddyIconHash() != m_details.buddyIconHash() )
 	{
@@ -356,6 +364,22 @@ void ICQContact::receivedStatusMessage( const QString &contact, const QString &m
 
 	if ( ! message.isEmpty() )
 		setProperty( mProtocol->awayMessage, message );
+	else
+		removeProperty( mProtocol->awayMessage );
+}
+
+void ICQContact::receivedStatusMessage( const Oscar::Message &message )
+{
+	if ( Oscar::normalize( message.sender() ) != Oscar::normalize( contactId() ) )
+		return;
+	
+	//decode message
+	QTextCodec* codec = contactCodec();
+	
+	QString realText = message.text(codec);
+
+	if ( !realText.isEmpty() )
+		setProperty( mProtocol->awayMessage, realText );
 	else
 		removeProperty( mProtocol->awayMessage );
 }

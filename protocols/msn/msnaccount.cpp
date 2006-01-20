@@ -1224,21 +1224,24 @@ void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
 
 void MSNAccount::slotGlobalIdentityChanged( const QString &key, const QVariant &value )
 {
-	if(key == Kopete::Global::Properties::self()->nickName().key())
+	if( !configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) )
 	{
-		QString oldNick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
-		QString newNick = value.toString();
-	
-		if(newNick != oldNick)
+		if(key == Kopete::Global::Properties::self()->nickName().key())
 		{
-			setPublicName( value.toString() );
+			QString oldNick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
+			QString newNick = value.toString();
+		
+			if(newNick != oldNick)
+			{
+				setPublicName( value.toString() );
+			}
 		}
-	}
-	else if(key == Kopete::Global::Properties::self()->photo().key())
-	{
-		m_pictureFilename = value.toString();
-		kdDebug( 14140 ) << k_funcinfo << m_pictureFilename << endl;
-		resetPictureObject(false);
+		else if(key == Kopete::Global::Properties::self()->photo().key())
+		{
+			m_pictureFilename = value.toString();
+			kdDebug( 14140 ) << k_funcinfo << m_pictureFilename << endl;
+			resetPictureObject(false);
+		}
 	}
 }
 

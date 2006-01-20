@@ -82,6 +82,8 @@ dlgJabberVCard::dlgJabberVCard (JabberAccount *account, JabberContact *contact, 
 
 	show ();
 	raise ();
+
+	slotGetVCard();
 }
 
 /*

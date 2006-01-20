@@ -15,6 +15,16 @@ activates all Kopete accounts, too.
 Changelog
 =========
 
+0.79 (2006/01/18)
+* refactoring to allow easy implementation of new detection methods
+* speed improvements
+
+0.75 (2006/01/01)
+* use of KSocketStream instead of deprecated KExtendedSocket
+* progressbar while searching for an smpppd on the local network
+* automatically found smpppd server is resolved via DNS
+* Fixed Bug 111369: better detection of SMPPPD and no more freeze of Kopete
+
 0.74 (2005/12/27)
 * minor bugfixes
 * disable netstat in config if the binary cannot be found

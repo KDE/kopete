@@ -12,4 +12,14 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 
 noinst_LTLIBRARIES = libkopetejabberjingle.la 
 
-libkopetejabberjingle_la_SOURCES = jinglevoicecaller.cpp  ui_voicecall.ui  voicecalldlg.cpp
+libkopetejabberjingle_la_SOURCES = jinglevoicecaller.cpp ui_voicecall.ui \
+	voicecalldlg.cpp jinglewatchsessiontask.cpp jinglesession.cpp jinglevoicesession.cpp jinglesessionmanager.cpp
+
+libkopetejabberjingle_la_LIBADD = libjingle/talk/session/phone/libcricketsessionphone.la \
+	libjingle/talk/p2p/client/libcricketp2pclient.la \
+	libjingle/talk/p2p/base/libcricketp2pbase.la \
+	libjingle/talk/xmpp/libcricketxmpp.la \
+	libjingle/talk/xmllite/libcricketxmllite.la \
+	libjingle/talk/base/libcricketbase.la \
+	libjingle/talk/third_party/mediastreamer/libmediastreamer.la  \
+	$(EXPAT_LIBS) $(ORTP_LIBS) -lpthread $(ILBC_LIBS) $(SPEEX_LIBS) $(GLIB_LIBS) $(ALSA_LIBS)

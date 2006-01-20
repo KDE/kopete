@@ -356,6 +356,7 @@ const XMPP::Resource &JabberResourcePool::bestResource ( const XMPP::Jid &jid, b
 	return (bestResource) ? bestResource->resource() : EmptyResource;
 }
 
+//TODO: Find Resources based on certain Features.
 void JabberResourcePool::findResources ( const XMPP::Jid &jid, JabberResourcePool::ResourceList &resourceList )
 {
 	for(JabberResource *mResource = d->pool.first (); mResource; mResource = d->pool.next ())

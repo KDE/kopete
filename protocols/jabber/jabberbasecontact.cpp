@@ -19,6 +19,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kiconloader.h>
+#include <qtimer.h>
 
 #include <kopetegroup.h>
 #include <kopetecontactlist.h>
@@ -49,15 +50,6 @@ JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, Kopete
 
 	// take roster item and update display name
 	updateContact ( rosterItem );
-
-	// since we're not in the account's contact pool yet
-	// (we'll only be once we returned from this constructor),
-	// we need to force an update to our status here
-	// FIXME: libkopete doesn't allow us to use this call
-	// here anymore as it causes an invocation of manager()
-	// which is still a pure virtual in this constructor.
-	// (needs to be done in subclasses instead)
-	//reevaluateStatus ();
 
 }
 
@@ -205,6 +197,9 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 	 * Enable updates for the server again.
 	 */
 	setDontSync ( false );
+	
+	//can't do it now because it's called from contructor at a point some virtual function are not available
+	QTimer::singleShot(0, this, SLOT(reevaluateStatus()));
 
 }
 
@@ -242,7 +237,25 @@ void JabberBaseContact::updateResourceList ()
 			resourceListStr += QString ( "<tr><td>%1: %2 (%3)</td></tr>" ).
 							   arg ( i18n ( "Client" ), (*it)->clientName (), (*it)->clientSystem () );
 		}
-
+		
+		// Supported features
+		QStringList supportedFeatures = (*it)->features().list();
+		QStringList::ConstIterator featuresIt, featuresItEnd = supportedFeatures.constEnd();
+		if( !supportedFeatures.empty() )
+			resourceListStr += QString( "<tr><td>Supported Features:" );
+		for( featuresIt = supportedFeatures.constBegin(); featuresIt != featuresItEnd; ++featuresIt )
+		{
+			XMPP::Features tempFeature(*featuresIt);
+			resourceListStr += QString("\n<br>");
+			if ( tempFeature.id() > XMPP::Features::FID_None )
+				resourceListStr += tempFeature.name() + QString(" (");
+			resourceListStr += *featuresIt;
+			if ( tempFeature.id() > Features::FID_None )
+				resourceListStr += QString(")");	
+		}
+		if( !supportedFeatures.empty() )
+			resourceListStr += QString( "</td></tr>" );
+		
 		// resource timestamp
 		resourceListStr += QString ( "<tr><td>%1: %2</td></tr>" ).
 						   arg ( i18n ( "Timestamp" ), KGlobal::locale()->formatDateTime ( (*it)->resource().status().timeStamp(), true, true ) );
@@ -271,6 +284,20 @@ void JabberBaseContact::reevaluateStatus ()
 	XMPP::Resource resource = account()->resourcePool()->bestResource ( mRosterItem.jid () );
 
 	status = protocol()->resourceToKOS ( resource );
+	
+	
+	/* Add some icon to show the subscription */ 
+	if( ( mRosterItem.subscription().type() == XMPP::Subscription::None || mRosterItem.subscription().type() == XMPP::Subscription::From)
+			 && inherits ( "JabberContact" ) && account()->myself() != this && account()->isConnected() )
+	{
+		status = Kopete::OnlineStatus(status.status() ,
+									  status.weight() ,
+									  protocol() ,
+									  status.internalStatus() | 0x0100,
+									  status.overlayIcons() + QStringList("status_unknown") , //FIXME: find better icon
+									  status.description() );
+	}
+	
 
 	/*
 	 * Set away message property.
@@ -286,6 +313,7 @@ void JabberBaseContact::reevaluateStatus ()
 	}
 
 	updateResourceList ();
+
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New status for " << contactId () << " is " << status.description () << endl;
 	setOnlineStatus ( status );

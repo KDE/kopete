@@ -1,9 +1,9 @@
 /*
     iconnector.h
  
-    Copyright (c) 2005      by Heiko Schaefer        <heiko@rangun.de>
+    Copyright (c) 2005-2006 by Heiko Schaefer        <heiko@rangun.de>
  
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -23,22 +23,23 @@
  * @author Heiko Sch&auml;fer <heiko@rangun.de>
  */
 class IConnector {
-	IConnector(const IConnector&);
-	IConnector& operator=(const IConnector&);
+    IConnector(const IConnector&);
+    IConnector& operator=(const IConnector&);
 
 public:
-	IConnector() {};
-	virtual ~IConnector() {}
+    IConnector() {}
+    ;
+    virtual ~IConnector() {}
 
-	/**
-	 * @brief Set the connection status.
-	 *
-	 * This method needs to get reimplemented at classes which implement
-	 * this interface.
-	 *
-	 * @param newStatus the status of the internet connection, <code>TRUE</code> if there is a connection, otherwise <code>FALSE</code>
-	 */
-	virtual void setConnectedStatus(bool newStatus) = 0;
+    /**
+     * @brief Set the connection status.
+     *
+     * This method needs to get reimplemented at classes which implement
+     * this interface.
+     *
+     * @param newStatus the status of the internet connection, <code>TRUE</code> if there is a connection, otherwise <code>FALSE</code>
+     */
+    virtual void setConnectedStatus(bool newStatus) = 0;
 };
 
 #endif

@@ -3,9 +3,9 @@
  
     Copyright (c) 2002-2003 by Chris Howells         <howells@kde.org>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
-    Copyright (c) 2004-2005 by Heiko Schaefer        <heiko@rangun.de>
+    Copyright (c) 2004-2006 by Heiko Schaefer        <heiko@rangun.de>
  
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -90,6 +90,9 @@ protected:
      */
     bool useSmpppd() const;
 
+public slots:
+	void smpppdServerChanged(const QString& server);
+
 private slots:
     void slotCheckStatus();
     void allPluginsLoaded();
@@ -100,13 +103,13 @@ private:
 
 private:
 
-    Detector          *m_detector;
-    bool               m_pluginConnected;
-    QTimer            *m_timer;
-    OnlineInquiry     *m_onlineInquiry;
+    Detector      * m_detectorSMPPPD;
+    Detector      * m_detectorNetstat;
+    bool            m_pluginConnected;
+    QTimer        * m_timer;
+    OnlineInquiry * m_onlineInquiry;
 };
 
 #endif /* SMPPPDCSPLUGIN_H */
 
 // vim: set noet ts=4 sts=4 sw=4:
-

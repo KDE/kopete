@@ -1,6 +1,6 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>dlgChatJoin</class>
-<widget class="QWidget">
+<widget class="KDialog">
     <property name="name">
         <cstring>dlgChatJoin</cstring>
     </property>
@@ -8,69 +8,123 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>290</width>
-            <height>122</height>
+            <width>291</width>
+            <height>160</height>
         </rect>
     </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLayoutWidget" row="0" column="0">
+        <widget class="QLabel" row="2" column="0">
+            <property name="name">
+                <cstring>lblNick</cstring>
+            </property>
+            <property name="text">
+                <string>Nick:</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="1" column="1">
+            <property name="name">
+                <cstring>leServer</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="2" column="1">
+            <property name="name">
+                <cstring>leNick</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="0" column="1">
+            <property name="name">
+                <cstring>leRoom</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>lblRoom</cstring>
+            </property>
+            <property name="text">
+                <string>Room:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>lblServer</cstring>
+            </property>
+            <property name="text">
+                <string>Server:</string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget" row="3" column="1">
             <property name="name">
                 <cstring>layout3</cstring>
             </property>
-            <grid>
+            <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel" row="2" column="0">
+                <spacer>
                     <property name="name">
-                        <cstring>lblNick</cstring>
+                        <cstring>spacer2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>41</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>pbJoin</cstring>
                     </property>
                     <property name="text">
-                        <string>Nick:</string>
+                        <string>&amp;Join</string>
+                    </property>
+                    <property name="default">
+                        <bool>true</bool>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="1" column="1">
+                <widget class="QPushButton">
                     <property name="name">
-                        <cstring>leServer</cstring>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="2" column="1">
-                    <property name="name">
-                        <cstring>leNick</cstring>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="0" column="1">
-                    <property name="name">
-                        <cstring>leRoom</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>lblRoom</cstring>
+                        <cstring>pbBrowse</cstring>
                     </property>
                     <property name="text">
-                        <string>Room:</string>
+                        <string>Bro&amp;wse</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>lblServer</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Server:</string>
-                    </property>
-                </widget>
-            </grid>
+            </hbox>
         </widget>
     </grid>
 </widget>
+<connections>
+    <connection>
+        <sender>pbJoin</sender>
+        <signal>clicked()</signal>
+        <receiver>dlgChatJoin</receiver>
+        <slot>slotJoin()</slot>
+    </connection>
+    <connection>
+        <sender>pbBrowse</sender>
+        <signal>clicked()</signal>
+        <receiver>dlgChatJoin</receiver>
+        <slot>slotBowse()</slot>
+    </connection>
+</connections>
 <tabstops>
     <tabstop>leRoom</tabstop>
     <tabstop>leServer</tabstop>
     <tabstop>leNick</tabstop>
 </tabstops>
+<slots>
+    <slot>slotBowse()</slot>
+    <slot>slotJoin()</slot>
+</slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

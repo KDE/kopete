@@ -811,12 +811,30 @@ void JabberClient::joinGroupChat ( const QString &host, const QString &room, con
 
 }
 
+void JabberClient::joinGroupChat ( const QString &host, const QString &room, const QString &nick, const QString &password )
+{
+
+	client()->groupChatJoin ( host, room, nick, password );
+
+}
+
 void JabberClient::leaveGroupChat ( const QString &host, const QString &room )
 {
 
 	client()->groupChatLeave ( host, room );
 
 }
+
+void JabberClient::setGroupChatStatus( const QString & host, const QString & room, const XMPP::Status & status )
+{
+	client()->groupChatSetStatus( host, room, status);
+}
+
+void JabberClient::changeGroupChatNick( const QString & host, const QString & room, const QString & nick, const XMPP::Status & status )
+{
+	client()->groupChatChangeNick( host, room, nick, status );
+}
+
 
 void JabberClient::sendMessage ( const XMPP::Message &message )
 {
@@ -1116,5 +1134,6 @@ void JabberClient::slotSubscription ( const Jid &jid, const QString &type )
 	emit subscription ( jid, type );
 
 }
+
 
 #include "jabberclient.moc"

@@ -43,6 +43,8 @@
 #include <kapplication.h>
 #include <kaboutdata.h>
 #include <ksocketbase.h>
+#include <kpassdlg.h>
+#include <kinputdialog.h>
 
 #include "kopetepassword.h"
 #include "kopeteawayaction.h"
@@ -70,9 +72,13 @@
 #include <sys/utsname.h>
 
 #ifdef SUPPORT_JINGLE
-#include "jingle/voicecaller.h"
-#include "jingle/jinglevoicecaller.h"
-#include "jingle/voicecalldlg.h"
+#include "voicecaller.h"
+#include "jinglevoicecaller.h"
+#include "voicecalldlg.h"
+
+#include "jinglesessionmanager.h"
+#include "jinglesession.h"
+#include "jinglevoicesession.h"
 #endif
 
 #define KOPETE_CAPS_NODE "http://kopete.kde.org/jabber/caps"
@@ -90,6 +96,7 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	m_contactPool = 0L;
 #ifdef SUPPORT_JINGLE
 	m_voiceCaller = 0L;
+	m_jingleSessionManager = 0L;
 #endif
 	m_removing=false;
 
@@ -134,6 +141,9 @@ void JabberAccount::cleanup ()
 #ifdef SUPPORT_JINGLE
 	delete m_voiceCaller;
 	m_voiceCaller = 0L;
+
+	delete m_jingleSessionManager;
+	m_jingleSessionManager = 0L;
 #endif
 }
 
@@ -161,7 +171,13 @@ KActionMenu *JabberAccount::actionMenu ()
 	m_actionMenu->popupMenu()->insertSeparator();
 
 	m_actionMenu->insert(new KAction (i18n ("Join Groupchat..."), "jabber_group", 0,
-		this, SLOT (slotJoinNewChat ()), this, "actionJoinChat"));
+						 this, SLOT (slotJoinNewChat ()), this, "actionJoinChat"));
+	
+	KSelectAction *groupchatBM = new KSelectAction( i18n("Groupchat bookmark") , "jabber_group" , 0 , this , "actionBookMark" );
+	m_actionMenu->insert( groupchatBM );
+	groupchatBM->setItems(m_bookmarkGroupChat);
+	QObject::connect(groupchatBM, SIGNAL(activated (const QString&)) , this, SLOT(slotJoinChatBookmark(const QString&)));
+		
 
 	m_actionMenu->popupMenu()->insertSeparator();
 	
@@ -302,7 +318,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		QObject::connect ( m_jabberClient, SIGNAL ( rosterRequestFinished ( bool ) ),
 				   this, SLOT ( slotRosterRequestFinished ( bool ) ) );
 		QObject::connect ( m_jabberClient, SIGNAL ( newContact ( const XMPP::RosterItem & ) ),
-				   this, SLOT ( slotNewContact ( const XMPP::RosterItem & ) ) );
+				   this, SLOT ( slotContactUpdated ( const XMPP::RosterItem & ) ) );
 		QObject::connect ( m_jabberClient, SIGNAL ( contactUpdated ( const XMPP::RosterItem & ) ),
 				   this, SLOT ( slotContactUpdated ( const XMPP::RosterItem & ) ) );
 		QObject::connect ( m_jabberClient, SIGNAL ( contactDeleted ( const XMPP::RosterItem & ) ),
@@ -425,15 +441,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		case JabberClient::Ok:
 		default:
 			// everything alright!
-#ifdef SUPPORT_JINGLE
-			if(!m_voiceCaller)
-			{
-				m_voiceCaller = new JingleVoiceCaller( m_jabberClient );
-				QObject::connect(m_voiceCaller,SIGNAL(incoming(const Jid&)),this,SLOT(slotIncomingVoiceCall( const Jid& )));
-			}
-			// Set caps extensions
-			m_jabberClient->client()->addExtension("voice-v1", Features(QString("http://www.google.com/xmpp/protocol/voice/v1")));
-#endif
+
 			break;
 	}
 
@@ -556,8 +564,26 @@ void JabberAccount::slotConnected ()
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Connected to Jabber server." << endl;
 	
 #ifdef SUPPORT_JINGLE
-	if(m_voiceCaller)
-		m_voiceCaller->initialize();
+	if(!m_voiceCaller)
+	{
+		m_voiceCaller = new JingleVoiceCaller( m_jabberClient );
+		QObject::connect(m_voiceCaller,SIGNAL(incoming(const Jid&)),this,SLOT(slotIncomingVoiceCall( const Jid& )));
+	}
+	m_voiceCaller->initialize();
+
+// 	if(!m_jingleSessionManager)
+// 	{
+// 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Creating Jingle Session Manager..." << endl;
+// 		m_jingleSessionManager = new JingleSessionManager( this );
+// 		QObject::connect(m_jingleSessionManager, SIGNAL(incomingSession(const QString &, JingleSession *)), this, SLOT(slotIncomingJingleSession(const QString &, JingleSession *)));
+// 	}
+
+	// Set caps extensions
+	m_jabberClient->client()->addExtension("voice-v1", Features(QString("http://www.google.com/xmpp/protocol/voice/v1")));
+
+	
+// 	if(m_voiceCaller)
+// 		m_voiceCaller->initialize();
 #endif
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Requesting roster..." << endl;
@@ -570,7 +596,12 @@ void JabberAccount::slotConnected ()
 	 * information in that case either). */
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting initial presence..." << endl;
 	setPresence ( m_initialPresence );
-
+	
+	
+	XMPP::JT_PrivateStorage * task = new XMPP::JT_PrivateStorage ( client()->rootTask ());
+	task->get( "storage" , "storage:bookmarks" );
+	QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotReceivedGroupChatBookmark() ) );
+	task->go ( true );
 }
 
 void JabberAccount::slotRosterRequestFinished ( bool success )
@@ -595,7 +626,7 @@ void JabberAccount::slotIncomingFileTransfer ()
 
 void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status  , const QString &reason)
 {
-	XMPP::Status xmppStatus ( "", reason );
+	XMPP::Status xmppStatus = m_protocol->kosToStatus( status, reason);
 
 	if( status.status() == Kopete::OnlineStatus::Offline )
 	{
@@ -610,33 +641,7 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status  , const
 		errorConnectionInProgress ();
 		return;
 	}
-
-	switch ( status.internalStatus () )
-	{
-		case JabberProtocol::JabberFreeForChat:
-			xmppStatus.setShow ( "chat" );
-			break;
-
-		case JabberProtocol::JabberOnline:
-			xmppStatus.setShow ( "" );
-			break;
-
-		case JabberProtocol::JabberAway:
-			xmppStatus.setShow ( "away" );
-			break;
-
-		case JabberProtocol::JabberXA:
-			xmppStatus.setShow ( "xa" );
-			break;
-
-		case JabberProtocol::JabberDND:
-			xmppStatus.setShow ( "dnd" );
-			break;
-
-		case JabberProtocol::JabberInvisible:
-			xmppStatus.setIsInvisible ( true );
-			break;
-	}
+	
 
 	if ( !isConnected () )
 	{
@@ -1199,7 +1204,7 @@ void JabberAccount::slotContactAddedNotifyDialogClosed( const QString & contacti
 
 
 
-void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
+void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
 {
 
 	/**
@@ -1220,51 +1225,83 @@ void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New roster item " << item.jid().full () << " (Subscription: " << item.subscription().toString () << ")" << endl;
 
 	/*
+	 * See if the contact need to be added, according to the criterias of 
+	 *  JEP-0162: Best Practices for Roster and Subscription Management
+	 * http://www.jabber.org/jeps/jep-0162.html#contacts
+	 */
+	bool need_to_add=false;
+	if(item.subscription().type() == XMPP::Subscription::Both || item.subscription().type() == XMPP::Subscription::To)
+		need_to_add = true;
+	else if( !item.ask().isEmpty() )
+		need_to_add = true;
+	else if( !item.name().isEmpty() || !item.groups().isEmpty() )
+		need_to_add = true;
+	
+	/*
 	 * See if the contact is already on our contact list
 	 */
-	Kopete::MetaContact *metaContact;
 	Kopete::Contact *c= contactPool()->findExactMatch( item.jid() );
-			//Kopete::ContactList::self()->findContact ( protocol()->pluginId (), accountId (), item.jid().full().lower () ) ;
-	if ( !c  )
+	
+	if( c && c == c->Kopete::Contact::account()->myself() )  //don't use JabberBaseContact::account() which return alwaus the JabberAccount, and not the transport
 	{
+		// don't let remove the gateway contact, eh!
+		need_to_add = true;  
+	}
+
+	if(need_to_add)
+	{
+		Kopete::MetaContact *metaContact=0L;
+		if (!c)
+		{
+			/*
+			* No metacontact has been found which contains a contact with this ID,
+			* so add a new metacontact to the list.
+			*/
+			metaContact = new Kopete::MetaContact ();
+			QStringList groups = item.groups ();
+	
+			// add this metacontact to all groups the contact is a member of
+			for (QStringList::Iterator it = groups.begin (); it != groups.end (); ++it)
+				metaContact->addToGroup (Kopete::ContactList::self ()->findGroup (*it));
+	
+			// put it onto contact list
+			Kopete::ContactList::self ()->addMetaContact ( metaContact );
+		}
+		else
+		{
+			metaContact=c->metaContact();
+			//TODO: syncronize groups
+		}
+
 		/*
-		 * No metacontact has been found which contains a contact with this ID,
-		 * so add a new metacontact to the list.
-		 */
-		metaContact = new Kopete::MetaContact ();
-		QStringList groups = item.groups ();
+		* Add / update the contact in our pool. In case the contact is already there,
+		* it will be updated. In case the contact is not in the meta contact yet, it
+		* will be added to it.
+		* The "dirty" flag is false here, because we just received the contact from
+		* the server's roster. As such, it is now a synchronized entry.
+		*/
+		JabberContact *contact = contactPool()->addContact ( item, metaContact, false );
 
-		// add this metacontact to all groups the contact is a member of
-		for (QStringList::Iterator it = groups.begin (); it != groups.end (); ++it)
-			metaContact->addToGroup (Kopete::ContactList::self ()->findGroup (*it));
-
-		// put it onto contact list
-		Kopete::ContactList::self ()->addMetaContact ( metaContact );
+		/*
+		* Set authorization property
+		*/
+		if ( !item.ask().isEmpty () )
+		{
+			contact->setProperty ( protocol()->propAuthorizationStatus, i18n ( "Waiting for authorization" ) );
+		}
+		else
+		{
+			contact->removeProperty ( protocol()->propAuthorizationStatus );
+		}
 	}
-	else
+	else if(c)  //we don't need to add it, and it is in the contactlist
 	{
-		metaContact=c->metaContact();
-	}
-
-	/*
-	 * Add / update the contact in our pool. In case the contact is already there,
-	 * it will be updated. In case the contact is not in the meta contact yet, it
-	 * will be added to it.
-	 * The "dirty" flag is false here, because we just received the contact from
-	 * the server's roster. As such, it is now a synchronized entry.
-	 */
-	JabberContact *contact = contactPool()->addContact ( item, metaContact, false );
-
-	/*
-	 * Set authorization property
-	 */
-	if ( !item.ask().isEmpty () )
-	{
-		contact->setProperty ( protocol()->propAuthorizationStatus, i18n ( "Waiting for authorization" ) );
-	}
-	else
-	{
-		contact->removeProperty ( protocol()->propAuthorizationStatus );
+		Kopete::MetaContact *metaContact=c->metaContact();
+		if(metaContact->isTemporary())
+			return;
+		delete c;
+		if(metaContact->contacts().isEmpty())
+			Kopete::ContactList::self()->removeMetaContact( metaContact );
 	}
 
 }
@@ -1275,31 +1312,6 @@ void JabberAccount::slotContactDeleted (const XMPP::RosterItem & item)
 
 	// since the contact instance will get deleted here, the GUI should be updated
 	contactPool()->removeContact ( item.jid () );
-
-}
-
-void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
-{
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Status update for " << item.jid().full () << endl;
-
-	/*
-	 * Sanity check: make sure that we have a matchin contact
-	 * in our local pool before we try to updating it.
-	 * (if no contact would be present, we'd add a contact
-	 * without parent meta contact)
-	 */
-	if ( !contactPool()->findExactMatch ( item.jid () ) )
-	{
-		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "WARNING: Trying to update non-existing contact " << item.jid().full () << endl;
-		return;
-	}
-
-	/*
-	 * Adding the contact again will update the existing instance.
-	 * We're also explicitely setting the dirty flag to "false" since
-	 * we are in synch with the server.
-	 */
-	contactPool()->addContact ( item, 0L, false );
 
 }
 
@@ -1396,10 +1408,15 @@ void JabberAccount::slotGroupChatJoined (const XMPP::Jid & jid)
 	// Create a groupchat contact for this room
 	JabberGroupContact *groupContact = dynamic_cast<JabberGroupContact *>( contactPool()->addGroupContact ( XMPP::RosterItem ( jid ), true, metaContact, false ) );
 
-	// Add the groupchat contact to the meta contact.
-	metaContact->addContact ( groupContact );
-
-	Kopete::ContactList::self ()->addMetaContact ( metaContact );
+	if(groupContact)
+	{
+		// Add the groupchat contact to the meta contact.
+		//metaContact->addContact ( groupContact );
+	
+		Kopete::ContactList::self ()->addMetaContact ( metaContact );
+	}
+	else
+		delete metaContact;
 
 	/**
 	 * Add an initial resource for this contact to the pool. We need
@@ -1412,22 +1429,55 @@ void JabberAccount::slotGroupChatJoined (const XMPP::Jid & jid)
 
 	// lock the room to our own status
 	resourcePool()->lockToResource ( XMPP::Jid ( jid.userHost () ), jid.resource () );
+	
+	
+	if(!m_bookmarkGroupChat.contains(jid.full()))
+	{
+		m_bookmarkGroupChat.append(jid.full());
+		
+		QDomDocument doc("storage");
+		QDomElement storage=doc.createElement("storage");
+		doc.appendChild(storage);
+		storage.setAttribute("xmlns","storage:bookmarks");
+		for ( QStringList::Iterator it = m_bookmarkGroupChat.begin(); it != m_bookmarkGroupChat.end(); ++it ) 
+		{
+			XMPP::Jid jid(*it);
+			QDomElement conference=doc.createElement("conference");
+			storage.appendChild(conference);
+			conference.setAttribute("jid",jid.userHost());
+			QDomElement nick=doc.createElement("nick");
+			conference.appendChild(nick);
+			nick.appendChild(doc.createTextNode(jid.resource()));
+		}
+		
+		XMPP::JT_PrivateStorage * task = new XMPP::JT_PrivateStorage ( client()->rootTask ());
+		task->set( storage );
+		QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotReceivedGroupChatBookmark() ) );
+		task->go ( true );
+	}
 
 }
 
 void JabberAccount::slotGroupChatLeft (const XMPP::Jid & jid)
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo "Left groupchat " << jid.full () << endl;
-
+	
 	// remove group contact from list
-	Kopete::MetaContact *metaContact = Kopete::ContactList::self()->findMetaContactByContactId ( jid.userHost () );
+	Kopete::Contact *contact = 
+			Kopete::ContactList::self()->findContact( protocol()->pluginId() , accountId() , jid.userHost() );
 
-	if ( metaContact )
-		Kopete::ContactList::self()->removeMetaContact ( metaContact );
+	if ( contact )
+	{
+		Kopete::MetaContact *metaContact= contact->metaContact();
+		if( metaContact && metaContact->isTemporary() )
+			Kopete::ContactList::self()->removeMetaContact ( metaContact );
+		else
+			contact->deleteLater();
+	}
 
 	// now remove it from our pool, which should clean up all subcontacts as well
 	contactPool()->removeContact ( XMPP::Jid ( jid.userHost () ) );
-
+	
 }
 
 void JabberAccount::slotGroupChatPresence (const XMPP::Jid & jid, const XMPP::Status & status)
@@ -1468,12 +1518,55 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Group chat error - room " << jid.full () << " had error " << error << " (" << reason << ")" << endl;
 
-	QString detailedReason = reason.isEmpty () ? i18n ( "No reason given by the server" ) : reason;
+	switch (error)
+	{
+	case JabberClient::InvalidPasswordForMUC:
+		{
+			QCString password;
+ 			int result = KPasswordDialog::getPassword(password, i18n("A password is required to join the room %1.").arg(jid.node()));
+			if (result == KPasswordDialog::Accepted)
+				m_jabberClient->joinGroupChat(jid.domain(), jid.node(), jid.resource(), password);
+		}
+		break;
 
-	KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
+	case JabberClient::NicknameConflict:
+		{
+			bool ok;
+			QString nickname = KInputDialog::getText(i18n("Error trying to join %1 : nickname %2 is already in use").arg(jid.node(), jid.resource()),
+									i18n("Give your nickname"),
+									QString(),
+									&ok);
+			if (ok)
+			{
+				m_jabberClient->joinGroupChat(jid.domain(), jid.node(), nickname);
+			}
+		}
+		break;
+
+	case JabberClient::BannedFromThisMUC:
+		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
+									KMessageBox::Error,
+									i18n ("You can't join the room %1 because you were banned").arg(jid.node()),
+									i18n ("Jabber Group Chat") );
+		break;
+
+	case JabberClient::MaxUsersReachedForThisMuc:
+		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
+									KMessageBox::Error,
+									i18n ("You can't join the room %1 because the maximum users has been reached").arg(jid.node()),
+									i18n ("Jabber Group Chat") );
+		break;
+
+	default:
+		{
+		QString detailedReason = reason.isEmpty () ? i18n ( "No reason given by the server" ) : reason;
+
+		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
 									KMessageBox::Error,
 									i18n ("There was an error processing your request for group chat %1. (Reason: %2, Code %3)").arg ( jid.full (), detailedReason, QString::number ( error ) ),
 									i18n ("Jabber Group Chat") );
+		}
+	}
 }
 
 void JabberAccount::slotResourceAvailable (const XMPP::Jid & jid, const XMPP::Resource & resource)
@@ -1501,24 +1594,28 @@ void JabberAccount::slotEditVCard ()
 
 void JabberAccount::slotGlobalIdentityChanged (const QString &key, const QVariant &value)
 {
-	JabberContact *jabberMyself = static_cast<JabberContact *>( myself() );
-	if( key == Kopete::Global::Properties::self()->nickName().key() )
+	// Check if this account is excluded from Global Identity.
+	if( !configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) )
 	{
-		QString oldNick = jabberMyself->property( protocol()->propNickName ).value().toString();
-		QString newNick = value.toString();
-	
-		if( newNick != oldNick && isConnected() )
+		JabberContact *jabberMyself = static_cast<JabberContact *>( myself() );
+		if( key == Kopete::Global::Properties::self()->nickName().key() )
 		{
-			jabberMyself->setProperty( protocol()->propNickName, newNick );
-			jabberMyself->slotSendVCard();
+			QString oldNick = jabberMyself->property( protocol()->propNickName ).value().toString();
+			QString newNick = value.toString();
+		
+			if( newNick != oldNick && isConnected() )
+			{
+				jabberMyself->setProperty( protocol()->propNickName, newNick );
+				jabberMyself->slotSendVCard();
+			}
 		}
-	}
-	if( key == Kopete::Global::Properties::self()->photo().key() )
-	{
-		if( isConnected() )
+		if( key == Kopete::Global::Properties::self()->photo().key() )
 		{
-			jabberMyself->setPhoto( value.toString() );
-			jabberMyself->slotSendVCard();
+			if( isConnected() )
+			{
+				jabberMyself->setPhoto( value.toString() );
+				jabberMyself->slotSendVCard();
+			}
 		}
 	}
 }
@@ -1561,8 +1658,28 @@ void JabberAccount::slotIncomingVoiceCall( const Jid & j)
 		vc->show();
 		vc->incoming();
 	}
+#else
+	Q_UNUSED(j);
 #endif
 }
+
+void JabberAccount::slotIncomingJingleSession( const QString &sessionType, JingleSession *session )
+{
+#ifdef SUPPORT_JINGLE
+	if(sessionType == "http://www.google.com/session/phone")
+	{
+		QString from = ((XMPP::Jid)session->peers().first()).full();
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, QString("Received a voice session invitation from %1.").arg(from) );
+
+		session->decline();
+		sessionManager()->removeSession(session);
+	}
+#else
+	Q_UNUSED( sessionType );
+	Q_UNUSED( session );
+#endif
+}
+
 
 void JabberAccount::addTransport( JabberTransport * tr, const QString &jid )
 {
@@ -1635,6 +1752,41 @@ void JabberAccount::slotUnregisterFinished( )
 	}
 	if(m_removing)  //it may be because this is now the timer.
 		Kopete::AccountManager::self()->removeAccount( this ); //this will delete this
+}
+
+void JabberAccount::slotReceivedGroupChatBookmark( )
+{
+	XMPP::JT_PrivateStorage * task = (XMPP::JT_PrivateStorage*)(sender());
+	if(task->success())
+	{
+		m_bookmarkGroupChat.clear();
+		QDomElement storage=task->element();
+		for(QDomNode n = storage.firstChild(); !n.isNull(); n = n.nextSibling()) {
+			QDomElement i = n.toElement();
+			if(i.isNull())
+				continue;
+			if(i.tagName() == "conference")
+			{
+				QString jid=i.attribute("jid");
+				for(QDomNode n = i.firstChild(); !n.isNull(); n = n.nextSibling()) {
+					QDomElement e = n.toElement();
+					if(e.isNull())
+						continue;
+					
+					if(e.tagName() == "nick")
+						jid+="/"+e.text();
+				}
+				m_bookmarkGroupChat += jid;
+			}
+		}
+	}
+
+}
+
+void JabberAccount::slotJoinChatBookmark( const QString & _jid )
+{
+	XMPP::Jid jid(_jid);
+	client()->joinGroupChat( jid.host() , jid.user() , jid.resource() );
 }
 
 

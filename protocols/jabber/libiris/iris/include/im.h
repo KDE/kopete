@@ -608,6 +608,7 @@ namespace XMPP
 		FileTransferManager *fileTransferManager() const;
 
 		bool groupChatJoin(const QString &host, const QString &room, const QString &nick);
+		bool groupChatJoin(const QString &host, const QString &room, const QString &nick, const QString &password);
 		void groupChatSetStatus(const QString &host, const QString &room, const Status &);
 		void groupChatChangeNick(const QString &host, const QString &room, const QString &nick, const Status &);
 		void groupChatLeave(const QString &host, const QString &room);

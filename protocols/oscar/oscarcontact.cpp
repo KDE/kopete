@@ -180,41 +180,41 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 	setProperty( Kopete::Global::Properties::self()->onlineSince(), details.onlineSinceTime() );
 	setIdleTime( details.idleTime() );
 	m_warningLevel = details.warningLevel();
-	m_details = details;
+	m_details.merge( details );
 	
 	QStringList capList;
 	// Append client name and version in case we found one
-	if ( details.userClass() & 0x0080 /* WIRELESS */ )
+	if ( m_details.userClass() & 0x0080 /* WIRELESS */ )
 		capList << i18n( "Mobile AIM Client" );
 	else
 	{
-		if ( !details.clientName().isEmpty() )
+		if ( !m_details.clientName().isEmpty() )
 		{
 			capList << i18n( "Translators: client name and version",
-			                "%1").arg( details.clientName() );
+			                "%1").arg( m_details.clientName() );
 		}
 	}
 	
 	// and now for some general informative capabilities
-	if ( details.hasCap( CAP_BUDDYICON ) )
+	if ( m_details.hasCap( CAP_BUDDYICON ) )
 		capList << i18n( "Buddy icons" );
-	if ( details.hasCap( CAP_UTF8 ) )
+	if ( m_details.hasCap( CAP_UTF8 ) )
 		capList << i18n( "UTF-8" );
-	if ( details.hasCap( CAP_RTFMSGS ) )
+	if ( m_details.hasCap( CAP_RTFMSGS ) )
 		capList << i18n( "Rich text messages" );
-	if ( details.hasCap( CAP_CHAT ) )
+	if ( m_details.hasCap( CAP_CHAT ) )
 		capList << i18n( "Group chat" );
-	if ( details.hasCap( CAP_VOICE ) )
+	if ( m_details.hasCap( CAP_VOICE ) )
 		capList << i18n( "Voice chat" );
-	if ( details.hasCap( CAP_IMIMAGE ) )
+	if ( m_details.hasCap( CAP_IMIMAGE ) )
 		capList << i18n( "DirectIM/IMImage" );
-	if ( details.hasCap( CAP_SENDBUDDYLIST ) )
+	if ( m_details.hasCap( CAP_SENDBUDDYLIST ) )
 		capList << i18n( "Send buddy list" );
-	if ( details.hasCap( CAP_SENDFILE ) )
+	if ( m_details.hasCap( CAP_SENDFILE ) )
 		capList << i18n( "File transfers" );
-	if ( details.hasCap( CAP_GAMES ) || details.hasCap( CAP_GAMES2 ) )
+	if ( m_details.hasCap( CAP_GAMES ) || m_details.hasCap( CAP_GAMES2 ) )
 		capList << i18n( "Games" );
-	if ( details.hasCap( CAP_TRILLIAN ) )
+	if ( m_details.hasCap( CAP_TRILLIAN ) )
 		capList << i18n( "Trillian user" );
 	
 	m_clientFeatures = capList.join( ", " );

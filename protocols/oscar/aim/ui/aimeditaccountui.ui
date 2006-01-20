@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>560</width>
-            <height>473</height>
+            <height>583</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -53,7 +53,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>B&amp;asic Setup</string>
+                    <string>&amp;Basic Setup</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -66,11 +66,11 @@
                         <property name="title">
                             <string>Account Information</string>
                         </property>
-                        <vbox>
+                        <grid>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLayoutWidget">
+                            <widget class="QLayoutWidget" row="0" column="0">
                                 <property name="name">
                                     <cstring>layout4</cstring>
                                 </property>
@@ -83,7 +83,7 @@
                                             <cstring>lblAccountId</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>&amp;AIM screen name:</string>
+                                            <string>AIM &amp;screen name:</string>
                                         </property>
                                         <property name="buddy" stdset="0">
                                             <cstring>edtAccountId</cstring>
@@ -108,12 +108,20 @@
                                     </widget>
                                 </hbox>
                             </widget>
-                            <widget class="Kopete::UI::PasswordWidget">
+                            <widget class="Kopete::UI::PasswordWidget" row="1" column="0">
                                 <property name="name">
                                     <cstring>mPasswordWidget</cstring>
                                 </property>
                             </widget>
-                            <widget class="QCheckBox">
+                            <widget class="QCheckBox" row="3" column="0">
+                                <property name="name">
+                                    <cstring>mGlobalIdentity</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Exclu&amp;de from Global Identity</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="2" column="0">
                                 <property name="name">
                                     <cstring>mAutoLogon</cstring>
                                 </property>
@@ -124,7 +132,7 @@
                                     <string>If you check that case, the account will not be connected when you press the "Connect All" button, or at startup even if you selected to automatically connect at startup</string>
                                 </property>
                             </widget>
-                        </vbox>
+                        </grid>
                     </widget>
                     <widget class="QGroupBox">
                         <property name="name">
@@ -204,7 +212,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>A&amp;ccount Preferences</string>
+                    <string>Accou&amp;nt Preferences</string>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -370,7 +378,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>P&amp;rivacy</string>
+                    <string>Pri&amp;vacy</string>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -526,4 +534,7 @@
     <tabstop>rbBlockDenyList</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kopetepasswordwidget.h</includehint>
+</includehints>
 </UI>

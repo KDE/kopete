@@ -149,7 +149,6 @@ static const char* const servers_ip[] = {
 	p->loginInfo.useTls		= false;
 	p->loginInfo.status		= GG_STATUS_AVAIL;
 	p->loginInfo.server		= 0;
-	p->loginInfo.forFriends		= false;
 	p->loginInfo.client_port	= 0;
 	p->loginInfo.client_addr	= 0;
 
@@ -162,7 +161,8 @@ static const char* const servers_ip[] = {
 	p->config = configGroup();
 
 	p->ignoreAnons = ignoreAnons();
-	
+	p->forFriends = loadFriendsMode();
+
 	initConnections();
 	initActions();
 
@@ -195,6 +195,8 @@ GaduAccount::initActions()
 	p->friendsModeAction	= new KToggleAction( i18n( "Only for Friends" ), "", 0,
 							this, SLOT( slotFriendsMode() ), 0,
 							"actionFriendsMode" );
+
+	static_cast<KToggleAction*>(p->friendsModeAction)->setChecked( p->forFriends );
 }
 
 void
@@ -906,6 +908,8 @@ GaduAccount::slotFriendsMode()
 	// now change status, it will changing it with p->forFriends flag
 	changeStatus( p->status, p->lastDescription );
 
+	saveFriendsMode( p->forFriends );
+
 }
 
 // FIXME: make loading and saving nonblocking (at the moment KFileDialog stops plugin/kopete)
@@ -1149,6 +1153,31 @@ GaduAccount::setDcc( bool d )
 	kdDebug( 14100 ) << "s: "<<s<<endl;
 
 	return f;
+}
+
+void
+GaduAccount::saveFriendsMode( bool i )
+{
+	p->config->writeEntry( QString::fromAscii( "forFriends" ), 
+			i == true ? QString::fromAscii( "1" ) : QString::fromAscii( "0" ) );
+}
+
+bool
+GaduAccount::loadFriendsMode()
+{
+	QString s;
+	bool r;
+	int n;
+
+	s = p->config->readEntry( QString::fromAscii( "forFriends" ) );
+	n = s.toInt( &r );
+
+	if ( n ) {
+		return true;
+	}
+
+	return false;
+
 }
 
 // might be bit inconsistent with what I used in DCC, but hell, it is so much easier to parse :-)
