@@ -23,7 +23,7 @@
 
 ConferenceTask::ConferenceTask(Task* parent) : Task(parent)
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
 ConferenceTask::~ConferenceTask()
@@ -32,7 +32,7 @@ ConferenceTask::~ConferenceTask()
 
 bool ConferenceTask::take( Transfer* transfer )
 {
-	kdDebug(14181) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	
 	if ( !forMe( transfer ) )
 		return false;
@@ -58,7 +58,7 @@ bool ConferenceTask::take( Transfer* transfer )
 
 bool ConferenceTask::forMe( Transfer* transfer ) const
 {
-	kdDebug(14181) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
@@ -78,7 +78,7 @@ bool ConferenceTask::forMe( Transfer* transfer ) const
 
 void ConferenceTask::parseInvitation( Transfer *transfer )
 {
-	kdDebug(14181) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
@@ -108,7 +108,7 @@ void ConferenceTask::parseInvitation( Transfer *transfer )
 
 void ConferenceTask::parseMessage( Transfer *transfer )
 {
-	kdDebug(14181) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
@@ -131,7 +131,7 @@ void ConferenceTask::parseMessage( Transfer *transfer )
 
 void ConferenceTask::parseUserJoined( Transfer *transfer )
 {
-	kdDebug(14181) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
@@ -147,7 +147,7 @@ void ConferenceTask::parseUserJoined( Transfer *transfer )
 
 void ConferenceTask::parseUserLeft( Transfer *transfer )
 {
-	kdDebug(14181) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
@@ -163,7 +163,7 @@ void ConferenceTask::parseUserLeft( Transfer *transfer )
 
 void ConferenceTask::parseUserDeclined( Transfer *transfer )
 {
-	kdDebug(14181) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
@@ -180,7 +180,7 @@ void ConferenceTask::parseUserDeclined( Transfer *transfer )
 
 void ConferenceTask::inviteConference( const QString &room, const QStringList &members, const QString &msg )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfInvite);
 	t->setId( client()->sessionID() );
@@ -198,7 +198,7 @@ void ConferenceTask::inviteConference( const QString &room, const QStringList &m
 
 void ConferenceTask::addInvite( const QString &room, const QStringList &members, const QString &msg )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfInvite);
 	t->setId( client()->sessionID() );
@@ -219,7 +219,7 @@ void ConferenceTask::addInvite( const QString &room, const QStringList &members,
 
 void ConferenceTask::joinConference( const QString &room, const QStringList &members )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfLogon);
 	t->setId( client()->sessionID() );
@@ -233,7 +233,7 @@ void ConferenceTask::joinConference( const QString &room, const QStringList &mem
 
 void ConferenceTask::declineConference( const QString &room, const QStringList &members, const QString &msg )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfDecline);
 	t->setId( client()->sessionID() );
@@ -248,7 +248,7 @@ void ConferenceTask::declineConference( const QString &room, const QStringList &
 }
 void ConferenceTask::leaveConference( const QString &room, const QStringList &members )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfLogoff);
 	t->setId( client()->sessionID() );
@@ -262,7 +262,7 @@ void ConferenceTask::leaveConference( const QString &room, const QStringList &me
 
 void ConferenceTask::sendMessage( const QString &room, const QStringList &members, const QString &msg )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfMsg);
 	t->setId( client()->sessionID() );

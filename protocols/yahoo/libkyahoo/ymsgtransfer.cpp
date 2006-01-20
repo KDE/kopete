@@ -227,13 +227,13 @@ QByteArray YMSGTransfer::serialize()
 	stream << (Q_INT32)d->id;
  	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
 	{
- 		kdDebug(14180) << k_funcinfo << " Serializing key " << (*it).first << " value " << (*it).second << endl;
+ 		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Serializing key " << (*it).first << " value " << (*it).second << endl;
 		stream.writeRawBytes ( QString::number( (*it).first ).local8Bit(), QString::number( (*it).first ).length() );
 		stream << (Q_INT8)0xc0 << (Q_INT8)0x80;
 		stream.writeRawBytes( (*it).second, (*it).second.length() );
 		stream << (Q_INT8)0xc0 << (Q_INT8)0x80;
 	}
-	kdDebug(14180) << k_funcinfo << " pos=" << pos << " (packet size)" << buffer << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " pos=" << pos << " (packet size)" << buffer << endl;
 	return buffer;
 }
 

@@ -27,7 +27,7 @@
 
 YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0, "yahoo_webcam" )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	theAccount = account;
 	theDialog = 0L;
 	origImg = new KTempFile();
@@ -75,7 +75,7 @@ void YahooWebcam::webcamDialogClosing()
 
 void YahooWebcam::sendImage()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	Kopete::AV::VideoDevicePool *videoDevice = Kopete::AV::VideoDevicePool::self();
 	videoDevice->getFrame();
@@ -101,7 +101,7 @@ void YahooWebcam::sendImage()
 	p.start( KProcess::Block );
 	if( p.exitStatus() != 0 )
 	{
-		kdDebug(14181) << " jasper exited with status " << p.exitStatus() << endl;
+		kdDebug(YAHOO_GEN_DEBUG) << " jasper exited with status " << p.exitStatus() << endl;
 	}
 	else
 	{
@@ -112,7 +112,7 @@ void YahooWebcam::sendImage()
 			theAccount->yahooSession()->sendWebcamImage( ar );
 		}
 		else
-			kdDebug(14181) << "Error opening the converted webcam image." << endl;
+			kdDebug(YAHOO_GEN_DEBUG) << "Error opening the converted webcam image." << endl;
 	}
 }
 

@@ -23,7 +23,7 @@
 
 ChangeStatusTask::ChangeStatusTask(Task* parent) : Task(parent)
 {
-	kdDebug(14181) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
 ChangeStatusTask::~ChangeStatusTask()
@@ -32,7 +32,7 @@ ChangeStatusTask::~ChangeStatusTask()
 
 void ChangeStatusTask::onGo()
 {
-	kdDebug(14181) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	YMSGTransfer *t = new YMSGTransfer( Yahoo::ServiceStatus );
 	t->setId( client()->sessionID() );

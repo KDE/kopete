@@ -25,7 +25,7 @@
 
 MessageReceiverTask::MessageReceiverTask(Task* parent) : Task(parent)
 {
-	kdDebug(14181) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
 MessageReceiverTask::~MessageReceiverTask()
@@ -34,7 +34,7 @@ MessageReceiverTask::~MessageReceiverTask()
 
 bool MessageReceiverTask::take( Transfer* transfer )
 {
-	kdDebug(14181) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	
 	if ( !forMe( transfer ) )
 		return false;
@@ -54,7 +54,7 @@ bool MessageReceiverTask::take( Transfer* transfer )
 
 bool MessageReceiverTask::forMe( Transfer* transfer ) const
 {
-	kdDebug(14181) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
@@ -72,7 +72,7 @@ bool MessageReceiverTask::forMe( Transfer* transfer ) const
 
 void MessageReceiverTask::parseMessage( Transfer *transfer )
 {
-	kdDebug(14181) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)
@@ -87,7 +87,7 @@ void MessageReceiverTask::parseMessage( Transfer *transfer )
 
 	if( msg.isEmpty() )
 	{
-		kdDebug(14181) << k_funcinfo << "Got a empty message. Dropped." << endl;
+		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Got a empty message. Dropped." << endl;
 		return;
 	}
 
@@ -107,7 +107,7 @@ void MessageReceiverTask::parseMessage( Transfer *transfer )
 
 void MessageReceiverTask::parseNotify( Transfer *transfer )
 {
-	kdDebug(14181) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)
@@ -127,12 +127,12 @@ void MessageReceiverTask::parseNotify( Transfer *transfer )
 	{
 		if( ind.startsWith(" ") )
 		{
-			kdDebug(14181) << k_funcinfo << "Got a WebcamInvitation." << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Got a WebcamInvitation." << endl;
 			emit gotWebcamInvite( from );
 		}
 		else
 		{
-			kdDebug(14181) << k_funcinfo << "Got a WebcamRequest-Response: " << ind.toInt() << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Got a WebcamRequest-Response: " << ind.toInt() << endl;
 		}
 	}
 }

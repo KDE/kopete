@@ -25,7 +25,7 @@
 
 PingTask::PingTask(Task* parent) : Task(parent)
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
 PingTask::~PingTask()
@@ -34,7 +34,7 @@ PingTask::~PingTask()
 
 void PingTask::onGo()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePing7);
 	t->setParam( 0, client()->userId().local8Bit() );

@@ -23,7 +23,7 @@
 
 SendMessageTask::SendMessageTask(Task* parent) : Task(parent)
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
 SendMessageTask::~SendMessageTask()
@@ -32,11 +32,11 @@ SendMessageTask::~SendMessageTask()
 
 void SendMessageTask::onGo()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	if( m_text.isEmpty() )
 	{
-		kdDebug(14180) << k_funcinfo << "Text to send is empty." << endl;
+		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Text to send is empty." << endl;
 		return;
 	}	
 

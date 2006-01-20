@@ -49,7 +49,7 @@
 // Yahoo Add Contact page
 YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent, const char* /*name*/): YahooEditAccountBase(parent), KopeteEditAccountWidget(theAccount)
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	theProtocol = protocol;
 
@@ -101,7 +101,7 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 
 bool YahooEditAccount::validateData()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	if(mScreenName->text().isEmpty())
 	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
@@ -118,7 +118,7 @@ bool YahooEditAccount::validateData()
 
 Kopete::Account *YahooEditAccount::apply()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	if ( !account() )
 		setAccount( new YahooAccount( theProtocol, mScreenName->text().lower() ) );

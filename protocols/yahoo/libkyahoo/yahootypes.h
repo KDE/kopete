@@ -20,6 +20,9 @@
 
 #include <qglobal.h>
 
+const int YAHOO_RAW_DEBUG = 14181;
+const int YAHOO_GEN_DEBUG = 14180;
+
 namespace Yahoo
 {
 	enum Service 

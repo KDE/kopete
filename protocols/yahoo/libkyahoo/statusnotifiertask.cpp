@@ -24,7 +24,7 @@
 
 StatusNotifierTask::StatusNotifierTask(Task* parent) : Task(parent)
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
 StatusNotifierTask::~StatusNotifierTask()
@@ -34,7 +34,7 @@ StatusNotifierTask::~StatusNotifierTask()
 
 bool StatusNotifierTask::take( Transfer* transfer )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	
 	if ( !forMe( transfer ) )
 		return false;
@@ -54,7 +54,7 @@ bool StatusNotifierTask::take( Transfer* transfer )
 
 bool StatusNotifierTask::forMe( Transfer* transfer ) const
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)
@@ -80,7 +80,7 @@ bool StatusNotifierTask::forMe( Transfer* transfer ) const
 
 void StatusNotifierTask::parseStatus( Transfer* transfer )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)
@@ -125,7 +125,7 @@ void StatusNotifierTask::parseStatus( Transfer* transfer )
 
 void StatusNotifierTask::parseAuthorization( Transfer* transfer )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)
@@ -160,14 +160,14 @@ void StatusNotifierTask::parseAuthorization( Transfer* transfer )
 		if( !fname.isEmpty() || !lname.isEmpty() )
 			name = QString("%1 %2").arg(fname).arg(lname);
 
-		kdDebug(14180) << k_funcinfo << "Emitting gotAuthorizationRequest( " << nick<< ", " << msg << ", " << name << " )" << endl;
+		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting gotAuthorizationRequest( " << nick<< ", " << msg << ", " << name << " )" << endl;
 		emit gotAuthorizationRequest( nick, msg, name );
 	}
 }
 
 void StatusNotifierTask::parseStealthStatus( Transfer* transfer )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)

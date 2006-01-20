@@ -33,7 +33,7 @@ extern "C"
 
 LoginTask::LoginTask(Task* parent) : Task(parent)
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	mState = InitialState;
 }
 
@@ -44,7 +44,7 @@ LoginTask::~LoginTask()
 
 bool LoginTask::take(Transfer* transfer)
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	/*
 	  Yahoo login task has various stages
 	  
@@ -65,7 +65,7 @@ bool LoginTask::take(Transfer* transfer)
 		switch (mState)
 		{
 			case (InitialState):
-				kdDebug(14180) << k_funcinfo << " - ERROR - take called while in initial state" << endl;
+				kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - ERROR - take called while in initial state" << endl;
 				return false;
 			break;
 			case (SentVerify):
@@ -93,7 +93,7 @@ bool LoginTask::take(Transfer* transfer)
 
 bool LoginTask::forMe(Transfer* transfer) const
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)
@@ -126,12 +126,12 @@ bool LoginTask::forMe(Transfer* transfer) const
 
 void LoginTask::onGo()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	/* initial state, we have to send a ServiceVerify */
 	if (mState == InitialState)
 		sendVerify();
 	else
-		kdDebug(14180) << k_funcinfo << " - ERROR - OnGo called and not initial state" << endl;
+		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - ERROR - OnGo called and not initial state" << endl;
 	//emit finished();
 }
 
@@ -143,7 +143,7 @@ void LoginTask::reset()
 void LoginTask::sendVerify()
 {
 	/* send a ServiceVerify */
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceVerify);
 	//t->setParam("1", client()->userId());
 	send( t );
@@ -152,12 +152,12 @@ void LoginTask::sendVerify()
 
 void LoginTask::sendAuth(Transfer* transfer)
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	// transfer is the verify ack transfer, no useful data in it.
 	Q_UNUSED(transfer);
 	
 	/* got ServiceVerify ACK, send a ServiceAuth with username */
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = new YMSGTransfer( Yahoo::ServiceAuth );
 	t->setParam( 1 , client()->userId().local8Bit() );
 	send(t);
@@ -166,7 +166,7 @@ void LoginTask::sendAuth(Transfer* transfer)
 
 void LoginTask::sendAuthResp(Transfer* transfer)
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)
@@ -184,14 +184,14 @@ void LoginTask::sendAuthResp(Transfer* transfer)
 	switch (version)
 	{
 		case 0:
-		kdDebug(14180) << k_funcinfo << " Version pre 0x0b "<< version_s << endl;	
+		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Version pre 0x0b "<< version_s << endl;	
 		break;
 		case 1:
-		kdDebug(14180) << k_funcinfo << " Version 0x0b "<< version_s << endl;
+		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Version 0x0b "<< version_s << endl;
 		sendAuthResp_0x0b(sn, seed, sessionID);
 		break;
 		default:
-		kdDebug(14180) << k_funcinfo << "Unknown quth version " << endl;
+		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Unknown quth version " << endl;
 	}	
 	mState = SentAuthResp;
 
@@ -200,11 +200,11 @@ void LoginTask::sendAuthResp(Transfer* transfer)
 
 void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint sessionID)
 {
-	kdDebug(14180) << k_funcinfo << " with seed " << seed << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " with seed " << seed << endl;
 	char *resp_6 = (char *) malloc(100);
 	char *resp_96 = (char *) malloc(100);
 	authresp_0x0b(seed.latin1(), sn.latin1(), (client()->password()).latin1(), resp_6, resp_96);
-	kdDebug(14180) << k_funcinfo << "resp_6: " << resp_6 << " resp_69: " << resp_96 << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "resp_6: " << resp_6 << " resp_69: " << resp_96 << endl;
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceAuthResp, m_stateOnConnect);
 	t->setId( sessionID );
 	t->setParam( 0 , sn.local8Bit());
@@ -230,12 +230,12 @@ void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint s
 
 void LoginTask::sendAuthResp_pre_0x0b(const QString &/*sn*/, const QString &/*seed*/)
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
 void LoginTask::handleAuthResp(Transfer *transfer)
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)
@@ -247,11 +247,11 @@ void LoginTask::handleAuthResp(Transfer *transfer)
 	switch( t->service() )
 	{
 		case( Yahoo::ServiceList ):
-			kdDebug(14180) << k_funcinfo << "Emitting Signal" << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting Signal" << endl;
 			emit loginResponse( Yahoo::LoginOk, QString::null );
 		break;
 		case( Yahoo::ServiceAuthResp ):
-			kdDebug(14180) << k_funcinfo << "Emitting Signal" << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting Signal" << endl;
 			emit loginResponse( t->firstParam( 66 ).toInt(), t->firstParam( 20 ) );
 		break;
 		default:
@@ -267,7 +267,7 @@ void LoginTask::setStateOnConnect( Yahoo::Status status )
 
 void LoginTask::parseCookies( Transfer *transfer )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)

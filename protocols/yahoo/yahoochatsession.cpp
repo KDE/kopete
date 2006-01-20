@@ -48,7 +48,7 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 	Kopete::ContactPtrList others, const char *name )
 : Kopete::ChatSession( user, others, protocol,  name )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
 	setInstance(protocol->instance());
 
@@ -81,28 +81,28 @@ YahooChatSession::~YahooChatSession()
 
 void YahooChatSession::slotBuzzContact()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	QPtrList<Kopete::Contact>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->buzzContact();
 }
 
 void YahooChatSession::slotUserInfo()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	QPtrList<Kopete::Contact>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->slotUserInfo();
 }
 
 void YahooChatSession::slotRequestWebcam()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	QPtrList<Kopete::Contact>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->requestWebcam();
 }
 
 void YahooChatSession::slotDisplayPictureChanged()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	QPtrList<Kopete::Contact> mb=members();
 	YahooContact *c = static_cast<YahooContact *>( mb.first() );
 	if ( c && m_image )

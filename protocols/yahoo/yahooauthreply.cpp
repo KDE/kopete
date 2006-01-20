@@ -35,7 +35,6 @@ YahooAuthReply::YahooAuthReply(QWidget *parent, const char *name)
 
 YahooAuthReply::~YahooAuthReply()
 {
-	kdDebug(14180) << k_funcinfo << endl;
 }	
 
 bool YahooAuthReply::acceptAuth()

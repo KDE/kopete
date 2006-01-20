@@ -59,7 +59,7 @@
 YahooContact::YahooContact( YahooAccount *account, const QString &userId, const QString &fullName, Kopete::MetaContact *metaContact )
 	: Kopete::Contact( account, userId, metaContact )
 {
-	//kdDebug(14180) << k_funcinfo << endl;
+	//kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	m_userId = userId;
 	if ( metaContact )
@@ -129,18 +129,18 @@ bool YahooContact::stealthed()
 
 void YahooContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)
 {
-	//kdDebug(14180) << k_funcinfo << endl;
+	//kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	Kopete::Contact::serialize(serializedData, addressBookData);
 }
 
 void YahooContact::syncToServer()
 {
-	kdDebug(14180) << k_funcinfo  << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo  << endl;
 	if(!m_account->isConnected()) return;
 
 	if ( !m_account->isOnServer(m_userId) && !metaContact()->isTemporary() )
-	{	kdDebug(14180) << "Contact " << m_userId << " doesn't exist on server-side. Adding..." << endl;
+	{	kdDebug(YAHOO_GEN_DEBUG) << "Contact " << m_userId << " doesn't exist on server-side. Adding..." << endl;
 
 		Kopete::GroupList groupList = metaContact()->groups();
 		for( Kopete::Group *g = groupList.first(); g; g = groupList.next() )
@@ -150,14 +150,14 @@ void YahooContact::syncToServer()
 
 void YahooContact::sync(unsigned int flags)
 {
-	kdDebug(14180) << k_funcinfo  << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo  << endl;
 	if ( !m_account->isConnected() )
 		return;
 
 	if ( !m_account->isOnServer( contactId() ) )
 	{
 		//TODO: Share this code with the above function
-		kdDebug(14180) << k_funcinfo << "Contact isn't on the server. Adding..." << endl;
+		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Contact isn't on the server. Adding..." << endl;
 		Kopete::GroupList groupList = metaContact()->groups();
 		for ( Kopete::Group *g = groupList.first(); g; g = groupList.next() )
 			m_account->yahooSession()->addBuddy(m_userId, g->displayName() );
@@ -167,7 +167,7 @@ void YahooContact::sync(unsigned int flags)
 		QString newGroup = metaContact()->groups().first()->displayName();
 		if ( flags & Kopete::Contact::MovedBetweenGroup )
 		{
-			kdDebug(14180) << k_funcinfo << "contact changed groups. moving on server" << endl;
+			kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact changed groups. moving on server" << endl;
 			m_account->yahooSession()->moveBuddy( contactId(), m_groupName, newGroup );
 			m_groupName = newGroup;
 		}
@@ -177,13 +177,13 @@ void YahooContact::sync(unsigned int flags)
 
 bool YahooContact::isOnline() const
 {
-	//kdDebug(14180) << k_funcinfo << endl;
+	//kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	return onlineStatus().status() != Kopete::OnlineStatus::Offline && onlineStatus().status() != Kopete::OnlineStatus::Unknown;
 }
 
 bool YahooContact::isReachable()
 {
-	//kdDebug(14180) << k_funcinfo << endl;
+	//kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	if ( m_account->isConnected() )
 		return true;
 	else
@@ -306,12 +306,12 @@ const QString &YahooContact::prepareMessage( QString messageText )
 
 void YahooContact::slotSendMessage( Kopete::Message &message )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	
 	QString messageText = message.escapedBody();
-	kdDebug(14180) << "Original message: " << messageText << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << "Original message: " << messageText << endl;
 	messageText = prepareMessage( messageText );
-	kdDebug(14180) << "Converted message: " << messageText << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << "Converted message: " << messageText << endl;
 	
 	Kopete::ContactPtrList m_them = manager(Kopete::Contact::CanCreate)->members();
 	Kopete::Contact *target = m_them.first();
@@ -418,7 +418,7 @@ QPtrList<KAction> *YahooContact::customContextMenuActions()
 
 void YahooContact::slotUserInfo()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	/*if( m_account->yahooSession() )
 		m_account->yahooSession()->getUserInfo( m_userId );
 	else
@@ -428,12 +428,12 @@ void YahooContact::slotUserInfo()
 
 void YahooContact::slotSendFile()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 }
 
 void YahooContact::stealthContact()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	KDialogBase *stealthSettingDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "stealthSettingDialog", "true",
 				i18n("Stealth Setting"), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
@@ -470,26 +470,26 @@ void YahooContact::buzzContact()
 
 void YahooContact::sendBuddyIconChecksum( int checksum )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	m_account->yahooSession()->sendPictureChecksum( checksum, m_userId );
 	
 }
 
 void YahooContact::sendBuddyIconInfo( const QString &url, int checksum )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	m_account->yahooSession()->sendPictureInformation( m_userId, url, checksum );
 }
 
 void YahooContact::sendBuddyIconUpdate( int type )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	m_account->yahooSession()->sendPictureStatusUpdate( m_userId, type );
 }
 
 void YahooContact::setDisplayPicture(KTempFile *f, int checksum)
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	if( !f )
 		return;
 	// stolen from msncontact.cpp ;)
@@ -507,7 +507,7 @@ void YahooContact::setDisplayPicture(KTempFile *f, int checksum)
 
 void YahooContact::slotEmitDisplayPictureChanged()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	QString newlocation=locateLocal( "appdata", "yahoopictures/"+ contactId().lower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 	setProperty( Kopete::Global::Properties::self()->photo(), QString::null );
 	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
@@ -603,15 +603,15 @@ void YahooContact::closeWebcamDialog()
 
 void YahooContact::deleteContact()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	
 	if( !m_account->isOnServer( contactId() ) )
 	{
-		kdDebug(14180) << k_funcinfo << "Contact does not exist on server-side. Not removing..." << endl;		
+		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Contact does not exist on server-side. Not removing..." << endl;		
 	}
 	else
 	{
-		kdDebug(14180) << k_funcinfo << "Contact is getting remove from server side contactlist...." << endl;
+		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Contact is getting remove from server side contactlist...." << endl;
 		m_account->yahooSession()->removeBuddy( contactId(), m_groupName );
 	}
 	Kopete::Contact::deleteContact();

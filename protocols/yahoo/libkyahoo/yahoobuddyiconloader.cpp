@@ -1,7 +1,7 @@
 /*
     yahoobuddyiconloader.cpp - Fetches YahooBuddyIcons
 
-    Copyright (c) 2005 by André Duffeck <andre@duffeck.de>
+    Copyright (c) 2005 by Andrï¿½Duffeck <andre@duffeck.de>
 
     *************************************************************************
     *                                                                       *
@@ -27,6 +27,8 @@
 #include <kurl.h>
 #include <kstandarddirs.h>
 
+#include "yahootypes.h"
+
 YahooBuddyIconLoader::YahooBuddyIconLoader()
 {
 }
@@ -37,7 +39,7 @@ YahooBuddyIconLoader::~YahooBuddyIconLoader()
 
 void YahooBuddyIconLoader::fetchBuddyIcon( const QString &who, KURL url, int checksum )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	KIO::TransferJob *transfer;
 	QString Url = url.url();
 	QString ext = Url.left( Url.findRev( "?" ) );
@@ -59,7 +61,7 @@ void YahooBuddyIconLoader::fetchBuddyIcon( const QString &who, KURL url, int che
 void YahooBuddyIconLoader::slotData( KIO::Job *job, const QByteArray& data )
 {
 
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	KIO::TransferJob *transfer = static_cast< KIO::TransferJob * >(job);
 
@@ -70,13 +72,13 @@ void YahooBuddyIconLoader::slotData( KIO::Job *job, const QByteArray& data )
 
 void YahooBuddyIconLoader::slotComplete( KIO::Job *job )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	KIO::TransferJob *transfer = static_cast< KIO::TransferJob * >(job);
 
 	if ( job->error () || transfer->isErrorPage () )
 	{
-		kdDebug(14180) << k_funcinfo << "An error occured while downloading buddy icon!" << endl;
+		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "An error occured while downloading buddy icon!" << endl;
 	}
 	else
 	{
@@ -87,7 +89,7 @@ void YahooBuddyIconLoader::slotComplete( KIO::Job *job )
 		}
 		else
 		{
-			kdDebug(14180) << k_funcinfo << "Fatal Error! IconLoadJob has an empty KTempFile pointer." << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Fatal Error! IconLoadJob has an empty KTempFile pointer." << endl;
 		}
 	}
 

@@ -54,7 +54,7 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 	/                   0 - 65535*                   |
 	+-------------------------------------------------+
 	*/
-	kdDebug(14180) << k_funcinfo << packet << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << packet << endl;
 	
 	int pos = 0;
 	int len = 0;
@@ -76,11 +76,11 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 	pos += 2;
 	version2 = yahoo_get16(packet.data() + pos);
 	pos += 2;
-	kdDebug(14180) << k_funcinfo << " - parsed packet version " << version1 << " " << version2 << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - parsed packet version " << version1 << " " << version2 << endl;
 	
 	len = yahoo_get16(packet.data() + pos);
 	pos += 2;
-	kdDebug(14180) << k_funcinfo << " - parsed packet len " << len << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - parsed packet len " << len << endl;
 	
 	servicenum = yahoo_get16(packet.data() + pos);
 	pos += 2;
@@ -89,127 +89,127 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 	{
 		// TODO add remamining services
 		case (Yahoo::ServiceAuth) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceAuth " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceAuth " << servicenum << endl;
 			service = Yahoo::ServiceAuth;
 		break;
 		case (Yahoo::ServiceAuthResp) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceAuthResp " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceAuthResp " << servicenum << endl;
 			service = Yahoo::ServiceAuthResp;
 		break;
 		case (Yahoo::ServiceVerify) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceVerify " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceVerify " << servicenum << endl;
 			service = Yahoo::ServiceVerify;
 		break;
 		case (Yahoo::ServiceList) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceList " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceList " << servicenum << endl;
 			service = Yahoo::ServiceList;
 		break;
 		case (Yahoo::ServiceLogon) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceLogon " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceLogon " << servicenum << endl;
 			service = Yahoo::ServiceLogon;
 		break;
 		case (Yahoo::ServicePing) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServicePing " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServicePing " << servicenum << endl;
 			service = Yahoo::ServicePing;
 		break;
 		case (Yahoo::ServiceNewMail) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceNewMail " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceNewMail " << servicenum << endl;
 			service = Yahoo::ServiceNewMail;
 		break;
 		case (Yahoo::ServiceLogoff) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceLogoff " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceLogoff " << servicenum << endl;
 			service = Yahoo::ServiceLogoff;
 		break;
 		case (Yahoo::ServiceIsAway) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceIsAway " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceIsAway " << servicenum << endl;
 			service = Yahoo::ServiceIsAway;
 		break;
 		case (Yahoo::ServiceIsBack) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceIsBack " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceIsBack " << servicenum << endl;
 			service = Yahoo::ServiceIsBack;
 		break;
 		case (Yahoo::ServiceGameLogon) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceGameLogon " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceGameLogon " << servicenum << endl;
 			service = Yahoo::ServiceGameLogon;
 		break;
 		case (Yahoo::ServiceGameLogoff) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceGameLogoff " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceGameLogoff " << servicenum << endl;
 			service = Yahoo::ServiceGameLogoff;
 		break;
 		case (Yahoo::ServiceIdAct) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceIdAct " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceIdAct " << servicenum << endl;
 			service = Yahoo::ServiceIdAct;
 		break;
 		case (Yahoo::ServiceIddeAct) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceIddeAct " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceIddeAct " << servicenum << endl;
 			service = Yahoo::ServiceIddeAct;
 		break;
 		case (Yahoo::ServiceStatus) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceStatus " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceStatus " << servicenum << endl;
 			service = Yahoo::ServiceStatus;
 		break;
 		case (Yahoo::ServiceMessage) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceMessage " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceMessage " << servicenum << endl;
 			service = Yahoo::ServiceMessage;
 		break;
 		case (Yahoo::ServiceNotify) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceNotify " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceNotify " << servicenum << endl;
 			service = Yahoo::ServiceNotify;
 		break;
 		case (Yahoo::ServiceAddBuddy) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceAddBuddy " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceAddBuddy " << servicenum << endl;
 			service = Yahoo::ServiceAddBuddy;
 		break;
 		case (Yahoo::ServicePictureChecksum) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServicePictureChecksum " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServicePictureChecksum " << servicenum << endl;
 			service = Yahoo::ServicePictureChecksum;
 		break;
 		case (Yahoo::ServicePictureStatus) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServicePictureStatus " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServicePictureStatus " << servicenum << endl;
 			service = Yahoo::ServicePictureStatus;
 		break;
 		case (Yahoo::ServicePicture) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServicePicture " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServicePicture " << servicenum << endl;
 			service = Yahoo::ServicePicture;
 		break;
 		case (Yahoo::ServiceStealth) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceStealth " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceStealth " << servicenum << endl;
 			service = Yahoo::ServiceStealth;
 		break;
 		case (Yahoo::ServicePictureUpload) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServicePictureUpload " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServicePictureUpload " << servicenum << endl;
 			service = Yahoo::ServicePictureUpload;
 		break;
 		case (Yahoo::ServiceWebcam) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceWebcam " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceWebcam " << servicenum << endl;
 			service = Yahoo::ServiceWebcam;
 		break;
 		case (Yahoo::ServiceConfInvite) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceConfInvite " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceConfInvite " << servicenum << endl;
 			service = Yahoo::ServiceConfInvite;
 		break;
 		case (Yahoo::ServiceConfLogon) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceConfLogon " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceConfLogon " << servicenum << endl;
 			service = Yahoo::ServiceConfLogon;
 		break;
 		case (Yahoo::ServiceConfDecline) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceConfDecline " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceConfDecline " << servicenum << endl;
 			service = Yahoo::ServiceConfDecline;
 		break;
 		case (Yahoo::ServiceConfLogoff) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceConfLogoff " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceConfLogoff " << servicenum << endl;
 			service = Yahoo::ServiceConfLogoff;
 		break;
 		case (Yahoo::ServiceConfAddInvite) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceConfAddInvite " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceConfAddInvite " << servicenum << endl;
 			service = Yahoo::ServiceConfAddInvite;
 		break;
 		case (Yahoo::ServiceConfMsg) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceConfMsg " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceConfMsg " << servicenum << endl;
 			service = Yahoo::ServiceConfMsg;
 		break;
 		case (Yahoo::ServiceAuthorization) :
-			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceAuthorization " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceAuthorization " << servicenum << endl;
 			service = Yahoo::ServiceAuthorization;
 		break;
 		/*
@@ -252,7 +252,7 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		*/
 
 		default:
-			kdDebug(14180) << k_funcinfo << "  Parsed packet service -  This means an unknown service " << servicenum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "  Parsed packet service -  This means an unknown service " << servicenum << endl;
 		break;
 	}
 	
@@ -285,15 +285,15 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		StatusOffline
 		StatusNotify*/
 		default:
-			kdDebug(14180) << k_funcinfo << " - unknown status " << statusnum << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - unknown status " << statusnum << endl;
 		break;
 	}
 	
 	sessionid = yahoo_get32(packet.data() + pos);
-	kdDebug(14180) << k_funcinfo << "  Parsed session id: " << (void *)sessionid << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "  Parsed session id: " << (void *)sessionid << endl;
 	pos += 4;
 	
-	kdDebug(14180) << k_funcinfo << " Setting incoming transfer basic information." << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Setting incoming transfer basic information." << endl;
 	YMSGTransfer *t = new YMSGTransfer();
 	t->setService(service);
 	t->setId(sessionid);
@@ -340,14 +340,14 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 
 		if (accept) 
 		{
-			kdDebug(14180) << k_funcinfo << " setting packet key [" << QString(key) << "] to " << QString(value) << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " setting packet key [" << QString(key) << "] to " << QString(value) << endl;
 			t->setParam(QString(key).toInt(), value);
 			free(value);
 			free(key);
 		}
 		else
 		{
-			kdDebug(14180) << k_funcinfo << " key not accepted" << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " key not accepted" << endl;
 		}
 	}
 
@@ -355,7 +355,7 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
  	while( (BYTE)data[pos] == (BYTE) 0x00 && pos <= len + 20)
  		pos++;
 
-	kdDebug(14180) << k_funcinfo << " Returning transfer" << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Returning transfer" << endl;
 	// tell them we have parsed offset bytes
 	
 	bytes = pos;

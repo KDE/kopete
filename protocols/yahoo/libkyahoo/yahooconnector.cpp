@@ -23,11 +23,12 @@
 
 #include "yahooconnector.h"
 #include "yahoobytestream.h"
+#include "yahootypes.h"
 
 KNetworkConnector::KNetworkConnector( QObject *parent, const char */*name*/ )
 		: Connector( parent )
 {
-	kdDebug( 14180 ) << k_funcinfo << "New KNetwork connector." << endl;
+	kdDebug( YAHOO_RAW_DEBUG ) << k_funcinfo << "New KNetwork connector." << endl;
 
 	mErrorCode = KNetwork::KSocketBase::NoError;
 
@@ -45,7 +46,7 @@ KNetworkConnector::~KNetworkConnector()
 
 void KNetworkConnector::connectToServer( const QString &server )
 {
-	kdDebug( 14180 ) << k_funcinfo << "Initiating connection to " << mHost << endl;
+	kdDebug( YAHOO_RAW_DEBUG ) << k_funcinfo << "Initiating connection to " << mHost << endl;
 	Q_ASSERT( !mHost.isNull() );
 	Q_ASSERT( mPort );
 
@@ -61,7 +62,7 @@ void KNetworkConnector::connectToServer( const QString &server )
 
 void KNetworkConnector::slotConnected()
 {
-	kdDebug( 14180 ) << k_funcinfo << "We are connected." << endl;
+	kdDebug( YAHOO_RAW_DEBUG ) << k_funcinfo << "We are connected." << endl;
 
 	// FIXME: setPeerAddress() is something different, find out correct usage later
 	//KInetSocketAddress inetAddress = mStreamSocket->address().asInet().makeIPv6 ();
@@ -72,7 +73,7 @@ void KNetworkConnector::slotConnected()
 
 void KNetworkConnector::slotError( int code )
 {
-	kdDebug( 14180 ) << k_funcinfo << "Error detected: " << code << endl;
+	kdDebug( YAHOO_RAW_DEBUG ) << k_funcinfo << "Error detected: " << code << endl;
 
 	mErrorCode = code;
 	emit error ();
@@ -85,19 +86,19 @@ int KNetworkConnector::errorCode()
 
 ByteStream *KNetworkConnector::stream() const
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	return mByteStream;
 }
 
 void KNetworkConnector::done()
 {
-	kdDebug ( 14180 ) << k_funcinfo << endl;
+	kdDebug ( YAHOO_RAW_DEBUG ) << k_funcinfo << endl;
 	mByteStream->close ();
 }
 
 void KNetworkConnector::setOptHostPort( const QString &host, Q_UINT16 port )
 {
-	kdDebug ( 14180 ) << k_funcinfo << "Manually specifying host " << host << " and port " << port << endl;
+	kdDebug ( YAHOO_RAW_DEBUG ) << k_funcinfo << "Manually specifying host " << host << " and port " << port << endl;
 
 	mHost = host;
 	mPort = port;

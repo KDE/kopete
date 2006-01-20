@@ -51,7 +51,7 @@ YahooVerifyAccount::YahooVerifyAccount(Kopete::Account *account, QWidget *parent
 // Destructor
 YahooVerifyAccount::~YahooVerifyAccount()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 }
 
 void YahooVerifyAccount::setUrl( KURL url )
@@ -66,7 +66,7 @@ void YahooVerifyAccount::setUrl( KURL url )
 void YahooVerifyAccount::slotData( KIO::Job */*job*/, const QByteArray& data )
 {
 
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	mFile->file()->writeBlock( data.data() , data.size() );
 }
@@ -74,7 +74,7 @@ void YahooVerifyAccount::slotData( KIO::Job */*job*/, const QByteArray& data )
 void YahooVerifyAccount::slotComplete( KIO::Job */*job*/ )
 {
 
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	mFile->file()->close();
 	mTheDialog->mPicture->setPixmap( mFile->file()->name() );
 	mTheDialog->mPicture->show();
@@ -82,7 +82,7 @@ void YahooVerifyAccount::slotComplete( KIO::Job */*job*/ )
 
 bool YahooVerifyAccount::validateData()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	return ( !mTheDialog->mWord->text().isEmpty() );
 }
@@ -94,7 +94,7 @@ void YahooVerifyAccount::slotClose()
 
 void YahooVerifyAccount::slotApply()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	YahooAccount* myAccount = static_cast<YahooAccount*>(mTheAccount);
 	myAccount->verifyAccount( mTheDialog->mWord->text() );
