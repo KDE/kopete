@@ -51,6 +51,7 @@ Comment[tr]=Kopete İletişim Kuralı Eklentisi
 Comment[uk]=Втулок протоколу для Kopete
 Comment[wa]=Tchôke-divins di protocole po Kopete
 Comment[zh_CN]=Kopete 协议插件
+Comment[zh_HK]=Kopete 通訊協定插件
 
 [PropertyDef::X-Kopete-Messaging-Protocol]
 Type=QString

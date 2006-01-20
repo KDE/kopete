@@ -58,6 +58,7 @@ Name[uk]=Рахунки
 Name[uz]=Ҳисоблар
 Name[wa]=Contes
 Name[zh_CN]=账户
+Name[zh_HK]=帳號
 Comment=Here You Can Manage All Your Accounts
 Comment[ar]=من هنا تستطيع إدارة جميع حساباتك
 Comment[be]=Тут Вы можаце кіраваць усімі Вашымі рахункамі
@@ -104,6 +105,7 @@ Comment[tg]=Дар ин ҷо Шумо Ҳамаи Ҳисоботҳои худро
 Comment[tr]=Bütün Hesaplarınız Buradan Yönetilebilir
 Comment[uk]=Тут можна керувати вашими рахунками
 Comment[zh_CN]=您可在此管理您全部的账户
+Comment[zh_HK]=在此您可管理您的帳號
 DocPath=kopete/configure-dialog.html#configuring-accounts
 
 

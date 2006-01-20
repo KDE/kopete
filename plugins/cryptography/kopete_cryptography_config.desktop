@@ -58,6 +58,7 @@ Name[uk]=Криптографія
 Name[uz]=Криптография
 Name[wa]=Criptografeye
 Name[zh_CN]=加密
+Name[zh_HK]=密碼學
 Comment=Encrypts messages using PGP
 Comment[ar]=يشفر الرسائل باستخدام PGP
 Comment[bg]=Шифроване на съобщения с GPG
@@ -103,4 +104,5 @@ Comment[tr]=PGP kullanan mesajları şifreler
 Comment[uk]=Шифрує повідомлення за допомогою PGP
 Comment[wa]=Ecripter les messaedjes avou PGP
 Comment[zh_CN]=用 PGP 加密消息
+Comment[zh_HK]=將訊息以 PGP 加密
 

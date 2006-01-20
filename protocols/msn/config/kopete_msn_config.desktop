@@ -59,6 +59,7 @@ Name[uk]=Втулок MSN
 Name[uz]=MSN плагини
 Name[wa]=Tchôke-divins MSN
 Name[zh_CN]=MSN 插件
+Name[zh_HK]=MSN 插件
 Comment=Microsoft Network Protocol
 Comment[ar]=بروتوكول شبكة Microsoft
 Comment[bg]=Протокол за връзка с Microsoft Network
@@ -99,4 +100,5 @@ Comment[uk]=Мережний протокол Microsoft
 Comment[uz]=Microsoft тармоғи билан алоқа ўрнатиш учун протокол
 Comment[wa]=Protocole pol rantoele da Microsoft
 Comment[zh_CN]=Microsoft Network 协议
+Comment[zh_HK]=Microsoft 網絡通訊協定
 
