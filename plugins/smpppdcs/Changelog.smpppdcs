@@ -15,6 +15,10 @@ activates all Kopete accounts, too.
 Changelog
 =========
 
+0.79 (2006/01/18)
+* refactoring to allow easy implementation of new detection methods
+* speed improvements
+
 0.75 (2006/01/01)
 * use of KSocketStream instead of deprecated KExtendedSocket
 * progressbar while searching for an smpppd on the local network

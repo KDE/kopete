@@ -17,58 +17,26 @@
 #ifndef DETECTOR_H
 #define DETECTOR_H
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include <qobject.h>
-#include <qstringlist.h>
+#include <qmutex.h>
 
 #define SMPPPDCS_CONFIG_GROUP "SMPPPDCS Plugin"
 
-namespace KNetwork {
-class KStreamSocket;
-};
-
-class KProcess;
-class DCOPClient;
 class IConnector;
 
 /**
- * @brief Detector to find out if there is a connection to the internet.
+ * @brief Detector interface to find out if there is a connection to the internet.
  *
- * Uses either the SuSE Meta PPP Daemon or netstat to inquire an existing
- * internet connection.
- *
- * This is useful on dial up connections on SuSE systems.
+ * Subclasses should implement the specific ways to check for an internet 
+ * connection
  *
  * @author Heiko Sch&auml;fer <heiko@rangun.de>
  *
  */
 
-class Detector : protected QObject {
-    Q_OBJECT
+class Detector {
 
     Detector(const Detector&);
     Detector& operator=(const Detector&);
-
-    /**
-     * @brief Enumerates the different states of communication with the smpppd
-     */
-    enum CommunicationState {
-        /// No connection to the smpppd is negotiated
-        UNSETTLED,
-        /// A connection to the smpppd is negotiated
-        SMPPPDSETTLED,
-        /// A challenge for the authentication is outspoken
-        CHALLENGED,
-        /// Ready for settling an smpppd connection
-        READY,
-        /// Listing of all interfaces requested
-        LISTIFCFG,
-        /// Status of all interfaces requested
-        STATUSIFCFG
-    };
 
 public:
     /**
@@ -76,80 +44,20 @@ public:
      *
      * @param connector A connector to send feedback to the calling object
      */
-    Detector(IConnector * connector);
+	Detector(IConnector * connector) : m_connector(connector) {}
 
     /**
      * @brief Destroys an <code>Detector</code> instance.
      *
      */
-    virtual ~Detector();
+	virtual ~Detector() {}
 
-    /**
-     * @brief Use netstat to get the status of an internet connection.
-     *
-     * Calls IConnector::setConnectedStatus of the IConnector given in
-     * the constructor.
-     *
-     * @see IConnector
-     *
-     */
-    virtual void netstatCheckStatus();
+    virtual void checkStatus() = 0;
+	
+	virtual void smpppdServerChange() {}
 
-#ifdef USE_SMPPPD
-    /**
-     * @brief Use the smpppd to get the status of an internet connection.
-     *
-     * Calls IConnector::setConnectedStatus of the IConnector given in
-     * the constructor.
-     *
-     * @see IConnector
-     *
-     */
-    virtual void smpppdCheckStatus();
-#endif
-
-private:
-#ifdef USE_SMPPPD
-    void connectToSMPPPD();
-    void disconnectFromSMPPPD();
-    QStringList readSMPPPD();
-    void writeSMPPPD(const char * cmd);
-#endif
-
-    /**
-    * @brief Makes an response for an challenge
-    *
-    * If the smpppd requests an authorization, it sends an challenge.
-    * The password has to be appended to this challenge and the m5sum
-    * in hex-display has to get responded to the smpppd.
-    *
-    * @param chex the challenge in hex display
-    * @param password the passwort to authenticate
-    * @return the reponse for the smpppd
-    */
-    QString make_response(const QString& chex, const QString& password) const;
-
-private slots:
-    // Original cs-plugin code
-    void slotProcessStdout(KProcess *process, char *buffer, int len);
-
-    /**
-     * Notify when the netstat process has exited
-     */
-    void slotProcessExited(KProcess *process);
-
-private:
-#ifdef USE_SMPPPD
-
-    CommunicationState       m_comState;
-    DCOPClient              *m_client;
-    static QCString          m_kinternetApp;
-	KNetwork::KStreamSocket *m_sock;
-    QStringList              m_ifcfgs;
-#endif
-
-    IConnector        *m_connector;
-    KProcess          *m_process;
+protected:
+    IConnector * m_connector;
 };
 
 #endif

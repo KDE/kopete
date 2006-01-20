@@ -1,10 +1,10 @@
 /*
-    smpppdlocationwidget.h
-
+    detectornetstat.h
+ 
     Copyright (c) 2004-2006 by Heiko Schaefer        <heiko@rangun.de>
-
+ 
     Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
-
+ 
     *************************************************************************
     *                                                                       *
     * This program is free software; you can redistribute it and/or modify  *
@@ -14,26 +14,42 @@
     *************************************************************************
 */
 
-#ifndef SMPPPDLOCATIONWIDGET_H
-#define SMPPPDLOCATIONWIDGET_H
+#ifndef DETECTORNETSTAT_H
+#define DETECTORNETSTAT_H
 
-#include "smpppdlocationui.h"
+#include <qobject.h>
+
+#include "detector.h"
+
+class KProcess;
+class IConnector;
 
 /**
 	@author Heiko Sch&auml;fer <heiko@rangun.de>
 */
-class SMPPPDLocationWidget : public SMPPPDLocationWidgetBase
-{
-	Q_OBJECT
+class DetectorNetstat : protected QObject, public Detector {
+    Q_OBJECT
 
-	SMPPPDLocationWidget(const SMPPPDLocationWidget&);
-	SMPPPDLocationWidget& operator=(const SMPPPDLocationWidget&);
+    DetectorNetstat(const DetectorNetstat&);
+    DetectorNetstat& operator=(const DetectorNetstat&);
 
 public:
-    SMPPPDLocationWidget(QWidget* parent = 0, const char* name = 0, WFlags fl = 0);
-    ~SMPPPDLocationWidget();
+    DetectorNetstat(IConnector* connector);
+    virtual ~DetectorNetstat();
 
-    void setServer(const QString& serv);
+    virtual void checkStatus();
+
+private slots:
+    // Original cs-plugin code
+    void slotProcessStdout(KProcess * process, char * buffer, int len);
+
+    /**
+     * Notify when the netstat process has exited
+     */
+    void slotProcessExited(KProcess *process);
+
+private:
+    KProcess * m_process;
 };
 
 #endif

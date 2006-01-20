@@ -1063,6 +1063,7 @@ Name[uk]=З'єднання втрачено
 Name[uz]=Уланиш узилди
 Name[zh_CN]=连接已丢失
 Comment=The connection has been lost
+Comment[cs]=Spojení bylo ztraceno
 Comment[da]=Forbindelsen er gået tabt
 Comment[de]=Die Verbindung wurde unterbrochen
 Comment[el]=Η σύνδεση έκλεισε
@@ -1070,6 +1071,7 @@ Comment[es]=Se perdió la conexión
 Comment[et]=Ühendus kadus
 Comment[fr]=La connexion a été perdue
 Comment[hu]=A kapcsolat megszakadt
+Comment[it]=La connessione è stata chiusa
 Comment[nl]=De verbinding is verbroken
 Comment[pt]=A ligação foi-se abaixo
 Comment[pt_BR]=A ligação foi-se abaixo
@@ -1077,6 +1079,7 @@ Comment[sr]=Веза је изгубљена
 Comment[sr@Latn]=Veza je izgubljena
 Comment[sv]=Anslutningen har förlorats
 Comment[uk]=З'єднання було втрачено
+Comment[zh_CN]=连接已丢失
 default_presentation=16
 
 [cannot_connect]
@@ -1237,6 +1240,7 @@ Name[tr]=Sunucu İç Hatası
 Name[uk]=Внутрішня помилка сервера
 Name[zh_CN]=服务器内部错误
 Comment=A service internal error has occurred
+Comment[cs]=Nastala interní chyba služby
 Comment[da]=En intern fejl for tjenesten er opstået
 Comment[de]=Bei diesem Dienst ist ein interner Serverfehler aufgetreten.
 Comment[el]=Παρουσιάστηκε ένα εσωτερικό σφάλμα της υπηρεσίας
@@ -1244,6 +1248,7 @@ Comment[es]=Ocurrió un error interno en el servicio
 Comment[et]=Tekkis teenuse sisemine viga
 Comment[fr]=Une erreur interne au service s'est produite
 Comment[hu]=Belső hiba történt a szolgáltatásban
+Comment[it]=Si è verificato un errore interno del servizio
 Comment[nl]=Er deed zich een interne fout op de server voor
 Comment[pt]=Ocorreu um erro interno do serviço
 Comment[pt_BR]=Ocorreu um erro interno do serviço
@@ -1251,6 +1256,7 @@ Comment[sr]=Дошло јо до интерне грешке сервиса
 Comment[sr@Latn]=Došlo jo do interne greške servisa
 Comment[sv]=Ett internt fel har inträffat i tjänsten
 Comment[uk]=Трапилась внутрішня помилка служби
+Comment[zh_CN]=发生了服务内部错误
 default_presentation=2
 
 [buzz_nudge]

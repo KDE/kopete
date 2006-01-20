@@ -1,10 +1,10 @@
 /*
-    smpppdlocationwidget.h
-
+    detectorsmpppd.h
+ 
     Copyright (c) 2004-2006 by Heiko Schaefer        <heiko@rangun.de>
-
+ 
     Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
-
+ 
     *************************************************************************
     *                                                                       *
     * This program is free software; you can redistribute it and/or modify  *
@@ -14,26 +14,34 @@
     *************************************************************************
 */
 
-#ifndef SMPPPDLOCATIONWIDGET_H
-#define SMPPPDLOCATIONWIDGET_H
+#ifndef DETECTORSMPPPD_H
+#define DETECTORSMPPPD_H
 
-#include "smpppdlocationui.h"
+#include <qstringlist.h>
+
+#include "detectordcop.h"
+
+namespace KNetwork {
+class KStreamSocket;
+};
+
+class IConnector;
 
 /**
 	@author Heiko Sch&auml;fer <heiko@rangun.de>
 */
-class SMPPPDLocationWidget : public SMPPPDLocationWidgetBase
-{
-	Q_OBJECT
+class DetectorSMPPPD : public DetectorDCOP {
 
-	SMPPPDLocationWidget(const SMPPPDLocationWidget&);
-	SMPPPDLocationWidget& operator=(const SMPPPDLocationWidget&);
-
+    DetectorSMPPPD(const DetectorSMPPPD&);
+    DetectorSMPPPD& operator=(const DetectorSMPPPD&);
+	
 public:
-    SMPPPDLocationWidget(QWidget* parent = 0, const char* name = 0, WFlags fl = 0);
-    ~SMPPPDLocationWidget();
+    DetectorSMPPPD(IConnector* connector);
+    virtual ~DetectorSMPPPD();
 
-    void setServer(const QString& serv);
+    virtual void checkStatus();
+	
+	virtual void smpppdServerChange();
 };
 
 #endif
