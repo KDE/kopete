@@ -26,19 +26,18 @@
 #include <ctime>
 
 // Qt includes
-#include <qclipboard.h>
-#include <qrect.h>
-#include <qcursor.h>
-#include <qregexp.h>
-#include <q3valuelist.h>
-#include <qtextstream.h>
-#include <qtimer.h>
-
-//Added by qt3to4:
+#include <QClipboard>
+#include <QRect>
+#include <QCursor>
+#include <QRegExp>
+#include <QList>
+#include <QTextStream>
+#include <QTimer>
 #include <QPixmap>
 #include <QTextStream>
 #include <QByteArray>
-#include <qtextcodec.h> 
+#include <QTextCodec>
+
 // KHTML::DOM includes
 #include <dom/dom_doc.h>
 #include <dom/dom_text.h>

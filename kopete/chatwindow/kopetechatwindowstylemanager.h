@@ -18,8 +18,9 @@
 #ifndef KOPETECHATWINDOWSTYLEMANAGER_H
 #define KOPETECHATWINDOWSTYLEMANAGER_H
 
-#include <qobject.h>
-#include <qmap.h>
+#include <QObject>
+#include <QHash>
+
 #include <kfileitem.h>
 #include <kopete_export.h>
 
@@ -51,7 +52,7 @@ public:
 	 * key = Name of the style (currently the directory name)
 	 * value = Path to the style
 	 */
-	typedef QMap<QString, QString> StyleList;
+	typedef QHash<QString, QString> StyleList;
 
 	/**
 	 * The StyleInstallStatus enum. It gives better return value for installStyle().

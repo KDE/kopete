@@ -28,15 +28,13 @@
 
 #include "tooltipeditdialog.h"
 
-#include <qcheckbox.h>
-#include <qdir.h>
-#include <qlayout.h>
-#include <qspinbox.h>
-#include <qslider.h>
-#include <qlabel.h>
-//Added by qt3to4:
+#include <QCheckBox>
+#include <QDir>
+#include <QLayout>
+#include <QSpinBox>
+#include <QSlider>
+#include <QLabel>
 #include <QPixmap>
-#include <QTextStream>
 #include <QVBoxLayout>
 
 #include <kdeversion.h>
@@ -56,7 +54,6 @@
 #include <kmessagebox.h>
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
-#include <ktextedit.h>
 #include <kurl.h> // KNewStuff
 #include <kurlrequesterdlg.h>
 #include <krun.h>
@@ -67,12 +64,6 @@
 #include <knewstuff/entry.h>          // "
 #include <knewstuff/knewstuff.h>      // "
 #include <knewstuff/provider.h>       // "
-
-#include <ktexteditor/highlightinginterface.h>
-// kde4 - doesn't exists anymore
-//#include <ktexteditor/editinterface.h>
-#include <ktexteditor/document.h>
-#include <ktexteditor/view.h>
 
 // For Kopete Chat Window Style configuration and preview.
 #include <kopetechatwindowstylemanager.h>
@@ -213,8 +204,8 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(installEmoticonTheme()));
 
 	// Since KNewStuff is incomplete and buggy we'll disable it by default.
-    d->m_allowDownloadTheme = config->readBoolEntry( "ForceNewStuff", false );
-    d->mPrfsEmoticons->btnGetThemes->setEnabled( d->m_allowDownloadTheme );
+	d->m_allowDownloadTheme = config->readEntry( "ForceNewStuff", false );
+	d->mPrfsEmoticons->btnGetThemes->setEnabled( d->m_allowDownloadTheme );
 	connect(d->mPrfsEmoticons->btnGetThemes, SIGNAL(clicked()),
 		this, SLOT(slotGetEmoticonThemes()));
 	connect(d->mPrfsEmoticons->btnRemoveTheme, SIGNAL(clicked()),
@@ -243,7 +234,7 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	connect(ChatWindowStyleManager::self(), SIGNAL(loadStylesFinished()), this, SLOT(slotLoadChatStyles()));
 
 	// Since KNewStuff is incomplete and buggy we'll disable it by default.
-	d->mPrfsChatWindow->btnGetStyles->setEnabled( config->readBoolEntry( "ForceNewStuff", false ) );
+	d->mPrfsChatWindow->btnGetStyles->setEnabled( config->readEntry( "ForceNewStuff", false ) );
 
 	d->mPrfsChatWindow->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
 	// Create the fake Chat Session
@@ -506,9 +497,9 @@ void AppearanceConfig::slotLoadChatStyles()
 		// Insert style name into the listbox
 		d->mPrfsChatWindow->styleList->insertItem( it.key(), 0 );
 		// Insert the style class into the internal map for futher acces.
-		d->styleItemMap.insert( d->mPrfsChatWindow->styleList->firstItem(), it.data() );
+		d->styleItemMap.insert( d->mPrfsChatWindow->styleList->firstItem(), it.value() );
 
-		if( it.data() == KopetePrefs::prefs()->stylePath() )
+		if( it.value() == KopetePrefs::prefs()->stylePath() )
 		{
 			kdDebug(14000) << k_funcinfo << "Restoring saved style: " << it.key() << endl;
 
@@ -613,7 +604,7 @@ void AppearanceConfig::slotChatStyleSelected()
 			// Insert variant name into the combobox.
 			d->mPrfsChatWindow->variantList->insertItem( it.key() );
 	
-			if( it.data() == KopetePrefs::prefs()->styleVariant() )
+			if( it.value() == KopetePrefs::prefs()->styleVariant() )
 				d->mPrfsChatWindow->variantList->setCurrentItem(currentIndex);
 	
 			currentIndex++;

@@ -21,9 +21,6 @@
 
 #include "kcmodule.h"
 
-#include <qmap.h>
-
-
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  * @author Michaël Larouche <michael.larouche@kdemail.net>

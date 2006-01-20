@@ -52,18 +52,14 @@ public:
 			styleDirLister->deleteLater();
 		}
 
-		QMap<QString, ChatWindowStyle*>::Iterator styleIt, styleItEnd = stylePool.end();
-		for(styleIt = stylePool.begin(); styleIt != styleItEnd; ++styleIt)
-		{
-			delete styleIt.data();
-		}
+		qDeleteAll(stylePool);
 	}
 
 	KDirLister *styleDirLister;
 	StyleList availableStyles;
 	
 	// key = style path, value = ChatWindowStyle instance
-	QMap<QString, ChatWindowStyle*> stylePool;
+	QHash<QString, ChatWindowStyle*> stylePool;
 
 	QStack<KURL> styleDirs;
 };
@@ -275,10 +271,10 @@ bool ChatWindowStyleManager::removeStyle(const QString &stylePath)
 {
 	// Find for the current style in avaiableStyles map.
 	StyleList::Iterator foundStyle = d->availableStyles.find(stylePath);
-	// QMap iterator return end() if it found no item.
+	// QHash iterator return end() if it found no item.
 	if(foundStyle != d->availableStyles.end())
 	{
-		d->availableStyles.remove(foundStyle);
+		d->availableStyles.remove(*foundStyle);
 		
 		// Remove and delete style from pool if needed.
 		if( d->stylePool.contains(stylePath) )
@@ -328,32 +324,30 @@ ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &stylePa
 
 void ChatWindowStyleManager::slotNewStyles(const KFileItemList &dirList)
 {
-	QList<KFileItem*>::const_iterator it=dirList.begin();
-	while( it!=dirList.end() ) 
+	foreach(KFileItem *item, dirList)
 	{
 		// Ignore data dir(from deprecated XSLT themes)
-		if( !(*it)->url().fileName().contains(QString::fromUtf8("data")) )
+		if( !item->url().fileName().contains(QString::fromUtf8("data")) )
 		{
-			kdDebug(14000) << k_funcinfo << "Listing: " << (*it)->url().fileName() << endl;
+			kdDebug(14000) << k_funcinfo << "Listing: " << item->url().fileName() << endl;
 			// If the style path is already in the pool, that's mean the style was updated on disk
 			// Reload the style
-			if( d->stylePool.contains((*it)->url().path()) )
+			if( d->stylePool.contains(item->url().path()) )
 			{
-				kdDebug(14000) << k_funcinfo << "Updating style: " << (*it)->url().path() << endl;
+				kdDebug(14000) << k_funcinfo << "Updating style: " << item->url().path() << endl;
 
-				d->stylePool[(*it)->url().path()]->reload();
+				d->stylePool[item->url().path()]->reload();
 
 				// Add to avaialble if required.
-				if( !d->availableStyles.contains((*it)->url().fileName()) )
-					d->availableStyles.insert((*it)->url().fileName(), (*it)->url().path());
+				if( !d->availableStyles.contains(item->url().fileName()) )
+					d->availableStyles.insert(item->url().fileName(), item->url().path());
 			}
 			else
 			{
 				// TODO: Use name from Info.plist
-				d->availableStyles.insert((*it)->url().fileName(), (*it)->url().path());
+				d->availableStyles.insert(item->url().fileName(), item->url().path());
 			}
 		}
-		++it;
 	}
 }
 

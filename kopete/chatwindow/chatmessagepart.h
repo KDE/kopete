@@ -22,8 +22,6 @@
 #include <khtml_part.h>
 #include <dom/html_element.h>
 
-//Added by qt3to4:
-#include <QPixmap>
 #include <kmenu.h>
 
 

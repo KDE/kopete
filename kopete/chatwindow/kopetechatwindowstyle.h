@@ -17,10 +17,8 @@
 #ifndef KOPETECHATWINDOWSTYLE_H
 #define KOPETECHATWINDOWSTYLE_H
 
-#include <qstring.h>
-#include <qmap.h>
-
-
+#include <QString>
+#include <QHash>
 
 /**
  * This class represent a single chat window style.
@@ -36,7 +34,7 @@ public:
 	 * value = Path to variant CSS file.
 	 * Path is relative to Ressources directory.
 	 */
-	typedef QMap<QString,QString> StyleVariants;
+	typedef QHash<QString,QString> StyleVariants;
 
 	/**
 	 * This enum specifies the mode of the constructor

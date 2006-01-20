@@ -407,8 +407,6 @@ QColor Message::bg() const
 
 QFont Message::font() const
 {
-	//QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
-	//return QFont( bodyNode.attribute( QString::fromLatin1("font") ), bodyNode.attribute( QString::fromLatin1("fontsize") ).toInt() );
 	return d->font;
 }
 

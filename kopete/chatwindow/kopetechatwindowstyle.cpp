@@ -18,10 +18,10 @@
 #include "kopetechatwindowstyle.h"
 
 // Qt includes
-#include <qfile.h>
-#include <qdir.h>
-#include <qstringlist.h>
-#include <qtextstream.h>
+#include <QFile>
+#include <QDir>
+#include <QStringList>
+#include <QTextStream>
 
 // KDE includes
 #include <kdebug.h>

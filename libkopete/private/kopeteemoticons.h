@@ -18,9 +18,9 @@
 #ifndef kopeteemoticons_h__
 #define kopeteemoticons_h__
 
-#include <qobject.h>
-#include <q3valuelist.h>
-#include <qregexp.h>
+#include <QObject>
+#include <QList>
+#include <QRegExp>
 
 #include "kopete_export.h"
 

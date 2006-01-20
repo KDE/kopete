@@ -21,12 +21,11 @@
 
 #include "kopeteprefs.h"
 
-#include <qdom.h>
-#include <qfile.h>
+#include <QtXml>
+#include <QFile>
 #include <QTextDocument>
-#include <qpixmap.h>
-#include <qdatetime.h>
-//Added by qt3to4:
+#include <QPixmap>
+#include <QDateTime>
 #include <QMap>
 
 #include <kapplication.h>
