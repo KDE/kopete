@@ -863,7 +863,7 @@ const QString &YahooAccount::prepareIncomingMessage( QString newMsgText )
 	}
 	
 	// Replace < and > in text
-	regExp.setPattern( "<(?![\"/fbui])" );
+	regExp.setPattern( "<(?!(/*(font.*|[\"fbui])>))" );
 	pos = 0;
 	while ( pos >= 0 ) {
 		pos = regExp.search( newMsgText, pos );
