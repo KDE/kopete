@@ -336,7 +336,7 @@ void ICQProtocol::initCountries()
 	mCountries.insert(965, kl->twoAlphaToCountryName("kw"));
 	mCountries.insert(706, kl->twoAlphaToCountryName("kg"));
 	mCountries.insert(856, kl->twoAlphaToCountryName("la"));
-	mCountries.insert(371, kl->twoAlphaToCountryName("kv"));
+	mCountries.insert(371, kl->twoAlphaToCountryName("lv"));
 	mCountries.insert(961, kl->twoAlphaToCountryName("kb"));
 	mCountries.insert(266, kl->twoAlphaToCountryName("ls"));
 	mCountries.insert(231, kl->twoAlphaToCountryName("lr"));
