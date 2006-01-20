@@ -193,7 +193,7 @@ void Client::streamError( int error )
 	if( error == ClientStream::ErrConnection )			// Ask Connector in this case
 	{
 		d->error = m_connector->errorCode();
-		d->errorString = KSocketBase::errorString( (KNetwork::KSocketBase::SocketError)error );
+		d->errorString = KSocketBase::errorString( (KNetwork::KSocketBase::SocketError)d->error );
 	}
 	else
 	{
