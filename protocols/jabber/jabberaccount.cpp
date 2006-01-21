@@ -624,10 +624,15 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status  , const
 
 	if( status.status() == Kopete::OnlineStatus::Offline )
 	{
-	   	xmppStatus.setIsAvailable( false );
-        kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "CROSS YOUR FINGERS! THIS IS GONNA BE WILD" << endl;
-        if( isConnected() )
-            m_jabberClient->disconnect (xmppStatus);
+		if( isConnected() )
+		{
+			xmppStatus.setIsAvailable( false );
+			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "CROSS YOUR FINGERS! THIS IS GONNA BE WILD" << endl;
+			m_jabberClient->disconnect (xmppStatus);
+		}
+		else
+			disconnect(Manual);
+		
     }
 
 	if( isConnecting () )
