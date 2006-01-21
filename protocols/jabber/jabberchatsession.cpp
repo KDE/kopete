@@ -33,6 +33,8 @@
 #include "jabberresourcepool.h"
 #include "kioslave/jabberdisco.h"
 
+#include <ktoolbar.h>
+
 JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBaseContact *user,
 											 Kopete::ContactPtrList others, const QString &resource, const char *name )
 											 : Kopete::ChatSession ( user, others, protocol,  name )
@@ -55,6 +57,17 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 	mResource = jid.resource().isEmpty () ? resource : jid.resource ();
 	slotUpdateDisplayName ();
+
+#ifdef SUPPORT_JINGLE
+	KAction *jabber_voicecall = new KAction( i18n("Voice call" ), QString::fromLatin1( "voiceCall"), 0, this, SLOT(voiceCall()),
+		actionCollection(), "jabber_voicecall" );
+
+	setInstance(protocol->instance());
+	jabber_voicecall->setEnabled(true);
+	setXMLFile("jabberchatui.rc");
+
+#endif
+
 }
 
 void JabberChatSession::slotUpdateDisplayName ()
