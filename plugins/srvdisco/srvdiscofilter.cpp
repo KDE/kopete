@@ -28,6 +28,7 @@
 #include <kopetemetacontact.h>
 #include <kurl.h>
 #include <kdebug.h>
+#include <kcodecs.h>
 
 
 using namespace SrvDisco;
@@ -68,11 +69,14 @@ void SrvDiscoFilter::handleMessage( MessageEvent *event )
 	if (rx.search(event->message().plainBody())==-1) MessageHandler::handleMessage( event );
 	else {
 		ServiceDef d;
-		kdDebug() << "HIT!!!" << endl;
 		d.name = KURL::decode_string(rx.cap(2)); 
 		d.type=ServiceType(rx.cap(3),rx.cap(4),((rx.cap(5)=="TCP") ? ServiceType::TCP : ServiceType::UDP));
 		d.hostName=rx.cap(6);
 		d.port=rx.cap(7).toUShort();
+		QByteArray raw = rx.cap(8).toAscii();
+		QDataStream s(KCodecs::base64Decode(raw));
+		s.setVersion(QDataStream::Qt_4_1);
+		s >> d.txt;
 		Kopete::MetaContact* m=event->message().from()->metaContact();
 		d.contact = m->metaContactId();
 		if (rx.cap(1)==QString("ANNOUNCE:")) emit newService(m,d);

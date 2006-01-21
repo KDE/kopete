@@ -30,6 +30,7 @@
 #include <kopetecontact.h>
 #include <kopetechatsession.h>
 #include <kurl.h>
+#include <kcodecs.h>
 #include <dcopclient.h>
 
 #include "srvdiscoifaceimpl.h"
@@ -90,8 +91,12 @@ bool SrvDiscoIfaceImpl::sendMessage(bool announce, Kopete::MetaContact *m, Servi
 	QString message = QString("#SRVDISCO:") + (announce ? QString("ANNOUNCE:") : QString("RELEASE:"));
 	message+=KURL::encode_string(d.name)+"/"+d.type.mainType()+"/"+d.type.auxType()+"/";
 	message+=(d.type.protocol()==ServiceType::TCP ? QString("TCP") : QString("UDP"))+"/";
-	// FIXME: TXT stuff
-	message+=d.hostName+"/"+QString::number(d.port)+"//";
+	message+=d.hostName+"/"+QString::number(d.port)+"/";
+	QByteArray raw;
+	QDataStream s(&raw,QIODevice::ReadWrite);
+	s.setVersion(QDataStream::Qt_4_1);
+	s << d.txt;
+	message+=KCodecs::base64Encode(raw)+"/";
 	Kopete::Contact * c = m->preferredContact();
 	Kopete::ChatSession * manager = c->manager(Kopete::Contact::CanCreate);
 	Kopete::Message msg = Kopete::Message( manager->myself(), manager->members(), message,
