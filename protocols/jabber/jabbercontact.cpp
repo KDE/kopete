@@ -942,22 +942,18 @@ void JabberContact::setPhoto( const QString &photoPath )
 {
 	QImage contactPhoto(photoPath);
 	QString newPhotoPath = photoPath;
-	if(contactPhoto.width() != 96 || contactPhoto.height() != 96)
+	if(contactPhoto.width() > 96 || contactPhoto.height() > 96)
 	{
 		// Save image to a new location if the image isn't the correct format.
 		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KURL(photoPath).fileName().lower() ) );
 	
 		// Scale and crop the picture.
-		contactPhoto = contactPhoto.smoothScale( 96, 96, QImage::ScaleMax );
+		contactPhoto = contactPhoto.smoothScale( 96, 96, QImage::ScaleMin );
 		// crop image if not square
-		if(contactPhoto.width() > contactPhoto.height()) 
-		{
-			contactPhoto = contactPhoto.copy((contactPhoto.width()-contactPhoto.height())/2, 0, contactPhoto.height(), contactPhoto.height());
-		}
-		else 
-		{
-			contactPhoto = contactPhoto.copy(0, (contactPhoto.height()-contactPhoto.width())/2, contactPhoto.width(), contactPhoto.width());
-		}
+		if(contactPhoto.width() < contactPhoto.height()) 
+			contactPhoto = contactPhoto.copy((contactPhoto.width()-contactPhoto.height())/2, 0, 96, 96);
+		else if (contactPhoto.width() > contactPhoto.height())
+			contactPhoto = contactPhoto.copy(0, (contactPhoto.height()-contactPhoto.width())/2, 96, 96);
 	
 		// Use the cropped/scaled image now.
 		if(!contactPhoto.save(newLocation, "PNG"))
@@ -965,6 +961,42 @@ void JabberContact::setPhoto( const QString &photoPath )
 		else
 			newPhotoPath = newLocation;
 	}
+	else if (contactPhoto.width() < 32 || contactPhoto.height() < 32)
+	{
+		// Save image to a new location if the image isn't the correct format.
+		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KURL(photoPath).fileName().lower() ) );
+	
+		// Scale and crop the picture.
+		contactPhoto = contactPhoto.smoothScale( 32, 32, QImage::ScaleMin );
+		// crop image if not square
+		if(contactPhoto.width() < contactPhoto.height())
+			contactPhoto = contactPhoto.copy((contactPhoto.width()-contactPhoto.height())/2, 0, 32, 32);
+		else if (contactPhoto.width() > contactPhoto.height())
+			contactPhoto = contactPhoto.copy(0, (contactPhoto.height()-contactPhoto.width())/2, 32, 32);
+	
+		// Use the cropped/scaled image now.
+		if(!contactPhoto.save(newLocation, "PNG"))
+			newPhotoPath = QString::null;
+		else
+			newPhotoPath = newLocation;
+	}
+	else if (contactPhoto.width() != contactPhoto.height())
+	{
+		// Save image to a new location if the image isn't the correct format.
+		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KURL(photoPath).fileName().lower() ) );
+
+		if(contactPhoto.width() < contactPhoto.height())
+			contactPhoto = contactPhoto.copy((contactPhoto.width()-contactPhoto.height())/2, 0, contactPhoto.height(), contactPhoto.height());
+		else if (contactPhoto.width() > contactPhoto.height())
+			contactPhoto = contactPhoto.copy(0, (contactPhoto.height()-contactPhoto.width())/2, contactPhoto.height(), contactPhoto.height());
+
+		// Use the cropped/scaled image now.
+		if(!contactPhoto.save(newLocation, "PNG"))
+			newPhotoPath = QString::null;
+		else
+			newPhotoPath = newLocation;
+	}
+
 	setProperty( protocol()->propPhoto, newPhotoPath );
 }
 

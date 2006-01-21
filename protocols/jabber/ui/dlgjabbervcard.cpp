@@ -397,17 +397,36 @@ void dlgJabberVCard::slotSelectPhoto()
 
 	if( !img.isNull() ) 
 	{
-		img = img.smoothScale( 96, 96, QImage::ScaleMax );
-		// crop image if not square
-		if(img.width() > img.height()) 
+		if(img.width() > 96 || img.height() > 96)
 		{
-			img = img.copy((img.width()-img.height())/2, 0, img.height(), img.height());
+			// Scale and crop the picture.
+			img = img.smoothScale( 96, 96, QImage::ScaleMin );
+			// crop image if not square
+			if(img.width() < img.height()) 
+				img = img.copy((img.width()-img.height())/2, 0, 96, 96);
+			else if (img.width() > img.height())
+				img = img.copy(0, (img.height()-img.width())/2, 96, 96);
+
 		}
-		else 
+		else if (img.width() < 32 || img.height() < 32)
 		{
-			img = img.copy(0, (img.height()-img.width())/2, img.width(), img.width());
+			// Scale and crop the picture.
+			img = img.smoothScale( 32, 32, QImage::ScaleMin );
+			// crop image if not square
+			if(img.width() < img.height())
+				img = img.copy((img.width()-img.height())/2, 0, 32, 32);
+			else if (img.width() > img.height())
+				img = img.copy(0, (img.height()-img.width())/2, 32, 32);
+	
 		}
-		
+		else if (img.width() != img.height())
+		{
+			if(img.width() < img.height())
+				img = img.copy((img.width()-img.height())/2, 0, img.height(), img.height());
+			else if (img.width() > img.height())
+				img = img.copy(0, (img.height()-img.width())/2, img.height(), img.height());
+		}
+
 		m_photoPath = locateLocal("appdata", "jabberphotos/" + m_contact->rosterItem().jid().full().lower().replace(QRegExp("[./~]"),"-")  +".png");
 		if( img.save(m_photoPath, "PNG") )
 		{

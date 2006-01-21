@@ -168,15 +168,15 @@ QString MSNProtocol::clientId()
 QImage MSNProtocol::scalePicture(const QImage &picture)
 {
 	QImage img(picture);
-	img = img.smoothScale( 96, 96, QImage::ScaleMax );
+	img = img.smoothScale( 96, 96, QImage::ScaleMin );
 	// crop image if not square
-	if(img.width() > img.height()) 
+	if(img.width() < img.height())
 	{
-		img = img.copy((img.width()-img.height())/2, 0, img.height(), img.height());
+		img = img.copy((img.width()-img.height())/2, 0, 96, 96);
 	}
-	else 
+	else if(img.width() > img.height())
 	{
-		img = img.copy(0, (img.height()-img.width())/2, img.width(), img.width());
+		img = img.copy(0, (img.height()-img.width())/2, 96, 96);
 	}
 
 	return img;
