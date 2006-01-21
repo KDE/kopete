@@ -57,7 +57,7 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
 				"gg_ignored", i18n( "Blocked" ) ),
 			gaduStatusOffline_( Kopete::OnlineStatus::Offline, GG_STATUS_NOT_AVAIL, this, GG_STATUS_NOT_AVAIL,
 				"gg_offline", i18n( "Offline" ) , i18n( "O&ffline" ) , Kopete::OnlineStatusManager::Offline ),
-			gaduStatusOfflineDescr_( Kopete::OnlineStatus::Away, GG_STATUS_NOT_AVAIL_DESCR, this, GG_STATUS_NOT_AVAIL_DESCR,
+			gaduStatusOfflineDescr_( Kopete::OnlineStatus::Offline, GG_STATUS_NOT_AVAIL_DESCR, this, GG_STATUS_NOT_AVAIL_DESCR,
 				QStringList::split( '|', "contact_away_overlay|gg_description_overlay" ), i18n( "Offline" ), i18n( "A&way" ) , Kopete::OnlineStatusManager::Offline ),
 			gaduStatusBusy_(Kopete::OnlineStatus::Away, GG_STATUS_BUSY, this, GG_STATUS_BUSY,
 				"contact_away_overlay", i18n( "Busy" ) , i18n( "B&usy" ) , Kopete::OnlineStatusManager::Busy ),
