@@ -256,13 +256,7 @@ void JabberAccount::errorConnectFirst ()
 
 void JabberAccount::errorConnectionLost ()
 {
-
-	KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
-									KMessageBox::Error,
-									i18n ("Your connection to the server has been lost in the meantime. "
-									"This means that your last action could not complete successfully. "
-									"Please reconnect and try again."), i18n ("Jabber Error") );
-
+	disconnected( Kopete::Account::ConnectionReset );
 }
 
 void JabberAccount::errorConnectionInProgress ()
@@ -680,7 +674,7 @@ void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )
 	 */
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Disconnected." << endl;
 
-	Kopete::Account::disconnected ( reason );
+	disconnected ( reason );
 }
 
 void JabberAccount::disconnect ()
@@ -783,6 +777,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			switch(connectorCode)
 			{
  				case KNetwork::KSocketBase::LookupFailure:
+					errorClass = Kopete::Account::InvalidHost;
 					errorCondition = i18n("Host not found.");
 					break;
 				case KNetwork::KSocketBase::AddressInUse:
@@ -828,11 +823,12 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 					errorCondition = i18n("Socket timed out.");
 					break;
 				default:
-					errorCondition = i18n("Sorry, something unexpected happened that I do not know more about.");
+					errorClass = Kopete::Account::ConnectionReset;
+					//errorCondition = i18n("Sorry, something unexpected happened that I do not know more about.");
 					break;
 			}
-
-			errorText = i18n("There was a connection error: %1").arg(errorCondition);
+			if(!errorCondition.isEmpty())
+				errorText = i18n("There was a connection error: %1").arg(errorCondition);
 			break;
 
 		case XMPP::ClientStream::ErrNeg:
@@ -965,7 +961,8 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 	 * API will attempt to reconnect, queueing another
 	 * error until memory is exhausted.
 	 */
-	KMessageBox::error (Kopete::UI::Global::mainWidget (),
+	if(!errorText.isEmpty())
+		KMessageBox::error (Kopete::UI::Global::mainWidget (),
 						errorText,
 						i18n("Connection problem with Jabber server %1").arg(server));
 
@@ -980,11 +977,7 @@ void JabberAccount::slotCSError ( int error )
 		&& ( client()->clientStream()->errorCondition () == XMPP::ClientStream::NotAuthorized ) )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Incorrect password, retrying." << endl;
-
-		// FIXME: This should be unified in libkopete as disconnect(IncorrectPassword)
-		password().setWrong ();
-		disconnect ();
-		connect ();
+		disconnect(Kopete::Account::BadPassword);
 	}
 	else
 	{
