@@ -9,7 +9,7 @@
 
 
 	<ToolBar name="statusToolBar">
-		<Action name="jabber_voicecall" />
+		<Action name="voicecall" />
 	</ToolBar>
 
 

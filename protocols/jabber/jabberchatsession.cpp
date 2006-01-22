@@ -33,7 +33,6 @@
 #include "jabberresourcepool.h"
 #include "kioslave/jabberdisco.h"
 
-#include <ktoolbar.h>
 
 JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBaseContact *user,
 											 Kopete::ContactPtrList others, const QString &resource, const char *name )
@@ -59,7 +58,7 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	slotUpdateDisplayName ();
 
 #ifdef SUPPORT_JINGLE
-	KAction *jabber_voicecall = new KAction( i18n("Voice call" ), QString::fromLatin1( "voiceCall"), 0, this, SLOT(voiceCall()),
+	KAction *jabber_voicecall = new KAction( i18n("Voice call" ), "voicecall", 0, this, SLOT(voiceCall()),
 		actionCollection(), "jabber_voicecall" );
 
 	setInstance(protocol->instance());

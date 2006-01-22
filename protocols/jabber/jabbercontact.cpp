@@ -236,7 +236,7 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 	
 	
 #ifdef SUPPORT_JINGLE
-	KAction *actionVoiceCall = new KAction (i18n ("Voice call"), "voiceCall", 0, this, SLOT (voiceCall ()), this, "jabber_voicecall");
+	KAction *actionVoiceCall = new KAction (i18n ("Voice call"), "voicecall", 0, this, SLOT (voiceCall ()), this, "jabber_voicecall");
 	actionVoiceCall->setEnabled( false );
 
 	actionCollection->append( actionVoiceCall );
