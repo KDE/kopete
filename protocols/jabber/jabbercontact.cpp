@@ -127,12 +127,35 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 
 	KActionMenu *actionAuthorization = new KActionMenu ( i18n ("Authorization"), "connect_established", this, "jabber_authorization");
 
-	actionAuthorization->insert (new KAction (i18n ("(Re)send Authorization To"), "mail_forward", 0,
-								 this, SLOT (slotSendAuth ()), actionAuthorization, "actionSendAuth"));
-	actionAuthorization->insert (new KAction (i18n ("(Re)request Authorization From"), "mail_reply", 0,
-								 this, SLOT (slotRequestAuth ()), actionAuthorization, "actionRequestAuth"));
-	actionAuthorization->insert (new KAction (i18n ("Remove Authorization From"), "mail_delete", 0,
-								 this, SLOT (slotRemoveAuth ()), actionAuthorization, "actionRemoveAuth"));
+	KAction *resendAuthAction, *requestAuthAction, *removeAuthAction;
+	
+	resendAuthAction = new KAction (i18n ("(Re)send Authorization To"), "mail_forward", 0,
+								 this, SLOT (slotSendAuth ()), actionAuthorization, "actionSendAuth");
+	resendAuthAction->setEnabled(false);
+	actionAuthorization->insert(resendAuthAction);
+
+	requestAuthAction = new KAction (i18n ("(Re)request Authorization From"), "mail_reply", 0,
+								 this, SLOT (slotRequestAuth ()), actionAuthorization, "actionRequestAuth");
+	requestAuthAction->setEnabled(false);
+	actionAuthorization->insert(requestAuthAction);
+	
+	removeAuthAction = new KAction (i18n ("Remove Authorization From"), "mail_delete", 0,
+								 this, SLOT (slotRemoveAuth ()), actionAuthorization, "actionRemoveAuth");
+	removeAuthAction->setEnabled(false);
+	actionAuthorization->insert(removeAuthAction);
+
+	if( mRosterItem.subscription().type() == XMPP::Subscription::From )
+	{
+		resendAuthAction->setEnabled(true);
+	}
+	else if( mRosterItem.subscription().type() == XMPP::Subscription::To )
+	{
+		requestAuthAction->setEnabled(true);
+	}
+	else if( mRosterItem.subscription().type() == XMPP::Subscription::Both )
+	{
+		removeAuthAction->setEnabled(true);
+	}
 
 	KActionMenu *actionSetAvailability = new KActionMenu (i18n ("Set Availability"), "kopeteavailable", this, "jabber_online");
 
@@ -213,11 +236,9 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 	
 	
 #ifdef SUPPORT_JINGLE
-	//KAction *actionVoiceCall = new KAction (i18n ("Voice call"), 0, 0, this, SLOT (voiceCall ()), this, "jabber_voicecall");
 	KAction *actionVoiceCall = new KAction (i18n ("Voice call"), "voiceCall", 0, this, SLOT (voiceCall ()), this, "jabber_voicecall");
-
-
 	actionVoiceCall->setEnabled( false );
+
 	actionCollection->append( actionVoiceCall );
 
 	// Check if the current contact support Voice calls, also honour lock by default.
