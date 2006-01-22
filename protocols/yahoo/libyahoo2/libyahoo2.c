@@ -1088,8 +1088,9 @@ static void yahoo_process_conference(struct yahoo_input_data *yid, struct yahoo_
 		if (pair->key == 14)		/* decline/conf message */
 			msg = pair->value;
 
-		if (pair->key == 13)
-			;
+		if (pair->key == 13) {
+			
+                }
 		if (pair->key == 16)		/* error */
 			msg = pair->value;
 
