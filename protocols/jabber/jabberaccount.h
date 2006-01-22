@@ -41,6 +41,7 @@ class JabberContact;
 class JabberContactPool;
 class JabberProtocol;
 class JabberTransport;
+class JabberBookmarks;
 
 namespace Kopete { class MetaContact; }
 
@@ -188,6 +189,8 @@ private:
 	JingleSessionManager *m_jingleSessionManager;
 #endif
 
+	JabberBookmarks *m_bookmarks;
+
 	/* Set up our actions for the status menu. */
 	void initActions ();
 
@@ -211,9 +214,6 @@ private:
 	
 	/* used in removeAccount() */
 	bool m_removing;
-	
-	QStringList m_bookmarkGroupChat;
-
 private slots:
 	/* Connects to the server. */
 	void slotConnect ();
@@ -300,9 +300,6 @@ private slots:
 	void slotUnregisterFinished();
 //ifdef SUPPORT_JINGLE  (we can't disable slot, or moc cill complain)
 	void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);
-	
-	void slotReceivedGroupChatBookmark();
-	void slotJoinChatBookmark(const QString& jid);
 };
 
 #endif
