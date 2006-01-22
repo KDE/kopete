@@ -28,6 +28,7 @@
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
 #include "kopeteaccountmanager.h"
+#include "managedconnectionaccount.h"
 
 #include "detectornetstat.h"
 #include "detectorsmpppd.h"
@@ -123,7 +124,17 @@ void SMPPPDCSPlugin::connectAllowed() {
             ;
             it.current();
             ++it) {
-        if(!list.contains(it.current()->protocol()->pluginId() + "_" + it.current()->accountId())) {
+
+#ifndef NDEBUG
+		if(it.current()->inherits("Kopete::ManagedConnectionAccount")) {
+            kdDebug(14312) << k_funcinfo << "Account " << it.current()->protocol()->pluginId() + "_" + it.current()->accountId() << " is an managed account!" << endl;
+        } else {
+            kdDebug(14312) << k_funcinfo << "Account " << it.current()->protocol()->pluginId() + "_" + it.current()->accountId() << " is an unmanaged account!" << endl;
+        }
+#endif
+
+        if(!list.contains(it.current()->protocol()->pluginId() + "_" + it.current()->
+                          accountId())) {
             it.current()->connect();
         }
     }
@@ -139,6 +150,15 @@ void SMPPPDCSPlugin::disconnectAllowed() {
             ;
             it.current();
             ++it) {
+
+#ifndef NDEBUG
+		if(it.current()->inherits("Kopete::ManagedConnectionAccount")) {
+            kdDebug(14312) << k_funcinfo << "Account " << it.current()->protocol()->pluginId() + "_" + it.current()->accountId() << " is an managed account!" << endl;
+        } else {
+            kdDebug(14312) << k_funcinfo << "Account " << it.current()->protocol()->pluginId() + "_" + it.current()->accountId() << " is an unmanaged account!" << endl;
+        }
+#endif
+
         if(!list.contains(it.current()->protocol()->pluginId() + "_" + it.current()->accountId())) {
             it.current()->disconnect();
         }
@@ -165,16 +185,15 @@ QString SMPPPDCSPlugin::detectionMethod() const {
 /*!
     \fn SMPPPDCSPlugin::smpppdServerChanged(const QString& server)
  */
-void SMPPPDCSPlugin::smpppdServerChanged(const QString& server)
-{
-	static KConfig *config = KGlobal::config();
-	config->setGroup(SMPPPDCS_CONFIG_GROUP);
-	QString oldServer = config->readEntry("server", "localhost").utf8();
-	
-	if(oldServer != server) {
-		kdDebug(14312) << k_funcinfo << "Detected a server change" << endl;
-		m_detectorSMPPPD->smpppdServerChange();
-	}
+void SMPPPDCSPlugin::smpppdServerChanged(const QString& server) {
+    static KConfig *config = KGlobal::config();
+    config->setGroup(SMPPPDCS_CONFIG_GROUP);
+    QString oldServer = config->readEntry("server", "localhost").utf8();
+
+    if(oldServer != server) {
+        kdDebug(14312) << k_funcinfo << "Detected a server change" << endl;
+        m_detectorSMPPPD->smpppdServerChange();
+    }
 }
 
 #include "smpppdcsplugin.moc"

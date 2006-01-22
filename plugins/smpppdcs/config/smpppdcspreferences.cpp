@@ -18,6 +18,7 @@
 #include <qregexp.h>
 #include <qtabwidget.h>
 
+#include <klocale.h>
 #include <kconfig.h>
 #include <klistview.h>
 #include <kautoconfig.h>
@@ -27,6 +28,7 @@
 #include "kopeteaccount.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccountmanager.h"
+#include "managedconnectionaccount.h"
 
 #include "smpppdcspreferences.h"
 #include "smpppdcsprefsimpl.h"
@@ -46,14 +48,19 @@ SMPPPDCSPreferences::SMPPPDCSPreferences(QWidget * parent, const char * /* name 
 	{
 		QString protoName;
 		QRegExp rex("(.*)Protocol");
+		
 		if(rex.search((*it)->protocol()->pluginId()) > -1) {
 			protoName = rex.cap(1);
 		} else {
 			protoName = (*it)->protocol()->pluginId();
 		}
 		
+		if(it.current()->inherits("Kopete::ManagedConnectionAccount")) {
+			protoName += QString(", %1").arg(i18n("connection status is managed by Kopete"));
+		}
+		
 		QCheckListItem * cli = new QCheckListItem(m_ui->accountList, 
-			(*it)->accountId() + " (" + protoName + ")", QCheckListItem::CheckBox);
+				(*it)->accountId() + " (" + protoName + ")", QCheckListItem::CheckBox);
 		cli->setPixmap(0, (*it)->accountIcon());
 		
 		m_accountMapOld[cli->text(0)] = AccountPrivMap(FALSE, (*it)->protocol()->pluginId() + "_" + (*it)->accountId());
