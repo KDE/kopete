@@ -3,8 +3,9 @@
 
     Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
     Copyright (c) 2005      by Duncan Mac-Vicar       <duncan@kde.org>
+    Copyright (c) 2006      by Michael Larouche       <michael.larouche@kdemail.net>
 
-    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -19,19 +20,16 @@
 #ifndef KOPETE_EMOTICON_TEST_H
 #define KOPETE_EMOTICON_TEST_H
 
-#include <kunittest/tester.h>
+#include <QObject>
 
-// change to SlotTester when it works
-class KopeteEmoticonTest : public KUnitTest::Tester
+/**
+ * QTestLib automatic test to test Emoticon parsing.
+ */
+class KopeteEmoticonTest : public QObject
 {
-public:
-	//KopeteLinkTest();
-	//~KopeteLinkTest();
-	void allTests();
-public slots:
-	void testEmoticonParser();
-private:
-	
+	Q_OBJECT
+private Q_SLOTS:
+	void testEmoticonParser();	
 };
 
 #endif

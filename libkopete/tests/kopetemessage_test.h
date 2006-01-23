@@ -39,7 +39,6 @@ public:
 
 public slots:
 	void testPrimitives();
-	void testValidXML();
 	void testLinkParser();
 
 private:

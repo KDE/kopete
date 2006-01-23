@@ -50,6 +50,7 @@
 #include <kabc/vcardconverter.h>
 #include <kxmlguifactory.h>
 #include <k3multipledrag.h>
+#include <kdialog.h>
 
 #include <kdeversion.h>
 #include <kinputdialog.h>
@@ -1725,9 +1726,8 @@ void KopeteContactListView::slotAddContact()
 
 	if( account && ( metacontact || group) )
 	{
-		KDialogBase *addDialog = new KDialogBase( this, "addDialog", true,
-			i18n( "Add Contact" ), KDialogBase::Ok|KDialogBase::Cancel,
-			KDialogBase::Ok, true );
+		KDialog *addDialog = new KDialog( this, 
+			i18n( "Add Contact" ), KDialog::Ok|KDialog::Cancel );
 
 		AddContactPage *addContactPage =
 			account->protocol()->createAddContactWidget( addDialog, account );
@@ -1798,7 +1798,7 @@ void KopeteContactListView::slotProperties()
 	{
 
 		KopeteMetaLVIProps *propsDialog =
-			new KopeteMetaLVIProps( metaLVI, 0L, "propsDialog" );
+			new KopeteMetaLVIProps( metaLVI, 0L );
 
 		propsDialog->exec(); // modal
 		delete propsDialog;
@@ -1817,7 +1817,7 @@ void KopeteContactListView::slotProperties()
 	else if(groupLVI)
 	{
 		KopeteGVIProps *propsDialog =
-			new KopeteGVIProps( groupLVI, 0L, "propsDialog");
+			new KopeteGVIProps( groupLVI, 0L );
 
 		propsDialog->exec(); // modal
 		delete propsDialog;

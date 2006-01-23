@@ -12,6 +12,9 @@
             <height>457</height>
         </rect>
     </property>
+    <property name="caption">
+        <string>KopeteMetaLVIPropsWidget</string>
+    </property>
     <property name="toolTip" stdset="0">
         <string></string>
     </property>
@@ -403,19 +406,6 @@
                                             </size>
                                         </property>
                                     </spacer>
-                                    <widget class="KURLComboRequester">
-                                        <property name="name">
-                                            <cstring>cmbPhotoUrl</cstring>
-                                        </property>
-                                        <property name="sizePolicy">
-                                            <sizepolicy>
-                                                <hsizetype>7</hsizetype>
-                                                <vsizetype>5</vsizetype>
-                                                <horstretch>0</horstretch>
-                                                <verstretch>0</verstretch>
-                                            </sizepolicy>
-                                        </property>
-                                    </widget>
                                     <widget class="KPushButton">
                                         <property name="name">
                                             <cstring>btnClearPhoto</cstring>
@@ -615,7 +605,6 @@
 <includehints>
     <includehint>klineedit.h</includehint>
     <includehint>kpushbutton.h</includehint>
-    <includehint>kicondialog.h</includehint>
-    <includehint>kurlrequester.h</includehint>
+    <includehint>kpushbutton.h</includehint>
 </includehints>
 </UI>

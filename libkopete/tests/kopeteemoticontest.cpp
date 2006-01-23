@@ -16,12 +16,16 @@
     *************************************************************************
 */
 
+// QTestLib for KDE
+#include <qtest_kde.h>
+#include "kopeteemoticontest.h"
+#include "kopeteemoticontest.moc"
+
 #include <stdlib.h>
 
-#include <qstring.h>
-#include <qdir.h>
-#include <qfile.h>
-//Added by qt3to4:
+#include <QString>
+#include <QDir>
+#include <QFile>
 #include <QTextStream>
 
 #include <kapplication.h>
@@ -29,15 +33,11 @@
 #include <kstandarddirs.h>
 #include <kdebug.h>
 
-#include <kunittest/module.h>
-#include "kopeteemoticontest.h"
+
 #include "kopetemessage.h"
 #include "kopeteemoticons.h"
 
-using namespace KUnitTest;
-
-KUNITTEST_MODULE( kunittest_kopeteemoticontest, "KopeteSuite");
-KUNITTEST_MODULE_REGISTER_TESTER( KopeteEmoticonTest );
+QTEST_KDEMAIN( KopeteEmoticonTest, GUI )
 
 /*
   There are three sets of tests, the Kopete 0.7 baseline with tests that were
@@ -48,18 +48,6 @@ KUNITTEST_MODULE_REGISTER_TESTER( KopeteEmoticonTest );
 
    the name convention is working|broken-number.input|output
 */
-
-
-void KopeteEmoticonTest::allTests()
-{
-	// change user data dir to avoid messing with user's .kde dir
-	setenv( "KDEHOME", QFile::encodeName( QDir::homePath() + "/.kopete-unittest" ), true );
-
-	//KApplication::disableAutoDcopRegistration();
-	//KApplication app;
-
-	testEmoticonParser();
-}
 
 void KopeteEmoticonTest::testEmoticonParser()
 {
@@ -81,7 +69,7 @@ void KopeteEmoticonTest::testEmoticonParser()
 		// if it doesn't, skip the testcase
 		if ( ! expectedFile.exists() )
 		{
-			SKIP("Warning! expected output for testcase "+ *it + " not found. Skiping testcase");
+			QSKIP( "Warning! expected output for testcase not found. Skiping testcase", SkipSingle);
 			continue;
 		}
 		if ( inputFile.open( QIODevice::ReadOnly ) && expectedFile.open( QIODevice::ReadOnly ))
@@ -111,24 +99,20 @@ void KopeteEmoticonTest::testEmoticonParser()
 			if ( fileName.section("-", 0, 0) == QString::fromLatin1("broken") )
 			{
 				kdDebug() << "checking known-broken testcase: " << fileName << endl;
-				XFAIL(result, expectedData);
+				QEXPECT_FAIL("", "Checking know-broken testcase", Continue);
+				QCOMPARE(result, expectedData);
 			}
 			else
 			{
 				kdDebug() << "checking known-working testcase: " << fileName << endl;
-				CHECK(result, expectedData);
+				QCOMPARE(result, expectedData);
 			}
 		}
 		else
 		{
-			SKIP("Warning! can't open testcase files for "+ *it + ". Skiping testcase");
+			QSKIP("Warning! can't open testcase files. Skiping testcase", SkipSingle);
 			continue;
 		}
 	}
 	
 }
-
-
-
-
- 

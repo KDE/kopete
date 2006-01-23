@@ -26,7 +26,6 @@
 #include <QTextDocument>
 #include <QPixmap>
 #include <QDateTime>
-#include <QMap>
 
 #include <kapplication.h>
 #include <kdebug.h>

@@ -196,7 +196,8 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		return bytesParsed;
 	}	
 	
-	QDataStream din( wire, IO_ReadOnly );
+	QByteArray tempWire = wire;
+	QDataStream din( &tempWire, IO_ReadOnly );
 	
 	// look at first four bytes and decide what to do with the chunk
 	if ( okToProceed( din ) )

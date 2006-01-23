@@ -1169,7 +1169,7 @@ GaduAccount::loadFriendsMode()
 	bool r;
 	int n;
 
-	s = p->config->readEntry( QString::fromAscii( "forFriends" ) );
+	s = p->config->readEntry( QString::fromAscii( "forFriends" ), QString() );
 	n = s.toInt( &r );
 
 	if ( n ) {

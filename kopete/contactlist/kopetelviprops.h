@@ -19,7 +19,7 @@
 #ifndef KOPETELVIPROPS_H
 #define KOPETELVIPROPS_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kabc/sound.h>
 
 #include "kopetemetacontact.h"
@@ -36,12 +36,12 @@ class KURLRequester;
 
 namespace Kopete { class Contact; }
 
-class KopeteGVIProps: public KDialogBase
+class KopeteGVIProps: public KDialog
 {
 	Q_OBJECT
 
 	public:
-		KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent, const char *name=0L);
+		KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent);
 		~KopeteGVIProps();
 
 	private:
@@ -57,12 +57,12 @@ class KopeteGVIProps: public KDialogBase
 };
 
 
-class KopeteMetaLVIProps: public KDialogBase
+class KopeteMetaLVIProps: public KDialog
 {
 	Q_OBJECT
 
 	public:
-		KopeteMetaLVIProps(KopeteMetaContactLVI *gvi, QWidget *parent, const char *name=0L);
+		KopeteMetaLVIProps(KopeteMetaContactLVI *gvi, QWidget *parent);
 		~KopeteMetaLVIProps();
 
 	private:

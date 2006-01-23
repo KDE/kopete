@@ -72,8 +72,8 @@ const char MC_UNK[] = "metacontact_unknown";
 // setIcon has changed, so it has been commented out. 
 // also cmbPhotoUrl  is gone completly. Let's pray for it
 
-KopeteGVIProps::KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent, const char *name)
-: KDialogBase(parent, name, true, i18n("Properties of Group %1").arg(gvi->group()->displayName()), Ok|Cancel, Ok, false)
+KopeteGVIProps::KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent)
+: KDialog(parent, i18n("Properties of Group %1").arg(gvi->group()->displayName()), Ok|Cancel)
 {
 	mainWidget = new KopeteGVIPropsWidget(this, "mainWidget");
 	mainWidget->icnbOpen->setIconSize(QSize(KIcon::SizeSmall,KIcon::SizeSmall));
@@ -152,8 +152,8 @@ void KopeteGVIProps::slotIconChanged()
 // =============================================================================
 
 
-KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *parent, const char *name)
-: KDialogBase(parent, name, true, i18n("Properties of Meta Contact %1").arg(lvi->metaContact()->displayName()), Ok|Cancel, Ok, false)
+KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *parent)
+: KDialog(parent, i18n("Properties of Meta Contact %1").arg(lvi->metaContact()->displayName()), Ok|Cancel)
 {
 	m_countPhotoCapable = 0;
 	mainWidget = new KopeteMetaLVIPropsWidget( this, "mainWidget" );
@@ -570,12 +570,12 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KURLRequester *requester )
 
 void KopeteMetaLVIProps::slotClearPhotoClicked()
 {
-#if KDE_IS_VERSION(3,4,0)
-	mainWidget->cmbPhotoUrl->setKURL( KURL() );
-#else
-	mainWidget->cmbPhotoUrl->setURL( QString::null );
-#endif
-	item->metaContact()->setPhoto( KURL() );
+// #if KDE_IS_VERSION(3,4,0)
+// 	mainWidget->cmbPhotoUrl->setKURL( KURL() );
+// #else
+// 	mainWidget->cmbPhotoUrl->setURL( QString::null );
+// #endif
+// 	item->metaContact()->setPhoto( KURL() );
 
 	slotEnableAndDisableWidgets();
 }

@@ -288,7 +288,11 @@ QString Message::parsedBody() const
 	}
 	else
 	{
+#warning Disable Emoticon parsing for now, it make QString cause a ASSERT error. (DarkShock)
+#if 0
 		return Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), d->format));
+#endif
+		return d->body;
 	}
 }
 

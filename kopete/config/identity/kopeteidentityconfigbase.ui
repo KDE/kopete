@@ -13,6 +13,9 @@
             <height>447</height>
         </rect>
     </property>
+    <property name="caption">
+        <string>KopeteIdentityConfigBase</string>
+    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -248,11 +251,6 @@
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="KURLComboRequester" row="1" column="0">
-                                        <property name="name">
-                                            <cstring>comboPhotoURL</cstring>
-                                        </property>
-                                    </widget>
                                     <widget class="KPushButton" row="1" column="1">
                                         <property name="name">
                                             <cstring>buttonClearPhoto</cstring>
@@ -529,8 +527,8 @@ current user contact.</string>
 <includehints>
     <includehint>kcombobox.h</includehint>
     <includehint>kpushbutton.h</includehint>
-    <includehint>kurlrequester.h</includehint>
-    <includehint>kcombobox.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
     <includehint>klineedit.h</includehint>

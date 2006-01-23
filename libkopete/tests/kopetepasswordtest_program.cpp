@@ -27,6 +27,7 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kstandarddirs.h>
+#include <klocale.h>
 
 static QTextStream _out( stdout, QIODevice::WriteOnly );
 
