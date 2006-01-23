@@ -106,7 +106,7 @@ bool WinPopupLib::checkMessageDir()
 								     "Install Into Samba (Configure... -> Account -> Edit)\n"
 								     "Should the directory be created? (May need root password)"), QString::null, i18n("Create Directory"), i18n("Do Not Create"));
 		if (tmpYesNo == KMessageBox::Yes) {
-			QString kdesuArgs = "mkdir -p -m 0777 /var/lib/winpopup";
+			QStringList kdesuArgs = QStringList(QString::fromLatin1("mkdir -p -m 0777 /var/lib/winpopup"));
 			if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
 		}
 	} else {
@@ -121,7 +121,7 @@ bool WinPopupLib::checkMessageDir()
 									     "/var/lib/winpopup/ are wrong!\n"
 									     "Fix? (May need root password)"), QString::null, i18n("Fix"), i18n("Do Not Fix"));
 			if (tmpYesNo == KMessageBox::Yes) {
-				QString kdesuArgs = "chmod 0777 /var/lib/winpopup";
+				QStringList kdesuArgs = QStringList(QString::fromLatin1("chmod 0777 /var/lib/winpopup"));
 				if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
 			}
 		} else {
@@ -230,14 +230,12 @@ void WinPopupLib::slotCheckForNewMessages()
 	if (!checkMessageDir()) return; // Restart timer if false? GF
 
 	QDir dir(WP_POPUP_DIR);
-	const QFileInfoList *messageFiles = dir.entryInfoList(QDir::Files, QDir::Name);
-	if (messageFiles) {
-		QFileInfoListIterator it(*messageFiles);
-		QFileInfo *messageFileInfo;
-		while((messageFileInfo = it.current()) != 0) {
-			++it;
-			if (messageFileInfo->isFile()) {
-				QString messageFileName(messageFileInfo->fileName());
+	const QFileInfoList messageFiles = dir.entryInfoList(QDir::Files, QDir::Name);
+	if (!messageFiles.empty()) {
+		QFileInfo messageFileInfo;
+		foreach(messageFileInfo, messageFiles) {
+			if (messageFileInfo.isFile()) {
+				QString messageFileName(messageFileInfo.fileName());
 				QString messageFilePath(WP_POPUP_DIR);
 //				messageFilePath.append("/");
 				messageFilePath.append(messageFileName);
@@ -277,7 +275,7 @@ void WinPopupLib::slotCheckForNewMessages()
 											"Fix? (May need root password)"), QString::null, i18n("Fix"), i18n("Do Not Fix"));
 						if (tmpYesNo == KMessageBox::Yes) {
 							QFileInfo messageFileInfo(messageFile);
-							QString kdesuArgs = "chmod 0666 /var/lib/winpopup/" + messageFileInfo.fileName();
+							QStringList kdesuArgs = QStringList(QString("chmod 0666 /var/lib/winpopup/" + messageFileInfo.fileName()));
 							if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) {
 								if (!messageFile.remove())
 									KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Still cannot remove it; please fix manually."));

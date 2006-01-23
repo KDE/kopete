@@ -24,7 +24,7 @@
 // Qt Includes
 #include <q3valuestack.h>
 #include <qdatetime.h>
-#include <q3ptrlist.h>
+#include <QList>
 #include <qtimer.h>
 #include <qstringlist.h>
 
@@ -55,7 +55,7 @@ public:
 
 //	virtual bool isOnline() const;
 	virtual bool isReachable();
-	virtual Q3PtrList<KAction> *customContextMenuActions();
+	virtual QList<KAction*> *customContextMenuActions();
 	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate);
 	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 

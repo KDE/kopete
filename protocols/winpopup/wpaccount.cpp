@@ -20,6 +20,7 @@
 
 // QT Includes
 #include <qregexp.h>
+#include <QIcon>
 
 // KDE Includes
 #include <kdebug.h>
@@ -165,15 +166,15 @@ KActionMenu* WPAccount::actionMenu()
 	kdDebug(14170) <<  "WPAccount::actionMenu()" << endl;
 
 	WPProtocol *theProtocol = static_cast<WPProtocol *>(protocol());
-	KActionMenu *theActionMenu = new KActionMenu(accountId() , myself()->onlineStatus().iconFor(this), this);
-	theActionMenu->popupMenu()->insertTitle(myself()->icon(), i18n("WinPopup (%1)").arg(accountId()));
+	KActionMenu *theActionMenu = new KActionMenu(accountId() , myself()->onlineStatus().iconFor(this), 0);
+	theActionMenu->popupMenu()->addTitle( QIcon(myself()->icon()), i18n("WinPopup (%1)").arg(accountId()));
 
 	if (theProtocol)
 	{
 		theActionMenu->insert(new KAction("Online", QIcon(theProtocol->WPOnline.iconFor(this)), 0,
-			this, SLOT(connect()), theActionMenu, "actionGoAvailable"));
+			this, SLOT(connect()), 0, "actionGoAvailable"));
 		theActionMenu->insert(new KAction("Away", QIcon(theProtocol->WPAway.iconFor(this)), 0,
-			this, SLOT(goAway()), theActionMenu, "actionGoAway"));
+			this, SLOT(goAway()), 0, "actionGoAway"));
 		// One can not really go offline manually - appears online as long as samba server is running. GF
 //		theActionMenu->insert(new KAction("Offline", QIcon(theProtocol->WPOffline.iconFor(this)), 0,
 //			this, SLOT(disconnect()), theActionMenu, "actionGoOffline"));

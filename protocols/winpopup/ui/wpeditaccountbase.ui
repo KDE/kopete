@@ -400,4 +400,10 @@
     <includehint>klineedit.h</includehint>
     <includehint>kpushbutton.h</includehint>
 </includehints>
+<customwidgets>
+ <customwidget>
+       <class>KIntSpinBox</class>
+       <header>knuminput.h</header>
+ </customwidget>
+</customwidgets>
 </UI>

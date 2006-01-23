@@ -20,7 +20,8 @@
 
 // QT Includes
 #include <qmap.h>
-#include <q3dict.h>
+#include <QList>
+#include <QHash>
 
 // KDE Includes
 #include <kapplication.h>
@@ -51,9 +52,9 @@ K_EXPORT_COMPONENT_FACTORY( kopete_wp, WPProtocolFactory( "kopete_wp" )  )
 // WP Protocol
 WPProtocol::WPProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
 : Kopete::Protocol( WPProtocolFactory::instance(), parent, name ),
-	WPOnline(  Kopete::OnlineStatus::Online,  25, this, 0,  QString::null, i18n("Online"),  i18n("Online")),
-	WPAway(    Kopete::OnlineStatus::Away,    20, this, 1,  "wp_away",     i18n("Away"),    i18n("Away")),
-	WPOffline( Kopete::OnlineStatus::Offline, 0,  this, 2,  QString::null, i18n("Offline"), i18n("Offline"))
+	WPOnline(  Kopete::OnlineStatus::Online,  25, this, 0,  QStringList(), i18n("Online"),  i18n("Online")),
+	WPAway(    Kopete::OnlineStatus::Away,    20, this, 1,  QStringList(QString::fromLatin1("wp_away")),     i18n("Away"),    i18n("Away")),
+	WPOffline( Kopete::OnlineStatus::Offline, 0,  this, 2,  QStringList(), i18n("Offline"), i18n("Offline"))
 {
 //	kdDebug(14170) << "WPProtocol::WPProtocol()" << endl;
 
@@ -153,25 +154,24 @@ void WPProtocol::installSamba()
 void WPProtocol::slotReceivedMessage(const QString &Body, const QDateTime &Time, const QString &From)
 {
 	bool foundContact = false;
-	QString accountKey = QString::null;
-	Q3Dict<Kopete::Account> Accounts = Kopete::AccountManager::self()->accounts(protocol());
-	for (Q3DictIterator<Kopete::Account> it(Accounts); it.current(); ++it) {
-		Q3Dict<Kopete::Contact> Contacts = it.current()->contacts();
+	QList<Kopete::Account*> Accounts = Kopete::AccountManager::self()->accounts(protocol());
+	Kopete::Account *theAccount;
+	foreach(Kopete::Account *account, Accounts) {
+		QHash<QString, Kopete::Contact*> Contacts = account->contacts();
 		Kopete::Contact *theContact = Contacts[From];
-		if (theContact != 0) {
+		if (theContact) {
 			foundContact = true;
-			dynamic_cast<WPAccount *>(it.current())->slotGotNewMessage(Body, Time, From);
+			theAccount = account;
+			dynamic_cast<WPAccount *>(account)->slotGotNewMessage(Body, Time, From);
 			break;
 		}
-
-		if (accountKey.isEmpty() && it.current()->isConnected()) accountKey = it.currentKey();
 	}
 
 	// What to do with messages with no contact?
 	// Maybe send them to the next online account? GF
 	if (!foundContact) {
-		if (!accountKey.isEmpty())
-			dynamic_cast<WPAccount *>(Accounts[accountKey])->slotGotNewMessage(Body, Time, From);
+		if (theAccount)
+			dynamic_cast<WPAccount *>(theAccount)->slotGotNewMessage(Body, Time, From);
 		else
 			kdDebug(14170) << "No contact or connected account found!" << endl;
 	}
