@@ -19,9 +19,9 @@
 #include <qlayout.h>
 //Added by qt3to4:
 #include <QPixmap>
-#include <QVBoxLayout>
-#include <Q3ValueList>
-#include <Q3PtrList>
+#include <Q3VBoxLayout>
+#include <QList>
+
 #include <kplugininfo.h>
 #include <kiconloader.h>
 #include <qpainter.h>
@@ -72,11 +72,10 @@ class AliasItem : public Q3ListViewItem
 
 				int marg = lv->itemMargin();
 				int r = marg;
-				const BackgroundMode bgmode = lv->viewport()->backgroundMode();
-				const QColorGroup::ColorRole crole =
-					QPalette::backgroundRoleFromMode( bgmode );
+				// QPalette(backgroundRole(())
+				QPalette bgmode = QPalette( lv->viewport()->backgroundRole() );
 				p->fillRect( cellWidth, 0, width - cellWidth, height(),
-					cg.brush( crole ) );
+					cg.brush( bgmode.currentColorGroup(), QPalette::Background ) );
 
 				if ( isSelected() && ( column == 0 || listView()->allColumnsShowFocus() ) )
 				{
@@ -127,7 +126,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_alias, AliasPreferencesFactory( "kcm_kope
 AliasPreferences::AliasPreferences( QWidget *parent, const char *, const QStringList &args )
 	: KCModule( AliasPreferencesFactory::instance(), parent, args )
 {
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
+	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
 	preferencesDialog = new AliasDialogBase( this );
 
 	connect( preferencesDialog->addButton, SIGNAL(clicked()), this, SLOT( slotAddAlias() ) );
@@ -171,7 +170,7 @@ void AliasPreferences::load()
 		for( QStringList::Iterator it = aliases.begin(); it != aliases.end(); ++it )
 		{
 			uint aliasNumber = config->readUnsignedNumEntry( (*it) + "_id" );
-			QString aliasCommand = config->readEntry( (*it) + "_command" );
+			QString aliasCommand = config->readEntry( (*it) + "_command", QString() );
 			QStringList protocols = config->readListEntry( (*it) + "_protocols" );
 
 			ProtocolList protocolList;
@@ -202,7 +201,7 @@ void AliasPreferences::slotPluginLoaded( Kopete::Plugin *plugin )
 			for( QStringList::Iterator it = aliases.begin(); it != aliases.end(); ++it )
 			{
 				uint aliasNumber = config->readUnsignedNumEntry( (*it) + "_id" );
-				QString aliasCommand = config->readEntry( (*it) + "_command" );
+				QString aliasCommand = config->readEntry( (*it) + "_command", QString() );
 				QStringList protocols = config->readListEntry( (*it) + "_protocols" );
 
 				for( QStringList::iterator it2 = protocols.begin(); it2 != protocols.end(); ++it2 )
@@ -458,8 +457,8 @@ void AliasPreferences::slotDeleteAliases()
 {
 	if( KMessageBox::warningContinueCancel(this, i18n("Are you sure you want to delete the selected aliases?"), i18n("Delete Aliases"), KGuiItem(i18n("Delete"), "editdelete") ) == KMessageBox::Continue )
 	{
-		Q3PtrList< Q3ListViewItem > items = preferencesDialog->aliasList->selectedItems();
-		for( Q3ListViewItem *i = items.first(); i; i = items.next() )
+		QList< Q3ListViewItem* > items = preferencesDialog->aliasList->selectedItems();
+		foreach( Q3ListViewItem *i, items)
 		{
 			ProtocolList protocols = static_cast<AliasItem*>( i )->protocolList;
 			for( ProtocolList::Iterator it = protocols.begin(); it != protocols.end(); ++it )

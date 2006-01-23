@@ -137,7 +137,7 @@ Do not include the '/' in the command (if you do it will be stripped off anyway)
                 <string>For protocols:</string>
             </property>
             <property name="alignment">
-                <set>AlignTop</set>
+                <set>Qt::AlignTop</set>
             </property>
             <property name="buddy" stdset="0">
                 <cstring>kListView2</cstring>
@@ -154,7 +154,7 @@ Do not include the '/' in the command (if you do it will be stripped off anyway)
                 <enum>Sunken</enum>
             </property>
             <property name="orientation">
-                <enum>Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
             </property>
         </widget>
     </grid>

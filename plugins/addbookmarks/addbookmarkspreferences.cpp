@@ -21,7 +21,7 @@
 #include <qnamespace.h>
 #include <qradiobutton.h>
 //Added by qt3to4:
-#include <QVBoxLayout>
+#include <Q3VBoxLayout>
 
 
 typedef KGenericFactory<BookmarksPreferences> BookmarksPreferencesFactory;
@@ -31,7 +31,7 @@ BookmarksPreferences::BookmarksPreferences(QWidget *parent, const char *name, co
  : KCModule(BookmarksPreferencesFactory::instance(), parent, args)
 {
 	Q_UNUSED( name );
-	( new QVBoxLayout (this) )->setAutoAdd( true );
+	( new Q3VBoxLayout (this) )->setAutoAdd( true );
 	p_dialog = new BookmarksPrefsUI( this );
 	load();
 	connect( p_dialog->yesButton, SIGNAL( toggled(bool) ), this, SLOT( slotSetStatusChanged() ));
