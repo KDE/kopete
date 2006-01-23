@@ -25,6 +25,8 @@
 #include <qdatastream.h>
 #include <qdatetime.h>
 #include <qtextstream.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 
 #include <kdebug.h>
@@ -159,7 +161,8 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		return bytesParsed;
 	}
 	
-	QDataStream din( wire, IO_ReadOnly );
+	QByteArray tempWire = wire;
+	QDataStream din( &tempWire, QIODevice::ReadOnly );
 	
 	// look at first four bytes and decide what to do with the chunk
 	if ( okToProceed( din ) )
@@ -183,7 +186,7 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		else 
 		{ 
 			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - not a valid YMSG packet. Trying to recover." << endl;
-			QTextStream s( wire, IO_ReadOnly );
+			QTextStream s( wire, QIODevice::ReadOnly );
 			QString remaining = s.read();
 			int pos = remaining.find( "YMSG", bytesParsed );
 			if( pos >= 0 )
@@ -206,7 +209,7 @@ void CoreProtocol::reset()
 	m_in.resize( 0 );
 }
 
-void CoreProtocol::slotOutgoingData( const QCString &out )
+void CoreProtocol::slotOutgoingData( const Q3CString &out )
 {
 	qDebug( "%s", out.data() );
 }

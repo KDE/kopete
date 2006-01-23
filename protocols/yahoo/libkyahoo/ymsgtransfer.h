@@ -24,15 +24,16 @@
 #include "transfer.h"
 
 #include "yahootypes.h"
-#include <qcstring.h>
-#include <qpair.h>
-#include <qvaluelist.h>
+
+#include <QByteArray>
+#include <QPair>
+#include <QList>
 
 class YMSGTransferPrivate;
 class QString;
 
-typedef QPair< int, QCString > Param;
-typedef QValueList< Param > ParamList;
+typedef QPair< int, QByteArray > Param;
+typedef QList< Param > ParamList;
 
 /**
 @author Duncan Mac-Vicar Prett
@@ -58,13 +59,13 @@ public:
 	void setId(unsigned int id);
 
 	ParamList paramList();
-	QCString firstParam( int index );
-	QCString nthParam( int index, int occurence );
-	QCString nthParamSeparated( int index, int occurence, int separator );
+	QByteArray firstParam( int index );
+	QByteArray nthParam( int index, int occurence );
+	QByteArray nthParamSeparated( int index, int occurence, int separator );
 	int paramCount( int index );
 	
 
-	void setParam(int index, const QCString &data);
+	void setParam(int index, const QByteArray &data);
 	void setParam(int index, int data);
 	QByteArray serialize();
 	

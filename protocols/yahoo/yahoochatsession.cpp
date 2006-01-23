@@ -19,14 +19,17 @@
 #include <qimage.h>
 #include <qtooltip.h>
 #include <qfile.h>
-#include <qiconset.h>
+#include <qicon.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QList>
 
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kinputdialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <ktempfile.h>
 #include <kmainwindow.h>
 #include <ktoolbar.h>
@@ -53,9 +56,9 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 	setInstance(protocol->instance());
 
 	// Add Actions
-	new KAction( i18n( "Buzz Contact" ), QIconSet(BarIcon("bell")), "Ctrl+G", this, SLOT( slotBuzzContact() ), actionCollection(), "yahooBuzz" ) ;
-	new KAction( i18n( "Show User Info" ), QIconSet(BarIcon("idea")), 0, this, SLOT( slotUserInfo() ), actionCollection(), "yahooShowInfo" ) ;
-	new KAction( i18n( "Request Webcam" ), QIconSet(BarIcon("image")), 0, this, SLOT( slotRequestWebcam() ), actionCollection(), "yahooRequestWebcam" ) ;
+	new KAction( i18n( "Buzz Contact" ), QIcon(BarIcon("bell")), "Ctrl+G", this, SLOT( slotBuzzContact() ), actionCollection(), "yahooBuzz" ) ;
+	new KAction( i18n( "Show User Info" ), QIcon(BarIcon("idea")), 0, this, SLOT( slotUserInfo() ), actionCollection(), "yahooShowInfo" ) ;
+	new KAction( i18n( "Request Webcam" ), QIcon(BarIcon("image")), 0, this, SLOT( slotRequestWebcam() ), actionCollection(), "yahooRequestWebcam" ) ;
 
 
 	YahooContact *c = static_cast<YahooContact*>( others.first() );
@@ -82,28 +85,28 @@ YahooChatSession::~YahooChatSession()
 void YahooChatSession::slotBuzzContact()
 {
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	QPtrList<Kopete::Contact>contacts = members();
+	QList<Kopete::Contact*>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->buzzContact();
 }
 
 void YahooChatSession::slotUserInfo()
 {
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	QPtrList<Kopete::Contact>contacts = members();
+	QList<Kopete::Contact*>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->slotUserInfo();
 }
 
 void YahooChatSession::slotRequestWebcam()
 {
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	QPtrList<Kopete::Contact>contacts = members();
+	QList<Kopete::Contact*>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->requestWebcam();
 }
 
 void YahooChatSession::slotDisplayPictureChanged()
 {
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	QPtrList<Kopete::Contact> mb=members();
+	QList<Kopete::Contact*> mb=members();
 	YahooContact *c = static_cast<YahooContact *>( mb.first() );
 	if ( c && m_image )
 	{
@@ -118,26 +121,30 @@ void YahooChatSession::slotDisplayPictureChanged()
 				//We connected that in the constructor.  we don't need to keep this slot active.
 				disconnect( Kopete::ChatSessionManager::self() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );
 
-				QPtrListIterator<KToolBar>  it=w->toolBarIterator() ;
 				KAction *imgAction=actionCollection()->action("yahooDisplayPicture");
-				if(imgAction)  while(it)
+				if(imgAction)
 				{
-					KToolBar *tb=*it;
-					if(imgAction->isPlugged(tb))
+					QList<KToolBar*> toolbarList = w->toolBarList();
+					QList<KToolBar*>::Iterator it, itEnd = toolbarList.end();
+					for(it = toolbarList.begin(); it != itEnd; ++it)
 					{
-						sz=tb->iconSize();
-						//ipdate if the size of the toolbar change.
-						disconnect(tb, SIGNAL(modechange()), this, SLOT(slotDisplayPictureChanged()));
-						connect(tb, SIGNAL(modechange()), this, SLOT(slotDisplayPictureChanged()));
-						break;
+						KToolBar *tb=*it;
+						if(imgAction->isPlugged(tb))
+						{
+							sz=tb->iconSize();
+							//ipdate if the size of the toolbar change.
+							disconnect(tb, SIGNAL(modechange()), this, SLOT(slotDisplayPictureChanged()));
+							connect(tb, SIGNAL(modechange()), this, SLOT(slotDisplayPictureChanged()));
+							break;
+						}
+						++it;
 					}
-					++it;
 				}
 			}
 			QString imgURL=c->property(Kopete::Global::Properties::self()->photo()).value().toString();
 			QImage scaledImg = QPixmap( imgURL ).convertToImage().smoothScale( sz, sz );
 			if(!scaledImg.isNull())
-				m_image->setPixmap( scaledImg );
+				m_image->setPixmap( QPixmap(scaledImg) );
 			else
 			{ //the image has maybe not been transfered correctly..  force to download again
 				c->removeProperty(Kopete::Global::Properties::self()->photo());

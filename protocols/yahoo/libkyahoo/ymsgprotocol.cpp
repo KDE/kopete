@@ -18,7 +18,7 @@
 
 #include <stdlib.h>
 
-#include <qcstring.h>
+#include <q3cstring.h>
 #include <qdatastream.h>
 #include <qmap.h>
 #include <qobject.h>
@@ -301,7 +301,7 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 	
 	// taken almost as is from libyahoo ;-)
 	
-	char *data = packet.data();
+	char *data = (char*)packet.data();
 	while (pos + 1 < len + 20 /*header*/)
 	{
 		if( (BYTE) data[pos] == (BYTE)0x00  )

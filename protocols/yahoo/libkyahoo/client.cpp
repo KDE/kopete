@@ -20,6 +20,9 @@
 */
 
 #include <qtimer.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3CString>
 
 #include <kdebug.h>
 #include <kurl.h>
@@ -528,7 +531,7 @@ QString Client::password()
 	return d->pass;
 }
 
-QCString Client::ipAddress()
+Q3CString Client::ipAddress()
 {
 	//TODO determine ip address
 	return "127.0.0.1";

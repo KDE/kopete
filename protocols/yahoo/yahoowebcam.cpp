@@ -93,7 +93,7 @@ void YahooWebcam::sendImage()
 	
 	img.save( origImg->name(), "JPEG");
 	
-	theDialog->newImage( img );
+	theDialog->newImage( QPixmap(img) );
 	KProcess p;
 	p << "jasper";
 	p << "--input" << origImg->name() << "--output" << convertedImg->name() << "--output-format" << "jpc" << "-O" << "rate=0.02" ;
@@ -106,7 +106,7 @@ void YahooWebcam::sendImage()
 	else
 	{
 		QFile file( convertedImg->name() );
-		if( file.open( IO_ReadOnly ) )
+		if( file.open( QIODevice::ReadOnly ) )
 		{
 			QByteArray ar = file.readAll();
 			theAccount->yahooSession()->sendWebcamImage( ar );

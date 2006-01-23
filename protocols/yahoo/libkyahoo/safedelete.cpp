@@ -54,9 +54,11 @@ void SafeDelete::deleteAll()
 	if(list.isEmpty())
 		return;
 
-	QObjectListIt it(list);
-	for(QObject *o; (o = it.current()); ++it)
+	foreach(QObject *o, list)
+	{
 		deleteSingle(o);
+	}
+
 	list.clear();
 }
 
@@ -114,13 +116,14 @@ SafeDeleteLater *SafeDeleteLater::ensureExists()
 
 SafeDeleteLater::SafeDeleteLater()
 {
-	list.setAutoDelete(true);
 	self = this;
 	QTimer::singleShot(0, this, SLOT(explode()));
 }
 
 SafeDeleteLater::~SafeDeleteLater()
 {
+	qDeleteAll(list);
+
 	list.clear();
 	self = 0;
 }

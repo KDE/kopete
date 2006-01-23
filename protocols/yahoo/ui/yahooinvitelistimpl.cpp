@@ -19,13 +19,13 @@
 
 #include <kdebug.h>
 
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qlineedit.h>
 
 YahooInviteListImpl::YahooInviteListImpl(QWidget *parent, const char *name) : YahooInviteListBase(parent,name)
 {
-	listFriends->setSelectionMode( QListBox::Extended );
-	listInvited->setSelectionMode( QListBox::Extended );
+	listFriends->setSelectionMode( Q3ListBox::Extended );
+	listInvited->setSelectionMode( Q3ListBox::Extended );
 }
 
 YahooInviteListImpl::~YahooInviteListImpl()

@@ -21,7 +21,7 @@
 #include "client.h"
 #include <qstring.h>
 #include <qfile.h>
-#include <qcstring.h>
+#include <q3cstring.h>
 #include <qdatastream.h>
 #include <kio/global.h>
 #include <kio/job.h>
@@ -87,9 +87,9 @@ void SendPictureTask::connectSucceeded()
 	t->setParam( 14, "" );
 	QByteArray buffer;
 	QByteArray paket;
-	QDataStream stream( buffer, IO_WriteOnly );
+	QDataStream stream( &buffer, QIODevice::WriteOnly );
 
-	if ( file.open(IO_ReadOnly ) )
+	if ( file.open(QIODevice::ReadOnly ) )
 	{
 		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "File successfully opened. Reading..." << endl;
 	}

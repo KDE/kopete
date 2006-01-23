@@ -18,6 +18,9 @@
 
 #include "inputprotocolbase.h"
 
+#include <Q3CString>
+#include <QDataStream>
+
 InputProtocolBase::InputProtocolBase(QObject *parent, const char *name)
  : QObject(parent, name)
 {
@@ -36,7 +39,7 @@ uint InputProtocolBase::state() const
 bool InputProtocolBase::readString( QString &message )
 {
 	uint len;
-	QCString rawData;
+	Q3CString rawData;
 	if ( !safeReadBytes( rawData, len ) )
 		return false;
 	message = QString::fromUtf8( rawData.data(), len - 1 );
@@ -59,7 +62,7 @@ bool InputProtocolBase::okToProceed()
 	return false;
 }
 
-bool InputProtocolBase::safeReadBytes( QCString & data, uint & len )
+bool InputProtocolBase::safeReadBytes( Q3CString & data, uint & len )
 {
 	// read the length of the bytes
 	Q_UINT32 val;
@@ -70,7 +73,7 @@ bool InputProtocolBase::safeReadBytes( QCString & data, uint & len )
 	if ( val > 1024 )
 		return false;
 	//qDebug( "EventProtocol::safeReadBytes() - expecting %i bytes", val );
-	QCString temp( val );
+	Q3CString temp( val );
 	if ( val != 0 )
 	{
 		if ( !okToProceed() )

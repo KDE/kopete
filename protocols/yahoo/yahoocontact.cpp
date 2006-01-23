@@ -63,7 +63,7 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 
 	m_userId = userId;
 	if ( metaContact )
-		m_groupName = metaContact->groups().getFirst()->displayName();
+		m_groupName = metaContact->groups().first()->displayName();
 	m_manager = 0L;
 	m_account = account;
 	m_stealthed = false;
@@ -143,7 +143,7 @@ void YahooContact::syncToServer()
 	{	kdDebug(YAHOO_GEN_DEBUG) << "Contact " << m_userId << " doesn't exist on server-side. Adding..." << endl;
 
 		Kopete::GroupList groupList = metaContact()->groups();
-		for( Kopete::Group *g = groupList.first(); g; g = groupList.next() )
+		foreach(Kopete::Group *g, groupList)
 			m_account->yahooSession()->addBuddy(m_userId, g->displayName() );
 	}
 }
@@ -159,7 +159,7 @@ void YahooContact::sync(unsigned int flags)
 		//TODO: Share this code with the above function
 		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Contact isn't on the server. Adding..." << endl;
 		Kopete::GroupList groupList = metaContact()->groups();
-		for ( Kopete::Group *g = groupList.first(); g; g = groupList.next() )
+		foreach(Kopete::Group *g, groupList)
 			m_account->yahooSession()->addBuddy(m_userId, g->displayName() );
 	}
 	else
@@ -356,13 +356,13 @@ void YahooContact::slotChatSessionDestroyed()
 	m_manager = 0L;
 }
 
-QPtrList<KAction> *YahooContact::customContextMenuActions()
+QList<KAction*> *YahooContact::customContextMenuActions()
 {
-	QPtrList<KAction> *actionCollection = new QPtrList<KAction>();
+	QList<KAction*> *actionCollection = new QList<KAction*>();
 	if ( !m_webcamAction )
 	{
 		m_webcamAction = new KAction( i18n( "View &Webcam" ), "camera_unmount", KShortcut(),
-		                              this, SLOT( requestWebcam() ), this, "view_webcam" );
+		                              this, SLOT( requestWebcam() ), 0, "view_webcam" );
 	}
 	if ( isReachable() )
 		m_webcamAction->setEnabled( true );
@@ -373,7 +373,7 @@ QPtrList<KAction> *YahooContact::customContextMenuActions()
 	if( !m_inviteWebcamAction )
 	{
 		m_inviteWebcamAction = new KAction( i18n( "Invite to view your Webcam" ), "camera_unmount", KShortcut(),
-		                                    this, SLOT( inviteWebcam() ), this, "invite_webcam" );
+		                                    this, SLOT( inviteWebcam() ), 0, "invite_webcam" );
 	}
 	if ( isReachable() )
 		m_inviteWebcamAction->setEnabled( true );
@@ -383,7 +383,7 @@ QPtrList<KAction> *YahooContact::customContextMenuActions()
 	
 	if ( !m_buzzAction )
 	{
-		m_buzzAction = new KAction( i18n( "&Buzz Contact" ), "bell", KShortcut(), this, SLOT( buzzContact() ), this, "buzz_contact");
+		m_buzzAction = new KAction( i18n( "&Buzz Contact" ), "bell", KShortcut(), this, SLOT( buzzContact() ), 0, "buzz_contact");
 	}
 	if ( isReachable() )
 		m_buzzAction->setEnabled( true );
@@ -393,7 +393,7 @@ QPtrList<KAction> *YahooContact::customContextMenuActions()
 
 	if ( !m_stealthAction )
 	{
-		m_stealthAction = new KAction( i18n( "&Stealth Setting" ), "yahoo_stealthed", KShortcut(), this, SLOT( stealthContact() ), this, "stealth_contact");
+		m_stealthAction = new KAction( i18n( "&Stealth Setting" ), "yahoo_stealthed", KShortcut(), this, SLOT( stealthContact() ), 0, "stealth_contact");
 	}
 	if ( isReachable() )
 		m_stealthAction->setEnabled( true );
@@ -403,7 +403,7 @@ QPtrList<KAction> *YahooContact::customContextMenuActions()
 	
 	if ( !m_inviteConferenceAction )
 	{
-		m_inviteConferenceAction = new KAction( i18n( "&Invite to Conference" ), "kontact_contacts", KShortcut(), this, SLOT( inviteConference() ), this, "invite_conference");
+		m_inviteConferenceAction = new KAction( i18n( "&Invite to Conference" ), "kontact_contacts", KShortcut(), this, SLOT( inviteConference() ), 0, "invite_conference");
 	}
 	if ( isReachable() )
 		m_inviteConferenceAction->setEnabled( true );
@@ -509,7 +509,7 @@ void YahooContact::slotEmitDisplayPictureChanged()
 {
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	QString newlocation=locateLocal( "appdata", "yahoopictures/"+ contactId().lower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
-	setProperty( Kopete::Global::Properties::self()->photo(), QString::null );
+	setProperty( Kopete::Global::Properties::self()->photo(), QString() );
 	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
 	emit displayPictureChanged();
 }
@@ -569,7 +569,7 @@ void YahooContact::initWebcamViewer()
 
 void YahooContact::requestWebcam()
 {
-	if ( !KStandardDirs::findExe("jasper") )
+	if ( KStandardDirs::findExe("jasper").isEmpty() )
 	{
 		KMessageBox::queuedMessageBox(                            		Kopete::UI::Global::mainWidget(),
 			KMessageBox::Error, i18n("I cannot find the jasper image convert program.\njasper is required to render the yahoo webcam images.\nPlease go to http://kopete.kde.org/yahoo/jasper.html for instructions.")

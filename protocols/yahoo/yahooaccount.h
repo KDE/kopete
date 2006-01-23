@@ -23,6 +23,8 @@
 // Qt
 #include <qobject.h>
 #include <qmap.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 // Kopete
 #include "kopetepasswordedaccount.h"

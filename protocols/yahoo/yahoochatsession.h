@@ -17,6 +17,7 @@
 #define YAHOOCHATSESSION_H
 
 #include "kopetechatsession.h"
+#include <QLabel>
 
 class KActionCollection;
 class YahooContact;

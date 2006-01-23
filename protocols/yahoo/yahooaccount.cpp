@@ -25,13 +25,16 @@
 #include <qregexp.h>
 #include <qimage.h>
 #include <qfile.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3ValueList>
 
 // KDE
 #include <klocale.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kaction.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kmessagebox.h>
 #include <kapplication.h>
 #include <krun.h>
@@ -91,8 +94,8 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	
 	m_session->setUserId( accountId.lower() );
 	
-	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
-	m_openYABAction = new KAction( i18n( "Open &Addressbook..." ), "contents", 0, this, SLOT( slotOpenYAB() ), this, "m_openYABAction" );
+	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), 0, "m_openInboxAction" );
+	m_openYABAction = new KAction( i18n( "Open &Addressbook..." ), "contents", 0, this, SLOT( slotOpenYAB() ), 0, "m_openYABAction" );
 
 	YahooContact* _myself=new YahooContact( this, accountId.lower(), accountId, Kopete::ContactList::self()->myself() );
 	setMyself( _myself );
@@ -105,7 +108,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged(const QString&, const QVariant& ) ), SLOT( slotGlobalIdentityChanged(const QString&, const QVariant& ) ));
 // 	initConnectionSignals( MakeConnections );
 	
-	QString displayName = configGroup()->readEntry(QString::fromLatin1("displayName"));
+	QString displayName = configGroup()->readEntry(QString::fromLatin1("displayName"), QString());
 	if(!displayName.isEmpty())
 		_myself->setNickName(displayName);
 }
@@ -479,8 +482,9 @@ void YahooAccount::disconnect()
 		m_session->close();
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 
-		for ( QDictIterator<Kopete::Contact> i( contacts() ); i.current(); ++i )
-			static_cast<YahooContact *>( i.current() )->setOnlineStatus( m_protocol->Offline );
+		QHash<QString,Kopete::Contact*>::ConstIterator it, itEnd = contacts().constEnd();
+		for ( it = contacts().constBegin(); it != itEnd; ++it )
+			static_cast<YahooContact *>( it.value() )->setOnlineStatus( m_protocol->Offline );
 		
 		disconnected( Manual );
 	}
@@ -489,8 +493,9 @@ void YahooAccount::disconnect()
 		kdDebug(YAHOO_GEN_DEBUG) << "Cancelling active login attempts (not fully connected)." << endl;
 		m_session->cancelConnect();
 
-		for ( QDictIterator<Kopete::Contact> i(contacts()); i.current(); ++i )
-			static_cast<YahooContact*>( i.current() )->setOnlineStatus( m_protocol->Offline );
+		QHash<QString,Kopete::Contact*>::ConstIterator it, itEnd = contacts().constEnd();
+		for ( it = contacts().constBegin(); it != itEnd; ++it )
+			static_cast<YahooContact*>( it.value() )->setOnlineStatus( m_protocol->Offline );
 	}
 
 	initConnectionSignals( DeleteConnections );
@@ -719,7 +724,7 @@ void YahooAccount::slotAuthorizationAccepted( const QString &who )
 	QString message;
 	message = i18n( "User %1 has granted your authorization request." )
 		.arg( who );
-	KNotification::event( "kopete_authorization", message, 0 , 0 , 0 );
+	KNotification::event( QString::fromLatin1("kopete_authorization"), message );
 }
 
 void YahooAccount::slotAuthorizationRejected( const QString &who, const QString &msg )
@@ -728,7 +733,7 @@ void YahooAccount::slotAuthorizationRejected( const QString &who, const QString 
 	QString message;
 	message = i18n( "User %1 has granted your authorization request.\n%2" )
 		.arg( who ).arg( msg );
-	KNotification::event( "kopete_authorization", message, 0 , 0 , 0 );
+	KNotification::event( QString::fromLatin1("kopete_authorization"), message );
 }
 
 void YahooAccount::slotgotAuthorizationRequest( const QString &user, const QString &msg, const QString &name )
@@ -1005,7 +1010,7 @@ void YahooAccount::slotGotConfInvite( const QString & who, const QString & room,
 			
 			QObject::connect( session, SIGNAL(leavingConference( YahooConferenceChatSession * ) ), this, SLOT( slotConfLeave( YahooConferenceChatSession * ) ) );
 			
-			for ( QValueList<QString>::ConstIterator it = myMembers.begin(); it != myMembers.end(); ++it )
+			for ( QStringList::ConstIterator it = myMembers.begin(); it != myMembers.end(); ++it )
 			{
 				YahooContact * c = contact( *it );
 				if ( !c )
@@ -1037,11 +1042,11 @@ void YahooAccount::prepareConference( const QString &who )
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "The generated roomname is: " << room << endl;
 	
 	QStringList buddies;
-	QDictIterator<Kopete::Contact> it( contacts() );
-	for( ; it.current(); ++it )
+	QHash<QString,Kopete::Contact*>::ConstIterator it, itEnd = contacts().constEnd();
+	for( it = contacts().constBegin(); it != itEnd; ++it )
 	{
-		if( (*it) != myself() )
-			buddies.push_back( (*it)->contactId() );
+		if( it.value() != myself() )
+			buddies.push_back( it.value()->contactId() );
 	}
 	
 	YahooInviteListImpl *dlg = new YahooInviteListImpl( Kopete::UI::Global::mainWidget() );
@@ -1132,7 +1137,7 @@ void YahooAccount::slotConfLeave( YahooConferenceChatSession *s )
 	if( !s )
 		return;
 	QStringList members;
-	for( Kopete::ContactPtrList::iterator it = s->members().begin(); it != s->members().end(); ++it )
+	for( Kopete::ContactPtrList::ConstIterator it = s->members().constBegin(); it != s->members().constEnd(); ++it )
 	{
 		if( (*it) == myself() )
 			continue;
@@ -1187,7 +1192,7 @@ void YahooAccount::sendConfMessage( YahooConferenceChatSession *s, Kopete::Messa
 {
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	QStringList members;
-	for( Kopete::ContactPtrList::iterator it = s->members().begin(); it != s->members().end(); ++it )
+	for( Kopete::ContactPtrList::ConstIterator it = s->members().constBegin(); it != s->members().constEnd(); ++it )
 	{
 		if( (*it) == myself() )
 			continue;
@@ -1241,15 +1246,15 @@ void YahooAccount::slotMailNotify( const QString& from, const QString& /* subjec
 
 	if ( cnt > m_currentMailCount && from.isEmpty() )
 	{
-		QObject::connect(KNotification::event( "yahoo_mail", i18n( "You have one unread message in your Yahoo inbox.",
-			"You have %n unread messages in your Yahoo inbox.", cnt ), 0 , 0 , i18n( "Open Inbox..." ) ),
+		QObject::connect(KNotification::event( QString::fromLatin1("yahoo_mail"), i18n( "You have one unread message in your Yahoo inbox.",
+			"You have %n unread messages in your Yahoo inbox.", cnt ), QPixmap() , 0 , QStringList(i18n( "Open Inbox..." )) ),
 		                 SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 		m_currentMailCount = cnt;
 	}
 	else if ( cnt > m_currentMailCount )
 	{	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "attempting to trigger event" << endl;
-		QObject::connect(KNotification::event( "yahoo_mail", i18n( "You have a message from %1 in your Yahoo inbox.").arg(from) 
-			, 0 , 0 , i18n( "Open Inbox..." ) ), SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
+		QObject::connect(KNotification::event( QString::fromLatin1("yahoo_mail"), i18n( "You have a message from %1 in your Yahoo inbox.").arg(from) 
+		                                       , QPixmap() , 0 , QStringList(i18n( "Open Inbox..." )) ), SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 		m_currentMailCount = cnt;
 	}
 }
@@ -1380,7 +1385,7 @@ void YahooAccount::setBuddyIcon( KURL url )
 			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n( "<qt>The selected buddy icon could not be opened. <br>Please set a new buddy icon.</qt>" ), i18n( "Yahoo Plugin" ) );
 			return;
 		}
-		image = image.smoothScale( 96, 96, QImage::ScaleMax );
+		image = image.smoothScale( 96, 96, Qt::KeepAspectRatioByExpanding );
 		if(image.width() > image.height()) {
 			image = image.copy((image.width()-image.height())/2, 0, image.height(), image.height());
 		}
@@ -1388,7 +1393,7 @@ void YahooAccount::setBuddyIcon( KURL url )
 			image = image.copy(0, (image.height()-image.width())/2, image.width(), image.width());
 		}
 
-		if( !image.save( newlocation, "PNG" ) || !iconFile.open(IO_ReadOnly) )
+		if( !image.save( newlocation, "PNG" ) || !iconFile.open(QIODevice::ReadOnly) )
 		{
 			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n( "An error occurred when trying to change the display picture." ), i18n( "Yahoo Plugin" ) );
 			return;
@@ -1431,7 +1436,7 @@ void YahooAccount::setBuddyIcon( KURL url )
 void YahooAccount::slotBuddyIconChanged( const QString &url )
 {
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	QDictIterator<Kopete::Contact> it( contacts() );
+	//	Q3DictIterator<Kopete::Contact> it( contacts() );
 	int checksum = myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt();
 
 	if ( url.isEmpty() )	// remove pictures from buddie's clients

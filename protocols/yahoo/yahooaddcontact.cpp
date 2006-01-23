@@ -18,6 +18,8 @@
 
 // QT Includes
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3VBoxLayout>
 
 // KDE Includes
 #include <kdebug.h>
@@ -37,7 +39,7 @@ YahooAddContact::YahooAddContact(YahooProtocol *owner, QWidget *parent, const ch
 {
 	kdDebug(YAHOO_GEN_DEBUG) << "YahooAddContact::YahooAddContact(<owner>, <parent>, " << name << ")" << endl;
 
-	(new QVBoxLayout(this))->setAutoAdd(true);
+	(new Q3VBoxLayout(this))->setAutoAdd(true);
 	theDialog = new YahooAddContactBase(this);
 	theDialog->show();
 	theProtocol = owner;

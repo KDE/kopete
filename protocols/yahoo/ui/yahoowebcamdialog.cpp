@@ -16,13 +16,16 @@
 
 #include "yahoowebcamdialog.h"
 
-#include <qframe.h>
+#include <q3frame.h>
 #include <qobject.h>
 #include <qwidget.h>
 #include <qlabel.h>
 #include <qtooltip.h>
 #include <qlayout.h>
-#include <qvbox.h>
+#include <q3vbox.h>
+//Added by qt3to4:
+#include <Q3VBoxLayout>
+#include <QPixmap>
 #include <kdebug.h>
 #include <klocale.h>
 
@@ -30,7 +33,7 @@ YahooWebcamDialog::YahooWebcamDialog( const QString &contactId, QWidget * parent
 : KDialogBase( KDialogBase::Plain, i18n( "Webcam for %1" ).arg( contactId ),
                    KDialogBase::Close, KDialogBase::Close, parent, name, false, true /*seperator*/ )
 {
-	setInitialSize( QSize(320,290), false );
+	setInitialSize( QSize(320,290) );
 	
 	setEscapeButton( KDialogBase::Close );
 	QObject::connect( this, SIGNAL( closeClicked() ), this, SIGNAL( closingWebcamDialog() ) );
@@ -39,7 +42,7 @@ YahooWebcamDialog::YahooWebcamDialog( const QString &contactId, QWidget * parent
 	QWidget *page = plainPage();
 	setMainWidget(page);
 
-	QVBoxLayout *topLayout = new QVBoxLayout( page, 0, spacingHint() );	
+	Q3VBoxLayout *topLayout = new Q3VBoxLayout( page, 0, spacingHint() );	
 	m_imageContainer = new QLabel( page );
 	m_imageContainer->setText( i18n( "No webcam image received" ) );
 	m_imageContainer->setAlignment( Qt::AlignCenter );

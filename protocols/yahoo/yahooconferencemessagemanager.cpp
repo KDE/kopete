@@ -17,10 +17,10 @@
 */
 
 #include <kdebug.h>
-#include <klineeditdlg.h>
+#include <klineedit.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kconfig.h>
 
 #include <kopetecontactaction.h>
@@ -90,12 +90,13 @@ void YahooConferenceChatSession::slotMessageSent( Kopete::Message & message, Kop
 void YahooConferenceChatSession::slotInviteOthers()
 {
 	QStringList buddies;
-	QDictIterator<Kopete::Contact> it( account()->contacts() );
+
+	QHash<QString, Kopete::Contact*>::ConstIterator it, itEnd = account()->contacts().constEnd();
 	Kopete::Contact *myself = account()->myself();
-	for( ; it.current(); ++it )
+	for( it = account()->contacts().constBegin(); it != itEnd; ++it )
 	{
-		if( (*it) != myself && !members().contains( *it ) )
-			buddies.push_back( (*it)->contactId() );
+		if( it.value() != myself && !members().contains( it.value() ) )
+			buddies.push_back( it.value()->contactId() );
 	}
 
 	YahooInviteListImpl *dlg = new YahooInviteListImpl( Kopete::UI::Global::mainWidget() );

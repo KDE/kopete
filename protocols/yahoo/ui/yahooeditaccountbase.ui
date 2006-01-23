@@ -157,7 +157,7 @@
                                     <string>To connect to the Yahoo network, you will need a Yahoo account.&lt;br&gt;&lt;br&gt;If you do not currently have a Yahoo account, please click the button to create one.</string>
                                 </property>
                                 <property name="alignment">
-                                    <set>WordBreak|AlignVCenter</set>
+                                    <set>Qt::TextWordWrap|Qt::AlignVCenter</set>
                                 </property>
                             </widget>
                             <widget class="QPushButton">
@@ -184,7 +184,7 @@
                             <cstring>spacer6</cstring>
                         </property>
                         <property name="orientation">
-                            <enum>Vertical</enum>
+                            <enum>Qt::Vertical</enum>
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
@@ -214,7 +214,7 @@
                             <cstring>spacer4</cstring>
                         </property>
                         <property name="orientation">
-                            <enum>Vertical</enum>
+                            <enum>Qt::Vertical</enum>
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
@@ -384,7 +384,7 @@
                                     </size>
                                 </property>
                                 <property name="frameShape">
-                                    <enum>GroupBoxPanel</enum>
+                                    <enum>QFrame::StyledPanel</enum>
                                 </property>
                                 <property name="margin">
                                     <number>0</number>
@@ -417,7 +417,7 @@
                 <string></string>
             </property>
             <property name="alignment">
-                <set>AlignCenter</set>
+                <set>Qt::AlignCenter</set>
             </property>
         </widget>
     </vbox>

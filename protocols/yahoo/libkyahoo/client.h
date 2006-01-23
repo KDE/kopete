@@ -23,6 +23,9 @@
 #define LIBYAHOO_CLIENT_H
 
 #include <qobject.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3CString>
 
 #include "rtf2html.h"
 #include "transfer.h"
@@ -260,7 +263,7 @@ Q_OBJECT
 		/**
 		 * Host's IP address
 		 */
-		QCString ipAddress();
+		Q3CString ipAddress();
 		
 		/**
 		 * current Session ID

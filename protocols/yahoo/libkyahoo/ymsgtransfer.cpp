@@ -23,6 +23,7 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "kdebug.h"
+
 #include <qdatastream.h>
 #include <qmap.h>
 #include <qstring.h>
@@ -132,7 +133,7 @@ int YMSGTransfer::paramCount( int index )
 }
 
 
-QCString YMSGTransfer::nthParam( int index, int occurence )
+QByteArray YMSGTransfer::nthParam( int index, int occurence )
 {
 	int cnt = 0;
 	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
@@ -140,10 +141,10 @@ QCString YMSGTransfer::nthParam( int index, int occurence )
 		if( (*it).first == index && cnt++ == occurence)
 			return (*it).second;
 	}
-	return QCString();
+	return QByteArray();
 }
 
-QCString YMSGTransfer::nthParamSeparated( int index, int occurence, int separator )
+QByteArray YMSGTransfer::nthParamSeparated( int index, int occurence, int separator )
 {
 
 	int cnt = -1;
@@ -154,20 +155,20 @@ QCString YMSGTransfer::nthParamSeparated( int index, int occurence, int separato
 		if( (*it).first == index && cnt == occurence)
 			return (*it).second;
 	}
-	return QCString();
+	return QByteArray();
 }
 
-QCString YMSGTransfer::firstParam( int index )
+QByteArray YMSGTransfer::firstParam( int index )
 {
 	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
 	{
 		if( (*it).first == index )
 			return (*it).second;
 	}
-	return QCString();
+	return QByteArray();
 }
 
-void YMSGTransfer::setParam(int index, const QCString &data)
+void YMSGTransfer::setParam(int index, const QByteArray &data)
 {
 	d->data.append( Param( index, data ) );
 }
@@ -210,7 +211,7 @@ QByteArray YMSGTransfer::serialize()
 	int packetSize = 20 + length();
 	QStringList::ConstIterator listIt = 0;
 	QByteArray buffer;
-	QDataStream stream( buffer, IO_WriteOnly );
+	QDataStream stream( &buffer, QIODevice::WriteOnly );
 	
 	stream << (Q_INT8)'Y' << (Q_INT8)'M' << (Q_INT8)'S' << (Q_INT8)'G';
 	if( d->service == Yahoo::ServicePictureUpload )
