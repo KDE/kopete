@@ -184,4 +184,10 @@
     <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
 </includehints>
+<customwidgets>
+    <customwidget>
+       <class>KIntSpinBox</class>
+       <header>knuminput.h</header>
+    </customwidget>
+</customwidgets>
 </UI>
