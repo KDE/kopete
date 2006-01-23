@@ -607,4 +607,10 @@
     <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
 </includehints>
+<customwidgets>
+    <customwidget>
+       <class>KURLComboRequester</class>
+       <header>kurlrequester.h</header>
+    </customwidget>
+</customwidgets>
 </UI>

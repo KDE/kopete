@@ -184,9 +184,9 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	connect( mainWidget->radioPhotoKABC, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
 	connect( mainWidget->radioPhotoContact, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
 	connect( mainWidget->radioPhotoCustom, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
-//	connect( mainWidget->cmbPhotoUrl, SIGNAL(urlSelected(const QString &)), SLOT(slotEnableAndDisableWidgets()));
+	connect( mainWidget->cmbPhotoUrl, SIGNAL(urlSelected(const QString &)), SLOT(slotEnableAndDisableWidgets()));
 
-//	mainWidget->btnClear->setIconSet( SmallIconSet( QApplication::isRightToLeft() ? "locationbar_erase" : "clear_left" ) );
+	mainWidget->btnClear->setIconSet( SmallIconSet( QApplication::isRightToLeft() ? "locationbar_erase" : "clear_left" ) );
 	mainWidget->btnClearPhoto->setIconSet( SmallIconSet( QApplication::reverseLayout() ? "locationbar_erase" : "clear_left" ) );
 	connect( mainWidget->btnClear, SIGNAL( clicked() ), this, SLOT( slotClearAddresseeClicked() ) );
 	connect( mainWidget->btnClearPhoto, SIGNAL( clicked() ), this, SLOT( slotClearPhotoClicked() ) );
@@ -315,7 +315,7 @@ void KopeteMetaLVIProps::slotLoadPhotoSources()
 			m_withPhotoContacts.insert(mainWidget->cmbAccountPhoto->count() - 1  , citem );
 		}
 	}
-//	mainWidget->cmbPhotoUrl->setKURL(item->metaContact()->customPhoto().url());
+	mainWidget->cmbPhotoUrl->setKURL(item->metaContact()->customPhoto().url());
 
 	Kopete::MetaContact::PropertySource photoSource = item->metaContact()->photoSource();
 
@@ -353,7 +353,7 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 	mainWidget->edtDisplayName->setEnabled(selectedNameSource() == Kopete::MetaContact::SourceCustom);
 
 	mainWidget->cmbAccountPhoto->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceContact);
-//	mainWidget->cmbPhotoUrl->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceCustom);
+	mainWidget->cmbPhotoUrl->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceCustom);
 	
 	if ( m_withPhotoContacts.isEmpty() )
 	{
@@ -372,7 +372,7 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 		photo = Kopete::photoFromContact(selectedNameSourceContact());
 		break;
 		case Kopete::MetaContact::SourceCustom:
-//		photo = QImage(KURL::decode_string(mainWidget->cmbPhotoUrl->url()));
+		photo = QImage(KURL::decode_string(mainWidget->cmbPhotoUrl->url()));
 		break;
 	}
 	if( !photo.isNull() )
@@ -435,8 +435,8 @@ void KopeteMetaLVIProps::slotOkClicked()
 	// set photo source
 	item->metaContact()->setPhotoSource(selectedPhotoSource());
 	item->metaContact()->setPhotoSourceContact( selectedPhotoSourceContact() );
-//	if ( !mainWidget->cmbPhotoUrl->url().isEmpty())
-//		item->metaContact()->setPhoto(KURL::fromPathOrURL((mainWidget->cmbPhotoUrl->url())));
+	if ( !mainWidget->cmbPhotoUrl->url().isEmpty())
+		item->metaContact()->setPhoto(KURL::fromPathOrURL((mainWidget->cmbPhotoUrl->url())));
 	item->metaContact()->setPhotoSyncedWithKABC( mainWidget->chkSyncPhoto->isChecked() );
 	
 	item->metaContact()->setUseCustomIcon(
@@ -570,12 +570,12 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KURLRequester *requester )
 
 void KopeteMetaLVIProps::slotClearPhotoClicked()
 {
-// #if KDE_IS_VERSION(3,4,0)
-// 	mainWidget->cmbPhotoUrl->setKURL( KURL() );
-// #else
-// 	mainWidget->cmbPhotoUrl->setURL( QString::null );
-// #endif
-// 	item->metaContact()->setPhoto( KURL() );
+#if KDE_IS_VERSION(3,4,0)
+	mainWidget->cmbPhotoUrl->setKURL( KURL() );
+#else
+	mainWidget->cmbPhotoUrl->setURL( QString::null );
+#endif
+	item->metaContact()->setPhoto( KURL() );
 
 	slotEnableAndDisableWidgets();
 }
