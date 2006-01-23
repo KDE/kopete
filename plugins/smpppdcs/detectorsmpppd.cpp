@@ -17,6 +17,7 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kconfig.h>
+#include <kapplication.h>
 
 #include "iconnector.h"
 #include "detectorsmpppd.h"
@@ -24,47 +25,43 @@
 #include "smpppdclient.h"
 
 DetectorSMPPPD::DetectorSMPPPD(IConnector * connector)
-	: DetectorDCOP(connector) {}
+        : DetectorDCOP(connector) {}
 
 DetectorSMPPPD::~DetectorSMPPPD() {}
 
 /*!
     \fn DetectorSMPPPD::checkStatus()
  */
-void DetectorSMPPPD::checkStatus() {
+void DetectorSMPPPD::checkStatus() const {
     kdDebug(14312) << k_funcinfo << "Checking for online status..." << endl;
 
-	m_kinternetApp = getKInternetDCOP();
-	if(m_client && m_kinternetApp != "") {
-		switch(getConnectionStatusDCOP()) {
-			case CONNECTED:
-				m_connector->setConnectedStatus(true);
-				return;
-			case DISCONNECTED:
-				m_connector->setConnectedStatus(false);
-				return;
-			default:
-				break;
-		}
-	}
-	
-	SMPPPD::Client c;
-	
-	static KConfig *config = KGlobal::config();
-	config->setGroup(SMPPPDCS_CONFIG_GROUP);
-	unsigned int port = config->readUnsignedNumEntry("port", 3185);
-	QString    server = config->readEntry("server", "localhost").utf8();
-	
-	c.setPassword(config->readEntry("Password", "").utf8());
-	
-	if(c.connect(server, port)) {
-		m_connector->setConnectedStatus(c.isOnline());
-	} else {
-		kdDebug(14312) << k_funcinfo << "not connected to smpppd => I'll try again later" << endl;
-		m_connector->setConnectedStatus(false);
-	}
-}
+    m_kinternetApp = getKInternetDCOP();
+    if(kapp->dcopClient() && m_kinternetApp != "") {
+        switch(getConnectionStatusDCOP()) {
+        case CONNECTED:
+            m_connector->setConnectedStatus(true);
+            return;
+        case DISCONNECTED:
+            m_connector->setConnectedStatus(false);
+            return;
+        default:
+            break;
+        }
+    }
 
-void DetectorSMPPPD::smpppdServerChange() {
-    kdDebug(14312) << k_funcinfo << "Server changed. Disconnect to SMPPPD" << endl;
+    SMPPPD::Client c;
+
+    static KConfig *config = KGlobal::config();
+    config->setGroup(SMPPPDCS_CONFIG_GROUP);
+    unsigned int port = config->readUnsignedNumEntry("port", 3185);
+    QString    server = config->readEntry("server", "localhost").utf8();
+
+    c.setPassword(config->readEntry("Password", "").utf8());
+
+    if(c.connect(server, port)) {
+        m_connector->setConnectedStatus(c.isOnline());
+    } else {
+        kdDebug(14312) << k_funcinfo << "not connected to smpppd => I'll try again later" << endl;
+        m_connector->setConnectedStatus(false);
+    }
 }

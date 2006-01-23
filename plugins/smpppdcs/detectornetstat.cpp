@@ -27,7 +27,7 @@ DetectorNetstat::~DetectorNetstat() {
     delete m_process;
 }
 
-void DetectorNetstat::checkStatus() {
+void DetectorNetstat::checkStatus() const {
     kdDebug(14312) << k_funcinfo << endl;
 
     if(m_process) {

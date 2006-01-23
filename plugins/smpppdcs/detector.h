@@ -52,7 +52,7 @@ public:
      */
 	virtual ~Detector() {}
 
-    virtual void checkStatus() = 0;
+    virtual void checkStatus() const = 0;
 	
 	virtual void smpppdServerChange() {}
 

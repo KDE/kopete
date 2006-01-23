@@ -19,7 +19,6 @@
 
 #include "detector.h"
 
-class DCOPClient;
 class IConnector;
 
 /**
@@ -42,12 +41,11 @@ protected:
         ERROR
     };
 
-    QCString getKInternetDCOP();
-    KInternetDCOPState getConnectionStatusDCOP();
+    QCString getKInternetDCOP() const;
+    KInternetDCOPState getConnectionStatusDCOP() const;
 
 protected:
-    static QCString  m_kinternetApp;
-    DCOPClient     * m_client;
+    static QCString m_kinternetApp;
 };
 
 #endif
