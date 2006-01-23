@@ -12,6 +12,7 @@ X-KDE-ParentComponents=kopete
 
 Name=Devices
 Name[bg]=Устройства
+Name[bn]=ডিভাইস
 Name[br]=Trobarzhelloù
 Name[ca]=Dispositius
 Name[cs]=Zařízení
@@ -57,6 +58,7 @@ Name[zh_HK]=裝置
 Name[zu]=Amacebo
 Comment=Here You Can Alter Kopete's Video And Audio Devices' Settings
 Comment[bg]=Настройки на видео и аудио устройствата на програмата
+Comment[bn]=আপনি এখানে কপেটের ভিডিও এবং অডিও ডিভাইসের মানসমূহ পরিবর্তন করতে পারেন
 Comment[ca]=Aquí podreu modificar els paràmetres dels dispositius d'àudio i vídeo del Kopete
 Comment[cs]=Zde je možné přizpůsobit si nastavení audio a video zařízení
 Comment[da]=Her kan du ændre Kopete's video- og lydenheds opsætning
