@@ -18,7 +18,7 @@
 #ifndef AutoReplacePREFERENCES_H
 #define AutoReplacePREFERENCES_H
 
-#include "kcautoconfigmodule.h"
+#include "kcmodule.h"
 
 class AutoReplacePrefsUI;
 class AutoReplaceConfig;
@@ -29,7 +29,7 @@ class AutoReplaceConfig;
 	// signal/slot when map changes (needed?)
 	// capital letter not just at the beginning but always after ". ", "! "...
 
-class AutoReplacePreferences : public KCAutoConfigModule
+class AutoReplacePreferences : public KCModule
 {
 	Q_OBJECT
 

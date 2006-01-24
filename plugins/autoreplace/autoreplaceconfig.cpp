@@ -22,6 +22,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 
+//TODO: Use KConfigXT
 AutoReplaceConfig::AutoReplaceConfig()
 {
 	load();

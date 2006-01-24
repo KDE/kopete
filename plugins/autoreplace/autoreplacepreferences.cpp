@@ -21,13 +21,12 @@
 #include <q3header.h>
 #include <q3listview.h>
 //Added by qt3to4:
-#include <QVBoxLayout>
+#include <Q3VBoxLayout>
 
 #include <klocale.h>
 #include <klineedit.h>
 #include <kglobal.h>
 #include <kgenericfactory.h>
-#include <kautoconfig.h>
 
 #include "autoreplaceprefs.h"
 #include "autoreplacepreferences.h"
@@ -37,10 +36,11 @@ typedef KGenericFactory<AutoReplacePreferences> AutoReplacePreferencesFactory;
 
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_autoreplace, AutoReplacePreferencesFactory( "kcm_kopete_autoreplace" ) )
 
+// TODO: Use KConfigXT
 AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const char * /* name */, const QStringList &args )
-: KCAutoConfigModule( AutoReplacePreferencesFactory::instance(), parent, args )
+: KCModule( AutoReplacePreferencesFactory::instance(), parent, args )
 {
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
+	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
 	preferencesDialog = new AutoReplacePrefsUI( this );
 
 	// creates table columns (avoids new columns every time)
@@ -62,7 +62,7 @@ AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const char * /*
 
 	m_wordListChanged = false;
 
-	setMainWidget( preferencesDialog->gb_options, "AutoReplace Plugin" );
+	//setMainWidget( preferencesDialog->gb_options, "AutoReplace Plugin" );
 
 	m_config = new AutoReplaceConfig;
 	load();
@@ -91,7 +91,6 @@ void AutoReplacePreferences::load()
 	}
 
 	m_wordListChanged = false;
-	KCAutoConfigModule::load();
 }
 
 // save list to kopeterc and creates map out of it
@@ -107,7 +106,6 @@ void AutoReplacePreferences::save()
 	m_config->save();
 
 	m_wordListChanged = false;
-	KCAutoConfigModule::save();
 }
 
 // read m_key m_value, create a QListViewItem
@@ -187,12 +185,11 @@ void AutoReplacePreferences::slotSelectionChanged()
 
 void AutoReplacePreferences::slotWidgetModified()
 {
-	emit KCModule::changed( m_wordListChanged || autoConfig()->hasChanged() );
+	emit KCModule::changed( m_wordListChanged );
 }
 
 void AutoReplacePreferences::defaults()
 {
-    KCAutoConfigModule::defaults();
     preferencesDialog->m_list->clear();
     m_config->loadDefaultAutoReplaceList();
     AutoReplaceConfig::WordsToReplace::Iterator it;
