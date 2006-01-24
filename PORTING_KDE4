@@ -26,3 +26,18 @@ Libkopete changes
 *) Kopete::Message
    - asXML() no longer exist (removed in 0.12)
 
+Other changes
+-------------
+If you get problems with UI files that fuck because of some KDE widgets,
+add those lines to the .ui file (open it as text). Note that it's just a exemple.
+
+<customwidgets>
+    <customwidget>
+       <class>KHistoryCombo</class>
+       <header>kcombobox.h</header>
+    </customwidget>
+    <customwidget>
+       <class>KPasswordEdit</class>
+       <header>kpassdlg.h</header>
+    </customwidget>
+</customwidgets>
