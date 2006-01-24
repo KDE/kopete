@@ -15,6 +15,9 @@
 */
 
 #include <cstdlib>
+#include <cstdio>
+#include <cstring>
+
 #include <openssl/md5.h>
 
 #include <qregexp.h>
@@ -74,7 +77,7 @@ bool Unsettled::connect(Client * client, const QString& server, uint port) {
 		socket(client)->setBlocking(TRUE);
 
 		if(!socket(client)->connect()) {
-			kdDebug(14312) << k_funcinfo << "Socket Error: " << KNetwork::KStreamSocket::errorString(socket(client)->error()) << endl;
+			kdDebug(14312) << k_funcinfo << "Socket Error: " << socket(client)->errorString() << endl;
         } else {
             kdDebug(14312) << k_funcinfo << "Successfully connected to smpppd \"" << server << ":" << port << "\"" << endl;
 

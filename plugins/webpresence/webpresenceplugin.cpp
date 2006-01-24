@@ -23,9 +23,9 @@
 #include <qdom.h>
 #include <qtimer.h>
 #include <qfile.h>
-//Added by qt3to4:
 #include <QTextStream>
-#include <Q3PtrList>
+#include <QList>
+#include <QDateTime>
 
 #include <kdebug.h>
 #include <kconfig.h>
@@ -116,10 +116,8 @@ void WebPresencePlugin::listenToAllAccounts()
 	for ( ProtocolList::Iterator it = protocols.begin();
 			it != protocols.end(); ++it )
 	{
-		Q3Dict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( *it );
-		Q3DictIterator<Kopete::Account> acIt( accounts );
-
-		for( ; Kopete::Account *account = acIt.current(); ++acIt )
+		QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts( *it );
+		foreach(Kopete::Account *account, accounts)
 		{
 			listenToAccount( account );
 		}
@@ -249,13 +247,11 @@ KTempFile* WebPresencePlugin::generateFile()
 	QDomElement accounts = doc.createElement( "accounts" );
 	root.appendChild( accounts );
 
-	Q3PtrList<Kopete::Account> list = Kopete::AccountManager::self()->accounts();
+	QList<Kopete::Account*> list = Kopete::AccountManager::self()->accounts();
 	// If no accounts, stop here
 	if ( !list.isEmpty() )
 	{
-		for( Q3PtrListIterator<Kopete::Account> it( list );
-			 Kopete::Account *account=it.current();
-			 ++it )
+		foreach(Kopete::Account *account, list)
 		{
 			QDomElement acc = doc.createElement( "account" );
 			//output += h.openTag( "account" );
@@ -370,7 +366,7 @@ bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 	}
 
 	// is the cast safe?
-	cur = xsltParseStylesheetFile( (const xmlChar *) sheet.name().toLatin1() );
+	cur = xsltParseStylesheetFile( (const xmlChar *) sheet.name().latin1() );
 	if ( !cur ) {
 		kdDebug(14309) << k_funcinfo << "ERROR: Style sheet parsing failed" << endl;
 		retval = false;

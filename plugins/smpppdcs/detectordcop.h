@@ -18,6 +18,8 @@
 #define DETECTORDCOP_H
 
 #include "detector.h"
+//Added by qt3to4:
+#include <Q3CString>
 
 class DCOPClient;
 class IConnector;
@@ -42,11 +44,11 @@ protected:
         ERROR
     };
 
-    QCString getKInternetDCOP();
+    Q3CString getKInternetDCOP();
     KInternetDCOPState getConnectionStatusDCOP();
 
 protected:
-    static QCString  m_kinternetApp;
+    static Q3CString  m_kinternetApp;
     DCOPClient     * m_client;
 };
 

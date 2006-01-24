@@ -17,20 +17,22 @@
 
 
 #include <kgenericfactory.h>
-#include "kcautoconfigmodule.h"
+#include <kcmodule.h>
+
 #include "translatorprefsbase.h"
 #include "translatorlanguages.h"
-#include <qcombobox.h>
 
+#include <q3combobox.h>
 
+// TODO: Port to KConfigXT
 class TranslatorPreferences;
 typedef KGenericFactory<TranslatorPreferences> TranslatorConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_translator, TranslatorConfigFactory( "kcm_kopete_translator" ) )
 
-class TranslatorPreferences : public KCAutoConfigModule
+class TranslatorPreferences : public KCModule
 {
 public:
-	TranslatorPreferences( QWidget *parent = 0, const char * = 0, const QStringList &args = QStringList() ) : KCAutoConfigModule( TranslatorConfigFactory::instance(), parent, args )
+	TranslatorPreferences( QWidget *parent = 0, const char * = 0, const QStringList &args = QStringList() ) : KCModule( TranslatorConfigFactory::instance(), parent, args )
 	{
 		TranslatorPrefsUI *preferencesDialog = new TranslatorPrefsUI(this);
 
@@ -46,7 +48,7 @@ public:
 		for ( i = m.begin(); i != m.end() ; ++i )
 			preferencesDialog->Service->insertItem( i.data(), languages.serviceIndex(i.key()) );
 
-		setMainWidget( preferencesDialog , "Translator Plugin");
+		//setMainWidget( preferencesDialog , "Translator Plugin");
 	}
 };
 

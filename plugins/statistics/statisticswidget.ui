@@ -112,7 +112,7 @@
                                                             <string>Time :</string>
                                                         </property>
                                                     </widget>
-                                                    <widget class="KTimeWidget">
+                                                    <widget class="QTimeEdit">
                                                         <property name="name">
                                                             <cstring>timePicker</cstring>
                                                         </property>
@@ -241,6 +241,5 @@
     <includehint>kdatepicker.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>kdatetbl.h</includehint>
-    <includehint>ktimewidget.h</includehint>
 </includehints>
 </UI>

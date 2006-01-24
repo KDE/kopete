@@ -26,13 +26,14 @@
 #include <qicon.h>
 #include <q3buttongroup.h>
 #include <qcheckbox.h>
-#include <qhbuttongroup.h>
+//#include <qhbuttongroup.h>
 #include <qtoolbutton.h>
 #include <qapplication.h>
 #include <qlabel.h>
 //Added by qt3to4:
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <Q3WhatsThis>
 
 #include <kdeversion.h>
 #include <klistview.h>
@@ -54,6 +55,8 @@
 //#include "kgpgview.h"
 //#include "kgpg.h"
 #include "kgpginterface.h"
+
+#include <cstdio>
 
 /////////////////   klistviewitem special
 
@@ -116,7 +119,7 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
 	
 	Q3HButtonGroup *hBar=new Q3HButtonGroup(page);
 	//hBar->setFrameStyle(QFrame::NoFrame);
-	hBar->setMargin(0);
+	//hBar->setMargin(0);
 	
 	QToolButton *clearSearch = new QToolButton(hBar);
 	clearSearch->setTextLabel(i18n("Clear Search"), true);
@@ -190,7 +193,7 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
 
 //BEGIN modified for Kopete
 
-	setWFlags( getWFlags() | Qt::WDestructiveClose );
+	setWindowFlags( windowFlags() | Qt::WDestructiveClose );
 
 				
 	/*CBarmor->setChecked( KGpgSettings::asciiArmor() );
@@ -403,7 +406,7 @@ void popupPublic::slotprocread(KProcIO *p)
                         if (val.isEmpty())
                                 val=i18n("Unlimited");
                         QString tr;
-                        switch( trust[0] ) {
+                        switch( trust[0].toLatin1() ) {
                         case 'o':
 				untrustedList<<id;
                                 break;
@@ -485,7 +488,7 @@ void popupPublic::slotOk()
 kdDebug(2100)<<"Ok pressed"<<endl;
         QStringList selectedKeys;
 	QString userid;
-        Q3PtrList<Q3ListViewItem> list=keysList->selectedItems();
+        QList<Q3ListViewItem*> list=keysList->selectedItems();
 
         for ( uint i = 0; i < list.count(); ++i )
                 if ( list.at(i) ) {

@@ -18,16 +18,16 @@
 #ifndef CryptographyPREFERENCES_H
 #define CryptographyPREFERENCES_H
 
-#include "kcautoconfigmodule.h"
+#include "kcmodule.h"
 
 class CryptographyPrefsUI;
-class KAutoConfig;
 
+// TODO: Port to KConfigXT
 /**
  * Preference widget for the Cryptography plugin
  * @author Olivier Goffart
  */
-class CryptographyPreferences : public KCAutoConfigModule  {
+class CryptographyPreferences : public KCModule  {
    Q_OBJECT
 public:
 	CryptographyPreferences(QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList());

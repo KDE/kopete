@@ -40,7 +40,7 @@ LatexGUIClient::LatexGUIClient( Kopete::ChatSession *parent, const char *name )
 
 	m_manager = parent;
 
-	new KAction( i18n( "Preview Latex Images" ), "latex", CTRL + Key_L, this, SLOT( slotPreview() ), actionCollection(), "latexPreview" );
+	new KAction( i18n( "Preview Latex Images" ), "latex", Qt::CTRL + Qt::Key_L, this, SLOT( slotPreview() ), actionCollection(), "latexPreview" );
 	
 	setXMLFile( "latexchatui.rc" );
 }

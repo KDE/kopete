@@ -27,6 +27,7 @@
 
 class KListView;
 class QCheckBox;
+class Q3ListViewItem;
 
 typedef struct gpgKey{
   QString gpgkeymail;

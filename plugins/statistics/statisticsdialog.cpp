@@ -22,6 +22,7 @@
 #include <q3textedit.h>
 #include <qcombobox.h>
 #include <qstring.h>
+#include <QTimeEdit>
 
 #include "kdialogbase.h"
 #include "klocale.h"
@@ -29,7 +30,6 @@
 #include "khtml_part.h"
 #include "kstandarddirs.h"
 #include "kdatepicker.h"
-#include "ktimewidget.h"
 
 #include "kopetemetacontact.h"
 #include "kopeteonlinestatus.h"

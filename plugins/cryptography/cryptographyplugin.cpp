@@ -18,10 +18,8 @@
 #include <QTextDocument>
 #include <qtimer.h>
 #include <qregexp.h>
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
 #include <QByteArray>
-#include <Q3PtrList>
 
 #include <kdebug.h>
 #include <kaction.h>
@@ -82,10 +80,10 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 	
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( chatSessionCreated( Kopete::ChatSession * )) , SLOT( slotNewKMM( Kopete::ChatSession * ) ) );
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	Q3ValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
-	for (Q3ValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
+	QList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+	foreach(Kopete::ChatSession *session, sessions)
 	{
-		slotNewKMM(*it);
+		slotNewKMM(session);
 	}
 
 }
@@ -101,17 +99,17 @@ void CryptographyPlugin::loadSettings()
 	KConfig *config = KGlobal::config();
 	config->setGroup("Cryptography Plugin");
 
-	mPrivateKeyID = config->readEntry("PGP_private_key");
-	mAlsoMyKey = config->readBoolEntry("Also_my_key", false);
+	mPrivateKeyID = config->readEntry("PGP_private_key", QString() );
+	mAlsoMyKey = config->readEntry("Also_my_key", false);
 
-	if(config->readBoolEntry("Cache_Till_App_Close", false))
+	if(config->readEntry("Cache_Till_App_Close", false))
 	  mCachePassPhrase = Keep;
-	if(config->readBoolEntry("Cache_Till_Time", false))
+	if(config->readEntry("Cache_Till_Time", false))
 	  mCachePassPhrase = Time;
-	if(config->readBoolEntry("Cache_Never", false))
+	if(config->readEntry("Cache_Never", false))
 	  mCachePassPhrase = Never;
-	mCacheTime = config->readNumEntry("Cache_Time", 15);
-	mAskPassPhrase = config->readBoolEntry("No_Passphrase_Handling", false);
+	mCacheTime = config->readEntry("Cache_Time", 15);
+	mAskPassPhrase = config->readEntry("No_Passphrase_Handling", false);
 }
 
 CryptographyPlugin* CryptographyPlugin::plugin()
@@ -235,8 +233,8 @@ void CryptographyPlugin::slotOutgoingMessage( Kopete::Message& msg )
 		return;
 
 	QStringList keys;
-	Q3PtrList<Kopete::Contact> contactlist = msg.to();
-	for( Kopete::Contact *c = contactlist.first(); c; c = contactlist.next() )
+	QList<Kopete::Contact*> contactlist = msg.to();
+	foreach(Kopete::Contact *c, contactlist)
 	{
 		QString tmpKey;
 		if( c->metaContact() )

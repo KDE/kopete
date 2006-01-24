@@ -25,7 +25,6 @@
 #include <klocale.h>
 #include <kcolordialog.h>
 #include <kgenericfactory.h>
-#include <kautoconfig.h>
 #include <kdebug.h>
 
 #include <kdeversion.h>

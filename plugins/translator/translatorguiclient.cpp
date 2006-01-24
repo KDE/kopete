@@ -25,7 +25,7 @@
 #include <kaction.h>
 #include <klocale.h>
 
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 #include "kopeteview.h"
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
@@ -43,7 +43,7 @@ TranslatorGUIClient::TranslatorGUIClient( Kopete::ChatSession *parent, const cha
 
 	m_manager = parent;
 
-	new KAction( i18n( "Translate" ), "locale", CTRL + Key_T, this, SLOT( slotTranslateChat() ), actionCollection(), "translateCurrentMessage" );
+	new KAction( i18n( "Translate" ), "locale", Qt::CTRL + Qt::Key_T, this, SLOT( slotTranslateChat() ), actionCollection(), "translateCurrentMessage" );
 	
 	setXMLFile( "translatorchatui.rc" );
 }
@@ -65,7 +65,7 @@ void TranslatorGUIClient::slotTranslateChat()
 	QString src_lang = TranslatorPlugin::plugin()->m_myLang;
 	QString dst_lang;
 
-	Q3PtrList<Kopete::Contact> list = m_manager->members();
+	QList<Kopete::Contact*> list = m_manager->members();
 	Kopete::MetaContact *to = list.first()->metaContact();
 	dst_lang = to->pluginData( TranslatorPlugin::plugin(), "languageKey" );
 	if ( dst_lang.isEmpty() || dst_lang == "null" )

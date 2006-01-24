@@ -122,9 +122,10 @@ void SMPPPDCSPlugin::connectAllowed()
 	QStringList list = config->readListEntry("ignoredAccounts");
 	
 	Kopete::AccountManager * m = Kopete::AccountManager::self();
-	for(Q3PtrListIterator<Kopete::Account> it(m->accounts()); it.current(); ++it) {
-		if(!list.contains(it.current()->protocol()->pluginId() + "_" + it.current()->accountId())) {
-			it.current()->connect();
+	foreach(Kopete::Account *account, m->accounts())
+	{
+		if(!list.contains(account->protocol()->pluginId() + "_" + account->accountId())) {
+			account->connect();
 		}
 	}
 }
@@ -135,9 +136,10 @@ void SMPPPDCSPlugin::disconnectAllowed() {
 	QStringList list = config->readListEntry("ignoredAccounts");
 	
 	Kopete::AccountManager * m = Kopete::AccountManager::self();
-	for(Q3PtrListIterator<Kopete::Account> it(m->accounts()); it.current(); ++it) {
-		if(!list.contains(it.current()->protocol()->pluginId() + "_" + it.current()->accountId())) {
-			it.current()->disconnect();
+	foreach(Kopete::Account *account, m->accounts())
+	{
+		if(!list.contains(account->protocol()->pluginId() + "_" + account->accountId())) {
+			account->disconnect();
 		}
 	}
 }

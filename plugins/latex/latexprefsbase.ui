@@ -45,7 +45,7 @@
                         <cstring>spacer5</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Vertical</enum>
+                        <enum>Qt::Vertical</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>
@@ -78,7 +78,7 @@
                                 <cstring>spacer3</cstring>
                             </property>
                             <property name="orientation">
-                                <enum>Horizontal</enum>
+                                <enum>Qt::Horizontal</enum>
                             </property>
                             <property name="sizeType">
                                 <enum>Expanding</enum>
@@ -123,7 +123,7 @@
                                 <cstring>spacer4</cstring>
                             </property>
                             <property name="orientation">
-                                <enum>Horizontal</enum>
+                                <enum>Qt::Horizontal</enum>
                             </property>
                             <property name="sizeType">
                                 <enum>Expanding</enum>
@@ -144,7 +144,7 @@
                 <cstring>spacer6</cstring>
             </property>
             <property name="orientation">
-                <enum>Vertical</enum>
+                <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>
@@ -165,4 +165,10 @@
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
 </includehints>
+<customwidgets>
+    <customwidget>
+       <class>KIntNumInput</class>
+       <header>knuminput.h</header>
+    </customwidget>
+</customwidgets>
 </UI>

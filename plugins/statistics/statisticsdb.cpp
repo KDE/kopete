@@ -44,7 +44,7 @@ StatisticsDB::StatisticsDB()
 	if ( file.open( QIODevice::ReadOnly ) ) 
 	{
 		QString format;
-		file.readLine( format, 50 );
+		format = QString( file.readLine( 50 ) ); //  readLine return a QByteArray
 		if ( !format.startsWith( "SQLite format 3" ) ) 
 		{
 			kdWarning() << "[statistics] Database versions incompatible. Removing and rebuilding database.\n";

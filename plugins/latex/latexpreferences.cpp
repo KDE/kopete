@@ -17,7 +17,7 @@
 
 #include <qlayout.h>
 //Added by qt3to4:
-#include <QVBoxLayout>
+#include <Q3VBoxLayout>
 #include <kparts/componentfactory.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
@@ -35,7 +35,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_latex, LatexPreferencesFactory( "kcm_kope
 LatexPreferences::LatexPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
 							: KCModule(LatexPreferencesFactory::instance(), parent, args)
 {
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
+	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
 	m_preferencesDialog = new LatexPrefsUI(this);
 	// connect widget signals here
 	m_preferencesDialog->horizontalDPI->setMinValue(1);

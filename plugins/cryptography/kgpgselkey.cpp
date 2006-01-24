@@ -27,6 +27,7 @@
 #include <qlabel.h>
 //Added by qt3to4:
 #include <QVBoxLayout>
+#include <Q3ListViewItem>
 
 #include <klistview.h>
 #include <klocale.h>
@@ -36,6 +37,7 @@
 
 #include "kgpgselkey.h"
 
+#include <cstdio>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -85,7 +87,7 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal):KDialog
       if (val.isEmpty())
         val=i18n("Unlimited");
       QString tr;
-      switch( trust[0] )
+      switch( trust[0].toLatin1() )
       {
       case 'o':
         tr= i18n("Unknown");
@@ -132,7 +134,7 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal):KDialog
         if (tst2.startsWith("pub"))
         {
           const QString trust2=tst2.section(':',1,1);
-          switch( trust2[0] )
+          switch( trust2[0].toLatin1() )
           {
           case 'f':
             dead=false;

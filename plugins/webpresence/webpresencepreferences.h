@@ -21,8 +21,9 @@
 #include "kcmodule.h"
 
 class WebPresencePrefsUI;
-class KAutoConfig;
+//class KAutoConfig;
 
+//TODO: Port to KConfigXT
 /**
  * Preference widget for the Now Listening plugin, copied from the Cryptography plugin
  * @author Olivier Goffart
@@ -38,7 +39,7 @@ public:
 
 private:
 	WebPresencePrefsUI *preferencesDialog;
-	KAutoConfig *kautoconfig;
+	//KAutoConfig *kautoconfig;
 
 private slots: // Public slots
 	void widgetModified();

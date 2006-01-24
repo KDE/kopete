@@ -69,7 +69,7 @@
                         <cstring>spacer5</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Horizontal</enum>
+                        <enum>Qt::Horizontal</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>
@@ -170,7 +170,7 @@ Note that some web browsers do not support XHTML. You should also make sure your
                                 <cstring>spacer10</cstring>
                             </property>
                             <property name="orientation">
-                                <enum>Horizontal</enum>
+                                <enum>Qt::Horizontal</enum>
                             </property>
                             <property name="sizeType">
                                 <enum>Fixed</enum>
@@ -271,7 +271,7 @@ images/winpopup_protocol.png</string>
                                 <cstring>spacer4_2</cstring>
                             </property>
                             <property name="orientation">
-                                <enum>Horizontal</enum>
+                                <enum>Qt::Horizontal</enum>
                             </property>
                             <property name="sizeType">
                                 <enum>Fixed</enum>
@@ -308,7 +308,7 @@ images/winpopup_protocol.png</string>
                 <cstring>Spacer7</cstring>
             </property>
             <property name="orientation">
-                <enum>Vertical</enum>
+                <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>

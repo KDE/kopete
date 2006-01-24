@@ -15,9 +15,8 @@
 */
 
 #include <qfile.h>
-#include <q3dict.h>
 //Added by qt3to4:
-#include <Q3PtrList>
+#include <QList>
 
 #include <kgenericfactory.h>
 #include <kaboutdata.h>
@@ -73,11 +72,10 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const char *name, const QSt
 	// Initializes the database
 	m_db = new StatisticsDB();
 	
-	Q3PtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
-	Q3PtrListIterator<Kopete::MetaContact> it( list );
-	for (; it.current(); ++it)
+	QList<Kopete::MetaContact*> list = Kopete::ContactList::self()->metaContacts();
+	foreach(Kopete::MetaContact *metaContact, list)
 	{
-		slotMetaContactAdded(it.current());
+		slotMetaContactAdded(metaContact);
 	}
 }	
 
@@ -104,15 +102,13 @@ void StatisticsPlugin::slotViewCreated(Kopete::ChatSession* session)
 
 void StatisticsPlugin::slotViewClosed(Kopete::ChatSession* session)
 {
-	Q3PtrList<Kopete::Contact> list = session->members();
-	Q3PtrListIterator<Kopete::Contact> it( list );
-	
-	for (; it.current(); ++it)
+	QList<Kopete::Contact*> list = session->members();
+	foreach(Kopete::Contact *contact, list)
 	{
 		// If this contact is not in other chat sessions
-		if (!it.current()->manager() && !it.current()->metaContact()->metaContactId().isEmpty()
-				   && statisticsContactMap[it.current()->metaContact()->metaContactId()])
-		statisticsContactMap[it.current()->metaContact()->metaContactId()]->setIsChatWindowOpen(false);
+		if (!contact->manager() && !contact->metaContact()->metaContactId().isEmpty()
+				   && statisticsContactMap[contact->metaContact()->metaContactId()])
+		statisticsContactMap[contact->metaContact()->metaContactId()]->setIsChatWindowOpen(false);
 	}
 }
 

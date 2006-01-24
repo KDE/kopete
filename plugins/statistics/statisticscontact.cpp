@@ -321,7 +321,7 @@ Q3ValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::Sta
 	}
 	
 	// Sort the list
-	qHeapSort(hoursValues);
+	//qSort(hoursValues);
 	
 	// Then we put some centroids (centroids in [0..24[)
 	Q3ValueList<int> centroids;

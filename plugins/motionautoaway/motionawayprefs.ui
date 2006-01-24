@@ -294,4 +294,10 @@
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
 </includehints>
+<customwidgets>
+    <customwidget>
+       <class>KIntNumInput</class>
+       <header>knuminput.h</header>
+    </customwidget>
+</customwidgets>
 </UI>

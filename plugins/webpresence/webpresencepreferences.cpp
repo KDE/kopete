@@ -17,14 +17,15 @@
 
 #include <qlayout.h>
 //Added by qt3to4:
-#include <QVBoxLayout>
+#include <Q3VBoxLayout>
 
 #include <kgenericfactory.h>
-#include <kautoconfig.h>
 #include <kurlrequester.h>
 
 #include "webpresenceprefs.h"
 #include "webpresencepreferences.h"
+
+//TODO: Port to KConfigXT
 
 typedef KGenericFactory<WebPresencePreferences> WebPresencePreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_webpresence, WebPresencePreferencesFactory("kcm_kopete_webpresence"))
@@ -33,32 +34,32 @@ WebPresencePreferences::WebPresencePreferences(QWidget *parent, const char* /*na
 		: KCModule(WebPresencePreferencesFactory::instance(), parent, args)
 {
 	// Add actuall widget generated from ui file.
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
+	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
 	preferencesDialog = new WebPresencePrefsUI(this);
 	preferencesDialog->uploadURL->setMode( KFile::File );
 	preferencesDialog->formatStylesheetURL->setFilter( "*.xsl" );
 
 	// KAutoConfig stuff
-	kautoconfig = new KAutoConfig(KGlobal::config(), this, "kautoconfig");
-	connect(kautoconfig, SIGNAL(widgetModified()), SLOT(widgetModified()));
-	connect(kautoconfig, SIGNAL(settingsChanged()), SLOT(widgetModified()));
-	kautoconfig->addWidget(preferencesDialog, "Web Presence Plugin");
-	kautoconfig->retrieveSettings(true);
+// 	kautoconfig = new KAutoConfig(KGlobal::config(), this, "kautoconfig");
+// 	connect(kautoconfig, SIGNAL(widgetModified()), SLOT(widgetModified()));
+// 	connect(kautoconfig, SIGNAL(settingsChanged()), SLOT(widgetModified()));
+// 	kautoconfig->addWidget(preferencesDialog, "Web Presence Plugin");
+// 	kautoconfig->retrieveSettings(true);
 }
 
 void WebPresencePreferences::widgetModified()
 {
-	emit KCModule::changed(kautoconfig->hasChanged());
+	//emit KCModule::changed(kautoconfig->hasChanged());
 }
 
 void WebPresencePreferences::save()
 {
-	kautoconfig->saveSettings();
+// 	kautoconfig->saveSettings();
 }
 
 void WebPresencePreferences::defaults ()
 {
-	kautoconfig->resetSettings();
+// 	kautoconfig->resetSettings();
 }
 
 #include "webpresencepreferences.moc"
