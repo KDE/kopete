@@ -60,10 +60,10 @@ class Account::Private
 public:
 	Private( Protocol *protocol, const QString &accountId )
 	 : protocol( protocol ), id( accountId )
-	 , excludeconnect( true ), priority( 0 ), myself( 0 )
+	 , excludeconnect( true ), priority( 0 ) 
+	 , connectionTry(0), myself( 0 )
 	 , suppressStatusTimer( 0 ), suppressStatusNotification( false )
 	 , blackList( new Kopete::BlackLister( protocol->pluginId(), accountId ) )
-	 , connectionTry(0)
 	{ }
 
 
@@ -90,10 +90,10 @@ Account::Account( Protocol *parent, const QString &accountId, const char *name )
 {
 	d->configGroup=new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Account_%1_%2" ).arg( d->protocol->pluginId(), d->id ));
 
-	d->excludeconnect = d->configGroup->readBoolEntry( "ExcludeConnect", false );
+	d->excludeconnect = d->configGroup->readEntry( "ExcludeConnect", false );
 	d->color = d->configGroup->readColorEntry( "Color", &d->color );
 	d->customIcon = d->configGroup->readEntry( "Icon", QString() );
-	d->priority = d->configGroup->readNumEntry( "Priority", 0 );
+	d->priority = d->configGroup->readEntry( "Priority", 0 );
 
 	QObject::connect( &d->suppressStatusTimer, SIGNAL( timeout() ),
 		this, SLOT( slotStopSuppression() ) );

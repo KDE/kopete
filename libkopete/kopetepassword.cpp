@@ -405,7 +405,7 @@ void Kopete::Password::readConfig()
 	KConfig *config = KGlobal::config();
 	config->setGroup( d->configGroup );
 
-	QString passwordCrypted = config->readEntry( "Password" );
+	QString passwordCrypted = config->readEntry( "Password", QString() );
 	if ( passwordCrypted.isNull() )
 		d->passwordFromKConfig = QString::null;
 	else

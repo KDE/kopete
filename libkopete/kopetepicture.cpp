@@ -20,7 +20,7 @@
 
 #include <kabc/picture.h>
 
-#include <kmdcodec.h>
+#include <kcodecs.h>
 #include <kstandarddirs.h>
 #include <kdebug.h>
 

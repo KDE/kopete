@@ -220,7 +220,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			KConfig *config = KGlobal::config();
 			config->setGroup("General");
 			if( (!manager->view(false) || !w || manager->view() != d->activeView ||
-						   config->readBoolEntry("EventIfActive", true) || !w->isActiveWindow())
+						   config->readEntry("EventIfActive", true) || !w->isActiveWindow())
 						   && msg.from())
 			{
 				QString msgFrom = QString::null;

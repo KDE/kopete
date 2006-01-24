@@ -271,7 +271,8 @@ static QRect getBoundingBox( const QImage& image )
 	{
 		QRgb *i = (QRgb*)image.scanLine(j) + width-1;
 
-		for( int k = width-1; k >= 0; --i, --k )
+		int k;
+		for( k = width-1; k >= 0; --i, --k )
 		{
 			if ( qAlpha(*i) )
 			{
@@ -280,6 +281,12 @@ static QRect getBoundingBox( const QImage& image )
 				break;
 			}
 		}
+			if ( qAlpha(*i) )
+			{
+				x2 = std::max( x2, k );
+				y2 = std::max( y2, j );
+				break;
+			}
 	}
 	return QRect( x1, y1, std::max( 0, x2-x1+1 ), std::max( 0, y2-y1+1 ) );
 }
@@ -318,7 +325,10 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 	// create an icon suiting the status from the base icon
 	// use reasonable defaults if not provided or protocol not set
 
-	if ( baseIcon == statusFor.overlayIcons().first() )
+	kdDebug( 14010) << k_funcinfo << "overlarIcons size: " << statusFor.overlayIcons().count() <<endl;
+
+	// NOTE: overlayIcons car be empty
+	if ( !statusFor.overlayIcons().empty() && baseIcon == statusFor.overlayIcons().first() )
 		kdWarning( 14010 ) << "Base and overlay icons are the same - icon effects will not be visible." << endl;
 
 	QPixmap* basis = new QPixmap( SmallIcon( baseIcon ) );

@@ -313,11 +313,11 @@ void AccountManager::load()
 	{
 		config->setGroup( *it );
 
-		QString protocol = config->readEntry( "Protocol" );
+		QString protocol = config->readEntry( "Protocol", QString() );
 		if ( protocol.endsWith( QString::fromLatin1( "Protocol" ) ) )
 			protocol = QString::fromLatin1( "kopete_" ) + protocol.toLower().remove( QString::fromLatin1( "protocol" ) );
 
-		if ( config->readBoolEntry( "Enabled", true ) )
+		if ( config->readEntry( "Enabled", true ) )
 			PluginManager::self()->loadPlugin( protocol, PluginManager::LoadAsync );
 	}
 }
@@ -340,10 +340,10 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 			continue;
 
 		// There's no GUI for this, but developers may want to disable an account.
-		if ( !config->readBoolEntry( "Enabled", true ) )
+		if ( !config->readEntry( "Enabled", true ) )
 			continue;
 
-		QString accountId = config->readEntry( "AccountId" );
+		QString accountId = config->readEntry( "AccountId", QString() );
 		if ( accountId.isEmpty() )
 		{
 			kdWarning( 14010 ) << k_funcinfo <<

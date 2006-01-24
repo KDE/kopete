@@ -224,9 +224,9 @@ void Kopete::Away::load()
 {
 	KConfig *config = KGlobal::config();
 	config->setGroup("AutoAway");
-	d->awayTimeout=config->readNumEntry("Timeout", 600);
-	d->goAvailable=config->readBoolEntry("GoAvailable", true);
-	d->useAutoAway=config->readBoolEntry("UseAutoAway", true);
+	d->awayTimeout=config->readEntry("Timeout", 600);
+	d->goAvailable=config->readEntry("GoAvailable", true);
+	d->useAutoAway=config->readEntry("UseAutoAway", true);
 }
 
 QStringList Kopete::Away::getMessages()
