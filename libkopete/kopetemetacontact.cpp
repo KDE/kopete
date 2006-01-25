@@ -799,25 +799,25 @@ void MetaContact::setDisplayNameSourceContact( Contact *contact )
 
 void MetaContact::setPhotoSourceContact( Contact *contact )
 {
-
-	
 	d->photoSourceContact = contact;
 
-#ifdef __GNUC_
-#warning Metacontact photos need to be ported
-#endif
-	/*
 	// Create a cache for the contact photo.
 	if(d->photoSourceContact != 0L)
 	{
 		QVariant photoProp;
 		if ( contact->hasProperty( Kopete::Global::Properties::self()->photo().key() ) )
+		{
 			photoProp = contact->property( Kopete::Global::Properties::self()->photo().key() ).value();
+		}
 
 		if(photoProp.canCast( QVariant::Image ))
-			d->contactPicture.setPicture(photoProp.toImage());
+		{
+			d->contactPicture.setPicture( photoProp.value<QImage>() );
+		}
 		else if(photoProp.canCast( QVariant::Pixmap ))
-			d->contactPicture.setPicture(photoProp.toPixmap().convertToImage());
+		{
+			d->contactPicture.setPicture( photoProp.value<QPixmap>().convertToImage() );
+		}
 		else if(!photoProp.asString().isEmpty())
 		{
 			d->contactPicture.setPicture(photoProp.toString());
@@ -828,7 +828,6 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 	{
 		emit photoChanged();
 	}
-	*/
 }
 
 void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
