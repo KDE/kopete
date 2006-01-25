@@ -20,6 +20,7 @@
 #include "kopetecontact.h"
 #include "kopetechatsessionmanager.h"
 #include "kopeteglobal.h"
+#include "kopetemetacontact.h"
 
 
 K_EXPORT_COMPONENT_FACTORY( kopete_addbookmarks, BookmarksPluginFactory( "kopete_addbookmarks" )  )
@@ -53,8 +54,14 @@ void BookmarksPlugin::slotBookmarkURLsInMessage(Kopete::Message & msg)
 	URLsList = extractURLsFromString( msg.parsedBody() );
 	if (!URLsList->empty()) {
 		for( it = URLsList->begin() ; it != URLsList->end() ; ++it){
-			addKopeteBookmark(*it, msg.from()->property(Kopete::Global::Properties::self()->nickName()).value().toString() );
-			//kdDebug (14501) << "name:" << msg.from()->property(Kopete::Global::Properties::self()->nickName()).value().toString() << endl;
+			if( msg.from()->metaContact() ) {
+				addKopeteBookmark(*it, msg.from()->metaContact()->displayName() );
+				//kdDebug (14501) << "name:" << msg.from()->metaContact()->displayName() << endl;
+			}
+			else {
+				addKopeteBookmark(*it, msg.from()->property(Kopete::Global::Properties::self()->nickName()).value().toString() );
+				//kdDebug (14501) << "name:" << msg.from()->property(Kopete::Global::Properties::self()->nickName()).value().toString() << endl;
+			}
 		}
 	}
 	delete URLsList;
