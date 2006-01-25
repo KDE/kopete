@@ -22,17 +22,17 @@
 #include <qtimer.h>
 
 #include <kdebug.h>
-#include <kconfig.h>
 #include <kgenericfactory.h>
 
 #include "kopeteprotocol.h"
+#include "networkstatuscommon.h"
 #include "kopetepluginmanager.h"
 #include "kopeteaccountmanager.h"
-#include "managedconnectionaccount.h"
 
 #include "detectornetworkstatus.h"
 #include "detectornetstat.h"
 #include "detectorsmpppd.h"
+#include "smpppdcsconfig.h"
 
 typedef KGenericFactory<SMPPPDCSPlugin> SMPPPDCSPluginFactory;
 K_EXPORT_COMPONENT_FACTORY(kopete_smpppdcs, SMPPPDCSPluginFactory("kopete_smpppdcs"))
@@ -82,7 +82,7 @@ void SMPPPDCSPlugin::allPluginsLoaded() {
         m_timer = new QTimer();
         connect(m_timer, SIGNAL(timeout()), this, SLOT(slotCheckStatus()));
 
-        if(useSmpppd()) {
+		if(SMPPPDCSConfig::self()->useSmpppd()) {
             m_timer->start(30000);
         } else {
             // we use 1 min interval, because it reflects
@@ -95,11 +95,15 @@ void SMPPPDCSPlugin::allPluginsLoaded() {
 }
 
 bool SMPPPDCSPlugin::isOnline() const {
-    return m_onlineInquiry->isOnline(useSmpppd());
+	return m_onlineInquiry->isOnline(SMPPPDCSConfig::self()->useSmpppd());
 }
 
 void SMPPPDCSPlugin::slotCheckStatus() {
-    if(useSmpppd()) {
+	
+	// reread config to get changes
+	SMPPPDCSConfig::self()->readConfig();
+	
+	if(SMPPPDCSConfig::self()->useSmpppd()) {
         m_detectorSMPPPD->checkStatus();
     } else {
         m_detectorNetstat->checkStatus();
@@ -132,9 +136,8 @@ void SMPPPDCSPlugin::setConnectedStatus( bool connected ) {
 }
 
 void SMPPPDCSPlugin::connectAllowed() {
-    static KConfig *config = KGlobal::config();
-    config->setGroup(SMPPPDCS_CONFIG_GROUP);
-    QStringList list = config->readListEntry("ignoredAccounts");
+
+	QStringList list = SMPPPDCSConfig::self()->ignoredAccounts();
 
     Kopete::AccountManager * m = Kopete::AccountManager::self();
     for(QPtrListIterator<Kopete::Account> it(m->accounts())
@@ -158,9 +161,8 @@ void SMPPPDCSPlugin::connectAllowed() {
 }
 
 void SMPPPDCSPlugin::disconnectAllowed() {
-    static KConfig *config = KGlobal::config();
-    config->setGroup(SMPPPDCS_CONFIG_GROUP);
-    QStringList list = config->readListEntry("ignoredAccounts");
+
+	QStringList list = SMPPPDCSConfig::self()->ignoredAccounts();
 
     Kopete::AccountManager * m = Kopete::AccountManager::self();
     for(QPtrListIterator<Kopete::Account> it(m->accounts())
@@ -182,17 +184,8 @@ void SMPPPDCSPlugin::disconnectAllowed() {
     }
 }
 
-/*!
-    \fn SMPPPDCSPlugin::useSmpppd() const
- */
-bool SMPPPDCSPlugin::useSmpppd() const {
-    static KConfig *config = KGlobal::config();
-    config->setGroup(SMPPPDCS_CONFIG_GROUP);
-    return config->readBoolEntry("useSmpppd", false);
-}
-
 QString SMPPPDCSPlugin::detectionMethod() const {
-    if(useSmpppd()) {
+	if(SMPPPDCSConfig::self()->useSmpppd()) {
         return "smpppd";
     } else {
         return "netstat";
@@ -203,9 +196,8 @@ QString SMPPPDCSPlugin::detectionMethod() const {
     \fn SMPPPDCSPlugin::smpppdServerChanged(const QString& server)
  */
 void SMPPPDCSPlugin::smpppdServerChanged(const QString& server) {
-    static KConfig *config = KGlobal::config();
-    config->setGroup(SMPPPDCS_CONFIG_GROUP);
-    QString oldServer = config->readEntry("server", "localhost").utf8();
+
+	QString oldServer = SMPPPDCSConfig::self()->server().utf8();
 
     if(oldServer != server) {
         kdDebug(14312) << k_funcinfo << "Detected a server change" << endl;

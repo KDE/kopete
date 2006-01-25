@@ -15,7 +15,8 @@ activates all Kopete accounts, too.
 Changelog
 =========
 
-0.79 (2006/01/22)
+0.79 (2006/01/25)
+* using KConfigXT for configuration
 * using dcopidl2cpp stub generated from kinternetiface.h (from kinternet package),
   no more own implementation
 * experimental implementation of the the KDED-NetworkStatus (not active, yet)

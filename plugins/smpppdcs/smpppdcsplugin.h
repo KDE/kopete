@@ -90,13 +90,8 @@ private slots:
     void allPluginsLoaded();
 
 private:
-    /**
-     * @brief Should the smpppd be used for inquiring
-     * @return <code>TRUE</code> for smpppd, <code>FALSE</code> for netstat
-     */
-    bool useSmpppd() const;
-
-    void connectAllowed();
+    
+	void connectAllowed();
     void disconnectAllowed();
 
 private:

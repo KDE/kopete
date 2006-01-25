@@ -14,34 +14,32 @@
     *************************************************************************
 */
 
-#include <qmap.h>
+#include <qlayout.h>
 #include <qregexp.h>
-#include <qtabwidget.h>
+#include <qradiobutton.h>
 
-#include <klocale.h>
-#include <kconfig.h>
 #include <klistview.h>
-#include <kautoconfig.h>
-#include <kiconloader.h>
+#include <klineedit.h>
+#include <knuminput.h>
 #include <kgenericfactory.h>
 
 #include "kopeteaccount.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccountmanager.h"
-#include "managedconnectionaccount.h"
 
+#include "smpppdlocationwidget.h"
 #include "smpppdcspreferences.h"
 #include "smpppdcsprefsimpl.h"
-
-#define CONFIGGROUP "SMPPPDCS Plugin"
+#include "smpppdcsconfig.h"
 
 typedef KGenericFactory<SMPPPDCSPreferences> SMPPPDCSPreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY(kcm_kopete_smpppdcs, SMPPPDCSPreferencesFactory("kcm_kopete_smpppdcs"))
 
 SMPPPDCSPreferences::SMPPPDCSPreferences(QWidget * parent, const char * /* name */, const QStringList& args)
- : KCAutoConfigModule(SMPPPDCSPreferencesFactory::instance(), parent, args), m_ui(NULL) {
+ : KCModule(SMPPPDCSPreferencesFactory::instance(), parent, args), m_ui(NULL) {
 
  	Kopete::AccountManager * manager = Kopete::AccountManager::self(); 
+	(new QVBoxLayout(this))->setAutoAdd(true);
 	m_ui = new SMPPPDCSPrefs(this);
 
 	for(QPtrListIterator<Kopete::Account> it(manager->accounts()); it.current(); ++it)
@@ -67,12 +65,16 @@ SMPPPDCSPreferences::SMPPPDCSPreferences(QWidget * parent, const char * /* name 
 		m_accountMapCur[cli->text(0)] = AccountPrivMap(FALSE, (*it)->protocol()->pluginId() + "_" + (*it)->accountId());;
 		m_ui->accountList->insertItem(cli);
 	}
-	
-	autoConfig()->ignoreSubWidget(m_ui->tabWidget);
-	autoConfig()->addWidget(m_ui->tabWidget->page(0), CONFIGGROUP);
-	setMainWidget(m_ui, CONFIGGROUP);
 
 	connect(m_ui->accountList, SIGNAL(clicked(QListViewItem *)), this, SLOT(listClicked(QListViewItem *)));
+	
+	// connect for modified
+	connect(m_ui->useNetstat, SIGNAL(clicked()), this, SLOT(slotModified()));
+	connect(m_ui->useSmpppd,  SIGNAL(clicked()), this, SLOT(slotModified()));
+	
+	connect(m_ui->SMPPPDLocation->server,   SIGNAL(textChanged(const QString&)), this, SLOT(slotModified()));
+	connect(m_ui->SMPPPDLocation->port,     SIGNAL(valueChanged(int)), this, SLOT(slotModified()));
+	connect(m_ui->SMPPPDLocation->Password, SIGNAL(textChanged(const QString&)), this, SLOT(slotModified()));
 	
 	load();
 }
@@ -96,7 +98,7 @@ void SMPPPDCSPreferences::listClicked(QListViewItem * item)
 				break;
 			}
 		}
-		emit changed(change);
+		emit KCModule::changed(change);
 	}
 	m_accountMapCur[cli->text(0)].m_on = cli->isOn();
 }
@@ -110,16 +112,24 @@ void SMPPPDCSPreferences::defaults()
 		++it;
 	}
 	
-	KCAutoConfigModule::defaults();
+	SMPPPDCSConfig::self()->setDefaults();
+	
+	m_ui->useNetstat->setChecked(SMPPPDCSConfig::self()->useNetstat());
+	m_ui->useSmpppd->setChecked(SMPPPDCSConfig::self()->useSmpppd());
+	
+	m_ui->SMPPPDLocation->server->setText(SMPPPDCSConfig::self()->server());
+	m_ui->SMPPPDLocation->port->setValue(SMPPPDCSConfig::self()->port());
+	m_ui->SMPPPDLocation->Password->setText(SMPPPDCSConfig::self()->password());
 }
 
 void SMPPPDCSPreferences::load()
 {
-	KConfig * config = KGlobal::config();
-	config->setGroup(CONFIGGROUP);
 	
-	QRegExp rex("^(.*) \\((.*)\\)");
-	QStringList list = config->readListEntry("ignoredAccounts");
+	SMPPPDCSConfig::self()->readConfig();
+	
+	static QString rexStr = "^(.*) \\((.*)\\)";
+	QRegExp rex(rexStr);
+	QStringList list = SMPPPDCSConfig::self()->ignoredAccounts();
 	QListViewItemIterator it(m_ui->accountList);
 	while(it.current()) {
 		QCheckListItem * cli = dynamic_cast<QCheckListItem *>(it.current());
@@ -131,15 +141,19 @@ void SMPPPDCSPreferences::load()
 		}
 		++it;
 	}
-	KCAutoConfigModule::load();
+	
+	m_ui->useNetstat->setChecked(SMPPPDCSConfig::self()->useNetstat());
+	m_ui->useSmpppd->setChecked(SMPPPDCSConfig::self()->useSmpppd());
+	
+	m_ui->SMPPPDLocation->server->setText(SMPPPDCSConfig::self()->server());
+	m_ui->SMPPPDLocation->port->setValue(SMPPPDCSConfig::self()->port());
+	m_ui->SMPPPDLocation->Password->setText(SMPPPDCSConfig::self()->password());
+	
+	emit KCModule::changed(false);
 }
 
 void SMPPPDCSPreferences::save()
 {
-	KCAutoConfigModule::save();
-	KConfig * config = KGlobal::config();
-	config->setGroup(CONFIGGROUP);
-	
 	QStringList list;
 	QListViewItemIterator it(m_ui->accountList);
 	while(it.current()) {
@@ -151,8 +165,23 @@ void SMPPPDCSPreferences::save()
 		
 		++it;
 	}
-		
-	config->writeEntry("ignoredAccounts", list);
+	
+	SMPPPDCSConfig::self()->setIgnoredAccounts(list);
+	
+	SMPPPDCSConfig::self()->setUseNetstat(m_ui->useNetstat->isChecked());
+	SMPPPDCSConfig::self()->setUseSmpppd(m_ui->useSmpppd->isChecked());
+	
+	SMPPPDCSConfig::self()->setServer(m_ui->SMPPPDLocation->server->text());
+	SMPPPDCSConfig::self()->setPort(m_ui->SMPPPDLocation->port->value());
+	SMPPPDCSConfig::self()->setPassword(m_ui->SMPPPDLocation->Password->text());
+	
+	SMPPPDCSConfig::self()->writeConfig();
+	
+	emit KCModule::changed(false);
+}
+
+void SMPPPDCSPreferences::slotModified() {
+	emit KCModule::changed(true);
 }
 
 #include "smpppdcspreferences.moc"

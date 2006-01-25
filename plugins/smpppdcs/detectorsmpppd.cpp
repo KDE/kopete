@@ -21,6 +21,7 @@
 
 #include "iconnector.h"
 #include "detectorsmpppd.h"
+#include "smpppdcsconfig.h"
 
 #include "smpppdclient.h"
 
@@ -35,6 +36,7 @@ DetectorSMPPPD::~DetectorSMPPPD() {}
 void DetectorSMPPPD::checkStatus() const {
     kdDebug(14312) << k_funcinfo << "Checking for online status..." << endl;
 
+#ifndef NOKINTERNETDCOP
     m_kinternetApp = getKInternetDCOP();
     if(kapp->dcopClient() && m_kinternetApp != "") {
         switch(getConnectionStatusDCOP()) {
@@ -48,15 +50,17 @@ void DetectorSMPPPD::checkStatus() const {
             break;
         }
     }
+#else
+#warning DCOP inquiry disabled
+	kdDebug(14312) << k_funcinfo << "DCOP inquiry disabled" << endl;
+#endif
 
     SMPPPD::Client c;
 
-    static KConfig *config = KGlobal::config();
-    config->setGroup(SMPPPDCS_CONFIG_GROUP);
-    unsigned int port = config->readUnsignedNumEntry("port", 3185);
-    QString    server = config->readEntry("server", "localhost").utf8();
+	unsigned int port = SMPPPDCSConfig::self()->port();
+	QString    server = SMPPPDCSConfig::self()->server();
 
-    c.setPassword(config->readEntry("Password", "").utf8());
+	c.setPassword(SMPPPDCSConfig::self()->password().utf8());
 
     if(c.connect(server, port)) {
         m_connector->setConnectedStatus(c.isOnline());

@@ -17,10 +17,6 @@
 #ifndef DETECTOR_H
 #define DETECTOR_H
 
-#include <qmutex.h>
-
-#define SMPPPDCS_CONFIG_GROUP "SMPPPDCS Plugin"
-
 class IConnector;
 
 /**
