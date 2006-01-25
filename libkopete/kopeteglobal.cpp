@@ -24,7 +24,7 @@
 #include <kio/netaccess.h>
 #include <kmimetype.h>
 #include <kmessagebox.h>
-#include <kprogress.h>
+#include <kprogressbar.h>
 #include <kstandarddirs.h>
 #include <ktar.h>
 

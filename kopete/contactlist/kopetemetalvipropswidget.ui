@@ -403,7 +403,7 @@
                                             </size>
                                         </property>
                                     </spacer>
-                                    <widget class="KURLComboRequester">
+                                    <widget class="KUrlComboRequester">
                                         <property name="name">
                                             <cstring>cmbPhotoUrl</cstring>
                                         </property>
@@ -620,7 +620,7 @@
 </includehints>
 <customwidgets>
     <customwidget>
-       <class>KURLComboRequester</class>
+       <class>KUrlComboRequester</class>
        <header>kurlrequester.h</header>
     </customwidget>
 </customwidgets>

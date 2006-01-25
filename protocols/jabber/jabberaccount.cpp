@@ -43,7 +43,7 @@
 #include <kapplication.h>
 #include <kaboutdata.h>
 #include <ksocketbase.h>
-#include <kpassdlg.h>
+#include <kpassworddialog.h>
 #include <kinputdialog.h>
 
 #include "kopetepassword.h"

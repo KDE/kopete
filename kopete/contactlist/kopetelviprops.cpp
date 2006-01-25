@@ -532,12 +532,12 @@ void KopeteMetaLVIProps::slotFromKABCClicked()
 #endif
 }
 
-void KopeteMetaLVIProps::slotOpenSoundDialog( KURLRequester *requester )
+void KopeteMetaLVIProps::slotOpenSoundDialog( KUrlRequester *requester )
 {
 	// taken from kdelibs/kio/kfile/knotifydialog.cpp
 	// only need to init this once
-	requester->disconnect( SIGNAL( openFileDialog( KURLRequester * )),
-						this, SLOT( slotOpenSoundDialog( KURLRequester * )));
+	requester->disconnect( SIGNAL( openFileDialog( KUrlRequester * )),
+						this, SLOT( slotOpenSoundDialog( KUrlRequester * )));
 
 	KFileDialog *fileDialog = requester->fileDialog();
 	//fileDialog->setCaption( i18n("Select Sound File") );

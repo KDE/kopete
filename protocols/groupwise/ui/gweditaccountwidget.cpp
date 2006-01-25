@@ -31,7 +31,7 @@
 #include <kconfig.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kpassdlg.h>
+#include <kpassworddialog.h>
 #include <kglobal.h>
 #include "kopetepasswordedaccount.h"
 #include "kopetepasswordwidget.h"

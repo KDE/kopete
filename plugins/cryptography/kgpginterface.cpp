@@ -20,7 +20,7 @@
 
 
 #include <klocale.h>
-#include <kpassdlg.h>
+#include <kpassworddialog.h>
 
 #include <stdlib.h>
 #include <stdio.h>

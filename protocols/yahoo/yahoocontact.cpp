@@ -545,7 +545,7 @@ void YahooContact::webcamPaused()
 
 void YahooContact::initWebcamViewer()
 {
-	//KImageIO::registerFormats();
+	//
 	
 	if ( !m_webcamDialog )
 	{

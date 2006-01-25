@@ -360,7 +360,7 @@
                                             </widget>
                                         </hbox>
                                     </widget>
-                                    <widget class="KURLRequester">
+                                    <widget class="KUrlRequester">
                                         <property name="name">
                                             <cstring>mSmbcPath</cstring>
                                         </property>

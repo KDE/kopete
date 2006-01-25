@@ -25,7 +25,7 @@
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
-#include <kprogress.h>
+#include <kprogressbar.h>
 #include <kapplication.h>
 #include <ksavefile.h>
 

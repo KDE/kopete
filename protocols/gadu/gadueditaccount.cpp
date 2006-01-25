@@ -39,7 +39,7 @@
 #include <kmessagebox.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kpassdlg.h>
+#include <kpassworddialog.h>
 
 #include "kopetepasswordwidget.h"
 

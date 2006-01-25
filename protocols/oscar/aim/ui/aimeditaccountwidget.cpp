@@ -12,7 +12,7 @@
 
 #include <kdebug.h>
 #include <krun.h>
-#include <kpassdlg.h>
+#include <kpassworddialog.h>
 #include <kconfig.h>
 
 #include "kopetepassword.h"

@@ -36,7 +36,7 @@
 #include <kurllabel.h>
 #include <kdatewidget.h>
 #include <krun.h>
-#include <kpassdlg.h>
+#include <kpassworddialog.h>
 
 #include "kopetepassword.h"
 #include "kopetepasswordwidget.h"

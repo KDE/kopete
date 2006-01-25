@@ -25,7 +25,7 @@
 #include <kglobal.h>
 #include <kmessagebox.h>
 #include <klineedit.h>
-#include <kpassdlg.h>
+#include <kpassworddialog.h>
 #include <knuminput.h>
 #include <kpushbutton.h>
 #include <qlabel.h>

@@ -103,7 +103,7 @@
                                     <attribute name="id">
                                         <number>0</number>
                                     </attribute>
-                                    <widget class="KURLLabel">
+                                    <widget class="KUrlLabel">
                                         <property name="name">
                                             <cstring>urlHomepage</cstring>
                                         </property>
@@ -498,7 +498,7 @@
                                     <attribute name="id">
                                         <number>0</number>
                                     </attribute>
-                                    <widget class="KURLLabel">
+                                    <widget class="KUrlLabel">
                                         <property name="name">
                                             <cstring>urlHomeEmail</cstring>
                                         </property>
@@ -762,7 +762,7 @@
                                     <attribute name="id">
                                         <number>0</number>
                                     </attribute>
-                                    <widget class="KURLLabel">
+                                    <widget class="KUrlLabel">
                                         <property name="name">
                                             <cstring>urlWorkEmail</cstring>
                                         </property>

@@ -20,7 +20,7 @@
 
 #include <qwidget.h>
 #include <qlineedit.h>
-#include <kpassdlg.h>
+#include <kpassworddialog.h>
 
 #include "xmpp_tasks.h"
 

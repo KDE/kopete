@@ -35,7 +35,7 @@
 #include <krun.h>
 #include <kurl.h>
 #include <kfiledialog.h>
-#include <kpassdlg.h>
+#include <kpassworddialog.h>
 #include <kconfig.h>
 #include <kstandarddirs.h>
 #include <kpixmapregionselectordialog.h>

@@ -19,7 +19,7 @@
 
 #include <qgroupbox.h>
 
-#include <kprogress.h>
+#include <kprogressbar.h>
 
 #include "smpppdcsprefs.h"
 

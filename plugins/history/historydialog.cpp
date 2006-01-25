@@ -53,7 +53,7 @@
 #include <kstandarddirs.h>
 #include <klistview.h>
 #include <klistviewsearchline.h>
-#include <kprogress.h>
+#include <kprogressbar.h>
 #include <kiconloader.h>
 #include <kcombobox.h>
 #include <kmenu.h>

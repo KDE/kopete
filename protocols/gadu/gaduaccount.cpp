@@ -36,7 +36,7 @@
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 
-#include <kpassdlg.h>
+#include <kpassworddialog.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>

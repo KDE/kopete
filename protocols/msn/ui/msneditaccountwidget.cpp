@@ -38,7 +38,7 @@
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
 #include <kdebug.h>
-#include <kpassdlg.h>
+#include <kpassworddialog.h>
 #include <krun.h>
 #include <kconfig.h>
 #include <kpixmapregionselectordialog.h>

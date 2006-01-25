@@ -32,7 +32,7 @@ class KPushButton;
 class KopeteGroupViewItem;
 class KopeteMetaContactLVI;
 class KopeteAddressBookExport;
-class KURLRequester;
+class KUrlRequester;
 
 namespace Kopete { class Contact; }
 
@@ -89,7 +89,7 @@ class KopeteMetaLVIProps: public KDialog
 		void slotExportClicked();
 		void slotImportClicked();
 		void slotFromKABCClicked();
-		void slotOpenSoundDialog( KURLRequester *requester );
+		void slotOpenSoundDialog( KUrlRequester *requester );
 		void slotLoadNameSources();
 		void slotLoadPhotoSources();
 		void slotEnableAndDisableWidgets();

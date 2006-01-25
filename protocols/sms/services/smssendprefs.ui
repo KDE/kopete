@@ -76,7 +76,7 @@
                         <cstring>provider</cstring>
                     </property>
                 </widget>
-                <widget class="KURLRequester" row="0" column="1">
+                <widget class="KUrlRequester" row="0" column="1">
                     <property name="name">
                         <cstring>program</cstring>
                     </property>

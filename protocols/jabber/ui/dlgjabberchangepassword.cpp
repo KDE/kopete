@@ -21,7 +21,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <kpassdlg.h>
+#include <kpassworddialog.h>
 #include <kmessagebox.h>
 #include <qlabel.h>
 #include <qlineedit.h>

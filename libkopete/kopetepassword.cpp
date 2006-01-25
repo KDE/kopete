@@ -36,7 +36,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kiconloader.h>
-#include <kpassdlg.h>
+#include <kpassworddialog.h>
 
 /**
  * Function for symmetrically (en/de)crypting strings for config file,

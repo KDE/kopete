@@ -404,7 +404,7 @@
                                 <string>Play a sound:</string>
                             </property>
                         </widget>
-                        <widget class="KURLRequester">
+                        <widget class="KUrlRequester">
                             <property name="name">
                                 <cstring>m_soundFN</cstring>
                             </property>

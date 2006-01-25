@@ -248,7 +248,7 @@
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="KURLComboRequester" row="1" column="0">
+                                    <widget class="KUrlComboRequester" row="1" column="0">
                                         <property name="name">
                                             <cstring>comboPhotoURL</cstring>
                                         </property>
@@ -537,7 +537,7 @@ current user contact.</string>
 </includehints>
 <customwidgets>
     <customwidget>
-       <class>KURLComboRequester</class>
+       <class>KUrlComboRequester</class>
        <header>kurlrequester.h</header>
     </customwidget>
 </customwidgets>

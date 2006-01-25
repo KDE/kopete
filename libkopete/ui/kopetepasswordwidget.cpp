@@ -18,7 +18,7 @@
 #include "kopetepasswordwidget.h"
 #include "kopetepassword.h"
 
-#include <kpassdlg.h>
+#include <kpassworddialog.h>
 
 #include <qcheckbox.h>
 
