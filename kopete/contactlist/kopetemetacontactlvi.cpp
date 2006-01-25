@@ -64,6 +64,7 @@
 #include "kopeteglobal.h"
 #include "kopetecontact.h"
 #include "kabcpersistence.h"
+#include "kopetepicture.h"
 
 
 #include <memory>
@@ -89,7 +90,7 @@ public:
 
         toolTip += QString::fromLatin1("<tr><td>");
 
-		if ( ! metaContact->photo().isNull() )
+		if ( ! metaContact->picture().isNull() )
         {
 			QString photoName = QString::fromLatin1("kopete-metacontact-photo:%1").arg( KURL::encode_string( metaContact->metaContactId() ));
 			//QMimeSourceFactory::defaultFactory()->setImage( "contactimg", metaContact->photo() );
@@ -451,15 +452,15 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 			case noChange:
 				break;
 			case signedIn:
-				connect(KNotification::event( QString("kopete_contact_online"), text, QPixmap(m_metaContact->photo()), 0l /*KopeteSystemTray::systemTray()*/, QStringList(i18n( "Chat" )), contexts ) ,
+				connect(KNotification::event( QString("kopete_contact_online"), text, QPixmap(m_metaContact->picture().image()), 0l /*KopeteSystemTray::systemTray()*/, QStringList(i18n( "Chat" )), contexts ) ,
 						SIGNAL(activated(unsigned int )) , this, SLOT( execute() ) );
 				break;
 			case changedStatus:
-				connect(KNotification::event( QString("kopete_contact_status_change"), text, QPixmap(m_metaContact->photo()), 0l  /*KopeteSystemTray::systemTray() */, QStringList(i18n( "Chat" )), contexts)  ,
+				connect(KNotification::event( QString("kopete_contact_status_change"), text, QPixmap(m_metaContact->picture().image()), 0l  /*KopeteSystemTray::systemTray() */, QStringList(i18n( "Chat" )), contexts)  ,
 						SIGNAL(activated(unsigned int )) , this, SLOT( execute() ));
 				break;
 			case signedOut:
-				KNotification::event( QString("kopete_contact_offline"), text, QPixmap(m_metaContact->photo()), KopeteSystemTray::systemTray() , QStringList(), contexts);
+				KNotification::event( QString("kopete_contact_offline"), text, QPixmap(m_metaContact->picture().image()), KopeteSystemTray::systemTray() , QStringList(), contexts);
 				break;
 			}
 		}
@@ -529,7 +530,7 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 		m_oldStatusIcon= d->metaContactIcon->pixmap();
 		QPixmap photoPixmap;
 		//QPixmap defaultIcon( KGlobal::iconLoader()->loadIcon( "vcard", KIcon::Desktop ) );
-		QImage photoImg = m_metaContact->photo();
+		QImage photoImg = m_metaContact->picture().image();
 		if ( !photoImg.isNull() && (photoImg.width() > 0) &&  (photoImg.height() > 0) )
 		{
 			int photoSize = d->iconSize;

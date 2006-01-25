@@ -44,6 +44,7 @@
 #include "kopeteglobal.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
+#include "kopetepicture.h"
 
 
 ClickableLabel::ClickableLabel(QWidget *parent, const char *name)
@@ -103,8 +104,8 @@ void KopeteEditGlobalIdentityWidget::setIconSize(int size)
 	d->iconSize = size;
 	d->labelPicture->setMinimumSize(QSize(d->iconSize, d->iconSize));
 	d->labelPicture->setMaximumSize(QSize(d->iconSize, d->iconSize));
-	if( !d->myself->photo().isNull() )
-		d->labelPicture->setPixmap(QPixmap(d->myself->photo().scaled(d->iconSize, d->iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
+	if( !d->myself->picture().isNull() )
+		d->labelPicture->setPixmap(QPixmap(d->myself->picture().image().scaled(d->iconSize, d->iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
 }
 
 void KopeteEditGlobalIdentityWidget::iconSizeChanged()
@@ -118,8 +119,8 @@ void KopeteEditGlobalIdentityWidget::iconSizeChanged()
 		d->iconSize = tb->iconSize();
 		d->labelPicture->setMinimumSize(QSize(d->iconSize, d->iconSize));
 		d->labelPicture->setMaximumSize(QSize(d->iconSize, d->iconSize));	
-		if( !d->myself->photo().isNull() )
-			d->labelPicture->setPixmap(QPixmap(d->myself->photo().scaled(d->iconSize, d->iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
+		if( !d->myself->picture().isNull() )
+			d->labelPicture->setPixmap(QPixmap(d->myself->picture().image().scaled(d->iconSize, d->iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
 	}
 }
 
@@ -151,9 +152,9 @@ void KopeteEditGlobalIdentityWidget::updateGUI(const QString &key, const QVarian
 	if(key == Kopete::Global::Properties::self()->photo().key())
 	{
 		// Update the picture and the tooltip
-		if( !d->myself->photo().isNull() )
+		if( !d->myself->picture().isNull() )
 		{
-			d->labelPicture->setPixmap(QPixmap(d->myself->photo().scaled(d->iconSize, d->iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
+			d->labelPicture->setPixmap(QPixmap(d->myself->picture().image().scaled(d->iconSize, d->iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
 			QToolTip::add(d->labelPicture, "<qt><img src=\""+ value.toString() +"\"></qt>");
 		}
 	}

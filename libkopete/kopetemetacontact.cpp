@@ -162,7 +162,7 @@ void MetaContact::addContact( Contact *c )
 				setDisplayNameSourceContact(c);
 				setDisplayNameSource(SourceContact);
 			}
-			if ( photo().isNull() )
+			if ( picture().isNull() )
 			{
 				setPhotoSourceContact(c);
 				setPhotoSource(SourceContact);
@@ -808,19 +808,19 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 		if ( contact->hasProperty( Kopete::Global::Properties::self()->photo().key() ) )
 		{
 			photoProp = contact->property( Kopete::Global::Properties::self()->photo().key() ).value();
-		}
-
-		if(photoProp.canCast( QVariant::Image ))
-		{
-			d->contactPicture.setPicture( photoProp.value<QImage>() );
-		}
-		else if(photoProp.canCast( QVariant::Pixmap ))
-		{
-			d->contactPicture.setPicture( photoProp.value<QPixmap>().convertToImage() );
-		}
-		else if(!photoProp.asString().isEmpty())
-		{
-			d->contactPicture.setPicture(photoProp.toString());
+		
+			if(photoProp.canCast( QVariant::Image ))
+			{
+				d->contactPicture.setPicture( photoProp.value<QImage>() );
+			}
+			else if(photoProp.canCast( QVariant::Pixmap ))
+			{
+				d->contactPicture.setPicture( photoProp.value<QPixmap>().convertToImage() );
+			}
+			else if(!photoProp.asString().isEmpty())
+			{
+				d->contactPicture.setPicture(photoProp.toString());
+			}
 		}
 	}
 
@@ -859,7 +859,7 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 			{
 				// HACK the displayName that changed is not from the contact we are tracking, but
 				// as the current one is null, lets use this new one
-				if (photo().isNull())
+				if (picture().isNull())
 					setPhotoSourceContact(subcontact);
 					
 			}

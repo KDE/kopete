@@ -39,6 +39,7 @@
 #include <kopetecontactproperty.h>
 #include <kopeteglobal.h>
 #include <kopetemetacontact.h>
+#include <kopetepicture.h>
 
 #include "kabcpersistence.h"
 
@@ -240,9 +241,11 @@ void KabcExportWizard::exportDetails( Kopete::MetaContact * mc, KABC::Addressee 
 	
 	}
 	
-	QImage photo = mc->photo();
-	if ( !photo.isNull() )
+	if( !mc->picture().isNull() )
+	{
+		QImage photo = mc->picture().image();
 		addr.setPhoto( KABC::Picture( photo ) );
+	}
 }
 
 #include "kabcexport.moc"

@@ -22,6 +22,7 @@
 #include "kopeteaccount.h"
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
+#include "kopetepicture.h"
 
 #include <kdebug.h>
 #include <kiconloader.h>
@@ -125,7 +126,7 @@ const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 			MetaContact *mc = ContactList::self()->metaContact( parts[1] );
 			if ( mc )
 			{
-				QImage photo = mc->photo();
+				QImage photo = mc->picture().image();
 				delete d->lastMimeSource;
 				d->lastMimeSource = new Q3ImageDrag( photo );
 				return d->lastMimeSource;	

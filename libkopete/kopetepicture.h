@@ -68,15 +68,15 @@ public:
 	/**
 	 * Create a picture from a local path.
 	 */
-	Picture(const QString &path);
+	explicit Picture(const QString &path);
 	/**
 	 * Create a picture from a QImage.
 	 */
-	Picture(const QImage &image);
+	explicit Picture(const QImage &image);
 	/**
 	 * Create a picture from a KABC::Picture.
 	 */
-	Picture(const KABC::Picture &picture);
+	explicit Picture(const KABC::Picture &picture);
 	/**
 	 * Copy a picture. It doesn't create a full copy, it just make a reference.
 	 */

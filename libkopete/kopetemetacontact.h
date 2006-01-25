@@ -182,8 +182,9 @@ public:
 	 * It can also use a subcontact as the photo source.
 	 *
 	 * This photo is obtained from the source set with @ref setPhotoSource
+	 * @deprecated Use picture().image() instead.
 	 */
-	QImage photo() const;
+	QImage photo() const KDE_DEPRECATED;
 
 	/**
 	 * Return the correct Kopete::Picture object depending of the metacontact photo source.

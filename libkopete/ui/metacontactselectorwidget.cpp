@@ -43,6 +43,7 @@
 #include "kopetelistviewsearchline.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
+#include "kopetepicture.h"
 #include "metacontactselectorwidget_base.h"
 #include "metacontactselectorwidget.h"
 
@@ -107,7 +108,7 @@ QString MetaContactSelectorWidgetLVI::text ( int /* column */ ) const
 void MetaContactSelectorWidgetLVI::slotPhotoChanged()
 {
 	QPixmap photoPixmap;
-	QImage photoImg = d->metaContact->photo();
+	QImage photoImg = d->metaContact->picture().image();
 	if ( !photoImg.isNull() && (photoImg.width() > 0) &&  (photoImg.height() > 0) )
 	{
 		int photoSize = d->photoSize;
