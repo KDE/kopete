@@ -17,31 +17,30 @@
     *************************************************************************
 */
 
+// QTestLib for KDE
+#include <qtest_kde.h>
 #include <stdlib.h>
 
-#include <qdir.h>
-#include <qfile.h>
-//Added by qt3to4:
+#include <QDir>
+#include <QFile>
 #include <QTextStream>
 #include <QByteArray>
+
 #include <kapplication.h>
 #include <kstandarddirs.h>
 #include <kinstance.h>
 #include <kprocess.h>
-#include <kunittest/module.h>
 #include <kdebug.h>
 
 #include "kopetemessage_test.h"
+#include "kopetemessage_test.moc"
 #include "kopeteaccount_mock.h"
 #include "kopeteprotocol_mock.h"
 #include "kopetecontact_mock.h"
 #include "kopetemetacontact_mock.h"
 #include "kopeteaccount_mock.h"
 
-using namespace KUnitTest;
-
-KUNITTEST_MODULE( kunittest_kopetemessage_test, "KopeteSuite");
-KUNITTEST_MODULE_REGISTER_TESTER( KopeteMessage_Test );
+QTEST_KDEMAIN( KopeteMessage_Test, NoGUI )
 
 /*
   There are four sets of tests: for each of plain text and html, we have those
@@ -65,22 +64,6 @@ KopeteMessage_Test::KopeteMessage_Test()
 	m_message = new Kopete::Message( m_contactFrom, m_contactTo, QString::null, Kopete::Message::Outbound, Kopete::Message::PlainText);
 }
 
-void KopeteMessage_Test::allTests()
-{
-	KApplication::disableAutoDcopRegistration();
-	//KCmdLineArgs::init(argc,argv,"testkopetemessage", 0, 0, 0, 0);
-
-	// At least Kopete::Message::asXML() seems to require that a QApplication
-	// is created. Running the console version doesn't create it, but the GUI
-	// version does.
-
-	if (!kapp)
-		new KApplication();
-
-	testPrimitives();
-	testLinkParser();
-}
-
 void KopeteMessage_Test::testPrimitives()
 {
 	/**********************************************
@@ -99,15 +82,15 @@ void KopeteMessage_Test::testPrimitives()
 
 	{
 		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Inbound, Kopete::Message::PlainText);
-		CHECK(Kopete::Message::Inbound, msg.direction());
+		QCOMPARE(Kopete::Message::Inbound, msg.direction());
 	}
 	{
 		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Outbound, Kopete::Message::RichText);
-		CHECK(Kopete::Message::Outbound, msg.direction());
+		QCOMPARE(Kopete::Message::Outbound, msg.direction());
 	}
 	{
 		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Internal, Kopete::Message::RichText);
-		CHECK(Kopete::Message::Internal, msg.direction());
+		QCOMPARE(Kopete::Message::Internal, msg.direction());
 	}
 
 	/**********************************************
@@ -116,27 +99,27 @@ void KopeteMessage_Test::testPrimitives()
 
 	{
 		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Inbound, Kopete::Message::PlainText);
-		CHECK(Kopete::Message::PlainText, msg.format());
+		QCOMPARE(Kopete::Message::PlainText, msg.format());
 	}
 	{
 		Kopete::Message msg( m_contactFrom, m_contactTo, "foobar", Kopete::Message::Inbound, Kopete::Message::RichText);
-		CHECK(Kopete::Message::RichText, msg.format());
+		QCOMPARE(Kopete::Message::RichText, msg.format());
 	}
 	{
 		QString m = "foobar";
 		Kopete::Message msg( m_contactFrom, m_contactTo, m, Kopete::Message::Inbound, Kopete::Message::RichText);
 
 		msg.setBody(m, Kopete::Message::PlainText);
-		CHECK(Kopete::Message::PlainText, msg.format());
+		QCOMPARE(Kopete::Message::PlainText, msg.format());
 
 		msg.setBody(m, Kopete::Message::RichText);
-		CHECK(Kopete::Message::RichText, msg.format());
+		QCOMPARE(Kopete::Message::RichText, msg.format());
 
 		msg.setBody(m, Kopete::Message::ParsedHTML);
-		CHECK(Kopete::Message::ParsedHTML, msg.format());
+		QCOMPARE(Kopete::Message::ParsedHTML, msg.format());
 
 		msg.setBody(m, Kopete::Message::Crypted);
-		CHECK(Kopete::Message::Crypted, msg.format());
+		QCOMPARE(Kopete::Message::Crypted, msg.format());
 	}
 
 
@@ -149,29 +132,29 @@ void KopeteMessage_Test::testPrimitives()
 		Kopete::Message msg( m_contactFrom, m_contactTo, m, Kopete::Message::Inbound, Kopete::Message::RichText);
 
 		msg.setBody("NEW", Kopete::Message::PlainText);
-		CHECK(QString("NEW"), msg.plainBody());
+		QCOMPARE(QString("NEW"), msg.plainBody());
 
 		msg.setBody("NEW_NEW", Kopete::Message::RichText);
-		CHECK(QString("NEW_NEW"), msg.plainBody());
+		QCOMPARE(QString("NEW_NEW"), msg.plainBody());
 	}
 	{
 		QString m = "foobar";
 		Kopete::Message msg( m_contactFrom, m_contactTo, m, Kopete::Message::Inbound, Kopete::Message::PlainText);
 
 		msg.setBody("NEW", Kopete::Message::PlainText);
-		CHECK(QString("NEW"), msg.plainBody());
+		QCOMPARE(QString("NEW"), msg.plainBody());
 
 		msg.setBody("NEW_NEW", Kopete::Message::RichText);
-		CHECK(QString("NEW_NEW"), msg.plainBody());
+		QCOMPARE(QString("NEW_NEW"), msg.plainBody());
 	}
 	{
 		QString m = "<html><head></head><body foo=\"bar\">   <b>HELLO WORLD</b>   </body></html>";
 		Kopete::Message msg( m_contactFrom, m_contactTo, m, Kopete::Message::Inbound, Kopete::Message::PlainText);
-		CHECK(m, msg.plainBody());
+		QCOMPARE(m, msg.plainBody());
 
 		msg.setBody("<simple> SIMPLE", Kopete::Message::PlainText);
-		CHECK(QString("<simple> SIMPLE"), msg.plainBody());
-		CHECK(QString("&lt;simple&gt; SIMPLE"), msg.escapedBody());
+		QCOMPARE(QString("<simple> SIMPLE"), msg.plainBody());
+		QCOMPARE(QString("&lt;simple&gt; SIMPLE"), msg.escapedBody());
 
 		msg.setBody(m, Kopete::Message::RichText);
 
@@ -179,20 +162,20 @@ void KopeteMessage_Test::testPrimitives()
 		//CHECK(msg.plainBody(),   QString("HELLO WORLD"));
 		//CHECK(msg.escapedBody(), QString("<b>HELLO WORLD</b>"));
 
-		CHECK(msg.plainBody().stripWhiteSpace(),   QString("HELLO WORLD"));
-		CHECK(msg.escapedBody().stripWhiteSpace(), QString("<b>HELLO WORLD</b>"));
+		QCOMPARE(msg.plainBody().stripWhiteSpace(),   QString("HELLO WORLD"));
+		QCOMPARE(msg.escapedBody().stripWhiteSpace(), QString("<b>HELLO WORLD</b>"));
 	}
 	{
 		Kopete::Message msg( m_contactFrom, m_contactTo, "foo", Kopete::Message::Inbound, Kopete::Message::PlainText);
 
 		msg.setBody("<p>foo", Kopete::Message::RichText);
-		CHECK(msg.escapedBody(), QString("foo"));
+		QCOMPARE(msg.escapedBody(), QString("foo"));
 
 		msg.setBody("<p>foo</p>", Kopete::Message::RichText);
-		CHECK(msg.escapedBody(), QString("foo"));
+		QCOMPARE(msg.escapedBody(), QString("foo"));
 
 		msg.setBody("\n<p>foo</p>\n<br/>", Kopete::Message::RichText);
-		CHECK(msg.escapedBody(), QString("foo<br/>"));
+		QCOMPARE(msg.escapedBody(), QString("foo<br/>"));
 	}
 
 	/**********************************************
@@ -203,12 +186,12 @@ void KopeteMessage_Test::testPrimitives()
 		Kopete::Message msg1(m_contactFrom, m_contactTo, "foo", Kopete::Message::Inbound, Kopete::Message::RichText);
 		Kopete::Message msg2(msg1);
 
-		CHECK(msg1.plainBody(), msg2.plainBody());
-		CHECK(msg1.escapedBody(), msg2.escapedBody());
+		QCOMPARE(msg1.plainBody(), msg2.plainBody());
+		QCOMPARE(msg1.escapedBody(), msg2.escapedBody());
 
 		msg1.setBody("NEW", Kopete::Message::PlainText);
-		CHECK(msg1.plainBody(), QString("NEW"));
-		CHECK(msg2.plainBody(), QString("foo"));
+		QCOMPARE(msg1.plainBody(), QString("NEW"));
+		QCOMPARE(msg2.plainBody(), QString("foo"));
 	}
 
 	/**********************************************
@@ -224,22 +207,18 @@ void KopeteMessage_Test::testPrimitives()
 
 			msg2 = msg1;
 
-			CHECK(msg1.plainBody(), msg2.plainBody());
-			CHECK(msg1.escapedBody(), msg2.escapedBody());
+			QCOMPARE(msg1.plainBody(), msg2.plainBody());
+			QCOMPARE(msg1.escapedBody(), msg2.escapedBody());
 
 			msg1.setBody("NEW", Kopete::Message::PlainText);
-			CHECK(msg1.plainBody(), QString("NEW"));
-			CHECK(msg2.plainBody(), QString("foo"));
+			QCOMPARE(msg1.plainBody(), QString("NEW"));
+			QCOMPARE(msg2.plainBody(), QString("foo"));
 		}
-		CHECK(msg1.plainBody(), QString("NEW"));
+		QCOMPARE(msg1.plainBody(), QString("NEW"));
 
 		msg1 = msg1;
-		CHECK(msg1.plainBody(), QString("NEW"));
+		QCOMPARE(msg1.plainBody(), QString("NEW"));
 	}
-}
-
-void KopeteMessage_Test::setup()
-{
 }
 
 void KopeteMessage_Test::testLinkParser()
@@ -260,7 +239,7 @@ void KopeteMessage_Test::testLinkParser()
 		// if it doesn't, skip the testcase
 		if ( ! expectedFile.exists() )
 		{
-			SKIP("Warning! expected output for testcase "+ *it + " not found. Skiping testcase");
+			QSKIP("Warning! expected output for testcase not found. Skiping testcase", SkipSingle);
 			continue;
 		}
 		if ( inputFile.open( QIODevice::ReadOnly ) && expectedFile.open( QIODevice::ReadOnly ))
@@ -298,17 +277,18 @@ void KopeteMessage_Test::testLinkParser()
 			if ( fileName.section("-", 0, 0) == QString::fromLatin1("broken") )
 			{
 				//kdDebug() << "checking known-broken testcase: " << fileName << endl;
-				XFAIL(result, expectedData);
+				QEXPECT_FAIL("", "Checking know-broken testcase", Continue);
+				QCOMPARE(result, expectedData);
 			}
 			else
 			{
 				//kdDebug() << "checking known-working testcase: " << fileName << endl;
-				CHECK(result, expectedData);
+				QCOMPARE(result, expectedData);
 			}
 		}
 		else
 		{
-			SKIP("Warning! can't open testcase files for "+ *it + ". Skiping testcase");
+			QSKIP("Warning! can't open testcase files for. Skiping testcase", SkipSingle);
 			continue;
 		}
 	}

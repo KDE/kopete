@@ -4,14 +4,16 @@ AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_ASCII_CAST -DQT_NO_COMPAT \
 METASOURCES = AUTO
 
 AM_LDFLAGS = $(QT_LDFLAGS) $(X_LDFLAGS) $(KDE_RPATH)
-LDADD = ../libkopete.la -lQtTest_debug
+LDADD = ../libkopete.la -lQtTest_debug mock/libkopete_mock.la
 
 #check_LTLIBRARIES = kunittest_kopetemessage_test.la kunittest_kopetecontactlist_test.la
 
-check_PROGRAMS = kopeteemoticontest
-TESTS = kopeteemoticontest
+check_PROGRAMS = kopeteemoticontest kopetemessage_test
+TESTS = kopeteemoticontest kopetemessage_test
 
 kopeteemoticontest_SOURCES = kopeteemoticontest.cpp
+
+kopetemessage_test_SOURCES = kopetemessage_test.cpp
 
 #check_PROGRAMS = kopetewallettest_program kopetepasswordtest_program
 

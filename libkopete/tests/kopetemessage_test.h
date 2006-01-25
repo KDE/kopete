@@ -19,7 +19,7 @@
 #ifndef KOPETEMESSAGE_TEST_H
 #define KOPETEMESSAGE_TEST_H
 
-#include <kunittest/tester.h>
+#include <QObject>
 
 #define private public
 #include "kopetemessage.h"
@@ -31,18 +31,17 @@ class Kopete::MetaContact;
 class Kopete::Contact;
 
 // change to SlotTester when it works
-class KopeteMessage_Test : public KUnitTest::Tester
+class KopeteMessage_Test : public QObject
 {
+	Q_OBJECT
 public:
 	KopeteMessage_Test();
-	void allTests();
 
-public slots:
+private slots:
 	void testPrimitives();
 	void testLinkParser();
 
 private:
-	void setup();
 	Kopete::Message *m_message;
 	Kopete::Protocol *m_protocol;
 	Kopete::Account *m_account;
