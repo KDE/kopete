@@ -231,7 +231,7 @@ void Message::setBody( const QString &body, MessageFormat f )
 		theBody.remove( QString::fromLatin1("\n") );
 	}
 
-	d->body=body;
+	d->body=theBody;
 	d->format = f;
 }
 
