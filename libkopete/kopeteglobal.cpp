@@ -25,6 +25,8 @@
 #include <kmimetype.h>
 #include <kmessagebox.h>
 #include <kprogressbar.h>
+#include <kprogressdialog.h>
+
 #include <kstandarddirs.h>
 #include <ktar.h>
 
@@ -200,7 +202,7 @@ const ContactPropertyTmpl &Properties::createProp(const QString &key,
 /*		kdDebug(14000) << k_funcinfo <<
 			"CREATING NEW ContactPropertyTmpl WITH key = " << key  <<
 			", label = " << label << ", persisten = " << persistent << endl;*/
-		d->mTemplates.insert(key,  ContactPropertyTmpl(key, label, icon, persistent));
+		d->mTemplates.insert(key,  ContactPropertyTmpl(key, label, icon, persistent ? ContactPropertyTmpl::PersistentProperty : ContactPropertyTmpl::NoProperty));
 	}
 	return tmpl(key);
 }
@@ -232,9 +234,9 @@ void installEmoticonTheme(const QString &archiveName)
 		return;
 	}
 
-	progressDlg = new KProgressDialog(0 , "emoticonInstProgress",
+	progressDlg = new KProgressDialog(0,
 	 	i18n("Installing Emoticon Themes..."), QString::null, true);
-	progressDlg->progressBar()->setTotalSteps(foundThemes.count());
+	progressDlg->progressBar()->setMaximum(foundThemes.count());
 	progressDlg->show();
 	kapp->processEvents();
 
@@ -312,8 +314,8 @@ void installEmoticonTheme(const QString &archiveName)
 
 	// check if all steps were done, if there are skipped ones then we didn't
 	// succeed copying all dirs from the tarball
-	if (progressDlg->progressBar()->totalSteps() !=
-		progressDlg->progressBar()->progress())
+	if (progressDlg->progressBar()->maximum() !=
+		progressDlg->progressBar()->value())
 	{
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(),
 			KMessageBox::Error,

@@ -26,6 +26,9 @@
 //Added by qt3to4:
 #include <QPixmap>
 
+// KDE
+#include <kurl.h>
+
 // Kopete
 #include "kopetepasswordedaccount.h"
 #include "kopeteawaydialog.h"
@@ -43,7 +46,7 @@ class YahooProtocol;
 class YahooWebcam;
 class YahooConferenceChatSession;
 class KTempFile;
-struct KURL;
+
 namespace Kopete{
 class Transfer;
 class ChatSession;

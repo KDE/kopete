@@ -578,8 +578,8 @@ void HistoryDialog::slotContactChanged(int index)
 
 void HistoryDialog::initProgressBar(const QString& text, int nbSteps)
 {
-		mMainWidget->searchProgress->setTotalSteps(nbSteps);
-		mMainWidget->searchProgress->setProgress(0);
+		mMainWidget->searchProgress->setMaximum(nbSteps);
+		mMainWidget->searchProgress->setValue(0);
 		mMainWidget->searchProgress->show();
 		mMainWidget->statusLabel->setText(text);
 }

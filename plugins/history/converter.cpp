@@ -25,6 +25,7 @@
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
+#include <kprogressdialog.h>
 #include <kprogressbar.h>
 #include <kapplication.h>
 #include <ksavefile.h>
@@ -41,7 +42,7 @@ void HistoryPlugin::convertOldHistory()
 	bool deleteFiles=  KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
 		i18n( "Would you like to remove old history files?" ) , i18n( "History Converter" ), KStdGuiItem::del(), i18n("Keep") ) == KMessageBox::Yes;
 
-	KProgressDialog *progressDlg=new KProgressDialog(Kopete::UI::Global::mainWidget() , "history_progress_dlg" , i18n( "History converter" ) ,
+	KProgressDialog *progressDlg=new KProgressDialog(Kopete::UI::Global::mainWidget() , i18n( "History converter" ) ,
 		 QString::null , true); //modal  to  make sure the user will not doing stupid things (we have a kapp->processEvents())
 	progressDlg->setAllowCancel(false); //because i am too lazy to allow to cancel
 
@@ -113,7 +114,7 @@ void HistoryPlugin::convertOldHistory()
 			QFileInfo fi2;
 
 			progressDlg->progressBar()->reset();
-			progressDlg->progressBar()->setTotalSteps(d2.count());
+			progressDlg->progressBar()->setMaximum(d2.count());
 			progressDlg->setLabel(i18n("Parsing old history in %1").arg(fi.fileName()));
 			progressDlg->show(); //if it was not already showed...
 
@@ -292,7 +293,7 @@ void HistoryPlugin::convertOldHistory()
 					}
 
 				}
-				progressDlg->progressBar()->setProgress(progressDlg->progressBar()->progress()+1);
+				progressDlg->progressBar()->setValue(progressDlg->progressBar()->value()+1);
 			}
 		}
 	}

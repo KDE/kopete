@@ -4,7 +4,9 @@
     Kopete::Contact Property class
 
     Copyright (c) 2004    by Stefan Gehn <metz AT gehn.net>
-    Kopete    (c) 2004    by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2006    by Michaël Larouche <michael.larouche@kdemail.net>
+
+    Kopete    (c) 2004-2006    by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -19,7 +21,8 @@
 #ifndef _KOPETECONTACTPROPERTY_H_
 #define _KOPETECONTACTPROPERTY_H_
 
-#include <qvariant.h>
+#include <QVariant>
+#include <QFlags>
 
 #include "kopete_export.h"
 
@@ -28,6 +31,7 @@ namespace Kopete
 
 /**
  * @author Stefan Gehn <metz AT gehn.net>
+ * @author Michaël Larouche <michael.larouche@kdemail.net>
  *
  * The template class for registering properties in Kopete
  * You need to use this if you want to set properties for a
@@ -36,6 +40,15 @@ namespace Kopete
 class KOPETE_EXPORT ContactPropertyTmpl
 {
 	public:
+		enum ContactPropertyOption 
+		{ 
+			NoProperty = 0x0,
+			PersistentProperty = 0x1, 
+			RichTextProperty = 0x2, 
+			PrivateProperty = 0x4 
+		};
+		Q_DECLARE_FLAGS(ContactPropertyOptions, ContactPropertyOption)
+
 		/**
 		 * Constructor only used for empty ContactPropertyTmpl objects
 		 *
@@ -48,18 +61,12 @@ class KOPETE_EXPORT ContactPropertyTmpl
 		 * @param key internal unique key for this template
 		 * @param label a label to show for properties based on this template
 		 * @param icon name of the icon to show for properties based on this template
-		 * @param persistent if true, properties based on this template will be
-		 *  saved to the contactlist.
-		 * @param richText Indicate that this property should be able to handle rich text
-		 * @param privateProp if true, properties based on this template won't be
-		 *  visible to the user
+		 * @param options set the options for that property. See ContactPropertyOption enum.
 		 **/
 		ContactPropertyTmpl( const QString &key,
 			const QString &label,
 			const QString &icon = QString::null,
-			bool persistent = false,
-			bool richText = false,
-			bool privateProp = false );
+			ContactPropertyOptions options = NoProperty);
 
 		/**
 		 * Copy constructor
@@ -89,6 +96,11 @@ class KOPETE_EXPORT ContactPropertyTmpl
 		 * Getter for icon to show aside or instead of @p label()
 		 **/
 		const QString &icon() const;
+
+		/**
+	 	 * Return the options for that property.
+		 */
+		ContactPropertyOptions options() const;
 
 		/**
 		 * Returns true if properties based on this template should
@@ -126,6 +138,7 @@ class KOPETE_EXPORT ContactPropertyTmpl
 		Private *d;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(ContactPropertyTmpl::ContactPropertyOptions)
 
 /**
  * @author Stefan Gehn <metz AT gehn.net>
@@ -135,7 +148,6 @@ class KOPETE_EXPORT ContactPropertyTmpl
  **/
 class KOPETE_EXPORT ContactProperty
 {
-	// TODO: Add d-pointer !
 	public:
 		/**
 		 * Constructor only used for empty ContactProperty objects
@@ -185,8 +197,8 @@ class KOPETE_EXPORT ContactProperty
 		typedef QMap<QString, ContactProperty> Map;
 
 	private:
-		QVariant mValue;
-		ContactPropertyTmpl mTemplate;
+		class Private;
+		Private *d;
 };
 
 } // END namespace Kopete

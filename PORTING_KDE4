@@ -20,6 +20,9 @@ Libkopete changes
    - Remplaced PortingDict, now a QMultiHash<QByteArray, PropertyData
    - Remplaced all const char * parameters with const QByteArray &
 
+*) kopetecontactproperty.h
+   - Remvoed bool flags from constructor. Use ContactPropertyOption enum instead.
+  
 *) kopetexsl.h
    - Was removed in 0.12 version.
 

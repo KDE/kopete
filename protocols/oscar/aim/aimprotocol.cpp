@@ -31,6 +31,7 @@
 #include "kopeteglobal.h"
 #include "kopeteuiglobal.h"
 #include "kopetemetacontact.h"
+#include "kopetecontactproperty.h"
 
 #include <kdialogbase.h>
 #include <kmessagebox.h>
@@ -226,9 +227,9 @@ AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
 							Kopete::OnlineStatusManager::HasAwayMessage ),
 	statusConnecting(Kopete::OnlineStatus::Connecting, 99, this, 99, QStringList(QString("aim_connecting")), i18n("Connecting...")),
 	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
-	clientFeatures("clientFeatures", i18n("Client Features"), 0, false),
-	clientProfile( "clientProfile", i18n( "User Profile"), 0, false, true),
-	iconHash("iconHash", i18n("Buddy Icon MD5 Hash"), QString(), true, false, true)
+	clientFeatures("clientFeatures", i18n("Client Features"), 0),
+	clientProfile( "clientProfile", i18n( "User Profile"), 0, Kopete::ContactPropertyTmpl::RichTextProperty),
+	iconHash("iconHash", i18n("Buddy Icon MD5 Hash"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty)
 {
 	if (protocolStatic_)
 		kdDebug(14152) << k_funcinfo << "AIM plugin already initialized" << endl;

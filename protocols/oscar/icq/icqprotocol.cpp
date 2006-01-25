@@ -47,6 +47,7 @@
 #include "kopeteuiglobal.h"
 #include "accountselector.h"
 #include "kopeteaccountmanager.h"
+#include "kopetecontactproperty.h"
 
 #include "oscartypeclasses.h"
 
@@ -172,9 +173,9 @@ ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
 	emailAddress(Kopete::Global::Properties::self()->emailAddress()),
 	ipAddress("ipAddress", i18n("IP Address") ),
-	clientFeatures("clientFeatures", i18n("Client Features"), 0, false),
-	buddyIconHash("iconHash", i18n("Buddy Icon MD5 Hash"), QString::null, true, false, true),
-    contactEncoding( "contactEncoding", i18n( "Contact Encoding" ), QString::null, true, false, true )
+	clientFeatures("clientFeatures", i18n("Client Features"), 0),
+buddyIconHash("iconHash", i18n("Buddy Icon MD5 Hash"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty ),
+contactEncoding( "contactEncoding", i18n( "Contact Encoding" ), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty )
 
 {
 	if (protocolStatic_)

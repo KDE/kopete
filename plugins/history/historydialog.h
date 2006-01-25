@@ -25,6 +25,7 @@
 
 #include <kdialogbase.h>
 #include <klistview.h>
+#include <kurl.h>
 
 #include "kopetemessage.h"
 
@@ -37,7 +38,6 @@ class HistoryLogger;
 class KHTMLView;
 class KHTMLPart;
 
-class KURL;
 namespace KParts { struct URLArgs; class Part; }
 
 

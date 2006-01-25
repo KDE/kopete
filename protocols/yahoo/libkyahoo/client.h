@@ -26,6 +26,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 #include <Q3CString>
+#include <kurl.h>
 
 #include "rtf2html.h"
 #include "transfer.h"
@@ -37,7 +38,6 @@ class QTimer;
 class ClientStream;
 class KNetworkConnector;
 class Task;
-class KURL;
 class KTempFile;
 
 class Client : public QObject

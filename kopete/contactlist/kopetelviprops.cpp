@@ -315,7 +315,7 @@ void KopeteMetaLVIProps::slotLoadPhotoSources()
 			m_withPhotoContacts.insert(mainWidget->cmbAccountPhoto->count() - 1  , citem );
 		}
 	}
-	mainWidget->cmbPhotoUrl->setKURL(item->metaContact()->customPhoto().url());
+	mainWidget->cmbPhotoUrl->setKUrl(item->metaContact()->customPhoto().url());
 
 	Kopete::MetaContact::PropertySource photoSource = item->metaContact()->photoSource();
 
@@ -570,12 +570,8 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KUrlRequester *requester )
 
 void KopeteMetaLVIProps::slotClearPhotoClicked()
 {
-#if KDE_IS_VERSION(3,4,0)
-	mainWidget->cmbPhotoUrl->setKURL( KURL() );
-#else
-	mainWidget->cmbPhotoUrl->setURL( QString::null );
-#endif
-	item->metaContact()->setPhoto( KURL() );
+	mainWidget->cmbPhotoUrl->setKUrl( KUrl() );
+	item->metaContact()->setPhoto( KUrl() );
 
 	slotEnableAndDisableWidgets();
 }

@@ -19,8 +19,9 @@
 
 #include "task.h"
 
+#include <kurl.h>
+
 class QString;
-class KURL;
 /**
 @author André Duffeck
 */

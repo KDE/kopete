@@ -4,7 +4,9 @@
     Kopete::Contact Property class
 
     Copyright (c) 2004    by Stefan Gehn <metz AT gehn.net>
-    Kopete    (c) 2004    by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2006    by Michaël Larouche <michael.larouche@kdemail.net>
+
+    Kopete    (c) 2004-2006    by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -29,9 +31,7 @@ public:
 	QString key;
 	QString label;
 	QString icon;
-	bool persistent;
-	bool richText;
-	bool privateProp;
+	ContactPropertyOptions options;
 	unsigned int refCount;
 };
 
@@ -42,12 +42,12 @@ ContactPropertyTmpl::ContactPropertyTmpl()
 {
 	d = new Private;
 	d->refCount = 1;
-	d->persistent = false;
+	d->options = NoProperty;
 	// Don't register empty template
 }
 
 ContactPropertyTmpl::ContactPropertyTmpl(const QString &key,
-	const QString &label, const QString &icon, bool persistent, bool richText, bool privateProp)
+	const QString &label, const QString &icon, ContactPropertyOptions options)
 {
 	ContactPropertyTmpl other = Kopete::Global::Properties::self()->tmpl(key);
 	if(other.isNull())
@@ -59,9 +59,7 @@ ContactPropertyTmpl::ContactPropertyTmpl(const QString &key,
 		d->key = key;
 		d->label = label;
 		d->icon = icon;
-		d->persistent = persistent;
-		d->richText = richText;
-		d->privateProp = privateProp;
+		d->options = options;
 		Kopete::Global::Properties::self()->registerTemplate(key, (*this));
 	}
 	else
@@ -112,7 +110,7 @@ bool ContactPropertyTmpl::operator==(const ContactPropertyTmpl &other) const
 		d->key == other.d->key &&
 		d->label == other.d->label &&
 		d->icon == other.d->key &&
-		d->persistent == other.d->persistent);
+		d->options == other.d->options);
 }
 
 bool ContactPropertyTmpl::operator!=(const ContactPropertyTmpl &other) const
@@ -121,7 +119,7 @@ bool ContactPropertyTmpl::operator!=(const ContactPropertyTmpl &other) const
 		d->key != other.d->key ||
 		d->label != other.d->label ||
 		d->icon != other.d->key ||
-		d->persistent != other.d->persistent);
+		d->options != other.d->options);
 }
 
 
@@ -140,19 +138,24 @@ const QString &ContactPropertyTmpl::icon() const
 	return d->icon;
 }
 
+ContactPropertyTmpl::ContactPropertyOptions ContactPropertyTmpl::options() const
+{
+	return d->options;
+}
+
 bool ContactPropertyTmpl::persistent() const
 {
-	return d->persistent;
+	return d->options & PersistentProperty;
 }
 
 bool ContactPropertyTmpl::isRichText() const
 {
-	return d->richText;
+	return d->options & RichTextProperty;
 }
 
 bool ContactPropertyTmpl::isPrivate() const
 {
-	return d->privateProp;
+	return d->options & PrivateProperty;
 }
 
 bool ContactPropertyTmpl::isNull() const
@@ -166,15 +169,24 @@ bool ContactPropertyTmpl::isNull() const
 
 ContactProperty ContactProperty::null;
 
+class ContactProperty::Private
+{
+public:
+	QVariant value;
+	ContactPropertyTmpl propertyTemplate;
+};
+
 ContactProperty::ContactProperty()
+ : d(new Private)
 {
 }
 
 ContactProperty::ContactProperty(const ContactPropertyTmpl &tmpl,
 	const QVariant &val)
+ : d(new Private)
 {
-	mTemplate = tmpl;
-	mValue = val;
+	d->propertyTemplate = tmpl;
+	d->value = val;
 }
 
 ContactProperty::~ContactProperty()
@@ -184,22 +196,22 @@ ContactProperty::~ContactProperty()
 
 const QVariant &ContactProperty::value() const
 {
-	return mValue;
+	return d->value;
 }
 
 const ContactPropertyTmpl &ContactProperty::tmpl() const
 {
-	return mTemplate;
+	return d->propertyTemplate;
 }
 
 bool ContactProperty::isNull() const
 {
-	return mValue.isNull();
+	return d->value.isNull();
 }
 
 bool ContactProperty::isRichText() const
 {
-	return mTemplate.isRichText();
+	return d->propertyTemplate.isRichText();
 }
 
 } // END namespace Kopete

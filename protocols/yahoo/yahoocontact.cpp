@@ -50,7 +50,6 @@
 #include <ktempfile.h>
 #include <kio/global.h>
 #include <kio/job.h>
-#include <kurl.h>
 #include <kio/jobclasses.h>
 #include <kimageio.h>
 #include <kstandarddirs.h>

@@ -551,7 +551,7 @@ void KopeteIdentityConfig::slotChangePhoto(const QString &photoUrl)
 
 void KopeteIdentityConfig::slotClearPhoto()
 {
-	d->m_view->comboPhotoURL->setKURL( KURL() );
+	d->m_view->comboPhotoURL->setKUrl( KUrl() );
 	slotEnableAndDisableWidgets();
 }
 

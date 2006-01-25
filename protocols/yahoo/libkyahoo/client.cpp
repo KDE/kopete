@@ -25,7 +25,6 @@
 #include <Q3CString>
 
 #include <kdebug.h>
-#include <kurl.h>
 
 #include "yahooclientstream.h"
 #include "yahooconnector.h"

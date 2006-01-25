@@ -26,6 +26,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 #include <QList>
+#include <kurl.h>
 
 class KAction;
 class KTempFile;
@@ -38,7 +39,6 @@ class YahooProtocol;
 class YahooAccount;
 class YahooWebcamDialog;
 class YahooChatSession;
-struct KURL;
 
 class YahooContact : public Kopete::Contact
 {

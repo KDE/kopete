@@ -33,6 +33,7 @@
 #include "kopeteaccountmanager.h"
 #include "kopeteonlinestatusmanager.h"
 #include "kopeteglobal.h"
+#include "kopetecontactproperty.h"
 
 typedef KGenericFactory<YahooProtocol> YahooProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_yahoo, YahooProtocolFactory( "kopete_yahoo" )  )
@@ -55,9 +56,9 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 	Idle( Kopete::OnlineStatus::Away,           15, this, 999, QStringList(QString::fromUtf8("yahoo_idle")),          i18n( "Idle" ),         i18n( "Idle" ),         Kopete::OnlineStatusManager::Idle ),
 	Connecting( Kopete::OnlineStatus::Connecting,2, this, 555, QStringList(QString::fromUtf8("yahoo_connecting")),    i18n( "Connecting" ), i18n("Connecting"), Kopete::OnlineStatusManager::HideFromMenu ),
 	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
-	iconCheckSum("iconCheckSum", i18n("Buddy Icon Checksum"), QString::null, true, false, true),
-	iconExpire("iconExpire", i18n("Buddy Icon Expire"), QString::null, true, false, true),
-	iconRemoteUrl("iconRemoteUrl", i18n("Buddy Icon Remote Url"), QString::null, true, false, true)
+	iconCheckSum("iconCheckSum", i18n("Buddy Icon Checksum"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty),
+	iconExpire("iconExpire", i18n("Buddy Icon Expire"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty),
+	iconRemoteUrl("iconRemoteUrl", i18n("Buddy Icon Remote Url"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty)
 
 {
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;

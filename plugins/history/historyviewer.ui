@@ -52,7 +52,7 @@
                         <string>Ready</string>
                     </property>
                 </widget>
-                <widget class="KProgress">
+                <widget class="KProgressBar">
                     <property name="name">
                         <cstring>searchProgress</cstring>
                     </property>

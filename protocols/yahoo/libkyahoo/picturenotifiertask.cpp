@@ -21,7 +21,7 @@
 #include "client.h"
 #include <qstring.h>
 #include <qstringlist.h>
-#include <kurl.h>
+
 
 PictureNotifierTask::PictureNotifierTask(Task* parent) : Task(parent)
 {

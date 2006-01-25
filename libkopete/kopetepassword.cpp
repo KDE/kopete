@@ -36,23 +36,8 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kiconloader.h>
+#include <kstringhandler.h>
 #include <kpassworddialog.h>
-
-/**
- * Function for symmetrically (en/de)crypting strings for config file,
- * taken from KMail.
- *
- * @author Stefan Taferner <taferner@alpin.or.at>
- */
-static QString cryptStr( const QString &aStr )
-{
-	//Once Kopete depends on 3.2 just remove this function and use KStringHandler::obscure
-	QString result;
-	for ( int i = 0; i < aStr.length(); i++ )
-		result += ( aStr[ i ].unicode() < 0x20) ? aStr[ i ] : QChar( 0x1001F - aStr[ i ].unicode() );
-
-	return result;
-}
 
 class Kopete::Password::Private
 {
@@ -409,7 +394,7 @@ void Kopete::Password::readConfig()
 	if ( passwordCrypted.isNull() )
 		d->passwordFromKConfig = QString::null;
 	else
-		d->passwordFromKConfig = cryptStr( passwordCrypted );
+		d->passwordFromKConfig = KStringHandler::obscure( passwordCrypted );
 
 	d->remembered = config->readEntry( "RememberPassword", false );
 	d->isWrong = config->readEntry( "PasswordIsWrong", false );
@@ -432,7 +417,7 @@ void Kopete::Password::writeConfig()
 	config->setGroup( d->configGroup );
 
 	if ( d->remembered && !d->passwordFromKConfig.isNull() )
-		config->writeEntry( "Password", cryptStr( d->passwordFromKConfig ) );
+		config->writeEntry( "Password", KStringHandler::obscure( d->passwordFromKConfig ) );
 	else
 		config->deleteEntry( "Password" );
 

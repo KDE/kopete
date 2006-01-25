@@ -18,7 +18,8 @@
 #ifndef KOPETEMIMETYPEHANDLER_H
 #define KOPETEMIMETYPEHANDLER_H
 
-class KURL;
+#include <kurl.h>
+
 class QString;
 class QStringList;
 

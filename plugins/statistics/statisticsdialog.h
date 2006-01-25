@@ -18,6 +18,7 @@
 
 #include <qwidget.h>
 #include <kdialogbase.h>
+#include <kurl.h>
 #include "kopetemetacontact.h"
 
 class Q3CanvasView;
@@ -30,7 +31,7 @@ class StatisticsDB;
 class StatisticsContact;
 
 class KHTMLPart;
-class KURL;
+
 namespace KParts
 {
 	class URLArgs;

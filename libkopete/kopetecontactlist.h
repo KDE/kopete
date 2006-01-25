@@ -22,9 +22,10 @@
 #include <qobject.h>
 #include <QList>
 
+#include <kurl.h>
+
 #include "kopete_export.h"
 
-class KURL;
 class QDomDocument;
 
 

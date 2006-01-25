@@ -23,17 +23,16 @@
 
 #include "kopetecontactlistelement.h"
 #include <QList>
-#include <qstring.h>
+#include <QString>
 
 #include <kdemacros.h>
+#include <kurl.h>
 #include "kopete_export.h"
 
 #include "kopetecontactlistelement.h"
 #include "kopeteonlinestatus.h"
 
 class QDomNode;
-
-class KURL;
 
 namespace Kopete {
 

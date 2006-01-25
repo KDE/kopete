@@ -38,7 +38,6 @@
 #include <kmessagebox.h>
 #include <kapplication.h>
 #include <krun.h>
-#include <kurl.h>
 #include <kstandarddirs.h>
 #include <kstandarddirs.h>
 

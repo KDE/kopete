@@ -87,12 +87,15 @@ void ChatTextEditPart::toggleAutoSpellCheck( bool enabled )
 		enabled = false;
 
 	m_autoSpellCheckEnabled = enabled;
+#warning Port to new SpellHightlighter interface, disabled to make compile (-DarkShock)
+#if 0
 	if ( spellHighlighter() )
 	{
 		spellHighlighter()->setAutomatic( enabled );
 		spellHighlighter()->setActive( enabled );
 	}
 	edit()->setCheckSpellingEnabled( enabled );
+#endif
 }
 
 bool ChatTextEditPart::autoSpellCheckEnabled() const

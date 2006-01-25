@@ -100,8 +100,8 @@ public:
 
 		QString displayName;
 		Kopete::Emoticons *e = Kopete::Emoticons::self();
-		Q3ValueList<Emoticons::Token> t = e->tokenize( metaContact->displayName());
-		Q3ValueList<Emoticons::Token>::iterator it;
+		QList<Emoticons::Token> t = e->tokenize( metaContact->displayName());
+		QList<Emoticons::Token>::iterator it;
 		for( it = t.begin(); it != t.end(); ++it )
 		{
 			if( (*it).type == Kopete::Emoticons::Image )
