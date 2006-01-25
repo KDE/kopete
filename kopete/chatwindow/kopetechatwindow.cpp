@@ -952,9 +952,7 @@ void KopeteChatWindow::slotSendMessage()
 
 void KopeteChatWindow::slotPrepareContactMenu(void)
 {
-#warning commented to make it compile
-#if 0
-	Q3PopupMenu *contactsMenu = actionContactMenu->popupMenu();
+	KMenu *contactsMenu = actionContactMenu->popupMenu();
 	contactsMenu->clear();
 
 	Kopete::Contact *contact;
@@ -970,7 +968,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 	// 'Contacts' action, or something cleverer.
 	uint contactCount = 0;
 
-	for ( contact = m_them.first(); contact; contact = m_them.next() )
+	foreach(contact, m_them)
 	{
 		KMenu *p = contact->popupMenu();
 		connect ( actionContactMenu->popupMenu(), SIGNAL(aboutToHide()),
@@ -982,10 +980,10 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 			contactsMenu->insertItem( contact->onlineStatus().iconFor( contact ) , contact->contactId(), p );
 
 		//FIXME: This number should be a config option
-		if( ++contactCount == 15 && contact != m_them.getLast() )
+		if( ++contactCount == 15 && contact != m_them.last() )
 		{
 			KActionMenu *moreMenu = new KActionMenu( i18n("More..."),
-				 QString::fromLatin1("folder_open"), contactsMenu );
+				 QString::fromLatin1("folder_open") );
 			connect ( actionContactMenu->popupMenu(), SIGNAL(aboutToHide()),
 				moreMenu, SLOT(deleteLater() ) );
 			moreMenu->plug( contactsMenu );
@@ -993,7 +991,6 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 			contactCount = 0;
 		}
 	}
-#endif
 }
 
 void KopeteChatWindow::slotPreparePlacementMenu()
