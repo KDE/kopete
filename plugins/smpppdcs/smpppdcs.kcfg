@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE kcfg SYSTEM "http://www.kde.org/standards/kcfg/1.0/kcfg.dtd">
+<kcfg> 
+  <kcfgfile name="kopeterc"/> 
+  <group name="SMPPPDCS Plugin"> 
+    <entry name="Password" type="String"> 
+      <label>Password to connect to the SMPPPD.</label> 
+    </entry> 
+    <entry name="ignoredAccounts" type="StringList"> 
+      <label>Accounts to ignore in the plugin.</label> 
+    </entry> 
+    <entry name="server" type="String"> 
+      <label>SMPPPD-Server to connect.</label> 
+      <default>localhost</default>
+    </entry> 
+    <entry name="port" type="UInt"> 
+      <label>SMPPPD-Server port to connect.</label> 
+      <default>3185</default>
+    </entry> 
+    <entry name="useNetstat" type="Bool"> 
+      <label>Use the netstat tool to determine the connection status.</label> 
+      <default>true</default>
+    </entry> 
+    <entry name="useSmpppd" type="Bool"> 
+      <label>Use the SMPPPD to determine the connection status.</label> 
+      <default>false</default>
+    </entry> 
+  </group> 
+</kcfg>
