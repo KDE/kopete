@@ -72,7 +72,7 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 	// Update ContactList
 	setNickName( fullName );
 	setOnlineStatus( static_cast<YahooProtocol*>( m_account->protocol() )->Offline );
-	setFileCapable( true );
+// 	setFileCapable( true );
 	
 	if ( m_account->haveContactList() )
 		syncToServer();
