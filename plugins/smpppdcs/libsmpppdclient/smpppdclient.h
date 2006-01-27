@@ -43,19 +43,19 @@ public:
     bool connect(const QString& server, uint port = 3185);
     void disconnect();
 
-    QStringList getInterfaceConfigurations();
-    bool statusInterface(const QString& ifcfg);
-
+	QStringList getInterfaceConfigurations();
+	bool statusInterface(const QString& ifcfg);
+	
     bool isOnline();
     QString serverID() const;
     QString serverVersion() const;
-
-    void setPassword(const QString& password);
+	
+	void setPassword(const QString& password);
 
 private:
     friend class State;
-
-    void changeState(State * newState);
+    
+	void changeState(State * newState);
     QStringList read() const;
     void write(const char * cmd);
 
@@ -64,7 +64,7 @@ private:
     KNetwork::KStreamSocket * m_sock;
     QString m_serverID;
     QString m_serverVer;
-    QString m_password;
+	QString m_password;
 };
 
 inline void Client::changeState(State * newState) {
@@ -72,7 +72,7 @@ inline void Client::changeState(State * newState) {
 }
 
 inline void Client::setPassword(const QString& password) {
-    m_password = password;
+	m_password = password;
 }
 
 };

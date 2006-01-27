@@ -66,6 +66,14 @@ protected:
      * @return <code>TRUE</code> if an smpppd was found
      */
     bool scan(const QString& ip, const QString& mask);
+	
+    /**
+     * @brief Checks the ip for an smpppd
+	 * 
+     * @param ip the ip to check
+     * @return <code>TRUE</code> if an smpppd was found at the ip
+     */
+    bool scanIP(const QString& ip);
 
 signals:
     /**

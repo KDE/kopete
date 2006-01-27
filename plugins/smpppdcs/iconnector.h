@@ -28,7 +28,7 @@ class IConnector {
 
 public:
     IConnector() {}
-
+    ;
     virtual ~IConnector() {}
 
     /**

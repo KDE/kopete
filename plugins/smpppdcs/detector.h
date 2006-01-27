@@ -17,6 +17,10 @@
 #ifndef DETECTOR_H
 #define DETECTOR_H
 
+#include <qmutex.h>
+
+#define SMPPPDCS_CONFIG_GROUP "SMPPPDCS Plugin"
+
 class IConnector;
 
 /**
@@ -48,7 +52,7 @@ public:
      */
 	virtual ~Detector() {}
 
-    virtual void checkStatus() const = 0;
+    virtual void checkStatus() = 0;
 	
 	virtual void smpppdServerChange() {}
 

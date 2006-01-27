@@ -34,13 +34,14 @@ class DetectorSMPPPD : public DetectorDCOP {
 
     DetectorSMPPPD(const DetectorSMPPPD&);
     DetectorSMPPPD& operator=(const DetectorSMPPPD&);
-
+	
 public:
     DetectorSMPPPD(IConnector* connector);
     virtual ~DetectorSMPPPD();
 
-    virtual void checkStatus() const;
-
+    virtual void checkStatus();
+	
+	virtual void smpppdServerChange();
 };
 
 #endif

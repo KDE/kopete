@@ -15,22 +15,15 @@ activates all Kopete accounts, too.
 Changelog
 =========
 
-0.79 (2006/01/25)
-* using KConfigXT for configuration
-* using dcopidl2cpp stub generated from kinternetiface.h (from kinternet package),
-  no more own implementation
-* experimental implementation of the the KDED-NetworkStatus (not active, yet)
-* significantly speeded up automatic detection of a SMPPPD
-* BUGFIX: reloading the plugin in a already running Kopete will no more 
-  result in an inactive plugin
+0.79 (2006/01/18)
 * refactoring to allow easy implementation of new detection methods
-* even more speed improvements
+* speed improvements
 
 0.75 (2006/01/01)
 * use of KSocketStream instead of deprecated KExtendedSocket
 * progressbar while searching for an smpppd on the local network
 * automatically found smpppd server is resolved via DNS
-* Fixed Bug 111369: better detection of a SMPPPD and no more freeze of Kopete
+* Fixed Bug 111369: better detection of SMPPPD and no more freeze of Kopete
 
 0.74 (2005/12/27)
 * minor bugfixes
@@ -45,7 +38,7 @@ Changelog
   Accounts can be excluded from the plugin connect/disconnect
   mechanism
 * connection detection enhanced: first kinternet is asked via
-  DCOP for a running connection, if this fails the smpppd is asked
+  DCOP for a running connection, if this fails smpppdcs is asked
 * improved startup detection, compatible with recent CVS changes
 * some API chages in the config module
 

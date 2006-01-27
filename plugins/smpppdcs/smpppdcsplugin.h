@@ -62,14 +62,6 @@ public:
      */
     virtual ~SMPPPDCSPlugin();
 
-    // Implementation of DCOP iface
-    /**
-     * @brief Checks if we are online.
-     * @note This method is reserved for future use. Do not use at the moment!
-     * @return <code>TRUE</code> if online, otherwise <code>FALSE</code>
-     */
-    virtual bool isOnline() const;
-
     /**
      * @brief Sets the status in all allowed accounts.
      * Allowed accounts are set in the config dialog of the plugin.
@@ -78,27 +70,39 @@ public:
      */
     virtual void setConnectedStatus( bool newStatus );
 
+    // Implementation of DCOP iface
+
+    /**
+     * @brief Checks if we are online.
+     * @note This method is reserved for future use. Do not use at the moment!
+     * @return <code>TRUE</code> if online, otherwise <code>FALSE</code>
+     */
+    virtual bool isOnline();
+
     virtual QString detectionMethod() const;
 
-    virtual void aboutToUnload();
+protected:
+    /**
+     * @brief Should the smpppd be used for inquiring
+     * @return <code>TRUE</code> for smpppd, <code>FALSE</code> for netstat
+     */
+    bool useSmpppd() const;
 
 public slots:
-    void smpppdServerChanged(const QString& server);
+	void smpppdServerChanged(const QString& server);
 
 private slots:
     void slotCheckStatus();
     void allPluginsLoaded();
 
 private:
-    
-	void connectAllowed();
+    void connectAllowed();
     void disconnectAllowed();
 
 private:
 
     Detector      * m_detectorSMPPPD;
     Detector      * m_detectorNetstat;
-    Detector      * m_detectorNetworkStatus;
     bool            m_pluginConnected;
     QTimer        * m_timer;
     OnlineInquiry * m_onlineInquiry;

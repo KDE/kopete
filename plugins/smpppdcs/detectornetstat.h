@@ -37,7 +37,7 @@ public:
     DetectorNetstat(IConnector* connector);
     virtual ~DetectorNetstat();
 
-    virtual void checkStatus() const;
+    virtual void checkStatus();
 
 private slots:
     // Original cs-plugin code
@@ -49,7 +49,7 @@ private slots:
     void slotProcessExited(KProcess *process);
 
 private:
-    mutable KProcess * m_process;
+    KProcess * m_process;
 };
 
 #endif
