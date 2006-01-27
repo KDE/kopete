@@ -25,12 +25,13 @@ libkopete_la_SOURCES = connectionmanager.cpp \
 	kopeteblacklister.cpp kopetemessageevent.cpp kopetemessagehandler.cpp \
 	kopetemessagehandlerchain.cpp kopetesimplemessagehandler.cpp kopeteproperties.cpp \
 	kabcpersistence.cpp connectionmanager.skel clientiface.stub managedconnectionaccount.cpp \
-	networkstatuscommon.h kopeteconfig.kcfgc kopeteutils.cpp kopeteprefs.cpp kopetepicture.cpp
+	networkstatuscommon.h kopeteconfig.kcfgc kopeteutils.cpp kopeteprefs.cpp kopetepicture.cpp \
+	kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc
 
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
 libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(LIB_KIO) $(LIB_XSS)
 
-kde_kcfg_DATA = kopete.kcfg
+kde_kcfg_DATA = kopete.kcfg kopeteappearancesettings.kcfg kopetebehaviorsettings.kcfg
 
 #AM_CXXFLAGS = -DQT_PLUGIN
 #kde_widget_LTLIBRARIES = libkopetewidgets.la

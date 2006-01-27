@@ -49,6 +49,7 @@ void KopetePrefs::load()
 //	kdDebug( 14010 ) << k_funcinfo << endl;
 	config->setGroup("Appearance");
 
+	// Appearance config
 	mIconTheme = config->readEntry("EmoticonTheme", defaultTheme());
 	mUseEmoticons = config->readBoolEntry("Use Emoticons", true);
 	mEmoticonsRequireSpaces = config->readBoolEntry("EmoticonsRequireSpaces" , true );
@@ -57,6 +58,7 @@ void KopetePrefs::load()
 	mGreyIdle = config->readBoolEntry("GreyIdleMetaContacts", true);
 	mSortByGroup = config->readBoolEntry("SortByGroup" , true);
 	mTreeView = config->readBoolEntry("TreeView", true);
+	// Behavior config
 	mStartDocked = config->readBoolEntry("StartDocked", false);
 	mUseQueue = config->readBoolEntry("Use Queue", true);
 	mUseStack = config->readBoolEntry("Use Stack", false);
@@ -75,7 +77,7 @@ void KopetePrefs::load()
 	mTrayflashNotifySetCurrentDesktopToChatView = config->readBoolEntry("Trayflash Notification Set Current Desktop To Chat View", false);
 	mSoundIfAway = config->readBoolEntry("Sound Notification If Away", true);
 	mChatWindowPolicy = config->readNumEntry("Chatwindow Policy", 0);
-	mRichText = config->readBoolEntry("RichText editor", false);
+	mRichText = config->readBoolEntry("RichText editor", false); // Not used.
 	mChatWShowSend = config->readBoolEntry("Show Chatwindow Send Button", true);
 	mRememberedMessages = config->readNumEntry("Remembered Messages", 5);
 	mTruncateContactNames = config->readBoolEntry("TruncateContactNames", false);
@@ -87,7 +89,9 @@ void KopetePrefs::load()
 	mHighlightBackground = config->readColorEntry("Highlight Background Color", &tmpColor);
 	tmpColor = KGlobalSettings::highlightedTextColor();
 	mHighlightForeground = config->readColorEntry("Highlight Foreground Color", &tmpColor);
+	// Behavior config
 	mHighlightEnabled = config->readBoolEntry("Highlighting Enabled", true);
+	
 	mBgOverride = config->readBoolEntry("ChatView Override Background", false);
 	mFgOverride = config->readBoolEntry("ChatView Override Foreground", false);
 	mRtfOverride = config->readBoolEntry("ChatView Override RTF", false);
@@ -150,6 +154,7 @@ void KopetePrefs::load()
 	mContactListAnimation = config->readBoolEntry("AnimateChanges", true);
 	mContactListFading = config->readBoolEntry("FadeItems", true);
 	mContactListFolding = config->readBoolEntry("FoldItems", true);
+	// Mouse Navigation is in Behavior Config.
 	mContactListMouseNavigation = config->readBoolEntry("MouseNavigation", false );
 	mContactListAutoHide = config->readBoolEntry("AutoHide", false);
 	mContactListAutoHideVScroll = config->readBoolEntry("AutoHideVScroll", true );

@@ -66,7 +66,7 @@ public:
 	bool raiseMsgWindow() const{ return mRaiseMsgWindow; }
 	bool showEvents() const{ return mShowEvents; }
 	bool trayflashNotify() const { return mTrayflashNotify; }
-	bool spellCheck() const { return mSpellCheck; }
+	bool spellCheck() const { return mSpellCheck; } // Not used.
 	bool queueUnreadMessages() const { return mQueueUnreadMessages; }
 	bool queueOnlyHighlightedMessagesInGroupChats() const { return mQueueOnlyHighlightedMessagesInGroupChats; }
 	bool queueOnlyMessagesOnAnotherDesktop() const { return mQueueOnlyMessagesOnAnotherDesktop; }
@@ -93,7 +93,7 @@ public:
 
 	QString interfacePreference() const { return mInterfacePreference; }
 	bool showTray() const { return mShowTray; }
-	bool richText() const { return mRichText; }
+	bool richText() const { return mRichText; } // Not used.
 	bool chatWShowSend() const { return mChatWShowSend; }
 	bool autoConnect() const { return mAutoConnect; }
 
