@@ -158,7 +158,6 @@ public:
 
 	static MSNProtocol* protocol();
 	static bool validContactId(const QString&);
-	QString clientId();
 	QImage scalePicture(const QImage &picture);
 
 private slots:
@@ -167,7 +166,6 @@ private slots:
 private:
 
 	static MSNProtocol *s_protocol;
-	uint m_clientId;
 
 signals:
 	/**

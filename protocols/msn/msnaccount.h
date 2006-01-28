@@ -102,6 +102,12 @@ public:
 
 	//END
 
+	/**
+	 * Return the client ID for the myself contact of this account.
+	 * It is dynamic to see if we really have a webcam or not.
+	 */
+	QString myselfClientId() const;
+
 public slots:
 	virtual void connectWithPassword( const QString &password ) ;
 	virtual void disconnect() ;
@@ -250,6 +256,11 @@ private:
 	 * I would like an API to request the password WITHOUT askling it.
 	 */
 	QString m_password;
+
+	/**
+	 * Cliend ID is a bitfield that contains supported features for a MSN contact.
+	 */
+	uint m_clientId;
 };
 
 #endif
