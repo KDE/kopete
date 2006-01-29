@@ -142,6 +142,12 @@ QPtrList<KAction> *MSNContact::customContextMenuActions()
 		// Send mail (only available if it is an hotmail account)
 		actionSendMail = new KAction( i18n("Send Email...") , "mail_generic",0, this, SLOT( slotSendMail() ),
 			this, "actionSendMail" );
+
+		// Invite to receive webcam
+		actionWebcamReceive = new KAction( i18n( "View Contact's Webcam" ), "webcamreceive",  0, this, SLOT(slotWebcamReceive() ), this, "msnWebcamReceive" ) ;
+
+		//Send webcam action
+		actionWebcamSend = new KAction( i18n( "Send Webcam" ), "webcamsend",  0, this, SLOT(slotWebcamSend() ), this, "msnWebcamSend" ) ;
 	}
 	else
 		actionBlock->setText( label );
@@ -151,6 +157,9 @@ QPtrList<KAction> *MSNContact::customContextMenuActions()
 	m_actionCollection->append( actionBlock );
 	m_actionCollection->append( actionShowProfile );
 	m_actionCollection->append( actionSendMail );
+	m_actionCollection->append( actionWebcamReceive );
+	m_actionCollection->append( actionWebcamSend );
+
 
 	return m_actionCollection;
 }
