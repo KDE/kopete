@@ -97,7 +97,7 @@ public slots:
 	 */
 	virtual void updateStatus();
 
-	virtual void sendFile(const KURL &sourceURL, const QString&, unsigned int);
+	virtual void sendFile(const KUrl &sourceURL, const QString&, unsigned int);
 
 protected slots:
 	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);

@@ -372,7 +372,7 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 		photo = Kopete::photoFromContact(selectedNameSourceContact());
 		break;
 		case Kopete::MetaContact::SourceCustom:
-		photo = QImage(KURL::decode_string(mainWidget->cmbPhotoUrl->url()));
+		photo = QImage(KUrl::decode_string(mainWidget->cmbPhotoUrl->url()));
 		break;
 	}
 	if( !photo.isNull() )
@@ -436,7 +436,7 @@ void KopeteMetaLVIProps::slotOkClicked()
 	item->metaContact()->setPhotoSource(selectedPhotoSource());
 	item->metaContact()->setPhotoSourceContact( selectedPhotoSourceContact() );
 	if ( !mainWidget->cmbPhotoUrl->url().isEmpty())
-		item->metaContact()->setPhoto(KURL::fromPathOrURL((mainWidget->cmbPhotoUrl->url())));
+		item->metaContact()->setPhoto(KUrl::fromPathOrURL((mainWidget->cmbPhotoUrl->url())));
 	item->metaContact()->setPhotoSyncedWithKABC( mainWidget->chkSyncPhoto->isChecked() );
 	
 	item->metaContact()->setUseCustomIcon(
@@ -552,7 +552,7 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KUrlRequester *requester )
 	soundDirs += KGlobal::dirs()->resourceDirs( "sound" );
 
 	if ( !soundDirs.isEmpty() ) {
-		KURL soundURL;
+		KUrl soundURL;
 		QDir dir;
 		dir.setFilter( QDir::Files | QDir::Readable );
 		QStringList::ConstIterator it = soundDirs.begin();

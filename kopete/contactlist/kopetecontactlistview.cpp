@@ -946,11 +946,11 @@ void KopeteContactListView::slotDropped(QDropEvent *e, Q3ListViewItem *, Q3ListV
 			return;
 		}
 
-		KURL::List urlList = KURL::List::fromMimeData( e->mimeData() );
+		KUrl::List urlList = KUrl::List::fromMimeData( e->mimeData() );
 
-		for ( KURL::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
+		for ( KUrl::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
 		{
-			KURL url = (*it);
+			KUrl url = (*it);
 			if( url.protocol() == QString::fromLatin1("kopetemessage") )
 			{
 				//Add a contact
@@ -1187,9 +1187,9 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 			if ( !Q3UriDrag::canDecode(e) )
 				return false;
 
-			KURL::List urlList = KURL::List::fromMimeData( e->mimeData() );
+			KUrl::List urlList = KUrl::List::fromMimeData( e->mimeData() );
 
-			for ( KURL::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
+			for ( KUrl::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
 			{
 				if( (*it).protocol() != QString::fromLatin1("kopetemessage") && (*it).isLocalFile() )
 					return false; //we can't send links if a locale file is in link

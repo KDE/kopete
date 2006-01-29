@@ -53,7 +53,7 @@ Kopete::FileTransferInfo::FileTransferInfo(  Kopete::Contact *contact, const QSt
 Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, const QString &localFile, bool showProgressInfo)
 	: KIO::Job(showProgressInfo), mInfo(kfti)
 {
-	KURL targ; targ.setPath( localFile );
+	KUrl targ; targ.setPath( localFile );
 	init( targ, showProgressInfo );
 }
 
@@ -61,11 +61,11 @@ Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, const Kopete::
 	: KIO::Job(showProgressInfo), mInfo(kfti)
 {
 	// TODO: use mInfo.url().fileName() after move to protocol-aware filetransfers
-	KURL targ; targ.setPath( mInfo.file() );
+	KUrl targ; targ.setPath( mInfo.file() );
 	init( displayURL( contact, targ.fileName() ), showProgressInfo );
 }
 
-void Kopete::Transfer::init( const KURL &target, bool showProgressInfo )
+void Kopete::Transfer::init( const KUrl &target, bool showProgressInfo )
 {
 	mTarget = target;
 
@@ -81,9 +81,9 @@ Kopete::Transfer::~Transfer()
 {
 }
 
-KURL Kopete::Transfer::displayURL( const Kopete::Contact *contact, const QString &file )
+KUrl Kopete::Transfer::displayURL( const Kopete::Contact *contact, const QString &file )
 {
-	KURL url;
+	KUrl url;
 	url.setProtocol( QString::fromLatin1("kopete") );
 
 	QString host;
@@ -103,18 +103,18 @@ KURL Kopete::Transfer::displayURL( const Kopete::Contact *contact, const QString
 
 // TODO: add possibility of network file transfers;
 //  call mInfo->url() not file()
-KURL Kopete::Transfer::sourceURL()
+KUrl Kopete::Transfer::sourceURL()
 {
 	if( mInfo.direction() == Kopete::FileTransferInfo::Incoming )
 		return displayURL( mInfo.contact(), mInfo.file() );
 	else
 	{
-		KURL url; url.setPath( mInfo.file() );
+		KUrl url; url.setPath( mInfo.file() );
 		return url;
 	}
 }
 
-KURL Kopete::Transfer::destinationURL()
+KUrl Kopete::Transfer::destinationURL()
 {
 	return mTarget;
 }
@@ -225,10 +225,10 @@ void Kopete::TransferManager::slotComplete(KIO::Job *job)
 	}
 }
 
-void Kopete::TransferManager::sendFile( const KURL &file, const QString &fname, unsigned long sz,
+void Kopete::TransferManager::sendFile( const KUrl &file, const QString &fname, unsigned long sz,
 	 bool mustBeLocal,	QObject *sendTo, const char *slot )
 {
-	KURL url(file);
+	KUrl url(file);
 	QString filename;
 	unsigned int size = 0;
 
@@ -260,9 +260,9 @@ void Kopete::TransferManager::sendFile( const KURL &file, const QString &fname, 
 		}
 		else
 		{
-			connect( this, SIGNAL(sendFile(const KURL&, const QString&, unsigned int)), sendTo, slot );
+			connect( this, SIGNAL(sendFile(const KUrl&, const QString&, unsigned int)), sendTo, slot );
 			emit sendFile( url, filename, size );
-			disconnect( this, SIGNAL(sendFile(const KURL&, const QString&, unsigned int)), sendTo, slot );
+			disconnect( this, SIGNAL(sendFile(const KUrl&, const QString&, unsigned int)), sendTo, slot );
 		}
 	}
 }

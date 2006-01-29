@@ -92,7 +92,7 @@ public:
 
 		if ( ! metaContact->picture().isNull() )
         {
-			QString photoName = QString::fromLatin1("kopete-metacontact-photo:%1").arg( KURL::encode_string( metaContact->metaContactId() ));
+			QString photoName = QString::fromLatin1("kopete-metacontact-photo:%1").arg( KUrl::encode_string( metaContact->metaContactId() ));
 			//QMimeSourceFactory::defaultFactory()->setImage( "contactimg", metaContact->photo() );
 			toolTip += QString::fromLatin1("<img src=\"%1\">").arg( photoName );
         }
@@ -131,9 +131,9 @@ public:
 		{
 			Contact* c = (*cit);
 			QString iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
-			.arg( KURL::encode_string( c->protocol()->pluginId() ),
-					KURL::encode_string( c->account()->accountId() ),
-					KURL::encode_string( c->contactId() )
+			.arg( KUrl::encode_string( c->protocol()->pluginId() ),
+					KUrl::encode_string( c->account()->accountId() ),
+					KUrl::encode_string( c->contactId() )
 				);
 
 			toolTip += i18n("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",

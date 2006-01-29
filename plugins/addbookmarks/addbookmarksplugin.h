@@ -34,7 +34,7 @@ public:
     
 private:
     typedef struct S_URLANDNAME{
-		KURL url;
+		KUrl url;
 		QString sender;
     } URLandName;
     typedef QMap<KIO::TransferJob*,URLandName> JobsToURLsMap;
@@ -42,11 +42,11 @@ private:
     JobsToURLsMap m_map;
     BookmarksPrefsSettings m_settings;
     
-    void addKopeteBookmark( KURL url, QString sender );
-    KURL::List* extractURLsFromString( QString text );
+    void addKopeteBookmark( KUrl url, QString sender );
+    KUrl::List* extractURLsFromString( QString text );
     KBookmarkGroup getKopeteFolder();
     KBookmarkGroup getFolder( KBookmarkGroup group, QString folder );
-    bool isURLInGroup( KURL url, KBookmarkGroup group );
+    bool isURLInGroup( KUrl url, KBookmarkGroup group );
     QTextCodec* getPageEncoding( QByteArray data );
 public slots:
     void slotBookmarkURLsInMessage(Kopete::Message & msg);

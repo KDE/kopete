@@ -53,7 +53,7 @@ class KgpgInterface : public QObject {
 	 * @param userID QString the name of the decryption key (only used to prompt user for passphrase)
 	 */
 	static QString KgpgDecryptText(QString text,QString userID);
-//	static QString KgpgDecryptFileToText(KURL srcUrl,QString userID);
+//	static QString KgpgDecryptFileToText(KUrl srcUrl,QString userID);
 
 	/*
 	 * Destructor for the class.
@@ -82,7 +82,7 @@ signals:
 	/**
 	 * @internal structure for the file information
 	 */
-        KURL file;
+        KUrl file;
 	/**
 	 * @internal structure to send signal only once on error.
 	 */

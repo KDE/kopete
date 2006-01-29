@@ -302,7 +302,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 			{
 				//debug( " - it's a single string" );
 				const Field::SingleField *sField = static_cast<const Field::SingleField*>( field );
-// 				QString encoded = KURL::encode_string( sField->value().toString(), 106 /* UTF-8 */);
+// 				QString encoded = KUrl::encode_string( sField->value().toString(), 106 /* UTF-8 */);
 // 				encoded.replace( "%20", "+" );
 // 				dout <<  encoded.ascii();
 

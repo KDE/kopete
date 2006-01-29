@@ -166,7 +166,7 @@ void YahooEditAccount::slotOpenRegister()
 
 void YahooEditAccount::slotSelectPicture()
 {
-	KURL file = KFileDialog::getImageOpenURL( QString::null, this, i18n( "Yahoo Buddy Icon" ) );
+	KUrl file = KFileDialog::getImageOpenURL( QString::null, this, i18n( "Yahoo Buddy Icon" ) );
 
 	if ( file.isEmpty() )
 		return;

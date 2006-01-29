@@ -37,7 +37,7 @@ YahooBuddyIconLoader::~YahooBuddyIconLoader()
 {
 }
 
-void YahooBuddyIconLoader::fetchBuddyIcon( const QString &who, KURL url, int checksum )
+void YahooBuddyIconLoader::fetchBuddyIcon( const QString &who, KUrl url, int checksum )
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	KIO::TransferJob *transfer;

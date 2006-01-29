@@ -143,7 +143,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 
 }
 
-void JabberGroupMemberContact::sendFile ( const KURL &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )
+void JabberGroupMemberContact::sendFile ( const KUrl &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )
 {
 	QString filePath;
 

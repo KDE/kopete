@@ -133,7 +133,7 @@ public:
 public slots:
 	virtual void slotUserInfo();
 	virtual void deleteContact();
-	virtual void sendFile( const KURL &sourceURL = KURL(),
+	virtual void sendFile( const KUrl &sourceURL = KURL(),
 						   const QString &fileName = QString::null, uint fileSize = 0L );
 
 	/**

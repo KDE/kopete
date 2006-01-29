@@ -263,7 +263,7 @@ void JabberGroupContact::removeSubContact ( const XMPP::RosterItem &rosterItem )
 
 }
 
-void JabberGroupContact::sendFile ( const KURL &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )
+void JabberGroupContact::sendFile ( const KUrl &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )
 {
 	QString filePath;
 

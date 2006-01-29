@@ -32,7 +32,7 @@ class ICQProtocolHandler : public Kopete::MimeTypeHandler
 {
 public:
 	ICQProtocolHandler();
-	void handleURL(const QString &mimeType, const KURL & url) const;
+	void handleURL(const QString &mimeType, const KUrl & url) const;
 };
 
 

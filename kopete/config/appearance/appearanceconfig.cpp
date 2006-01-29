@@ -633,7 +633,7 @@ void AppearanceConfig::slotChatStyleVariantSelected(const QString &variantName)
 
 void AppearanceConfig::slotInstallChatStyle()
 {
-	KURL styleToInstall = KFileDialog::getOpenURL( QString::null, QString::fromUtf8("application/x-zip application/x-tgz application/x-tbz"), this, i18n("Choose Chat Window style to install.") );
+	KUrl styleToInstall = KFileDialog::getOpenURL( QString::null, QString::fromUtf8("application/x-zip application/x-tgz application/x-tbz"), this, i18n("Choose Chat Window style to install.") );
 
 	if( !styleToInstall.isEmpty() )
 	{
@@ -818,7 +818,7 @@ void AppearanceConfig::emitChanged()
 
 void AppearanceConfig::installEmoticonTheme()
 {
-	KURL themeURL = KUrlRequesterDlg::getURL(QString::null, this,
+	KUrl themeURL = KUrlRequesterDlg::getURL(QString::null, this,
 			i18n("Drag or Type Emoticon Theme URL"));
 	if ( themeURL.isEmpty() )
 		return;
@@ -853,7 +853,7 @@ void AppearanceConfig::removeSelectedEmoticonTheme()
 	if (res!=KMessageBox::Continue)
 		return;
 
-	KURL themeUrl(KGlobal::dirs()->findResource("emoticons", themeName+"/"));
+	KUrl themeUrl(KGlobal::dirs()->findResource("emoticons", themeName+"/"));
 	KIO::NetAccess::del(themeUrl, this);
 
 	updateEmoticonlist();

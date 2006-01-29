@@ -41,7 +41,7 @@ public:
 
 	virtual bool validateData();
 
-	void setUrl( KURL url );
+	void setUrl( KUrl url );
 
 protected slots:
 	virtual void slotClose();

@@ -34,7 +34,7 @@ class AIMProtocolHandler : public Kopete::MimeTypeHandler
 {
 public:
 	AIMProtocolHandler();
-	void handleURL( const KURL & url ) const;
+	void handleURL( const KUrl & url ) const;
 };
 
 class AIMProtocol : public Kopete::Protocol

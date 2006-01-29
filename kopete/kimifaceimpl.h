@@ -72,7 +72,7 @@ public:
 	/**
 	 * Send the file to the contact
 	 */
-	void sendFile(const QString &uid, const KURL &sourceURL,
+	void sendFile(const QString &uid, const KUrl &sourceURL,
 		const QString &altFileName = QString::null, uint fileSize = 0);
 
 // MUTATORS

@@ -1164,7 +1164,7 @@ void JabberContact::sync ( unsigned int )
 
 }
 
-void JabberContact::sendFile ( const KURL &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )
+void JabberContact::sendFile ( const KUrl &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )
 {
 	QString filePath;
 

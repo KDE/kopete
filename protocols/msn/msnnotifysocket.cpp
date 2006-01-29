@@ -648,7 +648,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		*textStream << hotmailRequest;
 		tmpMailFile.file()->flush();
 
-		KRun::runURL( KURL::fromPathOrURL( tmpMailFile.name() ), "text/html" , true );
+		KRun::runURL( KUrl::fromPathOrURL( tmpMailFile.name() ), "text/html" , true );
 
 	}
 	else if ( cmd == "NOT" )
@@ -694,7 +694,7 @@ void MSNNotifySocket::slotMSNAlertUnwanted()
 void MSNNotifySocket::slotMSNAlertLink(unsigned int action)
 {
 	// index into our action list and pull out the URL that was clicked ..
-	KURL tempURLForLaunch(m_msnAlertURLs[action-1]);
+	KUrl tempURLForLaunch(m_msnAlertURLs[action-1]);
 	
 	KRun::runURL(tempURLForLaunch, QString::fromUtf8("text/html"));
 }

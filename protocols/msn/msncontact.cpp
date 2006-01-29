@@ -576,7 +576,7 @@ void MSNContact::slotShowProfile()
 /**
  * FIXME: Make this a standard KMM API call
  */
-void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, uint /*fileSize*/ )
+void MSNContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uint /*fileSize*/ )
 {
 	QString filePath;
 
@@ -666,7 +666,7 @@ void MSNContact::setDisplayPicture(KTempFile *f)
 	// but the custom emoticon code is to deeply merged in the display picture code while it could be separated.
 	QString newlocation=locateLocal( "appdata", "msnpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 
-	KIO::Job *j=KIO::file_move( KURL::fromPathOrURL( f->name() ) , KURL::fromPathOrURL( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
+	KIO::Job *j=KIO::file_move( KUrl::fromPathOrURL( f->name() ) , KUrl::fromPathOrURL( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
 	
 	f->setAutoDelete(false);
 	delete f;

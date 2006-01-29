@@ -150,12 +150,12 @@ Q_OBJECT
 		/**
 		 * Download the buddy's picture
 		 */
-		void downloadPicture( const QString &userId, KURL url, int checksum );
+		void downloadPicture( const QString &userId, KUrl url, int checksum );
 
 		/**
 		 * Send our picture
 		 */
-		void uploadPicture( KURL url );
+		void uploadPicture( KUrl url );
 
 		/**
 		 * Send checksum of our picture

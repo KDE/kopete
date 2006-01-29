@@ -290,7 +290,7 @@ void MSNEditAccountWidget::slotSelectImage()
 {
 	QString path = 0;
 	bool remoteFile = false;
-	KURL filePath = KFileDialog::getImageOpenURL( QString::null, this, i18n( "MSN Display Picture" ) );
+	KUrl filePath = KFileDialog::getImageOpenURL( QString::null, this, i18n( "MSN Display Picture" ) );
 	if( filePath.isEmpty() )
 		return;
 

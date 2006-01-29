@@ -376,7 +376,7 @@ void dlgJabberVCard::slotSelectPhoto()
 {
 	QString path;
 	bool remoteFile = false;
-	KURL filePath = KFileDialog::getImageOpenURL( QString::null, this, i18n( "Jabber Photo" ) );
+	KUrl filePath = KFileDialog::getImageOpenURL( QString::null, this, i18n( "Jabber Photo" ) );
 	if( filePath.isEmpty() )
 		return;
 

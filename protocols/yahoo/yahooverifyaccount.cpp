@@ -54,7 +54,7 @@ YahooVerifyAccount::~YahooVerifyAccount()
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 }
 
-void YahooVerifyAccount::setUrl( KURL url )
+void YahooVerifyAccount::setUrl( KUrl url )
 {
 	mFile = new KTempFile( locateLocal( "tmp", url.fileName() ) );
 	mFile->setAutoDelete( true );

@@ -221,7 +221,7 @@ public:
 	 * @see photo()
 	 * @see photoSource()
 	 */
-	KURL customPhoto() const;
+	KUrl customPhoto() const;
 
 
 	/**
@@ -233,7 +233,7 @@ public:
 	 * @see photo()
 	 * @see photoSource()
 	 */
-	void setPhoto( const KURL &url );
+	void setPhoto( const KUrl &url );
 
 	/**
 	 * @brief get the subcontact being tracked for its displayname (null if not set)
@@ -407,13 +407,13 @@ public slots:
 	 * no parameters are sent and they assume default values. This slot calls the slotSendFile
 	 * with identical params of the highest ranked contact capable of sending files (if any)
 	 *
-	 * @param sourceURL The actual KURL of the file you are sending
+	 * @param sourceURL The actual KUrl of the file you are sending
 	 * @param altFileName (Optional) An alternate name for the file - what the receiver will see
 	 * @param fileSize (Optional) Size of the file being sent. Used when sending a nondeterminate
 	 *                file size (such as over a socket)
 	 *
 	 */
-	void sendFile( const KURL &sourceURL, const QString &altFileName = QString::null,
+	void sendFile( const KUrl &sourceURL, const QString &altFileName = QString::null,
 		unsigned long fileSize = 0L );
 signals:
 	/**

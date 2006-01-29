@@ -55,7 +55,7 @@ class IRCProtocolHandler : public Kopete::MimeTypeHandler
 
 		IRCProtocolHandler();
 
-		void handleURL( const KURL &url ) const;
+		void handleURL( const KUrl &url ) const;
 };
 
 static const QString CHAT_VIEW( QString::fromLatin1("kopete_chatwindow") );

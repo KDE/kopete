@@ -48,8 +48,8 @@ void BookmarksPlugin::slotBookmarkURLsInMessage(Kopete::Message & msg)
 	//kdDebug(14501) << "recieved message:" << endl << msg.parsedBody() << endl;
 	if(msg.direction() != Kopete::Message::Inbound)
 		return;
-	KURL::List *URLsList;
-	KURL::List::iterator it;
+	KUrl::List *URLsList;
+	KUrl::List::iterator it;
 	URLsList = extractURLsFromString( msg.parsedBody() );
 	if (!URLsList->empty()) {
 		for( it = URLsList->begin() ; it != URLsList->end() ; ++it){
@@ -86,12 +86,12 @@ void BookmarksPlugin::slotAddKopeteBookmark( KIO::Job *transfer, const QByteArra
 	transfer->kill();
 }
 
-KURL::List* BookmarksPlugin::extractURLsFromString( QString text )
+KUrl::List* BookmarksPlugin::extractURLsFromString( QString text )
 {
-	KURL::List *list = new KURL::List;
+	KUrl::List *list = new KUrl::List;
 	QRegExp rx("<a href=\"[^\\s\"]+\"");
 	int pos=0;
-	KURL url;
+	KUrl url;
 	
 	for(; (pos=rx.search(text, pos))!=-1; pos+=rx.matchedLength()){
 	 //as long as there is a matching URL in text
@@ -103,7 +103,7 @@ KURL::List* BookmarksPlugin::extractURLsFromString( QString text )
 	return list;
 }
 
-void BookmarksPlugin::addKopeteBookmark( KURL url, QString sender )
+void BookmarksPlugin::addKopeteBookmark( KUrl url, QString sender )
 {
 	KBookmarkGroup group = getKopeteFolder();
 
@@ -128,7 +128,7 @@ KBookmarkGroup BookmarksPlugin::getKopeteFolder()
 	return getFolder( mgr->root(), "kopete" );
 }
 
-bool BookmarksPlugin::isURLInGroup(KURL url, KBookmarkGroup group)
+bool BookmarksPlugin::isURLInGroup(KUrl url, KBookmarkGroup group)
 {
 	KBookmark bookmark = group.first();
 	

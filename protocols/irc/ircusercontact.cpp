@@ -144,7 +144,7 @@ void IRCUserContact::updateStatus()
 	}
 }
 
-void IRCUserContact::sendFile(const KURL &sourceURL, const QString&, unsigned int)
+void IRCUserContact::sendFile(const KUrl &sourceURL, const QString&, unsigned int)
 {
 	QString filePath;
 

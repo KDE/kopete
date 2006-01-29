@@ -168,7 +168,7 @@ void KopeteEditGlobalIdentityWidget::updateGUI(const QString &key, const QVarian
 
 void KopeteEditGlobalIdentityWidget::photoClicked()
 {
-	KURL photoURL = KFileDialog::getImageOpenURL(QString::null, this, i18n("Global Photo"));
+	KUrl photoURL = KFileDialog::getImageOpenURL(QString::null, this, i18n("Global Photo"));
 	if(photoURL.isEmpty())
 		return;
 

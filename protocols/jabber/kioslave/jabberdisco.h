@@ -49,9 +49,9 @@ public:
 
 	void slave_status ();
 
-	void get ( const KURL &url );
-	void listDir ( const KURL &url );
-	void mimetype ( const KURL &url );
+	void get ( const KUrl &url );
+	void listDir ( const KUrl &url );
+	void mimetype ( const KUrl &url );
 
 	void dispatchLoop ();
 
@@ -70,7 +70,7 @@ private:
 
 	QString m_host, m_user, m_password;
 	int m_port;
-	KURL m_url;
+	KUrl m_url;
 	bool m_connected;
 
 	CommandType m_command;

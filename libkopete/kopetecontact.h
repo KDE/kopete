@@ -468,14 +468,14 @@ public slots:
 	 * true. If the function is called through the GUI, no parameters are sent
 	 * and they take on default values (the file is chosen with a file open dialog)
 	 *
-	 * @param sourceURL The actual KURL of the file you are sending
+	 * @param sourceURL The actual KUrl of the file you are sending
 	 * @param fileName (Optional) An alternate name for the file - what the
 	 * receiver will see
 	 * @param fileSize (Optional) Size of the file being sent. Used when sending
 	 * a nondeterminate
 	 *                file size (such as over  asocket
 	 */
-	virtual void sendFile( const KURL &sourceURL = KURL(),
+	virtual void sendFile( const KUrl &sourceURL = KURL(),
 			       const QString &fileName = QString::null, uint fileSize = 0L );
 
 private slots:

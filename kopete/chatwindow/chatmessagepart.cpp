@@ -214,8 +214,8 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	// Refresh the style if the display name change.
 	connect( d->manager, SIGNAL(displayNameChanged()), this, SLOT(changeStyle()) );
 
-	connect ( browserExtension(), SIGNAL( openURLRequestDelayed( const KURL &, const KParts::URLArgs & ) ),
-	          this, SLOT( slotOpenURLRequest( const KURL &, const KParts::URLArgs & ) ) );
+	connect ( browserExtension(), SIGNAL( openURLRequestDelayed( const KUrl &, const KParts::URLArgs & ) ),
+	          this, SLOT( slotOpenURLRequest( const KUrl &, const KParts::URLArgs & ) ) );
 
 	connect( this, SIGNAL(popupMenu(const QString &, const QPoint &)),
 	         this, SLOT(slotRightClick(const QString &, const QPoint &)) );
@@ -258,7 +258,7 @@ void ChatMessagePart::save()
 	if ( dlg.exec() != QDialog::Accepted )
 		return;
 
-	KURL saveURL = dlg.selectedURL();
+	KUrl saveURL = dlg.selectedURL();
 	KTempFile tempFile;
 	tempFile.setAutoDelete( true );
 	QFile* file = tempFile.file();
@@ -305,7 +305,7 @@ void ChatMessagePart::pageDown()
 	view()->scrollBy( 0, view()->visibleHeight() );
 }
 
-void ChatMessagePart::slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args*/)
+void ChatMessagePart::slotOpenURLRequest(const KUrl &url, const KParts::URLArgs &/*args*/)
 {
 	kdDebug(14000) << k_funcinfo << "url=" << url.url() << endl;
 	if ( url.protocol() == QString::fromLatin1("kopetemessage") )

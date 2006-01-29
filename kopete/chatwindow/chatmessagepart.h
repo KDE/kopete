@@ -136,7 +136,7 @@ signals:
 	void tooltipEvent(  const QString &textUnderMouse, QString &toolTip );
 
 private slots:
-	void slotOpenURLRequest( const KURL &url, const KParts::URLArgs &args );
+	void slotOpenURLRequest( const KUrl &url, const KParts::URLArgs &args );
 	void slotScrollView();
 	void slotAppearanceChanged();
 

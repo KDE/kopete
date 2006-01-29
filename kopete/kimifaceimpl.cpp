@@ -294,7 +294,7 @@ void KIMIfaceImpl::chatWithContact( const QString &uid )
 		unknown( uid );
 }
 
-void KIMIfaceImpl::sendFile(const QString &uid, const KURL &sourceURL,
+void KIMIfaceImpl::sendFile(const QString &uid, const KUrl &sourceURL,
 		const QString &altFileName, uint fileSize)
 {
 	Kopete::MetaContact *m = Kopete::ContactList::self()->metaContact( uid );

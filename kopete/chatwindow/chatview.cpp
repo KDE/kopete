@@ -1004,9 +1004,9 @@ void ChatView::dropEvent ( QDropEvent * event )
 			return;
 		}
 
-		KURL::List urlList = KURL::List::fromMimeData( event->mimeData() );
+		KUrl::List urlList = KUrl::List::fromMimeData( event->mimeData() );
 
-		for ( KURL::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
+		for ( KUrl::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
 		{
 			if ( (*it).isLocalFile() )
 			{ //send a file

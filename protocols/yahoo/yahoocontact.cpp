@@ -322,7 +322,7 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();
 }
 
-void YahooContact::sendFile( const KURL &sourceURL, const QString &/*fileName*/, uint fileSize )
+void YahooContact::sendFile( const KUrl &sourceURL, const QString &/*fileName*/, uint fileSize )
 {
 	QString file;
 	if( sourceURL.isValid() )
@@ -495,7 +495,7 @@ void YahooContact::setDisplayPicture(KTempFile *f, int checksum)
 	QString newlocation=locateLocal( "appdata", "yahoopictures/"+ contactId().lower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 	setProperty( YahooProtocol::protocol()->iconCheckSum, checksum );
 	
-	KIO::Job *j=KIO::file_move( KURL::fromPathOrURL( f->name() ) , KURL::fromPathOrURL( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
+	KIO::Job *j=KIO::file_move( KUrl::fromPathOrURL( f->name() ) , KUrl::fromPathOrURL( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
 	
 	f->setAutoDelete(false);
 	delete f;

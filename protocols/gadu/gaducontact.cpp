@@ -87,7 +87,7 @@ GaduContact::uin() const
 }
 
 void
-GaduContact::sendFile( const KURL &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )
+GaduContact::sendFile( const KUrl &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )
 {
 	QString filePath;
 

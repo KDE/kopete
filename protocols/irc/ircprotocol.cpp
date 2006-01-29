@@ -79,7 +79,7 @@ IRCProtocolHandler::IRCProtocolHandler() : Kopete::MimeTypeHandler( false )
 	registerAsProtocolHandler( QString::fromLatin1("irc") );
 }
 
-void IRCProtocolHandler::handleURL( const KURL &url ) const
+void IRCProtocolHandler::handleURL( const KUrl &url ) const
 {
 	kdDebug(14120) << url << endl;
 	if( !url.isValid() )

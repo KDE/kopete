@@ -66,7 +66,7 @@ public:
 
 	void setUserProfile( const QString &profile );
 
-	void setBuddyIcon( KURL url );
+	void setBuddyIcon( KUrl url );
 
 protected:
 	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const SSI& ssiItem );

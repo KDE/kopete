@@ -109,7 +109,7 @@ bool MimeTypeHandler::canAcceptRemoteFiles() const
 	return d->canAcceptRemoteFiles;
 }
 
-bool MimeTypeHandler::dispatchURL( const KURL &url )
+bool MimeTypeHandler::dispatchURL( const KUrl &url )
 {
 	if( url.isEmpty() )
 		return false;
@@ -139,7 +139,7 @@ bool MimeTypeHandler::dispatchURL( const KURL &url )
 	}
 }
 
-bool MimeTypeHandler::dispatchToHandler( const KURL &url, const QString &mimeType, MimeTypeHandler *handler )
+bool MimeTypeHandler::dispatchToHandler( const KUrl &url, const QString &mimeType, MimeTypeHandler *handler )
 {
 	if( !handler->canAcceptRemoteFiles() )
 	{
@@ -162,7 +162,7 @@ bool MimeTypeHandler::dispatchToHandler( const KURL &url, const QString &mimeTyp
 			return false;
 		}
 
-		KURL dest;
+		KUrl dest;
 		dest.setPath( file );
 
 		if( !mimeType.isNull() )
@@ -184,12 +184,12 @@ bool MimeTypeHandler::dispatchToHandler( const KURL &url, const QString &mimeTyp
 	return true;
 }
 
-void MimeTypeHandler::handleURL( const KURL &url ) const
+void MimeTypeHandler::handleURL( const KUrl &url ) const
 {
 	Q_UNUSED( url );
 }
 
-void MimeTypeHandler::handleURL( const QString &mimeType, const KURL &url ) const
+void MimeTypeHandler::handleURL( const QString &mimeType, const KUrl &url ) const
 {
 	Q_UNUSED( mimeType );
 	Q_UNUSED( url );
@@ -204,7 +204,7 @@ EmoticonMimeTypeHandler::EmoticonMimeTypeHandler()
 	registerAsMimeHandler( QString::fromLatin1("application/x-tbz") );
 }
 
-void EmoticonMimeTypeHandler::handleURL( const QString &, const KURL &url ) const
+void EmoticonMimeTypeHandler::handleURL( const QString &, const KUrl &url ) const
 {
 	Global::installEmoticonTheme( url.path() );
 }

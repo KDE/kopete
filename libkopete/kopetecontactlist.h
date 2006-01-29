@@ -362,7 +362,7 @@ public: //TODO I think all theses method should be moved to the decop interface.
 	 * @param altFileName (Optional) An alternate filename for the file we are sending
 	 * @param fileSize (Optional) The size of the file
 	 */
-	void sendFile(const QString &displayName, const KURL &sourceURL,
+	void sendFile(const QString &displayName, const KUrl &sourceURL,
 		const QString &altFileName = QString::null, const long unsigned int fileSize = 0L);
 
 	/**

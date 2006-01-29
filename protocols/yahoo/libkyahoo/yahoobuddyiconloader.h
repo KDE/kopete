@@ -31,7 +31,7 @@ namespace KIO {
 }
 
 struct IconLoadJob {
-	KURL url;
+	KUrl url;
 	QString who;
 	int checksum;
 	KTempFile *file;
@@ -54,7 +54,7 @@ public:
 	/**
 	 *	Add a BuddyIcon for download.
 	 */
-	void fetchBuddyIcon( const QString &who, KURL url, int checksum );
+	void fetchBuddyIcon( const QString &who, KUrl url, int checksum );
 
 signals:
 	/**

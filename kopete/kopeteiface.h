@@ -41,7 +41,7 @@ k_dcop:
 	QStringList fileTransferContacts();
 	QStringList contactFileProtocols(const QString &displayName);
 
-	/*void sendFile(const QString &displayName, const KURL &sourceURL,
+	/*void sendFile(const QString &displayName, const KUrl &sourceURL,
 		const QString &altFileName = QString::null, uint fileSize = 0);*/
 
 	// FIXME: Do we *need* this one? Sounds error prone to me, because
@@ -154,7 +154,7 @@ k_dcop:
 	 * set the global photo if global identity is enabled.
 	 * @param photoUrl URL to the photo
 	 */
-	void setGlobalPhoto( const KURL &photoUrl );
+	void setGlobalPhoto( const KUrl &photoUrl );
 };
 
 #endif

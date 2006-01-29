@@ -407,7 +407,7 @@ void ICQAccount::slotGlobalIdentityChanged( const QString& key, const QVariant& 
 	}
 }
 
-void ICQAccount::setBuddyIcon( KURL url )
+void ICQAccount::setBuddyIcon( KUrl url )
 {	
 	if ( url.path().isEmpty() )
 	{

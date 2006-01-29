@@ -373,7 +373,7 @@ void Client::requestPicture( const QString &userId )
 	rpt->go( true );
 }
 
-void Client::downloadPicture(  const QString &userId, KURL url, int checksum )
+void Client::downloadPicture(  const QString &userId, KUrl url, int checksum )
 {
 	if( !d->iconLoader )
 	{
@@ -385,7 +385,7 @@ void Client::downloadPicture(  const QString &userId, KURL url, int checksum )
 	d->iconLoader->fetchBuddyIcon( QString(userId), KURL(url), checksum );
 }
 
-void Client::uploadPicture( KURL url )
+void Client::uploadPicture( KUrl url )
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "URL: " << url.url() << endl;
 	SendPictureTask *spt = new SendPictureTask( d->root );

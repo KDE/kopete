@@ -81,7 +81,7 @@ class  MetaContact::Private
 
 	// used when source is custom
 	QString displayName;
-	KURL photoUrl;
+	KUrl photoUrl;
 
 	QList<Group *> groups;
 	QMap<QString, QMap<QString, QString> > addressBook;
@@ -565,7 +565,7 @@ bool MetaContact::canAcceptFiles() const
 }
 
 //Slot for sending files
-void MetaContact::sendFile( const KURL &sourceURL, const QString &altFileName, unsigned long fileSize )
+void MetaContact::sendFile( const KUrl &sourceURL, const QString &altFileName, unsigned long fileSize )
 {
 	//If we can't send any files then exit
 	if( d->contacts.isEmpty() || !canAcceptFiles() )
@@ -680,12 +680,12 @@ QString nameFromContact( Kopete::Contact *c) /*const*/
 	return contactName.isEmpty() ? c->contactId() : contactName.replace('\n',QString::fromUtf8(""));
 }
 
-KURL MetaContact::customPhoto() const
+KUrl MetaContact::customPhoto() const
 {
 	return KURL(d->customPicture.path());
 }
 
-void MetaContact::setPhoto( const KURL &url )
+void MetaContact::setPhoto( const KUrl &url )
 {
 	d->photoUrl = url;
 	d->customPicture.setPicture(url.path());
@@ -976,7 +976,7 @@ const QDomElement MetaContact::toXML(bool minimal)
 	displayName.appendChild( metaContact.createTextNode( d->displayName ) );
 	metaContact.documentElement().appendChild( displayName );
 	QDomElement photo = metaContact.createElement( QString::fromUtf8("photo" ) );
-	KURL photoUrl = KURL(d->customPicture.path());
+	KUrl photoUrl = KURL(d->customPicture.path());
 	photo.appendChild( metaContact.createTextNode( photoUrl.url() ) );
 	metaContact.documentElement().appendChild( photo );
 

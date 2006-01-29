@@ -176,7 +176,7 @@ void Contact::slotAccountIsConnectedChanged()
 }
 
 
-void Contact::sendFile( const KURL &, const QString &, uint )
+void Contact::sendFile( const KUrl &, const QString &, uint )
 {
 	kdWarning( 14010 ) << k_funcinfo << "Plugin "
 		<< protocol()->pluginId() << " has enabled file sending, "
@@ -643,9 +643,9 @@ QString Contact::toolTip() const
 	// Fixed part of tooltip
 
 	QString iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
-		.arg( KURL::encode_string( protocol()->pluginId() ),
-				KURL::encode_string( account()->accountId() ),
-				KURL::encode_string( contactId() ) );
+		.arg( KUrl::encode_string( protocol()->pluginId() ),
+				KUrl::encode_string( account()->accountId() ),
+				KUrl::encode_string( contactId() ) );
 
 	// TODO:  the nickname should be a configurable properties, like others. -Olivier
 	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
@@ -695,7 +695,7 @@ QString Contact::toolTip() const
 			{
 				tip += i18n("<br><b>Home Page:</b>&nbsp;FORMATTED URL",
 					"<br><b>Home Page:</b>&nbsp;<a href=\"%1\"><nobr>%2</nobr></a>").
-						arg( KURL::encode_string( url ), Kopete::Message::escape( Qt::escape(url) ) );
+						arg( KUrl::encode_string( url ), Kopete::Message::escape( Qt::escape(url) ) );
 			}
 		}
 		else if ((*it) == QString::fromLatin1("awayMessage"))

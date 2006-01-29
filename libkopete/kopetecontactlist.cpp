@@ -1054,7 +1054,7 @@ QStringList Kopete::ContactList::fileTransferContacts() const
 	return contacts;
 }
 
-void Kopete::ContactList::sendFile( const QString &displayName, const KURL &sourceURL,
+void Kopete::ContactList::sendFile( const QString &displayName, const KUrl &sourceURL,
 	const QString &altFileName, const long unsigned int fileSize)
 {
 //	kdDebug(14010) << "Send To Display Name: " << displayName << "\n";

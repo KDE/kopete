@@ -742,7 +742,7 @@ void MSNSocket::slotReadyWrite()
 
 QString MSNSocket::escape( const QString &str )
 {
-	//return ( KURL::encode_string( str, 106 ) );
+	//return ( KUrl::encode_string( str, 106 ) );
 	//It's not needed to encode everything. The official msn client only encode spaces and %
 	//If we encode more, the size can be longer than excepted.
 
@@ -778,7 +778,7 @@ QString MSNSocket::escape( const QString &str )
 QString MSNSocket::unescape( const QString &str )
 {
 	//GRRRRR F*CKING MSN PLUS USERS! They insert these stupid color codes in their nickname, and messages are not correctly shown
-	return KURL::decode_string( str, 106 ).replace( QRegExp("[\\x1-\\x8]"), "" );
+	return KUrl::decode_string( str, 106 ).replace( QRegExp("[\\x1-\\x8]"), "" );
 }
 
 void MSNSocket::slotConnectionSuccess()

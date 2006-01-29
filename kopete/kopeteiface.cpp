@@ -102,7 +102,7 @@ QString KopeteIface::messageContact( const QString &contactId, const QString &me
 	return QString::null;
 }
 /*
-void KopeteIface::sendFile(const QString &displayName, const KURL &sourceURL,
+void KopeteIface::sendFile(const QString &displayName, const KUrl &sourceURL,
 	const QString &altFileName, uint fileSize)
 {
 	return Kopete::ContactList::self()->sendFile(displayName, sourceURL, altFileName, fileSize);
@@ -295,7 +295,7 @@ void KopeteIface::setGlobalNickname( const QString &nickname )
 	}
 }
 
-void KopeteIface::setGlobalPhoto( const KURL &photoUrl )
+void KopeteIface::setGlobalPhoto( const KUrl &photoUrl )
 {
 	if( Kopete::Config::enableGlobalIdentity() )
 	{

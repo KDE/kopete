@@ -73,7 +73,7 @@ private slots:
 		 * We manage the openURLRequestDelayed signal from the generalHTMLPart->browserExtension() in order to
 		 * generate requested pages on the flow.
 		 */
-		void slotOpenURLRequest(const KURL& url, const KParts::URLArgs&);
+		void slotOpenURLRequest(const KUrl& url, const KParts::URLArgs&);
 		void slotAskButtonClicked();
 
 };

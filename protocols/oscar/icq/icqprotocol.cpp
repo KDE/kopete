@@ -70,7 +70,7 @@ ICQProtocolHandler::ICQProtocolHandler() : Kopete::MimeTypeHandler(false)
 	registerAsMimeHandler(QString::fromLatin1("application/x-icq"));
 }
 
-void ICQProtocolHandler::handleURL(const QString &mimeType, const KURL & url) const
+void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) const
 {
 	if (mimeType != "application/x-icq")
 		return;

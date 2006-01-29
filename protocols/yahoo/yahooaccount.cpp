@@ -1319,7 +1319,7 @@ void YahooAccount::slotGotBuddyIconChecksum(const QString &who, int checksum)
 		m_session->requestPicture( who );
 }
 
-void YahooAccount::slotGotBuddyIconInfo(const QString &who, KURL url, int checksum)
+void YahooAccount::slotGotBuddyIconInfo(const QString &who, KUrl url, int checksum)
 {
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	YahooContact *kc = contact( who );
@@ -1359,7 +1359,7 @@ void YahooAccount::slotGotBuddyIconRequest( const QString & who )
 							myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
 }
 
-void YahooAccount::setBuddyIcon( KURL url )
+void YahooAccount::setBuddyIcon( KUrl url )
 {
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Url: " << url.path() << endl;
 	QString s = url.path();

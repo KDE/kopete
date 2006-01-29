@@ -139,7 +139,7 @@ void JabberDiscoProtocol::slave_status ()
 
 }
 
-void JabberDiscoProtocol::get ( const KURL &url )
+void JabberDiscoProtocol::get ( const KUrl &url )
 {
 	kdDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << endl;
 
@@ -152,7 +152,7 @@ void JabberDiscoProtocol::get ( const KURL &url )
 
 }
 
-void JabberDiscoProtocol::listDir ( const KURL &url )
+void JabberDiscoProtocol::listDir ( const KUrl &url )
 {
 	kdDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << endl;
 
@@ -163,7 +163,7 @@ void JabberDiscoProtocol::listDir ( const KURL &url )
 
 }
 
-void JabberDiscoProtocol::mimetype ( const KURL &/*url*/ )
+void JabberDiscoProtocol::mimetype ( const KUrl &/*url*/ )
 {
 	kdDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << endl;
 

@@ -55,7 +55,7 @@ KopeteActiveLabel::KopeteActiveLabel( const QString& text, QWidget *parent,
 
 void KopeteActiveLabel::openLink( const QString& link )
 {
-	KURL url( link );
+	KUrl url( link );
 	QString protocol = url.protocol();
 	
 	if ( protocol == "mailto" )

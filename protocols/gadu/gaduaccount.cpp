@@ -962,7 +962,7 @@ GaduAccount::slotExportContactsListToFile()
 void
 GaduAccount::slotImportContactsFromFile()
 {
-	KURL url;
+	KUrl url;
 	QByteArray list;
 	QString oname;
 

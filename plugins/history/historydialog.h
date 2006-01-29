@@ -78,7 +78,7 @@ class HistoryDialog : public KDialogBase
 		void closing();
 
 	private slots:
-		void slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args*/);
+		void slotOpenURLRequest(const KUrl &url, const KParts::URLArgs &/*args*/);
 
 		// Called when a date is selected in the treeview
 		void dateSelected(Q3ListViewItem *);

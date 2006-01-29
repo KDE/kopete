@@ -84,7 +84,7 @@ public:
 	/**
 	 * @brief Ask the user which file to send when they click Send File.
 	 *
-	 * Possibly ask the user which file to send when they click Send File. Sends a signal indicating KURL to
+	 * Possibly ask the user which file to send when they click Send File. Sends a signal indicating KUrl to
 	 * send when the local user accepts the transfer.
 	 * @param file If valid, the user will not be prompted for a URL, and this one will be used instead.
 	 *  If it refers to a remote file and mustBeLocal is true, the file will be transferred to the local
@@ -94,9 +94,9 @@ public:
 	 * @param mustBeLocal If the protocol can only send files on the local filesystem, this flag
 	 *  allows you to ensure the filename will be local.
 	 * @param sendTo The object to send the signal to
-	 * @param slot The slot to send the signal to. Signature: sendFile(const KURL &file)
+	 * @param slot The slot to send the signal to. Signature: sendFile(const KUrl &file)
 	 */
-	void sendFile( const KURL &file, const QString &localFile, unsigned long fileSize,
+	void sendFile( const KUrl &file, const QString &localFile, unsigned long fileSize,
 		bool mustBeLocal, QObject *sendTo, const char *slot );
 
 signals:
@@ -113,7 +113,7 @@ signals:
 	void refused(const Kopete::FileTransferInfo& );
 
 	/** @brief Send a file */
-	void sendFile(const KURL &file, const QString &localFile, unsigned int fileSize);
+	void sendFile(const KUrl &file, const QString &localFile, unsigned int fileSize);
 
 private slots:
 	void slotAccepted(const Kopete::FileTransferInfo&, const QString&);
@@ -159,13 +159,13 @@ public:
 	 * For display purposes only! There's no guarantee that this URL
 	 * refers to a real file being transferred.
 	 */
-	KURL sourceURL();
+	KUrl sourceURL();
 
 	/**
 	 * Retrieve a URL indicating where the file is being copied to.
 	 * See @ref sourceURL
 	 */
-	KURL destinationURL();
+	KUrl destinationURL();
 
 public slots:
 
@@ -194,12 +194,12 @@ signals:
 	void transferCanceled();
 
 private:
-	void init( const KURL &, bool );
+	void init( const KUrl &, bool );
 
-	static KURL displayURL( const Contact *contact, const QString &file );
+	static KUrl displayURL( const Contact *contact, const QString &file );
 
 	FileTransferInfo mInfo;
-	KURL mTarget;
+	KUrl mTarget;
 	int mPercent;
 
 private slots:
