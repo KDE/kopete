@@ -214,6 +214,9 @@ private:
 	
 	/* used in removeAccount() */
 	bool m_removing;
+	/* keep track if we told the user we were not able to bind the
+	   jabber transfer port, to avoid popup insanity */
+	bool m_notifiedUserCannotBindTransferPort;
 private slots:
 	/* Connects to the server. */
 	void slotConnect ();

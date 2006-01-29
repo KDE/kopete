@@ -103,7 +103,7 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 #endif
 	m_bookmarks = new JabberBookmarks(this);
 	m_removing=false;
-
+	m_notifiedUserCannotBindTransferPort = false;
 	// add our own contact to the pool
 	JabberContact *myContact = contactPool()->addContact ( XMPP::RosterItem ( accountId ), Kopete::ContactList::self()->myself(), false );
 	setMyself( myContact );
@@ -159,11 +159,12 @@ void JabberAccount::setS5BServerPort ( int port )
 		return;
 	}
 
-	if ( !m_jabberClient->setS5BServerPort ( port ) )
+	if ( !m_jabberClient->setS5BServerPort ( port ) && !m_notifiedUserCannotBindTransferPort)
 	{
 		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (), KMessageBox::Sorry,
 							 i18n ( "Could not bind Jabber file transfer manager to local port. Please check if the file transfer port is already in use or choose another port in the account settings." ),
 							 i18n ( "Failed to start Jabber File Transfer Manager" ) );
+		m_notifiedUserCannotBindTransferPort = true;
 	}
 
 }
