@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="5" name="kopete_jabber_chat">
+<kpartgui version="8" name="kopete_jabber_chat">
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<text>&amp;Chat</text>
@@ -8,8 +8,8 @@
 	</MenuBar>
 
 
-	<ToolBar name="statusToolBar">
-		<Action name="voicecall" />
+	<ToolBar name="mainToolBar">
+		<Action name="jabber_voicecall" />
 	</ToolBar>
 
 

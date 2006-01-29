@@ -176,7 +176,7 @@ void KopeteWindow::initView()
 
 void KopeteWindow::initActions()
 {
-	actionAddContact = new KAction( i18n( "&Add Contact..." ), "bookmark_add",
+	actionAddContact = new KAction( i18n( "&Add Contact..." ), "add_user",
 		0, this, SLOT( showAddContactDialog() ),
 		actionCollection(), "AddContact" );
 
@@ -255,7 +255,7 @@ void KopeteWindow::initActions()
 	KStdAction::configureToolbars( this, SLOT(slotConfToolbar()), actionCollection() );
 	KStdAction::configureNotifications(this, SLOT(slotConfNotifications()), actionCollection(), "settings_notifications" );
 
-	actionShowOffliners = new KToggleAction( i18n( "Show Offline &Users" ), "viewmag", CTRL + Key_U,
+	actionShowOffliners = new KToggleAction( i18n( "Show Offline &Users" ), "show_offliners", CTRL + Key_U,
 			this, SLOT( slotToggleShowOffliners() ), actionCollection(), "settings_show_offliners" );
 	actionShowEmptyGroups = new KToggleAction( i18n( "Show Empty &Groups" ), "folder_green", CTRL + Key_G,
 			this, SLOT( slotToggleShowEmptyGroups() ), actionCollection(), "settings_show_empty_groups" );

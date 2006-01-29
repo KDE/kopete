@@ -487,10 +487,10 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 		ac, "contactSendFile" );
 
 	actionAddContact = new KActionMenu( i18n( "&Add Contact" ),
-		QString::fromLatin1( "bookmark_add" ), ac , "contactAddContact" );
+		QString::fromLatin1( "add_user" ), ac , "contactAddContact" );
 	actionAddContact->popupMenu()->insertTitle( i18n("Select Account") );
 
-	actionAddTemporaryContact = new KAction( i18n( "Add to Your Contact List" ), "bookmark_add", 0,
+	actionAddTemporaryContact = new KAction( i18n( "Add to Your Contact List" ), "add_user", 0,
 		this, SLOT( slotAddTemporaryContact() ), ac, "contactAddTemporaryContact" );
 
 	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotMetaContactSelected( bool ) ) );

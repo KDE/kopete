@@ -361,7 +361,7 @@ QPtrList<KAction> *YahooContact::customContextMenuActions()
 	QPtrList<KAction> *actionCollection = new QPtrList<KAction>();
 	if ( !m_webcamAction )
 	{
-		m_webcamAction = new KAction( i18n( "View &Webcam" ), "camera_unmount", KShortcut(),
+		m_webcamAction = new KAction( i18n( "View &Webcam" ), "webcamreceive", KShortcut(),
 		                              this, SLOT( requestWebcam() ), this, "view_webcam" );
 	}
 	if ( isReachable() )
@@ -372,7 +372,7 @@ QPtrList<KAction> *YahooContact::customContextMenuActions()
 	
 	if( !m_inviteWebcamAction )
 	{
-		m_inviteWebcamAction = new KAction( i18n( "Invite to view your Webcam" ), "camera_unmount", KShortcut(),
+		m_inviteWebcamAction = new KAction( i18n( "Invite to view your Webcam" ), "webcamsend", KShortcut(),
 		                                    this, SLOT( inviteWebcam() ), this, "invite_webcam" );
 	}
 	if ( isReachable() )

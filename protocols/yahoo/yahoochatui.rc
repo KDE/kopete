@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="4" name="kopete_yahoo_chat">
+<kpartgui version="7" name="kopete_yahoo_chat">
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<Action name="yahooBuzz" />
@@ -11,6 +11,10 @@
 
 	<ToolBar name="statusToolBar">
 		<Action name="yahooDisplayPicture" />
+		<Action name="yahooBuzz" />
+		<Action name="yahooShowInfo" />		
+		<Action name="yahooRequestWebcam" />	
+		<Action name="yahooSendWebcam" />	
 	</ToolBar>
 
 

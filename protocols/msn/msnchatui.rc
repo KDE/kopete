@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="5" name="kopete_msn_chat">
+<kpartgui version="10" name="kopete_msn_chat">
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<text>&amp;Chat</text>
@@ -21,7 +21,8 @@
 
 	<ToolBar name="statusToolBar">
 		<Action name="msnDisplayPicture" />
+		<Action name="msnSendNudge" />
+		<Action name="msnWebcamSend" />
+		<Action name="msnWebcamReceive" />	
 	</ToolBar>
-
-
 </kpartgui>

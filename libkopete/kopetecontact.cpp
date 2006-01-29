@@ -208,7 +208,7 @@ KPopupMenu* Contact::popupMenu( ChatSession *manager )
 
 	if( metaContact() && metaContact()->isTemporary() && contactId() != account()->myself()->contactId() )
 	{
-		KAction *actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "bookmark_add" ),
+		KAction *actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "add_user" ),
 		                                         0, this, SLOT( slotAddContact() ), menu, "actionAddContact" );
 		actionAddContact->plug( menu );
 		menu->insertSeparator();
