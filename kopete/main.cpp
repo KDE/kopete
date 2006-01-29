@@ -68,14 +68,17 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( "Will Stephenson", I18N_NOOP("Developer, GroupWise maintainer"), "lists@stevello.free-online.co.uk" );
 	aboutData.addAuthor ( "Michaël Larouche", I18N_NOOP("Developer, MSN, Chatwindow"), "michael.larouche@kdemail.net", "http://mlarouche.blogspot.com" );
 	aboutData.addAuthor ( "Cláudio da Silveira Pinheiro", I18N_NOOP("Developer, Video device support"), "taupter@gmail.com", "http://taupter.homelinux.org" );
+	aboutData.addAuthor ( "Ollivier Lapeyre Johann", I18N_NOOP("Artist / Developer, Artwork maintainer"), "johann.ollivierlapeyre@gmail.com" );
 
+
+	aboutData.addCredit ( "Vally8", I18N_NOOP("Konki style author"), "vally8@gmail.com", "http://vally8.free.fr/" );
+	aboutData.addCredit ( "Tm_T", I18N_NOOP("Hacker style author"), "tm_travolta@kapsi.fi");
 	aboutData.addCredit ( "Luciash d' Being", I18N_NOOP("Kopete's icon author") );
 	aboutData.addCredit ( "Steve Cable", I18N_NOOP("Sounds") );
 	aboutData.addCredit ( "Jessica Hall", I18N_NOOP("Kopete Docugoddess, Bug and Patch Testing.") );
 	aboutData.addCredit ( "Justin Karneges", I18N_NOOP("Iris Jabber Backend Library") );
 	aboutData.addCredit ( "Tom Linsky", I18N_NOOP("OscarSocket author"), "twl6@po.cwru.edu" );
 	aboutData.addCredit ( "Olaf Lueg", I18N_NOOP("Kmerlin MSN code") );
-
 	aboutData.addCredit ( "Nick Betcher", I18N_NOOP("Former developer, project co-founder"), "nbetcher@kde.org");
 	aboutData.addCredit ( "Ryan Cumming", I18N_NOOP("Former developer"), "ryan@kde.org" );
 	aboutData.addCredit ( "Stefan Gehn", I18N_NOOP("Former developer"), "metz@gehn.net", "http://metz.gehn.net" );
