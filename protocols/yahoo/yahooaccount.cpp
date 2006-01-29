@@ -720,6 +720,9 @@ void YahooAccount::slotAuthorizationAccepted( const QString &who )
 	message = i18n( "User %1 has granted your authorization request." )
 		.arg( who );
 	KNotification::event( "kopete_authorization", message, 0 , 0 , 0 );
+	
+	if( contact( who ) )
+		contact( who )->setOnlineStatus( m_protocol->Online );
 }
 
 void YahooAccount::slotAuthorizationRejected( const QString &who, const QString &msg )
