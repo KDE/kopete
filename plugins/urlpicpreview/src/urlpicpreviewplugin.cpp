@@ -20,7 +20,6 @@
 
 // KDE
 #include <kdebug.h>
-#include <kconfig.h>
 #include <kimageio.h>
 #include <ktempfile.h>
 #include <kapplication.h>
@@ -33,7 +32,7 @@
 #include "linkpreview.h"
 #include "kopeteuiglobal.h"
 #include "urlpicpreviewplugin.h"
-#include "urlpicpreviewglobals.h"
+#include "urlpicpreviewconfig.h"
 #include "kopetechatsessionmanager.h"
 
 typedef KGenericFactory<URLPicPreviewPlugin> URLPicPreviewPluginFactory;
@@ -75,6 +74,8 @@ URLPicPreviewPlugin::~URLPicPreviewPlugin() {
  */
 void URLPicPreviewPlugin::aboutToDisplay(Kopete::Message& message) {
     if(message.direction() == Kopete::Message::Inbound) {
+		// reread configuration
+		URLPicPreviewConfig::self()->readConfig();
         // prepare parsed message body
         message.setBody(prepareBody(message.parsedBody()), Kopete::Message::ParsedHTML);
     }
@@ -87,12 +88,9 @@ void URLPicPreviewPlugin::aboutToDisplay(Kopete::Message& message) {
  *
  * @return a new message body with the images as preview
  */
-QString URLPicPreviewPlugin::prepareBody(const QString& parsedBody, int previewCount) {
+QString URLPicPreviewPlugin::prepareBody(const QString& parsedBody, uint previewCount) {
 
     kdDebug(0) << k_funcinfo << "Searching for URLs to pictures" << endl;
-
-    KConfig * config = kapp->config();
-    config->setGroup(CONFIG_GROUP);
 
     static const QString rex = "(<a href=\")([^\"]*)(\" )?([^<]*)(</a>)(.*)$";
     //             Caps:          1           2        3     4      5    6
@@ -102,7 +100,7 @@ QString URLPicPreviewPlugin::prepareBody(const QString& parsedBody, int previewC
 
     kdDebug(0) << k_funcinfo << "Analyzing message: \"" << myParsedBody << "\"" << endl;
 
-    if(ex.search(myParsedBody) == -1 || (previewCount >= config->readNumEntry("PreviewAmount", 2)) || m_abortMessageCheck) {
+	if(ex.search(myParsedBody) == -1 || (previewCount >= URLPicPreviewConfig::self()->previewAmount()) || m_abortMessageCheck) {
         kdDebug(0) << k_funcinfo << "No more URLs found in message." << endl;
         return myParsedBody;
     }
@@ -117,9 +115,9 @@ QString URLPicPreviewPlugin::prepareBody(const QString& parsedBody, int previewC
         kdDebug(0) << k_funcinfo << "URL \"" << foundURL << "\" is valid." << endl;
 
         if((tmpFile = createPreviewPicture(url)) != QString::null) {
-            if(config->readBoolEntry("Scaling", true)) {
+			if(URLPicPreviewConfig::self()->scaling()) {
 
-                int width = config->readNumEntry("PreviewScaleWidth", 256);
+				int width = URLPicPreviewConfig::self()->previewScaleWidth();
                 kdDebug(0) << k_funcinfo << "Try to scale the image to width: " << width << endl;
                 if(m_pic->load(tmpFile)) {
                     // resize but keep aspect ratio
@@ -135,7 +133,7 @@ QString URLPicPreviewPlugin::prepareBody(const QString& parsedBody, int previewC
 
             myParsedBody.replace(QRegExp(rex), QString("<a href=\"%1\" title=\"%2\">%3</a><br /><img align=\"center\" src=\"%4\" title=\"" + i18n("Preview of:") + " %5\" /><br />").arg(foundURL).arg(foundURL).arg(foundURL).arg(tmpFile).arg(foundURL));
 
-            if(config->readBoolEntry("PreviewRestriction", true)) {
+			if(URLPicPreviewConfig::self()->previewRestriction()) {
                 previewCount++;
                 kdDebug(0) << k_funcinfo << "Updating previewCount: " << previewCount << endl;
             }

@@ -41,7 +41,7 @@ public:
     virtual ~URLPicPreviewPlugin();
 
 private:
-    QString prepareBody(const QString& parsedBody, int previewCount = 0);
+    QString prepareBody(const QString& parsedBody, uint previewCount = 0);
     QString createPreviewPicture(const KURL& url);
 
 protected slots:

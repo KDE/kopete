@@ -20,7 +20,6 @@
 #include <kcmodule.h>
 
 class QLayout;
-class KConfig;
 class URLPicPreviewPrefsBase;
 
 class URLPicPreviewPreferences : public KCModule {
@@ -39,7 +38,6 @@ public:
 private:
     QLayout * m_layout;
     URLPicPreviewPrefsBase * m_ui;
-    KConfig * m_config;
 };
 
 #endif /* URLPICPREVIEWPREFERENCES_H */
