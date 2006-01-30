@@ -2,7 +2,7 @@ body {
 	background: #FFFFFF url(konqui/konqui-blue.png) fixed;
 	background-repeat : no-repeat;
 	background-size : 100% auto;
-	background-position : center center;
+	background-position : bottom right;
 }
 
 .contenu_incoming .corps_message
