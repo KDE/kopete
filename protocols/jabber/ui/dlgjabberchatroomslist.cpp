@@ -19,6 +19,7 @@
 #include <qlabel.h>
 
 #include "dlgjabberchatroomslist.h"
+#include "jabberprotocol.h"
 
 dlgJabberChatRoomsList::dlgJabberChatRoomsList(JabberAccount& account, const QString& server, QWidget *parent, const char *name) :
 dlgChatRoomsList(parent, name),
@@ -59,7 +60,7 @@ void dlgJabberChatRoomsList::slotJoin()
 
 	if (m_selectedRow >= 0)
 	{
-		kdDebug (14130) << "join chat room : " <<  m_account.client()->client()->user() << " @ " << tblChatRoomsList->text(m_selectedRow, 0) << " on " << m_chatServer;
+		kdDebug (JABBER_DEBUG_GLOBAL) << "join chat room : " <<  m_account.client()->client()->user() << " @ " << tblChatRoomsList->text(m_selectedRow, 0) << " on " << m_chatServer << endl;
 		m_account.client()->joinGroupChat(m_chatServer, tblChatRoomsList->text(m_selectedRow, 0), m_account.client()->client()->user());
 	}
 }
