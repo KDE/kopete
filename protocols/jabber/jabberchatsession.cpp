@@ -58,8 +58,7 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	slotUpdateDisplayName ();
 
 #ifdef SUPPORT_JINGLE
-	KAction *jabber_voicecall = new KAction( i18n("Voice call" ), "voicecall", 0, this, SLOT(voiceCall()),
-		actionCollection(), "jabber_voicecall" );
+	KAction *jabber_voicecall = new KAction( i18n("Voice call" ), "voicecall", 0, members().getFirst(), SLOT(voiceCall ()), actionCollection(), "jabber_voicecall" );
 
 	setInstance(protocol->instance());
 	jabber_voicecall->setEnabled(true);
