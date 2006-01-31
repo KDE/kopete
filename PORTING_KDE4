@@ -21,7 +21,7 @@ Libkopete changes
    - Remplaced all const char * parameters with const QByteArray &
 
 *) kopetecontactproperty.h
-   - Remvoed bool flags from constructor. Use ContactPropertyOption enum instead.
+   - Removed bool flags from constructor. Use ContactPropertyOption enum instead.
 
 *) Kopete::MetaContact
    - photo() is now deprecated. Use picture().image() instead.
