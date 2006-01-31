@@ -97,7 +97,7 @@ QList<Emoticons::Token> Emoticons::tokenizeEmoticons( const QString& message, Pa
 	return self()->tokenize( message, mode );
 }
 
-QList<Emoticons::Token> Emoticons::tokenize( const QString& message, uint mode )
+QList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode mode )
 {
 	QList<Token> result;
 	if ( !KopetePrefs::prefs()->useEmoticons() )

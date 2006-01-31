@@ -22,6 +22,7 @@
 #include <QList>
 #include <QRegExp>
 #include <QMap>
+#include <QFlags>
 
 #include "kopete_export.h"
 
@@ -40,7 +41,7 @@ public:
 	 **/
 	Emoticons( const QString &theme = QString::null );
 
-	~Emoticons(  );
+	~Emoticons();
 
 	/**
 	 * The emoticons container-class by default is a singleton object.
@@ -51,11 +52,13 @@ public:
 	/**
 	 * The possible parse modes
 	 */
-	enum ParseMode {  DefaultParseMode = 0x0 ,  /**  Use strict or relaxed according the config  */
+	enum ParseModeEnum {  DefaultParseMode = 0x0 ,  /**  Use strict or relaxed according the config  */
 			StrictParse = 0x1,			/** Strict parsing requires a space between each emoticon */
 			RelaxedParse = 0x4,         /** Parse mode where all possible emoticon matches are allowed */
 			SkipHTML = 0x2				/** Skip emoticons within HTML */
 		 };
+
+	Q_DECLARE_FLAGS(ParseMode, ParseModeEnum);
 
 	/**
 	 * Use it to parse emoticons in a text.
@@ -66,10 +69,10 @@ public:
 	 * If nicks is provided, they will not be parsed if they 
 	 * exist in message.
 	 */
-	static QString parseEmoticons( const QString &message, ParseMode = SkipHTML ) ;
+	static QString parseEmoticons( const QString &message, ParseMode mode = SkipHTML ) ;
 
 	
-	QString parse( const QString &message, ParseMode = SkipHTML );
+	QString parse( const QString &message, ParseMode mode = SkipHTML );
 
 	/**
 	 * TokenType, a token might be an image ( emoticon ) or text.
@@ -127,7 +130,7 @@ public:
 	 * @author Engin AYDOGAN < engin@bzzzt.biz >
 	 * @since 23-03-05
 	 */
-	QList<Token> tokenize( const QString &message, uint mode = DefaultParseMode );
+	QList<Token> tokenize( const QString &message, ParseMode mode = DefaultParseMode );
 	
 	/**
 	 * Return all emoticons and the corresponding icon.
@@ -161,6 +164,7 @@ private slots:
 	void initEmoticons ( const QString &theme = QString::null );
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(Emoticons::ParseMode)
 
 } //END namespace Kopete
 

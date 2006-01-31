@@ -74,26 +74,26 @@ void KopeteEmoticonTest::testEmoticonParser()
 		}
 		if ( inputFile.open( QIODevice::ReadOnly ) && expectedFile.open( QIODevice::ReadOnly ))
 		{
-			QTextStream inputStream(&inputFile);
-			QTextStream expectedStream(&expectedFile);
 			QString inputData;
 			QString expectedData;
-			inputData = inputStream.read();
-			expectedData = expectedStream.read();
+			inputData = QString( inputFile.readAll() );
+			expectedData = QString( expectedFile.readAll() );
 
 			inputFile.close();
 			expectedFile.close();
 
 			QString path = KGlobal::dirs()->findResource( "emoticons", "Default/smile.png" ).replace( "smile.png", QString::null );
-				
-			Kopete::Emoticons::self();
-			QString result = emo.parse( inputData ).replace( path, QString::null );	
+
+			//Kopete::Emoticons::self();
+			QString result = emo.parse( inputData, Kopete::Emoticons::RelaxedParse | Kopete::Emoticons::SkipHTML ).replace( path, QString::null );	
 			
+			kdDebug() << "Parse result: " << result << endl;
+
 			// HACK to know the test case we applied, concatenate testcase name to both
 			// input and expected string. WIll remove when I can add some sort of metadata
 			// to a CHECK so debug its origin testcase
-			result = fileName + QString::fromLatin1(": ") + result;
-			expectedData = fileName + QString::fromLatin1(": ") + expectedData;
+			//result = fileName + QString::fromLatin1(": ") + result;
+			//expectedData = fileName + QString::fromLatin1(": ") + expectedData;
 			// if the test case begins with broken, we expect it to fail, then use XFAIL
 			// otherwise use CHECK
 			if ( fileName.section("-", 0, 0) == QString::fromLatin1("broken") )
