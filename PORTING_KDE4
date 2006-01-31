@@ -14,18 +14,18 @@ Libkopete changes
    - sessions() now return a QList<ChatSession*>
 
 *) kopetecommandhandler.h
-   -CommandList is now a QMultiHash<QString, Command*>
+   - CommandList is now a QMultiHash<QString, Command*>
 
 *) kopeteproperties.h
-   - Remplaced PortingDict, now a QMultiHash<QByteArray, PropertyData
-   - Remplaced all const char * parameters with const QByteArray &
+   - Replaced PortingDict, now a QMultiHash<QByteArray, PropertyData
+   - Replaced all const char * parameters with const QByteArray &
 
 *) kopetecontactproperty.h
    - Removed bool flags from constructor. Use ContactPropertyOption enum instead.
 
 *) Kopete::MetaContact
    - photo() is now deprecated. Use picture().image() instead.
-  
+
 *) kopetexsl.h
    - Was removed in 0.12 version.
 
