@@ -9,7 +9,7 @@
 
 #include <kgenericfactory.h>
 
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 
 #include "aliasplugin.h"
 

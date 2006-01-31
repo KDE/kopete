@@ -32,8 +32,10 @@ Libkopete changes
 *) Kopete::Message
    - asXML() no longer exist (removed in 0.12)
 
-* KopeteAwayDialog
+*) KopeteAwayDialog
    - removed. KopeteAwayAction should be used instead.
+
+-kopetemessagemanager.h and kopetemessagemanagerfactory.h has been removed. Use kopetechatsession.h and kopetechatsessionmanager.h
 
 Other changes
 -------------

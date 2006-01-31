@@ -36,7 +36,7 @@
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopetecontact.h"
 
 #include "translatorplugin.h"
@@ -108,25 +108,25 @@ void TranslatorPlugin::loadSettings()
 	int mode = 0;
 
 	config->setGroup( "Translator Plugin" );
-	m_myLang = m_languages->languageKey( config->readNumEntry( "myLang" , 0 ) );
-	m_service = m_languages->serviceKey( config->readNumEntry( "Service", 0 ) );
+	m_myLang = m_languages->languageKey( config->readEntry( "myLang" , 0 ) );
+	m_service = m_languages->serviceKey( config->readEntry( "Service", 0 ) );
 
-	if ( config->readBoolEntry( "IncomingDontTranslate", true ) )
+	if ( config->readEntry( "IncomingDontTranslate", true ) )
 		mode = 0;
-	else if ( config->readBoolEntry( "IncomingShowOriginal", false ) )
+	else if ( config->readEntry( "IncomingShowOriginal", false ) )
 		mode = 1;
-	else if ( config->readBoolEntry( "IncomingTranslate", false ) )
+	else if ( config->readEntry( "IncomingTranslate", false ) )
 		mode = 2;
 
 	m_incomingMode = mode;
 
-	if ( config->readBoolEntry( "OutgoingDontTranslate", true ) )
+	if ( config->readEntry( "OutgoingDontTranslate", true ) )
 		mode = 0;
-	else if ( config->readBoolEntry( "OutgoingShowOriginal", false ) )
+	else if ( config->readEntry( "OutgoingShowOriginal", false ) )
 		mode = 1;
-	else if ( config->readBoolEntry( "OutgoingTranslate", false ) )
+	else if ( config->readEntry( "OutgoingTranslate", false ) )
 		mode = 2;
-	else if ( config->readBoolEntry( "OutgoingAsk", false ) )
+	else if ( config->readEntry( "OutgoingAsk", false ) )
 		mode = 3;
 
 	m_outgoingMode = mode;
