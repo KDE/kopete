@@ -42,7 +42,7 @@ WPAccount::WPAccount(WPProtocol *parent, const QString &accountID, const char *n
 	QString theHostName = accountID;
 
 	// we need this before initActions
-	setMyself( new WPContact(this, theHostName, theHostName, 0) );
+	setMyself( new WPContact(this, theHostName, theHostName, Kopete::ContactList::self()->myself()) );
 
 //	if (excludeConnect()) connect(Kopete::OnlineStatus::Online); // ??
 
