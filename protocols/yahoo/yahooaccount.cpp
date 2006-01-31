@@ -64,26 +64,12 @@
 #include "yahooinvitelistimpl.h"
 #include "yahooauthreply.h"
 
-YahooAwayDialog::YahooAwayDialog(YahooAccount* account, QWidget *parent, const char *name) :
-	KopeteAwayDialog(parent, name)
-{
-	theAccount = account;
-}
-
-void YahooAwayDialog::setAway(int awayType)
-{
-	awayType = 0;
-	theAccount->setAway(awayType, getSelectedAwayMessage());
-}
-
-
 YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, const char *name)
  : Kopete::PasswordedAccount(parent, accountId, 0, name)
 {
 
 	// first things first - initialise internals
 	stateOnConnection = 0;
-	theAwayDialog = new YahooAwayDialog( this );
 	m_protocol = parent;
 	m_session = new Client( this );
 	m_lastDisconnectCode = 0;
@@ -114,7 +100,6 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 
 YahooAccount::~YahooAccount()
 {
-	delete theAwayDialog;
 }
 
 void YahooAccount::setServer( const QString &server )

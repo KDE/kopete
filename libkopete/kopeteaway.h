@@ -22,7 +22,6 @@
 #include <qstring.h>
 #include <qobject.h>
 
-#include "kopeteawaydialog.h"
 #include "kopete_export.h"
 
 class QStringList;

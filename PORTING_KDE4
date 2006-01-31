@@ -32,6 +32,9 @@ Libkopete changes
 *) Kopete::Message
    - asXML() no longer exist (removed in 0.12)
 
+* KopeteAwayDialog
+   - removed. KopeteAwayAction should be used instead.
+
 Other changes
 -------------
 If you get problems with UI files that fuck because of some KDE widgets,

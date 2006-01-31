@@ -23,15 +23,14 @@
 // Qt
 #include <qobject.h>
 #include <qmap.h>
-//Added by qt3to4:
 #include <QPixmap>
+#include <QPair>
 
 // KDE
 #include <kurl.h>
 
 // Kopete
 #include "kopetepasswordedaccount.h"
-#include "kopeteawaydialog.h"
 
 // Local
 #include "yahooprotocol.h"
@@ -53,15 +52,6 @@ class ChatSession;
 }
 class Client;
 
-class YahooAwayDialog : public KopeteAwayDialog
-{
-public:
-	YahooAwayDialog(YahooAccount *account, QWidget *parent = 0, const char *name = 0);
-	virtual void setAway(int awayType);
-
-private:
-	YahooAccount *theAccount;
-};
 
 class YahooAccount : public Kopete::PasswordedAccount
 {
@@ -271,8 +261,6 @@ private:
 	YahooProtocol *m_protocol;	// The Protocol Object
 
 	YahooWebcam *m_webcam;
-
-	YahooAwayDialog *theAwayDialog;	// Our away message dialog
 
 	KAction *m_openInboxAction;	// Menu item openInbox
 	KAction *m_openYABAction;	// Menu item openYahooAddressbook

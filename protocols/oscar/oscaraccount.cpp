@@ -23,7 +23,6 @@
 #include "kopeteaway.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
-#include "kopeteawaydialog.h"
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
 #include "kopetecontactlist.h"
