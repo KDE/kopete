@@ -37,7 +37,7 @@ class Protocol::Private
 {
 public:
 	bool unloading;
-	int capabilities;
+	Protocol::Capabilities capabilities;
 	/*
 	 * Make sure we always have a lastSeen and a fullname property as long as
 	 * a protocol is loaded
@@ -55,7 +55,6 @@ Protocol::Protocol( KInstance *instance, QObject *parent, const char *name )
 	d->mStickLastSeen = Global::Properties::self()->lastSeen();
 	d->mStickFullName = Global::Properties::self()->fullName();
 	d->unloading = false;
-	d->capabilities = 0;
 	d->accountNotConnectedStatus = Kopete::OnlineStatus( Kopete::OnlineStatus::Unknown, 0, this, Kopete::OnlineStatus::AccountOffline, QStringList(QString::fromLatin1( "account_offline_overlay" )), i18n( "Account Offline" ) );
 }
 
@@ -75,12 +74,12 @@ Protocol::~Protocol()
 	delete d;
 }
 
-unsigned int Protocol::capabilities() const
+Protocol::Capabilities Protocol::capabilities() const
 {
 	return d->capabilities;
 }
 
-void Protocol::setCapabilities( unsigned int capabilities )
+void Protocol::setCapabilities( Protocol::Capabilities capabilities )
 {
 	d->capabilities = capabilities;
 }

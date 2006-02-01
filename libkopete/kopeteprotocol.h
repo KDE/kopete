@@ -20,6 +20,8 @@
 #ifndef KOPETEPROTOCOL_H
 #define KOPETEPROTOCOL_H
 
+#include <QFlags>
+
 #include "kopeteplugin.h"
 #include "kopeteonlinestatus.h"
 
@@ -97,21 +99,13 @@ public:
 	 */
 	virtual KopeteEditAccountWidget * createEditAccountWidget( Account *account, QWidget *parent ) = 0;
 
-
-	/**
-	 * @brief a bitmask of the capabilities of this protocol
-	 * @sa @ref setCapabilities
-	 */
-	unsigned int capabilities() const ;
-
-
 	/**
 	 * @brief Available capabilities
 	 *
 	 * @ref capabilities() returns an ORed list of these, which
 	 * the edit widget interperts to determine what buttons to show
 	 */
-	enum Capabilities
+	enum Capability
 	{
 		BaseFgColor = 0x1,     ///< Setting the bg color of the whole edit widget / message
 		BaseBgColor = 0x2,     ///< Setting the fg color of the whole edit widget / message
@@ -148,6 +142,13 @@ public:
 
 		CanSendOffline = 0x10000 ///< If it's possible to send  offline messages
 	};
+	Q_DECLARE_FLAGS(Capabilities, Capability);
+
+	/**
+	 * @brief a bitmask of the capabilities of this protocol
+	 * @sa @ref setCapabilities
+	 */
+	Capabilities capabilities() const;
 
 	/**
 	 * @brief Returns the status used for contacts when accounts of this protocol are offline
@@ -171,7 +172,7 @@ protected:
 	 * The subclass contructor is a good place for calling it.
 	 * @sa @ref capabilities()
 	 */
-	void setCapabilities( unsigned int );
+	void setCapabilities( Capabilities );
 
 public:
 
@@ -262,6 +263,8 @@ private:
 	class Private;
 	Private *d;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Protocol::Capabilities);
 
 } //END namespace kopete
 
