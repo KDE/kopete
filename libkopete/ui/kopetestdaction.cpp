@@ -105,7 +105,7 @@ KAction * KopeteStdAction::changeMetaContact( const QObject *recvr, const char *
 
 KAction * KopeteStdAction::deleteContact( const QObject *recvr, const char *slot, QObject *parent, const char *name )
 {
-	return new KAction( i18n( "&Delete Contact" ), QString::fromLatin1( "editdelete" ), Qt::Key_Delete, recvr, slot, parent, name );
+	return new KAction( i18n( "&Delete Contact" ), QString::fromLatin1( "delete_user" ), Qt::Key_Delete, recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::changeAlias( const QObject *recvr, const char *slot, QObject *parent, const char *name )

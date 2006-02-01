@@ -87,11 +87,11 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 	m_actionNudge->setEnabled(true);
 #if MSN_WEBCAM
 	// Invite to receive webcam action
-	m_actionWebcamReceive=new KAction( i18n( "View Contact's Webcam" ), "webcamreceive",  0, this, SLOT(slotWebcamReceive() ), actionCollection(), "msnWebcamReceive" ) ;
+	m_actionWebcamReceive=new KAction( i18n( "View Contact's Webcam" ), "webcamreceive",  0, members().getFirst(), SLOT(slotWebcamReceive() ), actionCollection(), "msnWebcamReceive" ) ;
 	m_actionWebcamReceive->setEnabled(true);
 	
 	//Send webcam action
-	m_actionWebcamSend=new KAction( i18n( "Send Webcam" ), "webcamsend",  0, this, SLOT(slotWebcamSend() ), actionCollection(), "msnWebcamSend" ) ;
+	m_actionWebcamSend=new KAction( i18n( "Send Webcam" ), "webcamsend",  0, members().getFirst(), SLOT(slotWebcamSend() ), actionCollection(), "msnWebcamSend" ) ;
 	m_actionWebcamSend->setEnabled(true);
 
 #endif

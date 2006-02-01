@@ -28,6 +28,7 @@ class JabberBaseContact;
 namespace Kopete { class Message; }
 class QString;
 
+
 /**
  * @author Till Gerken
  */

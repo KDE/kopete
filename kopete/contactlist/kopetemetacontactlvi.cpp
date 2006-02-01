@@ -568,7 +568,7 @@ void KopeteMetaContactLVI::slotRemoveThisUser()
 
 	if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
 		i18n( "Are you sure you want to remove %1 from your contact list?" ).
-		arg( m_metaContact->displayName() ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"),"editdelete") )
+		arg( m_metaContact->displayName() ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"),"delete_user") )
 		== KMessageBox::Continue )
 	{
 		Kopete::ContactList::self()->removeMetaContact( m_metaContact );
