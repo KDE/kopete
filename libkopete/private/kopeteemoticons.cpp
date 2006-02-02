@@ -19,7 +19,7 @@
 
 #include "kopeteemoticons.h"
 
-#include "kopeteprefs.h"
+#include "kopeteappearancesettings.h"
 
 #include <QtXml>
 #include <QFile>
@@ -69,7 +69,7 @@ public:
 	QMap<QString, QString> emoticonAndPicList;
 
 	/**
-	 * The current icon theme from KopetePrefs
+	 * The current icon theme from Kopete::AppearanceSettings
 	 */
 	QString theme;
 
@@ -100,7 +100,7 @@ QList<Emoticons::Token> Emoticons::tokenizeEmoticons( const QString& message, Pa
 QList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode mode )
 {
 	QList<Token> result;
-	if ( !KopetePrefs::prefs()->useEmoticons() )
+	if ( !Kopete::AppearanceSettings::self()->useEmoticons() )
 	{
 		result.append( Token( Text, message ) );
 		return result;
@@ -109,7 +109,7 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode m
 	if( ! ( mode & (StrictParse|RelaxedParse) ) )
 	{
 		//if none of theses two mode are selected, use the mode from the config
-		mode |=  KopetePrefs::prefs()->emoticonsRequireSpaces() ? StrictParse : RelaxedParse  ;
+		mode |=  Kopete::AppearanceSettings::self()->emoticonsRequireSpace() ? StrictParse : RelaxedParse  ;
 	}
 
 	/* previous char, in the firs iteration assume that it is space since we want
@@ -279,7 +279,10 @@ Emoticons::Emoticons( const QString &theme ) : QObject( kapp, "KopeteEmoticons" 
 	if(theme.isNull())
 	{
 		initEmoticons();
+#warning Port to new signals when KConfigXT will support signals
+#if 0
 		connect( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(initEmoticons()) );
+#endif
 	}
 	else
 	{
@@ -352,10 +355,10 @@ void Emoticons::initEmoticons( const QString &theme )
 {
 	if(theme.isNull())
 	{
-		if ( d->theme == KopetePrefs::prefs()->iconTheme() )
+		if ( d->theme == Kopete::AppearanceSettings::self()->emoticonTheme() )
 			return;
 
-		d->theme = KopetePrefs::prefs()->iconTheme();
+		d->theme = Kopete::AppearanceSettings::self()->emoticonTheme();
 	}
 	else
 	{
@@ -429,7 +432,7 @@ QMap<QString, QString> Emoticons::emoticonAndPicList()
 
 QString Emoticons::parse( const QString &message, ParseMode mode )
 {
-	if ( !KopetePrefs::prefs()->useEmoticons() )
+	if ( !Kopete::AppearanceSettings::self()->useEmoticons() )
                 return message;
 
 	QList<Token> tokens = tokenize( message, mode );

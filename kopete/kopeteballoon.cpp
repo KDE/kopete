@@ -41,7 +41,7 @@
 
 #include "kopeteballoon.h"
 #include "systemtray.h"
-#include "kopeteprefs.h"
+#include "kopetebehaviorsettings.h"
 
 KopeteActiveLabel::KopeteActiveLabel( QWidget *parent, const char *name )
 	: KActiveLabel( parent, name ) 
@@ -126,10 +126,9 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 	connect(mCaption, SIGNAL(linkClicked(const QString &)),
 		this, SLOT(deleteLater()));
 	
-	KopetePrefs *p = KopetePrefs::prefs();
 	// Autoclose balloon 
-	if (p->balloonClose())
-		QTimer::singleShot( p->balloonCloseDelay() * 1000, this, SIGNAL( signalTimeout( ) ) );
+	if ( Kopete::BehaviorSettings::self()->balloonClose())
+		QTimer::singleShot( Kopete::BehaviorSettings::self()->balloonCloseDelay() * 1000, this, SIGNAL( signalTimeout( ) ) );
 }
 
 void KopeteBalloon::setAnchor(const QPoint &anchor)

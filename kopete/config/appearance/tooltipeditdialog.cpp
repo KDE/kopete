@@ -19,7 +19,7 @@
 
 #include "kopetecontactproperty.h"
 #include "kopeteglobal.h"
-#include "kopeteprefs.h"
+#include "kopeteappearancesettings.h"
 
 #include <qapplication.h>
 #include <qtoolbutton.h>
@@ -63,24 +63,19 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent, const char* name)
 
 	const Kopete::ContactPropertyTmpl::Map propmap(
 		Kopete::Global::Properties::self()->templateMap());
-	QStringList usedKeys = KopetePrefs::prefs()->toolTipContents();
+	QStringList usedKeys = Kopete::AppearanceSettings::self()->toolTipContents();
 
-#warning "kde4: test if it works with qt4"
-    connect(mMainWidget->lstUnusedItems, SIGNAL(doubleClicked ( QListViewItem *, const QPoint &, int )), this, SLOT(slotAddButton()));
-    connect(mMainWidget->lstUsedItems, SIGNAL(doubleClicked ( QListViewItem *, const QPoint &, int )), this, SLOT(slotRemoveButton()));
+	connect(mMainWidget->lstUnusedItems, SIGNAL(doubleClicked ( Q3ListViewItem *, const QPoint &, int )), this, SLOT(slotAddButton()));
+	connect(mMainWidget->lstUsedItems, SIGNAL(doubleClicked ( Q3ListViewItem *, const QPoint &, int )), this, SLOT(slotRemoveButton()));
 
 	// first fill the "used" list
-	QStringList::Iterator usedIt=usedKeys.end();
-	do
+	foreach(QString usedProp, usedKeys)
 	{
-		usedIt--;
-		// only add if that property key is really known
-		if(propmap.contains(*usedIt) && !propmap[*usedIt].isPrivate())
+		if(propmap.contains(usedProp) && !propmap[usedProp].isPrivate())
 		{
-			new TooltipItem(mMainWidget->lstUsedItems,
-				propmap[*usedIt].label(), *usedIt);
+			new TooltipItem(mMainWidget->lstUsedItems, propmap[usedProp].label(), usedProp);
 		}
-	} while(usedIt != usedKeys.begin());
+	}
 
 	// then iterate over all known properties and insert the remaining ones
 	// into the "unused" list
@@ -126,7 +121,7 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent, const char* name)
 
 void TooltipEditDialog::slotOkClicked()
 {
-	QStringList oldList = KopetePrefs::prefs()->toolTipContents();
+	QStringList oldList = Kopete::AppearanceSettings::self()->toolTipContents();
 	QStringList newList;
 	Q3ListViewItemIterator it(mMainWidget->lstUsedItems);
 	QString keyname;
@@ -142,7 +137,7 @@ void TooltipEditDialog::slotOkClicked()
 
 	if(oldList != newList)
 	{
-		KopetePrefs::prefs()->setToolTipContents(newList);
+		Kopete::AppearanceSettings::self()->setToolTipContents(newList);
 		emit changed(true);
 		kdDebug(14000) << k_funcinfo << "tooltip fields changed, emitting changed()" << endl;
 	}

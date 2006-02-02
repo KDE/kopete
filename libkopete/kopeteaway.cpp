@@ -34,10 +34,10 @@
 
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
+#include "kopetebehaviorsettings.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteonlinestatusmanager.h"
 #include "kopetecontact.h"
-#include "kopeteprefs.h"
 
 #ifdef Q_WS_X11
 
@@ -210,11 +210,9 @@ void Kopete::Away::save()
 
 void Kopete::Away::load()
 {
-	KConfig *config = KGlobal::config();
-	config->setGroup("AutoAway");
-	d->awayTimeout=config->readEntry("Timeout", 600);
-	d->goAvailable=config->readEntry("GoAvailable", true);
-	d->useAutoAway=config->readEntry("UseAutoAway", true);
+	d->awayTimeout=Kopete::BehaviorSettings::self()->autoAwayTimeout();
+	d->goAvailable=Kopete::BehaviorSettings::self()->autoAwayGoAvailable();
+	d->useAutoAway=Kopete::BehaviorSettings::self()->useAutoAway();
 }
 
 QStringList Kopete::Away::getMessages()
@@ -233,7 +231,7 @@ QString Kopete::Away::getMessage( uint messageNumber )
 void Kopete::Away::addMessage(const QString &message)
 {
 	d->awayMessageList.prepend( message );
-	if( (int)d->awayMessageList.count() > KopetePrefs::prefs()->rememberedMessages() )
+	if( (int)d->awayMessageList.count() > Kopete::BehaviorSettings::self()->awayMessageRemembered() )
 		d->awayMessageList.pop_back();
 	save();
 }

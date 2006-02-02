@@ -74,13 +74,14 @@
 #include "kopetechatsession.h"
 #include "kopetemetacontact.h"
 #include "kopetepluginmanager.h"
-#include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopeteglobal.h"
 #include "kopeteemoticons.h"
 #include "kopeteview.h"
 #include "kopetepicture.h"
+#include "kopeteappearancesettings.h"
+#include "kopetebehaviorsettings.h"
 
 #include "kopetechatwindowstyle.h"
 #include "kopetechatwindowstylemanager.h"
@@ -187,8 +188,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 {
 	d->manager = mgr;
 
-	KopetePrefs *kopetePrefs = KopetePrefs::prefs();
-	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool( kopetePrefs->stylePath() );
+	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool( Kopete::AppearanceSettings::self()->stylePath() );
 
 	//Security settings, we don't need this stuff
 	setJScriptEnabled( true ) ;
@@ -203,6 +203,8 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	// It is not possible to drag and drop on our widget
 	view()->setAcceptDrops(false);
 
+#warning Port to new signals when KConfigXT will support signals.
+#if 0
 	connect( KopetePrefs::prefs(), SIGNAL(messageAppearanceChanged()),
 	         this, SLOT( slotAppearanceChanged() ) );
 	connect( KopetePrefs::prefs(), SIGNAL(windowAppearanceChanged()),
@@ -211,6 +213,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 			 this, SLOT( setStyle(const QString &) ) );
 	connect( KopetePrefs::prefs(), SIGNAL(styleVariantChanged(const QString &)),
 			 this, SLOT( setStyleVariant(const QString &) ) );
+#endif 0
 	// Refresh the style if the display name change.
 	connect( d->manager, SIGNAL(displayNameChanged()), this, SLOT(changeStyle()) );
 
@@ -324,9 +327,9 @@ void ChatMessagePart::slotOpenURLRequest(const KUrl &url, const KParts::URLArgs 
 
 void ChatMessagePart::readOverrides()
 {
-	d->bgOverride = KopetePrefs::prefs()->bgOverride();
-	d->fgOverride = KopetePrefs::prefs()->fgOverride();
-	d->rtfOverride = KopetePrefs::prefs()->rtfOverride();
+	d->bgOverride = Kopete::AppearanceSettings::self()->chatBgOverride();
+	d->fgOverride = Kopete::AppearanceSettings::self()->chatFgOverride();
+	d->rtfOverride = Kopete::AppearanceSettings::self()->chatRtfOverride();
 }
 
 void ChatMessagePart::setStyle( const QString &stylePath )
@@ -377,7 +380,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 
 	QString formattedMessageHtml;
 	bool isConsecutiveMessage = false;
-	uint bufferLen = (uint)KopetePrefs::prefs()->chatViewBufferSize();
+	uint bufferLen = (uint)Kopete::BehaviorSettings::self()->chatWindowBufferViewSize();
 
 	// Find the "Chat" div element.
 	// If the "Chat" div element is not found, do nothing. It's the central part of Adium format.
@@ -393,7 +396,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 	// Consecutive messages are only for normal messages, status messages do not have a <div id="insert" />
 	// We check if the from() is the latestContact, because consecutive incoming/outgoing message can come from differents peopole(in groupchat and IRC)
 	// Group only if the user want it.
-	if( KopetePrefs::prefs()->groupConsecutiveMessages() )
+	if( Kopete::AppearanceSettings::self()->groupConsecutiveMessages() )
 	{
 		isConsecutiveMessage = (message.direction() == d->latestDirection && d->latestContact && d->latestContact == message.from() && message.type() == d->latestType);
 	}
@@ -499,7 +502,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 			
 		// Do a complete style refresh only if using consecutive messages.
 		// FIXME: Find a better way than that.
-		if( KopetePrefs::prefs()->groupConsecutiveMessages() )
+		if( Kopete::AppearanceSettings::self()->groupConsecutiveMessages() )
 		{
 			changeStyle();
 		}
@@ -561,7 +564,7 @@ void ChatMessagePart::slotRefreshView()
 		kopeteNode.setInnerText( styleHTML() );
 
 	DOM::HTMLBodyElement bodyElement = htmlDocument().body();
-	bodyElement.setBgColor( KopetePrefs::prefs()->bgColor().name() );
+	bodyElement.setBgColor( Kopete::AppearanceSettings::self()->chatBackgroundColor().name() );
 }
 
 void ChatMessagePart::keepScrolledDown()
@@ -572,7 +575,7 @@ void ChatMessagePart::keepScrolledDown()
 
 const QString ChatMessagePart::styleHTML() const
 {
-	KopetePrefs *p = KopetePrefs::prefs();
+	Kopete::AppearanceSettings *settings = Kopete::AppearanceSettings::self();
 
 	QString style = QString::fromLatin1(
 		"body{background-color:%1;font-family:%2;font-size:%3pt;color:%4}"
@@ -581,15 +584,15 @@ const QString ChatMessagePart::styleHTML() const
 		"a.KopeteDisplayName{text-decoration:none;color:inherit;}"
 		"a.KopeteDisplayName:hover{text-decoration:underline;color:inherit}"
 		".KopeteLink{cursor:pointer;}.KopeteLink:hover{text-decoration:underline}" )
-		.arg( p->bgColor().name() )
-		.arg( p->fontFace().family() )
-		.arg( p->fontFace().pointSize() )
-		.arg( p->textColor().name() )
-		.arg( p->fontFace().family() )
-		.arg( p->fontFace().pointSize() )
-		.arg( p->textColor().name() )
-		.arg( p->linkColor().name() )
-		.arg( p->linkColor().name() );
+		.arg( settings->chatBackgroundColor().name() )
+		.arg( settings->chatFont().family() )
+		.arg( settings->chatFont().pointSize() )
+		.arg( settings->chatTextColor().name() )
+		.arg( settings->chatFont().family() )
+		.arg( settings->chatFont().pointSize() )
+		.arg( settings->chatTextColor().name() )
+		.arg( settings->chatLinkColor().name() )
+		.arg( settings->chatLinkColor().name() );
 
 	return style;
 }
@@ -705,7 +708,7 @@ QString ChatMessagePart::textUnderMouse()
 		cPos = 0,
 		dataLen = data.length();
 
-	QFontMetrics metrics( KopetePrefs::prefs()->fontFace() );
+	QFontMetrics metrics( Kopete::AppearanceSettings::self()->chatFont() );
 	QString buffer;
 	while( cPos < dataLen && nodeLeft < mouseLeft )
 	{
@@ -875,13 +878,13 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	// Look for %textbacgroundcolor{X}% 
 	// TODO: use the X value.
 	// Only look for textbackgroundcolor if the message is hightlighted and hightlight is enabled.
-	if( message.importance() == Kopete::Message::Highlight && KopetePrefs::prefs()->highlightEnabled() )
+	if( message.importance() == Kopete::Message::Highlight && Kopete::BehaviorSettings::self()->highlightEnabled() )
 	{
 		QRegExp textBackgroundRegExp("%textbackgroundcolor\\{([^}]*)\\}%");
 		int textPos=0;
 		while( (textPos=textBackgroundRegExp.search(resultHTML, textPos) ) != -1 )
 		{
-			resultHTML = resultHTML.replace( textPos , textBackgroundRegExp.cap(0).length() , KopetePrefs::prefs()->highlightBackground().name() );
+			resultHTML = resultHTML.replace( textPos , textBackgroundRegExp.cap(0).length() , Kopete::AppearanceSettings::self()->highlightBackgroundColor().name() );
 		}
 	}
 
@@ -1058,9 +1061,9 @@ QString ChatMessagePart::formatName(const QString &sourceName)
 	formattedName = Kopete::Message::escape(formattedName);
 
 	// Squeeze the nickname if the user want it
-	if( KopetePrefs::prefs()->truncateContactNames() )
+	if( Kopete::BehaviorSettings::self()->truncateContactName() )
 	{
-		formattedName = KStringHandler::csqueeze( sourceName, KopetePrefs::prefs()->maxConactNameLength() );
+		formattedName = KStringHandler::csqueeze( sourceName, Kopete::BehaviorSettings::self()->truncateContactNameLength() );
 	}
 
 	return formattedName;
@@ -1150,7 +1153,7 @@ void ChatMessagePart::writeTemplate()
 		).arg( d->currentChatStyle->getStyleBaseHref() )
 		.arg( formatStyleKeywords(d->currentChatStyle->getHeaderHtml()) )
 		.arg( formatStyleKeywords(d->currentChatStyle->getFooterHtml()) )
-		.arg( KopetePrefs::prefs()->styleVariant() )
+		.arg( Kopete::AppearanceSettings::self()->styleVariant() )
 		.arg( styleHTML() );
 	write(xhtmlBase);
 	end();

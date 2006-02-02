@@ -31,14 +31,12 @@
 #include "kopeteaway.h"
 #include "kopetegroup.h"
 #include "kopetecontact.h"
-#include "kopeteconfig.h"
+#include "kopetegeneralsettings.h"
+#include "kopetebehaviorsettings.h"
 
 KopeteIface::KopeteIface() : DCOPObject( "KopeteIface" )
 {
-	KConfig *config = KGlobal::config();
-	config->setGroup("AutoAway");
-
-	if (config->readBoolEntry("UseAutoAway", true))
+	if (Kopete::BehaviorSettings::self()->useAutoAway())
 	{
 		connectDCOPSignal("kdesktop", "KScreensaverIface",
 			"KDE_start_screensaver()", "setAutoAway()", false);
@@ -287,7 +285,7 @@ void KopeteIface::setAutoAway()
 
 void KopeteIface::setGlobalNickname( const QString &nickname )
 {
-	if( Kopete::Config::enableGlobalIdentity() )
+	if( Kopete::GeneralSettings::self()->enableGlobalIdentity() )
 	{
 		Kopete::MetaContact *myselfMetaContact = Kopete::ContactList::self()->myself();
 		myselfMetaContact->setDisplayNameSource( Kopete::MetaContact::SourceCustom );
@@ -297,7 +295,7 @@ void KopeteIface::setGlobalNickname( const QString &nickname )
 
 void KopeteIface::setGlobalPhoto( const KUrl &photoUrl )
 {
-	if( Kopete::Config::enableGlobalIdentity() )
+	if( Kopete::GeneralSettings::self()->enableGlobalIdentity() )
 	{
 		Kopete::MetaContact *myselfMetaContact = Kopete::ContactList::self()->myself();
 		myselfMetaContact->setPhoto( photoUrl );

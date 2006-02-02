@@ -27,9 +27,9 @@
 #include "kopetegroupviewitem.h"
 #include "kopetegroup.h"
 #include "kopeteonlinestatus.h"
-#include "kopeteprefs.h"
 #include "kopetemetacontactlvi.h"
 #include "kopetemetacontact.h"
+#include "kopeteappearancesettings.h"
 
 #include <memory>
 
@@ -105,8 +105,11 @@ void KopeteGroupViewItem::initLVI()
 	connect( m_group, SIGNAL( displayNameChanged( Kopete::Group*, const QString& ) ),
 		this, SLOT( refreshDisplayName() ) );
 
+#warning Port when KConfigXT will support signals.
+#if 0
 	connect( KopetePrefs::prefs(), SIGNAL( contactListAppearanceChanged() ),
 		SLOT( slotConfigChanged() ) );
+#endif
 	connect( kapp, SIGNAL( appearanceChanged() ),  SLOT( slotConfigChanged() ) );
 
 	connect( m_group, SIGNAL( iconAppearanceChanged() ), SLOT( updateIcon() ) );
@@ -134,14 +137,14 @@ void KopeteGroupViewItem::slotConfigChanged()
 	updateIcon();
 	updateVisibility();
 
-	d->name->setColor( KopetePrefs::prefs()->contactListGroupNameColor() );
+	d->name->setColor( Kopete::AppearanceSettings::self()->groupNameColor() );
 
 	QFont font = listView()->font();
-	if ( KopetePrefs::prefs()->contactListUseCustomFonts() )
-		font = KopetePrefs::prefs()->contactListCustomNormalFont();
+	if ( Kopete::AppearanceSettings::self()->contactListUseCustomFont() )
+		font = Kopete::AppearanceSettings::self()->contactListNormalFont();
 	d->name->setFont( font );
 
-	d->count->setFont( KopetePrefs::prefs()->contactListSmallFont() );
+	d->count->setFont( Kopete::AppearanceSettings::self()->contactListSmallFont() );
 }
 
 void KopeteGroupViewItem::refreshDisplayName()
@@ -210,10 +213,10 @@ void KopeteGroupViewItem::updateVisibility()
 	//       or if he has an event (blinking icon).  If such as contact is not with
 	//       others inline contact in the group. the group will stay hidden.
 	int visibleUsers = onlineMemberCount;
-	if ( KopetePrefs::prefs()->showOffline() )
+	if ( Kopete::AppearanceSettings::self()->showOfflineUsers() )
 		visibleUsers = totalMemberCount;
 
-	bool visible = KopetePrefs::prefs()->showEmptyGroups() || ( visibleUsers > 0 );
+	bool visible = Kopete::AppearanceSettings::self()->showEmptyGroups() || ( visibleUsers > 0 );
 
 	if ( isVisible() != visible )
 	{

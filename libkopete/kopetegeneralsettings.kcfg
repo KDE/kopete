@@ -1,6 +1,6 @@
 <!DOCTYPE kcfg SYSTEM "http://www.kde.org/standards/kcfg/1.0/kcfg.dtd">
 <kcfg>
- <kcfgfile name="kopete" />
+ <kcfgfile name="kopeterc" />
  <group name="GlobalIdentity" >
   <entry key="enableGlobalIdentity" type="Bool" name="EnableGlobalIdentity" >
    <label>Enable the global identity feature</label>

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>348</width>
-            <height>302</height>
+            <width>387</width>
+            <height>348</height>
         </rect>
     </property>
     <property name="caption">
@@ -32,10 +32,10 @@
                 </property>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mShowTrayChk</cstring>
+                        <cstring>kcfg_showSystemTray</cstring>
                     </property>
                     <property name="text">
-                        <string>Show system tray &amp;icon</string>
+                        <string>Show system &amp;tray icon</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Show the icon in the system tray</string>
@@ -46,13 +46,13 @@
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mStartDockedChk</cstring>
+                        <cstring>kcfg_startDocked</cstring>
                     </property>
                     <property name="enabled">
                         <bool>false</bool>
                     </property>
                     <property name="text">
-                        <string>Start with hidden &amp;main window</string>
+                        <string>Start &amp;with hidden main window</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Start with the main window minimized to the system tray</string>
@@ -90,7 +90,7 @@
                 </widget>
                 <widget class="QRadioButton">
                     <property name="name">
-                        <cstring>mUseQueueChk</cstring>
+                        <cstring>kcfg_useMessageQueue</cstring>
                     </property>
                     <property name="text">
                         <string>Use message &amp;queue</string>
@@ -104,7 +104,7 @@
                 </widget>
                 <widget class="QRadioButton">
                     <property name="name">
-                        <cstring>mUseStackChk</cstring>
+                        <cstring>kcfg_useMessageStack</cstring>
                     </property>
                     <property name="text">
                         <string>Use message stac&amp;k</string>
@@ -118,13 +118,13 @@
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mQueueUnreadMessagesChk</cstring>
+                        <cstring>kcfg_queueUnreadMessages</cstring>
                     </property>
                     <property name="enabled">
                         <bool>false</bool>
                     </property>
                     <property name="text">
-                        <string>Queue/stack &amp;unread messages</string>
+                        <string>Queue/stack unrea&amp;d messages</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Also add unread messages to queue/stack</string>
@@ -148,7 +148,7 @@
                 </property>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mAutoConnect</cstring>
+                        <cstring>kcfg_autoConnect</cstring>
                     </property>
                     <property name="text">
                         <string>Connect automatically at &amp;startup</string>
@@ -162,7 +162,7 @@
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mMouseNavigation</cstring>
+                        <cstring>kcfg_contactListMouseNavigation</cstring>
                     </property>
                     <property name="text">
                         <string>Use mouse &amp;navigation instead of scroll-bars</string>
@@ -197,30 +197,30 @@
 </widget>
 <connections>
     <connection>
-        <sender>mShowTrayChk</sender>
+        <sender>kcfg_showSystemTray</sender>
         <signal>toggled(bool)</signal>
-        <receiver>mStartDockedChk</receiver>
+        <receiver>kcfg_startDocked</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>mUseQueueChk</sender>
+        <sender>kcfg_useMessageQueue</sender>
         <signal>toggled(bool)</signal>
-        <receiver>mQueueUnreadMessagesChk</receiver>
+        <receiver>kcfg_queueUnreadMessages</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>mUseStackChk</sender>
+        <sender>kcfg_useMessageStack</sender>
         <signal>toggled(bool)</signal>
-        <receiver>mQueueUnreadMessagesChk</receiver>
+        <receiver>kcfg_queueUnreadMessages</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>
-    <tabstop>mShowTrayChk</tabstop>
-    <tabstop>mStartDockedChk</tabstop>
-    <tabstop>mUseQueueChk</tabstop>
-    <tabstop>mAutoConnect</tabstop>
-    <tabstop>mMouseNavigation</tabstop>
+    <tabstop>kcfg_showSystemTray</tabstop>
+    <tabstop>kcfg_startDocked</tabstop>
+    <tabstop>kcfg_useMessageQueue</tabstop>
+    <tabstop>kcfg_autoConnect</tabstop>
+    <tabstop>kcfg_contactListMouseNavigation</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

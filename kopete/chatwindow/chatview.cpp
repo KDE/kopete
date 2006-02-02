@@ -25,12 +25,12 @@
 #include "kopetechatsession.h"
 #include "kopetemetacontact.h"
 #include "kopetepluginmanager.h"
-#include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopeteglobal.h"
 #include "kopetecontactlist.h"
 #include "kopeteviewmanager.h"
+#include "kopetebehaviorsettings.h"
 
 #include <kconfig.h>
 #include <ktabwidget.h>
@@ -277,7 +277,7 @@ void ChatView::raise( bool activate )
 		makeVisible();
 
 	if ( !KWin::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).onAllDesktops() )
-		if( KopetePrefs::prefs()->trayflashNotifySetCurrentDesktopToChatView() && activate )
+		if( Kopete::BehaviorSettings::self()->trayflashNotifySetCurrentDesktopToChatView() && activate )
 			KWin::setCurrentDesktop( KWin::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).desktop() );
 		else
 			KWin::setOnDesktop( m_mainWindow->winId(), KWin::currentDesktop() );
@@ -591,7 +591,7 @@ void ChatView::slotPropertyChanged( Kopete::Contact*, const QString &key,
 		QString newName=newValue.toString();
 		QString oldName=oldValue.toString();
 
-		if(KopetePrefs::prefs()->showEvents())
+		if(Kopete::BehaviorSettings::self()->showEvents())
 			if ( oldName != newName && !oldName.isEmpty())
 				sendInternalMessage( i18n( "%1 is now known as %2" ). arg( oldName, newName ) );
 	}
@@ -599,7 +599,7 @@ void ChatView::slotPropertyChanged( Kopete::Contact*, const QString &key,
 
 void ChatView::slotDisplayNameChanged( const QString &oldValue, const QString &newValue )
 {
-	if( KopetePrefs::prefs()->showEvents() )
+	if( Kopete::BehaviorSettings::self()->showEvents() )
 	{
 		if( oldValue != newValue )
 			sendInternalMessage( i18n( "%1 is now known as %2" ). arg( oldValue, newValue ) );
@@ -778,7 +778,7 @@ void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete:
  	kdDebug(14000) << k_funcinfo << contact << endl;
 	bool inhibitNotification = ( newStatus.status() == Kopete::OnlineStatus::Unknown ||
 	                             oldStatus.status() == Kopete::OnlineStatus::Unknown );
-	if ( contact && KopetePrefs::prefs()->showEvents() && !inhibitNotification )
+	if ( contact && Kopete::BehaviorSettings::self() && !inhibitNotification )
 	{
 		if ( contact->account() && contact == contact->account()->myself() )
 		{

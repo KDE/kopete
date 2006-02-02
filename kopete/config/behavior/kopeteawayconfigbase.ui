@@ -52,7 +52,7 @@
                 </widget>
                 <widget class="QSpinBox" row="1" column="1">
                     <property name="name">
-                        <cstring>rememberedMessages</cstring>
+                        <cstring>kcfg_awayMessageRemembered</cstring>
                     </property>
                     <property name="minValue">
                         <number>1</number>
@@ -103,10 +103,10 @@
                 </property>
                 <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="4">
                     <property name="name">
-                        <cstring>mUseAutoAway</cstring>
+                        <cstring>kcfg_useAutoAway</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Use auto away</string>
+                        <string>Use auto awa&amp;y</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="1" column="0">
@@ -164,13 +164,13 @@
                 </spacer>
                 <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="4">
                     <property name="name">
-                        <cstring>mGoAvailable</cstring>
+                        <cstring>kcfg_autoAwayGoAvailable</cstring>
                     </property>
                     <property name="enabled">
                         <bool>false</bool>
                     </property>
                     <property name="text">
-                        <string>Become available when detecting activity again</string>
+                        <string>&amp;Become available when detecting activity again</string>
                     </property>
                 </widget>
             </grid>
@@ -196,34 +196,34 @@
 </widget>
 <connections>
     <connection>
-        <sender>mUseAutoAway</sender>
+        <sender>kcfg_useAutoAway</sender>
         <signal>toggled(bool)</signal>
         <receiver>TextLabel2</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>mUseAutoAway</sender>
+        <sender>kcfg_useAutoAway</sender>
         <signal>toggled(bool)</signal>
         <receiver>mAutoAwayTimeout</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>mUseAutoAway</sender>
+        <sender>kcfg_useAutoAway</sender>
         <signal>toggled(bool)</signal>
         <receiver>TextLabel3</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>mUseAutoAway</sender>
+        <sender>kcfg_useAutoAway</sender>
         <signal>toggled(bool)</signal>
-        <receiver>mGoAvailable</receiver>
+        <receiver>kcfg_autoAwayGoAvailable</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>
-    <tabstop>mUseAutoAway</tabstop>
+    <tabstop>kcfg_useAutoAway</tabstop>
     <tabstop>mAutoAwayTimeout</tabstop>
-    <tabstop>mGoAvailable</tabstop>
+    <tabstop>kcfg_autoAwayGoAvailable</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

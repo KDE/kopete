@@ -1,5 +1,5 @@
-ClassName=Config
-File=kopete.kcfg
+ClassName=GeneralSettings
+File=kopetegeneralsettings.kcfg
 GlobalEnums=false
 Inherits=KConfigSkeleton
 ItemAccessors=true

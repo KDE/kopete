@@ -18,10 +18,10 @@
         </property>
         <widget class="QCheckBox">
             <property name="name">
-                <cstring>chkUseEmoticons</cstring>
+                <cstring>kcfg_useEmoticons</cstring>
             </property>
             <property name="text">
-                <string>&amp;Use emoticons</string>
+                <string>U&amp;se emoticons</string>
             </property>
             <property name="checked">
                 <bool>true</bool>
@@ -32,7 +32,7 @@
         </widget>
         <widget class="QCheckBox">
             <property name="name">
-                <cstring>chkRequireSpaces</cstring>
+                <cstring>kcfg_emoticonsRequireSpace</cstring>
             </property>
             <property name="text">
                 <string>&amp;Require separators (spaces) around emoticons</string>
@@ -130,7 +130,7 @@
                         </sizepolicy>
                     </property>
                     <property name="text">
-                        <string>Remove Theme</string>
+                        <string>Remove &amp;Theme</string>
                     </property>
                 </widget>
                 <spacer>
@@ -154,53 +154,51 @@
         </widget>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
-        <sender>chkUseEmoticons</sender>
+        <sender>kcfg_useEmoticons</sender>
         <signal>toggled(bool)</signal>
-        <receiver>chkRequireSpaces</receiver>
+        <receiver>kcfg_emoticonsRequireSpace</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>chkUseEmoticons</sender>
+        <sender>kcfg_useEmoticons</sender>
         <signal>toggled(bool)</signal>
         <receiver>lblPreview</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>chkUseEmoticons</sender>
+        <sender>kcfg_useEmoticons</sender>
         <signal>toggled(bool)</signal>
         <receiver>icon_theme_list</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>chkUseEmoticons</sender>
+        <sender>kcfg_useEmoticons</sender>
         <signal>toggled(bool)</signal>
         <receiver>lblPreview</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>chkUseEmoticons</sender>
+        <sender>kcfg_useEmoticons</sender>
         <signal>toggled(bool)</signal>
         <receiver>textLabel1</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>chkUseEmoticons</sender>
+        <sender>kcfg_useEmoticons</sender>
         <signal>toggled(bool)</signal>
         <receiver>btnGetThemes</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>chkUseEmoticons</sender>
+        <sender>kcfg_useEmoticons</sender>
         <signal>toggled(bool)</signal>
         <receiver>btnInstallTheme</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>chkUseEmoticons</sender>
+        <sender>kcfg_useEmoticons</sender>
         <signal>toggled(bool)</signal>
         <receiver>btnRemoveTheme</receiver>
         <slot>setEnabled(bool)</slot>

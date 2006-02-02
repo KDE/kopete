@@ -61,13 +61,13 @@
 #include "chattexteditpart.h"
 #include "chatview.h"
 #include "kopeteapplication.h"
+#include "kopetebehaviorsettings.h"
 #include "kopetechatwindow.h"
 #include "kopeteemoticonaction.h"
 #include "kopetegroup.h"
 #include "kopetechatsession.h"
 #include "kopetemetacontact.h"
 #include "kopetepluginmanager.h"
-#include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopetestdaction.h"
 #include "kopeteviewmanager.h"
@@ -105,30 +105,34 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 		group = gList.first();
 	}
 
-	switch( KopetePrefs::prefs()->chatWindowPolicy() )
+	switch( Kopete::BehaviorSettings::self()->chatWindowGroupPolicy() )
 	{
-		case GROUP_BY_ACCOUNT: //Open chats from the same protocol in the same window
+		//Open chats from the same protocol in the same window
+		case Kopete::BehaviorSettings::EnumChatWindowGroupPolicy::GroupByAccount: 
 			if( accountMap.contains( manager->account() ) )
 				myWindow = accountMap[ manager->account() ];
 			else
 				windowCreated = true;
 			break;
 
-		case GROUP_BY_GROUP: //Open chats from the same group in the same window
+		//Open chats from the same group in the same window
+		case Kopete::BehaviorSettings::EnumChatWindowGroupPolicy::GroupByGroup: 
 			if( group && groupMap.contains( group ) )
 				myWindow = groupMap[ group ];
 			else
 				windowCreated = true;
 			break;
 
-		case GROUP_BY_METACONTACT: //Open chats from the same metacontact in the same window
+		//Open chats from the same metacontact in the same window
+		case Kopete::BehaviorSettings::EnumChatWindowGroupPolicy::GroupByMetaContact: 
 			if( mcMap.contains( metaContact ) )
 				myWindow = mcMap[ metaContact ];
 			else
 				windowCreated = true;
 			break;
 
-		case GROUP_ALL: //Open all chats in the same window
+		//Open all chats in the same window
+		case Kopete::BehaviorSettings::EnumChatWindowGroupPolicy::GroupAll: 
 			if( windows.isEmpty() )
 				windowCreated = true;
 			else
@@ -149,7 +153,8 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 			}
 			break;
 
-		case NEW_WINDOW: //Open every chat in a new window
+		//Open every chat in a new window
+		case Kopete::BehaviorSettings::EnumChatWindowGroupPolicy::OpenNewWindow: 
 		default:
 			windowCreated = true;
 			break;
@@ -198,7 +203,7 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name )
 	mainArea->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	mainLayout = new QVBoxLayout( mainArea );
 
-	if ( KopetePrefs::prefs()->chatWShowSend() )
+	if ( Kopete::BehaviorSettings::self()->chatWindowShowSendButton() )
 	{
 		//Send Button
 		m_button_send = new KPushButton( i18n("Send"), statusBar() );
@@ -1127,7 +1132,7 @@ bool KopeteChatWindow::queryExit()
  	if ( app->sessionSaving()
 		|| app->isShuttingDown() /* only set if KopeteApplication::quitKopete() or
 									KopeteApplication::commitData() called */
-		|| !KopetePrefs::prefs()->showTray() /* also close if our tray icon is hidden! */
+		|| !Kopete::BehaviorSettings::self()->showSystemTray() /* also close if our tray icon is hidden! */
 		|| !isShown() )
 	{
 		Kopete::PluginManager::self()->shutdown();
@@ -1142,7 +1147,7 @@ void KopeteChatWindow::closeEvent( QCloseEvent * e )
 	// if there's a system tray applet and we are not shutting down then just do what needs to be done if a
 	// window is closed.
 	KopeteApplication *app = static_cast<KopeteApplication *>( kapp );
-	if ( KopetePrefs::prefs()->showTray() && !app->isShuttingDown() && !app->sessionSaving() ) {
+	if ( Kopete::BehaviorSettings::self()->showSystemTray() && !app->isShuttingDown() && !app->sessionSaving() ) {
 //		hide();
 		// BEGIN of code borrowed from KMainWindow::closeEvent
 		// Save settings if auto-save is enabled, and settings have changed

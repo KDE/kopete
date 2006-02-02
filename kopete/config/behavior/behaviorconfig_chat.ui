@@ -8,34 +8,69 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>564</width>
-            <height>537</height>
+            <width>594</width>
+            <height>309</height>
         </rect>
     </property>
     <property name="caption">
         <string>Chat</string>
     </property>
-    <grid>
+    <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QButtonGroup" row="3" column="0">
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>kcfg_showEvents</cstring>
+            </property>
+            <property name="text">
+                <string>Show events in chat &amp;window</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>kcfg_highlightEnabled</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>High&amp;light messages containing your nickname</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>kcfg_spellCheck</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>E&amp;nable automatic spell checking</string>
+            </property>
+        </widget>
+        <widget class="QButtonGroup">
             <property name="name">
                 <cstring>interfaceGroup</cstring>
             </property>
             <property name="title">
                 <string>&amp;Interface Preference</string>
             </property>
-            <hbox>
+            <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QComboBox">
-                    <property name="name">
-                        <cstring>viewPlugin</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel">
+                <widget class="QLabel" row="0" column="1" rowspan="2" colspan="2">
                     <property name="name">
                         <cstring>viewPluginLabel</cstring>
                     </property>
@@ -46,7 +81,7 @@
                         <cstring>viewPlugin</cstring>
                     </property>
                 </widget>
-                <spacer>
+                <spacer row="1" column="2">
                     <property name="name">
                         <cstring>spacer5</cstring>
                     </property>
@@ -63,26 +98,14 @@
                         </size>
                     </property>
                 </spacer>
-            </hbox>
+                <widget class="QComboBox" row="0" column="0" rowspan="2" colspan="1">
+                    <property name="name">
+                        <cstring>viewPlugin</cstring>
+                    </property>
+                </widget>
+            </grid>
         </widget>
-        <spacer row="7" column="0">
-            <property name="name">
-                <cstring>spacer2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>240</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QButtonGroup" row="4" column="0">
+        <widget class="QButtonGroup">
             <property name="name">
                 <cstring>chatWindowGroup</cstring>
             </property>
@@ -120,96 +143,18 @@
                         </property>
                     </item>
                     <property name="name">
-                        <cstring>mNewWindow</cstring>
+                        <cstring>kcfg_chatWindowGroupPolicy</cstring>
                     </property>
-                    <property name="text">
+                    <property name="text" stdset="0">
                         <string>Open all messages in a new chat window</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>Every chat will have its own window.</string>
                     </property>
                 </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>mTabAccountWindow</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Group messages from the same account in the same chat window</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>All chats for one account get grouped in to one window by using tabs.</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>mTabWindow</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Group all messages in the same chat window</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>All chats get grouped in to one window by using tabs.</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>mTabGroup</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Group messages from contacts in the same group in the same chat window</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>mTabMetaContact</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Group messages from the same metacontact in the same chat window</string>
-                    </property>
-                </widget>
             </grid>
         </widget>
-        <widget class="QCheckBox" row="2" column="0">
-            <property name="name">
-                <cstring>highlightEnabled</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="text">
-                <string>High&amp;light messages containing your nickname</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox" row="3" column="0">
-            <property name="name">
-                <cstring>cb_SpellCheckChk</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="text">
-                <string>E&amp;nable automatic spell checking</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox" row="1" column="0">
-            <property name="name">
-                <cstring>cb_ShowEventsChk</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Show events in chat window</string>
-            </property>
-        </widget>
-        <widget class="QLayoutWidget" row="6" column="0">
+        <widget class="QLayoutWidget">
             <property name="name">
                 <cstring>layout3</cstring>
             </property>
@@ -219,10 +164,10 @@
                 </property>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>truncateContactNameEnabled</cstring>
+                        <cstring>kcfg_truncateContactName</cstring>
                     </property>
                     <property name="text">
-                        <string>T&amp;runcate contact name with more characters than:</string>
+                        <string>&amp;Truncate contact name with more characters than:</string>
                     </property>
                 </widget>
                 <spacer>
@@ -244,7 +189,7 @@
                 </spacer>
                 <widget class="QSpinBox">
                     <property name="name">
-                        <cstring>mMaxContactNameLength</cstring>
+                        <cstring>kcfg_truncateContactNameLength</cstring>
                     </property>
                     <property name="enabled">
                         <bool>false</bool>
@@ -258,7 +203,7 @@
                 </widget>
             </hbox>
         </widget>
-        <widget class="QLayoutWidget" row="6" column="0">
+        <widget class="QLayoutWidget">
             <property name="name">
                 <cstring>layout4</cstring>
             </property>
@@ -271,7 +216,7 @@
                         <cstring>txtChatViewBufferSize</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Maximum number of chat window lines:</string>
+                        <string>Ma&amp;ximum number of chat window lines:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>mChatViewBufferSize</cstring>
@@ -299,7 +244,7 @@
                 </spacer>
                 <widget class="QSpinBox">
                     <property name="name">
-                        <cstring>mChatViewBufferSize</cstring>
+                        <cstring>kcfg_chatWindowBufferViewSize</cstring>
                     </property>
                     <property name="maxValue">
                         <number>9000</number>
@@ -313,23 +258,38 @@
                 </widget>
             </hbox>
         </widget>
-    </grid>
+        <spacer>
+            <property name="name">
+                <cstring>spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>190</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
 </widget>
 <connections>
     <connection>
-        <sender>truncateContactNameEnabled</sender>
+        <sender>kcfg_truncateContactName</sender>
         <signal>toggled(bool)</signal>
-        <receiver>mMaxContactNameLength</receiver>
+        <receiver>kcfg_truncateContactNameLength</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>
-    <tabstop>cb_ShowEventsChk</tabstop>
-    <tabstop>highlightEnabled</tabstop>
-    <tabstop>mNewWindow</tabstop>
-    <tabstop>mTabAccountWindow</tabstop>
-    <tabstop>mTabWindow</tabstop>
-    <tabstop>mChatViewBufferSize</tabstop>
+    <tabstop>kcfg_showEvents</tabstop>
+    <tabstop>kcfg_highlightEnabled</tabstop>
+    <tabstop>kcfg_chatWindowGroupPolicy</tabstop>
+    <tabstop>kcfg_chatWindowBufferViewSize</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

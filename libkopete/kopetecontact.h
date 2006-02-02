@@ -383,7 +383,7 @@ public:
 	/**
 	 * \brief Get the tooltip for this contact
 	 * Makes use of formattedName() and formattedIdleTime().
-	 * \return an RTF tooltip depending on KopetePrefs settings
+	 * \return an RTF tooltip depending on Kopete::AppearanceSettings settings
 	 **/
 	QString toolTip() const;
 

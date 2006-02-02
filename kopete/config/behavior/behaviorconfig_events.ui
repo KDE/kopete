@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>427</width>
-            <height>386</height>
+            <width>474</width>
+            <height>412</height>
         </rect>
     </property>
     <property name="caption">
@@ -32,7 +32,7 @@
                 </property>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mTrayflashNotifyChk</cstring>
+                        <cstring>kcfg_trayflashNotify</cstring>
                     </property>
                     <property name="text">
                         <string>Flash s&amp;ystem tray</string>
@@ -71,7 +71,7 @@
                         </spacer>
                         <widget class="QCheckBox">
                             <property name="name">
-                                <cstring>mTrayflashNotifyLeftClickOpensMessageChk</cstring>
+                                <cstring>kcfg_trayflashNotifyLeftClickOpensMessage</cstring>
                             </property>
                             <property name="enabled">
                                 <bool>false</bool>
@@ -90,7 +90,7 @@
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mBalloonNotifyChk</cstring>
+                        <cstring>kcfg_balloonNotify</cstring>
                     </property>
                     <property name="text">
                         <string>Sho&amp;w bubble</string>
@@ -129,13 +129,13 @@
                         </spacer>
                         <widget class="QCheckBox">
                             <property name="name">
-                                <cstring>mBalloonNotifyIgnoreClosesChatViewChk</cstring>
+                                <cstring>kcfg_balloonNotifyIgnoreClosesChatView</cstring>
                             </property>
                             <property name="enabled">
                                 <bool>false</bool>
                             </property>
                             <property name="text">
-                                <string>Button "&amp;Ignore" closes chat</string>
+                                <string>Button "I&amp;gnore" closes chat</string>
                             </property>
                             <property name="toolTip" stdset="0">
                                 <string>The "Ignore" button of the bubble closes the chat window for the sender</string>
@@ -173,7 +173,7 @@
                         </spacer>
                         <widget class="QCheckBox">
                             <property name="name">
-                                <cstring>mCloseBalloonChk</cstring>
+                                <cstring>kcfg_balloonClose</cstring>
                             </property>
                             <property name="enabled">
                                 <bool>false</bool>
@@ -193,7 +193,7 @@
                         </widget>
                         <widget class="QSpinBox">
                             <property name="name">
-                                <cstring>mBalloonCloseDelay</cstring>
+                                <cstring>kcfg_balloonCloseDelay</cstring>
                             </property>
                             <property name="enabled">
                                 <bool>false</bool>
@@ -232,10 +232,10 @@
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mQueueOnlyHighlightedMessagesInGroupChatsChk</cstring>
+                        <cstring>kcfg_queueOnlyHighlightedMessagesInGroupChats</cstring>
                     </property>
                     <property name="text">
-                        <string>Exclude non-highlighted messages in grou&amp;p chats</string>
+                        <string>Exclude non-&amp;highlighted messages in group chats</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Notify only highlighted messages in group chats</string>
@@ -246,7 +246,7 @@
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mQueueOnlyMessagesOnAnotherDesktopChk</cstring>
+                        <cstring>kcfg_queueOnlyMessagesOnAnotherDesktop</cstring>
                     </property>
                     <property name="text">
                         <string>Exclude messages in chats on current des&amp;ktop</string>
@@ -273,7 +273,7 @@
                 </property>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mSoundIfAwayChk</cstring>
+                        <cstring>kcfg_enableEventsWhileAway</cstring>
                     </property>
                     <property name="text">
                         <string>E&amp;nable events while away</string>
@@ -287,7 +287,7 @@
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mEventIfActive</cstring>
+                        <cstring>kcfg_showEventsIfActive</cstring>
                     </property>
                     <property name="text">
                         <string>Enable events for acti&amp;ve chat windows</string>
@@ -301,7 +301,7 @@
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mTrayflashNotifySetCurrentDesktopToChatViewChk</cstring>
+                        <cstring>kcfg_trayflashNotifySetCurrentDesktopToChatView</cstring>
                     </property>
                     <property name="text">
                         <string>Switch &amp;to desktop containing chat on opening message</string>
@@ -315,7 +315,7 @@
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mRaiseMsgWindowChk</cstring>
+                        <cstring>kcfg_raiseMessageWindow</cstring>
                     </property>
                     <property name="text">
                         <string>&amp;Raise window on incoming message</string>
@@ -350,39 +350,39 @@
 </widget>
 <connections>
     <connection>
-        <sender>mTrayflashNotifyChk</sender>
+        <sender>kcfg_trayflashNotify</sender>
         <signal>toggled(bool)</signal>
-        <receiver>mTrayflashNotifyLeftClickOpensMessageChk</receiver>
+        <receiver>kcfg_trayflashNotifyLeftClickOpensMessage</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>mBalloonNotifyChk</sender>
+        <sender>kcfg_balloonNotify</sender>
         <signal>toggled(bool)</signal>
-        <receiver>mBalloonNotifyIgnoreClosesChatViewChk</receiver>
+        <receiver>kcfg_balloonNotifyIgnoreClosesChatView</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>mBalloonNotifyChk</sender>
+        <sender>kcfg_balloonNotify</sender>
         <signal>toggled(bool)</signal>
-        <receiver>mCloseBalloonChk</receiver>
+        <receiver>kcfg_balloonClose</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>mBalloonNotifyChk</sender>
+        <sender>kcfg_balloonNotify</sender>
         <signal>toggled(bool)</signal>
-        <receiver>mBalloonCloseDelay</receiver>
+        <receiver>kcfg_balloonCloseDelay</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>
-    <tabstop>mTrayflashNotifyChk</tabstop>
-    <tabstop>mBalloonNotifyChk</tabstop>
-    <tabstop>mQueueOnlyHighlightedMessagesInGroupChatsChk</tabstop>
-    <tabstop>mQueueOnlyMessagesOnAnotherDesktopChk</tabstop>
-    <tabstop>mSoundIfAwayChk</tabstop>
-    <tabstop>mEventIfActive</tabstop>
-    <tabstop>mTrayflashNotifySetCurrentDesktopToChatViewChk</tabstop>
-    <tabstop>mRaiseMsgWindowChk</tabstop>
+    <tabstop>kcfg_trayflashNotify</tabstop>
+    <tabstop>kcfg_balloonNotify</tabstop>
+    <tabstop>kcfg_queueOnlyHighlightedMessagesInGroupChats</tabstop>
+    <tabstop>kcfg_queueOnlyMessagesOnAnotherDesktop</tabstop>
+    <tabstop>kcfg_enableEventsWhileAway</tabstop>
+    <tabstop>kcfg_showEventsIfActive</tabstop>
+    <tabstop>kcfg_trayflashNotifySetCurrentDesktopToChatView</tabstop>
+    <tabstop>kcfg_raiseMessageWindow</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

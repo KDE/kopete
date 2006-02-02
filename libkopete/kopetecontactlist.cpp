@@ -31,7 +31,6 @@
 #include <kdebug.h>
 #include <ksavefile.h>
 #include <kstandarddirs.h>
-#include <kopeteconfig.h>
 #include <kglobal.h>
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
@@ -43,7 +42,7 @@
 #include "kopeteaccountmanager.h"
 #include "kopetegroup.h"
 #include "kopetepicture.h"
-
+#include "kopetegeneralsettings.h"
 
 namespace  Kopete
 {
@@ -311,7 +310,7 @@ MetaContact* ContactList::myself()
 void ContactList::loadGlobalIdentity()
 {
  	// Apply the global identity
-	if(Kopete::Config::enableGlobalIdentity())
+	if(Kopete::GeneralSettings::self()->enableGlobalIdentity())
  	{
 		connect(myself(), SIGNAL(displayNameChanged(const QString&, const QString&)), this, SLOT(slotDisplayNameChanged()));
 		connect(myself(), SIGNAL(photoChanged()), this, SLOT(slotPhotoChanged()));
@@ -454,7 +453,7 @@ void ContactList::loadXML()
 			}
 		}
 		// Only load myself metacontact information when Global Identity is enabled.
-		else if( element.tagName() == QString::fromLatin1("myself-meta-contact") && Kopete::Config::enableGlobalIdentity() )
+		else if( element.tagName() == QString::fromLatin1("myself-meta-contact") && Kopete::GeneralSettings::self()->enableGlobalIdentity() )
 		{
 			if( !myself()->fromXML( element ) )
 			{
@@ -912,7 +911,7 @@ const QDomDocument ContactList::toXML()
 			doc.documentElement().appendChild( doc.importNode( mc->toXML(), true ) );
 	}
 	// Save myself metacontact information
-	if( Kopete::Config::enableGlobalIdentity() )
+	if( Kopete::GeneralSettings::self()->enableGlobalIdentity() )
 	{
 		QDomElement myselfElement = myself()->toXML(true); // Save minimal information.
 		myselfElement.setTagName( QString::fromLatin1("myself-meta-contact") );

@@ -17,7 +17,7 @@
 #include "krichtexteditpart.h"
 #include "krichtexteditpart.moc"
 #include "kopeteprotocol.h"
-#include "kopeteprefs.h"
+#include "kopeteappearancesettings.h"
 
 typedef KParts::GenericFactory<KopeteRichTextEditPart> KopeteRichTextEditPartFactory;
 K_EXPORT_COMPONENT_FACTORY( libkopeterichtexteditpart, KopeteRichTextEditPartFactory )
@@ -314,7 +314,7 @@ void KopeteRichTextEditPart::readConfig()
 	tmpColor = KGlobalSettings::baseColor();
 	setBgColor( config->readColorEntry("BgColor", &tmpColor ) );
 
-	QFont tmpFont = KopetePrefs::prefs()->fontFace();
+	QFont tmpFont = Kopete::AppearanceSettings::self()->chatFont();
 	setFont( config->readFontEntry("Font", &tmpFont ) );
 
 	int tmp = KGlobalSettings::generalFont().pixelSize();

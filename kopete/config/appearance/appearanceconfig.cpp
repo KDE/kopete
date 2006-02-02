@@ -80,11 +80,12 @@
 #include <kopetechatsession.h>
 #include <kopetechatsessionmanager.h>
 
-#include "kopeteprefs.h"
 #include "kopeteemoticons.h"
 #include "kopeteglobal.h"
 
 #include <qtabwidget.h>
+
+#include "kopeteappearancesettings.h"
 
 typedef KGenericFactory<AppearanceConfig, QWidget> KopeteAppearanceConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_appearanceconfig, KopeteAppearanceConfigFactory( "kcm_kopete_appearanceconfig" ) )
@@ -178,7 +179,6 @@ public:
 	}
 };
 
-// TODO: Someday, this configuration dialog must(not should) use KConfigXT
 AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const QStringList &args )
 : KCModule( KopeteAppearanceConfigFactory::instance(), parent, args )
 {
@@ -192,12 +192,8 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 
 	// "Emoticons" TAB ==========================================================
 	d->mPrfsEmoticons = new AppearanceConfig_Emoticons(d->mAppearanceTabCtl);
-	connect(d->mPrfsEmoticons->chkUseEmoticons, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsEmoticons->chkUseEmoticons, SIGNAL(toggled(bool)),
-			                    this, SLOT(updateEmoticonsButton(bool)));
-	connect(d->mPrfsEmoticons->chkRequireSpaces, SIGNAL(toggled(bool)),
-			this, SLOT(emitChanged()));
+	addConfig( Kopete::AppearanceSettings::self(), d->mPrfsEmoticons );
+
 	connect(d->mPrfsEmoticons->icon_theme_list, SIGNAL(selectionChanged()),
 		this, SLOT(slotSelectedEmoticonsThemeChanged()));
 	connect(d->mPrfsEmoticons->btnInstallTheme, SIGNAL(clicked()),
@@ -215,6 +211,7 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 
 	// "Chat Window" TAB ========================================================
 	d->mPrfsChatWindow = new AppearanceConfig_ChatWindow(d->mAppearanceTabCtl);
+	addConfig( Kopete::AppearanceSettings::self(), d->mPrfsChatWindow );
 
 	connect(d->mPrfsChatWindow->styleList, SIGNAL(selectionChanged(Q3ListBoxItem *)),
 		this, SLOT(slotChatStyleSelected()));
@@ -226,10 +223,7 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(slotInstallChatStyle()));
 	connect(d->mPrfsChatWindow->btnGetStyles, SIGNAL(clicked()),
 		this, SLOT(slotGetChatStyles()));
-	connect(d->mPrfsChatWindow->groupConsecutiveMessages, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsChatWindow->groupConsecutiveMessages, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
+
 	// Show the available styles when the Manager has finish to load the styles.
 	connect(ChatWindowStyleManager::self(), SIGNAL(loadStylesFinished()), this, SLOT(slotLoadChatStyles()));
 
@@ -259,75 +253,23 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 
 	// "Contact List" TAB =======================================================
 	d->mPrfsContactList = new AppearanceConfig_ContactList(d->mAppearanceTabCtl);
-	connect(d->mPrfsContactList->mTreeContactList, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsContactList->mSortByGroup, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
+	addConfig( Kopete::AppearanceSettings::self(), d->mPrfsContactList );
+
 	connect(d->mPrfsContactList->mEditTooltips, SIGNAL(clicked()),
 		this, SLOT(slotEditTooltips()));
-	connect(d->mPrfsContactList->mIndentContacts, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsContactList->mHideVerticalScrollBar, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()) );
-	connect(d->mPrfsContactList->mDisplayMode, SIGNAL(clicked(int)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsContactList->mIconMode, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsContactList->mAnimateChanges, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsContactList->mFadeVisibility, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsContactList->mFoldVisibility, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsContactList->mAutoHide, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsContactList->mAutoHideVScroll, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsContactList->mAutoHideTimeout, SIGNAL(valueChanged(int)),
-		this, SLOT(emitChanged()));
 
 	// don't enable the checkbox if XRender is not available
 	#ifdef HAVE_XRENDER
-	d->mPrfsContactList->mFadeVisibility->setEnabled(true);
+	d->mPrfsContactList->kcfg_contactListFading->setEnabled(true);
 	#else
-	d->mPrfsContactList->mFadeVisibility->setEnabled(false);
+	d->mPrfsContactList->kcfg_contactListFading->setEnabled(false);
 	#endif
 
 	d->mAppearanceTabCtl->addTab(d->mPrfsContactList, i18n("Contact List"));
 
 	// "Colors and Fonts" TAB ===================================================
 	d->mPrfsColors = new AppearanceConfig_Colors(d->mAppearanceTabCtl);
-	connect(d->mPrfsColors->Ui_AppearanceConfig_Colors::foregroundColor, SIGNAL(changed(const QColor &)),
-		this, SLOT(slotHighlightChanged()));
-	connect(d->mPrfsColors->Ui_AppearanceConfig_Colors::backgroundColor, SIGNAL(changed(const QColor &)),
-		this, SLOT(slotHighlightChanged()));
-	connect(d->mPrfsColors->fontFace, SIGNAL(fontSelected(const QFont &)),
-		this, SLOT(slotChangeFont()));
-	connect(d->mPrfsColors->textColor, SIGNAL(changed(const QColor &)),
-		this, SLOT(slotUpdateChatPreview()));
-	connect(d->mPrfsColors->bgColor, SIGNAL(changed(const QColor &)),
-		this, SLOT(slotUpdateChatPreview()));
-	connect(d->mPrfsColors->linkColor, SIGNAL(changed(const QColor &)),
-		this, SLOT(slotUpdateChatPreview()));
-	connect(d->mPrfsColors->mGreyIdleMetaContacts, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsColors->idleContactColor, SIGNAL(changed(const QColor &)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsColors->mUseCustomFonts, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsColors->mSmallFont, SIGNAL(fontSelected(const QFont &)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsColors->mNormalFont, SIGNAL(fontSelected(const QFont &)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsColors->mGroupNameColor, SIGNAL(changed(const QColor &)),
-		this, SLOT(emitChanged()));
-
-	connect(d->mPrfsColors->mBgOverride, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsColors->mFgOverride, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsColors->mRtfOverride, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
+	addConfig( Kopete::AppearanceSettings::self(), d->mPrfsColors );
 
 	d->mAppearanceTabCtl->addTab(d->mPrfsColors, i18n("Colors && Fonts"));
 
@@ -351,131 +293,50 @@ void AppearanceConfig::updateEmoticonsButton(bool _b)
 
 void AppearanceConfig::save()
 {
+	KCModule::save();
 //	kdDebug(14000) << k_funcinfo << "called." << endl;
-	KopetePrefs *p = KopetePrefs::prefs();
 
-	// "Emoticons" TAB ==========================================================
-	p->setIconTheme( d->mPrfsEmoticons->icon_theme_list->currentText() );
-	p->setUseEmoticons ( d->mPrfsEmoticons->chkUseEmoticons->isChecked() );
-	p->setEmoticonsRequireSpaces( d->mPrfsEmoticons->chkRequireSpaces->isChecked() );
+	Kopete::AppearanceSettings *settings = Kopete::AppearanceSettings::self();
 
-	// "Chat Window" TAB ========================================================
-	p->setGroupConsecutiveMessages( d->mPrfsChatWindow->groupConsecutiveMessages->isChecked() );
-	p->setGroupConsecutiveMessages( d->mPrfsChatWindow->groupConsecutiveMessages->isChecked() );
+	settings->setEmoticonTheme( d->mPrfsEmoticons->icon_theme_list->currentText() );
 
 	// Get the stylePath
 	if(d->currentStyle)
 	{
 		kdDebug(14000) << k_funcinfo << d->currentStyle->getStylePath() << endl;
-		p->setStylePath(d->currentStyle->getStylePath());
+		settings->setStylePath( d->currentStyle->getStylePath() );
 	}
 	// Get and save the styleVariant
 	if( !d->currentVariantMap.empty() )
 	{
 		kdDebug(14000) << k_funcinfo << d->currentVariantMap[ d->mPrfsChatWindow->variantList->currentText()] << endl;
-		p->setStyleVariant(d->currentVariantMap[ d->mPrfsChatWindow->variantList->currentText()]);
+		settings->setStyleVariant( d->currentVariantMap[d->mPrfsChatWindow->variantList->currentText()] );
 	}
 
-	// "Contact List" TAB =======================================================
-	p->setTreeView(d->mPrfsContactList->mTreeContactList->isChecked());
-	p->setSortByGroup(d->mPrfsContactList->mSortByGroup->isChecked());
-	p->setContactListIndentContacts(d->mPrfsContactList->mIndentContacts->isChecked());
-	p->setContactListHideVerticalScrollBar(d->mPrfsContactList->mHideVerticalScrollBar->isChecked());
-	p->setContactListDisplayMode(KopetePrefs::ContactDisplayMode(d->mPrfsContactList->mDisplayMode->selectedId()));
-	p->setContactListIconMode(KopetePrefs::IconDisplayMode((d->mPrfsContactList->mIconMode->isChecked()) ? KopetePrefs::PhotoPic : KopetePrefs::IconPic));
-	p->setContactListAnimation(d->mPrfsContactList->mAnimateChanges->isChecked());
-	p->setContactListFading(d->mPrfsContactList->mFadeVisibility->isChecked());
-	p->setContactListFolding(d->mPrfsContactList->mFoldVisibility->isChecked());
-
-	// "Colors & Fonts" TAB =====================================================
-	p->setHighlightBackground(d->mPrfsColors->Ui_AppearanceConfig_Colors::backgroundColor->color());
-	p->setHighlightForeground(d->mPrfsColors->Ui_AppearanceConfig_Colors::foregroundColor->color());
-	p->setBgColor(d->mPrfsColors->Ui_AppearanceConfig_Colors::backgroundColor->color());
-	p->setTextColor(d->mPrfsColors->textColor->color());
-	p->setLinkColor(d->mPrfsColors->linkColor->color());
-	p->setFontFace(d->mPrfsColors->fontFace->font());
-	p->setIdleContactColor(d->mPrfsColors->idleContactColor->color());
-	p->setGreyIdleMetaContacts(d->mPrfsColors->mGreyIdleMetaContacts->isChecked());
-	p->setContactListUseCustomFonts(d->mPrfsColors->mUseCustomFonts->isChecked());
-	p->setContactListCustomSmallFont(d->mPrfsColors->mSmallFont->font());
-	p->setContactListCustomNormalFont(d->mPrfsColors->mNormalFont->font());
-	p->setContactListGroupNameColor(d->mPrfsColors->mGroupNameColor->color());
-	p->setContactListAutoHide(d->mPrfsContactList->mAutoHide->isChecked());
-	p->setContactListAutoHideVScroll(d->mPrfsContactList->mAutoHideVScroll->isChecked());
-	p->setContactListAutoHideTimeout(d->mPrfsContactList->mAutoHideTimeout->value());
-
-	p->setBgOverride( d->mPrfsColors->mBgOverride->isChecked() );
-	p->setFgOverride( d->mPrfsColors->mFgOverride->isChecked() );
-	p->setRtfOverride( d->mPrfsColors->mRtfOverride->isChecked() );
-
-	p->save();
 	d->styleChanged = false;
+
+	load();
 }
 
 void AppearanceConfig::load()
 {
+	KCModule::load();
+
 	//we will change the state of somme controls, which will call some signals.
 	//so to don't refresh everything several times, we memorize we are loading.
 	d->loading=true;
 
-//	kdDebug(14000) << k_funcinfo << "called" << endl;
-	KopetePrefs *p = KopetePrefs::prefs();
-
-	// "Emoticons" TAB ==========================================================
+	// Look for available emoticons themes
 	updateEmoticonlist();
-	d->mPrfsEmoticons->chkUseEmoticons->setChecked( p->useEmoticons() );
-	d->mPrfsEmoticons->chkRequireSpaces->setChecked( p->emoticonsRequireSpaces() );
 
-	// "Chat Window" TAB ========================================================
-	d->mPrfsChatWindow->groupConsecutiveMessages->setChecked( p->groupConsecutiveMessages() );
-	d->mPrfsChatWindow->groupConsecutiveMessages->setChecked( p->groupConsecutiveMessages() );
-	// Look for avaiable chat window styles.
+	// Look for available chat window styles.
 	slotLoadChatStyles();
-	
-	// "Contact List" TAB =======================================================
-	d->mPrfsContactList->mTreeContactList->setChecked( p->treeView() );
-	d->mPrfsContactList->mSortByGroup->setChecked( p->sortByGroup() );
-	d->mPrfsContactList->mIndentContacts->setChecked( p->contactListIndentContacts() );
-	d->mPrfsContactList->mHideVerticalScrollBar->setChecked( p->contactListHideVerticalScrollBar() );
 
-        // convert old single value display mode to dual display/icon modes
-        if (p->contactListDisplayMode() == KopetePrefs::Yagami) {
-            	p->setContactListDisplayMode( KopetePrefs::Detailed);
-            	p->setContactListIconMode( KopetePrefs::PhotoPic );
-        }
-
-	d->mPrfsContactList->mDisplayMode->setButton( p->contactListDisplayMode() );
-	d->mPrfsContactList->mIconMode->setChecked( p->contactListIconMode() == KopetePrefs::PhotoPic);
-
-            
-	d->mPrfsContactList->mAnimateChanges->setChecked( p->contactListAnimation() );
-#ifdef HAVE_XRENDER
-	d->mPrfsContactList->mFadeVisibility->setChecked( p->contactListFading() );
-#else
-	d->mPrfsContactList->mFadeVisibility->setChecked( false );
+#ifndef HAVE_XRENDER
+	d->mPrfsContactList->kcfg_contactListFading->setChecked( false );
 #endif
-	d->mPrfsContactList->mFoldVisibility->setChecked( p->contactListFolding() );
-	d->mPrfsContactList->mAutoHide->setChecked( p->contactListAutoHide() );
-	d->mPrfsContactList->mAutoHideVScroll->setChecked( p->contactListAutoHideVScroll() );
-	d->mPrfsContactList->mAutoHideTimeout->setValue( p->contactListAutoHideTimeout() );
 
-	// "Colors & Fonts" TAB =====================================================
-	d->mPrfsColors->Ui_AppearanceConfig_Colors::foregroundColor->setColor(p->highlightForeground());
-	d->mPrfsColors->Ui_AppearanceConfig_Colors::backgroundColor->setColor(p->highlightBackground());
-	d->mPrfsColors->textColor->setColor(p->textColor());
-	d->mPrfsColors->linkColor->setColor(p->linkColor());
-	d->mPrfsColors->bgColor->setColor(p->bgColor());
-	d->mPrfsColors->fontFace->setFont(p->fontFace());
-	d->mPrfsColors->mGreyIdleMetaContacts->setChecked(p->greyIdleMetaContacts());
-	d->mPrfsColors->idleContactColor->setColor(p->idleContactColor());
-	d->mPrfsColors->mUseCustomFonts->setChecked(p->contactListUseCustomFonts());
-	d->mPrfsColors->mSmallFont->setFont(p->contactListCustomSmallFont());
-	d->mPrfsColors->mNormalFont->setFont(p->contactListCustomNormalFont());
-	d->mPrfsColors->mGroupNameColor->setColor(p->contactListGroupNameColor());
-
-	d->mPrfsColors->mBgOverride->setChecked( p->bgOverride() );
-	d->mPrfsColors->mFgOverride->setChecked( p->fgOverride() );
-	d->mPrfsColors->mRtfOverride->setChecked( p->rtfOverride() );
+//	kdDebug(14000) << k_funcinfo << "called" << endl;
 
 	d->loading=false;
 	slotUpdateChatPreview();
@@ -499,7 +360,7 @@ void AppearanceConfig::slotLoadChatStyles()
 		// Insert the style class into the internal map for futher acces.
 		d->styleItemMap.insert( d->mPrfsChatWindow->styleList->firstItem(), it.value() );
 
-		if( it.value() == KopetePrefs::prefs()->stylePath() )
+		if( it.value() == Kopete::AppearanceSettings::self()->stylePath() )
 		{
 			kdDebug(14000) << k_funcinfo << "Restoring saved style: " << it.key() << endl;
 
@@ -512,7 +373,6 @@ void AppearanceConfig::slotLoadChatStyles()
 
 void AppearanceConfig::updateEmoticonlist()
 {
-	KopetePrefs *p = KopetePrefs::prefs();
 	KStandardDirs dir;
 
 	d->mPrfsEmoticons->icon_theme_list->clear(); // Wipe out old list
@@ -538,7 +398,8 @@ void AppearanceConfig::updateEmoticonlist()
 	}
 
 	// Where is that theme in our big-list-o-themes?
-	Q3ListBoxItem *item = d->mPrfsEmoticons->icon_theme_list->findItem( p->iconTheme() );
+
+	Q3ListBoxItem *item = d->mPrfsEmoticons->icon_theme_list->findItem( Kopete::AppearanceSettings::self()->emoticonTheme() );
 
 	if (item) // found it... make it the currently selected theme
 		d->mPrfsEmoticons->icon_theme_list->setCurrentItem( item );
@@ -604,7 +465,7 @@ void AppearanceConfig::slotChatStyleSelected()
 			// Insert variant name into the combobox.
 			d->mPrfsChatWindow->variantList->insertItem( it.key() );
 	
-			if( it.value() == KopetePrefs::prefs()->styleVariant() )
+			if( it.value() == Kopete::AppearanceSettings::self()->styleVariant() )
 				d->mPrfsChatWindow->variantList->setCurrentItem(currentIndex);
 	
 			currentIndex++;

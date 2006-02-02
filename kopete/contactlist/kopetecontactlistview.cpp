@@ -66,7 +66,6 @@
 #include "kopetegroupviewitem.h"
 #include "kopetemetacontact.h"
 #include "kopetemetacontactlvi.h"
-#include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopetestatusgroupviewitem.h"
 #include "kopetestdaction.h"
@@ -77,6 +76,8 @@
 #include "kopeteglobal.h"
 #include "kopetelviprops.h"
 #include "kopetegrouplistaction.h"
+#include "kopeteappearancesettings.h"
+#include "kopetebehaviorsettings.h"
 
 #include <memory>
 #include <ktoolinvocation.h>
@@ -368,12 +369,12 @@ void KopeteContactListViewPrivate::updateViewStrategy( KListView *view )
 	// this is a bit nasty, but this function needs changing if we add
 	// more view strategies anyway, so it should be fine.
 	bool bSortByGroup = (bool)dynamic_cast<ArrangeByGroupsViewStrategy*>(viewStrategy.get());
-	if ( !viewStrategy.get() || KopetePrefs::prefs()->sortByGroup() != bSortByGroup )
+	if ( !viewStrategy.get() || Kopete::AppearanceSettings::self()->groupContactByGroup() != bSortByGroup )
 	{
 		// delete old strategy first...
 		viewStrategy.reset( 0 );
 		// then create and store a new one
-		if ( KopetePrefs::prefs()->sortByGroup() )
+		if ( Kopete::AppearanceSettings::self()->groupContactByGroup() )
 			viewStrategy.reset( new ArrangeByGroupsViewStrategy(view) );
 		else
 			viewStrategy.reset( new ArrangeByPresenceViewStrategy(view) );
@@ -402,7 +403,7 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 	m_undo=0L;
 	m_redo=0L;
 
-	mShowAsTree = KopetePrefs::prefs()->treeView();
+	mShowAsTree = Kopete::AppearanceSettings::self()->contactListTreeView();
 	if ( mShowAsTree )
 	{
 		setRootIsDecorated( true );
@@ -429,8 +430,10 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 	connect( this, SIGNAL( itemRenamed( Q3ListViewItem * ) ),
 	         SLOT( slotItemRenamed( Q3ListViewItem * ) ) );
 
+#warning Port to new signals when KConfigXT will support signals.
+#if 0
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ), SLOT( slotSettingsChanged() ) );
-
+#endif
 	connect( Kopete::ContactList::self(), SIGNAL( selectionChanged() ),
 	         SLOT( slotListSelectionChanged() ) );
 	connect( Kopete::ContactList::self(),
@@ -776,7 +779,7 @@ void KopeteContactListView::slotShowAddContactDialog()
 
 void KopeteContactListView::slotSettingsChanged( void )
 {
-	mShowAsTree = KopetePrefs::prefs()->treeView();
+	mShowAsTree = Kopete::AppearanceSettings::self()->contactListTreeView();
 	if ( mShowAsTree )
 	{
 		setRootIsDecorated( true );
@@ -788,7 +791,7 @@ void KopeteContactListView::slotSettingsChanged( void )
 		setTreeStepSize( 0 );
 	}
 
-	if( KopetePrefs::prefs()->contactListHideVerticalScrollBar() )
+	if( Kopete::AppearanceSettings::self()->contactListHideVerticalScrollBar() )
 	{
 		// This will disable scrollbar auto-hide feature if it's enabled
 		// and it will call setVScrollBarMode(Auto), so it must precede setScrollHide call
@@ -800,17 +803,17 @@ void KopeteContactListView::slotSettingsChanged( void )
 		// This will disable "always hide scrollbar" optio and call setVScrollBarMode(Auto)
 		// so it must precede setScrollAutoHide call
 		setScrollHide(false);
-		setScrollAutoHide( KopetePrefs::prefs()->contactListAutoHideVScroll() );
+		setScrollAutoHide( Kopete::AppearanceSettings::self()->contactListAutoHideVScroll() );
 	}
 	
 
-	setScrollAutoHideTimeout( KopetePrefs::prefs()->contactListAutoHideTimeout() );
-	setMouseNavigation( KopetePrefs::prefs()->contactListMouseNavigation() );
+	setScrollAutoHideTimeout( Kopete::AppearanceSettings::self()->contactListAutoHideTimeout() );
+	setMouseNavigation( Kopete::BehaviorSettings::self()->contactListMouseNavigation() );
 
-	// maybe setEffects should read these from KopetePrefs itself?
-	Kopete::UI::ListView::Item::setEffects( KopetePrefs::prefs()->contactListAnimation(),
-	                                        KopetePrefs::prefs()->contactListFading(),
-	                                        KopetePrefs::prefs()->contactListFolding() );
+	// maybe setEffects should read these from Kopete::AppearanceSettings itself?
+	Kopete::UI::ListView::Item::setEffects( Kopete::AppearanceSettings::self()->contactListAnimateChange(),
+	                                        Kopete::AppearanceSettings::self()->contactListFading(),
+	                                        Kopete::AppearanceSettings::self()->contactListFolding() );
 
 	d->updateViewStrategy( this );
 
@@ -1690,7 +1693,7 @@ void KopeteContactListView::slotRename()
 	}
 	else if ( KopeteGroupViewItem *groupLVI = dynamic_cast<KopeteGroupViewItem *>( currentItem() ) )
 	{
-		if ( !KopetePrefs::prefs()->sortByGroup() )
+		if ( !Kopete::AppearanceSettings::self()->groupContactByGroup() )
 			return;
 		groupLVI->setRenameEnabled( 0, true);
 		groupLVI->startRename( 0 );

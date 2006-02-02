@@ -62,7 +62,7 @@
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "addressbookselectordialog.h"
-#include "kopeteconfig.h"
+#include "kopetegeneralsettings.h"
 
 // Local includes
 #include "kopeteidentityconfigbase.h"
@@ -93,7 +93,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char */*name*/
 	d->m_view = new KopeteIdentityConfigBase( this, "KopeteIdentityConfig::m_view" );
 	
 	// Setup KConfigXT link with GUI.
-	addConfig( Kopete::Config::self(), d->m_view );
+	addConfig( Kopete::GeneralSettings::self(), d->m_view );
 
 	// Load config
 	KopeteIdentityConfigPreferences::self()->readConfig();

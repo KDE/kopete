@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>495</width>
-            <height>445</height>
+            <width>611</width>
+            <height>476</height>
         </rect>
     </property>
     <property name="caption">
@@ -32,7 +32,7 @@
                 </property>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mSortByGroup</cstring>
+                        <cstring>kcfg_groupContactByGroup</cstring>
                     </property>
                     <property name="text">
                         <string>Arrange metacontacts by &amp;group</string>
@@ -40,7 +40,7 @@
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mTreeContactList</cstring>
+                        <cstring>kcfg_contactListTreeView</cstring>
                     </property>
                     <property name="text">
                         <string>Show tree &amp;branch lines</string>
@@ -73,7 +73,7 @@
                         </spacer>
                         <widget class="QCheckBox">
                             <property name="name">
-                                <cstring>mIndentContacts</cstring>
+                                <cstring>kcfg_contactListIndentContact</cstring>
                             </property>
                             <property name="text">
                                 <string>In&amp;dent contacts</string>
@@ -83,7 +83,7 @@
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mHideVerticalScrollBar</cstring>
+                        <cstring>kcfg_contactListHideVerticalScrollBar</cstring>
                     </property>
                     <property name="text">
                         <string>&amp;Hide vertical scrollbar</string>
@@ -101,59 +101,56 @@
             <property name="title">
                 <string>Contact Display Mode</string>
             </property>
-            <vbox>
-            	<property name="name">
-            	    <cstring>unnamed</cstring>
-            	</property>
-            	<widget class="QButtonGroup">
-            	    <property name="name">
-            	        <cstring>mDisplayMode</cstring>
-            	    </property>
-            	    <property name="title">
-            	        <string>List Style</string>
-            	    </property>
-            	    <vbox>
-            	        <property name="name">
-            	            <cstring>unnamed</cstring>
-            	        </property>
-            	        <widget class="QRadioButton">
-            	            <property name="name">
-            	                <cstring>radioButton8</cstring>
-            	            </property>
-            	            <property name="text">
-            	                <string>&amp;Classic, left-aligned status icons</string>
-            	            </property>
-            	            <property name="checked">
-            	                <bool>true</bool>
-            	            </property>
-            	        </widget>
-            	        <widget class="QRadioButton">
-            	            <property name="name">
-            	                <cstring>radioButton9</cstring>
-            	            </property>
-            	            <property name="text">
-            	                <string>&amp;Right-aligned status icons</string>
-            	            </property>
-            	        </widget>
-            	        <widget class="QRadioButton">
-            	            <property name="name">
-            	                <cstring>radioButton10</cstring>
-            	            </property>
-            	            <property name="text">
-            	                <string>Detailed &amp;view</string>
-            	            </property>
-            	        </widget>
-            	    </vbox>
-            	</widget>
-	    	<widget class="QCheckBox">
-            	    <property name="name">
-            	        <cstring>mIconMode</cstring>
-            	    </property>
-            	    <property name="text">
-            	        <string>Use contact photos when available</string>
-            	    </property>
-            	</widget>
-            </vbox>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QComboBox" row="0" column="0">
+                    <item>
+                        <property name="text">
+                            <string>Classic, left-aligned status icon</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Right-aligned status icons</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Detailed view</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>kcfg_contactListDisplayMode</cstring>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="0">
+                    <property name="name">
+                        <cstring>kcfg_contactListIconMode</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use contact photos &amp;when available</string>
+                    </property>
+                </widget>
+                <spacer row="2" column="0">
+                    <property name="name">
+                        <cstring>spacer6</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>40</height>
+                        </size>
+                    </property>
+                </spacer>
+            </grid>
         </widget>
         <widget class="QGroupBox" row="2" column="0" rowspan="1" colspan="2">
             <property name="name">
@@ -171,7 +168,7 @@
                 </property>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mAutoHide</cstring>
+                        <cstring>kcfg_contactListAutoHide</cstring>
                     </property>
                     <property name="text">
                         <string>A&amp;uto-hide contact list</string>
@@ -179,7 +176,7 @@
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mAutoHideVScroll</cstring>
+                        <cstring>kcfg_contactListAutoHideVScroll</cstring>
                     </property>
                     <property name="text">
                         <string>Auto-hide vertical &amp;scrollbar</string>
@@ -216,7 +213,7 @@
                         </spacer>
                         <widget class="QSpinBox">
                             <property name="name">
-                                <cstring>mAutoHideTimeout</cstring>
+                                <cstring>kcfg_contactListAutoHideTimeout</cstring>
                             </property>
                             <property name="enabled">
                                 <bool>true</bool>
@@ -282,15 +279,15 @@
                 </property>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mAnimateChanges</cstring>
+                        <cstring>kcfg_contactListAnimateChange</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Animate changes to contact list items</string>
+                        <string>A&amp;nimate changes to contact list items</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mFadeVisibility</cstring>
+                        <cstring>kcfg_contactListFading</cstring>
                     </property>
                     <property name="text">
                         <string>Fade in / out contacts as the&amp;y appear / disappear</string>
@@ -298,7 +295,7 @@
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mFoldVisibility</cstring>
+                        <cstring>kcfg_contactListFolding</cstring>
                     </property>
                     <property name="text">
                         <string>Fo&amp;ld in / out contacts as they appear / disappear</string>
@@ -362,15 +359,15 @@
 </widget>
 <connections>
     <connection>
-        <sender>mTreeContactList</sender>
+        <sender>kcfg_contactListTreeView</sender>
         <signal>toggled(bool)</signal>
-        <receiver>mIndentContacts</receiver>
+        <receiver>kcfg_contactListIndentContact</receiver>
         <slot>setDisabled(bool)</slot>
     </connection>
     <connection>
-        <sender>mHideVerticalScrollBar</sender>
+        <sender>kcfg_contactListHideVerticalScrollBar</sender>
         <signal>toggled(bool)</signal>
-        <receiver>mAutoHideVScroll</receiver>
+        <receiver>kcfg_contactListAutoHideVScroll</receiver>
         <slot>setDisabled(bool)</slot>
     </connection>
 </connections>

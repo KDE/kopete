@@ -58,7 +58,8 @@
 #include "kopetemetacontact.h"
 #include "kopetemetacontactlvi.h"
 #include "kopetepluginmanager.h"
-#include "kopeteprefs.h"
+#include "kopeteappearancesettings.h"
+#include "kopetebehaviorsettings.h"
 #include "kopetestdaction.h"
 #include "systemtray.h"
 #include "kopeteglobal.h"
@@ -249,9 +250,11 @@ void KopeteMetaContactLVI::initLVI()
 	connect( m_metaContact, SIGNAL( contactIdleStateChanged( Kopete::Contact * ) ),
 		SLOT( slotIdleStateChanged( Kopete::Contact * ) ) );
 
+#warning Port to new signals when KConfigXT will support signals.
+#if 0
 	connect( KopetePrefs::prefs(), SIGNAL( contactListAppearanceChanged() ),
 			 SLOT( slotConfigChanged() ) );
-	
+#endif
 	connect( kapp, SIGNAL( appearanceChanged() ),  SLOT( slotConfigChanged() ) );
 
 	mBlinkTimer = new QTimer( this, "mBlinkTimer" );
@@ -285,8 +288,8 @@ void KopeteMetaContactLVI::movedToDifferentGroup()
 	// create a spacer if wanted
 	// I assume that the safety property that allows the delete in slotConfigChanged holds here - Will
 	delete d->spacerBox->component( 0 );
-	if ( KListViewItem::parent() && KopetePrefs::prefs()->contactListIndentContacts() &&
-	                !KopetePrefs::prefs()->treeView() )
+	if ( KListViewItem::parent() && Kopete::AppearanceSettings::self()->contactListIndentContact() &&
+	                !Kopete::AppearanceSettings::self()->contactListTreeView() )
 	{
 		new ListView::SpacerComponent( d->spacerBox, 20, 0 );
 	}
@@ -382,7 +385,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 		 || ( c->account()->myself()->onlineStatus().status() == Kopete::OnlineStatus::Connecting )
 		 || !c->account()->isConnected() ) )
 	{
-		if ( !c->account()->isAway() || KopetePrefs::prefs()->soundIfAway() )
+		if ( !c->account()->isAway() || Kopete::BehaviorSettings::self()->enableEventsWhileAway() )
 		{
 			//int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 
@@ -525,7 +528,7 @@ void KopeteMetaContactLVI::slotDisplayNameChanged()
 
 void KopeteMetaContactLVI::slotPhotoChanged()
 {
-	if ( d->metaContactIcon && d->currentIconMode == KopetePrefs::PhotoPic ) 
+	if ( d->metaContactIcon && d->currentIconMode == Kopete::AppearanceSettings::EnumContactListIconMode::IconPhoto ) 
 	{
 		m_oldStatusIcon= d->metaContactIcon->pixmap();
 		QPixmap photoPixmap;
@@ -668,22 +671,22 @@ void KopeteMetaContactLVI::slotAddToNewGroup()
 
 void KopeteMetaContactLVI::slotConfigChanged()
 {
-    setDisplayMode( KopetePrefs::prefs()->contactListDisplayMode(),
-                    KopetePrefs::prefs()->contactListIconMode() );
+    setDisplayMode( Kopete::AppearanceSettings::self()->contactListDisplayMode(),
+                    Kopete::AppearanceSettings::self()->contactListIconMode() );
 
 	// create a spacer if wanted
 	delete d->spacerBox->component( 0 );
-	if ( KListViewItem::parent() && KopetePrefs::prefs()->contactListIndentContacts() &&
-	                !KopetePrefs::prefs()->treeView() )
+	if ( KListViewItem::parent() && Kopete::AppearanceSettings::self()->contactListIndentContact() &&
+	                !Kopete::AppearanceSettings::self()->contactListTreeView() )
 	{
 		new ListView::SpacerComponent( d->spacerBox, 20, 0 );
 	}
 
-	if ( KopetePrefs::prefs()->contactListUseCustomFonts() )
+	if ( Kopete::AppearanceSettings::self()->contactListUseCustomFont() )
 	{
-		d->nameText->setFont( KopetePrefs::prefs()->contactListCustomNormalFont() );
+		d->nameText->setFont( Kopete::AppearanceSettings::self()->contactListNormalFont() );
 		if ( d->extraText )
-			d->extraText->setFont( KopetePrefs::prefs()->contactListSmallFont() );
+			d->extraText->setFont( Kopete::AppearanceSettings::self()->contactListSmallFont() );
 	}
 	else
 	{
@@ -730,10 +733,10 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 	d->extraText = 0L;
 	d->metaContactIcon = 0L;
 	d->contactIconSize = 12;
-	if (mode == KopetePrefs::Detailed) {
-		d->iconSize =  iconmode == KopetePrefs::IconPic ?  KIcon::SizeMedium : KIcon::SizeLarge;
+	if (mode == Kopete::AppearanceSettings::EnumContactListDisplayMode::Detailed ) {
+		d->iconSize =  iconmode == Kopete::AppearanceSettings::EnumContactListIconMode::IconPic ?  KIcon::SizeMedium : KIcon::SizeLarge;
 	} else {
-		d->iconSize = iconmode == KopetePrefs::IconPic ? IconSize( KIcon::Small ) :  KIcon::SizeMedium;
+		d->iconSize = iconmode == Kopete::AppearanceSettings::EnumContactListIconMode::IconPic ? IconSize( KIcon::Small ) :  KIcon::SizeMedium;
 	}
 	disconnect( Kopete::KABCPersistence::self()->addressBook() , 0 , this , 0);
 
@@ -742,7 +745,7 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 	Component *hbox = new BoxComponent( this, BoxComponent::Horizontal );
 	d->spacerBox = new BoxComponent( hbox, BoxComponent::Horizontal );
 	
-	if (iconmode == KopetePrefs::PhotoPic) {
+	if (iconmode == Kopete::AppearanceSettings::EnumContactListIconMode::IconPhoto) {
 		Component *imageBox = new BoxComponent( hbox, BoxComponent::Vertical );
 		new VSpacerComponent( imageBox );
 		d->metaContactIcon = new ImageComponent( imageBox, d->iconSize + 2 , d->iconSize + 2 );
@@ -756,7 +759,7 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 		d->metaContactIcon = new ImageComponent( hbox );
 	}
 	 
-	if( mode == KopetePrefs::Detailed )
+	if( mode == Kopete::AppearanceSettings::EnumContactListDisplayMode::Detailed )
 	{
 		d->contactIconSize = IconSize( KIcon::Small );
 		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
@@ -766,7 +769,7 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
 		d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
 	}
-	else if( mode == KopetePrefs::RightAligned )       // old right-aligned contact
+	else if( mode == Kopete::AppearanceSettings::EnumContactListDisplayMode::RightAligned )       // old right-aligned contact
 	{
 		d->nameText = new DisplayNameComponent( hbox );
 		new HSpacerComponent( hbox );
@@ -802,7 +805,7 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 
 void KopeteMetaContactLVI::updateVisibility()
 {
-	if ( KopetePrefs::prefs()->showOffline() || !d->events.isEmpty()  )
+	if ( Kopete::AppearanceSettings::self()->showOfflineUsers() || !d->events.isEmpty()  )
 		setTargetVisibility( true );
 	else if ( !m_metaContact->isOnline() && !mBlinkTimer->isActive() )
 		setTargetVisibility( false );
@@ -865,11 +868,7 @@ void KopeteMetaContactLVI::updateContactIcons()
 
 void KopeteMetaContactLVI::updateContactIcon( Kopete::Contact *c )
 {
-	KGlobal::config()->setGroup( QString::fromLatin1("ContactList") );
-	bool bHideOffline = KGlobal::config()->readBoolEntry(
-		QString::fromLatin1("HideOfflineContacts"), false );
-	if ( KopetePrefs::prefs()->showOffline() )
-		bHideOffline = false;
+	bool bHideOffline = !Kopete::AppearanceSettings::self()->showOfflineUsers();
 
 	ListView::ContactComponent *comp = contactComponent( c );
 	bool bShow = !bHideOffline || c->isOnline();
@@ -951,7 +950,7 @@ bool KopeteMetaContactLVI::isGrouped() const
 	if ( !m_parentGroup || !m_parentGroup->group() )
 		return false;
 
-	if ( m_parentGroup->group() == Kopete::Group::temporary() && !KopetePrefs::prefs()->sortByGroup() )
+	if ( m_parentGroup->group() == Kopete::Group::temporary() && !Kopete::AppearanceSettings::self()->groupContactByGroup() )
 		return false;
  
 	return true;
@@ -959,12 +958,12 @@ bool KopeteMetaContactLVI::isGrouped() const
 
 void KopeteMetaContactLVI::slotIdleStateChanged( Kopete::Contact *c )
 {
-	bool doWeHaveToGrayThatContact = KopetePrefs::prefs()->greyIdleMetaContacts() && ( m_metaContact->idleTime() >= 10 * 60 );
+	bool doWeHaveToGrayThatContact = Kopete::AppearanceSettings::self()->greyIdleMetaContacts() && ( m_metaContact->idleTime() >= 10 * 60 );
 	if ( doWeHaveToGrayThatContact )
 	{
-		d->nameText->setColor( KopetePrefs::prefs()->idleContactColor() );
+		d->nameText->setColor( Kopete::AppearanceSettings::self()->idleContactColor() );
 		if ( d->extraText )
-			d->extraText->setColor( KopetePrefs::prefs()->idleContactColor() );
+			d->extraText->setColor( Kopete::AppearanceSettings::self()->idleContactColor() );
 	}
 	else
 	{
@@ -973,7 +972,7 @@ void KopeteMetaContactLVI::slotIdleStateChanged( Kopete::Contact *c )
 			d->extraText->setDefaultColor();
 	}
 
-	if(d->metaContactIcon && d->currentIconMode==KopetePrefs::IconPic)
+	if(d->metaContactIcon && d->currentIconMode==Kopete::AppearanceSettings::EnumContactListIconMode::IconPic)
 	{
 		m_oldStatusIcon=d->metaContactIcon->pixmap();
 		

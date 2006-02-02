@@ -33,6 +33,7 @@
 #include "kabcpersistence.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
+#include "kopetebehaviorsettings.h"
 #include "kopetecommandhandler.h"
 #include "kopetecontactlist.h"
 #include "kopeteglobal.h"
@@ -43,7 +44,6 @@
 #include "kopetestdaction.h"
 #include "kopeteuiglobal.h"
 #include "kopetewindow.h"
-#include "kopeteprefs.h"
 #include "kopeteviewmanager.h"
 #include "videodevice.h"
 
@@ -211,7 +211,7 @@ void KopeteApplication::slotAllPluginsLoaded()
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
 	// --noconnect not specified?
-	if ( args->isSet( "connect" )  && KopetePrefs::prefs()->autoConnect() )
+	if ( args->isSet( "connect" )  && Kopete::BehaviorSettings::self()->autoConnect() )
 		Kopete::AccountManager::self()->connectAll();
 
 	QByteArrayList connectArgs = args->getOptionList( "autoconnect" );

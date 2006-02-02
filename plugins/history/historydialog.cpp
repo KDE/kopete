@@ -23,7 +23,7 @@
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopetecontactlist.h"
-#include "kopeteprefs.h"
+#include "kopeteappearancesettings.h"
 
 #include <dom/dom_doc.h>
 #include <dom/dom_element.h>
@@ -158,8 +158,8 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 	QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 	l->addWidget(mHtmlView);
 
-	QTextOStream( &fontSize ) << KopetePrefs::prefs()->fontFace().pointSize();
-	fontStyle = "<style>.hf { font-size:" + fontSize + ".0pt; font-family:" + KopetePrefs::prefs()->fontFace().family() + "; }</style>";
+	QTextOStream( &fontSize ) << Kopete::AppearanceSettings::self()->chatFont().pointSize();
+	fontStyle = "<style>.hf { font-size:" + fontSize + ".0pt; font-family:" + Kopete::AppearanceSettings::self()->chatFont().family() + "; }</style>";
 
 	mHtmlPart->begin();
 	htmlCode = "<html><head>" + fontStyle + "</head><body class=\"hf\"></body></html>";

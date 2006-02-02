@@ -38,7 +38,7 @@
 #include "kopeteuiglobal.h"
 #include "kopetechatsessionmanager.h"
 #include "kopeteballoon.h"
-#include "kopeteprefs.h"
+#include "kopetebehaviorsettings.h"
 #include "kopetemetacontact.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
@@ -70,7 +70,10 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
 	connect(Kopete::ChatSessionManager::self() , SIGNAL(newEvent(Kopete::MessageEvent*)),
 		this, SLOT(slotNewEvent(Kopete::MessageEvent*)));
+#warning Port to new signals when KConfigXT will support signals in snapshot.
+#if 0
 	connect(KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()));
+#endif
 
 	connect(Kopete::AccountManager::self(),
 		SIGNAL(accountOnlineStatusChanged(Kopete::Account *,
@@ -108,7 +111,7 @@ void KopeteSystemTray::mousePressEvent( QMouseEvent *me )
 {
 	if (
 		(me->button() == Qt::MidButton ||
-			(me->button() == Qt::LeftButton && KopetePrefs::prefs()->trayflashNotifyLeftClickOpensMessage())) &&
+			(me->button() == Qt::LeftButton && Kopete::BehaviorSettings::self()->trayflashNotifyLeftClickOpensMessage())) &&
 		mIsBlinking )
 	{
 		mouseDoubleClickEvent( me );
@@ -204,7 +207,7 @@ void KopeteSystemTray::slotBlink()
 
 void KopeteSystemTray::slotNewEvent( Kopete::MessageEvent *event )
 {
-	if( KopetePrefs::prefs()->useStack() )
+	if( Kopete::BehaviorSettings::self()->useMessageStack() )
 	{
 		mEventList.prepend( event );
 		mBalloonEventList.prepend( event );
@@ -223,7 +226,7 @@ void KopeteSystemTray::slotNewEvent( Kopete::MessageEvent *event )
 		if( event->message().manager()->account() )
 		{
 			if( !event->message().manager()->account()->isAway() ||
-				KopetePrefs::prefs()->soundIfAway() )
+				Kopete::BehaviorSettings::self()->enableEventsWhileAway() )
 			{
 				addBalloon();
 			}
@@ -237,7 +240,7 @@ void KopeteSystemTray::slotNewEvent( Kopete::MessageEvent *event )
 		kdDebug(14000) << k_funcinfo << "NULL message().manager()!" << endl;
 
 	// tray animation
-	if ( KopetePrefs::prefs()->trayflashNotify() )
+	if ( Kopete::BehaviorSettings::self()->trayflashNotify() )
 		if( mBalloonEventList.count() == mEventList.count() )
 			startBlink();
 		else
@@ -276,7 +279,7 @@ void KopeteSystemTray::removeBalloonEvent(Kopete::MessageEvent *event)
 		}
 		else
 		{
-			if(KopetePrefs::prefs()->trayflashNotify() && !mEventList.isEmpty())
+			if(Kopete::BehaviorSettings::self()->trayflashNotify() && !mEventList.isEmpty())
 				startBlink();
 		}
 	}
@@ -289,13 +292,13 @@ void KopeteSystemTray::addBalloon()
 		":" << KopetePrefs::prefs()->balloonNotify()
 		<< ":" << !mBalloonEventList.isEmpty() << endl;*/
 
-	if( m_balloon && KopetePrefs::prefs()->useStack() )
+	if( m_balloon && Kopete::BehaviorSettings::self()->useMessageStack() )
 	{
 		m_balloon->deleteLater();
 		m_balloon=0l;
 	}
 
-	if( !m_balloon && KopetePrefs::prefs()->showTray() && KopetePrefs::prefs()->balloonNotify() && !mBalloonEventList.isEmpty() )
+	if( !m_balloon && Kopete::BehaviorSettings::self()->showSystemTray() && Kopete::BehaviorSettings::self()->balloonNotify() && !mBalloonEventList.isEmpty() )
 	{
 		Kopete::Message msg = mBalloonEventList.first()->message();
 
@@ -326,7 +329,7 @@ void KopeteSystemTray::addBalloon()
 void KopeteSystemTray::slotConfigChanged()
 {
 //	kdDebug(14010) << k_funcinfo << "called." << endl;
-	if ( KopetePrefs::prefs()->showTray() )
+	if ( Kopete::BehaviorSettings::self()->showSystemTray() )
 		show();
 	else
 		hide(); // for users without kicker or a similar docking app

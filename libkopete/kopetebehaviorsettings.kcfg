@@ -49,6 +49,10 @@
 			<label>Show events in chat window.</label>
 			<default>true</default>
 		</entry>
+		<entry key="showEventsIfActive" type="Bool">
+			<label>Show events in active chat window.</label>
+			<default>true</default>
+		</entry>
 		<entry key="queueOnlyHighlightedMessagesInGroupChats" type="Bool">
 			<label>Queue only highlighted messages in group chats</label>
 			<default>false</default>
@@ -100,13 +104,17 @@
 		<entry key="chatWindowGroupPolicy" type="Enum">
 			<label>Chat window grouping policy.</label>
 			<choices>
+				<choice name="OpenNewWindow" />
 				<choice name="GroupByAccount" />
+				<choice name="GroupAll" />
 				<choice name="GroupByGroup" />
 				<choice name="GroupByMetaContact" />
-				<choice name="GroupAll" />
-				<choice name="OpenNewWindow" />
 			</choices>
 			<default>OpenNewWindow</default>
+		</entry>
+		<entry key="spellCheck" type="Bool">
+			<label>Enable spell checking.</label>
+			<default>true</default>
 		</entry>
 		<entry key="chatWindowShowSendButton" type="Bool">
 			<label>Show send button in Chat Window.</label>
@@ -124,13 +132,28 @@
 			<label>Maximum number of messages to show in a chat window.</label>
 			<default>250</default>
 		</entry>
-		<entry key="hightlightEnabled" type="Bool">
+		<entry key="highlightEnabled" type="Bool">
 			<label>Hightlight messages containing your nickname.</label>
 			<default>true</default>
 		</entry>
 		<entry key="viewPlugin" type="String">
 			<label>Selected view plugin for Chat Window.</label>
 			<default>kopete_chatwindow</default>
+		</entry>
+	</group>
+
+	<group name="AutoAway">
+		<entry key="useAutoAway" type="Bool">
+			<label>Use auto away.</label>
+			<default>true</default>
+		</entry>
+		<entry key="autoAwayTimeout" type="Int">
+			<label>Auto away timeout.</label>
+			<default>600</default>
+		</entry>
+		<entry key="autoAwayGoAvailable" type="Bool">
+			<label>Go available after detecting an activity.</label>
+			<default>true</default>
 		</entry>
 	</group>
 </kcfg>

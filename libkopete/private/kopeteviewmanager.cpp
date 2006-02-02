@@ -27,7 +27,7 @@
 #include <kglobal.h>
 #include <kwin.h>
 
-#include "kopeteprefs.h"
+#include "kopetebehaviorsettings.h"
 #include "kopeteaccount.h"
 #include "kopetepluginmanager.h"
 #include "kopeteviewplugin.h"
@@ -82,7 +82,10 @@ KopeteViewManager::KopeteViewManager()
     d->activeView = 0L;
     d->foreignMessage=false;
 
+#warning Port to new signals when KConfigXT will it them in snapshot
+#if 0
     connect( KopetePrefs::prefs(), SIGNAL( saved() ), this, SLOT( slotPrefsChanged() ) );
+#endif
 
     connect( Kopete::ChatSessionManager::self() , SIGNAL( display( Kopete::Message &, Kopete::ChatSession *) ),
             this, SLOT ( messageAppended( Kopete::Message &, Kopete::ChatSession *) ) );
@@ -109,12 +112,12 @@ KopeteViewManager::~KopeteViewManager()
 
 void KopeteViewManager::slotPrefsChanged()
 {
-	d->useQueueOrStack = KopetePrefs::prefs()->useQueue() || KopetePrefs::prefs()->useStack();
-    d->raiseWindow = KopetePrefs::prefs()->raiseMsgWindow();
-    d->queueUnreadMessages = KopetePrefs::prefs()->queueUnreadMessages();
-    d->queueOnlyHighlightedMessagesInGroupChats = KopetePrefs::prefs()->queueOnlyHighlightedMessagesInGroupChats();
-    d->queueOnlyMessagesOnAnotherDesktop = KopetePrefs::prefs()->queueOnlyMessagesOnAnotherDesktop();
-    d->balloonNotifyIgnoreClosesChatView = KopetePrefs::prefs()->balloonNotifyIgnoreClosesChatView();
+	d->useQueueOrStack = Kopete::BehaviorSettings::self()->useMessageQueue() || Kopete::BehaviorSettings::self()->useMessageStack();
+    d->raiseWindow = Kopete::BehaviorSettings::self()->raiseMessageWindow();
+    d->queueUnreadMessages = Kopete::BehaviorSettings::self()->queueUnreadMessages();
+    d->queueOnlyHighlightedMessagesInGroupChats = Kopete::BehaviorSettings::self()->queueOnlyHighlightedMessagesInGroupChats();
+    d->queueOnlyMessagesOnAnotherDesktop = Kopete::BehaviorSettings::self()->queueOnlyMessagesOnAnotherDesktop();
+    d->balloonNotifyIgnoreClosesChatView = Kopete::BehaviorSettings::self()->balloonNotifyIgnoreClosesChatView();
 }
 
 KopeteView *KopeteViewManager::view( Kopete::ChatSession* session, const QString &requestedPlugin )
@@ -130,7 +133,7 @@ KopeteView *KopeteViewManager::view( Kopete::ChatSession* session, const QString
         Kopete::PluginManager *pluginManager = Kopete::PluginManager::self();
         Kopete::ViewPlugin *viewPlugin = 0L;
 
-        QString pluginName = requestedPlugin.isEmpty() ? KopetePrefs::prefs()->interfacePreference() : requestedPlugin;
+        QString pluginName = requestedPlugin.isEmpty() ? Kopete::BehaviorSettings::self()->viewPlugin() : requestedPlugin;
         if( !pluginName.isEmpty() )
         {
             viewPlugin = (Kopete::ViewPlugin*)pluginManager->loadPlugin( pluginName );
@@ -214,13 +217,11 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
             readMessages( manager, outgoingMessage );
         }
 
-		if ( !outgoingMessage && ( !manager->account()->isAway() || KopetePrefs::prefs()->soundIfAway() ) )
+		if ( !outgoingMessage && ( !manager->account()->isAway() || Kopete::BehaviorSettings::self()->enableEventsWhileAway() ) )
 		{
 			QWidget *w=dynamic_cast<QWidget*>(manager->view(false));
-			KConfig *config = KGlobal::config();
-			config->setGroup("General");
 			if( (!manager->view(false) || !w || manager->view() != d->activeView ||
-						   config->readEntry("EventIfActive", true) || !w->isActiveWindow())
+						   Kopete::BehaviorSettings::self()->showEventsIfActive() || !w->isActiveWindow())
 						   && msg.from())
 			{
 				QString msgFrom = QString::null;

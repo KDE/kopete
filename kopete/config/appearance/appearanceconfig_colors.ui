@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>AppearanceConfig_Colors</class>
 <widget class="QWidget">
     <property name="name">
@@ -46,7 +46,7 @@
                 </widget>
                 <widget class="KColorButton" row="3" column="1">
                     <property name="name">
-                        <cstring>foregroundColor</cstring>
+                        <cstring>kcfg_highlightForegroundColor</cstring>
                     </property>
                     <property name="text">
                         <string></string>
@@ -62,7 +62,7 @@
                 </widget>
                 <widget class="KColorButton" row="2" column="1">
                     <property name="name">
-                        <cstring>linkColor</cstring>
+                        <cstring>kcfg_chatLinkColor</cstring>
                     </property>
                     <property name="text">
                         <string></string>
@@ -77,7 +77,7 @@
                 </widget>
                 <widget class="KColorButton" row="3" column="3">
                     <property name="name">
-                        <cstring>backgroundColor</cstring>
+                        <cstring>kcfg_highlightBackgroundColor</cstring>
                     </property>
                     <property name="text">
                         <string></string>
@@ -93,7 +93,7 @@
                 </widget>
                 <widget class="KColorButton" row="1" column="1">
                     <property name="name">
-                        <cstring>textColor</cstring>
+                        <cstring>kcfg_chatTextColor</cstring>
                     </property>
                     <property name="text">
                         <string></string>
@@ -101,7 +101,7 @@
                 </widget>
                 <widget class="KColorButton" row="1" column="3">
                     <property name="name">
-                        <cstring>bgColor</cstring>
+                        <cstring>kcfg_chatBackgroundColor</cstring>
                     </property>
                     <property name="text">
                         <string></string>
@@ -140,7 +140,7 @@
                 </widget>
                 <widget class="KFontRequester" row="0" column="1" rowspan="1" colspan="3">
                     <property name="name">
-                        <cstring>fontFace</cstring>
+                        <cstring>kcfg_chatFont</cstring>
                     </property>
                 </widget>
             </grid>
@@ -158,7 +158,7 @@
                 </property>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mBgOverride</cstring>
+                        <cstring>kcfg_chatBgOverride</cstring>
                     </property>
                     <property name="text">
                         <string>Do not show user specified &amp;background color</string>
@@ -166,15 +166,15 @@
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mFgOverride</cstring>
+                        <cstring>kcfg_chatFgOverride</cstring>
                     </property>
                     <property name="text">
-                        <string>Do not show user specified &amp;foreground color</string>
+                        <string>&amp;Do not show user specified foreground color</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mRtfOverride</cstring>
+                        <cstring>kcfg_chatRtfOverride</cstring>
                     </property>
                     <property name="text">
                         <string>Do not show user specified &amp;rich text</string>
@@ -195,10 +195,10 @@
                 </property>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mUseCustomFonts</cstring>
+                        <cstring>kcfg_contactListUseCustomFont</cstring>
                     </property>
                     <property name="text">
-                        <string>Use custom fonts for contact list items</string>
+                        <string>U&amp;se custom fonts for contact list items</string>
                     </property>
                 </widget>
                 <widget class="QLayoutWidget">
@@ -247,7 +247,7 @@
                                 </widget>
                                 <widget class="KFontRequester" row="0" column="1">
                                     <property name="name">
-                                        <cstring>mNormalFont</cstring>
+                                        <cstring>kcfg_contactListNormalFont</cstring>
                                     </property>
                                     <property name="enabled">
                                         <bool>false</bool>
@@ -266,7 +266,7 @@
                                 </widget>
                                 <widget class="KFontRequester" row="1" column="1">
                                     <property name="name">
-                                        <cstring>mSmallFont</cstring>
+                                        <cstring>kcfg_contactListSmallFont</cstring>
                                     </property>
                                     <property name="enabled">
                                         <bool>false</bool>
@@ -286,7 +286,7 @@
                         </property>
                         <widget class="KColorButton" row="1" column="1">
                             <property name="name">
-                                <cstring>mGroupNameColor</cstring>
+                                <cstring>kcfg_groupNameColor</cstring>
                             </property>
                             <property name="text">
                                 <string></string>
@@ -294,7 +294,7 @@
                         </widget>
                         <widget class="KColorButton" row="0" column="1">
                             <property name="name">
-                                <cstring>idleContactColor</cstring>
+                                <cstring>kcfg_idleContactColor</cstring>
                             </property>
                             <property name="enabled">
                                 <bool>false</bool>
@@ -305,10 +305,10 @@
                         </widget>
                         <widget class="QCheckBox" row="0" column="0">
                             <property name="name">
-                                <cstring>mGreyIdleMetaContacts</cstring>
+                                <cstring>kcfg_greyIdleMetaContacts</cstring>
                             </property>
                             <property name="text">
-                                <string>Recolor contacts marked as idle:</string>
+                                <string>Recolor co&amp;ntacts marked as idle:</string>
                             </property>
                         </widget>
                         <widget class="QLabel" row="1" column="0">
@@ -342,44 +342,42 @@
         </spacer>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
-        <sender>mUseCustomFonts</sender>
+        <sender>kcfg_contactListUseCustomFont</sender>
         <signal>toggled(bool)</signal>
         <receiver>mNormalFontLabel</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>mUseCustomFonts</sender>
+        <sender>kcfg_contactListUseCustomFont</sender>
         <signal>toggled(bool)</signal>
-        <receiver>mNormalFont</receiver>
+        <receiver>kcfg_contactListNormalFont</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>mUseCustomFonts</sender>
+        <sender>kcfg_contactListUseCustomFont</sender>
         <signal>toggled(bool)</signal>
         <receiver>mSmallFontLabel</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>mUseCustomFonts</sender>
+        <sender>kcfg_contactListUseCustomFont</sender>
         <signal>toggled(bool)</signal>
-        <receiver>mSmallFont</receiver>
+        <receiver>kcfg_contactListSmallFont</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>mGreyIdleMetaContacts</sender>
+        <sender>kcfg_greyIdleMetaContacts</sender>
         <signal>toggled(bool)</signal>
-        <receiver>idleContactColor</receiver>
+        <receiver>kcfg_idleContactColor</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>
-    <tabstop>bgColor</tabstop>
-    <tabstop>textColor</tabstop>
-    <tabstop>linkColor</tabstop>
+    <tabstop>kcfg_chatBackgroundColor</tabstop>
+    <tabstop>kcfg_chatTextColor</tabstop>
+    <tabstop>kcfg_chatLinkColor</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

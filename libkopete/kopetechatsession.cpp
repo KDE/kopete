@@ -33,12 +33,12 @@
 #include <knotification.h>
 
 #include "kopeteaccount.h"
+#include "kopetebehaviorsettings.h"
 #include "kopetecommandhandler.h"
 #include "kopetechatsessionmanager.h"
 #include "kopetemessagehandlerchain.h"
 #include "kopetemetacontact.h"
 #include "knotification.h"
-#include "kopeteprefs.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 #include "kopeteview.h"
@@ -247,7 +247,7 @@ void Kopete::ChatSession::sendMessage( Kopete::Message &message )
 	if ( !Kopete::CommandHandler::commandHandler()->processMessage( message, this ) )
 	{
 		emit messageSent( sentMessage, this );
-		if ( !account()->isAway() || KopetePrefs::prefs()->soundIfAway() )
+		if ( !account()->isAway() || Kopete::BehaviorSettings::self()->enableEventsWhileAway() )
 		{
 			KNotification::event(QString::fromLatin1( "kopete_outgoing" ),	i18n( "Outgoing Message Sent" ) );
 		}
@@ -275,7 +275,7 @@ void Kopete::ChatSession::appendMessage( Kopete::Message &msg )
 	if ( msg.direction() == Kopete::Message::Inbound )
 	{
 		QString nick=myself()->property(Kopete::Global::Properties::self()->nickName()).value().toString();
-		if ( KopetePrefs::prefs()->highlightEnabled() && !nick.isEmpty() &&
+		if ( Kopete::BehaviorSettings::self()->highlightEnabled() && !nick.isEmpty() &&
 			msg.plainBody().contains( QRegExp( QString::fromLatin1( "\\b(%1)\\b" ).arg( nick ), false ) ) )
 		{
 			msg.setImportance( Kopete::Message::Highlight );
@@ -495,7 +495,7 @@ void Kopete::ChatSession::setMayInvite( bool b )
 
 void Kopete::ChatSession::raiseView()
 {
-	KopeteView *v=view(true, KopetePrefs::prefs()->interfacePreference() );
+	KopeteView *v=view(true, Kopete::BehaviorSettings::self()->viewPlugin() );
 	if(v)
 		v->raise(true);
 }

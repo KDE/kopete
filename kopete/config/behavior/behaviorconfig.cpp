@@ -35,7 +35,7 @@
 #include <ktrader.h>
 #include <kconfig.h>
 
-#include "kopeteprefs.h"
+#include "kopetebehaviorsettings.h"
 #include "kopeteaway.h"
 #include "kopeteawayconfigbase.h"
 #include "kopetepluginmanager.h"
@@ -54,18 +54,22 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 
 	// "General" TAB ============================================================
 	mPrfsGeneral = new BehaviorConfig_General(mBehaviorTabCtl);
+	addConfig( Kopete::BehaviorSettings::self(), mPrfsGeneral );
 	mBehaviorTabCtl->addTab(mPrfsGeneral, i18n("&General"));
 
 	// "Events" TAB ============================================================
 	mPrfsEvents = new BehaviorConfig_Events(mBehaviorTabCtl);
+	addConfig( Kopete::BehaviorSettings::self(), mPrfsEvents );
 	mBehaviorTabCtl->addTab(mPrfsEvents, i18n("&Events"));
 
 	// "Away" TAB ===============================================================
 	mAwayConfigUI = new KopeteAwayConfigBaseUI(mBehaviorTabCtl);
+	addConfig( Kopete::BehaviorSettings::self(), mAwayConfigUI );
 	mBehaviorTabCtl->addTab(mAwayConfigUI, i18n("A&way Settings"));
 
 	// "Chat" TAB ===============================================================
 	mPrfsChat = new BehaviorConfig_Chat(mBehaviorTabCtl);
+	addConfig( Kopete::BehaviorSettings::self(), mPrfsChat );
 	mBehaviorTabCtl->addTab(mPrfsChat, i18n("Cha&t"));
 
 	Kopete::PluginManager *pluginManager = Kopete::PluginManager::self();
@@ -73,66 +77,7 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 
 	load();
 
-
-	// "General" TAB ============================================================
-	connect(mPrfsGeneral->mShowTrayChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mStartDockedChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mUseQueueChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mUseStackChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mQueueUnreadMessagesChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mAutoConnect, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mMouseNavigation, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-
-
-	// "Events" TAB ============================================================
-	connect(mPrfsEvents->mQueueOnlyHighlightedMessagesInGroupChatsChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsEvents->mQueueOnlyMessagesOnAnotherDesktopChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsEvents->mBalloonNotifyChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsEvents->mBalloonNotifyIgnoreClosesChatViewChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsEvents->mCloseBalloonChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsEvents->mBalloonCloseDelay, SIGNAL(valueChanged(int)),
-		this, SLOT(slotValueChanged(int)));
-	connect(mPrfsEvents->mTrayflashNotifyChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsEvents->mTrayflashNotifyLeftClickOpensMessageChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsEvents->mTrayflashNotifySetCurrentDesktopToChatViewChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsEvents->mSoundIfAwayChk, SIGNAL(toggled(bool)),
-			this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsEvents->mEventIfActive, SIGNAL(toggled(bool)),
-			this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsEvents->mRaiseMsgWindowChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-
-
 	// "Chat" TAB ===============================================================
-	connect( mPrfsChat->cb_ShowEventsChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect( mPrfsChat->highlightEnabled, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect( mPrfsChat->chatWindowGroup, SIGNAL(clicked(int)),
-		this, SLOT(slotValueChanged(int)));
-	connect( mPrfsChat->interfaceGroup, SIGNAL(clicked(int)),
-		this, SLOT(slotValueChanged(int)));
-	connect( mPrfsChat->mChatViewBufferSize, SIGNAL(valueChanged(int)),
-		this, SLOT(slotValueChanged(int)));
-	connect( mPrfsChat->truncateContactNameEnabled, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect( mPrfsChat->mMaxContactNameLength, SIGNAL(valueChanged(int)),
-		this, SLOT(slotValueChanged(int)));
 	connect( mPrfsChat->viewPlugin, SIGNAL(activated(int)),
 		 this, SLOT(slotValueChanged(int)));
 	connect( mPrfsChat->viewPlugin, SIGNAL(activated(int)),
@@ -141,120 +86,37 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 	// "Away" TAB ===============================================================
 	connect( mAwayConfigUI->mAutoAwayTimeout, SIGNAL(valueChanged(int)),
 		this, SLOT(slotValueChanged(int)));
-	connect( mAwayConfigUI->mGoAvailable, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect( mAwayConfigUI->mUseAutoAway, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
 }
 
 void BehaviorConfig::save()
 {
 //	kdDebug(14000) << k_funcinfo << "called." << endl;
 
-	KopetePrefs *p = KopetePrefs::prefs();
-	KConfig *config = KGlobal::config();
-
-	// "General" TAB ============================================================
-	p->setShowTray(mPrfsGeneral->mShowTrayChk->isChecked());
-	p->setStartDocked(mPrfsGeneral->mStartDockedChk->isChecked());
-	p->setUseQueue(mPrfsGeneral->mUseQueueChk->isChecked());
-	p->setUseStack(mPrfsGeneral->mUseStackChk->isChecked());
-	p->setQueueUnreadMessages(mPrfsGeneral->mQueueUnreadMessagesChk->isChecked());
-	p->setAutoConnect(mPrfsGeneral->mAutoConnect->isChecked());
-	p->setContactListMouseNavigation(mPrfsGeneral->mMouseNavigation->isChecked());
-
-	// "Events" TAB ============================================================
-	p->setQueueOnlyHighlightedMessagesInGroupChats(mPrfsEvents->mQueueOnlyHighlightedMessagesInGroupChatsChk->isChecked());
-	p->setQueueOnlyMessagesOnAnotherDesktop(mPrfsEvents->mQueueOnlyMessagesOnAnotherDesktopChk->isChecked());
-	p->setBalloonNotify(mPrfsEvents->mBalloonNotifyChk->isChecked());
-	p->setBalloonNotifyIgnoreClosesChatView(mPrfsEvents->mBalloonNotifyIgnoreClosesChatViewChk->isChecked());
-	p->setBalloonClose(mPrfsEvents->mCloseBalloonChk->isChecked());
-	p->setBalloonDelay(mPrfsEvents->mBalloonCloseDelay->value());
-	p->setTrayflashNotify(mPrfsEvents->mTrayflashNotifyChk->isChecked());
-	p->setTrayflashNotifyLeftClickOpensMessage(mPrfsEvents->mTrayflashNotifyLeftClickOpensMessageChk->isChecked());
-	p->setTrayflashNotifySetCurrentDesktopToChatView(mPrfsEvents->mTrayflashNotifySetCurrentDesktopToChatViewChk->isChecked());
-	p->setSoundIfAway(mPrfsEvents->mSoundIfAwayChk->isChecked());
-	p->setRaiseMsgWindow(mPrfsEvents->mRaiseMsgWindowChk->isChecked());
-	config->setGroup("General");
-	config->writeEntry("EventIfActive", mPrfsEvents->mEventIfActive->isChecked());
+	KCModule::save();
 
 	// "Away" TAB ===============================================================
-	p->setRememberedMessages( mAwayConfigUI->rememberedMessages->value() );
-
-	config->setGroup("AutoAway");
-	config->writeEntry("Timeout", mAwayConfigUI->mAutoAwayTimeout->value() * 60);
-	config->writeEntry("GoAvailable", mAwayConfigUI->mGoAvailable->isChecked());
-	config->writeEntry("UseAutoAway", mAwayConfigUI->mUseAutoAway->isChecked() );
-	config->sync();
+	Kopete::BehaviorSettings::self()->setAutoAwayTimeout( mAwayConfigUI->mAutoAwayTimeout->value() * 60 );
 
 	// "Chat" TAB ===============================================================
-	p->setShowEvents(mPrfsChat->cb_ShowEventsChk->isChecked());
-	p->setHighlightEnabled(mPrfsChat->highlightEnabled->isChecked());
-	p->setChatWindowPolicy(mPrfsChat->chatWindowGroup->id(
-		mPrfsChat->chatWindowGroup->selected())
-	);
+	Kopete::BehaviorSettings::self()->setViewPlugin( viewPlugins[mPrfsChat->viewPlugin->currentItem()]->pluginName() );
 
-	p->setInterfacePreference( viewPlugins[mPrfsChat->viewPlugin->currentItem()]->pluginName() );
-
-	p->setChatViewBufferSize(mPrfsChat->mChatViewBufferSize->value());
-	p->setTruncateContactNames(mPrfsChat->truncateContactNameEnabled->isChecked());
-	p->setMaxContactNameLength(mPrfsChat->mMaxContactNameLength->value());
-
-	p->save();
-	emit changed(false);
+	load();
 }
 
 void BehaviorConfig::load()
 {
 //	kdDebug(14000) << k_funcinfo << "called" << endl;
-	KopetePrefs *p = KopetePrefs::prefs();
-	KConfig *config = KGlobal::config();
 
-	// "General" TAB ============================================================
-	mPrfsGeneral->mShowTrayChk->setChecked( p->showTray() );
-	mPrfsGeneral->mStartDockedChk->setChecked( p->startDocked() );
-	mPrfsGeneral->mUseQueueChk->setChecked( p->useQueue() );
-	mPrfsGeneral->mUseStackChk->setChecked( p->useStack() );
-	mPrfsGeneral->mQueueUnreadMessagesChk->setChecked ( p->queueUnreadMessages() );
-	mPrfsGeneral->mAutoConnect->setChecked( p->autoConnect() );
-	mPrfsGeneral->mMouseNavigation->setChecked( p->contactListMouseNavigation() );
-
-	// "Events" TAB ============================================================
-	mPrfsEvents->mQueueOnlyHighlightedMessagesInGroupChatsChk->setChecked ( p->queueOnlyHighlightedMessagesInGroupChats() );
-	mPrfsEvents->mQueueOnlyMessagesOnAnotherDesktopChk->setChecked ( p->queueOnlyMessagesOnAnotherDesktop() );
-	mPrfsEvents->mBalloonNotifyChk->setChecked ( p->balloonNotify() );
-	mPrfsEvents->mBalloonNotifyIgnoreClosesChatViewChk->setChecked ( p->balloonNotifyIgnoreClosesChatView() );
-	mPrfsEvents->mCloseBalloonChk->setChecked( p->balloonClose() );
-	mPrfsEvents->mBalloonCloseDelay->setValue( p->balloonCloseDelay() );
-	mPrfsEvents->mTrayflashNotifyChk->setChecked ( p->trayflashNotify() );
-	mPrfsEvents->mTrayflashNotifyLeftClickOpensMessageChk->setChecked ( p->trayflashNotifyLeftClickOpensMessage() );
-	mPrfsEvents->mTrayflashNotifySetCurrentDesktopToChatViewChk->setChecked ( p->trayflashNotifySetCurrentDesktopToChatView() );
-	mPrfsEvents->mSoundIfAwayChk->setChecked( p->soundIfAway() );
-	mPrfsEvents->mRaiseMsgWindowChk->setChecked(p->raiseMsgWindow());
-	config->setGroup("General");
-	mPrfsEvents->mEventIfActive->setChecked(config->readBoolEntry("EventIfActive", true));
-
+	KCModule::load();
 	// "Away" TAB ===============================================================
-	config->setGroup("AutoAway");
-	mAwayConfigUI->mAutoAwayTimeout->setValue(config->readNumEntry("Timeout", 600)/60);
-	mAwayConfigUI->mGoAvailable->setChecked(config->readBoolEntry("GoAvailable", true));
-	mAwayConfigUI->mUseAutoAway->setChecked(config->readBoolEntry("UseAutoAway", true));
-	mAwayConfigUI->rememberedMessages->setValue( p->rememberedMessages() );
+	mAwayConfigUI->mAutoAwayTimeout->setValue( Kopete::BehaviorSettings::self()->autoAwayTimeout() / 60 );
 
 	// "Chat" TAB ===============================================================
-	mPrfsChat->cb_ShowEventsChk->setChecked(p->showEvents());
-	mPrfsChat->highlightEnabled->setChecked(p->highlightEnabled());
-	mPrfsChat->chatWindowGroup->setButton(p->chatWindowPolicy());
-	mPrfsChat->mChatViewBufferSize->setValue(p->chatViewBufferSize());
-	mPrfsChat->truncateContactNameEnabled->setChecked(p->truncateContactNames());
-	mPrfsChat->mMaxContactNameLength->setValue(p->maxConactNameLength());
-
-
 	mPrfsChat->viewPlugin->clear();
 	int selectedIdx = 0, i = 0;
 	for(  QList<KPluginInfo*>::iterator it = viewPlugins.begin(); it != viewPlugins.end(); ++it )
 	{
-		if( (*it)->pluginName() == p->interfacePreference() )
+		if( (*it)->pluginName() == Kopete::BehaviorSettings::self()->viewPlugin() )
 			selectedIdx = i;
 		mPrfsChat->viewPlugin->insertItem( (*it)->name(), i++ );
 	}

@@ -14,11 +14,11 @@
 			<label>Current emoticon theme.</label>
 			<default>Default</default>
 		</entry>
-		<entry key="useEmoticon" type="Bool"> 
+		<entry key="useEmoticons" type="Bool"> 
 			<label>Enable emoticon support in Kopete.</label>
 			<default>true</default>
 		</entry>
-		<entry key="emoticonRequireSpace" type="Bool">
+		<entry key="emoticonsRequireSpace" type="Bool">
 			<label>Use strict mode in emoticon parsing.</label>
 			<default>true</default>
 		</entry>
@@ -37,11 +37,11 @@
 		</entry>
 		
 		<!-- Hightlight preferences -->
-		<entry key="hightlightForegroundColor" type="Color">
+		<entry key="highlightForegroundColor" type="Color">
 			<label>Text color used when hightlighting</label>
 			<default code="true">KGlobalSettings::highlightedTextColor()</default>
 		</entry>
-		<entry key="hightlightBackgroundColor" type="Color">
+		<entry key="highlightBackgroundColor" type="Color">
 			<label>Background color used when hightlighting.</label>
 			<default code="true">KGlobalSettings::highlightColor()</default>
 		</entry>
@@ -111,16 +111,17 @@
 				<choice name="IconPic" />
 				<choice name="IconPhoto" />
 			</choices>
+			<default>IconPic</default>
 		</entry>
 		<entry key="contactListTreeView" type="Bool">
 			<label>Show contact list as a tree view.</label>
 			<default>true</default>
 		</entry>
-		<entry key="indentContact" type="Bool">
+		<entry key="contactListIndentContact" type="Bool">
 			<label>Indent contacts if you don't show tree lines.</label>
 			<default>false</default>
 		</entry>
-		<entry key="hideVerticalScrollBar" type="Bool">
+		<entry key="contactListHideVerticalScrollBar" type="Bool">
 			<label>Hide the vertical scroll bar.</label>
 			<default>false</default>
 		</entry>
@@ -128,7 +129,7 @@
 			<label>Group contacts by group.</label>
 			<default>true</default>
 		</entry>
-		<entry key="useCustomFont" type="Bool">
+		<entry key="contactListUseCustomFont" type="Bool">
 			<label>Use custom fonts for contact list.</label>
 			<default>false</default>
 		</entry>
@@ -143,6 +144,7 @@
 		font.setPointSizeFloat( font.pointSizeFloat() * 0.75 );
 			 -->
 			<label>Normal font for contact list</label>
+			<default code="true">KGlobalSettings::generalFont()</default>
 		</entry>
 		<entry key="contactListSmallFont" type="Font">
 			<label>Small font for contact list (for status message)</label>
@@ -161,7 +163,7 @@
 			<default>true</default>
 		</entry>
 		<entry key="contactListFolding" type="Bool">
-			<label></label>
+			<label>Fold-in/Fold-out on contact status change.</label>
 			<default>true</default>
 		</entry>
 		<entry key="contactListAutoHide" type="Bool">

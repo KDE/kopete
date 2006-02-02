@@ -25,7 +25,7 @@
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopetecontact.h"
-#include "kopeteprefs.h"
+#include "kopetebehaviorsettings.h"
 
 namespace Kopete
 {
@@ -80,7 +80,7 @@ void MessageEvent::ignore()
 {
 	// FIXME: this should be done by the contact list for itself.
 	if( d->message.from()->metaContact() && d->message.from()->metaContact()->isTemporary() &&
-		KopetePrefs::prefs()->balloonNotifyIgnoreClosesChatView() )
+		Kopete::BehaviorSettings::self()->balloonNotifyIgnoreClosesChatView() )
 		ContactList::self()->removeMetaContact( d->message.from()->metaContact() );
 	d->state = Ignored;
 	deleteLater();

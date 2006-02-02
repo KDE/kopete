@@ -170,7 +170,7 @@
                 </property>
                 <widget class="QCheckBox" row="1" column="0">
                     <property name="name">
-                        <cstring>groupConsecutiveMessages</cstring>
+                        <cstring>kcfg_groupConsecutiveMessages</cstring>
                     </property>
                     <property name="text">
                         <string>Group consecuti&amp;ve messages</string>

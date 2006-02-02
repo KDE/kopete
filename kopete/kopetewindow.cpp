@@ -58,11 +58,13 @@
 
 #include "addcontactwizard.h"
 #include "kabcexport.h"
+#include "kopeteappearancesettings.h"
 #include "kopeteapplication.h"
 #include "kopeteaccount.h"
 #include "kopeteaway.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteaccountstatusbaricon.h"
+#include "kopetebehaviorsettings.h"
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
@@ -70,7 +72,6 @@
 #include "kopetechatsessionmanager.h"
 #include "kopetepluginconfig.h"
 #include "kopetepluginmanager.h"
-#include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopetestdaction.h"
 #include "kopeteawayaction.h"
@@ -152,9 +153,11 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 		this, SLOT(slotAccountUnregistered(const Kopete::Account*)));
 
 	connect( m_autoHideTimer, SIGNAL( timeout() ), this, SLOT( slotAutoHide() ) );
+#warning Port to new signals when KConfigXT will support signals in snapshot
+#if 0
 	connect( KopetePrefs::prefs(), SIGNAL( contactListAppearanceChanged() ),
 		this, SLOT( slotContactListAppearanceChanged() ) );
-
+#endif
 	createGUI ( "kopeteui.rc", false );
 
 	// call this _after_ createGUI(), otherwise menubar is not set up correctly
@@ -300,9 +303,11 @@ void KopeteWindow::initActions()
 	connect( setStatusMenu->popupMenu(), SIGNAL( aboutToShow() ), SLOT(slotBuildStatusMessageMenu() ) );
 
 	// sync actions, config and prefs-dialog
+#warning Port to new signals when KConfigXT will support signals in snapshot
+#if 0
 	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
 	slotConfigChanged();
-
+#endif
 	globalAccel = new KGlobalAccel( this );
 	globalAccel->insert( QString::fromLatin1("Read Message"), i18n("Read Message"), i18n("Read the next pending message"),
 		Qt::CTRL + Qt::SHIFT + Qt::Key_I, /*Qt::META + Qt::CTRL + Qt::Key_I,*/ Kopete::ChatSessionManager::self(), SLOT(slotReadMessage()) );
@@ -420,28 +425,24 @@ void KopeteWindow::loadOptions()
 	else
 		resize(size);
 
-	KopetePrefs *p = KopetePrefs::prefs();
-
-	m_autoHide = p->contactListAutoHide();
-	m_autoHideTimeout = p->contactListAutoHideTimeout();
+	m_autoHide = Kopete::AppearanceSettings::self()->contactListAutoHide();
+	m_autoHideTimeout = Kopete::AppearanceSettings::self()->contactListAutoHideTimeout();
 
 
 	QString tmp = config->readEntry("State", "Shown");
-	if ( tmp == "Minimized" && p->showTray())
+	if ( tmp == "Minimized" && Kopete::BehaviorSettings::self()->showSystemTray())
 	{
 		showMinimized();
 	}
-	else if ( tmp == "Hidden" && p->showTray())
+	else if ( tmp == "Hidden" && Kopete::BehaviorSettings::self()->showSystemTray())
 	{
 		hide();
 	}
-	else if ( !p->startDocked() || !p->showTray() )
+	else if ( !Kopete::BehaviorSettings::self()->startDocked() || !Kopete::BehaviorSettings::self()->showSystemTray() )
 		show();
 
 	menubarAction->setChecked( !menuBar()->isHidden() );
 	statusbarAction->setChecked( !statusBar()->isHidden() );
-	m_autoHide = p->contactListAutoHide();
-	m_autoHideTimeout = p->contactListAutoHideTimeout();
 }
 
 void KopeteWindow::saveOptions()
@@ -492,40 +493,42 @@ void KopeteWindow::showStatusbar()
 
 void KopeteWindow::slotToggleShowOffliners()
 {
-	KopetePrefs *p = KopetePrefs::prefs();
-	p->setShowOffline ( actionShowOffliners->isChecked() );
+	Kopete::AppearanceSettings::self()->setShowOfflineUsers ( actionShowOffliners->isChecked() );
 
+#warning Port to new signals when KConfigXT will support signals in snapshot.
+#if 0
 	disconnect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
 	p->save();
 	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
+#endif 
+	Kopete::AppearanceSettings::self()->writeConfig();
 }
 
 void KopeteWindow::slotToggleShowEmptyGroups()
 {
-	KopetePrefs *p = KopetePrefs::prefs();
-	p->setShowEmptyGroups ( actionShowEmptyGroups->isChecked() );
-
+	Kopete::AppearanceSettings::self()->setShowEmptyGroups ( actionShowEmptyGroups->isChecked() );
+#warning Port to new signals when KConfigXT will support signals in snapshot.
+#if 0
 	disconnect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
 	p->save();
 	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
+#endif
+	Kopete::AppearanceSettings::self()->writeConfig();
 }
 
 void KopeteWindow::slotConfigChanged()
 {
-	KopetePrefs *pref = KopetePrefs::prefs();
-
-	if( isHidden() && !pref->showTray()) // user disabled systray while kopete is hidden, show it!
+	if( isHidden() && !Kopete::BehaviorSettings::self()->showSystemTray()) // user disabled systray while kopete is hidden, show it!
 		show();
 
-	actionShowOffliners->setChecked( pref->showOffline() );
-	actionShowEmptyGroups->setChecked( pref->showEmptyGroups() );
+	actionShowOffliners->setChecked( Kopete::AppearanceSettings::self()->showOfflineUsers() );
+	actionShowEmptyGroups->setChecked( Kopete::AppearanceSettings::self()->showEmptyGroups() );
 }
 
 void KopeteWindow::slotContactListAppearanceChanged()
 {
-	KopetePrefs* p = KopetePrefs::prefs();
-	m_autoHide = p->contactListAutoHide();
-	m_autoHideTimeout = p->contactListAutoHideTimeout();
+	m_autoHide = Kopete::AppearanceSettings::self()->contactListAutoHide();
+	m_autoHideTimeout = Kopete::AppearanceSettings::self()->contactListAutoHideTimeout();
 
 	startAutoHideTimer();
 }
@@ -598,7 +601,7 @@ bool KopeteWindow::queryClose()
 	KopeteApplication *app = static_cast<KopeteApplication *>( kapp );
 	if ( !app->sessionSaving()	// if we are just closing but not shutting down
 		&& !app->isShuttingDown()
-		&& KopetePrefs::prefs()->showTray()
+		&& Kopete::BehaviorSettings::self()->showSystemTray()
 		&& isShown() )
 		// I would make this a KMessageBox::queuedMessageBox but there doesn't seem to be don'tShowAgain support for those
 		KMessageBox::information( this,
@@ -617,7 +620,7 @@ bool KopeteWindow::queryExit()
  	if ( app->sessionSaving()
 		|| app->isShuttingDown() /* only set if KopeteApplication::quitKopete() or
 									KopeteApplication::commitData() called */
-		|| !KopetePrefs::prefs()->showTray() /* also close if our tray icon is hidden! */
+		|| !Kopete::BehaviorSettings::self()->showSystemTray() /* also close if our tray icon is hidden! */
 		|| !isShown() )
 	{
 		kdDebug( 14000 ) << k_funcinfo << " shutting down plugin manager" << endl;
@@ -633,7 +636,7 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 	// if there's a system tray applet and we are not shutting down then just do what needs to be done if a
 	// window is closed.
 	KopeteApplication *app = static_cast<KopeteApplication *>( kapp );
-	if ( KopetePrefs::prefs()->showTray() && !app->isShuttingDown() && !app->sessionSaving() ) {
+	if ( Kopete::BehaviorSettings::self()->showSystemTray() && !app->isShuttingDown() && !app->sessionSaving() ) {
 		// BEGIN of code borrowed from KMainWindow::closeEvent
 		// Save settings if auto-save is enabled, and settings have changed
 		if ( settingsDirty() && autoSaveSettings() )
@@ -881,7 +884,7 @@ void KopeteWindow::slotAutoHide()
 
 void KopeteWindow::startAutoHideTimer()
 {
-	if ( m_autoHideTimeout > 0 && m_autoHide == true && isVisible() && KopetePrefs::prefs()->showTray())
+	if ( m_autoHideTimeout > 0 && m_autoHide == true && isVisible() && Kopete::BehaviorSettings::self()->showSystemTray())
 		m_autoHideTimer->start( m_autoHideTimeout * 1000 );
 }
 

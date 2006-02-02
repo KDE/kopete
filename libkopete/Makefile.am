@@ -25,13 +25,13 @@ libkopete_la_SOURCES = connectionmanager.cpp \
 	kopeteblacklister.cpp kopetemessageevent.cpp kopetemessagehandler.cpp \
 	kopetemessagehandlerchain.cpp kopetesimplemessagehandler.cpp kopeteproperties.cpp \
 	kabcpersistence.cpp connectionmanager.skel clientiface.stub managedconnectionaccount.cpp \
-	networkstatuscommon.h kopeteconfig.kcfgc kopeteutils.cpp kopeteprefs.cpp kopetepicture.cpp \
+	networkstatuscommon.h kopetegeneralsettings.kcfgc kopeteutils.cpp kopeteprefs.cpp kopetepicture.cpp \
 	kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc
 
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
 libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(LIB_KIO) $(LIB_XSS)
 
-kde_kcfg_DATA = kopete.kcfg kopeteappearancesettings.kcfg kopetebehaviorsettings.kcfg
+kde_kcfg_DATA = kopetegeneralsettings.kcfg kopeteappearancesettings.kcfg kopetebehaviorsettings.kcfg
 
 #AM_CXXFLAGS = -DQT_PLUGIN
 #kde_widget_LTLIBRARIES = libkopetewidgets.la
@@ -57,8 +57,8 @@ kopeteinclude_HEADERS = kopeteaccount.h kopeteaccountmanager.h kopeteawayaction.
 	kopeteonlinestatus.h kopeteonlinestatusmanager.h kopetepasswordedaccount.h \
 	kopetepassword.h kopeteplugin.h kopeteprotocol.h kopetesimplemessagehandler.h kopetetask.h \
 	kopetetransfermanager.h kopeteuiglobal.h kabcpersistence.h managedconnectionaccount.h \
-	kopeteversion.h kopeteprefs.h kopetepicture.h
+	kopeteversion.h kopeteprefs.h kopetepicture.h kopeteappearancesettings.h kopetebehaviorsettings.h kopetegeneralsettings.h
 
 # vim: set noet:
 
-noinst_HEADERS = kopeteblacklister.h kopeteconfig.h 
+noinst_HEADERS = kopeteblacklister.h  

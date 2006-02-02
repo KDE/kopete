@@ -43,7 +43,7 @@
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
 #include "kopetegroup.h"
-#include "kopeteprefs.h"
+#include "kopetebehaviorsettings.h"
 #include "kopeteutils.h"
 #include "kopeteuiglobal.h"
 #include "kopeteblacklister.h"
@@ -117,7 +117,7 @@ Account::~Account()
 void Account::disconnected( DisconnectReason reason )
 {
 	//reconnect if needed
-	if ( ( KopetePrefs::prefs()->reconnectOnDisconnect() == true && reason > Manual ) ||
+	if ( ( Kopete::BehaviorSettings::self()->reconnectOnDisconnect() == true && reason > Manual ) ||
 	     reason == BadPassword )
 	{
 		if(reason != BadPassword) 

@@ -43,7 +43,8 @@
 #include "kopetechatsession.h"
 #include "kopeteview.h"
 #include "kopetemetacontact.h"
-#include "kopeteprefs.h"
+#include "kopeteappearancesettings.h"
+#include "kopetebehaviorsettings.h"
 #include "metacontactselectorwidget.h"
 
 //For the moving to another metacontact dialog
@@ -439,7 +440,7 @@ void Contact::execute()
 	// FIXME: After KDE 3.2 remove the isConnected check and move it to isReachable - Martijn
 	if ( account()->isConnected() && isReachable() )
 	{
-		KopeteView *v=manager( CanCreate )->view(true, KopetePrefs::prefs()->interfacePreference() );
+		KopeteView *v=manager( CanCreate )->view(true, Kopete::BehaviorSettings::self()->viewPlugin() );
 		if(v)
 			v->raise(true);
 	}
@@ -637,7 +638,7 @@ QString Contact::toolTip() const
 {
 	Kopete::ContactProperty p;
 	QString tip;
-	QStringList shownProps = KopetePrefs::prefs()->toolTipContents();
+	QStringList shownProps = Kopete::AppearanceSettings::self()->toolTipContents();
 
 	// --------------------------------------------------------------------------
 	// Fixed part of tooltip
