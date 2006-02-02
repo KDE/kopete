@@ -63,10 +63,15 @@ class Buffer
 		QByteArray buffer() const;
 
 		/**
-		 * Returns the remaining length of the buffer past the current read
-		 * position.
+		 * Returns the length of the buffer. This length is independent of the
+		 * current position in the buffer to be read.
 		 */
 		int length() const;
+	
+		/**
+		 * Returns the amount of data left in the buffer to read.
+		 */
+		int bytesAvailable() const;
 
 		/**
 		 * adds the given string to the buffer (make sure it's NULL-terminated)

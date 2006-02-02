@@ -435,6 +435,13 @@ int Buffer::length() const
 	return (mBuffer.size() - mReadPos);
 }
 
+int Buffer::bytesAvailable() const
+{
+	return (mBuffer.size() - mReadPos);
+}
+
+
+
 QString Buffer::toString() const
 {
 	// line format:
