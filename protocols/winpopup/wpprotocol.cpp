@@ -121,7 +121,7 @@ Kopete::Account *WPProtocol::createNewAccount(const QString &accountId)
 	return new WPAccount(this, accountId);
 }
 
-void WPProtocol::slotSettingsChanged()
+void WPProtocol::settingsChanged()
 {
 	kdDebug(14170) <<  "WPProtocol::slotSettingsChanged()" << endl;
 

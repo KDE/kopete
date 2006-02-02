@@ -102,11 +102,6 @@ bool WPEditAccount::validateData()
 		return false;
 	}
 
-	if (!mProtocol->checkMessageDir()) {
-		KMessageBox::sorry(this, i18n("<qt>There is a serious problem with your working directory.</qt>"), i18n("WinPopup"));
-		return false;
-	}
-
 	return true;
 }
 
@@ -128,8 +123,7 @@ Kopete::Account *WPEditAccount::apply()
 	account()->setExcludeConnect(mAutoConnect->isChecked());
 	writeConfig();
 
-	//is there already an API function or signal? GF
-	dynamic_cast<WPAccount *>(account())->slotSettingsChanged();
+	mProtocol->settingsChanged();
 
 	return account();
 }

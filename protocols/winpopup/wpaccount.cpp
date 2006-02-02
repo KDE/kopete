@@ -38,15 +38,11 @@ WPAccount::WPAccount(WPProtocol *parent, const QString &accountID, const char *n
 {
 //	kdDebug(14170) <<  "WPAccount::WPAccount()" << endl;
 
-	// setup internals
-	QString theHostName = accountID;
-
 	// we need this before initActions
-	setMyself( new WPContact(this, theHostName, theHostName, Kopete::ContactList::self()->myself()) );
+	Kopete::MetaContact *myself = Kopete::ContactList::self()->myself();
+	setMyself( new WPContact(this, accountID, myself->displayName(), myself) );
 
 //	if (excludeConnect()) connect(Kopete::OnlineStatus::Online); // ??
-
-	QObject::connect(this, SIGNAL(settingsChanged()), parent, SLOT(slotSettingsChanged()));
 }
 
 // Destructor
@@ -62,12 +58,6 @@ const QStringList WPAccount::getGroups()
 const QStringList WPAccount::getHosts(const QString &Group)
 {
 	return static_cast<WPProtocol *>(protocol())->getHosts(Group);
-}
-
-void WPAccount::slotSettingsChanged()
-{
-//	kdDebug(14170) <<  "WPAccount::slotSettingsChanged()" << endl;
-	emit(settingsChanged());
 }
 
 bool WPAccount::checkHost(const QString &Name)
