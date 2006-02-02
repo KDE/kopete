@@ -32,7 +32,6 @@
 #include <kcpuinfo.h> // for WORDS_BIGENDIAN
 
 #include <algorithm> // for min
-//Added by qt3to4:
 #include <QPixmap>
 #include <QByteArray>
 #include <QHash>
@@ -41,8 +40,8 @@ namespace Kopete {
 
 
 class OnlineStatusManager::Private
-{public:
-
+{
+public:
 	struct RegisteredStatusStruct
 	{
 		QString caption;
@@ -79,7 +78,7 @@ OnlineStatusManager::OnlineStatusManager()
 OnlineStatusManager::~OnlineStatusManager()
 {
 	QHashIterator<QString, QPixmap*> it(d->iconCache);
-    while ( it.hasNext() ) 
+	while ( it.hasNext() ) 
 	{
 		it.next();
 		delete it.value();
