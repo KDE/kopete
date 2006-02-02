@@ -24,7 +24,7 @@
 #include <kabc/stdaddressbook.h>
 
 // UI related includes used for importing from KABC
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include "accountselector.h"
@@ -380,9 +380,8 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 								// Do we need to choose an account
 								if ( accountcount > 1 )
 								{	// if we have >1 account in this protocol, prompt for the protocol.
-									KDialogBase *chooser = new KDialogBase(0, "chooser", true,
-											i18n("Choose Account"), KDialogBase::Ok|KDialogBase::Cancel,
-											KDialogBase::Ok, false);
+									KDialog *chooser = new KDialog(0, i18n("Choose Account"), 
+									                               KDialog::Ok | KDialog::Cancel);
 									AccountSelector *accSelector = new AccountSelector(proto, chooser,
 											"accSelector");
 									chooser->setMainWidget(accSelector);
