@@ -17,8 +17,7 @@
 */
 
 #include <qapplication.h>
-#include <qtimer.h>
-//Added by qt3to4:
+#include <QTimer>
 #include <QPixmap>
 
 #include <kconfig.h>
@@ -91,7 +90,7 @@ Account::Account( Protocol *parent, const QString &accountId, const char *name )
 	d->configGroup=new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Account_%1_%2" ).arg( d->protocol->pluginId(), d->id ));
 
 	d->excludeconnect = d->configGroup->readEntry( "ExcludeConnect", false );
-	d->color = d->configGroup->readColorEntry( "Color", &d->color );
+	d->color = d->configGroup->readEntry( "Color" );
 	d->customIcon = d->configGroup->readEntry( "Icon", QString() );
 	d->priority = d->configGroup->readEntry( "Priority", 0 );
 
@@ -485,9 +484,7 @@ bool Account::isBlocked( const QString &contactId )
 
 void Account::editAccount(QWidget *parent)
 {
-	KDialogBase *editDialog = new KDialogBase( parent, "KopeteAccountConfig::editDialog", true,
-						   i18n( "Edit Account" ), KDialogBase::Ok | KDialogBase::Cancel,
-						   KDialogBase::Ok, true );
+	KDialog *editDialog = new KDialog( parent, i18n( "Edit Account" ), KDialog::Ok | KDialog::Apply | KDialog::Cancel );
 
 	KopeteEditAccountWidget *m_accountWidget = protocol()->createEditAccountWidget( this, editDialog );
 	if ( !m_accountWidget )

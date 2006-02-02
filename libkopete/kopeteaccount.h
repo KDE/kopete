@@ -98,6 +98,16 @@ public:
 	};
 
 	/**
+	 * \brief Describes what should be done when the contact is added to a metacontact
+	 * @sa @ref addContact()
+	 */
+	enum AddMode {
+		ChangeKABC = 0,     ///< The KDE Address book may be updated
+		DontChangeKABC = 1, ///< The KDE Address book will not be changed
+		Temporary = 2       ///< The contact will not be added on the contactlist
+	};
+
+	/**
 	 * @param parent the protocol for this account. The account is a child object of the
 	 * protocol, so it will be automatically deleted when the protocol is.
 	 * @param accountID the unique ID of this account.
@@ -195,9 +205,6 @@ public:
 	 */
 	QString customIcon() const;
 	
-			
-			
-
 	/**
 	 * \brief Retrieve the 'myself' contact.
 	 *
@@ -242,16 +249,6 @@ public:
 	 * @return @c true if notifications should not be used, @c false otherwise
 	 */
 	bool suppressStatusNotification() const;
-
-	/**
-	 * \brief Describes what should be done when the contact is added to a metacontact
-	 * @sa @ref addContact()
-	 */
-	enum AddMode {
-		ChangeKABC = 0,     ///< The KDE Address book may be updated
-		DontChangeKABC = 1, ///< The KDE Address book will not be changed
-		Temporary = 2       ///< The contact will not be added on the contactlist
-	};
 
 	/**
 	 * \brief Create a contact (creating a new metacontact if necessary)
