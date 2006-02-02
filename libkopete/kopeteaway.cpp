@@ -22,6 +22,16 @@
 
 #include "kopeteaway.h"
 
+#include <QTimer>
+#include <QTime>
+
+#include <kconfig.h>
+#include <kapplication.h>
+#include <klocale.h>
+#include <kglobal.h>
+#include <kdebug.h>
+#include <ksettings/dispatcher.h>
+
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
 #include "kopeteonlinestatus.h"
@@ -29,17 +39,6 @@
 #include "kopetecontact.h"
 #include "kopeteprefs.h"
 
-#include <kconfig.h>
-#include <qtimer.h>
-#include <QTime>
-
-#include <kapplication.h>
-
-#include <klocale.h>
-#include <kglobal.h>
-#include <kdebug.h>
-#include <ksettings/dispatcher.h>
-#include <QX11Info>
 #ifdef Q_WS_X11
 
 #include <X11/Xlib.h>
@@ -141,18 +140,7 @@ Kopete::Away::Away() : QObject( kapp , "Kopete::Away")
 
 	if(config->hasKey("Messages"))
 	{
-		d->awayMessageList = config->readListEntry("Messages");
-	}
-	else if(config->hasKey("Titles"))  // Old config format
-	{
-		QStringList titles = config->readListEntry("Titles");  // Get the titles
-		for(QStringList::iterator i = titles.begin(); i != titles.end(); ++i)
-		{
-			d->awayMessageList.append( config->readEntry(*i , QString() ) ); // And add it to the list
-		}
-
-		/* Save this list to disk */
-		save();
+		d->awayMessageList = config->readEntry("Messages", QStringList());
 	}
 	else
 	{
