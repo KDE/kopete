@@ -97,6 +97,7 @@ private slots:
 //	void updateAccountId();
 
 private:
+	WPProtocol *mProtocol;
 	QString theAwayMessage;			// The message to give when the user is away
 };
 
