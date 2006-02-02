@@ -44,6 +44,7 @@
 #include "kopetemetacontact.h"
 #include "kopeteprefs.h"
 #include "metacontactselectorwidget.h"
+#include "kopeteemoticons.h"
 
 //For the moving to another metacontact dialog
 #include <qlabel.h>
@@ -664,7 +665,7 @@ QString Contact::toolTip() const
 			"<nobr><b>%4</b> (%3)</nobr><br><img src=\"%2\">&nbsp;%1" ).
 				arg( Kopete::Message::escape( onlineStatus().description() ), iconName,
 					Kopete::Message::escape( contactId() ),
-					Kopete::Message::escape( nick ) );
+					Kopete::Emoticons::parseEmoticons( Kopete::Message::escape( nick ) ) );
 	}
 
 	// --------------------------------------------------------------------------
@@ -706,7 +707,7 @@ QString Contact::toolTip() const
 			if(!awaymsg.isEmpty())
 			{
 				tip += i18n("<br><b>Away Message:</b>&nbsp;FORMATTED AWAY MESSAGE",
-							"<br><b>Away&nbsp;Message:</b>&nbsp;%1").arg ( Kopete::Message::escape(awaymsg) );
+							"<br><b>Away&nbsp;Message:</b>&nbsp;%1").arg ( Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(awaymsg) ) );
 			}
 		}
 		else
