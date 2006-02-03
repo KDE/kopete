@@ -498,13 +498,9 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 	{
 		d->allMessages.pop_front();
 			
-		// Do a complete style refresh only if using consecutive messages.
-		// FIXME: Find a better way than that.
-		if( KopetePrefs::prefs()->groupConsecutiveMessages() )
-		{
-			changeStyle();
-		}
-		else
+		// FIXME: Find a way to make work Chat View Buffer efficiently with consecutives messages.
+		// Before it was calling changeStyle() but it's damn too slow.
+		if( !KopetePrefs::prefs()->groupConsecutiveMessages() )
 		{
 			chatNode.removeChild( chatNode.firstChild() );
 		}
