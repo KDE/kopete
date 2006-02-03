@@ -22,23 +22,23 @@
 #include "kopeteglobal.h"
 #include "kopeteprefs.h"
 
-#include <qapplication.h>
+#include <QApplication>
 #include <QStyleOptionSlider>
 #include <QStyle>
-//Added by qt3to4:
 #include <QWheelEvent>
 #include <QKeyEvent>
 #include <QEvent>
+#include <QHelpEvent>
 #include <QDragMoveEvent>
 #include <QTimerEvent>
 #include <QMouseEvent>
+#include <QTimer>
+#include <QToolTip>
+#include <QStyle>
+
 #include <kglobal.h>
 #include <kconfig.h>
 #include <kdebug.h>
-
-#include <qtimer.h>
-#include <qtooltip.h>
-#include <qstyle.h>
 
 #include <utility>
 #include <memory>
@@ -47,66 +47,10 @@ namespace Kopete {
 namespace UI {
 namespace ListView {
 
-/*
- Custom QToolTip for the list view.
- The decision whether or not to show tooltips is taken in
- maybeTip(). See also the QListView sources from Qt itself.
- Delegates to the list view items.
-*/
-class ToolTip : public QWidget
-{
-public:
-	ToolTip( QWidget *parent, ListView *lv );
-	virtual ~ToolTip();
-
-	void maybeTip( const QPoint &pos );
-
-private:
-	ListView *m_listView;
-};
-
-ToolTip::ToolTip( QWidget *parent, ListView *lv )
- : QWidget( parent )
-{
-	m_listView = lv;
-}
-
-ToolTip::~ToolTip()
-{
-}
-
-void ToolTip::maybeTip( const QPoint &pos )
-{
-	if( !parentWidget() || !m_listView )
-		return;
-
-	if( Item *item = dynamic_cast<Item*>( m_listView->itemAt( pos ) ) )
-	{
-		QRect itemRect = m_listView->itemRect( item );
-
-		uint leftMargin = m_listView->treeStepSize() *
-		   ( item->depth() + ( m_listView->rootIsDecorated() ? 1 : 0 ) ) +
-		   m_listView->itemMargin();
-
-		uint xAdjust = itemRect.left() + leftMargin;
-		uint yAdjust = itemRect.top();
-		QPoint relativePos( pos.x() - xAdjust, pos.y() - yAdjust );
-
-		std::pair<QString,QRect> toolTip = item->toolTip( relativePos );
-		if ( toolTip.first.isEmpty() )
-			return;
-
-		toolTip.second.moveBy( xAdjust, yAdjust );
-// 		kdDebug( 14000 ) << k_funcinfo << "Adding tooltip: itemRect: "
-// 		                 << toolTip.second << ", tooltip:  " << toolTip.first << endl;
-        setToolTip( toolTip.first );
-	}
-}
 
 struct ListView::Private
 {
 	QTimer sortTimer;
-	std::auto_ptr<ToolTip> toolTip;
 	//! The status of smooth scrolling, enabled or disabled.
 	bool smoothScrollingEnabled;
 	//! This will be the QTimer's ID which will be updating smooth scrolling animation.
@@ -206,7 +150,6 @@ ListView::ListView( QWidget *parent )
 
 	// We have our own tooltips, don't use the default QListView ones
 	setShowToolTips( false );
-	d->toolTip.reset( new ToolTip( viewport(), this ) );
 
 	connect( this, SIGNAL( contextMenu( KListView *, Q3ListViewItem *, const QPoint & ) ),
 	         SLOT( slotContextMenu( KListView *, Q3ListViewItem *, const QPoint & ) ) );
@@ -725,6 +668,28 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 			if( d->scrollAutoHide ) // If auto-hide scroll bar is enabled
 			{
 				d->scrollAutoHideCounter = d->scrollAutoHideTimeout; // Mouse left the contact list, hide it after timeout
+			}
+		}
+		else if( e->type() == QEvent::ToolTip )
+		{
+			QHelpEvent *helpEvent = static_cast<QHelpEvent *>(e);
+			if( Item *item = dynamic_cast<Item*>( itemAt( helpEvent->pos() ) ) )
+			{
+				QRect itemRegion = this->itemRect( item );
+
+				uint leftMargin = this->treeStepSize() * ( item->depth() + ( this->rootIsDecorated() ? 1 : 0 ) ) + itemMargin();
+
+				uint xAdjust = itemRegion.left() + leftMargin;
+				uint yAdjust = itemRegion.top();
+				QPoint relativePosition( helpEvent->pos().x() - xAdjust, helpEvent->pos().y() - yAdjust );
+
+				std::pair<QString,QRect> toolTip = item->toolTip( relativePosition );
+				if ( toolTip.first.isEmpty() )
+					return false;
+
+				toolTip.second.moveBy( xAdjust, yAdjust );
+	
+				QToolTip::showText( helpEvent->globalPos(), toolTip.first );
 			}
 		}
 
