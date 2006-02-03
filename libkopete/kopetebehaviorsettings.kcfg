@@ -156,4 +156,11 @@
 			<default>true</default>
 		</entry>
 	</group>
+
+	<group name="ContactList">
+		<entry key="smoothScrolling" type="Bool">
+			<label>Enable smooth scrolling in contact list.</label>
+			<default>true</default>
+		</entry>
+	</group>
 </kcfg>

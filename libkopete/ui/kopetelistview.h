@@ -20,10 +20,10 @@
 #define KOPETE_LISTVIEW_H
 
 #include <klistview.h>
-//Added by qt3to4:
-#include <QTimerEvent>
-#include <QKeyEvent>
-#include <QEvent>
+
+class QKeyEvent;
+class QTimerEvent;
+class QEvent;
 
 namespace Kopete {
 namespace UI {
@@ -132,6 +132,7 @@ public slots:
 	 * Calls QListView::sort()
 	 */
 	void slotSort() { sort(); }
+
 protected:
 	virtual void keyPressEvent( QKeyEvent *e );
 	/**
@@ -157,8 +158,9 @@ private slots:
 	 * Otherwise, we focus (bring it to the center of the list) smoothly.
 	 */
 	void slotCurrentChanged( Q3ListViewItem *item );
+
 private:
-	struct Private;
+	class Private;
 	Private *d;
 };
 

@@ -20,7 +20,7 @@
 #include "kopetelistviewitem.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
-#include "kopeteprefs.h"
+#include "kopetebehaviorsettings.h"
 
 #include <QApplication>
 #include <QStyleOptionSlider>
@@ -36,8 +36,6 @@
 #include <QToolTip>
 #include <QStyle>
 
-#include <kglobal.h>
-#include <kconfig.h>
 #include <kdebug.h>
 
 #include <utility>
@@ -48,8 +46,9 @@ namespace UI {
 namespace ListView {
 
 
-struct ListView::Private
+class ListView::Private
 {
+public:
 	QTimer sortTimer;
 	//! The status of smooth scrolling, enabled or disabled.
 	bool smoothScrollingEnabled;
@@ -157,7 +156,7 @@ ListView::ListView( QWidget *parent )
 	         SLOT( slotDoubleClicked( Q3ListViewItem * ) ) );
 
 	// set up flags for nicer painting
-    setAttribute( Qt::WA_StaticContents, false );
+	setAttribute( Qt::WA_StaticContents, false );
 
 
 	// clear the appropriate flags from the viewport - qt docs say we have to mask
@@ -173,10 +172,7 @@ ListView::ListView( QWidget *parent )
 	static_cast<ListView*>(viewport())->setAttribute( Qt::WA_StaticContents, false );
 
 	// init smooth scrolling
-
-	KConfig *config = KGlobal::config();
-	config->setGroup( "ContactList" );
- 	setSmoothScrolling( config->readEntry( "SmoothScrolling", true ) );
+ 	setSmoothScrolling( Kopete::BehaviorSettings::self()->smoothScrolling() );
 }
 
 ListView::~ListView()
@@ -204,7 +200,7 @@ void ListView::slotContextMenu( KListView * /*listview*/,
 		clearSelection();
 
 //	if( Item *myItem = dynamic_cast<Item*>( item ) )
-		;// TODO: myItem->contextMenu( point );
+	// TODO: myItem->contextMenu( point );
 }
 
 void ListView::setShowTreeLines( bool bShowAsTree )
