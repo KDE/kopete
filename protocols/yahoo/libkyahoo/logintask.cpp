@@ -77,8 +77,8 @@ bool LoginTask::take(Transfer* transfer)
 				return true;
 			break;
 			case (SentAuthResp):
-				handleAuthResp( transfer );
 				parseCookies( transfer );
+				handleAuthResp( transfer );
 				// Throw transfer to the next task as it contains further data
 				return false;
 			break;
