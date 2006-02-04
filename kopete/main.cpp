@@ -88,8 +88,8 @@ int main( int argc, char *argv[] )
 	aboutData.addCredit ( "Hendrik vom Lehn", I18N_NOOP("Former developer"), "hennevl@hennevl.de", "http://www.hennevl.de");
 	aboutData.addCredit ( "Gav Wood", I18N_NOOP("Former developer and WinPopup maintainer"), "gav@indigoarchive.net" );
 
-	aboutData.setTranslator( I18N_NOOP("_: NAME OF TRANSLATORS\nYour names"),
-		I18N_NOOP("_: EMAIL OF TRANSLATORS\nYour emails") );
+	aboutData.setTranslator( I18N_NOOP2("NAME OF TRANSLATORS","Your names"),
+		I18N_NOOP2("EMAIL OF TRANSLATORS","Your emails") );
 
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
