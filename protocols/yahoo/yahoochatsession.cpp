@@ -100,6 +100,13 @@ void YahooChatSession::slotRequestWebcam()
 	static_cast<YahooContact *>(contacts.first())->requestWebcam();
 }
 
+void YahooChatSession::slotInviteWebcam()
+{
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	QPtrList<Kopete::Contact>contacts = members();
+	static_cast<YahooContact *>(contacts.first())->inviteWebcam();
+}
+
 void YahooChatSession::slotDisplayPictureChanged()
 {
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;

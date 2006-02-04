@@ -41,6 +41,7 @@ private slots:
 	void slotBuzzContact();
 	void slotUserInfo();
 	void slotRequestWebcam();
+	void slotInviteWebcam();
 
 private:
 	QLabel *m_image;

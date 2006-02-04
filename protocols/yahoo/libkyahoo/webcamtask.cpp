@@ -201,7 +201,7 @@ void WebcamTask::slotConnectionStage2Established()
 void WebcamTask::slotConnectionFailed( int error )
 {
 	KStreamSocket* socket = const_cast<KStreamSocket*>( dynamic_cast<const KStreamSocket*>( sender() ) );
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Webcam connection to the user " << socketMap[socket].sender << " failed. Error " << error << " - " << socket->errorString() << endl;	
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Webcam connection to the user " << socketMap[socket].sender << " failed. Error " << error << " - " << socket->errorString() << endl;
 	socketMap.remove( socket );
 }
 

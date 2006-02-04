@@ -61,6 +61,7 @@
 #include "yahooconferencemessagemanager.h"
 #include "yahooinvitelistimpl.h"
 #include "yahooauthreply.h"
+#include "yabentry.h"
 
 YahooAwayDialog::YahooAwayDialog(YahooAccount* account, QWidget *parent, const char *name) :
 	KopeteAwayDialog(parent, name)
@@ -314,9 +315,12 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(pictureInfoNotify(const QString&, KURL, int)), this, SLOT(slotGotBuddyIconInfo(const QString&, KURL, int )));
 
 		QObject::connect(m_session, SIGNAL(pictureChecksumNotify(const QString&, int)), this, SLOT(slotGotBuddyIconChecksum(const QString&, int )));
+		
 		QObject::connect(m_session, SIGNAL(pictureRequest(const QString&)), this, SLOT(slotGotBuddyIconRequest(const QString&)) );
 
 		QObject::connect(m_session, SIGNAL(pictureUploaded( const QString &)), this, SLOT(slotBuddyIconChanged(const QString&)));
+		
+		QObject::connect(m_session, SIGNAL(gotYABEntry( YABEntry * )), this, SLOT(slotGotYABEntry( YABEntry * )));
 		
 	}
 
@@ -427,6 +431,8 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::disconnect(m_session, SIGNAL(pictureStatusNotify( const QString&, int )), this, SLOT(slotPictureStatusNotiy( const QString&, int)));
 		
 		QObject::disconnect(m_session, SIGNAL(pictureChecksumNotify(const QString&, int)), this, SLOT(slotGotBuddyIconChecksum(const QString&, int )));
+		
+		QObject::disconnect(m_session, SIGNAL(gotYABEntry( YABEntry * )), this, SLOT(slotGotYABEntry( YABEntry * )));
 	}
 }
 
@@ -618,6 +624,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 
 		 
 		setBuddyIcon( myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString() );
+		m_session->getYABEntries();
 		m_lastDisconnectCode = 0;
 		return;
 	}
@@ -853,6 +860,7 @@ const QString &YahooAccount::prepareIncomingMessage( QString newMsgText )
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
 			newMsgText.replace( regExp, QString::fromLatin1("" ) );
+		
 		}
 	}
 	regExp.setPattern( "<[/]*ALT([^>]*)>" );
@@ -1198,6 +1206,22 @@ void YahooAccount::sendConfMessage( YahooConferenceChatSession *s, Kopete::Messa
 		members.append( (*it)->contactId() );
 	}
 	m_session->sendConferenceMessage( s->room(), members, YahooContact::prepareMessage( message.escapedBody() ) );
+}
+
+void YahooAccount::slotGotYABEntry( YABEntry *entry )
+{
+	if( !contact( entry->yahooId ) )
+	{
+		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "YAB entry received for a contact not on our buddylist." << endl;
+		delete entry;
+		return;
+	}
+	else
+	{
+		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "YAB entry for " << entry->yahooId << " received." << endl;
+		YahooContact* kc = contact( entry->yahooId );
+		kc->setYABEntry( entry );
+	}
 }
 
 void YahooAccount::slotGotFile( const QString &  who, const QString &  url , long /* expires */, const QString &  msg ,

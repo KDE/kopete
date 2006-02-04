@@ -35,6 +35,7 @@ class YahooProtocol;
 class YahooAccount;
 class YahooWebcamDialog;
 class YahooChatSession;
+class YABEntry;
 struct KURL;
 
 class YahooContact : public Kopete::Contact
@@ -83,6 +84,7 @@ public slots:
 	void sendBuddyIconInfo( const QString &url, int checksum );
 	void sendBuddyIconUpdate( int type );
 	void sendBuddyIconChecksum( int checksum );
+	void setYABEntry( YABEntry * );
 
 	/**
 	 * Must be called after the contact list has been received
@@ -112,6 +114,7 @@ private slots:
 private:
 	QString m_userId; 
 	QString m_groupName;
+	YABEntry *m_YABEntry;
 	YahooChatSession *m_manager;
 	YahooAccount* m_account;
 	bool m_stealthed;

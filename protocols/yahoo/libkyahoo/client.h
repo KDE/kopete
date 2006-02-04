@@ -1,7 +1,7 @@
 /*
     Kopete Yahoo Protocol
     
-    Copyright (c) 2005 Andre Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005-2006 Andre Duffeck <andre.duffeck@kdemail.net>
     Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
     Copyright (c) 2004 Matt Rogers <matt.rogers@kdemail.net>
     Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
@@ -28,6 +28,7 @@
 #include "transfer.h"
 #include "yahootypes.h"
 
+#define YMSG_PROGRAM_VERSION_STRING "7,5,0,33"
 
 class QString;
 class QTimer;
@@ -36,6 +37,7 @@ class KNetworkConnector;
 class Task;
 class KURL;
 class KTempFile;
+class YABEntry;
 
 class Client : public QObject
 {
@@ -234,6 +236,10 @@ Q_OBJECT
 		 */
 		void sendAuthReply( const QString &userId, bool accept, const QString &msg );
 
+		/**
+		 * Fetches all entries of the YAB
+		 */
+		void getYABEntries();
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -451,6 +457,10 @@ Q_OBJECT
 		 * A buddy requests authorization
 		 */
 		void gotAuthorizationRequest( const QString &, const QString &, const QString & );
+		/**
+		 * A entry from the Yahoo Address book was retrieved
+		 */
+		void gotYABEntry( YABEntry * );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();
