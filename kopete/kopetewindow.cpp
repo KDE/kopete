@@ -304,6 +304,7 @@ void KopeteWindow::initActions()
 	KActionMenu * setStatusMenu = new KActionMenu( i18n( "Set Status Message" ), "kopeteeditstatusmessage", actionCollection(), "SetStatusMessage" );
 	setStatusMenu->setDelayed( false );
 	connect( setStatusMenu->popupMenu(), SIGNAL( aboutToShow() ), SLOT(slotBuildStatusMessageMenu() ) );
+	connect( setStatusMenu->popupMenu(), SIGNAL( activated( int ) ), SLOT(slotStatusMessageSelected( int ) ) );
 
 	// sync actions, config and prefs-dialog
 	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
@@ -939,7 +940,7 @@ void KopeteWindow::slotBuildStatusMessageMenu()
 	{
 		m_globalStatusMessageMenu->insertItem( KStringHandler::rsqueeze( *it ), i );
 	}
-	connect( m_globalStatusMessageMenu, SIGNAL( activated( int ) ), SLOT( slotStatusMessageSelected( int ) ) );
+//	connect( m_globalStatusMessageMenu, SIGNAL( activated( int ) ), SLOT( slotStatusMessageSelected( int ) ) );
 //	connect( messageMenu, SIGNAL( aboutToHide() ), messageMenu, SLOT( deleteLater() ) );
 
 	m_newMessageEdit->setFocus();
@@ -970,6 +971,8 @@ void KopeteWindow::slotGlobalStatusMessageIconClicked( const QPoint &position )
 	KPopupMenu *statusMessageIconMenu = new KPopupMenu(this, "statusMessageIconMenu");
 	connect(statusMessageIconMenu, SIGNAL( aboutToShow() ),
 		this, SLOT(slotBuildStatusMessageMenu()));
+	connect( statusMessageIconMenu, SIGNAL( activated( int ) ),
+				SLOT( slotStatusMessageSelected( int ) ) );
 
 	statusMessageIconMenu->popup(position);
 }
