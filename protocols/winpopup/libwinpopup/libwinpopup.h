@@ -18,8 +18,6 @@
 #ifndef LIBWINPOPUP_H
 #define LIBWINPOPUP_H
 
-#define WP_POPUP_DIR "/var/lib/winpopup/"
-
 //QT includes
 #include <qobject.h>
 #include <qmutex.h>
@@ -30,6 +28,11 @@
 
 // KDE Includes
 #include <kprocio.h>
+#include <kfileitem.h>
+
+const QString WP_POPUP_DIR = "/var/lib/winpopup";
+
+class KDirLister;
 
 typedef QMap<QString, QString> stringMap;
 
@@ -64,17 +67,22 @@ private:
 	QStringList todo, done, currentHosts;
 	stringMap currentGroups;
 	QMutex groupMutex;
-	QTimer updateGroupDataTimer, messageCheckTimer;
+	QTimer updateGroupDataTimer;
 	QString smbClientBin;
 	int groupCheckFreq, messageCheckFreq;
+	KDirLister *dirLister;
 
-public slots:
+	void readMessages(const KFileItemList &items);
+
+private slots:
 	void slotUpdateGroupData();
 	void startReadProcess(const QString &Host);
 	void slotReadProcessReady(KProcIO *r);
 	void slotReadProcessExited(KProcess *r);
-	void slotCheckForNewMessages();
 	void slotSendProcessExited(KProcess *p);
+	void slotStartDirLister();
+	void slotListCompleted();
+	void slotNewMessages(const KFileItemList &items);
 
 signals:
 	void signalNewMessage(const QString &, const QDateTime &, const QString &);
