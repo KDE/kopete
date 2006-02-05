@@ -27,6 +27,7 @@ struct YABEntry
 	QString		lastName;
 	QString		nickName;
 	QString		title;
+	QString		category;
 
 	// Primary Information	
 	QString		phoneMobile;
@@ -39,6 +40,13 @@ struct YABEntry
 	QString		additionalNumber;
 	QString		altEmail1;
 	QString		altEmail2;
+	QString		imAIM;
+	QString		imICQ;
+	QString		imMSN;
+	QString		imGoogleTalk;
+	QString		imSkype;
+	QString		imIRC;
+	QString		imQQ;
 
 	// Private Information
 	QString		privateAdress;
