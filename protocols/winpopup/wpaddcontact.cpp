@@ -36,7 +36,7 @@
 #include "wpaccount.h"
 #include "wpaddcontact.h"
 
-WPAddContact::WPAddContact(WPProtocol *owner, WPAccount *newAccount, QWidget *parent, const char *name): AddContactPage(parent, name)
+WPAddContact::WPAddContact(QWidget *parent, WPAccount *newAccount, const char *name) : AddContactPage(parent, name)
 {
 //	kdDebug(14170) << "WPAddContact::WPAddContact(<owner>, " << newAccount << ", <parent>, " << name << ")" << endl;
 
@@ -45,7 +45,6 @@ WPAddContact::WPAddContact(WPProtocol *owner, WPAccount *newAccount, QWidget *pa
 	connect(theDialog->mHostGroup, SIGNAL(activated(const QString &)), this, SLOT(slotSelected(const QString &)));
 	connect(theDialog->mRefresh, SIGNAL(clicked()), this, SLOT(slotUpdateGroups()));
 	theDialog->show();
-	theProtocol = owner;
 	theAccount = newAccount;
 
 	slotUpdateGroups();

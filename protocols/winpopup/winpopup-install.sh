@@ -7,7 +7,7 @@ i=`find /etc -name smb.conf`
 
 # Create new smb.conf file with updated message command line
 echo "[global]" > ~/smb.conf.new
-echo "   message command = $1 %s %m &" >> ~/smb.conf.new
+echo "   message command = $1 %s %m %t &" >> ~/smb.conf.new
 cat $i | grep -v "message command = " | grep -v "\[global\]" >> ~/smb.conf.new
 
 # Backup the old file

@@ -227,6 +227,8 @@ void WinPopupLib::slotCheckForNewMessages()
 {
 //	kdDebug(14170) << "check for new Messages: " << this << endl;
 
+///TODO: use KDirWatch, KDirLister or something like
+
 	if (!checkMessageDir()) return; // Restart timer if false? GF
 
 	QDir dir(WP_POPUP_DIR);

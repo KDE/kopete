@@ -86,7 +86,7 @@ AddContactPage *WPProtocol::createAddContactWidget(QWidget *parent, Kopete::Acco
 {
 //	kdDebug(14170) << "WPProtocol::createAddContactWidget(<parent>, " << theAccount << ")" << endl;
 
-	return new WPAddContact(this, dynamic_cast<WPAccount *>(theAccount), parent);
+	return new WPAddContact(parent, dynamic_cast<WPAccount *>(theAccount));
 }
 
 Kopete::Contact *WPProtocol::deserializeContact( Kopete::MetaContact *metaContact,
@@ -113,7 +113,7 @@ Kopete::Contact *WPProtocol::deserializeContact( Kopete::MetaContact *metaContac
 
 KopeteEditAccountWidget *WPProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
 {
-	return new WPEditAccount(this, account, parent);
+	return new WPEditAccount(parent, account);
 }
 
 Kopete::Account *WPProtocol::createNewAccount(const QString &accountId)

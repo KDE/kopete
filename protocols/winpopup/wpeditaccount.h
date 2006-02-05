@@ -41,7 +41,7 @@ private:
 	WPAccount *mAccount;
 
 public:
-	WPEditAccount(WPProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = 0, const char *name = 0);
+	WPEditAccount(QWidget *parent, Kopete::Account *theAccount);
 
 	virtual bool validateData();
 	void writeConfig();

@@ -41,11 +41,14 @@
 // Local Includes
 #include "wpaccount.h"
 #include "wpeditaccount.h"
+#include "wpprotocol.h"
 
-WPEditAccount::WPEditAccount(WPProtocol *protocol, Kopete::Account *theAccount, QWidget *parent, const char *name)
-	: WPEditAccountBase(parent), KopeteEditAccountWidget(theAccount), mProtocol(protocol)
+WPEditAccount::WPEditAccount(QWidget *parent, Kopete::Account *theAccount)
+	: WPEditAccountBase(parent), KopeteEditAccountWidget(theAccount)
 {
-	kdDebug(14170) << "WPEditAccount::WPEditAccount(<protocol>, <theAccount>, <parent>, " << name << ")";
+	kdDebug(14170) << "WPEditAccount::WPEditAccount(<parent>, <theAccount>)";
+
+	mProtocol = WPProtocol::protocol();
 
 	if(account()) {
 		mHostName->setText(account()->accountId());

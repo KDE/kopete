@@ -1,5 +1,5 @@
 #!/bin/sh
-PATH=/bin
+PATH=/bin:/usr/bin/:/usr/local/bin
 
 # Check input
 [ -z "$1" -o -z "$2" ] && exit 1
@@ -7,28 +7,36 @@ PATH=/bin
 # Check if file is indeed a file and readable
 [ ! -f "$1" -o ! -r "$1" ] && exit 1
 
-# Create a unique filename
-filename="/var/lib/winpopup/`date +%s_%N`"
+KOPETE_RUNNING=x`ps -A|grep -e "kopete$"`
 
-# Put the remote host name into the file
-echo "$2" > $filename
+if [ "$KOPETE_RUNNING" = "x" ]; then
 
-# And the time...
-echo `date --iso-8601=seconds` >> $filename
+    if [ -z "$3" ]; then
+        THIS_SERVER=`uname -n`
+    else
+        THIS_SERVER="$3"
+    fi
 
-# Finally the message
-#cat "$1" | tr "\000" "\012" >> $filename
-# This tr eats the messages? GF
-cat "$1" >> $filename
+    if [ "$2" != "$THIS_SERVER" ]; then
+        echo -e "Kopete is currently not running.\nYour message was not delivered!" \
+            | smbclient -N -M $2
+    fi
 
-# Make sure the file is owned by nobody and is readable
-#chown nobody:nogroup $filename
-# Just to be sure
-#chmod 666 $filename
+else
 
-# Move the new message file into the pickup place
-# Doesn't this overwrite short before received messages? GF
-#mv -f $filename /var/lib/winpopup/message
+    # Create a unique filename
+    filename="/var/lib/winpopup/`date +%s_%N`"
+
+    # Put the remote host name into the file
+    echo "$2" > $filename
+
+    # And the time...
+    echo `date --iso-8601=seconds` >> $filename
+
+    # Finally the message
+    cat "$1" >> $filename
+
+fi
 
 # Remove the message from samba
 rm -f "$1"

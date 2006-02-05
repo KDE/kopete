@@ -35,9 +35,11 @@
 class KPopupMenu;
 
 WPAccount::WPAccount(WPProtocol *parent, const QString &accountID, const char *name)
-	: Kopete::Account(parent, accountID, name), mProtocol(parent)
+	: Kopete::Account(parent, accountID, name)
 {
 //	kdDebug(14170) <<  "WPAccount::WPAccount()" << endl;
+
+	mProtocol = WPProtocol::protocol();
 
 	// we need this before initActions
 	Kopete::MetaContact *myself = Kopete::ContactList::self()->myself();
