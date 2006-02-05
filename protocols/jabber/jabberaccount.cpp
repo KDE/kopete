@@ -75,7 +75,6 @@
 #ifdef SUPPORT_JINGLE
 #include "voicecaller.h"
 #include "jinglevoicecaller.h"
-#include "voicecalldlg.h"
 
 // NOTE: Disabled for 0.12, will develop them futher in KDE4
 // #include "jinglesessionmanager.h"

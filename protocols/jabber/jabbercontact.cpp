@@ -55,7 +55,6 @@
 #include "dlgjabbervcard.h"
 
 #ifdef SUPPORT_JINGLE
-#include "voicecalldlg.h"
 // #include "jinglesessionmanager.h"
 // #include "jinglevoicesession.h"
 #include "jinglevoicesessiondialog.h"
