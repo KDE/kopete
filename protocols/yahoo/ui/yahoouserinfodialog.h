@@ -26,6 +26,7 @@
 class KJanusWidget;
 class YahooWorkInfoWidget;
 class YahooGeneralInfoWidget;
+class YahooOtherInfoWidget;
 
 class YahooUserInfoDialog : public KDialogBase
 {
@@ -38,6 +39,7 @@ public slots:
 private:
 	YahooGeneralInfoWidget* m_genInfoWidget;
 	YahooWorkInfoWidget* m_workInfoWidget;
+	YahooOtherInfoWidget* m_otherInfoWidget;
 	
 	YABEntry m_yab;
 };

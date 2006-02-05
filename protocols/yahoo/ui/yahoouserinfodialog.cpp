@@ -23,6 +23,7 @@
 #include <qlineedit.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
+#include <qtextedit.h>
 #include <qobject.h>
 #include <qtextcodec.h>
 
@@ -35,6 +36,7 @@
 
 #include "yahooworkinfowidget.h"
 #include "yahoogeneralinfowidget.h"
+#include "yahoootherinfowidget.h"
 
 
 YahooUserInfoDialog::YahooUserInfoDialog( QWidget * parent, const char * name )
@@ -56,12 +58,12 @@ YahooUserInfoDialog::YahooUserInfoDialog( QWidget * parent, const char * name )
 	m_workInfoWidget = new YahooWorkInfoWidget( workInfo, "Work Information" );
 	workLayout->addWidget( m_workInfoWidget );
 	
-// 	QFrame* otherInfo = addPage( i18n( "Other Info" ),
-// 	                                           i18n( "Other ICQ Information" ),
-// 	                                           KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "email" ), KIcon::Desktop ) );
-// 	QVBoxLayout* otherLayout = new QVBoxLayout( otherInfo );
-// 	m_otherInfoWidget = new ICQOtherInfoWidget( otherInfo, "Other Information"  );
-// 	otherLayout->addWidget( m_otherInfoWidget );
+	QFrame* otherInfo = addPage( i18n( "Other Info" ),
+	                                           i18n( "Other Yahoo Information" ),
+	                                           KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "email" ), KIcon::Desktop ) );
+	QVBoxLayout* otherLayout = new QVBoxLayout( otherInfo );
+	m_otherInfoWidget = new YahooOtherInfoWidget( otherInfo, "Other Information"  );
+	otherLayout->addWidget( m_otherInfoWidget );
 // 	
 // 	QFrame* interestInfo = addPage( i18n( "Interest Info" ),
 // 	                                           i18n( "Interest" ),
@@ -104,6 +106,12 @@ void YahooUserInfoDialog::setData( const YABEntry *yab )
 	m_workInfoWidget->countryEdit->setText( yab->workCountry );
 	m_workInfoWidget->companyEdit->setText( yab->corporation );
 	m_workInfoWidget->homepageEdit->setText( yab->workURL );
+	
+	m_otherInfoWidget->commentsEdit->setText( yab->notes );
+	m_otherInfoWidget->note1Edit->setText( yab->additional1 );
+	m_otherInfoWidget->note2Edit->setText( yab->additional2 );
+	m_otherInfoWidget->note3Edit->setText( yab->additional3 );
+	m_otherInfoWidget->note4Edit->setText( yab->additional4 );
 }
 
 #include "yahoouserinfodialog.moc"
