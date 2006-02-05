@@ -56,8 +56,9 @@
 
 #ifdef SUPPORT_JINGLE
 #include "voicecalldlg.h"
-#include "jinglesessionmanager.h"
-#include "jinglevoicesession.h"
+// #include "jinglesessionmanager.h"
+// #include "jinglevoicesession.h"
+#include "jinglevoicesessiondialog.h"
 #endif
 
 /**
@@ -1459,12 +1460,20 @@ void JabberContact::voiceCall( )
 		// Check if the voice caller exist and the current resource support voice.
 		if( account()->voiceCaller() && bestResource->features().canVoice() )
 		{
-			VoiceCallDlg *vc = new VoiceCallDlg( jid, account()->voiceCaller() );
-			vc->show();
-			vc->call();
+			JingleVoiceSessionDialog *voiceDialog = new JingleVoiceSessionDialog( jid, account()->voiceCaller() );
+			voiceDialog->show();
+			voiceDialog->start();
 		}
-// 		JingleVoiceSession *session = static_cast<JingleVoiceSession*>(account()->sessionManager()->createSession("http://www.google.com/session/phone", jid));
-// 		session->start();
+#if 0
+		if( account()->sessionManager() && bestResource->features().canVoice() )
+		{
+			JingleVoiceSession *session = static_cast<JingleVoiceSession*>(account()->sessionManager()->createSession("http://www.google.com/session/phone", jid));
+
+			JingleVoiceSessionDialog *voiceDialog = new JingleVoiceSessionDialog(session);
+			voiceDialog->show();
+			voiceDialog->start();
+		}
+#endif
 	}
 	else
 	{

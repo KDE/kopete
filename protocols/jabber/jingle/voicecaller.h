@@ -1,4 +1,4 @@
-#define PsiAccount JabberClient
+#define PsiAccount JabberAccount
 class PsiAccount;
 
 #ifndef VOICECALLER_H

@@ -77,9 +77,11 @@
 #include "jinglevoicecaller.h"
 #include "voicecalldlg.h"
 
-#include "jinglesessionmanager.h"
-#include "jinglesession.h"
-#include "jinglevoicesession.h"
+// NOTE: Disabled for 0.12, will develop them futher in KDE4
+// #include "jinglesessionmanager.h"
+// #include "jinglesession.h"
+// #include "jinglevoicesession.h"
+#include "jinglevoicesessiondialog.h"
 #endif
 
 #define KOPETE_CAPS_NODE "http://kopete.kde.org/jabber/caps"
@@ -99,7 +101,7 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	m_contactPool = 0L;
 #ifdef SUPPORT_JINGLE
 	m_voiceCaller = 0L;
-	m_jingleSessionManager = 0L;
+	//m_jingleSessionManager = 0L; // NOTE: Disabled for 0.12
 #endif
 	m_bookmarks = new JabberBookmarks(this);
 	m_removing=false;
@@ -146,8 +148,8 @@ void JabberAccount::cleanup ()
 	delete m_voiceCaller;
 	m_voiceCaller = 0L;
 
-	delete m_jingleSessionManager;
-	m_jingleSessionManager = 0L;
+// 	delete m_jingleSessionManager;
+// 	m_jingleSessionManager = 0L;
 #endif
 }
 
@@ -565,24 +567,25 @@ void JabberAccount::slotConnected ()
 #ifdef SUPPORT_JINGLE
 	if(!m_voiceCaller)
 	{
-		m_voiceCaller = new JingleVoiceCaller( m_jabberClient );
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Creating Jingle Voice caller..." << endl;
+		m_voiceCaller = new JingleVoiceCaller( this );
 		QObject::connect(m_voiceCaller,SIGNAL(incoming(const Jid&)),this,SLOT(slotIncomingVoiceCall( const Jid& )));
+		m_voiceCaller->initialize();
 	}
-	m_voiceCaller->initialize();
+	
 
-// 	if(!m_jingleSessionManager)
-// 	{
-// 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Creating Jingle Session Manager..." << endl;
-// 		m_jingleSessionManager = new JingleSessionManager( this );
-// 		QObject::connect(m_jingleSessionManager, SIGNAL(incomingSession(const QString &, JingleSession *)), this, SLOT(slotIncomingJingleSession(const QString &, JingleSession *)));
-// 	}
+
+#if 0
+	if(!m_jingleSessionManager)
+	{
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Creating Jingle Session Manager..." << endl;
+		m_jingleSessionManager = new JingleSessionManager( this );
+		QObject::connect(m_jingleSessionManager, SIGNAL(incomingSession(const QString &, JingleSession *)), this, SLOT(slotIncomingJingleSession(const QString &, JingleSession *)));
+	}
+#endif
 
 	// Set caps extensions
 	m_jabberClient->client()->addExtension("voice-v1", Features(QString("http://www.google.com/xmpp/protocol/voice/v1")));
-
-	
-// 	if(m_voiceCaller)
-// 		m_voiceCaller->initialize();
 #endif
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Requesting roster..." << endl;
@@ -1621,36 +1624,36 @@ void JabberAccount::slotGetServices ()
 	dialog->raise ();
 }
 
-void JabberAccount::slotIncomingVoiceCall( const Jid & j)
+void JabberAccount::slotIncomingVoiceCall( const Jid &jid )
 {
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
 #ifdef SUPPORT_JINGLE
 	if(voiceCaller())
 	{
-		VoiceCallDlg* vc = new VoiceCallDlg(j,voiceCaller());
-		vc->show();
-		vc->incoming();
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Showing voice dialog." << endl;
+		JingleVoiceSessionDialog *voiceDialog = new JingleVoiceSessionDialog( jid, voiceCaller() );
+		voiceDialog->show();
 	}
 #else
-	Q_UNUSED(j);
+	Q_UNUSED(jid);
 #endif
 }
 
-void JabberAccount::slotIncomingJingleSession( const QString &sessionType, JingleSession *session )
-{
-#ifdef SUPPORT_JINGLE
-	if(sessionType == "http://www.google.com/session/phone")
-	{
-		QString from = ((XMPP::Jid)session->peers().first()).full();
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, QString("Received a voice session invitation from %1.").arg(from) );
-
-		session->decline();
-		sessionManager()->removeSession(session);
-	}
-#else
-	Q_UNUSED( sessionType );
-	Q_UNUSED( session );
-#endif
-}
+// void JabberAccount::slotIncomingJingleSession( const QString &sessionType, JingleSession *session )
+// {
+// #ifdef SUPPORT_JINGLE
+// 	if(sessionType == "http://www.google.com/session/phone")
+// 	{
+// 		QString from = ((XMPP::Jid)session->peers().first()).full();
+// 		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, QString("Received a voice session invitation from %1.").arg(from) );
+// 		JingleVoiceSessionDialog *voiceDialog = new JingleVoiceSessionDialog( static_cast<JingleVoiceSession*>(session) );
+// 		voiceDialog->show();
+// 	}
+// #else
+// 	Q_UNUSED( sessionType );
+// 	Q_UNUSED( session );
+// #endif
+// }
 
 
 void JabberAccount::addTransport( JabberTransport * tr, const QString &jid )

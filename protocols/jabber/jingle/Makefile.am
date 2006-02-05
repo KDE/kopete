@@ -12,8 +12,11 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 
 noinst_LTLIBRARIES = libkopetejabberjingle.la 
 
-libkopetejabberjingle_la_SOURCES = jinglevoicecaller.cpp ui_voicecall.ui \
-	voicecalldlg.cpp jinglewatchsessiontask.cpp jinglesession.cpp jinglevoicesession.cpp jinglesessionmanager.cpp
+# libkopetejabberjingle_la_SOURCES = jinglevoicecaller.cpp  \
+# 	jinglewatchsessiontask.cpp jinglesession.cpp jinglevoicesession.cpp jinglesessionmanager.cpp \
+# 	jinglevoicesessiondialogbase.ui jinglevoicesessiondialog.cpp
+
+libkopetejabberjingle_la_SOURCES = jinglevoicecaller.cpp jinglevoicesessiondialogbase.ui jinglevoicesessiondialog.cpp
 
 libkopetejabberjingle_la_LIBADD = libjingle/talk/session/phone/libcricketsessionphone.la \
 	libjingle/talk/p2p/client/libcricketp2pclient.la \

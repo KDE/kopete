@@ -61,8 +61,10 @@ public:
 	
 	void OnSignalingRequest()
 	{
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Requesting Jingle signaling." << endl;
 		sessionManager->cricketSessionManager()->OnSignalingReady();
 	}
+	
 	
 private:
 	JingleSessionManager *sessionManager;
@@ -81,15 +83,6 @@ public:
 
 	~Private()
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Cleaning up Jingle sessions." << endl;
-		QValueList<JingleSession*>::Iterator it, itEnd = sessionList.end();
-		for(it = sessionList.begin(); it != itEnd; ++it)
-		{
-			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "deleting a session." << endl;
-			(*it)->deleteLater();
-		}
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Done Cleaning up Jingle sessions." << endl;
-
 		delete networkManager;
 		delete portAllocator;
 		delete sessionThread;
@@ -104,8 +97,6 @@ public:
 	cricket::BasicPortAllocator *portAllocator;
 	cricket::Thread *sessionThread;
 	cricket::SessionManager *cricketSessionManager;
-
-	
 };
 //END JingleSessionManager::Private
 
@@ -144,6 +135,20 @@ JingleSessionManager::JingleSessionManager(JabberAccount *account)
 JingleSessionManager::~JingleSessionManager()
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
+
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Cleaning up Jingle sessions." << endl;
+	QValueList<JingleSession*>::Iterator it, itEnd = d->sessionList.end();
+	for(it = d->sessionList.begin(); it != itEnd; ++it)
+	{
+		JingleSession *deletedSession = *it;
+		if( deletedSession )
+		{
+			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "deleting a session." << endl;
+			delete deletedSession;
+		}
+	}
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Done Cleaning up Jingle sessions." << endl;
+
 	delete d;
 }
 
@@ -183,6 +188,8 @@ JingleSession *JingleSessionManager::createSession(const QString &sessionType, c
 
 void JingleSessionManager::removeSession(JingleSession *session)
 {
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing a jingle session." << endl;
+
 	d->sessionList.remove(session);
 	delete session;	
 }

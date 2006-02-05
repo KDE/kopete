@@ -43,6 +43,10 @@ bool JingleWatchSessionTask::take(const QDomElement &element)
 	{
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Checking for incoming sesssion." << endl;
 		initiator = first.attribute("initiator");
+	
+		// Only proceed initiate type Jingle XMPP call.
+		if( first.attribute("type") != QString::fromUtf8("initiate") )
+			return false;
 		
 		int nodeIndex;
 

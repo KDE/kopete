@@ -1,4 +1,4 @@
-#define PsiAccount JabberClient
+#define PsiAccount JabberAccount
 
 #ifndef JINGLEVOICECALLER_H
 #define JINGLEVOICECALLER_H

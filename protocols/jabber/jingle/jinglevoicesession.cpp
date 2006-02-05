@@ -1,14 +1,19 @@
-//
-// C++ Implementation: jinglevoicesession
-//
-// Description: 
-//
-//
-// Author: Kopete Developers <kopete-devel@kde.org>, (C) 2006
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+/*
+    jinglevoicesession.cpp - Define a Jingle voice session.
+
+    Copyright (c) 2006      by Michaël Larouche     <michael.larouche@kdemail.net>
+
+    Kopete    (c) 2001-2006 by the Kopete developers <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 // libjingle before everything else to not clash with Qt
 #define POSIX
@@ -75,6 +80,8 @@ public:
 	
 	void OnCallCreated(cricket::Call* call)
 	{
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "SlotsProxy: CallCreated." << endl;
+
 		call->SignalSessionState.connect(this, &JingleVoiceSession::SlotsProxy::PhoneSessionStateChanged);
 		voiceSession->setCall(call);
 	}
@@ -197,7 +204,6 @@ public:
 			currentCall->Terminate();
 
 		delete currentCall;
-		delete phoneSessionClient;
 	}
 
 	cricket::PhoneSessionClient *phoneSessionClient;
@@ -278,6 +284,7 @@ void JingleVoiceSession::setCall(cricket::Call *call)
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating cricket::call object." << endl;
 	d->currentCall = call;
+	d->phoneSessionClient->SetFocus(d->currentCall);
 }
 
 void JingleVoiceSession::receiveStanza(const QString &stanza)
