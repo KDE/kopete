@@ -55,24 +55,24 @@ int main( int argc, char *argv[] )
 
 	aboutData.addAuthor ( "Duncan Mac-Vicar Prett", I18N_NOOP("Developer and Project founder"), "duncan@kde.org", "http://www.mac-vicar.org/~duncan" );
 	aboutData.addAuthor ( "Andre Duffeck", I18N_NOOP("Developer, Yahoo plugin maintainer"), "andre@duffeck.de" );
-	aboutData.addAuthor ( "Till Gerken", I18N_NOOP("Developer, Jabber plugin maintainer"), "till@tantalo.net");
-	aboutData.addAuthor ( "Olivier Goffart", I18N_NOOP("Lead Developer, MSN plugin maintainer"), "ogoffart @ kde.org");
 	aboutData.addAuthor ( "Andy Goossens", I18N_NOOP("Developer"), "andygoossens@telenet.be" );
-	aboutData.addAuthor ( "Michel Hermier", I18N_NOOP("IRC plugin maintainer"), "michel.hermier@wanadoo.fr" );
+	aboutData.addAuthor ( "Chetan Reddy", I18N_NOOP("Developer, Yahoo"), "chetan13@gmail.com" );
 	aboutData.addAuthor ( "Chris Howells", I18N_NOOP("Developer, Connection status plugin author"), "howells@kde.org", "http://chrishowells.co.uk");
+	aboutData.addAuthor ( "Cláudio da Silveira Pinheiro", I18N_NOOP("Developer, Video device support"), "taupter@gmail.com", "http://taupter.homelinux.org" );
+	aboutData.addAuthor ( "Gregg Edghill", I18N_NOOP("Developer, MSN"), "gregg.edghill@gmail.com");
 	aboutData.addAuthor ( "Grzegorz Jaskiewicz", I18N_NOOP("Developer, Gadu plugin maintainer"), "gj@pointblue.com.pl" );
 	aboutData.addAuthor ( "Jason Keirstead", I18N_NOOP("Developer"), "jason@keirstead.org", "http://www.keirstead.org");
-	aboutData.addAuthor ( "Chetan Reddy", I18N_NOOP("Developer, Yahoo"), "chetan13@gmail.com" );
 	aboutData.addAuthor ( "Matt Rogers", I18N_NOOP("Lead Developer, AIM and ICQ plugin maintainer"), "mattr@kde.org" );
-	aboutData.addAuthor ( "Richard Smith", I18N_NOOP("Developer, UI maintainer"), "kde@metafoo.co.uk" );
-	aboutData.addAuthor ( "Will Stephenson", I18N_NOOP("Developer, GroupWise maintainer"), "lists@stevello.free-online.co.uk" );
-	aboutData.addAuthor ( "Michaël Larouche", I18N_NOOP("Developer, MSN, Chatwindow"), "michael.larouche@kdemail.net", "http://mlarouche.blogspot.com" );
-	aboutData.addAuthor ( "Cláudio da Silveira Pinheiro", I18N_NOOP("Developer, Video device support"), "taupter@gmail.com", "http://taupter.homelinux.org" );
+	aboutData.addAuthor ( "Michel Hermier", I18N_NOOP("IRC plugin maintainer"), "michel.hermier@wanadoo.fr" );
+	aboutData.addAuthor ( "Michaël Larouche", I18N_NOOP("Lead Developer"), "michael.larouche@kdemail.net", "http://mlarouche.blogspot.com" );
+	aboutData.addAuthor ( "Olivier Goffart", I18N_NOOP("Lead Developer, MSN plugin maintainer"), "ogoffart @ kde.org");
 	aboutData.addAuthor ( "Ollivier Lapeyre Johann", I18N_NOOP("Artist / Developer, Artwork maintainer"), "johann.ollivierlapeyre@gmail.com" );
-
-
+	aboutData.addAuthor ( "Richard Smith", I18N_NOOP("Developer, UI maintainer"), "kde@metafoo.co.uk" );
+	aboutData.addAuthor ( "Till Gerken", I18N_NOOP("Developer, Jabber plugin maintainer"), "till@tantalo.net");
+	aboutData.addAuthor ( "Will Stephenson", I18N_NOOP("Lead Developer, GroupWise maintainer"), "lists@stevello.free-online.co.uk" );
+	
 	aboutData.addCredit ( "Vally8", I18N_NOOP("Konki style author"), "vally8@gmail.com", "http://vally8.free.fr/" );
-	aboutData.addCredit ( "Tm_T", I18N_NOOP("Hacker style author"), "tm_travolta@kapsi.fi");
+	aboutData.addCredit ( "Tm_T", I18N_NOOP("Hacker style author"), "jussi.kekkonen@gmail.com");
 	aboutData.addCredit ( "Luciash d' Being", I18N_NOOP("Kopete's icon author") );
 	aboutData.addCredit ( "Steve Cable", I18N_NOOP("Sounds") );
 	aboutData.addCredit ( "Jessica Hall", I18N_NOOP("Kopete Docugoddess, Bug and Patch Testing.") );
