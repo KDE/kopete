@@ -25,6 +25,7 @@
 #include <qhbox.h>
 #include <qtooltip.h>
 #include <qtimer.h>
+#include <qevent.h>
 
 #include <kaction.h>
 #include <kactionclasses.h>
@@ -71,6 +72,21 @@
 #include "kopeteonlinestatusmanager.h"
 #include "kopeteeditglobalidentitywidget.h"
 
+//BEGIN GlobalStatusMessageIconLabel
+GlobalStatusMessageIconLabel::GlobalStatusMessageIconLabel(QWidget *parent, const char *name)
+ : QLabel(parent, name)
+{}
+
+void GlobalStatusMessageIconLabel::mouseReleaseEvent( QMouseEvent *event )
+{
+      if( event->button() == Qt::LeftButton || event->button() == Qt::RightButton )
+      {
+              emit iconClicked( event->globalPos() );
+              event->accept();
+      }
+}
+//END GlobalStatusMessageIconLabel
+
 /* KMainWindow is very broken from our point of view - it deref()'s the app
  * when the last visible KMainWindow is destroyed. But when our main window is
  * hidden when it's in the tray,closing the last chatwindow would cause the app
@@ -111,9 +127,11 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	m_statusBarWidget->setMargin( 2 );
 	m_statusBarWidget->setSpacing( 1 );
 
-	QLabel * label = new QLabel( statusBarMessage, "statusmsglabel" );
+	GlobalStatusMessageIconLabel *label = new GlobalStatusMessageIconLabel( statusBarMessage, "statusmsglabel" );
 	label->setFixedSize( 16, 16 );
 	label->setPixmap( SmallIcon( "kopetestatusmessage" ) );
+	connect(label, SIGNAL(iconClicked( const QPoint& )),
+		this, SLOT(slotGlobalStatusMessageIconClicked( const QPoint& )));
 	QToolTip::add( label, i18n( "Global status message" ) );
 	m_globalStatusMessage = new KSqueezedTextLabel( statusBarMessage );
 	statusBar()->addWidget(statusBarMessage, 1, false );
@@ -945,6 +963,15 @@ void KopeteWindow::slotNewStatusMessageEntered()
 	if ( !newMessage.isEmpty() )
 		Kopete::Away::getInstance()->addMessage( newMessage );
 	setStatusMessage( m_newMessageEdit->text() );
+}
+
+void KopeteWindow::slotGlobalStatusMessageIconClicked( const QPoint &position )
+{
+	KPopupMenu *statusMessageIconMenu = new KPopupMenu(this, "statusMessageIconMenu");
+	connect(statusMessageIconMenu, SIGNAL( aboutToShow() ),
+		this, SLOT(slotBuildStatusMessageMenu()));
+
+	statusMessageIconMenu->popup(position);
 }
 
 #include "kopetewindow.moc"
