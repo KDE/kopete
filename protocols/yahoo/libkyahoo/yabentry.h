@@ -27,7 +27,6 @@ struct YABEntry
 	QString		lastName;
 	QString		nickName;
 	QString		title;
-	QString		category;
 
 	// Primary Information	
 	QString		phoneMobile;

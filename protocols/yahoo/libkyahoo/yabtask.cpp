@@ -148,7 +148,6 @@ void YABTask::slotResult( KIO::Job* job )
 			entry->additional3 = e.attribute("c3");
 			entry->additional4 = e.attribute("c4");
 			entry->notes = e.attribute("cm");
-			entry->category = e.attribute("ca");
 			entry->imAIM = e.attribute("ima");
 			entry->imGoogleTalk = e.attribute("img");
 			entry->imICQ = e.attribute("imq");
