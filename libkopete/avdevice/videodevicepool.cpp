@@ -15,6 +15,8 @@
     *************************************************************************
 */
 
+#define ENABLE_AV
+
 #include <assert.h>
 #include <cstdlib>
 #include <cerrno>
@@ -430,6 +432,26 @@ int VideoDevicePool::scanDevices()
 #endif
 	kDebug() <<  k_funcinfo << "exited successfuly" << endl;
 	return EXIT_SUCCESS;
+}
+
+/*!
+    \fn Kopete::AV::VideoDevicePool::hasDevices()
+ */
+bool VideoDevicePool::hasDevices()
+{
+    /// @todo implement me
+	if(m_videodevice.size())
+		return true;
+	return false;
+}
+
+/*!
+    \fn Kopete::AV::VideoDevicePool::hasDevices()
+ */
+size_t VideoDevicePool::size()
+{
+    /// @todo implement me
+	return m_videodevice.size();
 }
 
 /*!

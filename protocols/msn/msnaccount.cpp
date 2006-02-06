@@ -19,6 +19,8 @@
 
 #include "msnaccount.h"
 
+#include <config.h>
+
 #include <kaction.h>
 #include <kconfig.h>
 #include <kdebug.h>
@@ -55,6 +57,9 @@
 #include <kglobal.h>
 #endif
 
+#if MSN_WEBCAM
+#include "avdevice/videodevicepool.h"
+#endif
 MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const char *name )
 	: Kopete::PasswordedAccount ( parent, AccountID.toLower(), 0, name )
 {
@@ -105,6 +110,17 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 		if ( !groupGuid.isEmpty() )
 			m_groupList.insert( groupGuid , g );
 	}
+
+	// Set the client Id for the myself contact.  It sets what MSN feature we support.
+	m_clientId = MSNProtocol::MSNC4 | MSNProtocol::InkFormatGIF | MSNProtocol::SupportMultiPacketMessaging;
+
+#if MSN_WEBCAM
+	Kopete::AV::VideoDevicePool::self()->scanDevices();
+	if( Kopete::AV::VideoDevicePool::self()->hasDevices() )
+	{
+		m_clientId |= MSNProtocol::SupportWebcam;
+	}
+#endif
 }
 
 
@@ -121,6 +137,11 @@ uint MSNAccount::serverPort()
 bool MSNAccount::useHttpMethod() const
 {
 	return configGroup()->readEntry(  "useHttpMethod" , false );
+}
+
+QString MSNAccount::myselfClientId() const
+{
+	return QString::number(m_clientId, 10);
 }
 
 void MSNAccount::connectWithPassword( const QString &passwd )

@@ -74,9 +74,9 @@ public:
 	const Kopete::OnlineStatus WPAway;
 	const Kopete::OnlineStatus WPOffline;
 	void sendMessage(const QString &Body, const QString &Destination);
+	void settingsChanged(void);			// Callback when settings changed
 
 public slots:
-	void slotSettingsChanged(void);			// Callback when settings changed
 	void installSamba();				// Modify smb.conf to use winpopup-send.sh script
 	void slotReceivedMessage(const QString &Body, const QDateTime &Time, const QString &From);
 

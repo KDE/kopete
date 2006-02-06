@@ -17,10 +17,10 @@
 #include <qregexp.h>
 #include <qfile.h>
 
-#include <kstreamsocket.h>
 #include <kprocess.h>
 #include <kdebug.h>
 
+#include "smpppdclient.h"
 #include "smpppdsearcher.h"
 
 SMPPPDSearcher::SMPPPDSearcher()
@@ -108,8 +108,12 @@ void SMPPPDSearcher::slotStdoutReceivedNetstat(KProcess * /* proc */, char * buf
 bool SMPPPDSearcher::scan(const QString& ip, const QString& mask) {
     kDebug(14312) << k_funcinfo << "Scanning " << ip << "/" << mask << "..." << endl;
 	
+	SMPPPD::Client client;
+	
 	if(ip == "127.0.0.1") { // if localhost, we only scan this one host
-		if(scanIP(ip)) {
+		if(client.connect(ip, 3185)) {
+			client.disconnect();
+			emit smpppdFound(ip);
 			return true;
 		}
 		
@@ -159,36 +163,24 @@ bool SMPPPDSearcher::scan(const QString& ip, const QString& mask) {
             if(range > 1) {
                 emit scanProgress(i);
             }
-            if(scanIP(QString(ipToks[0] + "." + ipToks[1] + "." + ipToks[2] + "." + QString::number(i)))) {
+			
+			if(client.connect(QString(ipToks[0] + "." + ipToks[1] + "." + ipToks[2] + "." + QString::number(i)), 3185)) {
+				client.disconnect();
+				emit smpppdFound(ip);
                 if(range > 1) {
                     emit scanFinished();
                 }
                 return true;
-            }
+			} 
+#ifndef NDEBUG
+			else {
+				kDebug(14312) << k_funcinfo << "No smpppd found at " << QString(ipToks[0] + "." + ipToks[1] + "." + ipToks[2] + "." + QString::number(i)) << endl;
+			}
+#endif
         }
         if(range > 1) {
             emit scanFinished();
         }
-    }
-
-    return false;
-}
-
-/*!
-    \fn SMPPPDSearcher::scanIP(const QString& ip)
- */
-bool SMPPPDSearcher::scanIP(const QString& ip) {
-    kDebug(14312) << k_funcinfo << "Now scanning " << ip << "..." << endl;
-
-    KNetwork::KStreamSocket sock(ip, "3185");
-    sock.setBlocking(TRUE);
-    sock.setTimeout(500);
-
-    if(sock.connect()) {
-        emit smpppdFound(ip);
-        return true;
-    } else {
-        kDebug(14312) << k_funcinfo << "Socket Error: " << KNetwork::KStreamSocket::errorString(sock.error()) << endl;
     }
 
     return false;

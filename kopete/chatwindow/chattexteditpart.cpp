@@ -112,7 +112,7 @@ KDictSpellingHighlighter* ChatTextEditPart::spellHighlighter()
 	return kdsh;
 #else 
 	return 0l;
-#endif;
+#endif
 }
 
 // NAUGHTY, BAD AND WRONG! (but needed to fix nick complete bugs)

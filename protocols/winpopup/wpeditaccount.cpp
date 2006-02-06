@@ -41,11 +41,14 @@
 // Local Includes
 #include "wpaccount.h"
 #include "wpeditaccount.h"
+#include "wpprotocol.h"
 
-WPEditAccount::WPEditAccount(WPProtocol *protocol, Kopete::Account *theAccount, QWidget *parent, const char *name)
-	: WPEditAccountBase(parent), KopeteEditAccountWidget(theAccount), mProtocol(protocol)
+WPEditAccount::WPEditAccount(QWidget *parent, Kopete::Account *theAccount)
+	: WPEditAccountBase(parent), KopeteEditAccountWidget(theAccount)
 {
-	kDebug(14170) << "WPEditAccount::WPEditAccount(<protocol>, <theAccount>, <parent>, " << name << ")";
+	kDebug(14170) << "WPEditAccount::WPEditAccount(<parent>, <theAccount>)";
+
+	mProtocol = WPProtocol::protocol();
 
 	if(account()) {
 		mHostName->setText(account()->accountId());
@@ -102,11 +105,6 @@ bool WPEditAccount::validateData()
 		return false;
 	}
 
-	if (!mProtocol->checkMessageDir()) {
-		KMessageBox::sorry(this, i18n("<qt>There is a serious problem with your working directory.</qt>"), i18n("WinPopup"));
-		return false;
-	}
-
 	return true;
 }
 
@@ -128,8 +126,7 @@ Kopete::Account *WPEditAccount::apply()
 	account()->setExcludeConnect(mAutoConnect->isChecked());
 	writeConfig();
 
-	//is there already an API function or signal? GF
-	dynamic_cast<WPAccount *>(account())->slotSettingsChanged();
+	mProtocol->settingsChanged();
 
 	return account();
 }

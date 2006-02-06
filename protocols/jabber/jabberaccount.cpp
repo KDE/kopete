@@ -29,6 +29,7 @@
 #include "bsocket.h"
 
 #include "jabberaccount.h"
+#include "jabberbookmarks.h"
 
 #include <time.h>
 
@@ -74,14 +75,17 @@
 #ifdef SUPPORT_JINGLE
 #include "voicecaller.h"
 #include "jinglevoicecaller.h"
-#include "voicecalldlg.h"
 
-#include "jinglesessionmanager.h"
-#include "jinglesession.h"
-#include "jinglevoicesession.h"
+// NOTE: Disabled for 0.12, will develop them futher in KDE4
+// #include "jinglesessionmanager.h"
+// #include "jinglesession.h"
+// #include "jinglevoicesession.h"
+#include "jinglevoicesessiondialog.h"
 #endif
 
 #define KOPETE_CAPS_NODE "http://kopete.kde.org/jabber/caps"
+
+
 
 JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId, const char *name)
 			  :Kopete::PasswordedAccount ( parent, accountId, 0, name )
@@ -96,10 +100,11 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	m_contactPool = 0L;
 #ifdef SUPPORT_JINGLE
 	m_voiceCaller = 0L;
-	m_jingleSessionManager = 0L;
+	//m_jingleSessionManager = 0L; // NOTE: Disabled for 0.12
 #endif
+	m_bookmarks = new JabberBookmarks(this);
 	m_removing=false;
-
+	m_notifiedUserCannotBindTransferPort = false;
 	// add our own contact to the pool
 	JabberContact *myContact = contactPool()->addContact ( XMPP::RosterItem ( accountId ), Kopete::ContactList::self()->myself(), false );
 	setMyself( myContact );
@@ -142,8 +147,8 @@ void JabberAccount::cleanup ()
 	delete m_voiceCaller;
 	m_voiceCaller = 0L;
 
-	delete m_jingleSessionManager;
-	m_jingleSessionManager = 0L;
+// 	delete m_jingleSessionManager;
+// 	m_jingleSessionManager = 0L;
 #endif
 }
 
@@ -155,11 +160,12 @@ void JabberAccount::setS5BServerPort ( int port )
 		return;
 	}
 
-	if ( !m_jabberClient->setS5BServerPort ( port ) )
+	if ( !m_jabberClient->setS5BServerPort ( port ) && !m_notifiedUserCannotBindTransferPort)
 	{
 		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (), KMessageBox::Sorry,
 							 i18n ( "Could not bind Jabber file transfer manager to local port. Please check if the file transfer port is already in use or choose another port in the account settings." ),
 							 i18n ( "Failed to start Jabber File Transfer Manager" ) );
+		m_notifiedUserCannotBindTransferPort = true;
 	}
 
 }
@@ -170,19 +176,19 @@ KActionMenu *JabberAccount::actionMenu ()
 
 	m_actionMenu->popupMenu()->insertSeparator();
 
-	m_actionMenu->insert(new KAction (i18n ("Join Groupchat..."), "jabber_group", 0,
-						 this, SLOT (slotJoinNewChat ()), this, "actionJoinChat"));
+	KAction *action;
 	
-	KSelectAction *groupchatBM = new KSelectAction( i18n("Groupchat bookmark") , "jabber_group" , 0 , this , "actionBookMark" );
-	m_actionMenu->insert( groupchatBM );
-	groupchatBM->setItems(m_bookmarkGroupChat);
-	QObject::connect(groupchatBM, SIGNAL(activated (const QString&)) , this, SLOT(slotJoinChatBookmark(const QString&)));
-		
+	action = new KAction (i18n ("Join Groupchat..."), "jabber_group", 0, this, SLOT (slotJoinNewChat ()), this, "actionJoinChat");
+	m_actionMenu->insert(action);
+	action->setEnabled( isConnected() );
+	
+	action = m_bookmarks->bookmarksAction( m_bookmarks );
+	m_actionMenu->insert(action);
+	action->setEnabled( isConnected() );
+
 
 	m_actionMenu->popupMenu()->insertSeparator();
 	
-	KAction *action;
-
 	action =  new KAction ( i18n ("Services..."), "jabber_serv_on", 0,
 							this, SLOT ( slotGetServices () ), this, "actionJabberServices");
 	action->setEnabled( isConnected() );
@@ -256,13 +262,7 @@ void JabberAccount::errorConnectFirst ()
 
 void JabberAccount::errorConnectionLost ()
 {
-
-	KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
-									KMessageBox::Error,
-									i18n ("Your connection to the server has been lost in the meantime. "
-									"This means that your last action could not complete successfully. "
-									"Please reconnect and try again."), i18n ("Jabber Error") );
-
+	disconnected( Kopete::Account::ConnectionReset );
 }
 
 void JabberAccount::errorConnectionInProgress ()
@@ -566,24 +566,23 @@ void JabberAccount::slotConnected ()
 #ifdef SUPPORT_JINGLE
 	if(!m_voiceCaller)
 	{
-		m_voiceCaller = new JingleVoiceCaller( m_jabberClient );
+		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Creating Jingle Voice caller..." << endl;
+		m_voiceCaller = new JingleVoiceCaller( this );
 		QObject::connect(m_voiceCaller,SIGNAL(incoming(const Jid&)),this,SLOT(slotIncomingVoiceCall( const Jid& )));
+		m_voiceCaller->initialize();
 	}
-	m_voiceCaller->initialize();
-
-// 	if(!m_jingleSessionManager)
-// 	{
-// 		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Creating Jingle Session Manager..." << endl;
-// 		m_jingleSessionManager = new JingleSessionManager( this );
-// 		QObject::connect(m_jingleSessionManager, SIGNAL(incomingSession(const QString &, JingleSession *)), this, SLOT(slotIncomingJingleSession(const QString &, JingleSession *)));
-// 	}
+	
+#if 0
+	if(!m_jingleSessionManager)
+	{
+		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Creating Jingle Session Manager..." << endl;
+		m_jingleSessionManager = new JingleSessionManager( this );
+		QObject::connect(m_jingleSessionManager, SIGNAL(incomingSession(const QString &, JingleSession *)), this, SLOT(slotIncomingJingleSession(const QString &, JingleSession *)));
+	}
+#endif
 
 	// Set caps extensions
 	m_jabberClient->client()->addExtension("voice-v1", Features(QString("http://www.google.com/xmpp/protocol/voice/v1")));
-
-	
-// 	if(m_voiceCaller)
-// 		m_voiceCaller->initialize();
 #endif
 
 	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Requesting roster..." << endl;
@@ -596,12 +595,6 @@ void JabberAccount::slotConnected ()
 	 * information in that case either). */
 	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting initial presence..." << endl;
 	setPresence ( m_initialPresence );
-	
-	
-	XMPP::JT_PrivateStorage * task = new XMPP::JT_PrivateStorage ( client()->rootTask ());
-	task->get( "storage" , "storage:bookmarks" );
-	QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotReceivedGroupChatBookmark() ) );
-	task->go ( true );
 }
 
 void JabberAccount::slotRosterRequestFinished ( bool success )
@@ -630,10 +623,14 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status  , const
 
 	if( status.status() == Kopete::OnlineStatus::Offline )
 	{
-	   	xmppStatus.setIsAvailable( false );
-        kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "CROSS YOUR FINGERS! THIS IS GONNA BE WILD" << endl;
-        if( isConnected() )
-            m_jabberClient->disconnect (xmppStatus);
+		if( isConnected() )
+		{
+			xmppStatus.setIsAvailable( false );
+			kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "CROSS YOUR FINGERS! THIS IS GONNA BE WILD" << endl;
+			m_jabberClient->disconnect (xmppStatus);
+		}
+		else
+			disconnect(Manual);
     }
 
 	if( isConnecting () )
@@ -680,7 +677,7 @@ void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )
 	 */
 	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Disconnected." << endl;
 
-	Kopete::Account::disconnected ( reason );
+	disconnected ( reason );
 }
 
 void JabberAccount::disconnect ()
@@ -783,6 +780,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			switch(connectorCode)
 			{
  				case KNetwork::KSocketBase::LookupFailure:
+					errorClass = Kopete::Account::InvalidHost;
 					errorCondition = i18n("Host not found.");
 					break;
 				case KNetwork::KSocketBase::AddressInUse:
@@ -828,11 +826,12 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 					errorCondition = i18n("Socket timed out.");
 					break;
 				default:
-					errorCondition = i18n("Sorry, something unexpected happened that I do not know more about.");
+					errorClass = Kopete::Account::ConnectionReset;
+					//errorCondition = i18n("Sorry, something unexpected happened that I do not know more about.");
 					break;
 			}
-
-			errorText = i18n("There was a connection error: %1").arg(errorCondition);
+			if(!errorCondition.isEmpty())
+				errorText = i18n("There was a connection error: %1").arg(errorCondition);
 			break;
 
 		case XMPP::ClientStream::ErrNeg:
@@ -965,7 +964,8 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 	 * API will attempt to reconnect, queueing another
 	 * error until memory is exhausted.
 	 */
-	KMessageBox::error (Kopete::UI::Global::mainWidget (),
+	if(!errorText.isEmpty())
+		KMessageBox::error (Kopete::UI::Global::mainWidget (),
 						errorText,
 						i18n("Connection problem with Jabber server %1").arg(server));
 
@@ -980,11 +980,7 @@ void JabberAccount::slotCSError ( int error )
 		&& ( client()->clientStream()->errorCondition () == XMPP::ClientStream::NotAuthorized ) )
 	{
 		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Incorrect password, retrying." << endl;
-
-		// FIXME: This should be unified in libkopete as disconnect(IncorrectPassword)
-		password().setWrong ();
-		disconnect ();
-		connect ();
+		disconnect(Kopete::Account::BadPassword);
 	}
 	else
 	{
@@ -1430,32 +1426,7 @@ void JabberAccount::slotGroupChatJoined (const XMPP::Jid & jid)
 	// lock the room to our own status
 	resourcePool()->lockToResource ( XMPP::Jid ( jid.userHost () ), jid.resource () );
 	
-	
-	if(!m_bookmarkGroupChat.contains(jid.full()))
-	{
-		m_bookmarkGroupChat.append(jid.full());
-		
-		QDomDocument doc("storage");
-		QDomElement storage=doc.createElement("storage");
-		doc.appendChild(storage);
-		storage.setAttribute("xmlns","storage:bookmarks");
-		for ( QStringList::Iterator it = m_bookmarkGroupChat.begin(); it != m_bookmarkGroupChat.end(); ++it ) 
-		{
-			XMPP::Jid jid(*it);
-			QDomElement conference=doc.createElement("conference");
-			storage.appendChild(conference);
-			conference.setAttribute("jid",jid.userHost());
-			QDomElement nick=doc.createElement("nick");
-			conference.appendChild(nick);
-			nick.appendChild(doc.createTextNode(jid.resource()));
-		}
-		
-		XMPP::JT_PrivateStorage * task = new XMPP::JT_PrivateStorage ( client()->rootTask ());
-		task->set( storage );
-		QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotReceivedGroupChatBookmark() ) );
-		task->go ( true );
-	}
-
+	m_bookmarks->insertGroupChat(jid);	
 }
 
 void JabberAccount::slotGroupChatLeft (const XMPP::Jid & jid)
@@ -1649,36 +1620,36 @@ void JabberAccount::slotGetServices ()
 	dialog->raise ();
 }
 
-void JabberAccount::slotIncomingVoiceCall( const Jid & j)
+void JabberAccount::slotIncomingVoiceCall( const Jid &jid )
 {
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
 #ifdef SUPPORT_JINGLE
 	if(voiceCaller())
 	{
-		VoiceCallDlg* vc = new VoiceCallDlg(j,voiceCaller());
-		vc->show();
-		vc->incoming();
+		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Showing voice dialog." << endl;
+		JingleVoiceSessionDialog *voiceDialog = new JingleVoiceSessionDialog( jid, voiceCaller() );
+		voiceDialog->show();
 	}
 #else
-	Q_UNUSED(j);
+	Q_UNUSED(jid);
 #endif
 }
 
-void JabberAccount::slotIncomingJingleSession( const QString &sessionType, JingleSession *session )
-{
-#ifdef SUPPORT_JINGLE
-	if(sessionType == "http://www.google.com/session/phone")
-	{
-		QString from = ((XMPP::Jid)session->peers().first()).full();
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, QString("Received a voice session invitation from %1.").arg(from) );
-
-		session->decline();
-		sessionManager()->removeSession(session);
-	}
-#else
-	Q_UNUSED( sessionType );
-	Q_UNUSED( session );
-#endif
-}
+// void JabberAccount::slotIncomingJingleSession( const QString &sessionType, JingleSession *session )
+// {
+// #ifdef SUPPORT_JINGLE
+// 	if(sessionType == "http://www.google.com/session/phone")
+// 	{
+// 		QString from = ((XMPP::Jid)session->peers().first()).full();
+// 		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, QString("Received a voice session invitation from %1.").arg(from) );
+// 		JingleVoiceSessionDialog *voiceDialog = new JingleVoiceSessionDialog( static_cast<JingleVoiceSession*>(session) );
+// 		voiceDialog->show();
+// 	}
+// #else
+// 	Q_UNUSED( sessionType );
+// 	Q_UNUSED( session );
+// #endif
+// }
 
 
 void JabberAccount::addTransport( JabberTransport * tr, const QString &jid )
@@ -1754,40 +1725,6 @@ void JabberAccount::slotUnregisterFinished( )
 		Kopete::AccountManager::self()->removeAccount( this ); //this will delete this
 }
 
-void JabberAccount::slotReceivedGroupChatBookmark( )
-{
-	XMPP::JT_PrivateStorage * task = (XMPP::JT_PrivateStorage*)(sender());
-	if(task->success())
-	{
-		m_bookmarkGroupChat.clear();
-		QDomElement storage=task->element();
-		for(QDomNode n = storage.firstChild(); !n.isNull(); n = n.nextSibling()) {
-			QDomElement i = n.toElement();
-			if(i.isNull())
-				continue;
-			if(i.tagName() == "conference")
-			{
-				QString jid=i.attribute("jid");
-				for(QDomNode n = i.firstChild(); !n.isNull(); n = n.nextSibling()) {
-					QDomElement e = n.toElement();
-					if(e.isNull())
-						continue;
-					
-					if(e.tagName() == "nick")
-						jid+="/"+e.text();
-				}
-				m_bookmarkGroupChat += jid;
-			}
-		}
-	}
-
-}
-
-void JabberAccount::slotJoinChatBookmark( const QString & _jid )
-{
-	XMPP::Jid jid(_jid);
-	client()->joinGroupChat( jid.host() , jid.user() , jid.resource() );
-}
 
 
 

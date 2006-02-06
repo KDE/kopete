@@ -63,6 +63,7 @@
 #include "yahooconferencemessagemanager.h"
 #include "yahooinvitelistimpl.h"
 #include "yahooauthreply.h"
+#include "yabentry.h"
 
 YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, const char *name)
  : Kopete::PasswordedAccount(parent, accountId, 0, name)
@@ -301,9 +302,12 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(pictureInfoNotify(const QString&, KURL, int)), this, SLOT(slotGotBuddyIconInfo(const QString&, KURL, int )));
 
 		QObject::connect(m_session, SIGNAL(pictureChecksumNotify(const QString&, int)), this, SLOT(slotGotBuddyIconChecksum(const QString&, int )));
+		
 		QObject::connect(m_session, SIGNAL(pictureRequest(const QString&)), this, SLOT(slotGotBuddyIconRequest(const QString&)) );
 
 		QObject::connect(m_session, SIGNAL(pictureUploaded( const QString &)), this, SLOT(slotBuddyIconChanged(const QString&)));
+		
+		QObject::connect(m_session, SIGNAL(gotYABEntry( YABEntry * )), this, SLOT(slotGotYABEntry( YABEntry * )));
 		
 	}
 
@@ -414,6 +418,8 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::disconnect(m_session, SIGNAL(pictureStatusNotify( const QString&, int )), this, SLOT(slotPictureStatusNotiy( const QString&, int)));
 		
 		QObject::disconnect(m_session, SIGNAL(pictureChecksumNotify(const QString&, int)), this, SLOT(slotGotBuddyIconChecksum(const QString&, int )));
+		
+		QObject::disconnect(m_session, SIGNAL(gotYABEntry( YABEntry * )), this, SLOT(slotGotYABEntry( YABEntry * )));
 	}
 }
 
@@ -607,6 +613,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 
 		 
 		setBuddyIcon( myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString() );
+		m_session->getYABEntries();
 		m_lastDisconnectCode = 0;
 		return;
 	}
@@ -709,6 +716,9 @@ void YahooAccount::slotAuthorizationAccepted( const QString &who )
 	message = i18n( "User %1 has granted your authorization request." )
 		.arg( who );
 	KNotification::event( QString::fromLatin1("kopete_authorization"), message );
+	
+	if( contact( who ) )
+		contact( who )->setOnlineStatus( m_protocol->Online );
 }
 
 void YahooAccount::slotAuthorizationRejected( const QString &who, const QString &msg )
@@ -839,6 +849,7 @@ const QString &YahooAccount::prepareIncomingMessage( QString newMsgText )
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
 			newMsgText.replace( regExp, QString::fromLatin1("" ) );
+		
 		}
 	}
 	regExp.setPattern( "<[/]*ALT([^>]*)>" );
@@ -1186,6 +1197,22 @@ void YahooAccount::sendConfMessage( YahooConferenceChatSession *s, Kopete::Messa
 	m_session->sendConferenceMessage( s->room(), members, YahooContact::prepareMessage( message.escapedBody() ) );
 }
 
+void YahooAccount::slotGotYABEntry( YABEntry *entry )
+{
+	if( !contact( entry->yahooId ) )
+	{
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "YAB entry received for a contact not on our buddylist." << endl;
+		delete entry;
+		return;
+	}
+	else
+	{
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "YAB entry for " << entry->yahooId << " received." << endl;
+		YahooContact* kc = contact( entry->yahooId );
+		kc->setYABEntry( entry );
+	}
+}
+
 void YahooAccount::slotGotFile( const QString &  who, const QString &  url , long /* expires */, const QString &  msg ,
 	const QString &  fname, unsigned long  fesize  )
 {
@@ -1370,11 +1397,13 @@ void YahooAccount::setBuddyIcon( KUrl url )
 			return;
 		}
 		image = image.smoothScale( 96, 96, Qt::KeepAspectRatioByExpanding );
-		if(image.width() > image.height()) {
-			image = image.copy((image.width()-image.height())/2, 0, image.height(), image.height());
+		if(image.width() < image.height())
+		{
+			image = image.copy((image.width()-image.height())/2, 0, 96, 96);
 		}
-		else if(image.height() > image.width()) {
-			image = image.copy(0, (image.height()-image.width())/2, image.width(), image.width());
+		else if(image.height() < image.width())
+		{
+			image = image.copy(0, (image.height()-image.width())/2, 96, 96);
 		}
 
 		if( !image.save( newlocation, "PNG" ) || !iconFile.open(QIODevice::ReadOnly) )

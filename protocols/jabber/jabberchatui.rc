@@ -1,0 +1,17 @@
+<!DOCTYPE kpartgui>
+<kpartgui version="10" name="kopete_jabber_chat">
+	<MenuBar>
+		<Menu noMerge="1" name="file">
+			<text>&amp;Chat</text>
+			<Action name="jabber_voicecall" />
+		</Menu>
+	</MenuBar>
+
+
+	<ToolBar name="statusToolBar">
+		<Action name="jabberDisplayPicture" />
+		<Action name="jabber_voicecall" />
+	</ToolBar>
+
+
+</kpartgui>

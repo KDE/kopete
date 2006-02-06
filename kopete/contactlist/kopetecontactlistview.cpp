@@ -493,16 +493,17 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 		ac, "contactRemove" );
 	actionSendEmail = new KAction( i18n( "Send Email..." ), QString::fromLatin1( "mail_generic" ),
 		0, this, SLOT(  slotSendEmail() ), ac, "contactSendEmail" );
+	/* this actionRename is buggy, and useless with properties, removed in kopeteui.rc*/
 	actionRename = new KAction( i18n( "Rename" ), "filesaveas", 0,
 		this, SLOT( slotRename() ), ac, "contactRename" );
 	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ),
 		ac, "contactSendFile" );
 
 	actionAddContact = new KActionMenu( i18n( "&Add Contact" ),
-		QString::fromLatin1( "bookmark_add" ), ac , "contactAddContact" );
+		QString::fromLatin1( "add_user" ), ac , "contactAddContact" );
 	actionAddContact->popupMenu()->addTitle( i18n("Select Account") );
 
-	actionAddTemporaryContact = new KAction( i18n( "Add to Your Contact List" ), "bookmark_add", 0,
+	actionAddTemporaryContact = new KAction( i18n( "Add to Your Contact List" ), "add_user", 0,
 		this, SLOT( slotAddTemporaryContact() ), ac, "contactAddTemporaryContact" );
 
 	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotMetaContactSelected( bool ) ) );
@@ -510,7 +511,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered( Kopete::Account* )), SLOT(slotAddSubContactActionNewAccount(Kopete::Account*)));
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered( const Kopete::Account* )), SLOT(slotAddSubContactActionAccountDeleted(const Kopete::Account *)));
 
-	actionProperties = new KAction( i18n( "&Properties" ), "", Qt::Key_Alt + Qt::Key_Return,
+	actionProperties = new KAction( i18n( "&Properties" ), "edit_user", Qt::Key_Alt + Qt::Key_Return,
 		this, SLOT( slotProperties() ), ac, "contactProperties" );
 
 	// Update enabled/disabled actions

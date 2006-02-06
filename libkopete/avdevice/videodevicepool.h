@@ -71,6 +71,8 @@ public:
 	int getImage(QImage *qimage);
 	int selectInput(int newinput);
 	int scanDevices();
+	bool hasDevices();
+	size_t size();
 	~VideoDevicePool();
 	VideoDeviceVector m_videodevice;
 	VideoDeviceModelVector m_model;

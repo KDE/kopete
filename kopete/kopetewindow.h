@@ -28,11 +28,15 @@
 #include <QCloseEvent>
 
 #include <kmainwindow.h>
+#include <qlabel.h>
 
 
 class KHBox;
 class QTimer;
 class QLineEdit;
+
+class QMouseEvent;
+class QPoint;
 
 class KAction;
 class KActionMenu;
@@ -68,7 +72,7 @@ public:
 	KopeteWindow ( QWidget *parent = 0, const char *name = 0 );
 	~KopeteWindow();
 
-    virtual bool eventFilter( QObject* o, QEvent* e );
+	virtual bool eventFilter( QObject* o, QEvent* e );
 
 protected:
 	virtual void closeEvent( QCloseEvent *ev );
@@ -182,6 +186,11 @@ private slots:
 	void slotStatusMessageSelected( int i );
 	void slotNewStatusMessageEntered();
 
+        /**
+         * Show the set global status message menu when clicking on the icon in the status bar.
+         */
+        void slotGlobalStatusMessageIconClicked( const QPoint &position );
+
 public:
 	KopeteContactListView *contactlist;
 
@@ -248,5 +257,21 @@ private:
 	QLineEdit * m_newMessageEdit;
 	QString m_globalStatusMessageStored;
 };
+
+
+class GlobalStatusMessageIconLabel : public QLabel
+{
+      Q_OBJECT
+public:
+      GlobalStatusMessageIconLabel(QWidget *parent = 0, const char *name = 0);
+
+protected:
+      void mouseReleaseEvent(QMouseEvent *event);
+
+signals:
+      void iconClicked(const QPoint &position);
+
+};
+
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

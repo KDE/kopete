@@ -17,6 +17,10 @@
 
 #include <qcombobox.h>
 #include <qlayout.h>
+#include <qapplication.h>
+#include <qevent.h>
+#include <qmutex.h>
+#include <qthread.h>
 #include <qcheckbox.h>
 
 #include <klocale.h>
@@ -45,12 +49,239 @@
 
 #include "kopete_unix_serial.h"
 
+/////////////////////////////////////////////////////////////////////
+#define GSMLIB_EVENT_ID 245
+GSMLibEvent::GSMLibEvent(SubType t) : QCustomEvent(QEvent::User+GSMLIB_EVENT_ID)
+{
+	setSubType(t);
+}
+
+GSMLibEvent::SubType GSMLibEvent::subType()
+{
+	return m_subType;
+}
+
+void GSMLibEvent::setSubType(GSMLibEvent::SubType t)
+{
+	m_subType = t;
+}
+
+/////////////////////////////////////////////////////////////////////
+GSMLibThread::GSMLibThread(QString dev, GSMLib* parent)
+{
+	m_device = dev;
+	m_parent = parent;
+	m_run = true;
+}
+
+GSMLibThread::~GSMLibThread()
+{
+	m_run = false;
+}
+
+void GSMLibThread::stop()
+{
+	m_run = false;
+	kDebug( 14160 ) << "Waiting from GSMLibThread to die"<<endl;
+	if( wait(4000) == false )
+		kWarning( 14160 ) << "GSMLibThread didn't exit!"<<endl;
+}
+void GSMLibThread::run()
+{
+	if( doConnect() )
+	{
+		while( m_run )
+		{
+			pollForMessages();
+			sendMessageQueue();	
+		}
+	}
+
+	delete m_MeTa;
+	m_MeTa = NULL;
+	QApplication::postEvent(m_parent, new GSMLibEvent(GSMLibEvent::DISCONNECTED));
+	kDebug( 14160 ) << "GSMLibThread exited"<<endl;
+}
+
+void GSMLibThread::send(const Kopete::Message& msg)
+{
+	m_outMessagesMutex.lock();
+	m_outMessages.push_back(msg);
+	m_outMessagesMutex.unlock();
+}
+
+
+bool GSMLibThread::doConnect()
+{
+	// open the port and ME/TA
+	try
+	{
+		kDebug( 14160 ) << "Connecting to: '"<<m_device<<"'"<<endl;
+		
+		gsmlib::Ref<gsmlib::Port> port = new gsmlib::KopeteUnixSerialPort(m_device.latin1(), 9600, gsmlib::DEFAULT_INIT_STRING, false);
+		
+		kDebug( 14160 ) << "Port created"<<endl;
+				
+		m_MeTa = new gsmlib::MeTa(port);
+		std::string dummy1, dummy2, receiveStoreName;
+		m_MeTa->getSMSStore(dummy1, dummy2, receiveStoreName );
+		m_MeTa->setSMSStore(receiveStoreName, 3);
+
+		m_MeTa->setMessageService(1);
+
+		// switch on SMS routing
+		m_MeTa->setSMSRoutingToTA(true, false, false, true);
+
+		m_MeTa->setEventHandler(this);
+		QApplication::postEvent(m_parent, new GSMLibEvent(GSMLibEvent::CONNECTED));
+		return true;
+	}
+	catch(gsmlib::GsmException &e)
+	{
+		kWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
+		m_run = false;
+		return false;
+	}
+}
+
+void GSMLibThread::SMSReception(gsmlib::SMSMessageRef newMessage, SMSMessageType messageType)
+{
+	try
+	{
+		IncomingMessage m;
+		m.Type = messageType;
+		m.Message = newMessage;
+		
+		m_newMessages.push_back(m);
+	}
+	catch(gsmlib::GsmException &e)
+	{
+		kWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
+		m_run = false;
+	}
+}
+
+void GSMLibThread::SMSReceptionIndication(std::string storeName, unsigned int index, SMSMessageType messageType)
+{
+	kDebug( 14160 ) << k_funcinfo << "New Message in store: "<<storeName.c_str() << endl;
+
+	try
+	{
+		if( messageType != gsmlib::GsmEvent::NormalSMS )
+			return;
+		
+		IncomingMessage m;
+		m.Index = index;
+		m.StoreName = storeName.c_str();
+		m.Type = messageType;
+		m_newMessages.push_back(m);
+	}
+	catch(gsmlib::GsmException &e)
+	{
+		kWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
+		m_run = false;
+	}
+}
+
+void GSMLibThread::pollForMessages( )
+{
+	if( m_MeTa == NULL )
+		return;
+	
+	try
+	{
+		struct timeval timeoutVal;
+		timeoutVal.tv_sec = 1;
+		timeoutVal.tv_usec = 0;
+		m_MeTa->waitEvent(&timeoutVal);
+		
+		MessageList::iterator it;
+		for( it=m_newMessages.begin(); it!=m_newMessages.end(); it++)
+		{
+			IncomingMessage m = *it;
+			
+			// Do we need to fetch it from the ME?
+			if( m.Message.isnull() )
+			{
+				gsmlib::SMSStoreRef store = m_MeTa->getSMSStore(m.StoreName.latin1());
+				store->setCaching(false);
+
+				m.Message = (*store.getptr())[m.Index].message();
+				store->erase(store->begin() + m.Index);
+			}
+
+			GSMLibEvent* e = new GSMLibEvent( GSMLibEvent::NEW_MESSAGE );
+			e->Text = m.Message->userData().c_str();
+			e->Number = m.Message->address().toString().c_str();
+
+			QApplication::postEvent(m_parent, e);
+
+		}
+		m_newMessages.clear();
+	}
+	catch(gsmlib::GsmException &e)
+	{
+		kWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
+		m_run = false;
+	}
+}
+
+void GSMLibThread::sendMessageQueue()
+{
+	QMutexLocker _(&m_outMessagesMutex);
+	
+	if(m_outMessages.size() == 0 )
+		return;
+
+	KopeteMessageList::iterator it;
+	for( it=m_outMessages.begin(); it!=m_outMessages.end(); it++)
+		sendMessage(*it);
+	m_outMessages.clear();
+}
+
+void GSMLibThread::sendMessage(const Kopete::Message& msg)
+{
+	QString reason;
+
+	if (!m_MeTa)
+	{
+		GSMLibEvent* e = new GSMLibEvent( GSMLibEvent::MSG_NOT_SENT );
+		e->Reason = QString("GSMLib: Not Connected");
+		e->Message = msg;
+		QApplication::postEvent(m_parent, e);
+	}
+
+	QString message = msg.plainBody();
+	QString nr = msg.to().first()->contactId();
+
+	// send SMS
+	try
+	{
+		gsmlib::Ref<gsmlib::SMSSubmitMessage> submitSMS = new gsmlib::SMSSubmitMessage();
+		gsmlib::Address destAddr( nr.latin1() );
+		submitSMS->setDestinationAddress(destAddr);
+		m_MeTa->sendSMSs(submitSMS, message.latin1(), true);
+		
+		GSMLibEvent* e = new GSMLibEvent( GSMLibEvent::MSG_SENT );
+		e->Message = msg;
+		QApplication::postEvent(m_parent, e);
+	}
+	catch(gsmlib::GsmException &e)
+	{
+		GSMLibEvent* ev = new GSMLibEvent( GSMLibEvent::MSG_NOT_SENT );
+		ev->Reason = QString("GSMLib: ") + e.what();
+		ev->Message = msg;
+		QApplication::postEvent(m_parent, ev);
+	}
+}
+
+/////////////////////////////////////////////////////////////////////
+
 GSMLib::GSMLib(Kopete::Account* account)
 	: SMSService(account)
 {
-	kWarning( 14160 ) << k_funcinfo << endl;
 	prefWidget = 0L;
-	m_MeTa = NULL;
+	m_thread = NULL;
 	
 	loadConfig();
 }
@@ -86,52 +317,28 @@ void GSMLib::loadConfig()
 
 void GSMLib::connect()
 {
-			
-	// open the port and ME/TA
-	try
-	{
-		kWarning( 14160 ) << "Connecting to: '"<<m_device<<"'"<<endl;
-		
-		gsmlib::Ref<gsmlib::Port> port = new gsmlib::KopeteUnixSerialPort(m_device.latin1(), 9600, gsmlib::DEFAULT_INIT_STRING, false);
-		
-		kWarning( 14160 ) << "Port created"<<endl;
-				
-		m_MeTa = new gsmlib::MeTa(port);
-		std::string dummy1, dummy2, receiveStoreName;
-		m_MeTa->getSMSStore(dummy1, dummy2, receiveStoreName );
-		m_MeTa->setSMSStore(receiveStoreName, 3);
-
-		m_MeTa->setMessageService(1);
-
-		// switch on SMS routing
-		m_MeTa->setSMSRoutingToTA(true, false, false, true);
-
-		m_MeTa->setEventHandler(this);
-		killTimers();
-		startTimer(1000);
-		emit connected();
-	}
-	catch(gsmlib::GsmException &e)
-	{
-		kWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
-		disconnect();
-		return;
-	}
+	
+	m_thread = new GSMLibThread(m_device, this);
+	m_thread->start();
+	
 }
 
 void GSMLib::disconnect()
 {
-	killTimers();
-	kWarning( 14160 ) << k_funcinfo <<endl;
-	delete m_MeTa;
-	m_MeTa = NULL;
+	kDebug( 14160 ) << k_funcinfo <<endl;
 
-	emit disconnected();
+	if( m_thread )
+	{
+		m_thread->stop();
+		delete m_thread;
+		m_thread = NULL;
+		emit disconnected();
+	}
+
 }
 
 void GSMLib::setWidgetContainer(QWidget* parent, QGridLayout* layout)
 {
-//	kWarning( 14160 ) << k_funcinfo << "ml: " << layout << ", " << "mp: " << parent << endl;
 	m_parent = parent;
 	m_layout = layout;
 	QWidget *configWidget = configureWidget(parent);
@@ -141,46 +348,11 @@ void GSMLib::setWidgetContainer(QWidget* parent, QGridLayout* layout)
 
 void GSMLib::send(const Kopete::Message& msg)
 {
-//	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
-	
-	QString reason;
-
-	if (!m_account) return;
-	if (!m_MeTa)
-	{
-		QString reason = QString("GSMLib: Not Connected");
-		kWarning( 14160 ) << k_funcinfo<< reason <<endl;
-		emit messageNotSent(msg, reason);
-		return;
-	}
-
-	QString message = msg.plainBody();
-	QString nr = msg.to().first()->contactId();
-
-	// send SMS
-	try
-	{
-		gsmlib::Ref<gsmlib::SMSSubmitMessage> submitSMS = new gsmlib::SMSSubmitMessage();
-		gsmlib::Address destAddr( nr.latin1() );
-		submitSMS->setDestinationAddress(destAddr);
-		kWarning( 14160 ) << k_funcinfo << "before send"<<endl;
-		m_MeTa->sendSMSs(submitSMS, message.latin1(), true);
-		kWarning( 14160 ) << k_funcinfo << "after send"<<endl;
-		
-		emit messageSent(msg);
-	}
-	catch(gsmlib::GsmException &e)
-	{
-		kWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
-		QString reason = QString("GSMLib: ") + e.what();
-		emit messageNotSent(msg, reason);
-	}
+	m_thread->send(msg);
 }
 
 QWidget* GSMLib::configureWidget(QWidget* parent)
 {
-//	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be ok if zero!!)" << endl;
-
 	if (prefWidget == 0L)
 		prefWidget = new GSMLibPrefsUI(parent);
 
@@ -192,8 +364,6 @@ QWidget* GSMLib::configureWidget(QWidget* parent)
 
 void GSMLib::savePreferences()
 {
-//	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be work if zero!!)" << endl;
-
 	if( prefWidget )
 	{
 		m_device = prefWidget->device->url();
@@ -206,41 +376,35 @@ int GSMLib::maxSize()
 	return 160;
 }
 
-void GSMLib::timerEvent( QTimerEvent * )
+void GSMLib::customEvent(QCustomEvent* e)
 {
-	if( m_MeTa == NULL )
+	if( e->type() != QEvent::User+GSMLIB_EVENT_ID )
 		return;
+
+	GSMLibEvent* ge = (GSMLibEvent*)e;
 	
-	try
+	kDebug( 14160 ) << "Got event "<<ge->subType()<<endl;
+	switch( ge->subType() )
 	{
-		struct timeval timeoutVal;
-		timeoutVal.tv_sec = 0;
-		timeoutVal.tv_usec = 100;
-		m_MeTa->waitEvent(&timeoutVal);
-		
-		MessageList::iterator it;
-		for( it=m_newMessages.begin(); it!=m_newMessages.end(); it++)
+		case GSMLibEvent::CONNECTED:
+			emit connected();
+			break;
+		case GSMLibEvent::DISCONNECTED:
+			disconnect();
+			break;
+		case GSMLibEvent::MSG_SENT:
+			emit messageSent(ge->Message);
+			break;
+		case GSMLibEvent::MSG_NOT_SENT:
+			emit messageNotSent(ge->Message, ge->Reason);
+			break;
+		case GSMLibEvent::NEW_MESSAGE:
 		{
-			kWarning( 14160 ) << k_funcinfo <<endl;
-			IncomingMessage m = *it;
+			QString nr = ge->Number;
+			QString text = ge->Text;
 			
-			// Do we need to fetch it from the ME?
-			if( m.Message.isnull() )
-			{
-				gsmlib::SMSStoreRef store = m_MeTa->getSMSStore(m.StoreName.latin1());
-				store->setCaching(false);
-
-				m.Message = (*store.getptr())[m.Index].message();
-				store->erase(store->begin() + m.Index);
-			}
-
-			QString text = m.Message->userData().c_str();
-			QString nr = m.Message->address().toString().c_str();
-			kWarning( 14160 ) << "Msg='"<<text <<"' addr='"<<nr<<"'"<<endl;
-		
 			// Locate a contact
 			SMSContact* contact = static_cast<SMSContact*>( m_account->contacts().find( nr ));
-			kWarning( 14160 ) <<"contact="<<contact<<endl;
 			if ( contact==NULL )
 			{
 				// No contact found, make a new one
@@ -248,63 +412,16 @@ void GSMLib::timerEvent( QTimerEvent * )
 				metaContact->setTemporary ( true );
 				contact = new SMSContact(m_account, nr, nr, metaContact );
 				Kopete::ContactList::self ()->addMetaContact( metaContact );
+				contact->setOnlineStatus( SMSProtocol::protocol()->SMSOnline );
 			}
 			
 			// Deliver the msg
 			Kopete::Message msg( contact, m_account->myself(), text, Kopete::Message::Inbound, Kopete::Message::RichText );
-			kWarning( 14160 ) <<"MARK1"<<endl;
 			contact->manager(Kopete::Contact::CanCreate)->appendMessage( msg );
-			kWarning( 14160 ) <<"MARK2"<<endl;
-
+			break;
 		}
-		m_newMessages.clear();
-	}
-	catch(gsmlib::GsmException &e)
-	{
-		kWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
-		disconnect();
 	}
 }
-
-void GSMLib::SMSReception(gsmlib::SMSMessageRef newMessage, SMSMessageType messageType)
-{
-	kWarning( 14160 ) << k_funcinfo << "New Message" << endl;
-
-	try
-	{
-		IncomingMessage m;
-		m.Type = messageType;
-		m.Message = newMessage;
-		
-		m_newMessages.push_back(m);
-	}
-	catch(gsmlib::GsmException &e)
-	{
-		kWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
-	}
-}
-
-void GSMLib::SMSReceptionIndication(std::string storeName, unsigned int index, SMSMessageType messageType)
-{
-	kWarning( 14160 ) << k_funcinfo << "New Message in store: "<<storeName.c_str() << endl;
-
-	try
-	{
-		if( messageType != gsmlib::GsmEvent::NormalSMS )
-			return;
-		
-		IncomingMessage m;
-		m.Index = index;
-		m.StoreName = storeName.c_str();
-		m.Type = messageType;
-		m_newMessages.push_back(m);
-	}
-	catch(gsmlib::GsmException &e)
-	{
-		kWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
-	}
-}
-
 
 const QString& GSMLib::description()
 {

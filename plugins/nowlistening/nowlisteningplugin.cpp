@@ -266,8 +266,10 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 				NOTE:
 				MSN status message(personal message) use a special tag to advert the current music playing. 
 				So, we don't send the all formatted string, send a special string seperated by ";".
+				
+				Also, do not use MSN hack in appending mode.
 			*/
-			if( a->protocol()->pluginId() == "MSNProtocol" )
+			if( a->protocol()->pluginId() == "MSNProtocol" && !NowListeningConfig::self()->appendStatusAdvertising() )
 			{
 				QString track, artist, album, mediaList;
 				bool isPlaying=false;

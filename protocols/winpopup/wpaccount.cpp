@@ -35,19 +35,18 @@
 
 class KMenu;
 
-WPAccount::WPAccount(WPProtocol *parent, const QString &accountID, const char *name) : Kopete::Account(parent, accountID, name)
+WPAccount::WPAccount(WPProtocol *parent, const QString &accountID, const char *name)
+	: Kopete::Account(parent, accountID, name)
 {
 //	kDebug(14170) <<  "WPAccount::WPAccount()" << endl;
 
-	// setup internals
-	QString theHostName = accountID;
+	mProtocol = WPProtocol::protocol();
 
 	// we need this before initActions
-	setMyself( new WPContact(this, theHostName, theHostName, 0) );
+	Kopete::MetaContact *myself = Kopete::ContactList::self()->myself();
+	setMyself( new WPContact(this, accountID, myself->displayName(), myself) );
 
 //	if (excludeConnect()) connect(Kopete::OnlineStatus::Online); // ??
-
-	QObject::connect(this, SIGNAL(settingsChanged()), parent, SLOT(slotSettingsChanged()));
 }
 
 // Destructor
@@ -57,18 +56,12 @@ WPAccount::~WPAccount()
 
 const QStringList WPAccount::getGroups()
 {
-	return static_cast<WPProtocol *>(protocol())->getGroups();
+	return mProtocol->getGroups();
 }
 
 const QStringList WPAccount::getHosts(const QString &Group)
 {
-	return static_cast<WPProtocol *>(protocol())->getHosts(Group);
-}
-
-void WPAccount::slotSettingsChanged()
-{
-//	kDebug(14170) <<  "WPAccount::slotSettingsChanged()" << endl;
-	emit(settingsChanged());
+	return mProtocol->getHosts(Group);
 }
 
 bool WPAccount::checkHost(const QString &Name)
@@ -79,7 +72,7 @@ bool WPAccount::checkHost(const QString &Name)
 		// Should never happen as localhost is now forbidden as contact, just for safety. GF
 		return true;
 	} else {
-		return static_cast<WPProtocol *>(protocol())->checkHost(Name);
+		return mProtocol->checkHost(Name);
 	}
 }
 
@@ -122,7 +115,7 @@ void WPAccount::slotGotNewMessage(const QString &Body, const QDateTime &Arrival,
 			static_cast<WPContact *>(contacts()[From])->slotNewMessage(Body, Arrival);
 		}
 		else {
-			static_cast<WPProtocol *>(protocol())->sendMessage(theAwayMessage, From);
+			mProtocol->sendMessage(theAwayMessage, From);
 		}
 	 } else {
 		// What to do with offline received messages?
@@ -133,13 +126,13 @@ void WPAccount::slotGotNewMessage(const QString &Body, const QDateTime &Arrival,
 void WPAccount::connect(const Kopete::OnlineStatus &)
 {
 //	kDebug(14170) <<  "WPAccount::Connect()" << endl;
-	myself()->setOnlineStatus(static_cast<WPProtocol *>(protocol())->WPOnline);
+	myself()->setOnlineStatus(mProtocol->WPOnline);
 }
 
 void WPAccount::disconnect()
 {
 //	kDebug(14170) <<  "WPAccount::Disconnect()" << endl;
-	myself()->setOnlineStatus(static_cast<WPProtocol *>(protocol())->WPOffline);
+	myself()->setOnlineStatus(mProtocol->WPOffline);
 }
 
 /* I commented this code because deleting myself may have *dangerous* side effect, for example, for the status tracking.
@@ -158,26 +151,30 @@ void WPAccount::setAway(bool status, const QString &awayMessage)
 
 //	if(!isConnected())
 //		theInterface->goOnline();
-	myself()->setOnlineStatus(status ? static_cast<WPProtocol *>(protocol())->WPAway : static_cast<WPProtocol *>(protocol())->WPOnline);
+	myself()->setOnlineStatus(status ? mProtocol->WPAway : mProtocol->WPOnline);
 }
 
 KActionMenu* WPAccount::actionMenu()
 {
 	kDebug(14170) <<  "WPAccount::actionMenu()" << endl;
 
-	WPProtocol *theProtocol = static_cast<WPProtocol *>(protocol());
-	KActionMenu *theActionMenu = new KActionMenu(accountId() , myself()->onlineStatus().iconFor(this), 0);
-	theActionMenu->popupMenu()->addTitle( QIcon(myself()->icon()), i18n("WinPopup (%1)").arg(accountId()));
+	/// How to remove an action from Kopete::Account::actionMenu()? GF
 
-	if (theProtocol)
+	KActionMenu *theActionMenu = new KActionMenu(accountId() , myself()->onlineStatus().iconFor(this), 0);
+	theActionMenu->popupMenu()->addTitle( QIcon(myself()->onlineStatus().iconFor(this)), i18n("WinPopup (%1)").arg(accountId()));
+
+	if (mProtocol)
 	{
-		theActionMenu->insert(new KAction("Online", QIcon(theProtocol->WPOnline.iconFor(this)), 0,
+		theActionMenu->insert(new KAction("Online", QIcon(mProtocol->WPOnline.iconFor(this)), 0,
 			this, SLOT(connect()), 0, "actionGoAvailable"));
-		theActionMenu->insert(new KAction("Away", QIcon(theProtocol->WPAway.iconFor(this)), 0,
+		theActionMenu->insert(new KAction("Away", QIcon(mProtocol->WPAway.iconFor(this)), 0,
 			this, SLOT(goAway()), 0, "actionGoAway"));
-		// One can not really go offline manually - appears online as long as samba server is running. GF
-//		theActionMenu->insert(new KAction("Offline", QIcon(theProtocol->WPOffline.iconFor(this)), 0,
-//			this, SLOT(disconnect()), theActionMenu, "actionGoOffline"));
+
+		/// One can not really go offline manually - appears online as long as samba server is running. GF
+
+		theActionMenu->popupMenu()->insertSeparator();
+		theActionMenu->insert(new KAction(i18n("Properties"),  0,
+							  this, SLOT(editAccount()), 0, "actionAccountProperties"));
 	}
 
 	return theActionMenu;
@@ -187,7 +184,7 @@ void WPAccount::slotSendMessage(const QString &Body, const QString &Destination)
 {
 	kDebug(14170) << "WPAccount::slotSendMessage(" << Body << ", " << Destination << ")" << endl;
 
-	static_cast<WPProtocol *>(protocol())->sendMessage(Body, Destination);
+	mProtocol->sendMessage(Body, Destination);
 }
 
 void WPAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const QString &reason)

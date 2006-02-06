@@ -178,6 +178,8 @@ private:
 	KAction *actionBlock;
 	KAction *actionShowProfile;
 	KAction *actionSendMail;
+	KAction *actionWebcamReceive;
+	KAction *actionWebcamSend;
 
 	QString m_obj; //the MSNObject
 

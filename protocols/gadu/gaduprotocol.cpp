@@ -59,7 +59,7 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
 					GG_STATUS_NOT_AVAIL, QStringList(QString::fromLatin1("gg_offline")), i18n( "Offline" ), 
 					i18n( "O&ffline" ) , Kopete::OnlineStatusManager::Offline ),
 			
-			gaduStatusOfflineDescr_( Kopete::OnlineStatus::Away, GG_STATUS_NOT_AVAIL_DESCR, this, 
+			gaduStatusOfflineDescr_( Kopete::OnlineStatus::Offline, GG_STATUS_NOT_AVAIL_DESCR, this, 
 					GG_STATUS_NOT_AVAIL_DESCR, 
 					QStringList::split( '|', "contact_away_overlay|gg_description_overlay" ), 
 					i18n( "Offline" ), i18n( "A&way" ) , Kopete::OnlineStatusManager::Offline ),
@@ -67,7 +67,6 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
 			gaduStatusBusy_(Kopete::OnlineStatus::Away, GG_STATUS_BUSY, this, 
 					GG_STATUS_BUSY, QStringList( QString::fromLatin1("contact_away_overlay") ), 
 					i18n( "Busy" ) , i18n( "B&usy" ) , Kopete::OnlineStatusManager::Busy ),
-			
 			gaduStatusBusyDescr_(Kopete::OnlineStatus::Away, GG_STATUS_BUSY_DESCR, this, GG_STATUS_BUSY_DESCR,
 				QStringList::split( '|', "contact_away_overlay|gg_description_overlay" ), i18n( "Busy" ) , 
 				i18n( "B&usy" ) , Kopete::OnlineStatusManager::Idle ),

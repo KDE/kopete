@@ -33,6 +33,8 @@
 #include "yahoowebcamdialog.h"
 #include "yahoostealthsetting.h"
 #include "yahoochatsession.h"
+#include "yabentry.h"
+#include "yahoouserinfodialog.h"
 
 // QT Includes
 #include <qregexp.h>
@@ -65,13 +67,14 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 		m_groupName = metaContact->groups().first()->displayName();
 	m_manager = 0L;
 	m_account = account;
+	m_YABEntry = 0L;
 	m_stealthed = false;
 	m_receivingWebcam = false;
 
 	// Update ContactList
 	setNickName( fullName );
 	setOnlineStatus( static_cast<YahooProtocol*>( m_account->protocol() )->Offline );
-	setFileCapable( true );
+// 	setFileCapable( true );
 	
 	if ( m_account->haveContactList() )
 		syncToServer();
@@ -87,6 +90,9 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 
 YahooContact::~YahooContact()
 {
+	if( m_YABEntry )
+		delete m_YABEntry;
+	m_YABEntry = 0L;
 }
 
 QString YahooContact::userId() const
@@ -200,7 +206,6 @@ Kopete::ChatSession *YahooContact::manager( Kopete::Contact::CanCreateFlags canC
 		connect( m_manager, SIGNAL( messageSent ( Kopete::Message&, Kopete::ChatSession* ) ), this, SLOT( slotSendMessage( Kopete::Message& ) ) );
 		connect( m_manager, SIGNAL( myselfTyping( bool) ), this, SLOT( slotTyping( bool ) ) );
 		connect( m_account, SIGNAL( receivedTypingMsg( const QString &, bool ) ), m_manager, SLOT( receivedTypingMsg( const QString&, bool ) ) );
-		connect( this, SIGNAL( signalWebcamInviteAccepted() ), this, SLOT( requestWebcam() ) );
 		connect( this, SIGNAL(displayPictureChanged()), m_manager, SLOT(slotDisplayPictureChanged()));
 	}
 
@@ -360,7 +365,7 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 	QList<KAction*> *actionCollection = new QList<KAction*>();
 	if ( !m_webcamAction )
 	{
-		m_webcamAction = new KAction( i18n( "View &Webcam" ), "camera_unmount", KShortcut(),
+		m_webcamAction = new KAction( i18n( "View &Webcam" ), "webcamreceive", KShortcut(),
 		                              this, SLOT( requestWebcam() ), 0, "view_webcam" );
 	}
 	if ( isReachable() )
@@ -371,7 +376,7 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 	
 	if( !m_inviteWebcamAction )
 	{
-		m_inviteWebcamAction = new KAction( i18n( "Invite to view your Webcam" ), "camera_unmount", KShortcut(),
+		m_inviteWebcamAction = new KAction( i18n( "Invite to view your Webcam" ), "webcamsend", KShortcut(),
 		                                    this, SLOT( inviteWebcam() ), 0, "invite_webcam" );
 	}
 	if ( isReachable() )
@@ -418,11 +423,15 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 void YahooContact::slotUserInfo()
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	/*if( m_account->yahooSession() )
-		m_account->yahooSession()->getUserInfo( m_userId );
-	else
-		KMessageBox::information( Kopete::UI::Global::mainWidget(), i18n("You need to connect to the service in order to use this feature."),
-		                         i18n("Not connected") );*/
+	if( !m_YABEntry )
+	{
+		m_YABEntry = new YABEntry;
+		m_YABEntry->yahooId = userId();
+	}
+	
+	YahooUserInfoDialog *dlg = new YahooUserInfoDialog( Kopete::UI::Global::mainWidget(), "yahoo userinfo" );
+	dlg->setData( m_YABEntry );
+	dlg->show();
 }
 
 void YahooContact::slotSendFile()
@@ -502,6 +511,15 @@ void YahooContact::setDisplayPicture(KTempFile *f, int checksum)
 	
 	//let the time to KIO to copy the file
 	connect(j, SIGNAL(result(KIO::Job *)) , this, SLOT(slotEmitDisplayPictureChanged() ));
+}
+
+
+void YahooContact::setYABEntry( YABEntry *entry )
+{
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	if( m_YABEntry )
+		delete m_YABEntry;
+	m_YABEntry = entry;
 }
 
 void YahooContact::slotEmitDisplayPictureChanged()

@@ -41,14 +41,16 @@ class JabberContact;
 class JabberContactPool;
 class JabberProtocol;
 class JabberTransport;
+class JabberBookmarks;
 
 namespace Kopete { class MetaContact; }
 
 #ifdef SUPPORT_JINGLE
-class JingleSessionManager;
+//class JingleSessionManager; 
+//class JingleSession; 
 class VoiceCaller;
 #endif
-class JingleSession; 
+
 
 /* @author Daniel Stone, Till Gerken */
 
@@ -88,10 +90,10 @@ public:
 		return m_voiceCaller;
 	}
 
-	JingleSessionManager *sessionManager()  const
-	{
-		return m_jingleSessionManager;
-	}
+// 	JingleSessionManager *sessionManager()  const
+// 	{
+// 		return m_jingleSessionManager;
+// 	}
 #endif
 
 	// change the default S5B server port
@@ -185,8 +187,10 @@ private:
 
 #ifdef SUPPORT_JINGLE
 	VoiceCaller *m_voiceCaller;
-	JingleSessionManager *m_jingleSessionManager;
+	//JingleSessionManager *m_jingleSessionManager;
 #endif
+
+	JabberBookmarks *m_bookmarks;
 
 	/* Set up our actions for the status menu. */
 	void initActions ();
@@ -211,9 +215,9 @@ private:
 	
 	/* used in removeAccount() */
 	bool m_removing;
-	
-	QStringList m_bookmarkGroupChat;
-
+	/* keep track if we told the user we were not able to bind the
+	   jabber transfer port, to avoid popup insanity */
+	bool m_notifiedUserCannotBindTransferPort;
 private slots:
 	/* Connects to the server. */
 	void slotConnect ();
@@ -298,11 +302,8 @@ private slots:
 	
 	/* the unregister task finished */
 	void slotUnregisterFinished();
-//ifdef SUPPORT_JINGLE  (we can't disable slot, or moc cill complain)
-	void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);
-	
-	void slotReceivedGroupChatBookmark();
-	void slotJoinChatBookmark(const QString& jid);
+
+	//void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);
 };
 
 #endif

@@ -21,7 +21,6 @@
 //Added by qt3to4:
 #include <Q3CString>
 
-class DCOPClient;
 class IConnector;
 
 /**
@@ -44,12 +43,11 @@ protected:
         ERROR
     };
 
-    Q3CString getKInternetDCOP();
-    KInternetDCOPState getConnectionStatusDCOP();
+    Q3CString getKInternetDCOP() const;
+    KInternetDCOPState getConnectionStatusDCOP() const;
 
 protected:
     static Q3CString  m_kinternetApp;
-    DCOPClient     * m_client;
 };
 
 #endif

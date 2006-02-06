@@ -124,7 +124,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const char */*name*/
 	d->m_view->buttonNewIdentity->setIconSet(SmallIconSet("new"));
 	d->m_view->buttonCopyIdentity->setIconSet(SmallIconSet("editcopy"));
 	d->m_view->buttonRenameIdentity->setIconSet(SmallIconSet("edit"));
-	d->m_view->buttonRemoveIdentity->setIconSet(SmallIconSet("editdelete"));
+	d->m_view->buttonRemoveIdentity->setIconSet(SmallIconSet("delete_user"));
 	d->m_view->buttonClearPhoto->setIconSet(  SmallIconSet( QApplication::reverseLayout() ? "locationbar_erase" : "clear_left" ) );
 
 	load(); // Load Configuration

@@ -14,7 +14,6 @@
     *************************************************************************
 */
 
-#include <q3groupbox.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 
@@ -36,7 +35,7 @@
 #include "smpppdcsprefsimpl.h"
 #include "smpppdsearcher.h"
 
-SMPPPDCSPrefs::SMPPPDCSPrefs(QWidget* parent, const char* name, Qt::WFlags fl)
+SMPPPDCSPrefs::SMPPPDCSPrefs(QWidget* parent, const char* name, WFlags fl)
 	: SMPPPDCSPrefsBase(parent, name, fl), m_plugin(NULL), m_scanProgressDlg(NULL), m_curSearcher(NULL) {
 
 	// search for our main-plugin instance

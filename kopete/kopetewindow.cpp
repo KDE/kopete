@@ -20,11 +20,10 @@
 
 #include "kopetewindow.h"
 
-#include <qcursor.h>
-#include <qlayout.h>
-#include <qtooltip.h>
-#include <qtimer.h>
-//Added by qt3to4:
+#include <QCursor>
+#include <QLayout>
+#include <QToolTip>
+#include <QTimer>
 #include <QPixmap>
 #include <QCloseEvent>
 #include <QEvent>
@@ -32,6 +31,7 @@
 #include <QShowEvent>
 #include <QLineEdit>
 #include <khbox.h>
+
 #include <kaction.h>
 #include <kactionclasses.h>
 #include <kconfig.h>
@@ -80,6 +80,21 @@
 #include "kopeteonlinestatusmanager.h"
 #include "kopeteeditglobalidentitywidget.h"
 
+//BEGIN GlobalStatusMessageIconLabel
+GlobalStatusMessageIconLabel::GlobalStatusMessageIconLabel(QWidget *parent, const char *name)
+ : QLabel(parent, name)
+{}
+
+void GlobalStatusMessageIconLabel::mouseReleaseEvent( QMouseEvent *event )
+{
+      if( event->button() == Qt::LeftButton || event->button() == Qt::RightButton )
+      {
+              emit iconClicked( event->globalPos() );
+              event->accept();
+      }
+}
+//END GlobalStatusMessageIconLabel
+
 /* KMainWindow is very broken from our point of view - it deref()'s the app
  * when the last visible KMainWindow is destroyed. But when our main window is
  * hidden when it's in the tray,closing the last chatwindow would cause the app
@@ -121,9 +136,11 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	m_statusBarWidget->setMargin( 2 );
 	m_statusBarWidget->setSpacing( 1 );
 
-	QLabel * label = new QLabel( statusBarMessage, "statusmsglabel" );
+	GlobalStatusMessageIconLabel *label = new GlobalStatusMessageIconLabel( statusBarMessage, "statusmsglabel" );
 	label->setFixedSize( 16, 16 );
 	label->setPixmap( SmallIcon( "kopetestatusmessage" ) );
+	connect(label, SIGNAL(iconClicked( const QPoint& )),
+		this, SLOT(slotGlobalStatusMessageIconClicked( const QPoint& )));
 	QToolTip::add( label, i18n( "Global status message" ) );
 	m_globalStatusMessage = new KSqueezedTextLabel( statusBarMessage );
 	statusBar()->addWidget(statusBarMessage, 1, false );
@@ -191,7 +208,7 @@ void KopeteWindow::initView()
 
 void KopeteWindow::initActions()
 {
-	actionAddContact = new KAction( i18n( "&Add Contact..." ), "bookmark_add",
+	actionAddContact = new KAction( i18n( "&Add Contact..." ), "add_user",
 		0, this, SLOT( showAddContactDialog() ),
 		actionCollection(), "AddContact" );
 
@@ -270,7 +287,7 @@ void KopeteWindow::initActions()
 	KStdAction::configureToolbars( this, SLOT(slotConfToolbar()), actionCollection() );
 	KStdAction::configureNotifications(this, SLOT(slotConfNotifications()), actionCollection(), "settings_notifications" );
 
-	actionShowOffliners = new KToggleAction( i18n( "Show Offline &Users" ), "viewmag", Qt::CTRL + Qt::Key_U,
+	actionShowOffliners = new KToggleAction( i18n( "Show Offline &Users" ), "show_offliners", Qt::CTRL + Qt::Key_U,
 			this, SLOT( slotToggleShowOffliners() ), actionCollection(), "settings_show_offliners" );
 	actionShowEmptyGroups = new KToggleAction( i18n( "Show Empty &Groups" ), "folder_green", Qt::CTRL + Qt::Key_G,
 			this, SLOT( slotToggleShowEmptyGroups() ), actionCollection(), "settings_show_empty_groups" );
@@ -301,6 +318,7 @@ void KopeteWindow::initActions()
 	KActionMenu * setStatusMenu = new KActionMenu( i18n( "Set Status Message" ), "kopeteeditstatusmessage", actionCollection(), "SetStatusMessage" );
 	setStatusMenu->setDelayed( false );
 	connect( setStatusMenu->popupMenu(), SIGNAL( aboutToShow() ), SLOT(slotBuildStatusMessageMenu() ) );
+	connect( setStatusMenu->popupMenu(), SIGNAL( activated( int ) ), SLOT(slotStatusMessageSelected( int ) ) );
 
 	// sync actions, config and prefs-dialog
 #warning Port to new signals when KConfigXT will support signals in snapshot
@@ -952,7 +970,7 @@ void KopeteWindow::slotBuildStatusMessageMenu()
 	{
 		m_globalStatusMessageMenu->insertItem( KStringHandler::rsqueeze( *it ), i );
 	}
-	connect( m_globalStatusMessageMenu, SIGNAL( activated( int ) ), SLOT( slotStatusMessageSelected( int ) ) );
+//	connect( m_globalStatusMessageMenu, SIGNAL( activated( int ) ), SLOT( slotStatusMessageSelected( int ) ) );
 //	connect( messageMenu, SIGNAL( aboutToHide() ), messageMenu, SLOT( deleteLater() ) );
 
 	m_newMessageEdit->setFocus();
@@ -977,6 +995,17 @@ void KopeteWindow::slotNewStatusMessageEntered()
 	if ( !newMessage.isEmpty() )
 		Kopete::Away::getInstance()->addMessage( newMessage );
 	setStatusMessage( m_newMessageEdit->text() );
+}
+
+void KopeteWindow::slotGlobalStatusMessageIconClicked( const QPoint &position )
+{
+	KMenu *statusMessageIconMenu = new KMenu(this);
+	connect(statusMessageIconMenu, SIGNAL( aboutToShow() ),
+		this, SLOT(slotBuildStatusMessageMenu()));
+	connect( statusMessageIconMenu, SIGNAL( activated( int ) ),
+				SLOT( slotStatusMessageSelected( int ) ) );
+
+	statusMessageIconMenu->popup(position);
 }
 
 #include "kopetewindow.moc"

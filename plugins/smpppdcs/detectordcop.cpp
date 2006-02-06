@@ -18,6 +18,8 @@
 #include <dcopclient.h>
 #include <kdebug.h>
 
+#include "kinternetiface_stub.h"
+
 #include "detectordcop.h"
 #include "iconnector.h"
 //Added by qt3to4:
@@ -26,18 +28,18 @@
 Q3CString DetectorDCOP::m_kinternetApp = "";
 
 DetectorDCOP::DetectorDCOP(IConnector * connector)
-        : Detector(connector) {}
+	: Detector(connector) {}
 
 DetectorDCOP::~DetectorDCOP() {}
 
 /*!
     \fn DetectorDCOP::getKInternetDCOP()
  */
-Q3CString DetectorDCOP::getKInternetDCOP() {
-    m_client = kapp->dcopClient();
-    if(m_kinternetApp.isEmpty() && m_client && m_client->isAttached()) {
+Q3CString DetectorDCOP::getKInternetDCOP() const {
+    DCOPClient * client = kapp->dcopClient();
+    if(m_kinternetApp.isEmpty() && client && client->isAttached()) {
         // get all registered dcop apps and search for kinternet
-        DCOPCStringList apps = m_client->registeredApplications();
+        DCOPCStringList apps = client->registeredApplications();
         DCOPCStringList::iterator iter;
         for(iter = apps.begin(); iter != apps.end(); ++iter) {
             if((*iter).left(9) == "kinternet") {
@@ -52,27 +54,26 @@ Q3CString DetectorDCOP::getKInternetDCOP() {
 /*!
     \fn DetectorDCOP::getConnectionStatusDCOP()
  */
-DetectorDCOP::KInternetDCOPState DetectorDCOP::getConnectionStatusDCOP() {
-    QByteArray data, replyData;
-    DCOPCString replyType;
-    QDataStream arg(&data, QIODevice::WriteOnly);
-
+DetectorDCOP::KInternetDCOPState DetectorDCOP::getConnectionStatusDCOP() const {
     kDebug(14312) << k_funcinfo << "Start inquiring " << m_kinternetApp << " via DCOP" << endl;
+	
+	
+	KInternetIface_stub stub = KInternetIface_stub(kapp->dcopClient(), m_kinternetApp, "KInternetIface");
+	
+	bool status = stub.isOnline();
+	
+	if(stub.ok()) {
+		if(status) {
+			kDebug(14312) << k_funcinfo << "isOnline() returned true" << endl;
+			return CONNECTED;
+		} else {
+			kDebug(14312) << k_funcinfo << "isOnline() returned false" << endl;
+			return DISCONNECTED;
+		}
+	} else {
+		kWarning(14312) << k_funcinfo << "DCOP call to " << m_kinternetApp << " failed!";
+	}
 
-    if(!m_client->call(m_kinternetApp, DCOPCString("KInternetIface"), DCOPCString("isOnline()"), data, replyType, replyData)) {
-        kDebug(14312) << k_funcinfo << "there was some error using DCOP." << endl;
-    } else {
-        QDataStream reply(&replyData, QIODevice::ReadOnly);
-        if(replyType == "bool") {
-            bool result;
-            reply >> result;
-            kDebug(14312) << k_funcinfo << "isOnline() returned " << result << endl;
-            return result ? CONNECTED : DISCONNECTED;
-        } else {
-            kDebug(14312) << k_funcinfo << "isOnline() returned an unexpected type of reply!" << endl;
-        }
-    }
-
-    return ERROR;
+	return ERROR;
 }
 

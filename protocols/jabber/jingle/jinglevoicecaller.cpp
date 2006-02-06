@@ -29,7 +29,6 @@
 #include "xmpp.h"
 #include "xmpp_xmlcommon.h"
 #include "jinglevoicecaller.h"
-//#include "psiaccount.h"
 #include "jabberprotocol.h"
 
 // Should change in the future
@@ -195,7 +194,7 @@ void JingleVoiceCaller::initialize()
 	if (initialized_)
 		return;
 
-	QString jid = ((ClientStream&) account()->client()->stream()).jid().full();
+	QString jid = ((ClientStream&) account()->client()->client()->stream()).jid().full();
 	qDebug(QString("jinglevoicecaller.cpp: Creating new caller for %1").arg(jid));
 	if (jid.isEmpty()) {
 		qWarning("jinglevoicecaller.cpp: Empty JID");
@@ -234,7 +233,7 @@ void JingleVoiceCaller::initialize()
 	new JingleIQResponder(account()->client()->rootTask());
 
 	// Listen to incoming packets
-	connect(account()->client(),SIGNAL(xmlIncoming(const QString&)),SLOT(receiveStanza(const QString&)));
+	connect(account()->client()->client(),SIGNAL(xmlIncoming(const QString&)),SLOT(receiveStanza(const QString&)));
 
 	initialized_ = true;
 }
@@ -319,10 +318,10 @@ void JingleVoiceCaller::registerCall(const Jid& jid, cricket::Call* call)
 	if (!calls_.contains(jid.full())) {
 		calls_[jid.full()] = call;
 	}
-	else {
-		qWarning("jinglevoicecaller.cpp: Auto-rejecting call because another call is currently open");
-		call->RejectSession(call->sessions()[0]);
-	}
+// 	else {
+// 		qWarning("jinglevoicecaller.cpp: Auto-rejecting call because another call is currently open");
+// 		call->RejectSession(call->sessions()[0]);
+// 	}
 }
 
 void JingleVoiceCaller::removeCall(const Jid& j)

@@ -41,7 +41,8 @@ kopete_jabber_la_SOURCES = \
 	jabbergroupchatmanager.cpp \
 	jabberfiletransfer.cpp \
 	jabbercapabilitiesmanager.cpp\
-	jabbertransport.cpp
+	jabbertransport.cpp\
+	jabberbookmarks.cpp
 
 kopete_jabber_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_jabber_la_LIBADD  = $(top_builddir)/kopete/libkopete/libkopete.la \
@@ -58,6 +59,9 @@ kopete_jabber_la_LIBADD  = $(top_builddir)/kopete/libkopete/libkopete.la \
 
 service_DATA = kopete_jabber.desktop
 servicedir = $(kde_servicesdir)
+
+mydatadir = $(kde_datadir)/kopete_jabber
+mydata_DATA = jabberchatui.rc
 
 noinst_HEADERS = jabberresourcepool.h jabbercontact.h jabbergroupcontact.h \
 	jabberclient.h

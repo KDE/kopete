@@ -213,7 +213,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 			 this, SLOT( setStyle(const QString &) ) );
 	connect( KopetePrefs::prefs(), SIGNAL(styleVariantChanged(const QString &)),
 			 this, SLOT( setStyleVariant(const QString &) ) );
-#endif 0
+#endif
 	// Refresh the style if the display name change.
 	connect( d->manager, SIGNAL(displayNameChanged()), this, SLOT(changeStyle()) );
 
@@ -369,7 +369,9 @@ void ChatMessagePart::slotAppearanceChanged()
 void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 {
 	// parse emoticons and URL now.
-	message.setBody( message.parsedBody() , Kopete::Message::ParsedHTML );
+	// Do not reparse emoticons on restoring, because it cause very intensive CPU usage on long chats.
+	if( !restoring )
+		message.setBody( message.parsedBody() , Kopete::Message::ParsedHTML );
 
 	message.setBgOverride( d->bgOverride );
 	message.setFgOverride( d->fgOverride );
@@ -500,13 +502,9 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 	{
 		d->allMessages.pop_front();
 			
-		// Do a complete style refresh only if using consecutive messages.
-		// FIXME: Find a better way than that.
-		if( Kopete::AppearanceSettings::self()->groupConsecutiveMessages() )
-		{
-			changeStyle();
-		}
-		else
+		// FIXME: Find a way to make work Chat View Buffer efficiently with consecutives messages.
+		// Before it was calling changeStyle() but it's damn too slow.
+		if( !Kopete::AppearanceSettings::self()->groupConsecutiveMessages() )
 		{
 			chatNode.removeChild( chatNode.firstChild() );
 		}

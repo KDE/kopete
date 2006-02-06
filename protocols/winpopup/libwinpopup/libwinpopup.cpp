@@ -27,7 +27,7 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <klocale.h>
-#include <kfileitem.h>
+#include <kdirlister.h>
 #include <ktoolinvocation.h>
 
 // Kopete Includes
@@ -40,14 +40,24 @@ WinPopupLib::WinPopupLib(const QString &smbClient,int groupFreq,int messageCheck
 	: smbClientBin(smbClient), groupCheckFreq(groupFreq), messageCheckFreq(messageCheck)
 {
 	connect(&updateGroupDataTimer, SIGNAL(timeout()), this, SLOT(slotUpdateGroupData()));
-	connect(&messageCheckTimer, SIGNAL(timeout()), this, SLOT(slotCheckForNewMessages()));
 
 	updateGroupDataTimer.start(1, true);
-	messageCheckTimer.start(1, true);
+	QTimer::singleShot(1, this, SLOT(slotStartDirLister()));
 }
 
 WinPopupLib::~WinPopupLib()
 {
+}
+
+void WinPopupLib::slotStartDirLister()
+{
+	if (checkMessageDir()) {
+		dirLister = new KDirLister();
+		dirLister->setAutoUpdate(true);
+		connect(dirLister, SIGNAL(newItems (const KFileItemList &)), this, SLOT(slotNewMessages(const KFileItemList &)));
+		connect(dirLister, SIGNAL(completed()), this, SLOT(slotListCompleted()));
+		dirLister->openURL(KURL(WP_POPUP_DIR));
+	}
 }
 
 /**
@@ -102,26 +112,29 @@ bool WinPopupLib::checkMessageDir()
 	QDir dir(WP_POPUP_DIR);
 	if (! dir.exists()) {
 		int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("Working directory /var/lib/winpopup/ does not exist.\n"
-								     "If you have not configured anything yet (samba) it may be better to call\n"
-								     "Install Into Samba (Configure... -> Account -> Edit)\n"
+								     "If you have not configured anything yet (samba) please see\n"
+								     "Install Into Samba (Configure... -> Account -> Edit) information\n"
+								     "on how to do this.\n"
 								     "Should the directory be created? (May need root password)"), QString::null, i18n("Create Directory"), i18n("Do Not Create"));
 		if (tmpYesNo == KMessageBox::Yes) {
-			QStringList kdesuArgs = QStringList(QString::fromLatin1("mkdir -p -m 0777 /var/lib/winpopup"));
+			QStringList kdesuArgs = QStringList(QString::fromLatin1("-c mkdir -p -m 0777 /var/lib/winpopup"));
 			if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
 		}
 	} else {
 		KFileItem tmpFileItem = KFileItem(KFileItem::Unknown, KFileItem::Unknown, "/var/lib/winpopup/");
-		QString tmpPerms = tmpFileItem.permissionsString();
+		mode_t tmpPerms = tmpFileItem.permissions();
 
-		if (tmpPerms != "drwxrwxrwx") {
+		if (tmpPerms != 0777) {
 
 			kDebug(14170) << "Perms not ok!" << endl;
 
 			int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("Permissions of the working directory "
 									     "/var/lib/winpopup/ are wrong!\n"
+									     "You will not receive messages if you say no.\n"
+								         "You can also correct it manually (chmod 0777 /var/lib/winpopup) and restart kopete.\n"
 									     "Fix? (May need root password)"), QString::null, i18n("Fix"), i18n("Do Not Fix"));
 			if (tmpYesNo == KMessageBox::Yes) {
-				QStringList kdesuArgs = QStringList(QString::fromLatin1("chmod 0777 /var/lib/winpopup"));
+				QStringList kdesuArgs = QStringList(QString::fromLatin1("-c chmod 0777 /var/lib/winpopup"));
 				if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
 			}
 		} else {
@@ -220,77 +233,76 @@ void WinPopupLib::slotReadProcessExited(KProcess *r)
 	}
 }
 
-/**
- * check for new arrived messages
- */
-void WinPopupLib::slotCheckForNewMessages()
+void WinPopupLib::slotListCompleted()
 {
-//	kDebug(14170) << "check for new Messages: " << this << endl;
+	/// only to check received messages during start up, then we use newItems. GF
+	disconnect(dirLister, SIGNAL(completed()), this, SLOT(slotListCompleted()));
+	readMessages(dirLister->items());
+}
 
-	if (!checkMessageDir()) return; // Restart timer if false? GF
+void WinPopupLib::slotNewMessages(const KFileItemList &items)
+{
+	readMessages(items);
+}
 
-	QDir dir(WP_POPUP_DIR);
-	const QFileInfoList messageFiles = dir.entryInfoList(QDir::Files, QDir::Name);
-	if (!messageFiles.empty()) {
-		QFileInfo messageFileInfo;
-		foreach(messageFileInfo, messageFiles) {
-			if (messageFileInfo.isFile()) {
-				QString messageFileName(messageFileInfo.fileName());
-				QString messageFilePath(WP_POPUP_DIR);
-//				messageFilePath.append("/");
-				messageFilePath.append(messageFileName);
-				QFile messageFile(messageFilePath);
+/**
+ * read new arrived messages
+ */
+void WinPopupLib::readMessages(const KFileItemList &items)
+{
+	KFileItem *tmpItem;
+	foreach(tmpItem, items) {
+		if (tmpItem->isFile()) {
+			QFile messageFile(tmpItem->localPath());
 
-				if (messageFile.open(QIODevice::ReadOnly)) {
-					QTextStream stream(&messageFile);
-					QString sender;
-					QDateTime time;
-					QString text;
+			if (messageFile.open(IO_ReadOnly)) {
+				QTextStream stream(&messageFile);
+				QString sender;
+				QDateTime time;
+				QString text;
 
-					// first line is sender, can this really be empty? GF
-					sender = stream.readLine();
-					sender = sender.toUpper();
+				// first line is sender, can this really be empty? GF
+				sender = stream.readLine();
+				sender = sender.upper();
 
-					// second line is time
-					QString tmpTime = stream.readLine();
-					time = QDateTime::fromString(tmpTime, Qt::ISODate);
+				// second line is time
+				QString tmpTime = stream.readLine();
+				time = QDateTime::fromString(tmpTime, Qt::ISODate);
 
-					while (!stream.atEnd()) {
-						text.append(stream.readLine());
-						text.append('\n');
-					}
+				while (!stream.atEnd()) {
+					text.append(stream.readLine());
+					text.append('\n');
+				}
 
-					// remove trailing CR
-					text = text.trimmed();
+				// remove trailing CR
+				text = text.stripWhiteSpace();
 
-					messageFile.close();
+				messageFile.close();
 
-					// delete file
-					if (!messageFile.remove()) {
-						// QFile::remove() seems to be very persistent, it removes even files with 0444 owned by root
-						// if the directory permissions are 0777 - so this is just for safety. GF
-						kDebug(14170) << "Message file not removed - how that?" << endl;
-						int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("A message file could not be removed; "
-											"maybe the permissions are wrong.\n"
-											"Fix? (May need root password)"), QString::null, i18n("Fix"), i18n("Do Not Fix"));
-						if (tmpYesNo == KMessageBox::Yes) {
-							QFileInfo messageFileInfo(messageFile);
-							QStringList kdesuArgs = QStringList(QString("chmod 0666 /var/lib/winpopup/" + messageFileInfo.fileName()));
-							if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) {
-								if (!messageFile.remove())
-									KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Still cannot remove it; please fix manually."));
-							}
+				// delete file
+				if (!messageFile.remove()) {
+					// QFile::remove() seems to be very persistent, it removes even files with 0444 owned by root
+					// if the directory permissions are 0777 - so this is just for safety. GF
+					kDebug(14170) << "Message file not removed - how that?" << endl;
+					int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("A message file could not be removed; "
+										"maybe the permissions are wrong.\n"
+										"Fix? (May need root password)"), QString::null, i18n("Fix"), i18n("Do Not Fix"));
+					if (tmpYesNo == KMessageBox::Yes) {
+						QFileInfo messageFileInfo(messageFile);
+						QStringList kdesuArgs = QStringList(QString("-c chmod 0666 /var/lib/winpopup/" + messageFileInfo.fileName()));
+						if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) {
+							if (!messageFile.remove())
+								KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Still cannot remove it; please fix manually."));
 						}
 					}
-					if (!sender.isEmpty() && time.isValid())
-						emit signalNewMessage(text, time, sender);
-					else
-						kDebug(14170) << "Received invalid message!" << endl;
 				}
+				if (!sender.isEmpty() && time.isValid())
+					emit signalNewMessage(text, time, sender);
+				else
+					kDebug(14170) << "Received invalid message!" << endl;
 			}
-		} // while
-	} // if messageFiles
-	messageCheckTimer.start(messageCheckFreq *1000, true);
+		} // isFile
+	} // foreach
 }
 
 /**
@@ -326,8 +338,7 @@ void WinPopupLib::settingsChanged(const QString &smbClient, int groupFreq, int m
 	groupCheckFreq = groupFreq;
 	messageCheckFreq = messageCheck;
 
-	if (updateGroupDataTimer.isActive()) updateGroupDataTimer.start(groupCheckFreq * 1000);
-	if (messageCheckTimer.isActive()) messageCheckTimer.start(messageCheckFreq * 1000);
+	if (updateGroupDataTimer.isActive()) updateGroupDataTimer.changeInterval(groupCheckFreq * 1000);
 }
 
 #include "libwinpopup.moc"

@@ -51,6 +51,7 @@ class Transfer;
 class ChatSession;
 }
 class Client;
+class YABEntry;
 
 
 class YahooAccount : public Kopete::PasswordedAccount
@@ -215,6 +216,7 @@ protected slots:
 	void slotGotBuddyIconChecksum(const QString&, int);
 	void slotGotBuddyIconRequest(const QString &);
 	void slotBuddyIconChanged(const QString&);
+	void slotGotYABEntry( YABEntry *entry );
 
 	void slotReceiveFileAccepted( Kopete::Transfer *trans, const QString& fileName );
 

@@ -19,7 +19,7 @@
 
 #include <qgroupbox.h>
 
-#include <kprogressbar.h>
+#include <kprogress.h>
 
 #include "smpppdcsprefs.h"
 
@@ -38,7 +38,7 @@ class SMPPPDCSPrefs : public SMPPPDCSPrefsBase
 	
 public:
 
-    SMPPPDCSPrefs(QWidget* parent, const char* name = 0, Qt::WFlags fl = 0);
+    SMPPPDCSPrefs(QWidget* parent, const char* name = 0, WFlags fl = 0);
     ~SMPPPDCSPrefs();
 
 signals:

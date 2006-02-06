@@ -21,7 +21,7 @@
 #include <qimage.h>
 #include <qtooltip.h>
 #include <qfile.h>
-
+#include <qiconset.h>
 #include <QPixmap>
 
 #include <kaction.h>
@@ -75,17 +75,22 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 		protocol,  SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNChatSession*  , MSNContact*  ) ) );
 
 
-	m_actionInvite = new KActionMenu( i18n( "&Invite" ), actionCollection() , "msnInvite" );
+	m_actionInvite = new KActionMenu( i18n( "&Invite" ), actionCollection() , "kontact_contacts" );
 	connect ( m_actionInvite->popupMenu() , SIGNAL( aboutToShow() ) , this , SLOT(slotActionInviteAboutToShow() ) ) ;
 
 	#if !defined NDEBUG
 	new KAction( i18n( "Send Raw C&ommand..." ), 0, this, SLOT( slotDebugRawCommand() ), actionCollection(), "msnDebugRawCommand" ) ;
 	#endif
 
-	m_actionNudge=new KAction( i18n( "Send Nudge" ), 0, this, SLOT(slotSendNudge() ), actionCollection(), "msnSendNudge" ) ;
-	m_actionNudge->setEnabled(false);
-	m_actionWebcamReceive=new KAction( i18n( "View Contact's Webcam" ), 0, this, SLOT(slotWebcamReceive() ), actionCollection(), "msnWebcamReceive" ) ;
-	m_actionWebcamSend=new KAction( i18n( "Send Webcam" ), 0, this, SLOT(slotWebcamSend() ), actionCollection(), "msnWebcamSend" ) ;
+	m_actionNudge=new KAction( i18n( "Send Nudge" ), "bell", 0, this, SLOT(slotSendNudge() ), actionCollection(), "msnSendNudge" ) ;
+	m_actionNudge->setEnabled(true);
+	// Invite to receive webcam action
+	m_actionWebcamReceive=new KAction( i18n( "View Contact's Webcam" ), "webcamreceive",  0, this, SLOT(slotWebcamReceive() ), actionCollection(), "msnWebcamReceive" ) ;
+	m_actionWebcamReceive->setEnabled(true);
+	
+	//Send webcam action
+	m_actionWebcamSend=new KAction( i18n( "Send Webcam" ), "webcamsend",  0, this, SLOT(slotWebcamSend() ), actionCollection(), "msnWebcamSend" ) ;
+	m_actionWebcamSend->setEnabled(true);
 	
 	
 

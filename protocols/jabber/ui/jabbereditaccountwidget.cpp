@@ -86,6 +86,7 @@ void JabberEditAccountWidget::reopen ()
 
 	mID->setText (account()->accountId ());
 	mPass->load (&account()->password ());
+	cbAutoConnect->setChecked (account()->excludeConnect());
 	
 	mResource->setText (account()->configGroup()->readEntry ("Resource", QString::fromLatin1("Kopete")));
 	mPriority->setValue (account()->configGroup()->readNumEntry ("Priority", 5));

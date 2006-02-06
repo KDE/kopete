@@ -30,7 +30,7 @@ class SMPPPDCSIFace : virtual public DCOPObject
   k_dcop:
 
     virtual QString detectionMethod() const = 0;
-    virtual bool isOnline() = 0;
+    virtual bool isOnline() const = 0;
 };
 
 #endif

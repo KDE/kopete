@@ -1,4 +1,6 @@
 /*
+    videodevice.cpp  -  Kopete Video Device Low-level Support
+
     Copyright (c) 2005 by Cláudio da Silveira Pinheiro   <taupter@gmail.com>
 
     Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
@@ -232,14 +234,9 @@ int VideoDevice::checkDevice()
 		}
 		else
 		{
-			if (EINVAL == errno)
-			{
-			kDebug() <<  k_funcinfo << "checkDevice(): " << full_filename << " is no V4L2 device." << endl;
-			}
-			else
-			{
-				return errnoReturn ("VIDIOC_QUERYCAP");
-			}
+// V4L-only drivers should return an EINVAL in errno to indicate they cannot handle V4L2 calls. Not every driver is compliant, so
+// it will try the V4L api even if the error code is different than expected.
+			kDebug() <<  k_funcinfo << "checkDevice(): " << full_filename << " is not a V4L2 device." << endl;
 		}
 #endif
 

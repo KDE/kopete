@@ -99,9 +99,6 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 
 	setCapabilities( Kopete::Protocol::BaseFgColor | Kopete::Protocol::BaseFont | Kopete::Protocol::BaseFormatting );
 
-	// Build the MSN clientId. It sets what MSN feature we support.
-	m_clientId = MSNC4 | InkFormatGIF | SupportMultiPacketMessaging  | SupportWebcam;
-
 	// m_status = m_unknownStatus = UNK;
 }
 
@@ -192,23 +189,18 @@ bool MSNProtocol::validContactId(const QString& userid)
 	return( userid.count("@") ==1 && userid.count(".") >=1 /*&& userid.count(QChar(' ')) == 1*/ );
 }
 
-QString MSNProtocol::clientId()
-{
-	return QString::number(m_clientId, 10);
-}
-
 QImage MSNProtocol::scalePicture(const QImage &picture)
 {
 	QImage img(picture);
 	img = img.smoothScale( 96, 96, Qt::KeepAspectRatioByExpanding );
 	// crop image if not square
-	if(img.width() > img.height()) 
+	if(img.width() < img.height())
 	{
-		img = img.copy((img.width()-img.height())/2, 0, img.height(), img.height());
+		img = img.copy((img.width()-img.height())/2, 0, 96, 96);
 	}
-	else 
+	else if(img.width() > img.height())
 	{
-		img = img.copy(0, (img.height()-img.width())/2, img.width(), img.width());
+		img = img.copy(0, (img.height()-img.width())/2, 96, 96);
 	}
 
 	return img;

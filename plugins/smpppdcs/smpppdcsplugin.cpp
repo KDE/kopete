@@ -24,33 +24,47 @@
 #include <QByteArray>
 
 #include <kdebug.h>
-#include <kconfig.h>
 #include <kgenericfactory.h>
 
 #include "kopeteprotocol.h"
+#include "networkstatuscommon.h"
 #include "kopetepluginmanager.h"
 #include "kopeteaccountmanager.h"
 
+#include "detectornetworkstatus.h"
 #include "detectornetstat.h"
 #include "detectorsmpppd.h"
+#include "smpppdcsconfig.h"
 
 typedef KGenericFactory<SMPPPDCSPlugin> SMPPPDCSPluginFactory;
 K_EXPORT_COMPONENT_FACTORY(kopete_smpppdcs, SMPPPDCSPluginFactory("kopete_smpppdcs"))
 
 SMPPPDCSPlugin::SMPPPDCSPlugin(QObject *parent, const char * name, const QStringList& /* args */)
         : DCOPObject("SMPPPDCSIface"), Kopete::Plugin(SMPPPDCSPluginFactory::instance(), parent, name),
-        m_detectorSMPPPD(NULL), m_detectorNetstat(NULL), m_timer(NULL),
+        m_detectorSMPPPD(NULL), m_detectorNetstat(NULL), m_detectorNetworkStatus(NULL), m_timer(NULL),
 m_onlineInquiry(NULL) {
 
-    m_pluginConnected = false;
+    kDebug(14312) << k_funcinfo << endl;
 
-    // we wait for the allPluginsLoaded signal, to connect as early as possible after startup
-    connect(Kopete::PluginManager::self(), SIGNAL(allPluginsLoaded()),
-            this, SLOT(allPluginsLoaded()));
+    m_pluginConnected = false;
 
     m_onlineInquiry   = new OnlineInquiry();
     m_detectorSMPPPD  = new DetectorSMPPPD(this);
     m_detectorNetstat = new DetectorNetstat(this);
+
+    // experimental, not used yet
+    m_detectorNetworkStatus = new DetectorNetworkStatus(this);
+
+    // we wait for the allPluginsLoaded signal, to connect
+    // as early as possible after startup, but not before
+    // all accounts are ready
+    connect(Kopete::PluginManager::self(), SIGNAL(allPluginsLoaded()),
+            this, SLOT(allPluginsLoaded()));
+
+    // if kopete was already running and the plugin
+    // was loaded later, we check once after 15 secs
+    // if all other plugins have been loaded
+    QTimer::singleShot(15000, this, SLOT(allPluginsLoaded()));
 }
 
 SMPPPDCSPlugin::~SMPPPDCSPlugin() {
@@ -60,30 +74,38 @@ SMPPPDCSPlugin::~SMPPPDCSPlugin() {
     delete m_timer;
     delete m_detectorSMPPPD;
     delete m_detectorNetstat;
+    delete m_detectorNetworkStatus;
     delete m_onlineInquiry;
 }
 
 void SMPPPDCSPlugin::allPluginsLoaded() {
 
-    m_timer = new QTimer();
-    connect( m_timer, SIGNAL( timeout() ), this, SLOT( slotCheckStatus() ) );
+    if(Kopete::PluginManager::self()->isAllPluginsLoaded()) {
+        m_timer = new QTimer();
+        connect(m_timer, SIGNAL(timeout()), this, SLOT(slotCheckStatus()));
 
-    if(useSmpppd()) {
-        m_timer->start(30000);
-    } else {
-        // we use 1 min interval, because it reflects the old connectionstatus plugin behaviour
-        m_timer->start(60000);
+		if(SMPPPDCSConfig::self()->useSmpppd()) {
+            m_timer->start(30000);
+        } else {
+            // we use 1 min interval, because it reflects
+            // the old connectionstatus plugin behaviour
+            m_timer->start(60000);
+        }
+
+        slotCheckStatus();
     }
-
-    slotCheckStatus();
 }
 
-bool SMPPPDCSPlugin::isOnline() {
-    return m_onlineInquiry->isOnline(useSmpppd());
+bool SMPPPDCSPlugin::isOnline() const {
+	return m_onlineInquiry->isOnline(SMPPPDCSConfig::self()->useSmpppd());
 }
 
 void SMPPPDCSPlugin::slotCheckStatus() {
-    if(useSmpppd()) {
+	
+	// reread config to get changes
+	SMPPPDCSConfig::self()->readConfig();
+	
+	if(SMPPPDCSConfig::self()->useSmpppd()) {
         m_detectorSMPPPD->checkStatus();
     } else {
         m_detectorNetstat->checkStatus();
@@ -117,13 +139,19 @@ void SMPPPDCSPlugin::setConnectedStatus( bool connected ) {
 
 void SMPPPDCSPlugin::connectAllowed()
 {
-	static KConfig *config = KGlobal::config();
-	config->setGroup(SMPPPDCS_CONFIG_GROUP);
-	QStringList list = config->readListEntry("ignoredAccounts");
+	QStringList list = SMPPPDCSConfig::self()->ignoredAccounts();
 	
 	Kopete::AccountManager * m = Kopete::AccountManager::self();
 	foreach(Kopete::Account *account, m->accounts())
 	{
+#ifndef NDEBUG
+        if(account->inherits("Kopete::ManagedConnectionAccount")) {
+            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + "_" + account->accountId() << " is an managed account!" << endl;
+        } else {
+            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + "_" +account->accountId() << " is an unmanaged account!" << endl;
+        }
+#endif
+
 		if(!list.contains(account->protocol()->pluginId() + "_" + account->accountId())) {
 			account->connect();
 		}
@@ -131,30 +159,26 @@ void SMPPPDCSPlugin::connectAllowed()
 }
 
 void SMPPPDCSPlugin::disconnectAllowed() {
-    static KConfig *config = KGlobal::config();
-    config->setGroup(SMPPPDCS_CONFIG_GROUP);
-	QStringList list = config->readListEntry("ignoredAccounts");
+	QStringList list = SMPPPDCSConfig::self()->ignoredAccounts();
 	
 	Kopete::AccountManager * m = Kopete::AccountManager::self();
 	foreach(Kopete::Account *account, m->accounts())
 	{
+#ifndef NDEBUG
+        if(account->inherits("Kopete::ManagedConnectionAccount")) {
+            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + "_" + account->accountId() << " is an managed account!" << endl;
+        } else {
+            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + "_" +account->accountId() << " is an unmanaged account!" << endl;
+        }
+#endi
 		if(!list.contains(account->protocol()->pluginId() + "_" + account->accountId())) {
 			account->disconnect();
 		}
 	}
 }
 
-/*!
-    \fn SMPPPDCSPlugin::useSmpppd() const
- */
-bool SMPPPDCSPlugin::useSmpppd() const {
-    static KConfig *config = KGlobal::config();
-    config->setGroup(SMPPPDCS_CONFIG_GROUP);
-    return config->readBoolEntry("useSmpppd", false);
-}
-
 QString SMPPPDCSPlugin::detectionMethod() const {
-    if(useSmpppd()) {
+	if(SMPPPDCSConfig::self()->useSmpppd()) {
         return "smpppd";
     } else {
         return "netstat";
@@ -166,14 +190,23 @@ QString SMPPPDCSPlugin::detectionMethod() const {
  */
 void SMPPPDCSPlugin::smpppdServerChanged(const QString& server)
 {
-	static KConfig *config = KGlobal::config();
-	config->setGroup(SMPPPDCS_CONFIG_GROUP);
-	QString oldServer = config->readEntry("server", "localhost").utf8();
+	QString oldServer = SMPPPDCSConfig::self()->server().utf8();
 	
 	if(oldServer != server) {
 		kDebug(14312) << k_funcinfo << "Detected a server change" << endl;
 		m_detectorSMPPPD->smpppdServerChange();
 	}
+}
+
+void SMPPPDCSPlugin::aboutToUnload() {
+
+    kDebug(14312) << k_funcinfo << endl;
+
+    if(m_timer) {
+        m_timer->stop();
+    }
+
+    emit readyForUnload();
 }
 
 #include "smpppdcsplugin.moc"

@@ -1,13 +1,13 @@
 /*
     Kopete Yahoo Protocol
     
-    Copyright (c) 2005 Andre Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005-2006 Andre Duffeck <andre.duffeck@kdemail.net>
     Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
     Copyright (c) 2004 Matt Rogers <matt.rogers@kdemail.net>
     Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
     Copyright (C) 2003  Justin Karneges
     
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -47,6 +47,7 @@
 #include "conferencetask.h"
 #include "sendauthresptask.h"
 #include "pingtask.h"
+#include "yabtask.h"
 #include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
@@ -76,6 +77,7 @@ public:
 	PictureNotifierTask *pictureNotifierTask;
 	WebcamTask *webcamTask;
 	ConferenceTask *conferenceTask;
+	YABTask *yabTask;
 
 	// Connection data
 	uint sessionID;
@@ -488,6 +490,14 @@ void Client::sendConferenceMessage( const QString &room, const QStringList &memb
 {
 	d->conferenceTask->sendMessage( room, members, msg );
 }
+
+// ***** YAB *****
+void Client::getYABEntries()
+{
+	d->yabTask->getAllEntries();
+}
+
+
 // ***** other *****
 void Client::notifyError( const QString & error )
 {
@@ -678,6 +688,10 @@ void Client::initTasks()
 				SIGNAL( confUserLeft( const QString &, const QString & ) ) );
 	QObject::connect( d->conferenceTask, SIGNAL( userDeclined( const QString &, const QString &, const QString & ) ),
 				SIGNAL( confUserDeclined( const QString &, const QString &, const QString & ) ) );
+
+	d->yabTask = new YABTask( d->root );
+	QObject::connect( d->yabTask, SIGNAL( gotEntry( YABEntry * ) ),
+				SIGNAL( gotYABEntry( YABEntry * ) ) );
 }
 
 void Client::deleteTasks()
@@ -695,6 +709,8 @@ void Client::deleteTasks()
 	d->webcamTask = 0L;
 	d->conferenceTask->deleteLater();
 	d->conferenceTask = 0L;
+	d->yabTask->deleteLater();
+	d->yabTask = 0L;
 }
 
 #include "client.moc"

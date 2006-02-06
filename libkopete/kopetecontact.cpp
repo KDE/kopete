@@ -46,6 +46,7 @@
 #include "kopeteappearancesettings.h"
 #include "kopetebehaviorsettings.h"
 #include "metacontactselectorwidget.h"
+#include "kopeteemoticons.h"
 
 //For the moving to another metacontact dialog
 #include <qlabel.h>
@@ -207,7 +208,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 
 	if( metaContact() && metaContact()->isTemporary() && contactId() != account()->myself()->contactId() )
 	{
-		KAction *actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "bookmark_add" ),
+		KAction *actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "add_user" ),
 		                                         KShortcut(), this, SLOT( slotAddContact() ), 0, "actionAddContact" );
 		actionAddContact->plug( menu );
 		menu->addSeparator();
@@ -456,7 +457,7 @@ void Contact::slotDelete()
 {
 	if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
 		i18n( "Are you sure you want to remove the contact  '%1' from your contact list?" ).
-		arg( d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("editdelete") ),
+		arg( d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("delete_user") ),
 		QString::fromLatin1("askRemoveContact"), KMessageBox::Notify | KMessageBox::Dangerous )
 		== KMessageBox::Continue )
 	{
@@ -663,7 +664,7 @@ QString Contact::toolTip() const
 			"<nobr><b>%4</b> (%3)</nobr><br><img src=\"%2\">&nbsp;%1" ).
 				arg( Kopete::Message::escape( onlineStatus().description() ), iconName,
 					Kopete::Message::escape( contactId() ),
-					Kopete::Message::escape( nick ) );
+					Kopete::Emoticons::parseEmoticons( Kopete::Message::escape( nick ) ) );
 	}
 
 	// --------------------------------------------------------------------------
@@ -705,7 +706,7 @@ QString Contact::toolTip() const
 			if(!awaymsg.isEmpty())
 			{
 				tip += i18n("<br><b>Away Message:</b>&nbsp;FORMATTED AWAY MESSAGE",
-							"<br><b>Away&nbsp;Message:</b>&nbsp;%1").arg ( Kopete::Message::escape(awaymsg) );
+							"<br><b>Away&nbsp;Message:</b>&nbsp;%1").arg ( Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(awaymsg) ) );
 			}
 		}
 		else
