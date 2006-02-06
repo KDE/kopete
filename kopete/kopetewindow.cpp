@@ -5,7 +5,7 @@
     Copyright (c) 2001-2002 by Stefan Gehn            <metz AT gehn.net>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
-    Copyright (c) 2005-2006 by Will Stephenson        <wstephenson at kde.org>
+
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -23,9 +23,11 @@
 #include <qcursor.h>
 #include <qlayout.h>
 #include <qhbox.h>
+#include <qvbox.h>
 #include <qtooltip.h>
 #include <qtimer.h>
 #include <qevent.h>
+#include <qsignalmapper.h>
 
 #include <kaction.h>
 #include <kactionclasses.h>
@@ -45,11 +47,14 @@
 #include <kwin.h>
 #include <kdeversion.h>
 #include <kinputdialog.h>
+#include <kplugininfo.h>
 #include <ksqueezedtextlabel.h>
 #include <kstringhandler.h>
 #include <kurl.h>
 
+#include "addcontactpage.h"
 #include "addcontactwizard.h"
+#include "groupkabcselectorwidget.h"
 #include "kabcexport.h"
 #include "kopeteapplication.h"
 #include "kopeteaccount.h"
@@ -59,6 +64,8 @@
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
+#include "kopetegroup.h"
+#include <kdialogbase.h>
 #include "kopetelistviewsearchline.h"
 #include "kopetechatsessionmanager.h"
 #include "kopetepluginconfig.h"
@@ -110,7 +117,7 @@ void GlobalStatusMessageIconLabel::mouseReleaseEvent( QMouseEvent *event )
  * queryClose() is honoured so group chats and chats receiving recent messages can interrupt
  * (session) quit.
  */
-
+ 
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 : KMainWindow( parent, name, WType_TopLevel )
 {
@@ -119,6 +126,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	// a MacOS-style MenuBar.
 	// This fixes a "statusbar drawn over the top of the toolbar" bug
 	// e.g. it can happen when you switch desktops on Kopete startup
+
 	m_statusBarWidget = new QHBox(statusBar(), "m_statusBarWidget");
 	m_statusBarWidget->setMargin( 2 );
 	m_statusBarWidget->setSpacing( 1 );
@@ -194,9 +202,14 @@ void KopeteWindow::initView()
 
 void KopeteWindow::initActions()
 {
-	actionAddContact = new KAction( i18n( "&Add Contact..." ), "add_user",
-		0, this, SLOT( showAddContactDialog() ),
+	// this action menu contains one action per account and is updated when accounts are registered/unregistered
+	actionAddContact = new KActionMenu( i18n( "&Add Contact" ), "add_user",
 		actionCollection(), "AddContact" );
+	actionAddContact->setDelayed( false );
+	// this signal mapper is needed to call slotAddContact with the correct arguments
+	addContactMapper = new QSignalMapper( this );
+	connect( addContactMapper, SIGNAL( mapped( const QString & ) ),
+		 this, SLOT( slotAddContactDialogInternal( const QString & ) ) );
 
 	/* ConnectAll is now obsolete.  "Go online" has replaced it.
 	actionConnect = new KAction( i18n( "&Connect Accounts" ), "connect_creating",
@@ -708,6 +721,13 @@ void KopeteWindow::slotAccountRegistered( Kopete::Account *account )
 
 	m_accountStatusBarIcons.insert( account, sbIcon );
 	slotAccountStatusIconChanged( account->myself() );
+	
+	// add an item for this account to the add contact actionmenu
+	QString s = "actionAdd%1Contact";
+	s.arg( account->accountId() );
+	KAction *action = new KAction( account->accountLabel(), account->accountIcon(), 0 , addContactMapper, SLOT( map() ), account, s.latin1() );
+	addContactMapper->setMapping( action, account->protocol()->pluginId() + QChar(0xE000) + account->accountId() );
+	actionAddContact->insert( action );
 }
 
 void KopeteWindow::slotAccountUnregistered( const Kopete::Account *account)
@@ -730,6 +750,19 @@ void KopeteWindow::slotAccountUnregistered( const Kopete::Account *account)
 	delete sbIcon;
 
 	makeTrayToolTip();
+	
+	// update add contact actionmenu
+	QString s = "actionAdd%1Contact";
+	s.arg( account->accountId() );
+// 	KAction * action = actionCollection()->action( account->accountId() );
+	Kopete::Account * myAccount = const_cast< Kopete::Account * > ( account );
+	KAction * action = static_cast< KAction *>( myAccount->child( s.latin1() ) );
+	if ( action )
+	{
+		kdDebug(14000) << " found KAction " << action << " with name: " << action->name() << endl;
+		addContactMapper->removeMappings( action );
+		actionAddContact->remove( action );
+	}
 }
 
 void KopeteWindow::slotAccountStatusIconChanged()
@@ -740,7 +773,18 @@ void KopeteWindow::slotAccountStatusIconChanged()
 
 void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 {
+	kdDebug( 14000 ) << k_funcinfo << contact->property( Kopete::Global::Properties::self()->awayMessage() ).value() << endl;
+	// update the global status label if the change doesn't 
+//	QString newAwayMessage = contact->property( Kopete::Global::Properties::self()->awayMessage() ).value().toString();
 	Kopete::OnlineStatus status = contact->onlineStatus();
+/*	if ( status.status() != Kopete::OnlineStatus::Connecting )
+	{
+		QString globalMessage = m_globalStatusMessage->text();
+		if ( newAwayMessage != globalMessage )
+			m_globalStatusMessage->setText( "" /* i18n("status message to show when different accounts have different status messages", "(multiple)" )*/ /*);
+	}*/
+//	kdDebug(14000) << k_funcinfo << "Icons: '" <<
+//		status.overlayIcons() << "'" << endl;
 
 	if ( status != Kopete::OnlineStatus::Connecting )
 	{
@@ -845,11 +889,6 @@ void KopeteWindow::slotTrayAboutToShowMenu( KPopupMenu * popup )
 		menu->popupMenu()->popup( p );
 	}
 }*/
-
-void KopeteWindow::showAddContactDialog()
-{
-	(new AddContactWizard(this))->show();
-}
 
 void KopeteWindow::showExportDialog()
 {
@@ -975,6 +1014,62 @@ void KopeteWindow::slotGlobalStatusMessageIconClicked( const QPoint &position )
 				SLOT( slotStatusMessageSelected( int ) ) );
 
 	statusMessageIconMenu->popup(position);
+}
+
+void KopeteWindow::slotAddContactDialogInternal( const QString & accountIdentifier )
+{
+	QString protocolId = accountIdentifier.section( QChar(0xE000), 0, 0 );
+	QString accountId = accountIdentifier.section( QChar(0xE000), 1, 1 );
+	Kopete::Account *account = Kopete::AccountManager::self()->findAccount( protocolId, accountId );
+ 	showAddContactDialog( account );
+}
+
+void KopeteWindow::showAddContactDialog( Kopete::Account * account )
+{
+	if ( !account ) {
+		kdDebug( 14000 ) << k_funcinfo << "no account given" << endl; 
+		return;
+	}
+	
+	Kopete::Group *group = Kopete::Group::topLevel();
+
+	KDialogBase *addDialog = new KDialogBase( this, "addDialog", true,
+		i18n( "Add Contact" ), KDialogBase::Ok|KDialogBase::Cancel,
+		KDialogBase::Ok, true );
+
+	QVBox * mainWid = new QVBox( addDialog );
+	
+	AddContactPage *addContactPage =
+		account->protocol()->createAddContactWidget( mainWid, account );
+
+	GroupKABCSelectorWidget * groupKABC = new GroupKABCSelectorWidget( mainWid, "groupkabcwidget" );
+
+	if (!addContactPage)
+	{
+		kdDebug(14000) << k_funcinfo <<
+			"Error while creating addcontactpage" << endl;
+	}
+	else
+	{
+		addDialog->setMainWidget( mainWid );
+		if( addDialog->exec() == QDialog::Accepted )
+		{
+			if( addContactPage->validateData() )
+			{
+				Kopete::MetaContact * metacontact = new Kopete::MetaContact();
+				metacontact->addToGroup( group );
+				if (addContactPage->apply( account, metacontact ))
+				{
+					Kopete::ContactList::self()->addMetaContact( metacontact );
+				}
+				else
+				{
+					delete metacontact;
+				}
+			}
+		}
+	}
+	addDialog->deleteLater();
 }
 
 #include "kopetewindow.moc"
