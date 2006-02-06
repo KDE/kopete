@@ -246,7 +246,7 @@ void Component::layout( const QRect &newRect )
 	else
 		d->startRect = rect();
 	d->targetRect = newRect;
-	//kdDebug(14000) << k_funcinfo << "At " << rect << endl;
+	//kDebug(14000) << k_funcinfo << "At " << rect << endl;
 }
 
 void Component::setRect( const QRect &rect )
@@ -741,7 +741,7 @@ void DisplayNameComponent::redraw()
 			ic->scale( INT_MAX, fontHeight, Qt::KeepAspectRatio );
 		break;
 		default:
-			kdDebug( 14010 ) << k_funcinfo << "This should have not happened!" << endl;
+			kDebug( 14010 ) << k_funcinfo << "This should have not happened!" << endl;
 		}
 	}
 	
@@ -869,14 +869,14 @@ public:
 		connect( this, SIGNAL(timeout()), target, slot );
 		if( users++ == 0 )
 			start( period );
-		//kdDebug(14000) << "SharedTimer::attach: users is now " << users << "\n";
+		//kDebug(14000) << "SharedTimer::attach: users is now " << users << "\n";
 	}
 	void detach( QObject *target, const char *slot )
 	{
 		disconnect( this, SIGNAL(timeout()), target, slot );
 		if( --users == 0 )
 			stop();
-		//kdDebug(14000) << "SharedTimer::detach: users is now " << users << "\n";
+		//kDebug(14000) << "SharedTimer::detach: users is now " << users << "\n";
 	}
 };
 
@@ -1030,7 +1030,7 @@ void Item::slotLayoutItems()
 
 		int height = component( n )->heightForWidth( width );
 		component( n )->layout( QRect( 0, 0, width, height ) );
-		//kdDebug(14000) << k_funcinfo << "Component " << n << " is " << width << " x " << height << endl;
+		//kDebug(14000) << k_funcinfo << "Component " << n << " is " << width << " x " << height << endl;
 	}
 
 	if ( Private::animateChanges && d->animateLayout && !d->visibilityTimer.isActive() )
@@ -1081,7 +1081,7 @@ void Item::setSearchMatch( bool match )
 		setVisible( false );
 	else
 	{
-		kdDebug(14000) << k_funcinfo << " match: " << match << ", vis timer active: " << d->visibilityTimer.isActive()
+		kDebug(14000) << k_funcinfo << " match: " << match << ", vis timer active: " << d->visibilityTimer.isActive()
 		               << ", target visibility: " << targetVisibility() << endl;
 		if ( d->visibilityTimer.isActive() )
 			setVisible( true );
@@ -1166,7 +1166,7 @@ void Item::setHeight( int )
 	int minHeight = 0;
 	for ( uint n = 0; n < components(); ++n )
 		minHeight = qMax( minHeight, component( n )->rect().height() );
-	//kdDebug(14000) << k_funcinfo << "Height is " << minHeight << endl;
+	//kDebug(14000) << k_funcinfo << "Height is " << minHeight << endl;
 	if ( Private::foldVisibility && d->visibilityTimer.isActive() )
 	{
 		int vis = d->visibilityLevel;

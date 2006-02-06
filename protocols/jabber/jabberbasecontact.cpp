@@ -81,7 +81,7 @@ bool JabberBaseContact::isReachable ()
 
 void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 {
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Synchronizing local copy of " << contactId() << " with information received from server.  (name='" << item.name() << "' groups='" << item.groups() << "')"<< endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Synchronizing local copy of " << contactId() << " with information received from server.  (name='" << item.name() << "' groups='" << item.groups() << "')"<< endl;
 
 	mRosterItem = item;
 
@@ -103,7 +103,7 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 		// only update the alias if its not empty
 		if ( !item.name().isEmpty () && item.name() != item.jid().bare() )
 		{
-			kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "setting display name of " << contactId () << " to " << item.name() << endl;
+			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "setting display name of " << contactId () << " to " << item.name() << endl;
 			metaContact()->setDisplayName ( item.name () );
 		}
 	}
@@ -183,13 +183,13 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 
 	for ( Kopete::Group *group = groupsToRemoveFrom.first (); group; group = groupsToRemoveFrom.next () )
 	{
-		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing " << contactId() << " from group " << group->displayName () << endl;
+		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing " << contactId() << " from group " << group->displayName () << endl;
 		metaContact()->removeFromGroup ( group );
 	}
 
 	for ( Kopete::Group *group = groupsToAddTo.first (); group; group = groupsToAddTo.next () )
 	{
-		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Adding " << contactId() << " to group " << group->displayName () << endl;
+		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Adding " << contactId() << " to group " << group->displayName () << endl;
 		metaContact()->addToGroup ( group );
 	}
 
@@ -278,7 +278,7 @@ void JabberBaseContact::updateResourceList ()
 
 void JabberBaseContact::reevaluateStatus ()
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Determining new status for " << contactId () << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Determining new status for " << contactId () << endl;
 
 	Kopete::OnlineStatus status;
 	XMPP::Resource resource = account()->resourcePool()->bestResource ( mRosterItem.jid () );
@@ -315,7 +315,7 @@ void JabberBaseContact::reevaluateStatus ()
 	updateResourceList ();
 
 
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New status for " << contactId () << " is " << status.description () << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New status for " << contactId () << " is " << status.description () << endl;
 	setOnlineStatus ( status );
 
 }

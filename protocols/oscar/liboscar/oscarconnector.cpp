@@ -27,7 +27,7 @@
 KNetworkConnector::KNetworkConnector( QObject *parent, const char */*name*/ )
 		: Connector( parent )
 {
-	kdDebug( 14151 ) << k_funcinfo << "New KNetwork connector." << endl;
+	kDebug( 14151 ) << k_funcinfo << "New KNetwork connector." << endl;
 
 	mErrorCode = KNetwork::KSocketBase::NoError;
 
@@ -45,7 +45,7 @@ KNetworkConnector::~KNetworkConnector()
 
 void KNetworkConnector::connectToServer( const QString &server )
 {
-	kdDebug( 14151 ) << k_funcinfo << "Initiating connection to " << mHost << endl;
+	kDebug( 14151 ) << k_funcinfo << "Initiating connection to " << mHost << endl;
 	Q_ASSERT( !mHost.isNull() );
 	Q_ASSERT( mPort );
 
@@ -61,7 +61,7 @@ void KNetworkConnector::connectToServer( const QString &server )
 
 void KNetworkConnector::slotConnected()
 {
-	kdDebug( 14151 ) << k_funcinfo << "We are connected." << endl;
+	kDebug( 14151 ) << k_funcinfo << "We are connected." << endl;
 
 	// FIXME: setPeerAddress() is something different, find out correct usage later
 	//KInetSocketAddress inetAddress = mStreamSocket->address().asInet().makeIPv6 ();
@@ -72,7 +72,7 @@ void KNetworkConnector::slotConnected()
 
 void KNetworkConnector::slotError( int code )
 {
-	kdDebug( 14151 ) << k_funcinfo << "Error detected: " << code << endl;
+	kDebug( 14151 ) << k_funcinfo << "Error detected: " << code << endl;
 
 	mErrorCode = code;
 	emit error ();
@@ -90,13 +90,13 @@ ByteStream *KNetworkConnector::stream() const
 
 void KNetworkConnector::done()
 {
-	kdDebug ( 14151 ) << k_funcinfo << endl;
+	kDebug ( 14151 ) << k_funcinfo << endl;
 	mByteStream->close ();
 }
 
 void KNetworkConnector::setOptHostPort( const QString &host, quint16 port )
 {
-	kdDebug ( 14151 ) << k_funcinfo << "Manually specifying host " << host << " and port " << port << endl;
+	kDebug ( 14151 ) << k_funcinfo << "Manually specifying host " << host << " and port " << port << endl;
 
 	mHost = host;
 	mPort = port;

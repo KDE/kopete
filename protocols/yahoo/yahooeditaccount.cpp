@@ -51,7 +51,7 @@
 // Yahoo Add Contact page
 YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent, const char* /*name*/): YahooEditAccountBase(parent), KopeteEditAccountWidget(theAccount)
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	theProtocol = protocol;
 
@@ -66,7 +66,7 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 		mPasswordWidget->load( &acct->password() );
 
 		QString pagerServer = account()->configGroup()->readEntry("Server", "scs.msg.yahoo.com");
-		int pagerPort = account()->configGroup()->readNumEntry("Port", 5050);
+		int pagerPort = account()->configGroup()->readEntry("Port", 5050);
 		if( pagerServer != "scs.msg.yahoo.com" || pagerPort != 5050 )
 			optionOverrideServer->setChecked( true );
 		else
@@ -75,7 +75,7 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 		sbxServerPort->setValue( pagerPort );
 
 		QString iconUrl = account()->configGroup()->readEntry("pictureUrl", "");
-		bool sendPicture = account()->configGroup()->readBoolEntry("sendPicture", false);
+		bool sendPicture = account()->configGroup()->readEntry("sendPicture", false);
 		optionSendBuddyIcon->setChecked( sendPicture );
     buttonSelectPicture->setEnabled( sendPicture );  
     connect( optionSendBuddyIcon, SIGNAL( toggled( bool ) ), buttonSelectPicture, SLOT( setEnabled( bool ) ) ); 
@@ -85,7 +85,7 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 		editPictureUrl->setEnabled( sendPicture );
 
 		// Global Identity
-		mGlobalIdentity->setChecked( account()->configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) );
+		mGlobalIdentity->setChecked( account()->configGroup()->readEntry("ExcludeGlobalIdentity", false) );
 	}
 
 	QObject::connect(buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
@@ -103,7 +103,7 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 
 bool YahooEditAccount::validateData()
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	if(mScreenName->text().isEmpty())
 	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
@@ -120,7 +120,7 @@ bool YahooEditAccount::validateData()
 
 Kopete::Account *YahooEditAccount::apply()
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	if ( !account() )
 		setAccount( new YahooAccount( theProtocol, mScreenName->text().lower() ) );

@@ -69,7 +69,7 @@ bool RateClassManager::canSend( Transfer* t ) const
 	SnacTransfer* st = dynamic_cast<SnacTransfer*>( t );
 
 	if ( !st ) //no snac transfer, no rate limiting
-	{ kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Not sending a snac" << endl;
+	{ kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Not sending a snac" << endl;
 		return true;
 	}
 
@@ -78,18 +78,18 @@ bool RateClassManager::canSend( Transfer* t ) const
 	{ 
 		if ( rc->timeToNextSend() == 0 )
 		{
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "rate class " << rc->id() << " said it's okay to send" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "rate class " << rc->id() << " said it's okay to send" << endl;
 			return true;
 		}
 		else
 		{
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "rate class " << rc->id() << " said it's not okay to send yet" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "rate class " << rc->id() << " said it's not okay to send yet" << endl;
 			return false;
 		}
 	}
 	else // no rate class
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "no rate class. doing no rate limiting" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "no rate class. doing no rate limiting" << endl;
 		return true;
 	}
 }
@@ -131,7 +131,7 @@ void RateClassManager::transferReady( Transfer* t )
 RateClass* RateClassManager::findRateClass( SnacTransfer* st ) const
 {
 	SNAC s = st->snac();
-	//kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Looking for SNAC " << s.family << ", " << s.subtype << endl;
+	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Looking for SNAC " << s.family << ", " << s.subtype << endl;
 	RateClass* rc = 0L;
 	Q3ValueList<RateClass*>::const_iterator it;
 	Q3ValueList<RateClass*>::const_iterator rcEnd = d->classList.constEnd();
@@ -140,7 +140,7 @@ RateClass* RateClassManager::findRateClass( SnacTransfer* st ) const
 	{
 		if ( ( *it )->isMember( s.family, s.subtype ) )
 		{
-			//kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found SNAC(" << s.family << ", " << s.subtype << ") in class" << endl;
+			//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found SNAC(" << s.family << ", " << s.subtype << ") in class" << endl;
 			rc = ( *it );
 			break;
 		}

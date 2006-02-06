@@ -173,7 +173,7 @@ void Engine::part(Message &msg)
 	/* This signal emits when a user parts a channel
 	* "<channel> *( "," <channel> ) [ <Part Message> ]"
 	*/
-	kdDebug(14120) << "User parting" << endl;
+	kDebug(14120) << "User parting" << endl;
 	emit incomingPartedChannel(msg.arg(0), msg.nickFromPrefix(), msg.suffix());
 }
 
@@ -193,7 +193,7 @@ void Engine::pong(Message &/*msg*/)
 
 void Engine::quit(const QString &reason, bool /*now*/)
 {
-	kdDebug(14120) << k_funcinfo << reason << endl;
+	kDebug(14120) << k_funcinfo << reason << endl;
 
 	if (isDisconnected())
 		return;
@@ -208,7 +208,7 @@ void Engine::quit(Message &msg)
 {
 	/* This signal emits when a user quits irc.
 	 */
-	kdDebug(14120) << "User quiting" << endl;
+	kDebug(14120) << "User quiting" << endl;
 	emit incomingQuitIRC(msg.prefix(), msg.suffix());
 }
 

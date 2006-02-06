@@ -103,7 +103,7 @@ void ICQSearchDialog::startSearch()
 				stopSearch();
 				clearResults();
 				KMessageBox::sorry( this, i18n("You must enter a valid UIN."), i18n("ICQ Plugin") );
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Search aborted: invalid UIN " << m_searchUI->uin->text() << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Search aborted: invalid UIN " << m_searchUI->uin->text() << endl;
 			}
 			else
 			{
@@ -142,13 +142,13 @@ void ICQSearchDialog::startSearch()
 				stopSearch();
 				clearResults();
 				KMessageBox::information(this, i18n("You must enter search criteria."), i18n("ICQ Plugin") );
-				kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Search aborted: all fields were blank" << endl;
+				kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Search aborted: all fields were blank" << endl;
 			}
 			else
 			{
 				// Start the search
 				m_account->engine()->whitePagesSearch( info );
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Starting whitepage search" << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Starting whitepage search" << endl;
 			}
 		}
 	}
@@ -171,12 +171,12 @@ void ICQSearchDialog::addContact()
 	ICQAddContactPage* iacp = dynamic_cast<ICQAddContactPage*>( parent() );
 	if ( !iacp )
 	{
-		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "The ICQ ACP is not our parent!!" << endl;
+		kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "The ICQ ACP is not our parent!!" << endl;
 	}
 	else
 	{
 		QString uin = m_searchUI->searchResults->selectedItem()->text( 0 );
-		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Passing " << uin << " back to the ACP" << endl;
+		kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Passing " << uin << " back to the ACP" << endl;
 		iacp->setUINFromSearch( uin );
 		
 		// Closing the dialog
@@ -207,7 +207,7 @@ void ICQSearchDialog::userInfo()
 		m_infoWidget->show();
 			if ( m_contact->account()->isConnected() )
 			m_account->engine()->requestFullInfo( m_contact->contactId() );
-		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Displaying user info" << endl;
+		kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Displaying user info" << endl;
 	}
 }
 
@@ -284,7 +284,7 @@ void ICQSearchDialog::newResult( const ICQSearchResult& info )
 
 void ICQSearchDialog::searchFinished( int numLeft )
 {
-	kdWarning(OSCAR_ICQ_DEBUG) << k_funcinfo << "There are " << numLeft << "contact left out of this search" << endl;
+	kWarning(OSCAR_ICQ_DEBUG) << k_funcinfo << "There are " << numLeft << "contact left out of this search" << endl;
 	m_searchUI->stopButton->setEnabled( false );
 	m_searchUI->clearButton->setEnabled( true );
 	m_searchUI->searchButton->setEnabled( true );

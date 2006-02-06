@@ -309,20 +309,20 @@ void KopeteRichTextEditPart::readConfig()
 	config->setGroup("RichTextEditor");
 
 	QColor tmpColor = KGlobalSettings::textColor();
-	setFgColor( config->readColorEntry("FgColor", &tmpColor ) );
+	setFgColor( config->readEntry("FgColor", tmpColor ) );
 
 	tmpColor = KGlobalSettings::baseColor();
-	setBgColor( config->readColorEntry("BgColor", &tmpColor ) );
+	setBgColor( config->readEntry("BgColor", tmpColor ) );
 
 	QFont tmpFont = Kopete::AppearanceSettings::self()->chatFont();
-	setFont( config->readFontEntry("Font", &tmpFont ) );
+	setFont( config->readEntry("Font", tmpFont ) );
 
 	int tmp = KGlobalSettings::generalFont().pixelSize();
-	setFontSize( config->readNumEntry( "FontSize", tmp ) );
+	setFontSize( config->readEntry( "FontSize", tmp ) );
 
-	action_bold->setChecked( config->readBoolEntry( "FontBold" ) );
-	action_italic->setChecked( config->readBoolEntry( "FontItalic" ) );
-	action_underline->setChecked( config->readBoolEntry( "FontUnderline" ) );
+	action_bold->setChecked( config->readEntry( "FontBold", false ) );
+	action_italic->setChecked( config->readEntry( "FontItalic", false ) );
+	action_underline->setChecked( config->readEntry( "FontUnderline", false ) );
 
 	switch( config->readNumEntry( "EditAlignment", Qt::AlignLeft ) )
 	{

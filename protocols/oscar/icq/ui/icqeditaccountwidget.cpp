@@ -49,7 +49,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	Kopete::Account *account, QWidget *parent, const char *name)
 	: QWidget(parent, name), KopeteEditAccountWidget(account)
 {
-	kdDebug(14153) << k_funcinfo << "Called." << endl;
+	kDebug(14153) << k_funcinfo << "Called." << endl;
 
 	mAccount=dynamic_cast<ICQAccount*>(account);
 	mProtocol=protocol;
@@ -70,32 +70,32 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		mAccountSettings->chkAutoLogin->setChecked(mAccount->excludeConnect());
 
 		QString serverEntry = mAccount->configGroup()->readEntry("Server", "login.oscar.aol.com");
-		int portEntry = mAccount->configGroup()->readNumEntry("Port", 5190);
+		int portEntry = mAccount->configGroup()->readEntry("Port", 5190);
 		if ( serverEntry != "login.oscar.aol.com" || ( portEntry != 5190) )
 			mAccountSettings->optionOverrideServer->setChecked( true );
 
 		mAccountSettings->edtServerAddress->setText( serverEntry );
 		mAccountSettings->edtServerPort->setValue( portEntry );
 
-        bool configValue = mAccount->configGroup()->readBoolEntry( "RequireAuth", false );
+        bool configValue = mAccount->configGroup()->readEntry( "RequireAuth", false );
 		mAccountSettings->chkRequireAuth->setChecked( configValue );
 
-        configValue = mAccount->configGroup()->readBoolEntry( "RespectRequireAuth", true );
+        configValue = mAccount->configGroup()->readEntry( "RespectRequireAuth", true );
 		mAccountSettings->chkRespectRequireAuth->setChecked( configValue );
 
-        configValue = mAccount->configGroup()->readBoolEntry( "HideIP", true );
+        configValue = mAccount->configGroup()->readEntry( "HideIP", true );
 		mAccountSettings->chkHideIP->setChecked( configValue );
 
-        configValue = mAccount->configGroup()->readBoolEntry( "WebAware", false );
+        configValue = mAccount->configGroup()->readEntry( "WebAware", false );
 		mAccountSettings->chkWebAware->setChecked( configValue );
 
-        int encodingValue = mAccount->configGroup()->readNumEntry( "DefaultEncoding", 4 );
+        int encodingValue = mAccount->configGroup()->readEntry( "DefaultEncoding", 4 );
         mProtocol->setComboFromTable( mAccountSettings->encodingCombo,
                                       mProtocol->encodings(),
                                       encodingValue );
 
 		// Global Identity
-		mAccountSettings->chkGlobalIdentity->setChecked( mAccount->configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) );
+		mAccountSettings->chkGlobalIdentity->setChecked( mAccount->configGroup()->readEntry("ExcludeGlobalIdentity", false) );
 	}
 
 	QObject::connect(mAccountSettings->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
@@ -109,12 +109,12 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 
 Kopete::Account *ICQEditAccountWidget::apply()
 {
-	kdDebug(14153) << k_funcinfo << "Called." << endl;
+	kDebug(14153) << k_funcinfo << "Called." << endl;
 
 	// If this is a new account, create it
 	if (!mAccount)
 	{
-		kdDebug(14153) << k_funcinfo << "Creating a new account" << endl;
+		kDebug(14153) << k_funcinfo << "Creating a new account" << endl;
 		mAccount = new ICQAccount(mProtocol, mAccountSettings->edtAccountId->text());
 		if(!mAccount)
 			return NULL;
@@ -158,7 +158,7 @@ Kopete::Account *ICQEditAccountWidget::apply()
 
 bool ICQEditAccountWidget::validateData()
 {
-	kdDebug(14153) << k_funcinfo << "Called." << endl;
+	kDebug(14153) << k_funcinfo << "Called." << endl;
 
 	QString userName = mAccountSettings->edtAccountId->text();
 
@@ -177,7 +177,7 @@ bool ICQEditAccountWidget::validateData()
 		return false;
 
 	// Seems good to me
-	kdDebug(14153) << k_funcinfo <<
+	kDebug(14153) << k_funcinfo <<
 		"Account data validated successfully." << endl;
 	return true;
 }

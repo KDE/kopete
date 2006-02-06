@@ -51,7 +51,7 @@ void LocalContactListTask::onGo()
 		SNAC s = { 0x0003, 0x0004, 0x0000, client()->snacSequence() };
 		Buffer* buffer = new Buffer();
 		
-		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending contact list" << endl;
+		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending contact list" << endl;
 		Q3ValueList<Oscar::SSI> contactList = client()->ssiManager()->contactList();
 		Q3ValueList<Oscar::SSI>::const_iterator cEnd = contactList.constEnd();
 		for ( Q3ValueList<Oscar::SSI>::const_iterator it = contactList.constBegin(); it != cEnd; ++it )
@@ -59,17 +59,17 @@ void LocalContactListTask::onGo()
 			if ( ( buffer->length() + ( *it ).name().length() ) 
 				< PACKET_SIZE_LIMIT )
 			{
-				kdDebug( OSCAR_RAW_DEBUG ) << "Adding contact " << ( *it ).name() << " to CLI_BUDDYLIST_ADD packet" << endl;
+				kDebug( OSCAR_RAW_DEBUG ) << "Adding contact " << ( *it ).name() << " to CLI_BUDDYLIST_ADD packet" << endl;
 				buffer->addBUIN( ( *it ).name().latin1() );
 			}
 			else
 			{
-				kdDebug( OSCAR_RAW_DEBUG ) << "CLI_BUDDYLIST_ADD packet is full. Transmitting the packet" << endl;
+				kDebug( OSCAR_RAW_DEBUG ) << "CLI_BUDDYLIST_ADD packet is full. Transmitting the packet" << endl;
 				Transfer* t = createTransfer( f, s, buffer );
 				send( t );
 
 				buffer = new Buffer();
-				kdDebug( OSCAR_RAW_DEBUG ) << "Adding contact " << ( *it ).name() << " to CLI_BUDDYLIST_ADD packet" << endl;
+				kDebug( OSCAR_RAW_DEBUG ) << "Adding contact " << ( *it ).name() << " to CLI_BUDDYLIST_ADD packet" << endl;
 				buffer->addBUIN( ( *it ).name().latin1() );
 			}
 		}

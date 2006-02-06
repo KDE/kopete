@@ -34,7 +34,7 @@ AIMJoinChatUI::AIMJoinChatUI( AIMAccount* account,  bool modal,
                    Cancel | User1, User1, true, i18n( "Join" ) )
 {
 
-    kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Account " << account->accountId()
+    kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Account " << account->accountId()
                    << " joining a chat room" << endl;
 
     m_account = account;

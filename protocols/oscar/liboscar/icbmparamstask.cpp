@@ -60,7 +60,7 @@ bool ICBMParamsTask::take( Transfer* transfer )
 
 void ICBMParamsTask::onGo()
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending ICBM Parameters request" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending ICBM Parameters request" << endl;
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0004, 0x0004, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
@@ -73,7 +73,7 @@ void ICBMParamsTask::handleICBMParameters()
 	Buffer* buffer = transfer()->buffer();
 	
 	WORD channel = buffer->getWord();
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "channel=" << channel << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "channel=" << channel << endl;
 	
 	/**
 	 * bit1: messages allowed for specified channel
@@ -87,11 +87,11 @@ void ICBMParamsTask::handleICBMParameters()
 	WORD minMsgInterval = buffer->getWord(); // minimum message interval (msec)
 	
 	
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "messageFlags       = " << messageFlags << endl;
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "maxMessageSnacSize = " << maxMessageSnacSize << endl;
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "maxSendWarnLvl     = " << maxSendWarnLvl << endl;
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "maxRecvWarnLvl     = " << maxRecvWarnLvl << endl;
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "minMsgInterval     = " << minMsgInterval << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "messageFlags       = " << messageFlags << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "maxMessageSnacSize = " << maxMessageSnacSize << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "maxSendWarnLvl     = " << maxSendWarnLvl << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "maxRecvWarnLvl     = " << maxRecvWarnLvl << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "minMsgInterval     = " << minMsgInterval << endl;
 	
 	/*WORD unknown = */buffer->getWord();
 
@@ -105,7 +105,7 @@ void ICBMParamsTask::handleICBMParameters()
 
 void ICBMParamsTask::sendMessageParams( int channel )
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending ICBM parameters for channel " << channel << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending ICBM parameters for channel " << channel << endl;
 	
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0004, 0x0002, 0x0000, client()->snacSequence() };

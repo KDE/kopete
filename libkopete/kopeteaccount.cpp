@@ -106,7 +106,7 @@ Account::~Account()
 	qDeleteAll(d->contacts);
 	d->contacts.clear();
 	
-	kdDebug( 14010 ) << k_funcinfo << " account '" << d->id << "' about to emit accountDestroyed " << endl;
+	kDebug( 14010 ) << k_funcinfo << " account '" << d->id << "' about to emit accountDestroyed " << endl;
 	emit accountDestroyed(this);
 
 	delete d->myself;
@@ -260,7 +260,7 @@ Kopete::MetaContact* Account::addContact( const QString &contactId, const QStrin
 	{
 		if ( c->metaContact()->isTemporary() && !isTemporary )
 		{
-			kdDebug( 14010 ) << k_funcinfo <<  " You are trying to add an existing temporary contact. Just add it on the list" << endl;
+			kDebug( 14010 ) << k_funcinfo <<  " You are trying to add an existing temporary contact. Just add it on the list" << endl;
 
 			c->metaContact()->setTemporary(false, group );
 			ContactList::self()->addMetaContact(c->metaContact());
@@ -268,7 +268,7 @@ Kopete::MetaContact* Account::addContact( const QString &contactId, const QStrin
 		else
 		{
 			// should we here add the contact to the parentContact if any?
-			kdDebug( 14010 ) << k_funcinfo << "Contact already exists" << endl;
+			kDebug( 14010 ) << k_funcinfo << "Contact already exists" << endl;
 		}
 		return c->metaContact();
 	}
@@ -288,7 +288,7 @@ Kopete::MetaContact* Account::addContact( const QString &contactId, const QStrin
 		c->setMetaContact( parentContact );
 		if ( mode == ChangeKABC )
 		{
-			kdDebug( 14010 ) << k_funcinfo << " changing KABC" << endl;
+			kDebug( 14010 ) << k_funcinfo << " changing KABC" << endl;
 			KABCPersistence::self()->write( parentContact );
 		}
 	}
@@ -321,7 +321,7 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 	{
 		if ( c->metaContact()->isTemporary() && !isTemporary )
 		{
-			kdDebug( 14010 ) <<
+			kDebug( 14010 ) <<
 				"Account::addContact: You are trying to add an existing temporary contact. Just add it on the list" << endl;
 
 				//setMetaContact ill take care about the deletion of the old contact
@@ -331,7 +331,7 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 		else
 		{
 			// should we here add the contact to the parentContact if any?
-			kdDebug( 14010 ) << "Account::addContact: Contact already exists" << endl;
+			kDebug( 14010 ) << "Account::addContact: Contact already exists" << endl;
 		}
 		return false; //(the contact is not in the correct metacontact, so false)
 	}
@@ -340,7 +340,7 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 
 	if ( success && mode == ChangeKABC )
 	{
-		kdDebug( 14010 ) << k_funcinfo << " changing KABC" << endl;
+		kDebug( 14010 ) << k_funcinfo << " changing KABC" << endl;
 		KABCPersistence::self()->write( parent );
 	}
 
@@ -423,7 +423,7 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 		//the timer is also used to reset the d->connectionTry
 	}
 
-/*	kdDebug(14010) << k_funcinfo << "account " << d->id << " changed status. was "
+/*	kDebug(14010) << k_funcinfo << "account " << d->id << " changed status. was "
 	               << Kopete::OnlineStatus::statusTypeToString(oldStatus.status()) << ", is "
 	               << Kopete::OnlineStatus::statusTypeToString(newStatus.status()) << endl;*/
 	if ( wasOffline != isOffline )

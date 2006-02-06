@@ -84,7 +84,7 @@ Contact::Contact( Account *account, const QString &contactId,
 {
 	d = new Private;
 
-	//kdDebug( 14010 ) << k_funcinfo << "Creating contact with id " << contactId << endl;
+	//kDebug( 14010 ) << k_funcinfo << "Creating contact with id " << contactId << endl;
 
 	d->contactId = contactId;
 	d->metaContact = parent;
@@ -117,7 +117,7 @@ Contact::Contact( Account *account, const QString &contactId,
 
 Contact::~Contact()
 {
-	//kdDebug(14010) << k_funcinfo << endl;
+	//kDebug(14010) << k_funcinfo << endl;
 	emit( contactDestroyed( this ) );
 	delete d;
 }
@@ -147,7 +147,7 @@ void Contact::setOnlineStatus( const OnlineStatus &status )
 		status.status() != OnlineStatus::Offline )
 	{
 		setProperty( globalProps->onlineSince(), QDateTime::currentDateTime() );
-		/*kdDebug(14010) << k_funcinfo << "REMOVING lastSeen property for " <<
+		/*kDebug(14010) << k_funcinfo << "REMOVING lastSeen property for " <<
 			d->displayName << endl;*/
 		removeProperty( globalProps->lastSeen() );
 	}
@@ -156,7 +156,7 @@ void Contact::setOnlineStatus( const OnlineStatus &status )
 		status.status() == OnlineStatus::Offline ) // Contact went back offline
 	{
 		removeProperty( globalProps->onlineSince() );
-		/*kdDebug(14010) << k_funcinfo << "SETTING lastSeen property for " <<
+		/*kDebug(14010) << k_funcinfo << "SETTING lastSeen property for " <<
 			d->displayName << endl;*/
 		setProperty( globalProps->lastSeen(), QDateTime::currentDateTime() );
 	}
@@ -179,7 +179,7 @@ void Contact::slotAccountIsConnectedChanged()
 
 void Contact::sendFile( const KUrl &, const QString &, uint )
 {
-	kdWarning( 14010 ) << k_funcinfo << "Plugin "
+	kWarning( 14010 ) << k_funcinfo << "Plugin "
 		<< protocol()->pluginId() << " has enabled file sending, "
 		<< "but didn't implement it!" << endl;
 }
@@ -394,7 +394,7 @@ void Contact::deserializeProperties(
 		QVariant variant( it.data() );
 		if( !variant.cast(QVariant::nameToType(type.toLatin1())) )
 		{
-			kdDebug(14010) << k_funcinfo <<
+			kDebug(14010) << k_funcinfo <<
 				"Casting QVariant to needed type FAILED" <<
 				"key=" << key << ", type=" << type << endl;
 			continue;
@@ -403,7 +403,7 @@ void Contact::deserializeProperties(
 		Kopete::ContactPropertyTmpl tmpl = Kopete::Global::Properties::self()->tmpl(key);
 		if( tmpl.isNull() )
 		{
-			kdDebug( 14010 ) << k_funcinfo << "no ContactPropertyTmpl defined for" \
+			kDebug( 14010 ) << k_funcinfo << "no ContactPropertyTmpl defined for" \
 				" key " << key << ", cannot restore persistent property" << endl;
 			continue;
 		}
@@ -599,7 +599,7 @@ void Contact::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
 {
 	if(tmpl.isNull() || tmpl.key().isEmpty())
 	{
-		kdDebug(14000) << k_funcinfo <<
+		kDebug(14000) << k_funcinfo <<
 			"No valid template for property passed!" << endl;
 		return;
 	}

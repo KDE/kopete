@@ -208,7 +208,7 @@ GaduRegisterAccount::slotClose()
 
 GaduRegisterAccount::~GaduRegisterAccount( )
 {
-	kdDebug( 14100 ) << " register Cancel " << endl;
+	kDebug( 14100 ) << " register Cancel " << endl;
 }
 
 #include "gaduregisteraccount.moc"

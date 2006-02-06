@@ -139,7 +139,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	// read sticky settings
 	KConfig *config = KGlobal::config();
 	config->setGroup("Add Contact Wizard");
-	bool useKABC = config->readBoolEntry( "UseAddressBook", false );
+	bool useKABC = config->readEntry( "UseAddressBook", false );
 	chkAddressee->setChecked( useKABC );
 	setAppropriate( selectAddressee, useKABC );
 	// load address book, if using KABC

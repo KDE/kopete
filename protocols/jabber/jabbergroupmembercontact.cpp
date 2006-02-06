@@ -100,7 +100,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 	QString viewType = "kopete_chatwindow";
 	Kopete::Message *newMessage = 0L;
 
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
 
 	/**
 	 * Don't display empty messages, these were most likely just carrying

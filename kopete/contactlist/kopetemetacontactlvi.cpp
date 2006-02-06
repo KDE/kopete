@@ -364,7 +364,7 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 		slotDisplayNameChanged();
 	}
 
-	kdDebug( 14000 ) << k_funcinfo << "newName=" << newName << endl;
+	kDebug( 14000 ) << k_funcinfo << "newName=" << newName << endl;
 }
 
 void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
@@ -400,7 +400,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 			// figure out what's happened
 			enum ChangeType { noChange, noEvent, signedIn, changedStatus, signedOut };
 			ChangeType t = noChange;
-			//kdDebug( 14000 ) << k_funcinfo << m_metaContact->displayName() <<
+			//kDebug( 14000 ) << k_funcinfo << m_metaContact->displayName() <<
 			//" - Old MC Status: " << m_oldStatus.status() << ", New MC Status: " << newStatus.status() << endl;
 			// first, exclude changes due to blocking or subscription changes at the protocol level
 			if ( ( m_oldStatus.status() == Kopete::OnlineStatus::Unknown
@@ -412,7 +412,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 				{
 					if ( newStatus.status() != Kopete::OnlineStatus::Offline )
 					{
-						//kdDebug( 14000 ) << "signed in" << endl;
+						//kDebug( 14000 ) << "signed in" << endl;
 						t = signedIn;	// contact has gone from offline to something else, it's a sign-in
 					}
 				}
@@ -422,7 +422,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 				{
 					if ( newStatus.status() == Kopete::OnlineStatus::Offline )
 					{
-						//kdDebug( 14000 ) << "signed OUT" << endl;
+						//kDebug( 14000 ) << "signed OUT" << endl;
 						t = signedOut;	// contact has gone from an online state to an offline state, it's a sign out
 					}
 					else if ( m_oldStatus > newStatus || m_oldStatus < newStatus ) // operator!= is useless because it's an identity operator, not an equivalence operator
@@ -430,13 +430,13 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 						// contact has changed online states, it's a status change,
 						// and the preferredContact changed status, or there is a new preferredContacat
 						// so it's worth notifying
-						//kdDebug( 14000 ) << "changed status" << endl;
+						//kDebug( 14000 ) << "changed status" << endl;
 						t = changedStatus;
 					}
 				}
 				else if ( m_oldStatus != newStatus )
 				{
-					//kdDebug( 14000 ) << "non-event" << endl;
+					//kDebug( 14000 ) << "non-event" << endl;
 					// catch-all for any other status change we don't know about
 					t = noEvent;
 				}
@@ -584,7 +584,7 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 /*
 void KopeteMetaContactLVI::slotRemoveThisUser()
 {
-	kdDebug( 14000 ) << k_funcinfo << " Removing user" << endl;
+	kDebug( 14000 ) << k_funcinfo << " Removing user" << endl;
 	//m_metaContact->removeThisUser();
 
 	if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
@@ -646,7 +646,7 @@ void KopeteMetaContactLVI::slotAddToGroup()
 {
 	if ( m_actionCopy )
 	{
-		kdDebug( 14000 ) << "KopeteMetaContactLVI::slotAddToGroup " << endl;
+		kDebug( 14000 ) << "KopeteMetaContactLVI::slotAddToGroup " << endl;
 		if ( m_actionCopy->currentItem() == 0 )
 		{
 			// we are adding to top-level

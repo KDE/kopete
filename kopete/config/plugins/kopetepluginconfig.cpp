@@ -110,7 +110,7 @@ void KopetePluginConfig::slotOk()
 
 void KopetePluginConfig::slotHelp()
 {
-	kdWarning() << k_funcinfo << "FIXME: Implement!" << endl;
+	kWarning() << k_funcinfo << "FIXME: Implement!" << endl;
 }
 
 void KopetePluginConfig::show()

@@ -81,7 +81,7 @@ bool SearchUserTask::take( Transfer * transfer )
 		return false;
 	if ( response->resultCode() )
 	{
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "got return code in response << " << response->resultCode() << endl;
+		kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "got return code in response << " << response->resultCode() << endl;
 		setError( response->resultCode() );
 		return true;
 	}
@@ -102,7 +102,7 @@ void SearchUserTask::slotPollForResults()
 void SearchUserTask::slotGotPollResults()
 {
 	PollSearchResultsTask * psrt = (PollSearchResultsTask *)sender();
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "status code is " << psrt->queryStatus() << endl;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "status code is " << psrt->queryStatus() << endl;
 	m_polls++;
 	switch ( psrt->queryStatus() )
 	{

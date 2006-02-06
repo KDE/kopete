@@ -23,7 +23,7 @@
 
 SendNotifyTask::SendNotifyTask(Task* parent) : Task(parent)
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
 SendNotifyTask::~SendNotifyTask()

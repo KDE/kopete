@@ -39,7 +39,7 @@ SMSProtocol::SMSProtocol(QObject *parent, const char *name, const QStringList &/
 	SMSOffline( Kopete::OnlineStatus::Offline, 25, this, 2,  QString::null,   i18n( "Offline" ), i18n( "Offline" ), Kopete::OnlineStatusManager::Offline )
 {
 	if (s_protocol)
-		kdWarning( 14160 ) << k_funcinfo << "s_protocol already defined!" << endl;
+		kWarning( 14160 ) << k_funcinfo << "s_protocol already defined!" << endl;
 	else
 		s_protocol = this;
 
@@ -79,7 +79,7 @@ Kopete::Contact *SMSProtocol::deserializeContact(Kopete::MetaContact *metaContac
 	Kopete::Account *account = accounts[accountId];
 	if (!account)
 	{
-		kdDebug(14160) << "Account doesn't exist, skipping" << endl;
+		kDebug(14160) << "Account doesn't exist, skipping" << endl;
 		return 0;
 	}
 

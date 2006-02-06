@@ -82,14 +82,14 @@ void ChangeVisibilityTask::onGo()
 	Oscar::SSI newSSI;
 	if ( !item )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Didn't find a visibility item" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Didn't find a visibility item" << endl;
 		return;
 	}
 	
 	//remove the old item and add the new item indicating the
 	//change in visibility.
 	manager->removeItem( item );
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found visibility item. changing setting" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found visibility item. changing setting" << endl;
 	newSSI = Oscar::SSI( item.name(), item.gid(), item.bid(), item.type(), Q3ValueList<TLV>(), 0 );
 	Q3ValueList<TLV> newList;
 	Q3ValueList<TLV>::const_iterator it = item.tlvList().begin(), listEnd = item.tlvList().end();
@@ -98,7 +98,7 @@ void ChangeVisibilityTask::onGo()
 		if ( ( *it ).type != 0x00CA )
 		{
 			TLV t = ( *it );
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "adding TLV of type" << t.type << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "adding TLV of type" << t.type << endl;
 			newList.append( t );
 		}
 	}
@@ -129,7 +129,7 @@ void ChangeVisibilityTask::onGo()
 	for( ; it2 != listEnd2; ++it2 )
 		b->addTLV( ( *it2 ) );
 	
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending visibility update" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending visibility update" << endl;
 	Transfer* t = createTransfer( f, s, b );
 	send( t );
 	sendEditEnd();

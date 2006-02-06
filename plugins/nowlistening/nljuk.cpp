@@ -114,6 +114,6 @@ void NLJuk::update()
 			m_newTrack = false;
 	}
 	else
-		kdDebug( 14307 ) << "Juk is not running!\n" << endl;
+		kDebug( 14307 ) << "Juk is not running!\n" << endl;
 }
 

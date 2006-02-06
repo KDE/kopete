@@ -231,7 +231,7 @@ public:
 Kopete::MessageHandlerChain::Ptr Kopete::ChatSession::chainForDirection( Kopete::Message::MessageDirection dir )
 {
 	if( dir < 0 || dir > 2)
-		kdFatal(14000) << k_funcinfo << "invalid message direction " << dir << endl;
+		kFatal(14000) << k_funcinfo << "invalid message direction " << dir << endl;
 	if( !d->chains[dir] )
 	{
 		TempFactory theTempFactory;
@@ -304,17 +304,17 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, const Kopete::On
 
 void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 {
-	//kdDebug( 14010 ) << k_funcinfo << endl;
+	//kDebug( 14010 ) << k_funcinfo << endl;
 	if ( d->mContactList.contains( (Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)c ) )
 	{
-		kdDebug( 14010 ) << k_funcinfo << "Contact already exists" <<endl;
+		kDebug( 14010 ) << k_funcinfo << "Contact already exists" <<endl;
 		emit contactAdded( c, suppress );
 	}
 	else
 	{
 		if ( d->mContactList.count() == 1 && d->isEmpty )
 		{
-			kdDebug( 14010 ) << k_funcinfo << " FUCKER ZONE " << endl;
+			kDebug( 14010 ) << k_funcinfo << " FUCKER ZONE " << endl;
 			/* We have only 1 contact before, so the status of the
 			   message manager was given from that contact status */
 			Kopete::Contact *old = d->mContactList.first();
@@ -353,13 +353,13 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 
 void Kopete::ChatSession::removeContact( const Kopete::Contact *c, const QString& reason, Kopete::Message::MessageFormat format, bool suppressNotification )
 {
-	kdDebug( 14010 ) << k_funcinfo << endl;
+	kDebug( 14010 ) << k_funcinfo << endl;
 	if ( !c || !d->mContactList.contains( (Kopete::Contact*)c ) )
 		return;
 
 	if ( d->mContactList.count() == 1 )
 	{
-		kdDebug( 14010 ) << k_funcinfo << "Contact not removed. Keep always one contact" << endl;
+		kDebug( 14010 ) << k_funcinfo << "Contact not removed. Keep always one contact" << endl;
 		d->isEmpty = true;
 	}
 	else

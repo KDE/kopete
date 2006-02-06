@@ -80,7 +80,7 @@ void TestbedAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Q
 
 void TestbedAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 {
-	kdDebug ( 14210 ) << k_funcinfo << endl;
+	kDebug ( 14210 ) << k_funcinfo << endl;
 	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOnline );
 	QObject::connect ( m_server, SIGNAL ( messageReceived( const QString & ) ),
 			this, SLOT ( receivedMessage( const QString & ) ) );
@@ -88,7 +88,7 @@ void TestbedAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 
 void TestbedAccount::disconnect()
 {
-	kdDebug ( 14210 ) << k_funcinfo << endl;
+	kDebug ( 14210 ) << k_funcinfo << endl;
 	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
 	QObject::disconnect ( m_server, 0, 0, 0 );
 }
@@ -100,7 +100,7 @@ TestbedFakeServer * TestbedAccount::server()
 
 void TestbedAccount::slotGoOnline ()
 {
-	kdDebug ( 14210 ) << k_funcinfo << endl;
+	kDebug ( 14210 ) << k_funcinfo << endl;
 
 	if (!isConnected ())
 		connect ();
@@ -111,7 +111,7 @@ void TestbedAccount::slotGoOnline ()
 
 void TestbedAccount::slotGoAway ()
 {
-	kdDebug ( 14210 ) << k_funcinfo << endl;
+	kDebug ( 14210 ) << k_funcinfo << endl;
 
 	if (!isConnected ())
 		connect();
@@ -123,7 +123,7 @@ void TestbedAccount::slotGoAway ()
 
 void TestbedAccount::slotGoOffline ()
 {
-	kdDebug ( 14210 ) << k_funcinfo << endl;
+	kDebug ( 14210 ) << k_funcinfo << endl;
 
 	if (isConnected ())
 		disconnect ();
@@ -140,7 +140,7 @@ void TestbedAccount::receivedMessage( const QString &message )
 	//from = QString::fromLatin1("echo");
 	messageSender = static_cast<TestbedContact *>( contacts ()[ from ] );
 
-	kdDebug( 14210 ) << k_funcinfo << " got a message from " << from << ", " << messageSender << ", is: " << message << endl;
+	kDebug( 14210 ) << k_funcinfo << " got a message from " << from << ", " << messageSender << ", is: " << message << endl;
 	// Pass it on to the contact to process and display via a KMM
 	messageSender->receivedMessage( message );
 }

@@ -126,7 +126,7 @@ void MSNP2P::makeMSNSLPMessage( MessageType type, QString content )
 			"\r\n" + content ).toUtf8(); //\0
 	//the data message must be end by \0,  bye chance, QCString automaticaly appends \0 at the end of the QByteArray
 
-	kdDebug(14141) << k_funcinfo << dataMessage << endl;
+	kDebug(14141) << k_funcinfo << dataMessage << endl;
 
 	sendP2PMessage(dataMessage);
 }
@@ -298,7 +298,7 @@ void MSNP2P::sendP2PAck( const char* originalHeader )
 
 void MSNP2P::error()
 {
-	kdDebug(14140) << k_funcinfo   << endl;
+	kDebug(14140) << k_funcinfo   << endl;
 	makeMSNSLPMessage( ERROR, QString::null );
 	m_parent->finished(this);
 }
@@ -383,7 +383,7 @@ void MSNP2PWebcam::parseMessage(MessageStruct &msgStr)
 		f+=16;
 	}
 	
-	kdDebug(14141) << k_funcinfo << dataMessage.size() << echoS << endl;
+	kDebug(14141) << k_funcinfo << dataMessage.size() << echoS << endl;
 
 	for(uint pos=m_content.isNull() ? 10 : 0; pos<dataMessage.size(); pos+=2)
 	{
@@ -393,7 +393,7 @@ void MSNP2PWebcam::parseMessage(MessageStruct &msgStr)
 	if( msgStr.dataMessageSize+msgStr.dataOffset < msgStr.totalSize )
 		return;
 	
-	kdDebug(14141) << k_funcinfo << "Message contents: " << m_content << "\n" << endl;
+	kDebug(14141) << k_funcinfo << "Message contents: " << m_content << "\n" << endl;
 	if(m_content.length() < 5)
 		makeSIPMessage(m_content);
 	else if(m_content.contains("<producer>"))
@@ -454,7 +454,7 @@ void MSNP2PWebcam::makeSIPMessage(const QString &message)
 		f+=16;
 	}
 	
-	kdDebug(14141) << k_funcinfo << dataMessage.size() << echoS << endl;
+	kDebug(14141) << k_funcinfo << dataMessage.size() << echoS << endl;
 
 	m_footer='\4';
 	sendBigP2PMessage(dataMessage);

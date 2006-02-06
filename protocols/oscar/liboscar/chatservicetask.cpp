@@ -65,7 +65,7 @@ void ChatServiceTask::onGo()
         return;
     }
 
-    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending '" << m_message.textArray() << "' to the "
+    kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending '" << m_message.textArray() << "' to the "
                              << m_room << " room" << endl;
     Buffer* b = new Buffer();
     b->addDWord( KRandom::random() ); //use kapp since it's convenient
@@ -143,23 +143,23 @@ bool ChatServiceTask::take( Transfer* t )
 	switch ( st->snacSubtype() )
 	{
 	case 0x0002:
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Parse room info" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Parse room info" << endl;
         parseRoomInfo();
 		break;
 	case 0x0003:
-        kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user joined notification" << endl;
+        kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user joined notification" << endl;
         parseJoinNotification();
         break;
     case 0x0004:
-        kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user left notification" << endl;
+        kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user left notification" << endl;
         parseLeftNotification();
         break;
     case 0x0006:
-        kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message from room to client" << endl;
+        kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message from room to client" << endl;
         parseChatMessage();
         break;
     case 0x0009:
-        kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "chat error or data" << endl;
+        kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "chat error or data" << endl;
         break;
     };
 
@@ -193,16 +193,16 @@ void ChatServiceTask::parseRoomInfo()
         {
         case 0x006A:
             m_internalRoom = QString( ( *it ).data );
-            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "room name: " << m_room << endl;
+            kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "room name: " << m_room << endl;
             break;
         case 0x006F:
-            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "num occupants: " << ( *it ).data << endl;
+            kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "num occupants: " << ( *it ).data << endl;
             break;
         case 0x0073:
-            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "occupant list" << endl;
+            kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "occupant list" << endl;
             break;
         case 0x00C9:
-            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "flags" << endl;
+            kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "flags" << endl;
             break;
         case 0x00CA: //creation time
         case 0x00D1: //max message length
@@ -212,10 +212,10 @@ void ChatServiceTask::parseRoomInfo()
         case 0x00D8: //encoding 2
         case 0x00D9: //language 2
         case 0x00DA: //maximum visible message length
-            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "unhandled TLV type " << ( *it ).type << endl;
+            kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "unhandled TLV type " << ( *it ).type << endl;
             break;
         default:
-            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "unknown TLV type " << ( *it ).type << endl;
+            kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "unknown TLV type " << ( *it ).type << endl;
             break;
         }
     }
@@ -227,7 +227,7 @@ void ChatServiceTask::parseJoinNotification()
     while ( b->length() > 0 )
     {
         QString sender( b->getBUIN() );
-        kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user name:" << sender << endl;
+        kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user name:" << sender << endl;
         WORD warningLevel = b->getWord();
         WORD numTLVs = b->getWord();
         for ( int i = 0; i < numTLVs; i++ )
@@ -236,17 +236,17 @@ void ChatServiceTask::parseJoinNotification()
             switch ( t.type )
             {
             case 0x0001:
-                kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user class: " << t.data << endl;
+                kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user class: " << t.data << endl;
                 break;
             case 0x000F:
-                kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "idle time: " << t.data << endl;
+                kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "idle time: " << t.data << endl;
                 break;
             case 0x0003:
-                kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "signon: " << t.data << endl;
+                kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "signon: " << t.data << endl;
                 break;
             }
         }
-        kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "emitted userJoinedChat" << endl;
+        kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "emitted userJoinedChat" << endl;
         emit userJoinedChat( m_exchange, m_room, sender );
     }
 
@@ -258,7 +258,7 @@ void ChatServiceTask::parseLeftNotification()
     while ( b->length() > 0 )
     {
         QString sender( b->getBUIN() );
-        kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user name:" << sender << endl;
+        kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user name:" << sender << endl;
         WORD warningLevel = b->getWord();
         WORD numTLVs = b->getWord();
         for ( int i = 0; i < numTLVs; i++ )
@@ -267,13 +267,13 @@ void ChatServiceTask::parseLeftNotification()
             switch ( t.type )
             {
             case 0x0001:
-                kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user class: " << t.data << endl;
+                kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user class: " << t.data << endl;
                 break;
             case 0x000F:
-                kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "idle time: " << t.data << endl;
+                kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "idle time: " << t.data << endl;
                 break;
             case 0x0003:
-                kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "signon: " << t.data << endl;
+                kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "signon: " << t.data << endl;
                 break;
             }
         }
@@ -283,7 +283,7 @@ void ChatServiceTask::parseLeftNotification()
 
 void ChatServiceTask::parseChatMessage()
 {
-    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "have new chat room message" << endl;
+    kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "have new chat room message" << endl;
     Buffer* b = transfer()->buffer();
     bool whisper = true, reflection = false;
     QByteArray language, encoding, message;
@@ -304,7 +304,7 @@ void ChatServiceTask::parseChatMessage()
             break;
         case 0x0005: //the good stuff - the actual message
         {
-            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "parsing the message" << endl;
+            kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "parsing the message" << endl;
             //oooh! look! more TLVS! i love those!
             Buffer b( ( *it ).data );
             while ( b.length() >= 4 )
@@ -314,15 +314,15 @@ void ChatServiceTask::parseChatMessage()
                 {
                 case 0x0003:
                     language = t.data;
-                    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "language: " << language << endl;
+                    kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "language: " << language << endl;
                     break;
                 case 0x0002:
                     encoding = t.data;
-                    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "encoding: " << encoding << endl;
+                    kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "encoding: " << encoding << endl;
                     break;
                 case 0x0001:
                     message = t.data;
-                    kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message: " << message << endl;
+                    kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message: " << message << endl;
                     break;
                 }
             }
@@ -332,7 +332,7 @@ void ChatServiceTask::parseChatMessage()
         {
             Buffer b( ( *it ).data );
             sender = QString( b.getBUIN() );
-            kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got user info. sender is " << sender << endl;
+            kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got user info. sender is " << sender << endl;
         }
         break;
 

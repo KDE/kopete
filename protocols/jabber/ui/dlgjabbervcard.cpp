@@ -99,7 +99,7 @@ dlgJabberVCard::~dlgJabberVCard ()
  */
 void dlgJabberVCard::slotClose()
 {
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Deleting dialog." << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Deleting dialog." << endl;
 	delayedDestruct();
 }
 

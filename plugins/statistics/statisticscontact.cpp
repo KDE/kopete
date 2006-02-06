@@ -142,7 +142,7 @@ void StatisticsContact::commonStatsCheck(const QString name, QString& statVar1, 
  */
 void StatisticsContact::newMessageReceived(Kopete::Message& m)
 {
-	kdDebug() << "statistics: new message received" << endl;
+	kDebug() << "statistics: new message received" << endl;
 	QDateTime currentDateTime = QDateTime::currentDateTime();
 	
 	if (m_timeBetweenTwoMessagesOn != -1 && m_isChatWindowOpen)
@@ -182,7 +182,7 @@ void StatisticsContact::onlineStatusChanged(Kopete::OnlineStatus::StatusType sta
 	if (m_oldStatus != Kopete::OnlineStatus::Unknown)
 	{
 		
-		kdDebug() << "statistics - status change for "<< metaContact()->metaContactId() << " : "<< QString::number(m_oldStatus) << endl;
+		kDebug() << "statistics - status change for "<< metaContact()->metaContactId() << " : "<< QString::number(m_oldStatus) << endl;
 		m_db->query(QString("INSERT INTO contactstatus "
 		"(metacontactid, status, datetimebegin, datetimeend) "
 				"VALUES('%1', '%2', '%3', '%4'" ");").arg(m_metaContact->metaContactId()).arg(Kopete::OnlineStatus::statusTypeToString(m_oldStatus)).arg(QString::number(m_oldStatusDateTime.toTime_t())).arg(QString::number(currentDateTime.toTime_t())));
@@ -228,21 +228,21 @@ QString StatisticsContact::mainStatusDate(const QDate& date)
 {
 	QDateTime dt1(date, QTime(0,0,0));
 	QDateTime dt2(date.addDays(1), QTime(0,0,0));
-	kdDebug() << "dt1:" << dt1.toString() << " dt2:" << dt2.toString() << endl;
+	kDebug() << "dt1:" << dt1.toString() << " dt2:" << dt2.toString() << endl;
 	QString request = QString("SELECT status, datetimebegin, datetimeend, metacontactid "
 			"FROM contactstatus WHERE metacontactid = '%1' AND "
 			"(datetimebegin >= %2 AND datetimebegin <= %3 OR "
 			"datetimeend >= %4 AND datetimeend <= %5) "
 			"ORDER BY datetimebegin;"
 							 ).arg(metaContact()->metaContactId()).arg(dt1.toTime_t()).arg(dt2.toTime_t()).arg(dt1.toTime_t()).arg(dt2.toTime_t());
-	kdDebug() << request << endl;
+	kDebug() << request << endl;
 	QStringList values = m_db->query(request);
 	
 	unsigned int online = 0, offline = 0, away = 0;
 	for(uint i=0; i<values.count(); i+=4)
 	{
 		unsigned int datetimebegin = values[i+1].toInt(), datetimeend = values[i+2].toInt();
-		kdDebug() << "statistics: id "<< values[i+3]<< " status " << values[i] << " datetimeend " << QString::number(datetimeend) << " datetimebegin " << QString::number(datetimebegin) << endl;
+		kDebug() << "statistics: id "<< values[i+3]<< " status " << values[i] << " datetimeend " << QString::number(datetimeend) << " datetimebegin " << QString::number(datetimebegin) << endl;
 		if (datetimebegin <= dt1.toTime_t()) datetimebegin = dt1.toTime_t();
 		if (datetimeend >= dt2.toTime_t()) datetimeend = dt2.toTime_t();
 		
@@ -309,7 +309,7 @@ Q3ValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::Sta
 	dt2.setTime_t(values[values.count()-1].toInt());
 	
 	avEventsPerDay = qRound((double)values.count()/(double)dt1.daysTo(dt2));
-	kdDebug() << "statistics: average events per day : " <<avEventsPerDay << endl;
+	kDebug() << "statistics: average events per day : " <<avEventsPerDay << endl;
 	
 	// We want to work on hours
 	Q3ValueList<int> hoursValues;
@@ -330,7 +330,7 @@ Q3ValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::Sta
 	for (uint i=0; i<hoursValues.count(); i+=incr)
 	{
 		centroids.push_back(hoursValues[i]);
-		kdDebug() << "statistics: add a centroid : " << centroids[centroids.count()-1] << endl;
+		kDebug() << "statistics: add a centroid : " << centroids[centroids.count()-1] << endl;
 	}
 	
 	
@@ -340,7 +340,7 @@ Q3ValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::Sta
 	// Convert to QDateTime
 	for (uint i=0; i<centroids.count(); i++)
 	{
-		kdDebug() << "statistics: new centroid : " << centroids[i] << endl;
+		kDebug() << "statistics: new centroid : " << centroids[i] << endl;
 
 		QTime dt(0, 0, 0);
 		dt = dt.addSecs(centroids[i]);
@@ -353,7 +353,7 @@ Q3ValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::Sta
 
 Q3ValueList<int> StatisticsContact::computeCentroids(const Q3ValueList<int>& centroids, const Q3ValueList<int>& values)
 {
-	kdDebug() << "statistics: enter compute centroids"<< endl;
+	kDebug() << "statistics: enter compute centroids"<< endl;
 
 	Q3ValueList<int> whichCentroid; // whichCentroid[i] = j <=> values[i] has centroid j for closest one
 	Q3ValueList<int> newCentroids;
@@ -379,7 +379,7 @@ Q3ValueList<int> StatisticsContact::computeCentroids(const Q3ValueList<int>& cen
 	
 	for (uint i=0; i<newCentroids.count(); i++)
 	{
-		kdDebug() << "statistics: compute new centroids"<< i << endl;
+		kDebug() << "statistics: compute new centroids"<< i << endl;
 		int weight = 0;
 		for (uint j=0; j<values.count(); j++)
 		{

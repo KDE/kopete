@@ -39,17 +39,17 @@
 GaduDCCServer::GaduDCCServer( QHostAddress* dccIp, unsigned int port )
 :QObject()
 {
-	kdDebug( 14100 ) << "dcc socket NULL, creating new liteining socket " << endl;
+	kDebug( 14100 ) << "dcc socket NULL, creating new liteining socket " << endl;
 
 	// don't care about UIN at that point
 	dccSock = gg_dcc_socket_create( (unsigned int)-1, port );
 
 	if ( dccSock == NULL ){
-		kdDebug(14100) << "attempt to initialize gadu-dcc listeing socket FAILED" << endl;
+		kDebug(14100) << "attempt to initialize gadu-dcc listeing socket FAILED" << endl;
 		return;
 	}
 
-	kdDebug(14100) << "attempt to initialize gadu-dcc listeing socket sucess" << endl;
+	kDebug(14100) << "attempt to initialize gadu-dcc listeing socket sucess" << endl;
 
 	// using global variables sucks, don't have too much choice thou
 	if ( dccIp == NULL ) {
@@ -66,7 +66,7 @@ GaduDCCServer::GaduDCCServer( QHostAddress* dccIp, unsigned int port )
 
 GaduDCCServer::~GaduDCCServer()
 {
-	kdDebug( 14100 ) << "gadu dcc server destructor " << endl;
+	kDebug( 14100 ) << "gadu dcc server destructor " << endl;
 	closeDCC();
 }
 
@@ -168,7 +168,7 @@ GaduDCCServer::watcher() {
 		case GG_EVENT_NONE:
 			break;
 		case GG_EVENT_DCC_ERROR:
-			kdDebug( 14100 ) << " dcc error occured " << endl;
+			kDebug( 14100 ) << " dcc error occured " << endl;
 			break;
 		case GG_EVENT_DCC_NEW:
 			// I do expect reciver to set this boolean to true if he handled signal
@@ -183,7 +183,7 @@ GaduDCCServer::watcher() {
 			}
 			break;
 		default:
-			kdDebug(14100) << "unknown/unhandled DCC EVENT: " << dccEvent->type << endl;
+			kDebug(14100) << "unknown/unhandled DCC EVENT: " << dccEvent->type << endl;
 			break;
 	}
 

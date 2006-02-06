@@ -79,7 +79,7 @@ const QStringList WinPopupLib::getHosts(const QString &Group)
  */
 bool WinPopupLib::checkHost(const QString &Name)
 {
-//	kdDebug() << "WP checkHost: " << Name << endl;
+//	kDebug() << "WP checkHost: " << Name << endl;
 	bool ret = false;
 
 	// Do we need a mutex or semaphore here? GF
@@ -115,7 +115,7 @@ bool WinPopupLib::checkMessageDir()
 
 		if (tmpPerms != "drwxrwxrwx") {
 
-			kdDebug(14170) << "Perms not ok!" << endl;
+			kDebug(14170) << "Perms not ok!" << endl;
 
 			int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("Permissions of the working directory "
 									     "/var/lib/winpopup/ are wrong!\n"
@@ -153,7 +153,7 @@ void WinPopupLib::startReadProcess(const QString &Host)
 
 	if (!reader->start(KProcess::NotifyOnExit, true)) {
 		// still to come
-		kdDebug(14170) << "ReadProcess not started!" << endl;
+		kDebug(14170) << "ReadProcess not started!" << endl;
 	}
 }
 
@@ -225,7 +225,7 @@ void WinPopupLib::slotReadProcessExited(KProcess *r)
  */
 void WinPopupLib::slotCheckForNewMessages()
 {
-//	kdDebug(14170) << "check for new Messages: " << this << endl;
+//	kDebug(14170) << "check for new Messages: " << this << endl;
 
 	if (!checkMessageDir()) return; // Restart timer if false? GF
 
@@ -269,7 +269,7 @@ void WinPopupLib::slotCheckForNewMessages()
 					if (!messageFile.remove()) {
 						// QFile::remove() seems to be very persistent, it removes even files with 0444 owned by root
 						// if the directory permissions are 0777 - so this is just for safety. GF
-						kdDebug(14170) << "Message file not removed - how that?" << endl;
+						kDebug(14170) << "Message file not removed - how that?" << endl;
 						int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("A message file could not be removed; "
 											"maybe the permissions are wrong.\n"
 											"Fix? (May need root password)"), QString::null, i18n("Fix"), i18n("Do Not Fix"));
@@ -285,7 +285,7 @@ void WinPopupLib::slotCheckForNewMessages()
 					if (!sender.isEmpty() && time.isValid())
 						emit signalNewMessage(text, time, sender);
 					else
-						kdDebug(14170) << "Received invalid message!" << endl;
+						kDebug(14170) << "Received invalid message!" << endl;
 				}
 			}
 		} // while

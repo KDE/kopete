@@ -87,7 +87,7 @@ KopeteEmoticonAction::KopeteEmoticonAction(  KActionCollection* parent, const ch
 KopeteEmoticonAction::~KopeteEmoticonAction()
 {
 	unplugAll();
-//	kdDebug(14010) << "KopeteEmoticonAction::~KopeteEmoticonAction()" << endl;
+//	kDebug(14010) << "KopeteEmoticonAction::~KopeteEmoticonAction()" << endl;
 	delete d;
 	d = 0;
 }
@@ -127,7 +127,7 @@ int KopeteEmoticonAction::plug( QWidget* widget, int index )
 	if (kapp && !KAuthorized::authorizeKAction(name()))
 		return -1;
 
-//	kdDebug(14010) << "KopeteEmoticonAction::plug( " << widget << ", " << index << " )" << endl;
+//	kDebug(14010) << "KopeteEmoticonAction::plug( " << widget << ", " << index << " )" << endl;
 
 	// KDE4/Qt TODO: Use qobject_cast instead.
 	if ( widget->inherits("QPopupMenu") )

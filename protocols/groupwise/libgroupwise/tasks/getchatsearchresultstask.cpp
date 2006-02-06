@@ -86,7 +86,7 @@ bool GetChatSearchResultsTask::take( Transfer * transfer )
 		setError( m_queryStatus );
 	else
 	{
-		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << " we won!" << endl;
+		kDebug ( GROUPWISE_DEBUG_GLOBAL ) << " we won!" << endl;
 		setSuccess( m_queryStatus );
 	}
 	return true;
@@ -115,7 +115,7 @@ GroupWise::ChatroomSearchResult GetChatSearchResultsTask::extractChatDetails( Fi
 	if ( ( sf = fields.findSingleField ( NM_A_UD_PARTICIPANTS ) ) )
 		csr.participants = sf->value().toInt();
 	
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << csr.name << ", " << csr.ownerDN << ", " << csr.participants << endl;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) << csr.name << ", " << csr.ownerDN << ", " << csr.participants << endl;
 	return csr;
 }
 

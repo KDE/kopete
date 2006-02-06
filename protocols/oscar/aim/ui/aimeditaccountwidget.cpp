@@ -25,7 +25,7 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
         Kopete::Account *account, QWidget *parent, const char *name )
 		: QWidget( parent, name ), KopeteEditAccountWidget( account )
 {
-	//kdDebug(14152) << k_funcinfo << "Called." << endl;
+	//kDebug(14152) << k_funcinfo << "Called." << endl;
 
 	mAccount = dynamic_cast<AIMAccount*>( account );
 	mProtocol = protocol;
@@ -43,7 +43,7 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 		mGui->edtAccountId->setDisabled( true );
 		mGui->mAutoLogon->setChecked( account->excludeConnect() );
 		QString serverEntry = account->configGroup()->readEntry( "Server", "login.oscar.aol.com" );
-		int portEntry = account->configGroup()->readNumEntry( "Port", 5190 );
+		int portEntry = account->configGroup()->readEntry( "Port", 5190 );
 		if ( serverEntry != "login.oscar.aol.com" || portEntry != 5190 )
 			mGui->optionOverrideServer->setChecked( true );
 		else
@@ -80,7 +80,7 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 		}
 
 		// Global Identity
-		mGui->mGlobalIdentity->setChecked( account->configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) );
+		mGui->mGlobalIdentity->setChecked( account->configGroup()->readEntry("ExcludeGlobalIdentity", false) );
     }
 	QObject::connect( mGui->buttonRegister, SIGNAL( clicked() ), this, SLOT( slotOpenRegister() ) );
 
@@ -95,12 +95,12 @@ AIMEditAccountWidget::~AIMEditAccountWidget()
 
 Kopete::Account *AIMEditAccountWidget::apply()
 {
-	kdDebug( 14152 ) << k_funcinfo << "Called." << endl;
+	kDebug( 14152 ) << k_funcinfo << "Called." << endl;
 
 	// If this is a new account, create it
 	if ( !mAccount )
 	{
-		kdDebug( 14152 ) << k_funcinfo << "creating a new account" << endl;
+		kDebug( 14152 ) << k_funcinfo << "creating a new account" << endl;
 		QString newId = mGui->edtAccountId->text();
 		mAccount = new AIMAccount( mProtocol, newId );
 	}
@@ -145,7 +145,7 @@ Kopete::Account *AIMEditAccountWidget::apply()
 
 bool AIMEditAccountWidget::validateData()
 {
-	//kdDebug(14152) << k_funcinfo << "Called." << endl;
+	//kDebug(14152) << k_funcinfo << "Called." << endl;
 
 	QString userName = mGui->edtAccountId->text();
 	QString server = mGui->edtServerAddress->text();
@@ -161,7 +161,7 @@ bool AIMEditAccountWidget::validateData()
 		return false;
 
 	// Seems good to me
-	//kdDebug(14152) << k_funcinfo << "Account data validated successfully." << endl;
+	//kDebug(14152) << k_funcinfo << "Account data validated successfully." << endl;
 	return true;
 }
 

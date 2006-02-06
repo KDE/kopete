@@ -95,7 +95,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_motionaway, MotionAwayPluginFactory( "kopete_
 MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
 : Kopete::Plugin( MotionAwayPluginFactory::instance(), parent, name )
 {
-	kdDebug(14305) << k_funcinfo << "Called." << endl;
+	kDebug(14305) << k_funcinfo << "Called." << endl;
 	/* This should be read from config someday may be */
 	m_width = DEF_WIDTH;
 	m_height = DEF_HEIGHT;
@@ -120,17 +120,17 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name, const QSt
 	m_imageOut.resize( m_width * m_height * 3);
 
 
-	kdDebug(14305) << k_funcinfo << "Opening Video4Linux Device" << endl;
+	kDebug(14305) << k_funcinfo << "Opening Video4Linux Device" << endl;
 
 	m_deviceHandler = open( videoDevice.toLatin1() , O_RDWR);
 
 	if (m_deviceHandler < 0)
 	{
-		kdDebug(14305) << k_funcinfo << "Can't open Video4Linux Device" << endl;
+		kDebug(14305) << k_funcinfo << "Can't open Video4Linux Device" << endl;
 	}
 	else
 	{
-        kdDebug(14305) << k_funcinfo << "Worked! Setting Capture timers!" << endl;
+        kDebug(14305) << k_funcinfo << "Worked! Setting Capture timers!" << endl;
 		/* Capture first image, or we will get a alarm on start */
 		getImage (m_deviceHandler, m_imageRef, DEF_WIDTH, DEF_HEIGHT, IN_DEFAULT, NORM_DEFAULT,
 	    	VIDEO_PALETTE_RGB24);
@@ -148,9 +148,9 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name, const QSt
 
 MotionAwayPlugin::~MotionAwayPlugin()
 {
-    kdDebug(14305) << k_funcinfo << "Closing Video4Linux Device" << endl;
+    kDebug(14305) << k_funcinfo << "Closing Video4Linux Device" << endl;
 	close (m_deviceHandler);
-	kdDebug(14305) << k_funcinfo << "Freeing memory" << endl;
+	kDebug(14305) << k_funcinfo << "Freeing memory" << endl;
 }
 
 void MotionAwayPlugin::loadSettings(){
@@ -259,7 +259,7 @@ void MotionAwayPlugin::slotCapture()
 		/* The cat just walked in :) */
 		if (diffs > m_maxChanges)
 		{
-            kdDebug(14305) << k_funcinfo << "Motion Detected. [" << diffs << "] Reseting Timeout" << endl;
+            kDebug(14305) << k_funcinfo << "Motion Detected. [" << diffs << "] Reseting Timeout" << endl;
 
 			/* If we were away, now we are available again */
 			if ( becomeAvailableWithActivity && !Kopete::Away::globalAway() && m_wentAway)
@@ -289,7 +289,7 @@ void MotionAwayPlugin::slotCapture()
 
 void MotionAwayPlugin::slotActivity()
 {
-	kdDebug(14305) << k_funcinfo << "User activity!, going available" << endl;
+	kDebug(14305) << k_funcinfo << "User activity!, going available" << endl;
 	m_wentAway = false;
 	Kopete::AccountManager::self()->setAvailableAll();
 }
@@ -298,7 +298,7 @@ void MotionAwayPlugin::slotTimeout()
 {
 	if(!Kopete::Away::globalAway() && !m_wentAway)
 	{
-		kdDebug(14305) << k_funcinfo << "Timeout and no user activity, going away" << endl;
+		kDebug(14305) << k_funcinfo << "Timeout and no user activity, going away" << endl;
 		m_wentAway = true;
 		Kopete::AccountManager::self()->setAwayAll();
 	}

@@ -52,7 +52,7 @@ UserDetails OscarMyselfContact::details()
 
 void OscarMyselfContact::deleteContact()
 {
-	kdWarning( OSCAR_GEN_DEBUG ) << k_funcinfo << "called on myself contact! Ignoring." << endl << kdBacktrace() << endl;
+	kWarning( OSCAR_GEN_DEBUG ) << k_funcinfo << "called on myself contact! Ignoring." << endl << kBacktrace() << endl;
 }
 
 #include "oscarmyselfcontact.moc"

@@ -60,7 +60,7 @@ MSNFileTransferSocket::~MSNFileTransferSocket()
 {
 	delete m_file;
 	delete m_server;
-	kdDebug(14140) << "MSNFileTransferSocket::~MSNFileTransferSocket" <<endl;
+	kDebug(14140) << "MSNFileTransferSocket::~MSNFileTransferSocket" <<endl;
 }
 
 void MSNFileTransferSocket::parseCommand(const QString & cmd, uint id, const QString & data)
@@ -69,7 +69,7 @@ void MSNFileTransferSocket::parseCommand(const QString & cmd, uint id, const QSt
 	{
 		if(data.section( ' ', 0, 0 ) != "MSNFTP")
 		{
-			kdDebug(14140) << "MSNFileTransferSocket::parseCommand (VER): bad version: disconnect" <<endl;
+			kDebug(14140) << "MSNFileTransferSocket::parseCommand (VER): bad version: disconnect" <<endl;
 			disconnect();
 		}
 		else
@@ -91,20 +91,20 @@ void MSNFileTransferSocket::parseCommand(const QString & cmd, uint id, const QSt
 			sendCommand( "TFR" ,NULL,false);
 		else
 		{
-			kdDebug(14140) << "MSNFileTransferSocket::parseCommand: ERROR: unable to open file - disconnect " <<endl;
+			kDebug(14140) << "MSNFileTransferSocket::parseCommand: ERROR: unable to open file - disconnect " <<endl;
 			disconnect();
 		}
 	}
 	else if( cmd == "BYE" )
 	{
-		kdDebug(14140) << "MSNFileTransferSocket::parseCommand : end of transfer " <<endl;
+		kDebug(14140) << "MSNFileTransferSocket::parseCommand : end of transfer " <<endl;
 		disconnect();
 	}
 	else if( cmd == "USR" )
 	{
 		if(data.section( ' ', 1, 1 )!= m_authcook)
 		{
-			kdDebug(14140) << "MSNFileTransferSocket::parseCommand (USR): bad auth" <<endl;
+			kDebug(14140) << "MSNFileTransferSocket::parseCommand (USR): bad auth" <<endl;
 			disconnect();
 		}
 		else
@@ -121,9 +121,9 @@ void MSNFileTransferSocket::parseCommand(const QString & cmd, uint id, const QSt
 		disconnect();
 	}
 	else
-		kdDebug(14140) << "MSNFileTransferSocket::parseCommand : unknown command " <<cmd <<endl;
+		kDebug(14140) << "MSNFileTransferSocket::parseCommand : unknown command " <<cmd <<endl;
 
-//	kdDebug(14140) << "MSNFileTransferSocket::parseCommand : done " <<cmd <<endl;
+//	kDebug(14140) << "MSNFileTransferSocket::parseCommand : done " <<cmd <<endl;
 }
 
 void MSNFileTransferSocket::doneConnect()
@@ -137,17 +137,17 @@ void MSNFileTransferSocket::bytesReceived(const QByteArray & head)
 {
 	if(head[0]!='\0')
 	{
-		kdDebug(14140) << "MSNFileTransferSocket::bytesReceived: transfer aborted" <<endl;
+		kDebug(14140) << "MSNFileTransferSocket::bytesReceived: transfer aborted" <<endl;
 		QTimer::singleShot(0,this,SLOT(disconnect()));
 	}
 	unsigned int sz=(int)((unsigned char)head.data()[2])*256+(int)((unsigned char)head.data()[1]);
-//	kdDebug(14140) << "MSNFileTransferSocket::bytesReceived: " << sz <<endl;
+//	kDebug(14140) << "MSNFileTransferSocket::bytesReceived: " << sz <<endl;
 	read(sz);
 }
 
 void MSNFileTransferSocket::slotSocketClosed()
 {
-	kdDebug(14140) << "MSNFileTransferSocket::slotSocketClose "<<  endl;
+	kDebug(14140) << "MSNFileTransferSocket::slotSocketClose "<<  endl;
 	if(m_file)
 		m_file->close();
 	delete m_file;
@@ -170,7 +170,7 @@ void MSNFileTransferSocket::slotReadBlock(const QByteArray &block)
 
 	m_downsize+=block.size();
 	if(m_kopeteTransfer) m_kopeteTransfer->slotProcessed(m_downsize);
-	kdDebug(14140) << "MSNFileTransferSocket  -  " << m_downsize << " of " << m_size <<" done"<<endl;
+	kDebug(14140) << "MSNFileTransferSocket  -  " << m_downsize << " of " << m_size <<" done"<<endl;
 
 	if(m_downsize==m_size)
 	{
@@ -199,16 +199,16 @@ void MSNFileTransferSocket::listen(int port)
 	QObject::connect( m_server, SIGNAL(readyAccept()), this,  SLOT(slotAcceptConnection()));
 	m_server->setAddress(QString::number(port));
 
-	kdDebug(14140) << "MSNFileTransferSocket::listen: about to listen"<<endl;
+	kDebug(14140) << "MSNFileTransferSocket::listen: about to listen"<<endl;
 	bool listenResult = m_server->listen(1);
-	kdDebug(14140) << "MSNFileTransferSocket::listen: result: "<<  listenResult <<endl;
+	kDebug(14140) << "MSNFileTransferSocket::listen: result: "<<  listenResult <<endl;
 	QTimer::singleShot( 60000, this, SLOT(slotTimer()) );
-	kdDebug(14140) << "MSNFileTransferSocket::listen done" <<endl;
+	kDebug(14140) << "MSNFileTransferSocket::listen done" <<endl;
 }
 
 void MSNFileTransferSocket::slotAcceptConnection()
 {
-	kdDebug(14140) << "MSNFileTransferSocket::slotAcceptConnection" <<endl;
+	kDebug(14140) << "MSNFileTransferSocket::slotAcceptConnection" <<endl;
 	if(!accept(m_server))
 	{
 		if( m_kopeteTransfer)
@@ -221,7 +221,7 @@ void MSNFileTransferSocket::slotTimer()
 {
 	if(onlineStatus() != Disconnected)
 		return;
-	kdDebug(14140) << "MSNFileTransferSocket::slotTimer: timeout "<<  endl;
+	kDebug(14140) << "MSNFileTransferSocket::slotTimer: timeout "<<  endl;
 	if( m_kopeteTransfer)
 	{
 		m_kopeteTransfer->slotError( KIO::ERR_CONNECTION_BROKEN , i18n( "Connection timed out" ) );
@@ -262,14 +262,14 @@ void MSNFileTransferSocket::setFile( const QString &fn, long unsigned int fileSi
 	{
 		if(m_file)
 		{
-			kdDebug(14140) << "MSNFileTransferSocket::setFileName: WARNING m_file already exists" << endl;
+			kDebug(14140) << "MSNFileTransferSocket::setFileName: WARNING m_file already exists" << endl;
 			delete m_file;
 		}
 		m_file = new QFile( fn );
 		if(!m_file->open(QIODevice::ReadOnly))
 		{
 			//FIXME: abort transfer here
-			kdDebug(14140) << "MSNFileTransferSocket::setFileName: WARNING unable to open the file" << endl;
+			kDebug(14140) << "MSNFileTransferSocket::setFileName: WARNING unable to open the file" << endl;
 		}
 
 		//If the fileSize is 0 it was not given, we are to get it from the file
@@ -283,7 +283,7 @@ void MSNFileTransferSocket::setFile( const QString &fn, long unsigned int fileSi
 
 void MSNFileTransferSocket::slotSendFile()
 {
-//	kdDebug(14140) <<"MSNFileTransferSocket::slotSendFile()" <<endl;
+//	kDebug(14140) <<"MSNFileTransferSocket::slotSendFile()" <<endl;
 	if( m_downsize >= m_size)
 	{
 		//the transfer seems to be finished.  
@@ -300,7 +300,7 @@ void MSNFileTransferSocket::slotSendFile()
 		QByteArray block(bytesRead+3);
 //		char i1= (char)fmod( bytesRead, 256 ) ;
 //		char i2= (char)floor( bytesRead / 256 ) ;
-//		kdDebug(14140) << "MSNFileTransferSocket::slotSendFile: " << (int)i1 <<" + 256* "<< (int)i2 <<" = " << bytesRead <<endl;
+//		kDebug(14140) << "MSNFileTransferSocket::slotSendFile: " << (int)i1 <<" + 256* "<< (int)i2 <<" = " << bytesRead <<endl;
 		block[0]='\0';
 		block[1]= (char)fmod( bytesRead, 256 );
 		block[2]= (char)floor( bytesRead / 256 );
@@ -315,7 +315,7 @@ void MSNFileTransferSocket::slotSendFile()
 		m_downsize+=bytesRead;
 		if(m_kopeteTransfer)
 			 m_kopeteTransfer->slotProcessed(m_downsize);
-		kdDebug(14140) << "MSNFileTransferSocket::slotSendFile: " << m_downsize << " of " << m_size <<" done"<<endl;
+		kDebug(14140) << "MSNFileTransferSocket::slotSendFile: " << m_downsize << " of " << m_size <<" done"<<endl;
 	}
 	ready=false;
 

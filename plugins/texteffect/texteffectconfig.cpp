@@ -33,18 +33,18 @@ void TextEffectConfig::load()
 	KConfig *config = KGlobal::config();
 	config->setGroup("TextEffect Plugin");
 
-	mColors = config->readListEntry("Colors");
+	mColors = config->readEntry("Colors", QStringList() );
 	if(mColors.isEmpty())
 	{
             mColors= defaultColorList();
 	}
-	mColorRandom = config->readBoolEntry("Color Random Order", false);
-	mColorLines = config->readBoolEntry("Color change every lines", true);
-	mColorWords = config->readBoolEntry("Color change every words", false);
-	mColorChar = config->readBoolEntry("Color change every char", false);
+	mColorRandom = config->readEntry("Color Random Order", false);
+	mColorLines = config->readEntry("Color change every lines", true);
+	mColorWords = config->readEntry("Color change every words", false);
+	mColorChar = config->readEntry("Color change every char", false);
 
-	mLamer = config->readBoolEntry("L4m3r", false);
-	mWaves = config->readBoolEntry("WaVeS", false);
+	mLamer = config->readEntry("L4m3r", false);
+	mWaves = config->readEntry("WaVeS", false);
 }
 
 QStringList TextEffectConfig::defaultColorList()

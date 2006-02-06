@@ -37,7 +37,7 @@ SMPPPDSearcher::~SMPPPDSearcher() {
     \fn SMPPPDSearcher::searchNetwork() const
  */
 void SMPPPDSearcher::searchNetwork() {
-    kdDebug(14312) << k_funcinfo << endl;
+    kDebug(14312) << k_funcinfo << endl;
 
     // the first point to search is localhost
     if(!scan("127.0.0.1", "255.0.0.0")) {
@@ -48,7 +48,7 @@ void SMPPPDSearcher::searchNetwork() {
         *m_procNetstat << "/bin/netstat" << "-rn";
         connect(m_procNetstat, SIGNAL(receivedStdout(KProcess *,char *,int)), this, SLOT(slotStdoutReceivedNetstat(KProcess *,char *,int)));
         if(!m_procNetstat->start(KProcess::Block, KProcess::Stdout)) {
-            kdDebug(14312) << k_funcinfo << "Couldn't execute /sbin/netstat -rn" << endl << "Perhaps the package net-tools isn't installed." << endl;
+            kDebug(14312) << k_funcinfo << "Couldn't execute /sbin/netstat -rn" << endl << "Perhaps the package net-tools isn't installed." << endl;
 
             emit smpppdNotFound();
         }
@@ -62,7 +62,7 @@ void SMPPPDSearcher::searchNetwork() {
     \fn SMPPPDSearcher::slotStdoutReceived(KProcess * proc, char * buf, int len)
  */
 void SMPPPDSearcher::slotStdoutReceivedIfconfig(KProcess * /* proc */, char * buf, int len) {
-    kdDebug(14312) << k_funcinfo << endl;
+    kDebug(14312) << k_funcinfo << endl;
 
     QString myBuf = QString::fromLatin1(buf,len);
     QRegExp rex("^[ ]{10}.*inet addr:([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}).*Mask:([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})");
@@ -79,7 +79,7 @@ void SMPPPDSearcher::slotStdoutReceivedIfconfig(KProcess * /* proc */, char * bu
     emit smpppdNotFound();
 }
 void SMPPPDSearcher::slotStdoutReceivedNetstat(KProcess * /* proc */, char * buf, int len) {
-    kdDebug(14312) << k_funcinfo << endl;
+    kDebug(14312) << k_funcinfo << endl;
 
     QRegExp rexGW(".*\\n0.0.0.0[ ]*([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}).*");
     QString myBuf = QString::fromLatin1(buf,len);
@@ -92,7 +92,7 @@ void SMPPPDSearcher::slotStdoutReceivedNetstat(KProcess * /* proc */, char * buf
         *m_procIfconfig << "/sbin/ifconfig";
         connect(m_procIfconfig, SIGNAL(receivedStdout(KProcess *,char *,int)), this, SLOT(slotStdoutReceivedIfconfig(KProcess *,char *,int)));
         if(!m_procIfconfig->start(KProcess::Block, KProcess::Stdout)) {
-            kdDebug(14312) << k_funcinfo << "Couldn't execute /sbin/ifconfig" << endl << "Perhaps the package net-tools isn't installed." << endl;
+            kDebug(14312) << k_funcinfo << "Couldn't execute /sbin/ifconfig" << endl << "Perhaps the package net-tools isn't installed." << endl;
 
             emit smpppdNotFound();
         }
@@ -106,7 +106,7 @@ void SMPPPDSearcher::slotStdoutReceivedNetstat(KProcess * /* proc */, char * buf
     \fn SMPPPDSearcher::scan() const
  */
 bool SMPPPDSearcher::scan(const QString& ip, const QString& mask) {
-    kdDebug(14312) << k_funcinfo << "Scanning " << ip << "/" << mask << "..." << endl;
+    kDebug(14312) << k_funcinfo << "Scanning " << ip << "/" << mask << "..." << endl;
 	
 	if(ip == "127.0.0.1") { // if localhost, we only scan this one host
 		if(scanIP(ip)) {
@@ -134,12 +134,12 @@ bool SMPPPDSearcher::scan(const QString& ip, const QString& mask) {
             uint lastWordMask = lastRex.cap(4).toUInt();
 
             if(lastWordMask == 0) {
-                kdDebug(14312) << k_funcinfo << "IP-Range: " << ipToks[0] << "." << ipToks[1] << "." <<  ipToks[2] << ".0 - " << ipToks[0] << "." << ipToks[1] << "." << ipToks[2] << ".255" << endl;
+                kDebug(14312) << k_funcinfo << "IP-Range: " << ipToks[0] << "." << ipToks[1] << "." <<  ipToks[2] << ".0 - " << ipToks[0] << "." << ipToks[1] << "." << ipToks[2] << ".255" << endl;
                 max_range = 255;
             } else if(lastWordMask == 255) {
                 min_range = max_range = lastWordIP;
             } else {
-                kdDebug(14312) << k_funcinfo << "IP-Range: " << ipToks[0] << "." << ipToks[1] << "." <<  ipToks[2] << ".0 - " << ipToks[0] << "." << ipToks[1] << "." << ipToks[2] << "." << lastWordMask << endl;
+                kDebug(14312) << k_funcinfo << "IP-Range: " << ipToks[0] << "." << ipToks[1] << "." <<  ipToks[2] << ".0 - " << ipToks[0] << "." << ipToks[1] << "." << ipToks[2] << "." << lastWordMask << endl;
                 max_range = lastWordMask;
             }
         }
@@ -178,7 +178,7 @@ bool SMPPPDSearcher::scan(const QString& ip, const QString& mask) {
     \fn SMPPPDSearcher::scanIP(const QString& ip)
  */
 bool SMPPPDSearcher::scanIP(const QString& ip) {
-    kdDebug(14312) << k_funcinfo << "Now scanning " << ip << "..." << endl;
+    kDebug(14312) << k_funcinfo << "Now scanning " << ip << "..." << endl;
 
     KNetwork::KStreamSocket sock(ip, "3185");
     sock.setBlocking(TRUE);
@@ -188,7 +188,7 @@ bool SMPPPDSearcher::scanIP(const QString& ip) {
         emit smpppdFound(ip);
         return true;
     } else {
-        kdDebug(14312) << k_funcinfo << "Socket Error: " << KNetwork::KStreamSocket::errorString(sock.error()) << endl;
+        kDebug(14312) << k_funcinfo << "Socket Error: " << KNetwork::KStreamSocket::errorString(sock.error()) << endl;
     }
 
     return false;

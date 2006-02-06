@@ -117,7 +117,7 @@ bool ChatPropertiesTask::take( Transfer * transfer )
 								entry.dn = sf->value().toString();
 							if ( ( sf = entryFields.findSingleField ( NM_A_SZ_ACCESS_FLAGS ) ) )
 								entry.chatRights = sf->value().toInt();
-							kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "got acl entry: " << entry.dn << ", " << entry.chatRights << endl;
+							kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "got acl entry: " << entry.dn << ", " << entry.chatRights << endl;
 							m_aclEntries.append( entry );
 						}
 						
@@ -126,7 +126,7 @@ bool ChatPropertiesTask::take( Transfer * transfer )
 			}
 		}
 	}
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "Got chatroom properties: " << m_chat << " : " << m_ownerDn << ", " << m_description << ", " << m_disclaimer << ", " << m_query << ", " << m_archive << ", " << m_topic << ", " << m_creatorDn << ", " << m_creationTime.toString() << ", " << m_rights << endl;
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "Got chatroom properties: " << m_chat << " : " << m_ownerDn << ", " << m_description << ", " << m_disclaimer << ", " << m_query << ", " << m_archive << ", " << m_topic << ", " << m_creatorDn << ", " << m_creationTime.toString() << ", " << m_rights << endl;
 	finished();
 	return true;
 }

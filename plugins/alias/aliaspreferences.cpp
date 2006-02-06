@@ -166,12 +166,12 @@ void AliasPreferences::load()
 	if( config->hasGroup( "AliasPlugin" ) )
 	{
 		config->setGroup("AliasPlugin");
-		QStringList aliases = config->readListEntry("AliasNames");
+		QStringList aliases = config->readEntry("AliasNames", QStringList() );
 		for( QStringList::Iterator it = aliases.begin(); it != aliases.end(); ++it )
 		{
-			uint aliasNumber = config->readUnsignedNumEntry( (*it) + "_id" );
+			uint aliasNumber = config->readEntry( (*it) + "_id", 0 );
 			QString aliasCommand = config->readEntry( (*it) + "_command", QString() );
-			QStringList protocols = config->readListEntry( (*it) + "_protocols" );
+			QStringList protocols = config->readEntry( (*it) + "_protocols", QStringList() );
 
 			ProtocolList protocolList;
 			for( QStringList::Iterator it2 = protocols.begin(); it2 != protocols.end(); ++it2 )
@@ -197,12 +197,12 @@ void AliasPreferences::slotPluginLoaded( Kopete::Plugin *plugin )
 		if( config->hasGroup( "AliasPlugin" ) )
 		{
 			config->setGroup("AliasPlugin");
-			QStringList aliases = config->readListEntry("AliasNames");
+			QStringList aliases = config->readEntry("AliasNames", QStringList());
 			for( QStringList::Iterator it = aliases.begin(); it != aliases.end(); ++it )
 			{
-				uint aliasNumber = config->readUnsignedNumEntry( (*it) + "_id" );
+				uint aliasNumber = config->readEntry( (*it) + "_id", 0 );
 				QString aliasCommand = config->readEntry( (*it) + "_command", QString() );
-				QStringList protocols = config->readListEntry( (*it) + "_protocols" );
+				QStringList protocols = config->readEntry( (*it) + "_protocols", QStringList() );
 
 				for( QStringList::iterator it2 = protocols.begin(); it2 != protocols.end(); ++it2 )
 				{

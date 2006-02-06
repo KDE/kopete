@@ -97,7 +97,7 @@ bool QVideo::findDisplayProperties(ImageFormat& fmt, int& depth, unsigned int& b
 				    vi_in[i].green_mask == 0x00ff00 &&
 				    vi_in[i].blue_mask  == 0x0000ff) {
 					p = FORMAT_BGR32;
-					kdDebug() << "QVideo: Found BGR32 display." << endl;
+					kDebug() << "QVideo: Found BGR32 display." << endl;
 				}
                 break;
 			case 24:
@@ -105,7 +105,7 @@ bool QVideo::findDisplayProperties(ImageFormat& fmt, int& depth, unsigned int& b
 				    vi_in[i].green_mask == 0x00ff00 &&
 				    vi_in[i].blue_mask  == 0x0000ff) {
 					p = FORMAT_BGR24;
-					kdDebug() << "QVideo: Found BGR24 display." << endl;
+					kDebug() << "QVideo: Found BGR24 display." << endl;
 				}
                 break;
 			case 16:
@@ -113,13 +113,13 @@ bool QVideo::findDisplayProperties(ImageFormat& fmt, int& depth, unsigned int& b
 				    vi_in[i].green_mask == 0x0007e0 &&
 				    vi_in[i].blue_mask  == 0x00001f) {
 					p = FORMAT_RGB15_LE;
-					kdDebug() << "QVideo: Found RGB16_LE display." << endl;
+					kDebug() << "QVideo: Found RGB16_LE display." << endl;
 				} else
                     if (vi_in[i].red_mask   == 0x007c00 &&
                         vi_in[i].green_mask == 0x0003e0 &&
                         vi_in[i].blue_mask  == 0x00001f) {
                         p = FORMAT_RGB15_LE;
-                        kdDebug() << "QVideo: Found RGB15_LE display." << endl;
+                        kDebug() << "QVideo: Found RGB15_LE display." << endl;
                     }
                 break;
 			case 8:
@@ -135,7 +135,7 @@ bool QVideo::findDisplayProperties(ImageFormat& fmt, int& depth, unsigned int& b
 
     if (p != FORMAT_NONE) {
         int bytespp = bytesppForFormat(p);
-        kdDebug() << "QVideo: Display properties: depth: " << d
+        kDebug() << "QVideo: Display properties: depth: " << d
                   << ", bits/pixel: " << bpp
                   << ", bytes/pixel: " << bytespp << endl;
         fmt           = p;
@@ -144,7 +144,7 @@ bool QVideo::findDisplayProperties(ImageFormat& fmt, int& depth, unsigned int& b
         depth         = d;
         return true;
     } else {
-        kdWarning() << "QVideo: Unable to find out palette. What display do you have????" << endl;
+        kWarning() << "QVideo: Unable to find out palette. What display do you have????" << endl;
         fmt           = FORMAT_NONE;
         bitsperpixel  = 0;
         bytesperpixel = 0;

@@ -136,9 +136,9 @@ void UserDetails::fill( Buffer * buffer )
 	m_warningLevel = buffer->getWord();
 	WORD numTLVs = buffer->getWord();
 
-	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Got user info for " << user << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Got user info for " << user << endl;
 #ifdef OSCAR_USERINFO_DEBUG
-	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Warning level is " << m_warningLevel << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Warning level is " << m_warningLevel << endl;
 #endif
 	//start parsing TLVs
 	for( int i = 0; i < numTLVs; ++i  )
@@ -153,7 +153,7 @@ void UserDetails::fill( Buffer * buffer )
 				m_userClass = b.getWord();
 				m_userClassSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "User class is " << m_userClass << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "User class is " << m_userClass << endl;
 #endif
 				break;
 			case 0x0002: //member since
@@ -161,43 +161,43 @@ void UserDetails::fill( Buffer * buffer )
 				m_memberSince.setTime_t( b.getDWord() );
 				m_memberSinceSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Member since " << m_memberSince << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Member since " << m_memberSince << endl;
 #endif
 				break;
 			case 0x0003: //sigon time
 				m_onlineSince.setTime_t( b.getDWord() );
 				m_onlineSinceSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Signed on at " << m_onlineSince << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Signed on at " << m_onlineSince << endl;
 #endif
 				break;
 			case 0x0004: //idle time
 				m_idleTime = b.getWord() * 60;
 #ifdef OSCAR_USERINFO_DEBUG
 				m_idleTimeSpecified = true;
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Idle time is " << m_idleTime << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Idle time is " << m_idleTime << endl;
 #endif
 				break;
 			case 0x0006: //extended user status
 				m_extendedStatus = b.getDWord();
 				m_extendedStatusSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Extended status is " << QString::number( m_extendedStatus, 16 ) << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Extended status is " << QString::number( m_extendedStatus, 16 ) << endl;
 #endif
                 break;
 			case 0x000A: //external IP address
 				m_dcOutsideIp = KNetwork::KIpAddress( ntohl( b.getDWord() ) );
 				m_dcOutsideSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "External IP address is " << m_dcOutsideIp.toString() << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "External IP address is " << m_dcOutsideIp.toString() << endl;
 #endif
 				break;
 			case 0x000C: //DC info
 				m_dcInsideIp = KNetwork::KIpAddress( ntohl( b.getDWord() ) );
 				m_dcPort = b.getDWord();
 #ifdef OSCAR_USERINFO_DEBUG
-    			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Internal IP address is " << m_dcInsideIp.toString() << endl;
-    			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Port number is " << m_dcPort << endl;
+    			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Internal IP address is " << m_dcInsideIp.toString() << endl;
+    			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Port number is " << m_dcPort << endl;
 #endif
     			m_dcType = b.getByte();
 				m_dcProtoVersion = b.getWord();
@@ -210,7 +210,7 @@ void UserDetails::fill( Buffer * buffer )
 				b.getWord(); //unknown.
 				m_dcInsideSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got DC info" << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got DC info" << endl;
 #endif
 				break;
 			case 0x000D: //capability info
@@ -222,7 +222,7 @@ void UserDetails::fill( Buffer * buffer )
 				m_numSecondsOnline = b.getDWord();
 				m_numSecondsOnlineSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Online for " << m_numSecondsOnline << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Online for " << m_numSecondsOnline << endl;
 #endif
 				break;
 			case 0x001D:
@@ -233,7 +233,7 @@ void UserDetails::fill( Buffer * buffer )
 				while ( b.length() > 0 )
 				{
 #ifdef OSCAR_USERINFO_DEBUG
-					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Icon and available message info" << endl;
+					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Icon and available message info" << endl;
 #endif
 					WORD type2 = b.getWord();
 					BYTE number = b.getByte();
@@ -250,12 +250,12 @@ void UserDetails::fill( Buffer * buffer )
  							m_md5IconHash.duplicate( b.getBlock( length ), length );
 							m_iconSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-							kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksum:" << m_md5IconHash << endl;
+							kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksum:" << m_md5IconHash << endl;
 #endif
 						}
  						else
  						{
-	 						kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "icon checksum indicated"
+	 						kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "icon checksum indicated"
 		 						<< " but unable to parse checksum" << endl;
 							b.skipBytes( length );
  						}
@@ -265,16 +265,16 @@ void UserDetails::fill( Buffer * buffer )
 						{
 							m_availableMessage = QString( b.getBSTR() );
 #ifdef OSCAR_USERINFO_DEBUG
-							kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "available message:" << m_availableMessage << endl;
+							kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "available message:" << m_availableMessage << endl;
 #endif
 							if ( b.length() >= 4 && b.getWord() == 0x0001 )
 							{
 								b.skipBytes( 2 );
-								kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Encoding:" << b.getBSTR() << endl;
+								kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Encoding:" << b.getBSTR() << endl;
 							}
 						}
 						else
-							kdDebug(OSCAR_RAW_DEBUG) << "not enough bytes for available message" << endl;
+							kDebug(OSCAR_RAW_DEBUG) << "not enough bytes for available message" << endl;
 						break;
 					default:
 						break;
@@ -283,7 +283,7 @@ void UserDetails::fill( Buffer * buffer )
 				break;
 			}
 			default:
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unknown TLV, type=" << t.type << ", length=" << t.length
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unknown TLV, type=" << t.type << ", length=" << t.length
 					<< " in userinfo" << endl;
 				break;
 			};
@@ -416,7 +416,7 @@ void UserDetails::detectClient()
 	{
 		if (hasCap(CAP_TYPING))
 		{
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Client protocol version = " << m_dcProtoVersion << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Client protocol version = " << m_dcProtoVersion << endl;
 			switch (m_dcProtoVersion)
 			{
 			case 10:
@@ -462,7 +462,7 @@ void UserDetails::detectClient()
 		}
 	}
 
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "detected client as: " << m_clientName
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "detected client as: " << m_clientName
 		<< " " << m_clientVersion << endl;
 	*/
 }

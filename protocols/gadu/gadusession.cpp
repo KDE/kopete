@@ -64,7 +64,7 @@ GaduSession::isConnected() const
 int
 GaduSession::status() const
 {
-	kdDebug(14100)<<"Status = " << session_->status <<", initial = "<< session_->initial_status <<endl;
+	kDebug(14100)<<"Status = " << session_->status <<", initial = "<< session_->initial_status <<endl;
 	if ( session_ ) {
 		return session_->status & ( ~GG_STATUS_FRIENDS_MASK );
 	}
@@ -80,11 +80,11 @@ GaduSession::login( struct gg_login_params* p )
 // to report it better. libgadu needs to be recompiled with debug enabled
 //		gg_debug_level=GG_DEBUG_MISC|GG_DEBUG_FUNCTION;
 
-		kdDebug(14100) << "Login" << endl;
+		kDebug(14100) << "Login" << endl;
 
 		if ( !( session_ = gg_login( p ) ) ) {
 			destroySession();
-			kdDebug( 14100 ) << "libgadu internal error " << endl;
+			kDebug( 14100 ) << "libgadu internal error " << endl;
 			emit connectionFailed(  GG_FAILURE_CONNECTING );
 			return;
 		}
@@ -176,7 +176,7 @@ GaduSession::login( KGaduLoginParams* loginp )
 	params_.client_addr	= loginp->client_addr;
 	params_.client_port	= loginp->client_port;
 
-	kdDebug(14100) << "LOGIN IP: " << loginp->client_addr << endl;
+	kDebug(14100) << "LOGIN IP: " << loginp->client_addr << endl;
 
 	if ( loginp->useTls ) {
 		params_.server_port = GG_HTTPS_PORT;
@@ -187,7 +187,7 @@ GaduSession::login( KGaduLoginParams* loginp )
 		}
 	}
 
-	kdDebug(14100)<<"gadusession::login, server ( " << loginp->server << " ), tls(" << loginp->useTls << ") " <<endl;
+	kDebug(14100)<<"gadusession::login, server ( " << loginp->server << " ), tls(" << loginp->useTls << ") " <<endl;
 	login( &params_ );
 
 }
@@ -283,7 +283,7 @@ GaduSession::sendMessage( uin_t recipient, const Kopete::Message& msg, int msgCl
 int
 GaduSession::changeStatus( int status, bool forFriends )
 {
-	kdDebug(14101)<<"## Changing to "<<status<<endl;
+	kDebug(14101)<<"## Changing to "<<status<<endl;
 	if ( isConnected() ) {
 		return gg_change_status( session_, status | ( forFriends ? GG_STATUS_FRIENDS_MASK : 0) );
 	}
@@ -474,7 +474,7 @@ GaduSession::sendResult( gg_pubdir50_t result )
 	count = gg_pubdir50_count( result );
 
 	if ( !count ) {
-		kdDebug(14100) << "there was nothing found in public directory for requested details" << endl;
+		kDebug(14100) << "there was nothing found in public directory for requested details" << endl;
 	}
 
 	for ( i = 0; i < count; i++ ) {
@@ -498,7 +498,7 @@ GaduSession::sendResult( gg_pubdir50_t result )
 			resultLine.age.truncate( 0 );
 		}
 		sres.append( resultLine );
-		kdDebug(14100) << "found line "<< resultLine.uin << " " << resultLine.firstname << endl;
+		kDebug(14100) << "found line "<< resultLine.uin << " " << resultLine.firstname << endl;
 	}
 
 	searchSeqNr_ = gg_pubdir50_next( result );
@@ -509,15 +509,15 @@ void
 GaduSession::requestContacts()
 {
 	if ( !session_ || session_->state != GG_STATE_CONNECTED ) {
-		kdDebug(14100) <<" you need to be connected to send " << endl;
+		kDebug(14100) <<" you need to be connected to send " << endl;
 		return;
 	}
 
 	if ( gg_userlist_request( session_, GG_USERLIST_GET, NULL ) == -1 ) {
-		kdDebug(14100) <<" userlist export ERROR " << endl;
+		kDebug(14100) <<" userlist export ERROR " << endl;
 		return;
 	}
-	kdDebug( 14100 ) << "Contacts list import..started " << endl;
+	kDebug( 14100 ) << "Contacts list import..started " << endl;
 }
 
 
@@ -527,19 +527,19 @@ GaduSession::exportContactsOnServer( GaduContactsList* contactsList )
 	QByteArray plist;
 
 	if ( !session_ || session_->state != GG_STATE_CONNECTED ) {
-		kdDebug( 14100 ) << "you need to connect to export Contacts list " << endl;
+		kDebug( 14100 ) << "you need to connect to export Contacts list " << endl;
 		return;
 	}
 
 	plist = textcodec->fromUnicode( contactsList->asString() );
-	kdDebug(14100) <<"--------------------userlists\n" << plist << endl;
-	kdDebug(14100) << "----------------------------" << endl;
+	kDebug(14100) <<"--------------------userlists\n" << plist << endl;
+	kDebug(14100) << "----------------------------" << endl;
 
 	if ( gg_userlist_request( session_, GG_USERLIST_PUT, plist.data() ) == -1 ) {
-		kdDebug( 14100 ) << "export contact list failed " << endl;
+		kDebug( 14100 ) << "export contact list failed " << endl;
 		return;
 	}
-	kdDebug( 14100 ) << "Contacts list export..started " << endl;
+	kDebug( 14100 ) << "Contacts list export..started " << endl;
 }
 
 
@@ -551,17 +551,17 @@ GaduSession::handleUserlist( gg_event* event )
 		case GG_USERLIST_GET_REPLY:
 			if ( event->event.userlist.reply ) {
 				ul = event->event.userlist.reply;
-				kdDebug( 14100 ) << "Got Contacts list  OK " << endl;
+				kDebug( 14100 ) << "Got Contacts list  OK " << endl;
 			}
 			else {
-				kdDebug( 14100 ) << "Got Contacts list  FAILED/EMPTY " << endl;
+				kDebug( 14100 ) << "Got Contacts list  FAILED/EMPTY " << endl;
 				// FIXME: send failed?
 			}
 			emit userListRecieved( ul );
 			break;
 
 		case GG_USERLIST_PUT_REPLY:
-			kdDebug( 14100 ) << "Contacts list exported  OK " << endl;
+			kDebug( 14100 ) << "Contacts list exported  OK " << endl;
 			emit userListExported();
 			break;
 
@@ -691,7 +691,7 @@ GaduSession::checkDescriptor()
 	KGaduNotify	gaduNotify;
 
 	if ( !( event = gg_watch_fd( session_ ) ) ) {
-		kdDebug(14100)<<"Connection was broken for some reason"<<endl;
+		kDebug(14100)<<"Connection was broken for some reason"<<endl;
 		destroyNotifiers();
 		logoff( Kopete::Account::ConnectionReset );
 		return;
@@ -699,16 +699,16 @@ GaduSession::checkDescriptor()
 
 	// FD changed, recreate socket notifiers
 	if ( session_->state == GG_STATE_CONNECTING_HUB || session_->state == GG_STATE_CONNECTING_GG ) {
-		kdDebug(14100)<<"recreating notifiers"<<endl;
+		kDebug(14100)<<"recreating notifiers"<<endl;
 		destroyNotifiers();
 		createNotifiers( true );
 	}
 
 	switch( event->type ) {
 		case GG_EVENT_MSG:
-			kdDebug(14100) << "incoming message:class:" << event->event.msg.msgclass << endl;
+			kDebug(14100) << "incoming message:class:" << event->event.msg.msgclass << endl;
 			if ( event->event.msg.msgclass & GG_CLASS_CTCP ) {
-				kdDebug( 14100 ) << "incomming ctcp " << endl;
+				kDebug( 14100 ) << "incomming ctcp " << endl;
 				// TODO: DCC CONNECTION
 				emit incomingCtcp( event->event.msg.sender );
 			}
@@ -769,17 +769,17 @@ GaduSession::checkDescriptor()
 			notify60( event );
 		break;
 		case GG_EVENT_CONN_SUCCESS:
-			kdDebug(14100) << "success server: " << session_->server_addr << endl;
+			kDebug(14100) << "success server: " << session_->server_addr << endl;
 			emit connectionSucceed();
 		break;
 		case GG_EVENT_CONN_FAILED:
-			kdDebug(14100) << "failed server: " << session_->server_addr << endl;
+			kDebug(14100) << "failed server: " << session_->server_addr << endl;
 			destroySession();
-			kdDebug(14100) << "emit connection failed(" << event->event.failure << ") signal" << endl;
+			kDebug(14100) << "emit connection failed(" << event->event.failure << ") signal" << endl;
 			emit connectionFailed( (gg_failure_t)event->event.failure );
 			break;
 		case GG_EVENT_DISCONNECT:
-			kdDebug(14100)<<"event Disconnected"<<endl;
+			kDebug(14100)<<"event Disconnected"<<endl;
 			// it should be called either when we requested disconnect, or when other client connects with our UID
 			logoff( Kopete::Account::Manual );
 		break;
@@ -797,7 +797,7 @@ GaduSession::checkDescriptor()
 			handleUserlist( event );
 		break;
 		default:
-			kdDebug(14100)<<"Unprocessed GaduGadu Event = "<<event->type<<endl;
+			kDebug(14100)<<"Unprocessed GaduGadu Event = "<<event->type<<endl;
 		break;
 	}
 

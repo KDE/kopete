@@ -163,7 +163,7 @@ void AddAccountWizard::next()
 	}
 	else 
 	{
-		kdDebug(14100) << k_funcinfo << "Next pressed on misc page" << endl;
+		kDebug(14100) << k_funcinfo << "Next pressed on misc page" << endl;
 		K3Wizard::next();
 	}
 

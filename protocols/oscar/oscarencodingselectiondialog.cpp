@@ -82,7 +82,7 @@ OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent, int
     m_encodingUI->encodingCombo->insertStringList( m_encodings.values() );
     if( (initialEncodingIndex = m_encodings.keys().findIndex(initialEncoding)) == -1 )
     {
-        kdWarning() << k_funcinfo << "Requested encoding mib " << initialEncoding
+        kWarning() << k_funcinfo << "Requested encoding mib " << initialEncoding
                 << " not in encoding list - defaulting to first encoding item"
                 << " in list to be shown in combobox initially" << endl;
         /* initialEncodingIndex = position in combobox, value 0 currently

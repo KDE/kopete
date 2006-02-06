@@ -141,7 +141,7 @@ OnlineStatus OnlineStatusManager::onlineStatus(Protocol * protocol, Categories c
 		categ_nb=(int)(categ_nb/2);
 	} while (categ_nb > 0);
 	
-	kdWarning() << "No status in the category " << category << " for the protocol " << protocol->displayName() <<endl;
+	kWarning() << "No status in the category " << category << " for the protocol " << protocol->displayName() <<endl;
 	return OnlineStatus();
 }
 
@@ -162,13 +162,13 @@ QPixmap OnlineStatusManager::cacheLookupByObject( const OnlineStatus &statusFor,
 {
 	QString fp = fingerprint( statusFor, icon, size, color, idle );
 
-	kdDebug(14010) << "finger print:" << fp << ", icon: " << icon << endl;
+	kDebug(14010) << "finger print:" << fp << ", icon: " << icon << endl;
 	// look it up in the cache
 	QPixmap *theIcon = d->iconCache.value(fp);
 	if ( !theIcon )
 	{
 		// cache miss
-		kdDebug(14010) << k_funcinfo << "Missed " << fp << " in icon cache!" << endl;
+		kDebug(14010) << k_funcinfo << "Missed " << fp << " in icon cache!" << endl;
 		theIcon = renderIcon( statusFor, icon, size, color, idle);
 		d->iconCache[fp] = theIcon;
 	}
@@ -324,11 +324,11 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 	// create an icon suiting the status from the base icon
 	// use reasonable defaults if not provided or protocol not set
 
-	kdDebug( 14010) << k_funcinfo << "overlarIcons size: " << statusFor.overlayIcons().count() <<endl;
+	kDebug( 14010) << k_funcinfo << "overlarIcons size: " << statusFor.overlayIcons().count() <<endl;
 
 	// NOTE: overlayIcons car be empty
 	if ( !statusFor.overlayIcons().empty() && baseIcon == statusFor.overlayIcons().first() )
-		kdWarning( 14010 ) << "Base and overlay icons are the same - icon effects will not be visible." << endl;
+		kWarning( 14010 ) << "Base and overlay icons are the same - icon effects will not be visible." << endl;
 
 	QPixmap* basis = new QPixmap( SmallIcon( baseIcon ) );
 

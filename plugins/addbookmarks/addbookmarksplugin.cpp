@@ -27,7 +27,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_addbookmarks, BookmarksPluginFactory( "kopete
 BookmarksPlugin::BookmarksPlugin(QObject *parent, const char *name, const QStringList &/*args*/)
  : Kopete::Plugin(BookmarksPluginFactory::instance(), parent, name)
 {
-	//kdDebug(14501) << "plugin loading" << endl;
+	//kDebug(14501) << "plugin loading" << endl;
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), this, SLOT( slotBookmarkURLsInMessage( Kopete::Message & ) ) );
 }
 
@@ -45,7 +45,7 @@ BookmarksPlugin::~BookmarksPlugin()
  */
 void BookmarksPlugin::slotBookmarkURLsInMessage(Kopete::Message & msg)
 {
-	//kdDebug(14501) << "recieved message:" << endl << msg.parsedBody() << endl;
+	//kDebug(14501) << "recieved message:" << endl << msg.parsedBody() << endl;
 	if(msg.direction() != Kopete::Message::Inbound)
 		return;
 	KUrl::List *URLsList;
@@ -54,7 +54,7 @@ void BookmarksPlugin::slotBookmarkURLsInMessage(Kopete::Message & msg)
 	if (!URLsList->empty()) {
 		for( it = URLsList->begin() ; it != URLsList->end() ; ++it){
 			addKopeteBookmark(*it, msg.from()->property(Kopete::Global::Properties::self()->nickName()).value().toString() );
-			//kdDebug (14501) << "name:" << msg.from()->property(Kopete::Global::Properties::self()->nickName()).value().toString() << endl;
+			//kDebug (14501) << "name:" << msg.from()->property(Kopete::Global::Properties::self()->nickName()).value().toString() << endl;
 		}
 	}
 	delete URLsList;
@@ -75,7 +75,7 @@ void BookmarksPlugin::slotAddKopeteBookmark( KIO::Job *transfer, const QByteArra
 
 	if( pos == -1 ){
 		group.addBookmark( mgr, m_map[(KIO::TransferJob*)transfer].url.prettyURL(), m_map[(KIO::TransferJob*)transfer].url.url() );
-		kdDebug( 14501 ) << "failed to extract title from first data chunk" << endl;
+		kDebug( 14501 ) << "failed to extract title from first data chunk" << endl;
 	}else {
 		group.addBookmark( mgr, rx.cap( 1 ).simplified(),
 						   m_map[(KIO::TransferJob*)transfer].url.url() );
@@ -148,7 +148,7 @@ KBookmarkGroup BookmarksPlugin::getFolder( KBookmarkGroup group, QString folder 
 	for( bookmark=group.first(); !bookmark.isNull() && !(bookmark.isGroup() && !bookmark.fullText().compare( folder )); bookmark = group.next(bookmark));
 	if( bookmark.isNull() ){
 		KBookmarkManager *mgr = KBookmarkManager::userBookmarksManager();
-		//kdDebug (14501) << "GetFolder:" << folder << endl;
+		//kDebug (14501) << "GetFolder:" << folder << endl;
 		group = group.createNewFolder( mgr, folder, true);
 	}else {
 		group = bookmark.toGroup();
@@ -164,16 +164,16 @@ QTextCodec* BookmarksPlugin::getPageEncoding( QByteArray data )
 	QTextCodec *codec;
 	
 	if( pos == -1 ){
-		kdDebug( 14501 ) << "charset not found in first data chunk" << endl;
+		kDebug( 14501 ) << "charset not found in first data chunk" << endl;
 		return QTextCodec::codecForName("iso8859-1");
 	}
-	//kdDebug(14501) << temp.mid(pos, rx.matchedLength()) << endl;
+	//kDebug(14501) << temp.mid(pos, rx.matchedLength()) << endl;
 	temp = temp.mid(pos, rx.matchedLength()-1);
 	temp = temp.mid( temp.find("charset", 0, false)+7);
 	temp = temp.remove('=').simplified();
 	for( pos = 0 ; temp[pos].isLetterOrNumber() || temp[pos] == '-' ; pos++ );
 	temp = temp.left( pos );
-	//kdDebug(14501) << "encoding: " << temp << endl;
+	//kDebug(14501) << "encoding: " << temp << endl;
 	codec = QTextCodec::codecForName( temp.toLatin1() );
 	if( !codec ){
 		return QTextCodec::codecForName("iso8859-1");

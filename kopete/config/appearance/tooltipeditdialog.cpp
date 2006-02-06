@@ -130,7 +130,7 @@ void TooltipEditDialog::slotOkClicked()
 	{
 		keyname = static_cast<TooltipItem *>(it.current())->propertyName();
 		newList += keyname;
-		kdDebug(14000) << k_funcinfo <<
+		kDebug(14000) << k_funcinfo <<
 			"Adding key '" << keyname << "' to tooltip list" << endl;
 		++it;
 	}
@@ -139,7 +139,7 @@ void TooltipEditDialog::slotOkClicked()
 	{
 		Kopete::AppearanceSettings::self()->setToolTipContents(newList);
 		emit changed(true);
-		kdDebug(14000) << k_funcinfo << "tooltip fields changed, emitting changed()" << endl;
+		kDebug(14000) << k_funcinfo << "tooltip fields changed, emitting changed()" << endl;
 	}
 }
 
@@ -193,7 +193,7 @@ void TooltipEditDialog::slotAddButton()
 	TooltipItem *item = static_cast<TooltipItem *>(mMainWidget->lstUnusedItems->currentItem());
 	if(!item)
 		return;
-	//kdDebug(14000) << k_funcinfo << endl;
+	//kDebug(14000) << k_funcinfo << endl;
 
 	// build a new one in the "used" list
 	new TooltipItem(mMainWidget->lstUsedItems, item->text(0), item->propertyName());
@@ -208,7 +208,7 @@ void TooltipEditDialog::slotRemoveButton()
 	TooltipItem *item = static_cast<TooltipItem *>(mMainWidget->lstUsedItems->currentItem());
 	if(!item)
 		return;
-	//kdDebug(14000) << k_funcinfo << endl;
+	//kDebug(14000) << k_funcinfo << endl;
 
 	// build a new one in the "unused" list
 	new TooltipItem(mMainWidget->lstUnusedItems, item->text(0), item->propertyName());

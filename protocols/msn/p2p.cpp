@@ -81,7 +81,7 @@ TransferContext::~TransferContext()
 
 void TransferContext::acknowledge(const Message& message)
 {
-	kdDebug(14140) << k_funcinfo << m_dispatcher<< endl;
+	kDebug(14140) << k_funcinfo << m_dispatcher<< endl;
 
 	Message outbound;
 	outbound.header.sessionId = message.header.sessionId;
@@ -134,7 +134,7 @@ void TransferContext::acknowledge(const Message& message)
 
 void TransferContext::error()
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo << endl;
 	sendMessage(ERROR);
 	m_dispatcher->detach(this);
 }
@@ -184,7 +184,7 @@ void TransferContext::sendData(const QByteArray& bytes)
 
 void TransferContext::sendDataPreparation()
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo << endl;
 
 	Message outbound;
 	outbound.header.sessionId  = m_sessionId;
@@ -344,7 +344,7 @@ void TransferContext::sendMessage(Message& outbound, const QByteArray& body)
 			bytesLeft -= offset;
 		}
 
-		kdDebug(14140) << k_funcinfo <<
+		kDebug(14140) << k_funcinfo <<
 			QByteArray(outbound.body.data(), outbound.body.size())
 			<< endl;
 
@@ -371,7 +371,7 @@ void TransferContext::setType(TransferType type)
 
 void TransferContext::abort()
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo << endl;
 	if(m_transfer)
 	{
 		if(m_transfer->error() == KIO::ERR_ABORTED)

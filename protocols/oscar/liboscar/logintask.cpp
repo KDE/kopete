@@ -58,7 +58,7 @@ bool StageOneLoginTask::take( Transfer* transfer )
 	{
 		if ( client()->isIcq() )
 		{
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Starting ICQ login" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Starting ICQ login" << endl;
 			m_icqTask = new IcqLoginTask( client()->rootTask() );
 			m_closeTask = new CloseConnectionTask( client()->rootTask() );
 			
@@ -68,8 +68,8 @@ bool StageOneLoginTask::take( Transfer* transfer )
 		}
 		else
 		{
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Starting AIM login" << endl;
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending the FLAP version back" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Starting AIM login" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending the FLAP version back" << endl;
 			
 			//send the flap version response
 			FLAP f = { 0x01, 0 , 0 };
@@ -90,7 +90,7 @@ bool StageOneLoginTask::take( Transfer* transfer )
 
 void StageOneLoginTask::closeTaskFinished()
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	m_cookie = m_closeTask->cookie();
 	m_bosPort = m_closeTask->bosPort();
 	m_bosServer = m_closeTask->bosHost();
@@ -100,7 +100,7 @@ void StageOneLoginTask::closeTaskFinished()
 
 void StageOneLoginTask::aimTaskFinished()
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	m_cookie = m_aimTask->cookie();
 	m_bosPort = m_aimTask->bosPort();
 	m_bosServer = m_aimTask->bosHost();
@@ -184,7 +184,7 @@ void StageTwoLoginTask::onGo()
 		outbuf->addDWord( 0x00000001 );
 		outbuf->addTLV( 0x06, m_cookie.size(), m_cookie.data() );
 		Transfer* ft = createTransfer( f, outbuf );
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending the login cookie back" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending the login cookie back" << endl;
 		send( ft );
 	}
 	else

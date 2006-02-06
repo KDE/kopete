@@ -67,7 +67,7 @@ void SSIManager::clear()
 	//delete all SSIs from the list
 	if ( d->SSIList.count() > 0 )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Clearing the SSI list" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Clearing the SSI list" << endl;
 		Q3ValueList<Oscar::SSI>::iterator it = d->SSIList.begin();
 		
 		while ( it != d->SSIList.end() && d->SSIList.count() > 0 )
@@ -107,15 +107,15 @@ void SSIManager::setParameters( WORD maxContacts, WORD maxGroups, WORD maxVisibl
 	//I'm not using k_funcinfo for these debug statements because of
 	//the function's long signature
 	QString funcName = QString::fromLatin1( "[void SSIManager::setParameters] " );
-	kdDebug(OSCAR_RAW_DEBUG) << funcName << "Max number of contacts allowed in SSI: "
+	kDebug(OSCAR_RAW_DEBUG) << funcName << "Max number of contacts allowed in SSI: "
 		<< maxContacts << endl;
-	kdDebug(OSCAR_RAW_DEBUG) << funcName << "Max number of groups allowed in SSI: "
+	kDebug(OSCAR_RAW_DEBUG) << funcName << "Max number of groups allowed in SSI: "
 		<< maxGroups << endl;
-	kdDebug(OSCAR_RAW_DEBUG) << funcName << "Max number of contacts allowed on visible list: "
+	kDebug(OSCAR_RAW_DEBUG) << funcName << "Max number of contacts allowed on visible list: "
 		<< maxVisible << endl;
-	kdDebug(OSCAR_RAW_DEBUG) << funcName << "Max number of contacts allowed on invisible list: "
+	kDebug(OSCAR_RAW_DEBUG) << funcName << "Max number of contacts allowed on invisible list: "
 		<< maxInvisible << endl;
-	kdDebug(OSCAR_RAW_DEBUG) << funcName << "Max number of contacts allowed on ignore list: "
+	kDebug(OSCAR_RAW_DEBUG) << funcName << "Max number of contacts allowed on ignore list: "
 		<< maxIgnore << endl;
 	
 	d->maxContacts = maxContacts;
@@ -173,7 +173,7 @@ Oscar::SSI SSIManager::findContact( const QString &contact, const QString &group
 	
 	if ( contact.isNull() || group.isNull() )
 	{
-		kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo <<
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo <<
 			"Passed NULL name or group string, aborting!" << endl;
 		
 		return m_dummyItem;
@@ -182,7 +182,7 @@ Oscar::SSI SSIManager::findContact( const QString &contact, const QString &group
 	Oscar::SSI gr = findGroup( group ); // find the parent group
 	if ( gr.isValid() )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "gr->name= " << gr.name() <<
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "gr->name= " << gr.name() <<
 			", gr->gid= " << gr.gid() <<
 			", gr->bid= " << gr.bid() <<
 			", gr->type= " << gr.type() << endl;
@@ -194,7 +194,7 @@ Oscar::SSI SSIManager::findContact( const QString &contact, const QString &group
 			if ( ( *it ).type() == ROSTER_CONTACT && (*it ).name() == contact && (*it ).gid() == gr.gid() )
 			{
 				//we have found our contact
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo <<
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo <<
 					"Found contact " << contact << " in SSI data" << endl;
 				 return ( *it );
 			}
@@ -202,7 +202,7 @@ Oscar::SSI SSIManager::findContact( const QString &contact, const QString &group
 	}
 	else
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo <<
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo <<
 			"ERROR: Group '" << group << "' not found!" << endl;
 	}
 	return m_dummyItem;
@@ -366,7 +366,7 @@ Oscar::SSI SSIManager::visibilityItem() const
 	{
 		if ( ( *it ).type() == 0x0004 )
 		{
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found visibility setting" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found visibility setting" << endl;
 			item = ( *it );
 			return item;
 		}
@@ -391,7 +391,7 @@ bool SSIManager::newGroup( const Oscar::SSI& group )
 
 	if ( !group.name().isEmpty() ) //avoid the group with gid 0 and bid 0
 	{	// the group is really new
-		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding group '" << group.name() << "' to SSI list" << endl;
+		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding group '" << group.name() << "' to SSI list" << endl;
 		if ( group.gid() > d->nextGroupId )
 			d->nextGroupId = group.gid();
 		
@@ -405,11 +405,11 @@ bool SSIManager::newGroup( const Oscar::SSI& group )
 bool SSIManager::removeGroup( const Oscar::SSI& group )
 {
 	QString groupName = group.name();
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing group " << group.name() << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing group " << group.name() << endl;
 	int remcount = d->SSIList.remove( group );
 	if ( remcount == 0 )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No groups removed" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No groups removed" << endl;
 		return false;
 	}
 	
@@ -426,7 +426,7 @@ bool SSIManager::removeGroup( const QString &group )
 		return true;
 	}
 	else
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Group " << group << " not found." << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Group " << group << " not found." << endl;
 
 	return false;
 }
@@ -436,13 +436,13 @@ bool SSIManager::newContact( const Oscar::SSI& contact )
 	//what to validate?
 	if ( contact.bid() > d->nextContactId )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting next contact ID to " << contact.bid() << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting next contact ID to " << contact.bid() << endl;
 		d->nextContactId = contact.bid();
 	}
 	
 	if ( d->SSIList.findIndex( contact ) == -1 )
 	{
-		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding contact '" << contact.name() << "' to SSI list" << endl;
+		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding contact '" << contact.name() << "' to SSI list" << endl;
 		d->SSIList.append( contact );
 		emit contactAdded( contact );
 	}
@@ -458,7 +458,7 @@ bool SSIManager::removeContact( const Oscar::SSI& contact )
 	
 	if ( remcount == 0 )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No contacts were removed." << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No contacts were removed." << endl;
 		return false;
 	}
 	
@@ -473,7 +473,7 @@ bool SSIManager::removeContact( const QString &contact )
 	if ( ct.isValid() && removeContact( ct ) )
 		return true;
 	else
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact " << contact << " not found." << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact " << contact << " not found." << endl;
 	
 	return false;
 }
@@ -482,12 +482,12 @@ bool SSIManager::newItem( const Oscar::SSI& item )
 {
 	if ( item.bid() > d->nextContactId )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting next contact ID to " << item.bid() << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting next contact ID to " << item.bid() << endl;
 		d->nextContactId = item.bid();
 	}
 	
 	//no error checking for now
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding item " << item.toString() << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding item " << item.toString() << endl;
 	d->SSIList.append( item );
 	return true;
 }

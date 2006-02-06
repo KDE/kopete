@@ -96,7 +96,7 @@ ICQContact::~ICQContact()
 
 void ICQContact::updateSSIItem()
 {
-	//kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << endl;
+	//kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << endl;
 	if ( m_ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 
@@ -111,11 +111,11 @@ void ICQContact::updateSSIItem()
 
 void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& details )
 {
-	//kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << contact << contactId() << endl;
+	//kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << contact << contactId() << endl;
 	if ( Oscar::normalize( contact  ) != Oscar::normalize( contactId() ) )
 		return;
 
-	kdDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
+	kDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
 	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( details.extendedStatus() & 0xffff );
 	setOnlineStatus( presence.toOnlineStatus() );
 
@@ -179,7 +179,7 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 			mAccount->engine()->requestServerRedirect( 0x0010 );
 		
 		int time = ( KRandom::random() % 10 ) * 1000;
-		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating buddy icon in " << time/1000 << " seconds" << endl;
+		kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating buddy icon in " << time/1000 << " seconds" << endl;
 		QTimer::singleShot( time, this, SLOT( requestBuddyIcon() ) );
 	}
 
@@ -191,7 +191,7 @@ void ICQContact::userOnline( const QString& userId )
 	if ( Oscar::normalize( userId ) != Oscar::normalize( contactId() ) )
 		return;
 
-	kdDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " online" << endl;
+	kDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " online" << endl;
 	ICQ::Presence online = mProtocol->statusManager()->presenceOf( ICQ::Presence::Online );
 	//mAccount->engine()->requestStatusInfo( contactId() );
 }
@@ -201,7 +201,7 @@ void ICQContact::userOffline( const QString& userId )
 	if ( Oscar::normalize( userId ) != Oscar::normalize( contactId() ) )
 		return;
 
-	kdDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " offline" << endl;
+	kDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " offline" << endl;
 	ICQ::Presence offline = mProtocol->statusManager()->presenceOf( ICQ::Presence::Offline );
 	setOnlineStatus( mProtocol->statusManager()->onlineStatusOf( offline ) );
 }
@@ -221,7 +221,7 @@ void ICQContact::loggedIn()
 	{
 		m_requestingNickname = true;
 		int time = ( KRandom::random() % 20 ) * 1000;
-		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating nickname in " << time/1000 << " seconds" << endl;
+		kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating nickname in " << time/1000 << " seconds" << endl;
 		QTimer::singleShot( time, this, SLOT( requestShortInfo() ) );
 	}
 
@@ -243,7 +243,7 @@ void ICQContact::slotRequestAuth()
 
 void ICQContact::slotSendAuth()
 {
-	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Sending auth reply" << endl;
+	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Sending auth reply" << endl;
 	ICQAuthReplyDialog replyDialog( 0, "replyDialog", false );
 
 	replyDialog.setUser( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
@@ -256,7 +256,7 @@ void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 
-	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << endl;
 	QString message;
 	if( granted )
 	{
@@ -310,7 +310,7 @@ void ICQContact::receivedLongInfo( const QString& contact )
 
 	QTextCodec* codec = contactCodec();
 
-	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "received long info from engine" << endl;
+	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "received long info from engine" << endl;
 
 	ICQGeneralUserInfo genInfo = mAccount->engine()->getGeneralInfo( contact );
 	if ( !genInfo.nickname.isEmpty() )
@@ -350,7 +350,7 @@ void ICQContact::receivedShortInfo( const QString& contact )
 	*/
 	if ( !shortInfo.nickname.isEmpty() )
 	{
-		kdDebug(14153) << k_funcinfo <<
+		kDebug(14153) << k_funcinfo <<
 			"setting new displayname for former UIN-only Contact" << endl;
 		setProperty( Kopete::Global::Properties::self()->nickName(), codec->toUnicode( shortInfo.nickname ) );
 	}
@@ -469,11 +469,11 @@ void ICQContact::haveIcon( const QString& user, QByteArray icon )
 	if ( Oscar::normalize( user ) != Oscar::normalize( contactId() ) )
 		return;
 	
-	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Updating icon for " << contactId() << endl;
+	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Updating icon for " << contactId() << endl;
 	QImage buddyIcon( icon );
 	if ( buddyIcon.isNull() )
 	{
-		kdWarning(OSCAR_ICQ_DEBUG) << k_funcinfo << "Failed to convert buddy icon to QImage" << endl;
+		kWarning(OSCAR_ICQ_DEBUG) << k_funcinfo << "Failed to convert buddy icon to QImage" << endl;
 		return;
 	}
 	
@@ -489,7 +489,7 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 	// update mInfo and general stuff from OscarContact
 	slotParseUserInfo(u);
 
-	/*kdDebug(14190) << k_funcinfo << "Called for '"
+	/*kDebug(14190) << k_funcinfo << "Called for '"
 		<< displayName() << "', contactName()=" << contactName() << endl;*/
 	QStringList capList;
 	// Append client name and version in case we found one
@@ -735,7 +735,7 @@ void ICQContact::changeEncodingDialogClosed( int result )
 {
     if ( result == QDialog::Accepted )
     {
-        kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "setting encoding mib to "
+        kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "setting encoding mib to "
                                  << m_oesd->selectedEncoding() << endl;
         setProperty( mProtocol->contactEncoding, m_oesd->selectedEncoding() );
     }
@@ -767,7 +767,7 @@ void ICQContact::slotInvisibleTo()
 
 void ICQContact::slotReadAwayMessage()
 {
-	kdDebug(14153) << k_funcinfo << "account='" << account()->accountId() <<
+	kDebug(14153) << k_funcinfo << "account='" << account()->accountId() <<
 		"', contact='" << displayName() << "'" << endl;
 
 	if (!awayMessageDialog)
@@ -794,14 +794,14 @@ void ICQContact::slotCloseAwayMessageDialog()
 
 const QString ICQContact::awayMessage()
 {
-	kdDebug(14150) << k_funcinfo <<  property(mProtocol->awayMessage).value().toString() << endl;
+	kDebug(14150) << k_funcinfo <<  property(mProtocol->awayMessage).value().toString() << endl;
 	return property(mProtocol->awayMessage).value().toString();
 }
 
 
 void ICQContact::setAwayMessage(const QString &message)
 {
-	/*kdDebug(14150) << k_funcinfo <<
+	/*kDebug(14150) << k_funcinfo <<
 		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;*/
 	setProperty(mProtocol->awayMessage, message);
 	emit awayMessageChanged();
@@ -848,7 +848,7 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 
 	if(contactName() == displayName() && !generalInfo.nickName.isEmpty())
 	{
-		kdDebug(14153) << k_funcinfo << "setting new displayname for former UIN-only Contact" << endl;
+		kDebug(14153) << k_funcinfo << "setting new displayname for former UIN-only Contact" << endl;
 		setDisplayName(generalInfo.nickName);
 	}
 
@@ -859,7 +859,7 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 void ICQContact::slotSnacFailed(WORD snacID)
 {
 	if (userinfoRequestSequence != 0)
-		kdDebug(14153) << k_funcinfo << "snacID = " << snacID << " seq = " << userinfoRequestSequence << endl;
+		kDebug(14153) << k_funcinfo << "snacID = " << snacID << " seq = " << userinfoRequestSequence << endl;
 
 	//TODO: ugly interaction between snacID and request sequence, see OscarSocket::sendCLI_TOICQSRV
 	if (snacID == (0x0000 << 16) | userinfoRequestSequence)
@@ -871,14 +871,14 @@ void ICQContact::slotSnacFailed(WORD snacID)
 
 void ICQContact::slotIgnore()
 {
-	kdDebug(14150) << k_funcinfo <<
+	kDebug(14150) << k_funcinfo <<
 		"Called; ignore = " << actionIgnore->isChecked() << endl;
 	setIgnore(actionIgnore->isChecked(), true);
 }
 
 void ICQContact::slotVisibleTo()
 {
-	kdDebug(14150) << k_funcinfo <<
+	kDebug(14150) << k_funcinfo <<
 		"Called; visible = " << actionVisibleTo->isChecked() << endl;
 	setVisibleTo(actionVisibleTo->isChecked(), true);
 }

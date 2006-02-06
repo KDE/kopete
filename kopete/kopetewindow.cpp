@@ -416,10 +416,10 @@ void KopeteWindow::loadOptions()
 
 	applyMainWindowSettings( config, "General Options" );
 	config->setGroup("General Options");
-	QPoint pos = config->readPointEntry("Position");
+	QPoint pos = config->readEntry("Position", QPoint());
 	move(pos);
 
-	QSize size = config->readSizeEntry("Geometry");
+	QSize size = config->readEntry("Geometry", QSize() );
 	if(size.isEmpty()) // Default size
 		resize( QSize(220, 350) );
 	else
@@ -623,7 +623,7 @@ bool KopeteWindow::queryExit()
 		|| !Kopete::BehaviorSettings::self()->showSystemTray() /* also close if our tray icon is hidden! */
 		|| !isShown() )
 	{
-		kdDebug( 14000 ) << k_funcinfo << " shutting down plugin manager" << endl;
+		kDebug( 14000 ) << k_funcinfo << " shutting down plugin manager" << endl;
 		Kopete::PluginManager::self()->shutdown();
 		return true;
 	}
@@ -646,11 +646,11 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 			e->accept();
 		}
 		// END of code borrowed from KMainWindow::closeEvent
-		kdDebug( 14000 ) << k_funcinfo << "just closing because we have a system tray icon" << endl;
+		kDebug( 14000 ) << k_funcinfo << "just closing because we have a system tray icon" << endl;
 	}
 	else
 	{
-		kdDebug( 14000 ) << k_funcinfo << "delegating to KMainWindow::closeEvent()" << endl;
+		kDebug( 14000 ) << k_funcinfo << "delegating to KMainWindow::closeEvent()" << endl;
 		KMainWindow::closeEvent( e );
 	}
 }
@@ -675,7 +675,7 @@ void KopeteWindow::slotAllPluginsLoaded()
 
 void KopeteWindow::slotAccountRegistered( Kopete::Account *account )
 {
-//	kdDebug(14000) << k_funcinfo << "Called." << endl;
+//	kDebug(14000) << k_funcinfo << "Called." << endl;
 	if ( !account )
 		return;
 
@@ -711,7 +711,7 @@ void KopeteWindow::slotAccountRegistered( Kopete::Account *account )
 
 void KopeteWindow::slotAccountUnregistered( const Kopete::Account *account)
 {
-//	kdDebug(14000) << k_funcinfo << "Called." << endl;
+//	kDebug(14000) << k_funcinfo << "Called." << endl;
 	QList<Kopete::Account *> accounts = Kopete::AccountManager::self()->accounts();
 	if (accounts.isEmpty())
 	{
@@ -780,7 +780,7 @@ void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 	}
 	else
 	{
-		//kdDebug( 14000 ) << k_funcinfo << "Using movie."  << endl;
+		//kDebug( 14000 ) << k_funcinfo << "Using movie."  << endl;
 		i->setMovie( mv );
 	}
 #endif
@@ -841,7 +841,7 @@ void KopeteWindow::slotTrayAboutToShowMenu( KMenu * popup )
 
 /*void KopeteWindow::slotProtocolStatusIconRightClicked( Kopete::Protocol *proto, const QPoint &p )
 {
-	//kdDebug( 14000 ) << k_funcinfo << endl;
+	//kDebug( 14000 ) << k_funcinfo << endl;
 	if ( Kopete::AccountManager::self()->accounts( proto ).count() > 0 )
 	{
 		KActionMenu *menu = proto->protocolActions();

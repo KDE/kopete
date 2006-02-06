@@ -40,7 +40,7 @@ Ready * Ready::instance() {
 }
 
 void Ready::disconnect(Client * client) {
-    kdDebug(14312) << k_funcinfo << endl;
+    kDebug(14312) << k_funcinfo << endl;
     if(socket(client)) {
         socket(client)->flush();
         socket(client)->close();
@@ -60,10 +60,10 @@ QStringList Ready::getInterfaceConfigurations(Client * client) {
     QStringList ifcfgs;
 
     // we want all ifcfgs
-    kdDebug(14312) << k_funcinfo << "smpppd req: list-ifcfgs" << endl;
+    kDebug(14312) << k_funcinfo << "smpppd req: list-ifcfgs" << endl;
     write(client, "list-ifcfgs");
     QStringList stream = read(client);
-    kdDebug(14312) << k_funcinfo << "smpppd ack: " << stream[0] << endl;
+    kDebug(14312) << k_funcinfo << "smpppd ack: " << stream[0] << endl;
     if(stream[0].startsWith("ok")) {
         // we have now a QStringList with all ifcfgs
         // we extract them and put them in the global ifcfgs-list
@@ -71,7 +71,7 @@ QStringList Ready::getInterfaceConfigurations(Client * client) {
         QRegExp numIfcfgsRex("^BEGIN IFCFGS ([0-9]+).*");
         if(numIfcfgsRex.exactMatch(stream[1])) {
             int count_ifcfgs = numIfcfgsRex.cap(1).toInt();
-            kdDebug(14312) << k_funcinfo << "ifcfgs: " << count_ifcfgs << endl;
+            kDebug(14312) << k_funcinfo << "ifcfgs: " << count_ifcfgs << endl;
 
             for(int i = 0; i < count_ifcfgs; i++) {
                 QRegExp ifcfgRex("^i \"(ifcfg-[a-zA-Z]+[0-9]+)\".*");

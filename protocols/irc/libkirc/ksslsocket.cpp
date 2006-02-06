@@ -121,7 +121,7 @@ int KSSLSocket::bytesAvailable() const
 
 void KSSLSocket::slotReadData()
 {
-	kdDebug(14120) << k_funcinfo << d->kssl->pending() << endl;
+	kDebug(14120) << k_funcinfo << d->kssl->pending() << endl;
 	QByteArray buff(512);
 	int bytesRead = d->kssl->read( buff.data(), 512 );
 
@@ -133,7 +133,7 @@ void KSSLSocket::slotReadData()
 void KSSLSocket::slotConnected()
 {
 	if (!KSSL::doesSSLWork()) {
-		kdError(14120) << k_funcinfo << "SSL not functional!" << endl;
+		kError(14120) << k_funcinfo << "SSL not functional!" << endl;
 
 		closeNow();
 		emit sslFailure();
@@ -144,7 +144,7 @@ void KSSLSocket::slotConnected()
 	d->kssl = new KSSL();
 
 	if (d->kssl->connect( sockfd ) != 1) {
-		kdError(14120) << k_funcinfo << "SSL connect() failed." << endl;
+		kError(14120) << k_funcinfo << "SSL connect() failed." << endl;
 
 		closeNow();
 		emit sslFailure();
@@ -171,7 +171,7 @@ void KSSLSocket::slotConnected()
 
 void KSSLSocket::slotDisconnected()
 {
-	kdDebug(14120) << k_funcinfo << "Disconnected" << endl;
+	kDebug(14120) << k_funcinfo << "Disconnected" << endl;
 
 	if( readNotifier() )
 		readNotifier()->setEnabled(false);
@@ -228,7 +228,7 @@ I basically copied the below from tcpKIO::SlaveBase.hpp, with some modificaions 
 int KSSLSocket::messageBox( KIO::SlaveBase::MessageBoxType type, const QString &text, const QString &caption,
 	const QString &buttonYes, const QString &buttonNo )
 {
-	kdDebug(14120) << "messageBox " << type << " " << text << " - " << caption << buttonYes << buttonNo << endl;
+	kDebug(14120) << "messageBox " << type << " " << text << " - " << caption << buttonYes << buttonNo << endl;
 	QByteArray data, result;
 	QByteArray returnType;
 	QDataStream arg( &data,QIODevice::WriteOnly);
@@ -424,7 +424,7 @@ int KSSLSocket::verifyCertificate()
 				break;
 		}
 		default:
-		kdDebug(14120) << "SSL error in cert code."
+		kDebug(14120) << "SSL error in cert code."
 				<< "Please report this to kopete-devel@kde.org."
 				<< endl;
 		break;
@@ -441,7 +441,7 @@ int KSSLSocket::verifyCertificate()
 		return rc;
 
 
-	kdDebug(14120) << "SSL connection information follows:" << endl
+	kDebug(14120) << "SSL connection information follows:" << endl
 		<< "+-----------------------------------------------" << endl
 		<< "| Cipher: " << d->kssl->connectionInfo().getCipher() << endl
 		<< "| Description: " << d->kssl->connectionInfo().getCipherDescription() << endl

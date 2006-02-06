@@ -245,7 +245,7 @@ void CryptographyPlugin::slotOutgoingMessage( Kopete::Message& msg )
 		}
 		if( tmpKey.isEmpty() )
 		{
-		//	kdDebug( 14303 ) << "CryptographyPlugin::slotOutgoingMessage: no key selected for one contact" <<endl;
+		//	kDebug( 14303 ) << "CryptographyPlugin::slotOutgoingMessage: no key selected for one contact" <<endl;
 			return;
 		}
 		keys.append( tmpKey );
@@ -257,7 +257,7 @@ void CryptographyPlugin::slotOutgoingMessage( Kopete::Message& msg )
 
 	if(key.isEmpty())
 	{
-		kdDebug(14303) << "CryptographyPlugin::slotOutgoingMessage: empty key" <<endl;
+		kDebug(14303) << "CryptographyPlugin::slotOutgoingMessage: empty key" <<endl;
 		return;
 	}
 
@@ -288,7 +288,7 @@ void CryptographyPlugin::slotOutgoingMessage( Kopete::Message& msg )
 		m_cachedMessages.insert(resultat,original);
 	}
 	else
-		kdDebug(14303) << "CryptographyPlugin::slotOutgoingMessage: empty result" <<endl;
+		kDebug(14303) << "CryptographyPlugin::slotOutgoingMessage: empty result" <<endl;
 
 }
 

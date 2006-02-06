@@ -84,7 +84,7 @@ QString AIMMyselfContact::userProfile()
 Kopete::ChatSession* AIMMyselfContact::manager( Kopete::Contact::CanCreateFlags canCreate,
                                                 Oscar::WORD exchange, const QString& room )
 {
-    kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << endl;
+    kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << endl;
     Kopete::ContactPtrList chatMembers;
     chatMembers.append( this );
     Kopete::ChatSession* genericManager = 0L;
@@ -110,7 +110,7 @@ void AIMMyselfContact::chatSessionDestroyed( Kopete::ChatSession* session )
 
 void AIMMyselfContact::sendMessage( Kopete::Message& message, Kopete::ChatSession* session )
 {
-    kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "sending a message" << endl;
+    kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "sending a message" << endl;
     //TODO: remove duplication - factor into a message utils class or something
     Oscar::Message msg;
     QString s;
@@ -174,7 +174,7 @@ void AIMMyselfContact::sendMessage( Kopete::Message& message, Kopete::ChatSessio
     //30- (and any I missed) are size 7
     s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"[^\"]*\">")),QString::fromLatin1("<font size=\"7\">"));
 
-    kdDebug(14190) << k_funcinfo << "sending "
+    kDebug(14190) << k_funcinfo << "sending "
         << s << endl;
 
     msg.setSender( contactId() );
@@ -186,7 +186,7 @@ void AIMMyselfContact::sendMessage( Kopete::Message& message, Kopete::ChatSessio
     AIMChatSession* aimSession = dynamic_cast<AIMChatSession*>( session );
     if ( !aimSession )
     {
-        kdWarning(OSCAR_AIM_DEBUG) << "couldn't convert to AIM chat room session!" << endl;
+        kWarning(OSCAR_AIM_DEBUG) << "couldn't convert to AIM chat room session!" << endl;
         session->messageSucceeded();
         return;
     }
@@ -202,7 +202,7 @@ void AIMMyselfContact::sendMessage( Kopete::Message& message, Kopete::ChatSessio
 AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID, const char *name)
 	: OscarAccount(parent, accountID, name, false)
 {
-	kdDebug(14152) << k_funcinfo << accountID << ": Called."<< endl;
+	kDebug(14152) << k_funcinfo << accountID << ": Called."<< endl;
 	AIMMyselfContact* mc = new AIMMyselfContact( this );
 	setMyself( mc );
 	myself()->setOnlineStatus( static_cast<AIMProtocol*>( parent )->statusOffline );
@@ -252,23 +252,23 @@ QString AIMAccount::sanitizedMessage( const QString& message )
 	doc.setContent( message, false, &domError, &errLine, &errCol );
 	if ( !domError.isEmpty() ) //error parsing, do nothing
 	{
-		kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "error from dom document conversion: "
+		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "error from dom document conversion: "
 			<< domError << endl;
 		return message;
 	}
 	else
 	{
-		kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "conversion to dom document successful."
+		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "conversion to dom document successful."
 			<< "looking for font tags" << endl;
 		QDomNodeList fontTagList = doc.elementsByTagName( "font" );
 		if ( fontTagList.count() == 0 )
 		{
-			kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "No font tags found. Returning normal message" << endl;
+			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "No font tags found. Returning normal message" << endl;
 			return message;
 		}
 		else
 		{
-			kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Found font tags. Attempting replacement" << endl;
+			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Found font tags. Attempting replacement" << endl;
 			uint numFontTags = fontTagList.count();
 			for ( uint i = 0; i < numFontTags; i++ )
 			{
@@ -280,7 +280,7 @@ QString AIMAccount::sanitizedMessage( const QString& message )
 					continue;
 				if ( fontEl.hasAttribute( "back" ) )
 				{
-					kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Found attribute to replace. Doing replacement" << endl;
+					kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Found attribute to replace. Doing replacement" << endl;
 					QString backgroundColor = fontEl.attribute( "back" );
 					backgroundColor.insert( 0, "background-color: " );
 					backgroundColor.append( ';' );
@@ -290,13 +290,13 @@ QString AIMAccount::sanitizedMessage( const QString& message )
 			}
 		}
 	}
-	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "sanitized message is " << doc.toString();
+	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "sanitized message is " << doc.toString();
 	return doc.toString();
 }
 
 KActionMenu* AIMAccount::actionMenu()
 {
-//	kdDebug(14152) << k_funcinfo << accountId() << ": Called." << endl;
+//	kDebug(14152) << k_funcinfo << accountId() << ": Called." << endl;
 	// mActionMenu is managed by Kopete::Account.  It is deleted when
 	// it is no longer shown, so we can (safely) just make a new one here.
 	
@@ -345,7 +345,7 @@ KActionMenu* AIMAccount::actionMenu()
 
 void AIMAccount::setAway(bool away, const QString &awayReason)
 {
-// 	kdDebug(14152) << k_funcinfo << accountId() << "reason is " << awayReason << endl;
+// 	kDebug(14152) << k_funcinfo << accountId() << "reason is " << awayReason << endl;
 	if ( away )
 	{
 		engine()->setStatus( Client::Away, awayReason );
@@ -364,7 +364,7 @@ void AIMAccount::setAway(bool away, const QString &awayReason)
 
 void AIMAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const QString& reason )
 {
-	kdDebug(14152) << k_funcinfo << "called with reason = " << reason <<" status = "<< status.status() << endl;;
+	kDebug(14152) << k_funcinfo << "called with reason = " << reason <<" status = "<< status.status() << endl;;
 	if ( status.status() == Kopete::OnlineStatus::Online )
 		setAway( false );
 	if ( status.status() == Kopete::OnlineStatus::Away )
@@ -374,7 +374,7 @@ void AIMAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const QStr
 
 void AIMAccount::setUserProfile(const QString &profile)
 {
-	kdDebug(14152) << k_funcinfo << "called." << endl;
+	kDebug(14152) << k_funcinfo << "called." << endl;
 	AIMMyselfContact* aimmc = dynamic_cast<AIMMyselfContact*>( myself() );
 	if ( aimmc )
 		aimmc->setOwnProfile( profile );
@@ -398,11 +398,11 @@ void AIMAccount::slotEditInfo()
 void AIMAccount::globalIdentityChanged( const QString& key, const QVariant& value )
 {
 	//do something with the photo
-	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Global identity changed" << endl;
-	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "key: " << key << endl;
-	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "value: " << value << endl;
+	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Global identity changed" << endl;
+	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "key: " << key << endl;
+	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "value: " << value << endl;
 	
-	if( !configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) )
+	if( !configGroup()->readEntry("ExcludeGlobalIdentity", false) )
 	{
 		if ( key == Kopete::Global::Properties::self()->nickName().key() )
 		{
@@ -420,10 +420,10 @@ void AIMAccount::globalIdentityChanged( const QString& key, const QVariant& valu
 			//photo is a url, gotta load it first.
 			QFile iconFile( value.toString() );
 			iconFile.open( IO_ReadOnly );
-			kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "hashing global identity image" << endl;
+			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "hashing global identity image" << endl;
 			KMD5 iconHash;
 			iconHash.update( iconFile );
-			kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo  << "hash is :" << iconHash.hexDigest() << endl;
+			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo  << "hash is :" << iconHash.hexDigest() << endl;
 			//find old item, create updated item
 			if ( engine()->isActive() )
 			{
@@ -432,7 +432,7 @@ void AIMAccount::globalIdentityChanged( const QString& key, const QVariant& valu
 	
 				if ( !item )
 				{
-					kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "no existing icon hash item in ssi. creating new"
+					kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "no existing icon hash item in ssi. creating new"
 						<< endl;
 					TLV t;
 					t.type = 0x00D5;
@@ -448,13 +448,13 @@ void AIMAccount::globalIdentityChanged( const QString& key, const QVariant& valu
 					Oscar::SSI s( "1", 0, ssi->nextContactId(), ROSTER_BUDDYICONS, list );
 	
 					//item is a non-valid ssi item, so the function will add an item
-					kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "setting new icon item" << endl;
+					kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "setting new icon item" << endl;
 					engine()->modifySSIItem( item, s );
 				}
 				else
 				{ //found an item
 					Oscar::SSI s(item);
-					kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "modifying old item in ssi."
+					kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "modifying old item in ssi."
 						<< endl;
 					Q3ValueList<TLV> tList( item.tlvList() );
 					TLV t = Oscar::findTLV( tList, 0x00D5 );
@@ -481,7 +481,7 @@ void AIMAccount::globalIdentityChanged( const QString& key, const QVariant& valu
 void AIMAccount::sendBuddyIcon()
 {
 	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
-	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << photoPath << endl;
+	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << photoPath << endl;
 	QFile iconFile( photoPath );
 	iconFile.open( QIODevice::ReadOnly );
 	QByteArray imageData = iconFile.readAll();
@@ -519,24 +519,24 @@ void AIMAccount::slotGoOnline()
 {
 	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Away )
 	{
-		kdDebug(14152) << k_funcinfo << accountId() << " was away. welcome back." << endl;
+		kDebug(14152) << k_funcinfo << accountId() << " was away. welcome back." << endl;
 		engine()->setStatus( Client::Online );
 		myself()->removeProperty( Kopete::Global::Properties::self()->awayMessage() );
 	}
 	else if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
 	{
-		kdDebug(14152) << k_funcinfo << accountId() << " was offline. time to connect" << endl;
+		kDebug(14152) << k_funcinfo << accountId() << " was offline. time to connect" << endl;
 		OscarAccount::connect();
 	}
 	else
 	{
-		kdDebug(14152) << k_funcinfo << accountId() << " is already online, doing nothing" << endl;
+		kDebug(14152) << k_funcinfo << accountId() << " is already online, doing nothing" << endl;
 	}
 }
 
 void AIMAccount::slotGoAway(const QString &message)
 {
-	kdDebug(14152) << k_funcinfo << message << endl;
+	kDebug(14152) << k_funcinfo << message << endl;
 	setAway(true, message);
 }
 
@@ -545,7 +545,7 @@ void AIMAccount::joinChatDialogClosed( int code )
     if ( code == QDialog::Accepted )
     {
         //join the chat
-	    kdDebug(14152) << k_funcinfo << "chat accepted." << endl;
+	    kDebug(14152) << k_funcinfo << "chat accepted." << endl;
 	    engine()->joinChatRoom( m_joinChatDialog->roomName(),
 	                            m_joinChatDialog->exchange().toInt() );
     }
@@ -565,14 +565,14 @@ void AIMAccount::loginActions()
 
 void AIMAccount::disconnected( DisconnectReason reason )
 {
-	kdDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "Attempting to set status offline" << endl;
+	kDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "Attempting to set status offline" << endl;
 	myself()->setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusOffline );
 	OscarAccount::disconnected( reason );
 }
 
 void AIMAccount::messageReceived( const Oscar::Message& message )
 {
-	kdDebug(14152) << k_funcinfo << " Got a message, calling OscarAccount::messageReceived" << endl;
+	kDebug(14152) << k_funcinfo << " Got a message, calling OscarAccount::messageReceived" << endl;
 	// Want to call the parent to do everything else
     if ( message.type() != 0x0003 )
     {
@@ -581,14 +581,14 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
         // Check to see if our status is away, and send an away message
         // Might be duplicate code from the parent class to get some needed information
         // Perhaps a refactoring is needed.
-        kdDebug(14152) << k_funcinfo << "Checking to see if I'm online.." << endl;
+        kDebug(14152) << k_funcinfo << "Checking to see if I'm online.." << endl;
         if( myself()->onlineStatus().status() == Kopete::OnlineStatus::Away )
         {
             QString sender = Oscar::normalize( message.sender() );
             AIMContact* aimSender = static_cast<AIMContact *> ( contacts()[sender] ); //should exist now
             if ( !aimSender )
             {
-                kdWarning(OSCAR_RAW_DEBUG) << "For some reason, could not get the contact "
+                kWarning(OSCAR_RAW_DEBUG) << "For some reason, could not get the contact "
                                            << "That this message is from: " << message.sender() << ", Discarding message" << endl;
                 return;
             }
@@ -598,11 +598,11 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
             // get the away message we have set
             AIMMyselfContact* myContact = static_cast<AIMMyselfContact *> ( myself() );
             QString msg = myContact->lastAwayMessage();
-            kdDebug(14152) << k_funcinfo << "Got away message: " << msg << endl;
+            kDebug(14152) << k_funcinfo << "Got away message: " << msg << endl;
             // Create the message
             Kopete::Message chatMessage( myself(), aimSender, msg, Kopete::Message::Outbound,
                                          Kopete::Message::RichText );
-            kdDebug(14152) << k_funcinfo << "Sending autoresponse" << endl;
+            kDebug(14152) << k_funcinfo << "Sending autoresponse" << endl;
             // Send the message
             aimSender->sendAutoResponse( chatMessage );
         }
@@ -610,7 +610,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 
     if ( message.type() == 0x0003 )
     {
-        kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "have chat message" << endl;
+        kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "have chat message" << endl;
         //handle chat room messages seperately
         Q3ValueList<Kopete::ChatSession*> chats = Kopete::ChatSessionManager::self()->sessions();
         Q3ValueList<Kopete::ChatSession*>::iterator it,  itEnd = chats.end();
@@ -625,7 +625,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
                  Oscar::normalize( session->roomName() ) ==
                  Oscar::normalize( message.chatRoom() ) )
             {
-                kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "found chat session for chat room" << endl;
+                kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "found chat session for chat room" << endl;
                 Kopete::Contact* ocSender = contacts()[Oscar::normalize( message.sender() )];
                 //sanitize;
                 QString sanitizedMsg = sanitizedMessage( message.text( defaultCodec() ) );
@@ -643,7 +643,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 
 void AIMAccount::connectedToChatRoom( WORD exchange, const QString& room )
 {
-    kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Creating chat room session" << endl;
+    kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Creating chat room session" << endl;
     Kopete::ContactPtrList emptyList;
     AIMMyselfContact* me = static_cast<AIMMyselfContact*>( myself() );
     AIMChatSession* session = dynamic_cast<AIMChatSession*>( me->manager( Kopete::Contact::CanCreate,
@@ -658,7 +658,7 @@ void AIMAccount::userJoinedChat( WORD exchange, const QString& room, const QStri
     if ( Oscar::normalize( contact ) == Oscar::normalize( myself()->contactId() ) )
         return;
 
-    kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "user " << contact << " has joined the chat" << endl;
+    kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "user " << contact << " has joined the chat" << endl;
     Q3ValueList<Kopete::ChatSession*> chats = Kopete::ChatSessionManager::self()->sessions();
     Q3ValueList<Kopete::ChatSession*>::iterator it, itEnd = chats.end();
     for ( it = chats.begin(); it != itEnd; ++it )
@@ -668,11 +668,11 @@ void AIMAccount::userJoinedChat( WORD exchange, const QString& room, const QStri
         if ( !session )
             continue;
 
-        kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << session->exchange() << " " << exchange << endl;
-        kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << session->roomName() << " " << room << endl;
+        kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << session->exchange() << " " << exchange << endl;
+        kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << session->roomName() << " " << room << endl;
         if ( session->exchange() == exchange && session->roomName() == room )
         {
-            kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "found correct chat session" << endl;
+            kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "found correct chat session" << endl;
             Kopete::Contact* c;
             if ( contacts()[Oscar::normalize( contact )] )
                 c = contacts()[Oscar::normalize( contact )];
@@ -681,13 +681,13 @@ void AIMAccount::userJoinedChat( WORD exchange, const QString& room, const QStri
                 Kopete::MetaContact* mc = addContact( Oscar::normalize( contact ),
                                                       contact, 0, Kopete::Account::Temporary );
                 if ( !mc )
-                    kdWarning(OSCAR_AIM_DEBUG) << "Unable to add contact for chat room" << endl;
+                    kWarning(OSCAR_AIM_DEBUG) << "Unable to add contact for chat room" << endl;
 
                 c = mc->contacts().first();
                 c->setNickName( contact );
             }
 
-            kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "adding contact" << endl;
+            kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "adding contact" << endl;
             session->addContact( c, static_cast<AIMProtocol*>( protocol() )->statusOnline, true /* suppress */ );
         }
     }
@@ -713,7 +713,7 @@ void AIMAccount::userLeftChat( WORD exchange, const QString& room, const QString
             Kopete::Contact* c = contacts()[Oscar::normalize( contact )];
             if ( !c )
             {
-                kdWarning(OSCAR_AIM_DEBUG) << k_funcinfo << "couldn't find the contact that's left the chat!" << endl;
+                kWarning(OSCAR_AIM_DEBUG) << k_funcinfo << "couldn't find the contact that's left the chat!" << endl;
                 continue;
             }
             session->removeContact( c );
@@ -731,25 +731,25 @@ void AIMAccount::userLeftChat( WORD exchange, const QString& room, const QString
 
 void AIMAccount::connectWithPassword( const QString & )
 {
-	kdDebug(14152) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
+	kDebug(14152) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 	
 	// Get the screen name for this account
 	QString screenName = accountId();
 	QString server = configGroup()->readEntry( "Server", QString::fromLatin1( "login.oscar.aol.com" ) );
-	uint port = configGroup()->readNumEntry( "Port", 5190 );
+	uint port = configGroup()->readEntry( "Port", 5190 );
 
 	Connection* c = setupConnection( server, port );
 	
 	QString _password = password().cachedValue();
 	if ( _password.isEmpty() )
 	{
-		kdDebug(14150) << "Kopete is unable to attempt to sign-on to the "
+		kDebug(14150) << "Kopete is unable to attempt to sign-on to the "
 			<< "AIM network because no password was specified in the "
 			<< "preferences." << endl;
 	}
 	else if ( myself()->onlineStatus() == static_cast<AIMProtocol*>( protocol() )->statusOffline )
 	{
-		kdDebug(14152) << k_funcinfo << "Logging in as " << accountId() << endl ;
+		kDebug(14152) << k_funcinfo << "Logging in as " << accountId() << endl ;
 		engine()->start( server, port, accountId(), _password );
 		engine()->connectToServer( c, server, true /* doAuth */ );
 		myself()->setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusConnecting );
@@ -879,7 +879,7 @@ void AIMAccount::setPrivacyTLVs( BYTE privacy, DWORD userClasses )
 
 	if ( !item )
 	{
-		kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Adding new privacy TLV item" << endl;
+		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Adding new privacy TLV item" << endl;
 		Oscar::SSI s( QString::null, 0, ssi->nextContactId(), ROSTER_VISIBILITY, tList );
 		engine()->modifySSIItem( item, s );
 	}
@@ -889,7 +889,7 @@ void AIMAccount::setPrivacyTLVs( BYTE privacy, DWORD userClasses )
 
 		if ( Oscar::updateTLVs( s, tList ) == true )
 		{
-			kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Updating privacy TLV item" << endl;
+			kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Updating privacy TLV item" << endl;
 			engine()->modifySSIItem( item, s );
 		}
 	}

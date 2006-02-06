@@ -42,7 +42,7 @@ BlackLister::BlackLister(const QString &protocolId, const QString &accountId, QO
 	d->owner = accountId;
 	d->protocol = protocolId;
 	config->setGroup("BlackLister");
-	d->blacklist = config->readListEntry( d->protocol + QString::fromLatin1("_") + d->owner );
+	d->blacklist = config->readEntry( d->protocol + QString::fromLatin1("_") + d->owner, QStringList() );
 }
 
 BlackLister::~BlackLister()

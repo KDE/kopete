@@ -69,7 +69,7 @@ QString Entity::host() const
 	case User:
 		return userHost();
 	default:
-		kdDebug(14121) << k_funcinfo << "No host defined for type:" << m_type;
+		kDebug(14121) << k_funcinfo << "No host defined for type:" << m_type;
 		return QString::null;
 	}
 }

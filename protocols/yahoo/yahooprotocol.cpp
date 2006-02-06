@@ -61,7 +61,7 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 	iconRemoteUrl("iconRemoteUrl", i18n("Buddy Icon Remote Url"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty)
 
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	s_protocolStatic_ = this;
 	setCapabilities( RichFgColor | RichFormatting | RichFont );
@@ -71,7 +71,7 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 
 YahooProtocol::~YahooProtocol()
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	s_protocolStatic_ = 0L;
 }
 
@@ -134,12 +134,12 @@ Kopete::Contact *YahooProtocol::deserializeContact( Kopete::MetaContact *metaCon
 	YahooAccount *theAccount = static_cast<YahooAccount*>(Kopete::AccountManager::self()->findAccount(protocol()->pluginId(), accountId));
 
 	if(!theAccount)
-	{	kdDebug( YAHOO_GEN_DEBUG ) << k_funcinfo << "Account " << accountId << " not found" << endl;
+	{	kDebug( YAHOO_GEN_DEBUG ) << k_funcinfo << "Account " << accountId << " not found" << endl;
 		return 0;
 	}
 
 	if(theAccount->contact(contactId))
-	{	kdDebug( YAHOO_GEN_DEBUG ) << k_funcinfo << "User " << contactId << " already in contacts map" << endl;
+	{	kDebug( YAHOO_GEN_DEBUG ) << k_funcinfo << "User " << contactId << " already in contacts map" << endl;
 		return 0;
 	}
 
@@ -149,7 +149,7 @@ Kopete::Contact *YahooProtocol::deserializeContact( Kopete::MetaContact *metaCon
 
 AddContactPage *YahooProtocol::createAddContactWidget( QWidget * parent , Kopete::Account* )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << "YahooProtocol::createAddContactWidget(<parent>)" << endl;
+	kDebug(YAHOO_GEN_DEBUG) << "YahooProtocol::createAddContactWidget(<parent>)" << endl;
 	return new YahooAddContact(this, parent);
 }
 

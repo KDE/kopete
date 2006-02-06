@@ -81,7 +81,7 @@ IRCProtocolHandler::IRCProtocolHandler() : Kopete::MimeTypeHandler( false )
 
 void IRCProtocolHandler::handleURL( const KUrl &url ) const
 {
-	kdDebug(14120) << url << endl;
+	kDebug(14120) << url << endl;
 	if( !url.isValid() )
 		return;
 
@@ -100,7 +100,7 @@ void IRCProtocolHandler::handleURL( const KUrl &url ) const
 		QString::number(port)
 	);
 
-	kdDebug(14120) << accountId << endl;
+	kDebug(14120) << accountId << endl;
 
 	IRCAccount *newAccount = new IRCAccount( IRCProtocol::protocol(), accountId, chan );
 	newAccount->setNickName( user.loginName() );
@@ -164,7 +164,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	propFullName(QString::fromLatin1("FormattedName"), i18n("Full Name")),
 	propIsIdentified(QString::fromLatin1("identifiedUser"), i18n("User Is Authenticated"))
 {
-//	kdDebug(14120) << k_funcinfo << endl;
+//	kDebug(14120) << k_funcinfo << endl;
 
 	s_protocol = this;
 
@@ -319,7 +319,7 @@ IRCProtocol::~IRCProtocol()
 
 const Kopete::OnlineStatus IRCProtocol::statusLookup( IRCStatus status ) const
 {
-	kdDebug(14120) << k_funcinfo << "Looking up status for " << status << endl;
+	kDebug(14120) << k_funcinfo << "Looking up status for " << status << endl;
 
 	switch( status )
 	{
@@ -421,7 +421,7 @@ Kopete::Account *IRCProtocol::createNewAccount(const QString &accountId)
 Kopete::Contact *IRCProtocol::deserializeContact( Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> & /* addressBookData */ )
 {
-	kdDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo << endl;
 
 	QString contactId = serializedData[ "contactId" ];
 	QString displayName = serializedData[ "displayName" ];
@@ -439,11 +439,11 @@ Kopete::Contact *IRCProtocol::deserializeContact( Kopete::MetaContact *metaConta
 			return a->contacts()[contactId];
 		}
 		else
-			kdDebug(14120) << k_funcinfo << serializedData[ "accountId" ] << " was a contact's account,"
+			kDebug(14120) << k_funcinfo << serializedData[ "accountId" ] << " was a contact's account,"
 				" but we don't have it in the accounts list" << endl;
 	}
 	else
-		kdDebug(14120) << k_funcinfo << "No accounts loaded!" << endl;
+		kDebug(14120) << k_funcinfo << "No accounts loaded!" << endl;
 
 	return 0;
 }
@@ -853,7 +853,7 @@ void IRCProtocol::storeCurrentNetwork()
 			net->description = netConf->description->text(); // crash on 2nd dialog show here!
 		}
 		else
-			kdDebug( 14120 ) << m_uiCurrentNetworkSelection << " was already gone from the cache!" << endl;
+			kDebug( 14120 ) << m_uiCurrentNetworkSelection << " was already gone from the cache!" << endl;
 	}
 }
 
@@ -1076,7 +1076,7 @@ void IRCProtocol::slotSaveNetworkConfig()
 {
 	// store any changes in the UI
 	storeCurrentNetwork();
-	kdDebug( 14120 ) <<  k_funcinfo << m_uiCurrentHostSelection << endl;
+	kDebug( 14120 ) <<  k_funcinfo << m_uiCurrentHostSelection << endl;
 	storeCurrentHost();
 
 	QDomDocument doc("irc-networks");
@@ -1110,7 +1110,7 @@ void IRCProtocol::slotSaveNetworkConfig()
 		}
 	}
 
-//	kdDebug(14121) << k_funcinfo << doc.toString(4) << endl;
+//	kDebug(14121) << k_funcinfo << doc.toString(4) << endl;
 	QFile xmlFile( locateLocal( "appdata", "ircnetworks.xml" ) );
 
 	if (xmlFile.open(QIODevice::WriteOnly))
@@ -1120,7 +1120,7 @@ void IRCProtocol::slotSaveNetworkConfig()
 		xmlFile.close();
 	}
 	else
-		kdDebug(14121) << k_funcinfo << "Failed to save the Networks definition file" << endl;
+		kDebug(14121) << k_funcinfo << "Failed to save the Networks definition file" << endl;
 
 	if (netConf)
 		emit networkConfigUpdated( netConf->networkList->currentText() );

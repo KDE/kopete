@@ -45,7 +45,7 @@
 ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent, const char *name)
 	: AddContactPage(parent,name)
 {
-	kdDebug(14153) << k_funcinfo << "called" << endl;
+	kDebug(14153) << k_funcinfo << "called" << endl;
 	mAccount = owner;
 	m_searchDialog = 0L;
 
@@ -71,10 +71,10 @@ void ICQAddContactPage::showEvent(QShowEvent *e)
 
 bool ICQAddContactPage::apply(Kopete::Account* , Kopete::MetaContact *parentContact  )
 {
-	kdDebug(14153) << k_funcinfo << "called; adding contact..." << endl;
+	kDebug(14153) << k_funcinfo << "called; adding contact..." << endl;
 
 	QString contactId = addUI->uinEdit->text();
-	kdDebug(14153) << k_funcinfo << "uin=" << contactId << endl;
+	kDebug(14153) << k_funcinfo << "uin=" << contactId << endl;
 	return mAccount->addContact(contactId, parentContact, Kopete::Account::ChangeKABC );
 
 }

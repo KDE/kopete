@@ -153,7 +153,7 @@ void GWContactList::removeInstanceById( unsigned int id )
 
 void GWContactList::dump()
 {
-	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
+	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
 	const QObjectList * l = children();
 	if ( l && !l->isEmpty() )
 	{
@@ -168,12 +168,12 @@ void GWContactList::dump()
 		}
 	}
 	else
-		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "  contact list is empty." << endl;
+		kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "  contact list is empty." << endl;
 }
 
 void GWContactList::clear()
 {
-	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
+	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
 	const QObjectList * l = children();
 	if ( l && !l->isEmpty() )
 	{
@@ -199,7 +199,7 @@ void GWFolder::dump( unsigned int depth )
 {
 	QString s;
 	s.fill( ' ', ++depth * 2 );
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << s <<"Folder " << displayName << " id: " << id << " contains: " << endl;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) << s <<"Folder " << displayName << " id: " << id << " contains: " << endl;
 	const QObjectList * l = children();
 	if ( l )
 	{
@@ -220,7 +220,7 @@ void GWFolder::dump( unsigned int depth )
 		}
 	}
 	else
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << s << "  no contacts." << endl;
+		kDebug( GROUPWISE_DEBUG_GLOBAL ) << s << "  no contacts." << endl;
 }
 
 GWContactInstance::GWContactInstance( QObject * parent, unsigned int theId, unsigned int theSequence, const QString & theDisplayName, const QString & theDn ) :
@@ -231,7 +231,7 @@ void GWContactInstance::dump( unsigned int depth )
 {
 	QString s;
 	s.fill( ' ', ++depth * 2 );
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << s << "Contact " << displayName << " id: " << id << " dn: " << dn << endl;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) << s << "Contact " << displayName << " id: " << id << " dn: " << dn << endl;
 }
 #include "gwcontactlist.moc"
 

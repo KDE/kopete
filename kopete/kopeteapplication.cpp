@@ -94,12 +94,12 @@ KopeteApplication::KopeteApplication()
 
 KopeteApplication::~KopeteApplication()
 {
-	kdDebug( 14000 ) << k_funcinfo << endl;
+	kDebug( 14000 ) << k_funcinfo << endl;
 
 	delete m_mainWindow;
 	delete m_emoticonHandler;
 	delete m_mimeFactory;
-	//kdDebug( 14000 ) << k_funcinfo << "Done" << endl;
+	//kDebug( 14000 ) << k_funcinfo << "Done" << endl;
 }
 
 void KopeteApplication::slotLoadPlugins()
@@ -262,7 +262,7 @@ void KopeteApplication::slotAllPluginsLoaded()
 
 int KopeteApplication::newInstance()
 {
-//	kdDebug(14000) << k_funcinfo << endl;
+//	kDebug(14000) << k_funcinfo << endl;
 	handleURLArgs();
 
 	/**
@@ -289,7 +289,7 @@ int KopeteApplication::newInstance()
 void KopeteApplication::handleURLArgs()
 {
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-//	kdDebug(14000) << k_funcinfo << "called with " << args->count() << " arguments to handle." << endl;
+//	kDebug(14000) << k_funcinfo << "called with " << args->count() << " arguments to handle." << endl;
 
 	if ( args->count() > 0 )
 	{
@@ -306,7 +306,7 @@ void KopeteApplication::handleURLArgs()
 
 void KopeteApplication::quitKopete()
 {
-	kdDebug( 14000 ) << k_funcinfo << endl;
+	kDebug( 14000 ) << k_funcinfo << endl;
 
 	m_isShuttingDown = true;
 

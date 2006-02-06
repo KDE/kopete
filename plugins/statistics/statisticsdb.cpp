@@ -36,7 +36,7 @@
 StatisticsDB::StatisticsDB()
 {
 	QByteArray path = (::locateLocal("appdata", "kopete_statistics-0.1.db")).toLatin1();
-	kdDebug() << "statistics: DB path:" << path << endl;
+	kDebug() << "statistics: DB path:" << path << endl;
 
 	// Open database file and check for correctness
 	bool failOpen = true;
@@ -47,11 +47,11 @@ StatisticsDB::StatisticsDB()
 		format = QString( file.readLine( 50 ) ); //  readLine return a QByteArray
 		if ( !format.startsWith( "SQLite format 3" ) ) 
 		{
-			kdWarning() << "[statistics] Database versions incompatible. Removing and rebuilding database.\n";
+			kWarning() << "[statistics] Database versions incompatible. Removing and rebuilding database.\n";
 		}
 		else if ( sqlite3_open( path, &m_db ) != SQLITE_OK ) 
 		{
-			kdWarning() << "[statistics] Database file corrupt. Removing and rebuilding database.\n";
+			kWarning() << "[statistics] Database file corrupt. Removing and rebuilding database.\n";
 			sqlite3_close( m_db );
 		}
 		else
@@ -65,14 +65,14 @@ StatisticsDB::StatisticsDB()
 	sqlite3_open( path, &m_db );
 	}
 
-	kdDebug() << "[Statistics] Contructor"<< endl;
+	kDebug() << "[Statistics] Contructor"<< endl;
 
 	// Creates the tables if they do not exist.
 	QStringList result = query("SELECT name FROM sqlite_master WHERE type='table'");
 	
 	if (!result.contains("contactstatus"))
 	{
-		kdDebug() << "[Statistics] Database empty"<< endl;
+		kDebug() << "[Statistics] Database empty"<< endl;
 		query(QString("CREATE TABLE contactstatus "
 			"(id INTEGER PRIMARY KEY,"
 			"metacontactid TEXT,"
@@ -121,13 +121,13 @@ StatisticsDB::~StatisticsDB()
  {
  
      if ( debug )
-         kdDebug() << "query-start: " << statement << endl;
+         kDebug() << "query-start: " << statement << endl;
  
      clock_t start = clock();
  
      if ( !m_db )
      {
-         kdError() << k_funcinfo << "[CollectionDB] SQLite pointer == NULL.\n";
+         kError() << k_funcinfo << "[CollectionDB] SQLite pointer == NULL.\n";
          return QStringList();
      }
  
@@ -141,9 +141,9 @@ StatisticsDB::~StatisticsDB()
  
      if ( error != SQLITE_OK )
      {
-         kdError() << k_funcinfo << "[CollectionDB] sqlite3_compile error:" << endl;
-         kdError() << sqlite3_errmsg( m_db ) << endl;
-         kdError() << "on query: " << statement << endl;
+         kError() << k_funcinfo << "[CollectionDB] sqlite3_compile error:" << endl;
+         kError() << sqlite3_errmsg( m_db ) << endl;
+         kError() << "on query: " << statement << endl;
  
          return QStringList();
      }
@@ -158,14 +158,14 @@ StatisticsDB::~StatisticsDB()
          if ( error == SQLITE_BUSY )
          {
              if ( busyCnt++ > 20 ) {
-                 kdError() << "[CollectionDB] Busy-counter has reached maximum. Aborting this sql statement!\n";
+                 kError() << "[CollectionDB] Busy-counter has reached maximum. Aborting this sql statement!\n";
                  break;
              }
              ::usleep( 100000 ); // Sleep 100 msec
-             kdDebug() << "[CollectionDB] sqlite3_step: BUSY counter: " << busyCnt << endl;
+             kDebug() << "[CollectionDB] sqlite3_step: BUSY counter: " << busyCnt << endl;
          }
          if ( error == SQLITE_MISUSE )
-             kdDebug() << "[CollectionDB] sqlite3_step: MISUSE" << endl;
+             kDebug() << "[CollectionDB] sqlite3_step: MISUSE" << endl;
          if ( error == SQLITE_DONE || error == SQLITE_ERROR )
              break;
  
@@ -181,9 +181,9 @@ StatisticsDB::~StatisticsDB()
  
      if ( error != SQLITE_DONE )
      {
-         kdError() << k_funcinfo << "sqlite_step error.\n";
-         kdError() << sqlite3_errmsg( m_db ) << endl;
-         kdError() << "on query: " << statement << endl;
+         kError() << k_funcinfo << "sqlite_step error.\n";
+         kError() << sqlite3_errmsg( m_db ) << endl;
+         kError() << "on query: " << statement << endl;
  
          return QStringList();
      }
@@ -192,7 +192,7 @@ StatisticsDB::~StatisticsDB()
      {
          clock_t finish = clock();
          const double duration = (double) (finish - start) / CLOCKS_PER_SEC;
-         kdDebug() << "[CollectionDB] SQL-query (" << duration << "s): " << statement << endl;
+         kDebug() << "[CollectionDB] SQL-query (" << duration << "s): " << statement << endl;
      }
  
  

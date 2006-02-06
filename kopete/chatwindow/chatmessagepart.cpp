@@ -238,7 +238,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 ChatMessagePart::~ChatMessagePart()
 {
-	kdDebug(14000) << k_funcinfo << endl;
+	kDebug(14000) << k_funcinfo << endl;
 	//delete d->tt;
 	delete d;
 }
@@ -310,7 +310,7 @@ void ChatMessagePart::pageDown()
 
 void ChatMessagePart::slotOpenURLRequest(const KUrl &url, const KParts::URLArgs &/*args*/)
 {
-	kdDebug(14000) << k_funcinfo << "url=" << url.url() << endl;
+	kDebug(14000) << k_funcinfo << "url=" << url.url() << endl;
 	if ( url.protocol() == QString::fromLatin1("kopetemessage") )
 	{
 		Kopete::Contact *contact = d->manager->account()->contacts()[ url.host() ];
@@ -388,7 +388,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 
 	if( chatNode.isNull() )
 	{
-		kdDebug(14000) << k_funcinfo << "WARNING: Chat Node was null !" << endl;
+		kDebug(14000) << k_funcinfo << "WARNING: Chat Node was null !" << endl;
 		return;
 	}
 
@@ -516,7 +516,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
 
 #ifdef STYLE_TIMETEST
-	kdDebug(14000) << "Message time: " << beforeMessage.msecsTo( QTime::currentTime()) << endl;
+	kDebug(14000) << "Message time: " << beforeMessage.msecsTo( QTime::currentTime()) << endl;
 #endif
 }
 
@@ -921,7 +921,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 	// Build the action message if the currentChatStyle do not have Action template.
 	if( message.type() == Kopete::Message::TypeAction && !d->currentChatStyle->hasActionTemplate() )
 	{
-		kdDebug(14000) << k_funcinfo << "Map Action message to Status template. " << endl;
+		kDebug(14000) << k_funcinfo << "Map Action message to Status template. " << endl;
 
 		QString boldNick = QString::fromUtf8("<b>%1</b> ").arg(nick);
 		// Don't set the body twice.
@@ -1099,15 +1099,15 @@ void ChatMessagePart::changeStyle()
 		Kopete::Message tempMessage = *it;
 		appendMessage(tempMessage, true); // true means that we are restoring.
 	}
-	kdDebug(14000) << k_funcinfo << "Finish changing style." << endl;
+	kDebug(14000) << k_funcinfo << "Finish changing style." << endl;
 #ifdef STYLE_TIMETEST
-	kdDebug(14000) << "Change time: " << beforeChange.msecsTo( QTime::currentTime()) << endl;
+	kDebug(14000) << "Change time: " << beforeChange.msecsTo( QTime::currentTime()) << endl;
 #endif
 }
 
 void ChatMessagePart::writeTemplate()
 {
-	kdDebug(14000) << k_funcinfo << endl;
+	kDebug(14000) << k_funcinfo << endl;
 
 #ifdef STYLE_TIMETEST
 	QTime beforeHeader = QTime::currentTime();
@@ -1158,7 +1158,7 @@ void ChatMessagePart::writeTemplate()
 	write(xhtmlBase);
 	end();
 #ifdef STYLE_TIMETEST
-	kdDebug(14000) << "Header time: " << beforeHeader.msecsTo( QTime::currentTime()) << endl;
+	kDebug(14000) << "Header time: " << beforeHeader.msecsTo( QTime::currentTime()) << endl;
 #endif
 }
 

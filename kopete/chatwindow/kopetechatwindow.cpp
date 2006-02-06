@@ -174,7 +174,7 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 			groupMap.insert( group, myWindow );
 	}
 
-//	kdDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
+//	kDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
 
 	return myWindow;
 }
@@ -229,14 +229,14 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name )
 	windowListChanged();
 
 	KGlobal::config()->setGroup( QString::fromLatin1("ChatWindowSettings") );
-	m_alwaysShowTabs = KGlobal::config()->readBoolEntry( QString::fromLatin1("AlwaysShowTabs"), false );
-//	kdDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
+	m_alwaysShowTabs = KGlobal::config()->readEntry( QString::fromLatin1("AlwaysShowTabs"), false );
+//	kDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
 	kapp->ref();
 }
 
 KopeteChatWindow::~KopeteChatWindow()
 {
-	kdDebug( 14010 ) << k_funcinfo << endl;
+	kDebug( 14010 ) << k_funcinfo << endl;
 
 	emit( closing( this ) );
 
@@ -267,7 +267,7 @@ KopeteChatWindow::~KopeteChatWindow()
 	windows.remove( this );
 	windowListChanged();
 
-//	kdDebug( 14010 ) << "Open Windows: " << windows.count() << endl;
+//	kDebug( 14010 ) << "Open Windows: " << windows.count() << endl;
 
 	saveOptions();
 
@@ -593,7 +593,7 @@ void KopeteChatWindow::createTabBar()
 
 		m_tabBar = new KTabWidget( mainArea );
 		m_tabBar->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
-		m_tabBar->setHoverCloseButton(KGlobal::config()->readBoolEntry( QString::fromLatin1("HoverClose"), false ));
+		m_tabBar->setHoverCloseButton(KGlobal::config()->readEntry( QString::fromLatin1("HoverClose"), false ));
 		m_tabBar->setTabReorderingEnabled(true);
 		m_tabBar->setAutomaticResizeTabs(true);
 		connect( m_tabBar, SIGNAL( closeRequest( QWidget* )), this, SLOT( slotCloseChat( QWidget* ) ) );
@@ -618,7 +618,7 @@ void KopeteChatWindow::createTabBar()
 		else
 			setActiveView( chatViewList.first() );
 
-		int tabPosition = KGlobal::config()->readNumEntry( QString::fromLatin1("Tab Placement") , 0 );
+		int tabPosition = KGlobal::config()->readEntry( QString::fromLatin1("Tab Placement") , 0 );
 		slotPlaceTabs( tabPosition );
 	}
 }
@@ -1024,7 +1024,7 @@ void KopeteChatWindow::slotPlaceTabs( int placement )
 void KopeteChatWindow::readOptions()
 {
 	// load and apply config file settings affecting the appearance of the UI
-//	kdDebug(14010) << k_funcinfo << endl;
+//	kDebug(14010) << k_funcinfo << endl;
 	KConfig *config = KGlobal::config();
 	applyMainWindowSettings( config, QString::fromLatin1( "KopeteChatWindow" ) );
 	config->setGroup( QString::fromLatin1("ChatWindowSettings") );
@@ -1032,7 +1032,7 @@ void KopeteChatWindow::readOptions()
 
 void KopeteChatWindow::saveOptions()
 {
-//	kdDebug(14010) << k_funcinfo << endl;
+//	kDebug(14010) << k_funcinfo << endl;
 
 	KConfig *config = KGlobal::config();
 
@@ -1047,7 +1047,7 @@ void KopeteChatWindow::saveOptions()
 
 void KopeteChatWindow::slotChatSave()
 {
-//	kdDebug(14010) << "KopeteChatWindow::slotChatSave()" << endl;
+//	kDebug(14010) << "KopeteChatWindow::slotChatSave()" << endl;
 	if( isActiveWindow() && m_activeView )
 		m_activeView->messagePart()->save();
 }
@@ -1102,9 +1102,9 @@ bool KopeteChatWindow::queryClose()
 {
 	bool canClose = true;
 
-//	kdDebug( 14010 ) << " Windows left open:" << endl;
+//	kDebug( 14010 ) << " Windows left open:" << endl;
 //	for( QPtrListIterator<ChatView> it( chatViewList ); it; ++it)
-//		kdDebug( 14010 ) << "  " << *it << " (" << (*it)->caption() << ")" << endl;
+//		kDebug( 14010 ) << "  " << *it << " (" << (*it)->caption() << ")" << endl;
 
 	for( Q3PtrListIterator<ChatView> it( chatViewList ); it; )
 	{
@@ -1119,7 +1119,7 @@ bool KopeteChatWindow::queryClose()
 		// if the view is closed, it is removed from chatViewList for us
 		if ( !view->closeView() )
 		{
-			kdDebug() << k_funcinfo << "Closing view failed!" << endl;
+			kDebug() << k_funcinfo << "Closing view failed!" << endl;
 			canClose = false;
 		}
 	}

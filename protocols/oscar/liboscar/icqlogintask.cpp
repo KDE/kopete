@@ -70,7 +70,7 @@ void IcqLoginTask::onGo()
 	outbuf->addTLV(0x000e, 0x0002, ICQ_COUNTRY);
 
 	Transfer* ft = createTransfer( f, outbuf );
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending ICQ channel 0x01 login packet" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending ICQ channel 0x01 login packet" << endl;
 	send( ft );
 	emit finished();
 }
@@ -78,7 +78,7 @@ void IcqLoginTask::onGo()
 
 QString IcqLoginTask::encodePassword( const QString& loginPassword )
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Called." << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Called." << endl;
 
 	// TODO: check if latin1 is the right conversion
 	const char *password = loginPassword.toLatin1();
@@ -102,10 +102,10 @@ QString IcqLoginTask::encodePassword( const QString& loginPassword )
 	}
 
 #ifdef OSCAR_PWDEBUG
-	kdDebug(OSCAR_RAW_DEBUG) << " plaintext pw='" << loginPassword << "', length=" <<
+	kDebug(OSCAR_RAW_DEBUG) << " plaintext pw='" << loginPassword << "', length=" <<
 		loginPassword.length() << endl;
 
-	kdDebug(OSCAR_RAW_DEBUG) << " encoded   pw='" << encodedPassword  << "', length=" <<
+	kDebug(OSCAR_RAW_DEBUG) << " encoded   pw='" << encodedPassword  << "', length=" <<
 		encodedPassword.length() << endl;
 #endif
 

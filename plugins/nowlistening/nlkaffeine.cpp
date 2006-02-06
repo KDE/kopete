@@ -52,13 +52,13 @@ void NLKaffeine::update()
 		if ( !m_client->call( DCOPCString("kaffeine"), kaffeineIface, DCOPCString("isPlaying()"), data,
 					replyType, replyData ) )
 		{
-			kdDebug ( 14307 ) << k_funcinfo << " Trying DCOP interface of Kaffeine >= 0.5" << endl;
+			kDebug ( 14307 ) << k_funcinfo << " Trying DCOP interface of Kaffeine >= 0.5" << endl;
 			// Trying with the new Kaffeine DCOP interface (>=0.5)
 			kaffeineIface = "KaffeineIface";
 			kaffeineGetTrack = "title()";
 			if( !m_client->call( DCOPCString("kaffeine"), kaffeineIface, DCOPCString("isPlaying()"), data, replyType, replyData ) )
 			{
-				kdDebug( 14307 ) << k_funcinfo << " DCOP error on Kaffeine." << endl;
+				kDebug( 14307 ) << k_funcinfo << " DCOP error on Kaffeine." << endl;
 			}
 			else
 			{
@@ -77,7 +77,7 @@ void NLKaffeine::update()
 			reply.setVersion(QDataStream::Qt_3_1);
 			if ( replyType == "bool" ) {
 					reply >> m_playing;
-					kdDebug( 14307 ) << "checked if Kaffeine is playing!" << endl;
+					kDebug( 14307 ) << "checked if Kaffeine is playing!" << endl;
 			}
 		}
 
@@ -98,6 +98,6 @@ void NLKaffeine::update()
 		}
 	}
 	else
-		kdDebug ( 14307 ) << "Kaffeine is not running!\n" << endl;
+		kDebug ( 14307 ) << "Kaffeine is not running!\n" << endl;
 }
 

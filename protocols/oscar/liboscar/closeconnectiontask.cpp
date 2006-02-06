@@ -59,13 +59,13 @@ bool CloseConnectionTask::take( Transfer* transfer )
 	WORD errorNum = 0;
 	if ( forMe( transfer ) )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "RECV (DISCONNECT)" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "RECV (DISCONNECT)" << endl;
 
 		FlapTransfer* ft = dynamic_cast<FlapTransfer*> ( transfer );
 		
 		if ( !ft )
 		{
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo 
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo 
 				<< "Could not convert transfer object to type FlapTransfer!!"  << endl;
 			return false;
 		}
@@ -75,7 +75,7 @@ bool CloseConnectionTask::take( Transfer* transfer )
 		TLV uin = findTLV( tlvList, 0x0001 );
 		if ( uin )
 		{
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(1) [UIN], uin=" << QString( uin.data ) << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(1) [UIN], uin=" << QString( uin.data ) << endl;
 		}
 	
 		TLV err = findTLV( tlvList, 0x0008 );
@@ -86,7 +86,7 @@ bool CloseConnectionTask::take( Transfer* transfer )
 		{
 			errorNum = ( ( err.data[0] << 8 ) | err.data[1] );
 	
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(8) [ERROR] error= " << errorNum << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(8) [ERROR] error= " << errorNum << endl;
 	
 			Oscar::SNAC s = { 0, 0, 0, 0 };
 			client()->fatalTaskError( s, errorNum );
@@ -97,7 +97,7 @@ bool CloseConnectionTask::take( Transfer* transfer )
 		TLV server = findTLV( tlvList, 0x0005 );
 		if ( server )
 		{
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(5) [SERVER] " << QString( server.data ) << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(5) [SERVER] " << QString( server.data ) << endl;
 			QString ip = server.data;
 			int index = ip.find( ':' );
 			m_bosHost = ip.left( index );
@@ -108,12 +108,12 @@ bool CloseConnectionTask::take( Transfer* transfer )
 		TLV cookie = findTLV( tlvList, 0x0006 );
 		if ( cookie )
 		{
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(6) [COOKIE]" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(6) [COOKIE]" << endl;
 			m_cookie.duplicate( cookie.data );
 		}
 		
 		tlvList.clear();
-		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "We should reconnect to server '" 
+		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "We should reconnect to server '" 
 			<< m_bosHost << "' on port " << m_bosPort << endl;
 		setSuccess( errorNum, errorReason );
 		return true;

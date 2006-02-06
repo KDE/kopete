@@ -68,7 +68,7 @@ void ICQTask::parseInitialData( Buffer buf )
 	else
 		m_requestSubType = 0xFFFF;
 
-/*kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "uin: " << m_icquin << " sequence: " << sequence
+/*kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "uin: " << m_icquin << " sequence: " << sequence
 		<<" request type: 0x" << QString::number( m_requestType, 16 )
 		<< " request sub type: 0x" << QString::number( m_requestSubType, 16 ) << endl;*/
 }
@@ -88,7 +88,7 @@ Buffer* ICQTask::addInitialData( Buffer* buf ) const
 	if ( m_requestSubType != 0xFFFF )
 		tlvData->addLEWord( m_requestSubType );
 	
-	/*kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "uin: " << m_icquin << " sequence: " << sequence
+	/*kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "uin: " << m_icquin << " sequence: " << sequence
 		<<" request type: 0x" << QString::number( m_requestType, 16 )
 		<< " request sub type: 0x" << QString::number( m_requestSubType, 16 ) << endl; */
 	if ( buf != 0 )

@@ -126,9 +126,9 @@ Kopete::Away::Away() : QObject( kapp , "Kopete::Away")
 	d->xIdleTime = 0;
 #endif
 	if (d->useXidle)
-		kdDebug(14010) << "using X11 Xidle extension" << endl;
+		kDebug(14010) << "using X11 Xidle extension" << endl;
 	if(d->useMit)
-		kdDebug(14010) << "using X11 MIT Screensaver extension" << endl;
+		kDebug(14010) << "using X11 MIT Screensaver extension" << endl;
 
 
 	load();
@@ -174,7 +174,7 @@ void Kopete::Away::setGlobalAwayMessage(const QString &message)
 {
 	if( !message.isEmpty() )
 	{
-		kdDebug(14010) << k_funcinfo <<
+		kDebug(14010) << k_funcinfo <<
 			"Setting global away message: " << message << endl;
 		d->awayMessage = message;
 	}
@@ -333,7 +333,7 @@ void Kopete::Away::slotTimerTimeout()
 
 void Kopete::Away::setActivity()
 {
-//	kdDebug(14010) << k_funcinfo << "Found activity on desktop, resetting away timer" << endl;
+//	kDebug(14010) << k_funcinfo << "Found activity on desktop, resetting away timer" << endl;
 	d->idleTime.start();
 
 	if(d->autoaway)
@@ -365,7 +365,7 @@ void Kopete::Away::setAutoAway()
 {
 	d->mouse_x=-1; //do not go availiable automaticaly after
 
-//	kdDebug(14010) << k_funcinfo << "Going AutoAway!" << endl;
+//	kDebug(14010) << k_funcinfo << "Going AutoAway!" << endl;
 	d->autoaway = true;
 
 	// Set all accounts that are not away already to away.

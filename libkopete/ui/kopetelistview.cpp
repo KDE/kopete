@@ -182,7 +182,7 @@ ListView::~ListView()
 
 void ListView::slotDoubleClicked( Q3ListViewItem *item )
 {
-	kdDebug( 14000 ) << k_funcinfo << endl;
+	kDebug( 14000 ) << k_funcinfo << endl;
 
 	if ( item )
 		setOpen( item, !isOpen( item ) );
@@ -554,7 +554,7 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 				return false; // pass the event to the scroll bar so the button gets "clicked"
 			break;
 			default:
-				kdDebug( 14010 ) << k_funcinfo << "Unhandled sub control" << endl;
+				kDebug( 14010 ) << k_funcinfo << "Unhandled sub control" << endl;
 			}
 			return true; // Now, ignore the event.
 		}
@@ -693,7 +693,7 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 	}
 	else
 	{
-// 		kdDebug( 14000 ) << k_funcinfo << "Unhandled event: [" << o << "][" << o->name() << "][" << o->className() << "][" << e->type() << "]" << endl;
+// 		kDebug( 14000 ) << k_funcinfo << "Unhandled event: [" << o << "][" << o->name() << "][" << o->className() << "][" << e->type() << "]" << endl;
 		return KListView::eventFilter( o, e ); // Pass the event to KListView
 	}
 

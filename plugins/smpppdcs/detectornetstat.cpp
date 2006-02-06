@@ -28,10 +28,10 @@ DetectorNetstat::~DetectorNetstat() {
 }
 
 void DetectorNetstat::checkStatus() {
-    kdDebug(14312) << k_funcinfo << endl;
+    kDebug(14312) << k_funcinfo << endl;
 
     if(m_process) {
-        kdWarning(14312) << k_funcinfo << "Previous netstat process is still running!" << endl
+        kWarning(14312) << k_funcinfo << "Previous netstat process is still running!" << endl
         << "Not starting new netstat. Perhaps your system is under heavy load?" << endl;
 
         return;
@@ -47,7 +47,7 @@ void DetectorNetstat::checkStatus() {
     connect(m_process, SIGNAL(processExited(KProcess *)), this, SLOT(slotProcessExited(KProcess *)));
 
     if(!m_process->start(KProcess::NotifyOnExit, KProcess::Stdout)) {
-        kdWarning(14312) << k_funcinfo << "Unable to start netstat process!" << endl;
+        kWarning(14312) << k_funcinfo << "Unable to start netstat process!" << endl;
 
         delete m_process;
         m_process = 0L;
@@ -56,9 +56,9 @@ void DetectorNetstat::checkStatus() {
 
 void DetectorNetstat::slotProcessStdout(KProcess *, char *buffer, int buflen) {
     // Look for a default gateway
-    kdDebug(14312) << k_funcinfo << endl;
+    kDebug(14312) << k_funcinfo << endl;
     QString qsBuffer = QString::fromLatin1(buffer, buflen);
-    kdDebug(14312) << qsBuffer << endl;
+    kDebug(14312) << qsBuffer << endl;
     m_connector->setConnectedStatus(qsBuffer.contains("default"));
 }
 

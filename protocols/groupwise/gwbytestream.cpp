@@ -28,7 +28,7 @@
 KNetworkByteStream::KNetworkByteStream ( QObject *parent, const char */*name*/ )
  : ByteStream ( parent )
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Instantiating new KNetwork byte stream." << endl;
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Instantiating new KNetwork byte stream." << endl;
 
 	// reset close tracking flag
 	mClosing = false;
@@ -49,7 +49,7 @@ KNetworkByteStream::KNetworkByteStream ( QObject *parent, const char */*name*/ )
 
 bool KNetworkByteStream::connect ( QString host, QString service )
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Connecting to " << host << ", service " << service << endl;
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Connecting to " << host << ", service " << service << endl;
 
 	return socket()->connect ( host, service );
 
@@ -65,7 +65,7 @@ bool KNetworkByteStream::isOpen () const
 
 void KNetworkByteStream::close ()
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Closing stream." << endl;
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Closing stream." << endl;
 
 	// close the socket and set flag that we are closing it ourselves
 	mClosing = true;
@@ -107,18 +107,18 @@ void KNetworkByteStream::slotConnected ()
 
 void KNetworkByteStream::slotConnectionClosed ()
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Socket has been closed." << endl;
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Socket has been closed." << endl;
 
 	// depending on who closed the socket, emit different signals
 	if ( mClosing )
 	{
-		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "..by ourselves!" << endl;
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "socket error is \"" << socket()->errorString( socket()->error() ) << "\"" << endl;
+		kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "..by ourselves!" << endl;
+		kDebug( GROUPWISE_DEBUG_GLOBAL ) << "socket error is \"" << socket()->errorString( socket()->error() ) << "\"" << endl;
 		emit connectionClosed ();
 	}
 	else
 	{
-		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "..by the other end" << endl;
+		kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "..by the other end" << endl;
 		emit delayedCloseFinished ();
 	}
 
@@ -147,7 +147,7 @@ void KNetworkByteStream::slotBytesWritten ( int bytes )
 
 void KNetworkByteStream::slotError ( int code )
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Socket error " << code << endl;
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Socket error " << code << endl;
 
 	emit error ( code );
 

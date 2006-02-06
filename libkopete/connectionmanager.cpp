@@ -51,7 +51,7 @@ void ConnectionManager::initialise()
 void ConnectionManager::updateStatus()
 {
 	NetworkStatus::EnumStatus daemonStatus = (NetworkStatus::EnumStatus)d->m_stub->status( QString::null );
-	kdDebug() << k_funcinfo << endl;
+	kDebug() << k_funcinfo << endl;
 	switch ( daemonStatus )
 	{
 		case NetworkStatus::Offline:
@@ -60,23 +60,23 @@ void ConnectionManager::updateStatus()
 		case NetworkStatus::ShuttingDown:
 			if ( d->m_state == Online )
 			{
-				kdDebug() << "STATE IS PENDING" << endl;
+				kDebug() << "STATE IS PENDING" << endl;
 				d->m_state = Pending;
 			}
 			else
 			{
-				kdDebug() << "STATE IS OFFLINE" << endl;
+				kDebug() << "STATE IS OFFLINE" << endl;
 				d->m_state = Offline;
 			}
 			break;
 		case NetworkStatus::Establishing:
 		case NetworkStatus::Online:
-			kdDebug() << "STATE IS ONLINE" << endl;
+			kDebug() << "STATE IS ONLINE" << endl;
 			d->m_state = Online;
 			break;
 		case NetworkStatus::NoNetworks:
 		case NetworkStatus::Unreachable:
-			kdDebug() << "STATE IS INACTIVE" << endl;
+			kDebug() << "STATE IS INACTIVE" << endl;
 			d->m_state = Inactive;
 			break;
 	}
@@ -102,7 +102,7 @@ NetworkStatus::EnumStatus ConnectionManager::status( const QString & host )
 
 NetworkStatus::EnumRequestResult ConnectionManager::requestConnection( QWidget * mainWidget, const QString & host, bool userInitiated )
 {
-	kdDebug() << k_funcinfo << endl;
+	kDebug() << k_funcinfo << endl;
 	NetworkStatus::EnumRequestResult result;
 	// if offline and the user has previously indicated they didn't want any new connections, suppress it
 	if ( d->m_state == Offline && !userInitiated && d->m_userInitiatedOnly )
@@ -130,7 +130,7 @@ void ConnectionManager::relinquishConnection( const QString & host )
 
 void ConnectionManager::slotStatusChanged( QString host, int status )
 {
-	kdDebug() << k_funcinfo << endl;
+	kDebug() << k_funcinfo << endl;
 	updateStatus();
 	// reset user initiated only flag if we are now online
 	if ( d->m_state == Online )

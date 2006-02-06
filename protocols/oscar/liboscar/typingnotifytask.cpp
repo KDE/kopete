@@ -96,19 +96,19 @@ void TypingNotifyTask::handleNotification()
 	switch ( word )
 	{
 	case 0x0000:
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << " has finished typing" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << " has finished typing" << endl;
 		emit typingFinished( contact );
 		break;
 	case 0x0001:
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << " has typed a word" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << " has typed a word" << endl;
 		emit typingFinished( contact );
 		break;
 	case 0x0002:
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << " has started typing" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << " has started typing" << endl;
 		emit typingStarted( contact );
 		break;
 	default:
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << " typed an unknown typing notification - " << word << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << " typed an unknown typing notification - " << word << endl;
 	}
 }
 

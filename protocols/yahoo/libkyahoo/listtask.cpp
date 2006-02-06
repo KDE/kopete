@@ -25,7 +25,7 @@
 
 ListTask::ListTask(Task* parent) : Task(parent)
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
 ListTask::~ListTask()
@@ -35,7 +35,7 @@ ListTask::~ListTask()
 
 bool ListTask::take( Transfer* transfer )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	
 	if ( !forMe( transfer ) )
 		return false;
@@ -48,7 +48,7 @@ bool ListTask::take( Transfer* transfer )
 
 bool ListTask::forMe( Transfer* transfer ) const
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)
@@ -63,7 +63,7 @@ bool ListTask::forMe( Transfer* transfer ) const
 
 void ListTask::parseBuddyList( Transfer *transfer )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)
@@ -85,7 +85,7 @@ void ListTask::parseBuddyList( Transfer *transfer )
 		buddies = QStringList::split( ",", (*groupIt).section(":", 1,1) );
 		for ( QStringList::Iterator buddyIt = buddies.begin(); buddyIt != buddies.end(); ++buddyIt ) 
 		{
-			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Parsed buddy: " << *buddyIt << " in group " << group << endl;
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Parsed buddy: " << *buddyIt << " in group " << group << endl;
 			emit gotBuddy( *buddyIt, QString::null, group );
 		}
 	}
@@ -93,7 +93,7 @@ void ListTask::parseBuddyList( Transfer *transfer )
 
 void ListTask::parseStealthList( Transfer *transfer )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)

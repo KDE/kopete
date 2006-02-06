@@ -52,7 +52,7 @@ void ClientReadyTask::onGo()
 	SNAC s = { 0x0001, 0x0002, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
 	
-	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending client ready, end of login" << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending client ready, end of login" << endl;
 	//nasty nasty nasty hack to get all the packets to work
 	Q3ValueList<int>::const_iterator rcEnd = m_familyList.constEnd();
 	for ( Q3ValueList<int>::const_iterator it = m_familyList.constBegin(); it != rcEnd; ++it )

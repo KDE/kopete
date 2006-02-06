@@ -181,7 +181,7 @@ void KopeteBalloon::updateMask()
 	move( right ? mAnchor.x() - width() : ( mAnchor.x() < 0 ? 0 : mAnchor.x() ),
 	      bottom ? mAnchor.y() - height() : ( mAnchor.y() < 0 ? 0 : mAnchor.y() )  );
 
-	//kdDebug(14000) << k_funcinfo << "finalpos: x=" << x() << ", y=" << y() << endl;
+	//kDebug(14000) << k_funcinfo << "finalpos: x=" << x() << ", y=" << y() << endl;
 }
 
 #include "kopeteballoon.moc"

@@ -48,7 +48,7 @@ void NLNoatun::update()
 		if ( !m_client->call( appname, DCOPCString("Noatun"), DCOPCString("state()"), data,
 					replyType, replyData ) )
 		{
-			kdDebug( 14307 ) <<  "NLNoatun::update() DCOP error on " << appname << endl;
+			kDebug( 14307 ) <<  "NLNoatun::update() DCOP error on " << appname << endl;
 		}
 		else
 		{
@@ -58,7 +58,7 @@ void NLNoatun::update()
 				int state = 0;
 				reply >> state;
 				m_playing = ( state == 2 );
-				//kdDebug( 14307 ) << "checked if Noatun is playing!" << endl;
+				//kDebug( 14307 ) << "checked if Noatun is playing!" << endl;
 			}
 		}
 		// poll it for its current songtitle, artist and album
@@ -73,7 +73,7 @@ void NLNoatun::update()
 			// Using the title() method
 			if ( !m_client->call( appname, DCOPCString("Noatun"),
 						DCOPCString("title()"), data, replyType, replyData ) )
-				kdDebug( 14307 ) <<  "NLNoatun::update() DCOP error on " << appname 
+				kDebug( 14307 ) <<  "NLNoatun::update() DCOP error on " << appname 
 					<< endl;
 			else {
 				QDataStream reply( &replyData,QIODevice::ReadOnly );
@@ -81,7 +81,7 @@ void NLNoatun::update()
 				if ( replyType == "QString" ) {
 					reply >> newTrack;
 				} else
-					kdDebug( 14307 ) << "NLNoatun::update(), title() returned unexpected reply type!" << endl;
+					kDebug( 14307 ) << "NLNoatun::update(), title() returned unexpected reply type!" << endl;
 			}
 		// if the current track title has changed
 		if ( newTrack != m_track )
@@ -91,12 +91,12 @@ void NLNoatun::update()
 		}
 		else
 			m_newTrack = false;
-		kdDebug( 14307 ) << "NLNoatun::update() - found "<< appname << " - "
+		kDebug( 14307 ) << "NLNoatun::update() - found "<< appname << " - "
 			<< m_track << endl;
 
 	}
 	else
-		kdDebug( 14307 ) << "NLNoatun::update() - noatun not found" << endl;
+		kDebug( 14307 ) << "NLNoatun::update() - noatun not found" << endl;
 }
 
 DCOPCString NLNoatun::find() const
@@ -109,7 +109,7 @@ DCOPCString NLNoatun::find() const
 		DCOPCStringList::iterator it;
 		for ( it = allApps.begin(); it != allApps.end(); it++ )
 		{
-			//kdDebug( 14307 ) << ( *it ) << endl;
+			//kDebug( 14307 ) << ( *it ) << endl;
 			if ( ( *it ).left( 6 ) == app )
 			{
 				app = ( *it );
@@ -134,7 +134,7 @@ QString NLNoatun::currentProperty( DCOPCString appname, QString property ) const
 	if ( !m_client->call( appname, DCOPCString("Noatun"),
 				DCOPCString("currentProperty(QString)"), data, replyType, replyData ) )
 	{
-		kdDebug( 14307 ) <<  "NLNoatun::currentProperty() DCOP error on "
+		kDebug( 14307 ) <<  "NLNoatun::currentProperty() DCOP error on "
 			<< appname << endl;
 	}	
 	else

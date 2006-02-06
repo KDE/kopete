@@ -464,7 +464,7 @@ void ChatView::toggleMembersVisibility()
 
 void ChatView::placeMembersList( K3DockWidget::DockPosition dp )
 {
-// 	kdDebug(14000) << k_funcinfo << "Members list policy " << membersStatus <<
+// 	kDebug(14000) << k_funcinfo << "Members list policy " << membersStatus <<
 // 			", visible " << d->visibleMembers << endl;
 
 	
@@ -649,7 +649,7 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 
 void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString &reason, Kopete::Message::MessageFormat format, bool suppressNotification )
 {
-// 	kdDebug(14000) << k_funcinfo << endl;
+// 	kDebug(14000) << k_funcinfo << endl;
 	if ( contact != m_manager->myself() )
 	{
 		m_remoteTypingMap.remove( const_cast<Kopete::Contact *>( contact ) );
@@ -699,7 +699,7 @@ QString& ChatView::caption() const
 
 void ChatView::setCaption( const QString &text, bool modified )
 {
-// 	kdDebug(14000) << k_funcinfo << endl;
+// 	kDebug(14000) << k_funcinfo << endl;
 	QString newCaption = text;
 
 	//Save this caption
@@ -775,7 +775,7 @@ void ChatView::slotToggleRtfToolbar( bool enabled )
 
 void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &newStatus, const Kopete::OnlineStatus &oldStatus )
 {
- 	kdDebug(14000) << k_funcinfo << contact << endl;
+ 	kDebug(14000) << k_funcinfo << contact << endl;
 	bool inhibitNotification = ( newStatus.status() == Kopete::OnlineStatus::Unknown ||
 	                             oldStatus.status() == Kopete::OnlineStatus::Unknown );
 	if ( contact && Kopete::BehaviorSettings::self() && !inhibitNotification )
@@ -864,7 +864,7 @@ void ChatView::readOptions()
 	}
 
 	dockKey.append( QString::fromLatin1( ",editDock:sepPos" ) );
-	//kdDebug(14000) << k_funcinfo << "reading splitterpos from key: " << dockKey << endl;
+	//kDebug(14000) << k_funcinfo << "reading splitterpos from key: " << dockKey << endl;
 	int splitterPos = config->readNumEntry( dockKey, 70 );
 	editDock->manualDock( viewDock, K3DockWidget::DockBottom, splitterPos );
 	viewDock->setDockSite( K3DockWidget::DockLeft | K3DockWidget::DockRight );

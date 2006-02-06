@@ -35,7 +35,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_history, HistoryConfigFactory( "kcm_kopet
 HistoryPreferences::HistoryPreferences(QWidget *parent, const char*/*name*/, const QStringList &args)
 	: KCModule(HistoryConfigFactory::instance(), parent, args)
 {
-	kdDebug(14310) << k_funcinfo << "called." << endl;
+	kDebug(14310) << k_funcinfo << "called." << endl;
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	p = new HistoryPrefsUI(this);
 
@@ -51,12 +51,12 @@ HistoryPreferences::HistoryPreferences(QWidget *parent, const char*/*name*/, con
 
 HistoryPreferences::~HistoryPreferences()
 {
-	kdDebug(14310) << k_funcinfo << "called." << endl;
+	kDebug(14310) << k_funcinfo << "called." << endl;
 }
 
 void HistoryPreferences::load()
 {
-	kdDebug(14310) << k_funcinfo << "called." << endl;
+	kDebug(14310) << k_funcinfo << "called." << endl;
 	HistoryConfig::self()->readConfig();
 	p->chkShowPrevious->setChecked(HistoryConfig::auto_chatwindow());
 	slotShowPreviousChanged(p->chkShowPrevious->isChecked());
@@ -69,7 +69,7 @@ void HistoryPreferences::load()
 
 void HistoryPreferences::save()
 {
-	kdDebug(14310) << k_funcinfo << "called." << endl;
+	kDebug(14310) << k_funcinfo << "called." << endl;
 	HistoryConfig::setAuto_chatwindow(p->chkShowPrevious->isChecked());
 	HistoryConfig::setNumber_Auto_chatwindow(p->Number_Auto_chatwindow->value());
 	HistoryConfig::setNumber_ChatWindow(p->Number_ChatWindow->value());

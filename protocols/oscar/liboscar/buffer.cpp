@@ -184,7 +184,7 @@ BYTE Buffer::getByte()
 		mReadPos++;
 	}
 	else
-		kdDebug(14150) << "Buffer::getByte(): mBuffer empty" << endl;
+		kDebug(14150) << "Buffer::getByte(): mBuffer empty" << endl;
 
 	return thebyte;
 }
@@ -265,7 +265,7 @@ QByteArray Buffer::getBBlock(WORD len)
 
 WORD *Buffer::getWordBlock(WORD len)
 {
-	kdDebug(14150) << k_funcinfo << "of length " << len << endl;
+	kDebug(14150) << k_funcinfo << "of length " << len << endl;
 	WORD *ch=new WORD[len+1];
 	for (unsigned int i=0; i<len; i++)
 	{
@@ -309,10 +309,10 @@ TLV Buffer::getTLV()
 		if ( t )
 			t.data = getBlock( t.length );
 		/*else
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Invalid TLV in buffer" << endl;*/
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Invalid TLV in buffer" << endl;*/
 	}
 
-	//kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "TLV data is " << t.data << endl;
+	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "TLV data is " << t.data << endl;
 	return t;
 }
 
@@ -327,11 +327,11 @@ QList<TLV> Buffer::getTLVList()
 		t = getTLV();
 		if ( !t )
 		{
-			kdDebug(14150) << k_funcinfo << "Invalid TLV found" << endl;
+			kDebug(14150) << k_funcinfo << "Invalid TLV found" << endl;
 			continue;
 		}
 
-		//kdDebug(14150) << k_funcinfo << "got TLV(" << t.type << ")" << endl;
+		//kDebug(14150) << k_funcinfo << "got TLV(" << t.type << ")" << endl;
 		ql.append(t);
 	}
 

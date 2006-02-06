@@ -34,7 +34,7 @@ void AutoReplaceConfig::load()
 	KConfig *config = KGlobal::config();
 	config->setGroup( "AutoReplace Plugin" );
 
-	QStringList wordsList = config->readListEntry( "WordsToReplace" );
+	QStringList wordsList = config->readEntry( "WordsToReplace", QStringList() );
 	if( wordsList.isEmpty() )
 	{
 		// basic list, key/value
@@ -56,10 +56,10 @@ void AutoReplaceConfig::load()
 		m_map.insert( k, v );
 	}
 
-	m_autoreplaceIncoming = config->readBoolEntry( "AutoReplaceIncoming" , false );
-	m_autoreplaceOutgoing = config->readBoolEntry( "AutoReplaceOutgoing" , true );
-	m_addDot              = config->readBoolEntry( "DotEndSentence" , false );
-	m_upper               = config->readBoolEntry( "CapitalizeBeginningSentence" , false );
+	m_autoreplaceIncoming = config->readEntry( "AutoReplaceIncoming" , false );
+	m_autoreplaceOutgoing = config->readEntry( "AutoReplaceOutgoing" , true );
+	m_addDot              = config->readEntry( "DotEndSentence" , false );
+	m_upper               = config->readEntry( "CapitalizeBeginningSentence" , false );
 }
 
 QStringList AutoReplaceConfig::defaultAutoReplaceList()

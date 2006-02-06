@@ -111,13 +111,13 @@ GaduEditAccount::publishUserInfo()
 	sr.meiden	= uiMeiden->text();
 	sr.orgin	= uiOrgin->text();
 
-	kdDebug(14100) << uiGender->currentItem() << " gender " << endl;
+	kDebug(14100) << uiGender->currentItem() << " gender " << endl;
 	if ( uiGender->currentItem() == 1 ) {
-		kdDebug(14100) << "so you become female now" << endl;
+		kDebug(14100) << "so you become female now" << endl;
 		sr.gender = QString( GG_PUBDIR50_GENDER_SET_FEMALE );
 	}
 	if ( uiGender->currentItem() == 2 ) {
-		kdDebug(14100) << "so you become male now" << endl;
+		kDebug(14100) << "so you become male now" << endl;
 		sr.gender = QString( GG_PUBDIR50_GENDER_SET_MALE );
 	}
 
@@ -141,15 +141,15 @@ GaduEditAccount::slotSearchResult( const SearchResult& result, unsigned int seq 
 	uiYOB->setText( result[0].age );
 	uiCity->setText( result[0].city );
 
-	kdDebug( 14100 ) << "gender found: " << result[0].gender << endl;
+	kDebug( 14100 ) << "gender found: " << result[0].gender << endl;
 	if ( result[0].gender == QString( GG_PUBDIR50_GENDER_SET_FEMALE ) ) {
 		uiGender->setCurrentItem( 1 );
-		kdDebug(14100) << "looks like female" << endl;
+		kDebug(14100) << "looks like female" << endl;
 	}
 	else {
 		if ( result[0].gender == QString( GG_PUBDIR50_GENDER_SET_MALE ) ) {
 			uiGender->setCurrentItem( 2 );
-			kdDebug( 14100 ) <<" looks like male" << endl;
+			kDebug( 14100 ) <<" looks like male" << endl;
 		}
 	}
 

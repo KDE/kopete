@@ -78,20 +78,20 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 JabberGroupContact::~JabberGroupContact ()
 {
 
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
 	delete mManager;
 	mManager=0l;
 
 	for ( Kopete::Contact *contact = mContactList.first (); contact; contact = mContactList.next () )
 	{
-		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Deleting KC " << contact->contactId () << endl;
+		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Deleting KC " << contact->contactId () << endl;
 		delete contact;
 	}
 
 	for ( Kopete::MetaContact *metaContact = mMetaContactList.first (); metaContact; metaContact = mMetaContactList.next () )
 	{
-		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Deleting KMC " << metaContact->metaContactId () << endl;
+		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Deleting KMC " << metaContact->metaContactId () << endl;
 		delete metaContact;
 	}
 
@@ -122,7 +122,7 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 	QString viewType = "kopete_chatwindow";
 	Kopete::Message *newMessage = 0L;
 
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
 
 	/**
 	 * Don't display empty messages, these were most likely just carrying
@@ -182,14 +182,14 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 
 JabberBaseContact *JabberGroupContact::addSubContact ( const XMPP::RosterItem &rosterItem, bool addToManager )
 {
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Adding new subcontact " << rosterItem.jid().full () << " to room " << mRosterItem.jid().full () << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Adding new subcontact " << rosterItem.jid().full () << " to room " << mRosterItem.jid().full () << endl;
 
 	// see if this contact already exists, skip creation otherwise
 	JabberBaseContact *subContact = dynamic_cast<JabberGroupMemberContact *>( account()->contactPool()->findExactMatch ( rosterItem.jid () ) );
 
 	if ( subContact )
 	{
-		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact already exists, not adding again." << endl;
+		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact already exists, not adding again." << endl;
 		return subContact;
 	}
 	
@@ -219,12 +219,12 @@ JabberBaseContact *JabberGroupContact::addSubContact ( const XMPP::RosterItem &r
 
 void JabberGroupContact::removeSubContact ( const XMPP::RosterItem &rosterItem )
 {
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing subcontact " << rosterItem.jid().full () << " from room " << mRosterItem.jid().full () << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing subcontact " << rosterItem.jid().full () << " from room " << mRosterItem.jid().full () << endl;
 
 	// make sure that subcontacts are only removed from the room contact, which has no resource
 	if ( !mRosterItem.jid().resource().isEmpty () )
 	{
-		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "WARNING: Trying to remove subcontact from subcontact!" << endl;
+		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "WARNING: Trying to remove subcontact from subcontact!" << endl;
 		return;
 	}
 
@@ -233,7 +233,7 @@ void JabberGroupContact::removeSubContact ( const XMPP::RosterItem &rosterItem )
 
 	if ( !subContact )
 	{
-		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "WARNING: Subcontact couldn't be located!" << endl;
+		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "WARNING: Subcontact couldn't be located!" << endl;
 		return;
 	}
 	

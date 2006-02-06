@@ -30,7 +30,7 @@
 
 SendPictureTask::SendPictureTask(Task* parent) : Task(parent)
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
 SendPictureTask::~SendPictureTask()
@@ -57,7 +57,7 @@ void SendPictureTask::onGo()
 
 void SendPictureTask::initiateUpload()
 {	
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	KBufferedSocket* yahooSocket = new KBufferedSocket( "filetransfer.msg.yahoo.com", QString::number(80) );
 	connect( yahooSocket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
 	connect( yahooSocket, SIGNAL( gotError(int) ), this, SLOT( connectFailed(int) ) );
@@ -67,12 +67,12 @@ void SendPictureTask::initiateUpload()
 
 void SendPictureTask::connectFailed( int i)
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << i << ": " << dynamic_cast<const KStreamSocket*>( sender() )->errorString() << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << i << ": " << dynamic_cast<const KStreamSocket*>( sender() )->errorString() << endl;
 }
 
 void SendPictureTask::connectSucceeded()
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	KStreamSocket* socket = const_cast<KBufferedSocket*>( dynamic_cast<const KBufferedSocket*>( sender() ) );
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePictureUpload);
 
@@ -91,16 +91,16 @@ void SendPictureTask::connectSucceeded()
 
 	if ( file.open(QIODevice::ReadOnly ) )
 	{
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "File successfully opened. Reading..." << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "File successfully opened. Reading..." << endl;
 	}
 	else
 	{
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Error opening file: " << file.errorString() << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Error opening file: " << file.errorString() << endl;
 		return;
 	}
 
 	paket = t->serialize();
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Sizes: File (" << m_path << "): " << file.size() << " - paket: " << paket.size() << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Sizes: File (" << m_path << "): " << file.size() << " - paket: " << paket.size() << endl;
 	QString header = QString::fromLatin1("POST /notifyft HTTP/1.1\r\n"
 			"Referer: blubb-dwsgqbxiu\r\n"
 			"Cookie: Y=%1; T=%2; C=%3 ;B=fckeert1kk1nl&b=2\r\n"
@@ -113,18 +113,18 @@ void SendPictureTask::connectSucceeded()
 	stream << (Q_INT8)0x32 << (Q_INT8)0x39 << (Q_INT8)0xc0 << (Q_INT8)0x80;
 	stream.writeRawBytes( file.readAll(), file.size() );
 
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Buffersize: " << buffer.size() << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Buffersize: " << buffer.size() << endl;
 	if( socket->writeBlock( buffer, buffer.size() ) )
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful!" << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful!" << endl;
 	else
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Failed!" << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Failed!" << endl;
 	socket->close();
 
 }
 
 void SendPictureTask::slotUploadFinished( KIO::Job *job )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	if ( job->error() )
 		setSuccess( false );
 	else
@@ -133,7 +133,7 @@ void SendPictureTask::slotUploadFinished( KIO::Job *job )
 
 void SendPictureTask::sendChecksum()
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePictureChecksum);
 	t->setId( client()->sessionID() );
@@ -149,7 +149,7 @@ void SendPictureTask::sendChecksum()
 
 void SendPictureTask::sendInformation()
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePicture);
 	t->setId( client()->sessionID() );
@@ -167,7 +167,7 @@ void SendPictureTask::sendInformation()
 
 void SendPictureTask::sendStatus()
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePictureUpdate);
 	t->setId( client()->sessionID() );

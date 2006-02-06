@@ -323,7 +323,7 @@ void ClientStream::cp_incomingData()
 		doReadyRead();
 	}
 	else
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << 
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << 
 			"client signalled incomingData but none was available, state is: " <<
 			d->client.state() << endl;
 }
@@ -351,7 +351,7 @@ void ClientStream::cr_connected()
 
 void ClientStream::cr_error()
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	reset();
 	emit error(ErrConnection);
 }
@@ -380,7 +380,7 @@ void ClientStream::bs_readyRead()
 
 #if LIBOSCAR_DEBUG
 	QByteArray cs(a.data(), a.size()+1);
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "recv: " << a.size() << "bytes" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "recv: " << a.size() << "bytes" << endl;
 	cs_dump( a );
 #endif
 
@@ -390,7 +390,7 @@ void ClientStream::bs_readyRead()
 void ClientStream::bs_bytesWritten(int bytes)
 {
 #if LIBOSCAR_DEBUG
- 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << bytes << " bytes written" << endl;
+ 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << bytes << " bytes written" << endl;
 	Q_UNUSED( bytes );
 #else
 	Q_UNUSED( bytes );

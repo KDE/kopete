@@ -48,7 +48,7 @@
 GSMLib::GSMLib(Kopete::Account* account)
 	: SMSService(account)
 {
-	kdWarning( 14160 ) << k_funcinfo << endl;
+	kWarning( 14160 ) << k_funcinfo << endl;
 	prefWidget = 0L;
 	m_MeTa = NULL;
 	
@@ -90,11 +90,11 @@ void GSMLib::connect()
 	// open the port and ME/TA
 	try
 	{
-		kdWarning( 14160 ) << "Connecting to: '"<<m_device<<"'"<<endl;
+		kWarning( 14160 ) << "Connecting to: '"<<m_device<<"'"<<endl;
 		
 		gsmlib::Ref<gsmlib::Port> port = new gsmlib::KopeteUnixSerialPort(m_device.latin1(), 9600, gsmlib::DEFAULT_INIT_STRING, false);
 		
-		kdWarning( 14160 ) << "Port created"<<endl;
+		kWarning( 14160 ) << "Port created"<<endl;
 				
 		m_MeTa = new gsmlib::MeTa(port);
 		std::string dummy1, dummy2, receiveStoreName;
@@ -113,7 +113,7 @@ void GSMLib::connect()
 	}
 	catch(gsmlib::GsmException &e)
 	{
-		kdWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
+		kWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
 		disconnect();
 		return;
 	}
@@ -122,7 +122,7 @@ void GSMLib::connect()
 void GSMLib::disconnect()
 {
 	killTimers();
-	kdWarning( 14160 ) << k_funcinfo <<endl;
+	kWarning( 14160 ) << k_funcinfo <<endl;
 	delete m_MeTa;
 	m_MeTa = NULL;
 
@@ -131,7 +131,7 @@ void GSMLib::disconnect()
 
 void GSMLib::setWidgetContainer(QWidget* parent, QGridLayout* layout)
 {
-//	kdWarning( 14160 ) << k_funcinfo << "ml: " << layout << ", " << "mp: " << parent << endl;
+//	kWarning( 14160 ) << k_funcinfo << "ml: " << layout << ", " << "mp: " << parent << endl;
 	m_parent = parent;
 	m_layout = layout;
 	QWidget *configWidget = configureWidget(parent);
@@ -141,7 +141,7 @@ void GSMLib::setWidgetContainer(QWidget* parent, QGridLayout* layout)
 
 void GSMLib::send(const Kopete::Message& msg)
 {
-//	kdWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
+//	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
 	
 	QString reason;
 
@@ -149,7 +149,7 @@ void GSMLib::send(const Kopete::Message& msg)
 	if (!m_MeTa)
 	{
 		QString reason = QString("GSMLib: Not Connected");
-		kdWarning( 14160 ) << k_funcinfo<< reason <<endl;
+		kWarning( 14160 ) << k_funcinfo<< reason <<endl;
 		emit messageNotSent(msg, reason);
 		return;
 	}
@@ -163,15 +163,15 @@ void GSMLib::send(const Kopete::Message& msg)
 		gsmlib::Ref<gsmlib::SMSSubmitMessage> submitSMS = new gsmlib::SMSSubmitMessage();
 		gsmlib::Address destAddr( nr.latin1() );
 		submitSMS->setDestinationAddress(destAddr);
-		kdWarning( 14160 ) << k_funcinfo << "before send"<<endl;
+		kWarning( 14160 ) << k_funcinfo << "before send"<<endl;
 		m_MeTa->sendSMSs(submitSMS, message.latin1(), true);
-		kdWarning( 14160 ) << k_funcinfo << "after send"<<endl;
+		kWarning( 14160 ) << k_funcinfo << "after send"<<endl;
 		
 		emit messageSent(msg);
 	}
 	catch(gsmlib::GsmException &e)
 	{
-		kdWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
+		kWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
 		QString reason = QString("GSMLib: ") + e.what();
 		emit messageNotSent(msg, reason);
 	}
@@ -179,7 +179,7 @@ void GSMLib::send(const Kopete::Message& msg)
 
 QWidget* GSMLib::configureWidget(QWidget* parent)
 {
-//	kdWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be ok if zero!!)" << endl;
+//	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be ok if zero!!)" << endl;
 
 	if (prefWidget == 0L)
 		prefWidget = new GSMLibPrefsUI(parent);
@@ -192,7 +192,7 @@ QWidget* GSMLib::configureWidget(QWidget* parent)
 
 void GSMLib::savePreferences()
 {
-//	kdWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be work if zero!!)" << endl;
+//	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be work if zero!!)" << endl;
 
 	if( prefWidget )
 	{
@@ -221,7 +221,7 @@ void GSMLib::timerEvent( QTimerEvent * )
 		MessageList::iterator it;
 		for( it=m_newMessages.begin(); it!=m_newMessages.end(); it++)
 		{
-			kdWarning( 14160 ) << k_funcinfo <<endl;
+			kWarning( 14160 ) << k_funcinfo <<endl;
 			IncomingMessage m = *it;
 			
 			// Do we need to fetch it from the ME?
@@ -236,11 +236,11 @@ void GSMLib::timerEvent( QTimerEvent * )
 
 			QString text = m.Message->userData().c_str();
 			QString nr = m.Message->address().toString().c_str();
-			kdWarning( 14160 ) << "Msg='"<<text <<"' addr='"<<nr<<"'"<<endl;
+			kWarning( 14160 ) << "Msg='"<<text <<"' addr='"<<nr<<"'"<<endl;
 		
 			// Locate a contact
 			SMSContact* contact = static_cast<SMSContact*>( m_account->contacts().find( nr ));
-			kdWarning( 14160 ) <<"contact="<<contact<<endl;
+			kWarning( 14160 ) <<"contact="<<contact<<endl;
 			if ( contact==NULL )
 			{
 				// No contact found, make a new one
@@ -252,23 +252,23 @@ void GSMLib::timerEvent( QTimerEvent * )
 			
 			// Deliver the msg
 			Kopete::Message msg( contact, m_account->myself(), text, Kopete::Message::Inbound, Kopete::Message::RichText );
-			kdWarning( 14160 ) <<"MARK1"<<endl;
+			kWarning( 14160 ) <<"MARK1"<<endl;
 			contact->manager(Kopete::Contact::CanCreate)->appendMessage( msg );
-			kdWarning( 14160 ) <<"MARK2"<<endl;
+			kWarning( 14160 ) <<"MARK2"<<endl;
 
 		}
 		m_newMessages.clear();
 	}
 	catch(gsmlib::GsmException &e)
 	{
-		kdWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
+		kWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
 		disconnect();
 	}
 }
 
 void GSMLib::SMSReception(gsmlib::SMSMessageRef newMessage, SMSMessageType messageType)
 {
-	kdWarning( 14160 ) << k_funcinfo << "New Message" << endl;
+	kWarning( 14160 ) << k_funcinfo << "New Message" << endl;
 
 	try
 	{
@@ -280,13 +280,13 @@ void GSMLib::SMSReception(gsmlib::SMSMessageRef newMessage, SMSMessageType messa
 	}
 	catch(gsmlib::GsmException &e)
 	{
-		kdWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
+		kWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
 	}
 }
 
 void GSMLib::SMSReceptionIndication(std::string storeName, unsigned int index, SMSMessageType messageType)
 {
-	kdWarning( 14160 ) << k_funcinfo << "New Message in store: "<<storeName.c_str() << endl;
+	kWarning( 14160 ) << k_funcinfo << "New Message in store: "<<storeName.c_str() << endl;
 
 	try
 	{
@@ -301,7 +301,7 @@ void GSMLib::SMSReceptionIndication(std::string storeName, unsigned int index, S
 	}
 	catch(gsmlib::GsmException &e)
 	{
-		kdWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
+		kWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
 	}
 }
 

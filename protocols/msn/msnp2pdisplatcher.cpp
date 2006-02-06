@@ -134,7 +134,7 @@ void MSNP2PDisplatcher::slotReadMessage( const QByteArray &msg )
 
 		if(msgStr.dataMessageSize==0)
 		{
-			kdDebug(14140) << k_funcinfo << " I do not care, it's a ACK     - flag= "  << (int)(unsigned char)(msg.data()[startBinHeader+28])  << endl;
+			kDebug(14140) << k_funcinfo << " I do not care, it's a ACK     - flag= "  << (int)(unsigned char)(msg.data()[startBinHeader+28])  << endl;
 			return;
 		}
 
@@ -178,7 +178,7 @@ void MSNP2PDisplatcher::slotReadMessage( const QByteArray &msg )
 				if(!p2p)
 				{
 					p2p=this;
-					kdDebug(14140) << k_funcinfo << " we got the SID in SessionID: "  << endl;
+					kDebug(14140) << k_funcinfo << " we got the SID in SessionID: "  << endl;
 				}
 			}
 			else
@@ -192,18 +192,18 @@ void MSNP2PDisplatcher::slotReadMessage( const QByteArray &msg )
 					QMap<unsigned long int , MSNP2P* >::iterator it;
 					for ( it = m_p2pList.begin(); it != m_p2pList.end(); ++it )
 					{
-						kdDebug(14140) << k_funcinfo <<it.data()->m_CallID<< " =?= "<< callID  << "  (sid= " << it.key() << endl;
+						kDebug(14140) << k_funcinfo <<it.data()->m_CallID<< " =?= "<< callID  << "  (sid= " << it.key() << endl;
 						if(it.data()->m_CallID == callID)
 						{
 							p2p=it.data();
-							kdDebug(14140) << k_funcinfo << " we got the SID in call_ID "  << endl;
+							kDebug(14140) << k_funcinfo << " we got the SID in call_ID "  << endl;
 							break;
 						}
 					}
 				}
 			}
 		}
-		kdDebug(14140) << k_funcinfo << " SID not found "  << endl;
+		kDebug(14140) << k_funcinfo << " SID not found "  << endl;
 		p2p->parseMessage( msgStr );
 	}
 }
@@ -217,7 +217,7 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 
 	if (dataMessage.contains("INVITE"))
 	{
-		kdDebug(14141) << k_funcinfo <<" dataMessage: "  << dataMessage << endl;
+		kDebug(14141) << k_funcinfo <<" dataMessage: "  << dataMessage << endl;
 
 		//Parse the message to get some info for replying
 		QRegExp rx(";branch=\\{([0-9A-F\\-]*)\\}\r\n");
@@ -254,7 +254,7 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
     		QByteArray msnobj;
     		KCodecs::base64Decode( rx.cap(1).toUtf8() , msnobj);
     		//rx=QRegExp("<msnobj\\s+Creator=\"(\\S+)\"\\s+Size=\"(\\S+)\"\\s+Type=\"(\\S+)\"\\s+Location=\"(\\S+)\"\\s+Friendly=\"(\\S+)\"\\s+SHA1D=\"(\\S+)\"\\s+SHA1C=\"(\\S+)\"/>");
-    		kdDebug(14140) << "Requesting pic" << msnobj << endl;
+    		kDebug(14140) << "Requesting pic" << msnobj << endl;
 
 			// If the msnobject is contained in the map, it's a custom emoticon.
 			//  Else, it's the display picture.
@@ -342,7 +342,7 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 			{
 				// while the contact ptr shouldn't be needed, kopete crash if one pass a null contact.
 				//  cf  Bug 89818
-				kdWarning(14140) << " impossible to get the contact for initiating file transfer " << endl;
+				kWarning(14140) << " impossible to get the contact for initiating file transfer " << endl;
 				p2p->error();
 				return;
 			}
@@ -423,7 +423,7 @@ void MSNP2PDisplatcher::requestDisplayPicture( const QString &myHandle, const QS
 		m_msgHandle=msgHandle;
 	}
 
-	kdDebug(14141) << k_funcinfo << msnObject << endl;
+	kDebug(14141) << k_funcinfo << msnObject << endl;
 
 
 	p2p->m_branch=randomid();
@@ -483,12 +483,12 @@ void MSNP2PDisplatcher::slotFileTransferRefused( const Kopete::FileTransferInfo 
 
 void MSNP2PDisplatcher::sendImage(const QString& fileName)
 {
-	kdDebug(14140) << k_funcinfo << fileName <<endl;
+	kDebug(14140) << k_funcinfo << fileName <<endl;
 
 	QFile pictFile( fileName );
 	if(!pictFile.open(QIODevice::ReadOnly))
 	{
-		kdWarning(14140) << k_funcinfo << "impossible to open " <<fileName <<endl;
+		kWarning(14140) << k_funcinfo << "impossible to open " <<fileName <<endl;
 		return;
 	}
 
@@ -624,7 +624,7 @@ void MSNP2PDisplatcher::sendFile(const QString& fileN ,unsigned int fileSize, co
 	
 
 	taille-=4; //to skip the string size
-	kdDebug() << k_funcinfo << taille << endl;
+	kDebug() << k_funcinfo << taille << endl;
 
 	for(unsigned int f=0; f<taille; f++)
 	{

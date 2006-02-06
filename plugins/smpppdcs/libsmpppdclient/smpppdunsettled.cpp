@@ -62,14 +62,14 @@ bool Unsettled::connect(Client * client, const QString& server, uint port) {
             KNetwork::KResolverResults results = resolver.results();
             if(!results.empty()) {
                 QString ip = results[0].address().asInet().ipAddress().toString();
-                kdDebug(14312) << k_funcinfo << "Found IP-Address for " << server << ": " << ip << endl;
+                kDebug(14312) << k_funcinfo << "Found IP-Address for " << server << ": " << ip << endl;
                 resolvedServer = ip;
             } else {
-                kdWarning(14312) << k_funcinfo << "No IP-Address found for " << server << endl;
+                kWarning(14312) << k_funcinfo << "No IP-Address found for " << server << endl;
                 return false;
             }
         } else {
-            kdWarning(14312) << k_funcinfo << "Looking up hostname timed out, consider to use IP or correct host" << endl;
+            kWarning(14312) << k_funcinfo << "Looking up hostname timed out, consider to use IP or correct host" << endl;
             return false;
         }
 
@@ -77,9 +77,9 @@ bool Unsettled::connect(Client * client, const QString& server, uint port) {
 		socket(client)->setBlocking(TRUE);
 
 		if(!socket(client)->connect()) {
-			kdDebug(14312) << k_funcinfo << "Socket Error: " << socket(client)->errorString() << endl;
+			kDebug(14312) << k_funcinfo << "Socket Error: " << socket(client)->errorString() << endl;
         } else {
-            kdDebug(14312) << k_funcinfo << "Successfully connected to smpppd \"" << server << ":" << port << "\"" << endl;
+            kDebug(14312) << k_funcinfo << "Successfully connected to smpppd \"" << server << ":" << port << "\"" << endl;
 
             static QString verRex = "^SuSE Meta pppd \\(smpppd\\), Version (.*)$";
             static QString clgRex = "^challenge = (.*)$";
@@ -106,12 +106,12 @@ bool Unsettled::connect(Client * client, const QString& server, uint port) {
 						setServerVersion(client, ver.cap(1));
                         return true;
                     } else {
-                        kdWarning(14312) << k_funcinfo << "SMPPPD responded: " << response << endl;
+                        kWarning(14312) << k_funcinfo << "SMPPPD responded: " << response << endl;
 						changeState(client, Ready::instance());
                         disconnect(client);
                     }
                 } else {
-                    kdWarning(14312) << k_funcinfo << "SMPPPD requested a challenge, but no password was supplied!" << endl;
+                    kWarning(14312) << k_funcinfo << "SMPPPD requested a challenge, but no password was supplied!" << endl;
 					changeState(client, Ready::instance());
                     disconnect(client);
                 }

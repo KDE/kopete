@@ -252,7 +252,7 @@ void LoginTask::extractPrivacy( Field::FieldList & fields )
 	// read allow list
 	allowList = readPrivacyItems( NM_A_BLOCKING_ALLOW_LIST, fields );
 	emit gotPrivacySettings( privacyLocked, defaultDeny, allowList, denyList );
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "locked is " << privacyLocked << ", default is " << defaultDeny << "\nallow list is: " << allowList << "\ndeny list is: " << denyList << endl;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) << "locked is " << privacyLocked << ", default is " << defaultDeny << "\nallow list is: " << allowList << "\ndeny list is: " << denyList << endl;
 }
 
 QStringList LoginTask::readPrivacyItems( const QByteArray & tag, Field::FieldList & fields )

@@ -122,7 +122,7 @@ Kopete::MetaContact *GlobalIdentitiesManager::getIdentity(const QString &identit
 
 void GlobalIdentitiesManager::loadXML()
 {
-	kdDebug() << k_funcinfo << "Loading global identities list from XML." << endl;
+	kDebug() << k_funcinfo << "Loading global identities list from XML." << endl;
 
 	QString filename = locateLocal( "appdata", QString::fromUtf8("global-identities.xml") );
 	if( filename.isEmpty() )
@@ -167,7 +167,7 @@ void GlobalIdentitiesManager::loadXML()
 
 void GlobalIdentitiesManager::saveXML()
 {
-	kdDebug() << k_funcinfo << "Saving global identities list to XML." << endl;
+	kDebug() << k_funcinfo << "Saving global identities list to XML." << endl;
 
 	QString globalIdentitiesListFileName = locateLocal( "appdata", QString::fromUtf8("global-identities.xml") );
 	KSaveFile globalIdentitiesListFile(globalIdentitiesListFileName);
@@ -183,12 +183,12 @@ void GlobalIdentitiesManager::saveXML()
 		}
 		else
 		{
-			kdDebug(14000) << k_funcinfo << "Failed to write global identities list, error code is: " << globalIdentitiesListFile.status() << endl;
+			kDebug(14000) << k_funcinfo << "Failed to write global identities list, error code is: " << globalIdentitiesListFile.status() << endl;
 		}
 	}
 	else
 	{
-		kdWarning(14000) << k_funcinfo << "Couldn't open global identities list file " << globalIdentitiesListFileName
+		kWarning(14000) << k_funcinfo << "Couldn't open global identities list file " << globalIdentitiesListFileName
 			<< ". Global Identities list not saved." << endl;
 	}
 }
@@ -203,7 +203,7 @@ const QDomDocument GlobalIdentitiesManager::toXML()
 	QMap<QString, Kopete::MetaContact*>::iterator end = d->identitiesList.end();
 	for(it = d->identitiesList.begin(); it != end; ++it)
 	{
-		kdDebug(14000) << k_funcinfo << "Saving " << it.key() << endl;
+		kDebug(14000) << k_funcinfo << "Saving " << it.key() << endl;
 		QDomElement identityMetaContactElement = it.data()->toXML(true); // Save minimal information.
 		identityMetaContactElement.setTagName(QString::fromUtf8("identity"));
 		identityMetaContactElement.setAttribute(QString::fromUtf8("name"), it.key());

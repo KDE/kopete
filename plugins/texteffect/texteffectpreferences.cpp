@@ -43,15 +43,15 @@ TextEffectPreferences::TextEffectPreferences(QWidget *parent,
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 
-	kdDebug( 14310 ) << "Creating preferences dialog" << endl;
+	kDebug( 14310 ) << "Creating preferences dialog" << endl;
 
 	preferencesDialog = new TextEffectPrefs(this);
 
-	kdDebug( 14310 ) << "Creating config object" << endl;
+	kDebug( 14310 ) << "Creating config object" << endl;
 
 	config = new TextEffectConfig;
 
-	kdDebug( 14310 ) << "Setting up connections" << endl;
+	kDebug( 14310 ) << "Setting up connections" << endl;
 
 	connect(preferencesDialog->mColorsAdd , SIGNAL(pressed()) ,
 			this , SLOT(slotAddPressed()));
@@ -95,7 +95,7 @@ TextEffectPreferences::~TextEffectPreferences()
 
 void TextEffectPreferences::load()
 {
-	kdDebug( 14310 ) << k_funcinfo << "ENTER" << endl;
+	kDebug( 14310 ) << k_funcinfo << "ENTER" << endl;
 
 	config->load();
 
@@ -113,13 +113,13 @@ void TextEffectPreferences::load()
 	// Indicate that we have not changed ^_^
 	emit changed( false );
 
-	kdDebug( 14310 ) << k_funcinfo << "EXIT" << endl;
+	kDebug( 14310 ) << k_funcinfo << "EXIT" << endl;
 
 }
 
 void TextEffectPreferences::save()
 {
-	kdDebug() << k_funcinfo << "ENTER" << endl;
+	kDebug() << k_funcinfo << "ENTER" << endl;
 	// Save the settings
 	config->setColors(colors());
 	config->setColorRandom(preferencesDialog->m_colorRandom->isChecked());
@@ -140,7 +140,7 @@ void TextEffectPreferences::save()
 
 	// Indicate that we have not changed ^_^
 	emit changed( false );
-	kdDebug() << k_funcinfo << "EXIT" << endl;
+	kDebug() << k_funcinfo << "EXIT" << endl;
 }
 
 QStringList TextEffectPreferences::colors()
@@ -211,7 +211,7 @@ void TextEffectPreferences::slotDownPressed()
 
 void TextEffectPreferences::slotSettingChanged()
 {
-	kdDebug() << k_funcinfo << "Called"
+	kDebug() << k_funcinfo << "Called"
 			  << endl;
 	// Indicate that our settings have changed
     emit changed( true );

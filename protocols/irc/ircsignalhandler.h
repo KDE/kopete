@@ -93,7 +93,7 @@ class QMember : public QObject
 	public slots:
 		void slotEmit( const QString &id )
 		{
-			//kdDebug(14120) << k_funcinfo << id << endl;
+			//kDebug(14120) << k_funcinfo << id << endl;
 			mapping->exec(id);
 		}
 
@@ -111,7 +111,7 @@ class QMemberSingle : public QObject
 	public slots:
 		void slotEmit( const QString &id, const QString &arg )
 		{
-			//kdDebug(14120) << k_funcinfo << id << " : " << arg  << endl;
+			//kDebug(14120) << k_funcinfo << id << " : " << arg  << endl;
 			mapping->exec(id,arg);
 		}
 
@@ -129,7 +129,7 @@ class QMemberDouble : public QObject
 	public slots:
 		void slotEmit( const QString &id, const QString &arg, const QString &arg2 )
 		{
-			//kdDebug(14120) << k_funcinfo << id << " : " << arg << " : " << arg2 << endl;
+			//kDebug(14120) << k_funcinfo << id << " : " << arg << " : " << arg2 << endl;
 			mapping->exec(id,arg,arg2);
 		}
 
@@ -147,7 +147,7 @@ class QMemberTriple : public QObject
 	public slots:
 		void slotEmit( const QString &id, const QString &arg, const QString &arg2, const QString &arg3 )
 		{
-			//kdDebug(14120) << k_funcinfo << id << " : " << arg << " : " << arg2 << " : " << arg3 << endl;
+			//kDebug(14120) << k_funcinfo << id << " : " << arg << " : " << arg2 << " : " << arg3 << endl;
 			mapping->exec(id,arg,arg2,arg3);
 		}
 

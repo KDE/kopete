@@ -53,7 +53,7 @@ Transfer* FlapProtocol::parse( const QByteArray & packet, uint& bytes )
 	*m_din >> w;
 	f.length = w;
 
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo  << "channel: " << f.channel
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo  << "channel: " << f.channel
 			<< " sequence: " << f.sequence << " length: " << f.length << endl;
 	//use pointer arithmatic to skip the flap and snac headers
 	//so we don't have to do double parsing in the tasks

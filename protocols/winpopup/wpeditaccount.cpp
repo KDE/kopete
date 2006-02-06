@@ -45,15 +45,15 @@
 WPEditAccount::WPEditAccount(WPProtocol *protocol, Kopete::Account *theAccount, QWidget *parent, const char *name)
 	: WPEditAccountBase(parent), KopeteEditAccountWidget(theAccount), mProtocol(protocol)
 {
-	kdDebug(14170) << "WPEditAccount::WPEditAccount(<protocol>, <theAccount>, <parent>, " << name << ")";
+	kDebug(14170) << "WPEditAccount::WPEditAccount(<protocol>, <theAccount>, <parent>, " << name << ")";
 
 	if(account()) {
 		mHostName->setText(account()->accountId());
 		mAutoConnect->setChecked(account()->excludeConnect());
 		mHostName->setReadOnly(true);
 		KGlobal::config()->setGroup("WinPopup");
-		mMessageCheckFreq->setValue(KGlobal::config()->readNumEntry("MessageCheckFreq", 5));
-		mHostCheckFreq->setValue(KGlobal::config()->readNumEntry("HostCheckFreq", 60));
+		mMessageCheckFreq->setValue(KGlobal::config()->readEntry("MessageCheckFreq", 5));
+		mHostCheckFreq->setValue(KGlobal::config()->readEntry("HostCheckFreq", 60));
 		mSmbcPath->setURL(KGlobal::config()->readEntry("SmbcPath", "/usr/bin/smbclient"));
 
 	}
@@ -89,7 +89,7 @@ void WPEditAccount::installSamba()
 
 bool WPEditAccount::validateData()
 {
-	kdDebug(14170) << "WPEditAccount::validateData()";
+	kDebug(14170) << "WPEditAccount::validateData()";
 
 	if(mHostName->text().isEmpty()) {
 		KMessageBox::sorry(this, i18n("<qt>You must enter a valid screen name.</qt>"), i18n("WinPopup"));
@@ -120,7 +120,7 @@ void WPEditAccount::writeConfig()
 
 Kopete::Account *WPEditAccount::apply()
 {
-	kdDebug(14170) << "WPEditAccount::apply()";
+	kDebug(14170) << "WPEditAccount::apply()";
 
 	if(!account())
 		setAccount(new WPAccount(mProtocol, mHostName->text()));

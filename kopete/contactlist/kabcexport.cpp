@@ -171,7 +171,7 @@ void KabcExportWizard::accept()
 				addr = m_addressBook->findByUid( item->mc->metaContactId() );
 				if ( addr.isEmpty() ) // unassociated contact
 				{
-					kdDebug( 14000 ) << "creating addressee " << item->mc->displayName() << " in address book " << selectedResource->resourceName() << endl;
+					kDebug( 14000 ) << "creating addressee " << item->mc->displayName() << " in address book " << selectedResource->resourceName() << endl;
 					// create a new addressee in the selected resource
 					addr.setResource( selectedResource );
 

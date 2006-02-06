@@ -58,7 +58,7 @@ Dispatcher::Dispatcher(QObject *parent, const QString& contact, const QStringLis
 
 Dispatcher::~Dispatcher()
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo << endl;
 
 	if(m_callbackChannel)
 	{
@@ -91,7 +91,7 @@ void Dispatcher::requestDisplayIcon(const QString& from, const QString& msnObjec
 	// Add the transfer to the list.
 	m_sessions.insert(sessionId, current);
 
-	kdDebug(14140) << k_funcinfo << "Requesting, " << msnObject << endl;
+	kDebug(14140) << k_funcinfo << "Requesting, " << msnObject << endl;
 
 	QString context = QString::fromUtf8(KCodecs::base64Encode(msnObject.toUtf8()));
 	// NOTE remove the \0 character automatically
@@ -167,11 +167,11 @@ void Dispatcher::sendFile(const QString& path, qint64 fileSize, const QString& t
 
 void Dispatcher::sendImage(const QString& /*fileName*/, const QString& /*to*/)
 {
-// 	TODO kdDebug(14140) << k_funcinfo << endl;
+// 	TODO kDebug(14140) << k_funcinfo << endl;
 // 	QFile imageFile(fileName);
 // 	if(!imageFile.open(QIODevice::ReadOnly))
 // 	{
-// 		kdDebug(14140) << k_funcinfo << "Error opening image file."
+// 		kDebug(14140) << k_funcinfo << "Error opening image file."
 // 			<< endl;
 // 		return;
 // 	}
@@ -243,7 +243,7 @@ void Dispatcher::slotReadMessage(const QString &from, const QByteArray& stream)
 			}
 			else
 			{
-				kdDebug(14140) << k_funcinfo
+				kDebug(14140) << k_funcinfo
 					<< "no transfer context with identifier, "
 					<< receivedMessage.header.ackSessionIdentifier
 					<< endl;
@@ -253,7 +253,7 @@ void Dispatcher::slotReadMessage(const QString &from, const QByteArray& stream)
 
 		if(m_messageBuffer.contains(receivedMessage.header.identifier))
 		{
-			kdDebug(14140) << k_funcinfo
+			kDebug(14140) << k_funcinfo
 				<< QString("retrieving buffered messsage, %1").arg(receivedMessage.header.identifier)
 				<< endl;
 
@@ -351,7 +351,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 		{
 			// The entire message has not been received;
 			// buffer the recevied portion of the original message.
-			kdDebug(14140) << k_funcinfo
+			kDebug(14140) << k_funcinfo
 				<< QString("Buffering messsage, %1").arg(message.header.identifier)
 				<< endl;
 			m_messageBuffer.insert(message.header.identifier, message);
@@ -360,7 +360,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 
 		QString body =
 			QByteArray(message.body.data(), message.header.dataSize);
-		kdDebug(14140) << k_funcinfo << "received, " << body << endl;
+		kDebug(14140) << k_funcinfo << "received, " << body << endl;
 
 		if(body.startsWith("INVITE"))
 		{
@@ -398,7 +398,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 
 				// Decode the msn object from base64 encoding.
 				KCodecs::base64Decode(regex.cap(1).toUtf8() , msnobj);
-				kdDebug(14140) << k_funcinfo << "Contact requested, "
+				kDebug(14140) << k_funcinfo << "Contact requested, "
 					<< msnobj << endl;
 
 				// Create a new transfer context that will handle
@@ -440,7 +440,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				// A contact has requested a session to
 				// send a file.
 
-				kdDebug(14140) << k_funcinfo << "File transfer invitation." << endl;
+				kDebug(14140) << k_funcinfo << "File transfer invitation." << endl;
 
 				// Create a new transfer context that will handle
 				// the file transfer.
@@ -472,7 +472,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				// 0x02 Background sharing.
 				qint32 flag;
 				reader >> flag;
-				kdDebug(14140) << flag << endl;
+				kDebug(14140) << flag << endl;
 				// FileName UTF16 (Unicode) [19..539]
 				QByteArray bytes(520);
 				reader.readRawBytes(bytes.data(), bytes.size());
@@ -483,7 +483,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 
 				emit incomingTransfer(from, fileName, fileSize);
 
-   				kdDebug(14140) <<
+   				kDebug(14140) <<
    					QString("%1, %2 bytes.").arg(fileName, QString::number(fileSize))
    					<< endl
    					<< endl;
@@ -507,7 +507,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				}
 				else
 				{
-					kdWarning(14140) << fileName << " from " << from
+					kWarning(14140) << fileName << " from " << from
 						<< " has failed; could not retrieve contact from contact list."
 						<< endl;
 					transfer->m_ackSessionIdentifier = message.header.identifier;
@@ -523,7 +523,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				regex.search(body);
 				QString GUID=regex.cap(1);
 
-				kdDebug(14140) << k_funcinfo << "webcam " << GUID << endl;
+				kDebug(14140) << k_funcinfo << "webcam " << GUID << endl;
 
 				Webcam::Who who;
 				if(GUID=="4BD96FC0-AB17-4425-A14A-439185962DC8")
@@ -537,7 +537,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				else
 				{ //unknown GUID
 					//current->error();
-					kdWarning(14140) << k_funcinfo << "Unknown GUID " << GUID << endl;
+					kWarning(14140) << k_funcinfo << "Unknown GUID " << GUID << endl;
 					return;
 				}
 

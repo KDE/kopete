@@ -51,7 +51,7 @@ Transfer* SnacProtocol::parse( const QByteArray & packet, uint& bytes )
 
 	//flap parsing
 	*m_din >> b; //this should be the start byte
-	//kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "start byte is " << b << endl;
+	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "start byte is " << b << endl;
 	*m_din >> b;
 	f.channel = b;
 	*m_din >> w;
@@ -61,8 +61,8 @@ Transfer* SnacProtocol::parse( const QByteArray & packet, uint& bytes )
 
 	if ( ( f.length + 6 ) > packet.size() )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Packet not big enough to parse!" << endl;
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "packet size is " << packet.size()
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Packet not big enough to parse!" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "packet size is " << packet.size()
 			<< " we need " << f.length + 6 << endl;
 		return 0;
 	}
@@ -76,7 +76,7 @@ Transfer* SnacProtocol::parse( const QByteArray & packet, uint& bytes )
 	*m_din >> dw;
 	s.id = dw;
 
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo  << "family: " << s.family
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo  << "family: " << s.family
 			<< " subtype: " << s.subtype << " flags: " << s.flags
 			<< " id: " << s.id << endl;
 
@@ -87,7 +87,7 @@ Transfer* SnacProtocol::parse( const QByteArray & packet, uint& bytes )
 	int snacOffset = 10; //default
 	if ( s.flags >= 0x8000  ) //skip the next 8 bytes, we don't care about the snac version ATM
 	{
-		//kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "skipping snac version" << endl;
+		//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "skipping snac version" << endl;
 		snacOffset = 18;
 		snacData = charPacket + 24;
 	}

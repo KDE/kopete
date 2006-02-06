@@ -34,7 +34,7 @@ void ICQShortInfo::fill( Buffer* buffer )
 {
 	if ( buffer->getByte() == 0x0A )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Parsing ICQ short user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Parsing ICQ short user info packet" << endl;
 		nickname = buffer->getLELNTS();
 		firstName = buffer->getLELNTS();
 		lastName = buffer->getLELNTS();
@@ -44,7 +44,7 @@ void ICQShortInfo::fill( Buffer* buffer )
 		gender = buffer->getByte();
 	}
 	else
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ short user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ short user info packet" << endl;
 }
 
 ICQGeneralUserInfo::ICQGeneralUserInfo()
@@ -61,7 +61,7 @@ void ICQGeneralUserInfo::fill( Buffer* buffer )
 {
 	if ( buffer->getByte() == 0x0A )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Parsing ICQ basic user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Parsing ICQ basic user info packet" << endl;
 		nickname = buffer->getLELNTS();
 		firstName = buffer->getLELNTS();
 		lastName = buffer->getLELNTS();
@@ -80,7 +80,7 @@ void ICQGeneralUserInfo::fill( Buffer* buffer )
 		publishEmail = ( buffer->getByte() == 0x01 );
 	}
 	else
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ basic user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ basic user info packet" << endl;
 }
 
 ICQWorkUserInfo::ICQWorkUserInfo()
@@ -107,7 +107,7 @@ void ICQWorkUserInfo::fill( Buffer* buffer )
 		homepage = buffer->getLELNTS();
 	}
 	else
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ work user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ work user info packet" << endl;
 }
 
 ICQMoreUserInfo::ICQMoreUserInfo()
@@ -148,7 +148,7 @@ void ICQMoreUserInfo::fill( Buffer* buffer )
 		marital = buffer->getLEWord();
 	}
 	else
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ work user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ work user info packet" << endl;
 }
 
 ICQEmailInfo::ICQEmailInfo()
@@ -168,7 +168,7 @@ void ICQEmailInfo::fill( Buffer* buffer )
 		}
 	}
 	else
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Coudln't parse ICQ email user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Coudln't parse ICQ email user info packet" << endl;
 }
 
 ICQInterestInfo::ICQInterestInfo()
@@ -190,17 +190,17 @@ void ICQInterestInfo::fill( Buffer* buffer )
 				if (count<4) { //i think this could not happen, i have never seen more
 					topics[count]=t;
 					descriptions[count]=d;
-					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got topic: "<<topics[count]<<" desc: " << topics[count] << endl;
+					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got topic: "<<topics[count]<<" desc: " << topics[count] << endl;
 					count++;
 				} else {
-					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got more than four interest infos" << endl;
+					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got more than four interest infos" << endl;
 				}
 			}
 		}
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "LEN: "<< len << " COUNT: " << count<< endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "LEN: "<< len << " COUNT: " << count<< endl;
 	}
 	else
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Coudln't parse ICQ interest user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Coudln't parse ICQ interest user info packet" << endl;
 }
 
 ICQSearchResult::ICQSearchResult()
@@ -215,7 +215,7 @@ void ICQSearchResult::fill( Buffer* buffer )
 	WORD datalength = buffer->getLEWord(); // data length
 	WORD len = 0;
 	uin = buffer->getLEDWord();
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found UIN " << QString::number( uin ) << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found UIN " << QString::number( uin ) << endl;
 	len = buffer->getLEWord();
 	if ( len > 0 )
 		nickName = Q3CString( buffer->getBlock( len ) );

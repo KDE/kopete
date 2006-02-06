@@ -58,7 +58,7 @@ KopeteSystemTray* KopeteSystemTray::systemTray( QWidget *parent )
 KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	: KSystemTray(parent), mMovie(0)
 {
-//	kdDebug(14010) << "Creating KopeteSystemTray" << endl;
+//	kDebug(14010) << "Creating KopeteSystemTray" << endl;
 	QToolTip::add( this, kapp->aboutData()->shortDescription() );
 
 	mIsBlinkIcon = false;
@@ -101,7 +101,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 
 KopeteSystemTray::~KopeteSystemTray()
 {
-//	kdDebug(14010) << "[KopeteSystemTray] ~KopeteSystemTray" << endl;
+//	kDebug(14010) << "[KopeteSystemTray] ~KopeteSystemTray" << endl;
 //	delete mBlinkTimer;
 	Kopete::UI::Global::setSysTrayWId( 0 );
 	delete mMovie;
@@ -136,7 +136,7 @@ void KopeteSystemTray::mouseDoubleClickEvent( QMouseEvent *me )
 
 void KopeteSystemTray::contextMenuAboutToShow( KMenu *me )
 {
-	//kdDebug(14010) << k_funcinfo << "Called." << endl;
+	//kDebug(14010) << k_funcinfo << "Called." << endl;
 	emit aboutToShowMenu( me );
 }
 
@@ -165,8 +165,8 @@ void KopeteSystemTray::startBlink( const QPixmap &icon )
 
 void KopeteSystemTray::startBlink( QMovie *movie )
 {
-	//kdDebug( 14010 ) << k_funcinfo << "starting movie." << endl;
-	kdDebug( 14010 ) << "Movie is " << movie->loopCount() << " loops, " << movie->frameCount() << " frames " << endl;
+	//kDebug( 14010 ) << k_funcinfo << "starting movie." << endl;
+	kDebug( 14010 ) << "Movie is " << movie->loopCount() << " loops, " << movie->frameCount() << " frames " << endl;
 	movie->unpause();
 	setMovie( movie );
 	mIsBlinking = true;
@@ -185,7 +185,7 @@ void KopeteSystemTray::startBlink()
 void KopeteSystemTray::stopBlink()
 {
 	if ( movie() )
-		kdDebug( 14010 ) << k_funcinfo << "stopping movie." << endl;
+		kDebug( 14010 ) << k_funcinfo << "stopping movie." << endl;
 	else if ( mBlinkTimer->isActive() )
 		mBlinkTimer->stop();
 
@@ -232,12 +232,12 @@ void KopeteSystemTray::slotNewEvent( Kopete::MessageEvent *event )
 			}
 			else
 			{
-				kdDebug(14000) << k_funcinfo << "Supressing balloon, account is away" << endl;
+				kDebug(14000) << k_funcinfo << "Supressing balloon, account is away" << endl;
 			}
 		}
 	}
 	else
-		kdDebug(14000) << k_funcinfo << "NULL message().manager()!" << endl;
+		kDebug(14000) << k_funcinfo << "NULL message().manager()!" << endl;
 
 	// tray animation
 	if ( Kopete::BehaviorSettings::self()->trayflashNotify() )
@@ -287,7 +287,7 @@ void KopeteSystemTray::removeBalloonEvent(Kopete::MessageEvent *event)
 
 void KopeteSystemTray::addBalloon()
 {
-	/*kdDebug(14010) << k_funcinfo <<
+	/*kDebug(14010) << k_funcinfo <<
 		m_balloon << ":" << KopetePrefs::prefs()->showTray() <<
 		":" << KopetePrefs::prefs()->balloonNotify()
 		<< ":" << !mBalloonEventList.isEmpty() << endl;*/
@@ -305,7 +305,7 @@ void KopeteSystemTray::addBalloon()
 		if ( msg.from() )
 		{
 			QString msgText = squashMessage( msg );
-			kdDebug(14010) << k_funcinfo << "msg text=" << msgText << endl;
+			kDebug(14010) << k_funcinfo << "msg text=" << msgText << endl;
 
 			QString msgFrom;
 			if( msg.from()->metaContact() )
@@ -328,7 +328,7 @@ void KopeteSystemTray::addBalloon()
 
 void KopeteSystemTray::slotConfigChanged()
 {
-//	kdDebug(14010) << k_funcinfo << "called." << endl;
+//	kDebug(14010) << k_funcinfo << "called." << endl;
 	if ( Kopete::BehaviorSettings::self()->showSystemTray() )
 		show();
 	else
@@ -343,7 +343,7 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 		return;
 
 	
-	//kdDebug(14010) << k_funcinfo << endl;
+	//kDebug(14010) << k_funcinfo << endl;
 	bool bOnline = false;
 	bool bAway = false;
 	bool bOffline = false;
@@ -390,7 +390,7 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 	}
 	else // none away and none online -> all offline
 	{
-		//kdDebug(14010) << k_funcinfo << "All Accounts offline!" << endl;
+		//kDebug(14010) << k_funcinfo << "All Accounts offline!" << endl;
 		setPixmap(loadIcon("kopete_offline"));
 	}
 }

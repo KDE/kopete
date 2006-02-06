@@ -117,8 +117,8 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		d->ui->m_serverName->setText( m_account->serverName() );
 		d->ui->m_serverPort->setValue( m_account->serverPort() );
 
-		QStringList blockList = config->readListEntry( "blockList" );
-		QStringList allowList = config->readListEntry( "allowList" );
+		QStringList blockList = config->readEntry( "blockList", QStringList() );
+		QStringList allowList = config->readEntry( "allowList", QStringList() );
 		//QStringList reverseList =  config->readListEntry("reverseList" );
 
 		for ( QStringList::Iterator it = blockList.begin(); it != blockList.end(); ++it )
@@ -133,10 +133,10 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 			account->accountId().toLower().replace( QRegExp("[./~]" ), "-" ) + ".png" );
 		d->ui->m_displayPicture->setPixmap( d->pictureUrl );
 
-		d->ui->m_useDisplayPicture->setChecked( config->readBoolEntry( "exportCustomPicture" ));
+		d->ui->m_useDisplayPicture->setChecked( config->readEntry( "exportCustomPicture", false ));
 
 		// Global Identity
-		d->ui->m_globalIdentity->setChecked( config->readBoolEntry("ExcludeGlobalIdentity", false) );
+		d->ui->m_globalIdentity->setChecked( config->readEntry("ExcludeGlobalIdentity", false) );
 	}
 	else
 	{
@@ -281,7 +281,7 @@ void MSNEditAccountWidget::slotBlock()
 
 void MSNEditAccountWidget::slotShowReverseList()
 {
-	QStringList reverseList = account()->configGroup()->readListEntry( "reverseList" );
+	QStringList reverseList = account()->configGroup()->readEntry( "reverseList", QStringList() );
 	KMessageBox::informationList( this, i18n( "Here you can see a list of contacts who added you to their contact list" ), reverseList,
 		i18n( "Reverse List - MSN Plugin" ) );
 }

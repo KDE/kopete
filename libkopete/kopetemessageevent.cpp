@@ -49,7 +49,7 @@ MessageEvent::MessageEvent( const Message& m, QObject *parent, const char *name 
 
 MessageEvent::~MessageEvent()
 {
-	kdDebug(14010) << k_funcinfo << endl;
+	kDebug(14010) << k_funcinfo << endl;
 	emit done(this);
 	delete d;
 }
@@ -71,7 +71,7 @@ MessageEvent::EventState MessageEvent::state()
 
 void MessageEvent::apply()
 {
-	kdDebug(14010) << k_funcinfo << endl;
+	kDebug(14010) << k_funcinfo << endl;
 	d->state = Applied;
 	deleteLater();
 }

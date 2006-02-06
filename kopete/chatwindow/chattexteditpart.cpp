@@ -151,7 +151,7 @@ void ChatTextEditPart::complete()
 		QString word = txt.mid( firstSpace, lastSpace - firstSpace );
 		QString match;
 
-		kdDebug(14000) << k_funcinfo << word << " from '" << txt << "'" << endl;
+		kDebug(14000) << k_funcinfo << word << " from '" << txt << "'" << endl;
 
 		if ( word != m_lastMatch )
 		{
@@ -191,7 +191,7 @@ void ChatTextEditPart::complete()
 		}
 		else
 		{
-			kdDebug(14000) << k_funcinfo << "No completions! Tried " << mComplete->items() << endl;
+			kDebug(14000) << k_funcinfo << "No completions! Tried " << mComplete->items() << endl;
 		}
 	}
 #endif

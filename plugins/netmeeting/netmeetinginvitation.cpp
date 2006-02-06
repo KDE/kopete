@@ -125,7 +125,7 @@ void NetMeetingInvitation::parseInvitation(const QString& msg)
 			rx.search(msg);
 			QString ip_address = rx.cap(1);
 	    	startMeeting(ip_address);
-			kdDebug() << k_funcinfo << ip_address << endl;
+			kDebug() << k_funcinfo << ip_address << endl;
 		}
 		else
 		{
@@ -166,7 +166,7 @@ void NetMeetingInvitation::startMeeting(const QString & ip_address)
 	config->setGroup("Netmeeting Plugin");
 	QString app=config->readEntry("NetmeetingApplication","gnomemeeting -c callto://%1").arg(ip_address);
 	
-	kdDebug() << k_funcinfo << app <<  endl ;
+	kDebug() << k_funcinfo << app <<  endl ;
 	
 	QStringList args=QStringList::split(" ", app);
 	

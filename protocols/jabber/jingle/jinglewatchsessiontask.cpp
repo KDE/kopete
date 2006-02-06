@@ -41,7 +41,7 @@ bool JingleWatchSessionTask::take(const QDomElement &element)
 	QDomElement first = element.firstChild().toElement();
 	if( !first.isNull() && first.attribute("xmlns") == JINGLE_NS && first.tagName() == "session" ) 
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Checking for incoming sesssion." << endl;
+		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Checking for incoming sesssion." << endl;
 		initiator = first.attribute("initiator");
 		
 		int nodeIndex;
@@ -59,7 +59,7 @@ bool JingleWatchSessionTask::take(const QDomElement &element)
 
 		if( !initiator.isEmpty() && !sessionType.isEmpty() )
 		{
-			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Emmiting incoming sesssion." << endl;
+			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Emmiting incoming sesssion." << endl;
 			emit watchSession(sessionType, initiator);
 			return true;
 		}

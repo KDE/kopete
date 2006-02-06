@@ -148,7 +148,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	QString m_accountId = this->accountId();
 	if( networkName.isEmpty() && QRegExp( "[^#+&\\s]+@[\\w-\\.]+:\\d+" ).exactMatch( m_accountId ) )
 	{
-		kdDebug(14120) << "Creating account from " << m_accountId << endl;
+		kDebug(14120) << "Creating account from " << m_accountId << endl;
 
 		mNickName = m_accountId.section('@',0,0);
 		QString serverInfo = m_accountId.section('@',1);
@@ -198,7 +198,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	}
 	else
 	{
-		kdError() << "No network name defined, and could not import network information from ID" << endl;
+		kError() << "No network name defined, and could not import network information from ID" << endl;
 	}
 
 	m_engine->setUserName(userName());
@@ -502,14 +502,14 @@ void IRCAccount::connectWithPassword(const QString &password)
 		}
 		else
 		{
-			kdWarning() << "No network defined!" << endl;
+			kWarning() << "No network defined!" << endl;
 		}
 	}
 }
 
 void IRCAccount::engineStatusChanged(KIRC::Engine::Status newStatus)
 {
-	kdDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo << endl;
 
 	mySelf()->updateStatus();
 
@@ -616,7 +616,7 @@ void IRCAccount::listChannels()
 
 void IRCAccount::quit( const QString &quitMessage )
 {
-	kdDebug(14120) << "Quitting IRC: " << quitMessage << endl;
+	kDebug(14120) << "Quitting IRC: " << quitMessage << endl;
 
 	if( quitMessage.isNull() || quitMessage.isEmpty() )
 		m_engine->quit( defaultQuit() );
@@ -626,7 +626,7 @@ void IRCAccount::quit( const QString &quitMessage )
 
 void IRCAccount::setAway(bool isAway, const QString &awayMessage)
 {
-	kdDebug(14120) << k_funcinfo << isAway << " " << awayMessage << endl;
+	kDebug(14120) << k_funcinfo << isAway << " " << awayMessage << endl;
 	if(m_engine->isConnected())
 	{
 		static_cast<IRCUserContact *>( myself() )->setAway( isAway );
@@ -676,7 +676,7 @@ void IRCAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const QSt
 
 void IRCAccount::successfullyChangedNick(const QString &oldnick, const QString &newnick)
 {
-	kdDebug(14120) << k_funcinfo << "Changing nick to " << newnick << endl;
+	kDebug(14120) << k_funcinfo << "Changing nick to " << newnick << endl;
 	mNickName = newnick;
 	mySelf()->setNickName( mNickName );
 	m_contactManager->removeFromNotifyList( oldnick );
@@ -685,7 +685,7 @@ void IRCAccount::successfullyChangedNick(const QString &oldnick, const QString &
 
 bool IRCAccount::createContact( const QString &contactId, Kopete::MetaContact *m )
 {
-	kdDebug(14120) << k_funcinfo << contactManager() << endl;
+	kDebug(14120) << k_funcinfo << contactManager() << endl;
 	IRCContact *c;
 
 	if( !m )
@@ -747,7 +747,7 @@ void IRCAccount::slotJoinChannel()
 		return;
 
 	QStringList chans = configGroup()->readListEntry( "Recent Channel list" );
-	//kdDebug(14120) << "Recent channel list from config: " << chans << endl;
+	//kDebug(14120) << "Recent channel list from config: " << chans << endl;
 
 	KLineEditDlg dlg(
 		i18n("Please enter name of the channel you want to join:"),

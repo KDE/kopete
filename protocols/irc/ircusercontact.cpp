@@ -61,7 +61,7 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 
 void IRCUserContact::updateStatus()
 {
-	//kdDebug(14120) << k_funcinfo << endl;
+	//kDebug(14120) << k_funcinfo << endl;
 
         Kopete::OnlineStatus newStatus;
 
@@ -110,7 +110,7 @@ void IRCUserContact::updateStatus()
 			IRCChannelContact *channel = *it;
 			Kopete::OnlineStatus currentStatus = channel->manager()->contactOnlineStatus(this);
 
-			//kdDebug(14120) << k_funcinfo << "iterating channel " << channel->nickName() << " internal status: " << currentStatus.internalStatus() << endl;
+			//kDebug(14120) << k_funcinfo << "iterating channel " << channel->nickName() << " internal status: " << currentStatus.internalStatus() << endl;
 
 			if( currentStatus.internalStatus() >= IRCProtocol::Online )
 			{
@@ -119,19 +119,19 @@ void IRCUserContact::updateStatus()
 				if( !(currentStatus.internalStatus() & IRCProtocol::Away) && newStatus == m_protocol->m_UserStatusAway )
 				{
 					setOnlineStatus( newStatus );
-					//kdDebug(14120) << k_funcinfo << "was NOT away, but is now, channel " << channel->nickName() << endl;
+					//kDebug(14120) << k_funcinfo << "was NOT away, but is now, channel " << channel->nickName() << endl;
 					adjustInternalOnlineStatusBits(channel, IRCProtocol::Away, AddBits);
 				}
 				else if( (currentStatus.internalStatus() & IRCProtocol::Away) && newStatus == m_protocol->m_UserStatusOnline )
 				{
 					setOnlineStatus( newStatus );
-					//kdDebug(14120) << k_funcinfo << "was away, but not anymore, channel " << channel->nickName() << endl;
+					//kDebug(14120) << k_funcinfo << "was away, but not anymore, channel " << channel->nickName() << endl;
 					adjustInternalOnlineStatusBits(channel, IRCProtocol::Away, RemoveBits);
 
 				}
 				else if( newStatus.internalStatus() < IRCProtocol::Away )
 				{
-					//kdDebug(14120) << k_funcinfo << "offline or connecting?" << endl;
+					//kDebug(14120) << k_funcinfo << "offline or connecting?" << endl;
 					channel->manager()->setContactOnlineStatus( this, newStatus );
 				}
 			}
@@ -139,7 +139,7 @@ void IRCUserContact::updateStatus()
 	}
 
 	if (!onlineStatusChanged) {
-		//kdDebug(14120) << k_funcinfo << "setting status at last" << endl;
+		//kDebug(14120) << k_funcinfo << "setting status at last" << endl;
 		setOnlineStatus( newStatus );
 	}
 }
@@ -154,7 +154,7 @@ void IRCUserContact::sendFile(const KUrl &sourceURL, const QString&, unsigned in
 	else
 		filePath = sourceURL.path(-1);
 
-	kdDebug(14120) << k_funcinfo << "File chosen to send:" << filePath << endl;
+	kDebug(14120) << k_funcinfo << "File chosen to send:" << filePath << endl;
 
 	if (!filePath.isEmpty())
 		kircEngine()->CtcpRequest_dcc( m_nickName, filePath, 0, KIRC::Transfer::FileOutgoing);
@@ -177,7 +177,7 @@ void IRCUserContact::slotUserOffline()
 
 void IRCUserContact::setAway(bool isAway)
 {
-	//kdDebug(14120) << k_funcinfo << isAway << endl;
+	//kDebug(14120) << k_funcinfo << isAway << endl;
 
 	mInfo.away = isAway;
 	updateStatus();
@@ -390,7 +390,7 @@ void IRCUserContact::newWhoIsServer(const QString &servername, const QString &se
 		mInfo.serverInfo = serverinfo;
 	else
 	{
-		//kdDebug(14120)<< "Setting last online: " << serverinfo << endl;
+		//kDebug(14120)<< "Setting last online: " << serverinfo << endl;
 
 		// Try to convert first, since server can return depending if
 		// user is online or not:
@@ -599,7 +599,7 @@ Q3PtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::ChatSessio
 
 void IRCUserContact::slotIncomingModeChange( const QString &channel, const QString &, const QString &mode_ )
 {
-	kdDebug(14120) << k_funcinfo << "channel: " << channel << " mode: " << mode_ << endl;
+	kDebug(14120) << k_funcinfo << "channel: " << channel << " mode: " << mode_ << endl;
 
 	IRCChannelContact *chan = ircAccount()->contactManager()->findChannel( channel );
 
@@ -621,7 +621,7 @@ void IRCUserContact::slotIncomingModeChange( const QString &channel, const QStri
 	bitAdjustment adjMode = RemoveBits;
 	QStringList::iterator user = users.begin();
 
-	//kdDebug(14120) << "me: " << m_nickName << " users: " << users << " mode: " << mode << endl;
+	//kDebug(14120) << "me: " << m_nickName << " users: " << users << " mode: " << mode << endl;
 
 	for( uint i=0; i < mode.length(); i++ )
 	{
@@ -636,7 +636,7 @@ void IRCUserContact::slotIncomingModeChange( const QString &channel, const QStri
 			break;
 
 		default:
-			//kdDebug(14120) << "got " << mode[i] << ", user: " << *user << endl;
+			//kDebug(14120) << "got " << mode[i] << ", user: " << *user << endl;
 
 			if (mode[i] == 'o') {
 				if (user == users.end())
@@ -710,7 +710,7 @@ void IRCUserContact::privateMessage(IRCContact *from, IRCContact *to, const QStr
 		}
 		else
 		{
-			kdDebug(14120) << "IRC Server error: Received a private message for " << to->nickName() << ":" << message << endl;
+			kDebug(14120) << "IRC Server error: Received a private message for " << to->nickName() << ":" << message << endl;
 			// emit/call something on main ircservercontact
 		}
 	}

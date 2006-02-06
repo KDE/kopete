@@ -68,7 +68,7 @@ void ProfileTask::setAwayMessage( const QString& text )
 
 void ProfileTask::sendProfileUpdate()
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SEND (CLI_SETUSERINFO/CLI_SET_LOCATION_INFO)" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SEND (CLI_SETUSERINFO/CLI_SET_LOCATION_INFO)" << endl;
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0002, 0x0004, 0x0000, client()->snacSequence() };
 	Buffer *buffer = new Buffer();
@@ -79,7 +79,7 @@ void ProfileTask::sendProfileUpdate()
 		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
 		buffer->addTLV(0x0001, defencoding.length(), defencoding.toLatin1());
 		buffer->addTLV(0x0002, m_profileText.length(), m_profileText.toLocal8Bit());
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting profile = " << m_profileText << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting profile = " << m_profileText << endl;
 	}
 
 	if ( !m_awayMessage.isNull() && !client()->isIcq() )
@@ -87,7 +87,7 @@ void ProfileTask::sendProfileUpdate()
 		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
 		buffer->addTLV(0x0003, defencoding.length(), defencoding.toLatin1());
 		buffer->addTLV(0x0004, m_awayMessage.length(), m_awayMessage.toLocal8Bit());
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting away message = " << m_awayMessage << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting away message = " << m_awayMessage << endl;
 	}
 
 	if ( client()->isIcq() )
@@ -108,7 +108,7 @@ void ProfileTask::sendProfileUpdate()
         capBuf.addString( oscar_caps[CAP_BUDDYICON], 16 ); //can you take my picture?
 	}
 
-	//kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "adding capabilities, size=" << capBuf.length() << endl;
+	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "adding capabilities, size=" << capBuf.length() << endl;
 	buffer->addTLV(0x0005, capBuf.length(), capBuf.buffer());
 	Transfer* st = createTransfer( f, s , buffer );
 	send( st );

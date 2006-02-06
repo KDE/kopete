@@ -80,7 +80,7 @@ public:
 	 */
 	bool isValid() const;
 
-	/** \brief Writes internal message information about this message through kdDebug().
+	/** \brief Writes internal message information about this message through kDebug().
 	 */
 	void dump() const;
 

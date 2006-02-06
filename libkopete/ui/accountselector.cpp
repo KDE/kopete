@@ -40,7 +40,7 @@ class AccountListViewItem : public KListViewItem
 			if (acc==0)
 				return;
 
-			/*kdDebug(14010) << k_funcinfo <<
+			/*kDebug(14010) << k_funcinfo <<
 				"account name = " << acc->accountId() << endl;*/
 			mAccount = acc;
 			setText(0, mAccount->accountId());
@@ -67,7 +67,7 @@ class AccountSelectorPrivate
 AccountSelector::AccountSelector(QWidget *parent, const char *name)
 	: QWidget(parent, name)
 {
-	//kdDebug(14010) << k_funcinfo << "for no special protocol" << endl;
+	//kDebug(14010) << k_funcinfo << "for no special protocol" << endl;
 	d = new AccountSelectorPrivate;
 	d->proto = 0;
 	initUI();
@@ -77,7 +77,7 @@ AccountSelector::AccountSelector(QWidget *parent, const char *name)
 AccountSelector::AccountSelector(Kopete::Protocol *proto, QWidget *parent,
 	const char *name) : QWidget(parent, name)
 {
-	//kdDebug(14010) << k_funcinfo << " for protocol " << proto->pluginId() << endl;
+	//kDebug(14010) << k_funcinfo << " for protocol " << proto->pluginId() << endl;
 	d = new AccountSelectorPrivate;
 	d->proto = proto;
 	initUI();
@@ -86,21 +86,21 @@ AccountSelector::AccountSelector(Kopete::Protocol *proto, QWidget *parent,
 
 AccountSelector::~AccountSelector()
 {
-	kdDebug(14010) << k_funcinfo << endl;
+	kDebug(14010) << k_funcinfo << endl;
 	delete d;
 }
 
 
 void AccountSelector::initUI()
 {
-	kdDebug(14010) << k_funcinfo << endl;
+	kDebug(14010) << k_funcinfo << endl;
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	d->lv = new KListView(this);
 	d->lv->setFullWidth(true);
 	d->lv->addColumn(QString::fromLatin1(""));
 	d->lv->header()->hide();
 
-	kdDebug(14010) << k_funcinfo << "creating list of all accounts" << endl;
+	kDebug(14010) << k_funcinfo << "creating list of all accounts" << endl;
 	foreach(Kopete::Account *account , Kopete::AccountManager::self()->accounts() )
 	{
 		if( !d->proto  ||  account->protocol() == d->proto )
@@ -146,7 +146,7 @@ bool AccountSelector::isSelected(Kopete::Account *account)
 
 Kopete::Account *AccountSelector::selectedItem()
 {
-	//kdDebug(14010) << k_funcinfo << endl;
+	//kDebug(14010) << k_funcinfo << endl;
 
 	if (d->lv->selectedItem() != 0)
 		return static_cast<AccountListViewItem *>(d->lv->selectedItem())->account();
@@ -156,7 +156,7 @@ Kopete::Account *AccountSelector::selectedItem()
 
 void AccountSelector::slotSelectionChanged(Q3ListViewItem *item)
 {
-	//kdDebug(14010) << k_funcinfo << endl;
+	//kDebug(14010) << k_funcinfo << endl;
 	if (item != 0)
 	{
 		Kopete::Account *account = static_cast<AccountListViewItem *>(item)->account();

@@ -36,7 +36,7 @@ WPUserInfo::WPUserInfo( WPContact *contact, WPAccount */*account*/, QWidget *par
 	: KDialogBase( parent, name, false, QString::null, Close, Close, false ), m_contact(contact),
 	  Comment(i18n("N/A")), Workgroup(i18n("N/A")), OS(i18n("N/A")), Software(i18n("N/A"))
 {
-//	kdDebug( 14170 ) << k_funcinfo << endl;
+//	kDebug( 14170 ) << k_funcinfo << endl;
 
 	setCaption( i18n( "User Info for %1" ).arg( m_contact->nickName() ) );
 
@@ -70,7 +70,7 @@ void WPUserInfo::startDetailsProcess(const QString &host)
 
 	if (!details->start(KProcess::NotifyOnExit, KProcess::Stderr)) {
 		slotDetailsProcessExited(details);
-		kdDebug(14170) << "DetailsProcess not started!" << endl;
+		kDebug(14170) << "DetailsProcess not started!" << endl;
 	}
 }
 
@@ -103,7 +103,7 @@ void WPUserInfo::slotDetailsProcessExited(KProcess *d)
 
 void WPUserInfo::slotCloseClicked()
 {
-	kdDebug( 14170 ) << k_funcinfo << endl;
+	kDebug( 14170 ) << k_funcinfo << endl;
 
 	emit closing();
 }

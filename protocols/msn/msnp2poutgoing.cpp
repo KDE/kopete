@@ -49,7 +49,7 @@ void MSNP2POutgoing::parseMessage(MessageStruct &msgStr)
 	MSNP2P::parseMessage(msgStr);
 
 	QString dataMessage=QByteArray((msgStr.message.data()+48) , msgStr.dataMessageSize);
-	kdDebug(14141) << k_funcinfo <<" dataMessage: "  << dataMessage << endl;
+	kDebug(14141) << k_funcinfo <<" dataMessage: "  << dataMessage << endl;
 
 	if (dataMessage.contains("BYE"))
 	{
@@ -74,7 +74,7 @@ void MSNP2POutgoing::parseMessage(MessageStruct &msgStr)
 			m_footer='\2';
 			m_totalDataSize=m_Sfile->size();
 			m_offset=0;
-			kdDebug(14140) << k_funcinfo <<" ok "  << m_Sfile->size()<< endl;
+			kDebug(14140) << k_funcinfo <<" ok "  << m_Sfile->size()<< endl;
 			slotSendData();
 			//start to send
 			
@@ -87,7 +87,7 @@ void MSNP2POutgoing::parseMessage(MessageStruct &msgStr)
 
 void MSNP2POutgoing::slotSendData()
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo << endl;
 	char ptr[1200];
 	char *data;
 	int bytesRead =0;
@@ -107,7 +107,7 @@ void MSNP2POutgoing::slotSendData()
 	for (  int f = 0; f < bytesRead; f++ )
 		dataBA[f] = data[f];
 
-//	kdDebug(14140) << "MSNP2PDisplatcher::slotSendData: offset="  << m_offset << "  size=" << bytesRead << "   totalSize=" << m_totalDataSize << "     sent=" << m_offset+bytesRead <<   endl;
+//	kDebug(14140) << "MSNP2PDisplatcher::slotSendData: offset="  << m_offset << "  size=" << bytesRead << "   totalSize=" << m_totalDataSize << "     sent=" << m_offset+bytesRead <<   endl;
 
 	sendP2PMessage(dataBA);
 

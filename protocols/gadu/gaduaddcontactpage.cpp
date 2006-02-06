@@ -57,7 +57,7 @@ GaduAddContactPage::GaduAddContactPage( GaduAccount* owner, QWidget* parent, con
 	addUI_->addEdit_->setText( "" );
 	addUI_->groups->setDisabled( TRUE );
 
-	kdDebug(14100) << "filling gropus" << endl;
+	kDebug(14100) << "filling gropus" << endl;
 
 	fillGroups();
 }
@@ -75,7 +75,7 @@ GaduAddContactPage::fillGroups()
 	QPtrList<Kopete::Group> gl = Kopete::ContactList::self()->groups();
 	for( g = gl.first(); g; g = gl.next() ) {
 		QCheckListItem* item = new QCheckListItem( addUI_->groups, g->displayName(), QCheckListItem::CheckBox );
-		kdDebug(14100) << g->displayName() << " " << g->groupId() << endl;
+		kDebug(14100) << g->displayName() << " " << g->groupId() << endl;
 	}
   */
 }
@@ -114,7 +114,7 @@ GaduAddContactPage::apply( Kopete::Account* a , Kopete::MetaContact* mc )
 		QString userid	= addUI_->addEdit_->text().trimmed();
 		QString name	= addUI_->nickEdit_->text().trimmed();
 		if ( a != account_ ) {
-			kdDebug(14100) << "Problem because accounts differ: " << a->accountId()
+			kDebug(14100) << "Problem because accounts differ: " << a->accountId()
 							<< " , " << account_->accountId() << endl;
 		}
 		if ( !a->addContact( userid,  mc, Kopete::Account::ChangeKABC )  ) {

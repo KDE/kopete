@@ -294,7 +294,7 @@ void AppearanceConfig::updateEmoticonsButton(bool _b)
 void AppearanceConfig::save()
 {
 	KCModule::save();
-//	kdDebug(14000) << k_funcinfo << "called." << endl;
+//	kDebug(14000) << k_funcinfo << "called." << endl;
 
 	Kopete::AppearanceSettings *settings = Kopete::AppearanceSettings::self();
 
@@ -303,13 +303,13 @@ void AppearanceConfig::save()
 	// Get the stylePath
 	if(d->currentStyle)
 	{
-		kdDebug(14000) << k_funcinfo << d->currentStyle->getStylePath() << endl;
+		kDebug(14000) << k_funcinfo << d->currentStyle->getStylePath() << endl;
 		settings->setStylePath( d->currentStyle->getStylePath() );
 	}
 	// Get and save the styleVariant
 	if( !d->currentVariantMap.empty() )
 	{
-		kdDebug(14000) << k_funcinfo << d->currentVariantMap[ d->mPrfsChatWindow->variantList->currentText()] << endl;
+		kDebug(14000) << k_funcinfo << d->currentVariantMap[ d->mPrfsChatWindow->variantList->currentText()] << endl;
 		settings->setStyleVariant( d->currentVariantMap[d->mPrfsChatWindow->variantList->currentText()] );
 	}
 
@@ -336,7 +336,7 @@ void AppearanceConfig::load()
 	d->mPrfsContactList->kcfg_contactListFading->setChecked( false );
 #endif
 
-//	kdDebug(14000) << k_funcinfo << "called" << endl;
+//	kDebug(14000) << k_funcinfo << "called" << endl;
 
 	d->loading=false;
 	slotUpdateChatPreview();
@@ -350,7 +350,7 @@ void AppearanceConfig::slotLoadChatStyles()
 	ChatWindowStyleManager::StyleList availableStyles;
 	availableStyles = ChatWindowStyleManager::self()->getAvailableStyles();
 	if( availableStyles.empty() )
-		kdDebug(14000) << k_funcinfo << "Warning, available styles is empty !" << endl;
+		kDebug(14000) << k_funcinfo << "Warning, available styles is empty !" << endl;
 
 	ChatWindowStyleManager::StyleList::ConstIterator it, itEnd = availableStyles.constEnd();
 	for(it = availableStyles.constBegin(); it != itEnd; ++it)
@@ -362,7 +362,7 @@ void AppearanceConfig::slotLoadChatStyles()
 
 		if( it.value() == Kopete::AppearanceSettings::self()->stylePath() )
 		{
-			kdDebug(14000) << k_funcinfo << "Restoring saved style: " << it.key() << endl;
+			kDebug(14000) << k_funcinfo << "Restoring saved style: " << it.key() << endl;
 
 			d->mPrfsChatWindow->styleList->setSelected( d->mPrfsChatWindow->styleList->firstItem(), true );
 		}
@@ -448,7 +448,7 @@ void AppearanceConfig::slotChatStyleSelected()
 	if(d->currentStyle)
 	{
 		d->currentVariantMap = d->currentStyle->getVariants();
-		kdDebug(14000) << k_funcinfo << "Loading style: " << d->currentStyle->getStylePath() << endl;
+		kDebug(14000) << k_funcinfo << "Loading style: " << d->currentStyle->getStylePath() << endl;
 	
 		// Update the variant list based on current style.
 		d->mPrfsChatWindow->variantList->clear();
@@ -484,8 +484,8 @@ void AppearanceConfig::slotChatStyleSelected()
 
 void AppearanceConfig::slotChatStyleVariantSelected(const QString &variantName)
 {
-// 	kdDebug(14000) << k_funcinfo << variantName << endl;
-// 	kdDebug(14000) << k_funcinfo << d->currentVariantMap[variantName] << endl;
+// 	kDebug(14000) << k_funcinfo << variantName << endl;
+// 	kDebug(14000) << k_funcinfo << d->currentVariantMap[variantName] << endl;
 
 	// Update the preview
 	d->preview->setStyleVariant(d->currentVariantMap[variantName]);

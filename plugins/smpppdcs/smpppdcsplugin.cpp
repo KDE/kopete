@@ -55,7 +55,7 @@ m_onlineInquiry(NULL) {
 
 SMPPPDCSPlugin::~SMPPPDCSPlugin() {
 
-    kdDebug(14312) << k_funcinfo << endl;
+    kDebug(14312) << k_funcinfo << endl;
 
     delete m_timer;
     delete m_detectorSMPPPD;
@@ -91,7 +91,7 @@ void SMPPPDCSPlugin::slotCheckStatus() {
 }
 
 void SMPPPDCSPlugin::setConnectedStatus( bool connected ) {
-    kdDebug(14312) << k_funcinfo << connected << endl;
+    kDebug(14312) << k_funcinfo << connected << endl;
 
     // We have to handle a few cases here. First is the machine is connected, and the plugin thinks
     // we're connected. Then we don't do anything. Next, we can have machine connected, but plugin thinks
@@ -102,16 +102,16 @@ void SMPPPDCSPlugin::setConnectedStatus( bool connected ) {
 
     if ( connected && !m_pluginConnected ) {
         // The machine is connected and plugin thinks we're disconnected
-        kdDebug(14312) << k_funcinfo << "Setting m_pluginConnected to true" << endl;
+        kDebug(14312) << k_funcinfo << "Setting m_pluginConnected to true" << endl;
         m_pluginConnected = true;
         connectAllowed();
-        kdDebug(14312) << k_funcinfo << "We're connected" << endl;
+        kDebug(14312) << k_funcinfo << "We're connected" << endl;
     } else if ( !connected && m_pluginConnected ) {
         // The machine isn't connected and plugin thinks we're connected
-        kdDebug(14312) << k_funcinfo << "Setting m_pluginConnected to false" << endl;
+        kDebug(14312) << k_funcinfo << "Setting m_pluginConnected to false" << endl;
         m_pluginConnected = false;
         disconnectAllowed();
-        kdDebug(14312) << k_funcinfo << "We're offline" << endl;
+        kDebug(14312) << k_funcinfo << "We're offline" << endl;
     }
 }
 
@@ -171,7 +171,7 @@ void SMPPPDCSPlugin::smpppdServerChanged(const QString& server)
 	QString oldServer = config->readEntry("server", "localhost").utf8();
 	
 	if(oldServer != server) {
-		kdDebug(14312) << k_funcinfo << "Detected a server change" << endl;
+		kDebug(14312) << k_funcinfo << "Detected a server change" << endl;
 		m_detectorSMPPPD->smpppdServerChange();
 	}
 }

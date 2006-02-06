@@ -32,8 +32,8 @@
 WPContact::WPContact(Kopete::Account *account, const QString &newHostName, const QString &nickName, Kopete::MetaContact *metaContact)
 	: Kopete::Contact(account, newHostName, metaContact)
 {
-//	kdDebug(14170) << "WPContact::WPContact(<account>, " << newHostName << ", " << nickName << ", <parent>)" << endl;
-	kdDebug(14170) << "I am " << this << "!" << endl;
+//	kDebug(14170) << "WPContact::WPContact(<account>, " << newHostName << ", " << nickName << ", <parent>)" << endl;
+	kDebug(14170) << "I am " << this << "!" << endl;
 
 	QString theNickName = nickName;
 
@@ -65,7 +65,7 @@ QList<KAction*> *WPContact::customContextMenuActions()
 
 void WPContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)
 {
-//	kdDebug(14170) << "WP::serialize(...)" << endl;
+//	kDebug(14170) << "WP::serialize(...)" << endl;
 
 	Kopete::Contact::serialize(serializedData, addressBookData);
 }
@@ -90,14 +90,14 @@ Kopete::ChatSession* WPContact::manager( Kopete::Contact::CanCreateFlags /*canCr
 /*
 bool WPContact::isOnline() const
 {
-	kdDebug(14170) << "[WPContact::isOnline()]" << endl;
+	kDebug(14170) << "[WPContact::isOnline()]" << endl;
 	return onlineStatus().status() != Kopete::OnlineStatus::Offline && onlineStatus().status() != Kopete::OnlineStatus::Unknown;
 }
 */
 
 bool WPContact::isReachable()
 {
-//	kdDebug(14170) << "[WPContact::isReachable()]" << endl;
+//	kDebug(14170) << "[WPContact::isReachable()]" << endl;
 	return onlineStatus().status() != Kopete::OnlineStatus::Offline && onlineStatus().status() != Kopete::OnlineStatus::Unknown;
 }
 
@@ -108,7 +108,7 @@ void WPContact::slotChatSessionDestroyed()
 
 void WPContact::slotUserInfo()
 {
-	kdDebug( 14170 ) << k_funcinfo << endl;
+	kDebug( 14170 ) << k_funcinfo << endl;
 
 	if (!m_infoDialog) {
 		m_infoDialog = new WPUserInfo( this, static_cast<WPAccount*>( account() ) );
@@ -159,7 +159,7 @@ void WPContact::slotCheckStatus()
 
 void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 {
-	kdDebug(14170) << "WPContact::slotNewMessage(" << Body << ", " << Arrival.toString() << ")" << endl;
+	kDebug(14170) << "WPContact::slotNewMessage(" << Body << ", " << Arrival.toString() << ")" << endl;
 
 	QList<Kopete::Contact*> contactList;
 	contactList.append(account()->myself());
@@ -178,9 +178,9 @@ void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 
 void WPContact::slotSendMessage( Kopete::Message& message )
 {
-//	kdDebug(14170) << "WPContact::slotSendMessage(<message>)" << endl;
+//	kDebug(14170) << "WPContact::slotSendMessage(<message>)" << endl;
 	// Warning: this could crash
-	kdDebug(14170) << message.to().first() << " is " << dynamic_cast<WPContact *>( message.to().first() )->contactId() << endl;
+	kDebug(14170) << message.to().first() << " is " << dynamic_cast<WPContact *>( message.to().first() )->contactId() << endl;
 
 	QString Message = (!message.subject().isEmpty() ? "Subject: " + message.subject() + "\n" : QString("")) + message.plainBody();
 	WPAccount *acct = dynamic_cast<WPAccount *>(account());

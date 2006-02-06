@@ -86,7 +86,7 @@ bool BuddyIconTask::forMe( const Transfer* transfer )
 
 	if ( st->snacRequest() != m_seq )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sequences don't match" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sequences don't match" << endl;
 		return false;
 	}
 
@@ -132,7 +132,7 @@ bool BuddyIconTask::take( Transfer* transfer )
 
 void BuddyIconTask::sendIcon()
 {
-	kdDebug(OSCAR_RAW_DEBUG) << "icon length: " << m_iconLength << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "icon length: " << m_iconLength << endl;
 	FLAP f = { 0x02, 0, 0 };
 	m_seq = client()->snacSequence();
 	SNAC s = { 0x0010, 0x0002, 0x0000, m_seq };
@@ -146,20 +146,20 @@ void BuddyIconTask::sendIcon()
 
 void BuddyIconTask::handleUploadResponse()
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "server acked icon upload" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "server acked icon upload" << endl;
 	Buffer* b = transfer()->buffer();
 	b->skipBytes( 4 );
 	BYTE iconHashSize = b->getByte();
 	QByteArray hash( b->getBlock( iconHashSize ) );
 	//check the hash
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "hash " << hash << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "hash " << hash << endl;
 	setSuccess( 0, QString::null );
 }
 
 
 void BuddyIconTask::sendAIMBuddyIconRequest()
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting buddy icon for " << m_user << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting buddy icon for " << m_user << endl;
 	FLAP f = { 0x02, 0, 0 };
 	m_seq = client()->snacSequence();
 	SNAC s = { 0x0010, 0x0004, 0x0000, m_seq };
@@ -179,7 +179,7 @@ void BuddyIconTask::handleAIMBuddyIconResponse()
 {
 	Buffer* b = transfer()->buffer();
 	QString user = b->getBUIN();
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Receiving buddy icon for " << user << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Receiving buddy icon for " << user << endl;
 	b->skipBytes(2); //unknown field. not used
 	BYTE iconType = b->getByte();
 	Q_UNUSED( iconType );
@@ -194,7 +194,7 @@ void BuddyIconTask::handleAIMBuddyIconResponse()
 
 void BuddyIconTask::sendICQBuddyIconRequest()
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting buddy icon for " << m_user << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting buddy icon for " << m_user << endl;
 	FLAP f = { 0x02, 0, 0 };
 	m_seq = client()->snacSequence();
 	SNAC s = { 0x0010, 0x0006, 0x0000, m_seq };
@@ -214,7 +214,7 @@ void BuddyIconTask::handleICQBuddyIconResponse()
 {
 	Buffer* b = transfer()->buffer();
 	QString user = b->getBUIN();
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Receiving buddy icon for " << user << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Receiving buddy icon for " << user << endl;
 	
 	b->skipBytes(2); //not used
 	BYTE iconType = b->getByte();

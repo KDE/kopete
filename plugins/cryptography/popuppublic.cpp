@@ -204,7 +204,7 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
 	config->setGroup("Cryptography Plugin");
 
 	CBarmor->hide();
-	CBuntrusted->setChecked(config->readBoolEntry("UntrustedKeys", true));
+	CBuntrusted->setChecked(config->readEntry("UntrustedKeys", true));
 	CBhideid->hide();
 	if (filemode) CBshred->hide();
 	CBsymmetric->hide();
@@ -485,7 +485,7 @@ void popupPublic::slotOk()
 
 
         //////   emit selected data
-kdDebug(2100)<<"Ok pressed"<<endl;
+kDebug(2100)<<"Ok pressed"<<endl;
         QStringList selectedKeys;
 	QString userid;
         QList<Q3ListViewItem*> list=keysList->selectedItems();
@@ -497,7 +497,7 @@ kdDebug(2100)<<"Ok pressed"<<endl;
                 }
         if (selectedKeys.isEmpty() && !CBsymmetric->isChecked())
                 return;
-kdDebug(2100)<<"Selected Key:"<<selectedKeys<<endl;
+kDebug(2100)<<"Selected Key:"<<selectedKeys<<endl;
         QStringList returnOptions;
         if (CBuntrusted->isChecked())
                 returnOptions<<"--always-trust";

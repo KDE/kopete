@@ -158,7 +158,7 @@ Contact *ContactList::findContact( const QString &protocolId,
 	Account *i=AccountManager::self()->findAccount(protocolId,accountId);
 	if(!i)
 	{
-		kdDebug( 14010 ) << k_funcinfo << "Account not found" << endl;
+		kDebug( 14010 ) << k_funcinfo << "Account not found" << endl;
 		return 0L;
 	}
 	return i->contacts()[contactId];
@@ -171,7 +171,7 @@ MetaContact *ContactList::findMetaContactByDisplayName( const QString &displayNa
 	while ( it.hasNext() )
 	{
 		MetaContact *mc = it.next();
-//		kdDebug(14010) << "Display Name: " << it.current()->displayName() << "\n";
+//		kDebug(14010) << "Display Name: " << it.current()->displayName() << "\n";
 		if( mc->displayName() == displayName ) {
 			return mc;
 		}
@@ -242,7 +242,7 @@ void ContactList::removeMetaContact(MetaContact *m)
 {
 	if ( !d->contacts.contains(m) )
 	{
-		kdDebug(14010) << k_funcinfo << "Trying to remove a not listed MetaContact." << endl;
+		kDebug(14010) << k_funcinfo << "Trying to remove a not listed MetaContact." << endl;
 		return;
 	}
 
@@ -292,7 +292,7 @@ void ContactList::removeGroup( Group *g )
 
 void ContactList::setSelectedItems(QList<MetaContact *> metaContacts , QList<Group *> groups)
 {
-	kdDebug( 14010 ) << k_funcinfo << metaContacts.count() << " metacontacts, " << groups.count() << " groups selected" << endl;
+	kDebug( 14010 ) << k_funcinfo << metaContacts.count() << " metacontacts, " << groups.count() << " groups selected" << endl;
 	d->selectedMetaContacts=metaContacts;
 	d->selectedGroups=groups;
 
@@ -334,12 +334,12 @@ void ContactList::slotDisplayNameChanged()
 	static bool mutex=false;
 	if(mutex)
 	{
-		kdDebug (14010) << k_funcinfo << " mutex blocked" << endl ;
+		kDebug (14010) << k_funcinfo << " mutex blocked" << endl ;
 		return;
 	}
 	mutex=true;
 
-	kdDebug( 14010 ) << k_funcinfo << myself()->displayName() << endl;
+	kDebug( 14010 ) << k_funcinfo << myself()->displayName() << endl;
 
 	emit globalIdentityChanged(Kopete::Global::Properties::self()->nickName().key(), myself()->displayName());
 	mutex=false;
@@ -350,11 +350,11 @@ void ContactList::slotPhotoChanged()
 	static bool mutex=false;
 	if(mutex)
 	{
-		kdDebug (14010) << k_funcinfo << " mutex blocked" << endl ;
+		kDebug (14010) << k_funcinfo << " mutex blocked" << endl ;
 		return;
 	}
 	mutex=true;
-	kdDebug( 14010 ) << k_funcinfo << myself()->picture().path() << endl;
+	kDebug( 14010 ) << k_funcinfo << myself()->picture().path() << endl;
 
 	emit globalIdentityChanged(Kopete::Global::Properties::self()->photo().key(), myself()->picture().path());
 	mutex=false;
@@ -402,7 +402,7 @@ void ContactList::loadXML()
 	{
 		// The version string is invalid, or we're using an older version.
 		// Convert first and reparse the file afterwards
-		kdDebug( 14010 ) << k_funcinfo << "Contact list version " << version
+		kDebug( 14010 ) << k_funcinfo << "Contact list version " << version
 			<< " is older than current version " <<  Private::ContactListVersion
 			<< ". Converting first." << endl;
 
@@ -463,7 +463,7 @@ void ContactList::loadXML()
 		}
 		else
 		{
-			kdWarning(14010) << "Kopete::ContactList::loadXML: "
+			kWarning(14010) << "Kopete::ContactList::loadXML: "
 				<< "Unknown element '" << element.tagName()
 				<< "' in contact list!" << endl;
 		}
@@ -826,7 +826,7 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 			}
 			else
 			{
-				kdWarning( 14010 ) << k_funcinfo << "Unknown element '" << oldElement.tagName()
+				kWarning( 14010 ) << k_funcinfo << "Unknown element '" << oldElement.tagName()
 					<< "' in contact list!" << endl;
 			}
 		}
@@ -838,7 +838,7 @@ void ContactList::convertContactList( const QString &fileName, uint /* fromVersi
 
 	QDir().rename( fileName, fileName + QString::fromLatin1( ".bak" ) );
 
-	// kdDebug( 14010 ) << k_funcinfo << "XML output:\n" << newList.toString( 2 ) << endl;
+	// kDebug( 14010 ) << k_funcinfo << "XML output:\n" << newList.toString( 2 ) << endl;
 
 	contactListFile.open( QIODevice::WriteOnly );
 	QTextStream stream( &contactListFile );
@@ -858,7 +858,7 @@ void Kopete::ContactList::saveXML()
 {
 	if(!d->loaded)
 	{
-		kdDebug(14010) << "Kopete::ContactList::saveXML: contactlist not loaded, abort saving" << endl;
+		kDebug(14010) << "Kopete::ContactList::saveXML: contactlist not loaded, abort saving" << endl;
 		return;
 	}
 
@@ -878,12 +878,12 @@ void Kopete::ContactList::saveXML()
 		}
 		else
 		{
-			kdDebug(14010) << "Kopete::ContactList::saveXML: failed to write contactlist, error code is: " << contactListFile.status() << endl;
+			kDebug(14010) << "Kopete::ContactList::saveXML: failed to write contactlist, error code is: " << contactListFile.status() << endl;
 		}
 	}
 	else
 	{
-		kdWarning(14010) << "Kopete::ContactList::saveXML: Couldn't open contact list file "
+		kWarning(14010) << "Kopete::ContactList::saveXML: Couldn't open contact list file "
 			<< contactListFileName << ". Contact list not saved." << endl;
 	}
 
@@ -1056,7 +1056,7 @@ QStringList Kopete::ContactList::fileTransferContacts() const
 void Kopete::ContactList::sendFile( const QString &displayName, const KUrl &sourceURL,
 	const QString &altFileName, const long unsigned int fileSize)
 {
-//	kdDebug(14010) << "Send To Display Name: " << displayName << "\n";
+//	kDebug(14010) << "Send To Display Name: " << displayName << "\n";
 
 	Kopete::MetaContact *c = findMetaContactByDisplayName( displayName );
 	if( c )
@@ -1079,21 +1079,21 @@ void Kopete::ContactList::messageContact( const QString &contactId, const QStrin
 
 QStringList Kopete::ContactList::contactFileProtocols(const QString &displayName)
 {
-//	kdDebug(14010) << "Get contacts for: " << displayName << "\n";
+//	kDebug(14010) << "Get contacts for: " << displayName << "\n";
 	QStringList protocols;
 
 	Kopete::MetaContact *c = findMetaContactByDisplayName( displayName );
 	if( c )
 	{
 		QList<Kopete::Contact *> mContacts = c->contacts();
-		kdDebug(14010) << mContacts.count() << endl;
+		kDebug(14010) << mContacts.count() << endl;
 		QListIterator<Kopete::Contact *> jt( mContacts );
 		while ( jt.hasNext() )
 		{
 			Kopete::Contact *c = jt.next();
-			kdDebug(14010) << "1" << c->protocol()->pluginId() << endl;
+			kDebug(14010) << "1" << c->protocol()->pluginId() << endl;
 			if( c->canAcceptFiles() ) {
-				kdDebug(14010) << c->protocol()->pluginId() << endl;
+				kDebug(14010) << c->protocol()->pluginId() << endl;
 				protocols.append ( c->protocol()->pluginId() );
 			}
 		}

@@ -254,7 +254,7 @@ void JabberTransport::removeAllContacts( )
 									i18n ("Jabber Service Unregistration"));
 	*/ //we don't really care, we remove everithing anyway.
 
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "delete all contacts of the transport"<< endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "delete all contacts of the transport"<< endl;
 	QDictIterator<Kopete::Contact> it( contacts() ); 
 	for( ; it.current(); ++it )
 	{

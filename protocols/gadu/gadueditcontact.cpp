@@ -104,7 +104,7 @@ GaduEditContact::fillGroups()
 				break;
 			}
 		}
-		kdDebug(14100) << g->displayName() << " " << g->groupId() << endl;
+		kDebug(14100) << g->displayName() << " " << g->groupId() << endl;
 	}
 }
 
@@ -160,12 +160,12 @@ GaduEditContact::slotApply()
 		// contact doesn't exists yet, create it and set all the details
 		bool s = account_->addContact( cl_->uin, GaduContact::findBestContactName( cl_ ), 0L, Kopete::Account::DontChangeKABC);
 		if ( s == false ) {
-			kdDebug(14100) << "There was a problem adding UIN "<< cl_->uin << "to users list" << endl;
+			kDebug(14100) << "There was a problem adding UIN "<< cl_->uin << "to users list" << endl;
 			return;
 		}
 		contact_ = static_cast<GaduContact*>( account_->contacts()[ cl_->uin ] );
 		if ( contact_ == NULL ) {
-			kdDebug(14100) << "oops, no Kopete::Contact in contacts()[] for some reason, for \"" << cl_->uin << "\"" << endl;
+			kDebug(14100) << "oops, no Kopete::Contact in contacts()[] for some reason, for \"" << cl_->uin << "\"" << endl;
 			return;
 		}
 	}

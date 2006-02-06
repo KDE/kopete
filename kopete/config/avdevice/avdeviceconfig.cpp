@@ -49,7 +49,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_avdeviceconfig, KopeteAVDeviceConfigFacto
 AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStringList &args)
  : KCModule( KopeteAVDeviceConfigFactory::instance(), parent, args )
 {
-	kdDebug() << "kopete:config (avdevice): KopeteAVDeviceConfigFactory::instance() called. " << endl;
+	kDebug() << "kopete:config (avdevice): KopeteAVDeviceConfigFactory::instance() called. " << endl;
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	mAVDeviceTabCtl = new QTabWidget(this, "mAVDeviceTabCtl");
 
@@ -101,7 +101,7 @@ AVDeviceConfig::~AVDeviceConfig()
 void AVDeviceConfig::save()
 {
     /// @todo implement me
-	kdDebug() << "kopete:config (avdevice): save() called. " << endl;
+	kDebug() << "kopete:config (avdevice): save() called. " << endl;
 	d->saveConfig();
 }
 
@@ -123,19 +123,19 @@ void AVDeviceConfig::slotValueChanged(int){
 }
 
 void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
-	kdDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. " << endl;
+	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. " << endl;
 	unsigned int newdevice = mPrfsVideoDevice->mDeviceKComboBox->currentItem();
-	kdDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) Current device: " << d->currentDevice() << "New device: " << newdevice << endl;
+	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) Current device: " << d->currentDevice() << "New device: " << newdevice << endl;
 	if ((newdevice < d->m_videodevice.size())&&(newdevice!=d->currentDevice()))
 	{
-	kdDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) should change device. " << endl;
+	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) should change device. " << endl;
 		d->open(newdevice);
 		d->setSize(320, 240);
 		d->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 		d->selectInput(0);
 		d->startCapturing();
 	}
-	kdDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. " << endl;
+	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. " << endl;
 	emit changed( true );
 }
 
@@ -169,7 +169,7 @@ void AVDeviceConfig::slotImageAutoAdjustBrightnessContrastChanged(bool){
 }
 
 void AVDeviceConfig::slotImageAutoColorCorrectionChanged(bool){
-	kdDebug() << "kopete:config (avdevice): slotImageAutoColorCorrectionChanged(" << mPrfsVideoDevice->mImageAutoColorCorrection->isChecked() << ") called. " << endl;
+	kDebug() << "kopete:config (avdevice): slotImageAutoColorCorrectionChanged(" << mPrfsVideoDevice->mImageAutoColorCorrection->isChecked() << ") called. " << endl;
 	d->setAutoColorCorrection(mPrfsVideoDevice->mImageAutoColorCorrection->isChecked());
 	emit changed( true );
 }
@@ -179,5 +179,5 @@ void AVDeviceConfig::slotUpdateImage()
 	d->getFrame();
 	d->getImage(&qimage);
 	bitBlt(mPrfsVideoDevice->mVideoImageLabel, 0, 0, &qimage, 0, Qt::CopyROP);
-	kdDebug() << "kopete (avdeviceconfig_videoconfig): Image updated." << endl;
+	kDebug() << "kopete (avdeviceconfig_videoconfig): Image updated." << endl;
 }

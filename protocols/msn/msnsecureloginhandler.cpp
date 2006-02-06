@@ -32,7 +32,7 @@ MSNSecureLoginHandler::MSNSecureLoginHandler(const QString &accountId, const QSt
 
 MSNSecureLoginHandler::~MSNSecureLoginHandler()
 {
-//	kdDebug(14140) << k_funcinfo << endl;
+//	kDebug(14140) << k_funcinfo << endl;
 }
 
 void MSNSecureLoginHandler::login()
@@ -63,7 +63,7 @@ void MSNSecureLoginHandler::slotLoginServerReceived(KIO::Job *loginJob)
 		QString loginUrl = rx.cap(2);
 		QString loginServer = loginUrl.section('/', 0, 0);
 
-		kdDebug(14140) << k_funcinfo << loginServer << endl;
+		kDebug(14140) << k_funcinfo << loginServer << endl;
 
 		QString authURL = "https://" + loginUrl;
 
@@ -78,7 +78,7 @@ void MSNSecureLoginHandler::slotLoginServerReceived(KIO::Job *loginJob)
 								"," + m_authentification + "\r\n";
 
 //   warning, this debug contains the password
-//		kdDebug(14140) << k_funcinfo << "Auth request: " << authRequest << endl;
+//		kDebug(14140) << k_funcinfo << "Auth request: " << authRequest << endl;
 
 		authJob->addMetaData("customHTTPHeader", authRequest);
 		authJob->addMetaData("SendLanguageSettings", "false");
@@ -90,7 +90,7 @@ void MSNSecureLoginHandler::slotLoginServerReceived(KIO::Job *loginJob)
 	}
 	else
 	{
-		kdDebug(14140) << k_funcinfo << loginJob->errorString() << endl;
+		kDebug(14140) << k_funcinfo << loginJob->errorString() << endl;
 
 		emit loginFailed();
 	}	
@@ -102,12 +102,12 @@ void MSNSecureLoginHandler::slotTweenerReceived(KIO::Job *authJob)
 	{
 		QString httpHeaders = authJob->queryMetaData("HTTP-Headers");
 
-// 		kdDebug(14140) << k_funcinfo << "HTTP headers: " << httpHeaders << endl;
+// 		kDebug(14140) << k_funcinfo << "HTTP headers: " << httpHeaders << endl;
 
 		// Check if we get "401 Unauthorized", thats means it's a bad password.
 		if(httpHeaders.contains(QString::fromUtf8("401 Unauthorized")))
 		{
-// 			kdDebug(14140) << k_funcinfo << "MSN Login Bad password." << endl;
+// 			kDebug(14140) << k_funcinfo << "MSN Login Bad password." << endl;
 			emit loginBadPassword();
 		}
 		else
@@ -116,14 +116,14 @@ void MSNSecureLoginHandler::slotTweenerReceived(KIO::Job *authJob)
 			rx.search(httpHeaders);
 			QString ticket = rx.cap(1);
 		
-	//		kdDebug(14140) << k_funcinfo << "Received ticket: " << ticket << endl;
+	//		kDebug(14140) << k_funcinfo << "Received ticket: " << ticket << endl;
 	
 			emit loginSuccesful(ticket);
 		}
 	}
 	else
 	{
-		kdDebug(14140) << k_funcinfo << authJob->errorString() << endl;
+		kDebug(14140) << k_funcinfo << authJob->errorString() << endl;
 
 		emit loginFailed();
 	}

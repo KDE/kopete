@@ -208,7 +208,7 @@ void MSNContact::slotUserInfoDialogReversedToggled()
 
 void MSNContact::deleteContact()
 {
-	kdDebug( 14140 ) << k_funcinfo << endl;
+	kDebug( 14140 ) << k_funcinfo << endl;
 
 	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
 	if( notify )
@@ -217,12 +217,12 @@ void MSNContact::deleteContact()
 		{
 			if( hasProperty(MSNProtocol::protocol()->propGuid.key()) )
 			{
-				kdDebug( 14140 ) << k_funcinfo << "Removing contact from top-level." << endl;
+				kDebug( 14140 ) << k_funcinfo << "Removing contact from top-level." << endl;
 				notify->removeContact( contactId(), MSNProtocol::FL, guid(), QString::null );
 			}
 			else
 			{
-				kdDebug( 14140 ) << k_funcinfo << "The contact is already removed from server, just delete it" << endl;
+				kDebug( 14140 ) << k_funcinfo << "The contact is already removed from server, just delete it" << endl;
 				deleteLater();
 			}
 			return;
@@ -340,7 +340,7 @@ void MSNContact::setInfo(const  QString &type,const QString &data )
 		else if( data == "N" )
 			m_phone_mob = false;
 		else
-			kdDebug( 14140 ) << k_funcinfo << "Unknown MOB " << data << endl;
+			kDebug( 14140 ) << k_funcinfo << "Unknown MOB " << data << endl;
 	}
 	else if( type == "MFN" )
 	{
@@ -348,7 +348,7 @@ void MSNContact::setInfo(const  QString &type,const QString &data )
 	}
 	else
 	{
-		kdDebug( 14140 ) << k_funcinfo << "Unknow info " << type << " " << data << endl;
+		kDebug( 14140 ) << k_funcinfo << "Unknow info " << type << " " << data << endl;
 	}
 }
 
@@ -419,7 +419,7 @@ void MSNContact::sync( unsigned int changed )
 		// FIXME: if this method is called a seconds times, that mean change can be
 		//        done in the contactlist. we should found a way to recall this
 		//        method later. (a QTimer?)
-		kdDebug( 14140 ) << k_funcinfo << " This contact is already moving. Abort sync    id: " << contactId() << endl;
+		kDebug( 14140 ) << k_funcinfo << " This contact is already moving. Abort sync    id: " << contactId() << endl;
 		return;
 	}
 	
@@ -458,7 +458,7 @@ void MSNContact::sync( unsigned int changed )
 				//repair the problem
 				group->setPluginData( protocol() , account()->accountId() + " id" , QString::null);
 				group->setPluginData( protocol() , account()->accountId() + " displayName" , QString::null);
-				kdWarning( 14140 ) << k_funcinfo << " Group " << group->displayName() << " marked with id #" <<Gid << " does not seems to be anymore on the server" << endl;
+				kWarning( 14140 ) << k_funcinfo << " Group " << group->displayName() << " marked with id #" <<Gid << " does not seems to be anymore on the server" << endl;
 
 				if(!group->displayName().isEmpty() && group->type() == Kopete::Group::Normal) //not the top-level
 				{
@@ -507,7 +507,7 @@ void MSNContact::sync( unsigned int changed )
 			removinglist.append(it.key());
 			count--;
 
-			kdDebug( 14140 ) << k_funcinfo << "the group marked with id #" << it.key() << " does not seems to be anymore on the server" << endl;
+			kDebug( 14140 ) << k_funcinfo << "the group marked with id #" << it.key() << " does not seems to be anymore on the server" << endl;
 
 			continue;
 		}
@@ -554,7 +554,7 @@ void MSNContact::contactRemovedFromGroup( const QString& groupId )
 
 void MSNContact::rename( const QString &newName )
 {
-	//kdDebug( 14140 ) << k_funcinfo << "From: " << displayName() << ", to: " << newName << endl;
+	//kDebug( 14140 ) << k_funcinfo << "From: " << displayName() << ", to: " << newName << endl;
 
 /*	if( newName == displayName() )
 		return;*/
@@ -586,7 +586,7 @@ void MSNContact::sendFile( const KUrl &sourceURL, const QString &altFileName, ui
 	else
 		filePath = sourceURL.path(-1);
 
-	//kdDebug(14140) << "MSNContact::sendFile: File chosen to send:" << fileName << endl;
+	//kDebug(14140) << "MSNContact::sendFile: File chosen to send:" << fileName << endl;
 
 	if ( !filePath.isEmpty() )
 	{
@@ -694,7 +694,7 @@ void MSNContact::setObject(const QString &obj)
 
 	KConfig *config = KGlobal::config();
 	config->setGroup( "MSN" );
-	if ( config->readNumEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty() 
+	if ( config->readEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty() 
 			 && account()->myself()->onlineStatus().status() != Kopete::OnlineStatus::Invisible )
 		manager(Kopete::Contact::CanCreate); //create the manager which will download the photo automatically.
 }

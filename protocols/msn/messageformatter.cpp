@@ -62,7 +62,7 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 		if(contentType != "application/x-msnmsgrp2p")
 			return inbound;
 
-//		kdDebug(14140) << k_funcinfo << endl;
+//		kDebug(14140) << k_funcinfo << endl;
 	
 		regex = QRegExp("MIME-Version: (\\d.\\d)");
 		regex.search(messageHeader);
@@ -92,7 +92,7 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 	reader >> inbound.header.ackUniqueIdentifier;
 	reader >> inbound.header.ackDataSize;
 
-	/*kdDebug(14140)
+	/*kDebug(14140)
 		<< "session id, "             << inbound.header.sessionId << endl
 		<< "identifier, "             << inbound.header.identifier << endl
 		<< "data offset, "            << inbound.header.dataOffset << endl
@@ -116,7 +116,7 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 		// Read the message application identifier from the stream.
 		reader >> inbound.applicationIdentifier;
 
-/*		kdDebug(14140)
+/*		kDebug(14140)
 			<< "application identifier, " << inbound.applicationIdentifier
 		<< endl;*/
 	}
@@ -126,7 +126,7 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 
 void MessageFormatter::writeMessage(const Message& message, QByteArray& stream, bool compact)
 {
-//	kdDebug(14140) << k_funcinfo << endl;
+//	kDebug(14140) << k_funcinfo << endl;
 
 	QDataStream writer( &stream,QIODevice::WriteOnly);
 	writer.setVersion(QDataStream::Qt_3_1);
@@ -163,7 +163,7 @@ void MessageFormatter::writeMessage(const Message& message, QByteArray& stream, 
 	writer << message.header.ackUniqueIdentifier;
 	writer << message.header.ackDataSize;
 
-/*	kdDebug(14140)
+/*	kDebug(14140)
 		<< "session id, "             << message.header.sessionId << endl
 		<< "identifier, "             << message.header.identifier << endl
 		<< "data offset, "            << message.header.dataOffset << endl
@@ -187,7 +187,7 @@ void MessageFormatter::writeMessage(const Message& message, QByteArray& stream, 
 		// Write the message application identifier to the stream.
 		writer << message.applicationIdentifier;
 
-/*		kdDebug(14140)
+/*		kDebug(14140)
 			<< "application identifier, " << message.applicationIdentifier
 			<< endl;
 		*/

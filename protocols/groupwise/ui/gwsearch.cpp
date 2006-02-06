@@ -139,14 +139,14 @@ void GroupWiseContactSearch::slotDoSearch()
 	}
 	else
 	{
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "no query to perform!" << endl;
+		kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "no query to perform!" << endl;
 	}
 	
 }
 
 void GroupWiseContactSearch::slotShowDetails()
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	// get the first selected result
 	Q3ValueList< ContactDetails > selected = selectedResults();
 	if ( selected.count() )
@@ -163,7 +163,7 @@ void GroupWiseContactSearch::slotShowDetails()
 
 void GroupWiseContactSearch::slotGotSearchResults()
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	SearchUserTask * st = ( SearchUserTask * ) sender();
 	m_searchResults = st->results();
 	

@@ -46,7 +46,7 @@ void NLamaroK::update()
 	// see if amaroK is  registered with DCOP
 	if ( !m_client->isApplicationRegistered( DCOPCString("amarok") ) )
 	{
-		kdDebug ( 14307 ) << "AmaroK is not running!\n" << endl;
+		kDebug ( 14307 ) << "AmaroK is not running!\n" << endl;
 		return;
 	}
 
@@ -56,11 +56,11 @@ void NLamaroK::update()
 	if ( !m_client->call( DCOPCString("amarok"), DCOPCString("player"), DCOPCString("status()"), data,
 	      replyType, replyData ) )
 	{
-		kdDebug( 14307 ) << k_funcinfo << " DCOP status() returned error, falling back to isPlaying()." << endl;
+		kDebug( 14307 ) << k_funcinfo << " DCOP status() returned error, falling back to isPlaying()." << endl;
 		if ( !m_client->call( DCOPCString("amarok"), DCOPCString("player"), DCOPCString("isPlaying()"), data,
 					replyType, replyData ) )
 		{
-			kdDebug( 14307 ) << k_funcinfo << " DCOP error on Amarok." << endl;
+			kDebug( 14307 ) << k_funcinfo << " DCOP error on Amarok." << endl;
 		}
 		else
 		{
@@ -79,7 +79,7 @@ void NLamaroK::update()
 		reply.setVersion(QDataStream::Qt_3_1);
 		if ( replyType == "int" ) {
 			reply >> status;
-			kdDebug( 14307 ) << k_funcinfo << "Amarok status()=" << status << endl;
+			kDebug( 14307 ) << k_funcinfo << "Amarok status()=" << status << endl;
 		}
 
 		if ( status ) 

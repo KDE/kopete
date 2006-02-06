@@ -127,14 +127,14 @@ DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 					capflags |= (1 << i);
 					versionString.sprintf( "%d.%d.%d%d", cap.at(12), cap.at(13), cap.at(14), cap.at(15) );
 					versionString.insert( 0, "Kopete " );
-					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Kopete version - " << versionString << endl;
+					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Kopete version - " << versionString << endl;
 				}
 			}
 			else if (i == CAP_MICQ)
 			{
 				if (memcmp(&oscar_caps[i], cap.data(), 12) == 0)
 				{
-					kdDebug(14150) << k_funcinfo << "MICQ version : <" <<
+					kDebug(14150) << k_funcinfo << "MICQ version : <" <<
 						(int)cap[12] << ":" << (int)cap[13] << ":" <<
 						(int)cap[14] << ":" << (int)cap[15] << ">" << endl;
 					
@@ -150,7 +150,7 @@ DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 			{
 				if (memcmp(&oscar_caps[i], cap, 12) == 0)
 				{
-					kdDebug(14150) << k_funcinfo << "SIM version : <" <<
+					kDebug(14150) << k_funcinfo << "SIM version : <" <<
 						(unsigned int)cap[12] << ":" << (unsigned int)cap[13] << ":" <<
 						(unsigned int)cap[14] << ":" << (unsigned int)cap[15] << ">" << endl;
 					capflags |= (1 << i);
@@ -166,7 +166,7 @@ DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 				{
 					int hiVersion = (cap[15] >> 6) - 1;
 					unsigned loVersion = cap[15] & 0x1F;
-					kdDebug(14150) << k_funcinfo << "OLD SIM version : <" <<
+					kDebug(14150) << k_funcinfo << "OLD SIM version : <" <<
 						hiVersion << ":" << loVersion << endl;
 					capflags |= (1 << i);
 					versionString.sprintf("%d.%d", (unsigned int)hiVersion, loVersion);
@@ -182,7 +182,7 @@ DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString )
 			} // END if(memcmp...
 		} // END for...
 	}
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << dbgCaps << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << dbgCaps << endl;
 	return capflags;
 }
 

@@ -33,10 +33,10 @@ void TestbedFakeServer::sendMessage( QString contactId, QString message )
 {
 	// see what contact the message is for
 	// if it's for Echo, respond immediately
-	kdDebug( 14210 ) << k_funcinfo << "Message for: " << contactId << ", is: " << message << endl;
+	kDebug( 14210 ) << k_funcinfo << "Message for: " << contactId << ", is: " << message << endl;
 	if ( contactId == QString::fromLatin1( "echo" ) )
 	{
-		kdDebug( 14210 ) << "recipient is echo, coming back at you." << endl;
+		kDebug( 14210 ) << "recipient is echo, coming back at you." << endl;
 		// put the message in a map and start a timer to tell it to deliver itself.
 		//emit messageReceived( QString::fromLatin1( "echo: " ) + message );
 		TestbedIncomingMessage* msg = new TestbedIncomingMessage( this, QString::fromLatin1( "echo: " ) + message );
@@ -44,7 +44,7 @@ void TestbedFakeServer::sendMessage( QString contactId, QString message )
 		QTimer::singleShot( 3000, msg, SLOT( deliver() ) );
 	}
 	else
-		kdWarning( 14210 ) << "message recipient: " << contactId << " is unknown." << endl;
+		kWarning( 14210 ) << "message recipient: " << contactId << " is unknown." << endl;
 	
 	// This removes any delivered messages 
 	purgeMessages();

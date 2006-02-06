@@ -25,7 +25,7 @@
 
 MailNotifierTask::MailNotifierTask(Task* parent) : Task(parent)
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
 MailNotifierTask::~MailNotifierTask()
@@ -35,7 +35,7 @@ MailNotifierTask::~MailNotifierTask()
 
 bool MailNotifierTask::take( Transfer* transfer )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	
 	if ( !forMe( transfer ) )
 		return false;
@@ -47,7 +47,7 @@ bool MailNotifierTask::take( Transfer* transfer )
 
 bool MailNotifierTask::forMe( Transfer* transfer ) const
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)
@@ -61,7 +61,7 @@ bool MailNotifierTask::forMe( Transfer* transfer ) const
 
 void MailNotifierTask::parseMail( Transfer *transfer )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)

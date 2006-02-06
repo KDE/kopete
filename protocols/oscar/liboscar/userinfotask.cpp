@@ -50,7 +50,7 @@ bool UserInfoTask::forMe( const Transfer * transfer ) const
 			return false;
 		else
 		{
-			//kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found sequence. taking packet" << endl;
+			//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found sequence. taking packet" << endl;
 			return true;
 		}
 	}
@@ -86,25 +86,25 @@ bool UserInfoTask::take( Transfer * transfer )
 				switch( ( *it ).type )
 				{
 				case 0x0001: //profile text encoding
-					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "text encoding is " << QString( ( *it ).data )<< endl;
+					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "text encoding is " << QString( ( *it ).data )<< endl;
 					break;
 				case 0x0002: //profile text
-					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "The profile is '" << QString( ( *it ).data ) << "'" << endl;
+					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "The profile is '" << QString( ( *it ).data ) << "'" << endl;
 					profile = QString( ( *it ).data ); // aim always seems to use us-ascii encoding
 					emit receivedProfile( m_contactSequenceMap[seq], profile );
 					break;
 				case 0x0003: //away message encoding
-					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Away message encoding is " << QString( ( *it ).data ) << endl;
+					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Away message encoding is " << QString( ( *it ).data ) << endl;
 					break;
 				case 0x0004: //away message
-					kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Away message is '" << QString( ( *it ).data ) << "'" << endl;
+					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Away message is '" << QString( ( *it ).data ) << "'" << endl;
 					away = QString( (*it ).data ); // aim always seems to use us-ascii encoding
 					emit receivedAwayMessage( m_contactSequenceMap[seq], away );
 					break;
 				case 0x0005: //capabilities
 					break;
 				default: //unknown
-					kdDebug(14151) << k_funcinfo << "Unknown user info type " << ( *it ).type << endl;
+					kDebug(14151) << k_funcinfo << "Unknown user info type " << ( *it ).type << endl;
 					break;
 				};
 			}
@@ -120,7 +120,7 @@ void UserInfoTask::onGo()
 {
 	if ( m_contactSequenceMap[m_seq].isEmpty() )
 	{
-		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Info requested for empty contact!" << endl;
+		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Info requested for empty contact!" << endl;
 		return;
 	}
 	
@@ -138,7 +138,7 @@ void UserInfoTask::onGo()
 void UserInfoTask::requestInfoFor( const QString& contact, unsigned int types )
 {
 	quint16 seq = client()->snacSequence();
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting sequence " << seq << " for contact " << contact << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting sequence " << seq << " for contact " << contact << endl;
 	m_contactSequenceMap[seq] = contact;
 	m_typesSequenceMap[seq] = types;
 	m_seq = seq;

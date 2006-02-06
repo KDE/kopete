@@ -27,7 +27,7 @@
 JabberByteStream::JabberByteStream ( QObject *parent, const char */*name*/ )
  : ByteStream ( parent )
 {
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Instantiating new Jabber byte stream." << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Instantiating new Jabber byte stream." << endl;
 
 	// reset close tracking flag
 	mClosing = false;
@@ -48,7 +48,7 @@ JabberByteStream::JabberByteStream ( QObject *parent, const char */*name*/ )
 
 bool JabberByteStream::connect ( QString host, QString service )
 {
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Connecting to " << host << ", service " << service << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Connecting to " << host << ", service " << service << endl;
 
 	mClosing = false;
 
@@ -66,7 +66,7 @@ bool JabberByteStream::isOpen () const
 
 void JabberByteStream::close ()
 {
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Closing stream." << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Closing stream." << endl;
 
 	// close the socket and set flag that we are closing it ourselves
 	mClosing = true;
@@ -108,7 +108,7 @@ void JabberByteStream::slotConnected ()
 
 void JabberByteStream::slotConnectionClosed ()
 {
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Socket has been closed." << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Socket has been closed." << endl;
 
 	// depending on who closed the socket, emit different signals
 	if ( !mClosing )
@@ -147,7 +147,7 @@ void JabberByteStream::slotBytesWritten ( int bytes )
 
 void JabberByteStream::slotError ( int code )
 {
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Socket error " << code << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Socket error " << code << endl;
 
 	emit error ( code );
 

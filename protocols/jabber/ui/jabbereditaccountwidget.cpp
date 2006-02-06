@@ -132,7 +132,7 @@ void JabberEditAccountWidget::reopen ()
 
 Kopete::Account *JabberEditAccountWidget::apply ()
 {
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << "JabberEditAccount::apply()" << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "JabberEditAccount::apply()" << endl;
 
 	if (!account())
 	{

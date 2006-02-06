@@ -59,7 +59,7 @@ void dlgJabberChatRoomsList::slotJoin()
 
 	if (m_selectedRow >= 0)
 	{
-		kdDebug (14130) << "join chat room : " <<  m_account.client()->client()->user() << " @ " << tblChatRoomsList->text(m_selectedRow, 0) << " on " << m_chatServer;
+		kDebug (14130) << "join chat room : " <<  m_account.client()->client()->user() << " @ " << tblChatRoomsList->text(m_selectedRow, 0) << " on " << m_chatServer;
 		m_account.client()->joinGroupChat(m_chatServer, tblChatRoomsList->text(m_selectedRow, 0), m_account.client()->client()->user());
 	}
 }

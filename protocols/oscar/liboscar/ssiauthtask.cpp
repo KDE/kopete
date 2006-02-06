@@ -141,8 +141,8 @@ void SSIAuthTask::handleFutureAuthGranted()
 	
 	buf->getWord(); // 0x0000 - Unknown
 	
-	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Future authorization granted from " << uin << endl;
-	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Future authorization granted from " << uin << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason << endl;
 	emit futureAuthGranted( uin, reason );
 }
 
@@ -155,8 +155,8 @@ void SSIAuthTask::handleAuthRequested()
 	
 	buf->getWord(); // 0x0000 - Unknown
 	
-	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Authorization requested from " << uin << endl;
-	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Authorization requested from " << uin << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason << endl;
 	
 	emit authRequested( uin, reason );
 }
@@ -170,11 +170,11 @@ void SSIAuthTask::handleAuthReplied()
 	QString reason = buf->getBSTR();
 	
 	if ( accepted )
-		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Authorization request accepted by " << uin << endl;
+		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Authorization request accepted by " << uin << endl;
 	else
-		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Authorization request declined by " << uin << endl;
+		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Authorization request declined by " << uin << endl;
 		
-	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason << endl;
 	
 	Oscar::SSI sender = m_manager->findContact( uin );
 	if ( sender )
@@ -189,7 +189,7 @@ void SSIAuthTask::handleAddedMessage()
 	
 	QString uin = Oscar::normalize( buf->getBUIN() );
 	
-	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "User " << uin << " added you to the contact list" << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "User " << uin << " added you to the contact list" << endl;
 	emit contactAddedYou( uin );
 }
 

@@ -95,7 +95,7 @@ public:
 	{
 #warning disable kwallet for now, it does not work
 #if 0
-		kdDebug( 14010 ) << k_funcinfo << endl;
+		kDebug( 14010 ) << k_funcinfo << endl;
 		Kopete::WalletManager::self()->openWallet( this, SLOT( walletReceived( KWallet::Wallet* ) ) );
 #else 
 		processRequest();
@@ -104,7 +104,7 @@ public:
 
 	void walletReceived( KWallet::Wallet *wallet )
 	{
-		kdDebug( 14010 ) << k_funcinfo << endl;
+		kDebug( 14010 ) << k_funcinfo << endl;
 		mWallet = wallet;
 		processRequest();
 	}
@@ -183,7 +183,7 @@ public:
 
 	void doPasswordDialog( const QString &password )
 	{
-		kdDebug( 14010 ) << k_funcinfo << endl;
+		kDebug( 14010 ) << k_funcinfo << endl;
 
 		KDialogBase *passwdDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "passwdDialog", true, i18n( "Password Required" ),
 			KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
@@ -265,7 +265,7 @@ public:
 	{
 		if ( KApplication *app = KApplication::kApplication() )
 			app->deref();
-		kdDebug( 14010 ) << k_funcinfo << "job complete" << endl;
+		kDebug( 14010 ) << k_funcinfo << "job complete" << endl;
 	}
 	void processRequest()
 	{
@@ -278,7 +278,7 @@ public:
 	}
 	bool setPassword()
 	{
-		kdDebug( 14010 ) << k_funcinfo << " setting password for " << mPassword.d->configGroup << endl;
+		kDebug( 14010 ) << k_funcinfo << " setting password for " << mPassword.d->configGroup << endl;
 
 		if ( mWallet && mWallet->writePassword( mPassword.d->configGroup, mNewPass ) == 0 )
 		{
@@ -329,7 +329,7 @@ public:
 	{
 		if ( KApplication *app = KApplication::kApplication() )
 			app->deref();
-		kdDebug( 14010 ) << k_funcinfo << "job complete" << endl;
+		kDebug( 14010 ) << k_funcinfo << "job complete" << endl;
 	}
 	void processRequest()
 	{
@@ -343,7 +343,7 @@ public:
 	}
 	bool clearPassword()
 	{
-		kdDebug( 14010 ) << k_funcinfo << " clearing password" << endl;
+		kDebug( 14010 ) << k_funcinfo << " clearing password" << endl;
 
 		mPassword.d->remembered = false;
 		mPassword.d->passwordFromKConfig = QString::null;

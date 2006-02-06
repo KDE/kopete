@@ -79,30 +79,30 @@ void WebPresencePlugin::loadSettings()
 	KConfig *kconfig = KGlobal::config();
 	kconfig->setGroup( "Web Presence Plugin" );
 
-	frequency = kconfig->readNumEntry("UploadFrequency", 15);
-	resultURL = kconfig->readPathEntry("uploadURL");
+	frequency = kconfig->readEntry("UploadFrequency", 15);
+	resultURL = kconfig->readEntry("uploadURL");
 
 	resultFormatting = WEB_UNDEFINED;
 
-	if ( kconfig->readBoolEntry( "formatHTML", false ) ) {
+	if ( kconfig->readEntry( "formatHTML", false ) ) {
 		resultFormatting = WEB_HTML;
-	} else if ( kconfig->readBoolEntry( "formatXHTML", false ) ) {
+	} else if ( kconfig->readEntry( "formatXHTML", false ) ) {
 		resultFormatting = WEB_XHTML;
-	} else if ( kconfig->readBoolEntry( "formatXML", false ) ) {
+	} else if ( kconfig->readEntry( "formatXML", false ) ) {
 		resultFormatting = WEB_XML;
-	} else if ( kconfig->readBoolEntry( "formatStylesheet", false ) ) {
+	} else if ( kconfig->readEntry( "formatStylesheet", false ) ) {
 		resultFormatting = WEB_CUSTOM;
-		userStyleSheet = kconfig->readEntry("formatStylesheetURL");
+		userStyleSheet = kconfig->readEntry("formatStylesheetURL", QString() );
 	}
 
 	// Default to HTML if we dont get anything useful from config file.
 	if ( resultFormatting == WEB_UNDEFINED )
 		resultFormatting = WEB_HTML;
 
-	useImagesInHTML = kconfig->readBoolEntry( "useImagesHTML", false );
-	useImName = kconfig->readBoolEntry("showName", true);
-	userName = kconfig->readEntry("showThisName");
-	showAddresses = kconfig->readBoolEntry("includeIMAddress", false);
+	useImagesInHTML = kconfig->readEntry( "useImagesHTML", false );
+	useImName = kconfig->readEntry("showName", true);
+	userName = kconfig->readEntry("showThisName", QString());
+	showAddresses = kconfig->readEntry("includeIMAddress", false);
 
 	// Update file when settings are changed.
 	slotWriteFile();
@@ -160,13 +160,13 @@ void WebPresencePlugin::slotWriteFile()
 	KUrl dest( resultURL );
 	if ( resultURL.isEmpty() || !dest.isValid() )
 	{
-		kdDebug(14309) << "url is empty or not valid. NOT UPDATING!" << endl;
+		kDebug(14309) << "url is empty or not valid. NOT UPDATING!" << endl;
 		return;
 	}
 
 	KTempFile* xml = generateFile();
 	xml->setAutoDelete( true );
-	kdDebug(14309) << k_funcinfo << " " << xml->name() << endl;
+	kDebug(14309) << k_funcinfo << " " << xml->name() << endl;
 
 	switch( resultFormatting ) {
 	case WEB_XML:
@@ -205,7 +205,7 @@ void WebPresencePlugin::slotWriteFile()
 void WebPresencePlugin::slotUploadJobResult( KIO::Job *job )
 {
 	if ( job->error() ) {
-		kdDebug(14309) << "Error uploading presence info." << endl;
+		kDebug(14309) << "Error uploading presence info." << endl;
 		KMessageBox::queuedDetailedError( 0, i18n("An error occurred when uploading your presence page.\nCheck the path and write permissions of the destination."), 0, displayName() );
 		delete m_output;
 		m_output = 0L;
@@ -215,7 +215,7 @@ void WebPresencePlugin::slotUploadJobResult( KIO::Job *job )
 KTempFile* WebPresencePlugin::generateFile()
 {
 	// generate the (temporary) XML file representing the current contactlist
-	kdDebug( 14309 ) << k_funcinfo << endl;
+	kDebug( 14309 ) << k_funcinfo << endl;
 	QString notKnown = i18n( "Not yet known" );
 
 	QDomDocument doc;
@@ -360,7 +360,7 @@ bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 	xmlDocPtr res = 0;
 
 	if ( !sheet.exists() ) {
-		kdDebug(14309) << k_funcinfo << "ERROR: Style sheet not found" << endl;
+		kDebug(14309) << k_funcinfo << "ERROR: Style sheet not found" << endl;
 		retval = false;
 		goto end;
 	}
@@ -368,27 +368,27 @@ bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 	// is the cast safe?
 	cur = xsltParseStylesheetFile( (const xmlChar *) sheet.name().latin1() );
 	if ( !cur ) {
-		kdDebug(14309) << k_funcinfo << "ERROR: Style sheet parsing failed" << endl;
+		kDebug(14309) << k_funcinfo << "ERROR: Style sheet parsing failed" << endl;
 		retval = false;
 		goto end;
 	}
 
 	doc = xmlParseFile( QFile::encodeName( src->name() ) );
 	if ( !doc ) {
-		kdDebug(14309) << k_funcinfo << "ERROR: XML parsing failed" << endl;
+		kDebug(14309) << k_funcinfo << "ERROR: XML parsing failed" << endl;
 		retval = false;
 		goto end;
 	}
 
 	res = xsltApplyStylesheet( cur, doc, 0 );
 	if ( !res ) {
-		kdDebug(14309) << k_funcinfo << "ERROR: Style sheet apply failed" << endl;
+		kDebug(14309) << k_funcinfo << "ERROR: Style sheet apply failed" << endl;
 		retval = false;
 		goto end;
 	}
 
 	if ( xsltSaveResultToFile(dest->fstream(), res, cur) == -1 ) {
-		kdDebug(14309) << k_funcinfo << "ERROR: Style sheet apply failed" << endl;
+		kDebug(14309) << k_funcinfo << "ERROR: Style sheet apply failed" << endl;
 		retval = false;
 		goto end;
 	}
@@ -415,7 +415,7 @@ end:
 
 ProtocolList WebPresencePlugin::allProtocols()
 {
-	kdDebug( 14309 ) << k_funcinfo << endl;
+	kDebug( 14309 ) << k_funcinfo << endl;
 
 	Kopete::PluginList plugins = Kopete::PluginManager::self()->loadedPlugins( "Protocols" );
 	Kopete::PluginList::ConstIterator it;

@@ -50,11 +50,11 @@ bool ErrorTask::take( Transfer* transfer )
 	{
 		Buffer* buffer = transfer->buffer();
 		//get the error code
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Error code is " << buffer->getWord() << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Error code is " << buffer->getWord() << endl;
 		TLV t = buffer->getTLV();
 		if ( t.type == 0x0008 && t.length > 0 )
 		{
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "TLV error subcode is " 
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "TLV error subcode is " 
 					<< t.data << endl;
 		}
 		return true;

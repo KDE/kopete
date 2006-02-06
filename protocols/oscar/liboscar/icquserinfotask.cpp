@@ -94,34 +94,34 @@ bool ICQUserInfoRequestTask::take( Transfer* transfer )
 		switch ( requestSubType() )
 		{
 		case 0x00C8:  //basic user info
-			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received basic info" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received basic info" << endl;
 			genInfo.setSequenceNumber( seq );
 			genInfo.fill( buffer );
 			m_genInfoMap[seq] = genInfo;
 			break;
 		case 0x00D2:  //work user info
-			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received work info" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received work info" << endl;
 			workInfo.setSequenceNumber( seq );
 			workInfo.fill( buffer );
 			m_workInfoMap[seq] = workInfo;
 			break;
 		case 0x00DC:  //more user info
-			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received more info" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received more info" << endl;
 			moreInfo.setSequenceNumber( seq );
 			moreInfo.fill( buffer );
 			m_moreInfoMap[seq] = moreInfo;
 			break;
 		case 0x00E6:  //notes user info
-			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Got Notes info, but we don't support it yet" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Got Notes info, but we don't support it yet" << endl;
 			break;
 		case 0x00EB:  //email user info
-			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received email info" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received email info" << endl;
 			emailInfo.setSequenceNumber( seq );
 			emailInfo.fill( buffer );
 			m_emailInfoMap[seq] = emailInfo;
 			break;
 		case 0x00F0:  //interests user info
-			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received interest info" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received interest info" << endl;
 			interestInfo.setSequenceNumber( seq );
 			interestInfo.fill( buffer );
 			m_interestInfoMap[seq] = interestInfo;
@@ -129,16 +129,16 @@ bool ICQUserInfoRequestTask::take( Transfer* transfer )
 		case 0x00FA:  //affliations user info
 			//affliations seems to be the last info we get, so be hacky and only emit the signal once
 			emit receivedInfoFor( contactId, Long );
-			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Got affliations info, but we don't support it yet" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Got affliations info, but we don't support it yet" << endl;
 			break;
 		case 0x0104:
-			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received short user info" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received short user info" << endl;
 			shortInfo.setSequenceNumber( seq );
 			shortInfo.fill( buffer );
 			m_shortInfoMap[seq] = shortInfo;
 			break;
 		case 0x010E:  //homepage category user info
-			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Got homepage category info, but we don't support it yet" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Got homepage category info, but we don't support it yet" << endl;
 			break;
 		default:
 			break;
@@ -164,12 +164,12 @@ void ICQUserInfoRequestTask::onGo()
 	if ( m_type != Short )
 	{
 		setRequestSubType( 0x04D0 );
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Requesting full user info for " << m_userToRequestFor << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Requesting full user info for " << m_userToRequestFor << endl;
 	}
 	else
 	{
 		setRequestSubType( 0x04BA );
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Requesting short user info for " << m_userToRequestFor << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Requesting short user info for " << m_userToRequestFor << endl;
 	}
 	
 	setSequence( client()->snacSequence() );

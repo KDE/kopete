@@ -28,8 +28,8 @@
 
 #include <kdebug.h>
 #define MEANWHILE_DEBUG 14200
-#define HERE kdDebug(MEANWHILE_DEBUG) << k_funcinfo << endl
-#define mwDebug() kdDebug(MEANWHILE_DEBUG)
+#define HERE kDebug(MEANWHILE_DEBUG) << k_funcinfo << endl
+#define mwDebug() kDebug(MEANWHILE_DEBUG)
 
 class MeanwhileAccount;
 class MeanwhileEditAccountWidget;

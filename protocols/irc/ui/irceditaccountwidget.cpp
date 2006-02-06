@@ -216,7 +216,7 @@ QString IRCEditAccountWidget::generateAccountId( const QString &network )
 	{
 		nextId = QString::fromLatin1("%1_%2").arg( network ).arg( ++accountNumber );
 	}
-	kdDebug( 14120 ) << k_funcinfo << " ID IS: " << nextId << endl;
+	kDebug( 14120 ) << k_funcinfo << " ID IS: " << nextId << endl;
 	return nextId;
 }
 

@@ -56,7 +56,7 @@ void notify( QPixmap pic, const QString &eventid, const QString &caption, const 
 		QString action;
 		if ( !explanation.isEmpty() )
 			action = i18n( "More Information..." );
-		kdDebug( 14010 ) << k_funcinfo <<  endl;
+		kDebug( 14010 ) << k_funcinfo <<  endl;
 		KNotification *n = KNotification::event( eventid, message, pic , 0L , QStringList( action ) );
 		ErrorNotificationInfo info;
 		info.explanation = explanation;

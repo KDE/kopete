@@ -79,14 +79,14 @@ Engine::Engine(QObject *parent, const char *name)
 	m_SourceString = QString::fromLatin1("Unknown client, known source.");
 
 	defaultCodec = QTextCodec::codecForMib(106); // UTF8 mib is 106
-	kdDebug(14120) << "Setting default engine codec, " << defaultCodec->name() << endl;
+	kDebug(14120) << "Setting default engine codec, " << defaultCodec->name() << endl;
 
 	m_sock = 0L;
 }
 
 Engine::~Engine()
 {
-	kdDebug(14120) << k_funcinfo << m_Host << endl;
+	kDebug(14120) << k_funcinfo << m_Host << endl;
 	quit("KIRC Deleted", true);
 	if( m_sock )
 		delete m_sock;
@@ -94,7 +94,7 @@ Engine::~Engine()
 
 void Engine::setUseSSL( bool useSSL )
 {
-	kdDebug(14120) << k_funcinfo << useSSL << endl;
+	kDebug(14120) << k_funcinfo << useSSL << endl;
 
 	if( !m_sock || useSSL != m_useSSL )
 	{
@@ -116,7 +116,7 @@ void Engine::setUseSSL( bool useSSL )
 		}
 		else
 		#else
-			kdWarning(14120) << "You tried to use SSL, but this version of Kopete was"
+			kWarning(14120) << "You tried to use SSL, but this version of Kopete was"
 				" not compiled with IRC SSL support. A normal IRC connection will be attempted." << endl;
 		}
 		#endif
@@ -135,7 +135,7 @@ void Engine::setUseSSL( bool useSSL )
 
 void Engine::setStatus(Engine::Status status)
 {
-	kdDebug(14120) << k_funcinfo << status << endl;
+	kDebug(14120) << k_funcinfo << status << endl;
 
 	if (m_status == status)
 		return;
@@ -191,20 +191,20 @@ void Engine::connectToServer(const QString &host, quint16 port, const QString &n
 	m_Host = host;
 	m_Port = port;
 
-	kdDebug(14120) << "Trying to connect to server " << m_Host << ":" << m_Port << endl;
-	kdDebug(14120) << "Sock status: " << m_sock->socketStatus() << endl;
+	kDebug(14120) << "Trying to connect to server " << m_Host << ":" << m_Port << endl;
+	kDebug(14120) << "Sock status: " << m_sock->socketStatus() << endl;
 
 	if( !m_sock->setAddress(m_Host, m_Port) )
-		kdDebug(14120) << k_funcinfo << "setAddress failed. Status:  " << m_sock->socketStatus() << endl;
+		kDebug(14120) << k_funcinfo << "setAddress failed. Status:  " << m_sock->socketStatus() << endl;
 
 	if( m_sock->startAsyncConnect() == 0 )
 	{
-		kdDebug(14120) << k_funcinfo << "Success!. Status: " << m_sock->socketStatus() << endl;
+		kDebug(14120) << k_funcinfo << "Success!. Status: " << m_sock->socketStatus() << endl;
 		setStatus(Connecting);
 	}
 	else
 	{
-		kdDebug(14120) << k_funcinfo << "Failed. Status: " << m_sock->socketStatus() << endl;
+		kDebug(14120) << k_funcinfo << "Failed. Status: " << m_sock->socketStatus() << endl;
 		setStatus(Disconnected);
 	}
 }
@@ -221,7 +221,7 @@ void Engine::slotConnectionClosed()
 
 void Engine::error(int errCode)
 {
-	kdDebug(14120) << k_funcinfo << "Socket error: " << errCode << endl;
+	kDebug(14120) << k_funcinfo << "Socket error: " << errCode << endl;
 	if (m_sock->socketStatus () != KExtendedSocket::connecting)
 	{
 		// Connection in progress.. This is a signal fired wrong
@@ -372,18 +372,18 @@ void Engine::slotReadyRead()
 
 				if (!errors.isEmpty())
 				{
-					kdDebug(14120) << "Method error for line:" << msg.raw() << endl;
+					kDebug(14120) << "Method error for line:" << msg.raw() << endl;
 					emit internalError(MethodFailed, msg);
 				}
 			}
 			else if (msg.isNumeric())
 			{
-				kdWarning(14120) << "Unknown IRC numeric reply for line:" << msg.raw() << endl;
+				kWarning(14120) << "Unknown IRC numeric reply for line:" << msg.raw() << endl;
 				emit incomingUnknown(msg.raw());
 			}
 			else
 			{
-				kdWarning(14120) << "Unknown IRC command for line:" << msg.raw() << endl;
+				kWarning(14120) << "Unknown IRC command for line:" << msg.raw() << endl;
 				emit internalError(UnknownCommand, msg);
 			}
 		}
@@ -406,7 +406,7 @@ const QTextCodec *Engine::codecForNick( const QString &nick ) const
 		return defaultCodec;
 
 	QTextCodec *codec = codecs[ nick ];
-	kdDebug(14120) << nick << " has codec " << codec << endl;
+	kDebug(14120) << nick << " has codec " << codec << endl;
 
 	if( !codec )
 		return defaultCodec;
@@ -441,13 +441,13 @@ bool Engine::invokeCtcpCommandOfMessage(const Q3Dict<MessageRedirector> &map, Me
 			if (errors.isEmpty())
 				return true;
 
-			kdDebug(14120) << "Method error for line:" << ctcpMsg.raw() << endl;
+			kDebug(14120) << "Method error for line:" << ctcpMsg.raw() << endl;
 			writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(),
 				QString::fromLatin1("%1 internal error(s)").arg(errors.size()));
 		}
 		else
 		{
-			kdDebug(14120) << "Unknow IRC/CTCP command for line:" << ctcpMsg.raw() << endl;
+			kDebug(14120) << "Unknow IRC/CTCP command for line:" << ctcpMsg.raw() << endl;
 			writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(), "Unknown CTCP command");
 
 			emit incomingUnknownCtcp(msg.ctcpRaw());
@@ -455,7 +455,7 @@ bool Engine::invokeCtcpCommandOfMessage(const Q3Dict<MessageRedirector> &map, Me
 	}
 	else
 	{
-		kdDebug(14120) << "Message do not embed a CTCP message:" << msg.raw();
+		kDebug(14120) << "Message do not embed a CTCP message:" << msg.raw();
 	}
 	return false;
 }

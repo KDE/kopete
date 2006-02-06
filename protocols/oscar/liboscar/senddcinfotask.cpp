@@ -41,7 +41,7 @@ void SendDCInfoTask::onGo()
 	SNAC s = { 0x0001, 0x001E, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
 	
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending DC Info" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending DC Info" << endl;
 
 	/** \TODO Support something more than online in the status flags
 	 *  \TODO Support something more than DC Disabled in the status flags
@@ -61,12 +61,12 @@ void SendDCInfoTask::onGo()
 	DWORD statusFlag = 0x01000000;
 	if ( client()->settings()->webAware() )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting web aware on" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting web aware on" << endl;
 		statusFlag |= 0x00010000;
 	}
 	if ( !client()->settings()->hideIP() )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting show ip on" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting show ip on" << endl;
 		statusFlag |= 0x00020000;
 	}
 	

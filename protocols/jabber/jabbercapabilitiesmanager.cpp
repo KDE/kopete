@@ -172,7 +172,7 @@ void JabberCapabilitiesManager::CapabilitiesInformation::addJid(const Jid& jid, 
 
 void JabberCapabilitiesManager::CapabilitiesInformation::removeJid(const Jid& jid)
 {
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unregistering " << QString(jid.full()).replace('%',"%%") << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unregistering " << QString(jid.full()).replace('%',"%%") << endl;
 
 	QValueList<QPair<QString,JabberAccount*> >::Iterator it = m_jids.begin();
 	while( it != m_jids.end() ) 
@@ -192,7 +192,7 @@ void JabberCapabilitiesManager::CapabilitiesInformation::removeJid(const Jid& ji
 
 QPair<Jid,JabberAccount*> JabberCapabilitiesManager::CapabilitiesInformation::nextJid(const Jid& jid, const Task* t)
 {
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Looking for next JID" << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Looking for next JID" << endl;
 
 	QValueList<QPair<QString,JabberAccount*> >::ConstIterator it = m_jids.constBegin(), itEnd = m_jids.constEnd();
 	for( ; it != itEnd; ++it) 
@@ -202,14 +202,14 @@ QPair<Jid,JabberAccount*> JabberCapabilitiesManager::CapabilitiesInformation::ne
 			it++;
 			if (it == itEnd) 
 			{
-				kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "No more JIDs" << endl;
+				kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "No more JIDs" << endl;
 
 				return QPair<Jid,JabberAccount*>(Jid(),0L);
 			}
 			else if( (*it).second->isConnected() ) 
 			{
 				//qDebug("caps.cpp: Account isn't active");
-				kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Account isn't connected." << endl;
+				kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Account isn't connected." << endl;
 
 				return QPair<Jid,JabberAccount*>( (*it).first,(*it).second );
 			}
@@ -275,7 +275,7 @@ void JabberCapabilitiesManager::CapabilitiesInformation::fromXml(const QDomEleme
 {
 	if( element.tagName() != "info") 
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Invalid info element" << endl;
+		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Invalid info element" << endl;
 		return;
 	}
 	
@@ -287,7 +287,7 @@ void JabberCapabilitiesManager::CapabilitiesInformation::fromXml(const QDomEleme
 		QDomElement infoElement = node.toElement();
 		if( infoElement.isNull() ) 
 		{
-			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Null element" << endl;
+			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Null element" << endl;
 			continue;
 		}
 
@@ -305,7 +305,7 @@ void JabberCapabilitiesManager::CapabilitiesInformation::fromXml(const QDomEleme
 		}
 		else 
 		{
-			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unknown element" << endl;
+			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unknown element" << endl;
 		}
 
 		m_discovered = true;
@@ -340,7 +340,7 @@ JabberCapabilitiesManager::~JabberCapabilitiesManager()
 
 void JabberCapabilitiesManager::removeAccount(JabberAccount *account)
 {
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing account " << account->accountId() << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing account " << account->accountId() << endl;
 
 	QValueList<CapabilitiesInformation> info = d->capabilitiesInformationMap.values();
 
@@ -396,7 +396,7 @@ void JabberCapabilitiesManager::updateCapabilities(JabberAccount *account, const
 			{
 				if( !d->capabilitiesInformationMap[*newCapsIt].discovered() && d->capabilitiesInformationMap[*newCapsIt].pendingRequests() == 0 ) 
 				{
-					kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << QString("Sending disco request to %1, node=%2").arg(QString(jid.full()).replace('%',"%%")).arg(node + "#" + (*newCapsIt).extensions()) << endl;
+					kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << QString("Sending disco request to %1, node=%2").arg(QString(jid.full()).replace('%',"%%")).arg(node + "#" + (*newCapsIt).extensions()) << endl;
 
 					d->capabilitiesInformationMap[*newCapsIt].setPendingRequests(1);
 					requestDiscoInfo(account, jid, node + "#" + (*newCapsIt).extensions());
@@ -406,7 +406,7 @@ void JabberCapabilitiesManager::updateCapabilities(JabberAccount *account, const
 		else 
 		{
 			// Remove all caps specifications
-			kdDebug(JABBER_DEBUG_GLOBAL) << QString("Illegal caps info from %1: node=%2, ver=%3").arg(QString(jid.full()).replace('%',"%%")).arg(node).arg(version) << endl;
+			kDebug(JABBER_DEBUG_GLOBAL) << QString("Illegal caps info from %1: node=%2, ver=%3").arg(QString(jid.full()).replace('%',"%%")).arg(node).arg(version) << endl;
 
 			d->jidCapabilitiesMap.remove( jid.full() );
 		}
@@ -444,7 +444,7 @@ void JabberCapabilitiesManager::discoRequestFinished()
 
 	DiscoItem item = discoInfo->item();
 	Jid jid = discoInfo->jid();
-	kdDebug(JABBER_DEBUG_GLOBAL) << QString("Disco response from %1, node=%2, success=%3").arg(QString(jid.full()).replace('%',"%%")).arg(discoInfo->node()).arg(discoInfo->success()) << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << QString("Disco response from %1, node=%2, success=%3").arg(QString(jid.full()).replace('%',"%%")).arg(discoInfo->node()).arg(discoInfo->success()) << endl;
 
 	QStringList tokens = QStringList::split("#",discoInfo->node());
 
@@ -482,18 +482,18 @@ void JabberCapabilitiesManager::discoRequestFinished()
 			QPair<Jid,JabberAccount*> jidAccountPair = d->capabilitiesInformationMap[capabilities].nextJid(jid,discoInfo->parent());
 			if( jidAccountPair.second ) 
 			{
-				kdDebug(JABBER_DEBUG_GLOBAL) << QString("Falling back on %1.").arg(QString(jidAccountPair.first.full()).replace('%',"%%")) << endl;
+				kDebug(JABBER_DEBUG_GLOBAL) << QString("Falling back on %1.").arg(QString(jidAccountPair.first.full()).replace('%',"%%")) << endl;
 				requestDiscoInfo( jidAccountPair.second, jidAccountPair.first, discoInfo->node() );
 			}
 			else 
 			{
-				kdDebug(JABBER_DEBUG_GLOBAL) << "No valid disco request avalable." << endl;
+				kDebug(JABBER_DEBUG_GLOBAL) << "No valid disco request avalable." << endl;
 				d->capabilitiesInformationMap[capabilities].setPendingRequests(0);
 			}
 		}
 	}
 	else 
-		kdDebug(JABBER_DEBUG_GLOBAL) << QString("Current client node '%1' does not match response '%2'").arg(jidCapabilities.node()).arg(node) << endl;
+		kDebug(JABBER_DEBUG_GLOBAL) << QString("Current client node '%1' does not match response '%2'").arg(jidCapabilities.node()).arg(node) << endl;
 
 	//for (unsigned int i = 0; i < item.features().list().count(); i++) 
 	//	printf("    Feature: %s\n",item.features().list()[i].latin1());
@@ -516,12 +516,12 @@ void JabberCapabilitiesManager::loadCachedInformation()
 	QFile cacheFile(capsFileName);
 	if( !cacheFile.open(IO_ReadOnly) )
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Could not open the Capabilities cache from disk." << endl;
+		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Could not open the Capabilities cache from disk." << endl;
 		return;
 	}
 	if( !doc.setContent(&cacheFile) )
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Could not set the Capabilities cache from file." << endl;
+		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Could not set the Capabilities cache from file." << endl;
 		return;
 	}
 	cacheFile.close();
@@ -529,7 +529,7 @@ void JabberCapabilitiesManager::loadCachedInformation()
 	QDomElement caps = doc.documentElement();
 	if( caps.tagName() != "capabilities" ) 
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Invalid capabilities element." << endl;
+		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Invalid capabilities element." << endl;
 		return;
 	}
 	
@@ -539,7 +539,7 @@ void JabberCapabilitiesManager::loadCachedInformation()
 		QDomElement element = node.toElement();
 		if( element.isNull() ) 
 		{
-			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Found a null element." << endl;
+			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Found a null element." << endl;
 			continue;
 		}
 
@@ -552,7 +552,7 @@ void JabberCapabilitiesManager::loadCachedInformation()
 		}
 		else 
 		{
-			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unknow element" << endl;
+			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unknow element" << endl;
 		}
 	}
 }
@@ -637,7 +637,7 @@ void JabberCapabilitiesManager::saveInformation()
 	QFile capsFile(capsFileName);
 	if( !capsFile.open(IO_WriteOnly) ) 
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL	) << k_funcinfo << "Error while opening Capabilities cache file." << endl;
+		kDebug(JABBER_DEBUG_GLOBAL	) << k_funcinfo << "Error while opening Capabilities cache file." << endl;
 		return;
 	}
 

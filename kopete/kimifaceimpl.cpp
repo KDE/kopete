@@ -131,7 +131,7 @@ QString KIMIfaceImpl::displayName( const QString & uid )
 
 int KIMIfaceImpl::presenceStatus( const QString & uid )
 {
-	//kdDebug( 14000 ) << k_funcinfo << endl;
+	//kDebug( 14000 ) << k_funcinfo << endl;
 	int p = -1;
 	Kopete::MetaContact *m = Kopete::ContactList::self()->metaContact( uid );
 	if ( m )
@@ -162,18 +162,18 @@ int KIMIfaceImpl::presenceStatus( const QString & uid )
 
 QString KIMIfaceImpl::presenceString( const QString & uid )
 {
-	//kdDebug( 14000 ) <<  "KIMIfaceImpl::presenceString" << endl;
+	//kDebug( 14000 ) <<  "KIMIfaceImpl::presenceString" << endl;
 	QString p;
 	Kopete::MetaContact *m = Kopete::ContactList::self()->metaContact( uid );
 	if ( m )
 	{
 		Kopete::OnlineStatus status = m->status();
 			p = status.description();
-		kdDebug( 14000 ) << "Got presence for " <<  uid << " : " << p.ascii() << endl;
+		kDebug( 14000 ) << "Got presence for " <<  uid << " : " << p.ascii() << endl;
 	}
 	else
 	{
-		kdDebug( 14000 ) << "Couldn't find MC: " << uid << endl;;
+		kDebug( 14000 ) << "Couldn't find MC: " << uid << endl;;
 		p = QString();
 	}
 	return p;

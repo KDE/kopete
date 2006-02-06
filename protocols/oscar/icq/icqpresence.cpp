@@ -85,7 +85,7 @@ const PresenceTypeData &PresenceTypeData::forType( Presence::Type type )
 	for ( uint n = 0; n < Presence::TypeCount; ++n )
 		if ( array[n].type == type )
 			return array[n];
-	kdWarning(14153) << k_funcinfo << "type " << (int)type << " not found! Returning Offline" << endl;
+	kWarning(14153) << k_funcinfo << "type " << (int)type << " not found! Returning Offline" << endl;
 	return array[0];
 }
 
@@ -94,11 +94,11 @@ const PresenceTypeData &PresenceTypeData::forStatus( unsigned long status )
 	const PresenceTypeData *array = all();
 	for ( uint n = 0; n < Presence::TypeCount; ++n )
 	{
-		//kdDebug(14153) << k_funcinfo << "array[n].getFlag is " << array[n].getFlag << ", status is " << status << ", & is " << (array[n].getFlag & status) << endl;
+		//kDebug(14153) << k_funcinfo << "array[n].getFlag is " << array[n].getFlag << ", status is " << status << ", & is " << (array[n].getFlag & status) << endl;
 		if ( (array[n].getFlag & status) == array[n].getFlag )
 			return array[n];
 	}
-	kdWarning(14153) << k_funcinfo << "status " << (int)status << " not found! Returning Offline. This should not happen." << endl;
+	kWarning(14153) << k_funcinfo << "status " << (int)status << " not found! Returning Offline. This should not happen." << endl;
 	return array[0];
 }
 
@@ -110,7 +110,7 @@ const PresenceTypeData &PresenceTypeData::forOnlineStatusType( const Kopete::Onl
 		if ( array[n].onlineStatusType == statusType )
 			return array[n];
 	}
-	kdWarning(14153) << k_funcinfo << "online status " << (int)statusType << " not found! Returning Offline. This should not happen." << endl;
+	kWarning(14153) << k_funcinfo << "online status " << (int)statusType << " not found! Returning Offline. This should not happen." << endl;
 	return array[0];
 }
 
@@ -203,7 +203,7 @@ Presence OnlineStatusManager::presenceOf( uint internalStatus )
 	}
 	else
 	{
-		kdWarning(14153) << k_funcinfo << "No presence exists for internal status " << internalStatus << "! Returning Offline" << endl;
+		kWarning(14153) << k_funcinfo << "No presence exists for internal status " << internalStatus << "! Returning Offline" << endl;
 		return Presence( Presence::Offline, Presence::Visible );
 	}	
 }

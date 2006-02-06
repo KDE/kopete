@@ -32,13 +32,13 @@ void ClientStreamTest::slotDoTest()
 {
 	QString server = QString::fromLatin1("scs.msg.yahoo.com");
 	// connect to server
-	kdDebug(14180) << k_funcinfo << " connecting to server" << endl;
+	kDebug(14180) << k_funcinfo << " connecting to server" << endl;
 	myTestObject->connectToServer( server, true ); // fine up to here...
 }
 
 void ClientStreamTest::slotConnected()
 {
-	kdDebug(14180) << k_funcinfo << " connection is up" << endl;
+	kDebug(14180) << k_funcinfo << " connection is up" << endl;
 	connected = true;
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceLogon);
 	t->setParam( 1, "kopetetest");

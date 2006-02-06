@@ -73,13 +73,13 @@ GaduDCC::unregisterAccount( unsigned int id )
 	initmutex.lock();
 
 	if ( id == 0 ) {
-		kdDebug(14100) << "ID nan" << endl;
+		kDebug(14100) << "ID nan" << endl;
 		initmutex.unlock();
 		return false;
 	}
 
 	if ( !accounts.contains( id ) ) {
-		kdDebug(14100) << "attempt to unregister not registered account" << endl;
+		kDebug(14100) << "attempt to unregister not registered account" << endl;
 		initmutex.unlock();
 		return false;
 	}
@@ -87,14 +87,14 @@ GaduDCC::unregisterAccount( unsigned int id )
 	accounts.remove( id );
 
 	if ( --referenceCount <= 0 ) {
-		kdDebug(14100) << "closing dcc socket" << endl;
+		kDebug(14100) << "closing dcc socket" << endl;
 		referenceCount = 0;
 		if ( dccServer ) {
 			delete dccServer;
 			dccServer = NULL;
 		}
 	}
-	kdDebug(14100)  << "reference count " << referenceCount << endl;
+	kDebug(14100)  << "reference count " << referenceCount << endl;
 	initmutex.unlock();
 
 	return true;
@@ -110,7 +110,7 @@ GaduDCC::registerAccount( GaduAccount* account )
 	}
 
 	if ( account->accountId().isEmpty() ) {
-		kdDebug(14100) << "attempt to register account with empty ID" << endl;
+		kDebug(14100) << "attempt to register account with empty ID" << endl;
 		return false;
 	}
 
@@ -119,13 +119,13 @@ GaduDCC::registerAccount( GaduAccount* account )
 	aid = account->accountId().toInt();
 
 	if ( accounts.contains( aid ) ) {
-		kdDebug(14100) << "attempt to register already registered account" << endl;
+		kDebug(14100) << "attempt to register already registered account" << endl;
 		initmutex.unlock();
 		return false;
 	}
 
 	accountId = aid;
-	kdDebug( 14100 ) << " attempt to register " << accountId << endl;
+	kDebug( 14100 ) << " attempt to register " << accountId << endl;
 
 	accounts[ accountId ] = account;
 
@@ -147,7 +147,7 @@ GaduDCC::slotIncoming( gg_dcc* incoming, bool& handled )
 	gg_dcc* newdcc;
 	GaduDCCTransaction* dt;
 
-	kdDebug( 14100 ) << "slotIncomming for UIN: " << incoming->uin  << endl;
+	kDebug( 14100 ) << "slotIncomming for UIN: " << incoming->uin  << endl;
 
 	// no uin? I'm so sorry
 	// this screws file receiving (using kadu 0.4.x as peer) for me
@@ -169,7 +169,7 @@ GaduDCC::slotIncoming( gg_dcc* incoming, bool& handled )
 GaduDCC::~GaduDCC()
 {
 	if ( accounts.contains( accountId ) ) {
-		kdDebug( 14100 ) << "unregister account " << accountId << "  in destructor " << endl;
+		kDebug( 14100 ) << "unregister account " << accountId << "  in destructor " << endl;
 		unregisterAccount( accountId );
 	}
 }

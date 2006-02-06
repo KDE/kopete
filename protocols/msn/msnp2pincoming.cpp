@@ -110,7 +110,7 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 	else
 	{
 		QString dataMessage=QByteArray((msgStr.message.data()+48) , msgStr.dataMessageSize);
-		kdDebug(14141) << k_funcinfo <<" dataMessage: "  << dataMessage << endl;
+		kDebug(14141) << k_funcinfo <<" dataMessage: "  << dataMessage << endl;
 
 		if (dataMessage.contains("INVITE") )
 		{
@@ -197,7 +197,7 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 			if(msgStr.dataOffset+msgStr.dataMessageSize >= msgStr.totalSize)
 			{ //whe have the whole
 
-				kdDebug(14141) << k_funcinfo <<"Analyse the image message: " << fullContentMessage <<  endl;
+				kDebug(14141) << k_funcinfo <<"Analyse the image message: " << fullContentMessage <<  endl;
 
 				QString ext;
 				QRegExp rx("Content-Type: ([a-zA-Z0-9/]*)");
@@ -210,7 +210,7 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 						ext=".png";
 					else
 					{
-						kdWarning(14140) << k_funcinfo << contentType << " is not recognized.  A MSN message is not displayed" <<  endl;
+						kWarning(14140) << k_funcinfo << contentType << " is not recognized.  A MSN message is not displayed" <<  endl;
 						return;
 					}
 				}
@@ -262,7 +262,7 @@ void MSNP2PIncoming::abortCurrentTransfer()
 void MSNP2PIncoming::slotKopeteTransferDestroyed()
 {
 	m_kopeteTransfer=0L;
-	kdDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo << endl;
 }
 
 void MSNP2PIncoming::error()

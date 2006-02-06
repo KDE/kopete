@@ -198,7 +198,7 @@ void QVideoStream::init()
         {
 #ifdef HAVE_XSHM
             if ( !_inputSize.isValid() ) {
-                kdWarning() << "QVideoStream::init() (XSHM): Unable to initialize due to invalid input size." << endl;
+                kWarning() << "QVideoStream::init() (XSHM): Unable to initialize due to invalid input size." << endl;
                 return;
             }
             
@@ -222,7 +222,7 @@ void QVideoStream::init()
                 _format = _xFormat;
                 _init = true;
             } else {
-                kdWarning() << "XShmAttach failed!" << endl;
+                kWarning() << "XShmAttach failed!" << endl;
                 XDestroyImage(d->xim);
                 d->xim = 0;
                 shmdt(d->shmh.shmaddr);
@@ -232,7 +232,7 @@ void QVideoStream::init()
         break;
 	case METHOD_X11:
 		if ( !_inputSize.isValid() ) {
-            kdWarning() << "QVideoStream::init() (X11): Unable to initialize due to invalid input size." << endl;
+            kWarning() << "QVideoStream::init() (X11): Unable to initialize due to invalid input size." << endl;
 			return;
         }
         
@@ -540,7 +540,7 @@ QVideoStreamGLWidget::QVideoStreamGLWidget(QWidget* parent, const char* name)
       _w(parent),
       _glfun(false)
 {
-    kdDebug() << "QVideoStreamGLWidget::QVideoStreamGLWidget()" << endl;
+    kDebug() << "QVideoStreamGLWidget::QVideoStreamGLWidget()" << endl;
 
     connect(_w, SIGNAL(resized(int, int)),
             this, SLOT(resize(int, int)));
@@ -551,7 +551,7 @@ QVideoStreamGLWidget::QVideoStreamGLWidget(QWidget* parent, const char* name)
 
 QVideoStreamGLWidget::~QVideoStreamGLWidget()
 {
-    kdDebug() << "QVideoStreamGLWidget::~QVideoStreamGLWidget()" << endl;
+    kDebug() << "QVideoStreamGLWidget::~QVideoStreamGLWidget()" << endl;
     delete _glfunTimer;
 
     makeCurrent();
@@ -577,24 +577,24 @@ bool QVideoStreamGLWidget::eventFilter(QObject*, QEvent* e)
 
 void QVideoStreamGLWidget::initializeGL()
 {
-    kdDebug() << "QVideoStreamGLWidget::initializeGL()" << endl;
+    kDebug() << "QVideoStreamGLWidget::initializeGL()" << endl;
     setAutoBufferSwap(false);
 
     QGLFormat f = format();
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_maxGL);
-    kdDebug() << "OpenGL capabilities (* = required):"           << endl;
-    kdDebug() << "    Valid context*:   " << isValid()           << endl;
-    kdDebug() << "    DoubleBuffer*:    " << f.doubleBuffer()    << endl;
-    kdDebug() << "    Depth:            " << f.depth()           << endl;
-    kdDebug() << "    RGBA*:            " << f.rgba()            << endl;
-    kdDebug() << "    Alpha:            " << f.alpha()           << endl;
-    kdDebug() << "    Accum:            " << f.accum()           << endl;
-    kdDebug() << "    Stencil:          " << f.stencil()         << endl;
-    kdDebug() << "    Stereo:           " << f.stereo()          << endl;
-    kdDebug() << "    DirectRendering*: " << f.directRendering() << endl;
-    kdDebug() << "    Overlay:          " << f.hasOverlay()      << endl;
-    kdDebug() << "    Plane:            " << f.plane()           << endl;
-    kdDebug() << "    MAX_TEXTURE_SIZE: " << _maxGL              << endl;
+    kDebug() << "OpenGL capabilities (* = required):"           << endl;
+    kDebug() << "    Valid context*:   " << isValid()           << endl;
+    kDebug() << "    DoubleBuffer*:    " << f.doubleBuffer()    << endl;
+    kDebug() << "    Depth:            " << f.depth()           << endl;
+    kDebug() << "    RGBA*:            " << f.rgba()            << endl;
+    kDebug() << "    Alpha:            " << f.alpha()           << endl;
+    kDebug() << "    Accum:            " << f.accum()           << endl;
+    kDebug() << "    Stencil:          " << f.stencil()         << endl;
+    kDebug() << "    Stereo:           " << f.stereo()          << endl;
+    kDebug() << "    DirectRendering*: " << f.directRendering() << endl;
+    kDebug() << "    Overlay:          " << f.hasOverlay()      << endl;
+    kDebug() << "    Plane:            " << f.plane()           << endl;
+    kDebug() << "    MAX_TEXTURE_SIZE: " << _maxGL              << endl;
 
     qglClearColor(Qt::black);
     glShadeModel(GL_FLAT);
@@ -632,7 +632,7 @@ void QVideoStreamGLWidget::setInputSize(const QSize& sz)
     int ih = _inputSize.height();
 
     if ( (iw > _maxGL) || (ih > _maxGL) ) {
-        kdWarning() << "QVideoStreamGLWidget::setInputSize(): Texture too large! maxGL: " << _maxGL << endl;
+        kWarning() << "QVideoStreamGLWidget::setInputSize(): Texture too large! maxGL: " << _maxGL << endl;
         return;
     }
 

@@ -41,7 +41,7 @@ JingleSession::JingleSession(JabberAccount *account, const JidList &peers)
 
 JingleSession::~JingleSession()
 {
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
 	delete d;
 }
 

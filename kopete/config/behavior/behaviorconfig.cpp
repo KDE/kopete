@@ -90,7 +90,7 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 
 void BehaviorConfig::save()
 {
-//	kdDebug(14000) << k_funcinfo << "called." << endl;
+//	kDebug(14000) << k_funcinfo << "called." << endl;
 
 	KCModule::save();
 
@@ -105,7 +105,7 @@ void BehaviorConfig::save()
 
 void BehaviorConfig::load()
 {
-//	kdDebug(14000) << k_funcinfo << "called" << endl;
+//	kDebug(14000) << k_funcinfo << "called" << endl;
 
 	KCModule::load();
 	// "Away" TAB ===============================================================

@@ -61,7 +61,7 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* pare
 	createWidget();
 	initConnections();
 
-	kdDebug( 14100 ) << "search for Uin: " << searchFor << endl;
+	kDebug( 14100 ) << "search for Uin: " << searchFor << endl;
 
 	mMainWidget->listFound->clear();
 	show();
@@ -242,14 +242,14 @@ GaduPublicDir::slotSearchResult( const SearchResult& result, unsigned int )
 {
 	Q3ListView* list = mMainWidget->listFound;
 
-	kdDebug(14100) << "searchResults(" << result.count() <<")" << endl;
+	kDebug(14100) << "searchResults(" << result.count() <<")" << endl;
 
 	Q3ListViewItem* sl;
 
 	SearchResult::const_iterator r;
 
 	for ( r = result.begin(); r != result.end() ; ++r ){
-		kdDebug(14100) << "adding" << (*r).uin << endl;
+		kDebug(14100) << "adding" << (*r).uin << endl;
 		sl= new Q3ListViewItem(
 					list, QString::fromAscii(""),
 					(*r).firstname,
@@ -297,7 +297,7 @@ GaduPublicDir::slotSearch()
 
 	// search more, or search ?
 	if ( mMainWidget->pubsearch->id( mMainWidget->pubsearch->visibleWidget() ) == 0 ) {
-		kdDebug(14100) << "start search... " << endl;
+		kDebug(14100) << "start search... " << endl;
 		getData();
 
 		// validate data
@@ -310,7 +310,7 @@ GaduPublicDir::slotSearch()
 
 	}
 	else{
-		kdDebug(14100) << "search more... " << endl;
+		kDebug(14100) << "search more... " << endl;
 		// Search for more
 	}
 	mMainWidget->pubsearch->setDisabled( true );

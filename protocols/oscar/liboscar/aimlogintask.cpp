@@ -124,7 +124,7 @@ bool AimLoginTask::take( Transfer* transfer )
 
 void AimLoginTask::sendAuthStringRequest()
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo 
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo 
 		<< "SEND CLI_AUTH_REQUEST, sending login request" << endl;
 
 	FLAP f = { 0x02, 0, 0 };
@@ -141,17 +141,17 @@ void AimLoginTask::sendAuthStringRequest()
 
 void AimLoginTask::processAuthStringReply()
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got the authorization key" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got the authorization key" << endl;
 	Buffer *inbuf = transfer()->buffer();
 	WORD keylen = inbuf->getWord();
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Key length is " << keylen << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Key length is " << keylen << endl;
 	m_authKey.duplicate( inbuf->getBlock(keylen) );
 	emit haveAuthKey();
 }
 
 void AimLoginTask::sendLoginRequest()
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo <<  "SEND (CLI_MD5_LOGIN) sending AIM login" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo <<  "SEND (CLI_MD5_LOGIN) sending AIM login" << endl;
 
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0017, 0x0002, 0x0000, client()->snacSequence() };
@@ -183,7 +183,7 @@ void AimLoginTask::sendLoginRequest()
 
 void AimLoginTask::handleLoginResponse()
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "RECV SNAC 0x17, 0x07 - AIM Login Response" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "RECV SNAC 0x17, 0x07 - AIM Login Response" << endl;
 
 	SnacTransfer* st = dynamic_cast<SnacTransfer*> ( transfer() );
 
@@ -198,7 +198,7 @@ void AimLoginTask::handleLoginResponse()
 	TLV uin = findTLV( tlvList, 0x0001 );
 	if ( uin )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(1) [SN], SN=" << QString( uin.data ) << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(1) [SN], SN=" << QString( uin.data ) << endl;
 	}
 
 	TLV err = findTLV( tlvList, 0x0008 );
@@ -207,7 +207,7 @@ void AimLoginTask::handleLoginResponse()
 	{
 		WORD errorNum = ( ( err.data[0] << 8 ) | err.data[1] );
 
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << k_funcinfo << "found TLV(8) [ERROR] error= " <<
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << k_funcinfo << "found TLV(8) [ERROR] error= " <<
 			errorNum << endl;
 		Oscar::SNAC s = { 0, 0, 0, 0 };
 		client()->fatalTaskError( s, errorNum );
@@ -219,19 +219,19 @@ void AimLoginTask::handleLoginResponse()
 	if ( server )
 	{
 		QString ip = QString( server.data );
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(5) [SERVER] " << ip << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(5) [SERVER] " << ip << endl;
 		int index = ip.find( ':' );
 		m_bosHost = ip.left( index );
 		ip.remove( 0 , index+1 ); //get rid of the colon and everything before it
 		m_bosPort = ip.left(4); //we only need 4 bytes
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "We should reconnect to server '" << m_bosHost <<
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "We should reconnect to server '" << m_bosHost <<
 			"' on port " << m_bosPort << endl;
 	}
 
 	TLV cookie = findTLV( tlvList, 0x0006 );
 	if ( cookie )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(6) [COOKIE]" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(6) [COOKIE]" << endl;
 		m_cookie.duplicate( cookie.data );
 		setSuccess( 0, QString::null );
 	}
@@ -240,7 +240,7 @@ void AimLoginTask::handleLoginResponse()
 
 void AimLoginTask::encodePassword( QByteArray& digest ) const
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	md5_state_t state;
 	md5_init( &state );
 	md5_append( &state, ( const md5_byte_t* ) m_authKey.data(), m_authKey.size() );

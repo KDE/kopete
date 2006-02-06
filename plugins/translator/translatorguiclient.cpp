@@ -70,7 +70,7 @@ void TranslatorGUIClient::slotTranslateChat()
 	dst_lang = to->pluginData( TranslatorPlugin::plugin(), "languageKey" );
 	if ( dst_lang.isEmpty() || dst_lang == "null" )
 	{
-		kdDebug( 14308 ) << k_funcinfo << "Cannot determine dst Metacontact language (" << to->displayName() << ")" << endl;
+		kDebug( 14308 ) << k_funcinfo << "Cannot determine dst Metacontact language (" << to->displayName() << ")" << endl;
 		return;
 	}
 
@@ -83,7 +83,7 @@ void TranslatorGUIClient::messageTranslated( const QVariant &result )
 	QString translated = result.toString();
 	if ( translated.isEmpty() )
 	{
-		kdDebug( 14308 ) << k_funcinfo << "Empty string returned"  << endl;
+		kDebug( 14308 ) << k_funcinfo << "Empty string returned"  << endl;
 		return;
 	}
 

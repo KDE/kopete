@@ -104,7 +104,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 	QString htmlCode;
 	QString fontStyle;
 
-	kdDebug(14310) << k_funcinfo << "called." << endl;
+	kDebug(14310) << k_funcinfo << "called." << endl;
 	//setWFlags(Qt::WDestructiveClose);	// send SIGNAL(closing()) on quit
 
 	// Class member initializations
@@ -401,7 +401,7 @@ void HistoryDialog::slotFilterChanged(int index)
 
 void HistoryDialog::slotOpenURLRequest(const KUrl &url, const KParts::URLArgs &/*args*/)
 {
-	kdDebug(14310) << k_funcinfo << "url=" << url.url() << endl;
+	kDebug(14310) << k_funcinfo << "url=" << url.url() << endl;
 	new KRun(url, 0, false); // false = non-local files
 }
 

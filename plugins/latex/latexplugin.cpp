@@ -46,7 +46,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_latex, LatexPluginFactory( "kopete_latex" )  
 LatexPlugin::LatexPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
 : Kopete::Plugin( LatexPluginFactory::instance(), parent, name )
 {
-//	kdDebug() << k_funcinfo << endl;
+//	kDebug() << k_funcinfo << endl;
 	if( !s_pluginStatic )
 		s_pluginStatic = this;
 
@@ -106,7 +106,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 	if( !messageText.contains("$$"))
 		return;
 
-	//kdDebug() << k_funcinfo << " Using converter: " << m_convScript << endl;
+	//kDebug() << k_funcinfo << " Using converter: " << m_convScript << endl;
 
 	// /\[([^]]).*?\[/$1\]/
 	// \$\$.+?\$\$
@@ -122,7 +122,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 	QMap<QString, QString> replaceMap;
 	while (pos >= 0 && (unsigned int)pos < messageText.length())
 	{
-//		kdDebug() << k_funcinfo  << " searching pos: " << pos << endl;
+//		kDebug() << k_funcinfo  << " searching pos: " << pos << endl;
 		pos = rg.search(messageText, pos);
 		
 		if (pos >= 0 )
@@ -234,7 +234,7 @@ QString LatexPlugin::handleLatex(const QString &latexFormula)
 	vDPI = LatexConfig::self()->verticalDPI();
 	p << m_convScript <<  argumentRes.arg(QString::number(hDPI), QString::number(vDPI)) << argumentOut.arg(fileName) /*<< argumentFormat*/ << latexFormula  ;
 			
-	kdDebug() << k_funcinfo  << " Rendering " << m_convScript << " " <<  argumentRes.arg(QString::number(hDPI), QString::number(vDPI)) << " " << argumentOut.arg(fileName) << endl;
+	kDebug() << k_funcinfo  << " Rendering " << m_convScript << " " <<  argumentRes.arg(QString::number(hDPI), QString::number(vDPI)) << " " << argumentOut.arg(fileName) << endl;
 			
 	// FIXME our sucky sync filter API limitations :-)
 	p.start(KProcess::Block);

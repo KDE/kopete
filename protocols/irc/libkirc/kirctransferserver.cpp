@@ -75,13 +75,13 @@ bool TransferServer::initServer()
 
 //		m_socket->setHost(m_socket->localAddress()->nodeName());
 		if (!m_socket->setPort(m_port))
-			kdDebug(14120) << k_funcinfo << "Failed to set port to" << m_port << endl;
+			kDebug(14120) << k_funcinfo << "Failed to set port to" << m_port << endl;
 		m_socket->setSocketFlags(KExtendedSocket::noResolve
 					|KExtendedSocket::passiveSocket
 					|KExtendedSocket::inetSocket );
 
 		if (!m_socket->setTimeout(2*60)) // FIXME: allow configuration of this.
-			kdDebug(14120) << k_funcinfo << "Failed to set timeout." << endl;
+			kDebug(14120) << k_funcinfo << "Failed to set timeout." << endl;
 
 		QObject::connect(m_socket, SIGNAL(readyAccept()),
 				this, SLOT(readyAccept()));
@@ -94,7 +94,7 @@ bool TransferServer::initServer()
 		const KInetSocketAddress *localAddress = static_cast<const KInetSocketAddress *>(m_socket->localAddress());
 		if (!localAddress)
 		{
-			kdDebug(14120) << k_funcinfo << "Not a KInetSocketAddress." << endl;
+			kDebug(14120) << k_funcinfo << "Not a KInetSocketAddress." << endl;
 			deleteLater();
 			return false;
 		}
@@ -128,7 +128,7 @@ void TransferServer::connectionFailed(int error)
 {
 	if (error!=0)
 	{
-		kdDebug(14120) << k_funcinfo << "Connection failed with " << m_nick << endl;
+		kDebug(14120) << k_funcinfo << "Connection failed with " << m_nick << endl;
 		deleteLater();
 	}
 }

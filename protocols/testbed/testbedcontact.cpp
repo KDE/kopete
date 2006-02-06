@@ -34,7 +34,7 @@ TestbedContact::TestbedContact( Kopete::Account* _account, const QString &unique
 		const TestbedContactType type, const QString &displayName, Kopete::MetaContact *parent )
 : Kopete::Contact( _account, uniqueName, parent )
 {
-	kdDebug( 14210 ) << k_funcinfo << " uniqueName: " << uniqueName << ", displayName: " << displayName << endl;
+	kDebug( 14210 ) << k_funcinfo << " uniqueName: " << uniqueName << ", displayName: " << displayName << endl;
 	m_type = type;
 	// FIXME: ? setDisplayName( displayName );
 	m_msgManager = 0L;
@@ -66,7 +66,7 @@ void TestbedContact::serialize( QMap< QString, QString > &serializedData, QMap< 
 
 Kopete::ChatSession* TestbedContact::manager( CanCreateFlags )
 {
-	kdDebug( 14210 ) << k_funcinfo << endl;
+	kDebug( 14210 ) << k_funcinfo << endl;
 	if ( m_msgManager )
 	{
 		return m_msgManager;
@@ -103,7 +103,7 @@ void TestbedContact::showContactSettings()
 
 void TestbedContact::sendMessage( Kopete::Message &message )
 {
-	kdDebug( 14210 ) << k_funcinfo << endl;
+	kDebug( 14210 ) << k_funcinfo << endl;
 	// convert to the what the server wants
 	// For this 'protocol', there's nothing to do
 	// send it

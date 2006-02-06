@@ -65,7 +65,7 @@ Protocol::~Protocol()
 	{
 		if( a->protocol() == this )
 		{
-			kdWarning( 14010 ) << k_funcinfo << "Deleting protocol with existing accounts! Did the account unloading go wrong?  account: " 
+			kWarning( 14010 ) << k_funcinfo << "Deleting protocol with existing accounts! Did the account unloading go wrong?  account: " 
 					<< a->accountId() << endl;
 		
 			delete a;
@@ -136,7 +136,7 @@ void Protocol::aboutToUnload()
 			
 			if ( a->myself() && a->myself()->isOnline() )
 			{
-				kdDebug( 14010 ) << k_funcinfo << a->accountId() <<
+				kDebug( 14010 ) << k_funcinfo << a->accountId() <<
 						" is still connected, disconnecting..." << endl;
 
 				QObject::connect( a->myself(),
@@ -147,7 +147,7 @@ void Protocol::aboutToUnload()
 			else
 			{
 				// Remove account, it's already disconnected
-				kdDebug( 14010 ) << k_funcinfo << a->accountId() <<
+				kDebug( 14010 ) << k_funcinfo << a->accountId() <<
 						" is already disconnected, deleting..." << endl;
 
 				QObject::connect( a, SIGNAL( destroyed( ) ),
@@ -172,7 +172,7 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 	QMap<QString, QString> addressBookData, ad;
 	QMap<QString, QString>::Iterator it;
 
-	//kdDebug( 14010 ) << "Protocol::metaContactAboutToSave: protocol " << pluginId() << ": serializing " << metaContact->displayName() << endl;
+	//kDebug( 14010 ) << "Protocol::metaContactAboutToSave: protocol " << pluginId() << ": serializing " << metaContact->displayName() << endl;
 
 	QListIterator<Contact *> cit(metaContact->contacts());
 	while ( cit.hasNext() )
@@ -230,7 +230,7 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 
 	for( it = addressBookData.begin(); it != addressBookData.end(); ++it )
 	{
-		//kdDebug( 14010 ) << "Protocol::metaContactAboutToSave: addressBookData: key: " << it.key() << ", data: " << it.data() << endl;
+		//kDebug( 14010 ) << "Protocol::metaContactAboutToSave: addressBookData: key: " << it.key() << ", data: " << it.data() << endl;
 		// FIXME: This is a terrible hack to check the key name for the phrase "messaging/"
 		//        to indicate what app name to use, but for now it's by far the easiest
 		//        way to get this working.
@@ -241,7 +241,7 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 		if( it.key().startsWith( QString::fromLatin1( "messaging/" ) ) )
 		{
 			metaContact->setAddressBookField( this, it.key(), QString::fromLatin1( "All" ), it.data() );
-//			kdDebug(14010) << k_funcinfo << "metaContact->setAddressBookField( " << this << ", " << it.key() << ", \"All\", " << it.data() << " );" << endl;
+//			kDebug(14010) << k_funcinfo << "metaContact->setAddressBookField( " << this << ", " << it.key() << ", \"All\", " << it.data() << " );" << endl;
 		}
 		else
 			metaContact->setAddressBookField( this, QString::fromLatin1( "kopete" ), it.key(), it.data() );
@@ -250,7 +250,7 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 
 void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QString> &data )
 {
-	/*kdDebug( 14010 ) << "Protocol::deserialize: protocol " <<
+	/*kDebug( 14010 ) << "Protocol::deserialize: protocol " <<
 		pluginId() << ": deserializing " << metaContact->displayName() << endl;*/
 	
 	QMap<QString, QStringList> serializedData;
@@ -296,7 +296,7 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 		// So ignore it
 		if(accountId == sd[ QString::fromLatin1( "contactId" ) ] )
 		{
-			kdDebug( 14010 ) << k_funcinfo << "Myself contact was on the contactlist.xml for account " << accountId << ".  Ignore it" << endl;
+			kDebug( 14010 ) << k_funcinfo << "Myself contact was on the contactlist.xml for account " << accountId << ".  Ignore it" << endl;
 			continue;
 		}
 
@@ -338,7 +338,7 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 			}
 			else
 			{
-				kdWarning( 14010 ) << k_funcinfo <<
+				kWarning( 14010 ) << k_funcinfo <<
 					"No account available and account not set in " \
 					"contactlist.xml either!" << endl
 					<< "Not deserializing this contact." << endl;

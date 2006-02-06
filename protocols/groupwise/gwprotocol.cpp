@@ -78,7 +78,7 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const char *name, const Q
 	  propEmail( Kopete::Global::Properties::self()->emailAddress() )
 {
 	// ^^ That is all member initialiser syntax, not broken indentation!
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
 	s_protocol = this;
 
@@ -105,7 +105,7 @@ Kopete::Contact *GroupWiseProtocol::deserializeContact(
 	Kopete::Account *account = accounts[ accountId ];
 	if ( !account )
 	{
-		kdDebug(GROUPWISE_DEBUG_GLOBAL) << "Account doesn't exist, skipping" << endl;
+		kDebug(GROUPWISE_DEBUG_GLOBAL) << "Account doesn't exist, skipping" << endl;
 		return 0;
 	}
 
@@ -115,13 +115,13 @@ Kopete::Contact *GroupWiseProtocol::deserializeContact(
 
 AddContactPage * GroupWiseProtocol::createAddContactWidget( QWidget *parent, Kopete::Account *  account )
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Creating Add Contact Page" << endl;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) << "Creating Add Contact Page" << endl;
 	return new GroupWiseAddContactPage( account, parent, "addcontactpage");
 }
 
 KopeteEditAccountWidget * GroupWiseProtocol::createEditAccountWidget( Kopete::Account *account, QWidget *parent )
 {
-	kdDebug(GROUPWISE_DEBUG_GLOBAL) << "Creating Edit Account Page" << endl;
+	kDebug(GROUPWISE_DEBUG_GLOBAL) << "Creating Edit Account Page" << endl;
 	return new GroupWiseEditAccountWidget( parent, account );
 }
 
@@ -163,7 +163,7 @@ Kopete::OnlineStatus GroupWiseProtocol::gwStatusToKOS( const int gwInternal )
 			break;
 		default:
 			status = groupwiseInvalid;
-			kdWarning( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Got unrecognised status value" << gwInternal << endl;
+			kWarning( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Got unrecognised status value" << gwInternal << endl;
 	}
 	return status;
 }
@@ -251,13 +251,13 @@ QString GroupWiseProtocol::rtfizeText( const QString & plain )
 			}
 			else
 			{
-				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "bogus utf-8 lead byte: 0x" << QTextStream::hex << current << endl;
+				kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "bogus utf-8 lead byte: 0x" << QTextStream::hex << current << endl;
 				ucs4Char = 0x003F;
 				bytesEncoded = 1;
 			}
 			index += bytesEncoded;
 			escapedUnicodeChar = QString("\\u%1?").arg( ucs4Char );
-			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "unicode escaped char: " << escapedUnicodeChar << endl;
+			kDebug( GROUPWISE_DEBUG_GLOBAL ) << "unicode escaped char: " << escapedUnicodeChar << endl;
 			outputText.append( escapedUnicodeChar );
 		}
 	}

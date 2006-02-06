@@ -94,7 +94,7 @@ void Transport::setDefaultBridge(MSNSwitchBoardSocket* mss)
 
 void Transport::slotOnReceive(const QString& contact, const QByteArray& bytes)
 {
-	kdDebug (14140) << k_funcinfo << " >> RECEIVED " << bytes.size() << " bytes." << endl;
+	kDebug (14140) << k_funcinfo << " >> RECEIVED " << bytes.size() << " bytes." << endl;
 // 	Message message = mFormatter->readMessage(bytes);
 }
 
@@ -193,7 +193,7 @@ void TcpTransportBridge::slotOnConnect()
 {
 	if (mConnected)
 	{
-		kdDebug(14140) << k_funcinfo << "Bridge (" << name() << ") ALREADY CONNECTED " << mSocket->peerAddress().toString() << " <-> " << mSocket->localAddress().toString() << endl;
+		kDebug(14140) << k_funcinfo << "Bridge (" << name() << ") ALREADY CONNECTED " << mSocket->peerAddress().toString() << " <-> " << mSocket->localAddress().toString() << endl;
 		return;
 	}
 
@@ -212,7 +212,7 @@ void TcpTransportBridge::slotOnDisconnect()
 
 void TcpTransportBridge::slotOnError(int errorCode)
 {
-	kdDebug(14140) << k_funcinfo << "Bridge (" << name() << ") ERROR occurred on {" << mSocket->localAddress().toString() << " <-> " << mSocket->peerAddress().toString() << "} - " << mSocket->errorString() << endl;
+	kDebug(14140) << k_funcinfo << "Bridge (" << name() << ") ERROR occurred on {" << mSocket->localAddress().toString() << " <-> " << mSocket->peerAddress().toString() << "} - " << mSocket->errorString() << endl;
 	emit bridgeError(QString("Bridge ERROR %1: %2").arg(errorCode).arg(mSocket->errorString()));
 	if (mConnected){
 		mSocket->disconnect();
@@ -225,7 +225,7 @@ void TcpTransportBridge::slotOnError(int errorCode)
 void TcpTransportBridge::slotOnSocketClose()
 {
 	mSocket->disconnect();
-	kdDebug(14140) << k_funcinfo << "Bridge (" << name() << ") DISCONNECTED {" << mSocket->peerAddress().toString() << " <-> " << mSocket->localAddress().toString() << "}" << endl;
+	kDebug(14140) << k_funcinfo << "Bridge (" << name() << ") DISCONNECTED {" << mSocket->peerAddress().toString() << " <-> " << mSocket->localAddress().toString() << "}" << endl;
 	mConnected = false;
 	mSocket->deleteLater();
 	mSocket = 0l;
@@ -235,7 +235,7 @@ void TcpTransportBridge::slotOnSocketClose()
 
 void TcpTransportBridge::slotOnSocketConnect()
 {
-	kdDebug(14140) << k_funcinfo << "Bridge (" << name() << ") CONNECTED to " << mSocket->peerAddress().toString() << " from "
+	kDebug(14140) << k_funcinfo << "Bridge (" << name() << ") CONNECTED to " << mSocket->peerAddress().toString() << " from "
 		<< mSocket->localAddress().toString() << endl;
 	mConnected = true;
 
@@ -252,7 +252,7 @@ void TcpTransportBridge::slotOnSocketConnect()
 
 void TcpTransportBridge::slotOnSocketReceive()
 {
-	kdDebug (14140) << k_funcinfo << "Bridge (" << name() << ") RECEIVED " << mSocket->bytesAvailable() << " bytes." << endl;
+	kDebug (14140) << k_funcinfo << "Bridge (" << name() << ") RECEIVED " << mSocket->bytesAvailable() << " bytes." << endl;
 	
 	QByteArray bytes(mSocket->bytesAvailable());
 	mSocket->readBlock(bytes.data(), bytes.size());
@@ -263,7 +263,7 @@ void TcpTransportBridge::slotOnSocketReceive()
 	{
 		QByteArray foo = mBuffer.read(4);
 		if (QString(foo) == "foo"){
-			kdDebug (14140) << k_funcinfo << "Bridge (" << name() << ") CONNECTION verified." << endl;
+			kDebug (14140) << k_funcinfo << "Bridge (" << name() << ") CONNECTION verified." << endl;
 			mVerified = true;
 		}
 	}
@@ -280,7 +280,7 @@ void TcpTransportBridge::slotOnSocketReceive()
 
 		if (mLength > 0 && mBuffer.size() >= mLength)
 		{
-			kdDebug (14140) << k_funcinfo << "Bridge (" << name() << ") read " << mLength << " bytes." << endl;
+			kDebug (14140) << k_funcinfo << "Bridge (" << name() << ") read " << mLength << " bytes." << endl;
 			bytes = mBuffer.read(mLength);
 			mLength = 0;
 // 			Message message = mFormatter->readMessage(bytes, true);
@@ -288,7 +288,7 @@ void TcpTransportBridge::slotOnSocketReceive()
 		}
 		else
 		{
-			kdDebug (14140) << k_funcinfo << "Bridge (" << name() << ") waiting for " << mLength << " bytes." << endl;
+			kDebug (14140) << k_funcinfo << "Bridge (" << name() << ") waiting for " << mLength << " bytes." << endl;
 			break;
 		}
 	}
@@ -300,7 +300,7 @@ void TcpTransportBridge::slotOnSocketReceive()
 
 void TcpTransportBridge::slotOnSocketConnectTimeout()
 {
-	kdDebug (14140) << k_funcinfo << "Bridge (" << name() << ") CONNECT timeout." << endl;
+	kDebug (14140) << k_funcinfo << "Bridge (" << name() << ") CONNECT timeout." << endl;
 	emit bridgeConnectTimeout();
 	mSocket->deleteLater();
 	mSocket = 0l;

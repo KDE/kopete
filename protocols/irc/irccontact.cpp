@@ -77,7 +77,7 @@ IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, K
 
 IRCContact::~IRCContact()
 {
-//	kdDebug(14120) << k_funcinfo << m_nickName << endl;
+//	kDebug(14120) << k_funcinfo << m_nickName << endl;
 	if (metaContact() && metaContact()->isTemporary() && !isChatting(m_chatSession))
 		metaContact()->deleteLater();
 
@@ -196,7 +196,7 @@ void IRCContact::slotUserDisconnected(const QString &user, const QString &reason
 
 void IRCContact::setNickName( const QString &nickname )
 {
-	kdDebug(14120) << k_funcinfo << m_nickName << " changed to " << nickname << endl;
+	kDebug(14120) << k_funcinfo << m_nickName << " changed to " << nickname << endl;
 	m_nickName = nickname;
 	Kopete::Contact::setNickName( nickname );
 }
@@ -375,13 +375,13 @@ bool IRCContact::isChatting(const Kopete::ChatSession *avoid) const
 
 void IRCContact::deleteContact()
 {
-	kdDebug(14120) << k_funcinfo << m_nickName << endl;
+	kDebug(14120) << k_funcinfo << m_nickName << endl;
 
 	delete m_chatSession;
 
 	if (!isChatting())
 	{
-		kdDebug(14120) << k_funcinfo << "will delete " << m_nickName << endl;
+		kDebug(14120) << k_funcinfo << "will delete " << m_nickName << endl;
 		Kopete::Contact::deleteContact();
 	}
 	else

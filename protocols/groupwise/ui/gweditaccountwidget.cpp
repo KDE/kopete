@@ -46,7 +46,7 @@
 GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, Kopete::Account* theAccount)
 : QWidget( parent ), KopeteEditAccountWidget( theAccount )
 {
-	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
+	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
 	m_layout = new QVBoxLayout( this );
 	m_preferencesDialog = new GroupWiseAccountPreferences( this );
 	m_layout->addWidget( m_preferencesDialog );
@@ -81,7 +81,7 @@ GroupWiseAccount *GroupWiseEditAccountWidget::account ()
 
 void GroupWiseEditAccountWidget::reOpen()
 {
-	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
+	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
 	
 	m_preferencesDialog->m_password->load( &account()->password () );
 	// Kopete at least <=0.90 doesn't support changing account IDs
@@ -96,7 +96,7 @@ void GroupWiseEditAccountWidget::reOpen()
 
 Kopete::Account* GroupWiseEditAccountWidget::apply()
 {
-	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
+	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
 		
 	if ( !account() )
 		setAccount( new GroupWiseAccount( GroupWiseProtocol::protocol(), m_preferencesDialog->m_userId->text() ) );
@@ -120,7 +120,7 @@ bool GroupWiseEditAccountWidget::validateData()
 
 void GroupWiseEditAccountWidget::writeConfig()
 {
-	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
+	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
 	account()->configGroup()->writeEntry( "Server", m_preferencesDialog->m_server->text() );
 	account()->configGroup()->writeEntry( "Port", QString::number( m_preferencesDialog->m_port->value() ) );
 	account()->configGroup()->writeEntry( "AlwaysAcceptInvitations", 

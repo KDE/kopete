@@ -93,7 +93,7 @@ Kopete::ChatSession* OscarContact::manager( CanCreateFlags canCreate )
 {
 	if ( !mMsgManager && canCreate )
 	{
-		/*kdDebug(14190) << k_funcinfo <<
+		/*kDebug(14190) << k_funcinfo <<
 			"Creating new ChatSession for contact '" << displayName() << "'" << endl;*/
 
 		QList<Kopete::Contact*> theContact;
@@ -141,11 +141,11 @@ void OscarContact::sync(unsigned int flags)
 
 		if ( m_ssiItem.waitingAuth() )
 		{
-			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Contact still requires auth. Doing nothing" << endl;
+			kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Contact still requires auth. Doing nothing" << endl;
 			return;
 		}
 		
-		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Moving a contact between groups" << endl;
+		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Moving a contact between groups" << endl;
 		SSIManager* ssiManager = mAccount->engine()->ssiManager();
 		SSI oldGroup = ssiManager->findGroup( m_ssiItem.gid() );
 		Kopete::Group* newGroup = metaContact()->groups().first();
@@ -154,7 +154,7 @@ void OscarContact::sync(unsigned int flags)
 		
 		if ( !ssiManager->findGroup( newGroup->displayName() ) )
 		{ //we don't have the group on the server
-			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "the group '" << newGroup->displayName() << "' is not on the server"
+			kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "the group '" << newGroup->displayName() << "' is not on the server"
 				<< "adding it" << endl;
 			mAccount->engine()->addGroup( newGroup->displayName() );
 		}
@@ -162,7 +162,7 @@ void OscarContact::sync(unsigned int flags)
 		SSI newSSIGroup = ssiManager->findGroup( newGroup->displayName() );
 		if ( !newSSIGroup )
 		{
-			kdWarning(OSCAR_GEN_DEBUG) << k_funcinfo << newSSIGroup.name() << " not found on SSI list after addition!" << endl;
+			kWarning(OSCAR_GEN_DEBUG) << k_funcinfo << newSSIGroup.name() << " not found on SSI list after addition!" << endl;
 			return;
 		}
 		

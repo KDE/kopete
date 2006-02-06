@@ -28,7 +28,7 @@
 KNetworkConnector::KNetworkConnector ( QObject *parent, const char */*name*/ )
  : Connector ( parent )
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "New KNetwork connector." << endl;
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "New KNetwork connector." << endl;
 
 	mErrorCode = KNetwork::KSocketBase::NoError;
 
@@ -48,7 +48,7 @@ KNetworkConnector::~KNetworkConnector ()
 
 void KNetworkConnector::connectToServer ( const QString &server )
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Initiating connection to " << mHost << endl;
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Initiating connection to " << mHost << endl;
 	Q_ASSERT( !mHost.isNull() );
 	Q_ASSERT( mPort );
 	/*
@@ -71,7 +71,7 @@ void KNetworkConnector::connectToServer ( const QString &server )
 
 void KNetworkConnector::slotConnected ()
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "We are connected." << endl;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "We are connected." << endl;
 
 	// FIXME: setPeerAddress() is something different, find out correct usage later
 	//KInetSocketAddress inetAddress = mStreamSocket->address().asInet().makeIPv6 ();
@@ -83,7 +83,7 @@ void KNetworkConnector::slotConnected ()
 
 void KNetworkConnector::slotError ( int code )
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Error detected: " << code << endl;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Error detected: " << code << endl;
 
 	mErrorCode = code;
 	emit error ();
@@ -105,13 +105,13 @@ ByteStream *KNetworkConnector::stream () const
 
 void KNetworkConnector::done ()
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	mByteStream->close ();
 }
 
 void KNetworkConnector::setOptHostPort ( const QString &host, quint16 port )
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Manually specifying host " << host << " and port " << port << endl;
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Manually specifying host " << host << " and port " << port << endl;
 
 	mHost = host;
 	mPort = port;
@@ -120,7 +120,7 @@ void KNetworkConnector::setOptHostPort ( const QString &host, quint16 port )
 
 void KNetworkConnector::setOptSSL ( bool ssl )
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Setting SSL to " << ssl << endl;
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Setting SSL to " << ssl << endl;
 
 	setUseSSL ( ssl );
 

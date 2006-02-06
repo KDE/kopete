@@ -66,12 +66,12 @@ template <typename _TYPE_>
 
 KSParser::KSParser()
 {
-	kdDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo << endl;
 }
 
 KSParser::~KSParser()
 {
-	kdDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo << endl;
 }
 
 /* NOTE: If thread corruption are seen simply ad a qlock here */

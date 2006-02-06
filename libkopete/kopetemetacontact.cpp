@@ -131,7 +131,7 @@ void MetaContact::addContact( Contact *c )
 {
 	if( d->contacts.contains( c ) )
 	{
-		kdWarning(14010) << "Ignoring attempt to add duplicate contact " << c->contactId() << "!" << endl;
+		kWarning(14010) << "Ignoring attempt to add duplicate contact " << c->contactId() << "!" << endl;
 	}
 	else
 	{
@@ -199,7 +199,7 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 {
 	if( !d->contacts.contains( c ) )
 	{
-		kdDebug(14010) << k_funcinfo << " Contact is not in this metaContact " << endl;
+		kDebug(14010) << k_funcinfo << " Contact is not in this metaContact " << endl;
 	}
 	else
 	{
@@ -271,7 +271,7 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 			disconnect( c, SIGNAL( idleStateChanged( Kopete::Contact * ) ),
 				this, SIGNAL( contactIdleStateChanged( Kopete::Contact *) ) );
 
-			kdDebug( 14010 ) << k_funcinfo << "Contact disconnected" << endl;
+			kDebug( 14010 ) << k_funcinfo << "Contact disconnected" << endl;
 
 			KABCPersistence::self()->write( this );
 		}
@@ -286,12 +286,12 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 
 Contact *MetaContact::findContact( const QString &protocolId, const QString &accountId, const QString &contactId )
 {
-	//kdDebug( 14010 ) << k_funcinfo << "Num contacts: " << d->contacts.count() << endl;
+	//kDebug( 14010 ) << k_funcinfo << "Num contacts: " << d->contacts.count() << endl;
 	QListIterator<Contact *> it( d->contacts );
 	while ( it.hasNext() )
 	{
 		Contact *c = it.next();
-		//kdDebug( 14010 ) << k_funcinfo << "Trying " << it.current()->contactId() << ", proto "
+		//kDebug( 14010 ) << k_funcinfo << "Trying " << it.current()->contactId() << ", proto "
 		//<< it.current()->protocol()->pluginId() << ", account " << it.current()->accountId() << endl;
 		if( ( c->contactId() == contactId ) && ( c->protocol()->pluginId() == protocolId || protocolId.isNull() ) )
 		{
@@ -594,9 +594,9 @@ void MetaContact::slotContactStatusChanged( Contact * c, const OnlineStatus &sta
 
 void MetaContact::setDisplayName( const QString &name )
 {
-	/*kdDebug( 14010 ) << k_funcinfo << "Change displayName from " << d->displayName <<
+	/*kDebug( 14010 ) << k_funcinfo << "Change displayName from " << d->displayName <<
 		" to " << name  << ", d->trackChildNameChanges=" << d->trackChildNameChanges << endl;
-	kdDebug(14010) << kdBacktrace(6) << endl;*/
+	kDebug(14010) << kBacktrace(6) << endl;*/
 
 	if( name == d->displayName )
 		return;
@@ -633,7 +633,7 @@ QString MetaContact::displayName() const
 			if( d->contacts.count() >= 1 )
 			{// don't call setDisplayNameSource , or there will probably be an infinite loop
 				d->displayNameSourceContact=d->contacts.first();
-//				kdDebug( 14010 ) << k_funcinfo << " setting displayname source for " << metaContactId()  << endl;
+//				kDebug( 14010 ) << k_funcinfo << " setting displayname source for " << metaContactId()  << endl;
 			}
 		}
 		if ( displayNameSourceContact() != 0L )
@@ -642,7 +642,7 @@ QString MetaContact::displayName() const
 		}
 		else
 		{
-//			kdDebug( 14010 ) << k_funcinfo << " source == SourceContact , but there is no displayNameSourceContact for contact " << metaContactId() << endl;
+//			kDebug( 14010 ) << k_funcinfo << " source == SourceContact , but there is no displayNameSourceContact for contact " << metaContactId() << endl;
 		}
 	}
 	return d->displayName;
@@ -656,7 +656,7 @@ QString nameFromKABC( const QString &id ) /*const*/
 		KABC::Addressee theAddressee = ab->findByUid(id);
 		if ( theAddressee.isEmpty() )
 		{
-			kdDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << id << " ) " << " in current address book" << endl;
+			kDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << id << " ) " << " in current address book" << endl;
 		}
 		else
 		{
@@ -755,7 +755,7 @@ QImage photoFromKABC( const QString &id ) /*const*/
 		KABC::Addressee theAddressee = ab->findByUid(id);
 		if ( theAddressee.isEmpty() )
 		{
-			kdDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << id << " ) " << " in current address book" << endl;
+			kDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << id << " ) " << " in current address book" << endl;
 		}
 		else
 		{
@@ -894,7 +894,7 @@ void MetaContact::moveToGroup( Group *from, Group *to )
 		return;
 
 
-	//kdDebug( 14010 ) << k_funcinfo << from->displayName() << " => " << to->displayName() << endl;
+	//kDebug( 14010 ) << k_funcinfo << from->displayName() << " => " << to->displayName() << endl;
 
 	d->groups.remove( from );
 	d->groups.append( to );
@@ -1006,7 +1006,7 @@ const QDomElement MetaContact::toXML(bool minimal)
 
 	if (photoSourceContact())
 	{
-		//kdDebug(14010) << k_funcinfo << "serializing photo source " << nameFromContact(photoSourceContact()) << endl;
+		//kDebug(14010) << k_funcinfo << "serializing photo source " << nameFromContact(photoSourceContact()) << endl;
 		// set contact source metadata for photo
 		QDomElement contactPhotoSource = metaContact.createElement( QString::fromUtf8("contact-source") );
 		contactPhotoSource.setAttribute( NSCID_ELEM, photoSourceContact()->contactId() );
@@ -1079,7 +1079,7 @@ bool MetaContact::fromXML( const QDomElement& element )
 			if ( contactElement.hasAttribute(NSCID_ELEM) && contactElement.hasAttribute(NSPID_ELEM) && contactElement.hasAttribute(NSAID_ELEM))
 			{
 				oldNameTracking = true;
-				//kdDebug(14010) << k_funcinfo << "old name tracking" << endl;
+				//kDebug(14010) << k_funcinfo << "old name tracking" << endl;
 				// retrieve deprecated data (now stored in property-sources)
 				// save temporarely, we will find a Contact* with this later
 				d->nameSourceCID = contactElement.attribute( NSCID_ELEM );
@@ -1087,7 +1087,7 @@ bool MetaContact::fromXML( const QDomElement& element )
 				d->nameSourceAID = contactElement.attribute( NSAID_ELEM );
 			}
 // 			else
-// 				kdDebug(14010) << k_funcinfo << "no old name tracking" << endl;
+// 				kDebug(14010) << k_funcinfo << "no old name tracking" << endl;
 		}
 		else if( contactElement.tagName() == QString::fromUtf8( "photo" ) )
 		{
@@ -1101,13 +1101,13 @@ bool MetaContact::fromXML( const QDomElement& element )
 			if ( contactElement.hasAttribute(PSCID_ELEM) && contactElement.hasAttribute(PSPID_ELEM) && contactElement.hasAttribute(PSAID_ELEM))
 			{
 				oldPhotoTracking = true;
-// 				kdDebug(14010) << k_funcinfo << "old photo tracking" << endl;
+// 				kDebug(14010) << k_funcinfo << "old photo tracking" << endl;
 				d->photoSourceCID = contactElement.attribute( PSCID_ELEM );
 				d->photoSourcePID = contactElement.attribute( PSPID_ELEM );
 				d->photoSourceAID = contactElement.attribute( PSAID_ELEM );
 			}
 // 			else
-// 				kdDebug(14010) << k_funcinfo << "no old photo tracking" << endl;
+// 				kDebug(14010) << k_funcinfo << "no old photo tracking" << endl;
 		}
 		else if( contactElement.tagName() == QString::fromUtf8( "property-sources" ) )
 		{
@@ -1195,7 +1195,7 @@ bool MetaContact::fromXML( const QDomElement& element )
 		/* if (displayNameSourceContact() )  <- doesn't work because the contact is only set up when all plugin are loaded (BUG 111956) */
 		if ( !d->nameSourceCID.isEmpty() )
 		{
-// 			kdDebug(14010) << k_funcinfo << "Converting old name source" << endl;
+// 			kDebug(14010) << k_funcinfo << "Converting old name source" << endl;
 			// even if the old tracking attributes exists, they could have been null, that means custom
 				setDisplayNameSource(SourceContact);
 		}
@@ -1212,7 +1212,7 @@ bool MetaContact::fromXML( const QDomElement& element )
 
 	if ( oldPhotoTracking )
 	{
-// 		kdDebug(14010) << k_funcinfo << "Converting old photo source" << endl;
+// 		kDebug(14010) << k_funcinfo << "Converting old photo source" << endl;
 		if ( !d->photoSourceCID.isEmpty() )   
 		{
 			setPhotoSource(SourceContact);
@@ -1242,7 +1242,7 @@ bool MetaContact::fromXML( const QDomElement& element )
 //	if (d->contacts.count() > 1) // Does NOT work as intended
 //		d->trackChildNameChanges=false;
 
-// 	kdDebug(14010) << k_funcinfo << "END" << endl;
+// 	kDebug(14010) << k_funcinfo << "END" << endl;
 	return true;
 }
 
@@ -1308,7 +1308,7 @@ void MetaContact::slotUpdateAddressBookPicture()
 		KABC::Addressee theAddressee = ab->findByUid(id);
 		if ( theAddressee.isEmpty() )
 		{
-			kdDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << id << " ) " << " in current address book" << endl;
+			kDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << id << " ) " << " in current address book" << endl;
 		}
 		else
 		{

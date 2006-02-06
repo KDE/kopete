@@ -280,7 +280,7 @@ QString Message::escapedBody() const
 
 QString Message::parsedBody() const
 {
-	//kdDebug(14000) << k_funcinfo << "messageformat: " << d->format << endl;
+	//kDebug(14000) << k_funcinfo << "messageformat: " << d->format << endl;
 
 	if( d->format == ParsedHTML )
 	{
@@ -525,7 +525,7 @@ QString Message::decodeString( const QByteArray &message, const QTextCodec *prov
 		return testCodec->toUnicode( message );
 	}
 
-	kdWarning(14000) << k_funcinfo << "Unable to decode string using provided codec(s), taking best guesses!" << endl;
+	kWarning(14000) << k_funcinfo << "Unable to decode string using provided codec(s), taking best guesses!" << endl;
 	if( success )
 		*success = false;
 
@@ -536,7 +536,7 @@ QString Message::decodeString( const QByteArray &message, const QTextCodec *prov
 	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) >= charsToCheck )
 	{
 		//All chars decodable.
-		kdDebug(14000) << k_funcinfo << "Using locale's codec" << endl;
+		kDebug(14000) << k_funcinfo << "Using locale's codec" << endl;
 		return testCodec->toUnicode( message );
 	}
 
@@ -545,11 +545,11 @@ QString Message::decodeString( const QByteArray &message, const QTextCodec *prov
 	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) >= charsToCheck )
 	{
 		//All chars decodable.
-		kdDebug(14000) << k_funcinfo << "Using latin1" << endl;
+		kDebug(14000) << k_funcinfo << "Using latin1" << endl;
 		return testCodec->toUnicode( message );
 	}
 
-	kdDebug(14000) << k_funcinfo << "Using latin1 and cleaning string" << endl;
+	kDebug(14000) << k_funcinfo << "Using latin1 and cleaning string" << endl;
 	//No codec decoded. Just decode latin1, and clean out any junk.
 	QString result = testCodec->toUnicode( message );
 	const uint length = message.length();

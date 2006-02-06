@@ -75,9 +75,9 @@ bool MessageReceiverTask::take( Transfer* transfer )
 		
 		Buffer* b = transfer->buffer();
 		m_icbmCookie = b->getBlock( 8 );
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "icbm cookie is " << m_icbmCookie << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "icbm cookie is " << m_icbmCookie << endl;
 		m_channel = b->getWord();
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "channel is " << m_channel << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "channel is " << m_channel << endl;
 
 		if ( m_currentSnacSubtype == 0x0007 )
 		{
@@ -106,7 +106,7 @@ bool MessageReceiverTask::take( Transfer* transfer )
 				return true;
 				break;
 			default:
-				kdWarning(OSCAR_RAW_DEBUG) << "A message was received on an unknown channel. Channel is " << m_channel << endl;
+				kWarning(OSCAR_RAW_DEBUG) << "A message was received on an unknown channel. Channel is " << m_channel << endl;
 				return false;
 				break;
 			}
@@ -132,7 +132,7 @@ void MessageReceiverTask::handleType1Message()
 	TLV t = Oscar::findTLV( messageTLVList, 0x0002 );
 	if ( !t )
 	{
-		kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Received a message packet with no message!" << endl;
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Received a message packet with no message!" << endl;
 		return;
 	}
 	Buffer messageBuffer( t.data );
@@ -143,7 +143,7 @@ void MessageReceiverTask::handleType1Message()
 		switch ( ( *it ).type )
 		{
 		case 0x0501:
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got features tlv. length: "
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got features tlv. length: "
 				<< ( *it ).length << " data: " << ( *it ).data << endl;
 			break;
 		case 0x0101:
@@ -151,7 +151,7 @@ void MessageReceiverTask::handleType1Message()
 			Buffer message( ( *it ).data );
 			m_charSet = message.getWord();
 			m_subCharSet = message.getWord();
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Message charset: " << m_charSet
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Message charset: " << m_charSet
 				<< " message subcharset: " << m_subCharSet << endl;
 			if ( m_charSet == 0x0002 )
 				msg.setEncoding( Oscar::Message::UCS2 );
@@ -166,7 +166,7 @@ void MessageReceiverTask::handleType1Message()
 			break;
 		} //end case
 		default:
-			kdDebug(OSCAR_RAW_DEBUG) << "Ignoring TLV of type " << ( *it ).type << endl;
+			kDebug(OSCAR_RAW_DEBUG) << "Ignoring TLV of type " << ( *it ).type << endl;
 			break;
 		} //end switch
 	}
@@ -174,7 +174,7 @@ void MessageReceiverTask::handleType1Message()
 	TLV autoResponse = Oscar::findTLV( messageTLVList, 0x0004 );
 	if ( autoResponse )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << "auto response message" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << "auto response message" << endl;
 		msg.addProperty( Oscar::Message::AutoResponse );
 	}
 	else
@@ -190,22 +190,22 @@ void MessageReceiverTask::handleType1Message()
 
 void MessageReceiverTask::handleType2Message()
 {
-	kdDebug(14151) << k_funcinfo << "Received Type 2 message. Trying to handle it..." << endl;
+	kDebug(14151) << k_funcinfo << "Received Type 2 message. Trying to handle it..." << endl;
 
 	Oscar::Message msg;
 	Q3ValueList<TLV> messageTLVList = transfer()->buffer()->getTLVList();
 	TLV t = Oscar::findTLV( messageTLVList, 0x0005 );
 	if ( !t )
 	{
-		kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Received a channel 2 message packet with no message!" << endl;
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Received a channel 2 message packet with no message!" << endl;
 		return;
 	}
 	Buffer messageBuffer( t.data );
-	kdDebug(14151) << k_funcinfo << "Buffer length is " << messageBuffer.length() << endl;
+	kDebug(14151) << k_funcinfo << "Buffer length is " << messageBuffer.length() << endl;
 
 	// request type
 	int requestType = messageBuffer.getWord();
-	kdDebug(14151) << k_funcinfo << "Request type (0 - request, 1 - cancel, 2 - accept): " << requestType << endl;
+	kDebug(14151) << k_funcinfo << "Request type (0 - request, 1 - cancel, 2 - accept): " << requestType << endl;
 
 	// skip the message id cookie, already handled above
 	messageBuffer.skipBytes( 8 );
@@ -219,27 +219,27 @@ void MessageReceiverTask::handleType2Message()
 		switch ( tlv.type )
 		{
 		case 0x0004:
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got external ip: "
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got external ip: "
 				<< tlv.length << " data: " << tlv.data << endl;
 			break;
 		case 0x0005:
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got listening port: "
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got listening port: "
 				<< tlv.length << " data: " << tlv.data << endl;
 			break;
 		case 0x000A:
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got Acktype: " // 0x0001 normal message, 2 Abort Request, 3 Acknowledge request
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got Acktype: " // 0x0001 normal message, 2 Abort Request, 3 Acknowledge request
 				<< tlv.length << " data: " << tlv.data << endl;
 			break;
 		case 0x000B:
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got unknown TLV 0x000B: "
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got unknown TLV 0x000B: "
 				<< tlv.length << " data: " << tlv.data << endl;
 			break;
 		case 0x000F:
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got unknown empty TLV 0x000F" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got unknown empty TLV 0x000F" << endl;
 			break;
 		case 0x2711:
 		{
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got a TLV 2711" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got a TLV 2711" << endl;
 			Buffer tlv2711Buffer( tlv.data );
 			parseRendezvousData( &tlv2711Buffer, &msg );
 			switch ( requestType )
@@ -248,20 +248,20 @@ void MessageReceiverTask::handleType2Message()
 				emit receivedMessage( msg );
 				break;
 			case 0x01:
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received Abort Mesage" << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received Abort Mesage" << endl;
 				break;
 			case 0x02:
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received OK Message" << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received OK Message" << endl;
 				break;
 			default:
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received unknown request type: " << requestType << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received unknown request type: " << requestType << endl;
 				break;
 			}
 			
 			break;
 		} //end case
 		default:
-			kdDebug(OSCAR_RAW_DEBUG) << "Ignoring TLV of type " << tlv.type << endl;
+			kDebug(OSCAR_RAW_DEBUG) << "Ignoring TLV of type " << tlv.type << endl;
 			break;
 		} //end switch
 	}//end while
@@ -270,10 +270,10 @@ void MessageReceiverTask::handleType2Message()
 void MessageReceiverTask::handleType4Message()
 {
 	TLV tlv5 = transfer()->buffer()->getTLV();
-	kdDebug(14151) << k_funcinfo << "The first TLV is of type " << tlv5.type << endl;
+	kDebug(14151) << k_funcinfo << "The first TLV is of type " << tlv5.type << endl;
 	if (tlv5.type != 0x0005)
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Aborting because first TLV != TLV(5)" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Aborting because first TLV != TLV(5)" << endl;
 		return;
 	}
 
@@ -281,12 +281,12 @@ void MessageReceiverTask::handleType4Message()
 
 	DWORD uin = tlv5buffer.getLEDWord(); // little endian for no sane reason!
 	if ( QString::number(uin) != m_fromUser )
-		kdWarning(14151) << k_funcinfo << "message uin does not match uin found in packet header!" << endl;
+		kWarning(14151) << k_funcinfo << "message uin does not match uin found in packet header!" << endl;
 
 	BYTE msgType = tlv5buffer.getByte();
 	BYTE msgFlags = tlv5buffer.getByte();
 
-	kdDebug(14151) << k_funcinfo << "Received server message. type = " << msgType
+	kDebug(14151) << k_funcinfo << "Received server message. type = " << msgType
 		<< ", flags = " << msgFlags << endl;
 
 	//handle the special user types
@@ -327,7 +327,7 @@ void MessageReceiverTask::handleType4Message()
 		msg.addProperty( Oscar::Message::Normal );
 		break;
 	default:
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Not handling message flag " << msgFlags << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Not handling message flag " << msgFlags << endl;
 		break;
 	}
 
@@ -342,7 +342,7 @@ void MessageReceiverTask::handleType4Message()
 
 void MessageReceiverTask::handleAutoResponse()
 {
-	kdDebug(14151) << k_funcinfo << "Received auto response. Trying to handle it..." << endl;
+	kDebug(14151) << k_funcinfo << "Received auto response. Trying to handle it..." << endl;
 	
 	Oscar::Message msg;
 	msg.addProperty( Oscar::Message::AutoResponse );
@@ -350,7 +350,7 @@ void MessageReceiverTask::handleAutoResponse()
 
 	// reason code
 	int reasonCode = b->getWord();
-	kdDebug(14151) << k_funcinfo << "Reason code (1 - channel not supported, 2 - busted payload, 3 - channel specific data): " << reasonCode << endl;
+	kDebug(14151) << k_funcinfo << "Reason code (1 - channel not supported, 2 - busted payload, 3 - channel specific data): " << reasonCode << endl;
 	
 	parseRendezvousData( b, &msg );
 	emit receivedMessage( msg );
@@ -361,7 +361,7 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 	int length1 =  b->getLEWord();
 	if ( length1 != 0x001B )
 	{	// all real messages (actually their header) seem to have length 0x1B
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Weired Message length. Bailing out!" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Weired Message length. Bailing out!" << endl;
 		return;
 	}
 	
@@ -402,7 +402,7 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 		*/
 		b->skipBytes(5); //same as above
 		
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Message type is: " << messageType << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Message type is: " << messageType << endl;
 		
 		Q3CString msgText( b->getLELNTS() );
 		Oscar::Message::Encoding encoding = Oscar::Message::UserDefined;
@@ -446,7 +446,7 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 		break;
 	}
 	default:
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got unknown message with length2 " << length2 << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got unknown message with length2 " << length2 << endl;
 	}
 }
 

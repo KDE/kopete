@@ -167,7 +167,7 @@ void Oscar::SSI::checkTLVs()
 	TLV authTLV = findTLV( m_tlvList, 0x0066 );
 	if ( authTLV )
 	{
-		kdDebug(14151) << k_funcinfo << "Need auth for contact " << m_name << endl;
+		kDebug(14151) << k_funcinfo << "Need auth for contact " << m_name << endl;
 		m_waitingAuth = true;
 	}
 	else
@@ -178,16 +178,16 @@ void Oscar::SSI::checkTLVs()
 	if ( aliasTLV )
 	{
 		m_alias.insert( 0, aliasTLV.data );
-		kdDebug( 14151 ) << k_funcinfo << "Got an alias '" << m_alias << "' for contact '" << m_name << "'" << endl;
+		kDebug( 14151 ) << k_funcinfo << "Got an alias '" << m_alias << "' for contact '" << m_name << "'" << endl;
 	}
 
 	TLV privacyTLV = findTLV( m_tlvList, 0x00CA );
 	if ( privacyTLV )
-		kdDebug(14151) << k_funcinfo << "Found privacy settings " << privacyTLV.data << endl;
+		kDebug(14151) << k_funcinfo << "Found privacy settings " << privacyTLV.data << endl;
 
 	TLV infoTLV = findTLV( m_tlvList, 0x00CC );
 	if ( infoTLV )
-		kdDebug(14151) << k_funcinfo << "Found 'allow others to see...' options " << infoTLV.data << endl;
+		kDebug(14151) << k_funcinfo << "Found 'allow others to see...' options " << infoTLV.data << endl;
 }
 
 QString Oscar::SSI::alias() const

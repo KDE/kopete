@@ -56,7 +56,7 @@ WPProtocol::WPProtocol( QObject *parent, const char *name, const QStringList & /
 	WPAway(    Kopete::OnlineStatus::Away,    20, this, 1,  QStringList(QString::fromLatin1("wp_away")),     i18n("Away"),    i18n("Away")),
 	WPOffline( Kopete::OnlineStatus::Offline, 0,  this, 2,  QStringList(), i18n("Offline"), i18n("Offline"))
 {
-//	kdDebug(14170) << "WPProtocol::WPProtocol()" << endl;
+//	kDebug(14170) << "WPProtocol::WPProtocol()" << endl;
 
 	sProtocol = this;
 
@@ -68,8 +68,8 @@ WPProtocol::WPProtocol( QObject *parent, const char *name, const QStringList & /
 
 	KGlobal::config()->setGroup("WinPopup");
 	QString smbClientBin = KGlobal::config()->readEntry("SmbcPath", "/usr/bin/smbclient");
-	int groupCheckFreq = KGlobal::config()->readNumEntry("HostCheckFreq", 60);
-	int messageCheckFreq = KGlobal::config()->readNumEntry("MessageCheckFreq", 5);
+	int groupCheckFreq = KGlobal::config()->readEntry("HostCheckFreq", 60);
+	int messageCheckFreq = KGlobal::config()->readEntry("MessageCheckFreq", 5);
 
 	popupClient = new WinPopupLib(smbClientBin, groupCheckFreq, messageCheckFreq);
 	QObject::connect(popupClient, SIGNAL(signalNewMessage(const QString &, const QDateTime &, const QString &)),
@@ -79,14 +79,14 @@ WPProtocol::WPProtocol( QObject *parent, const char *name, const QStringList & /
 // Destructor
 WPProtocol::~WPProtocol()
 {
-//	kdDebug(14170) <<  "WPProtocol::~WPProtocol()" << endl;
+//	kDebug(14170) <<  "WPProtocol::~WPProtocol()" << endl;
 
 	sProtocol = 0;
 }
 
 AddContactPage *WPProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *theAccount)
 {
-//	kdDebug(14170) << "WPProtocol::createAddContactWidget(<parent>, " << theAccount << ")" << endl;
+//	kDebug(14170) << "WPProtocol::createAddContactWidget(<parent>, " << theAccount << ")" << endl;
 
 	return new WPAddContact(this, dynamic_cast<WPAccount *>(theAccount), parent);
 }
@@ -100,12 +100,12 @@ Kopete::Contact *WPProtocol::deserializeContact( Kopete::MetaContact *metaContac
 
 	WPAccount *theAccount = static_cast<WPAccount *>(Kopete::AccountManager::self()->findAccount(protocol()->pluginId(), accountId));
 	if(!theAccount)	{
-		kdDebug(14170) <<  "Account " << accountId << " not found" << endl;
+		kDebug(14170) <<  "Account " << accountId << " not found" << endl;
 		return 0;
 	}
 
 	if(theAccount->contacts()[contactId]) {
-		kdDebug(14170) << "User " << contactId << " already in contacts map" << endl;
+		kDebug(14170) << "User " << contactId << " already in contacts map" << endl;
 		return 0;
 	}
 
@@ -125,19 +125,19 @@ Kopete::Account *WPProtocol::createNewAccount(const QString &accountId)
 
 void WPProtocol::slotSettingsChanged()
 {
-	kdDebug(14170) <<  "WPProtocol::slotSettingsChanged()" << endl;
+	kDebug(14170) <<  "WPProtocol::slotSettingsChanged()" << endl;
 
 	KGlobal::config()->setGroup("WinPopup");
 	QString smbClientBin = KGlobal::config()->readEntry("SmbcPath", "/usr/bin/smbclient");
-	int groupCheckFreq = KGlobal::config()->readNumEntry("HostCheckFreq", 60);
-	int messageCheckFreq = KGlobal::config()->readNumEntry("MessageCheckFreq", 5);
+	int groupCheckFreq = KGlobal::config()->readEntry("HostCheckFreq", 60);
+	int messageCheckFreq = KGlobal::config()->readEntry("MessageCheckFreq", 5);
 
 	popupClient->settingsChanged(smbClientBin, groupCheckFreq, messageCheckFreq);
 }
 
 void WPProtocol::installSamba()
 {
-//	kdDebug(14170) <<  "WPProtocol::installSamba()" endl;
+//	kDebug(14170) <<  "WPProtocol::installSamba()" endl;
 
 	QStringList args;
 	args += KStandardDirs::findExe("winpopup-install.sh");
@@ -173,7 +173,7 @@ void WPProtocol::slotReceivedMessage(const QString &Body, const QDateTime &Time,
 		if (theAccount)
 			dynamic_cast<WPAccount *>(theAccount)->slotGotNewMessage(Body, Time, From);
 		else
-			kdDebug(14170) << "No contact or connected account found!" << endl;
+			kDebug(14170) << "No contact or connected account found!" << endl;
 	}
 }
 

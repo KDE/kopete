@@ -23,7 +23,7 @@
 
 ModifyBuddyTask::ModifyBuddyTask(Task* parent) : Task(parent)
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
 ModifyBuddyTask::~ModifyBuddyTask()
@@ -32,7 +32,7 @@ ModifyBuddyTask::~ModifyBuddyTask()
 
 void ModifyBuddyTask::onGo()
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	switch( m_type )
 	{

@@ -25,7 +25,7 @@
 JabberConnector::JabberConnector ( QObject *parent, const char */*name*/ )
  : XMPP::Connector ( parent )
 {
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New Jabber connector." << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New Jabber connector." << endl;
 
 	mErrorCode = KNetwork::KSocketBase::NoError;
 
@@ -45,7 +45,7 @@ JabberConnector::~JabberConnector ()
 
 void JabberConnector::connectToServer ( const QString &server )
 {
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Initiating connection to " << server << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Initiating connection to " << server << endl;
 
 	/*
 	 * FIXME: we should use a SRV lookup to determine the
@@ -67,7 +67,7 @@ void JabberConnector::connectToServer ( const QString &server )
 
 void JabberConnector::slotConnected ()
 {
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "We are connected." << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "We are connected." << endl;
 
 	// FIXME: setPeerAddress() is something different, find out correct usage later
 	//KInetSocketAddress inetAddress = mStreamSocket->address().asInet().makeIPv6 ();
@@ -79,7 +79,7 @@ void JabberConnector::slotConnected ()
 
 void JabberConnector::slotError ( int code )
 {
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Error detected: " << code << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Error detected: " << code << endl;
 
 	mErrorCode = code;
 	emit error ();
@@ -109,7 +109,7 @@ void JabberConnector::done ()
 
 void JabberConnector::setOptHostPort ( const QString &host, quint16 port )
 {
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Manually specifying host " << host << " and port " << port << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Manually specifying host " << host << " and port " << port << endl;
 
 	mHost = host;
 	mPort = port;
@@ -118,7 +118,7 @@ void JabberConnector::setOptHostPort ( const QString &host, quint16 port )
 
 void JabberConnector::setOptSSL ( bool ssl )
 {
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Setting SSL to " << ssl << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Setting SSL to " << ssl << endl;
 
 	setUseSSL ( ssl );
 

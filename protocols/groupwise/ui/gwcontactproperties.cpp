@@ -97,7 +97,7 @@ void GroupWiseContactProperties::setupProperties( QMap< QString, QString > serve
 	QMap< QString, QString >::Iterator end = serverProps.end();
 	for ( it = serverProps.begin(); it != end; ++it )
 	{
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " adding property: " << it.key() << ", " << it.data() << endl;
+		kDebug( GROUPWISE_DEBUG_GLOBAL ) << " adding property: " << it.key() << ", " << it.data() << endl;
 		QString key = it.key();
 		QString localised;
 		if ( key == "telephoneNumber" )
@@ -124,9 +124,9 @@ void GroupWiseContactProperties::setupProperties( QMap< QString, QString > serve
 void GroupWiseContactProperties::slotShowContextMenu( Q3ListViewItem * item, const QPoint & pos )
 {
 	if ( item )
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "for item " << item->text(0) << ", " << item->text(1) << endl;
+		kDebug( GROUPWISE_DEBUG_GLOBAL ) << "for item " << item->text(0) << ", " << item->text(1) << endl;
 	else
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "no selected item" << endl;
+		kDebug( GROUPWISE_DEBUG_GLOBAL ) << "no selected item" << endl;
 	Q3PopupMenu * popupMenu = new Q3PopupMenu( m_propsWidget->m_propsView );
 	m_copyAction->plug( popupMenu );
 	popupMenu->exec( pos );
@@ -134,7 +134,7 @@ void GroupWiseContactProperties::slotShowContextMenu( Q3ListViewItem * item, con
 
 void GroupWiseContactProperties::slotCopy()
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	if ( m_propsWidget->m_propsView->currentItem() )
 	{
 		QClipboard *cb = kapp->clipboard();

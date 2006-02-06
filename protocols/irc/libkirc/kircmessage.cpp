@@ -97,18 +97,18 @@ void Message::writeRawMessage(Engine *engine, const QTextCodec *codec, const QSt
 	// FIXME: Really handle this
 	if (!engine->socket())
 	{
-		kdDebug(14121) << k_funcinfo << "Not connected while attempting to write:" << str << endl;
+		kDebug(14121) << k_funcinfo << "Not connected while attempting to write:" << str << endl;
 		return;
 	}
 
 	QString txt = str + QString::fromLatin1("\r\n");
 
 	QByteArray s(codec->fromUnicode(txt));
-        kdDebug(14120) << "Message is " << s.length() << " chars" << endl;
+        kDebug(14120) << "Message is " << s.length() << " chars" << endl;
 	// FIXME: Should check the amount of data really writen.
 	int wrote = engine->socket()->write(s.data(), s.length());
 
-	kdDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(str) << endl;
+	kDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(str) << endl;
 }
 
 void Message::writeMessage(Engine *engine, const QTextCodec *codec, const QString &message)
@@ -177,7 +177,7 @@ Message Message::parse(Engine *engine, const QTextCodec *codec, bool *parseSucce
 				raw.at(length-3) = '\0';
 			}
 
-			kdDebug(14121) << "<< " << raw << endl;
+			kDebug(14121) << "<< " << raw << endl;
 
 			Message msg;
 			if(matchForIRCRegExp(raw, codec, msg))
@@ -187,13 +187,13 @@ Message Message::parse(Engine *engine, const QTextCodec *codec, bool *parseSucce
 			}
 			else
 			{
-				kdDebug(14120) << k_funcinfo << "Unmatched line: \"" << raw << "\"" << endl;
+				kDebug(14120) << k_funcinfo << "Unmatched line: \"" << raw << "\"" << endl;
 			}
 
 			return msg;
 		}
 		else
-			kdWarning(14121) << k_funcinfo << "Failed to read a line while canReadLine returned true!" << endl;
+			kWarning(14121) << k_funcinfo << "Failed to read a line while canReadLine returned true!" << endl;
 	}
 
 	return Message();
@@ -358,7 +358,7 @@ bool Message::extractCtcpCommand(QByteArray &message, QByteArray &ctcpline)
 
 void Message::dump() const
 {
-	kdDebug(14120)	<< "Raw:" << m_raw << endl
+	kDebug(14120)	<< "Raw:" << m_raw << endl
 			<< "Prefix:" << m_prefix << endl
 			<< "Command:" << m_command << endl
 			<< "Args:" << m_args << endl
@@ -366,7 +366,7 @@ void Message::dump() const
 			<< "CtcpRaw:" << m_ctcpRaw << endl;
 	if(m_ctcpMessage)
 	{
-		kdDebug(14120) << "Contains CTCP Message:" << endl;
+		kDebug(14120) << "Contains CTCP Message:" << endl;
 		m_ctcpMessage->dump();
 	}
 }

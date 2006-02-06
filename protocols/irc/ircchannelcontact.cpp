@@ -134,10 +134,10 @@ void IRCChannelContact::slotOnlineStatusChanged(Kopete::Contact *c, const Kopete
 
 	if (c == account()->myself()) {
 		if (status.internalStatus() & IRCProtocol::Operator) { 
-			kdDebug(14120) << k_funcinfo << "WE NOW HAVE OP STATUS" << endl;
+			kDebug(14120) << k_funcinfo << "WE NOW HAVE OP STATUS" << endl;
 			toggleOperatorActions(true);
 		} else {
-			kdDebug(14120) << k_funcinfo << "WE NOW dont HAVE OP STATUS" << endl;
+			kDebug(14120) << k_funcinfo << "WE NOW dont HAVE OP STATUS" << endl;
 			toggleOperatorActions(false);
 		}
 	}
@@ -228,7 +228,7 @@ void IRCChannelContact::slotAddNicknames()
 
 		if ( nickToAdd.toLower() != account->mySelf()->nickName().toLower() )
 		{
-			//kdDebug(14120) << k_funcinfo << m_nickName << " nick to add: " << nickToAdd << endl;
+			//kDebug(14120) << k_funcinfo << m_nickName << " nick to add: " << nickToAdd << endl;
 
 			user = account->contactManager()->findUser(nickToAdd);
 
@@ -237,7 +237,7 @@ void IRCChannelContact::slotAddNicknames()
 			// onlineStatusChanged() emits, and they would adjust their statuses.
 
 			if (account->contactManager()->findChannelsByMember(user).isEmpty()) {
-				//kdDebug(14120) << k_funcinfo << "Setting nick ONLINE" << endl;
+				//kDebug(14120) << k_funcinfo << "Setting nick ONLINE" << endl;
 				user->setOnlineStatus(m_protocol->m_UserStatusOnline);
 			}
 		}
@@ -287,7 +287,7 @@ void IRCChannelContact::channelTopic(const QString &topic)
 
 void IRCChannelContact::channelHomePage(const QString &url)
 {
-	kdDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo << endl;
 	setProperty( m_protocol->propHomepage, url );
 }
 
@@ -296,10 +296,10 @@ void IRCChannelContact::join()
 	if (!manager(Kopete::Contact::CannotCreate) &&
 		onlineStatus().status() == Kopete::OnlineStatus::Online)
 	{
-		kdDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
-		kdDebug() << k_funcinfo << "My manager:" << manager(Kopete::Contact::CannotCreate) << endl;
+		kDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
+		kDebug() << k_funcinfo << "My manager:" << manager(Kopete::Contact::CannotCreate) << endl;
 		if( manager(Kopete::Contact::CannotCreate) )
-			kdDebug() << k_funcinfo << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false) << endl;
+			kDebug() << k_funcinfo << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false) << endl;
 		startChat();
 	}
 
@@ -356,12 +356,12 @@ void IRCChannelContact::userJoinedChannel(const QString &nickname)
 
 	if (nickname.toLower() == account->mySelf()->nickName().toLower())
 	{
-		kdDebug() << k_funcinfo << "Me:" << this << endl;
-		kdDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
-		kdDebug() << k_funcinfo << "My manager:" << manager(Kopete::Contact::CannotCreate) << endl;
+		kDebug() << k_funcinfo << "Me:" << this << endl;
+		kDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
+		kDebug() << k_funcinfo << "My manager:" << manager(Kopete::Contact::CannotCreate) << endl;
 
 		if (manager(Kopete::Contact::CannotCreate))
-			kdDebug() << k_funcinfo << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false) << endl;
+			kDebug() << k_funcinfo << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false) << endl;
 
 		Kopete::Message msg((Kopete::Contact *)this, mMyself,
 			i18n("You have joined channel %1").arg(m_nickName),

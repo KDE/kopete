@@ -240,7 +240,7 @@ void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Co
 		}*/
 		//if(!c)
 
-		kdWarning(14310) << k_funcinfo << "No contact found in this metacontact to" <<
+		kWarning(14310) << k_funcinfo << "No contact found in this metacontact to" <<
 			" append in the history" << endl;
 		return;
 	}
@@ -324,13 +324,13 @@ void HistoryLogger::saveToDisk()
 		//on a my machine, (2.4Ghz, but old HD) it should take about 10 ms to save the file.
 		// So that would mean save every 10 seconds, which seems to be ok.
 		// But it may take 500 ms if the file to save becomes too big (1Mb).
-		kdDebug(14310) << k_funcinfo << m_toSaveFileName << " saved in " << t.elapsed() << " ms " <<endl ;
+		kDebug(14310) << k_funcinfo << m_toSaveFileName << " saved in " << t.elapsed() << " ms " <<endl ;
 
 		m_toSaveFileName=QString::null;
 		m_toSaveDocument=QDomDocument();
 	}
 	else
-		kdError(14310) << k_funcinfo << "impossible to save the history file " << m_toSaveFileName << endl;
+		kError(14310) << k_funcinfo << "impossible to save the history file " << m_toSaveFileName << endl;
 
 }
 
@@ -716,7 +716,7 @@ unsigned int HistoryLogger::getFirstMonth(const Kopete::Contact *c)
 
 			if(result < 0)
 			{
-				kdWarning(14310) << k_funcinfo << "Kopete only found log file from Kopete 0.7.x made in the future. Check your date!" << endl;
+				kWarning(14310) << k_funcinfo << "Kopete only found log file from Kopete 0.7.x made in the future. Check your date!" << endl;
 				break;
 			}
 			return result;
@@ -744,7 +744,7 @@ unsigned int HistoryLogger::getFirstMonth(const Kopete::Contact *c)
 			int result = 12*(QDate::currentDate().year() - rx.cap(1).toUInt()) +QDate::currentDate().month() - rx.cap(2).toUInt();
 			if(result < 0)
 			{
-				kdWarning(14310) << k_funcinfo << "Kopete only found log file made in the future. Check your date!" << endl;
+				kWarning(14310) << k_funcinfo << "Kopete only found log file made in the future. Check your date!" << endl;
 				break;
 			}
 			return result;
@@ -816,7 +816,7 @@ QList<int> HistoryLogger::getDaysForMonth(QDate date)
 	int lastDay=0;
 	foreach(Kopete::Contact *contact, contacts)
 	{
-//		kdDebug() << getFileName(*it, date) << endl;
+//		kDebug() << getFileName(*it, date) << endl;
 		QFile file(getFileName(contact, date));
 		if(!file.open(QIODevice::ReadOnly))
 		{

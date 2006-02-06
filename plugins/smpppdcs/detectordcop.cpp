@@ -57,19 +57,19 @@ DetectorDCOP::KInternetDCOPState DetectorDCOP::getConnectionStatusDCOP() {
     DCOPCString replyType;
     QDataStream arg(&data, QIODevice::WriteOnly);
 
-    kdDebug(14312) << k_funcinfo << "Start inquiring " << m_kinternetApp << " via DCOP" << endl;
+    kDebug(14312) << k_funcinfo << "Start inquiring " << m_kinternetApp << " via DCOP" << endl;
 
     if(!m_client->call(m_kinternetApp, DCOPCString("KInternetIface"), DCOPCString("isOnline()"), data, replyType, replyData)) {
-        kdDebug(14312) << k_funcinfo << "there was some error using DCOP." << endl;
+        kDebug(14312) << k_funcinfo << "there was some error using DCOP." << endl;
     } else {
         QDataStream reply(&replyData, QIODevice::ReadOnly);
         if(replyType == "bool") {
             bool result;
             reply >> result;
-            kdDebug(14312) << k_funcinfo << "isOnline() returned " << result << endl;
+            kDebug(14312) << k_funcinfo << "isOnline() returned " << result << endl;
             return result ? CONNECTED : DISCONNECTED;
         } else {
-            kdDebug(14312) << k_funcinfo << "isOnline() returned an unexpected type of reply!" << endl;
+            kDebug(14312) << k_funcinfo << "isOnline() returned an unexpected type of reply!" << endl;
         }
     }
 

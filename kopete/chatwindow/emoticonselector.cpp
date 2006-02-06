@@ -68,24 +68,24 @@ void EmoticonLabel::mouseReleaseEvent(QMouseEvent*)
 EmoticonSelector::EmoticonSelector(QWidget *parent, const char *name)
 	: QWidget(parent, name)
 {
-//	kdDebug(14000) << k_funcinfo << "called." << endl;
+//	kDebug(14000) << k_funcinfo << "called." << endl;
 	lay = 0L;
 }
 
 void EmoticonSelector::prepareList(void)
 {
-//	kdDebug(14000) << k_funcinfo << "called." << endl;
+//	kDebug(14000) << k_funcinfo << "called." << endl;
 	int row = 0;
 	int col = 0;
 	QMap<QString, QString> list = Kopete::Emoticons::self()->emoticonAndPicList();
 	int emoticonsPerRow = static_cast<int>(sqrt(list.count()));
-//	kdDebug(14000) << "emoticonsPerRow=" << emoticonsPerRow << endl;
+//	kDebug(14000) << "emoticonsPerRow=" << emoticonsPerRow << endl;
 
 	if ( lay )
 	{
 // FIXME kde4, no clue what to do with that
 /*		QObjectList list = queryList( "EmoticonLabel" );
-//		kdDebug(14000) << k_funcinfo << "There are " << list->count() << " EmoticonLabels to delete." << endl;
+//		kDebug(14000) << k_funcinfo << "There are " << list->count() << " EmoticonLabels to delete." << endl;
 		list->setAutoDelete(true);
 		list.clear();
 		delete list;
@@ -99,7 +99,7 @@ void EmoticonSelector::prepareList(void)
 		QWidget *w = new EmoticonLabel(it.key(), it.data(), this);
 		movieList.push_back( ((QLabel*)w)->movie() );
 		connect(w, SIGNAL(clicked(const QString&)), this, SLOT(emoticonClicked(const QString&)));
-//		kdDebug(14000) << "adding Emoticon to row=" << row << ", col=" << col << "." << endl;
+//		kDebug(14000) << "adding Emoticon to row=" << row << ", col=" << col << "." << endl;
 		lay->addWidget(w, row, col);
 		if ( col == emoticonsPerRow )
 		{
@@ -114,7 +114,7 @@ void EmoticonSelector::prepareList(void)
 
 void EmoticonSelector::emoticonClicked(const QString &str)
 {
-//	kdDebug(14000) << "selected emoticon '" << str << "'" << endl;
+//	kDebug(14000) << "selected emoticon '" << str << "'" << endl;
 	// KDE4/Qt TODO: use qobject_cast instead.
 	emit ItemSelected ( str );
 	if ( isVisible() && parentWidget() &&
@@ -126,7 +126,7 @@ void EmoticonSelector::emoticonClicked(const QString &str)
 
 void EmoticonSelector::hideEvent( QHideEvent* )
 {
-	kdDebug( 14000 ) << k_funcinfo << endl;
+	kDebug( 14000 ) << k_funcinfo << endl;
 	MovieList::iterator it;
 	for( it = movieList.begin(); it != movieList.end(); ++it )
 	{
@@ -136,7 +136,7 @@ void EmoticonSelector::hideEvent( QHideEvent* )
 
 void EmoticonSelector::showEvent( QShowEvent* )
 {
-	kdDebug( 14000 ) << k_funcinfo << endl;
+	kDebug( 14000 ) << k_funcinfo << endl;
 	MovieList::iterator it;
 	for( it = movieList.begin(); it != movieList.end(); ++it )
 	{

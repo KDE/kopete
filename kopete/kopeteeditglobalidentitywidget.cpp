@@ -98,7 +98,7 @@ KopeteEditGlobalIdentityWidget::~KopeteEditGlobalIdentityWidget()
 
 void KopeteEditGlobalIdentityWidget::setIconSize(int size)
 {
-	kdDebug(14000) << k_funcinfo << "Manually changing the icon size." << endl;
+	kDebug(14000) << k_funcinfo << "Manually changing the icon size." << endl;
 
 	// Update the picture (change the size of it)
 	d->iconSize = size;
@@ -110,7 +110,7 @@ void KopeteEditGlobalIdentityWidget::setIconSize(int size)
 
 void KopeteEditGlobalIdentityWidget::iconSizeChanged()
 {
-	kdDebug(14000) << k_funcinfo << "Changing icon size (i.e the picture size)" << endl;
+	kDebug(14000) << k_funcinfo << "Changing icon size (i.e the picture size)" << endl;
 
 	KToolBar *tb = (KToolBar*)sender();
 	if(tb)
@@ -147,7 +147,7 @@ void KopeteEditGlobalIdentityWidget::createGUI()
 
 void KopeteEditGlobalIdentityWidget::updateGUI(const QString &key, const QVariant &value)
 {
-	kdDebug(14000) << k_funcinfo << "Updating the GUI reflecting the global identity change." << endl;
+	kDebug(14000) << k_funcinfo << "Updating the GUI reflecting the global identity change." << endl;
 	
 	if(key == Kopete::Global::Properties::self()->photo().key())
 	{
@@ -223,7 +223,7 @@ void KopeteEditGlobalIdentityWidget::changeNickname()
 {
 	if( !d->lineNickname->text().isEmpty() && d->lineNickname->text() != d->myself->displayName() )
 	{
-		kdDebug(14000) << k_funcinfo << "Updating global nickname..." << endl;
+		kDebug(14000) << k_funcinfo << "Updating global nickname..." << endl;
 
 		// Reset the text color since the nickname is now updated.
 		d->lineNickname->unsetPalette();

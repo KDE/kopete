@@ -81,7 +81,7 @@ public:
 		
 	void PhoneSessionStateChanged(cricket::Call *call, cricket::Session *session, cricket::Session::State state)
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "State changed: " << state << endl;
+		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "State changed: " << state << endl;
 
 		XMPP::Jid jid(session->remote_address().c_str());
 		
@@ -225,7 +225,7 @@ JingleVoiceSession::JingleVoiceSession(JabberAccount *account, const JidList &pe
 
 JingleVoiceSession::~JingleVoiceSession()
 {
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
 	delete slotsProxy;
 	delete d;
 }
@@ -237,11 +237,11 @@ QString JingleVoiceSession::sessionType()
 
 void JingleVoiceSession::start()
 {
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Starting a voice session..." << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Starting a voice session..." << endl;
 	d->currentCall = d->phoneSessionClient->CreateCall();
 
 	QString firstPeerJid = ((XMPP::Jid)peers().first()).full();
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "With peer: " << firstPeerJid << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "With peer: " << firstPeerJid << endl;
 	d->currentCall->InitiateSession( buzz::Jid(firstPeerJid.ascii()) );
 
 	d->phoneSessionClient->SetFocus(d->currentCall);
@@ -251,7 +251,7 @@ void JingleVoiceSession::accept()
 {	
 	if(d->currentCall)
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Accepting a voice session..." << endl;
+		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Accepting a voice session..." << endl;
 
 		d->currentCall->AcceptSession(d->currentCall->sessions()[0]);
 		d->phoneSessionClient->SetFocus(d->currentCall);
@@ -276,7 +276,7 @@ void JingleVoiceSession::terminate()
 
 void JingleVoiceSession::setCall(cricket::Call *call)
 {
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating cricket::call object." << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating cricket::call object." << endl;
 	d->currentCall = call;
 }
 
@@ -293,7 +293,7 @@ void JingleVoiceSession::receiveStanza(const QString &stanza)
 		if( type == "unavailable" && hasPeer(peers(), from) ) 
 		{
 			//qDebug("JingleVoiceCaller: User went offline without closing a call.");
-			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "User went offline without closing a call." << endl;
+			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "User went offline without closing a call." << endl;
 			emit terminated();
 		}
 		return;
@@ -317,7 +317,7 @@ void JingleVoiceSession::receiveStanza(const QString &stanza)
 	// Spread the word
 	if( ok )
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Handing down buzz::stanza" << endl;
+		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Handing down buzz::stanza" << endl;
 		buzz::XmlElement *e = buzz::XmlElement::ForStr(stanza.ascii());
 		d->phoneSessionClient->OnIncomingStanza(e);
 	}

@@ -122,7 +122,7 @@ int CoreProtocol::state()
 void CoreProtocol::debug( const QString &str )
 {
 #ifdef LIBGW_USE_KDEBUG
-	kdDebug( 14191 ) << "debug: " << str << endl;
+	kDebug( 14191 ) << "debug: " << str << endl;
 #else
 	qDebug( "GW RAW PROTO: %s\n", str.ascii() );
 #endif
@@ -343,7 +343,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		debug( QString( "CoreProtocol::fieldsToWire - outgoing data: %1" ).arg( outgoing.data() ) );
 		dout.writeRawBytes( outgoing.data(), outgoing.length() );
 		// write what we have so far, we may be calling this function recursively
-		//kdDebug( 14999 ) << k_funcinfo << "writing \'" << bout << "\'" << endl;
+		//kDebug( 14999 ) << k_funcinfo << "writing \'" << bout << "\'" << endl;
 		//debug( " - signalling data" );
 		emit outgoingData( bytesOut );
 

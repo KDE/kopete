@@ -95,7 +95,7 @@ bool ServerVersionsTask::take( Transfer* transfer )
 
 void ServerVersionsTask::handleFamilies()
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo 
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo 
 		<< "RECV SNAC 0x01, 0x03 - got the list of families server supports" << endl;
 
 	Buffer* outbuf = transfer()->buffer();
@@ -123,7 +123,7 @@ void ServerVersionsTask::requestFamilyVersions()
 	WORD val;
 	Buffer* outbuf = new Buffer();
 
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SEND SNAC 0x01, 0x17 - Snac family versions we want" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SEND SNAC 0x01, 0x17 - Snac family versions we want" << endl;
 
 	for ( int i = 0; i < listLength; i++ )
 	{
@@ -153,14 +153,14 @@ void ServerVersionsTask::requestFamilyVersions()
 
 void ServerVersionsTask::handleServerVersions()
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo <<
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo <<
 		"RECV SNAC 0x01, 0x18, got list of families this server understands" << endl;
 
 	Buffer* buffer = transfer()->buffer();
 	int numFamilies = m_familiesList.count();
 	for ( int srvFamCount = 0; srvFamCount < numFamilies; srvFamCount++ )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "server version=" << buffer->getWord()
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "server version=" << buffer->getWord()
 			 << ", server family=" << buffer->getWord() << endl;
 	}
 	setSuccess( 0, QString::null );

@@ -54,7 +54,7 @@ OutgoingTransfer::OutgoingTransfer(const QString& to, P2P::Dispatcher *dispatche
 
 OutgoingTransfer::~OutgoingTransfer()
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo << endl;
 }
 
 void OutgoingTransfer::sendImage(const QByteArray& image)
@@ -100,7 +100,7 @@ void OutgoingTransfer::slotSendData()
 		buffer.resize(bytesRead);
 	}
 
-	kdDebug(14140) << k_funcinfo << QString("Sending, %1 bytes").arg(bytesRead) << endl;
+	kDebug(14140) << k_funcinfo << QString("Sending, %1 bytes").arg(bytesRead) << endl;
 
 	if((m_offset + bytesRead) < m_file->size())
 	{
@@ -128,7 +128,7 @@ void OutgoingTransfer::slotSendData()
 
 void OutgoingTransfer::acknowledged()
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo << endl;
 
 	switch(m_state)
 	{
@@ -193,7 +193,7 @@ void OutgoingTransfer::processMessage(const Message& message)
 {
 	QString body =
 		QByteArray(message.body.data(), message.header.dataSize);
-	kdDebug(14140) << k_funcinfo << "received, " << body << endl;
+	kDebug(14140) << k_funcinfo << "received, " << body << endl;
 
 	if(body.startsWith("BYE"))
 	{
@@ -353,7 +353,7 @@ void OutgoingTransfer::connectToEndpoint(const QString& hostName)
 
 void OutgoingTransfer::slotConnected()
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo << endl;
 	// Check if connection is ok.
 	quint32 bytesWritten = m_socket->write(QByteArray("foo").data(), 4);
 	if(bytesWritten != 4)
@@ -394,12 +394,12 @@ void OutgoingTransfer::slotConnected()
 void OutgoingTransfer::slotRead()
 {
 	qint32 bytesAvailable = m_socket->bytesAvailable();
-	kdDebug(14140) << k_funcinfo << bytesAvailable << ", bytes available." << endl;
+	kDebug(14140) << k_funcinfo << bytesAvailable << ", bytes available." << endl;
 }
 
 void OutgoingTransfer::slotSocketError(int)
 {
-	kdDebug(14140) << k_funcinfo << m_socket->errorString() << endl;
+	kDebug(14140) << k_funcinfo << m_socket->errorString() << endl;
 	// If an error has occurred, try to connect
 	// to another available peer endpoint.
 	// If there are no more available endpoints,
@@ -422,7 +422,7 @@ void OutgoingTransfer::slotSocketError(int)
 
 void OutgoingTransfer::slotSocketClosed()
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo << endl;
 	m_socket->deleteLater();
 	m_socket = 0l;
 }

@@ -46,7 +46,7 @@ IncomingTransfer::IncomingTransfer(const QString& from, P2P::Dispatcher *dispatc
 
 IncomingTransfer::~IncomingTransfer()
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo << endl;
 	if(m_listener)
 	{
 		delete m_listener;
@@ -94,7 +94,7 @@ void IncomingTransfer::slotTransferRefused(const Kopete::FileTransferInfo& info)
 
 void IncomingTransfer::acknowledged()
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo << endl;
 	
 	switch(m_state)
 	{
@@ -128,7 +128,7 @@ void IncomingTransfer::processMessage(const Message& message)
 	{
 		// UserDisplayIcon data or File data is in this message.
 		// Write the recieved data to the file.
-		kdDebug(14140) << k_funcinfo << QString("Received, %1 bytes").arg(message.header.dataSize) << endl;
+		kDebug(14140) << k_funcinfo << QString("Received, %1 bytes").arg(message.header.dataSize) << endl;
 		
 		m_file->write(message.body.data(), message.header.dataSize);
 		if(m_transfer){
@@ -175,7 +175,7 @@ void IncomingTransfer::processMessage(const Message& message)
 	{
 		QString body =
 			QByteArray(message.body.data(), message.header.dataSize);
-//		kdDebug(14140) << k_funcinfo << "received, " << body << endl;
+//		kDebug(14140) << k_funcinfo << "received, " << body << endl;
 
 		if(body.startsWith("INVITE"))
 		{
@@ -197,7 +197,7 @@ void IncomingTransfer::processMessage(const Message& message)
 			regex = QRegExp("NetID: (\\-?\\d+)\r\n");
 			regex.search(body);
 			QString netId = regex.cap(1);
-			kdDebug(14140) << "net id, " << netId << endl;
+			kDebug(14140) << "net id, " << netId << endl;
 			// Connection Types
 			// - Direct-Connect
 			// - Port-Restrict-NAT
@@ -231,8 +231,8 @@ void IncomingTransfer::processMessage(const Message& message)
 				QObject::connect(m_listener, SIGNAL(gotError(int)), this, SLOT(slotListenError(int)));
 				// Listen for incoming connections.
 				bool isListening = m_listener->listen(1);
-				kdDebug(14140) << k_funcinfo << (isListening ? "listening" : "not listening") << endl;
-				kdDebug(14140) << k_funcinfo
+				kDebug(14140) << k_funcinfo << (isListening ? "listening" : "not listening") << endl;
+				kDebug(14140) << k_funcinfo
 					<< "local endpoint, " << m_listener->localAddress().nodeName()
 					<< endl;
 				
@@ -317,7 +317,7 @@ void IncomingTransfer::processMessage(const Message& message)
 
 void IncomingTransfer::slotListenError(int /*errorCode*/)
 {
-	kdDebug(14140) << k_funcinfo << m_listener->errorString() << endl;
+	kDebug(14140) << k_funcinfo << m_listener->errorString() << endl;
 }
 
 void IncomingTransfer::slotAccept()
@@ -329,13 +329,13 @@ void IncomingTransfer::slotAccept()
 		// NOTE If direct connection fails, the sending
 		// client wil transfer the file data through the
 		// existing session.
-		kdDebug(14140) << k_funcinfo << "Direct connection failed." << endl;
+		kDebug(14140) << k_funcinfo << "Direct connection failed." << endl;
 		// Close the listening endpoint.
 		m_listener->close();
 		return;
 	}
 
-	kdDebug(14140) << k_funcinfo << "Direct connection established." << endl;
+	kDebug(14140) << k_funcinfo << "Direct connection established." << endl;
 
 	// Set the socket to non blocking,
 	// enable the ready read signal and disable
@@ -356,26 +356,26 @@ void IncomingTransfer::slotAccept()
 void IncomingTransfer::slotSocketRead()
 {
 	int available = m_socket->bytesAvailable();
-	kdDebug(14140) << k_funcinfo << available << ", bytes available." << endl;
+	kDebug(14140) << k_funcinfo << available << ", bytes available." << endl;
 	if(available > 0)
 	{
 		QByteArray buffer(available);
 		m_socket->read(buffer.data(), buffer.size());
 
 		if(QString(buffer) == "foo"){
-			kdDebug(14140) << "Connection Check." << endl;
+			kDebug(14140) << "Connection Check." << endl;
 		}
 	}
 }
 
 void IncomingTransfer::slotSocketClosed()
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo << endl;
 }
 
 void IncomingTransfer::slotSocketError(int errorCode)
 {
-	kdDebug(14140) << k_funcinfo << errorCode << endl;
+	kDebug(14140) << k_funcinfo << errorCode << endl;
 }
 
 #include "incomingtransfer.moc"

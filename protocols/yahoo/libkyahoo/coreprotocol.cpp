@@ -54,7 +54,7 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 {
 	// store locally
 	int oldsize = m_in.size();
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << incomingBytes.size() << " bytes. already had " << oldsize << " bytes" << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << incomingBytes.size() << " bytes. already had " << oldsize << " bytes" << endl;
 	
 	m_in.resize( oldsize + incomingBytes.size() );
 	memcpy( m_in.data() + oldsize, incomingBytes.data(), incomingBytes.size() );
@@ -69,11 +69,11 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 	while ( m_in.size() && ( parsedBytes = wireToTransfer(m_in) ) )
 	{
 		transferCount++;
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " parsed transfer " <<  transferCount << " in chunk of "<< parsedBytes << " bytes" << endl; 
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " parsed transfer " <<  transferCount << " in chunk of "<< parsedBytes << " bytes" << endl; 
 		int size =  m_in.size();
 		if ( parsedBytes < size )
 		{
-			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " more data in chunk! ( I have parsed " << parsedBytes << " and total data of " << size << ")" << endl;
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " more data in chunk! ( I have parsed " << parsedBytes << " and total data of " << size << ")" << endl;
 			// copy the unparsed bytes into a new qbytearray and replace m_in with that
 			QByteArray remainder( size - parsedBytes );
 			memcpy( remainder.data(), m_in.data() + parsedBytes, remainder.size() );
@@ -83,7 +83,7 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 			m_in.truncate( 0 );
 	}
 	if ( m_state == NeedMore )
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " message was incomplete, waiting for more..." << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " message was incomplete, waiting for more..." << endl;
 	/*
 	if ( m_eventProtocol->state() == EventProtocol::OutOfSync )
 	{	
@@ -91,23 +91,23 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 		m_in.truncate( 0 );
 	}
 	*/
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " done processing chunk" << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " done processing chunk" << endl;
 	
 }
 
 Transfer* CoreProtocol::incomingTransfer()
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;	
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;	
 	if ( m_state == Available )
 	{
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - got a transfer" << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - got a transfer" << endl;
 		m_state = NoData;
 		return m_inTransfer;
 		m_inTransfer = 0;
 	}
 	else
 	{
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " no milk today" << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " no milk today" << endl;
 		return 0;
 	}
 }
@@ -115,7 +115,7 @@ Transfer* CoreProtocol::incomingTransfer()
 void cp_dump( const QByteArray &bytes )
 {
 #ifdef YAHOO_COREPROTOCOL_DEBUG
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " contains " << bytes.count() << " bytes" << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " contains " << bytes.count() << " bytes" << endl;
 	for ( uint i = 0; i < bytes.count(); ++i )
 	{
 		printf( "%02x ", bytes[ i ] );
@@ -126,10 +126,10 @@ void cp_dump( const QByteArray &bytes )
 
 void CoreProtocol::outgoingTransfer( Transfer* outgoing )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	if ( outgoing->type() == Transfer::YMSGTransfer )
 	{
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " got YMSGTransfer" << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " got YMSGTransfer" << endl;
 		YMSGTransfer *yt = (YMSGTransfer *) outgoing;
 		QByteArray bytesOut = yt->serialize();
 		
@@ -137,7 +137,7 @@ void CoreProtocol::outgoingTransfer( Transfer* outgoing )
 		//dout.setEncoding( QTextStream::Latin1 );
 		//dout.setByteOrder( QDataStream::LittleEndian );
 		//dout << bytesOut;
-		//kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " " << bytesOut << endl;
+		//kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " " << bytesOut << endl;
 		emit outgoingData( bytesOut );
 		// now convert 
 		//fieldsToWire( fields );
@@ -149,7 +149,7 @@ void CoreProtocol::outgoingTransfer( Transfer* outgoing )
 
 int CoreProtocol::wireToTransfer( const QByteArray& wire )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	// processing incoming data and reassembling it into transfers
 	// may be an event or a response
 	
@@ -169,13 +169,13 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 	{
 		if ( (wire[0] == 'Y') && (wire[1] == 'M') && (wire[2] == 'S') && (wire[3] == 'G'))
 		{
-			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - looks like a valid YMSG packet" << endl;
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - looks like a valid YMSG packet" << endl;
 			Transfer *t = m_YMSGProtocol->parse( wire, bytesParsed );
-			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - YMSG Protocol parsed " << bytesParsed << " bytes" << endl;
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - YMSG Protocol parsed " << bytesParsed << " bytes" << endl;
 			if ( t )
 			{
 				m_inTransfer = t;
-				kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - got a valid packet " << endl;
+				kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - got a valid packet " << endl;
 				
 				m_state = Available;
 				emit incomingData();
@@ -185,18 +185,18 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		}
 		else 
 		{ 
-			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - not a valid YMSG packet. Trying to recover." << endl;
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - not a valid YMSG packet. Trying to recover." << endl;
 			QTextStream s( wire, QIODevice::ReadOnly );
 			QString remaining = s.read();
 			int pos = remaining.find( "YMSG", bytesParsed );
 			if( pos >= 0 )
 			{
-				kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Recover successful." << endl;
+				kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Recover successful." << endl;
 				bytesParsed += pos;
 			}
 			else
 			{
-				kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Recover failed. Dump it!" << endl;
+				kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Recover failed. Dump it!" << endl;
 				bytesParsed = wire.size();
 			}
 		}
@@ -219,7 +219,7 @@ bool CoreProtocol::okToProceed( QDataStream &din)
 	if ( din.atEnd() )
 	{
 		m_state = NeedMore;
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " saved message prematurely" << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " saved message prematurely" << endl;
 		return false;
 	}
 	else

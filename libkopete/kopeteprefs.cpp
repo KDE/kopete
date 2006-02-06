@@ -46,7 +46,7 @@ KopetePrefs::KopetePrefs() : QObject( kapp, "KopetePrefs" )
 
 void KopetePrefs::load()
 {
-//	kdDebug( 14010 ) << k_funcinfo << endl;
+//	kDebug( 14010 ) << k_funcinfo << endl;
 	config->setGroup("Appearance");
 
 	// Appearance config
@@ -175,7 +175,7 @@ void KopetePrefs::load()
 
 void KopetePrefs::save()
 {
-//	kdDebug(14010) << "KopetePrefs::save()" << endl;
+//	kDebug(14010) << "KopetePrefs::save()" << endl;
 	config->setGroup("Appearance");
 
 	config->writeEntry("EmoticonTheme", mIconTheme);

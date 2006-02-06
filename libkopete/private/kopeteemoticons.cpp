@@ -221,7 +221,7 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode m
 					{
 						// Apparently this HTML entity isn't ended, something is wrong, try skip the '&'
 						// and continue
-						kdDebug( 14000 ) << k_funcinfo << "Broken HTML entity, trying to recover." << endl;
+						kDebug( 14000 ) << k_funcinfo << "Broken HTML entity, trying to recover." << endl;
 						inHTMLEntity = false;
 						pos++;
 					}
@@ -274,7 +274,7 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode m
 
 Emoticons::Emoticons( const QString &theme ) : QObject( kapp, "KopeteEmoticons" )
 {
-//	kdDebug(14010) << "KopeteEmoticons::KopeteEmoticons" << endl;
+//	kDebug(14010) << "KopeteEmoticons::KopeteEmoticons" << endl;
 	d=new Private;
 	if(theme.isNull())
 	{
@@ -365,7 +365,7 @@ void Emoticons::initEmoticons( const QString &theme )
 		d->theme = theme;
 	}
 
-//	kdDebug(14010) << k_funcinfo << "Called" << endl;
+//	kDebug(14010) << k_funcinfo << "Called" << endl;
 	d->emoticonAndPicList.clear();
 	d->emoticonMap.clear();
 
@@ -402,7 +402,7 @@ void Emoticons::initEmoticons( const QString &theme )
 						}
 						else
 						{
-							kdDebug(14010) << k_funcinfo <<
+							kDebug(14010) << k_funcinfo <<
 									"Warning: Unknown element '" << element.tagName() <<
 									"' in emoticon data" << endl;
 						}
@@ -414,7 +414,7 @@ void Emoticons::initEmoticons( const QString &theme )
 			}
 			else
 			{
-				kdDebug(14010) << k_funcinfo << "Warning: Unknown element '" <<
+				kDebug(14010) << k_funcinfo << "Warning: Unknown element '" <<
 						element.tagName() << "' in map file" << endl;
 			}
 		}
@@ -446,10 +446,10 @@ QString Emoticons::parse( const QString &message, ParseMode mode )
 		break;
 		case Image:
 			result += token.picHTMLCode;
-			kdDebug( 14010 ) << k_funcinfo << "Emoticon html code: " << result << endl;
+			kDebug( 14010 ) << k_funcinfo << "Emoticon html code: " << result << endl;
 		break;
 		default:
-			kdDebug( 14010 ) << k_funcinfo << "Unknown token type. Something's broken." << endl;
+			kDebug( 14010 ) << k_funcinfo << "Unknown token type. Something's broken." << endl;
 		}
 	}
 	return result;

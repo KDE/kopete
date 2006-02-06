@@ -38,7 +38,7 @@
 SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& prefixValue, Kopete::Account* account, QObject* parent, const char *name)
 	: QObject( parent, name ), m_account(account)
 {
-	kdWarning( 14160 ) << k_funcinfo << "this = " << this << ", m_account = " << m_account << " (should be ok if zero!!)" << endl;
+	kWarning( 14160 ) << k_funcinfo << "this = " << this << ", m_account = " << m_account << " (should be ok if zero!!)" << endl;
 
 	provider = providerName;
 	prefix = prefixValue;
@@ -119,10 +119,10 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 							telPos = names.count() - 1;
 							if (args[0] == *it)
 							{
-//								kdDebug(14160) << "Exact match for " << args[0] << endl;
+//								kDebug(14160) << "Exact match for " << args[0] << endl;
 								exactNumberMatch = true;
 							}
-//							kdDebug(14160) << "args[0] (" << args[0] << ") contains " << *it << endl;
+//							kDebug(14160) << "args[0] (" << args[0] << ") contains " << *it << endl;
 						}
 					}
 				}
@@ -142,7 +142,7 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 
 SMSSendProvider::~SMSSendProvider()
 {
-	kdWarning( 14160 ) << k_funcinfo << "this = " << this << endl;
+	kWarning( 14160 ) << k_funcinfo << "this = " << this << endl;
 }
 
 void SMSSendProvider::setAccount(Kopete::Account *account)
@@ -175,7 +175,7 @@ const bool SMSSendProvider::isHidden(int i)
 
 void SMSSendProvider::save(Q3PtrList<KLineEdit>& args)
 {
-	kdDebug( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
+	kDebug( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
 	if (!m_account) return;		// prevent crash in worst case
 
 	QString group = QString("SMSSend-%1").arg(provider);
@@ -185,16 +185,16 @@ void SMSSendProvider::save(Q3PtrList<KLineEdit>& args)
 	{
 		if (telPos == namesI || messagePos == namesI)
 		{
-//		    kdDebug(14160) << k_funcinfo << "Skipping pos " << namesI << endl;
+//		    kDebug(14160) << k_funcinfo << "Skipping pos " << namesI << endl;
 		    namesI++;
 		    if (telPos == namesI || messagePos == namesI)
 		    {
-//		        kdDebug(14160) << k_funcinfo << "Skipping pos " << namesI << endl;
+//		        kDebug(14160) << k_funcinfo << "Skipping pos " << namesI << endl;
 		        namesI++;
 		    }
 		}
 
-//                kdDebug(14160) << k_funcinfo << "saving " << args.at(i) << " to " << names[namesI] << endl;
+//                kDebug(14160) << k_funcinfo << "saving " << args.at(i) << " to " << names[namesI] << endl;
 		if (!args.at(i)->text().isEmpty())
 		{	values[namesI] = args.at(i)->text();
 			m_account->configGroup()->writeEntry(QString("%1:%2").arg(group).arg(names[namesI]), values[namesI]);
@@ -242,7 +242,7 @@ void SMSSendProvider::send(const Kopete::Message& msg)
 
 	KProcess* p = new KProcess;
 
-	kdWarning( 14160 ) << "Executing " << QString("%1/bin/smssend").arg(prefix) << " \"" << provider << "\" " << values.join("\" \"") << "\"" << endl;
+	kWarning( 14160 ) << "Executing " << QString("%1/bin/smssend").arg(prefix) << " \"" << provider << "\" " << values.join("\" \"") << "\"" << endl;
 
 	*p << QString("%1/bin/smssend").arg(prefix) << provider << values;
 
@@ -256,7 +256,7 @@ void SMSSendProvider::send(const Kopete::Message& msg)
 
 void SMSSendProvider::slotSendFinished(KProcess *p)
 {
-	kdWarning( 14160 ) << k_funcinfo << "this = " << this << ", es = " << p->exitStatus() << ", p = " << p << " (should be non-zero!!)" << endl;
+	kWarning( 14160 ) << k_funcinfo << "this = " << this << ", es = " << p->exitStatus() << ", p = " << p << " (should be non-zero!!)" << endl;
 	if (p->exitStatus() == 0)
 		emit messageSent(m_msg);
 	else
@@ -271,7 +271,7 @@ void SMSSendProvider::slotReceivedOutput(KProcess *, char *buffer, int buflen)
 //	for (QStringList::Iterator it = lines.begin(); it != lines.end(); ++it)
 	for(int i = 0; i < buflen; i++)
 		output += buffer[i];
-	kdWarning( 14160 ) << k_funcinfo << " output now = " << output << endl;
+	kWarning( 14160 ) << k_funcinfo << " output now = " << output << endl;
 }
 
 int SMSSendProvider::maxSize()

@@ -91,7 +91,7 @@ void SMPPPDCSPrefs::determineCSType() {
 }
 
 void SMPPPDCSPrefs::scanStarted(uint total) {
-    kdDebug(14312) << k_funcinfo << "Scanning for a SMPPPD started. Will scan " << total << " IPs" << endl;
+    kDebug(14312) << k_funcinfo << "Scanning for a SMPPPD started. Will scan " << total << " IPs" << endl;
 
     // setup the scanProgress Dialog
     if(!m_scanProgressDlg) {
@@ -113,13 +113,13 @@ void SMPPPDCSPrefs::scanProgress(uint cur) {
 }
 
 void SMPPPDCSPrefs::cancelScanning() {
-    kdDebug(14312) << k_funcinfo << endl;
+    kDebug(14312) << k_funcinfo << endl;
     Q_ASSERT(m_curSearcher);
     m_curSearcher->cancelSearch();
 }
 
 void SMPPPDCSPrefs::smpppdFound(const QString& host) {
-    kdDebug(14312) << k_funcinfo << endl;
+    kDebug(14312) << k_funcinfo << endl;
 
     QString myHost = host;
 
@@ -133,16 +133,16 @@ void SMPPPDCSPrefs::smpppdFound(const QString& host) {
 #ifndef NDEBUG
             switch(h_errno) {
             case HOST_NOT_FOUND:
-                kdDebug(14312) << k_funcinfo << "No such host is known in the database." << endl;
+                kDebug(14312) << k_funcinfo << "No such host is known in the database." << endl;
                 break;
             case TRY_AGAIN:
-                kdDebug(14312) << k_funcinfo << "Couldn't contact DNS server." << endl;
+                kDebug(14312) << k_funcinfo << "Couldn't contact DNS server." << endl;
                 break;
             case NO_RECOVERY:
-                kdDebug(14312) << k_funcinfo << "A non-recoverable error occurred." << endl;
+                kDebug(14312) << k_funcinfo << "A non-recoverable error occurred." << endl;
                 break;
             case NO_ADDRESS:
-                kdDebug(14312) << k_funcinfo << "The host database contains an entry for the name, but it doesn't have an associated Internet address." << endl;
+                kDebug(14312) << k_funcinfo << "The host database contains an entry for the name, but it doesn't have an associated Internet address." << endl;
                 break;
             }
 #endif
@@ -157,7 +157,7 @@ void SMPPPDCSPrefs::smpppdFound(const QString& host) {
 }
 
 void SMPPPDCSPrefs::smpppdNotFound() {
-    kdDebug(14312) << k_funcinfo << endl;
+    kDebug(14312) << k_funcinfo << endl;
     useNetstat->setChecked(true);
     useSmpppd->setChecked(false);
     autoCSTest->setEnabled(true);

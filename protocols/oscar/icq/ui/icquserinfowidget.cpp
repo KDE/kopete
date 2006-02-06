@@ -46,7 +46,7 @@
 ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, const char * name )
 : KDialogBase( KDialogBase::IconList, 0,  parent, name, false, i18n( "ICQ User Information" ), Ok )
 {
-	kdDebug(14153) << k_funcinfo << "Creating new icq user info widget" << endl;
+	kDebug(14153) << k_funcinfo << "Creating new icq user info widget" << endl;
 	
 	QFrame* genInfo = addPage( i18n( "General Info" ),
 	                                         i18n( "General ICQ Information" ),

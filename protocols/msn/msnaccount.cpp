@@ -81,9 +81,9 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 
 	KConfigGroup *config=configGroup();
 
-	m_blockList   = config->readListEntry(  "blockList" ) ;
-	m_allowList   = config->readListEntry(  "allowList" ) ;
-	m_reverseList = config->readListEntry(  "reverseList"  ) ;
+	m_blockList   = config->readEntry(  "blockList", QStringList() ) ;
+	m_allowList   = config->readEntry(  "allowList", QStringList() ) ;
+	m_reverseList = config->readEntry(  "reverseList", QStringList()  ) ;
 
 	// Load the avatar
 	m_pictureFilename = locateLocal( "appdata", "msnpicture-"+ accountId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  );
@@ -128,14 +128,14 @@ void MSNAccount::connectWithPassword( const QString &passwd )
 	m_newContactList=false;
 	if ( isConnected() )
 	{
-		kdDebug( 14140 ) << k_funcinfo <<"Ignoring Connect request "
+		kDebug( 14140 ) << k_funcinfo <<"Ignoring Connect request "
 			<< "(Already Connected)" << endl;
 		return;
 	}
 
 	if ( m_notifySocket )
 	{
-		kdDebug( 14140 ) << k_funcinfo <<"Ignoring Connect request (Already connecting)"  << endl;
+		kDebug( 14140 ) << k_funcinfo <<"Ignoring Connect request (Already connecting)"  << endl;
 		return;
 	}
 
@@ -143,7 +143,7 @@ void MSNAccount::connectWithPassword( const QString &passwd )
 
 	if ( m_password.isNull() )
 	{
-		kdDebug( 14140 ) << k_funcinfo <<"Abort connection (null password)"  << endl;
+		kDebug( 14140 ) << k_funcinfo <<"Abort connection (null password)"  << endl;
 		return;
 	}
 
@@ -366,7 +366,7 @@ void MSNAccount::slotOpenInbox()
 
 void MSNAccount::slotNotifySocketClosed()
 {
-	kdDebug( 14140 ) << k_funcinfo << endl;
+	kDebug( 14140 ) << k_funcinfo << endl;
 
 	Kopete::Account::DisconnectReason reason=(Kopete::Account::DisconnectReason)(m_notifySocket->disconnectReason());
 	m_notifySocket->deleteLater();
@@ -400,12 +400,12 @@ void MSNAccount::slotNotifySocketClosed()
 	}
 #endif
 	m_msgHandle.clear();
-	// kdDebug( 14140 ) << "MSNAccount::slotNotifySocketClosed - done" << endl;
+	// kDebug( 14140 ) << "MSNAccount::slotNotifySocketClosed - done" << endl;
 }
 
 void MSNAccount::slotStatusChanged( const Kopete::OnlineStatus &status )
 {
-//	kdDebug( 14140 ) << k_funcinfo  << status.internalStatus() <<  endl;
+//	kDebug( 14140 ) << k_funcinfo  << status.internalStatus() <<  endl;
 	myself()->setOnlineStatus( status );
 
 	if(m_newContactList)
@@ -472,7 +472,7 @@ void MSNAccount::slotGroupAdded( const QString& groupName, const QString &groupG
 	{
 		// Group can already be in the list since the idle timer does a 'List Groups'
 		// command. Simply return, don't issue a warning.
-		// kdDebug( 14140 ) << k_funcinfo << "Group " << groupName << " already in list, skipped." << endl;
+		// kDebug( 14140 ) << k_funcinfo << "Group " << groupName << " already in list, skipped." << endl;
 		return;
 	}
 
@@ -524,7 +524,7 @@ void MSNAccount::slotGroupAdded( const QString& groupName, const QString &groupG
 					g->pluginData( protocol(), accountId() + " id" ).isEmpty()  )
 			{
 				fallBack = g;
-				kdDebug( 14140 ) << k_funcinfo << "We didn't found the group " << groupName <<" in the old MSN group.  But kopete has already one with the same name." <<  endl;
+				kDebug( 14140 ) << k_funcinfo << "We didn't found the group " << groupName <<" in the old MSN group.  But kopete has already one with the same name." <<  endl;
 				break;
 			}
 		}
@@ -544,7 +544,7 @@ void MSNAccount::slotGroupAdded( const QString& groupName, const QString &groupG
 		{
 			fallBack = new Kopete::Group( groupName );
 			Kopete::ContactList::self()->addGroup( fallBack );
-			kdDebug( 14140 ) << k_funcinfo << "We didn't found the group " << groupName <<" So we're creating a new one." <<  endl;
+			kDebug( 14140 ) << k_funcinfo << "We didn't found the group " << groupName <<" So we're creating a new one." <<  endl;
 
 		}
 	}
@@ -561,7 +561,7 @@ void MSNAccount::slotGroupAdded( const QString& groupName, const QString &groupG
 		for ( it = list.begin(); it != itEnd; ++it )
 		{
 			QString contactId = *it;
-			kdDebug( 14140 ) << k_funcinfo << "Adding to new group: " << contactId <<  endl;
+			kDebug( 14140 ) << k_funcinfo << "Adding to new group: " << contactId <<  endl;
 			MSNContact *c = static_cast<MSNContact *>(contacts()[contactId]);
 			if(c && c->hasProperty(MSNProtocol::protocol()->propGuid.key()) )
 				notifySocket()->addContact( contactId, MSNProtocol::FL, QString::null, c->guid(), groupGuid );
@@ -611,13 +611,13 @@ void MSNAccount::addGroup( const QString &groupName, const QString& contactToAdd
 			tmp_addToNewGroup[groupName].append(contactToAdd);
 			//A group with the same name is about to be added,
 			// we don't need to add a second group with the same name
-			kdDebug( 14140 ) << k_funcinfo << "no need to re-add " << groupName << " for " << contactToAdd  <<  endl;
+			kDebug( 14140 ) << k_funcinfo << "no need to re-add " << groupName << " for " << contactToAdd  <<  endl;
 			return;
 		}
 		else
 		{
 			tmp_addToNewGroup.insert(groupName,QStringList(contactToAdd));
-			kdDebug( 14140 ) << k_funcinfo << "preparing to add " << groupName << " for " << contactToAdd  <<  endl;
+			kDebug( 14140 ) << k_funcinfo << "preparing to add " << groupName << " for " << contactToAdd  <<  endl;
 		}
 	}
 
@@ -752,7 +752,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 		{
 			if( !c->metaContact() )
 			{
-				kdWarning( 14140 ) << k_funcinfo << "the contact " << c->contactId() << " has no meta contact" <<endl;
+				kWarning( 14140 ) << k_funcinfo << "the contact " << c->contactId() << " has no meta contact" <<endl;
 				Kopete::MetaContact *metaContact = new Kopete::MetaContact();
 
 				c->setMetaContact(metaContact);
@@ -890,7 +890,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& list, c
 					// Let slotGroupAdded do it.
 					if( m_groupList.contains(groupGuid) )
 					{
-						kdDebug( 14140 ) << k_funcinfo << "Adding " << handle << " to group: " << groupGuid <<  endl;
+						kDebug( 14140 ) << k_funcinfo << "Adding " << handle << " to group: " << groupGuid <<  endl;
 						notifySocket()->addContact( handle, MSNProtocol::FL, QString::null, contactGuid, groupGuid );
 						
 						c->contactAddedToGroup( groupGuid, m_groupList[ groupGuid ] );
@@ -939,7 +939,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& list, c
 
 		if ( !handle.isEmpty() && !m_allowList.contains( handle ) && !m_blockList.contains( handle ) )
 		{
-			kdDebug(14140) << k_funcinfo << "Trying to add contact to AL. " << endl;
+			kDebug(14140) << k_funcinfo << "Trying to add contact to AL. " << endl;
 			notifySocket()->addContact(handle, MSNProtocol::AL, QString::null, QString::null, QString::null );
 		}
 	}
@@ -997,7 +997,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& list, c
 
 void MSNAccount::slotContactRemoved( const QString& handle, const QString& list, const QString& contactGuid, const QString& groupGuid )
 {
-	kdDebug( 14140 ) << k_funcinfo << "handle: " << handle << " list: " << list << " contact-uid: " << contactGuid << endl;
+	kDebug( 14140 ) << k_funcinfo << "handle: " << handle << " list: " << list << " contact-uid: " << contactGuid << endl;
 	MSNContact *c=static_cast<MSNContact *>( contacts()[ handle ] );
 	if ( list == "BL" )
 	{
@@ -1115,12 +1115,12 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 	if ( handle.isEmpty() )
 	{
 		// we have lost the handle?
-		kdDebug(14140) << k_funcinfo << "Impossible to open a chat session, I forgot the contact to invite" <<endl;
+		kDebug(14140) << k_funcinfo << "Impossible to open a chat session, I forgot the contact to invite" <<endl;
 		// forget it
 		return;
 	}
 
-//	kdDebug( 14140 ) << k_funcinfo <<"Creating chat for " << handle << endl;
+//	kDebug( 14140 ) << k_funcinfo <<"Creating chat for " << handle << endl;
 
 	if ( !contacts()[ handle ] )
 		addContact( handle, publicName, 0L, Kopete::Account::Temporary );
@@ -1224,7 +1224,7 @@ void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
 
 void MSNAccount::slotGlobalIdentityChanged( const QString &key, const QVariant &value )
 {
-	if( !configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) )
+	if( !configGroup()->readEntry("ExcludeGlobalIdentity", false) )
 	{
 		if(key == Kopete::Global::Properties::self()->nickName().key())
 		{
@@ -1239,7 +1239,7 @@ void MSNAccount::slotGlobalIdentityChanged( const QString &key, const QVariant &
 		else if(key == Kopete::Global::Properties::self()->photo().key())
 		{
 			m_pictureFilename = value.toString();
-			kdDebug( 14140 ) << k_funcinfo << m_pictureFilename << endl;
+			kDebug( 14140 ) << k_funcinfo << m_pictureFilename << endl;
 			resetPictureObject(false);
 		}
 	}
@@ -1280,7 +1280,7 @@ void MSNAccount::slotErrorMessageReceived( int type, const QString &msg )
 		}
 	}
 
-	kdDebug(14140) << k_funcinfo << msg << endl;
+	kDebug(14140) << k_funcinfo << msg << endl;
 	// Display the error
 	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), msgBoxType, msg, caption );
 
@@ -1327,10 +1327,10 @@ void MSNAccount::addContactServerside(const QString &contactId, QList<Kopete::Gr
 				// Clear the group plugin data.
 				group->setPluginData( protocol() , accountId() + " id" , QString::null);
 				group->setPluginData( protocol() , accountId() + " displayName" , QString::null);
-				kdDebug( 14140 ) << k_funcinfo << " Group " << group->displayName() << " marked with id #" << groupId << " does not seems to be anymore on the server" << endl;
+				kDebug( 14140 ) << k_funcinfo << " Group " << group->displayName() << " marked with id #" << groupId << " does not seems to be anymore on the server" << endl;
 
 				// Add the group on MSN server, will fix the corruption.
-				kdDebug(14140) << k_funcinfo << "Fixing group corruption, re-adding " << group->displayName() << "to the server." << endl;
+				kDebug(14140) << k_funcinfo << "Fixing group corruption, re-adding " << group->displayName() << "to the server." << endl;
 				addGroup( group->displayName(), contactId);
 			}
 			else
@@ -1346,20 +1346,20 @@ void MSNAccount::addContactServerside(const QString &contactId, QList<Kopete::Gr
 		{
 			if( !group->displayName().isEmpty() && group->type() == Kopete::Group::Normal )
 			{
-				kdDebug(14140) << k_funcinfo << "Group not on MSN server, add it" << endl;
+				kDebug(14140) << k_funcinfo << "Group not on MSN server, add it" << endl;
 				addGroup( group->displayName(), contactId );
 			}
 		}
 	}
 
 	// After add the contact to the top-level, it will be moved to required groups later.
-	kdDebug( 14140 ) << k_funcinfo << "Add the contact on the server " << endl;
+	kDebug( 14140 ) << k_funcinfo << "Add the contact on the server " << endl;
 	m_notifySocket->addContact( contactId, MSNProtocol::FL, contactId, QString::null, QString::null );
 }
 
 MSNContact *MSNAccount::findContactByGuid(const QString &contactGuid)
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo << endl;
 	QHash<QString, Kopete::Contact*> contactList = contacts();
 	QHash<QString, Kopete::Contact*>::Iterator it, itEnd = contactList.end();
 	for ( it = contactList.begin(); it != itEnd; ++it )
@@ -1368,7 +1368,7 @@ MSNContact *MSNAccount::findContactByGuid(const QString &contactGuid)
 
 		if(c && c->property( MSNProtocol::protocol()->propGuid ).value().toString() == contactGuid )
 		{
-			kdDebug(14140) << k_funcinfo << "OK found a contact. " << endl;
+			kDebug(14140) << k_funcinfo << "OK found a contact. " << endl;
 			// Found the contact GUID
 			return c;
 		}
@@ -1405,7 +1405,7 @@ void MSNAccount::resetPictureObject(bool silent)
 {
 	QString old=m_pictureObj;
 
-	if(!configGroup()->readBoolEntry("exportCustomPicture"))
+	if(!configGroup()->readEntry("exportCustomPicture", false))
 	{
 		m_pictureObj="";
 		myself()->removeProperty( Kopete::Global::Properties::self()->photo() );

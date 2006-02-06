@@ -73,7 +73,7 @@ IRCGUIClient::IRCGUIClient( Kopete::ChatSession *parent ) : QObject(parent) , KX
 		}
 		else
 		{
-			kdDebug(14120) << k_funcinfo << "Actions == 0" << endl;
+			kDebug(14120) << k_funcinfo << "Actions == 0" << endl;
 		}
 
 		delete actions;
@@ -82,7 +82,7 @@ IRCGUIClient::IRCGUIClient( Kopete::ChatSession *parent ) : QObject(parent) , KX
 	}
 	else
 	{
-		kdDebug(14120) << k_funcinfo << "Members == 0" << endl;
+		kDebug(14120) << k_funcinfo << "Members == 0" << endl;
 	}
 }
 

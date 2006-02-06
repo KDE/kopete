@@ -49,7 +49,7 @@ Properties *Properties::self()
 {
 	if(!mSelf)
 	{
-		//kdDebug(14000) << k_funcinfo << endl;
+		//kDebug(14000) << k_funcinfo << endl;
 		mSelf = new Properties();
 	}
 	return mSelf;
@@ -57,13 +57,13 @@ Properties *Properties::self()
 
 Properties::Properties()
 {
-	kdDebug(14000) << k_funcinfo << endl;
+	kDebug(14000) << k_funcinfo << endl;
 	d = new PropertiesPrivate();
 }
 
 Properties::~Properties()
 {
-	kdDebug(14000) << k_funcinfo << endl;
+	kDebug(14000) << k_funcinfo << endl;
 	delete d;
 }
 
@@ -71,7 +71,7 @@ const ContactPropertyTmpl &Properties::tmpl(const QString &key) const
 {
 	if(d->mTemplates.contains(key))
 	{
-		/*kdDebug(14000) << k_funcinfo <<
+		/*kDebug(14000) << k_funcinfo <<
 			"Found template for key = '" << key << "'" << endl;*/
 		return d->mTemplates[key];
 	}
@@ -84,7 +84,7 @@ bool Properties::registerTemplate(const QString &key,
 {
 	if(d->mTemplates.contains(key))
 	{
-		kdDebug(14000) << k_funcinfo <<
+		kDebug(14000) << k_funcinfo <<
 			"Called for EXISTING key = '" << key << "'" << endl;
 		return false;
 	}
@@ -97,7 +97,7 @@ bool Properties::registerTemplate(const QString &key,
 
 void Properties::unregisterTemplate(const QString &key)
 {
-	kdDebug(14000) << k_funcinfo << "called for key: '" << key << "'" << endl;
+	kDebug(14000) << k_funcinfo << "called for key: '" << key << "'" << endl;
 	d->mTemplates.remove(key);
 }
 
@@ -194,12 +194,12 @@ const ContactPropertyTmpl &Properties::photo() const
 const ContactPropertyTmpl &Properties::createProp(const QString &key,
 	const QString &label, const QString &icon, bool persistent) const
 {
-	/*kdDebug(14000) << k_funcinfo <<
+	/*kDebug(14000) << k_funcinfo <<
 		"key = " << key  << ", label = " << label << endl;*/
 
 	if(!d->mTemplates.contains(key))
 	{
-/*		kdDebug(14000) << k_funcinfo <<
+/*		kDebug(14000) << k_funcinfo <<
 			"CREATING NEW ContactPropertyTmpl WITH key = " << key  <<
 			", label = " << label << ", persisten = " << persistent << endl;*/
 		d->mTemplates.insert(key,  ContactPropertyTmpl(key, label, icon, persistent ? ContactPropertyTmpl::PersistentProperty : ContactPropertyTmpl::NoProperty));
@@ -291,7 +291,7 @@ void installEmoticonTheme(const QString &archiveName)
 		currentEntry = const_cast<KArchiveEntry *>(rootDir->entry(*it));
 		if (currentEntry == 0)
 		{
-			kdDebug(14010) << k_funcinfo << "couldn't get next archive entry" << endl;
+			kDebug(14010) << k_funcinfo << "couldn't get next archive entry" << endl;
 			continue;
 		}
 
@@ -300,7 +300,7 @@ void installEmoticonTheme(const QString &archiveName)
 			currentDir = dynamic_cast<KArchiveDirectory*>(currentEntry);
 			if (currentDir == 0)
 			{
-				kdDebug(14010) << k_funcinfo <<
+				kDebug(14010) << k_funcinfo <<
 					"couldn't cast archive entry to KArchiveDirectory" << endl;
 				continue;
 			}

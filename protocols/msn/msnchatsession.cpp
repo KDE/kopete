@@ -146,7 +146,7 @@ void MSNChatSession::createChat( const QString &handle,
 	
 	if( m_chatService )
 	{
-		kdDebug(14140) << k_funcinfo << "Service already exists, disconnect them." << endl;
+		kDebug(14140) << k_funcinfo << "Service already exists, disconnect them." << endl;
 		delete m_chatService;
 	}
 
@@ -210,7 +210,7 @@ void MSNChatSession::slotUserJoined( const QString &handle, const QString &publi
 
 	KConfig *config = KGlobal::config();
 	config->setGroup( "MSN" );
-	if ( members().count()==1 && config->readNumEntry( "DownloadPicture", 1 ) >= 1 && !c->object().isEmpty() && !c->hasProperty(Kopete::Global::Properties::self()->photo().key()))
+	if ( members().count()==1 && config->readEntry( "DownloadPicture", 1 ) >= 1 && !c->object().isEmpty() && !c->hasProperty(Kopete::Global::Properties::self()->photo().key()))
 		slotRequestPicture();
 }
 
@@ -225,7 +225,7 @@ void MSNChatSession::slotUserLeft( const QString &handle, const QString& reason 
 
 void MSNChatSession::slotSwitchBoardClosed()
 {
-	//kdDebug(14140) << "MSNChatSession::slotSwitchBoardClosed"  << endl;
+	//kDebug(14140) << "MSNChatSession::slotSwitchBoardClosed"  << endl;
 	m_chatService->deleteLater();
 	m_chatService=0l;
 
@@ -244,7 +244,7 @@ void MSNChatSession::slotMessageSent(Kopete::Message &message,Kopete::ChatSessio
 		if(id == -1)
 		{
 			m_messagesQueue.append(message);
-			kdDebug(14140) << k_funcinfo << "Message added to the queue" <<endl;
+			kDebug(14140) << k_funcinfo << "Message added to the queue" <<endl;
 		}
 		else if( id== -2 ) //the message has not been sent
 		{
@@ -317,7 +317,7 @@ void MSNChatSession::slotActionInviteAboutToShow()
 
 void MSNChatSession::slotCloseSession()
 {
-	kdDebug(14140) << k_funcinfo  << m_chatService <<endl;
+	kDebug(14140) << k_funcinfo  << m_chatService <<endl;
 	if(m_chatService)
 		m_chatService->slotCloseSession();
 }
@@ -360,10 +360,10 @@ void MSNChatSession::sendMessageQueue()
 {
 	if(!m_chatService)
 	{
-		kdDebug(14140) <<k_funcinfo << "Service doesn't exist" <<endl;
+		kDebug(14140) <<k_funcinfo << "Service doesn't exist" <<endl;
 		return;
 	}
-//	kdDebug(14140) << "MSNChatSession::sendMessageQueue: " << m_messagesQueue.count() <<endl;
+//	kDebug(14140) << "MSNChatSession::sendMessageQueue: " << m_messagesQueue.count() <<endl;
 	QList<Kopete::Message>::Iterator it;
 	for ( it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
 	{
@@ -466,7 +466,7 @@ void MSNChatSession::slotInvitation(const QString &handle, const QString &msg)
 
 void MSNChatSession::invitationDone(MSNInvitation* MFTS)
 {
-	kdDebug(14140) << k_funcinfo <<endl;
+	kDebug(14140) << k_funcinfo <<endl;
 	m_invitations.remove(MFTS->cookie());
 //	MFTS->deleteLater();
 	delete MFTS;
@@ -576,7 +576,7 @@ void MSNChatSession::slotDisplayPictureChanged()
 		{
 			KConfig *config = KGlobal::config();
 			config->setGroup( "MSN" );
-			if ( config->readNumEntry( "DownloadPicture", 1 ) >= 1 && !c->object().isEmpty() )
+			if ( config->readEntry( "DownloadPicture", 1 ) >= 1 && !c->object().isEmpty() )
 				slotRequestPicture();
 		}
 	}
@@ -607,7 +607,7 @@ void MSNChatSession::receivedTypingMsg( const QString &contactId, bool b )
 	{
 		//this was originaly in MSNAccount::slotCreateChat
 		KGlobal::config()->setGroup( "MSN" );
-		bool notifyNewChat = KGlobal::config()->readBoolEntry( "NotifyNewChat", false );
+		bool notifyNewChat = KGlobal::config()->readEntry( "NotifyNewChat", false );
 		if (  notifyNewChat  )
 		{
 			// this internal message should open the window if they not exist
@@ -652,7 +652,7 @@ void MSNChatSession::slotWebcamReceive()
 
 void MSNChatSession::slotWebcamSend()
 {
-	kdDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo << endl;
 	if(m_chatService && members().first())
 	{
 #if 0

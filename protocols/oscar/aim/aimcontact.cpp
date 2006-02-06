@@ -126,7 +126,7 @@ const QString AIMContact::awayMessage()
 
 void AIMContact::setAwayMessage(const QString &message)
 {
-	kdDebug(14152) << k_funcinfo <<
+	kDebug(14152) << k_funcinfo <<
 		"Called for '" << contactId() << "', away msg='" << message << "'" << endl;
 	QString filteredMessage = message;
 	filteredMessage.replace(
@@ -181,7 +181,7 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << endl;
 
 	//if they don't have an SSI alias, make sure we use the capitalization from the
 	//server so their contact id looks all pretty.
@@ -211,7 +211,7 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
             mAccount->engine()->requestServerRedirect( 0x0010 );
 
 		int time = ( KRandom::random() % 10 ) * 1000;
-		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating buddy icon in " << time/1000 << " seconds" << endl;
+		kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating buddy icon in " << time/1000 << " seconds" << endl;
 		QTimer::singleShot( time, this, SLOT( requestBuddyIcon() ) );
 	}
 
@@ -222,7 +222,7 @@ void AIMContact::userOnline( const QString& userId )
 {
 	if ( Oscar::normalize( userId ) == Oscar::normalize( contactId() ) )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Getting more contact info" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Getting more contact info" << endl;
 		setOnlineStatus( mProtocol->statusOnline );
 	}
 }
@@ -280,7 +280,7 @@ void AIMContact::gotWarning( const QString& contact, quint16 increase, quint16 n
 
 void AIMContact::requestBuddyIcon()
 {
-	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Updating buddy icon for " << contactId() << endl;
+	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Updating buddy icon for " << contactId() << endl;
 	if ( m_details.buddyIconHash().size() > 0 )
 	{
 		account()->engine()->requestBuddyIcon( contactId(), m_details.buddyIconHash(),
@@ -293,11 +293,11 @@ void AIMContact::haveIcon( const QString& user, QByteArray icon )
 	if ( Oscar::normalize( user ) != Oscar::normalize( contactId() ) )
 		return;
 
-	kdDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Updating icon for " << contactId() << endl;
+	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Updating icon for " << contactId() << endl;
 	QImage buddyIcon( icon );
 	if ( buddyIcon.isNull() )
 	{
-		kdWarning(OSCAR_AIM_DEBUG) << k_funcinfo << "Failed to convert buddy icon to QImage" << endl;
+		kWarning(OSCAR_AIM_DEBUG) << k_funcinfo << "Failed to convert buddy icon to QImage" << endl;
 		return;
 	}
 
@@ -404,7 +404,7 @@ void AIMContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
 	//30- (and any I missed) are size 7
 	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"[^\"]*\">")),QString::fromLatin1("<font size=\"7\">"));
 
-	kdDebug(14190) << k_funcinfo << "sending "
+	kDebug(14190) << k_funcinfo << "sending "
 		<< s << endl;
 
 	// XXX Need to check for message size?
@@ -434,13 +434,13 @@ void AIMContact::sendAutoResponse(Kopete::Message& msg)
 {
 	// The target time is 2 minutes later than the last message
 	int delta = m_lastAutoresponseTime.secsTo( QDateTime::currentDateTime() );
-	kdDebug(14152) << k_funcinfo << "Last autoresponse time: " << m_lastAutoresponseTime << endl;
-	kdDebug(14152) << k_funcinfo << "Current time: " << QDateTime::currentDateTime() << endl;
-	kdDebug(14152) << k_funcinfo << "Difference: " << delta << endl;
+	kDebug(14152) << k_funcinfo << "Last autoresponse time: " << m_lastAutoresponseTime << endl;
+	kDebug(14152) << k_funcinfo << "Current time: " << QDateTime::currentDateTime() << endl;
+	kDebug(14152) << k_funcinfo << "Difference: " << delta << endl;
 	// Check to see if we're past that time
 	if(delta > 120)
 	{
-		kdDebug(14152) << k_funcinfo << "Sending auto response" << endl;
+		kDebug(14152) << k_funcinfo << "Sending auto response" << endl;
 
 		// This code was yoinked straight from OscarContact::slotSendMsg()
 		// If only that slot wasn't private, but I'm not gonna change it right now.
@@ -463,7 +463,7 @@ void AIMContact::sendAutoResponse(Kopete::Message& msg)
 
 		// isAuto defaults to false
 		mAccount->engine()->sendMessage( message, true);
-		kdDebug(14152) << k_funcinfo << "Sent auto response" << endl;
+		kDebug(14152) << k_funcinfo << "Sent auto response" << endl;
 		manager(Kopete::Contact::CanCreate)->appendMessage(msg);
 		manager(Kopete::Contact::CanCreate)->messageSucceeded();
 		// Update the last autoresponse time
@@ -471,7 +471,7 @@ void AIMContact::sendAutoResponse(Kopete::Message& msg)
 	}
 	else
 	{
-		kdDebug(14152) << k_funcinfo << "Not enough time since last autoresponse, NOT sending" << endl;
+		kDebug(14152) << k_funcinfo << "Not enough time since last autoresponse, NOT sending" << endl;
 	}
 }
 #include "aimcontact.moc"

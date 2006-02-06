@@ -37,8 +37,8 @@
 
 #include "jabberaccount.h"
 #include <kdebug.h>
-#define qDebug( X )  kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << X << endl
-#define qWarning( X )  kdWarning() <<k_funcinfo<< X << endl
+#define qDebug( X )  kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << X << endl
+#define qWarning( X )  kWarning() <<k_funcinfo<< X << endl
 
 // ----------------------------------------------------------------------------
 
@@ -106,7 +106,7 @@ JingleClientSlots::JingleClientSlots(JingleVoiceCaller *voiceCaller) : voiceCall
 
 void JingleClientSlots::callCreated(cricket::Call *call) 
 {
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
 	call->SignalSessionState.connect(this, &JingleClientSlots::stateChanged);
 }
 

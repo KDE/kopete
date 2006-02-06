@@ -39,7 +39,7 @@
 SMSSend::SMSSend(Kopete::Account* account)
 	: SMSService(account)
 {
-	kdWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
+	kWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
 	prefWidget = 0L;
 	m_provider = 0L;
 }
@@ -50,7 +50,7 @@ SMSSend::~SMSSend()
 
 void SMSSend::send(const Kopete::Message& msg)
 {
-	kdWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
+	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
 	QString provider = m_account->configGroup()->readEntry("SMSSend:ProviderName", QString::null);
 
 	if (provider.length() < 1)
@@ -76,7 +76,7 @@ void SMSSend::send(const Kopete::Message& msg)
 
 void SMSSend::setWidgetContainer(QWidget* parent, QGridLayout* layout)
 {
-	kdWarning( 14160 ) << k_funcinfo << "ml: " << layout << ", " << "mp: " << parent << endl;
+	kWarning( 14160 ) << k_funcinfo << "ml: " << layout << ", " << "mp: " << parent << endl;
 	m_parent = parent;
 	m_layout = layout;
 
@@ -132,7 +132,7 @@ void SMSSend::savePreferences()
 
 void SMSSend::loadProviders(const QString &prefix)
 {
-	kdWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be ok if zero)" << endl;
+	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be ok if zero)" << endl;
 
 	QStringList p;
 
@@ -179,7 +179,7 @@ void SMSSend::loadProviders(const QString &prefix)
 
 void SMSSend::setOptions(const QString& name)
 {
-	kdWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be ok if zero!!)" << endl;
+	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be ok if zero!!)" << endl;
 	if(!prefWidget) return;			// sanity check
 
 	prefWidget->providerLabel->setText(i18n("%1 Settings").arg(name));
@@ -221,7 +221,7 @@ void SMSSend::setAccount(Kopete::Account* account)
 
 int SMSSend::maxSize()
 {
-	kdWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
+	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
 
 	QString pName = m_account->configGroup()->readEntry("SMSSend:ProviderName", QString::null);
 	if (pName.length() < 1)

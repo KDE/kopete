@@ -32,7 +32,7 @@ DetectorSMPPPD::~DetectorSMPPPD() {}
     \fn DetectorSMPPPD::checkStatus()
  */
 void DetectorSMPPPD::checkStatus() {
-    kdDebug(14312) << k_funcinfo << "Checking for online status..." << endl;
+    kDebug(14312) << k_funcinfo << "Checking for online status..." << endl;
 
 	m_kinternetApp = getKInternetDCOP();
 	if(m_client && m_kinternetApp != "") {
@@ -60,11 +60,11 @@ void DetectorSMPPPD::checkStatus() {
 	if(c.connect(server, port)) {
 		m_connector->setConnectedStatus(c.isOnline());
 	} else {
-		kdDebug(14312) << k_funcinfo << "not connected to smpppd => I'll try again later" << endl;
+		kDebug(14312) << k_funcinfo << "not connected to smpppd => I'll try again later" << endl;
 		m_connector->setConnectedStatus(false);
 	}
 }
 
 void DetectorSMPPPD::smpppdServerChange() {
-    kdDebug(14312) << k_funcinfo << "Server changed. Disconnect to SMPPPD" << endl;
+    kDebug(14312) << k_funcinfo << "Server changed. Disconnect to SMPPPD" << endl;
 }

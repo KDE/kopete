@@ -87,8 +87,8 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	_myself->setOnlineStatus( parent->Offline );
 	myself()->setProperty( YahooProtocol::protocol()->iconRemoteUrl, configGroup()->readEntry( "iconRemoteUrl", "" ) );
 	myself()->setProperty( Kopete::Global::Properties::self()->photo(), configGroup()->readEntry( "iconLocalUrl", "" ) );
-	myself()->setProperty( YahooProtocol::protocol()->iconCheckSum, configGroup()->readNumEntry( "iconCheckSum", 0 ) );
-	myself()->setProperty( YahooProtocol::protocol()->iconExpire, configGroup()->readNumEntry( "iconExpire", 0 ) );
+	myself()->setProperty( YahooProtocol::protocol()->iconCheckSum, configGroup()->readEntry( "iconCheckSum", 0 ) );
+	myself()->setProperty( YahooProtocol::protocol()->iconExpire, configGroup()->readEntry( "iconExpire", 0 ) );
 	
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged(const QString&, const QVariant& ) ), SLOT( slotGlobalIdentityChanged(const QString&, const QVariant& ) ));
 // 	initConnectionSignals( MakeConnections );
@@ -114,7 +114,7 @@ void YahooAccount::setPort( int port )
 
 void YahooAccount::slotGoStatus( int status, const QString &awayMessage)
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "GoStatus: " << status << " msg: " << awayMessage <<endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "GoStatus: " << status << " msg: " << awayMessage <<endl;
 	if( !isConnected() )
 	{
 		connect( m_protocol->statusFromYahoo( status ) );
@@ -168,7 +168,7 @@ QColor YahooAccount::getMsgColor(const QString& msg)
 	/* Yahoo sends a message either with color or without color
 	 * so we have to use this really hacky method to get colors
 	 */
-	//kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "msg is " << msg << endl;
+	//kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "msg is " << msg << endl;
 	//Please note that some of the colors are hard-coded to
 	//match the yahoo colors
 	if ( msg.find("\033[38m") != -1 )
@@ -189,7 +189,7 @@ QColor YahooAccount::getMsgColor(const QString& msg)
 		return QColor("#FFD8D8");
 	if ( msg.find("\033[#") != -1 )
 	{
-		kdDebug(YAHOO_GEN_DEBUG) << "Custom color is " << msg.mid(msg.find("\033[#")+2,7) << endl;
+		kDebug(YAHOO_GEN_DEBUG) << "Custom color is " << msg.mid(msg.find("\033[#")+2,7) << endl;
 		return QColor(msg.mid(msg.find("\033[#")+2,7));
 	}
 
@@ -419,7 +419,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 
 void YahooAccount::connectWithPassword( const QString &passwd )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	if ( isAway() )
 	{
 		slotGoOnline();
@@ -429,7 +429,7 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 	if ( isConnected() || 
 	     myself()->onlineStatus() == m_protocol->Connecting )
 	{
-		kdDebug(YAHOO_GEN_DEBUG) << "Yahoo plugin: Ignoring connect request (already connected)." <<endl;
+		kDebug(YAHOO_GEN_DEBUG) << "Yahoo plugin: Ignoring connect request (already connected)." <<endl;
 		return;
 	
 	}
@@ -441,13 +441,13 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 	}
 	
 	QString server = configGroup()->readEntry( "Server", "scs.msg.yahoo.com" );
-	int port = configGroup()->readNumEntry( "Port", 5050 );
+	int port = configGroup()->readEntry( "Port", 5050 );
 	
 	initConnectionSignals( MakeConnections );
 
 	//YahooSessionManager::manager()->setPager( server, port );
 	//m_session = YahooSessionManager::manager()->createSession( accountId(), passwd );
-	kdDebug(YAHOO_GEN_DEBUG) << "Attempting to connect to Yahoo on <" << server << ":" 
+	kDebug(YAHOO_GEN_DEBUG) << "Attempting to connect to Yahoo on <" << server << ":" 
 		<< port << ">. user <" << accountId() << ">"  << endl;
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Connecting );
 	m_session->setStatusOnConnect( Yahoo::Status( initialStatus().internalStatus() ) );
@@ -456,12 +456,12 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 
 void YahooAccount::disconnect()
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	m_currentMailCount = 0;
 	if ( isConnected() )
 	{
-		kdDebug(YAHOO_GEN_DEBUG) <<  "Attempting to disconnect from Yahoo server " << endl;
+		kDebug(YAHOO_GEN_DEBUG) <<  "Attempting to disconnect from Yahoo server " << endl;
 
 		m_session->close();
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
@@ -474,7 +474,7 @@ void YahooAccount::disconnect()
 	}
 	else
 	{       //make sure we set everybody else offline explicitly, just for cleanup
-		kdDebug(YAHOO_GEN_DEBUG) << "Cancelling active login attempts (not fully connected)." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << "Cancelling active login attempts (not fully connected)." << endl;
 		m_session->cancelConnect();
 
 		QHash<QString,Kopete::Contact*>::ConstIterator it, itEnd = contacts().constEnd();
@@ -488,14 +488,14 @@ void YahooAccount::disconnect()
 
 void YahooAccount::verifyAccount( const QString &word )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Word: s" << word << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Word: s" << word << endl;
 	m_session->setVerificationWord( word );
 	disconnected( BadPassword );
 }
 
 void YahooAccount::setAway(bool status, const QString &awayMessage)
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 
 	if( awayMessage.isEmpty() )
 		slotGoStatus( status ? 2 : 0 );
@@ -505,12 +505,12 @@ void YahooAccount::setAway(bool status, const QString &awayMessage)
 
 void YahooAccount::slotConnected()
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Moved to slotLoginResponse for the moment" << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Moved to slotLoginResponse for the moment" << endl;
 }
 
 void YahooAccount::slotGoOnline()
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	if( !isConnected() )
 		connect( m_protocol->Online );
 	else
@@ -527,7 +527,7 @@ void YahooAccount::slotGoOffline()
 
 KActionMenu *YahooAccount::actionMenu()
 {
-//	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+//	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	
 	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
 	
@@ -545,7 +545,7 @@ YahooContact *YahooAccount::contact( const QString &id )
 
 bool YahooAccount::createContact(const QString &contactId, Kopete::MetaContact *parentContact )
 {
-//	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << " contactId: " << contactId << endl;
+//	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << " contactId: " << contactId << endl;
 
 	if(!contact(contactId))
 	{
@@ -558,14 +558,14 @@ bool YahooAccount::createContact(const QString &contactId, Kopete::MetaContact *
 		return newContact != 0;
 	}
 	else
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Contact already exists" << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Contact already exists" << endl;
 
 	return false;
 }
 
 void YahooAccount::slotGlobalIdentityChanged( const QString &key, const QVariant &value )
 {
-	if( !configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) )
+	if( !configGroup()->readEntry("ExcludeGlobalIdentity", false) )
 	{
 		if ( key == Kopete::Global::Properties::self()->photo().key() )
 		{
@@ -576,7 +576,7 @@ void YahooAccount::slotGlobalIdentityChanged( const QString &key, const QVariant
 
 void YahooAccount::setPictureFlag( int flag )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << " PictureFlag: " << flag << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << " PictureFlag: " << flag << endl;
 	m_pictureFlag = flag;
 }
 
@@ -593,7 +593,7 @@ int YahooAccount::pictureFlag()
 
 void YahooAccount::slotLoginResponse( int succ , const QString &url )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << succ << ", " << url << ")]" << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << succ << ", " << url << ")]" << endl;
 	QString errorMsg;
 	if ( succ == Yahoo::LoginOk || (succ == Yahoo::LoginDupl && m_lastDisconnectCode == 2) )
 	{
@@ -662,7 +662,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 
 void YahooAccount::slotDisconnected()
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	initConnectionSignals( DeleteConnections );
 	if( !isConnected() )
 		return;
@@ -677,7 +677,7 @@ void YahooAccount::slotDisconnected()
 
 void YahooAccount::slotLoginFailed()
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	initConnectionSignals( DeleteConnections );
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 	disconnected( Manual );			// don't reconnect
@@ -690,13 +690,13 @@ void YahooAccount::slotLoginFailed()
 
 void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, const QString &group )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	IDs[userid] = QPair<QString, QString>(group, alias);
 
 	// Serverside -> local
 	if ( !contact( userid ) )
 	{
-		kdDebug(YAHOO_GEN_DEBUG) << "SS Contact " << userid << " is not in the contact list. Adding..." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << "SS Contact " << userid << " is not in the contact list. Adding..." << endl;
 		Kopete::Group *g=Kopete::ContactList::self()->findGroup(group);
 		addContact(userid, alias.isEmpty() ? userid : alias, g, Kopete::Account::ChangeKABC);
 	}
@@ -704,7 +704,7 @@ void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, co
 
 void YahooAccount::slotAuthorizationAccepted( const QString &who )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	QString message;
 	message = i18n( "User %1 has granted your authorization request." )
 		.arg( who );
@@ -713,7 +713,7 @@ void YahooAccount::slotAuthorizationAccepted( const QString &who )
 
 void YahooAccount::slotAuthorizationRejected( const QString &who, const QString &msg )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	QString message;
 	message = i18n( "User %1 has granted your authorization request.\n%2" )
 		.arg( who ).arg( msg );
@@ -722,7 +722,7 @@ void YahooAccount::slotAuthorizationRejected( const QString &who, const QString 
 
 void YahooAccount::slotgotAuthorizationRequest( const QString &user, const QString &msg, const QString &name )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	YahooAuthReply *dlg = new YahooAuthReply();
 	
 	QObject::connect( dlg, SIGNAL( okClicked() ), this, SLOT( slotAuthReplyOkClicked() ) );
@@ -744,17 +744,17 @@ void YahooAccount::slotAuthReplyOkClicked()
 
 void YahooAccount::slotGotIgnore( const QStringList & /* igns */ )
 {
-	//kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	//kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotGotIdentities( const QStringList & /* ids */ )
 {
-	//kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	//kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotStatusChanged( const QString &who, int stat, const QString &msg, int away, int idle )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << who << " status: " << stat << " msg: " << msg << " away: " << away << " idle: " << idle <<endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << who << " status: " << stat << " msg: " << msg << " away: " << away << " idle: " << idle <<endl;
 	YahooContact *kc = contact( who );
 	
 	if( contact( who ) == myself() )
@@ -799,11 +799,11 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 
 void YahooAccount::slotStealthStatusChanged( const QString &who, Yahoo::StealthStatus state )
 {
-	//kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Stealth Status of " << who << "changed to " << state << endl;
+	//kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Stealth Status of " << who << "changed to " << state << endl;
 	
 	YahooContact* kc = contact( who );
 	if ( kc == NULL ) {
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
 		return;
 	}
 	kc->setStealthed( state == Yahoo::Stealthed );
@@ -815,7 +815,7 @@ const QString &YahooAccount::prepareIncomingMessage( QString newMsgText )
 	int pos = 0;
 	newMsgText = stripMsgColorCodes( newMsgText );
 	
-	kdDebug(YAHOO_GEN_DEBUG) << "Message after stripping color codes '" << newMsgText << "'" << endl;
+	kDebug(YAHOO_GEN_DEBUG) << "Message after stripping color codes '" << newMsgText << "'" << endl;
 	
 	newMsgText.replace( QString::fromLatin1( "&" ), QString::fromLatin1( "&amp;" ) );
 	
@@ -895,13 +895,13 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	
 	if( !contact( who ) )
 	{
-		kdDebug(YAHOO_GEN_DEBUG) << "Adding contact " << who << endl;
+		kDebug(YAHOO_GEN_DEBUG) << "Adding contact " << who << endl;
 		addContact( who,who,  0L, Kopete::Account::Temporary );
 	}
 	
 	//Parse the message for it's properties
-	kdDebug(YAHOO_GEN_DEBUG) << "Original message is '" << msg << "'" << endl;
-	//kdDebug(YAHOO_GEN_DEBUG) << "Message color is " << getMsgColor(msg) << endl;
+	kDebug(YAHOO_GEN_DEBUG) << "Original message is '" << msg << "'" << endl;
+	//kDebug(YAHOO_GEN_DEBUG) << "Message color is " << getMsgColor(msg) << endl;
 	QColor fgColor = getMsgColor( msg );
 	if (tm == 0)
 		msgDT.setTime_t(time(0L));
@@ -910,7 +910,7 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	
 	QString newMsgText = prepareIncomingMessage( msg );
 	
-	kdDebug(YAHOO_GEN_DEBUG) << "Message after fixing font tags '" << newMsgText << "'" << endl;
+	kDebug(YAHOO_GEN_DEBUG) << "Message after fixing font tags '" << newMsgText << "'" << endl;
 	
 	Kopete::ChatSession *mm = contact(who)->manager(Kopete::Contact::CanCreate);
 	
@@ -934,7 +934,7 @@ void YahooAccount::slotGotBuzz( const QString &who, long tm )
 	
 	if( !contact( who ) )
 	{
-		kdDebug(YAHOO_GEN_DEBUG) << "Adding contact " << who << endl;
+		kDebug(YAHOO_GEN_DEBUG) << "Adding contact " << who << endl;
 		addContact( who,who,  0L, Kopete::Account::Temporary );
 	}
 	
@@ -960,8 +960,8 @@ void YahooAccount::slotGotBuzz( const QString &who, long tm )
 
 void YahooAccount::slotGotConfInvite( const QString & who, const QString & room, const QString &msg, const QStringList &members )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << who << " has invited you to join the conference \"" << room << "\" : " << msg << endl;
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Members: " << members << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << who << " has invited you to join the conference \"" << room << "\" : " << msg << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Members: " << members << endl;
 	
 	if( !m_pendingConfInvites.contains( room ) )	// We have to keep track of the invites as the server will send the same invite twice if it gets canceled by the host
 		m_pendingConfInvites.push_back( room );
@@ -999,7 +999,7 @@ void YahooAccount::slotGotConfInvite( const QString & who, const QString & room,
 				YahooContact * c = contact( *it );
 				if ( !c )
 				{
-					kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Adding contact " << *it << " to conference." << endl;
+					kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Adding contact " << *it << " to conference." << endl;
 					addContact( *it,*it,  0L, Kopete::Account::Temporary );
 					c = contact( *it );
 				}
@@ -1023,7 +1023,7 @@ void YahooAccount::prepareConference( const QString &who )
 		room += (c > 25)  ? c + 71 : c + 65;
 	}
 	room = QString("%1-%2--").arg(accountId()).arg(room);
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "The generated roomname is: " << room << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "The generated roomname is: " << room << endl;
 	
 	QStringList buddies;
 	QHash<QString,Kopete::Contact*>::ConstIterator it, itEnd = contacts().constEnd();
@@ -1044,7 +1044,7 @@ void YahooAccount::prepareConference( const QString &who )
 
 void YahooAccount::slotInviteConference( const QString &room, const QStringList &members, const QString &msg )
 {	
-kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Inviting " << members << " to the conference " << room << ". Message: " << msg << endl;
+kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Inviting " << members << " to the conference " << room << ". Message: " << msg << endl;
 	m_session->inviteConference( room, members, msg );
 	
 	Kopete::ContactPtrList others;
@@ -1059,17 +1059,17 @@ kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Inviting " << members << " to the con
 
 void YahooAccount::slotAddInviteConference( const QString &room, const QStringList &members, const QString &msg )
 {	
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Inviting " << members << " to the conference " << room << ". Message: " << msg << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Inviting " << members << " to the conference " << room << ". Message: " << msg << endl;
 	m_session->addInviteConference( room, members, msg );
 }
 
 void YahooAccount::slotConfUserDecline( const QString &who, const QString &room, const QString &msg)
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	
 	if( !m_conferences.contains( room ) )
 	{
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Error. No chatsession for this conference found." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Error. No chatsession for this conference found." << endl;
 		return;
 	}
 	
@@ -1083,10 +1083,10 @@ void YahooAccount::slotConfUserDecline( const QString &who, const QString &room,
 
 void YahooAccount::slotConfUserJoin( const QString &who, const QString &room )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;	
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;	
 	if( !m_conferences.contains( room ) )
 	{
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Error. No chatsession for this conference found." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Error. No chatsession for this conference found." << endl;
 		return;
 	}
 	
@@ -1100,10 +1100,10 @@ void YahooAccount::slotConfUserJoin( const QString &who, const QString &room )
 
 void YahooAccount::slotConfUserLeave( const QString & who, const QString &room )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;	
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;	
 	if( !m_conferences.contains( room ) )
 	{
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Error. No chatsession for this conference found." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Error. No chatsession for this conference found." << endl;
 		return;
 	}
 	
@@ -1117,7 +1117,7 @@ void YahooAccount::slotConfUserLeave( const QString & who, const QString &room )
 
 void YahooAccount::slotConfLeave( YahooConferenceChatSession *s )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	if( !s )
 		return;
 	QStringList members;
@@ -1125,7 +1125,7 @@ void YahooAccount::slotConfLeave( YahooConferenceChatSession *s )
 	{
 		if( (*it) == myself() )
 			continue;
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Member: " << (*it)->contactId() << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Member: " << (*it)->contactId() << endl;
 		members.append( (*it)->contactId() );
 	}
 	m_session->leaveConference( s->room(), members );
@@ -1134,11 +1134,11 @@ void YahooAccount::slotConfLeave( YahooConferenceChatSession *s )
 
 void YahooAccount::slotConfMessage( const QString &who, const QString &room, const QString &msg )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	
 	if( !m_conferences.contains( room ) )
 	{
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Error. No chatsession for this conference found." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Error. No chatsession for this conference found." << endl;
 		return;
 	}
 	
@@ -1150,17 +1150,17 @@ void YahooAccount::slotConfMessage( const QString &who, const QString &room, con
 	
 	if( !contact( who ) )
 	{
-		kdDebug(YAHOO_GEN_DEBUG) << "Adding contact " << who << endl;
+		kDebug(YAHOO_GEN_DEBUG) << "Adding contact " << who << endl;
 		addContact( who,who,  0L, Kopete::Account::Temporary );
 	}
-	kdDebug(YAHOO_GEN_DEBUG) << "Original message is '" << msg << "'" << endl;
+	kDebug(YAHOO_GEN_DEBUG) << "Original message is '" << msg << "'" << endl;
 	
 	QColor fgColor = getMsgColor( msg );
 	msgDT.setTime_t(time(0L));	
 	
 	QString newMsgText = prepareIncomingMessage( msg );
 	
-	kdDebug(YAHOO_GEN_DEBUG) << "Message after fixing font tags '" << newMsgText << "'" << endl;
+	kDebug(YAHOO_GEN_DEBUG) << "Message after fixing font tags '" << newMsgText << "'" << endl;
 	session->receivedTypingMsg(contact(who), false);
 	
 	justMe.append(myself());
@@ -1174,13 +1174,13 @@ void YahooAccount::slotConfMessage( const QString &who, const QString &room, con
 
 void YahooAccount::sendConfMessage( YahooConferenceChatSession *s, Kopete::Message &message )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	QStringList members;
 	for( Kopete::ContactPtrList::ConstIterator it = s->members().constBegin(); it != s->members().constEnd(); ++it )
 	{
 		if( (*it) == myself() )
 			continue;
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Member: " << (*it)->contactId() << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Member: " << (*it)->contactId() << endl;
 		members.append( (*it)->contactId() );
 	}
 	m_session->sendConferenceMessage( s->room(), members, YahooContact::prepareMessage( message.escapedBody() ) );
@@ -1189,8 +1189,8 @@ void YahooAccount::sendConfMessage( YahooConferenceChatSession *s, Kopete::Messa
 void YahooAccount::slotGotFile( const QString &  who, const QString &  url , long /* expires */, const QString &  msg ,
 	const QString &  fname, unsigned long  fesize  )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Received File from " << who << ": " << msg << endl;
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Filename :" << fname << " size:" << fesize << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Received File from " << who << ": " << msg << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Filename :" << fname << " size:" << fesize << endl;
 	
 	Kopete::TransferManager::transferManager()->askIncomingTransfer( contact( who ) , fname, fesize, msg, url );	
 	QObject::connect( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString& ) ),
@@ -1206,12 +1206,12 @@ void YahooAccount::slotReceiveFileAccepted(Kopete::Transfer *trans, const QStrin
 
 void YahooAccount::slotContactAdded( const QString & /* myid */, const QString & /* who */, const QString & /* msg */ )
 {
-//	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << myid << " " << who << " " << msg << endl;
+//	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << myid << " " << who << " " << msg << endl;
 }
 
 void YahooAccount::slotRejected( const QString & /* who */, const QString & /* msg */ )
 {
-//	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+//	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotTypingNotify( const QString &who, int what )
@@ -1221,12 +1221,12 @@ void YahooAccount::slotTypingNotify( const QString &who, int what )
 
 void YahooAccount::slotGameNotify( const QString & /* who */, int /* stat */ )
 {
-//	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+//	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotMailNotify( const QString& from, const QString& /* subject */, int cnt )
 {
-//	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Mail count: " << cnt << endl;
+//	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Mail count: " << cnt << endl;
 
 	if ( cnt > m_currentMailCount && from.isEmpty() )
 	{
@@ -1236,7 +1236,7 @@ void YahooAccount::slotMailNotify( const QString& from, const QString& /* subjec
 		m_currentMailCount = cnt;
 	}
 	else if ( cnt > m_currentMailCount )
-	{	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "attempting to trigger event" << endl;
+	{	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "attempting to trigger event" << endl;
 		QObject::connect(KNotification::event( QString::fromLatin1("yahoo_mail"), i18n( "You have a message from %1 in your Yahoo inbox.").arg(from) 
 		                                       , QPixmap() , 0 , QStringList(i18n( "Open Inbox..." )) ), SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 		m_currentMailCount = cnt;
@@ -1245,19 +1245,19 @@ void YahooAccount::slotMailNotify( const QString& from, const QString& /* subjec
 
 void YahooAccount::slotSystemMessage( const QString & /* msg */ )
 {
-//	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << msg << endl;
+//	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << msg << endl;
 }
 
 void YahooAccount::slotRemoveHandler( int /* fd */ )
 {
-//	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+//	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotGotWebcamInvite( const QString& who )
 {
 	YahooContact* kc = contact( who );
 	if ( kc == NULL ) {
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
 		return;
 	}
 	
@@ -1270,7 +1270,7 @@ void YahooAccount::slotGotWebcamImage( const QString& who, const QPixmap& image 
 {
 	YahooContact* kc = contact( who );
 	if ( kc == NULL ) {
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
 		return;
 	}
 	kc->receivedWebcamImage( image );
@@ -1280,25 +1280,25 @@ void YahooAccount::slotPictureStatusNotiy( const QString &who, int status)
 {
 	YahooContact *kc = contact( who );
 	if ( kc == NULL ) {
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
 		return;
 	}
 	
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " changed picture status to" << status << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " changed picture status to" << status << endl;
 }
 
 void YahooAccount::slotGotBuddyIconChecksum(const QString &who, int checksum)
 {
 	YahooContact *kc = contact( who );
 	if ( kc == NULL ) {
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
 		return;
 	}
 
 	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() &&
 	     QFile::exists( locateLocal( "appdata", "yahoopictures/"+ who.lower().replace(QRegExp("[./~]"),"-")  +".png" ) ) )
 	{
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Icon already exists. I will not request it again." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Icon already exists. I will not request it again." << endl;
 		return;
 	} else
 		m_session->requestPicture( who );
@@ -1306,17 +1306,17 @@ void YahooAccount::slotGotBuddyIconChecksum(const QString &who, int checksum)
 
 void YahooAccount::slotGotBuddyIconInfo(const QString &who, KUrl url, int checksum)
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	YahooContact *kc = contact( who );
 	if ( kc == NULL ) {
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
 		return;
 	}
 
 	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt()  &&
 	     QFile::exists( locateLocal( "appdata", "yahoopictures/"+ who.lower().replace(QRegExp("[./~]"),"-")  +".png" ) ))
 	{
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Icon already exists. I will not download it again." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Icon already exists. I will not download it again." << endl;
 		return;
 	} else
 		m_session->downloadPicture( who, url, checksum );
@@ -1324,20 +1324,20 @@ void YahooAccount::slotGotBuddyIconInfo(const QString &who, KUrl url, int checks
 
 void YahooAccount::slotGotBuddyIcon( const QString &who, KTempFile *file, int checksum )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	YahooContact *kc = contact( who );
 	if ( kc == NULL ) {
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
 		return;
 	}
 	kc->setDisplayPicture( file, checksum );
 }
 void YahooAccount::slotGotBuddyIconRequest( const QString & who )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	YahooContact *kc = contact( who );
 	if ( kc == NULL ) {
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
 		return;
 	}
 	kc->sendBuddyIconInfo( myself()->property( YahooProtocol::protocol()->iconRemoteUrl ).value().toString(),
@@ -1346,7 +1346,7 @@ void YahooAccount::slotGotBuddyIconRequest( const QString & who )
 
 void YahooAccount::setBuddyIcon( KUrl url )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Url: " << url.path() << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Url: " << url.path() << endl;
 	QString s = url.path();
 	if ( url.path().isEmpty() )
 	{
@@ -1419,7 +1419,7 @@ void YahooAccount::setBuddyIcon( KUrl url )
 
 void YahooAccount::slotBuddyIconChanged( const QString &url )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	//	Q3DictIterator<Kopete::Contact> it( contacts() );
 	int checksum = myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt();
 
@@ -1447,7 +1447,7 @@ void YahooAccount::slotBuddyIconChanged( const QString &url )
 
 void YahooAccount::slotWebcamReadyForTransmission()
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	if( !m_webcam )
 	{
 		m_webcam = new YahooWebcam( this );
@@ -1459,7 +1459,7 @@ void YahooAccount::slotWebcamReadyForTransmission()
 
 void YahooAccount::slotWebcamStopTransmission()
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	
 	if( m_webcam )
 	{
@@ -1501,7 +1501,7 @@ void YahooAccount::slotWebcamClosed( const QString& who, int reason )
 {
 	YahooContact* kc = contact( who );
 	if ( kc == NULL ) {
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
 		return;
 	}
 	kc->webcamClosed( reason );
@@ -1511,7 +1511,7 @@ void YahooAccount::slotWebcamPaused( const QString &who )
 {
 	YahooContact* kc = contact( who );
 	if ( kc == NULL ) {
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact " << who << " doesn't exist." << endl;
 		return;
 	}
 	kc->webcamPaused();
@@ -1519,7 +1519,7 @@ void YahooAccount::slotWebcamPaused( const QString &who )
 
 void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason)
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline &&
 	     ( status.status() == Kopete::OnlineStatus::Online || status.status() == Kopete::OnlineStatus::Invisible ) )
 	{

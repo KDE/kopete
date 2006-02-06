@@ -300,7 +300,7 @@ void KopeteEmailWindow::slotConfToolbar()
 
 void KopeteEmailWindow::slotCopy()
 {
-//	kdDebug(14010) << k_funcinfo << endl;
+//	kDebug(14010) << k_funcinfo << endl;
 
 	if ( d->messagePart->hasSelection() )
 		d->messagePart->copy();
@@ -369,7 +369,7 @@ void KopeteEmailWindow::slotUpdateReplySend()
 
 void KopeteEmailWindow::slotReadNext()
 {
-//	kdDebug(14010) << k_funcinfo << endl;
+//	kDebug(14010) << k_funcinfo << endl;
 
 	d->showingMessage = true;
 
@@ -382,7 +382,7 @@ void KopeteEmailWindow::slotReadNext()
 
 void KopeteEmailWindow::slotReadPrev()
 {
-//	kdDebug(14010) << k_funcinfo << endl;
+//	kDebug(14010) << k_funcinfo << endl;
 
 	d->showingMessage = true;
 
@@ -541,7 +541,7 @@ void KopeteEmailWindow::windowActivationChange( bool )
 
 void KopeteEmailWindow::makeVisible()
 {
-//	kdDebug(14010) << k_funcinfo << endl;
+//	kDebug(14010) << k_funcinfo << endl;
 	d->visible = true;
 	show();
 }

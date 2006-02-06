@@ -25,7 +25,7 @@
 
 PictureNotifierTask::PictureNotifierTask(Task* parent) : Task(parent)
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
 PictureNotifierTask::~PictureNotifierTask()
@@ -35,7 +35,7 @@ PictureNotifierTask::~PictureNotifierTask()
 
 bool PictureNotifierTask::take( Transfer* transfer )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	
 	if ( !forMe( transfer ) )
 		return false;
@@ -68,7 +68,7 @@ bool PictureNotifierTask::take( Transfer* transfer )
 
 bool PictureNotifierTask::forMe( Transfer* transfer ) const
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)
@@ -87,7 +87,7 @@ bool PictureNotifierTask::forMe( Transfer* transfer ) const
 
 void PictureNotifierTask::parsePictureStatus( Transfer *transfer )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)
@@ -104,7 +104,7 @@ void PictureNotifierTask::parsePictureStatus( Transfer *transfer )
 
 void PictureNotifierTask::parsePictureChecksum( Transfer *transfer )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)
@@ -122,7 +122,7 @@ void PictureNotifierTask::parsePictureChecksum( Transfer *transfer )
 
 void PictureNotifierTask::parsePicture( Transfer *transfer )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)
@@ -146,7 +146,7 @@ void PictureNotifierTask::parsePicture( Transfer *transfer )
 
 void PictureNotifierTask::parsePictureUploadResponse( Transfer *transfer )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
 	if (!t)
@@ -163,7 +163,7 @@ void PictureNotifierTask::parsePictureUploadResponse( Transfer *transfer )
 
 	if( !url.isEmpty() )
 	{
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting url: " << url << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting url: " << url << endl;
 		emit pictureUploaded( url );
 	}
 }

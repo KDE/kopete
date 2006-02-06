@@ -32,16 +32,16 @@ void BookmarksPrefsSettings::load()
 	m_isfolderforeachcontact = Always;
 	m_contactslist.clear();
 	if( configfile->getConfigState() == KConfigBase::NoAccess ){
-		kdDebug( 14501 ) << "load: failed to open config file for reading" << endl;
+		kDebug( 14501 ) << "load: failed to open config file for reading" << endl;
 		return;
 	}
 	if( !configfile->hasGroup("Bookmarks Plugin") ){
-		kdDebug( 14501 ) << "load: no config found in file" << endl;
+		kDebug( 14501 ) << "load: no config found in file" << endl;
 		return;
 	}
 	configfile->setGroup("Bookmarks Plugin");
-	m_isfolderforeachcontact = (UseSubfolders)configfile->readNumEntry( "UseSubfolderForEachContact", 0 );
-	m_contactslist = configfile->readListEntry( "ContactsList" );
+	m_isfolderforeachcontact = (UseSubfolders)configfile->readEntry( "UseSubfolderForEachContact", 0 );
+	m_contactslist = configfile->readEntry( "ContactsList", QStringList() );
 }
 
 void BookmarksPrefsSettings::save()
@@ -49,7 +49,7 @@ void BookmarksPrefsSettings::save()
 	KConfig * configfile = KGlobal::config();
 
 	if( configfile->getConfigState() != KConfigBase::ReadWrite ){
-		kdDebug( 14501 ) << "save: failed to open config file for writing" << endl;
+		kDebug( 14501 ) << "save: failed to open config file for writing" << endl;
 		return;
 	}
 	configfile->setGroup( "Bookmarks Plugin" );

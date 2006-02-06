@@ -34,14 +34,14 @@ YahooInviteListImpl::~YahooInviteListImpl()
 
 void YahooInviteListImpl::setRoom( const QString &room )
 {
-	kdDebug(14180) << k_funcinfo << "Setting roomname to: " << room << endl;
+	kDebug(14180) << k_funcinfo << "Setting roomname to: " << room << endl;
 
 	m_room = room;
 }
 
 void YahooInviteListImpl::fillFriendList( const QStringList &buddies )
 {	
-	kdDebug(14180) << k_funcinfo << "Adding friends: " << buddies << endl;
+	kDebug(14180) << k_funcinfo << "Adding friends: " << buddies << endl;
 
 	m_buddyList = buddies;
 	updateListBoxes();
@@ -49,7 +49,7 @@ void YahooInviteListImpl::fillFriendList( const QStringList &buddies )
 
 void YahooInviteListImpl::updateListBoxes()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kDebug(14180) << k_funcinfo << endl;
 
 	listFriends->clear();
 	listInvited->clear();
@@ -61,7 +61,7 @@ void YahooInviteListImpl::updateListBoxes()
 
 void YahooInviteListImpl::addInvitees( const QStringList &invitees )
 {
-	kdDebug(14180) << k_funcinfo << "Adding invitees: " << invitees << endl;
+	kDebug(14180) << k_funcinfo << "Adding invitees: " << invitees << endl;
 
 	for( QStringList::const_iterator it = invitees.begin(); it != invitees.end(); it++ )
 	{
@@ -76,7 +76,7 @@ void YahooInviteListImpl::addInvitees( const QStringList &invitees )
 
 void YahooInviteListImpl::removeInvitees( const QStringList &invitees )
 {
-	kdDebug(14180) << k_funcinfo << "Removing invitees: " << invitees << endl;
+	kDebug(14180) << k_funcinfo << "Removing invitees: " << invitees << endl;
 
 	for( QStringList::const_iterator it = invitees.begin(); it != invitees.end(); it++ )
 	{
@@ -91,7 +91,7 @@ void YahooInviteListImpl::removeInvitees( const QStringList &invitees )
 
 void YahooInviteListImpl::btnInvite_clicked()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kDebug(14180) << k_funcinfo << endl;
 
 	if( m_inviteeList.count() )
 		emit readyToInvite( m_room, m_inviteeList, editMessage->text() );
@@ -101,7 +101,7 @@ void YahooInviteListImpl::btnInvite_clicked()
 
 void YahooInviteListImpl::btnCancel_clicked()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kDebug(14180) << k_funcinfo << endl;
 
 	QDialog::reject();
 }
@@ -109,7 +109,7 @@ void YahooInviteListImpl::btnCancel_clicked()
 
 void YahooInviteListImpl::btnAddCustom_clicked()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kDebug(14180) << k_funcinfo << endl;
 
 	QString userId;
 	userId = editBuddyAdd->text();
@@ -123,7 +123,7 @@ void YahooInviteListImpl::btnAddCustom_clicked()
 
 void YahooInviteListImpl::btnRemove_clicked()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kDebug(14180) << k_funcinfo << endl;
 
 	QStringList buddies;
 	for( uint i=0; i<listInvited->count(); i++ )
@@ -139,7 +139,7 @@ void YahooInviteListImpl::btnRemove_clicked()
 
 void YahooInviteListImpl::btnAdd_clicked()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	kDebug(14180) << k_funcinfo << endl;
 
 	QStringList buddies;
 	for( uint i=0; i<listFriends->count(); i++ )

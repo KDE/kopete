@@ -101,7 +101,7 @@ void Engine::bindNumericReplies()
  */
 void Engine::numericReply_001(Message &msg)
 {
-	kdDebug(14121) << k_funcinfo << endl;
+	kDebug(14121) << k_funcinfo << endl;
 
 	if (m_FailedNickOnLogin)
 	{
@@ -347,7 +347,7 @@ void Engine::numericReply_320(Message &msg)
  */
 void Engine::numericReply_322(Message &msg)
 {
-	//kdDebug(14120) << k_funcinfo << "Listed " << msg.arg(1) << endl;
+	//kDebug(14120) << k_funcinfo << "Listed " << msg.arg(1) << endl;
 
 	emit incomingListedChan(Kopete::Message::unescape(msg.arg(1)), msg.arg(2).toUInt(), msg.suffix());
 }
@@ -371,7 +371,7 @@ void Engine::numericReply_324(Message &msg)
  */
 void Engine::numericReply_328(Message &msg)
 {
-	kdDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo << endl;
 	emit incomingChannelHomePage(Kopete::Message::unescape(msg.arg(1)), msg.suffix());
 }
 
@@ -404,7 +404,7 @@ void Engine::numericReply_332(Message &msg)
  */
 void Engine::numericReply_333( Message &msg )
 {
-	kdDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo << endl;
 	QDateTime d;
 	d.setTime_t( msg.arg(3).toLong() );
 	emit incomingTopicUser( Kopete::Message::unescape(msg.arg(1)), Kopete::Message::unescape(msg.arg(2)), d );
