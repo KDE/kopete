@@ -39,7 +39,7 @@
 
 AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool modal, bool firstRun )
 	: 
-	KWizard(parent, name, modal, Qt::WDestructiveClose),
+	K3Wizard(parent, name, modal, Qt::WDestructiveClose),
 	m_accountPage(0),
 	m_proto(0)
 {
@@ -102,7 +102,7 @@ void AddAccountWizard::back()
 {
 	if (currentPage() == dynamic_cast<QWidget *>(m_accountPage))
 	{
-		// Deletes the accountPage, KWizard does not like deleting pages
+		// Deletes the accountPage, K3Wizard does not like deleting pages
 		// using different pointers, it only seems to watch its own pointer
 		delete currentPage();
         
@@ -113,7 +113,7 @@ void AddAccountWizard::back()
 	}
 	else
 	{
-		KWizard::back();
+		K3Wizard::back();
 	}
 }
 
@@ -145,7 +145,7 @@ void AddAccountWizard::next()
 		}
 	
 		insertPage(dynamic_cast<QWidget *>(m_accountPage), i18n("Step Two: Account Information"), indexOf(m_finish));
-		KWizard::next();
+		K3Wizard::next();
 	}
 	else if (currentPage() == dynamic_cast<QWidget *>(m_accountPage))
 	{
@@ -159,12 +159,12 @@ void AddAccountWizard::next()
 
 		m_finish->mColorButton->setColor(col);
 		m_finish->mUseColor->setChecked(col.isValid());
-		KWizard::next();
+		K3Wizard::next();
 	}
 	else 
 	{
 		kdDebug(14100) << k_funcinfo << "Next pressed on misc page" << endl;
-		KWizard::next();
+		K3Wizard::next();
 	}
 
     // if it's the finish page, focus the finish button
@@ -203,7 +203,7 @@ void AddAccountWizard::accept()
 		account->connect();
 	}
 
-	KWizard::accept();
+	K3Wizard::accept();
 }
 
 void AddAccountWizard::reject()
@@ -227,7 +227,7 @@ void AddAccountWizard::reject()
 		}
 	}
 
-	KWizard::reject();
+	K3Wizard::reject();
 }
 
 #include "addaccountwizard.moc"

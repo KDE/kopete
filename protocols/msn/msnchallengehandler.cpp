@@ -124,7 +124,7 @@ qint64 MSNChallengeHandler::createHashKey(const QVector<qint32>& md5Integers,
 	QByteArray tempArray;
 	tempArray.reserve(8);
 	QDataStream buffer(&tempArray,QIODevice::ReadWrite);
-	buffer.setVersion(QDataStream::Qt_3_1);
+	//buffer.setVersion(QDataStream::Qt_3_1);
 	buffer.setByteOrder(QDataStream::LittleEndian);
 	buffer << (qint32)high;
 	buffer << (qint32)low;

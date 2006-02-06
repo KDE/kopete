@@ -33,8 +33,8 @@ class KopeteActiveLabel : public KActiveLabel
 	Q_OBJECT
 
 public:
-	KopeteActiveLabel( QWidget *parent = 0, const char* name = 0 );
-	KopeteActiveLabel( const QString& text, QWidget *parent = 0, const char* name = 0 );
+	KopeteActiveLabel( QWidget *parent = 0 );
+	KopeteActiveLabel( const QString& text, QWidget *parent = 0 );
 
 public slots:
 	virtual void openLink( const QString &link );

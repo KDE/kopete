@@ -21,7 +21,7 @@
 
 #include <qmap.h>
 
-#include <kwizard.h>
+#include <k3wizard.h>
 
 class Q3ListViewItem;
 
@@ -39,7 +39,7 @@ class KopeteEditAccountWidget;
 /**
  * @author  Olivier Goffart <ogoffart @ kde.org>
  */
-class AddAccountWizard : public KWizard
+class AddAccountWizard : public K3Wizard
 {
 	Q_OBJECT
 

@@ -93,9 +93,13 @@ public:
 
 		if ( ! metaContact->picture().isNull() )
         {
+#warning Currently using metaContact->picture().path() but should use replacement of KopeteMimeSourceFactory
+#if 0
 			QString photoName = QString::fromLatin1("kopete-metacontact-photo:%1").arg( KUrl::encode_string( metaContact->metaContactId() ));
 			//QMimeSourceFactory::defaultFactory()->setImage( "contactimg", metaContact->photo() );
 			toolTip += QString::fromLatin1("<img src=\"%1\">").arg( photoName );
+#endif
+			toolTip += QString::fromLatin1("<img src=\"%1\">").arg( metaContact->picture().path() );
         }
 
 		toolTip += QString::fromLatin1("</td><td>");

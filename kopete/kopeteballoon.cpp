@@ -43,13 +43,12 @@
 #include "systemtray.h"
 #include "kopetebehaviorsettings.h"
 
-KopeteActiveLabel::KopeteActiveLabel( QWidget *parent, const char *name )
-	: KActiveLabel( parent, name ) 
+KopeteActiveLabel::KopeteActiveLabel( QWidget *parent)
+	: KActiveLabel( parent) 
 {
 }
 
-KopeteActiveLabel::KopeteActiveLabel( const QString& text, QWidget *parent,
-	const char *name ) : KActiveLabel( text, parent, name )
+KopeteActiveLabel::KopeteActiveLabel( const QString& text, QWidget *parent) : KActiveLabel( text, parent)
 {
 }
 
@@ -80,7 +79,7 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 	QHBoxLayout *Layout1 = new QHBoxLayout(BalloonLayout,
 		KDialog::spacingHint(), "Layout1");
 	//QLabel *mCaption = new QLabel(text, this, "mCaption");
-	KopeteActiveLabel *mCaption = new KopeteActiveLabel(text, this, "mCaption");
+	KopeteActiveLabel *mCaption = new KopeteActiveLabel(text, this);
 	mCaption->setPalette(QToolTip::palette());
 	mCaption->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
 

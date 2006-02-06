@@ -38,8 +38,8 @@ LatexPreferences::LatexPreferences(QWidget *parent, const char* /*name*/, const 
 	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
 	m_preferencesDialog = new LatexPrefsUI(this);
 	// connect widget signals here
-	m_preferencesDialog->horizontalDPI->setMinValue(1);
-	m_preferencesDialog->verticalDPI->setMinValue(1);
+	m_preferencesDialog->horizontalDPI->setMinimum(1);
+	m_preferencesDialog->verticalDPI->setMinimum(1);
 	
 	connect(m_preferencesDialog->horizontalDPI, SIGNAL(valueChanged(int)), this, SLOT(slotModified()));
 	connect(m_preferencesDialog->verticalDPI, SIGNAL(valueChanged(int)), this, SLOT(slotModified()));

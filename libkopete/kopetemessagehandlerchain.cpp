@@ -103,7 +103,7 @@ MessageHandlerChain::Ptr MessageHandlerChain::create( ChatSession *manager, Mess
 	else // empty chain: might happen for dir == Internal
 		chain->d->first = terminator;
 	
-	return chain;
+	return MessageHandlerChain::Ptr(chain);
 }
 
 MessageHandlerChain::MessageHandlerChain()
@@ -128,7 +128,7 @@ MessageHandlerChain::~MessageHandlerChain()
 ProcessMessageTask *MessageHandlerChain::processMessage( const Message &message )
 {
 	MessageEvent *event = new MessageEvent( message );
-	return new ProcessMessageTask( this, event );
+	return new ProcessMessageTask( MessageHandlerChain::Ptr(this), event );
 }
 
 int MessageHandlerChain::capabilities()
