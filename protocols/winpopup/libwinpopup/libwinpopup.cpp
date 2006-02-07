@@ -51,7 +51,7 @@ void WinPopupLib::slotStartDirLister()
 	if (checkMessageDir()) {
 		dirLister = new KDirLister();
 		dirLister->setAutoUpdate(true);
-		connect(dirLister, SIGNAL(newItems (const KFileItemList &)), this, SLOT(slotNewMessages(const KFileItemList &)));
+		connect(dirLister, SIGNAL(newItems(const KFileItemList &)), this, SLOT(slotNewMessages(const KFileItemList &)));
 		connect(dirLister, SIGNAL(completed()), this, SLOT(slotListCompleted()));
 		dirLister->openURL(KURL(WP_POPUP_DIR));
 	}
@@ -108,30 +108,34 @@ bool WinPopupLib::checkMessageDir()
 {
 	QDir dir(WP_POPUP_DIR);
 	if (! dir.exists()) {
-		int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("Working directory /var/lib/winpopup/ does not exist.\n"
-								     "If you have not configured anything yet (samba) please see\n"
-								     "Install Into Samba (Configure... -> Account -> Edit) information\n"
-								     "on how to do this.\n"
-								     "Should the directory be created? (May need root password)"), QString::null, i18n("Create Directory"), i18n("Do Not Create"));
+		int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(),
+												  i18n("Working directory %1 does not exist.\n"
+													   "If you have not configured anything yet (samba) please see\n"
+													   "Install Into Samba (Configure... -> Account -> Edit) information\n"
+													   "on how to do this.\n"
+													   "Should the directory be created? (May need root password)").arg(WP_POPUP_DIR),
+												  QString::null, i18n("Create Directory"), i18n("Do Not Create"));
 		if (tmpYesNo == KMessageBox::Yes) {
-			QStringList kdesuArgs = QStringList(QString::fromLatin1("-c mkdir -p -m 0777 /var/lib/winpopup"));
+			QStringList kdesuArgs = QStringList(QString("-c mkdir -p -m 0777 " + WP_POPUP_DIR));
 			if (KApplication::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
 		}
 	} else {
-		KFileItem tmpFileItem = KFileItem(KFileItem::Unknown, KFileItem::Unknown, "/var/lib/winpopup/");
+		KFileItem tmpFileItem = KFileItem(KFileItem::Unknown, KFileItem::Unknown, WP_POPUP_DIR);
 		mode_t tmpPerms = tmpFileItem.permissions();
 
 		if (tmpPerms != 0777) {
 
 			kdDebug(14170) << "Perms not ok!" << endl;
 
-			int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("Permissions of the working directory "
-									     "/var/lib/winpopup/ are wrong!\n"
-									     "You will not receive messages if you say no.\n"
-								         "You can also correct it manually (chmod 0777 /var/lib/winpopup) and restart kopete.\n"
-									     "Fix? (May need root password)"), QString::null, i18n("Fix"), i18n("Do Not Fix"));
+			int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(),
+													  i18n("Permissions of the working directory "
+														   "%1 are wrong!\n"
+														   "You will not receive messages if you say no.\n"
+														   "You can also correct it manually (chmod 0777 %1) and restart kopete.\n"
+														   "Fix? (May need root password)").arg(WP_POPUP_DIR),
+													  QString::null, i18n("Fix"), i18n("Do Not Fix"));
 			if (tmpYesNo == KMessageBox::Yes) {
-				QStringList kdesuArgs = QStringList(QString::fromLatin1("-c chmod 0777 /var/lib/winpopup"));
+				QStringList kdesuArgs = QStringList(QString("-c chmod 0777 " + WP_POPUP_DIR));
 				if (KApplication::kdeinitExecWait("kdesu", kdesuArgs) == 0) return true;
 			}
 		} else {
@@ -141,6 +145,7 @@ bool WinPopupLib::checkMessageDir()
 
 	return false;
 }
+
 /**
  * read the groups and their hosts
  */
@@ -282,12 +287,13 @@ void WinPopupLib::readMessages(const KFileItemList &items)
 					// QFile::remove() seems to be very persistent, it removes even files with 0444 owned by root
 					// if the directory permissions are 0777 - so this is just for safety. GF
 					kdDebug(14170) << "Message file not removed - how that?" << endl;
-					int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(), i18n("A message file could not be removed; "
-										"maybe the permissions are wrong.\n"
-										"Fix? (May need root password)"), QString::null, i18n("Fix"), i18n("Do Not Fix"));
+					int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(),
+															  i18n("A message file could not be removed; "
+																   "maybe the permissions are wrong.\n"
+																   "Fix? (May need root password)"),
+															  QString::null, i18n("Fix"), i18n("Do Not Fix"));
 					if (tmpYesNo == KMessageBox::Yes) {
-						QFileInfo messageFileInfo(messageFile);
-						QStringList kdesuArgs = QStringList(QString("-c chmod 0666 /var/lib/winpopup/" + messageFileInfo.fileName()));
+						QStringList kdesuArgs = QStringList(QString("-c chmod 0666 " + tmpItem->localPath()));
 						if (KApplication::kdeinitExecWait("kdesu", kdesuArgs) == 0) {
 							if (!messageFile.remove())
 								KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Still cannot remove it; please fix manually."));
