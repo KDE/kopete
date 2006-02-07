@@ -14,19 +14,19 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
-#include"xmpp_jidlink.h"
+#include "xmpp_jidlink.h"
 
-#include<qdom.h>
-#include<qtimer.h>
+#include <qdom.h>
+#include <qtimer.h>
 //Added by qt3to4:
 #include <Q3PtrList>
-#include"im.h"
-#include"s5b.h"
-#include"xmpp_ibb.h"
+#include "im.h"
+#include "s5b.h"
+#include "xmpp_ibb.h"
 
 using namespace XMPP;
 

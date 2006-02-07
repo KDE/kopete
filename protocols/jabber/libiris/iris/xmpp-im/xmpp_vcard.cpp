@@ -14,21 +14,20 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
 #include "xmpp_vcard.h"
-
-#include "base64.h"
 
 #include <qdom.h>
 #include <qdatetime.h>
 
 #include <qimage.h> // needed for image format recognition
 #include <qbuffer.h>
-//Added by qt3to4:
-#include <QImageIO>
+#include <QImageReader>
+#include <QImageWriter>
+#include <QtCrypto>
 
 // Justin's XML helper functions
 
@@ -50,7 +49,7 @@ static QDomElement findSubTag(const QDomElement &e, const QString &name, bool *f
 		QDomElement i = n.toElement();
 		if(i.isNull())
 			continue;
-		if(i.tagName().toUpper() == name.toUpper()) { // mblsha: ignore case when searching
+		if(i.tagName().upper() == name.upper()) { // mblsha: ignore case when searching
 			if(found)
 				*found = TRUE;
 			return i;
@@ -82,7 +81,7 @@ static QString subTagText(const QDomElement &e, const QString &name)
 	bool found;
 	QDomElement i = findSubTag(e, name, &found);
 	if ( found )
-		return i.text().trimmed();
+		return i.text().stripWhiteSpace();
 	return QString::null;
 }
 
@@ -93,27 +92,28 @@ using namespace XMPP;
 //----------------------------------------------------------------------------
 static QString image2type(const QByteArray &ba)
 {
-	QBuffer buf(ba);
+	QBuffer buf;
+	buf.setData(ba);
 	buf.open(QIODevice::ReadOnly);
-	QString format = QImageIO::imageFormat( &buf );
+	QString format = QImageReader::imageFormat( &buf );
 
 	// TODO: add more formats
-	if ( format == "PNG" || format == "PsiPNG" )
+	if ( format.toUpper() == "PNG" || format == "PsiPNG" )
 		return "image/png";
-	if ( format == "MNG" )
+	if ( format.toUpper() == "MNG" )
 		return "video/x-mng";
-	if ( format == "GIF" )
+	if ( format.toUpper() == "GIF" )
 		return "image/gif";
-	if ( format == "BMP" )
+	if ( format.toUpper() == "BMP" )
 		return "image/bmp";
-	if ( format == "XPM" )
+	if ( format.toUpper() == "XPM" )
 		return "image/x-xpm";
-	if ( format == "SVG" )
+	if ( format.toUpper() == "SVG" )
 		return "image/svg+xml";
-	if ( format == "JPEG" )
+	if ( format.toUpper() == "JPEG" )
 		return "image/jpeg";
 
-	qWarning("WARNING! VCard::image2type: unknown format = '%s'", format.toLatin1());
+	qWarning(QString("WARNING! VCard::image2type: unknown format = '%1'").arg(format).toAscii());
 
 	return "image/unknown";
 }
@@ -303,7 +303,7 @@ QDomElement VCard::toXml(QDomDocument *doc) const
 
 		if ( !d->photo.isEmpty() ) {
 			w.appendChild( textTag(doc, "TYPE",	image2type(d->photo)) );
-			w.appendChild( textTag(doc, "BINVAL",	foldString( Base64::arrayToString(d->photo)) ) );
+			w.appendChild( textTag(doc, "BINVAL",	foldString( QCA::Base64().arrayToString(d->photo)) ) );
 		}
 		else if ( !d->photoURI.isEmpty() )
 			w.appendChild( textTag(doc, "EXTVAL",	d->photoURI) );
@@ -475,7 +475,7 @@ QDomElement VCard::toXml(QDomDocument *doc) const
 
 		if ( !d->logo.isEmpty() ) {
 			w.appendChild( textTag(doc, "TYPE",	image2type(d->logo)) );
-			w.appendChild( textTag(doc, "BINVAL",	foldString( Base64::arrayToString(d->logo)) ) );
+			w.appendChild( textTag(doc, "BINVAL",	foldString( QCA::Base64().arrayToString(d->logo)) ) );
 		}
 		else if ( !d->logoURI.isEmpty() )
 			w.appendChild( textTag(doc, "EXTVAL",	d->logoURI) );
@@ -532,7 +532,7 @@ QDomElement VCard::toXml(QDomDocument *doc) const
 		QDomElement w = doc->createElement("SOUND");
 
 		if ( !d->sound.isEmpty() )
-			w.appendChild( textTag(doc, "BINVAL",	foldString( Base64::arrayToString(d->sound)) ) );
+			w.appendChild( textTag(doc, "BINVAL",	foldString( QCA::Base64().arrayToString(d->sound)) ) );
 		else if ( !d->soundURI.isEmpty() )
 			w.appendChild( textTag(doc, "EXTVAL",	d->soundURI) );
 		else if ( !d->soundPhonetic.isEmpty() )
@@ -576,7 +576,7 @@ QDomElement VCard::toXml(QDomDocument *doc) const
 
 bool VCard::fromXml(const QDomElement &q)
 {
-	if ( q.tagName().toUpper() != "VCARD" )
+	if ( q.tagName().upper() != "VCARD" )
 		return false;
 
 	QDomNode n = q.firstChild();
@@ -585,15 +585,15 @@ bool VCard::fromXml(const QDomElement &q)
 		if ( i.isNull() )
 			continue;
 
-		QString tag = i.tagName().toUpper();
+		QString tag = i.tagName().upper();
 
 		bool found;
 		QDomElement e;
 
 		if ( tag == "VERSION" )
-			d->version = i.text().trimmed();
+			d->version = i.text().stripWhiteSpace();
 		else if ( tag == "FN" )
-			d->fullName = i.text().trimmed();
+			d->fullName = i.text().stripWhiteSpace();
 		else if ( tag == "N" ) {
 			d->familyName = subTagText(i, "FAMILY");
 			d->givenName  = subTagText(i, "GIVEN");
@@ -602,13 +602,13 @@ bool VCard::fromXml(const QDomElement &q)
 			d->suffixName = subTagText(i, "SUFFIX");
 		}
 		else if ( tag == "NICKNAME" )
-			d->nickName = i.text().trimmed();
+			d->nickName = i.text().stripWhiteSpace();
 		else if ( tag == "PHOTO" ) {
-			d->photo = Base64::stringToArray( subTagText(i, "BINVAL") );
+			d->photo = QCA::Base64().stringToArray(subTagText(i, "BINVAL").replace("\n","")).toByteArray();
 			d->photoURI = subTagText(i, "EXTVAL");
 		}
 		else if ( tag == "BDAY" )
-			d->bday = i.text().trimmed();
+			d->bday = i.text().stripWhiteSpace();
 		else if ( tag == "ADR" ) {
 			Address a;
 
@@ -655,8 +655,8 @@ bool VCard::fromXml(const QDomElement &q)
 				if ( ii.isNull() )
 					continue;
 
-				if ( ii.tagName().toUpper() == "LINE" )
-					l.lines.append ( ii.text().trimmed() );
+				if ( ii.tagName().upper() == "LINE" )
+					l.lines.append ( ii.text().stripWhiteSpace() );
 			}
 
 			d->labelList.append ( l );
@@ -698,26 +698,26 @@ bool VCard::fromXml(const QDomElement &q)
 
 			if ( m.userid.isEmpty() ) // FIXME: Workaround for Psi prior to 0.9
 				if ( !i.text().isEmpty() )
-					m.userid = i.text().trimmed();
+					m.userid = i.text().stripWhiteSpace();
 
 			d->emailList.append ( m );
 		}
 		else if ( tag == "JABBERID" )
-			d->jid = i.text().trimmed();
+			d->jid = i.text().stripWhiteSpace();
 		else if ( tag == "MAILER" )
-			d->mailer = i.text().trimmed();
+			d->mailer = i.text().stripWhiteSpace();
 		else if ( tag == "TZ" )
-			d->timezone = i.text().trimmed();
+			d->timezone = i.text().stripWhiteSpace();
 		else if ( tag == "GEO" ) {
 			d->geo.lat = subTagText(i, "LAT");
 			d->geo.lon = subTagText(i, "LON");
 		}
 		else if ( tag == "TITLE" )
-			d->title = i.text().trimmed();
+			d->title = i.text().stripWhiteSpace();
 		else if ( tag == "ROLE" )
-			d->role = i.text().trimmed();
+			d->role = i.text().stripWhiteSpace();
 		else if ( tag == "LOGO" ) {
-			d->logo = Base64::stringToArray( subTagText(i, "BINVAL") );
+			d->logo = QCA::Base64().stringToArray( subTagText(i, "BINVAL").replace("\n","") ).toByteArray();
 			d->logoURI = subTagText(i, "EXTVAL");
 		}
 		else if ( tag == "AGENT" ) {
@@ -742,8 +742,8 @@ bool VCard::fromXml(const QDomElement &q)
 				if ( ii.isNull() )
 					continue;
 
-				if ( ii.tagName().toUpper() == "ORGUNIT" )
-					d->org.unit.append( ii.text().trimmed() );
+				if ( ii.tagName().upper() == "ORGUNIT" )
+					d->org.unit.append( ii.text().stripWhiteSpace() );
 			}
 		}
 		else if ( tag == "CATEGORIES") {
@@ -753,29 +753,29 @@ bool VCard::fromXml(const QDomElement &q)
 				if ( ee.isNull() )
 					continue;
 
-				if ( ee.tagName().toUpper() == "KEYWORD" )
-					d->categories << ee.text().trimmed();
+				if ( ee.tagName().upper() == "KEYWORD" )
+					d->categories << ee.text().stripWhiteSpace();
 			}
 		}
 		else if ( tag == "NOTE" )
-			d->note = i.text().trimmed();
+			d->note = i.text().stripWhiteSpace();
 		else if ( tag == "PRODID" )
-			d->prodId = i.text().trimmed();
+			d->prodId = i.text().stripWhiteSpace();
 		else if ( tag == "REV" )
-			d->rev = i.text().trimmed();
+			d->rev = i.text().stripWhiteSpace();
 		else if ( tag == "SORT-STRING" )
-			d->sortString = i.text().trimmed();
+			d->sortString = i.text().stripWhiteSpace();
 		else if ( tag == "SOUND" ) {
-			d->sound = Base64::stringToArray( subTagText(i, "BINVAL") );
+			d->sound = QCA::Base64().stringToArray( subTagText(i, "BINVAL").replace("\n","") ).toByteArray();
 			d->soundURI      = subTagText(i, "EXTVAL");
 			d->soundPhonetic = subTagText(i, "PHONETIC");
 		}
 		else if ( tag == "UID" )
-			d->uid = i.text().trimmed();
+			d->uid = i.text().stripWhiteSpace();
 		else if ( tag == "URL")
-			d->url = i.text().trimmed();
+			d->url = i.text().stripWhiteSpace();
 		else if ( tag == "DESC" )
-			d->desc = i.text().trimmed();
+			d->desc = i.text().stripWhiteSpace();
 		else if ( tag == "CLASS" ) {
 			if ( hasSubTag(i, "PUBLIC") )
 				d->privacyClass = pcPublic;
@@ -789,14 +789,14 @@ bool VCard::fromXml(const QDomElement &q)
 			e = findSubTag(i, "TYPE", &found);
 			QString type = "text/plain";
 			if ( found )
-				type = e.text().trimmed();
+				type = e.text().stripWhiteSpace();
 
 			e = findSubTag(i, "CRED", &found );
 			if ( !found )
 				e = findSubTag(i, "BINVAL", &found); // case for very clever clients ;-)
 
 			if ( found )
-				d->key = e.text().toUtf8(); // FIXME
+				d->key = e.text().utf8(); // FIXME
 		}
 	}
 

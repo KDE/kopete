@@ -14,22 +14,22 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
 #ifndef QCAPROVIDER_H
 #define QCAPROVIDER_H
 
-#include<qglobal.h>
-#include<qstring.h>
-#include<qdatetime.h>
-#include<qobject.h>
-#include<qhostaddress.h>
-#include"qca.h"
+#include <qglobal.h>
+#include <qstring.h>
+#include <qdatetime.h>
+#include <qobject.h>
+#include <qhostaddress.h>
+#include "qca.h"
 //Added by qt3to4:
 #include <Q3PtrList>
-#include <Q3ValueList>
+#include <QList>
 
 #define QCA_PLUGIN_VERSION 1
 
@@ -113,8 +113,8 @@ public:
 	virtual QString serialNumber() const=0;
 	virtual QString subjectString() const=0;
 	virtual QString issuerString() const=0;
-	virtual Q3ValueList<QCA_CertProperty> subject() const=0;
-	virtual Q3ValueList<QCA_CertProperty> issuer() const=0;
+	virtual QList<QCA_CertProperty> subject() const=0;
+	virtual QList<QCA_CertProperty> issuer() const=0;
 	virtual QDateTime notBefore() const=0;
 	virtual QDateTime notAfter() const=0;
 	virtual bool matchesAddress(const QString &realHost) const=0;
@@ -144,7 +144,7 @@ public:
 struct QCA_SASLHostPort
 {
 	QHostAddress addr;
-	quint16 port;
+	Q_UINT16 port;
 };
 
 struct QCA_SASLNeedParams

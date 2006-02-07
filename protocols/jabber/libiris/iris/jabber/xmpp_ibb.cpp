@@ -14,17 +14,17 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
-#include"xmpp_ibb.h"
+#include "xmpp_ibb.h"
 
-#include<qtimer.h>
-#include"xmpp_xmlcommon.h"
-#include"base64.h"
+#include <qtimer.h>
+#include "xmpp_xmlcommon.h"
+#include <QtCrypto>
 
-#include<stdlib.h>
+#include <stdlib.h>
 
 #define IBB_PACKET_SIZE   4096
 #define IBB_PACKET_DELAY  0
@@ -106,7 +106,7 @@ void IBBConnection::connectToJid(const Jid &peer, const QDomElement &comment)
 	d->peer = peer;
 	d->comment = comment;
 
-	QString dstr; dstr.sprintf("IBBConnection[%d]: initiating request to %s\n", d->id, peer.full().toLatin1());
+	QString dstr; dstr.sprintf("IBBConnection[%d]: initiating request to %s\n", d->id, peer.full().latin1());
 	d->m->client()->debug(dstr);
 
 	d->j = new JT_IBB(d->m->client()->rootTask());
@@ -120,7 +120,7 @@ void IBBConnection::accept()
 	if(d->state != WaitingForAccept)
 		return;
 
-	QString dstr; dstr.sprintf("IBBConnection[%d]: accepting %s [%s]\n", d->id, d->peer.full().toLatin1(), d->sid.toLatin1());
+	QString dstr; dstr.sprintf("IBBConnection[%d]: accepting %s [%s]\n", d->id, d->peer.full().latin1(), d->sid.latin1());
 	d->m->client()->debug(dstr);
 
 	d->m->doAccept(this, d->iq_id);
@@ -203,7 +203,7 @@ void IBBConnection::write(const QByteArray &a)
 QByteArray IBBConnection::read(int)
 {
 	// TODO: obey argument
-	QByteArray a = d->recvbuf.copy();
+	QByteArray a = d->recvbuf;
 	d->recvbuf.resize(0);
 	return a;
 }
@@ -254,7 +254,7 @@ void IBBConnection::ibb_finished()
 		if(j->mode() == JT_IBB::ModeRequest) {
 			d->sid = j->streamid();
 
-			QString dstr; dstr.sprintf("IBBConnection[%d]: %s [%s] accepted.\n", d->id, d->peer.full().toLatin1(), d->sid.toLatin1());
+			QString dstr; dstr.sprintf("IBBConnection[%d]: %s [%s] accepted.\n", d->id, d->peer.full().latin1(), d->sid.latin1());
 			d->m->client()->debug(dstr);
 
 			d->state = Active;
@@ -275,7 +275,7 @@ void IBBConnection::ibb_finished()
 	}
 	else {
 		if(j->mode() == JT_IBB::ModeRequest) {
-			QString dstr; dstr.sprintf("IBBConnection[%d]: %s refused.\n", d->id, d->peer.full().toLatin1());
+			QString dstr; dstr.sprintf("IBBConnection[%d]: %s refused.\n", d->id, d->peer.full().latin1());
 			d->m->client()->debug(dstr);
 
 			reset(true);
@@ -515,7 +515,7 @@ void JT_IBB::sendData(const Jid &to, const QString &streamid, const QByteArray &
 	iq.appendChild(query);
 	query.appendChild(textTag(doc(), "streamid", streamid));
 	if(!a.isEmpty())
-		query.appendChild(textTag(doc(), "data", Base64::arrayToString(a)));
+		query.appendChild(textTag(doc(), "data", QCA::Base64().arrayToString(a)));
 	if(close) {
 		QDomElement c = doc()->createElement("close");
 		query.appendChild(c);
@@ -579,7 +579,7 @@ bool JT_IBB::take(const QDomElement &e)
 			bool close = false;
 			s = findSubTag(q, "data", &found);
 			if(found)
-				a = Base64::stringToArray(tagContent(s));
+				a = QCA::Base64().stringToArray(tagContent(s)).toByteArray();
 			s = findSubTag(q, "close", &found);
 			if(found)
 				close = true;

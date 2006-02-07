@@ -14,14 +14,14 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
-#include"xmpp.h"
+#include "xmpp.h"
 
-#include<qtimer.h>
-#include"qca.h"
+#include <qtimer.h>
+#include "qca.h"
 
 using namespace XMPP;
 
@@ -55,9 +55,9 @@ QCATLSHandler::QCATLSHandler(QCA::TLS *parent)
 	d->tls = parent;
 	connect(d->tls, SIGNAL(handshaken()), SLOT(tls_handshaken()));
 	connect(d->tls, SIGNAL(readyRead()), SLOT(tls_readyRead()));
-	connect(d->tls, SIGNAL(readyReadOutgoing(int)), SLOT(tls_readyReadOutgoing(int)));
+	connect(d->tls, SIGNAL(readyReadOutgoing()), SLOT(tls_readyReadOutgoing()));
 	connect(d->tls, SIGNAL(closed()), SLOT(tls_closed()));
-	connect(d->tls, SIGNAL(error(int)), SLOT(tls_error(int)));
+	connect(d->tls, SIGNAL(error()), SLOT(tls_error()));
 	d->state = 0;
 	d->err = -1;
 }
@@ -87,8 +87,7 @@ void QCATLSHandler::startClient(const QString &host)
 {
 	d->state = 0;
 	d->err = -1;
-	if(!d->tls->startClient(host))
-		QTimer::singleShot(0, this, SIGNAL(fail()));
+	d->tls->startClient(host);
 }
 
 void QCATLSHandler::write(const QByteArray &a)
@@ -120,9 +119,11 @@ void QCATLSHandler::tls_readyRead()
 	readyRead(d->tls->read());
 }
 
-void QCATLSHandler::tls_readyReadOutgoing(int plainBytes)
+void QCATLSHandler::tls_readyReadOutgoing()
 {
-	readyReadOutgoing(d->tls->readOutgoing(), plainBytes);
+	int plainBytes;
+	QByteArray buf = d->tls->readOutgoing(&plainBytes);
+	readyReadOutgoing(buf, plainBytes);
 }
 
 void QCATLSHandler::tls_closed()
@@ -130,9 +131,9 @@ void QCATLSHandler::tls_closed()
 	closed();
 }
 
-void QCATLSHandler::tls_error(int x)
+void QCATLSHandler::tls_error()
 {
-	d->err = x;
+	d->err = d->tls->errorCode();
 	d->state = 0;
 	fail();
 }

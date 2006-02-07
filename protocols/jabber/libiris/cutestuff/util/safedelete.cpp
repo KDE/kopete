@@ -1,6 +1,6 @@
-#include"safedelete.h"
+#include "safedelete.h"
 
-#include<qtimer.h>
+#include <qtimer.h>
 
 //----------------------------------------------------------------------------
 // SafeDelete
@@ -35,9 +35,9 @@ void SafeDelete::deleteAll()
 	if(list.isEmpty())
 		return;
 
-	QObjectListIt it(list);
-	for(QObject *o; (o = it.current()); ++it)
-		deleteSingle(o);
+	QObjectList::Iterator it = list.begin();
+	for(QObjectList::Iterator it = list.begin(); it != list.end(); ++it)
+		deleteSingle(*it);
 	list.clear();
 }
 
@@ -89,14 +89,14 @@ SafeDeleteLater *SafeDeleteLater::ensureExists()
 
 SafeDeleteLater::SafeDeleteLater()
 {
-	list.setAutoDelete(true);
 	self = this;
 	QTimer::singleShot(0, this, SLOT(explode()));
 }
 
 SafeDeleteLater::~SafeDeleteLater()
 {
-	list.clear();
+	while (!list.isEmpty())
+		delete list.takeFirst();
 	self = 0;
 }
 
@@ -109,5 +109,3 @@ void SafeDeleteLater::explode()
 {
 	delete this;
 }
-
-#include "safedelete.moc"

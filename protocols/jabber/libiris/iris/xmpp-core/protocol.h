@@ -14,18 +14,18 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-#include<qpair.h>
+#include <qpair.h>
 //Added by qt3to4:
-#include <Q3ValueList>
-#include"xmlprotocol.h"
-#include"xmpp.h"
+#include <QList>
+#include "xmlprotocol.h"
+#include "xmpp.h"
 
 #define NS_ETHERX   "http://etherx.jabber.org/streams"
 #define NS_CLIENT   "jabber:client"
@@ -37,8 +37,6 @@
 #define NS_SESSION  "urn:ietf:params:xml:ns:xmpp-session"
 #define NS_STANZAS  "urn:ietf:params:xml:ns:xmpp-stanzas"
 #define NS_BIND     "urn:ietf:params:xml:ns:xmpp-bind"
-#define NS_XHTML_IM "http://jabber.org/protocol/xhtml-im"
-#define NS_XHTML "http://www.w3.org/1999/xhtml"
 
 namespace XMPP
 {
@@ -231,7 +229,7 @@ namespace XMPP
 			QString stringToSend;
 			bool doWhitespace;
 		};
-		Q3ValueList<SendItem> sendList;
+		QList<SendItem> sendList;
 
 		bool doShutdown, delayedError, closeError, ready;
 		int stanzasPending, stanzasWritten;
@@ -313,7 +311,7 @@ namespace XMPP
 			GetAuthSetResponse  // read auth-set response
 		};
 
-		Q3ValueList<DBItem> dbrequests, dbpending, dbvalidated;
+		QList<DBItem> dbrequests, dbpending, dbvalidated;
 
 		bool server, dialback, dialback_verify;
 		int step;

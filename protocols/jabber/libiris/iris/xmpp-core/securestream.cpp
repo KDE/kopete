@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -26,16 +26,16 @@
     but future layers might not.
 */
 
-#include"securestream.h"
+#include "securestream.h"
 
-#include<qpointer.h>
-#include<q3valuelist.h>
-#include<qtimer.h>
+#include <qpointer.h>
+#include <QList>
+#include <qtimer.h>
 //Added by qt3to4:
 #include <Q3PtrList>
 
 #ifdef USE_TLSHANDLER
-#include"xmpp.h"
+#include "xmpp.h"
 #endif
 
 //----------------------------------------------------------------------------
@@ -58,7 +58,7 @@ public:
 	int finished(int encoded);
 
 	int p;
-	Q3ValueList<Item> list;
+	QList<Item> list;
 };
 
 LayerTracker::LayerTracker()
@@ -92,7 +92,7 @@ void LayerTracker::specifyEncoded(int encoded, int plain)
 int LayerTracker::finished(int encoded)
 {
 	int plain = 0;
-	for(Q3ValueList<Item>::Iterator it = list.begin(); it != list.end();) {
+	for(QList<Item>::Iterator it = list.begin(); it != list.end();) {
 		Item &i = *it;
 
 		// not enough?
@@ -306,7 +306,7 @@ private slots:
 #endif
 };
 
-#include"securestream.moc"
+#include "securestream.moc"
 
 class SecureStream::Private
 {

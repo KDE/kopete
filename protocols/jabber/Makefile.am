@@ -47,13 +47,7 @@ kopete_jabber_la_SOURCES = \
 kopete_jabber_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_jabber_la_LIBADD  = $(top_builddir)/kopete/libkopete/libkopete.la \
 	ui/libkopetejabberui.la \
-	libiris/iris/include/libiris.la \
-	libiris/iris/jabber/libiris_jabber.la \
-	libiris/iris/xmpp-core/libiris_xmpp_core.la \
-	libiris/iris/xmpp-im/libiris_xmpp_im.la \
-	libiris/qca/src/libqca.la \
-	libiris/cutestuff/network/libcutestuff_network.la \
-	libiris/cutestuff/util/libcutestuff_util.la \
+	libiris/libiris_local.la \
 	libjabberclient.la \
 	$(JINGLE_LIBS)
 

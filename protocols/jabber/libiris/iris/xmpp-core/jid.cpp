@@ -14,16 +14,16 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
-#include"xmpp.h"
+#include "xmpp.h"
 
-#include<q3dict.h>
+#include <q3dict.h>
 //Added by qt3to4:
-#include <QByteArray>
-#include<stringprep.h>
+#include <Q3CString>
+#include <stringprep.h>
 
 using namespace XMPP;
 
@@ -54,7 +54,7 @@ public:
 			return true;
 		}
 
-		QByteArray cs = in.toUtf8();
+		Q3CString cs = in.utf8();
 		cs.resize(maxbytes);
 		if(stringprep(cs.data(), maxbytes, (Stringprep_profile_flags)0, stringprep_nameprep) != 0)
 		{
@@ -90,7 +90,7 @@ public:
 			return true;
 		}
 
-		QByteArray cs = in.toUtf8();
+		Q3CString cs = in.utf8();
 		cs.resize(maxbytes);
 		if(stringprep(cs.data(), maxbytes, (Stringprep_profile_flags)0, stringprep_xmpp_nodeprep) != 0)
 		{
@@ -126,7 +126,7 @@ public:
 			return true;
 		}
 
-		QByteArray cs = in.toUtf8();
+		Q3CString cs = in.utf8();
 		cs.resize(maxbytes);
 		if(stringprep(cs.data(), maxbytes, (Stringprep_profile_flags)0, stringprep_xmpp_resourceprep) != 0)
 		{
@@ -235,9 +235,6 @@ void Jid::update()
 		b = d;
 	else
 		b = n + '@' + d;
-	
-	b=b.toLower(); // JID are not case sensitive
-	
 	if(r.isEmpty())
 		f = b;
 	else
@@ -376,7 +373,7 @@ bool Jid::compare(const Jid &a, bool compareRes) const
 
 bool Jid::validDomain(const QString &s, QString *norm)
 {
-	/*QCString cs = s.toUtf8();
+	/*QCString cs = s.utf8();
 	cs.resize(1024);
 	if(stringprep(cs.data(), 1024, (Stringprep_profile_flags)0, stringprep_nameprep) != 0)
 		return false;
@@ -388,7 +385,7 @@ bool Jid::validDomain(const QString &s, QString *norm)
 
 bool Jid::validNode(const QString &s, QString *norm)
 {
-	/*QCString cs = s.toUtf8();
+	/*QCString cs = s.utf8();
 	cs.resize(1024);
 	if(stringprep(cs.data(), 1024, (Stringprep_profile_flags)0, stringprep_xmpp_nodeprep) != 0)
 		return false;
@@ -400,7 +397,7 @@ bool Jid::validNode(const QString &s, QString *norm)
 
 bool Jid::validResource(const QString &s, QString *norm)
 {
-	/*QCString cs = s.toUtf8();
+	/*QCString cs = s.utf8();
 	cs.resize(1024);
 	if(stringprep(cs.data(), 1024, (Stringprep_profile_flags)0, stringprep_xmpp_resourceprep) != 0)
 		return false;

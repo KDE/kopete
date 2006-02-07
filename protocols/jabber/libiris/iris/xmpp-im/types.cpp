@@ -14,16 +14,16 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
-#include"im.h"
-#include "protocol.h"
-#include<qmap.h>
-#include<qapplication.h>
+#include "im.h"
+
+#include <qmap.h>
+#include <qapplication.h>
 //Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
 
 #define NS_XML     "http://www.w3.org/XML/1998/namespace"
 
@@ -182,15 +182,14 @@ public:
 	Jid to, from;
 	QString id, type, lang;
 
-	StringMap subject, body, xHTMLBody;
-
+	StringMap subject, body;
 	QString thread;
 	Stanza::Error error;
 
 	// extensions
 	QDateTime timeStamp;
 	UrlList urlList;
-	Q3ValueList<MsgEvent> eventList;
+	QList<MsgEvent> eventList;
 	QString eventId;
 	QString xencrypted, invite;
 
@@ -282,11 +281,6 @@ QString Message::body(const QString &lang) const
 	return d->body[lang];
 }
 
-QString Message::xHTMLBody(const QString &lang) const
-{
-	return d->xHTMLBody[lang];
-}
-
 QString Message::thread() const
 {
 	return d->thread;
@@ -348,14 +342,7 @@ void Message::setSubject(const QString &s, const QString &lang)
 void Message::setBody(const QString &s, const QString &lang)
 {
 	d->body[lang] = s;
-}
-
-void Message::setXHTMLBody(const QString &s, const QString &lang, const QString &attr)
-{
-	//ugly but needed if s is not a node but a list of leaf
-
-	QString content = "<body xmlns='" + QString(NS_XHTML) + "' "+attr+" >\n" + s +"\n</body>";
-	d->xHTMLBody[lang] = content;
+	//d->flag = false;
 }
 
 void Message::setThread(const QString &s)
@@ -504,19 +491,7 @@ Stanza Message::toStanza(Stream *stream) const
 			s.appendChild(e);
 		}
 	}
-	if ( !d->xHTMLBody.isEmpty()) {
-		QDomElement parent = s.createElement(s.xhtmlImNS(), "html");
-		for(it = d->xHTMLBody.begin(); it != d->xHTMLBody.end(); ++it) {
-			const QString &str = it.data();
-			if(!str.isEmpty()) {
-				QDomElement child = s.createXHTMLElement(str);
-				if(!it.key().isEmpty())
-					child.setAttributeNS(NS_XML, "xml:lang", it.key());
-				parent.appendChild(child);
-			}
-		}
-		s.appendChild(parent);
-	}
+
 	if(d->type == "error")
 		s.setError(d->error);
 
@@ -528,7 +503,7 @@ Stanza Message::toStanza(Stream *stream) const
 	}*/
 
 	// urls
-	for(Q3ValueList<Url>::ConstIterator uit = d->urlList.begin(); uit != d->urlList.end(); ++uit) {
+	for(QList<Url>::ConstIterator uit = d->urlList.begin(); uit != d->urlList.end(); ++uit) {
 		QDomElement x = s.createElement("jabber:x:oob", "x");
 		x.appendChild(s.createTextElement("jabber:x:oob", "url", (*uit).url()));
 		if(!(*uit).desc().isEmpty())
@@ -547,7 +522,7 @@ Stanza Message::toStanza(Stream *stream) const
 				x.appendChild(s.createTextElement("jabber:x:event","id",d->eventId));
 		}
 
-		for(Q3ValueList<MsgEvent>::ConstIterator ev = d->eventList.begin(); ev != d->eventList.end(); ++ev) {
+		for(QList<MsgEvent>::ConstIterator ev = d->eventList.begin(); ev != d->eventList.end(); ++ev) {
 			switch (*ev) {
 				case OfflineEvent:
 					x.appendChild(s.createElement("jabber:x:event", "offline"));
@@ -601,7 +576,7 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 	QDomElement root = s.element();
 
 	QDomNodeList nl = root.childNodes();
-	uint n;
+	int n;
 	for(n = 0; n < nl.count(); ++n) {
 		QDomNode i = nl.item(n);
 		if(i.isElement()) {
@@ -618,23 +593,8 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 				else if(e.tagName() == "thread")
 					d->thread = e.text();
 			}
-			else if (e.namespaceURI() == s.xhtmlImNS()) {
-				 if (e.tagName() == "html") {
-					QDomNodeList htmlNL= e.childNodes();
-					for (unsigned int x = 0; x < htmlNL.count(); x++) {
-						QDomElement i = htmlNL.item(x).toElement();
-
-						if (i.tagName() == "body") {
-							QDomDocument RichText;
-							QString lang = i.attributeNS(NS_XML, "lang", "");
-							RichText.appendChild(i);
-							d-> xHTMLBody[lang] = RichText.toString();
-						}
-					}
-				}
-			}
 			else {
-				//printf("extension element: [%s]\n", e.tagName().toLatin1());
+				//printf("extension element: [%s]\n", e.tagName().latin1());
 			}
 		}
 	}
@@ -681,8 +641,6 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 				d->eventList += ComposingEvent;
 			else if (evtag == "delivered")
 				d->eventList += DeliveredEvent;
-			else if (evtag == "offline")
-				d->eventList += OfflineEvent;
 		}
 		if (d->eventList.isEmpty())
 			d->eventList += CancelEvent;
@@ -964,7 +922,7 @@ void Resource::setStatus(const Status & _status)
 // ResourceList
 //---------------------------------------------------------------------------
 ResourceList::ResourceList()
-:Q3ValueList<Resource>()
+:QList<Resource>()
 {
 }
 
@@ -1023,6 +981,7 @@ ResourceList::ConstIterator ResourceList::priority() const
 RosterItem::RosterItem(const Jid &_jid)
 {
 	v_jid = _jid;
+	v_push = false;
 }
 
 RosterItem::~RosterItem()
@@ -1168,7 +1127,7 @@ bool RosterItem::fromXml(const QDomElement &item)
 // Roster
 //---------------------------------------------------------------------------
 Roster::Roster()
-:Q3ValueList<RosterItem>()
+:QList<RosterItem>()
 {
 }
 
@@ -1325,7 +1284,7 @@ QString FormField::typeToTagName(int type) const
 // Form
 //---------------------------------------------------------------------------
 Form::Form(const Jid &j)
-:Q3ValueList<FormField>()
+:QList<FormField>()
 {
 	setJid(j);
 }
@@ -1490,16 +1449,6 @@ bool Features::canSearch() const
 	return test(ns);
 }
 
-#define FID_XHTML  "http://jabber.org/protocol/xhtml-im"
-bool Features::canXHTML() const
-{
-	QStringList ns;
-
-	ns << FID_XHTML;
-
-	return test(ns);
-}
-
 #define FID_GROUPCHAT "jabber:iq:conference"
 bool Features::canGroupchat() const
 {
@@ -1609,7 +1558,7 @@ long Features::id() const
 		return FID_Disco;
 	else if ( haveVCard() )
 		return FID_VCard;
-	else if ( test(FID_ADD) )
+	else if ( test(QStringList(FID_ADD)) )
 		return FID_Add;
 
 	return FID_None;
@@ -1827,4 +1776,4 @@ QString DiscoItem::action2string(Action a)
 
 }
 
-#include"types.moc"
+#include "types.moc"

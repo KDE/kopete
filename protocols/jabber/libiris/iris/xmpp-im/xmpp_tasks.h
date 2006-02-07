@@ -14,20 +14,20 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
 #ifndef JABBER_TASKS_H
 #define JABBER_TASKS_H
 
-#include<qstring.h>
-#include<qdom.h>
+#include <qstring.h>
+#include <qdom.h>
 //Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
 
-#include"im.h"
-#include"xmpp_vcard.h"
+#include "im.h"
+#include "xmpp_vcard.h"
 
 namespace XMPP
 {
@@ -197,29 +197,6 @@ namespace XMPP
 		Private *d;
 	};
 
-	class JT_GetLastActivity : public Task
-	{
-		Q_OBJECT
-	public:
-		JT_GetLastActivity(Task *);
-		~JT_GetLastActivity();
-
-		void get(const Jid &);
-
-		int seconds() const;
-		const QString &message() const;
-
-		void onGo();
-		bool take(const QDomElement &x);
-
-	private:
-		class Private;
-		Private *d;
-
-		QDomElement iq;
-		Jid jid;
-	};
-
 	class JT_GetServices : public Task
 	{
 		Q_OBJECT
@@ -273,7 +250,7 @@ namespace XMPP
 		~JT_Search();
 
 		const Form & form() const;
-		const Q3ValueList<SearchResult> & results() const;
+		const QList<SearchResult> & results() const;
 
 		void get(const Jid &);
 		void set(const Form &);
@@ -441,47 +418,6 @@ namespace XMPP
 		class Private;
 		Private *d;
 	};
-
-	class JT_MucPresence : public Task
-	{
-		Q_OBJECT
-	public:
-		JT_MucPresence(Task *parent);
-		~JT_MucPresence();
-
-		void pres(const Status &);
-		void pres(const Jid &, const Status &, const QString &password);
-
-		void onGo();
-
-	private:
-		QDomElement tag;
-		int type;
-
-		class Private;
-		Private *d;
-	};
-	
-	class JT_PrivateStorage : public Task
-	{
-		Q_OBJECT
-	public:
-		JT_PrivateStorage(Task *parent);
-		~JT_PrivateStorage();
-
-		void set(const QDomElement &);
-		void get(const QString &tag, const QString& xmlns);
-		
-		QDomElement element();
-
-		void onGo();
-		bool take(const QDomElement &);
-		
-	private:
-		class Private;
-		Private *d;
-	};
-	
 }
 
 #endif

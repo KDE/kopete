@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -48,26 +48,26 @@
 //! QString ip_address = dns.resultString();
 //! \endcode
 
-#include"ndns.h"
+#include "ndns.h"
 
-#include<qapplication.h>
-#include<q3socketdevice.h>
-#include<q3ptrlist.h>
-#include<qeventloop.h>
+#include <qapplication.h>
+#include <q3socketdevice.h>
+#include <q3ptrlist.h>
+#include <qeventloop.h>
 //Added by qt3to4:
 #include <QCustomEvent>
 #include <QEvent>
-#include <QByteArray>
+#include <Q3CString>
 
 #ifdef Q_OS_UNIX
-#include<netdb.h>
-#include<sys/types.h>
-#include<netinet/in.h>
-#include<arpa/inet.h>
+#include <netdb.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #endif
 
 #ifdef Q_OS_WIN32
-#include<windows.h>
+#include <windows.h>
 #endif
 
 // CS_NAMESPACE_BEGIN
@@ -85,7 +85,7 @@ public:
 class NDnsWorker : public QThread
 {
 public:
-	NDnsWorker(QObject *, const QByteArray &);
+	NDnsWorker(QObject *, const Q3CString &);
 
 	bool success;
 	bool cancelled;
@@ -95,7 +95,7 @@ protected:
 	void run();
 
 private:
-	QByteArray host;
+	Q3CString host;
 	QObject *par;
 };
 //! \endif
@@ -180,7 +180,7 @@ void NDnsManager::resolve(NDns *self, const QString &name)
 {
 	Item *i = new Item;
 	i->ndns = self;
-	i->worker = new NDnsWorker(this, name.toUtf8());
+	i->worker = new NDnsWorker(this, name.utf8());
 	d->list.append(i);
 
 	i->worker->start();
@@ -246,8 +246,7 @@ void NDnsManager::tryDestroy()
 void NDnsManager::app_aboutToQuit()
 {
 	while(man) {
-		QEventLoop *e = qApp->eventLoop();
-		e->processEvents(QEventLoop::WaitForMore);
+		qApp->processEvents(QEventLoop::WaitForMoreEvents);
 	}
 }
 
@@ -335,7 +334,7 @@ NDnsWorkerEvent::NDnsWorkerEvent(NDnsWorker *p)
 //----------------------------------------------------------------------------
 // NDnsWorker
 //----------------------------------------------------------------------------
-NDnsWorker::NDnsWorker(QObject *_par, const QByteArray &_host)
+NDnsWorker::NDnsWorker(QObject *_par, const Q3CString &_host)
 {
 	success = cancelled = false;
 	par = _par;
@@ -378,5 +377,3 @@ void NDnsWorker::run()
 }
 
 // CS_NAMESPACE_END
-
-#include "ndns.moc"

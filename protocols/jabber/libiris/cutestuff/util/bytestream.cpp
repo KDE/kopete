@@ -14,13 +14,13 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
-#include"bytestream.h"
+#include "bytestream.h"
 //Added by qt3to4:
-#include <QByteArray>
+#include <Q3CString>
 
 // CS_NAMESPACE_BEGIN
 
@@ -130,6 +130,14 @@ int ByteStream::bytesToWrite() const
 	return d->writeBuf.size();
 }
 
+//!
+//! Writes string \a cs to the stream.
+void ByteStream::write(const Q3CString &cs)
+{
+	QByteArray block(cs.length());
+	memcpy(block.data(), cs.data(), block.size());
+	write(block);
+}
 
 //!
 //! Clears the read buffer.
@@ -216,7 +224,7 @@ QByteArray ByteStream::takeArray(QByteArray *from, int size, bool del)
 {
 	QByteArray a;
 	if(size == 0) {
-		a = from->copy();
+		a = *from;
 		if(del)
 			from->resize(0);
 	}
@@ -259,4 +267,3 @@ QByteArray ByteStream::takeArray(QByteArray *from, int size, bool del)
 //! error is indicated by \a code.
 
 // CS_NAMESPACE_END
-#include "bytestream.moc"

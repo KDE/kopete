@@ -14,15 +14,15 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
 #ifndef CS_SRVRESOLVER_H
 #define CS_SRVRESOLVER_H
 
-#include<q3valuelist.h>
-#include<q3dns.h>
+#include <QList>
+#include <q3dns.h>
 
 // CS_NAMESPACE_BEGIN
 
@@ -39,11 +39,11 @@ public:
 	void stop();
 	bool isBusy() const;
 
-	Q3ValueList<Q3Dns::Server> servers() const;
+	QList<Q3Dns::Server> servers() const;
 
 	bool failed() const;
 	QHostAddress resultAddress() const;
-	quint16 resultPort() const;
+	Q_UINT16 resultPort() const;
 
 signals:
 	void resultsReady();

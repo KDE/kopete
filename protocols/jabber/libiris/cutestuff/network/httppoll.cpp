@@ -14,25 +14,24 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
-#include"httppoll.h"
+#include "httppoll.h"
 
-#include<qstringlist.h>
-#include<q3url.h>
-#include<qtimer.h>
-#include<qpointer.h>
-#include<qca.h>
+#include <qstringlist.h>
+#include <q3url.h>
+#include <qtimer.h>
+#include <qpointer.h>
+#include <QtCrypto>
 //Added by qt3to4:
-#include <QByteArray>
-#include<stdlib.h>
-#include"bsocket.h"
-#include"base64.h"
+#include <Q3CString>
+#include <stdlib.h>
+#include "bsocket.h"
 
 #ifdef PROX_DEBUG
-#include<stdio.h>
+#include <stdio.h>
 #endif
 
 #define POLL_KEYS 64
@@ -55,7 +54,7 @@ static QString hpk(int n, const QString &s)
 	if(n == 0)
 		return s;
 	else
-		return Base64::arrayToString( QCA::SHA1::hash( QByteArray(hpk(n - 1, s).toLatin1()) ) );
+		return QCA::Base64().arrayToString( QCA::SHA1().hash( Q3CString(hpk(n - 1, s).latin1()) ).toByteArray() );
 }
 
 class HttpPoll::Private
@@ -157,11 +156,11 @@ void HttpPoll::connectToHost(const QString &proxyHost, int proxyPort, const QStr
 	QString key = getKey(&last);
 
 #ifdef PROX_DEBUG
-	fprintf(stderr, "HttpPoll: Connecting to %s:%d [%s]", d->host.toLatin1(), d->port, d->url.toLatin1());
+	fprintf(stderr, "HttpPoll: Connecting to %s:%d [%s]", d->host.latin1(), d->port, d->url.latin1());
 	if(d->user.isEmpty())
 		fprintf(stderr, "\n");
 	else
-		fprintf(stderr, ", auth {%s,%s}\n", d->user.toLatin1(), d->pass.toLatin1());
+		fprintf(stderr, ", auth {%s,%s}\n", d->user.latin1(), d->pass.latin1());
 #endif
 	QPointer<QObject> self = this;
 	syncStarted();
@@ -185,7 +184,7 @@ QByteArray HttpPoll::makePacket(const QString &ident, const QString &key, const 
 		str += newkey;
 	}
 	str += ',';
-	QByteArray cs = str.toLatin1();
+	Q3CString cs = str.latin1();
 	int len = cs.length();
 
 	QByteArray a(len + block.size());
@@ -386,7 +385,7 @@ static QString extractLine(QByteArray *buf, bool *found)
 	int n;
 	for(n = 0; n < (int)buf->size()-1; ++n) {
 		if(buf->at(n) == '\r' && buf->at(n+1) == '\n') {
-			QByteArray cstr;
+			Q3CString cstr;
 			cstr.resize(n+1);
 			memcpy(cstr.data(), buf->data(), n);
 			n += 2; // hack off CR/LF
@@ -487,11 +486,11 @@ void HttpProxyPost::post(const QString &proxyHost, int proxyPort, const QString 
 	d->asProxy = asProxy;
 
 #ifdef PROX_DEBUG
-	fprintf(stderr, "HttpProxyPost: Connecting to %s:%d", proxyHost.toLatin1(), proxyPort);
+	fprintf(stderr, "HttpProxyPost: Connecting to %s:%d", proxyHost.latin1(), proxyPort);
 	if(d->user.isEmpty())
 		fprintf(stderr, "\n");
 	else
-		fprintf(stderr, ", auth {%s,%s}\n", d->user.toLatin1(), d->pass.toLatin1());
+		fprintf(stderr, ", auth {%s,%s}\n", d->user.latin1(), d->pass.latin1());
 #endif
 	d->sock.connectToHost(proxyHost, proxyPort);
 }
@@ -536,9 +535,8 @@ void HttpProxyPost::sock_connected()
 	if(d->asProxy) {
 		if(!d->user.isEmpty()) {
 			QString str = d->user + ':' + d->pass;
-			s += QString("Proxy-Authorization: Basic ") + Base64::encodeString(str) + "\r\n";
+			s += QString("Proxy-Authorization: Basic ") + QCA::Base64().encodeString(str) + "\r\n";
 		}
-		s += "Proxy-Connection: Keep-Alive\r\n";
 		s += "Pragma: no-cache\r\n";
 		s += QString("Host: ") + u.host() + "\r\n";
 	}
@@ -550,7 +548,7 @@ void HttpProxyPost::sock_connected()
 	s += "\r\n";
 
 	// write request
-	QByteArray cs = s.toUtf8();
+	Q3CString cs = s.utf8();
 	QByteArray block(cs.length());
 	memcpy(block.data(), cs.data(), block.size());
 	d->sock.write(block);
@@ -561,7 +559,7 @@ void HttpProxyPost::sock_connected()
 
 void HttpProxyPost::sock_connectionClosed()
 {
-	d->body = d->recvBuf.copy();
+	d->body = d->recvBuf;
 	reset();
 	result();
 }
@@ -603,9 +601,9 @@ void HttpProxyPost::sock_readyRead()
 			}
 			else {
 #ifdef PROX_DEBUG
-				fprintf(stderr, "HttpProxyPost: header proto=[%s] code=[%d] msg=[%s]\n", proto.toLatin1(), code, msg.toLatin1());
+				fprintf(stderr, "HttpProxyPost: header proto=[%s] code=[%d] msg=[%s]\n", proto.latin1(), code, msg.latin1());
 				for(QStringList::ConstIterator it = d->headerLines.begin(); it != d->headerLines.end(); ++it)
-					fprintf(stderr, "HttpProxyPost: * [%s]\n", (*it).toLatin1());
+					fprintf(stderr, "HttpProxyPost: * [%s]\n", (*it).latin1());
 #endif
 			}
 
@@ -639,7 +637,7 @@ void HttpProxyPost::sock_readyRead()
 				}
 
 #ifdef PROX_DEBUG
-				fprintf(stderr, "HttpProxyPost: << Error >> [%s]\n", errStr.toLatin1());
+				fprintf(stderr, "HttpProxyPost: << Error >> [%s]\n", errStr.latin1());
 #endif
 				reset(true);
 				error(err);
@@ -664,5 +662,3 @@ void HttpProxyPost::sock_error(int x)
 }
 
 // CS_NAMESPACE_END
-
-#include "httppoll.moc"

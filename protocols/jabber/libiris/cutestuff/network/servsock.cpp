@@ -14,11 +14,11 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
-#include"servsock.h"
+#include "servsock.h"
 
 // CS_NAMESPACE_BEGIN
 
@@ -51,7 +51,7 @@ bool ServSock::isActive() const
 	return (d->serv ? true: false);
 }
 
-bool ServSock::listen(quint16 port)
+bool ServSock::listen(Q_UINT16 port)
 {
 	stop();
 
@@ -108,5 +108,3 @@ void ServSockSignal::newConnection(int x)
 }
 
 // CS_NAMESPACE_END
-
-#include "servsock.moc"

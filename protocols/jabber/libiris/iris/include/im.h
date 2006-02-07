@@ -14,17 +14,17 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
 #ifndef XMPP_IM_H
 #define XMPP_IM_H
 
-#include<qdatetime.h>
+#include <qdatetime.h>
 //Added by qt3to4:
-#include <Q3ValueList>
-#include"xmpp.h"
+#include <QList>
+#include "xmpp.h"
 
 namespace XMPP
 {
@@ -47,7 +47,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	typedef Q3ValueList<Url> UrlList;
+	typedef QList<Url> UrlList;
 	typedef QMap<QString, QString> StringMap;
 	typedef enum { OfflineEvent, DeliveredEvent, DisplayedEvent,
 			ComposingEvent, CancelEvent } MsgEvent;
@@ -67,7 +67,6 @@ namespace XMPP
 		QString lang() const;
 		QString subject(const QString &lang="") const;
 		QString body(const QString &lang="") const;
-		QString xHTMLBody(const QString &lang="") const;
 		QString thread() const;
 		Stanza::Error error() const;
 
@@ -78,7 +77,6 @@ namespace XMPP
 		void setLang(const QString &s);
 		void setSubject(const QString &s, const QString &lang="");
 		void setBody(const QString &s, const QString &lang="");
-		void setXHTMLBody(const QString &s, const QString &lang="", const QString &attr = "");
 		void setThread(const QString &s);
 		void setError(const Stanza::Error &err);
 
@@ -190,9 +188,6 @@ namespace XMPP
 
 		int ecode;
 		QString estr;
-
-		class Private;
-		Private *d;
 	};
 
 	class Resource
@@ -211,11 +206,9 @@ namespace XMPP
 	private:
 		QString v_name;
 		Status v_status;
-
-		class ResourcePrivate *d;
 	};
 
-	class ResourceList : public Q3ValueList<Resource>
+	class ResourceList : public QList<Resource>
 	{
 	public:
 		ResourceList();
@@ -226,9 +219,6 @@ namespace XMPP
 
 		ResourceList::ConstIterator find(const QString &) const;
 		ResourceList::ConstIterator priority() const;
-
-	private:
-		class ResourceListPrivate *d;
 	};
 
 	class RosterItem
@@ -264,11 +254,9 @@ namespace XMPP
 		Subscription v_subscription;
 		QString v_ask;
 		bool v_push;
-
-		class RosterItemPrivate *d;
 	};
 
-	class Roster : public Q3ValueList<RosterItem>
+	class Roster : public QList<RosterItem>
 	{
 	public:
 		Roster();
@@ -298,7 +286,6 @@ namespace XMPP
 		bool canGroupchat() const;
 		bool canVoice() const;
 		bool canDisco() const;
-		bool canXHTML() const;
 		bool isGateway() const;
 		bool haveVCard() const;
 
@@ -311,7 +298,6 @@ namespace XMPP
 			FID_Disco,
 			FID_Gateway,
 			FID_VCard,
-			FID_Xhtml,
 
 			// private Psi actions
 			FID_Add
@@ -356,7 +342,7 @@ namespace XMPP
 		Features v_features;
 	};
 
-	typedef Q3ValueList<AgentItem> AgentList;
+	typedef QList<AgentItem> AgentList;
 
 	class DiscoItem
 	{
@@ -391,7 +377,7 @@ namespace XMPP
 			QString type;
 		};
 
-		typedef Q3ValueList<Identity> Identities;
+		typedef QList<Identity> Identities;
 
 		const Identities &identities() const;
 		void setIdentities(const Identities &);
@@ -412,7 +398,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	typedef Q3ValueList<DiscoItem> DiscoList;
+	typedef QList<DiscoItem> DiscoList;
 
 	class FormField
 	{
@@ -441,7 +427,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class Form : public Q3ValueList<FormField>
+	class Form : public QList<FormField>
 	{
 	public:
 		Form(const Jid &j="");
@@ -608,7 +594,6 @@ namespace XMPP
 		FileTransferManager *fileTransferManager() const;
 
 		bool groupChatJoin(const QString &host, const QString &room, const QString &nick);
-		bool groupChatJoin(const QString &host, const QString &room, const QString &nick, const QString &password);
 		void groupChatSetStatus(const QString &host, const QString &room, const Status &);
 		void groupChatChangeNick(const QString &host, const QString &room, const QString &nick, const Status &);
 		void groupChatLeave(const QString &host, const QString &room);
@@ -698,12 +683,9 @@ namespace XMPP
 		ResourceList v_resourceList;
 		Status v_lastUnavailableStatus;
 		bool v_flagForDelete;
-
-		class LiveRosterItemPrivate;
-		LiveRosterItemPrivate *d;
 	};
 
-	class LiveRoster : public Q3ValueList<LiveRosterItem>
+	class LiveRoster : public QList<LiveRosterItem>
 	{
 	public:
 		LiveRoster();
@@ -712,10 +694,6 @@ namespace XMPP
 		void flagAllForDelete();
 		LiveRoster::Iterator find(const Jid &, bool compareRes=true);
 		LiveRoster::ConstIterator find(const Jid &, bool compareRes=true) const;
-
-	private:
-		class LiveRosterPrivate;
-		LiveRosterPrivate *d;
 	};
 }
 

@@ -14,16 +14,16 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
 #ifndef CS_BSOCKET_H
 #define CS_BSOCKET_H
 
-#include<qobject.h>
-#include<qhostaddress.h>
-#include"bytestream.h"
+#include <qobject.h>
+#include <qhostaddress.h>
+#include "bytestream.h"
 
 // CS_NAMESPACE_BEGIN
 
@@ -36,7 +36,7 @@ public:
 	BSocket(QObject *parent=0);
 	~BSocket();
 
-	void connectToHost(const QString &host, quint16 port);
+	void connectToHost(const QString &host, Q_UINT16 port);
 	void connectToServer(const QString &srv, const QString &type);
 	int socket() const;
 	void setSocket(int);
@@ -52,11 +52,11 @@ public:
 
 	// local
 	QHostAddress address() const;
-	quint16 port() const;
+	Q_UINT16 port() const;
 
 	// remote
 	QHostAddress peerAddress() const;
-	quint16 peerPort() const;
+	Q_UINT16 peerPort() const;
 
 signals:
 	void hostFound();

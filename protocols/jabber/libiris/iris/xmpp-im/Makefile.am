@@ -1,7 +1,7 @@
 METASOURCES = AUTO
 
 noinst_LTLIBRARIES = libiris_xmpp_im.la
-INCLUDES = -I$(srcdir)/../include -I$(srcdir)/../xmpp-core -I$(srcdir)/../xmpp-im -I$(srcdir)/../jabber -I$(srcdir)/../../cutestuff/util -I$(srcdir)/../../cutestuff/network -I$(srcdir)/../../qca/src $(all_includes)
+INCLUDES = -I$(srcdir)/../include -I$(srcdir)/../xmpp-core -I$(srcdir)/../xmpp-im -I$(srcdir)/../jabber -I$(srcdir)/../../cutestuff/util -I$(srcdir)/../../cutestuff/network -I$(srcdir)/../../qca2/include/QtCrypto $(all_includes)
 
 libiris_xmpp_im_la_SOURCES = \
 	client.cpp \

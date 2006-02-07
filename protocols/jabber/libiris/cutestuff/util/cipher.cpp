@@ -14,18 +14,16 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
-#include"cipher.h"
+#include "cipher.h"
 
-#include<openssl/evp.h>
-#include<openssl/rsa.h>
-#include"bytestream.h"
-#include"qrandom.h"
-//Added by qt3to4:
-#include <QByteArray>
+#include <openssl/evp.h>
+#include <openssl/rsa.h>
+#include "bytestream.h"
+#include "qrandom.h"
 
 static bool lib_encryptArray(const EVP_CIPHER *type, const QByteArray &buf, const QByteArray &key, const QByteArray &iv, bool pad, QByteArray *out)
 {
@@ -145,7 +143,7 @@ QByteArray Cipher::generateIV(Type t)
 	if(!type)
 		return QByteArray();
 	QByteArray out;
-	if(!lib_generateKeyIV(type, QByteArray("Get this man an iv!"), QByteArray(), 0, &out))
+	if(!lib_generateKeyIV(type, QCString("Get this man an iv!"), QByteArray(), 0, &out))
 		return QByteArray();
 	return out;
 }
@@ -158,7 +156,7 @@ int Cipher::ivSize(Type t)
 	return type->iv_len;
 }
 
-QByteArray Cipher::encrypt(const QByteArray &buf, const Qt::Key &key, const QByteArray &iv, bool pad, bool *ok)
+QByteArray Cipher::encrypt(const QByteArray &buf, const Key &key, const QByteArray &iv, bool pad, bool *ok)
 {
 	if(ok)
 		*ok = false;
@@ -174,7 +172,7 @@ QByteArray Cipher::encrypt(const QByteArray &buf, const Qt::Key &key, const QByt
 	return out;
 }
 
-QByteArray Cipher::decrypt(const QByteArray &buf, const Qt::Key &key, const QByteArray &iv, bool pad, bool *ok)
+QByteArray Cipher::decrypt(const QByteArray &buf, const Key &key, const QByteArray &iv, bool pad, bool *ok)
 {
 	if(ok)
 		*ok = false;

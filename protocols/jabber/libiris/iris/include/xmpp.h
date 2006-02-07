@@ -14,25 +14,25 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
 #ifndef XMPP_H
 #define XMPP_H
 
-#include<qobject.h>
-#include<qstring.h>
-#include<qhostaddress.h>
-#include<qstring.h>
-#include<q3cstring.h>
-#include<qxml.h>
-#include<qdom.h>
+#include <qobject.h>
+#include <qstring.h>
+#include <qhostaddress.h>
+#include <qstring.h>
+#include <q3cstring.h>
+#include <qxml.h>
+#include <qdom.h>
 
 namespace QCA
 {
 	class TLS;
-}
+};
 
 #ifndef CS_XMPP
 class ByteStream;
@@ -74,7 +74,7 @@ namespace XMPP
 		bool useSSL() const;
 		bool havePeerAddress() const;
 		QHostAddress peerAddress() const;
-		quint16 peerPort() const;
+		Q_UINT16 peerPort() const;
 
 	signals:
 		void connected();
@@ -83,13 +83,13 @@ namespace XMPP
 	protected:
 		void setUseSSL(bool b);
 		void setPeerAddressNone();
-		void setPeerAddress(const QHostAddress &addr, quint16 port);
+		void setPeerAddress(const QHostAddress &addr, Q_UINT16 port);
 
 	private:
 		bool ssl;
 		bool haveaddr;
 		QHostAddress addr;
-		quint16 port;
+		Q_UINT16 port;
 	};
 
 	class AdvancedConnector : public Connector
@@ -109,28 +109,28 @@ namespace XMPP
 
 			int type() const;
 			QString host() const;
-			quint16 port() const;
+			Q_UINT16 port() const;
 			QString url() const;
 			QString user() const;
 			QString pass() const;
 			int pollInterval() const;
 
-			void setHttpConnect(const QString &host, quint16 port);
-			void setHttpPoll(const QString &host, quint16 port, const QString &url);
-			void setSocks(const QString &host, quint16 port);
+			void setHttpConnect(const QString &host, Q_UINT16 port);
+			void setHttpPoll(const QString &host, Q_UINT16 port, const QString &url);
+			void setSocks(const QString &host, Q_UINT16 port);
 			void setUserPass(const QString &user, const QString &pass);
 			void setPollInterval(int secs);
 
 		private:
 			int t;
 			QString v_host, v_url;
-			quint16 v_port;
+			Q_UINT16 v_port;
 			QString v_user, v_pass;
 			int v_poll;
 		};
 
 		void setProxy(const Proxy &proxy);
-		void setOptHostPort(const QString &host, quint16 port);
+		void setOptHostPort(const QString &host, Q_UINT16 port);
 		void setOptProbe(bool);
 		void setOptSSL(bool);
 
@@ -210,9 +210,9 @@ namespace XMPP
 	private slots:
 		void tls_handshaken();
 		void tls_readyRead();
-		void tls_readyReadOutgoing(int);
+		void tls_readyReadOutgoing();
 		void tls_closed();
-		void tls_error(int);
+		void tls_error();
 
 	private:
 		class Private;
@@ -318,11 +318,8 @@ namespace XMPP
 
 		QDomDocument & doc() const;
 		QString baseNS() const;
-		QString xhtmlImNS() const;
-		QString xhtmlNS() const;
 		QDomElement createElement(const QString &ns, const QString &tagName);
 		QDomElement createTextElement(const QString &ns, const QString &tagName, const QString &text);
-		QDomElement createXHTMLElement(const QString &xHTML);
 		void appendChild(const QDomElement &e);
 
 		Kind kind() const;
@@ -375,8 +372,6 @@ namespace XMPP
 
 		virtual QDomDocument & doc() const=0;
 		virtual QString baseNS() const=0;
-		virtual QString xhtmlImNS() const=0;
-		virtual QString xhtmlNS() const=0;
 		virtual bool old() const=0;
 
 		virtual void close()=0;
@@ -479,13 +474,11 @@ namespace XMPP
 		void setSSFRange(int low, int high);
 		void setOldOnly(bool);
 		void setSASLMechanism(const QString &s);
-		void setLocalAddr(const QHostAddress &addr, quint16 port);
+		void setLocalAddr(const QHostAddress &addr, Q_UINT16 port);
 
 		// reimplemented
 		QDomDocument & doc() const;
 		QString baseNS() const;
-		QString xhtmlImNS() const;
-		QString xhtmlNS() const;
 		bool old() const;
 
 		void close();
@@ -548,6 +541,6 @@ namespace XMPP
 		void handleError();
 		void srvProcessNext();
 	};
-}
+};
 
 #endif

@@ -14,20 +14,20 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
-#include"httpconnect.h"
+#include "httpconnect.h"
 
-#include<qstringlist.h>
+#include <qstringlist.h>
 //Added by qt3to4:
-#include <QByteArray>
-#include"bsocket.h"
-#include"base64.h"
+#include <Q3CString>
+#include "bsocket.h"
+#include <QtCrypto>
 
 #ifdef PROX_DEBUG
-#include<stdio.h>
+#include <stdio.h>
 #endif
 
 // CS_NAMESPACE_BEGIN
@@ -38,7 +38,7 @@ static QString extractLine(QByteArray *buf, bool *found)
 	int n;
 	for(n = 0; n < (int)buf->size()-1; ++n) {
 		if(buf->at(n) == '\r' && buf->at(n+1) == '\n') {
-			QByteArray cstr;
+			Q3CString cstr;
 			cstr.resize(n+1);
 			memcpy(cstr.data(), buf->data(), n);
 			n += 2; // hack off CR/LF
@@ -145,11 +145,11 @@ void HttpConnect::connectToHost(const QString &proxyHost, int proxyPort, const Q
 	d->real_port = port;
 
 #ifdef PROX_DEBUG
-	fprintf(stderr, "HttpConnect: Connecting to %s:%d", proxyHost.toLatin1(), proxyPort);
+	fprintf(stderr, "HttpConnect: Connecting to %s:%d", proxyHost.latin1(), proxyPort);
 	if(d->user.isEmpty())
 		fprintf(stderr, "\n");
 	else
-		fprintf(stderr, ", auth {%s,%s}\n", d->user.toLatin1(), d->pass.toLatin1());
+		fprintf(stderr, ", auth {%s,%s}\n", d->user.latin1(), d->pass.latin1());
 #endif
 	d->sock.connectToHost(d->host, d->port);
 }
@@ -203,13 +203,12 @@ void HttpConnect::sock_connected()
 	s += QString("CONNECT ") + d->real_host + ':' + QString::number(d->real_port) + " HTTP/1.0\r\n";
 	if(!d->user.isEmpty()) {
 		QString str = d->user + ':' + d->pass;
-		s += QString("Proxy-Authorization: Basic ") + Base64::encodeString(str) + "\r\n";
+		s += QString("Proxy-Authorization: Basic ") + QCA::Base64().encodeString(str) + "\r\n";
 	}
-	s += "Proxy-Connection: Keep-Alive\r\n";
 	s += "Pragma: no-cache\r\n";
 	s += "\r\n";
 
-	QByteArray cs = s.toUtf8();
+	Q3CString cs = s.utf8();
 	QByteArray block(cs.length());
 	memcpy(block.data(), cs.data(), block.size());
 	d->toWrite = block.size();
@@ -274,9 +273,9 @@ void HttpConnect::sock_readyRead()
 				}
 				else {
 #ifdef PROX_DEBUG
-					fprintf(stderr, "HttpConnect: header proto=[%s] code=[%d] msg=[%s]\n", proto.toLatin1(), code, msg.toLatin1());
+					fprintf(stderr, "HttpConnect: header proto=[%s] code=[%d] msg=[%s]\n", proto.latin1(), code, msg.latin1());
 					for(QStringList::ConstIterator it = d->headerLines.begin(); it != d->headerLines.end(); ++it)
-						fprintf(stderr, "HttpConnect: * [%s]\n", (*it).toLatin1());
+						fprintf(stderr, "HttpConnect: * [%s]\n", (*it).latin1());
 #endif
 				}
 
@@ -319,7 +318,7 @@ void HttpConnect::sock_readyRead()
 					}
 
 #ifdef PROX_DEBUG
-					fprintf(stderr, "HttpConnect: << Error >> [%s]\n", errStr.toLatin1());
+					fprintf(stderr, "HttpConnect: << Error >> [%s]\n", errStr.latin1());
 #endif
 					reset(true);
 					error(err);
@@ -367,5 +366,3 @@ void HttpConnect::sock_error(int x)
 }
 
 // CS_NAMESPACE_END
-
-#include "httpconnect.moc"

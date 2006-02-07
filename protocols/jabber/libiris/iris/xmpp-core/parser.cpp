@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -47,11 +47,11 @@
     it would be nice if Qt had this already.
 */
 
-#include"parser.h"
+#include "parser.h"
 
-#include<qtextcodec.h>
-#include<q3ptrlist.h>
-#include<string.h>
+#include <qtextcodec.h>
+#include <q3ptrlist.h>
+#include <string.h>
 
 using namespace XMPP;
 
@@ -150,7 +150,7 @@ public:
 		}
 		else {
 #ifdef XMPP_PARSER_DEBUG
-			printf("next() = [%c]\n", c.toLatin1());
+			printf("next() = [%c]\n", c.latin1());
 #endif
 			last = c;
 		}
@@ -242,7 +242,7 @@ private:
 						QString enc = processXmlHeader(h);
 						QTextCodec *codec = 0;
 						if(!enc.isEmpty())
-							codec = QTextCodec::codecForName(enc.toLatin1());
+							codec = QTextCodec::codecForName(enc.latin1());
 
 						// changing codecs
 						if(codec) {
@@ -491,7 +491,7 @@ namespace XMPP
 
 		/*bool processingInstruction(const QString &target, const QString &data)
 		{
-			printf("Processing: [%s], [%s]\n", target.toLatin1(), data.toLatin1());
+			printf("Processing: [%s], [%s]\n", target.latin1(), data.latin1());
 			in->resetLastData();
 			return true;
 		}*/
@@ -547,7 +547,7 @@ namespace XMPP
 		Q3PtrList<Parser::Event> eventList;
 		bool needMore;
 	};
-}
+};
 
 
 //----------------------------------------------------------------------------

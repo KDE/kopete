@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -25,7 +25,7 @@
 #include <qstringlist.h>
 #include <q3cstring.h>
 
-#include <q3valuelist.h>
+#include <QList>
 #include <qdom.h>
 
 class QDate;
@@ -107,7 +107,7 @@ namespace XMPP
 			QString pcode;
 			QString country;
 		};
-		typedef Q3ValueList<Address> AddressList;
+		typedef QList<Address> AddressList;
 		const AddressList &addressList() const;
 		void setAddressList(const AddressList &);
 
@@ -127,7 +127,7 @@ namespace XMPP
 
 			QStringList lines;
 		};
-		typedef Q3ValueList<Label> LabelList;
+		typedef QList<Label> LabelList;
 		const LabelList &labelList() const;
 		void setLabelList(const LabelList &);
 
@@ -152,7 +152,7 @@ namespace XMPP
 
 			QString number;
 		};
-		typedef Q3ValueList<Phone> PhoneList;
+		typedef QList<Phone> PhoneList;
 		const PhoneList &phoneList() const;
 		void setPhoneList(const PhoneList &);
 
@@ -168,7 +168,7 @@ namespace XMPP
 
 			QString userid;
 		};
-		typedef Q3ValueList<Email> EmailList;
+		typedef QList<Email> EmailList;
 		const EmailList &emailList() const;
 		void setEmailList(const EmailList &);
 

@@ -14,15 +14,15 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
 #ifndef CS_BYTESTREAM_H
 #define CS_BYTESTREAM_H
 
-#include<qobject.h>
-#include<q3cstring.h>
+#include <qobject.h>
+#include <q3cstring.h>
 
 // CS_NAMESPACE_BEGIN
 
@@ -42,6 +42,7 @@ public:
 	virtual int bytesAvailable() const;
 	virtual int bytesToWrite() const;
 
+	void write(const Q3CString &);
 
 	static void appendArray(QByteArray *a, const QByteArray &b);
 	static QByteArray takeArray(QByteArray *from, int size=0, bool del=true);

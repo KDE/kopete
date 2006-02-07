@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -23,17 +23,17 @@
 //       report ErrProtocol if server uses wrong NS
 //       use send() instead of writeElement() in CoreProtocol
 
-#include"protocol.h"
+#include "protocol.h"
 
-#include<qca.h>
+#include <qca.h>
 //Added by qt3to4:
-#include <Q3ValueList>
-#include <QByteArray>
-#include"base64.h"
-#include"hash.h"
+#include <QList>
+#include <Q3CString>
+#include <QtCrypto>
+#include "hash.h"
 
 #ifdef XMPP_TEST
-#include"td.h"
+#include "td.h"
 #endif
 
 using namespace XMPP;
@@ -46,7 +46,7 @@ using namespace XMPP;
 static QString printArray(const QByteArray &a)
 {
 	QString s;
-	for(uint n = 0; n < a.size(); ++n) {
+	for(int n = 0; n < a.size(); ++n) {
 		unsigned char c = (unsigned char)a[(int)n];
 		if(c < 32 || c >= 127) {
 			QString str;
@@ -318,7 +318,7 @@ void BasicProtocol::extractStreamError(const QDomElement &e)
 
 		// find first non-standard namespaced element
 		QDomNodeList nl = e.childNodes();
-		for(uint n = 0; n < nl.count(); ++n) {
+		for(int n = 0; n < nl.count(); ++n) {
 			QDomNode i = nl.item(n);
 			if(i.isElement() && i.namespaceURI() != NS_STREAMS) {
 				appSpec = i.toElement();
@@ -533,7 +533,7 @@ bool BasicProtocol::doStep(const QDomElement &e)
 		if(!sendList.isEmpty()) {
 			SendItem i;
 			{
-				Q3ValueList<SendItem>::Iterator it = sendList.begin();
+				QList<SendItem>::Iterator it = sendList.begin();
 				i = (*it);
 				sendList.remove(it);
 			}
@@ -882,7 +882,7 @@ bool CoreProtocol::isValidStanza(const QDomElement &e) const
 
 bool CoreProtocol::grabPendingItem(const Jid &to, const Jid &from, int type, DBItem *item)
 {
-	for(Q3ValueList<DBItem>::Iterator it = dbpending.begin(); it != dbpending.end(); ++it) {
+	for(QList<DBItem>::Iterator it = dbpending.begin(); it != dbpending.end(); ++it) {
 		const DBItem &i = *it;
 		if(i.type == type && i.to.compare(to) && i.from.compare(from)) {
 			const DBItem &i = (*it);
@@ -907,7 +907,7 @@ bool CoreProtocol::dialbackStep(const QDomElement &e)
 		// process a request
 		DBItem i;
 		{
-			Q3ValueList<DBItem>::Iterator it = dbrequests.begin();
+			QList<DBItem>::Iterator it = dbrequests.begin();
 			i = (*it);
 			dbrequests.remove(it);
 		}
@@ -1114,7 +1114,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 #ifdef XMPP_TEST
 			TD::msg(QString("SASL OUT: [%1]").arg(printArray(sasl_step)));
 #endif
-			e.appendChild(doc.createTextNode(Base64::arrayToString(sasl_step)));
+			e.appendChild(doc.createTextNode(QCA::Base64().arrayToString(sasl_step)));
 		}
 
 		send(e, true);
@@ -1135,7 +1135,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 				QByteArray stepData = sasl_step;
 				QDomElement e = doc.createElementNS(NS_SASL, "challenge");
 				if(!stepData.isEmpty())
-					e.appendChild(doc.createTextNode(Base64::arrayToString(stepData)));
+					e.appendChild(doc.createTextNode(QCA::Base64().arrayToString(stepData)));
 
 				writeElement(e, TypeElement, false, true);
 				event = ESend;
@@ -1150,7 +1150,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 #endif
 			QDomElement e = doc.createElementNS(NS_SASL, "response");
 			if(!stepData.isEmpty())
-				e.appendChild(doc.createTextNode(Base64::arrayToString(stepData)));
+				e.appendChild(doc.createTextNode(QCA::Base64().arrayToString(stepData)));
 
 			send(e, true);
 			event = ESend;
@@ -1192,12 +1192,12 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 		QDomElement p;
 		if(digest) {
 			// need SHA1 here
-			if(!QCA::isSupported(QCA::CAP_SHA1))
-				QCA::insertProvider(createProviderHash());
+			//if(!QCA::isSupported(QCA::CAP_SHA1))
+			//	QCA::insertProvider(createProviderHash());
 
 			p = doc.createElement("digest");
-			QByteArray cs = id.toUtf8() + password.toUtf8();
-			p.appendChild(doc.createTextNode(QCA::SHA1::hashToString(cs)));
+			Q3CString cs = id.utf8() + password.utf8();
+			p.appendChild(doc.createTextNode(QCA::SHA1().hashToString(cs)));
 		}
 		else {
 			p = doc.createElement("password");
@@ -1273,7 +1273,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 			if(!m.isNull()) {
 				f.sasl_supported = true;
 				QDomNodeList l = m.elementsByTagNameNS(NS_SASL, "mechanism");
-				for(uint n = 0; n < l.count(); ++n)
+				for(int n = 0; n < l.count(); ++n)
 					f.sasl_mechs += l.item(n).toElement().text();
 			}
 			QDomElement b = e.elementsByTagNameNS(NS_BIND, "bind").item(0).toElement();
@@ -1342,7 +1342,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 		// waiting for sasl challenge/success/fail
 		if(e.namespaceURI() == NS_SASL) {
 			if(e.tagName() == "challenge") {
-				QByteArray a = Base64::stringToArray(e.text());
+				QByteArray a = QCA::Base64().stringToArray(e.text()).toByteArray();
 #ifdef XMPP_TEST
 				TD::msg(QString("SASL IN: [%1]").arg(printArray(a)));
 #endif
@@ -1404,7 +1404,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 						// get error condition
 						QDomNodeList nl = err.childNodes();
 						QDomElement t;
-						for(uint n = 0; n < nl.count(); ++n) {
+						for(int n = 0; n < nl.count(); ++n) {
 							QDomNode i = nl.item(n);
 							if(i.isElement()) {
 								t = i.toElement();
@@ -1516,7 +1516,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 	}
 	// server
 	else if(step == GetRequest) {
-		printf("get request: [%s], %s\n", e.namespaceURI().toLatin1(), e.tagName().toLatin1());
+		printf("get request: [%s], %s\n", e.namespaceURI().latin1(), e.tagName().latin1());
 		if(e.namespaceURI() == NS_TLS && e.localName() == "starttls") {
 			// TODO: don't let this be done twice
 
@@ -1537,7 +1537,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 				sasl_started = true;
 				sasl_mech = e.attribute("mechanism");
 				// TODO: if child text missing, don't pass it
-				sasl_step = Base64::stringToArray(e.text());
+				sasl_step = QCA::Base64().stringToArray(e.text()).toByteArray();
 				need = NSASLFirst;
 				step = GetSASLNext;
 				return false;
@@ -1576,7 +1576,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 	}
 	else if(step == GetSASLResponse) {
 		if(e.namespaceURI() == NS_SASL && e.localName() == "response") {
-			sasl_step = Base64::stringToArray(e.text());
+			sasl_step = QCA::Base64().stringToArray(e.text()).toByteArray();
 			need = NSASLNext;
 			step = GetSASLNext;
 			return false;

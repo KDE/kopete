@@ -1,6 +1,6 @@
-#include"qrandom.h"
+#include "qrandom.h"
 
-#include<stdlib.h>
+#include <stdlib.h>
 
 uchar QRandom::randomChar()
 {

@@ -14,33 +14,33 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
-#include"srvresolver.h"
+#include "srvresolver.h"
 
-#include<q3cstring.h>
-#include<qtimer.h>
-#include<q3dns.h>
+#include <q3cstring.h>
+#include <qtimer.h>
+#include <q3dns.h>
 //Added by qt3to4:
-#include <Q3ValueList>
-#include"safedelete.h"
+#include <QList>
+#include "safedelete.h"
 
 #ifndef NO_NDNS
-#include"ndns.h"
+#include "ndns.h"
 #endif
 
 // CS_NAMESPACE_BEGIN
 
-static void sortSRVList(Q3ValueList<Q3Dns::Server> &list)
+static void sortSRVList(QList<Q3Dns::Server> &list)
 {
-	Q3ValueList<Q3Dns::Server> tmp = list;
+	QList<Q3Dns::Server> tmp = list;
 	list.clear();
 
 	while(!tmp.isEmpty()) {
-		Q3ValueList<Q3Dns::Server>::Iterator p = tmp.end();
-		for(Q3ValueList<Q3Dns::Server>::Iterator it = tmp.begin(); it != tmp.end(); ++it) {
+		QList<Q3Dns::Server>::Iterator p = tmp.end();
+		for(QList<Q3Dns::Server>::Iterator it = tmp.begin(); it != tmp.end(); ++it) {
 			if(p == tmp.end())
 				p = it;
 			else {
@@ -69,11 +69,11 @@ public:
 
 	bool failed;
 	QHostAddress resultAddress;
-	quint16 resultPort;
+	Q_UINT16 resultPort;
 
 	bool srvonly;
 	QString srv;
-	Q3ValueList<Q3Dns::Server> servers;
+	QList<Q3Dns::Server> servers;
 	bool aaaa;
 
 	QTimer t;
@@ -167,7 +167,7 @@ bool SrvResolver::isBusy() const
 		return false;
 }
 
-Q3ValueList<Q3Dns::Server> SrvResolver::servers() const
+QList<Q3Dns::Server> SrvResolver::servers() const
 {
 	return d->servers;
 }
@@ -182,7 +182,7 @@ QHostAddress SrvResolver::resultAddress() const
 	return d->resultAddress;
 }
 
-quint16 SrvResolver::resultPort() const
+Q_UINT16 SrvResolver::resultPort() const
 {
 	return d->resultPort;
 }
@@ -215,7 +215,7 @@ void SrvResolver::qdns_done()
 	SafeDeleteLock s(&d->sd);
 
 	// grab the server list and destroy the qdns object
-	Q3ValueList<Q3Dns::Server> list;
+	QList<Q3Dns::Server> list;
 	if(d->qdns->recordType() == Q3Dns::Srv)
 		list = d->qdns->servers();
 	d->qdns->disconnect(this);
@@ -275,7 +275,7 @@ void SrvResolver::ndns_done()
 	SafeDeleteLock s(&d->sd);
 
 	// grab the address list and destroy the qdns object
-	Q3ValueList<QHostAddress> list;
+	QList<QHostAddress> list;
 	if(d->qdns->recordType() == Q3Dns::A || d->qdns->recordType() == Q3Dns::Aaaa)
 		list = d->qdns->addresses();
 	d->qdns->disconnect(this);
@@ -318,5 +318,3 @@ void SrvResolver::t_timeout()
 }
 
 // CS_NAMESPACE_END
-
-#include "srvresolver.moc"

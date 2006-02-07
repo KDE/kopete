@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -42,26 +42,26 @@
     - sasl anonymous
 */
 
-#include"xmpp.h"
+#include "xmpp.h"
 
-#include<qtextstream.h>
-#include<qpointer.h>
-#include<qtimer.h>
-#include<qca.h>
+#include <qtextstream.h>
+#include <qpointer.h>
+#include <qtimer.h>
+#include <qca.h>
 //Added by qt3to4:
-#include <Q3ValueList>
-#include <QByteArray>
+#include <QList>
+#include <Q3CString>
 #include <Q3PtrList>
-#include<stdlib.h>
-#include"bytestream.h"
-#include"base64.h"
-#include"hash.h"
-#include"simplesasl.h"
-#include"securestream.h"
-#include"protocol.h"
+#include <stdlib.h>
+#include "bytestream.h"
+#include <QtCrypto>
+#include "hash.h"
+//#include "simplesasl.h"
+#include "securestream.h"
+#include "protocol.h"
 
 #ifdef XMPP_TEST
-#include"td.h"
+#include "td.h"
 #endif
 
 //#define XMPP_DEBUG
@@ -85,10 +85,10 @@ static QByteArray randomArray(int size)
 static QString genId()
 {
 	// need SHA1 here
-	if(!QCA::isSupported(QCA::CAP_SHA1))
-		QCA::insertProvider(createProviderHash());
+	//if(!QCA::isSupported(QCA::CAP_SHA1))
+	//	QCA::insertProvider(createProviderHash());
 
-	return QCA::SHA1::hashToString(randomArray(128));
+	return QCA::SHA1().hashToString(randomArray(128));
 }
 
 //----------------------------------------------------------------------------
@@ -297,16 +297,6 @@ QString Stanza::baseNS() const
 	return d->s->baseNS();
 }
 
-QString Stanza::xhtmlImNS() const
-{
-	return d->s->xhtmlImNS();
-}
-
-QString Stanza::xhtmlNS() const
-{
-	return d->s->xhtmlNS();
-}
-
 QDomElement Stanza::createElement(const QString &ns, const QString &tagName)
 {
 	return d->s->doc().createElementNS(ns, tagName);
@@ -317,16 +307,6 @@ QDomElement Stanza::createTextElement(const QString &ns, const QString &tagName,
 	QDomElement e = d->s->doc().createElementNS(ns, tagName);
 	e.appendChild(d->s->doc().createTextNode(text));
 	return e;
-}
-
-QDomElement Stanza::createXHTMLElement(const QString &xHTML)
-{
-	QDomDocument doc;
-
-  	doc.setContent(xHTML, true);
-	QDomElement root = doc.documentElement();
-	//QDomElement e;
-	return (root);
 }
 
 void Stanza::appendChild(const QDomElement &e)
@@ -409,7 +389,7 @@ Stanza::Error Stanza::error() const
 	// condition: find first element
 	QDomNodeList nl = e.childNodes();
 	QDomElement t;
-	uint n;
+	int n;
 	for(n = 0; n < nl.count(); ++n) {
 		QDomNode i = nl.item(n);
 		if(i.isElement()) {
@@ -546,7 +526,7 @@ public:
 		ss = 0;
 		tlsHandler = 0;
 		tls = 0;
-		sasl = 0;
+		//sasl = 0;
 		in.setAutoDelete(true);
 
 		oldOnly = false;
@@ -567,7 +547,7 @@ public:
 		state = Idle;
 		notify = 0;
 		newStanzas = false;
-		sasl_ssf = 0;
+		//sasl_ssf = 0;
 		tls_warned = false;
 		using_tls = false;
 	}
@@ -578,9 +558,9 @@ public:
 	bool allowPlain, mutualAuth;
 	bool haveLocalAddr;
 	QHostAddress localAddr;
-	quint16 localPort;
+	Q_UINT16 localPort;
 	int minimumSSF, maximumSSF;
-	QString sasl_mech;
+	//QString sasl_mech;
 	bool doBinding;
 
 	bool in_rrsig;
@@ -589,7 +569,7 @@ public:
 	ByteStream *bs;
 	TLSHandler *tlsHandler;
 	QCA::TLS *tls;
-	QCA::SASL *sasl;
+	//QCA::SASL *sasl;
 	SecureStream *ss;
 	CoreProtocol client;
 	CoreProtocol srv;
@@ -600,11 +580,11 @@ public:
 	int state;
 	int notify;
 	bool newStanzas;
-	int sasl_ssf;
+	//int sasl_ssf;
 	bool tls_warned, using_tls;
 	bool doAuth;
 
-	QStringList sasl_mechlist;
+	//QStringList sasl_mechlist;
 
 	int errCond;
 	QString errText;
@@ -678,14 +658,15 @@ void ClientStream::reset(bool all)
 	d->ss = 0;
 
 	// reset sasl
-	delete d->sasl;
-	d->sasl = 0;
+	//delete d->sasl;
+	//d->sasl = 0;
 
 	// client
 	if(d->mode == Client) {
 		// reset tls
-		if(d->tlsHandler)
-			d->tlsHandler->reset();
+		// FIXME: Temporarily disabled
+		//if(d->tlsHandler)
+		//	d->tlsHandler->reset();
 
 		// reset connector
 		if(d->bs) {
@@ -767,8 +748,8 @@ bool ClientStream::isAuthenticated() const
 
 void ClientStream::setUsername(const QString &s)
 {
-	if(d->sasl)
-		d->sasl->setUsername(s);
+	//if(d->sasl)
+	//	d->sasl->setUsername(s);
 }
 
 void ClientStream::setPassword(const QString &s)
@@ -777,15 +758,15 @@ void ClientStream::setPassword(const QString &s)
 		d->client.setPassword(s);
 	}
 	else {
-		if(d->sasl)
-			d->sasl->setPassword(s);
+		//if(d->sasl)
+		//	d->sasl->setPassword(s);
 	}
 }
 
 void ClientStream::setRealm(const QString &s)
 {
-	if(d->sasl)
-		d->sasl->setRealm(s);
+	//if(d->sasl)
+	//	d->sasl->setRealm(s);
 }
 
 void ClientStream::continueAfterParams()
@@ -795,10 +776,10 @@ void ClientStream::continueAfterParams()
 		if(d->client.old) {
 			processNext();
 		}
-		else {
-			if(d->sasl)
-				d->sasl->continueAfterParams();
-		}
+		//else {
+			//if(d->sasl)
+			//	d->sasl->continueAfterParams();
+		//}
 	}
 }
 
@@ -823,20 +804,22 @@ void ClientStream::setNoopTime(int mills)
 
 QString ClientStream::saslMechanism() const
 {
-	return d->client.saslMech();
+	//return d->client.saslMech();
+	return "";
 }
 
 int ClientStream::saslSSF() const
 {
-	return d->sasl_ssf;
+	//return d->sasl_ssf;
+	return 0;
 }
 
 void ClientStream::setSASLMechanism(const QString &s)
 {
-	d->sasl_mech = s;
+	//d->sasl_mech = s;
 }
 
-void ClientStream::setLocalAddr(const QHostAddress &addr, quint16 port)
+void ClientStream::setLocalAddr(const QHostAddress &addr, Q_UINT16 port)
 {
 	d->haveLocalAddr = true;
 	d->localAddr = addr;
@@ -883,16 +866,6 @@ QDomDocument & ClientStream::doc() const
 QString ClientStream::baseNS() const
 {
 	return NS_CLIENT;
-}
-
-QString ClientStream::xhtmlImNS() const
-{
-	return NS_XHTML_IM;
-}
-
-QString ClientStream::xhtmlNS() const
-{
-	return NS_XHTML;
 }
 
 void ClientStream::setAllowPlain(bool b)
@@ -1015,7 +988,7 @@ void ClientStream::ss_readyRead()
 	QByteArray a = d->ss->read();
 
 #ifdef XMPP_DEBUG
-	QByteArray cs(a.data(), a.size()+1);
+	Q3CString cs(a.data(), a.size()+1);
 	fprintf(stderr, "ClientStream: recv: %d [%s]\n", a.size(), cs.data());
 #endif
 
@@ -1076,7 +1049,7 @@ void ClientStream::ss_error(int x)
 
 void ClientStream::sasl_clientFirstStep(const QString &mech, const QByteArray *stepData)
 {
-	d->client.setSASLFirst(mech, stepData ? *stepData : QByteArray());
+	//d->client.setSASLFirst(mech, stepData ? *stepData : QByteArray());
 	//d->client.sasl_mech = mech;
 	//d->client.sasl_firstStep = stepData ? true : false;
 	//d->client.sasl_step = stepData ? *stepData : QByteArray();
@@ -1086,14 +1059,14 @@ void ClientStream::sasl_clientFirstStep(const QString &mech, const QByteArray *s
 
 void ClientStream::sasl_nextStep(const QByteArray &stepData)
 {
-	if(d->mode == Client)
-		d->client.setSASLNext(stepData);
+	//if(d->mode == Client)
+	//	d->client.setSASLNext(stepData);
 		//d->client.sasl_step = stepData;
-	else
-		d->srv.setSASLNext(stepData);
+	//else
+	//	d->srv.setSASLNext(stepData);
 		//d->srv.sasl_step = stepData;
 
-	processNext();
+	//processNext();
 }
 
 void ClientStream::sasl_needParams(bool user, bool authzid, bool pass, bool realm)
@@ -1101,7 +1074,7 @@ void ClientStream::sasl_needParams(bool user, bool authzid, bool pass, bool real
 #ifdef XMPP_DEBUG
 	printf("need params: %d,%d,%d,%d\n", user, authzid, pass, realm);
 #endif
-	if(authzid && !user) {
+	/*if(authzid && !user) {
 		d->sasl->setAuthzid(d->jid.bare());
 		//d->sasl->setAuthzid("infiniti.homelesshackers.org");
 	}
@@ -1110,20 +1083,20 @@ void ClientStream::sasl_needParams(bool user, bool authzid, bool pass, bool real
 		needAuthParams(user, pass, realm);
 	}
 	else
-		d->sasl->continueAfterParams();
+		d->sasl->continueAfterParams();*/
 }
 
 void ClientStream::sasl_authCheck(const QString &user, const QString &)
 {
 //#ifdef XMPP_DEBUG
-//	printf("authcheck: [%s], [%s]\n", user.toLatin1(), authzid.toLatin1());
+//	printf("authcheck: [%s], [%s]\n", user.latin1(), authzid.latin1());
 //#endif
-	QString u = user;
+/*	QString u = user;
 	int n = u.find('@');
 	if(n != -1)
 		u.truncate(n);
 	d->srv.user = u;
-	d->sasl->continueAfterAuthCheck();
+	d->sasl->continueAfterAuthCheck();*/
 }
 
 void ClientStream::sasl_authenticated()
@@ -1131,12 +1104,12 @@ void ClientStream::sasl_authenticated()
 #ifdef XMPP_DEBUG
 	printf("sasl authed!!\n");
 #endif
-	d->sasl_ssf = d->sasl->ssf();
+/*	d->sasl_ssf = d->sasl->ssf();
 
 	if(d->mode == Server) {
 		d->srv.setSASLAuthed();
 		processNext();
-	}
+	}*/
 }
 
 void ClientStream::sasl_error(int)
@@ -1145,10 +1118,10 @@ void ClientStream::sasl_error(int)
 //	printf("sasl error: %d\n", c);
 //#endif
 	// has to be auth error
-	int x = convertedSASLCond();
+	/*int x = convertedSASLCond();
 	reset();
 	d->errCond = x;
-	error(ErrAuth);
+	error(ErrAuth);*/
 }
 
 void ClientStream::srvProcessNext()
@@ -1165,7 +1138,7 @@ void ClientStream::srvProcessNext()
 					printf("More data is needed to process next step\n");
 			}
 			else if(need == CoreProtocol::NSASLMechs) {
-				if(!d->sasl) {
+				/*if(!d->sasl) {
 					d->sasl = new QCA::SASL;
 					connect(d->sasl, SIGNAL(authCheck(const QString &, const QString &)), SLOT(sasl_authCheck(const QString &, const QString &)));
 					connect(d->sasl, SIGNAL(nextStep(const QByteArray &)), SLOT(sasl_nextStep(const QByteArray &)));
@@ -1187,30 +1160,27 @@ void ClientStream::srvProcessNext()
 					}
 					d->sasl_mechlist = list;
 				}
-				d->srv.setSASLMechList(d->sasl_mechlist);
+				d->srv.setSASLMechList(d->sasl_mechlist);*/
 				continue;
 			}
 			else if(need == CoreProtocol::NStartTLS) {
 				printf("Need StartTLS\n");
-				if(!d->tls->startServer()) {
-					printf("unable to start server!\n");
-					// TODO
-					return;
-				}
+				//if(!d->tls->startServer()) {
+				d->tls->startServer();
 				QByteArray a = d->srv.spare;
 				d->ss->startTLSServer(d->tls, a);
 			}
 			else if(need == CoreProtocol::NSASLFirst) {
-				printf("Need SASL First Step\n");
+				/*printf("Need SASL First Step\n");
 				QByteArray a = d->srv.saslStep();
-				d->sasl->putServerFirstStep(d->srv.saslMech(), a);
+				d->sasl->putServerFirstStep(d->srv.saslMech(), a);*/
 			}
 			else if(need == CoreProtocol::NSASLNext) {
-				printf("Need SASL Next Step\n");
+				/*printf("Need SASL Next Step\n");
 				QByteArray a = d->srv.saslStep();
-				QByteArray cs(a.data(), a.size()+1);
+				Q3CString cs(a.data(), a.size()+1);
 				printf("[%s]\n", cs.data());
-				d->sasl->putStep(a);
+				d->sasl->putStep(a);*/
 			}
 			else if(need == CoreProtocol::NSASLLayer) {
 			}
@@ -1235,7 +1205,7 @@ void ClientStream::srvProcessNext()
 			}
 			case CoreProtocol::ESend: {
 				QByteArray a = d->srv.takeOutgoingData();
-				QByteArray cs(a.size()+1);
+				Q3CString cs(a.size()+1);
 				memcpy(cs.data(), a.data(), a.size());
 				printf("Need Send: {%s}\n", cs.data());
 				d->ss->write(a);
@@ -1245,9 +1215,9 @@ void ClientStream::srvProcessNext()
 				printf("Break (RecvOpen)\n");
 
 				// calculate key
-				QByteArray str = QCA::SHA1::hashToString("secret").toUtf8();
-				str = QCA::SHA1::hashToString(str + "im.pyxa.org").toUtf8();
-				str = QCA::SHA1::hashToString(str + d->srv.id.toUtf8()).toUtf8();
+				Q3CString str = QCA::SHA1().hashToString("secret").utf8();
+				str = QCA::SHA1().hashToString(str + "im.pyxa.org").utf8();
+				str = QCA::SHA1().hashToString(str + d->srv.id.utf8()).utf8();
 				d->srv.setDialbackKey(str);
 
 				//d->srv.setDialbackKey("3c5d721ea2fcc45b163a11420e4e358f87e3142a");
@@ -1262,9 +1232,9 @@ void ClientStream::srvProcessNext()
 			}
 			case CoreProtocol::ESASLSuccess: {
 				printf("Break SASL Success\n");
-				disconnect(d->sasl, SIGNAL(error(int)), this, SLOT(sasl_error(int)));
-				QByteArray a = d->srv.spare;
-				d->ss->setLayerSASL(d->sasl, a);
+				//disconnect(d->sasl, SIGNAL(error(int)), this, SLOT(sasl_error(int)));
+				//QByteArray a = d->srv.spare;
+				//d->ss->setLayerSASL(d->sasl, a);
 				break;
 			}
 			case CoreProtocol::EPeerClosed: {
@@ -1280,7 +1250,7 @@ void ClientStream::srvProcessNext()
 
 void ClientStream::doReadyRead()
 {
-	//QPointer<QObject> self = this;
+	//QGuardedPtr<QObject> self = this;
 	readyRead();
 	//if(!self)
 	//	return;
@@ -1302,14 +1272,14 @@ void ClientStream::processNext()
 #endif
 		bool ok = d->client.processStep();
 		// deal with send/received items
-		for(Q3ValueList<XmlProtocol::TransferItem>::ConstIterator it = d->client.transferItemList.begin(); it != d->client.transferItemList.end(); ++it) {
+		for(QList<XmlProtocol::TransferItem>::ConstIterator it = d->client.transferItemList.begin(); it != d->client.transferItemList.end(); ++it) {
 			const XmlProtocol::TransferItem &i = *it;
 			if(i.isExternal)
 				continue;
 			QString str;
 			if(i.isString) {
 				// skip whitespace pings
-				if(i.str.trimmed().isEmpty())
+				if(i.str.stripWhiteSpace().isEmpty())
 					continue;
 				str = i.str;
 			}
@@ -1349,7 +1319,7 @@ void ClientStream::processNext()
 			case CoreProtocol::ESend: {
 				QByteArray a = d->client.takeOutgoingData();
 #ifdef XMPP_DEBUG
-				QByteArray cs(a.size()+1);
+				Q3CString cs(a.size()+1);
 				memcpy(cs.data(), a.data(), a.size());
 				printf("Need Send: {%s}\n", cs.data());
 #endif
@@ -1476,26 +1446,26 @@ bool ClientStream::handleNeed()
 			printf("Need SASL First Step\n");
 #endif
 			// no SASL plugin?  fall back to Simple SASL
-			if(!QCA::isSupported(QCA::CAP_SASL)) {
-				// Simple SASL needs MD5.  do we have that either?
-				if(!QCA::isSupported(QCA::CAP_MD5))
-					QCA::insertProvider(createProviderHash());
-				QCA::insertProvider(createProviderSimpleSASL());
-			}
+			//if(!QCA::isSupported(QCA::CAP_SASL)) {
+			//	// Simple SASL needs MD5.  do we have that either?
+			//	if(!QCA::isSupported(QCA::CAP_MD5))
+			//		QCA::insertProvider(createProviderHash());
+			//	QCA::insertProvider(createProviderSimpleSASL());
+			//}
 
-			d->sasl = new QCA::SASL;
-			connect(d->sasl, SIGNAL(clientFirstStep(const QString &, const QByteArray *)), SLOT(sasl_clientFirstStep(const QString &, const QByteArray *)));
-			connect(d->sasl, SIGNAL(nextStep(const QByteArray &)), SLOT(sasl_nextStep(const QByteArray &)));
-			connect(d->sasl, SIGNAL(needParams(bool, bool, bool, bool)), SLOT(sasl_needParams(bool, bool, bool, bool)));
-			connect(d->sasl, SIGNAL(authenticated()), SLOT(sasl_authenticated()));
-			connect(d->sasl, SIGNAL(error(int)), SLOT(sasl_error(int)));
+			//d->sasl = new QCA::SASL;
+			//connect(d->sasl, SIGNAL(clientFirstStep(const QString &, const QByteArray *)), SLOT(sasl_clientFirstStep(const QString &, const QByteArray *)));
+			//connect(d->sasl, SIGNAL(nextStep(const QByteArray &)), SLOT(sasl_nextStep(const QByteArray &)));
+			//connect(d->sasl, SIGNAL(needParams(bool, bool, bool, bool)), SLOT(sasl_needParams(bool, bool, bool, bool)));
+			//connect(d->sasl, SIGNAL(authenticated()), SLOT(sasl_authenticated()));
+			//connect(d->sasl, SIGNAL(error(int)), SLOT(sasl_error(int)));
 
-			if(d->haveLocalAddr)
-				d->sasl->setLocalAddr(d->localAddr, d->localPort);
-			if(d->conn->havePeerAddress())
-				d->sasl->setRemoteAddr(d->conn->peerAddress(), d->conn->peerPort());
+			//if(d->haveLocalAddr)
+			//	d->sasl->setLocalAddr(d->localAddr, d->localPort);
+			//if(d->conn->havePeerAddress())
+			//	d->sasl->setRemoteAddr(d->conn->peerAddress(), d->conn->peerPort());
 
-			d->sasl->setAllowAnonymous(false);
+			//d->sasl->setAllowAnonymous(false);
 
 			//d->sasl_mech = "ANONYMOUS";
 			//d->sasl->setRequirePassCredentials(true);
@@ -1504,45 +1474,45 @@ bool ClientStream::handleNeed()
 			//d->sasl->setExternalSSF(64);
 			//d->sasl_mech = "EXTERNAL";
 
-			d->sasl->setAllowPlain(d->allowPlain);
-			d->sasl->setRequireMutualAuth(d->mutualAuth);
+			//d->sasl->setAllowPlain(d->allowPlain);
+			//d->sasl->setRequireMutualAuth(d->mutualAuth);
 
-			d->sasl->setMinimumSSF(d->minimumSSF);
-			d->sasl->setMaximumSSF(d->maximumSSF);
+			//d->sasl->setMinimumSSF(d->minimumSSF);
+			//d->sasl->setMaximumSSF(d->maximumSSF);
 
-			QStringList ml;
-			if(!d->sasl_mech.isEmpty())
-				ml += d->sasl_mech;
-			else
-				ml = d->client.features.sasl_mechs;
+			//QStringList ml;
+			//if(!d->sasl_mech.isEmpty())
+			//	ml += d->sasl_mech;
+			//else
+			//	ml = d->client.features.sasl_mechs;
 
-			if(!d->sasl->startClient("xmpp", d->server, ml, true)) {
-				int x = convertedSASLCond();
-				reset();
-				d->errCond = x;
-				error(ErrAuth);
-				return false;
-			}
+			//if(!d->sasl->startClient("xmpp", d->server, ml, true)) {
+			//	int x = convertedSASLCond();
+			//	reset();
+			//	d->errCond = x;
+			//	error(ErrAuth);
+			//	return false;
+			//}
 			return false;
 		}
 		case CoreProtocol::NSASLNext: {
 #ifdef XMPP_DEBUG
 			printf("Need SASL Next Step\n");
 #endif
-			QByteArray a = d->client.saslStep();
-			d->sasl->putStep(a);
+			/*QByteArray a = d->client.saslStep();
+			d->sasl->putStep(a);*/
 			return false;
 		}
 		case CoreProtocol::NSASLLayer: {
 			// SecureStream will handle the errors from this point
-			disconnect(d->sasl, SIGNAL(error(int)), this, SLOT(sasl_error(int)));
+			/*disconnect(d->sasl, SIGNAL(error(int)), this, SLOT(sasl_error(int)));
 			d->ss->setLayerSASL(d->sasl, d->client.spare);
 			if(d->sasl_ssf > 0) {
 				QPointer<QObject> self = this;
 				securityLayerActivated(LayerSASL);
 				if(!self)
 					return false;
-			}
+			}*/
 			break;
 		}
 		case CoreProtocol::NPassword: {
@@ -1560,7 +1530,7 @@ bool ClientStream::handleNeed()
 
 int ClientStream::convertedSASLCond() const
 {
-	int x = d->sasl->errorCondition();
+	/*int x = d->sasl->errorCondition();
 	if(x == QCA::SASL::NoMech)
 		return NoMech;
 	else if(x == QCA::SASL::BadProto)
@@ -1570,7 +1540,8 @@ int ClientStream::convertedSASLCond() const
 	else if(x == QCA::SASL::TooWeak)
 		return MechTooWeak;
 	else
-		return GenericAuthError;
+		return GenericAuthError;*/
+	return 0;
 }
 
 void ClientStream::doNoop()

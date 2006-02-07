@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -29,26 +29,26 @@
   greatly simplify this class.  - Sep 3rd, 2003.
 */
 
-#include"xmpp.h"
+#include "xmpp.h"
 
-#include<qpointer.h>
-#include<qca.h>
+#include <qpointer.h>
+#include <qca.h>
 //Added by qt3to4:
-#include <Q3ValueList>
-#include"safedelete.h"
+#include <QList>
+#include "safedelete.h"
 
 #ifdef NO_NDNS
-#include<q3dns.h>
+#include <q3dns.h>
 #else
-#include"ndns.h"
+#include "ndns.h"
 #endif
 
-#include"srvresolver.h"
-#include"bsocket.h"
-#include"httpconnect.h"
-#include"httppoll.h"
-#include"socks.h"
-#include"hash.h"
+#include "srvresolver.h"
+#include "bsocket.h"
+#include "httpconnect.h"
+#include "httppoll.h"
+#include "socks.h"
+#include "hash.h"
 
 //#define XMPP_DEBUG
 
@@ -83,7 +83,7 @@ QHostAddress Connector::peerAddress() const
 	return addr;
 }
 
-quint16 Connector::peerPort() const
+Q_UINT16 Connector::peerPort() const
 {
 	return port;
 }
@@ -100,7 +100,7 @@ void Connector::setPeerAddressNone()
 	port = 0;
 }
 
-void Connector::setPeerAddress(const QHostAddress &_addr, quint16 _port)
+void Connector::setPeerAddress(const QHostAddress &_addr, Q_UINT16 _port)
 {
 	haveaddr = true;
 	addr = _addr;
@@ -131,7 +131,7 @@ QString AdvancedConnector::Proxy::host() const
 	return v_host;
 }
 
-quint16 AdvancedConnector::Proxy::port() const
+Q_UINT16 AdvancedConnector::Proxy::port() const
 {
 	return v_port;
 }
@@ -156,14 +156,14 @@ int AdvancedConnector::Proxy::pollInterval() const
 	return v_poll;
 }
 
-void AdvancedConnector::Proxy::setHttpConnect(const QString &host, quint16 port)
+void AdvancedConnector::Proxy::setHttpConnect(const QString &host, Q_UINT16 port)
 {
 	t = HttpConnect;
 	v_host = host;
 	v_port = port;
 }
 
-void AdvancedConnector::Proxy::setHttpPoll(const QString &host, quint16 port, const QString &url)
+void AdvancedConnector::Proxy::setHttpPoll(const QString &host, Q_UINT16 port, const QString &url)
 {
 	t = HttpPoll;
 	v_host = host;
@@ -171,7 +171,7 @@ void AdvancedConnector::Proxy::setHttpPoll(const QString &host, quint16 port, co
 	v_url = url;
 }
 
-void AdvancedConnector::Proxy::setSocks(const QString &host, quint16 port)
+void AdvancedConnector::Proxy::setSocks(const QString &host, Q_UINT16 port)
 {
 	t = Socks;
 	v_host = host;
@@ -214,7 +214,7 @@ public:
 
 	QString host;
 	int port;
-	Q3ValueList<Q3Dns::Server> servers;
+	QList<Q3Dns::Server> servers;
 	int errorCode;
 
 	bool multi, using_srv;
@@ -287,7 +287,7 @@ void AdvancedConnector::setProxy(const Proxy &proxy)
 	d->proxy = proxy;
 }
 
-void AdvancedConnector::setOptHostPort(const QString &host, quint16 _port)
+void AdvancedConnector::setOptHostPort(const QString &host, Q_UINT16 _port)
 {
 	if(d->mode != Idle)
 		return;
@@ -323,8 +323,8 @@ void AdvancedConnector::connectToServer(const QString &server)
 
 	if(d->proxy.type() == Proxy::HttpPoll) {
 		// need SHA1 here
-		if(!QCA::isSupported(QCA::CAP_SHA1))
-			QCA::insertProvider(createProviderHash());
+		//if(!QCA::isSupported(QCA::CAP_SHA1))
+		//	QCA::insertProvider(createProviderHash());
 
 		HttpPoll *s = new HttpPoll;
 		d->bs = s;
@@ -418,7 +418,7 @@ void AdvancedConnector::dns_done()
 	//SafeDeleteLock s(&d->sd);
 
         // grab the address list and destroy the qdns object
-	Q3ValueList<QHostAddress> list = d->qdns->addresses();
+	QList<QHostAddress> list = d->qdns->addresses();
 	d->qdns->disconnect(this);
 	d->qdns->deleteLater();
 	//d->sd.deleteLater(d->qdns);
@@ -495,7 +495,7 @@ void AdvancedConnector::dns_done()
 void AdvancedConnector::do_connect()
 {
 #ifdef XMPP_DEBUG
-	printf("trying %s:%d\n", d->host.toLatin1(), d->port);
+	printf("trying %s:%d\n", d->host.latin1(), d->port);
 #endif
 	int t = d->proxy.type();
 	if(t == Proxy::None) {

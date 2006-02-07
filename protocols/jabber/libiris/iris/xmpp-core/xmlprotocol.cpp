@@ -14,17 +14,17 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
-#include"xmlprotocol.h"
+#include "xmlprotocol.h"
 
-#include"bytestream.h"
+#include "bytestream.h"
 //Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
 #include <QTextStream>
-#include <QByteArray>
+#include <Q3CString>
 
 using namespace XMPP;
 
@@ -52,7 +52,7 @@ static QDomElement stripExtraNS(const QDomElement &e)
 		qName = e.tagName();
 
 	QDomElement i;
-	uint x;
+	int x;
 	if(noShowNS)
 		i = e.ownerDocument().createElement(qName);
 	else
@@ -102,7 +102,7 @@ static QString xmlToString(const QDomElement &e, const QString &fakeNS, const QS
 	}
 	// 'clip' means to remove any unwanted (and unneeded) characters, such as a trailing newline
 	if(clip) {
-		int n = out.lastIndexOf('>');
+		int n = out.findRev('>');
 		out.truncate(n+1);
 	}
 	return out;
@@ -136,8 +136,8 @@ static void createRootXmlTags(const QDomElement &root, QString *xmlHeader, QStri
 	int n2 = str.find('>', n);
 	++n2;
 	*tagOpen = str.mid(n, n2-n);
-	n2 = str.lastIndexOf('>');
-	n = str.lastIndexOf('<');
+	n2 = str.findRev('>');
+	n = str.findRev('<');
 	++n2;
 	*tagClose = str.mid(n, n2-n);
 
@@ -204,14 +204,14 @@ void XmlProtocol::addIncomingData(const QByteArray &a)
 
 QByteArray XmlProtocol::takeOutgoingData()
 {
-	QByteArray a = outData.copy();
+	QByteArray a = outData;
 	outData.resize(0);
 	return a;
 }
 
 void XmlProtocol::outgoingDataWritten(int bytes)
 {
-	for(Q3ValueList<TrackItem>::Iterator it = trackQueue.begin(); it != trackQueue.end();) {
+	for(QList<TrackItem>::Iterator it = trackQueue.begin(); it != trackQueue.end();) {
 		TrackItem &i = *it;
 
 		// enough bytes?
@@ -329,7 +329,7 @@ QString XmlProtocol::elementToString(const QDomElement &e, bool clip)
 	else {
 		// scan the root attributes for 'xmlns' (oh joyous hacks)
 		QDomNamedNodeMap al = elem.attributes();
-		uint n;
+		int n;
 		for(n = 0; n < al.count(); ++n) {
 			QDomAttr a = al.item(n).toAttr();
 			QString s = a.name();
@@ -455,7 +455,7 @@ int XmlProtocol::internalWriteData(const QByteArray &a, TrackItem::Type t, int i
 
 int XmlProtocol::internalWriteString(const QString &s, TrackItem::Type t, int id)
 {
-	QByteArray cs = s.toUtf8();
+	Q3CString cs = s.utf8();
 	QByteArray a(cs.length());
 	memcpy(a.data(), cs.data(), a.size());
 	return internalWriteData(a, t, id);
@@ -537,7 +537,7 @@ bool XmlProtocol::baseStep(const Parser::Event &pe)
 
 void XmlProtocol::setIncomingAsExternal()
 {
-	for(Q3ValueList<TransferItem>::Iterator it = transferItemList.begin(); it != transferItemList.end(); ++it) {
+	for(QList<TransferItem>::Iterator it = transferItemList.begin(); it != transferItemList.end(); ++it) {
 		TransferItem &i = *it;
 		// look for elements received
 		if(!i.isString && !i.isSent)
