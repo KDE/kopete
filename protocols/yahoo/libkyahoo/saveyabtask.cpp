@@ -64,8 +64,6 @@ void SaveYABTask::setEntry( const YABEntry &entry )
 
 	entry.dump();
 	m_postData = doc.toString().utf8();
-	
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << m_postData << endl;
 }
 
 
@@ -89,8 +87,6 @@ void SaveYABTask::connectSucceeded()
 			.arg(client()->yCookie()).arg(client()->tCookie())
 			.arg(client()->cCookie()).arg(m_postData.local8Bit().size());
 
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << m_postData << endl;
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo <<m_postData.local8Bit().size() << endl;
 	QByteArray buffer;
 	QByteArray paket;
 	QDataStream stream( buffer, IO_WriteOnly );
@@ -111,9 +107,7 @@ void SaveYABTask::slotRead()
 	QByteArray ar( socket->bytesAvailable() );
 	socket->readBlock ( ar.data (), ar.size () );
 	QString data( ar );
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " data " << data.length() << " bytes :" << data << endl;
 	data = data.right( data.length() - data.find("<?xml") );
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " data " << data.length() << " bytes :" << data << endl;
 
 
 	QDomDocument doc;
