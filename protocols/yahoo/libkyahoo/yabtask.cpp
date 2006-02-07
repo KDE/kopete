@@ -22,7 +22,6 @@
 #include "client.h"
 #include <qstring.h>
 #include <qdatastream.h>
-#include <qdom.h>
 #include <kio/global.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>
@@ -89,7 +88,7 @@ void YABTask::slotData( KIO::Job* /*job*/, const QByteArray &info  )
 
 void YABTask::slotResult( KIO::Job* job )
 {
-	if ( job->error () || m_transferJob->isErrorPage () )
+	if( job->error () || m_transferJob->isErrorPage () )
 		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Could not retrieve server side addressbook for user info." << endl;
 	else 
 	{
@@ -97,7 +96,6 @@ void YABTask::slotResult( KIO::Job* job )
 		QDomDocument doc;
 		QDomNodeList list;
 		QDomElement e;
-		QString msg;
 		uint it = 0;
 
 		kdDebug(YAHOO_RAW_DEBUG) << m_data << endl;
@@ -111,51 +109,7 @@ void YABTask::slotResult( KIO::Job* job )
 			e = list.item( it ).toElement();
 			
 			YABEntry *entry = new YABEntry;
-			entry->yahooId = e.attribute("yi");
-			entry->firstName = e.attribute("fn");
-			entry->secondName = e.attribute("mn");
-			entry->lastName = e.attribute("ln");
-			entry->nickName = e.attribute("nn");
-			entry->email = e.attribute("e0");
-			entry->privatePhone = e.attribute("hp");
-			entry->workPhone = e.attribute("wp");
-			entry->pager = e.attribute("pa");
-			entry->fax = e.attribute("fa");
-			entry->phoneMobile = e.attribute("mo");
-			entry->additionalNumber = e.attribute("ot");
-			entry->altEmail1 = e.attribute("e1");
-			entry->altEmail2 = e.attribute("e2");
-			entry->privateURL = e.attribute("pu");
-			entry->title = e.attribute("ti");
-			entry->corporation = e.attribute("co");
-			entry->workAdress = e.attribute("wa");
-			entry->workCity = e.attribute("wc");
-			entry->workState = e.attribute("ws");
-			entry->workZIP = e.attribute("wz");
-			entry->workCountry = e.attribute("wn");
-			entry->workURL = e.attribute("wu");
-			entry->privateAdress = e.attribute("ha");
-			entry->privateCity = e.attribute("hc");
-			entry->privateState = e.attribute("hs");
-			entry->privateZIP = e.attribute("hz");
-			entry->privateCountry = e.attribute("hn");
-			QString birtday = e.attribute("bi");
-			entry->birthday = QDate( birtday.section("/",2,2).toInt(), birtday.section("/",1,1).toInt(), birtday.section("/",0,0).toInt() );
-			QString an = e.attribute("an");
-			entry->anniversary = QDate( an.section("/",2,2).toInt(), an.section("/",1,1).toInt(), an.section("/",0,0).toInt() );
-			entry->additional1 = e.attribute("c1");
-			entry->additional2 = e.attribute("c2");
-			entry->additional3 = e.attribute("c3");
-			entry->additional4 = e.attribute("c4");
-			entry->notes = e.attribute("cm");
-			entry->imAIM = e.attribute("ima");
-			entry->imGoogleTalk = e.attribute("img");
-			entry->imICQ = e.attribute("imq");
-			entry->imIRC = e.attribute("imc");
-			entry->imMSN = e.attribute("imm");
-			entry->imQQ = e.attribute("imqq");
-			entry->imSkype = e.attribute("imk");
-			
+			entry->fromQDomElement( e );
 			emit gotEntry( entry );
 		}
 	}

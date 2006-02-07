@@ -1224,6 +1224,11 @@ void YahooAccount::slotGotYABEntry( YABEntry *entry )
 	}
 }
 
+void YahooAccount::slotSaveYABEntry( YABEntry &entry )
+{
+	m_session->saveYABEntry( entry );
+}
+
 void YahooAccount::slotGotFile( const QString &  who, const QString &  url , long /* expires */, const QString &  msg ,
 	const QString &  fname, unsigned long  fesize  )
 {

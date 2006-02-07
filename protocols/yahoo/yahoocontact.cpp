@@ -431,8 +431,9 @@ void YahooContact::slotUserInfo()
 	}
 	
 	YahooUserInfoDialog *dlg = new YahooUserInfoDialog( Kopete::UI::Global::mainWidget(), "yahoo userinfo" );
-	dlg->setData( m_YABEntry );
+	dlg->setData( *m_YABEntry );
 	dlg->show();
+	QObject::connect( dlg, SIGNAL(saveYABEntry( YABEntry & )), m_account, SLOT(slotSaveYABEntry( YABEntry & )));
 }
 
 void YahooContact::slotSendFile()

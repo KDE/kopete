@@ -33,15 +33,18 @@ class YahooUserInfoDialog : public KDialogBase
 Q_OBJECT
 public:
 	YahooUserInfoDialog( QWidget* parent = 0, const char* name = 0 );
+signals:
+	void saveYABEntry( YABEntry & );
 public slots:
-	void setData( const YABEntry *yab );
-
+	void setData( const YABEntry &yab );
+private slots:
+	void slotSaveAndCloseClicked();
 private:
 	YahooGeneralInfoWidget* m_genInfoWidget;
 	YahooWorkInfoWidget* m_workInfoWidget;
 	YahooOtherInfoWidget* m_otherInfoWidget;
 	
-	YABEntry m_yab;
+	const YABEntry *m_yab;
 };
 
 #endif

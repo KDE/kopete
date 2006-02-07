@@ -46,6 +46,7 @@
 #include "sendauthresptask.h"
 #include "pingtask.h"
 #include "yabtask.h"
+#include "saveyabtask.h"
 #include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
@@ -493,6 +494,13 @@ void Client::sendConferenceMessage( const QString &room, const QStringList &memb
 void Client::getYABEntries()
 {
 	d->yabTask->getAllEntries();
+}
+
+void Client::saveYABEntry( YABEntry &entry )
+{
+	SaveYABTask *syt = new SaveYABTask( d->root );
+	syt->setEntry( entry );
+	syt->go(true);
 }
 
 

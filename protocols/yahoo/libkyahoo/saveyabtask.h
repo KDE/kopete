@@ -1,6 +1,6 @@
 /*
     Kopete Yahoo Protocol
-    yabtask.h - Handles the Yahoo Address Book
+    saveyabtask.h - Saves a YAB entry
 
     Copyright (c) 2006 André Duffeck <andre.duffeck@kdemail.net>
     Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef YABTASK_H
-#define YABTASK_H
+#ifndef SAVEYABTASK_H
+#define SAVEYABTASK_H
 
 #include "task.h"
 #include "yabentry.h"
@@ -31,26 +31,25 @@ class QDomElement;
 /**
 @author André Duffeck
 */
-class YABTask : public Task
+class SaveYABTask : public Task
 {
 	Q_OBJECT
 public:
-	YABTask(Task *parent);
-	~YABTask();
-	
-	bool take(Transfer *transfer);
-	bool forMe( Transfer* transfer ) const;
+	SaveYABTask(Task *parent);
+	~SaveYABTask();
 
-	void getAllEntries();
-	void saveEntry( const YABEntry & );
+	virtual void onGo();
+	void setEntry( const YABEntry & );
 signals:
 	void gotEntry( YABEntry * );
 private slots:
-	void slotData( KIO::Job*, const QByteArray & );
-	void slotResult( KIO::Job* );
+	void connectSucceeded();
+	void connectFailed( int );
+	void slotRead();
 private:
 	KIO::TransferJob *m_transferJob;
 	QString m_data;
+	QString m_postData;
 };
 
 #endif

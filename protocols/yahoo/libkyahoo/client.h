@@ -240,6 +240,11 @@ Q_OBJECT
 		 * Fetches all entries of the YAB
 		 */
 		void getYABEntries();
+
+		/**
+		 * Saves/Updates a YAB entry
+		 */
+		void saveYABEntry( YABEntry &entry );
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
