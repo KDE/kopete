@@ -108,18 +108,21 @@ void SaveYABTask::connectSucceeded()
 void SaveYABTask::slotRead()
 {
 	KBufferedSocket* socket = const_cast<KBufferedSocket*>( dynamic_cast<const KBufferedSocket*>( sender() ) );
-	QByteArray data( socket->bytesAvailable() );
-	
-	socket->readBlock ( data.data (), data.size () );
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " data " << data.size() << " bytes " << endl;
+	QByteArray ar( socket->bytesAvailable() );
+	socket->readBlock ( ar.data (), ar.size () );
+	QString data( ar );
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " data " << data.length() << " bytes :" << data << endl;
+	data = data.right( data.length() - data.find("<?xml") );
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " data " << data.length() << " bytes :" << data << endl;
+
 
 	QDomDocument doc;
 	QDomNodeList list;
 	QDomElement e;
 	uint it = 0;
 	
-	doc.setContent( m_data );
-		
+	doc.setContent( data );
+
 	list = doc.elementsByTagName( "ct" );			// Get records
 	for( it = 0; it < list.count(); it++ )	{
 		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Parsing entry..." << endl;

@@ -48,7 +48,6 @@ private slots:
 	void slotRead();
 private:
 	KIO::TransferJob *m_transferJob;
-	QString m_data;
 	QString m_postData;
 };
 
