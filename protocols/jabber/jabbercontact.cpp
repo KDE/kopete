@@ -29,6 +29,8 @@
 #include <qimage.h>
 #include <qregexp.h>
 #include <qbuffer.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -271,7 +273,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		{
 			QString room=message.invite();
 			QString originalBody=message.body().isEmpty() ? QString() :
-					i18n( "The original message is : <i>\" %1 \"</i><br>" ).arg(QStyleSheet::escape(message.body()));
+					i18n( "The original message is : <i>\" %1 \"</i><br>" ).arg(Q3StyleSheet::escape(message.body()));
 			QString mes=i18n("<qt><i>%1</i> invited you to join the conference <b>%2</b><br>%3<br>"
 					"If you want to accept and join, just <b>enter your nickname</b> and press ok<br>"
 							 "If you want to decline, press cancel</qt>")
@@ -974,7 +976,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KURL(photoPath).fileName().toLower() ) );
 	
 		// Scale and crop the picture.
-		contactPhoto = contactPhoto.smoothScale( 96, 96, QImage::ScaleMin );
+		contactPhoto = contactPhoto.smoothScale( 96, 96, Qt::KeepAspectRatio );
 		// crop image if not square
 		if(contactPhoto.width() < contactPhoto.height()) 
 			contactPhoto = contactPhoto.copy((contactPhoto.width()-contactPhoto.height())/2, 0, 96, 96);
@@ -993,7 +995,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 		QString newLocation( locateLocal( "appdata", "jabberphotos/"+ KURL(photoPath).fileName().lower() ) );
 	
 		// Scale and crop the picture.
-		contactPhoto = contactPhoto.smoothScale( 32, 32, QImage::ScaleMin );
+		contactPhoto = contactPhoto.smoothScale( 32, 32, Qt::KeepAspectRatio );
 		// crop image if not square
 		if(contactPhoto.width() < contactPhoto.height())
 			contactPhoto = contactPhoto.copy((contactPhoto.width()-contactPhoto.height())/2, 0, 32, 32);
@@ -1493,8 +1495,8 @@ void JabberContact::slotDiscoFinished( )
 
 	if ( jt->success() )
  	{
-		QValueList<XMPP::DiscoItem::Identity> identities = jt->item().identities();
-		QValueList<XMPP::DiscoItem::Identity>::Iterator it;
+		Q3ValueList<XMPP::DiscoItem::Identity> identities = jt->item().identities();
+		Q3ValueList<XMPP::DiscoItem::Identity>::Iterator it;
 		for ( it = identities.begin(); it != identities.end(); ++it )
 		{
 			XMPP::DiscoItem::Identity ident=*it;

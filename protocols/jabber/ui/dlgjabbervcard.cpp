@@ -27,6 +27,8 @@
 
 #include <qapplication.h>
 #include <q3widgetstack.h>
+//Added by qt3to4:
+#include <QPixmap>
 // KDE includes
 #include <kdebug.h>
 #include <kpushbutton.h>
@@ -411,7 +413,7 @@ void dlgJabberVCard::slotSelectPhoto()
 		else if (img.width() < 32 || img.height() < 32)
 		{
 			// Scale and crop the picture.
-			img = img.smoothScale( 32, 32, QImage::ScaleMin );
+			img = img.smoothScale( 32, 32, Qt::KeepAspectRatioByExpanding );
 			// crop image if not square
 			if(img.width() < img.height())
 				img = img.copy((img.width()-img.height())/2, 0, 32, 32);

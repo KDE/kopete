@@ -13,7 +13,7 @@
 #include <klocale.h>
 #include <kdebug.h>
 
-#include <qtable.h>
+#include <q3table.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
 #include <qlabel.h>

@@ -33,9 +33,9 @@
                     </property>
                     <property name="paletteForegroundColor">
                         <color>
-                            <red>0</red>
-                            <green>0</green>
-                            <blue>0</blue>
+                            <Qt::red>0</Qt::red>
+                            <Qt::green>0</Qt::green>
+                            <Qt::blue>0</Qt::blue>
                         </color>
                     </property>
                     <property name="text">
@@ -129,7 +129,7 @@
                                 <cstring>spacer2</cstring>
                             </property>
                             <property name="orientation">
-                                <enum>Horizontal</enum>
+                                <enum>Qt::Horizontal</enum>
                             </property>
                             <property name="sizeType">
                                 <enum>Expanding</enum>

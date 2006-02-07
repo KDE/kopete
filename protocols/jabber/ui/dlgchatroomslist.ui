@@ -71,7 +71,7 @@
                 <cstring>tblChatRoomsList</cstring>
             </property>
             <property name="focusPolicy">
-                <enum>ClickFocus</enum>
+                <enum>Qt::ClickFocus</enum>
             </property>
             <property name="numRows">
                 <number>0</number>
@@ -108,7 +108,7 @@
                         <cstring>spacer2</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Horizontal</enum>
+                        <enum>Qt::Horizontal</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>

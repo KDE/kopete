@@ -17,8 +17,8 @@
 
 #include <qlabel.h>
 //Added by qt3to4:
-#include <QVBoxLayout>
-#include <QGridLayout>
+#include <Q3VBoxLayout>
+#include <Q3GridLayout>
 
 #include <kdebug.h>
 
@@ -35,16 +35,16 @@ JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * p
 	emptyForm = privForm;
 
 	/* Add instructions to layout. */
-	QVBoxLayout *innerLayout = new QVBoxLayout (this, 0, 4);
+	Q3VBoxLayout *innerLayout = new Q3VBoxLayout (this, 0, 4);
 
 	QLabel *label = new QLabel (form.instructions (), this, "InstructionLabel");
-	label->setAlignment (int (QLabel::WordBreak | QLabel::AlignVCenter));
+	label->setAlignment (int (Qt::TextWordWrap | Qt::AlignVCenter));
 	label->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Fixed, true);
 	label->show ();
 
 	innerLayout->addWidget (label, 0);
 
-	QGridLayout *formLayout = new QGridLayout (innerLayout, form.count (), 2);
+	Q3GridLayout *formLayout = new Q3GridLayout (innerLayout, form.count (), 2);
 
 	int row = 1;
 	XMPP::Form::const_iterator formEnd = form.end ();

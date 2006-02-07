@@ -21,7 +21,7 @@
 #include <im.h>
 
 #include <qobject.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 namespace cricket
 {
@@ -40,7 +40,7 @@ class JingleSessionManager : public QObject
 {
 	Q_OBJECT
 public:
-	typedef QValueList<XMPP::Jid> JidList;
+	typedef Q3ValueList<XMPP::Jid> JidList;
 
 	JingleSessionManager(JabberAccount *account);
 	~JingleSessionManager();

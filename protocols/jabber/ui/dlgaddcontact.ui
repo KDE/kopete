@@ -41,7 +41,7 @@
                         <string>&amp;Jabber ID:</string>
                     </property>
                     <property name="alignment">
-                        <set>AlignTop</set>
+                        <set>Qt::AlignTop</set>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>addID</cstring>
@@ -74,7 +74,7 @@
                 <string>&lt;i&gt;(for example: joe@jabber.org)&lt;/i&gt;</string>
             </property>
             <property name="alignment">
-                <set>WordBreak|AlignVCenter|AlignRight</set>
+                <set>Qt::TextWordWrap|Qt::AlignVCenter|Qt::AlignRight</set>
             </property>
         </widget>
         <spacer>
@@ -82,7 +82,7 @@
                 <cstring>spacer14</cstring>
             </property>
             <property name="orientation">
-                <enum>Vertical</enum>
+                <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>

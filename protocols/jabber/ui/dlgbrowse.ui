@@ -24,7 +24,7 @@
                 <cstring>splitter1</cstring>
             </property>
             <property name="orientation">
-                <enum>Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
             </property>
             <widget class="QGroupBox">
                 <property name="name">
@@ -48,7 +48,7 @@
                             <string>Please wait while retrieving search form...</string>
                         </property>
                         <property name="alignment">
-                            <set>WordBreak|AlignVCenter</set>
+                            <set>Qt::TextWordWrap|Qt::AlignVCenter</set>
                         </property>
                     </widget>
                 </vbox>
@@ -123,7 +123,7 @@
                         <cstring>buttonsSpacer</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Horizontal</enum>
+                        <enum>Qt::Horizontal</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>

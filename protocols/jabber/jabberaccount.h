@@ -33,6 +33,8 @@
 #include <im.h>
 #include "jabberclient.h"
 
+#include <QMap>
+
 class QString;
 class QStringList;
 class KActionMenu;
@@ -211,7 +213,7 @@ private:
 	 */
 	bool isConnecting ();
 
-	QMap<QString, JabberTransport *>m_transports;
+	QMap<QString, JabberTransport*> m_transports;
 	
 	/* used in removeAccount() */
 	bool m_removing;

@@ -31,6 +31,8 @@
 
 #include <qpixmap.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -103,7 +105,7 @@ KActionMenu *JabberTransport::actionMenu ()
 	nick.isNull() ? accountLabel() : i18n( "%2 <%1>" ).arg( accountLabel(), nick )
 								  );
 	
-	QPtrList<KAction> *customActions = myself()->customContextMenuActions(  );
+	Q3PtrList<KAction> *customActions = myself()->customContextMenuActions(  );
 	if( customActions && !customActions->isEmpty() )
 	{
 		menu->popupMenu()->insertSeparator();
@@ -255,7 +257,7 @@ void JabberTransport::removeAllContacts( )
 	*/ //we don't really care, we remove everithing anyway.
 
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "delete all contacts of the transport"<< endl;
-	QDictIterator<Kopete::Contact> it( contacts() ); 
+	Q3DictIterator<Kopete::Contact> it( contacts() ); 
 	for( ; it.current(); ++it )
 	{
 		XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
@@ -291,8 +293,8 @@ void JabberTransport::eatContacts( )
 	*            - a new contact will born, with the same characteristics, but owned by the transport
 	* - Olivier 2006-01-17 -
 	*/
-	QDict<Kopete::Contact> cts=account()->contacts();
-	QDictIterator<Kopete::Contact> it( cts ); 
+	Q3Dict<Kopete::Contact> cts=account()->contacts();
+	Q3DictIterator<Kopete::Contact> it( cts ); 
 	for( ; it.current(); ++it )
 	{
 		JabberContact *contact=dynamic_cast<JabberContact*>(it.current());

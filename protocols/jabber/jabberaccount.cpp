@@ -26,6 +26,8 @@
 #include "xmpp.h"
 #include "xmpp_tasks.h"
 #include "qca.h"
+//Added by qt3to4:
+#include <Q3CString>
 #include "bsocket.h"
 
 #include "jabberaccount.h"
@@ -1493,7 +1495,7 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 	{
 	case JabberClient::InvalidPasswordForMUC:
 		{
-			QCString password;
+			Q3CString password;
  			int result = KPasswordDialog::getPassword(password, i18n("A password is required to join the room %1.").arg(jid.node()));
 			if (result == KPasswordDialog::Accepted)
 				m_jabberClient->joinGroupChat(jid.domain(), jid.node(), jid.resource(), password);

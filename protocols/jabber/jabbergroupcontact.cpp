@@ -99,7 +99,7 @@ JabberGroupContact::~JabberGroupContact ()
 
 Q3PtrList<KAction> *JabberGroupContact::customContextMenuActions ()
 {
-	QPtrList<KAction> *actionCollection = new QPtrList<KAction>();
+	Q3PtrList<KAction> *actionCollection = new Q3PtrList<KAction>();
 
 	KAction *actionSetNick = new KAction (i18n ("Change nick name"), 0, 0, this, SLOT (slotChangeNick()), this, "jabber_changenick");
 	actionCollection->append( actionSetNick );
@@ -307,7 +307,7 @@ void JabberGroupContact::slotStatusChanged( )
 	if( !account()->isConnected() )
 	{
 		//we need to remove all contact, because when we connect again, we will not receive the notificaion they are gone.
-		QPtrList<Kopete::Contact> copy_contactlist=mContactList;
+		Q3PtrList<Kopete::Contact> copy_contactlist=mContactList;
 		for ( Kopete::Contact *contact = copy_contactlist.first (); contact; contact = copy_contactlist.next () )
 		{
 			removeSubContact( XMPP::Jid(contact->contactId()) );

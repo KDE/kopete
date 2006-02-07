@@ -18,7 +18,7 @@
 
 #include <qpushbutton.h>
 //Added by qt3to4:
-#include <QBoxLayout>
+#include <Q3BoxLayout>
 
 #include <kmessagebox.h>
 #include <klocale.h>
@@ -61,7 +61,7 @@ void dlgJabberRegister::slotGotForm ()
 
 	// translate the form and create it inside the box widget
 	translator = new JabberFormTranslator (task->form (), grpForm);
-	static_cast<QBoxLayout*>(grpForm->layout())->insertWidget(1, translator);
+	static_cast<Q3BoxLayout*>(grpForm->layout())->insertWidget(1, translator);
 	translator->show();
 	resize(sizeHint());
 

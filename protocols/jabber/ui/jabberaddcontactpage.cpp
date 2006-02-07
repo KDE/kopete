@@ -22,7 +22,7 @@
 
 #include <qlayout.h>
 //Added by qt3to4:
-#include <QVBoxLayout>
+#include <Q3VBoxLayout>
 #include <klineedit.h>
 #include <klocale.h>
 #include <kopeteaccount.h>
@@ -39,7 +39,7 @@
 
 JabberAddContactPage::JabberAddContactPage (Kopete::Account * owner, QWidget * parent, const char *name):AddContactPage (parent, name)
 {
-	(new QVBoxLayout (this))->setAutoAdd (true);
+	(new Q3VBoxLayout (this))->setAutoAdd (true);
 	
 	JabberTransport *transport=dynamic_cast<JabberTransport*>(owner);
 	JabberAccount *jaccount= transport ? transport->account() : dynamic_cast<JabberAccount*>(owner);
@@ -184,7 +184,7 @@ void JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND::slot
 		// collect all group names
 	QStringList groupNames;
 	Kopete::GroupList groupList = parentContact->groups();
-	for(Kopete::Group *group = groupList.first(); group; group = groupList.next())
+	foreach(Kopete::Group *group,groupList)
 		groupNames += group->displayName();
 
 	if ( jaccount->addContact ( contactId, parentContact, Kopete::Account::ChangeKABC ) )

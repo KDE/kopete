@@ -46,6 +46,8 @@
 #include "jabberprotocol.h"
 
 #include <kdebug.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #define JINGLE_NS "http://www.google.com/session"
 #define JINGLE_VOICE_SESSION_NS "http://www.google.com/session/phone"
@@ -90,7 +92,7 @@ public:
 	}
 	
 	JabberAccount *account;
-	QValueList<JingleSession*> sessionList;
+	Q3ValueList<JingleSession*> sessionList;
 	JingleWatchSessionTask *watchSessionTask;
 
 	cricket::NetworkManager *networkManager;
@@ -137,7 +139,7 @@ JingleSessionManager::~JingleSessionManager()
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
 
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Cleaning up Jingle sessions." << endl;
-	QValueList<JingleSession*>::Iterator it, itEnd = d->sessionList.end();
+	Q3ValueList<JingleSession*>::Iterator it, itEnd = d->sessionList.end();
 	for(it = d->sessionList.begin(); it != itEnd; ++it)
 	{
 		JingleSession *deletedSession = *it;

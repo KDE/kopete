@@ -21,7 +21,7 @@
 #include <qstring.h>
 
 #include <xmpp.h> // XMPP::Jid
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 class JabberAccount;
 /**
@@ -33,7 +33,7 @@ class JingleSession : public QObject
 {
 	Q_OBJECT
 public:
-	typedef QValueList<XMPP::Jid> JidList;
+	typedef Q3ValueList<XMPP::Jid> JidList;
 
 	JingleSession(JabberAccount *account, const JidList &peers);
 	virtual ~JingleSession();

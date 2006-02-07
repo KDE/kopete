@@ -33,7 +33,7 @@
 #include <qtimer.h>
 #include <qregexp.h>
 
-#include "qca.h"
+#include <QtCrypto>
 #include "xmpp.h"
 #include "xmpp_tasks.h"
 

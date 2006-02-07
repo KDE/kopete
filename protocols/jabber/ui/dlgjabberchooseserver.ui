@@ -43,7 +43,7 @@
                 <cstring>listServers</cstring>
             </property>
             <property name="focusPolicy">
-                <enum>NoFocus</enum>
+                <enum>Qt::NoFocus</enum>
             </property>
             <property name="resizePolicy">
                 <enum>Default</enum>

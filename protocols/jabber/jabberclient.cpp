@@ -24,7 +24,7 @@
 #include <qtimer.h>
 #include <qregexp.h>
 
-#include <qca.h>
+#include <QtCrypto>
 //Added by qt3to4:
 #include <Q3PtrList>
 #include <bsocket.h>
@@ -605,7 +605,7 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	/*
 	 * Return an error if we should force TLS but it's not available.
 	 */
-	if ( ( forceTLS () || useSSL () || probeSSL () ) && !QCA::isSupported ( QCA::CAP_TLS ) )
+	if ( ( forceTLS () || useSSL () || probeSSL () ) && !QCA::isSupported ("tls" ) )
 	{
 		return NoTLS;
 	}
@@ -633,7 +633,7 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	/*
 	 * Setup authentication layer
 	 */
-	if ( QCA::isSupported ( QCA::CAP_TLS ) )
+	if ( QCA::isSupported ("tls") )
 	{
 		d->jabberTLS = new QCA::TLS;
 		d->jabberTLSHandler = new XMPP::QCATLSHandler ( d->jabberTLS );
@@ -642,9 +642,11 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 			using namespace XMPP;
 			QObject::connect ( d->jabberTLSHandler, SIGNAL ( tlsHandshaken() ), this, SLOT ( slotTLSHandshaken () ) );
 		}
-
-		Q3PtrList<QCA::Cert> certStore;
+#warning Port to new QCA2 API
+#if 0
+		QList<QCA::Certificate> certStore;
 		d->jabberTLS->setCertificateStore ( certStore );
+#endif
 	}
 
 	/*

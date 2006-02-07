@@ -13,7 +13,7 @@ INCLUDES = \
 kde_module_LTLIBRARIES = kio_jabberdisco.la
 
 kio_jabberdisco_la_SOURCES = jabberdisco.cpp
-kio_jabberdisco_la_LIBADD = ../libjabberclient.la ../libiris/qca/src/libqca.la ../libiris/iris/include/libiris.la ../libiris/iris/xmpp-im/libiris_xmpp_im.la ../libiris/iris/xmpp-core/libiris_xmpp_core.la ../libiris/iris/jabber/libiris_jabber.la ../libiris/cutestuff/util/libcutestuff_util.la ../libiris/cutestuff/network/libcutestuff_network.la $(LIB_KIO)
+kio_jabberdisco_la_LIBADD = ../libjabberclient.la ../libiris/libiris_local.la $(LIB_KIO)
 kio_jabberdisco_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 
 noinst_HEADERS = jabberdisco.h

@@ -22,7 +22,7 @@
 #include <qimage.h>
 #include <qtooltip.h>
 #include <qfile.h>
-#include <qiconset.h>
+#include <qicon.h>
 
 #include <kconfig.h>
 #include <kdebug.h>

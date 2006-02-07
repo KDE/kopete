@@ -163,7 +163,7 @@
                                     <string>To connect to the Jabber network, you will need an account on a Jabber server.  If you do not yet have an account, please click the button to create one.</string>
                                 </property>
                                 <property name="alignment">
-                                    <set>WordBreak|AlignVCenter</set>
+                                    <set>Qt::TextWordWrap|Qt::AlignVCenter</set>
                                 </property>
                             </widget>
                             <widget class="QPushButton">
@@ -228,7 +228,7 @@
                                     <string>If you have an existing Jabber account and would like to change its password, you can use this button to enter a new password.</string>
                                 </property>
                                 <property name="alignment">
-                                    <set>WordBreak|AlignVCenter</set>
+                                    <set>Qt::TextWordWrap|Qt::AlignVCenter</set>
                                 </property>
                             </widget>
                         </grid>
@@ -238,7 +238,7 @@
                             <cstring>spacer8</cstring>
                         </property>
                         <property name="orientation">
-                            <enum>Vertical</enum>
+                            <enum>Qt::Vertical</enum>
                         </property>
                         <property name="sizeType">
                             <enum>Maximum</enum>
@@ -490,7 +490,7 @@
                                     <cstring>spacer28</cstring>
                                 </property>
                                 <property name="orientation">
-                                    <enum>Horizontal</enum>
+                                    <enum>Qt::Horizontal</enum>
                                 </property>
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
@@ -518,7 +518,7 @@
                                     <string>P&amp;riority:</string>
                                 </property>
                                 <property name="alignment">
-                                    <set>AlignVCenter</set>
+                                    <set>Qt::AlignVCenter</set>
                                 </property>
                                 <property name="buddy" stdset="0">
                                     <cstring>mResource</cstring>
@@ -570,7 +570,7 @@ If two resources have the same priority, the messages will be sent to the one co
                             <cstring>spacer43</cstring>
                         </property>
                         <property name="orientation">
-                            <enum>Vertical</enum>
+                            <enum>Qt::Vertical</enum>
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
@@ -692,7 +692,7 @@ If two resources have the same priority, the messages will be sent to the one co
 &lt;li&gt;The "Proxy JID" can be configured per account.&lt;/li&gt;&lt;/ul&gt;&lt;/i&gt;</string>
                                 </property>
                                 <property name="alignment">
-                                    <set>WordBreak|AlignVCenter</set>
+                                    <set>Qt::TextWordWrap|Qt::AlignVCenter</set>
                                 </property>
                             </widget>
                         </vbox>
@@ -702,7 +702,7 @@ If two resources have the same priority, the messages will be sent to the one co
                             <cstring>spacer29</cstring>
                         </property>
                         <property name="orientation">
-                            <enum>Vertical</enum>
+                            <enum>Qt::Vertical</enum>
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
@@ -784,7 +784,7 @@ If two resources have the same priority, the messages will be sent to the one co
                                                             <cstring>spacer6</cstring>
                                                         </property>
                                                         <property name="orientation">
-                                                            <enum>Horizontal</enum>
+                                                            <enum>Qt::Horizontal</enum>
                                                         </property>
                                                         <property name="sizeType">
                                                             <enum>Fixed</enum>
@@ -866,7 +866,7 @@ If two resources have the same priority, the messages will be sent to the one co
                                             <cstring>spacer10</cstring>
                                         </property>
                                         <property name="orientation">
-                                            <enum>Horizontal</enum>
+                                            <enum>Qt::Horizontal</enum>
                                         </property>
                                         <property name="sizeType">
                                             <enum>Expanding</enum>
@@ -887,7 +887,7 @@ If two resources have the same priority, the messages will be sent to the one co
                             <cstring>spacer5</cstring>
                         </property>
                         <property name="orientation">
-                            <enum>Vertical</enum>
+                            <enum>Qt::Vertical</enum>
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
@@ -915,7 +915,7 @@ If two resources have the same priority, the messages will be sent to the one co
                                     <cstring>spacer9</cstring>
                                 </property>
                                 <property name="orientation">
-                                    <enum>Horizontal</enum>
+                                    <enum>Qt::Horizontal</enum>
                                 </property>
                                 <property name="sizeType">
                                     <enum>Expanding</enum>

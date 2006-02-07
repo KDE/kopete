@@ -20,7 +20,7 @@
 #include <jinglesession.h>
 
 #include <xmpp.h> // XMPP::Jid
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 namespace cricket
 {
@@ -39,7 +39,7 @@ class JingleVoiceSession : public JingleSession
 {
 	Q_OBJECT
 public:
-	typedef QValueList<XMPP::Jid> JidList;
+	typedef Q3ValueList<XMPP::Jid> JidList;
 
 	JingleVoiceSession(JabberAccount *account, const JidList &peers);
 	virtual ~JingleVoiceSession();

@@ -21,6 +21,8 @@
 #define JABBERCAPABILITIESMANAGER_H
 
 #include <qobject.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include <im.h>
 #include <xmpp.h>
 
@@ -115,7 +117,7 @@ private:
 	void saveInformation();
 
 	class Capabilities;
-	typedef QValueList<Capabilities> CapabilitiesList;
+	typedef Q3ValueList<Capabilities> CapabilitiesList;
 	/**
 	 * @brief A class representing an entity capability specification.
 	 * An entity capability is a combination of a node, a version, and a set of
@@ -200,7 +202,7 @@ private:
 			int m_pendingRequests;
 			QStringList m_features;
 			DiscoItem::Identities m_identities;
-			QValueList<QPair<QString,JabberAccount*> > m_jids;
+			Q3ValueList<QPair<QString,JabberAccount*> > m_jids;
 			QDate m_lastSeen;
 	};
 

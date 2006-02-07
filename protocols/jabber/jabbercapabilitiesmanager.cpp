@@ -25,6 +25,8 @@
 #include <qpair.h>
 #include <qdom.h>
 #include <qtextstream.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include <kstandarddirs.h>
 #include <kdebug.h>
@@ -113,7 +115,7 @@ QStringList JabberCapabilitiesManager::CapabilitiesInformation::jids() const
 {
 	QStringList jids;
 	
-	QValueList<QPair<QString,JabberAccount*> >::ConstIterator it = m_jids.constBegin(), itEnd = m_jids.constEnd();
+	Q3ValueList<QPair<QString,JabberAccount*> >::ConstIterator it = m_jids.constBegin(), itEnd = m_jids.constEnd();
 	for( ; it != itEnd; ++it) 
 	{
 		QString jid( (*it).first );
@@ -143,12 +145,12 @@ void JabberCapabilitiesManager::CapabilitiesInformation::reset()
 
 void JabberCapabilitiesManager::CapabilitiesInformation::removeAccount(JabberAccount *account)
 {
-	QValueList<QPair<QString,JabberAccount*> >::Iterator it = m_jids.begin();
+	Q3ValueList<QPair<QString,JabberAccount*> >::Iterator it = m_jids.begin();
 	while( it != m_jids.end() ) 
 	{
 		if( (*it).second == account) 
 		{
-			QValueList<QPair<QString,JabberAccount*> >::Iterator otherIt = it;
+			Q3ValueList<QPair<QString,JabberAccount*> >::Iterator otherIt = it;
 			it++;
 			m_jids.remove(otherIt);
 		}
@@ -174,12 +176,12 @@ void JabberCapabilitiesManager::CapabilitiesInformation::removeJid(const Jid& ji
 {
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unregistering " << QString(jid.full()).replace('%',"%%") << endl;
 
-	QValueList<QPair<QString,JabberAccount*> >::Iterator it = m_jids.begin();
+	Q3ValueList<QPair<QString,JabberAccount*> >::Iterator it = m_jids.begin();
 	while( it != m_jids.end() ) 
 	{
 		if( (*it).first == jid.full() ) 
 		{
-			QValueList<QPair<QString,JabberAccount*> >::Iterator otherIt = it;
+			Q3ValueList<QPair<QString,JabberAccount*> >::Iterator otherIt = it;
 			it++;
 			m_jids.remove(otherIt);
 		}
@@ -194,7 +196,7 @@ QPair<Jid,JabberAccount*> JabberCapabilitiesManager::CapabilitiesInformation::ne
 {
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Looking for next JID" << endl;
 
-	QValueList<QPair<QString,JabberAccount*> >::ConstIterator it = m_jids.constBegin(), itEnd = m_jids.constEnd();
+	Q3ValueList<QPair<QString,JabberAccount*> >::ConstIterator it = m_jids.constBegin(), itEnd = m_jids.constEnd();
 	for( ; it != itEnd; ++it) 
 	{
 		if( (*it).first == jid.full() && (*it).second->client()->rootTask() == t) 
@@ -342,9 +344,9 @@ void JabberCapabilitiesManager::removeAccount(JabberAccount *account)
 {
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing account " << account->accountId() << endl;
 
-	QValueList<CapabilitiesInformation> info = d->capabilitiesInformationMap.values();
+	Q3ValueList<CapabilitiesInformation> info = d->capabilitiesInformationMap.values();
 
-	QValueList<CapabilitiesInformation>::Iterator it, itEnd = info.end();
+	Q3ValueList<CapabilitiesInformation>::Iterator it, itEnd = info.end();
 	for(it = info.begin(); it != info.end(); ++it) 
 	{
 		(*it).removeAccount(account);
@@ -514,7 +516,7 @@ void JabberCapabilitiesManager::loadCachedInformation()
 	// Load settings
 	QDomDocument doc;
 	QFile cacheFile(capsFileName);
-	if( !cacheFile.open(IO_ReadOnly) )
+	if( !cacheFile.open(QIODevice::ReadOnly) )
 	{
 		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Could not open the Capabilities cache from disk." << endl;
 		return;
@@ -635,7 +637,7 @@ void JabberCapabilitiesManager::saveInformation()
 
 	// Save
 	QFile capsFile(capsFileName);
-	if( !capsFile.open(IO_WriteOnly) ) 
+	if( !capsFile.open(QIODevice::WriteOnly) ) 
 	{
 		kDebug(JABBER_DEBUG_GLOBAL	) << k_funcinfo << "Error while opening Capabilities cache file." << endl;
 		return;

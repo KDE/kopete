@@ -44,8 +44,8 @@ public:
 		pool.setAutoDelete(true);
 	}
 	
-	QPtrList<JabberResource> pool;
-	QPtrList<JabberResource> lockList;
+	Q3PtrList<JabberResource> pool;
+	Q3PtrList<JabberResource> lockList;
 
 	/**
 	 * Pointer to the JabberAccount instance.

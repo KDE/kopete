@@ -22,7 +22,7 @@
 #include <qcheckbox.h>
 #include <qpushbutton.h>
 #include <qspinbox.h>
-#include <qcombobox.h>
+#include <q3combobox.h>
 #include <qlabel.h>
 
 #include <kconfig.h>
@@ -89,16 +89,16 @@ void JabberEditAccountWidget::reopen ()
 	cbAutoConnect->setChecked (account()->excludeConnect());
 	
 	mResource->setText (account()->configGroup()->readEntry ("Resource", QString::fromLatin1("Kopete")));
-	mPriority->setValue (account()->configGroup()->readNumEntry ("Priority", 5));
-	mServer->setText (account()->configGroup()->readEntry ("Server", QString::null));
+	mPriority->setValue (account()->configGroup()->readEntry ("Priority", 5));
+	mServer->setText (account()->configGroup()->readEntry ("Server", QString()));
 
-	cbUseSSL->setChecked (account()->configGroup()->readBoolEntry( "UseSSL", false));
+	cbUseSSL->setChecked (account()->configGroup()->readEntry( "UseSSL", false));
 
-	mPort->setValue (account()->configGroup()->readNumEntry("Port", 5222));
+	mPort->setValue (account()->configGroup()->readEntry("Port", 5222));
 
-	QString auth = account()->configGroup()->readEntry("AuthType", QString::null);
+	QString auth = account()->configGroup()->readEntry("AuthType", QString());
 
-	cbCustomServer->setChecked (account()->configGroup()->readBoolEntry("CustomServer",false));
+	cbCustomServer->setChecked (account()->configGroup()->readEntry("CustomServer",false));
 
 	if(cbCustomServer->isChecked ())
 	{
@@ -111,24 +111,24 @@ void JabberEditAccountWidget::reopen ()
 		mServer->setText(mID->text().section("@", 1));
 	}
 
-	cbAllowPlainTextPassword->setChecked (account()->configGroup()->readBoolEntry("AllowPlainTextPassword", true));
+	cbAllowPlainTextPassword->setChecked (account()->configGroup()->readEntry("AllowPlainTextPassword", true));
 
 	KGlobal::config()->setGroup("Jabber");
-	leLocalIP->setText (KGlobal::config()->readEntry("LocalIP", ""));
-	sbLocalPort->setValue (KGlobal::config()->readNumEntry("LocalPort", 8010));
+	leLocalIP->setText (KGlobal::config()->readEntry("LocalIP", QString()));
+	sbLocalPort->setValue (KGlobal::config()->readEntry("LocalPort", 8010));
 
-	leProxyJID->setText (account()->configGroup()->readEntry("ProxyJID", QString::null));
+	leProxyJID->setText (account()->configGroup()->readEntry("ProxyJID", QString()));
 
 	// Privacy
-	cbSendEvents->setChecked( account()->configGroup()->readBoolEntry("SendEvents", true) );
-	cbSendDeliveredEvent->setChecked( account()->configGroup()->readBoolEntry("SendDeliveredEvent", true) );
-	cbSendDisplayedEvent->setChecked( account()->configGroup()->readBoolEntry("SendDisplayedEvent", true) );
-	cbSendComposingEvent->setChecked( account()->configGroup()->readBoolEntry("SendComposingEvent", true) );
+	cbSendEvents->setChecked( account()->configGroup()->readEntry("SendEvents", true) );
+	cbSendDeliveredEvent->setChecked( account()->configGroup()->readEntry("SendDeliveredEvent", true) );
+	cbSendDisplayedEvent->setChecked( account()->configGroup()->readEntry("SendDisplayedEvent", true) );
+	cbSendComposingEvent->setChecked( account()->configGroup()->readEntry("SendComposingEvent", true) );
 
-	cbHideSystemInfo->setChecked( account()->configGroup()->readBoolEntry("HideSystemInfo", false) );
+	cbHideSystemInfo->setChecked( account()->configGroup()->readEntry("HideSystemInfo", false) );
 
 	// Global Identity
-	cbGlobalIdentity->setChecked( account()->configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) );
+	cbGlobalIdentity->setChecked( account()->configGroup()->readEntry("ExcludeGlobalIdentity", false) );
 }
 
 Kopete::Account *JabberEditAccountWidget::apply ()

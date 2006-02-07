@@ -25,7 +25,7 @@
 #include "xmpp_tasks.h"
 
 #include "dlgservices.h"
-#include <qlistview.h>
+#include <q3listview.h>
 
 /**
   *@author Till Gerken <till@tantalo.net>
@@ -40,7 +40,7 @@ public:
 	 ~dlgJabberServices ();
 
 private slots:
-	void slotSetSelection (QListViewItem *);
+	void slotSetSelection (Q3ListViewItem *);
 	void slotQuery ();
 	void slotQueryFinished ();
 	void slotRegister ();
@@ -56,12 +56,12 @@ private:
 };
 
 
-class dlgJabberServies_item : protected QObject, public QListViewItem  
+class dlgJabberServies_item : protected QObject, public Q3ListViewItem  
 {
 	Q_OBJECT
 	public:
-		dlgJabberServies_item( QListView *parent , const QString &s1 , const QString &s2 ) 
-			: QListViewItem(parent,s1,s2), can_browse(false) , can_register(false) {}
+		dlgJabberServies_item( Q3ListView *parent , const QString &s1 , const QString &s2 ) 
+			: Q3ListViewItem(parent,s1,s2), can_browse(false) , can_register(false) {}
 		bool can_browse, can_register;
 		XMPP::Jid jid;
 		

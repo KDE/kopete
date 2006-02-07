@@ -23,6 +23,8 @@
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <q3table.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include "jabberaccount.h"
 #include "jabberclient.h"
@@ -65,7 +67,7 @@ dlgJabberServices::dlgJabberServices (JabberAccount *account, QWidget *parent, c
 
 	connect (btnQuery, SIGNAL (clicked ()), this, SLOT (slotQuery ()));
 	//connect (tblServices, SIGNAL (clicked (int, int, int, const QPoint &)), this, SLOT (slotSetSelection (int, int, int, const QPoint &)));
-	connect (lvServices, SIGNAL (selectionChanged (QListViewItem *)), this, SLOT (slotSetSelection (QListViewItem *)));
+	connect (lvServices, SIGNAL (selectionChanged (Q3ListViewItem *)), this, SLOT (slotSetSelection (Q3ListViewItem *)));
 
 	connect (btnRegister, SIGNAL (clicked ()), this, SLOT (slotRegister ()));
 	connect (btnBrowse, SIGNAL (clicked ()), this, SLOT (slotBrowse ()));
@@ -74,7 +76,7 @@ dlgJabberServices::dlgJabberServices (JabberAccount *account, QWidget *parent, c
 
 }
 
-void dlgJabberServices::slotSetSelection (QListViewItem *it)
+void dlgJabberServices::slotSetSelection (Q3ListViewItem *it)
 {
 	dlgJabberServies_item *item=dynamic_cast<dlgJabberServies_item*>(it);
 	if(!item)
@@ -151,11 +153,11 @@ void dlgJabberServices::slotDiscoFinished( )
 
 	if ( jt->success() ) 
 	{
-		QValueList<XMPP::DiscoItem> list = jt->items();
+		Q3ValueList<XMPP::DiscoItem> list = jt->items();
 		
 		lvServices->clear();
 
-		for(QValueList<XMPP::DiscoItem>::ConstIterator it = list.begin(); it != list.end(); ++it) 
+		for(Q3ValueList<XMPP::DiscoItem>::ConstIterator it = list.begin(); it != list.end(); ++it) 
 		{
 			const XMPP::DiscoItem a = *it;
 			dlgJabberServies_item *item=new dlgJabberServies_item( lvServices , (*it).jid ().userHost () , (*it).name ());
