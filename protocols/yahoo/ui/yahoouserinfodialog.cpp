@@ -136,8 +136,8 @@ void YahooUserInfoDialog::setData( const YABEntry &yab )
 	m_genInfoWidget->nickNameEdit->setText( yab.nickName );
 	m_genInfoWidget->yahooIdEdit->setText( yab.yahooId );
 	m_genInfoWidget->titleEdit->setText( yab.title );
-	m_genInfoWidget->birthdayEdit->setText( yab.birthday.toString() );
-	m_genInfoWidget->anniversaryEdit->setText( yab.anniversary.toString() );
+	m_genInfoWidget->birthdayEdit->setText( QString("%1/%2/%3").arg( yab.birthday.day() ).arg( yab.birthday.month() ).arg( yab.birthday.year() ));
+	m_genInfoWidget->anniversaryEdit->setText( QString("%1/%2/%3").arg( yab.anniversary.day() ).arg( yab.anniversary.month() ).arg( yab.anniversary.year() ));
 	
 	m_genInfoWidget->addressEdit->setText( yab.privateAdress );
 	m_genInfoWidget->cityEdit->setText( yab.privateCity );
