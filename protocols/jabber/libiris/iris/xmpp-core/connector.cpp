@@ -32,7 +32,7 @@
 #include "xmpp.h"
 
 #include <qpointer.h>
-#include <qca.h>
+#include <QtCrypto>
 //Added by qt3to4:
 #include <QList>
 #include "safedelete.h"

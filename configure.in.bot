@@ -1,0 +1,9 @@
+if test "$have_qca2" = no; then
+  echo ""
+  echo "You're missing QCA 2.0 beta 1."
+  echo "Kopete will not be compiled. If you want to use Kopete, you should consider"
+  echo "installing or upgrading it."
+  echo "Have a look at http://delta.affinix.com/download/qca/2.0/beta1/"
+  echo ""
+  all_tests=bad
+fi

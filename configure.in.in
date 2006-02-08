@@ -83,6 +83,14 @@ fi
      fi
   fi
 
+KDE_PKG_CHECK_MODULES(QCA, qca, have_qca2=yes, have_qca2=no)
+if test x$have_qca2 = xno; then
+	AC_WARN([You need at least QCA 2.0 beta1. Get it at http://delta.affinix.com/download/qca/2.0/beta1/])
+	DO_NOT_COMPILE="$DO_NOT_COMPILE kopete"
+fi
+AC_SUBST(QCA_CFLAGS)
+AC_SUBST(QCA_LIBS)
+
 if test ! "$USE_RPATH" = "yes"; then
   LIBXSLT_RPATH=
   LIBXML_RPATH=

@@ -1,7 +1,9 @@
 METASOURCES = AUTO
 
+KDE_CXXFLAGS = $(QCA_CFLAGS)
+
 noinst_LTLIBRARIES = libcutestuff_network.la
-INCLUDES = -I$(srcdir)/../util -I$(srcdir)/../../qca2/include/QtCrypto $(all_includes)
+INCLUDES = -I$(srcdir)/../util $(all_includes)
 
 libcutestuff_network_la_SOURCES = \
 	bsocket.cpp \

@@ -10,12 +10,11 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(srcdir)/libiris/iris/include \
 	-I$(srcdir)/libiris/iris/xmpp-im \
 	-I$(srcdir)/libiris/iris/jabber \
-	-I$(srcdir)/libiris/qca2/include/QtCrypto \
 	-I$(srcdir)/libiris/cutestuff/util \
 	-I$(srcdir)/libiris/cutestuff/network \
 	-I$(srcdir)/ui \
 	-I./ui \
-	$(all_includes) $(JINGLE_INCLUDES)
+	$(all_includes) $(JINGLE_INCLUDES) $(QCA_CFLAGS)
 
 noinst_LTLIBRARIES = libjabberclient.la
 libjabberclient_la_SOURCES = \
