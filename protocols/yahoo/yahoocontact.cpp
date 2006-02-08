@@ -516,12 +516,15 @@ void YahooContact::setDisplayPicture(KTempFile *f, int checksum)
 }
 
 
-void YahooContact::setYABEntry( YABEntry *entry )
+void YahooContact::setYABEntry( YABEntry *entry, bool show )
 {
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	if( m_YABEntry )
 		delete m_YABEntry;
 	m_YABEntry = entry;
+	
+	if( show )
+		slotUserInfo();
 }
 
 void YahooContact::slotEmitDisplayPictureChanged()

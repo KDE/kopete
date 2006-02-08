@@ -115,7 +115,6 @@ void ConferenceTask::parseMessage( Transfer *transfer )
 	if (!t)
 		return;
 	
-	int i = 0;
 	QString room = t->firstParam( 57 );
 	QString from = t->firstParam( 3 );
 	bool utf = QString( t->firstParam( 97 ) ).toInt() == 1;

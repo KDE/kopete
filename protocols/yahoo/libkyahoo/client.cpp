@@ -501,6 +501,7 @@ void Client::saveYABEntry( YABEntry &entry )
 	SaveYABTask *syt = new SaveYABTask( d->root );
 	syt->setEntry( entry );
 	QObject::connect( syt, SIGNAL(gotEntry( YABEntry * )), this, SIGNAL( gotYABEntry( YABEntry * ) ) );
+	QObject::connect( syt, SIGNAL(error( YABEntry *, const QString &)), this, SIGNAL(saveYABEntryError( YABEntry *, const QString & )));
 	syt->go(true);
 }
 

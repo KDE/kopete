@@ -84,7 +84,7 @@ public slots:
 	void sendBuddyIconInfo( const QString &url, int checksum );
 	void sendBuddyIconUpdate( int type );
 	void sendBuddyIconChecksum( int checksum );
-	void setYABEntry( YABEntry * );
+	void setYABEntry( YABEntry *, bool show = false );
 
 	/**
 	 * Must be called after the contact list has been received

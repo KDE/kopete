@@ -322,6 +322,8 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::connect(m_session, SIGNAL(gotYABEntry( YABEntry * )), this, SLOT(slotGotYABEntry( YABEntry * )));
 		
+		QObject::connect(m_session, SIGNAL(saveYABEntryError( YABEntry *, const QString & )), this, SLOT(slotSaveYABEntryError( YABEntry *, const QString & )));
+		
 	}
 
 	if ( sct == DeleteConnections )
@@ -433,6 +435,8 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::disconnect(m_session, SIGNAL(pictureChecksumNotify(const QString&, int)), this, SLOT(slotGotBuddyIconChecksum(const QString&, int )));
 		
 		QObject::disconnect(m_session, SIGNAL(gotYABEntry( YABEntry * )), this, SLOT(slotGotYABEntry( YABEntry * )));
+		
+		QObject::disconnect(m_session, SIGNAL(saveYABEntryError( YABEntry *, const QString & )), this, SLOT(slotSaveYABEntryError( YABEntry *, const QString & )));
 	}
 }
 
@@ -1227,6 +1231,14 @@ void YahooAccount::slotGotYABEntry( YABEntry *entry )
 void YahooAccount::slotSaveYABEntry( YABEntry &entry )
 {
 	m_session->saveYABEntry( entry );
+}
+
+void YahooAccount::slotSaveYABEntryError( YABEntry *entry, const QString &msg )
+{
+	YahooContact* kc = contact( entry->yahooId );
+	if( kc )
+		kc->setYABEntry( entry, true );
+	KMessageBox::sorry( Kopete::UI::Global::mainWidget(), msg, i18n( "Yahoo Plugin" ) );
 }
 
 void YahooAccount::slotGotFile( const QString &  who, const QString &  url , long /* expires */, const QString &  msg ,

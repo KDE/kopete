@@ -463,9 +463,13 @@ Q_OBJECT
 		 */
 		void gotAuthorizationRequest( const QString &, const QString &, const QString & );
 		/**
-		 * A entry from the Yahoo Address book was retrieved
+		 * A entry from the Yahoo Addressbook was retrieved
 		 */
 		void gotYABEntry( YABEntry * );
+		/**
+		 * An error occured while saving a Yahoo Addressbook entry
+		 */
+		void saveYABEntryError( YABEntry *, const QString & );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();

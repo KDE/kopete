@@ -223,6 +223,7 @@ protected slots:
 	void slotBuddyIconChanged(const QString&);
 	void slotGotYABEntry( YABEntry *entry );
 	void slotSaveYABEntry( YABEntry &entry );
+	void slotSaveYABEntryError( YABEntry *entry, const QString & );
 
 	void slotReceiveFileAccepted( Kopete::Transfer *trans, const QString& fileName );
 

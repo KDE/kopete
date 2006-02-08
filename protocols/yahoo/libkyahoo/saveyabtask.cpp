@@ -24,6 +24,7 @@
 #include <qstring.h>
 #include <qdatastream.h>
 #include <qdom.h>
+#include <klocale.h>
 #include <kio/global.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>
@@ -126,7 +127,15 @@ void SaveYABTask::slotRead()
 		
 		YABEntry *entry = new YABEntry;
 		entry->fromQDomElement( e );
-		emit gotEntry( entry );
+
+		if( !e.attribute( "es" ).isEmpty() && e.attribute( "es" ) != "0" )		// Check for errors
+		{
+			emit error( entry, i18n("The Yahoo Addressbook entry could not be saved:\n%1 - %2").arg( e.attribute("es") ).arg( e.attribute("ee") ) );
+		}
+		else
+		{
+			emit gotEntry( entry );
+		}
 	}
 
 
