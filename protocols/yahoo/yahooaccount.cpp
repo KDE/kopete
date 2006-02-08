@@ -49,6 +49,7 @@
 #include <kopetecontactlist.h>
 #include <kopetetransfermanager.h>
 #include <kopeteview.h>
+#include <contactaddednotifydialog.h>
 
 // Yahoo
 #include "yahooaccount.h"
@@ -60,7 +61,6 @@
 #include "yahoowebcam.h"
 #include "yahooconferencemessagemanager.h"
 #include "yahooinvitelistimpl.h"
-#include "yahooauthreply.h"
 #include "yabentry.h"
 
 YahooAwayDialog::YahooAwayDialog(YahooAccount* account, QWidget *parent, const char *name) :
@@ -754,23 +754,35 @@ void YahooAccount::slotAuthorizationRejected( const QString &who, const QString 
 void YahooAccount::slotgotAuthorizationRequest( const QString &user, const QString &msg, const QString &name )
 {
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	YahooAuthReply *dlg = new YahooAuthReply();
+	YahooContact *kc = contact( user );
+	Kopete::MetaContact *metaContact=0L;
+	if(kc)
+		metaContact=kc->metaContact();
 	
-	QObject::connect( dlg, SIGNAL( okClicked() ), this, SLOT( slotAuthReplyOkClicked() ) );
-	dlg->setUser( user );
-	dlg->setName( name );
-	dlg->setRequestReason( msg );
-	dlg->setModal( TRUE );
-	dlg->show();
+	int hideFlags=Kopete::UI::ContactAddedNotifyDialog::InfoButton;
+	if( metaContact && !metaContact->isTemporary() )
+		hideFlags |= Kopete::UI::ContactAddedNotifyDialog::AddCheckBox | Kopete::UI::ContactAddedNotifyDialog::AddGroupBox ;
+	
+	Kopete::UI::ContactAddedNotifyDialog *dialog=
+		new Kopete::UI::ContactAddedNotifyDialog( user,QString::null,this, hideFlags );
+	QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),
+	                 this,SLOT(slotContactAddedNotifyDialogClosed(const QString& )));
+	dialog->show();
 }
 
-void YahooAccount::slotAuthReplyOkClicked()
+void YahooAccount::slotContactAddedNotifyDialogClosed( const QString &user )
 {
-	YahooAuthReply *dlg = const_cast<YahooAuthReply*>( dynamic_cast< const YahooAuthReply *>( sender() ) );
-	if( !dlg )
+	const Kopete::UI::ContactAddedNotifyDialog *dialog =
+		dynamic_cast<const Kopete::UI::ContactAddedNotifyDialog *>(sender());
+	if(!dialog || !isConnected())
 		return;
 	
-	m_session->sendAuthReply( dlg->user(), dlg->acceptAuth(), dlg->reason() );
+	m_session->sendAuthReply( user, dialog->authorized(), QString::null );
+	
+	if(dialog->added())
+	{
+		Kopete::MetaContact *parentContact=dialog->addContact();
+	}
 }
 
 void YahooAccount::slotGotIgnore( const QStringList & /* igns */ )
