@@ -109,6 +109,9 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	QString displayName = configGroup()->readEntry(QString::fromLatin1("displayName"));
 	if(!displayName.isEmpty())
 		_myself->setNickName(displayName);
+	
+	m_YABLastMerge = configGroup()->readNumEntry( "YABLastMerge", 0 );
+	m_YABLastRemoteRevision = configGroup()->readNumEntry( "YABLastRemoteRevision", 0 );
 }
 
 YahooAccount::~YahooAccount()
@@ -324,6 +327,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::connect(m_session, SIGNAL(saveYABEntryError( YABEntry *, const QString & )), this, SLOT(slotSaveYABEntryError( YABEntry *, const QString & )));
 		
+		QObject::connect(m_session, SIGNAL(gotYABRevision( long, bool )), this, SLOT(slotGotYABRevision( long , bool )) );
 	}
 
 	if ( sct == DeleteConnections )
@@ -437,6 +441,8 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::disconnect(m_session, SIGNAL(gotYABEntry( YABEntry * )), this, SLOT(slotGotYABEntry( YABEntry * )));
 		
 		QObject::disconnect(m_session, SIGNAL(saveYABEntryError( YABEntry *, const QString & )), this, SLOT(slotSaveYABEntryError( YABEntry *, const QString & )));
+		
+		QObject::disconnect(m_session, SIGNAL(gotYABRevision( long, bool )), this, SLOT(slotGotYABRevision( long , bool )) );
 	}
 }
 
@@ -628,7 +634,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 
 		 
 		setBuddyIcon( myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString() );
-		m_session->getYABEntries();
+		m_session->getYABEntries( m_YABLastMerge, m_YABLastRemoteRevision );
 		m_lastDisconnectCode = 0;
 		return;
 	}
@@ -1212,17 +1218,32 @@ void YahooAccount::sendConfMessage( YahooConferenceChatSession *s, Kopete::Messa
 	m_session->sendConferenceMessage( s->room(), members, YahooContact::prepareMessage( message.escapedBody() ) );
 }
 
+void YahooAccount::slotGotYABRevision( long rev, bool merged )
+{
+	if( merged )
+	{
+		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Merge Revision received: " << rev << endl;
+		configGroup()->writeEntry( "YABLastMerge", rev );
+		m_YABLastMerge = rev;
+	}
+	else
+	{
+		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Remote Revision received: " << rev << endl;
+		configGroup()->writeEntry( "YABLastRemoteRevision", rev );
+		m_YABLastRemoteRevision = rev;
+	}
+}
+
 void YahooAccount::slotGotYABEntry( YABEntry *entry )
 {
 	if( !contact( entry->yahooId ) )
 	{
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "YAB entry received for a contact not on our buddylist." << endl;
+		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "YAB entry received for a contact not on our buddylist: " << entry->yahooId << endl;
 		delete entry;
 		return;
 	}
 	else
 	{
-		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "YAB entry for " << entry->yahooId << " received." << endl;
 		YahooContact* kc = contact( entry->yahooId );
 		kc->setYABEntry( entry );
 	}

@@ -65,12 +65,12 @@ bool YABTask::forMe( Transfer* transfer ) const
 		return false;
 }
 
-void YABTask::getAllEntries()
+void YABTask::getAllEntries( long lastMerge, long lastRemoteRevision )
 {
-	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "cookies: " << client()->yCookie() << endl;
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "LastMerge: " << lastMerge << " LastRemoteRevision: " << lastRemoteRevision << endl;
 	m_data = QString::null;
-	QString url = QString::fromLatin1("http://address.yahoo.com/yab/us?v=XM&prog=ymsgr&.intl=us&diffs=1&t=1139039075&tags=short&rt=1139039099&prog-ver=%1")
-		.arg( YMSG_PROGRAM_VERSION_STRING );
+	QString url = QString::fromLatin1("http://address.yahoo.com/yab/us?v=XM&prog=ymsgr&.intl=us&diffs=1&t=%1&tags=short&rt=%2&prog-ver=%3")
+		.arg( lastMerge ).arg( lastRemoteRevision ).arg( YMSG_PROGRAM_VERSION_STRING );
 
 	m_transferJob = KIO::get( url , false, false );
 	m_transferJob->addMetaData("cookies", "manual");
@@ -101,9 +101,21 @@ void YABTask::slotResult( KIO::Job* job )
 		kdDebug(YAHOO_RAW_DEBUG) << m_data << endl;
 		doc.setContent( m_data );
 		
+		list = doc.elementsByTagName( "ab" );			// Get the Addressbook
+		for( it = 0; it < list.count(); it++ )	{
+			if( !list.item( it ).isElement() )
+				continue;
+			e = list.item( it ).toElement();
+			
+			if( !e.attribute( "lm" ).isEmpty() )
+				emit gotRevision( e.attribute( "lm" ).toLong(), true );
+
+			if( !e.attribute( "rt" ).isEmpty() )
+				emit gotRevision( e.attribute( "rt" ).toLong(), false );
+		}
+		
 		list = doc.elementsByTagName( "ct" );			// Get records
 		for( it = 0; it < list.count(); it++ )	{
-			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Parsing entry..." << endl;
 			if( !list.item( it ).isElement() )
 				continue;
 			e = list.item( it ).toElement();

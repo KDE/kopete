@@ -41,10 +41,11 @@ public:
 	bool take(Transfer *transfer);
 	bool forMe( Transfer* transfer ) const;
 
-	void getAllEntries();
+	void getAllEntries( long lastMerge, long lastRemoteRevision );
 	void saveEntry( const YABEntry & );
 signals:
 	void gotEntry( YABEntry * );
+	void gotRevision( long rev, bool merged );
 private slots:
 	void slotData( KIO::Job*, const QByteArray & );
 	void slotResult( KIO::Job* );

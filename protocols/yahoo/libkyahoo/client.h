@@ -239,7 +239,7 @@ Q_OBJECT
 		/**
 		 * Fetches all entries of the YAB
 		 */
-		void getYABEntries();
+		void getYABEntries( long lastMerge, long lastRemoteRevision );
 
 		/**
 		 * Saves/Updates a YAB entry
@@ -462,6 +462,10 @@ Q_OBJECT
 		 * A buddy requests authorization
 		 */
 		void gotAuthorizationRequest( const QString &, const QString &, const QString & );
+		/**
+		 * A revision of the Yahoo Addressbook was received
+		 */
+		void gotYABRevision( long rev, bool merged );
 		/**
 		 * A entry from the Yahoo Addressbook was retrieved
 		 */

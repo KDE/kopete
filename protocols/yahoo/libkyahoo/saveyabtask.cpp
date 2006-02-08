@@ -118,6 +118,19 @@ void SaveYABTask::slotRead()
 	
 	doc.setContent( data );
 
+	list = doc.elementsByTagName( "ab" );			// Get the Addressbook
+	for( it = 0; it < list.count(); it++ )	{
+		if( !list.item( it ).isElement() )
+			continue;
+		e = list.item( it ).toElement();
+		
+		if( !e.attribute( "lm" ).isEmpty() )
+			emit gotRevision( e.attribute( "lm" ).toLong(), true );
+
+		if( !e.attribute( "rt" ).isEmpty() )
+			emit gotRevision( e.attribute( "rt" ).toLong(), false );
+	}
+
 	list = doc.elementsByTagName( "ct" );			// Get records
 	for( it = 0; it < list.count(); it++ )	{
 		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Parsing entry..." << endl;

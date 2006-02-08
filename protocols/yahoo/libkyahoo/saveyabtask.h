@@ -42,6 +42,7 @@ public:
 	void setEntry( const YABEntry & );
 signals:
 	void gotEntry( YABEntry * );
+	void gotRevision( long rev, bool merged );
 	void error( YABEntry *, const QString &);
 private slots:
 	void connectSucceeded();

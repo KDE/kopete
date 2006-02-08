@@ -491,9 +491,9 @@ void Client::sendConferenceMessage( const QString &room, const QStringList &memb
 }
 
 // ***** YAB *****
-void Client::getYABEntries()
+void Client::getYABEntries( long lastMerge, long lastRemoteRevision )
 {
-	d->yabTask->getAllEntries();
+	d->yabTask->getAllEntries( lastMerge, lastRemoteRevision);
 }
 
 void Client::saveYABEntry( YABEntry &entry )
@@ -700,6 +700,8 @@ void Client::initTasks()
 	d->yabTask = new YABTask( d->root );
 	QObject::connect( d->yabTask, SIGNAL( gotEntry( YABEntry * ) ),
 				SIGNAL( gotYABEntry( YABEntry * ) ) );
+	QObject::connect( d->yabTask, SIGNAL( gotRevision( long, bool ) ),
+				SIGNAL( gotYABRevision( long, bool ) ) );
 }
 
 void Client::deleteTasks()

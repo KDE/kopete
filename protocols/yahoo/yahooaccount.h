@@ -222,6 +222,7 @@ protected slots:
 	void slotGotBuddyIconRequest(const QString &);
 	void slotBuddyIconChanged(const QString&);
 	void slotGotYABEntry( YABEntry *entry );
+	void slotGotYABRevision( long revision, bool merged );
 	void slotSaveYABEntry( YABEntry &entry );
 	void slotSaveYABEntryError( YABEntry *entry, const QString & );
 
@@ -267,6 +268,8 @@ private:
 	int m_lastDisconnectCode;	// The last disconnect code.
 	int m_currentMailCount;
 	int m_pictureFlag;			// Describes if we send a buddy icon or not
+	long m_YABLastMerge;		// The YAB Revision on which the last merge was done
+	long m_YABLastRemoteRevision;	// The last remote YAB Revision on which a sync was done
 	YahooProtocol *m_protocol;	// The Protocol Object
 
 	YahooWebcam *m_webcam;
