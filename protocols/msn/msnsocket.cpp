@@ -618,25 +618,15 @@ int MSNSocket::sendCommand( const QString &cmd, const QString &args, bool addId,
 
 	// Add length in bytes, not characters
 	if ( !body.isEmpty() )
-		data += " " + QString::number( body.size() - (binary ? 0 : 1 ) ).toUtf8();
+		data += " " + QString::number( binary ? body.size() : qstrlen(body) ).toUtf8();
 
 	data += "\r\n";
 
-
 	// the command will be sent in slotReadyWrite
-	QByteArray bytes;
-	const uint length = data.length();
-	bytes.duplicate(data.data(), length);
-	if(!body.isEmpty())
-	{
-		uint l = body.size() - (binary ? 0 : 1);
-		bytes.resize(length + l);
-		for(uint i=0; i < l; i++)
-			bytes[length + i] = body[i];
-	}
+	data += body;
 
 	// Add the request to the queue.
-	m_sendQueue.append(bytes);
+	m_sendQueue.append(data);
 	m_socket->enableWrite(true);
 
 	if ( addId )
