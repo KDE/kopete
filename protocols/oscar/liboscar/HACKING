@@ -14,10 +14,10 @@ Please comment parts of the code that might be unclear, need more thinking about
 reimplementing, etc. It will help people look for things to do if they want to help
 out.
 
-Please don't remove the kdDebug lines from any of the source files. If they're
+Please don't remove the kDebug lines from any of the source files. If they're
 excessive, either wrap them in an ifdef and put the ifdef in the soon to be
 created oscardebug.h file so that they can be enabled and disabled at the will of
-other developers or users. I also tend to use kdDebug statements to document
+other developers or users. I also tend to use kDebug statements to document
 my code in the place of comments for the simpler sections. 
 
 ================================================================================

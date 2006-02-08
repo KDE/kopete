@@ -2016,7 +2016,7 @@ void Level::setFont(unsigned nFont)
 
     if (m_bFontTbl){
         if (nFont > p->fonts.size() +1){
-				kdDebug(14200) << "Invalid font index (" <<
+				kDebug(14200) << "Invalid font index (" <<
 					nFont << ") while parsing font table." << endl;
             return;
         }
@@ -2031,7 +2031,7 @@ void Level::setFont(unsigned nFont)
     {
         if (nFont > p->fonts.size())
         {
-				kdDebug(14200) << "Invalid font index (" <<
+				kDebug(14200) << "Invalid font index (" <<
 					nFont << ")." << endl;
            return;
         }
@@ -2403,7 +2403,7 @@ QString RTF2HTML::Parse(const char *rtf, const char *_encoding)
 					if (n < 16)
 						PrintUnquoted(" %s ", smiles[n] );
                 }else{
-						kdDebug(14200) << "Unknown image " << rtftext << endl;
+						kDebug(14200) << "Unknown image " << rtftext << endl;
                 }
                 break;
             }
