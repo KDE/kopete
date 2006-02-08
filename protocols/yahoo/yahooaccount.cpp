@@ -478,7 +478,7 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 	//m_session = YahooSessionManager::manager()->createSession( accountId(), passwd );
 	kdDebug(YAHOO_GEN_DEBUG) << "Attempting to connect to Yahoo on <" << server << ":" 
 		<< port << ">. user <" << accountId() << ">"  << endl;
-	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Connecting );
+	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Connecting );	
 	m_session->setStatusOnConnect( Yahoo::Status( initialStatus().internalStatus() ) );
 	m_session->connect( server, port, accountId().lower(), passwd );
 }
@@ -624,13 +624,14 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	QString errorMsg;
 	if ( succ == Yahoo::LoginOk || (succ == Yahoo::LoginDupl && m_lastDisconnectCode == 2) )
 	{
-		//slotGotBuddies(yahooSession()->getLegacyBuddyList());
-
-		//Yahoo only supports connecting as invisible and online, nothing else
-		if ( initialStatus() != m_protocol->Online )
+		if ( initialStatus().internalStatus() )
+		{
 			static_cast<YahooContact *>( myself() )->setOnlineStatus( initialStatus() );
+		}
 		else
+		{
 			static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Online );
+		}
 
 		 
 		setBuddyIcon( myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString() );
