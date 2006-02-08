@@ -85,6 +85,7 @@ public:
 	QString cCookie;
 	Yahoo::Status status;
 	Yahoo::Status statusOnConnect;
+	QString statusMessageOnConnect;
 };
 
 Client::Client(QObject *par) :QObject(par, "yahooclient" )
@@ -155,7 +156,7 @@ void Client::cs_connected()
 	emit connected();
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " starting login task ... "<<  endl;
 
-	d->loginTask->setStateOnConnect( d->statusOnConnect );
+	d->loginTask->setStateOnConnect( (d->statusOnConnect == Yahoo::StatusInvisible) ? Yahoo::StatusInvisible : Yahoo::StatusAvailable );
 	d->loginTask->go();
 	d->active = true;
 }
@@ -228,6 +229,11 @@ void Client::slotLoginResponse( int response, const QString &msg )
 {
 	if( response == Yahoo::LoginOk )
 	{
+		if( !(d->statusOnConnect == Yahoo::StatusAvailable ||
+				d->statusOnConnect == Yahoo::StatusInvisible) ||
+				!d->statusMessageOnConnect.isEmpty() )
+			changeStatus( d->statusOnConnect, d->statusMessageOnConnect, Yahoo::StatusTypeAway );
+		d->statusMessageOnConnect = QString::null;
 		setStatus( d->statusOnConnect );
 		m_pingTimer->start( 60 * 1000 );
 		initTasks();
@@ -536,6 +542,11 @@ void Client::setStatus( Yahoo::Status status )
 void Client::setStatusOnConnect( Yahoo::Status status )
 {
 	d->statusOnConnect = status;
+}
+
+void Client::setStatusMessageOnConnect( const QString &msg )
+{
+	d->statusMessageOnConnect = msg;
 }
 
 void Client::setVerificationWord( const QString &word )

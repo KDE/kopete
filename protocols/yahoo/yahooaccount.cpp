@@ -627,7 +627,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		//slotGotBuddies(yahooSession()->getLegacyBuddyList());
 
 		//Yahoo only supports connecting as invisible and online, nothing else
-		if ( initialStatus() == m_protocol->Invisible )
+		if ( initialStatus() != m_protocol->Online )
 			static_cast<YahooContact *>( myself() )->setOnlineStatus( initialStatus() );
 		else
 			static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Online );
@@ -781,7 +781,7 @@ void YahooAccount::slotContactAddedNotifyDialogClosed( const QString &user )
 	
 	if(dialog->added())
 	{
-		Kopete::MetaContact *parentContact=dialog->addContact();
+		dialog->addContact();
 	}
 }
 
@@ -1610,9 +1610,11 @@ void YahooAccount::slotWebcamPaused( const QString &who )
 void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason)
 {
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline &&
-	     ( status.status() == Kopete::OnlineStatus::Online || status.status() == Kopete::OnlineStatus::Invisible ) )
+	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline && 
+	     status.status() != Kopete::OnlineStatus::Offline )
 	{
+		if( !reason.isEmpty() )
+			m_session->setStatusMessageOnConnect( reason );
 		connect( status );
 	}
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline &&

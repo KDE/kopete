@@ -85,9 +85,13 @@ Q_OBJECT
 
 		/**
 		 * Specifies the status we connect with.
-		 * May be Online or Invisible.
 		 */
 		void setStatusOnConnect( Yahoo::Status status );
+
+		/**
+		 * Specifies the status message we connect with.
+		 */
+		void setStatusMessageOnConnect( const QString &msg );
 
 		/**
 		 * Accessors needed for login
