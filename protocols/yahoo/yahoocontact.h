@@ -109,7 +109,9 @@ private slots:
 	void closeWebcamDialog();
 	void initWebcamViewer();
 	void inviteConference();
-	//void webcamClosed( const QString& contact, int reason );
+
+	void writeYABEntry();
+	void readYABEntry();
 
 private:
 	QString m_userId; 
