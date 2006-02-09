@@ -1,0 +1,38 @@
+/**
+\page libpapillon_design Libpapillon DESIGN
+
+<h2>Main Architecture</h2>
+It use a Task-based architecture for async operation. 
+
+-Papillon::Task class
+
+-Papillon::Command class
+This class encapsulate a command. The main socket parse a command and create
+a instance of this class. This is also used to build a command to send to the server.
+
+type enum flags(can be OR'ed):
+-NormalCommand
+-PayloadCommand
+-TransactionComamnd
+
+name() and setName() are used for the command name. ex "UBX"
+
+hasTransactionId() return if the command has a transaction ID and transactionId() return the transactionId.
+
+arguments(),setArguments() for commands arguments.
+
+payload() and setPayload() for payload data. Note that you must construct the command with PayloadCommand type.
+
+-Papillon::MimeHeader class
+Encapsulate MIME header from messages or HTTP request into a key/value system.
+Call static method MimeHeader::parse(const QString &data) to generate a MimeHeader class.
+
+-Papillon::Tasks::Login class
+
+-Papillon::Message class
+Include a Papillon::MimeHeader
+
+-Papillon::SlpMessage(inherits Papillon::Message)
+Special Message classes for SLP message type (P2P).
+
+*/
