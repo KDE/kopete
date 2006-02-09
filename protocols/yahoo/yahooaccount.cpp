@@ -1265,7 +1265,7 @@ void YahooAccount::slotGotYABEntry( YABEntry *entry )
 
 void YahooAccount::slotSaveYABEntry( YABEntry &entry )
 {
-	if( entry->YABId > 0 )
+	if( entry.YABId > 0 )
 		m_session->saveYABEntry( entry );
 	else
 		m_session->addYABEntry( entry );
