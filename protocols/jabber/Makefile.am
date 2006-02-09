@@ -1,7 +1,7 @@
 if include_jingle
 JINGLE=jingle
 JINGLE_LIBS=jingle/libkopetejabberjingle.la
-JINGLE_INCLUDES=-I$(srcdir)/jingle
+JINGLE_INCLUDES=-I$(srcdir)/jingle -I$(top_builddir)/kopete/protocols/jabber/jingle
 endif
 
 METASOURCES = AUTO
