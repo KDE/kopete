@@ -863,17 +863,21 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 		resultHTML = resultHTML.replace( pos , timeRegExp.cap(0).length() , timeKeyword );
 	}
 
-	// Look for %textbacgroundcolor{X}% 
+	// Look for %textbackgroundcolor{X}% 
 	// TODO: use the X value.
-	// Only look for textbackgroundcolor if the message is hightlighted and hightlight is enabled.
+	// Replace with user-selected highlight color if to be highlighted or
+	// with "inherit" otherwise to keep CSS clean
+	QString bgColor = QString::fromUtf8("inherit");
 	if( message.importance() == Kopete::Message::Highlight && KopetePrefs::prefs()->highlightEnabled() )
 	{
-		QRegExp textBackgroundRegExp("%textbackgroundcolor\\{([^}]*)\\}%");
-		int textPos=0;
-		while( (textPos=textBackgroundRegExp.search(resultHTML, textPos) ) != -1 )
-		{
-			resultHTML = resultHTML.replace( textPos , textBackgroundRegExp.cap(0).length() , KopetePrefs::prefs()->highlightBackground().name() );
-		}
+		bgColor = KopetePrefs::prefs()->highlightBackground().name();
+	}
+
+	QRegExp textBackgroundRegExp("%textbackgroundcolor\\{([^}]*)\\}%");
+	int textPos=0;
+	while( (textPos=textBackgroundRegExp.search(resultHTML, textPos) ) != -1 )
+	{
+		resultHTML = resultHTML.replace( textPos , textBackgroundRegExp.cap(0).length() , bgColor );
 	}
 
 	// Replace userIconPath
@@ -956,8 +960,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 {
 	QString resultHTML = sourceHTML;
 
-	QPtrList<Kopete::Contact> membersList =  d->manager->members();
-	Kopete::Contact *remoteContact = membersList.first();
+	Kopete::Contact *remoteContact = d->manager->members().getFirst();
 
 	// Verify that all contacts are not null before doing anything
 	if( remoteContact && d->manager->myself() )
