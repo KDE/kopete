@@ -31,7 +31,7 @@ class HttpPoll : public ByteStream
 public:
 	enum Error { ErrConnectionRefused = ErrCustom, ErrHostNotFound, ErrProxyConnect, ErrProxyNeg, ErrProxyAuth };
 	HttpPoll(QObject *parent=0);
-	~HttpPoll();
+	virtual ~HttpPoll();
 
 	void setAuth(const QString &user, const QString &pass="");
 	void connectToUrl(const QString &url);

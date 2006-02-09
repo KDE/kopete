@@ -20,18 +20,12 @@
 #include <kdebug.h>
 #include <kgenericfactory.h>
 #include <kconfig.h>
-#include <kmessagebox.h>
-#include <kiconloader.h>
-#include <kmenu.h>
-#include <kstandarddirs.h>
-#include <klineeditdlg.h>
 
-#include <qapplication.h>
-#include <qcursor.h>
 #include <qmap.h>
 #include <qtimer.h>
 #include <qpixmap.h>
 #include <qstringlist.h>
+#include <QList>
 
 #include "im.h"
 #include "xmpp.h"
@@ -71,14 +65,14 @@ K_EXPORT_COMPONENT_FACTORY( kopete_jabber, JabberProtocolFactory( "kopete_jabber
 
 JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStringList &)
 : Kopete::Protocol( JabberProtocolFactory::instance(), parent, name ),
-	JabberKOSChatty(Kopete::OnlineStatus::Online,        100, this, JabberFreeForChat, "jabber_chatty", i18n ("Free for Chat"), i18n ("Free for Chat"), Kopete::OnlineStatusManager::FreeForChat, Kopete::OnlineStatusManager::HasAwayMessage ),
-	JabberKOSOnline(Kopete::OnlineStatus::Online,         90, this, JabberOnline, QString::null, i18n ("Online"), i18n ("Online"), Kopete::OnlineStatusManager::Online, Kopete::OnlineStatusManager::HasAwayMessage ),
-	JabberKOSAway(Kopete::OnlineStatus::Away,             80, this, JabberAway, "contact_away_overlay", i18n ("Away"), i18n ("Away"), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasAwayMessage),
-	JabberKOSXA(Kopete::OnlineStatus::Away,               70, this, JabberXA, "contact_xa_overlay", i18n ("Extended Away"), i18n ("Extended Away"), 0, Kopete::OnlineStatusManager::HasAwayMessage),
-	JabberKOSDND(Kopete::OnlineStatus::Away,              60, this, JabberDND, "contact_busy_overlay", i18n ("Do not Disturb"), i18n ("Do not Disturb"), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasAwayMessage),
-	JabberKOSOffline(Kopete::OnlineStatus::Offline,       50, this, JabberOffline, QString::null, i18n ("Offline") ,i18n ("Offline"), Kopete::OnlineStatusManager::Offline, Kopete::OnlineStatusManager::HasAwayMessage ),
-	JabberKOSInvisible(Kopete::OnlineStatus::Invisible,   40, this, JabberInvisible, "contact_invisible_overlay",   i18n ("Invisible") ,i18n ("Invisible"), Kopete::OnlineStatusManager::Invisible),
-	JabberKOSConnecting(Kopete::OnlineStatus::Connecting, 30, this, JabberConnecting, "jabber_connecting",  i18n("Connecting")),
+	JabberKOSChatty(Kopete::OnlineStatus::Online,        100, this, JabberFreeForChat, QStringList("jabber_chatty"), i18n ("Free for Chat"), i18n ("Free for Chat"), Kopete::OnlineStatusManager::FreeForChat, Kopete::OnlineStatusManager::HasAwayMessage ),
+	JabberKOSOnline(Kopete::OnlineStatus::Online,         90, this, JabberOnline, QStringList(), i18n ("Online"), i18n ("Online"), Kopete::OnlineStatusManager::Online, Kopete::OnlineStatusManager::HasAwayMessage ),
+	JabberKOSAway(Kopete::OnlineStatus::Away,             80, this, JabberAway, QStringList("contact_away_overlay"), i18n ("Away"), i18n ("Away"), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasAwayMessage),
+	JabberKOSXA(Kopete::OnlineStatus::Away,               70, this, JabberXA, QStringList("contact_xa_overlay"), i18n ("Extended Away"), i18n ("Extended Away"), 0, Kopete::OnlineStatusManager::HasAwayMessage),
+	JabberKOSDND(Kopete::OnlineStatus::Away,              60, this, JabberDND, QStringList("contact_busy_overlay"), i18n ("Do not Disturb"), i18n ("Do not Disturb"), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasAwayMessage),
+	JabberKOSOffline(Kopete::OnlineStatus::Offline,       50, this, JabberOffline, QStringList(), i18n ("Offline") ,i18n ("Offline"), Kopete::OnlineStatusManager::Offline, Kopete::OnlineStatusManager::HasAwayMessage ),
+	JabberKOSInvisible(Kopete::OnlineStatus::Invisible,   40, this, JabberInvisible, QStringList("contact_invisible_overlay"),   i18n ("Invisible") ,i18n ("Invisible"), Kopete::OnlineStatusManager::Invisible),
+	JabberKOSConnecting(Kopete::OnlineStatus::Connecting, 30, this, JabberConnecting, QStringList("jabber_connecting"),  i18n("Connecting")),
 	propLastSeen(Kopete::Global::Properties::self()->lastSeen()),
 	propAwayMessage(Kopete::Global::Properties::self()->awayMessage()),
 	propFirstName(Kopete::Global::Properties::self()->firstName()),
@@ -90,34 +84,34 @@ JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStrin
 	propWorkPhone(Kopete::Global::Properties::self()->workPhone()),
 	propWorkMobilePhone(Kopete::Global::Properties::self()->workMobilePhone()),
 	propNickName(Kopete::Global::Properties::self()->nickName()),
-	propSubscriptionStatus("jabberSubscriptionStatus", i18n ("Subscription"), QString::null, true, false),
-	propAuthorizationStatus("jabberAuthorizationStatus", i18n ("Authorization Status"), QString::null, true, false),
-	propAvailableResources("jabberAvailableResources", i18n ("Available Resources"), "jabber_chatty", false, true),
-	propVCardCacheTimeStamp("jabberVCardCacheTimeStamp", i18n ("vCard Cache Timestamp"), QString::null, true, false, true),
+	propSubscriptionStatus("jabberSubscriptionStatus", i18n ("Subscription"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propAuthorizationStatus("jabberAuthorizationStatus", i18n ("Authorization Status"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propAvailableResources("jabberAvailableResources", i18n ("Available Resources"), "jabber_chatty", Kopete::ContactPropertyTmpl::RichTextProperty),
+	propVCardCacheTimeStamp("jabberVCardCacheTimeStamp", i18n ("vCard Cache Timestamp"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty),
 	propPhoto(Kopete::Global::Properties::self()->photo()),
-	propJid("jabberVCardJid", i18n("Jabber ID"), QString::null, true, false),
-	propBirthday("jabberVCardBirthday", i18n("Birthday"), QString::null, true, false),
-	propTimezone("jabberVCardTimezone", i18n("Timezone"), QString::null, true, false),
-	propHomepage("jabberVCardHomepage", i18n("Homepage"), QString::null, true, false),
-	propCompanyName("jabberVCardCompanyName", i18n("Company name"), QString::null, true, false),
-	propCompanyDepartement("jabberVCardCompanyDepartement", i18n("Company Departement"), QString::null, true, false),
-	propCompanyPosition("jabberVCardCompanyPosition", i18n("Company Position"), QString::null, true, false),
-	propCompanyRole("jabberVCardCompanyRole", i18n("Company Role"), QString::null, true, false),
-	propWorkStreet("jabberVCardWorkStreet", i18n("Work Street"), QString::null, true, false),
-	propWorkExtAddr("jabberVCardWorkExtAddr", i18n("Work Extra Address"), QString::null, true, false),
-	propWorkPOBox("jabberVCardWorkPOBox", i18n("Work PO Box"), QString::null, true, false),
-	propWorkCity("jabberVCardWorkCity", i18n("Work City"), QString::null, true, false),
-	propWorkPostalCode("jabberVCardWorkPostalCode", i18n("Work Postal Code"), QString::null, true, false),
-	propWorkCountry("jabberVCardWorkCountry", i18n("Work Country"), QString::null, true, false),
-	propWorkEmailAddress("jabberVCardWorkEmailAddress", i18n("Work Email Address"), QString::null, true, false),
-	propHomeStreet("jabberVCardHomeStreet", i18n("Home Street"), QString::null, true, false),
-	propHomeExtAddr("jabberVCardHomeExt", i18n("Home Extra Address"), QString::null, true, false),
-	propHomePOBox("jabberVCardHomePOBox", i18n("Home PO Box"), QString::null, true, false),
-	propHomeCity("jabberVCardHomeCity", i18n("Home City"), QString::null, true, false),
-	propHomePostalCode("jabberVCardHomePostalCode", i18n("Home Postal Code"), QString::null, true, false),
-	propHomeCountry("jabberVCardHomeCountry", i18n("Home Country"), QString::null, true, false),
-	propPhoneFax("jabberVCardPhoneFax", i18n("Fax"), QString::null, true, false),
-	propAbout("jabberVCardAbout", i18n("About"), QString::null, true, false)
+	propJid("jabberVCardJid", i18n("Jabber ID"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propBirthday("jabberVCardBirthday", i18n("Birthday"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propTimezone("jabberVCardTimezone", i18n("Timezone"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propHomepage("jabberVCardHomepage", i18n("Homepage"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propCompanyName("jabberVCardCompanyName", i18n("Company name"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propCompanyDepartement("jabberVCardCompanyDepartement", i18n("Company Departement"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propCompanyPosition("jabberVCardCompanyPosition", i18n("Company Position"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propCompanyRole("jabberVCardCompanyRole", i18n("Company Role"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propWorkStreet("jabberVCardWorkStreet", i18n("Work Street"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propWorkExtAddr("jabberVCardWorkExtAddr", i18n("Work Extra Address"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propWorkPOBox("jabberVCardWorkPOBox", i18n("Work PO Box"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propWorkCity("jabberVCardWorkCity", i18n("Work City"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propWorkPostalCode("jabberVCardWorkPostalCode", i18n("Work Postal Code"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propWorkCountry("jabberVCardWorkCountry", i18n("Work Country"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propWorkEmailAddress("jabberVCardWorkEmailAddress", i18n("Work Email Address"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propHomeStreet("jabberVCardHomeStreet", i18n("Home Street"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propHomeExtAddr("jabberVCardHomeExt", i18n("Home Extra Address"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propHomePOBox("jabberVCardHomePOBox", i18n("Home PO Box"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propHomeCity("jabberVCardHomeCity", i18n("Home City"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propHomePostalCode("jabberVCardHomePostalCode", i18n("Home Postal Code"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propHomeCountry("jabberVCardHomeCountry", i18n("Home Country"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propPhoneFax("jabberVCardPhoneFax", i18n("Fax"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propAbout("jabberVCardAbout", i18n("About"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty)
 
 {
 
@@ -279,9 +273,15 @@ Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaC
 	QString accountId = serializedData["accountId"];
 	QString jid = serializedData["JID"];
 
-	Q3Dict < Kopete::Account > accounts = Kopete::AccountManager::self ()->accounts (this);
-	Kopete::Account *account = accounts[accountId];
-	
+	QList<Kopete::Account*> accounts = Kopete::AccountManager::self ()->accounts (this);
+	Kopete::Account *account = 0;
+	QList<Kopete::Account*>::Iterator accountIt, accountItEnd = accounts.end();
+	for(accountIt = accounts.begin(); accountIt != accountItEnd; ++accountIt)
+	{
+		if((*accountIt)->accountId() == accountId)
+			account = *accountIt;
+	}
+
 	if (!account)
 	{
 		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "WARNING: Account for contact does not exist, skipping." << endl;

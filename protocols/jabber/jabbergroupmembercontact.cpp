@@ -57,7 +57,7 @@ JabberGroupMemberContact::~JabberGroupMemberContact ()
 	
 }
 
-Q3PtrList<KAction> *JabberGroupMemberContact::customContextMenuActions ()
+QList<KAction*> *JabberGroupMemberContact::customContextMenuActions ()
 {
 
 	return 0;
@@ -110,7 +110,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 		return;
 
 	Kopete::ContactPtrList contactList;
-	contactList.append ( manager( Kopete::Contact::CanCreate )->myself() );
+	contactList.append ( const_cast<Kopete::Contact*>( manager( Kopete::Contact::CanCreate )->myself() ) );
 
 	// check for errors
 	if ( message.type () == "error" )

@@ -35,7 +35,7 @@ Q_OBJECT
 public:
 	JabberByteStream ( QObject *parent = 0, const char *name = 0 );
 
-	~JabberByteStream ();
+	virtual ~JabberByteStream ();
 
 	bool connect ( QString host, QString service );
 	virtual bool isOpen () const;

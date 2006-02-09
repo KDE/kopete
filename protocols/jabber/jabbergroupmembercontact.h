@@ -42,7 +42,7 @@ public:
 	 * Create custom context menu items for the contact
 	 * FIXME: implement manager version here?
 	 */
-	Q3PtrList<KAction> *customContextMenuActions ();
+	QList<KAction*> *customContextMenuActions ();
 
 	/**
 	 * Return message manager for this instance.

@@ -22,6 +22,7 @@
 #include <klocale.h>
 #include <kfiledialog.h>
 #include <kinputdialog.h>
+
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
 #include "jabberclient.h"
@@ -30,8 +31,6 @@
 #include "jabbergroupmembercontact.h"
 #include "jabbercontactpool.h"
 #include "kopetemetacontact.h"
-//Added by qt3to4:
-#include <Q3PtrList>
 #include "xmpp_tasks.h"
 
 /**
@@ -83,13 +82,13 @@ JabberGroupContact::~JabberGroupContact ()
 	delete mManager;
 	mManager=0l;
 
-	for ( Kopete::Contact *contact = mContactList.first (); contact; contact = mContactList.next () )
+	foreach ( Kopete::Contact *contact,  mContactList )
 	{
 		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Deleting KC " << contact->contactId () << endl;
 		delete contact;
 	}
 
-	for ( Kopete::MetaContact *metaContact = mMetaContactList.first (); metaContact; metaContact = mMetaContactList.next () )
+	foreach ( Kopete::MetaContact *metaContact, mMetaContactList )
 	{
 		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Deleting KMC " << metaContact->metaContactId () << endl;
 		delete metaContact;
@@ -97,11 +96,11 @@ JabberGroupContact::~JabberGroupContact ()
 
 }
 
-Q3PtrList<KAction> *JabberGroupContact::customContextMenuActions ()
+QList<KAction*> *JabberGroupContact::customContextMenuActions ()
 {
-	Q3PtrList<KAction> *actionCollection = new Q3PtrList<KAction>();
+	QList<KAction*> *actionCollection = new QList<KAction*>();
 
-	KAction *actionSetNick = new KAction (i18n ("Change nick name"), 0, 0, this, SLOT (slotChangeNick()), this, "jabber_changenick");
+	KAction *actionSetNick = new KAction (i18n ("Change nick name"), 0, 0, this, SLOT (slotChangeNick()), 0, "jabber_changenick");
 	actionCollection->append( actionSetNick );
 
 	return actionCollection;
@@ -132,7 +131,7 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 		return;
 
 	Kopete::ContactPtrList contactList;
-	contactList.append ( mManager->user () );
+	contactList.append ( const_cast<JabberBaseContact*>(mManager->user ()) );
 
 	// check for errors
 	if ( message.type () == "error" )
@@ -307,8 +306,8 @@ void JabberGroupContact::slotStatusChanged( )
 	if( !account()->isConnected() )
 	{
 		//we need to remove all contact, because when we connect again, we will not receive the notificaion they are gone.
-		Q3PtrList<Kopete::Contact> copy_contactlist=mContactList;
-		for ( Kopete::Contact *contact = copy_contactlist.first (); contact; contact = copy_contactlist.next () )
+		QList<Kopete::Contact*> copy_contactlist=mContactList;
+		foreach ( Kopete::Contact *contact, copy_contactlist )
 		{
 			removeSubContact( XMPP::Jid(contact->contactId()) );
 		}

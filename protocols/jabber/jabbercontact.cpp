@@ -24,13 +24,10 @@
 #include <qtimer.h>
 #include <qdatetime.h>
 #include <QTextDocument>
-//Added by qt3to4:
-#include <Q3PtrList>
 #include <qimage.h>
 #include <qregexp.h>
 #include <qbuffer.h>
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -124,27 +121,27 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 	mDiscoDone = false;
 }
 
-Q3PtrList<KAction> *JabberContact::customContextMenuActions ()
+QList<KAction*> *JabberContact::customContextMenuActions ()
 {
 
-	Q3PtrList<KAction> *actionCollection = new Q3PtrList<KAction>();
+	QList<KAction*> *actionCollection = new QList<KAction*>();
 
-	KActionMenu *actionAuthorization = new KActionMenu ( i18n ("Authorization"), "connect_established", this, "jabber_authorization");
+	KActionMenu *actionAuthorization = new KActionMenu ( i18n ("Authorization"), "connect_established", 0, "jabber_authorization");
 
 	KAction *resendAuthAction, *requestAuthAction, *removeAuthAction;
 	
 	resendAuthAction = new KAction (i18n ("(Re)send Authorization To"), "mail_forward", 0,
-								 this, SLOT (slotSendAuth ()), actionAuthorization, "actionSendAuth");
+								 this, SLOT (slotSendAuth ()), 0, "actionSendAuth");
 	resendAuthAction->setEnabled(false);
 	actionAuthorization->insert(resendAuthAction);
 
 	requestAuthAction = new KAction (i18n ("(Re)request Authorization From"), "mail_reply", 0,
-								 this, SLOT (slotRequestAuth ()), actionAuthorization, "actionRequestAuth");
+								 this, SLOT (slotRequestAuth ()), 0, "actionRequestAuth");
 	requestAuthAction->setEnabled(false);
 	actionAuthorization->insert(requestAuthAction);
 	
 	removeAuthAction = new KAction (i18n ("Remove Authorization From"), "mail_delete", 0,
-								 this, SLOT (slotRemoveAuth ()), actionAuthorization, "actionRemoveAuth");
+								 this, SLOT (slotRemoveAuth ()), 0, "actionRemoveAuth");
 	removeAuthAction->setEnabled(false);
 	actionAuthorization->insert(removeAuthAction);
 
@@ -161,22 +158,22 @@ Q3PtrList<KAction> *JabberContact::customContextMenuActions ()
 		removeAuthAction->setEnabled(true);
 	}
 
-	KActionMenu *actionSetAvailability = new KActionMenu (i18n ("Set Availability"), "kopeteavailable", this, "jabber_online");
+	KActionMenu *actionSetAvailability = new KActionMenu (i18n ("Set Availability"), "kopeteavailable", 0, "jabber_online");
 
 	actionSetAvailability->insert(new KAction (i18n ("Online"), protocol()->JabberKOSOnline.iconFor(this),
-								  0, this, SLOT (slotStatusOnline ()), actionSetAvailability, "actionOnline"));
+								  0, this, SLOT (slotStatusOnline ()), 0, "actionOnline"));
 	actionSetAvailability->insert(new KAction (i18n ("Free to Chat"), protocol()->JabberKOSChatty.iconFor(this),
-								  0, this, SLOT (slotStatusChatty ()), actionSetAvailability, "actionChatty"));
+								  0, this, SLOT (slotStatusChatty ()), 0, "actionChatty"));
 	actionSetAvailability->insert(new KAction (i18n ("Away"), protocol()->JabberKOSAway.iconFor(this),
-								  0, this, SLOT (slotStatusAway ()), actionSetAvailability, "actionAway"));
+								  0, this, SLOT (slotStatusAway ()), 0, "actionAway"));
 	actionSetAvailability->insert(new KAction (i18n ("Extended Away"), protocol()->JabberKOSXA.iconFor(this),
-								  0, this, SLOT (slotStatusXA ()), actionSetAvailability, "actionXA"));
+								  0, this, SLOT (slotStatusXA ()), 0, "actionXA"));
 	actionSetAvailability->insert(new KAction (i18n ("Do Not Disturb"), protocol()->JabberKOSDND.iconFor(this),
-								  0, this, SLOT (slotStatusDND ()), actionSetAvailability, "actionDND"));
+								  0, this, SLOT (slotStatusDND ()), 0, "actionDND"));
 	actionSetAvailability->insert(new KAction (i18n ("Invisible"), protocol()->JabberKOSInvisible.iconFor(this),
-								  0, this, SLOT (slotStatusInvisible ()), actionSetAvailability, "actionInvisible"));
+								  0, this, SLOT (slotStatusInvisible ()), 0, "actionInvisible"));
 
-	KActionMenu *actionSelectResource = new KActionMenu (i18n ("Select Resource"), "connect_no", this, "actionSelectResource");
+	KActionMenu *actionSelectResource = new KActionMenu (i18n ("Select Resource"), "connect_no", 0, "actionSelectResource");
 
 	// if the contact is online, display the resources we have for it,
 	// otherwise disable the menu
@@ -214,7 +211,7 @@ Q3PtrList<KAction> *JabberContact::customContextMenuActions ()
 			if( i == activeItem )
 			{
 				actionSelectResource->insert ( new KAction( ( *it ), "button_ok", 0, this, SLOT( slotSelectResource() ),
-											   actionSelectResource, QString::number( i ).toLatin1() ) );
+											   0, QString::number( i ).toLatin1() ) );
 			}
 			else
 			{
@@ -226,7 +223,7 @@ Q3PtrList<KAction> *JabberContact::customContextMenuActions ()
 					protocol()->resourceToKOS ( account()->resourcePool()->bestResource ( mRosterItem.jid(), false ) ).iconFor ( account () ) : protocol()->resourceToKOS ( *availableResources.find(*it) ).iconFor ( account () ));
 
 				actionSelectResource->insert ( new KAction( ( *it ), iconSet, 0, this, SLOT( slotSelectResource() ),
-											   actionSelectResource, QString::number( i ).toLatin1() ) );
+											   0, QString::number( i ).toLatin1() ) );
 			}
 
 			i++;
@@ -240,7 +237,7 @@ Q3PtrList<KAction> *JabberContact::customContextMenuActions ()
 	
 	
 #ifdef SUPPORT_JINGLE
-	KAction *actionVoiceCall = new KAction (i18n ("Voice call"), "voicecall", 0, this, SLOT (voiceCall ()), this, "jabber_voicecall");
+	KAction *actionVoiceCall = new KAction (i18n ("Voice call"), "voicecall", 0, this, SLOT (voiceCall ()), 0, "jabber_voicecall");
 	actionVoiceCall->setEnabled( false );
 
 	actionCollection->append( actionVoiceCall );
@@ -273,7 +270,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		{
 			QString room=message.invite();
 			QString originalBody=message.body().isEmpty() ? QString() :
-					i18n( "The original message is : <i>\" %1 \"</i><br>" ).arg(Q3StyleSheet::escape(message.body()));
+					i18n( "The original message is : <i>\" %1 \"</i><br>" ).arg(Qt::escape(message.body()));
 			QString mes=i18n("<qt><i>%1</i> invited you to join the conference <b>%2</b><br>%3<br>"
 					"If you want to accept and join, just <b>enter your nickname</b> and press ok<br>"
 							 "If you want to decline, press cancel</qt>")
@@ -346,12 +343,17 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 
 		// retrieve and reformat body
 		QString body = message.body ();
+// see warning below
+#if 0
 		QString xHTMLBody = message.xHTMLBody ();
+#endif
 		if( !message.xencrypted().isEmpty () )
 		{
 			body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
 		}
 
+#warning Port when libiris change will be merged
+#if 0
 		// convert XMPP::Message into Kopete::Message
 		if (!xHTMLBody.isEmpty()) {
 			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Received a xHTML message" << endl;
@@ -359,7 +361,8 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 											 message.subject (), Kopete::Message::Inbound,
 											 Kopete::Message::RichText, viewPlugin );
 		}
-		else if ( !body.isEmpty () )
+#endif
+		if ( !body.isEmpty () )
 		{
 			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Received a plain text message" << endl;
 			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList, body,
@@ -568,16 +571,21 @@ void JabberContact::slotGetTimedLastActivity ()
 	{
 		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Requesting last activity from timer for " << mRosterItem.jid().bare () << endl;
 
+#warning Port when libiris changes will be merged
+#if 0
 		XMPP::JT_GetLastActivity *task = new XMPP::JT_GetLastActivity ( account()->client()->rootTask () );
 		QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotGotLastActivity () ) );
 		task->get ( mRosterItem.jid () );
 		task->go ( true );
+#endif
 	}
 
 }
 
 void JabberContact::slotGotLastActivity ()
 {
+#warning Port when libiris changes will be merged
+#if 0
 	XMPP::JT_GetLastActivity *task = (XMPP::JT_GetLastActivity *) sender ();
 
 	if ( task->success () )
@@ -588,6 +596,7 @@ void JabberContact::slotGotLastActivity ()
 			setProperty( protocol()->propAwayMessage, task->message() );
 		}
 	}
+#endif
 
 }
 
@@ -950,7 +959,7 @@ void JabberContact::slotSendVCard()
 		QString photoPath = property( protocol()->propPhoto ).value().toString();
 		QImage image( photoPath );
 		QByteArray ba;
-		QBuffer buffer( ba );
+		QBuffer buffer( &ba );
 		buffer.open( QIODevice::WriteOnly );
 		image.save( &buffer, "PNG" );
 		vCard.setPhoto( ba );
@@ -1207,7 +1216,7 @@ void JabberContact::sync ( unsigned int )
 
 	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Synchronizing contact " << contactId () << endl;
 
-	for ( Kopete::Group * g = groupList.first (); g; g = groupList.next () )
+	foreach ( Kopete::Group * g, groupList )
 	{
 		if ( g->type () != Kopete::Group::TopLevel )
 			groups += g->displayName ();
@@ -1495,8 +1504,8 @@ void JabberContact::slotDiscoFinished( )
 
 	if ( jt->success() )
  	{
-		Q3ValueList<XMPP::DiscoItem::Identity> identities = jt->item().identities();
-		Q3ValueList<XMPP::DiscoItem::Identity>::Iterator it;
+		QList<XMPP::DiscoItem::Identity> identities = jt->item().identities();
+		QList<XMPP::DiscoItem::Identity>::Iterator it;
 		for ( it = identities.begin(); it != identities.end(); ++it )
 		{
 			XMPP::DiscoItem::Identity ident=*it;

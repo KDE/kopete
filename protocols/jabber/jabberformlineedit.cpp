@@ -38,7 +38,7 @@ JabberFormLineEdit::~JabberFormLineEdit ()
 {
 }
 
-JabberFormPasswordEdit::JabberFormPasswordEdit (const int type, const QString & realName, const QString & value, QWidget * parent, const char *name):KPasswordEdit(parent, name)
+JabberFormPasswordEdit::JabberFormPasswordEdit (const int type, const QString & realName, const QString & value, QWidget * parent, const char */*name*/):KPasswordEdit(parent)
 {
 
 	setText(value);

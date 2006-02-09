@@ -26,8 +26,8 @@
 #include "xmpp_vcard.h"
 
 #include "kopetechatsession.h" // needed for silly Kopete::ContactPtrList
-//Added by qt3to4:
-#include <Q3PtrList>
+
+#include <QList>
 
 class JabberChatSession;
 

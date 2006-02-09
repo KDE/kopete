@@ -180,7 +180,7 @@ KActionMenu *JabberAccount::actionMenu ()
 
 	KAction *action;
 	
-	action = new KAction (i18n ("Join Groupchat..."), "jabber_group", 0, this, SLOT (slotJoinNewChat ()), this, "actionJoinChat");
+	action = new KAction (i18n ("Join Groupchat..."), "jabber_group", 0, this, SLOT (slotJoinNewChat ()), 0, "actionJoinChat");
 	m_actionMenu->insert(action);
 	action->setEnabled( isConnected() );
 	
@@ -192,17 +192,17 @@ KActionMenu *JabberAccount::actionMenu ()
 	m_actionMenu->popupMenu()->insertSeparator();
 	
 	action =  new KAction ( i18n ("Services..."), "jabber_serv_on", 0,
-							this, SLOT ( slotGetServices () ), this, "actionJabberServices");
+							this, SLOT ( slotGetServices () ), 0, "actionJabberServices");
 	action->setEnabled( isConnected() );
 	m_actionMenu->insert ( action );
 
 	action = new KAction ( i18n ("Send Raw Packet to Server..."), "mail_new", 0,
-										 this, SLOT ( slotSendRaw () ), this, "actionJabberSendRaw") ;
+										 this, SLOT ( slotSendRaw () ), 0, "actionJabberSendRaw") ;
 	action->setEnabled( isConnected() );
 	m_actionMenu->insert ( action );
 
 	action = new KAction ( i18n ("Edit User Info..."), "identity", 0,
-										 this, SLOT ( slotEditVCard () ), this, "actionEditVCard") ;
+										 this, SLOT ( slotEditVCard () ), 0, "actionEditVCard") ;
 	action->setEnabled( isConnected() );
 	m_actionMenu->insert ( action );
 
@@ -237,7 +237,7 @@ bool JabberAccount::createContact (const QString & contactId,  Kopete::MetaConta
 	// collect all group names
 	QStringList groupNames;
 	Kopete::GroupList groupList = metaContact->groups();
-	for(Kopete::Group *group = groupList.first(); group; group = groupList.next())
+	foreach( Kopete::Group *group, groupList )
 		groupNames += group->displayName();
 
 	XMPP::Jid jid ( contactId );
@@ -463,6 +463,8 @@ bool JabberAccount::handleTLSWarning ( JabberClient *jabberClient, int warning )
 	QString server = jabberClient->jid().domain ();
 	QString accountId = jabberClient->jid().bare ();
 
+#warning Port to new QCA2 API
+#if 0
 	switch ( warning )
 	{
 		case QCA::TLS::NoCert:
@@ -517,6 +519,7 @@ bool JabberAccount::handleTLSWarning ( JabberClient *jabberClient, int warning )
 			code = "Unknown";
 			break;
 		}
+#endif
 
 	return ( KMessageBox::warningContinueCancel ( Kopete::UI::Global::mainWidget (),
 						  i18n("<qt><p>The certificate of server %1 could not be validated for account %2: %3</p><p>Do you want to continue?</p></qt>").
@@ -1175,7 +1178,7 @@ void JabberAccount::slotContactAddedNotifyDialogClosed( const QString & contacti
 		{
 			QStringList groupNames;
 			Kopete::GroupList groupList = parentContact->groups();
-			for(Kopete::Group *group = groupList.first(); group; group = groupList.next())
+			foreach(Kopete::Group *group,groupList)
 				groupNames += group->displayName();
 
 			XMPP::RosterItem item;
@@ -1495,8 +1498,8 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 	{
 	case JabberClient::InvalidPasswordForMUC:
 		{
-			Q3CString password;
- 			int result = KPasswordDialog::getPassword(password, i18n("A password is required to join the room %1.").arg(jid.node()));
+			QByteArray password;
+ 			int result = KPasswordDialog::getPassword(Kopete::UI::Global::mainWidget(), password, i18n("A password is required to join the room %1.").arg(jid.node()));
 			if (result == KPasswordDialog::Accepted)
 				m_jabberClient->joinGroupChat(jid.domain(), jid.node(), jid.resource(), password);
 		}

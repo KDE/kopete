@@ -23,6 +23,7 @@
 #include <qobject.h>
 //Added by qt3to4:
 #include <Q3ValueList>
+#include <QPair>
 #include <im.h>
 #include <xmpp.h>
 

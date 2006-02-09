@@ -39,7 +39,7 @@ class SecureStream : public ByteStream
 public:
 	enum Error { ErrTLS = ErrCustom, ErrSASL };
 	SecureStream(ByteStream *s);
-	~SecureStream();
+	virtual ~SecureStream();
 
 	void startTLSClient(QCA::TLS *t, const QByteArray &spare=QByteArray());
 	void startTLSServer(QCA::TLS *t, const QByteArray &spare=QByteArray());

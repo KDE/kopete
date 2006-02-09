@@ -157,7 +157,7 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 		bool found = false;
 		for ( unsigned j = 0; j < metaContact()->groups().count (); j++)
 		{
-			if ( metaContact()->groups().at(j)->displayName () == *item.groups().at(i) )
+			if ( metaContact()->groups().at(j)->displayName () == item.groups().at(i) )
 			{
 				found = true;
 				break;
@@ -166,7 +166,7 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 		
 		if ( !found )
 		{
-			groupsToAddTo.append ( Kopete::ContactList::self()->findGroup ( *item.groups().at(i) ) );
+			groupsToAddTo.append ( Kopete::ContactList::self()->findGroup ( item.groups().at(i) ) );
 		}
 	}
 
@@ -181,13 +181,13 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 		groupsToRemoveFrom.remove ( Kopete::Group::topLevel () );
 	}
 
-	for ( Kopete::Group *group = groupsToRemoveFrom.first (); group; group = groupsToRemoveFrom.next () )
+	foreach ( Kopete::Group *group, groupsToRemoveFrom )
 	{
 		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing " << contactId() << " from group " << group->displayName () << endl;
 		metaContact()->removeFromGroup ( group );
 	}
 
-	for ( Kopete::Group *group = groupsToAddTo.first (); group; group = groupsToAddTo.next () )
+	foreach ( Kopete::Group *group, groupsToAddTo )
 	{
 		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Adding " << contactId() << " to group " << group->displayName () << endl;
 		metaContact()->addToGroup ( group );

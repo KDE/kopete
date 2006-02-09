@@ -21,7 +21,7 @@
 
 #include <qobject.h>
 //Added by qt3to4:
-#include <Q3PtrList>
+#include <QList>
 #include <im.h>
 
 class JabberResource;
@@ -37,7 +37,7 @@ class JabberResourcePool : public QObject
 public:
 	static XMPP::Resource EmptyResource;
 
-	typedef Q3PtrList<JabberResource> ResourceList;
+	typedef QList<JabberResource*> ResourceList;
 
 	/**
 	 * Default constructor

@@ -815,8 +815,8 @@ void JabberClient::joinGroupChat ( const QString &host, const QString &room, con
 
 void JabberClient::joinGroupChat ( const QString &host, const QString &room, const QString &nick, const QString &password )
 {
-
-	client()->groupChatJoin ( host, room, nick, password );
+#warning Renable password after merging of Kopete's libiris patch.
+	client()->groupChatJoin ( host, room, nick/*, password */);
 
 }
 
@@ -898,7 +898,8 @@ void JabberClient::slotTLSHandshaken ()
 	emit debugMessage ( "TLS handshake done, testing certificate validity..." );
 
 	// FIXME: in the future, this should be handled by KDE, not QCA
-	int validityResult = d->jabberTLS->certificateValidityResult ();
+#warning Port to new QCA API
+	int validityResult = 0; //d->jabberTLS->certificateValidityResult ();
 
 	if ( validityResult == QCA::TLS::Valid )
 	{

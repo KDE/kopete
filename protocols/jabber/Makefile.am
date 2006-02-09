@@ -5,7 +5,8 @@ JINGLE_INCLUDES=-I$(srcdir)/jingle
 endif
 
 METASOURCES = AUTO
-SUBDIRS = ui icons libiris $(JINGLE) . kioslave
+# Disabled kioslave for now, anyway this is not used (-DarkShock)
+SUBDIRS = ui icons libiris $(JINGLE) . 
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(srcdir)/libiris/iris/include \
 	-I$(srcdir)/libiris/iris/xmpp-im \
@@ -46,7 +47,13 @@ kopete_jabber_la_SOURCES = \
 kopete_jabber_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_jabber_la_LIBADD  = $(top_builddir)/kopete/libkopete/libkopete.la \
 	ui/libkopetejabberui.la \
-	libiris/libiris_local.la \
+	libiris/cutestuff/util/libcutestuff_util.la \
+	libiris/cutestuff/network/libcutestuff_network.la \
+	libiris/iris/include/libiris.la \
+	libiris/iris/jabber/libiris_jabber.la \
+	libiris/iris/xmpp-core/libiris_xmpp_core.la \
+    libiris/iris/xmpp-im/libiris_xmpp_im.la \
+	$(QCA_LIBS) \
 	libjabberclient.la \
 	$(JINGLE_LIBS)
 

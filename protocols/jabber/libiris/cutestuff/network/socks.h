@@ -61,7 +61,7 @@ public:
 	enum Request { ReqConnect, ReqUDPAssociate };
 	SocksClient(QObject *parent=0);
 	SocksClient(int, QObject *parent=0);
-	~SocksClient();
+	virtual ~SocksClient();
 
 	bool isIncoming() const;
 

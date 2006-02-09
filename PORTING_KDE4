@@ -22,6 +22,9 @@ Libkopete changes
 
 *) kopetecontactproperty.h
    - Removed bool flags from constructor. Use ContactPropertyOption enum instead.
+     First bool parameter -> Kopete::ContactPropertyTmpl::PersistentProperty
+     Second bool parameter -> Kopete::ContactPropertyTmpl::RichTextProperty
+     Third bool parameter -> Kopete::ContactProperyTmpl::PrivateProperty
 
 *) Kopete::MetaContact
    - photo() is now deprecated. Use picture().image() instead.

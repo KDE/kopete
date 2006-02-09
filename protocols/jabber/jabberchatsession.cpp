@@ -151,11 +151,10 @@ void JabberChatSession::sendNotification( XMPP::MsgEvent event )
 		return;
 
 	JabberContact *contact;
-	Q3PtrListIterator<Kopete::Contact> listIterator ( members () );
-
-	while ( ( contact = dynamic_cast<JabberContact*>( listIterator.current () ) ) != 0 )
+	QList<Kopete::Contact*>::ConstIterator it, itEnd = members().constEnd();
+	for(it = members().constBegin(); it != itEnd; ++it)
 	{
-		++listIterator;
+		contact = dynamic_cast<JabberContact*>( *it );
 		if ( contact->isContactRequestingEvent( event ) )
 		{
 			// create JID for us as sender
@@ -191,7 +190,7 @@ void JabberChatSession::slotSendTypingNotification ( bool typing )
 
 	// create JID for us as sender
 	XMPP::Jid fromJid = static_cast<const JabberBaseContact*>(myself())->rosterItem().jid();
-	fromJid.setResource ( account()->configGroup()->readEntry( "Resource", QString::null ) );
+	fromJid.setResource ( account()->configGroup()->readEntry( "Resource", QString() ) );
 
 	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Sending out typing notification (" << typing << ") to all chat members." << endl;
 
@@ -207,7 +206,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 		JabberBaseContact *recipient = static_cast<JabberBaseContact*>(message.to().first());
 
 		XMPP::Jid jid = static_cast<const JabberBaseContact*>(message.from())->rosterItem().jid();
-		jid.setResource ( account()->configGroup()->readEntry( "Resource", QString::null ) );
+		jid.setResource ( account()->configGroup()->readEntry( "Resource", QString() ) );
 		jabberMessage.setFrom ( jid );
 
 		XMPP::Jid toJid = recipient->rosterItem().jid();
@@ -248,11 +247,14 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 			jabberMessage.setBody ( message.plainBody ());
 			if (message.format() ==  Kopete::Message::RichText) 
 			{
+#warning Port when libiris change will be merged
+#if 0
 				JabberResource *bestResource = account()->resourcePool()->bestJabberResource(toJid);
 				if( bestResource && bestResource->features().canXHTML() )
 				{
 					jabberMessage.setXHTMLBody ( message.escapedBody(), QString::null, message.getHtmlStyleAttribute() );
 				}
+#endif
         	}
 		}
 

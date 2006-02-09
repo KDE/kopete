@@ -33,7 +33,7 @@ class ByteStream : public QObject
 public:
 	enum Error { ErrRead, ErrWrite, ErrCustom = 10 };
 	ByteStream(QObject *parent=0);
-	virtual ~ByteStream()=0;
+	virtual ~ByteStream();
 
 	virtual bool isOpen() const;
 	virtual void close();

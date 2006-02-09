@@ -3,7 +3,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(srcdir)/../libiris/iris/include \
 	-I$(srcdir)/../libiris/iris/xmpp-im \
 	-I$(srcdir)/../libiris/iris/jabber \
-	-I$(srcdir)/../libiris/qca2/include/QtCrypto \
+	$(QCA_CFLAGS) \
 	-I$(srcdir)/../libiris/cutestuff/util \
 	-I$(srcdir)/.. \
 	$(all_includes)

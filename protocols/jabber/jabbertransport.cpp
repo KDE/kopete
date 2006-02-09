@@ -98,19 +98,19 @@ JabberTransport::~JabberTransport ()
 
 KActionMenu *JabberTransport::actionMenu ()
 {
-	KActionMenu *menu = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ),  this );
+	KActionMenu *menu = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ),  0 );
 	QString nick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
 
-	menu->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ),
+	menu->popupMenu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
 	nick.isNull() ? accountLabel() : i18n( "%2 <%1>" ).arg( accountLabel(), nick )
 								  );
 	
-	Q3PtrList<KAction> *customActions = myself()->customContextMenuActions(  );
+	QList<KAction*> *customActions = myself()->customContextMenuActions(  );
 	if( customActions && !customActions->isEmpty() )
 	{
 		menu->popupMenu()->insertSeparator();
 
-		for( KAction *a = customActions->first(); a; a = customActions->next() )
+		foreach( KAction *a, *customActions )
 			a->plug( menu->popupMenu() );
 	}
 	delete customActions;
@@ -257,11 +257,11 @@ void JabberTransport::removeAllContacts( )
 	*/ //we don't really care, we remove everithing anyway.
 
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "delete all contacts of the transport"<< endl;
-	Q3DictIterator<Kopete::Contact> it( contacts() ); 
-	for( ; it.current(); ++it )
+	QHash<QString, Kopete::Contact*>::ConstIterator it, itEnd = contacts().constEnd(); 
+	for( it = contacts().constBegin(); it != itEnd; ++it )
 	{
 		XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
-		rosterTask->remove ( static_cast<JabberBaseContact*>(it.current())->rosterItem().jid() );
+		rosterTask->remove ( static_cast<JabberBaseContact*>(it.value())->rosterItem().jid() );
 		rosterTask->go ( true );
 	}
 	m_status = Removing; //in theory that's already our status
@@ -293,11 +293,11 @@ void JabberTransport::eatContacts( )
 	*            - a new contact will born, with the same characteristics, but owned by the transport
 	* - Olivier 2006-01-17 -
 	*/
-	Q3Dict<Kopete::Contact> cts=account()->contacts();
-	Q3DictIterator<Kopete::Contact> it( cts ); 
-	for( ; it.current(); ++it )
+	QHash<QString, Kopete::Contact*> cts=account()->contacts();
+	QHash<QString, Kopete::Contact*>::ConstIterator it, itEnd = cts.constEnd(); 
+	for( it = cts.constBegin(); it != itEnd; ++it )
 	{
-		JabberContact *contact=dynamic_cast<JabberContact*>(it.current());
+		JabberContact *contact=dynamic_cast<JabberContact*>(it.value());
 		if( contact && !contact->transport() && contact->rosterItem().jid().domain() == myself()->contactId() && contact != account()->myself())
 		{
 			XMPP::RosterItem item=contact->rosterItem();
