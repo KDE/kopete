@@ -303,6 +303,10 @@ void ContactList::loadGlobalIdentity()
  	// Apply the global identity
 	if(Kopete::Config::enableGlobalIdentity())
  	{
+		// Disconnect to make sure it will not cause duplicate calls.
+		disconnect(myself(), SIGNAL(displayNameChanged(const QString&, const QString&)), this, SLOT(slotDisplayNameChanged()));
+		disconnect(myself(), SIGNAL(photoChanged()), this, SLOT(slotPhotoChanged()));
+
 		connect(myself(), SIGNAL(displayNameChanged(const QString&, const QString&)), this, SLOT(slotDisplayNameChanged()));
 		connect(myself(), SIGNAL(photoChanged()), this, SLOT(slotPhotoChanged()));
 
@@ -318,6 +322,11 @@ void ContactList::loadGlobalIdentity()
 		slotDisplayNameChanged();
 		slotPhotoChanged();
  	}
+	else
+	{
+		disconnect(myself(), SIGNAL(displayNameChanged(const QString&, const QString&)), this, SLOT(slotDisplayNameChanged()));
+		disconnect(myself(), SIGNAL(photoChanged()), this, SLOT(slotPhotoChanged()));
+	}
 }
 
 void ContactList::slotDisplayNameChanged()
