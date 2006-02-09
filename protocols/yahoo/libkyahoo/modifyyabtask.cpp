@@ -1,6 +1,6 @@
 /*
     Kopete Yahoo Protocol
-    saveyabtask.h - Handles the Yahoo Address Book
+    modifyyabtask.h - Handles the Yahoo Address Book
 
     Copyright (c) 2006 André Duffeck <andre.duffeck@kdemail.net>
     Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
@@ -15,7 +15,7 @@
     *************************************************************************
 */
 
-#include "saveyabtask.h"
+#include "modifyyabtask.h"
 #include "yabtask.h"
 #include "transfer.h"
 #include "ymsgtransfer.h"
@@ -31,16 +31,16 @@
 #include <kbufferedsocket.h>
 
 using namespace KNetwork;
-SaveYABTask::SaveYABTask(Task* parent) : Task(parent)
+ModifyYABTask::ModifyYABTask(Task* parent) : Task(parent)
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
-SaveYABTask::~SaveYABTask()
+ModifyYABTask::~ModifyYABTask()
 {
 }
 
-void SaveYABTask::onGo()
+void ModifyYABTask::onGo()
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	KBufferedSocket* yahooSocket = new KBufferedSocket( "address.yahoo.com", QString::number(80) );
@@ -50,7 +50,12 @@ void SaveYABTask::onGo()
 	yahooSocket->connect();
 }
 
-void SaveYABTask::setEntry( const YABEntry &entry )
+void ModifyYABTask::setAction( Action action )
+{
+	m_action = action;
+}
+
+void ModifyYABTask::setEntry( const YABEntry &entry )
 {
 	QDomDocument doc("");
 	QDomElement root = doc.createElement( "ab" );
@@ -60,7 +65,18 @@ void SaveYABTask::setEntry( const YABEntry &entry )
 	
 	QDomElement contact = doc.createElement( "ct" );
 	entry.fillQDomElement( contact );
-	contact.setAttribute( "e", "1" );
+	switch( m_action )
+	{
+	case EditEntry:
+		contact.setAttribute( "e", "1" );
+		break;
+	case AddEntry:
+		contact.setAttribute( "a", "1" );
+		break;
+	case DeleteEntry:
+		contact.setAttribute( "d", "1" );
+		break;
+	}
 	root.appendChild( contact );
 
 	entry.dump();
@@ -69,12 +85,12 @@ void SaveYABTask::setEntry( const YABEntry &entry )
 
 
 
-void SaveYABTask::connectFailed( int i)
+void ModifyYABTask::connectFailed( int i)
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << i << ": " << dynamic_cast<const KBufferedSocket*>( sender() )->errorString() << endl;
 }
 
-void SaveYABTask::connectSucceeded()
+void ModifyYABTask::connectSucceeded()
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 	KBufferedSocket* socket = const_cast<KBufferedSocket*>( dynamic_cast<const KBufferedSocket*>( sender() ) );
@@ -102,7 +118,7 @@ void SaveYABTask::connectSucceeded()
 	connect( socket, SIGNAL( readyRead() ), this, SLOT( slotRead() ) );
 }
 
-void SaveYABTask::slotRead()
+void ModifyYABTask::slotRead()
 {
 	KBufferedSocket* socket = const_cast<KBufferedSocket*>( dynamic_cast<const KBufferedSocket*>( sender() ) );
 	QByteArray ar( socket->bytesAvailable() );
@@ -141,17 +157,36 @@ void SaveYABTask::slotRead()
 		YABEntry *entry = new YABEntry;
 		entry->fromQDomElement( e );
 
-		if( !e.attribute( "es" ).isEmpty() && e.attribute( "es" ) != "0" )		// Check for errors
+		switch( m_action )
 		{
-			emit error( entry, i18n("The Yahoo Addressbook entry could not be saved:\n%1 - %2").arg( e.attribute("es") ).arg( e.attribute("ee") ) );
+		case EditEntry:
+			if( !e.attribute( "es" ).isEmpty() && e.attribute( "es" ) != "0" )		// Check for edit errors
+			{
+				emit error( entry, i18n("The Yahoo Addressbook entry could not be saved:\n%1 - %2").arg( e.attribute("es") ).arg( e.attribute("ee") ) );
+			}
+			continue;
+			break;
+		case AddEntry:
+			if( !e.attribute( "as" ).isEmpty() && e.attribute( "as" ) != "0" )		// Check for add errors
+			{
+				emit error( entry, i18n("The Yahoo Addressbook entry could not be created:\n%1 - %2").arg( e.attribute("as") ).arg( e.attribute("ae") ) );
+			}
+			continue;
+			break;
+		case DeleteEntry:
+			if( !e.attribute( "ds" ).isEmpty() && e.attribute( "ds" ) != "0" )		// Check for delete errors
+			{
+				emit error( entry, i18n("The Yahoo Addressbook entry could not be deleted:\n%1 - %2").arg( e.attribute("ds") ).arg( e.attribute("de") ) );
+			}
+			continue;
+			break;
 		}
-		else
-		{
-			emit gotEntry( entry );
-		}
+
+		// No errors occured
+		emit gotEntry( entry );
 	}
 
 
 	setSuccess( true );
 }
-#include "saveyabtask.moc"
+#include "modifyyabtask.moc"

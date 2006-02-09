@@ -1,6 +1,6 @@
 /*
     Kopete Yahoo Protocol
-    saveyabtask.h - Saves a YAB entry
+    modifyyabtask.h - Saves a YAB entry
 
     Copyright (c) 2006 André Duffeck <andre.duffeck@kdemail.net>
     Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef SAVEYABTASK_H
-#define SAVEYABTASK_H
+#ifndef MODIFYYABTASK_H
+#define MODIFYYABTASK_H
 
 #include "task.h"
 #include "yabentry.h"
@@ -31,14 +31,16 @@ class QDomElement;
 /**
 @author André Duffeck
 */
-class SaveYABTask : public Task
+class ModifyYABTask : public Task
 {
 	Q_OBJECT
 public:
-	SaveYABTask(Task *parent);
-	~SaveYABTask();
+	enum Action { AddEntry, EditEntry, DeleteEntry };
+	ModifyYABTask(Task *parent);
+	~ModifyYABTask();
 
 	virtual void onGo();
+	void setAction( Action action );
 	void setEntry( const YABEntry & );
 signals:
 	void gotEntry( YABEntry * );
@@ -51,6 +53,7 @@ private slots:
 private:
 	KIO::TransferJob *m_transferJob;
 	QString m_postData;
+	Action m_action;
 };
 
 #endif

@@ -224,7 +224,7 @@ protected slots:
 	void slotGotYABEntry( YABEntry *entry );
 	void slotGotYABRevision( long revision, bool merged );
 	void slotSaveYABEntry( YABEntry &entry );
-	void slotSaveYABEntryError( YABEntry *entry, const QString & );
+	void slotModifyYABEntryError( YABEntry *entry, const QString & );
 
 	void slotReceiveFileAccepted( Kopete::Transfer *trans, const QString& fileName );
 

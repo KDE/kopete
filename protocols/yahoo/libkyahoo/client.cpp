@@ -46,7 +46,7 @@
 #include "sendauthresptask.h"
 #include "pingtask.h"
 #include "yabtask.h"
-#include "saveyabtask.h"
+#include "modifyyabtask.h"
 #include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
@@ -204,6 +204,11 @@ void Client::streamError( int error )
 		d->error = error;
 		d->errorString = d->stream->errorText();
 	}
+
+	d->stream->deleteLater();
+	d->stream = 0L;
+	m_connector->deleteLater();
+	m_connector = 0L;
 
 	if( status() == Yahoo::StatusConnecting )
 		emit loginFailed();
@@ -504,13 +509,31 @@ void Client::getYABEntries( long lastMerge, long lastRemoteRevision )
 
 void Client::saveYABEntry( YABEntry &entry )
 {
-	SaveYABTask *syt = new SaveYABTask( d->root );
-	syt->setEntry( entry );
-	QObject::connect( syt, SIGNAL(gotEntry( YABEntry * )), this, SIGNAL( gotYABEntry( YABEntry * ) ) );
-	QObject::connect( syt, SIGNAL(error( YABEntry *, const QString &)), this, SIGNAL(saveYABEntryError( YABEntry *, const QString & )));
-	syt->go(true);
+	ModifyYABTask *myt = new ModifyYABTask( d->root );
+	myt->setAction( ModifyYABTask::EditEntry );
+	myt->setEntry( entry );
+	QObject::connect( myt, SIGNAL(gotEntry( YABEntry * )), this, SIGNAL( gotYABEntry( YABEntry * ) ) );
+	QObject::connect( myt, SIGNAL(error( YABEntry *, const QString &)), this, SIGNAL(modifyYABEntryError( YABEntry *, const QString & )));
+	myt->go(true);
 }
 
+void Client::addYABEntry(  YABEntry &entry )
+{
+	ModifyYABTask *myt = new ModifyYABTask( d->root );
+	myt->setAction( ModifyYABTask::AddEntry );
+	myt->setEntry( entry );
+	QObject::connect( myt, SIGNAL(gotEntry( YABEntry * )), this, SIGNAL( gotYABEntry( YABEntry * ) ) );
+	QObject::connect( myt, SIGNAL(error( YABEntry *, const QString &)), this, SIGNAL(modifyYABEntryError( YABEntry *, const QString & )));
+	myt->go(true);
+}
+
+void Client::deleteYABEntry(  YABEntry &entry )
+{
+	ModifyYABTask *myt = new ModifyYABTask( d->root );
+	myt->setAction( ModifyYABTask::DeleteEntry );
+	myt->setEntry( entry );
+	myt->go(true);
+}
 
 // ***** other *****
 void Client::notifyError( const QString & error )

@@ -516,7 +516,7 @@ void YahooContact::setDisplayPicture(KTempFile *f, int checksum)
 
 void YahooContact::setYABEntry( YABEntry *entry, bool show )
 {
-	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << userId() << endl;
 	if( m_YABEntry )
 		delete m_YABEntry;
 	
@@ -634,6 +634,13 @@ void YahooContact::deleteContact()
 	else
 	{
 		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Contact is getting remove from server side contactlist...." << endl;
+		// Delete from YAB first
+		if( !m_YABEntry )
+			readYABEntry();
+		if( m_YABEntry->YABId )
+			m_account->yahooSession()->deleteYABEntry( *m_YABEntry );
+		
+		// Now remove from the contactlist
 		m_account->yahooSession()->removeBuddy( contactId(), m_groupName );
 	}
 	Kopete::Contact::deleteContact();

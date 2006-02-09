@@ -325,7 +325,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::connect(m_session, SIGNAL(gotYABEntry( YABEntry * )), this, SLOT(slotGotYABEntry( YABEntry * )));
 		
-		QObject::connect(m_session, SIGNAL(saveYABEntryError( YABEntry *, const QString & )), this, SLOT(slotSaveYABEntryError( YABEntry *, const QString & )));
+		QObject::connect(m_session, SIGNAL(modifyYABEntryError( YABEntry *, const QString & )), this, SLOT(slotModifyYABEntryError( YABEntry *, const QString & )));
 		
 		QObject::connect(m_session, SIGNAL(gotYABRevision( long, bool )), this, SLOT(slotGotYABRevision( long , bool )) );
 	}
@@ -440,7 +440,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::disconnect(m_session, SIGNAL(gotYABEntry( YABEntry * )), this, SLOT(slotGotYABEntry( YABEntry * )));
 		
-		QObject::disconnect(m_session, SIGNAL(saveYABEntryError( YABEntry *, const QString & )), this, SLOT(slotSaveYABEntryError( YABEntry *, const QString & )));
+		QObject::disconnect(m_session, SIGNAL(modifyYABEntryError( YABEntry *, const QString & )), this, SLOT(slotModifyYABEntryError( YABEntry *, const QString & )));
 		
 		QObject::disconnect(m_session, SIGNAL(gotYABRevision( long, bool )), this, SLOT(slotGotYABRevision( long , bool )) );
 	}
@@ -1257,6 +1257,7 @@ void YahooAccount::slotGotYABEntry( YABEntry *entry )
 	}
 	else
 	{
+		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "YAB entry received for: " << entry->yahooId << endl;
 		YahooContact* kc = contact( entry->yahooId );
 		kc->setYABEntry( entry );
 	}
@@ -1264,10 +1265,13 @@ void YahooAccount::slotGotYABEntry( YABEntry *entry )
 
 void YahooAccount::slotSaveYABEntry( YABEntry &entry )
 {
-	m_session->saveYABEntry( entry );
+	if( entry->YABId > 0 )
+		m_session->saveYABEntry( entry );
+	else
+		m_session->addYABEntry( entry );
 }
 
-void YahooAccount::slotSaveYABEntryError( YABEntry *entry, const QString &msg )
+void YahooAccount::slotModifyYABEntryError( YABEntry *entry, const QString &msg )
 {
 	YahooContact* kc = contact( entry->yahooId );
 	if( kc )

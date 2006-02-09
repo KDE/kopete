@@ -246,9 +246,19 @@ Q_OBJECT
 		void getYABEntries( long lastMerge, long lastRemoteRevision );
 
 		/**
-		 * Saves/Updates a YAB entry
+		 * Saves a modified YAB entry
 		 */
 		void saveYABEntry( YABEntry &entry );
+
+		/**
+		 * Creates a new YAB entry
+		 */
+		void addYABEntry( YABEntry &entry );
+
+		/**
+		 * Deletes a YAB entry
+		 */
+		void deleteYABEntry( YABEntry &entry );
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -477,7 +487,7 @@ Q_OBJECT
 		/**
 		 * An error occured while saving a Yahoo Addressbook entry
 		 */
-		void saveYABEntryError( YABEntry *, const QString & );
+		void modifyYABEntryError( YABEntry *, const QString & );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();
