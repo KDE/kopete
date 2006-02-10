@@ -87,6 +87,9 @@ signals:
 	void haveInterestInfo( const ICQInterestInfo& );
 
 private:
+	bool cachedBuddyIcon( QByteArray hash );
+	bool m_buddyIconDirty;
+	
 	bool m_requestingNickname;
 	ICQProtocol *mProtocol;
 	ICQUserInfoWidget* m_infoWidget;
