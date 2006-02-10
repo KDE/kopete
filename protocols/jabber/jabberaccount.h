@@ -148,6 +148,8 @@ public slots:
 	/* Disconnect with a reason */
 	void disconnect ( Kopete::Account::DisconnectReason reason );
 
+    /* Disconnect with a reason, and status */
+    void disconnect( Kopete::Account::DisconnectReason reason, XMPP::Status &status );
 	/* Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
 	
