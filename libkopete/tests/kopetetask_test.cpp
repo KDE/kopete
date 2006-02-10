@@ -66,6 +66,4 @@ void KopeteTaskTest::testEmoticonTask()
 	
 	QCOMPARE(spy.count(), 1);
 	QCOMPARE(task->succeeded(), true);
-
-	kapp->processEvents();
 }
