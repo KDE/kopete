@@ -2,7 +2,8 @@
     kopetetask.h - Kopete Task
 
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+
+    Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -19,6 +20,7 @@
 
 #include <qobject.h>
 #include <kdemacros.h>
+#include <kopete_export.h>
 
 namespace Kopete
 {
@@ -45,7 +47,7 @@ namespace Kopete
  * class come from KIO::Job.
  * @author Richard Smith <kde@metafoo.co.uk>
  */
-class Task : public QObject
+class KOPETE_EXPORT Task : public QObject
 {
 	Q_OBJECT
 
@@ -136,6 +138,20 @@ protected:
 	 * You should call this instead of emitting the result() signal yourself.
 	 */
 	void emitResult( Result result = ResultSucceeded, const QString &errorMessage = QString::null );
+
+	/**
+	 * Utility function for inherited tasks.
+	 * Set the result value. You should call emitResult instead.
+	 * @param result the task result.
+	 */
+	void setResult( Result result );
+
+	/**
+	 * Utility function for inherited tasks.
+	 * Set the error message. You should call emitResult instead.
+	 * @param message Error message for the task.
+	 */
+	void setErrorMessage( const QString &message );
 
 protected slots:
 	/**

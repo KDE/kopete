@@ -17,6 +17,7 @@
 #include "kopetetask.h"
 
 #include <klocale.h>
+#include <kdebug.h>
 
 #include <QList>
 
@@ -90,12 +91,22 @@ void Task::removeSubtask( Task *task, RemoveSubtaskIfLast actionIfLast )
 		emitResult( task->succeeded() ? ResultSucceeded : ResultFailed, task->errorString() );
 }
 
+void Task::setResult( Result res )
+{
+	d->result = res;
+}
+
+void Task::setErrorMessage( const QString &errorMessage )
+{
+	d->errorMessage = errorMessage;
+}
+
 void Task::emitResult( Result res, const QString &errorMessage )
 {
 	d->result = res;
 	d->errorMessage = errorMessage;
 	emit result( this );
-	delete this;
+	deleteLater();
 }
 
 void Task::slotResult( Kopete::Task *task )

@@ -8,12 +8,14 @@ LDADD = ../libkopete.la -lQtTest_debug mock/libkopete_mock.la
 
 #check_LTLIBRARIES = kunittest_kopetemessage_test.la kunittest_kopetecontactlist_test.la
 
-check_PROGRAMS = kopeteemoticontest kopetemessage_test
-TESTS = kopeteemoticontest kopetemessage_test
+check_PROGRAMS = kopeteemoticontest kopetemessage_test kopetetask_test
+TESTS = kopeteemoticontest kopetemessage_test kopetetask_test
 
 kopeteemoticontest_SOURCES = kopeteemoticontest.cpp
 
 kopetemessage_test_SOURCES = kopetemessage_test.cpp
+
+kopetetask_test_SOURCES = kopetetask_test.cpp
 
 #check_PROGRAMS = kopetewallettest_program kopetepasswordtest_program
 
