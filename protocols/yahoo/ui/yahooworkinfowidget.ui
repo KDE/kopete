@@ -222,5 +222,15 @@
         </spacer>
     </grid>
 </widget>
+<tabstops>
+    <tabstop>phoneEdit</tabstop>
+    <tabstop>companyEdit</tabstop>
+    <tabstop>homepageEdit</tabstop>
+    <tabstop>addressEdit</tabstop>
+    <tabstop>cityEdit</tabstop>
+    <tabstop>stateEdit</tabstop>
+    <tabstop>zipEdit</tabstop>
+    <tabstop>countryEdit</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
