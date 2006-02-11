@@ -179,7 +179,7 @@ void Oscar::SSI::checkTLVs()
 	TLV aliasTLV = findTLV( m_tlvList, 0x0131 );
 	if ( aliasTLV )
 	{
-		m_alias.insert( 0, aliasTLV.data );
+		m_alias = QString::fromUtf8( aliasTLV.data, aliasTLV.length );
 		kdDebug( 14151 ) << k_funcinfo << "Got an alias '" << m_alias << "' for contact '" << m_name << "'" << endl;
 	}
 
@@ -253,8 +253,18 @@ Oscar::SSI::operator bool() const
 Oscar::SSI::operator QByteArray() const
 {
 	Buffer b;
-	b.addWord( m_name.length() );
-	b.addString( m_name.latin1(), m_name.length() ); //TODO check encoding
+	QCString name( m_name.utf8() );
+	uint namelen = name.length();
+	const char *namedata = name;
+	b.addWord( namelen );
+	// Using namedata instead of name because
+	// Buffer::addString(QByteArray, DWORD) ignores it's second argument,
+	// while Buffer::addString(const char*, DWORD) does not ignore it.
+	// We must provide the explicit length argument to addString() because
+	// we don't need trailing null byte to be added when automatic
+	// conversion from QCString to QByteArray is performed.
+	// This hack will not be needed with Qt 4.
+	b.addString( namedata, namelen );
 	b.addWord( m_gid );
 	b.addWord( m_bid );
 	b.addWord( m_type );

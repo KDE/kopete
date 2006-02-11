@@ -98,7 +98,7 @@ void SSIListTask::handleSSIListReply()
 	{
 		tlvList.clear();
 		WORD strlength = buffer->getWord();
-		QString itemName = QString( buffer->getBlock( strlength ) );
+		QString itemName = QString::fromUtf8( buffer->getBlock( strlength ), strlength );
 		WORD groupId = buffer->getWord();
 		WORD itemId = buffer->getWord();
 		WORD itemType = buffer->getWord();
