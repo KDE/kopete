@@ -163,22 +163,22 @@ void ModifyYABTask::slotRead()
 			if( !e.attribute( "es" ).isEmpty() && e.attribute( "es" ) != "0" )		// Check for edit errors
 			{
 				emit error( entry, i18n("The Yahoo Addressbook entry could not be saved:\n%1 - %2").arg( e.attribute("es") ).arg( e.attribute("ee") ) );
+				continue;
 			}
-			continue;
 			break;
 		case AddEntry:
 			if( !e.attribute( "as" ).isEmpty() && e.attribute( "as" ) != "0" )		// Check for add errors
 			{
 				emit error( entry, i18n("The Yahoo Addressbook entry could not be created:\n%1 - %2").arg( e.attribute("as") ).arg( e.attribute("ae") ) );
+				continue;
 			}
-			continue;
 			break;
 		case DeleteEntry:
 			if( !e.attribute( "ds" ).isEmpty() && e.attribute( "ds" ) != "0" )		// Check for delete errors
 			{
 				emit error( entry, i18n("The Yahoo Addressbook entry could not be deleted:\n%1 - %2").arg( e.attribute("ds") ).arg( e.attribute("de") ) );
+				continue;
 			}
-			continue;
 			break;
 		}
 
