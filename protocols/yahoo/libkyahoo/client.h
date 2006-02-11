@@ -110,6 +110,11 @@ Q_OBJECT
 		void sendMessage( const QString &to, const QString &msg );
 
 		/**
+		 * Register / Unregister a chatsession
+		 */
+		void setChatSessionState( const QString &to, bool close );
+
+		/**
 		 * Send a Buzz
 		 */
 		void sendBuzz( const QString &to );

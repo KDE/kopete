@@ -71,6 +71,7 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 	m_YABEntry = 0L;
 	m_stealthed = false;
 	m_receivingWebcam = false;
+	m_sessionActive = false;
 
 	// Update ContactList
 	setNickName( fullName );
@@ -320,6 +321,12 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 	Kopete::ContactPtrList m_them = manager(Kopete::Contact::CanCreate)->members();
 	Kopete::Contact *target = m_them.first();
 
+	if( !m_sessionActive )			// Register a new chatsession
+	{
+		m_account->yahooSession()->setChatSessionState( m_userId, false );
+		m_sessionActive = true;
+	}
+	
 	m_account->yahooSession()->sendMessage( static_cast<YahooContact *>(target)->m_userId, messageText );
 	
 	// append message to window
@@ -358,6 +365,8 @@ void YahooContact::slotTyping(bool isTyping_ )
 void YahooContact::slotChatSessionDestroyed()
 {
 	m_manager = 0L;
+	m_account->yahooSession()->setChatSessionState( m_userId, true );	// Unregister chatsession
+	m_sessionActive = false;
 }
 
 QPtrList<KAction> *YahooContact::customContextMenuActions()

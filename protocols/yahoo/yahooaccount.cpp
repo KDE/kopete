@@ -1253,7 +1253,6 @@ void YahooAccount::slotGotYABEntry( YABEntry *entry )
 	{
 		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "YAB entry received for a contact not on our buddylist: " << entry->yahooId << endl;
 		delete entry;
-		return;
 	}
 	else
 	{
@@ -1265,6 +1264,7 @@ void YahooAccount::slotGotYABEntry( YABEntry *entry )
 
 void YahooAccount::slotSaveYABEntry( YABEntry &entry )
 {
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "YABId: " << entry.YABId << endl;
 	if( entry.YABId > 0 )
 		m_session->saveYABEntry( entry );
 	else

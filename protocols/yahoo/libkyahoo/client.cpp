@@ -47,6 +47,7 @@
 #include "pingtask.h"
 #include "yabtask.h"
 #include "modifyyabtask.h"
+#include "chatsessiontask.h"
 #include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
@@ -140,7 +141,6 @@ void Client::connect( const QString &host, const uint port, const QString &userI
 	QObject::connect( d->stream, SIGNAL( connected() ), this, SLOT( cs_connected() ) );
 	QObject::connect( d->stream, SIGNAL( error(int) ), this, SLOT( streamError(int) ) );
 	QObject::connect( d->stream, SIGNAL( readyRead() ), this, SLOT( streamReadyRead() ) );
-	
 	
 	d->stream->connectToServer( host, false );
 }
@@ -291,6 +291,14 @@ void Client::sendMessage( const QString &to, const QString &msg )
 	smt->setText( msg );
 	smt->setPicureFlag( pictureFlag() );
 	smt->go( true );
+}
+
+void Client::setChatSessionState( const QString &to, bool close )
+{
+	ChatSessionTask *cst = new ChatSessionTask( d->root );
+	cst->setTarget( to );
+	cst->setType( close ? ChatSessionTask::UnregisterSession : ChatSessionTask::RegisterSession );
+	cst->go( true );
 }
 
 void Client::sendBuzz( const QString &to )

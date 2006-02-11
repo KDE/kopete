@@ -121,6 +121,7 @@ private:
 	YahooAccount* m_account;
 	bool m_stealthed;
 	bool m_receivingWebcam;
+	bool m_sessionActive;
 	
 	//stealth
 	KAction* m_stealthAction;

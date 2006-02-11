@@ -94,6 +94,7 @@ namespace Yahoo
 		ServiceStatus = 0xc6,		/* YMSG13 */
 		ServicePictureStatus = 0xc7,	/* YMSG13, key 213: 0 = none, 1 = avatar, 2 = picture */
 		ServiceContactDetails = 0xd3,	/* YMSG13 */
+		ServiceChatSession = 0xd4,	
 		ServiceAuthorization = 0xd6,	/* YMSG13 */
 		ServiceBuddyChangeGroup = 0xe7	/* YMSG13 */
 	};

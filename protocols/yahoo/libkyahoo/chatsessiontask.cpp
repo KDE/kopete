@@ -1,8 +1,10 @@
 /*
     Kopete Yahoo Protocol
-    Send a message
+    chatsessiontask.cpp - Register / Unregister a chatsession
 
-    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2006 André Duffeck <andre.duffeck@kdemail.net>
+
+    Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -14,57 +16,50 @@
     *************************************************************************
 */
 
-#include "sendmessagetask.h"
+#include "chatsessiontask.h"
 #include "transfer.h"
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "client.h"
 #include <qstring.h>
 
-SendMessageTask::SendMessageTask(Task* parent) : Task(parent)
+ChatSessionTask::ChatSessionTask(Task* parent) : Task(parent)
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 }
 
-SendMessageTask::~SendMessageTask()
+ChatSessionTask::~ChatSessionTask()
 {
 }
 
-void SendMessageTask::onGo()
+void ChatSessionTask::onGo()
 {
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
-	if( m_text.isEmpty() )
-	{
-		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Text to send is empty." << endl;
-		return;
-	}	
-
-	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceMessage, Yahoo::StatusOffline);
+	YMSGTransfer *t = new YMSGTransfer( Yahoo::ServiceChatSession );
 	t->setId( client()->sessionID() );
 	t->setParam( 1, client()->userId().local8Bit() );
 	t->setParam( 5, m_target.local8Bit() );
-	t->setParam( 14, m_text.utf8() );
-	t->setParam( 63, ";0" );
-	t->setParam( 64, "0"  );	
-	t->setParam( 97, 1 );	// UTF-8
-	t->setParam( 206, client()->pictureFlag() );	
+	if( m_type == RegisterSession )
+	{
+		t->setParam( 13, 1 );
+	}
+	else
+	{
+		t->setParam( 13, 2 );
+		t->setParam( 34, 1 );
+	}
 	send( t );
 	
 	setSuccess( true );
 }
 
-void SendMessageTask::setTarget( const QString &to )
+void ChatSessionTask::setTarget( const QString &to )
 {
 	m_target = to;
 }
 
-void SendMessageTask::setText( const QString &text )
+void ChatSessionTask::setType( Type type )
 {
-	m_text = text;
-}
-
-void SendMessageTask::setPicureFlag( int flag )
-{
-	m_pictureFlag = flag;
+	m_type = type;
 }
