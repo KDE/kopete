@@ -159,6 +159,10 @@ void WinPopupLib::slotUpdateGroupData()
 
 void WinPopupLib::startReadProcess(const QString &Host)
 {
+	currentHosts.clear();
+	currentGroups.clear();
+	currentGroup = QString();
+
 	// for Samba 3
 	KProcIO *reader = new KProcIO;
 	*reader << smbClientBin << "-N" << "-E" << "-g" << "-L" << Host << "-";
@@ -176,12 +180,15 @@ void WinPopupLib::slotReadProcessReady(KProcIO *r)
 {
 	QString tmpLine = QString::null;
 	QRegExp group("^Workgroup\\|(.*)\\|(.*)$"), host("^Server\\|(.*)\\|(.*)$"),
-		info("^Domain=\\[([^\\]]+)\\] OS=\\[([^\\]]+)\\] Server=\\[([^\\]]+)\\]");
+			info("^Domain=\\[([^\\]]+)\\] OS=\\[([^\\]]+)\\] Server=\\[([^\\]]+)\\]"),
+			error("Connection.*failed");
 
 	while (r->readln(tmpLine) > -1) {
 		if (info.search(tmpLine) != -1) currentGroup = info.cap(1);
 		if (host.search(tmpLine) != -1) currentHosts += host.cap(1);
 		if (group.search(tmpLine) != -1) currentGroups[group.cap(1)] = group.cap(2);
+		if (error.search(tmpLine) != -1)
+			kdDebug(14170) << "Connection to " << currentHost << " failed!" << endl;
 	}
 }
 
@@ -198,32 +205,36 @@ void WinPopupLib::slotReadProcessExited(KProcess *r)
 		todo.remove(currentHost);
 		done += currentHost;
 
-		QMap<QString, WorkGroup> newGroups;
-		//loop through the read groups and check for new ones
-		QMap<QString, QString>::ConstIterator end = currentGroups.end();
-		for (QMap<QString, QString>::ConstIterator i = currentGroups.begin(); i != end; i++) {
-			QString groupMaster = i.data();
-			if (!done.contains(groupMaster)) todo += groupMaster;
+		if (!currentGroups.isEmpty()) {
+			QMap<QString, WorkGroup> newGroups;
+			//loop through the read groups and check for new ones
+			QMap<QString, QString>::ConstIterator end = currentGroups.end();
+			for (QMap<QString, QString>::ConstIterator i = currentGroups.begin(); i != end; i++) {
+				QString groupMaster = i.data();
+				if (!done.contains(groupMaster)) todo += groupMaster;
+			}
 		}
 
-		// create a workgroup object and put the hosts in
-		WorkGroup nWG;
-		nWG.addHosts(currentHosts);
+		if (!currentGroup.isEmpty()) {
+			// create a workgroup object and put the hosts in
+			WorkGroup nWG;
+			nWG.addHosts(currentHosts);
 
-		currentGroupsMap.insert(currentGroup, nWG, true);
+			currentGroupsMap.insert(currentGroup, nWG, true);
+		}
 
 	} else {
 		passedInitialHost = true;
-		QMap<QString, QString>::ConstIterator end = currentGroups.end();
-		for (QMap<QString, QString>::ConstIterator i = currentGroups.begin(); i != end; i++) {
-			QString groupMaster = i.data();
-			todo += groupMaster;
+		if (!currentGroups.isEmpty()) {
+			QMap<QString, QString>::ConstIterator end = currentGroups.end();
+			for (QMap<QString, QString>::ConstIterator i = currentGroups.begin(); i != end; i++) {
+				QString groupMaster = i.data();
+				todo += groupMaster;
+			}
 		}
 	}
 
 	// maybe restart cycle
-	currentHosts.clear();
-	currentGroups.clear();
 	if (todo.count()) {
 		currentHost = todo[0];
 		startReadProcess(currentHost);
