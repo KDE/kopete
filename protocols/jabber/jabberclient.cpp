@@ -815,7 +815,7 @@ void JabberClient::joinGroupChat ( const QString &host, const QString &room, con
 
 void JabberClient::joinGroupChat ( const QString &host, const QString &room, const QString &nick, const QString &password )
 {
-#warning Renable password after merging of Kopete's libiris patch.
+#warning Renable password after merging of libiris patch of Kopete.
 	client()->groupChatJoin ( host, room, nick/*, password */);
 
 }
