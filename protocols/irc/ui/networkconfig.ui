@@ -110,10 +110,10 @@
                     <property name="name">
                         <cstring>port</cstring>
                     </property>
-                    <property name="maxValue">
+                    <property name="maximum">
                         <number>65536</number>
                     </property>
-                    <property name="minValue">
+                    <property name="minimum">
                         <number>1024</number>
                     </property>
                     <property name="value">

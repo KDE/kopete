@@ -172,10 +172,10 @@
                                                         <property name="buttonSymbols">
                                                             <enum>PlusMinus</enum>
                                                         </property>
-                                                        <property name="maxValue">
+                                                        <property name="maximum">
                                                             <number>120</number>
                                                         </property>
-                                                        <property name="minValue">
+                                                        <property name="minimum">
                                                             <number>0</number>
                                                         </property>
                                                         <property name="value">
@@ -200,10 +200,10 @@
                                                         <property name="buttonSymbols">
                                                             <enum>PlusMinus</enum>
                                                         </property>
-                                                        <property name="maxValue">
+                                                        <property name="maximum">
                                                             <number>120</number>
                                                         </property>
-                                                        <property name="minValue">
+                                                        <property name="minimum">
                                                             <number>0</number>
                                                         </property>
                                                         <property name="value">

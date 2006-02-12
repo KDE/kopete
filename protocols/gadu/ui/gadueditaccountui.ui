@@ -747,7 +747,7 @@ If you do not currently have an account, please click the button to create one.<
                                         <property name="enabled">
                                             <bool>false</bool>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>65535</number>
                                         </property>
                                         <property name="value">

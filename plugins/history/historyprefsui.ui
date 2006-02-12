@@ -46,10 +46,10 @@
                     <property name="name">
                         <cstring>Number_ChatWindow</cstring>
                     </property>
-                    <property name="maxValue">
+                    <property name="maximum">
                         <number>32768</number>
                     </property>
-                    <property name="minValue">
+                    <property name="minimum">
                         <number>1</number>
                     </property>
                     <property name="value">
@@ -95,10 +95,10 @@
                     <property name="name">
                         <cstring>Number_Auto_chatwindow</cstring>
                     </property>
-                    <property name="maxValue">
+                    <property name="maximum">
                         <number>32768</number>
                     </property>
-                    <property name="minValue">
+                    <property name="minimum">
                         <number>1</number>
                     </property>
                     <property name="value">

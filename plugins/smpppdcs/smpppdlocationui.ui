@@ -76,7 +76,7 @@
                     <property name="value">
                         <number>3185</number>
                     </property>
-                    <property name="minValue">
+                    <property name="minimum">
                         <number>0</number>
                     </property>
                     <property name="toolTip" stdset="0">

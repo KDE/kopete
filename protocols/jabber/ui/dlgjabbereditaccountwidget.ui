@@ -409,10 +409,10 @@
                                         <property name="buttonSymbols">
                                             <enum>UpDownArrows</enum>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>65535</number>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>1</number>
                                         </property>
                                         <property name="value">
@@ -658,7 +658,7 @@ If two resources have the same priority, the messages will be sent to the one co
                                                 <property name="name">
                                                     <cstring>sbLocalPort</cstring>
                                                 </property>
-                                                <property name="maxValue">
+                                                <property name="maximum">
                                                     <number>65535</number>
                                                 </property>
                                                 <property name="value">

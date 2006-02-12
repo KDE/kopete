@@ -312,10 +312,10 @@
                                         <property name="enabled">
                                             <bool>false</bool>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>65534</number>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>1</number>
                                         </property>
                                         <property name="value">

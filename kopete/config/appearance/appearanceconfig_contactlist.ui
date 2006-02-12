@@ -221,10 +221,10 @@
                             <property name="suffix">
                                 <string> Sec</string>
                             </property>
-                            <property name="maxValue">
+                            <property name="maximum">
                                 <number>300</number>
                             </property>
-                            <property name="minValue">
+                            <property name="minimum">
                                 <number>3</number>
                             </property>
                             <property name="value">

@@ -294,10 +294,10 @@ However, the recommended way is to ask your administrator to create this directo
                                                         <verstretch>0</verstretch>
                                                     </sizepolicy>
                                                 </property>
-                                                <property name="maxValue">
+                                                <property name="maximum">
                                                     <number>3600</number>
                                                 </property>
-                                                <property name="minValue">
+                                                <property name="minimum">
                                                     <number>1</number>
                                                 </property>
                                             </widget>
@@ -339,10 +339,10 @@ However, the recommended way is to ask your administrator to create this directo
                                                         <verstretch>0</verstretch>
                                                     </sizepolicy>
                                                 </property>
-                                                <property name="maxValue">
+                                                <property name="maximum">
                                                     <number>3600</number>
                                                 </property>
-                                                <property name="minValue">
+                                                <property name="minimum">
                                                     <number>1</number>
                                                 </property>
                                             </widget>

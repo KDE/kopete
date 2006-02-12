@@ -104,10 +104,10 @@
                             <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property name="maxValue">
+                    <property name="maximum">
                         <number>999</number>
                     </property>
-                    <property name="minValue">
+                    <property name="minimum">
                         <number>1</number>
                     </property>
                     <property name="value">

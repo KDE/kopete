@@ -158,7 +158,7 @@
                     <property name="value">
                         <number>90</number>
                     </property>
-                    <property name="minValue">
+                    <property name="minimum">
                         <number>1</number>
                     </property>
                 </widget>

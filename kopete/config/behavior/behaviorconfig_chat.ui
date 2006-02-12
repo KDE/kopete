@@ -194,7 +194,7 @@
                     <property name="enabled">
                         <bool>false</bool>
                     </property>
-                    <property name="minValue">
+                    <property name="minimum">
                         <number>5</number>
                     </property>
                     <property name="value">
@@ -246,10 +246,10 @@
                     <property name="name">
                         <cstring>kcfg_chatWindowBufferViewSize</cstring>
                     </property>
-                    <property name="maxValue">
+                    <property name="maximum">
                         <number>9000</number>
                     </property>
-                    <property name="minValue">
+                    <property name="minimum">
                         <number>2</number>
                     </property>
                     <property name="value">

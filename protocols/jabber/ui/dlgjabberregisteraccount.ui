@@ -102,7 +102,7 @@
                     <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property name="maxValue">
+            <property name="maximum">
                 <number>65535</number>
             </property>
         </widget>

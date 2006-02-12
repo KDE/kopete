@@ -317,10 +317,10 @@
                                         <property name="enabled">
                                             <bool>false</bool>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>65535</number>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>1</number>
                                         </property>
                                         <property name="value">
@@ -1333,10 +1333,10 @@ Only works for emoticons in the PNG format.</string>
                                         <property name="enabled">
                                             <bool>false</bool>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>65535</number>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>1</number>
                                         </property>
                                         <property name="value">
@@ -1390,10 +1390,10 @@ Only check this option if the normal connection doesn't work.</string>
                                         <property name="enabled">
                                             <bool>false</bool>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>65535</number>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>1</number>
                                         </property>
                                         <property name="value">
