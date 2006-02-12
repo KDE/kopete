@@ -713,7 +713,7 @@ void IRCChannelContact::slotHomepage()
 	QString homePage = property(m_protocol->propHomepage).value().toString();
 	if( !homePage.isEmpty() )
 	{
-	       new KRun( KURL( homePage ), 0, false);
+	       new KRun( KUrl( homePage ), 0, false);
 	}
 }
 

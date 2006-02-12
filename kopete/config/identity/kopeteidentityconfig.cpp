@@ -203,7 +203,7 @@ void KopeteIdentityConfig::save()
 		if(!d->m_view->comboPhotoURL->url().isEmpty())
 			d->myself->setPhoto(d->m_view->comboPhotoURL->url());
 		else
-			d->myself->setPhoto( KURL() );
+			d->myself->setPhoto( KUrl() );
 		d->myself->setPhotoSyncedWithKABC(d->m_view->checkSyncPhotoKABC->isChecked());
 	}
 	
@@ -256,7 +256,7 @@ void KopeteIdentityConfig::saveCurrentIdentity()
 	if(!d->m_view->comboPhotoURL->url().isEmpty())
 		d->currentIdentity->setPhoto(d->m_view->comboPhotoURL->url());
 	else
-		d->currentIdentity->setPhoto( KURL() );
+		d->currentIdentity->setPhoto( KUrl() );
 	d->currentIdentity->setPhotoSyncedWithKABC(d->m_view->checkSyncPhotoKABC->isChecked());
 }
 

@@ -475,7 +475,7 @@ public slots:
 	 * a nondeterminate
 	 *                file size (such as over  asocket
 	 */
-	virtual void sendFile( const KUrl &sourceURL = KURL(),
+	virtual void sendFile( const KUrl &sourceURL = KUrl(),
 			       const QString &fileName = QString::null, uint fileSize = 0L );
 
 private slots:

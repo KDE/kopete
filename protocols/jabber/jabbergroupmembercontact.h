@@ -65,7 +65,7 @@ public slots:
 	 * @param fileSize (Optional) Size of the file being sent. Used when sending
 	 *                 a nondeterminate file size (such as over a socket)
 	 */
-	virtual void sendFile( const KUrl &sourceURL = KURL(),
+	virtual void sendFile( const KUrl &sourceURL = KUrl(),
 		const QString &fileName = QString::null, uint fileSize = 0L );
 
 	/**

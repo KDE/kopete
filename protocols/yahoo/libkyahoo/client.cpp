@@ -384,7 +384,7 @@ void Client::downloadPicture(  const QString &userId, KUrl url, int checksum )
 				SIGNAL(pictureDownloaded(const QString&, KTempFile*,  int ) ) );
 	}
 
-	d->iconLoader->fetchBuddyIcon( QString(userId), KURL(url), checksum );
+	d->iconLoader->fetchBuddyIcon( QString(userId), KUrl(url), checksum );
 }
 
 void Client::uploadPicture( KUrl url )

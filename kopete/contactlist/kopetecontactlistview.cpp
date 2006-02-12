@@ -1453,7 +1453,7 @@ void KopeteContactListView::slotSendFile()
 {
 	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
 	if(m)
-		m->sendFile(KURL());
+		m->sendFile(KUrl());
 }
 
  void KopeteContactListView::slotSendEmail()

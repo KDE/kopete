@@ -215,7 +215,7 @@ void KopeteAddressBookExport::exportData()
 	if ( newValue( mUI->mUrl ) )
 	{
 		dirty = true;
-		mAddressee.setUrl( KURL( mUI->mUrl->currentText() ) );
+		mAddressee.setUrl( KUrl( mUI->mUrl->currentText() ) );
 	}
 
 	QStringList newVals;

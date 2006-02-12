@@ -82,7 +82,7 @@ public slots:
 	void messageAck();
 	void slotShowPublicProfile();
 	void slotEditContact();
-	virtual void sendFile( const KUrl &sourceURL = KURL(),
+	virtual void sendFile( const KUrl &sourceURL = KUrl(),
 		const QString &fileName = QString::null, uint fileSize = 0L );
 
 

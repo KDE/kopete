@@ -94,12 +94,12 @@ void ICQReadAway::slotCloseClicked()
 
 void ICQReadAway::slotUrlClicked(const QString &url)
 {
-	new KRun(KURL(url));
+	new KRun(KUrl(url));
 }
 
 void ICQReadAway::slotMailClicked(const QString&, const QString &address)
 {
-	new KRun(KURL(address));
+	new KRun(KUrl(address));
 }
 
 #include "icqreadaway.moc"

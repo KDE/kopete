@@ -575,7 +575,7 @@ void YahooAccount::slotGlobalIdentityChanged( const QString &key, const QVariant
 	{
 		if ( key == Kopete::Global::Properties::self()->photo().key() )
 		{
-			setBuddyIcon( KURL( value.toString() ) );
+			setBuddyIcon( KUrl( value.toString() ) );
 		}
 	}
 }
@@ -657,7 +657,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		initConnectionSignals( DeleteConnections );
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 		YahooVerifyAccount *verifyDialog = new YahooVerifyAccount( this );
-		verifyDialog->setUrl( KURL(url) );
+		verifyDialog->setUrl( KUrl(url) );
 		verifyDialog->show();
 		return;
 	}
@@ -1577,12 +1577,12 @@ void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const Q
 
 void YahooAccount::slotOpenInbox()
 {
-	KRun::runURL( KURL( QString::fromLatin1("http://mail.yahoo.com/") ) , "text/html" );
+	KRun::runURL( KUrl( QString::fromLatin1("http://mail.yahoo.com/") ) , "text/html" );
 }
 
 void YahooAccount::slotOpenYAB()
 {
-	KRun::runURL( KURL( QString::fromLatin1("http://address.yahoo.com/") ) , "text/html" );
+	KRun::runURL( KUrl( QString::fromLatin1("http://address.yahoo.com/") ) , "text/html" );
 }
 
 #include "yahooaccount.moc"

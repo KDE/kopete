@@ -78,7 +78,7 @@ public slots:
 	virtual void slotUserInfo();
 	virtual void slotSendFile();
 	virtual void deleteContact();
-	virtual void sendFile( const KUrl &sourceURL = KURL(), const QString &fileName = QString::null, uint fileSize = 0L );
+	virtual void sendFile( const KUrl &sourceURL = KUrl(), const QString &fileName = QString::null, uint fileSize = 0L );
 	void stealthContact();
 	void requestWebcam();
 	void inviteWebcam();

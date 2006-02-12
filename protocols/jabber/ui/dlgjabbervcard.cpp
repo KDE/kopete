@@ -457,7 +457,7 @@ void dlgJabberVCard::slotClearPhoto()
 void dlgJabberVCard::slotOpenURL(const QString &url)
 {
 	if ( !url.isEmpty () || (url == QString::fromLatin1("mailto:") ) )
-		new KRun( KURL( url ), this );
+		new KRun( KUrl( url ), this );
 }
 
 #include "dlgjabbervcard.moc"

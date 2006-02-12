@@ -213,12 +213,12 @@ void AIMUserInfoDialog::slotUpdateProfile()
 //KRun changed, so comment it so it compiles FIXME
 void AIMUserInfoDialog::slotUrlClicked(const QString &url)
 {
-	//new KRun(KURL(url));
+	//new KRun(KUrl(url));
 }
 
 void AIMUserInfoDialog::slotMailClicked(const QString&, const QString &address)
 {
-	//new KRun(KURL(address));
+	//new KRun(KUrl(address));
 }
 
 #include "aimuserinfo.moc"
