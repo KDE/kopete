@@ -176,9 +176,9 @@ public:
 	bool canAsyncIO();
 	bool canStream();
 
-	QString m_name;
 	QString m_model;
-	size_t m_modelindex;
+	QString m_name;
+	size_t m_modelindex; // Defines what's the number of a device when more than 1 device of a given model is present;
 	QString full_filename;
 	videodev_driver m_driver;
 	int descriptor;

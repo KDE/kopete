@@ -67,11 +67,11 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	mAVDeviceTabCtl->addTab(mPrfsVideoDevice, i18n("&Video"));
 	d = Kopete::AV::VideoDevicePool::self();
 	d->scanDevices();
-	d->open(0);
+	d->open();
 	d->setSize(320, 240);
 	d->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 	d->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
-	d->selectInput(0);
+//	d->selectInput(0);
 	d->startCapturing();
 	d->getFrame();
 	d->getImage(&qimage);

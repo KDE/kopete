@@ -29,6 +29,8 @@
 #include <kcombobox.h>
 #include "videodevice.h"
 #include "kopete_export.h"
+#include <kapplication.h>
+#include <kconfig.h>
 
 namespace Kopete {
 
@@ -75,8 +77,8 @@ public:
 	bool hasDevices();
 	size_t size();
 	~VideoDevicePool();
-	VideoDeviceVector m_videodevice;
-	VideoDeviceModelVector m_model;
+	VideoDeviceVector m_videodevice; // Vector to be filled with found devices
+	VideoDeviceModelVector m_modelvector;  // Vector to be filled with unique device models
 	int fillDeviceKComboBox(KComboBox *combobox);
 	int fillInputKComboBox(KComboBox *combobox);
 	unsigned int currentDevice();

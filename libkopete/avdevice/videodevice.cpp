@@ -109,6 +109,7 @@ int VideoDevice::open()
 	}
 
 	initDevice();
+	selectInput(m_current_input);
 	kdDebug() <<  k_funcinfo << "exited successfuly" << endl;
 	return EXIT_SUCCESS;
 }
@@ -154,8 +155,6 @@ int VideoDevice::checkDevice()
 			kdDebug() <<  k_funcinfo << "checkDevice(): " << full_filename << " is a V4L2 device." << endl;
 			m_driver = VIDEODEV_DRIVER_V4L2;
 			m_model=QString::fromLocal8Bit((const char*)V4L2_capabilities.card);
-			m_name=m_model; // The name must be set in a way to distinguish between two or more cards of the same model. Watch out.
-
 
 
 // Detect maximum and minimum resolution supported by the V4L2 device
@@ -255,8 +254,7 @@ int VideoDevice::checkDevice()
 			{
 				kdDebug() <<  k_funcinfo << full_filename << " is a V4L device." << endl;
 				m_driver = VIDEODEV_DRIVER_V4L;
-				m_name=QString::fromLocal8Bit((const char*)V4L_capabilities.name);
-
+				m_model=QString::fromLocal8Bit((const char*)V4L_capabilities.name);
 				if(V4L_capabilities.type & VID_TYPE_CAPTURE)
 					m_videocapture=true;
 				if(V4L_capabilities.type & VID_TYPE_CHROMAKEY)
@@ -304,6 +302,7 @@ int VideoDevice::checkDevice()
 			}
 		}
 #endif
+		m_name=m_model; // Take care about changing the name to be different from the model itself...
 		kdDebug() <<  k_funcinfo << "checkDevice(): " << "Supported pixel formats:" << endl;
 		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_GREY))
 			kdDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_GREY) << endl;
@@ -373,7 +372,8 @@ int VideoDevice::showDeviceCapabilities()
 		if(V4L2_capabilities.capabilities & V4L2_CAP_AUDIO)
 			kdDebug() << "libkopete (avdevice):     Audio IO" << endl;
 ;*/
-		kdDebug() <<  k_funcinfo << "Card: " << m_name << endl;
+		kdDebug() <<  k_funcinfo << "Card model: " << m_model << endl;
+		kdDebug() <<  k_funcinfo << "Card name : " << m_name << endl;
 		kdDebug() <<  k_funcinfo << "Capabilities:" << endl;
 		if(canCapture())
 			kdDebug() <<  k_funcinfo << "    Video capture" << endl;
@@ -749,6 +749,10 @@ int VideoDevice::currentInput()
 int VideoDevice::selectInput(int newinput)
 {
     /// @todo implement me
+	if(m_current_input >= inputs())
+		return EXIT_FAILURE;
+
+	m_current_input = newinput;
 	if(isOpen())
 	{
 		switch (m_driver)
@@ -779,9 +783,8 @@ int VideoDevice::selectInput(int newinput)
 				break;
 		}
 		kdDebug() <<  k_funcinfo << "Selected input " << newinput << " (" << m_input[newinput].name << ")" << endl;
-		return EXIT_SUCCESS;
 	}
-	return EXIT_FAILURE;
+	return EXIT_SUCCESS;
 }
 
 /*!
