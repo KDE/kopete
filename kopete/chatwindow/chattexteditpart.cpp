@@ -25,7 +25,7 @@
 #include <kcompletion.h>
 #include <kdebug.h>
 #include <ktextedit.h>
-#include <ksyntaxhighlighter.h>
+//#include <ksyntaxhighlighter.h>
 
 #include <qtimer.h>
 #include <qregexp.h>
