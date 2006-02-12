@@ -43,7 +43,7 @@
 #include <kglobalsettings.h>
 #include <kgenericfactory.h>
 #include <khtmlview.h>
-#include <ksyntaxhighlighter.h>
+//#include <ksyntaxhighlighter.h>
 
 
 #include <qtimer.h>
