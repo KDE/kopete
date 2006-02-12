@@ -1,5 +1,5 @@
 METASOURCES = AUTO
-SUBDIRS =
+SUBDIRS = libpapillon
 AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes)
 
 kde_module_LTLIBRARIES = kopete_messenger.la
