@@ -61,7 +61,7 @@ SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Accoun
 		sName = account->configGroup()->readEntry("ServiceName", QString::null);
 		preferencesDialog->subEnable->setChecked(account->configGroup()->readBoolEntry("SubEnable", false));
 		preferencesDialog->subCode->setText(account->configGroup()->readEntry("SubCode", QString::null));
-		preferencesDialog->ifMessageTooLong->setCurrentItem(SMSMsgAction(account->configGroup()->readNumEntry("MsgAction", 0)));
+		preferencesDialog->ifMessageTooLong->setCurrentItem(SMSMsgAction(account->configGroup()->readEntry("MsgAction", 0)));
 	}
 
 	preferencesDialog->serviceName->insertStringList(ServiceLoader::services());

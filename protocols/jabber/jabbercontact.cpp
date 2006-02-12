@@ -1361,7 +1361,7 @@ void JabberContact::sendPresence ( const XMPP::Status status )
 	XMPP::Status newStatus = status;
 
 	// honour our priority
-	newStatus.setPriority ( account()->configGroup()->readNumEntry ( "Priority", 5 ) );
+	newStatus.setPriority ( account()->configGroup()->readEntry ( "Priority", 5 ) );
 
 	XMPP::JT_Presence * task = new XMPP::JT_Presence ( account()->client()->rootTask () );
 

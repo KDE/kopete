@@ -77,10 +77,10 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 
 		KConfigGroup *config = account()->configGroup();
 
-		serverNotices->setCurrentItem( config->readNumEntry( "ServerNotices", IRCAccount::ServerWindow ) - 1 );
-		serverMessages->setCurrentItem( config->readNumEntry( "ServerMessages", IRCAccount::ServerWindow ) - 1 );
-		informationReplies->setCurrentItem( config->readNumEntry( "InformationReplies", IRCAccount::ActiveWindow ) - 1 );
-		errorMessages->setCurrentItem( config->readNumEntry( "ErrorMessages", IRCAccount::ActiveWindow ) - 1 );
+		serverNotices->setCurrentItem( config->readEntry( "ServerNotices", IRCAccount::ServerWindow ) - 1 );
+		serverMessages->setCurrentItem( config->readEntry( "ServerMessages", IRCAccount::ServerWindow ) - 1 );
+		informationReplies->setCurrentItem( config->readEntry( "InformationReplies", IRCAccount::ActiveWindow ) - 1 );
+		errorMessages->setCurrentItem( config->readEntry( "ErrorMessages", IRCAccount::ActiveWindow ) - 1 );
 
 		QStringList cmds = account()->connectCommands();
 		for( QStringList::Iterator i = cmds.begin(); i != cmds.end(); ++i )

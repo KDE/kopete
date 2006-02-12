@@ -122,12 +122,12 @@ KActionMenu* GroupWiseAccount::actionMenu()
 
 const int GroupWiseAccount::port() const
 {
-	return configGroup()->readNumEntry( "Port" );
+	return configGroup()->readEntry( "Port", 0 );
 }
 
 const QString GroupWiseAccount::server() const
 {
-	return configGroup()->readEntry( "Server" );
+	return configGroup()->readEntry( "Server", 0 );
 }
 
 Client * GroupWiseAccount::client() const
@@ -384,9 +384,9 @@ void GroupWiseAccount::setOnlineStatus( const Kopete::OnlineStatus& status, cons
 		// Appear Offline is achieved by explicitly setting the status to offline, 
 		// rather than disconnecting as when really going offline.
 		if ( status == protocol()->groupwiseAppearOffline )
-			m_client->setStatus( GroupWise::Offline, reason, configGroup()->readEntry( "AutoReply" ) );
+			m_client->setStatus( GroupWise::Offline, reason, configGroup()->readEntry( "AutoReply",0 ) );
 		else
-			m_client->setStatus( ( GroupWise::Status )status.internalStatus(), reason, configGroup()->readEntry( "AutoReply" ) );
+			m_client->setStatus( ( GroupWise::Status )status.internalStatus(), reason, configGroup()->readEntry( "AutoReply",0 ) );
 	}
 	// going online
 	else
@@ -464,7 +464,7 @@ void GroupWiseAccount::slotLoggedIn()
 	
 	myself()->setOnlineStatus( protocol()->groupwiseAvailable );
 	if ( initialStatus() != Kopete::OnlineStatus(Kopete::OnlineStatus::Online) )
-		m_client->setStatus( ( GroupWise::Status )initialStatus().internalStatus(), m_initialReason, configGroup()->readEntry( "AutoReply" ) );
+		m_client->setStatus( ( GroupWise::Status )initialStatus().internalStatus(), m_initialReason, configGroup()->readEntry( "AutoReply",0 ) );
 	kDebug( GROUPWISE_DEBUG_GLOBAL ) << "initial status was " << initialStatus().description() << ", initial reason was " << m_initialReason << endl;
 }
 
@@ -1231,7 +1231,7 @@ void GroupWiseAccount::receiveInvitation( const ConferenceEvent & event )
 	GroupWiseContact * contactFrom = contactForDN( event.user );
 	if ( !contactFrom )
 		contactFrom = createTemporaryContact( event.user );
-	if ( configGroup()->readEntry( "AlwaysAcceptInvitations" ) == "true" )
+	if ( configGroup()->readEntry( "AlwaysAcceptInvitations",false ) == "true" )
 	{
 		client()->joinConference( event.guid );
 	}
@@ -1351,7 +1351,7 @@ void GroupWiseAccount::slotSetAutoReply()
 	QRegExp rx( ".*" );
     QRegExpValidator validator( rx, this );
 	QString newAutoReply = KInputDialog::getText( i18n( "Enter Auto-Reply Message" ),
-			 i18n( "Please enter an Auto-Reply message that will be shown to users who message you while Away or Busy" ), configGroup()->readEntry( "AutoReply" ),
+			 i18n( "Please enter an Auto-Reply message that will be shown to users who message you while Away or Busy" ), configGroup()->readEntry( "AutoReply",0 ),
 			 &ok, Kopete::UI::Global::mainWidget(), "autoreplymessagedlg", &validator );
 	if ( ok )
 		configGroup()->writeEntry( "AutoReply", newAutoReply );

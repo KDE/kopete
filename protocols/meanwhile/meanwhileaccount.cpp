@@ -108,7 +108,7 @@ void MeanwhileAccount::connectWithPassword(const QString &password)
 
     if (!m_session->isConnected() && !m_session->isConnecting())
         m_session->connect(configGroup()->readEntry("Server"),
-                configGroup()->readNumEntry("Port"),
+                configGroup()->readEntry("Port"),
                 m_meanwhileId, password);
 
     m_session->setStatus(initialStatus());
@@ -155,7 +155,7 @@ QString MeanwhileAccount::getServerName()
 
 int MeanwhileAccount::getServerPort()
 {
-    return configGroup()->readNumEntry("Port");
+    return configGroup()->readEntry("Port");
 }
 
 void MeanwhileAccount::setServerName(const QString &server)

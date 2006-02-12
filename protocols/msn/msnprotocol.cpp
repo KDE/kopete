@@ -175,7 +175,7 @@ void MSNProtocol::slotSyncContactList()
 	QString tmpUin;
 	tmpUin.sprintf("%d",uin);
 	tmp.append(tmpUin);
-	cnt=contactsFile->readNumEntry("Count",0);
+	cnt=contactsFile->readEntry("Count",0);
 */
 }
 

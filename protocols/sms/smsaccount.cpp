@@ -65,7 +65,7 @@ void SMSAccount::loadConfig()
 {
 	theSubEnable = configGroup()->readBoolEntry("SubEnable", false);
 	theSubCode = configGroup()->readEntry("SubCode", QString::null);
-	theLongMsgAction = (SMSMsgAction)configGroup()->readNumEntry("MsgAction", 0);
+	theLongMsgAction = (SMSMsgAction)configGroup()->readEntry("MsgAction", 0);
 }
 
 void SMSAccount::translateNumber(QString &theNumber)

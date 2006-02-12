@@ -559,7 +559,7 @@ void AIMAccount::loginActions()
 	OscarAccount::loginActions();
 
 	using namespace AIM::PrivacySettings;
-	int privacySetting = this->configGroup()->readNumEntry( "PrivacySetting", AllowAll );
+	int privacySetting = this->configGroup()->readEntry( "PrivacySetting", int(AllowAll) );
 	this->setPrivacySettings( privacySetting );
 }
 

@@ -54,7 +54,7 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 
 		using namespace AIM::PrivacySettings;
 
-		int privacySetting = mAccount->configGroup()->readNumEntry( "PrivacySetting", AllowAll );
+		int privacySetting = mAccount->configGroup()->readEntry( "PrivacySetting", int(AllowAll) );
 		switch( privacySetting )
 		{
 			case AllowAll:

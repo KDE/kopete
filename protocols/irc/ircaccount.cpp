@@ -129,12 +129,12 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 		mNickName = config->readEntry(CONFIG_NICKNAME);
 
 	QString codecMib = config->readEntry(CONFIG_CODECMIB);
-	//	int codecMib = config->readNumEntry(CONFIG_CODECMIB, UTF-8);
+	//	int codecMib = config->readEntry(CONFIG_CODECMIB, UTF-8);
 
-	m_serverNotices = (MessageDestination)config->readNumEntry( "ServerNotices", ServerWindow );
-	m_serverMessages = (MessageDestination)config->readNumEntry( "ServerMessages", ServerWindow );
-	m_informationReplies = (MessageDestination)config->readNumEntry( "InformationReplies", ActiveWindow );
-	m_errorMessages = (MessageDestination)config->readNumEntry( "ErrorMessages", ActiveWindow );
+	m_serverNotices = (MessageDestination)config->readEntry( "ServerNotices", ServerWindow );
+	m_serverMessages = (MessageDestination)config->readEntry( "ServerMessages", ServerWindow );
+	m_informationReplies = (MessageDestination)config->readEntry( "InformationReplies", ActiveWindow );
+	m_errorMessages = (MessageDestination)config->readEntry( "ErrorMessages", ActiveWindow );
 	autoShowServerWindow = config->readBoolEntry( "AutoShowServerWindow", false );
 
 	if( !codecMib.isEmpty() )

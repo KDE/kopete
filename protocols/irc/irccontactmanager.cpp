@@ -73,7 +73,7 @@ IRCContactManager::IRCContactManager(const QString &nickName, IRCAccount *accoun
 	if( !timeoutPath.isEmpty() )
 	{
 		KConfig config( timeoutPath );
-		socketTimeout = config.readNumEntry( "ReadTimeout", 15 ) * 1000;
+		socketTimeout = config.readEntry( "ReadTimeout", 15 ) * 1000;
 	}
 
 	m_NotifyTimer = new QTimer(this);

@@ -364,7 +364,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	// enable file transfer (if empty, IP will be set after connection has been established)
 	KGlobal::config()->setGroup ( "Jabber" );
 	m_jabberClient->setFileTransfersEnabled ( true, KGlobal::config()->readEntry ( "LocalIP" ) );
-	setS5BServerPort ( KGlobal::config()->readNumEntry ( "LocalPort", 8010 ) );
+	setS5BServerPort ( KGlobal::config()->readEntry ( "LocalPort", 8010 ) );
 
 	//
 	// Determine system name
@@ -1021,7 +1021,7 @@ void JabberAccount::setPresence ( const XMPP::Status &status )
 	}
 
 	// make sure the status gets the correct priority
-	newStatus.setPriority ( configGroup()->readNumEntry ( "Priority", 5 ) );
+	newStatus.setPriority ( configGroup()->readEntry ( "Priority", 5 ) );
 
 	XMPP::Jid jid ( myself()->contactId () );
 	XMPP::Resource newResource ( resource (), newStatus );
@@ -1613,7 +1613,7 @@ const QString JabberAccount::server () const
 const int JabberAccount::port () const
 {
 
-	return configGroup()->readNumEntry ( "Port", 5222 );
+	return configGroup()->readEntry ( "Port", 5222 );
 
 }
 

@@ -61,7 +61,7 @@ GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, Kopete:
 		KConfig *config = KGlobal::config();
 		config->setGroup("GroupWise Messenger");
 		m_preferencesDialog->m_server->setText( config->readEntry( "DefaultServer" ) );
-		m_preferencesDialog->m_port->setValue( config->readNumEntry( "DefaultPort", 8300 ) );
+		m_preferencesDialog->m_port->setValue( config->readEntry( "DefaultPort", 8300 ) );
 	}
 	QWidget::setTabOrder( m_preferencesDialog->m_userId, m_preferencesDialog->m_password->mRemembered );
 	QWidget::setTabOrder( m_preferencesDialog->m_password->mRemembered, m_preferencesDialog->m_password->mPassword );
@@ -89,7 +89,7 @@ void GroupWiseEditAccountWidget::reOpen()
 	m_preferencesDialog->m_userId->setText( account()->accountId() );
 	m_preferencesDialog->m_password->load( &account()->password() );
 	m_preferencesDialog->m_server->setText( account()->configGroup()->readEntry( "Server") );
-	m_preferencesDialog->m_port->setValue( account()->configGroup()->readNumEntry( "Port" ) );
+	m_preferencesDialog->m_port->setValue( account()->configGroup()->readEntry( "Port" ) );
 	m_preferencesDialog->m_autoConnect->setChecked( account()->excludeConnect() );
 	m_preferencesDialog->m_alwaysAccept->setChecked( account()->configGroup()->readBoolEntry( "AlwaysAcceptInvitations" ) );
 }
