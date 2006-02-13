@@ -55,7 +55,7 @@ void YABEntry::fromQDomElement( const QDomElement &e )
 	additional2 = e.attribute("c2");
 	additional3 = e.attribute("c3");
 	additional4 = e.attribute("c4");
-	notes = e.attribute("cm");
+	notes = e.attribute("cm").replace( "&#xd;&#xa;", "\n" );
 	imAIM = e.attribute("ima");
 	imGoogleTalk = e.attribute("img");
 	imICQ = e.attribute("imq");
@@ -102,7 +102,7 @@ void YABEntry::fillQDomElement( QDomElement &e ) const
 	e.setAttribute( "c2", additional2 );
 	e.setAttribute( "c3", additional3 );
 	e.setAttribute( "c4", additional4 );
-	e.setAttribute( "cm", notes );
+	e.setAttribute( "cm", QString( notes ).replace( "\n", "&#xd;&#xa;" ) );
 	e.setAttribute( "ima", imAIM );
 	e.setAttribute( "img", imGoogleTalk );
 	e.setAttribute( "imq", imICQ );
