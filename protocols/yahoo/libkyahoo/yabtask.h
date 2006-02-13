@@ -46,6 +46,8 @@ public:
 signals:
 	void gotEntry( YABEntry * );
 	void gotRevision( long rev, bool merged );
+protected:
+	void parseContactDetails( Transfer* transfer );
 private slots:
 	void slotData( KIO::Job*, const QByteArray & );
 	void slotResult( KIO::Job* );

@@ -44,8 +44,9 @@ bool YABTask::take( Transfer* transfer )
 
 	YMSGTransfer *t = 0L;
 	t = dynamic_cast<YMSGTransfer*>(transfer);
-	if (!t)
-		return false;
+	
+	if( t->service() == Yahoo::ServiceContactDetails )
+		parseContactDetails( t );
 	
 	return true;
 }
@@ -59,11 +60,43 @@ bool YABTask::forMe( Transfer* transfer ) const
 	if (!t)
 		return false;
 
-	if ( 0 )	
+	if ( t->service() == Yahoo::ServiceContactDetails )	
 		return true;
 	else
 		return false;
 }
+
+void YABTask::parseContactDetails( Transfer* transfer )
+{
+	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	YMSGTransfer *t = 0L;
+	t = dynamic_cast<YMSGTransfer*>(transfer);
+	if (!t)
+		return;
+
+	QString from;		/* key = 7  */
+	int count;
+
+	from = t->firstParam( 4 );
+	count = t->paramCount( 5 );
+	
+	for( int i = 0; i < count; i++ )
+	{
+		QString who = t->nthParam( 5, i );
+		QString s = t->nthParamSeparated( 280, i, 5 );
+		if( s.isEmpty() )
+			continue;
+
+		QDomDocument doc;
+		doc.setContent( s );
+		YABEntry *entry = new YABEntry;
+		entry->fromQDomDocument( doc );
+		entry->source = YABEntry::SourceContact;
+		entry->dump();
+		emit gotEntry( entry );
+	}
+}
+
 
 void YABTask::getAllEntries( long lastMerge, long lastRemoteRevision )
 {
@@ -122,6 +155,7 @@ void YABTask::slotResult( KIO::Job* job )
 			
 			YABEntry *entry = new YABEntry;
 			entry->fromQDomElement( e );
+			entry->source = YABEntry::SourceYAB;
 			emit gotEntry( entry );
 		}
 	}

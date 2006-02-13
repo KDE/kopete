@@ -434,10 +434,10 @@ void YahooContact::slotUserInfo()
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	if( !m_YABEntry )
 	{
-		readYABEntry();		// No YABEntry was set, so read the one from contactlist.xml
+		readYABEntry();	// No YABEntry was set, so read the one from contactlist.xml
 	}
 	
-	YahooUserInfoDialog *dlg = new YahooUserInfoDialog( Kopete::UI::Global::mainWidget(), "yahoo userinfo" );
+	YahooUserInfoDialog *dlg = new YahooUserInfoDialog( this, Kopete::UI::Global::mainWidget(), "yahoo userinfo" );
 	dlg->setData( *m_YABEntry );
 	dlg->show();
 	QObject::connect( dlg, SIGNAL(saveYABEntry( YABEntry & )), m_account, SLOT(slotSaveYABEntry( YABEntry & )));
@@ -534,6 +534,12 @@ void YahooContact::setYABEntry( YABEntry *entry, bool show )
 	
 	if( show )
 		slotUserInfo();
+}
+const YABEntry *YahooContact::yabEntry()
+{
+	if( m_YABEntry )
+		readYABEntry();
+	return m_YABEntry;
 }
 
 void YahooContact::slotEmitDisplayPictureChanged()

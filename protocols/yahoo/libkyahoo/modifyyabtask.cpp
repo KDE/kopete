@@ -158,6 +158,7 @@ void ModifyYABTask::slotRead()
 		
 		YABEntry *entry = new YABEntry;
 		entry->fromQDomElement( e );
+		entry->source = YABEntry::SourceYAB;
 
 		switch( m_action )
 		{

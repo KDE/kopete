@@ -62,6 +62,7 @@
 #include "yahooconferencemessagemanager.h"
 #include "yahooinvitelistimpl.h"
 #include "yabentry.h"
+#include "yahoouserinfodialog.h"
 
 YahooAwayDialog::YahooAwayDialog(YahooAccount* account, QWidget *parent, const char *name) :
 	KopeteAwayDialog(parent, name)
@@ -1249,7 +1250,8 @@ void YahooAccount::slotGotYABRevision( long rev, bool merged )
 
 void YahooAccount::slotGotYABEntry( YABEntry *entry )
 {
-	if( !contact( entry->yahooId ) )
+	YahooContact* kc = contact( entry->yahooId );
+	if( !kc )
 	{
 		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "YAB entry received for a contact not on our buddylist: " << entry->yahooId << endl;
 		delete entry;
@@ -1257,8 +1259,18 @@ void YahooAccount::slotGotYABEntry( YABEntry *entry )
 	else
 	{
 		kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "YAB entry received for: " << entry->yahooId << endl;
-		YahooContact* kc = contact( entry->yahooId );
-		kc->setYABEntry( entry );
+		if( entry->source == YABEntry::SourceYAB )
+		{
+			kc->setYABEntry( entry );
+		}
+		else if( entry->source == YABEntry::SourceContact )
+		{
+			entry->YABId = kc->yabEntry()->YABId;
+			YahooUserInfoDialog *dlg = new YahooUserInfoDialog( kc, Kopete::UI::Global::mainWidget(), "yahoo userinfo" );
+			dlg->setData( *entry );
+			dlg->show();
+			QObject::connect( dlg, SIGNAL(saveYABEntry( YABEntry & )), this, SLOT(slotSaveYABEntry( YABEntry & )));
+		}
 	}
 }
 

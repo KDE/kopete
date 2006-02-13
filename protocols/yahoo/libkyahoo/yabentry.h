@@ -22,6 +22,8 @@
 
 struct YABEntry
 {
+	enum Source { SourceYAB, SourceContact };
+
 	// Personal
 	QString		firstName;
 	QString		secondName;
@@ -34,6 +36,7 @@ struct YABEntry
 	QString		email;
 	QString		yahooId;
 	int		YABId;
+	Source		source;
 
 	// Additional Information
 	QString		pager;
@@ -79,6 +82,7 @@ struct YABEntry
 
 	
 	void fromQDomElement( const QDomElement &e );
+	void fromQDomDocument( const QDomDocument &e );
 	void fillQDomElement( QDomElement &e ) const;
 
 	void dump() const;

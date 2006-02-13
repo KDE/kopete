@@ -65,6 +65,56 @@ void YABEntry::fromQDomElement( const QDomElement &e )
 	imSkype = e.attribute("imk");
 }
 
+void YABEntry::fromQDomDocument( const QDomDocument &d )
+{
+	kdDebug() << d.toString() << 
+		d.elementsByTagName("yi").item(0).toElement().text();
+	yahooId = d.elementsByTagName("yi").item(0).toElement().text();
+	firstName = d.elementsByTagName("fn").item(0).toElement().text();
+	secondName = d.elementsByTagName("mn").item(0).toElement().text();
+	lastName = d.elementsByTagName("ln").item(0).toElement().text();
+	nickName = d.elementsByTagName("nn").item(0).toElement().text();
+	email = d.elementsByTagName("e0").item(0).toElement().text();
+	privatePhone = d.elementsByTagName("hp").item(0).toElement().text();
+	workPhone = d.elementsByTagName("wp").item(0).toElement().text();
+	pager = d.elementsByTagName("pa").item(0).toElement().text();
+	fax = d.elementsByTagName("fa").item(0).toElement().text();
+	phoneMobile = d.elementsByTagName("mo").item(0).toElement().text();
+	additionalNumber = d.elementsByTagName("ot").item(0).toElement().text();
+	altEmail1 = d.elementsByTagName("e1").item(0).toElement().text();
+	altEmail2 = d.elementsByTagName("e2").item(0).toElement().text();
+	privateURL = d.elementsByTagName("pu").item(0).toElement().text();
+	title = d.elementsByTagName("ti").item(0).toElement().text();
+	corporation = d.elementsByTagName("co").item(0).toElement().text();
+	workAdress = d.elementsByTagName("wa").item(0).toElement().text().replace( "&#xd;&#xa;", "\n" );
+	workCity = d.elementsByTagName("wc").item(0).toElement().text();
+	workState = d.elementsByTagName("ws").item(0).toElement().text();
+	workZIP = d.elementsByTagName("wz").item(0).toElement().text();
+	workCountry = d.elementsByTagName("wn").item(0).toElement().text();
+	workURL = d.elementsByTagName("wu").item(0).toElement().text();
+	privateAdress = d.elementsByTagName("ha").item(0).toElement().text().replace( "&#xd;&#xa;", "\n" );
+	privateCity = d.elementsByTagName("hc").item(0).toElement().text();
+	privateState = d.elementsByTagName("hs").item(0).toElement().text();
+	privateZIP = d.elementsByTagName("hz").item(0).toElement().text();
+	privateCountry = d.elementsByTagName("hn").item(0).toElement().text();
+	QString birtday = d.elementsByTagName("bi").item(0).toElement().text();
+	birthday = QDate( birtday.section("/",2,2).toInt(), birtday.section("/",1,1).toInt(), birtday.section("/",0,0).toInt() );
+	QString an = d.elementsByTagName("an").item(0).toElement().text();
+	anniversary = QDate( an.section("/",2,2).toInt(), an.section("/",1,1).toInt(), an.section("/",0,0).toInt() );
+	additional1 = d.elementsByTagName("c1").item(0).toElement().text();
+	additional2 = d.elementsByTagName("c2").item(0).toElement().text();
+	additional3 = d.elementsByTagName("c3").item(0).toElement().text();
+	additional4 = d.elementsByTagName("c4").item(0).toElement().text();
+	notes = d.elementsByTagName("cm").item(0).toElement().text().replace( "&#xd;&#xa;", "\n" );
+	imAIM = d.elementsByTagName("ima").item(0).toElement().text();
+	imGoogleTalk = d.elementsByTagName("img").item(0).toElement().text();
+	imICQ = d.elementsByTagName("imq").item(0).toElement().text();
+	imIRC = d.elementsByTagName("imc").item(0).toElement().text();
+	imMSN = d.elementsByTagName("imm").item(0).toElement().text();
+	imQQ = d.elementsByTagName("imqq").item(0).toElement().text();
+	imSkype = d.elementsByTagName("imk").item(0).toElement().text();
+}
+
 void YABEntry::fillQDomElement( QDomElement &e ) const
 {
 	e.setAttribute( "yi", yahooId );

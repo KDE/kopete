@@ -68,6 +68,8 @@ public:
 	void receivedWebcamImage( const QPixmap& );
 	void webcamClosed( int );
 	void webcamPaused();
+	
+	const YABEntry *yabEntry();
 
 	static const QString &prepareMessage( QString messageText );
 
