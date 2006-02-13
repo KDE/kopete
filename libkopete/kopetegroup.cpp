@@ -89,19 +89,14 @@ Group::~Group()
 
 QList<MetaContact *> Group::members() const
 {
-	QList<MetaContact *> members = ContactList::self()->metaContacts();
-	// members is a *copy* of the meta contacts, so using first(), next() and remove() is fine.
-	
-	QList<MetaContact *>::iterator it=members.begin();
-	while ( it!=members.end() )
+	QList<MetaContact *> groupMembers;
+	foreach(MetaContact *mc, ContactList::self()->metaContacts())
 	{
-		// FIXME not sure
-		if ( !(*it)->groups().contains( const_cast<Group*>(this) ) )
-			it=members.erase(it);
-		else
-			++it;
+		if( mc->groups().contains( const_cast<Group*>(this) ) )
+			groupMembers.append(mc);
 	}
-	return members;
+
+	return groupMembers;
 }
 
 const QDomElement Group::toXML()
