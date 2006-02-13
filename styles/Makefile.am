@@ -1,4 +1,4 @@
-SUBDIRS = . data Kopete Hacker Clean Clear Konqi
+SUBDIRS = . data Kopete Hacker Clean Clear Konqi Retropete
 
 styles_DATA = \
 	Adium.xsl \
