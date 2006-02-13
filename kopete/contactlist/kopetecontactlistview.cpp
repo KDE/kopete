@@ -88,6 +88,8 @@ class KopeteContactListViewPrivate
 {
 public:
 	std::auto_ptr<ContactListViewStrategy> viewStrategy;
+	// HACK: Used to update the KMEnu title - DarkShock
+	QMap<KMenu*, QAction*> menuTitleMap;
 
 	void updateViewStrategy( KListView *view );
 };
@@ -702,10 +704,15 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 				if ( title.length() > 43 )
 					title = title.left( 40 ) + QString::fromLatin1( "..." );
 
-// 				if ( popup->title().isNull() )
-					popup->addTitle ( title );
-// 				else
-// 					popup->changeTitle ( 0, title );
+				// HACK: Used to update the KMenu title -DarkShock
+				if( !d->menuTitleMap.contains(popup) )
+				{
+					d->menuTitleMap.insert( popup, popup->addTitle(title, popup->actions().first()) );
+				}
+				else
+				{
+					d->menuTitleMap[popup]->setText( title );
+				}
 
 				// Submenus for separate contact actions
 				bool sep = false;  //FIXME: find if there is already a separator in the end - Olivier
@@ -743,10 +750,15 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 			if ( title.length() > 32 )
 				title = title.left( 30 ) + QString::fromLatin1( "..." );
 
-// 			if( popup->title().isNull() )
-				popup->addTitle( title );
-// 			else
-// 				popup->changeTitle( 0, title );
+			// HACK: Used to update the KMenu title -DarkShock
+ 			if( !d->menuTitleMap.contains(popup) )
+			{
+				d->menuTitleMap.insert( popup, popup->addTitle(title, popup->actions().first()) );
+			}
+			else
+			{
+				d->menuTitleMap[popup]->setText( title );
+			}
 
 
 			popup->popup( point );
@@ -765,9 +777,16 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 			window->factory()->container( "contactlist_popup", window ) );
 		if ( popup )
 		{
-			kDebug() << k_funcinfo << "???????" << popup << endl;
-			if ( popup->title().isNull() )
-				popup->addTitle( i18n( "Kopete" ) );
+			// HACK: Used to update the KMenu title -DarkShock
+			if( !d->menuTitleMap.contains(popup) )
+			{
+				d->menuTitleMap.insert( popup, popup->addTitle(i18n( "Kopete" ), popup->actions().first()) );
+			}
+			else
+			{
+				d->menuTitleMap[popup]->setText( i18n( "Kopete" ) );
+			}
+
 			popup->popup( point );
 		}
 	}

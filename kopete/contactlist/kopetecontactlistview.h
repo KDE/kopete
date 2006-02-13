@@ -188,7 +188,6 @@ private:
 	Q3PtrList<KopeteGroupViewItem> m_selectedGroups;
 
 	bool mSortByGroup;
-	KRootPixmap *root;
 
 	QRect m_onItem;
 
