@@ -47,8 +47,8 @@ public:
 	 * @brief Build a single chat window style.
 	 * 
 	 */
-	ChatWindowStyle(const QString &stylePath, int styleBuildMode = StyleBuildNormal);
-	ChatWindowStyle(const QString &stylePath, const QString &variantPath, int styleBuildMode = StyleBuildFast);
+	ChatWindowStyle(const QString &stylePath, StyleBuildMode styleBuildMode = StyleBuildNormal);
+	ChatWindowStyle(const QString &stylePath, const QString &variantPath, StyleBuildMode styleBuildMode = StyleBuildFast);
 	~ChatWindowStyle();
 
 	/**
@@ -113,7 +113,7 @@ private:
 	/**
 	 * Init this class
 	 */
-	void init(const QString &stylePath, int styleBuildMode);
+	void init(const QString &stylePath, StyleBuildMode styleBuildMode);
 
 	/**
 	 * List available variants for the current style.

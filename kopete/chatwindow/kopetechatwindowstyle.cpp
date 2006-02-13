@@ -46,20 +46,20 @@ public:
 	QString actionOutgoingHtml;
 };
 
-ChatWindowStyle::ChatWindowStyle(const QString &stylePath, int styleBuildMode)
+ChatWindowStyle::ChatWindowStyle(const QString &stylePath, StyleBuildMode styleBuildMode)
 	: d(new Private)
 {
 	init(stylePath, styleBuildMode);
 }
 
-ChatWindowStyle::ChatWindowStyle(const QString &stylePath, const QString &variantPath, int styleBuildMode)
+ChatWindowStyle::ChatWindowStyle(const QString &stylePath, const QString &variantPath, StyleBuildMode styleBuildMode)
 	: d(new Private)
 {
 	d->currentVariantPath = variantPath;
 	init(stylePath, styleBuildMode);
 }
 
-void ChatWindowStyle::init(const QString &stylePath, int styleBuildMode)
+void ChatWindowStyle::init(const QString &stylePath, StyleBuildMode styleBuildMode)
 {
 	d->stylePath = stylePath;
 	d->baseHref = stylePath + QString::fromUtf8("/Contents/Resources/");
