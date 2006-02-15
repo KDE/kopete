@@ -269,6 +269,27 @@ struct ChatRoomInfo
 	const WORD ROSTER_NONICQ        = 0x0010; // a non-icq contact, no UIN, used to send SMS
 	const WORD ROSTER_IMPORTTIME    = 0x0013; // roster import time (name: "Import time")
 	const WORD ROSTER_BUDDYICONS    = 0x0014; // Buddy icon info. (names: from "0" and incrementing by one)
+
+    /* User classes/statuses */
+    const WORD CLASS_UNCONFIRMED    = 0x0001; // AOL Unconfirmed user
+    const WORD CLASS_ADMINISTRATOR  = 0x0002; // AOL Administrator
+    const WORD CLASS_AOL            = 0x0004; // AOL Staff
+    const WORD CLASS_COMMERCIAL     = 0x0008; // AOL commercial account
+    const WORD CLASS_FREE           = 0x0010; // ICQ non-commerical account
+    const WORD CLASS_AWAY           = 0x0020; // Away status
+    const WORD CLASS_ICQ            = 0x0040; // ICQ user
+    const WORD CLASS_WIRELESS       = 0x0080; // AOL wireless user
+    const WORD CLASS_UNKNOWN100     = 0x0100; // Unknown
+    const WORD CLASS_UNKNOWN400     = 0x0400; // Unknown
+    const WORD CLASS_UNKNOWN800     = 0x0800; // Unknown
+
+    const WORD STATUS_ONLINE        = 0x0000; // Online
+    const WORD STATUS_AWAY          = 0x0001; // Away
+    const WORD STATUS_DND           = 0x0002; // Do not Disturb
+    const WORD STATUS_NA            = 0x0004; // Not Available
+    const WORD STATUS_OCCUPIED      = 0x0010; // Occupied (BUSY/BISY)
+    const WORD STATUS_FREE4CHAT     = 0x0020; // Free for chat
+    const WORD STATUS_INVISIBLE     = 0x0100; // Invisible
 }
 
 #endif
