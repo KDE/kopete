@@ -38,6 +38,9 @@ Libkopete changes
 *) KopeteAwayDialog
    - removed. KopeteAwayAction should be used instead.
 
+*) Kopete::OnlineStatusManager
+	- HasAwayMessage enum value was renamed to HasStatusMessage.
+
 -kopetemessagemanager.h and kopetemessagemanagerfactory.h has been removed. Use kopetechatsession.h and kopetechatsessionmanager.h
 
 *) Configuration/Settings classes changes. 

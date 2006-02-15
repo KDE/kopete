@@ -224,7 +224,7 @@ AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
 	statusOnline( Kopete::OnlineStatus::Online, 1, this, 0, QStringList(), i18n("Online"), i18n("Online"), Kopete::OnlineStatusManager::Online ),
 	statusOffline( Kopete::OnlineStatus::Offline, 1, this, 10, QStringList(), i18n("Offline"), i18n("Offline"), Kopete::OnlineStatusManager::Offline ),
 	statusAway( Kopete::OnlineStatus::Away, 1, this, 20, QStringList(QString("contact_away_overlay")), i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away,
-							Kopete::OnlineStatusManager::HasAwayMessage ),
+							Kopete::OnlineStatusManager::HasStatusMessage ),
 	statusConnecting(Kopete::OnlineStatus::Connecting, 99, this, 99, QStringList(QString("aim_connecting")), i18n("Connecting...")),
 	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
 	clientFeatures("clientFeatures", i18n("Client Features"), 0),

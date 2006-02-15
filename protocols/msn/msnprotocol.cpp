@@ -49,25 +49,25 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 
 	NLN( Kopete::OnlineStatus::Online, 25, this, 1, QStringList(QString::null),
 			i18n( "Online" ), i18n( "O&nline" ), Kopete::OnlineStatusManager::Online, 
-			Kopete::OnlineStatusManager::HasAwayMessage ),
+			Kopete::OnlineStatusManager::HasStatusMessage ),
 	
 	BSY( Kopete::OnlineStatus::Away, 20, this, 2, QStringList(QString::fromLatin1("msn_busy")),
 			i18n( "Busy" ), i18n( "&Busy" ), Kopete::OnlineStatusManager::Busy,  
-			Kopete::OnlineStatusManager::HasAwayMessage ),
+			Kopete::OnlineStatusManager::HasStatusMessage ),
 	
 	BRB( Kopete::OnlineStatus::Away, 22, this, 3, QStringList(QString::fromLatin1("msn_brb")),
 			i18n( "Be Right Back" ), i18n( "Be &Right Back" ), 0,
-			Kopete::OnlineStatusManager::HasAwayMessage ),
+			Kopete::OnlineStatusManager::HasStatusMessage ),
 	
 	AWY( Kopete::OnlineStatus::Away, 18, this, 4, QStringList(QString::fromLatin1("contact_away_overlay")),
 			i18n( "Away From Computer" ), i18n( "&Away" ), Kopete::OnlineStatusManager::Away,  
-			Kopete::OnlineStatusManager::HasAwayMessage ),
+			Kopete::OnlineStatusManager::HasStatusMessage ),
 	
 	PHN( Kopete::OnlineStatus::Away, 12, this, 5, QStringList(QString::fromLatin1("contact_phone_overlay")),
-			i18n( "On the Phone" ), i18n( "On The &Phone" ), 0, Kopete::OnlineStatusManager::HasAwayMessage ),
+			i18n( "On the Phone" ), i18n( "On The &Phone" ), 0, Kopete::OnlineStatusManager::HasStatusMessage ),
 	
 	LUN( Kopete::OnlineStatus::Away, 15, this, 6, QStringList(QString::fromLatin1("contact_food_overlay")),   
-			i18n( "Out to Lunch" ), i18n( "Out To &Lunch" ), 0, Kopete::OnlineStatusManager::HasAwayMessage ),
+			i18n( "Out to Lunch" ), i18n( "Out To &Lunch" ), 0, Kopete::OnlineStatusManager::HasStatusMessage ),
 	
 	FLN( Kopete::OnlineStatus::Offline, 0, this, 7, QStringList(QString::null),
 			i18n( "Offline" ), i18n( "&Offline" ), Kopete::OnlineStatusManager::Offline,
