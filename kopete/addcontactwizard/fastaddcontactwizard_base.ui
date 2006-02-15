@@ -12,7 +12,7 @@
             <height>481</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Fast Contact Addition Wizard</string>
     </property>
     <widget class="QWidget">

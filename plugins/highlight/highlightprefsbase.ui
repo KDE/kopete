@@ -13,7 +13,7 @@
             <height>504</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>HighlighPrefsUI</string>
     </property>
     <vbox>

@@ -12,7 +12,7 @@
             <height>309</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Chat</string>
     </property>
     <vbox>

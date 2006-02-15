@@ -13,7 +13,7 @@
             <height>455</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Account Preferences - Jabber</string>
     </property>
     <property name="toolTip" stdset="0">

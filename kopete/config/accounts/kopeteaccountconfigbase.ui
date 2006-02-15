@@ -13,7 +13,7 @@
             <height>316</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Manage Accounts</string>
     </property>
     <grid>

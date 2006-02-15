@@ -12,7 +12,7 @@
             <height>493</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Account Preferences - WinPopup</string>
     </property>
     <grid>

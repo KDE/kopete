@@ -12,7 +12,7 @@
             <height>266</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Away Configuration</string>
     </property>
     <vbox>

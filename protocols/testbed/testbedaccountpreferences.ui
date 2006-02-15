@@ -12,7 +12,7 @@
             <height>372</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Account Preferences - Testbed</string>
     </property>
     <vbox>

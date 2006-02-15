@@ -15,7 +15,7 @@
     <property name="backgroundOrigin">
         <enum>WidgetOrigin</enum>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Away Dialog</string>
     </property>
     <property name="focusPolicy">

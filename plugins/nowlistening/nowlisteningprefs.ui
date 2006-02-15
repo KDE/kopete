@@ -12,7 +12,7 @@
             <height>370</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Now Listening</string>
     </property>
     <grid>

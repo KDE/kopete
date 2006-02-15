@@ -12,7 +12,7 @@
             <height>148</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>ICQ Authorization Reply</string>
     </property>
     <grid>

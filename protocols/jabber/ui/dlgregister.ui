@@ -20,7 +20,7 @@
             <verstretch>0</verstretch>
         </sizepolicy>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Register with Jabber Service</string>
     </property>
     <property name="sizeGripEnabled">

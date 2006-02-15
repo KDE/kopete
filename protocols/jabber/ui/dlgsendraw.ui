@@ -12,7 +12,7 @@
             <height>233</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Send Raw XML Packet</string>
     </property>
     <vbox>

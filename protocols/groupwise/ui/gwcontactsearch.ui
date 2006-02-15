@@ -12,7 +12,7 @@
             <height>410</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Search GroupWise Messenger</string>
     </property>
     <vbox>

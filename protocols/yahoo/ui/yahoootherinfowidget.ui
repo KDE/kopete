@@ -12,7 +12,7 @@
             <height>439</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>YahooOtherInfoWidget</string>
     </property>
     <grid>

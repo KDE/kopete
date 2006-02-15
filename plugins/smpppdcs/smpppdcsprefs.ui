@@ -13,7 +13,7 @@
             <height>225</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>SMPPPDCS Preferences</string>
     </property>
     <vbox>

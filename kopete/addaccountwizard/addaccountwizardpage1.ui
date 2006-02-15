@@ -18,7 +18,7 @@
             <height>0</height>
         </size>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Step One: Select Messaging Service</string>
     </property>
     <grid>

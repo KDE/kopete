@@ -12,7 +12,7 @@
             <height>651</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Merge with Address Book</string>
     </property>
     <grid>

@@ -12,7 +12,7 @@
             <height>404</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Account Preferences - Groupwise</string>
     </property>
     <vbox>

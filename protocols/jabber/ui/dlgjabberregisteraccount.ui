@@ -18,7 +18,7 @@
             <height>350</height>
         </size>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Register Account - Jabber</string>
     </property>
     <grid>

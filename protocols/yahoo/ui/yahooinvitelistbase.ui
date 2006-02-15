@@ -12,7 +12,7 @@
             <height>418</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Invite Friends to Conference</string>
     </property>
     <grid>

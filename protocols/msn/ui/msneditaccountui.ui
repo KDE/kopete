@@ -13,7 +13,7 @@
             <height>533</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Account Preferences - MSN</string>
     </property>
     <vbox>

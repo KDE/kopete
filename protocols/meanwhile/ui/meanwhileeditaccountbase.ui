@@ -12,7 +12,7 @@
             <height>450</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Edit Meanwhile Account</string>
     </property>
     <vbox>

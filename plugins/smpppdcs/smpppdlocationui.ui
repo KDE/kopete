@@ -12,7 +12,7 @@
             <height>167</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>SMPPPDLocation</string>
     </property>
     <vbox>

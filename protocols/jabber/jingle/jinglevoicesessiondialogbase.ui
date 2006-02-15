@@ -12,7 +12,7 @@
             <height>188</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>JabberVoiceSessionDialogBase</string>
     </property>
     <vbox>

@@ -12,7 +12,7 @@
             <height>292</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Jabber Service Management</string>
     </property>
     <property name="sizeGripEnabled">

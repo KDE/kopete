@@ -12,7 +12,7 @@
             <height>268</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Add New Alias</string>
     </property>
     <grid>

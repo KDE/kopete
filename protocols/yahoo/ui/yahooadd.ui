@@ -12,7 +12,7 @@
             <height>347</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Add Yahoo Contact</string>
     </property>
     <vbox>

@@ -12,7 +12,7 @@
             <height>468</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Network Configuration</string>
     </property>
     <grid>
