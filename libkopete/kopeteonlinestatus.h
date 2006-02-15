@@ -26,9 +26,10 @@
 #include <kdemacros.h>
 #include <ksharedptr.h>
 
-#include <qobject.h>
-//Added by qt3to4:
-#include <QPixmap>
+#include <QObject>
+#include <QFlags>
+
+#include "kopeteonlinestatusmanager.h"
 
 class QString;
 class QPixmap;
@@ -36,8 +37,8 @@ class QColor;
 
 namespace Kopete
 {
-
 	class OnlineStatusManager;
+
 	class Protocol;
 	class Account;
 	class Contact;
@@ -213,7 +214,7 @@ public:
 	 * @see Kopete::OnlineStatusManager::registerOnlineStatus for more info about the categories and options parameters
 	 */
 	OnlineStatus( StatusType status, unsigned weight, Protocol *protocol, unsigned internalStatus, const QStringList &overlayIcon,
-		const QString &description, const QString& caption,  unsigned int categories=0x0 , unsigned int options=0x0 );
+		const QString &description, const QString& caption, OnlineStatusManager::Categories categories = 0x0 , OnlineStatusManager::Options options = 0x0 );
 
 
 	/**

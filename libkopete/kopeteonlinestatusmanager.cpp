@@ -45,8 +45,8 @@ public:
 	struct RegisteredStatusStruct
 	{
 		QString caption;
-		unsigned int categories;
-		unsigned int options;
+		OnlineStatusManager::Categories categories;
+		OnlineStatusManager::Options options;
 	};
 
 	typedef QMap< OnlineStatus , RegisteredStatusStruct >  ProtocolMap ;
@@ -95,7 +95,7 @@ void OnlineStatusManager::slotIconsChanged()
 	emit iconsChanged();
 }
 
-void OnlineStatusManager::registerOnlineStatus( const OnlineStatus &status, const QString & caption, unsigned int categories, unsigned int options)
+void OnlineStatusManager::registerOnlineStatus( const OnlineStatus &status, const QString & caption, Categories categories, Options options)
 {
 	Private::RegisteredStatusStruct s;
 	s.caption=caption;
@@ -413,7 +413,7 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 		if ( !( action = static_cast<KAction*>( account->child( actionName ) ) ) )
 		{
 #warning  give a parent to actions
-			if(options & OnlineStatusManager::HasAwayMessage)
+			if(options & OnlineStatusManager::HasStatusMessage)
 			{
 				action = new AwayAction( status, caption, status.iconFor(account), 0, account,
 						SLOT( setOnlineStatus( const Kopete::OnlineStatus&, const QString& ) ),
@@ -440,15 +440,29 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 }
 
 
+class OnlineStatusAction::Private
+{
+public:
+	Private( const OnlineStatus& t_status )
+	 : status(t_status)
+	{}
+
+	OnlineStatus status;
+};
 OnlineStatusAction::OnlineStatusAction( const OnlineStatus& status, const QString &text, const QIcon &pix, QObject *parent, const char *name)
-	: KAction( text, pix, KShortcut() ,this, SLOT(slotActivated()), 0l, name) , m_status(status)
+	: KAction( text, pix, KShortcut() ,this, SLOT(slotActivated()), 0l, name) , d( new Private(status) )
 {
 	connect(parent,SIGNAL(destroyed()),this,SLOT(deleteLater()));
 }
 
+OnlineStatusAction::~OnlineStatusAction()
+{
+	delete d;
+}
+
 void OnlineStatusAction::slotActivated()
 {
-	emit activated(m_status);
+	emit activated(d->status);
 }
 
 

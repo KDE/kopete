@@ -85,7 +85,7 @@ OnlineStatus::OnlineStatus( StatusType status, unsigned weight, Protocol *protoc
 }
 
 OnlineStatus::OnlineStatus( StatusType status, unsigned weight, Protocol *protocol, unsigned internalStatus,
-   const QStringList &overlayIcons, const QString &description, const QString &caption, unsigned int categories , unsigned int options )
+   const QStringList &overlayIcons, const QString &description, const QString &caption, OnlineStatusManager::Categories categories , OnlineStatusManager::Options options )
 	 : d( new Private )
 {
 	d->status = status;

@@ -18,10 +18,9 @@
 #ifndef kopeteonlinestatusmanager_h__
 #define kopeteonlinestatusmanager_h__
 
-#include <qobject.h>
-//Added by qt3to4:
-#include <QPixmap>
-#include "kopeteonlinestatus.h"
+#include <QObject>
+#include <QFlags>
+
 #include "kaction.h"
 
 class QString;
@@ -33,6 +32,7 @@ namespace Kopete
 {
 	class OnlineStatus;
 	class Account;
+	class Protocol;
 
 
 /**
@@ -57,7 +57,7 @@ public:
 	 * Status number are organised so that make a tree.
 	 */
 	//please be carrefull when modifying values of status.  read comment in onlineStatus()
-	enum Categories
+	enum Category
 	{
 		Idle=1<<8,  ExtendedAway=1<<9 , Invisible=1<<10,
 		//  \     /             __________/
@@ -68,15 +68,16 @@ public:
 						Online=1<<1,
 		Offline=1
 	};
+	Q_DECLARE_FLAGS(Categories, Category);
 	
 
 	/**
 	 * @see registerOnlineStatus
 	 */
-	enum Options
+	enum Option
 	{
-		/// The user may set away messages for this online status   
-		HasAwayMessage = 0x01,  
+		/// The user may set status messages for this online status   
+		HasStatusMessage = 0x01,  
 		/// The action of the status will be disabled if the account is offline.
 		/// use it if your protocol doesn't support connecting with the status as initial status.
 		/// You praticaly shouldn't abuse of that, and automaticaly set status after connecting if possible
@@ -85,6 +86,7 @@ public:
 		///  without letting the user set itself that status  
 		HideFromMenu = 0x04
 	};
+	Q_DECLARE_FLAGS(Options, Option);
 	
 	/**
 	 * You need to register each status an account can be.
@@ -103,7 +105,7 @@ public:
 	 * @param categories A bitflag of @ref Categories
 	 * @param options is a bitflag of @ref Options
 	 */
-	void registerOnlineStatus(const OnlineStatus& status, const QString &caption, unsigned int categories=0x00 , unsigned int options=0x0);
+	void registerOnlineStatus(const OnlineStatus& status, const QString &caption, Categories categories=0x00 , Options options=0x0);
 
 	/**
 	 * insert "setStatus" actions from the given account to the specified actionMenu.
@@ -138,13 +140,14 @@ private slots:
 	void slotIconsChanged();
 
 private:
-	
 	static OnlineStatusManager *s_self;
 	OnlineStatusManager();
 	class Private;
 	Private *d;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(OnlineStatusManager::Categories);
+Q_DECLARE_OPERATORS_FOR_FLAGS(OnlineStatusManager::Options);
 
 /**
  * @internal
@@ -154,12 +157,15 @@ class OnlineStatusAction : public KAction
 	Q_OBJECT
   public:
 	OnlineStatusAction ( const OnlineStatus& status, const QString &text, const QIcon &pix, QObject *parent=0, const char *name=0);
+	~OnlineStatusAction();
+
   signals:
 	void activated( const Kopete::OnlineStatus& status );
   private slots:
 	void slotActivated();
   private:
-	OnlineStatus m_status;
+	class Private;
+	Private *d;
 };
 
 }  //END namespace Kopete 
