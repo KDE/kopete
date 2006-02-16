@@ -54,6 +54,7 @@ AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::M
 	m_warnUserAction = 0L;
 	mUserProfile="";
 	m_haveAwayMessage = false;
+	m_mobile = false;
 	// Set the last autoresponse time to the current time yesterday
 	m_lastAutoresponseTime = QDateTime::currentDateTime().addDays(-1);
 
@@ -186,14 +187,44 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	if ( nickname.isEmpty() || Oscar::normalize( nickname ) == Oscar::normalize( contact ) )
 		setNickName( contact );
 
-	if ( ( details.userClass() & 32 ) == 0 )
+	( details.userClass() & CLASS_WIRELESS ) ? m_mobile = true : m_mobile = false;
+
+	if ( ( details.userClass() & CLASS_AWAY ) == STATUS_ONLINE )
 	{
-		setOnlineStatus( mProtocol->statusOnline ); //we're online
+		if ( m_mobile ) 
+		{
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is mobile-online." << endl;
+			setOnlineStatus( mProtocol->statusWirelessOnline );
+    	}
+		else 
+		{
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is online." << endl;
+			setOnlineStatus( mProtocol->statusOnline ); //we're online
+		}
 		removeProperty( mProtocol->awayMessage );
 		m_haveAwayMessage = false;
 	}
+	else if ( ( details.userClass() & CLASS_AWAY ) ) // STATUS_AWAY
+	{
+		if ( m_mobile ) 
+		{
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is mobile-away." << endl;
+			setOnlineStatus( mProtocol->statusWirelessOnline );
+		}
+		else 
+		{
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " is away." << endl;
+			setOnlineStatus( mProtocol->statusAway ); //we're away
+		}
+		if ( !m_haveAwayMessage ) //prevent cyclic away message requests
+		{
+			mAccount->engine()->requestAIMAwayMessage( contactId() );
+			m_haveAwayMessage = true;
+		}
+	}
 	else
 	{
+        kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact: " << contact << " class " << details.userClass() << " is unhandled... defaulting to away." << endl;
 		setOnlineStatus( mProtocol->statusAway ); //we're away
 		if ( !m_haveAwayMessage ) //prevent cyclic away message requests
 		{
@@ -242,14 +273,20 @@ void AIMContact::updateAwayMessage( const QString& contact, const QString& messa
 		if ( message.isEmpty() )
 		{
 			removeProperty( mProtocol->awayMessage );
-			setOnlineStatus( mProtocol->statusOnline );
+			if ( !m_mobile )
+				setOnlineStatus( mProtocol->statusOnline );
+			else
+				setOnlineStatus( mProtocol->statusWirelessOnline );
 			m_haveAwayMessage = false;
 		}
 		else
 		{
 			m_haveAwayMessage = true;
 			setAwayMessage( message );
-			setOnlineStatus( mProtocol->statusAway );
+			if ( !m_mobile )
+				setOnlineStatus( mProtocol->statusAway );
+			else
+				setOnlineStatus( mProtocol->statusWirelessAway );
 		}
 	}
 

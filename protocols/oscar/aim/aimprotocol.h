@@ -66,6 +66,8 @@ public:
 	const Kopete::OnlineStatus statusOnline;
 	const Kopete::OnlineStatus statusOffline;
 	const Kopete::OnlineStatus statusAway;
+	const Kopete::OnlineStatus statusWirelessOnline;
+	const Kopete::OnlineStatus statusWirelessAway;
 	const Kopete::OnlineStatus statusConnecting;
 
 	const Kopete::ContactPropertyTmpl awayMessage;
