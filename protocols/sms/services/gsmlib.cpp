@@ -72,6 +72,7 @@ GSMLibThread::GSMLibThread(QString dev, GSMLib* parent)
 	m_device = dev;
 	m_parent = parent;
 	m_run = true;
+	m_MeTa = NULL;
 }
 
 GSMLibThread::~GSMLibThread()
