@@ -23,6 +23,7 @@
 
 
 #include "videoinput.h"
+#include "videodevicemodelpool.h"
 #include <qstring.h>
 #include <qimage.h>
 #include <qvaluevector.h>
@@ -41,14 +42,8 @@ This class allows kopete to check for the existence, open, configure, test, set 
 
 @author Cláudio da Silveira Pinheiro
 */
-struct VideoDeviceModel
-{
-	QString name;
-	size_t count;
-};
 
 typedef QValueVector<Kopete::AV::VideoDevice> VideoDeviceVector;
-typedef QValueVector<VideoDeviceModel> VideoDeviceModelVector;
 
 class VideoDevicePoolPrivate;
 
@@ -78,7 +73,7 @@ public:
 	size_t size();
 	~VideoDevicePool();
 	VideoDeviceVector m_videodevice; // Vector to be filled with found devices
-	VideoDeviceModelVector m_modelvector;  // Vector to be filled with unique device models
+	VideoDeviceModelPool m_modelvector;  // Vector to be filled with unique device models
 	int fillDeviceKComboBox(KComboBox *combobox);
 	int fillInputKComboBox(KComboBox *combobox);
 	unsigned int currentDevice();

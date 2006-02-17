@@ -77,6 +77,7 @@ int VideoDevicePool::open()
 		kdDebug() <<  k_funcinfo << "open(): Device out of scope (" << m_current_device << "). Defaulting to the first one." << endl;
 		m_current_device = 0;
 	}
+	loadConfig();
 	return m_videodevice[currentDevice()].open();
 }
 
@@ -363,6 +364,9 @@ int VideoDevicePool::scanDevices()
 	const QString videodevice_dir_filter=QString::fromLocal8Bit("video*");
 	VideoDevice videodevice;
 
+	m_videodevice.clear();
+	m_modelvector.clear();
+
 	videodevice_dir.setPath(videodevice_dir_path);
 	videodevice_dir.setNameFilter(videodevice_dir_filter);
         videodevice_dir.setFilter( QDir::System | QDir::NoSymLinks | QDir::Readable | QDir::Writable );
@@ -395,8 +399,6 @@ int VideoDevicePool::scanDevices()
 		QFileInfoListIterator fileiterator ( *list );
 		QFileInfo *fileinfo;
 
-		m_videodevice.clear();
-		m_modelvector.clear();
 		kdDebug() <<  k_funcinfo << "scanning devices in " << videodevice_dir_path << "..." << endl;
 		while ( (fileinfo = fileiterator.current()) != 0 )
 		{
@@ -405,16 +407,11 @@ int VideoDevicePool::scanDevices()
 			videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
 			if(videodevice.isOpen())
 			{
-				VideoDeviceModel devicemodel;
 				kdDebug() <<  k_funcinfo << "File " << videodevice.full_filename << " was opened successfuly" << endl;
 
 // This must be changed to proper code to handle multiple devices of the same model. It currently simply add models without proper checking
-				devicemodel.name=videodevice.m_name;
-				devicemodel.count=0;
-				m_modelvector.push_back(devicemodel);
-
 				videodevice.close();
-				videodevice.m_modelindex=0;
+				videodevice.m_modelindex=m_modelvector.addModel (videodevice.m_model); // Adds device to the device list and sets model number
 				m_videodevice.push_back(videodevice);
 			}
 			++fileiterator;
@@ -426,8 +423,6 @@ int VideoDevicePool::scanDevices()
 	QFileInfoListIterator fileiterator ( *list );
 	QFileInfo *fileinfo;
 
-	m_videodevice.clear();
-	m_modelvector.clear();
 	kdDebug() <<  k_funcinfo << "scanning devices in " << videodevice_dir_path << "..." << endl;
 	while ( (fileinfo = fileiterator.current()) != 0 )
 	{
@@ -436,16 +431,11 @@ int VideoDevicePool::scanDevices()
 		videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
 		if(videodevice.isOpen())
 		{
-			VideoDeviceModel devicemodel;
 			kdDebug() <<  k_funcinfo << "File " << videodevice.full_filename << " was opened successfuly" << endl;
 
 // This must be changed to proper code to handle multiple devices of the same model. It currently simply add models without proper checking
-			devicemodel.name=videodevice.m_name;
-			devicemodel.count=0;
-			m_modelvector.push_back(devicemodel);
-
 			videodevice.close();
-			videodevice.m_modelindex=0;
+			videodevice.m_modelindex=m_modelvector.addModel (videodevice.m_model); // Adds device to the device list and sets model number
 			m_videodevice.push_back(videodevice);
 		}
 		++fileiterator;
@@ -511,31 +501,38 @@ void VideoDevicePool::loadConfig()
 {
     /// @todo implement me
 	kdDebug() <<  k_funcinfo << "called" << endl;
-	kdDebug() <<  k_funcinfo << "called" << endl;
-	kdDebug() <<  k_funcinfo << "called" << endl;
-	kdDebug() <<  k_funcinfo << "called" << endl;
-	kdDebug() <<  k_funcinfo << "called" << endl;
-	kdDebug() <<  k_funcinfo << "called" << endl;
-	kdDebug() <<  k_funcinfo << "called" << endl;
-	kdDebug() <<  k_funcinfo << "called" << endl;
-	kdDebug() <<  k_funcinfo << "called" << endl;
-	kdDebug() <<  k_funcinfo << "called" << endl;
-	kdDebug() <<  k_funcinfo << "called" << endl;
-	kdDebug() <<  k_funcinfo << "called" << endl;
-	kdDebug() <<  k_funcinfo << "called" << endl;
 	if(hasDevices())
 	{
 		KConfig *config = kapp->config();
 		config->setGroup("Video Device Settings");
 		const QString currentdevice = config->readEntry("Current Device", QString::null);
-		kdDebug() << "Current device: " << currentdevice << endl;
+		kdDebug() << k_funcinfo << "Current device: " << currentdevice << endl;
+
 // Ok. It loads the thing accordingly. Now I need to write the code that mangles it and finds the correct device and defaults to the 1st one if the "current" is not present.
+/*		if(m_modelvector.size())
+		{
+			VideoDeviceModelPool::iterator vmiterator;
+			for( vmiterator = m_modelvector.begin(); vmiterator != m_modelvector.end(); ++vmiterator )
+			{
+				kdDebug() << "Device Model: " << (*vmiterator).model << endl;
+				kdDebug() << "Device Count: " << (*vmiterator).count << endl;
+			}
+		}
+*/
+
+//		m_current_device = 0;
 
 		VideoDeviceVector::iterator vditerator;
 		for( vditerator = m_videodevice.begin(); vditerator != m_videodevice.end(); ++vditerator )
 		{
-			const QString name     = config->readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex)), (*vditerator).m_model);
-			const int currentinput = config->readNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex)), 0);
+			const QString modelindex = QString::fromLocal8Bit ( "Model %1 Device %2")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex);
+			if(modelindex == currentdevice)
+			{
+				m_current_device = std::distance (m_videodevice.begin(), vditerator);
+				kdDebug() << k_funcinfo << "This place will be used to set " << modelindex << " as the current device ( " << std::distance(m_videodevice.begin(), vditerator ) << " )." << endl;
+			}
+			const QString name       = config->readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex)), (*vditerator).m_model);
+			const int currentinput   = config->readNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex)), 0);
 			kdDebug() << k_funcinfo << "Device name: " << name << endl;
 			kdDebug() << k_funcinfo << "Device current input: " << currentinput << endl;
 			(*vditerator).selectInput(currentinput);
@@ -548,6 +545,19 @@ void VideoDevicePool::loadConfig()
 				const float hue        = config->readDoubleNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Hue")        .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , 0.5 );
 				const bool  autobrightnesscontrast = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoBrightnessContrast") .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , false );
 				const bool  autocolorcorrection    = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoColorCorrection")    .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , false );
+				(*vditerator).setBrightness(brightness);
+				(*vditerator).setContrast(contrast);
+				(*vditerator).setSaturation(saturation);
+				(*vditerator).setHue(hue);
+				(*vditerator).setAutoBrightnessContrast(autobrightnesscontrast);
+				(*vditerator).setAutoColorCorrection(autocolorcorrection);
+				kdDebug() <<  k_funcinfo << "Brightness:" << brightness << endl;
+				kdDebug() <<  k_funcinfo << "Contrast  :" << contrast   << endl;
+				kdDebug() <<  k_funcinfo << "Saturation:" << saturation << endl;
+				kdDebug() <<  k_funcinfo << "Hue       :" << hue        << endl;
+				kdDebug() <<  k_funcinfo << "AutoBrightnessContrast:" << autobrightnesscontrast << endl;
+				kdDebug() <<  k_funcinfo << "AutoColorCorrection   :" << autocolorcorrection    << endl;
+
 			}
 		}
 	}
@@ -565,16 +575,16 @@ void VideoDevicePool::saveConfig()
 		KConfig *config = kapp->config();
 		config->setGroup("Video Device Settings");
 
-		if(m_modelvector.size())
+/*		if(m_modelvector.size())
 		{
-			VideoDeviceModelVector::iterator vmiterator;
+			VideoDeviceModelPool::m_devicemodel::iterator vmiterator;
 			for( vmiterator = m_modelvector.begin(); vmiterator != m_modelvector.end(); ++vmiterator )
 			{
-				kdDebug() << "Device Model: " << (*vmiterator).name << endl;
+				kdDebug() << "Device Model: " << (*vmiterator).model << endl;
 				kdDebug() << "Device Count: " << (*vmiterator).count << endl;
 			}
 		}
-
+*/
 // Stores what is the current video device in use
 		const QString currentdevice = QString::fromLocal8Bit ( "Model %1 Device %2" ) .arg(m_videodevice[m_current_device].m_model) .arg(m_videodevice[m_current_device].m_modelindex);
 		config->writeEntry( "Current Device", currentdevice);

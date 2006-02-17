@@ -16,7 +16,6 @@
 */
 
 #include "videoinput.h"
-#include "kdebug.h"
 
 namespace Kopete {
 
