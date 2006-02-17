@@ -1247,9 +1247,9 @@ void KopeteContactListView::findDrop(const QPoint &pos, Q3ListViewItem *&parent,
 }
 
 
-void KopeteContactListView::contentsMousePressEvent( QMouseEvent *e )
+void KopeteContactListView::mousePressEvent( QMouseEvent *e )
 {
-	KListView::contentsMousePressEvent( e );
+	KListView::mousePressEvent( e );
 	if (e->button() == Qt::LeftButton )
 	{
 		QPoint p=contentsToViewport(e->pos());
