@@ -207,7 +207,6 @@ QByteArray YMSGTransfer::serialize()
 	*/
 	
 	int pos = 0;
-	int packetSize = 20 + length();
 	QStringList::ConstIterator listIt = 0;
 	QByteArray buffer;
 	QDataStream stream( buffer, IO_WriteOnly );

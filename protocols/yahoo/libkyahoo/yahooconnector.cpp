@@ -46,6 +46,7 @@ KNetworkConnector::~KNetworkConnector()
 
 void KNetworkConnector::connectToServer( const QString &server )
 {
+	Q_UNUSED( server );
 	kdDebug( YAHOO_RAW_DEBUG ) << k_funcinfo << "Initiating connection to " << mHost << endl;
 	Q_ASSERT( !mHost.isNull() );
 	Q_ASSERT( mPort );

@@ -240,7 +240,7 @@ private:
 	 */
 	void initConnectionSignals( enum SignalConnectionType sct );
 
-	const QString &prepareIncomingMessage( QString msg );
+	QString prepareIncomingMessage( const QString &msg );
 
 	/**
 	 * internal (to the plugin) controls/flags

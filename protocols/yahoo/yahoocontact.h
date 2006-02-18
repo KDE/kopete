@@ -71,7 +71,7 @@ public:
 	
 	const YABEntry *yabEntry();
 
-	static const QString &prepareMessage( QString messageText );
+	static QString prepareMessage( const QString &messageText );
 
 public slots:
 	virtual void slotUserInfo();

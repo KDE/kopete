@@ -213,10 +213,11 @@ Kopete::ChatSession *YahooContact::manager( Kopete::Contact::CanCreateFlags canC
 	return m_manager;
 }
 
-const QString &YahooContact::prepareMessage( QString messageText )
+QString YahooContact::prepareMessage( const QString &messageText )
 {	
 	// Yahoo does not understand XML/HTML message data, so send plain text
 	// instead.  (Yahoo has its own format for "rich text".)
+	QString newMsg( messageText );
 	QRegExp regExp;
 	int pos = 0;
 	regExp.setMinimal( true );
@@ -228,7 +229,7 @@ const QString &YahooContact::prepareMessage( QString messageText )
 		pos = regExp.search( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-		messageText.replace( regExp, QString::fromLatin1("<span\\1font-weight:600\\2>\033[1m\\3\033[x1m</span>" ) );
+		newMsg.replace( regExp, QString::fromLatin1("<span\\1font-weight:600\\2>\033[1m\\3\033[x1m</span>" ) );
 		}
 	}
 	
@@ -239,7 +240,7 @@ const QString &YahooContact::prepareMessage( QString messageText )
 		pos = regExp.search( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-		messageText.replace( regExp, QString::fromLatin1("<span\\1text-decoration:underline\\2>\033[4m\\3\033[x4m</span>" ) );
+		newMsg.replace( regExp, QString::fromLatin1("<span\\1text-decoration:underline\\2>\033[4m\\3\033[x4m</span>" ) );
 		}
 	}
 	
@@ -250,7 +251,7 @@ const QString &YahooContact::prepareMessage( QString messageText )
 		pos = regExp.search( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-		messageText.replace( regExp, QString::fromLatin1("<span\\1font-style:italic\\2>\033[2m\\3\033[x2m</span>" ) );
+		newMsg.replace( regExp, QString::fromLatin1("<span\\1font-style:italic\\2>\033[2m\\3\033[x2m</span>" ) );
 		}
 	}
 	
@@ -261,7 +262,7 @@ const QString &YahooContact::prepareMessage( QString messageText )
 		pos = regExp.search( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			messageText.replace( regExp, QString::fromLatin1("<span\\1\\3>\033[#\\2m\\4\033[#000000m</span>" ) );
+			newMsg.replace( regExp, QString::fromLatin1("<span\\1\\3>\033[#\\2m\\4\033[#000000m</span>" ) );
 		}
 	}
 	
@@ -272,7 +273,7 @@ const QString &YahooContact::prepareMessage( QString messageText )
 		pos = regExp.search( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			messageText.replace( regExp, QString::fromLatin1("<span\\1\\3><font face=\"\\2\">\\4</span>" ) );
+			newMsg.replace( regExp, QString::fromLatin1("<span\\1\\3><font face=\"\\2\">\\4</span>" ) );
 		}
 	}
 	
@@ -283,7 +284,7 @@ const QString &YahooContact::prepareMessage( QString messageText )
 		pos = regExp.search( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			messageText.replace( regExp, QString::fromLatin1("<span\\1\\3><font size=\"\\2\">\\4</span>" ) );
+			newMsg.replace( regExp, QString::fromLatin1("<span\\1\\3><font size=\"\\2\">\\4</span>" ) );
 		}
 	}
 	
@@ -294,19 +295,19 @@ const QString &YahooContact::prepareMessage( QString messageText )
 		pos = regExp.search( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			messageText.replace( regExp, QString::fromLatin1("\\2") );
+			newMsg.replace( regExp, QString::fromLatin1("\\2") );
 		}
 	}
 	
 	// convert escaped chars
-	messageText.replace( QString::fromLatin1( "&gt;" ), QString::fromLatin1( ">" ) );
-	messageText.replace( QString::fromLatin1( "&lt;" ), QString::fromLatin1( "<" ) );
-	messageText.replace( QString::fromLatin1( "&quot;" ), QString::fromLatin1( "\"" ) );
-	messageText.replace( QString::fromLatin1( "&nbsp;" ), QString::fromLatin1( " " ) );
-	messageText.replace( QString::fromLatin1( "&amp;" ), QString::fromLatin1( "&" ) );
-	messageText.replace( QString::fromLatin1( "<br/>" ), QString::fromLatin1( "\r" ) );
+	newMsg.replace( QString::fromLatin1( "&gt;" ), QString::fromLatin1( ">" ) );
+	newMsg.replace( QString::fromLatin1( "&lt;" ), QString::fromLatin1( "<" ) );
+	newMsg.replace( QString::fromLatin1( "&quot;" ), QString::fromLatin1( "\"" ) );
+	newMsg.replace( QString::fromLatin1( "&nbsp;" ), QString::fromLatin1( " " ) );
+	newMsg.replace( QString::fromLatin1( "&amp;" ), QString::fromLatin1( "&" ) );
+	newMsg.replace( QString::fromLatin1( "<br/>" ), QString::fromLatin1( "\r" ) );
 	
-	return messageText;
+	return newMsg;
 }
 
 void YahooContact::slotSendMessage( Kopete::Message &message )

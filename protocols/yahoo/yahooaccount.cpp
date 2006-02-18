@@ -756,6 +756,8 @@ void YahooAccount::slotAuthorizationRejected( const QString &who, const QString 
 void YahooAccount::slotgotAuthorizationRequest( const QString &user, const QString &msg, const QString &name )
 {
 	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	Q_UNUSED( msg );
+	Q_UNUSED( name );
 	YahooContact *kc = contact( user );
 	Kopete::MetaContact *metaContact=0L;
 	if(kc)
@@ -854,8 +856,9 @@ void YahooAccount::slotStealthStatusChanged( const QString &who, Yahoo::StealthS
 	kc->setStealthed( state == Yahoo::Stealthed );
 }
 
-const QString &YahooAccount::prepareIncomingMessage( QString newMsgText )
+QString YahooAccount::prepareIncomingMessage( const QString &messageText )
 {
+	QString newMsgText( messageText );
 	QRegExp regExp;
 	int pos = 0;
 	newMsgText = stripMsgColorCodes( newMsgText );
@@ -1303,7 +1306,7 @@ void YahooAccount::slotGotFile( const QString &  who, const QString &  url , lon
 					this, SLOT( slotReceiveFileAccepted( Kopete::Transfer *, const QString& ) ) );
 }
 
-void YahooAccount::slotReceiveFileAccepted(Kopete::Transfer *trans, const QString& /*fileName*/)
+void YahooAccount::slotReceiveFileAccepted(Kopete::Transfer */*trans*/, const QString& /*fileName*/)
 {	
 	/*m_session->getUrlHandle( trans );
 	QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString& ) ),
