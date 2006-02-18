@@ -184,6 +184,7 @@ void WPAccount::slotSendMessage(const QString &Body, const QString &Destination)
 {
 	kdDebug(14170) << "WPAccount::slotSendMessage(" << Body << ", " << Destination << ")" << endl;
 
+	if (myself()->onlineStatus().status() == Kopete::OnlineStatus::Away) myself()->setOnlineStatus(mProtocol->WPOnline);
 	mProtocol->sendMessage(Body, Destination);
 }
 
