@@ -33,8 +33,8 @@
 // Local Includes
 #include "libwinpopup.h"
 
-WinPopupLib::WinPopupLib(const QString &smbClient,int groupFreq,int messageCheck)
-	: smbClientBin(smbClient), groupCheckFreq(groupFreq), messageCheckFreq(messageCheck)
+WinPopupLib::WinPopupLib(const QString &smbClient,int groupFreq)
+	: smbClientBin(smbClient), groupCheckFreq(groupFreq)
 {
 	connect(&updateGroupDataTimer, SIGNAL(timeout()), this, SLOT(slotUpdateGroupData()));
 
@@ -348,11 +348,10 @@ void WinPopupLib::slotSendProcessExited(KProcess *p)
 	delete p;
 }
 
-void WinPopupLib::settingsChanged(const QString &smbClient, int groupFreq, int messageCheck)
+void WinPopupLib::settingsChanged(const QString &smbClient, int groupFreq)
 {
 	smbClientBin = smbClient;
 	groupCheckFreq = groupFreq;
-	messageCheckFreq = messageCheck;
 
 	if (updateGroupDataTimer.isActive()) updateGroupDataTimer.changeInterval(groupCheckFreq * 1000);
 }

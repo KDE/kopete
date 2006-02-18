@@ -50,14 +50,13 @@ class WinPopupLib : public QObject
 	Q_OBJECT
 
 public:
-	WinPopupLib(const QString &smbClient,int groupFreq,int messageCheck);
+	WinPopupLib(const QString &smbClient,int groupFreq);
 	~WinPopupLib();
 
 	const QStringList getGroups();
 	const QStringList getHosts(const QString &Group);
 	bool checkHost(const QString &Name);
-	bool checkMessageDir();
-	void settingsChanged(const QString &smbClient, int groupFreq, int messageCheck);
+	void settingsChanged(const QString &smbClient, int groupFreq);
 	void sendMessage(const QString &Body, const QString &Destination);
 
 private:
@@ -69,10 +68,11 @@ private:
 	QMutex groupMutex;
 	QTimer updateGroupDataTimer;
 	QString smbClientBin;
-	int groupCheckFreq, messageCheckFreq;
+	int groupCheckFreq;
 	KDirLister *dirLister;
 
 	void readMessages(const KFileItemList &items);
+	bool checkMessageDir();
 
 private slots:
 	void slotUpdateGroupData();

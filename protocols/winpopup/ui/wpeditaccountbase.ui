@@ -114,17 +114,6 @@
                                     </widget>
                                 </hbox>
                             </widget>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>mAutoConnect</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Excl&amp;ude from connection</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
-                                </property>
-                            </widget>
                         </vbox>
                     </widget>
                     <widget class="QGroupBox">
@@ -242,7 +231,7 @@ However, the recommended way is to ask your administrator to create this directo
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLabel" row="1" column="0">
+                            <widget class="QLabel" row="0" column="0">
                                 <property name="name">
                                     <cstring>textLabel4</cstring>
                                 </property>
@@ -250,15 +239,7 @@ However, the recommended way is to ask your administrator to create this directo
                                     <string>Host check frequency:</string>
                                 </property>
                             </widget>
-                            <widget class="QLabel" row="0" column="0">
-                                <property name="name">
-                                    <cstring>textLabel3</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Message check frequency:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="2" column="0">
+                            <widget class="QLabel" row="1" column="0">
                                 <property name="name">
                                     <cstring>textLabel1</cstring>
                                 </property>
@@ -266,7 +247,7 @@ However, the recommended way is to ask your administrator to create this directo
                                     <string>Path to 'smbclient' executable:</string>
                                 </property>
                             </widget>
-                            <widget class="QLayoutWidget" row="0" column="1" rowspan="3" colspan="1">
+                            <widget class="QLayoutWidget" row="0" column="1" rowspan="2" colspan="1">
                                 <property name="name">
                                     <cstring>layout6</cstring>
                                 </property>
@@ -274,51 +255,6 @@ However, the recommended way is to ask your administrator to create this directo
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout4</cstring>
-                                        </property>
-                                        <hbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="KIntSpinBox">
-                                                <property name="name">
-                                                    <cstring>mMessageCheckFreq</cstring>
-                                                </property>
-                                                <property name="sizePolicy">
-                                                    <sizepolicy>
-                                                        <hsizetype>7</hsizetype>
-                                                        <vsizetype>0</vsizetype>
-                                                        <horstretch>0</horstretch>
-                                                        <verstretch>0</verstretch>
-                                                    </sizepolicy>
-                                                </property>
-                                                <property name="maxValue">
-                                                    <number>3600</number>
-                                                </property>
-                                                <property name="minValue">
-                                                    <number>1</number>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>textLabel5</cstring>
-                                                </property>
-                                                <property name="sizePolicy">
-                                                    <sizepolicy>
-                                                        <hsizetype>3</hsizetype>
-                                                        <vsizetype>5</vsizetype>
-                                                        <horstretch>0</horstretch>
-                                                        <verstretch>0</verstretch>
-                                                    </sizepolicy>
-                                                </property>
-                                                <property name="text">
-                                                    <string>second(s)</string>
-                                                </property>
-                                            </widget>
-                                        </hbox>
-                                    </widget>
                                     <widget class="QLayoutWidget">
                                         <property name="name">
                                             <cstring>layout5</cstring>
@@ -390,7 +326,6 @@ However, the recommended way is to ask your administrator to create this directo
     <tabstop>tabWidget10</tabstop>
     <tabstop>mHostName</tabstop>
     <tabstop>doInstallSamba</tabstop>
-    <tabstop>mAutoConnect</tabstop>
 </tabstops>
 <slots>
     <slot>installSamba()</slot>
@@ -398,7 +333,6 @@ However, the recommended way is to ask your administrator to create this directo
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kpushbutton.h</includehint>
-    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>kurlrequester.h</includehint>
     <includehint>klineedit.h</includehint>
