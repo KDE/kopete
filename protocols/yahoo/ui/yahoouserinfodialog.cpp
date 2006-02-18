@@ -70,6 +70,12 @@ YahooUserInfoDialog::YahooUserInfoDialog( YahooContact *c, QWidget * parent, con
 	QObject::connect(this, SIGNAL(user1Clicked()), this, SLOT(slotSaveAndCloseClicked()));
 }
 
+void YahooUserInfoDialog::setAccountConnected( bool isOnline )
+{
+	enableButton( User1, isOnline );
+	enableButton( User2, isOnline );
+}
+
 void YahooUserInfoDialog::slotSaveAndCloseClicked()
 {
 	if( m_yab )

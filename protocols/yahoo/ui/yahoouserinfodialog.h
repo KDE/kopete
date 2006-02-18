@@ -34,6 +34,7 @@ class YahooUserInfoDialog : public KDialogBase
 Q_OBJECT
 public:
 	YahooUserInfoDialog( YahooContact *c, QWidget* parent = 0, const char* name = 0 );
+	void setAccountConnected( bool isOnline );
 signals:
 	void saveYABEntry( YABEntry & );
 public slots:

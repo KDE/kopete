@@ -1268,6 +1268,7 @@ void YahooAccount::slotGotYABEntry( YABEntry *entry )
 			entry->YABId = kc->yabEntry()->YABId;
 			YahooUserInfoDialog *dlg = new YahooUserInfoDialog( kc, Kopete::UI::Global::mainWidget(), "yahoo userinfo" );
 			dlg->setData( *entry );
+			dlg->setAccountConnected( isConnected() );
 			dlg->show();
 			QObject::connect( dlg, SIGNAL(saveYABEntry( YABEntry & )), this, SLOT(slotSaveYABEntry( YABEntry & )));
 		}
