@@ -663,6 +663,8 @@ void YahooContact::deleteContact()
 
 void YahooContact::writeYABEntry()
 {
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	
 	// Personal
 	setProperty( YahooProtocol::protocol()->propfirstName, m_YABEntry->firstName );
 	setProperty( YahooProtocol::protocol()->propSecondName, m_YABEntry->secondName );
@@ -772,8 +774,8 @@ void YahooContact::readYABEntry()
 	m_YABEntry->workURL = property( YahooProtocol::protocol()->propWorkURL ).value().toString();
 
 	// Miscellanous
-	m_YABEntry->birthday.fromString( property( YahooProtocol::protocol()->propBirthday ).value().toString(), Qt::ISODate );
-	m_YABEntry->anniversary.fromString( property( YahooProtocol::protocol()->propAnniversary ).value().toString(), Qt::ISODate );
+	m_YABEntry->birthday = QDate::fromString( property( YahooProtocol::protocol()->propBirthday ).value().toString(), Qt::ISODate );
+	m_YABEntry->anniversary = QDate::fromString( property( YahooProtocol::protocol()->propAnniversary ).value().toString(), Qt::ISODate );
 	m_YABEntry->notes = property( YahooProtocol::protocol()->propNotes ).value().toString();
 	m_YABEntry->additional1 = property( YahooProtocol::protocol()->propAdditional1 ).value().toString();
 	m_YABEntry->additional2 = property( YahooProtocol::protocol()->propAdditional2 ).value().toString();

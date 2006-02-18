@@ -3,7 +3,7 @@
  yahoouserinfodialog.h - Display Yahoo user info
 
  Copyright (c) 2005 Matt Rogers <mattr@kde.org>
- Copyright (c) 2006 Andre Duffeck <mattr@kde.org>
+ Copyright (c) 2006 Andre Duffeck <andre@duffeck.de>
 
  Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
@@ -42,7 +42,7 @@
 YahooUserInfoDialog::YahooUserInfoDialog( YahooContact *c, QWidget * parent, const char * name )
 : KDialogBase( KDialogBase::IconList, 0,  parent, name, false, i18n( "Yahoo User Information" ), User2|User1|Cancel, Cancel, false, i18n("Save and Close"), i18n("Merge with existing entry") )
 {
-	kdDebug(14153) << k_funcinfo << "Creating new yahoo user info widget" << endl;
+	kdDebug(14180) << k_funcinfo << "Creating new yahoo user info widget" << endl;
 	m_yab = 0;
 	m_contact = c;
 	showButton( User2, false );
@@ -215,7 +215,10 @@ void YahooUserInfoDialog::setData( const YABEntry &yab )
 	m_genInfoWidget->nickNameEdit->setText( yab.nickName );
 	m_genInfoWidget->yahooIdEdit->setText( yab.yahooId );
 	m_genInfoWidget->titleEdit->setText( yab.title );
-	m_genInfoWidget->birthdayEdit->setText( QString("%1/%2/%3").arg( yab.birthday.day() ).arg( yab.birthday.month() ).arg( yab.birthday.year() ));
+	
+	if( yab.birthday.isValid() )
+		m_genInfoWidget->birthdayEdit->setText( QString("%1/%2/%3").arg( yab.birthday.day() ).arg( yab.birthday.month() ).arg( yab.birthday.year() ));
+	if( yab.anniversary.isValid() )
 	m_genInfoWidget->anniversaryEdit->setText( QString("%1/%2/%3").arg( yab.anniversary.day() ).arg( yab.anniversary.month() ).arg( yab.anniversary.year() ));
 	
 	m_genInfoWidget->addressEdit->setText( yab.privateAdress );
