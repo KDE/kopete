@@ -22,6 +22,7 @@
 #include "yahootypes.h"
 #include "client.h"
 #include <qstring.h>
+#include <kdebug.h>
 
 MessageReceiverTask::MessageReceiverTask(Task* parent) : Task(parent)
 {

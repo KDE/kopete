@@ -24,7 +24,6 @@
 
 #include <qobject.h>
 
-#include "rtf2html.h"
 #include "transfer.h"
 #include "yahootypes.h"
 

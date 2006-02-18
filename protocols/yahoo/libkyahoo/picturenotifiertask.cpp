@@ -22,6 +22,7 @@
 #include <qstring.h>
 #include <qstringlist.h>
 #include <kurl.h>
+#include <kdebug.h>
 
 PictureNotifierTask::PictureNotifierTask(Task* parent) : Task(parent)
 {

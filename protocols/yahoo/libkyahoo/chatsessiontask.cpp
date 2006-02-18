@@ -22,6 +22,7 @@
 #include "yahootypes.h"
 #include "client.h"
 #include <qstring.h>
+#include <kdebug.h>
 
 ChatSessionTask::ChatSessionTask(Task* parent) : Task(parent)
 {

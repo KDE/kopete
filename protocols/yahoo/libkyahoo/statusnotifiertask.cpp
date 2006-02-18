@@ -21,6 +21,7 @@
 #include "client.h"
 #include <qstring.h>
 #include <qstringlist.h>
+#include <kdebug.h>
 
 StatusNotifierTask::StatusNotifierTask(Task* parent) : Task(parent)
 {

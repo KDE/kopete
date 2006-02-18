@@ -27,6 +27,7 @@
 #include <kio/job.h>
 #include <kio/jobclasses.h>
 #include <kbufferedsocket.h>
+#include <kdebug.h>
 
 SendPictureTask::SendPictureTask(Task* parent) : Task(parent)
 {

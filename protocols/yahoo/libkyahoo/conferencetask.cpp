@@ -20,6 +20,8 @@
 #include "yahootypes.h"
 #include "client.h"
 #include <qstring.h>
+#include <qstringlist.h>
+#include <kdebug.h>
 
 ConferenceTask::ConferenceTask(Task* parent) : Task(parent)
 {
