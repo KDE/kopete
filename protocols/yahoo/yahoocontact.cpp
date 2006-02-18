@@ -539,7 +539,7 @@ void YahooContact::setYABEntry( YABEntry *entry, bool show )
 }
 const YABEntry *YahooContact::yabEntry()
 {
-	if( m_YABEntry )
+	if( !m_YABEntry )
 		readYABEntry();
 	return m_YABEntry;
 }
