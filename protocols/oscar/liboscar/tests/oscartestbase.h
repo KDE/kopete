@@ -22,14 +22,30 @@
 #include <QString>
 #include "buffer.h"
 
+/**
+ * @brief Base testcase class
+ */
 class OscarTestBase : public QObject
 {
 Q_OBJECT
 public:
-	OscarTestBase(QString &path, QObject *parent = 0);
-	bool loadFile(QString &file);
+	/** 
+	 * Default constructor that takes @p path as the path to the
+	 * directory containing the test data.
+	 */
+	OscarTestBase(const QString& path, QObject *parent = 0);
+
+	/** Default destructor */
+	~OscarTestBase();
+
+	/**
+	 * Takes a file @p file and attempts to load the file, prepending
+	 * the path specified in the constructor as test data.
+	 * @returns bool true on success.
+	 */
+	bool loadFile(const QString& file);
 protected:
-	Buffer m_data;
+	Buffer* m_data;
 	QString m_dataDir;
 };
 

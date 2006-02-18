@@ -22,19 +22,38 @@
 #include <QByteArray>
 #include <QDir>
 
-OscarTestBase::OscarTestBase(QString &path, QObject *parent)
+OscarTestBase::OscarTestBase(const QString& path, QObject *parent)
 : QObject(parent)
 {
 	m_dataDir = path;
-	m_data = Buffer();
+	m_data = NULL;
 }
 
-bool OscarTestBase::loadFile(QString &file)
+OscarTestBase::~OscarTestBase()
+{
+	if ( m_data != NULL )
+	{
+		delete m_data;
+	}
+}
+
+bool OscarTestBase::loadFile(const QString& file)
 {
 	if ( ! QFile::exists(m_dataDir + QDir::separator() + file) )
 		return false;
 
 	QFile datFile(m_dataDir + QDir::separator() + file);
-	m_data.addString(datFile.readAll());
+	if ( m_data == NULL )
+	{
+		m_data = new Buffer(datFile.readAll());
+	}
+	else
+	{
+		delete m_data;
+		m_data = NULL; //Safety
+		m_data = new Buffer(datFile.readAll());
+	}
 	return true;
 }
+
+#include "oscartestbase.moc"
