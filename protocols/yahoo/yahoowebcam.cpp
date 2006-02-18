@@ -38,9 +38,8 @@ YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0, "yahoo_webcam" )
 
 	Kopete::AV::VideoDevicePool *videoDevice = Kopete::AV::VideoDevicePool::self();
 	videoDevice->scanDevices();
-	videoDevice->open(0);
+	videoDevice->open();
 	videoDevice->setSize(320, 240);
-	videoDevice->selectInput(0);
 	videoDevice->startCapturing();
 }
 

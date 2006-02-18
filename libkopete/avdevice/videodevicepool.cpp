@@ -77,8 +77,10 @@ int VideoDevicePool::open()
 		kdDebug() <<  k_funcinfo << "open(): Device out of scope (" << m_current_device << "). Defaulting to the first one." << endl;
 		m_current_device = 0;
 	}
-	return m_videodevice[currentDevice()].open();
-	loadConfig(); // Temporary hack. The open() seems to clean the input parameters. Need to find a way to fix it.
+	int isopen = m_videodevice[currentDevice()].open();
+	if ( isopen == EXIT_SUCCESS)
+		loadConfig(); // Temporary hack. The open() seems to clean the input parameters. Need to find a way to fix it.
+	return isopen;
 }
 
 /*!
