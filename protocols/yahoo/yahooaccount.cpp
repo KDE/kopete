@@ -17,6 +17,7 @@
 */
 //Standard Header
 #include <ctime>
+#include <stdlib.h>
 
 //QT
 #include <qfont.h>
