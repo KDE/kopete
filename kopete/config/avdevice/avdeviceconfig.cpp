@@ -52,15 +52,15 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 
 // "Video" TAB ============================================================
 	mPrfsVideoDevice = new AVDeviceConfig_VideoDevice(mAVDeviceTabCtl);
-	connect(mPrfsVideoDevice->mDeviceKComboBox,                   SIGNAL(activated(int)),    this, SLOT(slotDeviceKComboBoxChanged(int)));
-	connect(mPrfsVideoDevice->mInputKComboBox,                    SIGNAL(activated(int)),    this, SLOT(slotInputKComboBoxChanged(int)));
-	connect(mPrfsVideoDevice->mStandardKComboBox,                 SIGNAL(activated(int)),    this, SLOT(slotStandardKComboBoxChanged(int)));
-	connect(mPrfsVideoDevice->mBrightnessSlider,                  SIGNAL(valueChanged(int)), this, SLOT(slotBrightnessSliderChanged(int)));
-	connect(mPrfsVideoDevice->mContrastSlider,                    SIGNAL(valueChanged(int)), this, SLOT(slotContrastSliderChanged(int)));
-	connect(mPrfsVideoDevice->mSaturationSlider,                  SIGNAL(valueChanged(int)), this, SLOT(slotSaturationSliderChanged(int)));
-	connect(mPrfsVideoDevice->mHueSlider,                         SIGNAL(valueChanged(int)), this, SLOT(slotHueSliderChanged(int)));
-	connect(mPrfsVideoDevice->mImageAutoAdjustBrightnessContrast, SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoAdjustBrightnessContrastChanged(bool)));
-	connect(mPrfsVideoDevice->mImageAutoColorCorrection,          SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoColorCorrectionChanged(bool)));
+	connect(mPrfsVideoDevice->mDeviceKComboBox,             SIGNAL(activated(int)),    this, SLOT(slotDeviceKComboBoxChanged(int)));
+	connect(mPrfsVideoDevice->mInputKComboBox,              SIGNAL(activated(int)),    this, SLOT(slotInputKComboBoxChanged(int)));
+	connect(mPrfsVideoDevice->mStandardKComboBox,           SIGNAL(activated(int)),    this, SLOT(slotStandardKComboBoxChanged(int)));
+	connect(mPrfsVideoDevice->mBrightnessSlider,            SIGNAL(valueChanged(int)), this, SLOT(slotBrightnessSliderChanged(int)));
+	connect(mPrfsVideoDevice->mContrastSlider,              SIGNAL(valueChanged(int)), this, SLOT(slotContrastSliderChanged(int)));
+	connect(mPrfsVideoDevice->mSaturationSlider,            SIGNAL(valueChanged(int)), this, SLOT(slotSaturationSliderChanged(int)));
+	connect(mPrfsVideoDevice->mHueSlider,                   SIGNAL(valueChanged(int)), this, SLOT(slotHueSliderChanged(int)));
+	connect(mPrfsVideoDevice->mImageAutoBrightnessContrast, SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoBrightnessContrastChanged(bool)));
+	connect(mPrfsVideoDevice->mImageAutoColorCorrection,    SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoColorCorrectionChanged(bool)));
 
 	// why is this here?
 	// mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
@@ -69,9 +69,12 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	d->scanDevices();
 	d->open();
 	d->setSize(320, 240);
+
 	d->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 	d->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
-//	d->selectInput(0);
+	mPrfsVideoDevice->mImageAutoBrightnessContrast->setChecked(d->getAutoBrightnessContrast());
+	mPrfsVideoDevice->mImageAutoColorCorrection->setChecked(d->getAutoColorCorrection());
+
 	d->startCapturing();
 	d->getFrame();
 	d->getImage(&qimage);
@@ -138,6 +141,8 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
 
 void AVDeviceConfig::slotInputKComboBoxChanged(int){
 	d->selectInput(mPrfsVideoDevice->mInputKComboBox->currentItem());
+	mPrfsVideoDevice->mImageAutoBrightnessContrast->setChecked(d->getAutoBrightnessContrast());
+	mPrfsVideoDevice->mImageAutoColorCorrection->setChecked(d->getAutoColorCorrection());
 	emit changed( true );
 }
 
@@ -161,8 +166,10 @@ void AVDeviceConfig::slotHueSliderChanged(int){
   emit changed( true );
 }
 
-void AVDeviceConfig::slotImageAutoAdjustBrightnessContrastChanged(bool){
-  emit changed( true );
+void AVDeviceConfig::slotImageAutoBrightnessContrastChanged(bool){
+	kdDebug() << "kopete:config (avdevice): slotImageAutoBrightnessContrastChanged(" << mPrfsVideoDevice->mImageAutoBrightnessContrast->isChecked() << ") called. " << endl;
+	d->setAutoBrightnessContrast(mPrfsVideoDevice->mImageAutoBrightnessContrast->isChecked());
+	emit changed( true );
 }
 
 void AVDeviceConfig::slotImageAutoColorCorrectionChanged(bool){

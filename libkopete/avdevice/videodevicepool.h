@@ -79,6 +79,8 @@ public:
 	unsigned int currentDevice();
 	int currentInput();
 	unsigned int inputs();
+	bool getAutoBrightnessContrast();
+	bool setAutoBrightnessContrast(bool brightnesscontrast);
 	bool getAutoColorCorrection();
 	bool setAutoColorCorrection(bool colorcorrection);
 	void loadConfig(); // Load configuration parameters;

@@ -57,7 +57,7 @@ private slots:
 	void slotContrastSliderChanged(int);
 	void slotSaturationSliderChanged(int);
 	void slotHueSliderChanged(int);
-	void slotImageAutoAdjustBrightnessContrastChanged(bool);
+	void slotImageAutoBrightnessContrastChanged(bool);
 	void slotImageAutoColorCorrectionChanged(bool);
 	void slotUpdateImage();
 private:

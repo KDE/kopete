@@ -77,8 +77,8 @@ int VideoDevicePool::open()
 		kdDebug() <<  k_funcinfo << "open(): Device out of scope (" << m_current_device << "). Defaulting to the first one." << endl;
 		m_current_device = 0;
 	}
-	loadConfig();
 	return m_videodevice[currentDevice()].open();
+	loadConfig(); // Temporary hack. The open() seems to clean the input parameters. Need to find a way to fix it.
 }
 
 /*!
@@ -96,6 +96,7 @@ int VideoDevicePool::open(unsigned int device)
 	close();
 	kdDebug() <<  k_funcinfo << "open(" << device << ") Setting m_current_Device to " << device << endl;
 	m_current_device = device;
+	saveConfig();
 	kdDebug() <<  k_funcinfo << "open(" << device << ") Calling open()." << endl;
 	return open();
 }
@@ -190,6 +191,27 @@ int VideoDevicePool::stopCapturing()
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].stopCapturing();
 	return EXIT_FAILURE;
+}
+
+/*!
+    \fn VideoDevicePool::getAutoBrightnessContrast()
+ */
+bool VideoDevicePool::getAutoBrightnessContrast()
+{
+	if(m_videodevice.size())
+		return m_videodevice[currentDevice()].getAutoBrightnessContrast();
+	return false;
+}
+
+/*!
+    \fn VideoDevicePool::setAutoBrightnessContrast(bool brightnesscontrast)
+ */
+bool VideoDevicePool::setAutoBrightnessContrast(bool brightnesscontrast)
+{
+	kdDebug() <<  k_funcinfo << "VideoDevicePool::setAutoBrightnessContrast(" << brightnesscontrast << ") called." << endl;
+	if(m_videodevice.size())
+		return m_videodevice[currentDevice()].setAutoBrightnessContrast(brightnesscontrast);
+	return false;
 }
 
 /*!

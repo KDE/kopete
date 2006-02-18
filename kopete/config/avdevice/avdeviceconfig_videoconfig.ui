@@ -206,7 +206,7 @@
                                     </property>
                                     <widget class="QCheckBox" row="1" column="0">
                                         <property name="name">
-                                            <cstring>mImageAutoAdjustBrightnessContrast</cstring>
+                                            <cstring>mImageAutoBrightnessContrast</cstring>
                                         </property>
                                         <property name="sizePolicy">
                                             <sizepolicy>
@@ -218,6 +218,9 @@
                                         </property>
                                         <property name="text">
                                             <string>Au&amp;tomatic brightness/contrast adjustment</string>
+                                        </property>
+                                        <property name="accel">
+                                            <string>Alt+T</string>
                                         </property>
                                     </widget>
                                     <widget class="QCheckBox" row="2" column="0">
@@ -341,6 +344,15 @@
                                                                 <verstretch>0</verstretch>
                                                             </sizepolicy>
                                                         </property>
+                                                        <property name="maxValue">
+                                                            <number>65535</number>
+                                                        </property>
+                                                        <property name="lineStep">
+                                                            <number>256</number>
+                                                        </property>
+                                                        <property name="pageStep">
+                                                            <number>4096</number>
+                                                        </property>
                                                         <property name="orientation">
                                                             <enum>Horizontal</enum>
                                                         </property>
@@ -356,6 +368,15 @@
                                                                 <horstretch>0</horstretch>
                                                                 <verstretch>0</verstretch>
                                                             </sizepolicy>
+                                                        </property>
+                                                        <property name="maxValue">
+                                                            <number>65535</number>
+                                                        </property>
+                                                        <property name="lineStep">
+                                                            <number>256</number>
+                                                        </property>
+                                                        <property name="pageStep">
+                                                            <number>4096</number>
                                                         </property>
                                                         <property name="orientation">
                                                             <enum>Horizontal</enum>
@@ -373,6 +394,15 @@
                                                                 <verstretch>0</verstretch>
                                                             </sizepolicy>
                                                         </property>
+                                                        <property name="maxValue">
+                                                            <number>65535</number>
+                                                        </property>
+                                                        <property name="lineStep">
+                                                            <number>256</number>
+                                                        </property>
+                                                        <property name="pageStep">
+                                                            <number>4096</number>
+                                                        </property>
                                                         <property name="orientation">
                                                             <enum>Horizontal</enum>
                                                         </property>
@@ -388,6 +418,15 @@
                                                                 <horstretch>0</horstretch>
                                                                 <verstretch>0</verstretch>
                                                             </sizepolicy>
+                                                        </property>
+                                                        <property name="maxValue">
+                                                            <number>65535</number>
+                                                        </property>
+                                                        <property name="lineStep">
+                                                            <number>256</number>
+                                                        </property>
+                                                        <property name="pageStep">
+                                                            <number>4096</number>
                                                         </property>
                                                         <property name="orientation">
                                                             <enum>Horizontal</enum>
