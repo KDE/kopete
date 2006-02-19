@@ -62,12 +62,13 @@ private slots:
 	void slotUpdateImage();
 private:
 	QTabWidget* mAVDeviceTabCtl;
-	AVDeviceConfig_VideoDevice *mPrfsVideoDevice;
-	AVDeviceConfig_AudioDevice *mPrfsAudioDevice;
-	Kopete::AV::VideoDevicePool *d ;
+	AVDeviceConfig_VideoDevice  *mPrfsVideoDevice;
+	AVDeviceConfig_AudioDevice  *mPrfsAudioDevice;
+	Kopete::AV::VideoDevicePool *mVideoDevicePool ;
 	QImage qimage;
 	QPixmap qpixmap, m_video_image;
 	QTimer qtimer;
+	void setVideoInputParameters();
 #ifdef HAVE_GL
 	QGLWidget m_video_gl;
 #endif

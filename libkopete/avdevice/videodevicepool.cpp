@@ -77,9 +77,13 @@ int VideoDevicePool::open()
 		kdDebug() <<  k_funcinfo << "open(): Device out of scope (" << m_current_device << "). Defaulting to the first one." << endl;
 		m_current_device = 0;
 	}
+loadConfig();
 	int isopen = m_videodevice[currentDevice()].open();
 	if ( isopen == EXIT_SUCCESS)
+	{
 		loadConfig(); // Temporary hack. The open() seems to clean the input parameters. Need to find a way to fix it.
+		
+	}
 	return isopen;
 }
 
@@ -195,6 +199,71 @@ int VideoDevicePool::stopCapturing()
 	return EXIT_FAILURE;
 }
 
+// Implementation of the methods that get / set input's adjustment parameters
+/*!
+    \fn VideoDevicePool::getBrightness()
+ */
+float VideoDevicePool::getBrightness()
+{
+	return m_videodevice[currentDevice()].getBrightness();
+}
+
+/*!
+    \fn VideoDevicePool::setBrightness(float brightness)
+ */
+float VideoDevicePool::setBrightness(float brightness)
+{
+	return m_videodevice[currentDevice()].setBrightness(brightness);
+}
+
+/*!
+    \fn VideoDevicePool::getContrast()
+ */
+float VideoDevicePool::getContrast()
+{
+	return m_videodevice[currentDevice()].getContrast();
+}
+
+/*!
+    \fn VideoDevicePool::setContrast(float contrast)
+ */
+float VideoDevicePool::setContrast(float contrast)
+{
+	return m_videodevice[currentDevice()].setContrast(contrast);
+}
+
+/*!
+    \fn VideoDevicePool::getSaturation()
+ */
+float VideoDevicePool::getSaturation()
+{
+	return m_videodevice[currentDevice()].getSaturation();
+}
+
+/*!
+    \fn VideoDevicePool::setSaturation(float saturation)
+ */
+float VideoDevicePool::setSaturation(float saturation)
+{
+	return m_videodevice[currentDevice()].setSaturation(saturation);
+}
+
+/*!
+    \fn VideoDevicePool::getHue()
+ */
+float VideoDevicePool::getHue()
+{
+	return m_videodevice[currentDevice()].getHue();
+}
+
+/*!
+    \fn VideoDevicePool::setHue(float hue)
+ */
+float VideoDevicePool::setHue(float hue)
+{
+	return m_videodevice[currentDevice()].setHue(hue);
+}
+
 /*!
     \fn VideoDevicePool::getAutoBrightnessContrast()
  */
@@ -242,7 +311,7 @@ bool VideoDevicePool::setAutoColorCorrection(bool colorcorrection)
  */
 int VideoDevicePool::getFrame()
 {
-	kdDebug() <<  k_funcinfo << "VideoDevicePool::getFrame() called." << endl;
+//	kdDebug() <<  k_funcinfo << "VideoDevicePool::getFrame() called." << endl;
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].getFrame();
 	else
@@ -255,7 +324,7 @@ int VideoDevicePool::getFrame()
 			m_buffer.data[loop+2] = 0;
 		}
 	}
-	kdDebug() <<  k_funcinfo << "VideoDevicePool::getFrame() exited successfuly." << endl;
+//	kdDebug() <<  k_funcinfo << "VideoDevicePool::getFrame() exited successfuly." << endl;
 	return EXIT_SUCCESS;
 }
 
@@ -264,7 +333,7 @@ int VideoDevicePool::getFrame()
  */
 int VideoDevicePool::getImage(QImage *qimage)
 {
-	kdDebug() <<  k_funcinfo << "VideoDevicePool::getImage() called." << endl;
+//	kdDebug() <<  k_funcinfo << "VideoDevicePool::getImage() called." << endl;
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].getImage(qimage);
 	else

@@ -869,7 +869,7 @@ int VideoDevice::getFrame()
 	struct v4l2_buffer v4l2buffer;
 #endif
 #endif
-	kdDebug() <<  k_funcinfo << "getFrame() called." << endl;
+//	kdDebug() <<  k_funcinfo << "getFrame() called." << endl;
 	if(isOpen())
 	{
 		switch (m_io_method)
@@ -878,7 +878,7 @@ int VideoDevice::getFrame()
 				return EXIT_FAILURE;
 				break;
 			case IO_METHOD_READ:
-				kdDebug() <<  k_funcinfo << "Using IO_METHOD_READ.File descriptor: " << descriptor << " Buffer address: " << &m_currentbuffer.data[0] << " Size: " << m_currentbuffer.data.size() << endl;
+//				kdDebug() <<  k_funcinfo << "Using IO_METHOD_READ.File descriptor: " << descriptor << " Buffer address: " << &m_currentbuffer.data[0] << " Size: " << m_currentbuffer.data.size() << endl;
 				bytesread = read (descriptor, &m_currentbuffer.data[0], m_currentbuffer.data.size());
 				if (-1 == bytesread) // must verify this point with ov511 driver.
 				{
@@ -920,7 +920,7 @@ int VideoDevice::getFrame()
 				}
 /*				if (v4l2buffer.index < m_streambuffers)
 					return EXIT_FAILURE;*/ //it was an assert()
-kdDebug() << k_funcinfo << "m_rawbuffers[" << v4l2buffer.index << "].start: " << (void *)m_rawbuffers[v4l2buffer.index].start << "   Size: " << m_currentbuffer.data.size() << endl;
+//kdDebug() << k_funcinfo << "m_rawbuffers[" << v4l2buffer.index << "].start: " << (void *)m_rawbuffers[v4l2buffer.index].start << "   Size: " << m_currentbuffer.data.size() << endl;
 
 
 
@@ -1031,11 +1031,11 @@ memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_current
 				case PIXELFORMAT_YUV422P: break;
 			}
 		}
-kdDebug() <<  k_funcinfo << "10 Using IO_METHOD_READ.File descriptor: " << descriptor << " Buffer address: " << &m_currentbuffer.data[0] << " Size: " << m_currentbuffer.data.size() << endl;
+//kdDebug() <<  k_funcinfo << "10 Using IO_METHOD_READ.File descriptor: " << descriptor << " Buffer address: " << &m_currentbuffer.data[0] << " Size: " << m_currentbuffer.data.size() << endl;
 
 
 // put frame copy operation here
-		kdDebug() <<  k_funcinfo << "exited successfuly." << endl;
+//		kdDebug() <<  k_funcinfo << "exited successfuly." << endl;
 		return EXIT_SUCCESS;
 	}
 	return EXIT_FAILURE;
@@ -1066,7 +1066,7 @@ int VideoDevice::getImage(QImage *qimage)
     /// @todo implement me
 	qimage->create(width(), height(),32, QImage::IgnoreEndian);
 	uchar *bits=qimage->bits();
-kdDebug() <<  k_funcinfo << "Capturing in " << pixelFormatName(m_currentbuffer.pixelformat) << endl;
+//kdDebug() <<  k_funcinfo << "Capturing in " << pixelFormatName(m_currentbuffer.pixelformat) << endl;
 	switch(m_currentbuffer.pixelformat)
 	{
 		case PIXELFORMAT_NONE	: break;

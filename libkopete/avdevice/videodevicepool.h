@@ -79,10 +79,20 @@ public:
 	unsigned int currentDevice();
 	int currentInput();
 	unsigned int inputs();
+
+	float getBrightness();
+	float setBrightness(float brightness);
+	float getContrast();
+	float setContrast(float contrast);
+	float getSaturation();
+	float setSaturation(float saturation);
+	float getHue();
+	float setHue(float hue);
 	bool getAutoBrightnessContrast();
 	bool setAutoBrightnessContrast(bool brightnesscontrast);
 	bool getAutoColorCorrection();
 	bool setAutoColorCorrection(bool colorcorrection);
+
 	void loadConfig(); // Load configuration parameters;
 	void saveConfig(); // Save configuretion parameters;
 
