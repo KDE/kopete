@@ -7,4 +7,5 @@ Icon=kopete_emoticons
 Patterns=*.kopete-emoticons
 X-KDE-AutoEmbed=false
 Comment=Kopete Emoticon Archive
+Comment[fr]=Archive d'émoticônes pour Kopete
 Comment[x-test]=xxKopete Emoticon Archivexx

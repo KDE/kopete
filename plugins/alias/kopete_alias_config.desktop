@@ -13,5 +13,6 @@ X-KDE-ParentComponents=kopete_alias
 Name=Alias
 Name[x-test]=xxAliasxx
 Comment=Adds custom aliases for commands
+Comment[fr]=Ajoute des alias personnalisés à des commandes
 Comment[x-test]=xxAdds custom aliases for commandsxx
 

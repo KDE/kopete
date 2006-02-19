@@ -10,6 +10,8 @@ X-KDE-ParentApp=kopete_motionaway
 X-KDE-ParentComponents=kopete_motionaway
 
 Name=Motion Auto-Away
+Name[fr]=Détection de mouvement
 Name[x-test]=xxMotion Auto-Awayxx
 Comment=Sets away status when not detecting movement near the computer
+Comment[fr]=Active l'état absent lorsque aucune activité n'est détectée près de l'ordinateur
 Comment[x-test]=xxSets away status when not detecting movement near the computerxx

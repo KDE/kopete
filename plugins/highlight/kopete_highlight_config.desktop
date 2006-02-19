@@ -11,6 +11,8 @@ X-KDE-ParentApp=kopete_highlight
 X-KDE-ParentComponents=kopete_highlight
 
 Name=Highlight
+Name[fr]=Surlignement
 Name[x-test]=xxHighlightxx
 Comment=Highlights text based on filters
+Comment[fr]=Surligne les messages qui répondent à certains critères
 Comment[x-test]=xxHighlights text based on filtersxx

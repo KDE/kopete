@@ -11,6 +11,8 @@ X-KDE-ParentApp=kopete_webpresence
 X-KDE-ParentComponents=kopete_webpresence
 
 Comment=Show the status of (parts of) your contact list on a web page
+Comment[fr]=Afficher l'état de connexion de votre liste (ou d'une partie) sur une page internet
 Comment[x-test]=xxShow the status of (parts of) your contact list on a web pagexx
 Name=Web Presence
+Name[fr]=Présence sur le web
 Name[x-test]=xxWeb Presencexx

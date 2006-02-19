@@ -11,7 +11,9 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Devices
+Name[fr]=Périphériques
 Name[x-test]=xxDevicesxx
 Comment=Here You Can Alter Kopete's Video And Audio Devices' Settings
+Comment[fr]=Vous pouvez modifier ici la configuration des périphériques audio et vidéo de Kopete
 Comment[x-test]=xxHere You Can Alter Kopete's Video And Audio Devices' Settingsxx
 DocPath=kopete/configure-dialog.html#configuring-avdevice

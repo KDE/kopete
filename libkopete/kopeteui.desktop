@@ -4,4 +4,5 @@ Type=ServiceType
 X-KDE-ServiceType=Kopete/UI
 X-KDE-Derived=Kopete/Plugin
 Comment=A Kopete UI Plugin
+Comment[fr]=Un module d'interface utilisateur pour Kopete
 Comment[x-test]=xxA Kopete UI Pluginxx

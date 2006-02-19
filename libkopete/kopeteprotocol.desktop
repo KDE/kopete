@@ -4,6 +4,7 @@ Type=ServiceType
 X-KDE-ServiceType=Kopete/Protocol
 X-KDE-Derived=Kopete/Plugin
 Comment=Kopete Protocol Plugin
+Comment[fr]=Module de protocole pour Kopete
 Comment[x-test]=xxKopete Protocol Pluginxx
 
 [PropertyDef::X-Kopete-Messaging-Protocol]

@@ -11,6 +11,8 @@ X-KDE-ParentApp=kopete_history
 X-KDE-ParentComponents=kopete_history
 
 Name=History
+Name[fr]=Historique
 Name[x-test]=xxHistoryxx
 Comment=History Plugin
+Comment[fr]=Module d'historique
 Comment[x-test]=xxHistory Pluginxx

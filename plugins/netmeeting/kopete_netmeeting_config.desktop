@@ -11,6 +11,8 @@ X-KDE-ParentApp=kopete_netmeeting
 X-KDE-ParentComponents=kopete_netmeeting
 
 Name=Netmeeting
+Name[fr]=Vidéo-conférence
 Name[x-test]=xxNetmeetingxx
 Comment=Voice and Video with MSN Messenger
+Comment[fr]=Voix et vidéo avec MSN Messenger
 Comment[x-test]=xxVoice and Video with MSN Messengerxx

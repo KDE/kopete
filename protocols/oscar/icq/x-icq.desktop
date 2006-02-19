@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Comment=ICQ Contact
+Comment[fr]=Contact ICQ
 Comment[x-test]=xxICQ Contactxx
 Type=MimeType
 MimeType=application/x-icq

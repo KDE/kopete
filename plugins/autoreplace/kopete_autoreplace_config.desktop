@@ -11,7 +11,9 @@ X-KDE-ParentApp=kopete_autoreplace
 X-KDE-ParentComponents=kopete_autoreplace
 
 Name=Auto Replace
+Name[fr]=Remplacement automatique
 Name[x-test]=xxAuto Replacexx
 Comment=Autoreplaces some text you can choose
+Comment[fr]=Remplace automatiquement du texte que vous pouvez choisir
 Comment[x-test]=xxAutoreplaces some text you can choosexx
 

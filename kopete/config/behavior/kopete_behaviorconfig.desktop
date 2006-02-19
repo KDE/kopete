@@ -11,8 +11,10 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Behavior
+Name[fr]=Comportement
 Name[x-test]=xxBehaviorxx
 Comment=Here You Can Personalize Kopete
+Comment[fr]=Vous pouvez personnaliser Kopete ici
 Comment[x-test]=xxHere You Can Personalize Kopetexx
 DocPath=kopete/configure-dialog.html#configuring-behavior
 

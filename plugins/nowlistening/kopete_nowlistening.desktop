@@ -15,7 +15,9 @@ X-KDE-PluginInfo-Depends=
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=Now Listening
+Name[fr]=En écoute
 Name[x-test]=xxNow Listeningxx
 Comment=Tells your buddies what you're listening to
+Comment[fr]=Indique à vos contacts ce que vous êtes en train d'écouter
 Comment[x-test]=xxTells your buddies what you're listening toxx
 

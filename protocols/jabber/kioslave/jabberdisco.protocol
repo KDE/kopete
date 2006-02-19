@@ -10,4 +10,5 @@ linking=false
 moving=false
 Icon=remote
 Description=A KIO slave for Jabber Service Discovery
+Description[fr]=Un module d'entrée / sortie pour la recherche de service Jabber
 Description[x-test]=xxA KIO slave for Jabber Service Discoveryxx

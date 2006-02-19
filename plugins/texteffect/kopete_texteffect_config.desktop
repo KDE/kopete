@@ -11,7 +11,9 @@ X-KDE-ParentApp=kopete_texteffect
 X-KDE-ParentComponents=kopete_texteffect
 
 Name=Text Effect
+Name[fr]=Effets de texte
 Name[x-test]=xxText Effectxx
 Comment=Adds special effects to your text
+Comment[fr]=Ajoute des effets spéciaux à vos messages
 Comment[x-test]=xxAdds special effects to your textxx
 
