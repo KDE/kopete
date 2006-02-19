@@ -172,6 +172,7 @@ protected slots:
 	void slotGoOffline();
 	void slotOpenInbox();			// Open Yahoo Mailbox in browser
 	void slotOpenYAB();			// Open Yahoo Addressbook in browser
+	void slotEditOwnYABEntry();		// Show own Yahoo Addressbook entry
 
 	void slotGoStatus(int status, const QString &awayMessage = QString::null);
 	void slotLoginResponse(int succ, const QString &url);
@@ -278,6 +279,7 @@ private:
 
 	KAction *m_openInboxAction;	// Menu item openInbox
 	KAction *m_openYABAction;	// Menu item openYahooAddressbook
+	KAction *m_editOwnYABEntry;	// Menu item editOwnYABEntry
 	
 	Client *m_session;		// The Connection object
 };

@@ -96,6 +96,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	
 	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
 	m_openYABAction = new KAction( i18n( "Open &Addressbook..." ), "contents", 0, this, SLOT( slotOpenYAB() ), this, "m_openYABAction" );
+	m_editOwnYABEntry = new KAction( i18n( "&Edit my contact details..."), "contents", 0, this, SLOT( slotEditOwnYABEntry() ), this, "m_editOwnYABEntry" );
 
 	YahooContact* _myself=new YahooContact( this, accountId.lower(), accountId, Kopete::ContactList::self()->myself() );
 	setMyself( _myself );
@@ -561,6 +562,7 @@ KActionMenu *YahooAccount::actionMenu()
 	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
 	
 	theActionMenu->popupMenu()->insertSeparator();
+	theActionMenu->insert( m_editOwnYABEntry );
 	theActionMenu->insert( m_openInboxAction );
 	theActionMenu->insert( m_openYABAction );
 	
@@ -1669,6 +1671,11 @@ void YahooAccount::slotOpenInbox()
 void YahooAccount::slotOpenYAB()
 {
 	KRun::runURL( KURL( QString::fromLatin1("http://address.yahoo.com/") ) , "text/html" );
+}
+
+void YahooAccount::slotEditOwnYABEntry()
+{
+	myself()->slotUserInfo();
 }
 
 #include "yahooaccount.moc"
