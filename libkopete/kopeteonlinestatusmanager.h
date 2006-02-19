@@ -102,8 +102,8 @@ public:
 	 *
 	 * @param status The status to register
 	 * @param caption The caption that will appear in menus (e.g. "Set &Away")
-	 * @param categories A bitflag of @ref Categories
-	 * @param options is a bitflag of @ref Options
+	 * @param categories A bitflag of OnlineStatusManager::Categories
+	 * @param options is a bitflag of OnlineStatusManager::Options
 	 */
 	void registerOnlineStatus(const OnlineStatus& status, const QString &caption, Categories categories=0x00 , Options options=0x0);
 
