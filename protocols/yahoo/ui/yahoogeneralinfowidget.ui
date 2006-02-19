@@ -493,52 +493,6 @@
                         <cstring>addressEdit</cstring>
                     </property>
                 </widget>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>textLabel2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;City:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>cityEdit</cstring>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="2" column="3">
-                    <property name="name">
-                        <cstring>stateEdit</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>7</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>1</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="readOnly">
-                        <bool>false</bool>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="2">
-                    <property name="name">
-                        <cstring>textLabel4</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;State:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>stateEdit</cstring>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="3" column="3">
-                    <property name="name">
-                        <cstring>countryEdit</cstring>
-                    </property>
-                    <property name="readOnly">
-                        <bool>false</bool>
-                    </property>
-                </widget>
                 <widget class="QLabel" row="3" column="2">
                     <property name="name">
                         <cstring>textLabel8</cstring>
@@ -548,52 +502,6 @@
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>countryEdit</cstring>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="3" column="1">
-                    <property name="name">
-                        <cstring>zipEdit</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>7</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                    <property name="readOnly">
-                        <bool>false</bool>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="2" column="1">
-                    <property name="name">
-                        <cstring>cityEdit</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>7</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>1</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="readOnly">
-                        <bool>false</bool>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="3" column="0">
-                    <property name="name">
-                        <cstring>textLabel3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Zip:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>zipEdit</cstring>
                     </property>
                 </widget>
                 <widget class="QTextEdit" row="0" column="1" rowspan="2" colspan="3">
@@ -618,6 +526,98 @@
                         </size>
                     </property>
                 </spacer>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>textLabel4</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;State:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>stateEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="3" column="1">
+                    <property name="name">
+                        <cstring>stateEdit</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>1</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="readOnly">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="2">
+                    <property name="name">
+                        <cstring>textLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;City:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>cityEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="2" column="3">
+                    <property name="name">
+                        <cstring>cityEdit</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>1</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="readOnly">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="3" column="3">
+                    <property name="name">
+                        <cstring>countryEdit</cstring>
+                    </property>
+                    <property name="readOnly">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>textLabel3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Zip:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>zipEdit</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="2" column="1">
+                    <property name="name">
+                        <cstring>zipEdit</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="readOnly">
+                        <bool>false</bool>
+                    </property>
+                </widget>
             </grid>
         </widget>
     </grid>
@@ -631,8 +631,8 @@
     <tabstop>birthdayEdit</tabstop>
     <tabstop>anniversaryEdit</tabstop>
     <tabstop>addressEdit</tabstop>
-    <tabstop>cityEdit</tabstop>
     <tabstop>zipEdit</tabstop>
+    <tabstop>cityEdit</tabstop>
     <tabstop>stateEdit</tabstop>
     <tabstop>countryEdit</tabstop>
     <tabstop>phoneEdit</tabstop>

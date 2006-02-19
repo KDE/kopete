@@ -99,14 +99,6 @@
                         <bool>false</bool>
                     </property>
                 </widget>
-                <widget class="QLabel" row="6" column="0">
-                    <property name="name">
-                        <cstring>textLabel4</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Zip:</string>
-                    </property>
-                </widget>
                 <widget class="QLabel" row="7" column="0">
                     <property name="name">
                         <cstring>textLabel9</cstring>
@@ -131,49 +123,9 @@
                         <bool>false</bool>
                     </property>
                 </widget>
-                <widget class="QLabel" row="5" column="0">
-                    <property name="name">
-                        <cstring>textLabel5</cstring>
-                    </property>
-                    <property name="text">
-                        <string>State:</string>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="6" column="1">
-                    <property name="name">
-                        <cstring>zipEdit</cstring>
-                    </property>
-                    <property name="readOnly">
-                        <bool>false</bool>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="4" column="1">
-                    <property name="name">
-                        <cstring>cityEdit</cstring>
-                    </property>
-                    <property name="readOnly">
-                        <bool>false</bool>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="5" column="1">
-                    <property name="name">
-                        <cstring>stateEdit</cstring>
-                    </property>
-                    <property name="readOnly">
-                        <bool>false</bool>
-                    </property>
-                </widget>
                 <widget class="QTextEdit" row="2" column="1" rowspan="2" colspan="1">
                     <property name="name">
                         <cstring>addressEdit</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="4" column="0">
-                    <property name="name">
-                        <cstring>textLabel3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>City:</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="2" column="0">
@@ -201,6 +153,54 @@
                         </size>
                     </property>
                 </spacer>
+                <widget class="QLineEdit" row="5" column="1">
+                    <property name="name">
+                        <cstring>cityEdit</cstring>
+                    </property>
+                    <property name="readOnly">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="6" column="1">
+                    <property name="name">
+                        <cstring>stateEdit</cstring>
+                    </property>
+                    <property name="readOnly">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="6" column="0">
+                    <property name="name">
+                        <cstring>textLabel5</cstring>
+                    </property>
+                    <property name="text">
+                        <string>State:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="5" column="0">
+                    <property name="name">
+                        <cstring>textLabel3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>City:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="4" column="0">
+                    <property name="name">
+                        <cstring>textLabel4</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Zip:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="4" column="1">
+                    <property name="name">
+                        <cstring>zipEdit</cstring>
+                    </property>
+                    <property name="readOnly">
+                        <bool>false</bool>
+                    </property>
+                </widget>
             </grid>
         </widget>
         <spacer row="2" column="0">
@@ -227,9 +227,9 @@
     <tabstop>companyEdit</tabstop>
     <tabstop>homepageEdit</tabstop>
     <tabstop>addressEdit</tabstop>
+    <tabstop>zipEdit</tabstop>
     <tabstop>cityEdit</tabstop>
     <tabstop>stateEdit</tabstop>
-    <tabstop>zipEdit</tabstop>
     <tabstop>countryEdit</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
