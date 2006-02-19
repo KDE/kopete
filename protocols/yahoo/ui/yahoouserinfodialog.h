@@ -47,7 +47,7 @@ private:
 	YahooWorkInfoWidget* m_workInfoWidget;
 	YahooOtherInfoWidget* m_otherInfoWidget;
 	
-	const YABEntry *m_yab;
+	YABEntry m_yab;
 	YahooContact *m_contact;
 };
 

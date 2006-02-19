@@ -1275,6 +1275,7 @@ void YahooAccount::slotGotYABEntry( YABEntry *entry )
 			dlg->setAccountConnected( isConnected() );
 			dlg->show();
 			QObject::connect( dlg, SIGNAL(saveYABEntry( YABEntry & )), this, SLOT(slotSaveYABEntry( YABEntry & )));
+			delete entry;
 		}
 	}
 }
