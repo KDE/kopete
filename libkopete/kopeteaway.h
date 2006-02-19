@@ -139,6 +139,14 @@ private:
 	 */
 	void save();
 
+	/**
+	 * @brief Check for activity using X11 methods
+	 * @return true if activity was detected, otherwise false
+	 *
+	 * Attempt to detect activity using a variety of X11 methods.
+	 */
+	bool isActivity();
+
 	//Away( const Away &rhs );
 	//Away &operator=( const Away &rhs );
 	static Away *instance;
@@ -150,14 +158,14 @@ private slots:
 
 public slots:
 	/**
-	 * @brief Set the activity
+	 * @brief Mark the user active
 	 *
-	 * Plugins can set the activity if they discover activity by another way than the mouse or the keyboard
+	 * Plugins can mark the user active if they discover activity by another way than the mouse or the keyboard
 	 * (example, the motion auto away plugin)
 	 * this will reset the @ref idleTime to 0, and set all protocols to available (online) if the state was
 	 * set automatically to away because of idleness, and if they was previously online
 	 */
-	void setActivity();
+	void setActive();
 
 	/**
 	 * Use this method if you want to go in the autoaway mode.
