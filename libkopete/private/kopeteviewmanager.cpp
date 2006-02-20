@@ -82,10 +82,7 @@ KopeteViewManager::KopeteViewManager()
     d->activeView = 0L;
     d->foreignMessage=false;
 
-#warning Port to new signals when KConfigXT will it them in snapshot
-#if 0
-    connect( KopetePrefs::prefs(), SIGNAL( saved() ), this, SLOT( slotPrefsChanged() ) );
-#endif
+    connect( Kopete::BehaviorSettings::self(), SIGNAL( configChanged() ), this, SLOT( slotPrefsChanged() ) );
 
     connect( Kopete::ChatSessionManager::self() , SIGNAL( display( Kopete::Message &, Kopete::ChatSession *) ),
             this, SLOT ( messageAppended( Kopete::Message &, Kopete::ChatSession *) ) );

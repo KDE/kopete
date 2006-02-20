@@ -254,11 +254,8 @@ void KopeteMetaContactLVI::initLVI()
 	connect( m_metaContact, SIGNAL( contactIdleStateChanged( Kopete::Contact * ) ),
 		SLOT( slotIdleStateChanged( Kopete::Contact * ) ) );
 
-#warning Port to new signals when KConfigXT will support signals.
-#if 0
-	connect( KopetePrefs::prefs(), SIGNAL( contactListAppearanceChanged() ),
+	connect( Kopete::AppearanceSettings::self(), SIGNAL( contactListAppearanceChanged() ),
 			 SLOT( slotConfigChanged() ) );
-#endif
 	connect( kapp, SIGNAL( appearanceChanged() ),  SLOT( slotConfigChanged() ) );
 
 	mBlinkTimer = new QTimer( this, "mBlinkTimer" );

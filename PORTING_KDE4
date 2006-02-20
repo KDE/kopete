@@ -41,6 +41,9 @@ Libkopete changes
    - Replaced PortingDict, now a QMultiHash<QByteArray, PropertyData
    - Replaced all const char * parameters with const QByteArray &
 
+*) KopetePrefs
+   - Removed. Use the new settings classes (see entry below).
+
 *) kopetexsl.h
    - Was removed in 0.12 version.
 

@@ -70,10 +70,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
 	connect(Kopete::ChatSessionManager::self() , SIGNAL(newEvent(Kopete::MessageEvent*)),
 		this, SLOT(slotNewEvent(Kopete::MessageEvent*)));
-#warning Port to new signals when KConfigXT will support signals in snapshot.
-#if 0
-	connect(KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()));
-#endif
+	connect(Kopete::BehaviorSettings::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()));
 
 	connect(Kopete::AccountManager::self(),
 		SIGNAL(accountOnlineStatusChanged(Kopete::Account *,

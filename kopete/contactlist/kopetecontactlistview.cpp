@@ -432,10 +432,8 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 	connect( this, SIGNAL( itemRenamed( Q3ListViewItem * ) ),
 	         SLOT( slotItemRenamed( Q3ListViewItem * ) ) );
 
-#warning Port to new signals when KConfigXT will support signals.
-#if 0
-	connect( KopetePrefs::prefs(), SIGNAL( saved() ), SLOT( slotSettingsChanged() ) );
-#endif
+	connect( Kopete::BehaviorSettings::self(), SIGNAL( configChanged() ), SLOT( slotSettingsChanged() ) );
+	connect( Kopete::AppearanceSettings::self(), SIGNAL( configChanged() ), SLOT( slotSettingsChanged() ) );
 	connect( Kopete::ContactList::self(), SIGNAL( selectionChanged() ),
 	         SLOT( slotListSelectionChanged() ) );
 	connect( Kopete::ContactList::self(),

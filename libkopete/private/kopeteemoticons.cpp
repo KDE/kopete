@@ -279,10 +279,7 @@ Emoticons::Emoticons( const QString &theme ) : QObject( kapp, "KopeteEmoticons" 
 	if(theme.isNull())
 	{
 		initEmoticons();
-#warning Port to new signals when KConfigXT will support signals
-#if 0
-		connect( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(initEmoticons()) );
-#endif
+		connect( Kopete::AppearanceSettings::self(), SIGNAL(configChanged()), this, SLOT(initEmoticons()) );
 	}
 	else
 	{

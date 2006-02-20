@@ -203,17 +203,15 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	// It is not possible to drag and drop on our widget
 	view()->setAcceptDrops(false);
 
-#warning Port to new signals when KConfigXT will support signals.
-#if 0
-	connect( KopetePrefs::prefs(), SIGNAL(messageAppearanceChanged()),
+	connect( Kopete::AppearanceSettings::self(), SIGNAL(messageOverridesChanged()),
 	         this, SLOT( slotAppearanceChanged() ) );
-	connect( KopetePrefs::prefs(), SIGNAL(windowAppearanceChanged()),
+	connect( Kopete::AppearanceSettings::self(), SIGNAL(appearanceChanged()),
 	         this, SLOT( slotRefreshView() ) );
-	connect( KopetePrefs::prefs(), SIGNAL(styleChanged(const QString &)),
+	connect( Kopete::AppearanceSettings::self(), SIGNAL(styleChanged(const QString &)),
 			 this, SLOT( setStyle(const QString &) ) );
-	connect( KopetePrefs::prefs(), SIGNAL(styleVariantChanged(const QString &)),
+	connect( Kopete::AppearanceSettings::self(), SIGNAL(styleVariantChanged(const QString &)),
 			 this, SLOT( setStyleVariant(const QString &) ) );
-#endif
+
 	// Refresh the style if the display name change.
 	connect( d->manager, SIGNAL(displayNameChanged()), this, SLOT(changeStyle()) );
 

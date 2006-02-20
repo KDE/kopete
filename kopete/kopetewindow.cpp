@@ -176,11 +176,8 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 		this, SLOT(slotAccountUnregistered(const Kopete::Account*)));
 
 	connect( m_autoHideTimer, SIGNAL( timeout() ), this, SLOT( slotAutoHide() ) );
-#warning Port to new signals when KConfigXT will support signals in snapshot
-#if 0
-	connect( KopetePrefs::prefs(), SIGNAL( contactListAppearanceChanged() ),
+	connect( Kopete::AppearanceSettings::self(), SIGNAL( contactListAppearanceChanged() ),
 		this, SLOT( slotContactListAppearanceChanged() ) );
-#endif
 	createGUI ( "kopeteui.rc", false );
 
 	// call this _after_ createGUI(), otherwise menubar is not set up correctly
@@ -332,11 +329,9 @@ void KopeteWindow::initActions()
 	connect( setStatusMenu->popupMenu(), SIGNAL( activated( int ) ), SLOT(slotStatusMessageSelected( int ) ) );
 
 	// sync actions, config and prefs-dialog
-#warning Port to new signals when KConfigXT will support signals in snapshot
-#if 0
-	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
+	connect ( Kopete::AppearanceSettings::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()) );
 	slotConfigChanged();
-#endif
+
 	globalAccel = new KGlobalAccel( this );
 	globalAccel->insert( QString::fromLatin1("Read Message"), i18n("Read Message"), i18n("Read the next pending message"),
 		Qt::CTRL + Qt::SHIFT + Qt::Key_I, /*Qt::META + Qt::CTRL + Qt::Key_I,*/ Kopete::ChatSessionManager::self(), SLOT(slotReadMessage()) );
@@ -523,25 +518,12 @@ void KopeteWindow::showStatusbar()
 void KopeteWindow::slotToggleShowOffliners()
 {
 	Kopete::AppearanceSettings::self()->setShowOfflineUsers ( actionShowOffliners->isChecked() );
-
-#warning Port to new signals when KConfigXT will support signals in snapshot.
-#if 0
-	disconnect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
-	p->save();
-	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
-#endif 
 	Kopete::AppearanceSettings::self()->writeConfig();
 }
 
 void KopeteWindow::slotToggleShowEmptyGroups()
 {
 	Kopete::AppearanceSettings::self()->setShowEmptyGroups ( actionShowEmptyGroups->isChecked() );
-#warning Port to new signals when KConfigXT will support signals in snapshot.
-#if 0
-	disconnect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
-	p->save();
-	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
-#endif
 	Kopete::AppearanceSettings::self()->writeConfig();
 }
 
