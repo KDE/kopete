@@ -170,7 +170,7 @@ ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 : Kopete::Protocol( ICQProtocolFactory::instance(), parent, name ),
 	firstName(Kopete::Global::Properties::self()->firstName()),
 	lastName(Kopete::Global::Properties::self()->lastName()),
-	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
+	awayMessage(Kopete::Global::Properties::self()->statusMessage()),
 	emailAddress(Kopete::Global::Properties::self()->emailAddress()),
 	ipAddress("ipAddress", i18n("IP Address") ),
 	clientFeatures("clientFeatures", i18n("Client Features"), 0),

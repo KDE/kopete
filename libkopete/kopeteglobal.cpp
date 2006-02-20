@@ -130,10 +130,10 @@ const ContactPropertyTmpl &Properties::lastSeen() const
 		i18n("Last Seen"), QString::null, true);
 }
 
-const ContactPropertyTmpl &Properties::awayMessage() const
+const ContactPropertyTmpl &Properties::statusMessage() const
 {
-	return createProp(QString::fromLatin1("awayMessage"),
-		i18n("Away Message"));
+	return createProp(QString::fromLatin1("statusMessage"),
+		i18n("Status Message"));
 }
 
 const ContactPropertyTmpl &Properties::firstName() const

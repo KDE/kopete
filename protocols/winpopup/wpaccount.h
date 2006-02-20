@@ -42,6 +42,10 @@ class KAction;
 class WPProtocol;
 class KopeteWinPopup;
 
+namespace Kopete
+{
+	class StatusMessage;
+}
 /**
  * The actual Account class used by Kopete.
  */
@@ -89,6 +93,7 @@ public slots:
 
 	/* Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus &status , const QString &reason = QString::null);
+	void setStatusMessage(const Kopete::StatusMessage& statusMessage);
 
 protected:
 	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentContact);

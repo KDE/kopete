@@ -26,7 +26,7 @@
 #include "oscartypeclasses.h"
 
 class KAction;
-namespace Kopete { class AwayAction; }
+namespace Kopete { class AwayAction; class StatusMessage; }
 class ICQProtocol;
 class ICQAccount;
 class OscarVisibilityDialog;
@@ -59,6 +59,7 @@ public:
 
 	/** Reimplementation from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus&, const QString& );
+	void setStatusMessage( const Kopete::StatusMessage& );
 
 	virtual void setAway( bool away, const QString &awayReason );
 

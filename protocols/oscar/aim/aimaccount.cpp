@@ -34,6 +34,7 @@
 #include "kopeteprotocol.h"
 #include "kopetechatsessionmanager.h"
 #include "kopeteview.h"
+#include "kopetestatusmessage.h"
 #include <kopeteuiglobal.h>
 
 #include "aimprotocol.h"
@@ -351,14 +352,14 @@ void AIMAccount::setAway(bool away, const QString &awayReason)
 		engine()->setStatus( Client::Away, awayReason );
 		AIMMyselfContact* me = static_cast<AIMMyselfContact *> ( myself() );
 		me->setLastAwayMessage(awayReason);
-		me->setProperty( Kopete::Global::Properties::self()->awayMessage(), awayReason );
+		me->setProperty( Kopete::Global::Properties::self()->statusMessage(), awayReason );
 	}
 	else
 	{
 		engine()->setStatus( Client::Online );
 		AIMMyselfContact* me = static_cast<AIMMyselfContact *> ( myself() );
 		me->setLastAwayMessage(QString::null);
-		me->removeProperty( Kopete::Global::Properties::self()->awayMessage() );
+		me->removeProperty( Kopete::Global::Properties::self()->statusMessage() );
 	}
 }
 
@@ -371,6 +372,9 @@ void AIMAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const QStr
 		setAway( true, reason );
 }
 
+void AIMAccount::setStatusMessage( const Kopete::StatusMessage& statusMessage )
+{
+}
 
 void AIMAccount::setUserProfile(const QString &profile)
 {
@@ -521,7 +525,7 @@ void AIMAccount::slotGoOnline()
 	{
 		kDebug(14152) << k_funcinfo << accountId() << " was away. welcome back." << endl;
 		engine()->setStatus( Client::Online );
-		myself()->removeProperty( Kopete::Global::Properties::self()->awayMessage() );
+		myself()->removeProperty( Kopete::Global::Properties::self()->statusMessage() );
 	}
 	else if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
 	{

@@ -35,6 +35,7 @@
 #include "kopetepassword.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
+#include "kopetestatusmessage.h"
 
 #include <kpassworddialog.h>
 #include <kconfig.h>
@@ -358,6 +359,12 @@ GaduAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const QString
 }
 
 void
+GaduAccount::setStatusMessage( const Kopete::StatusMessage& statusMessage )
+{
+	changeStatus( myself()->onlineStatus(), statusMessage.message() );
+}
+
+void
 GaduAccount::slotUserlistSynch()
 {
 	if ( !p->exportUserlist ) {
@@ -467,7 +474,7 @@ GaduAccount::changeStatus( const Kopete::OnlineStatus& status, const QString& de
 	}
 
 	myself()->setOnlineStatus( status );
-	myself()->setProperty( GaduProtocol::protocol()->propAwayMessage, descr );
+	myself()->setStatusMessage( Kopete::StatusMessage(descr) );
 
 	if ( status.internalStatus() == GG_STATUS_NOT_AVAIL || status.internalStatus() == GG_STATUS_NOT_AVAIL_DESCR ) {
 		if ( p->pingTimer_ ){
@@ -483,7 +490,7 @@ GaduAccount::slotLogin( int status, const QString& dscr )
 	p->lastDescription	= dscr;
 
 	myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ));
-	myself()->setProperty( GaduProtocol::protocol()->propAwayMessage, dscr );
+	myself()->setStatusMessage( Kopete::StatusMessage(dscr) );
 
 	if ( !p->session_->isConnected() ) {
 		if ( password().cachedValue().isEmpty() ) {
@@ -782,7 +789,7 @@ GaduAccount::connectionSucceed( )
 	kDebug(14100) << "#### Gadu-Gadu connected! " << endl;
 	p->status =  GaduProtocol::protocol()->convertStatus( p->session_->status() );
 	myself()->setOnlineStatus( p->status );
-	myself()->setProperty( GaduProtocol::protocol()->propAwayMessage, p->lastDescription );
+	myself()->setStatusMessage( Kopete::StatusMessage(p->lastDescription) );
 	startNotify();
 
 	p->session_->requestContacts();

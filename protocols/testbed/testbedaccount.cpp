@@ -24,6 +24,7 @@
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
+#include "kopetestatusmessage.h"
 
 #include "testbedcontact.h"
 #include "testbedfakeserver.h"
@@ -76,6 +77,11 @@ void TestbedAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Q
 		slotGoOffline();
 	else if ( status.status() == Kopete::OnlineStatus::Away )
 		slotGoAway( /* reason */ );
+}
+
+void TestbedAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
+{
+	/* Not used in testbed */
 }
 
 void TestbedAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )

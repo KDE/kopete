@@ -20,8 +20,12 @@
 #include <kopeteaccount.h>
 
 class KActionMenu;
-namespace Kopete { class Contact; }
-namespace Kopete { class MetaContact; }
+namespace Kopete 
+{ 
+	class Contact;
+	class MetaContact;
+	class StatusMessage;
+}
 
 class TestbedContact;
 class TestbedProtocol;
@@ -55,6 +59,7 @@ public:
 	 * Called when Kopete status is changed globally
 	 */
 	virtual void setOnlineStatus(const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+	virtual void setStatusMessage(const Kopete::StatusMessage& statusMessage);
 	/**
 	 * 'Connect' to the testbed server.  Only sets myself() online.
 	 */

@@ -29,6 +29,7 @@
 #include <kconfig.h>
 
 // Kopete Includes
+#include "kopetestatusmessage.h"
 
 // Local Includes
 #include "wpaccount.h"
@@ -152,6 +153,7 @@ void WPAccount::setAway(bool status, const QString &awayMessage)
 //	if(!isConnected())
 //		theInterface->goOnline();
 	myself()->setOnlineStatus(status ? mProtocol->WPAway : mProtocol->WPOnline);
+	myself()->setStatusMessage( Kopete::StatusMessage(theAwayMessage) );
 }
 
 KActionMenu* WPAccount::actionMenu()
@@ -197,6 +199,13 @@ void WPAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const QStrin
 		setAway( true, reason );
 }
 
+void WPAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
+{
+	if(myself()->onlineStatus().status() == Kopete::OnlineStatus::Online)
+		setAway( false, statusMessage.message() );
+	else if(myself()->onlineStatus().status() == Kopete::OnlineStatus::Away)
+		setAway( true, statusMessage.message() );
+}
 #include "wpaccount.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

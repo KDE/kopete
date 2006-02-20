@@ -23,6 +23,7 @@
 class Kopete::Protocol;
 class Kopete::OnlineStatus;
 class Kopete::MetaContact;
+class Kopete::StatusMessage;
 
 class QString;
 
@@ -43,6 +44,7 @@ public:
 	virtual void connect( const Kopete::OnlineStatus& initialStatus = OnlineStatus() );
 	virtual void disconnect();
 	virtual void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null );
+	virtual void setStatusMessage( const Kopete::StatusMessage &statusMessage );
 };
 
 } // end ns Kopete::Test::Mock

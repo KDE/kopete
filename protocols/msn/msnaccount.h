@@ -32,6 +32,11 @@ class KActionMenu;
 class MSNNotifySocket;
 class MSNContact;
 
+namespace Kopete
+{
+	class StatusMessage;
+}
+
 /**
  * MSNAccount encapsulates everything that is account-based, as opposed to
  * protocol based. This basically means sockets, current status, and account
@@ -55,7 +60,7 @@ public:
 	 * change the publicName to this new name
 	 */
 	void setPublicName( const QString &name );
-	void setPersonalMessage(MSNProtocol::PersonalMessageType type, const QString &personalMessage );
+	void setPersonalMessage(const Kopete::StatusMessage &message );
 
 	/**
 	 * Returns the address of the MSN server
@@ -113,7 +118,7 @@ public slots:
 	virtual void connectWithPassword( const QString &password ) ;
 	virtual void disconnect() ;
 	virtual void setOnlineStatus( const Kopete::OnlineStatus &status , const QString &reason = QString::null);
-
+	virtual void setStatusMessage( const Kopete::StatusMessage &statusMessage );
 	/**
 	 * Ask to the account to create a new chat session
 	 */
@@ -144,7 +149,6 @@ private slots:
 	// notifySocket related
 	void slotStatusChanged( const Kopete::OnlineStatus &status );
 	void slotNotifySocketClosed();
-	void slotPersonalMessageChanged(const QString& personalMessage);
 	void slotContactRemoved(const QString& handle, const QString& list, const QString& contactGuid, const QString& groupGuid );
 	void slotContactAdded(const QString& handle, const QString& list, const QString& publicName, const QString& contactGuid, const QString &groupGuid );
 	void slotContactListed( const QString& handle, const QString& publicName, const QString &contactGuid, uint lists, const QString& groups );

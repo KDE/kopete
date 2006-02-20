@@ -49,7 +49,7 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
 			propFirstName(Kopete::Global::Properties::self()->firstName()),
 			propLastName(Kopete::Global::Properties::self()->lastName()),
 			propEmail(Kopete::Global::Properties::self()->emailAddress()),
-			propAwayMessage(Kopete::Global::Properties::self()->awayMessage()),
+			propAwayMessage(Kopete::Global::Properties::self()->statusMessage()),
 			propPhoneNr(Kopete::Global::Properties::self()->privatePhone()),
 			defaultAccount_( 0 ),
 			gaduStatusBlocked_( Kopete::OnlineStatus::Away, GG_STATUS_BLOCKED, this,

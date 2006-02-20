@@ -26,6 +26,7 @@
 #include "kopetemetacontact.h"
 #include "kopeteonlinestatus.h"
 #include "kopetecontactlist.h"
+#include "kopetestatusmessage.h"
 
 // Messenger includes
 #include "messengerprotocol.h"
@@ -60,6 +61,11 @@ void MessengerAccount::disconnect()
 }
 
 void MessengerAccount::setOnlineStatus(const Kopete::OnlineStatus& status , const QString &reason)
+{
+	
+}
+
+void MessengerAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 {
 	
 }

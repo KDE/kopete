@@ -18,6 +18,7 @@
 #include "kopeteaccount_mock.h"
 #include "kopetemetacontact.h"
 #include "kopeteaccount_mock.h"
+#include "kopetestatusmessage.h"
 
 namespace Kopete
 {
@@ -52,6 +53,11 @@ void Account::disconnect()
 }
 
 void Account::setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason)
+{
+	// do nothing
+}
+
+void Account::setStatusMessage( const Kopete::StatusMessage& statusMessage )
 {
 	// do nothing
 }

@@ -37,6 +37,7 @@
 #include "kopeteaccount.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccountmanager.h"
+#include "kopetestatusmessage.h"
 
 #include "nowlisteningconfig.h"
 #include "nowlisteningplugin.h"
@@ -259,80 +260,69 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 	{
 		QString advert;
 
+		QString track, artist, album;
+		bool isPlaying=false;
+
+		if( NowListeningConfig::self()->useSpecifiedMediaPlayer() && d->m_currentMediaPlayer )
+		{
+			if( d->m_currentMediaPlayer->playing() )
+			{
+				track = d->m_currentMediaPlayer->track();
+				artist = d->m_currentMediaPlayer->artist();
+				album = d->m_currentMediaPlayer->album();
+				isPlaying = true;
+			}
+		}
+		else
+		{
+			foreach( NLMediaPlayer *i, d->m_mediaPlayerList )
+			{
+				if( i->playing() )
+				{
+					track = i->track();
+					artist = i->artist();
+					album = i->album();
+					isPlaying = true;
+				}
+			}
+		}
+
 		QList<Kopete::Account*> accountsList = Kopete::AccountManager::self()->accounts();
 		foreach( Kopete::Account* a, accountsList )
 		{
-			/*
-				NOTE:
-				MSN status message(personal message) use a special tag to advert the current music playing. 
-				So, we don't send the all formatted string, send a special string seperated by ";".
-				
-				Also, do not use MSN hack in appending mode.
-			*/
-			if( a->protocol()->pluginId() == "MSNProtocol" && !NowListeningConfig::self()->appendStatusAdvertising() )
+			Kopete::StatusMessage currentStatusMessage = a->myself()->statusMessage();
+			
+			if(isPlaying)
 			{
-				QString track, artist, album, mediaList;
-				bool isPlaying=false;
-
-				if( NowListeningConfig::self()->useSpecifiedMediaPlayer() && d->m_currentMediaPlayer )
+				currentStatusMessage.addMetaData("title", track);
+				currentStatusMessage.addMetaData("artist", artist);
+				currentStatusMessage.addMetaData("album", album);
+			}
+				
+			if( NowListeningConfig::self()->appendStatusAdvertising() )
+			{
+				// Check for the now listening message in parenthesis, 
+				// include the header to not override other messages in parenthesis.
+				QRegExp statusSong( QString("\\((%1[^.]*)\\)").arg( NowListeningConfig::header()) );
+					
+				// HACK: Don't keep appending the now listened song. Replace it in the status message.
+				advert = currentStatusMessage.message();
+				if(statusSong.search(advert) != -1)
 				{
-					if( d->m_currentMediaPlayer->playing() )
-					{
-						track = d->m_currentMediaPlayer->track();
-						artist = d->m_currentMediaPlayer->artist();
-						album = d->m_currentMediaPlayer->album();
-						mediaList = track + ";" + artist + ";" + album;
-						isPlaying = true;
-					}
+					advert = advert.replace(statusSong, QString("(%1)").arg(mediaPlayerAdvert(false)) );
 				}
 				else
 				{
-					foreach( NLMediaPlayer *i, d->m_mediaPlayerList )
-					{
-						if( i->playing() )
-						{
-							track = i->track();
-							artist = i->artist();
-							album = i->album();
-							mediaList = track + ";" + artist + ";" + album;
-							isPlaying = true;
-						}
-					}
+					advert += QString("(%1)").arg( mediaPlayerAdvert(false) );
 				}
-
-				// KDE4 TODO: Use the new status message framework, and remove this "hack".
-				if( isPlaying )
-				{
-					advert = QString("[Music]%1").arg(mediaList);
-				}
-
 			}
 			else
 			{
-				if( NowListeningConfig::self()->appendStatusAdvertising() )
-				{
-					// Check for the now listening message in parenthesis, 
-					// include the header to not override other messages in parenthesis.
-					QRegExp statusSong( QString("\\((%1[^.]*)\\)").arg( NowListeningConfig::header()) );
-					
-					// HACK: Don't keep appending the now listened song. Replace it in the status message.
-					advert = a->myself()->property( Kopete::Global::Properties::self()->awayMessage() ).value().toString();
-					if(statusSong.search(advert) != -1)
-					{
-						advert = advert.replace(statusSong, QString("(%1)").arg(mediaPlayerAdvert(false)) );
-					}
-					else
-					{
-						advert += QString("(%1)").arg( mediaPlayerAdvert(false) );
-					}
-				}
-				else
-				{
-					advert = mediaPlayerAdvert(false); // newTrackPlaying has done the update.
-				}
+				advert = mediaPlayerAdvert(false); // newTrackPlaying has done the update.
 			}
+			currentStatusMessage.setMessage( advert );
 
-			a->setOnlineStatus(a->myself()->onlineStatus(), advert);
+			a->setStatusMessage(currentStatusMessage);
 		}
 	}
 }

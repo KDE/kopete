@@ -32,6 +32,7 @@
 #include "kopetemessage.h"
 #include "kopetecontactlist.h"
 #include "kopeteuiglobal.h"
+#include "kopetestatusmessage.h"
 
 #include "client.h"
 #include "icquserinfo.h"
@@ -315,7 +316,7 @@ void ICQAccount::setPresenceType( ICQ::Presence::Type type, const QString &messa
 	kDebug(14153) << k_funcinfo << "new type=" << (int)type << ", old type=" << (int)pres.type() << endl;
 	//setAwayMessage(awayMessage);
 	setPresenceTarget( ICQ::Presence( type, pres.visibility() ), message );
-	myself()->setProperty( Kopete::Global::Properties::self()->awayMessage(), message );
+	myself()->setProperty( Kopete::Global::Properties::self()->statusMessage(), message );
 }
 
 void ICQAccount::setPresenceTarget( const ICQ::Presence &newPres, const QString &message )
@@ -367,6 +368,9 @@ void ICQAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const QStr
 	}
 }
 
+void ICQAccount::setStatusMessage( const Kopete::StatusMessage &statusMessage )
+{
+}
 
 OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const SSI& ssiItem )
 {

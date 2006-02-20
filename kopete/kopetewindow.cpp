@@ -761,7 +761,7 @@ void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 
 	if ( status != Kopete::OnlineStatus::Connecting )
 	{
-		m_globalStatusMessageStored = contact->property( Kopete::Global::Properties::self()->awayMessage() ).value().toString();
+		m_globalStatusMessageStored = contact->property( Kopete::Global::Properties::self()->statusMessage() ).value().toString();
 		m_globalStatusMessage->setText( m_globalStatusMessageStored );
 	}
 	

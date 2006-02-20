@@ -35,6 +35,11 @@ class KTempFile;
 class MSNSecureLoginHandler;
 class MSNChallengeHandler;
 
+namespace Kopete
+{
+	class StatusMessage;
+}
+
 /**
  * @author Olaf Lueg
  * @author Olivier Goffart
@@ -58,7 +63,7 @@ public:
 	void renameGroup( const QString& groupName, const QString& groupGuid );
 
 	void changePublicName( const QString& publicName , const QString &handle=QString::null );
-	void changePersonalMessage( MSNProtocol::PersonalMessageType type , const QString& personalMessage );
+	void changePersonalMessage( const Kopete::StatusMessage &personalMessage );
 
 	void changePhoneNumber( const QString &key, const QString &data );
 

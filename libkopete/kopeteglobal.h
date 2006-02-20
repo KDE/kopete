@@ -97,9 +97,9 @@ namespace Global
 			 */
 			const ContactPropertyTmpl &lastSeen() const;
 			/**
-			 * @return default template for a contact's away-message
+			 * @return default template for a contact's status message
 			 */
-			const ContactPropertyTmpl &awayMessage() const;
+			const ContactPropertyTmpl &statusMessage() const;
 			/**
 			 * @return default template for a contact's first name
 			 */

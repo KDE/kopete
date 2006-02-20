@@ -10,15 +10,14 @@ Libkopete changes
 *) Kopete::AccountManager
    - accounts() now return a QList<Account*>.
 
+*) KopeteAwayDialog
+   - removed. KopeteAwayAction should be used instead
+
 *) Kopete::ChatSessionManager
    - sessions() now return a QList<ChatSession*>
 
-*) kopetecommandhandler.h
+*) kopetecommandlist.h
    - CommandList is now a QMultiHash<QString, Command*>
-
-*) kopeteproperties.h
-   - Replaced PortingDict, now a QMultiHash<QByteArray, PropertyData
-   - Replaced all const char * parameters with const QByteArray &
 
 *) kopetecontactproperty.h
    - Removed bool flags from constructor. Use ContactPropertyOption enum instead.
@@ -26,20 +25,25 @@ Libkopete changes
      Second bool parameter -> Kopete::ContactPropertyTmpl::RichTextProperty
      Third bool parameter -> Kopete::ContactProperyTmpl::PrivateProperty
 
+*) kopeteglobal.h
+   - Renamed Kopete::Global::Properties::awayMessage() to statusMessage()
+
 *) Kopete::MetaContact
    - photo() is now deprecated. Use picture().image() instead.
-
-*) kopetexsl.h
-   - Was removed in 0.12 version.
 
 *) Kopete::Message
    - asXML() no longer exist (removed in 0.12)
 
-*) KopeteAwayDialog
-   - removed. KopeteAwayAction should be used instead.
-
 *) Kopete::OnlineStatusManager
 	- HasAwayMessage enum value was renamed to HasStatusMessage.
+
+*) kopeteproperties.h
+   - Replaced PortingDict, now a QMultiHash<QByteArray, PropertyData
+   - Replaced all const char * parameters with const QByteArray &
+
+*) kopetexsl.h
+   - Was removed in 0.12 version.
+
 
 -kopetemessagemanager.h and kopetemessagemanagerfactory.h has been removed. Use kopetechatsession.h and kopetechatsessionmanager.h
 

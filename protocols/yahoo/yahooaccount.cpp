@@ -51,6 +51,7 @@
 #include <kopetecontactlist.h>
 #include <kopetetransfermanager.h>
 #include <kopeteview.h>
+#include <kopetestatusmessage.h>
 
 // Yahoo
 #include "yahooaccount.h"
@@ -127,7 +128,7 @@ void YahooAccount::slotGoStatus( int status, const QString &awayMessage)
 			(status == Yahoo::StatusAvailable)? Yahoo::StatusTypeAvailable : Yahoo::StatusTypeAway );
 		
 		//sets the awayMessage property for the owner of the account. shows up in the statusbar icon's tooltip. the property is unset when awayMessage is null
-		myself()->setProperty( m_protocol->awayMessage, awayMessage );
+		myself()->setStatusMessage( Kopete::StatusMessage(awayMessage) );
 
 		myself()->setOnlineStatus( m_protocol->statusFromYahoo( status ) );
 	}
@@ -1573,6 +1574,14 @@ void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const Q
 	{
 		slotGoStatus( status.internalStatus(), reason );
 	}
+}
+
+void YahooAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
+{
+	int currentStatus = myself()->onlineStatus().internalStatus();
+	m_session->changeStatus( Yahoo::Status( currentStatus ), statusMessage.message(), 
+	                         (currentStatus == Yahoo::StatusAvailable)? Yahoo::StatusTypeAvailable : Yahoo::StatusTypeAway );
+	myself()->setStatusMessage( statusMessage );
 }
 
 void YahooAccount::slotOpenInbox()

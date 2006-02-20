@@ -40,6 +40,7 @@ class MetaContact;
 class Group;
 class OnlineStatus;
 class BlackLister;
+class StatusMessage;
 
 /**
  * The Kopete::Account class handles one account.
@@ -469,10 +470,16 @@ public slots:
 	/**
 	 * Reimplement this function to set the online status
 	 * @param status is the new status
-	 * @param reason is the away message to set.
+	 * @param reason is the status message to set.
 	 * @note If needed, you need to connect.  if the offline status is given, you should disconnect
 	 */
 	virtual void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null ) = 0;
+	/**
+	 * Reimplement this function to set the status message(with metadata).
+	 * You should use this method to set the status message instead of using setOnlineStatus.
+	 * @param statusMessage is the status message to set. (Use Kopete::StatusMessage).
+	 */
+	virtual void setStatusMessage( const Kopete::StatusMessage &statusMessage ) = 0;
 
 	/**
 	 * Display the edit account widget for the account

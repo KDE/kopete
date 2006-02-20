@@ -42,6 +42,8 @@ class OnlineStatus;
 class Plugin;
 class Protocol;
 class Account;
+class StatusMessage;
+
 typedef QList<Group *> GroupList;
 
 /**
@@ -211,6 +213,17 @@ public:
 	 */
 	void setOnlineStatus(const OnlineStatus &status);
 
+	/**
+	 * @brief Get the current status message of the contact.
+	 * @return the status in a Kopete::StatusMessage.
+	 */
+	Kopete::StatusMessage statusMessage() const;
+	/**
+	 * @brief Set the contact's status message.
+	 * It sets also the "awayMessage" property so you don't need to do it.
+	 */
+	void setStatusMessage(const Kopete::StatusMessage &statusMessage);
+	 
 	/**
 	 * \brief Get the set of custom menu items for this contact
 	 *

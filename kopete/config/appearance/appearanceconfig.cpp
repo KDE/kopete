@@ -79,6 +79,7 @@
 #include <kopetemessage.h>
 #include <kopetechatsession.h>
 #include <kopetechatsessionmanager.h>
+#include <kopetestatusmessage.h>
 
 #include "kopeteemoticons.h"
 #include "kopeteglobal.h"
@@ -602,6 +603,7 @@ bool createContact( const QString &/*contactId*/, Kopete::MetaContact */*parentC
 void connect( const Kopete::OnlineStatus& /*initialStatus*/){}
 void disconnect(){}
 void setOnlineStatus( const Kopete::OnlineStatus& /*status*/ , const QString &/*reason*/){}
+void setStatusMessage(const Kopete::StatusMessage& /*statusMessage*/){}
 };
 
 void AppearanceConfig::createPreviewChatSession()

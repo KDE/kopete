@@ -91,7 +91,7 @@ public:
 
         toolTip += QString::fromLatin1("<tr><td>");
 
-		if ( ! metaContact->picture().isNull() )
+// 		if ( ! metaContact->picture().isNull() )
         {
 #warning Currently using metaContact->picture().path() but should use replacement of KopeteMimeSourceFactory
 #if 0
@@ -820,7 +820,7 @@ void KopeteMetaContactLVI::updateVisibility()
 void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact */*contact*/,
 	const QString &key, const QVariant &old, const QVariant &newVal )
 {
-	if ( key == QString::fromLatin1("awayMessage") && d->extraText && old != newVal )
+	if ( key == Kopete::Global::Properties::self()->statusMessage().key() && d->extraText && old != newVal )
 	{
 		if ( newVal.toString().isEmpty() )
 			d->extraText->setText( QString::null );

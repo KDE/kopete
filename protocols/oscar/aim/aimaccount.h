@@ -40,6 +40,7 @@ namespace Kopete
 class Contact;
 class Group;
 class ChatSession;
+class StatusMessage;
 }
 
 class KAction;
@@ -102,6 +103,7 @@ public:
 public slots:
 	/** Reimplementation from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status, const QString& reason = QString::null );
+	void setStatusMessage( const Kopete::StatusMessage& statusMessage );
 	void slotEditInfo();
 	void slotGoOnline();
 

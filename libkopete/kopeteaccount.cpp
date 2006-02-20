@@ -48,6 +48,7 @@
 #include "kopeteuiglobal.h"
 #include "kopeteblacklister.h"
 #include "kopeteonlinestatusmanager.h"
+#include "kopetestatusmessage.h"
 #include "editaccountwidget.h"
 
 namespace Kopete

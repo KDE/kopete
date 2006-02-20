@@ -24,7 +24,8 @@ class KActionMenu;
 
 namespace Kopete 
 { 
-	class MetaContact; 
+	class MetaContact;
+	class StatusMessage;
 }
 
 class MessengerProtocol;
@@ -46,6 +47,7 @@ public slots:
 	virtual void disconnect();
 	
 	virtual void setOnlineStatus(const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+	virtual void setStatusMessage(const Kopete::StatusMessage &statusMessage);
 	
 protected:
 	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentMetaContact);

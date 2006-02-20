@@ -13,20 +13,20 @@ AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CA
 
 lib_LTLIBRARIES = libkopete.la
 
-libkopete_la_SOURCES = connectionmanager.cpp \
-	kopeteonlinestatus.cpp kopeteonlinestatusmanager.cpp kopeteprotocol.cpp kopetecontact.cpp \
-	kopetepluginmanager.cpp kopeteplugin.cpp kopetemessage.cpp kopetechatsession.cpp \
-	kopetechatsessionmanager.cpp kopetecontactlist.cpp kopetemetacontact.cpp \
-	kopetetransfermanager.cpp kopetegroup.cpp kopeteaccountmanager.cpp kopeteaccount.cpp \
-	kopetecontactlistelement.cpp kopetecommand.cpp kopetecommandhandler.cpp kopeteaway.cpp kopeteawayaction.cpp \
-	kopetewalletmanager.cpp kopetecontactproperty.cpp kopetepassword.cpp kopeteglobal.cpp \
-	kopeteuiglobal.cpp kopetepasswordedaccount.cpp kopetemimetypehandler.cpp kopetetask.cpp \
-	kopetemimesourcefactory.cpp \
-	kopeteblacklister.cpp kopetemessageevent.cpp kopetemessagehandler.cpp \
-	kopetemessagehandlerchain.cpp kopetesimplemessagehandler.cpp kopeteproperties.cpp \
-	kabcpersistence.cpp connectionmanager.skel clientiface.stub managedconnectionaccount.cpp \
-	networkstatuscommon.h kopetegeneralsettings.kcfgc kopeteutils.cpp kopeteprefs.cpp kopetepicture.cpp \
-	kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc
+libkopete_la_SOURCES = connectionmanager.cpp 	kopeteonlinestatus.cpp \
+	kopeteonlinestatusmanager.cpp kopeteprotocol.cpp kopetecontact.cpp 	kopetepluginmanager.cpp \
+	kopeteplugin.cpp kopetemessage.cpp kopetechatsession.cpp 	kopetechatsessionmanager.cpp \
+	kopetecontactlist.cpp kopetemetacontact.cpp 	kopetetransfermanager.cpp kopetegroup.cpp \
+	kopeteaccountmanager.cpp kopeteaccount.cpp 	kopetecontactlistelement.cpp kopetecommand.cpp \
+	kopetecommandhandler.cpp kopeteaway.cpp kopeteawayaction.cpp 	kopetewalletmanager.cpp \
+	kopetecontactproperty.cpp kopetepassword.cpp kopeteglobal.cpp 	kopeteuiglobal.cpp \
+	kopetepasswordedaccount.cpp kopetemimetypehandler.cpp kopetetask.cpp 	kopetemimesourcefactory.cpp \
+		kopeteblacklister.cpp kopetemessageevent.cpp kopetemessagehandler.cpp \
+		kopetemessagehandlerchain.cpp kopetesimplemessagehandler.cpp kopeteproperties.cpp \
+		kabcpersistence.cpp connectionmanager.skel clientiface.stub managedconnectionaccount.cpp \
+		networkstatuscommon.h kopetegeneralsettings.kcfgc kopeteutils.cpp kopeteprefs.cpp \
+	kopetepicture.cpp 	kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc \
+	kopetestatusmessage.cpp
 
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
 libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(LIB_KIO) $(LIB_XSS)
@@ -49,16 +49,18 @@ servicetype_DATA = kopeteplugin.desktop kopeteprotocol.desktop kopeteui.desktop
 servicetypedir = $(kde_servicetypesdir)
 
 kopeteincludedir = $(includedir)/kopete
-kopeteinclude_HEADERS = kopeteaccount.h kopeteaccountmanager.h kopeteawayaction.h kopeteaway.h \
-	kopeteblacklister.h kopetecommand.h kopetecommandhandler.h kopetecontact.h kopetecontactlistelement.h kopetecontactlist.h \
-	kopetecontactproperty.h kopete_export.h kopeteglobal.h kopetegroup.h \
-	kopetemessageevent.h kopetemessage.h kopetemessagehandlerchain.h kopetemessagehandler.h \
-	kopetechatsession.h kopetechatsessionmanager.h kopetemetacontact.h kopetemimetypehandler.h \
-	kopeteonlinestatus.h kopeteonlinestatusmanager.h kopetepasswordedaccount.h \
-	kopetepassword.h kopeteplugin.h kopeteprotocol.h kopetesimplemessagehandler.h kopetetask.h \
-	kopetetransfermanager.h kopeteuiglobal.h kabcpersistence.h managedconnectionaccount.h \
-	kopeteversion.h kopeteprefs.h kopetepicture.h kopeteappearancesettings.h kopetebehaviorsettings.h kopetegeneralsettings.h
+kopeteinclude_HEADERS = kopeteaccount.h kopeteaccountmanager.h \
+	kopeteawayaction.h kopeteaway.h 	kopeteblacklister.h kopetecommand.h \
+	kopetecommandhandler.h kopetecontact.h kopetecontactlistelement.h kopetecontactlist.h \
+		kopetecontactproperty.h kopete_export.h kopeteglobal.h kopetegroup.h 	kopetemessageevent.h \
+	kopetemessage.h kopetemessagehandlerchain.h kopetemessagehandler.h 	kopetechatsession.h \
+	kopetechatsessionmanager.h kopetemetacontact.h kopetemimetypehandler.h 	kopeteonlinestatus.h \
+	kopeteonlinestatusmanager.h kopetepasswordedaccount.h 	kopetepassword.h kopeteplugin.h \
+	kopeteprotocol.h kopetesimplemessagehandler.h kopetetask.h 	kopetetransfermanager.h \
+	kopeteuiglobal.h kabcpersistence.h managedconnectionaccount.h 	kopeteversion.h \
+	kopeteprefs.h kopetepicture.h kopeteappearancesettings.h kopetebehaviorsettings.h \
+	kopetegeneralsettings.h kopetestatusmessage.h
 
 # vim: set noet:
 
-noinst_HEADERS = kopeteblacklister.h  
+noinst_HEADERS = kopeteblacklister.h

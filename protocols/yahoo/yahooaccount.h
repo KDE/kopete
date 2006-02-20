@@ -49,6 +49,7 @@ class KTempFile;
 namespace Kopete{
 class Transfer;
 class ChatSession;
+class StatusMessage;
 }
 class Client;
 class YABEntry;
@@ -133,8 +134,7 @@ public slots:
 
 	/** Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus&, const QString &reason = QString::null);
-
-
+	void setStatusMessage(const Kopete::StatusMessage&);
 signals:
 	/**
 	 * Emitted when we receive notification that the person we're talking to is typing

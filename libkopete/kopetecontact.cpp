@@ -47,6 +47,7 @@
 #include "kopetebehaviorsettings.h"
 #include "metacontactselectorwidget.h"
 #include "kopeteemoticons.h"
+#include "kopetestatusmessage.h"
 
 //For the moving to another metacontact dialog
 #include <qlabel.h>
@@ -76,7 +77,7 @@ public:
 	unsigned long int idleTime;
 
 	Kopete::ContactProperty::Map properties;
-
+	Kopete::StatusMessage statusMessage;
 };
 
 Contact::Contact( Account *account, const QString &contactId,
@@ -164,6 +165,22 @@ void Contact::setOnlineStatus( const OnlineStatus &status )
 
 	if ( this == account()->myself() || account()->isConnected() )
 		emit onlineStatusChanged( this, status, oldStatus );
+}
+
+Kopete::StatusMessage Contact::statusMessage() const
+{
+	return d->statusMessage;
+}
+
+void Contact::setStatusMessage( const Kopete::StatusMessage &statusMessage )
+{
+	d->statusMessage = statusMessage;
+	
+	kDebug(14010) << k_funcinfo << "Setting up the status message property with this: " << statusMessage.message() << endl;
+	if( !statusMessage.message().isEmpty() )
+		setProperty( Kopete::Global::Properties::self()->statusMessage(), statusMessage.message() );
+	else
+		removeProperty( Kopete::Global::Properties::self()->statusMessage() );
 }
 
 void Contact::slotAccountIsConnectedChanged()
@@ -670,9 +687,10 @@ QString Contact::toolTip() const
 	// --------------------------------------------------------------------------
 	// Configurable part of tooltip
 
+	// FIXME: It shouldn't use QString to identity the properties. Instead it should use ContactPropertyTmpl::key()
 	for(QStringList::Iterator it=shownProps.begin(); it!=shownProps.end(); ++it)
 	{
-		if((*it) == QString::fromLatin1("FormattedName"))
+		if((*it) == Kopete::Global::Properties::self()->fullName().key() )
 		{
 			QString name = formattedName();
 			if(!name.isEmpty())
@@ -700,13 +718,13 @@ QString Contact::toolTip() const
 						arg( KUrl::encode_string( url ), Kopete::Message::escape( Qt::escape(url) ) );
 			}
 		}
-		else if ((*it) == QString::fromLatin1("awayMessage"))
+		else if ((*it) == Kopete::Global::Properties::self()->statusMessage().key() )
 		{
-			QString awaymsg = property(*it).value().toString();
-			if(!awaymsg.isEmpty())
+			QString statusmsg = property(*it).value().toString();
+			if(!statusmsg.isEmpty())
 			{
-				tip += i18n("<br><b>Away Message:</b>&nbsp;FORMATTED AWAY MESSAGE",
-							"<br><b>Away&nbsp;Message:</b>&nbsp;%1").arg ( Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(awaymsg) ) );
+				tip += i18n("<br><b>Status Message:</b>&nbsp;FORMATTED STATUS MESSAGE",
+							"<br><b>Status&nbsp;Message:</b>&nbsp;%1").arg ( Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusmsg) ) );
 			}
 		}
 		else
@@ -754,14 +772,14 @@ QString Contact::toolTip() const
 
 QString Kopete::Contact::formattedName() const
 {
-	if( hasProperty(QString::fromLatin1("FormattedName")) )
-		return property(QString::fromLatin1("FormattedName")).value().toString();
+	if( hasProperty( Kopete::Global::Properties::self()->fullName().key() ) )
+		return property( Kopete::Global::Properties::self()->fullName() ).value().toString();
 
 	QString ret;
 	Kopete::ContactProperty first, last;
 
-	first = property(QString::fromLatin1("firstName"));
-	last = property(QString::fromLatin1("lastName"));
+	first = property( Kopete::Global::Properties::self()->firstName() );
+	last = property( Kopete::Global::Properties::self()->lastName() );
 	if(!first.isNull())
 	{
 		if(!last.isNull()) // contact has both first and last name

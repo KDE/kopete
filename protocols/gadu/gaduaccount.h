@@ -45,6 +45,7 @@ class GaduContact;
 class GaduProtocol;
 namespace Kopete { class Protocol; }
 namespace Kopete { class Message; }
+namespace Kopete { class StatusMessage; }
 class GaduCommand;
 class QTimer;
 class KActionMenu;
@@ -74,6 +75,7 @@ public slots:
 	void disconnect( DisconnectReason );
 	void disconnect();
 	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+	void setStatusMessage( const Kopete::StatusMessage& statusMessage );
 	//}
 
 	void changeStatus( const Kopete::OnlineStatus& status, const QString& descr = QString::null );

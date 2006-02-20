@@ -48,6 +48,7 @@
 
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
+#include "kopetestatusmessage.h"
 
 #include <ctime>
 
@@ -944,7 +945,8 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 			MSNContact *contact = static_cast<MSNContact*>(m_account->contacts()[ m_tmpLastHandle ]);
 			if(contact)
 			{
-				contact->setProperty(MSNProtocol::protocol()->propPersonalMessage, currentMedia.isEmpty() ? personalMessage : currentMedia);
+				// TODO: Maybe use a display status message for current media ?
+				contact->setStatusMessage( Kopete::StatusMessage(currentMedia.isEmpty() ? personalMessage : currentMedia) );
 			}
 		}
 		m_tmpLastHandle = QString::null;
@@ -1137,21 +1139,18 @@ void MSNNotifySocket::changePublicName( const QString &publicName, const QString
 	}
 }
 
-void MSNNotifySocket::changePersonalMessage( MSNProtocol::PersonalMessageType type, const QString &personalMessage )
+void MSNNotifySocket::changePersonalMessage( const Kopete::StatusMessage &personalMessage )
 {
 	QString tempPersonalMessage;
 	QString xmlCurrentMedia;
 
 	// Only espace and cut the personalMessage is the type is normal.
-	if(type == MSNProtocol::PersonalMessageNormal)
+	tempPersonalMessage = personalMessage.message();
+	//Magic number : 129 characters
+	if( escape(tempPersonalMessage).length() > 129 )
 	{
-		tempPersonalMessage = personalMessage;
-		//Magic number : 129 characters
-		if( escape(personalMessage).length() > 129 )
-		{
-			// We cut. for now.
-			tempPersonalMessage = personalMessage.left(129);
-		}
+		// We cut. for now.
+		tempPersonalMessage = tempPersonalMessage.left(129);
 	}
 
 	QDomDocument xmlMessage;
@@ -1168,33 +1167,26 @@ void MSNNotifySocket::changePersonalMessage( MSNProtocol::PersonalMessageType ty
 		<CurrentMedia>\0Games\01\0Playing {0}\0Game Name\0</CurrentMedia>
 		<CurrentMedia>\0Office\01\0Office Message\0Office App Name\0</CurrentMedia>
 	*/
-	switch(type)
+	if( personalMessage.hasMetaData("title") || personalMessage.hasMetaData("artist") || personalMessage.hasMetaData("album") )
 	{
-		case MSNProtocol::PersonalMessageMusic:
+		xmlCurrentMedia = "\\0Music\\01\\0";
+		QString formatterArguments;
+		if( personalMessage.hasMetaData("title") ) // Current Track
 		{
-			xmlCurrentMedia = "\\0Music\\01\\0";
-			QStringList mediaList = QStringList::split(";", personalMessage);
-			QString formatterArguments;
-			if( !mediaList[0].isEmpty() ) // Current Track
-			{
-				xmlCurrentMedia += "{0}";
-				formatterArguments += QString("%1\\0").arg(mediaList[0]);
-			}
-			if( !mediaList[1].isEmpty() ) // Current Artist
-			{
-				xmlCurrentMedia += " - {1}";
-				formatterArguments += QString("%1\\0").arg(mediaList[1]);
-			}
-			if( !mediaList[2].isEmpty() ) // Current Album
-			{
-				xmlCurrentMedia += " ({2})";
-				formatterArguments += QString("%1\\0").arg(mediaList[2]);
-			}
-			xmlCurrentMedia += "\\0" + formatterArguments + "\\0";
-			break;
+			xmlCurrentMedia += "{0}";
+			formatterArguments += QString("%1\\0").arg( personalMessage.metaData("title").toString() );
 		}
-		default:
-			break;
+		if( personalMessage.hasMetaData("artist") ) // Current Artist
+		{
+			xmlCurrentMedia += " - {1}";
+			formatterArguments += QString("%1\\0").arg( personalMessage.metaData("artist").toString() );
+		}
+		if( personalMessage.hasMetaData("album")  ) // Current Album
+		{
+			xmlCurrentMedia += " ({2})";
+			formatterArguments += QString("%1\\0").arg( personalMessage.metaData("album").toString() );
+		}
+		xmlCurrentMedia += "\\0" + formatterArguments + "\\0";
 	}
 
 	currentMedia.appendChild( xmlMessage.createTextNode( xmlCurrentMedia ) );

@@ -226,7 +226,7 @@ AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
 	statusAway( Kopete::OnlineStatus::Away, 1, this, 20, QStringList(QString("contact_away_overlay")), i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away,
 							Kopete::OnlineStatusManager::HasStatusMessage ),
 	statusConnecting(Kopete::OnlineStatus::Connecting, 99, this, 99, QStringList(QString("aim_connecting")), i18n("Connecting...")),
-	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
+	awayMessage(Kopete::Global::Properties::self()->statusMessage()),
 	clientFeatures("clientFeatures", i18n("Client Features"), 0),
 	clientProfile( "clientProfile", i18n( "User Profile"), 0, Kopete::ContactPropertyTmpl::RichTextProperty),
 	iconHash("iconHash", i18n("Buddy Icon MD5 Hash"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty)
