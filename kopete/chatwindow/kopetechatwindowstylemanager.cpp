@@ -61,7 +61,7 @@ public:
 	// key = style path, value = ChatWindowStyle instance
 	QHash<QString, ChatWindowStyle*> stylePool;
 
-	QStack<KURL> styleDirs;
+	QStack<KUrl> styleDirs;
 };
 
 static KStaticDeleter<ChatWindowStyleManager> ChatWindowStyleManagerstaticDeleter;

@@ -379,7 +379,7 @@ Q_OBJECT
 		/**
 		 * Notifies about a picture
 		 */
-		void pictureInfoNotify( const QString &, KURL, int );
+		void pictureInfoNotify( const QString &, KUrl, int );
 		/**
 		 * The iconLoader has successfully downloaded a picutre
 		 */

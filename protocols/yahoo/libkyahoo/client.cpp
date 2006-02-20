@@ -650,8 +650,8 @@ void Client::initTasks()
 				SIGNAL( pictureStatusNotify( const QString &, int ) ) );
 	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureChecksumNotify( const QString &, int ) ),
 				SIGNAL( pictureChecksumNotify( const QString &, int ) ) );
-	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureInfoNotify( const QString &, KURL, int ) ),
-				SIGNAL( pictureInfoNotify( const QString &, KURL, int ) ) );
+	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureInfoNotify( const QString &, KUrl, int ) ),
+				SIGNAL( pictureInfoNotify( const QString &, KUrl, int ) ) );
 	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureRequest( const QString & ) ),
 				SIGNAL( pictureRequest( const QString & ) ) );
 	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureUploaded( const QString & ) ),
