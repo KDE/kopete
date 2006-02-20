@@ -17,7 +17,7 @@
 #define KOPETE_VERSION_STRING "0.50.50"
 #define KOPETE_VERSION_MAJOR 0
 #define KOPETE_VERSION_MINOR 50
-#define KOPETE_VERSION_RELEASE 51
+#define KOPETE_VERSION_RELEASE 50
 #define KOPETE_MAKE_VERSION( a,b,c ) (((a) << 16) | ((b) << 8) | (c))
 
 #define KOPETE_VERSION \

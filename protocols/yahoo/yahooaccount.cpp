@@ -17,6 +17,7 @@
 */
 //Standard Header
 #include <ctime>
+#include <stdlib.h>
 
 //QT
 #include <qfont.h>
@@ -52,6 +53,7 @@
 #include <kopetetransfermanager.h>
 #include <kopeteview.h>
 #include <kopetestatusmessage.h>
+#include <contactaddednotifydialog.h>
 
 // Yahoo
 #include "yahooaccount.h"
@@ -63,8 +65,8 @@
 #include "yahoowebcam.h"
 #include "yahooconferencemessagemanager.h"
 #include "yahooinvitelistimpl.h"
-#include "yahooauthreply.h"
 #include "yabentry.h"
+#include "yahoouserinfodialog.h"
 
 YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, const char *name)
  : Kopete::PasswordedAccount(parent, accountId, 0, name)
@@ -83,6 +85,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	
 	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), 0, "m_openInboxAction" );
 	m_openYABAction = new KAction( i18n( "Open &Addressbook..." ), "contents", 0, this, SLOT( slotOpenYAB() ), 0, "m_openYABAction" );
+	m_editOwnYABEntry = new KAction( i18n( "&Edit my contact details..."), "contents", 0, this, SLOT( slotEditOwnYABEntry() ), 0, "m_editOwnYABEntry" );
 
 	YahooContact* _myself=new YahooContact( this, accountId.lower(), accountId, Kopete::ContactList::self()->myself() );
 	setMyself( _myself );
@@ -98,6 +101,9 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	QString displayName = configGroup()->readEntry(QString::fromLatin1("displayName"), QString());
 	if(!displayName.isEmpty())
 		_myself->setNickName(displayName);
+	
+	m_YABLastMerge = configGroup()->readNumEntry( "YABLastMerge", 0 );
+	m_YABLastRemoteRevision = configGroup()->readNumEntry( "YABLastRemoteRevision", 0 );
 }
 
 YahooAccount::~YahooAccount()
@@ -310,6 +316,9 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::connect(m_session, SIGNAL(gotYABEntry( YABEntry * )), this, SLOT(slotGotYABEntry( YABEntry * )));
 		
+		QObject::connect(m_session, SIGNAL(modifyYABEntryError( YABEntry *, const QString & )), this, SLOT(slotModifyYABEntryError( YABEntry *, const QString & )));
+		
+		QObject::connect(m_session, SIGNAL(gotYABRevision( long, bool )), this, SLOT(slotGotYABRevision( long , bool )) );
 	}
 
 	if ( sct == DeleteConnections )
@@ -421,6 +430,10 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::disconnect(m_session, SIGNAL(pictureChecksumNotify(const QString&, int)), this, SLOT(slotGotBuddyIconChecksum(const QString&, int )));
 		
 		QObject::disconnect(m_session, SIGNAL(gotYABEntry( YABEntry * )), this, SLOT(slotGotYABEntry( YABEntry * )));
+		
+		QObject::disconnect(m_session, SIGNAL(modifyYABEntryError( YABEntry *, const QString & )), this, SLOT(slotModifyYABEntryError( YABEntry *, const QString & )));
+		
+		QObject::disconnect(m_session, SIGNAL(gotYABRevision( long, bool )), this, SLOT(slotGotYABRevision( long , bool )) );
 	}
 }
 
@@ -456,7 +469,7 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 	//m_session = YahooSessionManager::manager()->createSession( accountId(), passwd );
 	kDebug(YAHOO_GEN_DEBUG) << "Attempting to connect to Yahoo on <" << server << ":" 
 		<< port << ">. user <" << accountId() << ">"  << endl;
-	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Connecting );
+	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Connecting );	
 	m_session->setStatusOnConnect( Yahoo::Status( initialStatus().internalStatus() ) );
 	m_session->connect( server, port, accountId().lower(), passwd );
 }
@@ -539,6 +552,7 @@ KActionMenu *YahooAccount::actionMenu()
 	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
 	
 	theActionMenu->popupMenu()->insertSeparator();
+	theActionMenu->insert( m_editOwnYABEntry );
 	theActionMenu->insert( m_openInboxAction );
 	theActionMenu->insert( m_openYABAction );
 	
@@ -604,17 +618,18 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	QString errorMsg;
 	if ( succ == Yahoo::LoginOk || (succ == Yahoo::LoginDupl && m_lastDisconnectCode == 2) )
 	{
-		//slotGotBuddies(yahooSession()->getLegacyBuddyList());
-
-		//Yahoo only supports connecting as invisible and online, nothing else
-		if ( initialStatus() == m_protocol->Invisible )
+		if ( initialStatus().internalStatus() )
+		{
 			static_cast<YahooContact *>( myself() )->setOnlineStatus( initialStatus() );
+		}
 		else
+		{
 			static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Online );
+		}
 
 		 
 		setBuddyIcon( myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString() );
-		m_session->getYABEntries();
+		m_session->getYABEntries( m_YABLastMerge, m_YABLastRemoteRevision );
 		m_lastDisconnectCode = 0;
 		return;
 	}
@@ -734,23 +749,37 @@ void YahooAccount::slotAuthorizationRejected( const QString &who, const QString 
 void YahooAccount::slotgotAuthorizationRequest( const QString &user, const QString &msg, const QString &name )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	YahooAuthReply *dlg = new YahooAuthReply();
+	Q_UNUSED( msg );
+	Q_UNUSED( name );
+	YahooContact *kc = contact( user );
+	Kopete::MetaContact *metaContact=0L;
+	if(kc)
+		metaContact=kc->metaContact();
 	
-	QObject::connect( dlg, SIGNAL( okClicked() ), this, SLOT( slotAuthReplyOkClicked() ) );
-	dlg->setUser( user );
-	dlg->setName( name );
-	dlg->setRequestReason( msg );
-	dlg->setModal( TRUE );
-	dlg->show();
+	int hideFlags=Kopete::UI::ContactAddedNotifyDialog::InfoButton;
+	if( metaContact && !metaContact->isTemporary() )
+		hideFlags |= Kopete::UI::ContactAddedNotifyDialog::AddCheckBox | Kopete::UI::ContactAddedNotifyDialog::AddGroupBox ;
+	
+	Kopete::UI::ContactAddedNotifyDialog *dialog=
+		new Kopete::UI::ContactAddedNotifyDialog( user,QString::null,this, hideFlags );
+	QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),
+	                 this,SLOT(slotContactAddedNotifyDialogClosed(const QString& )));
+	dialog->show();
 }
 
-void YahooAccount::slotAuthReplyOkClicked()
+void YahooAccount::slotContactAddedNotifyDialogClosed( const QString &user )
 {
-	YahooAuthReply *dlg = const_cast<YahooAuthReply*>( dynamic_cast< const YahooAuthReply *>( sender() ) );
-	if( !dlg )
+	const Kopete::UI::ContactAddedNotifyDialog *dialog =
+		dynamic_cast<const Kopete::UI::ContactAddedNotifyDialog *>(sender());
+	if(!dialog || !isConnected())
 		return;
 	
-	m_session->sendAuthReply( dlg->user(), dlg->acceptAuth(), dlg->reason() );
+	m_session->sendAuthReply( user, dialog->authorized(), QString::null );
+	
+	if(dialog->added())
+	{
+		dialog->addContact();
+	}
 }
 
 void YahooAccount::slotGotIgnore( const QStringList & /* igns */ )
@@ -820,8 +849,9 @@ void YahooAccount::slotStealthStatusChanged( const QString &who, Yahoo::StealthS
 	kc->setStealthed( state == Yahoo::Stealthed );
 }
 
-const QString &YahooAccount::prepareIncomingMessage( QString newMsgText )
+QString YahooAccount::prepareIncomingMessage( const QString &messageText )
 {
+	QString newMsgText( messageText );
 	QRegExp regExp;
 	int pos = 0;
 	newMsgText = stripMsgColorCodes( newMsgText );
@@ -1198,20 +1228,65 @@ void YahooAccount::sendConfMessage( YahooConferenceChatSession *s, Kopete::Messa
 	m_session->sendConferenceMessage( s->room(), members, YahooContact::prepareMessage( message.escapedBody() ) );
 }
 
-void YahooAccount::slotGotYABEntry( YABEntry *entry )
+void YahooAccount::slotGotYABRevision( long rev, bool merged )
 {
-	if( !contact( entry->yahooId ) )
+	if( merged )
 	{
-		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "YAB entry received for a contact not on our buddylist." << endl;
-		delete entry;
-		return;
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Merge Revision received: " << rev << endl;
+		configGroup()->writeEntry( "YABLastMerge", (qlonglong)rev );
+		m_YABLastMerge = rev;
 	}
 	else
 	{
-		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "YAB entry for " << entry->yahooId << " received." << endl;
-		YahooContact* kc = contact( entry->yahooId );
-		kc->setYABEntry( entry );
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Remote Revision received: " << rev << endl;
+		configGroup()->writeEntry( "YABLastRemoteRevision", (qlonglong)rev );
+		m_YABLastRemoteRevision = rev;
 	}
+}
+
+void YahooAccount::slotGotYABEntry( YABEntry *entry )
+{
+	YahooContact* kc = contact( entry->yahooId );
+	if( !kc )
+	{
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "YAB entry received for a contact not on our buddylist: " << entry->yahooId << endl;
+		delete entry;
+	}
+	else
+	{
+		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "YAB entry received for: " << entry->yahooId << endl;
+		if( entry->source == YABEntry::SourceYAB )
+		{
+			kc->setYABEntry( entry );
+		}
+		else if( entry->source == YABEntry::SourceContact )
+		{
+			entry->YABId = kc->yabEntry()->YABId;
+			YahooUserInfoDialog *dlg = new YahooUserInfoDialog( kc, Kopete::UI::Global::mainWidget(), "yahoo userinfo" );
+			dlg->setData( *entry );
+			dlg->setAccountConnected( isConnected() );
+			dlg->show();
+			QObject::connect( dlg, SIGNAL(saveYABEntry( YABEntry & )), this, SLOT(slotSaveYABEntry( YABEntry & )));
+			delete entry;
+		}
+	}
+}
+
+void YahooAccount::slotSaveYABEntry( YABEntry &entry )
+{
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "YABId: " << entry.YABId << endl;
+	if( entry.YABId > 0 )
+		m_session->saveYABEntry( entry );
+	else
+		m_session->addYABEntry( entry );
+}
+
+void YahooAccount::slotModifyYABEntryError( YABEntry *entry, const QString &msg )
+{
+	YahooContact* kc = contact( entry->yahooId );
+	if( kc )
+		kc->setYABEntry( entry, true );
+	KMessageBox::sorry( Kopete::UI::Global::mainWidget(), msg, i18n( "Yahoo Plugin" ) );
 }
 
 void YahooAccount::slotGotFile( const QString &  who, const QString &  url , long /* expires */, const QString &  msg ,
@@ -1225,7 +1300,7 @@ void YahooAccount::slotGotFile( const QString &  who, const QString &  url , lon
 					this, SLOT( slotReceiveFileAccepted( Kopete::Transfer *, const QString& ) ) );
 }
 
-void YahooAccount::slotReceiveFileAccepted(Kopete::Transfer *trans, const QString& /*fileName*/)
+void YahooAccount::slotReceiveFileAccepted(Kopete::Transfer */*trans*/, const QString& /*fileName*/)
 {	
 	/*m_session->getUrlHandle( trans );
 	QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString& ) ),
@@ -1550,9 +1625,11 @@ void YahooAccount::slotWebcamPaused( const QString &who )
 void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason)
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline &&
-	     ( status.status() == Kopete::OnlineStatus::Online || status.status() == Kopete::OnlineStatus::Invisible ) )
+	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline && 
+	     status.status() != Kopete::OnlineStatus::Offline )
 	{
+		if( !reason.isEmpty() )
+			m_session->setStatusMessageOnConnect( reason );
 		connect( status );
 	}
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline &&
@@ -1592,6 +1669,11 @@ void YahooAccount::slotOpenInbox()
 void YahooAccount::slotOpenYAB()
 {
 	KRun::runURL( KUrl( QString::fromLatin1("http://address.yahoo.com/") ) , "text/html" );
+}
+
+void YahooAccount::slotEditOwnYABEntry()
+{
+	myself()->slotUserInfo();
 }
 
 #include "yahooaccount.moc"

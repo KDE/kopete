@@ -116,11 +116,11 @@ void WPAccount::slotGotNewMessage(const QString &Body, const QDateTime &Arrival,
 			static_cast<WPContact *>(contacts()[From])->slotNewMessage(Body, Arrival);
 		}
 		else {
-			mProtocol->sendMessage(theAwayMessage, From);
+			if (!theAwayMessage.isEmpty()) mProtocol->sendMessage(theAwayMessage, From);
 		}
 	 } else {
 		// What to do with offline received messages?
-		kDebug(14170) << "WinPopup: That's strange - we got a message while offline! Ignoring." << endl;
+		kDebug(14170) << "That's strange - we got a message while offline! Ignoring." << endl;
 	}
 }
 
@@ -148,7 +148,7 @@ void WPAccount::setAway(bool status, const QString &awayMessage)
 {
 //	kDebug(14170) <<  "WPAccount::setAway()" << endl;
 
-	theAwayMessage = awayMessage.isNull() ? i18n("I'm away at the moment.") : awayMessage;
+	theAwayMessage = awayMessage;
 
 //	if(!isConnected())
 //		theInterface->goOnline();
@@ -186,6 +186,7 @@ void WPAccount::slotSendMessage(const QString &Body, const QString &Destination)
 {
 	kDebug(14170) << "WPAccount::slotSendMessage(" << Body << ", " << Destination << ")" << endl;
 
+	if (myself()->onlineStatus().status() == Kopete::OnlineStatus::Away) myself()->setOnlineStatus(mProtocol->WPOnline);
 	mProtocol->sendMessage(Body, Destination);
 }
 

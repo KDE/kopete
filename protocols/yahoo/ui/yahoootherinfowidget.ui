@@ -32,7 +32,7 @@
                 <cstring>commentsEdit</cstring>
             </property>
             <property name="readOnly">
-                <bool>true</bool>
+                <bool>false</bool>
             </property>
         </widget>
         <widget class="QLabel" row="2" column="0">
@@ -47,6 +47,9 @@
             <property name="name">
                 <cstring>note1Edit</cstring>
             </property>
+            <property name="readOnly">
+                <bool>false</bool>
+            </property>
         </widget>
         <widget class="QLabel" row="3" column="0">
             <property name="name">
@@ -60,10 +63,16 @@
             <property name="name">
                 <cstring>note2Edit</cstring>
             </property>
+            <property name="readOnly">
+                <bool>false</bool>
+            </property>
         </widget>
         <widget class="QLineEdit" row="4" column="1">
             <property name="name">
                 <cstring>note3Edit</cstring>
+            </property>
+            <property name="readOnly">
+                <bool>false</bool>
             </property>
         </widget>
         <widget class="QLabel" row="4" column="0">
@@ -77,6 +86,9 @@
         <widget class="QLineEdit" row="5" column="1">
             <property name="name">
                 <cstring>note4Edit</cstring>
+            </property>
+            <property name="readOnly">
+                <bool>false</bool>
             </property>
         </widget>
         <widget class="QLabel" row="5" column="0">

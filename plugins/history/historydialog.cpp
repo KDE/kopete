@@ -57,6 +57,8 @@
 #include <kiconloader.h>
 #include <kcombobox.h>
 #include <kmenu.h>
+#include <kstdaction.h>
+#include <kaction.h>
 
 
 class KListViewDateItem : public KListViewItem
@@ -177,6 +179,11 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 	connect(mMainWidget->contactComboBox, SIGNAL(activated(int)), this, SLOT(slotContactChanged(int)));
 	connect(mMainWidget->messageFilterBox, SIGNAL(activated(int)), this, SLOT(slotFilterChanged(int )));
 	connect(mHtmlPart, SIGNAL(popupMenu(const QString &, const QPoint &)), this, SLOT(slotRightClick(const QString &, const QPoint &)));
+
+	//initActions
+	KActionCollection* ac = new KActionCollection(this);
+	mCopyAct = KStdAction::copy( this, SLOT(slotCopy()), ac );
+	mCopyURLAct = new KAction( i18n( "Copy Link Address" ), QString::fromLatin1( "editcopy" ), 0, this, SLOT( slotCopyURL() ), ac, "mCopyURLAct" );
 
 	resize(650, 700);
 	centerOnScreen(this);
@@ -590,11 +597,21 @@ void HistoryDialog::doneProgressBar()
 		mMainWidget->statusLabel->setText(i18n("Ready"));
 }
 
-void HistoryDialog::slotRightClick(const QString &, const QPoint &point)
+void HistoryDialog::slotRightClick(const QString &url, const QPoint &point)
 {
 	KMenu *chatWindowPopup = 0L;
 	chatWindowPopup = new KMenu();
-	chatWindowPopup->insertItem(i18n("Copy"), this, SLOT(slotCopy()));
+	
+	if ( !url.isEmpty() )
+	{
+		mURL = url;
+		mCopyURLAct->plug( chatWindowPopup );
+		chatWindowPopup->insertSeparator();
+	}
+	mCopyAct->setEnabled( mHtmlPart->hasSelection() );
+	mCopyAct->plug( chatWindowPopup );
+	
+	connect( chatWindowPopup, SIGNAL( aboutToHide() ), chatWindowPopup, SLOT( deleteLater() ) );
 	chatWindowPopup->popup(point);
 }
 
@@ -602,8 +619,20 @@ void HistoryDialog::slotCopy()
 {
 	QString qsSelection;
 	qsSelection = mHtmlPart->selectedText();
+	if ( qsSelection.isEmpty() ) return;
+	
+	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
 	QApplication::clipboard()->setText(qsSelection, QClipboard::Clipboard);
 	QApplication::clipboard()->setText(qsSelection, QClipboard::Selection);
+	connect( kapp->clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+}
+
+void HistoryDialog::slotCopyURL()
+{
+	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+	QApplication::clipboard()->setText( mURL, QClipboard::Clipboard);
+	QApplication::clipboard()->setText( mURL, QClipboard::Selection);
+	connect( kapp->clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
 }
 
 #include "historydialog.moc"

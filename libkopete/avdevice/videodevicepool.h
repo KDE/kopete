@@ -22,12 +22,15 @@
 
 
 #include "videoinput.h"
+#include "videodevicemodelpool.h"
 #include <qstring.h>
 #include <qimage.h>
 #include <q3valuevector.h>
 #include <kcombobox.h>
 #include "videodevice.h"
 #include "kopete_export.h"
+#include <kapplication.h>
+#include <kconfig.h>
 
 namespace Kopete {
 
@@ -38,14 +41,8 @@ This class allows kopete to check for the existence, open, configure, test, set 
 
 @author Cláudio da Silveira Pinheiro
 */
-struct VideoDeviceModel
-{
-	QString name;
-	size_t count;
-};
 
 typedef QVector<Kopete::AV::VideoDevice> VideoDeviceVector;
-typedef QVector<VideoDeviceModel> VideoDeviceModelVector;
 
 class VideoDevicePoolPrivate;
 
@@ -74,15 +71,27 @@ public:
 	bool hasDevices();
 	size_t size();
 	~VideoDevicePool();
-	VideoDeviceVector m_videodevice;
-	VideoDeviceModelVector m_model;
+	VideoDeviceVector m_videodevice; // Vector to be filled with found devices
+	VideoDeviceModelPool m_modelvector;  // Vector to be filled with unique device models
 	int fillDeviceKComboBox(KComboBox *combobox);
 	int fillInputKComboBox(KComboBox *combobox);
 	unsigned int currentDevice();
 	int currentInput();
 	unsigned int inputs();
+
+	float getBrightness();
+	float setBrightness(float brightness);
+	float getContrast();
+	float setContrast(float contrast);
+	float getSaturation();
+	float setSaturation(float saturation);
+	float getHue();
+	float setHue(float hue);
+	bool getAutoBrightnessContrast();
+	bool setAutoBrightnessContrast(bool brightnesscontrast);
 	bool getAutoColorCorrection();
 	bool setAutoColorCorrection(bool colorcorrection);
+
 	void loadConfig(); // Load configuration parameters;
 	void saveConfig(); // Save configuretion parameters;
 

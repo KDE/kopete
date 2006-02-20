@@ -933,7 +933,7 @@ GaduAccount::slotExportContactsListToFile()
 	}
 
 	p->saveListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
-					Kopete::UI::Global::mainWidget(), "gadu-list-save", false );
+					Kopete::UI::Global::mainWidget() );
 	p->saveListDialog->setCaption(
 	    i18n("Save Contacts List for Account %1 As").arg(
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
@@ -979,7 +979,7 @@ GaduAccount::slotImportContactsFromFile()
 	}
 
 	p->loadListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
-					Kopete::UI::Global::mainWidget(), "gadu-list-load", true );
+					Kopete::UI::Global::mainWidget() );
 	p->loadListDialog->setCaption(
 	    i18n("Load Contacts List for Account %1 As").arg(
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );

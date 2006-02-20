@@ -46,6 +46,9 @@ KopeteIface::KopeteIface() : DCOPObject( "KopeteIface" )
 		disconnectDCOPSignal("kdesktop", "KScreensaverIface",
 			"KDE_start_screensaver()", "setAutoAway()");
 	}
+	// FIXME: AFAICT, this never seems to fire.
+	connectDCOPSignal("kdesktop", "KScreensaverIface",
+		"KDE_stop_screensaver()", "setActive()", false);
 }
 
 QStringList KopeteIface::contacts()

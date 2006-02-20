@@ -27,6 +27,8 @@
 
 #include <kconfig.h>
 #include <kapplication.h>
+#include <dcopref.h>
+
 #include <klocale.h>
 #include <kglobal.h>
 #include <kdebug.h>
@@ -125,11 +127,19 @@ Kopete::Away::Away() : QObject( kapp , "Kopete::Away")
 #ifdef Q_WS_X11
 	d->xIdleTime = 0;
 #endif
+	kDebug(14010) << k_funcinfo << "Idle detection methods:" << endl;
+	kDebug(14010) << k_funcinfo << "\tKScreensaverIface::isBlanked()" << endl;
+#ifdef Q_WS_X11
+	kDebug(14010) << k_funcinfo << "\tX11 XQueryPointer()" << endl;
+#endif
 	if (d->useXidle)
-		kDebug(14010) << "using X11 Xidle extension" << endl;
-	if(d->useMit)
-		kDebug(14010) << "using X11 MIT Screensaver extension" << endl;
-
+	{
+		kDebug(14010) << k_funcinfo << "\tX11 Xidle extension" << endl;
+	}
+	if (d->useMit)
+	{
+		kDebug(14010) << k_funcinfo << "\tX11 MIT Screensaver extension" << endl;
+	}
 
 	load();
 	KSettings::Dispatcher::self()->registerInstance( KGlobal::instance(), this, SLOT( load() ) );
@@ -157,7 +167,7 @@ Kopete::Away::Away() : QObject( kapp , "Kopete::Away")
 	d->timer->start(4000);
 
 	//init the time and other
-	setActivity();
+	setActive();
 }
 
 Kopete::Away::~Away()
@@ -245,12 +255,50 @@ long int Kopete::Away::idleTime()
 
 void Kopete::Away::slotTimerTimeout()
 {
+	// Time to check whether we're active or autoaway.  We basically have two
+	// bits of info to go on - KDE's screensaver status
+	// (KScreenSaverIface::isBlanked()) and the X11 activity detection.
+	//
+	// Note that isBlanked() is a slight of a misnomer.  It returns true if we're:
+	//  - using a non-locking screensaver, which is running, or
+	//  - using a locking screensaver which is still locked, regardless of
+	//    whether the user is trying to unlock it right now
+	// Either way, it's only worth checking for activity if the screensaver
+	// isn't blanked/locked, because activity while blanked is impossible and
+	// activity while locked never matters (if there is any, it's probably just
+	// the cleaner wiping the keyboard :).
+
+	DCOPRef screenSaver("kdesktop", "KScreensaverIface");
+	DCOPReply isBlanked = screenSaver.call("isBlanked");
+	if (!(isBlanked.isValid() && isBlanked.type == "bool" && ((bool)isBlanked)))
+	{
+		// DCOP failed, or returned something odd, or the screensaver is
+		// inactive, so check for activity the X11 way.  It's only worth
+		// checking for autoaway if there's no activity, and because
+		// Screensaver blanking/locking implies autoAway activation (see
+		// KopeteIface::KopeteIface()), only worth checking autoAway when the
+		// screensaver isn't running.
+		if (isActivity())
+		{
+			setActive();
+		}
+		else if (!d->autoaway && d->useAutoAway && idleTime() > d->awayTimeout)
+		{
+			setAutoAway();
+		}
+	}
+}
+
+bool Kopete::Away::isActivity()
+{
 	// Copyright (c) 1999 Martin R. Jones <mjones@kde.org>
 	//
 	// KDE screensaver engine
 	//
 	// This module is a heavily modified xautolock.
 	// In fact as of KDE 2.0 this code is practically unrecognisable as xautolock.
+
+	bool activity = false;
 
 #ifdef Q_WS_X11
 	Display *dsp = QX11Info::display();
@@ -286,9 +334,9 @@ void Kopete::Away::slotTimerTimeout()
 			}
 		}
 	}
-#endif
+
 	// =================================================================================
-#ifdef Q_WS_X11
+
 	Time xIdleTime = 0; // millisecs since last input event
 
 	#ifdef HasXidle
@@ -313,10 +361,19 @@ void Kopete::Away::slotTimerTimeout()
 
 	// =================================================================================
 
-	if (root_x != d->mouse_x || root_y != d->mouse_y || mask != d->mouse_mask || xIdleTime < d->xIdleTime+2000)
+	// Only check idle time if we have some way of measuring it, otherwise if
+	// we've neither Mit nor Xidle it'll still be zero and we'll always appear active.
+	// FIXME: what problem does the 2000ms fudge solve?
+	if (root_x != d->mouse_x || root_y != d->mouse_y || mask != d->mouse_mask
+		|| ((d->useXidle || d->useMit) && xIdleTime < d->xIdleTime + 2000))
 	{
-		if(d->mouse_x!=-1) //we just gone autoaway, not activity this time
-			setActivity();
+		// -1 => just gone autoaway, ignore apparent activity this time round
+		// anything else => genuine activity
+		// See setAutoAway().
+		if (d->mouse_x != -1)
+		{
+			activity = true;
+		}
 		d->mouse_x = root_x;
 		d->mouse_y = root_y;
 		d->mouse_mask = mask;
@@ -325,13 +382,10 @@ void Kopete::Away::slotTimerTimeout()
 #endif // Q_WS_X11
 	// =================================================================================
 
-	if(!d->autoaway && d->useAutoAway && idleTime() > d->awayTimeout)
-	{
-		setAutoAway();
-	}
+	return activity;
 }
 
-void Kopete::Away::setActivity()
+void Kopete::Away::setActive()
 {
 //	kDebug(14010) << k_funcinfo << "Found activity on desktop, resetting away timer" << endl;
 	d->idleTime.start();
@@ -363,7 +417,12 @@ void Kopete::Away::setActivity()
 
 void Kopete::Away::setAutoAway()
 {
-	d->mouse_x=-1; //do not go availiable automaticaly after
+	// A value of -1 in mouse_x indicates to checkActivity() that next time it
+	// fires it should ignore any apparent idle/mouse/keyboard changes.
+	// I think the point of this is that if you manually start the screensaver
+	// then there'll unavoidably be some residual mouse/keyboard activity
+	// that should be ignored.
+	d->mouse_x = -1;
 
 //	kDebug(14010) << k_funcinfo << "Going AutoAway!" << endl;
 	d->autoaway = true;

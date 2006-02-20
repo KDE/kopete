@@ -48,6 +48,8 @@
 #include "sendauthresptask.h"
 #include "pingtask.h"
 #include "yabtask.h"
+#include "modifyyabtask.h"
+#include "chatsessiontask.h"
 #include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
@@ -86,6 +88,7 @@ public:
 	QString cCookie;
 	Yahoo::Status status;
 	Yahoo::Status statusOnConnect;
+	QString statusMessageOnConnect;
 };
 
 Client::Client(QObject *par) :QObject(par, "yahooclient" )
@@ -141,7 +144,6 @@ void Client::connect( const QString &host, const uint port, const QString &userI
 	QObject::connect( d->stream, SIGNAL( error(int) ), this, SLOT( streamError(int) ) );
 	QObject::connect( d->stream, SIGNAL( readyRead() ), this, SLOT( streamReadyRead() ) );
 	
-	
 	d->stream->connectToServer( host, false );
 }
 
@@ -156,7 +158,7 @@ void Client::cs_connected()
 	emit connected();
 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " starting login task ... "<<  endl;
 
-	d->loginTask->setStateOnConnect( d->statusOnConnect );
+	d->loginTask->setStateOnConnect( (d->statusOnConnect == Yahoo::StatusInvisible) ? Yahoo::StatusInvisible : Yahoo::StatusAvailable );
 	d->loginTask->go();
 	d->active = true;
 }
@@ -205,6 +207,11 @@ void Client::streamError( int error )
 		d->errorString = d->stream->errorText();
 	}
 
+	d->stream->deleteLater();
+	d->stream = 0L;
+	m_connector->deleteLater();
+	m_connector = 0L;
+
 	if( status() == Yahoo::StatusConnecting )
 		emit loginFailed();
 	else
@@ -229,6 +236,11 @@ void Client::slotLoginResponse( int response, const QString &msg )
 {
 	if( response == Yahoo::LoginOk )
 	{
+		if( !(d->statusOnConnect == Yahoo::StatusAvailable ||
+				d->statusOnConnect == Yahoo::StatusInvisible) ||
+				!d->statusMessageOnConnect.isEmpty() )
+			changeStatus( d->statusOnConnect, d->statusMessageOnConnect, Yahoo::StatusTypeAway );
+		d->statusMessageOnConnect = QString::null;
 		setStatus( d->statusOnConnect );
 		m_pingTimer->start( 60 * 1000 );
 		initTasks();
@@ -281,6 +293,14 @@ void Client::sendMessage( const QString &to, const QString &msg )
 	smt->setText( msg );
 	smt->setPicureFlag( pictureFlag() );
 	smt->go( true );
+}
+
+void Client::setChatSessionState( const QString &to, bool close )
+{
+	ChatSessionTask *cst = new ChatSessionTask( d->root );
+	cst->setTarget( to );
+	cst->setType( close ? ChatSessionTask::UnregisterSession : ChatSessionTask::RegisterSession );
+	cst->go( true );
 }
 
 void Client::sendBuzz( const QString &to )
@@ -492,11 +512,38 @@ void Client::sendConferenceMessage( const QString &room, const QStringList &memb
 }
 
 // ***** YAB *****
-void Client::getYABEntries()
+void Client::getYABEntries( long lastMerge, long lastRemoteRevision )
 {
-	d->yabTask->getAllEntries();
+	d->yabTask->getAllEntries( lastMerge, lastRemoteRevision);
 }
 
+void Client::saveYABEntry( YABEntry &entry )
+{
+	ModifyYABTask *myt = new ModifyYABTask( d->root );
+	myt->setAction( ModifyYABTask::EditEntry );
+	myt->setEntry( entry );
+	QObject::connect( myt, SIGNAL(gotEntry( YABEntry * )), this, SIGNAL( gotYABEntry( YABEntry * ) ) );
+	QObject::connect( myt, SIGNAL(error( YABEntry *, const QString &)), this, SIGNAL(modifyYABEntryError( YABEntry *, const QString & )));
+	myt->go(true);
+}
+
+void Client::addYABEntry(  YABEntry &entry )
+{
+	ModifyYABTask *myt = new ModifyYABTask( d->root );
+	myt->setAction( ModifyYABTask::AddEntry );
+	myt->setEntry( entry );
+	QObject::connect( myt, SIGNAL(gotEntry( YABEntry * )), this, SIGNAL( gotYABEntry( YABEntry * ) ) );
+	QObject::connect( myt, SIGNAL(error( YABEntry *, const QString &)), this, SIGNAL(modifyYABEntryError( YABEntry *, const QString & )));
+	myt->go(true);
+}
+
+void Client::deleteYABEntry(  YABEntry &entry )
+{
+	ModifyYABTask *myt = new ModifyYABTask( d->root );
+	myt->setAction( ModifyYABTask::DeleteEntry );
+	myt->setEntry( entry );
+	myt->go(true);
+}
 
 // ***** other *****
 void Client::notifyError( const QString & error )
@@ -528,6 +575,11 @@ void Client::setStatus( Yahoo::Status status )
 void Client::setStatusOnConnect( Yahoo::Status status )
 {
 	d->statusOnConnect = status;
+}
+
+void Client::setStatusMessageOnConnect( const QString &msg )
+{
+	d->statusMessageOnConnect = msg;
 }
 
 void Client::setVerificationWord( const QString &word )
@@ -692,6 +744,8 @@ void Client::initTasks()
 	d->yabTask = new YABTask( d->root );
 	QObject::connect( d->yabTask, SIGNAL( gotEntry( YABEntry * ) ),
 				SIGNAL( gotYABEntry( YABEntry * ) ) );
+	QObject::connect( d->yabTask, SIGNAL( gotRevision( long, bool ) ),
+				SIGNAL( gotYABRevision( long, bool ) ) );
 }
 
 void Client::deleteTasks()

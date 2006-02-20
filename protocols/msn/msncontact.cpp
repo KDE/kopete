@@ -38,6 +38,7 @@
 #include <kglobal.h>
 #include <qregexp.h>
 #include <kio/job.h>
+#include <kdialogbase.h>
 
 #include "kopetecontactlist.h"
 #include "kopetechatsessionmanager.h"

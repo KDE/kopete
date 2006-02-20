@@ -26,9 +26,10 @@ METASOURCES = AUTO
 SUBDIRS = addaccountwizard addcontactwizard config contactlist chatwindow . kconf_update
 
 bin_PROGRAMS = kopete
-kopete_SOURCES = main.cpp kopeteapplication.cpp kopeteiface.cpp \
-	kopeteiface.skel systemtray.cpp kopeteballoon.cpp kopetewindow.cpp \
-	kopeteaccountstatusbaricon.cpp 	kimifaceimpl.cpp kimiface.skel kopeteeditglobalidentitywidget.cpp
+kopete_SOURCES = main.cpp 	kopeteapplication.cpp kopeteiface.cpp \
+		kopeteiface.skel 	systemtray.cpp 	kopeteballoon.cpp kopetewindow.cpp \
+			kopeteaccountstatusbaricon.cpp 	kimifaceimpl.cpp kimiface.skel kopeteeditglobalidentitywidget.cpp \
+	groupkabcselectorwidget.ui
 
 kimiface_DIR = $(kde_includes)
 

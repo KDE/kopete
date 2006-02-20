@@ -71,8 +71,10 @@ public:
 	void receivedWebcamImage( const QPixmap& );
 	void webcamClosed( int );
 	void webcamPaused();
+	
+	const YABEntry *yabEntry();
 
-	static const QString &prepareMessage( QString messageText );
+	static QString prepareMessage( const QString &messageText );
 
 public slots:
 	virtual void slotUserInfo();
@@ -87,7 +89,7 @@ public slots:
 	void sendBuddyIconInfo( const QString &url, int checksum );
 	void sendBuddyIconUpdate( int type );
 	void sendBuddyIconChecksum( int checksum );
-	void setYABEntry( YABEntry * );
+	void setYABEntry( YABEntry *, bool show = false );
 
 	/**
 	 * Must be called after the contact list has been received
@@ -112,7 +114,9 @@ private slots:
 	void closeWebcamDialog();
 	void initWebcamViewer();
 	void inviteConference();
-	//void webcamClosed( const QString& contact, int reason );
+
+	void writeYABEntry();
+	void readYABEntry();
 
 private:
 	QString m_userId; 
@@ -122,6 +126,7 @@ private:
 	YahooAccount* m_account;
 	bool m_stealthed;
 	bool m_receivingWebcam;
+	bool m_sessionActive;
 	
 	//stealth
 	KAction* m_stealthAction;

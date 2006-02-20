@@ -208,16 +208,15 @@ QByteArray YMSGTransfer::serialize()
 	*/
 	
 	int pos = 0;
-	int packetSize = 20 + length();
 	QStringList::ConstIterator listIt = 0;
 	QByteArray buffer;
 	QDataStream stream( &buffer, QIODevice::WriteOnly );
 	
 	stream << (Q_INT8)'Y' << (Q_INT8)'M' << (Q_INT8)'S' << (Q_INT8)'G';
 	if( d->service == Yahoo::ServicePictureUpload )
-		stream << (Q_INT16)0x0d00;
+		stream << (Q_INT16)0x0e00;
 	else
-		stream << (Q_INT16)0x000d;
+		stream << (Q_INT16)0x000e;
 	stream << (Q_INT16)0x0000;
 	if( d->service == Yahoo::ServicePictureUpload )
 		stream << (Q_INT16)(length()+4);

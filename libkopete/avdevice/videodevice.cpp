@@ -109,6 +109,7 @@ int VideoDevice::open()
 	}
 
 	initDevice();
+	selectInput(m_current_input);
 	kDebug() <<  k_funcinfo << "exited successfuly" << endl;
 	return EXIT_SUCCESS;
 }
@@ -154,8 +155,6 @@ int VideoDevice::checkDevice()
 			kDebug() <<  k_funcinfo << "checkDevice(): " << full_filename << " is a V4L2 device." << endl;
 			m_driver = VIDEODEV_DRIVER_V4L2;
 			m_model=QString::fromLocal8Bit((const char*)V4L2_capabilities.card);
-			m_name=m_model; // The name must be set in a way to distinguish between two or more cards of the same model. Watch out.
-
 
 
 // Detect maximum and minimum resolution supported by the V4L2 device
@@ -255,8 +254,7 @@ int VideoDevice::checkDevice()
 			{
 				kDebug() <<  k_funcinfo << full_filename << " is a V4L device." << endl;
 				m_driver = VIDEODEV_DRIVER_V4L;
-				m_name=QString::fromLocal8Bit((const char*)V4L_capabilities.name);
-
+				m_model=QString::fromLocal8Bit((const char*)V4L_capabilities.name);
 				if(V4L_capabilities.type & VID_TYPE_CAPTURE)
 					m_videocapture=true;
 				if(V4L_capabilities.type & VID_TYPE_CHROMAKEY)
@@ -304,6 +302,7 @@ int VideoDevice::checkDevice()
 			}
 		}
 #endif
+		m_name=m_model; // Take care about changing the name to be different from the model itself...
 		kDebug() <<  k_funcinfo << "checkDevice(): " << "Supported pixel formats:" << endl;
 		if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_GREY))
 			kDebug() <<  k_funcinfo << "checkDevice(): " << pixelFormatName(PIXELFORMAT_GREY) << endl;
@@ -373,7 +372,8 @@ int VideoDevice::showDeviceCapabilities()
 		if(V4L2_capabilities.capabilities & V4L2_CAP_AUDIO)
 			kDebug() << "libkopete (avdevice):     Audio IO" << endl;
 ;*/
-		kDebug() <<  k_funcinfo << "Card: " << m_name << endl;
+		kDebug() <<  k_funcinfo << "Card model: " << m_model << endl;
+		kDebug() <<  k_funcinfo << "Card name : " << m_name << endl;
 		kDebug() <<  k_funcinfo << "Capabilities:" << endl;
 		if(canCapture())
 			kDebug() <<  k_funcinfo << "    Video capture" << endl;
@@ -749,6 +749,10 @@ int VideoDevice::currentInput()
 int VideoDevice::selectInput(int newinput)
 {
     /// @todo implement me
+	if(m_current_input >= inputs())
+		return EXIT_FAILURE;
+
+	m_current_input = newinput;
 	if(isOpen())
 	{
 		switch (m_driver)
@@ -779,9 +783,8 @@ int VideoDevice::selectInput(int newinput)
 				break;
 		}
 		kDebug() <<  k_funcinfo << "Selected input " << newinput << " (" << m_input[newinput].name << ")" << endl;
-		return EXIT_SUCCESS;
 	}
-	return EXIT_FAILURE;
+	return EXIT_SUCCESS;
 }
 
 /*!
@@ -866,7 +869,7 @@ int VideoDevice::getFrame()
 	struct v4l2_buffer v4l2buffer;
 #endif
 #endif
-	kDebug() <<  k_funcinfo << "getFrame() called." << endl;
+// 	kDebug() <<  k_funcinfo << "getFrame() called." << endl;
 	if(isOpen())
 	{
 		switch (m_io_method)
@@ -875,7 +878,7 @@ int VideoDevice::getFrame()
 				return EXIT_FAILURE;
 				break;
 			case IO_METHOD_READ:
-				kDebug() <<  k_funcinfo << "Using IO_METHOD_READ.File descriptor: " << descriptor << " Buffer address: " << &m_currentbuffer.data[0] << " Size: " << m_currentbuffer.data.size() << endl;
+// 				kDebug() <<  k_funcinfo << "Using IO_METHOD_READ.File descriptor: " << descriptor << " Buffer address: " << &m_currentbuffer.data[0] << " Size: " << m_currentbuffer.data.size() << endl;
 				bytesread = read (descriptor, &m_currentbuffer.data[0], m_currentbuffer.data.size());
 				if (-1 == bytesread) // must verify this point with ov511 driver.
 				{
@@ -917,7 +920,7 @@ int VideoDevice::getFrame()
 				}
 /*				if (v4l2buffer.index < m_streambuffers)
 					return EXIT_FAILURE;*/ //it was an assert()
-kDebug() << k_funcinfo << "m_rawbuffers[" << v4l2buffer.index << "].start: " << (void *)m_rawbuffers[v4l2buffer.index].start << "   Size: " << m_currentbuffer.data.size() << endl;
+// kDebug() << k_funcinfo << "m_rawbuffers[" << v4l2buffer.index << "].start: " << (void *)m_rawbuffers[v4l2buffer.index].start << "   Size: " << m_currentbuffer.data.size() << endl;
 
 
 
@@ -1028,11 +1031,11 @@ memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_current
 				case PIXELFORMAT_YUV422P: break;
 			}
 		}
-kDebug() <<  k_funcinfo << "10 Using IO_METHOD_READ.File descriptor: " << descriptor << " Buffer address: " << &m_currentbuffer.data[0] << " Size: " << m_currentbuffer.data.size() << endl;
+// kDebug() <<  k_funcinfo << "10 Using IO_METHOD_READ.File descriptor: " << descriptor << " Buffer address: " << &m_currentbuffer.data[0] << " Size: " << m_currentbuffer.data.size() << endl;
 
 
 // put frame copy operation here
-		kDebug() <<  k_funcinfo << "exited successfuly." << endl;
+// 		kDebug() <<  k_funcinfo << "exited successfuly." << endl;
 		return EXIT_SUCCESS;
 	}
 	return EXIT_FAILURE;
@@ -1063,7 +1066,7 @@ int VideoDevice::getImage(QImage *qimage)
     /// @todo implement me
 	qimage->create(width(), height(),32, QImage::IgnoreEndian);
 	uchar *bits=qimage->bits();
-kDebug() <<  k_funcinfo << "Capturing in " << pixelFormatName(m_currentbuffer.pixelformat) << endl;
+// kDebug() <<  k_funcinfo << "Capturing in " << pixelFormatName(m_currentbuffer.pixelformat) << endl;
 	switch(m_currentbuffer.pixelformat)
 	{
 		case PIXELFORMAT_NONE	: break;

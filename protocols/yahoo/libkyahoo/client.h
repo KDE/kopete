@@ -28,7 +28,6 @@
 #include <Q3CString>
 #include <kurl.h>
 
-#include "rtf2html.h"
 #include "transfer.h"
 #include "yahootypes.h"
 
@@ -88,9 +87,13 @@ Q_OBJECT
 
 		/**
 		 * Specifies the status we connect with.
-		 * May be Online or Invisible.
 		 */
 		void setStatusOnConnect( Yahoo::Status status );
+
+		/**
+		 * Specifies the status message we connect with.
+		 */
+		void setStatusMessageOnConnect( const QString &msg );
 
 		/**
 		 * Accessors needed for login
@@ -107,6 +110,11 @@ Q_OBJECT
 		 * Send a Message
 		 */
 		void sendMessage( const QString &to, const QString &msg );
+
+		/**
+		 * Register / Unregister a chatsession
+		 */
+		void setChatSessionState( const QString &to, bool close );
 
 		/**
 		 * Send a Buzz
@@ -242,7 +250,22 @@ Q_OBJECT
 		/**
 		 * Fetches all entries of the YAB
 		 */
-		void getYABEntries();
+		void getYABEntries( long lastMerge, long lastRemoteRevision );
+
+		/**
+		 * Saves a modified YAB entry
+		 */
+		void saveYABEntry( YABEntry &entry );
+
+		/**
+		 * Creates a new YAB entry
+		 */
+		void addYABEntry( YABEntry &entry );
+
+		/**
+		 * Deletes a YAB entry
+		 */
+		void deleteYABEntry( YABEntry &entry );
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -461,9 +484,17 @@ Q_OBJECT
 		 */
 		void gotAuthorizationRequest( const QString &, const QString &, const QString & );
 		/**
-		 * A entry from the Yahoo Address book was retrieved
+		 * A revision of the Yahoo Addressbook was received
+		 */
+		void gotYABRevision( long rev, bool merged );
+		/**
+		 * A entry from the Yahoo Addressbook was retrieved
 		 */
 		void gotYABEntry( YABEntry * );
+		/**
+		 * An error occured while saving a Yahoo Addressbook entry
+		 */
+		void modifyYABEntryError( YABEntry *, const QString & );
 	protected slots:
 		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();

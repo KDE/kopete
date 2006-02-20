@@ -70,6 +70,7 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 	m_YABEntry = 0L;
 	m_stealthed = false;
 	m_receivingWebcam = false;
+	m_sessionActive = false;
 
 	// Update ContactList
 	setNickName( fullName );
@@ -90,8 +91,7 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 
 YahooContact::~YahooContact()
 {
-	if( m_YABEntry )
-		delete m_YABEntry;
+	delete m_YABEntry;
 	m_YABEntry = 0L;
 }
 
@@ -212,10 +212,11 @@ Kopete::ChatSession *YahooContact::manager( Kopete::Contact::CanCreateFlags canC
 	return m_manager;
 }
 
-const QString &YahooContact::prepareMessage( QString messageText )
+QString YahooContact::prepareMessage( const QString &messageText )
 {	
 	// Yahoo does not understand XML/HTML message data, so send plain text
 	// instead.  (Yahoo has its own format for "rich text".)
+	QString newMsg( messageText );
 	QRegExp regExp;
 	int pos = 0;
 	regExp.setMinimal( true );
@@ -227,7 +228,7 @@ const QString &YahooContact::prepareMessage( QString messageText )
 		pos = regExp.search( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-		messageText.replace( regExp, QString::fromLatin1("<span\\1font-weight:600\\2>\033[1m\\3\033[x1m</span>" ) );
+		newMsg.replace( regExp, QString::fromLatin1("<span\\1font-weight:600\\2>\033[1m\\3\033[x1m</span>" ) );
 		}
 	}
 	
@@ -238,7 +239,7 @@ const QString &YahooContact::prepareMessage( QString messageText )
 		pos = regExp.search( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-		messageText.replace( regExp, QString::fromLatin1("<span\\1text-decoration:underline\\2>\033[4m\\3\033[x4m</span>" ) );
+		newMsg.replace( regExp, QString::fromLatin1("<span\\1text-decoration:underline\\2>\033[4m\\3\033[x4m</span>" ) );
 		}
 	}
 	
@@ -249,7 +250,7 @@ const QString &YahooContact::prepareMessage( QString messageText )
 		pos = regExp.search( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-		messageText.replace( regExp, QString::fromLatin1("<span\\1font-style:italic\\2>\033[2m\\3\033[x2m</span>" ) );
+		newMsg.replace( regExp, QString::fromLatin1("<span\\1font-style:italic\\2>\033[2m\\3\033[x2m</span>" ) );
 		}
 	}
 	
@@ -260,7 +261,7 @@ const QString &YahooContact::prepareMessage( QString messageText )
 		pos = regExp.search( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			messageText.replace( regExp, QString::fromLatin1("<span\\1\\3>\033[#\\2m\\4\033[#000000m</span>" ) );
+			newMsg.replace( regExp, QString::fromLatin1("<span\\1\\3>\033[#\\2m\\4\033[#000000m</span>" ) );
 		}
 	}
 	
@@ -271,7 +272,7 @@ const QString &YahooContact::prepareMessage( QString messageText )
 		pos = regExp.search( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			messageText.replace( regExp, QString::fromLatin1("<span\\1\\3><font face=\"\\2\">\\4</span>" ) );
+			newMsg.replace( regExp, QString::fromLatin1("<span\\1\\3><font face=\"\\2\">\\4</span>" ) );
 		}
 	}
 	
@@ -282,7 +283,7 @@ const QString &YahooContact::prepareMessage( QString messageText )
 		pos = regExp.search( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			messageText.replace( regExp, QString::fromLatin1("<span\\1\\3><font size=\"\\2\">\\4</span>" ) );
+			newMsg.replace( regExp, QString::fromLatin1("<span\\1\\3><font size=\"\\2\">\\4</span>" ) );
 		}
 	}
 	
@@ -293,19 +294,19 @@ const QString &YahooContact::prepareMessage( QString messageText )
 		pos = regExp.search( messageText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			messageText.replace( regExp, QString::fromLatin1("\\2") );
+			newMsg.replace( regExp, QString::fromLatin1("\\2") );
 		}
 	}
 	
 	// convert escaped chars
-	messageText.replace( QString::fromLatin1( "&gt;" ), QString::fromLatin1( ">" ) );
-	messageText.replace( QString::fromLatin1( "&lt;" ), QString::fromLatin1( "<" ) );
-	messageText.replace( QString::fromLatin1( "&quot;" ), QString::fromLatin1( "\"" ) );
-	messageText.replace( QString::fromLatin1( "&nbsp;" ), QString::fromLatin1( " " ) );
-	messageText.replace( QString::fromLatin1( "&amp;" ), QString::fromLatin1( "&" ) );
-	messageText.replace( QString::fromLatin1( "<br/>" ), QString::fromLatin1( "\r" ) );
+	newMsg.replace( QString::fromLatin1( "&gt;" ), QString::fromLatin1( ">" ) );
+	newMsg.replace( QString::fromLatin1( "&lt;" ), QString::fromLatin1( "<" ) );
+	newMsg.replace( QString::fromLatin1( "&quot;" ), QString::fromLatin1( "\"" ) );
+	newMsg.replace( QString::fromLatin1( "&nbsp;" ), QString::fromLatin1( " " ) );
+	newMsg.replace( QString::fromLatin1( "&amp;" ), QString::fromLatin1( "&" ) );
+	newMsg.replace( QString::fromLatin1( "<br/>" ), QString::fromLatin1( "\r" ) );
 	
-	return messageText;
+	return newMsg;
 }
 
 void YahooContact::slotSendMessage( Kopete::Message &message )
@@ -320,6 +321,12 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 	Kopete::ContactPtrList m_them = manager(Kopete::Contact::CanCreate)->members();
 	Kopete::Contact *target = m_them.first();
 
+	if( !m_sessionActive )			// Register a new chatsession
+	{
+		m_account->yahooSession()->setChatSessionState( m_userId, false );
+		m_sessionActive = true;
+	}
+	
 	m_account->yahooSession()->sendMessage( static_cast<YahooContact *>(target)->m_userId, messageText );
 	
 	// append message to window
@@ -358,6 +365,8 @@ void YahooContact::slotTyping(bool isTyping_ )
 void YahooContact::slotChatSessionDestroyed()
 {
 	m_manager = 0L;
+	m_account->yahooSession()->setChatSessionState( m_userId, true );	// Unregister chatsession
+	m_sessionActive = false;
 }
 
 QList<KAction*> *YahooContact::customContextMenuActions()
@@ -425,13 +434,14 @@ void YahooContact::slotUserInfo()
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
 	if( !m_YABEntry )
 	{
-		m_YABEntry = new YABEntry;
-		m_YABEntry->yahooId = userId();
+		readYABEntry();	// No YABEntry was set, so read the one from contactlist.xml
 	}
 	
-	YahooUserInfoDialog *dlg = new YahooUserInfoDialog( Kopete::UI::Global::mainWidget(), "yahoo userinfo" );
-	dlg->setData( m_YABEntry );
+	YahooUserInfoDialog *dlg = new YahooUserInfoDialog( this, Kopete::UI::Global::mainWidget(), "yahoo userinfo" );
+	dlg->setData( *m_YABEntry );
+	dlg->setAccountConnected( m_account->isConnected() );
 	dlg->show();
+	QObject::connect( dlg, SIGNAL(saveYABEntry( YABEntry & )), m_account, SLOT(slotSaveYABEntry( YABEntry & )));
 }
 
 void YahooContact::slotSendFile()
@@ -514,12 +524,23 @@ void YahooContact::setDisplayPicture(KTempFile *f, int checksum)
 }
 
 
-void YahooContact::setYABEntry( YABEntry *entry )
+void YahooContact::setYABEntry( YABEntry *entry, bool show )
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << userId() << endl;
 	if( m_YABEntry )
 		delete m_YABEntry;
+	
 	m_YABEntry = entry;
+	writeYABEntry();	// Store data in Contact
+	
+	if( show )
+		slotUserInfo();
+}
+const YABEntry *YahooContact::yabEntry()
+{
+	if( !m_YABEntry )
+		readYABEntry();
+	return m_YABEntry;
 }
 
 void YahooContact::slotEmitDisplayPictureChanged()
@@ -629,10 +650,140 @@ void YahooContact::deleteContact()
 	else
 	{
 		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Contact is getting remove from server side contactlist...." << endl;
+		// Delete from YAB first
+		if( !m_YABEntry )
+			readYABEntry();
+		if( m_YABEntry->YABId )
+			m_account->yahooSession()->deleteYABEntry( *m_YABEntry );
+		
+		// Now remove from the contactlist
 		m_account->yahooSession()->removeBuddy( contactId(), m_groupName );
 	}
 	Kopete::Contact::deleteContact();
 }
+
+void YahooContact::writeYABEntry()
+{
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	
+	// Personal
+	setProperty( YahooProtocol::protocol()->propfirstName, m_YABEntry->firstName );
+	setProperty( YahooProtocol::protocol()->propSecondName, m_YABEntry->secondName );
+	setProperty( YahooProtocol::protocol()->propLastName, m_YABEntry->lastName );
+	setProperty( YahooProtocol::protocol()->propNickName, m_YABEntry->nickName );
+	setProperty( YahooProtocol::protocol()->propTitle, m_YABEntry->title );
+	
+	// Primary Information	
+	setProperty( YahooProtocol::protocol()->propPhoneMobile, m_YABEntry->phoneMobile );
+	setProperty( YahooProtocol::protocol()->propEmail, m_YABEntry->email );
+	setProperty( YahooProtocol::protocol()->propYABId, m_YABEntry->YABId );
+	
+		// Additional Information
+	setProperty( YahooProtocol::protocol()->propPager, m_YABEntry->pager );
+	setProperty( YahooProtocol::protocol()->propFax, m_YABEntry->fax );
+	setProperty( YahooProtocol::protocol()->propAdditionalNumber, m_YABEntry->additionalNumber );
+	setProperty( YahooProtocol::protocol()->propAltEmail1, m_YABEntry->altEmail1 );
+	setProperty( YahooProtocol::protocol()->propAltEmail2, m_YABEntry->altEmail2 );
+	setProperty( YahooProtocol::protocol()->propImAIM, m_YABEntry->imAIM );
+	setProperty( YahooProtocol::protocol()->propImICQ, m_YABEntry->imICQ );
+	setProperty( YahooProtocol::protocol()->propImMSN, m_YABEntry->imMSN );
+	setProperty( YahooProtocol::protocol()->propImGoogleTalk, m_YABEntry->imGoogleTalk );
+	setProperty( YahooProtocol::protocol()->propImSkype, m_YABEntry->imSkype );
+	setProperty( YahooProtocol::protocol()->propImIRC, m_YABEntry->imIRC );
+	setProperty( YahooProtocol::protocol()->propImQQ, m_YABEntry->imQQ );
+	
+		// Private Information
+	setProperty( YahooProtocol::protocol()->propPrivateAddress, m_YABEntry->privateAdress );
+	setProperty( YahooProtocol::protocol()->propPrivateCity, m_YABEntry->privateCity );
+	setProperty( YahooProtocol::protocol()->propPrivateState, m_YABEntry->privateState );
+	setProperty( YahooProtocol::protocol()->propPrivateZIP, m_YABEntry->privateZIP );
+	setProperty( YahooProtocol::protocol()->propPrivateCountry, m_YABEntry->privateCountry );
+	setProperty( YahooProtocol::protocol()->propPrivatePhone, m_YABEntry->privatePhone );
+	setProperty( YahooProtocol::protocol()->propPrivateURL, m_YABEntry->privateURL );
+	
+		// Work Information
+	setProperty( YahooProtocol::protocol()->propCorporation, m_YABEntry->corporation );
+	setProperty( YahooProtocol::protocol()->propWorkAddress, m_YABEntry->workAdress );
+	setProperty( YahooProtocol::protocol()->propWorkCity, m_YABEntry->workCity );
+	setProperty( YahooProtocol::protocol()->propWorkState, m_YABEntry->workState );
+	setProperty( YahooProtocol::protocol()->propWorkZIP, m_YABEntry->workZIP );
+	setProperty( YahooProtocol::protocol()->propWorkCountry, m_YABEntry->workCountry );
+	setProperty( YahooProtocol::protocol()->propWorkPhone, m_YABEntry->workPhone );
+	setProperty( YahooProtocol::protocol()->propWorkURL, m_YABEntry->workURL );
+	
+		// Miscellanous
+	setProperty( YahooProtocol::protocol()->propBirthday, m_YABEntry->birthday.toString( Qt::ISODate ) );
+	setProperty( YahooProtocol::protocol()->propAnniversary, m_YABEntry->anniversary.toString( Qt::ISODate ) );
+	setProperty( YahooProtocol::protocol()->propNotes, m_YABEntry->notes );
+	setProperty( YahooProtocol::protocol()->propAdditional1, m_YABEntry->additional1 );
+	setProperty( YahooProtocol::protocol()->propAdditional2, m_YABEntry->additional2 );
+	setProperty( YahooProtocol::protocol()->propAdditional3, m_YABEntry->additional3 );
+	setProperty( YahooProtocol::protocol()->propAdditional4, m_YABEntry->additional4 );
+}
+
+void YahooContact::readYABEntry()
+{
+	kdDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	if( m_YABEntry )
+		delete m_YABEntry;
+	
+	m_YABEntry = new YABEntry;
+	m_YABEntry->yahooId = userId();
+	// Personal
+	m_YABEntry->firstName = property( YahooProtocol::protocol()->propfirstName ).value().toString();
+	m_YABEntry->secondName = property( YahooProtocol::protocol()->propSecondName ).value().toString();
+	m_YABEntry->lastName = property( YahooProtocol::protocol()->propLastName ).value().toString();
+	m_YABEntry->nickName = property( YahooProtocol::protocol()->propNickName ).value().toString();
+	m_YABEntry->title = property( YahooProtocol::protocol()->propTitle ).value().toString();
+	
+	// Primary Information	
+	m_YABEntry->phoneMobile = property( YahooProtocol::protocol()->propPhoneMobile ).value().toString();
+	m_YABEntry->email = property( YahooProtocol::protocol()->propEmail ).value().toString();
+	m_YABEntry->YABId = property( YahooProtocol::protocol()->propYABId ).value().toInt();
+	
+	// Additional Information
+	m_YABEntry->pager = property( YahooProtocol::protocol()->propPager ).value().toString();
+	m_YABEntry->fax = property( YahooProtocol::protocol()->propFax ).value().toString();
+	m_YABEntry->additionalNumber = property( YahooProtocol::protocol()->propAdditionalNumber ).value().toString();
+	m_YABEntry->altEmail1 = property( YahooProtocol::protocol()->propAltEmail1 ).value().toString();
+	m_YABEntry->altEmail2 = property( YahooProtocol::protocol()->propAltEmail2 ).value().toString();
+	m_YABEntry->imAIM = property( YahooProtocol::protocol()->propImAIM ).value().toString();
+	m_YABEntry->imICQ = property( YahooProtocol::protocol()->propImICQ ).value().toString();
+	m_YABEntry->imMSN = property( YahooProtocol::protocol()->propImMSN ).value().toString();
+	m_YABEntry->imGoogleTalk = property( YahooProtocol::protocol()->propImGoogleTalk ).value().toString();
+	m_YABEntry->imSkype = property( YahooProtocol::protocol()->propImSkype ).value().toString();
+	m_YABEntry->imIRC = property( YahooProtocol::protocol()->propImIRC ).value().toString();
+	m_YABEntry->imQQ = property( YahooProtocol::protocol()->propImQQ ).value().toString();
+	
+	// Private Information
+	m_YABEntry->privateAdress = property( YahooProtocol::protocol()->propPrivateAddress ).value().toString();
+	m_YABEntry->privateCity = property( YahooProtocol::protocol()->propPrivateCity ).value().toString();
+	m_YABEntry->privateState = property( YahooProtocol::protocol()->propPrivateState ).value().toString();
+	m_YABEntry->privateZIP = property( YahooProtocol::protocol()->propPrivateZIP ).value().toString();
+	m_YABEntry->privateCountry = property( YahooProtocol::protocol()->propPrivateCountry ).value().toString();
+	m_YABEntry->privatePhone = property( YahooProtocol::protocol()->propPrivatePhone ).value().toString();
+	m_YABEntry->privateURL = property( YahooProtocol::protocol()->propPrivateURL ).value().toString();
+	
+	// Work Information 
+	m_YABEntry->corporation = property( YahooProtocol::protocol()->propCorporation ).value().toString();
+	m_YABEntry->workAdress = property( YahooProtocol::protocol()->propWorkAddress ).value().toString();
+	m_YABEntry->workCity = property( YahooProtocol::protocol()->propWorkCity ).value().toString();
+	m_YABEntry->workState = property( YahooProtocol::protocol()->propWorkState ).value().toString();
+	m_YABEntry->workZIP = property( YahooProtocol::protocol()->propWorkZIP ).value().toString();
+	m_YABEntry->workCountry = property( YahooProtocol::protocol()->propWorkCountry ).value().toString();
+	m_YABEntry->workPhone = property( YahooProtocol::protocol()->propWorkPhone ).value().toString();
+	m_YABEntry->workURL = property( YahooProtocol::protocol()->propWorkURL ).value().toString();
+
+	// Miscellanous
+	m_YABEntry->birthday = QDate::fromString( property( YahooProtocol::protocol()->propBirthday ).value().toString(), Qt::ISODate );
+	m_YABEntry->anniversary = QDate::fromString( property( YahooProtocol::protocol()->propAnniversary ).value().toString(), Qt::ISODate );
+	m_YABEntry->notes = property( YahooProtocol::protocol()->propNotes ).value().toString();
+	m_YABEntry->additional1 = property( YahooProtocol::protocol()->propAdditional1 ).value().toString();
+	m_YABEntry->additional2 = property( YahooProtocol::protocol()->propAdditional2 ).value().toString();
+	m_YABEntry->additional3 = property( YahooProtocol::protocol()->propAdditional3 ).value().toString();
+	m_YABEntry->additional4 = property( YahooProtocol::protocol()->propAdditional4 ).value().toString();
+}
+
 #include "yahoocontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

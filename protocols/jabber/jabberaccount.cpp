@@ -628,14 +628,10 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status  , const
 
 	if( status.status() == Kopete::OnlineStatus::Offline )
 	{
-		if( isConnected() )
-		{
 			xmppStatus.setIsAvailable( false );
 			kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "CROSS YOUR FINGERS! THIS IS GONNA BE WILD" << endl;
-			m_jabberClient->disconnect (xmppStatus);
-		}
-		else
-			disconnect(Manual);
+            disconnect (Manual, xmppStatus);
+            return;
     }
 
 	if( isConnecting () )
@@ -683,6 +679,34 @@ void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )
 	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Disconnected." << endl;
 
 	disconnected ( reason );
+}
+
+void JabberAccount::disconnect( Kopete::Account::DisconnectReason reason, XMPP::Status &status )
+{
+    kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "disconnect( reason, status ) called" << endl;
+    
+	if (isConnected ())
+	{
+		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Still connected, closing connection..." << endl;
+		/* Tell backend class to disconnect. */
+		m_jabberClient->disconnect (status);
+	}
+
+	// make sure that the connection animation gets stopped if we're still
+	// in the process of connecting
+	setPresence ( status );
+
+	/* FIXME:
+	 * We should delete the JabberClient instance here,
+	 * but active timers in Iris prevent us from doing so.
+	 * (in a failed connection attempt, these timers will
+	 * try to access an already deleted object).
+	 * Instead, the instance will lurk until the next
+	 * connection attempt.
+	 */
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Disconnected." << endl;
+
+	Kopete::Account::disconnected ( reason );
 }
 
 void JabberAccount::disconnect ()

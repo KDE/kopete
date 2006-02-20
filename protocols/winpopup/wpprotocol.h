@@ -60,7 +60,6 @@ public:
 	const QStringList getGroups() {return popupClient->getGroups(); }
 	const QStringList getHosts(const QString &Group) { return popupClient->getHosts(Group); }
 	bool checkHost(const QString &Name) { return popupClient->checkHost(Name); }
-	bool checkMessageDir() { return popupClient->checkMessageDir(); }
 
 // Kopete::Plugin overloading
 public:

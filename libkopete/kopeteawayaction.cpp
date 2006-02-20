@@ -92,6 +92,9 @@ void AwayAction::slotAwayChanged()
 
 void AwayAction::slotSelectAway( int index )
 {
+	//remove that crappy check mark  cf bug 119862
+	setCurrentItem( -1 );
+	
 	Kopete::Away *mAway = Kopete::Away::getInstance();
 	QString awayReason;
 
@@ -123,7 +126,6 @@ void AwayAction::slotSelectAway( int index )
 
 	emit awayMessageSelected( awayReason ) ;
 	emit awayMessageSelected( d->status, awayReason );
-	setCurrentItem( -1 );
 }
 
 } //END namespace Kopete

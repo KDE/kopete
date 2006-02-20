@@ -9,11 +9,11 @@
 		<!-- MetaContact display -->
 		<div class="outMetacontact">%sender% &#160;</div>
 	</div>
-	<div class="OutgoingMessage" style="direction: %messageDirection%;">
-		%message%
-	</div>
-	<!-- For support of consecutive messages -->
-	<div id="insert" />
+	<ul class="OutgoingList" style="direction: %messageDirection%;">
+		<li class="OutgoingMessage" style="direction: %messageDirection%;">%message%</li>
+		<!-- For support of consecutive messages -->
+		<div id="insert" />
+	</ul>
 </div>
 	
  

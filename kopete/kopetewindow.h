@@ -4,7 +4,6 @@
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2001-2002 by Stefan Gehn            <metz AT gehn.net>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2005-2006 by Will Stephenson        <wstephenson at kde.org>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -34,6 +33,7 @@
 class KHBox;
 class QTimer;
 class QLineEdit;
+class QSignalMapper;
 
 class QMouseEvent;
 class QPoint;
@@ -165,7 +165,7 @@ private slots:
 	/**
 	 * Show the Add Contact wizard
 	 */
-	void showAddContactDialog();
+	void showAddContactDialog( Kopete::Account * );
 
 	/**
 	 * Show the Export Contacts wizards
@@ -191,11 +191,19 @@ private slots:
          */
         void slotGlobalStatusMessageIconClicked( const QPoint &position );
 
+	/**
+	 * Extracts protocolId and accountId from the single QString argument signalled by a QSignalMapper,
+	 * get the account, and call showAddContactDialog.
+	 * @param accountIdentifer QString of protocolId and accountId, concatenated with QChar( 0xE000 )
+	 * We need both to uniquely identify an account, but QSignalMapper only emits one QString.
+	 */
+	void slotAddContactDialogInternal( const QString & accountIdentifier );
+	
 public:
 	KopeteContactListView *contactlist;
 
 	// Some Actions
-	KAction* actionAddContact;
+	KActionMenu* actionAddContact;
 
 	//KActionMenu* actionConnectionMenu;
 	//KAction* actionConnect;
@@ -242,6 +250,7 @@ private:
 	bool m_autoHide;
 	unsigned int m_autoHideTimeout;
 	QTimer* m_autoHideTimer;
+	QSignalMapper* addContactMapper;
 
 	KopetePluginConfig *m_pluginConfig;
 

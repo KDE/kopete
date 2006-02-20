@@ -26,6 +26,8 @@
 #include "yahootypes.h"
 #include "client.h"
 #include <qstring.h>
+#include <kdebug.h>
+#include <stdlib.h>
 extern "C"
 {
 #include "libyahoo.h"

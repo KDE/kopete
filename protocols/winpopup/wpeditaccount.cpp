@@ -34,6 +34,8 @@
 #include <kmessagebox.h>
 #include <kconfig.h>
 #include <kapplication.h>
+#include <kstandarddirs.h>
+
 
 // Kopete Includes
 #include <addcontactpage.h>
@@ -50,14 +52,15 @@ WPEditAccount::WPEditAccount(QWidget *parent, Kopete::Account *theAccount)
 
 	mProtocol = WPProtocol::protocol();
 
+	QString tmpSmbcPath = KStandardDirs::findExe("smbclient");
+
 	if(account()) {
 		mHostName->setText(account()->accountId());
-		mAutoConnect->setChecked(account()->excludeConnect());
+//		mAutoConnect->setChecked(account()->excludeConnect());
 		mHostName->setReadOnly(true);
 		KGlobal::config()->setGroup("WinPopup");
-		mMessageCheckFreq->setValue(KGlobal::config()->readEntry("MessageCheckFreq", 5));
-		mHostCheckFreq->setValue(KGlobal::config()->readEntry("HostCheckFreq", 60));
-		mSmbcPath->setURL(KGlobal::config()->readEntry("SmbcPath", "/usr/bin/smbclient"));
+		mHostCheckFreq->setValue(KGlobal::config()->readNumEntry("HostCheckFreq", 60));
+		mSmbcPath->setURL(KGlobal::config()->readEntry("SmbcPath", tmpSmbcPath));
 
 	}
 	else {
@@ -77,9 +80,8 @@ WPEditAccount::WPEditAccount(QWidget *parent, Kopete::Account *theAccount)
 		else
 			mHostName->setText("LOCALHOST");
 
-		mMessageCheckFreq->setValue(5);
 		mHostCheckFreq->setValue(60);
-		mSmbcPath->setURL("/usr/bin/smbclient");
+		mSmbcPath->setURL(tmpSmbcPath);
 	}
 
 	show();
@@ -113,7 +115,6 @@ void WPEditAccount::writeConfig()
 	KGlobal::config()->setGroup("WinPopup");
 	KGlobal::config()->writeEntry("SmbcPath", mSmbcPath->url());
 	KGlobal::config()->writeEntry("HostCheckFreq", mHostCheckFreq->text());
-	KGlobal::config()->writeEntry("MessageCheckFreq", mMessageCheckFreq->text());
 }
 
 Kopete::Account *WPEditAccount::apply()
@@ -123,7 +124,7 @@ Kopete::Account *WPEditAccount::apply()
 	if(!account())
 		setAccount(new WPAccount(mProtocol, mHostName->text()));
 
-	account()->setExcludeConnect(mAutoConnect->isChecked());
+//	account()->setExcludeConnect(mAutoConnect->isChecked());
 	writeConfig();
 
 	mProtocol->settingsChanged();

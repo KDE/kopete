@@ -20,6 +20,7 @@
 #include "yahootypes.h"
 #include "client.h"
 #include <qstring.h>
+#include <kdebug.h>
 
 RequestPictureTask::RequestPictureTask(Task* parent) : Task(parent)
 {

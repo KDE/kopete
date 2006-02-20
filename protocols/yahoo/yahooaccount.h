@@ -167,6 +167,7 @@ protected slots:
 	void slotGoOffline();
 	void slotOpenInbox();			// Open Yahoo Mailbox in browser
 	void slotOpenYAB();			// Open Yahoo Addressbook in browser
+	void slotEditOwnYABEntry();		// Show own Yahoo Addressbook entry
 
 	void slotGoStatus(int status, const QString &awayMessage = QString::null);
 	void slotLoginResponse(int succ, const QString &url);
@@ -176,7 +177,7 @@ protected slots:
 	void slotAuthorizationAccepted( const QString &who );
 	void slotAuthorizationRejected( const QString &who, const QString &msg );
 	void slotgotAuthorizationRequest( const QString &, const QString &, const QString & );
-	void slotAuthReplyOkClicked();
+	void slotContactAddedNotifyDialogClosed( const QString & );
 	void slotGotIgnore(const QStringList &);
 	void slotGotIdentities(const QStringList &);
 	void slotStatusChanged(const QString &who, int stat, const QString &msg, int away, int idle);
@@ -217,6 +218,9 @@ protected slots:
 	void slotGotBuddyIconRequest(const QString &);
 	void slotBuddyIconChanged(const QString&);
 	void slotGotYABEntry( YABEntry *entry );
+	void slotGotYABRevision( long revision, bool merged );
+	void slotSaveYABEntry( YABEntry &entry );
+	void slotModifyYABEntryError( YABEntry *entry, const QString & );
 
 	void slotReceiveFileAccepted( Kopete::Transfer *trans, const QString& fileName );
 
@@ -232,7 +236,7 @@ private:
 	 */
 	void initConnectionSignals( enum SignalConnectionType sct );
 
-	const QString &prepareIncomingMessage( QString msg );
+	QString prepareIncomingMessage( const QString &msg );
 
 	/**
 	 * internal (to the plugin) controls/flags
@@ -260,12 +264,15 @@ private:
 	int m_lastDisconnectCode;	// The last disconnect code.
 	int m_currentMailCount;
 	int m_pictureFlag;			// Describes if we send a buddy icon or not
+	long m_YABLastMerge;		// The YAB Revision on which the last merge was done
+	long m_YABLastRemoteRevision;	// The last remote YAB Revision on which a sync was done
 	YahooProtocol *m_protocol;	// The Protocol Object
 
 	YahooWebcam *m_webcam;
 
 	KAction *m_openInboxAction;	// Menu item openInbox
 	KAction *m_openYABAction;	// Menu item openYahooAddressbook
+	KAction *m_editOwnYABEntry;	// Menu item editOwnYABEntry
 	
 	Client *m_session;		// The Connection object
 };

@@ -59,10 +59,10 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 	int pos = 0;
 	int len = 0;
 	
-	Yahoo::Status status;
+	Yahoo::Status status = Yahoo::StatusAvailable;
+	Yahoo::Service service = Yahoo::ServiceAuth;
 	int statusnum = 0;
 	int sessionid = 0;
-	Yahoo::Service service;
 	int servicenum;
 	int version1, version2;
 	
@@ -211,6 +211,10 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		case (Yahoo::ServiceAuthorization) :
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceAuthorization " << servicenum << endl;
 			service = Yahoo::ServiceAuthorization;
+		break;
+		case (Yahoo::ServiceContactDetails) :
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Parsed packet service -  This means ServiceContactDetails " << servicenum << endl;
+			service = Yahoo::ServiceContactDetails;
 		break;
 		/*
 		ServiceIdle, // 5 (placemarker)

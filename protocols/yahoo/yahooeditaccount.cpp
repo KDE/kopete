@@ -27,6 +27,7 @@
 #include <qspinbox.h>
 //Added by qt3to4:
 #include <QPixmap>
+#include <QLatin1String>
 
 // KDE Includes
 #include <klocale.h>
@@ -161,7 +162,7 @@ Kopete::Account *YahooEditAccount::apply()
 
 void YahooEditAccount::slotOpenRegister()
 {
-    KRun::runURL( "http://edit.yahoo.com/config/eval_register?new=1", "text/html" );
+    KRun::runURL( KUrl("http://edit.yahoo.com/config/eval_register?new=1"), QLatin1String("text/html") );
 }
 
 void YahooEditAccount::slotSelectPicture()

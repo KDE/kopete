@@ -630,9 +630,8 @@ void Webcam::slotSocketRead()
 				{
 					Kopete::AV::VideoDevicePool *videoDevice = Kopete::AV::VideoDevicePool::self();
 					videoDevice->scanDevices();
-					videoDevice->open(0);
+					videoDevice->open();
 					videoDevice->setSize(320, 240);
-					videoDevice->selectInput(0);
 					videoDevice->startCapturing();
 					
 					m_timerId=startTimer(1000);
@@ -682,9 +681,8 @@ void Webcam::slotSocketRead()
 				{
 					Kopete::AV::VideoDevicePool *videoDevice = Kopete::AV::VideoDevicePool::self();
 					videoDevice->scanDevices();
-					videoDevice->open(0);
+					videoDevice->open();
 					videoDevice->setSize(320, 240);
-					videoDevice->selectInput(0);
 					videoDevice->startCapturing();
 					
 					m_timerId=startTimer(1000);

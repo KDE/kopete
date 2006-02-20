@@ -26,6 +26,7 @@
 #include <qpushbutton.h>
 //Added by qt3to4:
 #include <Q3VBoxLayout>
+#include <QLatin1String>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -184,7 +185,7 @@ bool ICQEditAccountWidget::validateData()
 
 void ICQEditAccountWidget::slotOpenRegister()
 {
-	KRun::runURL( "http://go.icq.com/register/", "text/html" );
+	KRun::runURL( KUrl("http://go.icq.com/register/"), QLatin1String("text/html") );
 }
 
 #include "icqeditaccountwidget.moc"

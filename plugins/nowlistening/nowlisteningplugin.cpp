@@ -307,13 +307,22 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 					
 				// HACK: Don't keep appending the now listened song. Replace it in the status message.
 				advert = currentStatusMessage.message();
-				if(statusSong.search(advert) != -1)
+				// Remove the braces when they are no listened song.
+				QString mediaAdvert = mediaPlayerAdvert(false);
+				if(!mediaAdvert.isEmpty())
 				{
-					advert = advert.replace(statusSong, QString("(%1)").arg(mediaPlayerAdvert(false)) );
+					if(statusSong.search(advert) != -1)
+					{
+						advert = advert.replace(statusSong, QString("(%1)").arg(mediaPlayerAdvert(false)) );
+					}
+					else
+					{
+						advert += QString("(%1)").arg( mediaPlayerAdvert(false) );
+					}
 				}
 				else
 				{
-					advert += QString("(%1)").arg( mediaPlayerAdvert(false) );
+					advert = advert.replace(statusSong, "");
 				}
 			}
 			else

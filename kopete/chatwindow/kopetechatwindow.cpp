@@ -56,6 +56,7 @@
 #include <kglobalsettings.h>
 #include <khbox.h>
 #include <kvbox.h>
+#include <ktoolbar.h>
 
 #include "chatmessagepart.h"
 #include "chattexteditpart.h"

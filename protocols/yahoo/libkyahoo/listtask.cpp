@@ -22,6 +22,7 @@
 #include "client.h"
 #include <qstring.h>
 #include <qstringlist.h>
+#include <kdebug.h>
 
 ListTask::ListTask(Task* parent) : Task(parent)
 {

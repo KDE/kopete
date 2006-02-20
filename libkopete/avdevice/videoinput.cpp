@@ -16,7 +16,6 @@
 */
 
 #include "videoinput.h"
-#include "kdebug.h"
 
 namespace Kopete {
 
@@ -24,6 +23,7 @@ namespace AV {
 
 VideoInput::VideoInput()
 {
+	kdDebug() << k_funcinfo << "Executing Video Input's constructor!!!" << endl;
 	m_brightness = 0.5;
 	m_contrast = 0.5;
 	m_saturation = 0.5;

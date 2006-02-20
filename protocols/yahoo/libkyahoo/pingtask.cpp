@@ -22,6 +22,7 @@
 #include "yahootypes.h"
 #include "client.h"
 #include <qstring.h>
+#include <kdebug.h>
 
 PingTask::PingTask(Task* parent) : Task(parent)
 {

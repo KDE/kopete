@@ -254,7 +254,7 @@ void ChatMessagePart::slotScrollingTo( int /*x*/, int y )
 
 void ChatMessagePart::save()
 {
-	KFileDialog dlg( QString::null, QString::fromLatin1( "text/html text/plain" ), view(), "fileSaveDialog", false );
+	KFileDialog dlg( QString(), QString::fromLatin1( "text/html text/plain" ), view() );
 	dlg.setCaption( i18n( "Save Conversation" ) );
 	dlg.setOperationMode( KFileDialog::Saving );
 
@@ -873,17 +873,21 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, Kopete:
 		resultHTML = resultHTML.replace( pos , timeRegExp.cap(0).length() , timeKeyword );
 	}
 
-	// Look for %textbacgroundcolor{X}% 
+	// Look for %textbackgroundcolor{X}% 
 	// TODO: use the X value.
-	// Only look for textbackgroundcolor if the message is hightlighted and hightlight is enabled.
+	// Replace with user-selected highlight color if to be highlighted or
+	// with "inherit" otherwise to keep CSS clean
+	QString bgColor = QString::fromUtf8("inherit");
 	if( message.importance() == Kopete::Message::Highlight && Kopete::BehaviorSettings::self()->highlightEnabled() )
 	{
-		QRegExp textBackgroundRegExp("%textbackgroundcolor\\{([^}]*)\\}%");
-		int textPos=0;
-		while( (textPos=textBackgroundRegExp.search(resultHTML, textPos) ) != -1 )
-		{
-			resultHTML = resultHTML.replace( textPos , textBackgroundRegExp.cap(0).length() , Kopete::AppearanceSettings::self()->highlightBackgroundColor().name() );
-		}
+		bgColor = Kopete::AppearanceSettings::self()->highlightBackgroundColor().name();
+	}
+
+	QRegExp textBackgroundRegExp("%textbackgroundcolor\\{([^}]*)\\}%");
+	int textPos=0;
+	while( (textPos=textBackgroundRegExp.search(resultHTML, textPos) ) != -1 )
+	{
+		resultHTML = resultHTML.replace( textPos , textBackgroundRegExp.cap(0).length() , bgColor );
 	}
 
 	// Replace userIconPath
@@ -966,8 +970,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 {
 	QString resultHTML = sourceHTML;
 
-	QList<Kopete::Contact*> membersList =  d->manager->members();
-	Kopete::Contact *remoteContact = membersList.first();
+	Kopete::Contact *remoteContact = d->manager->members().first();
 
 	// Verify that all contacts are not null before doing anything
 	if( remoteContact && d->manager->myself() )

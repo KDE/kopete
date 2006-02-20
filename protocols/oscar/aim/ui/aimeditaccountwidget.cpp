@@ -9,6 +9,7 @@
 #include <qspinbox.h>
 //Added by qt3to4:
 #include <Q3VBoxLayout>
+#include <QLatin1String>
 
 #include <kdebug.h>
 #include <krun.h>
@@ -167,7 +168,7 @@ bool AIMEditAccountWidget::validateData()
 
 void AIMEditAccountWidget::slotOpenRegister()
 {
-	KRun::runURL( "http://my.screenname.aol.com/_cqr/login/login.psp?siteId=snshomepage&mcState=initialized&createSn=1", "text/html" );
+	KRun::runURL( KUrl("http://my.screenname.aol.com/_cqr/login/login.psp?siteId=snshomepage&mcState=initialized&createSn=1"), QLatin1String("text/html") );
 }
 
 #include "aimeditaccountwidget.moc"

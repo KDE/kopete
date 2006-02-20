@@ -21,6 +21,7 @@
 #define KOPETE_AVVIDEOINPUT_H
 
 #include <qstring.h>
+#include <kdebug.h>
 #include "kopete_export.h"
 
 namespace Kopete {

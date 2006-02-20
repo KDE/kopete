@@ -30,6 +30,7 @@
 #include <ktempfile.h>
 #include <kprocess.h>
 #include <kstreamsocket.h>
+#include <kdebug.h>
 using namespace KNetwork;
 
 WebcamTask::WebcamTask(Task* parent) : Task(parent)

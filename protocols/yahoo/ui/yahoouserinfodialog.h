@@ -27,21 +27,28 @@ class KJanusWidget;
 class YahooWorkInfoWidget;
 class YahooGeneralInfoWidget;
 class YahooOtherInfoWidget;
+class YahooContact;
 
 class YahooUserInfoDialog : public KDialogBase
 {
 Q_OBJECT
 public:
-	YahooUserInfoDialog( QWidget* parent = 0, const char* name = 0 );
+	YahooUserInfoDialog( YahooContact *c, QWidget* parent = 0, const char* name = 0 );
+	void setAccountConnected( bool isOnline );
+signals:
+	void saveYABEntry( YABEntry & );
 public slots:
-	void setData( const YABEntry *yab );
-
+	void setData( const YABEntry &yab );
+private slots:
+	void slotSaveAndCloseClicked();
+	void slotUser2();
 private:
 	YahooGeneralInfoWidget* m_genInfoWidget;
 	YahooWorkInfoWidget* m_workInfoWidget;
 	YahooOtherInfoWidget* m_otherInfoWidget;
 	
 	YABEntry m_yab;
+	YahooContact *m_contact;
 };
 
 #endif

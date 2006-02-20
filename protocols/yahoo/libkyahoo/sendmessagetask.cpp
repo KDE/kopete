@@ -20,6 +20,7 @@
 #include "yahootypes.h"
 #include "client.h"
 #include <qstring.h>
+#include <kdebug.h>
 
 SendMessageTask::SendMessageTask(Task* parent) : Task(parent)
 {
@@ -40,9 +41,8 @@ void SendMessageTask::onGo()
 		return;
 	}	
 
-	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceMessage);
+	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceMessage, Yahoo::StatusOffline);
 	t->setId( client()->sessionID() );
-	t->setStatus( Yahoo::StatusNotify );
 	t->setParam( 1, (Q3CString)client()->userId().local8Bit() );
 	t->setParam( 5, (Q3CString)m_target.local8Bit() );
 	t->setParam( 14, (Q3CString)m_text.utf8() );

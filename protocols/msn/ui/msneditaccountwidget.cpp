@@ -31,6 +31,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 #include <QVBoxLayout>
+#include <QLatin1String>
 
 #include <kfiledialog.h>
 #include <klocale.h>
@@ -323,7 +324,7 @@ void MSNEditAccountWidget::slotSelectImage()
 
 void MSNEditAccountWidget::slotOpenRegister()
 {
-	KRun::runURL( "http://register.passport.net/", "text/html" );
+	KRun::runURL( KUrl("http://register.passport.net/"), QLatin1String("text/html") );
 }
 
 #include "msneditaccountwidget.moc"

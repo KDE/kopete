@@ -96,8 +96,9 @@ class HistoryDialog : public KDialogBase
 		void init();
 		void slotLoadDays();
 
-		void slotRightClick(const QString &, const QPoint &point);
+		void slotRightClick(const QString &url, const QPoint &point);
 		void slotCopy();
+		void slotCopyURL();
 
 	private:
 		enum Disabled { Prev=1, Next=2 };
@@ -154,6 +155,10 @@ class HistoryDialog : public KDialogBase
 
 				Kopete::MetaContact *currentMetaContact;
 		} *mSearch;
+
+		KAction *mCopyAct;
+		KAction *mCopyURLAct;
+		QString mURL;
 };
 
 #endif

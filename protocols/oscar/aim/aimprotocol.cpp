@@ -15,7 +15,7 @@
   *************************************************************************
   */
 
-
+#include <qstringlist.h>
 #include <kgenericfactory.h>
 #include <kdebug.h>
 
@@ -221,10 +221,14 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 
 AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
   : Kopete::Protocol( AIMProtocolFactory::instance(), parent, name ),
-	statusOnline( Kopete::OnlineStatus::Online, 1, this, 0, QStringList(), i18n("Online"), i18n("Online"), Kopete::OnlineStatusManager::Online ),
-	statusOffline( Kopete::OnlineStatus::Offline, 1, this, 10, QStringList(), i18n("Offline"), i18n("Offline"), Kopete::OnlineStatusManager::Offline ),
-	statusAway( Kopete::OnlineStatus::Away, 1, this, 20, QStringList(QString("contact_away_overlay")), i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away,
+	statusOnline( Kopete::OnlineStatus::Online, 2, this, 0, QStringList(), i18n("Online"), i18n("Online"), Kopete::OnlineStatusManager::Online ),
+	statusOffline( Kopete::OnlineStatus::Offline, 2, this, 10, QStringList(), i18n("Offline"), i18n("Offline"), Kopete::OnlineStatusManager::Offline ),
+	statusAway( Kopete::OnlineStatus::Away, 2, this, 20, QStringList(QString("contact_away_overlay")), i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away,
 							Kopete::OnlineStatusManager::HasStatusMessage ),
+	statusWirelessOnline( Kopete::OnlineStatus::Online, 1, this, 30, QStringList("contact_phone_overlay"), i18n("Mobile"), i18n("Mobile"),
+	Kopete::OnlineStatusManager::Online, Kopete::OnlineStatusManager::HideFromMenu ),
+	statusWirelessAway( Kopete::OnlineStatus::Away, 1, this, 31, QString("contact_phone_overlay contact_away_overlay").split(" "),
+	i18n("Mobile Away"), i18n("Mobile Away"), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HideFromMenu ),
 	statusConnecting(Kopete::OnlineStatus::Connecting, 99, this, 99, QStringList(QString("aim_connecting")), i18n("Connecting...")),
 	awayMessage(Kopete::Global::Properties::self()->statusMessage()),
 	clientFeatures("clientFeatures", i18n("Client Features"), 0),

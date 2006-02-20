@@ -17,6 +17,7 @@
 #define YAHOOWEBCAM_H
 
 #include <qobject.h>
+#include <qstringlist.h>
 
 class YahooAccount;
 class YahooWebcamDialog;

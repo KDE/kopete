@@ -9,10 +9,10 @@
 		<!-- MetaContact display -->
 		<div class="inMetacontact">%sender% &#160;</div>
 	</div>
-	<div class="IncomingMessage" style="direction: %messageDirection%;">
-		%message%
-	</div>
-	<!-- For support of consecutive messages -->
-	<div id="insert" />
+	<ul class="IncommingList" style="direction: %messageDirection%;">
+		<li class="IncomingMessage" style="direction: %messageDirection%;">%message%</li>
+		<!-- For support of consecutive messages -->
+		<div id="insert" />
+	</ul>	
 </div>
 	

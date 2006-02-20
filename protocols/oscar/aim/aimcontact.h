@@ -93,6 +93,7 @@ private:
 	AIMUserInfoDialog* m_infoDialog;
 	QString mUserProfile;
 	bool m_haveAwayMessage;
+	bool m_mobile; // Is this user mobile (i.e. do they have message forwarding on, or mobile AIM)
 	QDateTime m_lastAutoresponseTime;
 	
 	KAction* m_warnUserAction;
