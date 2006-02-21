@@ -51,50 +51,50 @@ void KopetePrefs::load()
 
 	// Appearance config
 	mIconTheme = config->readEntry("EmoticonTheme", defaultTheme());
-	mUseEmoticons = config->readBoolEntry("Use Emoticons", true);
-	mEmoticonsRequireSpaces = config->readBoolEntry("EmoticonsRequireSpaces" , true );
-	mShowOffline = config->readBoolEntry("ShowOfflineUsers", true);
-	mShowEmptyGroups = config->readBoolEntry("ShowEmptyGroups", true);
-	mGreyIdle = config->readBoolEntry("GreyIdleMetaContacts", true);
-	mSortByGroup = config->readBoolEntry("SortByGroup" , true);
-	mTreeView = config->readBoolEntry("TreeView", true);
+	mUseEmoticons = config->readEntry("Use Emoticons", true);
+	mEmoticonsRequireSpaces = config->readEntry("EmoticonsRequireSpaces" , true );
+	mShowOffline = config->readEntry("ShowOfflineUsers", true);
+	mShowEmptyGroups = config->readEntry("ShowEmptyGroups", true);
+	mGreyIdle = config->readEntry("GreyIdleMetaContacts", true);
+	mSortByGroup = config->readEntry("SortByGroup" , true);
+	mTreeView = config->readEntry("TreeView", true);
 	// Behavior config
-	mStartDocked = config->readBoolEntry("StartDocked", false);
-	mUseQueue = config->readBoolEntry("Use Queue", true);
-	mUseStack = config->readBoolEntry("Use Stack", false);
-	mRaiseMsgWindow = config->readBoolEntry("Raise Msg Window", false);
-	mShowEvents = config->readBoolEntry("Show Events in Chat Window", true);
-	mSpellCheck = config->readBoolEntry("SpellCheck", true);
-	mQueueUnreadMessages = config->readBoolEntry("Queue Unread Messages", false);
-	mQueueOnlyHighlightedMessagesInGroupChats = config->readBoolEntry("Queue Only Highlighted Messages In Group Chats", false);
-	mQueueOnlyMessagesOnAnotherDesktop = config->readBoolEntry("Queue Only Messages On Another Desktop", false);
-	mBalloonNotify = config->readBoolEntry("Balloon Notification", true);
-	mBalloonNotifyIgnoreClosesChatView = config->readBoolEntry("Balloon Notification Ignore Closes Chat View", false);
-	mBalloonCloseDelay = config->readNumEntry("Balloon Autoclose Delay", 30);
-	mBalloonClose = config->readBoolEntry("Balloon Autoclose", false);
-	mTrayflashNotify = config->readBoolEntry("Trayflash Notification", true);
-	mTrayflashNotifyLeftClickOpensMessage = config->readBoolEntry("Trayflash Notification Left Click Opens Message", true);
-	mTrayflashNotifySetCurrentDesktopToChatView = config->readBoolEntry("Trayflash Notification Set Current Desktop To Chat View", false);
-	mSoundIfAway = config->readBoolEntry("Sound Notification If Away", true);
-	mChatWindowPolicy = config->readNumEntry("Chatwindow Policy", 0);
-	mRichText = config->readBoolEntry("RichText editor", false); // Not used.
-	mChatWShowSend = config->readBoolEntry("Show Chatwindow Send Button", true);
-	mRememberedMessages = config->readNumEntry("Remembered Messages", 5);
-	mTruncateContactNames = config->readBoolEntry("TruncateContactNames", false);
-	mMaxContactNameLength = config->readNumEntry("MaxContactNameLength", 20);
+	mStartDocked = config->readEntry("StartDocked", false);
+	mUseQueue = config->readEntry("Use Queue", true);
+	mUseStack = config->readEntry("Use Stack", false);
+	mRaiseMsgWindow = config->readEntry("Raise Msg Window", false);
+	mShowEvents = config->readEntry("Show Events in Chat Window", true);
+	mSpellCheck = config->readEntry("SpellCheck", true);
+	mQueueUnreadMessages = config->readEntry("Queue Unread Messages", false);
+	mQueueOnlyHighlightedMessagesInGroupChats = config->readEntry("Queue Only Highlighted Messages In Group Chats", false);
+	mQueueOnlyMessagesOnAnotherDesktop = config->readEntry("Queue Only Messages On Another Desktop", false);
+	mBalloonNotify = config->readEntry("Balloon Notification", true);
+	mBalloonNotifyIgnoreClosesChatView = config->readEntry("Balloon Notification Ignore Closes Chat View", false);
+	mBalloonCloseDelay = config->readEntry("Balloon Autoclose Delay", 30);
+	mBalloonClose = config->readEntry("Balloon Autoclose", false);
+	mTrayflashNotify = config->readEntry("Trayflash Notification", true);
+	mTrayflashNotifyLeftClickOpensMessage = config->readEntry("Trayflash Notification Left Click Opens Message", true);
+	mTrayflashNotifySetCurrentDesktopToChatView = config->readEntry("Trayflash Notification Set Current Desktop To Chat View", false);
+	mSoundIfAway = config->readEntry("Sound Notification If Away", true);
+	mChatWindowPolicy = config->readEntry("Chatwindow Policy", 0);
+	mRichText = config->readEntry("RichText editor", false); // Not used.
+	mChatWShowSend = config->readEntry("Show Chatwindow Send Button", true);
+	mRememberedMessages = config->readEntry("Remembered Messages", 5);
+	mTruncateContactNames = config->readEntry("TruncateContactNames", false);
+	mMaxContactNameLength = config->readEntry("MaxContactNameLength", 20);
 
-	mChatViewBufferSize = config->readNumEntry("ChatView BufferSize", 250);
+	mChatViewBufferSize = config->readEntry("ChatView BufferSize", 250);
 
 	QColor tmpColor = KGlobalSettings::highlightColor();
 	mHighlightBackground = config->readColorEntry("Highlight Background Color", &tmpColor);
 	tmpColor = KGlobalSettings::highlightedTextColor();
 	mHighlightForeground = config->readColorEntry("Highlight Foreground Color", &tmpColor);
 	// Behavior config
-	mHighlightEnabled = config->readBoolEntry("Highlighting Enabled", true);
+	mHighlightEnabled = config->readEntry("Highlighting Enabled", true);
 	
-	mBgOverride = config->readBoolEntry("ChatView Override Background", false);
-	mFgOverride = config->readBoolEntry("ChatView Override Foreground", false);
-	mRtfOverride = config->readBoolEntry("ChatView Override RTF", false);
+	mBgOverride = config->readEntry("ChatView Override Background", false);
+	mFgOverride = config->readEntry("ChatView Override Foreground", false);
+	mRtfOverride = config->readEntry("ChatView Override RTF", false);
 	mInterfacePreference = config->readEntry("View Plugin", QString::fromLatin1("kopete_chatwindow") );
 	tmpColor = KGlobalSettings::textColor();
 	mTextColor = config->readColorEntry("Text Color", &tmpColor );
@@ -102,16 +102,16 @@ void KopetePrefs::load()
 	mBgColor = config->readColorEntry("Bg Color", &tmpColor );
 	tmpColor = KGlobalSettings::linkColor();
 	mLinkColor = config->readColorEntry("Link Color", &tmpColor );
-	mFontFace = config->readFontEntry("Font Face");
+	mFontFace = config->readEntry("Font Face");
 	tmpColor = Qt::darkGray;
 	mIdleContactColor = config->readColorEntry("Idle Contact Color", &tmpColor);
 
-	mShowTray = config->readBoolEntry("Show Systemtray", true);
+	mShowTray = config->readEntry("Show Systemtray", true);
 
 	_setStylePath(config->readEntry("StylePath"));
 	mStyleVariant = config->readEntry("StyleVariant");
 	// Read Chat Window Style display
-	mGroupConsecutiveMessages = config->readBoolEntry("GroupConsecutiveMessages", true);
+	mGroupConsecutiveMessages = config->readEntry("GroupConsecutiveMessages", true);
 
 	mToolTipContents = config->readListEntry("ToolTipContents");
 	if(mToolTipContents.empty())
@@ -139,9 +139,9 @@ void KopetePrefs::load()
 	value = config->readEntry("IconMode",
                                   QString::fromLatin1("IconDefault"));
 	mContactListIconMode = (IconDisplayMode) metaObject()->property( n ).read( this ).toInt();
-	mContactListIndentContacts = config->readBoolEntry("IndentContacts", false);
-	mContactListHideVerticalScrollBar = config->readBoolEntry("HideVerticalScrollBar", false );
-	mContactListUseCustomFonts = config->readBoolEntry("UseCustomFonts", false);
+	mContactListIndentContacts = config->readEntry("IndentContacts", false);
+	mContactListHideVerticalScrollBar = config->readEntry("HideVerticalScrollBar", false );
+	mContactListUseCustomFonts = config->readEntry("UseCustomFonts", false);
 	QFont font = KGlobalSettings::generalFont();
 	mContactListNormalFont = config->readFontEntry("NormalFont", &font);
 	if ( font.pixelSize() != -1 )
@@ -151,19 +151,19 @@ void KopetePrefs::load()
 	mContactListSmallFont = config->readFontEntry("SmallFont", &font);
 	tmpColor = Qt::darkRed;
 	mContactListGroupNameColor = config->readColorEntry("GroupNameColor", &tmpColor);
-	mContactListAnimation = config->readBoolEntry("AnimateChanges", true);
-	mContactListFading = config->readBoolEntry("FadeItems", true);
-	mContactListFolding = config->readBoolEntry("FoldItems", true);
+	mContactListAnimation = config->readEntry("AnimateChanges", true);
+	mContactListFading = config->readEntry("FadeItems", true);
+	mContactListFolding = config->readEntry("FoldItems", true);
 	// Mouse Navigation is in Behavior Config.
-	mContactListMouseNavigation = config->readBoolEntry("MouseNavigation", false );
-	mContactListAutoHide = config->readBoolEntry("AutoHide", false);
-	mContactListAutoHideVScroll = config->readBoolEntry("AutoHideVScroll", true );
-	mContactListAutoHideTimeout = config->readUnsignedNumEntry("AutoHideTimeout", 30);
+	mContactListMouseNavigation = config->readEntry("MouseNavigation", false );
+	mContactListAutoHide = config->readEntry("AutoHide", false);
+	mContactListAutoHideVScroll = config->readEntry("AutoHideVScroll", true );
+	mContactListAutoHideTimeout = config->readEntry("AutoHideTimeout", 30);
 
 	// Load the reconnection setting
 	config->setGroup("General");
-	mReconnectOnDisconnect = config->readBoolEntry("ReconnectOnDisconnect", true);
-	mAutoConnect = config->readBoolEntry("AutoConnect", false);
+	mReconnectOnDisconnect = config->readEntry("ReconnectOnDisconnect", true);
+	mAutoConnect = config->readEntry("AutoConnect", false);
 
 	// Nothing has changed yet
 	mWindowAppearanceChanged = false;

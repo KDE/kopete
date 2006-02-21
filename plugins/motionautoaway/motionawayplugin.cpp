@@ -157,8 +157,8 @@ void MotionAwayPlugin::loadSettings(){
 	KConfig *kconfig = KGlobal::config();
 	kconfig->setGroup("MotionAway Plugin");
 
-	awayTimeout = kconfig->readNumEntry("AwayTimeout", 1);
-	becomeAvailableWithActivity = kconfig->readBoolEntry("BecomeAvailableWithActivity", true);
+	awayTimeout = kconfig->readEntry("AwayTimeout", 1);
+	becomeAvailableWithActivity = kconfig->readEntry("BecomeAvailableWithActivity", true);
 	videoDevice = kconfig->readEntry("VideoDevice", "/dev/video0");
 	m_awayTimer->start(awayTimeout * 60 * 1000);
 }

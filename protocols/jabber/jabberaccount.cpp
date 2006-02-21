@@ -353,13 +353,13 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	m_jabberClient->setUseXMPP09 ( true );
 
 	// set SSL flag (this should be converted to forceTLS when using the new protocol)
-	m_jabberClient->setUseSSL ( configGroup()->readBoolEntry ( "UseSSL", false ) );
+	m_jabberClient->setUseSSL ( configGroup()->readEntry ( "UseSSL", false ) );
 
 	// override server and port (this should be dropped when using the new protocol and no direct SSL)
 	m_jabberClient->setOverrideHost ( true, server (), port () );
 
 	// allow plaintext password authentication or not?
-	m_jabberClient->setAllowPlainTextPassword ( configGroup()->readBoolEntry ( "AllowPlainTextPassword", false ) );
+	m_jabberClient->setAllowPlainTextPassword ( configGroup()->readEntry ( "AllowPlainTextPassword", false ) );
 
 	// enable file transfer (if empty, IP will be set after connection has been established)
 	KGlobal::config()->setGroup ( "Jabber" );
@@ -369,7 +369,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	//
 	// Determine system name
 	//
-	if ( !configGroup()->readBoolEntry ( "HideSystemInfo", false ) )
+	if ( !configGroup()->readEntry ( "HideSystemInfo", false ) )
 	{
 		struct utsname utsBuf;
 
@@ -1595,7 +1595,7 @@ void JabberAccount::slotEditVCard ()
 void JabberAccount::slotGlobalIdentityChanged (const QString &key, const QVariant &value)
 {
 	// Check if this account is excluded from Global Identity.
-	if( !configGroup()->readBoolEntry("ExcludeGlobalIdentity", false) )
+	if( !configGroup()->readEntry("ExcludeGlobalIdentity", false) )
 	{
 		JabberContact *jabberMyself = static_cast<JabberContact *>( myself() );
 		if( key == Kopete::Global::Properties::self()->nickName().key() )
