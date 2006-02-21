@@ -14,7 +14,7 @@ kopete_emailwindow_la_LIBADD = ../../libkopete/libkopete.la ./libkopetechatwindo
 
 libkrichtexteditpart_la_SOURCES = krichtexteditpart.cpp
 libkrichtexteditpart_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries) $(KDE_RPATH)
-libkrichtexteditpart_la_LIBADD = ../../libkopete/libkopete.la $(LIB_KPARTS) $(LIB_KSPELL) $(LIB_KDEPRINT)
+libkrichtexteditpart_la_LIBADD = ../../libkopete/libkopete.la $(LIB_KPARTS) $(LIB_KSPELL2) $(LIB_KDEPRINT)
 
 libkopetechatwindow_la_SOURCES = chatmessagepart.cpp emoticonselector.cpp kopeteemoticonaction.cpp \
 	chattexteditpart.cpp krichtexteditpart.cpp kopetechatwindowstylemanager.cpp \
