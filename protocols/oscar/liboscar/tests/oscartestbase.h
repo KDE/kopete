@@ -20,7 +20,8 @@
 #include <QtTest/QtTest>
 #include <QObject>
 #include <QString>
-#include "buffer.h"
+
+class Buffer;
 
 /**
  * @brief Base testcase class
@@ -29,14 +30,15 @@ class OscarTestBase : public QObject
 {
 Q_OBJECT
 public:
-	/** 
-	 * Default constructor that takes @p path as the path to the
-	 * directory containing the test data.
-	 */
-	OscarTestBase(const QString& path, QObject *parent = 0);
+	OscarTestBase();
 
 	/** Default destructor */
 	~OscarTestBase();
+
+	/**
+	 * Set the directory to use to load test files
+	 */
+	void setPath( const QString& path );
 
 	/**
 	 * Takes a file @p file and attempts to load the file, prepending
@@ -49,13 +51,14 @@ protected:
 	QString m_dataDir;
 };
 
-#define OSCAR_TEST_MAIN(TestCase) \
+#define OSCAR_TEST_MAIN(TestObject) \
 int main(int argc, char **argv) \
 { \
-	if(argv[1]) { \
-		TestCase tc(argv[1]); \
-		return QTest::qExec( &tc, argc, argv); \
-	} \
+	QCoreApplication app(argc, argv); \
+	TestObject tc; \
+	if(argv[1]) \
+		tc.setPath( argv[1] ); \
+	return QTest::qExec( &tc, argc, argv); \
 }
 
 #endif

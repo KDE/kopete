@@ -39,8 +39,11 @@ public:
 	bool forMe(const Transfer* transfer) const;
 	bool take(Transfer* transfer);
 
+	static Q3ValueList<int> buildFamiliesList( Buffer* );
 
 private:
+
+
 	//! Handles the families the server supports
 	void handleFamilies();
 	

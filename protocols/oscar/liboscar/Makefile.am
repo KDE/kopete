@@ -1,4 +1,4 @@
-
+SUBDIRS = . tests
 METASOURCES = AUTO
 noinst_LTLIBRARIES = liboscar.la
 

@@ -16,25 +16,25 @@
 */
 
 #include "oscartestbase.h"
-#include "buffer.h"
-#include <QString>
 #include <QFile>
 #include <QByteArray>
 #include <QDir>
+#include "buffer.h"
 
-OscarTestBase::OscarTestBase(const QString& path, QObject *parent)
-: QObject(parent)
+OscarTestBase::OscarTestBase()
+    : m_data( 0 )
 {
-	m_dataDir = path;
-	m_data = NULL;
 }
+
 
 OscarTestBase::~OscarTestBase()
 {
-	if ( m_data != NULL )
-	{
-		delete m_data;
-	}
+	delete m_data;
+}
+
+void OscarTestBase::setPath( const QString& path )
+{
+    m_dataDir = path;
 }
 
 bool OscarTestBase::loadFile(const QString& file)

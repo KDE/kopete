@@ -93,23 +93,27 @@ bool ServerVersionsTask::take( Transfer* transfer )
 	return false;
 }
 
+Q3ValueList<int> ServerVersionsTask::buildFamiliesList( Buffer* buffer )
+{
+        Q3ValueList<int> familyList;
+
+        kDebug(OSCAR_RAW_DEBUG) << k_funcinfo
+                                << "Got the list of families server supports"
+                                << endl;
+
+        if ( buffer->length() % 2 != 0 )
+                return familyList;
+
+        while ( buffer->length () != 0 )
+                familyList.append( buffer->getWord() );
+
+        return familyList;
+}
+
 void ServerVersionsTask::handleFamilies()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo 
-		<< "RECV SNAC 0x01, 0x03 - got the list of families server supports" << endl;
-
-	Buffer* outbuf = transfer()->buffer();
-	if ( outbuf->length() % 2 != 0 )
-	{
-		setError( -1, QString::null );
-		return;
-	}
-
-	while ( outbuf->length () != 0 )
-	{
-		m_familiesList.append( outbuf->getWord() );
-	}
-	client()->addToSupportedFamilies( m_familiesList );
+	Q3ValueList<int> familyList = buildFamiliesList( transfer()->buffer() );
+	client()->addToSupportedFamilies( familyList );
 	requestFamilyVersions(); // send back a CLI_FAMILIES packet
 }
 
