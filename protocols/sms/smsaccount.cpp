@@ -95,6 +95,7 @@ void SMSAccount::setAway( bool /*away*/, const QString &)
 
 void SMSAccount::connect(const Kopete::OnlineStatus&)
 {
+	myself()->setOnlineStatus( SMSProtocol::protocol()->SMSConnecting );
 	if( theService )
 		theService->connect();
 }
