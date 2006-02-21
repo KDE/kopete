@@ -34,7 +34,7 @@ OscarTestBase::~OscarTestBase()
 
 void OscarTestBase::setPath( const QString& path )
 {
-    m_dataDir = path;
+	m_dataDir = path;
 }
 
 bool OscarTestBase::loadFile(const QString& file)
