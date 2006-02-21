@@ -39,7 +39,8 @@ SMSAccount::SMSAccount( SMSProtocol *parent, const QString &accountID, const cha
 {
 	setMyself( new SMSContact(this, accountID, accountID, Kopete::ContactList::self()->myself()) );
 	loadConfig();
-	
+	myself()->setOnlineStatus( SMSProtocol::protocol()->SMSOffline );
+
 	QString sName = configGroup()->readEntry("ServiceName", QString::null);
 	theService = ServiceLoader::loadService(sName, this);
 	
