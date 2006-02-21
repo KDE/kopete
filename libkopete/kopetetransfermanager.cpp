@@ -228,7 +228,7 @@ void Kopete::TransferManager::slotComplete(KIO::Job *job)
 void Kopete::TransferManager::sendFile( const KUrl &file, const QString &fname, unsigned long sz,
 	 bool mustBeLocal,	QObject *sendTo, const char *slot )
 {
-	KUrl url(file);
+	KUrl url = KUrl::fromPathOrURL(file);
 	QString filename;
 	unsigned int size = 0;
 

@@ -142,7 +142,7 @@ void PictureNotifierTask::parsePicture( Transfer *transfer )
 	if( type == 1 )
 		emit pictureRequest( nick );
 	else if( type == 2 )
-		emit pictureInfoNotify( nick, KUrl( url ), checksum );
+		emit pictureInfoNotify( nick, KUrl::fromPathOrURL( url ), checksum );
 }
 
 void PictureNotifierTask::parsePictureUploadResponse( Transfer *transfer )

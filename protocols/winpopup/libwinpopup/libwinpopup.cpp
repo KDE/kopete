@@ -56,7 +56,7 @@ void WinPopupLib::slotStartDirLister()
 		dirLister->setAutoUpdate(true);
 		connect(dirLister, SIGNAL(newItems(const KFileItemList &)), this, SLOT(slotNewMessages(const KFileItemList &)));
 		connect(dirLister, SIGNAL(completed()), this, SLOT(slotListCompleted()));
-		dirLister->openURL(KUrl(WP_POPUP_DIR));
+		dirLister->openURL(KUrl::fromPathOrURL(WP_POPUP_DIR));
 	}
 }
 

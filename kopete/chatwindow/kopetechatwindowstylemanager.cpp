@@ -98,7 +98,7 @@ void ChatWindowStyleManager::loadStyles()
 	for(it = chatStyles.constBegin(); it != chatStyles.constEnd(); ++it)
 	{
 		kDebug(14000) << k_funcinfo << *it << endl;
-		d->styleDirs.push( KUrl(*it) );
+		d->styleDirs.push( KUrl::fromPathOrURL(*it) );
 	}
 	
 	d->styleDirLister = new KDirLister;
@@ -285,7 +285,7 @@ bool ChatWindowStyleManager::removeStyle(const QString &stylePath)
 		}
 	
 		// Do the actual deletion of the directory style.
-		return KIO::NetAccess::del( KUrl(stylePath), 0 );
+		return KIO::NetAccess::del( KUrl::fromPathOrURL(stylePath), 0 );
 	}
 	else
 	{

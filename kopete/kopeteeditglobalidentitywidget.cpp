@@ -202,7 +202,7 @@ void KopeteEditGlobalIdentityWidget::photoClicked()
 	}
 
 	d->myself->setPhotoSource(Kopete::MetaContact::SourceCustom);
-	d->myself->setPhoto(KUrl(saveLocation));
+	d->myself->setPhoto(KUrl::fromPathOrURL(saveLocation));
 }
 
 void KopeteEditGlobalIdentityWidget::lineNicknameTextChanged(const QString &text)

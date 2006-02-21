@@ -157,7 +157,7 @@ void WebPresencePlugin::slotWriteFile()
 	m_writeScheduler->stop();
 
 	// generate the (temporary) XML file representing the current contactlist
-	KUrl dest( resultURL );
+	KUrl dest = KUrl::fromPathOrURL( resultURL );
 	if ( resultURL.isEmpty() || !dest.isValid() )
 	{
 		kDebug(14309) << "url is empty or not valid. NOT UPDATING!" << endl;
@@ -196,7 +196,7 @@ void WebPresencePlugin::slotWriteFile()
 	}
 
 	// upload it to the specified URL
-	KUrl src( m_output->name() );
+	KUrl src = KUrl::fromPathOrURL( m_output->name() );
 	KIO::FileCopyJob *job = KIO::file_move( src, dest, -1, true, false, false );
 	connect( job, SIGNAL( result( KIO::Job * ) ),
 			SLOT(  slotUploadJobResult( KIO::Job * ) ) );

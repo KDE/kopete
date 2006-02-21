@@ -72,7 +72,7 @@ void KopeteFileConfirmDialog::slotBrowsePressed()
 void KopeteFileConfirmDialog::slotUser2()
 {
 	m_emited=true;
-	KUrl url(m_view->m_saveto->text());
+	KUrl url = KUrl::fromPathOrURL(m_view->m_saveto->text());
 	if(url.isValid() && url.isLocalFile() )
 	{
 		const QString directory=url.directory();

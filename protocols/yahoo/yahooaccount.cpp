@@ -590,7 +590,7 @@ void YahooAccount::slotGlobalIdentityChanged( const QString &key, const QVariant
 	{
 		if ( key == Kopete::Global::Properties::self()->photo().key() )
 		{
-			setBuddyIcon( KUrl( value.toString() ) );
+			setBuddyIcon( KUrl::fromPathOrURL( value.toString() ) );
 		}
 	}
 }
@@ -673,7 +673,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		initConnectionSignals( DeleteConnections );
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 		YahooVerifyAccount *verifyDialog = new YahooVerifyAccount( this );
-		verifyDialog->setUrl( KUrl(url) );
+		verifyDialog->setUrl( KUrl::fromPathOrURL(url) );
 		verifyDialog->show();
 		return;
 	}

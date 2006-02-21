@@ -1431,7 +1431,7 @@ void MSNAccount::resetPictureObject(bool silent)
 			if(picture.width() != 96 || picture.height() != 96)
 			{
 				// Save to a new location in msnpictures.
-				QString newLocation( locateLocal( "appdata", "msnpictures/"+ KUrl(m_pictureFilename).fileName().toLower() ) );
+				QString newLocation( locateLocal( "appdata", "msnpictures/"+ KUrl::fromPathOrURL(m_pictureFilename).fileName().toLower() ) );
 	
 				// Scale and crop the picture.
 				picture = MSNProtocol::protocol()->scalePicture(picture);
