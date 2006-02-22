@@ -27,6 +27,7 @@
 
 
 namespace XMPP { class Jid; }
+namespace Kopete { class StatusMessage; }
 class JabberAccount;
 class JabberProtocol;
 
@@ -81,7 +82,7 @@ public slots:
 
 	/* Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
-	
+	void setStatusMessage( const Kopete::StatusMessage &statusMessage );
 	/**
 	 * the account has been unregistered.
 	 * loop over all contact and remove them

@@ -57,6 +57,7 @@
 #include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
 #include "contactaddednotifydialog.h"
+#include "kopetestatusmessage.h"
 
 #include "jabberconnector.h"
 #include "jabberclient.h"
@@ -651,6 +652,10 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status  , const
 	{
 		setPresence ( xmppStatus );
 	}
+}
+
+void JabberAccount::setStatusMessage( const Kopete::StatusMessage &statusMessage )
+{
 }
 
 void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )

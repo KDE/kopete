@@ -25,7 +25,7 @@
 #include <kopeteaccountmanager.h>
 #include <kopetecontact.h>
 #include <kopetecontactlist.h>
-
+#include <kopetestatusmessage.h>
 #include <kopeteversion.h>
 
 
@@ -218,6 +218,10 @@ void JabberTransport::setOnlineStatus( const Kopete::OnlineStatus& status  , con
 		setPresence ( xmppStatus );
 	}
 #endif
+}
+
+void JabberTransport::setStatusMessage( const Kopete::StatusMessage &statusMessage )
+{
 }
 
 JabberProtocol * JabberTransport::protocol( ) const

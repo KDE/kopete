@@ -45,7 +45,11 @@ class JabberProtocol;
 class JabberTransport;
 class JabberBookmarks;
 
-namespace Kopete { class MetaContact; }
+namespace Kopete 
+{ 
+	class MetaContact;
+	class StatusMessage;
+}
 
 #ifdef SUPPORT_JINGLE
 //class JingleSessionManager; 
@@ -153,8 +157,9 @@ public slots:
     /* Disconnect with a reason, and status */
     void disconnect( Kopete::Account::DisconnectReason reason, XMPP::Status &status );
 	/* Reimplemented from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
-	
+	void setOnlineStatus( const Kopete::OnlineStatus& status, const QString &reason = QString::null);
+	void setStatusMessage( const Kopete::StatusMessage &statusMessage );
+
 	void addTransport( JabberTransport *tr ,  const QString &jid);
 	void removeTransport( const QString &jid );
 
