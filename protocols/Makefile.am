@@ -22,4 +22,4 @@ endif
 
 # Disabled Jabber, IRC, Groupwise, SMS and Meanwhile for compiling, because they are not ported right now
 # I leave that to the protocol maintainer (-DarkShock)
-SUBDIRS = $(TESTBED) msn oscar yahoo winpopup $(GADU) messenger
+SUBDIRS = $(TESTBED) msn oscar yahoo winpopup $(GADU) messenger $(JABBER)
