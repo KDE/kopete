@@ -27,7 +27,6 @@
 #include "kopetechatsession.h"
 #include "kopeteplugin.h"
 #include "kopetepluginmanager.h"
-#include "kopeteprefs.h"
 #include "kopetestdaction.h"
 #include "kopeteviewmanager.h"
 
