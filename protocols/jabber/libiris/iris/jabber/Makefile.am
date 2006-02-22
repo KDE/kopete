@@ -6,8 +6,8 @@ KDE_CXXFLAGS = $(QCA_CFLAGS)
 noinst_LTLIBRARIES = libiris_jabber.la
 INCLUDES = -I$(srcdir)/../include -I$(srcdir)/../xmpp-core -I$(srcdir)/../xmpp-im -I$(srcdir)/../../cutestuff/util -I$(srcdir)/../../cutestuff/network $(all_includes)
 
-libiris_jabber_la_SOURCES = \
-	filetransfer.cpp s5b.cpp xmpp_ibb.cpp xmpp_jidlink.cpp all_mocs.cpp
+libiris_jabber_la_LDFLAGS = $(all_libraries) -no-undefined
+libiris_jabber_la_SOURCES = filetransfer.cpp s5b.cpp xmpp_ibb.cpp xmpp_jidlink.cpp all_mocs.cpp
 
 s5b.lo: s5b.moc
 
