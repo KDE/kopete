@@ -100,6 +100,8 @@ void BehaviorConfig::save()
 	// "Chat" TAB ===============================================================
 	Kopete::BehaviorSettings::self()->setViewPlugin( viewPlugins[mPrfsChat->viewPlugin->currentItem()]->pluginName() );
 
+	Kopete::BehaviorSettings::self()->writeConfig();
+
 	load();
 }
 

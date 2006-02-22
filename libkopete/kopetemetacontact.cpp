@@ -39,7 +39,6 @@
 #include "kopetepluginmanager.h"
 #include "kopetegroup.h"
 #include "kopeteglobal.h"
-#include "kopeteprefs.h"
 #include "kopeteuiglobal.h"
 #include "kopetepicture.h"
 

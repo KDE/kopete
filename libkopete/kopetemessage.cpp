@@ -37,7 +37,6 @@
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
 #include "kopetechatsession.h"
-#include "kopeteprefs.h"
 #include "kopetecontact.h"
 #include "kopeteemoticons.h"
 

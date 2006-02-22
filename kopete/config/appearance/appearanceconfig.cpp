@@ -314,6 +314,7 @@ void AppearanceConfig::save()
 		settings->setStyleVariant( d->currentVariantMap[d->mPrfsChatWindow->variantList->currentText()] );
 	}
 
+	settings->writeConfig();
 	d->styleChanged = false;
 
 	load();

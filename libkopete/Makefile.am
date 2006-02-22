@@ -24,7 +24,7 @@ libkopete_la_SOURCES = connectionmanager.cpp 	kopeteonlinestatus.cpp \
 		kopeteblacklister.cpp kopetemessageevent.cpp kopetemessagehandler.cpp \
 		kopetemessagehandlerchain.cpp kopetesimplemessagehandler.cpp kopeteproperties.cpp \
 		kabcpersistence.cpp connectionmanager.skel clientiface.stub managedconnectionaccount.cpp \
-		networkstatuscommon.h kopetegeneralsettings.kcfgc kopeteutils.cpp kopeteprefs.cpp \
+		networkstatuscommon.h kopetegeneralsettings.kcfgc kopeteutils.cpp \
 	kopetepicture.cpp 	kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc \
 	kopetestatusmessage.cpp
 
@@ -58,7 +58,7 @@ kopeteinclude_HEADERS = kopeteaccount.h kopeteaccountmanager.h \
 	kopeteonlinestatusmanager.h kopetepasswordedaccount.h 	kopetepassword.h kopeteplugin.h \
 	kopeteprotocol.h kopetesimplemessagehandler.h kopetetask.h 	kopetetransfermanager.h \
 	kopeteuiglobal.h kabcpersistence.h managedconnectionaccount.h 	kopeteversion.h \
-	kopeteprefs.h kopetepicture.h kopeteappearancesettings.h kopetebehaviorsettings.h \
+	kopetepicture.h kopeteappearancesettings.h kopetebehaviorsettings.h \
 	kopetegeneralsettings.h kopetestatusmessage.h
 
 # vim: set noet:
