@@ -10,7 +10,7 @@ api:
 
 messages:
 	$(EXTRACTRC) --context="Translators: The %FOO% placeholders are variables that are substituted in the code, please leave them untranslated" --tag-group=none --tag kopete-i18n styles/*.xsl > xml_doc.cpp
-	$(EXTRACTRC) `find . -name \*.ui -o -name \*.rc | egrep -v '(libkopete/compat|protocols/testbed)'` > rc.cpp
+	$(EXTRACTRC) `find . -name \*.ui -o -name \*.rc | egrep -v '(libkopete/compat|protocols/testbed)'` >> rc.cpp
 	LIST=`find . -name \*.h -o -name \*.cpp -o -name \*.c | egrep -v '(libkopete/compat|protocols/testbed)'`; \
 	if test -n "$$LIST"; then \
 		$(XGETTEXT) $$LIST -o $(podir)/kopete.pot; \
